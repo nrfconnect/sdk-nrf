@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: BSD-5-Clause-Nordic
+#
+
+menu "Nordic nRF libraries"
+
+config ESB
+	bool
+	prompt "Enable Enhanced Shock Burst"
+	default n
+	help
+	  Enable ESB functionality
+
+endmenu
