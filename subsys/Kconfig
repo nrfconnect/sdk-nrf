@@ -1,0 +1,1 @@
+source "subsys/bluetooth/Kconfig"

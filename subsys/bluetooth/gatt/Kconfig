@@ -1,0 +1,6 @@
+menu "NRF BLE Gatt services"
+
+config BLE_GATT_NUS
+	bool "BLE Gatt NUS (Nordic Usart Service"
+	default n
+endmenu

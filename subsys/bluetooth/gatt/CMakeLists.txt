@@ -1,0 +1,1 @@
+add_subdirectory_ifdef(CONFIG_BLE_GATT_NUS gatt)
