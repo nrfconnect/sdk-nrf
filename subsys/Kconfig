@@ -3,7 +3,5 @@
 #
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
-
-rsource "lib/Kconfig"
-rsource "subsys/Kconfig"
+rsource "bluetooth/Kconfig"
 
