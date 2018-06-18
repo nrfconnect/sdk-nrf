@@ -1,0 +1,41 @@
+# Kconfig - NCS BLE service configuration options
+
+comment "Service configuration"
+
+config NRF_BT_HIDS
+	bool
+	prompt "Enable HIDS"
+	help
+	  Enable HIDS functionality
+
+if NRF_BT_HIDS
+
+config NRF_BT_HIDS_ATTR_MAX
+	int "Maximum number of GATT attribute descriptors"
+	default 30
+	range 0 50
+	help
+	  Maximum number of GATT attribute descriptors that can be set for HIDS.
+
+config NRF_BT_HIDS_INPUT_REP_MAX
+	int "Maximum number of GATT attribute descriptors"
+	default 5
+	range 0 10
+	help
+	  Maximum number of HIDS Input Reports that can be set for HIDS.
+
+config NRF_BT_HIDS_SYS_LOG_LEVEL
+	int "HIDS log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for HIDS.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+endif # NRF_BT_HIDS

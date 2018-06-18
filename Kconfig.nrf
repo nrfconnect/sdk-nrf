@@ -5,4 +5,5 @@
 #
 
 rsource "lib/Kconfig"
+rsource "subsys/Kconfig"
 
