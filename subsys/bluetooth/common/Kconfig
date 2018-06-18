@@ -1,0 +1,49 @@
+# Kconfig - common module configuration options
+
+comment "Common modules configuration"
+
+config NRF_BT_SVC_COMMON
+	bool
+	prompt "Enable service utils"
+	default y if NRF_BT_HIDS
+	help
+	  Enable BLE service utils
+
+if NRF_BT_SVC_COMMON
+
+config NRF_BT_UUID_16_POOL_SIZE
+	int "Maximum number of 16-bit UUIDs descriptors"
+	default 10
+	range 0 255
+	help
+	  Maximum number of 16-bit UUID descriptors that can be dynamically registered.
+
+config NRF_BT_UUID_32_POOL_SIZE
+	int "Maximum number of 16-bit UUID descriptors"
+	default 0
+	range 0 255
+	help
+	  Maximum number of 32-bit UUID descriptors that can be dynamically registered.
+
+config NRF_BT_UUID_128_POOL_SIZE
+	int "Maximum number of 128-bit UUID descriptors"
+	default 0
+	range 0 255
+	help
+	  Maximum number of 128-bit UUID descriptors that can be dynamically registered.
+
+config NRF_BT_CHRC_POOL_SIZE
+	int "Maximum number of characteristic descriptors"
+	default 5
+	range 0 255
+	help
+	  Maximum number of characteristic descriptors that can be dynamically registered.
+
+config NRF_BT_CCC_POOL_SIZE
+	int "Maximum number of CCCD descriptors"
+	default 5
+	range 0 255
+	help
+	  Maximum number of CCCD descriptors that can be dynamically registered.
+
+endif # NRF_BT_SVC_COMMON

@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: BSD-5-Clause-Nordic
+#
+
+menu "Nordic nRF Bluetooth"
+
+config NRF_BT
+	bool
+	prompt "Enable Bluetooth"
+	default n
+	help
+	  Enable Bluetooth functionality
+
+if NRF_BT
+rsource "common/Kconfig"
+rsource "services/Kconfig"
+endif # NRF_BT
+
+endmenu
