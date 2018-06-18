@@ -25,34 +25,6 @@
 #include <logging/sys_log.h>
 
 
-#define DEVICE_NAME		CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN		(sizeof(DEVICE_NAME) - 1)
-
-
-static const struct bt_data ad[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-			  0x12, 0x18,	/* HID Service */
-			  0x0f, 0x18),	/* Battery Service */
-};
-
-static const struct bt_data sd[] = {
-	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
-};
-
-static void ble_state_adv_start(void)
-{
-	int err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
-				  sd, ARRAY_SIZE(sd));
-
-	if (err) {
-		SYS_LOG_ERR("Advertising failed to start (err %d)", err);
-		sys_reboot(SYS_REBOOT_WARM);
-	}
-
-	SYS_LOG_INF("Advertising started");
-}
-
 static void connected(struct bt_conn *conn, u8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -87,14 +59,6 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 		event->connected = false;
 		EVENT_SUBMIT(event);
 	}
-
-	/* TODO: use bond manager to check if it possible to pair with another
-	 * device
-	 * Currently our device will not accept pairing from host if it already
-	 * has CONFIG_BT_MAX_PAIRED bonds stored.
-	 * Currently bt_keys and bt_settings APIs are private
-	 */
-	ble_state_adv_start();
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level)
@@ -141,9 +105,6 @@ static void bt_ready(int err)
 	}
 
 	module_set_state("ready");
-
-	/* TODO start advertising after services are ready. */
-	ble_state_adv_start();
 }
 
 static int ble_state_init(void)
@@ -184,6 +145,7 @@ static bool event_handler(const struct event_header *eh)
 				SYS_LOG_ERR("cannot initialize");
 			}
 		}
+
 		return false;
 	}
 
