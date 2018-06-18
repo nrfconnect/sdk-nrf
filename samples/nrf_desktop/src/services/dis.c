@@ -74,6 +74,8 @@ static bool event_handler(const struct event_header *eh)
 				return false;
 			}
 			SYS_LOG_INF("service initialized");
+
+			module_set_state("ready");
 		}
 		return false;
 	}
