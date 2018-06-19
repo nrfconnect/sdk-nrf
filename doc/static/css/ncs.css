@@ -1,0 +1,20 @@
+.wy-menu-vertical li.current{background:#fafafa}
+
+.wy-nav-side{position:fixed;top:0;bottom:0;left:0;padding-bottom:2em;width:300px;overflow-x:hidden;overflow-y:hidden;min-height:100%;background:#fafafa;z-index:200;border-right:#ddd solid 1px}
+
+.rst-versions{position:fixed;bottom:0;left:0;width:300px;color:#fcfcfc;background:#e0e0e0;font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;z-index:400;border-top:0px}
+
+.rst-versions .rst-current-version{padding:12px;background-color:#2980B9;display:block;text-align:right;font-size:90%;cursor:pointer;color:#27AE60;*zoom:1}
+
+.rst-versions .rst-other-versions{font-size:90%;padding:12px;color:gray;display:none;line-height:30px}
+
+
+
+
+
+
+li > ol, li > ul {
+
+    margin: 5px 0px !important;
+
+}
