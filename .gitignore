@@ -20,3 +20,9 @@ tags
 .xxproject
 .envrc
 .vscode
+
+doc/_build
+doc/nrf/_doxygen/
+doc/nrf/_samples/
+doc/*_warnings.txt
+doc/*_doc.log
