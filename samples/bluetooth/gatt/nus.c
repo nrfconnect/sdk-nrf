@@ -2,11 +2,11 @@
 #include <bluetooth/uuid.h>                                                                                                            
 #include <bluetooth/gatt.h> 
 
-#include <gatt/nus.h>
+#include <../gatt/nus.h>
 
 static struct bt_gatt_ccc_cfg nuslc_ccc_cfg[BT_GATT_CCC_MAX] = {};                                                                     
 static u8_t                   notify_enabled = 0;
-static void                   (*nus_receive_cb)(u8_t);
+static void                   (*nus_receive_cb)(u8_t*, u16_t);
 static void                   (*nus_send_cb)(u8_t);
                                                                                                                                        
 #define BT_UUID_NUS_SERVICE   BT_UUID_DECLARE_128(NUS_UUID_SERVICE)                                                                    
@@ -23,7 +23,8 @@ static ssize_t on_receive(struct bt_conn *conn, const struct bt_gatt_attr *attr,
                           const void *buf, u16_t len, u16_t offset,
                           u8_t flags)                                                                                                    
 {
-        nus_receive_cb(*(u8_t*)buf);
+        nus_receive_cb((u8_t*)buf, len);
+
         return len;
 }
 
@@ -32,8 +33,7 @@ static ssize_t on_send(struct bt_conn *conn,
                        void *buf, u16_t len,
                        u16_t offset)
 {
-        printk("Data sendt (String:%s)\n",*(char*)buf);
-        nus_send_cb(*(u8_t*)buf);
+        printk("Data sendt (String:%s)\n",(char*)buf);
 
         return len;
 }
@@ -72,7 +72,7 @@ void nus_data_send(char *data)
         err = bt_gatt_notify(NULL, &attrs[2], data, strlen(data));
 
         if(err) {
-                printk("Sending data (%d) failed (err:%d)\n", data, err);
+                printk("Sending data (%s) failed (err:%d)\n", data, err);
         }
 }
 
