@@ -24,7 +24,7 @@ extern "C" {
 	                       0x93, 0xF3, 0xA3, 0xB5, 0x02, 0x00, 0x40, 0x6E
 
 void nus_init(void *receive_cb, void *send_cb);
-void nus_data_send(u8_t data);
+void nus_data_send(char *data);
 
 #ifdef __cplusplus
 }

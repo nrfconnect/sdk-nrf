@@ -8,4 +8,5 @@ target_sources(app PRIVATE
   ../gatt/nus.c
 )
 
-zephyr_library_include_directories($ENV{NRF_CONNECT_BASE}/samples/bluetooth/)
+zephyr_library_include_directories($ENV{ZEPHYR_BASE}/samples/bluetooth/)
+zephyr_library_include_directories(${CMAKE_CURRENT_SOURCE_DIR})

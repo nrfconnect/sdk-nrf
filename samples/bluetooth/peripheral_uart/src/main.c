@@ -10,14 +10,12 @@
 #include <bluetooth/gatt.h>
 #include <bluetooth/hci.h>
 
-#include <gatt/nus.h>
+#include <../gatt/nus.h>
 
 #include <stdio.h>
 
-#define TEST_MACRO(string) string
-
 #define DEVICE_NAME		CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN		(sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME_LEN	        (sizeof(DEVICE_NAME) - 1)
 
 /* Change this if you have an LED connected to a custom port */
 #ifndef LED0_GPIO_CONTROLLER
@@ -26,18 +24,19 @@
 
 #define LED_PORT                LED0_GPIO_CONTROLLER
 
-#define RUN_STATUS_LED          TEST_MACRO(CONFIG_RUN_STATUS_LED)
-#define CON_STATUS_LED          CONFIG_CON_STATUS_LED
+#define RUN_STATUS_LED          LED0_GPIO_PIN
+#define CON_STATUS_LED          LED1_GPIO_PIN
 
 #define LED_BLINK_INTERVAL      1000
 
 #define LED_ON                  0
 #define LED_OFF                 1
 
+#define UART_MAX_RX_SIZE        16
+
 static struct bt_conn *default_conn;
 static struct device  *led_port;
 static struct device  *uart;
-static u8_t           uart_data = 0;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -78,7 +77,7 @@ static struct bt_conn_cb conn_callbacks = {
         .disconnected = disconnected,
 };
 
-void bt_usart_write_cb(u8_t data)
+void bt_receive_cb(u8_t data)
 {
         printk("Got data over bluetooth (%c)\n", data);
 
@@ -87,7 +86,19 @@ void bt_usart_write_cb(u8_t data)
 
 void bt_usart_sendt_cb(u8_t data)
 {
+        uint8_t      buf[UART_MAX_RX_SIZE+1];
+        int          len;
+
+
         printk("Data was sendt over bluetooth (%c)\n", data);
+
+        if(uart_irq_rx_ready(uart)) {
+                len = uart_fifo_read(uart, buf, UART_MAX_RX_SIZE);
+                buf[len] = '\0';
+                nus_data_send(buf);
+        } else {
+                printk("No more data to send\n");
+        }
 }
 
 void bt_ready(int err)
@@ -99,7 +110,7 @@ void bt_ready(int err)
 
 	printk("BT initialization OK\n");
 
-	nus_init(bt_usart_write_cb, bt_usart_sendt_cb);
+	nus_init(bt_receive_cb, bt_usart_sendt_cb);
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
@@ -128,27 +139,29 @@ void init_leds()
         gpio_pin_write(led_port, CON_STATUS_LED, LED_OFF);
 }
 
-/*void uart_cb(struct device *uart)
+void uart_cb(struct device *uart)
 {
         int len=0;
-        u8_t buf[UART_MAX_RX_SIZE];
+        u8_t buf[UART_MAX_RX_SIZE+1];
 
         if(uart_irq_rx_ready(uart)) {
                 len = uart_fifo_read(uart, buf, UART_MAX_RX_SIZE);
+                buf[len] = '\0';
+                nus_data_send(buf);
         }
 }
 
 void init_usart()
 {
-        uart = device_get_binding(USART0);
-        if(!led_port) {
+        uart = device_get_binding(UART_1);
+        if(!uart) {
                 printk("Could not bind to USART module\n");
                 return;
         }
 
         uart_irq_callback_set(uart,uart_cb);
         uart_irq_rx_enable(uart);
-}*/
+}
 
 int main()
 {
@@ -157,6 +170,7 @@ int main()
         printf("Starting Nordic UART service example\n");
 
         init_leds();
+        init_usart();
 
 	bt_enable(bt_ready);
         bt_conn_cb_register(&conn_callbacks);
@@ -164,8 +178,6 @@ int main()
         for(;;) {
                 gpio_pin_write(led_port, RUN_STATUS_LED, (++blink_status) % 2);
                 k_sleep(LED_BLINK_INTERVAL);
-
-                nus_data_send(uart_data++);
         }
 
 	return 0;

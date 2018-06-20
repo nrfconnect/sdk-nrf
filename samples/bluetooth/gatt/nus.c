@@ -32,7 +32,7 @@ static ssize_t on_send(struct bt_conn *conn,
                        void *buf, u16_t len,
                        u16_t offset)
 {
-        printk("Data sendt (Char:%c)\n",*(char*)buf);
+        printk("Data sendt (String:%s)\n",*(char*)buf);
         nus_send_cb(*(u8_t*)buf);
 
         return len;
@@ -61,7 +61,7 @@ void nus_init(void *receive_cb, void *send_cb)
         bt_gatt_service_register(&nus_svc);
 }
 
-void nus_data_send(u8_t data)
+void nus_data_send(char *data)
 {
         int err;
 
@@ -69,7 +69,7 @@ void nus_data_send(u8_t data)
                 return;
         }
 
-        err = bt_gatt_notify(NULL, &attrs[2], &data, sizeof(data));
+        err = bt_gatt_notify(NULL, &attrs[2], data, strlen(data));
 
         if(err) {
                 printk("Sending data (%d) failed (err:%d)\n", data, err);

@@ -7,30 +7,9 @@
 #
 
 source "$ZEPHYR_BASE/Kconfig.zephyr"
-source "$NRF_CONNECT_BASE/Kconfig.nrf"
 
 menu "UART service sample application"
 
-config  RUN_STATUS_LED
-	string
-	prompt "Select RUN status LED"
-	default LED0_GPIO_PIN
-	help
-	  Insert the name of the LED to use for program RUN indication
-
-config CON_STATUS_LED
-	string
-	prompt "Select connection status LED"
-	default LED1_GPIO_PIN
-	help
-	  Insert the name of the LED to use for connection indication
-		
-config USART_PERIPHERAL_NAME
-	string 
-	prompt  "Advertising name"
-	default "Nordic UART Service"
-	help
-	  Name of the UART device used for send an receive.
 
 endmenu
 
