@@ -1,0 +1,90 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: BSD-5-Clause-Nordic
+#
+
+menu "HID State"
+
+config DESKTOP_KEY_STATE_SIZE
+	int "Size of array holding pressed keys"
+	default 10
+	help
+	  Size of array holding pressed keys.
+
+config DESKTOP_SYS_LOG_HID_STATE_LEVEL
+	int "HID state log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for HID state.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+endmenu
+
+
+menu "BLE State"
+
+config DESKTOP_BLE_STATE_LESC_ONLY
+	bool "LE Secure Connections only"
+	default n
+	select BT_SMP_SC_ONLY
+	help
+	  Enables Secure Connections only mode.
+
+config DESKTOP_SYS_LOG_BLE_STATE_LEVEL
+	int "BLE state log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for HID state.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+endmenu
+
+
+menu "Power manager"
+
+config DESKTOP_POWER_MANAGER_ENABLE
+	bool "Enable power management. TODO: connect to firmware"
+	default y
+	select CONFIG_SYS_POWER_MANAGEMENT
+	select CONFIG_SYS_POWER_LOW_POWER_STATE
+	select CONFIG_SYS_POWER_DEEP_SLEEP
+	select CONFIG_DEVICE_POWER_MANAGEMENT
+	help
+	  Enable power management, which will put the device to low-power mode if it is idle.
+
+if DESKTOP_POWER_MANAGER_ENABLE
+
+config DESKTOP_POWER_MANAGER_TIMEOUT
+	int "Power down timeout [s]"
+	default 120
+	help
+	  Time in seconds after which the device will enter low-power mode.
+
+config DESKTOP_SYS_LOG_POWER_MANAGER_LEVEL
+	int "Power management log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for power management.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+endif
+endmenu
