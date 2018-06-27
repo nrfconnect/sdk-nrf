@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
+zephyr_library()
+zephyr_library_link_libraries(nrf_bluetooth)
 
-rsource "lib/Kconfig"
-rsource "subsys/Kconfig"
-
+zephyr_library_sources(hids.c)

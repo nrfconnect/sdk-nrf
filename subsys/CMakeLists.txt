@@ -4,6 +4,4 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
-rsource "lib/Kconfig"
-rsource "subsys/Kconfig"
-
+add_subdirectory_ifdef(CONFIG_NRF_BT bluetooth)
