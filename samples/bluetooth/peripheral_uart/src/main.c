@@ -39,11 +39,11 @@
 
 #define UART_BUF_SIZE           16
 
-static struct bt_conn *default_conn;
-static  u16_t   led_blink_interval = RUN_LED_BLINK_INTERVAL;
+static struct   bt_conn *default_conn;
+static volatile u16_t   led_blink_interval = RUN_LED_BLINK_INTERVAL;
 
-static struct device  *led_port;
-static struct device  *uart;
+static struct   device  *led_port;
+static struct   device  *uart;
 
 struct uart_data_t {
         void  *fifo_reserved;
@@ -52,7 +52,6 @@ struct uart_data_t {
 };
 K_FIFO_DEFINE(fifo_uart_tx_data);
 K_FIFO_DEFINE(fifo_uart_rx_data);
-
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -106,13 +105,14 @@ void uart_cb(struct device *uart)
                 struct uart_data_t *buf = k_fifo_get(&fifo_uart_tx_data, K_NO_WAIT);
                 int written             = 0;
 
+                /* Nothing in the FIFO, nothing to send */
                 if(!buf) {
                         uart_irq_tx_disable(uart);
                         return;
                 }
 
                 while(buf->len != written) {
-                        written += uart_fifo_fill(uart, &buf->data[written],buf->len - written);
+                        written += uart_fifo_fill(uart, &buf->data[written], buf->len - written);
                 }
 
                 uart_irq_tx_disable(uart);
@@ -129,6 +129,8 @@ void bt_receive_cb(u8_t *data, u16_t len)
         tx->len  = len;
         memcpy(tx->data, data, len);
         k_fifo_put(&fifo_uart_tx_data, tx);
+
+        /* Start the UART tranfer by enabling the TX ready interrupt */
         uart_irq_tx_enable(uart);
 }
 
@@ -207,6 +209,7 @@ void init_thread(void)
 void ble_write()
 {
         for(;;) {
+                /* Wait indefinitely for data to send over bluetooth */
                 struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data, K_FOREVER);
                 nus_data_send(buf->data, buf->len);
                 k_free(buf);

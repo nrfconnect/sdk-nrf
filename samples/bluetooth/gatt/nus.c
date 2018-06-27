@@ -5,7 +5,7 @@
 #include <../gatt/nus.h>
 
 static struct bt_gatt_ccc_cfg nuslc_ccc_cfg[BT_GATT_CCC_MAX] = {};                                                                     
-static u8_t                   notify_enabled = 0;
+static u8_t                   notify_enabled                 = 0;
 static void                   (*nus_receive_cb)(u8_t*, u16_t);
 static void                   (*nus_send_cb)(u8_t*, u16_t);
                                                                                                                                        
