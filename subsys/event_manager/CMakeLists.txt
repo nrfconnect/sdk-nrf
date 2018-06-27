@@ -4,10 +4,4 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
-menu "subsystems"
-
-rsource "bluetooth/Kconfig"
-
-rsource "event_manager/Kconfig"
-
-endmenu
+zephyr_sources(event_manager.c)
