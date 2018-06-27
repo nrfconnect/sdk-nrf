@@ -1,0 +1,80 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: BSD-5-Clause-Nordic
+#
+
+menu "Hardware interface modules"
+
+menu "Board module"
+
+config DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
+	int "Board module log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for board module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+endmenu
+
+
+menu "Buttons module"
+
+config DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
+	int "Buttons module log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for buttons module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+endmenu
+
+
+menu "Accelerometer module"
+
+config DESKTOP_SYS_LOG_ACCEL_MODULE_LEVEL
+	int "Accelerometer module log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for accelerometer module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+endmenu
+
+
+menu "Motion module"
+
+config DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
+	int "Motion module log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for motion module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+endmenu
+endmenu
+
