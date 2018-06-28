@@ -10,28 +10,8 @@ extern "C" {
 
 #include <bluetooth/gatt.h>
 
-/* @TODO Move it to the main Zephyr repository (include/bluetooth/uuid.h). */
-
-/** @def BT_UUID_HIDS_PROTOCOL_MODE
- *  @brief HID Protocol Mode Characteristic
- */
-#define BT_UUID_HIDS_PROTOCOL_MODE         BT_UUID_DECLARE_16(0x2a4e)
-/** @def BT_UUID_BOOT_KEYBOARD_INPUT_REPORT
- *  @brief HID Boot Keyboard Input Report Characteristic
- */
-#define BT_UUID_BOOT_KEYBOARD_INPUT_REPORT BT_UUID_DECLARE_16(0x2a22)
-/** @def BT_UUID_BOOT_KEYBOARD_OUTPUT_REPORT
- *  @brief HID Boot Keyboard Output Report Characteristic
- */
-#define BT_UUID_BOOT_KEYBOARD_OUTPUT_REP   BT_UUID_DECLARE_16(0x2a32)
-/** @def BT_UUID_BOOT_MOUSE_INPUT_REPORT
- *  @brief HID Boot Mouse Input Report Characteristic
- */
-#define BT_UUID_BOOT_MOUSE_INPUT_REPORT    BT_UUID_DECLARE_16(0x2a33)
-
 #define BOOT_MOUSE_INPUT_REP_CHAR_LEN 8
 #define HIDS_INFORMATION_CHAR_LEN     4
-
 
 /** @def HIDS_DEF
  *  @brief HIDS instance declaration macro.

@@ -317,14 +317,14 @@ int hids_init(struct hids *hids_obj,
 	 * and CCC.
 	 */
 	if (hids_init_obj->is_mouse) {
-		CHRC_REGISTER(&hids_obj->svc, BT_UUID_BOOT_MOUSE_INPUT_REPORT,
+		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_obj->boot_mouse_inp_rep.att_ind = hids_obj->svc.attr_count;
 
 		DESCRIPTOR_REGISTER(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
-					BT_UUID_BOOT_MOUSE_INPUT_REPORT,
+					BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
 					BT_GATT_PERM_READ,
 					hids_boot_mouse_inp_report_read,
 					NULL,
