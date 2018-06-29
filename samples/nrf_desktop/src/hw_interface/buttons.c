@@ -95,54 +95,11 @@ static struct k_delayed_work buttons_scan;
 static bool active;
 
 
-static int read_bytes(struct device *i2c_dev, u8_t addr, u8_t *data,
-		u32_t num_bytes)
-{
-	struct i2c_msg msgs[2];
-
-	u8_t wr_addr = addr;
-
-	/* Send the address to read from */
-	msgs[0].buf = &wr_addr;
-	msgs[0].len = 1;
-	msgs[0].flags = I2C_MSG_WRITE;
-
-	/* Read from device. STOP after this. */
-	msgs[1].buf = data;
-	msgs[1].len = num_bytes;
-	msgs[1].flags = I2C_MSG_READ | I2C_MSG_STOP;
-
-	return i2c_transfer(i2c_dev, &msgs[0], ARRAY_SIZE(msgs),
-			SX1509_ADDRESS);
-}
-
-static int write_bytes(struct device *i2c_dev, u8_t addr, const u8_t *data,
-		u32_t num_bytes)
-{
-	struct i2c_msg msgs[2];
-
-	u8_t wr_addr = addr;
-
-	/* Send the address to read from */
-	msgs[0].buf = &wr_addr;
-	msgs[0].len = 1;
-	msgs[0].flags = I2C_MSG_WRITE;
-
-	/* Read from device. STOP after this. */
-	msgs[1].buf = (u8_t *)data;
-	msgs[1].len = num_bytes;
-	msgs[1].flags = I2C_MSG_WRITE | I2C_MSG_STOP;
-
-	return i2c_transfer(i2c_dev, &msgs[0], ARRAY_SIZE(msgs),
-			SX1509_ADDRESS);
-}
-
 static int set_registers(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(register_config); i++) {
-		int err = write_bytes(i2c_dev, register_config[i][0],
-				&register_config[i][1],
-				sizeof(register_config[i][1]));
+		int err = i2c_reg_write_byte(i2c_dev, SX1509_ADDRESS,
+				register_config[i][0], register_config[i][1]);
 
 		if (err) {
 			return err;
@@ -165,19 +122,23 @@ static void scan_fn(struct k_work *work)
 	 */
 
 	for (size_t i = 0; i < ARRAY_SIZE(row_state); i++) {
-		err = write_bytes(i2c_dev, RegDataB, &mask, sizeof(mask));
+		err = i2c_reg_write_byte(i2c_dev, SX1509_ADDRESS, RegDataB,
+				mask);
 		if (err) {
 			break;
 		}
-		err = read_bytes(i2c_dev, RegDataA, &row_state[i],
-				sizeof(mask));
+
+		err = i2c_reg_read_byte(i2c_dev, SX1509_ADDRESS, RegDataA,
+				&row_state[i]);
 		if (err) {
 			break;
 		}
+
 		mask = mask << 1;
 	}
 	if (!err) {
-		err = write_bytes(i2c_dev, RegDataB, &mask, sizeof(mask));
+		err = i2c_reg_write_byte(i2c_dev, SX1509_ADDRESS, RegDataB,
+				mask);
 	}
 
 	if (err) {
