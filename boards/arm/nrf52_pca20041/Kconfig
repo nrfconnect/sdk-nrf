@@ -4,10 +4,6 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
-menu "subsystems"
+if BOARD_NRF52_PCA20041
 
-rsource "bluetooth/Kconfig"
-
-rsource "event_manager/Kconfig"
-
-endmenu
+endif # BOARD_NRF52_PCA20041

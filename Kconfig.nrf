@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
+menu "Nordic nRF Connect"
+
 rsource "lib/Kconfig"
 rsource "subsys/Kconfig"
 
+endmenu

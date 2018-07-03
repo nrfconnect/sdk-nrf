@@ -5,3 +5,5 @@
 #
 
 add_subdirectory_ifdef(CONFIG_NRF_BT bluetooth)
+
+add_subdirectory_if_kconfig(event_manager)

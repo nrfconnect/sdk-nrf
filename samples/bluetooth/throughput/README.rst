@@ -28,4 +28,4 @@ Building and Running
 This sample can be found under :file:`samples/bluetooth/throughput` in the
 Nordic Connect SDK tree.
 
-See :ref:`bluetooth setup section <bluetooth_setup>` for details.
+See :ref:`bluetooth setup section <zephyr:bluetooth_setup>` for details.
