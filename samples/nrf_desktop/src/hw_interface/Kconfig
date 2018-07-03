@@ -6,7 +6,20 @@
 
 menu "Hardware interface modules"
 
-menu "Board module"
+config HAS_DTS_BMA400
+	bool
+	depends on HAS_DTS
+	help
+	  This option specifies that the target platform includes BMA400
+	  accelerometer.
+
+config HAS_DTS_PMW3360
+	bool
+	depends on HAS_DTS
+	help
+	  This option specifies that the target platform includes PMW3360
+	  mouse sensor.
+
 
 config DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
 	int "Board module log level"
@@ -21,10 +34,6 @@ config DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
 	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
-endmenu
-
-
-menu "Buttons module"
 
 config DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
 	int "Buttons module log level"
@@ -39,10 +48,6 @@ config DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
 	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
-endmenu
-
-
-menu "Accelerometer module"
 
 config DESKTOP_SYS_LOG_ACCEL_MODULE_LEVEL
 	int "Accelerometer module log level"
@@ -57,10 +62,6 @@ config DESKTOP_SYS_LOG_ACCEL_MODULE_LEVEL
 	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
-endmenu
-
-
-menu "Motion module"
 
 config DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
 	int "Motion module log level"
@@ -75,6 +76,6 @@ config DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
 	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
-endmenu
+
 endmenu
 
