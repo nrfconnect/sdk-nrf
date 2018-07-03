@@ -1,6 +1,6 @@
-.. _nrf52_desktop:
+.. _nrf_desktop:
 
-Bluetooth: NRF52 Desktop
+Bluetooth: NRF Desktop
 ##########################
 
 Overview
@@ -12,9 +12,9 @@ Requirements
 ************
 
 A dedicated board:
-* mouse,
-* keyboard,
-* USB dongle.
+* PCA20041 (mouse board),
+* (keyboard board),
+* PCA10059 (USB dongle).
 
 Building and Running
 ********************

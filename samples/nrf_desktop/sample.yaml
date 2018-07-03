@@ -1,7 +1,7 @@
 sample:
   description: nRF52 Desktop
   name: BLE HID device reference design
-  platform: nrf52_pca20041
+  platform: nrf52_pca20041 nrf10056 nrf10059
 tests:
   test:
     build_only: true
