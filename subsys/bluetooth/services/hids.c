@@ -52,12 +52,10 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 {
 	SYS_LOG_DBG("Writing to Protocol Mode characteristic.");
 
-	u8_t const *new_pm = (u8_t const *) buf;
-	u8_t *cur_pm = attr->user_data;
+	struct protocol_mode *pm = (struct protocol_mode *) attr->user_data;
 
-	struct hids_evt evt = { 0 };
-	hids_evt_handler_t evt_handler =
-		CONTAINER_OF(cur_pm, struct hids, protocol_mode)->evt_handler;
+	u8_t const *new_pm = (u8_t const *) buf;
+	u8_t cur_pm = pm->value;
 
 	if (offset + len > sizeof(u8_t)) {
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
@@ -65,18 +63,20 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 
 	switch (*new_pm) {
 	case HIDS_PROTOCOL_MODE_BOOT:
-		evt.type = HIDS_EVT_BOOT_MODE_ENTERED;
-		evt_handler(&evt);
+		if (pm->evt_handler) {
+			pm->evt_handler(HIDS_PM_EVT_BOOT_MODE_ENTERED);
+		}
 		break;
 	case HIDS_PROTOCOL_MODE_REPORT:
-		evt.type = HIDS_EVT_REPORT_MODE_ENTERED;
-		evt_handler(&evt);
+		if (pm->evt_handler) {
+			pm->evt_handler(HIDS_PM_EVT_REPORT_MODE_ENTERED);
+		}
 		break;
 	default:
 		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
 	}
 
-	memcpy(cur_pm + offset, new_pm, len);
+	memcpy(&cur_pm + offset, new_pm, len);
 	return len;
 }
 
@@ -138,6 +138,57 @@ static ssize_t hids_inp_rep_ref_read(struct bt_conn *conn,
 }
 
 
+static ssize_t hids_outp_rep_read(struct bt_conn *conn,
+				  struct bt_gatt_attr const *attr,
+				  void *buf, u16_t len, u16_t offset)
+{
+	SYS_LOG_DBG("Reading from Output Report characteristic.");
+
+	struct hids_outp_rep *rep = (struct hids_outp_rep *) attr->user_data;
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, rep->buff.data,
+				 rep->buff.size);
+}
+
+
+static ssize_t hids_outp_rep_write(struct bt_conn *conn,
+				   struct bt_gatt_attr const *attr,
+				   void const *buf, u16_t len,
+				   u16_t offset, u8_t flags)
+{
+	SYS_LOG_DBG("Writing to Output Report characteristic.");
+
+	struct hids_outp_rep *rep = (struct hids_outp_rep *) attr->user_data;
+
+	if (offset + len > sizeof(rep->buff.size)) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+	memcpy(rep->buff.data + offset, buf, len);
+
+	if (rep->handler) {
+		rep->handler(&rep->buff);
+	}
+	return len;
+}
+
+
+static ssize_t hids_outp_rep_ref_read(struct bt_conn *conn,
+				      struct bt_gatt_attr const *attr,
+				      void *buf, u16_t len, u16_t offset)
+{
+	SYS_LOG_DBG("Reading from Output Report Reference descriptor.");
+
+	u8_t report_ref[2];
+
+	report_ref[0] = *((u8_t *)attr->user_data); /* Report ID */
+	report_ref[1] = HIDS_OUTPUT;
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset,
+				 report_ref,
+				 sizeof(report_ref));
+}
+
+
 static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 					  u16_t value)
 {
@@ -175,6 +226,75 @@ static void hids_boot_mouse_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 }
 
 
+static ssize_t hids_boot_kb_inp_report_read(struct bt_conn *conn,
+					    struct bt_gatt_attr const *attr,
+					    void *buf, u16_t len,
+					    u16_t offset)
+{
+	SYS_LOG_DBG("Reading from Boot Keyboard Input Report characteristic.");
+
+	struct hids_boot_kb_inp_rep *rep =
+		(struct hids_boot_kb_inp_rep *) attr->user_data;
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset,
+				 rep->buff, sizeof(rep->buff));
+}
+
+
+static void hids_boot_kb_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
+					     u16_t value)
+{
+	SYS_LOG_DBG("Boot Keyboard Input Report CCCD has changed.");
+
+	if (value == BT_GATT_CCC_NOTIFY) {
+		SYS_LOG_DBG("Notification for Boot Keyboard has been turned "
+			    "on.");
+	}
+}
+
+
+static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
+					     struct bt_gatt_attr const *attr,
+					     void *buf, u16_t len,
+					     u16_t offset)
+{
+	SYS_LOG_DBG("Reading from Boot Keyboard Output Report characteristic.");
+
+	struct hids_boot_kb_outp_rep *rep =
+		(struct hids_boot_kb_outp_rep *) attr->user_data;
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset,
+				 rep->buff, sizeof(rep->buff));
+}
+
+
+static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
+					      struct bt_gatt_attr const *attr,
+					      void const *buf, u16_t len,
+					      u16_t offset, u8_t flags)
+{
+	SYS_LOG_DBG("Writing to Boot Keyboard Output Report characteristic.");
+
+	struct hids_boot_kb_outp_rep *rep =
+		(struct hids_boot_kb_outp_rep *) attr->user_data;
+
+	if (offset + len > sizeof(u8_t)) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+	memcpy(rep->buff + offset, buf, len);
+
+	if (rep->handler) {
+		struct hids_rep rep_data = {
+			.data = rep->buff,
+			.size = sizeof(rep->buff),
+		};
+
+		rep->handler(&rep_data);
+	}
+	return len;
+}
+
+
 static ssize_t hids_info_read(struct bt_conn *conn,
 			      struct bt_gatt_attr const *attr,
 			      void *buf, u16_t len, u16_t offset)
@@ -193,12 +313,10 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 {
 	SYS_LOG_DBG("Writing to Control Point characteristic.");
 
-	u8_t *cur_cp = attr->user_data;
-	u8_t const *new_cp = (u8_t const *) buf;
+	struct control_point *cp = (struct control_point *) attr->user_data;
 
-	struct hids_evt evt = { 0 };
-	hids_evt_handler_t evt_handler =
-		CONTAINER_OF(cur_cp, struct hids, ctrl_point)->evt_handler;
+	u8_t cur_cp = cp->value;
+	u8_t const *new_cp = (u8_t const *) buf;
 
 	if (offset + len > sizeof(u8_t)) {
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
@@ -206,18 +324,20 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 
 	switch (*new_cp) {
 	case HIDS_CONTROL_POINT_SUSPEND:
-		evt.type = HIDS_EVT_HOST_SUSP;
-		evt_handler(&evt);
+		if (cp->evt_handler) {
+			cp->evt_handler(HIDS_CP_EVT_HOST_SUSP);
+		}
 		break;
 	case HIDS_CONTROL_POINT_EXIT_SUSPEND:
-		evt.type = HIDS_EVT_HOST_EXIT_SUSP;
-		evt_handler(&evt);
+		if (cp->evt_handler) {
+			cp->evt_handler(HIDS_CP_EVT_HOST_EXIT_SUSP);
+		}
 		break;
 	default:
 		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
 	}
 
-	memcpy(cur_cp + offset, new_cp, len);
+	memcpy(&cur_cp + offset, new_cp, len);
 	return len;
 }
 
@@ -242,6 +362,9 @@ static u8_t hid_information_encode(u8_t *buffer,
 static void hids_input_reports_register(struct hids *hids_obj,
 					struct hids_init const *const hids_init)
 {
+	__ASSERT_NO_MSG(hids_init->inp_rep_group_init.cnt <=
+			CONFIG_NRF_BT_HIDS_INPUT_REP_MAX);
+
 	memcpy(&hids_obj->inp_rep_group, &hids_init->inp_rep_group_init,
 		sizeof(struct hids_inp_rep_group));
 
@@ -273,18 +396,54 @@ static void hids_input_reports_register(struct hids *hids_obj,
 }
 
 
+static void hids_outp_reports_register(struct hids *hids_obj,
+				       struct hids_init const *const hids_init)
+{
+	__ASSERT_NO_MSG(hids_init->outp_rep_group_init.cnt <=
+			CONFIG_NRF_BT_HIDS_OUTPUT_REP_MAX);
+
+	memcpy(&hids_obj->outp_rep_group, &hids_init->outp_rep_group_init,
+		sizeof(struct hids_outp_rep_group));
+
+	for (u8_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
+		struct hids_outp_rep *hids_outp_rep =
+			&hids_obj->outp_rep_group.reports[i];
+
+		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_REPORT,
+			      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE |
+			      BT_GATT_CHRC_WRITE_WITHOUT_RESP);
+
+		hids_outp_rep->att_ind = hids_obj->svc.attr_count;
+
+		DESCRIPTOR_REGISTER(&hids_obj->svc,
+				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
+						       (BT_GATT_PERM_READ |
+						       BT_GATT_PERM_WRITE),
+						       hids_outp_rep_read,
+						       hids_outp_rep_write,
+						       hids_outp_rep));
+		DESCRIPTOR_REGISTER(&hids_obj->svc,
+				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF,
+						       BT_GATT_PERM_READ,
+						       hids_outp_rep_ref_read,
+						       NULL,
+						       &hids_outp_rep->id));
+	}
+}
+
 int hids_init(struct hids *hids_obj,
 	      struct hids_init const *const hids_init_obj)
 {
 	SYS_LOG_DBG("Initializing HIDS.");
 
-	hids_obj->evt_handler = hids_init_obj->evt_handler;
+	hids_obj->pm.evt_handler = hids_init_obj->pm_evt_handler;
+	hids_obj->cp.evt_handler = hids_init_obj->cp_evt_handler;
 
 	/* Register primary service. */
 	PRIMARY_SVC_REGISTER(&hids_obj->svc, BT_UUID_HIDS);
 
 	/* Register Protocol Mode characteristic. */
-	hids_obj->protocol_mode = HIDS_PROTOCOL_MODE_REPORT;
+	hids_obj->pm.value = HIDS_PROTOCOL_MODE_REPORT;
 
 	CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_PROTOCOL_MODE,
 		      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE_WITHOUT_RESP);
@@ -294,10 +453,13 @@ int hids_init(struct hids *hids_obj,
 					       BT_GATT_PERM_WRITE,
 					       hids_protocol_mode_read,
 					       hids_protocol_mode_write,
-					       &hids_obj->protocol_mode));
+					       &hids_obj->pm));
 
 	/* Register Input Report characteristics. */
 	hids_input_reports_register(hids_obj, hids_init_obj);
+
+	/* Register Output Report characteristics. */
+	hids_outp_reports_register(hids_obj, hids_init_obj);
 
 	/* Register Report Map characteristic and its descriptor. */
 	memcpy(&hids_obj->rep_map, &hids_init_obj->rep_map,
@@ -334,6 +496,45 @@ int hids_init(struct hids *hids_obj,
 			     hids_boot_mouse_inp_rep_ccc_changed);
 	}
 
+	/* Register HID Boot Keyboard Input/Output Report characteristic, its
+	 * descriptor and CCC.
+	 */
+	if (hids_init_obj->is_kb) {
+		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_IN_REPORT,
+			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
+
+		hids_obj->boot_kb_inp_rep.att_ind = hids_obj->svc.attr_count;
+
+		DESCRIPTOR_REGISTER(&hids_obj->svc,
+				    BT_GATT_DESCRIPTOR(
+					BT_UUID_HIDS_BOOT_KB_IN_REPORT,
+					BT_GATT_PERM_READ,
+					hids_boot_kb_inp_report_read,
+					NULL,
+					&hids_obj->boot_kb_inp_rep));
+
+		CCC_REGISTER(&hids_obj->svc, hids_obj->boot_kb_inp_rep.ccc,
+			     hids_boot_kb_inp_rep_ccc_changed);
+
+		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
+			      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE |
+			      BT_GATT_CHRC_WRITE_WITHOUT_RESP);
+
+		hids_obj->boot_kb_outp_rep.att_ind = hids_obj->svc.attr_count;
+
+		DESCRIPTOR_REGISTER(&hids_obj->svc,
+				    BT_GATT_DESCRIPTOR(
+					BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
+					(BT_GATT_PERM_READ |
+					BT_GATT_PERM_WRITE),
+					hids_boot_kb_outp_report_read,
+					hids_boot_kb_outp_report_write,
+					&hids_obj->boot_kb_outp_rep));
+
+		hids_obj->boot_kb_outp_rep.handler =
+			hids_init_obj->boot_kb_outp_rep_handler;
+	}
+
 	/* Register HID Information characteristic and its descriptor. */
 	hid_information_encode(hids_obj->info, &hids_init_obj->info);
 
@@ -352,14 +553,14 @@ int hids_init(struct hids *hids_obj,
 			    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_CTRL_POINT,
 					       BT_GATT_PERM_WRITE,
 					       NULL, hids_ctrl_point_write,
-					       &hids_obj->ctrl_point));
+					       &hids_obj->cp));
 
 	/* Register HIDS attributes in GATT database. */
 	return bt_gatt_service_register(&hids_obj->svc);
 }
 
 
-int hids_inp_rep_send(struct hids *hids_obj, u8_t rep_index, u8_t *rep,
+int hids_inp_rep_send(struct hids *hids_obj, u8_t rep_index, u8_t const *rep,
 		      u8_t len)
 {
 	struct hids_inp_rep *hids_inp_rep =
@@ -398,3 +599,23 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, u8_t buttons,
 			      sizeof(boot_mouse_inp_rep->buff));
 }
 
+
+int hids_boot_kb_inp_rep_send(struct hids *hids_obj, u8_t const *rep,
+			      u16_t len)
+{
+	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
+	struct hids_boot_kb_inp_rep *boot_kb_inp_rep =
+		&hids_obj->boot_kb_inp_rep;
+
+	if (len > sizeof(boot_kb_inp_rep->buff)) {
+		return -EINVAL;
+	}
+	memcpy(boot_kb_inp_rep->buff, rep, len);
+	memset(&boot_kb_inp_rep->buff[len], 0,
+	       (sizeof(boot_kb_inp_rep->buff) - len));
+
+	return bt_gatt_notify(NULL,
+			      &hids_obj->svc.attrs[rep_ind],
+			      boot_kb_inp_rep->buff,
+			      sizeof(boot_kb_inp_rep->buff));
+}

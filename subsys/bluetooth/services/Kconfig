@@ -18,11 +18,18 @@ config NRF_BT_HIDS_ATTR_MAX
 	  Maximum number of GATT attribute descriptors that can be set for HIDS.
 
 config NRF_BT_HIDS_INPUT_REP_MAX
-	int "Maximum number of GATT attribute descriptors"
+	int "Maximum number of HIDS Input Report descriptors"
 	default 5
 	range 0 10
 	help
 	  Maximum number of HIDS Input Reports that can be set for HIDS.
+
+config NRF_BT_HIDS_OUTPUT_REP_MAX
+	int "Maximum number of HIDS Output Report descriptors"
+	default 5
+	range 0 10
+	help
+	  Maximum number of HIDS Output Reports that can be set for HIDS.
 
 config NRF_BT_HIDS_SYS_LOG_LEVEL
 	int "HIDS log level"
