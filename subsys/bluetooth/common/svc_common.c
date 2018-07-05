@@ -87,7 +87,7 @@ static void uuid_128_get(struct bt_uuid **const uuid,
 
 static void chrc_get(struct bt_gatt_chrc **const chrc)
 {
-	__ASSERT(chrc_pool->cnt < CONFIG_NRF_BT_CHRC_POOL_SIZE,
+	__ASSERT(chrc_pool.cnt < CONFIG_NRF_BT_CHRC_POOL_SIZE,
 		 "No more chrc descriptors in the pool!");
 
 	*chrc = &((struct bt_gatt_chrc *) chrc_pool.elements)[chrc_pool.cnt];
@@ -96,7 +96,7 @@ static void chrc_get(struct bt_gatt_chrc **const chrc)
 
 static void ccc_get(struct _bt_gatt_ccc **const ccc)
 {
-	__ASSERT(ccc_pool->cnt < CONFIG_NRF_BT_CCC_POOL_SIZE,
+	__ASSERT(ccc_pool.cnt < CONFIG_NRF_BT_CCC_POOL_SIZE,
 		 "No more chrc descriptors in the pool!");
 
 	*ccc = &((struct _bt_gatt_ccc *) ccc_pool.elements)[ccc_pool.cnt];
