@@ -132,15 +132,15 @@ static struct bt_conn_cb conn_callbacks = {
 };
 
 
-static void hids_evt_handler(struct hids_evt *evt)
+static void hids_pm_evt_handler(enum hids_pm_evt evt)
 {
-	switch (evt->type) {
-	case HIDS_EVT_BOOT_MODE_ENTERED:
+	switch (evt) {
+	case HIDS_PM_EVT_BOOT_MODE_ENTERED:
 		printk("Boot mode entered\n");
 		in_boot_mode = true;
 		break;
 
-	case HIDS_EVT_REPORT_MODE_ENTERED:
+	case HIDS_PM_EVT_REPORT_MODE_ENTERED:
 		printk("Report mode entered\n");
 		in_boot_mode = false;
 		break;
@@ -266,7 +266,7 @@ static void hog_init(void)
 	hids_init_obj.inp_rep_group_init.cnt++;
 
 	hids_init_obj.is_mouse = true;
-	hids_init_obj.evt_handler = hids_evt_handler;
+	hids_init_obj.pm_evt_handler = hids_pm_evt_handler;
 
 	err = hids_init(&hids_obj, &hids_init_obj);
 	__ASSERT(err == 0, "HIDS initialization failed\n");
