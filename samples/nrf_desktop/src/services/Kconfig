@@ -6,7 +6,26 @@
 
 menu "BLE Services"
 
-menu "Battery Service"
+config DESKTOP_HID_MOUSE
+	bool "Mouse HID device"
+	default y
+	select NRF_BT_HIDS
+	help
+	  This option controls if target is visible as mouse HID device.
+
+config DESKTOP_HID_KEYBOARD
+	bool "Keyboard HID device"
+	default y
+	select NRF_BT_HIDS
+	help
+	  This option controls if target is visible as keyboard HID device.
+
+config DESKTOP_HID_MPLAYER
+	bool "Media player HID device"
+	default n
+	select NRF_BT_HIDS
+	help
+	  This option controls if target is visible as media player HID device.
 
 config DESKTOP_SYS_LOG_BAS_LEVEL
 	int "Battery Service log level"
@@ -21,10 +40,6 @@ config DESKTOP_SYS_LOG_BAS_LEVEL
 	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
-endmenu
-
-
-menu "Device Information Service"
 
 config DESKTOP_SYS_LOG_DIS_LEVEL
 	int "BLE state log level"
@@ -39,14 +54,10 @@ config DESKTOP_SYS_LOG_DIS_LEVEL
 	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
-endmenu
-
-
-menu "HID over GATT Service"
 
 config DESKTOP_SYS_LOG_HOG_LEVEL
 	int "HID over GATT Service log level"
-	depends on SYS_LOG
+	depends on SYS_LOG && (DESKTOP_HID_MOUSE || DESKTOP_HID_KEYBOARD || DESKTOP_HID_MPLAYER)
 	default 2
 	range 0 4
 	help
@@ -57,6 +68,5 @@ config DESKTOP_SYS_LOG_HOG_LEVEL
 	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
-endmenu
 
 endmenu

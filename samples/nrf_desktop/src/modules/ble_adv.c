@@ -22,7 +22,9 @@
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
+#if CONFIG_NRF_BT_HIDS
 			  0x12, 0x18,	/* HID Service */
+#endif
 			  0x0f, 0x18),	/* Battery Service */
 };
 
@@ -49,7 +51,13 @@ static void ble_adv_start(void)
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		static const char *const required_srv[] = {"hog", "bas", "dis"};
+		static const char *const required_srv[] = {
+#if CONFIG_NRF_BT_HIDS
+			"hids",
+#endif
+			"bas",
+			"dis"
+		};
 		static unsigned int srv_ready_cnt;
 
 		struct module_state_event *event = cast_module_state_event(eh);
