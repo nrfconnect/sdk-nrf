@@ -40,7 +40,7 @@ project("nRF52 Desktop"
 zephyr_library_include_directories(src/events)
 
 # NCS sources
-add_subdirectory(${NRF_DIR} ${PROJECT_BINARY_DIR}/nrf)
+#add_subdirectory(${NRF_DIR} ${PROJECT_BINARY_DIR}/nrf)
 
 # Application sources
 add_subdirectory(src/events)
