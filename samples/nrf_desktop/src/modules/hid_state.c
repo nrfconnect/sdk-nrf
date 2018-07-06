@@ -29,12 +29,18 @@ static s16_t acc_x;
 static s16_t acc_y;
 
 static bool keys[CONFIG_DESKTOP_KEY_STATE_SIZE];
+static u32_t buttons;
 
-static void send_keys(void)
+static void send_report_keyboard(void)
 {
-	struct hid_keys_event *event = new_hid_keys_event();
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+		struct hid_keyboard_event *event = new_hid_keyboard_event();
 
-	if (event) {
+		if (!event) {
+			SYS_LOG_WRN("Failed to allocate an event");
+			return;
+		}
+
 		size_t cnt = 0;
 
 		for (size_t i = 0;
@@ -49,29 +55,52 @@ static void send_keys(void)
 			event->keys[cnt] = 0;
 		}
 
+		event->modifier_bm = 0;
+
 		EVENT_SUBMIT(event);
 	}
 }
 
-static void send_axis(void)
+static void send_report_mouse_xy(void)
 {
-	struct hid_axis_event *event = new_hid_axis_event();
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+		struct hid_mouse_xy_event *event = new_hid_mouse_xy_event();
 
-	if (event) {
+		if (!event) {
+			SYS_LOG_WRN("Failed to allocate an event");
+			return;
+		}
+
 		if (acc_x > SCHAR_MAX) {
-			event->x = SCHAR_MAX;
+			event->dx = SCHAR_MAX;
 		} else {
-			event->x = acc_x;
+			event->dx = acc_x;
 		}
 
 		if (acc_y > SCHAR_MAX) {
-			event->y = SCHAR_MAX;
+			event->dy = SCHAR_MAX;
 		} else {
-			event->y = acc_y;
+			event->dy = acc_y;
 		}
 
-		acc_x -= event->x;
-		acc_y -= event->y;
+		acc_x -= event->dx;
+		acc_y -= event->dy;
+
+		EVENT_SUBMIT(event);
+	}
+}
+
+static void send_report_mouse_buttons(void)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+		struct hid_mouse_button_event *event = new_hid_mouse_button_event();
+
+		if (!event) {
+			SYS_LOG_WRN("Failed to allocate an event");
+			return;
+		}
+
+		event->button_bm = buttons;
 
 		EVENT_SUBMIT(event);
 	}
@@ -115,7 +144,7 @@ static bool event_handler(const struct event_header *eh)
 		}
 
 		if (connected) {
-			send_axis();
+			send_report_mouse_xy();
 		}
 
 		keep_device_active();
@@ -130,10 +159,20 @@ static bool event_handler(const struct event_header *eh)
 
 		if (event->key_id < ARRAY_SIZE(keys)) {
 			keys[event->key_id] = event->pressed;
-		}
 
-		if (connected) {
-			send_keys();
+			if (connected) {
+				send_report_keyboard();
+			}
+		} else if ((event->key_id >= 0x20) && (event->key_id < 0x25)) {
+			u32_t mask = 1 << (event->key_id - 0x20);
+			if (event->pressed) {
+				buttons |= mask;
+			} else {
+				buttons &= ~mask;
+			}
+			if (connected) {
+				send_report_mouse_buttons();
+			}
 		}
 
 		keep_device_active();
@@ -149,7 +188,8 @@ static bool event_handler(const struct event_header *eh)
 
 		connected = event->connected;
 		if (connected) {
-			send_keys();
+			send_report_keyboard();
+			send_report_mouse_buttons();
 		}
 
 		return false;
