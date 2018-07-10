@@ -99,10 +99,10 @@ extern "C" {
  *          as the first field.
  */
 struct event_header {
-	sys_dlist_t node;    /**< Linked list node used to chain events. */
+	sys_dlist_t node;                 /**< Linked list node used to chain events. */
 
-	const void *type_id; /**< Pointer to the event type object. */
-	s64_t timestamp;     /**< Timestamp indicating event creation time. */
+	s64_t timestamp;                  /**< Timestamp indicating event creation time. */
+	const struct event_type *type_id; /**< Pointer to the event type object. */
 };
 
 
