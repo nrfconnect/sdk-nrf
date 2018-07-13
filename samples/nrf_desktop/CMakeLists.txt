@@ -5,8 +5,9 @@
 #
 
 # Check if selected board is supported.
-if    (${BOARD} STREQUAL "nrf52_pca20041")
+if    (${BOARD} STREQUAL "nrf52840_pca20041")
 elseif(${BOARD} STREQUAL "nrf52840_pca10056")
+elseif(${BOARD} STREQUAL "nrf52_pca63519")
 else()
 	message(FATAL_ERROR "board ${BOARD} is not supported")
 endif()
@@ -24,7 +25,8 @@ list(APPEND CONF_FILE "configuration/nrfconnect.conf")
 list(APPEND CONF_FILE "configuration/zephyr.conf")
 
 # Use boards defined in NCS.
-if (${BOARD} STREQUAL "nrf52_pca20041")
+if ((${BOARD} STREQUAL "nrf52840_pca20041") OR
+    (${BOARD} STREQUAL "nrf52_pca63519"))
 	set(BOARD_ROOT ${NRF_DIR})
 endif()
 
