@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
-if BOARD_NRF52_PCA20041
+if BOARD_NRF52_PCA63519
 
 config BOARD
-	default "nrf52_pca20041"
+	default "nrf52_pca63519"
 
 if GPIO_NRF5
 
@@ -32,4 +32,4 @@ config UART_0_NRF_CTS_PIN
 
 endif # UART_NRFX
 
-endif # BOARD_NRF52_PCA20041
+endif # BOARD_NRF52_PCA63519
