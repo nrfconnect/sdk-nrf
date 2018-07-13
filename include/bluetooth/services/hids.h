@@ -186,13 +186,14 @@ int hids_inp_rep_send(struct hids *hids_obj, u8_t rep_index, u8_t const *rep,
 /** @brief Sends Boot Mouse Input Report.
  *
  *  @param hids_obj HIDS instance
- *  @param buttons State of mouse buttons
+ *  @param buttons Pointer to the state of mouse buttons - buttons are set to
+ *                 the previously passed value if null
  *  @param x_delta Horizontal movement
  *  @param y_delta Vertical movement
  *
  *  @return Zero on success or (negative) error code otherwise.
  */
-int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, u8_t buttons,
+int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, const u8_t *buttons,
 				 s8_t x_delta, s8_t y_delta);
 
 

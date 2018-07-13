@@ -307,7 +307,7 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
 
-		hids_boot_mouse_inp_rep_send(&hids_obj, 0x00, x, y);
+		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, x, y);
 	} else {
 		s16_t x = max(min(event->dx, 0x07ff), -0x07ff);
 		s16_t y = max(min(event->dy, 0x07ff), -0x07ff);
@@ -342,7 +342,7 @@ static void send_mouse_wp(const struct hid_mouse_wp_event *event)
 static void send_mouse_buttons(const struct hid_mouse_button_event *event)
 {
 	if (in_boot_mode) {
-		hids_boot_mouse_inp_rep_send(&hids_obj, event->button_bm, 0, 0);
+		hids_boot_mouse_inp_rep_send(&hids_obj, &event->button_bm, 0, 0);
 	} else {
 		u8_t report[REPORT_SIZE_MOUSE_BUTTONS];
 

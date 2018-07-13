@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/types.h>
+#include <assert.h>
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
@@ -484,6 +485,9 @@ int hids_init(struct hids *hids_obj,
 
 		hids_obj->boot_mouse_inp_rep.att_ind = hids_obj->svc.attr_count;
 
+		memset(hids_obj->boot_mouse_inp_rep.buff, 0,
+				sizeof(hids_obj->boot_mouse_inp_rep.buff));
+
 		DESCRIPTOR_REGISTER(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
 					BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
@@ -578,20 +582,22 @@ int hids_inp_rep_send(struct hids *hids_obj, u8_t rep_index, u8_t const *rep,
 }
 
 
-int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, u8_t buttons,
+int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, const u8_t *buttons,
 				 s8_t x_delta, s8_t y_delta)
 {
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
 	struct hids_boot_mouse_inp_rep *boot_mouse_inp_rep =
 		&hids_obj->boot_mouse_inp_rep;
 
-	memset(boot_mouse_inp_rep->buff, 0, BOOT_MOUSE_INPUT_REPORT_MIN_SIZE);
+	static_assert(sizeof(boot_mouse_inp_rep->buff) >= 3,
+			"buffer is too short");
 
-	boot_mouse_inp_rep->buff[0] = buttons;
+	if (buttons) {
+		/* If buttons data is not given use old values. */
+		boot_mouse_inp_rep->buff[0] = *buttons;
+	}
 	boot_mouse_inp_rep->buff[1] = (u8_t) x_delta;
 	boot_mouse_inp_rep->buff[2] = (u8_t) y_delta;
-
-	/*  @TODO Optional data encoding. */
 
 	return bt_gatt_notify(NULL,
 			      &hids_obj->svc.attrs[rep_ind],
