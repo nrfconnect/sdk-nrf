@@ -4,11 +4,11 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
-config  BOARD_NRF52_PCA20041
-	bool "nRF52 PCA20041"
+config  BOARD_NRF52_PCA63519
+	bool "nRF52 PCA63519"
 	select HAS_DTS_GPIO
 	select HAS_DTS_I2C
-	select HAS_DTS_PMW3360
-	select HAS_DTS_BMA400
+	select HAS_DTS_LIS3DH
+	select HAS_DTS_TOUCHPAD
 
 	depends on SOC_NRF52832_QFAA

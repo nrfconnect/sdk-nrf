@@ -8,7 +8,7 @@
 #include <nordic/nrf52832.dtsi>
 
 / {
-	model = "Nordic PCA20041";
+	model = "Nordic PCA63519";
 	compatible = "nordic,pca10040-dk",
 		     "nordic,nrf52832-qfaa",
 		     "nordic,nrf52832";

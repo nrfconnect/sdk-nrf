@@ -4,6 +4,6 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
-if BOARD_NRF52_PCA20041
+if BOARD_NRF52_PCA63519
 
-endif # BOARD_NRF52_PCA20041
+endif # BOARD_NRF52_PCA63519
