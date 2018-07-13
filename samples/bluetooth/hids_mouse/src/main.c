@@ -322,7 +322,7 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 		y_delta = max(min(y_delta, SCHAR_MAX), SCHAR_MIN);
 
 		hids_boot_mouse_inp_rep_send(&hids_obj,
-					     0x00,
+					     NULL,
 					     (s8_t) x_delta,
 					     (s8_t) y_delta);
 	} else {
