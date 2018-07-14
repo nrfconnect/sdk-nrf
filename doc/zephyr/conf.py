@@ -16,9 +16,16 @@ import sys
 import os
 import shlex
 
+if "ZEPHYR_BASE" not in os.environ:
+        sys.exit("$ZEPHYR_BASE environment variable undefined.")
+ZEPHYR_BASE = os.environ["ZEPHYR_BASE"]
+
 # Add the 'extensions' directory to sys.path, to enable finding Sphinx
 # extensions within.
-sys.path.insert(0, os.path.join(os.path.abspath('.'), '../../../zephyr/doc/extensions'))
+sys.path.insert(0, os.path.join(os.path.abspath(ZEPHYR_BASE), 'doc', 'extensions'))
+# Also add west, to be able to pull in its API docs.
+sys.path.append(os.path.abspath(os.path.join(ZEPHYR_BASE, 'scripts', 'meta')))
+
 
 # -- General configuration ------------------------------------------------
 
@@ -32,6 +39,7 @@ extensions = [
     'breathe', 'sphinx.ext.todo',
     'sphinx.ext.extlinks',
     'zephyr.application',
+    'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -52,11 +60,6 @@ master_doc = 'index'
 project = u'Zephyr Project'
 copyright = u'2015-2017 Zephyr Project members and individual contributors.'
 author = u'many'
-
-if "ZEPHYR_BASE" not in os.environ:
-    sys.stderr.write("$ZEPHYR_BASE environment variable undefined.\n")
-    exit(1)
-ZEPHYR_BASE = os.environ["ZEPHYR_BASE"]
 
 # The following code tries to extract the information by reading the Makefile,
 # when Sphinx is run directly (e.g. by Read the Docs).

@@ -125,7 +125,7 @@ html_show_copyright = True
 html_show_license = True
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'zephyr': ('../../zephyr/html','../_build/zephyr/html/objects.inv')}
+intersphinx_mapping = {'zephyr': ('@ZEPHYR_HTML_DIR@', None)}
 
 breathe_projects = {
     "nrf": "_doxygen/xml",
