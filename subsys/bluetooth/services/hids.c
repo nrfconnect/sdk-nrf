@@ -195,8 +195,20 @@ static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 {
 	SYS_LOG_DBG("Input Report CCCD has changed.");
 
+	struct hids_inp_rep *inp_rep =
+		CONTAINER_OF(((struct _bt_gatt_ccc *) attr->user_data)->cfg,
+			     struct hids_inp_rep, ccc);
+
 	if (value == BT_GATT_CCC_NOTIFY) {
 		SYS_LOG_DBG("Notification has been turned on");
+		if (inp_rep->handler != NULL) {
+			inp_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
+		}
+	} else {
+		SYS_LOG_DBG("Notification has been turned off");
+		if (inp_rep->handler != NULL) {
+			inp_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
+		}
 	}
 }
 
@@ -221,8 +233,20 @@ static void hids_boot_mouse_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 {
 	SYS_LOG_DBG("Boot Mouse Input Report CCCD has changed.");
 
+	struct hids_boot_mouse_inp_rep *boot_mouse_rep =
+		CONTAINER_OF(((struct _bt_gatt_ccc *) attr->user_data)->cfg,
+			     struct hids_boot_mouse_inp_rep, ccc);
+
 	if (value == BT_GATT_CCC_NOTIFY) {
 		SYS_LOG_DBG("Notification for Boot Mouse has been turned on");
+		if (boot_mouse_rep->handler != NULL) {
+			boot_mouse_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
+		}
+	} else {
+		SYS_LOG_DBG("Notification for Boot Mouse has been turned off");
+		if (boot_mouse_rep->handler != NULL) {
+			boot_mouse_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
+		}
 	}
 }
 
@@ -247,9 +271,22 @@ static void hids_boot_kb_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 {
 	SYS_LOG_DBG("Boot Keyboard Input Report CCCD has changed.");
 
+	struct hids_boot_kb_inp_rep *boot_kb_inp_rep =
+		CONTAINER_OF(((struct _bt_gatt_ccc *) attr->user_data)->cfg,
+			     struct hids_boot_kb_inp_rep, ccc);
+
 	if (value == BT_GATT_CCC_NOTIFY) {
 		SYS_LOG_DBG("Notification for Boot Keyboard has been turned "
 			    "on.");
+		if (boot_kb_inp_rep->handler != NULL) {
+			boot_kb_inp_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
+		}
+	} else {
+		SYS_LOG_DBG("Notification for Boot Keyboard has been turned "
+			    "on.");
+		if (boot_kb_inp_rep->handler != NULL) {
+			boot_kb_inp_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
+		}
 	}
 }
 
@@ -484,6 +521,8 @@ int hids_init(struct hids *hids_obj,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_obj->boot_mouse_inp_rep.att_ind = hids_obj->svc.attr_count;
+		hids_obj->boot_mouse_inp_rep.handler =
+			hids_init_obj->boot_mouse_notif_handler;
 
 		memset(hids_obj->boot_mouse_inp_rep.buff, 0,
 				sizeof(hids_obj->boot_mouse_inp_rep.buff));
@@ -508,6 +547,8 @@ int hids_init(struct hids *hids_obj,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_obj->boot_kb_inp_rep.att_ind = hids_obj->svc.attr_count;
+		hids_obj->boot_kb_inp_rep.handler =
+			hids_init_obj->boot_kb_notif_handler;
 
 		DESCRIPTOR_REGISTER(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
@@ -525,6 +566,8 @@ int hids_init(struct hids *hids_obj,
 			      BT_GATT_CHRC_WRITE_WITHOUT_RESP);
 
 		hids_obj->boot_kb_outp_rep.att_ind = hids_obj->svc.attr_count;
+		hids_obj->boot_kb_outp_rep.handler =
+			hids_init_obj->boot_kb_outp_rep_handler;
 
 		DESCRIPTOR_REGISTER(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
@@ -534,9 +577,6 @@ int hids_init(struct hids *hids_obj,
 					hids_boot_kb_outp_report_read,
 					hids_boot_kb_outp_report_write,
 					&hids_obj->boot_kb_outp_rep));
-
-		hids_obj->boot_kb_outp_rep.handler =
-			hids_init_obj->boot_kb_outp_rep_handler;
 	}
 
 	/* Register HID Information characteristic and its descriptor. */

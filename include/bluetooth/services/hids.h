@@ -46,6 +46,14 @@ enum hids_cp_evt {
 	HIDS_CP_EVT_HOST_EXIT_SUSP,
 };
 
+/** HID notification event. */
+enum hids_notif_evt {
+	/** Notification enabled event. */
+	HIDS_CCCD_EVT_NOTIF_ENABLED,
+	/** Notification disabled event. */
+	HIDS_CCCD_EVT_NOTIF_DISABLED,
+};
+
 struct hids_info {
 	u16_t bcd_hid;
 	u8_t b_country_code;
@@ -58,6 +66,12 @@ struct hids_rep {
 	u8_t size;
 };
 
+/** @brief HID notification event handler.
+ *
+ *  @param evt Notification event.
+ */
+typedef void (*hids_notif_handler_t) (enum hids_notif_evt evt);
+
 /* HID Report event handler. */
 typedef void (*hids_rep_handler_t) (struct hids_rep const *rep);
 
@@ -67,6 +81,7 @@ struct hids_inp_rep {
 	struct bt_gatt_ccc_cfg ccc[1];
 	u8_t id;
 	u8_t att_ind;
+	hids_notif_handler_t handler;
 };
 
 /* Output Report descriptor. */
@@ -82,6 +97,7 @@ struct hids_boot_mouse_inp_rep {
 	u8_t buff[BOOT_MOUSE_INPUT_REP_CHAR_LEN];
 	struct bt_gatt_ccc_cfg ccc[1];
 	u8_t att_ind;
+	hids_notif_handler_t handler;
 };
 
 /* Boot Keyboard Input report descriptor. */
@@ -89,6 +105,7 @@ struct hids_boot_kb_inp_rep {
 	u8_t buff[BOOT_KB_INPUT_REP_CHAR_LEN];
 	struct bt_gatt_ccc_cfg ccc[1];
 	u8_t att_ind;
+	hids_notif_handler_t handler;
 };
 
 /* Boot Keyboard Output report descriptor. */
@@ -140,6 +157,8 @@ struct hids_init {
 	struct hids_rep_map rep_map;
 	hids_pm_evt_handler_t pm_evt_handler;
 	hids_cp_evt_handler_t cp_evt_handler;
+	hids_notif_handler_t boot_mouse_notif_handler;
+	hids_notif_handler_t boot_kb_notif_handler;
 	hids_rep_handler_t boot_kb_outp_rep_handler;
 	bool is_mouse;
 	bool is_kb;
