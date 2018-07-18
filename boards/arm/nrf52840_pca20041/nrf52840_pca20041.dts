@@ -42,14 +42,14 @@
 
 &i2c0 {
 	status = "ok";
-	sda-pin = <26>;
-	scl-pin = <27>;
+	sda-pin = <13>;
+	scl-pin = <15>;
 };
 
 &i2c1 {
 	status = "ok";
-	sda-pin = <30>;
-	scl-pin = <31>;
+	sda-pin = <6>;
+	scl-pin = <8>;
 };
 
 &flash0 {
