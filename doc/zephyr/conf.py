@@ -14,18 +14,23 @@
 
 import sys
 import os
-import shlex
 
 if "ZEPHYR_BASE" not in os.environ:
-        sys.exit("$ZEPHYR_BASE environment variable undefined.")
-ZEPHYR_BASE = os.environ["ZEPHYR_BASE"]
+    print("$ZEPHYR_BASE environment variable undefined.")
+    sys.exit("$ZEPHYR_BASE environment variable undefined.")
+ZEPHYR_BASE = os.path.abspath(os.environ["ZEPHYR_BASE"])
+
+if "ZEPHYR_BUILD" not in os.environ:
+    sys.exit("$ZEPHYR_BUILD environment variable undefined.")
+ZEPHYR_BUILD = os.path.abspath(os.environ["ZEPHYR_BUILD"])
+
+NRF_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 # Add the 'extensions' directory to sys.path, to enable finding Sphinx
 # extensions within.
-sys.path.insert(0, os.path.join(os.path.abspath(ZEPHYR_BASE), 'doc', 'extensions'))
+sys.path.insert(0, os.path.join(ZEPHYR_BASE, 'doc', 'extensions'))
 # Also add west, to be able to pull in its API docs.
-sys.path.append(os.path.abspath(os.path.join(ZEPHYR_BASE, 'scripts', 'meta')))
-
+sys.path.append(os.path.join(ZEPHYR_BASE, 'scripts', 'meta'))
 
 # -- General configuration ------------------------------------------------
 
@@ -38,8 +43,8 @@ sys.path.append(os.path.abspath(os.path.join(ZEPHYR_BASE, 'scripts', 'meta')))
 extensions = [
     'breathe', 'sphinx.ext.todo',
     'sphinx.ext.extlinks',
+    'sphinx.ext.autodoc',
     'zephyr.application',
-    'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -148,8 +153,7 @@ rst_epilog = """
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = "zephyr"
-html_theme_path = ['../themes']
-
+html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
 
 if tags.has('release'):
     is_release = True
@@ -181,7 +185,7 @@ html_title = "Zephyr Project Documentation"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['../static']
+html_static_path = ['{}/doc/static'.format(NRF_BASE)]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -250,8 +254,8 @@ sourcelink_suffix = '.txt'
 
 
 breathe_projects = {
-    "Zephyr": "../../../zephyr/doc/doxygen/xml",
-    "doc-examples": "../../../zephyr/doc/doxygen/xml"
+    "Zephyr": "{}/doxygen/xml".format(ZEPHYR_BUILD),
+    "doc-examples": "{}/doxygen/xml".format(ZEPHYR_BUILD)
 }
 breathe_default_project = "Zephyr"
 

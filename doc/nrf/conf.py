@@ -21,6 +21,25 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import sys
+import os
+
+if "ZEPHYR_BASE" not in os.environ:
+    sys.exit("$ZEPHYR_BASE environment variable undefined.")
+ZEPHYR_BASE = os.path.abspath(os.environ["ZEPHYR_BASE"])
+
+if "ZEPHYR_BUILD" not in os.environ:
+    sys.exit("$ZEPHYR_BUILD environment variable undefined.")
+ZEPHYR_BUILD = os.path.abspath(os.environ["ZEPHYR_BUILD"])
+
+if "NRF_BASE" not in os.environ:
+    sys.exit("$NRF_BASE environment variable undefined.")
+NRF_BASE = os.path.abspath(os.environ["NRF_BASE"])
+
+if "NRF_BUILD" not in os.environ:
+    sys.exit("$NRF_BUILD environment variable undefined.")
+NRF_BUILD = os.path.abspath(os.environ["NRF_BUILD"])
+
 
 # -- General configuration ------------------------------------------------
 
@@ -86,7 +105,7 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 html_theme = 'nrf'
-html_theme_path = ['../themes']
+html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -97,7 +116,7 @@ html_theme_path = ['../themes']
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['../static']
+html_static_path = ['{}/doc/static'.format(NRF_BASE)]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -125,10 +144,10 @@ html_show_copyright = True
 html_show_license = True
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'zephyr': ('@ZEPHYR_HTML_DIR@', None)}
+intersphinx_mapping = {'zephyr': ('{}/html'.format(ZEPHYR_BUILD), None)}
 
 breathe_projects = {
-    "nrf": "_doxygen/xml",
+    "nrf": "{}/doxygen/xml".format(NRF_BUILD),
 }
 breathe_default_project = "nrf"
 
