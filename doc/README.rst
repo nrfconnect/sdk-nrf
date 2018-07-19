@@ -108,6 +108,7 @@ Out-of-tree builds are also supported, so you can actually build from outside
 the source tree:
 
 .. code-block:: console
+
    # On Linux/macOS
    cd ~
    source ncs/zephyr/zephyr-env.sh
