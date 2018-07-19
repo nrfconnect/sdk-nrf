@@ -13,13 +13,10 @@
 #include <device.h>
 #include <gpio.h>
 
-#include "module_state_event.h"
-
 #include "power_event.h"
 
-
-#define MODULE		board
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE board
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
@@ -70,7 +67,7 @@ static int turn_board_on(void)
 		return -1;
 	}
 
-	module_set_state("ready");
+	module_set_state(MODULE_STATE_READY);
 
 	return 0;
 }
@@ -113,7 +110,7 @@ static int turn_board_off(void)
 		return -1;
 	}
 
-	module_set_state("off");
+	module_set_state(MODULE_STATE_OFF);
 
 	return 0;
 }
@@ -123,7 +120,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (check_state(event, "main", "ready")) {
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			active = true;
 			if (turn_board_on()) {
 				SYS_LOG_ERR("cannot initialize board");

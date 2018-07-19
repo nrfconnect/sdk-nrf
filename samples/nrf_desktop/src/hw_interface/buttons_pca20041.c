@@ -10,16 +10,16 @@
 #include <gpio.h>
 
 #include "event_manager.h"
-#include "module_state_event.h"
 #include "button_event.h"
 #include "power_event.h"
 
-#define MODULE		buttons
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE buttons
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
 #include <logging/sys_log.h>
+
 
 #define SCAN_INTERVAL 50 /* ms */
 
@@ -151,7 +151,7 @@ static void matrix_scan_fn(struct k_work *work)
 	return;
 
 error:
-	module_set_state("error");
+	module_set_state(MODULE_STATE_ERROR);
 }
 
 void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
@@ -225,17 +225,17 @@ static void init_fn(void)
 	atomic_set(&scanning, true);
 	matrix_scan_fn(NULL);
 
-	module_set_state("ready");
+	module_set_state(MODULE_STATE_READY);
 
 	return;
 
 error:
-	module_set_state("error");
+	module_set_state(MODULE_STATE_ERROR);
 }
 
 static void term_fn(void)
 {
-	module_set_state("off");
+	module_set_state(MODULE_STATE_READY);
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -243,7 +243,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (check_state(event, "main", "ready")) {
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);

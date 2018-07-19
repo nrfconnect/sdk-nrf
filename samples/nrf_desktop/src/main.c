@@ -6,13 +6,13 @@
 
 #include <event_manager.h>
 
+#define MODULE main
 #include "module_state_event.h"
 
-#define MODULE		main
-#define MODULE_NAME	STRINGIFY(MODULE)
-
 #define SYS_LOG_DOMAIN	MODULE_NAME
+#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
 #include <logging/sys_log.h>
+
 
 void main(void)
 {
@@ -21,5 +21,5 @@ void main(void)
 		return;
 	}
 
-	module_set_state("ready");
+	module_set_state(MODULE_STATE_READY);
 }

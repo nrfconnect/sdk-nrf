@@ -4,11 +4,8 @@
 
 #include <bluetooth/bluetooth.h>
 
+#define MODULE ble_adv
 #include "module_state_event.h"
-
-
-#define MODULE		ble_adv
-#define MODULE_NAME	STRINGIFY(MODULE)
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BLE_ADV_LEVEL
@@ -46,17 +43,19 @@ static void ble_adv_start(void)
 	}
 
 	SYS_LOG_INF("Advertising started");
+
+	module_set_state(MODULE_STATE_READY);
 }
 
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		static const char *const required_srv[] = {
+		const void * const required_srv[] = {
 #if CONFIG_NRF_BT_HIDS
-			"hids",
+			MODULE_ID(hids),
 #endif
-			"bas",
-			"dis"
+			MODULE_ID(bas),
+			MODULE_ID(dis),
 		};
 		static unsigned int srv_ready_cnt;
 
@@ -65,7 +64,7 @@ static bool event_handler(const struct event_header *eh)
 		SYS_LOG_DBG("event from %s", event->name);
 
 		for (size_t i = 0; i < ARRAY_SIZE(required_srv); i++) {
-			if (check_state(event, required_srv[i], "ready")) {
+			if (check_state(event, required_srv[i], MODULE_STATE_READY)) {
 				srv_ready_cnt++;
 				SYS_LOG_DBG("received %s ready! cnt: %u",
 					    required_srv[i], srv_ready_cnt);

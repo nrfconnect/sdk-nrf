@@ -13,12 +13,10 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
 
-#include "module_state_event.h"
 #include "ble_event.h"
 
-
-#define MODULE		ble_state
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE ble_state
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BLE_STATE_LEVEL
@@ -104,7 +102,7 @@ static void bt_ready(int err)
 		SYS_LOG_INF("Settings loaded");
 	}
 
-	module_set_state("ready");
+	module_set_state(MODULE_STATE_READY);
 }
 
 static int ble_state_init(void)
@@ -135,7 +133,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (check_state(event, "main", "ready")) {
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);

@@ -8,15 +8,14 @@
 
 #include <zephyr/types.h>
 
-#include "module_state_event.h"
 #include "button_event.h"
 #include "motion_event.h"
 #include "power_event.h"
 #include "hid_event.h"
 #include "ble_event.h"
 
-#define MODULE		hid_state
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE hid_state
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_HID_STATE_LEVEL
