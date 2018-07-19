@@ -51,16 +51,17 @@ Our documentation processing has been tested to run with:
 * docutils version 0.14
 * sphinx_rtd_theme version 0.4.0
 
-Begin by cloning a copy of the git repository for the nRF Connect SDK and
-setting up your development environment as described in :ref:`getting_started`.
+In order to install the documentation tools, clone a copy of the git
+repositories for the nRF Connect SDK project and set up your development
+environment as described in :ref:`getting_started`. This will ensure all the
+required tools are installed on your system.
 
-Other than ``doxygen``, the documentation tools should be installed
-using ``pip3`` (as documented in the development environment set up
-instructions).
-
-The documentation generation tools are included in the set of tools
-expected for the Zephyr build environment and so are included in
-``zephyr/scripts/requirements.txt``
+.. note::
+   On Windows, the Sphinx executable ``sphinx-build.exe`` is placed in
+   the ``Scripts`` folder of your Python installation path.
+   Dependending on how you have installed Python, you may need to
+   add this folder to your ``PATH`` environment variable. Follow
+   the instructions in `Windows Python Path`_ to add those if needed.
 
 Documentation presentation theme
 ********************************
@@ -90,22 +91,42 @@ folder, here are the commands to generate the html content locally:
    # On Windows
    cd %userprofile%\ncs\nrf
    ..\zephyr\zephyr-env.cmd
-   mkdir doc\_build & cd doc/_build
+   mkdir doc\_build && cd doc/_build
 
    # Use cmake to configure a Ninja-based build system:
    cmake -GNinja ..
    # Now run ninja on the generated build system:
    ninja nrf
+   # If you modify or add .rst files, run ninja again:
+   ninja nrf
 
-Depending on your development system, it will take about 15 minutes to
-collect and generate the HTML content.  When done, you can view the HTML
+Depending on your development system, it will take up to 15 minutes to
+collect and generate the HTML content. When done, you can view the HTML
 output with your browser started at ``doc/_build/nrf/html/index.html``
 
-If you want to build the documentation from scratch you can use this command:
+Out-of-tree builds are also supported, so you can actually build from outside
+the source tree:
 
 .. code-block:: console
+   # On Linux/macOS
+   cd ~
+   source ncs/zephyr/zephyr-env.sh
+   cd ~
+   mkdir build
+   # On Windows
+   cd %userprofile%
+   ncs\zephyr\zephyr-env.cmd
+   mkdir build
 
-   ninja nrf-pristine
+   # Use cmake to configure a Ninja-based build system:
+   cmake -GNinja -Bbuild/ -Hncs/nrf/doc
+   # Now run ninja on the generated build system:
+   ninja -C build/ nrf
+   # If you modify or add .rst files, run ninja again:
+   ninja -C build/ nrf
+
+If you want to build the documentation from scratch just delete the contents
+of the build folder and run ``cmake`` and then ``ninja`` again.
 
 .. _reStructuredText: http://sphinx-doc.org/rest.html
 .. _Sphinx: http://sphinx-doc.org/
