@@ -11,12 +11,11 @@
 #include <gpio.h>
 
 #include "event_manager.h"
-#include "module_state_event.h"
 #include "motion_event.h"
 #include "power_event.h"
 
-#define MODULE		motion
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE motion
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
@@ -37,7 +36,7 @@ enum {
 	TERMINATING_STATE,
 	STATES_NUM
 };
-atomic_t state;
+static atomic_t state;
 
 static void motion_event_send(s8_t dx, s8_t dy)
 {
@@ -100,8 +99,7 @@ static void async_init_fn(struct k_work *work)
 		}
 	}
 
-	/* Inform all that module is ready */
-	module_set_state("ready");
+	module_set_state(MODULE_STATE_READY);
 }
 K_WORK_DEFINE(motion_async_init, async_init_fn);
 
@@ -119,7 +117,7 @@ static void async_term_fn(struct k_work *work)
 	}
 
 	atomic_set(&state, IDLE_STATE);
-	module_set_state("off");
+	module_set_state(MODULE_STATE_OFF);
 }
 K_WORK_DEFINE(motion_async_term, async_term_fn);
 
@@ -128,7 +126,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (check_state(event, "board", "ready")) {
+		if (check_state(event, MODULE_ID(board), MODULE_STATE_READY)) {
 			if (atomic_cas(&state, IDLE_STATE, ACTIVE_STATE)) {
 				k_work_submit(&motion_async_init);
 			}

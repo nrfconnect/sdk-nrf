@@ -10,12 +10,10 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/gatt.h>
 
-#include "module_state_event.h"
 #include "battery_event.h"
 
-
-#define MODULE		bas
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE bas
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BAS_LEVEL
@@ -78,7 +76,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (check_state(event, "ble_state", "ready")) {
+		if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);
@@ -91,7 +89,7 @@ static bool event_handler(const struct event_header *eh)
 			}
 			SYS_LOG_INF("service initialized");
 
-			module_set_state("ready");
+			module_set_state(MODULE_STATE_READY);
 		}
 		return false;
 	}

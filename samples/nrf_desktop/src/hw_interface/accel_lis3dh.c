@@ -16,12 +16,11 @@
 #include <i2c.h>
 
 #include "event_manager.h"
-#include "module_state_event.h"
 #include "button_event.h"
 #include "power_event.h"
 
-#define MODULE		accel
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE accel
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_ACCEL_MODULE_LEVEL
@@ -275,7 +274,7 @@ static void async_init_fn(struct k_work *work)
 		return;
 	}
 
-	module_set_state("ready");
+	module_set_state(MODULE_STATE_READY);
 }
 K_WORK_DEFINE(accel_async_init, async_init_fn);
 
@@ -284,7 +283,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (check_state(event, "main", "ready")) {
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);
@@ -293,7 +292,7 @@ static bool event_handler(const struct event_header *eh)
 			return false;
 		}
 
-		if (check_state(event, "board", "ready")) {
+		if (check_state(event, MODULE_ID(board), MODULE_STATE_READY)) {
 			if (!active) {
 				active = true;
 				k_work_submit(&accel_async_init);
@@ -312,7 +311,7 @@ static bool event_handler(const struct event_header *eh)
 				SYS_LOG_ERR("cannot switch to wake up mode");
 			}
 
-			module_set_state("standby");
+			module_set_state(MODULE_STATE_STANDBY);
 		}
 
 		return active;

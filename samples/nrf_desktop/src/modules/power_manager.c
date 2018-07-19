@@ -16,14 +16,14 @@
 #include <misc/printk.h>
 
 #include "power_event.h"
-#include "module_state_event.h"
 
-#define MODULE		power_manager
-#define MODULE_NAME	STRINGIFY(MODULE)
+#define MODULE power_manager
+#include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_POWER_MANAGER_LEVEL
 #include <logging/sys_log.h>
+
 
 #define POWER_DOWN_TIMEOUT_MS	(1000 * CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT)
 #define DEVICE_POLICY_MAX	30
@@ -186,7 +186,8 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (!strcmp(event->state, "off") &&
+		if (((event->state == MODULE_STATE_OFF) ||
+		     (event->state == MODULE_STATE_STANDBY)) &&
 		    (power_state == POWER_STATE_SUSPENDING1)) {
 			struct power_down_event *event = new_power_down_event();
 
@@ -196,7 +197,7 @@ static bool event_handler(const struct event_header *eh)
 			return false;
 		}
 
-		if (check_state(event, "main", "ready")) {
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);
