@@ -69,6 +69,90 @@ static void pm_evt_handler(enum hids_pm_evt evt)
 	}
 }
 
+static void mouse_buttons_notif_handler(enum hids_notif_evt evt)
+{
+	switch (evt) {
+	case HIDS_CCCD_EVT_NOTIF_ENABLED:
+		SYS_LOG_INF("Notifications enabled");
+		break;
+	case HIDS_CCCD_EVT_NOTIF_DISABLED:
+		SYS_LOG_INF("Notifications disabled");
+		break;
+	}
+}
+
+static void mouse_wp_notif_handler(enum hids_notif_evt evt)
+{
+	switch (evt) {
+	case HIDS_CCCD_EVT_NOTIF_ENABLED:
+		SYS_LOG_INF("Notifications enabled");
+		break;
+	case HIDS_CCCD_EVT_NOTIF_DISABLED:
+		SYS_LOG_INF("Notifications disabled");
+		break;
+	}
+}
+
+static void mouse_xy_notif_handler(enum hids_notif_evt evt)
+{
+	switch (evt) {
+	case HIDS_CCCD_EVT_NOTIF_ENABLED:
+		SYS_LOG_INF("Notifications enabled");
+		break;
+	case HIDS_CCCD_EVT_NOTIF_DISABLED:
+		SYS_LOG_INF("Notifications disabled");
+		break;
+	}
+}
+
+static void boot_mouse_notif_handler(enum hids_notif_evt evt)
+{
+	switch (evt) {
+	case HIDS_CCCD_EVT_NOTIF_ENABLED:
+		SYS_LOG_INF("Notifications enabled");
+		break;
+	case HIDS_CCCD_EVT_NOTIF_DISABLED:
+		SYS_LOG_INF("Notifications disabled");
+		break;
+	}
+}
+
+static void keyboard_notif_handler(enum hids_notif_evt evt)
+{
+	switch (evt) {
+	case HIDS_CCCD_EVT_NOTIF_ENABLED:
+		SYS_LOG_INF("Notifications enabled");
+		break;
+	case HIDS_CCCD_EVT_NOTIF_DISABLED:
+		SYS_LOG_INF("Notifications disabled");
+		break;
+	}
+}
+
+static void boot_keyboard_notif_handler(enum hids_notif_evt evt)
+{
+	switch (evt) {
+	case HIDS_CCCD_EVT_NOTIF_ENABLED:
+		SYS_LOG_INF("Notifications enabled");
+		break;
+	case HIDS_CCCD_EVT_NOTIF_DISABLED:
+		SYS_LOG_INF("Notifications disabled");
+		break;
+	}
+}
+
+static void mplayer_notif_handler(enum hids_notif_evt evt)
+{
+	switch (evt) {
+	case HIDS_CCCD_EVT_NOTIF_ENABLED:
+		SYS_LOG_INF("Notifications enabled");
+		break;
+	case HIDS_CCCD_EVT_NOTIF_DISABLED:
+		SYS_LOG_INF("Notifications disabled");
+		break;
+	}
+}
+
 static int module_init(void)
 {
 	static const u8_t report_map[] = {
@@ -238,6 +322,7 @@ static int module_init(void)
 		input_report[ir_pos].id        = REPORT_ID_MOUSE_BUTTONS;
 		input_report[ir_pos].buff.data = mouse_buttons_buff;
 		input_report[ir_pos].buff.size = sizeof(mouse_buttons_buff);
+		input_report[ir_pos].handler   = mouse_buttons_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -248,6 +333,7 @@ static int module_init(void)
 		input_report[ir_pos].id        = REPORT_ID_MOUSE_WP;
 		input_report[ir_pos].buff.data = mouse_wp_buff;
 		input_report[ir_pos].buff.size = sizeof(mouse_wp_buff);
+		input_report[ir_pos].handler   = mouse_wp_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -258,6 +344,7 @@ static int module_init(void)
 		input_report[ir_pos].id        = REPORT_ID_MOUSE_XY;
 		input_report[ir_pos].buff.data = mouse_xy_buff;
 		input_report[ir_pos].buff.size = sizeof(mouse_xy_buff);
+		input_report[ir_pos].handler   = mouse_xy_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -269,6 +356,7 @@ static int module_init(void)
 		input_report[ir_pos].id        = REPORT_ID_KEYBOARD;
 		input_report[ir_pos].buff.data = keyboard_buff;
 		input_report[ir_pos].buff.size = sizeof(keyboard_buff);
+		input_report[ir_pos].handler   = keyboard_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -280,6 +368,7 @@ static int module_init(void)
 		input_report[ir_pos].id        = REPORT_ID_MPLAYER;
 		input_report[ir_pos].buff.data = mplayer_buff;
 		input_report[ir_pos].buff.size = sizeof(mplayer_buff);
+		input_report[ir_pos].handler   = mplayer_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -290,10 +379,14 @@ static int module_init(void)
 	/* Boot protocol setup */
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
 		hids_init_obj.is_mouse = true;
+		hids_init_obj.boot_mouse_notif_handler =
+			boot_mouse_notif_handler;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
 		hids_init_obj.is_kb = true;
+		hids_init_obj.boot_kb_notif_handler =
+			boot_keyboard_notif_handler;
 	}
 
 	hids_init_obj.pm_evt_handler = pm_evt_handler;
