@@ -176,6 +176,8 @@ struct hids {
 	struct protocol_mode pm;
 	struct control_point cp;
 	u8_t info[HIDS_INFORMATION_CHAR_LEN];
+	bool is_mouse;
+	bool is_kb;
 };
 
 
@@ -189,6 +191,13 @@ struct hids {
 int hids_init(struct hids *hids_obj,
 	      struct hids_init const * const hids_init_obj);
 
+/** @brief Uninitializes HIDS instance.
+ *
+ *  @param hids_obj HIDS instance
+ *
+ *  @return Zero on success or (negative) error code otherwise.
+ */
+int hids_uninit(struct hids *hids_obj);
 
 /** @brief Sends Input Report.
  *
