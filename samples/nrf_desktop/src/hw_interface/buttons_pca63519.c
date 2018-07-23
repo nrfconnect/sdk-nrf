@@ -18,7 +18,9 @@
 #include "button_event.h"
 #include "power_event.h"
 
-#define MODULE buttons
+#include "hid_keymap.h"
+
+#define MODULE		buttons
 #include "module_state_event.h"
 
 #define SYS_LOG_DOMAIN	MODULE_NAME
@@ -74,6 +76,10 @@
 #define RegHighInputB       0x69
 #define RegHighInputA       0x6A
 #define RegReset            0x7D
+
+
+#define KEY_ID(row, col) (((row & 0xF) << 4) | (col & 0xF))
+
 
 static const u8_t register_config[][2] = {
 	{ RegReset,         0x12 }, /* Software Reset - Part 1. */
@@ -154,14 +160,14 @@ static void scan_fn(struct k_work *work)
 					struct button_event *event =
 						new_button_event();
 
-					event->key_id = (i << 4) | (j & 0x0F);
+					event->key_id = KEY_ID(j, i);
 					event->pressed = true;
 					EVENT_SUBMIT(event);
 				} else if (!is_pressed && matrix[i][j]) {
 					struct button_event *event =
 						new_button_event();
 
-					event->key_id = (i << 4) | (j & 0x0F);
+					event->key_id = KEY_ID(j, i);
 					event->pressed = false;
 					EVENT_SUBMIT(event);
 				}

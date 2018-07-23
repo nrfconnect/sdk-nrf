@@ -31,6 +31,13 @@
 #define REPORT_SIZE_KEYBOARD       9 /* bytes */
 #define REPORT_SIZE_MPLAYER        1 /* bytes */
 
+#define USAGE_PAGE_MOUSE_XY		0x01
+#define USAGE_PAGE_MOUSE_WP		0x01
+#define USAGE_PAGE_KEYBOARD		0x07
+#define USAGE_PAGE_LEDS			0x08
+#define USAGE_PAGE_MOUSE_BUTTONS	0x09
+#define USAGE_PAGE_MPLAYER		0x0C
+
 enum {
 	REPORT_ID_RESERVED,
 	REPORT_ID_MOUSE_BUTTONS,
@@ -168,7 +175,7 @@ static int module_init(void)
 		0x85, REPORT_ID_MOUSE_BUTTONS,
 		0x75, 0x01,         /* Report Size (1) */
 		0x95, 0x08,         /* Report Count (8) */
-		0x05, 0x09,         /* Usage Page (Buttons) */
+		0x05, USAGE_PAGE_MOUSE_BUTTONS,
 		0x19, 0x01,         /* Usage Minimum (1) */
 		0x29, 0x08,         /* Usage Maximum (8) */
 		0x15, 0x00,         /* Logical Minimum (0) */
@@ -182,12 +189,12 @@ static int module_init(void)
 		0x85, REPORT_ID_MOUSE_WP,
 		0x75, 0x08,         /* Report Size (8) */
 		0x95, 0x01,         /* Report Count (1) */
-		0x05, 0x01,         /* Usage Page (Generic Desktop) */
+		0x05, USAGE_PAGE_MOUSE_WP,
 		0x09, 0x38,         /* Usage (Wheel) */
 		0x15, 0x81,         /* Logical Minimum (-127) */
 		0x25, 0x7F,         /* Logical Maximum (127) */
 		0x81, 0x06,         /* Input (Data, Variable, Relative) */
-		0x05, 0x0C,         /* Usage Page (Consumer) */
+		0x05, USAGE_PAGE_MPLAYER,
 		0x0A, 0x38, 0x02,   /* Usage (AC Pan) */
 		0x75, 0x08,         /* Report Size (8) */
 		0x95, 0x01,         /* Report Count (1) */
@@ -202,7 +209,7 @@ static int module_init(void)
 		0xA1, 0x00,       /* Collection (Physical) */
 		0x75, 0x0C,         /* Report Size (12) */
 		0x95, 0x02,         /* Report Count (2) */
-		0x05, 0x01,         /* Usage Page (Generic Desktop) */
+		0x05, USAGE_PAGE_MOUSE_XY,
 		0x09, 0x30,         /* Usage (X) */
 		0x09, 0x31,         /* Usage (Y) */
 		0x16, 0x01, 0xF8,   /* Logical Maximum (2047) */
@@ -225,7 +232,7 @@ static int module_init(void)
 		/* Keyboard - Modifiers */
 		0x75, 0x01,       /* Report Size (1) */
 		0x95, 0x08,       /* Report Count (8) */
-		0x05, 0x07,       /* Usage Page (Key Codes) */
+		0x05, USAGE_PAGE_KEYBOARD,
 		0x19, 0xe0,       /* Usage Minimum (Left Ctrl) */
 		0x29, 0xe7,       /* Usage Maximum (Right GUI) */
 		0x15, 0x00,       /* Logical Minimum (0) */
@@ -240,7 +247,7 @@ static int module_init(void)
 		/* Keyboard - Keys */
 		0x75, 0x08,       /* Report Size (8) */
 		0x95, 0x06,       /* Report Count (6) */
-		0x05, 0x07,       /* Usage Page (Key codes) */
+		0x05, USAGE_PAGE_KEYBOARD,
 		0x15, 0x00,       /* Logical Minimum (0) */
 		0x25, 0x65,       /* Logical Maximum (101) */
 		0x19, 0x00,       /* Usage Minimum (0) */
@@ -250,7 +257,7 @@ static int module_init(void)
 		/* Keyboard - LEDs */
 		0x95, 0x05,       /* Report Count (5) */
 		0x75, 0x01,       /* Report Size (1) */
-		0x05, 0x08,       /* Usage Page (LEDs) */
+		0x05, USAGE_PAGE_LEDS,
 		0x19, 0x01,       /* Usage Minimum (1) */
 		0x29, 0x05,       /* Usage Maximum (5) */
 		0x91, 0x02,       /* Output (Data, Variable, Absolute) */
@@ -264,8 +271,8 @@ static int module_init(void)
 #endif
 
 #if CONFIG_DESKTOP_HID_MPLAYER
-		/* Usage page - Consume Control */
-		0x05, 0x0C,     /* Usage Page (Consumer) */
+		/* Usage page - Consumer Control */
+		0x05, USAGE_PAGE_MPLAYER,
 		0x09, 0x01,     /* Usage (Consumer Control) */
 
 		0xA1, 0x01,     /* Collection (Application) */
