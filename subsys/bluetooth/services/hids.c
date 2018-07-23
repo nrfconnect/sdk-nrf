@@ -517,6 +517,8 @@ int hids_init(struct hids *hids_obj,
 	 * and CCC.
 	 */
 	if (hids_init_obj->is_mouse) {
+		hids_obj->is_mouse = hids_init_obj->is_mouse;
+
 		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
@@ -543,6 +545,8 @@ int hids_init(struct hids *hids_obj,
 	 * descriptor and CCC.
 	 */
 	if (hids_init_obj->is_kb) {
+		hids_obj->is_kb = hids_init_obj->is_kb;
+
 		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_IN_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
@@ -601,6 +605,84 @@ int hids_init(struct hids *hids_obj,
 
 	/* Register HIDS attributes in GATT database. */
 	return bt_gatt_service_register(&hids_obj->svc);
+}
+
+
+int hids_uninit(struct hids *hids_obj)
+{
+	int err;
+
+	/* Unregister HIDS attributes in GATT database. */
+	err = bt_gatt_service_unregister(&hids_obj->svc);
+	if (err) {
+		return err;
+	}
+
+	struct bt_gatt_attr *attr_start = hids_obj->svc.attrs;
+	struct bt_gatt_attr *attr = attr_start;
+
+	/* Unregister primary service. */
+	primary_svc_unregister(attr++);
+
+	/* Unregister Protocol Mode characteristic. */
+	chrc_unregister(attr++);
+	descriptor_unregister(attr++);
+
+	/* Unregister Input Report characteristics. */
+	for (u8_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
+		chrc_unregister(attr++);
+		descriptor_unregister(attr++);
+		ccc_unregister(attr++);
+		descriptor_unregister(attr++);
+	}
+
+	/* Unregister Output Report characteristics. */
+	for (u8_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
+		chrc_unregister(attr++);
+		descriptor_unregister(attr++);
+		descriptor_unregister(attr++);
+	}
+
+	/* Unregister Report Map characteristic and its descriptor. */
+	chrc_unregister(attr++);
+	descriptor_unregister(attr++);
+
+	/* Unregister HID Boot Mouse Input Report characteristic, its descriptor
+	 * and CCC.
+	 */
+	if (hids_obj->is_mouse) {
+		chrc_unregister(attr++);
+		descriptor_unregister(attr++);
+		ccc_unregister(attr++);
+	}
+
+	/* Unregister HID Boot Keyboard Input/Output Report characteristic, its
+	 * descriptor and CCC.
+	 */
+	if (hids_obj->is_kb) {
+		chrc_unregister(attr++);
+		descriptor_unregister(attr++);
+		ccc_unregister(attr++);
+		chrc_unregister(attr++);
+		descriptor_unregister(attr++);
+	}
+
+	/* Unregister HID Information characteristic and its descriptor. */
+	chrc_unregister(attr++);
+	descriptor_unregister(attr++);
+
+	/* Unregister HID Control Point characteristic and its descriptor. */
+	chrc_unregister(attr++);
+	descriptor_unregister(attr++);
+
+	__ASSERT((attr - attr_start) == hids_obj->svc.attr_count,
+		 "Failed to unregister full list of attributes.");
+
+	/* Reset HIDS instance. */
+	memset(hids_obj, 0, sizeof(*hids_obj));
+	hids_obj->svc.attrs = attr_start;
+
+	return err;
 }
 
 
