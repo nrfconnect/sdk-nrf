@@ -76,41 +76,62 @@ extern "C" {
  *
  *  @param svc GATT service descriptor
  *  @param svc_uuid_init service UUID
- *
- *  @return Zero on success or (negative) error code otherwise.
  */
-int primary_svc_register(struct bt_gatt_service *const svc,
-			 struct bt_uuid const *const svc_uuid);
+void primary_svc_register(struct bt_gatt_service *svc,
+			  struct bt_uuid const *svc_uuid);
+
+/** @brief Unregisters Primary service descriptor.
+ *
+ *  @param attr attribute describing previously registered primary service
+ */
+void primary_svc_unregister(struct bt_gatt_attr const *attr);
 
 /** @brief Registers characteristic descriptor.
  *
  *  @param svc GATT service descriptor
  *  @param chrc characteristic descriptor
- *
- *  @return Zero on success or (negative) error code otherwise.
  */
-int chrc_register(struct bt_gatt_service *const svc,
-		  struct bt_gatt_chrc const *const chrc);
+void chrc_register(struct bt_gatt_service *svc,
+		   struct bt_gatt_chrc const *chrc);
+
+/** @brief Unregisters characteristic descriptor.
+ *
+ *  @param attr attribute describing previously registered characteristic
+ */
+void chrc_unregister(struct bt_gatt_attr const *attr);
 
 /** @brief Registers attribute descriptor.
  *
  *  @param svc GATT service descriptor
  *  @param descriptor attribute descriptor
- *
- *  @return Zero on success or (negative) error code otherwise.
  */
-int descriptor_register(struct bt_gatt_service *const svc,
-			struct bt_gatt_attr const *const descriptor);
+void descriptor_register(struct bt_gatt_service *svc,
+			 struct bt_gatt_attr const *descriptor);
+
+/** @brief Unregisters attribute descriptor.
+ *
+ *  @param attr attribute describing previously registered descriptor
+ */
+void descriptor_unregister(struct bt_gatt_attr const *attr);
 
 /** @brief Registers CCC descriptor.
  *
  *  @param svc GATT service descriptor
  *  @param ccc CCC descriptor
- *
- *  @return Zero on success or (negative) error code otherwise.
  */
-int ccc_register(struct bt_gatt_service *const svc,
-		 struct _bt_gatt_ccc const *const ccc);
+void ccc_register(struct bt_gatt_service *svc, struct _bt_gatt_ccc const *ccc);
+
+/** @brief Unregisters CCC descriptor.
+ *
+ *  @param attr attribute describing previously registered CCC descriptor
+ */
+void ccc_unregister(struct bt_gatt_attr const *attr);
+
+#if CONFIG_NRF_BT_STATISTICS_PRINT != 0
+/** @brief Prints basic module statistics containing pool size usage.
+ */
+void statistics_print(void);
+#endif
 
 #ifdef __cplusplus
 }

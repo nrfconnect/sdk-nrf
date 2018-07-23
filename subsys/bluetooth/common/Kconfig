@@ -46,4 +46,11 @@ config NRF_BT_CCC_POOL_SIZE
 	help
 	  Maximum number of CCCD descriptors that can be dynamically registered.
 
+config NRF_BT_STATISTICS_PRINT
+	bool
+	prompt "Enable functions for printing module statistics"
+	default n
+	help
+	  Enable functions for printing module statistics
+
 endif # NRF_BT_SVC_COMMON
