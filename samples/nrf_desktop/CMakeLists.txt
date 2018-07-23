@@ -20,7 +20,7 @@ set(NRF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 set(KCONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Kconfig)
 
 # Define configuration files.
-set(CONF_FILE "configuration/application.conf")
+set(CONF_FILE "configuration/app_${BOARD}.conf")
 list(APPEND CONF_FILE "configuration/nrfconnect.conf")
 list(APPEND CONF_FILE "configuration/zephyr.conf")
 
@@ -38,8 +38,18 @@ project("nRF52 Desktop"
 
 ################################################################################
 
+# Use key map specified in configuration.
+if(${CONFIG_DESKTOP_KEYMAP} STREQUAL "")
+	message(FATAL_ERROR "Keymap file must be specified")
+else()
+	target_sources(app PRIVATE
+                       ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_DESKTOP_KEYMAP})
+endif()
+
 # Include application events
 zephyr_library_include_directories(src/events)
+# Include configuration headers
+zephyr_library_include_directories(configuration)
 
 # NCS sources
 #add_subdirectory(${NRF_DIR} ${PROJECT_BINARY_DIR}/nrf)
