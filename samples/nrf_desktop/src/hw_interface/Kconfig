@@ -34,6 +34,12 @@ config HAS_DTS_TOUCHPAD
 	  This option specifies that the target platform includes touchpad
 	  sensor.
 
+config DESKTOP_KEYMAP
+	string "Keymap"
+	default ""
+	help
+	  This option specifies keymap.
+
 
 config DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
 	int "Board module log level"
