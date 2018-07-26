@@ -13,6 +13,7 @@
 #include <limits.h>
 
 #include <zephyr/types.h>
+#include <misc/dlist.h>
 #include <misc/util.h>
 
 #include "button_event.h"
@@ -39,6 +40,7 @@ struct item {
 
 /**@brief Enqueued HID state item. */
 struct item_event {
+	sys_dnode_t node;	/**< Event queue linked list node. */
 	struct item item;	/**< HID state item which has been enqueued. */
 	enum target_report tr;	/**< HID target report. */
 	u32_t timestamp;	/**< HID event timestamp. */
@@ -61,18 +63,16 @@ struct items {
 struct hid_state {
 	u32_t			token;
 	enum state		state;
-	u8_t			eventq_head;
-	u8_t			eventq_tail;
 	struct items            items[TARGET_REPORT_COUNT];
-	struct item_event	eventq[CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE];
-	u32_t			eventq_timestamp[CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE];
+	sys_dlist_t		eventq;
+	u8_t			eventq_len;
 };
 
 
 static struct k_work hid_report_work;
 static struct hid_state state;
 
-static void issue_report(enum target_report target_report, u16_t usage_id, s16_t report);
+static void report_send(enum target_report target_report);
 
 
 /**@brief Binary search. Input array must be already sorted.
@@ -138,68 +138,95 @@ static int usage_id_compare(const void *a, const void *b)
 	return (p_a->usage_id - p_b->usage_id);
 }
 
-/**@brief Get index of the next element in the event queue. */
-static u8_t eventq_next(u8_t idx)
+/**@brief Allocate memory for HID state event.
+ *
+ * Additional heap size needed for hid event queue:
+ * sizeof(struct item_event)*DESKTOP_HID_EVENT_QUEUE_SIZE = 20*12 = 240
+ *
+ * TODO: decide if we want to use heap (system allocated pool) or
+ * create separate pool here with K_MEM_POOL_DEFINE and k_mem_pool_alloc()
+ */
+struct item_event *hid_event_alloc(void)
 {
-	size_t size = ARRAY_SIZE(state.eventq);
-
-	return (idx + 1) % size;
+	return k_malloc(sizeof(struct item_event));
 }
 
-/**@brief Get distance between two elements in the event queue. */
-static unsigned int eventq_diff(u8_t idx1, u8_t idx2)
+/**@brief Free memory from HID state event. */
+void hid_event_free(struct item_event *event)
 {
-	size_t size = ARRAY_SIZE(state.eventq);
-
-	return (size + idx1 - idx2) % size;
+	k_free(event);
 }
 
-/**@brief Get number of elements in the event queue. */
-static unsigned int eventq_len(void)
+static void eventq_init(void)
 {
-	return eventq_diff(state.eventq_head, state.eventq_tail);
+	struct item_event *event;
+	struct item_event *tmp;
+
+	SYS_DLIST_FOR_EACH_CONTAINER_SAFE(&state.eventq, event, tmp, node) {
+		unsigned int key = irq_lock();
+		sys_dlist_remove(&event->node);
+		irq_unlock(key);
+
+		hid_event_free(event);
+	}
+
+	sys_dlist_init(&state.eventq);
+	state.eventq_len = 0;
 }
 
 /**@brief Check if the event queue is full. */
 static bool eventq_full(void)
 {
-	return (eventq_next(state.eventq_head)
-		== state.eventq_tail);
+	return (state.eventq_len >= CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE);
+}
+
+static struct item_event *eventq_container_of(sys_dnode_t *node)
+{
+	return CONTAINER_OF(node, struct item_event, node);
 }
 
 /**@brief Remove stale events from the event queue. */
 static void eventq_cleanup(u32_t timestamp)
 {
 	/* Find timed out events. */
-	u8_t first_valid;
+	sys_dnode_t *first_valid;
 
-	for (first_valid = state.eventq_tail;
-	     first_valid != state.eventq_head;
-	     first_valid = eventq_next(first_valid)) {
-		u32_t diff = timestamp - state.eventq[first_valid].timestamp;
+	SYS_DLIST_FOR_EACH_NODE(&state.eventq, first_valid) {
+		u32_t diff = timestamp - eventq_container_of(first_valid)->timestamp;
 
+		SYS_LOG_WRN("diff = %d", diff);
 		if (diff < CONFIG_DESKTOP_HID_REPORT_EXPIRATION) {
 			break;
 		}
 	}
 
 	/* Remove events but only if key up was generated for each removed key down. */
-	u8_t maxfound_idx = state.eventq_tail;
+	sys_dnode_t *maxfound = sys_dlist_peek_head(&state.eventq);
+	sys_dnode_t *i;
+	sys_dnode_t *tmp_safe;
 
-	for (u8_t i = state.eventq_tail; i != first_valid; i = eventq_next(i)) {
-		if (state.eventq[i].item.value > 0) {
+	SYS_DLIST_FOR_EACH_NODE_SAFE(&state.eventq, i, tmp_safe) {
+		if (i == first_valid) {
+			break;
+		}
+
+		if (eventq_container_of(i)->item.value > 0) {
 			/* Every key down must be paired with key up.
 			 * Set hit count to value as we just detected
 			 * first key down for this usage.
 			 */
-			unsigned int hit_count = state.eventq[i].item.value;
-			u8_t j;
+			unsigned int hit_count = eventq_container_of(i)->item.value;
+			sys_dnode_t *j = sys_dlist_peek_next(&state.eventq, i);
 
-			for (j = eventq_next(i);
-			     j != first_valid;
-			     j = eventq_next(j)) {
-				if (state.eventq[i].item.usage_id == state.eventq[j].item.usage_id) {
-					hit_count += state.eventq[j].item.value;
+			SYS_DLIST_ITERATE_FROM_NODE(&state.eventq, j) {
+				if (j == first_valid) {
+					break;
+				}
+
+				if (eventq_container_of(i)->item.usage_id ==
+				    eventq_container_of(j)->item.usage_id) {
+					hit_count += eventq_container_of(j)->item.value;
+
 					if (hit_count == 0) {
 						/* When the hit count
 						 * reaches zero, all
@@ -216,19 +243,41 @@ static void eventq_cleanup(u32_t timestamp)
 				break;
 			}
 
-			if (eventq_diff(j, state.eventq_tail) >
-			    eventq_diff(maxfound_idx, state.eventq_tail)) {
-				maxfound_idx = j;
+			sys_dnode_t *tmp = maxfound;
+			SYS_DLIST_ITERATE_FROM_NODE(&state.eventq, tmp) {
+				if (j == NULL) {
+					break;
+				}
+
+				if (tmp == j) {
+					maxfound = j;
+					break;
+				}
 			}
 		}
 
-		if (i == maxfound_idx) {
+		if (i == maxfound) {
 			/* All events up to this point have pairs and can be deleted. */
-			SYS_LOG_WRN("%s(): WARNING: %u stale events removed from the queue!",
-					__func__,
-					eventq_diff(i, state.eventq_tail) + 1);
-			state.eventq_tail = eventq_next(i);
-			maxfound_idx = state.eventq_tail;
+			sys_dnode_t *tmp;
+			sys_dnode_t *tmp_safe_inner;
+			size_t cnt = 0;
+			SYS_DLIST_FOR_EACH_NODE_SAFE(&state.eventq, tmp, tmp_safe_inner) {
+				unsigned int key = irq_lock();
+				sys_dlist_remove(tmp);
+				irq_unlock(key);
+
+				hid_event_free(eventq_container_of(tmp));
+				cnt++;
+
+				if (tmp == i) {
+					break;
+				}
+			}
+
+			state.eventq_len -= cnt;
+			maxfound = sys_dlist_peek_head(&state.eventq);
+
+			SYS_LOG_WRN("%u stale events removed from the queue!", cnt);
 		}
 	}
 }
@@ -236,6 +285,8 @@ static void eventq_cleanup(u32_t timestamp)
 /**@brief Update value linked with given usage. */
 static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 {
+	SYS_LOG_WRN("value_set");
+
 	const u8_t prev_item_count = items->item_count;
 
 	bool update_needed = false;
@@ -394,21 +445,31 @@ static void report_issued(struct k_work *work)
 	__ASSERT_NO_MSG(state.state == HID_STATE_CONNECTED_BUSY);
 
 	while (true) {
-		if (eventq_len() == 0) {
-			/* Module is connected but there are no events to dequeue.
-			 * Switch to idle state.
+		if (sys_dlist_is_empty(&state.eventq)) {
+			/* Module is connected but there are no events to
+			 * dequeue. Switch to idle state.
 			 */
 			state.state = HID_STATE_CONNECTED_IDLE;
 			break;
 		}
 
 		/* There are enqueued events to handle. */
-		struct item_event *event = &state.eventq[state.eventq_tail];
+		unsigned int key = irq_lock();
+		sys_dnode_t *node = sys_dlist_get(&state.eventq);
+		irq_unlock(key);
+		state.eventq_len--;
 
-		state.eventq_tail = eventq_next(state.eventq_tail);
-		if (value_set(&(state.items[event->tr]), event->item.usage_id, event->item.value)) {
+		struct item_event *event = CONTAINER_OF(node, struct item_event, node);
+
+		bool update_needed = value_set(&(state.items[event->tr]),
+					       event->item.usage_id,
+					       event->item.value);
+
+		hid_event_free(event);
+
+		if (update_needed) {
 			/* Some item was updated. Report must be issued. */
-			issue_report(event->tr, event->item.usage_id, event->item.value);
+			report_send(event->tr);
 			break;
 		}
 
@@ -417,8 +478,7 @@ static void report_issued(struct k_work *work)
 }
 
 /**@brief Request report sending. */
-static void issue_report(enum target_report target_report,
-			 u16_t usage_id, s16_t report)
+static void report_send(enum target_report target_report)
 {
 	switch (target_report) {
 	case TARGET_REPORT_KEYBOARD:
@@ -430,6 +490,9 @@ static void issue_report(enum target_report target_report,
 		break;
 
 	case TARGET_REPORT_MPLAYER:
+		/* TODO: create consumer control report */
+		break;
+
 	case TARGET_REPORT_MOUSE_WHEEL:
 	case TARGET_REPORT_MOUSE_PAN:
 	default:
@@ -448,12 +511,12 @@ static void issue_report(enum target_report target_report,
 
 static void connect(void)
 {
-	if (eventq_len() > 0) {
+	if (!sys_dlist_is_empty(&state.eventq)) {
 		/* Remove all stale events from the queue. */
 		eventq_cleanup(MSEC(_sys_clock_tick_count));
 	}
 
-	if (eventq_len() == 0) {
+	if (sys_dlist_is_empty(&state.eventq)) {
 		/* No events left on the queue - connect but stay idle. */
 		state.state = HID_STATE_CONNECTED_IDLE;
 	} else {
@@ -473,8 +536,7 @@ static void disconnect(void)
 
 		/* Clear state and queue. */
 		memset(state.items, 0, sizeof(state.items));
-		state.eventq_head = 0;
-		state.eventq_tail = 0;
+		eventq_init();
 
 		/* Disconnection starts a new state session. Queue is cleared and event collection
 		 * is started. When a connection happens, the same queue is used until all collected
@@ -500,52 +562,62 @@ static void enqueue(enum target_report target_report, u16_t usage_id, s16_t repo
 {
 	eventq_cleanup(MSEC(_sys_clock_tick_count));
 
-	if (eventq_full() != false) {
+	if (eventq_full()) {
 		if (state.state == HID_STATE_DISCONNECTED) {
 			/* In disconnected state no items are recorded yet.
 			 * Try to remove queued items starting from the oldest one.
 			 */
-			for (u8_t i = state.eventq_tail;
-				 i != state.eventq_head;
-				 i = eventq_next(i)) {
+			sys_dnode_t *i;
+			SYS_DLIST_FOR_EACH_NODE(&state.eventq, i) {
 				/* Initial cleanup was done above. Queue will not contain events
 				 * with expired timestamp.
 				 */
-				u32_t timestamp = (state.eventq[i].timestamp + CONFIG_DESKTOP_HID_REPORT_EXPIRATION);
+				u32_t timestamp = (eventq_container_of(i)->timestamp + CONFIG_DESKTOP_HID_REPORT_EXPIRATION);
 
 				eventq_cleanup(timestamp);
-				if (eventq_full() == false) {
+				if (!eventq_full()) {
 					/* At least one element was removed from the queue.
 					 * Do not continue list traverse, content was modified!
 					 */
+
 					break;
 				}
 			}
 		}
-
-		if (eventq_full() != false) {
+		if (eventq_full()) {
 			/* To maintain the sanity of HID state, clear all recorded events and items. */
-			SYS_LOG_WRN("%s(): WARNING: Queue is full, all events are dropped!", __func__);
+			SYS_LOG_WRN("Queue is full, all events are dropped!");
 			memset(state.items, 0, sizeof(state.items));
-			state.eventq_head = 0;
-			state.eventq_tail = 0;
+			eventq_init();
 		}
 	}
 
+	struct item_event *event = hid_event_alloc();
+
+	if (!event) {
+		SYS_LOG_WRN("Failed to allocate HID event");
+		return;
+	}
+
+	event->item.usage_id = usage_id;
+	event->item.value = report,
+	event->tr = target_report,
+	event->timestamp = MSEC(_sys_clock_tick_count),
+
 	/* Add a new event to the queue. */
-	state.eventq[state.eventq_head].item.usage_id = usage_id;
-	state.eventq[state.eventq_head].item.value = report;
-	state.eventq[state.eventq_head].tr = target_report;
-	state.eventq[state.eventq_head].timestamp = MSEC(_sys_clock_tick_count);
-	state.eventq_head = eventq_next(state.eventq_head);
+	unsigned int key = irq_lock();
+	sys_dlist_append(&state.eventq, &event->node);
+	irq_unlock(key);
+
+	state.eventq_len++;
 }
 
 /**
  * @brief Function for updating the value linked to the HID usage.
  *
- * The function updates the HID state and triggers a report generation event
- * if BLE is connected. If a connection was not made yet, information about
- * usage change may be stored in a queue if usage is queueable.
+ * The function updates the HID state and sends a report if BLE is connected.
+ * If a connection was not made yet, information about usage change may be
+ * stored in a queue if usage is queueable.
  *
  * @param[in] map	HID keymap containing the usage to update.
  * @param[in] report	Value linked with the usage.
@@ -556,7 +628,7 @@ static void update(struct hid_keymap *map, s16_t report)
 	case HID_STATE_CONNECTED_IDLE:
 		/* Update state and issue report generation event. */
 		if (value_set(&state.items[map->target_report], map->usage_id, report)) {
-			issue_report(map->target_report, map->usage_id, report);
+			report_send(map->target_report);
 		}
 		break;
 
@@ -583,6 +655,8 @@ static void init(void)
 			}
 		}
 	}
+
+	eventq_init();
 
 	k_work_init(&hid_report_work,
 		    report_issued);
