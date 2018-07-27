@@ -21,7 +21,7 @@ target_sources_ifdef(CONFIG_HAS_DTS_PMW3360 app PRIVATE
 
 target_sources_ifdef(CONFIG_BOARD_NRF52_PCA63519 app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/board_pca63519.c
-		     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons_pca63519.c)
+                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons_pca63519.c)
 
 target_sources_ifdef(CONFIG_BOARD_NRF52840_PCA20041 app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/board_pca20041.c)
