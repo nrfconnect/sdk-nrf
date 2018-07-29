@@ -121,14 +121,7 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
+add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
 
-# Ensure that Zephyr build happens first
-add_dependencies(nrf-doxy html)
-add_dependencies(nrf-content html)
-add_dependencies(nrf-kconfig html)
-add_dependencies(nrf-html html nrf-doxy nrf-content nrf-kconfig)
-add_custom_target(
-  nrf
-)
+add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
-
