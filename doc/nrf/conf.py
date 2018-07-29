@@ -40,6 +40,9 @@ if "NRF_BUILD" not in os.environ:
     sys.exit("$NRF_BUILD environment variable undefined.")
 NRF_BUILD = os.path.abspath(os.environ["NRF_BUILD"])
 
+if "NRF_RST_SRC" not in os.environ:
+    sys.exit("$NRF_RST_SRC environment variable undefined.")
+NRF_RST_SRC = os.path.abspath(os.environ["NRF_RST_SRC"])
 
 # -- General configuration ------------------------------------------------
 
@@ -144,7 +147,7 @@ html_show_copyright = True
 html_show_license = True
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'zephyr': ('{}/html'.format(ZEPHYR_BUILD), None)}
+intersphinx_mapping = {'zephyr': (os.path.join('{}'.format(os.path.relpath(ZEPHYR_BUILD, os.path.join(NRF_BUILD, 'html'))), 'html'), os.path.join('{}'.format(os.path.relpath(ZEPHYR_BUILD, NRF_RST_SRC)), 'html', 'objects.inv'))}
 
 breathe_projects = {
     "nrf": "{}/doxygen/xml".format(NRF_BUILD),

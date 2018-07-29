@@ -115,6 +115,7 @@ add_custom_target(
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
   NRF_BASE=${NRF_BASE}
   NRF_BUILD=${NRF_BINARY_DIR}
+  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${ALLSPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${NRF_BINARY_DIR}/html
   # Merge the Doxygen and Sphinx logs into a single file
   COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
