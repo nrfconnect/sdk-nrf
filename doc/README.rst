@@ -95,9 +95,11 @@ folder, here are the commands to generate the html content locally:
 
    # Use cmake to configure a Ninja-based build system:
    cmake -GNinja ..
-   # Now run ninja on the generated build system:
+   # Now run ninja to build the Zephyr documentation:
+   ninja zephyr
+   # And then run ninja to build the nRF documentation:
    ninja nrf
-   # If you modify or add .rst files, run ninja again:
+   # If you modify or add .rst files in the nRF repository, run ninja again:
    ninja nrf
 
 Depending on your development system, it will take up to 15 minutes to
@@ -122,8 +124,9 @@ the source tree:
    # Use cmake to configure a Ninja-based build system:
    cmake -GNinja -Bbuild/ -Hncs/nrf/doc
    # Now run ninja on the generated build system:
+   ninja -C build/ zephyr
    ninja -C build/ nrf
-   # If you modify or add .rst files, run ninja again:
+   # If you modify or add .rst files in the nRF repository, run ninja again:
    ninja -C build/ nrf
 
 If you want to build the documentation from scratch just delete the contents
