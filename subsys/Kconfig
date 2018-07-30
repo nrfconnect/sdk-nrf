@@ -12,6 +12,8 @@ rsource "enhanced_shockburst/Kconfig"
 
 rsource "event_manager/Kconfig"
 
+rsource "nfc/Kconfig"
+
 rsource "profiler/Kconfig"
 
 endmenu
