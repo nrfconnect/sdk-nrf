@@ -13,7 +13,7 @@
 #include <limits.h>
 
 #include <zephyr/types.h>
-#include <misc/dlist.h>
+#include <misc/slist.h>
 #include <misc/util.h>
 
 #include "button_event.h"
@@ -40,7 +40,7 @@ struct item {
 
 /**@brief Enqueued HID state item. */
 struct item_event {
-	sys_dnode_t node;	/**< Event queue linked list node. */
+	sys_snode_t node;	/**< Event queue linked list node. */
 	struct item item;	/**< HID state item which has been enqueued. */
 	enum target_report tr;	/**< HID target report. */
 	u32_t timestamp;	/**< HID event timestamp. */
@@ -63,7 +63,7 @@ struct items {
 struct hid_state {
 	enum state		state;
 	struct items		items[TARGET_REPORT_COUNT];
-	sys_dlist_t		eventq;
+	sys_slist_t		eventq;
 	u8_t			eventq_len;
 };
 
@@ -137,18 +137,18 @@ static int usage_id_compare(const void *a, const void *b)
 	return (p_a->usage_id - p_b->usage_id);
 }
 
-static void event_reset(void)
+static void eventq_reset(void)
 {
 	struct item_event *event;
 	struct item_event *tmp;
 
-	SYS_DLIST_FOR_EACH_CONTAINER_SAFE(&state.eventq, event, tmp, node) {
-		sys_dlist_remove(&event->node);
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&state.eventq, event, tmp, node) {
+		sys_slist_remove(&state.eventq, NULL, &event->node);
 
 		k_free(event);
 	}
 
-	sys_dlist_init(&state.eventq);
+	sys_slist_init(&state.eventq);
 	state.eventq_len = 0;
 }
 
@@ -158,18 +158,89 @@ static bool eventq_full(void)
 	return (state.eventq_len >= CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE);
 }
 
-static struct item_event *eventq_container_of(sys_dnode_t *node)
+static sys_snode_t *eventq_region_find(sys_snode_t *first_valid, sys_snode_t *current)
 {
-	return CONTAINER_OF(node, struct item_event, node);
+	sys_snode_t *maxfound = sys_slist_peek_head(&state.eventq);
+	const struct item current_item = (CONTAINER_OF(current, struct item_event, node)->item);
+
+	if (current_item.value > 0) {
+		/* Every key down must be paired with key up.
+		 * Set hit count to value as we just detected
+		 * first key down for this usage.
+		 */
+		unsigned int hit_count = current_item.value;
+		sys_snode_t *j = sys_slist_peek_next(current);
+
+		SYS_SLIST_ITERATE_FROM_NODE(&state.eventq, j) {
+			if (j == first_valid) {
+				break;
+			}
+
+			if (current_item.usage_id ==
+			    CONTAINER_OF(j, struct item_event, node)->item.usage_id) {
+				hit_count += CONTAINER_OF(j, struct item_event, node)->item.value;
+
+				if (hit_count == 0) {
+					/* When the hit count reaches zero, all
+					 * events with this usage are paired.
+					 */
+					break;
+				}
+			}
+		}
+
+		if (j == first_valid) {
+			/* Pair not found. */
+			return maxfound;
+		}
+
+		sys_snode_t *tmp = maxfound;
+		SYS_SLIST_ITERATE_FROM_NODE(&state.eventq, tmp) {
+			if (!j) {
+				break;
+			}
+
+			if (tmp == j) {
+				/* We can remove events up to this point. */
+				maxfound = j;
+				break;
+			}
+		}
+	}
+
+	return maxfound;
 }
+
+static void eventq_region_purge(sys_snode_t *last_to_purge)
+{
+	sys_snode_t *tmp;
+	sys_snode_t *tmp_safe;
+	size_t cnt = 0;
+
+	SYS_SLIST_FOR_EACH_NODE_SAFE(&state.eventq, tmp, tmp_safe) {
+		sys_slist_remove(&state.eventq, NULL, tmp);
+
+		k_free(CONTAINER_OF(tmp, struct item_event, node));
+		cnt++;
+
+		if (tmp == last_to_purge) {
+			break;
+		}
+	}
+
+	state.eventq_len -= cnt;
+
+	SYS_LOG_WRN("%u stale events removed from the queue!", cnt);
+}
+
 
 /**@brief Remove stale events from the event queue. */
 static void eventq_cleanup(u32_t timestamp)
 {
 	/* Find timed out events. */
-	sys_dnode_t *first_valid;
+	sys_snode_t *first_valid;
 
-	SYS_DLIST_FOR_EACH_NODE(&state.eventq, first_valid) {
+	SYS_SLIST_FOR_EACH_NODE(&state.eventq, first_valid) {
 		u32_t diff = timestamp - CONTAINER_OF(
 			first_valid, struct item_event, node)->timestamp;
 
@@ -181,89 +252,21 @@ static void eventq_cleanup(u32_t timestamp)
 	/* Remove events but only if key up was generated for each removed
 	 * key down.
 	 */
-	sys_dnode_t *maxfound = sys_dlist_peek_head(&state.eventq);
-	sys_dnode_t *i;
-	sys_dnode_t *tmp_safe;
+	sys_snode_t *i;
+	sys_snode_t *tmp_safe;
 
-	SYS_DLIST_FOR_EACH_NODE_SAFE(&state.eventq, i, tmp_safe) {
+	SYS_SLIST_FOR_EACH_NODE_SAFE(&state.eventq, i, tmp_safe) {
 		if (i == first_valid) {
 			break;
 		}
 
-		if (eventq_container_of(i)->item.value > 0) {
-			/* Every key down must be paired with key up.
-			 * Set hit count to value as we just detected
-			 * first key down for this usage.
-			 */
-			unsigned int hit_count =
-				eventq_container_of(i)->item.value;
-			sys_dnode_t *j = sys_dlist_peek_next(&state.eventq, i);
-
-			SYS_DLIST_ITERATE_FROM_NODE(&state.eventq, j) {
-				if (j == first_valid) {
-					break;
-				}
-
-				if (eventq_container_of(i)->item.usage_id ==
-				    eventq_container_of(j)->item.usage_id) {
-					hit_count += eventq_container_of(j)->item.value;
-
-					if (hit_count == 0) {
-						/* When the hit count
-						 * reaches zero, all
-						 * events with this usage
-						 * are paired.
-						 */
-						break;
-					}
-				}
-			}
-
-			if (j == first_valid) {
-				/* Pair not found. */
-				break;
-			}
-
-			sys_dnode_t *tmp = maxfound;
-			SYS_DLIST_ITERATE_FROM_NODE(&state.eventq, tmp) {
-				if (j == NULL) {
-					break;
-				}
-
-				if (tmp == j) {
-					maxfound = j;
-					break;
-				}
-			}
-		}
+		sys_snode_t *maxfound = eventq_region_find(first_valid, i);
 
 		if (i == maxfound) {
 			/* All events up to this point have pairs and can
 			 * be deleted.
 			 */
-			sys_dnode_t *tmp;
-			sys_dnode_t *tmp_safe_inner;
-			size_t cnt = 0;
-			SYS_DLIST_FOR_EACH_NODE_SAFE(&state.eventq,
-						     tmp,
-						     tmp_safe_inner) {
-				unsigned int key = irq_lock();
-				sys_dlist_remove(tmp);
-				irq_unlock(key);
-
-				hid_event_free(eventq_container_of(tmp));
-				cnt++;
-
-				if (tmp == i) {
-					break;
-				}
-			}
-
-			state.eventq_len -= cnt;
-			maxfound = sys_dlist_peek_head(&state.eventq);
-
-			SYS_LOG_WRN("%u stale events removed from the queue!",
-				    cnt);
+			eventq_region_purge(maxfound);
 		}
 	}
 }
@@ -360,19 +363,19 @@ static void send_report_keyboard(void)
 		}
 
 		size_t cnt = 0;
+		const size_t max = ARRAY_SIZE(state.items[TARGET_REPORT_KEYBOARD].item);
 
 		for (size_t i = 0;
-		     (i < ARRAY_SIZE(state.items[TARGET_REPORT_KEYBOARD].item))
-		     && (cnt < ARRAY_SIZE(event->keys));
-		     i++) {
-			if (state.items[TARGET_REPORT_KEYBOARD].item[i].value) {
-
-				event->keys[cnt] = state.items[TARGET_REPORT_KEYBOARD].item[i].usage_id;
-				cnt++;
+		     (i < max) && (cnt < ARRAY_SIZE(event->keys));
+		     i++, cnt++) {
+			if (state.items[TARGET_REPORT_KEYBOARD].item[max - i - 1].value) {
+				event->keys[cnt] = state.items[TARGET_REPORT_KEYBOARD].item[max - i - 1].usage_id;
+			} else {
+				break;
 			}
 		}
 
-		/* fill the rest of report with zeros */
+		/* Fill the rest of report with zeros. */
 		for (; cnt < ARRAY_SIZE(event->keys); cnt++) {
 			event->keys[cnt] = 0;
 		}
@@ -401,6 +404,7 @@ static void send_report_mouse_buttons(void)
 			if (state.items[TARGET_REPORT_MOUSE_BUTTON].item[i].value) {
 				__ASSERT_NO_MSG(state.items[TARGET_REPORT_MOUSE_BUTTON].item[i].usage_id <= 8);
 				u8_t mask = 1 << (state.items[TARGET_REPORT_MOUSE_BUTTON].item[i].usage_id - 1);
+
 				event->button_bm |= mask;
 			}
 		}
@@ -435,9 +439,10 @@ static void send_report_mouse_xy(const s16_t dx, const s16_t dy)
 static void report_issued(struct k_work *work)
 {
 	__ASSERT_NO_MSG(state.state == HID_STATE_CONNECTED_BUSY);
+	bool update_needed;
 
-	while (true) {
-		if (sys_dlist_is_empty(&state.eventq)) {
+	do {
+		if (sys_slist_is_empty(&state.eventq)) {
 			/* Module is connected but there are no events to
 			 * dequeue. Switch to idle state.
 			 */
@@ -446,7 +451,7 @@ static void report_issued(struct k_work *work)
 		}
 
 		/* There are enqueued events to handle. */
-		sys_dnode_t *node = sys_dlist_get(&state.eventq);
+		sys_snode_t *node = sys_slist_get(&state.eventq);
 
 		state.eventq_len--;
 
@@ -454,20 +459,19 @@ static void report_issued(struct k_work *work)
 							struct item_event,
 							node);
 
-		bool update_needed = value_set(&(state.items[event->tr]),
+		update_needed = value_set(&(state.items[event->tr]),
 					       event->item.usage_id,
 					       event->item.value);
-
-		k_free(event);
 
 		if (update_needed) {
 			/* Some item was updated. Report must be issued. */
 			report_send(event->tr);
-			break;
 		}
 
+		k_free(event);
+
 		/* No item was changed. Try next event. */
-	}
+	} while (!update_needed);
 }
 
 /**@brief Request report sending. */
@@ -504,12 +508,12 @@ static void report_send(enum target_report target_report)
 
 static void connect(void)
 {
-	if (!sys_dlist_is_empty(&state.eventq)) {
+	if (!sys_slist_is_empty(&state.eventq)) {
 		/* Remove all stale events from the queue. */
 		eventq_cleanup(MSEC(_sys_clock_tick_count));
 	}
 
-	if (sys_dlist_is_empty(&state.eventq)) {
+	if (sys_slist_is_empty(&state.eventq)) {
 		/* No events left on the queue - connect but stay idle. */
 		state.state = HID_STATE_CONNECTED_IDLE;
 	} else {
@@ -536,7 +540,7 @@ static void disconnect(void)
 
 		/* Clear state and queue. */
 		memset(state.items, 0, sizeof(state.items));
-		event_reset();
+		eventq_reset();
 
 		/* Cancel all in-flight report sending tasks. */
 		k_delayed_work_cancel(&hid_report_work);
@@ -564,12 +568,14 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t report)
 			 * Try to remove queued items starting from the
 			 * oldest one.
 			 */
-			sys_dnode_t *i;
-			SYS_DLIST_FOR_EACH_NODE(&state.eventq, i) {
+			sys_snode_t *i;
+
+			SYS_SLIST_FOR_EACH_NODE(&state.eventq, i) {
 				/* Initial cleanup was done above. Queue will
 				 * not contain events with expired timestamp.
 				 */
 				u32_t timestamp = (CONTAINER_OF(i, struct item_event, node)->timestamp + CONFIG_DESKTOP_HID_REPORT_EXPIRATION);
+
 				eventq_cleanup(timestamp);
 				if (!eventq_full()) {
 					/* At least one element was removed
@@ -587,7 +593,7 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t report)
 			 */
 			SYS_LOG_WRN("Queue is full, all events are dropped!");
 			memset(state.items, 0, sizeof(state.items));
-			event_reset();
+			eventq_reset();
 		}
 	}
 
@@ -604,7 +610,7 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t report)
 	event->timestamp = MSEC(_sys_clock_tick_count);
 
 	/* Add a new event to the queue. */
-	sys_dlist_append(&state.eventq, &event->node);
+	sys_slist_append(&state.eventq, &event->node);
 
 	state.eventq_len++;
 }
@@ -655,7 +661,7 @@ static void init(void)
 		}
 	}
 
-	event_reset();
+	eventq_reset();
 
 	k_delayed_work_init(&hid_report_work, report_issued);
 }
