@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2017 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menu "NDEF"
+
+config NFC_NDEF_MSG_ENABLED
+	bool
+	prompt "NDEF Message generator module"
+	default n
+	help
+		Enable NFC NDEF Message generator module
+
+config NFC_NDEF_RECORD_ENABLED
+	bool
+	prompt "NDEF Record generator module"
+	default n
+	help
+		Enable NFC NDEF Record generator module
+
+config NFC_NDEF_TEXT_RECORD_ENABLED
+	bool
+	prompt "Encoding data for a text record for NFC Tag"
+	default n
+	help
+		Enable Encoding data for a text record for NFC Tag
+
+config NFC_NDEF_URI_MSG_ENABLED
+	bool
+	prompt "NDEF URI messages generator module"
+	default n
+	help
+		Enable NFC NDEF URI Record generator module
+
+config NFC_NDEF_URI_REC_ENABLED
+	bool
+	prompt "NDEF URI record generator module"
+	default n
+	help
+		Enable NFC NDEF URI Record generator module
+
+choice TAG_TYPE
+	prompt "Tag Type"
+config TYPE_2_TAG
+	bool
+	prompt "2"
+config TYPE_4_TAG
+	bool
+	prompt "4"
+endchoice
+
+config NFC_NDEF_MSG_TAG_TYPE
+	int
+	default 2 if TYPE_2_TAG
+	default 4 if TYPE_4_TAG
+	default 2
+
+config NDEF_FILE_SIZE
+	int
+	prompt "NDEF file maximal size"
+	default 1024
+	help
+		Set maximal NDEF file size
+endmenu
