@@ -180,7 +180,7 @@ Linking between doc sets
 Doxygen
 =======
 
-.. doxygenfunction:: ble_advertising_on_ble_evt
+.. doxygenfunction:: event_manager_init
    :project: nrf
 
 See `the breathe documentation <https://breathe.readthedocs.io/en/latest/directives.html#directives>`_ for information about what you can link to.

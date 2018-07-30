@@ -9,6 +9,14 @@ Nordic Semiconductor provides additional examples that specifically target Nordi
 
 .. toctree::
    :maxdepth: 1
+   :caption: Bluetooth samples:
    :glob:
 
-   _samples/*/*/README
+   ../../samples/bluetooth/*/README
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Other samples:
+   :glob:
+
+   ../../samples/*/README

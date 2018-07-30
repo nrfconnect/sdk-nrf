@@ -75,12 +75,12 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRF_BASE}
   ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT} samples boards
+  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT} samples boards include
   # Copy the .rst files in samples/ and boards/ to the doc/nrf folder inside rst
   COMMAND ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRF_BASE}
   ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT}/doc/nrf samples boards
+  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT}/doc/nrf samples boards include
 
   WORKING_DIRECTORY ${NRF_DOC_DIR}
 )
