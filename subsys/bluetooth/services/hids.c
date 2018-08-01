@@ -56,7 +56,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 	struct protocol_mode *pm = (struct protocol_mode *) attr->user_data;
 
 	u8_t const *new_pm = (u8_t const *) buf;
-	u8_t cur_pm = pm->value;
+	u8_t *cur_pm = &pm->value;
 
 	if (offset + len > sizeof(u8_t)) {
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
@@ -77,7 +77,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
 	}
 
-	memcpy(&cur_pm + offset, new_pm, len);
+	memcpy(cur_pm + offset, new_pm, len);
 	return len;
 }
 
