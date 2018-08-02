@@ -133,8 +133,7 @@ static ssize_t hids_inp_rep_ref_read(struct bt_conn *conn,
 	report_ref[0] = *((u8_t *)attr->user_data); /* Report ID */
 	report_ref[1] = HIDS_INPUT;
 
-	return bt_gatt_attr_read(conn, attr, buf, len, offset,
-				 report_ref,
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, report_ref,
 				 sizeof(report_ref));
 }
 
@@ -145,7 +144,8 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 {
 	SYS_LOG_DBG("Reading from Output Report characteristic.");
 
-	struct hids_outp_rep *rep = (struct hids_outp_rep *) attr->user_data;
+	struct hids_outp_feat_rep *rep =
+		(struct hids_outp_feat_rep *) attr->user_data;
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, rep->buff.data,
 				 rep->buff.size);
@@ -159,7 +159,8 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 {
 	SYS_LOG_DBG("Writing to Output Report characteristic.");
 
-	struct hids_outp_rep *rep = (struct hids_outp_rep *) attr->user_data;
+	struct hids_outp_feat_rep *rep =
+		(struct hids_outp_feat_rep *) attr->user_data;
 
 	if (offset + len > sizeof(rep->buff.size)) {
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
@@ -184,8 +185,59 @@ static ssize_t hids_outp_rep_ref_read(struct bt_conn *conn,
 	report_ref[0] = *((u8_t *)attr->user_data); /* Report ID */
 	report_ref[1] = HIDS_OUTPUT;
 
-	return bt_gatt_attr_read(conn, attr, buf, len, offset,
-				 report_ref,
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, report_ref,
+				 sizeof(report_ref));
+}
+
+
+static ssize_t hids_feat_rep_read(struct bt_conn *conn,
+				  struct bt_gatt_attr const *attr,
+				  void *buf, u16_t len, u16_t offset)
+{
+	SYS_LOG_DBG("Reading from Feature Report characteristic.");
+
+	struct hids_outp_feat_rep *rep =
+		(struct hids_outp_feat_rep *) attr->user_data;
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, rep->buff.data,
+				 rep->buff.size);
+}
+
+
+static ssize_t hids_feat_rep_write(struct bt_conn *conn,
+				   struct bt_gatt_attr const *attr,
+				   void const *buf, u16_t len,
+				   u16_t offset, u8_t flags)
+{
+	SYS_LOG_DBG("Writing to Feature Report characteristic.");
+
+	struct hids_outp_feat_rep *rep =
+		(struct hids_outp_feat_rep *) attr->user_data;
+
+	if (offset + len > sizeof(rep->buff.size)) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+	memcpy(rep->buff.data + offset, buf, len);
+
+	if (rep->handler) {
+		rep->handler(&rep->buff);
+	}
+	return len;
+}
+
+
+static ssize_t hids_feat_rep_ref_read(struct bt_conn *conn,
+				      struct bt_gatt_attr const *attr,
+				      void *buf, u16_t len, u16_t offset)
+{
+	SYS_LOG_DBG("Reading from Feature Report Reference descriptor.");
+
+	u8_t report_ref[2];
+
+	report_ref[0] = *((u8_t *)attr->user_data); /* Report ID */
+	report_ref[1] = HIDS_FEATURE;
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, report_ref,
 				 sizeof(report_ref));
 }
 
@@ -404,7 +456,7 @@ static void hids_input_reports_register(struct hids *hids_obj,
 			CONFIG_NRF_BT_HIDS_INPUT_REP_MAX);
 
 	memcpy(&hids_obj->inp_rep_group, &hids_init->inp_rep_group_init,
-		sizeof(struct hids_inp_rep_group));
+		sizeof(hids_obj->inp_rep_group));
 
 	for (u8_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
 		struct hids_inp_rep *hids_inp_rep =
@@ -441,10 +493,10 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 			CONFIG_NRF_BT_HIDS_OUTPUT_REP_MAX);
 
 	memcpy(&hids_obj->outp_rep_group, &hids_init->outp_rep_group_init,
-		sizeof(struct hids_outp_rep_group));
+		sizeof(hids_obj->outp_rep_group));
 
 	for (u8_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
-		struct hids_outp_rep *hids_outp_rep =
+		struct hids_outp_feat_rep *hids_outp_rep =
 			&hids_obj->outp_rep_group.reports[i];
 
 		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_REPORT,
@@ -468,6 +520,42 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 						       &hids_outp_rep->id));
 	}
 }
+
+
+static void hids_feat_reports_register(struct hids *hids_obj,
+				       struct hids_init const *const hids_init)
+{
+	__ASSERT_NO_MSG(hids_init->feat_rep_group_init.cnt <=
+			CONFIG_NRF_BT_HIDS_FEATURE_REP_MAX);
+
+	memcpy(&hids_obj->feat_rep_group, &hids_init->feat_rep_group_init,
+		sizeof(hids_obj->feat_rep_group));
+
+	for (u8_t i = 0; i < hids_obj->feat_rep_group.cnt; i++) {
+		struct hids_outp_feat_rep *hids_feat_rep =
+			&hids_obj->feat_rep_group.reports[i];
+
+		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_REPORT,
+			      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE);
+
+		hids_feat_rep->att_ind = hids_obj->svc.attr_count;
+
+		DESCRIPTOR_REGISTER(&hids_obj->svc,
+				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
+						       (BT_GATT_PERM_READ |
+						       BT_GATT_PERM_WRITE),
+						       hids_feat_rep_read,
+						       hids_feat_rep_write,
+						       hids_feat_rep));
+		DESCRIPTOR_REGISTER(&hids_obj->svc,
+				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF,
+						       BT_GATT_PERM_READ,
+						       hids_feat_rep_ref_read,
+						       NULL,
+						       &hids_feat_rep->id));
+	}
+}
+
 
 int hids_init(struct hids *hids_obj,
 	      struct hids_init const *const hids_init_obj)
@@ -498,6 +586,9 @@ int hids_init(struct hids *hids_obj,
 
 	/* Register Output Report characteristics. */
 	hids_outp_reports_register(hids_obj, hids_init_obj);
+
+	/* Register Feature Report characteristics. */
+	hids_feat_reports_register(hids_obj, hids_init_obj);
 
 	/* Register Report Map characteristic and its descriptor. */
 	memcpy(&hids_obj->rep_map, &hids_init_obj->rep_map,
@@ -638,6 +729,13 @@ int hids_uninit(struct hids *hids_obj)
 
 	/* Unregister Output Report characteristics. */
 	for (u8_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
+		chrc_unregister(attr++);
+		descriptor_unregister(attr++);
+		descriptor_unregister(attr++);
+	}
+
+	/* Unregister Feature Report characteristics. */
+	for (u8_t i = 0; i < hids_obj->feat_rep_group.cnt; i++) {
 		chrc_unregister(attr++);
 		descriptor_unregister(attr++);
 		descriptor_unregister(attr++);

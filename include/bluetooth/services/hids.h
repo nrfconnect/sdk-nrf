@@ -84,8 +84,8 @@ struct hids_inp_rep {
 	hids_notif_handler_t handler;
 };
 
-/* Output Report descriptor. */
-struct hids_outp_rep {
+/* Output/Feature Report descriptor. */
+struct hids_outp_feat_rep {
 	struct hids_rep buff;
 	u8_t id;
 	u8_t att_ind;
@@ -123,7 +123,13 @@ struct hids_inp_rep_group {
 
 /* Collection of all Output Reports. */
 struct hids_outp_rep_group {
-	struct hids_outp_rep reports[CONFIG_NRF_BT_HIDS_OUTPUT_REP_MAX];
+	struct hids_outp_feat_rep reports[CONFIG_NRF_BT_HIDS_OUTPUT_REP_MAX];
+	u8_t cnt;
+};
+
+/* Collection of all Feature Reports. */
+struct hids_feat_rep_group {
+	struct hids_outp_feat_rep reports[CONFIG_NRF_BT_HIDS_FEATURE_REP_MAX];
 	u8_t cnt;
 };
 
@@ -154,6 +160,7 @@ struct hids_init {
 	struct hids_info info;
 	struct hids_inp_rep_group inp_rep_group_init;
 	struct hids_outp_rep_group outp_rep_group_init;
+	struct hids_feat_rep_group feat_rep_group_init;
 	struct hids_rep_map rep_map;
 	hids_pm_evt_handler_t pm_evt_handler;
 	hids_cp_evt_handler_t cp_evt_handler;
@@ -169,6 +176,7 @@ struct hids {
 	struct bt_gatt_service svc;
 	struct hids_inp_rep_group inp_rep_group;
 	struct hids_outp_rep_group outp_rep_group;
+	struct hids_feat_rep_group feat_rep_group;
 	struct hids_boot_mouse_inp_rep boot_mouse_inp_rep;
 	struct hids_boot_kb_inp_rep boot_kb_inp_rep;
 	struct hids_boot_kb_outp_rep boot_kb_outp_rep;

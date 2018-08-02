@@ -31,6 +31,13 @@ config NRF_BT_HIDS_OUTPUT_REP_MAX
 	help
 	  Maximum number of HIDS Output Reports that can be set for HIDS.
 
+config NRF_BT_HIDS_FEATURE_REP_MAX
+	int "Maximum number of HIDS Feature Report descriptors"
+	default 5
+	range 0 10
+	help
+	  Maximum number of HIDS Feature Reports that can be set for HIDS.
+
 config NRF_BT_HIDS_SYS_LOG_LEVEL
 	int "HIDS log level"
 	depends on SYS_LOG
