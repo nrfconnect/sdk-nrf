@@ -11,6 +11,7 @@
  */
 
 #include <limits.h>
+#include <sys/types.h>
 
 #include <zephyr/types.h>
 #include <misc/slist.h>
@@ -83,11 +84,19 @@ static void *bsearch(const void *key, const void *base,
 			 size_t elem_num, size_t elem_size,
 			 int (*compare)(const void *, const void *))
 {
-	size_t lower = 0;
-	size_t upper = elem_num - 1;
+	__ASSERT_NO_MSG(base != NULL);
+	__ASSERT_NO_MSG(compare != NULL);
+	__ASSERT_NO_MSG(elem_num <= SSIZE_MAX);
+
+	if (!elem_num) {
+		return NULL;
+	}
+
+	ssize_t lower = 0;
+	ssize_t upper = elem_num - 1;
 
 	while (upper >= lower) {
-		size_t m = (lower + upper) >> 1;
+		ssize_t m = (lower + upper) / 2;
 		int cmp = compare(key, base + (elem_size * m));
 
 		if (cmp == 0) {
@@ -400,10 +409,17 @@ static void send_report_mouse_buttons(void)
 		event->button_bm = 0;
 
 		/* Traverse pressed keys and build mouse buttons report */
-		for (size_t i = 0; i < ARRAY_SIZE(state.items[TARGET_REPORT_MOUSE_BUTTON].item) ; i++) {
-			if (state.items[TARGET_REPORT_MOUSE_BUTTON].item[i].value) {
-				__ASSERT_NO_MSG(state.items[TARGET_REPORT_MOUSE_BUTTON].item[i].usage_id <= 8);
-				u8_t mask = 1 << (state.items[TARGET_REPORT_MOUSE_BUTTON].item[i].usage_id - 1);
+		for (size_t i = 0;
+		     i < ARRAY_SIZE(state.items[TARGET_REPORT_MOUSE_BUTTON].item);
+		     i++) {
+			struct item item =
+				state.items[TARGET_REPORT_MOUSE_BUTTON].item[i];
+
+			if (item.value) {
+				__ASSERT_NO_MSG(item.usage_id != 0);
+				__ASSERT_NO_MSG(item.usage_id <= 8);
+
+				u8_t mask = 1 << (item.usage_id - 1);
 
 				event->button_bm |= mask;
 			}
@@ -686,20 +702,15 @@ static bool event_handler(const struct event_header *eh)
 
 		SYS_LOG_INF("button event");
 
-		/* Key down increases key ref counter, key up decreases it. */
-		s16_t report = (event->pressed != false) ? (1) : (-1);
-
 		/* Get usage ID and target report from HID Keymap */
 		struct hid_keymap *map = hid_keymap_get(event->key_id);
-		if (!map) {
-			return false;
-		}
-
-		if (map->usage_id == 0) {
+		if (!map || !map->usage_id) {
 			SYS_LOG_WRN("No translation found, button ignored.");
 			return false;
 		}
 
+		/* Key down increases key ref counter, key up decreases it. */
+		s16_t report = (event->pressed != false) ? (1) : (-1);
 		update(map, report);
 
 		keep_device_active();

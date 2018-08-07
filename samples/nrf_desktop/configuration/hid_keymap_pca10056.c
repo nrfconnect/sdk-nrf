@@ -21,4 +21,3 @@ const struct hid_keymap hid_keymap[] = {
 };
 
 const size_t hid_keymap_size = ARRAY_SIZE(hid_keymap);
-
