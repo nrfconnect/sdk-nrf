@@ -105,10 +105,6 @@ add_custom_target(
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
-configure_file(${NRF_DOC_DIR}/conf.py ${NRF_RST_OUT}/doc/nrf/conf.py COPYONLY)
-configure_file(${NRF_DOC_DIR}/links.txt ${NRF_RST_OUT}/doc/nrf/links.txt COPYONLY)
-configure_file(${NRF_DOC_DIR}/shortcuts.txt ${NRF_RST_OUT}/doc/nrf/shortcuts.txt COPYONLY)
-
 add_custom_target(
   nrf-html
   COMMAND ${CMAKE_COMMAND} -E env
