@@ -3,11 +3,9 @@
 API documentation
 #################
 
-TODO: add API documentation once header files have been added
+The following sections contain information about the public APIs of the |NCS|:
 
-Syntax is, for example::
+.. toctree::
+   :maxdepth: 2
 
-  .. doxygenfunction:: ble_advertising_on_ble_evt
-     :project: nrf
-
-See `the breathe documentation <https://breathe.readthedocs.io/en/latest/directives.html#directives>`_ for information about what you can link to.
+   bluetooth.rst
