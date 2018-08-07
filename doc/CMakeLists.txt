@@ -66,11 +66,11 @@ set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
 add_custom_target(
   nrf-content
 
-  # Copy the .rst files in doc/ to the rst folder
+  # Copy all files in doc/ to the rst folder
   COMMAND ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRF_BASE}
   ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT} doc
+  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} -a ${NRF_RST_OUT} doc
   # Copy the .rst files in samples/ and boards/ to the rst folder
   COMMAND ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRF_BASE}
