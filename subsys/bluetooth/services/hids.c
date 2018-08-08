@@ -108,6 +108,23 @@ int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn)
 	return 0;
 }
 
+static bool hids_is_notification_enabled(struct bt_conn *conn,
+					 struct bt_gatt_ccc_cfg *ccd)
+{
+	const bt_addr_le_t *conn_addr = bt_conn_get_dst(conn);
+
+	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+		bt_addr_le_t *ccd_addr = &ccd[i].peer;
+
+		if ((!memcmp(conn_addr, ccd_addr, sizeof(bt_addr_le_t))) &&
+		    (ccd[i].value == BT_GATT_CCC_NOTIFY)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 					struct bt_gatt_attr const *attr,
 					void const *buf, u16_t len,
@@ -1099,12 +1116,17 @@ static int inp_rep_notify_all(struct hids *hids_obj,
 				ble_link_ctx_manager_context_get(hids_obj->ctx_manager, i);
 
 		if (conn_ctx) {
-			conn_data = (struct hids_conn_data *)conn_ctx->data;
-			rep_data = conn_data->inp_rep_ctx + hids_inp_rep->offset;
-			memcpy(rep_data, rep, len);
+			bool notification_enabled =
+					hids_is_notification_enabled(conn_ctx->conn,
+								     hids_inp_rep->ccc);
+			if (notification_enabled) {
+				conn_data = (struct hids_conn_data *)conn_ctx->data;
+				rep_data = conn_data->inp_rep_ctx + hids_inp_rep->offset;
+				memcpy(rep_data, rep, len);
+			}
 
 			ble_link_ctx_manager_release(hids_obj->ctx_manager,
-						     (void *)conn_data);
+						     (void *)conn_ctx->data);
 		}
 	}
 
@@ -1133,8 +1155,13 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 
 	if (!conn) {
 		return inp_rep_notify_all(hids_obj,
-					  hids_inp_rep,rep,
+					  hids_inp_rep,
+					  rep,
 					  len);
+	}
+
+	if (!hids_is_notification_enabled(conn, hids_inp_rep->ccc)) {
+		return -EACCES;
 	}
 
 	struct hids_conn_data *conn_data =
@@ -1164,10 +1191,11 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 
 static int boot_mouse_inp_report_notify_all(struct hids *hids_obj,
 					    const u8_t *buttons,
-					    u8_t rep_ind,
+					    struct hids_boot_mouse_inp_rep *boot_mouse_inp_rep,
 					    s8_t x_delta, s8_t y_delta)
 {
 	struct hids_conn_data *conn_data;
+	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
 	u8_t *rep_data = NULL;
 
 	for (size_t i = 0; i < ble_link_ctx_manager_get_ctx_num(hids_obj->ctx_manager); i++) {
@@ -1175,20 +1203,26 @@ static int boot_mouse_inp_report_notify_all(struct hids *hids_obj,
 				ble_link_ctx_manager_context_get(hids_obj->ctx_manager, i);
 
 		if (conn_ctx) {
-			conn_data = (struct hids_conn_data *)conn_ctx->data;
-			rep_data = conn_data->hids_boot_mouse_inp_rep_ctx;
+			bool notification_enabled =
+					hids_is_notification_enabled(conn_ctx->conn,
+								     boot_mouse_inp_rep->ccc);
 
-			if (buttons) {
-				/* If buttons data is not given
-				 * use old values.
-				 */
-				rep_data[0] = *buttons;
+			if (notification_enabled) {
+				conn_data = (struct hids_conn_data *)conn_ctx->data;
+				rep_data = conn_data->hids_boot_mouse_inp_rep_ctx;
+
+				if (buttons) {
+					/* If buttons data is not given
+					 * use old values.
+					 */
+					rep_data[0] = *buttons;
+				}
+				rep_data[1] = (u8_t) x_delta;
+				rep_data[2] = (u8_t) y_delta;
 			}
-			rep_data[1] = (u8_t) x_delta;
-			rep_data[2] = (u8_t) y_delta;
 
 			ble_link_ctx_manager_release(hids_obj->ctx_manager,
-						     (void *)conn_data);
+						     (void *)conn_ctx->data);
 		}
 	}
 
@@ -1209,13 +1243,19 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
 				 s8_t x_delta, s8_t y_delta)
 {
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
+	struct hids_boot_mouse_inp_rep *boot_mouse_inp_rep =
+			&hids_obj->boot_mouse_inp_rep;
 	u8_t *rep_data;
 
 	if (!conn) {
 		return boot_mouse_inp_report_notify_all(hids_obj,
 							buttons,
-							rep_ind,
+							boot_mouse_inp_rep,
 							x_delta, y_delta);
+	}
+
+	if (!hids_is_notification_enabled(conn, boot_mouse_inp_rep->ccc)) {
+		return -EACCES;
 	}
 
 	struct hids_conn_data *conn_data =
@@ -1253,9 +1293,10 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
 
 static int boot_kb_inp_notify_all(struct hids *hids_obj,
 				  u8_t const *rep, u16_t len,
-				  u8_t rep_ind)
+				  struct hids_boot_kb_inp_rep *boot_kb_input_report)
 {
 	struct hids_conn_data *conn_data;
+	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
 	u8_t *rep_data = NULL;
 
 	for (size_t i = 0; i < ble_link_ctx_manager_get_ctx_num(hids_obj->ctx_manager); i++) {
@@ -1263,15 +1304,21 @@ static int boot_kb_inp_notify_all(struct hids *hids_obj,
 				ble_link_ctx_manager_context_get(hids_obj->ctx_manager, i);
 
 		if (conn_ctx) {
-			conn_data = (struct hids_conn_data *)conn_ctx->data;
-			rep_data = conn_data->hids_boot_kb_inp_rep_ctx;
+			bool notification_enabled =
+					hids_is_notification_enabled(conn_ctx->conn,
+								     boot_kb_input_report->ccc);
 
-			memcpy(rep_data, rep, len);
-			memset(&rep_data[len], 0,
-			       (BOOT_KB_INPUT_REP_CHAR_LEN - len));
+			if (notification_enabled) {
+				conn_data = (struct hids_conn_data *)conn_ctx->data;
+				rep_data = conn_data->hids_boot_kb_inp_rep_ctx;
+
+				memcpy(rep_data, rep, len);
+				memset(&rep_data[len], 0,
+				       (BOOT_KB_INPUT_REP_CHAR_LEN - len));
+			}
 
 			ble_link_ctx_manager_release(hids_obj->ctx_manager,
-						     (void *)conn_data);
+						     (void *)conn_ctx->data);
 		}
 	}
 
@@ -1292,11 +1339,18 @@ int hids_boot_kb_inp_rep_send(struct hids *hids_obj,
 			      u16_t len)
 {
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
+	struct hids_boot_kb_inp_rep *boot_kb_input_report =
+			&hids_obj->boot_kb_inp_rep;
 	u8_t *rep_data = NULL;
 
 	if (!conn) {
 		return boot_kb_inp_notify_all(hids_obj, rep,
-					      len, rep_ind);
+					      len,
+					      boot_kb_input_report);
+	}
+
+	if (!hids_is_notification_enabled(conn, boot_kb_input_report->ccc)) {
+		return -EACCES;
 	}
 
 	struct hids_conn_data *conn_data =
