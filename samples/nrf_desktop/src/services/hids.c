@@ -435,7 +435,16 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 
 static void send_mouse_wp(const struct hid_mouse_wp_event *event)
 {
-	/* Not yet implemented. */
+	s16_t wheel = max(min(event->wheel, 0x7f), -0x7f);
+	s16_t pan   = max(min(event->pan,   0x7f), -0x7f);
+
+	u8_t buffer[] = {
+		wheel,
+		pan,
+	};
+
+	hids_inp_rep_send(&hids_obj, report_index[REPORT_ID_MOUSE_WP],
+			buffer, sizeof(buffer));
 }
 
 static void send_mouse_buttons(const struct hid_mouse_button_event *event)
@@ -539,5 +548,6 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_xy_event);
+EVENT_SUBSCRIBE(MODULE, hid_mouse_wp_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_button_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);

@@ -19,6 +19,7 @@
 
 #include "button_event.h"
 #include "motion_event.h"
+#include "wheel_event.h"
 #include "power_event.h"
 #include "hid_event.h"
 #include "ble_event.h"
@@ -429,7 +430,7 @@ static void send_report_mouse_buttons(void)
 	}
 }
 
-static void send_report_mouse_xy(const s16_t dx, const s16_t dy)
+static void send_report_mouse_xy(s16_t dx, s16_t dy)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
 		if ((dx == 0) && (dy == 0)) {
@@ -446,6 +447,28 @@ static void send_report_mouse_xy(const s16_t dx, const s16_t dy)
 
 		event->dx = dx;
 		event->dy = dy;
+
+		EVENT_SUBMIT(event);
+	}
+}
+
+static void send_report_mouse_wheel(s32_t wheel)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+		if (wheel == 0) {
+			/* There is nothing to send. */
+			return;
+		}
+
+		struct hid_mouse_wp_event *event = new_hid_mouse_wp_event();
+
+		if (!event) {
+			SYS_LOG_WRN("Failed to allocate an event");
+			return;
+		}
+
+		event->wheel = wheel;
+		event->pan   = 0;
 
 		EVENT_SUBMIT(event);
 	}
@@ -690,7 +713,24 @@ static bool event_handler(const struct event_header *eh)
 		SYS_LOG_INF("motion event");
 
 		/* Do not accumulate mouse motion data */
-		send_report_mouse_xy(event->dx, event->dy);
+		if (state.state != HID_STATE_DISCONNECTED) {
+			send_report_mouse_xy(event->dx, event->dy);
+		}
+
+		keep_device_active();
+
+		return false;
+	}
+
+	if (is_wheel_event(eh)) {
+		struct wheel_event *event = cast_wheel_event(eh);
+
+		SYS_LOG_INF("wheel event");
+
+		/* Do not accumulate mouse wheel data */
+		if (state.state != HID_STATE_DISCONNECTED) {
+			send_report_mouse_wheel(event->wheel);
+		}
 
 		keep_device_active();
 
@@ -765,3 +805,4 @@ EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, button_event);
 EVENT_SUBSCRIBE(MODULE, motion_event);
+EVENT_SUBSCRIBE(MODULE, wheel_event);
