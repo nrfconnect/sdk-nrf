@@ -16,9 +16,6 @@ target_sources_ifdef(CONFIG_HAS_DTS_QDEC app
 target_sources_ifdef(CONFIG_HAS_DTS_TOUCHPAD app PRIVATE
                      ${CMAKE_CURRENT_SOURCE_DIR}/motion_touchpad.c)
 
-target_sources_ifdef(CONFIG_HAS_DTS_PMW3360 app PRIVATE
-                     ${CMAKE_CURRENT_SOURCE_DIR}/motion_pmw3360.c)
-
 target_sources_ifdef(CONFIG_BOARD_NRF52_PCA63519 app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/board_pca63519.c
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons_pca63519.c)

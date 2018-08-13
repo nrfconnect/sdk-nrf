@@ -20,13 +20,6 @@ config HAS_DTS_LIS3DH
 	  This option specifies that the target platform includes LIS3DH
 	  accelerometer.
 
-config HAS_DTS_PMW3360
-	bool
-	depends on HAS_DTS
-	help
-	  This option specifies that the target platform includes PMW3360
-	  mouse sensor.
-
 config HAS_DTS_TOUCHPAD
 	bool
 	depends on HAS_DTS
