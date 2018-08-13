@@ -11,6 +11,13 @@ config NRF_BT_HIDS
 
 if NRF_BT_HIDS
 
+config NRF_BT_HIDS_MAX_CLIENT_COUNT
+	int "Maximum HIDS clients"
+	default 1
+	range 1 BT_MAX_CONN
+	help
+	 The maximum number of devices that HID can connect to.
+
 config NRF_BT_HIDS_ATTR_MAX
 	int "Maximum number of GATT attribute descriptors"
 	default 30
@@ -75,11 +82,11 @@ config NRF_BT_LINK_CTX_MANAGER
 if NRF_BT_LINK_CTX_MANAGER
 
 config NRF_BT_LINK_CTX_MANAGER_MEM_BUF_ALIGN
-        int "BLE Link Context Manager memory slab buffer alignment"
-        default 4
-        help
-          The memory buffer must be aligned to an N-byte boundary, 
-          where N is a power of 2 larger than 2 (i.e. 4, 8, 16, …).
+	int "BLE Link Context Manager memory slab buffer alignment"
+	default 4
+	help
+	 The memory buffer must be aligned to an N-byte boundary,
+	 where N is a power of 2 larger than 2 (i.e. 4, 8, 16, …).
 
 config NRF_BT_LINK_CTX_MANAGER_SYS_LOG_LEVEL
 	int "BLE Link Context Manager log level"

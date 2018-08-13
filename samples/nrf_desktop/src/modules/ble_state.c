@@ -63,6 +63,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	if (event) {
 		event->conn_id = conn;
 		event->state   = PEER_DISCONNECTED;
+
 		EVENT_SUBMIT(event);
 	}
 }
@@ -80,6 +81,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	if (event) {
 		event->conn_id = conn;
 		event->state   = PEER_SECURED;
+
 		EVENT_SUBMIT(event);
 	}
 }

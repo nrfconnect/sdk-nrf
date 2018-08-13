@@ -13,6 +13,7 @@
 #include <zephyr.h>
 #include <gpio.h>
 #include <board.h>
+#include <assert.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
@@ -52,7 +53,26 @@
 /* Id of reference to Mouse Input Report containing media player data. */
 #define INPUT_REP_REF_MPLAYER_ID    3
 
-HIDS_DEF(hids_obj); /* HIDS instance. */
+/* HIDs queue size. */
+#define HIDS_QUEUE_SIZE 10
+
+/* HIDS instance. */
+HIDS_DEF(hids_obj,
+	 INPUT_REP_BUTTONS_LEN,
+	 INPUT_REP_MOVEMENT_LEN,
+	 INPUT_REP_MEDIA_PLAYER_LEN);
+
+static struct k_delayed_work hids_work;
+struct mouse_pos {
+	s16_t x_val;
+	s16_t y_val;
+};
+
+/* Mouse movement queue. */
+K_MSGQ_DEFINE(hids_queue,
+	      sizeof(struct mouse_pos),
+	      HIDS_QUEUE_SIZE,
+	      4);
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -67,7 +87,11 @@ static const struct bt_data sd[] = {
 
 static struct device       *gpio_devs[4];
 static struct gpio_callback gpio_cbs[4];
-static bool		    in_boot_mode;
+
+static struct conn_mode {
+	struct bt_conn *conn;
+	bool in_boot_mode;
+} conn_mode[CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT];
 
 
 static void advertising_start(void)
@@ -100,16 +124,46 @@ static void connected(struct bt_conn *conn, u8_t err)
 	if (bt_conn_security(conn, BT_SECURITY_MEDIUM)) {
 		printk("Failed to set security\n");
 	}
+
+	err = hids_notify_connected(&hids_obj, conn);
+
+	if (err) {
+		printk("Failed to notify HID service about connection\n");
+		return;
+	}
+
+	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+		if (!conn_mode[i].conn) {
+			conn_mode[i].conn = conn;
+			conn_mode[i].in_boot_mode = false;
+			return;
+		}
+	}
 }
 
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
 {
+	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+	k_delayed_work_cancel(&hids_work);
 
 	printk("Disconnected from %s (reason %u)\n", addr, reason);
+
+	err = hids_notify_disconnected(&hids_obj, conn);
+
+	if (err) {
+		printk("Failed to notify HID service about disconnection\n");
+	}
+
+	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+		if (conn_mode[i].conn == conn) {
+			conn_mode[i].conn = NULL;
+			break;
+		}
+	}
 
 	advertising_start();
 }
@@ -132,17 +186,32 @@ static struct bt_conn_cb conn_callbacks = {
 };
 
 
-static void hids_pm_evt_handler(enum hids_pm_evt evt)
+static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 {
+	char addr[BT_ADDR_LE_STR_LEN];
+	size_t i;
+
+	for (i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+		if (conn_mode[i].conn == conn) {
+			break;
+		}
+	}
+
+	if (i >= CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT) {
+		return;
+	}
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
 	switch (evt) {
 	case HIDS_PM_EVT_BOOT_MODE_ENTERED:
-		printk("Boot mode entered\n");
-		in_boot_mode = true;
+		printk("Boot mode entered %s\n", addr);
+		conn_mode[i].in_boot_mode = true;
 		break;
 
 	case HIDS_PM_EVT_REPORT_MODE_ENTERED:
-		printk("Report mode entered\n");
-		in_boot_mode = false;
+		printk("Report mode entered %s\n", addr);
+		conn_mode[i].in_boot_mode = false;
 		break;
 
 	default:
@@ -151,15 +220,12 @@ static void hids_pm_evt_handler(enum hids_pm_evt evt)
 }
 
 
-static void hog_init(void)
+static void hid_init(void)
 {
 	int err;
 	struct hids_init hids_init_obj = { 0 };
 	struct hids_inp_rep *hids_inp_rep;
 
-	static u8_t buttons_buff[INPUT_REP_BUTTONS_LEN];
-	static u8_t movement_buff[INPUT_REP_MOVEMENT_LEN];
-	static u8_t media_buff[INPUT_REP_MEDIA_PLAYER_LEN];
 	static const u8_t report_map[] = {
 		0x05, 0x01,     /* Usage Page (Generic Desktop) */
 		0x09, 0x02,     /* Usage (Mouse) */
@@ -248,20 +314,17 @@ static void hog_init(void)
 			HIDS_NORMALLY_CONNECTABLE);
 
 	hids_inp_rep = &hids_init_obj.inp_rep_group_init.reports[0];
-	hids_inp_rep->buff.data = buttons_buff;
-	hids_inp_rep->buff.size = sizeof(buttons_buff);
+	hids_inp_rep->size = INPUT_REP_BUTTONS_LEN;
 	hids_inp_rep->id = INPUT_REP_REF_BUTTONS_ID;
 	hids_init_obj.inp_rep_group_init.cnt++;
 
 	hids_inp_rep++;
-	hids_inp_rep->buff.data = movement_buff;
-	hids_inp_rep->buff.size = sizeof(movement_buff);
+	hids_inp_rep->size = INPUT_REP_MOVEMENT_LEN;
 	hids_inp_rep->id = INPUT_REP_REF_MOVEMENT_ID;
 	hids_init_obj.inp_rep_group_init.cnt++;
 
 	hids_inp_rep++;
-	hids_inp_rep->buff.data = media_buff;
-	hids_inp_rep->buff.size = sizeof(media_buff);
+	hids_inp_rep->size = INPUT_REP_MEDIA_PLAYER_LEN;
 	hids_inp_rep->id = INPUT_REP_REF_MPLAYER_ID;
 	hids_init_obj.inp_rep_group_init.cnt++;
 
@@ -270,6 +333,62 @@ static void hog_init(void)
 
 	err = hids_init(&hids_obj, &hids_init_obj);
 	__ASSERT(err == 0, "HIDS initialization failed\n");
+}
+
+
+static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
+{
+	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+
+		if (!conn_mode[i].conn) {
+			continue;
+		}
+
+		if (conn_mode[i].in_boot_mode) {
+			x_delta = max(min(x_delta, SCHAR_MAX), SCHAR_MIN);
+			y_delta = max(min(y_delta, SCHAR_MAX), SCHAR_MIN);
+
+			hids_boot_mouse_inp_rep_send(&hids_obj,
+						     conn_mode[i].conn,
+						     NULL,
+						     (s8_t) x_delta,
+						     (s8_t) y_delta);
+		} else {
+			u8_t x_buff[2];
+			u8_t y_buff[2];
+			u8_t buffer[INPUT_REP_MOVEMENT_LEN];
+
+			s16_t x = max(min(x_delta, 0x07ff), -0x07ff);
+			s16_t y = max(min(y_delta, 0x07ff), -0x07ff);
+
+			/* Convert to little-endian. */
+			sys_put_le16(x, x_buff);
+			sys_put_le16(y, y_buff);
+
+			/* Encode report. */
+			static_assert(sizeof(buffer) == 3,
+					"Only 2 axis, 12-bit each, are supported");
+
+			buffer[0] = x_buff[0];
+			buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
+			buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
+
+
+			hids_inp_rep_send(&hids_obj, conn_mode[i].conn,
+					  INPUT_REP_MOVEMENT_INDEX,
+					  buffer, sizeof(buffer));
+		}
+	}
+}
+
+
+static void mouse_handler(struct k_work *work)
+{
+	struct mouse_pos pos;
+
+	while (!k_msgq_get(&hids_queue, &pos, K_NO_WAIT)) {
+		mouse_movement_send(pos.x_val, pos.y_val);
+	}
 }
 
 
@@ -284,7 +403,9 @@ static void bt_ready(int err)
 
 	bas_init();
 	dis_init(CONFIG_SOC, "Manufacturer");
-	hog_init();
+	hid_init();
+
+	k_delayed_work_init(&hids_work, mouse_handler);
 
 	advertising_start();
 }
@@ -315,70 +436,41 @@ static struct bt_conn_auth_cb auth_cb_display = {
 };
 
 
-static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
-{
-	if (in_boot_mode) {
-		x_delta = max(min(x_delta, SCHAR_MAX), SCHAR_MIN);
-		y_delta = max(min(y_delta, SCHAR_MAX), SCHAR_MIN);
-
-		hids_boot_mouse_inp_rep_send(&hids_obj,
-					     NULL,
-					     (s8_t) x_delta,
-					     (s8_t) y_delta);
-	} else {
-		u16_t s12_x_delta;
-		u16_t s12_y_delta;
-		u8_t x_buff[2];
-		u8_t y_buff[2];
-		u8_t buffer[INPUT_REP_MOVEMENT_LEN];
-
-		/* Check limits. */
-		x_delta = max(min(x_delta, 0x07ff), -0x07ff);
-		y_delta = max(min(y_delta, 0x07ff), -0x07ff);
-
-		/* Convert to 12-bit signed integer. */
-		s12_x_delta = (x_delta < 0) ? ((1 << 11) | x_delta) : x_delta;
-		s12_y_delta = (y_delta < 0) ? ((1 << 11) | y_delta) : y_delta;
-
-		/* Convert to little-endian. */
-		sys_put_le16(s12_x_delta, x_buff);
-		sys_put_le16(s12_y_delta, y_buff);
-
-		/* Encode report. */
-		buffer[0] = x_buff[0];
-		buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
-		buffer[2] = y_buff[1];
-
-		hids_inp_rep_send(&hids_obj, INPUT_REP_MOVEMENT_INDEX,
-				  buffer, sizeof(buffer));
-	}
-}
-
-
 void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 		    u32_t pins)
 {
-	s16_t val_x = 0;
-	s16_t val_y = 0;
+	struct mouse_pos pos;
+	int err;
+
+	memset(&pos, 0, sizeof(struct mouse_pos));
 
 	if (pins & (1 << SW0_GPIO_PIN)) {
-		val_x -= MOVEMENT_SPEED;
+		pos.x_val -= MOVEMENT_SPEED;
 		printk("%s(): left\n", __func__);
 	}
 	if (pins & (1 << SW1_GPIO_PIN)) {
-		val_y -= MOVEMENT_SPEED;
+		pos.y_val -= MOVEMENT_SPEED;
 		printk("%s(): up\n", __func__);
 	}
 	if (pins & (1 << SW2_GPIO_PIN)) {
-		val_x += MOVEMENT_SPEED;
+		pos.x_val += MOVEMENT_SPEED;
 		printk("%s(): right\n", __func__);
 	}
 	if (pins & (1 << SW3_GPIO_PIN)) {
-		val_y += MOVEMENT_SPEED;
+		pos.y_val += MOVEMENT_SPEED;
 		printk("%s(): down\n", __func__);
 	}
 
-	mouse_movement_send(val_x, val_y);
+	err = k_msgq_put(&hids_queue, &pos, K_NO_WAIT);
+
+	if (err) {
+		printk("No space in the queue for button pressed\n");
+		return;
+	}
+
+	if (k_msgq_num_used_get(&hids_queue) == 1) {
+		k_delayed_work_submit(&hids_work, 0);
+	}
 }
 
 

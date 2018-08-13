@@ -14,6 +14,7 @@
 #include <bluetooth/services/hids.h>
 
 #include "hid_event.h"
+#include "ble_event.h"
 
 #define MODULE hids
 #include "module_state_event.h"
@@ -52,12 +53,17 @@ enum {
 static size_t report_index[REPORT_ID_COUNT];
 
 
-HIDS_DEF(hids_obj);
+HIDS_DEF(hids_obj,
+	REPORT_SIZE_MOUSE_BUTTONS,
+	REPORT_SIZE_MOUSE_WP,
+	REPORT_SIZE_MOUSE_XY,
+	REPORT_SIZE_KEYBOARD,
+	REPORT_SIZE_MPLAYER);
 
 static bool in_boot_mode;
 
 
-static void pm_evt_handler(enum hids_pm_evt evt)
+static void pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 {
 	switch (evt) {
 	case HIDS_PM_EVT_BOOT_MODE_ENTERED:
@@ -323,58 +329,44 @@ static int module_init(void)
 	size_t ir_pos = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		static u8_t mouse_buttons_buff[REPORT_ID_MOUSE_BUTTONS];
 
-		input_report[ir_pos].id        = REPORT_ID_MOUSE_BUTTONS;
-		input_report[ir_pos].buff.data = mouse_buttons_buff;
-		input_report[ir_pos].buff.size = sizeof(mouse_buttons_buff);
-		input_report[ir_pos].handler   = mouse_buttons_notif_handler;
+		input_report[ir_pos].id      = REPORT_ID_MOUSE_BUTTONS;
+		input_report[ir_pos].size    = REPORT_SIZE_MOUSE_BUTTONS;
+		input_report[ir_pos].handler = mouse_buttons_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 
 
-		static u8_t mouse_wp_buff[REPORT_SIZE_MOUSE_WP];
-
-		input_report[ir_pos].id        = REPORT_ID_MOUSE_WP;
-		input_report[ir_pos].buff.data = mouse_wp_buff;
-		input_report[ir_pos].buff.size = sizeof(mouse_wp_buff);
-		input_report[ir_pos].handler   = mouse_wp_notif_handler;
+		input_report[ir_pos].id      = REPORT_ID_MOUSE_WP;
+		input_report[ir_pos].size    = REPORT_SIZE_MOUSE_WP;
+		input_report[ir_pos].handler = mouse_wp_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 
 
-		static u8_t mouse_xy_buff[REPORT_SIZE_MOUSE_XY];
-
-		input_report[ir_pos].id        = REPORT_ID_MOUSE_XY;
-		input_report[ir_pos].buff.data = mouse_xy_buff;
-		input_report[ir_pos].buff.size = sizeof(mouse_xy_buff);
-		input_report[ir_pos].handler   = mouse_xy_notif_handler;
+		input_report[ir_pos].id      = REPORT_ID_MOUSE_XY;
+		input_report[ir_pos].size    = REPORT_SIZE_MOUSE_XY;
+		input_report[ir_pos].handler = mouse_xy_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		static u8_t keyboard_buff[REPORT_SIZE_KEYBOARD];
-
-		input_report[ir_pos].id        = REPORT_ID_KEYBOARD;
-		input_report[ir_pos].buff.data = keyboard_buff;
-		input_report[ir_pos].buff.size = sizeof(keyboard_buff);
-		input_report[ir_pos].handler   = keyboard_notif_handler;
+		input_report[ir_pos].id      = REPORT_ID_KEYBOARD;
+		input_report[ir_pos].size    = REPORT_SIZE_KEYBOARD;
+		input_report[ir_pos].handler = keyboard_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
-		static u8_t mplayer_buff[REPORT_SIZE_MPLAYER];
-
-		input_report[ir_pos].id        = REPORT_ID_MPLAYER;
-		input_report[ir_pos].buff.data = mplayer_buff;
-		input_report[ir_pos].buff.size = sizeof(mplayer_buff);
-		input_report[ir_pos].handler   = mplayer_notif_handler;
+		input_report[ir_pos].id      = REPORT_ID_MPLAYER;
+		input_report[ir_pos].size    = REPORT_SIZE_MPLAYER;
+		input_report[ir_pos].handler = mplayer_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -406,7 +398,7 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
 
-		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, x, y);
+		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, NULL, x, y);
 	} else {
 		s16_t x = max(min(event->dx, 0x07ff), -0x07ff);
 		s16_t y = max(min(event->dy, 0x07ff), -0x07ff);
@@ -428,8 +420,9 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 		buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
 		buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
-		hids_inp_rep_send(&hids_obj, report_index[REPORT_ID_MOUSE_XY],
-				buffer, sizeof(buffer));
+		hids_inp_rep_send(&hids_obj, NULL,
+				  report_index[REPORT_ID_MOUSE_XY],
+				  buffer, sizeof(buffer));
 	}
 }
 
@@ -443,21 +436,25 @@ static void send_mouse_wp(const struct hid_mouse_wp_event *event)
 		pan,
 	};
 
-	hids_inp_rep_send(&hids_obj, report_index[REPORT_ID_MOUSE_WP],
-			buffer, sizeof(buffer));
+	hids_inp_rep_send(&hids_obj, NULL,
+			  report_index[REPORT_ID_MOUSE_WP],
+			  buffer, sizeof(buffer));
 }
 
 static void send_mouse_buttons(const struct hid_mouse_button_event *event)
 {
 	if (in_boot_mode) {
-		hids_boot_mouse_inp_rep_send(&hids_obj, &event->button_bm, 0, 0);
+		hids_boot_mouse_inp_rep_send(&hids_obj, NULL,
+					     &event->button_bm,
+					     0, 0);
 	} else {
 		u8_t report[REPORT_SIZE_MOUSE_BUTTONS];
 
 		report[0] = event->button_bm;
 
-		hids_inp_rep_send(&hids_obj, report_index[REPORT_ID_MOUSE_BUTTONS],
-				report, sizeof(report));
+		hids_inp_rep_send(&hids_obj, NULL,
+				  report_index[REPORT_ID_MOUSE_BUTTONS],
+				  report, sizeof(report));
 	}
 }
 
@@ -481,11 +478,29 @@ static void send_keyboard(const struct hid_keyboard_event *event)
 	report[8] = 0;
 
 	if (in_boot_mode) {
-		hids_boot_kb_inp_rep_send(&hids_obj, report,
+		hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
 				sizeof(report) - sizeof(report[8]));
 	} else {
-		hids_inp_rep_send(&hids_obj, report_index[REPORT_ID_KEYBOARD],
-				report, sizeof(report));
+		hids_inp_rep_send(&hids_obj, NULL,
+				  report_index[REPORT_ID_KEYBOARD],
+				  report, sizeof(report));
+	}
+}
+
+static void notify_hids(const struct ble_peer_event *event)
+{
+	int err = 0;
+
+	if (event->state == PEER_CONNECTED) {
+		err = hids_notify_connected(&hids_obj, event->conn_id);
+	} else if (event->state == PEER_DISCONNECTED) {
+		err = hids_notify_disconnected(&hids_obj, event->conn_id);
+	} else {
+		/* No action */
+	}
+
+	if (err) {
+		SYS_LOG_ERR("Failed to notify the HID service about the connection");
 	}
 }
 
@@ -517,6 +532,12 @@ static bool event_handler(const struct event_header *eh)
 
 			return false;
 		}
+	}
+
+	if (is_ble_peer_event(eh)) {
+		notify_hids(cast_ble_peer_event(eh));
+
+		return false;
 	}
 
 	if (is_module_state_event(eh)) {
@@ -551,3 +572,4 @@ EVENT_SUBSCRIBE(MODULE, hid_mouse_xy_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_wp_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_button_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);
