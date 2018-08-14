@@ -40,6 +40,26 @@ config DESKTOP_KEYMAP
 	help
 	  This option specifies keymap.
 
+comment "Wheel configuration"
+	depends on HAS_DTS_QDEC
+
+config DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER
+	int "Sensor value divider"
+	depends on HAS_DTS_QDEC
+	range 1 2048
+	default 1
+	help
+	  A value obtained from the wheel sensor will be divided
+	  by provided argument before being processed further.
+
+config DESKTOP_WHEEL_INVERT_AXIS
+	bool "Invert wheel axis"
+	depends on HAS_DTS_QDEC
+	default n
+	help
+	  Switch the orientation of the wheel sensor.
+
+comment "Log level configuration"
 
 config DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
 	int "Board module log level"
@@ -97,5 +117,18 @@ config DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
 
-endmenu
+config DESKTOP_SYS_LOG_WHEEL_MODULE_LEVEL
+	int "Wheel module log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for wheel module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
 
+endmenu
