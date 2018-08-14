@@ -8,6 +8,7 @@
 
 #include <device.h>
 #include <gpio.h>
+#include <nrf_gpio.h>
 
 #include "event_manager.h"
 #include "button_event.h"
@@ -200,6 +201,7 @@ static void init_fn(void)
 		int err = gpio_pin_configure(gpio_dev, row_pin[i],
 				GPIO_PUD_PULL_DOWN | GPIO_DIR_IN | GPIO_INT |
 				GPIO_INT_EDGE | GPIO_INT_DOUBLE_EDGE |
+				(GPIO_PIN_CNF_SENSE_High << GPIO_PIN_CNF_SENSE_Pos) |
 				GPIO_INT_DEBOUNCE);
 
 		if (!err) {
@@ -235,7 +237,7 @@ error:
 
 static void term_fn(void)
 {
-	module_set_state(MODULE_STATE_OFF);
+	module_set_state(MODULE_STATE_STANDBY);
 }
 
 static bool event_handler(const struct event_header *eh)
