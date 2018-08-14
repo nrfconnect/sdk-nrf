@@ -8,6 +8,7 @@ config  BOARD_NRF52840_PCA20041
 	bool "NRF52840 PCA20041"
 	select HAS_DTS_GPIO
 	select HAS_DTS_I2C
+	select HAS_DTS_QDEC
 	select HAS_DTS_PMW3360
 	select HAS_DTS_BMA400
 
