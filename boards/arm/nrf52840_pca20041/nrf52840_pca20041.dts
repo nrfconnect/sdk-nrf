@@ -52,6 +52,16 @@
 	scl-pin = <8>;
 };
 
+&qdec {
+	status = "ok";
+	a-pin = <3>;
+	b-pin = <28>;
+	enable-pin = <30>;
+	led-pin = <0xFFFFFFFF>;
+	led-pre = <0>;
+	steps = <24>;
+};
+
 &flash0 {
 	/*
 	 * For more information, see:
