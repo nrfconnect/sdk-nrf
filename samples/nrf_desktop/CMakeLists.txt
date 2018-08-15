@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
+cmake_minimum_required(VERSION 3.8.2)
+
 # Check if selected board is supported.
 if    (${BOARD} STREQUAL "nrf52840_pca20041")
 elseif(${BOARD} STREQUAL "nrf52840_pca10056")
