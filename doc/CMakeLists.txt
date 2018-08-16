@@ -23,9 +23,14 @@ endif()
 set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
+set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
+# Create the combined HTML output folder
+file(MAKE_DIRECTORY ${HTML_DIR})
 
 # Build Zephyr documentation
 set(SPHINXOPTS -c ${NRF_BASE}/doc/zephyr)
+# Place the generated HTML in the common Sphinx HTML output folder
+set(SPHINX_OUTPUT_DIR ${HTML_DIR}/zephyr)
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
 
 add_custom_target(
@@ -35,6 +40,7 @@ add_custom_target(
 add_dependencies(zephyr html)
 
 # Everything below this line is nrf-specific
+
 
 set(NRF_DOXYFILE_IN ${NRF_DOC_DIR}/nrf.doxyfile.in)
 set(NRF_DOXYFILE_OUT ${NRF_BINARY_DIR}/nrf.doxyfile)
@@ -109,12 +115,16 @@ add_custom_target(
   nrf-html
   COMMAND ${CMAKE_COMMAND} -E env
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
+  ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_BASE=${NRF_BASE}
   NRF_BUILD=${NRF_BINARY_DIR}
+  NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${ALLSPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${NRF_BINARY_DIR}/html
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${ALLSPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
   # Merge the Doxygen and Sphinx logs into a single file
   COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
+  # Copy root index file
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/static/html/index.html ${HTML_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
