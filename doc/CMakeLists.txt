@@ -41,6 +41,7 @@ add_dependencies(zephyr html)
 
 # Everything below this line is nrf-specific
 
+set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
 
 set(NRF_DOXYFILE_IN ${NRF_DOC_DIR}/nrf.doxyfile.in)
 set(NRF_DOXYFILE_OUT ${NRF_BINARY_DIR}/nrf.doxyfile)
@@ -120,7 +121,7 @@ add_custom_target(
   NRF_BUILD=${NRF_BINARY_DIR}
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
-  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${ALLSPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
+  ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
   # Merge the Doxygen and Sphinx logs into a single file
   COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
   # Copy root index file
