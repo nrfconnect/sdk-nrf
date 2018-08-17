@@ -39,6 +39,24 @@ add_custom_target(
 
 add_dependencies(zephyr html)
 
+# Common code
+set(TARGET_LIST zephyr nrf)
+
+foreach(target ${TARGET_LIST})
+  set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
+  # Cleanup build output
+  add_custom_target(
+    clean-${target}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/doctrees
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/doxygen
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/rst
+    COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/*.log
+    COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/*.warnings
+    # Remove generated HTML as well
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${HTML_DIR}/${target}
+  )
+endforeach()
+
 # Everything below this line is nrf-specific
 
 set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
@@ -66,7 +84,6 @@ add_custom_target(
     -DWORKING_DIRECTORY=${CMAKE_CURRENT_LIST_DIR}
     -P ${ZEPHYR_BASE}/cmake/util/execute_process.cmake
 )
-
 
 set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
 
@@ -132,3 +149,4 @@ add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
 
 add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
+
