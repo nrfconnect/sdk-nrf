@@ -12,14 +12,14 @@ config NRF_BT_SVC_COMMON
 if NRF_BT_SVC_COMMON
 
 config NRF_BT_UUID_16_POOL_SIZE
-	int "Maximum number of 16-bit UUIDs descriptors"
+	int "Maximum number of 16-bit UUID descriptors"
 	default 10
 	range 0 255
 	help
 	  Maximum number of 16-bit UUID descriptors that can be dynamically registered.
 
 config NRF_BT_UUID_32_POOL_SIZE
-	int "Maximum number of 16-bit UUID descriptors"
+	int "Maximum number of 32-bit UUID descriptors"
 	default 0
 	range 0 255
 	help
