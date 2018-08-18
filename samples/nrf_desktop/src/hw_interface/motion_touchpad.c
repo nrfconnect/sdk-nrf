@@ -110,7 +110,7 @@ static void async_init_fn(struct k_work *work)
 	int err = 0;
 
 	struct device *gpio_dev =
-		device_get_binding(CONFIG_GPIO_NRF5_P0_DEV_NAME);
+		device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
 		SYS_LOG_ERR("cannot get GPIO device");
@@ -189,7 +189,7 @@ static void async_term_fn(struct k_work *work)
 	 */
 
 	struct device *gpio_dev =
-		device_get_binding(CONFIG_GPIO_NRF5_P0_DEV_NAME);
+		device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
 		SYS_LOG_ERR("cannot get GPIO device");
