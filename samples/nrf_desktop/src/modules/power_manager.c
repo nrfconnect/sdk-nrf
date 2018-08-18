@@ -12,6 +12,7 @@
 #include <board.h>
 #include <device.h>
 #include <gpio.h>
+#include <hal/nrf_gpiote.h>
 
 #include <misc/printk.h>
 
@@ -48,11 +49,6 @@ static struct device_list device_list;
 
 static enum power_state power_state = POWER_STATE_IDLE;
 static struct k_delayed_work power_down_trigger;
-
-
-extern int nrf_gpiote_interrupt_enable(uint32_t mask);
-extern void nrf_gpiote_clear_port_event(void);
-
 
 static void suspend_devices(struct device_list *dl)
 {
@@ -174,9 +170,8 @@ static bool event_handler(const struct event_header *eh)
 		SYS_LOG_INF("power down the board");
 
 		/* Port events are needed to leave system off state */
-		nrf_gpiote_clear_port_event();
-		nrf_gpiote_interrupt_enable(GPIOTE_INTENSET_PORT_Msk);
-		NVIC_EnableIRQ(GPIOTE_IRQn);
+		nrf_gpiote_int_enable(GPIOTE_INTENSET_PORT_Msk);
+		irq_enable(GPIOTE_IRQn);
 
 		power_state = POWER_STATE_SUSPENDING2;
 

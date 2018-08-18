@@ -25,7 +25,7 @@ static int turn_board_on(void)
 	int err = 0;
 
 	struct device *gpio_dev =
-		device_get_binding(CONFIG_GPIO_NRF5_P0_DEV_NAME);
+		device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
 		SYS_LOG_ERR("cannot get GPIO device");
@@ -49,7 +49,7 @@ static int turn_board_off(void)
 	int err = 0;
 
 	struct device *gpio_dev
-		= device_get_binding(CONFIG_GPIO_NRF5_P0_DEV_NAME);
+		= device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
 		SYS_LOG_ERR("cannot get GPIO device");
