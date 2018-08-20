@@ -6,8 +6,6 @@
 
 config  BOARD_NRF52_PCA63519
 	bool "nRF52 PCA63519"
-	select HAS_DTS_GPIO
-	select HAS_DTS_I2C
 	select HAS_DTS_LIS3DH
 	select HAS_DTS_TOUCHPAD
 
