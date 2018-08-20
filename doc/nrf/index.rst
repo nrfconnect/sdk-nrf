@@ -11,9 +11,10 @@ The |NCS| contains libraries and application examples for Nordic Semiconductor c
    :caption: Contents:
 
    introduction
-   zephyr
+   documentation
+   getting_started
    samples
+   libraries
    reference/kconfig/index
-   api
 
 ..   cheat_sheet
