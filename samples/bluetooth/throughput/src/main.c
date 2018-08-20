@@ -8,8 +8,8 @@
  * SPDX-License-Identifier: BSD-5-Clause-Nordic
  */
 
-#include <console.h>
 #include <kernel.h>
+#include <console.h>
 #include <misc/printk.h>
 #include <string.h>
 #include <zephyr/types.h>
