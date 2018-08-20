@@ -446,7 +446,7 @@ static void send_report_mouse_xy(s16_t dx, s16_t dy)
 		}
 
 		event->dx = dx;
-		event->dy = dy;
+		event->dy = -dy;
 
 		EVENT_SUBMIT(event);
 	}
