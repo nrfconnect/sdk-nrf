@@ -5,6 +5,7 @@ comment "Service configuration"
 config NRF_BT_HIDS
 	bool
 	prompt "Enable HIDS"
+	select NRF_BT_SVC_COMMON
 	help
 	  Enable HIDS functionality
 
