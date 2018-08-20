@@ -1,0 +1,35 @@
+/* Display version number in white */
+.wy-side-nav-search > div.version {
+ color: #fff;
+}
+
+/* Set background and border for navigation pane */
+.wy-nav-side {
+ background:#fafafa;
+ border-right:#ddd solid 1px;
+}
+
+/* Light background when expanding as well */
+.wy-menu-vertical li.current, .wy-menu-vertical li.toctree-l2.current>a, .wy-menu-vertical li.toctree-l2.current li.toctree-l3 > a, .wy-menu-vertical li.toctree-l3.current>a, .wy-menu-vertical li.toctree-l3.current li.toctree-l4>a {
+ background:#fafafa;
+}
+
+/* no change when hovering */
+.wy-menu-vertical a:hover, .wy-menu-vertical li.current a:hover {
+ background:#fafafa;
+}
+
+/* No scroll bar, white text for the doc switcher */
+.rst-versions {
+ overflow:hidden;
+}
+.rst-versions a {
+ color: #fff;
+}
+
+/* Spacing of lists in the main document */
+.document li > ol, .document li > ul {
+
+    margin: 5px 0px !important;
+
+}

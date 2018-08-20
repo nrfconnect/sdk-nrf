@@ -1,20 +1,48 @@
-.wy-menu-vertical li.current{background:#fafafa}
+/* background color top and bottom left */
 
-.wy-nav-side{position:fixed;top:0;bottom:0;left:0;padding-bottom:2em;width:300px;overflow-x:hidden;overflow-y:hidden;min-height:100%;background:#fafafa;z-index:200;border-right:#ddd solid 1px}
+.wy-side-nav-search {
+ background-color: #00a9ce;
+}
 
-.rst-versions{position:fixed;bottom:0;left:0;width:300px;color:#fcfcfc;background:#e0e0e0;font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;z-index:400;border-top:0px}
+.rst-versions .rst-current-version {
+ background-color: #00a9ce;
+}
 
-.rst-versions .rst-current-version{padding:12px;background-color:#2980B9;display:block;text-align:right;font-size:90%;cursor:pointer;color:#27AE60;*zoom:1}
-
-.rst-versions .rst-other-versions{font-size:90%;padding:12px;color:gray;display:none;line-height:30px}
-
-
-
+/* Zephyr background color for the doc switcher */
+.rst-versions {
+ background: #a67dfb;
+}
 
 
+/* text color navigation menu */
 
-li > ol, li > ul {
+/* l1 not selected */
+.wy-menu-vertical a {
+ color: #00a9ce;
+}
+/* expanded container nodes */
+.wy-menu-vertical li.on a, .wy-menu-vertical li.current > a {
+ color: #00a9ce;
+}
+/* expanded nodes, not selected */
+.wy-menu-vertical li.current a {
+ color: #00a9ce;
+}
 
-    margin: 5px 0px !important;
 
+/* link text */
+.wy-nav-content a {
+ color: #00a9ce;
+}
+.wy-nav-content a:visited {
+ color: #0077c8;
+}
+
+/* footer */
+footer table {
+ width: 100%;
+}
+
+#nordiclogo {
+ width: 100px;
 }
