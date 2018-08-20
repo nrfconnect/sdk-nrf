@@ -426,7 +426,7 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 
 		buffer[0] = x_buff[0];
 		buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
-		buffer[2] = y_buff[1];
+		buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
 		hids_inp_rep_send(&hids_obj, report_index[REPORT_ID_MOUSE_XY],
 				buffer, sizeof(buffer));
