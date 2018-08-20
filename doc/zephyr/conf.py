@@ -291,5 +291,5 @@ linkcheck_workers = 10
 linkcheck_anchors = False
 
 def setup(app):
-   app.add_stylesheet("css/zephyr-custom.css")
-   app.add_stylesheet("css/ncs.css")
+   app.add_stylesheet("css/zephyr.css")
+   app.add_stylesheet("css/common.css")
