@@ -1,4 +1,4 @@
-.. _cheat_sheet:
+.. _doc_cheatsheet:
 
 Cheat Sheet
 ###########
@@ -176,6 +176,10 @@ Curabitur nisl |sapien|, posuere auctor metus et, convallis varius turpis. Sed e
 
 Linking between doc sets
 ************************
+
+Read out an objects.inv file::
+
+   python3 -m sphinx.ext.intersphinx objects.inv
 
 Doxygen
 =======
