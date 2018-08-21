@@ -8,7 +8,6 @@
 
 #include <device.h>
 #include <gpio.h>
-#include <nrf_gpio.h>
 
 #include "event_manager.h"
 #include "button_event.h"
@@ -70,7 +69,6 @@ static int get_rows(u32_t *mask)
 static void matrix_scan_fn(struct k_work *work)
 {
 	/* Get current state */
-
 	u32_t cur_state[ARRAY_SIZE(col_pin)] = {0};
 
 	for (size_t i = 0; i < ARRAY_SIZE(col_pin); i++) {
@@ -138,15 +136,21 @@ static void matrix_scan_fn(struct k_work *work)
 		/* Make sure that mode is set before callbacks are enabled */
 		atomic_set(&scanning, false);
 
-		/* Enable callbacks */
+		/* Enable callbacks
+		 * This must be done with irqs disabled to avoid pin callback
+		 * being fired before others are still not activated.
+		 */
+		unsigned int flags = irq_lock();
 		for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
 			int err = gpio_pin_enable_callback(gpio_dev, row_pin[i]);
 
 			if (err) {
+				irq_unlock(flags);
 				SYS_LOG_ERR("cannot enable callbacks");
 				goto error;
 			}
 		}
+		irq_unlock(flags);
 	}
 
 	return;
@@ -175,7 +179,7 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 	/* Activate periodic scan */
 	__ASSERT_NO_MSG(!atomic_get(&scanning));
 	atomic_set(&scanning, true);
-	k_delayed_work_submit(&matrix_scan, SCAN_INTERVAL);
+	k_delayed_work_submit(&matrix_scan, 0);
 }
 
 static void init_fn(void)
@@ -200,8 +204,7 @@ static void init_fn(void)
 	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
 		int err = gpio_pin_configure(gpio_dev, row_pin[i],
 				GPIO_PUD_PULL_DOWN | GPIO_DIR_IN | GPIO_INT |
-				GPIO_INT_EDGE | GPIO_INT_DOUBLE_EDGE |
-				(GPIO_PIN_CNF_SENSE_High << GPIO_PIN_CNF_SENSE_Pos) |
+				GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH |
 				GPIO_INT_DEBOUNCE);
 
 		if (!err) {
