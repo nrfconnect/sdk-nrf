@@ -8,6 +8,7 @@ zephyr_library_link_libraries(nrf_bluetooth)
 
 zephyr_library_sources_ifdef(CONFIG_NRF_BT_HIDS hids.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_BT_THROUGHPUT throughput.c)
-zephyr_library_sources_ifdef(CONFIG_NRF_BT_NUS  nus.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_BT_NUS nus.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_BT_LBS lbs.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_BT_DIS dis.c)
 zephyr_library_sources(ble_link_ctx_manager.c)
