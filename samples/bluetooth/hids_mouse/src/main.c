@@ -75,6 +75,9 @@ K_MSGQ_DEFINE(hids_queue,
 	      4);
 
 static const struct bt_data ad[] = {
+	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
+		      (CONFIG_BT_DEVICE_APPEARANCE >> 0) & 0xff,
+		      (CONFIG_BT_DEVICE_APPEARANCE >> 8) & 0xff),
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
 		      0x12, 0x18,       /* HID Service */
