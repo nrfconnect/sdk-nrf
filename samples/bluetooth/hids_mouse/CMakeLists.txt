@@ -5,7 +5,6 @@ project(NONE)
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE
 	${app_sources}
-	$ENV{ZEPHYR_BASE}/samples/bluetooth/gatt/dis.c
 	$ENV{ZEPHYR_BASE}/samples/bluetooth/gatt/bas.c
 )
 
