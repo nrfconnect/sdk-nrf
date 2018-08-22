@@ -21,9 +21,9 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 
-#include <gatt/dis.h>
 #include <gatt/bas.h>
 #include <bluetooth/services/hids.h>
+#include <bluetooth/services/dis.h>
 
 #define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -405,7 +405,7 @@ static void bt_ready(int err)
 	printk("Bluetooth initialized\n");
 
 	bas_init();
-	dis_init(CONFIG_SOC, "Manufacturer");
+	dis_init();
 	hid_init();
 
 	k_delayed_work_init(&hids_work, mouse_handler);
