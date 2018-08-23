@@ -19,7 +19,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/uuid.h>
 
-#include "throughput.h"
+#include <bluetooth/services/throughput.h>
 
 static struct metrics met;
 

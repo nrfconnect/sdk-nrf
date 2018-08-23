@@ -54,3 +54,13 @@ config NRF_BT_HIDS_SYS_LOG_LEVEL
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
 
 endif # NRF_BT_HIDS
+
+config NRF_BT_THROUGHPUT
+	bool
+	prompt "Enable Throughput service"
+	default n
+	help
+	 Enable Nordic GATT throughput BLE service
+
+if NRF_BT_THROUGHPUT
+endif # NRF_BT_THROUGHPUT
