@@ -15,6 +15,8 @@
 #include <board.h>
 #include <assert.h>
 
+#include <settings/settings.h>
+
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/conn.h>
@@ -409,6 +411,10 @@ static void bt_ready(int err)
 	hid_init();
 
 	k_delayed_work_init(&hids_work, mouse_handler);
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
 
 	advertising_start();
 }
