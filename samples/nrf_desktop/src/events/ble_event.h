@@ -14,6 +14,7 @@
  */
 
 #include <bluetooth/bluetooth.h>
+#include <bluetooth/conn.h>
 
 #include "event_manager.h"
 
@@ -21,11 +22,15 @@
 extern "C" {
 #endif
 
+extern const void *PEER_DISCONNECTED;
+extern const void *PEER_CONNECTED;
+extern const void *PEER_SECURED;
+
 struct ble_peer_event {
 	struct event_header header;
 
-	bt_addr_le_t address;
-	bool connected;
+	struct bt_conn *conn_id;
+	const void *state;
 };
 EVENT_TYPE_DECLARE(ble_peer_event);
 
