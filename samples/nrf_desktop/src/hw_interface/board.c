@@ -117,6 +117,15 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_wake_up_event(eh)) {
+		if (!initialized) {
+			initialized = true;
+
+			turn_board_on();
+		}
+		return false;
+	}
+
 	if (is_power_down_event(eh)) {
 		if (initialized) {
 			initialized = false;
@@ -135,3 +144,4 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, module_state_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, wake_up_event);

@@ -34,6 +34,13 @@ struct keep_active_event {
 
 EVENT_TYPE_DECLARE(keep_active_event);
 
+
+struct wake_up_event {
+	struct event_header header;
+};
+
+EVENT_TYPE_DECLARE(wake_up_event);
+
 #ifdef __cplusplus
 }
 #endif
