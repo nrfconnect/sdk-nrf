@@ -14,9 +14,8 @@
 #include <gpio.h>
 #include <hal/nrf_gpiote.h>
 
-#include <misc/printk.h>
-
 #include "power_event.h"
+#include "ble_event.h"
 
 #define MODULE power_manager
 #include "module_state_event.h"
@@ -31,9 +30,10 @@
 
 enum power_state {
 	POWER_STATE_IDLE,
-	POWER_STATE_SUSPENDING1,
-	POWER_STATE_SUSPENDING2,
+	POWER_STATE_SUSPENDING,
 	POWER_STATE_SUSPENDED,
+	POWER_STATE_TURN_OFF,
+	POWER_STATE_OFF,
 	POWER_STATE_WAKEUP
 };
 
@@ -49,6 +49,7 @@ static struct device_list device_list;
 
 static enum power_state power_state = POWER_STATE_IDLE;
 static struct k_delayed_work power_down_trigger;
+static unsigned int connection_count;
 
 static void suspend_devices(struct device_list *dl)
 {
@@ -84,20 +85,17 @@ static void create_device_list(struct device_list *dl)
 	device_list_get(&dl->devices, &count);
 
 
-	int dcount = 4; /* Reserve for 32KHz, 16MHz, system clock, and uart */
+	int dcount = 3; /* Reserve for 32KHz, 16MHz and system clock */
 
 	for (size_t i = 0;
 	     (i < count) && (dcount < ARRAY_SIZE(dl->ordered));
 	     i++) {
-
 		if (!strcmp(dl->devices[i].config->name, "clk_k32src")) {
 			dl->ordered[0] = i;
 		} else if (!strcmp(dl->devices[i].config->name, "clk_m16src")) {
 			dl->ordered[1] = i;
 		} else if (!strcmp(dl->devices[i].config->name, "sys_clock")) {
 			dl->ordered[2] = i;
-		} else if (!strcmp(dl->devices[i].config->name, "UART_0")) {
-			dl->ordered[3] = i;
 		} else {
 			dl->ordered[dcount] = i;
 			dcount++;
@@ -112,24 +110,21 @@ int _sys_soc_suspend(s32_t ticks)
 		return SYS_PM_NOT_HANDLED;
 	}
 
-	if (power_state == POWER_STATE_SUSPENDING2) {
-		SYS_LOG_WRN("switch system off now");
+	if (power_state == POWER_STATE_TURN_OFF) {
+		SYS_LOG_WRN("system turned off");
 
-		power_state = POWER_STATE_SUSPENDED;
+		power_state = POWER_STATE_OFF;
+
 		_sys_soc_pm_idle_exit_notification_disable();
 		suspend_devices(&device_list);
 		_sys_soc_set_power_state(SYS_POWER_STATE_DEEP_SLEEP);
 
-		/* System is off here - wake up leads to reboot */
+		/* System is off here - wake up leads to reboot. */
 		__ASSERT_NO_MSG(false);
 
 		return SYS_PM_DEEP_SLEEP;
 	}
 
-	/* TODO enough ticks - put CPU to sleep
-	 * _sys_soc_set_power_state(SYS_POWER_STATE_CPU_LPS);
-	 * return SYS_PM_LOW_POWER_STATE;
-	 */
 	return SYS_PM_NOT_HANDLED;
 }
 
@@ -139,11 +134,26 @@ static void power_down(struct k_work *work)
 		struct power_down_event *event = new_power_down_event();
 
 		if (event) {
-			SYS_LOG_INF("system switching off");
-			power_state = POWER_STATE_SUSPENDING1;
+			SYS_LOG_INF("system power down");
+			power_state = POWER_STATE_SUSPENDING;
 			EVENT_SUBMIT(event);
 		}
 	}
+}
+
+static void system_off(void)
+{
+	/* Port events are needed to leave system off state. */
+	nrf_gpiote_int_enable(GPIOTE_INTENSET_PORT_Msk);
+	irq_enable(GPIOTE_IRQn);
+
+	/* Make sure that port events are enabled before
+	 * the system goes off.
+	 */
+	__DSB();
+
+	/* System will go off on next idle cycle. */
+	power_state = POWER_STATE_TURN_OFF;
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -154,10 +164,11 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_submit(&power_down_trigger,
 					POWER_DOWN_TIMEOUT_MS);
 			break;
+		case POWER_STATE_SUSPENDING:
 		case POWER_STATE_SUSPENDED:
-		case POWER_STATE_SUSPENDING1:
-		case POWER_STATE_SUSPENDING2:
+		case POWER_STATE_TURN_OFF:
 			break;
+		case POWER_STATE_OFF:
 		default:
 			__ASSERT_NO_MSG(false);
 			break;
@@ -169,11 +180,48 @@ static bool event_handler(const struct event_header *eh)
 	if (is_power_down_event(eh)) {
 		SYS_LOG_INF("power down the board");
 
-		/* Port events are needed to leave system off state */
-		nrf_gpiote_int_enable(GPIOTE_INTENSET_PORT_Msk);
-		irq_enable(GPIOTE_IRQn);
+		if (connection_count > 0) {
+			/* Connection is active, keep OS alive. */
+			power_state = POWER_STATE_SUSPENDED;
+			SYS_LOG_WRN("system suspended");
+		} else {
+			/* No active connection, turn system off. */
+			system_off();
+		}
 
-		power_state = POWER_STATE_SUSPENDING2;
+		return false;
+	}
+
+	if (is_wake_up_event(eh)) {
+		SYS_LOG_INF("wake up the board");
+
+		power_state = POWER_STATE_IDLE;
+		k_delayed_work_submit(&power_down_trigger,
+				POWER_DOWN_TIMEOUT_MS);
+
+		return false;
+	}
+
+	if (is_ble_peer_event(eh)) {
+		struct ble_peer_event *event = cast_ble_peer_event(eh);
+
+		if (event->state == PEER_CONNECTED) {
+			__ASSERT_NO_MSG(connection_count < UINT_MAX);
+			connection_count++;
+		} else if (event->state == PEER_DISCONNECTED) {
+			__ASSERT_NO_MSG(connection_count > 0);
+			connection_count--;
+		} else {
+			/* No action */
+		}
+
+		if ((connection_count == 0) &&
+		    (power_state == POWER_STATE_SUSPENDED)) {
+			/* Last peer disconnected during standby.
+			 * Turn system off.
+			 */
+			system_off();
+		}
 
 		return false;
 	}
@@ -183,7 +231,8 @@ static bool event_handler(const struct event_header *eh)
 
 		if (((event->state == MODULE_STATE_OFF) ||
 		     (event->state == MODULE_STATE_STANDBY)) &&
-		    (power_state == POWER_STATE_SUSPENDING1)) {
+		    (power_state == POWER_STATE_SUSPENDING)) {
+			/* Some module is deactivated: re-iterate */
 			struct power_down_event *event = new_power_down_event();
 
 			if (event) {
@@ -217,5 +266,7 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, keep_active_event);
+EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);
