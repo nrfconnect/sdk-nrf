@@ -124,10 +124,20 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
-		atomic_set(&active, false);
+	if (is_wake_up_event(eh)) {
+		if (!atomic_get(&active)) {
+			init_fn();
+			atomic_set(&active, true);
+		}
 
-		term_fn();
+		return false;
+	}
+
+	if (is_power_down_event(eh)) {
+		if (atomic_get(&active)) {
+			atomic_set(&active, false);
+			term_fn();
+		}
 
 		return false;
 	}
@@ -139,4 +149,5 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

@@ -162,11 +162,6 @@ error:
 void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 		    u32_t pins)
 {
-	if (!atomic_get(&active)) {
-		/* Module is in power down state */
-		return;
-	}
-
 	/* Disable GPIO interrupt */
 	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
 		int err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
@@ -174,6 +169,17 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 		if (err) {
 			SYS_LOG_ERR("cannot disable callbacks");
 		}
+	}
+
+	if (!atomic_get(&active)) {
+		/* Module is in power down state */
+		struct wake_up_event *event = new_wake_up_event();
+
+		if (event) {
+			EVENT_SUBMIT(event);
+		}
+
+		return;
 	}
 
 	/* Activate periodic scan */
@@ -226,11 +232,11 @@ static void init_fn(void)
 		}
 	}
 
+	module_set_state(MODULE_STATE_READY);
+
 	/* Perform initial scan */
 	atomic_set(&scanning, true);
 	matrix_scan_fn(NULL);
-
-	module_set_state(MODULE_STATE_READY);
 
 	return;
 
@@ -265,6 +271,17 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_wake_up_event(eh)) {
+		if (!atomic_get(&active)) {
+			module_set_state(MODULE_STATE_READY);
+
+			atomic_set(&active, true);
+			matrix_scan_fn(NULL);
+		}
+
+		return false;
+	}
+
 	if (is_power_down_event(eh)) {
 		atomic_set(&active, false);
 
@@ -284,3 +301,4 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+EVENT_SUBSCRIBE(MODULE, wake_up_event);

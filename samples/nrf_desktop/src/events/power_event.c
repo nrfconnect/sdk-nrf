@@ -7,6 +7,7 @@
 #include "power_event.h"
 
 EVENT_TYPE_DEFINE(power_down_event, NULL);
+EVENT_TYPE_DEFINE(wake_up_event, NULL);
 
 static void print_event(const struct event_header *eh)
 {
