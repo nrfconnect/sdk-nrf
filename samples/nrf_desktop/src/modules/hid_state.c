@@ -764,7 +764,7 @@ static bool event_handler(const struct event_header *eh)
 		SYS_LOG_INF("peer %sconnected",
 			    (event->connected)?(""):("dis"));
 
-		if (event->connected) {
+		if (event->state == PEER_SECURED) {
 			connect();
 
 			/* TODO: Send enqueued keys and mouse buttons as soon
@@ -772,8 +772,10 @@ static bool event_handler(const struct event_header *eh)
 			 *
 			 * This needs modification of HIDS service.
 			 */
-		} else {
+		} else if (event->state == PEER_DISCONNECTED) {
 			disconnect();
+		} else {
+			/* No action */
 		}
 
 		return false;

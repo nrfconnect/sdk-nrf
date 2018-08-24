@@ -36,6 +36,14 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	SYS_LOG_INF("Connected to %s", addr);
 
+	struct ble_peer_event *event = new_ble_peer_event();
+
+	if (event) {
+		event->conn_id = conn;
+		event->state   = PEER_CONNECTED;
+		EVENT_SUBMIT(event);
+	}
+
 	err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
 	if (err) {
 		SYS_LOG_ERR("Failed to set security");
@@ -53,8 +61,8 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	struct ble_peer_event *event = new_ble_peer_event();
 
 	if (event) {
-		event->address = *bt_conn_get_dst(conn);
-		event->connected = false;
+		event->conn_id = conn;
+		event->state   = PEER_DISCONNECTED;
 		EVENT_SUBMIT(event);
 	}
 }
@@ -70,8 +78,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	struct ble_peer_event *event = new_ble_peer_event();
 
 	if (event) {
-		event->address = *bt_conn_get_dst(conn);
-		event->connected = true;
+		event->conn_id = conn;
+		event->state   = PEER_SECURED;
 		EVENT_SUBMIT(event);
 	}
 }
