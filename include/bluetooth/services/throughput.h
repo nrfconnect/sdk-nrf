@@ -30,7 +30,6 @@ struct metrics {
 			    0xA9, 0x6C, 0x9D, 0x6C, 0xDD, 0xDA, 0x83, 0x04)
 
 void throughput_init(void);
-void throughput_write(void);
 
 #ifdef __cplusplus
 }
