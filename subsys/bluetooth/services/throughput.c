@@ -1,6 +1,3 @@
-/** @file
- *  @brief Throughput service sample
- */
 
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA

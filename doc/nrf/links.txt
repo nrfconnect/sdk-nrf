@@ -3,3 +3,6 @@
 
 .. |link_zephyr_doc| replace:: Zephyr Project documentation
 .. _link_zephyr_doc: http://docs.zephyrproject.org/
+
+.. |core_spec| replace:: Bluetooth Core Specification
+.. _core_spec: https://www.bluetooth.com/specifications/bluetooth-core-specification
