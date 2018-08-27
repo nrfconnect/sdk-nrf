@@ -65,9 +65,9 @@ enum nfc_uri_id {
 	NFC_URI_URN_EPC_RAW   = 0x21,	/**< "urn:epc:raw:" */
 	NFC_URI_URN_EPC       = 0x22,	/**< "urn:epc:" */
 	NFC_URI_URN_NFC       = 0x23,	/**< "urn:nfc:" */
-	NFC_URI_RFU           = 0xFF	/**< No prepending is done. Reserved
-					 *   for future use.
-					 */
+	NFC_URI_RFU           = 0xFF	/**< No prepending is done. Reserved for
+					  *   future use.
+					  */
 };
 
 /**
