@@ -16,4 +16,9 @@ static void print_event(const struct event_header *eh)
 	printk("requested by %s", event->module_name);
 }
 
-EVENT_TYPE_DEFINE(keep_active_event, print_event, NULL);
+static void log_args(struct log_event_buf *buf, const struct event_header *eh)
+{
+}
+
+EVENT_INFO_DEFINE(keep_active_event, ENCODE(), ENCODE(), log_args);
+EVENT_TYPE_DEFINE(keep_active_event, print_event, &keep_active_event_info);
