@@ -36,44 +36,4 @@ config SYSVIEW_START_LOGGING_ON_SYSTEM_START
 
 endmenu #Advanced
 
-config PROFILER_NORDIC
-	bool "Use Nordic profiler"
-	depends on PROFILER
-	select RTT_CONSOLE
-	default n
-
-menu "Nordic profiler advanced"
-	depends on PROFILER_NORDIC
-
-config PROFILER_NORDIC_START_LOGGING_ON_SYSTEM_START
-	bool "Start logging on system start"
-	depends on PROFILER_NORDIC
-	default n
-
-config PROFILER_NORDIC_COMMAND_BUFFER_SIZE
-	int "Command buffer size"
-	default 16
-
-config PROFILER_NORDIC_DATA_BUFFER_SIZE
-	int "Data buffer size"
-	default 2048
-
-config PROFILER_NORDIC_INFO_BUFFER_SIZE
-	int "Info buffer size"
-	default 1024
-
-config PROFILER_NORDIC_RTT_CHANNEL_DATA
-	int "Data up channel index"
-	default 1
-
-config PROFILER_NORDIC_RTT_CHANNEL_INFO
-	int "Info up channel index"
-	default 2
-
-config PROFILER_NORDIC_RTT_CHANNEL_COMMANDS
-	int "Command down channel index"
-	default 1
-
-endmenu #Advanced
-
 endmenu
