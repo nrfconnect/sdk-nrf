@@ -19,4 +19,4 @@ static void print_event(const struct event_header *eh)
 			(const char *)event->state);
 }
 
-EVENT_TYPE_DEFINE(module_state_event, print_event);
+EVENT_TYPE_DEFINE(module_state_event, print_event, NULL);

@@ -18,6 +18,7 @@
  */
 
 #include "event_manager.h"
+#include "profiler.h"
 
 #ifdef __cplusplus
 extern "C" {
