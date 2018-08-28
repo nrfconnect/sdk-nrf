@@ -1,0 +1,79 @@
+menu "System profiler"
+
+config PROFILER
+	bool"Enable system profiler"
+	default n
+
+config MAX_NUMBER_OF_CUSTOM_EVENTS
+	int "Maximum number of stored custom events"
+	default 32
+
+config PROFILER_CUSTOM_EVENT_BUF_LEN
+	int "Length of data buffer for custom event data(in bytes)"
+	default 64
+
+config MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
+	int "Maximum number of characters used to describe single event type"
+	default 128
+
+config PROFILER_SYSVIEW
+	bool "Use SysView profiler"
+	depends on PROFILER
+	select RTT_CONSOLE
+	select SEGGER_SYSTEMVIEW
+	default y
+
+menu "SysView advanced"
+	depends on PROFILER_SYSVIEW
+config SYSVIEW_INITIALIZATION
+	bool "Initialize and config SystemView on start"
+	default n
+
+config SYSVIEW_START_LOGGING_ON_SYSTEM_START
+	bool "Start logging on system start"
+	depends on SYSVIEW_INITIALIZATION
+	default n
+
+endmenu #Advanced
+
+config PROFILER_NORDIC
+	bool "Use Nordic profiler"
+	depends on PROFILER
+	select RTT_CONSOLE
+	default n
+
+menu "Nordic profiler advanced"
+	depends on PROFILER_NORDIC
+
+config PROFILER_NORDIC_START_LOGGING_ON_SYSTEM_START
+	bool "Start logging on system start"
+	depends on PROFILER_NORDIC
+	default n
+
+config PROFILER_NORDIC_COMMAND_BUFFER_SIZE
+	int "Command buffer size"
+	default 16
+
+config PROFILER_NORDIC_DATA_BUFFER_SIZE
+	int "Data buffer size"
+	default 2048
+
+config PROFILER_NORDIC_INFO_BUFFER_SIZE
+	int "Info buffer size"
+	default 1024
+
+config PROFILER_NORDIC_RTT_CHANNEL_DATA
+	int "Data up channel index"
+	default 1
+
+config PROFILER_NORDIC_RTT_CHANNEL_INFO
+	int "Info up channel index"
+	default 2
+
+config PROFILER_NORDIC_RTT_CHANNEL_COMMANDS
+	int "Command down channel index"
+	default 1
+
+endmenu #Advanced
+
+endmenu

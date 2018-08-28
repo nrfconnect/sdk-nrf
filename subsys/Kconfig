@@ -10,4 +10,6 @@ rsource "bluetooth/Kconfig"
 
 rsource "event_manager/Kconfig"
 
+rsource "profiler/Kconfig"
+
 endmenu
