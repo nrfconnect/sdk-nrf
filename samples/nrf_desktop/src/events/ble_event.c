@@ -17,6 +17,8 @@ static void print_event(const struct event_header *eh)
 	printk("conn_id=%p %s", event->conn_id, (const char *)(event->state));
 }
 
-EVENT_TYPE_DEFINE(ble_peer_event, print_event);
 
-EVENT_TYPE_DEFINE(ble_interval_event, NULL);
+EVENT_TYPE_DEFINE(ble_peer_event, print_event, NULL);
+
+EVENT_TYPE_DEFINE(ble_interval_event, NULL, NULL);
+

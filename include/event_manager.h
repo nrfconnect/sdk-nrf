@@ -11,6 +11,7 @@
 #ifndef _EVENT_MANAGER_H_
 #define _EVENT_MANAGER_H_
 
+
 /**
  * @brief Event Manager
  * @defgroup event_manager Event Manager
@@ -70,6 +71,7 @@
 #include <misc/__assert.h>
 
 #include <event_manager_priv.h>
+#include <profiler.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -103,10 +105,10 @@ extern "C" {
  *          as the first field.
  */
 struct event_header {
-	sys_dlist_t node;                 /**< Linked list node used to chain events. */
+	sys_dlist_t node;    /**< Linked list node used to chain events. */
 
-	s64_t timestamp;                  /**< Timestamp indicating event creation time. */
-	const struct event_type *type_id; /**< Pointer to the event type object. */
+	const void *type_id; /**< Pointer to the event type object. */
+
 };
 
 
@@ -129,6 +131,23 @@ struct event_subscriber {
 };
 
 
+/** @brief Event description for profiling or logging.
+ */
+struct event_info {
+	/** Function to log this event. */
+	void (*log_arg_fn)(struct log_event_buf *buf, const struct event_header *eh);
+
+	/** Number of logged datafields. */
+	const u8_t log_arg_cnt;
+
+	/** Labels of logged datafields. */
+	const char **log_arg_labels;
+
+	/** Types of logged datafields. */
+	const enum profiler_arg *log_arg_types;
+};
+
+
 /** @brief Event type structure.
  */
 struct event_type {
@@ -144,6 +163,9 @@ struct event_type {
 
 	/** Function to print this event. */
 	void (*print_event)(const struct event_header *eh);
+
+	/** Logging and formatting information. */
+	const struct event_info *ev_info;
 };
 
 
@@ -198,6 +220,30 @@ extern const struct event_type __stop_event_types[];
 	const struct {} _CONCAT(_CONCAT(__event_subscriber_, ename), final_sub_redefined) = {}
 
 
+/** @def ENCODE
+ *
+ * @brief Encode event data types or labels.
+ *
+ * @param Data types or labels to be encoded.
+ */
+#define ENCODE(...) __VA_ARGS__
+
+
+/** @def EVENT_INFO_DEFINE
+ *
+ * @brief Declare event logging information.
+ *
+ * Macro provides declarations required for event to be logged by profiler.
+ *
+ * @param ename Name of the event.
+ * @param types Types of values to log.
+ * @param labels Labels of values to log (represented as enum).
+ * @param log_arg_fn Function used to log event data.
+ */
+#define EVENT_INFO_DEFINE(ename, types, labels, log_arg_func) \
+	_EVENT_INFO_DEFINE(ename, ENCODE(types), ENCODE(labels), log_arg_func)
+
+
 /** @def EVENT_TYPE_DECLARE
  *
  * @brief Declare event type.
@@ -219,7 +265,8 @@ extern const struct event_type __stop_event_types[];
  * @param ename     Name of the event.
  * @param print_fn  Function to stringify event of this type.
  */
-#define EVENT_TYPE_DEFINE(ename, print_fn) _EVENT_TYPE_DEFINE(ename, print_fn)
+#define EVENT_TYPE_DEFINE(ename, print_fn, ev_info_struct) \
+	_EVENT_TYPE_DEFINE(ename, print_fn, ev_info_struct)
 
 
 /** @def ASSERT_EVENT_ID

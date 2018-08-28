@@ -15,4 +15,4 @@ static void print_event(const struct event_header *eh)
 			(event->pressed)?("pressed"):("released"));
 }
 
-EVENT_TYPE_DEFINE(button_event, print_event);
+EVENT_TYPE_DEFINE(button_event, print_event, NULL);
