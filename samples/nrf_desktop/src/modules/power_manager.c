@@ -14,6 +14,9 @@
 #include <gpio.h>
 #include <hal/nrf_gpiote.h>
 
+#include <misc/printk.h>
+#include <profiler.h>
+
 #include "power_event.h"
 #include "ble_event.h"
 
@@ -180,6 +183,8 @@ static bool event_handler(const struct event_header *eh)
 	if (is_power_down_event(eh)) {
 		SYS_LOG_INF("power down the board");
 
+		profiler_term();
+
 		if (connection_count > 0) {
 			/* Connection is active, keep OS alive. */
 			power_state = POWER_STATE_SUSPENDED;
@@ -188,6 +193,7 @@ static bool event_handler(const struct event_header *eh)
 			/* No active connection, turn system off. */
 			system_off();
 		}
+
 
 		return false;
 	}
