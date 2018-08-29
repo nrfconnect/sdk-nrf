@@ -252,9 +252,8 @@ static void async_init_fn(struct k_work *work)
 	}
 
 	err = gpio_pin_configure(gpio_dev, 0x19, GPIO_DIR_IN | GPIO_INT |
-			GPIO_INT_EDGE | GPIO_INT_ACTIVE_HIGH |
-			GPIO_INT_DEBOUNCE |
-			(GPIO_PIN_CNF_SENSE_High << GPIO_PIN_CNF_SENSE_Pos));
+			GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH |
+			GPIO_INT_DEBOUNCE);
 	if (err) {
 		SYS_LOG_ERR("cannot configure irq pin");
 		return;
