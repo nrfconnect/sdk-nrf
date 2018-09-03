@@ -62,6 +62,25 @@ config NRF_BT_HIDS_SYS_LOG_LEVEL
 
 endif # NRF_BT_HIDS
 
+config NRF_BT_LBS
+	bool
+	prompt "Enable LBS"
+	help
+	  Enable LBS (LED-Button Service)
+
+if NRF_BT_LBS
+
+config NRF_BT_LBS_POLL_BUTTON
+	bool
+	default n
+	prompt "Support button state polling"
+	help
+	  Enable support for button state polling
+	  (button state change notify always supported)
+
+endif # NRF_BT_LBS
+
+
 config NRF_BT_NUS
 	bool
 	prompt "Enable NUS"
