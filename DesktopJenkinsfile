@@ -8,6 +8,7 @@ pipeline {
     docker {
       image "$IMAGE_TAG"
       registryUrl "$REGISTRY"
+      label "docker"
       args "-u jenkins:jenkins"
     }
   }
