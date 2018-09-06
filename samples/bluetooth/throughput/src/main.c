@@ -21,6 +21,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/services/throughput.h>
 
+#include <bluetooth/common/scan.h>
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -53,14 +54,48 @@ static const char img[][81] = {
 #include "img.file"
 };
 
-static void exchange_func(struct bt_conn *conn, u8_t rc,
+void scan_filter_match(struct bt_scan_device_info *device_info,
+		       struct bt_scan_filter_match *filter_match,
+		       bool connectable)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
+
+	printk("Filters matched. Address: %s connectable: %d\n",
+		addr, connectable);
+}
+
+void scan_filter_no_match(struct bt_scan_device_info *device_info,
+			  bool connectable)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
+
+	printk("Filter not match. Address: %s connectable: %d\n",
+				addr, connectable);
+}
+
+void scan_connecting_error(struct bt_scan_device_info *device_info)
+{
+	printk("Connecting failed\n");
+}
+
+static struct bt_scan_cb scan_cb = {
+	.filter_match = scan_filter_match,
+	.filter_no_match = scan_filter_no_match,
+	.connecting_error = scan_connecting_error,
+};
+
+static void exchange_func(struct bt_conn *conn, u8_t err,
 			  struct bt_gatt_exchange_params *params)
 {
 	struct bt_conn_info info = {0};
 
-	printk("MTU exchange %s\n", rc == 0 ? "successful" : "failed");
+	printk("MTU exchange %s\n", err == 0 ? "successful" : "failed");
 
-	rc = bt_conn_get_info(conn, &info);
+	err = bt_conn_get_info(conn, &info);
 	if (info.role == BT_CONN_ROLE_MASTER) {
 		test_ready = true;
 	}
@@ -69,7 +104,7 @@ static void exchange_func(struct bt_conn *conn, u8_t rc,
 static u8_t discover_func(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 			  struct bt_gatt_discover_params *params)
 {
-	int rc;
+	int err;
 
 	if (!attr) {
 		printk("Discover complete\n");
@@ -83,18 +118,18 @@ static u8_t discover_func(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 		discover_params.uuid = &BT_UUID_16(uuid16)->uuid;
 		discover_params.start_handle = attr->handle + 1;
 
-		rc = bt_gatt_discover(conn, &discover_params);
-		if (rc) {
-			printk("Discover failed (err %d)\n", rc);
+		err = bt_gatt_discover(conn, &discover_params);
+		if (err) {
+			printk("Discover failed (err %d)\n", err);
 		}
 	} else if (!bt_uuid_cmp(discover_params.uuid, uuid16)) {
 		/* characteristic found */
 		char_handle = attr->handle + 1;
 		exchange_params.func = exchange_func;
 
-		rc = bt_gatt_exchange_mtu(conn, &exchange_params);
-		if (rc) {
-			printk("MTU exchange failed (err %d)\n", rc);
+		err = bt_gatt_exchange_mtu(conn, &exchange_params);
+		if (err) {
+			printk("MTU exchange failed (err %d)\n", err);
 		} else {
 			printk("MTU exchange pending\n");
 		}
@@ -103,107 +138,19 @@ static u8_t discover_func(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 	return BT_GATT_ITER_STOP;
 }
 
-static bool eir_found(u8_t type, const u8_t *data, u8_t data_len,
-		      void *user_data)
-{
-	int rc;
-	char dev[BT_ADDR_LE_STR_LEN];
-	struct bt_uuid_128 uuid = {0};
-
-	bt_addr_le_t *addr = user_data;
-
-	if ((type != BT_DATA_UUID128_ALL && type != BT_DATA_UUID128_SOME) ||
-	    (data_len % 16)) {
-		/* only process well formed 128 bit UUIDs */
-		return true;
-	}
-
-	for (size_t i = 0; i < data_len; i += 16) {
-
-		/* copy the UUID to a local buffer */
-		memset(&uuid, 0x00, sizeof(uuid));
-		uuid.uuid.type = BT_UUID_TYPE_128;
-		memcpy(uuid.val, &data[i], sizeof(uuid.val));
-
-		/* format a human readable address to display */
-		bt_addr_le_to_str(addr, dev, sizeof(dev));
-
-		if (!bt_uuid_cmp((struct bt_uuid *)&uuid, uuid128)) {
-
-			/* stop scanning before creating a BLE connection */
-			printk("Found a peer device %s\n", dev);
-
-			rc = bt_le_scan_stop();
-			if (rc) {
-				printk("Stop LE scan failed (err %d)\n", rc);
-				return false;
-			}
-
-			default_conn = bt_conn_create_le(addr, conn_param);
-			if (!default_conn) {
-				printk("Error while creating connection\n");
-			}
-
-			return false;
-		}
-
-		printk("Skipping device %s\n", dev);
-	}
-
-	return true;
-}
-
-static void ad_parse(struct net_buf_simple *ad,
-		     bool (*func)(u8_t type, const u8_t *data, u8_t data_len,
-				  void *user_data),
-		     void *le_addr)
-{
-	while (ad->len > 1) {
-		u8_t type;
-		u8_t len = net_buf_simple_pull_u8(ad);
-
-		/* check for early termination */
-		if (len == 0) {
-			return;
-		}
-
-		if (len > ad->len) {
-			printk("Malformed advertising data\n");
-			return;
-		}
-
-		type = net_buf_simple_pull_u8(ad);
-
-		if (!func(type, ad->data, len - 1, le_addr)) {
-			return;
-		}
-
-		net_buf_simple_pull(ad, len - 1);
-	}
-}
-
-static void device_found(const bt_addr_le_t *addr, s8_t rssi, u8_t type,
-			 struct net_buf_simple *ad)
-{
-	/* we're only interested in connectable events */
-	if (type == BT_LE_ADV_IND || type == BT_LE_ADV_DIRECT_IND) {
-		ad_parse(ad, eir_found, (void *)addr);
-	}
-}
-
-static void connected(struct bt_conn *conn, u8_t rc)
+static void connected(struct bt_conn *conn, u8_t err)
 {
 	struct bt_conn_info info = {0};
 
-	if (rc) {
-		printk("Connection failed (err %u)\n", rc);
+	if (err) {
+		printk("Connection failed (err %u)\n", err);
 		return;
 	}
 
 	default_conn = bt_conn_ref(conn);
-	rc = bt_conn_get_info(default_conn, &info);
-	if (rc) {
-		printk("Error %u while getting bt conn info\n", rc);
+	err = bt_conn_get_info(default_conn, &info);
+	if (err) {
+		printk("Error %u while getting bt conn info\n", err);
 	}
 
 	printk("Connected as %s\n",
@@ -212,7 +159,7 @@ static void connected(struct bt_conn *conn, u8_t rc)
 
 	/* make sure we're not scanning or advertising */
 	bt_le_adv_stop();
-	bt_le_scan_stop();
+	bt_scan_stop();
 
 	discover_params.type = BT_GATT_DISCOVER_PRIMARY;
 	discover_params.uuid = &BT_UUID_128(uuid128)->uuid;
@@ -221,16 +168,16 @@ static void connected(struct bt_conn *conn, u8_t rc)
 	discover_params.end_handle = 0xffff;
 
 	if (info.role == BT_CONN_ROLE_MASTER) {
-		rc = bt_gatt_discover(default_conn, &discover_params);
-		if (rc) {
-			printk("Discover failed (err %d)\n", rc);
+		err = bt_gatt_discover(default_conn, &discover_params);
+		if (err) {
+			printk("Discover failed (err %d)\n", err);
 		}
 	}
 }
 
-static void advertise_and_scan(void)
+static void scan_init(void)
 {
-	int rc;
+	int err;
 	struct bt_le_scan_param scan_param = {
 	    .type = BT_HCI_LE_SCAN_PASSIVE,
 	    .filter_dup = BT_HCI_LE_SCAN_FILTER_DUP_ENABLE,
@@ -238,18 +185,44 @@ static void advertise_and_scan(void)
 	    .window = 0x0010,
 	};
 
-	rc = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
+	struct bt_scan_init scan_init = {
+		.connect_if_match = 1,
+		.scan_param = &scan_param,
+		.conn_param = conn_param
+	};
+
+	bt_scan_init(&scan_init);
+	bt_scan_cb_register(&scan_cb);
+
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, uuid128);
+	if (err) {
+		printk("Scanning filters cannot be set\n");
+
+		return;
+	}
+
+	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	if (err) {
+		printk("Filters cannot be turned on\n");
+	}
+}
+
+static void advertise_and_scan(void)
+{
+	int err;
+
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
 			     ARRAY_SIZE(sd));
-	if (rc) {
-		printk("Advertising failed to start (err %d)\n", rc);
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
 		return;
 	}
 
 	printk("Advertising successfully started\n");
 
-	rc = bt_le_scan_start(&scan_param, device_found);
-	if (rc) {
-		printk("Starting scanning failed (err %d)\n", rc);
+	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
+	if (err) {
+		printk("Starting scanning failed (err %d)\n", err);
 	}
 
 	printk("Scanning successfully started\n");
@@ -269,27 +242,28 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	advertise_and_scan();
 }
 
-static void bt_ready(int rc)
+static void bt_ready(int err)
 {
-	if (rc) {
-		printk("Bluetooth init failed (err %d)\n", rc);
+	if (err) {
+		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
 
 	printk("Bluetooth initialized\n");
 
+	scan_init();
 	throughput_init();
 	advertise_and_scan();
 }
 
-static u8_t read_fn(struct bt_conn *conn, u8_t rc,
+static u8_t read_fn(struct bt_conn *conn, u8_t err,
 		    struct bt_gatt_read_params *params, const void *data,
 		    u16_t len)
 {
 	struct metrics met = {0};
 
-	if (rc) {
-		printk("GATT read callback failed (err: %d)\n", rc);
+	if (err) {
+		printk("GATT read callback failed (err: %d)\n", err);
 		return 0;
 	}
 
@@ -310,7 +284,7 @@ static u8_t read_fn(struct bt_conn *conn, u8_t rc,
 
 static void test_run(void)
 {
-	int rc;
+	int err;
 	u64_t stamp;
 	u32_t delta;
 	u32_t data = 0;
@@ -332,17 +306,17 @@ static void test_run(void)
 	test_ready = false;
 
 	/* reset peer metrics */
-	rc = bt_gatt_write_without_response(
+	err = bt_gatt_write_without_response(
 		default_conn, char_handle, dummy, 1, false);
 
 	/* get cycle stamp */
 	stamp = k_uptime_get_32();
 
 	while (prog < IMG_SIZE) {
-		rc = bt_gatt_write_without_response(
+		err = bt_gatt_write_without_response(
 			default_conn, char_handle, dummy, 244, false);
-		if (rc) {
-			printk("GATT write failed (err %d)\n", rc);
+		if (err) {
+			printk("GATT write failed (err %d)\n", err);
 			break;
 		}
 
@@ -361,9 +335,9 @@ static void test_run(void)
 	/* read back char from peer */
 	read_param.single.handle = char_handle;
 
-	rc = bt_gatt_read(default_conn, &read_param);
-	if (rc) {
-		printk("GATT read failed (err %d)\n", rc);
+	err = bt_gatt_read(default_conn, &read_param);
+	if (err) {
+		printk("GATT read failed (err %d)\n", err);
 	}
 }
 
@@ -375,7 +349,7 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 
 void main(void)
 {
-	int rc;
+	int err;
 
 	static struct bt_conn_cb conn_callbacks = {
 	    .connected = connected,
@@ -385,9 +359,9 @@ void main(void)
 
 	console_init();
 
-	rc = bt_enable(bt_ready);
-	if (rc) {
-		printk("Bluetooth init failed (err %d)\n", rc);
+	err = bt_enable(bt_ready);
+	if (err) {
+		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
 
