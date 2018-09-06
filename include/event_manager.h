@@ -36,6 +36,10 @@
  * After new event object is created, its field can be filled in by the user.
  * Event is submitted to the event manager using a @ref EVENT_SUBMIT macro.
  *
+ * Note: an event allocated with new__'event type name' MUST be submitted with
+ * @ref EVENT_SUBMIT. Otherwise it will not be handled and the memory will
+ * not be freed.
+ *
  * After event is submitted the event manager adds it into its processing
  * queue. When event is handled the event manager will notify all modules
  * that subscribed for its reception.
