@@ -130,8 +130,8 @@ static inline void profiler_log_encode_u32(struct log_event_buf *buf,
  * Used for event identification
  * @warning Buffer has to be initialized with event_log_start function first.
  *
- * @param data Memory address to encode.
  * @param buf Pointer to data buffer.
+ * @param mem_address Memory address to encode.
  */
 #ifdef CONFIG_PROFILER
 void profiler_log_add_mem_address(struct log_event_buf *buf,

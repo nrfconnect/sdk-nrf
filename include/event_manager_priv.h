@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: BSD-5-Clause-Nordic
  */
 
-/** @file
- * @brief Event manager private header.
+/* Event manager private header.
  *
  * Although these defines are globally visible they must not be used directly.
  */
@@ -125,8 +124,7 @@ extern "C" {
 	}
 
 
-/* Declarations and definitions - for more details refer to public API. */
-
+/* Wrappers used for defining event infos */
 #ifdef CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION
 
 #define _ARG_LABELS_DEFINE(...) \
@@ -145,7 +143,7 @@ extern "C" {
 
 #endif
 
-
+/* Declarations and definitions - for more details refer to public API. */
 #define _EVENT_INFO_DEFINE(ename, types, labels, log_arg_func)							\
 	const static char *_CONCAT(ename, _log_arg_labels[]) __used = _ARG_LABELS_DEFINE(labels);		\
 	const static enum profiler_arg _CONCAT(ename, _log_arg_types[]) __used = _ARG_TYPES_DEFINE(types);	\
