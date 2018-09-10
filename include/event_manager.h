@@ -180,7 +180,7 @@ extern const struct event_type __stop_event_types[];
  *
  * @brief Create event listener object.
  *
- * @param name   Module name.
+ * @param lname   Module name.
  * @param cb_fn  Pointer to the event notification function.
  */
 #define EVENT_LISTENER(lname, cb_fn) _EVENT_LISTENER(lname, cb_fn)
@@ -208,7 +208,7 @@ extern const struct event_type __stop_event_types[];
 	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL))
 
 
-/** @def EVENT_SUBSCRIBE_EARLY
+/** @def EVENT_SUBSCRIBE_FINAL
  *
  * @brief Subscribe listener to the event type as final module being notified.
  *
@@ -224,7 +224,7 @@ extern const struct event_type __stop_event_types[];
  *
  * @brief Encode event data types or labels.
  *
- * @param Data types or labels to be encoded.
+ * @param ... Data types or labels to be encoded.
  */
 #define ENCODE(...) __VA_ARGS__
 
@@ -238,7 +238,7 @@ extern const struct event_type __stop_event_types[];
  * @param ename Name of the event.
  * @param types Types of values to log.
  * @param labels Labels of values to log (represented as enum).
- * @param log_arg_fn Function used to log event data.
+ * @param log_arg_func Function used to log event data.
  */
 #define EVENT_INFO_DEFINE(ename, types, labels, log_arg_func) \
 	_EVENT_INFO_DEFINE(ename, ENCODE(types), ENCODE(labels), log_arg_func)
@@ -262,8 +262,9 @@ extern const struct event_type __stop_event_types[];
  * Macro defines the event type. By doing that it defines the event type
  * specific functions as well event type structure.
  *
- * @param ename     Name of the event.
- * @param print_fn  Function to stringify event of this type.
+ * @param ename     		Name of the event.
+ * @param print_fn  		Function to stringify event of this type.
+ * @param ev_info_struct	Data structure describing event type.
  */
 #define EVENT_TYPE_DEFINE(ename, print_fn, ev_info_struct) \
 	_EVENT_TYPE_DEFINE(ename, print_fn, ev_info_struct)
