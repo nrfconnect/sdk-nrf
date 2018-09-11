@@ -93,7 +93,7 @@ pipeline {
     }
     stage('Trigger testing build') {
       steps {
-        build job: "desktop52_verification/${BRANCH_NAME.replace('/', '%2F')}"
+        build job: "desktop52_verification/master", propagate: true, wait: false, parameters: [string(name: 'branchname', value: "$BRANCH_NAME")]
       }
     }
   }
