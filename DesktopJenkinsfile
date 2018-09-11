@@ -91,5 +91,10 @@ pipeline {
         cleanWs()
       }
     }
+    stage('Trigger testing build') {
+      steps {
+        build job: "desktop52_verification/${BRANCH_NAME.replace('/', '%2F')}"
+      }
+    }
   }
 }
