@@ -52,6 +52,13 @@
 	scl-pin = <8>;
 };
 
+&spi1 {
+	status = "ok";
+	sck-pin = <16>;
+	mosi-pin = <17>;
+	miso-pin = <15>;
+};
+
 &qdec {
 	status = "ok";
 	a-pin = <3>;
