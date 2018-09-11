@@ -50,7 +50,10 @@ pipeline {
                   fileExists('nrf/samples/nrf_desktop/build_pca10056/zephyr/zephyr.hex') && \
                   fileExists('nrf/samples/nrf_desktop/build_pca63519/zephyr/zephyr.hex')) {
                 echo "nrf_desktop build successful!"
-                archiveArtifacts artifacts: 'nrf/samples/nrf_desktop/**/zephyr.hex'
+                sh "cp 'nrf/samples/nrf_desktop/build_pca20041/zephyr/zephyr.hex' pca20041.hex"
+                sh "cp 'nrf/samples/nrf_desktop/build_pca10056/zephyr/zephyr.hex' pca10056.hex"
+                sh "cp 'nrf/samples/nrf_desktop/build_pca63519/zephyr/zephyr.hex' pca63519.hex"
+                archiveArtifacts artifacts: '*.hex'
               }
               else {
                 echo "nrf_desktop build failed!"
