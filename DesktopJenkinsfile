@@ -13,7 +13,10 @@ pipeline {
     }
   }
   // Checkout the repository to this folder instead of root
-  options { checkoutToSubdirectory('nrf') }
+  options {
+    checkoutToSubdirectory('nrf')
+    copyArtifactPermission("/desktop52_verification/*")
+  }
 
   environment {
       SANITYCHECK_OPTIONS = " --inline-logs"
