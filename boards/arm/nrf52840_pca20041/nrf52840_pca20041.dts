@@ -38,6 +38,8 @@
 	status = "ok";
 	compatible = "nordic,nrf-uart";
 	current-speed = <115200>;
+	tx-pin = <32>;
+	rx-pin = <33>;
 };
 
 &i2c0 {
@@ -50,6 +52,13 @@
 	status = "ok";
 	sda-pin = <6>;
 	scl-pin = <8>;
+};
+
+&spi1 {
+	status = "ok";
+	sck-pin = <16>;
+	mosi-pin = <17>;
+	miso-pin = <15>;
 };
 
 &qdec {
