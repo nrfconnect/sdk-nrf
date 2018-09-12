@@ -80,8 +80,12 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 
 static void async_init_fn(struct k_work *work)
 {
-	static const char *port_name[BUTTONS_NUM] = { SW0_GPIO_NAME,
-		SW1_GPIO_NAME, SW2_GPIO_NAME, SW3_GPIO_NAME };
+	static const char *port_name[BUTTONS_NUM] = {
+		SW0_GPIO_CONTROLLER,
+		SW1_GPIO_CONTROLLER,
+		SW2_GPIO_CONTROLLER,
+		SW3_GPIO_CONTROLLER
+	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(pin_id); i++) {
 		gpio_devs[i] = device_get_binding(port_name[i]);
