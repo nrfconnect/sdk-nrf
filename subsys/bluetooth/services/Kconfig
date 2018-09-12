@@ -62,6 +62,12 @@ config NRF_BT_HIDS_SYS_LOG_LEVEL
 
 endif # NRF_BT_HIDS
 
+config NRF_BT_NUS
+	bool
+	prompt "Enable NUS"
+	help
+	  Enable NUS (Nordic UART service
+
 config NRF_BT_THROUGHPUT
 	bool
 	prompt "Enable Throughput service"
