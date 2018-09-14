@@ -37,7 +37,7 @@ static struct device *LED1_dev;
 static struct device *LED3_dev;
 static struct device *button;
 
-#define BUTTON_PORT	SW0_GPIO_NAME
+#define BUTTON_PORT	SW0_GPIO_CONTROLLER
 /**< Button's GPIO port used to set default NDEF message. */
 #define BUTTON_PIN	SW0_GPIO_PIN
 /**< Button's GPIO pin used to set default NDEF message. */
@@ -89,19 +89,19 @@ static void nfc_callback(void *context,
 
 static int board_init(void)
 {
-	LED0_dev = device_get_binding(LED0_GPIO_PORT);
+	LED0_dev = device_get_binding(LED0_GPIO_CONTROLLER);
 	if (!LED0_dev) {
 		LOG_ERR("LED0 device not found");
 		return -ENXIO;
 	}
 
-	LED1_dev = device_get_binding(LED1_GPIO_PORT);
+	LED1_dev = device_get_binding(LED1_GPIO_CONTROLLER);
 	if (!LED1_dev) {
 		LOG_ERR("LED1 device not found");
 		return -ENXIO;
 	}
 
-	LED3_dev = device_get_binding(LED3_GPIO_PORT);
+	LED3_dev = device_get_binding(LED3_GPIO_CONTROLLER);
 	if (!LED3_dev) {
 		LOG_ERR("LED3 device not found");
 		return -ENXIO;
