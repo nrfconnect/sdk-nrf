@@ -22,10 +22,9 @@
 #include <nvs/nvs.h>
 
 #define LOG_MODULE_NAME ndef_file_m
-#define LOG_LEVEL CONFIG_HAL_NFC_LOG_LEVEL
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER();
+LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #define FLASH_URL_ADDRESS_ID 1 /**< Address of URL message in FLASH */
 
