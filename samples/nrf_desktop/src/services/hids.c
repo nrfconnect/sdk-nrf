@@ -312,6 +312,8 @@ static int module_init(void)
 
 	/* HID service configuration */
 	struct hids_init hids_init_obj = { 0 };
+	static const u8_t mouse_xy_mask[ceiling_fraction(REPORT_SIZE_MOUSE_XY, 8)] = {0};
+	static const u8_t mouse_wheel_mask[ceiling_fraction(REPORT_SIZE_MOUSE_WP, 8)] = {0};
 
 	hids_init_obj.info.bcd_hid        = BASE_USB_HID_SPEC_VERSION;
 	hids_init_obj.info.b_country_code = 0x00;
@@ -338,35 +340,37 @@ static int module_init(void)
 		ir_pos++;
 
 
-		input_report[ir_pos].id      = REPORT_ID_MOUSE_WP;
-		input_report[ir_pos].size    = REPORT_SIZE_MOUSE_WP;
-		input_report[ir_pos].handler = mouse_wp_notif_handler;
+		input_report[ir_pos].id       = REPORT_ID_MOUSE_WP;
+		input_report[ir_pos].size     = REPORT_SIZE_MOUSE_WP;
+		input_report[ir_pos].handler  = mouse_wp_notif_handler;
+		input_report[ir_pos].rep_mask = mouse_wheel_mask;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 
 
-		input_report[ir_pos].id      = REPORT_ID_MOUSE_XY;
-		input_report[ir_pos].size    = REPORT_SIZE_MOUSE_XY;
-		input_report[ir_pos].handler = mouse_xy_notif_handler;
+		input_report[ir_pos].id       = REPORT_ID_MOUSE_XY;
+		input_report[ir_pos].size     = REPORT_SIZE_MOUSE_XY;
+		input_report[ir_pos].handler  = mouse_xy_notif_handler;
+		input_report[ir_pos].rep_mask = mouse_xy_mask;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		input_report[ir_pos].id      = REPORT_ID_KEYBOARD;
-		input_report[ir_pos].size    = REPORT_SIZE_KEYBOARD;
-		input_report[ir_pos].handler = keyboard_notif_handler;
+		input_report[ir_pos].id          = REPORT_ID_KEYBOARD;
+		input_report[ir_pos].size        = REPORT_SIZE_KEYBOARD;
+		input_report[ir_pos].handler     = keyboard_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
-		input_report[ir_pos].id      = REPORT_ID_MPLAYER;
-		input_report[ir_pos].size    = REPORT_SIZE_MPLAYER;
-		input_report[ir_pos].handler = mplayer_notif_handler;
+		input_report[ir_pos].id          = REPORT_ID_MPLAYER;
+		input_report[ir_pos].size        = REPORT_SIZE_MPLAYER;
+		input_report[ir_pos].handler     = mplayer_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;

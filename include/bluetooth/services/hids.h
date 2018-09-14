@@ -152,6 +152,18 @@ struct hids_inp_rep {
 	/** Report data offset. */
 	u8_t offset;
 
+	/** Pointer to report mask. The least significant bit
+	 * corresponds to the least significant byte of the report value.
+	 * If this bit is set to 1 then the first byte of report is stored.
+	 * For example, report is 16 byte length to mask this the 2 byte is
+	 * needed, so if first byte is 0b11111111 then the first 8 byte of
+	 * report is stored, if second byte is 0b00001111 the only next 4
+	 * bytes so first 12 byte of report is stored. The user must provide
+	 * a mask of the appropriate length to mask all bytes of the report.
+	 * If rep_mask is NULL then whole report is stored.
+	 */
+	const u8_t *rep_mask;
+
 	/** Callback with the notification event. */
 	hids_notif_handler_t handler;
 };
