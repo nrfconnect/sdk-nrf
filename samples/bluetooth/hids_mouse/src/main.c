@@ -228,6 +228,7 @@ static void hid_init(void)
 	int err;
 	struct hids_init hids_init_obj = { 0 };
 	struct hids_inp_rep *hids_inp_rep;
+	static const u8_t mouse_movement_mask[ceiling_fraction(INPUT_REP_MOVEMENT_LEN, 8)] = {0};
 
 	static const u8_t report_map[] = {
 		0x05, 0x01,     /* Usage Page (Generic Desktop) */
@@ -324,6 +325,7 @@ static void hid_init(void)
 	hids_inp_rep++;
 	hids_inp_rep->size = INPUT_REP_MOVEMENT_LEN;
 	hids_inp_rep->id = INPUT_REP_REF_MOVEMENT_ID;
+	hids_inp_rep->rep_mask = mouse_movement_mask;
 	hids_init_obj.inp_rep_group_init.cnt++;
 
 	hids_inp_rep++;
