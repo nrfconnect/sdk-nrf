@@ -34,6 +34,11 @@ struct ble_peer_event {
 };
 EVENT_TYPE_DECLARE(ble_peer_event);
 
+struct ble_interval_event {
+	struct event_header header;
+};
+EVENT_TYPE_DECLARE(ble_interval_event);
+
 #ifdef __cplusplus
 }
 #endif
