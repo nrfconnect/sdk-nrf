@@ -6,8 +6,11 @@
 add_library(nrf_bluetooth INTERFACE)
 
 add_subdirectory_ifdef(CONFIG_NRF_BT_SVC_COMMON common)
-add_subdirectory_ifdef(CONFIG_NRF_BT_HIDS services)
-add_subdirectory_ifdef(CONFIG_NRF_BT_THROUGHPUT services)
-add_subdirectory_ifdef(CONFIG_NRF_BT_NUS services)
-add_subdirectory_ifdef(CONFIG_NRF_BT_LBS services)
-add_subdirectory_ifdef(CONFIG_NRF_BT_DIS services)
+
+if (CONFIG_NRF_BT_DIS  OR
+    CONFIG_NRF_BT_HIDS OR
+    CONFIG_NRF_BT_LBS  OR
+    CONFIG_NRF_BT_NUS  OR
+    CONFIG_NRF_BT_THROUGHPUT)
+	add_subdirectory(services)
+endif()
