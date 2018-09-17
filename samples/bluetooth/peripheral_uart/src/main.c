@@ -362,7 +362,7 @@ static void led_blink_thread(void)
 	int    blink_status       = 0;
 	int    err                = 0;
 
-	printf("Starting Nordic UART service example\n");
+	printk("Starting Nordic UART service example\n");
 
 	err = init_uart();
 	if (!err) {
