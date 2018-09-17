@@ -9,7 +9,7 @@ Overview
 This sample demonstrates LBS (LED Button) GATT Service. When connected
 the example will send the state of button 1 on the development board
 to the mobile application. While the mobile application can control the
-state of the LED 1 on development board.
+state of the LED 3 on development board.
 
 Requirements
 ************
