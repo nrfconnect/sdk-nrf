@@ -454,13 +454,14 @@ int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn);
  *  @param rep_index Index of report descriptor.
  *  @param rep Pointer to the report data.
  *  @param len Length of report data.
+ *  @param cb Notification complete callback (can be NULL).
  *
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
  */
 int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 		      u8_t rep_index, u8_t const *rep,
-		      u8_t len);
+		      u8_t len, bt_gatt_notify_complete_func_t cb);
 
 /** @brief Send Boot Mouse Input Report.
  *
@@ -473,6 +474,7 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
  *                 buttons are set to the previously passed value.
  *  @param x_delta Horizontal movement.
  *  @param y_delta Vertical movement.
+ *  @param cb Notification complete callback (can be NULL).
  *
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
@@ -480,7 +482,8 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
 				 struct bt_conn *conn,
 				 const u8_t *buttons,
-				 s8_t x_delta, s8_t y_delta);
+				 s8_t x_delta, s8_t y_delta,
+				 bt_gatt_notify_complete_func_t cb);
 
 /** @brief Send Boot Keyboard Input Report.
  *
@@ -491,6 +494,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
  *  @param conn Pointer to Connection Object.
  *  @param rep Pointer to the report data.
  *  @param len Length of report data.
+ *  @param cb Notification complete callback (can be NULL).
  *
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
@@ -498,7 +502,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
 int hids_boot_kb_inp_rep_send(struct hids *hids_obj,
 			      struct bt_conn *conn,
 			      u8_t const *rep,
-			      u16_t len);
+			      u16_t len, bt_gatt_notify_complete_func_t cb);
 
 
 #ifdef __cplusplus

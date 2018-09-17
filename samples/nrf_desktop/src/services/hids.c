@@ -392,13 +392,18 @@ static int module_init(void)
 	return hids_init(&hids_obj, &hids_init_obj);
 }
 
+static void mouse_xy_sent(struct bt_conn *conn)
+{
+}
+
 static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 {
 	if (in_boot_mode) {
 		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
 
-		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, NULL, x, y);
+		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, NULL, x, y,
+				mouse_xy_sent);
 	} else {
 		s16_t x = max(min(event->dx, 0x07ff), -0x07ff);
 		s16_t y = max(min(event->dy, 0x07ff), -0x07ff);
@@ -422,8 +427,12 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 
 		hids_inp_rep_send(&hids_obj, NULL,
 				  report_index[REPORT_ID_MOUSE_XY],
-				  buffer, sizeof(buffer));
+				  buffer, sizeof(buffer), mouse_xy_sent);
 	}
+}
+
+static void mouse_wp_sent(struct bt_conn *conn)
+{
 }
 
 static void send_mouse_wp(const struct hid_mouse_wp_event *event)
@@ -438,7 +447,11 @@ static void send_mouse_wp(const struct hid_mouse_wp_event *event)
 
 	hids_inp_rep_send(&hids_obj, NULL,
 			  report_index[REPORT_ID_MOUSE_WP],
-			  buffer, sizeof(buffer));
+			  buffer, sizeof(buffer), mouse_wp_sent);
+}
+
+static void mouse_buttons_sent(struct bt_conn *conn)
+{
 }
 
 static void send_mouse_buttons(const struct hid_mouse_button_event *event)
@@ -446,7 +459,7 @@ static void send_mouse_buttons(const struct hid_mouse_button_event *event)
 	if (in_boot_mode) {
 		hids_boot_mouse_inp_rep_send(&hids_obj, NULL,
 					     &event->button_bm,
-					     0, 0);
+					     0, 0, mouse_buttons_sent);
 	} else {
 		u8_t report[REPORT_SIZE_MOUSE_BUTTONS];
 
@@ -454,8 +467,12 @@ static void send_mouse_buttons(const struct hid_mouse_button_event *event)
 
 		hids_inp_rep_send(&hids_obj, NULL,
 				  report_index[REPORT_ID_MOUSE_BUTTONS],
-				  report, sizeof(report));
+				  report, sizeof(report), mouse_buttons_sent);
 	}
+}
+
+static void keyboard_sent(struct bt_conn *conn)
+{
 }
 
 static void send_keyboard(const struct hid_keyboard_event *event)
@@ -479,11 +496,12 @@ static void send_keyboard(const struct hid_keyboard_event *event)
 
 	if (in_boot_mode) {
 		hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
-				sizeof(report) - sizeof(report[8]));
+					  sizeof(report) - sizeof(report[8]),
+					  keyboard_sent);
 	} else {
 		hids_inp_rep_send(&hids_obj, NULL,
 				  report_index[REPORT_ID_KEYBOARD],
-				  report, sizeof(report));
+				  report, sizeof(report), keyboard_sent);
 	}
 }
 

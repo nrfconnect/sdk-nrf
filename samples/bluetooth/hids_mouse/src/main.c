@@ -357,7 +357,8 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 						     conn_mode[i].conn,
 						     NULL,
 						     (s8_t) x_delta,
-						     (s8_t) y_delta);
+						     (s8_t) y_delta,
+						     NULL);
 		} else {
 			u8_t x_buff[2];
 			u8_t y_buff[2];
@@ -381,7 +382,7 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 
 			hids_inp_rep_send(&hids_obj, conn_mode[i].conn,
 					  INPUT_REP_MOVEMENT_INDEX,
-					  buffer, sizeof(buffer));
+					  buffer, sizeof(buffer), NULL);
 		}
 	}
 }
