@@ -433,11 +433,6 @@ static void send_report_mouse_buttons(void)
 static void send_report_mouse_xy(s16_t dx, s16_t dy)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		if ((dx == 0) && (dy == 0)) {
-			/* There is nothing to send. */
-			return;
-		}
-
 		struct hid_mouse_xy_event *event = new_hid_mouse_xy_event();
 
 		if (!event) {
