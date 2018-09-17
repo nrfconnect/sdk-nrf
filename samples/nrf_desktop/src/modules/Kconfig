@@ -48,6 +48,30 @@ config DESKTOP_BLE_STATE_LESC_ONLY
 	help
 	  Enables Secure Connections only mode.
 
+config DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MIN
+	int "Connection interval min (N * 1.25 ms)"
+	default 6
+	help
+	  Desired connection interval used during negotiations (lower limit).
+
+config DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MAX
+	int "Connection interval max (N * 1.25 ms)"
+	default 40
+	help
+	  Desired connection interval used during negotiations (higher limit).
+
+config DESKTOP_BLE_STATE_CONNECTION_LATENCY
+	int "Connection latency"
+	default 0
+	help
+	  Desired connection latency used during negotiations.
+
+config DESKTOP_BLE_STATE_CONNECTION_TIMEOUT
+	int "Connection timeout (N * 10 ms)"
+	default 400
+	help
+	  Desired connection timeout used during negotiations.
+
 config DESKTOP_SYS_LOG_BLE_STATE_LEVEL
 	int "BLE state log level"
 	depends on SYS_LOG
