@@ -18,3 +18,5 @@ static void print_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(ble_peer_event, print_event);
+
+EVENT_TYPE_DEFINE(ble_interval_event, NULL);
