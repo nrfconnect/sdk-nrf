@@ -487,8 +487,8 @@ void configure_buttons(void)
 {
 	static const u32_t pin_id[4] = { SW0_GPIO_PIN, SW1_GPIO_PIN,
 		SW2_GPIO_PIN, SW3_GPIO_PIN };
-	static const char *port_name[4] = { SW0_GPIO_NAME, SW1_GPIO_NAME,
-		SW2_GPIO_NAME, SW3_GPIO_NAME };
+	static const char *port_name[4] = { SW0_GPIO_CONTROLLER, SW1_GPIO_CONTROLLER,
+		SW2_GPIO_CONTROLLER, SW3_GPIO_CONTROLLER };
 
 	for (size_t i = 0; i < ARRAY_SIZE(pin_id); i++) {
 		gpio_devs[i] = device_get_binding(port_name[i]);
