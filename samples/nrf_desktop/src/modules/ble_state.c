@@ -36,6 +36,19 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	SYS_LOG_INF("Connected to %s", addr);
 
+	struct bt_le_conn_param param = {
+		.interval_min	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MIN,
+		.interval_max	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MAX,
+		.latency	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_LATENCY,
+		.timeout	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_TIMEOUT
+	};
+
+	err = bt_conn_le_param_update(conn, &param);
+	if (err) {
+		SYS_LOG_WRN("Failed to set connection params");
+	}
+
+
 	struct ble_peer_event *event = new_ble_peer_event();
 
 	if (event) {
