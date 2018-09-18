@@ -10,3 +10,5 @@ rsource "lib/Kconfig"
 rsource "subsys/Kconfig"
 
 endmenu
+
+orsource "../nrfxlib/Kconfig.nrfxlib"

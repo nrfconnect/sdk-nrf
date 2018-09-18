@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
+set(NRFXLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../nrfxlib)
+if(EXISTS ${NRFXLIB_DIR})
+	add_subdirectory(${NRFXLIB_DIR} ${PROJECT_BINARY_DIR}/nrfxlib)
+endif()
+
 zephyr_include_directories(include)
 add_subdirectory(lib)
 add_subdirectory(subsys)

@@ -10,4 +10,6 @@ rsource "bluetooth/Kconfig"
 
 rsource "event_manager/Kconfig"
 
+rsource "nfc/Kconfig"
+
 endmenu
