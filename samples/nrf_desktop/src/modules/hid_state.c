@@ -63,14 +63,14 @@ struct items {
 
 /**@brief HID state structure. */
 struct hid_state {
-	enum state		state;
-	struct items		items[TARGET_REPORT_COUNT];
-	sys_slist_t		eventq;
-	u8_t			eventq_len;
+	struct items	items[TARGET_REPORT_COUNT];
+	sys_slist_t	eventq;
+	u8_t		eventq_len;
+	enum state	state;
+	s32_t		wheel_acc;
 };
 
 
-static struct k_delayed_work hid_report_work;
 static struct hid_state state;
 
 static void report_send(enum target_report target_report);
@@ -444,6 +444,8 @@ static void send_report_mouse_xy(s16_t dx, s16_t dy)
 		event->dy = dy;
 
 		EVENT_SUBMIT(event);
+
+		state.state = HID_STATE_CONNECTED_BUSY;
 	}
 }
 
@@ -466,14 +468,22 @@ static void send_report_mouse_wheel(s32_t wheel)
 		event->pan   = 0;
 
 		EVENT_SUBMIT(event);
+
+		state.state = HID_STATE_CONNECTED_BUSY;
 	}
 }
 
 /**@brief Callback used when report was generated. */
-static void report_issued(struct k_work *work)
+static bool report_issued(void)
 {
 	__ASSERT_NO_MSG(state.state == HID_STATE_CONNECTED_BUSY);
 	bool update_needed;
+
+	if (state.wheel_acc != 0) {
+		send_report_mouse_wheel(state.wheel_acc);
+		state.wheel_acc = 0;
+		return true;
+	}
 
 	do {
 		if (sys_slist_is_empty(&state.eventq)) {
@@ -506,6 +516,8 @@ static void report_issued(struct k_work *work)
 
 		/* No item was changed. Try next event. */
 	} while (!update_needed);
+
+	return update_needed;
 }
 
 /**@brief Request report sending. */
@@ -532,11 +544,6 @@ static void report_send(enum target_report target_report)
 	}
 
 	state.state = HID_STATE_CONNECTED_BUSY;
-
-	/* As events are executed by system workqueue, next dequeue
-	 * will be called after a report is generated.
-	 */
-	k_delayed_work_submit(&hid_report_work, 0);
 }
 
 
@@ -555,7 +562,7 @@ static void connect(void)
 		 * start event draining procedure.
 		 */
 		state.state = HID_STATE_CONNECTED_BUSY;
-		k_delayed_work_submit(&hid_report_work, 0);
+		report_issued();
 	}
 }
 
@@ -575,9 +582,6 @@ static void disconnect(void)
 		/* Clear state and queue. */
 		memset(state.items, 0, sizeof(state.items));
 		eventq_reset();
-
-		/* Cancel all in-flight report sending tasks. */
-		k_delayed_work_cancel(&hid_report_work);
 	}
 }
 
@@ -696,8 +700,6 @@ static void init(void)
 	}
 
 	eventq_reset();
-
-	k_delayed_work_init(&hid_report_work, report_issued);
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -708,13 +710,22 @@ static bool event_handler(const struct event_header *eh)
 		SYS_LOG_INF("motion event");
 
 		/* Do not accumulate mouse motion data */
-		if (state.state != HID_STATE_DISCONNECTED) {
+		if (state.state == HID_STATE_CONNECTED_IDLE) {
 			send_report_mouse_xy(event->dx, event->dy);
+		} else if (state.state != HID_STATE_DISCONNECTED) {
+			SYS_LOG_WRN("Motion sensed while busy");
 		}
 
 		keep_device_active();
 
 		return false;
+	}
+
+	if (is_ble_interval_event(eh)) {
+		SYS_LOG_INF("report issued");
+
+		/* Drain internal queue before sensor read trigger */
+		return report_issued();
 	}
 
 	if (is_wheel_event(eh)) {
@@ -723,8 +734,11 @@ static bool event_handler(const struct event_header *eh)
 		SYS_LOG_INF("wheel event");
 
 		/* Do not accumulate mouse wheel data */
-		if (state.state != HID_STATE_DISCONNECTED) {
+		if (state.state == HID_STATE_CONNECTED_IDLE) {
 			send_report_mouse_wheel(event->wheel);
+		} else if (state.state != HID_STATE_DISCONNECTED) {
+			SYS_LOG_INF("Wheel sensed while busy");
+			state.wheel_acc += event->wheel;
 		}
 
 		keep_device_active();
@@ -798,6 +812,7 @@ static bool event_handler(const struct event_header *eh)
 }
 
 EVENT_LISTENER(MODULE, event_handler);
+EVENT_SUBSCRIBE_EARLY(MODULE, ble_interval_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, button_event);

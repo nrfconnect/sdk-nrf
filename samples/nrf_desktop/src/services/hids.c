@@ -394,6 +394,10 @@ static int module_init(void)
 
 static void mouse_xy_sent(struct bt_conn *conn)
 {
+	struct ble_interval_event *event = new_ble_interval_event();
+	if (event) {
+		EVENT_SUBMIT(event);
+	}
 }
 
 static void send_mouse_xy(const struct hid_mouse_xy_event *event)
@@ -433,6 +437,10 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 
 static void mouse_wp_sent(struct bt_conn *conn)
 {
+	struct ble_interval_event *event = new_ble_interval_event();
+	if (event) {
+		EVENT_SUBMIT(event);
+	}
 }
 
 static void send_mouse_wp(const struct hid_mouse_wp_event *event)
@@ -452,6 +460,10 @@ static void send_mouse_wp(const struct hid_mouse_wp_event *event)
 
 static void mouse_buttons_sent(struct bt_conn *conn)
 {
+	struct ble_interval_event *event = new_ble_interval_event();
+	if (event) {
+		EVENT_SUBMIT(event);
+	}
 }
 
 static void send_mouse_buttons(const struct hid_mouse_button_event *event)
@@ -473,6 +485,10 @@ static void send_mouse_buttons(const struct hid_mouse_button_event *event)
 
 static void keyboard_sent(struct bt_conn *conn)
 {
+	struct ble_interval_event *event = new_ble_interval_event();
+	if (event) {
+		EVENT_SUBMIT(event);
+	}
 }
 
 static void send_keyboard(const struct hid_keyboard_event *event)
