@@ -68,6 +68,9 @@ struct hid_state {
 	u8_t		eventq_len;
 	enum state	state;
 	s32_t		wheel_acc;
+	s16_t		last_x;
+	s16_t		last_y;
+	unsigned int	report_cnt;
 };
 
 
@@ -393,6 +396,7 @@ static void send_report_keyboard(void)
 		event->modifier_bm = 0;
 
 		EVENT_SUBMIT(event);
+		state.report_cnt++;
 	}
 }
 
@@ -427,6 +431,7 @@ static void send_report_mouse_buttons(void)
 		}
 
 		EVENT_SUBMIT(event);
+		state.report_cnt++;
 	}
 }
 
@@ -444,6 +449,7 @@ static void send_report_mouse_xy(s16_t dx, s16_t dy)
 		event->dy = dy;
 
 		EVENT_SUBMIT(event);
+		state.report_cnt++;
 
 		state.state = HID_STATE_CONNECTED_BUSY;
 	}
@@ -468,6 +474,7 @@ static void send_report_mouse_wheel(s32_t wheel)
 		event->pan   = 0;
 
 		EVENT_SUBMIT(event);
+		state.report_cnt++;
 
 		state.state = HID_STATE_CONNECTED_BUSY;
 	}
@@ -476,7 +483,6 @@ static void send_report_mouse_wheel(s32_t wheel)
 /**@brief Callback used when report was generated. */
 static bool report_issued(void)
 {
-	__ASSERT_NO_MSG(state.state == HID_STATE_CONNECTED_BUSY);
 	bool update_needed;
 
 	if (state.wheel_acc != 0) {
@@ -516,6 +522,14 @@ static bool report_issued(void)
 
 		/* No item was changed. Try next event. */
 	} while (!update_needed);
+
+	if (!update_needed) {
+		if ((state.last_x != 0) || (state.last_y != 0)) {
+			send_report_mouse_xy(state.last_x, state.last_y);
+			state.last_x = 0;
+			state.last_y = 0;
+		}
+	}
 
 	return update_needed;
 }
@@ -711,9 +725,18 @@ static bool event_handler(const struct event_header *eh)
 
 		/* Do not accumulate mouse motion data */
 		if (state.state == HID_STATE_CONNECTED_IDLE) {
+			if (state.report_cnt == 0) {
+				/* To make sure motion data is sampled on every
+				 * connection event, add one additional report
+				 * to the pipeline.
+				 */
+				send_report_mouse_xy(0, 0);
+			}
 			send_report_mouse_xy(event->dx, event->dy);
 		} else if (state.state != HID_STATE_DISCONNECTED) {
-			SYS_LOG_WRN("Motion sensed while busy");
+			SYS_LOG_INF("Motion sensed while busy");
+			state.last_x = event->dx;
+			state.last_y = event->dy;
 		}
 
 		keep_device_active();
@@ -723,6 +746,9 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_ble_interval_event(eh)) {
 		SYS_LOG_INF("report issued");
+
+		__ASSERT_NO_MSG(state.report_cnt > 0);
+		state.report_cnt--;
 
 		/* Drain internal queue before sensor read trigger */
 		return report_issued();
