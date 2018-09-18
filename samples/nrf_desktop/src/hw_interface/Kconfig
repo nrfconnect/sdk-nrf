@@ -20,6 +20,13 @@ config HAS_DTS_LIS3DH
 	  This option specifies that the target platform includes LIS3DH
 	  accelerometer.
 
+config HAS_DTS_MOTION
+	bool
+	depends on HAS_DTS
+	help
+	  This option specifies that the target platform includes motion
+	  sensor.
+
 config HAS_DTS_TOUCHPAD
 	bool
 	depends on HAS_DTS
@@ -40,6 +47,14 @@ config DESKTOP_PORT_STATE
 	  This option specifies a path to the port state file.
 	  Port state file specifies how ports are set when board is turned
 	  on and off.
+
+comment "Optical sensor configuration"
+
+config DESKTOP_SPI_FREQ_HZ
+	int "SPI clock frequency for communication with the optical sensor"
+	depends on HAS_DTS_MOTION
+	default 1800000
+	range 500000 2500000
 
 comment "Wheel configuration"
 	depends on HAS_DTS_QDEC
