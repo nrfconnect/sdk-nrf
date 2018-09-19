@@ -6,6 +6,7 @@
 
 menu "Nordic nRF Connect"
 
+rsource "ext/Kconfig"
 rsource "lib/Kconfig"
 rsource "subsys/Kconfig"
 

@@ -6,6 +6,7 @@
 
 zephyr_include_directories(include)
 
+add_subdirectory(ext)
 add_subdirectory(lib)
 add_subdirectory(subsys)
 
