@@ -13,13 +13,14 @@
  *
  */
 
-#include "ndef_file_m.h"
-#include <nfc/ndef/nfc_uri_msg.h>
 #include <zephyr.h>
 #include <board.h>
 #include <device.h>
 #include <string.h>
 #include <nvs/nvs.h>
+#include <nfc/ndef/nfc_uri_msg.h>
+
+#include "ndef_file_m.h"
 
 #define LOG_MODULE_NAME ndef_file_m
 
@@ -92,7 +93,7 @@ int ndef_restore_default(u8_t *buff, u32_t size)
 
 int ndef_file_load(u8_t *buff, u32_t size)
 {
-	int err = 0;
+	int err;
 
 	/* If there is no record with given ID, create default message and store
 	 * in FLASH. FLASH_URL_ADDRESS_ID is used to store an address, lets see

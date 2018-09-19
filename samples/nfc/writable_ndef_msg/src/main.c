@@ -42,9 +42,31 @@ static struct device *button;
 #define BUTTON_PIN	SW0_GPIO_PIN
 /**< Button's GPIO pin used to set default NDEF message. */
 
-static u8_t m_ndef_msg_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for NDEF file. */
-static volatile u8_t m_ndef_msg_len; /**< Length of the NDEF message. */
-static volatile bool update_mask; /**< Indicate that update event appeared */
+static u8_t ndef_msg_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for NDEF file. */
+
+enum {
+	FLASH_WRITE_FINISHED,
+	FLASH_BUF_PREP_STARTED,
+	FLASH_BUF_PREP_FINISHED,
+	FLASH_WRITE_STARTED,
+};
+static atomic_t op_flags;
+static u8_t flash_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for flash update. */
+static u8_t flash_buf_len; /**< Length of the flash buffer. */
+
+static void flash_buffer_prepare(size_t data_length)
+{
+	if (atomic_cas(&op_flags, FLASH_WRITE_FINISHED,
+			FLASH_BUF_PREP_STARTED)) {
+		flash_buf_len = data_length + NLEN_FIELD_SIZE;
+		memcpy(flash_buf, ndef_msg_buf, sizeof(flash_buf));
+
+		atomic_set(&op_flags, FLASH_BUF_PREP_FINISHED);
+	} else {
+		LOG_ERR("Flash update pending. Discarding new data...");
+	}
+
+}
 
 /**
  * @brief Callback function for handling NFC events.
@@ -52,7 +74,7 @@ static volatile bool update_mask; /**< Indicate that update event appeared */
 static void nfc_callback(void *context,
 			 enum nfc_t4t_event event,
 			 const u8_t *data,
-			 size_t dataLength,
+			 size_t data_length,
 			 u32_t flags)
 {
 	ARG_UNUSED(context);
@@ -75,10 +97,9 @@ static void nfc_callback(void *context,
 		break;
 
 	case NFC_T4T_EVENT_NDEF_UPDATED:
-		if (dataLength > 0) {
+		if (data_length > 0) {
 			gpio_pin_write(LED1_dev, LED1_GPIO_PIN, LED_ON);
-			m_ndef_msg_len = dataLength;
-			update_mask = true;
+			flash_buffer_prepare(data_length);
 		}
 		break;
 
@@ -137,15 +158,15 @@ static int board_init(void)
 		LOG_ERR("Button device not found");
 		return -ENXIO;
 	}
-	err = gpio_pin_configure(button,
-				      BUTTON_PIN,
-				      GPIO_DIR_IN | GPIO_PUD_PULL_UP);
+	err = gpio_pin_configure(button, BUTTON_PIN,
+				 GPIO_DIR_IN | GPIO_PUD_PULL_UP);
 	if (err) {
 		LOG_ERR("Cannot configure button port!");
 		return err;
 	}
 	return 0;
 }
+
 /**
  * @brief   Function for application main entry.
  */
@@ -165,7 +186,7 @@ int main(void)
 		goto fail;
 	}
 	/* Load NDEF message from the flash file. */
-	if (ndef_file_load(m_ndef_msg_buf, sizeof(m_ndef_msg_buf)) < 0) {
+	if (ndef_file_load(ndef_msg_buf, sizeof(ndef_msg_buf)) < 0) {
 		LOG_ERR("Cannot load NDEF file!");
 		goto fail;
 	}
@@ -174,8 +195,8 @@ int main(void)
 
 	gpio_pin_read(button, BUTTON_PIN, &val);
 	if (!val) {
-		if (ndef_restore_default(m_ndef_msg_buf,
-					 sizeof(m_ndef_msg_buf)) < 0) {
+		if (ndef_restore_default(ndef_msg_buf,
+					 sizeof(ndef_msg_buf)) < 0) {
 			LOG_ERR("Cannot flash NDEF message");
 			goto fail;
 		}
@@ -189,8 +210,8 @@ int main(void)
 		goto fail;
 	}
 	/* Run Read-Write mode for Type 4 Tag platform */
-	if (nfc_t4t_ndef_rwpayload_set(m_ndef_msg_buf,
-				       sizeof(m_ndef_msg_buf)) < 0) {
+	if (nfc_t4t_ndef_rwpayload_set(ndef_msg_buf,
+				       sizeof(ndef_msg_buf)) < 0) {
 		LOG_ERR("Cannot set payload!");
 		goto fail;
 	}
@@ -202,16 +223,17 @@ int main(void)
 	LOG_INF("Writable NDEF message example started.");
 
 	while (true) {
-		if (update_mask) {
-			if (ndef_file_update(m_ndef_msg_buf,
-					m_ndef_msg_len + NLEN_FIELD_SIZE) < 0) {
+		if (atomic_cas(&op_flags, FLASH_BUF_PREP_FINISHED,
+				FLASH_WRITE_STARTED)) {
+			if (ndef_file_update(flash_buf, flash_buf_len) < 0) {
 				LOG_ERR("Cannot flash NDEF message");
 			} else {
 				LOG_INF("NDEF message successfully flashed");
 			}
-			update_mask = false;
+
+			atomic_set(&op_flags, FLASH_WRITE_FINISHED);
 		}
-		if (!update_mask && !LOG_PROCESS()) {
+		if (!LOG_PROCESS()) {
 			__WFE();
 		}
 	}

@@ -17,9 +17,6 @@
  */
 
 #include <zephyr/types.h>
-#include <stdbool.h>
-#include "compiler_abstraction.h"
-#include "nrf.h"
 
 /**
  * @brief   Function for initializing the NVS module.
