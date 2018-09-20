@@ -105,10 +105,11 @@ extern "C" {
  *          as the first field.
  */
 struct event_header {
-	sys_dlist_t node;    /**< Linked list node used to chain events. */
+	/** Linked list node used to chain events. */
+	sys_dlist_t node;
 
-	const void *type_id; /**< Pointer to the event type object. */
-
+	/** Pointer to the event type object. */
+	const struct event_type *type_id;
 };
 
 
@@ -117,7 +118,8 @@ struct event_header {
  * @note All event listeners must be defined using @ref EVENT_LISTENER.
  */
 struct event_listener {
-	const char *name; /**< Name of this listener. */
+	/** Name of this listener. */
+	const char *name;
 
 	/** Pointer to function that is called when event is handled. */
 	bool (*notification)(const struct event_header *eh);
@@ -127,7 +129,8 @@ struct event_listener {
 /** @brief Event subscriber structure.
  */
 struct event_subscriber {
-	const struct event_listener *listener; /**< Pointer to the listener. */
+	/** Pointer to the listener. */
+	const struct event_listener *listener;
 };
 
 
