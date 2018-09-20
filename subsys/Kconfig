@@ -8,6 +8,8 @@ menu "subsystems"
 
 rsource "bluetooth/Kconfig"
 
+rsource "enhanced_shockburst/Kconfig"
+
 rsource "event_manager/Kconfig"
 
 rsource "profiler/Kconfig"
