@@ -184,9 +184,8 @@ struct nfc_ndef_bin_payload_desc {
  * @brief Macro for creating and initializing an NFC NDEF record descriptor for
  * a record with binary payload.
  *
- * This macro creates and initializes a static instance of type
- * nfc_ndef_record_desc and a binary data descriptor containing the
- * payload data.
+ * This macro creates and initializes an instance of type nfc_ndef_record_desc
+ * and a binary data descriptor containing the payload data.
  *
  * Use the macro @ref NFC_NDEF_RECORD_BIN_DATA to access the NDEF record
  * descriptor instance.
