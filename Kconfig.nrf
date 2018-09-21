@@ -9,4 +9,6 @@ menu "Nordic nRF Connect"
 rsource "lib/Kconfig"
 rsource "subsys/Kconfig"
 
+orsource "../nrfxlib/Kconfig.nrfxlib"
+
 endmenu
