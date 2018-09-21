@@ -15,7 +15,7 @@
 
 #include <zephyr/types.h>
 #include <stdbool.h>
-#include <nfc/nfc_t4t_lib.h>
+#include <nfc_t4t_lib.h>
 
 #include "ndef_file_m.h"
 #include <nfc/ndef/nfc_ndef_msg.h>
