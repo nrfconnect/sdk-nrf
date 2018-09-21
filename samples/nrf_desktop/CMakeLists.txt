@@ -40,35 +40,25 @@ project("nRF52 Desktop"
 
 ################################################################################
 
-# Use key map specified in the configuration.
-if(${CONFIG_DESKTOP_KEYMAP} STREQUAL "")
-	message(FATAL_ERROR "Keymap file must be specified")
-else()
-	target_sources(app PRIVATE
-                       ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_DESKTOP_KEYMAP})
-endif()
+assert(CONFIG_DESKTOP_KEYMAP     "Keymap file must be specified")
+assert(CONFIG_DESKTOP_PORT_STATE "Port state file must be specified")
 
-# Use port state specified in the configuration.
-if(${CONFIG_DESKTOP_PORT_STATE} STREQUAL "")
-	message(FATAL_ERROR "Port state file must be specified")
-else()
-	target_sources(app PRIVATE
-                       ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_DESKTOP_PORT_STATE})
-endif()
+target_sources(app PRIVATE
+  src/main.c
+  ${CONFIG_DESKTOP_KEYMAP}
+  ${CONFIG_DESKTOP_PORT_STATE}
+)
 
-
-# Include application events
-zephyr_library_include_directories(src/events)
-# Include configuration headers
-zephyr_library_include_directories(configuration)
+# Include application events and configuration headers
+zephyr_library_include_directories(
+  src/events
+  configuration
+  )
 
 # NCS sources
-#add_subdirectory(${NRF_DIR} ${PROJECT_BINARY_DIR}/nrf)
 
 # Application sources
 add_subdirectory(src/events)
 add_subdirectory(src/hw_interface)
 add_subdirectory(src/modules)
 add_subdirectory(src/services)
-
-target_sources(app PRIVATE src/main.c)
