@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-5-Clause-Nordic
  */
 
-#include <string.h>
+#include <errno.h>
 #include <nfc/ndef/nfc_uri_msg.h>
 
 int nfc_uri_msg_encode(enum nfc_uri_id uri_id_code,

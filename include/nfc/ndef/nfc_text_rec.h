@@ -17,7 +17,7 @@
  *
  */
 
-#include <zephyr.h>
+#include <zephyr/types.h>
 #include <nfc/ndef/nfc_ndef_record.h>
 
 #ifdef __cplusplus

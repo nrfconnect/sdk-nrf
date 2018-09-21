@@ -16,6 +16,7 @@
  * @brief    Generation of NFC NDEF URI record descriptions.
  *
  */
+#include <stddef.h>
 #include <zephyr/types.h>
 #include <nfc/ndef/nfc_ndef_record.h>
 
@@ -90,7 +91,7 @@ extern const u8_t ndef_uri_record_type;
  * @brief Function for constructing the payload for a URI record.
  *
  * This function encodes the payload according to the URI record definition.
- * It implements an API compatible with @ref p_payload_constructor.
+ * It implements an API compatible with @ref payload_constructor_t.
  *
  * @param input Pointer to the description of the payload.
  * @param buff Pointer to payload destination. If NULL, function will calculate

@@ -7,9 +7,7 @@
 #ifndef _NFC_NDEF_RECORD_H__
 #define _NFC_NDEF_RECORD_H__
 
-#include <zephyr.h>
-#include <string.h>
-#include <nrf.h>
+#include <zephyr/types.h>
 
 #ifdef __cplusplus
 extern "C" {

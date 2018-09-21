@@ -5,11 +5,11 @@
  */
 
 #include <nfc/ndef/nfc_ndef_msg.h>
-#include <nrf.h>
 #include <misc/byteorder.h>
-#include <stdint.h>
-/**
- * @brief Resolve the value of record location flags of the NFC NDEF record
+#include <misc/util.h>
+#include <errno.h>
+
+/* Resolve the value of record location flags of the NFC NDEF record
  * within an NFC NDEF message.
  */
 static enum nfc_ndef_record_location record_location_get(u32_t index,
@@ -42,24 +42,18 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		return -EINVAL;
 	}
 
-	struct nfc_ndef_record_desc **pp_record_rec_desc =
+	struct nfc_ndef_record_desc const **pp_record_rec_desc =
 						ndef_msg_desc->record;
 
 	if (!ndef_msg_desc->record) {
 		return -EINVAL;
 	}
-	/* Pointer is used only with Type 4 Tag */
-	u8_t *root_msg_buffer = msg_buffer;
 
-	if (CONFIG_NFC_NDEF_MSG_TAG_TYPE == TYPE_4_TAG) {
-		if (msg_buffer) {
-			if (*msg_len < NLEN_FIELD_SIZE) {
-				return -ENOSR;
-			}
-
-			msg_buffer += NLEN_FIELD_SIZE;
-		}
+	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN)) {
 		sum_of_len += NLEN_FIELD_SIZE;
+		if (*msg_len < sum_of_len) {
+			return -ENOSR;
+		}
 	}
 
 	for (u32_t i = 0; i < ndef_msg_desc->record_count; i++) {
@@ -73,26 +67,25 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		temp_len = *msg_len - sum_of_len;
 
 		err = nfc_ndef_record_encode(*pp_record_rec_desc,
-						  record_location,
-						  msg_buffer,
-						  &temp_len);
+					     record_location,
+					     msg_buffer ?
+						&msg_buffer[sum_of_len] : NULL,
+					     &temp_len);
 		if (err) {
 			return err;
 		}
 
 		sum_of_len += temp_len;
-		if (msg_buffer) {
-			msg_buffer += temp_len;
-		}
+
 		/* next record */
 		pp_record_rec_desc++;
 	}
-	if (CONFIG_NFC_NDEF_MSG_TAG_TYPE == TYPE_4_TAG) {
+	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN)) {
 		if (msg_buffer) {
 			if (sum_of_len - NLEN_FIELD_SIZE > UINT16_MAX) {
 				return -ENOTSUP;
 			}
-			*(u16_t *)root_msg_buffer =
+			*(u16_t *)msg_buffer =
 				sys_cpu_to_be16(sum_of_len - NLEN_FIELD_SIZE);
 		}
 	}
@@ -114,7 +107,7 @@ int nfc_ndef_msg_record_add(struct nfc_ndef_msg_desc *msg,
 		return -ENOSR;
 	}
 
-	msg->record[msg->record_count] = (struct nfc_ndef_record_desc *)record;
+	msg->record[msg->record_count] = record;
 	msg->record_count++;
 
 	return 0;
