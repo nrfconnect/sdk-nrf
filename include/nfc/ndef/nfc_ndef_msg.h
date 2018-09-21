@@ -121,7 +121,7 @@ int nfc_ndef_msg_record_add(struct nfc_ndef_msg_desc *msg,
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor with
  * an encapsulated NDEF message.
- * This macro creates and initializes a static instance of type
+ * This macro creates and initializes an instance of type
  * @ref nfc_ndef_record_desc that contains an encapsulated NDEF message as
  * payload. @ref nfc_ndef_msg_encode is used as payload constructor to encode
  * the message. The encoded message is then used as payload for the record.
