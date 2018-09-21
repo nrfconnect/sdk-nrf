@@ -6,6 +6,7 @@
 add_library(nrf_bluetooth INTERFACE)
 
 add_subdirectory_ifdef(CONFIG_NRF_BT_SVC_COMMON common)
+add_subdirectory_ifdef(CONFIG_BT_LL_NRFXLIB controller)
 
 if (CONFIG_NRF_BT_DIS  OR
     CONFIG_NRF_BT_HIDS OR

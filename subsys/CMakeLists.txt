@@ -1,10 +1,13 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
 
-add_subdirectory_ifdef(CONFIG_NRF_BT bluetooth)
+if (CONFIG_NRF_BT OR
+	CONFIG_BT_LL_NRFXLIB)
+	add_subdirectory(bluetooth)
+endif()
 
 add_subdirectory_ifdef(CONFIG_NRF_ESB enhanced_shockburst)
 
