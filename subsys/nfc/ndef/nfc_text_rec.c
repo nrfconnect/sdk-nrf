@@ -17,9 +17,7 @@
 
 const u8_t nfc_text_rec_type_field[] = {'T'};
 
-/**
- * @brief Function for calculating payload size.
- */
+/* Function for calculating payload size. */
 static u32_t nfc_text_rec_payload_size_get(
 	    struct nfc_text_rec_payload_desc const *nfc_rec_text_payload_desc)
 {

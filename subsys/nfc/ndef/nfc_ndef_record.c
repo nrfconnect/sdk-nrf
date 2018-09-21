@@ -5,6 +5,7 @@
  */
 
 #include <string.h>
+#include <errno.h>
 #include <nfc/ndef/nfc_ndef_record.h>
 #include <misc/byteorder.h>
 

@@ -5,6 +5,7 @@
  */
 
 #include <string.h>
+#include <errno.h>
 #include <nfc/ndef/nfc_uri_rec.h>
 
 const u8_t ndef_uri_record_type = 'U'; /**< URI Record type. */
@@ -13,7 +14,7 @@ const u8_t ndef_uri_record_type = 'U'; /**< URI Record type. */
  * @brief Function for constructing the payload for a URI record.
  *
  * This function encodes the payload according to the URI record definition.
- * It implements an API compatible with @ref p_payload_constructor_t.
+ * It implements an API compatible with @ref payload_constructor_t.
  *
  * @param input Pointer to the description of the payload.
  * @param buff Pointer to payload destination. If NULL, function will calculate

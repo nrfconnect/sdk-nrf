@@ -28,21 +28,9 @@ config NFC_NDEF_URI_REC
 	bool
 	prompt "NDEF URI record generator module"
 
-choice TAG_TYPE
-	prompt "Tag Type"
-config TYPE_2_TAG
+config NFC_NDEF_MSG_WITH_NLEN
 	bool
-	prompt "2"
-config TYPE_4_TAG
-	bool
-	prompt "4"
-endchoice
-
-config NFC_NDEF_MSG_TAG_TYPE
-	int
-	default 2 if TYPE_2_TAG
-	default 4 if TYPE_4_TAG
-	default 2
+	prompt "Encode NDEF message with additional NLEN field"
 
 config NDEF_FILE_SIZE
 	int
