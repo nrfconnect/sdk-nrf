@@ -13,4 +13,4 @@ target_sources(app PRIVATE
 	${app_sources}
 )
 
-zephyr_library_include_directories($ENV{ZEPHYR_BASE}/samples/bluetooth)
+zephyr_library_include_directories(${ZEPHYR_BASE}/samples/bluetooth)
