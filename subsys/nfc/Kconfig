@@ -9,12 +9,9 @@ menu "NFC"
 config NFC_NDEF
 	bool
 	prompt "Enable NDEF modules"
-	default n
 	help
 	  Enable NFC Data Exchange Format modules
 
-if NFC_NDEF
 rsource "ndef/Kconfig"
-endif # NFC_NDEF
 
 endmenu
