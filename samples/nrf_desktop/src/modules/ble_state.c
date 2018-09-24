@@ -99,15 +99,6 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	}
 }
 
-static void auth_cancel(struct bt_conn *conn)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	SYS_LOG_INF("Pairing cancelled: %s", addr);
-}
-
 static void bt_ready(int err)
 {
 	if (err) {
@@ -136,17 +127,6 @@ static int ble_state_init(void)
 		.security_changed = security_changed,
 	};
 	bt_conn_cb_register(&conn_callbacks);
-
-	static struct bt_conn_auth_cb auth_cb_display = {
-		.passkey_display = NULL,
-		.passkey_entry = NULL,
-		.cancel = auth_cancel,
-	};
-	int err = bt_conn_auth_cb_register(&auth_cb_display);
-
-	if (err) {
-		__ASSERT_NO_MSG(false);
-	}
 
 	return bt_enable(bt_ready);
 }
