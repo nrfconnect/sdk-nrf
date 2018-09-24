@@ -8,7 +8,6 @@ menu "BLE Services"
 
 config DESKTOP_HID_MOUSE
 	bool "Mouse HID device"
-	default y
 	select NRF_BT_HIDS
 	select NRF_BT_DIS
 	help
@@ -16,7 +15,6 @@ config DESKTOP_HID_MOUSE
 
 config DESKTOP_HID_KEYBOARD
 	bool "Keyboard HID device"
-	default y
 	select NRF_BT_HIDS
 	select NRF_BT_DIS
 	help
@@ -24,7 +22,6 @@ config DESKTOP_HID_KEYBOARD
 
 config DESKTOP_HID_MPLAYER
 	bool "Media player HID device"
-	default n
 	select NRF_BT_HIDS
 	select NRF_BT_DIS
 	help
