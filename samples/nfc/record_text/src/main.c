@@ -87,7 +87,7 @@ static void nfc_callback(void *context,
 static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 {
 	/** @snippet [NFC text usage_2] */
-	int err_code;
+	int err;
 
 	/* Create NFC NDEF text record description in English */
 	NFC_NDEF_TEXT_RECORD_DESC_DEF(nfc_en_text_rec,
@@ -123,36 +123,36 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 
 	/* Add text records to NDEF text message */
 	/** @snippet [NFC text usage_4] */
-	err_code = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
+	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_en_text_rec));
-	if (err_code < 0) {
+	if (err < 0) {
 		LOG_ERR("Cannot add first record!");
-		return err_code;
+		return err;
 	}
 	/** @snippet [NFC text usage_4] */
-	err_code = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
+	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_no_text_rec));
-	if (err_code < 0) {
+	if (err < 0) {
 		LOG_ERR("Cannot add second record!");
-		return err_code;
+		return err;
 	}
 
-	err_code = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
+	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_pl_text_rec));
-	if (err_code < 0) {
+	if (err < 0) {
 		LOG_ERR("Cannot add third record!");
-		return err_code;
+		return err;
 	}
 
 	/** @snippet [NFC text usage_5] */
-	err_code = nfc_ndef_msg_encode(&NFC_NDEF_MSG(nfc_text_msg),
+	err = nfc_ndef_msg_encode(&NFC_NDEF_MSG(nfc_text_msg),
 				      buffer,
 				      len);
-	if (err_code < 0) {
+	if (err < 0) {
 		LOG_ERR("Cannot encode message!");
 	}
 
-	return err_code;
+	return err;
 	/** @snippet [NFC text usage_5] */
 }
 
@@ -166,11 +166,11 @@ static int board_init(void)
 	}
 
 	/* Set LED pin as output */
-	int err_code = gpio_pin_configure(dev, LED_PIN, GPIO_DIR_OUT);
+	int err = gpio_pin_configure(dev, LED_PIN, GPIO_DIR_OUT);
 
-	if (err_code) {
+	if (err) {
 		LOG_ERR("Cannot configure led port!");
-		return err_code;
+		return err;
 	}
 	/* Turn LED off */
 	gpio_pin_write(dev, LED_PIN, LED_OFF);
