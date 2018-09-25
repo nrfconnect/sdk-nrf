@@ -90,7 +90,10 @@ extern "C" {
 	static inline struct ename *_CONCAT(new_, ename)(void)		\
 	{								\
 		struct ename *event = k_malloc(sizeof(*event));		\
-		if (!event) {						\
+		if (unlikely(!event)) {					\
+			printk("Event Manager OOM error\n");		\
+			k_sleep(1);					\
+			sys_reboot(SYS_REBOOT_WARM);			\
 			return NULL;					\
 		}							\
 		event->header.type_id = _EVENT_ID(ename);		\
