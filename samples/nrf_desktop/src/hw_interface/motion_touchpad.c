@@ -79,20 +79,18 @@ static void scan_fn(struct k_work *work)
 		if (pos[0] || pos[1]) {
 			struct motion_event *event = new_motion_event();
 
-			if (event) {
-				if (pos[0] < 7) {
-					event->dx = 3 * pos[0] / 2;
-				} else {
-					event->dx = 2 * pos[0];
-				}
-				if (pos[1] < 7) {
-					event->dy = -3 * pos[1] / 2;
-				} else {
-					event->dy = -2 * pos[1];
-				}
-
-				EVENT_SUBMIT(event);
+			if (pos[0] < 7) {
+				event->dx = 3 * pos[0] / 2;
+			} else {
+				event->dx = 2 * pos[0];
 			}
+			if (pos[1] < 7) {
+				event->dy = -3 * pos[1] / 2;
+			} else {
+				event->dy = -2 * pos[1];
+			}
+
+			EVENT_SUBMIT(event);
 		}
 		/* TODO note that we cannot go below kernel tick
 		 * actually if tick is 10ms (default) interval cannot go below

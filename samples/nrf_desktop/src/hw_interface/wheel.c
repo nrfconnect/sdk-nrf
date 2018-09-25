@@ -43,23 +43,22 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 	}
 
 	struct wheel_event *event = new_wheel_event();
-	if (event) {
-		s32_t wheel = value.val1;
 
-		if (IS_ENABLED(CONFIG_DESKTOP_WHEEL_INVERT_AXIS)) {
-			wheel *= -1;
-		}
+	s32_t wheel = value.val1;
 
-		static_assert(CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER > 0,
-			      "Divider must be non-negative");
-		if (CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER > 1) {
-			wheel /= CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER;
-		}
-
-		event->wheel = max(min(wheel, SCHAR_MAX), SCHAR_MIN);
-
-		EVENT_SUBMIT(event);
+	if (IS_ENABLED(CONFIG_DESKTOP_WHEEL_INVERT_AXIS)) {
+		wheel *= -1;
 	}
+
+	static_assert(CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER > 0,
+		      "Divider must be non-negative");
+	if (CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER > 1) {
+		wheel /= CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER;
+	}
+
+	event->wheel = max(min(wheel, SCHAR_MAX), SCHAR_MIN);
+
+	EVENT_SUBMIT(event);
 }
 
 static void init_fn(void)
