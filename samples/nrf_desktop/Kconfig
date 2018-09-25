@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: BSD-5-Clause-Nordic
 #
@@ -10,8 +10,6 @@ rsource "src/modules/Kconfig"
 rsource "src/services/Kconfig"
 endmenu
 
-rsource ../../Kconfig.nrf
-
-menu "Zephyr kernel"
+menu "Zephyr Kernel"
 source "$ZEPHYR_BASE/Kconfig.zephyr"
 endmenu
