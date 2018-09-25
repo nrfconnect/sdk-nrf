@@ -65,6 +65,43 @@ static int get_rows(u32_t *mask)
 	return 0;
 }
 
+static int set_trig_mode(int trig_mode)
+{
+	__ASSERT_NO_MSG((trig_mode == GPIO_INT_EDGE) ||
+			(trig_mode == GPIO_INT_LEVEL));
+
+	int flags = GPIO_PUD_PULL_DOWN | GPIO_DIR_IN | GPIO_INT |
+		    GPIO_INT_ACTIVE_HIGH;
+	flags |= trig_mode;
+
+	int err = 0;
+
+	for (size_t i = 0; (i < ARRAY_SIZE(row_pin)) && !err; i++) {
+		err = gpio_pin_configure(gpio_dev, row_pin[i], flags);
+	}
+
+	return err;
+}
+
+static int callback_ctrl(bool enable)
+{
+	int err = 0;
+
+	/* This must be done with irqs disabled to avoid pin callback
+	 * being fired before others are still not activated.
+	 */
+	unsigned int flags = irq_lock();
+	for (size_t i = 0; (i < ARRAY_SIZE(row_pin)) && !err; i++) {
+		if (enable) {
+			err = gpio_pin_enable_callback(gpio_dev, row_pin[i]);
+		} else {
+			err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
+		}
+	}
+	irq_unlock(flags);
+
+	return err;
+}
 
 static void matrix_scan_fn(struct k_work *work)
 {
@@ -130,21 +167,12 @@ static void matrix_scan_fn(struct k_work *work)
 		/* Make sure that mode is set before callbacks are enabled */
 		atomic_set(&scanning, false);
 
-		/* Enable callbacks
-		 * This must be done with irqs disabled to avoid pin callback
-		 * being fired before others are still not activated.
-		 */
-		unsigned int flags = irq_lock();
-		for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
-			int err = gpio_pin_enable_callback(gpio_dev, row_pin[i]);
-
-			if (err) {
-				irq_unlock(flags);
-				SYS_LOG_ERR("cannot enable callbacks");
-				goto error;
-			}
+		int err = callback_ctrl(true);
+		if (err) {
+			SYS_LOG_ERR("cannot enable callbacks");
+			goto error;
 		}
-		irq_unlock(flags);
+
 	}
 
 	return;
@@ -196,17 +224,16 @@ static void init_fn(void)
 		}
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
-		int err = gpio_pin_configure(gpio_dev, row_pin[i],
-				GPIO_PUD_PULL_DOWN | GPIO_DIR_IN | GPIO_INT |
-				GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH |
-				GPIO_INT_DEBOUNCE);
+	int err = set_trig_mode(GPIO_INT_EDGE);
+	if (err) {
+		SYS_LOG_ERR("cannot set interrupt mode");
+		goto error;
+	}
 
-		if (!err) {
-			gpio_init_callback(&gpio_cbs[i], button_pressed,
-					BIT(row_pin[i]));
-			err = gpio_add_callback(gpio_dev, &gpio_cbs[i]);
-		}
+	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
+		gpio_init_callback(&gpio_cbs[i], button_pressed,
+				   BIT(row_pin[i]));
+		err = gpio_add_callback(gpio_dev, &gpio_cbs[i]);
 
 		if (!err) {
 			/* Module starts in scanning mode and will switch to
@@ -262,10 +289,21 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_wake_up_event(eh)) {
 		if (!atomic_get(&active)) {
-			module_set_state(MODULE_STATE_READY);
-
-			atomic_set(&active, true);
-			matrix_scan_fn(NULL);
+			int err = callback_ctrl(false);
+			if (err) {
+				SYS_LOG_ERR("cannot disable callbacks");
+			} else {
+				err = set_trig_mode(GPIO_INT_EDGE);
+				if (err) {
+					SYS_LOG_ERR("cannot set trig mode");
+					module_set_state(MODULE_STATE_ERROR);
+				} else {
+					module_set_state(MODULE_STATE_READY);
+					atomic_set(&scanning, true);
+					atomic_set(&active, true);
+					matrix_scan_fn(NULL);
+				}
+			}
 		}
 
 		return false;
@@ -277,6 +315,13 @@ static bool event_handler(const struct event_header *eh)
 		bool scn = atomic_get(&scanning);
 		if (!scn) {
 			term_fn();
+		}
+
+		/* Leaving deep sleep requires level interrupt */
+		int err = set_trig_mode(GPIO_INT_LEVEL);
+		if (err) {
+			SYS_LOG_ERR("Cannot configure an interrupt");
+			module_set_state(MODULE_STATE_ERROR);
 		}
 
 		return scn;
