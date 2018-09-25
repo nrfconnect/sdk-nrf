@@ -802,7 +802,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		if (check_state(event, "main", "ready")) {
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);
