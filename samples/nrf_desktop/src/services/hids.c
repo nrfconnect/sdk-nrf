@@ -499,12 +499,22 @@ static void notify_hids(const struct ble_peer_event *event)
 {
 	int err = 0;
 
-	if (event->state == PEER_CONNECTED) {
+	switch (event->state) {
+	case PEER_STATE_CONNECTED:
 		err = hids_notify_connected(&hids_obj, event->conn_id);
-	} else if (event->state == PEER_DISCONNECTED) {
+		break;
+
+	case PEER_STATE_DISCONNECTED:
 		err = hids_notify_disconnected(&hids_obj, event->conn_id);
-	} else {
+		break;
+
+	case PEER_STATE_SECURED:
 		/* No action */
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
 	}
 
 	if (err) {

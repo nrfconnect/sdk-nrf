@@ -209,14 +209,24 @@ static bool event_handler(const struct event_header *eh)
 	if (is_ble_peer_event(eh)) {
 		struct ble_peer_event *event = cast_ble_peer_event(eh);
 
-		if (event->state == PEER_CONNECTED) {
+		switch (event->state) {
+		case PEER_STATE_CONNECTED:
 			__ASSERT_NO_MSG(connection_count < UINT_MAX);
 			connection_count++;
-		} else if (event->state == PEER_DISCONNECTED) {
+			break;
+
+		case PEER_STATE_DISCONNECTED:
 			__ASSERT_NO_MSG(connection_count > 0);
 			connection_count--;
-		} else {
+			break;
+
+		case PEER_STATE_SECURED:
 			/* No action */
+			break;
+
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
 		}
 
 		if ((connection_count == 0) &&

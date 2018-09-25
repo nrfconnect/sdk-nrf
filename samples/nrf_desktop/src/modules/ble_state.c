@@ -51,7 +51,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->conn_id = conn;
-	event->state   = PEER_CONNECTED;
+	event->state   = PEER_STATE_CONNECTED;
 	EVENT_SUBMIT(event);
 
 	err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
@@ -70,7 +70,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->conn_id = conn;
-	event->state   = PEER_DISCONNECTED;
+	event->state   = PEER_STATE_DISCONNECTED;
 	EVENT_SUBMIT(event);
 }
 
@@ -84,7 +84,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->conn_id = conn;
-	event->state   = PEER_SECURED;
+	event->state   = PEER_STATE_SECURED;
 	EVENT_SUBMIT(event);
 }
 
