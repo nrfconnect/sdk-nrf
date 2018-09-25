@@ -782,18 +782,27 @@ static bool event_handler(const struct event_header *eh)
 		SYS_LOG_INF("peer %sconnected",
 			    (event->connected)?(""):("dis"));
 
-		if (event->state == PEER_SECURED) {
+		switch (event->state) {
+		case PEER_STATE_SECURED:
 			connect();
-
 			/* TODO: Send enqueued keys and mouse buttons as soon
 			 * as the peer subscribes to notifications using CCC
 			 *
 			 * This needs modification of HIDS service.
 			 */
-		} else if (event->state == PEER_DISCONNECTED) {
+			break;
+
+		case PEER_STATE_DISCONNECTED:
 			disconnect();
-		} else {
+			break;
+
+		case PEER_STATE_CONNECTED:
 			/* No action */
+			break;
+
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
 		}
 
 		return false;

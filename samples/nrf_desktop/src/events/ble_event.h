@@ -22,18 +22,32 @@
 extern "C" {
 #endif
 
-extern const void *PEER_DISCONNECTED;
-extern const void *PEER_CONNECTED;
-extern const void *PEER_SECURED;
 
+/** @brief Peer connection state list. */
+#define PEER_STATE_LIST		\
+	X(DISCONNECTED)		\
+	X(CONNECTED)		\
+	X(SECURED)
+
+/** @brief Peer states. */
+enum peer_state {
+#define X(name) _CONCAT(PEER_STATE_, name),
+	PEER_STATE_LIST
+#undef X
+
+	PEER_STATE_COUNT
+};
+
+/** @brief BLE peer event. */
 struct ble_peer_event {
 	struct event_header header;
 
 	struct bt_conn *conn_id;
-	const void *state;
+	enum peer_state state;
 };
 EVENT_TYPE_DECLARE(ble_peer_event);
 
+/** @brief BLE interval event. */
 struct ble_interval_event {
 	struct event_header header;
 };
