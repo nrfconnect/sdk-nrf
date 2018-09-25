@@ -6,11 +6,6 @@
 
 menu "libraries"
 
-config ESB
-	bool
-	prompt "Enable Enhanced Shock Burst"
-	default n
-	help
-	  Enable ESB functionality
+# nothing here
 
 endmenu
