@@ -33,7 +33,7 @@
  * When above is done user can create and submit events of this new type.
  * The new event object is created by using function defined by macro
  * new_'event type name' (e.g. new_motion_event). If there is no memory
- * available for event allocation NULL is returned.
+ * available for event allocation reset is triggered.
  * After new event object is created, its field can be filled in by the user.
  * Event is submitted to the event manager using a @ref EVENT_SUBMIT macro.
  *
@@ -68,6 +68,7 @@
 
 #include <zephyr.h>
 #include <zephyr/types.h>
+#include <misc/reboot.h>
 #include <misc/__assert.h>
 
 #include <event_manager_priv.h>
