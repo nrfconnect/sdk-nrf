@@ -17,10 +17,6 @@ endif()
 # Point to NCS root directory.
 set(NRF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
-# Application is root for the entire configuration and binds
-# its own, kernel and NCS configuration trees.
-set(KCONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Kconfig)
-
 # Define configuration files.
 set(CONF_FILE "configuration/app_${BOARD}.conf")
 list(APPEND CONF_FILE "configuration/nrfconnect.conf")
