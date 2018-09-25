@@ -134,13 +134,11 @@ int _sys_soc_suspend(s32_t ticks)
 static void power_down(struct k_work *work)
 {
 	if (power_state == POWER_STATE_IDLE) {
-		struct power_down_event *event = new_power_down_event();
+		SYS_LOG_INF("system power down");
 
-		if (event) {
-			SYS_LOG_INF("system power down");
-			power_state = POWER_STATE_SUSPENDING;
-			EVENT_SUBMIT(event);
-		}
+		struct power_down_event *event = new_power_down_event();
+		power_state = POWER_STATE_SUSPENDING;
+		EVENT_SUBMIT(event);
 	}
 }
 
@@ -240,10 +238,7 @@ static bool event_handler(const struct event_header *eh)
 		    (power_state == POWER_STATE_SUSPENDING)) {
 			/* Some module is deactivated: re-iterate */
 			struct power_down_event *event = new_power_down_event();
-
-			if (event) {
-				EVENT_SUBMIT(event);
-			}
+			EVENT_SUBMIT(event);
 			return false;
 		}
 

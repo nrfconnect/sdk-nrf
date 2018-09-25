@@ -368,21 +368,20 @@ static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 static void send_report_keyboard(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+		const size_t max =
+			ARRAY_SIZE(state.items[TARGET_REPORT_KEYBOARD].item);
+
 		struct hid_keyboard_event *event = new_hid_keyboard_event();
-
-		if (!event) {
-			SYS_LOG_WRN("Failed to allocate an event");
-			return;
-		}
-
 		size_t cnt = 0;
-		const size_t max = ARRAY_SIZE(state.items[TARGET_REPORT_KEYBOARD].item);
 
 		for (size_t i = 0;
 		     (i < max) && (cnt < ARRAY_SIZE(event->keys));
 		     i++, cnt++) {
-			if (state.items[TARGET_REPORT_KEYBOARD].item[max - i - 1].value) {
-				event->keys[cnt] = state.items[TARGET_REPORT_KEYBOARD].item[max - i - 1].usage_id;
+			struct item item =
+				state.items[TARGET_REPORT_KEYBOARD].item[max - i - 1];
+
+			if (item.value) {
+				event->keys[cnt] = item.usage_id;
 			} else {
 				break;
 			}
@@ -405,11 +404,6 @@ static void send_report_mouse_buttons(void)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
 		struct hid_mouse_button_event *event =
 			new_hid_mouse_button_event();
-
-		if (!event) {
-			SYS_LOG_WRN("Failed to allocate an event");
-			return;
-		}
 
 		event->button_bm = 0;
 
@@ -440,15 +434,11 @@ static void send_report_mouse_xy(s16_t dx, s16_t dy)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
 		struct hid_mouse_xy_event *event = new_hid_mouse_xy_event();
 
-		if (!event) {
-			SYS_LOG_WRN("Failed to allocate an event");
-			return;
-		}
-
 		event->dx = dx;
 		event->dy = dy;
 
 		EVENT_SUBMIT(event);
+
 		state.report_cnt++;
 
 		state.state = HID_STATE_CONNECTED_BUSY;
@@ -465,15 +455,11 @@ static void send_report_mouse_wheel(s32_t wheel)
 
 		struct hid_mouse_wp_event *event = new_hid_mouse_wp_event();
 
-		if (!event) {
-			SYS_LOG_WRN("Failed to allocate an event");
-			return;
-		}
-
 		event->wheel = wheel;
 		event->pan   = 0;
 
 		EVENT_SUBMIT(event);
+
 		state.report_cnt++;
 
 		state.state = HID_STATE_CONNECTED_BUSY;
@@ -602,11 +588,8 @@ static void disconnect(void)
 static void keep_device_active(void)
 {
 	struct keep_active_event *event = new_keep_active_event();
-
-	if (event) {
-		event->module_name = MODULE_NAME;
-		EVENT_SUBMIT(event);
-	}
+	event->module_name = MODULE_NAME;
+	EVENT_SUBMIT(event);
 }
 
 /**@brief Enqueue event that updates a given usage. */
@@ -649,20 +632,20 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t report)
 		}
 	}
 
-	struct item_event *event = k_malloc(sizeof(struct item_event));
+	struct item_event *hid_event = k_malloc(sizeof(*hid_event));
 
-	if (!event) {
+	if (!hid_event) {
 		SYS_LOG_WRN("Failed to allocate HID event");
 		return;
 	}
 
-	event->item.usage_id = usage_id;
-	event->item.value = report;
-	event->tr = tr;
-	event->timestamp = MSEC(_sys_clock_tick_count);
+	hid_event->item.usage_id = usage_id;
+	hid_event->item.value = report;
+	hid_event->tr = tr;
+	hid_event->timestamp = MSEC(_sys_clock_tick_count);
 
 	/* Add a new event to the queue. */
-	sys_slist_append(&state.eventq, &event->node);
+	sys_slist_append(&state.eventq, &hid_event->node);
 
 	state.eventq_len++;
 }

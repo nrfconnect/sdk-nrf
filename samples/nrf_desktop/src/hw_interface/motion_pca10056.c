@@ -41,13 +41,9 @@ static atomic_t state;
 static void motion_event_send(s8_t dx, s8_t dy)
 {
 	struct motion_event *event = new_motion_event();
-
-	if (event) {
-		event->dx = dx;
-		event->dy = dy;
-
-		EVENT_SUBMIT(event);
-	}
+	event->dx = dx;
+	event->dy = dy;
+	EVENT_SUBMIT(event);
 }
 
 

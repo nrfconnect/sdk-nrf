@@ -50,12 +50,9 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 
 	struct ble_peer_event *event = new_ble_peer_event();
-
-	if (event) {
-		event->conn_id = conn;
-		event->state   = PEER_CONNECTED;
-		EVENT_SUBMIT(event);
-	}
+	event->conn_id = conn;
+	event->state   = PEER_CONNECTED;
+	EVENT_SUBMIT(event);
 
 	err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
 	if (err) {
@@ -72,13 +69,9 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	SYS_LOG_INF("Disconnected from %s (reason %u)", addr, reason);
 
 	struct ble_peer_event *event = new_ble_peer_event();
-
-	if (event) {
-		event->conn_id = conn;
-		event->state   = PEER_DISCONNECTED;
-
-		EVENT_SUBMIT(event);
-	}
+	event->conn_id = conn;
+	event->state   = PEER_DISCONNECTED;
+	EVENT_SUBMIT(event);
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level)
@@ -90,13 +83,9 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	SYS_LOG_INF("Security with %s level %u", addr, level);
 
 	struct ble_peer_event *event = new_ble_peer_event();
-
-	if (event) {
-		event->conn_id = conn;
-		event->state   = PEER_SECURED;
-
-		EVENT_SUBMIT(event);
-	}
+	event->conn_id = conn;
+	event->state   = PEER_SECURED;
+	EVENT_SUBMIT(event);
 }
 
 static void bt_ready(int err)

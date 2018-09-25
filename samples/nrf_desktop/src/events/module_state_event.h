@@ -50,11 +50,9 @@ static inline void module_set_state(const void *state)
 {
 	struct module_state_event *event = new_module_state_event();
 
-	if (event) {
-		event->module_id = _CONCAT(__module_, MODULE);
-		event->state = state;
-		EVENT_SUBMIT(event);
-	}
+	event->module_id = _CONCAT(__module_, MODULE);
+	event->state = state;
+	EVENT_SUBMIT(event);
 }
 
 #endif

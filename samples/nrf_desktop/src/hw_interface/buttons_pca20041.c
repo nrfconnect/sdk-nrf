@@ -96,17 +96,11 @@ static void matrix_scan_fn(struct k_work *work)
 			bool was_pressed = (old_state[i] & (1 << j));
 
 			if (is_pressed != was_pressed) {
-				struct button_event *event =
-					new_button_event();
+				struct button_event *event = new_button_event();
 
-				if (event) {
-					event->key_id = (i << 8) | (j & 0xFF);
-					event->pressed = is_pressed;
-					EVENT_SUBMIT(event);
-				} else {
-					SYS_LOG_ERR("no memory");
-					goto error;
-				}
+				event->key_id = (i << 8) | (j & 0xFF);
+				event->pressed = is_pressed;
+				EVENT_SUBMIT(event);
 			}
 
 			any_pressed = any_pressed || is_pressed;
@@ -165,19 +159,14 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 	/* Disable GPIO interrupt */
 	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
 		int err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
-
 		if (err) {
 			SYS_LOG_ERR("cannot disable callbacks");
 		}
 	}
 
 	if (!atomic_get(&active)) {
-		/* Module is in power down state */
 		struct wake_up_event *event = new_wake_up_event();
-
-		if (event) {
-			EVENT_SUBMIT(event);
-		}
+		EVENT_SUBMIT(event);
 
 		return;
 	}
