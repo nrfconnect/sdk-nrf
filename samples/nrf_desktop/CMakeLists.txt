@@ -6,27 +6,17 @@
 
 cmake_minimum_required(VERSION 3.8.2)
 
-# Check if selected board is supported.
-if    (${BOARD} STREQUAL "nrf52840_pca20041")
-elseif(${BOARD} STREQUAL "nrf52840_pca10056")
-elseif(${BOARD} STREQUAL "nrf52_pca63519")
-else()
-	message(FATAL_ERROR "board ${BOARD} is not supported")
-endif()
+set(NRF_SUPPORTED_BOARDS
+  nrf52840_pca20041
+  nrf52840_pca10056
+  nrf52_pca63519)
 
-# Point to NCS root directory.
-set(NRF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+include(../../cmake/boilerplate.cmake)
 
 # Define configuration files.
 set(CONF_FILE "configuration/app_${BOARD}.conf")
 list(APPEND CONF_FILE "configuration/nrfconnect.conf")
 list(APPEND CONF_FILE "configuration/zephyr.conf")
-
-# Use boards defined in NCS.
-if ((${BOARD} STREQUAL "nrf52840_pca20041") OR
-    (${BOARD} STREQUAL "nrf52_pca63519"))
-	set(BOARD_ROOT ${NRF_DIR})
-endif()
 
 ################################################################################
 
