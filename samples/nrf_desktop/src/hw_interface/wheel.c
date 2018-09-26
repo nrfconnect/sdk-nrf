@@ -69,12 +69,18 @@ static void init_fn(void)
 		goto error;
 	}
 
+	int err = device_set_power_state(qdec_dev, DEVICE_PM_ACTIVE_STATE);
+	if (err) {
+		SYS_LOG_ERR("cannot activate qdec");
+		goto error;
+	}
+
 	struct sensor_trigger trig = {
 		.type = SENSOR_TRIG_DATA_READY,
 		.chan = SENSOR_CHAN_ROTATION,
 	};
 
-	int err = sensor_trigger_set(qdec_dev, &trig, data_ready_handler);
+	err = sensor_trigger_set(qdec_dev, &trig, data_ready_handler);
 	if (err) {
 		SYS_LOG_ERR("cannot setup trigger");
 		goto error;
@@ -98,6 +104,11 @@ static void term_fn(void)
 	int err = sensor_trigger_set(qdec_dev, &trig, NULL);
 	if (err) {
 		SYS_LOG_ERR("cannot disable trigger");
+	}
+
+	err = device_set_power_state(qdec_dev, DEVICE_PM_SUSPEND_STATE);
+	if (err) {
+		SYS_LOG_ERR("cannot suspend qdec");
 	}
 
 	module_set_state(MODULE_STATE_OFF);
