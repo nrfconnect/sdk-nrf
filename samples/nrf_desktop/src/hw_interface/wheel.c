@@ -10,6 +10,7 @@
 
 #include <device.h>
 #include <sensor.h>
+#include <gpio.h>
 
 #include "event_manager.h"
 #include "wheel_event.h"
@@ -22,8 +23,16 @@
 #define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_WHEEL_MODULE_LEVEL
 #include <logging/sys_log.h>
 
+static const u32_t qdec_pin[] = {CONFIG_QDEC_A_PIN, CONFIG_QDEC_B_PIN};
+
+static const struct sensor_trigger qdec_trig = {
+	.type = SENSOR_TRIG_DATA_READY,
+	.chan = SENSOR_CHAN_ROTATION,
+};
 
 static struct device *qdec_dev;
+static struct device *gpio_dev;
+static struct gpio_callback gpio_cbs[2];
 static atomic_t active;
 
 
@@ -61,49 +70,129 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 	EVENT_SUBMIT(event);
 }
 
-static void init_fn(void)
+
+void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb, u32_t pins)
 {
-	qdec_dev = device_get_binding("QDEC");
-	if (!qdec_dev) {
-		SYS_LOG_ERR("cannot get the device");
+	int err = 0;
+
+	for (size_t i = 0; (i < ARRAY_SIZE(qdec_pin)) && !err; i++) {
+		err = gpio_pin_disable_callback(gpio_dev, qdec_pin[i]);
+		if (err) {
+			SYS_LOG_ERR("cannot disable cb (pin:%zu)", i);
+		}
+	}
+
+	__ASSERT_NO_MSG(!atomic_get(&active));
+
+	if (!err) {
+		struct wake_up_event *event = new_wake_up_event();
+		EVENT_SUBMIT(event);
+	}
+}
+
+static int setup_wakeup(void)
+{
+	int err = gpio_pin_configure(gpio_dev, CONFIG_QDEC_ENABLE_PIN,
+				     GPIO_DIR_OUT);
+	if (err) {
+		SYS_LOG_ERR("cannot configure enable pin");
 		goto error;
 	}
 
+	err = gpio_pin_write(gpio_dev, CONFIG_QDEC_ENABLE_PIN, 0);
+	if (err) {
+		SYS_LOG_ERR("failed to set enable pin");
+		goto error;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(qdec_pin); i++) {
+
+		u32_t val;
+		err = gpio_pin_read(gpio_dev, qdec_pin[i], &val);
+		if (err) {
+			SYS_LOG_ERR("cannot read pin %zu", i);
+			goto error;
+		}
+
+		int flags = GPIO_DIR_IN | GPIO_INT | GPIO_INT_LEVEL;
+		flags |= (val) ? GPIO_INT_ACTIVE_LOW : GPIO_INT_ACTIVE_HIGH;
+
+		err = gpio_pin_configure(gpio_dev, qdec_pin[i], flags);
+		if (err) {
+			SYS_LOG_ERR("cannot configure pin %zu", i);
+			goto error;
+		}
+	}
+
+	/* This must be done with irqs disabled to avoid pin callback
+	 * being fired before others are still not activated.
+	 */
+	unsigned int flags = irq_lock();
+	for (size_t i = 0; (i < ARRAY_SIZE(qdec_pin)) && !err; i++) {
+		err = gpio_pin_enable_callback(gpio_dev, qdec_pin[i]);
+		if (err) {
+			SYS_LOG_ERR("cannot enable cb (pin:%zu)", i);
+		}
+	}
+	irq_unlock(flags);
+
+error:
+	return err;
+}
+
+static int init(void)
+{
+	qdec_dev = device_get_binding(CONFIG_QDEC_NAME);
+	if (!qdec_dev) {
+		SYS_LOG_ERR("cannot get qdec device");
+		return -ENXIO;
+	}
+
+	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	if (!gpio_dev) {
+		SYS_LOG_ERR("cannot get gpio device");
+		return -ENXIO;
+	}
+
+	static_assert(ARRAY_SIZE(qdec_pin) == ARRAY_SIZE(gpio_cbs),
+		      "Invalid array size");
+	int err = 0;
+
+	for (size_t i = 0; (i < ARRAY_SIZE(qdec_pin)) && !err; i++) {
+		gpio_init_callback(&gpio_cbs[i], wakeup_cb, BIT(qdec_pin[i]));
+		err = gpio_add_callback(gpio_dev, &gpio_cbs[i]);
+		if (err) {
+			SYS_LOG_ERR("cannot configure cb (pin:%zu)", i);
+		}
+	}
+
+	return err;
+}
+
+static int enable(void)
+{
 	int err = device_set_power_state(qdec_dev, DEVICE_PM_ACTIVE_STATE);
 	if (err) {
 		SYS_LOG_ERR("cannot activate qdec");
-		goto error;
+		return err;
 	}
 
-	struct sensor_trigger trig = {
-		.type = SENSOR_TRIG_DATA_READY,
-		.chan = SENSOR_CHAN_ROTATION,
-	};
-
-	err = sensor_trigger_set(qdec_dev, &trig, data_ready_handler);
+	err = sensor_trigger_set(qdec_dev, (struct sensor_trigger *)&qdec_trig,
+				 data_ready_handler);
 	if (err) {
 		SYS_LOG_ERR("cannot setup trigger");
-		goto error;
 	}
 
-	module_set_state(MODULE_STATE_READY);
-
-	return;
-
-error:
-	module_set_state(MODULE_STATE_ERROR);
+	return err;
 }
 
-static void term_fn(void)
+static int disable(void)
 {
-	struct sensor_trigger trig = {
-		.type = SENSOR_TRIG_DATA_READY,
-		.chan = SENSOR_CHAN_ROTATION,
-	};
-
-	int err = sensor_trigger_set(qdec_dev, &trig, NULL);
+	int err = sensor_trigger_set(qdec_dev,
+				     (struct sensor_trigger *)&qdec_trig, NULL);
 	if (err) {
 		SYS_LOG_ERR("cannot disable trigger");
+		return err;
 	}
 
 	err = device_set_power_state(qdec_dev, DEVICE_PM_SUSPEND_STATE);
@@ -111,7 +200,7 @@ static void term_fn(void)
 		SYS_LOG_ERR("cannot suspend qdec");
 	}
 
-	module_set_state(MODULE_STATE_OFF);
+	return err;
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -125,8 +214,16 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			init_fn();
-			atomic_set(&active, true);
+			int err = init();
+			if (!err) {
+				err = enable();
+			}
+			if (!err) {
+				atomic_set(&active, true);
+				module_set_state(MODULE_STATE_READY);
+			} else {
+				module_set_state(MODULE_STATE_ERROR);
+			}
 
 			return false;
 		}
@@ -136,8 +233,13 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_wake_up_event(eh)) {
 		if (!atomic_get(&active)) {
-			init_fn();
-			atomic_set(&active, true);
+			int err = enable();
+			if (!err) {
+				atomic_set(&active, true);
+				module_set_state(MODULE_STATE_READY);
+			} else {
+				module_set_state(MODULE_STATE_ERROR);
+			}
 		}
 
 		return false;
@@ -146,7 +248,15 @@ static bool event_handler(const struct event_header *eh)
 	if (is_power_down_event(eh)) {
 		if (atomic_get(&active)) {
 			atomic_set(&active, false);
-			term_fn();
+			int err = disable();
+			if (!err) {
+				err = setup_wakeup();
+			}
+			if (!err) {
+				module_set_state(MODULE_STATE_STANDBY);
+			} else {
+				module_set_state(MODULE_STATE_ERROR);
+			}
 		}
 
 		return false;
