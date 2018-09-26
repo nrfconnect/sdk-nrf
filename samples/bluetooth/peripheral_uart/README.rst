@@ -1,7 +1,7 @@
 .. _peripheral_uart:
 
 Bluetooth: Peripheral UART
-#########################
+##########################
 
 Overview
 ********
@@ -28,5 +28,5 @@ Building and Running
 ********************
 
 This sample can be found under :file:`samples/bluetooth/peripheral_uart` in the
-Nordic Connect SDK tree.
+|NCS| tree.
 See :ref:`bluetooth setup section <bluetooth_setup>` for details.
