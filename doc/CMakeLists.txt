@@ -87,6 +87,8 @@ add_custom_target(
 
 set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
 
+file(GLOB RELNOTES ${NRF_DOC_DIR}/../release-notes*.rst)
+
 add_custom_target(
   nrf-content
 
@@ -105,6 +107,8 @@ add_custom_target(
   ZEPHYR_BASE=${NRF_BASE}
   ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
   ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT}/doc/nrf samples boards include
+  # Copy ncs release notes
+  COMMAND ${CMAKE_COMMAND} -E copy ${RELNOTES} ${NRF_RST_OUT}/doc/nrf/
 
   WORKING_DIRECTORY ${NRF_DOC_DIR}
 )
@@ -149,4 +153,3 @@ add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
 
 add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
-
