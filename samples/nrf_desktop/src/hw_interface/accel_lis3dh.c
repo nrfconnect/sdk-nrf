@@ -220,7 +220,7 @@ static void irq_callback(struct device *dev, struct gpio_callback *cb,
 
 static void async_init_fn(struct k_work *work)
 {
-	i2c_dev = device_get_binding("I2C_1");
+	i2c_dev = device_get_binding(CONFIG_I2C_1_NAME);
 	if (!i2c_dev) {
 		SYS_LOG_ERR("cannot get I2C device");
 		return;
@@ -244,7 +244,7 @@ static void async_init_fn(struct k_work *work)
 		return;
 	}
 
-	struct device *gpio_dev = device_get_binding("GPIO_0");
+	struct device *gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
 		SYS_LOG_ERR("cannot get GPIO device");
