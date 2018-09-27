@@ -12,14 +12,12 @@
 
 
 static const struct pin_state port0_on[] = {
-	{LED2_GPIO_PIN, 1},
 };
 
 static const struct pin_state port1_on[] = {
 };
 
 static const struct pin_state port0_off[] = {
-	{LED2_GPIO_PIN, 0},
 };
 
 static const struct pin_state port1_off[] = {
