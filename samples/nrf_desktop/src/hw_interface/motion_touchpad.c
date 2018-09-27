@@ -143,7 +143,7 @@ static void async_init_fn(struct k_work *work)
 
 
 	/* Check if TP is connected */
-	i2c_dev = device_get_binding("I2C_0");
+	i2c_dev = device_get_binding(CONFIG_I2C_0_NAME);
 	if (!i2c_dev) {
 		SYS_LOG_ERR("cannot get I2C device");
 		return;
