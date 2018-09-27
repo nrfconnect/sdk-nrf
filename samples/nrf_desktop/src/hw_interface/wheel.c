@@ -70,20 +70,38 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 	EVENT_SUBMIT(event);
 }
 
-
-void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb, u32_t pins)
+static int wakeup_int_ctrl(bool enable)
 {
 	int err = 0;
 
+	/* This must be done with irqs disabled to avoid pin callback
+	 * being fired before others are still not set up.
+	 */
+	unsigned int flags = irq_lock();
+
 	for (size_t i = 0; (i < ARRAY_SIZE(qdec_pin)) && !err; i++) {
-		err = gpio_pin_disable_callback(gpio_dev, qdec_pin[i]);
+		if (enable) {
+			err = gpio_pin_enable_callback(gpio_dev, qdec_pin[i]);
+		} else {
+			err = gpio_pin_disable_callback(gpio_dev, qdec_pin[i]);
+		}
+
 		if (err) {
-			SYS_LOG_ERR("cannot disable cb (pin:%zu)", i);
+			SYS_LOG_ERR("cannot control cb (pin:%zu)", i);
 		}
 	}
 
+	irq_unlock(flags);
+
+	return err;
+}
+
+static void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb,
+		      u32_t pins)
+{
 	__ASSERT_NO_MSG(!atomic_get(&active));
 
+	int err = wakeup_int_ctrl(false);
 	if (!err) {
 		struct wake_up_event *event = new_wake_up_event();
 		EVENT_SUBMIT(event);
@@ -124,17 +142,7 @@ static int setup_wakeup(void)
 		}
 	}
 
-	/* This must be done with irqs disabled to avoid pin callback
-	 * being fired before others are still not activated.
-	 */
-	unsigned int flags = irq_lock();
-	for (size_t i = 0; (i < ARRAY_SIZE(qdec_pin)) && !err; i++) {
-		err = gpio_pin_enable_callback(gpio_dev, qdec_pin[i]);
-		if (err) {
-			SYS_LOG_ERR("cannot enable cb (pin:%zu)", i);
-		}
-	}
-	irq_unlock(flags);
+	err = wakeup_int_ctrl(true);
 
 error:
 	return err;
@@ -233,7 +241,11 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_wake_up_event(eh)) {
 		if (!atomic_get(&active)) {
-			int err = enable();
+			int err = wakeup_int_ctrl(false);
+			if (!err) {
+				err = enable();
+			}
+
 			if (!err) {
 				atomic_set(&active, true);
 				module_set_state(MODULE_STATE_READY);
@@ -248,10 +260,12 @@ static bool event_handler(const struct event_header *eh)
 	if (is_power_down_event(eh)) {
 		if (atomic_get(&active)) {
 			atomic_set(&active, false);
+
 			int err = disable();
 			if (!err) {
 				err = setup_wakeup();
 			}
+
 			if (!err) {
 				module_set_state(MODULE_STATE_STANDBY);
 			} else {
