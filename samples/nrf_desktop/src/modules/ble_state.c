@@ -36,19 +36,6 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	SYS_LOG_INF("Connected to %s", addr);
 
-	struct bt_le_conn_param param = {
-		.interval_min	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MIN,
-		.interval_max	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MAX,
-		.latency	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_LATENCY,
-		.timeout	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_TIMEOUT
-	};
-
-	err = bt_conn_le_param_update(conn, &param);
-	if (err) {
-		SYS_LOG_WRN("Failed to set connection params");
-	}
-
-
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->conn_id = conn;
 	event->state   = PEER_STATE_CONNECTED;
@@ -86,6 +73,18 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	event->conn_id = conn;
 	event->state   = PEER_STATE_SECURED;
 	EVENT_SUBMIT(event);
+
+	struct bt_le_conn_param param = {
+		.interval_min	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MIN,
+		.interval_max	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MAX,
+		.latency	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_LATENCY,
+		.timeout	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_TIMEOUT
+	};
+
+	int err = bt_conn_le_param_update(conn, &param);
+	if (err) {
+		SYS_LOG_WRN("Failed to set connection params");
+	}
 }
 
 static void bt_ready(int err)
