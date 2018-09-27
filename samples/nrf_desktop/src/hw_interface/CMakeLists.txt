@@ -25,6 +25,9 @@ target_sources_ifdef(CONFIG_HAS_DTS_MOTION app PRIVATE
 target_sources_ifdef(CONFIG_BOARD_NRF52_PCA63519 app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons_pca63519.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_LED_ENABLE app
+		     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/leds.c)
+
 target_sources_ifdef(CONFIG_BOARD_NRF52840_PCA20041 app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons_pca20041.c)
 
