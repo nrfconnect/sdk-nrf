@@ -62,7 +62,7 @@ config DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MAX
 
 config DESKTOP_BLE_STATE_CONNECTION_LATENCY
 	int "Connection latency"
-	default 0
+	default 99
 	help
 	  Desired connection latency used during negotiations.
 
