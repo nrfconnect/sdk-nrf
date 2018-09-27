@@ -56,6 +56,34 @@ config DESKTOP_SPI_FREQ_HZ
 	default 1800000
 	range 500000 2500000
 
+comment "LED configuration"
+
+config DESKTOP_LED_ENABLE
+	bool "Enable LED hardware interface"
+	default y
+
+config DESKTOP_LED_STATE
+	string "LED state"
+	depends on DESKTOP_LED_ENABLE
+	default ""
+	help
+	  This option specifies a path to the led state file.
+
+config DESKTOP_LED_COUNT
+	int "Number of LEDs in use"
+	depends on DESKTOP_LED_ENABLE
+	default 0
+
+config DESKTOP_LED_COLOR_COUNT
+	int "Number of color channels per diode"
+	depends on DESKTOP_LED_ENABLE
+	default 3
+
+config DESKTOP_LED_BRIGHTNESS_MAX
+	int "Maximum value for LED brightness"
+	depends on DESKTOP_LED_ENABLE
+	default 255
+
 comment "Wheel configuration"
 	depends on HAS_DTS_QDEC
 
@@ -140,6 +168,21 @@ config DESKTOP_SYS_LOG_WHEEL_MODULE_LEVEL
 	range 0 4
 	help
 	  Sets log level for wheel module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+config DESKTOP_SYS_LOG_LED_MODULE_LEVEL
+	int "LED module log level"
+	depends on SYS_LOG
+	depends on DESKTOP_LED_ENABLE
+	default 2
+	range 0 4
+	help
+	  Sets log level for buttons module.
 	  Levels are:
 	  - 0 OFF, do not write
 	  - 1 ERROR, only write SYS_LOG_ERR
