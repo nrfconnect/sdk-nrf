@@ -28,9 +28,9 @@ Repositories
    * - `nrfxlib <https://github.com/NordicPlayground/nrfxlib>`_
      - v0.1.0
    * - `fw-nrfconnect-zephyr <https://github.com/NordicPlayground/fw-nrfconnect-zephyr>`_
-     - v1.13.0-ncs1
+     - v1.13.99-ncs1
    * - `fw-nrfconnect-mcuboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_
-     - v1.2.0-ncs1
+     - v1.2.99-ncs1
 
 
 Supported boards
