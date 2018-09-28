@@ -169,8 +169,6 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 			break;
 		}
 	}
-
-	advertising_start();
 }
 
 
