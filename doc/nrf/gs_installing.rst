@@ -38,11 +38,12 @@ Cloning the repositories
    The following instructions are temporary.
    There will be a tool that automizes the process of cloning the repositories.
 
-1. Fork the three |NCS| repositories to your own GitHub account by clicking the **Fork** button in the upper right-hand corner of each repository page:
+1. Fork the four |NCS| repositories to your own GitHub account by clicking the **Fork** button in the upper right-hand corner of each repository page:
 
    a. |ncs_repo|
    #. |ncs_zephyr_repo|
    #. |ncs_mcuboot_repo|
+   #. |ncs_nrfxlib_repo|
 
 #. Create a folder named ``ncs``.
    This folder will hold all |NCS| repositories.
@@ -57,6 +58,8 @@ Cloning the repositories
 
       git clone https://github.com/<username>/fw-nrfconnect-nrf.git nrf
 
+      git clone https://github.com/<username>/nrfxlib.git nrfxlib
+
    Replace *<username>* with your GitHub user name.
 #. To link your local repositories to the |NCS| repositories, add remotes that point to the original repositories:
 
@@ -70,6 +73,10 @@ Cloning the repositories
 
       cd ../nrf
       git remote add ncs https://github.com/NordicPlayground/fw-nrfconnect-nrf.git
+
+      cd ../nrfxlib
+      git remote add ncs https://github.com/NordicPlayground/nrfxlib.git
+
 #. Optionally, add remotes to the upstream repositories for Zephyr and Mcuboot:
 
    .. code-block:: console
@@ -85,4 +92,5 @@ Your directory structure now looks like this::
    ncs
     |___ mcuboot
     |___ nrf
+    |___ nrfxlib
     |___ zephyr

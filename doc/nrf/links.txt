@@ -18,3 +18,5 @@
 .. |ncs_zephyr_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
 
 .. |ncs_mcuboot_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
+
+.. |ncs_nrfxlib_repo| replace:: https://github.com/NordicPlayground/nrfxlib
