@@ -6,7 +6,7 @@
  * Copyright (c) 2016 Intel Corporation
  * Copyright (c) 2018 Nordic Semiconductor
  *
- * SPDX-License-Identifier: BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
 #include <zephyr/types.h>

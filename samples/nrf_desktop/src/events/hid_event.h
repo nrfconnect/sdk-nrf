@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
 #ifndef _HID_EVENT_H_
