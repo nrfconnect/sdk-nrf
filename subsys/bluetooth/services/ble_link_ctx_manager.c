@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
 #include <bluetooth/services/ble_link_ctx_manager.h>

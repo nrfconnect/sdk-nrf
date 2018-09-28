@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
-# SPDX-License-Identifier: BSD-5-Clause-Nordic
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 cmake_minimum_required(VERSION 3.8.2)
 
