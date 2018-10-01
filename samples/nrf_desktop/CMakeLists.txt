@@ -14,9 +14,13 @@ set(NRF_SUPPORTED_BOARDS
 include(../../cmake/boilerplate.cmake)
 
 # Define configuration files.
-set(CONF_FILE "configuration/app_${BOARD}.conf")
-list(APPEND CONF_FILE "configuration/nrfconnect.conf")
-list(APPEND CONF_FILE "configuration/zephyr.conf")
+macro(set_conf_file)
+  set(CONF_FILE
+	"configuration/app_${BOARD}.conf"
+	"configuration/nrfconnect.conf"
+	"configuration/zephyr.conf"
+	)
+endmacro()
 
 ################################################################################
 
