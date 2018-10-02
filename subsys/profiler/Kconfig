@@ -5,7 +5,7 @@ config PROFILER
 	default n
 
 config MAX_NUMBER_OF_CUSTOM_EVENTS
-	int "Maximum number of stored custom events"
+	int "Maximum number of stored custom events types"
 	default 32
 
 config PROFILER_CUSTOM_EVENT_BUF_LEN
@@ -16,31 +16,21 @@ config MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
 	int "Maximum number of characters used to describe single event type"
 	default 128
 
-config PROFILER_SYSVIEW
-	bool "Use SysView profiler"
+choice
+	prompt "Profiler selection"
+	default PROFILER_SYSVIEW
 	depends on PROFILER
+
+config PROFILER_SYSVIEW
+	bool "SysView profiler."
 	select RTT_CONSOLE
 	select SEGGER_SYSTEMVIEW
-	default y
-
-menu "SysView advanced"
-	depends on PROFILER_SYSVIEW
-config SYSVIEW_INITIALIZATION
-	bool "Initialize and config SystemView on start"
-	default n
-
-config SYSVIEW_START_LOGGING_ON_SYSTEM_START
-	bool "Start logging on system start"
-	depends on SYSVIEW_INITIALIZATION
-	default n
-
-endmenu #Advanced
 
 config PROFILER_NORDIC
-	bool "Use Nordic profiler"
-	depends on PROFILER
+	bool "Nordic profiler."
 	select RTT_CONSOLE
-	default n
+
+endchoice
 
 menu "Nordic profiler advanced"
 	depends on PROFILER_NORDIC
