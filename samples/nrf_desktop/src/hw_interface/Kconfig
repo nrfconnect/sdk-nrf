@@ -60,11 +60,32 @@ config DESKTOP_SPI_FREQ_HZ
 	default 1800000
 	range 500000 2500000
 
+comment "Wheel configuration"
+	depends on HAS_DTS_QDEC
+
+config DESKTOP_WHEEL_ENABLE
+	bool "Enable wheel hardware interface"
+	depends on HAS_DTS_QDEC
+
+config DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER
+	int "Wheel sensor value divider"
+	depends on DESKTOP_WHEEL_ENABLE
+	range 1 2048
+	default 1
+	help
+	  A value obtained from the wheel sensor will be divided
+	  by provided argument before being processed further.
+
+config DESKTOP_WHEEL_INVERT_AXIS
+	bool "Invert wheel axis"
+	depends on DESKTOP_WHEEL_ENABLE
+	help
+	  Switch the orientation of the wheel sensor.
+
 comment "LED configuration"
 
 config DESKTOP_LED_ENABLE
 	bool "Enable LED hardware interface"
-	default y
 
 config DESKTOP_LED_STATE
 	string "LED state"
@@ -87,25 +108,6 @@ config DESKTOP_LED_BRIGHTNESS_MAX
 	int "Maximum value for LED brightness"
 	depends on DESKTOP_LED_ENABLE
 	default 255
-
-comment "Wheel configuration"
-	depends on HAS_DTS_QDEC
-
-config DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER
-	int "Sensor value divider"
-	depends on HAS_DTS_QDEC
-	range 1 2048
-	default 1
-	help
-	  A value obtained from the wheel sensor will be divided
-	  by provided argument before being processed further.
-
-config DESKTOP_WHEEL_INVERT_AXIS
-	bool "Invert wheel axis"
-	depends on HAS_DTS_QDEC
-	default n
-	help
-	  Switch the orientation of the wheel sensor.
 
 comment "Log level configuration"
 
@@ -169,6 +171,7 @@ config DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
 config DESKTOP_SYS_LOG_WHEEL_MODULE_LEVEL
 	int "Wheel module log level"
 	depends on SYS_LOG
+	depends on DESKTOP_WHEEL_ENABLE
 	default 2
 	range 0 4
 	help

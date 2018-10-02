@@ -23,6 +23,15 @@ static const struct pin_state port0_on[] = {
 
 	{9,  0}, /* NFC1 */
 	{10, 0}, /* NFC2 */
+
+#if !defined(CONFIG_DESKTOP_LED_ENABLE)
+	{23, 0}, /* Front LED red */
+	{25, 0}, /* Front LED green */
+	{7,  0}, /* Front LED blue */
+	{11, 0}, /* Back LED red */
+	{26, 0}, /* Back LED green */
+	{27, 0}, /* Back LED blue */
+#endif
 };
 
 static const struct pin_state port1_on[] = {
