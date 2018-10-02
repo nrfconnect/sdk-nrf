@@ -14,7 +14,9 @@
 static const struct pin_state port0_on[] = {
 	{4,  0}, /* accelerometer power switch */
 
+#if !defined(CONFIG_DESKTOP_MOTION_OPTICAL_ENABLE)
 	{14, 0}, /* motion power switch */
+#endif
 
 	{5,  0}, /* battery monitor sense */
 	{6,  0}, /* battery monitor enable */
