@@ -55,13 +55,6 @@ static u32_t shorten_mem_address(const void *event_mem_address)
 
 int profiler_init(void)
 {
-	if (IS_ENABLED(CONFIG_SYSVIEW_INITIALIZATION)) {
-		SEGGER_SYSVIEW_Conf();
-		if (IS_ENABLED(CONFIG_SYSVIEW_START_LOGGING_ON_SYSTEM_START)) {
-			SEGGER_SYSVIEW_Start();
-		}
-	}
-
 	SEGGER_SYSVIEW_RegisterModule(&events);
 	return 0;
 }
