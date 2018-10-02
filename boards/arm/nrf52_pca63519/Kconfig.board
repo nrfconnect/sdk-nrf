@@ -7,6 +7,5 @@
 config  BOARD_NRF52_PCA63519
 	bool "nRF52 PCA63519"
 	select HAS_DTS_LIS3DH
-	select HAS_DTS_TOUCHPAD
 
 	depends on SOC_NRF52832_QFAA
