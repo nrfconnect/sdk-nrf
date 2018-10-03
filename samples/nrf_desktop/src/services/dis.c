@@ -12,9 +12,9 @@
 #define MODULE dis
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_DIS_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_DIS_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 static bool event_handler(const struct event_header *eh)
@@ -30,7 +30,7 @@ static bool event_handler(const struct event_header *eh)
 
 			dis_init();
 
-			SYS_LOG_INF("service initialized");
+			LOG_INF("service initialized");
 
 			module_set_state(MODULE_STATE_READY);
 		}

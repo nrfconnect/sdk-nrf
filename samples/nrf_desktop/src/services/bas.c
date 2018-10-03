@@ -15,9 +15,9 @@
 #define MODULE bas
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BAS_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_BAS_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 static struct bt_gatt_ccc_cfg blvl_ccc_cfg[BT_GATT_CCC_MAX];
@@ -83,11 +83,11 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (bas_init()) {
-				SYS_LOG_ERR("service init failed");
+				LOG_ERR("service init failed");
 
 				return false;
 			}
-			SYS_LOG_INF("service initialized");
+			LOG_INF("service initialized");
 
 			module_set_state(MODULE_STATE_READY);
 		}

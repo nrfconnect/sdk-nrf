@@ -28,9 +28,9 @@
 #define MODULE hid_state
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_HID_STATE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_HID_STATE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 /**@brief Module state. */
@@ -205,7 +205,7 @@ static void eventq_append(struct eventq *eventq, u16_t usage_id, s16_t value)
 	struct item_event *hid_event = k_malloc(sizeof(*hid_event));
 
 	if (!hid_event) {
-		SYS_LOG_WRN("Failed to allocate HID event");
+		LOG_WRN("Failed to allocate HID event");
 		return;
 	}
 
@@ -239,7 +239,7 @@ static void eventq_region_purge(struct eventq *eventq,
 
 	eventq->len -= cnt;
 
-	SYS_LOG_WRN("%u stale events removed from the queue!", cnt);
+	LOG_WRN("%u stale events removed from the queue!", cnt);
 }
 
 
@@ -373,7 +373,7 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 		 * about the maximum number of simultaneously pressed keys.
 		 * Generate a warning if an item cannot be recorded.
 		 */
-		SYS_LOG_WRN("No place on the list to store HID item!");
+		LOG_WRN("No place on the list to store HID item!");
 	} else {
 		/* After sort operation, free slots (zeros) are stored
 		 * at the beginning of the array.
@@ -665,7 +665,7 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t value)
 			/* To maintain the sanity of HID state, clear
 			 * all recorded events and items.
 			 */
-			SYS_LOG_WRN("Queue is full, all events are dropped!");
+			LOG_WRN("Queue is full, all events are dropped!");
 			memset(&report->items, 0, sizeof(report->items));
 			eventq_reset(&report->eventq);
 		}
@@ -763,7 +763,7 @@ static bool event_handler(const struct event_header *eh)
 		/* Get usage ID and target report from HID Keymap */
 		struct hid_keymap *map = hid_keymap_get(event->key_id);
 		if (!map || !map->usage_id) {
-			SYS_LOG_WRN("No translation found, button ignored.");
+			LOG_WRN("No translation found, button ignored.");
 			return false;
 		}
 
@@ -799,7 +799,7 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			SYS_LOG_INF("Init HID state!");
+			LOG_INF("Init HID state!");
 			init();
 		}
 		return false;

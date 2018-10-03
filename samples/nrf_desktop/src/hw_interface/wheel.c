@@ -19,9 +19,9 @@
 #define MODULE wheel
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_WHEEL_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_WHEEL_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 static const u32_t qdec_pin[] = {CONFIG_QDEC_A_PIN, CONFIG_QDEC_B_PIN};
 
@@ -47,7 +47,7 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 
 	int err = sensor_channel_get(qdec_dev, SENSOR_CHAN_ROTATION, &value);
 	if (err) {
-		SYS_LOG_ERR("cannot get sensor value");
+		LOG_ERR("cannot get sensor value");
 		return;
 	}
 
@@ -87,7 +87,7 @@ static int wakeup_int_ctrl(bool enable)
 		}
 
 		if (err) {
-			SYS_LOG_ERR("cannot control cb (pin:%zu)", i);
+			LOG_ERR("cannot control cb (pin:%zu)", i);
 		}
 	}
 
@@ -113,13 +113,13 @@ static int setup_wakeup(void)
 	int err = gpio_pin_configure(gpio_dev, CONFIG_QDEC_ENABLE_PIN,
 				     GPIO_DIR_OUT);
 	if (err) {
-		SYS_LOG_ERR("cannot configure enable pin");
+		LOG_ERR("cannot configure enable pin");
 		goto error;
 	}
 
 	err = gpio_pin_write(gpio_dev, CONFIG_QDEC_ENABLE_PIN, 0);
 	if (err) {
-		SYS_LOG_ERR("failed to set enable pin");
+		LOG_ERR("failed to set enable pin");
 		goto error;
 	}
 
@@ -128,7 +128,7 @@ static int setup_wakeup(void)
 		u32_t val;
 		err = gpio_pin_read(gpio_dev, qdec_pin[i], &val);
 		if (err) {
-			SYS_LOG_ERR("cannot read pin %zu", i);
+			LOG_ERR("cannot read pin %zu", i);
 			goto error;
 		}
 
@@ -137,7 +137,7 @@ static int setup_wakeup(void)
 
 		err = gpio_pin_configure(gpio_dev, qdec_pin[i], flags);
 		if (err) {
-			SYS_LOG_ERR("cannot configure pin %zu", i);
+			LOG_ERR("cannot configure pin %zu", i);
 			goto error;
 		}
 	}
@@ -152,13 +152,13 @@ static int init(void)
 {
 	qdec_dev = device_get_binding(CONFIG_QDEC_NAME);
 	if (!qdec_dev) {
-		SYS_LOG_ERR("cannot get qdec device");
+		LOG_ERR("cannot get qdec device");
 		return -ENXIO;
 	}
 
 	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		SYS_LOG_ERR("cannot get gpio device");
+		LOG_ERR("cannot get gpio device");
 		return -ENXIO;
 	}
 
@@ -170,7 +170,7 @@ static int init(void)
 		gpio_init_callback(&gpio_cbs[i], wakeup_cb, BIT(qdec_pin[i]));
 		err = gpio_add_callback(gpio_dev, &gpio_cbs[i]);
 		if (err) {
-			SYS_LOG_ERR("cannot configure cb (pin:%zu)", i);
+			LOG_ERR("cannot configure cb (pin:%zu)", i);
 		}
 	}
 
@@ -181,14 +181,14 @@ static int enable(void)
 {
 	int err = device_set_power_state(qdec_dev, DEVICE_PM_ACTIVE_STATE);
 	if (err) {
-		SYS_LOG_ERR("cannot activate qdec");
+		LOG_ERR("cannot activate qdec");
 		return err;
 	}
 
 	err = sensor_trigger_set(qdec_dev, (struct sensor_trigger *)&qdec_trig,
 				 data_ready_handler);
 	if (err) {
-		SYS_LOG_ERR("cannot setup trigger");
+		LOG_ERR("cannot setup trigger");
 	}
 
 	return err;
@@ -199,13 +199,13 @@ static int disable(void)
 	int err = sensor_trigger_set(qdec_dev,
 				     (struct sensor_trigger *)&qdec_trig, NULL);
 	if (err) {
-		SYS_LOG_ERR("cannot disable trigger");
+		LOG_ERR("cannot disable trigger");
 		return err;
 	}
 
 	err = device_set_power_state(qdec_dev, DEVICE_PM_SUSPEND_STATE);
 	if (err) {
-		SYS_LOG_ERR("cannot suspend qdec");
+		LOG_ERR("cannot suspend qdec");
 	}
 
 	return err;

@@ -17,9 +17,9 @@
 #define MODULE motion
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_MOTION_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 #define BUTTONS_NUM	4
 #define MOVEMENT_SPEED	5
@@ -55,19 +55,19 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 
 	if (pins & (1 << SW0_GPIO_PIN)) {
 		val_x -= MOVEMENT_SPEED;
-		SYS_LOG_DBG("Left");
+		LOG_DBG("Left");
 	}
 	if (pins & (1 << SW1_GPIO_PIN)) {
 		val_y -= MOVEMENT_SPEED;
-		SYS_LOG_DBG("Up");
+		LOG_DBG("Up");
 	}
 	if (pins & (1 << SW2_GPIO_PIN)) {
 		val_x += MOVEMENT_SPEED;
-		SYS_LOG_DBG("Right");
+		LOG_DBG("Right");
 	}
 	if (pins & (1 << SW3_GPIO_PIN)) {
 		val_y += MOVEMENT_SPEED;
-		SYS_LOG_DBG("Down");
+		LOG_DBG("Down");
 	}
 
 	motion_event_send(val_x, val_y);
@@ -86,7 +86,7 @@ static void async_init_fn(struct k_work *work)
 	for (size_t i = 0; i < ARRAY_SIZE(pin_id); i++) {
 		gpio_devs[i] = device_get_binding(port_name[i]);
 		if (gpio_devs[i]) {
-			SYS_LOG_DBG("Port %zu bound", i);
+			LOG_DBG("Port %zu bound", i);
 
 			gpio_pin_configure(gpio_devs[i], pin_id[i],
 					   GPIO_PUD_PULL_UP | GPIO_DIR_IN |
@@ -107,7 +107,7 @@ static void async_term_fn(struct k_work *work)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
 		if (gpio_devs[i]) {
-			SYS_LOG_DBG("Port %zu unbound", i);
+			LOG_DBG("Port %zu unbound", i);
 
 			gpio_pin_disable_callback(gpio_devs[i], pin_id[i]);
 			gpio_remove_callback(gpio_devs[i], &gpio_cbs[i]);

@@ -23,9 +23,9 @@
 #define MODULE power_manager
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_POWER_MANAGER_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_POWER_MANAGER_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 #define POWER_DOWN_TIMEOUT_MS	(1000 * CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT)
@@ -114,7 +114,7 @@ int _sys_soc_suspend(s32_t ticks)
 	}
 
 	if (power_state == POWER_STATE_TURN_OFF) {
-		SYS_LOG_WRN("system turned off");
+		LOG_WRN("system turned off");
 
 		power_state = POWER_STATE_OFF;
 
@@ -134,7 +134,7 @@ int _sys_soc_suspend(s32_t ticks)
 static void power_down(struct k_work *work)
 {
 	if (power_state == POWER_STATE_IDLE) {
-		SYS_LOG_INF("system power down");
+		LOG_INF("system power down");
 
 		struct power_down_event *event = new_power_down_event();
 		power_state = POWER_STATE_SUSPENDING;
@@ -179,14 +179,14 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_down_event(eh)) {
-		SYS_LOG_INF("power down the board");
+		LOG_INF("power down the board");
 
 		profiler_term();
 
 		if (connection_count > 0) {
 			/* Connection is active, keep OS alive. */
 			power_state = POWER_STATE_SUSPENDED;
-			SYS_LOG_WRN("system suspended");
+			LOG_WRN("system suspended");
 		} else {
 			/* No active connection, turn system off. */
 			system_off();
@@ -197,7 +197,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_wake_up_event(eh)) {
-		SYS_LOG_INF("wake up the board");
+		LOG_INF("wake up the board");
 
 		power_state = POWER_STATE_IDLE;
 		k_delayed_work_submit(&power_down_trigger,
@@ -258,7 +258,7 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			SYS_LOG_INF("activate power manager");
+			LOG_INF("activate power manager");
 
 			create_device_list(&device_list);
 

@@ -15,9 +15,9 @@
 #define MODULE usb_state
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BLE_STATE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_USB_STATE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 #include "hid_report_desc.h"
 
@@ -97,7 +97,7 @@ static void broadcast_subscription_change(void)
 	event->report_type = TARGET_REPORT_MOUSE;
 	event->enabled     = state == USB_STATE_ACTIVE;
 
-	SYS_LOG_INF("USB HID %sabled", (event->enabled)?("en"):("dis"));
+	LOG_INF("USB HID %sabled", (event->enabled)?("en"):("dis"));
 
 	EVENT_SUBMIT(event);
 }
@@ -182,7 +182,7 @@ static int usb_init(void)
 
 	int err = usb_hid_init();
 	if (err) {
-		SYS_LOG_ERR("cannot initialize HID class");
+		LOG_ERR("cannot initialize HID class");
 	}
 
 	return err;
@@ -208,7 +208,7 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (usb_init()) {
-				SYS_LOG_ERR("cannot initialize");
+				LOG_ERR("cannot initialize");
 				module_set_state(MODULE_STATE_ERROR);
 			} else {
 				module_set_state(MODULE_STATE_READY);

@@ -29,19 +29,19 @@ config DESKTOP_HID_EVENT_QUEUE_SIZE
 	default 12
 	range 2 255
 
-config DESKTOP_SYS_LOG_HID_STATE_LEVEL
+config DESKTOP_LOG_HID_STATE_LEVEL
 	int "HID state log level"
-	depends on SYS_LOG
+	depends on LOG
 	default 2
 	range 0 4
 	help
 	  Sets log level for HID state.
 	  Levels are:
 	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 endmenu
 
 
@@ -54,37 +54,37 @@ config DESKTOP_BLE_STATE_LESC_ONLY
 	help
 	  Enables Secure Connections only mode.
 
-config DESKTOP_SYS_LOG_BLE_STATE_LEVEL
+config DESKTOP_LOG_BLE_STATE_LEVEL
 	int "BLE state log level"
-	depends on SYS_LOG
+	depends on LOG
 	default 2
 	range 0 4
 	help
 	  Sets log level for BLE state.
 	  Levels are:
 	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 endmenu
 
 
 menu "BLE Advertising"
 
-config DESKTOP_SYS_LOG_BLE_ADV_LEVEL
+config DESKTOP_LOG_BLE_ADV_LEVEL
 	int "BLE advertising log level"
-	depends on SYS_LOG
+	depends on LOG
 	default 2
 	range 0 4
 	help
 	  Sets log level for BLE advertising.
 	  Levels are:
 	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 endmenu
 
 menu "Power manager"
@@ -107,38 +107,38 @@ config DESKTOP_POWER_MANAGER_TIMEOUT
 	help
 	  Time in seconds after which the device will enter low-power mode.
 
-config DESKTOP_SYS_LOG_POWER_MANAGER_LEVEL
+config DESKTOP_LOG_POWER_MANAGER_LEVEL
 	int "Power management log level"
-	depends on SYS_LOG
+	depends on LOG
 	default 2
 	range 0 4
 	help
 	  Sets log level for power management.
 	  Levels are:
 	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 endif
 endmenu
 
 if DESKTOP_LED_ENABLE
 menu "LED state"
 
-config DESKTOP_SYS_LOG_LED_STATE_LEVEL
+config DESKTOP_LOG_LED_STATE_LEVEL
 	int "LED state log level"
-	depends on SYS_LOG
+	depends on LOG
 	default 2
 	range 0 4
 	help
 	  Sets log level for LED state.
 	  Levels are:
 	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 
 endmenu
 endif
@@ -152,9 +152,9 @@ config DESKTOP_USB_ENABLE
 	help
 	  Enables USB module.
 
-config DESKTOP_SYS_LOG_USB_STATE_LEVEL
+config DESKTOP_LOG_USB_STATE_LEVEL
 	int "USB state log level"
-	depends on SYS_LOG
+	depends on LOG
 	depends on DESKTOP_USB_ENABLE
 	default 2
 	range 0 4
@@ -162,10 +162,10 @@ config DESKTOP_SYS_LOG_USB_STATE_LEVEL
 	  Sets log level for USB state.
 	  Levels are:
 	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 
 endmenu
 endif
