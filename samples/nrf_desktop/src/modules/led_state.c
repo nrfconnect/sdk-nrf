@@ -13,9 +13,9 @@
 #include "ble_event.h"
 #include "battery_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_STATE_STATE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_STATE_STATE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 #include "led_state.h"
 

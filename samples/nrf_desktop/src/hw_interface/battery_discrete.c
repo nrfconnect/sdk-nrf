@@ -17,9 +17,9 @@
 #define MODULE battery
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BATTERY_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_BATTERY_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 #define CSO_PERIOD_HZ          CONFIG_DESKTOP_BATTERY_CSO_FREQ
@@ -92,7 +92,7 @@ static int init_fn(void)
 
 	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		SYS_LOG_ERR("cannot get gpio device");
+		LOG_ERR("cannot get gpio device");
 		err = -ENXIO;
 		goto error;
 	}

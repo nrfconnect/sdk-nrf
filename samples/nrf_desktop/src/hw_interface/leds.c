@@ -15,9 +15,9 @@
 #define MODULE leds
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_LED_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_LED_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 struct led {
@@ -126,7 +126,7 @@ static int leds_init(void)
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		leds[i].pwm_dev = device_get_binding(dev_name[i]);
 		if (!leds[i].pwm_dev) {
-			SYS_LOG_ERR("cannot bind %s\n", dev_name[i]);
+			LOG_ERR("cannot bind %s\n", dev_name[i]);
 			err = -ENXIO;
 		} else {
 			k_delayed_work_init(&leds[i].work, work_handler);

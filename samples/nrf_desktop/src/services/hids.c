@@ -21,9 +21,9 @@
 #define MODULE hids
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_HOG_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_HOG_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 #define BASE_USB_HID_SPEC_VERSION   0x0101
@@ -63,7 +63,7 @@ static void broadcast_subscription_change(enum target_report tr,
 	event->report_type = tr;
 	event->enabled     = report_enabled[tr][new_mode];
 
-	SYS_LOG_INF("Notifications %sabled", (event->enabled)?("en"):("dis"));
+	LOG_INF("Notifications %sabled", (event->enabled)?("en"):("dis"));
 
 	EVENT_SUBMIT(event);
 }
@@ -74,12 +74,12 @@ static void pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 
 	switch (evt) {
 	case HIDS_PM_EVT_BOOT_MODE_ENTERED:
-		SYS_LOG_INF("Boot mode");
+		LOG_INF("Boot mode");
 		report_mode = REPORT_MODE_BOOT;
 		break;
 
 	case HIDS_PM_EVT_REPORT_MODE_ENTERED:
-		SYS_LOG_INF("Report mode");
+		LOG_INF("Report mode");
 		report_mode = REPORT_MODE_PROTOCOL;
 		break;
 
@@ -121,31 +121,31 @@ static void notif_handler(enum hids_notif_evt evt, enum target_report tr,
 
 static void mouse_notif_handler(enum hids_notif_evt evt)
 {
-	SYS_LOG_INF("");
+	LOG_INF("");
 	notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
 }
 
 static void boot_mouse_notif_handler(enum hids_notif_evt evt)
 {
-	SYS_LOG_INF("");
+	LOG_INF("");
 	notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_BOOT);
 }
 
 static void keyboard_notif_handler(enum hids_notif_evt evt)
 {
-	SYS_LOG_INF("");
+	LOG_INF("");
 	notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_PROTOCOL);
 }
 
 static void boot_keyboard_notif_handler(enum hids_notif_evt evt)
 {
-	SYS_LOG_INF("");
+	LOG_INF("");
 	notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_BOOT);
 }
 
 static void mplayer_notif_handler(enum hids_notif_evt evt)
 {
-	SYS_LOG_INF("");
+	LOG_INF("");
 	notif_handler(evt, TARGET_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
 }
 
@@ -337,7 +337,7 @@ static void notify_hids(const struct ble_peer_event *event)
 	}
 
 	if (err) {
-		SYS_LOG_ERR("Failed to notify the HID service about the connection");
+		LOG_ERR("Failed to notify the HID service about the connection");
 	}
 }
 
@@ -375,11 +375,11 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (module_init()) {
-				SYS_LOG_ERR("service init failed");
+				LOG_ERR("service init failed");
 
 				return false;
 			}
-			SYS_LOG_INF("service initialized");
+			LOG_INF("service initialized");
 
 			module_set_state(MODULE_STATE_READY);
 		}

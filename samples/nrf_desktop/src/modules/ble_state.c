@@ -15,9 +15,9 @@
 #define MODULE ble_state
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BLE_STATE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_BLE_STATE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 static void connected(struct bt_conn *conn, u8_t err)
@@ -27,11 +27,11 @@ static void connected(struct bt_conn *conn, u8_t err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
-		SYS_LOG_ERR("Failed to connect to %s (%u)", addr, err);
+		LOG_ERR("Failed to connect to %s (%u)", addr, err);
 		return;
 	}
 
-	SYS_LOG_INF("Connected to %s", addr);
+	LOG_INF("Connected to %s", addr);
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->conn_id = conn;
@@ -40,7 +40,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
 	if (err) {
-		SYS_LOG_ERR("Failed to set security");
+		LOG_ERR("Failed to set security");
 	}
 }
 
@@ -50,7 +50,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	SYS_LOG_INF("Disconnected from %s (reason %u)", addr, reason);
+	LOG_INF("Disconnected from %s (reason %u)", addr, reason);
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->conn_id = conn;
@@ -64,7 +64,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	SYS_LOG_INF("Security with %s level %u", addr, level);
+	LOG_INF("Security with %s level %u", addr, level);
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->conn_id = conn;
@@ -74,10 +74,10 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
-	SYS_LOG_INF("Conn parameters request:"
-		     "\n\tinterval (0x%04x, 0x%04x)\n\tsl %d\n\ttimeout %d",
-		     param->interval_min, param->interval_max,
-		     param->latency, param->timeout);
+	LOG_INF("Conn parameters request:"
+		"\n\tinterval (0x%04x, 0x%04x)\n\tsl %d\n\ttimeout %d",
+		param->interval_min, param->interval_max,
+		param->latency, param->timeout);
 
 	/* Accept the request */
 	return true;
@@ -86,19 +86,19 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 static void le_param_updated(struct bt_conn *conn, u16_t interval,
 			     u16_t latency, u16_t timeout)
 {
-	SYS_LOG_INF("Conn parameters updated:"
-		    "\n\tinterval 0x%04x\n\tlat %d\n\ttimeout %d\n",
-		    interval, latency, timeout);
+	LOG_INF("Conn parameters updated:"
+		"\n\tinterval 0x%04x\n\tlat %d\n\ttimeout %d\n",
+		interval, latency, timeout);
 }
 
 static void bt_ready(int err)
 {
 	if (err) {
-		SYS_LOG_ERR("Bluetooth initialization failed (err %d)", err);
+		LOG_ERR("Bluetooth initialization failed (err %d)", err);
 		sys_reboot(SYS_REBOOT_WARM);
 	}
 
-	SYS_LOG_INF("Bluetooth initialized");
+	LOG_INF("Bluetooth initialized");
 
 	module_set_state(MODULE_STATE_READY);
 }
@@ -129,7 +129,7 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (ble_state_init()) {
-				SYS_LOG_ERR("cannot initialize");
+				LOG_ERR("cannot initialize");
 			}
 		}
 

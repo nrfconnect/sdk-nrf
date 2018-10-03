@@ -19,9 +19,9 @@
 #define MODULE motion
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_MOTION_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 /* Use timings defined by spec */
@@ -159,7 +159,7 @@ static int spi_cs_ctrl(bool enable)
 	u32_t val = (enable) ? (0) : (1);
 	int err = gpio_pin_write(gpio_dev, OPTICAL_PIN_CS, val);
 	if (err) {
-		SYS_LOG_ERR("SPI CS ctrl failed");
+		LOG_ERR("SPI CS ctrl failed");
 	}
 
 	if (enable) {
@@ -221,7 +221,7 @@ static int reg_read(u8_t reg, u8_t *buf)
 	return 0;
 
 error:
-	SYS_LOG_ERR("SPI reg read failed");
+	LOG_ERR("SPI reg read failed");
 
 	return err;
 }
@@ -265,7 +265,7 @@ static int reg_write(u8_t reg, u8_t val)
 	return 0;
 
 error:
-	SYS_LOG_ERR("SPI reg write failed");
+	LOG_ERR("SPI reg write failed");
 
 	return err;
 }
@@ -332,7 +332,7 @@ static int motion_burst_read(u8_t *data, size_t burst_size)
 	return 0;
 
 error:
-	SYS_LOG_ERR("SPI burst write failed");
+	LOG_ERR("SPI burst write failed");
 
 	return err;
 }
@@ -385,7 +385,7 @@ static int burst_write(u8_t reg, const u8_t *buf, size_t size)
 	return 0;
 
 error:
-	SYS_LOG_ERR("SPI reg write failed");
+	LOG_ERR("SPI reg write failed");
 
 	return err;
 }
@@ -394,7 +394,7 @@ static int firmware_load(void)
 {
 	int err;
 
-	SYS_LOG_INF("Uploading optical sensor firmware...");
+	LOG_INF("Uploading optical sensor firmware...");
 
 	/* Write 0 to Rest_En bit of Config2 register to disable Rest mode */
 	err = reg_write(OPTICAL_REG_CONFIG2, 0x00);
@@ -422,7 +422,7 @@ static int firmware_load(void)
 	err = burst_write(OPTICAL_REG_SROM_LOAD_BURST, firmware_data,
 			firmware_length);
 	if (err) {
-		SYS_LOG_ERR("Loading firmware to optical sensor failed!");
+		LOG_ERR("Loading firmware to optical sensor failed!");
 		goto error;
 	}
 
@@ -436,9 +436,9 @@ static int firmware_load(void)
 		goto error;
 	}
 
-	SYS_LOG_DBG("Optical chip firmware ID: 0x%x", id);
+	LOG_DBG("Optical chip firmware ID: 0x%x", id);
 	if (id != OPTICAL_FIRMWARE_ID) {
-		SYS_LOG_ERR("Chip is not running from SROM!");
+		LOG_ERR("Chip is not running from SROM!");
 		err = -EIO;
 		goto error;
 	}
@@ -460,7 +460,7 @@ static int firmware_load(void)
 	return 0;
 
 error:
-	SYS_LOG_ERR("SPI firmware load failed");
+	LOG_ERR("SPI firmware load failed");
 
 	return err;
 }
@@ -515,7 +515,7 @@ static int motion_read(void)
 
 		EVENT_SUBMIT(event);
 	} else {
-		SYS_LOG_ERR("No memory");
+		LOG_ERR("No memory");
 		err = -ENOMEM;
 	}
 
@@ -529,13 +529,13 @@ static int init(void)
 	/* Obtain bindings */
 	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		SYS_LOG_ERR("Cannot get GPIO device");
+		LOG_ERR("Cannot get GPIO device");
 		goto error;
 	}
 
 	spi_dev = device_get_binding(CONFIG_SPI_1_NAME);
 	if (!spi_dev) {
-		SYS_LOG_ERR("Cannot get SPI device");
+		LOG_ERR("Cannot get SPI device");
 		goto error;
 	}
 
@@ -587,7 +587,7 @@ static int init(void)
 	u8_t product_id;
 	err = reg_read(OPTICAL_REG_PRODUCT_ID, &product_id);
 	if (err || (product_id != OPTICAL_PRODUCT_ID)) {
-		SYS_LOG_ERR("Wrong product ID");
+		LOG_ERR("Wrong product ID");
 		goto error;
 	}
 
@@ -596,20 +596,20 @@ static int init(void)
 				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
 				 GPIO_INT_LEVEL | GPIO_INT_ACTIVE_LOW);
 	if (err) {
-		SYS_LOG_ERR("Failed to confiugure GPIO");
+		LOG_ERR("Failed to confiugure GPIO");
 		goto error;
 	}
 
 	gpio_init_callback(&gpio_cb, irq_handler, BIT(OPTICAL_PIN_MOTION));
 	err = gpio_add_callback(gpio_dev, &gpio_cb);
 	if (err) {
-		SYS_LOG_ERR("Cannot add GPIO callback");
+		LOG_ERR("Cannot add GPIO callback");
 		goto error;
 	}
 
 	err = gpio_pin_enable_callback(gpio_dev, OPTICAL_PIN_MOTION);
 	if (err) {
-		SYS_LOG_ERR("Cannot enable GPIO interrupt");
+		LOG_ERR("Cannot enable GPIO interrupt");
 		goto error;
 	}
 
@@ -652,7 +652,7 @@ static void optical_thread_fn(void)
 			}
 			if ((err == -ENODATA) || (err == -EAGAIN)) {
 				/* No motion or timeout. */
-				SYS_LOG_DBG("Stop polling, wait for interrupt");
+				LOG_DBG("Stop polling, wait for interrupt");
 
 				/* Read data to clear interrupt. */
 				u8_t data[OPTICAL_MAX_BURST_SIZE];

@@ -13,9 +13,9 @@
 #define MODULE ble_adv
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BLE_ADV_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_BLE_ADV_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 #define DEVICE_NAME		CONFIG_BT_DEVICE_NAME
@@ -41,11 +41,11 @@ static void ble_adv_start(void)
 				  sd, ARRAY_SIZE(sd));
 
 	if (err) {
-		SYS_LOG_ERR("Advertising failed to start (err %d)", err);
+		LOG_ERR("Advertising failed to start (err %d)", err);
 		sys_reboot(SYS_REBOOT_WARM);
 	}
 
-	SYS_LOG_INF("Advertising started");
+	LOG_INF("Advertising started");
 
 	module_set_state(MODULE_STATE_READY);
 }
@@ -57,10 +57,10 @@ static void ble_settings_load(void)
 	 */
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		if (settings_load()) {
-			SYS_LOG_ERR("Cannot load settings");
+			LOG_ERR("Cannot load settings");
 			sys_reboot(SYS_REBOOT_WARM);
 		}
-		SYS_LOG_INF("Settings loaded");
+		LOG_INF("Settings loaded");
 	}
 }
 

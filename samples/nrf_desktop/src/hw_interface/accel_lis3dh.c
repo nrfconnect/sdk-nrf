@@ -22,9 +22,9 @@
 #define MODULE accel
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_ACCEL_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_ACCEL_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 #define LIS3DH_ADDRESS	0x19
@@ -52,7 +52,7 @@ static int disable_irq(void)
 	int err = i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, INT1_CFG, 0x00);
 
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	}
 	return err;
@@ -63,7 +63,7 @@ static int enable_irq(void)
 	int err = i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, INT1_CFG, 0x2A);
 
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	}
 	return err;
@@ -76,7 +76,7 @@ static int clear_irq(void)
 	int err = i2c_reg_read_byte(i2c_dev, LIS3DH_ADDRESS, INT1_SRC, &val);
 
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	}
 	k_sleep(1);
@@ -170,13 +170,13 @@ static bool verify_id(void)
 	int err = i2c_reg_read_byte(i2c_dev, LIS3DH_ADDRESS, WHO_AM_I, &val);
 
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 		return false;
 	}
 
 	if (val != I_AM_LIS3DH) {
-		SYS_LOG_ERR("wrong id (0x%x != 0x%x)", val, I_AM_LIS3DH);
+		LOG_ERR("wrong id (0x%x != 0x%x)", val, I_AM_LIS3DH);
 		return false;
 	}
 
@@ -192,7 +192,7 @@ static int reset(void)
 	int err =  i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, CTRL_REG1, 0x80);
 
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 		return err;
 	}
@@ -200,7 +200,7 @@ static int reset(void)
 	/* Reboot */
 	err =  i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, CTRL_REG5, 0x80);
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 		return err;
 	}
@@ -222,32 +222,32 @@ static void async_init_fn(struct k_work *work)
 {
 	i2c_dev = device_get_binding(CONFIG_I2C_1_NAME);
 	if (!i2c_dev) {
-		SYS_LOG_ERR("cannot get I2C device");
+		LOG_ERR("cannot get I2C device");
 		return;
 	}
 
 	if (!verify_id()) {
-		SYS_LOG_ERR("device not recognized");
+		LOG_ERR("device not recognized");
 		return;
 	}
 
 	int err = reset();
 
 	if (err) {
-		SYS_LOG_ERR("device cannot be initialized");
+		LOG_ERR("device cannot be initialized");
 		return;
 	}
 
 	err = idle_mode_set();
 	if (err) {
-		SYS_LOG_ERR("device cannot go to idle mode");
+		LOG_ERR("device cannot go to idle mode");
 		return;
 	}
 
 	struct device *gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
-		SYS_LOG_ERR("cannot get GPIO device");
+		LOG_ERR("cannot get GPIO device");
 		return;
 	}
 
@@ -255,7 +255,7 @@ static void async_init_fn(struct k_work *work)
 			GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH |
 			GPIO_INT_DEBOUNCE);
 	if (err) {
-		SYS_LOG_ERR("cannot configure irq pin");
+		LOG_ERR("cannot configure irq pin");
 		return;
 	}
 
@@ -263,13 +263,13 @@ static void async_init_fn(struct k_work *work)
 
 	err = gpio_add_callback(gpio_dev, &gpio_cb);
 	if (err) {
-		SYS_LOG_ERR("cannot configure irq callback");
+		LOG_ERR("cannot configure irq callback");
 		return;
 	}
 
 	err = gpio_pin_enable_callback(gpio_dev, 0x19);
 	if (err) {
-		SYS_LOG_ERR("cannot enable irq callback");
+		LOG_ERR("cannot enable irq callback");
 		return;
 	}
 
@@ -304,10 +304,10 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_power_down_event(eh)) {
 		if (active) {
-			SYS_LOG_INF("switch to wakeup mode");
+			LOG_INF("switch to wakeup mode");
 			active = false;
 			if (wakeup_mode_set()) {
-				SYS_LOG_ERR("cannot switch to wake up mode");
+				LOG_ERR("cannot switch to wake up mode");
 			}
 
 			module_set_state(MODULE_STATE_STANDBY);

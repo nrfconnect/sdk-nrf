@@ -21,9 +21,9 @@
 #define MODULE motion
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_MOTION_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_MOTION_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 /* Product ID expected to be received from product ID query. */
@@ -73,7 +73,7 @@ static void scan_fn(struct k_work *work)
 	int err = read_bytes(i2c_dev, TOUCHPAD_XY, pos, sizeof(pos));
 
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	} else {
 		if (pos[0] || pos[1]) {
@@ -111,7 +111,7 @@ static void async_init_fn(struct k_work *work)
 		device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
-		SYS_LOG_ERR("cannot get GPIO device");
+		LOG_ERR("cannot get GPIO device");
 		return;
 	}
 
@@ -145,7 +145,7 @@ static void async_init_fn(struct k_work *work)
 	/* Check if TP is connected */
 	i2c_dev = device_get_binding(CONFIG_I2C_0_NAME);
 	if (!i2c_dev) {
-		SYS_LOG_ERR("cannot get I2C device");
+		LOG_ERR("cannot get I2C device");
 		return;
 	}
 
@@ -154,12 +154,12 @@ static void async_init_fn(struct k_work *work)
 	err = read_bytes(i2c_dev, TOUCHPAD_PRODUCT_ID, product_id,
 			sizeof(product_id));
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	} else {
 		for (size_t i = 0; i < sizeof(product_id); i++) {
 			if (expected_product_id[i] != product_id[i]) {
-				SYS_LOG_ERR("invalid product id (0x%x != 0x%x)",
+				LOG_ERR("invalid product id (0x%x != 0x%x)",
 						expected_product_id[i],
 						product_id[i]);
 				return;
@@ -190,7 +190,7 @@ static void async_term_fn(struct k_work *work)
 		device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
-		SYS_LOG_ERR("cannot get GPIO device");
+		LOG_ERR("cannot get GPIO device");
 		return;
 	}
 

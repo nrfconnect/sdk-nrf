@@ -16,9 +16,9 @@
 #define MODULE buttons
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_BUTTONS_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 #define SCAN_INTERVAL 50 /* ms */
@@ -40,7 +40,7 @@ static int set_cols(u32_t mask)
 		u32_t val = (mask & (1 << i)) ? (1) : (0);
 
 		if (gpio_pin_write(gpio_dev, col_pin[i], val)) {
-			SYS_LOG_ERR("cannot set pin");
+			LOG_ERR("cannot set pin");
 
 			return -EFAULT;
 		}
@@ -55,7 +55,7 @@ static int get_rows(u32_t *mask)
 		u32_t val;
 
 		if (gpio_pin_read(gpio_dev, row_pin[i], &val)) {
-			SYS_LOG_ERR("cannot get pin");
+			LOG_ERR("cannot get pin");
 			return -EFAULT;
 		}
 
@@ -117,7 +117,7 @@ static void matrix_scan_fn(struct k_work *work)
 		}
 
 		if (err) {
-			SYS_LOG_ERR("cannot scan matrix");
+			LOG_ERR("cannot scan matrix");
 			goto error;
 		}
 	}
@@ -149,7 +149,7 @@ static void matrix_scan_fn(struct k_work *work)
 	if (atomic_get(&scanning) && any_pressed) {
 		/* Avoid draining current between scans */
 		if (set_cols(0x00)) {
-			SYS_LOG_ERR("cannot set neutral state");
+			LOG_ERR("cannot set neutral state");
 			goto error;
 		}
 
@@ -160,7 +160,7 @@ static void matrix_scan_fn(struct k_work *work)
 
 		/* Prepare to wait for a callback */
 		if (set_cols(0xFF)) {
-			SYS_LOG_ERR("cannot set neutral state");
+			LOG_ERR("cannot set neutral state");
 			goto error;
 		}
 
@@ -169,7 +169,7 @@ static void matrix_scan_fn(struct k_work *work)
 
 		int err = callback_ctrl(true);
 		if (err) {
-			SYS_LOG_ERR("cannot enable callbacks");
+			LOG_ERR("cannot enable callbacks");
 			goto error;
 		}
 
@@ -188,7 +188,7 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
 		int err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
 		if (err) {
-			SYS_LOG_ERR("cannot disable callbacks");
+			LOG_ERR("cannot disable callbacks");
 		}
 	}
 
@@ -210,7 +210,7 @@ static void init_fn(void)
 	/* Setup GPIO configuration */
 	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		SYS_LOG_ERR("cannot get GPIO device binding");
+		LOG_ERR("cannot get GPIO device binding");
 		return;
 	}
 
@@ -219,14 +219,14 @@ static void init_fn(void)
 				GPIO_DIR_OUT);
 
 		if (err) {
-			SYS_LOG_ERR("cannot configure cols");
+			LOG_ERR("cannot configure cols");
 			goto error;
 		}
 	}
 
 	int err = set_trig_mode(GPIO_INT_EDGE);
 	if (err) {
-		SYS_LOG_ERR("cannot set interrupt mode");
+		LOG_ERR("cannot set interrupt mode");
 		goto error;
 	}
 
@@ -243,7 +243,7 @@ static void init_fn(void)
 		}
 
 		if (err) {
-			SYS_LOG_ERR("cannot configure rows");
+			LOG_ERR("cannot configure rows");
 			goto error;
 		}
 	}
@@ -291,11 +291,11 @@ static bool event_handler(const struct event_header *eh)
 		if (!atomic_get(&active)) {
 			int err = callback_ctrl(false);
 			if (err) {
-				SYS_LOG_ERR("cannot disable callbacks");
+				LOG_ERR("cannot disable callbacks");
 			} else {
 				err = set_trig_mode(GPIO_INT_EDGE);
 				if (err) {
-					SYS_LOG_ERR("cannot set trig mode");
+					LOG_ERR("cannot set trig mode");
 					module_set_state(MODULE_STATE_ERROR);
 				} else {
 					module_set_state(MODULE_STATE_READY);
@@ -320,7 +320,7 @@ static bool event_handler(const struct event_header *eh)
 		/* Leaving deep sleep requires level interrupt */
 		int err = set_trig_mode(GPIO_INT_LEVEL);
 		if (err) {
-			SYS_LOG_ERR("Cannot configure an interrupt");
+			LOG_ERR("Cannot configure an interrupt");
 			module_set_state(MODULE_STATE_ERROR);
 		}
 

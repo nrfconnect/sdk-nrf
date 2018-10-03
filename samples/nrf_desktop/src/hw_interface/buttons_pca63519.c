@@ -23,9 +23,9 @@
 #define MODULE		buttons
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_BUTTONS_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 #define SX1509_ADDRESS	0x3E
@@ -147,7 +147,7 @@ static void scan_fn(struct k_work *work)
 	}
 
 	if (err) {
-		SYS_LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("i2c read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	} else {
 		static bool matrix[8][8] = {0};
@@ -189,12 +189,12 @@ static void async_init_fn(struct k_work *work)
 {
 	i2c_dev = device_get_binding(CONFIG_I2C_0_NAME);
 	if (!i2c_dev) {
-		SYS_LOG_ERR("cannot get I2C device");
+		LOG_ERR("cannot get I2C device");
 		return;
 	}
 
 	if (set_registers()) {
-		SYS_LOG_ERR("device cannot be initialized");
+		LOG_ERR("device cannot be initialized");
 		return;
 	}
 

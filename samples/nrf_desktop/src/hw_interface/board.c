@@ -17,9 +17,9 @@
 #define MODULE board
 #include "module_state_event.h"
 
-#define SYS_LOG_DOMAIN	MODULE_NAME
-#define SYS_LOG_LEVEL	CONFIG_DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
+#define LOG_LEVEL CONFIG_DESKTOP_LOG_BOARD_MODULE_LEVEL
+LOG_MODULE_REGISTER(MODULE);
 
 
 static int port_setup(const char *name,
@@ -30,7 +30,7 @@ static int port_setup(const char *name,
 	int err = 0;
 
 	if (!gpio_dev) {
-		SYS_LOG_ERR("Cannot bind %s", name);
+		LOG_ERR("Cannot bind %s", name);
 		return -ENXIO;
 	}
 
@@ -43,7 +43,7 @@ static int port_setup(const char *name,
 					     pin_state[i].pin,
 					     pin_state[i].val);
 		} else {
-			SYS_LOG_ERR("Cannot configure pin %u on %s",
+			LOG_ERR("Cannot configure pin %u on %s",
 				    pin_state[i].pin, name);
 			break;
 		}
@@ -80,7 +80,7 @@ static void turn_board_on(void)
 	return;
 
 error:
-	SYS_LOG_ERR("Cannot initialize board");
+	LOG_ERR("Cannot initialize board");
 	module_set_state(MODULE_STATE_ERROR);
 }
 
@@ -96,7 +96,7 @@ static void turn_board_off(void)
 	return;
 
 error:
-	SYS_LOG_ERR("Cannot suspend board");
+	LOG_ERR("Cannot suspend board");
 	module_set_state(MODULE_STATE_ERROR);
 }
 
