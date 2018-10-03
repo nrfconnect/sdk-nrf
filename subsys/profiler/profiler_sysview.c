@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <stdio.h>
 #include <profiler.h>
 #include <kernel_structs.h>
 
