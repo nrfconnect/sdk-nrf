@@ -27,10 +27,7 @@
  */
 
 
-#include <zephyr.h>
-#include <stdio.h>
-#include <systemview/SEGGER_SYSVIEW.h>
-#include <rtt/SEGGER_RTT.h>
+#include <zephyr/types.h>
 
 
 /** @brief Data types for logging in system profiler.
