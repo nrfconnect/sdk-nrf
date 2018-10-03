@@ -779,9 +779,6 @@ static bool event_handler(const struct event_header *eh)
 	if (is_ble_peer_event(eh)) {
 		struct ble_peer_event *event = cast_ble_peer_event(eh);
 
-		SYS_LOG_INF("peer %sconnected",
-			    (event->connected)?(""):("dis"));
-
 		switch (event->state) {
 		case PEER_STATE_SECURED:
 			connect();
