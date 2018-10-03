@@ -6,20 +6,6 @@
 
 menu "Hardware interface modules"
 
-config HAS_DTS_BMA400
-	bool
-	depends on HAS_DTS
-	help
-	  This option specifies that the target platform includes BMA400
-	  accelerometer.
-
-config HAS_DTS_LIS3DH
-	bool
-	depends on HAS_DTS
-	help
-	  This option specifies that the target platform includes LIS3DH
-	  accelerometer.
-
 config DESKTOP_KEYMAP
 	string "Keymap"
 	default ""
@@ -33,6 +19,20 @@ config DESKTOP_PORT_STATE
 	  This option specifies a path to the port state file.
 	  Port state file specifies how ports are set when board is turned
 	  on and off.
+
+comment "Accelerometer configuration"
+
+choice
+	prompt "Select accelerometer interface"
+	default DESKTOP_ACCEL_NONE
+
+config DESKTOP_ACCEL_NONE
+	bool "Disable accelerometer"
+
+config DESKTOP_ACCEL_LIS3DH
+	bool "LIS3DH"
+
+endchoice
 
 comment "Motion configuration"
 
@@ -142,6 +142,7 @@ config DESKTOP_SYS_LOG_BUTTONS_MODULE_LEVEL
 config DESKTOP_SYS_LOG_ACCEL_MODULE_LEVEL
 	int "Accelerometer module log level"
 	depends on SYS_LOG
+	depends on !DESKTOP_ACCEL_NONE
 	default 2
 	range 0 4
 	help

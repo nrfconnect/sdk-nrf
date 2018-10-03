@@ -6,10 +6,10 @@
 
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/board.c)
 
-target_sources_ifdef(CONFIG_HAS_DTS_LIS3DH app
+target_sources_ifdef(CONFIG_DESKTOP_ACCEL_LIS3DH app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/accel_lis3dh.c)
 
-target_sources_ifdef(CONFIG_HAS_DTS_BMA400 app
+target_sources_ifdef(CONFIG_DESKTOP_ACCEL_BMA400 app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/accel_bma400.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_MOTION_OPTICAL_ENABLE app PRIVATE
