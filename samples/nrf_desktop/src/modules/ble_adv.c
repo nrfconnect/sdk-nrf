@@ -67,13 +67,9 @@ static bool event_handler(const struct event_header *eh)
 
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		SYS_LOG_DBG("event from %s", event->name);
-
 		for (size_t i = 0; i < ARRAY_SIZE(required_srv); i++) {
 			if (check_state(event, required_srv[i], MODULE_STATE_READY)) {
 				srv_ready_cnt++;
-				SYS_LOG_DBG("received %s ready! cnt: %u",
-					    required_srv[i], srv_ready_cnt);
 
 				if (srv_ready_cnt == ARRAY_SIZE(required_srv)) {
 					static bool initialized;
