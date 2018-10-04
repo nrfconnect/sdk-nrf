@@ -705,6 +705,7 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_wake_up_event(eh)) {
 		if (atomic_cas(&state, STATE_SUSPENDED, STATE_FETCHING)) {
+			gpio_pin_disable_callback(gpio_dev, OPTICAL_PIN_MOTION);
 			module_set_state(MODULE_STATE_READY);
 			k_sem_give(&sem);
 		}
