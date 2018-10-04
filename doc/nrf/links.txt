@@ -20,3 +20,6 @@
 .. |ncs_mcuboot_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/NordicPlayground/nrfxlib
+
+.. |link_mcuboot| replace:: MCUboot
+.. _link_mcuboot: https://mcuboot.com

@@ -27,9 +27,28 @@
  color: #fff;
 }
 
+/* Spacing in drop-down */
+.rst-versions .rst-other-versions {
+ padding: 0px;
+}
+.rst-other-version {
+ padding: 12px;
+}
+
 /* Spacing of lists in the main document */
 .document li > ol, .document li > ul {
 
     margin: 5px 0px !important;
 
+}
+
+/* Background colors for the different sets */
+.ncs {
+ background-color: #00a9ce;
+}
+.zephyr {
+ background-color: #a67dfb;
+}
+.mcuboot {
+ background-color: #159957;
 }
