@@ -207,20 +207,26 @@ static void uuid_unregister(struct bt_uuid const *uuid)
 	switch (uuid->type) {
 	case BT_UUID_TYPE_16:
 		EL_IN_POOL_VERIFY(BT_UUID_16_TAB, uuid);
+#if CONFIG_NRF_BT_UUID_16_POOL_SIZE != 0
 		atomic_clear_bit(uuid_16_pool.locks,
 				 ADDR_2_INDEX(BT_UUID_16_TAB, uuid));
+#endif
 		break;
 
 	case BT_UUID_TYPE_32:
 		EL_IN_POOL_VERIFY(BT_UUID_32_TAB, uuid);
+#if CONFIG_NRF_BT_UUID_32_POOL_SIZE != 0
 		atomic_clear_bit(uuid_32_pool.locks,
 				 ADDR_2_INDEX(BT_UUID_32_TAB, uuid));
+#endif
 		break;
 
 	case BT_UUID_TYPE_128:
 		EL_IN_POOL_VERIFY(BT_UUID_128_TAB, uuid);
+#if CONFIG_NRF_BT_UUID_128_POOL_SIZE != 0
 		atomic_clear_bit(uuid_128_pool.locks,
 				 ADDR_2_INDEX(BT_UUID_128_TAB, uuid));
+#endif
 		break;
 
 	default:
