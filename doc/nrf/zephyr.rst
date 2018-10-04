@@ -9,3 +9,4 @@ The |NCS| includes a fork of the Zephyr Project.
 This fork is kept as close to the original repository as possible, but it might contain some additions that are specific to Nordic Semiconductor devices and applications.
 
 The Zephyr repository, and the |NCS| fork of the Zephyr repository, contain the low-level libraries and drivers that are part of the RTOS.
+See the :doc:`documentation <zephyr:index>` of Nordic Semiconductor's Zephyr fork for more information.

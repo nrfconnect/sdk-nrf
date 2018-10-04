@@ -4,9 +4,14 @@ project(nrf-connect-sdk-doc VERSION ${PROJECT_VERSION} LANGUAGES)
 set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
 set(ENV{NRF_BASE} ${NRF_BASE})
+if(NOT DEFINED ENV{MCUBOOT_BASE})
+ get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../mcuboot/ REALPATH)
+ set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
+endif()
 
 message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
 message(STATUS "NRF_BASE: $ENV{NRF_BASE}")
+message(STATUS "MCUBOOT_BASE: $ENV{MCUBOOT_BASE}")
 
 find_package(PythonInterp 3.4)
 set(DOXYGEN_SKIP_DOT True)
@@ -22,7 +27,9 @@ endif()
 
 set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
+set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
 set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
+set(MCUBOOT_DOC_DIR ${MCUBOOT_BASE}/docs)
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
 # Create the combined HTML output folder
 file(MAKE_DIRECTORY ${HTML_DIR})
@@ -40,7 +47,7 @@ add_custom_target(
 add_dependencies(zephyr html)
 
 # Common code
-set(TARGET_LIST zephyr nrf)
+set(TARGET_LIST zephyr nrf mcuboot)
 
 foreach(target ${TARGET_LIST})
   set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
@@ -142,6 +149,7 @@ add_custom_target(
   NRF_BUILD=${NRF_BINARY_DIR}
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
+  MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
   # Merge the Doxygen and Sphinx logs into a single file
   COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
@@ -153,3 +161,52 @@ add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
 
 add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
+
+
+
+# Everything below this line is mcuboot-specific
+
+set(MCUBOOT_SPHINXOPTS -d ${MCUBOOT_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/mcuboot ${MCUBOOT_SPHINXOPTS})
+
+set(MCUBOOT_RST_OUT ${MCUBOOT_BINARY_DIR}/rst)
+set(MCUBOOT_CONF_PY ${NRF_BASE}/doc/mcuboot/conf.py)
+set(MCUBOOT_DOC_LOG ${MCUBOOT_BINARY_DIR}/doc.log)
+set(MCUBOOT_SPHINX_LOG ${MCUBOOT_BINARY_DIR}/sphinx.log)
+set(MCUBOOT_DOC_WARN ${MCUBOOT_BINARY_DIR}/doc.warnings)
+
+set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
+set(FIX_MARKDOWN ${NRF_BASE}/doc/scripts/fix_markdown.py)
+
+file(GLOB MDFILES ${MCUBOOT_DOC_DIR}/*.md)
+
+add_custom_target(
+  mcuboot-content
+
+  # Copy all files from nrf/doc/mcuboot to the rst folder
+  COMMAND ${CMAKE_COMMAND} -E env
+  ZEPHYR_BASE=${NRF_BASE}
+  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
+  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} -a ${MCUBOOT_RST_OUT} doc/mcuboot
+
+  # Copy all markdown files from mcuboot/docs to the rst folder
+  COMMAND ${CMAKE_COMMAND} -E copy ${MDFILES} ${MCUBOOT_RST_OUT}/doc/mcuboot/
+
+  # Fix problems in markdown files
+  COMMAND ${CMAKE_COMMAND} -E env
+  ${PYTHON_EXECUTABLE} ${FIX_MARKDOWN} ${MCUBOOT_RST_OUT}/doc/mcuboot
+
+  WORKING_DIRECTORY ${MCUBOOT_DOC_DIR}
+)
+
+add_custom_target(
+  mcuboot-html
+  COMMAND ${CMAKE_COMMAND} -E env
+  NRF_BASE=${NRF_BASE}
+  ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
+
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
+add_dependencies(mcuboot-html mcuboot-content)
+
+add_custom_target(mcuboot)
+add_dependencies(mcuboot mcuboot-html)
