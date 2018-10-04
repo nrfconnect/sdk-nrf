@@ -18,4 +18,8 @@ rsource "common/Kconfig"
 rsource "services/Kconfig"
 endif # NRF_BT
 
+if BT_LL_NRFXLIB
+rsource "controller/Kconfig"
+endif # CONFIG_BT_LL_NRFXLIB
+
 endmenu

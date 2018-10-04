@@ -1,1 +1,19 @@
-# nothing here
+config BLECTLR_PRIO
+	# Hidden option to set the priority of the controller threads
+	int
+	default BT_RX_PRIO if BT_HCI_HOST || BT_RECV_IS_RX_THREAD
+	default 8
+
+config BLECTLR_RX_STACK_SIZE
+	int "Size of the receive thread stack"
+	default 1024
+	help
+	  Size of the receiving thread stack, used to retrieve HCI events and
+	  data from the controller.
+
+config BLECTLR_SIGNAL_STACK_SIZE
+	int "Size of the signal handler thread stack"
+	default 1024
+	help
+	  Size of the signal handler thread stack, used to process lower
+	  priority signals in the controller.
