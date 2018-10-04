@@ -84,7 +84,7 @@ static void report_send(enum target_report target_report);
  * bsearch is also available from newlib libc, but including
  * the library takes around 10K of FLASH.
  */
-static void *bsearch(const void *key, const void *base,
+static void *bsearch(const void *key, const u8_t *base,
 			 size_t elem_num, size_t elem_size,
 			 int (*compare)(const void *, const void *))
 {
@@ -133,7 +133,7 @@ static struct hid_keymap *hid_keymap_get(u16_t key_id)
 	};
 
 	struct hid_keymap *map = bsearch(&key,
-					 hid_keymap,
+					 (u8_t *)hid_keymap,
 					 hid_keymap_size,
 					 sizeof(key),
 					 hid_keymap_compare);
@@ -298,7 +298,7 @@ static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 	__ASSERT_NO_MSG(report != 0);
 
 	p_item = bsearch(&usage_id,
-			 items->item,
+			 (u8_t *)items->item,
 			 ARRAY_SIZE(items->item),
 			 sizeof(items->item[0]),
 			 usage_id_compare);
