@@ -17,15 +17,13 @@
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #include "common/log.h"
 
-#define SIGNAL_HANDLER_STACK_SIZE 1024
-
 static K_SEM_DEFINE(sem_recv, 0, UINT_MAX);
 static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 
 static struct k_thread recv_thread_data;
 static struct k_thread signal_thread_data;
-static BT_STACK_NOINIT(recv_thread_stack, CONFIG_BT_RX_STACK_SIZE);
-static BT_STACK_NOINIT(signal_thread_stack, SIGNAL_HANDLER_STACK_SIZE);
+static BT_STACK_NOINIT(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
+static BT_STACK_NOINIT(signal_thread_stack, CONFIG_BLECTLR_SIGNAL_STACK_SIZE);
 
 void blectlr_assertion_handler(const char *const file, const u32_t line)
 {
@@ -216,13 +214,13 @@ static int hci_driver_open(void)
 
 	k_thread_create(&recv_thread_data, recv_thread_stack,
 			K_THREAD_STACK_SIZEOF(recv_thread_stack), recv_thread,
-			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_BT_RX_PRIO), 0,
+			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_BLECTLR_PRIO), 0,
 			K_NO_WAIT);
 
 	k_thread_create(&signal_thread_data, signal_thread_stack,
 			K_THREAD_STACK_SIZEOF(signal_thread_stack),
 			signal_thread, NULL, NULL, NULL,
-			K_PRIO_COOP(CONFIG_BT_RX_PRIO), 0, K_NO_WAIT);
+			K_PRIO_COOP(CONFIG_BLECTLR_PRIO), 0, K_NO_WAIT);
 
 	return 0;
 }
