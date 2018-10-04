@@ -126,7 +126,7 @@ static int leds_init(void)
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		leds[i].pwm_dev = device_get_binding(dev_name[i]);
 		if (!leds[i].pwm_dev) {
-			LOG_ERR("cannot bind %s\n", dev_name[i]);
+			LOG_ERR("cannot bind %s", dev_name[i]);
 			err = -ENXIO;
 		} else {
 			k_delayed_work_init(&leds[i].work, work_handler);
@@ -140,6 +140,10 @@ static int leds_init(void)
 static void leds_start(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
+		int err = device_set_power_state(leds[i].pwm_dev, DEVICE_PM_ACTIVE_STATE);
+		if (err) {
+			LOG_ERR("PWM enable failed");
+		}
 		led_mode_update(&leds[i], leds[i].mode);
 	}
 }
@@ -148,6 +152,10 @@ static void leds_stop(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
 		led_mode_update(&leds[i], LED_MODE_OFF);
+		int err = device_set_power_state(leds[i].pwm_dev, DEVICE_PM_SUSPEND_STATE);
+		if (err) {
+			LOG_ERR("PWM disable failed");
+		}
 	}
 }
 
