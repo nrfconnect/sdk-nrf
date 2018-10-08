@@ -14,6 +14,7 @@
  */
 
 #include <string.h>
+#include <toolchain/common.h>
 
 #include "event_manager.h"
 

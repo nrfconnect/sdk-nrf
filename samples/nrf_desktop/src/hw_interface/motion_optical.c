@@ -14,7 +14,7 @@
 #include "event_manager.h"
 #include "motion_event.h"
 #include "power_event.h"
-#include "ble_event.h"
+#include "hid_event.h"
 
 #define MODULE motion
 #include "module_state_event.h"
@@ -673,16 +673,21 @@ static void optical_thread_fn(void)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (is_ble_interval_event(eh)) {
-		if (atomic_get(&state) == STATE_FETCHING) {
+	if (is_hid_report_sent_event(eh)) {
+		const struct hid_report_sent_event *event =
+			cast_hid_report_sent_event(eh);
+
+		if ((event->report_type == TARGET_REPORT_MOUSE) &&
+		    (atomic_get(&state) == STATE_FETCHING)) {
 			k_sem_give(&sem);
 		}
 
-		return true;
+		return false;
 	}
 
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -739,5 +744,5 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
-EVENT_SUBSCRIBE(MODULE, ble_interval_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

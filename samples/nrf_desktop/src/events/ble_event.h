@@ -13,6 +13,7 @@
  * @{
  */
 
+#include <toolchain/common.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
 
@@ -46,12 +47,6 @@ struct ble_peer_event {
 	enum peer_state state;
 };
 EVENT_TYPE_DECLARE(ble_peer_event);
-
-/** @brief BLE interval event. */
-struct ble_interval_event {
-	struct event_header header;
-};
-EVENT_TYPE_DECLARE(ble_interval_event);
 
 #ifdef __cplusplus
 }

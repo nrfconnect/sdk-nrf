@@ -19,6 +19,7 @@
 
 #include "event_manager.h"
 #include "profiler.h"
+#include "hid_keymap.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,36 +36,28 @@ struct hid_keyboard_event {
 EVENT_TYPE_DECLARE(hid_keyboard_event);
 
 
-/** @brief Mouse cursor position change report data event. */
-struct hid_mouse_xy_event {
+/** @brief Mouse report data event. */
+struct hid_mouse_event {
 	struct event_header header; /**< Event header. */
 
-	s16_t dx; /**< Position change in x axis. */
-	s16_t dy; /**< Position change in y axis. */
+	u8_t  button_bm; /**< Bitmask indicating pressed mouse buttons. */
+	s16_t wheel;     /**< Change of wheel (scroll). */
+	s16_t dx;        /**< Position change in x axis. */
+	s16_t dy;        /**< Position change in y axis. */
 };
 
-EVENT_TYPE_DECLARE(hid_mouse_xy_event);
+EVENT_TYPE_DECLARE(hid_mouse_event);
 
 
-/** @brief Mouse wheel/pan report data event. */
-struct hid_mouse_wp_event {
+/** @brief Report sent event. */
+struct hid_report_sent_event {
 	struct event_header header; /**< Event header. */
 
-	s16_t wheel; /**< Change of wheel (scroll). */
-	s16_t pan;   /**< Change of pan. */
+	enum target_report report_type; /**< Type of the report. */
 };
 
-EVENT_TYPE_DECLARE(hid_mouse_wp_event);
+EVENT_TYPE_DECLARE(hid_report_sent_event);
 
-
-/** @brief Mouse buttons report data event. */
-struct hid_mouse_button_event {
-	struct event_header header; /**< Event header. */
-
-	u8_t button_bm; /**< Bitmask indicating pressed mouse buttons. */
-};
-
-EVENT_TYPE_DECLARE(hid_mouse_button_event);
 
 #ifdef __cplusplus
 }

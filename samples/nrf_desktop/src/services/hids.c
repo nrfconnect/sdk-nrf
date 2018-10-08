@@ -26,14 +26,12 @@
 
 #define BASE_USB_HID_SPEC_VERSION   0x0101
 
-#define REPORT_SIZE_MOUSE_BUTTONS  1 /* bytes */
-#define REPORT_SIZE_MOUSE_WP       2 /* bytes */
-#define REPORT_SIZE_MOUSE_XY       3 /* bytes */
+#define REPORT_SIZE_MOUSE          5 /* bytes */
 #define REPORT_SIZE_KEYBOARD       9 /* bytes */
 #define REPORT_SIZE_MPLAYER        1 /* bytes */
 
 #define USAGE_PAGE_MOUSE_XY		0x01
-#define USAGE_PAGE_MOUSE_WP		0x01
+#define USAGE_PAGE_MOUSE_WHEEL		0x01
 #define USAGE_PAGE_KEYBOARD		0x07
 #define USAGE_PAGE_LEDS			0x08
 #define USAGE_PAGE_MOUSE_BUTTONS	0x09
@@ -41,9 +39,7 @@
 
 enum {
 	REPORT_ID_RESERVED,
-	REPORT_ID_MOUSE_BUTTONS,
-	REPORT_ID_MOUSE_WP,
-	REPORT_ID_MOUSE_XY,
+	REPORT_ID_MOUSE,
 	REPORT_ID_KEYBOARD,
 	REPORT_ID_MPLAYER,
 
@@ -54,9 +50,7 @@ static size_t report_index[REPORT_ID_COUNT];
 
 
 HIDS_DEF(hids_obj,
-	REPORT_SIZE_MOUSE_BUTTONS,
-	REPORT_SIZE_MOUSE_WP,
-	REPORT_SIZE_MOUSE_XY,
+	REPORT_SIZE_MOUSE,
 	REPORT_SIZE_KEYBOARD,
 	REPORT_SIZE_MPLAYER);
 
@@ -81,31 +75,7 @@ static void pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 	}
 }
 
-static void mouse_buttons_notif_handler(enum hids_notif_evt evt)
-{
-	switch (evt) {
-	case HIDS_CCCD_EVT_NOTIF_ENABLED:
-		SYS_LOG_INF("Notifications enabled");
-		break;
-	case HIDS_CCCD_EVT_NOTIF_DISABLED:
-		SYS_LOG_INF("Notifications disabled");
-		break;
-	}
-}
-
-static void mouse_wp_notif_handler(enum hids_notif_evt evt)
-{
-	switch (evt) {
-	case HIDS_CCCD_EVT_NOTIF_ENABLED:
-		SYS_LOG_INF("Notifications enabled");
-		break;
-	case HIDS_CCCD_EVT_NOTIF_DISABLED:
-		SYS_LOG_INF("Notifications disabled");
-		break;
-	}
-}
-
-static void mouse_xy_notif_handler(enum hids_notif_evt evt)
+static void mouse_notif_handler(enum hids_notif_evt evt)
 {
 	switch (evt) {
 	case HIDS_CCCD_EVT_NOTIF_ENABLED:
@@ -175,10 +145,10 @@ static int module_init(void)
 
 		0xA1, 0x01,     /* Collection (Application) */
 
-		/* Report: Mouse buttons */
+		/* Report: Mouse */
 		0x09, 0x01,       /* Usage (Pointer) */
 		0xA1, 0x00,       /* Collection (Physical) */
-		0x85, REPORT_ID_MOUSE_BUTTONS,
+		0x85, REPORT_ID_MOUSE,
 		0x75, 0x01,         /* Report Size (1) */
 		0x95, 0x08,         /* Report Count (8) */
 		0x05, USAGE_PAGE_MOUSE_BUTTONS,
@@ -187,32 +157,15 @@ static int module_init(void)
 		0x15, 0x00,         /* Logical Minimum (0) */
 		0x25, 0x01,         /* Logical Maximum (1) */
 		0x81, 0x02,         /* Input (Data, Variable, Absolute) */
-		0xC0,             /* End Collection (Physical) */
 
-		/* Report: Mouse wheel/pan */
-		0x09, 0x01,       /* Usage (Pointer) */
-		0xA1, 0x00,       /* Collection (Physical) */
-		0x85, REPORT_ID_MOUSE_WP,
 		0x75, 0x08,         /* Report Size (8) */
 		0x95, 0x01,         /* Report Count (1) */
-		0x05, USAGE_PAGE_MOUSE_WP,
+		0x05, USAGE_PAGE_MOUSE_WHEEL,
 		0x09, 0x38,         /* Usage (Wheel) */
 		0x15, 0x81,         /* Logical Minimum (-127) */
 		0x25, 0x7F,         /* Logical Maximum (127) */
 		0x81, 0x06,         /* Input (Data, Variable, Relative) */
-		0x05, USAGE_PAGE_MPLAYER,
-		0x0A, 0x38, 0x02,   /* Usage (AC Pan) */
-		0x75, 0x08,         /* Report Size (8) */
-		0x95, 0x01,         /* Report Count (1) */
-		0x15, 0x81,         /* Logical Minimum (-127) */
-		0x25, 0x7F,         /* Logical Maximum (127) */
-		0x81, 0x06,         /* Input (Data, Variable, Relative) */
-		0xC0,             /* End Collection (Physical) */
 
-		/* Report: Mouse motion */
-		0x85, REPORT_ID_MOUSE_XY,
-		0x09, 0x01,       /* Usage (Pointer) */
-		0xA1, 0x00,       /* Collection (Physical) */
 		0x75, 0x0C,         /* Report Size (12) */
 		0x95, 0x02,         /* Report Count (2) */
 		0x05, USAGE_PAGE_MOUSE_XY,
@@ -312,8 +265,7 @@ static int module_init(void)
 
 	/* HID service configuration */
 	struct hids_init hids_init_obj = { 0 };
-	static const u8_t mouse_xy_mask[ceiling_fraction(REPORT_SIZE_MOUSE_XY, 8)] = {0};
-	static const u8_t mouse_wheel_mask[ceiling_fraction(REPORT_SIZE_MOUSE_WP, 8)] = {0};
+	static const u8_t mouse_mask[ceiling_fraction(REPORT_SIZE_MOUSE, 8)] = {0x01};
 
 	hids_init_obj.info.bcd_hid        = BASE_USB_HID_SPEC_VERSION;
 	hids_init_obj.info.b_country_code = 0x00;
@@ -331,28 +283,10 @@ static int module_init(void)
 	size_t ir_pos = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-
-		input_report[ir_pos].id      = REPORT_ID_MOUSE_BUTTONS;
-		input_report[ir_pos].size    = REPORT_SIZE_MOUSE_BUTTONS;
-		input_report[ir_pos].handler = mouse_buttons_notif_handler;
-
-		report_index[input_report[ir_pos].id] = ir_pos;
-		ir_pos++;
-
-
-		input_report[ir_pos].id       = REPORT_ID_MOUSE_WP;
-		input_report[ir_pos].size     = REPORT_SIZE_MOUSE_WP;
-		input_report[ir_pos].handler  = mouse_wp_notif_handler;
-		input_report[ir_pos].rep_mask = mouse_wheel_mask;
-
-		report_index[input_report[ir_pos].id] = ir_pos;
-		ir_pos++;
-
-
-		input_report[ir_pos].id       = REPORT_ID_MOUSE_XY;
-		input_report[ir_pos].size     = REPORT_SIZE_MOUSE_XY;
-		input_report[ir_pos].handler  = mouse_xy_notif_handler;
-		input_report[ir_pos].rep_mask = mouse_xy_mask;
+		input_report[ir_pos].id       = REPORT_ID_MOUSE;
+		input_report[ir_pos].size     = REPORT_SIZE_MOUSE;
+		input_report[ir_pos].handler  = mouse_notif_handler;
+		input_report[ir_pos].rep_mask = mouse_mask;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -396,21 +330,24 @@ static int module_init(void)
 	return hids_init(&hids_obj, &hids_init_obj);
 }
 
-static void report_sent(struct bt_conn *conn)
+static void mouse_report_sent(struct bt_conn *conn)
 {
-	struct ble_interval_event *event = new_ble_interval_event();
+	struct hid_report_sent_event *event = new_hid_report_sent_event();
+
+	event->report_type = TARGET_REPORT_MOUSE;
 	EVENT_SUBMIT(event);
 }
 
-static void send_mouse_xy(const struct hid_mouse_xy_event *event)
+static void send_mouse_report(const struct hid_mouse_event *event)
 {
 	if (in_boot_mode) {
 		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
 
-		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, NULL, x, y,
-				report_sent);
+		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, &event->button_bm,
+					     x, y, mouse_report_sent);
 	} else {
+		s16_t wheel = max(min(event->wheel, 0x7f), -0x7f);
 		s16_t x = max(min(event->dx, 0x07ff), -0x07ff);
 		s16_t y = max(min(event->dy, 0x07ff), -0x07ff);
 
@@ -422,51 +359,28 @@ static void send_mouse_xy(const struct hid_mouse_xy_event *event)
 		sys_put_le16(y, y_buff);
 
 		/* Encode report. */
-		u8_t buffer[REPORT_SIZE_MOUSE_XY];
+		u8_t buffer[REPORT_SIZE_MOUSE];
 
-		static_assert(sizeof(buffer) == 3,
-				"Only 2 axis, 12-bit each, are supported");
+		static_assert(sizeof(buffer) == 5, "Invalid report size");
 
-		buffer[0] = x_buff[0];
-		buffer[1] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
-		buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
+		buffer[0] = event->button_bm;
+		buffer[1] = wheel;
+		buffer[2] = x_buff[0];
+		buffer[3] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
+		buffer[4] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
 		hids_inp_rep_send(&hids_obj, NULL,
-				  report_index[REPORT_ID_MOUSE_XY],
-				  buffer, sizeof(buffer), report_sent);
+				  report_index[REPORT_ID_MOUSE],
+				  buffer, sizeof(buffer), mouse_report_sent);
 	}
 }
 
-static void send_mouse_wp(const struct hid_mouse_wp_event *event)
+static void keyboard_report_sent(struct bt_conn *conn)
 {
-	s16_t wheel = max(min(event->wheel, 0x7f), -0x7f);
-	s16_t pan   = max(min(event->pan,   0x7f), -0x7f);
+	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
-	u8_t buffer[] = {
-		wheel,
-		pan,
-	};
-
-	hids_inp_rep_send(&hids_obj, NULL,
-			  report_index[REPORT_ID_MOUSE_WP],
-			  buffer, sizeof(buffer), report_sent);
-}
-
-static void send_mouse_buttons(const struct hid_mouse_button_event *event)
-{
-	if (in_boot_mode) {
-		hids_boot_mouse_inp_rep_send(&hids_obj, NULL,
-					     &event->button_bm,
-					     0, 0, report_sent);
-	} else {
-		u8_t report[REPORT_SIZE_MOUSE_BUTTONS];
-
-		report[0] = event->button_bm;
-
-		hids_inp_rep_send(&hids_obj, NULL,
-				  report_index[REPORT_ID_MOUSE_BUTTONS],
-				  report, sizeof(report), report_sent);
-	}
+	event->report_type = TARGET_REPORT_KEYBOARD;
+	EVENT_SUBMIT(event);
 }
 
 static void send_keyboard(const struct hid_keyboard_event *event)
@@ -491,11 +405,11 @@ static void send_keyboard(const struct hid_keyboard_event *event)
 	if (in_boot_mode) {
 		hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
 					  sizeof(report) - sizeof(report[8]),
-					  report_sent);
+					  keyboard_report_sent);
 	} else {
 		hids_inp_rep_send(&hids_obj, NULL,
 				  report_index[REPORT_ID_KEYBOARD],
-				  report, sizeof(report), report_sent);
+				  report, sizeof(report), keyboard_report_sent);
 	}
 }
 
@@ -529,20 +443,8 @@ static void notify_hids(const struct ble_peer_event *event)
 static bool event_handler(const struct event_header *eh)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		if (is_hid_mouse_xy_event(eh)) {
-			send_mouse_xy(cast_hid_mouse_xy_event(eh));
-
-			return false;
-		}
-
-		if (is_hid_mouse_wp_event(eh)) {
-			send_mouse_wp(cast_hid_mouse_wp_event(eh));
-
-			return false;
-		}
-
-		if (is_hid_mouse_button_event(eh)) {
-			send_mouse_buttons(cast_hid_mouse_button_event(eh));
+		if (is_hid_mouse_event(eh)) {
+			send_mouse_report(cast_hid_mouse_event(eh));
 
 			return false;
 		}
@@ -590,8 +492,6 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
-EVENT_SUBSCRIBE(MODULE, hid_mouse_xy_event);
-EVENT_SUBSCRIBE(MODULE, hid_mouse_wp_event);
-EVENT_SUBSCRIBE(MODULE, hid_mouse_button_event);
+EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);
