@@ -5,10 +5,7 @@
  */
 
 #include <zephyr/types.h>
-
 #include <misc/reboot.h>
-
-#include <settings/settings.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
@@ -95,14 +92,6 @@ static void bt_ready(int err)
 	}
 
 	SYS_LOG_INF("Bluetooth initialized");
-
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		if (settings_load()) {
-			SYS_LOG_ERR("Cannot load settings");
-			sys_reboot(SYS_REBOOT_WARM);
-		}
-		SYS_LOG_INF("Settings loaded");
-	}
 
 	module_set_state(MODULE_STATE_READY);
 }

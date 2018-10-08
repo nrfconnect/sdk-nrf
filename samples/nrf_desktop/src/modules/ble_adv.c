@@ -5,8 +5,8 @@
  */
 
 #include <zephyr/types.h>
-
 #include <misc/reboot.h>
+#include <settings/settings.h>
 
 #include <bluetooth/bluetooth.h>
 
@@ -37,9 +37,6 @@ static const struct bt_data sd[] = {
 
 static void ble_adv_start(void)
 {
-	/* TODO: use bond manager to check if it possible to pair with another
-	 * device. Currently bt_keys and bt_settings APIs are private
-	 */
 	int err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
 				  sd, ARRAY_SIZE(sd));
 
@@ -51,6 +48,20 @@ static void ble_adv_start(void)
 	SYS_LOG_INF("Advertising started");
 
 	module_set_state(MODULE_STATE_READY);
+}
+
+static void ble_settings_load(void)
+{
+	/* Settings need to be loaded after GATT services are setup, otherwise
+	 * the values stored in flash will not be written to GATT database.
+	 */
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		if (settings_load()) {
+			SYS_LOG_ERR("Cannot load settings");
+			sys_reboot(SYS_REBOOT_WARM);
+		}
+		SYS_LOG_INF("Settings loaded");
+	}
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -77,6 +88,7 @@ static bool event_handler(const struct event_header *eh)
 					__ASSERT_NO_MSG(!initialized);
 					initialized = true;
 
+					ble_settings_load();
 					ble_adv_start();
 				}
 				break;
