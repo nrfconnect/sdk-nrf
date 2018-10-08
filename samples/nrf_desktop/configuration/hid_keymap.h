@@ -9,27 +9,33 @@
 #define _HID_KEYMAP_H_
 
 #include <stddef.h>
-
+#include <toolchain/common.h>
 #include <zephyr/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-enum target_report {
-	TARGET_REPORT_MOUSE_BUTTON,
-	TARGET_REPORT_MOUSE_WHEEL,
-	TARGET_REPORT_MOUSE_PAN,
-	TARGET_REPORT_KEYBOARD,
-	TARGET_REPORT_MPLAYER,
+/** @brief Target report list. */
+#define TARGET_REPORT_LIST	\
+	X(MOUSE)		\
+	X(KEYBOARD)		\
+	X(MPLAYER)
 
-	TARGET_REPORT_COUNT,
+/** @brief Target reports. */
+enum target_report {
+#define X(name) _CONCAT(TARGET_REPORT_, name),
+	TARGET_REPORT_LIST
+#undef X
+
+	TARGET_REPORT_COUNT
 };
 
+/** @brief HID map entry. */
 struct hid_keymap {
-	u16_t			key_id;
-	u16_t			usage_id;
-	enum target_report	target_report;
+	u16_t			key_id;		/**< Key HW id. */
+	u16_t			usage_id;	/**< Assigned usage. */
+	enum target_report	target_report;	/**< Id of the target report. */
 };
 
 extern const struct hid_keymap	hid_keymap[];
@@ -40,4 +46,3 @@ extern const size_t		hid_keymap_size;
 #endif
 
 #endif /* _HID_KEYMAP_H_ */
-

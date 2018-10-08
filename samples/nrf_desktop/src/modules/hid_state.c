@@ -68,15 +68,13 @@ struct hid_state {
 	u8_t		eventq_len;
 	enum state	state;
 	s32_t		wheel_acc;
-	s16_t		last_x;
-	s16_t		last_y;
-	unsigned int	report_cnt;
+	s16_t		last_dx;
+	s16_t		last_dy;
+	unsigned int	report_cnt[TARGET_REPORT_COUNT];
 };
 
 
 static struct hid_state state;
-
-static void report_send(enum target_report target_report);
 
 
 /**@brief Binary search. Input array must be already sorted.
@@ -395,24 +393,29 @@ static void send_report_keyboard(void)
 		event->modifier_bm = 0;
 
 		EVENT_SUBMIT(event);
-		state.report_cnt++;
+		state.report_cnt[TARGET_REPORT_KEYBOARD]++;
+	} else {
+		/* Not supported. */
+		__ASSERT_NO_MSG(false);
 	}
 }
 
-static void send_report_mouse_buttons(void)
+static void send_report_mouse(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		struct hid_mouse_button_event *event =
-			new_hid_mouse_button_event();
+		struct hid_mouse_event *event = new_hid_mouse_event();
 
+		event->dx        = state.last_dx;
+		event->dy        = state.last_dy;
+		event->wheel     = state.wheel_acc;
 		event->button_bm = 0;
 
 		/* Traverse pressed keys and build mouse buttons report */
 		for (size_t i = 0;
-		     i < ARRAY_SIZE(state.items[TARGET_REPORT_MOUSE_BUTTON].item);
+		     i < ARRAY_SIZE(state.items[TARGET_REPORT_MOUSE].item);
 		     i++) {
 			struct item item =
-				state.items[TARGET_REPORT_MOUSE_BUTTON].item[i];
+				state.items[TARGET_REPORT_MOUSE].item[i];
 
 			if (item.value) {
 				__ASSERT_NO_MSG(item.usage_id != 0);
@@ -425,57 +428,53 @@ static void send_report_mouse_buttons(void)
 		}
 
 		EVENT_SUBMIT(event);
-		state.report_cnt++;
+		state.report_cnt[TARGET_REPORT_MOUSE]++;
+
+		state.last_dx   = 0;
+		state.last_dy   = 0;
+		state.wheel_acc = 0;
+	} else {
+		/* Not supported. */
+		__ASSERT_NO_MSG(false);
 	}
 }
 
-static void send_report_mouse_xy(s16_t dx, s16_t dy)
+static void report_send(enum target_report target_report)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		struct hid_mouse_xy_event *event = new_hid_mouse_xy_event();
+	switch (target_report) {
+	case TARGET_REPORT_KEYBOARD:
+		send_report_keyboard();
+		break;
 
-		event->dx = dx;
-		event->dy = dy;
+	case TARGET_REPORT_MOUSE:
+		send_report_mouse();
+		break;
 
-		EVENT_SUBMIT(event);
+	case TARGET_REPORT_MPLAYER:
+		/* Not supported. */
+		__ASSERT_NO_MSG(false);
+		break;
 
-		state.report_cnt++;
-
-		state.state = HID_STATE_CONNECTED_BUSY;
+	default:
+		/* Unhandled HID report type. */
+		__ASSERT_NO_MSG(false);
+		break;
 	}
+
+	if (state.report_cnt[target_report] == 1) {
+		/* To make sure report is sampled on every
+		 * connection event, add one additional report
+		 * to the pipeline.
+		 */
+		report_send(TARGET_REPORT_MOUSE);
+	}
+
+	state.state = HID_STATE_CONNECTED_BUSY;
 }
 
-static void send_report_mouse_wheel(s32_t wheel)
-{
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		if (wheel == 0) {
-			/* There is nothing to send. */
-			return;
-		}
-
-		struct hid_mouse_wp_event *event = new_hid_mouse_wp_event();
-
-		event->wheel = wheel;
-		event->pan   = 0;
-
-		EVENT_SUBMIT(event);
-
-		state.report_cnt++;
-
-		state.state = HID_STATE_CONNECTED_BUSY;
-	}
-}
-
-/**@brief Callback used when report was generated. */
-static bool report_issued(void)
+static void report_issued(void)
 {
 	bool update_needed;
-
-	if (state.wheel_acc != 0) {
-		send_report_mouse_wheel(state.wheel_acc);
-		state.wheel_acc = 0;
-		return true;
-	}
 
 	do {
 		if (sys_slist_is_empty(&state.eventq)) {
@@ -510,45 +509,20 @@ static bool report_issued(void)
 	} while (!update_needed);
 
 	if (!update_needed) {
-		if ((state.last_x != 0) || (state.last_y != 0)) {
-			send_report_mouse_xy(state.last_x, state.last_y);
-			state.last_x = 0;
-			state.last_y = 0;
+		if ((state.last_dx != 0) ||
+		    (state.last_dy != 0) ||
+		    (state.wheel_acc != 0)) {
+			report_send(TARGET_REPORT_MOUSE);
 		}
 	}
-
-	return update_needed;
 }
-
-/**@brief Request report sending. */
-static void report_send(enum target_report target_report)
-{
-	switch (target_report) {
-	case TARGET_REPORT_KEYBOARD:
-		send_report_keyboard();
-		break;
-
-	case TARGET_REPORT_MOUSE_BUTTON:
-		send_report_mouse_buttons();
-		break;
-
-	case TARGET_REPORT_MPLAYER:
-		/* TODO: create consumer control report */
-		break;
-
-	case TARGET_REPORT_MOUSE_WHEEL:
-	case TARGET_REPORT_MOUSE_PAN:
-	default:
-		/* Unhandled HID report type. */
-		__ASSERT_NO_MSG(false);
-	}
-
-	state.state = HID_STATE_CONNECTED_BUSY;
-}
-
 
 static void connect(void)
 {
+	state.last_dx   = 0;
+	state.last_dy   = 0;
+	state.wheel_acc = 0;
+
 	if (!sys_slist_is_empty(&state.eventq)) {
 		/* Remove all stale events from the queue. */
 		eventq_cleanup(MSEC(_sys_clock_tick_count));
@@ -702,24 +676,14 @@ static void init(void)
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_motion_event(eh)) {
-		struct motion_event *event = cast_motion_event(eh);
+		const struct motion_event *event = cast_motion_event(eh);
 
-		SYS_LOG_INF("motion event");
+		state.last_dx = event->dx;
+		state.last_dy = event->dy;
 
 		/* Do not accumulate mouse motion data */
 		if (state.state == HID_STATE_CONNECTED_IDLE) {
-			if (state.report_cnt == 0) {
-				/* To make sure motion data is sampled on every
-				 * connection event, add one additional report
-				 * to the pipeline.
-				 */
-				send_report_mouse_xy(0, 0);
-			}
-			send_report_mouse_xy(event->dx, event->dy);
-		} else if (state.state != HID_STATE_DISCONNECTED) {
-			SYS_LOG_INF("Motion sensed while busy");
-			state.last_x = event->dx;
-			state.last_y = event->dy;
+			report_send(TARGET_REPORT_MOUSE);
 		}
 
 		keep_device_active();
@@ -727,27 +691,24 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_interval_event(eh)) {
-		SYS_LOG_INF("report issued");
+	if (is_hid_report_sent_event(eh)) {
+		const struct hid_report_sent_event *event =
+			cast_hid_report_sent_event(eh);
 
-		__ASSERT_NO_MSG(state.report_cnt > 0);
-		state.report_cnt--;
+		__ASSERT_NO_MSG(state.report_cnt[event->report_type] > 0);
 
-		/* Drain internal queue before sensor read trigger */
-		return report_issued();
+		report_issued();
+		state.report_cnt[event->report_type]--;
+		return false;
 	}
 
 	if (is_wheel_event(eh)) {
-		struct wheel_event *event = cast_wheel_event(eh);
+		const struct wheel_event *event = cast_wheel_event(eh);
 
-		SYS_LOG_INF("wheel event");
+		state.wheel_acc += event->wheel;
 
-		/* Do not accumulate mouse wheel data */
 		if (state.state == HID_STATE_CONNECTED_IDLE) {
-			send_report_mouse_wheel(event->wheel);
-		} else if (state.state != HID_STATE_DISCONNECTED) {
-			SYS_LOG_INF("Wheel sensed while busy");
-			state.wheel_acc += event->wheel;
+			report_send(TARGET_REPORT_MOUSE);
 		}
 
 		keep_device_active();
@@ -756,9 +717,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_button_event(eh)) {
-		struct button_event *event = cast_button_event(eh);
-
-		SYS_LOG_INF("button event");
+		const struct button_event *event = cast_button_event(eh);
 
 		/* Get usage ID and target report from HID Keymap */
 		struct hid_keymap *map = hid_keymap_get(event->key_id);
@@ -777,7 +736,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_ble_peer_event(eh)) {
-		struct ble_peer_event *event = cast_ble_peer_event(eh);
+		const struct ble_peer_event *event = cast_ble_peer_event(eh);
 
 		switch (event->state) {
 		case PEER_STATE_SECURED:
@@ -806,7 +765,8 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -827,7 +787,7 @@ static bool event_handler(const struct event_header *eh)
 }
 
 EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, ble_interval_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, button_event);
