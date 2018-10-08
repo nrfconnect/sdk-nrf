@@ -5,3 +5,4 @@
 #
 
 add_subdirectory_ifdef(CONFIG_LTE_LINK_CONTROL lte_link_control)
+add_subdirectory_ifdef(CONFIG_NETWORKING net)

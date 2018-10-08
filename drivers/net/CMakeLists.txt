@@ -4,9 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Device Drivers"
-
-rsource "lte_link_control/Kconfig"
-rsource "net/Kconfig"
-
-endmenu
+zephyr_sources_ifdef(CONFIG_NET_RTT rtt.c)
