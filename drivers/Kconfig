@@ -9,6 +9,7 @@ menu "Device Drivers"
 rsource "gps_sim/Kconfig"
 
 rsource "lte_link_control/Kconfig"
+rsource "net/Kconfig"
 
 rsource "sensor/Kconfig"
 
