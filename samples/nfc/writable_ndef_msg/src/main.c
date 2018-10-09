@@ -24,11 +24,6 @@
 #include <device.h>
 #include <gpio.h>
 
-#include <logging/log_ctrl.h>
-#define LOG_MODULE_NAME main
-#include <logging/log.h>
-LOG_MODULE_REGISTER();
-
 #define LED_ON  (u32_t)(0)
 #define LED_OFF (u32_t)(1)
 
@@ -63,7 +58,7 @@ static void flash_buffer_prepare(size_t data_length)
 
 		atomic_set(&op_flags, FLASH_BUF_PREP_FINISHED);
 	} else {
-		LOG_ERR("Flash update pending. Discarding new data...");
+		printk("Flash update pending. Discarding new data...\n");
 	}
 
 }
@@ -112,19 +107,19 @@ static int board_init(void)
 {
 	LED0_dev = device_get_binding(LED0_GPIO_CONTROLLER);
 	if (!LED0_dev) {
-		LOG_ERR("LED0 device not found");
+		printk("LED0 device not found!\n");
 		return -ENXIO;
 	}
 
 	LED1_dev = device_get_binding(LED1_GPIO_CONTROLLER);
 	if (!LED1_dev) {
-		LOG_ERR("LED1 device not found");
+		printk("LED1 device not found!\n");
 		return -ENXIO;
 	}
 
 	LED3_dev = device_get_binding(LED3_GPIO_CONTROLLER);
 	if (!LED3_dev) {
-		LOG_ERR("LED3 device not found");
+		printk("LED3 device not found!\n");
 		return -ENXIO;
 	}
 
@@ -133,19 +128,19 @@ static int board_init(void)
 
 	err = gpio_pin_configure(LED0_dev, LED0_GPIO_PIN, GPIO_DIR_OUT);
 	if (err) {
-		LOG_ERR("Cannot configure led 0 port!");
+		printk("Cannot configure led 0 port!\n");
 		return err;
 	}
 
 	err = gpio_pin_configure(LED1_dev, LED1_GPIO_PIN, GPIO_DIR_OUT);
 	if (err) {
-		LOG_ERR("Cannot configure led 1 port!");
+		printk("Cannot configure led 1 port!\n");
 		return err;
 	}
 
 	err = gpio_pin_configure(LED3_dev, LED3_GPIO_PIN, GPIO_DIR_OUT);
 	if (err) {
-		LOG_ERR("Cannot configure led 3 port!");
+		printk("Cannot configure led 3 port!\n");
 		return err;
 	}
 	/* Turn LEDs off */
@@ -155,13 +150,13 @@ static int board_init(void)
 
 	button = device_get_binding(BUTTON_PORT);
 	if (!button) {
-		LOG_ERR("Button device not found");
+		printk("Button device not found!\n");
 		return -ENXIO;
 	}
 	err = gpio_pin_configure(button, BUTTON_PIN,
 				 GPIO_DIR_IN | GPIO_PUD_PULL_UP);
 	if (err) {
-		LOG_ERR("Cannot configure button port!");
+		printk("Cannot configure button port!\n");
 		return err;
 	}
 	return 0;
@@ -172,22 +167,21 @@ static int board_init(void)
  */
 int main(void)
 {
-	LOG_INIT();
-	LOG_INF("NFC configuration start");
+	printk("NFC configuration start.\n");
 
 	/* Configure LED-pins as outputs. */
 	if (board_init() < 0) {
-		LOG_ERR("Cannot initialize board!");
+		printk("Cannot initialize board!\n");
 		goto fail;
 	}
 	/* Initialize NVS. */
 	if (ndef_file_setup() < 0) {
-		LOG_ERR("Cannot setup NDEF file!");
+		printk("Cannot setup NDEF file!\n");
 		goto fail;
 	}
 	/* Load NDEF message from the flash file. */
 	if (ndef_file_load(ndef_msg_buf, sizeof(ndef_msg_buf)) < 0) {
-		LOG_ERR("Cannot load NDEF file!");
+		printk("Cannot load NDEF file!\n");
 		goto fail;
 	}
 	/* Restore default NDEF message if button is pressed. */
@@ -197,45 +191,44 @@ int main(void)
 	if (!val) {
 		if (ndef_restore_default(ndef_msg_buf,
 					 sizeof(ndef_msg_buf)) < 0) {
-			LOG_ERR("Cannot flash NDEF message");
+			printk("Cannot flash NDEF message!\n");
 			goto fail;
 		}
-		LOG_DBG("Default NDEF message restored!");
+		printk("Default NDEF message restored!\n");
 	}
 	/* Set up NFC */
 	int err = nfc_t4t_setup(nfc_callback, NULL);
 
 	if (err < 0) {
-		LOG_ERR("Cannot setup t4t library!");
+		printk("Cannot setup t4t library!\n");
 		goto fail;
 	}
 	/* Run Read-Write mode for Type 4 Tag platform */
 	if (nfc_t4t_ndef_rwpayload_set(ndef_msg_buf,
 				       sizeof(ndef_msg_buf)) < 0) {
-		LOG_ERR("Cannot set payload!");
+		printk("Cannot set payload!\n");
 		goto fail;
 	}
 	/* Start sensing NFC field */
 	if (nfc_t4t_emulation_start() < 0) {
-		LOG_ERR("Cannot start emulation!");
+		printk("Cannot start emulation!\n");
 		goto fail;
 	}
-	LOG_INF("Writable NDEF message example started.");
+	printk("Writable NDEF message example started.\n");
 
 	while (true) {
 		if (atomic_cas(&op_flags, FLASH_BUF_PREP_FINISHED,
 				FLASH_WRITE_STARTED)) {
 			if (ndef_file_update(flash_buf, flash_buf_len) < 0) {
-				LOG_ERR("Cannot flash NDEF message");
+				printk("Cannot flash NDEF message!\n");
 			} else {
-				LOG_INF("NDEF message successfully flashed");
+				printk("NDEF message successfully flashed.\n");
 			}
 
 			atomic_set(&op_flags, FLASH_WRITE_FINISHED);
 		}
-		if (!LOG_PROCESS()) {
-			__WFE();
-		}
+
+		__WFE();
 	}
 
 fail:

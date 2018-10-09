@@ -15,11 +15,6 @@
 #include <device.h>
 #include <gpio.h>
 
-#include <logging/log_ctrl.h>
-#define LOG_MODULE_NAME main
-#include <logging/log.h>
-LOG_MODULE_REGISTER();
-
 #define MAX_REC_COUNT	3
 
 /* Change this if you have an LED connected to a custom port */
@@ -126,21 +121,21 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_en_text_rec));
 	if (err < 0) {
-		LOG_ERR("Cannot add first record!");
+		printk("Cannot add first record!\n");
 		return err;
 	}
 	/** @snippet [NFC text usage_4] */
 	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_no_text_rec));
 	if (err < 0) {
-		LOG_ERR("Cannot add second record!");
+		printk("Cannot add second record!\n");
 		return err;
 	}
 
 	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_pl_text_rec));
 	if (err < 0) {
-		LOG_ERR("Cannot add third record!");
+		printk("Cannot add third record!\n");
 		return err;
 	}
 
@@ -149,7 +144,7 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 				      buffer,
 				      len);
 	if (err < 0) {
-		LOG_ERR("Cannot encode message!");
+		printk("Cannot encode message!\n");
 	}
 
 	return err;
@@ -161,7 +156,7 @@ static int board_init(void)
 {
 	dev = device_get_binding(LED_PORT);
 	if (!dev) {
-		LOG_ERR("LED device not found");
+		printk("LED device not found\n");
 		return -ENXIO;
 	}
 
@@ -169,7 +164,7 @@ static int board_init(void)
 	int err = gpio_pin_configure(dev, LED_PIN, GPIO_DIR_OUT);
 
 	if (err) {
-		LOG_ERR("Cannot configure led port!");
+		printk("Cannot configure led port!\n");
 		return err;
 	}
 	/* Turn LED off */
@@ -184,54 +179,48 @@ int main(void)
 	u8_t ndef_msg_buf[256]; /* Buffer used to hold an NFC NDEF message. */
 	u32_t len = sizeof(ndef_msg_buf);
 
-	LOG_INIT();
-	LOG_INF("NFC configuration start");
+	printk("NFC configuration start\n");
 
 	/* Configure LED-pins as outputs */
 	if (board_init() < 0) {
-		LOG_ERR("Cannot initialize board!");
+		printk("Cannot initialize board!\n");
 		goto fail;
 	}
 
 	/* Set up NFC */
 	if (nfc_t2t_setup(nfc_callback, NULL) < 0) {
-		LOG_ERR("Cannot setup NFC T2T library!");
+		printk("Cannot setup NFC T2T library!\n");
 		goto fail;
 	}
 
 
 	/* Encode welcome message */
 	if (welcome_msg_encode(ndef_msg_buf, &len) < 0) {
-		LOG_ERR("Cannot encode message!");
+		printk("Cannot encode message!\n");
 		goto fail;
 	}
 
 
 	/* Set created message as the NFC payload */
 	if (nfc_t2t_payload_set(ndef_msg_buf, len) < 0) {
-		LOG_ERR("Cannot set payload!");
+		printk("Cannot set payload!\n");
 		goto fail;
 	}
 
 
 	/* Start sensing NFC field */
 	if (nfc_t2t_emulation_start() < 0) {
-		LOG_ERR("Cannot start emulation!");
+		printk("Cannot start emulation!\n");
 		goto fail;
 	}
-	LOG_INF("NFC configuration done");
+	printk("NFC configuration done\n");
 
-	while (true) {
-	/* It is not necessary to LOG_PROCESS() if CONFIG_LOG_PROCESS_THREAD is
-	 * true (by default is true if both LOG and MULTITHREADING are true).
-	 */
-		if (!LOG_PROCESS()) {
-			__WFE();
-		}
-	}
+	return 0;
+
 fail:
 #if CONFIG_REBOOT
 	sys_reboot(SYS_REBOOT_COLD);
 #endif /* CONFIG_REBOOT */
+
 	return -EIO;
 }
