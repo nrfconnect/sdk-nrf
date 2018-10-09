@@ -22,11 +22,6 @@
 
 #include "ndef_file_m.h"
 
-#define LOG_MODULE_NAME ndef_file_m
-
-#include <logging/log.h>
-LOG_MODULE_REGISTER(LOG_MODULE_NAME);
-
 #define FLASH_URL_ADDRESS_ID 1 /**< Address of URL message in FLASH */
 
 static const u8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". */
@@ -51,7 +46,7 @@ int ndef_file_setup(void)
 
 	err = nvs_init(&fs, FLASH_DEV_NAME);
 	if (err < 0) {
-		LOG_ERR("Cannot initialize NVS");
+		printk("Cannot initialize NVS!\n");
 	}
 
 	return err;
@@ -79,14 +74,14 @@ int ndef_restore_default(u8_t *buff, u32_t size)
 
 	err = ndef_file_default_message(buff, &size);
 	if (err < 0) {
-		LOG_ERR("Cannot create default message");
+		printk("Cannot create default message!\n");
 		return err;
 	}
 
 	/* Save record with default NDEF message. */
 	err = ndef_file_update(buff, size);
 	if (err < 0) {
-		LOG_ERR("Cannot flash NDEF message");
+		printk("Cannot flash NDEF message!\n");
 	}
 	return err;
 }
@@ -102,9 +97,9 @@ int ndef_file_load(u8_t *buff, u32_t size)
 	 */
 	err = nvs_read(&fs, FLASH_URL_ADDRESS_ID, buff, size);
 	if (err > 0) { /* Item was found, show it */
-		LOG_INF("Found NDEF file record.");
+		printk("Found NDEF file record.\n");
 	} else {
-		LOG_INF("NDEF file record not found, creating default NDEF");
+		printk("NDEF file record not found, creating default NDEF.\n");
 		/* Create default NDEF message. */
 		err = ndef_restore_default(buff, size);
 	}
