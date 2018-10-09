@@ -55,7 +55,7 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 
 	s32_t wheel = value.val1;
 
-	if (IS_ENABLED(CONFIG_DESKTOP_WHEEL_INVERT_AXIS)) {
+	if (!IS_ENABLED(CONFIG_DESKTOP_WHEEL_INVERT_AXIS)) {
 		wheel *= -1;
 	}
 
