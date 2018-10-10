@@ -59,6 +59,17 @@ struct hid_report_sent_event {
 EVENT_TYPE_DECLARE(hid_report_sent_event);
 
 
+/** @brief Report subscription event. */
+struct hid_report_subscription_event {
+	struct event_header header; /**< Event header. */
+
+	enum target_report report_type; /**< Type of the report. */
+	bool enabled;                   /**< True if notification are enabled. */
+};
+
+EVENT_TYPE_DECLARE(hid_report_subscription_event);
+
+
 #ifdef __cplusplus
 }
 #endif

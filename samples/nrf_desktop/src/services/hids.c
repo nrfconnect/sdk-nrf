@@ -37,7 +37,7 @@
 #define USAGE_PAGE_MOUSE_BUTTONS	0x09
 #define USAGE_PAGE_MPLAYER		0x0C
 
-enum {
+enum report_id {
 	REPORT_ID_RESERVED,
 	REPORT_ID_MOUSE,
 	REPORT_ID_KEYBOARD,
@@ -54,85 +54,118 @@ HIDS_DEF(hids_obj,
 	REPORT_SIZE_KEYBOARD,
 	REPORT_SIZE_MPLAYER);
 
-static bool in_boot_mode;
+enum report_mode {
+	REPORT_MODE_PROTOCOL,
+	REPORT_MODE_BOOT,
 
+	REPORT_MODE_COUNT
+};
+
+static enum report_mode report_mode;
+static bool report_enabled[TARGET_REPORT_COUNT][REPORT_MODE_COUNT];
+
+
+static void broadcast_subscription_change(enum target_report tr,
+					  enum report_mode old_mode,
+					  enum report_mode new_mode)
+{
+	if ((old_mode != new_mode) &&
+	    (report_enabled[tr][old_mode] == report_enabled[tr][new_mode])) {
+		/* No change in report state. */
+		return;
+	}
+
+	struct hid_report_subscription_event *event =
+		new_hid_report_subscription_event();
+
+	event->report_type = tr;
+	event->enabled     = report_enabled[tr][new_mode];
+
+	SYS_LOG_INF("Notifications %sabled", (event->enabled)?("en"):("dis"));
+
+	EVENT_SUBMIT(event);
+
+}
 
 static void pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 {
+	enum report_mode old_mode = report_mode;
+
 	switch (evt) {
 	case HIDS_PM_EVT_BOOT_MODE_ENTERED:
 		SYS_LOG_INF("Boot mode");
-		in_boot_mode = true;
+		report_mode = REPORT_MODE_BOOT;
 		break;
 
 	case HIDS_PM_EVT_REPORT_MODE_ENTERED:
 		SYS_LOG_INF("Report mode");
-		in_boot_mode = false;
+		report_mode = REPORT_MODE_PROTOCOL;
 		break;
 
 	default:
 		break;
 	}
+
+	if (report_mode != old_mode) {
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+			broadcast_subscription_change(TARGET_REPORT_MOUSE,
+					old_mode, report_mode);
+		}
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+			broadcast_subscription_change(TARGET_REPORT_MOUSE,
+					old_mode, report_mode);
+		}
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
+			broadcast_subscription_change(TARGET_REPORT_MOUSE,
+					old_mode, report_mode);
+		}
+	}
+}
+
+static void notif_handler(enum hids_notif_evt evt, enum target_report tr,
+			  enum report_mode mode)
+{
+	__ASSERT_NO_MSG((evt == HIDS_CCCD_EVT_NOTIF_ENABLED) ||
+			(evt == HIDS_CCCD_EVT_NOTIF_DISABLED));
+
+	bool enabled = (evt == HIDS_CCCD_EVT_NOTIF_ENABLED);
+	bool changed = (report_enabled[tr][mode] != enabled);
+
+	report_enabled[tr][mode] = enabled;
+
+	if ((report_mode == mode) && changed) {
+		broadcast_subscription_change(tr, mode, mode);
+	}
 }
 
 static void mouse_notif_handler(enum hids_notif_evt evt)
 {
-	switch (evt) {
-	case HIDS_CCCD_EVT_NOTIF_ENABLED:
-		SYS_LOG_INF("Notifications enabled");
-		break;
-	case HIDS_CCCD_EVT_NOTIF_DISABLED:
-		SYS_LOG_INF("Notifications disabled");
-		break;
-	}
+	SYS_LOG_INF("");
+	notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
 }
 
 static void boot_mouse_notif_handler(enum hids_notif_evt evt)
 {
-	switch (evt) {
-	case HIDS_CCCD_EVT_NOTIF_ENABLED:
-		SYS_LOG_INF("Notifications enabled");
-		break;
-	case HIDS_CCCD_EVT_NOTIF_DISABLED:
-		SYS_LOG_INF("Notifications disabled");
-		break;
-	}
+	SYS_LOG_INF("");
+	notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_BOOT);
 }
 
 static void keyboard_notif_handler(enum hids_notif_evt evt)
 {
-	switch (evt) {
-	case HIDS_CCCD_EVT_NOTIF_ENABLED:
-		SYS_LOG_INF("Notifications enabled");
-		break;
-	case HIDS_CCCD_EVT_NOTIF_DISABLED:
-		SYS_LOG_INF("Notifications disabled");
-		break;
-	}
+	SYS_LOG_INF("");
+	notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_PROTOCOL);
 }
 
 static void boot_keyboard_notif_handler(enum hids_notif_evt evt)
 {
-	switch (evt) {
-	case HIDS_CCCD_EVT_NOTIF_ENABLED:
-		SYS_LOG_INF("Notifications enabled");
-		break;
-	case HIDS_CCCD_EVT_NOTIF_DISABLED:
-		SYS_LOG_INF("Notifications disabled");
-		break;
-	}
+	SYS_LOG_INF("");
+	notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_BOOT);
 }
 
 static void mplayer_notif_handler(enum hids_notif_evt evt)
 {
-	switch (evt) {
-	case HIDS_CCCD_EVT_NOTIF_ENABLED:
-		SYS_LOG_INF("Notifications enabled");
-		break;
-	case HIDS_CCCD_EVT_NOTIF_DISABLED:
-		SYS_LOG_INF("Notifications disabled");
-		break;
-	}
+	SYS_LOG_INF("");
+	notif_handler(evt, TARGET_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
 }
 
 static int module_init(void)
@@ -340,7 +373,7 @@ static void mouse_report_sent(struct bt_conn *conn)
 
 static void send_mouse_report(const struct hid_mouse_event *event)
 {
-	if (in_boot_mode) {
+	if (report_mode == REPORT_MODE_BOOT) {
 		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
 
@@ -402,7 +435,7 @@ static void send_keyboard(const struct hid_keyboard_event *event)
 	/* Led */
 	report[8] = 0;
 
-	if (in_boot_mode) {
+	if (report_mode == REPORT_MODE_BOOT) {
 		hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
 					  sizeof(report) - sizeof(report[8]),
 					  keyboard_report_sent);

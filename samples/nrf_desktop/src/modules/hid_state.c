@@ -22,7 +22,6 @@
 #include "wheel_event.h"
 #include "power_event.h"
 #include "hid_event.h"
-#include "ble_event.h"
 
 #include "hid_keymap.h"
 
@@ -735,30 +734,14 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_event(eh)) {
-		const struct ble_peer_event *event = cast_ble_peer_event(eh);
+	if (is_hid_report_subscription_event(eh)) {
+		const struct hid_report_subscription_event *event =
+			cast_hid_report_subscription_event(eh);
 
-		switch (event->state) {
-		case PEER_STATE_SECURED:
+		if (event->enabled) {
 			connect();
-			/* TODO: Send enqueued keys and mouse buttons as soon
-			 * as the peer subscribes to notifications using CCC
-			 *
-			 * This needs modification of HIDS service.
-			 */
-			break;
-
-		case PEER_STATE_DISCONNECTED:
+		} else {
 			disconnect();
-			break;
-
-		case PEER_STATE_CONNECTED:
-			/* No action */
-			break;
-
-		default:
-			__ASSERT_NO_MSG(false);
-			break;
 		}
 
 		return false;
@@ -788,8 +771,8 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, button_event);
 EVENT_SUBSCRIBE(MODULE, motion_event);
 EVENT_SUBSCRIBE(MODULE, wheel_event);
