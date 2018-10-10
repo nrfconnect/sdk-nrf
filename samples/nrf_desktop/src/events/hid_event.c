@@ -55,7 +55,7 @@ static void print_hid_report_sent_event(const struct event_header *eh)
 }
 
 static void log_args_report_sent(struct log_event_buf *buf,
-			   const struct event_header *eh)
+				 const struct event_header *eh)
 {
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(eh);
@@ -69,3 +69,30 @@ EVENT_INFO_DEFINE(hid_report_sent_event,
 		  ENCODE("report_type"), log_args_report_sent);
 EVENT_TYPE_DEFINE(hid_report_sent_event, print_hid_report_sent_event,
 		  &hid_report_sent_event_info);
+
+static void print_hid_report_subscription_event(const struct event_header *eh)
+{
+	const struct hid_report_subscription_event *event =
+		cast_hid_report_subscription_event(eh);
+
+	printk("%s report notification %sabled",
+	       target_report_name[event->report_type],
+	       (event->enabled)?("en"):("dis"));
+}
+
+static void log_args_report_subscription(struct log_event_buf *buf,
+					 const struct event_header *eh)
+{
+	const struct hid_report_subscription_event *event =
+		cast_hid_report_subscription_event(eh);
+
+	ARG_UNUSED(event);
+	profiler_log_encode_u32(buf, event->report_type);
+	profiler_log_encode_u32(buf, event->enabled);
+}
+
+EVENT_INFO_DEFINE(hid_report_subscription_event,
+		  ENCODE(PROFILER_ARG_U8, PROFILER_ARG_U8),
+		  ENCODE("report_type", "enabled"), log_args_report_subscription);
+EVENT_TYPE_DEFINE(hid_report_subscription_event, print_hid_report_subscription_event,
+		  &hid_report_subscription_event_info);
