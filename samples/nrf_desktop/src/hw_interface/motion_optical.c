@@ -110,8 +110,8 @@
 /* Max register count readable in a single motion burst */
 #define OPTICAL_MAX_BURST_SIZE			12
 
-/* Sensor polling interval after motion detection */
-#define OPTICAL_INITIAL_POLL_INTERVAL_MS	500
+/* Sampling thread poll timeout */
+#define OPTICAL_POLL_TIMEOUT_MS			500
 
 #define OPTICAL_THREAD_STACK_SIZE		384
 #define OPTICAL_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
@@ -147,6 +147,7 @@ static struct device *gpio_dev;
 static struct device *spi_dev;
 
 static atomic_t state;
+static atomic_t connected;
 
 
 static int spi_cs_ctrl(bool enable)
@@ -503,13 +504,7 @@ static int motion_read(void)
 		} else {
 			nodata = false;
 
-			/* No motion occurred. */
-			SYS_LOG_DBG("Stop polling, wait for motion interrupt");
-
-			atomic_cas(&state, STATE_FETCHING, STATE_IDLE);
-			gpio_pin_enable_callback(gpio_dev, OPTICAL_PIN_MOTION);
-
-			return err;
+			return -ENODATA;
 		}
 	}
 
@@ -640,7 +635,7 @@ static void optical_thread_fn(void)
 	int err = init();
 
 	while (!err) {
-		k_sem_take(&sem, timeout);
+		err = k_sem_take(&sem, timeout);
 
 		switch (atomic_get(&state)) {
 		case STATE_IDLE:
@@ -648,15 +643,36 @@ static void optical_thread_fn(void)
 			break;
 
 		case STATE_FETCHING:
-			timeout = K_MSEC(OPTICAL_INITIAL_POLL_INTERVAL_MS);
-			err = motion_read();
+			if (!atomic_get(&connected)) {
+				/* HID notification was disabled. */
+				/* Ignore possible timeout. */
+				err = -ENODATA;
+			}
+			if (err == 0) {
+				err = motion_read();
+			}
+			if ((err == -ENODATA) || (err == -EAGAIN)) {
+				/* No motion or timeout. */
+				SYS_LOG_DBG("Stop polling, wait for interrupt");
+
+				atomic_cas(&state, STATE_FETCHING,
+						STATE_IDLE);
+				gpio_pin_enable_callback(gpio_dev,
+						OPTICAL_PIN_MOTION);
+				err = 0;
+				timeout = K_FOREVER;
+			} else {
+				timeout = K_MSEC(OPTICAL_POLL_TIMEOUT_MS);
+			}
 			break;
 
 		case STATE_SUSPENDING:
-			timeout = K_FOREVER;
+			__ASSERT_NO_MSG(!err || (err == -EAGAIN));
+			err = 0; /* Ignore possible timeout. */
 			atomic_set(&state, STATE_SUSPENDED);
 			module_set_state(MODULE_STATE_STANDBY);
 			gpio_pin_enable_callback(gpio_dev, OPTICAL_PIN_MOTION);
+			timeout = K_FOREVER;
 			break;
 
 		case STATE_SUSPENDED:
@@ -667,8 +683,11 @@ static void optical_thread_fn(void)
 
 		default:
 			__ASSERT_NO_MSG(false);
+			break;
 		}
 	}
+	/* This thread is supposed to run forever. */
+	__ASSERT_NO_MSG(false);
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -679,6 +698,18 @@ static bool event_handler(const struct event_header *eh)
 
 		if ((event->report_type == TARGET_REPORT_MOUSE) &&
 		    (atomic_get(&state) == STATE_FETCHING)) {
+			k_sem_give(&sem);
+		}
+
+		return false;
+	}
+
+	if (is_hid_report_subscription_event(eh)) {
+		const struct hid_report_subscription_event *event =
+			cast_hid_report_subscription_event(eh);
+
+		if (event->report_type == TARGET_REPORT_MOUSE) {
+			atomic_set(&connected, event->enabled);
 			k_sem_give(&sem);
 		}
 
@@ -745,4 +776,5 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
