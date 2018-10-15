@@ -19,6 +19,6 @@ Requirements
 Building and Running
 ********************
 
-This sample can be found under :file:`samples/rf/ble/hids_mouse` in the |NCS| folder structure.
+This sample can be found under :file:`samples/bluetooth/peripheral_hids_mouse` in the |NCS| folder structure.
 
 See :ref:`bluetooth setup section <bluetooth_setup>` for details.
