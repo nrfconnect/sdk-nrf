@@ -76,6 +76,7 @@ set(NRF_DOC_LOG ${NRF_BINARY_DIR}/doc.log)
 set(NRF_DOXY_LOG ${NRF_BINARY_DIR}/doxy.log)
 set(NRF_SPHINX_LOG ${NRF_BINARY_DIR}/sphinx.log)
 set(NRF_DOC_WARN ${NRF_BINARY_DIR}/doc.warnings)
+set(NRF_CONTENT_OUTPUTS ${NRF_BINARY_DIR}/extracted-content.txt)
 
 configure_file(${NRF_DOXYFILE_IN} ${NRF_DOXYFILE_OUT} @ONLY)
 
@@ -92,31 +93,26 @@ add_custom_target(
     -P ${ZEPHYR_BASE}/cmake/util/execute_process.cmake
 )
 
-set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
-
-file(GLOB RELNOTES ${NRF_DOC_DIR}/../release-notes*.rst)
+set(NRF_EXTRACT_CONTENT_COMMAND
+  ${CMAKE_COMMAND} -E env
+  ZEPHYR_BASE=${NRF_BASE}
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
+  --outputs ${NRF_CONTENT_OUTPUTS}
+  --ignore ${CMAKE_CURRENT_BINARY_DIR}
+  "*:doc:${NRF_RST_OUT}"
+  "*.rst:samples:${NRF_RST_OUT}"
+  "*.rst:boards:${NRF_RST_OUT}"
+  "*.rst:include:${NRF_RST_OUT}"
+  "*.rst:samples:${NRF_RST_OUT}/doc/nrf"
+  "*.rst:boards:${NRF_RST_OUT}/doc/nrf"
+  "release-notes*.rst:doc:${NRF_RST_OUT}/doc/nrf"
+  "*.rst:include:${NRF_RST_OUT}/doc/nrf"
+)
 
 add_custom_target(
   nrf-content
-
   # Copy all files in doc/ to the rst folder
-  COMMAND ${CMAKE_COMMAND} -E env
-  ZEPHYR_BASE=${NRF_BASE}
-  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} -a ${NRF_RST_OUT} doc
-  # Copy the .rst files in samples/ and boards/ to the rst folder
-  COMMAND ${CMAKE_COMMAND} -E env
-  ZEPHYR_BASE=${NRF_BASE}
-  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT} samples boards include
-  # Copy the .rst files in samples/ and boards/ to the doc/nrf folder inside rst
-  COMMAND ${CMAKE_COMMAND} -E env
-  ZEPHYR_BASE=${NRF_BASE}
-  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} ${NRF_RST_OUT}/doc/nrf samples boards include
-  # Copy ncs release notes
-  COMMAND ${CMAKE_COMMAND} -E copy ${RELNOTES} ${NRF_RST_OUT}/doc/nrf/
-
+  COMMAND ${NRF_EXTRACT_CONTENT_COMMAND}
   WORKING_DIRECTORY ${NRF_DOC_DIR}
 )
 
@@ -140,9 +136,8 @@ add_custom_target(
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
-add_custom_target(
-  nrf-html
-  COMMAND ${CMAKE_COMMAND} -E env
+set(NRF_SPHINX_BUILD_HTML_COMMAND
+  ${CMAKE_COMMAND} -E env
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
   ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_BASE=${NRF_BASE}
@@ -151,6 +146,11 @@ add_custom_target(
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
+)
+
+add_custom_target(
+  nrf-html
+  COMMAND ${NRF_SPHINX_BUILD_HTML_COMMAND}
   # Merge the Doxygen and Sphinx logs into a single file
   COMMAND ${CMAKE_COMMAND} -P ${ZEPHYR_BASE}/cmake/util/fmerge.cmake ${NRF_DOC_LOG} ${NRF_DOXY_LOG} ${NRF_SPHINX_LOG}
   # Copy root index file
@@ -161,8 +161,6 @@ add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
 
 add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
-
-
 
 # Everything below this line is mcuboot-specific
 
@@ -179,14 +177,20 @@ set(FIX_MARKDOWN ${NRF_BASE}/doc/scripts/fix_markdown.py)
 
 file(GLOB MDFILES ${MCUBOOT_DOC_DIR}/*.md)
 
+set(MCUBOOT_EXTRACT_CONTENT_COMMAND
+ ${CMAKE_COMMAND} -E env
+  ZEPHYR_BASE=${NRF_BASE}
+  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
+  --ignore ${CMAKE_CURRENT_BINARY_DIR}
+  "*:doc/mcuboot:${MCUBOOT_RST_OUT}"
+)
+
 add_custom_target(
   mcuboot-content
 
   # Copy all files from nrf/doc/mcuboot to the rst folder
-  COMMAND ${CMAKE_COMMAND} -E env
-  ZEPHYR_BASE=${NRF_BASE}
-  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-  ${PYTHON_EXECUTABLE} ${EXTRACT_CONTENT} -a ${MCUBOOT_RST_OUT} doc/mcuboot
+  COMMAND ${MCUBOOT_EXTRACT_CONTENT_COMMAND}
 
   # Copy all markdown files from mcuboot/docs to the rst folder
   COMMAND ${CMAKE_COMMAND} -E copy ${MDFILES} ${MCUBOOT_RST_OUT}/doc/mcuboot/
