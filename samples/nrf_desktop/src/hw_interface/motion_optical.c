@@ -482,8 +482,7 @@ static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
 			EVENT_SUBMIT(event);
 		}
 	} else {
-		/* This interrupt should not happen */
-		__ASSERT_NO_MSG(false);
+		/* Ignore when fetching or suspending */
 	}
 }
 
@@ -670,8 +669,8 @@ static void optical_thread_fn(void)
 			__ASSERT_NO_MSG(!err || (err == -EAGAIN));
 			err = 0; /* Ignore possible timeout. */
 			atomic_set(&state, STATE_SUSPENDED);
-			module_set_state(MODULE_STATE_STANDBY);
 			gpio_pin_enable_callback(gpio_dev, OPTICAL_PIN_MOTION);
+			module_set_state(MODULE_STATE_STANDBY);
 			timeout = K_FOREVER;
 			break;
 
@@ -741,7 +740,6 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_wake_up_event(eh)) {
 		if (atomic_cas(&state, STATE_SUSPENDED, STATE_FETCHING)) {
-			gpio_pin_disable_callback(gpio_dev, OPTICAL_PIN_MOTION);
 			module_set_state(MODULE_STATE_READY);
 			k_sem_give(&sem);
 		}
@@ -750,22 +748,23 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_down_event(eh)) {
+		bool suspended = false;
 		switch (atomic_get(&state)) {
 		case STATE_SUSPENDED:
-			return false;
+			suspended = true;
+			break;
 
 		case STATE_SUSPENDING:
 			/* No action */
 			break;
 
 		default:
-			gpio_pin_disable_callback(gpio_dev, OPTICAL_PIN_MOTION);
 			atomic_set(&state, STATE_SUSPENDING);
 			k_sem_give(&sem);
 			break;
 		}
 
-		return true;
+		return !suspended;
 	}
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
