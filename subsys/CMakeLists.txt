@@ -13,6 +13,8 @@ add_subdirectory_ifdef(CONFIG_NRF_ESB enhanced_shockburst)
 
 add_subdirectory_if_kconfig(event_manager)
 
+add_subdirectory(net)
+
 add_subdirectory_ifdef(CONFIG_NRFXLIB_NFC nfc)
 
 add_subdirectory_ifdef(CONFIG_PROFILER profiler)
