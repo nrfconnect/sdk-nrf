@@ -8,4 +8,6 @@ menu "libraries"
 
 rsource "bsdlib/Kconfig"
 
+rsource "sensor_sim/Kconfig"
+
 endmenu
