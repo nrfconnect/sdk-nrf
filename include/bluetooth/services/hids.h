@@ -135,7 +135,7 @@ typedef void (*hids_rep_handler_t) (struct hids_rep const *rep,
  */
 struct hids_inp_rep {
 	/** CCC descriptor. */
-	struct bt_gatt_ccc_cfg ccc[CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT];
+	struct bt_gatt_ccc_cfg ccc[BT_GATT_CCC_MAX];
 
 	/** Report ID defined in the HIDS Report Map. */
 	u8_t id;
@@ -195,7 +195,7 @@ struct hids_outp_feat_rep {
  */
 struct hids_boot_mouse_inp_rep {
 	/** CCC descriptor. */
-	struct bt_gatt_ccc_cfg ccc[CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT];
+	struct bt_gatt_ccc_cfg ccc[BT_GATT_CCC_MAX];
 
 	/** Index in the service attribute array. */
 	u8_t att_ind;
@@ -208,7 +208,7 @@ struct hids_boot_mouse_inp_rep {
  */
 struct hids_boot_kb_inp_rep {
 	/** CCC descriptor. */
-	struct bt_gatt_ccc_cfg ccc[CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT];
+	struct bt_gatt_ccc_cfg ccc[BT_GATT_CCC_MAX];
 
 	/** Index in the service attribute array. */
 	u8_t att_ind;
