@@ -1,0 +1,12 @@
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "BSD Library for nrf91"
+
+config BSD_LIBRARY
+	bool "BSD Socket library for IP/TLS/DTLS"
+	select FLOAT
+	depends on CPU_CORTEX_M33
+endmenu

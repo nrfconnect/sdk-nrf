@@ -4,4 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-# nothing here
+add_subdirectory_ifdef(CONFIG_BSD_LIBRARY bsdlib)

@@ -6,6 +6,6 @@
 
 menu "libraries"
 
-# nothing here
+rsource "bsdlib/Kconfig"
 
 endmenu
