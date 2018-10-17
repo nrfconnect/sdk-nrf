@@ -168,59 +168,6 @@ static bool eventq_full(void)
 	return (state.eventq_len >= CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE);
 }
 
-static sys_snode_t *eventq_region_find(sys_snode_t *first_valid, sys_snode_t *current)
-{
-	sys_snode_t *maxfound = sys_slist_peek_head(&state.eventq);
-	const struct item current_item = (CONTAINER_OF(current, struct item_event, node)->item);
-
-	if (current_item.value > 0) {
-		/* Every key down must be paired with key up.
-		 * Set hit count to value as we just detected
-		 * first key down for this usage.
-		 */
-		unsigned int hit_count = current_item.value;
-		sys_snode_t *j = sys_slist_peek_next(current);
-
-		SYS_SLIST_ITERATE_FROM_NODE(&state.eventq, j) {
-			if (j == first_valid) {
-				break;
-			}
-
-			if (current_item.usage_id ==
-			    CONTAINER_OF(j, struct item_event, node)->item.usage_id) {
-				hit_count += CONTAINER_OF(j, struct item_event, node)->item.value;
-
-				if (hit_count == 0) {
-					/* When the hit count reaches zero, all
-					 * events with this usage are paired.
-					 */
-					break;
-				}
-			}
-		}
-
-		if (j == first_valid) {
-			/* Pair not found. */
-			return maxfound;
-		}
-
-		sys_snode_t *tmp = maxfound;
-		SYS_SLIST_ITERATE_FROM_NODE(&state.eventq, tmp) {
-			if (!j) {
-				break;
-			}
-
-			if (tmp == j) {
-				/* We can remove events up to this point. */
-				maxfound = j;
-				break;
-			}
-		}
-	}
-
-	return maxfound;
-}
-
 static void eventq_region_purge(sys_snode_t *last_to_purge)
 {
 	sys_snode_t *tmp;
@@ -248,6 +195,7 @@ static void eventq_region_purge(sys_snode_t *last_to_purge)
 static void eventq_cleanup(u32_t timestamp)
 {
 	/* Find timed out events. */
+
 	sys_snode_t *first_valid;
 
 	SYS_SLIST_FOR_EACH_NODE(&state.eventq, first_valid) {
@@ -262,22 +210,76 @@ static void eventq_cleanup(u32_t timestamp)
 	/* Remove events but only if key up was generated for each removed
 	 * key down.
 	 */
-	sys_snode_t *i;
+
+	sys_snode_t *maxfound = sys_slist_peek_head(&state.eventq);
+	size_t maxfound_pos = 0;
+
+	sys_snode_t *cur;
+	size_t cur_pos = 0;
+
 	sys_snode_t *tmp_safe;
 
-	SYS_SLIST_FOR_EACH_NODE_SAFE(&state.eventq, i, tmp_safe) {
-		if (i == first_valid) {
+	SYS_SLIST_FOR_EACH_NODE_SAFE(&state.eventq, cur, tmp_safe) {
+		const struct item cur_item =
+			CONTAINER_OF(cur, struct item_event, node)->item;
+
+		if (cur_item.value > 0) {
+			/* Every key down must be paired with key up.
+			 * Set hit count to value as we just detected
+			 * first key down for this usage.
+			 */
+
+			unsigned int hit_count = cur_item.value;
+			sys_snode_t *j = cur;
+			size_t j_pos = cur_pos;
+
+			SYS_SLIST_ITERATE_FROM_NODE(&state.eventq, j) {
+				j_pos++;
+				if (j == first_valid) {
+					break;
+				}
+
+				const struct item item =
+					CONTAINER_OF(j,
+						     struct item_event,
+						     node)->item;
+
+				if (cur_item.usage_id == item.usage_id) {
+					hit_count += item.value;
+
+					if (hit_count == 0) {
+						/* All events with this usage
+						 * are paired.
+						 */
+						break;
+					}
+				}
+			}
+
+			if (j == first_valid) {
+				/* Pair not found. */
+				break;
+			}
+
+			if (j_pos > maxfound_pos) {
+				maxfound = j;
+				maxfound_pos = j_pos;
+			}
+		}
+
+
+		if (cur == first_valid) {
 			break;
 		}
 
-		sys_snode_t *maxfound = eventq_region_find(first_valid, i);
-
-		if (i == maxfound) {
+		if (cur == maxfound) {
 			/* All events up to this point have pairs and can
 			 * be deleted.
 			 */
 			eventq_region_purge(maxfound);
 		}
+
+		cur_pos++;
 	}
 }
 
