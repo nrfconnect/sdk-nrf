@@ -19,6 +19,7 @@ if NRF_BT_LBS_SECURITY_ENABLED
 
 choice NRF_BT_LBS_SECURITY
 	prompt "Bluetooth security level"
+	default NRF_BT_LBS_SECURITY_LEVEL_HIGH
 
 config NRF_BT_LBS_SECURITY_LEVEL_FIPS
 	bool "Authenticated Secure Connections"
