@@ -5,4 +5,5 @@
 #
 
 add_subdirectory_ifdef(CONFIG_BSD_LIBRARY bsdlib)
+add_subdirectory_ifdef(CONFIG_GPS_SIM gps_sim)
 add_subdirectory_ifdef(CONFIG_SENSOR_SIM sensor_sim)

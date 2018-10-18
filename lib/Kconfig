@@ -8,6 +8,8 @@ menu "libraries"
 
 rsource "bsdlib/Kconfig"
 
+rsource "gps_sim/Kconfig"
+
 rsource "sensor_sim/Kconfig"
 
 endmenu
