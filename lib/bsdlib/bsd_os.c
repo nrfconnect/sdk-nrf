@@ -34,13 +34,48 @@
 
 #define UNUSED_FLAGS 0
 
+#define NUM_SLEEPING_THREADS 10
+
 
 void IPC_IRQHandler(void);
 
+static inline int thread_id_hash(u32_t thread_id)
+{
+	/* TODO: A better idea on how to hash thread IDs without collision.
+	 * A linked list or an array to fill would introduce sync issues.
+	 */
+	return thread_id % NUM_SLEEPING_THREADS;
+}
+
+struct k_sem sleep_sem[NUM_SLEEPING_THREADS];
+
+static void sleep_sem_init(void)
+{
+	for (int i = 0; i < NUM_SLEEPING_THREADS; i++) {
+		k_sem_init(&sleep_sem[i], 0, 1);
+	}
+}
+
+static void all_sleep_threads_wake(void)
+{
+	for (int i = 0; i < NUM_SLEEPING_THREADS; i++) {
+		k_sem_give(&sleep_sem[i]);
+	}
+}
+
 s32_t bsd_os_timedwait(u32_t context, u32_t timeout)
 {
-	/* TODO: to be implemented */
-	return 0;
+	int converted_timeout = K_MSEC(timeout);
+
+	if (timeout == 0) {
+		converted_timeout = K_FOREVER;
+	}
+
+	bool ret_val = k_sem_take(
+		&sleep_sem[thread_id_hash(context)],
+		converted_timeout);
+
+	return ret_val;
 }
 
 
@@ -171,6 +206,7 @@ ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
 ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 {
 	bsd_os_application_irq_handler();
+	all_sleep_threads_wake();
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
 	return 1; /* We should check if scheduling decision should be made */
@@ -187,6 +223,7 @@ void read_task_create(void)
 /* This function is called by bsd_init and must not be called explicitly. */
 void bsd_os_init(void)
 {
+	sleep_sem_init();
 	read_task_create();
 }
 
