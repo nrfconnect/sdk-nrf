@@ -7,6 +7,7 @@
 menu "libraries"
 
 rsource "bsdlib/Kconfig"
+rsource "at_host/Kconfig"
 
 rsource "gps_sim/Kconfig"
 
