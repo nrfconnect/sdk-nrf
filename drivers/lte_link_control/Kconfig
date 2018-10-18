@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Link control on LTE link for nRF91"
+
+config LTE_LINK_CONTROL
+	bool "Enable link control of the LTE link"
+	depends on BSD_LIBRARY
+	default n
+
+config LTE_AUTO_INIT_AND_CONNECT
+	bool "Auto Initialize and Connect for the LTE link"
+	depends on LTE_LINK_CONTROL
+	default y
+	help
+		Turn on to make the LTE Link Controller to
+		automatically initialize and connect the modem
+		before the application starts
+endmenu
