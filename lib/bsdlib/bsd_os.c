@@ -16,11 +16,26 @@
 #include <zephyr/types.h>
 #include <errno.h>
 
+#ifndef ENOKEY 
+#define ENOKEY 2001
+#endif
+
+#ifndef EKEYEXPIRED
+#define EKEYEXPIRED 2002
+#endif
+
+#ifndef EKEYREVOKED
+#define EKEYREVOKED 2003
+#endif
+
+#ifndef EKEYREJECTED
+#define EKEYREJECTED 2004
+#endif
+
 #define UNUSED_FLAGS 0
 
 
 void IPC_IRQHandler(void);
-
 
 s32_t bsd_os_timedwait(u32_t context, u32_t timeout)
 {
@@ -113,24 +128,18 @@ void bsd_os_errno_set(int err_code)
 	case NRF_ECANCELED:
 		errno = ECANCELED;
 		break;
-/* Keyrelated errnos are not included in zephyrs errno.h.
- *	case NRF_ENOKEY:
- *		errno = ENOKEY;
- *		break;
- *	case NRF_EKEYEXPIRED:
- *		errno = EKEYEXPIRED;
- *		break;
- *	case NRF_EKEYREVOKED:
- *		errno = EKEYREVOKED;
- *		break;
- *	case NRF_EKEYREJECTED:
- *		errno = EKEYREJECTED;
- *		break;
- */
 	case NRF_ENOKEY:
+		errno = ENOKEY;
+		break;
 	case NRF_EKEYEXPIRED:
+		errno = EKEYEXPIRED;
+		break;
 	case NRF_EKEYREVOKED:
+		errno = EKEYREVOKED;
+		break;
 	case NRF_EKEYREJECTED:
+		errno = EKEYREJECTED;
+		break;
 	default:
 		errno = EINVAL;
 		break;
