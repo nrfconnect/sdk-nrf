@@ -10,6 +10,8 @@ rsource "bsdlib/Kconfig"
 
 rsource "gps_sim/Kconfig"
 
+rsource "dk_buttons_and_leds/Kconfig"
+
 rsource "sensor_sim/Kconfig"
 
 endmenu
