@@ -113,11 +113,7 @@ static struct bt_uuid *uuid_16_store(const struct bt_uuid *uuid)
 {
 	struct bt_uuid_16 *uuid_16 = BT_UUID_16(uuid);
 
-	if (uuid->type != BT_UUID_TYPE_16) {
-		LOG_ERR("Unsupported UUID type.");
-
-		return NULL;
-	}
+	__ASSERT_NO_MSG(uuid->type == BT_UUID_TYPE_16);
 
 	uuid_16 = (struct bt_uuid_16 *) user_data_store((u8_t *) uuid_16,
 			sizeof(*uuid_16));
@@ -128,6 +124,43 @@ static struct bt_uuid *uuid_16_store(const struct bt_uuid *uuid)
 	}
 
 	return &uuid_16->uuid;
+}
+
+static struct bt_uuid *uuid_128_store(const struct bt_uuid *uuid)
+{
+	struct bt_uuid_128 *uuid_128 = BT_UUID_128(uuid);
+
+	__ASSERT_NO_MSG(uuid->type == BT_UUID_TYPE_128);
+
+	uuid_128 = (struct bt_uuid_128 *) user_data_store((u8_t *) uuid_128,
+			sizeof(*uuid_128));
+
+	if (!uuid_128) {
+		LOG_ERR("Could not store ATT UUID.");
+
+		return NULL;
+	}
+
+	return &uuid_128->uuid;
+}
+
+static struct bt_uuid *uuid_store(const struct bt_uuid *uuid)
+{
+	if (!uuid) {
+		LOG_ERR("Uninitialized UUID.");
+
+		return NULL;
+	}
+
+	switch (uuid->type) {
+	case BT_UUID_TYPE_16:
+		return uuid_16_store(uuid);
+	case BT_UUID_TYPE_128:
+		return uuid_128_store(uuid);
+	default:
+		LOG_ERR("Unsupported UUID type.");
+		return NULL;
+	}
 }
 
 static bool is_desc_dicovery_reqd(u16_t *start_handle, u16_t *end_handle)
@@ -240,8 +273,8 @@ static u8_t discovery_callback(struct bt_conn *conn,
 	case BT_GATT_DISCOVER_SECONDARY:
 		gatt_service = attr->user_data;
 
-		cur_attr->uuid = uuid_16_store(attr->uuid);
-		gatt_service->uuid = uuid_16_store(gatt_service->uuid);
+		cur_attr->uuid = uuid_store(attr->uuid);
+		gatt_service->uuid = uuid_store(gatt_service->uuid);
 		cur_attr->user_data = user_data_store((u8_t *) gatt_service,
 				sizeof(*gatt_service));
 		if (!cur_attr->uuid || !cur_attr->user_data ||
@@ -265,8 +298,8 @@ static u8_t discovery_callback(struct bt_conn *conn,
 	case BT_GATT_DISCOVER_CHARACTERISTIC:
 		gatt_chrc = attr->user_data;
 
-		cur_attr->uuid = uuid_16_store(attr->uuid);
-		gatt_chrc->uuid = uuid_16_store(gatt_chrc->uuid);
+		cur_attr->uuid = uuid_store(attr->uuid);
+		gatt_chrc->uuid = uuid_store(gatt_chrc->uuid);
 		cur_attr->user_data = user_data_store((u8_t *) gatt_chrc,
 				sizeof(*gatt_chrc));
 		if (!cur_attr->uuid || !cur_attr->user_data ||
@@ -277,7 +310,7 @@ static u8_t discovery_callback(struct bt_conn *conn,
 
 		return BT_GATT_ITER_CONTINUE;
 	case BT_GATT_DISCOVER_DESCRIPTOR:
-		cur_attr->uuid = uuid_16_store(attr->uuid);
+		cur_attr->uuid = uuid_store(attr->uuid);
 		if (!cur_attr->uuid) {
 			err = -ENOMEM;
 			goto error;
@@ -305,7 +338,8 @@ int gatt_db_discovery_start(struct bt_conn *conn,
 {
 	int err;
 
-	if (svc_uuid->type != BT_UUID_TYPE_16) {
+	if ((svc_uuid->type != BT_UUID_TYPE_16) &&
+	    (svc_uuid->type != BT_UUID_TYPE_128)) {
 		return -EINVAL;
 	}
 
@@ -319,7 +353,7 @@ int gatt_db_discovery_start(struct bt_conn *conn,
 
 	callback = cb;
 
-	discover_params.uuid = uuid_16_store(svc_uuid);
+	discover_params.uuid = uuid_store(svc_uuid);
 	discover_params.func = discovery_callback;
 	discover_params.start_handle = 0x0001;
 	discover_params.end_handle = 0xffff;
