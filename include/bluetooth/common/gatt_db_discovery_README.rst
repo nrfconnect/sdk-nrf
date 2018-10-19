@@ -10,7 +10,6 @@ The GATT Database Discovery Module is used in the :ref:`bluetooth_central_hids` 
 Limitations
 ***********
 * The discovery procedure can be target at the chosen service - group type service discovery is not supported.
-* The 32-bit and 128-bit UUIDs are not supported currently.
 * One discovery procedure can be running at the same time.
 
 API documentation
