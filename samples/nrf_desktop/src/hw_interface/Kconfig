@@ -109,6 +109,34 @@ config DESKTOP_LED_BRIGHTNESS_MAX
 	depends on DESKTOP_LED_ENABLE
 	default 255
 
+comment "Battery charger configuration"
+
+choice
+	prompt "Select battery charging interface"
+	default DESKTOP_BATTERY_NONE
+
+config DESKTOP_BATTERY_NONE
+	bool "No battery charging"
+
+config DESKTOP_BATTERY_DISCRETE
+	bool "Discrete battery charger"
+
+endchoice
+
+config DESKTOP_BATTERY_CSO_PIN
+	int "Charging status pin"
+	depends on DESKTOP_BATTERY_DISCRETE
+	help
+	  A pin number to which CSO output is connected.
+
+config DESKTOP_BATTERY_CSO_FREQ
+	int "CSO switching frequency (in Hz) on error state"
+	depends on DESKTOP_BATTERY_DISCRETE
+	default 1000
+	help
+	  A frequency with which CSO pin switches state when charging
+	  error occurs.
+
 comment "Log level configuration"
 
 config DESKTOP_SYS_LOG_BOARD_MODULE_LEVEL
@@ -191,7 +219,22 @@ config DESKTOP_SYS_LOG_LED_MODULE_LEVEL
 	default 2
 	range 0 4
 	help
-	  Sets log level for buttons module.
+	  Sets log level for LED module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+config DESKTOP_SYS_LOG_BATTERY_MODULE_LEVEL
+	int "Battery module log level"
+	depends on SYS_LOG
+	depends on !DESKTOP_BATTERY_NONE
+	default 2
+	range 0 4
+	help
+	  Sets log level for battery module.
 	  Levels are:
 	  - 0 OFF, do not write
 	  - 1 ERROR, only write SYS_LOG_ERR
