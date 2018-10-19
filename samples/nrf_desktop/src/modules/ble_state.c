@@ -70,18 +70,25 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	event->conn_id = conn;
 	event->state   = PEER_STATE_SECURED;
 	EVENT_SUBMIT(event);
+}
 
-	struct bt_le_conn_param param = {
-		.interval_min	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MIN,
-		.interval_max	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_INTERVAL_MAX,
-		.latency	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_LATENCY,
-		.timeout	= CONFIG_DESKTOP_BLE_STATE_CONNECTION_TIMEOUT
-	};
+static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
+{
+	SYS_LOG_INF("Conn parameters request:"
+		     "\n\tinterval (0x%04x, 0x%04x)\n\tsl %d\n\ttimeout %d",
+		     param->interval_min, param->interval_max,
+		     param->latency, param->timeout);
 
-	int err = bt_conn_le_param_update(conn, &param);
-	if (err) {
-		SYS_LOG_WRN("Failed to set connection params");
-	}
+	/* Accept the request */
+	return true;
+}
+
+static void le_param_updated(struct bt_conn *conn, u16_t interval,
+			     u16_t latency, u16_t timeout)
+{
+	SYS_LOG_INF("Conn parameters updated:"
+		    "\n\tinterval 0x%04x\n\tlat %d\n\ttimeout %d\n",
+		    interval, latency, timeout);
 }
 
 static void bt_ready(int err)
@@ -102,6 +109,8 @@ static int ble_state_init(void)
 		.connected = connected,
 		.disconnected = disconnected,
 		.security_changed = security_changed,
+		.le_param_req = le_param_req,
+		.le_param_updated = le_param_updated,
 	};
 	bt_conn_cb_register(&conn_callbacks);
 
