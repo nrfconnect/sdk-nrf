@@ -60,8 +60,8 @@ static bool event_handler(const struct event_header *eh)
 {
 	/* TODO subscribe to connection events and handle them. */
 
-	if (is_battery_event(eh)) {
-		struct battery_event *event = cast_battery_event(eh);
+	if (is_battery_level_event(eh)) {
+		struct battery_level_event *event = cast_battery_level_event(eh);
 
 		battery = event->level;
 
