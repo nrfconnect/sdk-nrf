@@ -47,6 +47,33 @@ static void nrf_to_z_ipv4(struct sockaddr *z_out,
 	ptr->sin_addr.s_addr = nrf_in->sin_addr.s_addr;
 }
 
+static void z_to_nrf_ipv6(const struct sockaddr *z_in,
+			  struct nrf_sockaddr_in6 *nrf_out)
+{
+	const struct sockaddr_in6 *ptr = (const struct sockaddr_in6 *)z_in;
+
+	/* nrf_out->sin6_flowinfo field not used */
+	nrf_out->sin6_len = sizeof(struct nrf_sockaddr_in6);
+	nrf_out->sin6_port = ptr->sin6_port;
+	nrf_out->sin6_family = ptr->sin6_family;
+	memcpy(nrf_out->sin6_addr.s6_addr, ptr->sin6_addr.s6_addr,
+		sizeof(struct in6_addr));
+	nrf_out->sin6_scope_id = (u32_t)ptr->sin6_scope_id;
+}
+
+static void nrf_to_z_ipv6(struct sockaddr *z_out,
+			  const struct nrf_sockaddr_in6 *nrf_in)
+{
+	struct sockaddr_in6 *ptr = (struct sockaddr_in6 *)z_out;
+
+	/* nrf_sockaddr_in6 fields .sin6_flowinfo and .sin6_len not used */
+	ptr->sin6_port = nrf_in->sin6_port;
+	ptr->sin6_family = nrf_in->sin6_family;
+	memcpy(ptr->sin6_addr.s6_addr, nrf_in->sin6_addr.s6_addr,
+		sizeof(struct nrf_in6_addr));
+	ptr->sin6_scope_id = (u8_t)nrf_in->sin6_scope_id;
+}
+
 static int z_to_nrf_level(int z_in_level, int *nrf_out_level)
 {
 	int retval = 0;
@@ -205,8 +232,8 @@ static int nrf91_socket_offload_accept(int sd, struct sockaddr *addr,
 		*addrlen = sizeof(struct sockaddr_in);
 		nrf_to_z_ipv4(addr, (const struct nrf_sockaddr_in *)&nrf_addr);
 	} else if (nrf_addr.sa_family == AF_INET6) {
-		/* TODO: Add ipv6 */
-		goto error;
+		*addrlen = sizeof(struct sockaddr_in6);
+		nrf_to_z_ipv6(addr, (const struct nrf_sockaddr_in6 *)&nrf_addr);
 	} else {
 		goto error;
 	}
@@ -231,8 +258,11 @@ static int nrf91_socket_offload_bind(int sd, const struct sockaddr *addr,
 		retval = nrf_bind(sd, (const struct nrf_sockaddr *)&ipv4,
 				  sizeof(struct nrf_sockaddr_in));
 	} else if (addr->sa_family == AF_INET6) {
-		/* TODO: Add ipv6 */
-		goto error;
+		struct nrf_sockaddr_in6 ipv6;
+
+		z_to_nrf_ipv6(addr, &ipv6);
+		retval = nrf_bind(sd, (const struct nrf_sockaddr *)&ipv6,
+				  sizeof(struct nrf_sockaddr_in6));
 	} else {
 		goto error;
 	}
@@ -262,8 +292,11 @@ static int nrf91_socket_offload_connect(int sd, const struct sockaddr *addr,
 		retval = nrf_connect(sd, (const struct nrf_sockaddr_in *)&ipv4,
 				     sizeof(struct nrf_sockaddr_in));
 	} else if (addr->sa_family == AF_INET6) {
-		/* TODO: Add ipv6 */
-		goto error;
+		struct nrf_sockaddr_in6 ipv6;
+
+		z_to_nrf_ipv6(addr, &ipv6);
+		retval = nrf_connect(sd, (const struct nrf_sockaddr *)&ipv6,
+				  sizeof(struct nrf_sockaddr_in6));
 	} else {
 		goto error;
 	}
@@ -348,16 +381,12 @@ static ssize_t nrf91_socket_offload_recvfrom(int sd, void *buf, short int len,
 			nrf_to_z_ipv4(from, (struct nrf_sockaddr_in *)&cliaddr);
 			*fromlen = sizeof(struct sockaddr_in);
 		} else if (cliaddr.sa_family == AF_INET6) {
-			/* TODO: implement ipv6 */
-			goto error;
+			nrf_to_z_ipv6(from, (struct nrf_sockaddr_in6 *)
+					  &cliaddr);
+			*fromlen = sizeof(struct sockaddr_in6);
 		}
 	}
 
-	return retval;
-
-error:
-	retval = -1;
-	errno = -ENOTSUP;
 	return retval;
 }
 
@@ -384,8 +413,12 @@ static ssize_t nrf91_socket_offload_sendto(int sd, const void *buf, size_t len,
 		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags), &ipv4,
 				    sock_len);
 	} else if (to->sa_family == AF_INET6) {
-		/* TODO: implement ipv6 */
-		goto error;
+		struct nrf_sockaddr_in6 ipv6;
+		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in6);
+
+		z_to_nrf_ipv6(to, &ipv6);
+		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags), &ipv6,
+				    sock_len);
 	} else {
 		goto error;
 	}
