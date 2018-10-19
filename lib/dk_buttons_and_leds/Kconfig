@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Button and LED Library for Nordic DKs"
+
+config DK_LIBRARY
+	bool "Button and LED Library for Nordic DKs"
+
+if DK_LIBRARY
+
+config DK_LIBRARY_BUTTON_SCAN_INTERVAL
+	int "Scanning interval of buttons in milliseconds"
+	default 10
+
+config DK_LIBRARY_INVERT_BUTTONS
+	bool "Invert buttons pins on DK"
+	default y
+
+config DK_LIBRARY_INVERT_LEDS
+	bool "Invert LED pins on DK"
+	default y
+
+endif # DK_LIBRARY
+
+endmenu
