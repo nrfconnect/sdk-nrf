@@ -21,5 +21,28 @@ const struct led_config led_config[SYSTEM_STATE_COUNT][CONFIG_DESKTOP_LED_COUNT]
 			.mode = LED_MODE_ON,
 			.color.c = {200},
 		}
-	}
+	},
+	/* SYSTEM_STATE_DISCONNECTED_CHARGING */
+	{
+		{
+			.mode = LED_MODE_BLINKING,
+			.color.c = {200},
+			.period = 1000
+		}
+	},
+	/* SYSTEM_STATE_CONNECTED_CHARGING */
+	{
+		{
+			.mode = LED_MODE_ON,
+			.color.c = {200},
+		}
+	},
+	/* SYSTEM_STATE_ERROR */
+	{
+		{
+			.mode = LED_MODE_BLINKING,
+			.color.c = {200},
+			.period = 200
+		}
+	},
 };

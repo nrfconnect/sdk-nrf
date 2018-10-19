@@ -22,11 +22,20 @@ extern "C" {
 
 /** @brief State of the system. */
 enum system_state {
-	/** Device disconnected. */
+	/** Device disconnected not charging. */
 	SYSTEM_STATE_DISCONNECTED,
 
-	/** Device connected. */
+	/** Device connected not charging. */
 	SYSTEM_STATE_CONNECTED,
+
+	/** Device disconnected and charging. */
+	SYSTEM_STATE_DISCONNECTED_CHARGING,
+
+	/** Device connected and charging. */
+	SYSTEM_STATE_CONNECTED_CHARGING,
+
+	/** Device error. */
+	SYSTEM_STATE_ERROR,
 
 	/** Number of states. */
 	SYSTEM_STATE_COUNT
