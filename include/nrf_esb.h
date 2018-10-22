@@ -258,7 +258,8 @@ int nrf_esb_init(const struct nrf_esb_config *config);
  *  Calling this function stops ongoing communications without changing the
  *  queues.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_suspend(void);
 
@@ -287,7 +288,8 @@ bool nrf_esb_is_idle(void);
  *
  *  @param[in]   payload     The payload.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_write_payload(const struct nrf_esb_payload *payload);
 
@@ -295,25 +297,29 @@ int nrf_esb_write_payload(const struct nrf_esb_payload *payload);
  *
  *  @param[in,out] payload	The payload to be received.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_read_rx_payload(struct nrf_esb_payload *payload);
 
 /** @brief Start transmitting data.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_start_tx(void);
 
 /** @brief Start receiving data.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_start_rx(void);
 
 /** @brief Stop data reception.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_stop_rx(void);
 
@@ -321,19 +327,22 @@ int nrf_esb_stop_rx(void);
  *
  * This function clears the TX FIFO buffer.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_flush_tx(void);
 
 /** @brief Pop the first item from the TX buffer.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_pop_tx(void);
 
 /** @brief Flush the RX buffer.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_flush_rx(void);
 
@@ -341,15 +350,17 @@ int nrf_esb_flush_rx(void);
  *
  *  @param[in] length	Length of the ESB address (in bytes).
  *
- *  @return Zero on success or (negative) error code otherwise.
- */
+* @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+  */
 int nrf_esb_set_address_length(u8_t length);
 
 /** @brief Set the base address for pipe 0.
  *
  * @param[in] addr	Address.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_base_address_0(const u8_t *addr);
 
@@ -357,7 +368,8 @@ int nrf_esb_set_base_address_0(const u8_t *addr);
  *
  *  @param[in] addr	Address.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_base_address_1(const u8_t *addr);
 
@@ -370,7 +382,8 @@ int nrf_esb_set_base_address_1(const u8_t *addr);
  *  @param[in] num_pipes	Number of pipes. Must be less than or equal to
  *				@ref CONFIG_NRF_ESB_PIPE_COUNT.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes);
 
@@ -384,7 +397,8 @@ int nrf_esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes);
  *			Setting a bit to 0 disables the pipe.
  *			Setting a bit to 1 enables the pipe.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_enable_pipes(u8_t enable_mask);
 
@@ -393,7 +407,8 @@ int nrf_esb_enable_pipes(u8_t enable_mask);
  *  @param pipe		Pipe for which to set the prefix.
  *  @param prefix	Prefix to set for the pipe.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_update_prefix(u8_t pipe, u8_t prefix);
 
@@ -406,7 +421,8 @@ int nrf_esb_update_prefix(u8_t pipe, u8_t prefix);
  *
  *  @param[in] channel	Channel to use for radio.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_rf_channel(u32_t channel);
 
@@ -414,7 +430,8 @@ int nrf_esb_set_rf_channel(u32_t channel);
  *
  *  @param[in, out] channel	Channel number.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_get_rf_channel(u32_t *channel);
 
@@ -422,7 +439,8 @@ int nrf_esb_get_rf_channel(u32_t *channel);
  *
  *  @param[in] tx_output_power	Output power.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_tx_power(enum nrf_esb_tx_power tx_output_power);
 
@@ -430,7 +448,8 @@ int nrf_esb_set_tx_power(enum nrf_esb_tx_power tx_output_power);
  *
  *  @param[in] delay	Delay between retransmissions.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_retransmit_delay(u16_t delay);
 
@@ -438,7 +457,8 @@ int nrf_esb_set_retransmit_delay(u16_t delay);
  *
  *  @param[in] count	Number of retransmissions.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_retransmit_count(u16_t count);
 
@@ -446,7 +466,8 @@ int nrf_esb_set_retransmit_count(u16_t count);
  *
  * @param[in] bitrate	Radio bitrate.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_set_bitrate(enum nrf_esb_bitrate bitrate);
 
@@ -459,7 +480,8 @@ int nrf_esb_set_bitrate(enum nrf_esb_bitrate bitrate);
  *
  *  @param[in] pipe	Pipe.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_esb_reuse_pid(u8_t pipe);
 
