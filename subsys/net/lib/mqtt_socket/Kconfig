@@ -18,7 +18,7 @@ module=MQTT
 module-dep=NET_LOG
 module-str=Log level for MQTT
 module-help=Enables mqtt debug messages.
-source "subsys/net/Kconfig.template.log_config.net"
+source "${ZEPHYR_BASE}/subsys/net/Kconfig.template.log_config.net"
 
 config MQTT_MAX_CLIENTS
 	int "Maximum number of clients"
