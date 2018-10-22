@@ -13,6 +13,7 @@ The |NCS| contains libraries and application examples for Nordic Semiconductor c
    introduction
    documentation
    getting_started
+   user_guides
    samples
    libraries
    reference/kconfig/index
