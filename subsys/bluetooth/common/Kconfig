@@ -104,6 +104,7 @@ config NRF_BT_GATT_DB_DISCOVERY_DATA_PRINT
 	bool
 	prompt "Enable functions for printing discovery related data"
 	default y
+	select BT_DEBUG
 	help
 	  Enable functions for printing discovery related data
 
