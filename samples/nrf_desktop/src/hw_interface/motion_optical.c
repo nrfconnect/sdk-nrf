@@ -654,11 +654,15 @@ static void optical_thread_fn(void)
 				/* No motion or timeout. */
 				SYS_LOG_DBG("Stop polling, wait for interrupt");
 
+				/* Read data to clear interrupt. */
+				u8_t data[OPTICAL_MAX_BURST_SIZE];
+				err = motion_burst_read(data, sizeof(data));
+
+				/* Switch state. */
 				atomic_cas(&state, STATE_FETCHING,
 						STATE_IDLE);
 				gpio_pin_enable_callback(gpio_dev,
 						OPTICAL_PIN_MOTION);
-				err = 0;
 				timeout = K_FOREVER;
 			} else {
 				timeout = K_MSEC(OPTICAL_POLL_TIMEOUT_MS);
