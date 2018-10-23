@@ -9,9 +9,11 @@ menu "Event Manager"
 config EVENT_MANAGER
 	bool
 	prompt "Enable Event Manager"
-	default n
+	depends on LINKER_ORPHAN_SECTION_PLACE
 	help
-	  Enable Event Manager
+	  Enable Event Manager.
+	  Note that Event Manager uses orphan sections to handle its
+	  data structures.
 
 if EVENT_MANAGER
 
@@ -23,13 +25,11 @@ config DESKTOP_EVENT_MANAGER_SHOW_EVENTS
 
 config DESKTOP_EVENT_MANAGER_SHOW_EVENT_HANDLERS
 	bool "Show event handlers"
-	default n
 	help
 	  This option controls if event handlers are printed to console.
 
 config DESKTOP_EVENT_MANAGER_SHOW_LISTENERS
 	bool "Show event listeners"
-	default n
 	help
 	  Show listeners with events they subscribe to.
 
