@@ -526,7 +526,7 @@ static void connect(void)
 
 	if (!sys_slist_is_empty(&state.eventq)) {
 		/* Remove all stale events from the queue. */
-		eventq_cleanup(MSEC(_sys_clock_tick_count));
+		eventq_cleanup(MSEC(z_tick_get()));
 	}
 
 	if (sys_slist_is_empty(&state.eventq)) {
@@ -570,7 +570,7 @@ static void keep_device_active(void)
 /**@brief Enqueue event that updates a given usage. */
 static void enqueue(enum target_report tr, u16_t usage_id, s16_t report)
 {
-	eventq_cleanup(MSEC(_sys_clock_tick_count));
+	eventq_cleanup(MSEC(z_tick_get()));
 
 	if (eventq_full()) {
 		if (state.state == HID_STATE_DISCONNECTED) {
@@ -617,7 +617,7 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t report)
 	hid_event->item.usage_id = usage_id;
 	hid_event->item.value = report;
 	hid_event->tr = tr;
-	hid_event->timestamp = MSEC(_sys_clock_tick_count);
+	hid_event->timestamp = MSEC(z_tick_get());
 
 	/* Add a new event to the queue. */
 	sys_slist_append(&state.eventq, &hid_event->node);
