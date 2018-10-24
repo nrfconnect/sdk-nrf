@@ -311,7 +311,7 @@ static int gps_sim_init(struct device *dev)
 		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
 			struct gps_sim_data *drv_data = dev->driver_data;
 
-			drv_data->gpio_port = SW1_GPIO_NAME;
+			drv_data->gpio_port = SW1_GPIO_CONTROLLER;
 			drv_data->gpio_pin = SW1_GPIO_PIN;
 		}
 		if (gps_sim_init_thread(dev) < 0) {
