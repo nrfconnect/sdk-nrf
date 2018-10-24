@@ -132,7 +132,34 @@ config DESKTOP_SYS_LOG_LED_STATE_LEVEL
 	default 2
 	range 0 4
 	help
-	  Sets log level for system state.
+	  Sets log level for LED state.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+endmenu
+endif
+
+if USB_DEVICE_HID
+menu "USB state"
+
+config DESKTOP_USB_ENABLE
+	bool "Enable USB module"
+	default n
+	help
+	  Enables USB module.
+
+config DESKTOP_SYS_LOG_USB_STATE_LEVEL
+	int "USB state log level"
+	depends on SYS_LOG
+	depends on DESKTOP_USB_ENABLE
+	default 2
+	range 0 4
+	help
+	  Sets log level for USB state.
 	  Levels are:
 	  - 0 OFF, do not write
 	  - 1 ERROR, only write SYS_LOG_ERR
