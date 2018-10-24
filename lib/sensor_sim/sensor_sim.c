@@ -167,7 +167,7 @@ static int sensor_sim_init(struct device *dev)
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
 	struct sensor_sim_data *drv_data = dev->driver_data;
 
-	drv_data->gpio_port = SW0_GPIO_NAME;
+	drv_data->gpio_port = SW0_GPIO_CONTROLLER;
 	drv_data->gpio_pin = SW0_GPIO_PIN;
 #endif
 	if (sensor_sim_init_thread(dev) < 0) {
