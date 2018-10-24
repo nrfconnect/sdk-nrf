@@ -228,6 +228,11 @@ static void mouse_report_sent(struct bt_conn *conn)
 
 static void send_mouse_report(const struct hid_mouse_event *event)
 {
+	if (!report_enabled[TARGET_REPORT_MOUSE][report_mode]) {
+		/* Notification disabled */
+		return;
+	}
+
 	if (report_mode == REPORT_MODE_BOOT) {
 		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
@@ -274,8 +279,13 @@ static void keyboard_report_sent(struct bt_conn *conn)
 	EVENT_SUBMIT(event);
 }
 
-static void send_keyboard(const struct hid_keyboard_event *event)
+static void send_keyboard_report(const struct hid_keyboard_event *event)
 {
+	if (!report_enabled[TARGET_REPORT_KEYBOARD][report_mode]) {
+		/* Notification disabled */
+		return;
+	}
+
 	u8_t report[REPORT_SIZE_KEYBOARD];
 
 	static_assert(ARRAY_SIZE(report) == ARRAY_SIZE(event->keys) + 3,
@@ -343,7 +353,7 @@ static bool event_handler(const struct event_header *eh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
 		if (is_hid_keyboard_event(eh)) {
-			send_keyboard(cast_hid_keyboard_event(eh));
+			send_keyboard_report(cast_hid_keyboard_event(eh));
 
 			return false;
 		}
