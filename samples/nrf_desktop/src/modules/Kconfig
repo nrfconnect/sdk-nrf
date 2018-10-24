@@ -6,6 +6,12 @@
 
 menu "HID State"
 
+config DESKTOP_REPORT_DESC
+	string "HID report descriptor"
+	default ""
+	help
+	  This option specifies a path to the HID report descriptor file.
+
 config DESKTOP_HID_REPORT_EXPIRATION
 	int "HID report expiration [ms]"
 	default 500

@@ -30,8 +30,9 @@ project("nRF52 Desktop"
 
 ################################################################################
 
-assert(CONFIG_DESKTOP_KEYMAP     "Keymap file must be specified")
-assert(CONFIG_DESKTOP_PORT_STATE "Port state file must be specified")
+assert(CONFIG_DESKTOP_KEYMAP      "Keymap file must be specified")
+assert(CONFIG_DESKTOP_PORT_STATE  "Port state file must be specified")
+assert(CONFIG_DESKTOP_REPORT_DESC "HID report descriptor file must be specified")
 
 if (${CONFIG_DESKTOP_LED_ENABLE})
 	assert(CONFIG_DESKTOP_LED_STATE  "Led state file must be specified")
@@ -42,6 +43,7 @@ target_sources(app PRIVATE
   src/main.c
   ${CONFIG_DESKTOP_KEYMAP}
   ${CONFIG_DESKTOP_PORT_STATE}
+  ${CONFIG_DESKTOP_REPORT_DESC}
 )
 
 # Include application events and configuration headers
