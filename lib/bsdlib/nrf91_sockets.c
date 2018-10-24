@@ -155,57 +155,146 @@ static int z_to_nrf_flags(int z_flags)
 	return nrf_flags;
 }
 
+static int z_to_nrf_addrinfo_flags(int flags)
+{
+	/* Flags not implemented.*/
+	ARG_UNUSED(flags);
+	return 0;
+}
+
+static int nrf_to_z_addrinfo_flags(int flags)
+{
+	/* Flags not implemented.*/
+	ARG_UNUSED(flags);
+	return 0;
+}
+
+static int nrf_to_z_protocol(int proto)
+{
+	switch (proto) {
+	case NRF_IPPROTO_TCP:
+		return IPPROTO_TCP;
+	case NRF_IPPROTO_UDP:
+		return IPPROTO_UDP;
+	case NRF_SPROTO_TLS1v2:
+		return IPPROTO_TLS_1_2;
+	case NRF_PROTO_AT:
+		return NPROTO_AT;
+	case 0:
+		return PROTO_WILDCARD;
+	/*
+	 * TODO: handle missing TLS v1.3 define
+	 * case IPPROTO_TLS_1_3:
+	 *      return NRF_SPROTO_TLS1v3;
+	 */
+	case NRF_SPROTO_DTLS1v2:
+		return IPPROTO_DTLS_1_2;
+	default:
+		return -EPROTONOSUPPORT;
+	}
+}
+
+
+
+static int z_to_nrf_protocol(int proto)
+{
+	switch (proto) {
+	case IPPROTO_TCP:
+		return NRF_IPPROTO_TCP;
+	case IPPROTO_UDP:
+		return NRF_IPPROTO_UDP;
+	case IPPROTO_TLS_1_2:
+		return NRF_SPROTO_TLS1v2;
+	case NPROTO_AT:
+		return NRF_PROTO_AT;
+	case PROTO_WILDCARD:
+		return 0;
+	/*
+	 * TODO: handle missing TLS v1.3 define
+	 * case IPPROTO_TLS_1_3:
+	 *      return NRF_SPROTO_TLS1v3;
+	 */
+	case IPPROTO_DTLS_1_2:
+		return NRF_SPROTO_DTLS1v2;
+	/* Let non-implemented cases fall through */
+	case IPPROTO_DTLS_1_0:
+	/* fall through */
+	case IPPROTO_ICMP:
+	/* fall through */
+	case IPPROTO_ICMPV6:
+	/* fall through */
+	case IPPROTO_TLS_1_0:
+	/* fall through */
+	case IPPROTO_TLS_1_1:
+	/* fall through */
+	default:
+		return -EPROTONOSUPPORT;
+	}
+}
+
+static int z_to_nrf_addrinfo_hints(const struct addrinfo *z_in,
+			      struct nrf_addrinfo *nrf_out)
+{
+	memset(nrf_out, 0, sizeof(struct nrf_addrinfo));
+	nrf_out->ai_flags     = z_to_nrf_addrinfo_flags(z_in->ai_flags);
+	nrf_out->ai_family    = z_in->ai_family;
+	nrf_out->ai_socktype  = z_in->ai_socktype;
+	nrf_out->ai_protocol  = z_to_nrf_protocol(z_in->ai_protocol);
+
+	if (nrf_out->ai_protocol == -EPROTONOSUPPORT) {
+		return -EPROTONOSUPPORT;
+	}
+	return 0;
+}
+
+static int nrf_to_z_addrinfo(struct addrinfo *z_out,
+			      const struct nrf_addrinfo *nrf_in)
+{
+	z_out->ai_next      = NULL;
+	z_out->ai_canonname = NULL; /* TODO Do proper content copy. */
+	z_out->ai_flags     = nrf_to_z_addrinfo_flags(nrf_in->ai_flags);
+	z_out->ai_family    = nrf_in->ai_family;
+	z_out->ai_socktype  = nrf_in->ai_socktype;
+	z_out->ai_protocol  = nrf_to_z_protocol(nrf_in->ai_protocol);
+
+	if (z_out->ai_protocol == -EPROTONOSUPPORT) {
+		z_out->ai_addr = NULL;
+		return -EPROTONOSUPPORT;
+	}
+	if (nrf_in->ai_family == AF_INET) {
+		z_out->ai_addr = k_malloc(sizeof(struct sockaddr_in));
+		if (z_out->ai_addr == NULL) {
+			return -ENOMEM;
+		}
+		z_out->ai_addrlen  = sizeof(struct sockaddr_in);
+		nrf_to_z_ipv4(z_out->ai_addr,
+			(const struct nrf_sockaddr_in *)nrf_in->ai_addr);
+	} else if (nrf_in->ai_family == AF_INET6) {
+		z_out->ai_addr = k_malloc(sizeof(struct sockaddr_in6));
+		if (z_out->ai_addr == NULL) {
+			return -ENOMEM;
+		}
+		z_out->ai_addrlen  = sizeof(struct sockaddr_in6);
+		nrf_to_z_ipv6(z_out->ai_addr,
+			(const struct nrf_sockaddr_in6 *)nrf_in->ai_addr);
+	} else {
+		return -EPROTONOSUPPORT;
+	}
+	return 0;
+}
+
 static int nrf91_socket_offload_socket(int family, int type, int proto)
 {
 	int retval;
 
-	switch (proto) {
-	case IPPROTO_TCP:
-		proto = NRF_IPPROTO_TCP;
-		break;
-	case IPPROTO_UDP:
-		proto = NRF_IPPROTO_UDP;
-		break;
-	case IPPROTO_TLS_1_2:
-		proto = NRF_SPROTO_TLS1v2;
-		break;
-	case NPROTO_AT:
-		/* fall through */
-	case PROTO_WILDCARD:
-		/* No need to set, will match */
-		break;
-	/*
-	 * TODO: handle missing TLS v1.3 define
-	 * case IPPROTO_TLS_1_3:
-	 *	proto = NRF_SPROTO_TLS1v3;
-	 *	break;
-	 */
-	case IPPROTO_DTLS_1_2:
-		proto = NRF_SPROTO_DTLS1v2;
-		break;
-	/* Let non-implemented cases fall through */
-	case IPPROTO_DTLS_1_0:
-		/* fall through */
-	case IPPROTO_ICMP:
-		/* fall through */
-	case IPPROTO_ICMPV6:
-		/* fall through */
-	case IPPROTO_TLS_1_0:
-		/* fall through */
-	case IPPROTO_TLS_1_1:
-		/* fall through */
-	default:
-		goto error;
-		break;
+	proto = z_to_nrf_protocol(proto);
+	if (proto == -EPROTONOSUPPORT) {
+		errno = -EPROTONOSUPPORT;
+		return -1;
 	}
 
 	retval = nrf_socket(family, type, proto);
 
-	return retval;
-
-error:
-	retval = -1;
-	errno = -EPROTONOSUPPORT;
 	return retval;
 }
 
@@ -471,18 +560,79 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 	return retval;
 }
 
+static void nrf91_socket_offload_freeaddrinfo(struct addrinfo *root)
+{
+	struct addrinfo *next = root;
+
+	while (next != NULL) {
+		struct addrinfo *this = next;
+
+		next = next->ai_next;
+		k_free(this->ai_addr);
+		k_free(this);
+	}
+}
+
 static int nrf91_socket_offload_getaddrinfo(const char *node,
 					    const char *service,
 					    const struct addrinfo *hints,
 					    struct addrinfo **res)
 {
-	return nrf_getaddrinfo(node, service, (struct nrf_addrinfo *)hints,
-				 (struct nrf_addrinfo **)res);
-}
+	int error;
+	struct nrf_addrinfo nrf_hints;
+	struct nrf_addrinfo *nrf_hints_ptr = NULL;
+	struct nrf_addrinfo *nrf_res = NULL;
 
-static void nrf91_socket_offload_freeaddrinfo(struct addrinfo *res)
-{
-	nrf_freeaddrinfo((struct nrf_addrinfo *)res);
+	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
+
+	if (hints != NULL) {
+		nrf_hints_ptr = &nrf_hints;
+		error = z_to_nrf_addrinfo_hints(hints, &nrf_hints);
+		if (error == -EPROTONOSUPPORT) {
+			return DNS_EAI_SOCKTYPE;
+		}
+	}
+	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
+
+	struct nrf_addrinfo *next_nrf_res = nrf_res;
+	struct addrinfo *latest_z_res = NULL;
+
+	*res = NULL;
+
+	while ((retval == 0) && (next_nrf_res != NULL)) {
+		struct addrinfo *next_z_res = k_malloc(sizeof(struct addrinfo));
+
+		if (next_z_res == NULL) {
+			retval = DNS_EAI_MEMORY;
+			break;
+		}
+		error = nrf_to_z_addrinfo(next_z_res, next_nrf_res);
+		if (error == -ENOMEM) {
+			retval = DNS_EAI_MEMORY;
+			k_free(next_z_res);
+			break;
+		} else if (error == -EPROTONOSUPPORT) {
+			retval = DNS_EAI_SOCKTYPE;
+			k_free(next_z_res);
+			break;
+		}
+		if (latest_z_res == NULL) {
+			/* This is the first node processed. */
+			*res = next_z_res;
+		} else {
+			latest_z_res->ai_next = next_z_res;
+		}
+		latest_z_res = next_z_res;
+		next_nrf_res = next_nrf_res->ai_next;
+	}
+	if (retval != 0) {
+		/* Release any already allocated list nodes. */
+		nrf91_socket_offload_freeaddrinfo(*res);
+		*res = NULL;
+	}
+	nrf_freeaddrinfo(nrf_res);
+
+	return retval;
 }
 
 static const struct socket_offload nrf91_socket_offload_ops = {
