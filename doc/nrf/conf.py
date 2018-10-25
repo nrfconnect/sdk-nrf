@@ -67,7 +67,8 @@ MCUBOOT_OUTPUT = os.path.abspath(os.environ["MCUBOOT_OUTPUT"])
 # ones.
 extensions = ['sphinx.ext.intersphinx',
               'breathe',
-              'sphinx.ext.ifconfig']
+              'sphinx.ext.ifconfig',
+              'sphinxcontrib.mscgen']
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['../_templates']

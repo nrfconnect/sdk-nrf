@@ -20,3 +20,10 @@ Here you can find documentation for these libraries, including API documentation
    :glob:
 
    ../../include/bluetooth/services/*
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Other libraries:
+   :glob:
+
+   ../../include/*
