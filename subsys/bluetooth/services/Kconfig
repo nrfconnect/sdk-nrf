@@ -1,5 +1,6 @@
 comment "BLE GATT Services"
 
+rsource "Kconfig.bas_c"
 rsource "Kconfig.dfu_smp_c"
 rsource "Kconfig.hids"
 rsource "Kconfig.hids_c"
