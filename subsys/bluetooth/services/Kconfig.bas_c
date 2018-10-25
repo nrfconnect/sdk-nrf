@@ -1,0 +1,12 @@
+menuconfig BT_GATT_BAS_C
+	bool "Battery service client"
+	help
+	  Enable Battery Service Client.
+
+if BT_GATT_BAS_C
+
+module = BT_GATT_BAS_C
+module-str = BAS Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATT_BAS_C
