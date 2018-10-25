@@ -46,4 +46,8 @@ config NRF_CLOUD_PORT
 	depends on NRF_CLOUD
 	default 8883
 
+config NRF_CLOUD_IPV6
+	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used."
+	depends on NRF_CLOUD
+
 endmenu
