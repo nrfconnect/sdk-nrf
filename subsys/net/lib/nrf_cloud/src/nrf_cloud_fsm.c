@@ -512,6 +512,15 @@ static int all_ua_request_handler(const struct nct_evt *nct_evt)
 		return state_ua_input_wait();
 	}
 	case STATE_UA_COMPLETE: {
+		struct nrf_cloud_data rx;
+		struct nrf_cloud_data tx;
+
+		err = nrf_coded_decode_data_endpoint(payload, &tx, &rx);
+		if (err) {
+			return err;
+		}
+		nct_dc_endpoint_set(&tx, &rx);
+
 		err = state_ua_complete();
 		/* Disconnect the link. Must connect back. */
 		(void) nct_disconnect();
