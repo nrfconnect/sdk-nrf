@@ -13,14 +13,16 @@
 extern "C" {
 #endif
 
-/**@defgroup enum nrf_cloud_evt_type nRF Cloud events
+/** @defgroup nrf_cloud nRF Cloud
  * @{
- * @brief Asynchronous events notified by the module.
  */
+
+
+/** @brief Asynchronous nRF Cloud events notified by the module. */
 enum nrf_cloud_evt_type {
 	/** The transport to the nRF Cloud is established. */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECTED = 0x1,
-	/** A request from nRF Cloud to associate the device
+	/** There was a request from nRF Cloud to associate the device
 	 * with a user on the nRF Cloud. On receiving this
 	 * event, the user must enter the user association sequence using
 	 * the @ref nrf_cloud_user_associate API.
@@ -31,7 +33,7 @@ enum nrf_cloud_evt_type {
 	/** The device can now start sending sensor data to the cloud. */
 	NRF_CLOUD_EVT_READY,
 	/** A sensor was successfully attached to the cloud.
-	 * Supported sensor types are defined @ref nrf_cloud_sensor_types.
+	 * Supported sensor types are defined in @ref nrf_cloud_sensor.
 	 */
 	NRF_CLOUD_EVT_SENSOR_ATTACHED,
 	/** The device received data from the cloud. */
@@ -43,34 +45,23 @@ enum nrf_cloud_evt_type {
 	/** There was an error communicating with the cloud. */
 	NRF_CLOUD_EVT_ERROR = 0xFF
 };
-/**@}  */
 
-/**@defgroup nrf_cloud_user_association_types nRF Cloud user association types
- * @{
- * @brief User association types supported by the nRF Cloud.
- */
+
+/** @brief User association types supported by the nRF Cloud. */
 enum nrf_cloud_ua {
 	/** Button input. */
 	NRF_CLOUD_UA_BUTTON,
 };
-/**@}  */
 
-/**@defgroup nrf_cloud_sensor_types nRF Cloud sensor types
- * @{
- * @brief Sensor types supported by the nRF Cloud.
- */
+/** @brief Sensor types supported by the nRF Cloud. */
 enum nrf_cloud_sensor {
 	/** The GPS sensor on the device. */
 	NRF_CLOUD_SENSOR_GPS,
 	/** The FLIP movement sensor on the device. */
 	NRF_CLOUD_SENSOR_FLIP,
 };
-/**@}  */
 
-/**@defgroup nrf_cloud_ua_button_valid_input nRF Cloud input values for
- * user association.
- * @{
- * @brief User input sequence for user association type
+/** @brief User input sequence values for user association type
  * @ref NRF_CLOUD_UA_BUTTON.
  */
 enum nrf_cloud_ua_button {
@@ -79,7 +70,6 @@ enum nrf_cloud_ua_button {
 	NRF_CLOUD_UA_BUTTON_INPUT_3,       /**< Button Input 3. */
 	NRF_CLOUD_UA_BUTTON_INPUT_4,       /**< Button Input 4. */
 };
-/**@}  */
 
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
 struct nrf_cloud_data {
@@ -137,7 +127,7 @@ struct nrf_cloud_sensor_data {
 	u32_t tag;
 };
 
-/**@brief Structure of asynchronous events received from the module. */
+/**@brief Asynchronous events received from the module. */
 struct nrf_cloud_evt {
 	/** The event that occurred. */
 	enum nrf_cloud_evt_type type;
@@ -173,34 +163,23 @@ struct nrf_cloud_init_param {
  *
  * @param[in] param Initialization parameters.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_init(const struct nrf_cloud_init_param *param);
 
 /**
  * @brief Connect to the cloud.
  *
- * If this API succeeds, expect the following sequence:
- *
- * @msc
- * hscale = "1.3";
- * Module,Application;
- * Module<<Application      [label="nrf_cloud_connect() returns successfully"];
- * Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
- * Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST
- * (conditional)"]; Module<<Application [label="nrf_cloud_user_associate()"];
- * Module box Application   [label="nrf_cloud_user_associate() must be called
- * only if NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST is received."];
- * Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
- * @endmsc
- *
- * During any of these phases, an @ref NRF_CLOUD_EVT_ERROR might be received.
+ * In any stage of connecting to the cloud, an @ref NRF_CLOUD_EVT_ERROR
+ * might be received.
  * If it is received before @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED,
  * the application may repeat the call to @ref nrf_cloud_connect to try again.
  *
  * @param[in] param Parameters to be used for the connection.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
 
@@ -213,7 +192,8 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
  *
  * @param[in] param	User association information.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_user_associate(const struct nrf_cloud_ua_param *param);
 
@@ -227,7 +207,8 @@ int nrf_cloud_user_associate(const struct nrf_cloud_ua_param *param);
  *
  * @param[in] param	Sensor information.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param);
 
@@ -241,7 +222,8 @@ int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param);
  *
  * @param[in] param Sensor data.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
 
@@ -253,7 +235,8 @@ int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
  *
  * @param[in] param Sensor data.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
 
@@ -265,7 +248,8 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
  * If the API succeeds, you can expect the
  * @ref NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED event.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_disconnect(void);
 
@@ -274,6 +258,9 @@ int nrf_cloud_disconnect(void);
  * functional.
  */
 void nrf_cloud_process(void);
+
+
+  /** @} */
 
 #ifdef __cplusplus
 }
