@@ -10,6 +10,7 @@
 #include <zephyr.h>
 #include <net/mqtt_socket.h>
 #include <net/socket.h>
+#include <stdio.h>
 #include "nrf_inbuilt_key.h"
 
 #include <misc/util.h>
@@ -32,7 +33,10 @@ LOG_MODULE_REGISTER(nrf_cloud_transport);
 #endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
 
 #if !defined(NRF_CLOUD_CLIENT_ID)
-#define NRF_CLOUD_CLIENT_ID "my-client-id"
+#define NRF_IMEI_LEN 15
+#define NRF_CLOUD_CLIENT_ID_LEN (NRF_IMEI_LEN + 4)
+#else
+#define NRF_CLOUD_CLIENT_ID_LEN (sizeof(NRF_CLOUD_CLIENT_ID) - 1)
 #endif
 
 #define NRF_CLOUD_HOSTNAME CONFIG_NRF_CLOUD_HOST_NAME
@@ -45,13 +49,35 @@ LOG_MODULE_REGISTER(nrf_cloud_transport);
 #endif /* defined(CONFIG_NRF_CLOUD_IPV6) */
 
 #define AWS "$aws/things/"
+#define AWS_LEN (sizeof(AWS) - 1)
 
-#define NCT_SHADOW_BASE_TOPIC  AWS NRF_CLOUD_CLIENT_ID "/shadow"
-#define NCT_ACCEPTED_TOPIC  AWS NRF_CLOUD_CLIENT_ID "/shadow/get/accepted"
-#define NCT_REJECTED_TOPIC  AWS NRF_CLOUD_CLIENT_ID "/shadow/get/rejected"
-#define NCT_UPDATE_DELTA_TOPIC  AWS NRF_CLOUD_CLIENT_ID "/shadow/update/delta"
-#define NCT_UPDATE_TOPIC  AWS NRF_CLOUD_CLIENT_ID "/shadow/update"
-#define NCT_SHADOW_GET  AWS NRF_CLOUD_CLIENT_ID "/shadow/get"
+#define NCT_SHADOW_BASE_TOPIC AWS "%s/shadow"
+#define NCT_SHADOW_BASE_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 7)
+
+#define NCT_ACCEPTED_TOPIC AWS "%s/shadow/get/accepted"
+#define NCT_ACCEPTED_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 20)
+
+#define NCT_REJECTED_TOPIC AWS "%s/shadow/get/rejected"
+#define NCT_REJECTED_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 20)
+
+#define NCT_UPDATE_DELTA_TOPIC AWS "%s/shadow/update/delta"
+#define NCT_UPDATE_DELTA_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 20)
+
+#define NCT_UPDATE_TOPIC AWS "%s/shadow/update"
+#define NCT_UPDATE_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 14)
+
+#define NCT_SHADOW_GET AWS "%s/shadow/get"
+#define NCT_SHADOW_GET_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 11)
+
+/* Buffer for keeping the client_id + \0 */
+static char client_id_buf[NRF_CLOUD_CLIENT_ID_LEN + 1];
+/* Buffers for keeping the topics for nrf_cloud */
+static char shadow_base_topic[NCT_SHADOW_BASE_TOPIC_LEN + 1];
+static char accepted_topic[NCT_ACCEPTED_TOPIC_LEN + 1];
+static char rejected_topic[NCT_REJECTED_TOPIC_LEN + 1];
+static char update_delta_topic[NCT_UPDATE_DELTA_TOPIC_LEN + 1];
+static char update_topic[NCT_UPDATE_TOPIC_LEN + 1];
+static char shadow_get_topic[NCT_SHADOW_GET_LEN + 1];
 
 #define NCT_CC_SUBSCRIBE_ID 1234
 #define NCT_DC_SUBSCRIBE_ID 8765
@@ -76,22 +102,22 @@ static struct nct {
 static const struct mqtt_topic nct_cc_rx_list[] = {
 	{
 		.topic = {
-			.utf8 = NCT_ACCEPTED_TOPIC,
-			.size = (sizeof(NCT_ACCEPTED_TOPIC) - 1)
+			.utf8 = accepted_topic,
+			.size = NCT_ACCEPTED_TOPIC_LEN
 		},
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE
 	},
 	{
 		.topic = {
-			.utf8 = NCT_REJECTED_TOPIC,
-			.size = (sizeof(NCT_REJECTED_TOPIC) - 1)
+			.utf8 = rejected_topic,
+			.size = NCT_REJECTED_TOPIC_LEN
 		},
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE
 	},
 	{
 		.topic = {
-			.utf8 = NCT_UPDATE_DELTA_TOPIC,
-			.size = (sizeof(NCT_UPDATE_DELTA_TOPIC) - 1)
+			.utf8 = update_delta_topic,
+			.size = NCT_UPDATE_DELTA_TOPIC_LEN
 		},
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE
 	}
@@ -100,15 +126,15 @@ static const struct mqtt_topic nct_cc_rx_list[] = {
 static const struct mqtt_topic nct_cc_tx_list[] = {
 	{
 		.topic = {
-			.utf8 = NCT_SHADOW_GET,
-			.size = (sizeof(NCT_SHADOW_GET) - 1)
+			.utf8 = shadow_get_topic,
+			.size = NCT_SHADOW_GET_LEN
 		},
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE
 	},
 	{
 		.topic = {
-			.utf8 = NCT_UPDATE_TOPIC,
-			.size = (sizeof(NCT_UPDATE_TOPIC) - 1)
+			.utf8 = update_topic,
+			.size = NCT_UPDATE_TOPIC_LEN
 		},
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE
 	}
@@ -218,6 +244,93 @@ static bool control_channel_topic_match(u32_t list_id,
 	return false;
 }
 
+/* Function to get the client id */
+static int nct_client_id_get(char *id)
+{
+#if !defined(NRF_CLOUD_CLIENT_ID)
+	int at_socket_fd;
+	int bytes_written;
+	int bytes_read;
+	char imei_buf[NRF_IMEI_LEN + 1];
+	int ret;
+
+	at_socket_fd = nrf_socket(NRF_AF_LTE, 0, NRF_PROTO_AT);
+	__ASSERT_NO_MSG(at_socket_fd >= 0);
+
+	bytes_written = nrf_write(at_socket_fd, "AT+CGSN", 7);
+	__ASSERT_NO_MSG(bytes_written == 7);
+
+	bytes_read = nrf_read(at_socket_fd, imei_buf, NRF_IMEI_LEN);
+	__ASSERT_NO_MSG(bytes_read == NRF_IMEI_LEN);
+	imei_buf[NRF_IMEI_LEN] = 0;
+
+	snprintf(id, NRF_CLOUD_CLIENT_ID_LEN + 1, "nrf-%s", imei_buf);
+
+	ret = nrf_close(at_socket_fd);
+	__ASSERT_NO_MSG(ret == 0);
+#else
+	memcpy(id, NRF_CLOUD_CLIENT_ID, NRF_CLOUD_CLIENT_ID_LEN + 1);
+#endif /* !defined(NRF_CLOUD_CLIENT_ID) */
+
+	LOG_DBG("client_id = %s", id);
+
+	return 0;
+}
+
+static int nct_topics_populate(void)
+{
+	int ret;
+
+	ret = nct_client_id_get(client_id_buf);
+	if (ret != 0) {
+		return ret;
+	}
+
+	ret = snprintf(shadow_base_topic, sizeof(shadow_base_topic),
+		       NCT_SHADOW_BASE_TOPIC, client_id_buf);
+	if (ret != NCT_SHADOW_BASE_TOPIC_LEN) {
+		return -ENOMEM;
+	}
+	LOG_DBG("shadow_base_topic: %s", shadow_base_topic);
+
+	ret = snprintf(accepted_topic, sizeof(accepted_topic),
+		       NCT_ACCEPTED_TOPIC, client_id_buf);
+	if (ret != NCT_ACCEPTED_TOPIC_LEN) {
+		return -ENOMEM;
+	}
+	LOG_DBG("accepted_topic: %s", accepted_topic);
+
+	ret = snprintf(rejected_topic, sizeof(rejected_topic),
+		       NCT_REJECTED_TOPIC, client_id_buf);
+	if (ret != NCT_REJECTED_TOPIC_LEN) {
+		return -ENOMEM;
+	}
+	LOG_DBG("rejected_topic: %s", rejected_topic);
+
+	ret = snprintf(update_delta_topic, sizeof(update_delta_topic),
+		       NCT_UPDATE_DELTA_TOPIC, client_id_buf);
+	if (ret != NCT_UPDATE_DELTA_TOPIC_LEN) {
+		return -ENOMEM;
+	}
+	LOG_DBG("update_delta_topic: %s", update_delta_topic);
+
+	ret = snprintf(update_topic, sizeof(update_topic),
+		       NCT_UPDATE_TOPIC, client_id_buf);
+	if (ret != NCT_UPDATE_TOPIC_LEN) {
+		return -ENOMEM;
+	}
+	LOG_DBG("update_topic: %s", update_topic);
+
+	ret = snprintf(shadow_get_topic, sizeof(shadow_get_topic),
+		       NCT_SHADOW_GET, client_id_buf);
+	if (ret != NCT_SHADOW_GET_LEN) {
+		return -ENOMEM;
+	}
+	LOG_DBG("shadow_get_topic: %s", shadow_get_topic);
+
+	return 0;
+}
+
 /* Provisions root CA certificate using nrf_inbuilt_key API */
 static int nct_provision(void)
 {
@@ -230,8 +343,8 @@ static int nct_provision(void)
 	nct.tls_config.seg_tag_list = sec_tag_list;
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)) {
-
+#if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
+	{
 		int err;
 
 		/* Delete certificates */
@@ -275,6 +388,8 @@ static int nct_provision(void)
 			return err;
 		}
 	}
+#endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
+
 	return 0;
 }
 
@@ -285,8 +400,8 @@ int nct_mqtt_connect(void)
 
 	nct.client.broker = (struct sockaddr *)&nct.broker;
 	nct.client.evt_cb = nct_mqtt_evt_handler;
-	nct.client.client_id.utf8 = (u8_t *)NRF_CLOUD_CLIENT_ID;
-	nct.client.client_id.size = strlen(NRF_CLOUD_CLIENT_ID);
+	nct.client.client_id.utf8 = (u8_t *)client_id_buf;
+	nct.client.client_id.size = strlen(client_id_buf);
 	nct.client.protocol_version = MQTT_VERSION_3_1_1;
 	nct.client.password = NULL;
 	nct.client.user_name = NULL;
@@ -406,6 +521,11 @@ int nct_init(void)
 	int err;
 
 	dc_endpoint_reset();
+
+	err = nct_topics_populate();
+	if (err) {
+		return err;
+	}
 
 	err = nct_provision();
 	if (err) {
