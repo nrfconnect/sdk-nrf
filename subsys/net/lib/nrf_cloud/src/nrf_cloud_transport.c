@@ -38,6 +38,12 @@ LOG_MODULE_REGISTER(nrf_cloud_transport);
 #define NRF_CLOUD_HOSTNAME CONFIG_NRF_CLOUD_HOST_NAME
 #define NRF_CLOUD_PORT CONFIG_NRF_CLOUD_PORT
 
+#if defined(CONFIG_NRF_CLOUD_IPV6)
+#define NRF_CLOUD_AF_FAMILY AF_INET6
+#else
+#define NRF_CLOUD_AF_FAMILY AF_INET
+#endif /* defined(CONFIG_NRF_CLOUD_IPV6) */
+
 #define AWS "$aws/things/"
 
 #define NCT_SHADOW_BASE_TOPIC  AWS NRF_CLOUD_CLIENT_ID "/shadow"
@@ -61,7 +67,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *client,
 static struct nct {
 	struct mqtt_sec_config tls_config;
 	struct mqtt_client client;
-	struct sockaddr_in broker;
+	struct sockaddr_storage broker;
 	struct mqtt_utf8 dc_tx_endp;
 	struct mqtt_utf8 dc_rx_endp;
 	u32_t message_id;
@@ -277,10 +283,6 @@ int nct_mqtt_connect(void)
 {
 	mqtt_client_init(&nct.client);
 
-	/* nct.broker.sin_len = sizeof(struct sockaddr_in); */
-	nct.broker.sin_family = AF_INET;
-	nct.broker.sin_port = htons(NRF_CLOUD_PORT);
-
 	nct.client.broker = (struct sockaddr *)&nct.broker;
 	nct.client.evt_cb = nct_mqtt_evt_handler;
 	nct.client.client_id.utf8 = (u8_t *)NRF_CLOUD_CLIENT_ID;
@@ -418,26 +420,57 @@ int nct_connect(void)
 	int err;
 	struct addrinfo *result;
 	struct addrinfo *addr;
+	struct addrinfo hints;
 
-	err = getaddrinfo(NRF_CLOUD_HOSTNAME, NULL, NULL, &result);
+	hints.ai_flags = 0;
+	hints.ai_family = NRF_CLOUD_AF_FAMILY;
+	hints.ai_socktype = SOCK_STREAM;
+
+	err = getaddrinfo(NRF_CLOUD_HOSTNAME, NULL, &hints, &result);
 	if (err) {
+		LOG_DBG("getaddrinfo failed %d", err);
+
 		return err;
 	}
 
 	addr = result;
 	err = -ENOENT;
 
-	/* Look for IPv4 address of the broker. */
+	/* Look for address of the broker. */
 	while (addr != NULL) {
 		/* IPv4 Address. */
-		if (addr->ai_addrlen == 4) {
-			nct.broker.sin_addr.s4_addr32[0] =
-			    ((struct nrf_sockaddr_in *)result->ai_addr)
+		if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
+			struct sockaddr_in *broker =
+				((struct sockaddr_in *)&nct.broker);
+
+			broker->sin_addr.s_addr =
+				((struct sockaddr_in *)addr->ai_addr)
 				->sin_addr.s_addr;
+			broker->sin_family = AF_INET;
+			broker->sin_port = htons(NRF_CLOUD_PORT);
+
+			LOG_DBG("IPv4 Address 0x%08x", broker->sin_addr.s_addr);
 			err = nct_mqtt_connect();
 			break;
-		} else if (addr->ai_addrlen == 6) {
-			/* TODO: Add support for IPv6 address. */
+		} else if (addr->ai_addrlen == sizeof(struct sockaddr_in6)) {
+			/* IPv6 Address. */
+			struct sockaddr_in6 *broker =
+				((struct sockaddr_in6 *)&nct.broker);
+
+			memcpy(broker->sin6_addr.s6_addr,
+				((struct sockaddr_in6 *)addr->ai_addr)
+				->sin6_addr.s6_addr,
+				sizeof(struct in6_addr));
+			broker->sin6_family = AF_INET6;
+			broker->sin6_port = htons(NRF_CLOUD_PORT);
+
+			err = nct_mqtt_connect();
+			break;
+		} else {
+			LOG_DBG("ai_addrlen = %d should be %d or %d",
+				addr->ai_addrlen,
+				sizeof(struct sockaddr_in),
+				sizeof(struct sockaddr_in6));
 		}
 
 		addr = addr->ai_next;
