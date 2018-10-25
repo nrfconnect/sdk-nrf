@@ -36,7 +36,7 @@ static ATOMIC_DEFINE(state_flags, STATE_NUM);
 
 static struct gatt_db_discovery_cb *callback;
 
-static u8_t *user_data_store(u8_t *user_data, size_t len)
+static void *user_data_store(const void *user_data, size_t len)
 {
 	u8_t *user_data_loc;
 
@@ -115,8 +115,7 @@ static struct bt_uuid *uuid_16_store(const struct bt_uuid *uuid)
 
 	__ASSERT_NO_MSG(uuid->type == BT_UUID_TYPE_16);
 
-	uuid_16 = (struct bt_uuid_16 *) user_data_store((u8_t *) uuid_16,
-			sizeof(*uuid_16));
+	uuid_16 = user_data_store(uuid_16, sizeof(*uuid_16));
 	if (!uuid_16) {
 		LOG_ERR("Could not store ATT UUID.");
 
@@ -132,8 +131,7 @@ static struct bt_uuid *uuid_128_store(const struct bt_uuid *uuid)
 
 	__ASSERT_NO_MSG(uuid->type == BT_UUID_TYPE_128);
 
-	uuid_128 = (struct bt_uuid_128 *) user_data_store((u8_t *) uuid_128,
-			sizeof(*uuid_128));
+	uuid_128 = user_data_store(uuid_128, sizeof(*uuid_128));
 
 	if (!uuid_128) {
 		LOG_ERR("Could not store ATT UUID.");
@@ -275,7 +273,7 @@ static u8_t discovery_callback(struct bt_conn *conn,
 
 		cur_attr->uuid = uuid_store(attr->uuid);
 		gatt_service->uuid = uuid_store(gatt_service->uuid);
-		cur_attr->user_data = user_data_store((u8_t *) gatt_service,
+		cur_attr->user_data = user_data_store(gatt_service,
 				sizeof(*gatt_service));
 		if (!cur_attr->uuid || !cur_attr->user_data ||
 		    !gatt_service->uuid) {
@@ -300,7 +298,7 @@ static u8_t discovery_callback(struct bt_conn *conn,
 
 		cur_attr->uuid = uuid_store(attr->uuid);
 		gatt_chrc->uuid = uuid_store(gatt_chrc->uuid);
-		cur_attr->user_data = user_data_store((u8_t *) gatt_chrc,
+		cur_attr->user_data = user_data_store(gatt_chrc,
 				sizeof(*gatt_chrc));
 		if (!cur_attr->uuid || !cur_attr->user_data ||
 		    !gatt_chrc->uuid) {
