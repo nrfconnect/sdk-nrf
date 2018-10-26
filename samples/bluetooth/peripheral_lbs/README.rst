@@ -20,7 +20,6 @@ Requirements
 Building and Running
 ********************
 
-This sample can be found under :file:`samples/bluetooth/peripheral_lbs` in the
-Nordic Connect SDK tree.
+This sample can be found under :file:`samples/bluetooth/peripheral_lbs` in the |NCS| folder structure.
 
 See :ref:`bluetooth setup section <bluetooth_setup>` for details.

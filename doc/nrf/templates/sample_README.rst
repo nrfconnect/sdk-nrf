@@ -71,7 +71,7 @@ Button 1:
 Building and running
 ********************
 
-This sample can be found under :file:`samples/bluetooth/XXX` in the |NCS| tree.
+This sample can be found under :file:`samples/bluetooth/XXX` in the |NCS| folder structure.
 
 See :ref:`bluetooth setup section <zephyr:bluetooth_setup>` for details.
 
