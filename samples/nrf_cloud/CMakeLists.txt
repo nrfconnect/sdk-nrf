@@ -11,3 +11,6 @@ project(NONE)
 
 target_sources(app PRIVATE src/main.c)
 zephyr_include_directories(src)
+
+include_directories(src/orientation_detector)
+target_sources(app PRIVATE src/orientation_detector/orientation_detector.c)
