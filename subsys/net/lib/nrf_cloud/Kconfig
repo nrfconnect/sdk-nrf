@@ -39,7 +39,7 @@ config NRF_CLOUD_CERTIFICATES_FILE
 config NRF_CLOUD_HOST_NAME
 	string "nRF Cloud server hostname"
 	depends on NRF_CLOUD
-	default "a2n7tk1kp18wix.iot.us-east-1.amazonaws.com"
+	default "a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com"
 
 config NRF_CLOUD_PORT
 	int "nRF Cloud server port"
