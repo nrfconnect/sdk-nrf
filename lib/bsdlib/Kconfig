@@ -9,14 +9,4 @@ config BSD_LIBRARY
 	bool "BSD Socket library for IP/TLS/DTLS"
 	select FLOAT
 	depends on CPU_CORTEX_M33
-
-config BSD_LIB_RESPONSE_THREAD_STACK_SIZE
-	int "RESPONSE_THREAD_STACK_SIZE"
-	default 1024
-	depends on BSD_LIBRARY
-
-config BSD_LIB_RESPONSE_THREAD_PRIO
-	int "RESPONSE_THREAD_PRIO"
-	default 1
-	depends on BSD_LIBRARY
 endmenu

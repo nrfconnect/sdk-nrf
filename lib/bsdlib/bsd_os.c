@@ -37,14 +37,6 @@
 
 void IPC_IRQHandler(void);
 
-/* Semaphore to start the application level recv processing. */
-static struct k_sem response_thread_sem;
-
-/* Thread objects for application level recv processing. */
-K_THREAD_STACK_DEFINE(response_thread_stack, CONFIG_BSD_LIB_RESPONSE_THREAD_STACK_SIZE);
-static struct k_thread response_thread_obj;
-
-
 s32_t bsd_os_timedwait(u32_t context, u32_t timeout)
 {
 	/* TODO: to be implemented */
@@ -157,23 +149,13 @@ void bsd_os_errno_set(int err_code)
 
 void bsd_os_application_irq_set(void)
 {
-	/* Open semaphore to start recv processing */
-	k_sem_give(&response_thread_sem);
+	NVIC_SetPendingIRQ(BSD_APPLICATION_IRQ);
 }
 
 
 void bsd_os_application_irq_clear(void)
 {
-	/* Nothing to do.*/
-}
-
-
-static void response_thread_func(void *unused1, void *unused2, void *unused3)
-{
-	while (1) {
-		k_sem_take(&response_thread_sem, K_FOREVER);
-		bsd_os_application_irq_handler();
-	}
+	NVIC_ClearPendingIRQ(BSD_APPLICATION_IRQ);
 }
 
 
@@ -186,16 +168,26 @@ ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
 }
 
 
+ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
+{
+	bsd_os_application_irq_handler();
+	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
+			  */
+	return 1; /* We should check if scheduling decision should be made */
+}
+
+
+void read_task_create(void)
+{
+	IRQ_DIRECT_CONNECT(BSD_APPLICATION_IRQ, BSD_APPLICATION_IRQ_PRIORITY,
+			   rpc_proxy_irq_handler, UNUSED_FLAGS);
+	irq_enable(BSD_APPLICATION_IRQ);
+}
+
 /* This function is called by bsd_init and must not be called explicitly. */
 void bsd_os_init(void)
 {
-	k_sem_init(&response_thread_sem, 0, 1);
-
-	/* Create the read task. */
-	k_thread_create(&response_thread_obj, response_thread_stack,
-			K_THREAD_STACK_SIZEOF(response_thread_stack),
-			response_thread_func, NULL, NULL, NULL,
-			CONFIG_BSD_LIB_RESPONSE_THREAD_PRIO, 0, K_NO_WAIT);
+	read_task_create();
 }
 
 static int _bsd_driver_init(struct device *unused)
