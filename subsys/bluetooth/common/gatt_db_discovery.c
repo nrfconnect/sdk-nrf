@@ -24,8 +24,8 @@ static struct bt_gatt_discover_params discover_params;
 static struct bt_gatt_attr attrs[CONFIG_NRF_BT_GATT_DB_DISCOVERY_MAX_ATTRS];
 
 static u8_t *user_data_chunks[CONFIG_NRF_BT_GATT_DB_DISCOVERY_MAX_MEM_CHUNKS];
-static u8_t cur_chunk_id;
-static u8_t cur_chunk_data_len;
+static size_t cur_chunk_id;
+static size_t cur_chunk_data_len;
 
 enum {
 	STATE_ATTRS_LOCKED,
@@ -34,7 +34,7 @@ enum {
 };
 static ATOMIC_DEFINE(state_flags, STATE_NUM);
 
-static struct gatt_db_discovery_cb *callback;
+static const struct gatt_db_discovery_cb *callback;
 
 static void *user_data_store(const void *user_data, size_t len)
 {
@@ -263,6 +263,7 @@ static u8_t discovery_callback(struct bt_conn *conn,
 	cur_attr = attr_store(attr);
 	if (!cur_attr) {
 		LOG_ERR("Not enough memory for next attribute descriptor.");
+		err = -ENOMEM;
 		goto error;
 	}
 
@@ -331,8 +332,8 @@ error:
 }
 
 int gatt_db_discovery_start(struct bt_conn *conn,
-			    struct bt_uuid *svc_uuid,
-			    struct gatt_db_discovery_cb *cb)
+			    const struct bt_uuid *svc_uuid,
+			    const struct gatt_db_discovery_cb *cb)
 {
 	int err;
 
