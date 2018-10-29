@@ -42,6 +42,15 @@
 
 }
 
+/* Center-align images */
+div.figure {
+ text-align: center;
+}
+
+.caption {
+ padding-top: 10px;
+}
+
 /* Background colors for the different sets */
 .ncs {
  background-color: #00a9ce;
