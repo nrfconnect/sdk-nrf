@@ -15,6 +15,7 @@
 #include <blectlr_util.h>
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
+#define LOG_MODULE_NAME bt_ctlr_hci_driver
 #include "common/log.h"
 
 static K_SEM_DEFINE(sem_recv, 0, UINT_MAX);
@@ -22,8 +23,8 @@ static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 
 static struct k_thread recv_thread_data;
 static struct k_thread signal_thread_data;
-static BT_STACK_NOINIT(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
-static BT_STACK_NOINIT(signal_thread_stack, CONFIG_BLECTLR_SIGNAL_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(signal_thread_stack, CONFIG_BLECTLR_SIGNAL_STACK_SIZE);
 
 void blectlr_assertion_handler(const char *const file, const u32_t line)
 {
