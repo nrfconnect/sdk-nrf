@@ -253,18 +253,26 @@ static void bt_receive_cb(const u8_t *const data, u16_t len)
 			return;
 		}
 
-		if ((len - pos) > sizeof(tx->data)) {
-			tx->len = sizeof(tx->data);
+		/* Keep the last byte of TX buffer for potential LF char. */
+		size_t tx_data_size = sizeof(tx->data) - 1;
+
+		if ((len - pos) > tx_data_size) {
+			tx->len = tx_data_size;
 		} else {
 			tx->len = (len - pos);
 		}
 
-		printk("Allocated buffer for bluetooth data with length %d\n",
-			tx->len);
-
 		memcpy(tx->data, &data[pos], tx->len);
 
 		pos += tx->len;
+
+		/* Append the LF character when the CR character triggered
+		 * transmission from the peer.
+		 */
+		if ((pos == len) && (data[len - 1] == '\r')) {
+			tx->data[tx->len] = '\n';
+			tx->len++;
+		}
 
 		k_fifo_put(&fifo_uart_tx_data, tx);
 	}
