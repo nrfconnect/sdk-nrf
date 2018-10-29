@@ -77,8 +77,8 @@ struct gatt_db_discovery_cb {
  *         code is returned.
  */
 int gatt_db_discovery_start(struct bt_conn *conn,
-			    struct bt_uuid *svc_uuid,
-			    struct gatt_db_discovery_cb *cb);
+			    const struct bt_uuid *svc_uuid,
+			    const struct gatt_db_discovery_cb *cb);
 
 /** @brief Release data associated with service discovery.
  *
