@@ -10,6 +10,7 @@
 #include <gpio.h>
 #include <misc/util.h>
 #include <logging/sys_log.h>
+#include <nrfx.h>
 #include <dk_buttons_and_leds.h>
 
 static struct k_delayed_work buttons_scan;
