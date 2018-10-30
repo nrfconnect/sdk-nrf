@@ -6,6 +6,10 @@
 
 menu "Nordic nRF Bluetooth"
 
+if BT_LL_NRFXLIB
+rsource "controller/Kconfig"
+endif # CONFIG_BT_LL_NRFXLIB
+
 config NRF_BT
 	bool
 	prompt "Enable Bluetooth"
@@ -17,9 +21,5 @@ if NRF_BT
 rsource "common/Kconfig"
 rsource "services/Kconfig"
 endif # NRF_BT
-
-if BT_LL_NRFXLIB
-rsource "controller/Kconfig"
-endif # CONFIG_BT_LL_NRFXLIB
 
 endmenu
