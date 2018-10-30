@@ -363,7 +363,7 @@ static void secure_boot_jump(void)
 		.msp_ns = vtor_ns[0],
 		.psp_ns = 0,
 		.control_ns.npriv = 0, /* Privileged mode*/
-		.control_ns.spsel = 1 /* Use PSP in Thread mode */
+		.control_ns.spsel = 0 /* Use MSP in Thread mode */
 	};
 
 	secure_boot_configure_ns(&secure_boot_ns_conf);
