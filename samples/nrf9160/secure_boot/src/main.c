@@ -312,6 +312,9 @@ static void secure_boot_config_peripherals(void)
 	/* Configure EGU1 as Non-Secure */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_EGU1_S), 0);
+	/* Configure EGU2 as Non-Secure */
+	secure_boot_config_peripheral(
+		NRFX_PERIPHERAL_ID_GET(NRF_EGU2_S), 0);
 	/* Configure FPU as non-secure */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_FPU_S), 0);
