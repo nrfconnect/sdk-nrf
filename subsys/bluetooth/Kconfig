@@ -4,22 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Nordic nRF Bluetooth"
+menu "Bluetooth Low Energy"
 
 if BT_LL_NRFXLIB
 rsource "controller/Kconfig"
 endif # CONFIG_BT_LL_NRFXLIB
 
-config NRF_BT
-	bool
-	prompt "Enable Bluetooth"
-	default n
-	help
-	  Enable Bluetooth functionality
-
-if NRF_BT
+if BT
 rsource "common/Kconfig"
 rsource "services/Kconfig"
-endif # NRF_BT
+endif # BT
 
 endmenu
