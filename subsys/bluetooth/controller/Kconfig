@@ -1,3 +1,5 @@
+menu "Nordic BLE controller"
+
 config BLECTLR_PRIO
 	# Hidden option to set the priority of the controller threads
 	int
@@ -17,3 +19,5 @@ config BLECTLR_SIGNAL_STACK_SIZE
 	help
 	  Size of the signal handler thread stack, used to process lower
 	  priority signals in the controller.
+
+endmenu
