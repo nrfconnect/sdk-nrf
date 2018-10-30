@@ -545,6 +545,7 @@ int nct_connect(void)
 	hints.ai_flags = 0;
 	hints.ai_family = NRF_CLOUD_AF_FAMILY;
 	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = 0;
 
 	err = getaddrinfo(NRF_CLOUD_HOSTNAME, NULL, &hints, &result);
 	if (err) {
