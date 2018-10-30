@@ -15,6 +15,6 @@ See :ref:`getting_started` for information about how to install the |NCS| and ab
 .. toctree::
    :maxdepth: 2
 
-   doc/release-notes
+   release_notes
    zephyr
    mcuboot

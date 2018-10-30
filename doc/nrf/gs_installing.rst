@@ -16,6 +16,9 @@ However, there are some Zephyr features that are currently only available on Lin
 * BlueZ integration
 * net-tools integration
 
+
+.. _gs_installing_toolchain:
+
 Installing the toolchain
 ************************
 
@@ -40,8 +43,8 @@ Cloning the repositories
 
 1. Fork the four |NCS| repositories to your own GitHub account by clicking the **Fork** button in the upper right-hand corner of each repository page:
 
-   a. |ncs_repo|
-   #. |ncs_zephyr_repo|
+   a. |ncs_zephyr_repo|
+   #. |ncs_repo|
    #. |ncs_mcuboot_repo|
    #. |ncs_nrfxlib_repo|
 
@@ -52,7 +55,7 @@ Cloning the repositories
 
    .. code-block:: console
 
-      git clone https://github.com/<username>/fw-nrfconnect-zephyr.git zephyr
+      git clone https://github.com/<username>/_fw-nrfconnect-nrf91-zephyr.git zephyr
 
       git clone https://github.com/<username>/fw-nrfconnect-mcuboot.git mcuboot
 
@@ -66,7 +69,7 @@ Cloning the repositories
    .. code-block:: console
 
       cd zephyr
-      git remote add ncs https://github.com/NordicPlayground/fw-nrfconnect-zephyr.git
+      git remote add ncs https://github.com/NordicPlayground/_fw-nrfconnect-nrf91-zephyr.git
 
       cd ../mcuboot
       git remote add ncs https://github.com/NordicPlayground/fw-nrfconnect-mcuboot.git
