@@ -15,7 +15,7 @@
 
 .. |ncs_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 
-.. |ncs_zephyr_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
+.. |ncs_zephyr_repo| replace:: https://github.com/NordicPlayground/_fw-nrfconnect-nrf91-zephyr
 
 .. |ncs_mcuboot_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
 
@@ -25,3 +25,13 @@
 .. _link_mcuboot: https://mcuboot.com
 
 .. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/_fw-nrfconnect-nrf91-zephyr/blob/master/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
+
+.. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
+
+.. _`nRF5x Command Line Tools Linux 32`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Linux32/58857
+.. _`nRF5x Command Line Tools Linux 64`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Linux64/58852
+.. _`nRF5x Command Line Tools Windows 32`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Win32/58850
+.. _`nRF5x Command Line Tools Windows 64`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Win64/70507
+.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-OSX/58855
+
+.. _`Semantic Versioning 2.0.0`: https://semver.org/
