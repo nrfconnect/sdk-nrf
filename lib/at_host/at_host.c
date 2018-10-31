@@ -74,7 +74,6 @@ static void uart_rx_handler(u8_t *data)
 		case MODE_NULL_TERM:
 			if (*data == termination[term_mode]) {
 				at_rdy = true;
-				at_buff[characters - 1] = '\r';
 			}
 			break;
 		case MODE_CR:
@@ -183,7 +182,7 @@ void at_host_process(void)
 		if (characters > AT_MAX_CMD_LEN) {
 			LOG_ERR("at_buff overflow\n");
 		} else {
-			at_host_at_socket_write(at_buff, characters - 1);
+			at_host_at_socket_write(at_buff, characters);
 		}
 		characters = 0;
 		uart_irq_rx_enable(uart_dev);
