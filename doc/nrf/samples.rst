@@ -18,6 +18,13 @@ The following demo applications are available:
 
 .. toctree::
    :maxdepth: 1
+   :caption: nRF9160 samples:
+   :glob:
+
+   ../../samples/nrf9160/*/README
+
+.. toctree::
+   :maxdepth: 1
    :caption: Other samples:
    :glob:
 

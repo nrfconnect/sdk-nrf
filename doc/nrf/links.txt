@@ -23,3 +23,5 @@
 
 .. |link_mcuboot| replace:: MCUboot
 .. _link_mcuboot: https://mcuboot.com
+
+.. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/_fw-nrfconnect-nrf91-zephyr/blob/master/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
