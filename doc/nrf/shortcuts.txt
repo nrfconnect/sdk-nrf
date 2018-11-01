@@ -1,1 +1,1 @@
-.. |NCS| replace:: nRF SDK
+.. |NCS| replace:: nRF Connect SDK

@@ -1,6 +1,6 @@
 
-nRF SDK: fw-nrfconnect-nrf
-##########################
+nRF Connect SDK: fw-nrfconnect-nrf
+##################################
 
 This repository contains the Nordic-specific source code additions to open
 source projects (Zephyr RTOS and MCUboot).
@@ -19,4 +19,3 @@ Disclaimer
 
 This repository is not intended or supported by Nordic Semiconductor for
 product development.
-

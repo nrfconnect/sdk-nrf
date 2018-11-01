@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# nRF SDK documentation build configuration file, created by
+# nRF Connect SDK documentation build configuration file, created by
 # sphinx-quickstart on Mon Jun 11 11:28:40 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -82,7 +82,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'nRF SDK'
+project = 'nRF Connect SDK'
 copyright = '2018, Nordic Semiconductor'
 author = 'Nordic Semiconductor'
 
