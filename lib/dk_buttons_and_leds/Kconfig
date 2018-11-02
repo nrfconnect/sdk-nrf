@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Button and LED Library for Nordic DKs"
-
-config DK_LIBRARY
+menuconfig DK_LIBRARY
 	bool "Button and LED Library for Nordic DKs"
 
 if DK_LIBRARY
@@ -24,5 +22,3 @@ config DK_LIBRARY_INVERT_LEDS
 	default y
 
 endif # DK_LIBRARY
-
-endmenu
