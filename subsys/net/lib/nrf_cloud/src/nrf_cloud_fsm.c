@@ -491,9 +491,9 @@ static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt)
 		struct nrf_cloud_data rx;
 		struct nrf_cloud_data tx;
 
-		err = nrf_coded_decode_data_endpoint(payload, &tx, &rx);
+		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx);
 		if (err) {
-			LOG_ERR("nrf_coded_decode_data_endpoint failed %d",
+			LOG_ERR("nrf_cloud_decode_data_endpoint failed %d",
 				err);
 			return err;
 		}
@@ -534,9 +534,9 @@ static int all_ua_request_handler(const struct nct_evt *nct_evt)
 		struct nrf_cloud_data rx;
 		struct nrf_cloud_data tx;
 
-		err = nrf_coded_decode_data_endpoint(payload, &tx, &rx);
+		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx);
 		if (err) {
-			LOG_ERR("nrf_coded_decode_data_endpoint Failed %d",
+			LOG_ERR("nrf_cloud_decode_data_endpoint Failed %d",
 				err);
 			return err;
 		}
