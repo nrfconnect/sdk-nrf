@@ -46,17 +46,19 @@ config DESKTOP_SYS_LOG_EVENT_MANAGER_LEVEL
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
 
 config DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
-	bool "Enable logging event manager events to profiler"
-	depends on PROFILER
+	bool "Log events to Profiler"
+	select PROFILER
+
+if DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
 
 config DESKTOP_EVENT_MANAGER_MAX_EVENT_CNT
-	depends on DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
-	int "Maximum number of events types in event manager"
+	int "Maximum number of event types"
 	default 64
 
 config DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION
-	bool "Tracing of events execution"
-	depends on DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
+	bool "Trace events execution"
 	default y
+
+endif # DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
 
 endif # EVENT_MANAGER
