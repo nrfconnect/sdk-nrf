@@ -1,0 +1,4 @@
+config NRF_BT_NUS
+	bool "Nordic UART service"
+	help
+	  Enable Nordic UART service.
