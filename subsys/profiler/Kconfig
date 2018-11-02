@@ -1,15 +1,15 @@
-menu "System profiler"
-
-config PROFILER
-	bool"Enable system profiler"
+menuconfig PROFILER
+	bool "System profiler"
 	default n
+
+if PROFILER
 
 config MAX_NUMBER_OF_CUSTOM_EVENTS
 	int "Maximum number of stored custom events types"
 	default 32
 
 config PROFILER_CUSTOM_EVENT_BUF_LEN
-	int "Length of data buffer for custom event data(in bytes)"
+	int "Length of data buffer for custom event data (in bytes)"
 	default 64
 
 config MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
@@ -22,12 +22,12 @@ choice
 	depends on PROFILER
 
 config PROFILER_SYSVIEW
-	bool "SysView profiler."
+	bool "SysView profiler"
 	select RTT_CONSOLE
 	select SEGGER_SYSTEMVIEW
 
 config PROFILER_NORDIC
-	bool "Nordic profiler."
+	bool "Nordic profiler"
 	select RTT_CONSOLE
 
 endchoice
@@ -64,6 +64,6 @@ config PROFILER_NORDIC_RTT_CHANNEL_COMMANDS
 	int "Command down channel index"
 	default 1
 
-endmenu #Advanced
+endmenu # Advanced
 
-endmenu
+endif # PROFILER
