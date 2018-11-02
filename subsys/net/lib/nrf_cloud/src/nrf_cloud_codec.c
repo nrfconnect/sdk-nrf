@@ -471,7 +471,7 @@ int nrf_cloud_encode_state(u32_t reported_state, struct nrf_cloud_data *output)
  *
  * @retval 0 or an error code indicating reason for failure
  */
-int nrf_coded_decode_data_endpoint(const struct nrf_cloud_data *input,
+int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *tx_endpoint,
 				   struct nrf_cloud_data *rx_endpoint)
 {
