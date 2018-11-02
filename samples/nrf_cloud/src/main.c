@@ -13,6 +13,8 @@
 #include <nrf_cloud.h>
 #include <dk_buttons_and_leds.h>
 #include <lte_lc.h>
+#include <misc/reboot.h>
+#include <bsd.h>
 
 #include "nrf_socket.h"
 #include "orientation_detector.h"
@@ -72,9 +74,10 @@ static bool flip_mode_enabled = true;
 
 /* Structure for delayed work */
 static struct k_delayed_work leds_update_work;
+static struct k_delayed_work connect_work;
 
 /* Forward declaration of functions */
-static void cloud_connect(void);
+static void cloud_connect(struct k_work *work);
 static void app_flip_poll(void);
 static void app_sensors_init(void);
 static void work_init(void);
@@ -83,12 +86,23 @@ static void sensor_data_send(struct nrf_cloud_sensor_data *data);
 /**@brief nRF Cloud error handler. */
 void app_nrf_cloud_error_handler(void)
 {
+	int err;
+
 	/* TODO: ensure that the delayed work is indeed cancelled.
 	 * The current situation is that work might be ongoing and "self-submit"
 	 * because it's executed from a higher priority thread
 	 */
 	k_delayed_work_cancel(&leds_update_work);
+	k_delayed_work_cancel(&connect_work);
 
+	/* Turn off and shutdown modem */
+	err = lte_lc_power_off();
+	__ASSERT(err == 0, "lte_lc_power_off failed %d", err);
+	bsd_shutdown();
+
+#if !defined(CMAKE_C_FLAGS_DEBUG)
+	sys_reboot(SYS_REBOOT_COLD);
+#else
 	/* Blinking all LEDs ON/OFF in pairs (1 and 4, 2 and 3)
 	 * if there is an recoverable error.
 	 */
@@ -100,10 +114,11 @@ void app_nrf_cloud_error_handler(void)
 			DK_LED1_MSK | DK_LED4_MSK);
 		k_sleep(250);
 	}
+#endif /* defined (APP_DEBUG_BUILD) */
 }
 
 /**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(u32_t error)
+void bsd_recoverable_error_handler(uint32_t error)
 {
 	ARG_UNUSED(error);
 
@@ -121,7 +136,7 @@ void bsd_recoverable_error_handler(u32_t error)
 }
 
 /**@brief Irrecoverable BSD library error. */
-void bsd_irrecoverable_error_handler(u32_t error)
+void bsd_irrecoverable_error_handler(uint32_t error)
 {
 	ARG_UNUSED(error);
 
@@ -319,7 +334,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED\n");
 		display_state = LEDS_INITIALIZING;
-		cloud_connect();
+		/* Try to reconnect after 3 seconds hold of time */
+		/* TODO: Investigate if this need to be 3 seconds */
+		k_delayed_work_submit(&connect_work, K_SECONDS(3));
 		break;
 	case NRF_CLOUD_EVT_ERROR:
 		printk("NRF_CLOUD_EVT_ERROR\n");
@@ -345,9 +362,11 @@ static void cloud_init(void)
 }
 
 /**@brief Connect to nRF Cloud, */
-static void cloud_connect(void)
+static void cloud_connect(struct k_work *work)
 {
 	int err;
+
+	ARG_UNUSED(work);
 
 	const enum nrf_cloud_ua supported_uas[] = {
 		NRF_CLOUD_UA_BUTTON
@@ -377,6 +396,7 @@ static void cloud_connect(void)
 	err = nrf_cloud_connect(&param);
 
 	if (err) {
+		printk("nrf_cloud_connect failed %d\n", err);
 		app_nrf_cloud_error_handler();
 	}
 }
@@ -493,6 +513,7 @@ static void app_process(void)
 static void work_init(void)
 {
 	k_delayed_work_init(&leds_update_work, app_leds_update);
+	k_delayed_work_init(&connect_work, cloud_connect);
 	k_delayed_work_submit(&leds_update_work, APP_LEDS_UPDATE_INTERVAL);
 }
 
@@ -611,7 +632,7 @@ void main(void)
 	work_init();
 	cloud_init();
 	modem_configure();
-	cloud_connect();
+	cloud_connect(NULL);
 
 	if (IS_ENABLED(CONFIG_CLOUD_UA_CONSOLE)) {
 		console_init();
