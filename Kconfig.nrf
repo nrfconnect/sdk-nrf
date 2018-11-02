@@ -6,10 +6,10 @@
 
 menu "Nordic nRF Connect"
 
-rsource "ext/Kconfig"
-rsource "lib/Kconfig"
 rsource "subsys/Kconfig"
+rsource "lib/Kconfig"
 rsource "drivers/Kconfig"
+rsource "ext/Kconfig"
 
 orsource "../nrfxlib/Kconfig.nrfxlib"
 
