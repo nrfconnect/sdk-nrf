@@ -4,11 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Enhanced ShockBurst"
-
-config NRF_ESB
-	bool
-	prompt "Enable Enhanced ShockBurst"
+menuconfig NRF_ESB
+	bool "Enhanced ShockBurst"
 	default n
 	help
 	  Enable ESB functionality.
@@ -171,6 +168,4 @@ endif # NRF_ESB_ADDR_HANG_BUGFIX
 
 endmenu
 
-endif #NRF_ENHANCED_SHOCKBURST
-
-endmenu
+endif # NRF_ENHANCED_SHOCKBURST
