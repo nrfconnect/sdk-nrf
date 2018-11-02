@@ -7,7 +7,7 @@
 # Kconfig - cJSON Library for Zephyr
 
 config  CJSON_LIB
-	bool "cJSON Library Support"
+	bool "cJSON library"
 	default n
 	help
 	  Enable the cJSON Library
