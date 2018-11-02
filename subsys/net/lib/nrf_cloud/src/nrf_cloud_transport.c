@@ -512,7 +512,11 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 
 	if (event_notify) {
-		nct_input(&evt);
+		int err = nct_input(&evt);
+
+		if (err != 0) {
+			LOG_ERR("nct_input: failed %d", err);
+		}
 	}
 }
 
@@ -618,10 +622,12 @@ int nct_cc_connect(void)
 int nct_cc_send(const struct nct_cc_data *cc_data)
 {
 	if (cc_data == NULL) {
+		LOG_ERR("cc_data == NULL");
 		return -EINVAL;
 	}
 
 	if (cc_data->opcode >= ARRAY_SIZE(nct_cc_tx_list)) {
+		LOG_ERR("opcode = %d", cc_data->opcode);
 		return -ENOTSUP;
 	}
 
@@ -645,7 +651,13 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 		publish.message_id, cc_data->opcode,
 		cc_data->data.len);
 
-	return mqtt_publish(&nct.client, &publish);
+	int err = mqtt_publish(&nct.client, &publish);
+
+	if (err) {
+		LOG_ERR("mqtt_publish failed %d", err);
+	}
+
+	return err;
 }
 
 int nct_cc_disconnect(void)
