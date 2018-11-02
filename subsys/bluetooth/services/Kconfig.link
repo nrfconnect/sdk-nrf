@@ -1,0 +1,31 @@
+menuconfig NRF_BT_LINK_CTX_MANAGER
+	bool
+	prompt "Link Context Manager library"
+	default n
+	help
+	  Enable Event Manager
+
+if NRF_BT_LINK_CTX_MANAGER
+
+config NRF_BT_LINK_CTX_MANAGER_MEM_BUF_ALIGN
+	int "Memory slab buffer alignment"
+	default 4
+	help
+	 The memory buffer must be aligned to an N-byte boundary,
+	 where N is a power of 2 larger than 2 (i.e. 4, 8, 16, …).
+
+config NRF_BT_LINK_CTX_MANAGER_SYS_LOG_LEVEL
+	int "Log level"
+	depends on SYS_LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for BLE Link Context Manager.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+endif # NRF_BT_LINK_CTX_MANAGER

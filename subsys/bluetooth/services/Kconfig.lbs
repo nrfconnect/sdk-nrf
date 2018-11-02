@@ -1,0 +1,16 @@
+menuconfig NRF_BT_LBS
+	bool "Led Button service"
+	help
+	  Enable Led Button service.
+
+if NRF_BT_LBS
+
+config NRF_BT_LBS_POLL_BUTTON
+	bool
+	default n
+	prompt "Support button state polling"
+	help
+	  Enable support for button state polling
+	  (button state change notify always supported)
+
+endif # NRF_BT_LBS
