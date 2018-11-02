@@ -4,11 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Event Manager"
-
-config EVENT_MANAGER
+menuconfig EVENT_MANAGER
 	bool
-	prompt "Enable Event Manager"
+	prompt "Event Manager"
 	depends on LINKER_ORPHAN_SECTION_PLACE
 	help
 	  Enable Event Manager.
@@ -62,5 +60,3 @@ config DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION
 	default y
 
 endif # EVENT_MANAGER
-
-endmenu
