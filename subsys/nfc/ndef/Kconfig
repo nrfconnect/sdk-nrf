@@ -4,17 +4,21 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-if NFC_NDEF
+config NFC_NDEF
+	bool
+	prompt "NDEF libraries"
+	help
+	  Enable NFC Data Exchange Format libraries
 
-menu "NDEF"
+if NFC_NDEF
 
 config NFC_NDEF_MSG
 	bool
-	prompt "NDEF Message generator module"
+	prompt "NDEF Message generator library"
 
 config NFC_NDEF_RECORD
 	bool
-	prompt "NDEF Record generator module"
+	prompt "NDEF Record generator library"
 
 config NFC_NDEF_TEXT_RECORD
 	bool
@@ -22,11 +26,11 @@ config NFC_NDEF_TEXT_RECORD
 
 config NFC_NDEF_URI_MSG
 	bool
-	prompt "NDEF URI messages generator module"
+	prompt "NDEF URI messages generator library"
 
 config NFC_NDEF_URI_REC
 	bool
-	prompt "NDEF URI record generator module"
+	prompt "NDEF URI record generator library"
 
 config NFC_NDEF_MSG_WITH_NLEN
 	bool
@@ -38,6 +42,5 @@ config NDEF_FILE_SIZE
 	default 1024
 	help
 		Set maximal NDEF file size
-endmenu
 
 endif # NFC_NDEF
