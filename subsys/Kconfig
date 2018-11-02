@@ -4,18 +4,14 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "subsystems"
-
 rsource "bluetooth/Kconfig"
 
 rsource "enhanced_shockburst/Kconfig"
-
-rsource "event_manager/Kconfig"
 
 rsource "net/Kconfig"
 
 rsource "nfc/Kconfig"
 
-rsource "profiler/Kconfig"
+rsource "event_manager/Kconfig"
 
-endmenu
+rsource "profiler/Kconfig"
