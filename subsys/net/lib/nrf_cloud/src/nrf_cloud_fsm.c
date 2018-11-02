@@ -252,7 +252,13 @@ int nfsm_handle_incoming_event(const struct nct_evt *nct_evt,
 			       enum nfsm_state state)
 {
 	if (state < STATE_TOTAL) {
-		return state_event_handlers[state][nct_evt->type](nct_evt);
+		int err = state_event_handlers[state][nct_evt->type](nct_evt);
+
+		if (err) {
+			LOG_ERR("Handler failed! state: %d, type: %d",
+				state, nct_evt->type);
+		}
+		return err;
 	}
 
 	__ASSERT_NO_MSG(false);
@@ -269,6 +275,7 @@ static int state_ua_initiate(void)
 	/* Publish report to the cloud on current status. */
 	err = nrf_cloud_encode_state(STATE_UA_INITIATE, &msg.data);
 	if (err) {
+		LOG_ERR("nrf_cloud_encode_state failed %d", err);
 		return err;
 	}
 
@@ -291,6 +298,7 @@ static int state_ua_input_wait(void)
 	/* Publish report to the cloud on current status. */
 	err = nrf_cloud_encode_state(STATE_UA_INPUT_WAIT, &msg.data);
 	if (err) {
+		LOG_ERR("nrf_cloud_encode_state failed %d", err);
 		return err;
 	}
 
@@ -318,6 +326,7 @@ static int state_ua_complete(void)
 
 	err = nrf_cloud_encode_state(STATE_UA_COMPLETE, &msg.data);
 	if (err) {
+		LOG_ERR("nrf_cloud_encode_state failed %d", err);
 		return err;
 	}
 
@@ -344,6 +353,7 @@ static int state_ua_mismatch(void)
 	/* Publish report to the cloud on current status. */
 	err = nrf_cloud_encode_state(STATE_UA_INPUT_MISMATCH, &msg.data);
 	if (err) {
+		LOG_ERR("nrf_cloud_encode_state failed %d", err);
 		return err;
 	}
 
@@ -364,7 +374,7 @@ static int state_ua_mismatch(void)
 
 static int drop_event_handler(const struct nct_evt *nct_evt)
 {
-	LOG_WRN("Dropping FSM transition %d", nct_evt->type);
+	LOG_DBG("Dropping FSM transition %d", nct_evt->type);
 	return 0;
 }
 
@@ -460,6 +470,7 @@ static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt)
 
 	err = nrf_cloud_decode_requested_state(payload, &expected_state);
 	if (err) {
+		LOG_ERR("nrf_cloud_decode_requested_state failed %d", err);
 		return err;
 	}
 
@@ -477,6 +488,8 @@ static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt)
 
 		err = nrf_coded_decode_data_endpoint(payload, &tx, &rx);
 		if (err) {
+			LOG_ERR("nrf_coded_decode_data_endpoint failed %d",
+				err);
 			return err;
 		}
 
@@ -500,6 +513,7 @@ static int all_ua_request_handler(const struct nct_evt *nct_evt)
 
 	err = nrf_cloud_decode_requested_state(payload, &expected_state);
 	if (err) {
+		LOG_ERR("nrf_cloud_decode_requested_state Failed %d", err);
 		return err;
 	}
 
@@ -517,6 +531,8 @@ static int all_ua_request_handler(const struct nct_evt *nct_evt)
 
 		err = nrf_coded_decode_data_endpoint(payload, &tx, &rx);
 		if (err) {
+			LOG_ERR("nrf_coded_decode_data_endpoint Failed %d",
+				err);
 			return err;
 		}
 		nct_dc_endpoint_set(&tx, &rx);
@@ -552,6 +568,7 @@ static int initiate_cmd_handler(const struct nct_evt *nct_evt)
 
 	err = nrf_cloud_decode_requested_state(payload, &expected_state);
 	if (err) {
+		LOG_ERR("nrf_cloud_decode_requested_state Failed %d", err);
 		return err;
 	}
 
@@ -572,6 +589,7 @@ static int initiate_cmd_in_dc_conn_handler(const struct nct_evt *nct_evt)
 
 	err = nrf_cloud_decode_requested_state(payload, &expected_state);
 	if (err) {
+		LOG_ERR("nrf_cloud_decode_requested_state Failed %d", err);
 		return err;
 	}
 

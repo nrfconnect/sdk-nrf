@@ -286,6 +286,7 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 
 	root_obj = cJSON_Parse(input->ptr);
 	if (root_obj == NULL) {
+		LOG_ERR("cJSON_Parse failed: %s", (char *)input->ptr);
 		return -ENOENT;
 	}
 
@@ -299,6 +300,7 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	pairing_state_obj = json_object_decode(pairing_obj, "state");
 
 	if (!pairing_state_obj || pairing_state_obj->type != cJSON_String) {
+		LOG_DBG("No valid state found!");
 		cJSON_Delete(root_obj);
 		return -ENOENT;
 	}
