@@ -38,6 +38,11 @@ LOG_MODULE_REGISTER(nrf_cloud_fsm);
  */
 #define PAIRING_STATUS_REPORT_ID 7890
 
+/**@brief Default message identifier.
+ * Can be any unique unsigned 16-bit integer value except zero.
+ */
+#define DEFAULT_REPORT_ID 1
+
 
 typedef int (*fsm_transition)(const struct nct_evt *nct_evt);
 
@@ -292,7 +297,7 @@ static int state_ua_input_wait(void)
 	int err;
 	struct nct_cc_data msg = {
 		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = 0,
+		.id = DEFAULT_REPORT_ID,
 	};
 
 	/* Publish report to the cloud on current status. */
@@ -347,7 +352,7 @@ static int state_ua_mismatch(void)
 	int err;
 	struct nct_cc_data msg = {
 		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = 0,
+		.id = DEFAULT_REPORT_ID,
 	};
 
 	/* Publish report to the cloud on current status. */
