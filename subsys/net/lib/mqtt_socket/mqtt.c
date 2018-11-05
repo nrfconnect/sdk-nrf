@@ -92,11 +92,6 @@ void event_notify(struct mqtt_client *client, const struct mqtt_evt *evt,
 		evt_cb(client, evt);
 
 		mqtt_mutex_lock();
-
-		if (flags & MQTT_EVT_FLAG_INSTANCE_RESET) {
-			client_free(client);
-			client_init(client);
-		}
 	}
 }
 
