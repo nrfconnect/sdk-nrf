@@ -49,10 +49,12 @@ enum profiler_arg {
  * Buffer required for data, which is send with event.
  */
 struct log_event_buf {
+#ifdef CONFIG_PROFILER
 	/** Pointer to the end of payload */
 	u8_t *payload;
 	/** Array where payload is located before it is send */
 	u8_t payload_start[CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN];
+#endif
 };
 
 
