@@ -1,4 +1,4 @@
-.. _sample_README:
+.. _sample:
 
 Sample template
 ###############
