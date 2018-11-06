@@ -233,7 +233,7 @@ static void secure_boot_config_peripheral(u8_t id, u32_t dma_present)
 	 *
 	 * Assign DMA capabilities and lock down the attribution.
 	 *
-	 * Note: the function assume that the peripheral ID matches
+	 * Note: the function assumes that the peripheral ID matches
 	 * the IRQ line.
 	 */
 	if (((NRF_SPU->PERIPHID[id].PERM & SPU_PERIPHID_PERM_PRESENT_Msk)
@@ -303,9 +303,9 @@ static void secure_boot_config_peripherals(void)
 	/* Configure GPIO as Non-Secure */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_GPIO), 0);
-	/* Configure GPIOTE1 as Non-Secure */
+	/* Make GPIOTE1 interrupt available in Non-Secure domain */
 	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE), 0);
+		NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE1_NS), 0);
 	/* Configure UARTE1 as Non-Secure */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_UARTE1), 0);
