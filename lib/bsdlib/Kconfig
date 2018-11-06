@@ -8,5 +8,8 @@ menu "BSD Library for nrf91"
 config BSD_LIBRARY
 	bool "BSD Socket library for IP/TLS/DTLS"
 	select FLOAT
+	# Modem tracing over UART use the UARTE1 as dedicated peripheral.
+	# This enable UARTE1 peripheral and includes nrfx UARTE driver.
+	select NRFX_UARTE1
 	depends on CPU_CORTEX_M33
 endmenu
