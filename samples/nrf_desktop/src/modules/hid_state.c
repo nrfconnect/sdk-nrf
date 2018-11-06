@@ -33,25 +33,17 @@
 #include <logging/sys_log.h>
 
 
+/**@brief Module state. */
+enum state {
+	STATE_DISCONNECTED,	/**< Not connected. */
+	STATE_CONNECTED_IDLE,	/**< Connected, no data exchange. */
+	STATE_CONNECTED_BUSY	/**< Connected, report is generated. */
+};
+
 /**@brief HID state item. */
 struct item {
 	u16_t usage_id;		/**< HID usage ID. */
 	s16_t value;		/**< HID value. */
-};
-
-/**@brief Enqueued HID state item. */
-struct item_event {
-	sys_snode_t node;	/**< Event queue linked list node. */
-	struct item item;	/**< HID state item which has been enqueued. */
-	enum target_report tr;	/**< HID target report. */
-	u32_t timestamp;	/**< HID event timestamp. */
-};
-
-/**@brief Module state. */
-enum state {
-	HID_STATE_DISCONNECTED,		/**< Not connected. */
-	HID_STATE_CONNECTED_IDLE,	/**< Connected, no data exchange. */
-	HID_STATE_CONNECTED_BUSY	/**< Connected, report is generated. */
 };
 
 /**@brief Structure keeping state for a single target HID report. */
@@ -60,16 +52,34 @@ struct items {
 	u8_t item_count;
 };
 
+/**@brief Enqueued HID state item. */
+struct item_event {
+	sys_snode_t node;	/**< Event queue linked list node. */
+	struct item item;	/**< HID state item which has been enqueued. */
+	u32_t timestamp;	/**< HID event timestamp. */
+};
+
+/**@brief Event queue. */
+struct eventq {
+	sys_slist_t root;
+	size_t len;
+};
+
+/**@brief Report state. */
+struct report {
+	enum state state;
+	unsigned int cnt;
+	struct items items;
+	struct eventq eventq;
+};
+
+
 /**@brief HID state structure. */
 struct hid_state {
-	struct items	items[TARGET_REPORT_COUNT];
-	sys_slist_t	eventq;
-	u8_t		eventq_len;
-	enum state	state;
-	s32_t		wheel_acc;
-	s16_t		last_dx;
-	s16_t		last_dy;
-	unsigned int	report_cnt[TARGET_REPORT_COUNT];
+	struct report report[TARGET_REPORT_COUNT];
+	s32_t wheel_acc;
+	s16_t last_dx;
+	s16_t last_dy;
 };
 
 
@@ -147,35 +157,77 @@ static int usage_id_compare(const void *a, const void *b)
 	return (p_a->usage_id - p_b->usage_id);
 }
 
-static void eventq_reset(void)
+static void eventq_reset(struct eventq *eventq)
 {
 	struct item_event *event;
 	struct item_event *tmp;
 
-	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&state.eventq, event, tmp, node) {
-		sys_slist_remove(&state.eventq, NULL, &event->node);
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&eventq->root, event, tmp, node) {
+		sys_slist_remove(&eventq->root, NULL, &event->node);
 
 		k_free(event);
 	}
 
-	sys_slist_init(&state.eventq);
-	state.eventq_len = 0;
+	sys_slist_init(&eventq->root);
+	eventq->len = 0;
 }
 
-/**@brief Check if the event queue is full. */
-static bool eventq_full(void)
+static bool eventq_is_full(const struct eventq *eventq)
 {
-	return (state.eventq_len >= CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE);
+	return (eventq->len >= CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE);
 }
 
-static void eventq_region_purge(sys_snode_t *last_to_purge)
+
+static bool eventq_is_empty(struct eventq *eventq)
+{
+	bool empty = sys_slist_is_empty(&eventq->root);
+
+	__ASSERT_NO_MSG(!empty == (eventq->len != 0));
+
+	return empty;
+}
+
+static struct item_event *eventq_get(struct eventq *eventq)
+{
+	sys_snode_t *node = sys_slist_get(&eventq->root);
+
+	if (node == NULL) {
+		return NULL;
+	}
+
+	eventq->len--;
+
+	return CONTAINER_OF(node, struct item_event, node);
+}
+
+static void eventq_append(struct eventq *eventq, u16_t usage_id, s16_t value)
+{
+	struct item_event *hid_event = k_malloc(sizeof(*hid_event));
+
+	if (!hid_event) {
+		SYS_LOG_WRN("Failed to allocate HID event");
+		return;
+	}
+
+	hid_event->item.usage_id = usage_id;
+	hid_event->item.value = value;
+	hid_event->timestamp = MSEC(z_tick_get());
+
+	/* Add a new event to the queue. */
+	sys_slist_append(&eventq->root, &hid_event->node);
+
+	eventq->len++;
+}
+
+static void eventq_region_purge(struct eventq *eventq,
+				sys_snode_t *last_to_purge)
 {
 	sys_snode_t *tmp;
 	sys_snode_t *tmp_safe;
 	size_t cnt = 0;
 
-	SYS_SLIST_FOR_EACH_NODE_SAFE(&state.eventq, tmp, tmp_safe) {
-		sys_slist_remove(&state.eventq, NULL, tmp);
+	SYS_SLIST_FOR_EACH_NODE_SAFE(&eventq->root, tmp, tmp_safe) {
+		sys_slist_remove(&eventq->root, NULL, tmp);
 
 		k_free(CONTAINER_OF(tmp, struct item_event, node));
 		cnt++;
@@ -185,20 +237,19 @@ static void eventq_region_purge(sys_snode_t *last_to_purge)
 		}
 	}
 
-	state.eventq_len -= cnt;
+	eventq->len -= cnt;
 
 	SYS_LOG_WRN("%u stale events removed from the queue!", cnt);
 }
 
 
-/**@brief Remove stale events from the event queue. */
-static void eventq_cleanup(u32_t timestamp)
+static void eventq_cleanup(struct eventq *eventq, u32_t timestamp)
 {
 	/* Find timed out events. */
 
 	sys_snode_t *first_valid;
 
-	SYS_SLIST_FOR_EACH_NODE(&state.eventq, first_valid) {
+	SYS_SLIST_FOR_EACH_NODE(&eventq->root, first_valid) {
 		u32_t diff = timestamp - CONTAINER_OF(
 			first_valid, struct item_event, node)->timestamp;
 
@@ -211,7 +262,7 @@ static void eventq_cleanup(u32_t timestamp)
 	 * key down.
 	 */
 
-	sys_snode_t *maxfound = sys_slist_peek_head(&state.eventq);
+	sys_snode_t *maxfound = sys_slist_peek_head(&eventq->root);
 	size_t maxfound_pos = 0;
 
 	sys_snode_t *cur;
@@ -219,7 +270,7 @@ static void eventq_cleanup(u32_t timestamp)
 
 	sys_snode_t *tmp_safe;
 
-	SYS_SLIST_FOR_EACH_NODE_SAFE(&state.eventq, cur, tmp_safe) {
+	SYS_SLIST_FOR_EACH_NODE_SAFE(&eventq->root, cur, tmp_safe) {
 		const struct item cur_item =
 			CONTAINER_OF(cur, struct item_event, node)->item;
 
@@ -233,7 +284,7 @@ static void eventq_cleanup(u32_t timestamp)
 			sys_snode_t *j = cur;
 			size_t j_pos = cur_pos;
 
-			SYS_SLIST_ITERATE_FROM_NODE(&state.eventq, j) {
+			SYS_SLIST_ITERATE_FROM_NODE(&eventq->root, j) {
 				j_pos++;
 				if (j == first_valid) {
 					break;
@@ -276,15 +327,14 @@ static void eventq_cleanup(u32_t timestamp)
 			/* All events up to this point have pairs and can
 			 * be deleted.
 			 */
-			eventq_region_purge(maxfound);
+			eventq_region_purge(eventq, maxfound);
 		}
 
 		cur_pos++;
 	}
 }
 
-/**@brief Update value linked with given usage. */
-static bool value_set(struct items *items, u16_t usage_id, s16_t report)
+static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 {
 	const u8_t prev_item_count = items->item_count;
 
@@ -294,7 +344,7 @@ static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 	__ASSERT_NO_MSG(usage_id != 0);
 
 	/* Report equal to zero brings no change. This should never happen. */
-	__ASSERT_NO_MSG(report != 0);
+	__ASSERT_NO_MSG(value != 0);
 
 	p_item = bsearch(&usage_id,
 			 (u8_t *)items->item,
@@ -304,7 +354,7 @@ static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 
 	if (p_item != NULL) {
 		/* Item is present in the array - update its value. */
-		p_item->value += report;
+		p_item->value += value;
 		if (p_item->value == 0) {
 			__ASSERT_NO_MSG(items->item_count != 0);
 			items->item_count -= 1;
@@ -312,7 +362,7 @@ static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 		}
 
 		update_needed = true;
-	} else if (report < 0) {
+	} else if (value < 0) {
 		/* For items with absolute value, the value is used as
 		 * a reference counter and must not fall below zero. This
 		 * could happen if a key up event is lost and the state
@@ -334,7 +384,7 @@ static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 
 		/* Record this value change. */
 		items->item[idx].usage_id = usage_id;
-		items->item[idx].value = report;
+		items->item[idx].value = value;
 		items->item_count += 1;
 
 		update_needed = true;
@@ -367,8 +417,9 @@ static bool value_set(struct items *items, u16_t usage_id, s16_t report)
 static void send_report_keyboard(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		const size_t max =
-			ARRAY_SIZE(state.items[TARGET_REPORT_KEYBOARD].item);
+		struct report *report = &state.report[TARGET_REPORT_KEYBOARD];
+
+		const size_t max = ARRAY_SIZE(report->items.item);
 
 		struct hid_keyboard_event *event = new_hid_keyboard_event();
 		size_t cnt = 0;
@@ -376,8 +427,7 @@ static void send_report_keyboard(void)
 		for (size_t i = 0;
 		     (i < max) && (cnt < ARRAY_SIZE(event->keys));
 		     i++, cnt++) {
-			struct item item =
-				state.items[TARGET_REPORT_KEYBOARD].item[max - i - 1];
+			struct item item = report->items.item[max - i - 1];
 
 			if (item.value) {
 				event->keys[cnt] = item.usage_id;
@@ -394,7 +444,7 @@ static void send_report_keyboard(void)
 		event->modifier_bm = 0;
 
 		EVENT_SUBMIT(event);
-		state.report_cnt[TARGET_REPORT_KEYBOARD]++;
+		report->cnt++;
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
@@ -404,6 +454,8 @@ static void send_report_keyboard(void)
 static void send_report_mouse(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+		struct report *report = &state.report[TARGET_REPORT_MOUSE];
+
 		struct hid_mouse_event *event = new_hid_mouse_event();
 
 		event->dx        = state.last_dx;
@@ -411,12 +463,13 @@ static void send_report_mouse(void)
 		event->wheel     = state.wheel_acc;
 		event->button_bm = 0;
 
+		state.last_dx   = 0;
+		state.last_dy   = 0;
+		state.wheel_acc = 0;
+
 		/* Traverse pressed keys and build mouse buttons report */
-		for (size_t i = 0;
-		     i < ARRAY_SIZE(state.items[TARGET_REPORT_MOUSE].item);
-		     i++) {
-			struct item item =
-				state.items[TARGET_REPORT_MOUSE].item[i];
+		for (size_t i = 0; i < ARRAY_SIZE(report->items.item); i++) {
+			struct item item = report->items.item[i];
 
 			if (item.value) {
 				__ASSERT_NO_MSG(item.usage_id != 0);
@@ -429,20 +482,16 @@ static void send_report_mouse(void)
 		}
 
 		EVENT_SUBMIT(event);
-		state.report_cnt[TARGET_REPORT_MOUSE]++;
-
-		state.last_dx   = 0;
-		state.last_dy   = 0;
-		state.wheel_acc = 0;
+		report->cnt++;
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
 	}
 }
 
-static void report_send(enum target_report target_report)
+static void report_send(enum target_report tr)
 {
-	switch (target_report) {
+	switch (tr) {
 	case TARGET_REPORT_KEYBOARD:
 		send_report_keyboard();
 		break;
@@ -462,46 +511,45 @@ static void report_send(enum target_report target_report)
 		break;
 	}
 
-	if (state.report_cnt[target_report] == 1) {
+	struct report *report = &state.report[tr];
+
+	if (report->cnt == 1) {
 		/* To make sure report is sampled on every
 		 * connection event, add one additional report
 		 * to the pipeline.
 		 */
-		report_send(TARGET_REPORT_MOUSE);
+		report_send(tr);
 	}
 
-	state.state = HID_STATE_CONNECTED_BUSY;
+	report->state = STATE_CONNECTED_BUSY;
 }
 
-static void report_issued(void)
+static void report_issued(enum target_report tr)
 {
+	struct report *report = &state.report[tr];
 	bool update_needed;
 
 	do {
-		if (sys_slist_is_empty(&state.eventq)) {
+		if (eventq_is_empty(&report->eventq)) {
 			/* Module is connected but there are no events to
 			 * dequeue. Switch to idle state.
 			 */
-			state.state = HID_STATE_CONNECTED_IDLE;
+			report->state = STATE_CONNECTED_IDLE;
 			break;
 		}
 
 		/* There are enqueued events to handle. */
-		sys_snode_t *node = sys_slist_get(&state.eventq);
+		struct item_event *event = eventq_get(&report->eventq);
 
-		state.eventq_len--;
+		__ASSERT_NO_MSG(event != NULL);
 
-		struct item_event *event = CONTAINER_OF(node,
-							struct item_event,
-							node);
-
-		update_needed = value_set(&(state.items[event->tr]),
-					       event->item.usage_id,
-					       event->item.value);
+		update_needed = key_value_set(&report->items,
+					      event->item.usage_id,
+					      event->item.value);
 
 		if (update_needed) {
 			/* Some item was updated. Report must be issued. */
-			report_send(event->tr);
+			report_send(tr);
 		}
 
 		k_free(event);
@@ -509,7 +557,7 @@ static void report_issued(void)
 		/* No item was changed. Try next event. */
 	} while (!update_needed);
 
-	if (!update_needed) {
+	if (!update_needed && (tr == TARGET_REPORT_MOUSE)) {
 		if ((state.last_dx != 0) ||
 		    (state.last_dy != 0) ||
 		    (state.wheel_acc != 0)) {
@@ -518,45 +566,54 @@ static void report_issued(void)
 	}
 }
 
-static void connect(void)
+static void connect(enum target_report tr)
 {
-	state.last_dx   = 0;
-	state.last_dy   = 0;
-	state.wheel_acc = 0;
-
-	if (!sys_slist_is_empty(&state.eventq)) {
-		/* Remove all stale events from the queue. */
-		eventq_cleanup(MSEC(z_tick_get()));
+	switch (tr) {
+	case TARGET_REPORT_MOUSE:
+		state.last_dx   = 0;
+		state.last_dy   = 0;
+		state.wheel_acc = 0;
+		break;
+	case TARGET_REPORT_KEYBOARD:
+	case TARGET_REPORT_MPLAYER:
+		break;
+	default:
+		break;
 	}
 
-	if (sys_slist_is_empty(&state.eventq)) {
+	struct report *report = &state.report[tr];
+
+	if (!eventq_is_empty(&report->eventq)) {
+		/* Remove all stale events from the queue. */
+		eventq_cleanup(&report->eventq, MSEC(z_tick_get()));
+	}
+
+	if (eventq_is_empty(&report->eventq)) {
 		/* No events left on the queue - connect but stay idle. */
-		state.state = HID_STATE_CONNECTED_IDLE;
+		report->state = STATE_CONNECTED_IDLE;
 	} else {
-		/* There are some collected events,
-		 * start event draining procedure.
-		 */
-		state.state = HID_STATE_CONNECTED_BUSY;
-		report_issued();
+		/* There are some collected events - start draining events. */
+		report->state = STATE_CONNECTED_BUSY;
+		report_issued(tr);
 	}
 }
 
-static void disconnect(void)
+static void disconnect(enum target_report tr)
 {
-	/* Check if module is connected. Disconnect request can happen
-	 * if Bluetooth connection attempt failed.
-	 */
-	if (state.state != HID_STATE_DISCONNECTED) {
+	struct report *report = &state.report[tr];
+
+	/* Check if report is connected. */
+	if (report->state != STATE_DISCONNECTED) {
 		/* Disconnection starts a new state session. Queue is cleared
 		 * and event collection is started. When a connection happens,
 		 * the same queue is used until all collected
 		 * events are drained.
 		 */
-		state.state = HID_STATE_DISCONNECTED;
+		report->state = STATE_DISCONNECTED;
 
 		/* Clear state and queue. */
-		memset(state.items, 0, sizeof(state.items));
-		eventq_reset();
+		memset(&report->items, 0, sizeof(report->items));
+		eventq_reset(&report->eventq);
 	}
 }
 
@@ -568,89 +625,73 @@ static void keep_device_active(void)
 }
 
 /**@brief Enqueue event that updates a given usage. */
-static void enqueue(enum target_report tr, u16_t usage_id, s16_t report)
+static void enqueue(enum target_report tr, u16_t usage_id, s16_t value)
 {
-	eventq_cleanup(MSEC(z_tick_get()));
+	struct report *report = &state.report[tr];
 
-	if (eventq_full()) {
-		if (state.state == HID_STATE_DISCONNECTED) {
+	eventq_cleanup(&report->eventq, MSEC(z_tick_get()));
+
+	if (eventq_is_full(&report->eventq)) {
+		if (report->state == STATE_DISCONNECTED) {
 			/* In disconnected state no items are recorded yet.
 			 * Try to remove queued items starting from the
 			 * oldest one.
 			 */
 			sys_snode_t *i;
 
-			SYS_SLIST_FOR_EACH_NODE(&state.eventq, i) {
+			SYS_SLIST_FOR_EACH_NODE(&report->eventq.root, i) {
 				/* Initial cleanup was done above. Queue will
 				 * not contain events with expired timestamp.
 				 */
-				u32_t timestamp = (CONTAINER_OF(i, struct item_event, node)->timestamp + CONFIG_DESKTOP_HID_REPORT_EXPIRATION);
+				u32_t timestamp =
+					CONTAINER_OF(i,
+						     struct item_event,
+						     node)->timestamp +
+					CONFIG_DESKTOP_HID_REPORT_EXPIRATION;
 
-				eventq_cleanup(timestamp);
-				if (!eventq_full()) {
+				eventq_cleanup(&report->eventq, timestamp);
+
+				if (!eventq_is_full(&report->eventq)) {
 					/* At least one element was removed
 					 * from the queue. Do not continue
 					 * list traverse, content was modified!
 					 */
-
 					break;
 				}
 			}
 		}
-		if (eventq_full()) {
+
+		if (eventq_is_full(&report->eventq)) {
 			/* To maintain the sanity of HID state, clear
 			 * all recorded events and items.
 			 */
 			SYS_LOG_WRN("Queue is full, all events are dropped!");
-			memset(state.items, 0, sizeof(state.items));
-			eventq_reset();
+			memset(&report->items, 0, sizeof(report->items));
+			eventq_reset(&report->eventq);
 		}
 	}
 
-	struct item_event *hid_event = k_malloc(sizeof(*hid_event));
-
-	if (!hid_event) {
-		SYS_LOG_WRN("Failed to allocate HID event");
-		return;
-	}
-
-	hid_event->item.usage_id = usage_id;
-	hid_event->item.value = report;
-	hid_event->tr = tr;
-	hid_event->timestamp = MSEC(z_tick_get());
-
-	/* Add a new event to the queue. */
-	sys_slist_append(&state.eventq, &hid_event->node);
-
-	state.eventq_len++;
+	eventq_append(&report->eventq, usage_id, value);
 }
 
-/**
- * @brief Function for updating the value linked to the HID usage.
- *
- * The function updates the HID state and sends a report if BLE is connected.
- * If a connection was not made yet, information about usage change may be
- * stored in a queue if usage is queueable.
- *
- * @param[in] map	HID keymap containing the usage to update.
- * @param[in] report	Value linked with the usage.
- */
-static void update(struct hid_keymap *map, s16_t report)
+/**@brief Function for updating the value linked to the HID usage. */
+static void update_key(const struct hid_keymap *map, s16_t value)
 {
-	switch (state.state) {
-	case HID_STATE_CONNECTED_IDLE:
+	struct report *report = &state.report[map->target_report];
+
+	switch (report->state) {
+	case STATE_CONNECTED_IDLE:
 		/* Update state and issue report generation event. */
-		if (value_set(&state.items[map->target_report],
-		    map->usage_id, report)) {
+		if (key_value_set(&report->items, map->usage_id, value)) {
 			report_send(map->target_report);
 		}
 		break;
 
-	case HID_STATE_DISCONNECTED:
+	case STATE_DISCONNECTED:
 		/* Report cannot be sent yet - enqueue this HID event. */
-	case HID_STATE_CONNECTED_BUSY:
+	case STATE_CONNECTED_BUSY:
 		/* Sequence is important - enqueue this HID event. */
-		enqueue(map->target_report, map->usage_id, report);
+		enqueue(map->target_report, map->usage_id, value);
 		break;
 
 	default:
@@ -658,7 +699,6 @@ static void update(struct hid_keymap *map, s16_t report)
 	}
 }
 
-/* @brief Initialize HID state. */
 static void init(void)
 {
 	if (IS_ENABLED(CONFIG_ASSERT)) {
@@ -670,8 +710,6 @@ static void init(void)
 			}
 		}
 	}
-
-	eventq_reset();
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -679,12 +717,13 @@ static bool event_handler(const struct event_header *eh)
 	if (is_motion_event(eh)) {
 		const struct motion_event *event = cast_motion_event(eh);
 
+		/* Do not accumulate mouse motion data */
 		state.last_dx = event->dx;
 		state.last_dy = event->dy;
 
-		/* Do not accumulate mouse motion data */
-		if (state.state == HID_STATE_CONNECTED_IDLE) {
-			report_send(TARGET_REPORT_MOUSE);
+		enum target_report tr = TARGET_REPORT_MOUSE;
+		if (state.report[tr].state == STATE_CONNECTED_IDLE) {
+			report_send(tr);
 		}
 
 		keep_device_active();
@@ -696,10 +735,10 @@ static bool event_handler(const struct event_header *eh)
 		const struct hid_report_sent_event *event =
 			cast_hid_report_sent_event(eh);
 
-		__ASSERT_NO_MSG(state.report_cnt[event->report_type] > 0);
+		__ASSERT_NO_MSG(state.report[event->report_type].cnt > 0);
 
-		report_issued();
-		state.report_cnt[event->report_type]--;
+		report_issued(event->report_type);
+		state.report[event->report_type].cnt--;
 		return false;
 	}
 
@@ -708,8 +747,9 @@ static bool event_handler(const struct event_header *eh)
 
 		state.wheel_acc += event->wheel;
 
-		if (state.state == HID_STATE_CONNECTED_IDLE) {
-			report_send(TARGET_REPORT_MOUSE);
+		enum target_report tr = TARGET_REPORT_MOUSE;
+		if (state.report[tr].state == STATE_CONNECTED_IDLE) {
+			report_send(tr);
 		}
 
 		keep_device_active();
@@ -728,8 +768,8 @@ static bool event_handler(const struct event_header *eh)
 		}
 
 		/* Key down increases key ref counter, key up decreases it. */
-		s16_t report = (event->pressed != false) ? (1) : (-1);
-		update(map, report);
+		s16_t value = (event->pressed != false) ? (1) : (-1);
+		update_key(map, value);
 
 		keep_device_active();
 
@@ -741,9 +781,9 @@ static bool event_handler(const struct event_header *eh)
 			cast_hid_report_subscription_event(eh);
 
 		if (event->enabled) {
-			connect();
+			connect(event->report_type);
 		} else {
-			disconnect();
+			disconnect(event->report_type);
 		}
 
 		return false;
