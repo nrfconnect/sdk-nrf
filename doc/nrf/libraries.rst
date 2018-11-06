@@ -12,11 +12,11 @@ Here you can find documentation for these libraries, including API documentation
    :caption: Bluetooth libraries:
    :glob:
 
-   ../../include/bluetooth/common/*README
+   ../../include/bluetooth/common/*
 
 .. toctree::
    :maxdepth: 1
    :caption: Bluetooth services:
    :glob:
 
-   ../../include/bluetooth/services/*README
+   ../../include/bluetooth/services/*
