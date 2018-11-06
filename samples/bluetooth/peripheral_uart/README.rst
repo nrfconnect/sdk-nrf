@@ -3,7 +3,7 @@
 Bluetooth: Peripheral UART
 ##########################
 
-The Peripheral UART sample demonstrates how to use the :ref:`nus_service`.
+The Peripheral UART sample demonstrates how to use the :ref:`nus_service_readme`.
 It uses the NUS service to send data back and forth between a UART connection and a Bluetooth LE connection, emulating a serial port over Bluetooth LE.
 
 
@@ -72,7 +72,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`nus_service`
+* :ref:`nus_service_readme`
 
 In addition, it uses the following Zephyr libraries:
 

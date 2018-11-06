@@ -1,4 +1,4 @@
-.. _nus_service:
+.. _nus_service_readme:
 
 Nordic UART (NUS) GATT Service
 ##############################

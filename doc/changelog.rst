@@ -79,9 +79,9 @@ The following list contains the most important changes since the last release:
 * Added **gps_sim** library. This library simulates a simple GPS device providing NMEA strings with generated data that can be accessed through the GPS API.
 * Added **sensor_sim** library. This library simulates a sensor device that can be accessed through the sensor API, currently supporting the acceleration channels in the API.
 * Added :doc:`MCUboot <mcuboot:index>` documentation.
-* Added documentation for the :ref:`peripheral_uart` sample and the :ref:`nus_service`.
-* Added **scan** library for BLE. This library handles BLE scanning for your application. See :ref:`nrf_bt_scan`.
-* Added **gatt_db_discovery** library for BLE. This library handles service discovery on BLE GATT servers. See :ref:`gatt_db_discovery`.
+* Added documentation for the :ref:`peripheral_uart` sample and the :ref:`nus_service_readme`.
+* Added **scan** library for BLE. This library handles BLE scanning for your application. See :ref:`nrf_bt_scan_readme`.
+* Added **gatt_db_discovery** library for BLE. This library handles service discovery on BLE GATT servers. See :ref:`gatt_db_discovery_readme`.
 * Added **central_hids** BLE sample. This sample connects to HID devices and uses **gatt_db_discovery** library to perform HID service discovery.
 * Added **ndef** libraries for NFC. These libraries handle NDEF records and message generation. Text and URI records are supported for now.
 * Added **record_text** NFC sample. This sample uses the NFC Type 2 Tag to expose a Text record to NFC polling devices. It requires the binary libraries in the nrfxlib repository.
