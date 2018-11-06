@@ -16,7 +16,9 @@
 #include <zephyr/types.h>
 #include <errno.h>
 
-#ifndef ENOKEY 
+#include <nrfx_uarte.h>
+
+#ifndef ENOKEY
 #define ENOKEY 2001
 #endif
 
@@ -34,6 +36,12 @@
 
 #define UNUSED_FLAGS 0
 
+/* Handle modem traces from IRQ context with lower priority. */
+#define TRACE_IRQ EGU2_IRQn
+#define TRACE_IRQ_PRIORITY 6
+
+/* Use UARTE1 as a dedicated peripheral to print traces. */
+static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 
 void IPC_IRQHandler(void);
 
@@ -146,18 +154,25 @@ void bsd_os_errno_set(int err_code)
 	}
 }
 
-
 void bsd_os_application_irq_set(void)
 {
 	NVIC_SetPendingIRQ(BSD_APPLICATION_IRQ);
 }
-
 
 void bsd_os_application_irq_clear(void)
 {
 	NVIC_ClearPendingIRQ(BSD_APPLICATION_IRQ);
 }
 
+void bsd_os_trace_irq_set(void)
+{
+	NVIC_SetPendingIRQ(TRACE_IRQ);
+}
+
+void bsd_os_trace_irq_clear(void)
+{
+	NVIC_ClearPendingIRQ(TRACE_IRQ);
+}
 
 ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
 {
@@ -167,7 +182,6 @@ ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
 	return 1; /* We should check if scheduling decision should be made */
 }
 
-
 ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 {
 	bsd_os_application_irq_handler();
@@ -176,6 +190,20 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 	return 1; /* We should check if scheduling decision should be made */
 }
 
+ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
+{
+	bsd_os_trace_irq_handler();
+	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
+			  */
+	return 1; /* We should check if scheduling decision should be made */
+}
+
+void trace_task_create(void)
+{
+	IRQ_DIRECT_CONNECT(TRACE_IRQ, TRACE_IRQ_PRIORITY,
+			   trace_proxy_irq_handler, UNUSED_FLAGS);
+	irq_enable(TRACE_IRQ);
+}
 
 void read_task_create(void)
 {
@@ -184,10 +212,55 @@ void read_task_create(void)
 	irq_enable(BSD_APPLICATION_IRQ);
 }
 
+void trace_uart_init(void)
+{
+	/* UART pins are defined in "nrf9160_pca10090.dts". */
+	const nrfx_uarte_config_t config = {
+		/* Use UARTE1 pins routed on VCOM2. */
+		.pseltxd = CONFIG_UART_1_TX_PIN,
+		.pselrxd = CONFIG_UART_1_RX_PIN,
+		.pselcts = CONFIG_UART_1_CTS_PIN,
+		.pselrts = CONFIG_UART_1_RTS_PIN,
+
+		.hwfc = NRF_UARTE_HWFC_DISABLED,
+		.parity = NRF_UARTE_PARITY_EXCLUDED,
+		.baudrate = NRF_UARTE_BAUDRATE_1000000,
+
+		/* IRQ handler not used. Blocking mode.*/
+		.interrupt_priority = NRFX_UARTE_DEFAULT_CONFIG_IRQ_PRIORITY,
+		.p_context = NULL,
+	};
+
+	/* Initialize nrfx UARTE driver in blocking mode. */
+	/* TODO: use UARTE in non-blocking mode with IRQ handler. */
+	nrfx_uarte_init(&uarte_inst, &config, NULL);
+}
+
 /* This function is called by bsd_init and must not be called explicitly. */
 void bsd_os_init(void)
 {
 	read_task_create();
+
+	/* Configure and enable modem tracing over UART. */
+	trace_uart_init();
+	trace_task_create();
+}
+
+s32_t bsd_os_trace_put(const u8_t * const data, u32_t len)
+{
+	/* FIXME: Due to a bug in nrfx, max DMA transfers are 255 bytes. */
+
+	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
+	u32_t remaining_bytes = len;
+
+	while (remaining_bytes) {
+		u8_t transfer_len = min(remaining_bytes, UINT8_MAX);
+		u32_t idx = len - remaining_bytes;
+
+		nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);
+		remaining_bytes -= transfer_len;
+	}
+	return 0;
 }
 
 static int _bsd_driver_init(struct device *unused)

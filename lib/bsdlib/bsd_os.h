@@ -29,7 +29,17 @@ void bsd_os_application_irq_clear(void);
 
 void bsd_os_application_irq_set(void);
 
+void bsd_os_trace_irq_set(void);
+
+void bsd_os_trace_irq_clear(void);
+
+s32_t bsd_os_trace_put(const u8_t * const data, u32_t len);
+
+/* Need extern to not generate mock in testing. */
 extern void bsd_os_application_irq_handler(void);
+
+/* Need extern to not generate mock in testing. */
+extern void bsd_os_trace_irq_handler(void);
 
 #ifdef __cplusplus
 }
