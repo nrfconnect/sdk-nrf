@@ -20,6 +20,10 @@
 #define SYS_LOG_LEVEL CONFIG_SYS_LOG_GPS_SIM_LEVEL
 #include <logging/sys_log.h>
 
+#define BASE_GPS_SAMPLE_HOUR	(CONFIG_GPS_SIM_BASE_TIMESTAMP / 10000)
+#define BASE_GPS_SAMPLE_MINUTE	((CONFIG_GPS_SIM_BASE_TIMESTAMP / 100) % 100)
+#define BASE_GPS_SAMPLE_SECOND	(CONFIG_GPS_SIM_BASE_TIMESTAMP % 100)
+
 struct gps_sim_data {
 #if defined(CONFIG_GPS_SIM_TRIGGER)
 	struct device *gpio;
@@ -41,14 +45,6 @@ static struct gps_data nmea_sample;
 static double base_gps_sample_lat;
 static double base_gps_sample_lng;
 static struct k_mutex trigger_mutex;
-
-/* The base for the GPS timestamp is arbitrarily chosen */
-static const u8_t base_gps_sample_hour =
-	(CONFIG_GPS_SIM_BASE_TIMESTAMP / 10000);
-static const u8_t base_gps_sample_minute =
-	(CONFIG_GPS_SIM_BASE_TIMESTAMP / 100) % 100;
-static const u8_t base_gps_sample_second =
-	CONFIG_GPS_SIM_BASE_TIMESTAMP % 100;
 
 /**
  * @brief Callback for GPIO when using button as trigger.
@@ -251,9 +247,9 @@ static void generate_gps_data(
 	struct gps_data *nmea_sentence,
 	double max_variation)
 {
-	static u8_t hour = (const u8_t) base_gps_sample_hour;
-	static u8_t minute = base_gps_sample_minute;
-	static u8_t second = base_gps_sample_second;
+	static u8_t hour = BASE_GPS_SAMPLE_HOUR;
+	static u8_t minute = BASE_GPS_SAMPLE_MINUTE;
+	static u8_t second = BASE_GPS_SAMPLE_SECOND;
 	static u32_t last_uptime;
 	double lat = base_gps_sample_lat;
 	double lng = base_gps_sample_lng;
