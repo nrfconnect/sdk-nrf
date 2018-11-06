@@ -40,12 +40,12 @@ choice
 	help
 		Sets the termination ending from the serial terminal
 		Levels are:
-		-  \0 Termination
+		-  NULL Termination
 		-  CR Termination
 		-  LF Termination
 		-  CR+LF Termination
 	config NULL_TERMINATION
-		bool "\\0 Termination"
+		bool "NULL Termination"
 	config CR_TERMINATION
 		bool "CR Termination"
 	config LF_TERMINATION
