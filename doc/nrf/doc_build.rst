@@ -15,7 +15,7 @@ Before you start
 ****************
 
 Before you can build the documentation, install the |NCS| as described in :ref:`gs_installing`.
-See the *Installing the documentation processors* section in the :ref:`zephyr:zephyr_doc` developer guide for information about supported versions of the documentation tools.
+See the *Installing the documentation processors* section in the :ref:`zephyr:zephyr_doc` developer guide for information about installing the required tools to build the documentation and their supported versions.
 
 .. note::
    On Windows, the Sphinx executable ``sphinx-build.exe`` is placed in
