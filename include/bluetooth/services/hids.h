@@ -302,7 +302,7 @@ struct control_point {
 
 /** @brief HID initialization.
  */
-struct hids_init {
+struct hids_init_param {
 	/** HIDS Information. */
 	struct hids_info info;
 
@@ -415,13 +415,12 @@ struct hids_conn_data {
 /** @brief Initialize the HIDS instance.
  *
  *  @param hids_obj Pointer to HIDS instance.
- *  @param hids_init_obj HIDS initialization descriptor.
+ *  @param init_param HIDS initialization descriptor.
  *
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
  */
-int hids_init(struct hids *hids_obj,
-	      struct hids_init const * const hids_init_obj);
+int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param);
 
 /** @brief Uninitialize a HIDS instance.
  *

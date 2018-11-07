@@ -752,13 +752,13 @@ static u8_t hid_information_encode(u8_t *buffer,
 
 
 static void hids_input_reports_register(struct hids *hids_obj,
-					struct hids_init const *const hids_init)
+					const struct hids_init_param *init_param)
 {
-	__ASSERT_NO_MSG(hids_init->inp_rep_group_init.cnt <=
+	__ASSERT_NO_MSG(init_param->inp_rep_group_init.cnt <=
 			CONFIG_NRF_BT_HIDS_INPUT_REP_MAX);
 	u8_t offset = 0;
 
-	memcpy(&hids_obj->inp_rep_group, &hids_init->inp_rep_group_init,
+	memcpy(&hids_obj->inp_rep_group, &init_param->inp_rep_group_init,
 		sizeof(hids_obj->inp_rep_group));
 
 	for (size_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
@@ -793,14 +793,14 @@ static void hids_input_reports_register(struct hids *hids_obj,
 
 
 static void hids_outp_reports_register(struct hids *hids_obj,
-				       struct hids_init const *const hids_init)
+				       const struct hids_init_param *init_param)
 {
-	__ASSERT_NO_MSG(hids_init->outp_rep_group_init.cnt <=
+	__ASSERT_NO_MSG(init_param->outp_rep_group_init.cnt <=
 			CONFIG_NRF_BT_HIDS_OUTPUT_REP_MAX);
 
 	u8_t offset = 0;
 
-	memcpy(&hids_obj->outp_rep_group, &hids_init->outp_rep_group_init,
+	memcpy(&hids_obj->outp_rep_group, &init_param->outp_rep_group_init,
 		sizeof(hids_obj->outp_rep_group));
 
 	for (size_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
@@ -835,12 +835,12 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 
 
 static void hids_feat_reports_register(struct hids *hids_obj,
-				       struct hids_init const *const hids_init)
+				       const struct hids_init_param *init_param)
 {
-	__ASSERT_NO_MSG(hids_init->feat_rep_group_init.cnt <=
+	__ASSERT_NO_MSG(init_param->feat_rep_group_init.cnt <=
 			CONFIG_NRF_BT_HIDS_FEATURE_REP_MAX);
 
-	memcpy(&hids_obj->feat_rep_group, &hids_init->feat_rep_group_init,
+	memcpy(&hids_obj->feat_rep_group, &init_param->feat_rep_group_init,
 		sizeof(hids_obj->feat_rep_group));
 
 	u8_t offset = 0;
@@ -875,13 +875,12 @@ static void hids_feat_reports_register(struct hids *hids_obj,
 }
 
 
-int hids_init(struct hids *hids_obj,
-	      struct hids_init const *const hids_init_obj)
+int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 {
 	SYS_LOG_DBG("Initializing HIDS.");
 
-	hids_obj->pm.evt_handler = hids_init_obj->pm_evt_handler;
-	hids_obj->cp.evt_handler = hids_init_obj->cp_evt_handler;
+	hids_obj->pm.evt_handler = init_param->pm_evt_handler;
+	hids_obj->cp.evt_handler = init_param->cp_evt_handler;
 
 	/* Register primary service. */
 	PRIMARY_SVC_REGISTER(&hids_obj->svc, BT_UUID_HIDS);
@@ -898,16 +897,16 @@ int hids_init(struct hids *hids_obj,
 					       &hids_obj->pm));
 
 	/* Register Input Report characteristics. */
-	hids_input_reports_register(hids_obj, hids_init_obj);
+	hids_input_reports_register(hids_obj, init_param);
 
 	/* Register Output Report characteristics. */
-	hids_outp_reports_register(hids_obj, hids_init_obj);
+	hids_outp_reports_register(hids_obj, init_param);
 
 	/* Register Feature Report characteristics. */
-	hids_feat_reports_register(hids_obj, hids_init_obj);
+	hids_feat_reports_register(hids_obj, init_param);
 
 	/* Register Report Map characteristic and its descriptor. */
-	memcpy(&hids_obj->rep_map, &hids_init_obj->rep_map,
+	memcpy(&hids_obj->rep_map, &init_param->rep_map,
 	       sizeof(hids_obj->rep_map));
 
 	CHRC_REGISTER(&hids_obj->svc,
@@ -923,15 +922,15 @@ int hids_init(struct hids *hids_obj,
 	/* Register HID Boot Mouse Input Report characteristic, its descriptor
 	 * and CCC.
 	 */
-	if (hids_init_obj->is_mouse) {
-		hids_obj->is_mouse = hids_init_obj->is_mouse;
+	if (init_param->is_mouse) {
+		hids_obj->is_mouse = init_param->is_mouse;
 
 		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_obj->boot_mouse_inp_rep.att_ind = hids_obj->svc.attr_count;
 		hids_obj->boot_mouse_inp_rep.handler =
-			hids_init_obj->boot_mouse_notif_handler;
+			init_param->boot_mouse_notif_handler;
 
 		DESCRIPTOR_REGISTER(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
@@ -948,15 +947,15 @@ int hids_init(struct hids *hids_obj,
 	/* Register HID Boot Keyboard Input/Output Report characteristic, its
 	 * descriptor and CCC.
 	 */
-	if (hids_init_obj->is_kb) {
-		hids_obj->is_kb = hids_init_obj->is_kb;
+	if (init_param->is_kb) {
+		hids_obj->is_kb = init_param->is_kb;
 
 		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_IN_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_obj->boot_kb_inp_rep.att_ind = hids_obj->svc.attr_count;
 		hids_obj->boot_kb_inp_rep.handler =
-			hids_init_obj->boot_kb_notif_handler;
+			init_param->boot_kb_notif_handler;
 
 		DESCRIPTOR_REGISTER(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
@@ -975,7 +974,7 @@ int hids_init(struct hids *hids_obj,
 
 		hids_obj->boot_kb_outp_rep.att_ind = hids_obj->svc.attr_count;
 		hids_obj->boot_kb_outp_rep.handler =
-			hids_init_obj->boot_kb_outp_rep_handler;
+			init_param->boot_kb_outp_rep_handler;
 
 		DESCRIPTOR_REGISTER(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
@@ -988,7 +987,7 @@ int hids_init(struct hids *hids_obj,
 	}
 
 	/* Register HID Information characteristic and its descriptor. */
-	hid_information_encode(hids_obj->info, &hids_init_obj->info);
+	hid_information_encode(hids_obj->info, &init_param->info);
 
 	CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_INFO, BT_GATT_CHRC_READ);
 	DESCRIPTOR_REGISTER(&hids_obj->svc,
