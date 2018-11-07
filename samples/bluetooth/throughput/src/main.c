@@ -185,7 +185,7 @@ static void scan_init(void)
 	    .window = 0x0010,
 	};
 
-	struct bt_scan_init scan_init = {
+	struct bt_scan_init_param scan_init = {
 		.connect_if_match = 1,
 		.scan_param = &scan_param,
 		.conn_param = conn_param

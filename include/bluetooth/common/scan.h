@@ -148,7 +148,7 @@ struct bt_scan_short_name {
 
 /**@brief Structure for Scanning Module initialization.
  */
-struct bt_scan_init {
+struct bt_scan_init_param {
 	/** Scan parameters required to initialize the module.
 	 * Can be initialized as NULL. If NULL, the parameters required to
 	 * initialize the module are loaded from the static configuration.
@@ -273,7 +273,7 @@ void bt_scan_cb_register(struct bt_scan_cb *cb);
  *                 connection automatically, this must be initialized
  *                 with the relevant data.
  */
-void bt_scan_init(struct bt_scan_init *init);
+void bt_scan_init(struct bt_scan_init_param *init);
 
 /**@brief Function for starting scanning.
  *
