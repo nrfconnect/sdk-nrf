@@ -969,7 +969,7 @@ int bt_scan_stop(void)
 	return bt_le_scan_stop();
 }
 
-void bt_scan_init(struct bt_scan_init *init)
+void bt_scan_init(struct bt_scan_init_param *init)
 {
 	/* Disable all scanning filters. */
 	memset(&bt_scan.scan_filters, 0, sizeof(bt_scan.scan_filters));
