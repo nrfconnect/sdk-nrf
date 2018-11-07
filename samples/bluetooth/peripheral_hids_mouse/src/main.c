@@ -226,7 +226,7 @@ static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 static void hid_init(void)
 {
 	int err;
-	struct hids_init hids_init_obj = { 0 };
+	struct hids_init_param hids_init_param = { 0 };
 	struct hids_inp_rep *hids_inp_rep;
 	static const u8_t mouse_movement_mask[ceiling_fraction(INPUT_REP_MOVEMENT_LEN, 8)] = {0};
 
@@ -309,34 +309,34 @@ static void hid_init(void)
 		0xC0              /* End Collection */
 	};
 
-	hids_init_obj.rep_map.data = report_map;
-	hids_init_obj.rep_map.size = sizeof(report_map);
+	hids_init_param.rep_map.data = report_map;
+	hids_init_param.rep_map.size = sizeof(report_map);
 
-	hids_init_obj.info.bcd_hid = BASE_USB_HID_SPEC_VERSION;
-	hids_init_obj.info.b_country_code = 0x00;
-	hids_init_obj.info.flags = (HIDS_REMOTE_WAKE |
+	hids_init_param.info.bcd_hid = BASE_USB_HID_SPEC_VERSION;
+	hids_init_param.info.b_country_code = 0x00;
+	hids_init_param.info.flags = (HIDS_REMOTE_WAKE |
 			HIDS_NORMALLY_CONNECTABLE);
 
-	hids_inp_rep = &hids_init_obj.inp_rep_group_init.reports[0];
+	hids_inp_rep = &hids_init_param.inp_rep_group_init.reports[0];
 	hids_inp_rep->size = INPUT_REP_BUTTONS_LEN;
 	hids_inp_rep->id = INPUT_REP_REF_BUTTONS_ID;
-	hids_init_obj.inp_rep_group_init.cnt++;
+	hids_init_param.inp_rep_group_init.cnt++;
 
 	hids_inp_rep++;
 	hids_inp_rep->size = INPUT_REP_MOVEMENT_LEN;
 	hids_inp_rep->id = INPUT_REP_REF_MOVEMENT_ID;
 	hids_inp_rep->rep_mask = mouse_movement_mask;
-	hids_init_obj.inp_rep_group_init.cnt++;
+	hids_init_param.inp_rep_group_init.cnt++;
 
 	hids_inp_rep++;
 	hids_inp_rep->size = INPUT_REP_MEDIA_PLAYER_LEN;
 	hids_inp_rep->id = INPUT_REP_REF_MPLAYER_ID;
-	hids_init_obj.inp_rep_group_init.cnt++;
+	hids_init_param.inp_rep_group_init.cnt++;
 
-	hids_init_obj.is_mouse = true;
-	hids_init_obj.pm_evt_handler = hids_pm_evt_handler;
+	hids_init_param.is_mouse = true;
+	hids_init_param.pm_evt_handler = hids_pm_evt_handler;
 
-	err = hids_init(&hids_obj, &hids_init_obj);
+	err = hids_init(&hids_obj, &hids_init_param);
 	__ASSERT(err == 0, "HIDS initialization failed\n");
 }
 

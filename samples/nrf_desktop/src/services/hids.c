@@ -152,22 +152,22 @@ static void mplayer_notif_handler(enum hids_notif_evt evt)
 static int module_init(void)
 {
 	/* HID service configuration */
-	struct hids_init hids_init_obj = { 0 };
+	struct hids_init_param hids_init_param = { 0 };
 	static const u8_t mouse_mask[ceiling_fraction(REPORT_SIZE_MOUSE, 8)] = {0x01};
 
-	hids_init_obj.info.bcd_hid        = BASE_USB_HID_SPEC_VERSION;
-	hids_init_obj.info.b_country_code = 0x00;
-	hids_init_obj.info.flags          = HIDS_REMOTE_WAKE |
+	hids_init_param.info.bcd_hid        = BASE_USB_HID_SPEC_VERSION;
+	hids_init_param.info.b_country_code = 0x00;
+	hids_init_param.info.flags          = HIDS_REMOTE_WAKE |
 			HIDS_NORMALLY_CONNECTABLE;
 
 	/* Attach report map */
-	hids_init_obj.rep_map.data = hid_report_desc;
-	hids_init_obj.rep_map.size = hid_report_desc_size;
+	hids_init_param.rep_map.data = hid_report_desc;
+	hids_init_param.rep_map.size = hid_report_desc_size;
 
 	/* Declare HID reports */
 
 	struct hids_inp_rep *input_report =
-		&hids_init_obj.inp_rep_group_init.reports[0];
+		&hids_init_param.inp_rep_group_init.reports[0];
 	size_t ir_pos = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
@@ -198,24 +198,24 @@ static int module_init(void)
 		ir_pos++;
 	}
 
-	hids_init_obj.inp_rep_group_init.cnt = ir_pos;
+	hids_init_param.inp_rep_group_init.cnt = ir_pos;
 
 	/* Boot protocol setup */
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		hids_init_obj.is_mouse = true;
-		hids_init_obj.boot_mouse_notif_handler =
+		hids_init_param.is_mouse = true;
+		hids_init_param.boot_mouse_notif_handler =
 			boot_mouse_notif_handler;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		hids_init_obj.is_kb = true;
-		hids_init_obj.boot_kb_notif_handler =
+		hids_init_param.is_kb = true;
+		hids_init_param.boot_kb_notif_handler =
 			boot_keyboard_notif_handler;
 	}
 
-	hids_init_obj.pm_evt_handler = pm_evt_handler;
+	hids_init_param.pm_evt_handler = pm_evt_handler;
 
-	return hids_init(&hids_obj, &hids_init_obj);
+	return hids_init(&hids_obj, &hids_init_param);
 }
 
 static void mouse_report_sent(struct bt_conn *conn)
