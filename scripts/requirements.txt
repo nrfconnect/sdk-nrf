@@ -1,0 +1,2 @@
+recommonmark
+git+https://github.com/carlescufi/mscgen.git@python3

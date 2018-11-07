@@ -97,3 +97,18 @@ Your directory structure now looks like this::
     |___ nrf
     |___ nrfxlib
     |___ zephyr
+
+Installing additional Python dependencies
+*****************************************
+
+The |NCS| requires additional Python packages to be installed. To install those
+use the following command:
+
+   .. code-block:: console
+
+      # Linux
+      pip3 install --user -r nrf/scripts/requirements.txt
+
+      # macOS and Windows
+      pip3 install -r nrf/scripts/requirements.txt
+
