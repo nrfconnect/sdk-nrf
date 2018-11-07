@@ -15,7 +15,6 @@ Before you start
 ****************
 
 Before you can build the documentation, install the |NCS| as described in :ref:`gs_installing`.
-The installation includes all tools required for building the documentation except for the module recommonmark, which you can install by running ``pip install recommonmark``.
 See the *Installing the documentation processors* section in the :ref:`zephyr:zephyr_doc` developer guide for information about supported versions of the documentation tools.
 
 .. note::
