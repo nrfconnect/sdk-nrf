@@ -9,10 +9,9 @@
 #include <string.h>
 #include <bluetooth/common/scan.h>
 
-#define LOG_MODULE_NAME nrf_bt_scan
 #define LOG_LEVEL CONFIG_NRF_BT_SCAN_LOG_LEVEL
 #include <logging/log.h>
-LOG_MODULE_REGISTER();
+LOG_MODULE_REGISTER(nrf_bt_scan);
 
 #define BT_SCAN_UUID_128_SIZE 16
 
