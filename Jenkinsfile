@@ -1,5 +1,5 @@
 // Due to JENKINS-42369 we put these defines outside the pipeline
-def IMAGE_TAG = "ncs-toolchain:1.03"
+def IMAGE_TAG = "ncs-toolchain:1.04"
 def REPO_ZEPHYR = "https://github.com/NordicPlayground/fw-nrfconnect-zephyr.git"
 def REPO_NRFXLIB = "https://github.com/NordicPlayground/nrfxlib.git"
 
@@ -68,12 +68,6 @@ pipeline {
                 currentBuild.result = 'FAILURE'
               }
             }
-          }
-        }
-
-        stage('Run sanity check') {
-          steps {
-            sh "source zephyr/zephyr-env.sh && ./zephyr/scripts/sanitycheck $ARCH $SANITYCHECK_OPTIONS"
           }
         }
 
