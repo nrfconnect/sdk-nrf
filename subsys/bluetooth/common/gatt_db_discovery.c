@@ -8,10 +8,9 @@
 
 #include <bluetooth/common/gatt_db_discovery.h>
 
-#define LOG_MODULE_NAME gatt_db_discovery
 #define LOG_LEVEL CONFIG_NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL
 #include <logging/log.h>
-LOG_MODULE_REGISTER();
+LOG_MODULE_REGISTER(gatt_db_discovery);
 
 /* Available sizes: 128, 512, 2048... */
 #define CHUNK_SIZE (128 - sizeof(struct k_mem_block_id))
