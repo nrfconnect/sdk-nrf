@@ -73,7 +73,7 @@ static void svc_attr_memory_release(void)
 	memset(attrs, 0, sizeof(attrs));
 	cur_attr_id = 0;
 	/* Release dynamic memory data chunks */
-	for (size_t i = 0; i < cur_chunk_id; i++) {
+	for (size_t i = 0; i <= cur_chunk_id; i++) {
 		k_free(user_data_chunks[i]);
 		user_data_chunks[i] = NULL;
 	}
