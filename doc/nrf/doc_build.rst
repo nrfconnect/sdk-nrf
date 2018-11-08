@@ -30,7 +30,7 @@ Documentation structure
 
 All documentation build files are located in the ``ncs/nrf/doc`` folder.
 The ``nrf`` subfolder in that directory contains all .rst source files that are not directly related to a sample application or a library.
-Documentation for samples and libraries are provided in a ``README.rst`` or ``*_README.rst`` file in the same directory as the code.
+Documentation for samples and libraries are provided in a ``README.rst`` or ``*.rst`` file in the same directory as the code.
 
 Building the documentation output requires building output for all documentation sets.
 Currently, there are three sets: ncs, zephyr, and mcuboot.
