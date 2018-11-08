@@ -158,38 +158,36 @@ Functions
 	 *  @param rep 		Pointer to the report data.
 	 *  @param len 		Length of report data.
 	 *
-	 *  @return 0 		If the operation was successful. Otherwise, a (negative) error
-	 *  			code is returned.
+	 *  @retval 0 		If the operation was successful.
+         *                      Otherwise, a (negative) error code is returned.
 	 */
 	int hids_boot_kb_inp_rep_send(struct hids *hids_obj, u8_t const *rep,
 					  u16_t len);
 
-Enums - WIP
-===========
+Enums
+=====
 
-#. The documentation block should follow, not precede, the documented element.
-#. The C99-style single line comment, ``//``, is not allowed, as per `Zephyr coding style`_.
+The documentation block should precede the documented element.
+
 
 .. code-block:: c
-   :caption: Enum documentation example -- PH
+   :caption: Enum documentation example
 
-	/** @brief Send Boot Keyboard Input Report.
-	 *
-	 *  @param hids_obj  	HIDS instance.
-	 *  @param rep 		Pointer to the report data.
-	 *  @param len 		Length of report data.
-	 *
-	 *  @return 0 		If the operation was successful. Otherwise, a (negative) error
-	 *  			code is returned.
-	 */
-	int hids_boot_kb_inp_rep_send(struct hids *hids_obj, u8_t const *rep,
-					  u16_t len);
+        /** HID Service Protocol Mode events. */
+        enum hids_pm_evt {
 
-Structs - WIP
-=============
+        	/** Boot mode entered. */
+	        HIDS_PM_EVT_BOOT_MODE_ENTERED,
 
-#. The documentation block should follow, not precede, the documented element.
-#. The C99-style single line comment, ``//``, is not allowed, as per `Zephyr coding style`_.
+	        /** Report mode entered. */
+	        HIDS_PM_EVT_REPORT_MODE_ENTERED,
+         };
+
+Structs
+=======
+
+Documentation of members in a struct cannot be displayed by Sphinx/Breathe.
+Therefore, members must be documented as params.
 
 .. code-block:: c
    :caption: Struct documentation example
@@ -198,13 +196,16 @@ Structs - WIP
 	 *
 	 * @warning When event structure is defined event header must be placed
 	 *          as the first field.
+         *
+         * @param node Linked list node used to chain events.
+         * @param timestamp Timestamp indicating event creation time.
+         * @param event_type Pointer to the event type object.
+         *
 	 */
 	struct event_header {
-		sys_dlist_t node;                 /**< Linked list node used to chain events. */
-
-
-		s64_t timestamp;                  /**< Timestamp indicating event creation time. */
-		const struct event_type *type_id; /**< Pointer to the event type object. */
+		sys_dlist_t node;
+		s64_t timestamp;
+		const struct event_type *type_id;
 	};
 
 Typedefs - WIP
@@ -216,17 +217,7 @@ Typedefs - WIP
 .. code-block:: c
    :caption: Typedef documentation example -- PH
 
-	/** @brief Send Boot Keyboard Input Report.
-	 *
-	 *  @param hids_obj  	HIDS instance.
-	 *  @param rep 		Pointer to the report data.
-	 *  @param len 		Length of report data.
-	 *
-	 *  @return 0 		If the operation was successful. Otherwise, a (negative) error
-	 *  			code is returned.
-	 */
-	int hids_boot_kb_inp_rep_send(struct hids *hids_obj, u8_t const *rep,
-					  u16_t len);
+   TBD
 
 TBD
 ==============
