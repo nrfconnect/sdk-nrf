@@ -24,8 +24,8 @@ Repositories
      - master
    * - `nrfxlib <https://github.com/NordicPlayground/nrfxlib>`_
      - master
-   * - `_fw-nrfconnect-nrf91-zephyr <https://github.com/NordicPlayground/_fw-nrfconnect-nrf91-zephyr>`_
-     - master
+   * - `_fw-nrfconnect-zephyr <https://github.com/NordicPlayground/_fw-nrfconnect-zephyr>`_
+     - nrf91
    * - `fw-nrfconnect-mcuboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_
      - master
 

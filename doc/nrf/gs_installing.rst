@@ -55,7 +55,7 @@ Cloning the repositories
 
    .. code-block:: console
 
-      git clone https://github.com/<username>/_fw-nrfconnect-nrf91-zephyr.git zephyr
+      git clone https://github.com/<username>/_fw-nrfconnect-zephyr.git zephyr
 
       git clone https://github.com/<username>/fw-nrfconnect-mcuboot.git mcuboot
 
@@ -69,7 +69,7 @@ Cloning the repositories
    .. code-block:: console
 
       cd zephyr
-      git remote add ncs https://github.com/NordicPlayground/_fw-nrfconnect-nrf91-zephyr.git
+      git remote add ncs https://github.com/NordicPlayground/_fw-nrfconnect-zephyr.git
 
       cd ../mcuboot
       git remote add ncs https://github.com/NordicPlayground/fw-nrfconnect-mcuboot.git
@@ -97,6 +97,17 @@ Your directory structure now looks like this::
     |___ nrf
     |___ nrfxlib
     |___ zephyr
+
+To be able to build |NCS| applications for nRF91, check out
+branch ``nrf91`` in the fw-nrfconnect-zephyr repository:
+
+   .. code-block:: console
+
+	cd ../zephyr
+	git checkout nrf91
+
+Pull requests related to nRF91 (for example, for nRF9160 SoC or Board support,
+drivers, and so on) must be submitted against the nRF91 branch.
 
 Installing additional Python dependencies
 *****************************************
