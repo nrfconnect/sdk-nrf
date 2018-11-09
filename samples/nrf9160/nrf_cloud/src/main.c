@@ -19,12 +19,14 @@
 #include "nrf_socket.h"
 #include "orientation_detector.h"
 
-/* Interval in seconds between each time sensor data is sent. */
-#define APP_SENSOR_DATA_SEND_INTERVAL	1
 /* Interval in milliseconds between each time status LEDs are updated. */
-#define APP_LEDS_UPDATE_INTERVAL	500
+#define LEDS_UPDATE_INTERVAL	        500
 
-#define AT_CMD_BUFFER_SIZE		100
+/* Interval in microseconds between each time LEDs are updated when indicating
+ * that an error has occurred.
+ */
+#define LEDS_ERROR_UPDATE_INTERVAL      250000
+
 #define BUTTON_1			BIT(0)
 #define BUTTON_2			BIT(1)
 #define SWITCH_1			BIT(2)
@@ -68,85 +70,100 @@ static struct k_sem user_assoc_sem;
 static struct gps_data nmea_data;
 static struct nrf_cloud_sensor_data flip_cloud_data;
 static struct nrf_cloud_sensor_data gps_cloud_data;
+static atomic_val_t send_data_enable;
 
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
 
-/* Structure for delayed work */
+/* Structures for work */
 static struct k_delayed_work leds_update_work;
 static struct k_delayed_work connect_work;
 
+enum error_type {
+	ERROR_NRF_CLOUD,
+	ERROR_BSD_RECOVERABLE,
+	ERROR_BSD_IRRECOVERABLE
+};
+
 /* Forward declaration of functions */
 static void cloud_connect(struct k_work *work);
-static void app_flip_poll(void);
-static void app_sensors_init(void);
+static void flip_poll(void);
+static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct nrf_cloud_sensor_data *data);
 
 /**@brief nRF Cloud error handler. */
-void app_nrf_cloud_error_handler(void)
+void error_handler(enum error_type err_type, int err_code)
 {
-	int err;
+	if (err_type == ERROR_NRF_CLOUD) {
+		k_sched_lock();
 
-	/* TODO: ensure that the delayed work is indeed cancelled.
-	 * The current situation is that work might be ongoing and "self-submit"
-	 * because it's executed from a higher priority thread
-	 */
-	k_delayed_work_cancel(&leds_update_work);
-	k_delayed_work_cancel(&connect_work);
+		/* Turn off and shutdown modem */
+		int err = lte_lc_power_off();
+		__ASSERT(err == 0, "lte_lc_power_off failed: %d", err);
+		bsd_shutdown();
+	}
 
-	/* Turn off and shutdown modem */
-	err = lte_lc_power_off();
-	__ASSERT(err == 0, "lte_lc_power_off failed %d", err);
-	bsd_shutdown();
-
-#if !defined(CMAKE_C_FLAGS_DEBUG)
+#if !defined(CONFIG_DEBUG)
 	sys_reboot(SYS_REBOOT_COLD);
 #else
-	/* Blinking all LEDs ON/OFF in pairs (1 and 4, 2 and 3)
-	 * if there is an recoverable error.
-	 */
-	while (true) {
-		dk_set_leds_state(DK_LED1_MSK | DK_LED4_MSK,
-			DK_LED2_MSK | DK_LED3_MSK);
-		k_sleep(250);
-		dk_set_leds_state(DK_LED2_MSK | DK_LED3_MSK,
-			DK_LED1_MSK | DK_LED4_MSK);
-		k_sleep(250);
+	u8_t led_pattern;
+
+	switch (err_type) {
+	case ERROR_NRF_CLOUD:
+		/* Blinking all LEDs ON/OFF in pairs (1 and 4, 2 and 3)
+		 * if there is an application error.
+		 */
+		led_pattern = DK_LED1_MSK | DK_LED4_MSK;
+		printk("Error of type ERROR_NRF_CLOUD: %d\n", err_code);
+	break;
+	case ERROR_BSD_RECOVERABLE:
+		/* Blinking all LEDs ON/OFF in pairs (1 and 3, 2 and 4)
+		 * if there is a recoverable error.
+		 */
+		led_pattern = DK_LED1_MSK | DK_LED3_MSK;
+		printk("Error of type ERROR_BSD_RECOVERABLE: %d\n", err_code);
+	break;
+	case ERROR_BSD_IRRECOVERABLE:
+		/* Blinking all LEDs ON/OFF if there is an
+		 * irrecoverable error.
+		 */
+		led_pattern = DK_ALL_LEDS_MSK;
+		printk("Error of type ERROR_BSD_IRRECOVERABLE: %d\n",
+								err_code);
+	break;
+	default:
+		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
+		 * undefined error.
+		 */
+		led_pattern = DK_LED1_MSK | DK_LED2_MSK;
+	break;
 	}
-#endif /* defined (APP_DEBUG_BUILD) */
+
+	while (true) {
+		dk_set_leds(led_pattern & 0x0f);
+		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL);
+		dk_set_leds(~led_pattern & 0x0f);
+		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL);
+	}
+#endif /* CONFIG_DEBUG */
+}
+
+void nrf_cloud_error_handler(int err)
+{
+	error_handler(ERROR_NRF_CLOUD, err);
 }
 
 /**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t error)
+void bsd_recoverable_error_handler(uint32_t err)
 {
-	ARG_UNUSED(error);
-
-	/* Blinking all LEDs ON/OFF in pairs (1 and 3, 2 and 4)
-	 * if there is an recoverable error.
-	 */
-	while (true) {
-		dk_set_leds_state(DK_LED1_MSK | DK_LED3_MSK,
-			DK_LED2_MSK | DK_LED4_MSK);
-		k_sleep(250);
-		dk_set_leds_state(DK_LED2_MSK | DK_LED4_MSK,
-			DK_LED1_MSK | DK_LED3_MSK);
-		k_sleep(250);
-	}
+	error_handler(ERROR_BSD_RECOVERABLE, (int)err);
 }
 
 /**@brief Irrecoverable BSD library error. */
-void bsd_irrecoverable_error_handler(uint32_t error)
+void bsd_irrecoverable_error_handler(uint32_t err)
 {
-	ARG_UNUSED(error);
-
-	/* Blinking all LEDs ON/OFF if there is an irrecoverable error. */
-	while (true) {
-		dk_set_leds_state(DK_ALL_LEDS_MSK, 0x00);
-		k_sleep(250);
-		dk_set_leds_state(0x00, DK_ALL_LEDS_MSK);
-		k_sleep(250);
-	}
+	error_handler(ERROR_BSD_IRRECOVERABLE, (int)err);
 }
 
 /**@brief Callback for GPS trigger events */
@@ -157,7 +174,7 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 	ARG_UNUSED(trigger);
 	dk_read_buttons(&button_state, &has_changed);
 
-	if (!(button_state & SWITCH_2)) {
+	if (!(button_state & SWITCH_2) && atomic_get(&send_data_enable)) {
 		gps_sample_fetch(dev);
 		gps_channel_get(dev, GPS_CHAN_NMEA, &nmea_data);
 		gps_cloud_data.data.ptr = nmea_data.str;
@@ -183,7 +200,7 @@ static void sensor_trigger_handler(struct device *dev,
 }
 
 /**@brief Function for polling flip orientation if mode has been enabled. */
-static void app_flip_poll(void)
+static void flip_poll(void)
 {
 	static enum orientation_state last_orientation_state =
 		ORIENTATION_NOT_KNOWN;
@@ -218,7 +235,7 @@ static void app_flip_poll(void)
 }
 
 /**@brief Update LEDs state. */
-static void app_leds_update(struct k_work *work)
+static void leds_update(struct k_work *work)
 {
 	static bool led_on;
 	static u8_t current_led_on_mask;
@@ -244,7 +261,7 @@ static void app_leds_update(struct k_work *work)
 		current_led_on_mask = led_on_mask;
 	}
 
-	k_delayed_work_submit(&leds_update_work, APP_LEDS_UPDATE_INTERVAL);
+	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
 /**@brief Send sensor data to nRF Cloud. **/
@@ -252,7 +269,7 @@ static void sensor_data_send(struct nrf_cloud_sensor_data *data)
 {
 	int err;
 
-	if (pattern_recording) {
+	if (pattern_recording || !atomic_get(&send_data_enable)) {
 		return;
 	}
 
@@ -263,7 +280,8 @@ static void sensor_data_send(struct nrf_cloud_sensor_data *data)
 	}
 
 	if (err) {
-		app_nrf_cloud_error_handler();
+		printk("sensor_data_send failed: %d\n", err);
+		nrf_cloud_error_handler(err);
 	}
 }
 
@@ -313,17 +331,20 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 		err = nrf_cloud_sensor_attach(&param);
 
 		if (err) {
-			app_nrf_cloud_error_handler();
+			printk("nrf_cloud_sensor_attach failed: %d\n", err);
+			nrf_cloud_error_handler(err);
 		}
 
 		param.sensor_type = NRF_CLOUD_SENSOR_GPS;
 		err = nrf_cloud_sensor_attach(&param);
 
 		if (err) {
-			app_nrf_cloud_error_handler();
+			printk("nrf_cloud_sensor_attach failed: %d\n", err);
+			nrf_cloud_error_handler(err);
 		}
 
-		app_sensors_init();
+		sensors_init();
+		atomic_set(&send_data_enable, 1);
 		break;
 	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
 		printk("NRF_CLOUD_EVT_SENSOR_ATTACHED\n");
@@ -333,15 +354,17 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED\n");
+		atomic_set(&send_data_enable, 0);
 		display_state = LEDS_INITIALIZING;
-		/* Try to reconnect after 3 seconds hold of time */
-		/* TODO: Investigate if this need to be 3 seconds */
-		k_delayed_work_submit(&connect_work, K_SECONDS(3));
+
+		/* Try to reconnect after 1 second back off time */
+		k_delayed_work_submit(&connect_work, K_SECONDS(1));
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		printk("NRF_CLOUD_EVT_ERROR\n");
+		printk("NRF_CLOUD_EVT_ERROR, status: %d\n", p_evt->status);
+		atomic_set(&send_data_enable, 0);
 		display_state = LEDS_ERROR;
-		app_nrf_cloud_error_handler();
+		nrf_cloud_error_handler(p_evt->status);
 		break;
 	default:
 		printk("Received unknown %d\n", p_evt->type);
@@ -358,7 +381,7 @@ static void cloud_init(void)
 
 	int err = nrf_cloud_init(&param);
 
-	__ASSERT(err == 0, "nRF Cloud library could not be initialized\n");
+	__ASSERT(err == 0, "nRF Cloud library could not be initialized.");
 }
 
 /**@brief Connect to nRF Cloud, */
@@ -396,8 +419,8 @@ static void cloud_connect(struct k_work *work)
 	err = nrf_cloud_connect(&param);
 
 	if (err) {
-		printk("nrf_cloud_connect failed %d\n", err);
-		app_nrf_cloud_error_handler();
+		printk("nrf_cloud_connect failed: %d\n", err);
+		nrf_cloud_error_handler(err);
 	}
 }
 
@@ -416,7 +439,8 @@ static void cloud_user_associate(void)
 	err = nrf_cloud_user_associate(&ua);
 
 	if (err) {
-		app_nrf_cloud_error_handler();
+		printk("nrf_cloud_user_associate failed: %d\n", err);
+		nrf_cloud_error_handler(err);
 	}
 }
 
@@ -464,12 +488,12 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 	}
 
 	if (has_changed & SWITCH_1) {
-		app_flip_poll();
+		flip_poll();
 	}
 }
 
 /**@brief Processing of user inputs to the application. */
-static void app_process(void)
+static void input_process(void)
 {
 	if (!pattern_recording) {
 		return;
@@ -512,9 +536,9 @@ static void app_process(void)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
-	k_delayed_work_init(&leds_update_work, app_leds_update);
-	k_delayed_work_init(&connect_work, cloud_connect);
-	k_delayed_work_submit(&leds_update_work, APP_LEDS_UPDATE_INTERVAL);
+	k_delayed_work_init(&leds_update_work, leds_update);
+	k_work_init(&connect_work, cloud_connect);
+	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
 /**@brief Configures modem to provide LTE link. Blocks until link is
@@ -531,7 +555,7 @@ static void modem_configure(void)
 
 		printk("LTE LC config ...\n");
 		err = lte_lc_init_and_connect();
-		__ASSERT(err == 0, "LTE link could not be established");
+		__ASSERT(err == 0, "LTE link could not be established.");
 	}
 }
 
@@ -602,7 +626,7 @@ static void flip_detection_init(void)
 }
 
 /**@brief Initializes the sensors that are used by the application. */
-static void app_sensors_init(void)
+static void sensors_init(void)
 {
 	gps_init();
 	flip_detection_init();
@@ -654,6 +678,6 @@ void main(void)
 
 	while (true) {
 		nrf_cloud_process();
-		app_process();
+		input_process();
 	}
 }
