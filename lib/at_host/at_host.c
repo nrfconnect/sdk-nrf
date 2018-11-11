@@ -36,6 +36,8 @@ static struct device *uart_dev;
 static int at_socket_fd = INVALID_DESCRIPTOR;
 static int characters;
 static bool inside_quotes;
+static void * p_context;                              /**< Pointer to context provided by application. */
+static at_host_msg_handler_t   p_msg_handler;         /**< Message handler. */
 static u8_t at_cmd_read[AT_MAX_CMD_LEN];
 static u8_t at_buff[AT_MAX_CMD_LEN];
 
@@ -141,6 +143,9 @@ int at_host_init(at_host_config_t * config)
 		return -EINVAL;
 	}
 
+    p_context     = config->p_context;
+    p_msg_handler = config->p_msg_handler;
+
 	/* Choose which UART to use */
 	switch (config->uart) {
 	case UART_0:
@@ -193,6 +198,12 @@ void at_host_process(void)
 	/* Forward the data over UART if any. */
 	/* If no data, errno is set to EGAIN and we will try again. */
 	if (r_bytes > 0) {
+        /* notify message to application. */
+        if (p_msg_handler != NULL)
+        {
+            p_msg_handler(p_context, at_read_buff, r_bytes);
+        }
+        
 		/* Poll out what is in the buffer gathered from the modem */
 		for (size_t i = 0; i < r_bytes; i++) {
 			uart_poll_out(uart_dev, at_read_buff[i]);

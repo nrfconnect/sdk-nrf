@@ -37,11 +37,23 @@ enum select_uart {
 };
 
 
+/**
+ * @brief Message handler.
+ *
+ * @param[in] p_context  Context passed to interrupt handler, set on initialization.
+ * @param[in] p_data     Pointer to received data.
+ * @param[in] len        Length of received data.
+ */
+typedef void (*at_host_msg_handler_t)(void * p_context, uint8_t * p_data, int32_t len);
+
+
 /**@brief Structure for initialization. */
 typedef struct
 {
     enum select_uart        uart;           /**< The UART to use. */
     enum term_modes         mode;           /**< The termination mode. */
+    void                  * p_context;      /**< Pointer to context provided by application. */
+    at_host_msg_handler_t   p_msg_handler;  /**< Pointer to message handler function. */
 } at_host_config_t;
 
 
