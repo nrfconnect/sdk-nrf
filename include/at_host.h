@@ -36,18 +36,26 @@ enum select_uart {
     UART_2
 };
 
+
+/**@brief Structure for initialization. */
+typedef struct
+{
+    enum select_uart        uart;           /**< The UART to use. */
+    enum term_modes         mode;           /**< The termination mode. */
+} at_host_config_t;
+
+
 /**
  * @brief Function for initializing the AT host module.
  *
  * The UART is initialized when this function is called.
  * An AT socket is created to communicate with the modem.
  *
- * @param uart            The UART to use
- * @param mode            The termination mode
- *
+ * @param config          Pointer to configuration structure, @ref at_host_config_t.
+ * 
  * @return Zero on success or (negative) error code otherwise.
  */
-int at_host_init(enum select_uart uart, enum term_modes mode);
+int at_host_init(at_host_config_t * config);
 
 /**
  * @brief Function for reading the AT socket and forwarding the data over UART.

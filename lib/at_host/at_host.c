@@ -130,19 +130,19 @@ static int at_uart_init(char *uart_dev_name)
 	return err;
 }
 
-int at_host_init(enum select_uart uart_id, enum term_modes mode)
+int at_host_init(at_host_config_t * config)
 {
 	char *uart_dev_name;
 	int err;
 	/* Choosing the termination mode */
-	if (mode < MODE_COUNT) {
-		term_mode = mode;
+	if (config->mode < MODE_COUNT) {
+		term_mode = config->mode;
 	} else {
 		return -EINVAL;
 	}
 
 	/* Choose which UART to use */
-	switch (uart_id) {
+	switch (config->uart) {
 	case UART_0:
 		uart_dev_name = CONFIG_UART_0_NAME;
 		break;
@@ -152,7 +152,7 @@ int at_host_init(enum select_uart uart_id, enum term_modes mode)
 	case UART_2:
 		uart_dev_name = CONFIG_UART_2_NAME;
 	default:
-		LOG_ERR("Unknown UART instance %d", uart_id);
+		LOG_ERR("Unknown UART instance %d", config->uart);
 		return -EINVAL;
 	}
 
