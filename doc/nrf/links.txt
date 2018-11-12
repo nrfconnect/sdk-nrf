@@ -35,3 +35,5 @@
 .. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-OSX/58855
 
 .. _`Semantic Versioning 2.0.0`: https://semver.org/
+
+.. _`nRF Cloud`: https://nrfcloud.com/
