@@ -45,7 +45,7 @@ static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 
 void IPC_IRQHandler(void);
 
-s32_t bsd_os_timedwait(u32_t context, u32_t timeout)
+int32_t bsd_os_timedwait(uint32_t context, uint32_t timeout)
 {
 	/* TODO: to be implemented */
 	return 0;
@@ -246,7 +246,7 @@ void bsd_os_init(void)
 	trace_task_create();
 }
 
-s32_t bsd_os_trace_put(const u8_t * const data, u32_t len)
+int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
 {
 	/* FIXME: Due to a bug in nrfx, max DMA transfers are 255 bytes. */
 
