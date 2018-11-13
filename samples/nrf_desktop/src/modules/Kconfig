@@ -47,6 +47,31 @@ endmenu
 
 menu "BLE State"
 
+config DESKTOP_BLE_BOND_REMOVAL
+	bool "Enable bond removal by pressing a button during startup"
+	default y
+	help
+	  Let user remove all bonded Bluetooth peers by holding down a button
+	  during the device boot.
+
+if DESKTOP_BLE_BOND_REMOVAL
+
+config DESKTOP_BLE_BOND_REMOVAL_BUTTON
+	hex "Key ID of button used to remove bonds when held during startup"
+	default 0x0002
+	range 0x0000 0xffff
+	help
+	  Button which should be held during device startup in order to
+	  unpair all bonded Bluetooth peers.
+endif
+
+if !DESKTOP_BLE_BOND_REMOVAL
+
+config DESKTOP_BLE_BOND_REMOVAL_BUTTON
+	hex
+	default 0x0000
+endif
+
 config DESKTOP_BLE_STATE_LESC_ONLY
 	bool "LE Secure Connections only"
 	default n
