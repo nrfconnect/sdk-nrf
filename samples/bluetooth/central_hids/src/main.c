@@ -19,8 +19,44 @@
 #include <bluetooth/gatt.h>
 #include <bluetooth/common/gatt_db_discovery.h>
 #include <misc/byteorder.h>
+#include <bluetooth/common/scan.h>
 
 static struct bt_conn *default_conn;
+
+static void scan_filter_match(struct bt_scan_device_info *device_info,
+			      struct bt_scan_filter_match *filter_match,
+			      bool connectable)
+{
+	int err;
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
+
+	printk("Filters matched. Address: %s connectable: %s\n",
+		addr, connectable ? "yes" : "no");
+
+	err = bt_scan_stop();
+	if (err) {
+		printk("Stop LE scan failed (err %d)\n", err);
+	}
+}
+
+static void scan_connecting_error(struct bt_scan_device_info *device_info)
+{
+	printk("Connecting failed\n");
+}
+
+static void scan_connecting(struct bt_scan_device_info *device_info,
+			    struct bt_conn *conn)
+{
+	default_conn = bt_conn_ref(conn);
+}
+
+static struct bt_scan_cb scan_cb = {
+	.filter_match = scan_filter_match,
+	.connecting_error = scan_connecting_error,
+	.connecting = scan_connecting
+};
 
 static void discovery_completed_cb(struct bt_conn *conn,
 				   const struct bt_gatt_attr *attrs,
@@ -82,64 +118,6 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 	}
 }
 
-static bool ad_found(struct bt_data *data, void *user_data)
-{
-	printk("[AD]: %u data_len %u\n", data->type, data->data_len);
-
-	switch (data->type) {
-	case BT_DATA_UUID16_SOME:
-	case BT_DATA_UUID16_ALL:
-		if (data->data_len % sizeof(u16_t) != 0) {
-			printk("AD malformed\n");
-			return true;
-		}
-
-		for (size_t i = 0; i < data->data_len; i += sizeof(u16_t)) {
-			int err;
-			u16_t u16;
-			struct bt_uuid *uuid;
-			bt_addr_le_t *addr = user_data;
-
-			memcpy(&u16, &data->data[i], sizeof(u16));
-			uuid = BT_UUID_DECLARE_16(sys_le16_to_cpu(u16));
-			if (bt_uuid_cmp(uuid, BT_UUID_HIDS)) {
-				continue;
-			}
-
-			err = bt_le_scan_stop();
-			if (err) {
-				printk("Stop LE scan failed (err %d)\n", err);
-				continue;
-			}
-
-			default_conn = bt_conn_create_le(addr,
-						BT_LE_CONN_PARAM_DEFAULT);
-			return false;
-		}
-		break;
-	default:
-		/* Ignored */
-		break;
-	}
-
-	return true;
-}
-
-static void device_found(const bt_addr_le_t *addr, s8_t rssi, u8_t type,
-			 struct net_buf_simple *ad)
-{
-	char dev[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(addr, dev, sizeof(dev));
-	printk("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i\n",
-	       dev, type, ad->len, rssi);
-
-	/* We're only interested in connectable events */
-	if ((type == BT_LE_ADV_IND) || (type == BT_LE_ADV_DIRECT_IND)) {
-		bt_data_parse(ad, ad_found, (void *)addr);
-	}
-}
-
 static void disconnected(struct bt_conn *conn, u8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -157,7 +135,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	default_conn = NULL;
 
 	/* This demo doesn't require active scan */
-	err = bt_le_scan_start(BT_LE_SCAN_PASSIVE, device_found);
+	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
 	}
@@ -168,12 +146,37 @@ static struct bt_conn_cb conn_callbacks = {
 	.disconnected = disconnected,
 };
 
+static void scan_init(void)
+{
+	int err;
+
+	struct bt_scan_init_param scan_init = {
+		.connect_if_match = 1,
+		.scan_param = NULL,
+		.conn_param = BT_LE_CONN_PARAM_DEFAULT
+	};
+
+	bt_scan_init(&scan_init);
+	bt_scan_cb_register(&scan_cb);
+
+	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
+	if (err) {
+		printk("Scanning filters cannot be set (err %d)\n", err);
+
+		return;
+	}
+
+	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	if (err) {
+		printk("Filters cannot be turned on (err %d)\n", err);
+	}
+}
+
 void main(void)
 {
 	int err;
 
 	err = bt_enable(NULL);
-
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
@@ -181,10 +184,10 @@ void main(void)
 
 	printk("Bluetooth initialized\n");
 
+	scan_init();
 	bt_conn_cb_register(&conn_callbacks);
 
-	err = bt_le_scan_start(BT_LE_SCAN_ACTIVE, device_found);
-
+	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
 		return;
