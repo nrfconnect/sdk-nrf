@@ -24,7 +24,8 @@ pipeline {
   }
 
   environment {
-      SANITYCHECK_OPTIONS = " --inline-logs"
+      // Build all custom samples that match the ci_build tag
+      SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --build-only --disable-unrecognized-section-test -t ci_build"
       ARCH = "-a arm"
       LC_ALL = "C.UTF-8"
       DOWNSTREAM_PROJECTS = credentials('fw-nrfconnect-nrf-jobs')
@@ -44,24 +45,39 @@ pipeline {
 
     stage('Testing') {
       parallel {
-        stage('Build nrf_desktop') {
+        stage('Build samples') {
           steps {
-            // Use paranthesis to avoid actually changing the current working directory
-            sh "mkdir nrf/samples/nrf_desktop/build_pca20041 nrf/samples/nrf_desktop/build_pca10056 nrf/samples/nrf_desktop/build_pca63519"
-            sh "(source zephyr/zephyr-env.sh && cd nrf/samples/nrf_desktop/build_pca20041 && cmake .. -DBOARD=nrf52840_pca20041 && make -j 8)"
-            sh "(source zephyr/zephyr-env.sh && cd nrf/samples/nrf_desktop/build_pca10056 && cmake .. -DBOARD=nrf52840_pca10056 && make -j 8)"
-            sh "(source zephyr/zephyr-env.sh && cd nrf/samples/nrf_desktop/build_pca63519 && cmake .. -DBOARD=nrf52_pca63519    && make -j 8)"
+            // Create a folder to store artifacts in
+            sh 'mkdir artifacts'
+
+            // Build all the samples
+            dir('zephyr') {
+              sh "source zephyr-env.sh && ./scripts/sanitycheck $SANITYCHECK_OPTIONS"
+            }
+
+            // Export artifacts needed for downstream projects.
+            // Platform array assumed to be <chip>_<board> and artifact will be named <board>.hex
+            script {
+              desktop_platforms = ['nrf52840_pca20041', 'nrf52840_pca10056', 'nrf52_pca63519']
+              for(int i=0; i<desktop_platforms.size(); i++) {
+                file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.hex"
+                if (fileExists(file_path)) {
+                  sh "cp ${file_path} artifacts/${desktop_platforms[i].split('_')[1]}.hex"
+                }
+                else {
+                  echo "Build for ${desktop_platforms[i]} failed, or no output was found"
+                  sh "cat zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/build.log"
+                }
+              }
+            }
 
             // Check if the files were successfully built
             script {
-              if (fileExists('nrf/samples/nrf_desktop/build_pca20041/zephyr/zephyr.hex') && \
-                  fileExists('nrf/samples/nrf_desktop/build_pca10056/zephyr/zephyr.hex') && \
-                  fileExists('nrf/samples/nrf_desktop/build_pca63519/zephyr/zephyr.hex')) {
+              if (fileExists('artifacts/pca20041.hex') && \
+                  fileExists('artifacts/pca10056.hex') && \
+                  fileExists('artifacts/pca63519.hex')) {
                 echo "nrf_desktop build successful!"
-                sh "cp 'nrf/samples/nrf_desktop/build_pca20041/zephyr/zephyr.hex' pca20041.hex"
-                sh "cp 'nrf/samples/nrf_desktop/build_pca10056/zephyr/zephyr.hex' pca10056.hex"
-                sh "cp 'nrf/samples/nrf_desktop/build_pca63519/zephyr/zephyr.hex' pca63519.hex"
-                archiveArtifacts artifacts: '*.hex'
+                archiveArtifacts artifacts: 'artifacts/*.hex'
               }
               else {
                 echo "nrf_desktop build failed!"
@@ -111,10 +127,10 @@ pipeline {
     }
   }
 
-  // post {
-    // always {
-      // // Clean up the working space at the end (including tracked files)
-      // cleanWs()
-    // }
-  // }
+  post {
+    always {
+      // Clean up the working space at the end (including tracked files)
+      cleanWs()
+    }
+  }
 }
