@@ -32,7 +32,7 @@ extern "C" {
  * @brief Callback executed when button state change is detected
  *
  * @param button_state Bitmask of button states
- * @param has_changed Bitmask that shows wich buttons that have changed.
+ * @param has_changed Bitmask that shows which buttons that have changed.
  */
 typedef void (*button_handler_t)(u32_t button_state, u32_t has_changed);
 
@@ -53,32 +53,42 @@ int dk_buttons_init(button_handler_t button_handler);
 /** @brief Read current button states
  *
  * @param button_state Bitmask of button states
- * @param has_changed Bitmask that shows wich buttons that have changed.
+ * @param has_changed Bitmask that shows which buttons that have changed.
  */
 void dk_read_buttons(u32_t *button_state, u32_t *has_changed);
 
 /** @brief Set value of LED pins
  *
- *  @param  leds Bitmask that that will turn on and of the LEDs
+ *  @param  leds Bitmask that will turn on and of the LEDs
  *
  *  @return Zero on success or (negative) error code otherwise.
  */
 int dk_set_leds(u32_t leds);
 
-
 /** @brief Set value of LED pins.
  *
- *  @param  leds_on_mask Bitmask that that will turn on the corresponding
+ *  @param  leds_on_mask Bitmask that will turn on the corresponding
  *                       LEDs. In cases where it overlaps with
  *                       leds_off_mask, the leds_on_mask will have priority.
  *
- *  @param  leds_off_mask Bitmask that that will turn off the corresponding
+ *  @param  leds_off_mask Bitmask that will turn off the corresponding
  *                        LEDs. In cases where it overlaps with
  *                        leds_on_mask, the leds_on_mask will have priority.
  *
  *  @return Zero on success or (negative) error code otherwise.
  */
 int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask);
+
+/** @brief Check value of LED_pins
+ *
+ *  @param leds_mask Bitmask that will check value of
+ *                   corresponding LEDS.
+ *  @param led_state Bitmask thah shows which LEDS are turned on
+ *                   or turned off.
+ *
+ *  @return Zero on success or (negative) error code otherwise.
+ */
+int dk_check_leds_state(u32_t leds_mask, u32_t *led_state);
 
 #ifdef __cplusplus
 }

@@ -15,4 +15,6 @@ rsource "dk_buttons_and_leds/Kconfig"
 
 rsource "sensor_sim/Kconfig"
 
+rsource "ui/Kconfig"
+
 endmenu
