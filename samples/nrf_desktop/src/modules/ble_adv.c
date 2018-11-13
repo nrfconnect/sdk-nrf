@@ -12,6 +12,7 @@
 
 #define MODULE ble_adv
 #include "module_state_event.h"
+#include "button_event.h"
 
 #include <logging/log.h>
 #define LOG_LEVEL CONFIG_DESKTOP_LOG_BLE_ADV_LEVEL
@@ -34,6 +35,10 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
+
+static bool bonds_initialized;
+static bool bonds_remove;
+
 
 static void ble_adv_start(void)
 {
@@ -61,6 +66,18 @@ static void ble_settings_load(void)
 			sys_reboot(SYS_REBOOT_WARM);
 		}
 		LOG_INF("Settings loaded");
+
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_BOND_REMOVAL)) {
+			if (bonds_remove) {
+				if (bt_unpair(BT_ID_DEFAULT, BT_ADDR_LE_ANY)) {
+					LOG_ERR("Failed to remove bonds");
+				} else {
+					LOG_WRN("Removed bonded devices");
+				}
+			}
+
+			bonds_initialized = true;
+		}
 	}
 }
 
@@ -98,6 +115,25 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_BOND_REMOVAL)) {
+		if (is_button_event(eh)) {
+			if (bonds_initialized) {
+				return false;
+			}
+
+			const struct button_event *event =
+				cast_button_event(eh);
+
+			if ((event->key_id ==
+			    CONFIG_DESKTOP_BLE_BOND_REMOVAL_BUTTON) &&
+			    event->pressed) {
+				bonds_remove = true;
+			}
+
+			return false;
+		}
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -105,3 +141,6 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+#if CONFIG_DESKTOP_BLE_BOND_REMOVAL
+EVENT_SUBSCRIBE(MODULE, button_event);
+#endif /* CONFIG_DESKTOP_BLE_BOND_REMOVAL */
