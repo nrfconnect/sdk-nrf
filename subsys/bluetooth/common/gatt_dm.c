@@ -8,18 +8,18 @@
 
 #include <bluetooth/common/gatt_dm.h>
 
-#define LOG_LEVEL CONFIG_NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL
+#define LOG_LEVEL CONFIG_BT_GATT_DM_LOG_LEVEL
 #include <logging/log.h>
-LOG_MODULE_REGISTER(gatt_db_discovery);
+LOG_MODULE_REGISTER(bt_gatt_dm);
 
 /* Available sizes: 128, 512, 2048... */
 #define CHUNK_SIZE (128 - sizeof(struct k_mem_block_id))
 
 static struct bt_gatt_discover_params discover_params;
-static struct bt_gatt_attr attrs[CONFIG_NRF_BT_GATT_DB_DISCOVERY_MAX_ATTRS];
+static struct bt_gatt_attr attrs[CONFIG_BT_GATT_DM_MAX_ATTRS];
 static size_t cur_attr_id;
 
-static u8_t *user_data_chunks[CONFIG_NRF_BT_GATT_DB_DISCOVERY_MAX_MEM_CHUNKS];
+static u8_t *user_data_chunks[CONFIG_BT_GATT_DM_MAX_MEM_CHUNKS];
 static size_t cur_chunk_id;
 static size_t cur_chunk_data_len;
 
@@ -30,7 +30,7 @@ enum {
 };
 static ATOMIC_DEFINE(state_flags, STATE_NUM);
 
-static const struct gatt_db_discovery_cb *callback;
+static const struct bt_gatt_dm_cb *callback;
 
 static void *user_data_store(const void *user_data, size_t len)
 {
@@ -350,9 +350,9 @@ static u8_t discovery_callback(struct bt_conn *conn,
 	return BT_GATT_ITER_STOP;
 }
 
-int gatt_db_discovery_start(struct bt_conn *conn,
-			    const struct bt_uuid *svc_uuid,
-			    const struct gatt_db_discovery_cb *cb)
+int bt_gatt_dm_start(struct bt_conn *conn,
+		     const struct bt_uuid *svc_uuid,
+		     const struct bt_gatt_dm_cb *cb)
 {
 	int err;
 
@@ -389,7 +389,7 @@ int gatt_db_discovery_start(struct bt_conn *conn,
 	return err;
 }
 
-int gatt_db_discovery_data_release(void)
+int bt_gatt_dm_data_release(void)
 {
 	if (!atomic_test_and_clear_bit(state_flags,
 				       STATE_ATTRS_RELEASE_PENDING)) {
@@ -402,7 +402,7 @@ int gatt_db_discovery_data_release(void)
 	return 0;
 }
 
-#if CONFIG_NRF_BT_GATT_DB_DISCOVERY_DATA_PRINT
+#if CONFIG_BT_GATT_DM_DATA_PRINT
 
 #define UUID_STR_LEN 37
 
@@ -442,7 +442,7 @@ static void attr_print(const struct bt_gatt_attr *attr)
 	}
 }
 
-void gatt_db_discovery_data_print(void)
+void bt_gatt_dm_data_print(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(attrs); i++) {
 		if (attrs[i].uuid != NULL) {
@@ -451,4 +451,4 @@ void gatt_db_discovery_data_print(void)
 	}
 }
 
-#endif /* CONFIG_NRF_BT_GATT_DB_DISCOVERY_DATA_PRINT */
+#endif /* CONFIG_BT_GATT_DM_DATA_PRINT */
