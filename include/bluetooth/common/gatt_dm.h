@@ -9,9 +9,9 @@
 
 /**
  * @file
- * @defgroup nrf_bt_gatt_db_discovery GATT Database Discovery API
+ * @defgroup bt_gatt_dm GATT Discovery Manager API
  * @{
- * @brief Module for GATT Database Discovery.
+ * @brief Module for GATT Discovery Manager.
  */
 
 #include <bluetooth/gatt.h>
@@ -30,7 +30,7 @@ struct bt_gatt_dm_cb {
 	 *
 	 * The discovery procedure has completed successfully.
 	 *
-	 * @note You need to release the discovery data with
+	 * @note You must release the discovery data with
 	 * @ref bt_gatt_dm_data_release if you want to start another
 	 * discovery.
 	 *
@@ -62,19 +62,19 @@ struct bt_gatt_dm_cb {
 
 /** @brief Start service discovery.
  *
- * This function is asynchronous and discovery results are passed through
- * supplied callback.
+ * This function is asynchronous. Discovery results are passed through
+ * the supplied callback.
  *
  * @note Only one discovery procedure can be started simultaneously. To start
- * another one, you need to wait for the result of previous procedure to finish
+ * another one, wait for the result of the previous procedure to finish
  * and call @ref bt_gatt_dm_data_release if it was successful.
  *
  * @param[in] conn Connection object.
  * @param[in] svc_uuid UUID of target service.
  * @param[in] cb Callback structure.
  *
- * @return 0 if the operation was successful. Otherwise, a (negative) error
- *         code is returned.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int bt_gatt_dm_start(struct bt_conn *conn,
 		     const struct bt_uuid *svc_uuid,
@@ -82,17 +82,17 @@ int bt_gatt_dm_start(struct bt_conn *conn,
 
 /** @brief Release data associated with service discovery.
  *
- * After calling this function, you cannot rely on the discovery data passed
- * with discovery completed callback (see @ref bt_gatt_dm_cb).
+ * After calling this function, you cannot rely on the discovery data that was
+ * passed with the discovery completed callback (see @ref bt_gatt_dm_cb).
  *
- * @return 0 if the operation was successful. Otherwise, a (negative) error
- *         code is returned.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int bt_gatt_dm_data_release(void);
 
 /** @brief Print service discovery data.
  *
- * This function prints GATT attibutes that belong to the discovered service.
+ * This function prints GATT attributes that belong to the discovered service.
  */
 void bt_gatt_dm_data_print(void);
 
