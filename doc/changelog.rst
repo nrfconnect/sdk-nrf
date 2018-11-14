@@ -81,8 +81,8 @@ The following list contains the most important changes since the last release:
 * Added :doc:`MCUboot <mcuboot:index>` documentation.
 * Added documentation for the :ref:`peripheral_uart` sample and the :ref:`nus_service_readme`.
 * Added **scan** library for BLE. This library handles BLE scanning for your application. See :ref:`nrf_bt_scan_readme`.
-* Added **gatt_db_discovery** library for BLE. This library handles service discovery on BLE GATT servers. See :ref:`gatt_db_discovery_readme`.
-* Added **central_hids** BLE sample. This sample connects to HID devices and uses **gatt_db_discovery** library to perform HID service discovery.
+* Added **gatt_dm** library for BLE. This library handles service discovery on BLE GATT servers. See :ref:`gatt_dm_readme`.
+* Added **central_hids** BLE sample. This sample connects to HID devices and uses **gatt_dm** library to perform HID service discovery.
 * Added **ndef** libraries for NFC. These libraries handle NDEF records and message generation. Text and URI records are supported for now.
 * Added **record_text** NFC sample. This sample uses the NFC Type 2 Tag to expose a Text record to NFC polling devices. It requires the binary libraries in the nrfxlib repository.
 * Added **writable_ndef_msg** NFC sample. This sample uses the NFC Type 4 Tag to expose an NDEF message, which can be overwritten by NFC polling devices. It requires the binary libraries in the nrfxlib repository.
