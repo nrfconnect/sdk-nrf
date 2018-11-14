@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 
-#include <bluetooth/common/gatt_db_discovery.h>
+#include <bluetooth/common/gatt_dm.h>
 
 #define LOG_LEVEL CONFIG_NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL
 #include <logging/log.h>

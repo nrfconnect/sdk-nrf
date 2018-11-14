@@ -17,7 +17,7 @@
 #include <bluetooth/conn.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
-#include <bluetooth/common/gatt_db_discovery.h>
+#include <bluetooth/common/gatt_dm.h>
 #include <misc/byteorder.h>
 #include <bluetooth/common/scan.h>
 
