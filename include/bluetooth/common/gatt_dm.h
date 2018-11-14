@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef GATT_DB_DISCOVERY_H__
-#define GATT_DB_DISCOVERY_H__
+#ifndef BT_GATT_DM_H_
+#define BT_GATT_DM_H_
 
 /**
  * @file
@@ -25,13 +25,13 @@ extern "C" {
  *
  *  This structure is used for tracking the result of a discovery.
  */
-struct gatt_db_discovery_cb {
+struct bt_gatt_dm_cb {
 	/** @brief Discovery completed callback.
 	 *
 	 * The discovery procedure has completed successfully.
 	 *
 	 * @note You need to release the discovery data with
-	 * @ref gatt_db_discovery_data_release if you want to start another
+	 * @ref bt_gatt_dm_data_release if you want to start another
 	 * discovery.
 	 *
 	 * @param[in] conn Connection object.
@@ -67,7 +67,7 @@ struct gatt_db_discovery_cb {
  *
  * @note Only one discovery procedure can be started simultaneously. To start
  * another one, you need to wait for the result of previous procedure to finish
- * and call @ref gatt_db_discovery_data_release if it was successful.
+ * and call @ref bt_gatt_dm_data_release if it was successful.
  *
  * @param[in] conn Connection object.
  * @param[in] svc_uuid UUID of target service.
@@ -76,25 +76,25 @@ struct gatt_db_discovery_cb {
  * @return 0 if the operation was successful. Otherwise, a (negative) error
  *         code is returned.
  */
-int gatt_db_discovery_start(struct bt_conn *conn,
-			    const struct bt_uuid *svc_uuid,
-			    const struct gatt_db_discovery_cb *cb);
+int bt_gatt_dm_start(struct bt_conn *conn,
+		     const struct bt_uuid *svc_uuid,
+		     const struct bt_gatt_dm_cb *cb);
 
 /** @brief Release data associated with service discovery.
  *
  * After calling this function, you cannot rely on the discovery data passed
- * with discovery completed callback (see @ref gatt_db_discovery_cb).
+ * with discovery completed callback (see @ref bt_gatt_dm_cb).
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error
  *         code is returned.
  */
-int gatt_db_discovery_data_release(void);
+int bt_gatt_dm_data_release(void);
 
 /** @brief Print service discovery data.
  *
  * This function prints GATT attibutes that belong to the discovered service.
  */
-void gatt_db_discovery_data_print(void);
+void bt_gatt_dm_data_print(void);
 
 #ifdef __cplusplus
 }
@@ -104,4 +104,4 @@ void gatt_db_discovery_data_print(void);
  * @}
  */
 
-#endif /* GATT_DB_DISCOVERY_H__ */
+#endif /* BT_GATT_DM_H_ */

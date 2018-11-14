@@ -1,48 +1,48 @@
-menuconfig NRF_BT_GATT_DB_DISCOVERY
-	bool "GATT DB discovery library"
+menuconfig BT_GATT_DM
+	bool "GATT Discovery Manager library"
 	help
-	  Enable BLE GATT DB Discovery library
+	  Enable BLE GATT Discovery Manager library
 
-if NRF_BT_GATT_DB_DISCOVERY
+if BT_GATT_DM
 
-config NRF_BT_GATT_DB_DISCOVERY_MAX_ATTRS
+config BT_GATT_DM_MAX_ATTRS
 	int "Maximum number of attributes that can be present in the discovered service"
 	default 35
 	help
 	  Maximum number of attributes that can be present in the discovered service.
 
-config NRF_BT_GATT_DB_DISCOVERY_MAX_MEM_CHUNKS
+config BT_GATT_DM_MAX_MEM_CHUNKS
 	int "Maximum number of allocated memory chunks containing GATT attribute data"
 	default 6
 	help
 	  Maximum number of allocated memory blocks containing GATT attribute data.
 
 choice
-	prompt "GATT DB Discovery logging level"
-	default NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_DBG
+	prompt "GATT Discovery Manager logging level"
+	default BT_GATT_DM_LOG_LEVEL_DBG
 
-config NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_OFF
+config BT_GATT_DM_LOG_LEVEL_OFF
 	bool "Off"
-config NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_ERR
+config BT_GATT_DM_LOG_LEVEL_ERR
 	bool "Error"
-config NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_WRN
+config BT_GATT_DM_LOG_LEVEL_WRN
 	bool "Warning"
-config NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_INF
+config BT_GATT_DM_LOG_LEVEL_INF
 	bool "Info"
-config NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_DBG
+config BT_GATT_DM_LOG_LEVEL_DBG
 	bool "Debug"
 
 endchoice
 
-config NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL
+config BT_GATT_DM_LOG_LEVEL
 	int
-	default 0 if NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_OFF
-	default 1 if NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_ERR
-	default 2 if NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_WRN
-	default 3 if NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_INF
-	default 4 if NRF_BT_GATT_DB_DISCOVERY_LOG_LEVEL_DBG
+	default 0 if BT_GATT_DM_LOG_LEVEL_OFF
+	default 1 if BT_GATT_DM_LOG_LEVEL_ERR
+	default 2 if BT_GATT_DM_LOG_LEVEL_WRN
+	default 3 if BT_GATT_DM_LOG_LEVEL_INF
+	default 4 if BT_GATT_DM_LOG_LEVEL_DBG
 
-config NRF_BT_GATT_DB_DISCOVERY_DATA_PRINT
+config BT_GATT_DM_DATA_PRINT
 	bool
 	prompt "Enable functions for printing discovery related data"
 	default y
@@ -50,4 +50,4 @@ config NRF_BT_GATT_DB_DISCOVERY_DATA_PRINT
 	help
 	  Enable functions for printing discovery related data
 
-endif # NRF_BT_GATT_DB_DISCOVERY
+endif # BT_GATT_DM
