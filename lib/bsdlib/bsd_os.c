@@ -16,7 +16,9 @@
 #include <zephyr/types.h>
 #include <errno.h>
 
+#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
 #include <nrfx_uarte.h>
+#endif
 
 #ifndef ENOKEY
 #define ENOKEY 2001
@@ -40,8 +42,10 @@
 #define TRACE_IRQ EGU2_IRQn
 #define TRACE_IRQ_PRIORITY 6
 
+#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
 /* Use UARTE1 as a dedicated peripheral to print traces. */
 static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
+#endif
 
 void IPC_IRQHandler(void);
 
@@ -192,6 +196,10 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 
 ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
 {
+	/*
+	 * Process traces.
+	 * The function has to be called even if UART traces are disabled.
+	 */
 	bsd_os_trace_irq_handler();
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
@@ -214,6 +222,7 @@ void read_task_create(void)
 
 void trace_uart_init(void)
 {
+#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
 	/* UART pins are defined in "nrf9160_pca10090.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
@@ -234,6 +243,7 @@ void trace_uart_init(void)
 	/* Initialize nrfx UARTE driver in blocking mode. */
 	/* TODO: use UARTE in non-blocking mode with IRQ handler. */
 	nrfx_uarte_init(&uarte_inst, &config, NULL);
+#endif
 }
 
 /* This function is called by bsd_init and must not be called explicitly. */
@@ -248,6 +258,7 @@ void bsd_os_init(void)
 
 s32_t bsd_os_trace_put(const u8_t * const data, u32_t len)
 {
+#ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
 	/* FIXME: Due to a bug in nrfx, max DMA transfers are 255 bytes. */
 
 	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
@@ -260,6 +271,8 @@ s32_t bsd_os_trace_put(const u8_t * const data, u32_t len)
 		nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);
 		remaining_bytes -= transfer_len;
 	}
+#endif
+
 	return 0;
 }
 
