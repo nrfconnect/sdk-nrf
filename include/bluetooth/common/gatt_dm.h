@@ -21,6 +21,12 @@
 extern "C" {
 #endif
 
+/** @brief Discovery manager instance
+ *
+ * The instance of the manager used by most of the functions here.
+ */
+struct bt_gatt_dm;
+
 /** @brief Discovery callback structure.
  *
  *  This structure is used for tracking the result of a discovery.
@@ -34,31 +40,207 @@ struct bt_gatt_dm_cb {
 	 * @ref bt_gatt_dm_data_release if you want to start another
 	 * discovery.
 	 *
-	 * @param[in] conn Connection object.
-	 * @param[in] attrs GATT attributes that belong to the discovered
-	 *                  service.
-	 * @param[in] attrs_len Length of the attribute array.
+	 * @param[in,out] dm Discovery Manager instance
+	 * @param[in,out] context The value passed to
+	 *                @ref gatt_db_discovery_start
 	 */
-	void (*completed)(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attrs,
-			  size_t attrs_len);
+	void (*completed)(struct bt_gatt_dm *dm,
+			  void *context);
 
 	/** @brief Service not found callback.
 	 *
 	 * The targeted service could not be found during the discovery.
 	 *
-	 * @param[in] conn Connection object.
+	 * @param[in,out] conn Connection object.
+	 * @param[in,out] context The value passed to
+	 *                @ref gatt_db_discovery_start
 	 */
-	void (*service_not_found)(struct bt_conn *conn);
+	void (*service_not_found)(struct bt_conn *conn,
+				  void *context);
 
 	/** @brief Discovery error found callback.
 	 *
 	 * The discovery procedure has failed.
 	 *
-	 * @param[in] conn Connection object.
+	 * @param[in,out] conn Connection object.
+	 * @param[in]     err The error code.
+	 * @param[in,out] context The value passed to
+	 *                @ref gatt_db_discovery_start
 	 */
-	void (*error_found)(struct bt_conn *conn, int err);
+	void (*error_found)(struct bt_conn *conn,
+			    int err,
+			    void *context);
 };
+
+/** @brief Access service value saved with service attribute
+ *
+ * This function access the service value parsed and saved previously
+ * in the user_data attribute field.
+ *
+ * @note Use it only on the attribute parsed in this module.
+ *       To access service attribute use @ref bt_gatt_dm_service_get function.
+ *
+ * @param[in] attr Service attribute
+ *
+ * @return The service value from the parsed attribute
+ *         or NULL when attribute UUID value is unexpected.
+ */
+struct bt_gatt_service_val *bt_gatt_dm_attr_service_val(
+	const struct bt_gatt_attr *attr);
+
+/** @brief Access characteristic value saved with characteristic attribute
+ *
+ * This function access the characteristic value parsed
+ * and saved previously in the user_data attribute field.
+ *
+ * @note Use it only on the attribute parsed in this module.
+ *       To access characteristic attribute use
+ *       @ref bt_gatt_dm_char_next function.
+ *
+ * @param[in] attr Characteristic attribute
+ *
+ * @return The characteristic value from parser attribute
+ *         or NULL when attribute UUID value is unexpected.
+ */
+struct bt_gatt_chrc *bt_gatt_dm_attr_chrc_val(
+	const struct bt_gatt_attr *attr);
+
+/** @brief Get the connection object
+ *
+ * Function returns connection object that is used by given
+ * discovery manager instance.
+ *
+ * @param[in] dm Discovery manager instance
+ *
+ * @return Connection object.
+ */
+struct bt_conn *bt_gatt_dm_conn_get(struct bt_gatt_dm *dm);
+
+/** @brief Get total number of attributes decoded
+ *
+ * The number of attributes including the service attribute.
+ * It means that service without any attribute would return 1 here.
+ *
+ * @param[in] dm Discovery Manager instance.
+ *
+ * @return Total number of attributes parsed.
+ */
+size_t bt_gatt_dm_attr_cnt(const struct bt_gatt_dm *dm);
+
+/** @brief Get service value
+ *
+ * Function returns the value that contains UUID and attribute
+ * end handler of the service found.
+ *
+ * @param[in] dm Discovery Manager instance.
+ *
+ * @return The pointer service value structure.
+ */
+const struct bt_gatt_attr *bt_gatt_dm_service_get(const struct bt_gatt_dm *dm);
+
+/** @brief Get next characteristic
+ *
+ * @param[in] dm Discovery Manager instance.
+ * @param[in] prev An attribute where start to search.
+ *            If NULL - the first characteristic in the service would be found.
+ *            Note: It can be the previous characteristic attribute or the
+ *            last descriptor inside the previous attribute.
+ *            Function would start searching for the next characteristic
+ *            from that point.
+ *
+ * @return The pointer for an attribute that describes the characteristic
+ *         or NULL if no more characteristic is present.
+ */
+const struct bt_gatt_attr *bt_gatt_dm_char_next(
+	const struct bt_gatt_dm *dm,
+	const struct bt_gatt_attr *prev);
+
+/** @brief Get the characteristic by its UUID
+ *
+ * Function finds characteristic attribute by the UUID stored in its
+ * characteristic value.
+ * If the selected characteristic is not found in parsed service
+ * it returns NULL.
+ *
+ * @param[in] dm Discovery instance
+ * @param[in] uuid The UUID of the characteristic
+ *
+ * @return The characteristic attribute
+ *         (the one with UUID set to @ref BT_UUID_GATT_CHRC)
+ *         with the selected UUID inside the characteristic value.
+ *         Returns NULL if no such characteristic is present in the
+ *         current service.
+ */
+const struct bt_gatt_attr *bt_gatt_dm_char_by_uuid(
+	const struct bt_gatt_dm *dm,
+	const struct bt_uuid *uuid);
+
+/** @brief Get attribute by handle
+ *
+ * Function returns any type of the attribute using its handle.
+ *
+ * @param[in] dm Discovery Manager instance.
+ * @param[in] handle The handle to find
+ *
+ * @return The pointer to the attribute or NULL if there is no
+ *         attribute with such a pointer.
+ */
+const struct bt_gatt_attr *bt_gatt_dm_attr_by_handle(
+	const struct bt_gatt_dm *dm, u16_t handle);
+
+/** @brief Get next attribute
+ *
+ * Function returns the attribute next to the given one.
+ * It returns any type of the attribute.
+ *
+ * @param[in] dm Discovery Manager instance.
+ * @param[in] prev Previous attribute or NULL if we wish to get
+ *            first attribute (just after service).
+ *
+ * @return Attribute next to the @c prev
+ *         or the first attribute if NULL is given.
+ */
+const struct bt_gatt_attr *bt_gatt_dm_attr_next(
+	const struct bt_gatt_dm *dm,
+	const struct bt_gatt_attr *prev);
+
+
+/** @brief Search the descriptor by UUID
+ *
+ * Function searches for the descriptor with given UUID
+ * inside given characteristic.
+ *
+ * @param[in] dm Discovery Manager instance.
+ * @param[in] attr_chrc The characteristic attribute where to search
+ * @param[in] uuid The UUID of the searched descriptor.
+ *
+ * @return Pointer to the attribute or NULL if the attribute cannot be found.
+ */
+const struct bt_gatt_attr *bt_gatt_dm_desc_by_uuid(
+	const struct bt_gatt_dm *dm,
+	const struct bt_gatt_attr *attr_chrc,
+	const struct bt_uuid *uuid);
+
+/** @brief Get next descriptor
+ *
+ * Function returns next descriptor.
+ * The difference between this function and @ref bt_gatt_dm_attr_next is that
+ * it returns NULL also when returned attribute appears to be next
+ * characteristic.
+ *
+ * @param[in] dm Discovery Manager instance.
+ * @param[in] prev Previous attribute.
+ *            The characteristic if we wish to get first descriptor
+ *            or previous descriptor.
+ *            If NULL or pointer to service attribute is given
+ *            the result is undefined.
+ *
+ * @return The pointer to the descriptor attribute
+ *         or NULL if there is no more descriptors in the characteristic.
+ */
+const struct bt_gatt_attr *bt_gatt_dm_desc_next(
+	const struct bt_gatt_dm *dm,
+	const struct bt_gatt_attr *prev);
 
 /** @brief Start service discovery.
  *
@@ -69,32 +251,39 @@ struct bt_gatt_dm_cb {
  * another one, wait for the result of the previous procedure to finish
  * and call @ref bt_gatt_dm_data_release if it was successful.
  *
- * @param[in] conn Connection object.
- * @param[in] svc_uuid UUID of target service.
- * @param[in] cb Callback structure.
+ * @param[in]     conn Connection object.
+ * @param[in]     svc_uuid UUID of target service.
+ * @param[in]     cb Callback structure.
+ * @param[in,out] context Context argument that would be passed to
+ *                callback functions
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_gatt_dm_start(struct bt_conn *conn,
 		     const struct bt_uuid *svc_uuid,
-		     const struct bt_gatt_dm_cb *cb);
+		     const struct bt_gatt_dm_cb *cb,
+		     void *context);
 
 /** @brief Release data associated with service discovery.
  *
  * After calling this function, you cannot rely on the discovery data that was
  * passed with the discovery completed callback (see @ref bt_gatt_dm_cb).
  *
+ * @param[in] dm Discovery Manager instance
+ *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_gatt_dm_data_release(void);
+int bt_gatt_dm_data_release(struct bt_gatt_dm *dm);
 
 /** @brief Print service discovery data.
  *
  * This function prints GATT attributes that belong to the discovered service.
+ *
+ * @param[in] dm Discovery Manager instance
  */
-void bt_gatt_dm_data_print(void);
+void bt_gatt_dm_data_print(const struct bt_gatt_dm *dm);
 
 #ifdef __cplusplus
 }
