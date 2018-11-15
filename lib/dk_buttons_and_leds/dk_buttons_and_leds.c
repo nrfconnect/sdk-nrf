@@ -73,7 +73,30 @@ static void buttons_scan_fn(struct k_work *work)
 	}
 }
 
-int dk_buttons_and_leds_init(button_handler_t button_handler)
+int dk_leds_init(void)
+{
+	int err;
+
+	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	if (!gpio_dev) {
+		SYS_LOG_ERR("Cannot bind gpio device");
+		return -ENODEV;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
+		err = gpio_pin_configure(gpio_dev, led_pins[i],
+					 GPIO_DIR_OUT);
+
+		if (err) {
+			SYS_LOG_ERR("Cannot configure LED gpio");
+			return err;
+		}
+	}
+
+	return dk_set_leds_state(DK_NO_LEDS_MSK, DK_ALL_LEDS_MSK);
+}
+
+int dk_buttons_init(button_handler_t button_handler)
 {
 	int err;
 
@@ -89,25 +112,13 @@ int dk_buttons_and_leds_init(button_handler_t button_handler)
 
 	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
 		err = gpio_pin_configure(gpio_dev, button_pins[i],
-				GPIO_DIR_IN | GPIO_PUD_PULL_UP);
+					 GPIO_DIR_IN | GPIO_PUD_PULL_UP);
 
 		if (err) {
 			SYS_LOG_ERR("Cannot configure button gpio");
 			return err;
 		}
 	}
-
-	for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
-		err = gpio_pin_configure(gpio_dev, led_pins[i],
-				GPIO_DIR_OUT);
-
-		if (err) {
-			SYS_LOG_ERR("Cannot configure LED gpio");
-			return err;
-		}
-	}
-
-	dk_set_leds_state(DK_NO_LEDS_MSK, DK_ALL_LEDS_MSK);
 
 	k_delayed_work_init(&buttons_scan, buttons_scan_fn);
 	err = k_delayed_work_submit(&buttons_scan, 0);
