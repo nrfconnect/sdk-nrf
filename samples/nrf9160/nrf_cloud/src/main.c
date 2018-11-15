@@ -77,7 +77,7 @@ static bool flip_mode_enabled = true;
 
 /* Structures for work */
 static struct k_delayed_work leds_update_work;
-static struct k_delayed_work connect_work;
+static struct k_work connect_work;
 
 enum error_type {
 	ERROR_NRF_CLOUD,
@@ -357,8 +357,8 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 		atomic_set(&send_data_enable, 0);
 		display_state = LEDS_INITIALIZING;
 
-		/* Try to reconnect after 1 second back off time */
-		k_delayed_work_submit(&connect_work, K_SECONDS(1));
+		/* Reconnect to nRF Cloud. */
+		k_work_submit(&connect_work);
 		break;
 	case NRF_CLOUD_EVT_ERROR:
 		printk("NRF_CLOUD_EVT_ERROR, status: %d\n", p_evt->status);
