@@ -28,7 +28,7 @@ static const struct pin_state port0_off[] = {
 
 const struct port_state port_state_on[] = {
 	{
-		.name     = CONFIG_GPIO_P0_DEV_NAME,
+		.name     = DT_GPIO_P0_DEV_NAME,
 		.ps       = port0_on,
 		.ps_count = ARRAY_SIZE(port0_on),
 	},
@@ -38,7 +38,7 @@ const size_t port_state_on_size = ARRAY_SIZE(port_state_on);
 
 const struct port_state port_state_off[] = {
 	{
-		.name     = CONFIG_GPIO_P0_DEV_NAME,
+		.name     = DT_GPIO_P0_DEV_NAME,
 		.ps       = port0_off,
 		.ps_count = ARRAY_SIZE(port0_off),
 	},

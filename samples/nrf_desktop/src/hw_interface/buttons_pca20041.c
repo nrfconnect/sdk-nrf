@@ -208,7 +208,7 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 static void init_fn(void)
 {
 	/* Setup GPIO configuration */
-	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
 		LOG_ERR("cannot get GPIO device binding");
 		return;
