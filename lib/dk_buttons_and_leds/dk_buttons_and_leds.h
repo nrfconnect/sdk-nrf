@@ -36,13 +36,19 @@ extern "C" {
  */
 typedef void (*button_handler_t)(u32_t button_state, u32_t has_changed);
 
-/** @brief Initialize the button and led library.
+/** @brief Initialize the leds library.
+ *
+ *  @return Zero on success or (negative) error code otherwise.
+ */
+int dk_leds_init(void);
+
+/** @brief Initialize the buttons library.
  *
  *  @param  button_handler Callback handler for button state changes.
  *
  *  @return Zero on success or (negative) error code otherwise.
  */
-int dk_buttons_and_leds_init(button_handler_t button_handler);
+int dk_buttons_init(button_handler_t button_handler);
 
 /** @brief Read current button states
  *

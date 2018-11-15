@@ -620,8 +620,22 @@ static void app_sensors_init(void)
  */
 static void buttons_leds_init(void)
 {
-	dk_buttons_and_leds_init(button_handler);
-	dk_set_leds_state(0x00, DK_ALL_LEDS_MSK);
+	int err;
+
+	err = dk_buttons_init(button_handler);
+	if (err) {
+		printk("Could not initialize buttons, err code: %d\n", err);
+	}
+
+	err = dk_leds_init();
+	if (err) {
+		printk("Could not initialize leds, err code: %d\n", err);
+	}
+
+	err = dk_set_leds_state(0x00, DK_ALL_LEDS_MSK);
+	if (err) {
+		printk("Could not set leds state, err code: %d\n", err);
+	}
 }
 
 void main(void)
