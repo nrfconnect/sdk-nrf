@@ -191,6 +191,11 @@ Doxygen
 
 See `the breathe documentation <https://breathe.readthedocs.io/en/latest/directives.html#directives>`_ for information about what you can link to.
 
+To link to doxygen macros, enums or functions use:
+
+* :c:macro:`HIDS_INFORMATION_CHAR_LEN`
+* :cpp:func:`hids_init`
+
 Linked RST project
 ==================
 
