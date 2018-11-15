@@ -23,7 +23,7 @@
 #define LOG_LEVEL CONFIG_DESKTOP_LOG_WHEEL_MODULE_LEVEL
 LOG_MODULE_REGISTER(MODULE);
 
-static const u32_t qdec_pin[] = {CONFIG_QDEC_A_PIN, CONFIG_QDEC_B_PIN};
+static const u32_t qdec_pin[] = {DT_QDEC_A_PIN, DT_QDEC_B_PIN};
 
 static const struct sensor_trigger qdec_trig = {
 	.type = SENSOR_TRIG_DATA_READY,
@@ -110,14 +110,14 @@ static void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb,
 
 static int setup_wakeup(void)
 {
-	int err = gpio_pin_configure(gpio_dev, CONFIG_QDEC_ENABLE_PIN,
+	int err = gpio_pin_configure(gpio_dev, DT_QDEC_ENABLE_PIN,
 				     GPIO_DIR_OUT);
 	if (err) {
 		LOG_ERR("cannot configure enable pin");
 		goto error;
 	}
 
-	err = gpio_pin_write(gpio_dev, CONFIG_QDEC_ENABLE_PIN, 0);
+	err = gpio_pin_write(gpio_dev, DT_QDEC_ENABLE_PIN, 0);
 	if (err) {
 		LOG_ERR("failed to set enable pin");
 		goto error;
@@ -150,13 +150,13 @@ error:
 
 static int init(void)
 {
-	qdec_dev = device_get_binding(CONFIG_QDEC_NAME);
+	qdec_dev = device_get_binding(DT_QDEC_NAME);
 	if (!qdec_dev) {
 		LOG_ERR("cannot get qdec device");
 		return -ENXIO;
 	}
 
-	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
 		LOG_ERR("cannot get gpio device");
 		return -ENXIO;

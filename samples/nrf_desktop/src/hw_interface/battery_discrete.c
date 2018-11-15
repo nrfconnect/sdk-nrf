@@ -90,7 +90,7 @@ static int init_fn(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
 		LOG_ERR("cannot get gpio device");
 		err = -ENXIO;
