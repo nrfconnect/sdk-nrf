@@ -713,8 +713,22 @@ static bool event_handler(const struct event_header *eh)
 			cast_hid_report_subscription_event(eh);
 
 		if (event->report_type == TARGET_REPORT_MOUSE) {
-			atomic_set(&connected, event->enabled);
-			k_sem_give(&sem);
+			static u8_t peer_count;
+
+			if (event->enabled) {
+				__ASSERT_NO_MSG(peer_count < UCHAR_MAX);
+				peer_count++;
+			} else {
+				__ASSERT_NO_MSG(peer_count > 0);
+				peer_count--;
+			}
+
+			bool new_state = (peer_count != 0);
+			bool old_state = atomic_set(&connected, new_state);
+
+			if (old_state != new_state) {
+				k_sem_give(&sem);
+			}
 		}
 
 		return false;
