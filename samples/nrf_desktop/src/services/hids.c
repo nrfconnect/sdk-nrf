@@ -46,6 +46,8 @@ enum report_mode {
 static enum report_mode report_mode;
 static bool report_enabled[TARGET_REPORT_COUNT][REPORT_MODE_COUNT];
 
+static const struct bt_conn *cur_conn;
+
 
 static void broadcast_subscription_change(enum target_report tr,
 					  enum report_mode old_mode,
@@ -62,6 +64,7 @@ static void broadcast_subscription_change(enum target_report tr,
 
 	event->report_type = tr;
 	event->enabled     = report_enabled[tr][new_mode];
+	event->subscriber  = cur_conn;
 
 	LOG_INF("Notifications %sabled", (event->enabled)?("en"):("dis"));
 
@@ -223,11 +226,17 @@ static void mouse_report_sent(struct bt_conn *conn)
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = TARGET_REPORT_MOUSE;
+	event->subscriber  = cur_conn;
 	EVENT_SUBMIT(event);
 }
 
 static void send_mouse_report(const struct hid_mouse_event *event)
 {
+	if (cur_conn != event->subscriber) {
+		/* It's not us */
+		return;
+	}
+
 	if (!report_enabled[TARGET_REPORT_MOUSE][report_mode]) {
 		/* Notification disabled */
 		return;
@@ -285,11 +294,17 @@ static void keyboard_report_sent(struct bt_conn *conn)
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = TARGET_REPORT_KEYBOARD;
+	event->subscriber  = cur_conn;
 	EVENT_SUBMIT(event);
 }
 
 static void send_keyboard_report(const struct hid_keyboard_event *event)
 {
+	if (cur_conn != event->subscriber) {
+		/* It's not us */
+		return;
+	}
+
 	if (!report_enabled[TARGET_REPORT_KEYBOARD][report_mode]) {
 		/* Notification disabled */
 		return;
@@ -337,11 +352,17 @@ static void notify_hids(const struct ble_peer_event *event)
 
 	switch (event->state) {
 	case PEER_STATE_CONNECTED:
+		__ASSERT_NO_MSG(cur_conn == NULL);
 		err = hids_notify_connected(&hids_obj, event->id);
+		if (!err) {
+			cur_conn = event->id;
+		}
 		break;
 
 	case PEER_STATE_DISCONNECTED:
+		__ASSERT_NO_MSG(cur_conn == event->id);
 		err = hids_notify_disconnected(&hids_obj, event->id);
+		cur_conn = NULL;
 		break;
 
 	case PEER_STATE_SECURED:
