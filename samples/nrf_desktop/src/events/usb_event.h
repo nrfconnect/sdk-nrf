@@ -40,7 +40,8 @@ enum usb_state {
 struct usb_state_event {
 	struct event_header header; /**< Event header. */
 
-	enum usb_state state;       /**< State of the USB module. */
+	enum usb_state state; /**< State of the USB module. */
+	const void *id;       /**< Module id. */
 };
 EVENT_TYPE_DECLARE(usb_state_event);
 
