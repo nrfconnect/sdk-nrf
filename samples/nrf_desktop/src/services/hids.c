@@ -233,12 +233,15 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		return;
 	}
 
+	int err;
+
 	if (report_mode == REPORT_MODE_BOOT) {
 		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
 
-		hids_boot_mouse_inp_rep_send(&hids_obj, NULL, &event->button_bm,
-					     x, y, mouse_report_sent);
+		err = hids_boot_mouse_inp_rep_send(&hids_obj, NULL,
+						   &event->button_bm,
+						   x, y, mouse_report_sent);
 	} else {
 		s16_t wheel = max(min(event->wheel, REPORT_MOUSE_WHEEL_MAX),
 				  REPORT_MOUSE_WHEEL_MIN);
@@ -265,9 +268,15 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		buffer[3] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
 		buffer[4] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
-		hids_inp_rep_send(&hids_obj, NULL,
-				  report_index[REPORT_ID_MOUSE],
-				  buffer, sizeof(buffer), mouse_report_sent);
+		err = hids_inp_rep_send(&hids_obj, NULL,
+					report_index[REPORT_ID_MOUSE],
+					buffer, sizeof(buffer),
+					mouse_report_sent);
+	}
+
+	if (err) {
+		LOG_ERR("Cannot send report (%d)", err);
+		module_set_state(MODULE_STATE_ERROR);
 	}
 }
 
@@ -303,14 +312,22 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	/* Led */
 	report[8] = 0;
 
+	int err;
+
 	if (report_mode == REPORT_MODE_BOOT) {
-		hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
-					  sizeof(report) - sizeof(report[8]),
-					  keyboard_report_sent);
+		err = hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
+						sizeof(report) - sizeof(report[8]),
+						keyboard_report_sent);
 	} else {
-		hids_inp_rep_send(&hids_obj, NULL,
-				  report_index[REPORT_ID_KEYBOARD],
-				  report, sizeof(report), keyboard_report_sent);
+		err = hids_inp_rep_send(&hids_obj, NULL,
+					report_index[REPORT_ID_KEYBOARD],
+					report, sizeof(report),
+					keyboard_report_sent);
+	}
+
+	if (err) {
+		LOG_ERR("Cannot send report (%d)", err);
+		module_set_state(MODULE_STATE_ERROR);
 	}
 }
 
