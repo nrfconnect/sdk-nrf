@@ -145,6 +145,21 @@ const struct bt_gatt_attr * bt_gatt_dm_service_get(const struct bt_gatt_dm *dm);
 const struct bt_gatt_attr * bt_gatt_dm_char_next(const struct bt_gatt_dm * dm, const struct bt_gatt_attr * prev);
 
 /**
+ * @brief Get the characteristic by its UUID
+ *
+ * Function finds Characteristic attribute by the UUID stored in its characteristic value.
+ * If the selected characteristic is not found in parsed service it returns NULL.
+ *
+ * @param dm Discovery instance
+ * @param uuid The UUID of the characteristic
+ *
+ * @return The characteristic attribute (the one with UUID set to @ref BT_UUID_GATT_CHRC)
+ *         with the selected UUID inside the characteristic value.
+ *         Returns NULL if no such characteristic is present in the current service.
+ */
+const struct bt_gatt_attr * bt_gatt_dm_char_by_uuid(const struct bt_gatt_dm *dm, const struct bt_uuid *uuid);
+
+/**
  * @brief Get attribute by handle
  *
  * Function returns any type of the attribute using its handle.
