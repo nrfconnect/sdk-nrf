@@ -19,6 +19,16 @@ DEVICE_DECLARE(lte_link_control);
 /* Subscribes to notifications with level 2 */
 static const char subscribe[] = { 'A', 'T', '+', 'C', 'E',
 				  'R', 'E', 'G', '=', '2' };
+
+#if defined(CONFIG_LTE_LOCK_BANDS)
+/* Lock LTE bands 3, 4, 13 and 20 (volatile setting) */
+static const char lock_bands[] = { 'A', 'T', '%', 'X', 'B', 'A', 'N', 'D',
+				  'L', 'O', 'C', 'K', '=', '2', ',', '"',
+				  '1', '0', '0', '0', '0', '0', '0', '1',
+				  '0', '0', '0', '0', '0', '0', '0', '0',
+				  '1', '1', '0', '0', '"' };
+#endif
+
 /* Set the modem to power off mode */
 static const char power_off[] = { 'A', 'T', '+', 'C', 'F', 'U', 'N', '=', '0' };
 /* Set the modem to Normal mode */
@@ -58,6 +68,24 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 		close(at_socket_fd);
 		return -EIO;
 	}
+
+#if defined(CONFIG_LTE_LOCK_BANDS)
+	/* Set LTE band lock (volatile setting).
+	   Has to be done every time before activating the modem. */
+	buffer = send(at_socket_fd, lock_bands, sizeof(lock_bands), 0);
+	if (buffer != sizeof(lock_bands)) {
+		close(at_socket_fd);
+		return -EIO;
+	}
+
+	buffer = recv(at_socket_fd, read_buffer, sizeof(read_buffer), 0);
+	if ((buffer < sizeof(success)) ||
+	    (memcmp(success, read_buffer, sizeof(success)) != 0)) {
+		close(at_socket_fd);
+		return -EIO;
+	}
+#endif
+
 	buffer = send(at_socket_fd, normal, sizeof(normal), 0);
 	if (buffer != sizeof(normal)) {
 		close(at_socket_fd);
