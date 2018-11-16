@@ -10,6 +10,7 @@
 
 #include <misc/printk.h>
 
+#include <soc.h>
 #include <device.h>
 #include <gpio.h>
 #include <i2c.h>

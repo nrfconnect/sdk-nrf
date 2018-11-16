@@ -7,6 +7,7 @@
 #include <zephyr.h>
 #include <atomic.h>
 
+#include <soc.h>
 #include <device.h>
 #include <spi.h>
 #include <gpio.h>

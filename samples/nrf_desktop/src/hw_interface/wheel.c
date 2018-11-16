@@ -8,6 +8,7 @@
 
 #include <zephyr/types.h>
 
+#include <soc.h>
 #include <device.h>
 #include <sensor.h>
 #include <gpio.h>

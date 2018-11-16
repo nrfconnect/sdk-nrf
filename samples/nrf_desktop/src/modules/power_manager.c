@@ -9,7 +9,6 @@
 
 #include <soc_power.h>
 #include <nrf_power.h>
-#include <board.h>
 #include <device.h>
 #include <gpio.h>
 #include <hal/nrf_gpiote.h>

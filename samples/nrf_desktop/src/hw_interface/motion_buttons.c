@@ -6,8 +6,8 @@
 
 #include <zephyr.h>
 
+#include <soc.h>
 #include <device.h>
-#include <board.h>
 #include <gpio.h>
 
 #include "event_manager.h"
