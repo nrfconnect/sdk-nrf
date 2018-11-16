@@ -26,7 +26,7 @@ static void print_event(const struct event_header *eh)
 
 	__ASSERT_NO_MSG(event->state < USB_STATE_COUNT);
 
-	printk("%s", state_name[event->state]);
+	printk("id:%p state:%s", event->id, state_name[event->state]);
 }
 
 EVENT_TYPE_DEFINE(usb_state_event, print_event, NULL);
