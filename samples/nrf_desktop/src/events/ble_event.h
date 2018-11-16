@@ -43,8 +43,8 @@ enum peer_state {
 struct ble_peer_event {
 	struct event_header header;
 
-	struct bt_conn *conn_id;
 	enum peer_state state;
+	void *id;
 };
 EVENT_TYPE_DECLARE(ble_peer_event);
 

@@ -25,7 +25,7 @@ static void print_event(const struct event_header *eh)
 
 	__ASSERT_NO_MSG(event->state < PEER_STATE_COUNT);
 
-	printk("conn_id=%p %s", event->conn_id, state_name[event->state]);
+	printk("id=%p %s", event->id, state_name[event->state]);
 }
 
 

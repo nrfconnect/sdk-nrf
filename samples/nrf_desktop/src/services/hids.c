@@ -337,11 +337,11 @@ static void notify_hids(const struct ble_peer_event *event)
 
 	switch (event->state) {
 	case PEER_STATE_CONNECTED:
-		err = hids_notify_connected(&hids_obj, event->conn_id);
+		err = hids_notify_connected(&hids_obj, event->id);
 		break;
 
 	case PEER_STATE_DISCONNECTED:
-		err = hids_notify_disconnected(&hids_obj, event->conn_id);
+		err = hids_notify_disconnected(&hids_obj, event->id);
 		break;
 
 	case PEER_STATE_SECURED:
