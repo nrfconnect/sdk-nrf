@@ -29,6 +29,7 @@ extern "C" {
 struct hid_keyboard_event {
 	struct event_header header; /**< Event header. */
 
+	const void *subscriber; /**< Id of the report subscriber. */
 	u8_t modifier_bm; /**< Bitmask indicating pressed modifier keys. */
 	u8_t keys[6];     /**< Array of pressed keys' usage values. */
 };
@@ -40,19 +41,32 @@ EVENT_TYPE_DECLARE(hid_keyboard_event);
 struct hid_mouse_event {
 	struct event_header header; /**< Event header. */
 
-	u8_t  button_bm; /**< Bitmask indicating pressed mouse buttons. */
-	s16_t wheel;     /**< Change of wheel (scroll). */
-	s16_t dx;        /**< Position change in x axis. */
-	s16_t dy;        /**< Position change in y axis. */
+	const void *subscriber; /**< Id of the report subscriber. */
+	u8_t  button_bm;  /**< Bitmask indicating pressed mouse buttons. */
+	s16_t wheel;      /**< Change of wheel (scroll). */
+	s16_t dx;         /**< Position change in x axis. */
+	s16_t dy;         /**< Position change in y axis. */
 };
 
 EVENT_TYPE_DECLARE(hid_mouse_event);
+
+
+/** @brief Report subscriber event. */
+struct hid_report_subscriber_event {
+	struct event_header header; /**< Event header. */
+
+	const void *subscriber; /**< Id of the report subscriber. */
+	bool connected;   /**< True if subscriber is connected to the system. */
+};
+
+EVENT_TYPE_DECLARE(hid_report_subscriber_event);
 
 
 /** @brief Report sent event. */
 struct hid_report_sent_event {
 	struct event_header header; /**< Event header. */
 
+	const void *subscriber;         /**< Id of the report subscriber. */
 	enum target_report report_type; /**< Type of the report. */
 };
 
@@ -63,6 +77,7 @@ EVENT_TYPE_DECLARE(hid_report_sent_event);
 struct hid_report_subscription_event {
 	struct event_header header; /**< Event header. */
 
+	const void *subscriber;         /**< Id of the report subscriber. */
 	enum target_report report_type; /**< Type of the report. */
 	bool enabled;                   /**< True if notification are enabled. */
 };
