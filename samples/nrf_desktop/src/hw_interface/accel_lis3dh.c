@@ -10,6 +10,7 @@
 
 #include <misc/printk.h>
 
+#include <soc.h>
 #include <device.h>
 #include <gpio.h>
 #include <nrf_gpio.h>
@@ -244,7 +245,7 @@ static void async_init_fn(struct k_work *work)
 		return;
 	}
 
-	struct device *gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	struct device *gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
 		LOG_ERR("cannot get GPIO device");
