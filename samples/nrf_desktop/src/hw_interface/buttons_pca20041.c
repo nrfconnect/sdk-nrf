@@ -6,6 +6,7 @@
 
 #include <zephyr/types.h>
 
+#include <soc.h>
 #include <device.h>
 #include <gpio.h>
 

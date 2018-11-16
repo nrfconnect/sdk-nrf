@@ -5,8 +5,7 @@
  */
 
 #include <misc/util.h>
-
-#include <board.h>
+#include <soc.h>
 
 #include "port_state.h"
 
