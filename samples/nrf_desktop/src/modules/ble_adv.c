@@ -72,7 +72,6 @@ static bool event_handler(const struct event_header *eh)
 			MODULE_ID(hids),
 #endif
 			MODULE_ID(bas),
-			MODULE_ID(dis),
 		};
 		static unsigned int srv_ready_cnt;
 
