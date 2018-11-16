@@ -41,11 +41,17 @@ static void mouse_report_sent(void)
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = TARGET_REPORT_MOUSE;
+	event->subscriber = &state;
 	EVENT_SUBMIT(event);
 }
 
 static void send_mouse_report(const struct hid_mouse_event *event)
 {
+	if (&state != event->subscriber) {
+		/* It's not us */
+		return;
+	}
+
 	if (state != USB_STATE_ACTIVE) {
 		/* USB not connected. */
 		return;
@@ -89,6 +95,7 @@ static void broadcast_usb_state(void)
 	struct usb_state_event *event = new_usb_state_event();
 
 	event->state = state;
+	event->id = &state;
 
 	EVENT_SUBMIT(event);
 }
@@ -100,6 +107,7 @@ static void broadcast_subscription_change(void)
 
 	event->report_type = TARGET_REPORT_MOUSE;
 	event->enabled     = state == USB_STATE_ACTIVE;
+	event->subscriber  = &state;
 
 	LOG_INF("USB HID %sabled", (event->enabled)?("en"):("dis"));
 
@@ -167,11 +175,11 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 
 		state = new_state;
 
+		broadcast_usb_state();
 		if ((new_state == USB_STATE_ACTIVE) ||
 		    (old_state == USB_STATE_ACTIVE)) {
 			broadcast_subscription_change();
 		}
-		broadcast_usb_state();
 	}
 }
 

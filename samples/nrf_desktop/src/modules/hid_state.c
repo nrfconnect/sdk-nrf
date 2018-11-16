@@ -22,6 +22,8 @@
 #include "wheel_event.h"
 #include "power_event.h"
 #include "hid_event.h"
+#include "ble_event.h"
+#include "usb_event.h"
 
 #include "hid_keymap.h"
 
@@ -39,6 +41,8 @@ enum state {
 	STATE_CONNECTED_IDLE,	/**< Connected, no data exchange. */
 	STATE_CONNECTED_BUSY	/**< Connected, report is generated. */
 };
+
+#define SUBSCRIBER_COUNT 2
 
 /**@brief HID state item. */
 struct item {
@@ -66,17 +70,27 @@ struct eventq {
 };
 
 /**@brief Report state. */
-struct report {
-	enum state state;
-	unsigned int cnt;
+struct report_data {
 	struct items items;
 	struct eventq eventq;
 };
 
+struct report_state {
+	enum state state;
+	unsigned int cnt;
+};
+
+struct subscriber {
+	const void *id;
+	bool is_usb;
+	struct report_state state[TARGET_REPORT_COUNT];
+};
 
 /**@brief HID state structure. */
 struct hid_state {
-	struct report report[TARGET_REPORT_COUNT];
+	struct report_data report_data[TARGET_REPORT_COUNT];
+	struct subscriber subscriber[SUBSCRIBER_COUNT];
+	struct subscriber *selected;
 	s32_t wheel_acc;
 	s16_t last_dx;
 	s16_t last_dy;
@@ -95,8 +109,8 @@ static void *bsearch(const void *key, const u8_t *base,
 			 size_t elem_num, size_t elem_size,
 			 int (*compare)(const void *, const void *))
 {
-	__ASSERT_NO_MSG(base != NULL);
-	__ASSERT_NO_MSG(compare != NULL);
+	__ASSERT_NO_MSG(base);
+	__ASSERT_NO_MSG(compare);
 	__ASSERT_NO_MSG(elem_num <= SSIZE_MAX);
 
 	if (!elem_num) {
@@ -191,7 +205,7 @@ static struct item_event *eventq_get(struct eventq *eventq)
 {
 	sys_snode_t *node = sys_slist_get(&eventq->root);
 
-	if (node == NULL) {
+	if (!node) {
 		return NULL;
 	}
 
@@ -334,6 +348,79 @@ static void eventq_cleanup(struct eventq *eventq, u32_t timestamp)
 	}
 }
 
+static struct subscriber *get_subscriber(const void *subscriber_id)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		if (subscriber_id == state.subscriber[i].id) {
+			return &state.subscriber[i];
+		}
+	}
+	LOG_WRN("no subscriber %p\n", subscriber_id);
+	return NULL;
+}
+
+static struct subscriber *get_subscriber_by_type(bool is_usb)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		if (state.subscriber[i].id &&
+		    (state.subscriber[i].is_usb == is_usb)) {
+			return &state.subscriber[i];
+		}
+	}
+	LOG_WRN("no subscriber of type %s\n", (is_usb)?("USB"):("BLE"));
+	return NULL;
+}
+
+static void connect_subscriber(const void *subscriber_id, bool is_usb)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		if (!state.subscriber[i].id) {
+			state.subscriber[i].id = subscriber_id;
+			state.subscriber[i].is_usb = is_usb;
+			LOG_INF("subscriber %p connected", subscriber_id);
+
+			if (!state.selected || is_usb) {
+				state.selected = &state.subscriber[i];
+				LOG_INF("Active subscriber %p",
+					state.selected->id);
+			}
+			return;
+		}
+	}
+	LOG_WRN("cannot connect subscriber");
+}
+
+static void disconnect_subscriber(const void *subscriber_id)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		if (subscriber_id == state.subscriber[i].id) {
+			bool is_usb = state.subscriber[i].is_usb;
+
+			memset(&state.subscriber[i],
+			       0,
+			       sizeof(state.subscriber[i]));
+			LOG_INF("subscriber %p disconnected", subscriber_id);
+
+			if (&state.subscriber[i] == state.selected) {
+				state.selected = NULL;
+				if (is_usb) {
+					state.selected =
+						get_subscriber_by_type(false);
+				}
+
+				if (!state.selected) {
+					LOG_INF("no active subscriber");
+				} else {
+					LOG_INF("Active subscriber %p",
+						state.selected->id);
+				}
+			}
+			return;
+		}
+	}
+	LOG_WRN("cannot disconnect subscriber");
+}
+
 static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 {
 	const u8_t prev_item_count = items->item_count;
@@ -352,7 +439,7 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 			 sizeof(items->item[0]),
 			 usage_id_compare);
 
-	if (p_item != NULL) {
+	if (p_item) {
 		/* Item is present in the array - update its value. */
 		p_item->value += value;
 		if (p_item->value == 0) {
@@ -417,17 +504,19 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 static void send_report_keyboard(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		struct report *report = &state.report[TARGET_REPORT_KEYBOARD];
+		struct report_data *rd = &state.report_data[TARGET_REPORT_KEYBOARD];
 
-		const size_t max = ARRAY_SIZE(report->items.item);
+		const size_t max = ARRAY_SIZE(rd->items.item);
 
 		struct hid_keyboard_event *event = new_hid_keyboard_event();
-		size_t cnt = 0;
 
+		event->subscriber = state.selected->id;
+
+		size_t cnt = 0;
 		for (size_t i = 0;
 		     (i < max) && (cnt < ARRAY_SIZE(event->keys));
 		     i++, cnt++) {
-			struct item item = report->items.item[max - i - 1];
+			struct item item = rd->items.item[max - i - 1];
 
 			if (item.value) {
 				event->keys[cnt] = item.usage_id;
@@ -444,7 +533,6 @@ static void send_report_keyboard(void)
 		event->modifier_bm = 0;
 
 		EVENT_SUBMIT(event);
-		report->cnt++;
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
@@ -454,9 +542,11 @@ static void send_report_keyboard(void)
 static void send_report_mouse(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		struct report *report = &state.report[TARGET_REPORT_MOUSE];
+		struct report_data *rd = &state.report_data[TARGET_REPORT_MOUSE];
 
 		struct hid_mouse_event *event = new_hid_mouse_event();
+
+		event->subscriber = state.selected->id;
 
 		event->dx        = state.last_dx;
 		event->dy        = state.last_dy;
@@ -468,8 +558,8 @@ static void send_report_mouse(void)
 		state.wheel_acc = 0;
 
 		/* Traverse pressed keys and build mouse buttons report */
-		for (size_t i = 0; i < ARRAY_SIZE(report->items.item); i++) {
-			struct item item = report->items.item[i];
+		for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
+			struct item item = rd->items.item[i];
 
 			if (item.value) {
 				__ASSERT_NO_MSG(item.usage_id != 0);
@@ -482,139 +572,162 @@ static void send_report_mouse(void)
 		}
 
 		EVENT_SUBMIT(event);
-		report->cnt++;
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
 	}
 }
 
-static void report_send(enum target_report tr)
+static void report_send(enum target_report tr, bool check_state)
 {
-	switch (tr) {
-	case TARGET_REPORT_KEYBOARD:
-		send_report_keyboard();
-		break;
-
-	case TARGET_REPORT_MOUSE:
-		send_report_mouse();
-		break;
-
-	case TARGET_REPORT_MPLAYER:
-		/* Not supported. */
-		__ASSERT_NO_MSG(false);
-		break;
-
-	default:
-		/* Unhandled HID report type. */
-		__ASSERT_NO_MSG(false);
-		break;
+	if (!state.selected) {
+		LOG_WRN("No active subscriber");
+		return;
 	}
 
-	struct report *report = &state.report[tr];
+	struct report_state *rs = &state.selected->state[tr];
 
-	if (report->cnt == 1) {
-		/* To make sure report is sampled on every
-		 * connection event, add one additional report
-		 * to the pipeline.
-		 */
-		report_send(tr);
+	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
+		do {
+			switch (tr) {
+			case TARGET_REPORT_KEYBOARD:
+				send_report_keyboard();
+				break;
+
+			case TARGET_REPORT_MOUSE:
+				send_report_mouse();
+				break;
+
+			case TARGET_REPORT_MPLAYER:
+				/* Not supported. */
+				__ASSERT_NO_MSG(false);
+				break;
+
+			default:
+				/* Unhandled HID report type. */
+				__ASSERT_NO_MSG(false);
+				break;
+			}
+
+			rs->cnt++;
+
+			/* To make sure report is sampled on every connection
+			 * event, add one additional report to the pipeline.
+			 */
+		} while ((rs->cnt == 1) && !state.selected->is_usb);
+
+		rs->state = STATE_CONNECTED_BUSY;
 	}
-
-	report->state = STATE_CONNECTED_BUSY;
 }
 
-static void report_issued(enum target_report tr)
+static void report_issued(const void *subscriber_id, enum target_report tr)
 {
-	struct report *report = &state.report[tr];
+	struct subscriber *subscriber = get_subscriber(subscriber_id);
+
+	if (!subscriber) {
+		LOG_WRN("no subscriber %p", subscriber_id);
+		return;
+	}
+
+	if (state.selected != subscriber) {
+		LOG_INF("subscriber %p not active", subscriber_id);
+		return;
+	}
+
+	struct report_state *rs = &subscriber->state[tr];
+	struct report_data *rd = &state.report_data[tr];
+
+	__ASSERT_NO_MSG(rs->cnt > 0);
+	rs->cnt--;
+
 	bool update_needed;
 
 	do {
-		if (eventq_is_empty(&report->eventq)) {
+		if (eventq_is_empty(&rd->eventq)) {
 			/* Module is connected but there are no events to
-			 * dequeue. Switch to idle state.
+			 * dequeue. If that was the last report switch to idle
+			 * state.
 			 */
-			report->state = STATE_CONNECTED_IDLE;
+			if (rs->cnt == 0) {
+				rs->state = STATE_CONNECTED_IDLE;
+			}
 			break;
 		}
 
 		/* There are enqueued events to handle. */
-		struct item_event *event = eventq_get(&report->eventq);
+		struct item_event *event = eventq_get(&rd->eventq);
 
-		__ASSERT_NO_MSG(event != NULL);
+		__ASSERT_NO_MSG(event);
 
-		update_needed = key_value_set(&report->items,
+		update_needed = key_value_set(&rd->items,
 					      event->item.usage_id,
 					      event->item.value);
 
-		if (update_needed) {
-			/* Some item was updated. Report must be issued. */
-			report_send(tr);
-		}
-
 		k_free(event);
 
-		/* No item was changed. Try next event. */
+		/* If no item was changed, try next event. */
 	} while (!update_needed);
 
 	if (!update_needed && (tr == TARGET_REPORT_MOUSE)) {
 		if ((state.last_dx != 0) ||
 		    (state.last_dy != 0) ||
 		    (state.wheel_acc != 0)) {
-			report_send(TARGET_REPORT_MOUSE);
+			update_needed = true;
 		}
 	}
-}
 
-static void connect(enum target_report tr)
-{
-	switch (tr) {
-	case TARGET_REPORT_MOUSE:
-		state.last_dx   = 0;
-		state.last_dy   = 0;
-		state.wheel_acc = 0;
-		break;
-	case TARGET_REPORT_KEYBOARD:
-	case TARGET_REPORT_MPLAYER:
-		break;
-	default:
-		break;
-	}
-
-	struct report *report = &state.report[tr];
-
-	if (!eventq_is_empty(&report->eventq)) {
-		/* Remove all stale events from the queue. */
-		eventq_cleanup(&report->eventq, MSEC(z_tick_get()));
-	}
-
-	if (eventq_is_empty(&report->eventq)) {
-		/* No events left on the queue - connect but stay idle. */
-		report->state = STATE_CONNECTED_IDLE;
-	} else {
-		/* There are some collected events - start draining events. */
-		report->state = STATE_CONNECTED_BUSY;
-		report_issued(tr);
+	if (update_needed) {
+		/* Something was updated. Report must be issued. */
+		report_send(tr, false);
 	}
 }
 
-static void disconnect(enum target_report tr)
+static void connect(const void *subscriber_id, enum target_report tr)
 {
-	struct report *report = &state.report[tr];
+	struct subscriber *subscriber = get_subscriber(subscriber_id);
 
-	/* Check if report is connected. */
-	if (report->state != STATE_DISCONNECTED) {
-		/* Disconnection starts a new state session. Queue is cleared
-		 * and event collection is started. When a connection happens,
-		 * the same queue is used until all collected
-		 * events are drained.
-		 */
-		report->state = STATE_DISCONNECTED;
-
-		/* Clear state and queue. */
-		memset(&report->items, 0, sizeof(report->items));
-		eventq_reset(&report->eventq);
+	if (!subscriber) {
+		LOG_WRN("no subscriber %p", subscriber_id);
+		return;
 	}
+
+	subscriber->state[tr].state = STATE_CONNECTED_IDLE;
+
+	if (state.selected == subscriber) {
+		switch (tr) {
+		case TARGET_REPORT_MOUSE:
+			state.last_dx   = 0;
+			state.last_dy   = 0;
+			state.wheel_acc = 0;
+			break;
+		case TARGET_REPORT_KEYBOARD:
+		case TARGET_REPORT_MPLAYER:
+			break;
+		default:
+			break;
+		}
+
+		struct report_data *rd = &state.report_data[tr];
+
+		if (!eventq_is_empty(&rd->eventq)) {
+			/* Remove all stale events from the queue. */
+			eventq_cleanup(&rd->eventq, MSEC(z_tick_get()));
+		}
+
+		report_send(tr, false);
+	}
+}
+
+static void disconnect(const void *subscriber_id, enum target_report tr)
+{
+	struct subscriber *subscriber = get_subscriber(subscriber_id);
+
+	if (!subscriber) {
+		LOG_WRN("no subscriber %p", subscriber_id);
+		return;
+	}
+
+	subscriber->state[tr].state = STATE_DISCONNECTED;
 }
 
 static void keep_device_active(void)
@@ -625,21 +738,22 @@ static void keep_device_active(void)
 }
 
 /**@brief Enqueue event that updates a given usage. */
-static void enqueue(enum target_report tr, u16_t usage_id, s16_t value)
+static void enqueue(enum target_report tr, u16_t usage_id, s16_t value,
+		    bool connected)
 {
-	struct report *report = &state.report[tr];
+	struct report_data *rd = &state.report_data[tr];
 
-	eventq_cleanup(&report->eventq, MSEC(z_tick_get()));
+	eventq_cleanup(&rd->eventq, MSEC(z_tick_get()));
 
-	if (eventq_is_full(&report->eventq)) {
-		if (report->state == STATE_DISCONNECTED) {
+	if (eventq_is_full(&rd->eventq)) {
+		if (!connected) {
 			/* In disconnected state no items are recorded yet.
 			 * Try to remove queued items starting from the
 			 * oldest one.
 			 */
 			sys_snode_t *i;
 
-			SYS_SLIST_FOR_EACH_NODE(&report->eventq.root, i) {
+			SYS_SLIST_FOR_EACH_NODE(&rd->eventq.root, i) {
 				/* Initial cleanup was done above. Queue will
 				 * not contain events with expired timestamp.
 				 */
@@ -649,9 +763,9 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t value)
 						     node)->timestamp +
 					CONFIG_DESKTOP_HID_REPORT_EXPIRATION;
 
-				eventq_cleanup(&report->eventq, timestamp);
+				eventq_cleanup(&rd->eventq, timestamp);
 
-				if (!eventq_is_full(&report->eventq)) {
+				if (!eventq_is_full(&rd->eventq)) {
 					/* At least one element was removed
 					 * from the queue. Do not continue
 					 * list traverse, content was modified!
@@ -661,41 +775,35 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t value)
 			}
 		}
 
-		if (eventq_is_full(&report->eventq)) {
+		if (eventq_is_full(&rd->eventq)) {
 			/* To maintain the sanity of HID state, clear
 			 * all recorded events and items.
 			 */
 			LOG_WRN("Queue is full, all events are dropped!");
-			memset(&report->items, 0, sizeof(report->items));
-			eventq_reset(&report->eventq);
+			memset(&rd->items, 0, sizeof(rd->items));
+			eventq_reset(&rd->eventq);
 		}
 	}
 
-	eventq_append(&report->eventq, usage_id, value);
+	eventq_append(&rd->eventq, usage_id, value);
 }
 
 /**@brief Function for updating the value linked to the HID usage. */
 static void update_key(const struct hid_keymap *map, s16_t value)
 {
-	struct report *report = &state.report[map->target_report];
+	enum target_report tr = map->target_report;
 
-	switch (report->state) {
-	case STATE_CONNECTED_IDLE:
-		/* Update state and issue report generation event. */
-		if (key_value_set(&report->items, map->usage_id, value)) {
-			report_send(map->target_report);
-		}
-		break;
-
-	case STATE_DISCONNECTED:
+	if (!state.selected ||
+	    (state.selected->state[tr].state != STATE_CONNECTED_IDLE)) {
 		/* Report cannot be sent yet - enqueue this HID event. */
-	case STATE_CONNECTED_BUSY:
-		/* Sequence is important - enqueue this HID event. */
-		enqueue(map->target_report, map->usage_id, value);
-		break;
-
-	default:
-		__ASSERT_NO_MSG(false);
+		enqueue(map->target_report, map->usage_id, value,
+			state.selected->state[tr].state != STATE_DISCONNECTED);
+	} else {
+		/* Update state and issue report generation event. */
+		struct report_data *rd = &state.report_data[tr];
+		if (key_value_set(&rd->items, map->usage_id, value)) {
+			report_send(tr, false);
+		}
 	}
 }
 
@@ -721,10 +829,7 @@ static bool event_handler(const struct event_header *eh)
 		state.last_dx = event->dx;
 		state.last_dy = event->dy;
 
-		enum target_report tr = TARGET_REPORT_MOUSE;
-		if (state.report[tr].state == STATE_CONNECTED_IDLE) {
-			report_send(tr);
-		}
+		report_send(TARGET_REPORT_MOUSE, true);
 
 		keep_device_active();
 
@@ -735,10 +840,8 @@ static bool event_handler(const struct event_header *eh)
 		const struct hid_report_sent_event *event =
 			cast_hid_report_sent_event(eh);
 
-		__ASSERT_NO_MSG(state.report[event->report_type].cnt > 0);
+		report_issued(event->subscriber, event->report_type);
 
-		report_issued(event->report_type);
-		state.report[event->report_type].cnt--;
 		return false;
 	}
 
@@ -747,10 +850,7 @@ static bool event_handler(const struct event_header *eh)
 
 		state.wheel_acc += event->wheel;
 
-		enum target_report tr = TARGET_REPORT_MOUSE;
-		if (state.report[tr].state == STATE_CONNECTED_IDLE) {
-			report_send(tr);
-		}
+		report_send(TARGET_REPORT_MOUSE, true);
 
 		keep_device_active();
 
@@ -781,12 +881,54 @@ static bool event_handler(const struct event_header *eh)
 			cast_hid_report_subscription_event(eh);
 
 		if (event->enabled) {
-			connect(event->report_type);
+			connect(event->subscriber, event->report_type);
 		} else {
-			disconnect(event->report_type);
+			disconnect(event->subscriber, event->report_type);
 		}
 
 		return false;
+	}
+
+	if (is_ble_peer_event(eh)) {
+		const struct ble_peer_event *event =
+			cast_ble_peer_event(eh);
+
+		switch (event->state) {
+		case PEER_STATE_CONNECTED:
+			connect_subscriber(event->id, false);
+			break;
+		case PEER_STATE_DISCONNECTED:
+			disconnect_subscriber(event->id);
+			break;
+		case PEER_STATE_SECURED:
+			/* Ignore */
+			break;
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
+		}
+		return false;
+	}
+
+
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE)) {
+		if (is_usb_state_event(eh)) {
+			const struct usb_state_event *event =
+				cast_usb_state_event(eh);
+
+			switch (event->state) {
+			case USB_STATE_POWERED:
+				connect_subscriber(event->id, true);
+				break;
+			case USB_STATE_DISCONNECTED:
+				disconnect_subscriber(event->id);
+				break;
+			default:
+				/* Ignore */
+				break;
+			}
+			return false;
+		}
 	}
 
 	if (is_module_state_event(eh)) {
@@ -812,6 +954,8 @@ static bool event_handler(const struct event_header *eh)
 }
 
 EVENT_LISTENER(MODULE, event_handler);
+EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
