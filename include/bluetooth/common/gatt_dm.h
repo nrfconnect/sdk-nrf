@@ -42,11 +42,9 @@ struct bt_gatt_dm_cb {
 	 * discovery.
 	 *
 	 * @param[in] dm Discovery Manager instance
-	 * @param[in] conn Connection object.
 	 * @param[in] context The value passed to @ref gatt_db_discovery_start
 	 */
 	void (*completed)(struct bt_gatt_dm *dm,
-			  struct bt_conn *conn,
 			  void *context);
 
 	/** @brief Service not found callback.
@@ -98,6 +96,17 @@ struct bt_gatt_service_val * bt_gatt_dm_attr_service_val(const struct bt_gatt_at
  * @return The characteristic value from parser attribute or NULL when attribute UUID value is unexpected.
  */
 struct bt_gatt_chrc * bt_gatt_dm_attr_chrc_val(const struct bt_gatt_attr * attr);
+
+/**
+ * @brief Get the connection object
+ *
+ * Function returns connection object that is used by given discovery manager instance.
+ *
+ * @param dm Discovery manager instance
+ *
+ * @return Connection object.
+ */
+struct bt_conn * bt_gatt_dm_con_get(struct bt_gatt_dm * dm);
 
 /**
  * @brief Get total number of attributes decoded
@@ -209,9 +218,9 @@ const struct bt_gatt_attr * bt_gatt_dm_desc_next(const struct bt_gatt_dm * dm, c
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_gatt_dm_start(struct bt_conn *conn,
-		    const struct bt_uuid *svc_uuid,
-		    const struct discovery_cb *cb,
-		    void *context);
+		     const struct bt_uuid *svc_uuid,
+		     const struct discovery_cb *cb,
+		     void *context);
 
 /** @brief Release data associated with service discovery.
  *
