@@ -77,7 +77,11 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 	buffer[4] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
 	buffer[5] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
-	hid_int_ep_write(buffer, sizeof(buffer), NULL);
+	int err = hid_int_ep_write(buffer, sizeof(buffer), NULL);
+	if (err) {
+		LOG_ERR("Cannot send report (%d)", err);
+		module_set_state(MODULE_STATE_ERROR);
+	}
 }
 
 static void broadcast_usb_state(void)
