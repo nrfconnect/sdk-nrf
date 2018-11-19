@@ -20,7 +20,7 @@
 #include "ndef_file_m.h"
 #include <nfc/ndef/nfc_ndef_msg.h>
 
-#include <board.h>
+#include <soc.h>
 #include <device.h>
 #include <gpio.h>
 

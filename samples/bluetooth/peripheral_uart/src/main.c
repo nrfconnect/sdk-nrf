@@ -12,7 +12,7 @@
 #include <zephyr.h>
 #include <uart.h>
 
-#include <board.h>
+#include <soc.h>
 #include <gpio.h>
 
 #include <bluetooth/bluetooth.h>

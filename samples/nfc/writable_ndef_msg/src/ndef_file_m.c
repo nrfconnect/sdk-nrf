@@ -14,7 +14,7 @@
  */
 
 #include <zephyr.h>
-#include <board.h>
+#include <soc.h>
 #include <device.h>
 #include <string.h>
 #include <nvs/nvs.h>
