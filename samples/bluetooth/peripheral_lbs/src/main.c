@@ -12,7 +12,7 @@
 #include <misc/byteorder.h>
 #include <zephyr.h>
 #include <gpio.h>
-#include <board.h>
+#include <soc.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
@@ -46,7 +46,7 @@
 #ifdef SW0_GPIO_NAME
 #define SW0_GPIO_CONTROLLER SW0_GPIO_NAME
 #else
-#error SW0_GPIO_NAME or SW0_GPIO_CONTROLLER needs to be set in board.h
+#error SW0_GPIO_NAME or SW0_GPIO_CONTROLLER needs to be set in soc.h
 #endif
 #endif
 #define BUTTON_PORT SW0_GPIO_CONTROLLER
@@ -55,7 +55,7 @@
 #ifdef SW0_GPIO_PIN
 #define USER_BUTTON SW0_GPIO_PIN
 #else
-#error SW0_GPIO_PIN needs to be set in board.h
+#error SW0_GPIO_PIN needs to be set in soc.h
 #endif
 
 /* change to use another GPIO pin interrupt config */

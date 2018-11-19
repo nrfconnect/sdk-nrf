@@ -12,7 +12,7 @@
 #include <misc/byteorder.h>
 #include <zephyr.h>
 #include <gpio.h>
-#include <board.h>
+#include <soc.h>
 #include <assert.h>
 
 #include <settings/settings.h>
