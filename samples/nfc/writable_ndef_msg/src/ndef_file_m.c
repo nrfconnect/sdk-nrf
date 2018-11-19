@@ -44,7 +44,7 @@ int ndef_file_setup(void)
 {
 	int err;
 
-	err = nvs_init(&fs, FLASH_DEV_NAME);
+	err = nvs_init(&fs, DT_FLASH_DEV_NAME);
 	if (err < 0) {
 		printk("Cannot initialize NVS!\n");
 	}
