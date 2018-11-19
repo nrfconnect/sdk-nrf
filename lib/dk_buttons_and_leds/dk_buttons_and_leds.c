@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <board.h>
+#include <soc.h>
 #include <device.h>
 #include <gpio.h>
 #include <misc/util.h>
@@ -77,7 +77,7 @@ int dk_leds_init(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
 		SYS_LOG_ERR("Cannot bind gpio device");
 		return -ENODEV;
@@ -104,7 +104,7 @@ int dk_buttons_init(button_handler_t button_handler)
 		button_handler_cb = button_handler;
 	}
 
-	gpio_dev = device_get_binding(CONFIG_GPIO_P0_DEV_NAME);
+	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
 		SYS_LOG_ERR("Cannot bind gpio device");
 		return -ENODEV;
