@@ -1,8 +1,9 @@
 sample:
   description: nRF52 Desktop
   name: BLE HID device reference design
-  platforms: nrf52840_pca20041 nrf52840_pca10056 nrf52840_pca10059 nrf52_pca63519
 tests:
   test:
     build_only: true
-    tags: bluetooth
+    build_on_all: true
+    platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52_pca63519
+    tags: bluetooth ci_build
