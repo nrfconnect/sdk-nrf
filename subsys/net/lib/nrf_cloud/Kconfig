@@ -6,7 +6,8 @@
 menuconfig NRF_CLOUD
 	bool "nRF Cloud library"
 	select CJSON_LIB
-	select MQTT_SOCKET_LIB
+	select MQTT_LIB
+	select MQTT_LIB_TLS
 
 if NRF_CLOUD
 
@@ -44,6 +45,17 @@ config NRF_CLOUD_PORT
 
 config NRF_CLOUD_IPV6
 	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used."
+
+config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
+	int "Size of the buffer for MQTT library."
+	default 256
+	help
+		Specifies maximum message size can be transmitted/received through
+		MQTT (exluding MQTT PUBLISH payload).
+
+config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
+	int "Size of the buffer for MQTT PUBLISH payload."
+	default 2048
 
 module=NRF_CLOUD
 module-dep=LOG
