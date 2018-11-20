@@ -25,6 +25,8 @@ Requirements
 
 * A phone or tablet running a compatible application. The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
 
+  You can also test the application with the :ref:`central_uart` sample. See the documentation for that sample for detailed instructions.
+
 User interface
 **************
 
