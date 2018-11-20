@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(nrf_cloud_transport);
 #include "nrf_cloud_mem.h"
 
 #include <zephyr.h>
-#include <net/mqtt_socket.h>
+#include <net/mqtt.h>
 #include <net/socket.h>
 #include <stdio.h>
 #include "nrf_inbuilt_key.h"
@@ -99,6 +99,9 @@ static struct nct {
 	struct mqtt_utf8 dc_tx_endp;
 	struct mqtt_utf8 dc_rx_endp;
 	u32_t message_id;
+	u8_t rx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
+	u8_t tx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
+	u8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN];
 } nct;
 
 static const struct mqtt_topic nct_cc_rx_list[] = {
@@ -408,12 +411,56 @@ int nct_mqtt_connect(void)
 	nct.client.password = NULL;
 	nct.client.user_name = NULL;
 	nct.client.transport.type = MQTT_TRANSPORT_SECURE;
+	nct.client.rx_buf = nct.rx_buf;
+	nct.client.rx_buf_size = sizeof(nct.rx_buf);
+	nct.client.tx_buf = nct.tx_buf;
+	nct.client.tx_buf_size = sizeof(nct.tx_buf);
 
 	struct mqtt_sec_config *tls_config = &nct.client.transport.tls.config;
 
 	memcpy(tls_config, &nct.tls_config, sizeof(struct mqtt_sec_config));
 
 	return mqtt_connect(&nct.client);
+}
+
+static int publish_get_payload(struct mqtt_client *client, size_t length)
+{
+	u8_t *buf = nct.payload_buf;
+	u8_t *end = buf + length;
+	struct pollfd fds;
+
+	if (length > sizeof(nct.payload_buf)) {
+		return -EMSGSIZE;
+	}
+
+	if (client->transport.type == MQTT_TRANSPORT_SECURE) {
+		fds.fd = client->transport.tls.sock;
+	} else {
+		fds.fd = client->transport.tcp.sock;
+	}
+
+	fds.events = POLLIN;
+
+	while (buf < end) {
+		int ret = mqtt_read_publish_payload(client, buf, end - buf);
+		if (ret < 0) {
+			if (ret == -EAGAIN) {
+				LOG_DBG("mqtt_read_publish_payload: EAGAIN");
+				poll(&fds, 1, K_FOREVER);
+				continue;
+			}
+
+			return ret;
+		}
+
+		if (ret == 0) {
+			return -EIO;
+		}
+
+		buf += ret;
+	}
+
+	return 0;
 }
 
 /* Handle MQTT events. */
@@ -441,6 +488,16 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			p->message_id,
 			p->message.payload.len);
 
+		int err = publish_get_payload(mqtt_client,
+					      p->message.payload.len);
+
+		if (err < 0) {
+			LOG_ERR("publish_get_payload: failed %d", err);
+			mqtt_disconnect(mqtt_client);
+			event_notify = false;
+			break;
+		}
+
 		/* If the data arrives on one of the subscribed control channel
 		 * topic. Then we notify the same.
 		 */
@@ -448,7 +505,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			NCT_RX_LIST, &p->message.topic, &cc.opcode)) {
 
 			cc.id = p->message_id;
-			cc.data.ptr = p->message.payload.data;
+			cc.data.ptr = nct.payload_buf;
 			cc.data.len = p->message.payload.len;
 
 			evt.type = NCT_EVT_CC_RX_DATA;
@@ -533,12 +590,7 @@ int nct_init(void)
 		return err;
 	}
 
-	err = nct_provision();
-	if (err) {
-		return err;
-	}
-
-	return mqtt_init();
+	return nct_provision();
 }
 
 int nct_connect(void)
@@ -759,5 +811,5 @@ int nct_disconnect(void)
 void nct_process(void)
 {
 	mqtt_input(&nct.client);
-	mqtt_live();
+	mqtt_live(&nct.client);
 }
