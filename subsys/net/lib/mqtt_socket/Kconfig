@@ -14,7 +14,7 @@ menuconfig MQTT_SOCKET_LIB
 
 if MQTT_SOCKET_LIB
 
-module=MQTT
+module=MQTT_SOCKET
 module-dep=NET_LOG
 module-str=Log level for MQTT
 module-help=Enables mqtt debug messages.
