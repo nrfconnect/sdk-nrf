@@ -17,31 +17,6 @@ config BT_GATT_DM_MAX_MEM_CHUNKS
 	help
 	  Maximum number of allocated memory blocks containing GATT attribute data.
 
-choice
-	prompt "GATT Discovery Manager logging level"
-	default BT_GATT_DM_LOG_LEVEL_DBG
-
-config BT_GATT_DM_LOG_LEVEL_OFF
-	bool "Off"
-config BT_GATT_DM_LOG_LEVEL_ERR
-	bool "Error"
-config BT_GATT_DM_LOG_LEVEL_WRN
-	bool "Warning"
-config BT_GATT_DM_LOG_LEVEL_INF
-	bool "Info"
-config BT_GATT_DM_LOG_LEVEL_DBG
-	bool "Debug"
-
-endchoice
-
-config BT_GATT_DM_LOG_LEVEL
-	int
-	default 0 if BT_GATT_DM_LOG_LEVEL_OFF
-	default 1 if BT_GATT_DM_LOG_LEVEL_ERR
-	default 2 if BT_GATT_DM_LOG_LEVEL_WRN
-	default 3 if BT_GATT_DM_LOG_LEVEL_INF
-	default 4 if BT_GATT_DM_LOG_LEVEL_DBG
-
 config BT_GATT_DM_DATA_PRINT
 	bool
 	prompt "Enable functions for printing discovery related data"
@@ -49,5 +24,9 @@ config BT_GATT_DM_DATA_PRINT
 	select BT_DEBUG
 	help
 	  Enable functions for printing discovery related data
+
+module = BT_GATT_DM
+module-str = GATT database discovery
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATT_DM
