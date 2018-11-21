@@ -7,7 +7,7 @@ add_library(nrf_bluetooth INTERFACE)
 
 if (CONFIG_NRF_BT_SVC_COMMON OR
     CONFIG_BT_GATT_DM OR
-    CONFIG_NRF_BT_SCAN)
+    CONFIG_BT_SCAN)
 	add_subdirectory(common)
 endif()
 
