@@ -78,14 +78,14 @@
 #define PULL_UP	0
 #endif
 
-#ifdef CONFIG_NRF_BT_LBS_SECURITY_ENABLED
-#ifdef CONFIG_NRF_BT_LBS_SECURITY_LEVEL_LOW
+#ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_LBS_SECURITY_LEVEL_LOW
 static const bt_security_t sec_level = BT_SECURITY_LOW;
-#elif CONFIG_NRF_BT_LBS_SECURITY_LEVEL_MED
+#elif CONFIG_BT_GATT_LBS_SECURITY_LEVEL_MED
 static const bt_security_t sec_level = BT_SECURITY_MEDIUM;
-#elif CONFIG_NRF_BT_LBS_SECURITY_LEVEL_HIGH
+#elif CONFIG_BT_GATT_LBS_SECURITY_LEVEL_HIGH
 static const bt_security_t sec_level = BT_SECURITY_HIGH;
-#elif CONFIG_NRF_BT_LBS_SECURITY_LEVEL_FIPS
+#elif CONFIG_BT_GATT_LBS_SECURITY_LEVEL_FIPS
 static const bt_security_t sec_level = BT_SECURITY_FIPS;
 #endif
 #endif
@@ -122,7 +122,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	}
 
 	printk("Connected\n");
-#ifdef CONFIG_NRF_BT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
 	if (bt_conn_security(conn, sec_level)) {
 		printk("Failed to set security level %d\n", sec_level);
 	}
@@ -138,7 +138,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	set_led_state(CON_STATUS_LED, LED_OFF);
 }
 
-#ifdef CONFIG_NRF_BT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level)
 {
 	printk("Security level was raised to %d\n", level);
@@ -148,13 +148,13 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 static struct bt_conn_cb conn_callbacks = {
 	.connected        = connected,
 	.disconnected     = disconnected,
-#ifdef CONFIG_NRF_BT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
 	.security_changed = security_changed,
 #endif
 };
 
-#if !defined(CONFIG_NRF_BT_LBS_SECURITY_LEVEL_LOW) && \
-	defined(CONFIG_NRF_BT_LBS_SECURITY_ENABLED)
+#if !defined(CONFIG_BT_GATT_LBS_SECURITY_LEVEL_LOW) && \
+	defined(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -321,8 +321,8 @@ void main(void)
 
 	if (!err) {
 		bt_conn_cb_register(&conn_callbacks);
-		#if !defined(CONFIG_NRF_BT_LBS_SECURITY_LEVEL_LOW) && \
-		     defined(CONFIG_NRF_BT_LBS_SECURITY_ENABLED)
+		#if !defined(CONFIG_BT_GATT_LBS_SECURITY_LEVEL_LOW) && \
+		     defined(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
 		#endif
 

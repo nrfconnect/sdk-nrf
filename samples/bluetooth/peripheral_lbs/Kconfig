@@ -8,39 +8,39 @@ source "$ZEPHYR_BASE/Kconfig.zephyr"
 
 menu "Nordic LED-Button BLE GATT service sample"
 
-config NRF_BT_LBS_SECURITY_ENABLED
+config BT_GATT_LBS_SECURITY_ENABLED
 	bool "Enable security"
 	default y
 	select BT_SMP
 	help
 	  "Enable BLE security for the LED-Button service"
 
-if NRF_BT_LBS_SECURITY_ENABLED
+if BT_GATT_LBS_SECURITY_ENABLED
 
-choice NRF_BT_LBS_SECURITY
+choice BT_GATT_LBS_SECURITY
 	prompt "Bluetooth security level"
-	default NRF_BT_LBS_SECURITY_LEVEL_HIGH
+	default BT_GATT_LBS_SECURITY_LEVEL_HIGH
 
-config NRF_BT_LBS_SECURITY_LEVEL_FIPS
+config BT_GATT_LBS_SECURITY_LEVEL_FIPS
 	bool "Authenticated Secure Connections"
 	select BT_SMP
 	help
 	  "This level has high security level with FIPS
 	   approved encryption cipher"
 
-config NRF_BT_LBS_SECURITY_LEVEL_HIGH
+config BT_GATT_LBS_SECURITY_LEVEL_HIGH
 	bool "High security level"
 	select BT_SMP
 	help
 	  "This level has encryption and authentication"
 
-config NRF_BT_LBS_SECURITY_LEVEL_MED
+config BT_GATT_LBS_SECURITY_LEVEL_MED
 	bool "Medium security level"
 	select BT_SMP
 	help
 	  "This level has encryption and no authentication"
 
-config NRF_BT_LBS_SECURITY_LEVEL_LOW
+config BT_GATT_LBS_SECURITY_LEVEL_LOW
 	bool "Low security level"
 	select BT_SMP
 	help

@@ -51,7 +51,7 @@ static ssize_t write_led(struct bt_conn *conn,
 	return len;
 }
 
-#ifdef CONFIG_NRF_BT_LBS_POLL_BUTTON
+#ifdef CONFIG_BT_GATT_LBS_POLL_BUTTON
 static ssize_t read_button(struct bt_conn *conn,
 			  const struct bt_gatt_attr *attr,
 			  void *buf,
@@ -73,7 +73,7 @@ static ssize_t read_button(struct bt_conn *conn,
 /* LED Button Service Declaration */
 static struct bt_gatt_attr attrs[] = {
 	BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
-#ifdef CONFIG_NRF_BT_LBS_POLL_BUTTON
+#ifdef CONFIG_BT_GATT_LBS_POLL_BUTTON
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_BUTTON,
 			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ, read_button, NULL,
