@@ -18,6 +18,6 @@ if (CONFIG_NRF_BT_DIS    OR
     CONFIG_BT_GATT_LBS   OR
     CONFIG_BT_GATT_NUS   OR
     CONFIG_BT_GATT_NUS_C OR
-    CONFIG_NRF_BT_THROUGHPUT)
+    CONFIG_BT_GATT_THROUGHPUT)
 	add_subdirectory(services)
 endif()
