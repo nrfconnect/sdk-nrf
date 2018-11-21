@@ -10,18 +10,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <logging/log.h>
 
 #if defined(CONFIG_GPS_SIM_DYNAMIC_VALUES)
 #include <math.h>
 #endif
 
-#define SYS_LOG_DOMAIN "GPS_SIM"
-#define SYS_LOG_LEVEL CONFIG_SYS_LOG_GPS_SIM_LEVEL
-#include <logging/sys_log.h>
-
 #define BASE_GPS_SAMPLE_HOUR	(CONFIG_GPS_SIM_BASE_TIMESTAMP / 10000)
 #define BASE_GPS_SAMPLE_MINUTE	((CONFIG_GPS_SIM_BASE_TIMESTAMP / 100) % 100)
 #define BASE_GPS_SAMPLE_SECOND	(CONFIG_GPS_SIM_BASE_TIMESTAMP % 100)
+
+LOG_MODULE_REGISTER(gps_sim, CONFIG_GPS_SIM_LOG_LEVEL);
 
 struct gps_sim_data {
 #if defined(CONFIG_GPS_SIM_TRIGGER)
@@ -108,7 +107,7 @@ static int gps_sim_init_thread(struct device *dev)
 	if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
 		drv_data->gpio = device_get_binding(drv_data->gpio_port);
 		if (drv_data->gpio == NULL) {
-			SYS_LOG_ERR("Failed to get pointer to %s device",
+			LOG_ERR("Failed to get pointer to %s device",
 					drv_data->gpio_port);
 			return -EINVAL;
 		}
@@ -121,7 +120,7 @@ static int gps_sim_init_thread(struct device *dev)
 				BIT(drv_data->gpio_pin));
 
 		if (gpio_add_callback(drv_data->gpio, &drv_data->gpio_cb) < 0) {
-			SYS_LOG_ERR("Failed to set GPIO callback");
+			LOG_ERR("Failed to set GPIO callback");
 			return -EIO;
 		}
 
@@ -162,7 +161,7 @@ static int gps_sim_trigger_set(struct device *dev,
 		k_mutex_unlock(&trigger_mutex);
 		break;
 	default:
-		SYS_LOG_ERR("Unsupported GPS trigger");
+		LOG_ERR("Unsupported GPS trigger");
 		ret = -ENOTSUP;
 		break;
 	}
@@ -310,7 +309,7 @@ static int gps_sim_init(struct device *dev)
 			drv_data->gpio_pin = SW1_GPIO_PIN;
 		}
 		if (gps_sim_init_thread(dev) < 0) {
-			SYS_LOG_ERR("Failed to initialize trigger interrupt");
+			LOG_ERR("Failed to initialize trigger interrupt");
 			return -EIO;
 		}
 	}

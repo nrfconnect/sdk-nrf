@@ -133,4 +133,8 @@ config GPS_SIM_THREAD_STACK_SIZE
 
 endif #GPS_SIM_TRIGGER
 
+module = GPS_SIM
+module-str = GPS simulator
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endif #GPS_SIM
