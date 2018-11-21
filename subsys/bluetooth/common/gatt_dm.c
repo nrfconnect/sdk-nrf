@@ -5,12 +5,11 @@
  */
 
 #include <zephyr.h>
+#include <logging/log.h>
 
 #include <bluetooth/common/gatt_dm.h>
 
-#define LOG_LEVEL CONFIG_BT_GATT_DM_LOG_LEVEL
-#include <logging/log.h>
-LOG_MODULE_REGISTER(bt_gatt_dm);
+LOG_MODULE_REGISTER(bt_gatt_dm, CONFIG_BT_GATT_DM_LOG_LEVEL);
 
 /* Available sizes: 128, 512, 2048... */
 #define CHUNK_SIZE (128 - sizeof(struct k_mem_block_id))
