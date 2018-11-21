@@ -41,18 +41,8 @@ config BT_GATT_HIDS_FEATURE_REP_MAX
 	help
 	  Maximum number of HIDS Feature Reports that can be set for HIDS.
 
-config BT_GATT_HIDS_SYS_LOG_LEVEL
-	int "HIDS log level"
-	depends on SYS_LOG
-	default 2
-	range 0 4
-	help
-	  Sets log level for HIDS.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+module = BT_GATT_HIDS
+module-str = HIDS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATT_HIDS

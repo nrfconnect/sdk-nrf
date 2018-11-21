@@ -21,11 +21,11 @@
 #include <bluetooth/common/svc_common.h>
 #include <bluetooth/services/hids.h>
 
-#define SYS_LOG_DOMAIN	STRINGIFY(nrf_ble_hids)
-#define SYS_LOG_LEVEL	CONFIG_BT_GATT_HIDS_SYS_LOG_LEVEL
-#include <logging/sys_log.h>
+#include <logging/log.h>
 
 #define BOOT_MOUSE_INPUT_REPORT_MIN_SIZE 3
+
+LOG_MODULE_REGISTER(ble_gatt_hids, CONFIG_BT_GATT_HIDS_LOG_LEVEL);
 
 /* HID Protocol modes. */
 enum {
@@ -56,7 +56,7 @@ int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn)
 									    conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("There is no free memory to "
+		LOG_WRN("There is no free memory to "
 			    "allocate the connection context");
 		return -ENOMEM;
 	}
@@ -100,7 +100,7 @@ int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn)
 	int err = ble_link_ctx_manager_free(hids_obj->ctx_manager, conn);
 
 	if (err) {
-		SYS_LOG_WRN("The memory was not allocated for the context of this connection.");
+		LOG_WRN("The memory was not allocated for the context of this connection.");
 
 		return err;
 	}
@@ -130,7 +130,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 					void const *buf, u16_t len,
 					u16_t offset, u8_t flags)
 {
-	SYS_LOG_DBG("Writing to Protocol Mode characteristic.");
+	LOG_DBG("Writing to Protocol Mode characteristic.");
 
 	struct protocol_mode *pm = (struct protocol_mode *) attr->user_data;
 	struct hids *hids_ctx = CONTAINER_OF(pm, struct hids, pm);
@@ -141,7 +141,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -179,7 +179,7 @@ static ssize_t hids_protocol_mode_read(struct bt_conn *conn,
 				       struct bt_gatt_attr const *attr,
 				       void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Protocol Mode characteristic.");
+	LOG_DBG("Reading from Protocol Mode characteristic.");
 
 	struct protocol_mode *pm = (struct protocol_mode *) attr->user_data;
 	struct hids *hids_ctx = CONTAINER_OF(pm, struct hids, pm);
@@ -190,7 +190,7 @@ static ssize_t hids_protocol_mode_read(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -210,7 +210,7 @@ static ssize_t hids_report_map_read(struct bt_conn *conn,
 				    struct bt_gatt_attr const *attr,
 				    void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Report Map characteristic.");
+	LOG_DBG("Reading from Report Map characteristic.");
 
 	struct hids_rep_map *rep_map =
 		(struct hids_rep_map *) attr->user_data;
@@ -224,7 +224,7 @@ static ssize_t hids_inp_rep_read(struct bt_conn *conn,
 				 struct bt_gatt_attr const *attr,
 				 void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Input Report characteristic.");
+	LOG_DBG("Reading from Input Report characteristic.");
 
 	struct hids_inp_rep *rep =
 			(struct hids_inp_rep *) attr->user_data;
@@ -240,7 +240,7 @@ static ssize_t hids_inp_rep_read(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -260,7 +260,7 @@ static ssize_t hids_inp_rep_ref_read(struct bt_conn *conn,
 				     struct bt_gatt_attr const *attr,
 				     void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Input Report Reference descriptor.");
+	LOG_DBG("Reading from Input Report Reference descriptor.");
 
 	u8_t report_ref[2];
 
@@ -276,7 +276,7 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 				  struct bt_gatt_attr const *attr,
 				  void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Output Report characteristic.");
+	LOG_DBG("Reading from Output Report characteristic.");
 
 	struct hids_outp_feat_rep *rep =
 			(struct hids_outp_feat_rep *) attr->user_data;
@@ -292,7 +292,7 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -313,7 +313,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 				   void const *buf, u16_t len,
 				   u16_t offset, u8_t flags)
 {
-	SYS_LOG_DBG("Writing to Output Report characteristic.");
+	LOG_DBG("Writing to Output Report characteristic.");
 
 	struct hids_outp_feat_rep *rep =
 			(struct hids_outp_feat_rep *) attr->user_data;
@@ -328,7 +328,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -358,7 +358,7 @@ static ssize_t hids_outp_rep_ref_read(struct bt_conn *conn,
 				      struct bt_gatt_attr const *attr,
 				      void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Output Report Reference descriptor.");
+	LOG_DBG("Reading from Output Report Reference descriptor.");
 
 	u8_t report_ref[2];
 
@@ -374,7 +374,7 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 				  struct bt_gatt_attr const *attr,
 				  void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Feature Report characteristic.");
+	LOG_DBG("Reading from Feature Report characteristic.");
 
 	struct hids_outp_feat_rep *rep =
 		(struct hids_outp_feat_rep *) attr->user_data;
@@ -390,7 +390,7 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -412,7 +412,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 				   void const *buf, u16_t len,
 				   u16_t offset, u8_t flags)
 {
-	SYS_LOG_DBG("Writing to Feature Report characteristic.");
+	LOG_DBG("Writing to Feature Report characteristic.");
 
 	struct hids_outp_feat_rep *rep =
 		(struct hids_outp_feat_rep *) attr->user_data;
@@ -427,7 +427,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -457,7 +457,7 @@ static ssize_t hids_feat_rep_ref_read(struct bt_conn *conn,
 				      struct bt_gatt_attr const *attr,
 				      void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Feature Report Reference descriptor.");
+	LOG_DBG("Reading from Feature Report Reference descriptor.");
 
 	u8_t report_ref[2];
 
@@ -472,19 +472,19 @@ static ssize_t hids_feat_rep_ref_read(struct bt_conn *conn,
 static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 					  u16_t value)
 {
-	SYS_LOG_DBG("Input Report CCCD has changed.");
+	LOG_DBG("Input Report CCCD has changed.");
 
 	struct hids_inp_rep *inp_rep =
 		CONTAINER_OF(((struct _bt_gatt_ccc *) attr->user_data)->cfg,
 			     struct hids_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
-		SYS_LOG_DBG("Notification has been turned on");
+		LOG_DBG("Notification has been turned on");
 		if (inp_rep->handler != NULL) {
 			inp_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
 		}
 	} else {
-		SYS_LOG_DBG("Notification has been turned off");
+		LOG_DBG("Notification has been turned off");
 		if (inp_rep->handler != NULL) {
 			inp_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
 		}
@@ -497,7 +497,7 @@ static ssize_t hids_boot_mouse_inp_report_read(struct bt_conn *conn,
 					       void *buf, u16_t len,
 					       u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Boot Mouse Input Report characteristic.");
+	LOG_DBG("Reading from Boot Mouse Input Report characteristic.");
 
 	struct hids_boot_mouse_inp_rep *rep =
 			(struct hids_boot_mouse_inp_rep *)attr->user_data;
@@ -510,7 +510,7 @@ static ssize_t hids_boot_mouse_inp_report_read(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
@@ -530,19 +530,19 @@ static ssize_t hids_boot_mouse_inp_report_read(struct bt_conn *conn,
 static void hids_boot_mouse_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 						u16_t value)
 {
-	SYS_LOG_DBG("Boot Mouse Input Report CCCD has changed.");
+	LOG_DBG("Boot Mouse Input Report CCCD has changed.");
 
 	struct hids_boot_mouse_inp_rep *boot_mouse_rep =
 		CONTAINER_OF(((struct _bt_gatt_ccc *) attr->user_data)->cfg,
 			     struct hids_boot_mouse_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
-		SYS_LOG_DBG("Notification for Boot Mouse has been turned on");
+		LOG_DBG("Notification for Boot Mouse has been turned on");
 		if (boot_mouse_rep->handler != NULL) {
 			boot_mouse_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
 		}
 	} else {
-		SYS_LOG_DBG("Notification for Boot Mouse has been turned off");
+		LOG_DBG("Notification for Boot Mouse has been turned off");
 		if (boot_mouse_rep->handler != NULL) {
 			boot_mouse_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
 		}
@@ -555,7 +555,7 @@ static ssize_t hids_boot_kb_inp_report_read(struct bt_conn *conn,
 					    void *buf, u16_t len,
 					    u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Boot Keyboard Input Report characteristic.");
+	LOG_DBG("Reading from Boot Keyboard Input Report characteristic.");
 
 	struct hids_boot_kb_inp_rep *rep =
 			(struct hids_boot_kb_inp_rep *)attr->user_data;
@@ -568,7 +568,7 @@ static ssize_t hids_boot_kb_inp_report_read(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -587,20 +587,20 @@ static ssize_t hids_boot_kb_inp_report_read(struct bt_conn *conn,
 static void hids_boot_kb_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 					     u16_t value)
 {
-	SYS_LOG_DBG("Boot Keyboard Input Report CCCD has changed.");
+	LOG_DBG("Boot Keyboard Input Report CCCD has changed.");
 
 	struct hids_boot_kb_inp_rep *boot_kb_inp_rep =
 		CONTAINER_OF(((struct _bt_gatt_ccc *) attr->user_data)->cfg,
 			     struct hids_boot_kb_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
-		SYS_LOG_DBG("Notification for Boot Keyboard has been turned "
+		LOG_DBG("Notification for Boot Keyboard has been turned "
 			    "on.");
 		if (boot_kb_inp_rep->handler != NULL) {
 			boot_kb_inp_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
 		}
 	} else {
-		SYS_LOG_DBG("Notification for Boot Keyboard has been turned "
+		LOG_DBG("Notification for Boot Keyboard has been turned "
 			    "on.");
 		if (boot_kb_inp_rep->handler != NULL) {
 			boot_kb_inp_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
@@ -614,7 +614,7 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 					     void *buf, u16_t len,
 					     u16_t offset)
 {
-	SYS_LOG_DBG("Reading from Boot Keyboard Output Report characteristic.");
+	LOG_DBG("Reading from Boot Keyboard Output Report characteristic.");
 
 	struct hids_boot_kb_outp_rep *rep =
 			(struct hids_boot_kb_outp_rep *)attr->user_data;
@@ -627,7 +627,7 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -648,7 +648,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 					      void const *buf, u16_t len,
 					      u16_t offset, u8_t flags)
 {
-	SYS_LOG_DBG("Writing to Boot Keyboard Output Report characteristic.");
+	LOG_DBG("Writing to Boot Keyboard Output Report characteristic.");
 
 	struct hids_boot_kb_outp_rep *rep =
 		(struct hids_boot_kb_outp_rep *) attr->user_data;
@@ -660,7 +660,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return BT_GATT_ERR(BT_ATT_ERR_INSUFFICIENT_RESOURCES);
 	}
 
@@ -691,7 +691,7 @@ static ssize_t hids_info_read(struct bt_conn *conn,
 			      struct bt_gatt_attr const *attr,
 			      void *buf, u16_t len, u16_t offset)
 {
-	SYS_LOG_DBG("Reading from HID information characteristic.");
+	LOG_DBG("Reading from HID information characteristic.");
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
 				 HIDS_INFORMATION_CHAR_LEN);
@@ -703,7 +703,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 				     void const *buf, u16_t len, u16_t offset,
 				     u8_t flags)
 {
-	SYS_LOG_DBG("Writing to Control Point characteristic.");
+	LOG_DBG("Writing to Control Point characteristic.");
 
 	struct control_point *cp = (struct control_point *) attr->user_data;
 
@@ -877,7 +877,7 @@ static void hids_feat_reports_register(struct hids *hids_obj,
 
 int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 {
-	SYS_LOG_DBG("Initializing HIDS.");
+	LOG_DBG("Initializing HIDS.");
 
 	hids_obj->pm.evt_handler = init_param->pm_evt_handler;
 	hids_obj->cp.evt_handler = init_param->cp_evt_handler;
@@ -1189,7 +1189,7 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 									  conn);
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return -EINVAL;
 	}
 
@@ -1292,7 +1292,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
 			"buffer is too short");
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return -EINVAL;
 	}
 
@@ -1395,7 +1395,7 @@ int hids_boot_kb_inp_rep_send(struct hids *hids_obj,
 	}
 
 	if (!conn_data) {
-		SYS_LOG_WRN("The context was not found");
+		LOG_WRN("The context was not found");
 		return -EINVAL;
 	}
 
