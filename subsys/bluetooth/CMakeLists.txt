@@ -16,7 +16,7 @@ add_subdirectory_ifdef(CONFIG_BT_LL_NRFXLIB controller)
 if (CONFIG_NRF_BT_DIS    OR
     CONFIG_NRF_BT_HIDS   OR
     CONFIG_NRF_BT_LBS    OR
-    CONFIG_NRF_BT_NUS    OR
+    CONFIG_BT_GATT_NUS   OR
     CONFIG_BT_GATT_NUS_C OR
     CONFIG_NRF_BT_THROUGHPUT)
 	add_subdirectory(services)
