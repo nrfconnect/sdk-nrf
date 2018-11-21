@@ -12,8 +12,7 @@
 #include <zephyr.h>
 #include <uart.h>
 
-#include <soc.h>
-#include <gpio.h>
+#include <ui_out.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/uuid.h>
@@ -29,21 +28,6 @@
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN	        (sizeof(DEVICE_NAME) - 1)
-
-/* Change this if you have an LED connected to a custom port */
-#ifndef LED0_GPIO_CONTROLLER
-#define LED0_GPIO_CONTROLLER    LED0_GPIO_PORT
-#endif
-
-#define LED_PORT                LED0_GPIO_CONTROLLER
-
-#define RUN_STATUS_LED          LED0_GPIO_PIN
-#define RUN_LED_BLINK_INTERVAL  1000
-
-#define CON_STATUS_LED          LED1_GPIO_PIN
-
-#define LED_ON                  0
-#define LED_OFF                 1
 
 #define UART_BUF_SIZE           CONFIG_BT_GATT_NUS_UART_BUFFER_SIZE
 
@@ -63,7 +47,6 @@ static K_SEM_DEFINE(ble_init_ok, 0, 2);
 
 static struct bt_conn *current_conn;
 
-static struct device  *led_port;
 static struct device  *uart;
 
 struct uart_data_t {
@@ -83,13 +66,6 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, NUS_UUID_SERVICE),
 };
-
-static void set_led_state(int led, bool state)
-{
-	if (led_port) {
-		gpio_pin_write(led_port, led, state);
-	}
-}
 
 static void uart_cb(struct device *uart)
 {
@@ -182,12 +158,13 @@ static void connected(struct bt_conn *conn, u8_t err)
 	printk("Connected\n");
 	current_conn = bt_conn_ref(conn);
 
+	ui_out_state_indicate(UI_OUT_STATE_BLE_CONNECTED);
+
 #ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
 	if (bt_conn_security(conn, sec_level)) {
 		printk("Failed to set security level %d\n", sec_level);
 	}
 #endif
-	set_led_state(CON_STATUS_LED, LED_ON);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
@@ -197,7 +174,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	if (current_conn) {
 		bt_conn_unref(current_conn);
 		current_conn = NULL;
-		set_led_state(CON_STATUS_LED, LED_OFF);
+		ui_out_state_indicate(UI_OUT_STATE_IDLE);
 	}
 }
 
@@ -302,77 +279,29 @@ static void bt_ready(int err)
 			      ARRAY_SIZE(sd));
 	if (err) {
 		printk("Advertising failed to start (err %d)\n", err);
+	} else {
+		ui_out_state_indicate(UI_OUT_STATE_BLE_ADVERTISING);
 	}
 
 	/* Give two semaphores to signal both the led_blink_thread, and
 	 * and the ble_write_thread that ble initialized successfully
 	 */
 	k_sem_give(&ble_init_ok);
-	k_sem_give(&ble_init_ok);
 }
 
-static int init_leds(void)
+void main(void)
 {
 	int err = 0;
 
-	led_port = device_get_binding(LED_PORT);
-
-	if (!led_port) {
-		printk("Could not bind to LED port\n");
-		return -ENXIO;
-	}
-
-	err = gpio_pin_configure(led_port, RUN_STATUS_LED,
-			   GPIO_DIR_OUT);
-	if (!err) {
-		err = gpio_pin_configure(led_port, CON_STATUS_LED,
-			   GPIO_DIR_OUT);
-	}
-
-	if (!err) {
-		err = gpio_port_write(led_port, LED_OFF << RUN_STATUS_LED |
-						LED_OFF << CON_STATUS_LED);
-	}
-
-	if (err) {
-		printk("Not able to correctly initialize LED pins (err:%d)",
-			err);
-		led_port = NULL;
-	}
-
-	return err;
-}
-
-void error(void)
-{
-	int err = -1;
-
-	led_port = device_get_binding(LED_PORT);
-	if (led_port) {
-		err = gpio_port_configure(led_port, GPIO_DIR_OUT);
-	}
-
-	if (!err) {
-		gpio_port_write(led_port, LED_ON << LED0_GPIO_PIN |
-					  LED_ON << LED1_GPIO_PIN |
-					  LED_ON << LED2_GPIO_PIN |
-					  LED_ON << LED3_GPIO_PIN);
-	}
-
-	while (true) {
-		/* Spin for ever */
-		k_sleep(1000);
-	}
-}
-
-static void led_blink_thread(void)
-{
-	int    blink_status       = 0;
-	int    err                = 0;
-
 	printk("Starting Nordic UART service example\n");
 
-	err = init_uart();
+	err = ui_out_init();
+	if (!err) {
+		err = init_uart();
+	} else {
+		printk("User interface output initialization failed\n");
+	}
+
 	if (!err) {
 		err = bt_enable(bt_ready);
 	}
@@ -395,21 +324,8 @@ static void led_blink_thread(void)
 	}
 
 	if (err) {
-		error();
+		ui_out_state_indicate(UI_OUT_STATE_FATAL_ERROR);
 	}
-
-	init_leds();
-
-	for (;;) {
-		set_led_state(RUN_STATUS_LED, (++blink_status) % 2);
-		k_sleep(RUN_LED_BLINK_INTERVAL);
-	}
-}
-
-void ble_write_thread(void)
-{
-	/* Don't go any further until BLE is initailized */
-	k_sem_take(&ble_init_ok, K_FOREVER);
 
 	for (;;) {
 		/* Wait indefinitely for data to be sent over bluetooth */
@@ -422,10 +338,3 @@ void ble_write_thread(void)
 		k_free(buf);
 	}
 }
-
-K_THREAD_DEFINE(led_blink_thread_id, STACKSIZE, led_blink_thread, NULL, NULL,
-		NULL, PRIORITY, 0, K_NO_WAIT);
-
-K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
-		NULL, PRIORITY, 0, K_NO_WAIT);
-
