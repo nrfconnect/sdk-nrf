@@ -291,7 +291,7 @@ int bt_scan_start(enum bt_scan_type scan_type);
  */
 int bt_scan_stop(void);
 
-#if CONFIG_NRF_BT_SCAN_FILTER_ENABLE
+#if CONFIG_BT_SCAN_FILTER_ENABLE
 
 /**@brief Function for enabling filtering.
  *
@@ -358,7 +358,7 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
  */
 void bt_scan_filter_remove_all(void);
 
-#endif /* CONFIG_NRF_BT_SCAN_FILTER_ENABLE */
+#endif /* CONFIG_BT_SCAN_FILTER_ENABLE */
 
 /**@brief Function for changing the scanning parameters.
  *

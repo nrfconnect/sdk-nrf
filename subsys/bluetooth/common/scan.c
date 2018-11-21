@@ -9,7 +9,7 @@
 #include <string.h>
 #include <bluetooth/common/scan.h>
 
-#define LOG_LEVEL CONFIG_NRF_BT_SCAN_LOG_LEVEL
+#define LOG_LEVEL CONFIG_BT_SCAN_LOG_LEVEL
 #include <logging/log.h>
 LOG_MODULE_REGISTER(nrf_bt_scan);
 
@@ -54,7 +54,7 @@ struct bt_scan_name_filter {
 	/* Names that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
-	char target_name[CONFIG_NRF_BT_SCAN_NAME_CNT][CONFIG_NRF_BT_SCAN_NAME_MAX_LEN];
+	char target_name[CONFIG_BT_SCAN_NAME_CNT][CONFIG_BT_SCAN_NAME_MAX_LEN];
 
 	/* Name filter counter. */
 	u8_t cnt;
@@ -71,11 +71,11 @@ struct bt_scan_short_name_filter {
 		/* Short names that the main application will scan for,
 		 * and that will be advertised by the peripherals.
 		 */
-		char target_name[CONFIG_NRF_BT_SCAN_SHORT_NAME_MAX_LEN];
+		char target_name[CONFIG_BT_SCAN_SHORT_NAME_MAX_LEN];
 
 		/* Minimum length of the short name. */
 		u8_t min_len;
-	} name[CONFIG_NRF_BT_SCAN_SHORT_NAME_CNT];
+	} name[CONFIG_BT_SCAN_SHORT_NAME_CNT];
 
 	/* Short name filter counter. */
 	u8_t cnt;
@@ -88,7 +88,7 @@ struct bt_scan_short_name_filter {
  */
 struct bt_scan_addr_filter {
 	/* Addresses advertised by the peripherals. */
-	bt_addr_le_t target_addr[CONFIG_NRF_BT_SCAN_ADDRESS_CNT];
+	bt_addr_le_t target_addr[CONFIG_BT_SCAN_ADDRESS_CNT];
 
 	/* Address filter counter. */
 	u8_t cnt;
@@ -119,7 +119,7 @@ struct bt_scan_uuid_filter {
 	/* UUIDs that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
-	struct bt_scan_uuid uuid[CONFIG_NRF_BT_SCAN_UUID_CNT];
+	struct bt_scan_uuid uuid[CONFIG_BT_SCAN_UUID_CNT];
 
 	/* UUID filter counter. */
 	u8_t cnt;
@@ -132,7 +132,7 @@ struct bt_scan_appearance_filter {
 	/* Apperances that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
-	u16_t appearance[CONFIG_NRF_BT_SCAN_APPEARANCE_CNT];
+	u16_t appearance[CONFIG_BT_SCAN_APPEARANCE_CNT];
 
 	/* Appearance filter counter. */
 	u8_t cnt;
@@ -331,7 +331,7 @@ static int scan_addr_filter_add(const bt_addr_le_t *target_addr)
 	u8_t counter = bt_scan.scan_filters.addr.cnt;
 
 	/* If no memory for filter. */
-	if (counter >= CONFIG_NRF_BT_SCAN_ADDRESS_CNT) {
+	if (counter >= CONFIG_BT_SCAN_ADDRESS_CNT) {
 		return -ENOMEM;
 	}
 
@@ -409,14 +409,14 @@ static int scan_name_filter_add(const char *name)
 	size_t name_len;
 
 	/* If no memory for filter. */
-	if (counter >= CONFIG_NRF_BT_SCAN_NAME_CNT) {
+	if (counter >= CONFIG_BT_SCAN_NAME_CNT) {
 		return -ENOMEM;
 	}
 
 	name_len = strlen(name);
 
 	/* Check the name length. */
-	if ((name_len == 0) || (name_len > CONFIG_NRF_BT_SCAN_NAME_MAX_LEN)) {
+	if ((name_len == 0) || (name_len > CONFIG_BT_SCAN_NAME_MAX_LEN)) {
 		return -EINVAL;
 	}
 
@@ -499,7 +499,7 @@ static int scan_short_name_filter_add(const struct bt_scan_short_name *short_nam
 	u8_t name_len;
 
 	/* If no memory for filter. */
-	if (counter >= CONFIG_NRF_BT_SCAN_SHORT_NAME_CNT) {
+	if (counter >= CONFIG_BT_SCAN_SHORT_NAME_CNT) {
 		return -ENOMEM;
 	}
 
@@ -507,7 +507,7 @@ static int scan_short_name_filter_add(const struct bt_scan_short_name *short_nam
 
 	/* Check the name length. */
 	if ((name_len == 0) ||
-	    (name_len > CONFIG_NRF_BT_SCAN_SHORT_NAME_MAX_LEN)) {
+	    (name_len > CONFIG_BT_SCAN_SHORT_NAME_MAX_LEN)) {
 		return -EINVAL;
 	}
 
@@ -660,7 +660,7 @@ static int scan_uuid_filter_add(struct bt_uuid *uuid)
 	struct bt_uuid_128 *uuid_128;
 
 	/* If no memory. */
-	if (counter >= CONFIG_NRF_BT_SCAN_UUID_CNT) {
+	if (counter >= CONFIG_BT_SCAN_UUID_CNT) {
 		return -ENOMEM;
 	}
 
@@ -772,7 +772,7 @@ static int scan_appearance_filter_add(u16_t appearance)
 	u8_t counter = bt_scan.scan_filters.appearance.cnt;
 
 	/* If no memory. */
-	if (counter >= CONFIG_NRF_BT_SCAN_APPEARANCE_CNT) {
+	if (counter >= CONFIG_BT_SCAN_APPEARANCE_CNT) {
 		return -ENOMEM;
 	}
 
