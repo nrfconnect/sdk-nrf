@@ -1,47 +1,47 @@
-menuconfig NRF_BT_HIDS
+menuconfig BT_GATT_HIDS
 	bool "Human Interface Device service"
 	select NRF_BT_SVC_COMMON
 	help
 	  Enable BLE GATT Human Interface Device service.
 
-if NRF_BT_HIDS
+if BT_GATT_HIDS
 
-config NRF_BT_HIDS_MAX_CLIENT_COUNT
+config BT_GATT_HIDS_MAX_CLIENT_COUNT
 	int "Maximum HIDS clients"
 	default 1
 	range 1 BT_MAX_CONN
 	help
 	 The maximum number of devices that HID can connect to.
 
-config NRF_BT_HIDS_ATTR_MAX
+config BT_GATT_HIDS_ATTR_MAX
 	int "Maximum number of GATT attribute descriptors"
 	default 30
 	range 0 50
 	help
 	  Maximum number of GATT attribute descriptors that can be set for HIDS.
 
-config NRF_BT_HIDS_INPUT_REP_MAX
+config BT_GATT_HIDS_INPUT_REP_MAX
 	int "Maximum number of HIDS Input Report descriptors"
 	default 5
 	range 0 10
 	help
 	  Maximum number of HIDS Input Reports that can be set for HIDS.
 
-config NRF_BT_HIDS_OUTPUT_REP_MAX
+config BT_GATT_HIDS_OUTPUT_REP_MAX
 	int "Maximum number of HIDS Output Report descriptors"
 	default 5
 	range 0 10
 	help
 	  Maximum number of HIDS Output Reports that can be set for HIDS.
 
-config NRF_BT_HIDS_FEATURE_REP_MAX
+config BT_GATT_HIDS_FEATURE_REP_MAX
 	int "Maximum number of HIDS Feature Report descriptors"
 	default 5
 	range 0 10
 	help
 	  Maximum number of HIDS Feature Reports that can be set for HIDS.
 
-config NRF_BT_HIDS_SYS_LOG_LEVEL
+config BT_GATT_HIDS_SYS_LOG_LEVEL
 	int "HIDS log level"
 	depends on SYS_LOG
 	default 2
@@ -55,4 +55,4 @@ config NRF_BT_HIDS_SYS_LOG_LEVEL
 	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
 	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
 
-endif # NRF_BT_HIDS
+endif # BT_GATT_HIDS
