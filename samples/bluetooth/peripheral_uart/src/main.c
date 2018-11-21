@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 
-#define STACKSIZE               CONFIG_NRF_BT_NUS_THREAD_STACK_SIZE
+#define STACKSIZE               CONFIG_BT_GATT_NUS_THREAD_STACK_SIZE
 #define PRIORITY                7
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
@@ -45,16 +45,16 @@
 #define LED_ON                  0
 #define LED_OFF                 1
 
-#define UART_BUF_SIZE           CONFIG_NRF_BT_NUS_UART_BUFFER_SIZE
+#define UART_BUF_SIZE           CONFIG_BT_GATT_NUS_UART_BUFFER_SIZE
 
-#ifdef CONFIG_NRF_BT_NUS_SECURITY_ENABLED
-#ifdef CONFIG_NRF_BT_NUS_SECURITY_LEVEL_LOW
+#ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_NUS_SECURITY_LEVEL_LOW
 static const bt_security_t sec_level = BT_SECURITY_LOW;
-#elif CONFIG_NRF_BT_NUS_SECURITY_LEVEL_MED
+#elif CONFIG_BT_GATT_NUS_SECURITY_LEVEL_MED
 static const bt_security_t sec_level = BT_SECURITY_MEDIUM;
-#elif CONFIG_NRF_BT_NUS_SECURITY_LEVEL_HIGH
+#elif CONFIG_BT_GATT_NUS_SECURITY_LEVEL_HIGH
 static const bt_security_t sec_level = BT_SECURITY_HIGH;
-#elif CONFIG_NRF_BT_NUS_SECURITY_LEVEL_FIPS
+#elif CONFIG_BT_GATT_NUS_SECURITY_LEVEL_FIPS
 static const bt_security_t sec_level = BT_SECURITY_FIPS;
 #endif
 #endif
@@ -182,7 +182,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	printk("Connected\n");
 	current_conn = bt_conn_ref(conn);
 
-#ifdef CONFIG_NRF_BT_NUS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
 	if (bt_conn_security(conn, sec_level)) {
 		printk("Failed to set security level %d\n", sec_level);
 	}
@@ -201,7 +201,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	}
 }
 
-#ifdef CONFIG_NRF_BT_NUS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level)
 {
 	printk("Security level was raised to %d\n", level);
@@ -211,13 +211,13 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 static struct bt_conn_cb conn_callbacks = {
 	.connected    = connected,
 	.disconnected = disconnected,
-#ifdef CONFIG_NRF_BT_NUS_SECURITY_ENABLED
+#ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
 	.security_changed = security_changed,
 #endif
 };
 
-#if !defined(CONFIG_NRF_BT_NUS_SECURITY_LEVEL_LOW) && \
-	defined(CONFIG_NRF_BT_NUS_SECURITY_ENABLED)
+#if !defined(CONFIG_BT_GATT_NUS_SECURITY_LEVEL_LOW) && \
+	defined(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -379,8 +379,8 @@ static void led_blink_thread(void)
 
 	if (!err) {
 		bt_conn_cb_register(&conn_callbacks);
-		#if !defined(CONFIG_NRF_BT_NUS_SECURITY_LEVEL_LOW) && \
-		     defined(CONFIG_NRF_BT_NUS_SECURITY_ENABLED)
+		#if !defined(CONFIG_BT_GATT_NUS_SECURITY_LEVEL_LOW) && \
+		     defined(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
 		#endif
 
