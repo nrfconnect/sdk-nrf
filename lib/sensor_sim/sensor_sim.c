@@ -9,12 +9,15 @@
 #include <sensor.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <logging/log.h>
 
 #include "sensor_sim.h"
 
 #if defined(CONFIG_SENSOR_SIM_DYNAMIC_VALUES)
 	#include <math.h>
 #endif
+
+LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 
 static const double base_accel_samples[3] = {0.0, 0.0, 0.0};
 static double accel_samples[3];

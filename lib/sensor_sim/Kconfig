@@ -80,4 +80,8 @@ config SENSOR_SIM_THREAD_STACK_SIZE
 
 endif #SENSOR_SIM_TRIGGER
 
+module = SENSOR_SIM
+module-str = Sensor simulator
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endif #SENSOR_SIM

@@ -27,7 +27,4 @@ struct sensor_sim_data {
 #endif  /* CONFIG_SENSOR_SIM_TRIGGER */
 };
 
-#define SYS_LOG_DOMAIN "SENSOR_SIM"
-#define SYS_LOG_LEVEL CONFIG_SYS_LOG_SENSOR_LEVEL
-#include <logging/sys_log.h>
 #endif /* __SENSOR_SENSOR_SIM_H__ */
