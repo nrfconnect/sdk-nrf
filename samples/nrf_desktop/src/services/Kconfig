@@ -8,21 +8,21 @@ menu "BLE Services"
 
 config DESKTOP_HID_MOUSE
 	bool "Mouse HID device"
-	select NRF_BT_HIDS
+	select BT_GATT_HIDS
 	select NRF_BT_DIS
 	help
 	  This option controls if target is visible as mouse HID device.
 
 config DESKTOP_HID_KEYBOARD
 	bool "Keyboard HID device"
-	select NRF_BT_HIDS
+	select BT_GATT_HIDS
 	select NRF_BT_DIS
 	help
 	  This option controls if target is visible as keyboard HID device.
 
 config DESKTOP_HID_MPLAYER
 	bool "Media player HID device"
-	select NRF_BT_HIDS
+	select BT_GATT_HIDS
 	select NRF_BT_DIS
 	help
 	  This option controls if target is visible as media player HID device.

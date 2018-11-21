@@ -22,7 +22,7 @@
 #include <bluetooth/services/hids.h>
 
 #define SYS_LOG_DOMAIN	STRINGIFY(nrf_ble_hids)
-#define SYS_LOG_LEVEL	CONFIG_NRF_BT_HIDS_SYS_LOG_LEVEL
+#define SYS_LOG_LEVEL	CONFIG_BT_GATT_HIDS_SYS_LOG_LEVEL
 #include <logging/sys_log.h>
 
 #define BOOT_MOUSE_INPUT_REPORT_MIN_SIZE 3
@@ -113,7 +113,7 @@ static bool hids_is_notification_enabled(struct bt_conn *conn,
 {
 	const bt_addr_le_t *conn_addr = bt_conn_get_dst(conn);
 
-	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
 		bt_addr_le_t *ccd_addr = &ccd[i].peer;
 
 		if ((!memcmp(conn_addr, ccd_addr, sizeof(bt_addr_le_t))) &&
@@ -755,7 +755,7 @@ static void hids_input_reports_register(struct hids *hids_obj,
 					const struct hids_init_param *init_param)
 {
 	__ASSERT_NO_MSG(init_param->inp_rep_group_init.cnt <=
-			CONFIG_NRF_BT_HIDS_INPUT_REP_MAX);
+			CONFIG_BT_GATT_HIDS_INPUT_REP_MAX);
 	u8_t offset = 0;
 
 	memcpy(&hids_obj->inp_rep_group, &init_param->inp_rep_group_init,
@@ -796,7 +796,7 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 				       const struct hids_init_param *init_param)
 {
 	__ASSERT_NO_MSG(init_param->outp_rep_group_init.cnt <=
-			CONFIG_NRF_BT_HIDS_OUTPUT_REP_MAX);
+			CONFIG_BT_GATT_HIDS_OUTPUT_REP_MAX);
 
 	u8_t offset = 0;
 
@@ -838,7 +838,7 @@ static void hids_feat_reports_register(struct hids *hids_obj,
 				       const struct hids_init_param *init_param)
 {
 	__ASSERT_NO_MSG(init_param->feat_rep_group_init.cnt <=
-			CONFIG_NRF_BT_HIDS_FEATURE_REP_MAX);
+			CONFIG_BT_GATT_HIDS_FEATURE_REP_MAX);
 
 	memcpy(&hids_obj->feat_rep_group, &init_param->feat_rep_group_init,
 		sizeof(hids_obj->feat_rep_group));

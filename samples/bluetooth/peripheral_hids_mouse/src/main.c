@@ -96,7 +96,7 @@ static struct gpio_callback gpio_cbs[4];
 static struct conn_mode {
 	struct bt_conn *conn;
 	bool in_boot_mode;
-} conn_mode[CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT];
+} conn_mode[CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT];
 
 
 static void advertising_start(void)
@@ -137,7 +137,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 		return;
 	}
 
-	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
 		if (!conn_mode[i].conn) {
 			conn_mode[i].conn = conn;
 			conn_mode[i].in_boot_mode = false;
@@ -163,7 +163,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 		printk("Failed to notify HID service about disconnection\n");
 	}
 
-	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
 		if (conn_mode[i].conn == conn) {
 			conn_mode[i].conn = NULL;
 			break;
@@ -194,13 +194,13 @@ static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 	char addr[BT_ADDR_LE_STR_LEN];
 	size_t i;
 
-	for (i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
 		if (conn_mode[i].conn == conn) {
 			break;
 		}
 	}
 
-	if (i >= CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT) {
+	if (i >= CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT) {
 		return;
 	}
 
@@ -343,7 +343,7 @@ static void hid_init(void)
 
 static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 {
-	for (size_t i = 0; i < CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
 
 		if (!conn_mode[i].conn) {
 			continue;

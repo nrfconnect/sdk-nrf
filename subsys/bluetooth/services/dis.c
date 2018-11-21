@@ -44,7 +44,7 @@ static const u8_t dis_pnp_id[DIS_PNP_ID_LEN] = {
 	(CONFIG_NRF_BT_PNP_PRODUCT_VER >> 8) & 0xFF
 };
 #else
-#if CONFIG_NRF_BT_HIDS
+#if CONFIG_BT_GATT_HIDS
 #warning "PnP_ID characteristic is mandatory if HID Service is used"
 #endif
 #endif

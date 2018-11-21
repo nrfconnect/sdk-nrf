@@ -39,10 +39,10 @@ extern "C" {
  */
 #define HIDS_DEF(_name, ...)				                       \
 	BLE_LINK_CTX_MANAGER_DEF(_name,                                        \
-				 CONFIG_NRF_BT_HIDS_MAX_CLIENT_COUNT,          \
+				 CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT,         \
 				 _BLE_HIDS_LINK_CTX_SIZE_CALC(__VA_ARGS__));   \
 	static struct bt_gatt_attr					       \
-		CONCAT(_name, _attr_tab)[CONFIG_NRF_BT_HIDS_ATTR_MAX] = { 0 }; \
+		CONCAT(_name, _attr_tab)[CONFIG_BT_GATT_HIDS_ATTR_MAX] = { 0 };\
 	static struct hids _name =					       \
 	{								       \
 		.svc = { .attrs = CONCAT(_name, _attr_tab) },		       \
@@ -231,7 +231,7 @@ struct hids_boot_kb_outp_rep {
  */
 struct hids_inp_rep_group {
 	/** Pointer to the report collection. */
-	struct hids_inp_rep reports[CONFIG_NRF_BT_HIDS_INPUT_REP_MAX];
+	struct hids_inp_rep reports[CONFIG_BT_GATT_HIDS_INPUT_REP_MAX];
 
 	/** Total number of reports. */
 	u8_t cnt;
@@ -241,7 +241,7 @@ struct hids_inp_rep_group {
  */
 struct hids_outp_rep_group {
 	/** Pointer to the report collection. */
-	struct hids_outp_feat_rep reports[CONFIG_NRF_BT_HIDS_OUTPUT_REP_MAX];
+	struct hids_outp_feat_rep reports[CONFIG_BT_GATT_HIDS_OUTPUT_REP_MAX];
 
 	/** Total number of reports. */
 	u8_t cnt;
@@ -251,7 +251,7 @@ struct hids_outp_rep_group {
  */
 struct hids_feat_rep_group {
 	/** Pointer to the report collection. */
-	struct hids_outp_feat_rep reports[CONFIG_NRF_BT_HIDS_FEATURE_REP_MAX];
+	struct hids_outp_feat_rep reports[CONFIG_BT_GATT_HIDS_FEATURE_REP_MAX];
 
 	/** Total number of reports. */
 	u8_t cnt;
