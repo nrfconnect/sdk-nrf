@@ -9,9 +9,11 @@
 #include <device.h>
 #include <gpio.h>
 #include <misc/util.h>
-#include <logging/sys_log.h>
+#include <logging/log.h>
 #include <nrfx.h>
 #include <dk_buttons_and_leds.h>
+
+LOG_MODULE_REGISTER(dk_buttons_and_leds, CONFIG_DK_LIBRARY_LOG_LEVEL);
 
 static struct k_delayed_work buttons_scan;
 static const u8_t button_pins[] = { SW0_GPIO_PIN, SW1_GPIO_PIN,
@@ -28,7 +30,7 @@ static int get_buttons(u32_t *mask)
 		u32_t val;
 
 		if (gpio_pin_read(gpio_dev, button_pins[i], &val)) {
-			SYS_LOG_ERR("Cannot read gpio pin");
+			LOG_ERR("Cannot read gpio pin");
 			return -EFAULT;
 		}
 
@@ -69,7 +71,7 @@ static void buttons_scan_fn(struct k_work *work)
 		  CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL);
 
 	if (err) {
-		SYS_LOG_ERR("Cannot add work to workqueue");
+		LOG_ERR("Cannot add work to workqueue");
 	}
 }
 
@@ -79,7 +81,7 @@ int dk_leds_init(void)
 
 	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		SYS_LOG_ERR("Cannot bind gpio device");
+		LOG_ERR("Cannot bind gpio device");
 		return -ENODEV;
 	}
 
@@ -88,7 +90,7 @@ int dk_leds_init(void)
 					 GPIO_DIR_OUT);
 
 		if (err) {
-			SYS_LOG_ERR("Cannot configure LED gpio");
+			LOG_ERR("Cannot configure LED gpio");
 			return err;
 		}
 	}
@@ -106,7 +108,7 @@ int dk_buttons_init(button_handler_t button_handler)
 
 	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		SYS_LOG_ERR("Cannot bind gpio device");
+		LOG_ERR("Cannot bind gpio device");
 		return -ENODEV;
 	}
 
@@ -115,7 +117,7 @@ int dk_buttons_init(button_handler_t button_handler)
 					 GPIO_DIR_IN | GPIO_PUD_PULL_UP);
 
 		if (err) {
-			SYS_LOG_ERR("Cannot configure button gpio");
+			LOG_ERR("Cannot configure button gpio");
 			return err;
 		}
 	}
@@ -123,7 +125,7 @@ int dk_buttons_init(button_handler_t button_handler)
 	k_delayed_work_init(&buttons_scan, buttons_scan_fn);
 	err = k_delayed_work_submit(&buttons_scan, 0);
 	if (err) {
-		SYS_LOG_ERR("Cannot add work to workqueue");
+		LOG_ERR("Cannot add work to workqueue");
 		return err;
 	}
 
@@ -171,7 +173,7 @@ int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask)
 			int err = gpio_pin_write(gpio_dev, led_pins[i], val);
 
 			if (err) {
-				SYS_LOG_ERR("Cannot write LED gpio");
+				LOG_ERR("Cannot write LED gpio");
 				return err;
 			}
 		}
