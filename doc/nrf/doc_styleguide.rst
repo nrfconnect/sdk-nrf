@@ -73,9 +73,9 @@ File headers and groups
 
 	/**
 	 * @file
-	 * @defgroup nrf_bt_svc_common Common BLE GATT service utilities API
+	 * @defgroup bt_gatt_pool BLE GATT attribute pool API
 	 * @{
-	 * @brief Common utilities for BLE GATT services.
+	 * @brief BLE GATT attribute pools.
 	 */
 
 	#ifdef __cplusplus
@@ -91,26 +91,24 @@ File headers and groups
 	 *  @param _svc GATT service descriptor.
 	 *  @param _svc_uuid_init Service UUID.
 	 */
-
-	#define PRIMARY_SVC_REGISTER(_svc, _svc_uuid_init)	    \
-		{						    \
-			struct bt_uuid *_svc_uuid = _svc_uuid_init; \
-			primary_svc_register(_svc, _svc_uuid);	    \
-		}
+	#define BT_GATT_POOL_SVC_GET(_svc, _svc_uuid_init)	\
+	{							\
+		struct bt_uuid *_svc_uuid = _svc_uuid_init;	\
+		bt_gatt_pool_svc_get(_svc, _svc_uuid);		\
+	}
 
 	[...]
-	/** @brief Unregister a CCC descriptor.
+	/** @brief Return a CCC descriptor to the pool.
 	 *
-	 *  @param attr Attribute describing a previously registered CCC descriptor.
+	 *  @param attr Attribute describing the CCC descriptor to be returned.
 	 */
-	void ccc_unregister(struct bt_gatt_attr const *attr);
+	void bt_gatt_pool_ccc_put(struct bt_gatt_attr const *attr);
 
-	#if CONFIG_NRF_BT_STATISTICS_PRINT != 0
+	#if CONFIG_BT_GATT_POOL_STATS != 0
 	/** @brief Print basic module statistics (containing pool size usage).
-	 */
-	void statistics_print(void);
+	*/
+	void bt_gatt_pool_stats_print(void);
 	#endif
-
 
 	#ifdef __cplusplus
 	}

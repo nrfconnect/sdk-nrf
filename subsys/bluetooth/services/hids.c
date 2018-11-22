@@ -18,7 +18,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 
-#include <bluetooth/common/svc_common.h>
+#include <bluetooth/common/gatt_pool.h>
 #include <bluetooth/services/hids.h>
 
 #include <logging/log.h>
@@ -765,23 +765,23 @@ static void hids_input_reports_register(struct hids *hids_obj,
 		struct hids_inp_rep *hids_inp_rep =
 			&hids_obj->inp_rep_group.reports[i];
 
-		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_REPORT,
+		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_inp_rep->att_ind = hids_obj->svc.attr_count;
 		hids_inp_rep->offset = offset;
 		hids_inp_rep->idx = i;
 
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
 						       BT_GATT_PERM_READ,
 						       hids_inp_rep_read,
 						       NULL,
 						       hids_inp_rep));
 
-		CCC_REGISTER(&hids_obj->svc, hids_inp_rep->ccc,
+		BT_GATT_POOL_CCC_GET(&hids_obj->svc, hids_inp_rep->ccc,
 			     hids_input_report_ccc_changed);
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF,
 						       BT_GATT_PERM_READ,
 						       hids_inp_rep_ref_read,
@@ -807,7 +807,7 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 		struct hids_outp_feat_rep *hids_outp_rep =
 			&hids_obj->outp_rep_group.reports[i];
 
-		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_REPORT,
+		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE |
 			      BT_GATT_CHRC_WRITE_WITHOUT_RESP);
 
@@ -815,14 +815,14 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 		hids_outp_rep->offset = offset;
 		hids_outp_rep->idx = i;
 
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
 						       (BT_GATT_PERM_READ |
 						       BT_GATT_PERM_WRITE),
 						       hids_outp_rep_read,
 						       hids_outp_rep_write,
 						       hids_outp_rep));
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF,
 						       BT_GATT_PERM_READ,
 						       hids_outp_rep_ref_read,
@@ -849,21 +849,21 @@ static void hids_feat_reports_register(struct hids *hids_obj,
 		struct hids_outp_feat_rep *hids_feat_rep =
 			&hids_obj->feat_rep_group.reports[i];
 
-		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_REPORT,
+		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE);
 
 		hids_feat_rep->att_ind = hids_obj->svc.attr_count;
 		hids_feat_rep->offset = offset;
 		hids_feat_rep->idx = i;
 
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
 						       (BT_GATT_PERM_READ |
 						       BT_GATT_PERM_WRITE),
 						       hids_feat_rep_read,
 						       hids_feat_rep_write,
 						       hids_feat_rep));
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF,
 						       BT_GATT_PERM_READ,
 						       hids_feat_rep_ref_read,
@@ -883,12 +883,12 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 	hids_obj->cp.evt_handler = init_param->cp_evt_handler;
 
 	/* Register primary service. */
-	PRIMARY_SVC_REGISTER(&hids_obj->svc, BT_UUID_HIDS);
+	BT_GATT_POOL_SVC_GET(&hids_obj->svc, BT_UUID_HIDS);
 
 	/* Register Protocol Mode characteristic. */
-	CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_PROTOCOL_MODE,
+	BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_PROTOCOL_MODE,
 		      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE_WITHOUT_RESP);
-	DESCRIPTOR_REGISTER(&hids_obj->svc,
+	BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 			    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_PROTOCOL_MODE,
 					       BT_GATT_PERM_READ |
 					       BT_GATT_PERM_WRITE,
@@ -909,10 +909,10 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 	memcpy(&hids_obj->rep_map, &init_param->rep_map,
 	       sizeof(hids_obj->rep_map));
 
-	CHRC_REGISTER(&hids_obj->svc,
+	BT_GATT_POOL_CHRC_GET(&hids_obj->svc,
 		      BT_UUID_HIDS_REPORT_MAP,
 		      BT_GATT_CHRC_READ);
-	DESCRIPTOR_REGISTER(&hids_obj->svc,
+	BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 			    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_MAP,
 					       BT_GATT_PERM_READ,
 					       hids_report_map_read,
@@ -925,14 +925,14 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 	if (init_param->is_mouse) {
 		hids_obj->is_mouse = init_param->is_mouse;
 
-		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
+		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_obj->boot_mouse_inp_rep.att_ind = hids_obj->svc.attr_count;
 		hids_obj->boot_mouse_inp_rep.handler =
 			init_param->boot_mouse_notif_handler;
 
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
 					BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
 					BT_GATT_PERM_READ,
@@ -940,7 +940,7 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 					NULL,
 					&hids_obj->boot_mouse_inp_rep));
 
-		CCC_REGISTER(&hids_obj->svc, hids_obj->boot_mouse_inp_rep.ccc,
+		BT_GATT_POOL_CCC_GET(&hids_obj->svc, hids_obj->boot_mouse_inp_rep.ccc,
 			     hids_boot_mouse_inp_rep_ccc_changed);
 	}
 
@@ -950,14 +950,14 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 	if (init_param->is_kb) {
 		hids_obj->is_kb = init_param->is_kb;
 
-		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_IN_REPORT,
+		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_IN_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
 
 		hids_obj->boot_kb_inp_rep.att_ind = hids_obj->svc.attr_count;
 		hids_obj->boot_kb_inp_rep.handler =
 			init_param->boot_kb_notif_handler;
 
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
 					BT_UUID_HIDS_BOOT_KB_IN_REPORT,
 					BT_GATT_PERM_READ,
@@ -965,10 +965,10 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 					NULL,
 					&hids_obj->boot_kb_inp_rep));
 
-		CCC_REGISTER(&hids_obj->svc, hids_obj->boot_kb_inp_rep.ccc,
+		BT_GATT_POOL_CCC_GET(&hids_obj->svc, hids_obj->boot_kb_inp_rep.ccc,
 			     hids_boot_kb_inp_rep_ccc_changed);
 
-		CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
+		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
 			      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE |
 			      BT_GATT_CHRC_WRITE_WITHOUT_RESP);
 
@@ -976,7 +976,7 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 		hids_obj->boot_kb_outp_rep.handler =
 			init_param->boot_kb_outp_rep_handler;
 
-		DESCRIPTOR_REGISTER(&hids_obj->svc,
+		BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 				    BT_GATT_DESCRIPTOR(
 					BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
 					(BT_GATT_PERM_READ |
@@ -989,8 +989,8 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 	/* Register HID Information characteristic and its descriptor. */
 	hid_information_encode(hids_obj->info, &init_param->info);
 
-	CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_INFO, BT_GATT_CHRC_READ);
-	DESCRIPTOR_REGISTER(&hids_obj->svc,
+	BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_INFO, BT_GATT_CHRC_READ);
+	BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 			    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_INFO,
 					       BT_GATT_PERM_READ,
 					       hids_info_read,
@@ -998,9 +998,9 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 					       hids_obj->info));
 
 	/* Register HID Control Point characteristic and its descriptor. */
-	CHRC_REGISTER(&hids_obj->svc, BT_UUID_HIDS_CTRL_POINT,
+	BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_CTRL_POINT,
 		      BT_GATT_CHRC_WRITE_WITHOUT_RESP);
-	DESCRIPTOR_REGISTER(&hids_obj->svc,
+	BT_GATT_POOL_DESC_GET(&hids_obj->svc,
 			    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_CTRL_POINT,
 					       BT_GATT_PERM_WRITE,
 					       NULL, hids_ctrl_point_write,
@@ -1027,65 +1027,65 @@ int hids_uninit(struct hids *hids_obj)
 				= hids_obj->ctx_manager;
 
 	/* Unregister primary service. */
-	primary_svc_unregister(attr++);
+	bt_gatt_pool_svc_put(attr++);
 
 	/* Unregister Protocol Mode characteristic. */
-	chrc_unregister(attr++);
-	descriptor_unregister(attr++);
+	bt_gatt_pool_chrc_put(attr++);
+	bt_gatt_pool_desc_put(attr++);
 
 	/* Unregister Input Report characteristics. */
 	for (size_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
-		chrc_unregister(attr++);
-		descriptor_unregister(attr++);
-		ccc_unregister(attr++);
-		descriptor_unregister(attr++);
+		bt_gatt_pool_chrc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
+		bt_gatt_pool_ccc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
 	}
 
 	/* Unregister Output Report characteristics. */
 	for (size_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
-		chrc_unregister(attr++);
-		descriptor_unregister(attr++);
-		descriptor_unregister(attr++);
+		bt_gatt_pool_chrc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
 	}
 
 	/* Unregister Feature Report characteristics. */
 	for (size_t i = 0; i < hids_obj->feat_rep_group.cnt; i++) {
-		chrc_unregister(attr++);
-		descriptor_unregister(attr++);
-		descriptor_unregister(attr++);
+		bt_gatt_pool_chrc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
 	}
 
 	/* Unregister Report Map characteristic and its descriptor. */
-	chrc_unregister(attr++);
-	descriptor_unregister(attr++);
+	bt_gatt_pool_chrc_put(attr++);
+	bt_gatt_pool_desc_put(attr++);
 
 	/* Unregister HID Boot Mouse Input Report characteristic, its descriptor
 	 * and CCC.
 	 */
 	if (hids_obj->is_mouse) {
-		chrc_unregister(attr++);
-		descriptor_unregister(attr++);
-		ccc_unregister(attr++);
+		bt_gatt_pool_chrc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
+		bt_gatt_pool_ccc_put(attr++);
 	}
 
 	/* Unregister HID Boot Keyboard Input/Output Report characteristic, its
 	 * descriptor and CCC.
 	 */
 	if (hids_obj->is_kb) {
-		chrc_unregister(attr++);
-		descriptor_unregister(attr++);
-		ccc_unregister(attr++);
-		chrc_unregister(attr++);
-		descriptor_unregister(attr++);
+		bt_gatt_pool_chrc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
+		bt_gatt_pool_ccc_put(attr++);
+		bt_gatt_pool_chrc_put(attr++);
+		bt_gatt_pool_desc_put(attr++);
 	}
 
 	/* Unregister HID Information characteristic and its descriptor. */
-	chrc_unregister(attr++);
-	descriptor_unregister(attr++);
+	bt_gatt_pool_chrc_put(attr++);
+	bt_gatt_pool_desc_put(attr++);
 
 	/* Unregister HID Control Point characteristic and its descriptor. */
-	chrc_unregister(attr++);
-	descriptor_unregister(attr++);
+	bt_gatt_pool_chrc_put(attr++);
+	bt_gatt_pool_desc_put(attr++);
 
 	__ASSERT((attr - attr_start) == hids_obj->svc.attr_count,
 		 "Failed to unregister full list of attributes.");
