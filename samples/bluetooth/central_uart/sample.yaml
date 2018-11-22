@@ -1,6 +1,6 @@
 sample:
-  description: BLE LED Button service sample
-  name: BLE LED Button service
+  description: TBD
+  name: Central UART
 tests:
   test_build:
     build_only: true
