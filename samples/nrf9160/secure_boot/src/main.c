@@ -49,7 +49,6 @@
 
 #include <zephyr.h>
 #include <misc/printk.h>
-#include <board.h>
 #include <device.h>
 #include <gpio.h>
 
