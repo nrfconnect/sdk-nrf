@@ -1,0 +1,79 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Application sample"
+
+choice
+	prompt "GPS device"
+	default GPS_USE_SIM
+	help
+		Select from which device GPS data will be fetched.
+
+config GPS_USE_SIM
+	bool "Use GPS simulator"
+	select GPS_SIM
+	select GPS_SIM_TRIGGER
+	help
+		Use simulated GPS data.
+
+config GPS_USE_EXTERNAL
+	bool "User provided GPS device"
+	help
+		Provide a GPS device that location data will be fetched from and
+		sent to nRF Cloud
+
+endchoice
+
+if GPS_USE_SIM
+
+config GPS_DEV_NAME
+	string
+	default GPS_SIM_DEV_NAME
+
+config GPS_TRIGGER
+	bool
+	default GPS_SIM_TRIGGER
+
+endif
+
+if GPS_USE_EXTERNAL
+config GPS_DEV_NAME
+	string "GPS device name"
+	help
+		GPS device from which location data will be fetched and sent
+		to nRF Cloud.
+
+endif
+
+choice
+	prompt "nRF Cloud user association"
+	default CLOUD_UA_BUTTONS
+	help
+		Select which method to use for nRF Cloud user association
+		input.
+
+config CLOUD_UA_BUTTONS
+	bool "Use buttons and switches"
+	help
+		Use buttons and switches on the development kit to provide
+		user association input.
+
+config CLOUD_UA_CONSOLE
+	bool "Use console input"
+	help
+		Use console to enter nRF Cloud user association input.
+		Allowed input is as follows:
+		'b1' = Button 1
+		'b2' = Button 2
+		's1' = Switch 1
+		's2' = Switch 2
+
+endchoice
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
