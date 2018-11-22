@@ -534,7 +534,7 @@ static int init(void)
 		goto error;
 	}
 
-	spi_dev = device_get_binding(CONFIG_SPI_1_NAME);
+	spi_dev = device_get_binding(DT_SPI_1_NAME);
 	if (!spi_dev) {
 		LOG_ERR("Cannot get SPI device");
 		goto error;
