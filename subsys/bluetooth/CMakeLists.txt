@@ -13,8 +13,7 @@ endif()
 
 add_subdirectory_ifdef(CONFIG_BT_LL_NRFXLIB controller)
 
-if (CONFIG_NRF_BT_DIS    OR
-    CONFIG_BT_GATT_HIDS  OR
+if (CONFIG_BT_GATT_HIDS  OR
     CONFIG_BT_GATT_LBS   OR
     CONFIG_BT_GATT_NUS   OR
     CONFIG_BT_GATT_NUS_C OR
