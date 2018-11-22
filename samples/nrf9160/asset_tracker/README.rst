@@ -1,9 +1,9 @@
 .. _nrf_cloud:
 
-nRF9160: nRF Cloud
-##################
+nRF9160: Asset Tracker
+######################
 
-The nRF Cloud sample demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160 Development Kit to the `nRF Cloud`_ via LTE and transmit sensor data.
+The Asset Tracker sample demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160 Development Kit to the `nRF Cloud`_ via LTE and transmit GPS and device orientation data.
 
 
 Overview
@@ -33,7 +33,7 @@ Requirements
 Building and running
 ********************
 
-This sample can be found under :file:`samples/nrf_cloud` in the |NCS| folder structure.
+This sample can be found under :file:`samples/nrf9160/asset_tracker` in the |NCS| folder structure.
 
 The sample is built as a non-secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_NONSECURE=y`` set in ``prj.conf``.
 It can be programmed independently from the secure boot firmware.
@@ -73,7 +73,7 @@ All LEDs (1-4):
 
 Testing
 *******
-After programming the :ref:`secure_boot` to your board, test the nRF Cloud sample by performing the following steps:
+After programming the :ref:`secure_boot` to your board, test the Asset Tracker sample by performing the following steps:
 
 1. Connect the board to the computer using a USB cable.
    The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
@@ -82,7 +82,7 @@ After programming the :ref:`secure_boot` to your board, test the nRF Cloud sampl
    Follow the instructions to set up your account and add an LTE device.
    A pattern of switch and button actions is displayed.
 #. Make sure that the :ref:`secure_boot` sample is programmed to the board.
-#. Compile and program the nRF Cloud sample to the board.
+#. Compile and program the Asset Tracker sample to the board.
 #. Observe in the terminal window that the board starts up in secure boot and that the application starts.
    This is indicated by output similar to the following lines::
 
