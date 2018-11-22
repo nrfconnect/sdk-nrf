@@ -2,6 +2,6 @@
 
 comment "BLE Libraries"
 
-rsource "Kconfig.common"
+rsource "Kconfig.pool"
 rsource "Kconfig.scan"
 rsource "Kconfig.discovery"

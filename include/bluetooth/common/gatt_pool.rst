@@ -1,7 +1,7 @@
-.. _svc_common_readme:
+.. _gatt_pool_readme:
 
-Common service utilities
-########################
+Bluetooth GATT attribute pools
+##############################
 
 GATT attribute pools can be used to dynamically create a service description, which can later be registered in the Zephyr GATT database.
 
@@ -25,6 +25,6 @@ If you are unsure about the proper values, print the module's statistics to see 
 API documentation
 *****************
 
-.. doxygengroup:: nrf_bt_svc_common
+.. doxygengroup:: bt_gatt_pool
    :project: nrf
    :members:
