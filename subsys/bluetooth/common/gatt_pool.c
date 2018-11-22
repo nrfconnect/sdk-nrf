@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <bluetooth/common/svc_common.h>
+#include <bluetooth/common/gatt_pool.h>
 
 struct svc_el_pool {
 	void *elements;
 	atomic_t *locks;
 };
 
-#if CONFIG_NRF_BT_UUID_16_POOL_SIZE != 0
-static struct bt_uuid_16 uuid_16_tab[CONFIG_NRF_BT_UUID_16_POOL_SIZE];
+#if CONFIG_BT_GATT_UUID16_POOL_SIZE != 0
+static struct bt_uuid_16 uuid_16_tab[CONFIG_BT_GATT_UUID16_POOL_SIZE];
 static ATOMIC_DEFINE(uuid_16_locks, ARRAY_SIZE(uuid_16_tab));
 #define BT_UUID_16_TAB uuid_16_tab
 #define BT_UUID_16_LOCKS uuid_16_locks
@@ -21,8 +21,8 @@ static ATOMIC_DEFINE(uuid_16_locks, ARRAY_SIZE(uuid_16_tab));
 #define BT_UUID_16_LOCKS NULL
 #endif
 
-#if CONFIG_NRF_BT_UUID_32_POOL_SIZE != 0
-static struct bt_uuid_32 uuid_32_tab[CONFIG_NRF_BT_UUID_32_POOL_SIZE];
+#if CONFIG_BT_GATT_UUID32_POOL_SIZE != 0
+static struct bt_uuid_32 uuid_32_tab[CONFIG_BT_GATT_UUID32_POOL_SIZE];
 static ATOMIC_DEFINE(uuid_32_locks, ARRAY_SIZE(uuid_32_tab));
 #define BT_UUID_32_TAB uuid_32_tab
 #define BT_UUID_32_LOCKS uuid_32_locks
@@ -31,8 +31,8 @@ static ATOMIC_DEFINE(uuid_32_locks, ARRAY_SIZE(uuid_32_tab));
 #define BT_UUID_32_LOCKS NULL
 #endif
 
-#if CONFIG_NRF_BT_UUID_128_POOL_SIZE != 0
-static struct bt_uuid_128 uuid_128_tab[CONFIG_NRF_BT_UUID_128_POOL_SIZE];
+#if CONFIG_BT_GATT_UUID128_POOL_SIZE != 0
+static struct bt_uuid_128 uuid_128_tab[CONFIG_BT_GATT_UUID128_POOL_SIZE];
 static ATOMIC_DEFINE(uuid_128_locks, ARRAY_SIZE(uuid_128_tab));
 #define BT_UUID_128_TAB uuid_128_tab
 #define BT_UUID_128_LOCKS uuid_128_locks
@@ -41,8 +41,8 @@ static ATOMIC_DEFINE(uuid_128_locks, ARRAY_SIZE(uuid_128_tab));
 #define BT_UUID_128_LOCKS NULL
 #endif
 
-#if CONFIG_NRF_BT_CHRC_POOL_SIZE != 0
-static struct bt_gatt_chrc chrc_tab[CONFIG_NRF_BT_CHRC_POOL_SIZE];
+#if CONFIG_BT_GATT_CHRC_POOL_SIZE != 0
+static struct bt_gatt_chrc chrc_tab[CONFIG_BT_GATT_CHRC_POOL_SIZE];
 static ATOMIC_DEFINE(chrc_locks, ARRAY_SIZE(chrc_tab));
 #define BT_GATT_CHRC_TAB chrc_tab
 #define BT_GATT_CHRC_LOCKS chrc_locks
@@ -51,8 +51,8 @@ static ATOMIC_DEFINE(chrc_locks, ARRAY_SIZE(chrc_tab));
 #define BT_GATT_CHRC_LOCKS NULL
 #endif
 
-#if CONFIG_NRF_BT_CCC_POOL_SIZE != 0
-static struct _bt_gatt_ccc ccc_tab[CONFIG_NRF_BT_CCC_POOL_SIZE];
+#if CONFIG_BT_GATT_CCC_POOL_SIZE != 0
+static struct _bt_gatt_ccc ccc_tab[CONFIG_BT_GATT_CCC_POOL_SIZE];
 static ATOMIC_DEFINE(ccc_locks, ARRAY_SIZE(ccc_tab));
 #define BT_GATT_CCC_TAB ccc_tab
 #define BT_GATT_CCC_LOCKS ccc_locks
@@ -82,15 +82,16 @@ static struct svc_el_pool ccc_pool = {
 	.locks = BT_GATT_CCC_LOCKS,
 };
 
-#define EL_IN_POOL_VERIFY(pool, el)					   \
-	do {								   \
-		__ASSERT(pool != NULL, "Pool is uninitialized");	   \
-		__ASSERT(((u32_t) el >= (u32_t) pool) &&		   \
-			 (((u32_t) el) < (((u32_t) pool) + sizeof(pool))), \
-			 "Element does not belong to the pool");	   \
+#define EL_IN_POOL_VERIFY(pool, el)                                            \
+	do {                                                                   \
+		__ASSERT(pool != NULL, "Pool is uninitialized");               \
+		__ASSERT(((u32_t)el >= (u32_t)pool) &&                         \
+			     (((u32_t)el) < (((u32_t)pool) + sizeof(pool))),   \
+			 "Element does not belong to the pool");               \
 	} while ((0))
-#define ADDR_2_INDEX(pool, el)				    \
-	((((u32_t) el) - ((u32_t) pool))/(sizeof(pool[0])))
+
+#define ADDR_2_INDEX(pool, el)                                                 \
+	((((u32_t)el) - ((u32_t)pool)) / (sizeof(pool[0])))
 
 static size_t free_element_find(struct svc_el_pool *el_pool, size_t el_cnt)
 {
@@ -108,9 +109,9 @@ static size_t free_element_find(struct svc_el_pool *el_pool, size_t el_cnt)
 static void uuid_16_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 {
 	size_t ind = free_element_find(uuid_pool,
-				       CONFIG_NRF_BT_UUID_16_POOL_SIZE);
+				       CONFIG_BT_GATT_UUID16_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_NRF_BT_UUID_16_POOL_SIZE,
+	__ASSERT(ind < CONFIG_BT_GATT_UUID16_POOL_SIZE,
 		 "No more UUID16s in the pool!");
 
 	*uuid = (struct bt_uuid *)
@@ -120,9 +121,9 @@ static void uuid_16_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 static void uuid_32_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 {
 	size_t ind = free_element_find(uuid_pool,
-				       CONFIG_NRF_BT_UUID_32_POOL_SIZE);
+				       CONFIG_BT_GATT_UUID32_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_NRF_BT_UUID_32_POOL_SIZE,
+	__ASSERT(ind < CONFIG_BT_GATT_UUID32_POOL_SIZE,
 		 "No more UUID32s in the pool!");
 
 	*uuid = (struct bt_uuid *)
@@ -132,9 +133,9 @@ static void uuid_32_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 static void uuid_128_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 {
 	size_t ind = free_element_find(uuid_pool,
-				       CONFIG_NRF_BT_UUID_128_POOL_SIZE);
+				       CONFIG_BT_GATT_UUID128_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_NRF_BT_UUID_128_POOL_SIZE,
+	__ASSERT(ind < CONFIG_BT_GATT_UUID128_POOL_SIZE,
 		 "No more UUID128s in the pool!");
 
 	*uuid = (struct bt_uuid *)
@@ -144,9 +145,9 @@ static void uuid_128_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 static void chrc_get(struct bt_gatt_chrc **chrc)
 {
 	size_t ind = free_element_find(&chrc_pool,
-				       CONFIG_NRF_BT_CHRC_POOL_SIZE);
+				       CONFIG_BT_GATT_CHRC_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_NRF_BT_CHRC_POOL_SIZE,
+	__ASSERT(ind < CONFIG_BT_GATT_CHRC_POOL_SIZE,
 		 "No more chrc descriptors in the pool!");
 
 	*chrc = &((struct bt_gatt_chrc *) chrc_pool.elements)[ind];
@@ -161,9 +162,9 @@ static void chrc_release(struct bt_gatt_chrc const *chrc)
 
 static void ccc_get(struct _bt_gatt_ccc **ccc)
 {
-	size_t ind = free_element_find(&ccc_pool, CONFIG_NRF_BT_CCC_POOL_SIZE);
+	size_t ind = free_element_find(&ccc_pool, CONFIG_BT_GATT_CCC_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_NRF_BT_CCC_POOL_SIZE,
+	__ASSERT(ind < CONFIG_BT_GATT_CCC_POOL_SIZE,
 		 "No more chrc descriptors in the pool!");
 
 	*ccc = &((struct _bt_gatt_ccc *) ccc_pool.elements)[ind];
@@ -207,7 +208,7 @@ static void uuid_unregister(struct bt_uuid const *uuid)
 	switch (uuid->type) {
 	case BT_UUID_TYPE_16:
 		EL_IN_POOL_VERIFY(BT_UUID_16_TAB, uuid);
-#if CONFIG_NRF_BT_UUID_16_POOL_SIZE != 0
+#if CONFIG_BT_GATT_UUID16_POOL_SIZE != 0
 		atomic_clear_bit(uuid_16_pool.locks,
 				 ADDR_2_INDEX(BT_UUID_16_TAB, uuid));
 #endif
@@ -215,7 +216,7 @@ static void uuid_unregister(struct bt_uuid const *uuid)
 
 	case BT_UUID_TYPE_32:
 		EL_IN_POOL_VERIFY(BT_UUID_32_TAB, uuid);
-#if CONFIG_NRF_BT_UUID_32_POOL_SIZE != 0
+#if CONFIG_BT_GATT_UUID32_POOL_SIZE != 0
 		atomic_clear_bit(uuid_32_pool.locks,
 				 ADDR_2_INDEX(BT_UUID_32_TAB, uuid));
 #endif
@@ -223,7 +224,7 @@ static void uuid_unregister(struct bt_uuid const *uuid)
 
 	case BT_UUID_TYPE_128:
 		EL_IN_POOL_VERIFY(BT_UUID_128_TAB, uuid);
-#if CONFIG_NRF_BT_UUID_128_POOL_SIZE != 0
+#if CONFIG_BT_GATT_UUID128_POOL_SIZE != 0
 		atomic_clear_bit(uuid_128_pool.locks,
 				 ADDR_2_INDEX(BT_UUID_128_TAB, uuid));
 #endif
@@ -234,7 +235,7 @@ static void uuid_unregister(struct bt_uuid const *uuid)
 	}
 }
 
-void primary_svc_register(struct bt_gatt_service *svc,
+void bt_gatt_pool_svc_get(struct bt_gatt_service *svc,
 			  struct bt_uuid const *svc_uuid)
 {
 	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
@@ -252,7 +253,7 @@ void primary_svc_register(struct bt_gatt_service *svc,
 	svc->attr_count++;
 }
 
-void primary_svc_unregister(struct bt_gatt_attr const *attr)
+void bt_gatt_pool_svc_put(struct bt_gatt_attr const *attr)
 {
 	__ASSERT_NO_MSG(attr != NULL);
 
@@ -260,8 +261,8 @@ void primary_svc_unregister(struct bt_gatt_attr const *attr)
 	uuid_unregister(attr->user_data);
 }
 
-void chrc_register(struct bt_gatt_service *svc,
-		   struct bt_gatt_chrc const *chrc)
+void bt_gatt_pool_chrc_get(struct bt_gatt_service *svc,
+			   struct bt_gatt_chrc const *chrc)
 {
 	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
 	struct bt_uuid      *uuid_gatt_chrc = BT_UUID_GATT_CHRC;
@@ -285,7 +286,7 @@ void chrc_register(struct bt_gatt_service *svc,
 	svc->attr_count++;
 }
 
-void chrc_unregister(struct bt_gatt_attr const *attr)
+void bt_gatt_pool_chrc_put(struct bt_gatt_attr const *attr)
 {
 	__ASSERT_NO_MSG(attr != NULL);
 
@@ -294,8 +295,8 @@ void chrc_unregister(struct bt_gatt_attr const *attr)
 	uuid_unregister(attr->uuid);
 }
 
-void descriptor_register(struct bt_gatt_service *svc,
-			 struct bt_gatt_attr const *descriptor)
+void bt_gatt_pool_desc_get(struct bt_gatt_service *svc,
+			   struct bt_gatt_attr const *descriptor)
 {
 	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
 
@@ -310,14 +311,15 @@ void descriptor_register(struct bt_gatt_service *svc,
 	svc->attr_count++;
 }
 
-void descriptor_unregister(struct bt_gatt_attr const *attr)
+void bt_gatt_pool_desc_put(struct bt_gatt_attr const *attr)
 {
 	__ASSERT_NO_MSG(attr != NULL);
 
 	uuid_unregister(attr->uuid);
 }
 
-void ccc_register(struct bt_gatt_service *svc, struct _bt_gatt_ccc const *ccc)
+void bt_gatt_pool_ccc_get(struct bt_gatt_service *svc,
+			  struct _bt_gatt_ccc const *ccc)
 {
 	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
 	struct bt_uuid      *uuid_gatt_ccc = BT_UUID_GATT_CCC;
@@ -336,7 +338,7 @@ void ccc_register(struct bt_gatt_service *svc, struct _bt_gatt_ccc const *ccc)
 	svc->attr_count++;
 }
 
-void ccc_unregister(struct bt_gatt_attr const *attr)
+void bt_gatt_pool_ccc_put(struct bt_gatt_attr const *attr)
 {
 	__ASSERT_NO_MSG(attr != NULL);
 
@@ -344,7 +346,7 @@ void ccc_unregister(struct bt_gatt_attr const *attr)
 	ccc_release(attr->user_data);
 }
 
-#if CONFIG_NRF_BT_STATISTICS_PRINT != 0
+#if CONFIG_BT_GATT_POOL_STATS != 0
 static size_t mask_print(atomic_t *mask, size_t mask_size)
 {
 	size_t used_el_cnt = 0;
@@ -358,58 +360,58 @@ static size_t mask_print(atomic_t *mask, size_t mask_size)
 	return used_el_cnt;
 }
 
-void statistics_print(void)
+void bt_gatt_pool_stats_print(void)
 {
 	size_t used_el_cnt;
 
-#if CONFIG_NRF_BT_UUID_16_POOL_SIZE != 0
+#if CONFIG_BT_GATT_UUID16_POOL_SIZE != 0
 	printk("UUID 16 Pool. Locked elements mask:\n");
 
 	used_el_cnt = mask_print(BT_UUID_16_LOCKS,
 				 ARRAY_SIZE(BT_UUID_16_LOCKS));
 
 	printk("\nPool element usage: %d out of %d\n\n", used_el_cnt,
-	       CONFIG_NRF_BT_UUID_16_POOL_SIZE);
+	       CONFIG_BT_GATT_UUID16_POOL_SIZE);
 #endif
 
-#if CONFIG_NRF_BT_UUID_32_POOL_SIZE != 0
+#if CONFIG_BT_GATT_UUID32_POOL_SIZE != 0
 	printk("UUID 32 Pool. Locked elements mask:\n");
 
 	used_el_cnt = mask_print(BT_UUID_32_LOCKS,
 				 ARRAY_SIZE(BT_UUID_32_LOCKS));
 
 	printk("\nPool element usage: %d out of %d\n\n", used_el_cnt,
-	       CONFIG_NRF_BT_UUID_32_POOL_SIZE);
+	       CONFIG_BT_GATT_UUID32_POOL_SIZE);
 #endif
 
-#if CONFIG_NRF_BT_UUID_128_POOL_SIZE != 0
+#if CONFIG_BT_GATT_UUID128_POOL_SIZE != 0
 	printk("UUID 128 Pool. Locked elements mask:\n");
 
 	used_el_cnt = mask_print(BT_UUID_128_LOCKS,
 				 ARRAY_SIZE(BT_UUID_128_LOCKS));
 
 	printk("\nPool element usage: %d out of %d\n\n", used_el_cnt,
-	       CONFIG_NRF_BT_UUID_128_POOL_SIZE);
+	       CONFIG_BT_GATT_UUID128_POOL_SIZE);
 #endif
 
-#if CONFIG_NRF_BT_CHRC_POOL_SIZE != 0
+#if CONFIG_BT_GATT_CHRC_POOL_SIZE != 0
 	printk("Characteristic Pool. Locked elements mask:\n");
 
 	used_el_cnt = mask_print(BT_GATT_CHRC_LOCKS,
 				 ARRAY_SIZE(BT_GATT_CHRC_LOCKS));
 
 	printk("\nPool element usage: %d out of %d\n\n", used_el_cnt,
-	       CONFIG_NRF_BT_CHRC_POOL_SIZE);
+	       CONFIG_BT_GATT_CHRC_POOL_SIZE);
 #endif
 
-#if CONFIG_NRF_BT_CCC_POOL_SIZE != 0
+#if CONFIG_BT_GATT_CCC_POOL_SIZE != 0
 	printk("CCC Pool. Locked elements mask:\n");
 
 	used_el_cnt = mask_print(BT_GATT_CCC_LOCKS,
 				 ARRAY_SIZE(BT_GATT_CCC_LOCKS));
 
 	printk("\nPool element usage: %d out of %d\n\n", used_el_cnt,
-	       CONFIG_NRF_BT_CCC_POOL_SIZE);
+	       CONFIG_BT_GATT_CCC_POOL_SIZE);
 #endif
 }
 #endif
