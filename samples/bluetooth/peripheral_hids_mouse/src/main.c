@@ -407,8 +407,8 @@ static void bt_ready(int err)
 
 	printk("Bluetooth initialized\n");
 
+	/* DIS initialized at system boot with SYS_INIT macro. */
 	bas_init();
-	dis_init();
 	hid_init();
 
 	k_delayed_work_init(&hids_work, mouse_handler);
