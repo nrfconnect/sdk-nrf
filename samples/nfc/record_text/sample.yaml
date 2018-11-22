@@ -1,0 +1,9 @@
+sample:
+  description: TBD
+  name: TBD
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840_pca10056 nrf52_pca10040
+    tags: ci_build
