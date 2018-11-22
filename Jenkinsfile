@@ -25,7 +25,7 @@ pipeline {
 
   environment {
       // Build all custom samples that match the ci_build tag
-      SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --build-only --disable-unrecognized-section-test -t ci_build"
+      SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
       ARCH = "-a arm"
       LC_ALL = "C.UTF-8"
       DOWNSTREAM_PROJECTS = credentials('fw-nrfconnect-nrf-jobs')
