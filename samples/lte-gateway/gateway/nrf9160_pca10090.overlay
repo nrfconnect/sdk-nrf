@@ -1,0 +1,10 @@
+/ {
+	chosen {
+		zephyr,bt-uart=&uart1;
+	};
+};
+
+&uart1 {
+	current-speed = <1000000>;
+	status = "ok";
+};

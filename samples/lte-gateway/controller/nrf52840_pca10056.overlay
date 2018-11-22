@@ -1,0 +1,18 @@
+/ {
+	chosen {
+		zephyr,console=&uart0;
+		zephyr,bt-uart=&uart1;
+	};
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uart";
+	status = "ok";
+};
+
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <1000000>;
+	status = "ok";
+};
+
