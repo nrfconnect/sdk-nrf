@@ -221,7 +221,7 @@ static void irq_callback(struct device *dev, struct gpio_callback *cb,
 
 static void async_init_fn(struct k_work *work)
 {
-	i2c_dev = device_get_binding(CONFIG_I2C_1_NAME);
+	i2c_dev = device_get_binding(DT_I2C_1_NAME);
 	if (!i2c_dev) {
 		LOG_ERR("cannot get I2C device");
 		return;
