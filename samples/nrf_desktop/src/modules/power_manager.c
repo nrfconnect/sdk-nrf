@@ -18,6 +18,7 @@
 
 #include "power_event.h"
 #include "ble_event.h"
+#include "usb_event.h"
 
 #define MODULE power_manager
 #include "module_state_event.h"
@@ -52,6 +53,7 @@ static struct device_list device_list;
 static enum power_state power_state = POWER_STATE_IDLE;
 static struct k_delayed_work power_down_trigger;
 static unsigned int connection_count;
+static bool usb_connected;
 
 static void suspend_devices(struct device_list *dl)
 {
@@ -132,7 +134,7 @@ int _sys_soc_suspend(s32_t ticks)
 
 static void power_down(struct k_work *work)
 {
-	if (power_state == POWER_STATE_IDLE) {
+	if (!usb_connected && (power_state == POWER_STATE_IDLE)) {
 		LOG_INF("system power down");
 
 		struct power_down_event *event = new_power_down_event();
@@ -178,19 +180,20 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_down_event(eh)) {
-		LOG_INF("power down the board");
+		if (!usb_connected) {
+			LOG_INF("power down the board");
 
-		profiler_term();
+			profiler_term();
 
-		if (connection_count > 0) {
-			/* Connection is active, keep OS alive. */
-			power_state = POWER_STATE_SUSPENDED;
-			LOG_WRN("system suspended");
-		} else {
-			/* No active connection, turn system off. */
-			system_off();
+			if (connection_count > 0) {
+				/* Connection is active, keep OS alive. */
+				power_state = POWER_STATE_SUSPENDED;
+				LOG_WRN("system suspended");
+			} else {
+				/* No active connection, turn system off. */
+				system_off();
+			}
 		}
-
 
 		return false;
 	}
@@ -228,7 +231,7 @@ static bool event_handler(const struct event_header *eh)
 			break;
 		}
 
-		if ((connection_count == 0) &&
+		if (!usb_connected && (connection_count == 0) &&
 		    (power_state == POWER_STATE_SUSPENDED)) {
 			/* Last peer disconnected during standby.
 			 * Turn system off.
@@ -237,6 +240,33 @@ static bool event_handler(const struct event_header *eh)
 		}
 
 		return false;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE)) {
+		if (is_usb_state_event(eh)) {
+			const struct usb_state_event *event =
+				cast_usb_state_event(eh);
+
+			switch (event->state) {
+			case USB_STATE_POWERED:
+				usb_connected = true;
+				k_delayed_work_cancel(&power_down_trigger);
+				struct wake_up_event *wue = new_wake_up_event();
+				EVENT_SUBMIT(wue);
+				break;
+
+			case USB_STATE_DISCONNECTED:
+				usb_connected = false;
+				k_delayed_work_submit(&power_down_trigger,
+						      POWER_DOWN_TIMEOUT_MS);
+				break;
+
+			default:
+				/* Ignore */
+				break;
+			}
+			return false;
+		}
 	}
 
 	if (is_module_state_event(eh)) {
@@ -277,6 +307,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, keep_active_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);
