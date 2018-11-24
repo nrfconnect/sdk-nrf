@@ -1,0 +1,4 @@
+tests:
+  testing.gatt_dm:
+    tags: test_discovery_manager
+type: unit
