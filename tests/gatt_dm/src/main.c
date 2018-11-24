@@ -11,6 +11,9 @@
 #include <bluetooth/common/gatt_dm.h>
 #include "../mock/gatt_discover_mock.h"
 
+/* Timeout for the discovery in ms */
+#define SERVICE_DISCOVERY_TIMEOUT 2000
+
 static char dummy_conn;
 K_SEM_DEFINE(discovery_finished, 0, 1);
 
@@ -42,7 +45,7 @@ const struct bt_gatt_attr discover_sim[] = {
 };
 
 
-void test_hids_cb_completed(struct bt_gatt_dm *dm, void *context)
+void test_cb_completed(struct bt_gatt_dm *dm, void *context)
 {
 	printk("%s\n", __func__);
 	/* Saving discovery manager instance and giving the semaphore */
@@ -50,13 +53,14 @@ void test_hids_cb_completed(struct bt_gatt_dm *dm, void *context)
 	k_sem_give(&discovery_finished);
 }
 
-void test_hids_cb_service_not_found(struct bt_conn *conn, void *context)
+void test_cb_service_not_found(struct bt_conn *conn, void *context)
 {
 	printk("%s\n", __func__);
-	zassert_unreachable("HIDS not found");
+	*(struct bt_gatt_dm **)context = NULL;
+	k_sem_give(&discovery_finished);
 }
 
-void test_hids_cb_error_found(struct bt_conn *conn, int err, void *context)
+void test_cb_error_found(struct bt_conn *conn, int err, void *context)
 {
 	printk("%s\n", __func__);
 	zassert_unreachable("HIDS error found");
@@ -64,9 +68,9 @@ void test_hids_cb_error_found(struct bt_conn *conn, int err, void *context)
 
 
 struct bt_gatt_dm_cb test_hids_cb = {
-	.completed         = test_hids_cb_completed,
-	.service_not_found = test_hids_cb_service_not_found,
-	.error_found       = test_hids_cb_error_found
+	.completed         = test_cb_completed,
+	.service_not_found = test_cb_service_not_found,
+	.error_found       = test_cb_error_found
 };
 
 void test_setup(void)
@@ -78,19 +82,40 @@ void test_setup(void)
 struct bt_gatt_dm *run_dm(const struct bt_uuid *svc_uuid)
 {
 	struct bt_gatt_dm *dm;
-	int err = bt_gatt_dm_start((struct bt_conn *)&dummy_conn,
+	int err;
+
+	err = bt_gatt_dm_start((struct bt_conn *)&dummy_conn,
 				   svc_uuid,
 				   &test_hids_cb,
 				   &dm);
 	zassert_false(err, "bt_gatt_dm_start finished with error: %d", err);
 
-	err = k_sem_take(&discovery_finished, K_MSEC(2000));
+	err = k_sem_take(&discovery_finished, K_MSEC(SERVICE_DISCOVERY_TIMEOUT));
 	zassert_equal(0, err, "It seems that no callback function was called: %d", err);
 
-	/* Check dm */
-	zassert_not_null(dm, "Device Manager pointer not set");
-
 	return dm;
+}
+
+struct bt_gatt_dm *run_dm_next(struct bt_gatt_dm *dm)
+{
+	int err;
+	struct bt_gatt_dm *dm_next;
+
+	bt_gatt_dm_data_release(dm);
+	bt_gatt_dm_continue(dm, &dm_next);
+
+	err = k_sem_take(&discovery_finished, K_MSEC(SERVICE_DISCOVERY_TIMEOUT));
+	zassert_equal(0, err, "It seems that no callback function was called: %d", err);
+
+	return dm_next;
+}
+
+/* The service that is not present */
+void test_gatt_none_serv(void)
+{
+	struct bt_gatt_dm *dm = run_dm(BT_UUID_BAS);
+
+	zassert_is_null(dm, "Detected service that should be inviable");
 }
 
 /* This is just a simple test to check if another service than
@@ -99,6 +124,8 @@ void test_gatt_DIS_simple_next_attr(void)
 {
 	const struct bt_gatt_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_DIS);
+
+	zassert_not_null(dm, "Device Manager pointer not set");
 
 	zassert_equal(5,
 		      bt_gatt_dm_attr_cnt(dm),
@@ -123,6 +150,8 @@ void test_gatt_DIS_attr_by_handle(void)
 	const struct bt_gatt_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_DIS);
 
+	zassert_not_null(dm, "Device Manager pointer not set");
+
 	attr = bt_gatt_dm_attr_by_handle(dm, 11);
 	zassert_is_null(attr, "Attr before 12 should be NULL");
 	attr = bt_gatt_dm_attr_by_handle(dm, 17);
@@ -142,6 +171,8 @@ void test_gatt_HIDS_simple_next_attr(void)
 	const struct bt_gatt_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_HIDS);
 
+	zassert_not_null(dm, "Device Manager pointer not set");
+
 	attr = NULL;
 	for (int i = 2; i <= 11; ++i) {
 		attr = bt_gatt_dm_attr_next(dm, attr);
@@ -159,6 +190,8 @@ void test_gatt_HIDS_attr_by_handle(void)
 {
 	const struct bt_gatt_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_HIDS);
+
+	zassert_not_null(dm, "Device Manager pointer not set");
 
 	attr = bt_gatt_dm_attr_by_handle(dm, 0);
 	zassert_is_null(attr, "Attr before 1 should be NULL");
@@ -184,6 +217,7 @@ void test_gatt_HIDS_next_chrc_access(void)
 	const struct bt_gatt_chrc        *chrc_val;
 
 	dm = run_dm(BT_UUID_HIDS);
+	zassert_not_null(dm, "Device Manager pointer not set");
 
 	/* Check service */
 	attr_serv = bt_gatt_dm_service_get(dm);
@@ -278,6 +312,7 @@ void test_gatt_HIDS_chrc_by_uuid(void)
 	const struct bt_gatt_attr *attr_desc;
 
 	dm = run_dm(BT_UUID_HIDS);
+	zassert_not_null(dm, "Device Manager pointer not set");
 
 	/* ------------------------------------------------------ */
 	/* Searching for HIDS_REPORT by UUID */
@@ -309,16 +344,50 @@ void test_gatt_HIDS_chrc_by_uuid(void)
 	zassert_equal(0, bt_gatt_dm_attr_cnt(dm), "Parameter count after clearing: %d", bt_gatt_dm_attr_cnt(dm));
 }
 
+void test_gatt_generic_serv(void)
+{
+	struct bt_gatt_dm *dm;
+	const struct bt_gatt_attr *attr_serv;
+	const struct bt_gatt_service_val *serv_val;
+
+	dm = run_dm(NULL);
+	zassert_not_null(dm, "Device Manager pointer not set");
+	attr_serv = bt_gatt_dm_service_get(dm);
+	serv_val  = bt_gatt_dm_attr_service_val(attr_serv);
+	zassert_true(!bt_uuid_cmp(BT_UUID_HIDS, serv_val->uuid), "Invalid service detected");
+	zassert_equal(11,
+		      bt_gatt_dm_attr_cnt(dm),
+		      "Unexpected number of attributes detected: %d",
+		      bt_gatt_dm_attr_cnt(dm));
+
+	dm = run_dm_next(dm);
+	zassert_not_null(dm, "Device Manager pointer not set");
+	attr_serv = bt_gatt_dm_service_get(dm);
+	serv_val  = bt_gatt_dm_attr_service_val(attr_serv);
+	zassert_true(!bt_uuid_cmp(BT_UUID_DIS, serv_val->uuid), "Invalid service detected");
+	zassert_equal(5,
+		      bt_gatt_dm_attr_cnt(dm),
+		      "Unexpected number of attributes detected: %d",
+		      bt_gatt_dm_attr_cnt(dm));
+
+	dm = run_dm_next(dm);
+	zassert_is_null(dm, "Unexpected service detected");
+	/* ------------------------------------------------------ */
+	/* No cleanup here - cleanup is done in run_dm_next */
+}
+
 void test_main(void)
 {
 	ztest_test_suite(
 		test_gatt,
+		ztest_unit_test_setup_teardown(test_gatt_none_serv, test_setup, unit_test_noop),
 		ztest_unit_test_setup_teardown(test_gatt_DIS_simple_next_attr, test_setup, unit_test_noop),
 		ztest_unit_test_setup_teardown(test_gatt_DIS_attr_by_handle, test_setup, unit_test_noop),
 		ztest_unit_test_setup_teardown(test_gatt_HIDS_simple_next_attr, test_setup, unit_test_noop),
 		ztest_unit_test_setup_teardown(test_gatt_HIDS_attr_by_handle, test_setup, unit_test_noop),
 		ztest_unit_test_setup_teardown(test_gatt_HIDS_next_chrc_access, test_setup, unit_test_noop),
-		ztest_unit_test_setup_teardown(test_gatt_HIDS_chrc_by_uuid, test_setup, unit_test_noop)
+		ztest_unit_test_setup_teardown(test_gatt_HIDS_chrc_by_uuid, test_setup, unit_test_noop),
+		ztest_unit_test_setup_teardown(test_gatt_generic_serv, test_setup, unit_test_noop)
 	);
 
 	ztest_run_test_suite(test_gatt);
