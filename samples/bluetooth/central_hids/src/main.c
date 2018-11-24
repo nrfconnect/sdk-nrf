@@ -58,29 +58,31 @@ static struct bt_scan_cb scan_cb = {
 	.connecting = scan_connecting
 };
 
-static void discovery_completed_cb(struct bt_conn *conn,
-				   const struct bt_gatt_attr *attrs,
-				   size_t attrs_len)
+static void discovery_completed_cb(struct bt_gatt_dm *dm,
+				   void *context)
 {
 	int err;
 
 	printk("The discovery procedure succeeded\n");
 
-	bt_gatt_dm_data_print();
+	bt_gatt_dm_data_print(dm);
 
-	err = bt_gatt_dm_data_release();
+	err = bt_gatt_dm_data_release(dm);
 	if (err) {
 		printk("Could not release the discovery data, error "
 		       "code: %d\n", err);
 	}
 }
 
-static void discovery_service_not_found_cb(struct bt_conn *conn)
+static void discovery_service_not_found_cb(struct bt_conn *conn,
+					   void *context)
 {
 	printk("The service could not be found during the discovery\n");
 }
 
-static void discovery_error_found_cb(struct bt_conn *conn, int err)
+static void discovery_error_found_cb(struct bt_conn *conn,
+				     int err,
+				     void *context)
 {
 	printk("The discovery procedure failed with %d\n", err);
 }
@@ -109,8 +111,10 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 	}
 
 	if (conn == default_conn) {
-		int err = bt_gatt_dm_start(conn, BT_UUID_HIDS,
-					   &discovery_cb);
+		int err = bt_gatt_dm_start(conn,
+					   BT_UUID_HIDS,
+					   &discovery_cb,
+					   NULL);
 		if (err) {
 			printk("Could not start the discovery procedure, error "
 			       "code: %d\n", err);
