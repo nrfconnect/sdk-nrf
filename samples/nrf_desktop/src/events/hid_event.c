@@ -76,8 +76,15 @@ static void print_hid_report_sent_event(const struct event_header *eh)
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(eh);
 
-	printk("%s report sent by %p", target_report_name[event->report_type],
-	       event->subscriber);
+	if (event->error) {
+		printk("error while sending %s report by %p",
+		       target_report_name[event->report_type],
+		       event->subscriber);
+	} else {
+		printk("%s report sent by %p",
+		       target_report_name[event->report_type],
+		       event->subscriber);
+	}
 }
 
 static void log_args_report_sent(struct log_event_buf *buf,
@@ -89,11 +96,13 @@ static void log_args_report_sent(struct log_event_buf *buf,
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->report_type);
+	profiler_log_encode_u32(buf, event->error);
 }
 
 EVENT_INFO_DEFINE(hid_report_sent_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
-		  ENCODE("subscriber", "report_type"), log_args_report_sent);
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
+		  ENCODE("subscriber", "report_type", "error"),
+		  log_args_report_sent);
 EVENT_TYPE_DEFINE(hid_report_sent_event, print_hid_report_sent_event,
 		  &hid_report_sent_event_info);
 

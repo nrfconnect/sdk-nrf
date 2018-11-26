@@ -78,6 +78,7 @@ struct report_data {
 struct report_state {
 	enum state state;
 	unsigned int cnt;
+	unsigned int err_cnt;
 };
 
 struct subscriber {
@@ -620,7 +621,8 @@ static void report_send(enum target_report tr, bool check_state)
 	}
 }
 
-static void report_issued(const void *subscriber_id, enum target_report tr)
+static void report_issued(const void *subscriber_id, enum target_report tr,
+			  bool error)
 {
 	struct subscriber *subscriber = get_subscriber(subscriber_id);
 
@@ -640,9 +642,23 @@ static void report_issued(const void *subscriber_id, enum target_report tr)
 	__ASSERT_NO_MSG(rs->cnt > 0);
 	rs->cnt--;
 
-	bool update_needed;
+	if (error) {
+		rs->err_cnt++;
+		if (rs->err_cnt > 1) {
+			LOG_ERR("Error while sending report");
+			if (rs->cnt == 0) {
+				rs->state = STATE_CONNECTED_IDLE;
+			}
+			return;
+		}
+	} else {
+		rs->err_cnt = 0;
+	}
 
-	do {
+	/* If there was an error try sending the state again. */
+	bool update_needed = error;
+
+	while (!update_needed) {
 		if (eventq_is_empty(&rd->eventq)) {
 			/* Module is connected but there are no events to
 			 * dequeue. If that was the last report switch to idle
@@ -666,7 +682,7 @@ static void report_issued(const void *subscriber_id, enum target_report tr)
 		k_free(event);
 
 		/* If no item was changed, try next event. */
-	} while (!update_needed);
+	}
 
 	if (!update_needed && (tr == TARGET_REPORT_MOUSE)) {
 		if ((state.last_dx != 0) ||
@@ -840,7 +856,8 @@ static bool event_handler(const struct event_header *eh)
 		const struct hid_report_sent_event *event =
 			cast_hid_report_sent_event(eh);
 
-		report_issued(event->subscriber, event->report_type);
+		report_issued(event->subscriber, event->report_type,
+			      event->error);
 
 		return false;
 	}
