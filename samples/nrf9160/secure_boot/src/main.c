@@ -308,6 +308,9 @@ static void secure_boot_config_peripherals(void)
 	/* Configure UARTE1 as Non-Secure */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_UARTE1), 0);
+	/* Configure UARTE2 as Non-Secure */
+	secure_boot_config_peripheral(
+		NRFX_PERIPHERAL_ID_GET(NRF_UARTE2), 0);
 	/* Configure EGU1 as Non-Secure */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_EGU1_S), 0);
