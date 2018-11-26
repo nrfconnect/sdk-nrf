@@ -5,7 +5,6 @@
 #
 
 add_subdirectory_ifdef(CONFIG_CLOUD_API cloud)
-add_subdirectory_ifdef(CONFIG_MQTT_SOCKET_LIB mqtt_socket)
 add_subdirectory_ifdef(CONFIG_NRF_CLOUD nrf_cloud)
 add_subdirectory_ifdef(CONFIG_DOWNLOAD_CLIENT download_client)
 add_subdirectory_ifdef(CONFIG_FOTA_DOWNLOAD fota_download)
