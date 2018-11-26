@@ -226,10 +226,10 @@ void trace_uart_init(void)
 	/* UART pins are defined in "nrf9160_pca10090.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
-		.pseltxd = CONFIG_UART_1_TX_PIN,
-		.pselrxd = CONFIG_UART_1_RX_PIN,
-		.pselcts = CONFIG_UART_1_CTS_PIN,
-		.pselrts = CONFIG_UART_1_RTS_PIN,
+		.pseltxd = UART_1_TX_PIN,
+		.pselrxd = UART_1_RX_PIN,
+		.pselcts = UART_1_CTS_PIN,
+		.pselrts = UART_1_RTS_PIN,
 
 		.hwfc = NRF_UARTE_HWFC_DISABLED,
 		.parity = NRF_UARTE_PARITY_EXCLUDED,
