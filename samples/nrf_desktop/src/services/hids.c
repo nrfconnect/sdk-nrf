@@ -221,13 +221,19 @@ static int module_init(void)
 	return hids_init(&hids_obj, &hids_init_param);
 }
 
-static void mouse_report_sent(struct bt_conn *conn)
+static void mouse_report_sent(const struct bt_conn *conn, bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = TARGET_REPORT_MOUSE;
 	event->subscriber  = cur_conn;
+	event->error = error;
 	EVENT_SUBMIT(event);
+}
+
+static void mouse_report_sent_cb(struct bt_conn *conn)
+{
+	mouse_report_sent(conn, false);
 }
 
 static void send_mouse_report(const struct hid_mouse_event *event)
@@ -250,7 +256,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 
 		err = hids_boot_mouse_inp_rep_send(&hids_obj, NULL,
 						   &event->button_bm,
-						   x, y, mouse_report_sent);
+						   x, y, mouse_report_sent_cb);
 	} else {
 		s16_t wheel = max(min(event->wheel, REPORT_MOUSE_WHEEL_MAX),
 				  REPORT_MOUSE_WHEEL_MIN);
@@ -280,22 +286,28 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		err = hids_inp_rep_send(&hids_obj, NULL,
 					report_index[REPORT_ID_MOUSE],
 					buffer, sizeof(buffer),
-					mouse_report_sent);
+					mouse_report_sent_cb);
 	}
 
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
-		module_set_state(MODULE_STATE_ERROR);
+		mouse_report_sent(cur_conn, true);
 	}
 }
 
-static void keyboard_report_sent(struct bt_conn *conn)
+static void keyboard_report_sent(const struct bt_conn *conn, bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = TARGET_REPORT_KEYBOARD;
 	event->subscriber  = cur_conn;
+	event->error = error;
 	EVENT_SUBMIT(event);
+}
+
+static void keyboard_report_sent_cb(struct bt_conn *conn)
+{
+	keyboard_report_sent(conn, false);
 }
 
 static void send_keyboard_report(const struct hid_keyboard_event *event)
@@ -332,17 +344,17 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	if (report_mode == REPORT_MODE_BOOT) {
 		err = hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
 						sizeof(report) - sizeof(report[8]),
-						keyboard_report_sent);
+						keyboard_report_sent_cb);
 	} else {
 		err = hids_inp_rep_send(&hids_obj, NULL,
 					report_index[REPORT_ID_KEYBOARD],
 					report, sizeof(report),
-					keyboard_report_sent);
+					keyboard_report_sent_cb);
 	}
 
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
-		module_set_state(MODULE_STATE_ERROR);
+		keyboard_report_sent(cur_conn, true);
 	}
 }
 

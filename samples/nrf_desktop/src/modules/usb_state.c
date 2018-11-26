@@ -36,13 +36,19 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 	return 0;
 }
 
-static void mouse_report_sent(void)
+static void mouse_report_sent(bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = TARGET_REPORT_MOUSE;
 	event->subscriber = &state;
+	event->error = error;
 	EVENT_SUBMIT(event);
+}
+
+static void mouse_report_sent_cb(void)
+{
+	mouse_report_sent(false);
 }
 
 static void send_mouse_report(const struct hid_mouse_event *event)
@@ -86,7 +92,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 	int err = hid_int_ep_write(buffer, sizeof(buffer), NULL);
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
-		module_set_state(MODULE_STATE_ERROR);
+		mouse_report_sent(true);
 	}
 }
 
@@ -187,7 +193,7 @@ static int usb_init(void)
 {
 	static const struct hid_ops ops = {
 		.get_report   = get_report,
-		.int_in_ready = mouse_report_sent,
+		.int_in_ready = mouse_report_sent_cb,
 		.status_cb    = device_status,
 	};
 	usb_hid_register_device(hid_report_desc, hid_report_desc_size, &ops);

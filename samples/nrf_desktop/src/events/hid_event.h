@@ -68,6 +68,7 @@ struct hid_report_sent_event {
 
 	const void *subscriber;         /**< Id of the report subscriber. */
 	enum target_report report_type; /**< Type of the report. */
+	bool error;                     /**< If true error occured on send. */
 };
 
 EVENT_TYPE_DECLARE(hid_report_sent_event);
