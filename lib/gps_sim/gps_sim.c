@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <board.h>
 #include <gpio.h>
 #include <gps.h>
 #include <init.h>
