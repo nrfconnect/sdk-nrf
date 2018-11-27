@@ -291,7 +291,7 @@ static struct bt_scan_cb scan_cb = {
 
 static int uart_init(void)
 {
-	uart = device_get_binding(DT_UART_0_NAME);
+	uart = device_get_binding(UART_0_LABEL);
 	if (!uart) {
 		printk("UART binding failed\n");
 		return -ENXIO;
