@@ -24,6 +24,8 @@ LOG_MODULE_REGISTER(lte_lc);
 DEVICE_DECLARE(lte_link_control);
 #endif
 
+#define AT_CMD_SIZE(x) (sizeof(x) - 1)
+
 /* Subscribes to notifications with level 2 */
 static const char subscribe[] = "AT+CEREG=2";
 
@@ -49,19 +51,40 @@ static const char normal[] = "AT+CFUN=1";
 static const char offline[] = "AT+CFUN=4";
 /* Successful return from modem */
 static const char success[] = "OK";
-/* Network status read from modem */
-static const char *status[4] = {
-	"+CEREG: 1",
-	"+CEREG:1",
-	"+CEREG: 5",
-	"+CEREG:5",
-};
+/* Accepted network statuses read from modem */
+static const char status1[] = "+CEREG: 1";
+static const char status2[] = "+CEREG:1";
+static const char status3[] = "+CEREG: 5";
+static const char status4[] = "+CEREG:5";
+
+static int at_cmd(int fd, const char *cmd, size_t size)
+{
+	int len;
+	u8_t buffer[LC_MAX_READ_LENGTH];
+
+	LOG_DBG("send: %s", cmd);
+	len = send(fd, cmd, size, 0);
+	if (len != size) {
+		LOG_ERR("send: failed");
+		return -EIO;
+	}
+
+	len = recv(fd, buffer, LC_MAX_READ_LENGTH, 0);
+	if ((len < AT_CMD_SIZE(success)) ||
+	    (memcmp(success, buffer, AT_CMD_SIZE(success)) != 0)) {
+		LOG_ERR("recv: %s", buffer);
+		return -EIO;
+	}
+
+	return 0;
+}
 
 static int w_lte_lc_init_and_connect(struct device *unused)
 {
+	int err;
 	int at_socket_fd;
-	int buffer;
-	u8_t read_buffer[LC_MAX_READ_LENGTH];
+
+	u8_t buffer[LC_MAX_READ_LENGTH];
 
 	at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
 	if (at_socket_fd == -1) {
@@ -70,84 +93,49 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 
 #if defined(CONFIG_LTE_EDRX_REQ)
 	/* Request configured eDRX settings to save power */
-	LOG_DBG("send: %s", edrx_req);
-	buffer = send(at_socket_fd, edrx_req, strlen(edrx_req), 0);
-	if (buffer != strlen(edrx_req)) {
+	err = at_cmd(at_socket_fd, edrx_req, AT_CMD_SIZE(edrx_req));
+	if (err) {
 		close(at_socket_fd);
-		return -EIO;
-	}
-
-	buffer = recv(at_socket_fd, read_buffer, sizeof(read_buffer), 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
+		return err;
 	}
 #endif
-	LOG_DBG("send: %s", subscribe);
-	buffer = send(at_socket_fd, subscribe, strlen(subscribe), 0);
-	if (buffer != strlen(subscribe)) {
+	err = at_cmd(at_socket_fd, subscribe, AT_CMD_SIZE(subscribe));
+	if (err) {
 		close(at_socket_fd);
-		return -EIO;
-	}
-
-	buffer = recv(at_socket_fd, read_buffer, sizeof(read_buffer), 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
+		return err;
 	}
 
 #if defined(CONFIG_LTE_LOCK_BANDS)
 	/* Set LTE band lock (volatile setting).
-	   Has to be done every time before activating the modem. */
-	LOG_DBG("send: %s", lock_bands);
-	buffer = send(at_socket_fd, lock_bands, strlen(lock_bands), 0);
-	if (buffer != strlen(lock_bands)) {
+	 * Has to be done every time before activating the modem.
+	 */
+	err = at_cmd(at_socket_fd, lock_bands, AT_CMD_SIZE(lock_bands));
+	if (err) {
 		close(at_socket_fd);
-		return -EIO;
-	}
-
-	buffer = recv(at_socket_fd, read_buffer, sizeof(read_buffer), 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
+		return err;
 	}
 #endif
-
-	LOG_DBG("send: %s", normal);
-	buffer = send(at_socket_fd, normal, strlen(normal), 0);
-	if (buffer != strlen(normal)) {
+	err = at_cmd(at_socket_fd, normal, AT_CMD_SIZE(normal));
+	if (err) {
 		close(at_socket_fd);
-		return -EIO;
-	}
-
-	buffer = recv(at_socket_fd, read_buffer, sizeof(read_buffer), 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
+		return err;
 	}
 
 	while (true) {
-		buffer = recv(at_socket_fd, read_buffer,
-				  sizeof(read_buffer), 0);
-		if (buffer) {
-			LOG_DBG("recv: %s", read_buffer);
-			if (
-			(memcmp(status[0], read_buffer, strlen(status[0])) == 0) ||
-			(memcmp(status[1], read_buffer, strlen(status[1])) == 0) ||
-			(memcmp(status[2], read_buffer, strlen(status[2])) == 0) ||
-			(memcmp(status[3], read_buffer, strlen(status[3])) == 0)) {
+		int bytes;
+
+		bytes = recv(at_socket_fd, buffer, LC_MAX_READ_LENGTH, 0);
+		if (bytes) {
+			LOG_DBG("recv: %s", buffer);
+			if (!memcmp(status1, buffer, AT_CMD_SIZE(status1)) ||
+			    !memcmp(status2, buffer, AT_CMD_SIZE(status2)) ||
+			    !memcmp(status3, buffer, AT_CMD_SIZE(status3)) ||
+			    !memcmp(status4, buffer, AT_CMD_SIZE(status4))) {
 				break;
 			}
 		}
 	}
+
 	close(at_socket_fd);
 	return 0;
 }
@@ -164,161 +152,100 @@ int lte_lc_init_and_connect(void)
 
 int lte_lc_offline(void)
 {
+	int err;
 	int at_socket_fd;
-	int buffer;
-	u8_t read_buffer[LC_MAX_READ_LENGTH];
 
 	at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
 	if (at_socket_fd == -1) {
 		return -EFAULT;
 	}
-	LOG_DBG("send: %s", offline);
-	buffer = send(at_socket_fd, offline, strlen(offline), 0);
-	if (buffer != strlen(offline)) {
-		close(at_socket_fd);
-		return -EIO;
-	}
 
-	buffer = recv(at_socket_fd, read_buffer, LC_MAX_READ_LENGTH, 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success) != 0))) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
-	}
-
+	err = at_cmd(at_socket_fd, offline, AT_CMD_SIZE(offline));
 	close(at_socket_fd);
-	return 0;
+
+	return err;
 }
 
 int lte_lc_power_off(void)
 {
+	int err;
 	int at_socket_fd;
-	int buffer;
-	u8_t read_buffer[LC_MAX_READ_LENGTH];
 
 	at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
 	if (at_socket_fd == -1) {
 		return -EFAULT;
 	}
-	LOG_DBG("send: %s", power_off);
-	buffer = send(at_socket_fd, power_off, strlen(power_off), 0);
-	if (buffer != strlen(power_off)) {
-		close(at_socket_fd);
-		return -EIO;
-	}
 
-	buffer = recv(at_socket_fd, read_buffer, LC_MAX_READ_LENGTH, 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
-	}
+	err = at_cmd(at_socket_fd, power_off, AT_CMD_SIZE(power_off));
 	close(at_socket_fd);
-	return 0;
+
+	return err;
 }
 
 int lte_lc_normal(void)
 {
+	int err;
 	int at_socket_fd;
-	int buffer;
-	u8_t read_buffer[LC_MAX_READ_LENGTH];
 
 	at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
 	if (at_socket_fd == -1) {
 		return -EFAULT;
 	}
-	LOG_DBG("send: %s", normal);
-	buffer = send(at_socket_fd, normal, strlen(normal), 0);
-	if (buffer != strlen(normal)) {
-		close(at_socket_fd);
-		return -EIO;
-	}
 
-	buffer = recv(at_socket_fd, read_buffer, LC_MAX_READ_LENGTH, 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
-	}
+	err = at_cmd(at_socket_fd, normal, AT_CMD_SIZE(normal));
 	close(at_socket_fd);
-	return 0;
+
+	return err;
 }
 
 int lte_lc_psm_req(bool enable)
 {
+	int err;
 	int at_socket_fd;
-	int buffer;
-	u8_t read_buffer[LC_MAX_READ_LENGTH];
+	const char *cmd;
+	size_t size;
 
 	at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
 	if (at_socket_fd == -1) {
 		return -EFAULT;
 	}
 	if (enable) {
-		LOG_DBG("send: %s", psm_req);
-		buffer = send(at_socket_fd, psm_req, strlen(psm_req), 0);
-		if (buffer != strlen(psm_req)) {
-			close(at_socket_fd);
-			return -EIO;
-		}
+		cmd = psm_req;
+		size = AT_CMD_SIZE(psm_req);
 	} else {
-		LOG_DBG("send: %s", psm_disable);
-		buffer = send(at_socket_fd, psm_disable, strlen(psm_disable), 0);
-		if (buffer != strlen(psm_disable)) {
-			close(at_socket_fd);
-			return -EIO;
-		}
+		cmd = psm_disable;
+		size = AT_CMD_SIZE(psm_disable);
 	}
 
-	buffer = recv(at_socket_fd, read_buffer, LC_MAX_READ_LENGTH, 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
-	}
+	err = at_cmd(at_socket_fd, cmd, size);
 	close(at_socket_fd);
-	return 0;
+
+	return err;
 }
 
 int lte_lc_edrx_req(bool enable)
 {
+	int err;
 	int at_socket_fd;
-	int buffer;
-	u8_t read_buffer[LC_MAX_READ_LENGTH];
+	const char *cmd;
+	size_t size;
 
 	at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
 	if (at_socket_fd == -1) {
 		return -EFAULT;
 	}
 	if (enable) {
-		LOG_DBG("send: %s", edrx_req);
-		buffer = send(at_socket_fd, edrx_req, strlen(edrx_req), 0);
-		if (buffer != strlen(edrx_req)) {
-			close(at_socket_fd);
-			return -EIO;
-		}
+		cmd = edrx_req;
+		size = AT_CMD_SIZE(edrx_req);
 	} else {
-		LOG_DBG("send: %s", edrx_disable);
-		buffer = send(at_socket_fd, edrx_disable, strlen(edrx_disable), 0);
-		if (buffer != strlen(edrx_disable)) {
-			close(at_socket_fd);
-			return -EIO;
-		}
+		cmd = edrx_disable;
+		size = AT_CMD_SIZE(edrx_disable);
 	}
 
-	buffer = recv(at_socket_fd, read_buffer, sizeof(read_buffer), 0);
-	if ((buffer < strlen(success)) ||
-	    (memcmp(success, read_buffer, strlen(success)) != 0)) {
-		close(at_socket_fd);
-		LOG_ERR("recv: %s", read_buffer);
-		return -EIO;
-	}
+	err = at_cmd(at_socket_fd, cmd, size);
 	close(at_socket_fd);
-	return 0;
+
+	return err;
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
