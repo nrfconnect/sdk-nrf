@@ -82,7 +82,8 @@ static struct k_work connect_work;
 enum error_type {
 	ERROR_NRF_CLOUD,
 	ERROR_BSD_RECOVERABLE,
-	ERROR_BSD_IRRECOVERABLE
+	ERROR_BSD_IRRECOVERABLE,
+	ERROR_LTE_LC
 };
 
 /* Forward declaration of functions */
@@ -137,6 +138,8 @@ void error_handler(enum error_type err_type, int err_code)
 		 * undefined error.
 		 */
 		led_pattern = DK_LED1_MSK | DK_LED2_MSK;
+		printk("Unknown error type: %d err_code: %d\n",
+			err_type, err_code);
 	break;
 	}
 
@@ -482,6 +485,8 @@ static void pairing_button_register(u32_t button_state, u32_t has_changed)
 /**@brief Callback for button events from the DK buttons and LEDs library. */
 static void button_handler(u32_t buttons, u32_t has_changed)
 {
+	int err;
+
 	if (pattern_recording && IS_ENABLED(CONFIG_CLOUD_UA_BUTTONS)) {
 		pairing_button_register(buttons, has_changed);
 		return;
@@ -489,6 +494,29 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 
 	if (has_changed & SWITCH_1) {
 		flip_poll();
+	}
+
+	if ((has_changed & SWITCH_2) &&
+	    IS_ENABLED(CONFIG_POWER_OPTIMIZATION_ENABLE)) {
+		if (buttons & SWITCH_2) {
+			err = lte_lc_edrx_req(false);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+			err = lte_lc_psm_req(true);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+		} else {
+			err = lte_lc_psm_req(false);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+			err = lte_lc_edrx_req(true);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+		}
 	}
 }
 
@@ -679,5 +707,7 @@ void main(void)
 	while (true) {
 		nrf_cloud_process();
 		input_process();
+		/* put CPU to sleep to save power */
+		k_cpu_idle();
 	}
 }

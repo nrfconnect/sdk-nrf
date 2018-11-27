@@ -6,6 +6,20 @@
 
 menu "Application sample"
 
+config POWER_OPTIMIZATION_ENABLE
+	bool "Enable power optimization"
+	default y
+	select LTE_EDRX_REQ
+
+config GPS_SIM_TRIGGER_TIMER_MSEC
+	int
+	default 120000 if POWER_OPTIMIZATION_ENABLE
+	default 2000
+
+config MQTT_KEEPALIVE
+	int
+	default 1000 if POWER_OPTIMIZATION_ENABLE
+	default 120
 choice
 	prompt "GPS device"
 	default GPS_USE_SIM
