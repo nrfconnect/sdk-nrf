@@ -3,6 +3,14 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+
+/* TODO A workaround for intrusive behavior of networking subsystem logging.
+ *      Upstream issue #11659.
+ */
+#include <logging/log.h>
+#define LOG_LEVEL LOG_LEVEL_NONE
+LOG_MODULE_REGISTER(lte_lc);
+
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <errno.h>

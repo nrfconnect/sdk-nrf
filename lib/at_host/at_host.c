@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <logging/log.h>
+#define LOG_DOMAIN at_host
+#define LOG_LEVEL CONFIG_LOG_AT_HOST_LEVEL
+LOG_MODULE_REGISTER(LOG_DOMAIN);
+
 #include <at_host.h>
 #include <zephyr.h>
 #include <stdio.h>
 #include <uart.h>
 #include <net/socket.h>
 #include <string.h>
-
-#include <logging/log.h>
-#define LOG_DOMAIN at_host
-#define LOG_LEVEL CONFIG_LOG_AT_HOST_LEVEL
-LOG_MODULE_REGISTER(LOG_DOMAIN);
 
 #define CONFIG_UART_0_NAME "UART_0"
 #define CONFIG_UART_1_NAME "UART_1"
