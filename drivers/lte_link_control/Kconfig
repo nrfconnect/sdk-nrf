@@ -11,6 +11,10 @@ menuconfig LTE_LINK_CONTROL
 
 if LTE_LINK_CONTROL
 
+config LTE_LINK_CONTROL_LOG_LEVEL
+	int "Set LTE LC log level"
+	default 0
+
 config LTE_AUTO_INIT_AND_CONNECT
 	bool "Auto Initialize and Connect for the LTE link"
 	default y
@@ -25,5 +29,48 @@ config LTE_LOCK_BANDS
 	help
 		Enable LTE band locks for bands 3, 4, 13 and 20.
 		Other bands cannot be used when this setting is enabled.
+
+config LTE_PSM_REQ_RPTAU
+	string "PSM setting requested periodic TAU"
+	default "00000011"
+	help
+		Power saving mode setting for requested periodic TAU.
+		See 3GPP 27.007 Ch. 7.38.
+		And 3GPP 24.008 Ch. 10.5.7.4a for data format.
+
+config LTE_PSM_REQ_RAT
+	string "PSM setting requested active time"
+	default "00100001"
+	help
+		Power saving mode setting for requested active time.
+		See 3GPP 27.007 Ch. 7.38.
+		And 3GPP 24.008 Ch. 10.5.7.3 for data format.
+
+config LTE_EDRX_REQ
+	bool "Enable requesting use of eDRX."
+	default n
+	help
+		Enable request for use of eDRX using AT+CEDRXS.
+		For reference, see 3GPP 27.007 Ch. 7.40.
+
+config LTE_EDRX_REQ_ACTT_TYPE
+	string "Select ActT-type."
+	default "4"
+	help
+		Select ActT-type.
+
+		 - "4" E-UTRAN (WB-S1 mode)
+		 - "5" E-UTRAN (NB-S1 mode)
+
+		For reference, see 3GPP 27.007 Ch. 7.40.
+
+config LTE_EDRX_REQ_VALUE
+	string "Requested eDRX value"
+	default "1000"
+	help
+		Sets the eDRX value to request. Half a byte in a four-bit
+		format. The eDRX value refers to bit 4 to 1 of octet 3 of the
+		Extended DRX parameters information element.
+		See 3GPP TS 24.008, subclause 10.5.5.32.
 
 endif # LTE_LINK_CONTROL
