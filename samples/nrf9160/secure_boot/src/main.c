@@ -317,6 +317,12 @@ static void secure_boot_config_peripherals(void)
 	/* Configure FPU as non-secure */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_FPU_S), 0);
+	/* Configure TWIM2 as non-secure */
+	secure_boot_config_peripheral(
+		NRFX_PERIPHERAL_ID_GET(NRF_TWIM2_S), 0);
+	/* Configure SPIM3 as non-secure */
+	secure_boot_config_peripheral(
+		NRFX_PERIPHERAL_ID_GET(NRF_SPIM3_S), 0);
 }
 
 static void secure_boot_config(void)
