@@ -64,6 +64,19 @@ HIDS_DEF(hids_obj,
 	 INPUT_REP_MOVEMENT_LEN,
 	 INPUT_REP_MEDIA_PLAYER_LEN);
 
+
+#ifdef CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_LOW
+static const bt_security_t sec_level = BT_SECURITY_LOW;
+#elif CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_MED
+static const bt_security_t sec_level = BT_SECURITY_MEDIUM;
+#elif CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_HIGH
+static const bt_security_t sec_level = BT_SECURITY_HIGH;
+#elif CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_FIPS
+static const bt_security_t sec_level = BT_SECURITY_FIPS;
+#else
+static const bt_security_t sec_level = BT_SECURITY_LOW;
+#endif
+
 static struct k_delayed_work hids_work;
 struct mouse_pos {
 	s16_t x_val;
@@ -126,8 +139,10 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	printk("Connected %s\n", addr);
 
-	if (bt_conn_security(conn, BT_SECURITY_MEDIUM)) {
-		printk("Failed to set security\n");
+	if (IS_ENABLED(CONFIG_BT_GATT_HIDS_SECURITY_ENABLED)) {
+		if (bt_conn_security(conn, sec_level)) {
+			printk("Failed to set security\n");
+		}
 	}
 
 	err = hids_notify_connected(&hids_obj, conn);
@@ -172,6 +187,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 }
 
 
+#ifdef CONFIG_BT_GATT_HIDS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -180,12 +196,15 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 
 	printk("Security changed: %s level %u\n", addr, level);
 }
+#endif
 
 
 static struct bt_conn_cb conn_callbacks = {
 	.connected = connected,
 	.disconnected = disconnected,
+#ifdef CONFIG_BT_GATT_HIDS_SECURITY_ENABLED
 	.security_changed = security_changed,
+#endif
 };
 
 
@@ -421,6 +440,18 @@ static void bt_ready(int err)
 }
 
 
+#if !defined(CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_LOW) && \
+	defined(CONFIG_BT_GATT_HIDS_SECURITY_ENABLED)
+static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, passkey);
+}
+
+
 static void auth_cancel(struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -438,12 +469,15 @@ static void auth_done(struct bt_conn *conn)
 }
 
 
-static struct bt_conn_auth_cb auth_cb_display = {
-	.passkey_display = NULL,
+static struct bt_conn_auth_cb conn_auth_callbacks = {
+	.passkey_display = auth_passkey_display,
 	.passkey_entry = NULL,
 	.cancel = auth_cancel,
 	.pairing_confirm = auth_done,
 };
+#else
+static struct bt_conn_auth_cb conn_auth_callbacks;
+#endif
 
 
 void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
@@ -516,7 +550,10 @@ void main(void)
 	printk("Start zephyr\n");
 
 	bt_conn_cb_register(&conn_callbacks);
-	bt_conn_auth_cb_register(&auth_cb_display);
+
+	if (IS_ENABLED(CONFIG_BT_GATT_HIDS_SECURITY_ENABLED)) {
+		bt_conn_auth_cb_register(&conn_auth_callbacks);
+	}
 
 	err = bt_enable(bt_ready);
 	if (err) {
