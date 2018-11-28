@@ -33,8 +33,8 @@ The ``nrf`` subfolder in that directory contains all .rst source files that are 
 Documentation for samples and libraries are provided in a ``README.rst`` or ``*.rst`` file in the same directory as the code.
 
 Building the documentation output requires building output for all documentation sets.
-Currently, there are three sets: ncs, zephyr, and mcuboot.
-Since there are links from the ncs documentation set into other documentation sets, the other documentation set must be built first.
+Currently, there are four sets: nrf, nrfxlib, zephyr, and mcuboot.
+Since there are links from the ncs documentation set into other documentation sets, the other documentation sets must be built first.
 
 Building documentation output
 *****************************
@@ -92,6 +92,12 @@ Complete the following steps to build the documentation output:
            ninja zephyr
 
    This step can take up to 15 minutes.
+#. Run ninja to build the nrfxlib documentation:
+
+        .. code-block:: console
+
+           ninja nrfxlib
+
 #. Run ninja to build the mcuboot documentation:
 
         .. code-block:: console
@@ -107,7 +113,7 @@ Complete the following steps to build the documentation output:
 The documentation output is written to ``_build\html``. Double-click the ``index.html`` file to display the documentation in your browser.
 
 .. tip::
-   If you modify or add RST files, you only need to rerun the steps that build the respective documentation: step 4 (if you modified the Zephyr documentation), step 5 (if you modified the MCUboot documentation), or step 6 (if you modified the |NCS| documentation).
+   If you modify or add RST files, you only need to rerun the steps that build the respective documentation: step 4 (if you modified the Zephyr documentation), step 5 (if you modified the nrfxlib documentation), step 6 (if you modified the MCUboot documentation), or step 7 (if you modified the |NCS| documentation).
 
    If you open up a new command prompt, you must repeat step 2.
 
@@ -126,6 +132,12 @@ To clean the build folders for the Zephyr documentation:
 .. code-block:: console
 
    ninja clean-zephyr
+
+To clean the build folders for the nrfxlib documentation:
+
+.. code-block:: console
+
+   ninja clean-nrfxlib
 
 To clean the build folders for the MCUboot documentation:
 
@@ -161,6 +173,7 @@ the source tree:
    cmake -GNinja -Bbuild/ -Hncs/nrf/doc
    # Now run ninja on the generated build system:
    ninja -C build/ zephyr
+   ninja -C build/ nrfxlib
    ninja -C build/ mcuboot
    ninja -C build/ nrf
    # If you modify or add .rst files in the nRF repository, run ninja again:
