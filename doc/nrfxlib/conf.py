@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# nRF Connect SDK documentation build configuration file, created by
+# nrfxlib documentation build configuration file, created by
 # sphinx-quickstart on Mon Jun 11 11:28:40 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -24,41 +24,13 @@
 import sys
 import os
 
-if "ZEPHYR_BASE" not in os.environ:
-    sys.exit("$ZEPHYR_BASE environment variable undefined.")
-ZEPHYR_BASE = os.path.abspath(os.environ["ZEPHYR_BASE"])
-
-if "ZEPHYR_BUILD" not in os.environ:
-    sys.exit("$ZEPHYR_BUILD environment variable undefined.")
-ZEPHYR_BUILD = os.path.abspath(os.environ["ZEPHYR_BUILD"])
-
-if "ZEPHYR_OUTPUT" not in os.environ:
-    sys.exit("$ZEPHYR_OUTPUT environment variable undefined.")
-ZEPHYR_OUTPUT = os.path.abspath(os.environ["ZEPHYR_OUTPUT"])
-
 if "NRF_BASE" not in os.environ:
     sys.exit("$NRF_BASE environment variable undefined.")
 NRF_BASE = os.path.abspath(os.environ["NRF_BASE"])
 
-if "NRF_BUILD" not in os.environ:
-    sys.exit("$NRF_BUILD environment variable undefined.")
-NRF_BUILD = os.path.abspath(os.environ["NRF_BUILD"])
-
-if "NRF_OUTPUT" not in os.environ:
-    sys.exit("$NRF_OUTPUT environment variable undefined.")
-NRF_OUTPUT = os.path.abspath(os.environ["NRF_OUTPUT"])
-
-if "NRF_RST_SRC" not in os.environ:
-    sys.exit("$NRF_RST_SRC environment variable undefined.")
-NRF_RST_SRC = os.path.abspath(os.environ["NRF_RST_SRC"])
-
-if "MCUBOOT_OUTPUT" not in os.environ:
-    sys.exit("$MCUBOOT_OUTPUT environment variable undefined.")
-MCUBOOT_OUTPUT = os.path.abspath(os.environ["MCUBOOT_OUTPUT"])
-
-if "NRFXLIB_OUTPUT" not in os.environ:
-    sys.exit("$NRFXLIB_OUTPUT environment variable undefined.")
-NRFXLIB_OUTPUT = os.path.abspath(os.environ["NRFXLIB_OUTPUT"])
+if "NRFXLIB_BUILD" not in os.environ:
+    sys.exit("$NRFXLIB_BUILD environment variable undefined.")
+NRFXLIB_BUILD = os.path.abspath(os.environ["NRFXLIB_BUILD"])
 
 # -- General configuration ------------------------------------------------
 
@@ -84,10 +56,10 @@ extensions = ['sphinx.ext.intersphinx',
 source_suffix = '.rst'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'README'
 
 # General information about the project.
-project = 'nRF Connect SDK'
+project = 'nrfxlib'
 copyright = '2018, Nordic Semiconductor'
 author = 'Nordic Semiconductor'
 
@@ -124,7 +96,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'nrf'
+html_theme = 'nrfxlib'
 html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -163,24 +135,13 @@ html_show_copyright = True
 # If true, license is shown in the HTML footer. Default is True.
 html_show_license = True
 
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {
-    'zephyr': ('{}'.format(os.path.relpath(ZEPHYR_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(ZEPHYR_OUTPUT, NRF_RST_SRC)), 'objects.inv')),
-    'mcuboot': ('{}'.format(os.path.relpath(MCUBOOT_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(MCUBOOT_OUTPUT, NRF_RST_SRC)), 'objects.inv')),
-    'nrfxlib': ('{}'.format(os.path.relpath(NRFXLIB_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(NRFXLIB_OUTPUT, NRF_RST_SRC)), 'objects.inv'))
-}
 
 breathe_projects = {
-    "nrf": "{}/doxygen/xml".format(NRF_BUILD),
+    "nrfxlib": "{}/doxygen/xml".format(NRFXLIB_BUILD),
 }
-breathe_default_project = "nrf"
+breathe_default_project = "nrfxlib"
 
-
-rst_epilog = """
-.. include:: /links.txt
-.. include:: /shortcuts.txt
-"""
 
 def setup(app):
    app.add_stylesheet("css/common.css")
-   app.add_stylesheet("css/ncs.css")
+   app.add_stylesheet("css/nrfxlib.css")

@@ -37,9 +37,12 @@
 
 /* Spacing of lists in the main document */
 .document li > ol, .document li > ul {
-
     margin: 5px 0px !important;
+}
 
+
+.wy-side-nav-search input[type="text"] {
+    border-width: 0;
 }
 
 /* Center-align images */
@@ -60,4 +63,7 @@ div.figure {
 }
 .mcuboot {
  background-color: #159957;
+}
+.nrfxlib {
+ background-color: #ff9933;
 }

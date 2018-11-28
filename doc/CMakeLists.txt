@@ -8,10 +8,15 @@ if(NOT DEFINED ENV{MCUBOOT_BASE})
  get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../mcuboot/ REALPATH)
  set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
 endif()
+if(NOT DEFINED ENV{NRFXLIB_BASE})
+ get_filename_component(NRFXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/../../nrfxlib/ REALPATH)
+ set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
+endif()
 
 message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
 message(STATUS "NRF_BASE: $ENV{NRF_BASE}")
 message(STATUS "MCUBOOT_BASE: $ENV{MCUBOOT_BASE}")
+message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
 
 find_package(PythonInterp 3.4)
 set(DOXYGEN_SKIP_DOT True)
@@ -28,6 +33,7 @@ endif()
 set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
+set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
 set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
 set(MCUBOOT_DOC_DIR ${MCUBOOT_BASE}/docs)
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -47,7 +53,7 @@ add_custom_target(
 add_dependencies(zephyr html)
 
 # Common code
-set(TARGET_LIST zephyr nrf mcuboot)
+set(TARGET_LIST zephyr nrf mcuboot nrfxlib)
 
 foreach(target ${TARGET_LIST})
   set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
@@ -64,7 +70,9 @@ foreach(target ${TARGET_LIST})
   )
 endforeach()
 
+###################################################
 # Everything below this line is nrf-specific
+###################################################
 
 set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
 
@@ -146,6 +154,7 @@ set(NRF_SPHINX_BUILD_HTML_COMMAND
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
+  NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
   ${SPHINXBUILD} -w ${NRF_SPHINX_LOG} -N -b html ${NRF_SPHINXOPTS} ${NRF_RST_OUT}/doc/nrf ${HTML_DIR}/nrf
 )
 
@@ -163,7 +172,9 @@ add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
 add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
 
+###################################################
 # Everything below this line is mcuboot-specific
+###################################################
 
 set(MCUBOOT_SPHINXOPTS -d ${MCUBOOT_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/mcuboot ${MCUBOOT_SPHINXOPTS})
 
@@ -215,3 +226,74 @@ add_dependencies(mcuboot-html mcuboot-content)
 
 add_custom_target(mcuboot)
 add_dependencies(mcuboot mcuboot-html)
+
+
+
+###################################################
+# Everything below this line is nrfxlib-specific
+###################################################
+
+set(NRFXLIB_SPHINXOPTS -d ${NRFXLIB_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/nrfxlib ${NRFXLIB_SPHINXOPTS})
+
+
+set(NRFXLIB_DOXYFILE_IN ${NRF_BASE}/doc/nrfxlib/nrfxlib.doxyfile.in)
+set(NRFXLIB_DOXYFILE_OUT ${NRFXLIB_BINARY_DIR}/nrfxlib.doxyfile)
+set(NRFXLIB_RST_OUT ${NRFXLIB_BINARY_DIR}/rst)
+set(NRFXLIB_CONF_PY ${NRF_BASE}/doc/nrfxlib/conf.py)
+set(NRFXLIB_DOC_LOG ${NRFXLIB_BINARY_DIR}/doc.log)
+set(NRFXLIB_DOXY_LOG ${NRFXLIB_BINARY_DIR}/doxy.log)
+set(NRFXLIB_SPHINX_LOG ${NRFXLIB_BINARY_DIR}/sphinx.log)
+set(NRFXLIB_DOC_WARN ${NRFXLIB_BINARY_DIR}/doc.warnings)
+
+
+configure_file(${NRFXLIB_DOXYFILE_IN} ${NRFXLIB_DOXYFILE_OUT} @ONLY)
+
+set(ARGS ${NRFXLIB_DOXYFILE_OUT})
+
+add_custom_target(
+  nrfxlib-doxy
+  COMMAND ${CMAKE_COMMAND}
+    -DCOMMAND=${DOXYGEN_EXECUTABLE}
+    -DARGS="${ARGS}"
+    -DOUTPUT_FILE=${NRFXLIB_DOXY_LOG}
+    -DERROR_FILE=${NRFXLIB_DOXY_LOG}
+    -DWORKING_DIRECTORY=${NRFXLIB_BASE}
+    -P ${ZEPHYR_BASE}/cmake/util/execute_process.cmake
+)
+
+
+
+set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
+
+set(NRFXLIB_EXTRACT_CONTENT_COMMAND
+ ${CMAKE_COMMAND} -E env
+  ZEPHYR_BASE=${NRFXLIB_BASE}
+  ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
+  --ignore ${CMAKE_CURRENT_BINARY_DIR}
+  "*.rst:.:${NRFXLIB_RST_OUT}"
+)
+
+
+add_custom_target(
+  nrfxlib-content
+
+  # Copy all files from nrfxlib to the rst folder
+  COMMAND ${NRFXLIB_EXTRACT_CONTENT_COMMAND}
+
+  WORKING_DIRECTORY ${NRFXLIB_BASE}
+)
+
+add_custom_target(
+  nrfxlib-html
+  COMMAND ${CMAKE_COMMAND} -E env
+  NRF_BASE=${NRF_BASE}
+  NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
+
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
+add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy)
+
+add_custom_target(nrfxlib)
+add_dependencies(nrfxlib nrfxlib-html)
