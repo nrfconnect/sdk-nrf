@@ -11,6 +11,18 @@ def getRepoURL() {
   }
 }
 
+def check_and_store_sample(path, new_name) {
+  script {
+    if (fileExists(file_path)) {
+      sh "cp ${path} artifacts/${new_name}"
+    }
+    else {
+      echo "Build for ${new_name} failed"
+      currentBuild.result = 'FAILURE'
+    }
+  }
+}
+
 pipeline {
   agent {
     docker {
@@ -28,6 +40,12 @@ pipeline {
       SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
       ARCH = "-a arm"
       LC_ALL = "C.UTF-8"
+
+      // ENVs for building (triggered by sanitycheck)
+      ZEPHYR_TOOLCHAIN_VARIANT = 'gnuarmemb'
+      GNUARMEMB_TOOLCHAIN_PATH = '/workdir/gcc-arm-none-eabi-7-2018-q2-update'
+
+      // Projects to trigger after this one is built
       DOWNSTREAM_PROJECTS = credentials('fw-nrfconnect-nrf-jobs')
   }
 
@@ -35,7 +53,7 @@ pipeline {
     stage('Checkout repositories') {
       steps {
         dir("zephyr") {
-          git branch: "master", url: "$REPO_ZEPHYR", credentialsId: 'github'
+          git branch: "nrf91", url: "$REPO_ZEPHYR", credentialsId: 'github'
         }
         dir("nrfxlib") {
           git branch: "master", url: "$REPO_NRFXLIB", credentialsId: 'github'
@@ -55,35 +73,23 @@ pipeline {
               sh "source zephyr-env.sh && ./scripts/sanitycheck $SANITYCHECK_OPTIONS"
             }
 
-            // Export artifacts needed for downstream projects.
-            // Platform array assumed to be <chip>_<board> and artifact will be named <board>.hex
             script {
+              /* Rename the nrf52 desktop samples */
               desktop_platforms = ['nrf52840_pca20041', 'nrf52840_pca10056', 'nrf52_pca63519']
               for(int i=0; i<desktop_platforms.size(); i++) {
                 file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.hex"
-                if (fileExists(file_path)) {
-                  sh "cp ${file_path} artifacts/${desktop_platforms[i].split('_')[1]}.hex"
-                }
-                else {
-                  echo "Build for ${desktop_platforms[i]} failed, or no output was found"
-                  sh "cat zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/build.log"
-                }
+                check_and_store_sample("$file_path", "nrf_desktop_${desktop_platforms[i]}.hex")
               }
-            }
 
-            // Check if the files were successfully built
-            script {
-              if (fileExists('artifacts/pca20041.hex') && \
-                  fileExists('artifacts/pca10056.hex') && \
-                  fileExists('artifacts/pca63519.hex')) {
-                echo "nrf_desktop build successful!"
-                archiveArtifacts artifacts: 'artifacts/*.hex'
-              }
-              else {
-                echo "nrf_desktop build failed!"
-                currentBuild.result = 'FAILURE'
+              /* Rename the nrf9160 samples */
+              samples = ['secure_boot', 'asset_tracker', 'at_client']
+              for(int i=0; i<samples.size(); i++)
+              {
+                file_path = "zephyr/sanity-out/nrf9160_pca10090/nrf9160/${samples[i]}/test_build/zephyr/zephyr.hex"
+                check_and_store_sample("$file_path", "${samples[i]}_nrf9160_pca10090.hex")
               }
             }
+            archiveArtifacts allowEmptyArchive: true, artifacts: 'artifacts/*.hex'
           }
         }
 
