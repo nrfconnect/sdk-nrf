@@ -28,16 +28,16 @@ extern "C" {
  * @param  _max_clients   Maximum number of clients connected at a time.
  * @param  _ctx_size      Context size in bytes for a single link.
  */
-#define BLE_LINK_CTX_MANAGER_DEF(_name, _max_clients, _ctx_size)                             \
-	K_MEM_SLAB_DEFINE(_name##_mem_slab,                                                  \
-			  ROUND_UP(_ctx_size, CONFIG_NRF_BT_LINK_CTX_MANAGER_MEM_BUF_ALIGN), \
-			  (_max_clients),                                                    \
-			  CONFIG_NRF_BT_LINK_CTX_MANAGER_MEM_BUF_ALIGN);                     \
-	K_MUTEX_DEFINE(_name##_mutex);                                                       \
-	static struct ble_link_ctx_manager CONCAT(_name, _link_manager) =                    \
-	{                                                                                    \
-		.mem_slab = &CONCAT(_name, _mem_slab),                                       \
-		.mutex = &_name##_mutex                                                      \
+#define BLE_LINK_CTX_MANAGER_DEF(_name, _max_clients, _ctx_size)                         \
+	K_MEM_SLAB_DEFINE(_name##_mem_slab,                                              \
+			  ROUND_UP(_ctx_size, CONFIG_BT_LINK_CTX_MANAGER_MEM_BUF_ALIGN), \
+			  (_max_clients),                                                \
+			  CONFIG_BT_LINK_CTX_MANAGER_MEM_BUF_ALIGN);                     \
+	K_MUTEX_DEFINE(_name##_mutex);                                                   \
+	static struct ble_link_ctx_manager CONCAT(_name, _link_manager) =                \
+	{                                                                                \
+		.mem_slab = &CONCAT(_name, _mem_slab),                                   \
+		.mutex = &_name##_mutex                                                  \
 	}
 
 /** @brief Connection context data. */
