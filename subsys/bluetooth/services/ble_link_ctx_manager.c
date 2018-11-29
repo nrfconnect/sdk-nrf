@@ -5,10 +5,10 @@
  */
 
 #include <bluetooth/services/ble_link_ctx_manager.h>
+#include <logging/log.h>
 
-#define SYS_LOG_DOMAIN	STRINGIFY(nrf_ble_link_ctx_manager)
-#define SYS_LOG_LEVEL	CONFIG_NRF_BT_LINK_CTX_MANAGER_SYS_LOG_LEVEL
-#include <logging/sys_log.h>
+LOG_MODULE_REGISTER(ble_link_ctx_manager,
+		    CONFIG_BT_LINK_CTX_MANAGER_LOG_LEVEL);
 
 static inline void ble_link_ctx_mem_free(struct k_mem_slab *mem_slab,
 					 void **data)
@@ -40,9 +40,9 @@ void *ble_link_ctx_manager_alloc(struct ble_link_ctx_manager *ctx_manager,
 			if (!err) {
 				conn_ctx->conn = conn;
 
-				SYS_LOG_DBG("The memory for the connection context "
-					    "has been allocated, conn %p, index: %u",
-					    conn, i);
+				LOG_DBG("The memory for the connection context "
+					"has been allocated, conn %p, index: %u",
+					conn, i);
 
 				return conn_ctx->data;
 
@@ -53,7 +53,7 @@ void *ble_link_ctx_manager_alloc(struct ble_link_ctx_manager *ctx_manager,
 		}
 	}
 
-	SYS_LOG_WRN("Memory can not be allocated");
+	LOG_WRN("Memory can not be allocated");
 	k_mutex_unlock(ctx_manager->mutex);
 
 	return NULL;
@@ -77,9 +77,9 @@ int ble_link_ctx_manager_free(struct ble_link_ctx_manager *ctx_manager,
 			conn_ctx->conn = NULL;
 			conn_ctx->data = NULL;
 
-			SYS_LOG_DBG("The context memory for the connection "
-				    "has been released, conn %p index %u",
-				    conn, i);
+			LOG_DBG("The context memory for the connection "
+				"has been released, conn %p index %u",
+				conn, i);
 
 			k_mutex_unlock(ctx_manager->mutex);
 
@@ -87,7 +87,7 @@ int ble_link_ctx_manager_free(struct ble_link_ctx_manager *ctx_manager,
 		}
 	}
 
-	SYS_LOG_WRN("There is no allocated memory for this connection");
+	LOG_WRN("There is no allocated memory for this connection");
 	k_mutex_unlock(ctx_manager->mutex);
 
 	return  -EINVAL;
@@ -113,7 +113,7 @@ void ble_link_ctx_manager_free_all(struct ble_link_ctx_manager *ctx_manager)
 
 	k_mutex_unlock(ctx_manager->mutex);
 
-	SYS_LOG_DBG("All allocated memory has been released");
+	LOG_DBG("All allocated memory has been released");
 }
 
 void *ble_link_ctx_manager_get(struct ble_link_ctx_manager *ctx_manager,
@@ -129,13 +129,13 @@ void *ble_link_ctx_manager_get(struct ble_link_ctx_manager *ctx_manager,
 				&ctx_manager->conn_ctx[i];
 
 		if (conn_ctx->conn == conn) {
-			SYS_LOG_DBG("Memory block found for the connection");
+			LOG_DBG("Memory block found for the connection");
 
 			return conn_ctx->data;
 		}
 	}
 
-	SYS_LOG_WRN("No memory block for connection");
+	LOG_WRN("No memory block for connection");
 
 	k_mutex_unlock(ctx_manager->mutex);
 
