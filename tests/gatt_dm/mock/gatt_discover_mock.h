@@ -29,12 +29,17 @@
  * @param _handle     The handler of the service attribute.
  * @param _uuid       The UUID of the service itself.
  * @param _end_handle The value of the end handle.
+ *
+ * @note
+ * The @c user_data field is set to point to const struct.
+ * This way we can assume that created structure would be placed in FLASH.
+ * Then if we try to write it, the test would hard fault.
  */
-#define BT_GATT_DISCOVER_MOCK_SERV(_handle, _uuid, _end_handle) {    \
-		.uuid = BT_UUID_GATT_PRIMARY,                        \
-		.handle = _handle,                                   \
-		.user_data = (&(struct bt_gatt_service_val)          \
-			{ .uuid = _uuid, .end_handle = _end_handle}) \
+#define BT_GATT_DISCOVER_MOCK_SERV(_handle, _uuid, _end_handle) {         \
+		.uuid = BT_UUID_GATT_PRIMARY,                             \
+		.handle = _handle,                                        \
+		.user_data = (void *)(&(const struct bt_gatt_service_val) \
+			{ .uuid = _uuid, .end_handle = _end_handle})      \
 	}
 
 /**
@@ -52,11 +57,11 @@
  * @param _uuid   The UUID of the characteristic itself.
  * @param _props  Characteristic properties.
  */
-#define BT_GATT_DISCOVER_MOCK_CHRC(_handle, _uuid, _props) {     \
-		.uuid = BT_UUID_GATT_CHRC,                       \
-		.handle = _handle,                               \
-		.user_data = (&(struct bt_gatt_chrc)             \
-			{ .uuid = _uuid, .properties = _props }) \
+#define BT_GATT_DISCOVER_MOCK_CHRC(_handle, _uuid, _props) {       \
+		.uuid = BT_UUID_GATT_CHRC,                         \
+		.handle = _handle,                                 \
+		.user_data = (void *)(&(const struct bt_gatt_chrc) \
+			{ .uuid = _uuid, .properties = _props })   \
 	}
 
 /**

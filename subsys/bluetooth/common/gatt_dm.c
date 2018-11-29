@@ -271,10 +271,12 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 		service_val->end_handle);
 
 	cur_attr->uuid = uuid_store(dm, attr->uuid);
+	service_val = user_data_store(dm, service_val,
+				      sizeof(*service_val));
 	service_val->uuid = uuid_store(dm, service_val->uuid);
-	cur_attr->user_data = user_data_store(dm, service_val,
-			sizeof(*service_val));
-	if (!cur_attr->uuid || !cur_attr->user_data ||
+	cur_attr->user_data = service_val;
+
+	if (!cur_attr->uuid || !service_val ||
 	    !service_val->uuid) {
 		LOG_ERR("Not enough memory for service attribute data.");
 		discovery_complete_error(dm, -ENOMEM);
@@ -363,9 +365,10 @@ static u8_t discovery_process_characteristic(
 	}
 
 	gatt_chrc = attr->user_data;
+	gatt_chrc = user_data_store(dm, gatt_chrc, sizeof(*gatt_chrc));
 	gatt_chrc->uuid = uuid_store(dm, gatt_chrc->uuid);
-	cur_attr->user_data = user_data_store(dm, gatt_chrc, sizeof(*gatt_chrc));
-	if (!cur_attr->user_data || !gatt_chrc->uuid) {
+	cur_attr->user_data = gatt_chrc;
+	if (!gatt_chrc || !gatt_chrc->uuid) {
 		discovery_complete_error(dm, -ENOMEM);
 		return BT_GATT_ITER_STOP;
 	}
