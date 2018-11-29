@@ -252,10 +252,15 @@ const struct bt_gatt_attr *bt_gatt_dm_desc_next(
  * and call @ref bt_gatt_dm_data_release if it was successful.
  *
  * @param[in]     conn Connection object.
- * @param[in]     svc_uuid UUID of target service.
+ * @param[in]     svc_uuid UUID of target service
+ *                or NULL if any service should be parsed.
  * @param[in]     cb Callback structure.
  * @param[in,out] context Context argument that would be passed to
  *                callback functions
+ *
+ * @note
+ * If @c svc_uuid is set to NULL all services may be parsed.
+ * To process next service see @ref bt_gatt_dm_continue function.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -264,6 +269,20 @@ int bt_gatt_dm_start(struct bt_conn *conn,
 		     const struct bt_uuid *svc_uuid,
 		     const struct bt_gatt_dm_cb *cb,
 		     void *context);
+
+/** @brief Continue discovery
+ *
+ * This function continues service discovery.
+ * Call it after the previous data was released by @ref bt_gatt_dm_data_release.
+ *
+ * @param[in,out] dm Discovery Manager instance
+ * @param[in]     context Context argument that would
+ *                be passed to callback functions
+ *
+ * @return 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int bt_gatt_dm_continue(struct bt_gatt_dm *dm, void *context);
 
 /** @brief Release data associated with service discovery.
  *
