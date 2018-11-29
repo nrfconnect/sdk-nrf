@@ -3,7 +3,7 @@
 Welcome to the |NCS|!
 #####################
 
-The |NCS| contains libraries and application examples for Nordic Semiconductor chips. It uses the |link_zephyr|_ as real-time operating system.
+The |NCS| contains libraries and application examples for Nordic Semiconductor devices. It uses the |link_zephyr|_ as real-time operating system.
 
 
 .. toctree::
