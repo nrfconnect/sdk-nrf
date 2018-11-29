@@ -588,7 +588,7 @@ static void report_send(enum target_report tr, bool check_state)
 
 	struct report_state *rs = &state.selected->state[tr];
 
-	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
+	if (!check_state || (rs->state == STATE_CONNECTED_IDLE)) {
 		do {
 			switch (tr) {
 			case TARGET_REPORT_KEYBOARD:
