@@ -545,7 +545,8 @@ int bt_gatt_dm_start(struct bt_conn *conn,
 	int err;
 	struct bt_gatt_dm *dm;
 
-	if ((svc_uuid->type != BT_UUID_TYPE_16) &&
+	if (svc_uuid &&
+	    (svc_uuid->type != BT_UUID_TYPE_16) &&
 	    (svc_uuid->type != BT_UUID_TYPE_128)) {
 		return -EINVAL;
 	}
@@ -567,13 +568,48 @@ int bt_gatt_dm_start(struct bt_conn *conn,
 	dm->data_chunk.cur_len = 0;
 	dm->data_chunk.cur_id = 0;
 
-	dm->discover_params.uuid = uuid_store(dm, svc_uuid);
+	dm->discover_params.uuid = svc_uuid ? uuid_store(dm, svc_uuid) : NULL;
 	dm->discover_params.func = discovery_callback;
 	dm->discover_params.start_handle = 0x0001;
 	dm->discover_params.end_handle = 0xffff;
 	dm->discover_params.type = BT_GATT_DISCOVER_PRIMARY;
 
 	err = bt_gatt_discover(conn, &dm->discover_params);
+	if (err) {
+		LOG_ERR("Discover failed, error: %d.", err);
+		atomic_clear_bit(dm->state_flags, STATE_ATTRS_LOCKED);
+	}
+
+	return err;
+}
+
+int bt_gatt_dm_continue(struct bt_gatt_dm *dm, void *context)
+{
+	int err;
+
+	if ((!dm) ||
+	    (!dm->callback) ||
+	    (dm->discover_params.func != discovery_callback)) {
+		return -EINVAL;
+	}
+
+	/* If UUID is set, it does not make sense to call this function.
+	 * The stored UUID would be broken anyway in bt_gatt_dm_data_release.
+	 */
+	if (dm->discover_params.uuid) {
+		return -EINVAL;
+	}
+
+	if (atomic_test_and_set_bit(dm->state_flags, STATE_ATTRS_LOCKED)) {
+		return -EALREADY;
+	}
+
+	dm->context = context;
+	dm->discover_params.start_handle = dm->discover_params.end_handle + 1;
+	dm->discover_params.end_handle = 0xffff;
+	dm->discover_params.type = BT_GATT_DISCOVER_PRIMARY;
+
+	err = bt_gatt_discover(dm->conn, &dm->discover_params);
 	if (err) {
 		LOG_ERR("Discover failed, error: %d.", err);
 		atomic_clear_bit(dm->state_flags, STATE_ATTRS_LOCKED);
