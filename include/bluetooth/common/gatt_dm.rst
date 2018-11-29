@@ -16,7 +16,6 @@ The GATT Discovery Manager is used, for example, in the :ref:`bluetooth_central_
 Limitations
 ***********
 
-* The discovery procedure can be targeted at the chosen service. Group type service discovery is not supported.
 * Only one discovery procedure can be running at the same time.
 
 API documentation
