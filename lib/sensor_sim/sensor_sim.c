@@ -95,8 +95,8 @@ static int sensor_sim_init_thread(struct device *dev)
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
 	drv_data->gpio = device_get_binding(drv_data->gpio_port);
 	if (drv_data->gpio == NULL) {
-		SYS_LOG_ERR("Failed to get pointer to %s device",
-			    drv_data->gpio_port);
+		LOG_ERR("Failed to get pointer to %s device",
+			drv_data->gpio_port);
 		return -EINVAL;
 	}
 
@@ -110,7 +110,7 @@ static int sensor_sim_init_thread(struct device *dev)
 			   BIT(drv_data->gpio_pin));
 
 	if (gpio_add_callback(drv_data->gpio, &drv_data->gpio_cb) < 0) {
-		SYS_LOG_ERR("Failed to set GPIO callback");
+		LOG_ERR("Failed to set GPIO callback");
 		return -EIO;
 	}
 
@@ -145,7 +145,7 @@ static int sensor_sim_trigger_set(struct device *dev,
 		drv_data->drdy_trigger = *trig;
 		break;
 	default:
-		SYS_LOG_ERR("Unsupported sensor trigger");
+		LOG_ERR("Unsupported sensor trigger");
 		ret = -ENOTSUP;
 		break;
 	}
@@ -173,7 +173,7 @@ static int sensor_sim_init(struct device *dev)
 	drv_data->gpio_pin = SW0_GPIO_PIN;
 #endif
 	if (sensor_sim_init_thread(dev) < 0) {
-		SYS_LOG_ERR("Failed to initialize trigger interrupt");
+		LOG_ERR("Failed to initialize trigger interrupt");
 		return -EIO;
 	}
 #endif
