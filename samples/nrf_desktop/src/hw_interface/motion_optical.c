@@ -111,6 +111,9 @@ LOG_MODULE_REGISTER(MODULE);
 /* Max register count readable in a single motion burst */
 #define OPTICAL_MAX_BURST_SIZE			12
 
+/* Register count used for reading a single motion burst */
+#define OPTICAL_BURST_SIZE			6
+
 /* Sampling thread poll timeout */
 #define OPTICAL_POLL_TIMEOUT_MS			500
 
@@ -149,7 +152,7 @@ static struct device *spi_dev;
 
 static atomic_t state;
 static atomic_t connected;
-
+static bool last_read_burst;
 
 static int spi_cs_ctrl(bool enable)
 {
@@ -175,6 +178,7 @@ static int reg_read(u8_t reg, u8_t *buf)
 	int err;
 
 	__ASSERT_NO_MSG((reg & SPI_WRITE_MASK) == 0);
+	last_read_burst = false;
 
 	err = spi_cs_ctrl(true);
 	if (err) {
@@ -232,6 +236,7 @@ static int reg_write(u8_t reg, u8_t val)
 	int err;
 
 	__ASSERT_NO_MSG((reg & SPI_WRITE_MASK) == 0);
+	last_read_burst = false;
 
 	err = spi_cs_ctrl(true);
 	if (err) {
@@ -277,10 +282,15 @@ static int motion_burst_read(u8_t *data, size_t burst_size)
 
 	__ASSERT_NO_MSG(burst_size <= OPTICAL_MAX_BURST_SIZE);
 
-	/* Write any value to motion burst register */
-	err = reg_write(OPTICAL_REG_MOTION_BURST, 0x00);
-	if (err) {
-		goto error;
+	/* Write any value to motion burst register only if there have been
+	 * other SPI transmissions with sensor since last burst read.
+	 */
+	if (!last_read_burst) {
+		err = reg_write(OPTICAL_REG_MOTION_BURST, 0x00);
+		if (err) {
+			goto error;
+		}
+		last_read_burst = true;
 	}
 
 	err = spi_cs_ctrl(true);
@@ -342,6 +352,7 @@ static int burst_write(u8_t reg, const u8_t *buf, size_t size)
 {
 	int err;
 
+	last_read_burst = false;
 	err = spi_cs_ctrl(true);
 	if (err) {
 		goto error;
@@ -489,7 +500,7 @@ static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
 
 static int motion_read(void)
 {
-	u8_t data[OPTICAL_MAX_BURST_SIZE];
+	u8_t data[OPTICAL_BURST_SIZE];
 
 	int err = motion_burst_read(data, sizeof(data));
 	if (err) {
@@ -656,7 +667,7 @@ static void optical_thread_fn(void)
 				LOG_DBG("Stop polling, wait for interrupt");
 
 				/* Read data to clear interrupt. */
-				u8_t data[OPTICAL_MAX_BURST_SIZE];
+				u8_t data[OPTICAL_BURST_SIZE];
 				err = motion_burst_read(data, sizeof(data));
 
 				/* Switch state. */
