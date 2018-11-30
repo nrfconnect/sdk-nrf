@@ -28,7 +28,7 @@ static const u8_t col_pin[] = { 2, 21, 20, 19};
 static const u8_t row_pin[] = {29, 31, 22, 24};
 
 static struct device *gpio_dev;
-static struct gpio_callback gpio_cbs[ARRAY_SIZE(row_pin)];
+static struct gpio_callback gpio_cb;
 static struct k_delayed_work matrix_scan;
 static atomic_t scanning;
 static atomic_t active;
@@ -230,22 +230,25 @@ static void init_fn(void)
 		goto error;
 	}
 
+	u32_t pin_mask = 0;
 	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
-		gpio_init_callback(&gpio_cbs[i], button_pressed,
-				   BIT(row_pin[i]));
-		err = gpio_add_callback(gpio_dev, &gpio_cbs[i]);
-
-		if (!err) {
-			/* Module starts in scanning mode and will switch to
-			 * callback mode if no button is pressed.
-			 */
-			err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
-		}
-
+		/* Module starts in scanning mode and will switch to
+		 * callback mode if no button is pressed.
+		 */
+		err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
 		if (err) {
 			LOG_ERR("cannot configure rows");
 			goto error;
 		}
+
+		pin_mask |= BIT(row_pin[i]);
+	}
+
+	gpio_init_callback(&gpio_cb, button_pressed, pin_mask);
+	err = gpio_add_callback(gpio_dev, &gpio_cb);
+	if (err) {
+		LOG_ERR("cannot add callback");
+		goto error;
 	}
 
 	module_set_state(MODULE_STATE_READY);
