@@ -39,3 +39,5 @@
 .. _`Semantic Versioning 2.0.0`: https://semver.org/
 
 .. _`nRF Cloud`: https://nrfcloud.com/
+
+.. _`Nordic Thingy:52`: https://www.nordicsemi.com/eng/Products/Nordic-Thingy-52

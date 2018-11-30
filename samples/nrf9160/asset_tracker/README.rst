@@ -29,15 +29,7 @@ Requirements
   The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
   Therefore, it requires the :ref:`secure_boot` bootloader that prepares the required peripherals to be available for the application.
 
-
-Building and running
-********************
-
-This sample can be found under :file:`samples/nrf9160/asset_tracker` in the |NCS| folder structure.
-
-The sample is built as a non-secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_NONSECURE=y`` set in ``prj.conf``.
-It can be programmed independently from the secure boot firmware.
-
+.. _nrf_cloud_user_interface:
 
 User interface
 **************
@@ -70,9 +62,18 @@ All LEDs (1-4):
     * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Recoverable error in the BSD library.
     * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with the nRF Cloud.
 
+Building and running
+********************
+
+This sample can be found under :file:`samples/nrf9160/asset_tracker` in the |NCS| folder structure.
+
+The sample is built as a non-secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_NONSECURE=y`` set in ``prj.conf``.
+It can be programmed independently from the secure boot firmware.
+
 
 Testing
-*******
+=======
+
 After programming the :ref:`secure_boot` to your board, test the Asset Tracker sample by performing the following steps:
 
 1. Connect the board to the computer using a USB cable.
