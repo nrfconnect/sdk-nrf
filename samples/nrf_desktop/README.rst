@@ -1,22 +1,33 @@
 .. _nrf_desktop:
 
-Bluetooth: NRF Desktop
+nRF Desktop
 ##########################
+
+Nordic Semiconductor HID reference design.
 
 Overview
 ********
 
-Nordic Semiconductor HID reference design.
+This sample is a reference design of a HID device.
+
+The code is currently work-in-progress and as such is not fully functional, verified, or
+supported for product development.
+
 
 Requirements
 ************
 
-Supported board:
-* PCA10056 (nRF52840 DK) - for mouse example,
-* PCA20041 - for low-latency mouse reference design,
-* PCA10059 - for USB dongle.
+Supported boards:
+* PCA10056 (nRF52840 DK) - example where the mouse is emulated using DK buttons
+* PCA20041 - nRF Desktop mouse reference design
 
 Building and Running
 ********************
 
-See :ref:`bluetooth setup section <bluetooth_setup>` for details.
+This sample can be found under :file:`samples/nrf_desktop` in the |NCS| folder structure.
+
+Testing
+*******
+
+The code is currently work-in-progress and as such is not fully functional, verified, or
+supported for product development.
