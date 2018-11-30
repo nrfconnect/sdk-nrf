@@ -34,7 +34,7 @@ int aggregator_put(struct sensor_data in_data)
 		entry_count--;
 	}
 
-	if(fifo_data == NULL) {
+	if (fifo_data == NULL) {
 		fifo_data = k_malloc(sizeof(struct fifo_entry));
 	}
 
