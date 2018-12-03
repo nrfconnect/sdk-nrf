@@ -22,6 +22,12 @@ LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 static const double base_accel_samples[3] = {0.0, 0.0, 0.0};
 static double accel_samples[3];
 
+/* TODO: Make base temperature configurable from Kconfig, along with more
+ * detailed control over the temperature data generation.
+ */
+static const double base_temp_sample = 21.0;
+static double temp_sample;
+
 /*
  * @brief Helper function to convert from double to sensor_value struct
  *
@@ -177,8 +183,17 @@ static int sensor_sim_init(struct device *dev)
 		return -EIO;
 	}
 #endif
+	srand(k_cycle_get_32());
 
 	return 0;
+}
+
+/**
+ * @brief Generates a pseudo-random number between -1 and 1.
+ */
+static double generate_pseudo_random(void)
+{
+	return (double)rand() / ((double)RAND_MAX / 2.0) - 1.0;
 }
 
 /*
@@ -261,6 +276,14 @@ static int generate_accel_data(enum sensor_channel chan)
 	return retval;
 }
 
+/**
+ * @brief Generates temperature data.
+ */
+static void generate_temp_data(void)
+{
+	temp_sample = base_temp_sample + generate_pseudo_random();
+}
+
 /*
  * @brief Generates simulated sensor data for a channel.
  *
@@ -281,8 +304,11 @@ static int sensor_sim_generate_data(enum sensor_channel chan)
 	case SENSOR_CHAN_ACCEL_XYZ:
 		generate_accel_data(SENSOR_CHAN_ACCEL_XYZ);
 		break;
+	case SENSOR_CHAN_AMBIENT_TEMP:
+		generate_temp_data();
+		break;
 	default:
-		generate_accel_data(SENSOR_CHAN_ACCEL_XYZ);
+		return -ENOTSUP;
 	}
 
 	return 0;
@@ -308,20 +334,22 @@ static int sensor_sim_channel_get(struct device *dev,
 {
 	switch (chan) {
 	case SENSOR_CHAN_ACCEL_X:
-			double_to_sensor_value(accel_samples[0], sample);
+		double_to_sensor_value(accel_samples[0], sample);
 		break;
 	case SENSOR_CHAN_ACCEL_Y:
-			double_to_sensor_value(accel_samples[1], sample);
+		double_to_sensor_value(accel_samples[1], sample);
 		break;
 	case SENSOR_CHAN_ACCEL_Z:
-			double_to_sensor_value(accel_samples[2], sample);
+		double_to_sensor_value(accel_samples[2], sample);
 		break;
 	case SENSOR_CHAN_ACCEL_XYZ:
-			double_to_sensor_value(accel_samples[0], sample);
-			double_to_sensor_value(accel_samples[1], ++sample);
-			double_to_sensor_value(accel_samples[2], ++sample);
+		double_to_sensor_value(accel_samples[0], sample);
+		double_to_sensor_value(accel_samples[1], ++sample);
+		double_to_sensor_value(accel_samples[2], ++sample);
 		break;
-
+	case SENSOR_CHAN_AMBIENT_TEMP:
+		double_to_sensor_value(temp_sample, sample);
+		break;
 	default:
 		return -ENOTSUP;
 	}
