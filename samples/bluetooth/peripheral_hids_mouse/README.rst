@@ -1,6 +1,6 @@
 .. _peripheral_hids:
 
-Bluetooth: Peripheral HIDs
+Bluetooth: Peripheral HIDs mouse
 ##########################
 
 Overview
