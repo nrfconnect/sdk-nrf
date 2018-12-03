@@ -582,6 +582,7 @@ static void modem_configure(void)
 		int err;
 
 		printk("LTE LC config ...\n");
+		display_state = LEDS_CONNECTING;
 		err = lte_lc_init_and_connect();
 		__ASSERT(err == 0, "LTE link could not be established.");
 	}
