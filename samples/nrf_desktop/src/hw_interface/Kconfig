@@ -60,6 +60,30 @@ config DESKTOP_SPI_FREQ_HZ
 	default 1800000
 	range 500000 2500000
 
+comment "Buttons configuration"
+
+choice
+	prompt "Select buttons interface"
+	default DESKTOP_BUTTONS_NONE
+
+config DESKTOP_BUTTONS_NONE
+	bool "Disable buttons"
+
+config DESKTOP_BUTTONS_EXPANDER_ENABLE
+	bool "Buttons read from SR3 Shield expander"
+
+config DESKTOP_BUTTONS_MATRIX_ENABLE
+	bool "Buttons scanned from key matrix"
+
+endchoice
+
+config DESKTOP_BUTTONS_MATRIX_SCAN_INTERVAL
+	int "Key matrix scan interval in ms"
+	depends on DESKTOP_BUTTONS_MATRIX_ENABLE
+	default 15
+	help
+	  Interval at which key matrix is scanned.
+
 comment "Wheel configuration"
 	depends on HAS_DTS_QDEC
 
@@ -153,20 +177,6 @@ config DESKTOP_LOG_BOARD_MODULE_LEVEL
 	  - 3 INFO, write LOG_INF in addition to previous levels
 	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 
-config DESKTOP_LOG_BUTTONS_MODULE_LEVEL
-	int "Buttons module log level"
-	depends on LOG
-	default 2
-	range 0 4
-	help
-	  Sets log level for buttons module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
-
 config DESKTOP_LOG_ACCEL_MODULE_LEVEL
 	int "Accelerometer module log level"
 	depends on LOG
@@ -190,6 +200,21 @@ config DESKTOP_LOG_MOTION_MODULE_LEVEL
 	range 0 4
 	help
 	  Sets log level for motion module.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+
+config DESKTOP_LOG_BUTTONS_MODULE_LEVEL
+	int "Buttons module log level"
+	depends on LOG
+	depends on !DESKTOP_BUTTONS_NONE
+	default 2
+	range 0 4
+	help
+	  Sets log level for buttons module.
 	  Levels are:
 	  - 0 OFF, do not write
 	  - 1 ERROR, only write LOG_ERR
