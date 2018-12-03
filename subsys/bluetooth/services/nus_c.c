@@ -107,48 +107,62 @@ int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const u8_t *data,
 	return err;
 }
 
-int bt_gatt_nus_c_handles_assign(struct bt_gatt_nus_c *nus_c,
-				 struct bt_conn *conn,
-				 const struct bt_gatt_attr *attrs,
-				 size_t attrs_len)
+int bt_gatt_nus_c_handles_assign(struct bt_gatt_dm *dm,
+				 struct bt_gatt_nus_c *nus_c)
 {
-	struct bt_gatt_service_val *gatt_service = attrs->user_data;
+	const struct bt_gatt_attr *gatt_service_attr =
+			bt_gatt_dm_service_get(dm);
+	const struct bt_gatt_service_val *gatt_service =
+			bt_gatt_dm_attr_service_val(gatt_service_attr);
+	const struct bt_gatt_attr *gatt_chrc;
+	const struct bt_gatt_attr *gatt_desc;
 
 	if (bt_uuid_cmp(gatt_service->uuid, BT_UUID_NUS_SERVICE)) {
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 	LOG_DBG("Getting handles from NUS service.");
-
-	/* Assign handles required by NUS. */
 	memset(&nus_c->handles, 0xFF, sizeof(nus_c->handles));
-	for (size_t i = 0; i < attrs_len; i++) {
-		if (!bt_uuid_cmp(attrs[i].uuid, BT_UUID_NUS_TX)) {
-			nus_c->handles.tx = attrs[i].handle;
-			LOG_DBG("Found handle for NUS TX Characteristic.");
-			if (!bt_uuid_cmp(attrs[i + 1].uuid, BT_UUID_GATT_CCC)) {
-				nus_c->handles.tx_ccc = attrs[i + 1].handle;
-				LOG_DBG("Found handle for CCC of NUS TX"
-					" characteristic.");
-			}
-		} else if (!bt_uuid_cmp(attrs[i].uuid, BT_UUID_NUS_RX)) {
-			nus_c->handles.rx = attrs[i].handle;
-			LOG_DBG("Found handle for NUS RX Characteristic");
-		}
-	}
 
-	/* Validate if required handles are present. */
-	u16_t *handle;
-
-	handle = (u16_t *) &nus_c->handles;
-	for (size_t i = 0; i < sizeof(nus_c->handles) / sizeof(u16_t); i++) {
-		if (handle[i] == 0xffff) {
-			LOG_ERR("All required handles need to be set.");
-			return -EINVAL;
-		}
+	/* NUS TX Characteristic */
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_NUS_TX);
+	if (!gatt_chrc) {
+		LOG_ERR("Missing NUS TX characteristic.");
+		return -EINVAL;
 	}
+	/* NUS TX */
+	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_NUS_TX);
+	if (!gatt_desc) {
+		LOG_ERR("Missing NUS TX value descriptor in characteristic.");
+		return -EINVAL;
+	}
+	LOG_DBG("Found handle for NUS TX characteristic.");
+	nus_c->handles.tx = gatt_desc->handle;
+	/* NUS TX CCC */
+	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_GATT_CCC);
+	if (!gatt_desc) {
+		LOG_ERR("Missing NUS TX CCC in characteristic.");
+		return -EINVAL;
+	}
+	LOG_DBG("Found handle for CCC of NUS TX characteristic.");
+	nus_c->handles.tx_ccc = gatt_desc->handle;
+
+	/* NUS RX Characteristic */
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_NUS_RX);
+	if (!gatt_chrc) {
+		LOG_ERR("Missing NUS RX characteristic.");
+		return -EINVAL;
+	}
+	/* NUS RX */
+	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_NUS_RX);
+	if (!gatt_desc) {
+		LOG_ERR("Missing NUS RX value descriptor in characteristic.");
+		return -EINVAL;
+	}
+	LOG_DBG("Found handle for NUS RX characteristic.");
+	nus_c->handles.rx = gatt_desc->handle;
 
 	/* Assign connection instance. */
-	nus_c->conn = conn;
+	nus_c->conn = bt_gatt_dm_conn_get(dm);
 	return 0;
 }
 

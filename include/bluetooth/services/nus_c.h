@@ -20,6 +20,7 @@ extern "C" {
 
 #include <bluetooth/gatt.h>
 #include <bluetooth/conn.h>
+#include <bluetooth/common/gatt_dm.h>
 
 /** @brief Handles on the connected peer device that are needed to interact with
  * the device.
@@ -136,18 +137,16 @@ int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const u8_t *data,
  * instance of this module. The GATT attribute handles are provided by the
  * GATT DB discovery module.
  *
+ * @param[in] dm Discovery object.
  * @param[in,out] nus_c NUS Client instance.
- * @param[in] conn Connection object.
- * @param[in] attrs GATT attributes that belong to the NUS.
- * @param[in] attrs_len Length of the attribute array.
  *
  * @retval 0 If the operation was successful.
- *           Otherwise, a negative error code is returned.
+ * @retval (-ENOTSUP) Special error code used when UUID
+ *         of the service does not match the expected UUID.
+ * @retval Otherwise, a negative error code is returned.
  */
-int bt_gatt_nus_c_handles_assign(struct bt_gatt_nus_c *nus_c,
-				 struct bt_conn *conn,
-				 const struct bt_gatt_attr *attrs,
-				 size_t attrs_len);
+int bt_gatt_nus_c_handles_assign(struct bt_gatt_dm *dm,
+				 struct bt_gatt_nus_c *nus_c);
 
 /** @brief Request the peer to start sending notifications for the TX
  *	   Characteristic.
