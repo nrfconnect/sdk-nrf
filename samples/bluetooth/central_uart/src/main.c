@@ -41,7 +41,7 @@ static K_FIFO_DEFINE(fifo_uart_tx_data);
 static K_FIFO_DEFINE(fifo_uart_rx_data);
 
 static struct bt_conn *default_conn;
-static struct bt_gatt_nus_c nus_c;
+static struct bt_gatt_nus_c gatt_nus_c;
 
 static void ble_data_sent(u8_t err, const u8_t *const data, u16_t len)
 {
@@ -164,26 +164,29 @@ static void uart_cb(struct device *uart)
 	}
 }
 
-static void discovery_complete(struct bt_conn *conn,
-			       const struct bt_gatt_attr *attrs,
-			       size_t attrs_len)
+static void discovery_complete(struct bt_gatt_dm *dm,
+			       void *context)
 {
+	struct bt_gatt_nus_c *nus_c = context;
 	printk("Service discovery completed\n");
 
-	bt_gatt_dm_data_print();
+	bt_gatt_dm_data_print(dm);
 
-	bt_gatt_nus_c_handles_assign(&nus_c, conn, attrs, attrs_len);
-	bt_gatt_nus_c_tx_notif_enable(&nus_c);
+	bt_gatt_nus_c_handles_assign(dm, nus_c);
+	bt_gatt_nus_c_tx_notif_enable(nus_c);
 
-	bt_gatt_dm_data_release();
+	bt_gatt_dm_data_release(dm);
 }
 
-static void discovery_service_not_found(struct bt_conn *conn)
+static void discovery_service_not_found(struct bt_conn *conn,
+					void *context)
 {
 	printk("Service not found\n");
 }
 
-static void discovery_error(struct bt_conn *conn, int err)
+static void discovery_error(struct bt_conn *conn,
+			    int err,
+			    void *context)
 {
 	printk("Error while discovering GATT database: (%d)\n", err);
 }
@@ -217,8 +220,10 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 	}
 
 	if (conn == default_conn) {
-		err = bt_gatt_dm_start(conn, BT_UUID_NUS_SERVICE,
-				       &discovery_cb);
+		err = bt_gatt_dm_start(conn,
+				       BT_UUID_NUS_SERVICE,
+				       &discovery_cb,
+				       &gatt_nus_c);
 
 		if (err) {
 			printk("Failed to start discovery process (err:%d)\n",
@@ -314,7 +319,7 @@ static int nus_client_init(void)
 		}
 	};
 
-	err = bt_gatt_nus_c_init(&nus_c, &nus_c_init_obj);
+	err = bt_gatt_nus_c_init(&gatt_nus_c, &nus_c_init_obj);
 	if (err) {
 		printk("NUS Client initialization failed (err %d)\n", err);
 		return err;
@@ -385,7 +390,7 @@ void main(void)
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
 
-		err = bt_gatt_nus_c_send(&nus_c, buf->data, buf->len);
+		err = bt_gatt_nus_c_send(&gatt_nus_c, buf->data, buf->len);
 		if (err) {
 			printk("Failed to send data over BLE connection"
 			       "(err %d)\n", err);
