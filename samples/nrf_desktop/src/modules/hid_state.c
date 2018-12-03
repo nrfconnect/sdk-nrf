@@ -825,7 +825,8 @@ static void update_key(const struct hid_keymap *map, s16_t value)
 
 static void init(void)
 {
-	if (IS_ENABLED(CONFIG_ASSERT)) {
+	if (IS_ENABLED(CONFIG_ASSERT) &&
+	    !IS_ENABLED(CONFIG_DESKTOP_BUTTONS_NONE)) {
 		/* Validate the order of key IDs on the key map array. */
 		for (size_t i = 1; i < hid_keymap_size; i++) {
 			if (hid_keymap[i - 1].key_id >= hid_keymap[i].key_id) {
@@ -874,23 +875,26 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_button_event(eh)) {
-		const struct button_event *event = cast_button_event(eh);
+	if (!IS_ENABLED(CONFIG_DESKTOP_BUTTONS_NONE)) {
+		if (is_button_event(eh)) {
+			const struct button_event *event =
+				cast_button_event(eh);
 
-		/* Get usage ID and target report from HID Keymap */
-		struct hid_keymap *map = hid_keymap_get(event->key_id);
-		if (!map || !map->usage_id) {
-			LOG_WRN("No translation found, button ignored.");
+			/* Get usage ID and target report from HID Keymap */
+			struct hid_keymap *map = hid_keymap_get(event->key_id);
+			if (!map || !map->usage_id) {
+				LOG_WRN("No mapping, button ignored.");
+				return false;
+			}
+
+			/* Keydown increases ref counter, keyup decreases it. */
+			s16_t value = (event->pressed != false) ? (1) : (-1);
+			update_key(map, value);
+
+			keep_device_active();
+
 			return false;
 		}
-
-		/* Key down increases key ref counter, key up decreases it. */
-		s16_t value = (event->pressed != false) ? (1) : (-1);
-		update_key(map, value);
-
-		keep_device_active();
-
-		return false;
 	}
 
 	if (is_hid_report_subscription_event(eh)) {
