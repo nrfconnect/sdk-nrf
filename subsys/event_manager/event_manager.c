@@ -114,7 +114,8 @@ void _event_submit(struct event_header *eh)
 	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED)) {
 		const struct event_type *et = eh->type_id;
 
-		if (et->ev_info && et->ev_info->log_arg_fn) {
+		if (et->ev_info && et->ev_info->log_arg_fn &&
+		    is_profiling_enabled(profiler_event_ids[et - __start_event_types])) {
 			struct log_event_buf buf;
 
 			ARG_UNUSED(buf);
@@ -225,7 +226,12 @@ static void register_events(void)
 
 static void trace_event_execution(const struct event_header *eh, bool is_start)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION)) {
+	size_t tracing_event_id = profiler_event_ids[__stop_event_types -
+						     __start_event_types +
+						     (is_start ? 0 : 1)];
+
+	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION) &&
+	    is_profiling_enabled(tracing_event_id)) {
 		struct log_event_buf buf;
 
 		ARG_UNUSED(buf);
