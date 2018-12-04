@@ -6,12 +6,6 @@
 
 menu "Hardware interface modules"
 
-config DESKTOP_KEYMAP
-	string "Keymap"
-	default ""
-	help
-	  This option specifies a path to the keymap file.
-
 config DESKTOP_PORT_STATE
 	string "Port state"
 	default ""
@@ -76,6 +70,13 @@ config DESKTOP_BUTTONS_MATRIX_ENABLE
 	bool "Buttons scanned from key matrix"
 
 endchoice
+
+config DESKTOP_KEYMAP
+	string "Keymap"
+	depends on !DESKTOP_BUTTONS_NONE
+	default ""
+	help
+	  This option specifies a path to the keymap file.
 
 config DESKTOP_BUTTONS_MATRIX_SCAN_INTERVAL
 	int "Key matrix scan interval in ms"

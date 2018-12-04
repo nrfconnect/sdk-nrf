@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Power manager"
+
+config DESKTOP_POWER_MANAGER_ENABLE
+	bool "Enable power management"
+	default n
+	select SYS_POWER_MANAGEMENT
+	select SYS_POWER_LOW_POWER_STATE
+	select SYS_POWER_DEEP_SLEEP
+	select DEVICE_POWER_MANAGEMENT
+	help
+	  Enable power management, which will put the device to low-power mode
+	  if it is idle.
+
+if DESKTOP_POWER_MANAGER_ENABLE
+
+config DESKTOP_POWER_MANAGER_TIMEOUT
+	int "Power down timeout [s]"
+	default 120
+	help
+	  Time in seconds after which the device will enter low-power mode.
+
+config DESKTOP_LOG_POWER_MANAGER_LEVEL
+	int "Power management log level"
+	depends on LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for power management.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+endif
+
+endmenu

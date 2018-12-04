@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if SHELL
+
+menu "Shell module"
+
+config DESKTOP_SHELL_ENABLE
+	bool "Enable shell module"
+	default n
+	depends on SHELL
+
+config DESKTOP_DEVICE_SHELL
+	bool "Enable device information"
+	depends on DESKTOP_SHELL_ENABLE
+	default n
+	select DEVICE_SHELL
+
+config DESKTOP_KERNEL_SHELL
+	bool "Enable kernel information"
+	depends on DESKTOP_SHELL_ENABLE
+	select KERNEL_SHELL
+	select THREAD_MONITOR
+	select INIT_STACKS
+	select THREAD_NAME
+
+endmenu
+
+endif

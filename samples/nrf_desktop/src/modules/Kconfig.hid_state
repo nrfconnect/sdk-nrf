@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "HID State"
+
+config DESKTOP_REPORT_DESC
+	string "HID report descriptor"
+	default ""
+	help
+	  This option specifies a path to the HID report descriptor file.
+
+config DESKTOP_HID_STATE_ENABLE
+	bool
+	default y if DESKTOP_WHEEL_ENABLE || !DESKTOP_MOTION_NONE || !DESKTOP_BUTTONS_NONE
+	help
+	  HID events processing module.
+
+if DESKTOP_HID_STATE_ENABLE
+
+config DESKTOP_HID_REPORT_EXPIRATION
+	int "HID report expiration [ms]"
+	default 500
+	help
+	  Define the time after which a HID report expires
+	  and is not sent again.
+
+config DESKTOP_HID_STATE_ITEM_COUNT
+	int "HID state item count"
+	default 10
+	range 1 255
+
+config DESKTOP_HID_EVENT_QUEUE_SIZE
+	int "HID event queue size"
+	default 12
+	range 2 255
+
+config DESKTOP_LOG_HID_STATE_LEVEL
+	int "HID state log level"
+	depends on LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for HID state.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+
+endif
+
+endmenu
