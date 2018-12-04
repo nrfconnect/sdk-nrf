@@ -1,7 +1,7 @@
 .. _peripheral_hids:
 
 Bluetooth: Peripheral HIDs mouse
-##########################
+################################
 
 Overview
 ********
