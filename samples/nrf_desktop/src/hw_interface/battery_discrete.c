@@ -32,6 +32,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_LOG_LEVEL);
 
 #define ADC_DEVICE_NAME		DT_ADC_0_NAME
 #define ADC_RESOLUTION		12
+#define ADC_OVERSAMPLING	4 /* 2^ADC_OVERSAMPLING samples are averaged */
 #define ADC_MAX 		4096
 #define ADC_GAIN		ADC_GAIN_1
 #define ADC_REFERENCE		ADC_REF_INTERNAL
@@ -212,6 +213,7 @@ static void battery_lvl_read_fn(struct k_work *work)
 			.buffer      = &adc_buffer,
 			.buffer_size = sizeof(adc_buffer),
 			.resolution  = ADC_RESOLUTION,
+			.oversampling = ADC_OVERSAMPLING,
 		};
 
 		err = adc_read_async(adc_dev, &sequence, &async_sig);
