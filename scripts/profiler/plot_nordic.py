@@ -63,6 +63,8 @@ class DrawState():
         self.selected_event_textbox = None
 
         self.added_time = 0
+        self.synchronized_with_events = False
+        self.stale_events_displayed = False
 
 
 class ProcessedData():
@@ -462,6 +464,17 @@ class PlotNordic():
                 events.append(event)
 
         # translating plot
+        if not self.draw_state.synchronized_with_events:
+            # ignore translating plot for stale events
+            if not self.draw_state.stale_events_displayed:
+                self.draw_state.stale_events_displayed = True
+            else:
+            # translate plot for new events
+                if len(events) != 0:
+                    self.draw_state.added_time = events[-1].timestamp - \
+                                                   0.3 * self.draw_state.timeline_width
+                    self.draw_state.synchronized_with_events = True
+
         if not self.draw_state.paused:
             self.draw_state.timeline_max = time.time() - self.start_time + \
                 self.draw_state.added_time
