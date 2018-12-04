@@ -8,9 +8,19 @@
 #include <profiler.h>
 #include <kernel_structs.h>
 
+
+/* By default, when there is no shell, all events are profiled. */
+#ifndef CONFIG_SHELL
+u32_t profiler_enabled_events = 0xffffffff;
+#endif
+
 static char descr[CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS]
 		 [CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
-static char *arg_types_encodings[] = {	"%u",	/* u8_t */
+
+u8_t profiler_num_events;
+
+static char *arg_types_encodings[] = {
+					"%u",	/* u8_t */
 					"%d",	/* s8_t */
 					"%u",	/* u16_t */
 					"%d",	/* s16_t */
@@ -18,7 +28,7 @@ static char *arg_types_encodings[] = {	"%u",	/* u8_t */
 					"%d",	/* s32_t */
 					"%s",	/* string */
 					"%D"	/* time */
-					};
+				     };
 
 
 static void event_module_description(void);
@@ -64,6 +74,11 @@ void profiler_term(void)
 {
 }
 
+const char *profiler_get_event_descr(size_t profiler_event_id)
+{
+	return descr[profiler_event_id];
+}
+
 u16_t profiler_register_event_type(const char *name, const char **args,
 				   const enum profiler_arg *arg_types,
 				   u8_t arg_cnt)
@@ -97,6 +112,7 @@ u16_t profiler_register_event_type(const char *name, const char **args,
 	 */
 	__DMB();
 	events.NumEvents++;
+	profiler_num_events = events.NumEvents;
 	k_sched_unlock();
 	return events.EventOffset + ne;
 }

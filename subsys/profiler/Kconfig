@@ -5,8 +5,9 @@ menuconfig PROFILER
 if PROFILER
 
 config MAX_NUMBER_OF_CUSTOM_EVENTS
-	int "Maximum number of stored custom events types"
+	int "Maximum number of stored custom event types"
 	default 32
+	range 0 32
 
 config PROFILER_CUSTOM_EVENT_BUF_LEN
 	int "Length of data buffer for custom event data (in bytes)"
@@ -63,6 +64,14 @@ config PROFILER_NORDIC_RTT_CHANNEL_INFO
 config PROFILER_NORDIC_RTT_CHANNEL_COMMANDS
 	int "Command down channel index"
 	default 1
+
+config PROFILER_NORDIC_STACK_SIZE
+	int "Stack size for thread handling host input"
+	default 512
+
+config PROFILER_NORDIC_THREAD_PRIORITY
+	int "Priority of thread handling host input"
+	default 10
 
 endmenu # Advanced
 

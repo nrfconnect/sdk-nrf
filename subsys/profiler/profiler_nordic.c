@@ -10,8 +10,15 @@
 #include <misc/util.h>
 #include <misc/byteorder.h>
 #include <zephyr.h>
-#include <rtt/SEGGER_RTT.h>
+#include <SEGGER_RTT.h>
 #include <profiler.h>
+#include <string.h>
+
+
+/* By default, when there is no shell, all events are profiled. */
+#ifndef CONFIG_SHELL
+u32_t profiler_enabled_events = 0xffffffff;
+#endif
 
 
 static K_SEM_DEFINE(profiler_sem, 0, 1);
@@ -24,9 +31,10 @@ enum nordic_command {
 	NORDIC_COMMAND_INFO	= 3
 };
 
-static char descr[CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS]
-		 [CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
-static char *arg_types_encodings[] = {	"u8",  /* u8_t */
+char descr[CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS]
+	  [CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
+static char *arg_types_encodings[] = {
+					"u8",  /* u8_t */
 					"s8",  /* s8_t */
 					"u16", /* u16_t */
 					"s16", /* s16_t */
@@ -34,9 +42,9 @@ static char *arg_types_encodings[] = {	"u8",  /* u8_t */
 					"s32", /* s32_t */
 					"s",   /* string */
 					"t"    /* time */
-					};
+				     };
 
-static u8_t num_events;
+u8_t profiler_num_events;
 
 static u8_t buffer_data[CONFIG_PROFILER_NORDIC_DATA_BUFFER_SIZE];
 static u8_t buffer_info[CONFIG_PROFILER_NORDIC_INFO_BUFFER_SIZE];
@@ -44,7 +52,8 @@ static u8_t buffer_commands[CONFIG_PROFILER_NORDIC_COMMAND_BUFFER_SIZE];
 
 static k_tid_t protocol_thread_id;
 
-static K_THREAD_STACK_DEFINE(profiler_nordic_stack, 128);
+static K_THREAD_STACK_DEFINE(profiler_nordic_stack,
+			     CONFIG_PROFILER_NORDIC_STACK_SIZE);
 static struct k_thread profiler_nordic_thread;
 
 static void send_system_description(void)
@@ -54,22 +63,27 @@ static void send_system_description(void)
 	/* Memory barrier to make sure that data is visible
 	 * before being accessed
 	 */
-	u8_t ne = num_events;
+	u8_t ne = profiler_num_events;
 
 	__DMB();
+	char end_line = '\n';
 
 	for (size_t t = 0; t < ne; t++) {
-		num_bytes_send = SEGGER_RTT_WriteString(
+		num_bytes_send = SEGGER_RTT_WriteNoLock(
 				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
-				  descr[t]);
+				  descr[t],
+				  strlen(descr[t]));
 		__ASSERT_NO_MSG(num_bytes_send > 0);
-		num_bytes_send = SEGGER_RTT_PutChar(
+		num_bytes_send = SEGGER_RTT_WriteNoLock(
 				  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
-				  '\n');
+				  &end_line,
+				  1);
 		__ASSERT_NO_MSG(num_bytes_send > 0);
 	}
-	num_bytes_send = SEGGER_RTT_PutChar(
-			  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO, '\n');
+	num_bytes_send = SEGGER_RTT_WriteNoLock(
+			  CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
+			  &end_line,
+			  1);
 	__ASSERT_NO_MSG(num_bytes_send > 0);
 }
 
@@ -113,21 +127,24 @@ int profiler_init(void)
 
 	ret = SEGGER_RTT_ConfigUpBuffer(
 		CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
-		"Nordic profiler data", buffer_data,
+		"Nordic profiler data",
+		buffer_data,
 		CONFIG_PROFILER_NORDIC_DATA_BUFFER_SIZE,
 		SEGGER_RTT_MODE_NO_BLOCK_SKIP);
 	__ASSERT_NO_MSG(ret >= 0);
 
 	ret = SEGGER_RTT_ConfigUpBuffer(
 		CONFIG_PROFILER_NORDIC_RTT_CHANNEL_INFO,
-		"Nordic profiler info", buffer_info,
+		"Nordic profiler info",
+		buffer_info,
 		CONFIG_PROFILER_NORDIC_INFO_BUFFER_SIZE,
 		SEGGER_RTT_MODE_NO_BLOCK_SKIP);
 	__ASSERT_NO_MSG(ret >= 0);
 
 	ret = SEGGER_RTT_ConfigDownBuffer(
 		CONFIG_PROFILER_NORDIC_RTT_CHANNEL_COMMANDS,
-		"Nordic profiler command", buffer_commands,
+		"Nordic profiler command",
+		buffer_commands,
 		CONFIG_PROFILER_NORDIC_COMMAND_BUFFER_SIZE,
 		SEGGER_RTT_MODE_NO_BLOCK_SKIP);
 	__ASSERT_NO_MSG(ret >= 0);
@@ -136,7 +153,8 @@ int profiler_init(void)
 			profiler_nordic_stack,
 			K_THREAD_STACK_SIZEOF(profiler_nordic_stack),
 			(k_thread_entry_t) profiler_nordic_thread_fn,
-			NULL, NULL, NULL, K_PRIO_COOP(1), 0, 0);
+			NULL, NULL, NULL,
+			CONFIG_PROFILER_NORDIC_THREAD_PRIORITY, 0, 0);
 	return 0;
 }
 
@@ -148,6 +166,11 @@ void profiler_term(void)
 	k_sem_take(&profiler_sem, K_FOREVER);
 }
 
+const char *profiler_get_event_descr(size_t profiler_event_id)
+{
+	return descr[profiler_event_id];
+}
+
 u16_t profiler_register_event_type(const char *name, const char **args,
 				   const enum profiler_arg *arg_types,
 				   u8_t arg_cnt)
@@ -156,7 +179,7 @@ u16_t profiler_register_event_type(const char *name, const char **args,
 	 * from multiple threads
 	 */
 	k_sched_lock();
-	u8_t ne = num_events;
+	u8_t ne = profiler_num_events;
 	size_t temp = snprintf(descr[ne],
 			CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS,
 			"%s,%d", name, ne);
@@ -188,7 +211,7 @@ u16_t profiler_register_event_type(const char *name, const char **args,
 	 * before being accessed
 	 */
 	__DMB();
-	num_events++;
+	profiler_num_events++;
 	k_sched_unlock();
 
 	return ne;
@@ -223,10 +246,13 @@ void profiler_log_send(struct log_event_buf *buf, u16_t event_type_id)
 		u8_t type_id = event_type_id & UCHAR_MAX;
 
 		buf->payload_start[0] = type_id;
-		u8_t num_bytes_send = SEGGER_RTT_Write(
+		int key = irq_lock();
+
+		u8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
 				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
 				buf->payload_start,
 				buf->payload - buf->payload_start);
+		irq_unlock(key);
 		__ASSERT_NO_MSG(num_bytes_send > 0);
 	}
 }
