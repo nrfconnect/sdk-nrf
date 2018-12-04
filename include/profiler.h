@@ -23,11 +23,25 @@
  * protocol (desktop application from SEGGER may be used to visualize custom
  * events) and custom (Nordic) protocol are implemented.
  *
+ * @warning Currently up to 32 events may be profiled.
  * @{
  */
 
 
 #include <zephyr/types.h>
+
+#ifndef CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS
+#define CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS 0
+#endif
+
+/** @brief Set of flags for enabling/disabling profiling for given events.
+ */
+extern u32_t profiler_enabled_events;
+
+
+/** @brief Number of events registered in profiler.
+ */
+extern u8_t profiler_num_events;
 
 
 /** @brief Data types for logging in system profiler.
@@ -77,6 +91,35 @@ void profiler_term(void);
 static inline void profiler_term(void) {}
 #endif
 
+/** @brief Function to retrieve description of an event.
+ *
+ * @param profiler_event_id Event ID in profiler.
+ *
+ * @return Event description.
+ */
+#ifdef CONFIG_PROFILER
+const char *profiler_get_event_descr(size_t profiler_event_id);
+#else
+static inline const char *profiler_get_event_descr(size_t profiler_event_id)
+{
+	return NULL;
+}
+#endif
+
+/** @brief Function to check if profiling is enabled for given event.
+ *
+ * @param profiler_event_id Event ID in profiler.
+ *
+ * @return Logical value indicating if event is currently profiled.
+ */
+static inline bool is_profiling_enabled(size_t profiler_event_id)
+{
+	if (IS_ENABLED(CONFIG_PROFILER)) {
+		__ASSERT_NO_MSG(profiler_event_id < CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS);
+		return (profiler_enabled_events & BIT(profiler_event_id)) != 0;
+	}
+	return false;
+}
 
 /** @brief Function to register type of event in system profiler.
  *
