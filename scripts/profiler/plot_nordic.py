@@ -446,6 +446,7 @@ class PlotNordic():
                                 self.processed_data.submit_event,
                                 self.processed_data.start_event,
                                 event))
+                        self.submitted_event_type = None
                 else:
                     self.processed_data.temp_events.append(event)
                     if event.timestamp > time.time() - self.start_time + self.draw_state.added_time - \
