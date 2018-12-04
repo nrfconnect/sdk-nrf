@@ -118,7 +118,10 @@ pipeline {
           def projs = [:]
           env.DOWNSTREAM_PROJECTS.split(',').each {
             projs["${it}"] = {
-              build job: "${it}", propagate: true, wait: false, parameters: [string(name: 'branchname', value: "$BRANCH_NAME"), string(name: 'API_URL', value: "${getRepoURL()}"), string(name: 'API_COMMIT', value: "$GIT_COMMIT")]
+              build job: "${it}", propagate: true, wait: false, parameters: [string(name: 'branchname', value: "$BRANCH_NAME"),
+                                                                             string(name: 'API_URL', value: "${getRepoURL()}"),
+                                                                             string(name: 'API_COMMIT', value: "$GIT_COMMIT"),
+                                                                             string(name: 'API_PR_NAME', value: "$CHANGE_TITLE")]
             }
           }
           parallel projs
