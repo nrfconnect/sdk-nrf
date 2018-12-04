@@ -8,28 +8,47 @@ menu "BLE Services"
 
 config DESKTOP_HID_MOUSE
 	bool "Mouse HID device"
-	select BT_GATT_HIDS
-	select NRF_BT_DIS
 	help
 	  This option controls if target is visible as mouse HID device.
 
 config DESKTOP_HID_KEYBOARD
 	bool "Keyboard HID device"
-	select BT_GATT_HIDS
-	select NRF_BT_DIS
 	help
 	  This option controls if target is visible as keyboard HID device.
 
 config DESKTOP_HID_MPLAYER
 	bool "Media player HID device"
-	select BT_GATT_HIDS
-	select NRF_BT_DIS
 	help
 	  This option controls if target is visible as media player HID device.
+
+config DESKTOP_BAS_ENABLE
+	bool
+	default n
+	help
+	  This option enables battery service.
+
+config DESKTOP_HIDS_ENABLE
+	bool
+	default n
+	help
+	  This option enables HID over GATT service.
+
+config DESKTOP_HID_PERIPHERAL
+	bool
+	default y
+	depends on BT_PERIPHERAL
+	depends on (DESKTOP_HID_MOUSE || DESKTOP_HID_KEYBOARD || DESKTOP_HID_MPLAYER)
+	select BT_GATT_HIDS
+	select NRF_BT_DIS
+	select DESKTOP_BAS_ENABLE
+	select DESKTOP_HIDS_ENABLE
+	help
+	  This option selects required options if device is HID peripheral.
 
 config DESKTOP_LOG_BAS_LEVEL
 	int "Battery Service log level"
 	depends on LOG
+	depends on DESKTOP_BAS_ENABLE
 	default 2
 	range 0 4
 	help
@@ -41,23 +60,10 @@ config DESKTOP_LOG_BAS_LEVEL
 	  - 3 INFO, write LOG_INF in addition to previous levels
 	  - 4 DEBUG, write LOG_DBG in addition to previous levels
 
-config DESKTOP_LOG_DIS_LEVEL
-	int "BLE state log level"
-	depends on LOG
-	default 2
-	range 0 4
-	help
-	  Sets log level for Device Information Service.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
-
-config DESKTOP_LOG_HOG_LEVEL
+config DESKTOP_LOG_HIDS_LEVEL
 	int "HID over GATT Service log level"
-	depends on LOG && (DESKTOP_HID_MOUSE || DESKTOP_HID_KEYBOARD || DESKTOP_HID_MPLAYER)
+	depends on LOG
+	depends on DESKTOP_HIDS_ENABLE
 	default 2
 	range 0 4
 	help

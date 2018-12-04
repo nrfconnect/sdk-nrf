@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "BLE"
+
+comment "BLE State"
+
+config DESKTOP_BLE_BOND_REMOVAL
+	bool "Enable bond removal by pressing a button during startup"
+	default n
+	depends on !DESKTOP_BUTTONS_NONE
+	help
+	  Let user remove all bonded Bluetooth peers by holding down a button
+	  during the device boot.
+
+if DESKTOP_BLE_BOND_REMOVAL
+
+config DESKTOP_BLE_BOND_REMOVAL_BUTTON
+	hex "Key ID of button used to remove bonds when held during startup"
+	default 0x0002
+	range 0x0000 0xffff
+	help
+	  Button which should be held during device startup in order to
+	  unpair all bonded Bluetooth peers.
+endif
+
+if !DESKTOP_BLE_BOND_REMOVAL
+
+config DESKTOP_BLE_BOND_REMOVAL_BUTTON
+	hex
+	default 0x0000
+
+endif
+
+config DESKTOP_LOG_BLE_STATE_LEVEL
+	int "BLE state log level"
+	depends on LOG
+	default 2
+	range 0 4
+	help
+	  Sets log level for BLE state.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+
+
+comment "BLE Advertising"
+
+config DESKTOP_BLE_ADVERTISING_ENABLE
+	bool "Enable BLE advertising"
+	default n
+	depends on BT_PERIPHERAL
+	help
+	  Make device discoverable via BLE.
+
+config DESKTOP_LOG_BLE_ADV_LEVEL
+	int "BLE advertising log level"
+	depends on LOG
+	depends on DESKTOP_BLE_ADVERTISING_ENABLE
+	default 2
+	range 0 4
+	help
+	  Sets log level for BLE advertising.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write LOG_ERR
+	  - 2 WARNING, write LOG_WRN in addition to previous level
+	  - 3 INFO, write LOG_INF in addition to previous levels
+	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+
+endmenu
