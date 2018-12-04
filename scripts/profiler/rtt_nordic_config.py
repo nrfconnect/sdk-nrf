@@ -9,7 +9,7 @@ RttNordicConfig = {
     'rtt_command_channel': 1,
     'ms_per_timestamp_tick': 0.03125,
     'byteorder': 'little',
-    'reset_on_start': True,
+    'reset_on_start': False,
     'connection_timeout': -1,
     'timestamp_raw_max': 2**32 #timestamp on uC is stored as 32-bit value
 }
