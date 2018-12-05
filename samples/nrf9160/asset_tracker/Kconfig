@@ -94,6 +94,20 @@ config ACCEL_DEV_NAME
 config ACCEL_TRIGGER
 	bool
 	default SENSOR_SIM_TRIGGER
+
+config FLIP_INPUT
+	int "Button or switch number to simulate flip"
+	range 1 4 if BOARD_NRF9160_PCA10090
+	range 1 1 if BOARD_NRF9160_PCA20035
+	default 3 if BOARD_NRF9160_PCA10090
+	default 1 if BOARD_NRF9160_PCA20035
+	help
+		Button or switch number to use for simulating
+		a board flip event.
+		1 - Button 1
+		2 - Button 2
+		3 - Switch 1
+		4 - Switch 2
 endif
 
 if ACCEL_USE_EXTERNAL
