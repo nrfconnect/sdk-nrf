@@ -115,13 +115,19 @@ pipeline {
     stage('Trigger testing build') {
       steps {
         script {
+          if (env.CHANGE_TITLE) {
+            PR_NAME = "${env.CHANGE_TITLE}"
+          }
+          else {
+            PR_NAME = "$BRANCH_NAME"
+          }
           def projs = [:]
           env.DOWNSTREAM_PROJECTS.split(',').each {
             projs["${it}"] = {
               build job: "${it}", propagate: true, wait: false, parameters: [string(name: 'branchname', value: "$BRANCH_NAME"),
                                                                              string(name: 'API_URL', value: "${getRepoURL()}"),
                                                                              string(name: 'API_COMMIT', value: "$GIT_COMMIT"),
-                                                                             string(name: 'API_PR_NAME', value: "$CHANGE_TITLE")]
+                                                                             string(name: 'API_PR_NAME', value: "$PR_NAME")]
             }
           }
           parallel projs
