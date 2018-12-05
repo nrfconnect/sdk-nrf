@@ -16,8 +16,7 @@
 #include "module_state_event.h"
 
 #include <logging/log.h>
-#define LOG_LEVEL CONFIG_DESKTOP_LOG_BAS_LEVEL
-LOG_MODULE_REGISTER(MODULE);
+LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BAS_LOG_LEVEL);
 
 
 static struct bt_gatt_ccc_cfg blvl_ccc_cfg[BT_GATT_CCC_MAX];

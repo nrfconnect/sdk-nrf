@@ -164,108 +164,44 @@ config DESKTOP_BATTERY_CSO_FREQ
 
 comment "Log level configuration"
 
-config DESKTOP_LOG_BOARD_MODULE_LEVEL
-	int "Board module log level"
-	depends on LOG
-	default 2
-	range 0 4
-	help
-	  Sets log level for board module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+module = DESKTOP_BOARD
+module-str = board module
+source "subsys/logging/Kconfig.template.log_config"
 
-config DESKTOP_LOG_ACCEL_MODULE_LEVEL
-	int "Accelerometer module log level"
-	depends on LOG
-	depends on !DESKTOP_ACCEL_NONE
-	default 2
-	range 0 4
-	help
-	  Sets log level for accelerometer module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+if !DESKTOP_ACCEL_NONE
+module = DESKTOP_ACCEL
+module-str = accelerometer module
+source "subsys/logging/Kconfig.template.log_config"
+endif
 
-config DESKTOP_LOG_MOTION_MODULE_LEVEL
-	int "Motion module log level"
-	depends on LOG
-	depends on !DESKTOP_MOTION_NONE
-	default 2
-	range 0 4
-	help
-	  Sets log level for motion module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+if !DESKTOP_MOTION_NONE
+module = DESKTOP_MOTION
+module-str = motion module
+source "subsys/logging/Kconfig.template.log_config"
+endif
 
-config DESKTOP_LOG_BUTTONS_MODULE_LEVEL
-	int "Buttons module log level"
-	depends on LOG
-	depends on !DESKTOP_BUTTONS_NONE
-	default 2
-	range 0 4
-	help
-	  Sets log level for buttons module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+if !DESKTOP_BUTTONS_NONE
+module = DESKTOP_BUTTONS
+module-str = buttons module
+source "subsys/logging/Kconfig.template.log_config"
+endif
 
-config DESKTOP_LOG_WHEEL_MODULE_LEVEL
-	int "Wheel module log level"
-	depends on LOG
-	depends on DESKTOP_WHEEL_ENABLE
-	default 2
-	range 0 4
-	help
-	  Sets log level for wheel module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+if DESKTOP_WHEEL_ENABLE
+module = DESKTOP_WHEEL
+module-str = wheel module
+source "subsys/logging/Kconfig.template.log_config"
+endif
 
-config DESKTOP_LOG_LED_MODULE_LEVEL
-	int "LED module log level"
-	depends on LOG
-	depends on DESKTOP_LED_ENABLE
-	default 2
-	range 0 4
-	help
-	  Sets log level for LED module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+if DESKTOP_LED_ENABLE
+module = DESKTOP_LED
+module-str = LED module
+source "subsys/logging/Kconfig.template.log_config"
+endif
 
-config DESKTOP_LOG_BATTERY_MODULE_LEVEL
-	int "Battery module log level"
-	depends on LOG
-	depends on !DESKTOP_BATTERY_NONE
-	default 2
-	range 0 4
-	help
-	  Sets log level for battery module.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+if !DESKTOP_BATTERY_NONE
+module = DESKTOP_BATTERY
+module-str = battery module
+source "subsys/logging/Kconfig.template.log_config"
+endif
 
 endmenu

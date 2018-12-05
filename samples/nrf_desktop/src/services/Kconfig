@@ -45,34 +45,20 @@ config DESKTOP_HID_PERIPHERAL
 	help
 	  This option selects required options if device is HID peripheral.
 
-config DESKTOP_LOG_BAS_LEVEL
-	int "Battery Service log level"
-	depends on LOG
-	depends on DESKTOP_BAS_ENABLE
-	default 2
-	range 0 4
-	help
-	  Sets log level for Battery Service.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+if DESKTOP_BAS_ENABLE
 
-config DESKTOP_LOG_HIDS_LEVEL
-	int "HID over GATT Service log level"
-	depends on LOG
-	depends on DESKTOP_HIDS_ENABLE
-	default 2
-	range 0 4
-	help
-	  Sets log level for HID over GATT Service.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write LOG_ERR
-	  - 2 WARNING, write LOG_WRN in addition to previous level
-	  - 3 INFO, write LOG_INF in addition to previous levels
-	  - 4 DEBUG, write LOG_DBG in addition to previous levels
+module = DESKTOP_BAS
+module-str = battery service
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+if DESKTOP_HIDS_ENABLE
+
+module = DESKTOP_HIDS
+module-str = HID over GATT service
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
 
 endmenu
