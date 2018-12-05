@@ -37,6 +37,12 @@
 #define LED_GET_ON(x)			((x) & 0xFF)
 #define LED_GET_BLINK(x)		(((x) >> 8) & 0xFF)
 
+#ifdef CONFIG_ACCEL_USE_SIM
+#define FLIP_INPUT			BIT(CONFIG_FLIP_INPUT - 1)
+#else
+#define FLIP_INPUT			-1
+#endif
+
 #if !defined(CONFIG_LTE_LINK_CONTROL)
 #error "Missing CONFIG_LTE_LINK_CONTROL"
 #endif /* !defined(CONFIG_LTE_LINK_CONTROL) */
@@ -106,7 +112,7 @@ enum error_type {
 
 /* Forward declaration of functions */
 static void cloud_connect(struct k_work *work);
-static void flip_poll(void);
+static void flip_send(void);
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct nrf_cloud_sensor_data *data);
@@ -218,14 +224,14 @@ static void sensor_trigger_handler(struct device *dev,
 	/* No action implemented. */
 }
 
-/**@brief Function for polling flip orientation if mode has been enabled. */
-static void flip_poll(void)
+/**@brief Poll flip orientation and send to cloud if flip mode is enabled. */
+static void flip_send(void)
 {
 	static enum orientation_state last_orientation_state =
 		ORIENTATION_NOT_KNOWN;
 	static struct orientation_detector_sensor_data sensor_data;
 
-	if (!flip_mode_enabled) {
+	if (!flip_mode_enabled || !atomic_get(&send_data_enable)) {
 		return;
 	}
 
@@ -503,8 +509,8 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 		return;
 	}
 
-	if (has_changed & SWITCH_1) {
-		flip_poll();
+	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (has_changed & FLIP_INPUT)) {
+		flip_send();
 	}
 
 	if ((has_changed & SWITCH_2) &&
@@ -677,6 +683,11 @@ static void sensors_init(void)
 	gps_cloud_data.data.len = nmea_data.len;
 
 	flip_cloud_data.type = NRF_CLOUD_SENSOR_FLIP;
+
+	/* Get and send sensor data after initialization, as it may be a long
+	 * time until next time if the application is in power optimized mode.
+	 */
+	flip_send();
 }
 
 /**@brief Initializes buttons and LEDs, using the DK buttons and LEDs
