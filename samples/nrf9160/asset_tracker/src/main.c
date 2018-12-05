@@ -20,12 +20,12 @@
 #include "orientation_detector.h"
 
 /* Interval in milliseconds between each time status LEDs are updated. */
-#define LEDS_UPDATE_INTERVAL	        500
+#define LEDS_UPDATE_INTERVAL	        K_MSEC(500)
 
-/* Interval in microseconds between each time LEDs are updated when indicating
+/* Interval in milliseconds between each time LEDs are updated when indicating
  * that an error has occurred.
  */
-#define LEDS_ERROR_UPDATE_INTERVAL      250000
+#define LEDS_ERROR_UPDATE_INTERVAL      K_MSEC(250)
 
 #define BUTTON_1			BIT(0)
 #define BUTTON_2			BIT(1)
@@ -50,13 +50,17 @@
 	*/
 
 enum {
-	LEDS_INITIALIZING     = LED_ON(0),
-	LEDS_CONNECTING       = LED_BLINK(DK_LED3_MSK),
-	LEDS_PATTERN_WAIT     = LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
-	LEDS_PATTERN_ENTRY    = LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
-	LEDS_PATTERN_DONE     = LED_BLINK(DK_LED4_MSK),
-	LEDS_PAIRED           = LED_ON(DK_LED4_MSK),
-	LEDS_ERROR            = LED_ON(DK_ALL_LEDS_MSK)
+	LEDS_INITIALIZING	= LED_ON(0),
+	LEDS_CONNECTING		= LED_BLINK(DK_LED3_MSK),
+	LEDS_PATTERN_WAIT	= LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
+	LEDS_PATTERN_ENTRY	= LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
+	LEDS_PATTERN_DONE	= LED_BLINK(DK_LED4_MSK),
+	LEDS_PAIRED		= LED_ON(DK_LED4_MSK),
+	LEDS_ERROR_NRF_CLOUD	= LED_BLINK(DK_LED1_MSK | DK_LED4_MSK),
+	LEDS_ERROR_BSD_REC	= LED_BLINK(DK_LED1_MSK | DK_LED3_MSK),
+	LEDS_ERROR_BSD_IRREC	= LED_BLINK(DK_ALL_LEDS_MSK),
+	LEDS_ERROR_LTE_LC	= LED_BLINK(DK_LED1_MSK | DK_LED2_MSK),
+	LEDS_ERROR_UNKNOWN	= LED_ON(DK_ALL_LEDS_MSK)
 } display_state;
 
  /* Variables to keep track of nRF cloud user association. */
@@ -92,6 +96,7 @@ static void flip_poll(void);
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct nrf_cloud_sensor_data *data);
+static void leds_update(struct k_work *work);
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
@@ -108,46 +113,43 @@ void error_handler(enum error_type err_type, int err_code)
 #if !defined(CONFIG_DEBUG)
 	sys_reboot(SYS_REBOOT_COLD);
 #else
-	u8_t led_pattern;
-
 	switch (err_type) {
 	case ERROR_NRF_CLOUD:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 4, 2 and 3)
 		 * if there is an application error.
 		 */
-		led_pattern = DK_LED1_MSK | DK_LED4_MSK;
+		display_state = LEDS_ERROR_NRF_CLOUD;
 		printk("Error of type ERROR_NRF_CLOUD: %d\n", err_code);
 	break;
 	case ERROR_BSD_RECOVERABLE:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 3, 2 and 4)
 		 * if there is a recoverable error.
 		 */
-		led_pattern = DK_LED1_MSK | DK_LED3_MSK;
+		display_state = LEDS_ERROR_BSD_REC;
 		printk("Error of type ERROR_BSD_RECOVERABLE: %d\n", err_code);
 	break;
 	case ERROR_BSD_IRRECOVERABLE:
 		/* Blinking all LEDs ON/OFF if there is an
 		 * irrecoverable error.
 		 */
-		led_pattern = DK_ALL_LEDS_MSK;
-		printk("Error of type ERROR_BSD_IRRECOVERABLE: %d\n",
-								err_code);
+		display_state = LEDS_ERROR_BSD_IRREC;
+		printk("Error of type ERROR_BSD_IRRECOVERABLE: %d\n", err_code);
 	break;
 	default:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
 		 * undefined error.
 		 */
-		led_pattern = DK_LED1_MSK | DK_LED2_MSK;
-		printk("Unknown error type: %d err_code: %d\n",
+		display_state = LEDS_ERROR_UNKNOWN;
+		printk("Unknown error type: %d, code: %d\n",
 			err_type, err_code);
 	break;
 	}
 
 	while (true) {
-		dk_set_leds(led_pattern & 0x0f);
-		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL);
-		dk_set_leds(~led_pattern & 0x0f);
-		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL);
+		leds_update(NULL);
+		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL * MSEC_PER_SEC);
+		leds_update(NULL);
+		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL * MSEC_PER_SEC);
 	}
 #endif /* CONFIG_DEBUG */
 }
@@ -242,17 +244,11 @@ static void leds_update(struct k_work *work)
 {
 	static bool led_on;
 	static u8_t current_led_on_mask;
-	u8_t led_on_mask = current_led_on_mask;
+	u8_t led_on_mask;
 
-	ARG_UNUSED(work);
-
-	/* Reset LED3 and LED4. */
-	led_on_mask &= ~(DK_LED3_MSK | DK_LED4_MSK);
-
-	/* Set LED3 and LED4 to match current state. */
-	led_on_mask |= LED_GET_ON(display_state);
-
+	led_on_mask = LED_GET_ON(display_state);
 	led_on = !led_on;
+
 	if (led_on) {
 		led_on_mask |= LED_GET_BLINK(display_state);
 	} else {
@@ -264,7 +260,9 @@ static void leds_update(struct k_work *work)
 		current_led_on_mask = led_on_mask;
 	}
 
-	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+	if (work) {
+		k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+	}
 }
 
 /**@brief Send sensor data to nRF Cloud. **/
@@ -366,7 +364,6 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 	case NRF_CLOUD_EVT_ERROR:
 		printk("NRF_CLOUD_EVT_ERROR, status: %d\n", p_evt->status);
 		atomic_set(&send_data_enable, 0);
-		display_state = LEDS_ERROR;
 		nrf_cloud_error_handler(p_evt->status);
 		break;
 	default:
