@@ -17,8 +17,7 @@
 #include "module_state_event.h"
 
 #include <logging/log.h>
-#define LOG_LEVEL CONFIG_DESKTOP_LOG_BOARD_MODULE_LEVEL
-LOG_MODULE_REGISTER(MODULE);
+LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BOARD_LOG_LEVEL);
 
 
 static int port_setup(const char *name,

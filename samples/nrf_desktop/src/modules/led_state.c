@@ -14,8 +14,7 @@
 #include "battery_event.h"
 
 #include <logging/log.h>
-#define LOG_LEVEL CONFIG_DESKTOP_LOG_STATE_STATE_LEVEL
-LOG_MODULE_REGISTER(MODULE);
+LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STATE_LOG_LEVEL);
 
 #include "led_state.h"
 

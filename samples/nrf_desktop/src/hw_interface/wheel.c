@@ -21,8 +21,7 @@
 #include "module_state_event.h"
 
 #include <logging/log.h>
-#define LOG_LEVEL CONFIG_DESKTOP_LOG_WHEEL_MODULE_LEVEL
-LOG_MODULE_REGISTER(MODULE);
+LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_WHEEL_LOG_LEVEL);
 
 static const u32_t qdec_pin[] = {
 	DT_NORDIC_NRF_QDEC_QDEC_0_A_PIN,

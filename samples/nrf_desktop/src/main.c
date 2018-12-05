@@ -10,7 +10,6 @@
 #include "module_state_event.h"
 
 #include <logging/log.h>
-#define LOG_LEVEL CONFIG_DESKTOP_LOG_BUTTONS_MODULE_LEVEL
 LOG_MODULE_REGISTER(MODULE);
 
 
