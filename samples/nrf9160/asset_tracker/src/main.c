@@ -708,7 +708,12 @@ void main(void)
 	while (true) {
 		nrf_cloud_process();
 		input_process();
-		/* put CPU to sleep to save power */
-		k_cpu_idle();
+		if (IS_ENABLED(CONFIG_LOG)) {
+			/* if logging is enabled, sleep */
+			k_sleep(K_MSEC(10));
+		} else {
+			/* other, put CPU to idle to save power */
+			k_cpu_idle();
+		}
 	}
 }
