@@ -9,6 +9,7 @@ config BSD_LIBRARY
 	bool
 	prompt "Use BSD Socket library for IP/TLS/DTLS"
 	select FLOAT
+	select NET_RAW_MODE
 	depends on CPU_CORTEX_M33
 	help
 	  Use Nordic BSD Socket library.
