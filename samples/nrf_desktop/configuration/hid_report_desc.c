@@ -46,7 +46,20 @@ const u8_t hid_report_desc[] = {
 	0x75, 0x0C,         /* Report Size (12) */
 	0x95, 0x02,         /* Report Count (2) */
 	0x81, 0x06,         /* Input (Data, Variable, Relative) */
+
 	0xC0,             /* End Collection (Physical) */
+
+#if CONFIG_DESKTOP_USER_CONFIG_ENABLE
+	/* Report: Configuration feature report */
+	0x05, 0x01,       /* Usage Page (Generic Desktop) */
+	0x85, REPORT_ID_USER_CONFIG,
+	0x09, 0x05,       /* Usage (Vendor Defined) */
+	0x15, 0x00,       /* Logical Minimum (0) */
+	0x26, 0xFF, 0x00, /* Logical Maximum (255) */
+	0x75, 0x08,       /* Report Size (8) */
+	0x95, REPORT_SIZE_USER_CONFIG, /* Report Count */
+	0xB1, 0x02,       /* Feature (Data, Variable, Absolute) */
+#endif
 	0xC0,           /* End Collection (Application) */
 #endif
 

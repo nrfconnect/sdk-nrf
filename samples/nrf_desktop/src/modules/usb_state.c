@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 
 #include "hid_event.h"
 #include "usb_event.h"
-
+#include "config_event.h"
 
 static enum usb_state state;
 
@@ -31,6 +31,35 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
 	*len  = hid_report_desc_size;
 	*data = (u8_t *)hid_report_desc;
+
+	return 0;
+}
+
+static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		size_t length = *len;
+		const u8_t *buffer = *data;
+
+		if (length > 0) {
+			if (buffer[0] != REPORT_ID_USER_CONFIG) {
+				LOG_WRN("Unsupported report ID");
+				return -ENOTSUP;
+			}
+
+			if (length != (REPORT_SIZE_USER_CONFIG + 1)) {
+				LOG_WRN("Unsupported report size");
+				return -ENOTSUP;
+			}
+
+			struct config_event *event = new_config_event();
+
+			event->id = buffer[1];
+			memcpy(event->data, &(buffer[2]), sizeof(event->data));
+
+			EVENT_SUBMIT(event);
+		}
+	}
 
 	return 0;
 }
@@ -196,6 +225,7 @@ static int usb_init(void)
 {
 	static const struct hid_ops ops = {
 		.get_report   = get_report,
+		.set_report   = set_report,
 		.int_in_ready = mouse_report_sent_cb,
 		.status_cb    = device_status,
 	};
