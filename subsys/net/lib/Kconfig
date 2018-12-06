@@ -5,6 +5,7 @@
 
 menu "Application protocols"
 
+rsource "coap/Kconfig"
 rsource "mqtt_socket/Kconfig"
 rsource "nrf_cloud/Kconfig"
 
