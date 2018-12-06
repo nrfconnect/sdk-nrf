@@ -41,3 +41,5 @@
 .. _`nRF Cloud`: https://nrfcloud.com/
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/Nordic-Thingy-52
+
+.. _`openSSL`: https://www.openssl.org/

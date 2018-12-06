@@ -1,0 +1,109 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Firmware Metadata Options"
+
+config SB_VALIDATION_METADATA_OFFSET
+	int "Offset to store validation metadata at."
+	default 0
+	help
+	  Must be either 0 or larger than size of application. If 0 is set,
+	  the metadata will be appended directly after the application image,
+	  aligned to closest word.
+
+config SB_FIRMWARE_INFO_OFFSET
+	hex "The location of firmware info inside firmware."
+	default 0x800
+	help
+	  Note that all space between the vector table and this address will be
+	  unused.
+
+config SB_FIRMWARE_VERSION
+	int "Version number of the firmware."
+	default 1
+
+config SB_MAGIC_COMMON
+	hex "Magic word used for all structs (32 bits)."
+	default 0x281ee6de
+	help
+	  There are 3 different metadata structs (see fw_metadata.h). They each
+	  have their own magic word composed of 3 u32_t values. One of the
+	  u32_ts is a compatibility id constructed from SB_HARDWARE_ID,
+	  SB_INFO_VERSION, SB_CRYPTO_ALGORITHM, and SB_CUSTOM_COMPATIBILITY_ID.
+	  The other two u32_ts are defined in SB_MAGIC_COMMON (common to
+	  all structs), and in one of SB_MAGIC_FIRMWARE_INFO,
+	  SB_MAGIC_VALIDATION_INFO, and SB_MAGIC_POINTER.
+	  The bootloader expects a certain value for each struct, and if it
+	  attempts to read a struct without a matching magic word, the struct
+	  will be rejected. The config values here apply both to this build of
+	  the bootloader, and to the metadata constructed for the app.
+	  Refer to fw_metadata.cmake to see how the magic words are composed.
+
+config SB_MAGIC_FIRMWARE_INFO
+	hex "Magic word for firmware info structs (32 bits)."
+	default 0x8fcebb4c
+	help
+	  Magic word value specific to firmware info structs (inside firmware).
+	  For more info, see SB_MAGIC_COMMON.
+
+config SB_MAGIC_VALIDATION_INFO
+	hex "Magic word used for validation info structs (32 bits)."
+	default 0x86518483
+	help
+	  Magic word value specific to validation info structs (after firmware).
+	  For more info, see SB_MAGIC_COMMON.
+
+config SB_MAGIC_POINTER
+	hex "Magic word used for validation info pointer structs (32 bits)."
+	default 0x6919b47e
+	help
+	  Magic word value specific to validation info pointer structs.
+	  For more info, see SB_MAGIC_COMMON.
+
+config SB_HARDWARE_ID
+	int "The SOC a firmware is built to run on (8 bits)."
+	range 0 255
+	default 51 if SOC_SERIES_NRF51X
+	default 52 if SOC_SERIES_NRF52X
+	default 91 if SOC_SERIES_NRF91X
+	help
+	  Used to ensure binary compatibility.
+	  For more info, see SB_MAGIC_COMMON.
+
+config SB_INFO_VERSION
+	int "Version number of the fw_*_info structs (8 bits)."
+	range 0 255
+	default 1
+	help
+	  Used to ensure binary compatibility.
+	  For more info, see SB_MAGIC_COMMON.
+
+config SB_CRYPTO_ALGORITHM
+	int
+	range 0 255
+	default 1 if SB_ECDSA
+	default 2 if SB_RSA
+	help
+	  The algorithm used for signing the firmware (8 bits).
+	  Used to ensure compatibility.
+	  For more info, see SB_MAGIC_COMMON.
+
+config SB_CUSTOM_COMPATIBILITY_ID
+	int "Compatibility ID for user-defined purposes (8 bits)."
+	default 0
+	help
+	  User defined value.
+	  Used to ensure compatibility between bootloader and metadata.
+	  For more info, see SB_MAGIC_COMMON.
+
+config SB_MAGIC_LEN
+	int
+	default 12
+	help
+	  Total length of magic words (in bytes).
+	  For more info, see SB_MAGIC_COMMON.
+
+endmenu
