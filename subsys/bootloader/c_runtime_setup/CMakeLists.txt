@@ -61,18 +61,40 @@ if(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR)
 endif()
 
 # Nordic specific for startup code
-if(CONFIG_SOC_SERIES_NRF91X)
+if(CONFIG_SOC_SERIES_NRF51X)
 target_sources_ifdef(CONFIG_SB_VENDOR_SYSTEM_INIT
   c_runtime_setup
   PRIVATE
-  ${HAL}/nordic/nrfx/mdk/system_nrf9160.c
+  ${HAL}/nordic/nrfx/mdk/system_nrf51.c
   )
 target_sources_ifdef(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_MDK
   c_runtime_setup
   PRIVATE
-  gcc_startup_nrf9160.S
+  gcc_startup_nrf51.S
   )
-elseif(CONFIG_SOC_SERIES_NRF52X)
+elseif(CONFIG_SOC_NRF52810)
+target_sources_ifdef(CONFIG_SB_VENDOR_SYSTEM_INIT
+  c_runtime_setup
+  PRIVATE
+  ${HAL}/nordic/nrfx/mdk/system_nrf52810.c
+  )
+target_sources_ifdef(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_MDK
+  c_runtime_setup
+  PRIVATE
+  gcc_startup_nrf52810.S
+  )
+elseif(CONFIG_SOC_NRF52832)
+target_sources_ifdef(CONFIG_SB_VENDOR_SYSTEM_INIT
+  c_runtime_setup
+  PRIVATE
+  ${HAL}/nordic/nrfx/mdk/system_nrf52.c
+  )
+target_sources_ifdef(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_MDK
+  c_runtime_setup
+  PRIVATE
+  gcc_startup_nrf52.S
+  )
+elseif(CONFIG_SOC_NRF52840)
 target_sources_ifdef(CONFIG_SB_VENDOR_SYSTEM_INIT
   c_runtime_setup
   PRIVATE
@@ -82,5 +104,16 @@ target_sources_ifdef(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_MDK
   c_runtime_setup
   PRIVATE
   gcc_startup_nrf52840.S
+  )
+elseif(CONFIG_SOC_NRF9160)
+target_sources_ifdef(CONFIG_SB_VENDOR_SYSTEM_INIT
+  c_runtime_setup
+  PRIVATE
+  ${HAL}/nordic/nrfx/mdk/system_nrf9160.c
+  )
+target_sources_ifdef(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_MDK
+  c_runtime_setup
+  PRIVATE
+  gcc_startup_nrf9160.S
   )
 endif()
