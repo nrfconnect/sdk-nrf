@@ -10,3 +10,4 @@ They introduce you to important concepts and guide you through developing your a
    :maxdepth: 2
 
    ug_esb
+   ug_bootloader

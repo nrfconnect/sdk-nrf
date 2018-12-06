@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+choice
+	prompt "C runtime setup selection"
+	default SB_C_RUNTIME_SETUP_VARIANT_MDK
+	config SB_C_RUNTIME_SETUP_VARIANT_CUSTOM
+		bool "Custom C runtime setup"
+	config SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR
+		bool "Zephyr C runtime setup"
+	config SB_C_RUNTIME_SETUP_VARIANT_MDK
+		bool "MDK C runtime setup"
+		select SB_VENDOR_SYSTEM_INIT
+endchoice
+
+config SB_VENDOR_SYSTEM_INIT
+	bool "Boot with chip specific initialization"
+

@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+
+rsource "bootloader/Kconfig"
+
 rsource "bluetooth/Kconfig"
 
 rsource "enhanced_shockburst/Kconfig"

@@ -1,0 +1,63 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig SECURE_BOOT
+	bool "Secure Boot"
+	select SECURE_BOOT_CRYPTO
+	select SB_FLASH_PROTECT
+
+if SECURE_BOOT
+
+config CUSTOM_DTS_OVERLAY_CMAKE_FILE
+	string
+	# We must use relative path from ZEPHYR_BASE here as the NRF_DIR
+	# variable is not yet available when this config is used.
+	default "${ZEPHYR_BASE}/../nrf/subsys/bootloader/dts/overlay.cmake"
+
+
+config SB_SIGNING_KEY_FILE
+	string "Private key PEM file"
+	default ""
+	help
+	  Absolute path to the private key PEM file.
+	  Specifies the private key used for signing the firmware image.
+	  The hash of the corresponding public key is stored as the first
+	  entry in the list of public key hashes in the provision hex file.
+	  This value can also be set by exporting an environment variable
+	  named 'SB_SIGNING_KEY_FILE' or passing
+	  '-DSB_SIGNING_KEY_FILE=/path/to/my/pem' when running cmake.
+	  See also SB_PUBLIC_KEY_FILES.
+
+config SB_PUBLIC_KEY_FILES
+	string "Public Key PEM files"
+	default ""
+	help
+	  Comma-separated list of absolute paths to public key pem files.
+	  The provision hex file will contain a list of hashes of public keys.
+	  The first public key hash is the one corresponding to the private
+	  signing key used to sign the image. See SB_SIGNING_KEY_FILE.
+	  The hashes of the public keys specified in this configuration will be
+	  placed after the aforementioned private key hash, in the order
+	  they appear in this config.
+	  If config is an empty string, 2 generated debug files
+	  will be used.
+	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
+
+rsource "debug/Kconfig"
+
+rsource "bl_crypto/Kconfig"
+
+rsource "c_runtime_setup/Kconfig"
+
+rsource "fw_metadata/Kconfig"
+
+rsource "fprotect/Kconfig"
+
+endif # SECURE_BOOT
+
+if ZTEST && !SECURE_BOOT
+rsource "bl_crypto/Kconfig"
+endif # ZTEST
