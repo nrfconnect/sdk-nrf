@@ -45,7 +45,7 @@ Supported boards
 Required tools
 **************
 
-In addition to the :ref:`Zephyr toolchain <gs_installing_toolchain>`, the following tool versions are required to work with the |NCS|:
+In addition to the tools mentioned in :ref:`gs_installing`, the following tool versions are required to work with the |NCS|:
 
 .. list-table::
    :header-rows: 1

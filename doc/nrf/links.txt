@@ -43,3 +43,7 @@
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/Nordic-Thingy-52
 
 .. _`openSSL`: https://www.openssl.org/
+
+.. _`Getting Started information on the nRF9160 DK product page`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/GetStarted#infotabs
+
+.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
