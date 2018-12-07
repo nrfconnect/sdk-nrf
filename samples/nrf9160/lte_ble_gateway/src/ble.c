@@ -60,51 +60,59 @@ static u8_t on_received(struct bt_conn *conn,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static void discovery_completed(struct bt_conn *conn,
-				   const struct bt_gatt_attr *attrs,
-				   size_t attrs_len)
+static void discovery_completed(struct bt_gatt_dm *disc, void *ctx)
 {
 	int err;
+
+	/* Must be statically allocated */
 	static struct bt_gatt_subscribe_params param = {
 		.notify = on_received,
 		.value = BT_GATT_CCC_NOTIFY,
 	};
 
-	printk("GATT discovery completed\n");
+	const struct bt_gatt_attr *chrc;
+	const struct bt_gatt_attr *desc;
 
-	for (size_t i = 0; i < attrs_len - 1; i++) {
-		if (!bt_uuid_cmp(attrs[i].uuid, BT_UUID_TOC)) {
-			param.value_handle = attrs[i].handle;
-			if (!bt_uuid_cmp(attrs[i + 1].uuid, BT_UUID_GATT_CCC)) {
-				param.ccc_handle = attrs[i + 1].handle;
-				break;
-			}
-		}
-	}
-
-	if (param.value_handle == 0 && param.ccc_handle == 0) {
-		printk("Could not find char handles.\n");
+	chrc = bt_gatt_dm_char_by_uuid(disc, BT_UUID_TOC);
+	if (!chrc) {
+		printk("Missing Thingy orientation characteristic\n");
 		goto release;
 	}
 
-	err = bt_gatt_subscribe(conn, &param);
+	desc = bt_gatt_dm_desc_by_uuid(disc, chrc, BT_UUID_TOC);
+	if (!desc) {
+		printk("Missing Thingy orientation char value descriptor\n");
+		goto release;
+	}
+
+	param.value_handle = desc->handle,
+
+	desc = bt_gatt_dm_desc_by_uuid(disc, chrc, BT_UUID_GATT_CCC);
+	if (!desc) {
+		printk("Missing Thingy orientation char CCC descriptor\n");
+		goto release;
+	}
+
+	param.ccc_handle = desc->handle;
+
+	err = bt_gatt_subscribe(bt_gatt_dm_conn_get(disc), &param);
 	if (err) {
-		printk("Subscribe failed (err %d)", err);
+		printk("Subscribe failed (err %d)\n", err);
 	}
 
 release:
-	err = bt_gatt_dm_data_release();
+	err = bt_gatt_dm_data_release(disc);
 	if (err) {
 		printk("Could not release discovery data, err: %d\n", err);
 	}
 }
 
-static void discovery_service_not_found(struct bt_conn *conn)
+static void discovery_service_not_found(struct bt_conn *conn, void *ctx)
 {
-	printk("Thing orientation service not found!\n");
+	printk("Thingy orientation service not found!\n");
 }
 
-static void discovery_error_found(struct bt_conn *conn, int err)
+static void discovery_error_found(struct bt_conn *conn, int err, void *ctx)
 {
 	printk("The discovery procedure failed, err %d\n", err);
 }
@@ -129,7 +137,7 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 
 	printk("Connected: %s\n", addr);
 
-	err = bt_gatt_dm_start(conn, BT_UUID_TMS, &discovery_cb);
+	err = bt_gatt_dm_start(conn, BT_UUID_TMS, &discovery_cb, NULL);
 	if (err) {
 		printk("Could not start service discovery, err %d\n", err);
 	}
