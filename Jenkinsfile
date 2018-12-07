@@ -133,7 +133,8 @@ pipeline {
               build job: "${it}", propagate: true, wait: false, parameters: [string(name: 'branchname', value: "$BRANCH_NAME"),
                                                                              string(name: 'API_URL', value: "${getRepoURL()}"),
                                                                              string(name: 'API_COMMIT', value: "$GIT_COMMIT"),
-                                                                             string(name: 'API_PR_NAME', value: "$PR_NAME")]
+                                                                             string(name: 'API_PR_NAME', value: "$PR_NAME"),
+                                                                             string(name: 'API_RUN_NUMBER', value: "$BUILD_NUMBER")]
             }
           }
           parallel projs
