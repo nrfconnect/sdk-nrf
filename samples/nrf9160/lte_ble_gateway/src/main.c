@@ -596,6 +596,12 @@ void main(void)
 		nrf_cloud_process();
 		input_process();
 		send_aggregated_data();
-		k_cpu_idle();
+		if (IS_ENABLED(CONFIG_LOG)) {
+			/* if logging is enabled, sleep */
+			k_sleep(K_MSEC(10));
+		} else {
+			/* otherwise, put CPU to idle to save power */
+			k_cpu_idle();
+		}
 	}
 }
