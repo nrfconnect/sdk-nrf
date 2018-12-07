@@ -82,7 +82,7 @@ pipeline {
               }
 
               /* Rename the nrf9160 samples */
-              samples = ['secure_boot', 'asset_tracker', 'at_client']
+              samples = ['secure_boot', 'asset_tracker', 'lte_ble_gateway', 'at_client']
               for(int i=0; i<samples.size(); i++)
               {
                 file_path = "zephyr/sanity-out/nrf9160_pca10090/nrf9160/${samples[i]}/test_build/zephyr/zephyr.hex"
