@@ -26,11 +26,11 @@ static void connected(struct bt_conn *conn, u8_t err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
-		LOG_ERR("Failed to connect to %s (%u)", addr, err);
+		LOG_ERR("Failed to connect to %s (%u)", log_strdup(addr), err);
 		return;
 	}
 
-	LOG_INF("Connected to %s", addr);
+	LOG_INF("Connected to %s", log_strdup(addr));
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
@@ -49,7 +49,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Disconnected from %s (reason %u)", addr, reason);
+	LOG_INF("Disconnected from %s (reason %u)", log_strdup(addr), reason);
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
@@ -63,7 +63,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Security with %s level %u", addr, level);
+	LOG_INF("Security with %s level %u", log_strdup(addr), level);
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
