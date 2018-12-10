@@ -105,7 +105,15 @@ static void uart_cb(struct device *uart)
 			if (rx) {
 				rx->len = 0;
 			} else {
+				char dummy;
+
 				printk("Not able to allocate UART receive buffer\n");
+
+				/* Drop one byte to avoid spinning in a
+				 * eternal loop.
+				 */
+				uart_fifo_read(uart, &dummy, 1);
+
 				return;
 			}
 		}
