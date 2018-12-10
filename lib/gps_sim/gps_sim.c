@@ -302,12 +302,13 @@ static int gps_sim_init(struct device *dev)
 	base_gps_sample_lng = CONFIG_GPS_SIM_BASE_LONGITUDE / 1000.0;
 
 	if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER)) {
-		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
-			struct gps_sim_data *drv_data = dev->driver_data;
+#ifdef CONFIG_GPS_SIM_TRIGGER_USE_BUTTON
+		struct gps_sim_data *drv_data = dev->driver_data;
 
-			drv_data->gpio_port = SW1_GPIO_CONTROLLER;
-			drv_data->gpio_pin = SW1_GPIO_PIN;
-		}
+		drv_data->gpio_port = CONFIG_GPS_SIM_GPIO_CONTROLLER;
+		drv_data->gpio_pin = CONFIG_GPS_SIM_GPIO_PIN;
+#endif /* GPS_SIM_TRIGGER_USE_BUTTON */
+
 		if (gps_sim_init_thread(dev) < 0) {
 			LOG_ERR("Failed to initialize trigger interrupt");
 			return -EIO;
