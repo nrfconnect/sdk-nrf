@@ -175,7 +175,7 @@ breathe_projects = {
 }
 breathe_default_project = "nrf"
 
-# Qualifiers to a function are causing Sphihx/Breathe to warn about
+# Qualifiers to a function are causing Sphinx/Breathe to warn about
 # Error when parsing function declaration and more.  This is a list
 # of strings that the parser additionally should accept as
 # attributes.
@@ -190,4 +190,4 @@ rst_epilog = """
 
 def setup(app):
    app.add_stylesheet("css/common.css")
-   app.add_stylesheet("css/ncs.css")
+   app.add_stylesheet("css/nrf.css")
