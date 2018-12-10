@@ -19,6 +19,7 @@
 #include "power_event.h"
 #include "ble_event.h"
 #include "usb_event.h"
+#include "hid_event.h"
 
 #define MODULE power_manager
 #include "module_state_event.h"
@@ -28,6 +29,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_POWER_MANAGER_LOG_LEVEL);
 
 
 #define POWER_DOWN_TIMEOUT_MS	(1000 * CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT)
+#define POWER_DOWN_CHECK_MS	1000
 #define DEVICE_POLICY_MAX	30
 
 enum power_state {
@@ -51,6 +53,7 @@ static struct device_list device_list;
 
 static enum power_state power_state = POWER_STATE_IDLE;
 static struct k_delayed_work power_down_trigger;
+static atomic_t power_down_count;
 static unsigned int connection_count;
 static bool usb_connected;
 
@@ -133,12 +136,20 @@ int _sys_soc_suspend(s32_t ticks)
 
 static void power_down(struct k_work *work)
 {
-	if (!usb_connected && (power_state == POWER_STATE_IDLE)) {
+	__ASSERT_NO_MSG(!usb_connected);
+	__ASSERT_NO_MSG(power_state == POWER_STATE_IDLE);
+
+	atomic_val_t cnt = atomic_add(&power_down_count, POWER_DOWN_CHECK_MS);
+
+	if (cnt >= POWER_DOWN_TIMEOUT_MS) {
 		LOG_INF("system power down");
 
 		struct power_down_event *event = new_power_down_event();
 		power_state = POWER_STATE_SUSPENDING;
 		EVENT_SUBMIT(event);
+	} else {
+		k_delayed_work_submit(&power_down_trigger,
+				      POWER_DOWN_CHECK_MS);
 	}
 }
 
@@ -159,11 +170,13 @@ static void system_off(void)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (is_keep_active_event(eh)) {
+	if (is_hid_mouse_event(eh)) {
+		/* Device is connected and sends reports to host.
+		 * Keep it active.
+		 */
 		switch (power_state) {
 		case POWER_STATE_IDLE:
-			k_delayed_work_submit(&power_down_trigger,
-					POWER_DOWN_TIMEOUT_MS);
+			atomic_set(&power_down_count, 0);
 			break;
 		case POWER_STATE_SUSPENDING:
 		case POWER_STATE_SUSPENDED:
@@ -201,8 +214,11 @@ static bool event_handler(const struct event_header *eh)
 		LOG_INF("wake up the board");
 
 		power_state = POWER_STATE_IDLE;
-		k_delayed_work_submit(&power_down_trigger,
-				POWER_DOWN_TIMEOUT_MS);
+		if (!usb_connected) {
+			atomic_set(&power_down_count, 0);
+			k_delayed_work_submit(&power_down_trigger,
+					      POWER_DOWN_CHECK_MS);
+		}
 
 		return false;
 	}
@@ -257,7 +273,7 @@ static bool event_handler(const struct event_header *eh)
 			case USB_STATE_DISCONNECTED:
 				usb_connected = false;
 				k_delayed_work_submit(&power_down_trigger,
-						      POWER_DOWN_TIMEOUT_MS);
+						      POWER_DOWN_CHECK_MS);
 				break;
 
 			default:
@@ -292,7 +308,7 @@ static bool event_handler(const struct event_header *eh)
 
 			k_delayed_work_init(&power_down_trigger, power_down);
 			k_delayed_work_submit(&power_down_trigger,
-					POWER_DOWN_TIMEOUT_MS);
+					      POWER_DOWN_CHECK_MS);
 		}
 
 		return false;
@@ -307,6 +323,6 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, usb_state_event);
-EVENT_SUBSCRIBE(MODULE, keep_active_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
+EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);
