@@ -57,4 +57,28 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+
+comment "BLE Scanning"
+
+config DESKTOP_BLE_SCANNING_ENABLE
+	bool "Enable BLE scanning"
+	default n
+	depends on BT_CENTRAL
+	help
+	  Enable device to scan for peripheral devices.
+
+if DESKTOP_BLE_SCANNING_ENABLE
+
+config DESKTOP_BLE_SCANNING_DEVICE_NAME
+	string "Peripheral device name"
+	default ""
+	help
+	  Name of the device to which central shall connect to.
+
+module = DESKTOP_BLE_SCANNING
+module-str = BLE scanning
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
 endmenu
