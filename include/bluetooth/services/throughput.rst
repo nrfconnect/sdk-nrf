@@ -39,3 +39,4 @@ API documentation
 
 .. doxygengroup::  nrf_bt_throughput
    :project: nrf
+   :members:

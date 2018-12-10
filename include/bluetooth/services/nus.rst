@@ -36,3 +36,4 @@ API documentation
 
 .. doxygengroup:: nrf_bt_nus
    :project: nrf
+   :members:

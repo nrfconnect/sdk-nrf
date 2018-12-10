@@ -24,3 +24,4 @@ API documentation
 
 .. doxygengroup:: bt_gatt_nus_c
    :project: nrf
+   :members:

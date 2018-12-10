@@ -140,3 +140,4 @@ API documentation
 
 .. doxygengroup:: nrf_cloud
    :project: nrf
+   :members:

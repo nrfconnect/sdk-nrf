@@ -21,6 +21,7 @@ See the following example example for including a doxygen group:
 
    .. doxygengroup:: bluetooth_gatt_throughput
       :project: nrf
+      :members:
 
 The `Breathe documentation`_ contains information about what you can link to.
 

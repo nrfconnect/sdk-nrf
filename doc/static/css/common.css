@@ -70,7 +70,7 @@ div.figure {
 
 
 /* dbk tweak for doxygen-generated API headings (for RTD theme) */
-.rst-content dl.group>dt, .rst-content dl.group>dd>p {
+.rst-content dl.group>dt, .rst-content dl.group>dd>p, .rst-content dl.class p.breathe-sectiondef-title{
    display:none !important;
 }
 .rst-content dl.group {
