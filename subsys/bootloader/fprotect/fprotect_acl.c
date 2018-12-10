@@ -5,9 +5,25 @@
  */
 
 #include <nrf_acl.h>
+#include <errno.h>
 
-void fprotect_area(u32_t start, size_t length)
+int fprotect_area(u32_t start, size_t length)
 {
-	nrf_acl_region_set(NRF_ACL, 0, start, length,
+	static u32_t region_idx;
+
+	if (region_idx > ACL_REGIONS_COUNT) {
+		return -EAGAIN;
+	}
+
+	if (start  % NRF_FICR->CODEPAGESIZE != 0 ||
+	    length % NRF_FICR->CODEPAGESIZE != 0 ||
+	    length > NRF_ACL_REGION_SIZE_MAX ||
+	    length == 0) {
+		return -EFAULT;
+	}
+
+	nrf_acl_region_set(NRF_ACL, region_idx++, start, length,
 			   NRF_ACL_PERM_READ_NO_WRITE);
+
+	return 0;
 }
