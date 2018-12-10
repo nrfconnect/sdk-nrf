@@ -3,13 +3,13 @@
 nRF9160: Asset Tracker
 ######################
 
-The Asset Tracker sample demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160 Development Kit to the `nRF Cloud`_ via LTE and transmit GPS and device orientation data.
+The Asset Tracker sample demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160 DK to the `nRF Cloud`_ via LTE and transmit GPS and device orientation data.
 
 
 Overview
 ********
 
-The sample sends GPS position data and accelerometer data that is collected by an nRF9160 Development Kit to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where the data is visualized.
+The sample sends GPS position data and accelerometer data that is collected by an nRF9160 DK to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where the data is visualized.
 The accelerometer data is used to infer the device's physical orientation.
 It is sent as the nRF Cloud sensor data type "FLIP".
 
@@ -22,7 +22,7 @@ Requirements
 
 * The following development board:
 
-    * nRF9160 Preview Development Kit board (PCA10090)
+    * nRF9160 DK board (PCA10090)
 
 * :ref:`secure_boot` must be programmed on the board.
 
