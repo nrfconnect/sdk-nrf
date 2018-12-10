@@ -273,7 +273,7 @@ void bt_scan_cb_register(struct bt_scan_cb *cb);
  *                 connection automatically, this must be initialized
  *                 with the relevant data.
  */
-void bt_scan_init(struct bt_scan_init_param *init);
+void bt_scan_init(const struct bt_scan_init_param *init);
 
 /**@brief Function for starting scanning.
  *
