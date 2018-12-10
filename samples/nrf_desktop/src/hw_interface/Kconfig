@@ -148,6 +148,42 @@ config DESKTOP_BATTERY_DISCRETE
 
 endchoice
 
+config DESKTOP_BATTERY_MIN_LEVEL
+	int "Minimum battery voltage [mV] that corresponds to 0% level"
+	depends on DESKTOP_BATTERY_DISCRETE
+	default 3100
+
+config DESKTOP_BATTERY_MAX_LEVEL
+	int "Maximum battery voltage [mV] that corresponds to 100% level"
+	depends on DESKTOP_BATTERY_DISCRETE
+	default 4180
+
+config DESKTOP_BATTERY_VOLTAGE_DIVIDER_UPPER
+	int "Upper resistor in battery measurement voltage divider [kOhm]"
+	depends on DESKTOP_BATTERY_DISCRETE
+	default 1500
+	help
+	  Output voltage is measured on the lower resistor.
+
+config DESKTOP_BATTERY_VOLTAGE_DIVIDER_LOWER
+	int "Lower resistor in battery measurement voltage divider [kOhm]"
+	depends on DESKTOP_BATTERY_DISCRETE
+	default 180
+	help
+	  Output voltage is measured on the lower resistor.
+
+config DESKTOP_BATTERY_POLL_INTERVAL_MS
+	int "Time between the subsequent battery measurements [ms]"
+	depends on DESKTOP_BATTERY_DISCRETE
+	default 10000
+	range 500 120000
+
+config DESKTOP_BATTERY_MONITOR_ENABLE_PIN
+	int "Battery monitoring enable pin"
+	depends on DESKTOP_BATTERY_DISCRETE
+	help
+	  A pin which enables the battery measurement circuit.
+
 config DESKTOP_BATTERY_CSO_PIN
 	int "Charging status pin"
 	depends on DESKTOP_BATTERY_DISCRETE

@@ -34,6 +34,10 @@
 	status ="ok";
 };
 
+&adc {
+	status ="ok";
+};
+
 &uart0 {
 	status = "ok";
 	compatible = "nordic,nrf-uart";

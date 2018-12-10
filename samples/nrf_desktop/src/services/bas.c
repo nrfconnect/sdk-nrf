@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BAS_LOG_LEVEL);
 static struct bt_gatt_ccc_cfg blvl_ccc_cfg[BT_GATT_CCC_MAX];
 
 static bool active;
-static u8_t battery = 100; /* TODO use atomic */
+static u8_t battery = 100;
 
 static void blvl_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 				 u16_t value)
@@ -99,5 +99,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, battery_event);
+EVENT_SUBSCRIBE(MODULE, battery_level_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
