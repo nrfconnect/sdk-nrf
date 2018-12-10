@@ -103,6 +103,20 @@ config GPS_SIM_TRIGGER_USE_BUTTON
 
 endchoice
 
+if GPS_SIM_TRIGGER_USE_BUTTON
+config GPS_SIM_GPIO_CONTROLLER
+	string "GPIO controller"
+	default "GPIO_0"
+	help
+		GPIO controller for GPS simulator trigger button.
+
+config GPS_SIM_GPIO_PIN
+	int "GPIO pin"
+	default 6
+	help
+		GPIO pin for trigger button.
+endif
+
 if GPS_SIM_TRIGGER && GPS_SIM_TRIGGER_USE_TIMER
 	config GPS_SIM_TRIGGER_TIMER_MSEC
 		int "Time between triggers, in milliseconds"
