@@ -4,7 +4,7 @@ nRF9160: Secure Boot
 ####################
 
 The Secure Boot sample application provides a reference implementation of a first-stage boot firmware.
-This firmware is required to set up the nRF9160 Development Kit so that it can run user applications in the non-secure domain.
+This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
 Overview
 ********
@@ -53,7 +53,7 @@ Requirements
 
 The following development board:
 
-* nRF9160 Preview Development Kit board (PCA10090)
+* nRF9160 DK board (PCA10090)
 
 Building and running
 ********************

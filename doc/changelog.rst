@@ -39,7 +39,7 @@ Supported boards
 * PCA10059 (nRF52840 Dongle)
 * PCA63519 (Smart Remote 3 DK add-on)
 * PCA20041 (TBD)
-* PCA10090 (nRF9160 Preview Development Kit)
+* PCA10090 (nRF9160 DK)
 
 
 Required tools

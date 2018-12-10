@@ -3,7 +3,7 @@
 nRF9160: LTE Sensor Gateway
 ###########################
 
-The LTE Sensor Gateway sample demonstrates how to transmit sensor data from an nRF9160 Development Kit to the `nRF Cloud`_.
+The LTE Sensor Gateway sample demonstrates how to transmit sensor data from an nRF9160 DK to the `nRF Cloud`_.
 Unlike the :ref:`nrf_cloud` sample, the sensor data is collected via Bluetooth LE.
 Therefore, this sample acts as a gateway between Bluetooth LE and the LTE connection to the nRF Cloud.
 
@@ -25,7 +25,7 @@ Requirements
 * A `Nordic Thingy:52`_
 * The following development board:
 
-  * nRF9160 Preview Development Kit board (PCA10090)
+  * nRF9160 DK board (PCA10090)
 
 * :ref:`zephyr:bluetooth-hci-uart-sample` must be programmed to the nRF52 board controller on the board.
 * :ref:`secure_boot` must be programmed on the board.
@@ -44,7 +44,7 @@ It can be programmed independently from the secure boot firmware.
 Programming the sample
 ======================
 
-When you connect the nRF9160 Preview Development Kit board to your computer, three virtual serial ports (USB CDC class) should appear.
+When you connect the nRF9160 DK board to your computer, three virtual serial ports (USB CDC class) should appear.
 The first port is connected to the main controller (nRF9160) on the board, while the second port is connected to the board controller (nRF52840).
 
 Before you program the sample application onto the main controller, you must program the :ref:`zephyr:bluetooth-hci-uart-sample` sample onto the board controller:
