@@ -26,15 +26,6 @@ struct power_down_event {
 EVENT_TYPE_DECLARE(power_down_event);
 
 
-struct keep_active_event {
-	struct event_header header;
-
-	const char *module_name;
-};
-
-EVENT_TYPE_DECLARE(keep_active_event);
-
-
 struct wake_up_event {
 	struct event_header header;
 };

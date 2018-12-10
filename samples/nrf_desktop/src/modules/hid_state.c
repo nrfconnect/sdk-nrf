@@ -20,7 +20,6 @@
 #include "button_event.h"
 #include "motion_event.h"
 #include "wheel_event.h"
-#include "power_event.h"
 #include "hid_event.h"
 #include "ble_event.h"
 #include "usb_event.h"
@@ -745,13 +744,6 @@ static void disconnect(const void *subscriber_id, enum target_report tr)
 	subscriber->state[tr].state = STATE_DISCONNECTED;
 }
 
-static void keep_device_active(void)
-{
-	struct keep_active_event *event = new_keep_active_event();
-	event->module_name = MODULE_NAME;
-	EVENT_SUBMIT(event);
-}
-
 /**@brief Enqueue event that updates a given usage. */
 static void enqueue(enum target_report tr, u16_t usage_id, s16_t value,
 		    bool connected)
@@ -847,8 +839,6 @@ static bool event_handler(const struct event_header *eh)
 
 		report_send(TARGET_REPORT_MOUSE, true);
 
-		keep_device_active();
-
 		return false;
 	}
 
@@ -869,8 +859,6 @@ static bool event_handler(const struct event_header *eh)
 
 		report_send(TARGET_REPORT_MOUSE, true);
 
-		keep_device_active();
-
 		return false;
 	}
 
@@ -889,8 +877,6 @@ static bool event_handler(const struct event_header *eh)
 			/* Keydown increases ref counter, keyup decreases it. */
 			s16_t value = (event->pressed != false) ? (1) : (-1);
 			update_key(map, value);
-
-			keep_device_active();
 
 			return false;
 		}
