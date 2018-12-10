@@ -8,6 +8,7 @@ menuconfig SECURE_BOOT
 	bool "Secure Boot"
 	select SECURE_BOOT_CRYPTO
 	select SB_FLASH_PROTECT
+	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 
 if SECURE_BOOT
 
