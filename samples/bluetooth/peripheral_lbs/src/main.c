@@ -71,13 +71,6 @@
 			 GPIO_INT_ACTIVE_LOW)
 #endif
 
-/* change this to enable pull-up/pull-down */
-#ifdef SW0_GPIO_PIN_PUD
-#define PULL_UP SW0_GPIO_PIN_PUD
-#else
-#define PULL_UP	0
-#endif
-
 #ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
 #ifdef CONFIG_BT_GATT_LBS_SECURITY_LEVEL_LOW
 static const bt_security_t sec_level = BT_SECURITY_LOW;
@@ -239,7 +232,7 @@ static int init_button(void)
 	}
 
 	err = gpio_pin_configure(button_port, USER_BUTTON,
-			   GPIO_DIR_IN | GPIO_INT | PULL_UP |
+			   GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
 			   EDGE_SENSE_CONF);
 
 	if (!err) {
