@@ -15,19 +15,21 @@ The module can automatically establish a connection after a filter match.
 Usage
 *****
 
-+---------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Action              | Description                                                                                                                                                                                                                                                                                                                                   |
-+=====================+===============================================================================================================================================================================================================================================================================================================================================+
-| Initialization      | The module must be initialized with bt_scan_init that can be called without initialization structure. When initialization structure is passed as NULL, the default static configuration is used. This configuration is also used when you use an initialization structure with NULL pointers to scan parameters and connection parameters.    |
-+---------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Starting scanning   | When initialization completes, you can start scanning with bt_scan_start. In the simplest mode when you do not using event handler, the connection can be established when scanner found device.                                                                                                                                              |
-+---------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Changing parameters | Call the function bt_scan_params_set to change parameters.                                                                                                                                                                                                                                                                                    |
-+---------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Stopping scanning   | Call the function bt_scan_stop to stop scanning.                                                                                                                                                                                                                                                                                              |
-+---------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Resuming scanning   | Scanning stops if the module established the connection automatically, or if the application calls bt_scan_stop. To resume scanning use bt_scan_start.                                                                                                                                                                                        |
-+---------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :header-rows: 1
+
+   * - Action
+     - Description
+   * - Initialization
+     - The module must be initialized with :cpp:func:`bt_scan_init` that can be called without initialization structure. When initialization structure is passed as NULL, the default static configuration is used. This configuration is also used when you use an initialization structure with NULL pointers to scan parameters and connection parameters.
+   * - Starting scanning
+     - When initialization completes, you can start scanning with :cpp:func:`bt_scan_start`. In the simplest mode when you do not using event handler, the connection can be established when scanner found device.
+   * - Changing parameters
+     - Call the function :cpp:func:`bt_scan_params_set` to change parameters.
+   * - Stopping scanning
+     - Call the function :cpp:func:`bt_scan_stop` to stop scanning.
+   * - Resuming scanning
+     - Scanning stops if the module established the connection automatically, or if the application calls :cpp:func:`bt_scan_stop`. To resume scanning use :cpp:func:`bt_scan_start`.
 
 
 Filters
