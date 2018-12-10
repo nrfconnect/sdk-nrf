@@ -85,7 +85,7 @@ config SB_PUBLIC_KEY_FILES
 	  The first public key hash is the one corresponding to the private
 	  signing key used to sign the image. See SB_SIGNING_KEY_FILE.
 	  The hashes of the public keys specified in this configuration will be
-	  placed after the aforementioned private key hash, in the order
+	  placed after the aforementioned public key hash, in the order
 	  they appear in this config.
 	  If config is an empty string, 2 generated debug files
 	  will be used.
