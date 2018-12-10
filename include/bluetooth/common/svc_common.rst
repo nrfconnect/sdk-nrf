@@ -11,3 +11,4 @@ API documentation
 
 .. doxygengroup:: nrf_bt_svc_common
    :project: nrf
+   :members:

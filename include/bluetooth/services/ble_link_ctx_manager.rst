@@ -13,3 +13,4 @@ API documentation
 
 .. doxygengroup:: nrf_ble_link_ctx_manager
    :project: nrf
+   :members:

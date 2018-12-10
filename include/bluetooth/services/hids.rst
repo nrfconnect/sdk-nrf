@@ -58,3 +58,4 @@ API documentation
 
 .. doxygengroup:: nrf_bt_hids
    :project: nrf
+   :members:

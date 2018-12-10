@@ -86,3 +86,4 @@ API documentation
 
 .. doxygengroup:: nrf_bt_scan
    :project: nrf
+   :members:

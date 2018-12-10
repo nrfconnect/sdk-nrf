@@ -13,3 +13,4 @@ API documentation
 
 .. doxygengroup:: nrf_esb
    :project: nrf
+   :members:
