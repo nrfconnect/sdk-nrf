@@ -27,6 +27,12 @@ target_sources_ifdef(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_CUSTOM
   startup.c
   )
 
+target_sources_ifdef(CONFIG_CPU_CORTEX_M0
+  c_runtime_setup
+  PUBLIC
+  ${ARM}/irq_relay.S
+  )
+
 target_sources_ifdef(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR
   c_runtime_setup
   PRIVATE

@@ -85,6 +85,16 @@ void uninit_used_peripherals(void)
 #endif
 }
 
+#ifdef CONFIG_SW_VECTOR_RELAY
+#ifndef CONFIG_SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR
+_GENERIC_SECTION(.vt_pointer_section) u32_t _vector_table_pointer;
+#endif
+extern u32_t _vector_table_pointer;
+#define VTOR _vector_table_pointer
+#else
+#define VTOR SCB->VTOR
+#endif
+
 static void boot_from(u32_t *address)
 {
 	if (!verify_firmware((u32_t)address)) {
@@ -117,8 +127,11 @@ static void boot_from(u32_t *address)
 	 * TODO: @sigvartmh currently not implemented or used
 	 */
 	SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk;
+
+#ifndef CONFIG_CPU_CORTEX_M0
 	SCB->SHCSR &= ~(SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk |
 			SCB_SHCSR_MEMFAULTENA_Msk);
+#endif
 
 	/* Activate the MSP if the core is found to currently run with the PSP */
 	if (CONTROL_SPSEL_Msk & __get_CONTROL()) {
@@ -128,7 +141,7 @@ static void boot_from(u32_t *address)
 	__DSB(); /* Force Memory Write before continuing */
 	__ISB(); /* Flush and refill pipeline with updated premissions */
 
-	SCB->VTOR = (u32_t)address;
+	VTOR = (u32_t)address;
 
 	/* Set MSP to the new address and clear any information from PSP */
 	__set_MSP(address[0]);

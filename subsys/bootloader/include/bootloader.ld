@@ -26,8 +26,37 @@ MEMORY
     IDT_LIST  (wx)      : ORIGIN = (RAM_ADDR + RAM_SIZE), LENGTH = 2K
 }
 
+
+SECTIONS
+    {
+	SECTION_PROLOGUE(text0,,)
+	{
+	. = CONFIG_TEXT_SECTION_OFFSET;
+
+#if defined(CONFIG_SW_VECTOR_RELAY)
+	KEEP(*(.vector_relay_table))
+	KEEP(*(".vector_relay_table.*"))
+	KEEP(*(.vector_relay_handler))
+	KEEP(*(".vector_relay_handler.*"))
+#endif
+	} GROUP_LINK_IN(ROMABLE_REGION)
+
+#if defined(CONFIG_SW_VECTOR_RELAY)
+	/* Reserved 4 bytes to save vector table base address */
+	SECTION_PROLOGUE(.vt_pointer,(NOLOAD),)
+	{
+		*(.vt_pointer_section)
+		*(".vt_pointer_section.*")
+	} GROUP_LINK_IN(RAMABLE_REGION)
+#endif
+    }
+
 /* Set this first so we are sure relevant sections are placed where the MDK expect it to be */
 #include <nrf_common.ld>
+
+/* Define Zephyr symbols for compatibility with Zephyr code. */
+_main_stack = __StackLimit;
+__reset = Reset_Handler;
 
 SECTIONS
     {
@@ -46,8 +75,6 @@ SECTIONS
 
 	SECTION_PROLOGUE(_TEXT_SECTION_NAME,,)
 	{
-	. = CONFIG_TEXT_SECTION_OFFSET;
-
 	_vector_start = .;
 	KEEP(*(.exc_vector_table))
 	KEEP(*(".exc_vector_table.*"))
