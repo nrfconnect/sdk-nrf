@@ -92,7 +92,7 @@ ACK packet. To do so, the PRX adds a packet to its TX FIFO, which is sent as the
 
 If the PTX does not receive the ACK after the initial transmitted packet, it attempts to retransmit the packet until the ACK is finally
 being received.
-The maximum number of allowed retransmission attempts and the delay between each attempt is specified by the most recent call to either :c:func:`nrf_esb_init` (where the values of :c:data:`nrf_esb_config::retransmit_count` and :c:data:`nrf_esb_config::retransmit_delay` in the :c:type:`nrf_esb_config` structure specify the number of retransmission attempts and the delay between them, respectively) or the functions :c:func:`nrf_esb_set_retransmit_count` and :c:func:`nrf_esb_set_retransmit_delay`.
+The maximum number of allowed retransmission attempts and the delay between each attempt is specified by the most recent call to either :cpp:func:`nrf_esb_init` (where the values of :cpp:member:`retransmit_count` and :cpp:member:`retransmit_delay` in the :cpp:type:`nrf_esb_config` structure specify the number of retransmission attempts and the delay between them, respectively) or the functions :cpp:func:`nrf_esb_set_retransmit_count` and :cpp:func:`nrf_esb_set_retransmit_delay`.
 The retransmission delay is defined as the duration between the start of each transmission
 attempt. Note that this differs from the legacy nRF24L Series hardware implementation,
 where the delay was defined as the duration from the end of a
@@ -109,7 +109,7 @@ If the ACK packet sent from the PRX to the PTX is lost, but both the initial pac
 A PTX can select that individual packets that are transmitted to the
 PRX do not require an ACK to be sent in return from the PRX. This decision
 is taken by the application when uploading a packet to the TX FIFO using the
-:c:data:`nrf_esb_payload::noack` field of the c:data:`p_payload` parameter that is passed to the :c:func:`nrf_esb_write_payload` function.
+:cpp:member:`nrf_esb_payload::noack` field of the :cpp:type:`p_payload` parameter that is passed to the :cpp:func:`nrf_esb_write_payload` function.
 
 When the PRX receives a packet that does not require an ACK, it does not send an ACK packet to the PTX, and as a result the PTX will continue retransmitting the packet until the maximum number of allowed retransmission attempts is reached.
 
@@ -120,14 +120,14 @@ Setting up an ESB application
 
 Perform the following steps to set up an application to send and receive packets:
 
-1. Initialize ESB using :c:func:`nrf_esb_init`. You can use the default parameters in :c:data:`NRF_ESB_DEFAULT_CONFIG` as starting point for the **p_config** parameter and reconfigure them if needed.
+1. Initialize ESB using :cpp:func:`nrf_esb_init`. You can use the default parameters in :c:macro:`NRF_ESB_DEFAULT_CONFIG` as starting point for the **p_config** parameter and reconfigure them if needed.
 #. If necessary, use any of the folowing functions to update the addresses, the address prefix, the channel, and the bitrate:
 
-   * :c:func:`nrf_esb_set_base_address_0`
-   * :c:func:`nrf_esb_set_base_address_1`
-   * :c:func:`nrf_esb_set_prefixes`
-   * :c:func:`nrf_esb_set_rf_channel`
-   * :c:func:`nrf_esb_set_bitrate`
+   * :cpp:func:`nrf_esb_set_base_address_0`
+   * :cpp:func:`nrf_esb_set_base_address_1`
+   * :cpp:func:`nrf_esb_set_prefixes`
+   * :cpp:func:`nrf_esb_set_rf_channel`
+   * :cpp:func:`nrf_esb_set_bitrate`
 
 #. Make sure that the high-frequency clock is running:
 
@@ -141,23 +141,23 @@ Perform the following steps to set up an application to send and receive packets
 
    * If the node is a PTX:
 
-     a. Add packets to the TX FIFO by calling :c:func:`nrf_esb_write_payload`.
-     #. Depending on the value of :c:data:`nrf_esb_config::tx_mode` that was used in the most recent call to :c:func:`nrf_esb_init`, you might have to call :c:func:`nrf_esb_start_tx` to start the transmission.
-     #. After the radio has received an acknowledgment or timed out, handle :c:data:`NRF_ESB_EVENT_TX_SUCCESS`, :c:data:`NRF_ESB_EVENT_TX_FAILED`, and :c:data:`NRF_ESB_EVENT_RX_RECEIVED` events.
+     a. Add packets to the TX FIFO by calling :cpp:func:`nrf_esb_write_payload`.
+     #. Depending on the value of :cpp:member:`nrf_esb_config::tx_mode` that was used in the most recent call to :cpp:func:`nrf_esb_init`, you might have to call :cpp:func:`nrf_esb_start_tx` to start the transmission.
+     #. After the radio has received an acknowledgment or timed out, handle :c:macro:`NRF_ESB_EVENT_TX_SUCCESS`, :c:macro:`NRF_ESB_EVENT_TX_FAILED`, and :c:macro:`NRF_ESB_EVENT_RX_RECEIVED` events.
 
    * If the node is a PRX:
 
-     a. Handle :c:data:`NRF_ESB_EVENT_RX_RECEIVED` events as packets are coming in. Multiple packets might arrive in the RX FIFO between each event.
-     #. To attach payloads to acknowledgment packets, add them to the TX FIFO using :c:func:`nrf_esb_write_payload`. The payload must be queued before a packet is received. After a queued payload is sent with an acknowledgment, it is assumed that it reaches the other device. Therefore, an :c:data:`NRF_ESB_EVENT_TX_SUCCESS` event is queued.
+     a. Handle :c:macro:`NRF_ESB_EVENT_RX_RECEIVED` events as packets are coming in. Multiple packets might arrive in the RX FIFO between each event.
+     #. To attach payloads to acknowledgment packets, add them to the TX FIFO using :cpp:func:`nrf_esb_write_payload`. The payload must be queued before a packet is received. After a queued payload is sent with an acknowledgment, it is assumed that it reaches the other device. Therefore, an :c:macro:`NRF_ESB_EVENT_TX_SUCCESS` event is queued.
 
-To stop the ESB module, call :c:func:`nrf_esb_disable`. Note, however, that if a transaction is ongoing when you disable the module, it is not completed. Therefore, you might want to check if the module is idle before disabling it.
+To stop the ESB module, call :cpp:func:`nrf_esb_disable`. Note, however, that if a transaction is ongoing when you disable the module, it is not completed. Therefore, you might want to check if the module is idle before disabling it.
 
 .. _freq_select:
 
 Frequency selection
 ===================
 
-ESB can send or receive packets using any of the channels that the nRF5 chip can use. The channel is selected by calling the :c:func:`nrf_esb_set_rf_channel` function.
+ESB can send or receive packets using any of the channels that the nRF5 chip can use. The channel is selected by calling the :cpp:func:`nrf_esb_set_rf_channel` function.
 
 The PTX and PRX must be configured to use the same frequency to exchange packets.
 
@@ -174,7 +174,7 @@ Pipe 0 has its own unique base address (base address 0), while pipes 1-7 use the
 
 On-air, the most significant bit of each address byte is transmitted first. The most significant byte of the 2-4 byte long base address is the first transmitted address byte, while the prefix byte is transmitted last.
 
-Addresses cannot consist of a 0x00 prefix and an address on the format 0x00XXXXXX (length 4)/0x0000XXXX (length 5). Such a zero address will cause error code :c:data:`NRF_ERROR_INVALID_PARAM` to be returned.
+Addresses cannot consist of a 0x00 prefix and an address on the format 0x00XXXXXX (length 4)/0x0000XXXX (length 5). Such a zero address will cause error code :c:macro:`NRF_ERROR_INVALID_PARAM` to be returned.
 
 Note that the byte ordering in ESB and the nRF5 radio peripheral are not the same, because the address bytes are rearranged in ESB to match the nRF24L radios.
 
@@ -195,7 +195,7 @@ packet's Cyclic Redundancy Check (CRC) field. This packet ID is used to distingu
 new packet from the previous packet if it has the same payload.
 
 At the PRX, retransmitted packets are discarded and not added to an RX FIFO.
-The :c:data:`NRF_ESB_EVENT_RX_RECEIVED` event is not called.
+The :c:macro:`NRF_ESB_EVENT_RX_RECEIVED` event is not called.
 
 The CRC is used in addition to the PID to identify a unique packet. This reduces the
 likelihood of a packet being falsely identified as a retransmission attempt
@@ -207,7 +207,7 @@ occur. This feature is helpful as the PID is only two bits.
 FIFOs
 =====
 
-On each node, there is one FIFO queue for RX and one for TX. The FIFOs are shared by all pipes, and :c:data:`nrf_esb_payload::pipe` indicates a packet's pipe. For received packets, this field specifies from which pipe the packet came. For transmitted packets, it specifies through which pipe the packet will be sent.
+On each node, there is one FIFO queue for RX and one for TX. The FIFOs are shared by all pipes, and :cpp:member:`nrf_esb_payload::pipe` indicates a packet's pipe. For received packets, this field specifies from which pipe the packet came. For transmitted packets, it specifies through which pipe the packet will be sent.
 
 When multiple packets are queued, they are handled in a FIFO fashion, ignoring pipes.
 
@@ -240,7 +240,7 @@ Event handling
 When there is an event on the radio, the :ref:`nrf_esb_readme` module analyzes its cause and, if necessary, queues an event to the application.
 This event indicates a successful operation, a failed operation, or new data available in the RX FIFO.
 
-Events are queued as flags that are read out on the first opportunity to trigger a software interrupt. Therefore, there might be multiple radio interrupts between each event that is actually sent to the application. A single :c:data:`NRF_ESB_EVENT_TX_SUCCESS` or :c:data:`NRF_ESB_EVENT_TX_FAILED` event indicates one or more successful or failed operations, respectively. An :c:data:`NRF_ESB_EVENT_RX_RECEIVED` event indicates that there is at least one new packet in the RX FIFO. The event handler should make sure to completely empty the RX FIFO when appropriate.
+Events are queued as flags that are read out on the first opportunity to trigger a software interrupt. Therefore, there might be multiple radio interrupts between each event that is actually sent to the application. A single :c:macro:`NRF_ESB_EVENT_TX_SUCCESS` or :c:macro:`NRF_ESB_EVENT_TX_FAILED` event indicates one or more successful or failed operations, respectively. An :c:macro:`NRF_ESB_EVENT_RX_RECEIVED` event indicates that there is at least one new packet in the RX FIFO. The event handler should make sure to completely empty the RX FIFO when appropriate.
 
 .. _esb_errata:
 
