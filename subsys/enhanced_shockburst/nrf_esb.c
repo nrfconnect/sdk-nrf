@@ -1269,7 +1269,7 @@ int nrf_esb_start_rx(void)
 
 int nrf_esb_stop_rx(void)
 {
-	if (esb_state != ESB_STATE_PRX) {
+	if (esb_state != ESB_STATE_PRX || esb_state != ESB_STATE_PRX_SEND_ACK) {
 		return -EINVAL;
 	}
 
