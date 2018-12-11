@@ -17,7 +17,6 @@ if EVENT_MANAGER
 
 config DESKTOP_EVENT_MANAGER_SHOW_EVENTS
 	bool "Show events"
-	default y
 	help
 	  This option controls if events are printed to console.
 
