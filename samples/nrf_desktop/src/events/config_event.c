@@ -5,20 +5,21 @@
  */
 
 #include <assert.h>
-
+#include <stdio.h>
 #include <misc/printk.h>
 
 #include "config_event.h"
 
-static void print_config_event(const struct event_header *eh)
+static int log_config_event(const struct event_header *eh, char *buf,
+			   size_t buf_len)
 {
 	struct config_event *event = cast_config_event(eh);
 
-	printk("id=%u", event->id);
+	return snprintf(buf, buf_len, "id=%u", event->id);
 }
 
-static void log_config_event(struct log_event_buf *buf,
-			     const struct event_header *eh)
+static void profile_config_event(struct log_event_buf *buf,
+				 const struct event_header *eh)
 {
 	struct config_event *event = cast_config_event(eh);
 
@@ -29,7 +30,6 @@ static void log_config_event(struct log_event_buf *buf,
 EVENT_INFO_DEFINE(config_event,
 		  ENCODE(PROFILER_ARG_U8),
 		  ENCODE("id"),
-		  log_config_event);
+		  profile_config_event);
 
-EVENT_TYPE_DEFINE(config_event, print_config_event,
-		  &config_event_info);
+EVENT_TYPE_DEFINE(config_event, log_config_event, &config_event_info);

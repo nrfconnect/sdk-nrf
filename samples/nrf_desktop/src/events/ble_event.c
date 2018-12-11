@@ -6,6 +6,7 @@
 
 #include <assert.h>
 #include <misc/util.h>
+#include <stdio.h>
 
 #include "ble_event.h"
 
@@ -16,7 +17,8 @@ static const char * const state_name[] = {
 #undef X
 };
 
-static void print_event(const struct event_header *eh)
+static int log_event(const struct event_header *eh, char *buf,
+			size_t buf_len)
 {
 	struct ble_peer_event *event = cast_ble_peer_event(eh);
 
@@ -25,8 +27,9 @@ static void print_event(const struct event_header *eh)
 
 	__ASSERT_NO_MSG(event->state < PEER_STATE_COUNT);
 
-	printk("id=%p %s", event->id, state_name[event->state]);
+	return snprintf(buf, buf_len, "id=%p %s", event->id,
+			state_name[event->state]);
 }
 
 
-EVENT_TYPE_DEFINE(ble_peer_event, print_event, NULL);
+EVENT_TYPE_DEFINE(ble_peer_event, log_event, NULL);

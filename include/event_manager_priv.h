@@ -147,12 +147,12 @@ extern "C" {
 #endif
 
 /* Declarations and definitions - for more details refer to public API. */
-#define _EVENT_INFO_DEFINE(ename, types, labels, log_arg_func)							\
+#define _EVENT_INFO_DEFINE(ename, types, labels, profile_func)							\
 	const static char *_CONCAT(ename, _log_arg_labels[]) __used = _ARG_LABELS_DEFINE(labels);		\
 	const static enum profiler_arg _CONCAT(ename, _log_arg_types[]) __used = _ARG_TYPES_DEFINE(types);	\
 	const static struct event_info _CONCAT(ename, _info) __used						\
 	__attribute__((__section__("event_infos"))) = {								\
-				.log_arg_fn	= log_arg_func,							\
+				.profile_fn	= profile_func,							\
 				.log_arg_cnt	= ARRAY_SIZE(_CONCAT(ename, _log_arg_labels)),			\
 				.log_arg_labels	= _CONCAT(ename, _log_arg_labels),				\
 				.log_arg_types	= _CONCAT(ename, _log_arg_types)				\
@@ -175,7 +175,7 @@ extern "C" {
 	_EVENT_TYPECHECK_FN(ename)
 
 
-#define _EVENT_TYPE_DEFINE(ename, print_fn, ev_info_struct)								\
+#define _EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct)								\
 	_EVENT_SUBSCRIBERS_DEFINE(ename);										\
 	const struct event_type _CONCAT(__event_type_, ename) __used							\
 	__attribute__((__section__("event_types"))) = {									\
@@ -190,7 +190,7 @@ extern "C" {
 			[_SUBS_PRIO_NORMAL]	= _EVENT_SUBSCRIBERS_STOP(ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL)),	\
 			[_SUBS_PRIO_FINAL]	= _EVENT_SUBSCRIBERS_STOP(ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL)),	\
 		},													\
-		.print_event			= print_fn,								\
+		.log_event			= log_fn,								\
 		.ev_info			= ev_info_struct,							\
 	}
 

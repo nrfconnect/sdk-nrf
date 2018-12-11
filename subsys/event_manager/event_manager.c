@@ -4,11 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <stdio.h>
 #include <zephyr.h>
 #include <misc/dlist.h>
-#include <misc/printk.h>
-#include <logging/sys_log.h>
 #include <event_manager.h>
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(event_manager, CONFIG_DESKTOP_EVENT_MANAGER_LOG_LEVEL);
 
 static void event_processor_fn(struct k_work *work);
 static void trace_event_execution(const struct event_header *eh,
@@ -59,11 +61,23 @@ static void event_processor_fn(struct k_work *work)
 
 		trace_event_execution(eh, true);
 		if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS)) {
-			printk("e: %s ", et->name);
-			if (et->print_event) {
-				et->print_event(eh);
+			if (et->log_event) {
+				const size_t buf_len = CONFIG_DESKTOP_EVENT_MANAGER_EVENT_LOG_BUF_LEN;
+				char event_log_buf[buf_len];
+				int pos;
+
+				pos = et->log_event(eh, event_log_buf, buf_len);
+				if (pos < 0) {
+					event_log_buf[0] = '\0';
+				}
+				if (pos >= buf_len) {
+					event_log_buf[buf_len - 2] = '~';
+				}
+				LOG_INF("e: %s %s", et->name,
+					log_strdup(event_log_buf));
+			} else {
+				LOG_INF("e: %s", et->name);
 			}
-			printk("\n");
 		}
 
 		bool consumed = false;
@@ -87,7 +101,7 @@ static void event_processor_fn(struct k_work *work)
 
 				if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS) &&
 				    IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENT_HANDLERS)) {
-					printk("|\t%s notified%s\n",
+					LOG_INF("|\t%s notified%s",
 						el->name,
 						(consumed)?(" (event consumed)"):(""));
 				}
@@ -95,11 +109,6 @@ static void event_processor_fn(struct k_work *work)
 		}
 		trace_event_execution(eh, false);
 		k_free(eh);
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS) &&
-	    IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENT_HANDLERS)) {
-		printk("|\n\n");
 	}
 }
 
@@ -114,7 +123,7 @@ void _event_submit(struct event_header *eh)
 	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED)) {
 		const struct event_type *et = eh->type_id;
 
-		if (et->ev_info && et->ev_info->log_arg_fn &&
+		if (et->ev_info && et->ev_info->profile_fn &&
 		    is_profiling_enabled(profiler_event_ids[et - __start_event_types])) {
 			struct log_event_buf buf;
 
@@ -123,7 +132,7 @@ void _event_submit(struct event_header *eh)
 			if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION)) {
 				profiler_log_add_mem_address(&buf, eh);
 			}
-			et->ev_info->log_arg_fn(&buf, eh);
+			et->ev_info->profile_fn(&buf, eh);
 			profiler_log_send(&buf,
 			  profiler_event_ids[et - __start_event_types]);
 		}
@@ -133,19 +142,19 @@ void _event_submit(struct event_header *eh)
 
 static void event_manager_show_listeners(void)
 {
-	printk("Registered Listeners:\n");
+	LOG_INF("Registered Listeners:");
 	for (const struct event_listener *el = __start_event_listeners;
 	     el != __stop_event_listeners;
 	     el++) {
 		__ASSERT_NO_MSG(el != NULL);
-		printk("|\t[L:%s]\n", el->name);
+		LOG_INF("|\t[L:%s]", el->name);
 	}
-	printk("|\n\n");
+	LOG_INF("");
 }
 
 static void event_manager_show_subscribers(void)
 {
-	printk("Registered Subscribers:\n");
+	LOG_INF("Registered Subscribers:");
 	for (const struct event_type *et = __start_event_types;
 	     (et != NULL) && (et != __stop_event_types);
 	     et++) {
@@ -164,19 +173,19 @@ static void event_manager_show_subscribers(void)
 				const struct event_listener *el = es->listener;
 
 				__ASSERT_NO_MSG(el != NULL);
-				printk("|\tprio:%u\t[E:%s] -> [L:%s]\n", prio,
-						et->name, el->name);
+				LOG_INF("|\tprio:%u\t[E:%s] -> [L:%s]", prio,
+					et->name, el->name);
 
 				is_subscribed = true;
 			}
 		}
 
 		if (!is_subscribed) {
-			printk("|\t[E:%s] has no subscribers\n", et->name);
+			LOG_INF("|\t[E:%s] has no subscribers", et->name);
 		}
-		printk("|\n");
+		LOG_INF("");
 	}
-	printk("\n");
+	LOG_INF("");
 }
 
 static void register_execution_tracking_events(void)
@@ -250,7 +259,7 @@ int event_manager_init(void)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED)) {
 		if (profiler_init()) {
-			SYS_LOG_ERR("System profiler: "
+			LOG_ERR("System profiler: "
 				"initialization problem\n");
 			return -1;
 		}

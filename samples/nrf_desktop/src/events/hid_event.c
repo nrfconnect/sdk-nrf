@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <stdio.h>
+
 #include "hid_event.h"
 
 static const char * const target_report_name[] = {
@@ -16,16 +18,18 @@ static const char * const target_report_name[] = {
 EVENT_TYPE_DEFINE(hid_keyboard_event, NULL, NULL);
 
 
-static void print_hid_mouse_event(const struct event_header *eh)
+static int log_hid_mouse_event(const struct event_header *eh, char *buf,
+				  size_t buf_len)
 {
 	struct hid_mouse_event *event = cast_hid_mouse_event(eh);
 
-	printk("buttons:0x%x wheel:%d dx:%d dy:%d => %p",
-	       event->button_bm, event->wheel, event->dx, event->dy,
-	       event->subscriber);
+	return snprintf(buf, buf_len,
+			"buttons:0x%x wheel:%d dx:%d dy:%d => %p",
+			event->button_bm, event->wheel, event->dx, event->dy,
+			event->subscriber);
 }
 
-static void log_args_mouse(struct log_event_buf *buf,
+static void profile_hid_mouse_event(struct log_event_buf *buf,
 			   const struct event_header *eh)
 {
 	struct hid_mouse_event *event = cast_hid_mouse_event(eh);
@@ -42,20 +46,23 @@ EVENT_INFO_DEFINE(hid_mouse_event,
 		  ENCODE(PROFILER_ARG_S32, PROFILER_ARG_U8, PROFILER_ARG_S32,
 			 PROFILER_ARG_S32, PROFILER_ARG_S32),
 		  ENCODE("subscriber", "buttons", "wheel", "dx", "dy"),
-		  log_args_mouse);
-EVENT_TYPE_DEFINE(hid_mouse_event, print_hid_mouse_event, &hid_mouse_event_info);
+		  profile_hid_mouse_event);
 
-static void print_hid_report_subscriber_event(const struct event_header *eh)
+EVENT_TYPE_DEFINE(hid_mouse_event, log_hid_mouse_event, &hid_mouse_event_info);
+
+static int log_hid_report_subscriber_event(const struct event_header *eh,
+					      char *buf, size_t buf_len)
 {
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(eh);
 
-	printk("report subscriber %p was %sconnected",
-	       event->subscriber, (event->connected)?(""):("dis"));
+	return snprintf(buf, buf_len,
+			"report subscriber %p was %sconnected",
+			event->subscriber, (event->connected)?(""):("dis"));
 }
 
-static void log_args_report_subscriber(struct log_event_buf *buf,
-					 const struct event_header *eh)
+static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
+						const struct event_header *eh)
 {
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(eh);
@@ -67,28 +74,33 @@ static void log_args_report_subscriber(struct log_event_buf *buf,
 
 EVENT_INFO_DEFINE(hid_report_subscriber_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
-		  ENCODE("subscriber", "connected"), log_args_report_subscriber);
-EVENT_TYPE_DEFINE(hid_report_subscriber_event, print_hid_report_subscriber_event,
+		  ENCODE("subscriber", "connected"),
+		  profile_hid_report_subscriber_event);
+
+EVENT_TYPE_DEFINE(hid_report_subscriber_event, log_hid_report_subscriber_event,
 		  &hid_report_subscriber_event_info);
 
-static void print_hid_report_sent_event(const struct event_header *eh)
+static int log_hid_report_sent_event(const struct event_header *eh,
+					char *buf, size_t buf_len)
 {
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(eh);
 
 	if (event->error) {
-		printk("error while sending %s report by %p",
-		       target_report_name[event->report_type],
-		       event->subscriber);
+		return snprintf(buf, buf_len,
+				"error while sending %s report by %p",
+				target_report_name[event->report_type],
+				event->subscriber);
 	} else {
-		printk("%s report sent by %p",
-		       target_report_name[event->report_type],
-		       event->subscriber);
+		return snprintf(buf, buf_len,
+				"%s report sent by %p",
+				target_report_name[event->report_type],
+				event->subscriber);
 	}
 }
 
-static void log_args_report_sent(struct log_event_buf *buf,
-				 const struct event_header *eh)
+static void profile_hid_report_sent_event(struct log_event_buf *buf,
+						const struct event_header *eh)
 {
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(eh);
@@ -102,22 +114,24 @@ static void log_args_report_sent(struct log_event_buf *buf,
 EVENT_INFO_DEFINE(hid_report_sent_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
 		  ENCODE("subscriber", "report_type", "error"),
-		  log_args_report_sent);
-EVENT_TYPE_DEFINE(hid_report_sent_event, print_hid_report_sent_event,
+		  profile_hid_report_sent_event);
+EVENT_TYPE_DEFINE(hid_report_sent_event, log_hid_report_sent_event,
 		  &hid_report_sent_event_info);
 
-static void print_hid_report_subscription_event(const struct event_header *eh)
+static int log_hid_report_subscription_event(const struct event_header *eh,
+						char *buf, size_t buf_len)
 {
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(eh);
 
-	printk("%s report notification %sabled by %p",
-	       target_report_name[event->report_type],
-	       (event->enabled)?("en"):("dis"), event->subscriber);
+	return snprintf(buf, buf_len,
+			"%s report notification %sabled by %p",
+			target_report_name[event->report_type],
+			(event->enabled)?("en"):("dis"), event->subscriber);
 }
 
-static void log_args_report_subscription(struct log_event_buf *buf,
-					 const struct event_header *eh)
+static void profile_hid_report_subscription_event(struct log_event_buf *buf,
+						  const struct event_header *eh)
 {
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(eh);
@@ -131,6 +145,8 @@ static void log_args_report_subscription(struct log_event_buf *buf,
 EVENT_INFO_DEFINE(hid_report_subscription_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
 		  ENCODE("subscriber", "report_type", "enabled"),
-		  log_args_report_subscription);
-EVENT_TYPE_DEFINE(hid_report_subscription_event, print_hid_report_subscription_event,
+		  profile_hid_report_subscription_event);
+
+EVENT_TYPE_DEFINE(hid_report_subscription_event,
+		  log_hid_report_subscription_event,
 		  &hid_report_subscription_event_info);

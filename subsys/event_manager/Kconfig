@@ -17,33 +17,32 @@ if EVENT_MANAGER
 
 config DESKTOP_EVENT_MANAGER_SHOW_EVENTS
 	bool "Show events"
+	depends on LOG
 	default y
 	help
 	  This option controls if events are printed to console.
 
 config DESKTOP_EVENT_MANAGER_SHOW_EVENT_HANDLERS
 	bool "Show event handlers"
+	depends on DESKTOP_EVENT_MANAGER_SHOW_EVENTS
 	help
 	  This option controls if event handlers are printed to console.
 
 config DESKTOP_EVENT_MANAGER_SHOW_LISTENERS
 	bool "Show event listeners"
+	depends on LOG
 	help
 	  Show listeners with events they subscribe to.
 
-config DESKTOP_SYS_LOG_EVENT_MANAGER_LEVEL
-	int "Event Manager log level"
-	depends on SYS_LOG
-	default 2
-	range 0 4
-	help
-	  Sets log level for HID state.
-	  Levels are:
-	  - 0 OFF, do not write
-	  - 1 ERROR, only write SYS_LOG_ERR
-	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
-	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
-	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+module = DESKTOP_EVENT_MANAGER
+module-str = Event Manager
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config DESKTOP_EVENT_MANAGER_EVENT_LOG_BUF_LEN
+	int "Length of buffer for processing event message"
+	default 128
+	range 2 1024
 
 config DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
 	bool "Log events to Profiler"

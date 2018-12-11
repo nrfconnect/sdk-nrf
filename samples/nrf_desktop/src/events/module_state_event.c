@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <stdio.h>
 #include <assert.h>
 #include <misc/util.h>
 
@@ -16,7 +17,8 @@ static const char * const state_name[] = {
 #undef X
 };
 
-static void print_event(const struct event_header *eh)
+static int log_module_state_event(const struct event_header *eh, char *buf,
+					  size_t buf_len)
 {
 	struct module_state_event *event = cast_module_state_event(eh);
 
@@ -25,8 +27,8 @@ static void print_event(const struct event_header *eh)
 
 	__ASSERT_NO_MSG(event->state < MODULE_STATE_COUNT);
 
-	printk("module:%s state:%s", (const char *)event->module_id,
-			state_name[event->state]);
+	return snprintf(buf, buf_len, "module:%s state:%s",
+		      (const char *)event->module_id, state_name[event->state]);
 }
 
-EVENT_TYPE_DEFINE(module_state_event, print_event, NULL);
+EVENT_TYPE_DEFINE(module_state_event, log_module_state_event, NULL);

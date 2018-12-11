@@ -4,18 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <stdio.h>
+
 #include "button_event.h"
 
-static void print_event(const struct event_header *eh)
+static int log_button_event(const struct event_header *eh, char *buf,
+			    size_t buf_len)
 {
 	struct button_event *event = cast_button_event(eh);
 
-	printk("key_id=0x%x %s",
-			event->key_id,
+	return snprintf(buf, buf_len, "key_id=0x%x %s", event->key_id,
 			(event->pressed)?("pressed"):("released"));
 }
 
-static void log_args(struct log_event_buf *buf, const struct event_header *eh)
+static void profile_button_event(struct log_event_buf *buf,
+				 const struct event_header *eh)
 {
 	struct button_event *event = cast_button_event(eh);
 
@@ -24,7 +27,9 @@ static void log_args(struct log_event_buf *buf, const struct event_header *eh)
 	profiler_log_encode_u32(buf, (event->pressed)?(1):(0));
 }
 
-EVENT_INFO_DEFINE(button_event, ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U32),
-			ENCODE("button_id", "status"), log_args);
+EVENT_INFO_DEFINE(button_event,
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U32),
+		  ENCODE("button_id", "status"),
+		  profile_button_event);
 
-EVENT_TYPE_DEFINE(button_event, print_event, &button_event_info);
+EVENT_TYPE_DEFINE(button_event, log_button_event, &button_event_info);
