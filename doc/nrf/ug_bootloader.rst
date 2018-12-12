@@ -1,4 +1,4 @@
-.. ug_bootloader:
+.. _ug_bootloader:
 
 Secure bootloader chain
 #######################
