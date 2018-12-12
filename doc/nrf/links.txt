@@ -4,6 +4,8 @@
 .. |link_zephyr_doc| replace:: Zephyr Project documentation
 .. _link_zephyr_doc: http://docs.zephyrproject.org/
 
+.. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr/issues
+
 .. |core_spec| replace:: Bluetooth Core Specification
 .. _core_spec: https://www.bluetooth.com/specifications/bluetooth-core-specification
 
@@ -49,6 +51,8 @@
 .. _`Getting Started information`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/GetStarted#infotabs
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+
+.. _`DevZone`: https://devzone.nordicsemi.com/
 
 .. _`Link Monitor`: https://www.nordicsemi.com/DocLib/Content/User_Guides/link_monitor/latest/UG/link_monitor/lm_intro
 
