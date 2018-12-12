@@ -41,7 +41,7 @@ Building and running
 
 This sample can be found under :file:`samples/bluetooth/peripheral_uart` in the |NCS| folder structure.
 
-See :ref:`bluetooth setup section <zephyr:bluetooth_setup>` for details.
+See :ref:`gs_programming` for information about how to build and program the application.
 
 .. _peripheral_uart_testing:
 

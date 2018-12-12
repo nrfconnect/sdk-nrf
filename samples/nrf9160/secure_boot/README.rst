@@ -63,6 +63,8 @@ This sample can be found under :file:`samples/nrf9160/secure_boot` in the |NCS| 
 The sample is built as a secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_SECURE=y`` set in ``prj.conf``.
 It can be programmed independently from the non-secure application firmware.
 
+See :ref:`gs_programming` for information about how to build and program the application.
+
 Testing
 =======
 

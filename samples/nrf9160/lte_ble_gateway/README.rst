@@ -41,6 +41,9 @@ This sample can be found under :file:`samples/lte-gateway/` in the |NCS| folder 
 The sample is built as a non-secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_NONSECURE=y`` set in ``prj.conf``.
 It can be programmed independently from the secure boot firmware.
 
+See :ref:`gs_programming` for information about how to build and program the application.
+Note that you must program two different applications as described in the following section.
+
 Programming the sample
 ======================
 

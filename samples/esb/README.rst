@@ -51,7 +51,7 @@ Building and running
 The Transmitter sample can be found under :file:`samples/esb/ptx` in the |NCS| folder structure.
 The Receiver sample can be found under :file:`samples/esb/prx` in the |NCS| folder structure.
 
-See :ref:`bluetooth setup section <zephyr:bluetooth_setup>` for details.
+See :ref:`gs_programming` for information about how to build and program the application.
 
 Testing
 =======
