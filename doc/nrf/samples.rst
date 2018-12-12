@@ -16,6 +16,9 @@ The following demo applications are available:
 
    ../../samples/bluetooth/*/README
 
+.. note::
+   |noBLE|
+
 .. toctree::
    :maxdepth: 1
    :caption: nRF9160 samples:

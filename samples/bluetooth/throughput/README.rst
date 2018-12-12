@@ -59,7 +59,6 @@ You can experiment with different connection parameter values by reconfiguring t
    If you change them to lower values, it is sufficient to program them to one of the boards.
    If you were to change them to higher values, you would need to program both boards again.
 
-See :ref:`gs_configuring` for instructions on how to change the connection parameter values.
 
 Requirements
 ************

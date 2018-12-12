@@ -9,7 +9,7 @@ This firmware is required to set up the nRF9160 DK so that it can run user appli
 Overview
 ********
 
-The sample configures secure attributions for the nRF9160 SoC and jumps into the non-secure application.
+The sample configures secure attributions for the nRF9160 SiP and jumps into the non-secure application.
 
 It utilizes the SPU peripheral to configure security attributions for the nRF9160 flash, SRAM, and peripherals.
 After the configuration setup is complete, the sample loads the application firmware that is located on the device.

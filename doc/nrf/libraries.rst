@@ -14,12 +14,16 @@ Here you can find documentation for these libraries, including API documentation
 
    ../../include/bluetooth/common/*
 
+
 .. toctree::
    :maxdepth: 1
    :caption: Bluetooth services:
    :glob:
 
    ../../include/bluetooth/services/*
+
+.. note::
+   |noBLE|
 
 .. toctree::
    :maxdepth: 1

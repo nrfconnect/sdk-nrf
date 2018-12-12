@@ -1,3 +1,5 @@
 .. |NCS| replace:: nRF Connect SDK
 
 .. |SES| replace:: SEGGER Embedded Studio
+
+.. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, samples, and applications are not supported for product development.

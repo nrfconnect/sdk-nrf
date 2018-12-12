@@ -3,25 +3,19 @@
 Getting started
 ###############
 
-This section is meant to help you get up to speed with developing applications in |NCS|.
+To quickly get started with the |NCS|, use the `Getting Started Assistant`_ to set up your development environment.
+Alternatively, check the :ref:`gs_installing` section for instructions on setting up your environment manually.
 
-After installing the |NCS|, you should follow these steps to start the developing process:
+We recommend using SEGGER Embedded Studio for building your applications. See :ref:`gs_programming` for the download links and instructions.
+There is also a troubleshooting section, in case you run into problems.
 
-1. Find an example that does more or less what you need.
-#. Program the unchanged example to your board.
-#. Test to see if everything works.
-#. Do small modifications to the example and program and test again.
-#. Start implementing your changes.
-
-The following sections will guide you through those steps.
-
-Also see the Zephyr :ref:`zephyr:getting_started`.
+Once you are set up, check out the :ref:`samples`.
+If this is the first time you work with embedded devices, it is probably a good idea to program an unchanged sample to your board first and test if it works as expected.
+After that, pick a sample that is related to the application you want to create and start developing!
 
 .. toctree::
    :maxdepth: 2
 
    gs_installing
-   gs_architecture
    gs_programming
    gs_testing
-   gs_configuring
