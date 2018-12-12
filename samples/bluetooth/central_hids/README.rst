@@ -19,4 +19,4 @@ Building and Running
 
 This sample can be found under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
 
-See :ref:`bluetooth setup section <bluetooth_setup>` for details.
+See :ref:`gs_programming` for information about how to build and program the application.

@@ -52,7 +52,7 @@ LED 3 and LED 4:
     * LED 4 blinking: Pattern sent - Pattern has been entered and sent to nRF Cloud for verification.
     * LED 4 ON: Connected - The device is ready for sensor data transfer.
 
-    .. figure:: /images/nrf_cloud_led_states.svg
+    .. figure:: ../../../doc/nrf/images/nrf_cloud_led_states.svg
        :alt: Application state indicated by LEDs
 
     Application state indicated by LEDs
@@ -69,6 +69,8 @@ This sample can be found under :file:`samples/nrf9160/asset_tracker` in the |NCS
 
 The sample is built as a non-secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_NONSECURE=y`` set in ``prj.conf``.
 It can be programmed independently from the secure boot firmware.
+
+See :ref:`gs_programming` for information about how to build and program the application.
 
 .. _power_opt:
 
