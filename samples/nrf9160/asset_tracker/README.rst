@@ -41,7 +41,7 @@ Switch 1:
     * Toggle to simulate flipping of the boards orientation.
 
 Switch 2:
-    * Set to **N.C.** to send simulated GPS data to the nRF Cloud once every second.
+    * Set to **N.C.** to send simulated GPS data to the nRF Cloud once every 2 seconds.
 
 The application state is indicated by the LEDs.
 
@@ -70,6 +70,27 @@ This sample can be found under :file:`samples/nrf9160/asset_tracker` in the |NCS
 The sample is built as a non-secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_NONSECURE=y`` set in ``prj.conf``.
 It can be programmed independently from the secure boot firmware.
 
+.. _power_opt:
+
+Power optimization
+******************
+
+The Asset Tracker sample can run in three power modes that are configured in the
+Kconfig file of the sample.
+
+Demo mode
+	This is the default setting.
+	In this mode, the device sends GPS data every 2 seconds.
+	To enable this mode, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=n``.
+
+Request eDRX mode
+	In this mode, the device sends GPS data every 2 minutes.
+	To enable this mode, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then
+	set Switch 2 to ON.
+
+Request Power Saving Mode (PSM)
+	To enable PSM, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then
+	set Switch 2 to OFF.
 
 Testing
 =======
@@ -89,10 +110,10 @@ After programming the :ref:`secure_boot` to your board, test the Asset Tracker s
 
       Secure Boot: prepare to jump to Non-Secure image
       ***** Booting Zephyr OS v1.13.99 *****
+      Application started
 
-#. Observe that "Application started" is printed to the terminal window after the LTE link is established.
-   This might take several minutes.
-#. Observe that LED 3 starts blinking as the connection to nRF Cloud is established.
+#. Observe that LED 3 starts blinking as the LTE link is established. This may take several minutes.
+#. Observe in the terminal window that connection to nRF Cloud is established.
 #. The first time you start the sample, pair the device to your account:
 
    a. Observe that both LED 3 and 4 start blinking, indicating that the pairing procedure has been initiated.
