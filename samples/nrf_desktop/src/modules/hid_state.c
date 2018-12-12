@@ -643,7 +643,13 @@ static void report_issued(const void *subscriber_id, enum target_report tr,
 	if (error) {
 		rs->err_cnt++;
 		if (rs->err_cnt > 1) {
+			/* To maintain the sanity of HID state, clear
+			 * all recorded events and items.
+			 */
 			LOG_ERR("Error while sending report");
+			memset(&rd->items, 0, sizeof(rd->items));
+			eventq_reset(&rd->eventq);
+
 			if (rs->cnt == 0) {
 				rs->state = STATE_CONNECTED_IDLE;
 			}
