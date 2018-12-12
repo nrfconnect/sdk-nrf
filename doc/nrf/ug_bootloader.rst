@@ -88,7 +88,7 @@ Complete the following steps to add a secure bootloader chain to your applicatio
 1. Create a private key in PEM format.
    To do so, run the following command, which stores your private key in a file name ``priv.pem`` in the current folder::
 
-       openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -pkeyopt ec_param_enc:named_curve -out priv.pem
+       openssl ecparam -name prime256v1 -genkey -noout -out priv.pem
 
    OpenSSL is installed with GIT, so it should be available in your GIT bash.
    See `openSSL`_ for more information.
@@ -107,6 +107,11 @@ Complete the following steps to add a secure bootloader chain to your applicatio
 
       There are additional configuration options that you can modify, but it is not recommended to do so.
       The default settings are suitable for most use cases.
+
+   .. note::
+      If you need more flexibility with signing, or you don't want the build system to handle your private key, choose CONFIG_SB_SIGNING_CUSTOM.
+      When choosing CONFIG_SB_SIGNING_CUSTOM, you must also specify CONFIG_SB_SIGNING_COMMAND and CONFIG_SB_SIGNING_PUBLIC_KEY.
+
    #. Click **Configure**.
 
 #. Select **Build** > **Build Solution** to compile your application.

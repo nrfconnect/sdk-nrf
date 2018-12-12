@@ -57,8 +57,6 @@ def parse_args():
     parser.add_argument("--generated-conf-file", required=True, help="Generated conf file.")
     parser.add_argument("--public-key-files", required=True,
                         help="Semicolon-separated list of public key .pem files.")
-    parser.add_argument("--signature-private-key-file", required=True,
-                        help="Path to private key PEM file used to generate the signature of the image.")
     parser.add_argument("-o", "--output", required=False, default="provision.hex",
                         help="Output file name.")
     parser.add_argument("-v", "--verbose", required=False, action="count",
@@ -66,11 +64,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_hashes(private_signing_key_file, public_key_files):
+def get_hashes(public_key_files):
     hashes = list()
-    with open(private_signing_key_file, 'r') as fn:
-        hashes.append(sha256(SigningKey.from_pem(fn.read()).get_verifying_key().to_string()).digest()[:16])
-        verbose_print("hash: " + hashes[-1].hex())
     for fn in public_key_files:
         verbose_print("Getting hash of %s" % fn)
         with open(fn, 'rb') as f:
@@ -86,7 +81,7 @@ def main():
     VERBOSE = args.verbose
 
     s0_address, s1_address, provision_address = find_provision_memory_section(args.generated_conf_file)
-    hashes = get_hashes(args.signature_private_key_file, args.public_key_files.split(','))
+    hashes = get_hashes(args.public_key_files.split(','))
     generate_provision_hex_file(s0_address=s0_address,
                                 s1_address=s1_address,
                                 hashes=hashes,

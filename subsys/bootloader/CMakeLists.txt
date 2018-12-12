@@ -168,27 +168,8 @@ list(APPEND to_merge ${PROVISION_HEX})
 set_property(GLOBAL APPEND PROPERTY HEX_FILES_TO_MERGE ${to_merge})
 
 include (${CMAKE_CURRENT_LIST_DIR}/cmake/debug_keys.cmake)
+include (${CMAKE_CURRENT_LIST_DIR}/cmake/sign.cmake)
 
-set(sign_depends kernel_elf ${key_file_depends})
-
-add_custom_command(
-  OUTPUT
-  ${SIGNED_KERNEL_HEX}
-  COMMAND
-  ${PYTHON_EXECUTABLE}
-  ${NRF_BOOTLOADER_SCRIPTS}/sign.py
-  --input ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
-  --output ${SIGNED_KERNEL_HEX}
-  --offset ${CONFIG_SB_VALIDATION_METADATA_OFFSET}
-  --pem ${signature_private_key_file}
-  --magic-value "${VALIDATION_INFO_MAGIC}"
-  --pk-hash-len ${CONFIG_SB_PUBLIC_KEY_HASH_LEN}
-  DEPENDS ${sign_depends}
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-  COMMENT
-  "Creating validation for ${KERNEL_HEX_NAME}, storing to ${SIGNED_KERNEL_HEX_NAME}"
-  USES_TERMINAL
-  )
 add_custom_target(
   sign_target
   DEPENDS
@@ -203,10 +184,9 @@ add_custom_command(
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/provision.py
   --generated-conf-file ${PROJECT_BINARY_DIR}/include/generated/generated_dts_board.conf
-  --signature-private-key-file "${signature_private_key_file}"
-  --public-key-files "${public_key_files}"
+  --public-key-files "${public_key_file},${PUBLIC_KEY_FILES}"
   --output ${PROVISION_HEX}
-  DEPENDS ${provision_depends}
+  DEPENDS ${PROVISION_DEPENDS}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMENT
   "Creating provision data for Bootloader, storing to ${PROVISION_HEX_NAME}"
