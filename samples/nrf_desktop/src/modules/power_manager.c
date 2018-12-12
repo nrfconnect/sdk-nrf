@@ -24,6 +24,7 @@
 #define MODULE power_manager
 #include "module_state_event.h"
 
+#include <logging/log_ctrl.h>
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_POWER_MANAGER_LOG_LEVEL);
 
@@ -118,6 +119,7 @@ int _sys_soc_suspend(s32_t ticks)
 
 	if (power_state == POWER_STATE_TURN_OFF) {
 		LOG_WRN("system turned off");
+		LOG_PANIC();
 
 		power_state = POWER_STATE_OFF;
 
