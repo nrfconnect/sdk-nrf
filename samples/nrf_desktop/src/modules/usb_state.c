@@ -180,9 +180,13 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 
 		state = new_state;
 
+		if (old_state == USB_STATE_ACTIVE) {
+			broadcast_subscription_change();
+		}
+
 		broadcast_usb_state();
-		if ((new_state == USB_STATE_ACTIVE) ||
-		    (old_state == USB_STATE_ACTIVE)) {
+
+		if (new_state == USB_STATE_ACTIVE) {
 			broadcast_subscription_change();
 		}
 	}
