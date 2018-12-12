@@ -3,8 +3,6 @@
 Common service utilities
 ########################
 
-ADD CONCEPTUAL DOCUMENTATION HERE
-
 
 API documentation
 *****************
