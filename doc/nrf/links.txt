@@ -49,3 +49,11 @@
 .. _`Getting Started information`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/GetStarted#infotabs
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+
+.. _`Link Monitor`: https://www.nordicsemi.com/DocLib/Content/User_Guides/link_monitor/latest/UG/link_monitor/lm_intro
+
+.. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160-SiP
+
+.. _`band lock section in the AT Commands reference document`: https://www.nordicsemi.com/DocLib/Content/User_Guides/at_commands/latest/REF/at_commands/mob_termination_ctrl_status/xbandlock
+
+.. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
