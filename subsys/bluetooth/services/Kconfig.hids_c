@@ -1,0 +1,19 @@
+menuconfig BT_GATT_HIDS_C
+	bool "HID service client"
+	help
+	  Enable HID GATT Human Interface Device service client.
+
+if BT_GATT_HIDS_C
+
+module = BT_GATT_HIDS_C
+module-str = HIDS Client
+source "subsys/logging/Kconfig.template.log_config"
+
+config BT_GATT_HIDS_C_REPORTS_MAX
+	int "Maximum number of reports supported"
+	default 8
+	help
+	  The number of reports supported by all the HIDS clients used.
+	  The report pool would be common to all HIDS client objects created.
+
+endif # BT_GATT_HIDS_C
