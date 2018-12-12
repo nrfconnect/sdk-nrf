@@ -8,28 +8,37 @@
 from ecdsa import SigningKey
 from ecdsa.curves import NIST256p
 import argparse
+import sys
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate PEM file.",
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--output-private", required=False,
-                        help="Output private key file name.")
-    parser.add_argument("--output-public", required=False,
-                        help="Output public key file name.")
+
+    priv_pub_group = parser.add_mutually_exclusive_group(required=True)
+    priv_pub_group.add_argument("--private", required=False, action="store_true",
+                                help="Output a private key.")
+    priv_pub_group.add_argument("--public", required=False, action="store_true",
+                                help="Output a public key.")
+    parser.add_argument("--out", "-out", "-o", required=False,
+                        type=argparse.FileType('wb'), default=sys.stdout.buffer,
+                        help="Output to specified file instead of stdout.")
+    parser.add_argument("--in", "-in", "-i", required=False, dest="infile",
+                        type=argparse.FileType('rb'),
+                        help="Read private key from specified PEM file instead of generating it.")
+
     args = parser.parse_args()
 
-    sk = SigningKey.generate(curve=NIST256p)
-    if args.output_private:
-        with open(args.output_private, 'wb') as sk_file:
-            sk_file.write(sk.to_pem())
+    sk = SigningKey.from_pem(args.infile.read()) if args.infile else SigningKey.generate(curve=NIST256p)
 
-    if args.output_public:
+    if args.private:
+        args.out.write(sk.to_pem())
+
+    if args.public:
         vk = sk.get_verifying_key()
         vk.to_pem()
-        with open(args.output_public, 'wb') as vk_file:
-            vk_file.write(vk.to_pem())
+        args.out.write(vk.to_pem())
 
 
 

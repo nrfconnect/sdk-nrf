@@ -18,9 +18,32 @@ config CUSTOM_DTS_OVERLAY_CMAKE_FILE
 	# variable is not yet available when this config is used.
 	default "${ZEPHYR_BASE}/../nrf/subsys/bootloader/dts/overlay.cmake"
 
+config SB_PRIVATE_KEY_PROVIDED
+	bool
+	help
+	  Hidden config specifying whether the build system has access to the
+	  private key used for signing, and will use it to perform signing and
+	  create the public key for the provision page.
+
+
+choice SB_SIGNING
+	prompt "Firmware signing method"
+	default SB_SIGNING_PYTHON
+	config SB_SIGNING_PYTHON
+		bool "Sign with Python ecdsa library."
+		select SB_PRIVATE_KEY_PROVIDED
+
+	config SB_SIGNING_OPENSSL
+		bool "Sign with openssl command line tool."
+		select SB_PRIVATE_KEY_PROVIDED
+
+	config SB_SIGNING_CUSTOM
+		bool "Sign with custom command."
+endchoice
 
 config SB_SIGNING_KEY_FILE
-	string "Private key PEM file"
+	string
+	prompt "Private key PEM file" if SB_PRIVATE_KEY_PROVIDED
 	default ""
 	help
 	  Absolute path to the private key PEM file.
@@ -31,6 +54,27 @@ config SB_SIGNING_KEY_FILE
 	  named 'SB_SIGNING_KEY_FILE' or passing
 	  '-DSB_SIGNING_KEY_FILE=/path/to/my/pem' when running cmake.
 	  See also SB_PUBLIC_KEY_FILES.
+
+config SB_SIGNING_COMMAND
+	string
+	prompt "Custom signing command" if !SB_PRIVATE_KEY_PROVIDED
+	default ""
+	help
+	  This command will be called to produce a signature of the firmware.
+	  It will be called as "${CONFIG_SB_SIGNING_COMMAND} <file>"
+	  The command must take calculate the signature over the the contents
+	  of the <file> and write the signature to stdout.
+	  The signature must be on DER format.
+
+config SB_SIGNING_PUBLIC_KEY
+	string
+	prompt "Public key PEM file" if !SB_PRIVATE_KEY_PROVIDED
+	default ""
+	help
+	  Path to a PEM file.
+	  When using a custom signing command, specify the corresponding public
+	  key here. This public key is checked during building, and added to
+	  the provision page as the first entry. See SB_PUBLIC_KEY_FILES.
 
 config SB_PUBLIC_KEY_FILES
 	string "Public Key PEM files"
