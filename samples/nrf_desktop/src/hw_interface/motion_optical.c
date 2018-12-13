@@ -16,6 +16,7 @@
 #include "motion_event.h"
 #include "power_event.h"
 #include "hid_event.h"
+#include "config_event.h"
 
 #define MODULE motion
 #include "module_state_event.h"
