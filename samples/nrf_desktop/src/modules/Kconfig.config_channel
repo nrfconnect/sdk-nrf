@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "User configuration channel"
+
+config DESKTOP_CONFIG_CHANNEL_ENABLE
+	bool "Enable user configuration channel"
+	help
+	  Enables user to change firmware parameters at runtime over the
+	  configuration channel.
+
+if DESKTOP_CONFIG_CHANNEL_ENABLE
+
+module = DESKTOP_CONFIG_CHANNEL
+module-str = Config channel
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

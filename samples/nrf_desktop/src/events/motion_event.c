@@ -13,7 +13,8 @@ static void print_event(const struct event_header *eh)
 	printk("dx=%d, dy=%d", event->dx, event->dy);
 }
 
-static void log_args(struct log_event_buf *buf, const struct event_header *eh)
+static void log_event(struct log_event_buf *buf,
+			     const struct event_header *eh)
 {
 	struct motion_event *event = cast_motion_event(eh);
 
@@ -24,5 +25,5 @@ static void log_args(struct log_event_buf *buf, const struct event_header *eh)
 
 
 EVENT_INFO_DEFINE(motion_event, ENCODE(PROFILER_ARG_S32, PROFILER_ARG_S32),
-			ENCODE("dx", "dy"), log_args);
+			ENCODE("dx", "dy"), log_event);
 EVENT_TYPE_DEFINE(motion_event, print_event, &motion_event_info);

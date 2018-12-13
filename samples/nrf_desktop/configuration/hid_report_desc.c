@@ -49,7 +49,7 @@ const u8_t hid_report_desc[] = {
 
 	0xC0,             /* End Collection (Physical) */
 
-#if CONFIG_DESKTOP_USER_CONFIG_ENABLE
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 	/* Report: Configuration feature report */
 	0x05, 0x01,       /* Usage Page (Generic Desktop) */
 	0x85, REPORT_ID_USER_CONFIG,
