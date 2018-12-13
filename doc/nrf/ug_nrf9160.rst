@@ -77,6 +77,25 @@ For more detailed information, see the `band lock section in the AT Commands ref
 
 .. _nrf9160_ug_drivs_libs_samples:
 
+Board controller
+================
+
+The nRF9160 DK contains an nRF52840 SoC that is used to route some of the nRF9160 SiP
+pins to different components on the DK, such as the Arduino pin headers, LEDs,
+and buttons. For a complete list of all the routing options available, see
+the `nRF9160 DK User Guide`_.
+
+The nRF52840 SoC on the DK comes preprogrammed with a firmware.
+If you need to restore the original firmware at some point, download the
+nRF9160 DK board controller FW from the `nRF9160 DK product page`_.
+To program the HEX file, use nrfjprog (which is part of the `nRF5 Command Line Tools`_).
+
+If you want to route some pins differently from what is done in the
+preprogrammed firmware, program the :ref:`zephyr:hello_world` sample instead of the preprogrammed firmware.
+Configure the sample (located under ``samples/hello_world``) for the nrf52840_pca10090 board.
+All configuration options can be found under **Board configuration** in menuconfig.
+See :ref:`zephyr:nrf52840_pca10090` for detailed information about the board.
+
 Available drivers, libraries, and samples
 =========================================
 
