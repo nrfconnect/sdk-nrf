@@ -70,3 +70,21 @@ To do this, select **Target -> Download zephyr/zephyr.elf**.
 
 7. To inspect the details of the flashed code and the memory usage,
 click **Debug -> Go**.
+
+.. _gs_programming_ts:
+
+Troublehooting SES
+==================
+
+When using SES to build the |NCS| samples,
+it might return an error indicating a project load failure. For example::
+
+	Can't load project file
+	The project file <filepath> is invalid.
+	The reported error is 'solution load command failed (1)'
+
+This issue might be caused by a variety of problems, such as incorrectly specified
+project file paths.
+SES helps you to identify the source of the issue by providing a text output
+with detailed information about the error. Make sure to click **OK** on the
+error pop-up message and then inspect the text output in SES.
