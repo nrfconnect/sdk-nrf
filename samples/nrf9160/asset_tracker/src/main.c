@@ -109,7 +109,9 @@ struct env_sensor {
 static const enum nrf_cloud_sensor available_sensors[] = {
 	NRF_CLOUD_SENSOR_GPS,
 	NRF_CLOUD_SENSOR_FLIP,
-	NRF_CLOUD_SENSOR_TEMP
+	NRF_CLOUD_SENSOR_TEMP,
+	NRF_CLOUD_SENSOR_HUMID,
+	NRF_CLOUD_SENSOR_AIR_PRESS
 };
 
 static struct env_sensor temp_sensor = {
@@ -118,9 +120,23 @@ static struct env_sensor temp_sensor = {
 	.dev_name = CONFIG_TEMP_DEV_NAME
 };
 
+static struct env_sensor humid_sensor = {
+	.type = NRF_CLOUD_SENSOR_HUMID,
+	.channel = SENSOR_CHAN_HUMIDITY,
+	.dev_name = CONFIG_TEMP_DEV_NAME
+};
+
+static struct env_sensor pressure_sensor = {
+	.type = NRF_CLOUD_SENSOR_AIR_PRESS,
+	.channel = SENSOR_CHAN_PRESS,
+	.dev_name = CONFIG_TEMP_DEV_NAME
+};
+
 /* Array containg environment sensors available on the board. */
 static struct env_sensor *env_sensors[] = {
-	&temp_sensor
+	&temp_sensor,
+	&humid_sensor,
+	&pressure_sensor
 };
 
  /* Variables to keep track of nRF cloud user association. */
@@ -868,6 +884,11 @@ static void sensors_init(void)
 	gps_cloud_data.data.len = nmea_data.len;
 
 	flip_cloud_data.type = NRF_CLOUD_SENSOR_FLIP;
+
+	/* Send sensor data after initialization, as it may be a long time until
+	 * next time if the application is in power optimized mode.
+	 */
+	env_data_send();
 }
 
 /**@brief Initializes buttons and LEDs, using the DK buttons and LEDs
