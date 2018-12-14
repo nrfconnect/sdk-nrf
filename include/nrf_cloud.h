@@ -61,6 +61,13 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_SENSOR_FLIP,
 	/** The TEMP sensor on the device. */
 	NRF_CLOUD_SENSOR_TEMP,
+	/** The Humidity sensor on the device. */
+	NRF_CLOUD_SENSOR_HUMID,
+	/** The Air Pressure sensor on the device. */
+	NRF_CLOUD_SENSOR_AIR_PRESS,
+	/** The Air Quality sensor on the device. */
+	NRF_CLOUD_SENSOR_AIR_QUAL,
+
 };
 
 /** @brief User input sequence values for user association type
