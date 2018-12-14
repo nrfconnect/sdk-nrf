@@ -114,6 +114,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 /* Register count used for reading a single motion burst */
 #define OPTICAL_BURST_SIZE			6
 
+#define OPTICAL_MAX_CPI				12000
+#define OPTICAL_MIN_CPI				100
+
 /* Sampling thread poll timeout */
 #define OPTICAL_POLL_TIMEOUT_MS			500
 
@@ -154,6 +157,8 @@ static struct device *spi_dev;
 static atomic_t state;
 static atomic_t connected;
 static bool last_read_burst;
+
+static atomic_t sensor_cpi;
 
 static int spi_cs_ctrl(bool enable)
 {
@@ -403,6 +408,34 @@ error:
 	return err;
 }
 
+static void update_cpi(u16_t cpi)
+{
+	/* Set resolution with CPI step of 100 cpi
+	 * 0x00: 100 cpi (minimum cpi)
+	 * 0x01: 200 cpi
+	 * :
+	 * 0x31: 5000 cpi (default cpi)
+	 * :
+	 * 0x77: 12000 cpi (maximum cpi)
+	 */
+
+	if ((cpi > OPTICAL_MAX_CPI) || (cpi < OPTICAL_MIN_CPI)) {
+		LOG_WRN("CPI value out of range");
+		return;
+	}
+
+	/* Convert CPI to register value */
+	u8_t value = (cpi / 100) - 1;
+
+	LOG_INF("Setting CPI to %u (reg value 0x%x)", cpi, value);
+
+	int err = reg_write(OPTICAL_REG_CONFIG1, value);
+	if (err) {
+		LOG_ERR("Failed to change CPI");
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
 static int firmware_load(void)
 {
 	int err;
@@ -460,12 +493,6 @@ static int firmware_load(void)
 	 * wireless mouse design.
 	 */
 	err = reg_write(OPTICAL_REG_CONFIG2, 0x20);
-	if (err) {
-		goto error;
-	}
-
-	/* Set initial CPI resolution. */
-	err = reg_write(OPTICAL_REG_CONFIG1, 0x15);
 	if (err) {
 		goto error;
 	}
@@ -536,7 +563,7 @@ static int motion_read(void)
 	return err;
 }
 
-static int init(void)
+static int init(u16_t cpi)
 {
 	int err = -ENXIO;
 
@@ -597,6 +624,12 @@ static int init(void)
 		goto error;
 	}
 
+	/* Set initial CPI resolution. */
+	update_cpi(cpi);
+	if (err) {
+		goto error;
+	}
+
 	/* Verify product id */
 	u8_t product_id;
 	err = reg_read(OPTICAL_REG_PRODUCT_ID, &product_id);
@@ -642,10 +675,11 @@ error:
 static void optical_thread_fn(void)
 {
 	s32_t timeout = K_FOREVER;
+	u16_t cpi = CONFIG_DESKTOP_OPTICAL_DEFAULT_CPI;
 
 	atomic_set(&state, STATE_IDLE);
 
-	int err = init();
+	int err = init(cpi);
 
 	while (!err) {
 		err = k_sem_take(&sem, timeout);
@@ -702,6 +736,15 @@ static void optical_thread_fn(void)
 			__ASSERT_NO_MSG(false);
 			break;
 		}
+
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+			u16_t new_cpi = atomic_get(&sensor_cpi);
+			if (new_cpi != cpi) {
+				cpi = new_cpi;
+				update_cpi(cpi);
+			}
+		}
+
 	}
 	/* This thread is supposed to run forever. */
 	__ASSERT_NO_MSG(false);
@@ -798,6 +841,20 @@ static bool event_handler(const struct event_header *eh)
 
 		return !suspended;
 	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		if (is_config_event(eh)) {
+			const struct config_event *event = cast_config_event(eh);
+
+			if (event->id == CONFIG_EVENT_ID_MOUSE_CPI) {
+				u16_t new_cpi = event->data[0] + (event->data[1] << 8);
+				atomic_set(&sensor_cpi, new_cpi);
+			}
+
+			return false;
+		}
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -808,4 +865,5 @@ EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+EVENT_SUBSCRIBE(MODULE, config_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
