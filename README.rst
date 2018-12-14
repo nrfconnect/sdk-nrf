@@ -17,5 +17,7 @@ The following repositories must be combined with fw-nrfconnect-nrf:
 Disclaimer
 **********
 
-This repository is not intended or supported by Nordic Semiconductor for
-product development.
+nRF Connect SDK supports development with nRF9160 Cellular IoT devices.
+It contains references and code for Bluetooth Low Energy devices in the
+nRF52 Series, though development on these devices is not currently supported
+with the nRF Connect SDK.
