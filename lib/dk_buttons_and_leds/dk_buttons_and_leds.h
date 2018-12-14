@@ -82,20 +82,19 @@ u32_t dk_get_buttons(void);
 
 /** @brief Set value of LED pins
  *
- *  @param  leds Bitmask that that will turn on and of the LEDs
+ *  @param  leds Bitmask that will turn on and of the LEDs
  *
  *  @return Zero on success or (negative) error code otherwise.
  */
 int dk_set_leds(u32_t leds);
 
-
 /** @brief Set value of LED pins.
  *
- *  @param  leds_on_mask Bitmask that that will turn on the corresponding
+ *  @param  leds_on_mask Bitmask that will turn on the corresponding
  *                       LEDs. In cases where it overlaps with
  *                       leds_off_mask, the leds_on_mask will have priority.
  *
- *  @param  leds_off_mask Bitmask that that will turn off the corresponding
+ *  @param  leds_off_mask Bitmask that will turn off the corresponding
  *                        LEDs. In cases where it overlaps with
  *                        leds_on_mask, the leds_on_mask will have priority.
  *
@@ -132,6 +131,17 @@ int dk_set_led_on(u8_t led_idx);
  *  @return Zero on success or (negative) error code otherwise.
  */
 int dk_set_led_off(u8_t led_idx);
+
+/** @brief Check value of LED_pins
+ *
+ *  @param leds_mask Bitmask that will check value of
+ *                   corresponding LEDS.
+ *  @param led_state Bitmask thah shows which LEDS are turned on
+ *                   or turned off.
+ *
+ *  @return Zero on success or (negative) error code otherwise.
+ */
+int dk_check_leds_state(u32_t leds_mask, u32_t *led_state);
 
 #ifdef __cplusplus
 }

@@ -209,3 +209,34 @@ int dk_set_led_off(u8_t led_idx)
 {
 	return dk_set_led(led_idx, 0);
 }
+
+int dk_check_leds_state(u32_t leds_mask, u32_t *led_state)
+{
+	u32_t led_state_mask = 0;
+
+	if ((leds_mask & ~DK_ALL_LEDS_MSK) != 0) {
+		return -EINVAL;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
+		u32_t val;
+
+		int err = gpio_pin_read(gpio_dev, led_pins[i], &val);
+
+		if (err) {
+			LOG_ERR("Cannot read LED gpio");
+			return err;
+		}
+
+		if (IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_LEDS)) {
+			val = 1 - val;
+		}
+
+		led_state_mask |= (val << i);
+	}
+
+	*led_state = led_state_mask;
+	*led_state &= leds_mask;
+
+	return 0;
+}
