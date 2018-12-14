@@ -1,0 +1,124 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "User interface library for Nordic DKs"
+
+config UI_OUT_LIBRARY
+	bool "User interface output library for Nordic DKs"
+
+if UI_OUT_LIBRARY
+
+comment "User interface output the type of signaling"
+
+config UI_OUT_USER_STATE
+	bool "Enable creating user states"
+	default n
+	help
+	  Allows you to create individual user
+	  events for the application
+
+config UI_OUT_LOG
+	bool "Signalimg events by log"
+	default y
+
+config UI_OUT_LEDS
+	bool "Signaling events by DK leds"
+	select DK_LIBRARY
+	default y
+
+menu "Leds intervals"
+visible if UI_OUT_LEDS
+
+config UI_OUT_ADV_LED_ON_INTERVAL
+	int "Advertising led on interval in milliseconds"
+	default 200
+
+config UI_OUT_ADV_LED_OFF_INTERVAL
+	int "Advertising led off interval in milliseconds"
+	default 1800
+
+config UI_OUT_SCAN_LED_ON_INTERVAL
+	int "Scanning led on interval in milliseconds"
+	default 1800
+
+config UI_OUT_SCAN_LED_OFF_INTERVAL
+	int "Scanning led off interval in milliseconds"
+	default 200
+
+config UI_OUT_BONDING_LED_INTERVAL
+	int "Bonding led interval in milliseconds"
+	default 100
+
+config UI_OUT_ADV_SCAN_LEDS_ON_INTERVAL
+	int "Advertising and scanning leds on interval in milliseconds"
+	default 500
+
+config UI_OUT_ADV_SCAN_LEDS_OFF_INTERVAL
+	int "Advertising and scanning leds off interval in milliseconds"
+	default 250
+
+config UI_OUT_ALERT_INTERVAL
+	int "Alert led interval"
+	default 200
+endmenu
+
+menu "Leds"
+visible if UI_OUT_LEDS
+
+config UI_OUT_ADV_STARTED_LED
+	int "Advertising led number"
+	default 1
+	range 1 4
+
+config UI_OUT_CONNECTED_LED
+	int "Connected led number"
+	default 1
+	range 1 4
+
+config UI_OUT_BONDING_LED
+	int "Bonding led number"
+	default 1
+	range 1 4
+
+config UI_OUT_SCANNING_LED
+	int "Scanning led number"
+	default 2
+	range 1 4
+
+config UI_OUT_USER_LED1
+	int "User led 1 number"
+	default 1
+	range 1 4
+
+config UI_OUT_USER_LED2
+	int "User led 2 number"
+	default 2
+	range 1 4
+
+config UI_OUT_USER_LED3
+	int "User led 3 number"
+	default 3
+	range 1 4
+
+config UI_OUT_USER_LED4
+	int "User led 4 number"
+	default 4
+	range 1 4
+
+config UI_OUT_ALERT_LED
+	int "Alert led number"
+	default 2
+	range 1 4
+
+endmenu
+
+module = UI_OUT_LIB
+module-str = User interface output
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # UI_OUT_LIBRARY
+
+endmenu
