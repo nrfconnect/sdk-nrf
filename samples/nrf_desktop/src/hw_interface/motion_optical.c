@@ -626,6 +626,7 @@ static int init(u16_t cpi)
 
 	/* Set initial CPI resolution. */
 	update_cpi(cpi);
+	atomic_set(&sensor_cpi, cpi);
 	if (err) {
 		goto error;
 	}

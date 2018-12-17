@@ -54,6 +54,15 @@ config DESKTOP_SPI_FREQ_HZ
 	default 1800000
 	range 500000 2500000
 
+config DESKTOP_OPTICAL_DEFAULT_CPI
+	int "Default CPI resolution of the mouse optical sensor"
+	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	default 4000
+	range 100 12000
+	help
+	  This value is set on firmware start. It can be changed in runtime
+	  using the configuration channel.
+
 comment "Buttons configuration"
 
 choice
