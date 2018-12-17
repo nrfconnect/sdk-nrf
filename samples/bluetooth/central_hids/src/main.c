@@ -20,8 +20,10 @@
 #include <bluetooth/common/gatt_dm.h>
 #include <misc/byteorder.h>
 #include <bluetooth/common/scan.h>
+#include <bluetooth/services/hids_c.h>
 
 static struct bt_conn *default_conn;
+static struct bt_gatt_hids_c hids_c;
 
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
@@ -66,6 +68,11 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm,
 	printk("The discovery procedure succeeded\n");
 
 	bt_gatt_dm_data_print(dm);
+
+	err = bt_gatt_hids_c_handles_assign(dm, &hids_c);
+	if (err) {
+		printk("Could not init HIDS client object, error: %d\n", err);
+	}
 
 	err = bt_gatt_dm_data_release(dm);
 	if (err) {
@@ -131,6 +138,11 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	printk("Disconnected: %s (reason %u)\n", addr, reason);
 
+	if (bt_gatt_hids_c_assign_check(&hids_c)) {
+		printk("HIDS client active - releasing");
+		bt_gatt_hids_c_release(&hids_c);
+	}
+
 	if (default_conn != conn) {
 		return;
 	}
@@ -176,9 +188,70 @@ static void scan_init(void)
 	}
 }
 
+static u8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
+			     struct bt_gatt_hids_c_rep_info *rep,
+			     u8_t err,
+			     const u8_t *data)
+{
+	u8_t size = rep->size;
+	u8_t i;
+
+	if (!data) {
+		return BT_GATT_ITER_STOP;
+	}
+	printk("Notification, id: %u, size: %u, data:",
+	       rep->ref.id,
+	       size);
+	for (i = 0; i < size; ++i) {
+		printk(" 0x%x", data[i]);
+	}
+	printk("\n");
+	return BT_GATT_ITER_CONTINUE;
+}
+
+static void hids_c_ready_cb(struct bt_gatt_hids_c *hids_c)
+{
+	u8_t i;
+
+	printk("HIDS is ready to work\n");
+	for (i = 0; i < hids_c->rep_cnt; ++i) {
+		struct bt_gatt_hids_c_rep_info *rep;
+
+		rep = hids_c->rep_info[i];
+		if (rep->ref.type ==
+		    BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
+			printk("Subscribe in report id: %u\n",
+			       rep->ref.id);
+			bt_gatt_hids_c_rep_subscribe(hids_c, rep,
+						     hids_c_notify_cb);
+		}
+	}
+}
+
+static void hids_c_prep_fail_cb(struct bt_gatt_hids_c *hids_c, int err)
+{
+	printk("ERROR: HIDS client preparation failed!\n");
+}
+
+static void hids_c_pm_update_cb(struct bt_gatt_hids_c *hids_c)
+{
+	printk("Protocol mode updated: %s\n",
+	      bt_gatt_hids_c_pm_get(hids_c) == BT_GATT_HIDS_C_PM_BOOT ?
+	      "BOOT" : "REPORT");
+}
+
+/* HIDS client initialization parameters */
+static const struct bt_gatt_hids_c_init_params hids_c_init_params = {
+	.ready_cb      = hids_c_ready_cb,
+	.prep_error_cb = hids_c_prep_fail_cb,
+	.pm_update_cb  = hids_c_pm_update_cb
+};
+
 void main(void)
 {
 	int err;
+
+	bt_gatt_hids_c_init(&hids_c, &hids_c_init_params);
 
 	err = bt_enable(NULL);
 	if (err) {
