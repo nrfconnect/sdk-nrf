@@ -1,4 +1,4 @@
-.. _nrf_esb_readme:
+.. _esb_readme:
 
 Enhanced ShockBurst
 ###################
@@ -11,9 +11,9 @@ Also, check out the :ref:`esb_prx_ptx` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/nrf_esb.h`
-| Source files: :file:`subsys/enhanced_shockburst/`
+| Header file: :file:`include/esb.h`
+| Source files: :file:`subsys/esb/`
 
-.. doxygengroup:: nrf_esb
+.. doxygengroup:: esb
    :project: nrf
    :members:

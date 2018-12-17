@@ -4,34 +4,34 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig NRF_ESB
+menuconfig ESB
 	bool "Enhanced ShockBurst"
 	default n
 	help
 	  Enable ESB functionality.
 
-if NRF_ESB
+if ESB
 
-config NRF_ESB_MAX_PAYLOAD_LENGTH
+config ESB_MAX_PAYLOAD_LENGTH
 	int "Maximum payload size"
 	default 32
 	range 1 252
 	help
 	  The maximum size of the payload.
 
-config NRF_ESB_TX_FIFO_SIZE
+config ESB_TX_FIFO_SIZE
 	int "TX buffer length"
 	default 8
 	help
 	  The length of the TX FIFO buffer, in number of elements.
 
-config NRF_ESB_RX_FIFO_SIZE
+config ESB_RX_FIFO_SIZE
 	int "RX buffer length"
 	default 8
 	help
 	  The length of the RX FIFO buffer, in number of elements.
 
-config NRF_ESB_PIPE_COUNT
+config ESB_PIPE_COUNT
 	int "Maximum number of pipes"
 	default 8
 	range 1 8
@@ -43,7 +43,7 @@ config NRF_ESB_PIPE_COUNT
 
 menu "Hardware selection (alter with care)"
 
-config NRF_ESB_PPI_TIMER_START
+config ESB_PPI_TIMER_START
 	int "PPI channel used to start the sys timer."
 	default 5
 	range 0 19
@@ -53,7 +53,7 @@ config NRF_ESB_PPI_TIMER_START
 	  if you have an understanding of the other nRF5 specific submodules
 	  your implementation is currently using.
 
-config NRF_ESB_PPI_TIMER_STOP
+config ESB_PPI_TIMER_STOP
 	int "PPI channel used to stop the sys timer."
 	default 6
 	range 0 19
@@ -63,7 +63,7 @@ config NRF_ESB_PPI_TIMER_STOP
 	  if you have an understanding of the other nRF5 specific submodules
 	  your implementation is currently using.
 
-config NRF_ESB_PPI_RX_TIMEOUT
+config ESB_PPI_RX_TIMEOUT
 	int "PPI channel used to stop the radio when the timer expires."
 	default 7
 	range 0 19
@@ -73,7 +73,7 @@ config NRF_ESB_PPI_RX_TIMEOUT
 	  subsystems. Only change this if you have an understanding of the other
 	  nRF5 specific submodules your implementation is currently using.
 
-config NRF_ESB_PPI_TX_START
+config ESB_PPI_TX_START
 	int "PPI channel used to start the radio when the timer expires."
 	default 8
 	range 0 19
@@ -83,7 +83,7 @@ config NRF_ESB_PPI_TX_START
 	  Only change this if you have an understanding of the other nRF5
 	  specific submodules your implementation is currently using.
 
-config NRF_ESB_PPI_BUGFIX1
+config ESB_PPI_BUGFIX1
 	int "PPI channel used on nRF52832 to work around radio erratas."
 	default 11
 	range 0 19
@@ -93,7 +93,7 @@ config NRF_ESB_PPI_BUGFIX1
 	  Only change this if you have an understanding of the other nRF5
 	  specific submodules your implementation is currently using.
 
-config NRF_ESB_PPI_BUGFIX2
+config ESB_PPI_BUGFIX2
 	int "PPI channel used on nRF52832 to work around radio erratas."
 	default 10
 	range 0 19
@@ -103,7 +103,7 @@ config NRF_ESB_PPI_BUGFIX2
 	  Only change this if you have an understanding of the other nRF5
 	  specific submodules your implementation is currently using.
 
-config NRF_ESB_PPI_BUGFIX3
+config ESB_PPI_BUGFIX3
 	int "PPI channel used on nRF52832 to work around radio erratas."
 	default 9
 	range 0 19
@@ -113,58 +113,58 @@ config NRF_ESB_PPI_BUGFIX3
 	  Only change this if you have an understanding of the other nRF5
 	  specific submodules your implementation is currently using.
 
-choice NRF_ESB_SYS_TIMER
-	default NRF_ESB_SYS_TIMER2
+choice ESB_SYS_TIMER
+	default ESB_SYS_TIMER2
 	prompt "Timer to use for the ESB system timer."
 
-config NRF_ESB_SYS_TIMER0
+config ESB_SYS_TIMER0
 	bool "TIMER0"
 
-config NRF_ESB_SYS_TIMER1
+config ESB_SYS_TIMER1
 	bool "TIMER1"
 
-config NRF_ESB_SYS_TIMER2
+config ESB_SYS_TIMER2
 	bool "TIMER2"
 
-config NRF_ESB_SYS_TIMER3
+config ESB_SYS_TIMER3
 	bool "TIMER3"
 
-config NRF_ESB_SYS_TIMER4
+config ESB_SYS_TIMER4
 	bool "TIMER4"
 
 endchoice
 
-config NRF_ESB_ADDR_HANG_BUGFIX
+config ESB_ADDR_HANG_BUGFIX
 	depends on SOC_NRF52832
 	bool "Apply address hang bugfix"
 	help
 	  Apply address hang bugfix.
 	  Only affects nRF52832 Rev. 1 SoCs.
 
-if NRF_ESB_ADDR_HANG_BUGFIX
+if ESB_ADDR_HANG_BUGFIX
 
-choice NRF_ESB_BUGFIX_TIMER
-	default NRF_ESB_BUGFIX_TIMER3
+choice ESB_BUGFIX_TIMER
+	default ESB_BUGFIX_TIMER3
 	prompt "Timer to use for the ESB bugfix timer."
 
-config NRF_ESB_BUGFIX_TIMER0
+config ESB_BUGFIX_TIMER0
 	bool "TIMER0"
 
-config NRF_ESB_BUGFIX_TIMER1
+config ESB_BUGFIX_TIMER1
 	bool "TIMER1"
 
-config NRF_ESB_BUGFIX_TIMER2
+config ESB_BUGFIX_TIMER2
 	bool "TIMER2"
 
-config NRF_ESB_BUGFIX_TIMER3
+config ESB_BUGFIX_TIMER3
 	bool "TIMER3"
 
-config NRF_ESB_BUGFIX_TIMER4
+config ESB_BUGFIX_TIMER4
 	bool "TIMER4"
 
 endchoice
 
-endif # NRF_ESB_ADDR_HANG_BUGFIX
+endif # ESB_ADDR_HANG_BUGFIX
 
 endmenu
 

@@ -97,7 +97,7 @@ Kconfig*                                  @SebastianBoe
 /subsys/bluetooth/controller/             @joerchan @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
 /subsys/dfu/                              @hakonfam @sigvartmh
-/subsys/enhanced_shockburst/              @Raane @lemrey
+/subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
 /subsys/mpsl/                             @joerchan @rugeGerritsen
