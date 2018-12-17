@@ -71,13 +71,6 @@
 			 GPIO_INT_ACTIVE_LOW)
 #endif
 
-/* change this to enable pull-up/pull-down */
-#ifdef SW0_GPIO_PIN_PUD
-#define PULL_UP SW0_GPIO_PIN_PUD
-#else
-#define PULL_UP	0
-#endif
-
 #ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
 #ifdef CONFIG_BT_GATT_LBS_SECURITY_LEVEL_LOW
 static const bt_security_t sec_level = BT_SECURITY_LOW;
@@ -91,6 +84,7 @@ static const bt_security_t sec_level = BT_SECURITY_FIPS;
 #endif
 
 static K_SEM_DEFINE(ble_init_ok, 0, 1);
+static struct k_work        work_button_state;
 
 static struct device        *button_port;
 static struct device        *led_port;
@@ -221,11 +215,17 @@ static void bt_ready(int err)
 	k_sem_give(&ble_init_ok);
 }
 
+
+static void send_button_state(struct k_work *item)
+{
+	lbs_send_button_state(!button_state);
+}
+
 static void button_pressed(struct device *button_port, struct gpio_callback *cb,
 		    u32_t pins)
 {
-	button_state = button_state ^ 0x01;
-	lbs_send_button_state(button_state);
+	gpio_pin_read(button_port, USER_BUTTON, (u32_t *)&button_state);
+	k_work_submit(&work_button_state);
 }
 
 static int init_button(void)
@@ -239,7 +239,7 @@ static int init_button(void)
 	}
 
 	err = gpio_pin_configure(button_port, USER_BUTTON,
-			   GPIO_DIR_IN | GPIO_INT | PULL_UP |
+			   GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
 			   EDGE_SENSE_CONF);
 
 	if (!err) {
@@ -272,6 +272,7 @@ static void init_leds(void)
 	err = gpio_pin_configure(led_port, RUN_STATUS_LED, GPIO_DIR_OUT);
 	err += gpio_pin_configure(led_port, USER_LED, GPIO_DIR_OUT);
 	err += gpio_pin_configure(led_port, CON_STATUS_LED, GPIO_DIR_OUT);
+
 	if (!err) {
 		err = gpio_port_write(led_port, LED_OFF << RUN_STATUS_LED |
 						LED_OFF << USER_LED |
@@ -318,6 +319,8 @@ void main(void)
 	if (!err) {
 		err = bt_enable(bt_ready);
 	}
+
+	k_work_init(&work_button_state, send_button_state);
 
 	if (!err) {
 		bt_conn_cb_register(&conn_callbacks);
