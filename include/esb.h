@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
-#ifndef __NRF_ESB_H
-#define __NRF_ESB_H
+#ifndef __ESB_H
+#define __ESB_H
 
 #include <errno.h>
 #include <sys/util.h>
@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-/** @defgroup nrf_esb Enhanced ShockBurst
+/** @defgroup esb Enhanced ShockBurst
  * @{
  * @ingroup proprietary_api
  *
@@ -36,17 +36,17 @@ extern "C" {
  *  Roughly equal to the nRF24Lxx default parameters except for CRC,
  *  which is set to 16 bit, and protocol, which is set to DPL.
  */
-#define NRF_ESB_DEFAULT_CONFIG                                                 \
+#define ESB_DEFAULT_CONFIG                                                     \
 	{                                                                      \
-		.protocol = NRF_ESB_PROTOCOL_ESB_DPL,                          \
-		.mode = NRF_ESB_MODE_PTX,				       \
+		.protocol = ESB_PROTOCOL_ESB_DPL,                              \
+		.mode = ESB_MODE_PTX,					       \
 		.event_handler = 0,					       \
-		.bitrate = NRF_ESB_BITRATE_2MBPS,			       \
-		.crc = NRF_ESB_CRC_16BIT,				       \
-		.tx_output_power = NRF_ESB_TX_POWER_0DBM,                      \
+		.bitrate = ESB_BITRATE_2MBPS,				       \
+		.crc = ESB_CRC_16BIT,					       \
+		.tx_output_power = ESB_TX_POWER_0DBM,			       \
 		.retransmit_delay = 600,				       \
 		.retransmit_count = 3,					       \
-		.tx_mode = NRF_ESB_TXMODE_AUTO,				       \
+		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.radio_irq_priority = 1,				       \
 		.event_irq_priority = 2,				       \
 		.payload_length = 32,					       \
@@ -57,17 +57,17 @@ extern "C" {
  *
  *  Identical to the nRF24Lxx defaults.
  */
-#define NRF_ESB_LEGACY_CONFIG                                                  \
+#define ESB_LEGACY_CONFIG                                                      \
 	{                                                                      \
-		.protocol = NRF_ESB_PROTOCOL_ESB,			       \
-		.mode = NRF_ESB_MODE_PTX,				       \
+		.protocol = ESB_PROTOCOL_ESB,				       \
+		.mode = ESB_MODE_PTX,					       \
 		.event_handler = 0,					       \
-		.bitrate = NRF_ESB_BITRATE_2MBPS,			       \
-		.crc = NRF_ESB_CRC_8BIT,                                       \
-		.tx_output_power = NRF_ESB_TX_POWER_0DBM,                      \
+		.bitrate = ESB_BITRATE_2MBPS,				       \
+		.crc = ESB_CRC_8BIT,					       \
+		.tx_output_power = ESB_TX_POWER_0DBM,			       \
 		.retransmit_delay = 600,				       \
 		.retransmit_count = 3,					       \
-		.tx_mode = NRF_ESB_TXMODE_AUTO,				       \
+		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.radio_irq_priority = 1,				       \
 		.event_irq_priority = 2,				       \
 		.payload_length = 32,					       \
@@ -86,7 +86,7 @@ extern "C" {
  *  @return  Initializer that sets up the pipe, length, and byte array for
  *           content of the TX data.
  */
-#define NRF_ESB_CREATE_PAYLOAD(_pipe, ...)                                     \
+#define ESB_CREATE_PAYLOAD(_pipe, ...)                                         \
 	{                                                                      \
 		.pipe = _pipe,                                                 \
 		.length = NUM_VA_ARGS_LESS_1(_pipe, __VA_ARGS__),	       \
@@ -96,95 +96,91 @@ extern "C" {
 	}
 
 /** @brief Enhanced ShockBurst protocols. */
-enum nrf_esb_protocol {
-	NRF_ESB_PROTOCOL_ESB,    /**< Enhanced ShockBurst with fixed payload
-				   *  length.
-				   */
-	NRF_ESB_PROTOCOL_ESB_DPL /**< Enhanced ShockBurst with dynamic payload
-				   *  length.
-				   */
+enum esb_protocol {
+	ESB_PROTOCOL_ESB,	/**< Fixed payload length. */
+	ESB_PROTOCOL_ESB_DPL	/**< Dynamic payload length. */
 };
 
 /** @brief Enhanced ShockBurst modes. */
-enum nrf_esb_mode {
-	NRF_ESB_MODE_PTX, /**< Primary transmitter mode. */
-	NRF_ESB_MODE_PRX  /**< Primary receiver mode.    */
+enum esb_mode {
+	ESB_MODE_PTX,	/**< Primary transmitter mode. */
+	ESB_MODE_PRX	/**< Primary receiver mode.    */
 };
 
 /** @brief Enhanced ShockBurst bitrate modes. */
-enum nrf_esb_bitrate {
+enum esb_bitrate {
 	/** 1 Mb radio mode. */
-	NRF_ESB_BITRATE_1MBPS = RADIO_MODE_MODE_Nrf_1Mbit,
-	 /** 2 Mb radio mode. */
-	NRF_ESB_BITRATE_2MBPS = RADIO_MODE_MODE_Nrf_2Mbit,
-#if !(defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52810)\
-		|| defined(CONFIG_SOC_NRF52811))
+	ESB_BITRATE_1MBPS = RADIO_MODE_MODE_Nrf_1Mbit,
+	/** 2 Mb radio mode. */
+	ESB_BITRATE_2MBPS = RADIO_MODE_MODE_Nrf_2Mbit,
+#if !(defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52810) ||          \
+      defined(CONFIG_SOC_NRF52811))
 	/** 250 Kb radio mode. */
-	NRF_ESB_BITRATE_250KBPS = RADIO_MODE_MODE_Nrf_250Kbit,
+	ESB_BITRATE_250KBPS = RADIO_MODE_MODE_Nrf_250Kbit,
 #endif
 	/** 1 Mb radio mode using @e Bluetooth low energy radio parameters. */
-	NRF_ESB_BITRATE_1MBPS_BLE = RADIO_MODE_MODE_Ble_1Mbit,
+	ESB_BITRATE_1MBPS_BLE = RADIO_MODE_MODE_Ble_1Mbit,
 #if defined(CONFIG_SOC_SERIES_NRF52X)
 	/** 2 Mb radio mode using @e Bluetooth low energy radio parameters. */
-	NRF_ESB_BITRATE_2MBPS_BLE = 4,
+	ESB_BITRATE_2MBPS_BLE = 4,
 #endif
 };
 
 /** @brief Enhanced ShockBurst CRC modes. */
-enum nrf_esb_crc {
-	NRF_ESB_CRC_16BIT = RADIO_CRCCNF_LEN_Two,   /**< Use two-byte CRC. */
-	NRF_ESB_CRC_8BIT = RADIO_CRCCNF_LEN_One,    /**< Use one-byte CRC. */
-	NRF_ESB_CRC_OFF = RADIO_CRCCNF_LEN_Disabled /**< Disable CRC. */
+enum esb_crc {
+	ESB_CRC_16BIT = RADIO_CRCCNF_LEN_Two,	/**< Use two-byte CRC. */
+	ESB_CRC_8BIT = RADIO_CRCCNF_LEN_One,	/**< Use one-byte CRC. */
+	ESB_CRC_OFF = RADIO_CRCCNF_LEN_Disabled /**< Disable CRC. */
 };
 
 /** @brief Enhanced ShockBurst radio transmission power modes. */
-enum nrf_esb_tx_power {
+enum esb_tx_power {
 	/** 4 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_4DBM = RADIO_TXPOWER_TXPOWER_Pos4dBm,
+	ESB_TX_POWER_4DBM = RADIO_TXPOWER_TXPOWER_Pos4dBm,
 #if defined(CONFIG_SOC_SERIES_NRF52X)
 	/** 3 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_3DBM = RADIO_TXPOWER_TXPOWER_Pos3dBm,
+	ESB_TX_POWER_3DBM = RADIO_TXPOWER_TXPOWER_Pos3dBm,
 #endif
 	/** 0 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_0DBM = RADIO_TXPOWER_TXPOWER_0dBm,
+	ESB_TX_POWER_0DBM = RADIO_TXPOWER_TXPOWER_0dBm,
 	/** -4 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_NEG4DBM = RADIO_TXPOWER_TXPOWER_Neg4dBm,
+	ESB_TX_POWER_NEG4DBM = RADIO_TXPOWER_TXPOWER_Neg4dBm,
 	/** -8 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_NEG8DBM = RADIO_TXPOWER_TXPOWER_Neg8dBm,
+	ESB_TX_POWER_NEG8DBM = RADIO_TXPOWER_TXPOWER_Neg8dBm,
 	/** -12 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_NEG12DBM = RADIO_TXPOWER_TXPOWER_Neg12dBm,
+	ESB_TX_POWER_NEG12DBM = RADIO_TXPOWER_TXPOWER_Neg12dBm,
 	/** -16 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_NEG16DBM = RADIO_TXPOWER_TXPOWER_Neg16dBm,
+	ESB_TX_POWER_NEG16DBM = RADIO_TXPOWER_TXPOWER_Neg16dBm,
 	/** -20 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_NEG20DBM = RADIO_TXPOWER_TXPOWER_Neg20dBm,
+	ESB_TX_POWER_NEG20DBM = RADIO_TXPOWER_TXPOWER_Neg20dBm,
 	/** -30 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_NEG30DBM = RADIO_TXPOWER_TXPOWER_Neg30dBm,
+	ESB_TX_POWER_NEG30DBM = RADIO_TXPOWER_TXPOWER_Neg30dBm,
 	/** -40 dBm radio transmit power. */
-	NRF_ESB_TX_POWER_NEG40DBM = RADIO_TXPOWER_TXPOWER_Neg40dBm
+	ESB_TX_POWER_NEG40DBM = RADIO_TXPOWER_TXPOWER_Neg40dBm
 };
 
 /** @brief Enhanced ShockBurst transmission modes. */
-enum nrf_esb_tx_mode {
+enum esb_tx_mode {
 	/** Automatic TX mode: When the TX FIFO contains packets and the
 	 * radio is idle, packets are sent automatically.
 	 */
-	NRF_ESB_TXMODE_AUTO,
-	/** Manual TX mode: Packets are not sent until @ref nrf_esb_start_tx
+	ESB_TXMODE_AUTO,
+	/** Manual TX mode: Packets are not sent until @ref esb_start_tx
 	 * is called. This mode can be used to ensure consistent packet timing.
 	 */
-	NRF_ESB_TXMODE_MANUAL,
+	ESB_TXMODE_MANUAL,
 	/** Manual start TX mode: Packets are not sent until
-	 * @ref nrf_esb_start_tx is called. Then, transmission continues
+	 * @ref esb_start_tx is called. Then, transmission continues
 	 * automatically until the TX FIFO is empty.
 	 */
-	NRF_ESB_TXMODE_MANUAL_START
+	ESB_TXMODE_MANUAL_START
 };
 
 /** @brief Enhanced ShockBurst event IDs. */
-enum nrf_esb_evt_id {
-	NRF_ESB_EVENT_TX_SUCCESS, /**< Event triggered on TX success. */
-	NRF_ESB_EVENT_TX_FAILED,  /**< Event triggered on TX failure. */
-	NRF_ESB_EVENT_RX_RECEIVED /**< Event triggered on RX received. */
+enum esb_evt_id {
+	ESB_EVENT_TX_SUCCESS, /**< Event triggered on TX success. */
+	ESB_EVENT_TX_FAILED,  /**< Event triggered on TX failure. */
+	ESB_EVENT_RX_RECEIVED /**< Event triggered on RX received. */
 };
 
 /** @brief Enhanced ShockBurst payload.
@@ -192,7 +188,7 @@ enum nrf_esb_evt_id {
  *  The payload is used both for transmissions and for acknowledging a
  *  received packet with a payload.
  */
-struct nrf_esb_payload {
+struct esb_payload {
 	u8_t length; /**< Length of the packet when not in DPL mode. */
 	u8_t pipe;   /**< Pipe used for this payload. */
 	s8_t rssi;   /**< RSSI for the received packet. */
@@ -201,27 +197,27 @@ struct nrf_esb_payload {
 		       *  ack is enabled.
 		       */
 	u8_t pid;    /**< PID assigned during communication. */
-	u8_t data[CONFIG_NRF_ESB_MAX_PAYLOAD_LENGTH]; /**< The payload data. */
+	u8_t data[CONFIG_ESB_MAX_PAYLOAD_LENGTH]; /**< The payload data. */
 };
 
 /** @brief Enhanced ShockBurst event. */
-struct nrf_esb_evt {
-	enum nrf_esb_evt_id evt_id;	/**< Enhanced ShockBurst event ID. */
+struct esb_evt {
+	enum esb_evt_id evt_id;	/**< Enhanced ShockBurst event ID. */
 	u32_t tx_attempts;	/**< Number of TX retransmission attempts. */
 };
 
-/** @brief Definition of the event handler for the module. */
-typedef void (*nrf_esb_event_handler)(const struct nrf_esb_evt *event);
+/** @brief Event handler prototype. */
+typedef void (*esb_event_handler)(const struct esb_evt *event);
 
 /** @brief Main configuration structure for the module. */
-struct nrf_esb_config {
-	enum nrf_esb_protocol protocol;		/**< ESB protocol. */
-	enum nrf_esb_mode mode;			/**< ESB mode. */
-	nrf_esb_event_handler event_handler;	/**< ESB event handler. */
+struct esb_config {
+	enum esb_protocol protocol;		/**< Protocol. */
+	enum esb_mode mode;			/**< Mode. */
+	esb_event_handler event_handler;	/**< Event handler. */
 	/* General RF parameters */
-	enum nrf_esb_bitrate bitrate;		/**< Bitrate mode. */
-	enum nrf_esb_crc crc;			/**< CRC mode. */
-	enum nrf_esb_tx_power tx_output_power;	/**< Radio TX power. */
+	enum esb_bitrate bitrate;		/**< Bitrate mode. */
+	enum esb_crc crc;			/**< CRC mode. */
+	enum esb_tx_power tx_output_power;	/**< Radio TX power. */
 
 	u16_t retransmit_delay; /**< The delay between each retransmission of
 				  *  unacknowledged packets.
@@ -231,7 +227,7 @@ struct nrf_esb_config {
 				  */
 
 	/* Control settings */
-	enum nrf_esb_tx_mode tx_mode;	/**< Transmission mode. */
+	enum esb_tx_mode tx_mode;	/**< Transmission mode. */
 
 	u8_t radio_irq_priority;	/**< nRF radio interrupt priority. */
 	u8_t event_irq_priority;	/**< ESB event interrupt priority. */
@@ -252,7 +248,7 @@ struct nrf_esb_config {
  *
  *  @return Zero on success or (negative) error code otherwise.
  */
-int nrf_esb_init(const struct nrf_esb_config *config);
+int esb_init(const struct esb_config *config);
 
 /** @brief Suspend the Enhanced ShockBurst module.
  *
@@ -262,7 +258,7 @@ int nrf_esb_init(const struct nrf_esb_config *config);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_suspend(void);
+int esb_suspend(void);
 
 /** @brief Disable the Enhanced ShockBurst module.
  *
@@ -272,13 +268,13 @@ int nrf_esb_suspend(void);
  *  @note All queues are flushed by this function.
  *
  */
-void nrf_esb_disable(void);
+void esb_disable(void);
 
 /** @brief Check if the Enhanced ShockBurst module is idle.
  *
  *  @return True if the module is idle, false otherwise.
  */
-bool nrf_esb_is_idle(void);
+bool esb_is_idle(void);
 
 /** @brief Write a payload for transmission or acknowledgement.
  *
@@ -292,7 +288,7 @@ bool nrf_esb_is_idle(void);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_write_payload(const struct nrf_esb_payload *payload);
+int esb_write_payload(const struct esb_payload *payload);
 
 /** @brief Read a payload.
  *
@@ -301,28 +297,28 @@ int nrf_esb_write_payload(const struct nrf_esb_payload *payload);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_read_rx_payload(struct nrf_esb_payload *payload);
+int esb_read_rx_payload(struct esb_payload *payload);
 
 /** @brief Start transmitting data.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_start_tx(void);
+int esb_start_tx(void);
 
 /** @brief Start receiving data.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_start_rx(void);
+int esb_start_rx(void);
 
 /** @brief Stop data reception.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_stop_rx(void);
+int esb_stop_rx(void);
 
 /** @brief Flush the TX buffer.
  *
@@ -331,30 +327,30 @@ int nrf_esb_stop_rx(void);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_flush_tx(void);
+int esb_flush_tx(void);
 
 /** @brief Pop the first item from the TX buffer.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_pop_tx(void);
+int esb_pop_tx(void);
 
 /** @brief Flush the RX buffer.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_flush_rx(void);
+int esb_flush_rx(void);
 
 /** @brief Set the length of the address.
  *
  *  @param[in] length	Length of the ESB address (in bytes).
  *
-* @retval 0 If successful.
+ * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
-  */
-int nrf_esb_set_address_length(u8_t length);
+ */
+int esb_set_address_length(u8_t length);
 
 /** @brief Set the base address for pipe 0.
  *
@@ -363,7 +359,7 @@ int nrf_esb_set_address_length(u8_t length);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_base_address_0(const u8_t *addr);
+int esb_set_base_address_0(const u8_t *addr);
 
 /** @brief Set the base address for pipe 1 to pipe 7.
  *
@@ -372,7 +368,7 @@ int nrf_esb_set_base_address_0(const u8_t *addr);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_base_address_1(const u8_t *addr);
+int esb_set_base_address_1(const u8_t *addr);
 
 /** @brief Set the number of pipes and the pipe prefix addresses.
  *
@@ -381,18 +377,18 @@ int nrf_esb_set_base_address_1(const u8_t *addr);
  *
  *  @param[in] prefixes		Prefixes for each pipe.
  *  @param[in] num_pipes	Number of pipes. Must be less than or equal to
- *				@ref CONFIG_NRF_ESB_PIPE_COUNT.
+ *				@ref CONFIG_ESB_PIPE_COUNT.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes);
+int esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes);
 
 /** @brief Enable select pipes.
  *
  *  The @p enable_mask parameter must contain the same number of pipes as has
- *  been configured with @ref nrf_esb_set_prefixes. This number may not be
- *  greater than the number defined by @ref CONFIG_NRF_ESB_PIPE_COUNT
+ *  been configured with @ref esb_set_prefixes. This number may not be
+ *  greater than the number defined by @ref CONFIG_ESB_PIPE_COUNT
  *
  *  @param enable_mask	Bitfield mask to enable or disable pipes.
  *			Setting a bit to 0 disables the pipe.
@@ -401,7 +397,7 @@ int nrf_esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_enable_pipes(u8_t enable_mask);
+int esb_enable_pipes(u8_t enable_mask);
 
 /** @brief Update pipe prefix.
  *
@@ -411,7 +407,7 @@ int nrf_esb_enable_pipes(u8_t enable_mask);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_update_prefix(u8_t pipe, u8_t prefix);
+int esb_update_prefix(u8_t pipe, u8_t prefix);
 
 /** @brief Set the channel to use for the radio.
  *
@@ -425,7 +421,7 @@ int nrf_esb_update_prefix(u8_t pipe, u8_t prefix);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_rf_channel(u32_t channel);
+int esb_set_rf_channel(u32_t channel);
 
 /** @brief Get the current radio channel.
  *
@@ -434,7 +430,7 @@ int nrf_esb_set_rf_channel(u32_t channel);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_get_rf_channel(u32_t *channel);
+int esb_get_rf_channel(u32_t *channel);
 
 /** @brief Set the radio output power.
  *
@@ -443,7 +439,7 @@ int nrf_esb_get_rf_channel(u32_t *channel);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_tx_power(enum nrf_esb_tx_power tx_output_power);
+int esb_set_tx_power(enum esb_tx_power tx_output_power);
 
 /** @brief Set the packet retransmit delay.
  *
@@ -452,7 +448,7 @@ int nrf_esb_set_tx_power(enum nrf_esb_tx_power tx_output_power);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_retransmit_delay(u16_t delay);
+int esb_set_retransmit_delay(u16_t delay);
 
 /** @brief Set the number of retransmission attempts.
  *
@@ -461,7 +457,7 @@ int nrf_esb_set_retransmit_delay(u16_t delay);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_retransmit_count(u16_t count);
+int esb_set_retransmit_count(u16_t count);
 
 /** @brief Set the radio bitrate.
  *
@@ -470,7 +466,7 @@ int nrf_esb_set_retransmit_count(u16_t count);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_set_bitrate(enum nrf_esb_bitrate bitrate);
+int esb_set_bitrate(enum esb_bitrate bitrate);
 
 /** @brief Reuse a packet ID for a specific pipe.
  *
@@ -484,7 +480,7 @@ int nrf_esb_set_bitrate(enum nrf_esb_bitrate bitrate);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_esb_reuse_pid(u8_t pipe);
+int esb_reuse_pid(u8_t pipe);
 
 /** @} */
 
@@ -492,4 +488,4 @@ int nrf_esb_reuse_pid(u8_t pipe);
 }
 #endif
 
-#endif /* NRF_ESB */
+#endif /* ESB */

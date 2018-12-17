@@ -9,7 +9,7 @@
 #include <irq.h>
 #include <logging/log.h>
 #include <nrf.h>
-#include <nrf_esb.h>
+#include <esb.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
 
@@ -20,8 +20,8 @@ LOG_MODULE_REGISTER(esb_ptx);
 
 static bool ready = true;
 static struct device *led_port;
-static struct nrf_esb_payload rx_payload;
-static struct nrf_esb_payload tx_payload = NRF_ESB_CREATE_PAYLOAD(0,
+static struct esb_payload rx_payload;
+static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
 	0x01, 0x00, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
 #define _RADIO_SHORTS_COMMON                                                   \
@@ -29,19 +29,19 @@ static struct nrf_esb_payload tx_payload = NRF_ESB_CREATE_PAYLOAD(0,
 	 RADIO_SHORTS_ADDRESS_RSSISTART_Msk |                                  \
 	 RADIO_SHORTS_DISABLED_RSSISTOP_Msk)
 
-void esb_event_handler(struct nrf_esb_evt const *event)
+void event_handler(struct esb_evt const *event)
 {
 	ready = true;
 
 	switch (event->evt_id) {
-	case NRF_ESB_EVENT_TX_SUCCESS:
+	case ESB_EVENT_TX_SUCCESS:
 		LOG_DBG("TX SUCCESS EVENT");
 		break;
-	case NRF_ESB_EVENT_TX_FAILED:
+	case ESB_EVENT_TX_FAILED:
 		LOG_DBG("TX FAILED EVENT");
 		break;
-	case NRF_ESB_EVENT_RX_RECEIVED:
-		while (nrf_esb_read_rx_payload(&rx_payload) == 0) {
+	case ESB_EVENT_RX_RECEIVED:
+		while (esb_read_rx_payload(&rx_payload) == 0) {
 			LOG_DBG("Packet received, len %d : "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x, "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x",
@@ -83,7 +83,7 @@ int clocks_start(void)
 	return 0;
 }
 
-int esb_init(void)
+int esb_initialize(void)
 {
 	int err;
 	/* These are arbitrary default addresses. In end user products
@@ -93,32 +93,32 @@ int esb_init(void)
 	u8_t base_addr_1[4] = {0xC2, 0xC2, 0xC2, 0xC2};
 	u8_t addr_prefix[8] = {0xE7, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8};
 
-	struct nrf_esb_config config = NRF_ESB_DEFAULT_CONFIG;
+	struct esb_config config = ESB_DEFAULT_CONFIG;
 
-	config.protocol = NRF_ESB_PROTOCOL_ESB_DPL;
+	config.protocol = ESB_PROTOCOL_ESB_DPL;
 	config.retransmit_delay = 600;
-	config.bitrate = NRF_ESB_BITRATE_2MBPS;
-	config.event_handler = esb_event_handler;
-	config.mode = NRF_ESB_MODE_PTX;
+	config.bitrate = ESB_BITRATE_2MBPS;
+	config.event_handler = event_handler;
+	config.mode = ESB_MODE_PTX;
 	config.selective_auto_ack = true;
 
-	err = nrf_esb_init(&config);
+	err = esb_init(&config);
 
 	if (err) {
 		return err;
 	}
 
-	err = nrf_esb_set_base_address_0(base_addr_0);
+	err = esb_set_base_address_0(base_addr_0);
 	if (err) {
 		return err;
 	}
 
-	err = nrf_esb_set_base_address_1(base_addr_1);
+	err = esb_set_base_address_1(base_addr_1);
 	if (err) {
 		return err;
 	}
 
-	err = nrf_esb_set_prefixes(addr_prefix, ARRAY_SIZE(addr_prefix));
+	err = esb_set_prefixes(addr_prefix, ARRAY_SIZE(addr_prefix));
 	if (err) {
 		return err;
 	}
@@ -180,7 +180,7 @@ void main(void)
 
 	leds_init();
 
-	err = esb_init();
+	err = esb_initialize();
 	if (err) {
 		LOG_ERR("ESB initialization failed, err %d", err);
 		return;
@@ -193,10 +193,10 @@ void main(void)
 	while (1) {
 		if (ready) {
 			ready = false;
-			nrf_esb_flush_tx();
+			esb_flush_tx();
 			leds_update(tx_payload.data[1]);
 
-			err = nrf_esb_write_payload(&tx_payload);
+			err = esb_write_payload(&tx_payload);
 			if (err) {
 				LOG_ERR("Payload write failed, err %d", err);
 			}

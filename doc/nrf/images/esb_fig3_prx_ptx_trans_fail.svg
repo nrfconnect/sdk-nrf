@@ -289,11 +289,11 @@
 			</g>
 			<g id="shape294-124">
 				<title>Sheet.294</title>
-				<desc>Event with event ID NRF_ESB_EVENT_TX_FAILED</desc>
+				<desc>Event with event ID ESB_EVENT_TX_FAILED</desc>
 				<path d="M0 372.44 L9 381.44 L9 372.44 L0 372.44 ZM0 372.44 L9 372.44 L9 381.44 L255.5 381.44 L255.5 321.94 L0 321.94
 							 L0 372.44 Z" class="st10"/>
 				<text x="-251.5" y="-355.29" transform="rotate(180)" class="st3">Event with event ID <tspan x="-251.5" dy="1.2em"
-							class="st4">NRF</tspan>_ESB_EVENT_TX_FAILED</text>			</g>
+							class="st4">ESB_EVENT_TX_FAILED</tspan></text>			</g>
 		</g>
 		<g id="group295-128" transform="translate(349.933,726.752) rotate(180)">
 			<title>Annotation/Comment.351</title>
@@ -341,11 +341,11 @@
 			</g>
 			<g id="shape309-151">
 				<title>Sheet.309</title>
-				<desc>Event with event ID NRF_ESB_EVENT_RX_RECEIVED</desc>
+				<desc>Event with event ID ESB_EVENT_RX_RECEIVED</desc>
 				<path d="M0 372.44 L9 381.44 L9 372.44 L0 372.44 ZM0 372.44 L9 372.44 L9 381.44 L207.26 381.44 L207.26 345.44 L0
 							 345.44 L0 372.44 Z" class="st10"/>
 				<text x="-203.26" y="-367.04" transform="rotate(180)" class="st3">Event with event ID <tspan x="-203.26" dy="1.2em"
-							class="st4">NRF</tspan>_ESB_EVENT_RX_RECEIVED</text>			</g>
+							class="st4">ESB_EVENT_RX_RECEIVED</tspan></text>			</g>
 		</g>
 		<g id="group310-155" transform="translate(588.941,726.752) rotate(180)">
 			<title>Annotation/Comment.366</title>

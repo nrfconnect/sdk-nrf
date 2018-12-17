@@ -131,7 +131,7 @@
 				<path d="M0 387.79 L9 396.79 L9 387.79 L0 387.79 ZM0 387.79 L9 387.79 L9 396.79 L205 396.79 L205 345.29 L0 345.29
 							 L0 387.79 Z" class="st10"/>
 				<text x="-201" y="-381.84" transform="rotate(180)" class="st3">Here, we start the transaction by <tspan x="-201"
-							dy="1.2em" class="st4">adding a payload to the TX FIFO </tspan><tspan x="-201" dy="1.2em" class="st4">using nrf</tspan>_esb_write_payload()</text>			</g>
+							dy="1.2em" class="st4">adding a payload to the TX FIFO </tspan><tspan x="-201" dy="1.2em" class="st4">using esb_write_payload()</tspan></text>			</g>
 		</g>
 		<g id="group306-53" transform="translate(422.62,418.693) rotate(180)">
 			<title>Annotation/Comment.291</title>
@@ -179,11 +179,11 @@
 			</g>
 			<g id="shape320-76">
 				<title>Sheet.320</title>
-				<desc>Event with event ID NRF_ESB_EVENT_TX_SUCCESS</desc>
+				<desc>Event with event ID ESB_EVENT_TX_SUCCESS</desc>
 				<path d="M0 387.79 L9 396.79 L9 387.79 L0 387.79 ZM0 387.79 L9 387.79 L9 396.79 L204.25 396.79 L204.25 345.29 L0
 							 345.29 L0 387.79 Z" class="st10"/>
 				<text x="-200.25" y="-374.64" transform="rotate(180)" class="st3">Event with event ID <tspan x="-200.25" dy="1.2em"
-							class="st4">NRF</tspan>_ESB_EVENT_TX_SUCCESS</text>			</g>
+							class="st4">ESB_EVENT_TX_SUCCESS</tspan></text>			</g>
 		</g>
 		<g id="group321-80" transform="translate(657.806,396.906) rotate(180)">
 			<title>Annotation/Comment.321</title>
@@ -231,11 +231,11 @@
 			</g>
 			<g id="shape335-103">
 				<title>Sheet.335</title>
-				<desc>Event with event ID NRF_ESB_EVENT_RX_RECEIVED (We received a ...</desc>
+				<desc>Event with event ID ESB_EVENT_RX_RECEIVED (We received a ...</desc>
 				<path d="M0 387.79 L9 396.79 L9 387.79 L0 387.79 ZM0 387.79 L9 387.79 L9 396.79 L208.94 396.79 L208.94 323.5 L0 323.5
 							 L0 387.79 Z" class="st10"/>
 				<text x="-204.94" y="-378.15" transform="rotate(180)" class="st3">Event with event ID <tspan x="-204.94" dy="1.2em"
-							class="st4">NRF</tspan>_ESB_EVENT_RX_RECEIVED <tspan x="-204.94" dy="1.2em" class="st4">(</tspan>We received a payload in the ACK <tspan
+							class="st4">ESB_EVENT_RX_RECEIVED</tspan> <tspan x="-204.94" dy="1.2em" class="st4">(</tspan>We received a payload in the ACK <tspan
 							x="-204.94" dy="1.2em" class="st4">packet that is ready to be read</tspan>)</text>			</g>
 		</g>
 		<g id="group336-109" transform="translate(691.368,491.449) rotate(180)">
@@ -284,12 +284,12 @@
 			</g>
 			<g id="shape350-132">
 				<title>Sheet.350</title>
-				<desc>If both events occur, the NRF_ESB_EVENT_TX_SUCCESS event alwa...</desc>
+				<desc>If both events occur, the ESB_EVENT_TX_SUCCESS event alwa...</desc>
 				<path d="M0 387.79 L9 396.79 L9 387.79 L0 387.79 ZM0 387.79 L9 387.79 L9 396.79 L255.5 396.79 L255.5 337.29 L0 337.29
 							 L0 387.79 Z" class="st10"/>
 				<text x="-251.5" y="-385.04" transform="rotate(180)" class="st3">If both events occur, the <tspan x="-251.5"
-							dy="1.2em" class="st4">NRF</tspan>_ESB_EVENT_TX_SUCCESS event <tspan x="-251.5" dy="1.2em" class="st4">always occurs before the </tspan><tspan
-							x="-251.5" dy="1.2em" class="st4">NRF</tspan>_ESB_EVENT_RX_RECEIVED event</text>			</g>
+							dy="1.2em" class="st4">ESB_EVENT_TX_SUCCESS event</tspan> <tspan x="-251.5" dy="1.2em" class="st4">always occurs before the </tspan><tspan
+							x="-251.5" dy="1.2em" class="st4">ESB_EVENT_RX_RECEIVED event</tspan></text>			</g>
 		</g>
 		<g id="group351-138" transform="translate(221.37,746.65) rotate(180)">
 			<title>Annotation/Comment.351</title>
@@ -337,11 +337,11 @@
 			</g>
 			<g id="shape365-161" transform="translate(0,10.802)">
 				<title>Sheet.365</title>
-				<desc>Here, we preload a TX payload using nrf_esb_write_payload() (...</desc>
+				<desc>Here, we preload a TX payload using esb_write_payload() (...</desc>
 				<path d="M0 387.79 L9 396.79 L9 387.79 L0 387.79 ZM0 387.79 L9 387.79 L9 396.79 L186 396.79 L186 339.18 L0 339.18
 							 L0 387.79 Z" class="st10"/>
 				<text x="-182" y="-385.98" transform="rotate(180)" class="st3">Here, we preload a TX payload <tspan x="-182"
-							dy="1.2em" class="st4">using nrf</tspan>_esb_write_payload()  <tspan x="-182" dy="2.4em" class="st4">(</tspan>Optional)</text>			</g>
+							dy="1.2em" class="st4">using esb_write_payload()</tspan>  <tspan x="-182" dy="2.4em" class="st4">(</tspan>Optional)</text>			</g>
 		</g>
 		<g id="group366-166" transform="translate(360.62,683.65) rotate(180)">
 			<title>Annotation/Comment.366</title>
@@ -389,11 +389,11 @@
 			</g>
 			<g id="shape380-189">
 				<title>Sheet.380</title>
-				<desc>Event with event ID NRF_ESB_EVENT_RX_RECEIVED</desc>
+				<desc>Event with event ID ESB_EVENT_RX_RECEIVED</desc>
 				<path d="M0 387.79 L9 396.79 L9 387.79 L0 387.79 ZM0 387.79 L9 387.79 L9 396.79 L206 396.79 L206 360.79 L0 360.79
 							 L0 387.79 Z" class="st10"/>
 				<text x="-202" y="-382.39" transform="rotate(180)" class="st3">Event with event ID <tspan x="-202" dy="1.2em"
-							class="st4">NRF</tspan>_ESB_EVENT_RX_RECEIVED</text>			</g>
+							class="st4">ESB_EVENT_RX_RECEIVED</tspan></text>			</g>
 		</g>
 		<g id="shape384-193" transform="translate(257.123,-233.384)">
 			<title>s.384</title>
