@@ -11,7 +11,7 @@ rsource "bluetooth/Kconfig"
 
 rsource "dfu/Kconfig"
 
-rsource "enhanced_shockburst/Kconfig"
+rsource "esb/Kconfig"
 
 rsource "net/Kconfig"
 

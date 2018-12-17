@@ -9,7 +9,7 @@
 #include <irq.h>
 #include <logging/log.h>
 #include <nrf.h>
-#include <nrf_esb.h>
+#include <esb.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
 
@@ -19,8 +19,8 @@ LOG_MODULE_REGISTER(esb_prx);
 #define LED_OFF 1
 
 static struct device *led_port;
-static struct nrf_esb_payload rx_payload;
-static struct nrf_esb_payload tx_payload = NRF_ESB_CREATE_PAYLOAD(0,
+static struct esb_payload rx_payload;
+static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17);
 
 static int leds_init(void)
@@ -64,17 +64,17 @@ static void leds_update(u8_t value)
 	}
 }
 
-void esb_event_handler(struct nrf_esb_evt const *event)
+void event_handler(struct esb_evt const *event)
 {
 	switch (event->evt_id) {
-	case NRF_ESB_EVENT_TX_SUCCESS:
+	case ESB_EVENT_TX_SUCCESS:
 		LOG_DBG("TX SUCCESS EVENT");
 		break;
-	case NRF_ESB_EVENT_TX_FAILED:
+	case ESB_EVENT_TX_FAILED:
 		LOG_DBG("TX FAILED EVENT");
 		break;
-	case NRF_ESB_EVENT_RX_RECEIVED:
-		if (nrf_esb_read_rx_payload(&rx_payload) == 0) {
+	case ESB_EVENT_RX_RECEIVED:
+		if (esb_read_rx_payload(&rx_payload) == 0) {
 			LOG_DBG("Packet received, len %d : "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x, "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x",
@@ -120,7 +120,7 @@ int clocks_start(void)
 	return 0;
 }
 
-int esb_init(void)
+int esb_initialize(void)
 {
 	int err;
 	/* These are arbitrary default addresses. In end user products
@@ -130,30 +130,30 @@ int esb_init(void)
 	u8_t base_addr_1[4] = {0xC2, 0xC2, 0xC2, 0xC2};
 	u8_t addr_prefix[8] = {0xE7, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8};
 
-	struct nrf_esb_config config = NRF_ESB_DEFAULT_CONFIG;
+	struct esb_config config = ESB_DEFAULT_CONFIG;
 
-	config.protocol = NRF_ESB_PROTOCOL_ESB_DPL;
-	config.bitrate = NRF_ESB_BITRATE_2MBPS;
-	config.mode = NRF_ESB_MODE_PRX;
-	config.event_handler = esb_event_handler;
+	config.protocol = ESB_PROTOCOL_ESB_DPL;
+	config.bitrate = ESB_BITRATE_2MBPS;
+	config.mode = ESB_MODE_PRX;
+	config.event_handler = event_handler;
 	config.selective_auto_ack = true;
 
-	err = nrf_esb_init(&config);
+	err = esb_init(&config);
 	if (err) {
 		return err;
 	}
 
-	err = nrf_esb_set_base_address_0(base_addr_0);
+	err = esb_set_base_address_0(base_addr_0);
 	if (err) {
 		return err;
 	}
 
-	err = nrf_esb_set_base_address_1(base_addr_1);
+	err = esb_set_base_address_1(base_addr_1);
 	if (err) {
 		return err;
 	}
 
-	err = nrf_esb_set_prefixes(addr_prefix, ARRAY_SIZE(addr_prefix));
+	err = esb_set_prefixes(addr_prefix, ARRAY_SIZE(addr_prefix));
 	if (err) {
 		return err;
 	}
@@ -174,7 +174,7 @@ void main(void)
 
 	leds_init();
 
-	err = esb_init();
+	err = esb_initialize();
 	if (err) {
 		LOG_ERR("ESB initialization failed, err %d", err);
 		return;
@@ -182,7 +182,7 @@ void main(void)
 
 	LOG_INF("Initialization complete");
 
-	err = nrf_esb_write_payload(&tx_payload);
+	err = esb_write_payload(&tx_payload);
 	if (err) {
 		LOG_ERR("Write payload, err %d", err);
 		return;
@@ -190,7 +190,7 @@ void main(void)
 
 	LOG_INF("Setting up for packet receiption");
 
-	err = nrf_esb_start_rx();
+	err = esb_start_rx();
 	if (err) {
 		LOG_ERR("RX setup failed, err %d", err);
 		return;

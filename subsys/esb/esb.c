@@ -7,7 +7,7 @@
 #include <irq.h>
 #include <sys/byteorder.h>
 #include <nrf.h>
-#include <nrf_esb.h>
+#include <esb.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -52,44 +52,44 @@
 	 RADIO_SHORTS_ADDRESS_RSSISTART_Msk |                                  \
 	 RADIO_SHORTS_DISABLED_RSSISTOP_Msk)
 
-#ifdef CONFIG_NRF_ESB_SYS_TIMER0
+#ifdef CONFIG_ESB_SYS_TIMER0
 #define ESB_SYS_TIMER NRF_TIMER0
 #define ESB_SYS_TIMER_IRQn TIMER0_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_SYS_TIMER1
+#ifdef CONFIG_ESB_SYS_TIMER1
 #define ESB_SYS_TIMER NRF_TIMER1
 #define ESB_SYS_TIMER_IRQn TIMER1_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_SYS_TIMER2
+#ifdef CONFIG_ESB_SYS_TIMER2
 #define ESB_SYS_TIMER NRF_TIMER2
 #define ESB_SYS_TIMER_IRQn TIMER2_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_SYS_TIMER3
+#ifdef CONFIG_ESB_SYS_TIMER3
 #define ESB_SYS_TIMER NRF_TIMER3
 #define ESB_SYS_TIMER_IRQn TIMER3_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_SYS_TIMER4
+#ifdef CONFIG_ESB_SYS_TIMER4
 #define ESB_SYS_TIMER NRF_TIMER4
 #define ESB_SYS_TIMER_IRQn TIMER4_IRQn
 #endif
 
-#ifdef CONFIG_NRF_ESB_BUGFIX_TIMER0
+#ifdef CONFIG_ESB_BUGFIX_TIMER0
 #define ESB_BUGFIX_TIMER NRF_TIMER0
 #define ESB_BUGFIX_TIMER_IRQn TIMER0_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_BUGFIX_TIMER1
+#ifdef CONFIG_ESB_BUGFIX_TIMER1
 #define ESB_BUGFIX_TIMER NRF_TIMER1
 #define ESB_BUGFIX_TIMER_IRQn TIMER1_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_BUGFIX_TIMER2
+#ifdef CONFIG_ESB_BUGFIX_TIMER2
 #define ESB_BUGFIX_TIMER NRF_TIMER2
 #define ESB_BUGFIX_TIMER_IRQn TIMER2_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_BUGFIX_TIMER3
+#ifdef CONFIG_ESB_BUGFIX_TIMER3
 #define ESB_BUGFIX_TIMER NRF_TIMER3
 #define ESB_BUGFIX_TIMER_IRQn TIMER3_IRQn
 #endif
-#ifdef CONFIG_NRF_ESB_BUGFIX_TIMER4
+#ifdef CONFIG_ESB_BUGFIX_TIMER4
 #define ESB_BUGFIX_TIMER NRF_TIMER4
 #define ESB_BUGFIX_TIMER_IRQn TIMER4_IRQn
 #endif
@@ -122,7 +122,7 @@ struct pipe_info {
 /* First-in, first-out queue of payloads to be transmitted. */
 struct payload_tx_fifo {
 	 /* Payload queue */
-	struct nrf_esb_payload *payload[CONFIG_NRF_ESB_TX_FIFO_SIZE];
+	struct esb_payload *payload[CONFIG_ESB_TX_FIFO_SIZE];
 
 	u32_t back;	/* Back of the queue (last in). */
 	u32_t front;	/* Front of queue (first out). */
@@ -132,7 +132,7 @@ struct payload_tx_fifo {
 /* First-in, first-out queue of received payloads. */
 struct payload_rx_fifo {
 	 /* Payload queue */
-	struct nrf_esb_payload *payload[CONFIG_NRF_ESB_RX_FIFO_SIZE];
+	struct esb_payload *payload[CONFIG_ESB_RX_FIFO_SIZE];
 
 	u32_t back;	/* Back of the queue (last in). */
 	u32_t front;	/* Front of queue (first out). */
@@ -157,7 +157,7 @@ struct esb_address {
 
 
 static bool esb_initialized;
-static struct nrf_esb_config esb_cfg;
+static struct esb_config esb_cfg;
 static volatile enum esb_state esb_state = ESB_STATE_IDLE;
 
 /* Default address configuration for ESB.
@@ -170,23 +170,23 @@ static struct esb_address esb_addr = {
 	.base_addr_p1 = {0xC2, 0xC2, 0xC2, 0xC2},
 	.pipe_prefixes = {0xE7, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8},
 	.addr_length = 5,
-	.num_pipes = CONFIG_NRF_ESB_PIPE_COUNT,
+	.num_pipes = CONFIG_ESB_PIPE_COUNT,
 	.rf_channel = 2,
 	.rx_pipes_enabled = 0xFF
 };
 
-static nrf_esb_event_handler event_handler;
-static struct nrf_esb_payload *current_payload;
+static esb_event_handler event_handler;
+static struct esb_payload *current_payload;
 
 /* FIFOs and buffers */
 static struct payload_tx_fifo tx_fifo;
 static struct payload_rx_fifo rx_fifo;
-static u8_t tx_payload_buffer[CONFIG_NRF_ESB_MAX_PAYLOAD_LENGTH + 2];
-static u8_t rx_payload_buffer[CONFIG_NRF_ESB_MAX_PAYLOAD_LENGTH + 2];
+static u8_t tx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
+static u8_t rx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
 
 /* Run time variables */
-static u8_t pids[CONFIG_NRF_ESB_PIPE_COUNT];
-static struct pipe_info rx_pipe_info[CONFIG_NRF_ESB_PIPE_COUNT];
+static u8_t pids[CONFIG_ESB_PIPE_COUNT];
+static struct pipe_info rx_pipe_info[CONFIG_ESB_PIPE_COUNT];
 static volatile u32_t interrupt_flags;
 static volatile u32_t retransmits_remaining;
 static volatile u32_t last_tx_attempts;
@@ -296,7 +296,7 @@ static void apply_address_workarounds(void)
 
 static void update_rf_payload_format_esb_dpl(u32_t payload_length)
 {
-#if (CONFIG_NRF_ESB_MAX_PAYLOAD_LENGTH <= 32)
+#if (CONFIG_ESB_MAX_PAYLOAD_LENGTH <= 32)
 	/* Using 6 bits for length */
 	NRF_RADIO->PCNF0 = (0 << RADIO_PCNF0_S0LEN_Pos) |
 			   (6 << RADIO_PCNF0_LFLEN_Pos) |
@@ -312,7 +312,7 @@ static void update_rf_payload_format_esb_dpl(u32_t payload_length)
 		(RADIO_PCNF1_ENDIAN_Big << RADIO_PCNF1_ENDIAN_Pos) |
 		((esb_addr.addr_length - 1) << RADIO_PCNF1_BALEN_Pos) |
 		(0 << RADIO_PCNF1_STATLEN_Pos) |
-		(CONFIG_NRF_ESB_MAX_PAYLOAD_LENGTH << RADIO_PCNF1_MAXLEN_Pos);
+		(CONFIG_ESB_MAX_PAYLOAD_LENGTH << RADIO_PCNF1_MAXLEN_Pos);
 }
 
 static void update_rf_payload_format_esb(u32_t payload_length)
@@ -358,24 +358,24 @@ static bool update_radio_bitrate(void)
 	NRF_RADIO->MODE = esb_cfg.bitrate << RADIO_MODE_MODE_Pos;
 
 	switch (esb_cfg.bitrate) {
-	case NRF_ESB_BITRATE_2MBPS:
+	case ESB_BITRATE_2MBPS:
 #ifdef CONFIG_SOC_SERIES_NRF52X
-	case NRF_ESB_BITRATE_2MBPS_BLE:
+	case ESB_BITRATE_2MBPS_BLE:
 #endif
 		wait_for_ack_timeout_us = RX_ACK_TIMEOUT_US_2MBPS;
 		break;
 
-	case NRF_ESB_BITRATE_1MBPS:
+	case ESB_BITRATE_1MBPS:
 		wait_for_ack_timeout_us = RX_ACK_TIMEOUT_US_1MBPS;
 		break;
 
 #ifdef CONFIG_SOC_SERIES_NRF51X
-	case NRF_ESB_BITRATE_250KBPS:
+	case ESB_BITRATE_250KBPS:
 		wait_for_ack_timeout_us = RX_ACK_TIMEOUT_US_250KBPS;
 		break;
 #endif /* CONFIG_SOC_SERIES_NRF51X */
 
-	case NRF_ESB_BITRATE_1MBPS_BLE:
+	case ESB_BITRATE_1MBPS_BLE:
 		wait_for_ack_timeout_us = RX_ACK_TIMEOUT_US_1MBPS_BLE;
 		break;
 
@@ -390,11 +390,11 @@ static bool update_radio_bitrate(void)
 static bool update_radio_protocol(void)
 {
 	switch (esb_cfg.protocol) {
-	case NRF_ESB_PROTOCOL_ESB_DPL:
+	case ESB_PROTOCOL_ESB_DPL:
 		update_rf_payload_format = update_rf_payload_format_esb_dpl;
 		break;
 
-	case NRF_ESB_PROTOCOL_ESB:
+	case ESB_PROTOCOL_ESB:
 		update_rf_payload_format = update_rf_payload_format_esb;
 		break;
 
@@ -408,17 +408,17 @@ static bool update_radio_protocol(void)
 static bool update_radio_crc(void)
 {
 	switch (esb_cfg.crc) {
-	case NRF_ESB_CRC_16BIT:
+	case ESB_CRC_16BIT:
 		NRF_RADIO->CRCINIT = 0xFFFFUL;  /* Initial value */
 		NRF_RADIO->CRCPOLY = 0x11021UL; /* CRC poly: x^16+x^12^x^5+1 */
 		break;
 
-	case NRF_ESB_CRC_8BIT:
+	case ESB_CRC_8BIT:
 		NRF_RADIO->CRCINIT = 0xFFUL;  /* Initial value */
 		NRF_RADIO->CRCPOLY = 0x107UL; /* CRC poly: x^8+x^2^x^1+1 */
 		break;
 
-	case NRF_ESB_CRC_OFF:
+	case ESB_CRC_OFF:
 		break;
 
 	default:
@@ -427,7 +427,7 @@ static bool update_radio_crc(void)
 
 	NRF_RADIO->CRCINIT = 0xFFFFUL;  /* Initial value */
 	NRF_RADIO->CRCPOLY = 0x11021UL; /* CRC poly: x^16+x^12^x^5+1 */
-	NRF_RADIO->CRCCNF = NRF_ESB_CRC_16BIT << RADIO_CRCCNF_LEN_Pos;
+	NRF_RADIO->CRCCNF = ESB_CRC_16BIT << RADIO_CRCCNF_LEN_Pos;
 
 	return true;
 }
@@ -460,16 +460,16 @@ static void reset_fifos(void)
 
 static void initialize_fifos(void)
 {
-	static struct nrf_esb_payload rx_payload[CONFIG_NRF_ESB_RX_FIFO_SIZE];
-	static struct nrf_esb_payload tx_payload[CONFIG_NRF_ESB_TX_FIFO_SIZE];
+	static struct esb_payload rx_payload[CONFIG_ESB_RX_FIFO_SIZE];
+	static struct esb_payload tx_payload[CONFIG_ESB_TX_FIFO_SIZE];
 
 	reset_fifos();
 
-	for (size_t i = 0; i < CONFIG_NRF_ESB_TX_FIFO_SIZE; i++) {
+	for (size_t i = 0; i < CONFIG_ESB_TX_FIFO_SIZE; i++) {
 		tx_fifo.payload[i] = &tx_payload[i];
 	}
 
-	for (size_t i = 0; i < CONFIG_NRF_ESB_RX_FIFO_SIZE; i++) {
+	for (size_t i = 0; i < CONFIG_ESB_RX_FIFO_SIZE; i++) {
 		rx_fifo.payload[i] = &rx_payload[i];
 	}
 }
@@ -483,7 +483,7 @@ static void tx_fifo_remove_last(void)
 	u32_t key = irq_lock();
 
 	tx_fifo.count--;
-	if (++tx_fifo.front >= CONFIG_NRF_ESB_TX_FIFO_SIZE) {
+	if (++tx_fifo.front >= CONFIG_ESB_TX_FIFO_SIZE) {
 		tx_fifo.front = 0;
 	}
 
@@ -504,16 +504,16 @@ static void tx_fifo_remove_last(void)
  */
 static bool rx_fifo_push_rfbuf(u8_t pipe, u8_t pid)
 {
-	if (rx_fifo.count >= CONFIG_NRF_ESB_RX_FIFO_SIZE) {
+	if (rx_fifo.count >= CONFIG_ESB_RX_FIFO_SIZE) {
 		return false;
 	}
 
-	if (esb_cfg.protocol == NRF_ESB_PROTOCOL_ESB_DPL) {
-		if (rx_payload_buffer[0] > CONFIG_NRF_ESB_MAX_PAYLOAD_LENGTH) {
+	if (esb_cfg.protocol == ESB_PROTOCOL_ESB_DPL) {
+		if (rx_payload_buffer[0] > CONFIG_ESB_MAX_PAYLOAD_LENGTH) {
 			return false;
 		}
 		rx_fifo.payload[rx_fifo.back]->length = rx_payload_buffer[0];
-	} else if (esb_cfg.mode == NRF_ESB_MODE_PTX) {
+	} else if (esb_cfg.mode == ESB_MODE_PTX) {
 		/* Received packet is an acknowledgment */
 		rx_fifo.payload[rx_fifo.back]->length = 0;
 	} else {
@@ -528,7 +528,7 @@ static bool rx_fifo_push_rfbuf(u8_t pipe, u8_t pid)
 	rx_fifo.payload[rx_fifo.back]->pid = pid;
 	rx_fifo.payload[rx_fifo.back]->noack = !(rx_payload_buffer[1] & 0x01);
 
-	if (++rx_fifo.back >= CONFIG_NRF_ESB_RX_FIFO_SIZE) {
+	if (++rx_fifo.back >= CONFIG_ESB_RX_FIFO_SIZE) {
 		rx_fifo.back = 0;
 	}
 	rx_fifo.count++;
@@ -547,24 +547,24 @@ static void sys_timer_init(void)
 
 static void ppi_init(void)
 {
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_TIMER_START].EEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_START].EEP =
 		(u32_t)&NRF_RADIO->EVENTS_READY;
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_TIMER_START].TEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_START].TEP =
 		(u32_t)&ESB_SYS_TIMER->TASKS_START;
 
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_TIMER_STOP].EEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_STOP].EEP =
 		(u32_t)&NRF_RADIO->EVENTS_ADDRESS;
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_TIMER_STOP].TEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_STOP].TEP =
 		(u32_t)&ESB_SYS_TIMER->TASKS_SHUTDOWN;
 
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_RX_TIMEOUT].EEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_RX_TIMEOUT].EEP =
 		(u32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[0];
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_RX_TIMEOUT].TEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_RX_TIMEOUT].TEP =
 		(u32_t)&NRF_RADIO->TASKS_DISABLE;
 
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_TX_START].EEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_TX_START].EEP =
 		(u32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[1];
-	NRF_PPI->CH[CONFIG_NRF_ESB_PPI_TX_START].TEP =
+	NRF_PPI->CH[CONFIG_ESB_PPI_TX_START].TEP =
 		(u32_t)&NRF_RADIO->TASKS_TXEN;
 }
 
@@ -577,7 +577,7 @@ static void start_tx_transaction(void)
 	current_payload = tx_fifo.payload[tx_fifo.front];
 
 	switch (esb_cfg.protocol) {
-	case NRF_ESB_PROTOCOL_ESB:
+	case ESB_PROTOCOL_ESB:
 		update_rf_payload_format(current_payload->length);
 		tx_payload_buffer[0] = current_payload->pid;
 		tx_payload_buffer[1] = 0;
@@ -595,7 +595,7 @@ static void start_tx_transaction(void)
 		esb_state = ESB_STATE_PTX_TX_ACK;
 		break;
 
-	case NRF_ESB_PROTOCOL_ESB_DPL:
+	case ESB_PROTOCOL_ESB_DPL:
 		ack = !current_payload->noack || !esb_cfg.selective_auto_ack;
 		tx_payload_buffer[0] = current_payload->length;
 		tx_payload_buffer[1] = current_payload->pid << 1;
@@ -678,13 +678,13 @@ static void on_radio_disabled_tx(void)
 	/* Remove */
 	ESB_SYS_TIMER->TASKS_START = 1;
 
-	NRF_PPI->CHENSET = (1 << CONFIG_NRF_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_NRF_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_NRF_ESB_PPI_TIMER_STOP);
-	NRF_PPI->CHENCLR = (1 << CONFIG_NRF_ESB_PPI_TX_START);
+	NRF_PPI->CHENSET = (1 << CONFIG_ESB_PPI_TIMER_START) |
+			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
+			   (1 << CONFIG_ESB_PPI_TIMER_STOP);
+	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TX_START);
 	NRF_RADIO->EVENTS_END = 0;
 
-	if (esb_cfg.protocol == NRF_ESB_PROTOCOL_ESB) {
+	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
 		update_rf_payload_format(0);
 	}
 
@@ -700,21 +700,21 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	/* Make sure the timer will not deactivate the radio if a packet is
 	 * received.
 	 */
-	NRF_PPI->CHENCLR = (1 << CONFIG_NRF_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_NRF_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_NRF_ESB_PPI_TIMER_STOP);
+	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TIMER_START) |
+			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
+			   (1 << CONFIG_ESB_PPI_TIMER_STOP);
 
 	/* If the radio has received a packet and the CRC status is OK */
 	if (NRF_RADIO->EVENTS_END && NRF_RADIO->CRCSTATUS != 0) {
 		ESB_SYS_TIMER->TASKS_SHUTDOWN = 1;
-		NRF_PPI->CHENCLR = (1 << CONFIG_NRF_ESB_PPI_TX_START);
+		NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TX_START);
 		interrupt_flags |= INT_TX_SUCCESS_MSK;
 		last_tx_attempts = esb_cfg.retransmit_count -
 				   retransmits_remaining + 1;
 
 		tx_fifo_remove_last();
 
-		if (esb_cfg.protocol != NRF_ESB_PROTOCOL_ESB &&
+		if (esb_cfg.protocol != ESB_PROTOCOL_ESB &&
 		    rx_payload_buffer[0] > 0) {
 			if (rx_fifo_push_rfbuf((u8_t)NRF_RADIO->TXADDRESS,
 					       rx_payload_buffer[1] >> 1)) {
@@ -724,7 +724,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		}
 
 		if ((tx_fifo.count == 0) ||
-		    (esb_cfg.tx_mode == NRF_ESB_TXMODE_MANUAL)) {
+		    (esb_cfg.tx_mode == ESB_TXMODE_MANUAL)) {
 			esb_state = ESB_STATE_IDLE;
 			NVIC_SetPendingIRQ(ESB_EVT_IRQ);
 		} else {
@@ -734,7 +734,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	} else {
 		if (retransmits_remaining-- == 0) {
 			ESB_SYS_TIMER->TASKS_SHUTDOWN = 1;
-			NRF_PPI->CHENCLR = (1 << CONFIG_NRF_ESB_PPI_TX_START);
+			NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TX_START);
 			/* All retransmits are expended, and the TX operation is
 			 * suspended
 			 */
@@ -755,7 +755,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			on_radio_disabled = on_radio_disabled_tx;
 			esb_state = ESB_STATE_PTX_TX_ACK;
 			ESB_SYS_TIMER->TASKS_START = 1;
-			NRF_PPI->CHENSET = (1 << CONFIG_NRF_ESB_PPI_TX_START);
+			NRF_PPI->CHENSET = (1 << CONFIG_ESB_PPI_TX_START);
 			if (ESB_SYS_TIMER->EVENTS_COMPARE[1]) {
 				NRF_RADIO->TASKS_TXEN = 1;
 			}
@@ -791,7 +791,7 @@ static void on_radio_disabled_rx_dpl(bool retransmit_payload,
 		/* Do not report TX success on first ack payload or retransmit
 		 */
 		if (pipe_info->ack_payload && !retransmit_payload) {
-			if (++tx_fifo.front >= CONFIG_NRF_ESB_TX_FIFO_SIZE) {
+			if (++tx_fifo.front >= CONFIG_ESB_TX_FIFO_SIZE) {
 				tx_fifo.front = 0;
 			}
 
@@ -832,7 +832,7 @@ static void on_radio_disabled_rx(void)
 		return;
 	}
 
-	if (rx_fifo.count >= CONFIG_NRF_ESB_RX_FIFO_SIZE) {
+	if (rx_fifo.count >= CONFIG_ESB_RX_FIFO_SIZE) {
 		clear_events_restart_rx();
 		return;
 	}
@@ -854,11 +854,11 @@ static void on_radio_disabled_rx(void)
 				    RADIO_SHORTS_DISABLED_RXEN_Msk;
 
 		switch (esb_cfg.protocol) {
-		case NRF_ESB_PROTOCOL_ESB_DPL:
+		case ESB_PROTOCOL_ESB_DPL:
 			on_radio_disabled_rx_dpl(retransmit_payload, pipe_info);
 			break;
 
-		case NRF_ESB_PROTOCOL_ESB:
+		case ESB_PROTOCOL_ESB:
 			update_rf_payload_format(0);
 			tx_payload_buffer[0] = rx_payload_buffer[0];
 			tx_payload_buffer[1] = 0;
@@ -948,34 +948,34 @@ static void RADIO_IRQHandler(void)
 static void ESB_EVT_IRQHandler(void)
 {
 	u32_t interrupts;
-	struct nrf_esb_evt event;
+	struct esb_evt event;
 
 	event.tx_attempts = last_tx_attempts;
 
 	get_and_clear_irqs(&interrupts);
 	if (event_handler != NULL) {
 		if (interrupts & INT_TX_SUCCESS_MSK) {
-			event.evt_id = NRF_ESB_EVENT_TX_SUCCESS;
+			event.evt_id = ESB_EVENT_TX_SUCCESS;
 			event_handler(&event);
 		}
 		if (interrupts & INT_TX_FAILED_MSK) {
-			event.evt_id = NRF_ESB_EVENT_TX_FAILED;
+			event.evt_id = ESB_EVENT_TX_FAILED;
 			event_handler(&event);
 		}
 		if (interrupts & INT_RX_DATA_RECEIVED_MSK) {
-			event.evt_id = NRF_ESB_EVENT_RX_RECEIVED;
+			event.evt_id = ESB_EVENT_RX_RECEIVED;
 			event_handler(&event);
 		}
 	}
 }
 
-static void NRF_ESB_SYS_TIMER_IRQHandler(void)
+static void ESB_SYS_TIMER_IRQHandler(void)
 {
 }
 
-#ifdef CONFIG_NRF_ESB_ADDR_HANG_BUGFIX
+#ifdef CONFIG_ESB_ADDR_HANG_BUGFIX
 /* Workaround necessary on nRF52832 Rev. 1. */
-static void NRF_ESB_BUGFIX_TIMER_IRQHandler(void)
+static void ESB_BUGFIX_TIMER_IRQHandler(void)
 {
 	if (ESB_BUGFIX_TIMER->EVENTS_COMPARE[0]) {
 		ESB_BUGFIX_TIMER->EVENTS_COMPARE[0] = 0;
@@ -990,14 +990,14 @@ static void NRF_ESB_BUGFIX_TIMER_IRQHandler(void)
 }
 #endif
 
-int nrf_esb_init(const struct nrf_esb_config *config)
+int esb_init(const struct esb_config *config)
 {
 	if (config == NULL) {
 		return -EINVAL;
 	}
 
 	if (esb_initialized) {
-		nrf_esb_disable();
+		esb_disable();
 	}
 
 	event_handler = config->event_handler;
@@ -1026,13 +1026,13 @@ int nrf_esb_init(const struct nrf_esb_config *config)
 	IRQ_DIRECT_CONNECT(SWI0_IRQn, config->event_irq_priority,
 			   ESB_EVT_IRQHandler, 0);
 	IRQ_DIRECT_CONNECT(ESB_SYS_TIMER_IRQn, config->event_irq_priority,
-			   NRF_ESB_SYS_TIMER_IRQHandler, 0);
+			   ESB_SYS_TIMER_IRQHandler, 0);
 
 	irq_enable(RADIO_IRQn);
 	irq_enable(SWI0_IRQn);
 	irq_enable(ESB_SYS_TIMER_IRQn);
 
-#ifdef CONFIG_NRF_ESB_ADDR_HANG_BUGFIX
+#ifdef CONFIG_ESB_ADDR_HANG_BUGFIX
 	/* Check if the device is an nRF52832 Rev. 1. */
 	if ((NRF_FICR->INFO.VARIANT & 0x0000FF00) == 0x00004200) {
 		/* Setup a timeout timer to start on an ADDRESS match,
@@ -1057,26 +1057,26 @@ int nrf_esb_init(const struct nrf_esb_config *config)
 
 		IRQ_DIRECT_CONNECT(ESB_BUGFIX_TIMER_IRQn,
 				   config->event_irq_priority,
-				   NRF_ESB_BUGFIX_TIMER_IRQHandler, 0);
+				   ESB_BUGFIX_TIMER_IRQHandler, 0);
 
-		NRF_PPI->CH[CONFIG_NRF_ESB_PPI_BUGFIX1].EEP =
+		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX1].EEP =
 		    (u32_t)&NRF_RADIO->EVENTS_ADDRESS;
-		NRF_PPI->CH[CONFIG_NRF_ESB_PPI_BUGFIX1].TEP =
+		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX1].TEP =
 		    (u32_t)&ESB_BUGFIX_TIMER->TASKS_START;
 
-		NRF_PPI->CH[CONFIG_NRF_ESB_PPI_BUGFIX2].EEP =
+		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX2].EEP =
 		    (u32_t)&NRF_RADIO->EVENTS_BCMATCH;
-		NRF_PPI->CH[CONFIG_NRF_ESB_PPI_BUGFIX2].TEP =
+		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX2].TEP =
 		    (u32_t)&ESB_BUGFIX_TIMER->TASKS_SHUTDOWN;
 
-		NRF_PPI->CH[CONFIG_NRF_ESB_PPI_BUGFIX3].EEP =
+		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX3].EEP =
 		    (u32_t)&NRF_RADIO->EVENTS_BCMATCH;
-		NRF_PPI->CH[CONFIG_NRF_ESB_PPI_BUGFIX3].TEP =
+		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX3].TEP =
 		    (u32_t)&ESB_BUGFIX_TIMER->TASKS_CLEAR;
 
-		NRF_PPI->CHENSET = (1 << CONFIG_NRF_ESB_PPI_BUGFIX1) |
-				   (1 << CONFIG_NRF_ESB_PPI_BUGFIX2) |
-				   (1 << CONFIG_NRF_ESB_PPI_BUGFIX3);
+		NRF_PPI->CHENSET = (1 << CONFIG_ESB_PPI_BUGFIX1) |
+				   (1 << CONFIG_ESB_PPI_BUGFIX2) |
+				   (1 << CONFIG_ESB_PPI_BUGFIX3);
 	}
 #endif
 
@@ -1094,30 +1094,30 @@ int nrf_esb_init(const struct nrf_esb_config *config)
 	return 0;
 }
 
-int nrf_esb_suspend(void)
+int esb_suspend(void)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
 
 	/*  Clear PPI */
-	NRF_PPI->CHENCLR = (1 << CONFIG_NRF_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_NRF_ESB_PPI_TIMER_STOP) |
-			   (1 << CONFIG_NRF_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_NRF_ESB_PPI_TX_START);
+	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TIMER_START) |
+			   (1 << CONFIG_ESB_PPI_TIMER_STOP) |
+			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
+			   (1 << CONFIG_ESB_PPI_TX_START);
 
 	esb_state = ESB_STATE_IDLE;
 
 	return 0;
 }
 
-void nrf_esb_disable(void)
+void esb_disable(void)
 {
 	/*  Clear PPI */
-	NRF_PPI->CHENCLR = (1 << CONFIG_NRF_ESB_PPI_TIMER_START) |
-			   (1 << CONFIG_NRF_ESB_PPI_TIMER_STOP) |
-			   (1 << CONFIG_NRF_ESB_PPI_RX_TIMEOUT) |
-			   (1 << CONFIG_NRF_ESB_PPI_TX_START);
+	NRF_PPI->CHENCLR = (1 << CONFIG_ESB_PPI_TIMER_START) |
+			   (1 << CONFIG_ESB_PPI_TIMER_STOP) |
+			   (1 << CONFIG_ESB_PPI_RX_TIMEOUT) |
+			   (1 << CONFIG_ESB_PPI_TX_START);
 
 	esb_state = ESB_STATE_IDLE;
 	esb_initialized = false;
@@ -1135,12 +1135,12 @@ void nrf_esb_disable(void)
 	    RADIO_SHORTS_END_DISABLE_Enabled << RADIO_SHORTS_END_DISABLE_Pos;
 }
 
-bool nrf_esb_is_idle(void)
+bool esb_is_idle(void)
 {
 	return (esb_state == ESB_STATE_IDLE);
 }
 
-int nrf_esb_write_payload(const struct nrf_esb_payload *payload)
+int esb_write_payload(const struct esb_payload *payload)
 {
 	if (!esb_initialized) {
 		return -EACCES;
@@ -1149,27 +1149,27 @@ int nrf_esb_write_payload(const struct nrf_esb_payload *payload)
 		return -EINVAL;
 	}
 	if (payload->length == 0 ||
-	    payload->length > CONFIG_NRF_ESB_MAX_PAYLOAD_LENGTH ||
-	    (esb_cfg.protocol == NRF_ESB_PROTOCOL_ESB &&
+	    payload->length > CONFIG_ESB_MAX_PAYLOAD_LENGTH ||
+	    (esb_cfg.protocol == ESB_PROTOCOL_ESB &&
 	     payload->length > esb_cfg.payload_length)) {
 		return -EMSGSIZE;
 	}
-	if (tx_fifo.count >= CONFIG_NRF_ESB_TX_FIFO_SIZE) {
+	if (tx_fifo.count >= CONFIG_ESB_TX_FIFO_SIZE) {
 		return -ENOMEM;
 	}
-	if (payload->pipe >= CONFIG_NRF_ESB_PIPE_COUNT) {
+	if (payload->pipe >= CONFIG_ESB_PIPE_COUNT) {
 		return -EINVAL;
 	}
 
 	u32_t key = irq_lock();
 
 	memcpy(tx_fifo.payload[tx_fifo.back], payload,
-	       sizeof(struct nrf_esb_payload));
+	       sizeof(struct esb_payload));
 
 	pids[payload->pipe] = (pids[payload->pipe] + 1) % (PID_MAX + 1);
 	tx_fifo.payload[tx_fifo.back]->pid = pids[payload->pipe];
 
-	if (++tx_fifo.back >= CONFIG_NRF_ESB_TX_FIFO_SIZE) {
+	if (++tx_fifo.back >= CONFIG_ESB_TX_FIFO_SIZE) {
 		tx_fifo.back = 0;
 	}
 
@@ -1177,8 +1177,8 @@ int nrf_esb_write_payload(const struct nrf_esb_payload *payload)
 
 	irq_unlock(key);
 
-	if (esb_cfg.mode == NRF_ESB_MODE_PTX &&
-	    esb_cfg.tx_mode == NRF_ESB_TXMODE_AUTO &&
+	if (esb_cfg.mode == ESB_MODE_PTX &&
+	    esb_cfg.tx_mode == ESB_TXMODE_AUTO &&
 	    esb_state == ESB_STATE_IDLE) {
 		start_tx_transaction();
 	}
@@ -1186,7 +1186,7 @@ int nrf_esb_write_payload(const struct nrf_esb_payload *payload)
 	return 0;
 }
 
-int nrf_esb_read_rx_payload(struct nrf_esb_payload *payload)
+int esb_read_rx_payload(struct esb_payload *payload)
 {
 	if (!esb_initialized) {
 		return -EACCES;
@@ -1209,7 +1209,7 @@ int nrf_esb_read_rx_payload(struct nrf_esb_payload *payload)
 	memcpy(payload->data, rx_fifo.payload[rx_fifo.front]->data,
 	       payload->length);
 
-	if (++rx_fifo.front >= CONFIG_NRF_ESB_RX_FIFO_SIZE) {
+	if (++rx_fifo.front >= CONFIG_ESB_RX_FIFO_SIZE) {
 		rx_fifo.front = 0;
 	}
 
@@ -1220,7 +1220,7 @@ int nrf_esb_read_rx_payload(struct nrf_esb_payload *payload)
 	return 0;
 }
 
-int nrf_esb_start_tx(void)
+int esb_start_tx(void)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1235,7 +1235,7 @@ int nrf_esb_start_tx(void)
 	return 0;
 }
 
-int nrf_esb_start_rx(void)
+int esb_start_rx(void)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1266,7 +1266,7 @@ int nrf_esb_start_rx(void)
 	return 0;
 }
 
-int nrf_esb_stop_rx(void)
+int esb_stop_rx(void)
 {
 	if (esb_state != ESB_STATE_PRX && esb_state != ESB_STATE_PRX_SEND_ACK) {
 		return -EINVAL;
@@ -1286,7 +1286,7 @@ int nrf_esb_stop_rx(void)
 	return 0;
 }
 
-int nrf_esb_flush_tx(void)
+int esb_flush_tx(void)
 {
 	if (!esb_initialized) {
 		return -EACCES;
@@ -1303,7 +1303,7 @@ int nrf_esb_flush_tx(void)
 	return 0;
 }
 
-int nrf_esb_pop_tx(void)
+int esb_pop_tx(void)
 {
 	if (!esb_initialized) {
 		return -EACCES;
@@ -1314,7 +1314,7 @@ int nrf_esb_pop_tx(void)
 
 	u32_t key = irq_lock();
 
-	if (++tx_fifo.back >= CONFIG_NRF_ESB_TX_FIFO_SIZE) {
+	if (++tx_fifo.back >= CONFIG_ESB_TX_FIFO_SIZE) {
 		tx_fifo.back = 0;
 	}
 	tx_fifo.count--;
@@ -1324,7 +1324,7 @@ int nrf_esb_pop_tx(void)
 	return 0;
 }
 
-int nrf_esb_flush_rx(void)
+int esb_flush_rx(void)
 {
 	if (!esb_initialized) {
 		return -EACCES;
@@ -1343,7 +1343,7 @@ int nrf_esb_flush_rx(void)
 	return 0;
 }
 
-int nrf_esb_set_address_length(u8_t length)
+int esb_set_address_length(u8_t length)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1407,7 +1407,7 @@ int nrf_esb_set_address_length(u8_t length)
 	return 0;
 }
 
-int nrf_esb_set_base_address_0(const u8_t *addr)
+int esb_set_base_address_0(const u8_t *addr)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1461,7 +1461,7 @@ int nrf_esb_set_base_address_0(const u8_t *addr)
 	return 0;
 }
 
-int nrf_esb_set_base_address_1(const u8_t *addr)
+int esb_set_base_address_1(const u8_t *addr)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1521,7 +1521,7 @@ int nrf_esb_set_base_address_1(const u8_t *addr)
 	return 0;
 }
 
-int nrf_esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
+int esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1529,7 +1529,7 @@ int nrf_esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
 	if (prefixes == NULL) {
 		return -EINVAL;
 	}
-	if (!(num_pipes <= CONFIG_NRF_ESB_PIPE_COUNT)) {
+	if (!(num_pipes <= CONFIG_ESB_PIPE_COUNT)) {
 		return -EINVAL;
 	}
 
@@ -1590,12 +1590,12 @@ int nrf_esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
 	return 0;
 }
 
-int nrf_esb_update_prefix(u8_t pipe, u8_t prefix)
+int esb_update_prefix(u8_t pipe, u8_t prefix)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
-	if (pipe >= CONFIG_NRF_ESB_PIPE_COUNT) {
+	if (pipe >= CONFIG_ESB_PIPE_COUNT) {
 		return -EINVAL;
 	}
 
@@ -1650,13 +1650,13 @@ int nrf_esb_update_prefix(u8_t pipe, u8_t prefix)
 	return 0;
 }
 
-int nrf_esb_enable_pipes(u8_t enable_mask)
+int esb_enable_pipes(u8_t enable_mask)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
-	if ((enable_mask | BIT_MASK_UINT_8(CONFIG_NRF_ESB_PIPE_COUNT)) !=
-	    BIT_MASK_UINT_8(CONFIG_NRF_ESB_PIPE_COUNT)) {
+	if ((enable_mask | BIT_MASK_UINT_8(CONFIG_ESB_PIPE_COUNT)) !=
+	    BIT_MASK_UINT_8(CONFIG_ESB_PIPE_COUNT)) {
 		return -EINVAL;
 	}
 
@@ -1666,7 +1666,7 @@ int nrf_esb_enable_pipes(u8_t enable_mask)
 	return 0;
 }
 
-int nrf_esb_set_rf_channel(u32_t channel)
+int esb_set_rf_channel(u32_t channel)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1680,7 +1680,7 @@ int nrf_esb_set_rf_channel(u32_t channel)
 	return 0;
 }
 
-int nrf_esb_get_rf_channel(u32_t *channel)
+int esb_get_rf_channel(u32_t *channel)
 {
 	if (channel == NULL) {
 		return -EINVAL;
@@ -1691,7 +1691,7 @@ int nrf_esb_get_rf_channel(u32_t *channel)
 	return 0;
 }
 
-int nrf_esb_set_tx_power(enum nrf_esb_tx_power tx_output_power)
+int esb_set_tx_power(enum esb_tx_power tx_output_power)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1705,7 +1705,7 @@ int nrf_esb_set_tx_power(enum nrf_esb_tx_power tx_output_power)
 	return 0;
 }
 
-int nrf_esb_set_retransmit_delay(u16_t delay)
+int esb_set_retransmit_delay(u16_t delay)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1719,7 +1719,7 @@ int nrf_esb_set_retransmit_delay(u16_t delay)
 	return 0;
 }
 
-int nrf_esb_set_retransmit_count(u16_t count)
+int esb_set_retransmit_count(u16_t count)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1730,7 +1730,7 @@ int nrf_esb_set_retransmit_count(u16_t count)
 	return 0;
 }
 
-int nrf_esb_set_bitrate(enum nrf_esb_bitrate bitrate)
+int esb_set_bitrate(enum esb_bitrate bitrate)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1741,12 +1741,12 @@ int nrf_esb_set_bitrate(enum nrf_esb_bitrate bitrate)
 	return update_radio_bitrate() ? 0 : -EINVAL;
 }
 
-int nrf_esb_reuse_pid(u8_t pipe)
+int esb_reuse_pid(u8_t pipe)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
-	if (!(pipe < CONFIG_NRF_ESB_PIPE_COUNT)) {
+	if (!(pipe < CONFIG_ESB_PIPE_COUNT)) {
 		return -EINVAL;
 	}
 

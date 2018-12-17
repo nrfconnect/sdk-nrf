@@ -8,7 +8,7 @@ The Enhanced ShockBurst Transmitter/Receiver sample shows the basic steps that a
 Overview
 ********
 
-The sample consists of two applications, one Transmitter and one Receiver, that use the :ref:`nrf_esb_README` library.
+The sample consists of two applications, one Transmitter and one Receiver, that use the :ref:`esb_README` library.
 After programming each application on an nRF5 development board, you can test that packets that are sent by the board that runs the Transmitter application are picked up by the board that runs the Receiver application.
 Successful communication is indicated by LED changes, which should be in sync on both boards.
 
@@ -69,7 +69,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`nrf_esb_readme`
+* :ref:`esb_readme`
 
 In addition, it uses the following Zephyr libraries:
 
