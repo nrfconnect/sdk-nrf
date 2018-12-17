@@ -27,6 +27,8 @@
  */
 #define LEDS_ERROR_UPDATE_INTERVAL      K_MSEC(250)
 
+#define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
+
 #define BUTTON_1			BIT(0)
 #define BUTTON_2			BIT(1)
 #define SWITCH_1			BIT(2)
@@ -41,6 +43,7 @@
 #define FLIP_INPUT			BIT(CONFIG_FLIP_INPUT - 1)
 #define CALIBRATION_INPUT		-1
 #else
+#define CALIBRATION_INPUT		BIT(CONFIG_CALIBRATION_INPUT - 1)
 #define FLIP_INPUT			-1
 #define CALIBRATION_INPUT		BIT(CONFIG_CALIBRATION_INPUT - 1)
 #endif
@@ -106,6 +109,7 @@ static bool flip_mode_enabled = true;
 /* Structures for work */
 static struct k_delayed_work leds_update_work;
 static struct k_work connect_work;
+static struct k_delayed_work long_press_button_work;
 
 enum error_type {
 	ERROR_NRF_CLOUD,
@@ -503,9 +507,30 @@ static void pairing_button_register(u32_t button_state, u32_t has_changed)
 	}
 }
 
+static void accelerometer_calibrate(struct k_work *work)
+{
+	int err;
+	u32_t prev_display_state = display_state;
+
+	printk("Starting accelerometer calibration...\n");
+	display_state = LEDS_CALIBRATING;
+	leds_update(NULL);
+
+	err = orientation_detector_calibrate();
+	if (err) {
+		printk("Accelerometer calibration failed: %d\n",
+			err);
+	} else {
+		printk("Accelerometer calibration done.\n");
+	}
+
+	display_state = prev_display_state;
+}
+
 /**@brief Callback for button events from the DK buttons and LEDs library. */
 static void button_handler(u32_t buttons, u32_t has_changed)
 {
+	static bool long_press_active;
 	int err;
 
 	if (pattern_recording && IS_ENABLED(CONFIG_CLOUD_UA_BUTTONS)) {
@@ -515,6 +540,20 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 
 	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (has_changed & FLIP_INPUT)) {
 		flip_send();
+	}
+
+	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
+			(buttons & has_changed & CALIBRATION_INPUT)) {
+		if (!long_press_active) {
+			long_press_active = true;
+			k_delayed_work_submit(&long_press_button_work,
+						CALIBRATION_PRESS_DURATION);
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
+			(~buttons & has_changed & CALIBRATION_INPUT)) {
+		k_delayed_work_cancel(&long_press_button_work);
 	}
 
 	if ((has_changed & SWITCH_2) &&
@@ -585,8 +624,9 @@ static void input_process(void)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
-	k_delayed_work_init(&leds_update_work, leds_update);
 	k_work_init(&connect_work, cloud_connect);
+	k_delayed_work_init(&leds_update_work, leds_update);
+	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
 	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
 
@@ -648,6 +688,7 @@ static void gps_init(void)
  */
 static void flip_detection_init(void)
 {
+	int err;
 	struct device *accel_dev =
 		device_get_binding(CONFIG_ACCEL_DEV_NAME);
 
@@ -673,6 +714,15 @@ static void flip_detection_init(void)
 	}
 
 	orientation_detector_init(accel_dev);
+
+	if (!IS_ENABLED(CONFIG_ACCEL_CALIBRATE)) {
+		return;
+	}
+
+	err = orientation_detector_calibrate();
+	if (err) {
+		printk("Could not calibrate accelerometer device: %d\n", err);
+	}
 }
 
 /**@brief Initializes the sensors that are used by the application. */
