@@ -12,10 +12,6 @@ import argparse
 import ecdsa
 
 
-def leftpad(s, length):
-    return b'\0' * (length - len(s)) + s
-
-
 def get_ecdsa_signature(der, clength):
     # The der consists of a SEQUENCE with 2 INTEGERS (r and s)
     # The expected byte format of the file is
@@ -32,7 +28,7 @@ def get_ecdsa_signature(der, clength):
     # the values in hex, together with human-readble metadata.
 
     stdout = check_output(["openssl", "asn1parse", "-inform", "der"], input=der)
-    sig = b"".join([leftpad(bytes.fromhex(re.search(r"(?<=\:)([0-9A-F]+)", num)[0]), clength) \
+    sig = b"".join([bytes.fromhex(re.search(r"(?<=\:)([0-9A-F]+)", num)[0]).ljust(clength, b'\0') \
                     for num in re.findall(r"INTEGER *\:[0-9A-F]+", stdout.decode())])
 
     assert(len(sig) == 2*clength)
