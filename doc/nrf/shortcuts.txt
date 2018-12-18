@@ -2,4 +2,4 @@
 
 .. |SES| replace:: SEGGER Embedded Studio
 
-.. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, samples, and applications are not supported for product development.
+.. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, drivers, samples, and applications are not supported for product development.
