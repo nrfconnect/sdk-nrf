@@ -119,6 +119,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 #define OPTICAL_THREAD_STACK_SIZE		512
 #define OPTICAL_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
 
+#define NODATA_LIMIT				10
 
 extern const u16_t firmware_length;
 extern const u8_t firmware_data[];
@@ -506,16 +507,17 @@ static int motion_read(void)
 		return err;
 	}
 
+	static unsigned int nodata;
 	if (!data[2] && !data[3] && !data[4] && !data[5]) {
-		static unsigned nodata;
-
-		if (!nodata) {
-			nodata = true;
+		if (nodata < NODATA_LIMIT) {
+			nodata++;
 		} else {
-			nodata = false;
+			nodata = 0;
 
 			return -ENODATA;
 		}
+	} else {
+		nodata = 0;
 	}
 
 	struct motion_event *event = new_motion_event();
