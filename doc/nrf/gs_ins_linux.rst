@@ -77,7 +77,7 @@ If you use Ubuntu, install v1.4.7 from Cosmic by entering the following commands
 
 .. _build_environment_linux:
 
-.. |envfile| replace:: ``zephyr/zephyr-env.sh``
+.. |envfile| replace:: ``source zephyr/zephyr-env.sh``
 .. |rcfile| replace:: ``~/.zephyrrc``
 
 .. include:: gs_ins_windows.rst
