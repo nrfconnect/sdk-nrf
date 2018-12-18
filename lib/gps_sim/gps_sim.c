@@ -256,7 +256,7 @@ static void generate_gps_data(
 	char lng_heading = 'E';
 
 	if (IS_ENABLED(CONFIG_GPS_SIM_ELLIPSOID)) {
-		lat = generate_sine(base_gps_sample_lat, max_variation);
+		lat = generate_sine(base_gps_sample_lat, max_variation / 2.0);
 		lng = generate_cosine(base_gps_sample_lng, max_variation);
 	}
 
