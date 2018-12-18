@@ -602,8 +602,16 @@ static void report_send(enum target_report tr, bool check_state)
 
 	struct report_state *rs = &state.selected->state[tr];
 
-	if (!check_state || (rs->state == STATE_CONNECTED_IDLE)) {
-		do {
+	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
+		unsigned int pipeline_depth;
+
+		if (state.selected->is_usb) {
+			pipeline_depth = 1;
+		} else {
+			pipeline_depth = 2;
+		}
+
+		while (rs->cnt < pipeline_depth) {
 			switch (tr) {
 			case TARGET_REPORT_KEYBOARD:
 				send_report_keyboard();
@@ -629,7 +637,7 @@ static void report_send(enum target_report tr, bool check_state)
 			/* To make sure report is sampled on every connection
 			 * event, add one additional report to the pipeline.
 			 */
-		} while ((rs->cnt == 1) && !state.selected->is_usb);
+		}
 
 		rs->state = STATE_CONNECTED_BUSY;
 	}
