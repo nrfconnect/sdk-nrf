@@ -24,8 +24,10 @@ config GPS_SIM_BASE_LATITUDE
 	help
 		Start-point latitude for simulated GPS data,
 		from which the generated data will continue.
-		Calculated by deg * 100000 + minutes * 1000 N,
-		for example 63 deg 25.280' will be 6325280.
+		Calculated by deg * 100000 + minutes * 1000,
+		for example 63 deg 25.280'N will be 6325280.
+		Positive values are North, while negative
+		values are South.
 
 config GPS_SIM_BASE_LONGITUDE
 	int "Base longitude for GPS data"
@@ -33,8 +35,10 @@ config GPS_SIM_BASE_LONGITUDE
 	help
 		Start-point longitude for simulated GPS data,
 		from which the generated data will continue.
-		Calculated by deg * 100000 + minutes * 1000 E,
-		for example 10 deg 26.201' will be 1026201.
+		Calculated by deg * 100000 + minutes * 1000,
+		for example 10 deg 26.201'E will be 1026201.
+		Positive values are East, while negative
+		values are West.
 
 config GPS_SIM_BASE_TIMESTAMP
 	int "Base timestamp for GPS data"
