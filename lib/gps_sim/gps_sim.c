@@ -251,6 +251,9 @@ static void generate_gps_data(
 	static u32_t last_uptime;
 	double lat = base_gps_sample_lat;
 	double lng = base_gps_sample_lng;
+	char tmp_str[GPS_NMEA_SENTENCE_MAX_LENGTH];
+	char lat_heading = 'N';
+	char lng_heading = 'E';
 
 	if (IS_ENABLED(CONFIG_GPS_SIM_ELLIPSOID)) {
 		lat = generate_sine(base_gps_sample_lat, max_variation);
@@ -282,12 +285,20 @@ static void generate_gps_data(
 		}
 	}
 
-	char tmp_str[GPS_NMEA_SENTENCE_MAX_LENGTH];
+	if (lat < 0) {
+		lat *= -1.0;
+		lat_heading = 'S';
+	}
+
+	if (lng < 0) {
+		lng *= -1.0;
+		lng_heading = 'W';
+	}
 
 	snprintf(tmp_str, GPS_NMEA_SENTENCE_MAX_LENGTH,
-		"$GPGGA,%02d%02d%02d.200,%8.3f,N,%09.3f,E,1,"
+		"$GPGGA,%02d%02d%02d.200,%8.3f,%c,%09.3f,%c,1,"
 		"12,1.0,0.0,M,0.0,M,,*",
-		hour, minute, second, lat, lng);
+		hour, minute, second, lat, lat_heading, lng, lng_heading);
 
 	u8_t checksum = nmea_checksum_get(tmp_str);
 
