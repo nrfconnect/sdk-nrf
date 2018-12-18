@@ -33,3 +33,5 @@ static int log_event(const struct event_header *eh, char *buf,
 
 
 EVENT_TYPE_DEFINE(ble_peer_event, log_event, NULL);
+
+EVENT_TYPE_DEFINE(ble_discovery_complete_event, NULL, NULL);

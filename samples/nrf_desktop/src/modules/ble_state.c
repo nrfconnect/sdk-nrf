@@ -19,14 +19,15 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_STATE_LOG_LEVEL);
 
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, u8_t error)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	if (err) {
-		LOG_ERR("Failed to connect to %s (%u)", log_strdup(addr), err);
+	if (error) {
+		LOG_ERR("Failed to connect to %s (%u)", log_strdup(addr),
+			error);
 		return;
 	}
 
@@ -37,9 +38,20 @@ static void connected(struct bt_conn *conn, u8_t err)
 	event->state = PEER_STATE_CONNECTED;
 	EVENT_SUBMIT(event);
 
-	err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
+	struct bt_conn_info info;
+
+	int err = bt_conn_get_info(conn, &info);
 	if (err) {
-		LOG_ERR("Failed to set security");
+		LOG_ERR("Cannot get conn info");
+		return;
+	}
+
+	if (info.role == BT_CONN_ROLE_SLAVE) {
+		LOG_INF("Set security level");
+		err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
+		if (err) {
+			LOG_ERR("Failed to set security");
+		}
 	}
 }
 
