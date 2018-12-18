@@ -48,6 +48,15 @@ struct ble_peer_event {
 };
 EVENT_TYPE_DECLARE(ble_peer_event);
 
+/** @brief BLE discovery complete event. */
+struct ble_discovery_complete_event {
+	struct event_header header;
+
+	struct bt_gatt_dm *dm;
+};
+EVENT_TYPE_DECLARE(ble_discovery_complete_event);
+
+
 #ifdef __cplusplus
 }
 #endif
