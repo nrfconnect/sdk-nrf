@@ -8,8 +8,7 @@ See the release notes for information about specific |NCS| releases.
 .. toctree::
    :maxdepth: 1
 
-   doc/release-notes-0.3.0
-   doc/release-notes-0.1.0
+   doc/changelog
 
 .. important::
    The |NCS| follows `Semantic Versioning 2.0.0`_.
@@ -20,4 +19,5 @@ See the release notes for information about specific |NCS| releases.
 .. toctree::
    :maxdepth: 1
 
-   doc/changelog
+   doc/release-notes-0.3.0
+   doc/release-notes-0.1.0
