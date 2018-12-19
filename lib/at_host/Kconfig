@@ -12,26 +12,26 @@ config AT_HOST_LIBRARY
 
 choice
 	prompt "UART for AT Host"
-	default UART_0
+	default AT_HOST_UART_0
 	depends on AT_HOST_LIBRARY
 	help
 		Sets the UART to use for the AT Host
 		-  UART 0
 		-  UART 1
 		-  UART 2
-	config UART_0
+	config AT_HOST_UART_0
 		bool "UART 0"
-	config UART_1
+	config AT_HOST_UART_1
 		bool "UART 1"
-	config UART_2
+	config AT_HOST_UART_2
 		bool "UART 2"
 endchoice
 
 config AT_HOST_UART
 	int
-	default 0 if UART_0
-	default 1 if UART_1
-	default 2 if UART_2
+	default 0 if AT_HOST_UART_0
+	default 1 if AT_HOST_UART_1
+	default 2 if AT_HOST_UART_2
 
 choice
 	prompt "Termination Mode"
