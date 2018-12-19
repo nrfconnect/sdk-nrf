@@ -12,6 +12,10 @@ set(NRF_SUPPORTED_BOARDS
   nrf52840_pca10059
   nrf52_pca63519)
 
+if (${BOARD} STREQUAL nrf52840_pca10056)
+        set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
+endif()
+
 include(../../cmake/boilerplate.cmake)
 
 # Define configuration files.

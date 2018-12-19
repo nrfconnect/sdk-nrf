@@ -75,6 +75,20 @@
 	steps = <24>;
 };
 
+&pwm0 {
+	status = "ok";
+	ch0-pin = <11>;
+	ch1-pin = <26>;
+	ch2-pin = <27>;
+};
+
+&pwm1 {
+	status = "ok";
+	ch0-pin = <23>;
+	ch1-pin = <25>;
+	ch2-pin = <7>;
+};
+
 &flash0 {
 	/*
 	 * For more information, see:
