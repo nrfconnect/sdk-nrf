@@ -6,6 +6,21 @@
 
 #include "led_state.h"
 
+/* Mapping the PWM channels to pin numbers */
+const size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
+		     [CONFIG_DESKTOP_LED_COLOR_COUNT] = {
+	{
+		DT_NORDIC_NRF_PWM_PWM_0_CH0_PIN,
+		DT_NORDIC_NRF_PWM_PWM_0_CH1_PIN,
+		DT_NORDIC_NRF_PWM_PWM_0_CH2_PIN
+	},
+	{
+		DT_NORDIC_NRF_PWM_PWM_1_CH0_PIN,
+		DT_NORDIC_NRF_PWM_PWM_1_CH1_PIN,
+		DT_NORDIC_NRF_PWM_PWM_1_CH2_PIN
+	}
+};
+
 const struct led_config led_config[SYSTEM_STATE_COUNT][CONFIG_DESKTOP_LED_COUNT] = {
 	/* SYSTEM_STATE_DISCONNECTED */
 	{

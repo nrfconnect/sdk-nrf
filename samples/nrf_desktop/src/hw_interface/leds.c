@@ -18,10 +18,10 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_LOG_LEVEL);
 
-
 struct led {
 	struct device *pwm_dev;
 
+	size_t id;
 	enum led_mode mode;
 	struct led_color color;
 
@@ -31,30 +31,33 @@ struct led {
 	struct k_delayed_work work;
 };
 
+extern size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
+		      [CONFIG_DESKTOP_LED_COLOR_COUNT];
 
 static struct led leds[CONFIG_DESKTOP_LED_COUNT];
 
-static void pwm_out(struct device *pwm_dev, struct led_color *color)
+static void pwm_out(struct led *led, struct led_color *color)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
-		pwm_pin_set_usec(pwm_dev, i, CONFIG_DESKTOP_LED_BRIGHTNESS_MAX,
+		pwm_pin_set_usec(led->pwm_dev, led_pins[led->id][i],
+				 CONFIG_DESKTOP_LED_BRIGHTNESS_MAX,
 				 color->c[i]);
 	}
 }
 
-static void pwm_off(struct device *pwm_dev)
+static void pwm_off(struct led *led)
 {
 	struct led_color nocolor = {0};
 
-	pwm_out(pwm_dev, &nocolor);
+	pwm_out(led, &nocolor);
 }
 
 static void led_blink(struct led *led)
 {
 	if (led->dir) {
-		pwm_off(led->pwm_dev);
+		pwm_off(led);
 	} else {
-		pwm_out(led->pwm_dev, &led->color);
+		pwm_out(led, &led->color);
 	}
 	led->dir = !led->dir;
 
@@ -82,11 +85,11 @@ static void led_mode_update(struct led *led, enum led_mode mode)
 
 	switch (mode) {
 	case LED_MODE_ON:
-		pwm_out(led->pwm_dev, &led->color);
+		pwm_out(led, &led->color);
 		break;
 
 	case LED_MODE_OFF:
-		pwm_off(led->pwm_dev);
+		pwm_off(led);
 		break;
 
 	case LED_MODE_BLINKING:
@@ -113,7 +116,7 @@ static int leds_init(void)
 		CONFIG_PWM_2_NAME,
 #endif
 #if CONFIG_PWM_3
-		CONFIG_PWM_4_NAME,
+		CONFIG_PWM_3_NAME,
 #endif
 	};
 
@@ -170,6 +173,7 @@ static bool event_handler(const struct event_header *eh)
 		/* Record params */
 		struct led *led = &leds[event->led_id];
 
+		led->id = event->led_id;
 		led->color = event->color;
 		led->mode = event->mode;
 		led->period = event->period;
