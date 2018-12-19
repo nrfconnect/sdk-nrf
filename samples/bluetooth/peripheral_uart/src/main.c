@@ -47,18 +47,6 @@
 
 #define UART_BUF_SIZE           CONFIG_BT_GATT_NUS_UART_BUFFER_SIZE
 
-#ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
-#ifdef CONFIG_BT_GATT_NUS_SECURITY_LEVEL_LOW
-static const bt_security_t sec_level = BT_SECURITY_LOW;
-#elif CONFIG_BT_GATT_NUS_SECURITY_LEVEL_MED
-static const bt_security_t sec_level = BT_SECURITY_MEDIUM;
-#elif CONFIG_BT_GATT_NUS_SECURITY_LEVEL_HIGH
-static const bt_security_t sec_level = BT_SECURITY_HIGH;
-#elif CONFIG_BT_GATT_NUS_SECURITY_LEVEL_FIPS
-static const bt_security_t sec_level = BT_SECURITY_FIPS;
-#endif
-#endif
-
 static K_SEM_DEFINE(ble_init_ok, 0, 2);
 
 static struct bt_conn *current_conn;
@@ -190,11 +178,6 @@ static void connected(struct bt_conn *conn, u8_t err)
 	printk("Connected\n");
 	current_conn = bt_conn_ref(conn);
 
-#ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
-	if (bt_conn_security(conn, sec_level)) {
-		printk("Failed to set security level %d\n", sec_level);
-	}
-#endif
 	set_led_state(CON_STATUS_LED, LED_ON);
 }
 
@@ -224,8 +207,7 @@ static struct bt_conn_cb conn_callbacks = {
 #endif
 };
 
-#if !defined(CONFIG_BT_GATT_NUS_SECURITY_LEVEL_LOW) && \
-	defined(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)
+#if defined(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -249,6 +231,8 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_entry = NULL,
 	.cancel = auth_cancel,
 };
+#else
+static struct bt_conn_auth_cb conn_auth_callbacks;
 #endif
 
 static void bt_receive_cb(const u8_t *const data, u16_t len)
@@ -387,10 +371,10 @@ static void led_blink_thread(void)
 
 	if (!err) {
 		bt_conn_cb_register(&conn_callbacks);
-		#if !defined(CONFIG_BT_GATT_NUS_SECURITY_LEVEL_LOW) && \
-		     defined(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)
-		bt_conn_auth_cb_register(&conn_auth_callbacks);
-		#endif
+
+		if (IS_ENABLED(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)) {
+			bt_conn_auth_cb_register(&conn_auth_callbacks);
+		}
 
 		err = k_sem_take(&ble_init_ok, K_MSEC(100));
 
