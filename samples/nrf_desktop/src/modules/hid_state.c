@@ -724,7 +724,7 @@ static void report_issued(const void *subscriber_id, enum target_report tr,
 		}
 	}
 
-	if (update_needed) {
+	if (update_needed && (rs->cnt == 0)) {
 		/* Something was updated. Report must be issued. */
 		report_send(tr, false);
 	}
