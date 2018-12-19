@@ -59,6 +59,8 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_SENSOR_GPS,
 	/** The FLIP movement sensor on the device. */
 	NRF_CLOUD_SENSOR_FLIP,
+	/** The Button press sensor on the device. */
+	NRF_CLOUD_SENSOR_BUTTON,
 	/** The TEMP sensor on the device. */
 	NRF_CLOUD_SENSOR_TEMP,
 	/** The Humidity sensor on the device. */

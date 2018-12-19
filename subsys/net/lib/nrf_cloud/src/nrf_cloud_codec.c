@@ -45,6 +45,7 @@ static void encode_ua_button_sequence(const struct nrf_cloud_data *sequence,
 static const char * const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_GPS] = "GPS",
 	[NRF_CLOUD_SENSOR_FLIP] = "FLIP",
+	[NRF_CLOUD_SENSOR_BUTTON] = "BUTTON",
 	[NRF_CLOUD_SENSOR_TEMP] = "TEMP",
 	[NRF_CLOUD_SENSOR_HUMID] = "HUMID",
 	[NRF_CLOUD_SENSOR_AIR_PRESS] = "AIR_PRESS",
