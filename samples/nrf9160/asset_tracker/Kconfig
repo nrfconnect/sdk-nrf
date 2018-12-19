@@ -6,6 +6,16 @@
 
 menu "Application sample"
 
+config CLOUD_BUTTON
+	bool "Enable button sensor"
+	default y
+
+config CLOUD_BUTTON_INPUT
+	int "Enable button sensor"
+	range 1 4 if BOARD_NRF9160_PCA10090
+	range 1 1 if BOARD_NRF9160_PCA20035
+	default 1
+
 config POWER_OPTIMIZATION_ENABLE
 	bool "Enable power optimization"
 	default y

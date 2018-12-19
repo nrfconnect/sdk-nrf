@@ -109,6 +109,7 @@ struct env_sensor {
 static const enum nrf_cloud_sensor available_sensors[] = {
 	NRF_CLOUD_SENSOR_GPS,
 	NRF_CLOUD_SENSOR_FLIP,
+	NRF_CLOUD_SENSOR_BUTTON,
 	NRF_CLOUD_SENSOR_TEMP,
 	NRF_CLOUD_SENSOR_HUMID,
 	NRF_CLOUD_SENSOR_AIR_PRESS
@@ -150,6 +151,7 @@ static struct k_sem user_assoc_sem;
 static struct gps_data nmea_data;
 static struct nrf_cloud_sensor_data flip_cloud_data;
 static struct nrf_cloud_sensor_data gps_cloud_data;
+static struct nrf_cloud_sensor_data button_cloud_data;
 static struct nrf_cloud_sensor_data env_cloud_data[ARRAY_SIZE(env_sensors)];
 static atomic_val_t send_data_enable;
 
@@ -292,6 +294,32 @@ static void sensor_trigger_handler(struct device *dev,
 
 	/* No action implemented. */
 }
+
+#if defined(CONFIG_DK_LIBRARY)
+/**@brief Send button presses to cloud */
+static void button_send(bool pressed)
+{
+	char data[] = "1";
+
+	if (!atomic_get(&send_data_enable)) {
+		return;
+	}
+
+	if (!pressed) {
+		data[0] = '0';
+	}
+
+	button_cloud_data.data.ptr = &data;
+	button_cloud_data.data.len = strlen(data);
+	button_cloud_data.tag += 1;
+
+	if (button_cloud_data.tag == 0) {
+		button_cloud_data.tag = 0x1;
+	}
+
+	sensor_data_send(&button_cloud_data);
+}
+#endif
 
 /**@brief Poll flip orientation and send to cloud if flip mode is enabled. */
 static void flip_send(struct k_work *work)
@@ -665,6 +693,11 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 		flip_send(NULL);
 	}
 
+	if (IS_ENABLED(CONFIG_CLOUD_BUTTON) &&
+	   (has_changed & CONFIG_CLOUD_BUTTON_INPUT)) {
+		button_send(buttons & CONFIG_CLOUD_BUTTON_INPUT);
+	}
+
 	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
 			(buttons & has_changed & CALIBRATION_INPUT)) {
 		if (!long_press_active) {
@@ -871,12 +904,21 @@ static void env_sensor_init(void)
 	}
 }
 
+static void button_sensor_init(void)
+{
+	button_cloud_data.type = NRF_CLOUD_SENSOR_BUTTON;
+	button_cloud_data.tag = 0x1;
+}
+
 /**@brief Initializes the sensors that are used by the application. */
 static void sensors_init(void)
 {
 	gps_init();
 	flip_detection_init();
 	env_sensor_init();
+	if (IS_ENABLED(CONFIG_CLOUD_BUTTON)) {
+		button_sensor_init();
+	}
 
 	gps_cloud_data.type = NRF_CLOUD_SENSOR_GPS;
 	gps_cloud_data.tag = 0x1;
