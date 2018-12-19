@@ -64,19 +64,6 @@ HIDS_DEF(hids_obj,
 	 INPUT_REP_MOVEMENT_LEN,
 	 INPUT_REP_MEDIA_PLAYER_LEN);
 
-
-#ifdef CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_LOW
-static const bt_security_t sec_level = BT_SECURITY_LOW;
-#elif CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_MED
-static const bt_security_t sec_level = BT_SECURITY_MEDIUM;
-#elif CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_HIGH
-static const bt_security_t sec_level = BT_SECURITY_HIGH;
-#elif CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_FIPS
-static const bt_security_t sec_level = BT_SECURITY_FIPS;
-#else
-static const bt_security_t sec_level = BT_SECURITY_LOW;
-#endif
-
 static struct k_delayed_work hids_work;
 struct mouse_pos {
 	s16_t x_val;
@@ -138,12 +125,6 @@ static void connected(struct bt_conn *conn, u8_t err)
 	}
 
 	printk("Connected %s\n", addr);
-
-	if (IS_ENABLED(CONFIG_BT_GATT_HIDS_SECURITY_ENABLED)) {
-		if (bt_conn_security(conn, sec_level)) {
-			printk("Failed to set security\n");
-		}
-	}
 
 	err = hids_notify_connected(&hids_obj, conn);
 
@@ -440,8 +421,7 @@ static void bt_ready(int err)
 }
 
 
-#if !defined(CONFIG_BT_GATT_HIDS_SECURITY_LEVEL_LOW) && \
-	defined(CONFIG_BT_GATT_HIDS_SECURITY_ENABLED)
+#if defined(CONFIG_BT_GATT_HIDS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
