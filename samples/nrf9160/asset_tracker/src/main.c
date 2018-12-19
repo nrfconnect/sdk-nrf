@@ -22,7 +22,13 @@
 #include "orientation_detector.h"
 
 /* Interval in milliseconds between each time status LEDs are updated. */
-#define LEDS_UPDATE_INTERVAL	        K_MSEC(500)
+#if defined(CONFIG_BOARD_NRF9160_PCA20035)
+#define LEDS_ON_INTERVAL	        K_MSEC(1)
+#define LEDS_OFF_INTERVAL	        K_MSEC(2000)
+#else
+#define LEDS_ON_INTERVAL	        K_MSEC(500)
+#define LEDS_OFF_INTERVAL	        K_MSEC(500)
+#endif
 
 /* Interval in milliseconds between each time LEDs are updated when indicating
  * that an error has occurred.
@@ -66,20 +72,20 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 	requires CONFIG_LTE_AUTO_INIT_AND_CONNECT to be disabled!"
 #endif
 
-enum {
-#if defined(CONFIG_BOARD_NRF9160_PCA20035)
+static enum {
+#ifdef CONFIG_BOARD_NRF9160_PCA20035
 	LEDS_INITIALIZING	= LED_ON(0),
 	LEDS_CONNECTING		= LED_BLINK(DK_LED3_MSK),
 	LEDS_PATTERN_WAIT	= LED_BLINK(DK_LED2_MSK | DK_LED3_MSK),
-	LEDS_PATTERN_ENTRY	= LED_ON(DK_LED2_MSK) | LED_BLINK(DK_LED3_MSK),
-	LEDS_PATTERN_DONE	= LED_ON(DK_LED2_MSK | DK_LED3_MSK),
-	LEDS_PAIRED		= LED_ON(DK_LED2_MSK),
+	LEDS_PATTERN_ENTRY	= LED_BLINK(DK_LED1_MSK | DK_LED2_MSK),
+	LEDS_PATTERN_DONE	= LED_BLINK(DK_LED2_MSK | DK_LED3_MSK),
+	LEDS_PAIRED		= LED_BLINK(DK_LED2_MSK),
 	LEDS_CALIBRATING	= LED_ON(DK_LED1_MSK | DK_LED3_MSK),
 	LEDS_ERROR_NRF_CLOUD	= LED_BLINK(DK_LED1_MSK),
 	LEDS_ERROR_BSD_REC	= LED_BLINK(DK_LED1_MSK | DK_LED3_MSK),
 	LEDS_ERROR_BSD_IRREC	= LED_BLINK(DK_ALL_LEDS_MSK),
 	LEDS_ERROR_LTE_LC	= LED_BLINK(DK_LED1_MSK | DK_LED2_MSK),
-	LEDS_ERROR_UNKNOWN	= LED_ON(DK_ALL_LEDS_MSK)
+	LEDS_ERROR_UNKNOWN	= LED_BLINK(DK_ALL_LEDS_MSK)
 #else
 	LEDS_INITIALIZING	= LED_ON(0),
 	LEDS_CONNECTING		= LED_BLINK(DK_LED3_MSK),
@@ -430,7 +436,13 @@ static void leds_update(struct k_work *work)
 	}
 
 	if (work) {
-		k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+		if (led_on) {
+			k_delayed_work_submit(&leds_update_work,
+						LEDS_ON_INTERVAL);
+		} else {
+			k_delayed_work_submit(&leds_update_work,
+						LEDS_OFF_INTERVAL);
+		}
 	}
 }
 
@@ -790,7 +802,7 @@ static void work_init(void)
 	k_delayed_work_init(&leds_update_work, leds_update);
 	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
-	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
+	k_delayed_work_submit(&leds_update_work, LEDS_ON_INTERVAL);
 }
 
 /**@brief Configures modem to provide LTE link. Blocks until link is
@@ -976,5 +988,7 @@ void main(void)
 		nrf_cloud_process();
 		input_process();
 		k_sleep(K_MSEC(10));
+		/* Put CPU to idle to save power */
+		k_cpu_idle();
 	}
 }
