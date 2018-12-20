@@ -19,6 +19,15 @@
 
 #include <provision.h>
 
+void *memcpy32(void *restrict d, const void *restrict s, size_t n)
+{
+	size_t len_words = ROUND_UP(n, 4) / 4;
+	for (size_t i = 0; i < len_words; i++) {
+		((u32_t *)d)[i] = ((u32_t *)s)[i];
+	}
+	return d;
+}
+
 static bool verify_firmware(u32_t address)
 {
 	/* Some key data storage backends require word sized reads, hence
@@ -99,8 +108,10 @@ static void boot_from(u32_t *address)
 		return;
 	}
 
+#if CONFIG_ARCH_HAS_USERSPACE
 	__ASSERT(!(CONTROL_nPRIV_Msk & __get_CONTROL()),
 			"Not in Privileged mode");
+#endif
 
 	/* Allow any pending interrupts to be recognized */
 	__ISB();

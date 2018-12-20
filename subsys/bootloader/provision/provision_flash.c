@@ -60,7 +60,7 @@ int public_key_data_read(u32_t key_idx, u32_t *p_buf, size_t buf_size)
 	 */
 	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
 	BUILD_ASSERT(offsetof(provision_flash_t, pkd) % 4 == 0);
-	__ASSERT((p_key % 4 == 0), "Key address is not word aligned");
+	__ASSERT(((u32_t)p_key % 4 == 0), "Key address is not word aligned");
 #endif /* CONFIG_SOC_NRF9160 */
 
 	for (size_t i = 0; i < CONFIG_SB_PUBLIC_KEY_HASH_LEN/4; i++) {

@@ -9,17 +9,19 @@
 #include <bl_crypto.h>
 #include "bl_crypto_internal.h"
 
-int crypto_root_of_trust(const u8_t *pk, const u8_t *pk_hash,
-			 const u8_t *sig, const u8_t *fw,
-			 const u32_t fw_len)
+int crypto_root_of_trust(const u8_t *public_key, const u8_t *public_key_hash,
+			 const u8_t *signature, const u8_t *firmware,
+			 const u32_t firmware_len)
 {
-	__ASSERT(pk && pk_hash && sig && fw, "A parameter was NULL.");
-	if (!verify_truncated_hash(pk, CONFIG_SB_PUBLIC_KEY_LEN, pk_hash,
-				   CONFIG_SB_PUBLIC_KEY_HASH_LEN)) {
+	__ASSERT(public_key && public_key_hash && signature && firmware,
+			"A parameter was NULL.");
+
+	if (!verify_truncated_hash(public_key, CONFIG_SB_PUBLIC_KEY_LEN,
+			public_key_hash, CONFIG_SB_PUBLIC_KEY_HASH_LEN)) {
 		return -EPKHASHINV;
 	}
 
-	if (!verify_sig(fw, fw_len, sig, pk)) {
+	if (!verify_signature(firmware, firmware_len, signature, public_key)) {
 		return -ESIGINV;
 	}
 	return 0;

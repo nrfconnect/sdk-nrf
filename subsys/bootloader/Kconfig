@@ -110,4 +110,3 @@ rsource "bl_crypto/Kconfig"
 rsource "image/fw_metadata/Kconfig"
 endif # IS_SECURE_BOOTLOADER || SECURE_BOOT
 
-
