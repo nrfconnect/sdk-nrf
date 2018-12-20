@@ -32,10 +32,10 @@ struct __packed fw_firmware_info {
 	u32_t firmware_size;      /* Size without validation_info pointer and
 				   * padding.
 				   */
-	u32_t firmware_version; /* Monotonically increasing version counter.*/
-	u32_t firmware_address; /* The address of the start (vector table) of
-				 * the firmware.
-				 */
+	u32_t firmware_version;   /* Monotonically increasing version counter.*/
+	u32_t firmware_address;   /* The address of the start (vector table) of
+				   * the firmware.
+				   */
 };
 
 struct __packed fw_validation_info {
@@ -48,13 +48,13 @@ struct __packed fw_validation_info {
 	/* The hash of the firmware.*/
 	u8_t  firmware_hash[CONFIG_SB_HASH_LEN];
 
-	/* Public key to be used for signature verification.
-	 * This must be checked against a trusted hash.
+	/* Public key to be used for signature verification. This must be
+	 * checked against a trusted hash.
 	 */
 	u8_t  public_key[CONFIG_SB_PUBLIC_KEY_LEN];
 
-	/* Signature over the firmware as represented by the
-	 * firmware_address and firmware_size in the firmware_info.
+	/* Signature over the firmware as represented by the firmware_address
+	 * and firmware_size in the firmware_info.
 	 */
 	u8_t  signature[CONFIG_SB_SIGNATURE_LEN];
 };
