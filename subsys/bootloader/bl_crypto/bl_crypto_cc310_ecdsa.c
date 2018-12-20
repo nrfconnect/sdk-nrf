@@ -10,8 +10,8 @@
 #include "bl_crypto_internal.h"
 #include "bl_crypto_cc310_common.h"
 
-bool verify_sig(const u8_t *data, u32_t data_len, const u8_t *sig,
-		const u8_t *pk)
+bool verify_signature(const u8_t *data, u32_t data_len, const u8_t *signature,
+		const u8_t *public_key)
 {
 	nrf_cc310_bl_ecdsa_verify_context_secp256r1_t context;
 	nrf_cc310_bl_hash_digest_sha256_t hash1;
@@ -32,10 +32,10 @@ bool verify_sig(const u8_t *data, u32_t data_len, const u8_t *sig,
 	cc310_bl_backend_enable();
 
 	bool retval = (nrf_cc310_bl_ecdsa_verify_secp256r1(
-			       &context,
-			       (nrf_cc310_bl_ecc_public_key_secp256r1_t *)pk,
-			       (nrf_cc310_bl_ecc_signature_secp256r1_t *)sig,
-			       hash2, CONFIG_SB_HASH_LEN) == CRYS_OK);
+			&context,
+			(nrf_cc310_bl_ecc_public_key_secp256r1_t *)public_key,
+			(nrf_cc310_bl_ecc_signature_secp256r1_t *)signature,
+			hash2, CONFIG_SB_HASH_LEN) == CRYS_OK);
 
 	cc310_bl_backend_disable();
 

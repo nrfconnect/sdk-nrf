@@ -28,15 +28,19 @@
 #define MAGIC_LEN_WORDS (CONFIG_SB_MAGIC_LEN / sizeof(u32_t))
 
 struct __packed fw_firmware_info {
+	/* Magic value to verify that the struct has the correct type. */
 	u32_t magic[MAGIC_LEN_WORDS];
-	u32_t firmware_size;      /* Size without validation_info pointer and
-				   * padding.
-				   */
-	u32_t firmware_version;   /* Monotonically increasing version counter.*/
-	u32_t firmware_address;   /* The address of the start (vector table) of
-				   * the firmware.
-				   */
+
+	/* Size without validation_info pointer and padding. */
+	u32_t firmware_size;
+
+	/* Monotonically increasing version counter.*/
+	u32_t firmware_version;
+
+	/* The address of the start (vector table) of the firmware. */
+	u32_t firmware_address;
 };
+
 
 #define OFFSET_CHECK(type, member, value) \
 		static_assert(offsetof(type, member) == value, \
@@ -51,7 +55,7 @@ OFFSET_CHECK(struct fw_firmware_info, firmware_address,
 	(CONFIG_SB_MAGIC_LEN + 8));
 
 struct __packed fw_validation_info {
-	/* Magic value */
+	/* Magic value to verify that the struct has the correct type. */
 	u32_t magic[MAGIC_LEN_WORDS];
 
 	/* The address of the start (vector table) of the firmware. */
@@ -83,8 +87,7 @@ OFFSET_CHECK(struct fw_validation_info, signature,
 	(CONFIG_SB_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN
 	+ CONFIG_SB_SIGNATURE_LEN));
 
-/*
- * Can be used to make the firmware discoverable in other locations, e.g. when
+/* Can be used to make the firmware discoverable in other locations, e.g. when
  * searching backwards. This struct would typically be constructed locally, so
  * it needs no version.
  */
@@ -140,11 +143,10 @@ static inline bool memeq(const void *expected, const void *actual, u32_t len)
 	}
 }
 
-/*
- * Get a pointer to the firmware_info structure inside the firmware.
- */
+/* Get a pointer to the firmware_info structure inside the firmware. */
 static inline const struct fw_firmware_info *
-firmware_info_get(u32_t firmware_address) {
+firmware_info_get(u32_t firmware_address)
+{
 	u32_t finfo_addr = firmware_address + CONFIG_SB_FIRMWARE_INFO_OFFSET;
 	const struct fw_firmware_info *finfo;
 	const u32_t firmware_info_magic[] = {FIRMWARE_INFO_MAGIC};
@@ -156,12 +158,11 @@ firmware_info_get(u32_t firmware_address) {
 	return NULL;
 }
 
-/*
- * Find the validation_info at the end of the firmware.
- */
+/* Find the validation_info at the end of the firmware. */
 static inline const struct fw_validation_info *
-validation_info_find(const struct fw_firmware_info *finfo, u32_t
-		search_distance) {
+validation_info_find(const struct fw_firmware_info *finfo,
+			u32_t search_distance)
+{
 	u32_t vinfo_addr = finfo->firmware_address + finfo->firmware_size;
 	const struct fw_validation_info *vinfo;
 	const u32_t validation_info_magic[] = {VALIDATION_INFO_MAGIC};

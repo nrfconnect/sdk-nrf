@@ -32,7 +32,7 @@ config SB_MAGIC_COMMON
 	  There are 3 different metadata structs (see fw_metadata.h). They each
 	  have their own magic word composed of 3 u32_t values. One of the
 	  u32_ts is a compatibility id constructed from SB_HARDWARE_ID,
-	  SB_INFO_VERSION, SB_CRYPTO_ALGORITHM, and SB_CUSTOM_COMPATIBILITY_ID.
+	  SB_INFO_VERSION, SB_CRYPTO_ID, and SB_CUSTOM_COMPATIBILITY_ID.
 	  The other two u32_ts are defined in SB_MAGIC_COMMON (common to
 	  all structs), and in one of SB_MAGIC_FIRMWARE_INFO,
 	  SB_MAGIC_VALIDATION_INFO, and SB_MAGIC_POINTER.
@@ -81,19 +81,23 @@ config SB_INFO_VERSION
 	  Used to ensure binary compatibility.
 	  For more info, see SB_MAGIC_COMMON.
 
-config SB_CRYPTO_ALGORITHM
+config SB_CRYPTO_ID
 	int
-	range 1 2
-	default 1 if SB_ECDSA
-	default 2 if SB_RSA
-        default 0
+	range 0 255
+	default 1 if SB_ECDSA_SECP256R1 && SB_SHA256
+	default 2 if SB_RSA_PSS2048 && SB_SHA256
 	help
 	  The algorithm used for signing the firmware (8 bits).
 	  Used to ensure compatibility.
 	  For more info, see SB_MAGIC_COMMON.
 
+config SB_INFO_CRYPTO_ID
+	int
+	default 0
+
 config SB_CUSTOM_COMPATIBILITY_ID
 	int "Compatibility ID for user-defined purposes (8 bits)."
+	range 0 255
 	default 0
 	help
 	  User defined value.

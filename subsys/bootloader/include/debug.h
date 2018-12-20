@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <misc/__assert.h>
 
+#ifdef CONFIG_SECURE_BOOT_DEBUG
 void printk(const char *fmt, ...);
 
 #ifdef CONFIG_SB_DEBUG_PORT_SEGGER_RTT
@@ -18,5 +19,8 @@ void printk(const char *fmt, ...);
 #elif defined(CONFIG_SB_DEBUG_PORT_UART)
 #include <debug/uart.h>
 #endif /* CONFIG_SB_DEBUG_PORT_SEGGER_RTT */
+#else
+#define printk(...)
+#endif
 
 #endif /* DEBUG_H_ */
