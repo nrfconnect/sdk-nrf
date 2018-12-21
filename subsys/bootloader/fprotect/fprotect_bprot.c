@@ -30,7 +30,7 @@ int fprotect_area(u32_t start, size_t length)
 
 	if ((start % BPROT_REGIONS_SIZE) ||
 	    (length % BPROT_REGIONS_SIZE) ||
-	    (pagenum_end >= BPROT_REGIONS_NUM) ||
+	    (pagenum_end > BPROT_REGIONS_NUM) ||
 	    (pagenum_end < pagenum_start)) {
 		/* start or length isn't aligned with a BPROT region,
 		 * or attempting to protect an area that is invalid or outside
@@ -44,7 +44,7 @@ int fprotect_area(u32_t start, size_t length)
 		config_masks[i] = 0;
 	}
 
-	for (u32_t i = pagenum_start; i <= pagenum_end; i++)	{
+	for (u32_t i = pagenum_start; i < pagenum_end; i++)	{
 		config_masks[i / BITS_PER_LONG] |= BIT(i % BITS_PER_LONG);
 	}
 
