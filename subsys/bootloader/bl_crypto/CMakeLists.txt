@@ -29,3 +29,6 @@ elseif (CONFIG_SB_CRYPTO_CC310_SHA256)
 else()
   message(FATAL_ERROR "No hash implementation chosen for bootloader.")
 endif()
+
+zephyr_include_directories(.)
+zephyr_link_libraries(nrfxlib_crypto)

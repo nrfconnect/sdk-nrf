@@ -18,41 +18,11 @@
  * @param[out] hash     Buffer to store hash in
  * @param[in]  data     Data to produce hash over
  * @param[in]  data_len Length of data to hash
+ * @param[in]  external Whether this function is called through an ext_abi, in
+ *                      which case it can only use stack memory.
  *
- * @return True if success, false otherwise.
+ * @return 0 if success, error code otherwise.
  */
-bool get_hash(u8_t *hash, const u8_t *data, u32_t data_len);
-
-
-/**
- * @brief Verify hash of provided data against expected hash.
- *
- * @param[in]  data     Data to produce hash over
- * @param[in]  data_len Length of data to hash
- * @param[in]  expected Expected hash
- */
-bool verify_hash(const u8_t *data, u32_t data_len, const u8_t *expected);
-
-/**
- * @brief Verify truncated hash of data.
- *
- * @param[in]  data     Data to produce hash over
- * @param[in]  data_len Length of data to hash
- * @param[in]  expected Expected hash
- * @param[in]  hash_len Length of hash
- */
-bool verify_truncated_hash(const u8_t *data, u32_t data_len,
-			   const u8_t *expected, u32_t hash_len);
-
-/**
- * @brief Verify signature of data.
- *
- * @param[in] data       Data to produce hash over
- * @param[in] data_len   Length of data to hash
- * @param[in] signature  Expected signature
- * @param[in] public_key Public Key
- */
-bool verify_signature(const u8_t *data, u32_t data_len,
-		const u8_t *signature, const u8_t *public_key);
+int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external);
 
 #endif
