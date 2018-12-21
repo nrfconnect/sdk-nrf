@@ -10,6 +10,8 @@ set(hash_file firmware.sha256)
 set(signature_file firmware.signature)
 set(SIGNATURE_PUBLIC_KEY_FILE public.pem)
 
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/fw_info_magic.cmake)
+
 set(hashcmd
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/hash.py
@@ -101,7 +103,7 @@ add_custom_command(
   ${NRF_BOOTLOADER_SCRIPTS}/validation_data.py
   --input ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
   --output ${SIGNED_KERNEL_HEX}
-  --offset ${CONFIG_SB_VALIDATION_METADATA_OFFSET}
+  --offset ${CONFIG_FW_VALIDATION_METADATA_OFFSET}
   --signature ${signature_file}
   --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
   --magic-value "${VALIDATION_INFO_MAGIC}"

@@ -38,7 +38,7 @@ static bool verify_firmware(u32_t address)
 	const struct fw_firmware_info *fw_info;
 	const struct fw_validation_info *fw_ver_info;
 
-	fw_info = firmware_info_get(address);
+	fw_info = fw_firmware_info_get(address);
 
 	printk("Attempting to boot from address 0x%x.\n\r", address);
 
@@ -147,6 +147,8 @@ static void boot_from(u32_t *address)
 	__ISB(); /* Flush and refill pipeline with updated premissions */
 
 	VTOR = (u32_t)address;
+
+	fw_abi_provide((u32_t)address);
 
 	/* Set MSP to the new address and clear any information from PSP */
 	__set_MSP(address[0]);
