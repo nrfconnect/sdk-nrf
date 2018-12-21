@@ -237,20 +237,26 @@ class PlotNordic():
         plt.draw()
 
     def _find_closest_event(self, x_coord, y_coord):
-        filtered_id = list(filter(lambda x: x.submit.type_id == round(y_coord),
-                                  self.processed_data.tracked_events))
-        if len(filtered_id) == 0:
-            return None
-        matching_processing = list(
-            filter(
-                lambda x: x.start.timestamp < x_coord and x.end.timestamp > x_coord,
-                filtered_id))
-        if len(matching_processing):
-            return matching_processing[0]
-        dists = list(map(lambda x: min([abs(x.submit.timestamp - x_coord),
-            abs(x.start.timestamp - x_coord), abs(x.end.timestamp - x_coord)]), filtered_id))
-        selected_event = filtered_id[np.argmin(dists)]
-        return selected_event
+        if self.processed_data.tracked_events:
+            filtered_id = list(filter(lambda x: x.submit.type_id == round(y_coord),
+                                      self.processed_data.tracked_events))
+            if len(filtered_id) == 0:
+                return None
+            matching_processing = list(
+                filter(
+                    lambda x: x.start.timestamp < x_coord and x.end.timestamp > x_coord,
+                    filtered_id))
+            if len(matching_processing):
+                return matching_processing[0]
+            dists = list(map(lambda x: min([abs(x.submit.timestamp - x_coord),
+               abs(x.start.timestamp - x_coord), abs(x.end.timestamp - x_coord)]), filtered_id))
+            return filtered_id[np.argmin(dists)]
+        else:
+            filtered_id = list(filter(lambda x: x.type_id == round(y_coord), self.raw_data.events))
+            if len(filtered_id) == 0:
+                return None
+            dists = list(map(lambda x: abs(x.timestamp - x_coord), filtered_id))
+            return filtered_id[np.argmin(dists)]
 
     def _stringify_time(time_seconds):
         if time_seconds > 0.1:
@@ -288,43 +294,53 @@ class PlotNordic():
             if selected_event is None:
                 return
 
+            if self.processed_data.tracking_execution:
+                event_submit = selected_event.submit
+            else:
+                event_submit = selected_event
+
             self.draw_state.selected_event_submit = self.draw_state.ax.plot(
-                selected_event.submit.timestamp,
-                selected_event.submit.type_id,
+                event_submit.timestamp,
+                event_submit.type_id,
                 markersize=2*self.draw_state.event_submit_markersize,
                 color='g',
                 marker='o',
                 linestyle=' ')
-            self.draw_state.selected_event_processing = matplotlib.patches.Rectangle(
-                (selected_event.start.timestamp,
-                 selected_event.submit.type_id -
-                 self.draw_state.event_processing_rect_height),
-                selected_event.end.timestamp -
-                selected_event.start.timestamp,
-                2*self.draw_state.event_processing_rect_height,
-                color='g')
-            self.draw_state.ax.add_artist(
-            self.draw_state.selected_event_processing)
+
+            if self.processed_data.tracking_execution:
+                self.draw_state.selected_event_processing = matplotlib.patches.Rectangle(
+                    (selected_event.start.timestamp,
+                    selected_event.submit.type_id -
+                    self.draw_state.event_processing_rect_height),
+                    selected_event.end.timestamp -
+                    selected_event.start.timestamp,
+                    2*self.draw_state.event_processing_rect_height,
+                    color='g')
+                self.draw_state.ax.add_artist(
+                    self.draw_state.selected_event_processing)
 
             self.draw_state.selected_event_text = self.raw_data.registered_events_types[
-                selected_event.submit.type_id].name + '\n'
+                event_submit.type_id].name + '\n'
             self.draw_state.selected_event_text += 'Submit: ' + \
                 PlotNordic._stringify_time(
-                    selected_event.submit.timestamp) + '\n'
-            self.draw_state.selected_event_text += 'Processing start: ' + \
-                PlotNordic._stringify_time(
-                    selected_event.start.timestamp) + '\n'
-            self.draw_state.selected_event_text += 'Processing end: ' + \
-                PlotNordic._stringify_time(
-                    selected_event.end.timestamp) + '\n'
-            self.draw_state.selected_event_text += 'Processing time: ' + \
-                PlotNordic._stringify_time(selected_event.end.timestamp - selected_event.start.timestamp) + '\n'
-            ev_type = self.raw_data.registered_events_types[selected_event.submit.type_id]
+                    event_submit.timestamp) + '\n'
+            if self.processed_data.tracking_execution:
+                self.draw_state.selected_event_text += 'Processing start: ' + \
+                    PlotNordic._stringify_time(
+                        selected_event.start.timestamp) + '\n'
+                self.draw_state.selected_event_text += 'Processing end: ' + \
+                    PlotNordic._stringify_time(
+                        selected_event.end.timestamp) + '\n'
+                self.draw_state.selected_event_text += 'Processing time: ' + \
+                    PlotNordic._stringify_time(selected_event.end.timestamp - \
+                        selected_event.start.timestamp) + '\n'
+
+            ev_type = self.raw_data.registered_events_types[event_submit.type_id]
             for i in range(0, len(ev_type.data_descriptions)):
                 if ev_type.data_descriptions[i] == 'mem_address':
                     continue
                 self.draw_state.selected_event_text += ev_type.data_descriptions[i] + ' = '
-                self.draw_state.selected_event_text += str(selected_event.submit.data[i]) + '\n'
+                self.draw_state.selected_event_text += str(event_submit.data[i]) + '\n'
 
             self.draw_state.selected_event_textbox.set_visible(True)
             self.draw_state.selected_event_textbox.set_text(
@@ -462,6 +478,7 @@ class PlotNordic():
                     events.append(event)
             else:
                 events.append(event)
+                self.raw_data.events.append(event)
 
         # translating plot
         if not self.draw_state.synchronized_with_events:
