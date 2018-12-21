@@ -15,6 +15,7 @@
 
 #include "hid_event.h"
 #include "ble_event.h"
+#include "config_event.h"
 
 #include "hid_report_desc.h"
 
@@ -33,7 +34,11 @@ static size_t report_index[REPORT_ID_COUNT];
 HIDS_DEF(hids_obj,
 	REPORT_SIZE_MOUSE,
 	REPORT_SIZE_KEYBOARD,
-	REPORT_SIZE_MPLAYER);
+	REPORT_SIZE_MPLAYER
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+	, REPORT_SIZE_USER_CONFIG
+#endif
+);
 
 enum report_mode {
 	REPORT_MODE_PROTOCOL,
@@ -151,6 +156,24 @@ static void mplayer_notif_handler(enum hids_notif_evt evt)
 	notif_handler(evt, TARGET_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
 }
 
+static void feature_report_handler(struct hids_rep const *rep,
+				   struct bt_conn *conn)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		if (rep->size != REPORT_SIZE_USER_CONFIG) {
+			LOG_WRN("Unsupported report size");
+			return;
+		}
+
+		struct config_event *event = new_config_event();
+
+		event->id = rep->data[0];
+		memcpy(event->data, &(rep->data[1]), sizeof(event->data));
+
+		EVENT_SUBMIT(event);
+	}
+}
+
 static int module_init(void)
 {
 	/* HID service configuration */
@@ -183,21 +206,35 @@ static int module_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		input_report[ir_pos].id          = REPORT_ID_KEYBOARD;
-		input_report[ir_pos].size        = REPORT_SIZE_KEYBOARD;
-		input_report[ir_pos].handler     = keyboard_notif_handler;
+		input_report[ir_pos].id      = REPORT_ID_KEYBOARD;
+		input_report[ir_pos].size    = REPORT_SIZE_KEYBOARD;
+		input_report[ir_pos].handler = keyboard_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
-		input_report[ir_pos].id          = REPORT_ID_MPLAYER;
-		input_report[ir_pos].size        = REPORT_SIZE_MPLAYER;
-		input_report[ir_pos].handler     = mplayer_notif_handler;
+		input_report[ir_pos].id      = REPORT_ID_MPLAYER;
+		input_report[ir_pos].size    = REPORT_SIZE_MPLAYER;
+		input_report[ir_pos].handler = mplayer_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		struct hids_outp_feat_rep *feature_report =
+			&hids_init_param.feat_rep_group_init.reports[0];
+		size_t feat_pos = 0;
+
+		feature_report[feat_pos].id      = REPORT_ID_USER_CONFIG;
+		feature_report[feat_pos].size    = REPORT_SIZE_USER_CONFIG;
+		feature_report[feat_pos].handler = feature_report_handler;
+
+		feat_pos++;
+
+		hids_init_param.feat_rep_group_init.cnt = feat_pos;
 	}
 
 	hids_init_param.inp_rep_group_init.cnt = ir_pos;
