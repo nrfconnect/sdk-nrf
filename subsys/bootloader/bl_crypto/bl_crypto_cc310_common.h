@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 
-bool cc310_bl_init(void);
+int cc310_bl_init(void);
 
 void cc310_bl_backend_enable(void);
 

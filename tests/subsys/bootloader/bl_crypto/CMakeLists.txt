@@ -11,5 +11,4 @@ project(NONE)
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
 target_include_directories(app PRIVATE .)
-
-target_link_libraries(app PRIVATE bl_crypto)
+target_link_libraries(app PRIVATE nrfxlib_crypto)

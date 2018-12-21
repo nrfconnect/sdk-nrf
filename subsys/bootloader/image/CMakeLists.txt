@@ -6,6 +6,9 @@
 
 set(KERNEL_ELF kernel_elf) # TODO multi_image
 zephyr_include_directories(${CMAKE_CURRENT_LIST_DIR}/../include)
+if (NOT DEFINED CONFIG_IS_SECURE_BOOTLOADER)
+  add_subdirectory(bl_crypto_client)
+endif()
 set(NRF_BOOTLOADER_SCRIPTS ${NRF_DIR}/scripts/bootloader)
 set(PROVISION_HEX_NAME     provision_data.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})

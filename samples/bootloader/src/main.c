@@ -35,6 +35,7 @@ static bool verify_firmware(u32_t address)
 	 */
 	u32_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN/4];
 	int retval = -EFAULT;
+	int err;
 	const struct fw_firmware_info *fw_info;
 	const struct fw_validation_info *fw_ver_info;
 
@@ -56,6 +57,12 @@ static bool verify_firmware(u32_t address)
 		return false;
 	}
 
+	err = bl_crypto_init();
+	if (err) {
+		printk("bl_crypto_init() returned %d. Aborting boot!\n\r", err);
+		return false;
+	}
+
 	u32_t num_public_keys = num_public_keys_read();
 
 	for (u32_t key_data_idx = 0; key_data_idx < num_public_keys;
@@ -65,7 +72,7 @@ static bool verify_firmware(u32_t address)
 			retval = -EFAULT;
 			break;
 		}
-		retval = crypto_root_of_trust(fw_ver_info->public_key,
+		retval = bl_root_of_trust_verify(fw_ver_info->public_key,
 					      (u8_t *)key_data,
 					      fw_ver_info->signature,
 					      (u8_t *)address,

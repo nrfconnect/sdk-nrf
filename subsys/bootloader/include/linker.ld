@@ -169,6 +169,14 @@ SECTIONS
 	KEEP(*(".kinetis_flash_config.*"))
 
 	_vector_end = .;
+
+	#if defined(CONFIG_SB_FIRMWARE_INFO_OFFSET)
+	_firmware_info_start = .;
+	KEEP(*(.firmware_info))
+	_firmware_info_end = .;
+	_firmware_info_size = _firmware_info_end - _firmware_info_start;
+	#endif
+
 	} GROUP_LINK_IN(ROMABLE_REGION)
 
 #ifdef CONFIG_CODE_DATA_RELOCATION

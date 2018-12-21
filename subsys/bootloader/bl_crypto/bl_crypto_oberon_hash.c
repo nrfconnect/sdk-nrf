@@ -9,33 +9,45 @@
 #include <occ_constant_time.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <errno.h>
+#include <bl_crypto.h>
 
-bool get_hash(u8_t *hash, const u8_t *data, u32_t data_len)
+
+BUILD_ASSERT_MSG(SHA256_CTX_SIZE >= sizeof(occ_sha256_ctx), \
+		"occ_sha256_ctx can no longer fit inside bl_sha256_ctx_t.");
+
+int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external)
 {
+	(void) external;
 	occ_sha256(hash, data, data_len);
 
-	/* Return true always as occ_sha256 does not have a return value. */
-	return true;
+	/* Return success always as occ_sha256 does not have a return value. */
+	return 0;
 }
 
-bool verify_truncated_hash(const u8_t *data, u32_t data_len,
-			   const u8_t *expected, u32_t hash_len)
+int bl_sha256_init(occ_sha256_ctx *ctx)
 {
-	u8_t hash[CONFIG_SB_HASH_LEN];
-
-	if (hash_len > CONFIG_SB_HASH_LEN) {
-		return false;
+	if (ctx == NULL) {
+		return -EFAULT;
 	}
-
-	if (!get_hash(hash, data, data_len)) {
-		return false;
-	}
-
-	return occ_constant_time_equal(expected, hash, hash_len);
+	occ_sha256_init(ctx);
+	return 0;
 }
 
-bool verify_hash(const u8_t *data, u32_t data_len, const u8_t *expected)
+int bl_sha256_update(occ_sha256_ctx *ctx, const u8_t *data, u32_t data_len)
 {
-	return verify_truncated_hash(data, data_len, expected,
-				     CONFIG_SB_HASH_LEN);
+	if (!ctx || !data) {
+		return -EINVAL;
+	}
+	occ_sha256_update(ctx, data, (size_t) data_len);
+	return 0;
+}
+
+int bl_sha256_finalize(occ_sha256_ctx *ctx, u8_t *output)
+{
+	if (!ctx || !output) {
+		return -EINVAL;
+	}
+	occ_sha256_final(output, ctx);
+	return 0;
 }

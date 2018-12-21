@@ -7,8 +7,6 @@
 menuconfig SECURE_BOOT_CRYPTO
 	bool
 	prompt "Secure Boot Crypto"
-	help
-	  Only meant to be enabled separately from SECURE_BOOT when testing.
 
 if (SECURE_BOOT_CRYPTO)
 config SB_ECDSA_SECP256R1
@@ -19,6 +17,7 @@ config SB_RSA_PSS2048
 	select FW_RSA_PSS2048
 config SB_SHA256
 	bool
+	select FW_SHA256
 
 config SB_SIGNATURE_LEN
 	int

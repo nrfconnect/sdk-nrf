@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <errno.h>
 #include <zephyr/types.h>
 #include <misc/util.h>
 #include <toolchain.h>
@@ -26,18 +27,18 @@ void cc310_bl_backend_disable(void)
 	NRF_CRYPTOCELL->ENABLE = 0;
 }
 
-bool cc310_bl_init(void)
+int cc310_bl_init(void)
 {
 	static bool initialized;
 
 	if (!initialized) {
 		cc310_bl_backend_enable();
 		if (nrf_cc310_bl_init() != CRYS_OK) {
-			return false;
+			return -EFAULT;
 		}
 		initialized = true;
 		cc310_bl_backend_disable();
 	}
 
-	return true;
+	return 0;
 }

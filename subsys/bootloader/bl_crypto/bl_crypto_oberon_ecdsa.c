@@ -6,25 +6,23 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
+#include <errno.h>
 #include <stdbool.h>
+#include <bl_crypto.h>
 #include <occ_ecdsa_p256.h>
 #include "bl_crypto_internal.h"
 
-bool verify_signature(const u8_t *data, u32_t data_len, const u8_t *signature,
-		const u8_t *public_key)
+
+int bl_secp256r1_validate(const u8_t *hash, u32_t hash_len,
+			const u8_t *public_key, const u8_t *signature)
 {
-	u8_t hash1[CONFIG_SB_HASH_LEN];
-	u8_t hash2[CONFIG_SB_HASH_LEN];
-
-	if (!get_hash(hash1, data, data_len)) {
-		return false;
+	if (!hash || (hash_len != CONFIG_SB_HASH_LEN) || !public_key
+			|| ! signature) {
+		return -EINVAL;
 	}
-
-	if (!get_hash(hash2, hash1, CONFIG_SB_HASH_LEN)) {
-		return false;
+	int retval = occ_ecdsa_p256_verify_hash(signature, hash, public_key);
+	if (retval == -1) {
+		return -ESIGINV;
 	}
-
-	int retval = occ_ecdsa_p256_verify_hash(signature, hash2, public_key);
-
-	return (retval == 0);
+	return 0;
 }
