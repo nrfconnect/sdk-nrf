@@ -6,7 +6,6 @@
 
 set(KERNEL_ELF kernel_elf) # TODO multi_image
 zephyr_include_directories(${CMAKE_CURRENT_LIST_DIR}/../include)
-add_subdirectory(fw_metadata)
 set(NRF_BOOTLOADER_SCRIPTS ${NRF_DIR}/scripts/bootloader)
 set(PROVISION_HEX_NAME     provision_data.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
@@ -26,7 +25,6 @@ set_property(
 )
 
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/debug_keys.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/fw_info_magic.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/sign.cmake)
 
 if(DEFINED DT_FLASH_AREA_S0_OFFSET)
