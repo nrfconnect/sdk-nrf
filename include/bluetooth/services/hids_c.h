@@ -101,7 +101,7 @@ typedef void (*bt_gatt_hids_c_ready_cb)(struct bt_gatt_hids_c *hids_c);
  * this function would be called.
  *
  * @param hids_c HIDS client object
- * @param err    Error code
+ * @param err    Negative internal error code or positive ATT error code.
  *
  * @sa bt_gatt_hids_c_ready_cb
  */
@@ -268,13 +268,13 @@ struct bt_gatt_hids_c {
 	 */
 	bt_gatt_hids_c_prep_fail_cb prep_error_cb;
 	/**
-	 * @brief Report map data chunk received
-	 */
-	bt_gatt_hids_c_map_cb map_cb;
-	/**
 	 * @brief The callback for the Protocol mode updated
 	 */
 	bt_gatt_hids_c_pm_update_cb pm_update_cb;
+	/**
+	 * @brief Report map data chunk received
+	 */
+	bt_gatt_hids_c_map_cb map_cb;
 	/**
 	 * @brief Auxiliary read parameters
 	 *
@@ -292,6 +292,16 @@ struct bt_gatt_hids_c {
 	 * can be used.
 	 */
 	struct k_sem read_params_sem;
+	/**
+	 * @brief Structure used during report initialization
+	 *
+	 * During initialization process all reports reference
+	 * information is read. This structure helps tracking the
+	 * current state of this process.
+	 */
+	struct {
+		u8_t rep_idx;
+	} init_repref;
 	/** Boot protocol reports if available.
 	 *  Input and Output keyboard reports comes in pairs. It is no valid
 	 *  situation if only one of keyboard reports is present.
