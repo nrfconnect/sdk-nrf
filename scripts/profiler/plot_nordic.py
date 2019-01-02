@@ -16,7 +16,8 @@ import time
 import threading
 import logging
 
-from events import Event, EventType, EventsData
+from events import Event, EventType, EventsData, TrackedEvent
+from processed_events import ProcessedEvents
 from plot_nordic_config import PlotNordicConfig
 
 
@@ -24,14 +25,6 @@ class MouseButton(Enum):
     LEFT = 1
     MIDDLE = 2
     RIGHT = 3
-
-
-class TrackedEvent():
-    def __init__(self, submit, start, end):
-        self.submit = submit
-        self.start = start
-        self.end = end
-
 
 class DrawState():
     def __init__(self, timeline_width_init,
@@ -66,50 +59,38 @@ class DrawState():
         self.synchronized_with_events = False
         self.stale_events_displayed = False
 
-
-class ProcessedData():
-    def __init__(self):
-        self.temp_events = []
-        self.tracked_events = []
-
-        self.event_processing_start_id = None
-        self.event_provessing_end_id = None
-        self.tracking_execution = True
-
-        self.submit_event = None
-        self.start_event = None
-
-
 class PlotNordic():
 
     def __init__(self, log_lvl=logging.WARNING):
         plt.rcParams['toolbar'] = 'None'
         plt.ioff()
-        self.raw_data = EventsData([], {})
         self.plot_config = PlotNordicConfig
         self.draw_state = DrawState(
             self.plot_config['timeline_width_init'],
             self.plot_config['event_processing_rect_height'],
             self.plot_config['event_submit_markersize'])
-        self.processed_data = ProcessedData()
+        self.processed_events = ProcessedEvents()
         self.submitted_event_type = None
+
+        self.temp_events = []
 
         self.logger = logging.getLogger('RTT Plot Nordic')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
-        self.log_format = logging.Formatter('[%(levelname)s] %(name)s: %(message)s')
+        self.log_format = logging.Formatter(
+            '[%(levelname)s] %(name)s: %(message)s')
         self.logger_console.setFormatter(self.log_format)
         self.logger.addHandler(self.logger_console)
 
 
     def read_data_from_files(self, events_filename, events_types_filename):
-        self.raw_data.read_data_from_files(
+        self.processed_events.raw_data.read_data_from_files(
             events_filename, events_types_filename)
-        if not self.raw_data.verify():
+        if not self.processed_events.raw_data.verify():
             self.logger.warning("Missing event descriptions")
 
     def write_data_to_files(self, events_filename, events_types_filename):
-        self.raw_data.write_data_to_files(
+        self.processed_events.raw_data.write_data_to_files(
             events_filename, events_types_filename)
 
     def on_click_start_stop(self, event):
@@ -129,21 +110,7 @@ class PlotNordic():
 
         self.draw_state.paused = not self.draw_state.paused
 
-    def _get_event_type_id(self, type_name):
-        for key, value in self.raw_data.registered_events_types.items():
-            if type_name == value.name:
-                return key
-        return None
-
     def _prepare_plot(self, selected_events_types):
-        self.processed_data.event_processing_start_id = self._get_event_type_id(
-            'event_processing_start')
-        self.processed_data.event_processing_end_id = self._get_event_type_id(
-            'event_processing_end')
-
-        if (self.processed_data.event_processing_start_id is None) or (
-                self.processed_data.event_processing_end_id is None):
-            self.processed_data.tracking_execution = False
 
         self.draw_state.ax = plt.gca()
         self.draw_state.ax.set_navigate(False)
@@ -164,13 +131,14 @@ class PlotNordic():
         ticks = []
         labels = []
         for j in selected_events_types:
-            if j != self.processed_data.event_processing_start_id and j != self.processed_data.event_processing_end_id:
+            if j != self.processed_events.event_processing_start_id \
+              and j != self.processed_events.event_processing_end_id:
                 if j > maximum:
                     maximum = j
                 if j < minimum:
                     minimum = j
                 ticks.append(j)
-                labels.append(self.raw_data.registered_events_types[j].name)
+                labels.append(self.processed_events.raw_data.registered_events_types[j].name)
         plt.yticks(ticks, labels, rotation=45)
 
         # min and max range of y axis are bigger by one so markers fit nicely
@@ -237,22 +205,22 @@ class PlotNordic():
         plt.draw()
 
     def _find_closest_event(self, x_coord, y_coord):
-        if self.processed_data.tracked_events:
+        if self.processed_events.tracking_execution:
             filtered_id = list(filter(lambda x: x.submit.type_id == round(y_coord),
-                                      self.processed_data.tracked_events))
+                                      self.processed_events.tracked_events))
             if len(filtered_id) == 0:
                 return None
             matching_processing = list(
                 filter(
-                    lambda x: x.start.timestamp < x_coord and x.end.timestamp > x_coord,
+                    lambda x: x.proc_start_time < x_coord and x.proc_end_time > x_coord,
                     filtered_id))
             if len(matching_processing):
                 return matching_processing[0]
             dists = list(map(lambda x: min([abs(x.submit.timestamp - x_coord),
-               abs(x.start.timestamp - x_coord), abs(x.end.timestamp - x_coord)]), filtered_id))
+               abs(x.proc_start_time - x_coord), abs(x.proc_end_time - x_coord)]), filtered_id))
             return filtered_id[np.argmin(dists)]
         else:
-            filtered_id = list(filter(lambda x: x.type_id == round(y_coord), self.raw_data.events))
+            filtered_id = list(filter(lambda x: x.type_id == round(y_coord), self.processed_events.raw_data.events))
             if len(filtered_id) == 0:
                 return None
             dists = list(map(lambda x: abs(x.timestamp - x_coord), filtered_id))
@@ -294,7 +262,7 @@ class PlotNordic():
             if selected_event is None:
                 return
 
-            if self.processed_data.tracking_execution:
+            if self.processed_events.tracking_execution:
                 event_submit = selected_event.submit
             else:
                 event_submit = selected_event
@@ -307,35 +275,35 @@ class PlotNordic():
                 marker='o',
                 linestyle=' ')
 
-            if self.processed_data.tracking_execution:
+            if self.processed_events.tracking_execution:
                 self.draw_state.selected_event_processing = matplotlib.patches.Rectangle(
-                    (selected_event.start.timestamp,
+                    (selected_event.proc_start_time,
                     selected_event.submit.type_id -
                     self.draw_state.event_processing_rect_height),
-                    selected_event.end.timestamp -
-                    selected_event.start.timestamp,
+                    selected_event.proc_end_time -
+                    selected_event.proc_start_time,
                     2*self.draw_state.event_processing_rect_height,
                     color='g')
                 self.draw_state.ax.add_artist(
                     self.draw_state.selected_event_processing)
 
-            self.draw_state.selected_event_text = self.raw_data.registered_events_types[
-                event_submit.type_id].name + '\n'
+            self.draw_state.selected_event_text = \
+                self.processed_events.raw_data.registered_events_types[event_submit.type_id].name + '\n'
             self.draw_state.selected_event_text += 'Submit: ' + \
-                PlotNordic._stringify_time(
-                    event_submit.timestamp) + '\n'
-            if self.processed_data.tracking_execution:
+                PlotNordic._stringify_time(event_submit.timestamp) + '\n'
+            if self.processed_events.tracking_execution:
                 self.draw_state.selected_event_text += 'Processing start: ' + \
                     PlotNordic._stringify_time(
-                        selected_event.start.timestamp) + '\n'
+                        selected_event.proc_start_time) + '\n'
                 self.draw_state.selected_event_text += 'Processing end: ' + \
                     PlotNordic._stringify_time(
-                        selected_event.end.timestamp) + '\n'
+                        selected_event.proc_end_time) + '\n'
                 self.draw_state.selected_event_text += 'Processing time: ' + \
-                    PlotNordic._stringify_time(selected_event.end.timestamp - \
-                        selected_event.start.timestamp) + '\n'
+                    PlotNordic._stringify_time(selected_event.proc_end_time - \
+                        selected_event.proc_start_time) + '\n'
 
-            ev_type = self.raw_data.registered_events_types[event_submit.type_id]
+            ev_type = self.processed_events.raw_data.registered_events_types[event_submit.type_id]
+
             for i in range(0, len(ev_type.data_descriptions)):
                 if ev_type.data_descriptions[i] == 'mem_address':
                     continue
@@ -418,6 +386,9 @@ class PlotNordic():
         self.finish_event.set()
         sys.exit()
 
+    def plot_from_file_close_event(self, event):
+        sys.exit()
+
     def animate_events_real_time(self, fig, selected_events_types, one_line):
         rects = []
         finished = False
@@ -431,42 +402,42 @@ class PlotNordic():
             if event is None:
                 self.logger.info("Stopped collecting new events")
 
-            if self.processed_data.tracking_execution:
-                if event.type_id == self.processed_data.event_processing_start_id:
-                    self.processed_data.start_event = event
+            if self.processed_events.tracking_execution:
+                if event.type_id == self.processed_events.event_processing_start_id:
+                    self.processed_events.start_event = event
                     for i in range(
-                            len(self.processed_data.temp_events) - 1, -1, -1):
+                            len(self.temp_events) - 1, -1, -1):
                         # comparing memory addresses of event processing start
                         # and event submit to identify matching events
-                        if self.processed_data.temp_events[i].data[0] == self.processed_data.start_event.data[0]:
-                            self.processed_data.submit_event = self.processed_data.temp_events[i]
-                            events.append(self.processed_data.temp_events[i])
-                            self.submitted_event_type = self.processed_data.submit_event.type_id
-                            del(self.processed_data.temp_events[i])
+                        if self.temp_events[i].data[0] == self.processed_events.start_event.data[0]:
+                            self.processed_events.submit_event = self.temp_events[i]
+                            events.append(self.temp_events[i])
+                            self.submitted_event_type = self.processed_events.submit_event.type_id
+                            del(self.temp_events[i])
                             break
 
-                elif event.type_id == self.processed_data.event_processing_end_id:
+                elif event.type_id == self.processed_events.event_processing_end_id:
                     # comparing memory addresses of event processing start and
                     # end to identify matching events
                     if self.submitted_event_type is not None and event.data[0] \
-                             == self.processed_data.start_event.data[0]:
+                             == self.processed_events.start_event.data[0]:
                         rects.append(
                             matplotlib.patches.Rectangle(
-                                (self.processed_data.start_event.timestamp,
-                                 self.processed_data.submit_event.type_id -
+                                (self.processed_events.start_event.timestamp,
+                                 self.processed_events.submit_event.type_id -
                                  self.draw_state.event_processing_rect_height/2),
                                 event.timestamp -
-                                self.processed_data.start_event.timestamp,
+                                self.processed_events.start_event.timestamp,
                                 self.draw_state.event_processing_rect_height,
                                 edgecolor='black'))
-                        self.processed_data.tracked_events.append(
+                        self.processed_events.tracked_events.append(
                             TrackedEvent(
-                                self.processed_data.submit_event,
-                                self.processed_data.start_event,
-                                event))
+                                self.processed_events.submit_event,
+                                self.processed_events.start_event.timestamp,
+                                event.timestamp))
                         self.submitted_event_type = None
                 else:
-                    self.processed_data.temp_events.append(event)
+                    self.temp_events.append(event)
                     if event.timestamp > time.time() - self.start_time + self.draw_state.added_time - \
                             0.2 * self.draw_state.timeline_width:
                         self.draw_state.added_time += 0.05
@@ -478,7 +449,7 @@ class PlotNordic():
                     events.append(event)
             else:
                 events.append(event)
-                self.raw_data.events.append(event)
+                self.processed_events.raw_data.events.append(event)
 
         # translating plot
         if not self.draw_state.synchronized_with_events:
@@ -524,13 +495,21 @@ class PlotNordic():
         self.queue = queue
 
         self.finish_event = finish_event
-        self.raw_data = EventsData([], {})
-        self.raw_data.registered_events_types = queue.get()
+        self.processed_events.raw_data.registered_events_types = queue.get()
 
+        self.processed_events.match_event_processing()
         if selected_events_types is None:
             selected_events_types = list(
-                self.raw_data.registered_events_types.keys())
+                self.processed_events.raw_data.registered_events_types.keys())
 
+        self.processed_events.event_processing_start_id = \
+            self.processed_events.raw_data.get_event_type_id('event_processing_start')
+        self.processed_events.event_processing_end_id = \
+            self.processed_events.raw_data.get_event_type_id('event_processing_end')
+
+        if (self.processed_events.event_processing_start_id is None) or (
+                self.processed_events.event_processing_end_id is None):
+            self.processed_events.tracking_execution = False
         fig = self._prepare_plot(selected_events_types)
 
         self.start_stop_ax = plt.axes([0.8, 0.025, 0.1, 0.04])
@@ -552,20 +531,19 @@ class PlotNordic():
     def plot_events_from_file(
             self, selected_events_types=None, one_line=False):
         self.draw_state.paused = True
-        if len(self.raw_data.events) == 0 or \
-                len(self.raw_data.registered_events_types) == 0:
+        if len(self.processed_events.raw_data.events) == 0 or \
+                len(self.processed_events.raw_data.registered_events_types) == 0:
             self.logger.error("Please read some events data before plotting")
-        # default - print every event type
+
         if selected_events_types is None:
             selected_events_types = list(
-                self.raw_data.registered_events_types.keys())
+                self.processed_events.raw_data.registered_events_types.keys())
 
+        self.processed_events.match_event_processing()
         fig = self._prepare_plot(selected_events_types)
 
-        events = list(filter(lambda x: x.type_id != self.processed_data.event_processing_start_id
-                             and x.type_id != self.processed_data.event_processing_end_id, self.raw_data.events))
-        y = list(map(lambda x: x.type_id, events))
-        x = list(map(lambda x: x.timestamp, events))
+        x = list(map(lambda x: x.submit.timestamp, self.processed_events.tracked_events))
+        y = list(map(lambda x: x.submit.type_id, self.processed_events.tracked_events))
         self.draw_state.ax.plot(
             x,
             y,
@@ -574,37 +552,16 @@ class PlotNordic():
             color='r',
             markersize=self.draw_state.event_submit_markersize)
 
-        if self.processed_data.tracking_execution:
+        if self.processed_events.tracking_execution:
             rects = []
-            for i in range(0, len(self.raw_data.events)):
-                if self.raw_data.events[i].type_id == self.processed_data.event_processing_start_id:
-                    self.processed_data.start_event = self.raw_data.events[i]
-                    for j in range(i - 1, -1, -1):
-                        # comparing memory addresses of event processing start
-                        # and event submit to identify matching events
-                        if self.raw_data.events[j].data[0] == self.processed_data.start_event.data[0]:
-                            self.processed_data.submit_event = self.raw_data.events[j]
-                            break
-
-                # comparing memory addresses of event processing start and end
-                # to identify matching events
-                if self.raw_data.events[i].type_id == self.processed_data.event_processing_end_id:
-                    if self.processed_data.submit_event is not None \
-                            and self.raw_data.events[i].data[0] == self.processed_data.start_event.data[0]:
-                        rects.append(
-                            matplotlib.patches.Rectangle(
-                                (self.processed_data.start_event.timestamp,
-                                 self.processed_data.submit_event.type_id -
-                                 self.draw_state.event_processing_rect_height/2),
-                                self.raw_data.events[i].timestamp -
-                                self.processed_data.start_event.timestamp,
-                                self.draw_state.event_processing_rect_height,
-                                edgecolor='black'))
-                        self.processed_data.tracked_events.append(
-                            TrackedEvent(
-                                self.processed_data.submit_event,
-                                self.processed_data.start_event,
-                                self.raw_data.events[i]))
+            for ev in self.processed_events.tracked_events:
+                rects.append(
+                    matplotlib.patches.Rectangle(
+                        (ev.proc_start_time,
+                         ev.submit.type_id - self.draw_state.event_processing_rect_height/2),
+                         ev.proc_end_time - ev.proc_start_time,
+                         self.draw_state.event_processing_rect_height,
+                         edgecolor='black'))
 
             self.draw_state.ax.add_collection(PatchCollection(rects))
 
@@ -612,62 +569,7 @@ class PlotNordic():
         self.draw_state.timeline_width = max(x) - min(x) + 2
         self.draw_state.ax.set_xlim([min(x) - 1, max(x) + 1])
 
+        fig.canvas.mpl_connect('close_event', self.plot_from_file_close_event)
+
         plt.draw()
         plt.show()
-
-    def log_stats(self, log_filename):
-        csvfile = open(log_filename + '.csv', 'w', newline='')
-        self._log_events_counts(csvfile)
-        self._log_processing_times(csvfile)
-        csvfile.close()
-
-    def _log_processing_times(self, log_file):
-        log_file.write("#####EVENT PROCESSING TIMES [MS] #####\n")
-        fieldnames = ['Type name:', 'Min:', 'Avg:', 'Max:', 'Std:']
-        wr = csv.DictWriter(log_file, delimiter=',', fieldnames=fieldnames)
-        wr.writeheader()
-        for i in self.raw_data.registered_events_types:
-            if i == self.processed_data.event_processing_start_id or i == self.processed_data.event_processing_end_id:
-                continue
-
-            ev = list(
-                filter(
-                    lambda x: x.submit.type_id == i,
-                    self.processed_data.tracked_events))
-            if len(ev) == 0:
-                wr.writerow(
-                    {
-                        'Type name:': self.raw_data.registered_events_types[i].name,
-                        'Min:': '---',
-                        'Avg:': '---',
-                        'Max:': '---',
-                        'Std:': '---'})
-                continue
-
-            processing_times = list(
-                map(lambda x: x.end.timestamp - x.start.timestamp, ev))
-            wr.writerow(
-                {
-                    'Type name:': self.raw_data.registered_events_types[i].name,
-                    'Min:': '%.5f' % (1000 * min(processing_times)),
-                    'Avg:': '%.5f' % (1000 * np.mean(processing_times)),
-                    'Max:': '%.5f' % (1000 * max(processing_times)),
-                    'Std:': '%.5f' % (1000 * np.std(processing_times))})
-        log_file.write("\n\n")
-
-    def _log_events_counts(self, log_file):
-        log_file.write("#####EVENTS COUNTS#####\n")
-        fieldnames = ['Type name:', 'Count:']
-        wr = csv.DictWriter(log_file, delimiter=',', fieldnames=fieldnames)
-        wr.writeheader()
-        for i in self.raw_data.registered_events_types:
-            wr.writerow(
-                {'Type name:': self.raw_data.registered_events_types[i].name, 'Count:': self._count_event(i)})
-        log_file.write("\n\n")
-
-    def _count_event(self, event_type_id):
-        events_temp = list(
-            filter(
-                lambda x: x.type_id == event_type_id,
-                self.raw_data.events))
-        return len(events_temp)

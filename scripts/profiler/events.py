@@ -7,14 +7,6 @@ import hashlib
 import logging
 import sys
 
-def create_logger():
-        logger = logging.getLogger('Events')
-        logger_console = logging.StreamHandler()
-        logger.setLevel(logging.WARNING)
-        log_format = logging.Formatter('[%(levelname)s] %(name)s: %(message)s')
-        logger_console.setFormatter(log_format)
-        logger.addHandler(logger_console)
-        return logger
 
 class Event():
     def __init__(self, type_id, timestamp, data):
@@ -47,10 +39,30 @@ class EventType():
             json["data_descriptions"])
 
 
+class TrackedEvent():
+    def __init__(self, submit, start_time, end_time):
+        self.submit = submit
+        self.proc_start_time = start_time
+        self.proc_end_time = end_time
+
+
 class EventsData():
     def __init__(self, events, registered_events_types):
         self.events = events
         self.registered_events_types = registered_events_types
+        self.logger = logging.getLogger('Events Data')
+        self.logger_console = logging.StreamHandler()
+        self.logger.setLevel(logging.WARNING)
+        self.log_format = logging.Formatter(
+                              '[%(levelname)s] %(name)s: %(message)s')
+        self.logger_console.setFormatter(self.log_format)
+        self.logger.addHandler(self.logger_console)
+
+    def get_event_type_id(self, type_name):
+        for key, value in self.registered_events_types.items():
+            if type_name == value.name:
+                return key
+        return None
 
     def verify(self):
         for ev in self.events:
@@ -68,9 +80,8 @@ class EventsData():
         csv_hash1 = self._read_events_types_json(filename_event_types)
         csv_hash2 = EventsData._calculate_md5_hash_of_file(filename_events)
         if csv_hash1 != csv_hash2:
-            logger = create_logger()
-            logger.warning("Hash values of csv files do not match")
-            logger.warning("Events and descriptions may be inconsistent")
+            self.logger.warning("Hash values of csv files do not match")
+            self.logger.warning("Events and descriptions may be inconsistent")
 
     def _calculate_md5_hash_of_file(filename):
         return hashlib.md5(open(filename, 'rb').read()).hexdigest()
@@ -79,14 +90,17 @@ class EventsData():
         try:
             with open(filename, 'w', newline='') as csvfile:
                 fieldnames = ['type_id', 'timestamp', 'data']
-                wr = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
+                wr = csv.DictWriter(csvfile, delimiter=',',
+                                    fieldnames=fieldnames)
                 wr.writeheader()
                 for ev in self.events:
-                    wr.writerow({'type_id': ev.type_id, 'timestamp': ev.timestamp,
-                                 'data': ev.data})
+                    wr.writerow({
+                                 'type_id': ev.type_id,
+                                 'timestamp': ev.timestamp,
+                                 'data': ev.data
+                                })
         except IOError:
-            logger = create_logger()
-            logger.error("Problem with accessing file: " + filename)
+            self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
     def _read_events_csv(self, filename):
@@ -104,8 +118,7 @@ class EventsData():
                     ev = Event(type_id, timestamp, data)
                     self.events.append(ev)
         except IOError:
-            logger = create_logger()
-            logger.error("Problem with accessing file: " + filename)
+            self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
     def _write_events_types_json(self, filename, csv_hash):
@@ -116,8 +129,7 @@ class EventsData():
             with open(filename, "w") as wr:
                 json.dump(d, wr, indent=4)
         except IOError:
-            logger = create_logger()
-            logger.error("Problem with accessing file: " + filename)
+            self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
     def _read_events_types_json(self, filename):
@@ -125,8 +137,7 @@ class EventsData():
             with open(filename, "r") as rd:
                 data = json.load(rd)
         except IOError:
-            logger = create_logger()
-            logger.error("Problem with accessing file: " + filename)
+            self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
         csv_hash = data['csv_hash']
         del data['csv_hash']
