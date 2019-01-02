@@ -70,7 +70,6 @@ config DESKTOP_OPTICAL_RUN_DOWNSHIFT_TIME_MS
 	range 10 2550
 	help
 	  Time after which sensor goes from "Run" to "Rest 1" mode.
-
 	  This value is set on firmware start. It can be changed in runtime
 	  using the configuration channel.
 
@@ -81,7 +80,6 @@ config DESKTOP_OPTICAL_REST1_DOWNSHIFT_TIME_MS
 	range 320 81600
 	help
 	  Time after which sensor goes from "Rest 1" to "Rest 2" mode.
-
 	  This value is set on firmware start. It can be changed in runtime
 	  using the configuration channel.
 
@@ -92,7 +90,6 @@ config DESKTOP_OPTICAL_REST2_DOWNSHIFT_TIME_MS
 	range 3200 816000
 	help
 	  Time after which sensor goes from "Rest 2" to "Rest 3" mode.
-
 	  This value is set on firmware start. It can be changed in runtime
 	  using the configuration channel.
 
