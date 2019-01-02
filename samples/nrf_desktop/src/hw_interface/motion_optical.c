@@ -6,6 +6,7 @@
 
 #include <zephyr.h>
 #include <atomic.h>
+#include <misc/byteorder.h>
 
 #include <soc.h>
 #include <device.h>
@@ -159,6 +160,16 @@ static atomic_t connected;
 static bool last_read_burst;
 
 static atomic_t sensor_cpi;
+static atomic_t sensor_downshift_run;
+static atomic_t sensor_downshift_rest1;
+static atomic_t sensor_downshift_rest2;
+
+struct config_options {
+	u16_t cpi;
+	u32_t time_run;
+	u32_t time_rest1;
+	u32_t time_rest2;
+};
 
 static int spi_cs_ctrl(bool enable)
 {
@@ -446,27 +457,34 @@ static void update_downshift_time(u8_t reg_addr, u32_t time)
 	u32_t maxtime;
 	u32_t mintime;
 
-	if (reg_addr == OPTICAL_REG_RUN_DOWNSHIFT) {
+	switch (reg_addr) {
+	case OPTICAL_REG_RUN_DOWNSHIFT:
 		/*
 		 * Run downshift time = OPTICAL_REG_RUN_DOWNSHIFT * 10 ms
 		 */
 		maxtime = 2550;
 		mintime = 10;
-	} else if (reg_addr == OPTICAL_REG_REST1_DOWNSHIFT) {
+		break;
+
+	case OPTICAL_REG_REST1_DOWNSHIFT:
 		/*
 		 * Rest1 downshift time = OPTICAL_REG_RUN_DOWNSHIFT
 		 *                        * 320 * Rest1 rate (default 1 ms)
 		 */
 		maxtime = 81600;
 		mintime = 320;
-	} else if (reg_addr == OPTICAL_REG_REST2_DOWNSHIFT) {
+		break;
+
+	case OPTICAL_REG_REST2_DOWNSHIFT:
 		/*
 		 * Rest2 downshift time = OPTICAL_REG_REST2_DOWNSHIFT
 		 *                        * 32 * Rest2 rate (default 100 ms)
 		 */
 		maxtime = 816000;
 		mintime = 3200;
-	} else {
+		break;
+
+	default:
 		LOG_ERR("Not supported");
 		return;
 	}
@@ -475,6 +493,8 @@ static void update_downshift_time(u8_t reg_addr, u32_t time)
 		LOG_WRN("Downshift time %u out of range", time);
 		return;
 	}
+
+	__ASSERT_NO_MSG(mintime > 0);
 
 	/* Convert time to register value */
 	u8_t value = time / mintime;
@@ -541,8 +561,8 @@ static int firmware_load(void)
 		goto error;
 	}
 
-	/* Write 0x00 to Config2 register for wired mouse or 0x20 for
-	 * wireless mouse design.
+	/* Write 0x20 to Config2 register for wireless mouse design.
+	 * This enables entering rest modes.
 	 */
 	err = reg_write(OPTICAL_REG_CONFIG2, 0x20);
 	if (err) {
@@ -615,7 +635,7 @@ static int motion_read(void)
 	return err;
 }
 
-static int init(u16_t cpi)
+static int init(struct config_options *options)
 {
 	int err = -ENXIO;
 
@@ -677,19 +697,16 @@ static int init(u16_t cpi)
 	}
 
 	/* Set initial CPI resolution. */
-	update_cpi(cpi);
-	atomic_set(&sensor_cpi, cpi);
-	if (err) {
-		goto error;
-	}
+	update_cpi(options->cpi);
+	atomic_set(&sensor_cpi, options->cpi);
 
 	/* Set initial power mode downshift times. */
-	update_downshift_time(OPTICAL_REG_RUN_DOWNSHIFT,
-			      CONFIG_DESKTOP_OPTICAL_RUN_DOWNSHIFT_TIME_MS);
-	update_downshift_time(OPTICAL_REG_REST1_DOWNSHIFT,
-			      CONFIG_DESKTOP_OPTICAL_REST1_DOWNSHIFT_TIME_MS);
-	update_downshift_time(OPTICAL_REG_REST2_DOWNSHIFT,
-			      CONFIG_DESKTOP_OPTICAL_REST2_DOWNSHIFT_TIME_MS);
+	update_downshift_time(OPTICAL_REG_RUN_DOWNSHIFT, options->time_run);
+	update_downshift_time(OPTICAL_REG_REST1_DOWNSHIFT, options->time_rest1);
+	update_downshift_time(OPTICAL_REG_REST2_DOWNSHIFT, options->time_rest2);
+	atomic_set(&sensor_downshift_run, options->time_run);
+	atomic_set(&sensor_downshift_rest1, options->time_rest1);
+	atomic_set(&sensor_downshift_rest2, options->time_rest2);
 
 	/* Verify product id */
 	u8_t product_id;
@@ -732,15 +749,79 @@ error:
 	return err;
 }
 
+static void update_config(const u8_t config_id, const u8_t *data)
+{
+	switch (config_id) {
+	case CONFIG_EVENT_ID_MOUSE_CPI:
+		atomic_set(&sensor_cpi, sys_get_le16(data));
+		break;
+
+	case CONFIG_EVENT_ID_MOUSE_DOWNSHIFT_RUN:
+		atomic_set(&sensor_downshift_run, sys_get_le32(data));
+		break;
+
+	case CONFIG_EVENT_ID_MOUSE_DOWNSHIFT_REST1:
+		atomic_set(&sensor_downshift_rest1, sys_get_le32(data));
+		break;
+
+	case CONFIG_EVENT_ID_MOUSE_DOWNSHIFT_REST2:
+		atomic_set(&sensor_downshift_rest2, sys_get_le32(data));
+		break;
+
+	default:
+		/* Not for us */
+		return;
+	}
+
+	if (atomic_get(&state) != STATE_FETCHING) {
+		k_sem_give(&sem);
+	}
+}
+
+static void write_config(struct config_options *options)
+{
+	u16_t new_cpi = atomic_get(&sensor_cpi);
+	if (new_cpi != options->cpi) {
+		options->cpi = new_cpi;
+		update_cpi(options->cpi);
+	}
+
+	u32_t new_time = atomic_get(&sensor_downshift_run);
+	if (new_time != options->time_run) {
+		options->time_run = new_time;
+		update_downshift_time(OPTICAL_REG_RUN_DOWNSHIFT,
+				      options->time_run);
+	}
+
+	new_time = atomic_get(&sensor_downshift_rest1);
+	if (new_time != options->time_rest1) {
+		options->time_rest1 = new_time;
+		update_downshift_time(OPTICAL_REG_REST1_DOWNSHIFT,
+				      options->time_rest1);
+	}
+
+	new_time = atomic_get(&sensor_downshift_rest2);
+	if (new_time != options->time_rest2) {
+		options->time_rest2 = new_time;
+		update_downshift_time(OPTICAL_REG_REST2_DOWNSHIFT,
+				      options->time_rest2);
+	}
+}
+
 /* Optical hardware interface state machine. */
 static void optical_thread_fn(void)
 {
 	s32_t timeout = K_FOREVER;
-	u16_t cpi = CONFIG_DESKTOP_OPTICAL_DEFAULT_CPI;
+	struct config_options options = {
+		.cpi = CONFIG_DESKTOP_OPTICAL_DEFAULT_CPI,
+		.time_run = CONFIG_DESKTOP_OPTICAL_RUN_DOWNSHIFT_TIME_MS,
+		.time_rest1 = CONFIG_DESKTOP_OPTICAL_REST1_DOWNSHIFT_TIME_MS,
+		.time_rest2 = CONFIG_DESKTOP_OPTICAL_REST2_DOWNSHIFT_TIME_MS
+	};
 
 	atomic_set(&state, STATE_IDLE);
 
-	int err = init(cpi);
+	int err = init(&options);
 
 	while (!err) {
 		err = k_sem_take(&sem, timeout);
@@ -799,13 +880,8 @@ static void optical_thread_fn(void)
 		}
 
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-			u16_t new_cpi = atomic_get(&sensor_cpi);
-			if (new_cpi != cpi) {
-				cpi = new_cpi;
-				update_cpi(cpi);
-			}
+			write_config(&options);
 		}
-
 	}
 	/* This thread is supposed to run forever. */
 	__ASSERT_NO_MSG(false);
@@ -905,13 +981,10 @@ static bool event_handler(const struct event_header *eh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		if (is_config_event(eh)) {
-			const struct config_event *event = cast_config_event(eh);
+			const struct config_event *event =
+				cast_config_event(eh);
 
-			if (event->id == CONFIG_EVENT_ID_MOUSE_CPI) {
-				u16_t new_cpi = event->data[0] + (event->data[1] << 8);
-				atomic_set(&sensor_cpi, new_cpi);
-			}
-
+			update_config(event->id, event->data);
 			return false;
 		}
 	}
