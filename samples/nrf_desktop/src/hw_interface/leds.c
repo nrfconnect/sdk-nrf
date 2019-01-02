@@ -127,6 +127,8 @@ static int leds_init(void)
 
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		leds[i].pwm_dev = device_get_binding(dev_name[i]);
+		leds[i].id = i;
+
 		if (!leds[i].pwm_dev) {
 			LOG_ERR("cannot bind %s", dev_name[i]);
 			err = -ENXIO;
