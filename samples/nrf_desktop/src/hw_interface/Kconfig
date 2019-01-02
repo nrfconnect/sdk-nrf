@@ -63,6 +63,39 @@ config DESKTOP_OPTICAL_DEFAULT_CPI
 	  This value is set on firmware start. It can be changed in runtime
 	  using the configuration channel.
 
+config DESKTOP_OPTICAL_RUN_DOWNSHIFT_TIME_MS
+	int "Default run downshift time of the mouse optical sensor"
+	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	default 500
+	range 10 2550
+	help
+	  Time after which sensor goes from "Run" to "Rest 1" mode.
+
+	  This value is set on firmware start. It can be changed in runtime
+	  using the configuration channel.
+
+config DESKTOP_OPTICAL_REST1_DOWNSHIFT_TIME_MS
+	int "Default Rest 1 downshift time of the mouse optical sensor"
+	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	default 9220
+	range 320 81600
+	help
+	  Time after which sensor goes from "Rest 1" to "Rest 2" mode.
+
+	  This value is set on firmware start. It can be changed in runtime
+	  using the configuration channel.
+
+config DESKTOP_OPTICAL_REST2_DOWNSHIFT_TIME_MS
+	int "Default Rest 2 downshift time of the mouse optical sensor"
+	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	default 150000
+	range 3200 816000
+	help
+	  Time after which sensor goes from "Rest 2" to "Rest 3" mode.
+
+	  This value is set on firmware start. It can be changed in runtime
+	  using the configuration channel.
+
 comment "Buttons configuration"
 
 choice

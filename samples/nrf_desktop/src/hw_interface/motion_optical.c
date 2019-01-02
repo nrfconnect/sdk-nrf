@@ -436,6 +436,58 @@ static void update_cpi(u16_t cpi)
 	}
 }
 
+static void update_downshift_time(u8_t reg_addr, u32_t time)
+{
+	/* Set downshift time:
+	 * - Run downshift time (from Run to Rest1 mode)
+	 * - Rest 1 downshift time (from Rest1 to Rest2 mode)
+	 * - Rest 2 downshift time (from Rest2 to Rest3 mode)
+	 */
+	u32_t maxtime;
+	u32_t mintime;
+
+	if (reg_addr == OPTICAL_REG_RUN_DOWNSHIFT) {
+		/*
+		 * Run downshift time = OPTICAL_REG_RUN_DOWNSHIFT * 10 ms
+		 */
+		maxtime = 2550;
+		mintime = 10;
+	} else if (reg_addr == OPTICAL_REG_REST1_DOWNSHIFT) {
+		/*
+		 * Rest1 downshift time = OPTICAL_REG_RUN_DOWNSHIFT
+		 *                        * 320 * Rest1 rate (default 1 ms)
+		 */
+		maxtime = 81600;
+		mintime = 320;
+	} else if (reg_addr == OPTICAL_REG_REST2_DOWNSHIFT) {
+		/*
+		 * Rest2 downshift time = OPTICAL_REG_REST2_DOWNSHIFT
+		 *                        * 32 * Rest2 rate (default 100 ms)
+		 */
+		maxtime = 816000;
+		mintime = 3200;
+	} else {
+		LOG_ERR("Not supported");
+		return;
+	}
+
+	if ((time > maxtime) || (time < mintime)) {
+		LOG_WRN("Downshift time %u out of range", time);
+		return;
+	}
+
+	/* Convert time to register value */
+	u8_t value = time / mintime;
+
+	LOG_INF("Setting run downshift to %u ms (reg value 0x%x)", time, value);
+
+	int err = reg_write(reg_addr, value);
+	if (err) {
+		LOG_ERR("Failed to change downshift time");
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
 static int firmware_load(void)
 {
 	int err;
@@ -630,6 +682,14 @@ static int init(u16_t cpi)
 	if (err) {
 		goto error;
 	}
+
+	/* Set initial power mode downshift times. */
+	update_downshift_time(OPTICAL_REG_RUN_DOWNSHIFT,
+			      CONFIG_DESKTOP_OPTICAL_RUN_DOWNSHIFT_TIME_MS);
+	update_downshift_time(OPTICAL_REG_REST1_DOWNSHIFT,
+			      CONFIG_DESKTOP_OPTICAL_REST1_DOWNSHIFT_TIME_MS);
+	update_downshift_time(OPTICAL_REG_REST2_DOWNSHIFT,
+			      CONFIG_DESKTOP_OPTICAL_REST2_DOWNSHIFT_TIME_MS);
 
 	/* Verify product id */
 	u8_t product_id;
