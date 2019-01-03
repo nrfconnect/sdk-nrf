@@ -66,4 +66,10 @@ config SB_SEGGER_RTT_MEMCPY_USE_BYTELOOP
 	bool "Use a simple byte-loop instead of standard memcpy"
 endmenu
 endif # SB_DEBUG_PORT_SEGGER_RTT
+
+config SB_BPROT_IN_DEBUG
+	bool "Enable block protect in debug"
+	default y
+	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
+
 endif #SECURE_BOOT_DEBUG

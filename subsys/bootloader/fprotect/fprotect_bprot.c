@@ -4,64 +4,59 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <stddef.h>
 #include <nrf.h>
-#include <nrf_peripherals.h>
+#if defined(NRF_BPROT)
+	#include <nrf_bprot.h>
+	#define PROTECT nrf_bprot_nvm_blocks_protection_enable
+#elif defined(NRF_MPU)
+	#include <nrf_mpu.h>
+	/* Rename nRF51's NRF_MPU to NRF_BPROT as they work the same. */
+	#define NRF_BPROT NRF_MPU
+	#define PROTECT nrf_mpu_nvm_blocks_protection_enable
+#else
+	#error Either NRF_BPROT or NRF_MPU must be available to use this file.
+#endif
 #include <misc/util.h>
-#include <misc/__assert.h>
 #include <errno.h>
 
-#if !defined(NRF_BPROT) && defined(NRF_MPU)
-/* Rename nRF51's NRF_MPU to NRF_BPROT as they work the same. */
-#define NRF_BPROT NRF_MPU
-#define CONFIG0 PROTENSET0
-#define CONFIG1 PROTENSET1
+ /* The number of CONFIG registers present in the chip. */
+#define BPROT_CONFIGS_NUM ceiling_fraction(BPROT_REGIONS_NUM, BITS_PER_LONG)
+#if defined(CONFIG_SB_BPROT_IN_DEBUG)
+#define ENABLE_BPROT_IN_DEBUG true
+#else
+#define ENABLE_BPROT_IN_DEBUG false
 #endif
 
-/* The number of CONFIG registers present in the chip. */
-#define BPROT_CONFIGS_NUM ceiling_fraction(BPROT_REGIONS_NUM, BITS_PER_LONG)
 
 int fprotect_area(u32_t start, size_t length)
 {
-	/*  TODO - use BPROT HAL when available. */
+	nrf_bprot_nvm_protection_in_debug_set(NRF_BPROT,
+					      ENABLE_BPROT_IN_DEBUG
+					      );
 
-	u32_t pagenum_start = start / BPROT_REGIONS_SIZE;
-	u32_t pagenum_end   = (start + length) / BPROT_REGIONS_SIZE;
+	u32_t block_start = start / BPROT_REGIONS_SIZE;
+	u32_t block_end   = (start + length) / BPROT_REGIONS_SIZE;
+	u32_t block_mask[BPROT_CONFIGS_NUM] = {0};
 
 	if ((start % BPROT_REGIONS_SIZE) ||
 	    (length % BPROT_REGIONS_SIZE) ||
-	    (pagenum_end > BPROT_REGIONS_NUM) ||
-	    (pagenum_end < pagenum_start)) {
-		/* start or length isn't aligned with a BPROT region,
+	    (block_end > BPROT_REGIONS_NUM) ||
+	    (block_end < block_start)) {
+		/*
+		 * start or length isn't aligned with a BPROT region,
 		 * or attempting to protect an area that is invalid or outside
-		 * flash. */
+		 * flash.
+		 */
 		return -EINVAL;
 	}
 
-	u32_t config_masks[BPROT_CONFIGS_NUM];
+	for (u32_t i = block_start; i < block_end; i++) {
+		block_mask[i / BITS_PER_LONG] |= BIT(i % BITS_PER_LONG);
+	}
 
 	for (u32_t i = 0; i < BPROT_CONFIGS_NUM; i++) {
-		config_masks[i] = 0;
+		PROTECT(NRF_BPROT, i, block_mask[i]);
 	}
 
-	for (u32_t i = pagenum_start; i < pagenum_end; i++)	{
-		config_masks[i / BITS_PER_LONG] |= BIT(i % BITS_PER_LONG);
-	}
-
-	/* The bits in the BPROT CONFIG registers cannot be cleared to 0,
-	 * so these = are effectively |= */
-	NRF_BPROT->CONFIG0 = config_masks[0];
-#if BPROT_CONFIGS_NUM > 1
-	NRF_BPROT->CONFIG1 = config_masks[1];
-#endif
-#if BPROT_CONFIGS_NUM > 2
-	NRF_BPROT->CONFIG2 = config_masks[2];
-#endif
-#if BPROT_CONFIGS_NUM > 3
-	NRF_BPROT->CONFIG3 = config_masks[3];
-#endif
-#if BPROT_CONFIGS_NUM > 4
-	#warning Flash protection above page 127 not implemented.
-#endif
 	return 0;
 }
