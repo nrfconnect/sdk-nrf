@@ -10,6 +10,8 @@
 #include <bluetooth/common/gatt_dm.h>
 #include <bluetooth/common/scan.h>
 
+#include <settings/settings.h>
+
 #define MODULE ble_scan
 #include "module_state_event.h"
 
@@ -25,6 +27,72 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
 static bt_addr_le_t target_addr;
 
+
+static void save_address(struct bt_conn *conn)
+{
+	struct bt_conn_info info;
+
+	int err = bt_conn_get_info(conn, &info);
+
+	if (err) {
+		LOG_ERR("Cannot get conn info");
+		return;
+	}
+
+	if (bt_addr_le_cmp(&target_addr, info.le.dst)) {
+		LOG_INF("Store target address");
+		bt_addr_le_copy(&target_addr, info.le.dst);
+		settings_save_one(MODULE_NAME "/taddr", &target_addr,
+				  sizeof(target_addr));
+	}
+}
+
+static int settings_set(int argc, char **argv, void *val_ctx)
+{
+	if (argc == 1) {
+		if (!strcmp(argv[0], "taddr")) {
+			int len = settings_val_read_cb(val_ctx, &target_addr,
+						       sizeof(target_addr));
+
+			if (len < 0) {
+				LOG_ERR("Can't read target address (err:%d)",
+					len);
+			}
+		}
+
+		return 0;
+	}
+
+	return -ENOENT;
+}
+
+static int enable_settings(void)
+{
+	int err = 0;
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		static struct settings_handler sh = {
+			.name = MODULE_NAME,
+			.h_set = settings_set,
+		};
+
+		err = settings_register(&sh);
+		if (err) {
+			LOG_ERR("Cannot register settings handler (err %d)", err);
+			goto error;
+		}
+
+		err = settings_load();
+		if (err) {
+			LOG_ERR("Cannot load settings");
+			goto error;
+		}
+		LOG_INF("Settings loaded");
+	}
+
+error:
+	return err;
+}
 
 static int configure_filters(void)
 {
@@ -93,8 +161,6 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
 	LOG_INF("Connecting done");
-
-	bt_addr_le_copy(&target_addr, device_info->addr);
 }
 
 static void discovery_completed(struct bt_gatt_dm *dm, void *context)
@@ -184,6 +250,12 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 
 static int scan_init(void)
 {
+	int err = enable_settings();
+	if (err) {
+		LOG_ERR("Cannot enable settings (err %d)", err);
+		goto error;
+	}
+
 	static const struct bt_scan_init_param scan_init = {
 		.connect_if_match = true,
 		.scan_param = NULL,
@@ -251,6 +323,7 @@ static bool event_handler(const struct event_header *eh)
 			start_scanning();
 			break;
 		case PEER_STATE_SECURED:
+			save_address(event->id);
 			start_discovery(event->id);
 			break;
 		default:
