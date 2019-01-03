@@ -865,7 +865,7 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 	return err;
 }
 
-void bt_scan_all_filter_remove_all(void)
+void bt_scan_filter_remove_all(void)
 {
 	k_mutex_lock(&scan_add_mutex, K_FOREVER);
 
