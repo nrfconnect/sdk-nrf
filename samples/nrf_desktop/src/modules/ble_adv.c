@@ -29,6 +29,7 @@ static const struct bt_data ad[] = {
 			  0x12, 0x18,	/* HID Service */
 #endif
 			  0x0f, 0x18),	/* Battery Service */
+	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
 static const struct bt_data sd[] = {
