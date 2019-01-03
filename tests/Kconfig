@@ -4,5 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-config UNITY
-	bool "Use Unity test framework"
+rsource "unity/Kconfig"
