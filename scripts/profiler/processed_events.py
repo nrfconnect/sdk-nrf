@@ -35,7 +35,7 @@ class ProcessedEvents():
                 self.tracked_events.append(TrackedEvent(ev, None, None))
             return
 
-        for i in range(0, len(self.raw_data.events)):
+        for i in range(1, len(self.raw_data.events)):
             if self.raw_data.events[i].type_id == self.event_processing_start_id:
                 self.start_event = self.raw_data.events[i]
                 for j in range(i - 1, -1, -1):
