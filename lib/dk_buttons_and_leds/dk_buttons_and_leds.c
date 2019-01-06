@@ -178,3 +178,29 @@ int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask)
 
 	return 0;
 }
+
+int dk_set_led(u8_t led_idx, u32_t val)
+{
+	int err;
+
+	if (led_idx > ARRAY_SIZE(led_pins)) {
+		LOG_ERR("LED index out of the range");
+		return -EINVAL;
+	}
+	err = gpio_pin_write(gpio_dev, led_pins[led_idx],
+			IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_LEDS) ? !val : val);
+	if (err) {
+		LOG_ERR("Cannot write LED gpio");
+	}
+	return err;
+}
+
+int dk_set_led_on(u8_t led_idx)
+{
+	return dk_set_led(led_idx, 1);
+}
+
+int dk_set_led_off(u8_t led_idx)
+{
+	return dk_set_led(led_idx, 0);
+}
