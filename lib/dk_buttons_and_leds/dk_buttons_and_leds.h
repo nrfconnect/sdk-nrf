@@ -20,18 +20,26 @@ extern "C" {
 #endif
 
 #define DK_NO_LEDS_MSK    (0)
-#define DK_LED1_MSK       BIT(0)
-#define DK_LED2_MSK       BIT(1)
-#define DK_LED3_MSK       BIT(2)
-#define DK_LED4_MSK       BIT(3)
+#define DK_LED1           0
+#define DK_LED2           1
+#define DK_LED3           2
+#define DK_LED4           3
+#define DK_LED1_MSK       BIT(DK_LED1)
+#define DK_LED2_MSK       BIT(DK_LED2)
+#define DK_LED3_MSK       BIT(DK_LED3)
+#define DK_LED4_MSK       BIT(DK_LED4)
 #define DK_ALL_LEDS_MSK   (DK_LED1_MSK | DK_LED2_MSK |\
 			   DK_LED3_MSK | DK_LED4_MSK)
 
 #define DK_NO_BTNS_MSK   (0)
-#define DK_BTN1_MSK      BIT(0)
-#define DK_BTN2_MSK      BIT(1)
-#define DK_BTN3_MSK      BIT(2)
-#define DK_BTN4_MSK      BIT(3)
+#define DK_BTN1          0
+#define DK_BTN2          1
+#define DK_BTN3          2
+#define DK_BTN4          3
+#define DK_BTN1_MSK      BIT(DK_BTN1)
+#define DK_BTN2_MSK      BIT(DK_BTN2)
+#define DK_BTN3_MSK      BIT(DK_BTN3)
+#define DK_BTN4_MSK      BIT(DK_BTN4)
 #define DK_ALL_BTNS_MSK  (DK_BTN1_MSK | DK_BTN2_MSK | \
 			  DK_BTN2_MSK | DK_BTN3_MSK)
 /**
@@ -86,6 +94,36 @@ int dk_set_leds(u32_t leds);
  *  @return Zero on success or (negative) error code otherwise.
  */
 int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask);
+
+/** @brief Set single LED value
+ *
+ *  Turns single LED on or off.
+ *
+ *  @param led_idx Index of the LED
+ *  @param val     Value for the single LED: 1 - turn on, 0 - turn off
+ *
+ *  @return Zero on success or (negative) error code otherwise.
+ *
+ *  @sa dk_set_led_on
+ *  @sa dk_set_led_off
+ */
+int dk_set_led(u8_t led_idx, u32_t val);
+
+/** @brief Set single LED on
+ *
+ *  @param led_idx Index of the LED
+ *
+ *  @return Zero on success or (negative) error code otherwise.
+ */
+int dk_set_led_on(u8_t led_idx);
+
+/** @brief Set single LED off
+ *
+ *  @param led_idx Index of the LED
+ *
+ *  @return Zero on success or (negative) error code otherwise.
+ */
+int dk_set_led_off(u8_t led_idx);
 
 #ifdef __cplusplus
 }
