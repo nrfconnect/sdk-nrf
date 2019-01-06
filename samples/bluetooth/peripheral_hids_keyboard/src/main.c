@@ -635,8 +635,17 @@ static void button_changed(u32_t button_state, u32_t has_changed)
 
 static void configure_gpio(void)
 {
-	dk_buttons_init(button_changed);
-	dk_leds_init();
+	int err;
+
+	err = dk_buttons_init(button_changed);
+	if (err) {
+		printk("Cannot init buttons (err: %d)\n", err);
+	}
+
+	err = dk_leds_init();
+	if (err) {
+		printk("Cannot init LEDs (err: %d)\n", err);
+	}
 }
 
 

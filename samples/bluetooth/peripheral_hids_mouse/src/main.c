@@ -26,6 +26,7 @@
 #include <gatt/bas.h>
 #include <bluetooth/services/hids.h>
 #include <bluetooth/services/dis.h>
+#include <dk_buttons_and_leds.h>
 
 #define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -58,6 +59,15 @@
 /* HIDs queue size. */
 #define HIDS_QUEUE_SIZE 10
 
+/* Key used to move cursor left */
+#define KEY_LEFT_MASK   DK_BTN1_MSK
+/* Key used to move cursor up */
+#define KEY_UP_MASK     DK_BTN2_MSK
+/* Key used to move cursor right */
+#define KEY_RIGHT_MASK  DK_BTN3_MSK
+/* Key used to move cursor down */
+#define KEY_DOWN_MASK   DK_BTN4_MSK
+
 /* HIDS instance. */
 BT_GATT_HIDS_DEF(hids_obj,
 		 INPUT_REP_BUTTONS_LEN,
@@ -89,9 +99,6 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
-
-static struct device       *gpio_devs[4];
-static struct gpio_callback gpio_cbs[4];
 
 static struct conn_mode {
 	struct bt_conn *conn;
@@ -461,65 +468,57 @@ static struct bt_conn_auth_cb conn_auth_callbacks;
 #endif
 
 
-void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
-		    u32_t pins)
+void button_changed(u32_t button_state, u32_t has_changed)
 {
+	bool data_to_send = false;
 	struct mouse_pos pos;
-	int err;
+	u32_t buttons = button_state & has_changed;
 
 	memset(&pos, 0, sizeof(struct mouse_pos));
 
-	if (pins & (1 << SW0_GPIO_PIN)) {
+	if (buttons & KEY_LEFT_MASK) {
 		pos.x_val -= MOVEMENT_SPEED;
 		printk("%s(): left\n", __func__);
+		data_to_send = true;
 	}
-	if (pins & (1 << SW1_GPIO_PIN)) {
+	if (buttons & KEY_UP_MASK) {
 		pos.y_val -= MOVEMENT_SPEED;
 		printk("%s(): up\n", __func__);
+		data_to_send = true;
 	}
-	if (pins & (1 << SW2_GPIO_PIN)) {
+	if (buttons & KEY_RIGHT_MASK) {
 		pos.x_val += MOVEMENT_SPEED;
 		printk("%s(): right\n", __func__);
+		data_to_send = true;
 	}
-	if (pins & (1 << SW3_GPIO_PIN)) {
+	if (buttons & KEY_DOWN_MASK) {
 		pos.y_val += MOVEMENT_SPEED;
 		printk("%s(): down\n", __func__);
+		data_to_send = true;
 	}
 
-	err = k_msgq_put(&hids_queue, &pos, K_NO_WAIT);
+	if (data_to_send) {
+		int err;
 
-	if (err) {
-		printk("No space in the queue for button pressed\n");
-		return;
-	}
-
-	if (k_msgq_num_used_get(&hids_queue) == 1) {
-		k_delayed_work_submit(&hids_work, 0);
+		err = k_msgq_put(&hids_queue, &pos, K_NO_WAIT);
+		if (err) {
+			printk("No space in the queue for button pressed\n");
+			return;
+		}
+		if (k_msgq_num_used_get(&hids_queue) == 1) {
+			k_delayed_work_submit(&hids_work, 0);
+		}
 	}
 }
 
 
 void configure_buttons(void)
 {
-	static const u32_t pin_id[4] = { SW0_GPIO_PIN, SW1_GPIO_PIN,
-		SW2_GPIO_PIN, SW3_GPIO_PIN };
-	static const char *port_name[4] = { SW0_GPIO_CONTROLLER, SW1_GPIO_CONTROLLER,
-		SW2_GPIO_CONTROLLER, SW3_GPIO_CONTROLLER };
+	int err;
 
-	for (size_t i = 0; i < ARRAY_SIZE(pin_id); i++) {
-		gpio_devs[i] = device_get_binding(port_name[i]);
-		if (gpio_devs[i]) {
-			printk("%s(): port %zu bound\n", __func__, i);
-
-			gpio_pin_configure(gpio_devs[i], pin_id[i],
-					   GPIO_PUD_PULL_UP | GPIO_DIR_IN |
-					   GPIO_INT | GPIO_INT_EDGE |
-					   GPIO_INT_ACTIVE_LOW);
-			gpio_init_callback(&gpio_cbs[i], button_pressed,
-					   BIT(pin_id[i]));
-			gpio_add_callback(gpio_devs[i], &gpio_cbs[i]);
-			gpio_pin_enable_callback(gpio_devs[i], pin_id[i]);
-		}
+	err = dk_buttons_init(button_changed);
+	if (err) {
+		printk("Cannot init buttons (err: %d)\n", err);
 	}
 }
 
@@ -544,5 +543,3 @@ void main(void)
 
 	configure_buttons();
 }
-
-
