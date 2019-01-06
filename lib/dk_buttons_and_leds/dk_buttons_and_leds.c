@@ -22,7 +22,7 @@ static const u8_t led_pins[] = { LED0_GPIO_PIN, LED1_GPIO_PIN,
 				 LED2_GPIO_PIN, LED3_GPIO_PIN };
 static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
-struct device *gpio_dev;
+static struct device *gpio_dev;
 
 static u32_t get_buttons(void)
 {
