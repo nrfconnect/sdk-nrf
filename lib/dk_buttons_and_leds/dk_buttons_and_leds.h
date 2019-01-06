@@ -27,6 +27,13 @@ extern "C" {
 #define DK_ALL_LEDS_MSK   (DK_LED1_MSK | DK_LED2_MSK |\
 			   DK_LED3_MSK | DK_LED4_MSK)
 
+#define DK_NO_BTNS_MSK   (0)
+#define DK_BTN1_MSK      BIT(0)
+#define DK_BTN2_MSK      BIT(1)
+#define DK_BTN3_MSK      BIT(2)
+#define DK_BTN4_MSK      BIT(3)
+#define DK_ALL_BTNS_MSK  (DK_BTN1_MSK | DK_BTN2_MSK | \
+			  DK_BTN2_MSK | DK_BTN3_MSK)
 /**
  * @typedef button_handler_t
  * @brief Callback executed when button state change is detected
