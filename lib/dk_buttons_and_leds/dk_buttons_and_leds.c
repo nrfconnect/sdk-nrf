@@ -147,6 +147,11 @@ void dk_read_buttons(u32_t *button_state, u32_t *has_changed)
 	last_state = current_state;
 }
 
+u32_t dk_get_buttons(void)
+{
+	return atomic_get(&my_buttons);
+}
+
 int dk_set_leds(u32_t leds)
 {
 	return dk_set_leds_state(leds, DK_ALL_LEDS_MSK);
