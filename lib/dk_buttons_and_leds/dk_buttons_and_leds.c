@@ -24,33 +24,32 @@ static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
 struct device *gpio_dev;
 
-static int get_buttons(u32_t *mask)
+static u32_t get_buttons(void)
 {
+	u32_t ret = 0;
 	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
 		u32_t val;
 
 		if (gpio_pin_read(gpio_dev, button_pins[i], &val)) {
 			LOG_ERR("Cannot read gpio pin");
-			return -EFAULT;
+			return 0;
 		}
-
-		if (IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_BUTTONS)) {
-			val = (~val) & 0x01;
+		if ((val && !IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_BUTTONS)) ||
+		    (!val && IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_BUTTONS))) {
+			ret |= 1U << i;
 		}
-
-		*mask |= (val << i);
 	}
 
-	return 0;
+	return ret;
 }
 
 static void buttons_scan_fn(struct k_work *work)
 {
 	static u32_t last_button_scan;
 	static bool initial_run = true;
-	u32_t button_scan = 0;
+	u32_t button_scan;
 
-	get_buttons(&button_scan);
+	button_scan = get_buttons();
 	atomic_set(&my_buttons, (atomic_val_t)button_scan);
 
 	if (!initial_run) {
@@ -102,9 +101,7 @@ int dk_buttons_init(button_handler_t button_handler)
 {
 	int err;
 
-	if (button_handler != NULL) {
-		button_handler_cb = button_handler;
-	}
+	button_handler_cb = button_handler;
 
 	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
