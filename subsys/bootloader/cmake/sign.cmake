@@ -12,30 +12,48 @@ set(SIGNATURE_PUBLIC_KEY_FILE public.pem)
 
 set(hashcmd
   ${PYTHON_EXECUTABLE}
-  ${NRF_BOOTLOADER_SCRIPTS}/hash.py --in ${PROJECT_BINARY_DIR}/${KERNEL_BIN_NAME} > ${hash_file}
+  ${NRF_BOOTLOADER_SCRIPTS}/hash.py
+  --in ${PROJECT_BINARY_DIR}/${KERNEL_BIN_NAME}
+  > ${hash_file}
   )
 
 if (CONFIG_SB_SIGNING_PYTHON)
   set(signcmd
     ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/do_sign.py --private-key ${SIGNATURE_PRIVATE_KEY_FILE} --in ${hash_file} > ${signature_file}
+    ${NRF_BOOTLOADER_SCRIPTS}/do_sign.py
+    --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
+    --in ${hash_file}
+    > ${signature_file}
     )
   set(pubgencmd
     ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/keygen.py --public --in ${SIGNATURE_PRIVATE_KEY_FILE} --out ${SIGNATURE_PUBLIC_KEY_FILE}
+    ${NRF_BOOTLOADER_SCRIPTS}/keygen.py
+    --public
+    --in ${SIGNATURE_PRIVATE_KEY_FILE}
+    --out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_OPENSSL)
   set(signcmd
-    openssl dgst -sha256 -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${hash_file} |
+    openssl dgst
+    -sha256
+    -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${hash_file} |
     ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/asn1parse.py --alg ecdsa --contents signature > ${signature_file}
+    ${NRF_BOOTLOADER_SCRIPTS}/asn1parse.py
+    --alg ecdsa
+    --contents signature
+    > ${signature_file}
     )
   set(pubgencmd
-    openssl ec -pubout -in ${SIGNATURE_PRIVATE_KEY_FILE} -out ${SIGNATURE_PUBLIC_KEY_FILE}
+    openssl ec
+    -pubout
+    -in ${SIGNATURE_PRIVATE_KEY_FILE}
+    -out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_CUSTOM)
   set(signcmd
-    ${CONFIG_SB_SIGNING_COMMAND} ${hash_file} > ${signature_file}
+    ${CONFIG_SB_SIGNING_COMMAND}
+    ${hash_file}
+    > ${signature_file}
     )
   set(SIGNATURE_PUBLIC_KEY_FILE ${CONFIG_SB_SIGNING_PUBLIC_KEY})
   if (signcmd STREQUAL "" OR NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE})
@@ -56,7 +74,7 @@ add_custom_command(
   ${sign_depends}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMENT
-  "Creating signature of application."
+  "Creating signature of application"
   USES_TERMINAL
   )
 
@@ -70,7 +88,7 @@ if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
     ${sign_depends}
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     COMMENT
-    "Creating public key."
+    "Creating public key from private key used for signing"
     USES_TERMINAL
     )
 endif()
