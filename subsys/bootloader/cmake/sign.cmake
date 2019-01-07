@@ -8,7 +8,7 @@ set(sign_depends kernel_elf ${KEY_FILE_DEPENDS})
 
 set(hash_file firmware.sha256)
 set(signature_file firmware.signature)
-set(public_key_file public.pem)
+set(SIGNATURE_PUBLIC_KEY_FILE public.pem)
 
 set(hashcmd
   ${PYTHON_EXECUTABLE}
@@ -22,7 +22,7 @@ if (CONFIG_SB_SIGNING_PYTHON)
     )
   set(pubgencmd
     ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/keygen.py --public --in ${SIGNATURE_PRIVATE_KEY_FILE} --out ${public_key_file}
+    ${NRF_BOOTLOADER_SCRIPTS}/keygen.py --public --in ${SIGNATURE_PRIVATE_KEY_FILE} --out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_OPENSSL)
   set(signcmd
@@ -31,14 +31,14 @@ elseif (CONFIG_SB_SIGNING_OPENSSL)
     ${NRF_BOOTLOADER_SCRIPTS}/asn1parse.py --alg ecdsa --contents signature > ${signature_file}
     )
   set(pubgencmd
-    openssl ec -pubout -in ${SIGNATURE_PRIVATE_KEY_FILE} -out ${public_key_file}
+    openssl ec -pubout -in ${SIGNATURE_PRIVATE_KEY_FILE} -out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_CUSTOM)
   set(signcmd
     ${CONFIG_SB_SIGNING_COMMAND} ${hash_file} > ${signature_file}
     )
-  set(public_key_file ${CONFIG_SB_SIGNING_PUBLIC_KEY})
-  if (signcmd STREQUAL "" OR NOT EXISTS ${public_key_file})
+  set(SIGNATURE_PUBLIC_KEY_FILE ${CONFIG_SB_SIGNING_PUBLIC_KEY})
+  if (signcmd STREQUAL "" OR NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE})
     message(WARNING "You must specify a signing command and valid public key file.")
   endif()
 else ()
@@ -63,7 +63,7 @@ add_custom_command(
 if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
   add_custom_command(
     OUTPUT
-    ${public_key_file}
+    ${SIGNATURE_PUBLIC_KEY_FILE}
     COMMAND
     ${pubgencmd}
     DEPENDS
@@ -85,13 +85,13 @@ add_custom_command(
   --output ${SIGNED_KERNEL_HEX}
   --offset ${CONFIG_SB_VALIDATION_METADATA_OFFSET}
   --signature ${signature_file}
-  --public-key ${public_key_file}
+  --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
   --magic-value "${VALIDATION_INFO_MAGIC}"
   --pk-hash-len ${CONFIG_SB_PUBLIC_KEY_HASH_LEN}
   DEPENDS
   ${sign_depends}
   ${signature_file}
-  ${public_key_file}
+  ${SIGNATURE_PUBLIC_KEY_FILE}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMENT
   "Creating validation for ${KERNEL_HEX_NAME}, storing to ${SIGNED_KERNEL_HEX_NAME}"
