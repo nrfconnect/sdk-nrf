@@ -184,7 +184,7 @@ add_custom_command(
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/provision.py
   --generated-conf-file ${PROJECT_BINARY_DIR}/include/generated/generated_dts_board.conf
-  --public-key-files "${public_key_file},${PUBLIC_KEY_FILES}"
+  --public-key-files "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}"
   --output ${PROVISION_HEX}
   DEPENDS ${PROVISION_DEPENDS}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
