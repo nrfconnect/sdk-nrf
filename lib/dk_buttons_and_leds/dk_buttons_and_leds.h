@@ -47,7 +47,7 @@ extern "C" {
  * @brief Callback executed when button state change is detected
  *
  * @param button_state Bitmask of button states
- * @param has_changed Bitmask that shows wich buttons that have changed.
+ * @param has_changed Bitmask that shows which buttons that have changed.
  */
 typedef void (*button_handler_t)(u32_t button_state, u32_t has_changed);
 
@@ -68,7 +68,7 @@ int dk_buttons_init(button_handler_t button_handler);
 /** @brief Read current button states
  *
  *  @param button_state Bitmask of button states
- *  @param has_changed Bitmask that shows wich buttons that have changed.
+ *  @param has_changed Bitmask that shows which buttons that have changed.
  */
 void dk_read_buttons(u32_t *button_state, u32_t *has_changed);
 
@@ -76,7 +76,7 @@ void dk_read_buttons(u32_t *button_state, u32_t *has_changed);
  *
  *  Get buttons state from internal variable.
  *
- *  @return Bibmask of button states.
+ *  @return Bitmask of button states.
  */
 u32_t dk_get_buttons(void);
 
