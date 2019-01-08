@@ -15,11 +15,37 @@
 
 LOG_MODULE_REGISTER(dk_buttons_and_leds, CONFIG_DK_LIBRARY_LOG_LEVEL);
 
+static const u8_t button_pins[] = {
+#ifdef SW0_GPIO_PIN
+	SW0_GPIO_PIN,
+#endif
+#ifdef SW1_GPIO_PIN
+	SW1_GPIO_PIN,
+#endif
+#ifdef SW2_GPIO_PIN
+	SW2_GPIO_PIN,
+#endif
+#ifdef SW3_GPIO_PIN
+	SW3_GPIO_PIN,
+#endif
+};
+
+static const u8_t led_pins[] = {
+#ifdef LED0_GPIO_PIN
+	LED0_GPIO_PIN,
+#endif
+#ifdef LED1_GPIO_PIN
+	LED1_GPIO_PIN,
+#endif
+#ifdef LED2_GPIO_PIN
+	LED2_GPIO_PIN,
+#endif
+#ifdef LED3_GPIO_PIN
+	LED3_GPIO_PIN,
+#endif
+};
+
 static struct k_delayed_work buttons_scan;
-static const u8_t button_pins[] = { SW0_GPIO_PIN, SW1_GPIO_PIN,
-				    SW2_GPIO_PIN, SW3_GPIO_PIN };
-static const u8_t led_pins[] = { LED0_GPIO_PIN, LED1_GPIO_PIN,
-				 LED2_GPIO_PIN, LED3_GPIO_PIN };
 static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
 static struct device *gpio_dev;
