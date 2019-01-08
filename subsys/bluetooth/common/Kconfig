@@ -1,7 +1,0 @@
-# Kconfig - common module configuration options
-
-comment "BLE Libraries"
-
-rsource "Kconfig.pool"
-rsource "Kconfig.scan"
-rsource "Kconfig.discovery"

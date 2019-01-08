@@ -3,13 +3,10 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
-add_library(nrf_bluetooth INTERFACE)
 
-if (CONFIG_BT_GATT_POOL OR
-    CONFIG_BT_GATT_DM OR
-    CONFIG_BT_SCAN)
-	add_subdirectory(common)
-endif()
+zephyr_sources_ifdef(CONFIG_BT_GATT_POOL gatt_pool.c)
+zephyr_sources_ifdef(CONFIG_BT_GATT_DM gatt_dm.c)
+zephyr_sources_ifdef(CONFIG_BT_SCAN scan.c)
 
 add_subdirectory_ifdef(CONFIG_BT_LL_NRFXLIB controller)
 

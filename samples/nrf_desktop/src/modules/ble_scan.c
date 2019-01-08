@@ -7,8 +7,8 @@
 #include <zephyr/types.h>
 
 #include <bluetooth/bluetooth.h>
-#include <bluetooth/common/gatt_dm.h>
-#include <bluetooth/common/scan.h>
+#include <bluetooth/gatt_dm.h>
+#include <bluetooth/scan.h>
 
 #include <settings/settings.h>
 

@@ -8,8 +8,8 @@
 
 #include <bluetooth/gatt.h>
 #include <bluetooth/uuid.h>
-#include <bluetooth/common/gatt_dm.h>
-#include <bluetooth/common/scan.h>
+#include <bluetooth/gatt_dm.h>
+#include <bluetooth/scan.h>
 
 #include <dk_buttons_and_leds.h>
 #include <misc/byteorder.h>

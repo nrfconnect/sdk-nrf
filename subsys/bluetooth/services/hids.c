@@ -18,7 +18,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/uuid.h>
 
-#include <bluetooth/common/gatt_pool.h>
+#include <bluetooth/gatt_pool.h>
 #include <bluetooth/services/hids.h>
 
 #include <logging/log.h>

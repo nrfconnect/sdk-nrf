@@ -17,9 +17,9 @@
 #include <bluetooth/conn.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
-#include <bluetooth/common/gatt_dm.h>
+#include <bluetooth/gatt_dm.h>
 #include <misc/byteorder.h>
-#include <bluetooth/common/scan.h>
+#include <bluetooth/scan.h>
 #include <bluetooth/services/hids_c.h>
 
 static struct bt_conn *default_conn;

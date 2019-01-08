@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <bluetooth/common/gatt_pool.h>
+#include <bluetooth/gatt_pool.h>
 
 struct svc_el_pool {
 	void *elements;

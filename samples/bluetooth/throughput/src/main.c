@@ -21,7 +21,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/services/throughput.h>
 
-#include <bluetooth/common/scan.h>
+#include <bluetooth/scan.h>
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)

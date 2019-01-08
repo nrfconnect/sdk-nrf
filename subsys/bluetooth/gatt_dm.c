@@ -8,7 +8,7 @@
 #include <zephyr.h>
 #include <logging/log.h>
 
-#include <bluetooth/common/gatt_dm.h>
+#include <bluetooth/gatt_dm.h>
 
 LOG_MODULE_REGISTER(bt_gatt_dm, CONFIG_BT_GATT_DM_LOG_LEVEL);
 
