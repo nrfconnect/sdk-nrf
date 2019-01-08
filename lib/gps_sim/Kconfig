@@ -71,6 +71,15 @@ config GPS_SIM_DYNAMIC_VALUES
 		Enables dynamically created simulator otuput as opposed
 		to static values.
 
+config GPS_SIM_FIX_TIME
+	int "Time in milliseconds between position generations"
+	range 500 60000
+	default GPS_SIM_TRIGGER_TIMER_MSEC if GPS_SIM_TRIGGER_USE_TIMER
+	default 1000
+	help
+		Time in milliseconds that the GPS simulator will return the same
+		position before generating new coordinates.
+
 config GPS_SIM_MAX_STEP
 	int "Maximum step size each iteration"
 	default 5
