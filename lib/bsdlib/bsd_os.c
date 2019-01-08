@@ -47,12 +47,61 @@
 static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 #endif
 
+#define NUM_SLEEPING_THREADS 10
+
 void IPC_IRQHandler(void);
+
+static inline int thread_id_hash(u32_t thread_id)
+{
+	/* TODO: A better idea on how to hash thread IDs without collision.
+	 * A linked list or an array to fill would introduce sync issues.
+	 */
+	return thread_id % NUM_SLEEPING_THREADS;
+}
+
+typedef struct {
+	u32_t thread_id;
+	bool sleeping;
+	struct k_sem sem;
+} sleeping_thread_t;
+
+sleeping_thread_t sleeping_threads[NUM_SLEEPING_THREADS];
+
+static void sleeping_threads_init(void)
+{
+	for (int i = 0; i < NUM_SLEEPING_THREADS; i++) {
+		k_sem_init(&sleeping_threads[i].sem, 0, 1);
+		sleeping_threads[i].thread_id = 0;
+		sleeping_threads[i].sleeping = false;
+	}
+}
+
+static void all_sleeping_threads_wake(void)
+{
+	for (int i = 0; i < NUM_SLEEPING_THREADS; i++) {
+		if (sleeping_threads[i].sleeping) {
+			k_sem_give(&sleeping_threads[i].sem);
+		}
+	}
+}
 
 int32_t bsd_os_timedwait(uint32_t context, uint32_t timeout)
 {
-	/* TODO: to be implemented */
-	return 0;
+	int converted_timeout = K_MSEC(timeout);
+
+	if (timeout == 0) {
+		converted_timeout = K_FOREVER;
+	}
+
+	int i = thread_id_hash(context);
+
+	sleeping_threads[i].thread_id = context;
+	sleeping_threads[i].sleeping  = true;
+
+	bool ret_val = k_sem_take(&sleeping_threads[i].sem, converted_timeout);
+
+	sleeping_threads[i].sleeping = false;
+	return ret_val;
 }
 
 
@@ -158,10 +207,12 @@ void bsd_os_errno_set(int err_code)
 	}
 }
 
+
 void bsd_os_application_irq_set(void)
 {
 	NVIC_SetPendingIRQ(BSD_APPLICATION_IRQ);
 }
+
 
 void bsd_os_application_irq_clear(void)
 {
@@ -178,6 +229,7 @@ void bsd_os_trace_irq_clear(void)
 	NVIC_ClearPendingIRQ(TRACE_IRQ);
 }
 
+
 ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
 {
 	IPC_IRQHandler();
@@ -186,9 +238,11 @@ ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
 	return 1; /* We should check if scheduling decision should be made */
 }
 
+
 ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 {
 	bsd_os_application_irq_handler();
+	all_sleeping_threads_wake();
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
 	return 1; /* We should check if scheduling decision should be made */
@@ -249,6 +303,7 @@ void trace_uart_init(void)
 /* This function is called by bsd_init and must not be called explicitly. */
 void bsd_os_init(void)
 {
+	sleeping_threads_init();
 	read_task_create();
 
 	/* Configure and enable modem tracing over UART. */
@@ -273,7 +328,7 @@ int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
 	}
 #endif
 
-	return 0;
+       return 0;
 }
 
 static int _bsd_driver_init(struct device *unused)
@@ -282,7 +337,7 @@ static int _bsd_driver_init(struct device *unused)
 	 * Note: No enable irq_enable here. This is done through bsd_init.
 	 */
 	IRQ_DIRECT_CONNECT(BSD_NETWORK_IRQ, BSD_NETWORK_IRQ_PRIORITY,
-			   ipc_proxy_irq_handler, UNUSED_FLAGS);
+			           ipc_proxy_irq_handler, UNUSED_FLAGS);
 	bsd_init();
 
 	return 0;
