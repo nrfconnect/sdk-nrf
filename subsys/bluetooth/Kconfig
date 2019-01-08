@@ -11,8 +11,14 @@ rsource "controller/Kconfig"
 endif # CONFIG_BT_LL_NRFXLIB
 
 if BT
-rsource "common/Kconfig"
+
+comment "BLE Libraries"
+rsource "Kconfig.pool"
+rsource "Kconfig.scan"
+rsource "Kconfig.discovery"
+
 rsource "services/Kconfig"
+
 endif # BT
 
 endmenu

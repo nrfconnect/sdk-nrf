@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <misc/byteorder.h>
 #include <string.h>
-#include <bluetooth/common/scan.h>
+#include <bluetooth/scan.h>
 
 #define LOG_LEVEL CONFIG_BT_SCAN_LOG_LEVEL
 #include <logging/log.h>

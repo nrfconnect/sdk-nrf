@@ -8,7 +8,7 @@
 #include <stddef.h>
 #include <misc/util.h>
 #include <bluetooth/uuid.h>
-#include <bluetooth/common/gatt_dm.h>
+#include <bluetooth/gatt_dm.h>
 #include "../mock/gatt_discover_mock.h"
 
 /* Timeout for the discovery in ms */

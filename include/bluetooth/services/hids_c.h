@@ -20,7 +20,7 @@ extern "C" {
 
 #include <bluetooth/gatt.h>
 #include <bluetooth/conn.h>
-#include <bluetooth/common/gatt_dm.h>
+#include <bluetooth/gatt_dm.h>
 
 struct bt_gatt_hids_c;
 struct bt_gatt_hids_c_rep_info;

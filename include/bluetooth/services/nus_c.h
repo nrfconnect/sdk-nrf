@@ -20,7 +20,7 @@ extern "C" {
 
 #include <bluetooth/gatt.h>
 #include <bluetooth/conn.h>
-#include <bluetooth/common/gatt_dm.h>
+#include <bluetooth/gatt_dm.h>
 
 /** @brief Handles on the connected peer device that are needed to interact with
  * the device.

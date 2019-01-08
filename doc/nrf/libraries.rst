@@ -12,7 +12,7 @@ Here you can find documentation for these libraries, including API documentation
    :caption: Bluetooth libraries:
    :glob:
 
-   ../../include/bluetooth/common/*
+   ../../include/bluetooth/*
 
 
 .. toctree::
