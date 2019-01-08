@@ -199,7 +199,7 @@ static u8_t nmea_checksum_get(const u8_t *nmea_sentence)
  */
 static double generate_sine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32();
+	u32_t time = k_uptime_get_32() / K_MSEC(CONFIG_GPS_SIM_FIX_TIME);
 
 	return offset + amplitude * sin(time % UINT16_MAX);
 }
@@ -213,7 +213,7 @@ static double generate_sine(double offset, double amplitude)
  */
 static double generate_cosine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32();
+	u32_t time = k_uptime_get_32() /  K_MSEC(CONFIG_GPS_SIM_FIX_TIME);
 
 	return offset + amplitude * cos(time % UINT16_MAX);
 }
