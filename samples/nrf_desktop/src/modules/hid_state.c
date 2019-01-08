@@ -565,12 +565,12 @@ static void send_report_mouse(void)
 
 		event->dx        = state.last_dx;
 		event->dy        = state.last_dy;
-		event->wheel     = state.wheel_acc;
+		event->wheel     = state.wheel_acc / 2;
 		event->button_bm = 0;
 
 		state.last_dx   = 0;
 		state.last_dy   = 0;
-		state.wheel_acc = 0;
+		state.wheel_acc -= event->wheel * 2;
 
 		/* Traverse pressed keys and build mouse buttons report */
 		for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
