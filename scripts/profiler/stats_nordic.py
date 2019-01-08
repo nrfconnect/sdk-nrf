@@ -30,11 +30,11 @@ class StatsNordic():
         self.logger.addHandler(self.logger_console)
 
     def calculate_stats_preset1(self):
-        self.time_between_events("hid_report_sent_event", EventState.PROC_END,
+        self.time_between_events("hid_report_sent_event", EventState.SUBMIT,
                                  "motion_event", EventState.SUBMIT,
                                  4000)
-        self.time_between_events("motion_event", EventState.SUBMIT,
-                                 "hid_report_sent_event", EventState.PROC_END,
+        self.time_between_events("hid_report_sent_event", EventState.SUBMIT,
+                                 "hid_report_sent_event", EventState.SUBMIT,
                                  4000)
         plt.show()
 
@@ -75,6 +75,14 @@ class StatsNordic():
         end_times = self._get_timestamps(end_event_name, end_event_state)
 
         if start_times is None or end_times is None:
+            return
+
+        if len(start_times) == 0:
+            self.logger.error("No events logged: " + start_event_name)
+            return
+
+        if len(end_times) == 0:
+            self.logger.error("No events logged: " + stop_event_name)
             return
 
         times_between = []
