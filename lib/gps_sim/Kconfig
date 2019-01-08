@@ -82,7 +82,7 @@ config GPS_SIM_FIX_TIME
 
 config GPS_SIM_MAX_STEP
 	int "Maximum step size each iteration"
-	default 5
+	default 100
 	help
 		Sets the maximum step size that can be taken in latitude or longitude
 		for each simulation iteration. In units of 1/1000 degrees.
