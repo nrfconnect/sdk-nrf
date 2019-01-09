@@ -67,6 +67,9 @@ static bool event_handler(const struct event_header *eh)
 		case PEER_STATE_DISCONNECTED:
 			connected = false;
 			break;
+		case PEER_STATE_CONN_FAILED:
+			/* Ignore */
+			break;
 		default:
 			error = true;
 			break;

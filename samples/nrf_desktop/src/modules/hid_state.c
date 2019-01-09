@@ -959,6 +959,7 @@ static bool event_handler(const struct event_header *eh)
 			disconnect_subscriber(event->id);
 			break;
 		case PEER_STATE_SECURED:
+		case PEER_STATE_CONN_FAILED:
 			/* Ignore */
 			break;
 		default:

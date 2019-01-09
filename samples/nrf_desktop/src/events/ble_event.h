@@ -28,7 +28,8 @@ extern "C" {
 #define PEER_STATE_LIST		\
 	X(DISCONNECTED)		\
 	X(CONNECTED)		\
-	X(SECURED)
+	X(SECURED)		\
+	X(CONN_FAILED)
 
 /** @brief Peer states. */
 enum peer_state {

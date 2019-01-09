@@ -10,8 +10,6 @@
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
-#include <settings/settings.h>
-
 #define MODULE ble_scan
 #include "module_state_event.h"
 
@@ -24,66 +22,24 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 #define DEVICE_NAME	CONFIG_DESKTOP_BLE_SHORT_NAME
 #define DEVICE_NAME_LEN	(sizeof(DEVICE_NAME) - 1)
 
-static bt_addr_le_t target_addr;
+
+struct bond_find_data {
+	bt_addr_le_t peer_address;
+	u8_t peer_id;
+	u8_t peer_count;
+};
 
 
-static void save_address(struct bt_conn *conn)
+static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
-	struct bt_conn_info info;
+	struct bond_find_data *bond_find_data = user_data;
 
-	int err = bt_conn_get_info(conn, &info);
-
-	if (err) {
-		LOG_ERR("Cannot get conn info");
-		return;
+	if (bond_find_data->peer_id == bond_find_data->peer_count) {
+		bt_addr_le_copy(&bond_find_data->peer_address, &info->addr);
 	}
 
-	if (bt_addr_le_cmp(&target_addr, info.le.dst)) {
-		LOG_INF("Store target address");
-		bt_addr_le_copy(&target_addr, info.le.dst);
-		settings_save_one(MODULE_NAME "/taddr", &target_addr,
-				  sizeof(target_addr));
-	}
-}
-
-static int settings_set(int argc, char **argv, void *val_ctx)
-{
-	if (argc == 1) {
-		if (!strcmp(argv[0], "taddr")) {
-			int len = settings_val_read_cb(val_ctx, &target_addr,
-						       sizeof(target_addr));
-
-			if (len < 0) {
-				LOG_ERR("Can't read target address (err:%d)",
-					len);
-			}
-		}
-
-		return 0;
-	}
-
-	return -ENOENT;
-}
-
-static int enable_settings(void)
-{
-	int err = 0;
-
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		static struct settings_handler sh = {
-			.name = MODULE_NAME,
-			.h_set = settings_set,
-		};
-
-		err = settings_register(&sh);
-		if (err) {
-			LOG_ERR("Cannot register settings handler (err %d)", err);
-			goto error;
-		}
-	}
-
-error:
-	return err;
+	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
+	bond_find_data->peer_count++;
 }
 
 static int configure_filters(void)
@@ -92,33 +48,45 @@ static int configure_filters(void)
 
 	static_assert(DEVICE_NAME_LEN > 0, "Invalid device name");
 
-	static const struct bt_scan_short_name short_name = {
-		.name = DEVICE_NAME,
-		.min_len = DEVICE_NAME_LEN,
+	struct bond_find_data bond_find_data = {
+		.peer_id = 0,
 	};
-	int err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &short_name);
-	if (err) {
-		LOG_ERR("Name filter cannot be added (err %d)", err);
-		goto error;
-	}
-	u8_t filter_mode = BT_SCAN_SHORT_NAME_FILTER;
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
-	if (err) {
-		LOG_ERR("UUID filter cannot be added (err %d)", err);
-		goto error;
-	}
-	filter_mode |= BT_SCAN_UUID_FILTER;
+	u8_t filter_mode = 0;
+	int err;
 
-	if (target_addr.a.val[0] != 0) {
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR, &target_addr);
+	if (bond_find_data.peer_id < bond_find_data.peer_count) {
+		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,
+					 &bond_find_data.peer_address);
 		if (err) {
 			LOG_ERR("Address filter cannot be added (err %d)", err);
 			goto error;
 		}
 		filter_mode |= BT_SCAN_ADDR_FILTER;
 
-		LOG_INF("Address filter added");
+		char addr_str[BT_ADDR_LE_STR_LEN];
+		bt_addr_le_to_str(&bond_find_data.peer_address,
+				  addr_str, sizeof(addr_str));
+		LOG_INF("Address filter added %s", log_strdup(addr_str));
+	} else {
+		static const struct bt_scan_short_name short_name = {
+			.name = DEVICE_NAME,
+			.min_len = DEVICE_NAME_LEN,
+		};
+		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &short_name);
+		if (err) {
+			LOG_ERR("Name filter cannot be added (err %d)", err);
+			goto error;
+		}
+		filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
+
+		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
+		if (err) {
+			LOG_ERR("UUID filter cannot be added (err %d)", err);
+			goto error;
+		}
+		filter_mode |= BT_SCAN_UUID_FILTER;
 	}
 
 	err = bt_scan_filter_enable(filter_mode, true);
@@ -225,14 +193,8 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 	return true;
 }
 
-static int scan_init(void)
+static void scan_init(void)
 {
-	int err = enable_settings();
-	if (err) {
-		LOG_ERR("Cannot enable settings (err %d)", err);
-		goto error;
-	}
-
 	static const struct bt_scan_init_param scan_init = {
 		.connect_if_match = true,
 		.scan_param = NULL,
@@ -253,9 +215,6 @@ static int scan_init(void)
 	};
 
 	bt_conn_cb_register(&conn_callbacks);
-
-error:
-	return err;
 }
 
 static void scan_start(void)
@@ -293,12 +252,9 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			int err = scan_init();
-			if (err) {
-				module_set_state(MODULE_STATE_ERROR);
-			} else {
-				module_set_state(MODULE_STATE_READY);
-			}
+			scan_init();
+
+			module_set_state(MODULE_STATE_READY);
 		} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
 			static bool started;
 
@@ -318,13 +274,13 @@ static bool event_handler(const struct event_header *eh)
 
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
+		case PEER_STATE_CONN_FAILED:
 			/* Ignore */
 			break;
 		case PEER_STATE_DISCONNECTED:
 			scan_start();
 			break;
 		case PEER_STATE_SECURED:
-			save_address(event->id);
 			start_discovery(event->id);
 			break;
 		default:
