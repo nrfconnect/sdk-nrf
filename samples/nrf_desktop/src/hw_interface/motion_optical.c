@@ -499,7 +499,7 @@ static void update_downshift_time(u8_t reg_addr, u32_t time)
 	/* Convert time to register value */
 	u8_t value = time / mintime;
 
-	LOG_INF("Setting run downshift to %u ms (reg value 0x%x)", time, value);
+	LOG_INF("Setting downshift time to %u ms (reg value 0x%x)", time, value);
 
 	int err = reg_write(reg_addr, value);
 	if (err) {
