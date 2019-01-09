@@ -21,6 +21,9 @@
 #include <misc/byteorder.h>
 #include <bluetooth/common/scan.h>
 #include <bluetooth/services/hids_c.h>
+#include <dk_buttons_and_leds.h>
+
+#define KEY_BOOTMODE_MASK DK_BTN2_MSK
 
 static struct bt_conn *default_conn;
 static struct bt_gatt_hids_c hids_c;
@@ -209,9 +212,48 @@ static u8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
 	return BT_GATT_ITER_CONTINUE;
 }
 
+static u8_t hids_c_boot_mouse_report(struct bt_gatt_hids_c *hids_c,
+				     struct bt_gatt_hids_c_rep_info *rep,
+				     u8_t err,
+				     const u8_t *data)
+{
+	u8_t size = rep->size;
+	u8_t i;
+
+	if (!data) {
+		return BT_GATT_ITER_STOP;
+	}
+	printk("Notification, mouse boot, size: %u, data:", size);
+	for (i = 0; i < size; ++i) {
+		printk(" 0x%x", data[i]);
+	}
+	printk("\n");
+	return BT_GATT_ITER_CONTINUE;
+}
+
+static u8_t hids_c_boot_kbd_report(struct bt_gatt_hids_c *hids_c,
+				   struct bt_gatt_hids_c_rep_info *rep,
+				   u8_t err,
+				   const u8_t *data)
+{
+	u8_t size = rep->size;
+	u8_t i;
+
+	if (!data) {
+		return BT_GATT_ITER_STOP;
+	}
+	printk("Notification, keyboard boot, size: %u, data:", size);
+	for (i = 0; i < size; ++i) {
+		printk(" 0x%x", data[i]);
+	}
+	printk("\n");
+	return BT_GATT_ITER_CONTINUE;
+}
+
 static void hids_c_ready_cb(struct bt_gatt_hids_c *hids_c)
 {
 	u8_t i;
+	int err;
 
 	printk("HIDS is ready to work\n");
 	for (i = 0; i < hids_c->rep_cnt; ++i) {
@@ -222,8 +264,29 @@ static void hids_c_ready_cb(struct bt_gatt_hids_c *hids_c)
 		    BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
 			printk("Subscribe in report id: %u\n",
 			       rep->ref.id);
-			bt_gatt_hids_c_rep_subscribe(hids_c, rep,
-						     hids_c_notify_cb);
+			err = bt_gatt_hids_c_rep_subscribe(hids_c, rep,
+							   hids_c_notify_cb);
+			if (err) {
+				printk("Subscribe error (%d)\n", err);
+			}
+		}
+	}
+	if (hids_c->rep_boot.kbd_inp) {
+		printk("Subscribe in boot keyboard report\n");
+		err = bt_gatt_hids_c_rep_subscribe(hids_c,
+						   hids_c->rep_boot.kbd_inp,
+						   hids_c_boot_kbd_report);
+		if (err) {
+			printk("Subscribe error (%d)\n", err);
+		}
+	}
+	if (hids_c->rep_boot.mouse_inp) {
+		printk("Subscribe in boot mouse report\n");
+		err = bt_gatt_hids_c_rep_subscribe(hids_c,
+						   hids_c->rep_boot.mouse_inp,
+						   hids_c_boot_mouse_report);
+		if (err) {
+			printk("Subscribe error (%d)\n", err);
 		}
 	}
 }
@@ -247,6 +310,35 @@ static const struct bt_gatt_hids_c_init_params hids_c_init_params = {
 	.pm_update_cb  = hids_c_pm_update_cb
 };
 
+
+static void button_handler(u32_t button_state, u32_t has_changed)
+{
+	u32_t button = button_state & has_changed;
+
+	if (button & KEY_BOOTMODE_MASK) {
+		if (bt_gatt_hids_ready_check(&hids_c)) {
+			int err;
+			enum bt_gatt_hids_c_pm pm =
+				bt_gatt_hids_c_pm_get(&hids_c);
+
+			printk("Setting protocol mode: %s\n",
+			       (pm == BT_GATT_HIDS_C_PM_BOOT) ?
+			       "BOOT" : "REPORT");
+			err = bt_gatt_hids_c_pm_write(
+				&hids_c,
+				(pm == BT_GATT_HIDS_C_PM_BOOT) ?
+					BT_GATT_HIDS_C_PM_REPORT :
+					BT_GATT_HIDS_C_PM_BOOT);
+			if (err) {
+				printk("Cannot change protocol mode (err %d)\n",
+				       err);
+			}
+		} else {
+			printk("HID device not ready\n");
+		}
+	}
+}
+
 void main(void)
 {
 	int err;
@@ -263,6 +355,12 @@ void main(void)
 
 	scan_init();
 	bt_conn_cb_register(&conn_callbacks);
+
+	err = dk_buttons_init(button_handler);
+	if (err) {
+		printk("Failed to initialize buttons (err %d)\n", err);
+		return;
+	}
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
