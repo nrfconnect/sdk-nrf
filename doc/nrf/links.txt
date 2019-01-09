@@ -6,6 +6,10 @@
 
 .. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr/issues
 
+.. _`nRF Connect SDK v0.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.3.0/nrf/index.html
+
+.. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
+
 .. |core_spec| replace:: Bluetooth Core Specification
 .. _core_spec: https://www.bluetooth.com/specifications/bluetooth-core-specification
 
