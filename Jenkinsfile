@@ -75,7 +75,7 @@ pipeline {
 
             script {
               /* Rename the nrf52 desktop samples */
-              desktop_platforms = ['nrf52840_pca20041', 'nrf52840_pca10056', 'nrf52_pca63519']
+              desktop_platforms = ['nrf52840_pca20041', 'nrf52840_pca10056', 'nrf52840_pca10059', 'nrf52_pca63519']
               for(int i=0; i<desktop_platforms.size(); i++) {
                 file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.hex"
                 check_and_store_sample("$file_path", "nrf_desktop_${desktop_platforms[i]}.hex")
