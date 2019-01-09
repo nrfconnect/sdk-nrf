@@ -1158,6 +1158,9 @@ int bt_gatt_hids_c_pm_write(struct bt_gatt_hids_c *hids_c,
 	int err;
 	u8_t data[] = {(u8_t)pm};
 
+	if (hids_c->handlers.pm == 0) {
+		return -EOPNOTSUPP;
+	}
 	err = bt_gatt_write_without_response(hids_c->conn,
 					     hids_c->handlers.pm,
 					     data,
