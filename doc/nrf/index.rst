@@ -10,6 +10,11 @@ The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is bui
 .. note::
    The |NCS| contains references and code for Bluetooth Low Energy devices in the nRF52 Series, though product development on these devices is not currently supported with the |NCS|.
 
+Documentation for different versions of the |NCS| is available at the following links:
+
+* `nRF Connect SDK latest documentation`_ (updated weekly)
+* `nRF Connect SDK v0.3.0 documentation`_
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
