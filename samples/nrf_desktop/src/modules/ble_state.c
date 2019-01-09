@@ -26,7 +26,12 @@ static void connected(struct bt_conn *conn, u8_t error)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (error) {
-		LOG_ERR("Failed to connect to %s (%u)", log_strdup(addr),
+		struct ble_peer_event *event = new_ble_peer_event();
+		event->id = conn;
+		event->state = PEER_STATE_CONN_FAILED;
+		EVENT_SUBMIT(event);
+
+		LOG_WRN("Failed to connect to %s (%u)", log_strdup(addr),
 			error);
 		return;
 	}

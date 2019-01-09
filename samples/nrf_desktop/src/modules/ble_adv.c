@@ -8,6 +8,7 @@
 #include <settings/settings.h>
 
 #include <bluetooth/bluetooth.h>
+#include <bluetooth/conn.h>
 
 #define MODULE ble_adv
 #include "module_state_event.h"
@@ -30,15 +31,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 #define DEVICE_NAME_LEN	(sizeof(DEVICE_NAME) - 1)
 
 #define SWIFT_PAIR_SECTION_SIZE 1 /* number of struct bt_data objects */
-
-
-enum state {
-	STATE_DISABLED,
-	STATE_IDLE,
-	STATE_ACTIVE_FAST,
-	STATE_ACTIVE_SLOW,
-	STATE_GRACE_PERIOD
-};
 
 
 static const struct bt_le_adv_param adv_param_fast = {
@@ -74,6 +66,23 @@ static const struct bt_data ad[] = {
 #endif
 };
 
+
+enum state {
+	STATE_DISABLED,
+	STATE_IDLE,
+	STATE_ACTIVE_FAST,
+	STATE_ACTIVE_SLOW,
+	STATE_ACTIVE_FAST_DIRECT,
+	STATE_ACTIVE_SLOW_DIRECT,
+	STATE_GRACE_PERIOD
+};
+
+struct bond_find_data {
+	bt_addr_le_t peer_address;
+	u8_t peer_id;
+	u8_t peer_count;
+};
+
 /* When using BT_LE_ADV_OPT_USE_NAME, device name is added to scan response
  * data by controller.
  */
@@ -84,27 +93,6 @@ static enum state state;
 static struct k_delayed_work adv_update;
 static struct k_delayed_work sp_grace_period_to;
 
-
-static void ble_adv_update_fn(struct k_work *work)
-{
-	int err = bt_le_adv_stop();
-
-	if (!err) {
-		err = bt_le_adv_start(&adv_param_normal, ad, ARRAY_SIZE(ad),
-				      sd, ARRAY_SIZE(sd));
-	}
-
-	if (err == -ECONNREFUSED) {
-		LOG_WRN("Already connected, do not advertise");
-		return;
-	} else if (err) {
-		LOG_ERR("Failed to restart advertising (err %d)", err);
-		module_set_state(MODULE_STATE_ERROR);
-		return;
-	}
-
-	LOG_INF("Switched to normal cadence advertising");
-}
 
 static int ble_adv_stop(void)
 {
@@ -128,30 +116,95 @@ static int ble_adv_stop(void)
 	return err;
 }
 
-static int ble_adv_start(void)
+static void bond_find(const struct bt_bond_info *info, void *user_data)
+{
+	struct bond_find_data *bond_find_data = user_data;
+
+	if (bond_find_data->peer_id == bond_find_data->peer_count) {
+		bt_addr_le_copy(&bond_find_data->peer_address, &info->addr);
+	}
+
+	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
+	bond_find_data->peer_count++;
+}
+
+static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
+{
+	const struct bt_le_adv_param *adv_param = BT_LE_ADV_CONN_DIR_LOW_DUTY;
+
+	if (fast_adv) {
+		LOG_INF("Use fast advertising");
+		adv_param = BT_LE_ADV_CONN_DIR;
+	}
+
+	struct bt_conn *conn = bt_conn_create_slave_le(addr, adv_param);
+
+	if (conn == NULL) {
+		return -EFAULT;
+	}
+
+	bt_conn_unref(conn);
+
+	char addr_str[BT_ADDR_LE_STR_LEN];
+	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
+
+	LOG_INF("Direct advertising to %s", log_strdup(addr_str));
+
+	return 0;
+}
+
+static int ble_adv_start_undirected(bool fast_adv)
 {
 	const struct bt_le_adv_param *adv_param = &adv_param_normal;
-	int err;
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
-		err = bt_le_adv_stop();
-		if (err) {
-			LOG_ERR("Cannot stop advertising (err %d)", err);
-			return err;
-		}
-
-		LOG_INF("Use fast advertising");
+	LOG_INF("Use %s advertising", (fast_adv)?("fast"):("slow"));
+	if (fast_adv) {
 		adv_param = &adv_param_fast;
 	}
 
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
+	return bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+}
+
+static int ble_adv_start(bool can_fast_adv)
+{
+	bool fast_adv = IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV) && can_fast_adv;
+
+	struct bond_find_data bond_find_data = {
+		.peer_id = 0,
+	};
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
+
+	int err = ble_adv_stop();
+	if (err) {
+		LOG_ERR("Cannot stop advertising (err %d)", err);
+		goto error;
+	}
+
+	bool direct = false;
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV) &&
+	    (bond_find_data.peer_id < bond_find_data.peer_count)) {
+		err = ble_adv_start_directed(&bond_find_data.peer_address,
+					     fast_adv);
+		direct = true;
+	} else {
+		err = ble_adv_start_undirected(fast_adv);
+	}
 
 	if (err == -ECONNREFUSED) {
 		LOG_WRN("Already connected, do not advertise");
 		err = 0;
+		goto error;
 	} else if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
+		goto error;
+	}
+
+	if (direct) {
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
+			state = STATE_ACTIVE_FAST_DIRECT;
+		} else {
+			state = STATE_ACTIVE_SLOW_DIRECT;
+		}
 	} else {
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
 			k_delayed_work_submit(&adv_update,
@@ -160,10 +213,11 @@ static int ble_adv_start(void)
 		} else {
 			state = STATE_ACTIVE_SLOW;
 		}
-
-		LOG_INF("Advertising started");
 	}
 
+	LOG_INF("Advertising started");
+
+error:
 	return err;
 }
 
@@ -201,6 +255,17 @@ static int remove_vendor_section(void)
 	return err;
 }
 
+static void ble_adv_update_fn(struct k_work *work)
+{
+	__ASSERT_NO_MSG(state == STATE_ACTIVE_FAST);
+
+	int err = ble_adv_start(false);
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
 static void init(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
@@ -217,7 +282,8 @@ static void init(void)
 
 static void start(void)
 {
-	int err = ble_adv_start();
+	int err = ble_adv_start(true);
+
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
 	}
@@ -260,7 +326,11 @@ static bool event_handler(const struct event_header *eh)
 			break;
 
 		case PEER_STATE_DISCONNECTED:
-			err = ble_adv_start();
+			err = ble_adv_start(true);
+			break;
+
+		case PEER_STATE_CONN_FAILED:
+			err = ble_adv_start(false);
 			break;
 
 		default:
@@ -277,7 +347,7 @@ static bool event_handler(const struct event_header *eh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE)) {
 		if (is_power_down_event(eh)) {
-			int err;
+			int err = 0;
 
 			switch (state) {
 			case STATE_ACTIVE_FAST:
@@ -290,9 +360,13 @@ static bool event_handler(const struct event_header *eh)
 						module_set_state(MODULE_STATE_OFF);
 					}
 				}
+				break;
 
-				if (err) {
-					module_set_state(MODULE_STATE_ERROR);
+			case STATE_ACTIVE_FAST_DIRECT:
+			case STATE_ACTIVE_SLOW_DIRECT:
+				err = ble_adv_stop();
+				if (!err) {
+					module_set_state(MODULE_STATE_OFF);
 				}
 				break;
 
@@ -311,6 +385,10 @@ static bool event_handler(const struct event_header *eh)
 				break;
 			}
 
+			if (err) {
+				module_set_state(MODULE_STATE_ERROR);
+			}
+
 			return state != STATE_IDLE;
 		}
 
@@ -323,10 +401,7 @@ static bool event_handler(const struct event_header *eh)
 				was_idle = true;
 				/* fall through */
 			case STATE_GRACE_PERIOD:
-				err = ble_adv_stop();
-				if (!err) {
-					err = ble_adv_start();
-				}
+				err = ble_adv_start(true);
 
 				if (err) {
 					module_set_state(MODULE_STATE_ERROR);
@@ -337,6 +412,8 @@ static bool event_handler(const struct event_header *eh)
 
 			case STATE_ACTIVE_FAST:
 			case STATE_ACTIVE_SLOW:
+			case STATE_ACTIVE_FAST_DIRECT:
+			case STATE_ACTIVE_SLOW_DIRECT:
 			case STATE_DISABLED:
 				/* No action */
 				break;

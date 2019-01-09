@@ -50,6 +50,18 @@ config DESKTOP_BLE_ADVERTISING_ENABLE
 	help
 	  Make device discoverable via BLE.
 
+config DESKTOP_BLE_DIRECT_ADV_AVAILABLE
+	bool
+	default y if BT_PERIPHERAL
+	default y if BT_CENTRAL && BT_SCAN_WITH_IDENTITY
+
+config DESKTOP_BLE_DIRECT_ADV
+	bool "Advertise to bonded peer directly"
+	depends on DESKTOP_BLE_ADVERTISING_ENABLE
+	depends on DESKTOP_BLE_DIRECT_ADV_AVAILABLE
+	help
+	  Device will use direct advertising if bonded.
+
 config DESKTOP_BLE_FAST_ADV
 	bool "Enable period of fast advertising"
 	depends on DESKTOP_BLE_ADVERTISING_ENABLE
