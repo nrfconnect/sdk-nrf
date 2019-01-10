@@ -49,6 +49,10 @@ static struct bt_gatt_hids_c hids_c;
 static u8_t capslock_state;
 
 
+static void hids_on_ready(struct k_work *work);
+static K_WORK_DEFINE(hids_ready_work, hids_on_ready);
+
+
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
 			      bool connectable)
@@ -273,38 +277,43 @@ static u8_t hids_c_boot_kbd_report(struct bt_gatt_hids_c *hids_c,
 
 static void hids_c_ready_cb(struct bt_gatt_hids_c *hids_c)
 {
+	k_work_submit(&hids_ready_work);
+}
+
+static void hids_on_ready(struct k_work *work)
+{
 	u8_t i;
 	int err;
 
 	printk("HIDS is ready to work\n");
-	for (i = 0; i < hids_c->rep_cnt; ++i) {
+	for (i = 0; i < hids_c.rep_cnt; ++i) {
 		struct bt_gatt_hids_c_rep_info *rep;
 
-		rep = hids_c->rep_info[i];
+		rep = hids_c.rep_info[i];
 		if (rep->ref.type ==
 		    BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
 			printk("Subscribe in report id: %u\n",
 			       rep->ref.id);
-			err = bt_gatt_hids_c_rep_subscribe(hids_c, rep,
+			err = bt_gatt_hids_c_rep_subscribe(&hids_c, rep,
 							   hids_c_notify_cb);
 			if (err) {
 				printk("Subscribe error (%d)\n", err);
 			}
 		}
 	}
-	if (hids_c->rep_boot.kbd_inp) {
+	if (hids_c.rep_boot.kbd_inp) {
 		printk("Subscribe in boot keyboard report\n");
-		err = bt_gatt_hids_c_rep_subscribe(hids_c,
-						   hids_c->rep_boot.kbd_inp,
+		err = bt_gatt_hids_c_rep_subscribe(&hids_c,
+						   hids_c.rep_boot.kbd_inp,
 						   hids_c_boot_kbd_report);
 		if (err) {
 			printk("Subscribe error (%d)\n", err);
 		}
 	}
-	if (hids_c->rep_boot.mouse_inp) {
+	if (hids_c.rep_boot.mouse_inp) {
 		printk("Subscribe in boot mouse report\n");
-		err = bt_gatt_hids_c_rep_subscribe(hids_c,
-						   hids_c->rep_boot.mouse_inp,
+		err = bt_gatt_hids_c_rep_subscribe(&hids_c,
+						   hids_c.rep_boot.mouse_inp,
 						   hids_c_boot_mouse_report);
 		if (err) {
 			printk("Subscribe error (%d)\n", err);
