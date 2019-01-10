@@ -214,6 +214,38 @@ static u16_t chrc_value_handle_by_uuid(struct bt_gatt_dm *dm,
 }
 
 /**
+ * @brief Mark hids ready to work
+ *
+ * This function marks ready flags and calls required callbacks.
+ *
+ * @param hids_c HIDS client object.
+ */
+static void hids_mark_ready(struct bt_gatt_hids_c *hids_c)
+{
+	hids_c->ready = true;
+	if (hids_c->ready_cb) {
+		hids_c->ready_cb(hids_c);
+	}
+}
+
+/**
+ * @brief Call error callback
+ *
+ * This function calls HIDS client callback for error.
+ * It releases parameter read semaphore.
+ *
+ * @param hids_c HIDS client object.
+ * @param err    Error code.
+ */
+static void hids_prep_error(struct bt_gatt_hids_c *hids_c, int err)
+{
+	k_sem_give(&hids_c->read_params_sem);
+	if (hids_c->prep_error_cb) {
+		hids_c->prep_error_cb(hids_c, err);
+	}
+}
+
+/**
  * @brief Process protocol mode read
  *
  * This function processed protocol mode read that is started when
@@ -233,7 +265,6 @@ static u8_t pm_read_process(struct bt_conn *conn, u8_t err,
 			    struct bt_gatt_read_params *params,
 			    const void *data, u16_t length);
 
-
 /**
  * @brief Start protocol mode read
  *
@@ -245,20 +276,21 @@ static u8_t pm_read_process(struct bt_conn *conn, u8_t err,
  *
  * @return 0 or negative error value.
  */
-int pm_read_start(struct bt_gatt_hids_c *hids_c)
+static int pm_read_start(struct bt_gatt_hids_c *hids_c)
 {
 	int err;
 
 	if (!hids_c) {
 		return -EINVAL;
 	}
+	LOG_DBG("PM read start");
 	hids_c->read_params.func = pm_read_process;
 	hids_c->read_params.handle_count  = 1;
 	hids_c->read_params.single.handle = hids_c->handlers.pm;
 	hids_c->read_params.single.offset = 0;
 	err = bt_gatt_read(hids_c->conn, &(hids_c->read_params));
 	if (err) {
-		k_sem_give(&hids_c->read_params_sem);
+		LOG_ERR("PM read error (err: %d)", err);
 		return err;
 	}
 	return 0;
@@ -277,18 +309,18 @@ static u8_t pm_read_process(struct bt_conn *conn, u8_t err,
 
 	if (length != 1 || !data) {
 		LOG_ERR("Unexpected PM size");
-		hids_c->prep_error_cb(hids_c, -ENOTSUP);
+		hids_prep_error(hids_c, -ENOTSUP);
 		return BT_GATT_ITER_STOP;
 	}
 	if (err) {
 		LOG_ERR("PM read error");
-		hids_c->prep_error_cb(hids_c, err);
+		hids_prep_error(hids_c, err);
 		return BT_GATT_ITER_STOP;
 	}
 
 	hids_c->pm = (enum bt_gatt_hids_c_pm)((u8_t *)data)[0];
-	hids_c->ready = true;
-	hids_c->ready_cb(hids_c);
+	LOG_DBG("Read PM success: %d", (int)hids_c->pm);
+	hids_mark_ready(hids_c);
 	return BT_GATT_ITER_STOP;
 }
 
@@ -335,9 +367,12 @@ static int repref_read_start(struct bt_gatt_hids_c *hids_c, size_t rep_idx)
 	if (rep_idx == 0) {
 		err = k_sem_take(&hids_c->read_params_sem, K_NO_WAIT);
 		if (err) {
+			LOG_ERR("Cannot take read params semaphore (err: %d)",
+				err);
 			return err;
 		}
 	}
+	LOG_DBG("Report (id: %u) reference read start", rep_idx);
 	rep = hids_c->rep_info[rep_idx];
 	hids_c->init_repref.rep_idx = rep_idx;
 	hids_c->read_params.func = repref_read_process;
@@ -346,6 +381,7 @@ static int repref_read_start(struct bt_gatt_hids_c *hids_c, size_t rep_idx)
 	hids_c->read_params.single.offset = 0;
 	err = bt_gatt_read(hids_c->conn, &(hids_c->read_params));
 	if (err) {
+		LOG_ERR("Report reference read error (err: %d)", err);
 		k_sem_give(&hids_c->read_params_sem);
 		return err;
 	}
@@ -365,39 +401,55 @@ static u8_t repref_read_process(struct bt_conn *conn, u8_t err,
 			      struct bt_gatt_hids_c,
 			      read_params);
 
+	rep_idx = hids_c->init_repref.rep_idx;
+	__ASSERT_NO_MSG(rep_idx < hids_c->rep_cnt);
+
 	if (err) {
-		hids_c->prep_error_cb(hids_c, err);
+		LOG_ERR("Report (idx: %u) reference read error (err: %d)",
+			(unsigned int)rep_idx, err);
+		hids_prep_error(hids_c, err);
 		return BT_GATT_ITER_STOP;
 	}
 	if (length != 2) {
-		hids_c->prep_error_cb(hids_c, -ENOTSUP);
+		LOG_ERR("Report (idx: %u) reference unexpected size (%u)",
+			(unsigned int)rep_idx, (unsigned int)length);
+		hids_prep_error(hids_c, -ENOTSUP);
 		return BT_GATT_ITER_STOP;
 	}
 
-	rep_idx = hids_c->init_repref.rep_idx;
-	__ASSERT_NO_MSG(rep_idx < hids_c->rep_cnt);
 	rep = hids_c->rep_info[rep_idx];
 	if ((u8_t)rep->ref.type != bdata[1]) {
-		hids_c->prep_error_cb(hids_c, -EINVAL);
+		LOG_ERR("Unexpected report type (%u while expecting %u)",
+			(unsigned int)bdata[1], (unsigned int)rep->ref.type);
+		hids_prep_error(hids_c, -EINVAL);
 		return BT_GATT_ITER_STOP;
 	}
 	rep->ref.id = bdata[0];
+	LOG_DBG("Report reference read (idx: %u, id: %u)",
+		(unsigned int)rep_idx, (unsigned int)rep->ref.id);
+
 
 	/* Next */
 	if (++rep_idx >= hids_c->rep_cnt) {
 		int ret;
 
-		ret = pm_read_start(hids_c);
-		if (ret) {
-			hids_c->prep_error_cb(hids_c, ret);
-			return BT_GATT_ITER_STOP;
+		if (hids_c->handlers.pm == 0) {
+			LOG_DBG("Device ready without boot protocol");
+			hids_mark_ready(hids_c);
+		} else {
+			ret = pm_read_start(hids_c);
+			if (ret) {
+				LOG_ERR("Cannot start boot protocol read");
+				hids_prep_error(hids_c, ret);
+				return BT_GATT_ITER_STOP;
+			}
 		}
 	} else {
 		int ret;
 
 		ret = repref_read_start(hids_c, rep_idx);
 		if (ret) {
-			hids_c->prep_error_cb(hids_c, ret);
+			hids_prep_error(hids_c, ret);
 			return BT_GATT_ITER_STOP;
 		}
 	}
@@ -594,8 +646,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 			return ret;
 		}
 	} else {
-		hids_c->ready = true;
-		hids_c->ready_cb(hids_c);
+		hids_mark_ready(hids_c);
 	}
 
 	return 0;
@@ -862,6 +913,9 @@ int bt_gatt_hids_c_rep_subscribe(struct bt_gatt_hids_c *hids_c,
 	rep->notify_params.ccc_handle = rep->handlers.ccc;
 	rep->notify_params.flags = BT_GATT_SUBSCRIBE_FLAG_VOLATILE;
 
+	LOG_DBG("Subscribe: val: %u, ccc: %u",
+		rep->notify_params.value_handle,
+		rep->notify_params.ccc_handle);
 	err = bt_gatt_subscribe(hids_c->conn, &rep->notify_params);
 	if (err) {
 		LOG_ERR("Report notification subscribe error: %d.", err);
