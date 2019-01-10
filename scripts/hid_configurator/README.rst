@@ -11,9 +11,15 @@ This application is an example of controlling nRF52 Desktop firmware parameters 
 It uses HID feature reports to communicate with firmware.
 
 Right now, it can be used to change following parameters:
+
 * mouse optical sensor resolution (CPI)
+* optical sensor power saving modes:
+	* downshift time from "Run" to "Rest1" mode
+	* downshift time from "Rest1" to "Rest2" mode
+	* downshift time from "Rest2" to "Rest3" mode
 
 Supported transports:
+
 * USB
 
 Usage
@@ -25,6 +31,8 @@ On Windows:
 On Linux:
 
 	python3 configurator.py --cpi 12000
+
+To get a list of possible arguments, call with `--help` option.
 
 Installation
 ************
@@ -42,9 +50,9 @@ This installs:
 * HIDAPI library - on Windows provided by `hidapi.dll` or `hidapi-x64.dll`
 * pyhidapi Python wrapper - installed from GitHub repository with additional patches included. The version on PyPI is obsolete and will not work.
 
-On Linux, if you want to be able to call Python script without root rights,
+On Linux, to call the Python script without root rights,
 install the provided udev rule `99-hid.rules` by copying it to
-`/etc/udev/rules.d` and re-plugging the device.
+`/etc/udev/rules.d` and replugging the device.
 
 Note:
 ************
