@@ -11,6 +11,14 @@ config POWER_OPTIMIZATION_ENABLE
 	default y
 	select LTE_EDRX_REQ
 
+config USE_AT_HOST
+	bool "Enable AT commands"
+	default y
+	select AT_HOST_LIBRARY
+	help
+		Enable AT host library so that AT commands can be sent and
+		received from and to a serial terminal.
+
 config GPS_SIM_TRIGGER_TIMER_MSEC
 	int
 	default 120000 if POWER_OPTIMIZATION_ENABLE

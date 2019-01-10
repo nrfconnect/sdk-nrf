@@ -15,6 +15,7 @@
 #include <lte_lc.h>
 #include <misc/reboot.h>
 #include <bsd.h>
+#include <at_host.h>
 
 #include "nrf_socket.h"
 #include "orientation_detector.h"
@@ -134,12 +135,14 @@ static struct nrf_cloud_sensor_data flip_cloud_data;
 static struct nrf_cloud_sensor_data gps_cloud_data;
 static struct nrf_cloud_sensor_data env_cloud_data[ARRAY_SIZE(env_sensors)];
 static atomic_val_t send_data_enable;
+static atomic_val_t at_host_enable;
 
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
 
 /* Structures for work */
 static struct k_work connect_work;
+static struct k_work at_host_start_work;
 static struct k_delayed_work leds_update_work;
 static struct k_delayed_work flip_poll_work;
 static struct k_delayed_work long_press_button_work;
@@ -466,6 +469,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATED\n");
+#if defined(CONFIG_USE_AT_HOST)
+		k_work_submit(&at_host_start_work);
+#endif
 		break;
 	case NRF_CLOUD_EVT_READY:
 		printk("NRF_CLOUD_EVT_READY\n");
@@ -715,10 +721,27 @@ static void input_process(void)
 	}
 }
 
+/* Initializes the AT host library and enabled sending and receiving of
+ * AT commands.
+ */
+static void at_host_start(struct k_work *work)
+{
+#if defined(CONFIG_USE_AT_HOST)
+	int err;
+	err = at_host_init(CONFIG_AT_HOST_UART, CONFIG_AT_HOST_TERMINATION);
+	if (err) {
+		printk("ERROR: AT Host not initialized %d\n", err);
+		nrf_cloud_error_handler(err);
+	}
+	atomic_set(&at_host_enable, 1);
+#endif
+}
+
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
 	k_work_init(&connect_work, cloud_connect);
+	k_work_init(&at_host_start_work, at_host_start);
 	k_delayed_work_init(&leds_update_work, leds_update);
 	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
@@ -889,6 +912,9 @@ void main(void)
 	while (true) {
 		nrf_cloud_process();
 		input_process();
+		if (atomic_get(&at_host_enable)) {
+			at_host_process();
+		}
 		if (IS_ENABLED(CONFIG_LOG)) {
 			/* if logging is enabled, sleep */
 			k_sleep(K_MSEC(10));
