@@ -1,15 +1,15 @@
 # udev rules which allow using configuration channel for nRF52 Desktop without
 # root permissions on Linux. Adapted from HIDAPI project.
 
-# To apply the rule, drop this file into /etc/udev/rules.d and unplug
-# and re-plug your device. This is all that is necessary to see the new
-# permissions. Udev does not have to be restarted.
+# To apply the rule, drop this file into `/etc/udev/rules.d` and unplug
+# and replug your device. These are the only steps necessary to see the new
+# permissions. You do not need to restart udev.
 
 # Rules change the permissions to 0666 (world readable/writable) for specified
 # device on Linux systems.
 
-# Note that for kernels before 2.6.24, you will need
-# to substitute "usb" with "usb_device". It shouldn't hurt to use two lines
+# Note that for kernels before 2.6.24, you must
+# substitute "usb" with "usb_device". It is recommended to use two lines
 # (one each way) for compatibility with older systems.
 
 # HIDAPI/libusb
