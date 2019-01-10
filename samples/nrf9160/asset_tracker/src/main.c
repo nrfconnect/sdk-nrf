@@ -26,8 +26,13 @@
  * that an error has occurred.
  */
 #define LEDS_ERROR_UPDATE_INTERVAL      K_MSEC(250)
-
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
+
+#if defined(CONFIG_FLIP_POLL)
+#define FLIP_POLL_INTERVAL		K_MSEC(CONFIG_FLIP_POLL_INTERVAL)
+#else
+#define FLIP_POLL_INTERVAL		0
+#endif
 
 #define BUTTON_1			BIT(0)
 #define BUTTON_2			BIT(1)
@@ -43,7 +48,6 @@
 #define FLIP_INPUT			BIT(CONFIG_FLIP_INPUT - 1)
 #define CALIBRATION_INPUT		-1
 #else
-#define CALIBRATION_INPUT		BIT(CONFIG_CALIBRATION_INPUT - 1)
 #define FLIP_INPUT			-1
 #define CALIBRATION_INPUT		BIT(CONFIG_CALIBRATION_INPUT - 1)
 #endif
@@ -107,8 +111,9 @@ static atomic_val_t send_data_enable;
 static bool flip_mode_enabled = true;
 
 /* Structures for work */
-static struct k_delayed_work leds_update_work;
 static struct k_work connect_work;
+static struct k_delayed_work leds_update_work;
+static struct k_delayed_work flip_poll_work;
 static struct k_delayed_work long_press_button_work;
 
 enum error_type {
@@ -120,7 +125,7 @@ enum error_type {
 
 /* Forward declaration of functions */
 static void cloud_connect(struct k_work *work);
-static void flip_send(void);
+static void flip_send(struct k_work *work);
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct nrf_cloud_sensor_data *data);
@@ -233,19 +238,19 @@ static void sensor_trigger_handler(struct device *dev,
 }
 
 /**@brief Poll flip orientation and send to cloud if flip mode is enabled. */
-static void flip_send(void)
+static void flip_send(struct k_work *work)
 {
 	static enum orientation_state last_orientation_state =
 		ORIENTATION_NOT_KNOWN;
 	static struct orientation_detector_sensor_data sensor_data;
 
 	if (!flip_mode_enabled || !atomic_get(&send_data_enable)) {
-		return;
+		goto exit;
 	}
 
 	if (orientation_detector_poll(&sensor_data) == 0) {
 		if (sensor_data.orientation == last_orientation_state) {
-			return;
+			goto exit;
 		}
 
 		switch (sensor_data.orientation) {
@@ -258,12 +263,18 @@ static void flip_send(void)
 			flip_cloud_data.data.len = sizeof("UPSIDE_DOWN") - 1;
 			break;
 		default:
-			return;
+			goto exit;
 		}
 
 		sensor_data_send(&flip_cloud_data);
 
 		last_orientation_state = sensor_data.orientation;
+	}
+
+exit:
+	if (work) {
+		k_delayed_work_submit(&flip_poll_work,
+					FLIP_POLL_INTERVAL);
 	}
 }
 
@@ -374,6 +385,11 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 
 		sensors_init();
 		atomic_set(&send_data_enable, 1);
+
+		if (IS_ENABLED(CONFIG_FLIP_POLL)) {
+			k_delayed_work_submit(&flip_poll_work, K_NO_WAIT);
+		}
+
 		break;
 	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
 		printk("NRF_CLOUD_EVT_SENSOR_ATTACHED\n");
@@ -539,7 +555,7 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 	}
 
 	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (has_changed & FLIP_INPUT)) {
-		flip_send();
+		flip_send(NULL);
 	}
 
 	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
@@ -554,6 +570,7 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
 			(~buttons & has_changed & CALIBRATION_INPUT)) {
 		k_delayed_work_cancel(&long_press_button_work);
+		long_press_active = false;
 	}
 
 	if ((has_changed & SWITCH_2) &&
@@ -626,6 +643,7 @@ static void work_init(void)
 {
 	k_work_init(&connect_work, cloud_connect);
 	k_delayed_work_init(&leds_update_work, leds_update);
+	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
 	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
@@ -737,11 +755,6 @@ static void sensors_init(void)
 	gps_cloud_data.data.len = nmea_data.len;
 
 	flip_cloud_data.type = NRF_CLOUD_SENSOR_FLIP;
-
-	/* Get and send sensor data after initialization, as it may be a long
-	 * time until next time if the application is in power optimized mode.
-	 */
-	flip_send();
 }
 
 /**@brief Initializes buttons and LEDs, using the DK buttons and LEDs
