@@ -94,6 +94,13 @@ enum {
 #endif
 } display_state;
 
+struct env_sensor {
+	enum nrf_cloud_sensor type;
+	enum sensor_channel channel;
+	u8_t *dev_name;
+	struct device *dev;
+};
+
 /* Array containing all nRF Cloud sensor types that are available to the
  * application.
  */
@@ -101,6 +108,17 @@ static const enum nrf_cloud_sensor available_sensors[] = {
 	NRF_CLOUD_SENSOR_GPS,
 	NRF_CLOUD_SENSOR_FLIP,
 	NRF_CLOUD_SENSOR_TEMP
+};
+
+static struct env_sensor temp_sensor = {
+	.type = NRF_CLOUD_SENSOR_TEMP,
+	.channel = SENSOR_CHAN_AMBIENT_TEMP,
+	.dev_name = CONFIG_TEMP_DEV_NAME
+};
+
+/* Array containg environment sensors available on the board. */
+static struct env_sensor *env_sensors[] = {
+	&temp_sensor
 };
 
  /* Variables to keep track of nRF cloud user association. */
@@ -114,6 +132,7 @@ static struct k_sem user_assoc_sem;
 static struct gps_data nmea_data;
 static struct nrf_cloud_sensor_data flip_cloud_data;
 static struct nrf_cloud_sensor_data gps_cloud_data;
+static struct nrf_cloud_sensor_data env_cloud_data[ARRAY_SIZE(env_sensors)];
 static atomic_val_t send_data_enable;
 
 /* Flag used for flip detection */
@@ -135,6 +154,7 @@ enum error_type {
 /* Forward declaration of functions */
 static void cloud_connect(struct k_work *work);
 static void flip_send(struct k_work *work);
+static void env_data_send(void);
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct nrf_cloud_sensor_data *data);
@@ -233,6 +253,7 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 		}
 
 		sensor_data_send(&gps_cloud_data);
+		env_data_send();
 	}
 }
 
@@ -287,6 +308,50 @@ exit:
 	}
 }
 
+/**@brief Get environment data from sensors and send to cloud. */
+static void env_data_send(void)
+{
+	int num_sensors = ARRAY_SIZE(env_sensors);
+	struct sensor_value data[num_sensors];
+	char buf[6];
+	int err;
+	u8_t len;
+
+	if (!atomic_get(&send_data_enable)) {
+		return;
+	}
+
+	for (int i = 0; i < num_sensors; i++) {
+		err = sensor_sample_fetch_chan(env_sensors[i]->dev,
+			env_sensors[i]->channel);
+		if (err) {
+			printk("Failed to fetch data from %s, error: %d\n",
+				env_sensors[i]->dev_name, err);
+			return;
+		}
+
+		err = sensor_channel_get(env_sensors[i]->dev,
+			env_sensors[i]->channel, &data[i]);
+		if (err) {
+			printk("Failed to fetch data from %s, error: %d\n",
+				env_sensors[i]->dev_name, err);
+			return;
+		}
+
+		len = snprintf(buf, sizeof(buf), "%.1f",
+			sensor_value_to_double(&data[i]));
+		env_cloud_data[i].data.ptr = buf;
+		env_cloud_data[i].data.len = len;
+		env_cloud_data[i].tag += 1;
+
+		if (env_cloud_data[i].tag == 0) {
+			env_cloud_data[i].tag = 0x1;
+		}
+
+		sensor_data_send(&env_cloud_data[i]);
+	}
+}
+
 /**@brief Update LEDs state. */
 static void leds_update(struct k_work *work)
 {
@@ -322,10 +387,10 @@ static void sensor_data_send(struct nrf_cloud_sensor_data *data)
 		return;
 	}
 
-	if (data->type == NRF_CLOUD_SENSOR_FLIP) {
-		err = nrf_cloud_sensor_data_stream(data);
-	} else {
+	if (data->type == NRF_CLOUD_SENSOR_GPS) {
 		err = nrf_cloud_sensor_data_send(data);
+	} else {
+		err = nrf_cloud_sensor_data_stream(data);
 	}
 
 	if (err) {
@@ -755,11 +820,26 @@ static void flip_detection_init(void)
 	}
 }
 
+/**@brief Initialize environment sensors. */
+static void env_sensor_init(void)
+{
+	for (int i = 0; i < ARRAY_SIZE(env_sensors); i++) {
+		env_sensors[i]->dev =
+			device_get_binding(env_sensors[i]->dev_name);
+		__ASSERT(env_sensors[i]->dev, "Could not get device %s\n",
+			env_sensors[i]->dev_name);
+
+		env_cloud_data[i].type = env_sensors[i]->type;
+		env_cloud_data[i].tag = 0x1;
+	}
+}
+
 /**@brief Initializes the sensors that are used by the application. */
 static void sensors_init(void)
 {
 	gps_init();
 	flip_detection_init();
+	env_sensor_init();
 
 	gps_cloud_data.type = NRF_CLOUD_SENSOR_GPS;
 	gps_cloud_data.tag = 0x1;

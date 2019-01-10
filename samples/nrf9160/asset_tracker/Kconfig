@@ -211,6 +211,63 @@ config CLOUD_UA_CONSOLE
 		's2' = Switch 2
 
 endchoice
+
+
+choice
+	prompt "Temperature measurement device"
+	default TEMP_USE_SIM
+	help
+		Select which device will provide temperature data.
+
+config TEMP_USE_SIM
+	bool "Use simulated temperature data"
+	select SENSOR
+	select SENSOR_SIM
+	help
+		Use sensor simulator to generate temperature data send to
+		nRF Cloud.
+
+config TEMP_USE_EXTERNAL
+	bool "User provided temperature device"
+	help
+		The user will provide an temperature device that will
+		be used for temperature measurement.
+
+endchoice
+
+if TEMP_USE_SIM
+config TEMP_DEV_NAME
+	string
+	default SENSOR_SIM_DEV_NAME
+
+config TEMP_TRIGGER
+	bool
+	default SENSOR_SIM_TRIGGER
+
+config TEMP_SIM_BUTTON
+	int "Button or switch number to simulate flip"
+	range 1 4 if BOARD_NRF9160_PCA10090
+	range 1 1 if BOARD_NRF9160_PCA20035
+	default 3 if BOARD_NRF9160_PCA10090
+	default 1 if BOARD_NRF9160_PCA20035
+	help
+		Button or switch number to use for simulating
+		a board flip event.
+		1 - Button 1
+		2 - Button 2
+		3 - Switch 1
+		4 - Switch 2
+endif
+
+if TEMP_USE_EXTERNAL
+
+config TEMP_DEV_NAME
+	string "Accelerometer device name"
+	help
+		Device from which temperature data will be fetched and used
+		for orientation detection and sent to nRF Cloud.
+
+endif
 endmenu
 
 menu "Zephyr Kernel"
