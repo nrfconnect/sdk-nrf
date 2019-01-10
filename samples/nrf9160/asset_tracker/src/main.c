@@ -94,6 +94,15 @@ enum {
 #endif
 } display_state;
 
+/* Array containing all nRF Cloud sensor types that are available to the
+ * application.
+ */
+static const enum nrf_cloud_sensor available_sensors[] = {
+	NRF_CLOUD_SENSOR_GPS,
+	NRF_CLOUD_SENSOR_FLIP,
+	NRF_CLOUD_SENSOR_TEMP
+};
+
  /* Variables to keep track of nRF cloud user association. */
 static u8_t ua_pattern[10];
 static int buttons_to_capture;
@@ -345,11 +354,43 @@ static void on_user_association_req(const struct nrf_cloud_evt *p_evt)
 	}
 }
 
+/**@brief Attach available sensors to nRF Cloud. */
+void sensors_attach(void)
+{
+	int err;
+	struct nrf_cloud_sa_param param;
+
+	for (u8_t i = 0; i < ARRAY_SIZE(available_sensors); i++) {
+		param.sensor_type = available_sensors[i];
+
+		err = nrf_cloud_sensor_attach(&param);
+		if (err) {
+			printk("nrf_cloud_sensor_attach failed: %d\n",
+				err);
+			nrf_cloud_error_handler(err);
+		}
+	}
+}
+
+/**@brief Callback for sensor attached event from nRF Cloud. */
+void sensor_attached(void)
+{
+	static u8_t attached_sensors;
+	attached_sensors++;
+
+	if (attached_sensors == ARRAY_SIZE(available_sensors)) {
+		atomic_set(&send_data_enable, 1);
+		sensors_init();
+
+		if (IS_ENABLED(CONFIG_FLIP_POLL)) {
+			k_delayed_work_submit(&flip_poll_work, K_NO_WAIT);
+		}
+	}
+}
+
 /**@brief Callback for nRF Cloud events. */
 static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 {
-	int err;
-
 	switch (p_evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_CONNECTED\n");
@@ -364,35 +405,11 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 	case NRF_CLOUD_EVT_READY:
 		printk("NRF_CLOUD_EVT_READY\n");
 		display_state = LEDS_PAIRED;
-		struct nrf_cloud_sa_param param = {
-			.sensor_type = NRF_CLOUD_SENSOR_FLIP,
-		};
-
-		err = nrf_cloud_sensor_attach(&param);
-
-		if (err) {
-			printk("nrf_cloud_sensor_attach failed: %d\n", err);
-			nrf_cloud_error_handler(err);
-		}
-
-		param.sensor_type = NRF_CLOUD_SENSOR_GPS;
-		err = nrf_cloud_sensor_attach(&param);
-
-		if (err) {
-			printk("nrf_cloud_sensor_attach failed: %d\n", err);
-			nrf_cloud_error_handler(err);
-		}
-
-		sensors_init();
-		atomic_set(&send_data_enable, 1);
-
-		if (IS_ENABLED(CONFIG_FLIP_POLL)) {
-			k_delayed_work_submit(&flip_poll_work, K_NO_WAIT);
-		}
-
+		sensors_attach();
 		break;
 	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
 		printk("NRF_CLOUD_EVT_SENSOR_ATTACHED\n");
+		sensor_attached();
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		printk("NRF_CLOUD_EVT_SENSOR_DATA_ACK\n");
@@ -439,19 +456,14 @@ static void cloud_connect(struct k_work *work)
 		NRF_CLOUD_UA_BUTTON
 	};
 
-	const enum nrf_cloud_sensor supported_sensors[] = {
-		NRF_CLOUD_SENSOR_GPS,
-		NRF_CLOUD_SENSOR_FLIP
-	};
-
 	const struct nrf_cloud_ua_list ua_list = {
 		.size = ARRAY_SIZE(supported_uas),
 		.ptr = supported_uas
 	};
 
 	const struct nrf_cloud_sensor_list sensor_list = {
-		.size = ARRAY_SIZE(supported_sensors),
-		.ptr = supported_sensors
+		.size = ARRAY_SIZE(available_sensors),
+		.ptr = available_sensors
 	};
 
 	const struct nrf_cloud_connect_param param = {
