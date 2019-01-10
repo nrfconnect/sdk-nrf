@@ -14,8 +14,9 @@ if BT
 
 comment "BLE Libraries"
 rsource "Kconfig.pool"
-rsource "Kconfig.scan"
 rsource "Kconfig.discovery"
+rsource "Kconfig.scan"
+rsource "Kconfig.link"
 
 rsource "services/Kconfig"
 

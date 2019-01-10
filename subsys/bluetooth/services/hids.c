@@ -52,7 +52,7 @@ int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn)
 	__ASSERT_NO_MSG(hids_obj != NULL);
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_alloc(hids_obj->ctx_manager, conn);
+		bt_conn_ctx_alloc(hids_obj->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("There is no free memory to "
@@ -60,8 +60,7 @@ int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn)
 		return -ENOMEM;
 	}
 
-	memset(conn_data, 0,
-	       ble_link_ctx_manager_get_block_size(hids_obj->ctx_manager));
+	memset(conn_data, 0, bt_conn_ctx_block_size_get(hids_obj->conn_ctx));
 
 	conn_data->pm_ctx_value = HIDS_PROTOCOL_MODE_REPORT;
 
@@ -85,7 +84,7 @@ int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn)
 		    hids_obj->outp_rep_group.reports[i].size;
 	}
 
-	ble_link_ctx_manager_release(hids_obj->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
 	return 0;
 }
@@ -95,7 +94,7 @@ int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn)
 	__ASSERT_NO_MSG(conn != NULL);
 	__ASSERT_NO_MSG(hids_obj != NULL);
 
-	int err = ble_link_ctx_manager_free(hids_obj->ctx_manager, conn);
+	int err = bt_conn_ctx_free(hids_obj->conn_ctx, conn);
 
 	if (err) {
 		LOG_WRN("The memory was not allocated for the context of this "
@@ -136,7 +135,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 	u8_t const *new_pm = (u8_t const *)buf;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -166,7 +165,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 
 	memcpy(cur_pm + offset, new_pm, len);
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return len;
 }
@@ -182,7 +181,7 @@ static ssize_t hids_protocol_mode_read(struct bt_conn *conn,
 	ssize_t ret_len;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -194,7 +193,7 @@ static ssize_t hids_protocol_mode_read(struct bt_conn *conn,
 	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, protocol_mode,
 				    sizeof(*protocol_mode));
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
 }
@@ -225,7 +224,7 @@ static ssize_t hids_inp_rep_read(struct bt_conn *conn,
 	ssize_t ret_len;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -237,7 +236,7 @@ static ssize_t hids_inp_rep_read(struct bt_conn *conn,
 	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 				    rep->size);
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
 }
@@ -271,7 +270,7 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 	ssize_t ret_len;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -283,7 +282,7 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 				    rep->size);
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
 }
@@ -302,7 +301,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 	u8_t *rep_data;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -324,7 +323,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 		rep->handler(&report, conn);
 	}
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return len;
 }
@@ -358,7 +357,7 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 	ssize_t ret_len;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -370,7 +369,7 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 				    rep->size);
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
 }
@@ -389,7 +388,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 	u8_t *rep_data;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -411,7 +410,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 		rep->handler(&report, conn);
 	}
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return len;
 }
@@ -466,7 +465,7 @@ static ssize_t hids_boot_mouse_inp_report_read(struct bt_conn *conn,
 	ssize_t ret_len;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -479,7 +478,7 @@ static ssize_t hids_boot_mouse_inp_report_read(struct bt_conn *conn,
 	ret_len =
 	    bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 			      sizeof(conn_data->hids_boot_mouse_inp_rep_ctx));
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
 }
@@ -518,7 +517,7 @@ static ssize_t hids_boot_kb_inp_report_read(struct bt_conn *conn,
 	ssize_t ret_len;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -530,7 +529,7 @@ static ssize_t hids_boot_kb_inp_report_read(struct bt_conn *conn,
 	ret_len =
 	    bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 			      sizeof(conn_data->hids_boot_kb_inp_rep_ctx));
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
 }
@@ -571,7 +570,7 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 	ssize_t ret_len;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -583,7 +582,7 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 	ret_len =
 	    bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 			      sizeof(conn_data->hids_boot_kb_outp_rep_ctx));
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
 }
@@ -600,7 +599,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 	u8_t *rep_data;
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids->ctx_manager, conn);
+		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -623,7 +622,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 		rep->handler(&report, conn);
 	}
 
-	ble_link_ctx_manager_release(hids->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return len;
 }
@@ -948,7 +947,7 @@ int hids_uninit(struct hids *hids_obj)
 
 	struct bt_gatt_attr *attr_start = hids_obj->svc.attrs;
 	struct bt_gatt_attr *attr = attr_start;
-	struct ble_link_ctx_manager *ctx_manager = hids_obj->ctx_manager;
+	struct bt_conn_ctx_lib *conn_ctx = hids_obj->conn_ctx;
 
 	/* Unregister primary service. */
 	bt_gatt_pool_svc_put(attr++);
@@ -1015,12 +1014,12 @@ int hids_uninit(struct hids *hids_obj)
 		 "Failed to unregister full list of attributes.");
 
 	/* Free all allocated memory. */
-	ble_link_ctx_manager_free_all(hids_obj->ctx_manager);
+	bt_conn_ctx_free_all(hids_obj->conn_ctx);
 
 	/* Reset HIDS instance. */
 	memset(hids_obj, 0, sizeof(*hids_obj));
 	hids_obj->svc.attrs = attr_start;
-	hids_obj->ctx_manager = ctx_manager;
+	hids_obj->conn_ctx = conn_ctx;
 
 	return 0;
 }
@@ -1051,18 +1050,18 @@ static int inp_rep_notify_all(struct hids *hids_obj,
 	u8_t *rep_data = NULL;
 
 	const size_t contexts =
-	    ble_link_ctx_manager_get_ctx_num(hids_obj->ctx_manager);
+	    bt_conn_ctx_count(hids_obj->conn_ctx);
 
 	for (size_t i = 0; i < contexts; i++) {
-		const struct ble_link_conn_ctx *conn_ctx =
-		    ble_link_ctx_manager_context_get(hids_obj->ctx_manager, i);
+		const struct bt_conn_ctx *ctx =
+			bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
 
-		if (conn_ctx) {
+		if (ctx) {
 			bool notification_enabled =
-			    hids_is_notification_enabled(conn_ctx->conn,
+			    hids_is_notification_enabled(ctx->conn,
 							 hids_inp_rep->ccc);
 			if (notification_enabled) {
-				conn_data = conn_ctx->data;
+				conn_data = ctx->data;
 				rep_data = conn_data->inp_rep_ctx +
 					   hids_inp_rep->offset;
 
@@ -1070,8 +1069,8 @@ static int inp_rep_notify_all(struct hids *hids_obj,
 						   len);
 			}
 
-			ble_link_ctx_manager_release(hids_obj->ctx_manager,
-						     (void *)conn_ctx->data);
+			bt_conn_ctx_release(hids_obj->conn_ctx,
+					    (void *)ctx->data);
 		}
 	}
 
@@ -1105,7 +1104,7 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 	}
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids_obj->ctx_manager, conn);
+		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");
@@ -1119,7 +1118,7 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 	    bt_gatt_notify_cb(conn, &hids_obj->svc.attrs[hids_inp_rep->att_ind],
 			      rep, hids_inp_rep->size, cb);
 
-	ble_link_ctx_manager_release(hids_obj->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
 	return err;
 }
@@ -1137,20 +1136,19 @@ static int boot_mouse_inp_report_notify_all(
 	rep_buff[1] = (u8_t)x_delta;
 	rep_buff[2] = (u8_t)y_delta;
 
-	const size_t contexts =
-	    ble_link_ctx_manager_get_ctx_num(hids_obj->ctx_manager);
+	const size_t contexts = bt_conn_ctx_count(hids_obj->conn_ctx);
 
 	for (size_t i = 0; i < contexts; i++) {
-		const struct ble_link_conn_ctx *conn_ctx =
-		    ble_link_ctx_manager_context_get(hids_obj->ctx_manager, i);
+		const struct bt_conn_ctx *ctx =
+			bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
 
-		if (conn_ctx) {
+		if (ctx) {
 			bool notification_enabled =
 			    hids_is_notification_enabled(
-				conn_ctx->conn, boot_mouse_inp_rep->ccc);
+				ctx->conn, boot_mouse_inp_rep->ccc);
 
 			if (notification_enabled) {
-				conn_data = conn_ctx->data;
+				conn_data = ctx->data;
 				rep_data =
 				    conn_data->hids_boot_mouse_inp_rep_ctx;
 
@@ -1164,8 +1162,8 @@ static int boot_mouse_inp_report_notify_all(
 				rep_buff[0] = rep_data[0];
 			}
 
-			ble_link_ctx_manager_release(hids_obj->ctx_manager,
-						     (void *)conn_ctx->data);
+			bt_conn_ctx_release(hids_obj->conn_ctx,
+					    (void *)ctx->data);
 		}
 	}
 
@@ -1199,7 +1197,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 	}
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids_obj->ctx_manager, conn);
+		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
 	static_assert(sizeof(conn_data->hids_boot_mouse_inp_rep_ctx) >= 3,
 		      "buffer is too short");
@@ -1225,7 +1223,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 	rep_data[1] = 0;
 	rep_data[2] = 0;
 
-	ble_link_ctx_manager_release(hids_obj->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
 	return err;
 }
@@ -1239,20 +1237,19 @@ boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
 	u8_t *rep_data = NULL;
 
-	const size_t contexts =
-	    ble_link_ctx_manager_get_ctx_num(hids_obj->ctx_manager);
+	const size_t contexts = bt_conn_ctx_count(hids_obj->conn_ctx);
 
 	for (size_t i = 0; i < contexts; i++) {
-		const struct ble_link_conn_ctx *conn_ctx =
-		    ble_link_ctx_manager_context_get(hids_obj->ctx_manager, i);
+		const struct bt_conn_ctx *ctx =
+		    bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
 
-		if (conn_ctx) {
+		if (ctx) {
 			bool notification_enabled =
 			    hids_is_notification_enabled(
-				conn_ctx->conn, boot_kb_input_report->ccc);
+				ctx->conn, boot_kb_input_report->ccc);
 
 			if (notification_enabled) {
-				conn_data = conn_ctx->data;
+				conn_data = ctx->data;
 				rep_data = conn_data->hids_boot_kb_inp_rep_ctx;
 
 				memcpy(rep_data, rep, len);
@@ -1260,8 +1257,8 @@ boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
 				       (BOOT_KB_INPUT_REP_CHAR_LEN - len));
 			}
 
-			ble_link_ctx_manager_release(hids_obj->ctx_manager,
-						     (void *)conn_ctx->data);
+			bt_conn_ctx_release(hids_obj->conn_ctx,
+					    (void *)ctx->data);
 		}
 	}
 
@@ -1293,7 +1290,7 @@ int hids_boot_kb_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 	}
 
 	struct hids_conn_data *conn_data =
-	    ble_link_ctx_manager_get(hids_obj->ctx_manager, conn);
+		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
 	if (len > sizeof(conn_data->hids_boot_kb_inp_rep_ctx)) {
 		return -EINVAL;
@@ -1314,7 +1311,7 @@ int hids_boot_kb_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 	    bt_gatt_notify_cb(conn, &hids_obj->svc.attrs[rep_ind], rep_data,
 			      sizeof(conn_data->hids_boot_kb_inp_rep_ctx), cb);
 
-	ble_link_ctx_manager_release(hids_obj->ctx_manager, (void *)conn_data);
+	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
 	return err;
 }
