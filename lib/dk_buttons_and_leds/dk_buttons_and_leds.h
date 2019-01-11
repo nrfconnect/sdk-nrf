@@ -8,8 +8,8 @@
 #define DK_BUTTON_AND_LEDS_H__
 
 /** @file dk_buttons_and_leds.h
- * @brief Module to handle buttons and LEDs on Nordic DKs.
- * @defgroup dk_buttons_and_leds DK buttons and leds
+ * @brief Module for handling buttons and LEDs on Nordic DKs.
+ * @defgroup dk_buttons_and_leds DK buttons and LEDs
  * @{
  */
 
@@ -44,92 +44,96 @@ extern "C" {
 			  DK_BTN2_MSK | DK_BTN3_MSK)
 /**
  * @typedef button_handler_t
- * @brief Callback executed when button state change is detected
+ * @brief Callback that is executed when a button state change is detected.
  *
- * @param button_state Bitmask of button states
- * @param has_changed Bitmask that shows which buttons that have changed.
+ * @param button_state Bitmask of button states.
+ * @param has_changed Bitmask that shows which buttons have changed.
  */
 typedef void (*button_handler_t)(u32_t button_state, u32_t has_changed);
 
-/** @brief Initialize the leds library.
+/** @brief Initialize the library to control the LEDs.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  */
 int dk_leds_init(void);
 
-/** @brief Initialize the buttons library.
+/** @brief Initialize the library to read the button state.
  *
  *  @param  button_handler Callback handler for button state changes.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  */
 int dk_buttons_init(button_handler_t button_handler);
 
-/** @brief Read current button states
+/** @brief Read current button states.
  *
- *  @param button_state Bitmask of button states
- *  @param has_changed Bitmask that shows which buttons that have changed.
+ *  @param button_state Bitmask of button states.
+ *  @param has_changed Bitmask that shows which buttons have changed.
  */
 void dk_read_buttons(u32_t *button_state, u32_t *has_changed);
 
-/** @brief Get current buttons state
- *
- *  Get buttons state from internal variable.
+/** @brief Get current button state from internal variable.
  *
  *  @return Bitmask of button states.
  */
 u32_t dk_get_buttons(void);
 
-/** @brief Set value of LED pins
+/** @brief Set value of LED pins as specified in one bitmask.
  *
- *  @param  leds Bitmask that that will turn on and of the LEDs
+ *  @param  leds Bitmask that defines which LEDs to turn on and off.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  */
 int dk_set_leds(u32_t leds);
 
 
-/** @brief Set value of LED pins.
+/** @brief Set value of LED pins as specified in two bitmasks.
  *
- *  @param  leds_on_mask Bitmask that that will turn on the corresponding
- *                       LEDs. In cases where it overlaps with
- *                       leds_off_mask, the leds_on_mask will have priority.
+ *  @param  leds_on_mask  Bitmask that defines which LEDs to turn on.
+ *                        If this bitmask overlaps with @p leds_off_mask,
+ *                        @p leds_on_mask has priority.
  *
- *  @param  leds_off_mask Bitmask that that will turn off the corresponding
- *                        LEDs. In cases where it overlaps with
- *                        leds_on_mask, the leds_on_mask will have priority.
+ *  @param  leds_off_mask Bitmask that defines which LEDs to turn off.
+ *                        If this bitmask overlaps with @p leds_on_mask,
+ *                        @p leds_on_mask has priority.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  */
 int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask);
 
-/** @brief Set single LED value
+/** @brief Set a single LED value.
  *
- *  Turns single LED on or off.
+ *  This function turns a single LED on or off.
  *
- *  @param led_idx Index of the LED
- *  @param val     Value for the single LED: 1 - turn on, 0 - turn off
+ *  @param led_idx Index of the LED.
+ *  @param val     Value for the LED: 1 - turn on, 0 - turn off
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  *
- *  @sa dk_set_led_on
- *  @sa dk_set_led_off
+ *  @sa dk_set_led_on, dk_set_led_off
  */
 int dk_set_led(u8_t led_idx, u32_t val);
 
-/** @brief Set single LED on
+/** @brief Turn a single LED on.
  *
- *  @param led_idx Index of the LED
+ *  @param led_idx Index of the LED.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  */
 int dk_set_led_on(u8_t led_idx);
 
-/** @brief Set single LED off
+/** @brief Turn a single LED off.
  *
- *  @param led_idx Index of the LED
+ *  @param led_idx Index of the LED.
  *
- *  @return Zero on success or (negative) error code otherwise.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  */
 int dk_set_led_off(u8_t led_idx);
 
