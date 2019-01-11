@@ -837,6 +837,7 @@ static u8_t rep_read_process(struct bt_conn *conn, u8_t err,
 	}
 	rep->size = (u8_t)length;
 	(void)rep->read_cb(rep->hids_c, rep, 0, data);
+	rep->read_cb = NULL;
 	return BT_GATT_ITER_STOP;
 }
 
@@ -873,8 +874,8 @@ int bt_gatt_hids_c_rep_read(struct bt_gatt_hids_c *hids_c,
  *  @param err ATT error code.
  *  @param params Write parameters used.
  */
-static void rep_write_proc(struct bt_conn *conn, u8_t err,
-			   struct bt_gatt_write_params *params)
+static void rep_write_process(struct bt_conn *conn, u8_t err,
+			      struct bt_gatt_write_params *params)
 {
 	struct bt_gatt_hids_c_rep_info *rep;
 
@@ -886,6 +887,7 @@ static void rep_write_proc(struct bt_conn *conn, u8_t err,
 		return;
 	}
 	rep->write_cb(rep->hids_c, rep, err);
+	rep->write_cb = NULL;
 }
 
 int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
@@ -902,7 +904,7 @@ int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
 		return -EBUSY;
 	}
 	rep->write_cb = func;
-	rep->write_params.func   = rep_write_proc;
+	rep->write_params.func   = rep_write_process;
 	rep->write_params.data   = data;
 	rep->write_params.handle = rep->handlers.val;
 	rep->write_params.length = length;
