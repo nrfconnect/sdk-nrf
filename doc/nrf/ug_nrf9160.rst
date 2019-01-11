@@ -155,7 +155,7 @@ Asset Tracker
 	The **Asset Tracker** sample is a comprehensive application that demonstrates
 	how to use the nRF Cloud library to connect an nRF9160 DK to
 	the `nRF Cloud`_ through LTE, and transmit GPS and device orientation data.
-	For details, see :ref:`nrf_cloud`.
+	For details, see :ref:`asset_tracker`.
 
 LTE Sensor Gateway
 	The **LTE Sensor Gateway** sample demonstrates how to transmit sensor data

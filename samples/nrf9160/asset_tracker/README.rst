@@ -1,4 +1,4 @@
-.. _nrf_cloud:
+.. _asset_tracker:
 
 nRF9160: Asset Tracker
 ######################
@@ -29,7 +29,7 @@ Requirements
   The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
   Therefore, it requires the :ref:`secure_boot` bootloader that prepares the required peripherals to be available for the application.
 
-.. _nrf_cloud_user_interface:
+.. _asset_tracker_user_interface:
 
 User interface
 **************

@@ -20,7 +20,7 @@ Highlights
 
 * Added the following samples for nRF9160:
 
-  * :ref:`nrf_cloud`
+  * :ref:`asset_tracker`
   * :ref:`lte_sensor_gateway`
   * AT Client
 
@@ -97,7 +97,7 @@ nRF9160
     The sample configures resources for the secure domain and boots an application from the non-secure domain.
   * **at_client**:
     This sample uses the **at_host** library to provide a UART interface for AT commands.
-  * :ref:`nrf_cloud`:
+  * :ref:`asset_tracker`:
     This sample uses the **nrf_cloud** library to transmit GPS and device orientation data to the nRF Cloud via LTE.
   * :ref:`lte_sensor_gateway`:
     This sample uses the **nrf_cloud** library to transmit sensor data collected via Bluetooth LE to the nRF Cloud via LTE.
@@ -210,9 +210,9 @@ Known issues
 nRF9160
 =======
 
-* The :ref:`nrf_cloud` sample does not wait for connection to nRF Cloud before trying to send data.
+* The :ref:`asset_tracker` sample does not wait for connection to nRF Cloud before trying to send data.
   This causes the sample to crash if the user toggles one of the switches before the board is connected to the cloud.
-* The :ref:`nrf_cloud` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
+* The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * If a debugger (for example, J-Link) is connected via SWD to the nRF9160, the modem firmware will reset.
   Therefore, the LTE modem cannot be operational during debug sessions.
 * The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.
