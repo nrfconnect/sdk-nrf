@@ -114,7 +114,7 @@ From |NCS|
   * ``lib/gps_sim``
   * ``lib/bsd_lib``
   * ``lib/sensor_sim``
-  * ``lib/dk_buttons_and_leds``
+  * :ref:`dk_buttons_and_leds_readme`
   * ``drivers/lte_link_control``
 
 From Zephyr
