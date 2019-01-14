@@ -49,6 +49,42 @@ config DESKTOP_BLE_ADVERTISING_ENABLE
 	help
 	  Make device discoverable via BLE.
 
+config DESKTOP_BLE_SWIFT_PAIR
+	bool "Enable Swift Pair feature"
+	default y
+	depends on DESKTOP_BLE_ADVERTISING_ENABLE
+	help
+	  Enable quick pairing with Microsoft Swift Pair.
+
+if DESKTOP_BLE_SWIFT_PAIR
+config DESKTOP_BLE_FAST_ADV_TIMEOUT
+	int "Time of initial fastest advertising"
+	default 30
+	help
+	  Device will initially advertise with shorter interval to enable
+	  quickest discovery by Swift Pair hosts. After this time it will shift
+	  to normal cadence advertising.
+
+config DESKTOP_BLE_SWIFT_PAIR_REMOVE_BEFORE_EXIT_TIMEOUT
+	int "Time before going to low-power mode when the Swift Pair section will be removed"
+	default 30
+	help
+	  To ensure users will not try to connect to a device which is no longer
+	  available, Swift Pair vendor section will be removed before exiting
+	  from advertising mode.
+
+endif
+
+if !DESKTOP_BLE_SWIFT_PAIR
+config DESKTOP_BLE_FAST_ADV_TIMEOUT
+	int
+	default 0
+
+config DESKTOP_BLE_SWIFT_PAIR_REMOVE_BEFORE_EXIT_TIMEOUT
+	int
+	default 0
+endif
+
 if DESKTOP_BLE_ADVERTISING_ENABLE
 
 module = DESKTOP_BLE_ADV

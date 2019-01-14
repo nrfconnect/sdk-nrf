@@ -29,6 +29,13 @@ static const struct bt_data ad[] = {
 			  0x12, 0x18,	/* HID Service */
 #endif
 			  0x0f, 0x18),	/* Battery Service */
+#if CONFIG_DESKTOP_BLE_SWIFT_PAIR
+	BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA,
+			  0x06, 0x00,	/* Microsoft Vendor ID */
+			  0x03,		/* Microsoft Beacon ID */
+			  0x00,		/* Microsoft Beacon Sub Scenario */
+			  0x80),	/* Reserved RSSI Byte */
+#endif
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
