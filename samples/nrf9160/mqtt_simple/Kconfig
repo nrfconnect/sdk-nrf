@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "MQTT simple sample"
+config MQTT_PUB_TOPIC
+	string "MQTT publish topic"
+	default "my/publish/topic"
+
+config MQTT_SUB_TOPIC
+	string "MQTT subscribe topic"
+	default "my/subscribe/topic"
+
+config MQTT_CLIENT_ID
+	string "MQTT Client ID"
+	default "my-client-id"
+
+config MQTT_BROKER_HOSTNAME
+	string "MQTT broker hostname"
+	default "iot.eclipse.org"
+
+config MQTT_BROKER_PORT
+	int "MQTT broker port"
+	default 1883
+
+config MQTT_MESSAGE_BUFFER_SIZE
+	int ""
+	default 128
+
+config MQTT_PAYLOAD_BUFFER_SIZE
+	int ""
+	default 128
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
