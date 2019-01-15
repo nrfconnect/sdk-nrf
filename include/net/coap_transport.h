@@ -33,8 +33,11 @@ extern "C" {
 #endif
 
 
-/**@brief  Identifies the local transport handle for data exchange. */
-typedef u32_t coap_transport_handle_t;
+/**@brief  Identifies the local transport handle for data exchange.
+ * @details This handle is the socket descriptor that can be used to perform
+ *          any socket operations like poll, setsockopt, getsockopt etc.
+ */
+typedef int coap_transport_handle_t;
 
 /**@brief TLS configuration for secure MQTT transports. */
 typedef struct {
@@ -74,8 +77,10 @@ typedef struct {
 	 */
 	int protocol;
 
-	/** Transport associated with the local endpoint. */
-	coap_transport_handle_t *transport;
+	/** Transport associated with the local endpoint. This is a socket
+	 *  descriptor.
+	 */
+	coap_transport_handle_t transport;
 
 	/** Security parameters in case the protocol is SPROTO_DTLS1v2.
 	 *  Otherwise ignored.
@@ -116,7 +121,7 @@ u32_t coap_transport_init(coap_transport_init_t *param);
  * @return 0 if the data was sent successfully. Otherwise, an error code that
  *         indicates the reason for the failure is returned.
  */
-u32_t coap_transport_write(const coap_transport_handle_t *handle,
+u32_t coap_transport_write(const coap_transport_handle_t handle,
 			   const struct sockaddr *remote, const u8_t *data,
 			   u16_t datalen);
 
@@ -138,7 +143,7 @@ u32_t coap_transport_write(const coap_transport_handle_t *handle,
  *         that indicates the reason for the failure is returned.
  *
  */
-u32_t coap_transport_read(const coap_transport_handle_t *handle,
+u32_t coap_transport_read(const coap_transport_handle_t handle,
 			  const struct sockaddr *remote,
 			  const struct sockaddr *local, u32_t result,
 			  const u8_t *data, u16_t datalen);

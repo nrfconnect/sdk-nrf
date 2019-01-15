@@ -32,7 +32,7 @@ u32_t coap_message_create(coap_message_t *message,
 	NULL_PARAM_CHECK(message);
 	NULL_PARAM_CHECK(init_config);
 
-	if (init_config->transport == NULL) {
+	if (init_config->transport == -1) {
 		return EINVAL;
 	}
 

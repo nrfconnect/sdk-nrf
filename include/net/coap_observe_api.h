@@ -44,7 +44,7 @@ typedef struct {
 	coap_resource_t *resource_of_interest;
 
 	/** Pointer to use when sending notifictions. */
-	coap_transport_handle_t *transport;
+	coap_transport_handle_t transport;
 } coap_observer_t;
 
 /**@brief Struct for CoAP Client for holding an instance of a remote observable
