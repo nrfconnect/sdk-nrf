@@ -11,5 +11,8 @@ RttNordicConfig = {
     'byteorder': 'little',
     'reset_on_start': False,
     'connection_timeout': -1,
-    'timestamp_raw_max': 2**32 #timestamp on uC is stored as 32-bit value
+    'timestamp_raw_max': 2**32, #timestamp on uC is stored as 32-bit value
+    'rtt_read_period': 0.1, #in seconds
+    'rtt_read_chunk_size': 64000,
+    'rtt_additional_read_thresh': 4096
 }
