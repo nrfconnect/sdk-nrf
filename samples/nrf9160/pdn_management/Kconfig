@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Application sample"
+
+config POWER_OPTIMIZATION_ENABLE
+	bool "Enable power optimization"
+	default y
+	select LTE_EDRX_REQ
+
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
