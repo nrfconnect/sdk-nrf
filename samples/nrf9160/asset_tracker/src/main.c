@@ -12,11 +12,13 @@
 #include <console.h>
 #include <nrf_cloud.h>
 #include <dk_buttons_and_leds.h>
-#include <lte_lc.h>
 #include <misc/reboot.h>
+#if defined(CONFIG_BSD_LIBRARY)
 #include <bsd.h>
+#include <lte_lc.h>
+#endif
 
-#include "nrf_socket.h"
+
 #include "orientation_detector.h"
 
 /* Interval in milliseconds between each time status LEDs are updated. */
@@ -52,17 +54,17 @@
 #define CALIBRATION_INPUT		BIT(CONFIG_CALIBRATION_INPUT - 1)
 #endif
 
-#if !defined(CONFIG_LTE_LINK_CONTROL)
+#if defined(CONFIG_BSD_LIBRARY) && \
+!defined(CONFIG_LTE_LINK_CONTROL)
 #error "Missing CONFIG_LTE_LINK_CONTROL"
-#endif /* !defined(CONFIG_LTE_LINK_CONTROL) */
+#endif
 
-#if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT) && \
-	defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
+#if defined(CONFIG_BSD_LIBRARY) && \
+defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT) && \
+defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #error "PROVISION_CERTIFICATES \
 	requires CONFIG_LTE_AUTO_INIT_AND_CONNECT to be disabled!"
-#endif /* defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
-	* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
-	*/
+#endif
 
 enum {
 #if defined(CONFIG_BOARD_NRF9160_PCA20035)
@@ -166,10 +168,14 @@ void error_handler(enum error_type err_type, int err_code)
 	if (err_type == ERROR_NRF_CLOUD) {
 		k_sched_lock();
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 		/* Turn off and shutdown modem */
 		int err = lte_lc_power_off();
 		__ASSERT(err == 0, "lte_lc_power_off failed: %d", err);
+#endif
+#if defined(CONFIG_BSD_LIBRARY)
 		bsd_shutdown();
+#endif
 	}
 
 #if !defined(CONFIG_DEBUG)
@@ -236,12 +242,16 @@ void bsd_irrecoverable_error_handler(uint32_t err)
 /**@brief Callback for GPS trigger events */
 static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 {
+	ARG_UNUSED(trigger);
+#if defined(CONFIG_DK_LIBRARY)
 	u32_t button_state, has_changed;
 
-	ARG_UNUSED(trigger);
 	dk_read_buttons(&button_state, &has_changed);
 
 	if (!(button_state & SWITCH_2) && atomic_get(&send_data_enable)) {
+#else
+	{
+#endif
 		gps_sample_fetch(dev);
 		gps_channel_get(dev, GPS_CHAN_NMEA, &nmea_data);
 		gps_cloud_data.data.ptr = nmea_data.str;
@@ -369,7 +379,9 @@ static void leds_update(struct k_work *work)
 	}
 
 	if (led_on_mask != current_led_on_mask) {
+#if defined(CONFIG_DK_LIBRARY)
 		dk_set_leds(led_on_mask);
+#endif
 		current_led_on_mask = led_on_mask;
 	}
 
@@ -565,6 +577,7 @@ static void cloud_user_associate(void)
 	}
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 /**@brief Function to keep track of user association input when using
  * buttons and switches to register the association pattern.
  */
@@ -599,6 +612,7 @@ static void pairing_button_register(u32_t button_state, u32_t has_changed)
 		k_sem_give(&user_assoc_sem);
 	}
 }
+#endif /* defined(CONFIG_DK_LIBRARY) */
 
 static void accelerometer_calibrate(struct k_work *work)
 {
@@ -620,11 +634,11 @@ static void accelerometer_calibrate(struct k_work *work)
 	display_state = prev_display_state;
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 /**@brief Callback for button events from the DK buttons and LEDs library. */
 static void button_handler(u32_t buttons, u32_t has_changed)
 {
 	static bool long_press_active;
-	int err;
 
 	if (pattern_recording && IS_ENABLED(CONFIG_CLOUD_UA_BUTTONS)) {
 		pairing_button_register(buttons, has_changed);
@@ -650,8 +664,11 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 		long_press_active = false;
 	}
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 	if ((has_changed & SWITCH_2) &&
 	    IS_ENABLED(CONFIG_POWER_OPTIMIZATION_ENABLE)) {
+		int err;
+
 		if (buttons & SWITCH_2) {
 			err = lte_lc_edrx_req(false);
 			if (err) {
@@ -672,7 +689,9 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 			}
 		}
 	}
+#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 }
+#endif /* defined(CONFIG_DK_LIBRARY) */
 
 /**@brief Processing of user inputs to the application. */
 static void input_process(void)
@@ -730,6 +749,7 @@ static void work_init(void)
  */
 static void modem_configure(void)
 {
+#if defined(CONFIG_BSD_LIBRARY)
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on
 		 * and connected.
@@ -742,6 +762,7 @@ static void modem_configure(void)
 		err = lte_lc_init_and_connect();
 		__ASSERT(err == 0, "LTE link could not be established.");
 	}
+#endif
 }
 
 /**@brief Initializes GPS device and configures trigger if set.
@@ -854,6 +875,7 @@ static void sensors_init(void)
  */
 static void buttons_leds_init(void)
 {
+#if defined(CONFIG_DK_LIBRARY)
 	int err;
 
 	err = dk_buttons_init(button_handler);
@@ -870,6 +892,7 @@ static void buttons_leds_init(void)
 	if (err) {
 		printk("Could not set leds state, err code: %d\n", err);
 	}
+#endif
 }
 
 void main(void)
