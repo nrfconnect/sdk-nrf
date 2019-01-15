@@ -129,22 +129,30 @@ extern "C" {
 
 /* Wrappers used for defining event infos */
 #ifdef CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION
-
-#define _ARG_LABELS_DEFINE(...) \
-	{"mem_address", __VA_ARGS__}
-
-#define _ARG_TYPES_DEFINE(...) \
-	 {PROFILER_ARG_U32, __VA_ARGS__}
+#define MEM_ADDRESS_LABEL "mem_address",
+#define MEM_ADDRESS_TYPE PROFILER_ARG_U32,
 
 #else
+#define MEM_ADDRESS_LABEL
+#define MEM_ADDRESS_TYPE
 
+#endif /* CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION */
+
+
+#ifdef CONFIG_DESKTOP_EVENT_MANAGER_PROFILE_EVENT_DATA
 #define _ARG_LABELS_DEFINE(...) \
-	{__VA_ARGS__}
-
+	{MEM_ADDRESS_LABEL __VA_ARGS__}
 #define _ARG_TYPES_DEFINE(...) \
-	{__VA_ARGS__}
+	 {MEM_ADDRESS_TYPE __VA_ARGS__}
 
-#endif
+#else
+#define _ARG_LABELS_DEFINE(...) \
+	{MEM_ADDRESS_LABEL}
+#define _ARG_TYPES_DEFINE(...) \
+	 {MEM_ADDRESS_TYPE}
+
+#endif /* CONFIG_DESKTOP_EVENT_MANAGER_PROFILE_EVENT_DATA */
+
 
 /* Declarations and definitions - for more details refer to public API. */
 #define _EVENT_INFO_DEFINE(ename, types, labels, profile_func)							\

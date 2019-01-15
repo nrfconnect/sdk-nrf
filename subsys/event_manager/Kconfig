@@ -58,6 +58,10 @@ config DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION
 	bool "Trace events execution"
 	default y
 
+config DESKTOP_EVENT_MANAGER_PROFILE_EVENT_DATA
+	bool "Profile data connected with event"
+	default n
+
 endif # DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
 
 endif # EVENT_MANAGER
