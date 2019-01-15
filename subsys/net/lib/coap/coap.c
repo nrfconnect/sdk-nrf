@@ -57,7 +57,7 @@ static coap_message_t coap_empty_message = {
 	.arg = NULL,
 	.response_callback = NULL,
 	.local = NULL,
-	.transport = NULL,
+	.transport = -1,
 	.options_len = 0,
 	.options_offset = 0,
 	.data = NULL,
@@ -381,7 +381,7 @@ static u32_t send_error_response(coap_message_t *message, u8_t code)
 	return err_code;
 }
 
-u32_t coap_transport_read(const coap_transport_handle_t *transport,
+u32_t coap_transport_read(const coap_transport_handle_t transport,
 			  const struct sockaddr *remote,
 			  const struct sockaddr *local,
 			  u32_t result, const u8_t *data, u16_t datalen)
@@ -420,7 +420,7 @@ u32_t coap_transport_read(const coap_transport_handle_t *transport,
 	/* Copy the remote address information. */
 	message->remote = (struct sockaddr *)remote;
 	message->local = (struct sockaddr *)local;
-	message->transport = (coap_transport_handle_t *)transport;
+	message->transport = transport;
 
 	if (is_ping(message)) {
 		COAP_MESSAGE_RST_SET(message->remote, message->transport,
@@ -634,7 +634,7 @@ u32_t coap_message_new(coap_message_t **request, coap_message_conf_t *config)
 	/* If port is not configured, return error and skip initialization
 	 * of the message.
 	 */
-	if (config->transport == NULL) {
+	if (config->transport == -1) {
 		COAP_EXIT();
 		return EINVAL;
 	}

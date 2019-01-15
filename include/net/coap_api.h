@@ -317,7 +317,7 @@ typedef struct {
 	/** Transport layer variable to associate the message with an
 	 *  underlying Transport Layer socket descriptor.
 	 */
-	coap_transport_handle_t *transport;
+	coap_transport_handle_t transport;
 } coap_message_conf_t;
 
 /**@brief Structure to hold a CoAP message header.
@@ -405,7 +405,7 @@ struct coap_message_t {
 	/** Internal. Transport layer variable to associate the message with
 	 *  an underlying Transport Layer socket descriptor.
 	 */
-	coap_transport_handle_t *transport;
+	coap_transport_handle_t transport;
 
 	/** Internal. Length of the options including the mandatory header
 	 *  with extension bytes and option data. Accumulated every time a
@@ -858,7 +858,7 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote);
  *
  * @retval 0 If the destruction of the secure DTLS session was successful.
  */
-u32_t coap_security_destroy(coap_transport_handle_t *handle);
+u32_t coap_security_destroy(coap_transport_handle_t handle);
 
 
 /**@brief Process loop when using CoAP BSD socket transport implementation.

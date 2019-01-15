@@ -53,7 +53,7 @@ typedef struct {
 	u16_t timeout_val;
 
 	/** Source port to use when re-transmitting. */
-	coap_transport_handle_t *transport;
+	coap_transport_handle_t transport;
 
 	/** Pointer to the data buffer containing the encoded CoAP message. */
 	u8_t *buffer;

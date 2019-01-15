@@ -39,8 +39,8 @@ typedef struct {
 	/** Remote endpoint - address and port. Provision for maximum size. */
 	struct sockaddr_in6 remote;
 
-	/** Local endpoint associated with the session. */
 	transport_t *local;
+	/** Local endpoint associated with the session. */
 } session_t;
 
 /** Table maintaining association between CoAP local ports and corresponding
@@ -176,6 +176,40 @@ static session_t *session_find(const struct sockaddr *local,
 }
 #endif /* (COAP_SESSION_COUNT > 0) */
 
+
+/**@brief Internal method to find the session or port corresponding to the
+ *        handle.
+ *
+ * @param[in] handle Identifies the socket descriptor, also the the handle for
+ *                   the transport.
+ *
+ * @retval Pointer to a valid transport in case of success, else, NULL.
+ */
+static int local_endpoint_find(coap_transport_handle_t handle)
+{
+	for (int index = 0; index < COAP_SOCKET_COUNT; index++) {
+		if (port_table[index].socket_fd == handle) {
+			return index;
+		}
+	}
+
+	return -1;
+}
+
+#if (COAP_SESSION_COUNT > 0)
+/**@brief Internal method to find the session or port corresponding to the
+ *        handle.
+ *
+ * @param[in] index Identifies the index of port_table.
+ *
+ * @retval true if the endpoint was secure else false.
+ */
+static bool secure_endpoint_check(u32_t index)
+{
+	return index < COAP_PORT_COUNT ? false : true;
+}
+#endif
+
 /**@brief Creates socket and binds to local address and port as requested port.
  *
  * @details Creates port as requested in port.
@@ -184,11 +218,10 @@ static session_t *session_find(const struct sockaddr *local,
  *                  to be made.
  * @param[in] local Port information to be created.
  *
- * @retval 0 Indicates if port was created successfully, else an an error code
- *           indicating reason for failure.
+ * @retval -1 if the menthod failed, else, the socket descriptor.
  */
-static coap_transport_handle_t *socket_create_and_bind(u32_t index,
-						       coap_local_t *local)
+static coap_transport_handle_t socket_create_and_bind(u32_t index,
+						      coap_local_t *local)
 {
 	/* Request new socket creation. */
 	const int family = local->addr->sa_family;
@@ -216,7 +249,7 @@ static coap_transport_handle_t *socket_create_and_bind(u32_t index,
 				 * creation and initialization, hence free it.
 				 */
 				(void)close(socket_fd);
-				return NULL;
+				return -1;
 			}
 		}
 
@@ -231,11 +264,11 @@ static coap_transport_handle_t *socket_create_and_bind(u32_t index,
 			 * and initialization, hence free it.
 			 */
 			(void)close(socket_fd);
-			return NULL;
+			return -1;
 		}
 	}
 
-	return (coap_transport_handle_t *)&port_table[index];
+	return socket_fd;
 }
 
 
@@ -251,58 +284,59 @@ u32_t coap_transport_init(coap_transport_init_t *param)
 #endif /* (COAP_SESSION_COUNT > 0) */
 
 	for (index = 0; index < COAP_PORT_COUNT; index++) {
-		coap_transport_handle_t *transport =
-					param->port_table[index].transport;
+		coap_transport_handle_t transport;
 
 		/* Create end point for each of the CoAP ports. */
 		transport = socket_create_and_bind(index,
 						   &param->port_table[index]);
-		if (transport == NULL) {
+		if (transport == -1) {
+			/* TODO: close any previous sockets? */
 			return EIO;
 		}
 
 		param->port_table[index].transport =
-				(coap_transport_handle_t *)&port_table[index];
+				port_table[index].socket_fd;
 	}
 
 	return 0;
 }
 
 
-u32_t coap_transport_write(const coap_transport_handle_t *transport,
+u32_t coap_transport_write(const coap_transport_handle_t transport,
 			   const struct sockaddr *remote, const u8_t *data,
 			   u16_t datalen)
 {
 	u32_t err_code = ENOENT;
 	int retval;
+	int index;
 
-	NULL_PARAM_CHECK(transport);
 	NULL_PARAM_CHECK(remote);
 	NULL_PARAM_CHECK(data);
 
-	transport_t *port = (transport_t *)transport;
-
 	COAP_MUTEX_UNLOCK();
 
-#if (COAP_SESSION_COUNT > 0)
-	const session_t *session = session_find((struct sockaddr *)&port->local,
-						remote);
-
-	if (session != NULL) {
-		retval = send(port->socket_fd, data, datalen, 0);
-	} else
-#endif /* (COAP_SESSION_COUNT > 0) */
-	{
-		/* Send on UDP port. */
-		retval = sendto(port->socket_fd, data, datalen, 0, remote,
-				address_length_get(remote));
-	}
-
-	if (retval == -1) {
-		/* Error in sendto. */
-		err_code = EIO;
+	index = local_endpoint_find(transport);
+	if (index == -1) {
+		err_code = EBADF;
 	} else {
-		err_code = 0;
+
+#if (COAP_SESSION_COUNT > 0)
+		if (secure_endpoint_check(index)) {
+			retval = send(transport, data, datalen, 0);
+		} else
+#endif /* (COAP_SESSION_COUNT > 0) */
+		{
+			/* Send on UDP port. */
+			retval = sendto(transport, data, datalen, 0, remote,
+					address_length_get(remote));
+		}
+
+		if (retval == -1) {
+			/* Error in sendto. */
+			err_code = EIO;
+		} else {
+			err_code = 0;
+		}
 	}
 
 	COAP_MUTEX_LOCK();
@@ -339,7 +373,7 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote)
 	session_t *session = session_find(local->addr, remote);
 
 	if (session != NULL) {
-		local->transport = (coap_transport_handle_t *)session->local;
+		local->transport = session->local->socket_fd;
 
 		/* Note that we do not validate if the security parameters
 		 * requested match the existing session or not.
@@ -353,7 +387,7 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote)
 		session = &session_table[index];
 
 		if (session->local == NULL) {
-			coap_transport_handle_t *transport;
+			coap_transport_handle_t transport;
 
 			/* We have a free slot available.
 			 * Lets create a socket for the session.
@@ -365,7 +399,7 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote)
 
 			transport = socket_create_and_bind(port_entry, local);
 
-			if (transport != NULL) {
+			if (transport != -1) {
 				session->local = &port_table[port_entry];
 
 				/* Initiate a connection. */
@@ -382,8 +416,7 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote)
 
 				memcpy(&session->remote, remote,
 				       address_length_get(remote));
-				local->transport =
-				    (coap_transport_handle_t *)session->local;
+				local->transport = transport;
 
 				return 0;
 			}
@@ -394,23 +427,21 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote)
 }
 
 
-u32_t coap_security_destroy(coap_transport_handle_t *transport)
+u32_t coap_security_destroy(coap_transport_handle_t transport)
 {
-	NULL_PARAM_CHECK(transport);
 #if (COAP_SESSION_COUNT > 0)
+	int index = local_endpoint_find(transport);
 
-	transport_t *local = (transport_t *) transport;
-	session_t   *session;
+	if (index == -1) {
+		return EBADF;
+	}
 
-	/* Search for the local entry in the session table. */
-	for (int index = 0; index < COAP_SESSION_COUNT; index++) {
-		session = &session_table[index];
+	if (secure_endpoint_check(index)) {
+		session_t   *session = &session_table[index - COAP_PORT_COUNT];
 
-		if (local == session->local) {
-			/* Free the session. */
-			session_free(session);
-			return 0;
-		}
+		/* Free the session. */
+		session_free(session);
+		return 0;
 	}
 #endif /* (COAP_SESSION_COUNT > 0) */
 
@@ -445,7 +476,7 @@ void coap_transport_input(void)
 
 			/* Notify the CoAP module of received data. */
 			int retval = coap_transport_read(
-					(coap_transport_handle_t *)port,
+					port->socket_fd,
 					(struct sockaddr *)&session->remote,
 					(struct sockaddr *)&port->local,
 					0, read_mem, (u16_t)bytes_read);
@@ -479,7 +510,7 @@ void coap_transport_input(void)
 		if (bytes_read >= 0) {
 			/* Notify the CoAP module of received data. */
 			int retval = coap_transport_read(
-					(coap_transport_handle_t *)port,
+					port->socket_fd,
 					remote, local, 0, read_mem,
 					(u16_t)bytes_read);
 
