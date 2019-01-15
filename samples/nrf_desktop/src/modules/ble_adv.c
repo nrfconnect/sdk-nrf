@@ -43,13 +43,53 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
+static struct k_delayed_work adv_param_update;
+static struct bt_le_adv_param adv_param = {
+	.options = BT_LE_ADV_OPT_CONNECTABLE,
+	.interval_min = BT_GAP_ADV_FAST_INT_MIN_2,
+	.interval_max = BT_GAP_ADV_FAST_INT_MAX_2,
+};
+
 static bool bonds_initialized;
 static bool bonds_remove;
 
+static void ble_adv_param_update_fn(struct k_work *work)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR)) {
+		LOG_INF("Switch to normal cadence advertising");
+		adv_param.interval_min = BT_GAP_ADV_FAST_INT_MIN_2;
+		adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_2;
+
+		err = bt_le_adv_stop();
+
+		if (!err) {
+			bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad),
+					sd, ARRAY_SIZE(sd));
+		}
+
+		if (err) {
+			LOG_ERR("Failed to restart advertising (err %d)", err);
+			sys_reboot(SYS_REBOOT_WARM);
+		}
+
+		vendor_section_remove = true;
+		k_delayed_work_submit(&adv_update,
+			K_SECONDS(SWIFT_PAIR_SECTION_REMOVE_TIMEOUT));
+	}
+}
+#endif /* CONFIG_DESKTOP_BLE_SWIFT_PAIR */
 
 static void ble_adv_start(void)
 {
-	int err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
+#if CONFIG_DESKTOP_BLE_SWIFT_PAIR
+	k_delayed_work_init(&adv_update, ble_adv_update_fn);
+
+	LOG_INF("Swift pair enabled, use fast advertising");
+	adv_param.interval_min = BT_GAP_ADV_FAST_INT_MIN_1;
+	adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_1;
+#endif
+
+	int err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad),
 				  sd, ARRAY_SIZE(sd));
 
 	if (err) {
@@ -58,6 +98,11 @@ static void ble_adv_start(void)
 	}
 
 	LOG_INF("Advertising started");
+
+#if CONFIG_DESKTOP_BLE_SWIFT_PAIR
+	k_delayed_work_submit(&adv_update,
+		K_SECONDS(CONFIG_DESKTOP_BLE_FAST_ADV_TIMEOUT));
+#endif
 
 	module_set_state(MODULE_STATE_READY);
 }
