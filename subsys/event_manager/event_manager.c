@@ -132,7 +132,9 @@ void _event_submit(struct event_header *eh)
 			if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION)) {
 				profiler_log_add_mem_address(&buf, eh);
 			}
-			et->ev_info->profile_fn(&buf, eh);
+			if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILE_EVENT_DATA)) {
+				et->ev_info->profile_fn(&buf, eh);
+			}
 			profiler_log_send(&buf,
 			  profiler_event_ids[et - __start_event_types]);
 		}
