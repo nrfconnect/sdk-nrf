@@ -26,7 +26,9 @@ LOG_MODULE_REGISTER(nrf_cloud_transport);
 #include <net/mqtt_socket.h>
 #include <net/socket.h>
 #include <stdio.h>
+#if defined(CONFIG_BSD_LIBRARY)
 #include "nrf_inbuilt_key.h"
+#endif
 
 #include <misc/util.h>
 
@@ -250,6 +252,7 @@ static bool control_channel_topic_match(u32_t list_id,
 static int nct_client_id_get(char *id)
 {
 #if !defined(NRF_CLOUD_CLIENT_ID)
+#if defined(CONFIG_BSD_LIBRARY)
 	int at_socket_fd;
 	int bytes_written;
 	int bytes_read;
@@ -270,6 +273,9 @@ static int nct_client_id_get(char *id)
 
 	ret = nrf_close(at_socket_fd);
 	__ASSERT_NO_MSG(ret == 0);
+#else
+	#error Missing NRF_CLOUD_CLIENT_ID
+#endif /* defined(CONFIG_BSD_LIBRARY) */
 #else
 	memcpy(id, NRF_CLOUD_CLIENT_ID, NRF_CLOUD_CLIENT_ID_LEN + 1);
 #endif /* !defined(NRF_CLOUD_CLIENT_ID) */
@@ -346,6 +352,7 @@ static int nct_provision(void)
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
+#if defined(CONFIG_BSD_LIBRARY)
 	{
 		int err;
 
@@ -364,7 +371,7 @@ static int nct_provision(void)
 					NRF_CLOUD_CA_CERTIFICATE,
 					sizeof(NRF_CLOUD_CA_CERTIFICATE));
 		if (err) {
-			LOG_DBG("NRF_CLOUD_CA_CERTIFICATE error!");
+			LOG_ERR("NRF_CLOUD_CA_CERTIFICATE err: %d", err);
 			return err;
 		}
 
@@ -375,7 +382,7 @@ static int nct_provision(void)
 			NRF_CLOUD_CLIENT_PRIVATE_KEY,
 			sizeof(NRF_CLOUD_CLIENT_PRIVATE_KEY));
 		if (err) {
-			LOG_DBG("NRF_CLOUD_CLIENT_PRIVATE_KEY error! ");
+			LOG_ERR("NRF_CLOUD_CLIENT_PRIVATE_KEY err: %d", err);
 			return err;
 		}
 
@@ -386,10 +393,45 @@ static int nct_provision(void)
 			NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE,
 			sizeof(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
 		if (err) {
-			LOG_DBG("NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE error!");
+			LOG_ERR("NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE err: %d",
+				err);
 			return err;
 		}
 	}
+#else
+	{
+		int err;
+
+		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
+			TLS_CREDENTIAL_CA_CERTIFICATE,
+			NRF_CLOUD_CA_CERTIFICATE,
+			sizeof(NRF_CLOUD_CA_CERTIFICATE));
+		if (err < 0) {
+			LOG_ERR("Failed to register ca certificate: %d",
+				err);
+			return err;
+		}
+		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
+			TLS_CREDENTIAL_PRIVATE_KEY,
+			NRF_CLOUD_CLIENT_PRIVATE_KEY,
+			sizeof(NRF_CLOUD_CLIENT_PRIVATE_KEY));
+		if (err < 0) {
+			LOG_ERR("Failed to register private key: %d",
+				err);
+			return err;
+		}
+		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
+			TLS_CREDENTIAL_SERVER_CERTIFICATE,
+			NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE,
+			sizeof(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
+		if (err < 0) {
+			LOG_ERR("Failed to register public certificate: %d",
+				err);
+			return err;
+		}
+
+	}
+#endif /* defined(CONFIG_BSD_LIBRARY) */
 #endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
 
 	return 0;
@@ -407,11 +449,15 @@ int nct_mqtt_connect(void)
 	nct.client.protocol_version = MQTT_VERSION_3_1_1;
 	nct.client.password = NULL;
 	nct.client.user_name = NULL;
+#if defined(CONFIG_MQTT_LIB_TLS)
 	nct.client.transport.type = MQTT_TRANSPORT_SECURE;
 
 	struct mqtt_sec_config *tls_config = &nct.client.transport.tls.config;
 
 	memcpy(tls_config, &nct.tls_config, sizeof(struct mqtt_sec_config));
+#else
+	nct.client.transport.type = MQTT_TRANSPORT_NON_SECURE;
+#endif
 
 	return mqtt_connect(&nct.client);
 }
@@ -566,7 +612,8 @@ int nct_connect(void)
 	/* Look for address of the broker. */
 	while (addr != NULL) {
 		/* IPv4 Address. */
-		if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
+		if ((addr->ai_addrlen == sizeof(struct sockaddr_in)) &&
+		    (NRF_CLOUD_AF_FAMILY == AF_INET)) {
 			struct sockaddr_in *broker =
 				((struct sockaddr_in *)&nct.broker);
 
@@ -579,7 +626,8 @@ int nct_connect(void)
 			LOG_DBG("IPv4 Address 0x%08x", broker->sin_addr.s_addr);
 			err = nct_mqtt_connect();
 			break;
-		} else if (addr->ai_addrlen == sizeof(struct sockaddr_in6)) {
+		} else if ((addr->ai_addrlen == sizeof(struct sockaddr_in6)) &&
+			   (NRF_CLOUD_AF_FAMILY == AF_INET6)) {
 			/* IPv6 Address. */
 			struct sockaddr_in6 *broker =
 				((struct sockaddr_in6 *)&nct.broker);
@@ -591,13 +639,14 @@ int nct_connect(void)
 			broker->sin6_family = AF_INET6;
 			broker->sin6_port = htons(NRF_CLOUD_PORT);
 
+			LOG_DBG("IPv6 Address");
 			err = nct_mqtt_connect();
 			break;
 		} else {
-			LOG_DBG("ai_addrlen = %d should be %d or %d",
-				addr->ai_addrlen,
-				sizeof(struct sockaddr_in),
-				sizeof(struct sockaddr_in6));
+			LOG_DBG("ai_addrlen = %u should be %u or %u",
+				(unsigned int)addr->ai_addrlen,
+				(unsigned int)sizeof(struct sockaddr_in),
+				(unsigned int)sizeof(struct sockaddr_in6));
 		}
 
 		addr = addr->ai_next;

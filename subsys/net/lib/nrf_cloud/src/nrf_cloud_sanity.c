@@ -30,9 +30,3 @@
 #endif
 
 #endif /* CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES */
-
-
-/* Ensure correct data type size */
-
-BUILD_ASSERT_MSG(sizeof(enum nrf_cloud_sensor) == sizeof(u8_t),
-		 "Incorrect size for nrf_cloud_sensor enum");
