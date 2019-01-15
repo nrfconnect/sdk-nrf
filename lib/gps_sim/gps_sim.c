@@ -11,10 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <logging/log.h>
-
-#if defined(CONFIG_GPS_SIM_DYNAMIC_VALUES)
 #include <math.h>
-#endif
 
 #define BASE_GPS_SAMPLE_HOUR	(CONFIG_GPS_SIM_BASE_TIMESTAMP / 10000)
 #define BASE_GPS_SAMPLE_MINUTE	((CONFIG_GPS_SIM_BASE_TIMESTAMP / 100) % 100)
