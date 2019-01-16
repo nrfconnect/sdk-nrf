@@ -6,4 +6,3 @@
 
 zephyr_library()
 zephyr_library_sources(dk_buttons_and_leds.c)
-zephyr_include_directories(.)
