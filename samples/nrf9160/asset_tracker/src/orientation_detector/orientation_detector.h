@@ -56,11 +56,14 @@ int orientation_detector_poll(
 	struct orientation_detector_sensor_data *sensor_data);
 
 
-/**@brief Determines and stores the static offset of the accelerometer that's
- * used to infer device orientation. The device has to be placed on a flat
+/**@brief Determine and store the static offset of the accelerometer that is
+ * used to infer device orientation.
+ *
+ * The device must be placed on a flat
  * surface facing up when this function is called.
  *
- * @return 0 if the operation is successful, negative error code otherwise.
+  *  @retval 0           If the operation was successful.
+  *                      Otherwise, a (negative) error code is returned.
  */
 int orientation_detector_calibrate(void);
 

@@ -16,8 +16,8 @@ config USE_AT_HOST
 	default y
 	select AT_HOST_LIBRARY
 	help
-		Enable AT host library so that AT commands can be sent and
-		received from and to a serial terminal.
+		Enable the AT host library so that AT commands can be sent to and
+		received from a serial terminal.
 
 config GPS_SIM_TRIGGER_TIMER_MSEC
 	int
@@ -232,14 +232,14 @@ config TEMP_USE_SIM
 	select SENSOR
 	select SENSOR_SIM
 	help
-		Use sensor simulator to generate temperature data send to
+		Use sensor simulator to generate temperature data to send to
 		nRF Cloud.
 
 config TEMP_USE_EXTERNAL
 	bool "User provided temperature device"
 	help
-		The user will provide an temperature device that will
-		be used for temperature measurement.
+		The user provides a temperature device that is
+		used for temperature measurement.
 
 endchoice
 
@@ -253,14 +253,14 @@ config TEMP_TRIGGER
 	default SENSOR_SIM_TRIGGER
 
 config TEMP_SIM_BUTTON
-	int "Button or switch number to simulate flip"
+	int "Button or switch to trigger 'data ready' event"
 	range 1 4 if BOARD_NRF9160_PCA10090
 	range 1 1 if BOARD_NRF9160_PCA20035
 	default 3 if BOARD_NRF9160_PCA10090
 	default 1 if BOARD_NRF9160_PCA20035
 	help
-		Button or switch number to use for simulating
-		a board flip event.
+		Button or switch number to use for triggering
+		a 'data ready' event.
 		1 - Button 1
 		2 - Button 2
 		3 - Switch 1
@@ -270,10 +270,10 @@ endif
 if TEMP_USE_EXTERNAL
 
 config TEMP_DEV_NAME
-	string "Accelerometer device name"
+	string "Temperature device name"
 	help
-		Device from which temperature data will be fetched and used
-		for orientation detection and sent to nRF Cloud.
+		Device from which temperature data will be fetched and
+		sent to nRF Cloud.
 
 endif
 endmenu
