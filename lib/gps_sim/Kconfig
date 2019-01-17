@@ -130,19 +130,12 @@ config GPS_SIM_GPIO_PIN
 		GPIO pin for trigger button.
 endif
 
-if GPS_SIM_TRIGGER && GPS_SIM_TRIGGER_USE_TIMER
-	config GPS_SIM_TRIGGER_TIMER_MSEC
-		int "Time between triggers, in milliseconds"
-		default 1000
-		help
-			The time interval between each 'data ready' trigger event.
-endif
-
-if GPS_SIM_TRIGGER && !GPS_SIM_TRIGGER_USE_TIMER
-	config GPS_SIM_TRIGGER_TIMER_MSEC
-		int
-		default 0
-endif
+config GPS_SIM_TRIGGER_TIMER_MSEC
+	int "Time between triggers, in milliseconds"
+	depends on GPS_SIM_TRIGGER_USE_TIMER
+	default 1000
+	help
+		The time interval between each 'data ready' trigger event.
 
 config GPS_SIM_THREAD_PRIORITY
 	int "Thread priority"
