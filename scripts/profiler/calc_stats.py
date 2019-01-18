@@ -7,6 +7,7 @@ import sys
 import argparse
 import logging
 
+
 def main():
     parser = argparse.ArgumentParser(description='Calculating stats for events.')
     parser.add_argument('event_csv', help='.csv file to read raw events data')
