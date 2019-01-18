@@ -18,6 +18,36 @@ LOG_MODULE_REGISTER(hids_c, CONFIG_BT_GATT_HIDS_C_LOG_LEVEL);
 /* Exit suspend value for Control Point */
 #define BT_GATT_HIDS_C_CP_EXIT_SUSPEND 0x01
 
+/* Real report structure definition */
+struct bt_gatt_hids_c_rep_info {
+	/** HIDS client object
+	 *  @note Do not use it directly as it may be changed to some kind of
+	 *        connection context management
+	 */
+	struct bt_gatt_hids_c *hids_c;
+	bt_gatt_hids_c_read_cb  read_cb;   /**< Read function callback        */
+	bt_gatt_hids_c_write_cb write_cb;  /**< Write function callback       */
+	bt_gatt_hids_c_read_cb  notify_cb; /**< Notification function (Input) */
+	struct bt_gatt_read_params      read_params;   /**< Read params   */
+	struct bt_gatt_write_params     write_params;  /**< Write params  */
+	struct bt_gatt_subscribe_params notify_params; /**< Notify params */
+
+	/** User data to be used freely by the application */
+	void *user_data;
+	/** Handlers */
+	struct {
+		u16_t ref; /**< Report Reference handler */
+		u16_t val; /**< Value handler            */
+		u16_t ccc; /**< CCC handler (Input)      */
+	} handlers;
+	/** Report reference information */
+	struct {
+		u8_t id;                              /**< Report identifier */
+		enum bt_gatt_hids_c_report_type type; /**< Report type       */
+	} ref;
+	u8_t size; /**< The size of the value */
+};
+
 /* Memory slab used for reports */
 K_MEM_SLAB_DEFINE(bt_gatt_hids_c_reports_mem,
 		  sizeof(struct bt_gatt_hids_c_rep_info),
@@ -1201,4 +1231,111 @@ int bt_gatt_hids_c_exit_suspend(struct bt_gatt_hids_c *hids_c)
 					     sizeof(data),
 					     false);
 	return err;
+}
+
+struct bt_conn *bt_gatt_hids_c_conn(const struct bt_gatt_hids_c *hids_c)
+{
+	return hids_c->conn;
+}
+
+const struct bt_gatt_hids_c_info_val *bt_gatt_hids_c_conn_info_val(
+	const struct bt_gatt_hids_c *hids_c)
+{
+	return &hids_c->info_val;
+}
+
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_kbd_in(
+	struct bt_gatt_hids_c *hids_c)
+{
+	return hids_c->rep_boot.kbd_inp;
+}
+
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_kbd_out(
+	struct bt_gatt_hids_c *hids_c)
+{
+	return hids_c->rep_boot.kbd_out;
+}
+
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_mouse_in(
+	struct bt_gatt_hids_c *hids_c)
+{
+	return hids_c->rep_boot.mouse_inp;
+}
+
+size_t bt_gatt_hids_c_rep_cnt(const struct bt_gatt_hids_c *hids_c)
+{
+	return hids_c->rep_cnt;
+}
+
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
+	struct bt_gatt_hids_c *hids_c,
+	const struct bt_gatt_hids_c_rep_info *rep)
+{
+	struct bt_gatt_hids_c_rep_info **rep_arr;
+	size_t n;
+
+	/* No reports in HIDS */
+	if (hids_c->rep_cnt == 0) {
+		return NULL;
+	}
+	/* First element */
+	if (rep == NULL) {
+		return hids_c->rep_info[0];
+	}
+	/* Searching current report in array */
+	rep_arr = hids_c->rep_info;
+
+	for (n = 0; n + 1 <= hids_c->rep_cnt; ++n) {
+		if (*rep_arr++ == rep) {
+			return *rep_arr;
+		}
+	}
+	return NULL;
+}
+
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_find(
+	struct bt_gatt_hids_c *hids_c,
+	enum bt_gatt_hids_c_report_type type,
+	u8_t id)
+{
+	struct bt_gatt_hids_c_rep_info **rep_arr;
+	size_t n;
+
+	/* Searching the report */
+	rep_arr = hids_c->rep_info;
+	for (n = 0; n < hids_c->rep_cnt; ++n, ++rep_arr) {
+		struct bt_gatt_hids_c_rep_info *rep = (*rep_arr);
+
+		if ((rep->ref.id == id) && (rep->ref.type == type)) {
+			return rep;
+		}
+	}
+	return NULL;
+}
+
+void bt_gatt_hids_c_rep_user_data_set(struct bt_gatt_hids_c_rep_info *rep,
+				      void *data)
+{
+	rep->user_data = data;
+}
+
+void *bt_gatt_hids_c_rep_user_data(const struct bt_gatt_hids_c_rep_info *rep)
+{
+	return rep->user_data;
+}
+
+u8_t bt_gatt_hids_c_rep_id(const struct bt_gatt_hids_c_rep_info *rep)
+{
+	return rep->ref.id;
+}
+
+enum bt_gatt_hids_c_report_type bt_gatt_hids_c_rep_type(
+	const struct bt_gatt_hids_c_rep_info *rep)
+{
+	return rep->ref.type;
+}
+
+size_t bt_gatt_hids_c_rep_size(const struct bt_gatt_hids_c_rep_info *rep)
+{
+	return rep->size;
 }
