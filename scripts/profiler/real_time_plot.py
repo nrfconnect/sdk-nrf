@@ -17,7 +17,6 @@ def rtt_thread(queue, finish_event, event_filename, event_types_filename, log_lv
                                      log_lvl=log_lvl_number)
     profiler.get_events_descriptions()
     profiler.read_events_rtt(-1)
-    profiler.disconnect()
 
 def main():
     parser = argparse.ArgumentParser(
