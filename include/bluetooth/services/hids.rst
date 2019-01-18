@@ -18,7 +18,10 @@ The HIDS module must be notified about the incoming connect and
 disconnect events using the dedicated API. This is done to synchronize
 the connection state of HIDS with the top module that uses it.
 
-The HID Service is used in the :ref:`peripheral_hids` sample.
+The HID Service is used in the following samples:
+
+ * :ref:`peripheral_hids`
+ * :ref:`peripheral_hids_keyboard`
 
 Service Changed support
 ***********************
