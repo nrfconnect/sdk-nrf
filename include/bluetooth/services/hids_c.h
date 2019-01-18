@@ -134,43 +134,6 @@ typedef void (*bt_gatt_hids_c_map_cb)(struct bt_gatt_hids_c *hids_c,
 typedef void (*bt_gatt_hids_c_pm_update_cb)(struct bt_gatt_hids_c *hids_c);
 
 /**
- * @brief Report base information struct
- *
- * The structure that contains record information.
- * This is common structure for Input and Output/Feature reports.
- * Some of the fields are used only for Input report type.
- *
- */
-struct bt_gatt_hids_c_rep_info {
-	/** HIDS client object
-	 *  @note Do not use it directly as it may be changed to some kind of
-	 *        connection context management
-	 */
-	struct bt_gatt_hids_c *hids_c;
-	bt_gatt_hids_c_read_cb  read_cb;   /**< Read function callback        */
-	bt_gatt_hids_c_write_cb write_cb;  /**< Write function callback       */
-	bt_gatt_hids_c_read_cb  notify_cb; /**< Notification function (Input) */
-	struct bt_gatt_read_params      read_params;   /**< Read params   */
-	struct bt_gatt_write_params     write_params;  /**< Write params  */
-	struct bt_gatt_subscribe_params notify_params; /**< Notify params */
-
-	/** User data to be used freely by the application */
-	void *user_data;
-	/** Handlers */
-	struct {
-		u16_t ref; /**< Report Reference handler */
-		u16_t val; /**< Value handler            */
-		u16_t ccc; /**< CCC handler (Input)      */
-	} handlers;
-	/** Report reference information */
-	struct {
-		u8_t id;                              /**< Report identifier */
-		enum bt_gatt_hids_c_report_type type; /**< Report type       */
-	} ref;
-	u8_t size; /**< The size of the value */
-};
-
-/**
  * @brief RemoteWake flag position
  *
  * Used in @ref bt_gatt_hids_c_info_val::Flags
@@ -243,7 +206,25 @@ struct bt_gatt_hids_c_init_params {
 };
 
 /**
- * HIDS client structure
+ * @brief Report base information struct
+ *
+ * The structure that contains record information.
+ * This is common structure for Input and Output/Feature reports.
+ * Some of the fields are used only for Input report type.
+ *
+ */
+struct bt_gatt_hids_c_rep_info;
+
+/**
+ * @brief HIDS client structure
+ *
+ * This structure is used ad HIDS client object.
+ *
+ * @note
+ * It is defined here to allow the user to allocate the memory for it
+ * in any application dependent manner.
+ * Please do not use any of the fields here directly - there are accessors
+ * for every field you may need.
  */
 struct bt_gatt_hids_c {
 	/** Connection object */
@@ -602,6 +583,160 @@ int bt_gatt_hids_c_suspend(struct bt_gatt_hids_c *hids_c);
  * @return 0 or negative error value.
  */
 int bt_gatt_hids_c_exit_suspend(struct bt_gatt_hids_c *hids_c);
+
+
+/**
+ * @brief Get the connection object from HIDS client
+ *
+ * Function gets the connection object used with given HIDS client.
+ *
+ * @param hids_c HIDS client object.
+ *
+ * @return Connection object.
+ */
+struct bt_conn *bt_gatt_hids_c_conn(const struct bt_gatt_hids_c *hids_c);
+
+/**
+ * @brief Access the HID information value
+ *
+ * Function access the structure with decoded HID information characteristic
+ * value.
+ *
+ * @param hids_c HIDS client object.
+ *
+ * @return Pointer to the decoded HID information structure.
+ */
+const struct bt_gatt_hids_c_info_val *bt_gatt_hids_c_conn_info_val(
+	const struct bt_gatt_hids_c *hids_c);
+
+/**
+ * @brief Access boot keyboard input report
+ *
+ * @param hids_c HIDS client object.
+ *
+ * @return The report pointer or NULL if the device does not support
+ *         boot keyboard protocol mode.
+ */
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_kbd_in(
+	struct bt_gatt_hids_c *hids_c);
+
+/**
+ * @brief Access boot keyboard output report
+ *
+ * @param hids_c HIDS client object.
+ *
+ * @return The report pointer or NULL if the device does not support
+ *         boot keyboard protocol mode.
+ */
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_kbd_out(
+	struct bt_gatt_hids_c *hids_c);
+
+/**
+ * @brief Access boot mouse input report
+ *
+ * @param hids_c HIDS client object.
+ *
+ * @return The report pointer or NULL if the device does not support
+ *         boot mouse protocol mode.
+ */
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_boot_mouse_in(
+	struct bt_gatt_hids_c *hids_c);
+
+/**
+ * @brief Get number of HID reports in device
+ *
+ * Function returns number of HID reports.
+ * @note
+ * It does not take into account boot records.
+ * They can be accessed using separate functions.
+ *
+ * @param hids_c HIDS client object.
+ *
+ * @return Number of records
+ */
+size_t bt_gatt_hids_c_rep_cnt(const struct bt_gatt_hids_c *hids_c);
+
+/**
+ * @brief Get next report
+ *
+ * Function gets next report in HIDS client object.
+ *
+ * @param hids_c HIDS client object.
+ * @param rep    Previous record to the one we want to access now or NULL if we
+ *               wish to access first record.
+ *
+ * @return Next report in the relation in @c rep or NULL if no more reports
+ *         are available.
+ */
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
+	struct bt_gatt_hids_c *hids_c,
+	const struct bt_gatt_hids_c_rep_info *rep);
+
+/**
+ * @brief Find report
+ *
+ * Function searches for the report with given type and identifier.
+ *
+ * @param hids_c HIDS client object.
+ * @param type   The report type to find.
+ * @param id     The identifier to find.
+ *               Note that valid identifiers starts from 1 but the value 0 may
+ *               be used for the devices that have one report of each type and
+ *               there is no Report ID inside Report Map.
+ *
+ * @return Report found or NULL.
+ */
+struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_find(
+	struct bt_gatt_hids_c *hids_c,
+	enum bt_gatt_hids_c_report_type type,
+	u8_t id);
+
+/**
+ * @brief Set user data in report
+ *
+ * @param rep  Report object.
+ * @param data User data pointer to set.
+ */
+void bt_gatt_hids_c_rep_user_data_set(struct bt_gatt_hids_c_rep_info *rep,
+				      void *data);
+
+/**
+ * @brief Get user data from report
+ *
+ * @param rep Report object.
+ *
+ * @return User data pointer.
+ */
+void *bt_gatt_hids_c_rep_user_data(const struct bt_gatt_hids_c_rep_info *rep);
+
+/**
+ * @brief Get report identifier
+ *
+ * @param rep Report object.
+ *
+ * @return Report identifier.
+ */
+u8_t bt_gatt_hids_c_rep_id(const struct bt_gatt_hids_c_rep_info *rep);
+
+
+/**
+ * @brief Get report type
+ *
+ * @param rep Report object.
+ *
+ * @return Report type.
+ */
+enum bt_gatt_hids_c_report_type bt_gatt_hids_c_rep_type(
+	const struct bt_gatt_hids_c_rep_info *rep);
+
+/**
+ * @brief Get report size
+ *
+ * @param rep Report object.
+ *
+ * @return The size of the report.
+ */
+size_t bt_gatt_hids_c_rep_size(const struct bt_gatt_hids_c_rep_info *rep);
 
 #ifdef __cplusplus
 }

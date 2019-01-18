@@ -221,14 +221,14 @@ static u8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
 			     u8_t err,
 			     const u8_t *data)
 {
-	u8_t size = rep->size;
+	u8_t size = bt_gatt_hids_c_rep_size(rep);
 	u8_t i;
 
 	if (!data) {
 		return BT_GATT_ITER_STOP;
 	}
 	printk("Notification, id: %u, size: %u, data:",
-	       rep->ref.id,
+	       bt_gatt_hids_c_rep_id(rep),
 	       size);
 	for (i = 0; i < size; ++i) {
 		printk(" 0x%x", data[i]);
@@ -242,7 +242,7 @@ static u8_t hids_c_boot_mouse_report(struct bt_gatt_hids_c *hids_c,
 				     u8_t err,
 				     const u8_t *data)
 {
-	u8_t size = rep->size;
+	u8_t size = bt_gatt_hids_c_rep_size(rep);
 	u8_t i;
 
 	if (!data) {
@@ -261,7 +261,7 @@ static u8_t hids_c_boot_kbd_report(struct bt_gatt_hids_c *hids_c,
 				   u8_t err,
 				   const u8_t *data)
 {
-	u8_t size = rep->size;
+	u8_t size = bt_gatt_hids_c_rep_size(rep);
 	u8_t i;
 
 	if (!data) {
@@ -282,18 +282,16 @@ static void hids_c_ready_cb(struct bt_gatt_hids_c *hids_c)
 
 static void hids_on_ready(struct k_work *work)
 {
-	u8_t i;
 	int err;
+	struct bt_gatt_hids_c_rep_info *rep = NULL;
 
 	printk("HIDS is ready to work\n");
-	for (i = 0; i < hids_c.rep_cnt; ++i) {
-		struct bt_gatt_hids_c_rep_info *rep;
 
-		rep = hids_c.rep_info[i];
-		if (rep->ref.type ==
+	while (NULL != (rep = bt_gatt_hids_c_rep_next(&hids_c, rep))) {
+		if (bt_gatt_hids_c_rep_type(rep) ==
 		    BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
 			printk("Subscribe in report id: %u\n",
-			       rep->ref.id);
+			       bt_gatt_hids_c_rep_id(rep));
 			err = bt_gatt_hids_c_rep_subscribe(&hids_c, rep,
 							   hids_c_notify_cb);
 			if (err) {
@@ -406,7 +404,8 @@ static u8_t capslock_read_cb(struct bt_gatt_hids_c *hids_c,
 		printk("Capslock read - no data\n");
 		return BT_GATT_ITER_STOP;
 	}
-	printk("Received data (size: %u, data[0]: 0x%x)\n", rep->size, data[0]);
+	printk("Received data (size: %u, data[0]: 0x%x)\n",
+	       bt_gatt_hids_c_rep_size(rep), data[0]);
 
 	return BT_GATT_ITER_STOP;
 }
