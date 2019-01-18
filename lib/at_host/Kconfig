@@ -61,4 +61,17 @@ config AT_HOST_TERMINATION
 	default 2 if LF_TERMINATION
 	default 3 if CR_LF_TERMINATION
 
+config AT_HOST_THREAD_PRIO
+	int "Thread priority"
+	range 0 NUM_PREEMPT_PRIORITIES
+	default 10
+
+config AT_HOST_SOCKET_BUF_SIZE
+	int "AT socket Rx buffer size"
+	default 328
+
+config AT_HOST_UART_BUF_SIZE
+	int "UART Rx buffer size"
+	default 256
+
 endmenu
