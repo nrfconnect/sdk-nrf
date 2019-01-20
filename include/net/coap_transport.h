@@ -89,6 +89,12 @@ typedef struct {
 
 	/** Indication to do a non-blocking socket connect. */
 	u8_t non_blocking : 1;
+
+	/** Optional local interface to bind the CoAP transport to.
+	 *  NULL indicates no preference.
+	 */
+	void *interface;
+
 } coap_local_t;
 
 /**@brief Transport initialization information. */

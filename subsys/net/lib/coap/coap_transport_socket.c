@@ -232,6 +232,25 @@ static coap_transport_handle_t socket_create_and_bind(u32_t index,
 	socklen_t address_len = address_length_get(local->addr);
 
 	if (socket_fd != -1) {
+		if (local->interface) {
+#ifdef CONFIG_BSD_LIBRARY
+			struct ifreq ifr;
+
+			memset(&ifr, 0, sizeof(ifr));
+			memcpy(ifr.ifr_name, local->interface,
+			       strlen(local->interface));
+
+			int err = setsockopt(socket_fd, SOL_SOCKET,
+					     SO_BINDTODEVICE, (void *)&ifr,
+					     strlen(local->interface));
+
+			if (err == -1) {
+				(void)close(socket_fd);
+				return -1;
+			}
+#endif /* CONFIG_BSD_LIBRARY */
+		}
+
 		if (local->protocol == IPPROTO_DTLS_1_2) {
 			/* Set the security configuration for the socket. */
 			int err = setsockopt(socket_fd, SOL_TLS, TLS_DTLS_ROLE,
