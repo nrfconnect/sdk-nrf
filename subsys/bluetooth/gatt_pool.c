@@ -250,6 +250,7 @@ void bt_gatt_pool_svc_get(struct bt_gatt_service *svc,
 	attr->perm = BT_GATT_PERM_READ;
 	attr->read = bt_gatt_attr_read_service;
 
+	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
 	svc->attr_count++;
 }
 
@@ -283,6 +284,7 @@ void bt_gatt_pool_chrc_get(struct bt_gatt_service *svc,
 	dest_chrc->properties = chrc->properties;
 	uuid_register((struct bt_uuid **) &dest_chrc->uuid, chrc->uuid);
 
+	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
 	svc->attr_count++;
 }
 
@@ -308,6 +310,7 @@ void bt_gatt_pool_desc_get(struct bt_gatt_service *svc,
 	attr->uuid = NULL;
 	uuid_register((struct bt_uuid **) &attr->uuid, descriptor->uuid);
 
+	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
 	svc->attr_count++;
 }
 
@@ -335,6 +338,7 @@ void bt_gatt_pool_ccc_get(struct bt_gatt_service *svc,
 	ccc_get((struct _bt_gatt_ccc **) &attr->user_data);
 	memcpy(attr->user_data, ccc, sizeof(struct _bt_gatt_ccc));
 
+	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
 	svc->attr_count++;
 }
 
