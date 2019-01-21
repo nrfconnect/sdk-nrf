@@ -46,6 +46,9 @@ def find_provision_memory_section(config_file):
             elif "FLASH_AREA_PROVISION_OFFSET" in line:
                 provision_address = int(line.split('=')[1])
 
+    if s0_address == 0 or s1_address == 0 or provision_address == 0:
+        raise RuntimeError("Could not find value for one of S0, S1 or provision address.")
+    
     return s0_address, s1_address, provision_address
 
 
