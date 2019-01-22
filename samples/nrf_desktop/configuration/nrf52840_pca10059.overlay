@@ -1,0 +1,9 @@
+&usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "ok";
+	num-bidir-endpoints = <0>;
+	num-in-endpoints = <2>;
+	num-out-endpoints = <2>;
+	num-isoin-endpoints = <0>;
+	num-isoout-endpoints = <0>;
+};
