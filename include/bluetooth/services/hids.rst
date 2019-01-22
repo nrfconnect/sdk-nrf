@@ -20,7 +20,7 @@ the connection state of HIDS with the top module that uses it.
 
 The HID Service is used in the following samples:
 
- * :ref:`peripheral_hids`
+ * :ref:`peripheral_hids_mouse`
  * :ref:`peripheral_hids_keyboard`
 
 Service Changed support

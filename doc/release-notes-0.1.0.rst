@@ -56,7 +56,7 @@ The following samples that work with the Zephyr BLE Controller have been added:
 
 * :ref:`peripheral_lbs` - sample server implementation using a proprietary vendor-specific UUID.
 * :ref:`peripheral_uart` - sample server implementation using a proprietary vendor-specific UUID.
-* :ref:`peripheral_hids` - sample server implementation using the :ref:`hids_readme`.
+* :ref:`peripheral_hids_mouse` - sample server implementation using the :ref:`hids_readme`.
 * :ref:`ble_throughput` - sample server and client implementation showing the usage of Data Length Extension and PHY update procedures.
 * :ref:`nrf_desktop` - reference design running on PCA10056 (nRF52840 Development Kit).
 
