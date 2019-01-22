@@ -75,21 +75,39 @@ class RttNordicProfilerHost:
         time.sleep(1)  # time required for initialization
         self.logger.info("Connected to device via RTT")
 
+    def shutdown(self):
+        self.disconnect()
+        self._read_remaining_events()
+        if self.event_filename and self.event_types_filename:
+            self.received_events.write_data_to_files(self.event_filename,
+                                                     self.event_types_filename)
+
     def disconnect(self):
         self.stop_logging_events()
         # read remaining data to buffer
-        buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
-                                  self.config['rtt_read_chunk_size'],
-                                  encoding=None)
+        try:
+            buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
+                                      self.config['rtt_read_chunk_size'],
+                                      encoding=None)
+
+        except:
+            self.logger.error("Problem with reading RTT data.")
+
         while len(buf) > 0:
             self.bufs.append(buf)
             self.bcnt += len(buf)
             buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
                                       self.config['rtt_read_chunk_size'],
                                       encoding=None)
-        self.jlink.rtt_stop()
-        self.jlink.disconnect_from_emu()
-        self.jlink.close()
+        try:
+            self.jlink.rtt_stop()
+            self.jlink.disconnect_from_emu()
+            self.jlink.close()
+
+        except:
+            self.logger.error("JLink connection lost. Saving collected data.")
+            return
+
         self.logger.info("Disconnected from device")
 
     def _get_buffered_data(self, num_bytes):
@@ -113,9 +131,15 @@ class RttNordicProfilerHost:
             if now - self.last_read_time < self.config['rtt_read_period'] \
             and self.bcnt >= num_bytes:
                 break
-            buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
-                                      self.config['rtt_read_chunk_size'],
-                                      encoding=None)
+
+            try:
+                buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
+                                          self.config['rtt_read_chunk_size'],
+                                          encoding=None)
+            except:
+                self.logger.error("Problem with reading RTT data.")
+                self.shutdown()
+
             if len(buf) > 0:
                 self.bufs.append(buf)
                 self.bcnt += len(buf)
@@ -125,18 +149,13 @@ class RttNordicProfilerHost:
 
             self.last_read_time = now
 
-
             if self.bcnt >= num_bytes:
                 break
 
             if self.finish_event is not None and self.finish_event.is_set():
                 self.finish_event.clear()
                 self.logger.info("Real time transmission closed")
-                self.disconnect()
-                self._read_remaining_events()
-                if self.event_filename is not None and self.event_types_filename is not None:
-                    self.received_events.write_data_to_files(self.event_filename,
-                                                             self.event_types_filename)
+                self.shutdown()
                 self.logger.info("Events data saved to files")
                 sys.exit()
 
@@ -150,9 +169,15 @@ class RttNordicProfilerHost:
 
     def _read_single_event_description(self):
         while '\n' not in self.desc_buf:
-            buf_temp = self.jlink.rtt_read(self.config['rtt_info_channel'],
-                                  self.config['rtt_read_chunk_size'],
-                                  encoding='utf-8')
+            try:
+                buf_temp = self.jlink.rtt_read(self.config['rtt_info_channel'],
+                                      self.config['rtt_read_chunk_size'],
+                                      encoding='utf-8')
+
+            except:
+                self.logger.error("Problem with reading RTT data.")
+                self.shutdown()
+
             self.desc_buf += buf_temp
             time.sleep(0.1)
 
@@ -248,11 +273,7 @@ class RttNordicProfilerHost:
                 self.queue.put(event)
             current_time = time.time()
         self.logger.info("Real time transmission closed")
-        self.disconnect()
-        self._read_remaining_events()
-        if self.event_filename is not None and self.event_types_filename is not None:
-            self.received_events.write_data_to_files(self.event_filename,
-                                                     self.event_types_filename)
+        self.shutdown()
         self.logger.info("Events data saved to files")
         sys.exit()
 
@@ -265,4 +286,7 @@ class RttNordicProfilerHost:
     def _send_command(self, command_type):
         command = bytearray(1)
         command[0] = command_type.value
-        self.jlink.rtt_write(self.config['rtt_command_channel'], command, None)
+        try:
+            self.jlink.rtt_write(self.config['rtt_command_channel'], command, None)
+        except:
+            self.logger.error("Problem with writing RTT data.")
