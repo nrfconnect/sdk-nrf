@@ -79,6 +79,8 @@ pipeline {
               for(int i=0; i<desktop_platforms.size(); i++) {
                 file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.hex"
                 check_and_store_sample("$file_path", "nrf_desktop_${desktop_platforms[i]}.hex")
+                file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_zrelease/zephyr/zephyr.hex"
+                check_and_store_sample("$file_path", "nrf_desktop_${desktop_platforms[i]}_ZRelease.hex")
               }
 
               /* Rename the nrf9160 samples */

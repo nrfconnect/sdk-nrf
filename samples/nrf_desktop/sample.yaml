@@ -7,3 +7,9 @@ tests:
     build_on_all: true
     platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52840_pca10059 nrf52_pca63519
     tags: bluetooth ci_build
+  test_zrelease:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52840_pca10059 nrf52_pca63519
+    tags: bluetooth ci_build
+    extra_args: "CMAKE_BUILD_TYPE=ZRelease"
