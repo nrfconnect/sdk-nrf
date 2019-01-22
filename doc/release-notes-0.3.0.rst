@@ -230,7 +230,7 @@ Bluetooth Low Energy
 * :ref:`peripheral_uart` cannot handle the corner case that a user attempts to send a string of more than 211 bytes.
   This issue will be fixed with `pull request #313 <https://github.com/NordicPlayground/fw-nrfconnect-nrf/pull/313>`_.
 * The central samples (:ref:`central_uart`, :ref:`bluetooth_central_hids`) do not support any pairing methods with MITM protection.
-* The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
+* The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids_mouse`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
   These issues result in disconnection.
 
 Bootloader

@@ -47,3 +47,5 @@ The following documentation has been added or updated:
 * :ref:`bt_conn_ctx_readme` (added)
 * :ref:`dk_buttons_and_leds_readme` (added)
 * :ref:`asset_tracker` (updated)
+* :ref:`peripheral_hids_mouse` (updated)
+* :ref:`peripheral_hids_keyboard` (added)
