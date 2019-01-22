@@ -21,7 +21,7 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE ZDebug)
 endif()
 
-if (${BOARD} STREQUAL nrf52840_pca10056)
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
         set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
 endif()
 
