@@ -31,13 +31,13 @@ class StatsNordic():
         self.logger_console.setFormatter(self.log_format)
         self.logger.addHandler(self.logger_console)
 
-    def calculate_stats_preset1(self):
+    def calculate_stats_preset1(self, start_meas, end_meas):
         self.time_between_events("hid_report_sent_event", EventState.SUBMIT,
                                  "motion_event", EventState.SUBMIT,
-                                 4000)
+                                 4000, start_meas, end_meas)
         self.time_between_events("hid_report_sent_event", EventState.SUBMIT,
                                  "hid_report_sent_event", EventState.SUBMIT,
-                                 4000)
+                                 4000, start_meas, end_meas)
         plt.show()
 
     def _get_timestamps(self, event_name, event_state, start_meas, end_meas):
@@ -57,16 +57,16 @@ class StatsNordic():
         if event_state == EventState.SUBMIT:
             timestamps = np.fromiter(map(lambda x: x.submit.timestamp, trackings),
                                      dtype=np.float)
-        if event_state == EventState.PROC_START:
+        elif event_state == EventState.PROC_START:
             timestamps = np.fromiter(map(lambda x: x.proc_start_time, trackings),
                                      dtype=np.float)
-        if event_state == EventState.PROC_END:
+        elif event_state == EventState.PROC_END:
             timestamps = np.fromiter(map(lambda x: x.proc_end_time, trackings),
                                      dtype=np.float)
 
-        timestamps = np.fromiter(filter(lambda x: x > start_meas
-                                        and x < end_meas,
-                                        timestamps), dtype=np.float)
+        timestamps = timestamps[np.where((timestamps > start_meas)
+                                         & (timestamps < end_meas))]
+
         return timestamps
 
     def calculate_times_between(self, start_times, end_times):
@@ -93,7 +93,7 @@ class StatsNordic():
 
     def time_between_events(self, start_event_name, start_event_state,
                             end_event_name, end_event_state, hist_bin_cnt=400,
-                            start_meas=0, end_meas=np.Inf):
+                            start_meas=0, end_meas=float('inf')):
 
         if not self.processed_data.tracking_execution:
             if start_event_state != EventState.SUBMIT or \
