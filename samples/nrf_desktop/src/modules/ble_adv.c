@@ -100,15 +100,18 @@ static void ble_adv_update_fn(struct k_work *work)
 				ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 		}
 
-		if (err) {
+		if (err == -EIO) {
+			LOG_WRN("Already connected, do not advertise");
+		} else if (err) {
 			LOG_ERR("Failed to restart advertising (err %d)", err);
 			k_delayed_work_cancel(&vendor_section_remove);
 
 			module_set_state(MODULE_STATE_ERROR);
-		} else {
-			k_delayed_work_submit(&vendor_section_remove,
-				K_SECONDS(SWIFT_PAIR_SECTION_REMOVE_TIMEOUT));
+			return;
 		}
+
+		k_delayed_work_submit(&vendor_section_remove,
+			K_SECONDS(SWIFT_PAIR_SECTION_REMOVE_TIMEOUT));
 	}
 }
 
