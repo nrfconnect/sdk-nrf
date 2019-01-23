@@ -1044,7 +1044,7 @@ static void store_input_report(struct hids_inp_rep *hids_inp_rep,
 static int inp_rep_notify_all(struct hids *hids_obj,
 			      struct hids_inp_rep *hids_inp_rep,
 			      u8_t const *rep, u8_t len,
-			      bt_gatt_notify_complete_func_t cb)
+			      bt_gatt_complete_func_t cb)
 {
 	struct hids_conn_data *conn_data;
 	u8_t *rep_data = NULL;
@@ -1085,7 +1085,7 @@ static int inp_rep_notify_all(struct hids *hids_obj,
 
 int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 		      u8_t rep_index, u8_t const *rep, u8_t len,
-		      bt_gatt_notify_complete_func_t cb)
+		      bt_gatt_complete_func_t cb)
 {
 	struct hids_inp_rep *hids_inp_rep =
 	    &hids_obj->inp_rep_group.reports[rep_index];
@@ -1126,7 +1126,7 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 static int boot_mouse_inp_report_notify_all(
 	struct hids *hids_obj, const u8_t *buttons,
 	struct hids_boot_mouse_inp_rep *boot_mouse_inp_rep, s8_t x_delta,
-	s8_t y_delta, bt_gatt_notify_complete_func_t cb)
+	s8_t y_delta, bt_gatt_complete_func_t cb)
 {
 	struct hids_conn_data *conn_data;
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
@@ -1179,7 +1179,7 @@ static int boot_mouse_inp_report_notify_all(
 int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 				 const u8_t *buttons, s8_t x_delta,
 				 s8_t y_delta,
-				 bt_gatt_notify_complete_func_t cb)
+				 bt_gatt_complete_func_t cb)
 {
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
 	struct hids_boot_mouse_inp_rep *boot_mouse_inp_rep =
@@ -1231,7 +1231,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 static int
 boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
 		       struct hids_boot_kb_inp_rep *boot_kb_input_report,
-		       bt_gatt_notify_complete_func_t cb)
+		       bt_gatt_complete_func_t cb)
 {
 	struct hids_conn_data *conn_data;
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
@@ -1273,7 +1273,7 @@ boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
 
 int hids_boot_kb_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 			      u8_t const *rep, u16_t len,
-			      bt_gatt_notify_complete_func_t cb)
+			      bt_gatt_complete_func_t cb)
 {
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
 	struct hids_boot_kb_inp_rep *boot_kb_input_report =

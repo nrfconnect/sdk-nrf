@@ -472,7 +472,7 @@ int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn);
  */
 int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 		      u8_t rep_index, u8_t const *rep,
-		      u8_t len, bt_gatt_notify_complete_func_t cb);
+		      u8_t len, bt_gatt_complete_func_t cb);
 
 /** @brief Send Boot Mouse Input Report.
  *
@@ -494,7 +494,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
 				 struct bt_conn *conn,
 				 const u8_t *buttons,
 				 s8_t x_delta, s8_t y_delta,
-				 bt_gatt_notify_complete_func_t cb);
+				 bt_gatt_complete_func_t cb);
 
 /** @brief Send Boot Keyboard Input Report.
  *
@@ -513,7 +513,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
 int hids_boot_kb_inp_rep_send(struct hids *hids_obj,
 			      struct bt_conn *conn,
 			      u8_t const *rep,
-			      u16_t len, bt_gatt_notify_complete_func_t cb);
+			      u16_t len, bt_gatt_complete_func_t cb);
 
 
 #ifdef __cplusplus
