@@ -16,6 +16,12 @@
 #define BASE_GPS_SAMPLE_HOUR	(CONFIG_GPS_SIM_BASE_TIMESTAMP / 10000)
 #define BASE_GPS_SAMPLE_MINUTE	((CONFIG_GPS_SIM_BASE_TIMESTAMP / 100) % 100)
 #define BASE_GPS_SAMPLE_SECOND	(CONFIG_GPS_SIM_BASE_TIMESTAMP % 100)
+#define BASE_GSP_SAMPLE_LAT	(CONFIG_GPS_SIM_BASE_LATITUDE / 1000.0)
+#define BASE_GSP_SAMPLE_LNG	(CONFIG_GPS_SIM_BASE_LONGITUDE / 1000.0)
+
+/* Whole NMEA sentence, including CRC. */
+#define GPS_NMEA_SENTENCE "$GPGGA,%02d%02d%02d.200,%8.3f,%c,%09.3f,%c,1,"      \
+			  "12,1.0,0.0,M,0.0,M,,*%02X"
 
 LOG_MODULE_REGISTER(gps_sim, CONFIG_GPS_SIM_LOG_LEVEL);
 
@@ -36,8 +42,6 @@ struct gps_sim_data {
 };
 
 static struct gps_data nmea_sample;
-static double base_gps_sample_lat;
-static double base_gps_sample_lng;
 static struct k_mutex trigger_mutex;
 
 /**
@@ -219,13 +223,6 @@ static double generate_cosine(double offset, double amplitude)
  */
 static double generate_pseudo_random(void)
 {
-	static bool set_seed;
-
-	if (!set_seed) {
-		srand(k_cycle_get_32());
-		set_seed = true;
-	}
-
 	return (double)rand() / ((double)RAND_MAX / 2.0) - 1.0;
 }
 
@@ -244,15 +241,14 @@ static void generate_gps_data(struct gps_data *nmea_sentence,
 	static u8_t minute = BASE_GPS_SAMPLE_MINUTE;
 	static u8_t second = BASE_GPS_SAMPLE_SECOND;
 	static u32_t last_uptime;
-	double lat = base_gps_sample_lat;
-	double lng = base_gps_sample_lng;
-	char tmp_str[GPS_NMEA_SENTENCE_MAX_LENGTH];
+	double lat = BASE_GSP_SAMPLE_LAT;
+	double lng = BASE_GSP_SAMPLE_LNG;
 	char lat_heading = 'N';
 	char lng_heading = 'E';
 
 	if (IS_ENABLED(CONFIG_GPS_SIM_ELLIPSOID)) {
-		lat = generate_sine(base_gps_sample_lat, max_variation / 2.0);
-		lng = generate_cosine(base_gps_sample_lng, max_variation);
+		lat = generate_sine(BASE_GSP_SAMPLE_LAT, max_variation / 2.0);
+		lng = generate_cosine(BASE_GSP_SAMPLE_LNG, max_variation);
 	}
 
 	if (IS_ENABLED(CONFIG_GPS_SIM_PSEUDO_RANDOM)) {
@@ -261,8 +257,8 @@ static void generate_gps_data(struct gps_data *nmea_sentence,
 
 		acc_lat += max_variation * generate_pseudo_random();
 		acc_lng += max_variation * generate_pseudo_random();
-		lat = base_gps_sample_lat + acc_lat;
-		lng = base_gps_sample_lng + acc_lng;
+		lat = BASE_GSP_SAMPLE_LAT + acc_lat;
+		lng = BASE_GSP_SAMPLE_LNG + acc_lng;
 	}
 
 	u32_t uptime = k_uptime_get_32() / MSEC_PER_SEC;
@@ -290,23 +286,31 @@ static void generate_gps_data(struct gps_data *nmea_sentence,
 		lng_heading = 'W';
 	}
 
-	snprintf(tmp_str, GPS_NMEA_SENTENCE_MAX_LENGTH,
-		 "$GPGGA,%02d%02d%02d.200,%8.3f,%c,%09.3f,%c,1,"
-		 "12,1.0,0.0,M,0.0,M,,*",
-		 hour, minute, second, lat, lat_heading, lng, lng_heading);
+	/* Format the sentence, excluding the CRC. */
+	snprintf(nmea_sentence->str,
+		 GPS_NMEA_SENTENCE_MAX_LENGTH, GPS_NMEA_SENTENCE,
+		 hour, minute, second, lat, lat_heading, lng, lng_heading, 0);
 
-	u8_t checksum = nmea_checksum_get(tmp_str);
+	/* Calculate the CRC (stop when '*' is found, thus excluding the CRC),
+	 * then reformat the string, this time including the CRC.
+	 *
+	 * An alternative way to do this would have been to allocate a small
+	 * buffer on the stack, format the CRC into it, and strcat it with
+	 * the NMEA sentence.
+	 */
+
+	u8_t checksum = nmea_checksum_get(nmea_sentence->str);
 
 	nmea_sentence->len =
 		snprintf(nmea_sentence->str, GPS_NMEA_SENTENCE_MAX_LENGTH,
-			 "%s%02X", tmp_str, checksum);
+			 GPS_NMEA_SENTENCE, hour, minute, second, lat,
+			 lat_heading, lng, lng_heading, checksum);
+
+	LOG_DBG("%s (%d bytes)", nmea_sentence->str, nmea_sentence->len);
 }
 
 static int gps_sim_init(struct device *dev)
 {
-	base_gps_sample_lat = CONFIG_GPS_SIM_BASE_LATITUDE / 1000.0;
-	base_gps_sample_lng = CONFIG_GPS_SIM_BASE_LONGITUDE / 1000.0;
-
 	if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER)) {
 #ifdef CONFIG_GPS_SIM_TRIGGER_USE_BUTTON
 		struct gps_sim_data *drv_data = dev->driver_data;
@@ -314,6 +318,9 @@ static int gps_sim_init(struct device *dev)
 		drv_data->gpio_port = CONFIG_GPS_SIM_GPIO_CONTROLLER;
 		drv_data->gpio_pin = CONFIG_GPS_SIM_GPIO_PIN;
 #endif /* GPS_SIM_TRIGGER_USE_BUTTON */
+
+		/* Initialize random seed. */
+		srand(k_cycle_get_32());
 
 		if (gps_sim_init_thread(dev) < 0) {
 			LOG_ERR("Failed to initialize trigger interrupt");
@@ -331,11 +338,10 @@ static int gps_sim_init(struct device *dev)
  */
 static int gps_sim_generate_data(enum gps_channel chan)
 {
-	static double max_step = CONFIG_GPS_SIM_MAX_STEP / 1000.0;
-
 	switch (chan) {
 	case GPS_CHAN_NMEA:
-		generate_gps_data(&nmea_sample, max_step);
+		generate_gps_data(&nmea_sample,
+				  CONFIG_GPS_SIM_MAX_STEP / 1000.0);
 		break;
 	default:
 		return -ENOTSUP;
