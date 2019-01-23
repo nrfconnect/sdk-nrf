@@ -30,10 +30,9 @@ struct gps_sim_data {
 	gps_trigger_handler_t drdy_handler;
 	struct gps_trigger drdy_trigger;
 
-	K_THREAD_STACK_MEMBER(thread_stack,
-				  CONFIG_GPS_SIM_THREAD_STACK_SIZE);
+	K_THREAD_STACK_MEMBER(thread_stack, CONFIG_GPS_SIM_THREAD_STACK_SIZE);
 	struct k_thread thread;
-#endif  /* CONFIG_GPS_SIM_TRIGGER */
+#endif /* CONFIG_GPS_SIM_TRIGGER */
 };
 
 static struct gps_data nmea_sample;
@@ -73,8 +72,7 @@ static void gps_sim_thread(int dev_ptr)
 		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_TIMER)) {
 			k_sleep(CONFIG_GPS_SIM_TRIGGER_TIMER_MSEC);
 		} else if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
-			k_sem_take(&drv_data->gpio_sem,
-				K_FOREVER);
+			k_sem_take(&drv_data->gpio_sem, K_FOREVER);
 		}
 
 		k_mutex_lock(&trigger_mutex, K_FOREVER);
@@ -85,7 +83,7 @@ static void gps_sim_thread(int dev_ptr)
 
 		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
 			gpio_pin_enable_callback(drv_data->gpio,
-				drv_data->gpio_pin);
+						 drv_data->gpio_pin);
 		}
 	}
 }
@@ -105,16 +103,17 @@ static int gps_sim_init_thread(struct device *dev)
 		drv_data->gpio = device_get_binding(drv_data->gpio_port);
 		if (drv_data->gpio == NULL) {
 			LOG_ERR("Failed to get pointer to %s device",
-					drv_data->gpio_port);
+				drv_data->gpio_port);
 			return -EINVAL;
 		}
 
 		gpio_pin_configure(drv_data->gpio, drv_data->gpio_pin,
-					GPIO_DIR_IN | GPIO_INT | GPIO_INT_EDGE |
-					GPIO_INT_ACTIVE_LOW | GPIO_PUD_PULL_UP);
+				   GPIO_DIR_IN | GPIO_INT | GPIO_INT_EDGE |
+					   GPIO_INT_ACTIVE_LOW |
+					   GPIO_PUD_PULL_UP);
 
 		gpio_init_callback(&drv_data->gpio_cb, gps_sim_gpio_callback,
-				BIT(drv_data->gpio_pin));
+				   BIT(drv_data->gpio_pin));
 
 		if (gpio_add_callback(drv_data->gpio, &drv_data->gpio_cb) < 0) {
 			LOG_ERR("Failed to set GPIO callback");
@@ -133,8 +132,8 @@ static int gps_sim_init_thread(struct device *dev)
 }
 
 static int gps_sim_trigger_set(struct device *dev,
-				   const struct gps_trigger *trig,
-				   gps_trigger_handler_t handler)
+			       const struct gps_trigger *trig,
+			       gps_trigger_handler_t handler)
 {
 	int ret = 0;
 	struct gps_sim_data *drv_data = dev->driver_data;
@@ -148,10 +147,10 @@ static int gps_sim_trigger_set(struct device *dev,
 		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
 			if (handler) {
 				gpio_pin_enable_callback(drv_data->gpio,
-					drv_data->gpio_pin);
+							 drv_data->gpio_pin);
 			} else {
 				gpio_pin_disable_callback(drv_data->gpio,
-					drv_data->gpio_pin);
+							  drv_data->gpio_pin);
 			}
 		}
 
@@ -210,7 +209,7 @@ static double generate_sine(double offset, double amplitude)
  */
 static double generate_cosine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32() /  K_MSEC(CONFIG_GPS_SIM_FIX_TIME);
+	u32_t time = k_uptime_get_32() / K_MSEC(CONFIG_GPS_SIM_FIX_TIME);
 
 	return offset + amplitude * cos(time % UINT16_MAX);
 }
@@ -227,7 +226,7 @@ static double generate_pseudo_random(void)
 		set_seed = true;
 	}
 
-	return (double)rand() / ((double) RAND_MAX / 2.0) - 1.0;;
+	return (double)rand() / ((double)RAND_MAX / 2.0) - 1.0;
 }
 
 /**
@@ -238,9 +237,8 @@ static double generate_pseudo_random(void)
  * @param max_variation The maximum value the latitude and longitude in the
  * generated sentence can vary for each iteration. In units of minutes.
  */
-static void generate_gps_data(
-	struct gps_data *nmea_sentence,
-	double max_variation)
+static void generate_gps_data(struct gps_data *nmea_sentence,
+			      double max_variation)
 {
 	static u8_t hour = BASE_GPS_SAMPLE_HOUR;
 	static u8_t minute = BASE_GPS_SAMPLE_MINUTE;
@@ -293,15 +291,15 @@ static void generate_gps_data(
 	}
 
 	snprintf(tmp_str, GPS_NMEA_SENTENCE_MAX_LENGTH,
-		"$GPGGA,%02d%02d%02d.200,%8.3f,%c,%09.3f,%c,1,"
-		"12,1.0,0.0,M,0.0,M,,*",
-		hour, minute, second, lat, lat_heading, lng, lng_heading);
+		 "$GPGGA,%02d%02d%02d.200,%8.3f,%c,%09.3f,%c,1,"
+		 "12,1.0,0.0,M,0.0,M,,*",
+		 hour, minute, second, lat, lat_heading, lng, lng_heading);
 
 	u8_t checksum = nmea_checksum_get(tmp_str);
 
 	nmea_sentence->len =
 		snprintf(nmea_sentence->str, GPS_NMEA_SENTENCE_MAX_LENGTH,
-			"%s%02X", tmp_str, checksum);
+			 "%s%02X", tmp_str, checksum);
 }
 
 static int gps_sim_init(struct device *dev)
@@ -352,7 +350,7 @@ static int gps_sim_sample_fetch(struct device *dev)
 }
 
 static int gps_sim_channel_get(struct device *dev, enum gps_channel chan,
-				   struct gps_data *sample)
+			       struct gps_data *sample)
 {
 	switch (chan) {
 	case GPS_CHAN_NMEA:
@@ -384,5 +382,5 @@ static const struct gps_driver_api gps_sim_api_funcs = {
 #endif
 
 DEVICE_AND_API_INIT(gps_sim, CONFIG_GPS_SIM_DEV_NAME, gps_sim_init,
-			&gps_sim_data, NULL, POST_KERNEL, GPS_INIT_PRIORITY,
-			&gps_sim_api_funcs);
+		    &gps_sim_data, NULL, POST_KERNEL, GPS_INIT_PRIORITY,
+		    &gps_sim_api_funcs);
