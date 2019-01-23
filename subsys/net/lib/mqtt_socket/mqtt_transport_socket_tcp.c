@@ -10,7 +10,7 @@
  */
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(net_mqtt_sock_tcp, CONFIG_MQTT_LOG_LEVEL);
+LOG_MODULE_REGISTER(net_mqtt_sock_tcp, CONFIG_MQTT_SOCKET_LOG_LEVEL);
 
 #include <errno.h>
 #include <net/socket.h>

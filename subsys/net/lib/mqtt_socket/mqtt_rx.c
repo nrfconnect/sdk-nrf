@@ -5,7 +5,7 @@
  */
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(net_mqtt_rx, CONFIG_MQTT_LOG_LEVEL);
+LOG_MODULE_REGISTER(net_mqtt_rx, CONFIG_MQTT_SOCKET_LOG_LEVEL);
 
 #include "mqtt_internal.h"
 #include "mqtt_os.h"
