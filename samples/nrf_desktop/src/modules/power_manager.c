@@ -111,7 +111,7 @@ static void create_device_list(struct device_list *dl)
 	dl->count = dcount;
 }
 
-int _sys_soc_suspend(s32_t ticks)
+int sys_suspend(s32_t ticks)
 {
 	if ((ticks != K_FOREVER) && (ticks < MSEC(100))) {
 		return SYS_PM_NOT_HANDLED;
@@ -123,9 +123,9 @@ int _sys_soc_suspend(s32_t ticks)
 
 		power_state = POWER_STATE_OFF;
 
-		_sys_soc_pm_idle_exit_notification_disable();
+		sys_pm_idle_exit_notification_disable();
 		suspend_devices(&device_list);
-		_sys_soc_set_power_state(SYS_POWER_STATE_DEEP_SLEEP);
+		sys_set_power_state(SYS_POWER_STATE_DEEP_SLEEP);
 
 		/* System is off here - wake up leads to reboot. */
 		__ASSERT_NO_MSG(false);
