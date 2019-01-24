@@ -70,6 +70,7 @@
 #include <zephyr/types.h>
 #include <misc/reboot.h>
 #include <misc/__assert.h>
+#include <logging/log_ctrl.h>
 
 #include <event_manager_priv.h>
 #include <profiler.h>
