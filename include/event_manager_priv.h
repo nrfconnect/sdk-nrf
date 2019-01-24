@@ -92,7 +92,7 @@ extern "C" {
 		struct ename *event = k_malloc(sizeof(*event));		\
 		if (unlikely(!event)) {					\
 			printk("Event Manager OOM error\n");		\
-			k_sleep(1);					\
+			LOG_PANIC();					\
 			sys_reboot(SYS_REBOOT_WARM);			\
 			return NULL;					\
 		}							\
