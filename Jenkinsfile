@@ -1,5 +1,5 @@
 // Due to JENKINS-42369 we put these defines outside the pipeline
-def IMAGE_TAG = "ncs-toolchain:1.06"
+def IMAGE_TAG = "ncs-toolchain:1.07"
 def REPO_ZEPHYR = "https://github.com/NordicPlayground/fw-nrfconnect-zephyr.git"
 def REPO_NRFXLIB = "https://github.com/NordicPlayground/nrfxlib.git"
 
