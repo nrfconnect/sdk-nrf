@@ -185,8 +185,8 @@ The documentation block should precede the documented element.
 Structs
 =======
 
-Documentation of members in a struct cannot be displayed by Sphinx/Breathe.
-Therefore, members must be documented as params.
+The documentation block should precede the documented element.
+Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
 
 .. code-block:: c
    :caption: Struct documentation example
@@ -195,15 +195,13 @@ Therefore, members must be documented as params.
 	 *
 	 * @warning When event structure is defined event header must be placed
 	 *          as the first field.
-         *
-         * @param node Linked list node used to chain events.
-         * @param timestamp Timestamp indicating event creation time.
-         * @param event_type Pointer to the event type object.
-         *
 	 */
 	struct event_header {
+
+        	/** Linked list node used to chain events. */
 		sys_dlist_t node;
-		s64_t timestamp;
+
+        	/** Pointer to the event type object. */
 		const struct event_type *type_id;
 	};
 
