@@ -24,22 +24,26 @@ extern "C" {
 
 /** @brief Handles on the connected peer device that are needed to interact with
  * the device.
- *
- * @param rx      Handle of the NUS RX characteristic, as provided by
- *		  a discovery.
- * @param tx      Handle of the NUS TX characteristic, as provided by
- *		  a discovery.
- * @param tx_ccc  Handle of the CCC descriptor of the NUS TX characteristic, as
- *                provided by a discovery.
  */
 struct bt_gatt_nus_c_handles {
+
+        /** Handle of the NUS RX characteristic, as provided by
+	 *  a discovery.
+         */
 	u16_t rx;
+
+        /** Handle of the NUS TX characteristic, as provided by
+	 *  a discovery.
+         */
 	u16_t tx;
+
+        /** Handle of the CCC descriptor of the NUS TX characteristic,
+	 *  as provided by a discovery.
+         */
 	u16_t tx_ccc;
 };
 
-/** @brief NUS Client callback structure.
- */
+/** @brief NUS Client callback structure. */
 struct bt_gatt_nus_c_cbs {
 	/** @brief Data received callback.
 	 *
@@ -71,30 +75,34 @@ struct bt_gatt_nus_c_cbs {
 	void (*tx_notif_disabled)(void);
 };
 
-/** @brief NUS Client structure.
- *
- * @param bt_conn Connection object.
- * @param state Internal state.
- * @param handles Handles on the connected peer device that are needed
- *                to interact with the device.
- * @param tx_notif_params GATT subscribe parameters for NUS TX Characteristic.
- * @param rx_write_params GATT write parameters for NUS RX Characteristic.
- * @param cbs Application callbacks.
- */
+/** @brief NUS Client structure. */
 struct bt_gatt_nus_c {
+
+        /** Connection object. */
 	struct bt_conn *conn;
+
+        /** Internal state. */
 	atomic_t state;
+
+        /** Handles on the connected peer device that are needed
+         * to interact with the device.
+         */
 	struct bt_gatt_nus_c_handles handles;
+
+        /** GATT subscribe parameters for NUS TX Characteristic. */
 	struct bt_gatt_subscribe_params tx_notif_params;
+
+        /** GATT write parameters for NUS RX Characteristic. */
 	struct bt_gatt_write_params rx_write_params;
+
+        /** Application callbacks. */
 	struct bt_gatt_nus_c_cbs cbs;
 };
 
-/** @brief NUS Client initialization structure.
- *
- * @param cbs Callbacks provided by the user.
- */
+/** @brief NUS Client initialization structure. */
 struct bt_gatt_nus_c_init_param {
+
+        /** Callbacks provided by the user. */
 	struct bt_gatt_nus_c_cbs cbs;
 };
 

@@ -20,22 +20,23 @@
 extern "C" {
 #endif
 
-/**@brief BLE GATT throughput metrics.
- *
- * @param write_count Number of GATT writes received.
- * @param write_len Number of bytes received.
- * @param write_rate Transfer speed in bits per second.
- */
+/**@brief BLE GATT throughput metrics. */
 struct metrics {
+
+        /** Number of GATT writes received. */
 	u32_t write_count;
+
+        /** Number of bytes received. */
 	u32_t write_len;
+
+        /** Transfer speed in bits per second. */
 	u32_t write_rate;
 };
 
-/** Throughput characteristic UUID. */
+/** @brief Throughput characteristic UUID. */
 #define BT_UUID_THROUGHPUT_CHAR BT_UUID_DECLARE_16(0x1524)
 
-/** Throughput Service UUID. */
+/** @brief Throughput Service UUID. */
 #define BT_UUID_THROUGHPUT                                                     \
 	BT_UUID_DECLARE_128(0xBB, 0x4A, 0xFF, 0x4F, 0xAD, 0x03, 0x41, 0x5D,    \
 			    0xA9, 0x6C, 0x9D, 0x6C, 0xDD, 0xDA, 0x83, 0x04)
