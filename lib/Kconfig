@@ -7,12 +7,9 @@
 menu "Libraries"
 
 rsource "bsdlib/Kconfig"
+
 rsource "at_host/Kconfig"
 
-rsource "gps_sim/Kconfig"
-
 rsource "dk_buttons_and_leds/Kconfig"
-
-rsource "sensor_sim/Kconfig"
 
 endmenu
