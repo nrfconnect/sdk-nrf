@@ -132,15 +132,15 @@ BSD Socket
 	The library source files are located in :file:`lib/bsdlib`.
 
 GPS simulator
-	The **GPS simulator** library simulates a simple GPS device providing NMEA strings
+	The **GPS simulator** simulates a simple GPS device providing NMEA strings
 	with generated data that can be accessed through the GPS API.
-	The library source files are located in :file:`lib/gps_sim`.
+	The driver source files are located in :file:`drivers/gps_sim`.
 
 Sensor simulator
-	The **Sensor simulator** library simulates a sensor device that can be accessed
+	The **Sensor simulator** simulates a sensor device that can be accessed
 	through the sensor API.
 	It is currently supporting the acceleration channels in the API.
-	The library source files are located in :file:`lib/sensor_sim`.
+	The driver source files are located in :file:`drivers/sensor/sensor_sim`.
 
 Samples
 *******
