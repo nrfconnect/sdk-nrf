@@ -38,7 +38,11 @@ typedef void (*nus_sent_cb_t)(const u8_t *data, u16_t len);
 
 /** @brief Pointers to the callback functions for service events. */
 struct bt_nus_cb {
+
+        /** Callback for data received. **/
 	nus_received_cb_t received_cb;
+
+        /** Callback for data sent. **/
 	nus_sent_cb_t     sent_cb;
 };
 

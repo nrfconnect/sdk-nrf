@@ -75,8 +75,10 @@ enum nrf_cloud_ua_button {
 
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
 struct nrf_cloud_data {
-	u32_t len;       /** Length of the data. */
-	const void *ptr; /** Pointer to the data. */
+        /** Length of the data. */
+	u32_t len;
+        /** Pointer to the data. */
+	const void *ptr;
 };
 
 /**@brief User association types that are supported by the device. */
