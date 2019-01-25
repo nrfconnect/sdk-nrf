@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig AT_CMD
+	bool "nRF91 LTE Link control library"
+	depends on BSD_LIBRARY
+
+if AT_CMD
+
+config AT_CMD_MAX_CLIENTS
+	int "Maximum number of clients"
+	range 1 8
+	default 8
+
+config AT_CMD_THREAD_PRIO
+	int
+	range 0 NUM_PREEMPT_PRIORITIES
+	default 0 if !MULTITHREADING
+	default 10
+
+config AT_CMD_CMD_MAX_LEN
+	int "Maximum AT command length"
+	default 128
+
+config AT_CMD_RESPONSE_MAX_LEN
+	int "Maximum AT command response length"
+	default 128
+
+config AT_CMD_RESP_TIMEOUT
+	int "Time in ms to wait for response from modem"
+	range -1 30000
+	default -1
+	help
+		The value determines the timeout in milliseconds to wait for
+		the modem to respond to an AT command. Set to -1 to block
+		indefinitely until response is received.
+
+module = AT_CMD
+module-str = AT command driver
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AT_CMD
