@@ -1,0 +1,46 @@
+# The west manifest file for the nRF Connect SDK (NCS).
+#
+# The per-installation west configuration file specifies the location of this
+# manifest file. The "path" option in the [manifest] section of .west/config
+# defines the folder that contains west.yml. The path is relative to the folder
+# that contains .west.
+#
+# You can create your own manifest files and put them in any
+# repository you want, to create your own custom NCS installation.
+# For example, you could create a manifest file in your own
+# out-of-tree application directory, which would pull the nrf repository
+# in as an ordinary project.
+#
+# You can pass your manifest repositories to west init when creating a
+# new NCS installation. See the west documentation for more
+# information.
+
+west:
+  url: https://github.com/zephyrproject-rtos/west
+  revision: master
+
+manifest:
+  defaults:
+    remote: ncs
+
+  remotes:
+      # nRF Connect SDK base URL.
+    - name: ncs
+      url-base: https://github.com/NordicPlayground
+
+  # The list of external projects for the nRF Connect SDK.
+  #
+  projects:
+    - name: fw-nrfconnect-zephyr
+      path: zephyr
+      west-commands: scripts/west-commands.yml
+      revision: e7404f89f63f1e712ece8d723f4c2bf56eee121c
+    - name: fw-nrfconnect-mcuboot
+      path: mcuboot
+      revision: 9d9a463f68fea23a0432e8dd597b7baad4a659ed
+    - name: nrfxlib
+      path: nrfxlib
+      revision: 4173ecf39b5798100a3859dafbb0bca9ea6b24fc
+
+  self:
+    path: nrf
