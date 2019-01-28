@@ -60,7 +60,7 @@ int clocks_start(void)
 	int err;
 	struct device *hfclk;
 
-	hfclk = device_get_binding(CONFIG_CLOCK_CONTROL_NRF5_M16SRC_DRV_NAME);
+	hfclk = device_get_binding(CONFIG_CLOCK_CONTROL_NRF_M16SRC_DRV_NAME);
 	if (!hfclk) {
 		LOG_ERR("HF Clock device not found!");
 		return -EIO;
