@@ -105,16 +105,17 @@ config DESKTOP_BLE_SCANNING_ENABLE
 
 if DESKTOP_BLE_SCANNING_ENABLE
 
-config DESKTOP_BLE_SCANNING_DEVICE_NAME
-	string "Peripheral device name"
-	default ""
-	help
-	  Name of the device to which central shall connect to.
-
 module = DESKTOP_BLE_SCANNING
 module-str = BLE scanning
 source "subsys/logging/Kconfig.template.log_config"
 
 endif
+
+config DESKTOP_BLE_SHORT_NAME
+	string "Short device name used for advertising and as a scan filter"
+	default ""
+	help
+	  Name of the device to which central shall connect to. Used also to
+	  determine shortened device name for advertising.
 
 endmenu

@@ -18,9 +18,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 
-#define DEVICE_NAME				CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN				(sizeof(DEVICE_NAME) - 1)
-#define DEVICE_NAME_SHORT_LEN			(min(12, DEVICE_NAME_LEN))
+#define DEVICE_NAME	CONFIG_DESKTOP_BLE_SHORT_NAME
+#define DEVICE_NAME_LEN	(sizeof(DEVICE_NAME) - 1)
 
 #define SWIFT_PAIR_SECTION_SIZE			1 /* number of struct bt_data objects */
 #define SWIFT_PAIR_SECTION_REMOVE_TIMEOUT	(CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT	\
@@ -52,15 +51,13 @@ static const struct bt_data ad[] = {
 #endif
 			  0x0f, 0x18),	/* Battery Service */
 
+	BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, DEVICE_NAME_LEN),
 #if CONFIG_DESKTOP_BLE_SWIFT_PAIR
-	BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, DEVICE_NAME_SHORT_LEN),
 	BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA,
 			  0x06, 0x00,	/* Microsoft Vendor ID */
 			  0x03,		/* Microsoft Beacon ID */
 			  0x00,		/* Microsoft Beacon Sub Scenario */
 			  0x80),	/* Reserved RSSI Byte */
-#else
-	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 #endif
 };
 

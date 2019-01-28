@@ -21,9 +21,8 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
 
-#define DEVICE_NAME	CONFIG_DESKTOP_BLE_SCANNING_DEVICE_NAME
+#define DEVICE_NAME	CONFIG_DESKTOP_BLE_SHORT_NAME
 #define DEVICE_NAME_LEN	(sizeof(DEVICE_NAME) - 1)
-
 
 static bt_addr_le_t target_addr;
 
@@ -99,12 +98,17 @@ static int configure_filters(void)
 	bt_scan_filter_remove_all();
 
 	static_assert(DEVICE_NAME_LEN > 0, "Invalid device name");
-	int err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, DEVICE_NAME);
+
+	static const struct bt_scan_short_name short_name = {
+		.name = DEVICE_NAME,
+		.min_len = DEVICE_NAME_LEN,
+	};
+	int err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &short_name);
 	if (err) {
 		LOG_ERR("Name filter cannot be added (err %d)", err);
 		goto error;
 	}
-	u8_t filter_mode = BT_SCAN_NAME_FILTER;
+	u8_t filter_mode = BT_SCAN_SHORT_NAME_FILTER;
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
 	if (err) {
