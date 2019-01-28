@@ -10,6 +10,8 @@ config AT_HOST_LIBRARY
 	bool "AT Host Library for nrf91"
 	depends on BSD_LIBRARY
 
+if AT_HOST_LIBRARY
+
 choice
 	prompt "UART for AT Host"
 	default AT_HOST_UART_0
@@ -62,7 +64,8 @@ config AT_HOST_TERMINATION
 	default 3 if CR_LF_TERMINATION
 
 config AT_HOST_THREAD_PRIO
-	int "Thread priority"
+	# Hidden option for preemptive AT Host thread priority
+	int
 	range 0 NUM_PREEMPT_PRIORITIES
 	default 0 if !MULTITHREADING
 	default 10
@@ -74,5 +77,7 @@ config AT_HOST_SOCKET_BUF_SIZE
 config AT_HOST_UART_BUF_SIZE
 	int "UART Rx buffer size"
 	default 256
+
+endif # AT_HOST_LIBRARY
 
 endmenu
