@@ -301,7 +301,7 @@ static void secure_boot_config_peripherals(void)
 		NRFX_PERIPHERAL_ID_GET(NRF_VMC_S), 0);
 	/* Configure GPIO as Non-Secure */
 	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_GPIO), 0);
+		NRFX_PERIPHERAL_ID_GET(NRF_P0), 0);
 	/* Make GPIOTE1 interrupt available in Non-Secure domain */
 	secure_boot_config_peripheral(
 		NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE1_NS), 0);
