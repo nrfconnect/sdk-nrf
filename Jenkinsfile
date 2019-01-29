@@ -93,11 +93,17 @@ pipeline {
               }
 
               /* Rename the nrf9160 samples */
-              samples = ['secure_boot', 'asset_tracker', 'lte_ble_gateway', 'at_client']
+              samples = ['secure_boot']
               for(int i=0; i<samples.size(); i++)
               {
                 file_path = "zephyr/sanity-out/nrf9160_pca10090/nrf9160/${samples[i]}/test_build/zephyr/zephyr.hex"
                 check_and_store_sample("$file_path", "${samples[i]}_nrf9160_pca10090.hex")
+              }
+              ns_samples = ['asset_tracker', 'lte_ble_gateway', 'at_client']
+              for(int i=0; i<ns_samples.size(); i++)
+              {
+                file_path = "zephyr/sanity-out/nrf9160_pca10090ns/nrf9160/${ns_samples[i]}/test_build/zephyr/zephyr.hex"
+                check_and_store_sample("$file_path", "${ns_samples[i]}_nrf9160_pca10090ns.hex")
               }
             }
             archiveArtifacts allowEmptyArchive: true, artifacts: 'artifacts/*.hex'
