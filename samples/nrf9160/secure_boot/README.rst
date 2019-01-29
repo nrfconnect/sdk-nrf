@@ -46,7 +46,7 @@ Requirements for the application firmware
 * The application firmware must be located in the slot_ns flash partition.
   For more details, see the `nrf9160_pca10090_partition_conf.dts`_ file in the nrf9160_pca10090 board definition.
   Note that if you build your application firmware with the |NCS|, this requirement is automatically fulfilled.
-* The application firmware must be built as a non-secure firmware, which means that you must set ``CONFIG_TRUSTED_EXECUTION_NONSECURE=y`` in the ``prj.conf`` file of the application.
+* The application firmware must be built as a non-secure firmware for the nrf9160_pca10090ns board.
 
 Requirements
 ************
@@ -60,7 +60,7 @@ Building and running
 
 This sample can be found under :file:`samples/nrf9160/secure_boot` in the |NCS| folder structure.
 
-The sample is built as a secure firmware image, thus with ``CONFIG_TRUSTED_EXECUTION_SECURE=y`` set in ``prj.conf``.
+The sample is built as a secure firmware image for the nrf9160_pca10090 board.
 It can be programmed independently from the non-secure application firmware.
 
 See :ref:`gs_programming` for information about how to build and program the application.
