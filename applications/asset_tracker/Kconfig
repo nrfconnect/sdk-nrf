@@ -12,8 +12,8 @@ config CLOUD_BUTTON
 
 config CLOUD_BUTTON_INPUT
 	int "Enable button sensor"
-	range 1 4 if BOARD_NRF9160_PCA10090
-	range 1 1 if BOARD_NRF9160_PCA20035
+	range 1 4 if BOARD_NRF9160_PCA10090NS
+	range 1 1 if BOARD_NRF9160_PCA20035NS
 	default 1
 
 config POWER_OPTIMIZATION_ENABLE
@@ -116,9 +116,9 @@ config ACCEL_TRIGGER
 config FLIP_INPUT
 	int "Button or switch number to simulate flip"
 	range 1 4 if BOARD_NRF9160_PCA10090NS
-	range 1 1 if BOARD_NRF9160_PCA20035
+	range 1 1 if BOARD_NRF9160_PCA20035NS
 	default 3 if BOARD_NRF9160_PCA10090NS
-	default 1 if BOARD_NRF9160_PCA20035
+	default 1 if BOARD_NRF9160_PCA20035NS
 	help
 		Button or switch number to use for simulating
 		a board flip event.
@@ -156,14 +156,14 @@ endif
 
 config ACCEL_INVERTED
 	bool "Accelerometer inverted"
-	default y if BOARD_NRF9160_PCA20035
+	default y if BOARD_NRF9160_PCA20035NS
 	help
 		Enable if the accelerometer is mounted with the top side facing
 		down when the board itself is in normal position.
 
 config ACCEL_CALIBRATE
 	bool "Calibrate accelerometer"
-	default y if BOARD_NRF9160_PCA20035
+	default y if BOARD_NRF9160_PCA20035NS
 	help
 		Calibrate the accelerometer on a flat surface to filter away
 		static measurement offset that could affect orientation
@@ -172,7 +172,7 @@ config ACCEL_CALIBRATE
 if ACCEL_CALIBRATE
 config ACCEL_CALIBRATION_ITERATIONS
 	int "Number of readings for calibration"
-	default 20 if BOARD_NRF9160_PCA20035
+	default 20 if BOARD_NRF9160_PCA20035NS
 	help
 		Number of measurement readings to average over to find the
 		static offset in the readings when calibrating the
@@ -181,9 +181,9 @@ config ACCEL_CALIBRATION_ITERATIONS
 config CALIBRATION_INPUT
 	int "Button to trigger accelerometer calibration"
 	range 1 2 if BOARD_NRF9160_PCA10090NS
-	range 1 1 if BOARD_NRF9160_PCA20035
+	range 1 1 if BOARD_NRF9160_PCA20035NS
 	default 1 if BOARD_NRF9160_PCA10090NS
-	default 1 if BOARD_NRF9160_PCA20035
+	default 1 if BOARD_NRF9160_PCA20035NS
 	help
 		Button number to use to trigger accelerometer calibration:
 		1 - Button 1
@@ -198,7 +198,7 @@ endif
 
 config ACCEL_ITERATIONS
 	int "Number of readings per measurement"
-	default 20 if BOARD_NRF9160_PCA20035
+	default 20 if BOARD_NRF9160_PCA20035NS
 	default 1
 	help
 		Number of measurement readings to average over for each time
@@ -265,9 +265,9 @@ config TEMP_TRIGGER
 config TEMP_SIM_BUTTON
 	int "Button or switch to trigger 'data ready' event"
 	range 1 4 if BOARD_NRF9160_PCA10090NS
-	range 1 1 if BOARD_NRF9160_PCA20035
+	range 1 1 if BOARD_NRF9160_PCA20035NS
 	default 3 if BOARD_NRF9160_PCA10090NS
-	default 1 if BOARD_NRF9160_PCA20035
+	default 1 if BOARD_NRF9160_PCA20035NS
 	help
 		Button or switch number to use for triggering
 		a 'data ready' event.
