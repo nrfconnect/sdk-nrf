@@ -7,7 +7,6 @@
 
 menuconfig SENSOR_SIM
 	bool "Sensor simulator"
-	select SENSOR
 	help
 	  Enable sensor simulator.
 
