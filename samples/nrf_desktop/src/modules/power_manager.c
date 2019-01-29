@@ -194,7 +194,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_down_event(eh)) {
-		if (!usb_connected) {
+		if (!usb_connected && (power_state == POWER_STATE_SUSPENDING)) {
 			LOG_INF("power down the board");
 
 			profiler_term();
