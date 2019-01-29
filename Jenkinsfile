@@ -53,7 +53,7 @@ pipeline {
     stage('Checkout repositories') {
       steps {
         dir("zephyr") {
-          git branch: "nrf91", url: "$REPO_ZEPHYR", credentialsId: 'github'
+          git branch: "master", url: "$REPO_ZEPHYR", credentialsId: 'github'
         }
         dir("nrfxlib") {
           git branch: "master", url: "$REPO_NRFXLIB", credentialsId: 'github'
