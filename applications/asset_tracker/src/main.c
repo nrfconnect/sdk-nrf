@@ -22,7 +22,7 @@
 #include "orientation_detector.h"
 
 /* Interval in milliseconds between each time status LEDs are updated. */
-#if defined(CONFIG_BOARD_NRF9160_PCA20035)
+#if defined(CONFIG_BOARD_NRF9160_PCA20035NS)
 #define LEDS_ON_INTERVAL	        K_MSEC(1)
 #define LEDS_OFF_INTERVAL	        K_MSEC(2000)
 #else
@@ -77,7 +77,7 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #define CLOUD_LED_MSK DK_LED1_MSK
 
 static enum {
-#ifdef CONFIG_BOARD_NRF9160_PCA20035
+#ifdef CONFIG_BOARD_NRF9160_PCA20035NS
 	LEDS_INITIALIZING	= LED_ON(0),
 	LEDS_CONNECTING		= LED_BLINK(DK_LED3_MSK),
 	LEDS_PATTERN_WAIT	= LED_BLINK(DK_LED2_MSK | DK_LED3_MSK),
