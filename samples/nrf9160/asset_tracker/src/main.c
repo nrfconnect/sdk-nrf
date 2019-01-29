@@ -483,6 +483,7 @@ static void on_user_association_req(const struct nrf_cloud_evt *p_evt)
 			printk("using the buttons and switches\n");
 		} else if (IS_ENABLED(CONFIG_CLOUD_UA_CONSOLE)) {
 			printk("using the console\n");
+			console_init();
 		}
 	}
 }
@@ -979,10 +980,6 @@ void main(void)
 	cloud_init();
 	modem_configure();
 	cloud_connect(NULL);
-
-	if (IS_ENABLED(CONFIG_CLOUD_UA_CONSOLE)) {
-		console_init();
-	}
 
 	while (true) {
 		nrf_cloud_process();
