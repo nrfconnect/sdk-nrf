@@ -48,6 +48,9 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.autodoc',
     'zephyr.application',
+    'zephyr.html_redirects',
+    'only.eager_only',
+    'zephyr.link-roles'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
