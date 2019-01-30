@@ -58,16 +58,3 @@ To fork and clone the repositories, complete the following steps:
 .. include:: gs_ins_windows.rst
    :start-after: dirstructure_start
    :end-before: dirstructure_end
-
-To be able to build |NCS| applications for nRF91, check out branch ``nrf91`` in the fw-nrfconnect-zephyr repository:
-
-   .. code-block:: console
-
-	cd ../zephyr
-	git checkout nrf91
-
-Pull requests related to nRF91 (for example, for nRF9160 SiP or board support, drivers, and so on) in the fw-nrfconnect-zephyr repository must be submitted against the ``nrf91`` branch.
-
-.. note::
-   The ``nrf91`` branch is temporary.
-   Code changes to support the nRF9160 SiP and the nRF9160 DK board will be submitted upstream to the official Zephyr repository shortly after the v0.3.0 release.

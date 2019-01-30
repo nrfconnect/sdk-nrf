@@ -32,7 +32,7 @@
 .. |link_mcuboot| replace:: MCUboot
 .. _link_mcuboot: https://mcuboot.com
 
-.. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/_fw-nrfconnect-zephyr/blob/nrf91/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
+.. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 

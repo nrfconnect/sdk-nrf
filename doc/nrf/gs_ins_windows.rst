@@ -102,7 +102,7 @@ Your directory structure now looks like this::
 
 .. dirstructure_end
 
-The latest state of development is on the master branches of the fw-nrfconnect-nrf, fw-nrfconnect-mcuboot, and nrfxlib repositories and the nrf91 branch of the fw-nrfconnect-zephyr repository.
+The latest state of development is on the master branches of the repositories.
 Note that this might not be a stable state.
 Therefore, unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
 
