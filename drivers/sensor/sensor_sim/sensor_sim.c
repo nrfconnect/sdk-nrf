@@ -22,11 +22,15 @@ LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 static const double base_accel_samples[3] = {0.0, 0.0, 0.0};
 static double accel_samples[3];
 
-/* TODO: Make base temperature configurable from Kconfig, along with more
- * detailed control over the temperature data generation.
+/* TODO: Make base sensor data configurable from Kconfig, along with more
+ * detailed control over the sensor data data generation.
  */
 static const double base_temp_sample = 21.0;
+static const double base_humidity_sample = 52.0;
+static const double base_pressure_sample = 98.2;
 static double temp_sample;
+static double humidity_sample;
+static double pressure_sample;
 
 /*
  * @brief Helper function to convert from double to sensor_value struct
@@ -284,6 +288,22 @@ static void generate_temp_data(void)
 	temp_sample = base_temp_sample + generate_pseudo_random();
 }
 
+/**
+ * @brief Generates humidity data.
+ */
+static void generate_humidity_data(void)
+{
+	humidity_sample = base_humidity_sample + generate_pseudo_random();
+}
+
+/**
+ * @brief Generates pressure data.
+ */
+static void generate_pressure_data(void)
+{
+	pressure_sample = base_pressure_sample + generate_pseudo_random();
+}
+
 /*
  * @brief Generates simulated sensor data for a channel.
  *
@@ -306,6 +326,12 @@ static int sensor_sim_generate_data(enum sensor_channel chan)
 		break;
 	case SENSOR_CHAN_AMBIENT_TEMP:
 		generate_temp_data();
+		break;
+	case SENSOR_CHAN_HUMIDITY:
+		generate_humidity_data();
+		break;
+	case SENSOR_CHAN_PRESS:
+		generate_pressure_data();
 		break;
 	default:
 		return -ENOTSUP;
@@ -349,6 +375,12 @@ static int sensor_sim_channel_get(struct device *dev,
 		break;
 	case SENSOR_CHAN_AMBIENT_TEMP:
 		double_to_sensor_value(temp_sample, sample);
+		break;
+	case SENSOR_CHAN_HUMIDITY:
+		double_to_sensor_value(humidity_sample, sample);
+		break;
+	case SENSOR_CHAN_PRESS:
+		double_to_sensor_value(pressure_sample, sample);
 		break;
 	default:
 		return -ENOTSUP;
