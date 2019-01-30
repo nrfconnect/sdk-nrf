@@ -40,7 +40,8 @@ pipeline {
       // ENVs for check-compliance
       GH_TOKEN = credentials('nordicbuilder-compliance-token') // This token is used to by check_compliance to comment on PRs and use checks
       GH_USERNAME = "NordicBuilder"
-      COMPLIANCE_ARGS = "-g -r NordicPlayground/fw-nrfconnect-nrf -p $CHANGE_ID -S $GIT_COMMIT"
+      COMPLIANCE_ARGS = "-r NordicPlayground/fw-nrfconnect-nrf"
+      COMPLIANCE_REPORT_ARGS = "-p $CHANGE_ID -S $GIT_COMMIT -g"
 
       // Build all custom samples that match the ci_build tag
       SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
@@ -115,9 +116,10 @@ pipeline {
             // Define a Groovy script block, which allows things like try/catch and if/else. If not, the junit command will not be run if check-compliance fails
             dir('nrf') {
               script {
-                // If we're a pull request, compare the target branch against the current HEAD (the PR)
+                // If we're a pull request, compare the target branch against the current HEAD (the PR), and also report issues to the PR
                 if (env.CHANGE_TARGET) {
                   COMMIT_RANGE = "origin/${env.CHANGE_TARGET}..HEAD"
+                  COMPLIANCE_ARGS = "$COMPLIANCE_ARGS $COMPLIANCE_REPORT_ARGS"
                 }
                 // If not a PR, it's a non-PR-branch or master build. Compare against the origin.
                 else {
