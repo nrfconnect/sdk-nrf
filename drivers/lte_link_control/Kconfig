@@ -11,10 +11,6 @@ menuconfig LTE_LINK_CONTROL
 
 if LTE_LINK_CONTROL
 
-config LTE_LINK_CONTROL_LOG_LEVEL
-	int "Set LTE LC log level"
-	default 0
-
 config LTE_AUTO_INIT_AND_CONNECT
 	bool "Auto Initialize and Connect for the LTE link"
 	default y
@@ -72,5 +68,9 @@ config LTE_EDRX_REQ_VALUE
 		format. The eDRX value refers to bit 4 to 1 of octet 3 of the
 		Extended DRX parameters information element.
 		See 3GPP TS 24.008, subclause 10.5.5.32.
+
+module = LTE_LINK_CONTROL
+module-str = LTE link control library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # LTE_LINK_CONTROL

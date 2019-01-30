@@ -4,13 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-/* TODO A workaround for intrusive behavior of networking subsystem logging.
- *      Upstream issue #11659.
- */
-#include <logging/log.h>
-#define LOG_LEVEL CONFIG_LTE_LINK_CONTROL_LOG_LEVEL
-LOG_MODULE_REGISTER(lte_lc);
-
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <errno.h>
@@ -18,12 +11,11 @@ LOG_MODULE_REGISTER(lte_lc);
 #include <string.h>
 #include <stdio.h>
 #include <device.h>
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 #define LC_MAX_READ_LENGTH 128
-#if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
-DEVICE_DECLARE(lte_link_control);
-#endif
-
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
 /* Subscribes to notifications with level 2 */
@@ -249,6 +241,7 @@ int lte_lc_edrx_req(bool enable)
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
+DEVICE_DECLARE(lte_link_control);
 DEVICE_AND_API_INIT(lte_link_control, "LTE_LINK_CONTROL",
 		    w_lte_lc_init_and_connect, NULL, NULL, APPLICATION,
 		    CONFIG_APPLICATION_INIT_PRIORITY, NULL);
