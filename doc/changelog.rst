@@ -26,8 +26,8 @@ Repositories
      - master
    * - `nrfxlib <https://github.com/NordicPlayground/nrfxlib>`_
      - master
-   * - `_fw-nrfconnect-zephyr <https://github.com/NordicPlayground/_fw-nrfconnect-zephyr>`_
-     - nrf91
+   * - `fw-nrfconnect-zephyr <https://github.com/NordicPlayground/fw-nrfconnect-zephyr>`_
+     - master
    * - `fw-nrfconnect-mcuboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_
      - master
 
@@ -37,4 +37,13 @@ Major changes
 
 The following list contains the most important changes since the last release:
 
-* n/a
+* All updates needed to develop for the nRF9160 SiP have been merged to the master branch of the fw-nrfconnect-zephyr repository.
+  The nrf91 branch will therefore be deleted in the near future.
+
+
+
+The following documentation has been added or updated:
+
+* :ref:`bt_conn_ctx_readme` (added)
+* :ref:`dk_buttons_and_leds_readme` (added)
+* :ref:`asset_tracker` (updated)
