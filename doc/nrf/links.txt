@@ -1,23 +1,16 @@
-.. |link_zephyr| replace:: Zephyr Project
-.. _link_zephyr: https://zephyrproject.org/
+.. ### Links to Zephyr
 
-.. |link_zephyr_doc| replace:: Zephyr Project documentation
-.. _link_zephyr_doc: http://docs.zephyrproject.org/
+.. _`Zephyr Project`: https://zephyrproject.org/
+
+.. _`Zephyr Project documentation`: http://docs.zephyrproject.org/
 
 .. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr/issues
 
-.. _`nRF Connect SDK v0.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.3.0/nrf/index.html
-
-.. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
-
-.. |core_spec| replace:: Bluetooth Core Specification
-.. _core_spec: https://www.bluetooth.com/specifications/bluetooth-core-specification
-
-.. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
-
-.. _`reStructuredText Primer`: http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
-
 .. _`Zephyr coding style`: http://docs.zephyrproject.org/contribute/contribute_guidelines.html
+
+
+
+.. ### Link to the NCS repositories
 
 .. |ncs_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 
@@ -29,53 +22,87 @@
 
 .. _`nrfxlib`: https://github.com/NordicPlayground/nrfxlib
 
-.. |link_mcuboot| replace:: MCUboot
-.. _link_mcuboot: https://mcuboot.com
 
-.. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
 
-.. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
+.. ### Links to Nordic documentation
 
-.. _`nRF5x Command Line Tools Linux 32`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Linux32/58857
-.. _`nRF5x Command Line Tools Linux 64`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Linux64/58852
-.. _`nRF5x Command Line Tools Windows 32`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Win32/58850
-.. _`nRF5x Command Line Tools Windows 64`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-Win64/70507
-.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/eng/nordic/Products/nRF52840/nRF5x-Command-Line-Tools-OSX/58855
+.. _`nRF Connect SDK v0.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.3.0/nrf/index.html
 
-.. _`Semantic Versioning 2.0.0`: https://semver.org/
+.. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
-.. _`nRF Cloud`: https://nrfcloud.com/
+.. _`LTE Link Monitor`: https://www.nordicsemi.com/DocLib/Content/User_Guides/link_monitor/latest/UG/link_monitor/lm_intro
 
-.. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/Nordic-Thingy-52
+.. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://www.nordicsemi.com/en/DocLib/Content/User_Guides/nrf91_dk/latest/UG/nrf91_DK/hw_description/board_controller
 
-.. _`openSSL`: https://www.openssl.org/
+.. _`band lock section in the AT Commands reference document`: https://www.nordicsemi.com/DocLib/Content/User_Guides/at_commands/latest/REF/at_commands/mob_termination_ctrl_status/xbandlock
 
-.. _`Getting Started Assistant`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/GetStarted#infotabs
 
-.. _`Getting Started information`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/GetStarted#infotabs
 
-.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+.. ### Links to the Nordic website
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
 
-.. _`Link Monitor`: https://www.nordicsemi.com/DocLib/Content/User_Guides/link_monitor/latest/UG/link_monitor/lm_intro
-
-.. _`nRF9160 DK User Guide`: https://www.nordicsemi.com/en/DocLib/Content/User_Guides/nrf91_dk/latest/UG/nrf91_DK/hw_description/board_controller
+.. _`Getting Started information`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/GetStarted#infotabs
 
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/Download#infotabs
 
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160-SiP
 
-.. _`band lock section in the AT Commands reference document`: https://www.nordicsemi.com/DocLib/Content/User_Guides/at_commands/latest/REF/at_commands/mob_termination_ctrl_status/xbandlock
-
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 
-.. _`nRF5 Command Line Tools`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF5-Command-Line-Tools
+.. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/Nordic-Thingy-52
+
+
+
+.. ### Links to Nordic software
+
+.. _`nRF5 Command Line Tools`:
+.. _`nRF5x Command Line Tools Linux 32`:
+.. _`nRF5x Command Line Tools Linux 64`:
+.. _`nRF5x Command Line Tools Windows 32`:
+.. _`nRF5x Command Line Tools Windows 64`:
+.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF5-Command-Line-Tools
+
+.. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
+
+
+
+.. ### Links to other websites and software
+
+.. _`Semantic Versioning 2.0.0`: https://semver.org/
+
+.. _`nRF Cloud`: https://nrfcloud.com/
+
+.. _`openSSL`: https://www.openssl.org/
+
+.. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+
+.. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
+
+.. _`MCUboot`: https://mcuboot.com
 
 .. _`HID usage tables`: https://www.usb.org/hid
 
+
+
+.. ### Links to Bluetooth specs
+
+.. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification
+
 .. _`HID Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245140
 
-.. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
+
+
+.. ### Links to other documentation
+
+.. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
+
+.. _`reStructuredText Primer`: http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
+
+
+
+.. ### Links to specific files on GitHub
+
+.. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
 
 .. _`west manifest file`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/west.yml
