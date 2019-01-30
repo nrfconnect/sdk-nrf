@@ -213,7 +213,7 @@ In addition, it uses the following Zephyr libraries:
 References
 ***********
 
-For more information about the connection parameters that are used in this sample, see the following chapters in the |core_spec|_:
+For more information about the connection parameters that are used in this sample, see the following chapters in the `Bluetooth Core Specification`_:
 
 * Vol 3, Part F, 3.2.8 Exchanging MTU Size
 * Vol 6, Part B, 5.1.1 Connection Update Procedure

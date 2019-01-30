@@ -3,7 +3,7 @@
 Getting started
 ###############
 
-To quickly get started with the |NCS|, use the `Getting Started Assistant`_ to set up your development environment.
+To quickly get started with the |NCS|, use the `Getting Started Assistant <Getting Started Information_>`_ to set up your development environment.
 Alternatively, check the :ref:`gs_installing` section for instructions on setting up your environment manually.
 
 .. important::
