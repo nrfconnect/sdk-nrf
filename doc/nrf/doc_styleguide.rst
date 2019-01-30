@@ -38,8 +38,24 @@ The |NCS| documentation follows the Zephyr style guide, and adds a few more rest
 * Do not use consecutive headings without intervening text.
 * For readability reasons, start every sentence on a new line in the source files.
   In the output, consecutive lines without blank lines in between are combined into one paragraph.
-* Define all external links in the ``links.txt`` file.
-  Do not define them directly in the RST file.
+
+Hyperlinks
+==========
+
+All external links must be defined in the ``links.txt`` file.
+Do not define them directly in the RST file.
+The reason for this is to allow for validating all links in one central location and to make it easy to update breaking links.
+
+Each link should be defined only once in ``links.txt``.
+
+If the link text that is defined in ``links.txt`` does not fit in the context where you use the link, you can override it by using the following syntax::
+
+   `new link text <original link text_>`_
+
+It is also possible to define more than one default link text for a link, which can be useful if you frequently need a different link text::
+
+   .. _`Link text one`:
+   .. _`Link text two`: http://..
 
 
 Doxygen style guide
