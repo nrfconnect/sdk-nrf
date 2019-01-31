@@ -661,7 +661,15 @@ static int dc_connection_handler(const struct nct_evt *nct_evt)
 
 static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 {
-	return 0; /* Nothing to do */
+	struct nrf_cloud_evt cloud_evt = {
+		.type = NRF_CLOUD_EVT_RX_DATA,
+		.param.data = nct_evt->param.dc->data,
+	};
+
+	/* All data is forwared to the app */
+	nfsm_set_current_state_and_notify(nfsm_get_current_state(), &cloud_evt);
+
+	return 0;
 }
 
 static int dc_tx_cnf_handler(const struct nct_evt *nct_evt)

@@ -236,7 +236,7 @@ static bool control_channel_topic_match(u32_t list_id,
 	}
 
 	for (u32_t index = 0; index < list_size; index++) {
-		if (!strings_compare(
+		if (strings_compare(
 			    topic->topic.utf8,
 			    topic_list[index].topic.utf8,
 			    topic->topic.size,
@@ -470,6 +470,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		.status = _mqtt_evt->result
 	};
 	struct nct_cc_data cc;
+	struct nct_dc_data dc;
 	bool event_notify = false;
 
 	switch (_mqtt_evt->type) {
@@ -502,6 +503,13 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			event_notify = true;
 		} else {
 			/* Try to match it with one of the data topics. */
+			dc.id = p->message_id;
+			dc.data.ptr = p->message.payload.data;
+			dc.data.len = p->message.payload.len;
+
+			evt.type = NCT_EVT_DC_RX_DATA;
+			evt.param.dc = &dc;
+			event_notify = true;
 		}
 
 		if (p->message.topic.qos == MQTT_QOS_1_AT_LEAST_ONCE) {

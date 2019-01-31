@@ -151,6 +151,7 @@ struct nrf_cloud_evt {
 		 *  @ref NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST event.
 		 */
 		struct nrf_cloud_ua_param ua_req;
+		struct nrf_cloud_data data;
 	} param;
 };
 
