@@ -8,6 +8,7 @@ menu "nRF52 Desktop"
 rsource "src/hw_interface/Kconfig"
 rsource "src/modules/Kconfig"
 rsource "src/services/Kconfig"
+rsource "configuration/Kconfig"
 endmenu
 
 menu "Zephyr Kernel"
