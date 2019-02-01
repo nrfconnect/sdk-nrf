@@ -6,6 +6,7 @@
 
 menuconfig DK_LIBRARY
 	bool "Button and LED Library for Nordic DKs"
+	select GPIO
 
 if DK_LIBRARY
 
