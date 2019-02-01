@@ -1,8 +1,6 @@
 // Due to JENKINS-42369 we put these defines outside the pipeline
 def IMAGE_TAG = "ncs-toolchain:1.07"
 def REPO_CI_TOOLS = "https://github.com/zephyrproject-rtos/ci-tools.git"
-def REPO_ZEPHYR = "https://github.com/NordicPlayground/fw-nrfconnect-zephyr.git"
-def REPO_NRFXLIB = "https://github.com/NordicPlayground/nrfxlib.git"
 
 // Function to get the current repo URL, to be propagated to the downstream job
 def getRepoURL() {
@@ -29,6 +27,7 @@ pipeline {
     docker {
       image "$IMAGE_TAG"
       label "docker && ncs"
+      args '-e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/workdir/.local/bin'
     }
   }
   options {
@@ -59,15 +58,16 @@ pipeline {
   stages {
     stage('Checkout repositories') {
       steps {
+        // Fetch the tools used to checking compliance
         dir("ci-tools") {
           git branch: "master", url: "$REPO_CI_TOOLS"
         }
-        dir("zephyr") {
-          git branch: "master", url: "$REPO_ZEPHYR", credentialsId: 'github'
-        }
-        dir("nrfxlib") {
-          git branch: "master", url: "$REPO_NRFXLIB", credentialsId: 'github'
-        }
+        // Install and initialize west
+        sh "pip3 install --user west==0.5.1"
+        sh "west init -l nrf/"
+
+        // Checkout
+        sh "west update"
       }
     }
 
