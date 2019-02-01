@@ -40,7 +40,7 @@ static void z_to_nrf_ipv4(const struct sockaddr *z_in,
 
 	nrf_out->sin_len = sizeof(struct nrf_sockaddr_in);
 	nrf_out->sin_port = ptr->sin_port;
-	nrf_out->sin_family = ptr->sin_family;
+	nrf_out->sin_family = NRF_AF_INET;
 	nrf_out->sin_addr.s_addr = ptr->sin_addr.s_addr;
 }
 
@@ -50,7 +50,7 @@ static void nrf_to_z_ipv4(struct sockaddr *z_out,
 	struct sockaddr_in *ptr = (struct sockaddr_in *)z_out;
 
 	ptr->sin_port = nrf_in->sin_port;
-	ptr->sin_family = nrf_in->sin_family;
+	ptr->sin_family = AF_INET;
 	ptr->sin_addr.s_addr = nrf_in->sin_addr.s_addr;
 }
 
@@ -62,7 +62,7 @@ static void z_to_nrf_ipv6(const struct sockaddr *z_in,
 	/* nrf_out->sin6_flowinfo field not used */
 	nrf_out->sin6_len = sizeof(struct nrf_sockaddr_in6);
 	nrf_out->sin6_port = ptr->sin6_port;
-	nrf_out->sin6_family = ptr->sin6_family;
+	nrf_out->sin6_family = NRF_AF_INET6;
 	memcpy(nrf_out->sin6_addr.s6_addr, ptr->sin6_addr.s6_addr,
 		sizeof(struct in6_addr));
 	nrf_out->sin6_scope_id = (u32_t)ptr->sin6_scope_id;
@@ -75,7 +75,7 @@ static void nrf_to_z_ipv6(struct sockaddr *z_out,
 
 	/* nrf_sockaddr_in6 fields .sin6_flowinfo and .sin6_len not used */
 	ptr->sin6_port = nrf_in->sin6_port;
-	ptr->sin6_family = nrf_in->sin6_family;
+	ptr->sin6_family = AF_INET6;
 	memcpy(ptr->sin6_addr.s6_addr, nrf_in->sin6_addr.s6_addr,
 		sizeof(struct nrf_in6_addr));
 	ptr->sin6_scope_id = (u8_t)nrf_in->sin6_scope_id;
@@ -176,6 +176,36 @@ static int nrf_to_z_addrinfo_flags(int flags)
 	return 0;
 }
 
+static int z_to_nrf_family(sa_family_t z_family)
+{
+	switch (z_family) {
+	case AF_INET:
+		return NRF_AF_INET;
+	case AF_INET6:
+		return NRF_AF_INET6;
+	case AF_LTE:
+		return NRF_AF_LTE;
+	case AF_UNSPEC:
+	/* No NRF_AF_UNSPEC defined. */
+	default:
+		return -EAFNOSUPPORT;
+	}
+}
+
+static int nrf_to_z_family(nrf_socket_family_t nrf_family)
+{
+	switch (nrf_family) {
+	case NRF_AF_INET:
+		return AF_INET;
+	case NRF_AF_INET6:
+		return AF_INET6;
+	case NRF_AF_LTE:
+		return AF_LTE;
+	default:
+		return -EAFNOSUPPORT;
+	}
+}
+
 static int nrf_to_z_protocol(int proto)
 {
 	switch (proto) {
@@ -200,8 +230,6 @@ static int nrf_to_z_protocol(int proto)
 		return -EPROTONOSUPPORT;
 	}
 }
-
-
 
 static int z_to_nrf_protocol(int proto)
 {
@@ -242,33 +270,49 @@ static int z_to_nrf_protocol(int proto)
 static int z_to_nrf_addrinfo_hints(const struct addrinfo *z_in,
 			      struct nrf_addrinfo *nrf_out)
 {
-	memset(nrf_out, 0, sizeof(struct nrf_addrinfo));
-	nrf_out->ai_flags     = z_to_nrf_addrinfo_flags(z_in->ai_flags);
-	nrf_out->ai_family    = z_in->ai_family;
-	nrf_out->ai_socktype  = z_in->ai_socktype;
-	nrf_out->ai_protocol  = z_to_nrf_protocol(z_in->ai_protocol);
+	int family;
 
+	memset(nrf_out, 0, sizeof(struct nrf_addrinfo));
+	nrf_out->ai_flags = z_to_nrf_addrinfo_flags(z_in->ai_flags);
+	nrf_out->ai_socktype = z_in->ai_socktype;
+
+	family = z_to_nrf_family(z_in->ai_family);
+	if (family == -EAFNOSUPPORT) {
+		return -EAFNOSUPPORT;
+	}
+	nrf_out->ai_family = family;
+
+	nrf_out->ai_protocol = z_to_nrf_protocol(z_in->ai_protocol);
 	if (nrf_out->ai_protocol == -EPROTONOSUPPORT) {
 		return -EPROTONOSUPPORT;
 	}
+
 	return 0;
 }
 
 static int nrf_to_z_addrinfo(struct addrinfo *z_out,
 			      const struct nrf_addrinfo *nrf_in)
 {
-	z_out->ai_next      = NULL;
-	z_out->ai_canonname = NULL; /* TODO Do proper content copy. */
-	z_out->ai_flags     = nrf_to_z_addrinfo_flags(nrf_in->ai_flags);
-	z_out->ai_family    = nrf_in->ai_family;
-	z_out->ai_socktype  = nrf_in->ai_socktype;
-	z_out->ai_protocol  = nrf_to_z_protocol(nrf_in->ai_protocol);
+	int family;
 
+	z_out->ai_next = NULL;
+	z_out->ai_canonname = NULL; /* TODO Do proper content copy. */
+	z_out->ai_flags = nrf_to_z_addrinfo_flags(nrf_in->ai_flags);
+	z_out->ai_socktype = nrf_in->ai_socktype;
+
+	family = nrf_to_z_family(nrf_in->ai_family);
+	if (family == -EAFNOSUPPORT) {
+		return -EAFNOSUPPORT;
+	}
+	z_out->ai_family = family;
+
+	z_out->ai_protocol = nrf_to_z_protocol(nrf_in->ai_protocol);
 	if (z_out->ai_protocol == -EPROTONOSUPPORT) {
 		z_out->ai_addr = NULL;
 		return -EPROTONOSUPPORT;
 	}
-	if (nrf_in->ai_family == AF_INET) {
+
+	if (nrf_in->ai_family == NRF_AF_INET) {
 		z_out->ai_addr = k_malloc(sizeof(struct sockaddr_in));
 		if (z_out->ai_addr == NULL) {
 			return -ENOMEM;
@@ -276,7 +320,7 @@ static int nrf_to_z_addrinfo(struct addrinfo *z_out,
 		z_out->ai_addrlen  = sizeof(struct sockaddr_in);
 		nrf_to_z_ipv4(z_out->ai_addr,
 			(const struct nrf_sockaddr_in *)nrf_in->ai_addr);
-	} else if (nrf_in->ai_family == AF_INET6) {
+	} else if (nrf_in->ai_family == NRF_AF_INET6) {
 		z_out->ai_addr = k_malloc(sizeof(struct sockaddr_in6));
 		if (z_out->ai_addr == NULL) {
 			return -ENOMEM;
@@ -287,12 +331,19 @@ static int nrf_to_z_addrinfo(struct addrinfo *z_out,
 	} else {
 		return -EPROTONOSUPPORT;
 	}
+
 	return 0;
 }
 
 static int nrf91_socket_offload_socket(int family, int type, int proto)
 {
 	int retval;
+
+	family = z_to_nrf_family(family);
+	if (family == -EAFNOSUPPORT) {
+		errno = -EAFNOSUPPORT;
+		return -1;
+	}
 
 	proto = z_to_nrf_protocol(proto);
 	if (proto == -EPROTONOSUPPORT) {
@@ -324,10 +375,10 @@ static int nrf91_socket_offload_accept(int sd, struct sockaddr *addr,
 		return -1;
 	}
 
-	if (nrf_addr.sa_family == AF_INET) {
+	if (nrf_addr.sa_family == NRF_AF_INET) {
 		*addrlen = sizeof(struct sockaddr_in);
 		nrf_to_z_ipv4(addr, (const struct nrf_sockaddr_in *)&nrf_addr);
-	} else if (nrf_addr.sa_family == AF_INET6) {
+	} else if (nrf_addr.sa_family == NRF_AF_INET6) {
 		*addrlen = sizeof(struct sockaddr_in6);
 		nrf_to_z_ipv6(addr, (const struct nrf_sockaddr_in6 *)&nrf_addr);
 	} else {
@@ -473,10 +524,10 @@ static ssize_t nrf91_socket_offload_recvfrom(int sd, void *buf, short int len,
 
 		retval = nrf_recvfrom(sd, buf, len, z_to_nrf_flags(flags),
 				      &cliaddr, &sock_len);
-		if (cliaddr.sa_family == AF_INET) {
+		if (cliaddr.sa_family == NRF_AF_INET) {
 			nrf_to_z_ipv4(from, (struct nrf_sockaddr_in *)&cliaddr);
 			*fromlen = sizeof(struct sockaddr_in);
-		} else if (cliaddr.sa_family == AF_INET6) {
+		} else if (cliaddr.sa_family == NRF_AF_INET6) {
 			nrf_to_z_ipv6(from, (struct nrf_sockaddr_in6 *)
 					  &cliaddr);
 			*fromlen = sizeof(struct sockaddr_in6);
@@ -597,6 +648,8 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 		error = z_to_nrf_addrinfo_hints(hints, &nrf_hints);
 		if (error == -EPROTONOSUPPORT) {
 			return DNS_EAI_SOCKTYPE;
+		} else if (error == -EAFNOSUPPORT) {
+			return DNS_EAI_ADDRFAMILY;
 		}
 	}
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
@@ -613,6 +666,7 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 			retval = DNS_EAI_MEMORY;
 			break;
 		}
+
 		error = nrf_to_z_addrinfo(next_z_res, next_nrf_res);
 		if (error == -ENOMEM) {
 			retval = DNS_EAI_MEMORY;
@@ -622,7 +676,12 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 			retval = DNS_EAI_SOCKTYPE;
 			k_free(next_z_res);
 			break;
+		} else if (error == -EAFNOSUPPORT) {
+			retval = DNS_EAI_ADDRFAMILY;
+			k_free(next_z_res);
+			break;
 		}
+
 		if (latest_z_res == NULL) {
 			/* This is the first node processed. */
 			*res = next_z_res;
