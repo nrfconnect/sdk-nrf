@@ -22,6 +22,9 @@ target_sources_ifdef(CONFIG_DESKTOP_MOTION_TOUCHPAD_ENABLE app PRIVATE
 target_sources_ifdef(CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/motion_buttons.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/motion_simulated.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_BUTTONS_EXPANDER_ENABLE app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/buttons_expander.c)
 

@@ -46,7 +46,25 @@ config DESKTOP_MOTION_TOUCHPAD_ENABLE
 config DESKTOP_MOTION_BUTTONS_ENABLE
 	bool "Motion from buttons"
 
+config DESKTOP_MOTION_SIMULATED_ENABLE
+	bool "Simulated motion"
+	depends on SHELL
+
 endchoice
+
+config DESKTOP_MOTION_SIMULATED_EDGE_TIME
+	int "Time for transition between two points in a trajectory [ms]"
+	depends on DESKTOP_MOTION_SIMULATED_ENABLE
+	range 8 1000000
+	default 16
+	help
+	  Must be power of two (calculations speedup).
+
+config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
+	int "Scale factor for given shape"
+	depends on DESKTOP_MOTION_SIMULATED_ENABLE
+	range 1 5
+	default 2
 
 config DESKTOP_SPI_FREQ_HZ
 	int "SPI clock frequency for communication with the optical sensor"
