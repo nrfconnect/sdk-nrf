@@ -127,7 +127,7 @@ In addition, it uses the following Zephyr libraries:
 * ``include/zephyr/types.h``
 * ``include/misc/printk.h``
 * ``include/misc/byteorder.h``
-* :ref:`GPIO Interface <zephyr:io_interfaces>`
+* :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:settings`
 * :ref:`zephyr:bluetooth_api`:
 

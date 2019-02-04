@@ -14,6 +14,7 @@
 
 import sys
 import os
+from subprocess import CalledProcessError, check_output, DEVNULL
 
 if "ZEPHYR_BASE" not in os.environ:
     print("$ZEPHYR_BASE environment variable undefined.")
@@ -29,11 +30,27 @@ NRF_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 # Add the 'extensions' directory to sys.path, to enable finding Sphinx
 # extensions within.
 sys.path.insert(0, os.path.join(ZEPHYR_BASE, 'doc', 'extensions'))
-# Also add west, to be able to pull in its API docs.
-sys.path.append(os.path.join(ZEPHYR_BASE, 'scripts', 'meta'))
-# HACK: also add the runners module, to work around some import issues
-# related to west's current packaging.
-sys.path.append(os.path.join(ZEPHYR_BASE, 'scripts', 'meta', 'west'))
+
+# Add the directory which contains the runners package as well,
+# for autodoc directives on runners.xyz.
+sys.path.insert(0, os.path.join(ZEPHYR_BASE, 'scripts', 'west_commands'))
+
+west_found = False
+
+try:
+    desc = check_output(['west', 'list', '-f{abspath}', 'west'],
+			stderr=DEVNULL,
+			cwd=os.path.dirname(__file__))
+    west_path = desc.decode(sys.getdefaultencoding()).strip()
+    # Add west, to be able to pull in its API docs.
+    sys.path.append(os.path.join(west_path, 'src'))
+    west_found = True
+except FileNotFoundError as e:
+    # west not installed
+    pass
+except CalledProcessError as e:
+    # west not able to list itself
+    pass
 
 # -- General configuration ------------------------------------------------
 
@@ -69,8 +86,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Zephyr Project'
-copyright = u'2015-2017 Zephyr Project members and individual contributors.'
-author = u'many'
+copyright = u'2015-2019 Zephyr Project members and individual contributors.'
+author = u'The Zephyr Project'
 
 # The following code tries to extract the information by reading the Makefile,
 # when Sphinx is run directly (e.g. by Read the Docs).
@@ -119,6 +136,10 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build']
+if not west_found:
+    exclude_patterns.append('**/*west-apis*')
+else:
+    exclude_patterns.append('**/*west-not-found*')
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
