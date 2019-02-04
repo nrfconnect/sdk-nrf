@@ -439,7 +439,7 @@ static void update_cpi(u16_t cpi)
 	 */
 
 	if ((cpi > OPTICAL_MAX_CPI) || (cpi < OPTICAL_MIN_CPI)) {
-		LOG_WRN("CPI value out of range");
+		LOG_WRN("CPI value %u out of range", cpi);
 		return;
 	}
 
@@ -767,19 +767,19 @@ error:
 static void update_config(const u8_t config_id, const u8_t *data)
 {
 	switch (config_id) {
-	case CONFIG_EVENT_ID_MOUSE_CPI:
+	case CONFIG_EVENT_ID_MOTION_CPI:
 		atomic_set(&sensor_cpi, sys_get_le16(data));
 		break;
 
-	case CONFIG_EVENT_ID_MOUSE_DOWNSHIFT_RUN:
+	case CONFIG_EVENT_ID_MOTION_DOWNSHIFT_RUN:
 		atomic_set(&sensor_downshift_run, sys_get_le32(data));
 		break;
 
-	case CONFIG_EVENT_ID_MOUSE_DOWNSHIFT_REST1:
+	case CONFIG_EVENT_ID_MOTION_DOWNSHIFT_REST1:
 		atomic_set(&sensor_downshift_rest1, sys_get_le32(data));
 		break;
 
-	case CONFIG_EVENT_ID_MOUSE_DOWNSHIFT_REST2:
+	case CONFIG_EVENT_ID_MOTION_DOWNSHIFT_REST2:
 		atomic_set(&sensor_downshift_rest2, sys_get_le32(data));
 		break;
 
@@ -948,6 +948,7 @@ static bool event_handler(const struct event_header *eh)
 			state.state = STATE_FETCHING;
 			state.sample = true;
 			k_sem_give(&sem);
+
 			module_set_state(MODULE_STATE_READY);
 		}
 		k_spin_unlock(&state.lock, key);

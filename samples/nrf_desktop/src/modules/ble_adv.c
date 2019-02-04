@@ -149,37 +149,6 @@ static int ble_adv_start(void)
 	return 0;
 }
 
-static int ble_settings_load(void)
-{
-	/* Settings need to be loaded after GATT services are setup, otherwise
-	 * the values stored in flash will not be written to GATT database.
-	 */
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		int err = settings_load();
-		if (err) {
-			LOG_ERR("Cannot load settings");
-			return err;
-		}
-		LOG_INF("Settings loaded");
-
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_BOND_REMOVAL)) {
-			if (bonds_remove) {
-				err = bt_unpair(BT_ID_DEFAULT, BT_ADDR_LE_ANY);
-				if (err) {
-					LOG_ERR("Failed to remove bonds");
-					return err;
-				} else {
-					LOG_INF("Removed bonded devices");
-				}
-			}
-
-			bonds_initialized = true;
-		}
-	}
-
-	return 0;
-}
-
 static void init(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR)) {
@@ -188,53 +157,59 @@ static void init(void)
 				    vendor_section_remove_fn);
 	}
 
-	int err = ble_settings_load();
+	module_set_state(MODULE_STATE_READY);
+}
 
-	if (!err) {
-		err = ble_adv_start();
+static void start(void)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_BOND_REMOVAL)) {
+		if (bonds_remove) {
+			err = bt_unpair(BT_ID_DEFAULT, BT_ADDR_LE_ANY);
+			if (err) {
+				LOG_ERR("Failed to remove bonds");
+				goto error;
+			} else {
+				LOG_INF("Removed bonded devices");
+			}
+		}
+
+		bonds_initialized = true;
 	}
+
+	err = ble_adv_start();
 	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
-	} else {
-		module_set_state(MODULE_STATE_READY);
+		goto error;
 	}
+
+	return;
+error:
+	module_set_state(MODULE_STATE_ERROR);
 }
 
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		const void * const req_srv[] = {
-#if CONFIG_DESKTOP_HIDS_ENABLE
-			MODULE_ID(hids),
-#endif
-#if CONFIG_DESKTOP_BAS_ENABLE
-			MODULE_ID(bas),
-#endif
-#if CONFIG_DESKTOP_SMP_ENABLE
-			MODULE_ID(smp),
-#endif
-		};
-		static unsigned int rdy_srv;
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
 
-		struct module_state_event *event = cast_module_state_event(eh);
+		if (check_state(event, MODULE_ID(ble_state),
+				MODULE_STATE_READY)) {
+			static bool initialized;
 
-		for (size_t i = 0; i < ARRAY_SIZE(req_srv); i++) {
-			if (check_state(event, req_srv[i], MODULE_STATE_READY)) {
-				unsigned int mask = BIT(i);
+			__ASSERT_NO_MSG(!initialized);
 
-				__ASSERT_NO_MSG((rdy_srv & mask) == 0);
-				rdy_srv |= mask;
+			init();
+			initialized = true;
+		} else if (check_state(event, MODULE_ID(config), MODULE_STATE_READY)) {
+			static bool started;
 
-				if (rdy_srv == BIT_MASK(ARRAY_SIZE(req_srv))) {
-					static bool initialized;
-					__ASSERT_NO_MSG(!initialized);
+			__ASSERT_NO_MSG(!started);
 
-					init();
-
-					initialized = true;
-				}
-				break;
-			}
+			/* Settings need to be loaded before advertising start */
+			start();
+			started = true;
 		}
 
 		return false;

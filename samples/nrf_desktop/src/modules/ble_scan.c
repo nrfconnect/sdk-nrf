@@ -80,13 +80,6 @@ static int enable_settings(void)
 			LOG_ERR("Cannot register settings handler (err %d)", err);
 			goto error;
 		}
-
-		err = settings_load();
-		if (err) {
-			LOG_ERR("Cannot load settings");
-			goto error;
-		}
-		LOG_INF("Settings loaded");
 	}
 
 error:
@@ -212,26 +205,6 @@ static void start_discovery(struct bt_conn *conn)
 	}
 }
 
-static int start_scanning(void)
-{
-	int err = configure_filters();
-	if (err) {
-		LOG_ERR("Cannot set filters (err %d)", err);
-		goto error;
-	}
-
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
-		LOG_ERR("Cannot start scanning (err %d)", err);
-		goto error;
-	}
-
-	LOG_INF("Scan started");
-
-error:
-	return err;
-}
-
 extern bool bt_le_conn_params_valid(const struct bt_le_conn_param *param);
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
@@ -281,15 +254,31 @@ static int scan_init(void)
 
 	bt_conn_cb_register(&conn_callbacks);
 
-	err = start_scanning();
-	if (err) {
-		LOG_ERR("Scanning failed to start (err %d)", err);
-	}
-
 error:
 	return err;
 }
 
+static void scan_start(void)
+{
+	int err = configure_filters();
+	if (err) {
+		LOG_ERR("Cannot set filters (err %d)", err);
+		goto error;
+	}
+
+	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	if (err) {
+		LOG_ERR("Cannot start scanning (err %d)", err);
+		goto error;
+	}
+
+	LOG_INF("Scan started");
+	return;
+
+error:
+	LOG_ERR("Scanning failed to start (err %d)", err);
+	module_set_state(MODULE_STATE_ERROR);
+}
 
 static bool event_handler(const struct event_header *eh)
 {
@@ -310,6 +299,14 @@ static bool event_handler(const struct event_header *eh)
 			} else {
 				module_set_state(MODULE_STATE_READY);
 			}
+		} else if (check_state(event, MODULE_ID(config), MODULE_STATE_READY)) {
+			static bool started;
+
+			__ASSERT_NO_MSG(!started);
+
+			/* Settings need to be loaded before scan start */
+			scan_start();
+			started = true;
 		}
 
 		return false;
@@ -324,7 +321,7 @@ static bool event_handler(const struct event_header *eh)
 			/* Ignore */
 			break;
 		case PEER_STATE_DISCONNECTED:
-			start_scanning();
+			scan_start();
 			break;
 		case PEER_STATE_SECURED:
 			save_address(event->id);

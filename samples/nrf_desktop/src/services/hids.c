@@ -169,6 +169,7 @@ static void feature_report_handler(struct hids_rep const *rep,
 
 		event->id = rep->data[0];
 		memcpy(event->data, &(rep->data[1]), sizeof(event->data));
+		event->store_needed = true;
 
 		EVENT_SUBMIT(event);
 	}
