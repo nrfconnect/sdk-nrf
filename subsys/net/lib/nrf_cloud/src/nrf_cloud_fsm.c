@@ -267,6 +267,8 @@ int nfsm_handle_incoming_event(const struct nct_evt *nct_evt,
 	}
 
 	__ASSERT_NO_MSG(false);
+
+	return -EINVAL;
 }
 
 static int state_ua_initiate(void)
