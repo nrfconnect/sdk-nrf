@@ -195,7 +195,7 @@ This sample uses the following nRF Connect SDK libraries:
 In addition, it uses the following Zephyr libraries:
 
 * ``include/console.h``
-* :ref:`zephyr:kernel_apis`:
+* :ref:`zephyr:kernel`:
 
   * ``include/kernel.h``
 

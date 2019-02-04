@@ -80,11 +80,11 @@ In addition, it uses the following Zephyr libraries:
 
 * ``include/zephyr/types.h``
 * ``boards/arm/nrf*/board.h``
-* :ref:`zephyr:kernel_apis`:
+* :ref:`zephyr:kernel`:
 
   * ``include/kernel.h``
 
-* :ref:`zephyr:io_interfaces`:
+* :ref:`zephyr:api_peripherals`:
 
    * ``incude/gpio.h``
    * ``include/uart.h``
