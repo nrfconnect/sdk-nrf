@@ -48,6 +48,7 @@ static const char status1[] = "+CEREG: 1";
 static const char status2[] = "+CEREG:1";
 static const char status3[] = "+CEREG: 5";
 static const char status4[] = "+CEREG:5";
+static const char cmd_trace[] = "AT%XMODEMTRACE=1,4";
 
 static int at_cmd(int fd, const char *cmd, size_t size)
 {
@@ -82,6 +83,8 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 	if (at_socket_fd == -1) {
 		return -EFAULT;
 	}
+
+	//at_cmd(at_socket_fd, cmd_trace, AT_CMD_SIZE(cmd_trace));
 
 #if defined(CONFIG_LTE_EDRX_REQ)
 	/* Request configured eDRX settings to save power */
@@ -127,6 +130,8 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 			}
 		}
 	}
+
+	at_cmd(at_socket_fd, cmd_trace, AT_CMD_SIZE(cmd_trace));
 
 	close(at_socket_fd);
 	return 0;

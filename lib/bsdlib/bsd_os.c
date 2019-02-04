@@ -276,8 +276,48 @@ int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
 	return 0;
 }
 
+
+static void modem_trace_enable(void)
+{
+	#include "nrf9160.h"
+    /* GPIO configurations for trace and debug */
+    #define CS_PIN_CFG_TRACE_CLK    21 //GPIO_OUT_PIN21_Pos
+    #define CS_PIN_CFG_TRACE_DATA0  22 //GPIO_OUT_PIN22_Pos
+    #define CS_PIN_CFG_TRACE_DATA1  23 //GPIO_OUT_PIN23_Pos
+    #define CS_PIN_CFG_TRACE_DATA2  24 //GPIO_OUT_PIN24_Pos
+    #define CS_PIN_CFG_TRACE_DATA3  25 //GPIO_OUT_PIN25_Pos
+
+    #define NRF_GPIO_NS                    ((NRF_GPIO_Type*)          0x40842500UL)
+
+    // Configure outputs.
+    // CS_PIN_CFG_TRACE_CLK
+    NRF_GPIO_NS->PIN_CNF[CS_PIN_CFG_TRACE_CLK] = (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos) |
+                                                (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos);
+
+    // CS_PIN_CFG_TRACE_DATA0
+    NRF_GPIO_NS->PIN_CNF[CS_PIN_CFG_TRACE_DATA0] = (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos) |
+                                                  (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos);
+
+    // CS_PIN_CFG_TRACE_DATA1
+    NRF_GPIO_NS->PIN_CNF[CS_PIN_CFG_TRACE_DATA1] = (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos) |
+                                                  (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos);
+
+    // CS_PIN_CFG_TRACE_DATA2
+    NRF_GPIO_NS->PIN_CNF[CS_PIN_CFG_TRACE_DATA2] = (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos) |
+                                                  (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos);
+
+    // CS_PIN_CFG_TRACE_DATA3
+    NRF_GPIO_NS->PIN_CNF[CS_PIN_CFG_TRACE_DATA3] = (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos) |
+                                                  (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos);
+
+    NRF_GPIO_NS->DIR = 0xFFFFFFFF;
+}
+
+
 static int _bsd_driver_init(struct device *unused)
 {
+	*(uint32_t *) 0x40005C04 = 0x02ul;
+	modem_trace_enable();
 	/* Setup the two IRQs used by the BSD library.
 	 * Note: No enable irq_enable here. This is done through bsd_init.
 	 */
