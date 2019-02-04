@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include "config_event.h"
 
 static enum usb_state state;
-
+static u8_t hid_protocol = HID_PROTOCOL_REPORT;
 
 static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
@@ -91,32 +91,47 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		return;
 	}
 
-	s16_t wheel = max(min(event->wheel, REPORT_MOUSE_WHEEL_MAX),
-			  REPORT_MOUSE_WHEEL_MIN);
-	s16_t x = max(min(event->dx, REPORT_MOUSE_XY_MAX),
-		      REPORT_MOUSE_XY_MIN);
-	s16_t y = max(min(event->dy, REPORT_MOUSE_XY_MAX),
-		      REPORT_MOUSE_XY_MIN);
+	u8_t buffer[(hid_protocol) ?
+		    REPORT_SIZE_MOUSE + sizeof(u8_t) :
+		    REPORT_SIZE_MOUSE_BOOT];
 
-	/* Convert to little-endian. */
-	u8_t x_buff[2];
-	u8_t y_buff[2];
+	if (hid_protocol == HID_PROTOCOL_REPORT) {
+		s16_t wheel = max(min(event->wheel, REPORT_MOUSE_WHEEL_MAX),
+				REPORT_MOUSE_WHEEL_MIN);
+		s16_t x = max(min(event->dx, REPORT_MOUSE_XY_MAX),
+				REPORT_MOUSE_XY_MIN);
+		s16_t y = max(min(event->dy, REPORT_MOUSE_XY_MAX),
+				REPORT_MOUSE_XY_MIN);
+		/* Convert to little-endian. */
+		u8_t x_buff[2];
+		u8_t y_buff[2];
 
-	sys_put_le16(x, x_buff);
-	sys_put_le16(y, y_buff);
+		sys_put_le16(x, x_buff);
+		sys_put_le16(y, y_buff);
 
-	/* Encode report. */
-	u8_t buffer[REPORT_SIZE_MOUSE + sizeof(u8_t)];
+		__ASSERT(sizeof(buffer) == 6, "Invalid report size");
 
-	static_assert(sizeof(buffer) == 6, "Invalid report size");
+		/* Encode report. */
+		buffer[0] = REPORT_ID_MOUSE;
+		buffer[1] = event->button_bm;
+		buffer[2] = wheel;
+		buffer[3] = x_buff[0];
+		buffer[4] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
+		buffer[5] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
-	buffer[0] = REPORT_ID_MOUSE;
-	buffer[1] = event->button_bm;
-	buffer[2] = wheel;
-	buffer[3] = x_buff[0];
-	buffer[4] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
-	buffer[5] = (y_buff[1] << 4) | (y_buff[0] >> 4);
+	} else {
+		s8_t x = max(min(event->dx, REPORT_MOUSE_XY_MAX_BOOT),
+				REPORT_MOUSE_XY_MIN_BOOT);
+		s8_t y = max(min(event->dy, REPORT_MOUSE_XY_MAX_BOOT),
+				REPORT_MOUSE_XY_MIN_BOOT);
 
+		__ASSERT(sizeof(buffer) == 3, "Invalid boot report size");
+
+		buffer[0] = event->button_bm;
+		buffer[1] = x;
+		buffer[2] = y;
+
+	}
 	int err = hid_int_ep_write(buffer, sizeof(buffer), NULL);
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
@@ -221,13 +236,20 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 	}
 }
 
+static void protocol_change(u8_t protocol)
+{
+	hid_protocol = protocol;
+	LOG_INF("%s_PROTOCOL selected", protocol ? "REPORT" : "BOOT");
+}
+
 static int usb_init(void)
 {
 	static const struct hid_ops ops = {
-		.get_report   = get_report,
-		.set_report   = set_report,
-		.int_in_ready = mouse_report_sent_cb,
-		.status_cb    = device_status,
+		.get_report   		= get_report,
+		.set_report   		= set_report,
+		.int_in_ready 		= mouse_report_sent_cb,
+		.status_cb    		= device_status,
+		.protocol_change 	= protocol_change,
 	};
 	usb_hid_register_device(hid_report_desc, hid_report_desc_size, &ops);
 

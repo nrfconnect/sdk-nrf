@@ -15,6 +15,7 @@ extern "C" {
 #endif
 
 #define REPORT_SIZE_MOUSE	5 /* bytes */
+#define REPORT_SIZE_MOUSE_BOOT	3 /* bytes */
 #define REPORT_SIZE_KEYBOARD	9 /* bytes */
 #define REPORT_SIZE_MPLAYER	1 /* bytes */
 #define REPORT_SIZE_USER_CONFIG	5 /* bytes */
@@ -26,10 +27,12 @@ extern "C" {
 #define USAGE_PAGE_MOUSE_BUTTONS	0x09
 #define USAGE_PAGE_MPLAYER		0x0C
 
-#define REPORT_MOUSE_WHEEL_MIN	(-0x7F)
-#define REPORT_MOUSE_WHEEL_MAX	(0x7F)
-#define REPORT_MOUSE_XY_MIN	(-0x07ff)
-#define REPORT_MOUSE_XY_MAX	(0x07ff)
+#define REPORT_MOUSE_WHEEL_MIN		(-0x7F)
+#define REPORT_MOUSE_WHEEL_MAX		(0x7F)
+#define REPORT_MOUSE_XY_MIN		(-0x07ff)
+#define REPORT_MOUSE_XY_MAX		(0x07ff)
+#define REPORT_MOUSE_XY_MIN_BOOT	(-0x80)
+#define REPORT_MOUSE_XY_MAX_BOOT	(0x7f)
 
 enum report_id {
 	REPORT_ID_RESERVED,
