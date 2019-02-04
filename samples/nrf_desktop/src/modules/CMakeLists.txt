@@ -12,6 +12,9 @@ target_sources_ifdef(CONFIG_DESKTOP_BLE_ADVERTISING_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_BLE_SCANNING_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_scan.c)
 
+target_sources_ifdef(CONFIG_SETTINGS
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/config.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_BLE_SCANNING_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_forward.c)
 
