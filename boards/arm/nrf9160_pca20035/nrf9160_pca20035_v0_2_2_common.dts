@@ -1,0 +1,99 @@
+/*
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
+#include "nrf9160_pca20035_common.dts"
+
+/ {
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 26 GPIO_PUD_PULL_UP>;
+			label = "Button 1";
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		red_led: led_1 {
+			gpios = <&gpio0 29 GPIO_INT_ACTIVE_LOW>;
+			label = "RGB red channel";
+		};
+		green_led: led_2 {
+			gpios = <&gpio0 30 GPIO_INT_ACTIVE_LOW>;
+			label = "RGB green channel";
+		};
+		blue_led: led_3 {
+			gpios = <&gpio0 31 GPIO_INT_ACTIVE_LOW>;
+			label = "RGB blue channel";
+		};
+		sense_red_led: led_4 {
+			gpios = <&gpio0 0 0>;
+			label = "RGB red channel";
+		};
+		sense_green_led: led_5 {
+			gpios = <&gpio0 1 0>;
+			label = "RGB green channel";
+		};
+		sense_blue_led: led_6 {
+			gpios = <&gpio0 2 0>;
+			label = "RGB blue channel";
+		};
+	};
+
+	aliases {
+		sw0 = &button0;
+		led0 = &red_led;
+		led1 = &green_led;
+		led2 = &blue_led;
+		sense-led0 = &sense_red_led;
+		sense-led1 = &sense_green_led;
+		sense-led2 = &sense_blue_led;
+	};
+};
+
+&spi3 {
+	status = "ok";
+	sck-pin = <6>;
+	mosi-pin = <7>;
+	miso-pin = <8>;
+	cs-gpios = <&gpio0 9 0>;
+
+	adxl372@0 {
+		compatible = "adi,adxl372";
+		label = "ADXL372";
+		spi-max-frequency = <8000000>;
+		reg = <0>;
+		int1-gpios = <&gpio0 4 0>;
+	};
+};
+
+&uart0 {
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <23>;
+	rx-pin = <21>;
+	rts-pin = <24>;
+	cts-pin = <25>;
+};
+
+&uart1 {
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <18>;
+	rx-pin = <19>;
+	rts-pin = <22>;
+	cts-pin = <20>;
+};
+
+&uart2 {
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <13>;
+	rx-pin = <14>;
+	rts-pin = <15>;
+	cts-pin = <16>;
+};

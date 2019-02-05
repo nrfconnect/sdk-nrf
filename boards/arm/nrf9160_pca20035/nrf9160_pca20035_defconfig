@@ -1,0 +1,31 @@
+CONFIG_ARM=y
+CONFIG_SOC_FAMILY_NRF=y
+CONFIG_SOC_SERIES_NRF91X=y
+CONFIG_SOC_NRF9160_SICA=y
+
+# PCA20035 v0.3.0 is set as the default board
+CONFIG_BOARD_NRF9160_PCA20035_V0_3_0=y
+
+# Enable MPU
+CONFIG_ARM_MPU=y
+
+# Enable TrustZone-M
+CONFIG_ARM_TRUSTZONE_M=y
+
+# This Board implies building Non-Secure firmware
+CONFIG_TRUSTED_EXECUTION_SECURE=y
+
+# Enable GPIO
+CONFIG_GPIO=y
+
+# Enable UARTE
+CONFIG_SERIAL=y
+CONFIG_UART_NRFX=y
+CONFIG_UART_0_NRF_UARTE=y
+
+# Enable console
+CONFIG_CONSOLE=y
+CONFIG_UART_CONSOLE=y
+
+# Disable entropy driver, as it's not yet implemented for nRF9160
+CONFIG_ENTROPY_NRF5_RNG=n

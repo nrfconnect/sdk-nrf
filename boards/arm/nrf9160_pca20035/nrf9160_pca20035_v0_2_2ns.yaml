@@ -1,0 +1,10 @@
+identifier: nrf9160_pca20035_v0_2_2ns
+name: nRF9160-PCA20035-Non-Secure
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+ram: 128
+flash: 256
+supported:
+  - i2c
