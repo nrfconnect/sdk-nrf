@@ -1,11 +1,19 @@
 .. _gs_installing_linux:
 
 .. |os| replace:: Linux
+.. |installextract| replace:: Extract
+.. |system_vars| replace:: \
+.. |install_user| replace:: install --user
+.. |tcfolder| replace:: "~/gnuarmemb"
+.. |tcfolder_cc| replace:: ``~/gnuarmemb``
+.. |bash| replace:: terminal window
+.. |envfile| replace:: ``source zephyr/zephyr-env.sh``
+.. |rcfile| replace:: ``~/.zephyrrc``
+
 
 .. include:: gs_ins_windows.rst
    :start-after: intro_start
    :end-before: intro_end
-
 
 
 
@@ -28,29 +36,16 @@ If you use Ubuntu, install v1.4.7 from Cosmic by entering the following commands
    We recommend to install the compiler toolchain separately, as detailed in `Installing the toolchain`_.
 
 
-.. _gs_installing_toolchain_linux:
 
-.. |installextract| replace:: Extract
-.. |tcfolder| replace:: ``~/gnuarmemb``
+.. _gs_installing_toolchain_linux:
 
 .. include:: gs_ins_windows.rst
    :start-after: toolchain_start
-   :end-before: #. If you want to build and program
-
-#. If you want to build and program applications from the command line, define the environment variables for the GNU Arm Embedded toolchain.
-   To do so, enter the following commands in a terminal window (assuming that you have installed the toolchain to |tcfolder|; if not, change the value for GNUARMEMB_TOOLCHAIN_PATH)::
-
-     export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-     export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb"
-
-#. Instead of setting the environment variables every time you start a new session, define them in the``~/.zephyrrc`` file as described in `Setting up the build environment`_.
-
+   :end-before: toolchain_end
 
 
 
 .. _cloning_the_repositories_linux:
-
-.. |bash| replace:: terminal window
 
 .. include:: gs_ins_windows.rst
    :start-after: cloning_start
@@ -58,27 +53,15 @@ If you use Ubuntu, install v1.4.7 from Cosmic by entering the following commands
 
 
 
-
 .. _additional_deps_linux:
-
-.. |prompt| replace:: terminal window
 
 .. include:: gs_ins_windows.rst
    :start-after: add_deps_start
    :end-before: add_deps_end
 
-.. code-block:: console
-
-   pip3 install --user -r zephyr/scripts/requirements.txt
-   pip3 install --user -r nrf/scripts/requirements.txt
-
-
 
 
 .. _build_environment_linux:
-
-.. |envfile| replace:: ``source zephyr/zephyr-env.sh``
-.. |rcfile| replace:: ``~/.zephyrrc``
 
 .. include:: gs_ins_windows.rst
    :start-after: buildenv_start

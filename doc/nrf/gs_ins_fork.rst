@@ -3,58 +3,88 @@
 Forking the |NCS| repositories
 ##############################
 
-If you want to change any of the code that is provided by the |NCS| and contribute this updated code back to the |NCS|, you should create your own forks of the |NCS| repositories and clone these forks instead of the base repositories.
+If you want to change any of the code that is provided by the |NCS| and contribute this updated code back to the |NCS|, you should create your own forks of the |NCS| repositories.
 
-To fork and clone the repositories, complete the following steps:
+To fork the repositories and update your :ref:`cloned repositories<cloning_the_repositories_win>` to use your fork, complete the following steps:
 
 1. Fork the four |NCS| repositories to your own GitHub account by clicking the **Fork** button in the upper right-hand corner of each repository page:
 
-   a. |ncs_zephyr_repo|
-   #. |ncs_repo|
+   a. |ncs_repo|
+   #. |ncs_zephyr_repo|
    #. |ncs_mcuboot_repo|
    #. |ncs_nrfxlib_repo|
 
-#. Create a folder named ``ncs``.
-   This folder will hold all |NCS| repositories.
-#. Open a GIT bash or terminal window in the ``ncs`` folder.
-#. Clone your forks by entering the following commands, where *<username>* must be replaced with your GitHub user name:
+#. Open a Git bash or terminal window in the ``ncs`` folder.
+#. For each of the four repository folders, complete the following steps, replacing *Folder* with the respective folder name (``nrf``, ``zephyr``, ``mcuboot``, or ``nrfxlib``):
 
-   .. code-block:: console
+   a. Enter the respective folder:
 
-      git clone https://github.com/<username>/fw-nrfconnect-zephyr.git zephyr
+      .. parsed-literal::
+         :class: highlight
 
-      git clone https://github.com/<username>/fw-nrfconnect-mcuboot.git mcuboot
+         cd *Folder*
+   #. For ``nrf``, rename the default remote that points to the upstream |NCS| repository from ``origin`` to ``ncs``::
 
-      git clone https://github.com/<username>/fw-nrfconnect-nrf.git nrf
+         git remote rename origin ncs
 
-      git clone https://github.com/<username>/nrfxlib.git nrfxlib
+      You do not need to do this for the other repositories, because their default remotes are already named ``ncs``.
+   #. Add the fork that you created as default remote with the name ``origin``.
+      To do so, enter one of the following commands, replacing *Username* with your GitHub user name:
 
-#. To link your local repositories to the |NCS| repositories, add remotes that point to the original repositories:
+      For nrf:
+         .. parsed-literal::
+            :class: highlight
 
-   .. code-block:: console
+            git remote add origin https\://github.com/*Username*/fw-nrfconnect-nrf.git
 
-      cd zephyr
-      git remote add ncs https://github.com/NordicPlayground/fw-nrfconnect-zephyr.git
+      For zephyr:
+         .. parsed-literal::
+            :class: highlight
 
-      cd ../mcuboot
-      git remote add ncs https://github.com/NordicPlayground/fw-nrfconnect-mcuboot.git
+            git remote add origin https\://github.com/*Username*/fw-nrfconnect-zephyr.git
 
-      cd ../nrf
-      git remote add ncs https://github.com/NordicPlayground/fw-nrfconnect-nrf.git
+      For mcuboot:
+         .. parsed-literal::
+            :class: highlight
 
-      cd ../nrfxlib
-      git remote add ncs https://github.com/NordicPlayground/nrfxlib.git
+            git remote add origin https\://github.com/*Username*/fw-nrfconnect-mcuboot.git
 
-#. Optionally, add remotes to the upstream repositories for Zephyr and Mcuboot:
+      For nrfxlib:
+         .. parsed-literal::
+            :class: highlight
 
-   .. code-block:: console
+            git remote add origin https\://github.com/*Username*/nrfxlib.git
+   #. Optionally, for ``zephyr`` and ``mcuboot``, add remotes for the upstream repositories:
 
-      cd ../zephyr
-      git remote add upstream https://github.com/zephyrproject-rtos/zephyr.git
+      For zephyr:
+         .. parsed-literal::
+            :class: highlight
 
-      cd ../mcuboot
-      git remote add upstream https://github.com/runtimeco/mcuboot.git
+            git remote add upstream https\://github.com/zephyrproject-rtos/zephyr.git
 
-.. include:: gs_ins_windows.rst
-   :start-after: dirstructure_start
-   :end-before: dirstructure_end
+      For mcuboot:
+         .. parsed-literal::
+            :class: highlight
+
+            git remote add upstream https\://github.com/JuulLabs-OSS/mcuboot.git
+   #. Verify the remote repositories by entering the following command::
+
+        git remote -v
+
+      The output should look similar to this example for zephyr:
+
+      .. parsed-literal::
+         :class: highlight
+
+         ncs     https\://github.com/NordicPlayground/fw-nrfconnect-zephyr (fetch)
+         ncs     https\://github.com/NordicPlayground/fw-nrfconnect-zephyr (push)
+         origin   https\://github.com/*Username*/fw-nrfconnect-zephyr (fetch)
+         origin   https\://github.com/*Username*/fw-nrfconnect-zephyr (push)
+         upstream https\://github.com/zephyrproject-rtos/zephyr (fetch)
+         upstream https\://github.com/zephyrproject-rtos/zephyr (push)
+
+   #. Go back to the ``ncs`` folder::
+
+         cd ..
+
+You can now work on your local fork (``origin``), but also fetch and check out branches from ``ncs`` and ``upstream``.

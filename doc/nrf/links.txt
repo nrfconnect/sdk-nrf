@@ -77,3 +77,5 @@
 .. _`HID Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245140
 
 .. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
+
+.. _`west manifest file`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/west.yml
