@@ -112,7 +112,7 @@ static int callback_ctrl(bool enable)
 	return err;
 }
 
-static int suspend(void)
+static int suspend_nolock(void)
 {
 	int err = -EBUSY;
 
@@ -147,27 +147,47 @@ static int suspend(void)
 	return err;
 }
 
+static int suspend(void)
+{
+	int err;
+
+	k_spinlock_key_t key = k_spin_lock(&lock);
+	err = suspend_nolock();
+	k_spin_unlock(&lock, key);
+
+	return err;
+}
+
 static void resume(void)
 {
-	if (state == STATE_IDLE) {
-		int err = callback_ctrl(false);
-		if (err) {
-			LOG_ERR("cannot disable callbacks");
-		} else {
-			err = set_trig_mode(GPIO_INT_EDGE);
-			if (err) {
-				LOG_ERR("cannot set trig mode");
-			} else {
-				state = STATE_SCANNING;
-				matrix_scan_fn(NULL);
-			}
-		}
+	k_spinlock_key_t key = k_spin_lock(&lock);
+	if (state != STATE_IDLE) {
+		/* Already activated. */
+		k_spin_unlock(&lock, key);
+		return;
+	}
 
+	int err = callback_ctrl(false);
+	if (err) {
+		LOG_ERR("cannot disable callbacks");
+	} else {
+		err = set_trig_mode(GPIO_INT_EDGE);
 		if (err) {
-			module_set_state(MODULE_STATE_ERROR);
+			LOG_ERR("cannot set trig mode");
 		} else {
-			module_set_state(MODULE_STATE_READY);
+			state = STATE_SCANNING;
 		}
+	}
+
+	/* GPIO callback is disabled - it is safe to unlock */
+	k_spin_unlock(&lock, key);
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+	} else {
+		matrix_scan_fn(NULL);
+
+		module_set_state(MODULE_STATE_READY);
 	}
 }
 
@@ -252,9 +272,8 @@ static void matrix_scan_fn(struct k_work *work)
 
 		case STATE_SUSPENDING:
 			state = STATE_ACTIVE;
-			err = suspend();
+			err = suspend_nolock();
 			if (!err) {
-				LOG_ERR("PDUNAJ Suspend me");
 				module_set_state(MODULE_STATE_STANDBY);
 			}
 			__ASSERT_NO_MSG((err != -EBUSY) && (err != -EALREADY));
@@ -363,6 +382,7 @@ static void init_fn(void)
 
 	/* Perform initial scan */
 	state = STATE_SCANNING;
+
 	matrix_scan_fn(NULL);
 
 	return;
@@ -393,17 +413,13 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_wake_up_event(eh)) {
-		k_spinlock_key_t key = k_spin_lock(&lock);
 		resume();
-		k_spin_unlock(&lock, key);
 
 		return false;
 	}
 
 	if (is_power_down_event(eh)) {
-		k_spinlock_key_t key = k_spin_lock(&lock);
 		int err = suspend();
-		k_spin_unlock(&lock, key);
 
 		if (!err) {
 			module_set_state(MODULE_STATE_STANDBY);
