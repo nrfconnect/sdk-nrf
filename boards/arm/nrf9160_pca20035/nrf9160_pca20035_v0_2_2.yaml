@@ -1,0 +1,10 @@
+identifier: nrf9160_pca20035
+name: nRF9160-PCA20035
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+ram: 64
+flash: 256
+supported:
+  - i2c

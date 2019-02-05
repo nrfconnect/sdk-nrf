@@ -1,0 +1,29 @@
+# Kconfig - nRF91 PCA20035 board configuration
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+if SOC_NRF9160_SICA
+
+config BOARD_NRF9160_PCA20035_V0_2_2
+	bool "nRF9160 PCA20035 v0.2.2"
+	depends on !TRUSTED_EXECUTION_NONSECURE
+	select BOARD_NRF9160_PCA20035
+
+config BOARD_NRF9160_PCA20035_V0_2_2NS
+	bool "nRF9160 PCA20035 v0.2.2 non-secure"
+	depends on TRUSTED_EXECUTION_NONSECURE
+	select BOARD_NRF9160_PCA20035NS
+
+config BOARD_NRF9160_PCA20035_V0_3_0
+	bool "nRF9160 PCA20035 v0.3.0"
+	depends on !TRUSTED_EXECUTION_NONSECURE
+	select BOARD_NRF9160_PCA20035
+
+config BOARD_NRF9160_PCA20035_V0_3_0NS
+	bool "nRF9160 PCA20035 v0.3.0 non-secure"
+	depends on TRUSTED_EXECUTION_NONSECURE
+	select BOARD_NRF9160_PCA20035NS
+
+endif # SOC_NRF9160_SICA

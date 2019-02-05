@@ -1,0 +1,16 @@
+# Kconfig - nRF91 PCA20035 board configuration
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+config BOARD_NRF9160_PCA20035
+	bool
+
+config BOARD_NRF9160_PCA20035NS
+	bool
+
+module=BOARD
+module-dep=LOG
+module-str=Log level for board
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

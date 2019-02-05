@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
+/dts-v1/;
+
+/* PCA20035 v0.3.0 is set as the default board. */
+#include "nrf9160_pca20035_v0_3_0ns.dts"
