@@ -73,7 +73,7 @@ config GPS_SIM_DYNAMIC_VALUES
 
 config GPS_SIM_FIX_TIME
 	int "Time in milliseconds between position generations"
-	range 500 60000
+	range 500 3600000
 	default GPS_SIM_TRIGGER_TIMER_MSEC if GPS_SIM_TRIGGER_USE_TIMER
 	default 1000
 	help
