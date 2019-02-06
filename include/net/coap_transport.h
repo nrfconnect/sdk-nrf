@@ -86,6 +86,9 @@ typedef struct {
 	 *  Otherwise ignored.
 	 */
 	coap_sec_config_t *setting;
+
+	/** Indication to do a non-blocking socket connect. */
+	u8_t non_blocking : 1;
 } coap_local_t;
 
 /**@brief Transport initialization information. */
