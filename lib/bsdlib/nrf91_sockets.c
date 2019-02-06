@@ -612,7 +612,7 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 		if (tmp[i].returned & NRF_POLLOUT) {
 			fds[i].revents |= POLLOUT;
 		}
-		if (tmp[i].requested & NRF_POLLERR) {
+		if (tmp[i].returned & NRF_POLLERR) {
 			fds[i].revents |= POLLERR;
 		}
 	}
