@@ -16,6 +16,7 @@ set(NRF_SUPPORTED_BOARDS
 set(NRF_SUPPORTED_BUILD_TYPES
   ZDebug
   ZDebugWithShell
+  ZDebugMCUBoot
   ZRelease
   ZReleaseMCUBoot
   )
@@ -87,7 +88,7 @@ if (${CONFIG_BOOTLOADER_MCUBOOT})
     set(key_file_path "${MCUBOOT_DIR}/root-rsa-2048.pem")
   endif()
 
-  set(cmd ${CMAKE_COMMAND} -E env
+  set(cmd_sign_hex ${CMAKE_COMMAND} -E env
       ${MCUBOOT_DIR}/scripts/imgtool.py sign
       --key ${key_file_path}
       --header-size ${CONFIG_TEXT_SECTION_OFFSET}
@@ -98,11 +99,27 @@ if (${CONFIG_BOOTLOADER_MCUBOOT})
       ${APPLICATION_BINARY_DIR}/zephyr/zephyr_signed.hex
       DEPENDS ${APPLICATION_BINARY_DIR}/zephyr/zephyr.elf
   )
+
+  set(cmd_sign_bin ${CMAKE_COMMAND} -E env
+      ${MCUBOOT_DIR}/scripts/imgtool.py sign
+      --key ${key_file_path}
+      --header-size ${CONFIG_TEXT_SECTION_OFFSET}
+      --align 8
+      --version ${CMAKE_PROJECT_VERSION}
+      --slot-size ${CONFIG_FLASH_LOAD_SIZE}
+      ${APPLICATION_BINARY_DIR}/zephyr/zephyr.bin
+      ${APPLICATION_BINARY_DIR}/zephyr/zephyr_signed.bin
+      DEPENDS ${APPLICATION_BINARY_DIR}/zephyr/zephyr.elf
+  )
+
   add_custom_target(sign
     COMMAND
-    ${cmd}
+    ${cmd_sign_hex}
+    COMMAND
+    ${cmd_sign_bin}
     COMMENT
-    "Sign file ${APPLICATION_BINARY_DIR}/zephyr/zephyr_signed.hex"
+    "Sign binary files"
     USES_TERMINAL
     )
+
 endif()

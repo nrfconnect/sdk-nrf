@@ -9,3 +9,6 @@ target_sources_ifdef(CONFIG_DESKTOP_BAS_ENABLE
 
 target_sources_ifdef(CONFIG_DESKTOP_HIDS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hids.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_SMP_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/smp.c)
