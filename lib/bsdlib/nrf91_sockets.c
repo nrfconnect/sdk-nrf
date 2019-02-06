@@ -24,6 +24,7 @@ LOG_MODULE_REGISTER(nrf91_sockets);
 #include <net/socket_offload.h>
 #include <nrf_socket.h>
 #include <zephyr.h>
+#include <fcntl.h>
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
@@ -741,6 +742,42 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	return retval;
 }
 
+static int nrf91_socket_offload_fcntl(int fd, int cmd, va_list args)
+{
+	int retval;
+	int flags;
+
+	switch (cmd) {
+	case F_SETFL:
+		flags = va_arg(args, int);
+		if (flags != 0 && flags != O_NONBLOCK)
+			goto error;
+
+		/* Translate flags from native to nRF */
+		flags = (flags & O_NONBLOCK) ? NRF_O_NONBLOCK : 0;
+
+		retval = nrf_fcntl(fd, NRF_F_SETFL, flags);
+		break;
+
+	case F_GETFL:
+		flags = nrf_fcntl(fd, NRF_F_GETFL, 0);
+
+		/* Translate flags from nRF to native */
+		retval = (flags & NRF_O_NONBLOCK) ? O_NONBLOCK : 0;
+		break;
+
+	default:
+		goto error;
+	}
+
+	return retval;
+
+error:
+	retval = -1;
+	errno = EINVAL;
+	return retval;
+}
+
 static const struct socket_offload nrf91_socket_offload_ops = {
 	.socket = nrf91_socket_offload_socket,
 	.close = nrf91_socket_offload_close,
@@ -757,6 +794,7 @@ static const struct socket_offload nrf91_socket_offload_ops = {
 	.poll = nrf91_socket_offload_poll,
 	.getaddrinfo = nrf91_socket_offload_getaddrinfo,
 	.freeaddrinfo = nrf91_socket_offload_freeaddrinfo,
+	.fcntl = nrf91_socket_offload_fcntl,
 };
 
 static int nrf91_bsdlib_socket_offload_init(struct device *arg)
