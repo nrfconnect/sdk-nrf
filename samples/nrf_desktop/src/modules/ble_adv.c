@@ -46,10 +46,13 @@ static const struct bt_le_adv_param adv_param_normal = {
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-#if CONFIG_BT_GATT_HIDS
+#if CONFIG_DESKTOP_HIDS_ENABLE
 			  0x12, 0x18,	/* HID Service */
 #endif
-			  0x0f, 0x18),	/* Battery Service */
+#if CONFIG_DESKTOP_BAS_ENABLE
+			  0x0f, 0x18,	/* Battery Service */
+#endif
+	),
 
 	BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, DEVICE_NAME_LEN),
 #if CONFIG_DESKTOP_BLE_SWIFT_PAIR
@@ -200,21 +203,29 @@ static void init(void)
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		const void * const required_srv[] = {
-#if CONFIG_BT_GATT_HIDS
+		const void * const req_srv[] = {
+#if CONFIG_DESKTOP_HIDS_ENABLE
 			MODULE_ID(hids),
 #endif
+#if CONFIG_DESKTOP_BAS_ENABLE
 			MODULE_ID(bas),
+#endif
+#if CONFIG_DESKTOP_SMP_ENABLE
+			MODULE_ID(smp),
+#endif
 		};
-		static unsigned int srv_ready_cnt;
+		static unsigned int rdy_srv;
 
 		struct module_state_event *event = cast_module_state_event(eh);
 
-		for (size_t i = 0; i < ARRAY_SIZE(required_srv); i++) {
-			if (check_state(event, required_srv[i], MODULE_STATE_READY)) {
-				srv_ready_cnt++;
+		for (size_t i = 0; i < ARRAY_SIZE(req_srv); i++) {
+			if (check_state(event, req_srv[i], MODULE_STATE_READY)) {
+				unsigned int mask = BIT(i);
 
-				if (srv_ready_cnt == ARRAY_SIZE(required_srv)) {
+				__ASSERT_NO_MSG((rdy_srv & mask) == 0);
+				rdy_srv |= mask;
+
+				if (rdy_srv == BIT_MASK(ARRAY_SIZE(req_srv))) {
 					static bool initialized;
 					__ASSERT_NO_MSG(!initialized);
 
@@ -225,7 +236,6 @@ static bool event_handler(const struct event_header *eh)
 				break;
 			}
 		}
-		__ASSERT_NO_MSG(srv_ready_cnt <= ARRAY_SIZE(required_srv));
 
 		return false;
 	}
