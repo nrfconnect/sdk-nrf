@@ -8,8 +8,6 @@
 
 #include <zephyr.h>
 
-#include <misc/printk.h>
-
 #include <soc.h>
 #include <device.h>
 #include <gpio.h>

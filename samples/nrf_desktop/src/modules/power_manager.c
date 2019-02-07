@@ -13,7 +13,6 @@
 #include <gpio.h>
 #include <hal/nrf_gpiote.h>
 
-#include <misc/printk.h>
 #include <profiler.h>
 
 #include "power_event.h"
