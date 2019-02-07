@@ -6,7 +6,6 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <misc/printk.h>
 
 #include "config_event.h"
 
