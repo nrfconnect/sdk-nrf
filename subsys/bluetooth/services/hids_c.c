@@ -10,9 +10,8 @@
 
 #include <bluetooth/services/hids_c.h>
 
-#define LOG_LEVEL CONFIG_BT_GATT_HIDS_C_LOG_LEVEL
 #include <logging/log.h>
-LOG_MODULE_REGISTER(hids_c);
+LOG_MODULE_REGISTER(hids_c, CONFIG_BT_GATT_HIDS_C_LOG_LEVEL);
 
 /* Suspend value for Control Point  */
 #define BT_GATT_HIDS_C_CP_SUSPEND      0x00
