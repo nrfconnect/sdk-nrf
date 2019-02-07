@@ -130,7 +130,7 @@ static int leds_init(void)
 		leds[i].id = i;
 
 		if (!leds[i].pwm_dev) {
-			LOG_ERR("cannot bind %s", dev_name[i]);
+			LOG_ERR("Cannot bind %s", dev_name[i]);
 			err = -ENXIO;
 		} else {
 			k_delayed_work_init(&leds[i].work, work_handler);

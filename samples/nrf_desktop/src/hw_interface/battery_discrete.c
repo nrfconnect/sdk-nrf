@@ -246,7 +246,7 @@ static int init_fn(void)
 
 	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		LOG_ERR("cannot get gpio device");
+		LOG_ERR("Cannot get GPIO device");
 		err = -ENXIO;
 		goto error;
 	}
