@@ -12,9 +12,9 @@ LOG_MODULE_REGISTER(LOG_DOMAIN);
 #include <zephyr.h>
 #include <stdio.h>
 #include <uart.h>
-#include <net/socket.h>
 #include <string.h>
 #include <init.h>
+#include <at_cmd.h>
 
 #define CONFIG_UART_0_NAME 	"UART_0"
 #define CONFIG_UART_1_NAME 	"UART_1"
@@ -53,31 +53,25 @@ enum select_uart {
 
 static enum term_modes term_mode;
 static struct device *uart_dev;
-static int at_socket_fd = INVALID_DESCRIPTOR;
-static struct pollfd fds[1];
-static int nfds;
+static struct at_cmd_client *at_cmd_client;
 static u8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
-static struct k_work at_cmd_send_work;
-static struct k_thread socket_thread;
-static K_THREAD_STACK_DEFINE(socket_thread_stack, THREAD_STACK_SIZE);
-static struct k_mutex socket_mutex;
-
-
+static struct k_work cmd_send_work;
 static const char termination[3] = { '\0', '\r', '\n' };
 
-static void at_cmd_send(struct k_work *work)
+static void cmd_send(struct k_work *work)
 {
-	int bytes_sent;
+	int err;
+	struct at_cmd_msg cmd;
 
 	ARG_UNUSED(work);
 
-	k_mutex_lock(&socket_mutex, K_FOREVER);
-	bytes_sent = send(at_socket_fd, at_buf, at_buf_len, 0);
-	k_mutex_unlock(&socket_mutex);
+	cmd.buf = at_buf;
+	cmd.len = at_buf_len;
 
-	if (bytes_sent <= 0) {
-		LOG_ERR("Could not send AT command to modem: %d", bytes_sent);
+	err = at_cmd_send(at_cmd_client, &cmd);
+	if (err) {
+		LOG_ERR("Could not send AT command to modem: %d", err);
 	}
 
 	uart_irq_rx_enable(uart_dev);
@@ -152,7 +146,7 @@ static void uart_rx_handler(u8_t character)
 	return;
 send:
 	uart_irq_rx_disable(uart_dev);
-	k_work_submit(&at_cmd_send_work);
+	k_work_submit(&cmd_send_work);
 	at_buf_len = cmd_len;
 	cmd_len = 0;
 }
@@ -191,38 +185,20 @@ static int at_uart_init(char *uart_dev_name)
 	return err;
 }
 
-static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
+static void response_handler(char *cmd, size_t cmd_len,
+			     char *response, size_t response_len)
 {
-	u8_t at_read_buff[CONFIG_AT_HOST_SOCKET_BUF_SIZE] = {0};
-	int err;
-	int r_bytes;
+	ARG_UNUSED(cmd);
+	ARG_UNUSED(cmd_len);
 
-	ARG_UNUSED(arg1);
-	ARG_UNUSED(arg2);
-	ARG_UNUSED(arg3);
-
-	while (1) {
-		/* Poll the socket for incoming data. */
-		err = poll(fds, nfds, K_FOREVER);
-		if (err < 0) {
-			LOG_ERR("Poll error: %d\n", err);
-		}
-
-		k_mutex_lock(&socket_mutex, K_FOREVER);
-		/* Read AT socket in non-blocking mode. */
-		r_bytes = recv(at_socket_fd, at_read_buff,
-				sizeof(at_read_buff), MSG_DONTWAIT);
-		k_mutex_unlock(&socket_mutex);
-
-		/* Forward the data over UART if any. */
-		/* If no data, errno is set to EGAIN and we will try again. */
-		if (r_bytes > 0) {
-			/* Poll out what is in the buffer gathered from
-			 * the modem.
-			 */
-			for (size_t i = 0; i < r_bytes; i++) {
-				uart_poll_out(uart_dev, at_read_buff[i]);
-			}
+	/* Forward the data over UART if any. */
+	/* If no data, errno is set to EGAIN and we will try again. */
+	if (response_len > 0) {
+		/* Poll out what is in the buffer gathered from
+		 * the modem.
+		 */
+		for (size_t i = 0; i < response_len; i++) {
+			uart_poll_out(uart_dev, response[i]);
 		}
 	}
 }
@@ -263,26 +239,15 @@ static int at_host_init(struct device *arg)
 	if (err) {
 		LOG_ERR("UART could not be initialized: %d", err);
 		return -EFAULT;
-	} else {
-		/* AT socket creation. Handle must be valid to continue. */
-		at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
-		fds[0].fd = at_socket_fd;
-		fds[0].events = ZSOCK_POLLIN;
-		nfds += 1;
-
-		if (at_socket_fd == INVALID_DESCRIPTOR) {
-			LOG_ERR("Creating at_socket failed\n");
-			return -EFAULT;
-		}
 	}
 
-	k_mutex_init(&socket_mutex);
-	k_work_init(&at_cmd_send_work, at_cmd_send);
-	k_thread_create(&socket_thread, socket_thread_stack,
-			K_THREAD_STACK_SIZEOF(socket_thread_stack),
-			socket_thread_fn,
-			NULL, NULL, NULL,
-			THREAD_PRIORITY, 0, K_NO_WAIT);
+	at_cmd_client = at_cmd_client_init(response_handler);
+	if (!at_cmd_client) {
+		LOG_ERR("Could not initialize AT command client");
+		return -EFAULT;
+	}
+
+	k_work_init(&cmd_send_work, cmd_send);
 	uart_irq_rx_enable(uart_dev);
 
 	return err;
