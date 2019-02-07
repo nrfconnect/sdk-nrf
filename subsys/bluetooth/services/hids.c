@@ -25,7 +25,7 @@
 
 #define BOOT_MOUSE_INPUT_REPORT_MIN_SIZE 3
 
-LOG_MODULE_REGISTER(ble_gatt_hids, CONFIG_BT_GATT_HIDS_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_gatt_hids, CONFIG_BT_GATT_HIDS_LOG_LEVEL);
 
 /* HID Protocol modes. */
 enum {
@@ -46,12 +46,13 @@ enum {
 	HIDS_FEATURE = 0x03,
 };
 
-int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn)
+int bt_gatt_hids_notify_connected(struct bt_gatt_hids *hids_obj,
+				  struct bt_conn *conn)
 {
 	__ASSERT_NO_MSG(conn != NULL);
 	__ASSERT_NO_MSG(hids_obj != NULL);
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_alloc(hids_obj->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -66,7 +67,7 @@ int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn)
 
 	/* Assign input report context. */
 	conn_data->inp_rep_ctx =
-	    (u8_t *)conn_data + sizeof(struct hids_conn_data);
+	    (u8_t *)conn_data + sizeof(struct bt_gatt_hids_conn_data);
 
 	/* Assign output report context. */
 	conn_data->outp_rep_ctx = conn_data->inp_rep_ctx;
@@ -89,7 +90,8 @@ int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn)
 	return 0;
 }
 
-int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn)
+int bt_gatt_hids_notify_disconnected(struct bt_gatt_hids *hids_obj,
+				     struct bt_conn *conn)
 {
 	__ASSERT_NO_MSG(conn != NULL);
 	__ASSERT_NO_MSG(hids_obj != NULL);
@@ -130,11 +132,11 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 {
 	LOG_DBG("Writing to Protocol Mode characteristic.");
 
-	struct protocol_mode *pm = attr->user_data;
-	struct hids *hids = CONTAINER_OF(pm, struct hids, pm);
+	struct bt_gatt_hids_pm *pm = attr->user_data;
+	struct bt_gatt_hids *hids = CONTAINER_OF(pm, struct bt_gatt_hids, pm);
 	u8_t const *new_pm = (u8_t const *)buf;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -151,12 +153,14 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 	switch (*new_pm) {
 	case HIDS_PROTOCOL_MODE_BOOT:
 		if (pm->evt_handler) {
-			pm->evt_handler(HIDS_PM_EVT_BOOT_MODE_ENTERED, conn);
+			pm->evt_handler(BT_GATT_HIDS_PM_EVT_BOOT_MODE_ENTERED,
+					conn);
 		}
 		break;
 	case HIDS_PROTOCOL_MODE_REPORT:
 		if (pm->evt_handler) {
-			pm->evt_handler(HIDS_PM_EVT_REPORT_MODE_ENTERED, conn);
+			pm->evt_handler(BT_GATT_HIDS_PM_EVT_REPORT_MODE_ENTERED,
+					conn);
 		}
 		break;
 	default:
@@ -176,11 +180,11 @@ static ssize_t hids_protocol_mode_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Protocol Mode characteristic.");
 
-	struct protocol_mode *pm = attr->user_data;
-	struct hids *hids = CONTAINER_OF(pm, struct hids, pm);
+	struct bt_gatt_hids_pm *pm = attr->user_data;
+	struct bt_gatt_hids *hids = CONTAINER_OF(pm, struct bt_gatt_hids, pm);
 	ssize_t ret_len;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -204,7 +208,7 @@ static ssize_t hids_report_map_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Report Map characteristic.");
 
-	struct hids_rep_map *rep_map = attr->user_data;
+	struct bt_gatt_hids_rep_map *rep_map = attr->user_data;
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, rep_map->data,
 				 rep_map->size);
@@ -216,14 +220,15 @@ static ssize_t hids_inp_rep_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Input Report characteristic.");
 
-	struct hids_inp_rep *rep = attr->user_data;
+	struct bt_gatt_hids_inp_rep *rep = attr->user_data;
 	u8_t idx = rep->idx;
-	struct hids *hids =
-	    CONTAINER_OF((rep - idx), struct hids, inp_rep_group.reports);
+	struct bt_gatt_hids *hids = CONTAINER_OF((rep - idx),
+						 struct bt_gatt_hids,
+						 inp_rep_group.reports);
 	u8_t *rep_data;
 	ssize_t ret_len;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -262,14 +267,15 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Output Report characteristic.");
 
-	struct hids_outp_feat_rep *rep = attr->user_data;
+	struct bt_gatt_hids_outp_feat_rep *rep = attr->user_data;
 	u8_t idx = rep->idx;
-	struct hids *hids =
-	    CONTAINER_OF((rep - idx), struct hids, outp_rep_group.reports);
+	struct bt_gatt_hids *hids = CONTAINER_OF((rep - idx),
+						 struct bt_gatt_hids,
+						 outp_rep_group.reports);
 	u8_t *rep_data;
 	ssize_t ret_len;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -294,13 +300,14 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 {
 	LOG_DBG("Writing to Output Report characteristic.");
 
-	struct hids_outp_feat_rep *rep = attr->user_data;
+	struct bt_gatt_hids_outp_feat_rep *rep = attr->user_data;
 	u8_t idx = rep->idx;
-	struct hids *hids =
-	    CONTAINER_OF((rep - idx), struct hids, outp_rep_group.reports);
+	struct bt_gatt_hids *hids = CONTAINER_OF((rep - idx),
+						 struct bt_gatt_hids,
+						 outp_rep_group.reports);
 	u8_t *rep_data;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -316,7 +323,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 	memcpy(rep_data + offset, buf, len);
 
 	if (rep->handler) {
-		struct hids_rep report = {
+		struct bt_gatt_hids_rep report = {
 		    .data = rep_data,
 		    .size = rep->size,
 		};
@@ -349,14 +356,15 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Feature Report characteristic.");
 
-	struct hids_outp_feat_rep *rep = attr->user_data;
+	struct bt_gatt_hids_outp_feat_rep *rep = attr->user_data;
 	u8_t idx = rep->idx;
-	struct hids *hids =
-	    CONTAINER_OF((rep - idx), struct hids, feat_rep_group.reports);
+	struct bt_gatt_hids *hids = CONTAINER_OF((rep - idx),
+						 struct bt_gatt_hids,
+						 feat_rep_group.reports);
 	u8_t *rep_data;
 	ssize_t ret_len;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -381,13 +389,14 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 {
 	LOG_DBG("Writing to Feature Report characteristic.");
 
-	struct hids_outp_feat_rep *rep = attr->user_data;
+	struct bt_gatt_hids_outp_feat_rep *rep = attr->user_data;
 	u8_t idx = rep->idx;
-	struct hids *hids =
-	    CONTAINER_OF((rep - idx), struct hids, feat_rep_group.reports);
+	struct bt_gatt_hids *hids = CONTAINER_OF((rep - idx),
+						 struct bt_gatt_hids,
+						 feat_rep_group.reports);
 	u8_t *rep_data;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -403,7 +412,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 	memcpy(rep_data + offset, buf, len);
 
 	if (rep->handler) {
-		struct hids_rep report = {
+		struct bt_gatt_hids_rep report = {
 		    .data = rep_data,
 		    .size = rep->size,
 		};
@@ -435,19 +444,19 @@ static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 {
 	LOG_DBG("Input Report CCCD has changed.");
 
-	struct hids_inp_rep *inp_rep =
+	struct bt_gatt_hids_inp_rep *inp_rep =
 	    CONTAINER_OF(((struct _bt_gatt_ccc *)attr->user_data)->cfg,
-			 struct hids_inp_rep, ccc);
+			 struct bt_gatt_hids_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
 		LOG_DBG("Notification has been turned on");
 		if (inp_rep->handler != NULL) {
-			inp_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
+			inp_rep->handler(BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED);
 		}
 	} else {
 		LOG_DBG("Notification has been turned off");
 		if (inp_rep->handler != NULL) {
-			inp_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
+			inp_rep->handler(BT_GATT_HIDS_CCCD_EVT_NOTIF_DISABLED);
 		}
 	}
 }
@@ -459,12 +468,13 @@ static ssize_t hids_boot_mouse_inp_report_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Boot Mouse Input Report characteristic.");
 
-	struct hids_boot_mouse_inp_rep *rep = attr->user_data;
-	struct hids *hids = CONTAINER_OF(rep, struct hids, boot_mouse_inp_rep);
+	struct bt_gatt_hids_boot_mouse_inp_rep *rep = attr->user_data;
+	struct bt_gatt_hids *hids = CONTAINER_OF(rep, struct bt_gatt_hids,
+						 boot_mouse_inp_rep);
 	u8_t *rep_data;
 	ssize_t ret_len;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -488,19 +498,19 @@ static void hids_boot_mouse_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 {
 	LOG_DBG("Boot Mouse Input Report CCCD has changed.");
 
-	struct hids_boot_mouse_inp_rep *boot_mouse_rep =
+	struct bt_gatt_hids_boot_mouse_inp_rep *boot_mouse_rep =
 	    CONTAINER_OF(((struct _bt_gatt_ccc *)attr->user_data)->cfg,
-			 struct hids_boot_mouse_inp_rep, ccc);
+			 struct bt_gatt_hids_boot_mouse_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
 		LOG_DBG("Notification for Boot Mouse has been turned on");
 		if (boot_mouse_rep->handler != NULL) {
-			boot_mouse_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
+			boot_mouse_rep->handler(BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED);
 		}
 	} else {
 		LOG_DBG("Notification for Boot Mouse has been turned off");
 		if (boot_mouse_rep->handler != NULL) {
-			boot_mouse_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
+			boot_mouse_rep->handler(BT_GATT_HIDS_CCCD_EVT_NOTIF_DISABLED);
 		}
 	}
 }
@@ -511,12 +521,13 @@ static ssize_t hids_boot_kb_inp_report_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Boot Keyboard Input Report characteristic.");
 
-	struct hids_boot_kb_inp_rep *rep = attr->user_data;
-	struct hids *hids = CONTAINER_OF(rep, struct hids, boot_kb_inp_rep);
+	struct bt_gatt_hids_boot_kb_inp_rep *rep = attr->user_data;
+	struct bt_gatt_hids *hids = CONTAINER_OF(rep, struct bt_gatt_hids,
+						 boot_kb_inp_rep);
 	u8_t *rep_data;
 	ssize_t ret_len;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -539,21 +550,21 @@ static void hids_boot_kb_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 {
 	LOG_DBG("Boot Keyboard Input Report CCCD has changed.");
 
-	struct hids_boot_kb_inp_rep *boot_kb_inp_rep =
+	struct bt_gatt_hids_boot_kb_inp_rep *boot_kb_inp_rep =
 	    CONTAINER_OF(((struct _bt_gatt_ccc *)attr->user_data)->cfg,
-			 struct hids_boot_kb_inp_rep, ccc);
+			 struct bt_gatt_hids_boot_kb_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
 		LOG_DBG("Notification for Boot Keyboard has been turned "
 			"on.");
 		if (boot_kb_inp_rep->handler != NULL) {
-			boot_kb_inp_rep->handler(HIDS_CCCD_EVT_NOTIF_ENABLED);
+			boot_kb_inp_rep->handler(BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED);
 		}
 	} else {
 		LOG_DBG("Notification for Boot Keyboard has been turned "
 			"on.");
 		if (boot_kb_inp_rep->handler != NULL) {
-			boot_kb_inp_rep->handler(HIDS_CCCD_EVT_NOTIF_DISABLED);
+			boot_kb_inp_rep->handler(BT_GATT_HIDS_CCCD_EVT_NOTIF_DISABLED);
 		}
 	}
 }
@@ -564,12 +575,13 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Boot Keyboard Output Report characteristic.");
 
-	struct hids_boot_kb_outp_rep *rep = attr->user_data;
-	struct hids *hids = CONTAINER_OF(rep, struct hids, boot_kb_outp_rep);
+	struct bt_gatt_hids_boot_kb_outp_rep *rep = attr->user_data;
+	struct bt_gatt_hids *hids = CONTAINER_OF(rep, struct bt_gatt_hids,
+						 boot_kb_outp_rep);
 	u8_t *rep_data;
 	ssize_t ret_len;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -594,11 +606,12 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 {
 	LOG_DBG("Writing to Boot Keyboard Output Report characteristic.");
 
-	struct hids_boot_kb_outp_rep *rep = attr->user_data;
-	struct hids *hids = CONTAINER_OF(rep, struct hids, boot_kb_outp_rep);
+	struct bt_gatt_hids_boot_kb_outp_rep *rep = attr->user_data;
+	struct bt_gatt_hids *hids = CONTAINER_OF(rep, struct bt_gatt_hids,
+						 boot_kb_outp_rep);
 	u8_t *rep_data;
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -614,7 +627,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 	memcpy(rep_data + offset, buf, len);
 
 	if (rep->handler) {
-		struct hids_rep report = {
+		struct bt_gatt_hids_rep report = {
 		    .data = rep_data,
 		    .size = sizeof(conn_data->hids_boot_kb_outp_rep_ctx),
 		};
@@ -634,7 +647,7 @@ static ssize_t hids_info_read(struct bt_conn *conn,
 	LOG_DBG("Reading from HID information characteristic.");
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
-				 HIDS_INFORMATION_CHAR_LEN);
+				 BT_GATT_HIDS_INFORMATION_LEN);
 }
 
 static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
@@ -644,7 +657,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 {
 	LOG_DBG("Writing to Control Point characteristic.");
 
-	struct control_point *cp = (struct control_point *)attr->user_data;
+	struct bt_gatt_hids_cp *cp = (struct bt_gatt_hids_cp *)attr->user_data;
 
 	u8_t cur_cp = cp->value;
 	u8_t const *new_cp = (u8_t const *)buf;
@@ -656,12 +669,12 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 	switch (*new_cp) {
 	case HIDS_CONTROL_POINT_SUSPEND:
 		if (cp->evt_handler) {
-			cp->evt_handler(HIDS_CP_EVT_HOST_SUSP);
+			cp->evt_handler(BT_GATT_HIDS_CP_EVT_HOST_SUSP);
 		}
 		break;
 	case HIDS_CONTROL_POINT_EXIT_SUSPEND:
 		if (cp->evt_handler) {
-			cp->evt_handler(HIDS_CP_EVT_HOST_EXIT_SUSP);
+			cp->evt_handler(BT_GATT_HIDS_CP_EVT_HOST_EXIT_SUSP);
 		}
 		break;
 	default:
@@ -673,7 +686,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 }
 
 static u8_t hid_information_encode(u8_t *buffer,
-				   struct hids_info const *hid_info)
+				   struct bt_gatt_hids_info const *hid_info)
 {
 	u8_t len = 0;
 
@@ -683,14 +696,14 @@ static u8_t hid_information_encode(u8_t *buffer,
 	buffer[len++] = hid_info->b_country_code;
 	buffer[len++] = hid_info->flags;
 
-	__ASSERT(len == HIDS_INFORMATION_CHAR_LEN,
+	__ASSERT(len == BT_GATT_HIDS_INFORMATION_LEN,
 		 "HIDS Information encoding failed");
 	return len;
 }
 
 static void
-hids_input_reports_register(struct hids *hids_obj,
-			    const struct hids_init_param *init_param)
+hids_input_reports_register(struct bt_gatt_hids *hids_obj,
+			    const struct bt_gatt_hids_init_param *init_param)
 {
 	__ASSERT_NO_MSG(init_param->inp_rep_group_init.cnt <=
 			CONFIG_BT_GATT_HIDS_INPUT_REP_MAX);
@@ -700,7 +713,7 @@ hids_input_reports_register(struct hids *hids_obj,
 	       sizeof(hids_obj->inp_rep_group));
 
 	for (size_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
-		struct hids_inp_rep *hids_inp_rep =
+		struct bt_gatt_hids_inp_rep *hids_inp_rep =
 		    &hids_obj->inp_rep_group.reports[i];
 
 		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_REPORT,
@@ -726,8 +739,8 @@ hids_input_reports_register(struct hids *hids_obj,
 	}
 }
 
-static void hids_outp_reports_register(struct hids *hids_obj,
-				       const struct hids_init_param *init_param)
+static void hids_outp_reports_register(struct bt_gatt_hids *hids_obj,
+				       const struct bt_gatt_hids_init_param *init_param)
 {
 	__ASSERT_NO_MSG(init_param->outp_rep_group_init.cnt <=
 			CONFIG_BT_GATT_HIDS_OUTPUT_REP_MAX);
@@ -738,7 +751,7 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 	       sizeof(hids_obj->outp_rep_group));
 
 	for (size_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
-		struct hids_outp_feat_rep *hids_outp_rep =
+		struct bt_gatt_hids_outp_feat_rep *hids_outp_rep =
 		    &hids_obj->outp_rep_group.reports[i];
 
 		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_REPORT,
@@ -765,8 +778,8 @@ static void hids_outp_reports_register(struct hids *hids_obj,
 	}
 }
 
-static void hids_feat_reports_register(struct hids *hids_obj,
-				       const struct hids_init_param *init_param)
+static void hids_feat_reports_register(struct bt_gatt_hids *hids_obj,
+				       const struct bt_gatt_hids_init_param *init_param)
 {
 	__ASSERT_NO_MSG(init_param->feat_rep_group_init.cnt <=
 			CONFIG_BT_GATT_HIDS_FEATURE_REP_MAX);
@@ -777,7 +790,7 @@ static void hids_feat_reports_register(struct hids *hids_obj,
 	u8_t offset = 0;
 
 	for (size_t i = 0; i < hids_obj->feat_rep_group.cnt; i++) {
-		struct hids_outp_feat_rep *hids_feat_rep =
+		struct bt_gatt_hids_outp_feat_rep *hids_feat_rep =
 		    &hids_obj->feat_rep_group.reports[i];
 
 		BT_GATT_POOL_CHRC_GET(&hids_obj->svc, BT_UUID_HIDS_REPORT,
@@ -803,7 +816,8 @@ static void hids_feat_reports_register(struct hids *hids_obj,
 	}
 }
 
-int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
+int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
+		      const struct bt_gatt_hids_init_param *init_param)
 {
 	LOG_DBG("Initializing HIDS.");
 
@@ -935,7 +949,7 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param)
 	return bt_gatt_service_register(&hids_obj->svc);
 }
 
-int hids_uninit(struct hids *hids_obj)
+int bt_gatt_hids_uninit(struct bt_gatt_hids *hids_obj)
 {
 	int err;
 
@@ -1024,7 +1038,7 @@ int hids_uninit(struct hids *hids_obj)
 	return 0;
 }
 
-static void store_input_report(struct hids_inp_rep *hids_inp_rep,
+static void store_input_report(struct bt_gatt_hids_inp_rep *hids_inp_rep,
 			       u8_t *rep_data, u8_t const *rep, u8_t len)
 {
 	if (!hids_inp_rep->rep_mask) {
@@ -1041,12 +1055,12 @@ static void store_input_report(struct hids_inp_rep *hids_inp_rep,
 	}
 }
 
-static int inp_rep_notify_all(struct hids *hids_obj,
-			      struct hids_inp_rep *hids_inp_rep,
+static int inp_rep_notify_all(struct bt_gatt_hids *hids_obj,
+			      struct bt_gatt_hids_inp_rep *hids_inp_rep,
 			      u8_t const *rep, u8_t len,
 			      bt_gatt_complete_func_t cb)
 {
-	struct hids_conn_data *conn_data;
+	struct bt_gatt_hids_conn_data *conn_data;
 	u8_t *rep_data = NULL;
 
 	const size_t contexts =
@@ -1083,11 +1097,12 @@ static int inp_rep_notify_all(struct hids *hids_obj,
 	}
 }
 
-int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
-		      u8_t rep_index, u8_t const *rep, u8_t len,
-		      bt_gatt_complete_func_t cb)
+int bt_gatt_hids_inp_rep_send(struct bt_gatt_hids *hids_obj,
+			      struct bt_conn *conn, u8_t rep_index,
+			      u8_t const *rep, u8_t len,
+			      bt_gatt_complete_func_t cb)
 {
-	struct hids_inp_rep *hids_inp_rep =
+	struct bt_gatt_hids_inp_rep *hids_inp_rep =
 	    &hids_obj->inp_rep_group.reports[rep_index];
 	u8_t *rep_data;
 
@@ -1103,7 +1118,7 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 		return -EACCES;
 	}
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
 	if (!conn_data) {
@@ -1124,14 +1139,14 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 }
 
 static int boot_mouse_inp_report_notify_all(
-	struct hids *hids_obj, const u8_t *buttons,
-	struct hids_boot_mouse_inp_rep *boot_mouse_inp_rep, s8_t x_delta,
-	s8_t y_delta, bt_gatt_complete_func_t cb)
+	struct bt_gatt_hids *hids_obj, const u8_t *buttons,
+	struct bt_gatt_hids_boot_mouse_inp_rep *boot_mouse_inp_rep,
+	s8_t x_delta, s8_t y_delta, bt_gatt_complete_func_t cb)
 {
-	struct hids_conn_data *conn_data;
+	struct bt_gatt_hids_conn_data *conn_data;
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
 	u8_t *rep_data = NULL;
-	u8_t rep_buff[BOOT_MOUSE_INPUT_REP_CHAR_LEN] = {0};
+	u8_t rep_buff[BT_GATT_HIDS_BOOT_MOUSE_REP_LEN] = {0};
 
 	rep_buff[1] = (u8_t)x_delta;
 	rep_buff[2] = (u8_t)y_delta;
@@ -1176,13 +1191,14 @@ static int boot_mouse_inp_report_notify_all(
 	}
 }
 
-int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
-				 const u8_t *buttons, s8_t x_delta,
-				 s8_t y_delta,
-				 bt_gatt_complete_func_t cb)
+int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
+					 struct bt_conn *conn,
+					 const u8_t *buttons,
+					 s8_t x_delta, s8_t y_delta,
+					 bt_gatt_complete_func_t cb)
 {
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
-	struct hids_boot_mouse_inp_rep *boot_mouse_inp_rep =
+	struct bt_gatt_hids_boot_mouse_inp_rep *boot_mouse_inp_rep =
 	    &hids_obj->boot_mouse_inp_rep;
 	u8_t *rep_data;
 
@@ -1196,7 +1212,7 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 		return -EACCES;
 	}
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
 	static_assert(sizeof(conn_data->hids_boot_mouse_inp_rep_ctx) >= 3,
@@ -1229,11 +1245,12 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 }
 
 static int
-boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
-		       struct hids_boot_kb_inp_rep *boot_kb_input_report,
+boot_kb_inp_notify_all(struct bt_gatt_hids *hids_obj, u8_t const *rep,
+		       u16_t len,
+		       struct bt_gatt_hids_boot_kb_inp_rep *boot_kb_inp_rep,
 		       bt_gatt_complete_func_t cb)
 {
-	struct hids_conn_data *conn_data;
+	struct bt_gatt_hids_conn_data *conn_data;
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
 	u8_t *rep_data = NULL;
 
@@ -1246,7 +1263,7 @@ boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
 		if (ctx) {
 			bool notification_enabled =
 			    hids_is_notification_enabled(
-				ctx->conn, boot_kb_input_report->ccc);
+				ctx->conn, boot_kb_inp_rep->ccc);
 
 			if (notification_enabled) {
 				conn_data = ctx->data;
@@ -1254,7 +1271,8 @@ boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
 
 				memcpy(rep_data, rep, len);
 				memset(&rep_data[len], 0,
-				       (BOOT_KB_INPUT_REP_CHAR_LEN - len));
+				       (BT_GATT_HIDS_BOOT_KB_INPUT_REP_LEN -
+					len));
 			}
 
 			bt_conn_ctx_release(hids_obj->conn_ctx,
@@ -1271,12 +1289,12 @@ boot_kb_inp_notify_all(struct hids *hids_obj, u8_t const *rep, u16_t len,
 	}
 }
 
-int hids_boot_kb_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
-			      u8_t const *rep, u16_t len,
-			      bt_gatt_complete_func_t cb)
+int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
+				      struct bt_conn *conn, u8_t const *rep,
+				      u16_t len, bt_gatt_complete_func_t cb)
 {
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
-	struct hids_boot_kb_inp_rep *boot_kb_input_report =
+	struct bt_gatt_hids_boot_kb_inp_rep *boot_kb_input_report =
 	    &hids_obj->boot_kb_inp_rep;
 	u8_t *rep_data = NULL;
 
@@ -1289,7 +1307,7 @@ int hids_boot_kb_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
 		return -EACCES;
 	}
 
-	struct hids_conn_data *conn_data =
+	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
 	if (len > sizeof(conn_data->hids_boot_kb_inp_rep_ctx)) {

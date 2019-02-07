@@ -98,9 +98,9 @@ enum {
 };
 
 /* HIDS instance. */
-HIDS_DEF(hids_obj,
-	 OUTPUT_REPORT_MAX_LEN,
-	 INPUT_REPORT_KEYS_MAX_LEN);
+BT_GATT_HIDS_DEF(hids_obj,
+		 OUTPUT_REPORT_MAX_LEN,
+		 INPUT_REPORT_KEYS_MAX_LEN);
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
@@ -168,7 +168,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	printk("Connected %s\n", addr);
 
-	err = hids_notify_connected(&hids_obj, conn);
+	err = bt_gatt_hids_notify_connected(&hids_obj, conn);
 
 	if (err) {
 		printk("Failed to notify HID service about connection\n");
@@ -194,7 +194,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	printk("Disconnected from %s (reason %u)\n", addr, reason);
 
-	err = hids_notify_disconnected(&hids_obj, conn);
+	err = bt_gatt_hids_notify_disconnected(&hids_obj, conn);
 
 	if (err) {
 		printk("Failed to notify HID service about disconnection\n");
@@ -226,7 +226,7 @@ static struct bt_conn_cb conn_callbacks = {
 };
 
 
-static void caps_lock_handler(const struct hids_rep *rep)
+static void caps_lock_handler(const struct bt_gatt_hids_rep *rep)
 {
 	u8_t report_val = ((*rep->data) & OUTPUT_REPORT_BIT_MASK_CAPS_LOCK) ?
 			  1 : 0;
@@ -234,7 +234,7 @@ static void caps_lock_handler(const struct hids_rep *rep)
 }
 
 
-static void hids_outp_rep_handler(const struct hids_rep *rep,
+static void hids_outp_rep_handler(const struct bt_gatt_hids_rep *rep,
 				  struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -245,7 +245,7 @@ static void hids_outp_rep_handler(const struct hids_rep *rep,
 }
 
 
-static void hids_boot_kb_outp_rep_handler(const struct hids_rep *rep,
+static void hids_boot_kb_outp_rep_handler(const struct bt_gatt_hids_rep *rep,
 					  struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -256,7 +256,8 @@ static void hids_boot_kb_outp_rep_handler(const struct hids_rep *rep,
 }
 
 
-static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
+static void hids_pm_evt_handler(enum bt_gatt_hids_pm_evt evt,
+				struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 	size_t i;
@@ -275,12 +276,12 @@ static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	switch (evt) {
-	case HIDS_PM_EVT_BOOT_MODE_ENTERED:
+	case BT_GATT_HIDS_PM_EVT_BOOT_MODE_ENTERED:
 		printk("Boot mode entered %s\n", addr);
 		conn_mode[i].in_boot_mode = true;
 		break;
 
-	case HIDS_PM_EVT_REPORT_MODE_ENTERED:
+	case BT_GATT_HIDS_PM_EVT_REPORT_MODE_ENTERED:
 		printk("Report mode entered %s\n", addr);
 		conn_mode[i].in_boot_mode = false;
 		break;
@@ -294,9 +295,9 @@ static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 static void hid_init(void)
 {
 	int err;
-	struct hids_init_param    hids_init_obj = { 0 };
-	struct hids_inp_rep       *hids_inp_rep;
-	struct hids_outp_feat_rep *hids_outp_rep;
+	struct bt_gatt_hids_init_param    hids_init_obj = { 0 };
+	struct bt_gatt_hids_inp_rep       *hids_inp_rep;
+	struct bt_gatt_hids_outp_feat_rep *hids_outp_rep;
 
 	static const u8_t report_map[] = {
 		0x05, 0x01,       /* Usage Page (Generic Desktop) */
@@ -353,8 +354,8 @@ static void hid_init(void)
 
 	hids_init_obj.info.bcd_hid = BASE_USB_HID_SPEC_VERSION;
 	hids_init_obj.info.b_country_code = 0x00;
-	hids_init_obj.info.flags = (HIDS_REMOTE_WAKE |
-				    HIDS_NORMALLY_CONNECTABLE);
+	hids_init_obj.info.flags = (BT_GATT_HIDS_REMOTE_WAKE |
+				    BT_GATT_HIDS_NORMALLY_CONNECTABLE);
 
 	hids_inp_rep =
 		&hids_init_obj.inp_rep_group_init.reports[INPUT_REP_KEYS_IDX];
@@ -373,7 +374,7 @@ static void hid_init(void)
 	hids_init_obj.boot_kb_outp_rep_handler = hids_boot_kb_outp_rep_handler;
 	hids_init_obj.pm_evt_handler = hids_pm_evt_handler;
 
-	err = hids_init(&hids_obj, &hids_init_obj);
+	err = bt_gatt_hids_init(&hids_obj, &hids_init_obj);
 	__ASSERT(err == 0, "HIDS initialization failed\n");
 }
 
@@ -460,14 +461,12 @@ static int key_report_con_send(const struct keyboard_state *state,
 		*key_data++ = *key_state++;
 	}
 	if (boot_mode) {
-		err = hids_boot_kb_inp_rep_send(&hids_obj, conn,
-						data, sizeof(data),
-						NULL);
+		err = bt_gatt_hids_boot_kb_inp_rep_send(&hids_obj, conn, data,
+							sizeof(data), NULL);
 	} else {
-		err = hids_inp_rep_send(&hids_obj, conn,
-					INPUT_REP_KEYS_IDX,
-					data, sizeof(data),
-					NULL);
+		err = bt_gatt_hids_inp_rep_send(&hids_obj, conn,
+						INPUT_REP_KEYS_IDX, data,
+						sizeof(data), NULL);
 	}
 	return err;
 }
