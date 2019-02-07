@@ -22,8 +22,8 @@
  */
 
 
-#ifndef BT_SCAN_H__
-#define BT_SCAN_H__
+#ifndef BT_SCAN_H_
+#define BT_SCAN_H_
 
 #include <zephyr/types.h>
 #include <misc/slist.h>
@@ -384,4 +384,4 @@ int bt_scan_params_set(struct bt_le_scan_param *scan_param);
  * @}
  */
 
-#endif /* BT_SCAN_H__ */
+#endif /* BT_SCAN_H_ */
