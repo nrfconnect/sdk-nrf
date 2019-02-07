@@ -5,29 +5,8 @@ menuconfig BT_GATT_NUS_C
 
 if BT_GATT_NUS_C
 
-choice
-	prompt "NUS Client logging level"
-	default BT_GATT_NUS_C_LOG_LEVEL_DBG
-
-config BT_GATT_NUS_C_LOG_LEVEL_OFF
-	bool "Off"
-config BT_GATT_NUS_C_LOG_LEVEL_ERR
-	bool "Error"
-config BT_GATT_NUS_C_LOG_LEVEL_WRN
-	bool "Warning"
-config BT_GATT_NUS_C_LOG_LEVEL_INF
-	bool "Info"
-config BT_GATT_NUS_C_LOG_LEVEL_DBG
-	bool "Debug"
-
-endchoice
-
-config BT_GATT_NUS_C_LOG_LEVEL
-	int
-	default 0 if BT_GATT_NUS_C_LOG_LEVEL_OFF
-	default 1 if BT_GATT_NUS_C_LOG_LEVEL_ERR
-	default 2 if BT_GATT_NUS_C_LOG_LEVEL_WRN
-	default 3 if BT_GATT_NUS_C_LOG_LEVEL_INF
-	default 4 if BT_GATT_NUS_C_LOG_LEVEL_DBG
+module = BT_GATT_NUS_C
+module-str = NUS Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATT_NUS_C
