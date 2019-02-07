@@ -59,10 +59,10 @@
 #define HIDS_QUEUE_SIZE 10
 
 /* HIDS instance. */
-HIDS_DEF(hids_obj,
-	 INPUT_REP_BUTTONS_LEN,
-	 INPUT_REP_MOVEMENT_LEN,
-	 INPUT_REP_MEDIA_PLAYER_LEN);
+BT_GATT_HIDS_DEF(hids_obj,
+		 INPUT_REP_BUTTONS_LEN,
+		 INPUT_REP_MOVEMENT_LEN,
+		 INPUT_REP_MEDIA_PLAYER_LEN);
 
 static struct k_delayed_work hids_work;
 struct mouse_pos {
@@ -126,7 +126,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	printk("Connected %s\n", addr);
 
-	err = hids_notify_connected(&hids_obj, conn);
+	err = bt_gatt_hids_notify_connected(&hids_obj, conn);
 
 	if (err) {
 		printk("Failed to notify HID service about connection\n");
@@ -153,7 +153,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	printk("Disconnected from %s (reason %u)\n", addr, reason);
 
-	err = hids_notify_disconnected(&hids_obj, conn);
+	err = bt_gatt_hids_notify_disconnected(&hids_obj, conn);
 
 	if (err) {
 		printk("Failed to notify HID service about disconnection\n");
@@ -189,7 +189,8 @@ static struct bt_conn_cb conn_callbacks = {
 };
 
 
-static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
+static void hids_pm_evt_handler(enum bt_gatt_hids_pm_evt evt,
+				struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 	size_t i;
@@ -207,12 +208,12 @@ static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	switch (evt) {
-	case HIDS_PM_EVT_BOOT_MODE_ENTERED:
+	case BT_GATT_HIDS_PM_EVT_BOOT_MODE_ENTERED:
 		printk("Boot mode entered %s\n", addr);
 		conn_mode[i].in_boot_mode = true;
 		break;
 
-	case HIDS_PM_EVT_REPORT_MODE_ENTERED:
+	case BT_GATT_HIDS_PM_EVT_REPORT_MODE_ENTERED:
 		printk("Report mode entered %s\n", addr);
 		conn_mode[i].in_boot_mode = false;
 		break;
@@ -226,8 +227,8 @@ static void hids_pm_evt_handler(enum hids_pm_evt evt, struct bt_conn *conn)
 static void hid_init(void)
 {
 	int err;
-	struct hids_init_param hids_init_param = { 0 };
-	struct hids_inp_rep *hids_inp_rep;
+	struct bt_gatt_hids_init_param hids_init_param = { 0 };
+	struct bt_gatt_hids_inp_rep *hids_inp_rep;
 	static const u8_t mouse_movement_mask[ceiling_fraction(INPUT_REP_MOVEMENT_LEN, 8)] = {0};
 
 	static const u8_t report_map[] = {
@@ -314,8 +315,8 @@ static void hid_init(void)
 
 	hids_init_param.info.bcd_hid = BASE_USB_HID_SPEC_VERSION;
 	hids_init_param.info.b_country_code = 0x00;
-	hids_init_param.info.flags = (HIDS_REMOTE_WAKE |
-			HIDS_NORMALLY_CONNECTABLE);
+	hids_init_param.info.flags = (BT_GATT_HIDS_REMOTE_WAKE |
+				      BT_GATT_HIDS_NORMALLY_CONNECTABLE);
 
 	hids_inp_rep = &hids_init_param.inp_rep_group_init.reports[0];
 	hids_inp_rep->size = INPUT_REP_BUTTONS_LEN;
@@ -336,7 +337,7 @@ static void hid_init(void)
 	hids_init_param.is_mouse = true;
 	hids_init_param.pm_evt_handler = hids_pm_evt_handler;
 
-	err = hids_init(&hids_obj, &hids_init_param);
+	err = bt_gatt_hids_init(&hids_obj, &hids_init_param);
 	__ASSERT(err == 0, "HIDS initialization failed\n");
 }
 
@@ -353,12 +354,12 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 			x_delta = max(min(x_delta, SCHAR_MAX), SCHAR_MIN);
 			y_delta = max(min(y_delta, SCHAR_MAX), SCHAR_MIN);
 
-			hids_boot_mouse_inp_rep_send(&hids_obj,
-						     conn_mode[i].conn,
-						     NULL,
-						     (s8_t) x_delta,
-						     (s8_t) y_delta,
-						     NULL);
+			bt_gatt_hids_boot_mouse_inp_rep_send(&hids_obj,
+							     conn_mode[i].conn,
+							     NULL,
+							     (s8_t) x_delta,
+							     (s8_t) y_delta,
+							     NULL);
 		} else {
 			u8_t x_buff[2];
 			u8_t y_buff[2];
@@ -380,9 +381,9 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 			buffer[2] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
 
-			hids_inp_rep_send(&hids_obj, conn_mode[i].conn,
-					  INPUT_REP_MOVEMENT_INDEX,
-					  buffer, sizeof(buffer), NULL);
+			bt_gatt_hids_inp_rep_send(&hids_obj, conn_mode[i].conn,
+						  INPUT_REP_MOVEMENT_INDEX,
+						  buffer, sizeof(buffer), NULL);
 		}
 	}
 }

@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef __HIDS_H
-#define __HIDS_H
+#ifndef BT_GATT_HIDS_H_
+#define BT_GATT_HIDS_H_
 
 /**
  * @file
- * @defgroup nrf_bt_hids BLE GATT Human Interface Device Service API
+ * @defgroup bt_gatt_hids BLE GATT Human Interface Device Service API
  * @{
  * @brief API for the BLE GATT Human Interface Device (HID) Service.
  */
@@ -22,14 +22,14 @@ extern "C" {
 #include <bluetooth/conn_ctx.h>
 
 /** Length of the Boot Mouse Input Report. */
-#define BOOT_MOUSE_INPUT_REP_CHAR_LEN	8
+#define BT_GATT_HIDS_BOOT_MOUSE_REP_LEN		8
 /** Length of the Boot Keyboard Input Report. */
-#define BOOT_KB_INPUT_REP_CHAR_LEN	8
+#define BT_GATT_HIDS_BOOT_KB_INPUT_REP_LEN	8
 /** Length of the Boot Keyboard Output Report. */
-#define BOOT_KB_OUTPUT_REP_CHAR_LEN	1
+#define BT_GATT_HIDS_BOOT_KB_OUTPUT_REP_LEN	1
 
 /** Length of encoded HID Information. */
-#define HIDS_INFORMATION_CHAR_LEN	4
+#define BT_GATT_HIDS_INFORMATION_LEN	4
 
 /**
  * @brief Declare a HIDS instance.
@@ -37,79 +37,79 @@ extern "C" {
  * @param _name Name of the HIDS instance.
  * @param ...               Lengths of HIDS reports
  */
-#define HIDS_DEF(_name, ...)						       \
+#define BT_GATT_HIDS_DEF(_name, ...)					       \
 	BT_CONN_CTX_DEF(_name,						       \
 			CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT,		       \
-			_BLE_HIDS_CONN_CTX_SIZE_CALC(__VA_ARGS__));	       \
+			_BT_GATT_HIDS_CONN_CTX_SIZE_CALC(__VA_ARGS__));	       \
 	static struct bt_gatt_attr					       \
 		CONCAT(_name, _attr_tab)[CONFIG_BT_GATT_HIDS_ATTR_MAX] = { 0 };\
-	static struct hids _name =					       \
+	static struct bt_gatt_hids _name =				       \
 	{								       \
 		.svc = { .attrs = CONCAT(_name, _attr_tab) },		       \
 		.conn_ctx = &CONCAT(_name, _ctx_lib),			       \
 	}
 
 
-/**@brief Helping macro for @ref HIDS_DEF, that calculates
+/**@brief Helping macro for @ref BT_GATT_HIDS_DEF, that calculates
  *        the link context size for BLE HIDS instance.
  */
-#define _BLE_HIDS_CONN_CTX_SIZE_CALC(...)                                      \
-	(MACRO_MAP(_BLE_HIDS_REPORT_ADD, __VA_ARGS__)			       \
-	sizeof(struct hids_conn_data))
+#define _BT_GATT_HIDS_CONN_CTX_SIZE_CALC(...)		   \
+	(MACRO_MAP(_BLE_GATT_HIDS_REPORT_ADD, __VA_ARGS__) \
+	sizeof(struct bt_gatt_hids_conn_data))
 
-/**@brief Helping macro for @ref BLE_HIDS_LINK_CTX_SIZE_CALC,
+/**@brief Helping macro for @ref _BT_GATT_HIDS_CONN_CTX_SIZE_CALC,
  *        that adds Input/Output/Feature report lengths.
  */
-#define _BLE_HIDS_REPORT_ADD(_report_size) (_report_size) +
+#define _BLE_GATT_HIDS_REPORT_ADD(_report_size) (_report_size) +
 
 /** HID Service information flags. */
-enum hids_flags {
+enum bt_gatt_hids_flags {
 	/** Device is capable of sending a wake-signal to a host. */
-	HIDS_REMOTE_WAKE          = BIT(0),
+	BT_GATT_HIDS_REMOTE_WAKE          = BIT(0),
 	/** Device advertises when bonded but not connected. */
-	HIDS_NORMALLY_CONNECTABLE = BIT(1),
+	BT_GATT_HIDS_NORMALLY_CONNECTABLE = BIT(1),
 };
 
 /** HID Service Protocol Mode events. */
-enum hids_pm_evt {
+enum bt_gatt_hids_pm_evt {
 	/** Boot mode entered. */
-	HIDS_PM_EVT_BOOT_MODE_ENTERED,
+	BT_GATT_HIDS_PM_EVT_BOOT_MODE_ENTERED,
 	/** Report mode entered. */
-	HIDS_PM_EVT_REPORT_MODE_ENTERED,
+	BT_GATT_HIDS_PM_EVT_REPORT_MODE_ENTERED,
 };
 
 /** HID Service Control Point events. */
-enum hids_cp_evt {
+enum bt_gatt_hids_cp_evt {
 	/** Suspend command received. */
-	HIDS_CP_EVT_HOST_SUSP,
+	BT_GATT_HIDS_CP_EVT_HOST_SUSP,
 	/** Exit suspend command received. */
-	HIDS_CP_EVT_HOST_EXIT_SUSP,
+	BT_GATT_HIDS_CP_EVT_HOST_EXIT_SUSP,
 };
 
 /** HID notification events. */
-enum hids_notif_evt {
+enum bt_gatt_hids_notif_evt {
 	/** Notification enabled event. */
-	HIDS_CCCD_EVT_NOTIF_ENABLED,
+	BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED,
 	/** Notification disabled event. */
-	HIDS_CCCD_EVT_NOTIF_DISABLED,
+	BT_GATT_HIDS_CCCD_EVT_NOTIF_DISABLED,
 };
 
 /** @brief HID Service information.
  */
-struct hids_info {
+struct bt_gatt_hids_info {
 	/** Version of the base USB HID specification. */
 	u16_t bcd_hid;
 
 	/** Country ID code. */
 	u8_t b_country_code;
 
-	/** Information flags (see @ref hids_flags). */
+	/** Information flags (see @ref bt_gatt_hids_flags). */
 	u8_t flags;
 };
 
 /** @brief Report data.
  */
-struct hids_rep {
+struct bt_gatt_hids_rep {
 	/** Pointer to the report data. */
 	u8_t *data;
 
@@ -121,19 +121,19 @@ struct hids_rep {
  *
  *  @param evt Notification event.
  */
-typedef void (*hids_notif_handler_t) (enum hids_notif_evt evt);
+typedef void (*bt_gatt_hids_notif_handler_t) (enum bt_gatt_hids_notif_evt evt);
 
 /** @brief HID Report event handler.
  *
  * @param rep  Pointer to the report descriptor.
  * @param conn Pointer to Connection Object.
  */
-typedef void (*hids_rep_handler_t) (struct hids_rep const *rep,
-				    struct bt_conn *conn);
+typedef void (*bt_gatt_hids_rep_handler_t) (struct bt_gatt_hids_rep const *rep,
+					    struct bt_conn *conn);
 
 /** @brief Input Report.
  */
-struct hids_inp_rep {
+struct bt_gatt_hids_inp_rep {
 	/** CCC descriptor. */
 	struct bt_gatt_ccc_cfg ccc[BT_GATT_CCC_MAX];
 
@@ -165,13 +165,13 @@ struct hids_inp_rep {
 	const u8_t *rep_mask;
 
 	/** Callback with the notification event. */
-	hids_notif_handler_t handler;
+	bt_gatt_hids_notif_handler_t handler;
 };
 
 
 /** @brief Output or Feature Report.
  */
-struct hids_outp_feat_rep {
+struct bt_gatt_hids_outp_feat_rep {
 	/** Report ID defined in the HIDS Report Map. */
 	u8_t id;
 
@@ -188,12 +188,12 @@ struct hids_outp_feat_rep {
 	u8_t att_ind;
 
 	/** Callback with updated report data. */
-	hids_rep_handler_t handler;
+	bt_gatt_hids_rep_handler_t handler;
 };
 
 /** @brief Boot Mouse Input Report.
  */
-struct hids_boot_mouse_inp_rep {
+struct bt_gatt_hids_boot_mouse_inp_rep {
 	/** CCC descriptor. */
 	struct bt_gatt_ccc_cfg ccc[BT_GATT_CCC_MAX];
 
@@ -201,12 +201,12 @@ struct hids_boot_mouse_inp_rep {
 	u8_t att_ind;
 
 	/** Callback with the notification event. */
-	hids_notif_handler_t handler;
+	bt_gatt_hids_notif_handler_t handler;
 };
 
 /** @brief Boot Keyboard Input Report.
  */
-struct hids_boot_kb_inp_rep {
+struct bt_gatt_hids_boot_kb_inp_rep {
 	/** CCC descriptor. */
 	struct bt_gatt_ccc_cfg ccc[BT_GATT_CCC_MAX];
 
@@ -214,24 +214,24 @@ struct hids_boot_kb_inp_rep {
 	u8_t att_ind;
 
 	/** Callback with the notification event. */
-	hids_notif_handler_t handler;
+	bt_gatt_hids_notif_handler_t handler;
 };
 
 /** @brief Boot Keyboard Output Report.
  */
-struct hids_boot_kb_outp_rep {
+struct bt_gatt_hids_boot_kb_outp_rep {
 	/** Index in the service attribute array. */
 	u8_t att_ind;
 
 	/** Callback with updated report data. */
-	hids_rep_handler_t handler;
+	bt_gatt_hids_rep_handler_t handler;
 };
 
 /** @brief Collection of all input reports.
  */
-struct hids_inp_rep_group {
+struct bt_gatt_hids_inp_rep_group {
 	/** Pointer to the report collection. */
-	struct hids_inp_rep reports[CONFIG_BT_GATT_HIDS_INPUT_REP_MAX];
+	struct bt_gatt_hids_inp_rep reports[CONFIG_BT_GATT_HIDS_INPUT_REP_MAX];
 
 	/** Total number of reports. */
 	u8_t cnt;
@@ -239,9 +239,9 @@ struct hids_inp_rep_group {
 
 /** @brief Collection of all output reports.
  */
-struct hids_outp_rep_group {
+struct bt_gatt_hids_outp_rep_group {
 	/** Pointer to the report collection. */
-	struct hids_outp_feat_rep reports[CONFIG_BT_GATT_HIDS_OUTPUT_REP_MAX];
+	struct bt_gatt_hids_outp_feat_rep reports[CONFIG_BT_GATT_HIDS_OUTPUT_REP_MAX];
 
 	/** Total number of reports. */
 	u8_t cnt;
@@ -249,9 +249,9 @@ struct hids_outp_rep_group {
 
 /** @brief Collection of all feature reports.
  */
-struct hids_feat_rep_group {
+struct bt_gatt_hids_feat_rep_group {
 	/** Pointer to the report collection. */
-	struct hids_outp_feat_rep reports[CONFIG_BT_GATT_HIDS_FEATURE_REP_MAX];
+	struct bt_gatt_hids_outp_feat_rep reports[CONFIG_BT_GATT_HIDS_FEATURE_REP_MAX];
 
 	/** Total number of reports. */
 	u8_t cnt;
@@ -259,7 +259,7 @@ struct hids_feat_rep_group {
 
 /** @brief Report Map.
  */
-struct hids_rep_map {
+struct bt_gatt_hids_rep_map {
 	/** Pointer to the map. */
 	u8_t const *data;
 
@@ -269,69 +269,69 @@ struct hids_rep_map {
 
 /** @brief HID Protocol Mode event handler.
  *
- * @param evt  Protocol Mode event (see @ref hids_pm_evt).
+ * @param evt  Protocol Mode event (see @ref bt_gatt_hids_pm_evt).
  * @param conn Pointer to Connection Object.
  */
-typedef void (*hids_pm_evt_handler_t) (enum hids_pm_evt evt,
-				       struct bt_conn *conn);
+typedef void (*bt_gatt_hids_pm_evt_handler_t) (enum bt_gatt_hids_pm_evt evt,
+					       struct bt_conn *conn);
 
 
 /** @brief Protocol Mode.
  */
-struct protocol_mode {
+struct bt_gatt_hids_pm {
 	/** Callback with new Protocol Mode. */
-	hids_pm_evt_handler_t evt_handler;
+	bt_gatt_hids_pm_evt_handler_t evt_handler;
 };
 
 /** @brief HID Control Point event handler.
  *
  * @param evt Event indicating that the Control Point value has changed.
- * (see @ref hids_cp_evt).
+ * (see @ref bt_gatt_hids_cp_evt).
  */
-typedef void (*hids_cp_evt_handler_t) (enum hids_cp_evt evt);
+typedef void (*bt_gatt_hids_cp_evt_handler_t) (enum bt_gatt_hids_cp_evt evt);
 
 /** @brief Control Point.
  */
-struct control_point {
+struct bt_gatt_hids_cp {
 	/** Current value of the Control Point. */
 	u8_t value;
 
 	/** Callback with new Control Point state.*/
-	hids_cp_evt_handler_t evt_handler;
+	bt_gatt_hids_cp_evt_handler_t evt_handler;
 };
 
 /** @brief HID initialization.
  */
-struct hids_init_param {
+struct bt_gatt_hids_init_param {
 	/** HIDS Information. */
-	struct hids_info info;
+	struct bt_gatt_hids_info info;
 
 	/** Input Report collection. */
-	struct hids_inp_rep_group inp_rep_group_init;
+	struct bt_gatt_hids_inp_rep_group inp_rep_group_init;
 
 	/** Output Report collection. */
-	struct hids_outp_rep_group outp_rep_group_init;
+	struct bt_gatt_hids_outp_rep_group outp_rep_group_init;
 
 	/** Feature Report collection. */
-	struct hids_feat_rep_group feat_rep_group_init;
+	struct bt_gatt_hids_feat_rep_group feat_rep_group_init;
 
 	/** Report Map. */
-	struct hids_rep_map rep_map;
+	struct bt_gatt_hids_rep_map rep_map;
 
 	/** Callback for Protocol Mode characteristic. */
-	hids_pm_evt_handler_t pm_evt_handler;
+	bt_gatt_hids_pm_evt_handler_t pm_evt_handler;
 
 	/** Callback for Control Point characteristic. */
-	hids_cp_evt_handler_t cp_evt_handler;
+	bt_gatt_hids_cp_evt_handler_t cp_evt_handler;
 
 	/** Callback for Boot Mouse Input Report. */
-	hids_notif_handler_t boot_mouse_notif_handler;
+	bt_gatt_hids_notif_handler_t boot_mouse_notif_handler;
 
 	/** Callback for Boot Keyboard Input Report. */
-	hids_notif_handler_t boot_kb_notif_handler;
+	bt_gatt_hids_notif_handler_t boot_kb_notif_handler;
 
 	/** Callback for Boot Keyboard Output Report. */
-	hids_rep_handler_t boot_kb_outp_rep_handler;
+	bt_gatt_hids_rep_handler_t boot_kb_outp_rep_handler;
 
 	/** Flag indicating that the device has mouse capabilities. */
 	bool is_mouse;
@@ -342,39 +342,39 @@ struct hids_init_param {
 
 /** @brief HID Service structure.
  */
-struct hids {
+struct bt_gatt_hids {
 	/** Descriptor of the service attribute array. */
 	struct bt_gatt_service svc;
 
 	/** Input Report collection. */
-	struct hids_inp_rep_group inp_rep_group;
+	struct bt_gatt_hids_inp_rep_group inp_rep_group;
 
 	/** Output Report collection. */
-	struct hids_outp_rep_group outp_rep_group;
+	struct bt_gatt_hids_outp_rep_group outp_rep_group;
 
 	/** Feature Report collection. */
-	struct hids_feat_rep_group feat_rep_group;
+	struct bt_gatt_hids_feat_rep_group feat_rep_group;
 
 	/** Boot Mouse Input Report. */
-	struct hids_boot_mouse_inp_rep boot_mouse_inp_rep;
+	struct bt_gatt_hids_boot_mouse_inp_rep boot_mouse_inp_rep;
 
 	/** Boot Keyboard Input Report. */
-	struct hids_boot_kb_inp_rep boot_kb_inp_rep;
+	struct bt_gatt_hids_boot_kb_inp_rep boot_kb_inp_rep;
 
 	/** Boot Keyboard Output Report. */
-	struct hids_boot_kb_outp_rep boot_kb_outp_rep;
+	struct bt_gatt_hids_boot_kb_outp_rep boot_kb_outp_rep;
 
 	/** Report Map. */
-	struct hids_rep_map rep_map;
+	struct bt_gatt_hids_rep_map rep_map;
 
 	/** Protocol Mode. */
-	struct protocol_mode pm;
+	struct bt_gatt_hids_pm pm;
 
 	/** Control Point. */
-	struct control_point cp;
+	struct bt_gatt_hids_cp cp;
 
 	/** Buffer with encoded HID Information. */
-	u8_t info[HIDS_INFORMATION_CHAR_LEN];
+	u8_t info[BT_GATT_HIDS_INFORMATION_LEN];
 
 	/** Flag indicating that the device has mouse capabilities. */
 	bool is_mouse;
@@ -388,18 +388,18 @@ struct hids {
 
 /** @brief HID Connection context data structure.
  */
-struct hids_conn_data {
+struct bt_gatt_hids_conn_data {
 	/** Protocol Mode context data. */
 	u8_t pm_ctx_value;
 
 	/** HIDS Boot Mouse Input Report Context. */
-	u8_t hids_boot_mouse_inp_rep_ctx[BOOT_MOUSE_INPUT_REP_CHAR_LEN];
+	u8_t hids_boot_mouse_inp_rep_ctx[BT_GATT_HIDS_BOOT_MOUSE_REP_LEN];
 
 	/** HIDS Boot Keyboard Input Report Context. */
-	u8_t hids_boot_kb_inp_rep_ctx[BOOT_KB_INPUT_REP_CHAR_LEN];
+	u8_t hids_boot_kb_inp_rep_ctx[BT_GATT_HIDS_BOOT_KB_INPUT_REP_LEN];
 
 	/** HIDS Boot Keyboard Output Report Context. */
-	u8_t hids_boot_kb_outp_rep_ctx[BOOT_KB_OUTPUT_REP_CHAR_LEN];
+	u8_t hids_boot_kb_outp_rep_ctx[BT_GATT_HIDS_BOOT_KB_OUTPUT_REP_LEN];
 
 	/** Pointer to Input Reports Context data. */
 	u8_t *inp_rep_ctx;
@@ -420,7 +420,8 @@ struct hids_conn_data {
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
  */
-int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param);
+int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
+		      const struct bt_gatt_hids_init_param *init_param);
 
 /** @brief Uninitialize a HIDS instance.
  *
@@ -429,7 +430,7 @@ int hids_init(struct hids *hids_obj, const struct hids_init_param *init_param);
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
  */
-int hids_uninit(struct hids *hids_obj);
+int bt_gatt_hids_uninit(struct bt_gatt_hids *hids_obj);
 
 /**
  * @brief Function for notification HID service about connection to the device
@@ -441,7 +442,8 @@ int hids_uninit(struct hids *hids_obj);
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn);
+int bt_gatt_hids_notify_connected(struct bt_gatt_hids *hids_obj,
+				  struct bt_conn *conn);
 
 /**
  * @brief Function for notification HID service about disconnection
@@ -453,7 +455,8 @@ int hids_notify_connected(struct hids *hids_obj, struct bt_conn *conn);
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn);
+int bt_gatt_hids_notify_disconnected(struct bt_gatt_hids *hids_obj,
+				     struct bt_conn *conn);
 
 /** @brief Send Input Report.
  *
@@ -470,9 +473,10 @@ int hids_notify_disconnected(struct hids *hids_obj, struct bt_conn *conn);
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
  */
-int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
-		      u8_t rep_index, u8_t const *rep,
-		      u8_t len, bt_gatt_complete_func_t cb);
+int bt_gatt_hids_inp_rep_send(struct bt_gatt_hids *hids_obj,
+			      struct bt_conn *conn, u8_t rep_index,
+			      u8_t const *rep, u8_t len,
+			      bt_gatt_complete_func_t cb);
 
 /** @brief Send Boot Mouse Input Report.
  *
@@ -490,11 +494,11 @@ int hids_inp_rep_send(struct hids *hids_obj, struct bt_conn *conn,
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
  */
-int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
-				 struct bt_conn *conn,
-				 const u8_t *buttons,
-				 s8_t x_delta, s8_t y_delta,
-				 bt_gatt_complete_func_t cb);
+int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
+					 struct bt_conn *conn,
+					 const u8_t *buttons,
+					 s8_t x_delta, s8_t y_delta,
+					 bt_gatt_complete_func_t cb);
 
 /** @brief Send Boot Keyboard Input Report.
  *
@@ -510,10 +514,9 @@ int hids_boot_mouse_inp_rep_send(struct hids *hids_obj,
  *  @return 0 If the operation was successful. Otherwise, a (negative) error
  *	      code is returned.
  */
-int hids_boot_kb_inp_rep_send(struct hids *hids_obj,
-			      struct bt_conn *conn,
-			      u8_t const *rep,
-			      u16_t len, bt_gatt_complete_func_t cb);
+int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
+				      struct bt_conn *conn, u8_t const *rep,
+				      u16_t len, bt_gatt_complete_func_t cb);
 
 
 #ifdef __cplusplus
@@ -524,4 +527,4 @@ int hids_boot_kb_inp_rep_send(struct hids *hids_obj,
  * @}
  */
 
-#endif /* __HIDS_H */
+#endif /* BT_GATT_HIDS_H_ */
