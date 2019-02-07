@@ -93,19 +93,21 @@ static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 
 static void hidc_ready(struct bt_gatt_hids_c *hids_c)
 {
-	for (size_t i = 0; i < hids_c->rep_cnt; i++) {
-		struct bt_gatt_hids_c_rep_info *rep = hids_c->rep_info[i];
+	struct bt_gatt_hids_c_rep_info *rep = NULL;
 
-		if (rep->ref.type == BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
-			int err = bt_gatt_hids_c_rep_subscribe(&hidc,
-							       hidc.rep_info[i],
+	while (NULL != (rep = bt_gatt_hids_c_rep_next(hids_c, rep))) {
+		if (bt_gatt_hids_c_rep_type(rep) ==
+		    BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
+			int err = bt_gatt_hids_c_rep_subscribe(hids_c,
+							       rep,
 							       hidc_read);
 
 			if (err) {
 				LOG_ERR("Cannot subscribe to report (err:%d)",
 					err);
 			} else {
-				LOG_INF("Subscriber to rep id:%d", rep->ref.id);
+				LOG_INF("Subscriber to rep id:%d",
+					bt_gatt_hids_c_rep_id(rep));
 			}
 			break;
 		}
