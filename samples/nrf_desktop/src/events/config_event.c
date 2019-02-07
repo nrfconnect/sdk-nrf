@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <assert.h>
 #include <stdio.h>
 
 #include "config_event.h"

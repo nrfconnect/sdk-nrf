@@ -50,7 +50,7 @@ static int disable_irq(void)
 	int err = i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, INT1_CFG, 0x00);
 
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	}
 	return err;
@@ -61,7 +61,7 @@ static int enable_irq(void)
 	int err = i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, INT1_CFG, 0x2A);
 
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	}
 	return err;
@@ -74,7 +74,7 @@ static int clear_irq(void)
 	int err = i2c_reg_read_byte(i2c_dev, LIS3DH_ADDRESS, INT1_SRC, &val);
 
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	}
 	k_sleep(1);
@@ -168,13 +168,13 @@ static bool verify_id(void)
 	int err = i2c_reg_read_byte(i2c_dev, LIS3DH_ADDRESS, WHO_AM_I, &val);
 
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 		return false;
 	}
 
 	if (val != I_AM_LIS3DH) {
-		LOG_ERR("wrong id (0x%x != 0x%x)", val, I_AM_LIS3DH);
+		LOG_ERR("Wrong id (0x%x != 0x%x)", val, I_AM_LIS3DH);
 		return false;
 	}
 
@@ -190,7 +190,7 @@ static int reset(void)
 	int err =  i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, CTRL_REG1, 0x80);
 
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 		return err;
 	}
@@ -198,7 +198,7 @@ static int reset(void)
 	/* Reboot */
 	err =  i2c_reg_write_byte(i2c_dev, LIS3DH_ADDRESS, CTRL_REG5, 0x80);
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 		return err;
 	}
@@ -220,32 +220,32 @@ static void async_init_fn(struct k_work *work)
 {
 	i2c_dev = device_get_binding(DT_I2C_1_NAME);
 	if (!i2c_dev) {
-		LOG_ERR("cannot get I2C device");
+		LOG_ERR("Cannot get I2C device");
 		return;
 	}
 
 	if (!verify_id()) {
-		LOG_ERR("device not recognized");
+		LOG_ERR("Device not recognized");
 		return;
 	}
 
 	int err = reset();
 
 	if (err) {
-		LOG_ERR("device cannot be initialized");
+		LOG_ERR("Device cannot be initialized");
 		return;
 	}
 
 	err = idle_mode_set();
 	if (err) {
-		LOG_ERR("device cannot go to idle mode");
+		LOG_ERR("Device cannot go to idle mode");
 		return;
 	}
 
 	struct device *gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
-		LOG_ERR("cannot get GPIO device");
+		LOG_ERR("Cannot get GPIO device");
 		return;
 	}
 
@@ -253,7 +253,7 @@ static void async_init_fn(struct k_work *work)
 			GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH |
 			GPIO_INT_DEBOUNCE);
 	if (err) {
-		LOG_ERR("cannot configure irq pin");
+		LOG_ERR("Cannot configure IRQ pin");
 		return;
 	}
 
@@ -261,13 +261,13 @@ static void async_init_fn(struct k_work *work)
 
 	err = gpio_add_callback(gpio_dev, &gpio_cb);
 	if (err) {
-		LOG_ERR("cannot configure irq callback");
+		LOG_ERR("Cannot configure IRQ callback");
 		return;
 	}
 
 	err = gpio_pin_enable_callback(gpio_dev, 0x19);
 	if (err) {
-		LOG_ERR("cannot enable irq callback");
+		LOG_ERR("Cannot enable IRQ callback");
 		return;
 	}
 
@@ -302,10 +302,10 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_power_down_event(eh)) {
 		if (active) {
-			LOG_INF("switch to wakeup mode");
+			LOG_INF("Switched to wake up mode");
 			active = false;
 			if (wakeup_mode_set()) {
-				LOG_ERR("cannot switch to wake up mode");
+				LOG_ERR("Cannot switch to wake up mode");
 			}
 
 			module_set_state(MODULE_STATE_STANDBY);

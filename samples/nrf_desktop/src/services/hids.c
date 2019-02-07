@@ -461,11 +461,11 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (module_init()) {
-				LOG_ERR("service init failed");
+				LOG_ERR("Service init failed");
 
 				return false;
 			}
-			LOG_INF("service initialized");
+			LOG_INF("Service initialized");
 
 			module_set_state(MODULE_STATE_READY);
 		}

@@ -41,10 +41,10 @@ static bool event_handler(const struct event_header *eh)
 
 			int err = smp_bt_register();
 			if (err) {
-				LOG_ERR("service init failed");
+				LOG_ERR("Service init failed");
 				module_set_state(MODULE_STATE_ERROR);
 			} else {
-				LOG_INF("service initialized");
+				LOG_INF("Service initialized");
 				module_set_state(MODULE_STATE_READY);
 			}
 		}

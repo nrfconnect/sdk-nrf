@@ -71,7 +71,7 @@ static void scan_fn(struct k_work *work)
 	int err = read_bytes(i2c_dev, TOUCHPAD_XY, pos, sizeof(pos));
 
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	} else {
 		if (pos[0] || pos[1]) {
@@ -109,7 +109,7 @@ static void async_init_fn(struct k_work *work)
 		device_get_binding(DT_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
-		LOG_ERR("cannot get GPIO device");
+		LOG_ERR("Cannot get GPIO device");
 		return;
 	}
 
@@ -143,7 +143,7 @@ static void async_init_fn(struct k_work *work)
 	/* Check if TP is connected */
 	i2c_dev = device_get_binding(DT_I2C_0_NAME);
 	if (!i2c_dev) {
-		LOG_ERR("cannot get I2C device");
+		LOG_ERR("Cannot get I2C device");
 		return;
 	}
 
@@ -152,12 +152,12 @@ static void async_init_fn(struct k_work *work)
 	err = read_bytes(i2c_dev, TOUCHPAD_PRODUCT_ID, product_id,
 			sizeof(product_id));
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	} else {
 		for (size_t i = 0; i < sizeof(product_id); i++) {
 			if (expected_product_id[i] != product_id[i]) {
-				LOG_ERR("invalid product id (0x%x != 0x%x)",
+				LOG_ERR("Invalid product id (0x%x != 0x%x)",
 						expected_product_id[i],
 						product_id[i]);
 				return;
@@ -188,7 +188,7 @@ static void async_term_fn(struct k_work *work)
 		device_get_binding(DT_GPIO_P0_DEV_NAME);
 
 	if (!gpio_dev) {
-		LOG_ERR("cannot get GPIO device");
+		LOG_ERR("Cannot get GPIO device");
 		return;
 	}
 

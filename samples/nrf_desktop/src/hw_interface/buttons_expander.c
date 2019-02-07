@@ -145,7 +145,7 @@ static void scan_fn(struct k_work *work)
 	}
 
 	if (err) {
-		LOG_ERR("i2c read error (%d) from %s:%d",
+		LOG_ERR("I2C read error (%d) from %s:%d",
 				err, __func__, __LINE__);
 	} else {
 		static bool matrix[8][8] = {0};
@@ -187,12 +187,12 @@ static void async_init_fn(struct k_work *work)
 {
 	i2c_dev = device_get_binding(DT_I2C_0_NAME);
 	if (!i2c_dev) {
-		LOG_ERR("cannot get I2C device");
+		LOG_ERR("Cannot get I2C device");
 		return;
 	}
 
 	if (set_registers()) {
-		LOG_ERR("device cannot be initialized");
+		LOG_ERR("Device cannot be initialized");
 		return;
 	}
 

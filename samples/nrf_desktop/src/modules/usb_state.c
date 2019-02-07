@@ -255,7 +255,7 @@ static int usb_init(void)
 
 	int err = usb_hid_init();
 	if (err) {
-		LOG_ERR("cannot initialize HID class");
+		LOG_ERR("Cannot initialize HID class");
 	}
 
 	return err;
@@ -281,7 +281,7 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (usb_init()) {
-				LOG_ERR("cannot initialize");
+				LOG_ERR("Cannot initialize");
 				module_set_state(MODULE_STATE_ERROR);
 			} else {
 				module_set_state(MODULE_STATE_READY);

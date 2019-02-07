@@ -50,7 +50,7 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 
 	int err = sensor_channel_get(qdec_dev, SENSOR_CHAN_ROTATION, &value);
 	if (err) {
-		LOG_ERR("cannot get sensor value");
+		LOG_ERR("Cannot get sensor value");
 		return;
 	}
 
@@ -90,7 +90,7 @@ static int wakeup_int_ctrl(bool enable)
 		}
 
 		if (err) {
-			LOG_ERR("cannot control cb (pin:%zu)", i);
+			LOG_ERR("Cannot control cb (pin:%zu)", i);
 		}
 	}
 
@@ -116,13 +116,13 @@ static int setup_wakeup(void)
 	int err = gpio_pin_configure(gpio_dev, DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN,
 				     GPIO_DIR_OUT);
 	if (err) {
-		LOG_ERR("cannot configure enable pin");
+		LOG_ERR("Cannot configure enable pin");
 		goto error;
 	}
 
 	err = gpio_pin_write(gpio_dev, DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN, 0);
 	if (err) {
-		LOG_ERR("failed to set enable pin");
+		LOG_ERR("Failed to set enable pin");
 		goto error;
 	}
 
@@ -131,7 +131,7 @@ static int setup_wakeup(void)
 		u32_t val;
 		err = gpio_pin_read(gpio_dev, qdec_pin[i], &val);
 		if (err) {
-			LOG_ERR("cannot read pin %zu", i);
+			LOG_ERR("Cannot read pin %zu", i);
 			goto error;
 		}
 
@@ -140,7 +140,7 @@ static int setup_wakeup(void)
 
 		err = gpio_pin_configure(gpio_dev, qdec_pin[i], flags);
 		if (err) {
-			LOG_ERR("cannot configure pin %zu", i);
+			LOG_ERR("Cannot configure pin %zu", i);
 			goto error;
 		}
 	}
@@ -155,13 +155,13 @@ static int init(void)
 {
 	qdec_dev = device_get_binding(DT_NORDIC_NRF_QDEC_QDEC_0_LABEL);
 	if (!qdec_dev) {
-		LOG_ERR("cannot get qdec device");
+		LOG_ERR("Cannot get QDEC device");
 		return -ENXIO;
 	}
 
 	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
 	if (!gpio_dev) {
-		LOG_ERR("cannot get gpio device");
+		LOG_ERR("Cannot get GPIO device");
 		return -ENXIO;
 	}
 
@@ -173,7 +173,7 @@ static int init(void)
 		gpio_init_callback(&gpio_cbs[i], wakeup_cb, BIT(qdec_pin[i]));
 		err = gpio_add_callback(gpio_dev, &gpio_cbs[i]);
 		if (err) {
-			LOG_ERR("cannot configure cb (pin:%zu)", i);
+			LOG_ERR("Cannot configure cb (pin:%zu)", i);
 		}
 	}
 
@@ -184,14 +184,14 @@ static int enable(void)
 {
 	int err = device_set_power_state(qdec_dev, DEVICE_PM_ACTIVE_STATE);
 	if (err) {
-		LOG_ERR("cannot activate qdec");
+		LOG_ERR("Cannot activate QDEC");
 		return err;
 	}
 
 	err = sensor_trigger_set(qdec_dev, (struct sensor_trigger *)&qdec_trig,
 				 data_ready_handler);
 	if (err) {
-		LOG_ERR("cannot setup trigger");
+		LOG_ERR("Cannot setup trigger");
 	}
 
 	return err;
@@ -202,13 +202,13 @@ static int disable(void)
 	int err = sensor_trigger_set(qdec_dev,
 				     (struct sensor_trigger *)&qdec_trig, NULL);
 	if (err) {
-		LOG_ERR("cannot disable trigger");
+		LOG_ERR("Cannot disable trigger");
 		return err;
 	}
 
 	err = device_set_power_state(qdec_dev, DEVICE_PM_SUSPEND_STATE);
 	if (err) {
-		LOG_ERR("cannot suspend qdec");
+		LOG_ERR("Cannot suspend QDEC");
 	}
 
 	return err;

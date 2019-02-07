@@ -140,7 +140,7 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			if (ble_state_init()) {
-				LOG_ERR("cannot initialize");
+				LOG_ERR("Cannot initialize");
 			}
 		}
 
