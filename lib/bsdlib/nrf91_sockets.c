@@ -341,13 +341,13 @@ static int nrf91_socket_offload_socket(int family, int type, int proto)
 
 	family = z_to_nrf_family(family);
 	if (family == -EAFNOSUPPORT) {
-		errno = -EAFNOSUPPORT;
+		errno = EAFNOSUPPORT;
 		return -1;
 	}
 
 	proto = z_to_nrf_protocol(proto);
 	if (proto == -EPROTONOSUPPORT) {
-		errno = -EPROTONOSUPPORT;
+		errno = EPROTONOSUPPORT;
 		return -1;
 	}
 
@@ -389,7 +389,7 @@ static int nrf91_socket_offload_accept(int sd, struct sockaddr *addr,
 
 error:
 	retval = -1;
-	errno = -ENOTSUP;
+	errno = ENOTSUP;
 	return retval;
 }
 
@@ -418,7 +418,7 @@ static int nrf91_socket_offload_bind(int sd, const struct sockaddr *addr,
 
 error:
 	retval = -1;
-	errno = -ENOTSUP;
+	errno = ENOTSUP;
 	return retval;
 }
 
@@ -452,7 +452,7 @@ static int nrf91_socket_offload_connect(int sd, const struct sockaddr *addr,
 
 error:
 	retval = -1;
-	errno = -ENOTSUP;
+	errno = ENOTSUP;
 	return retval;
 }
 
@@ -475,7 +475,7 @@ static int nrf91_socket_offload_setsockopt(int sd, int level, int optname,
 
 error:
 	retval = -1;
-	errno = -ENOPROTOOPT;
+	errno = ENOPROTOOPT;
 	return retval;
 }
 
@@ -498,7 +498,7 @@ static int nrf91_socket_offload_getsockopt(int sd, int level, int optname,
 
 error:
 	retval = -1;
-	errno = -ENOPROTOOPT;
+	errno = ENOPROTOOPT;
 	return retval;
 }
 
@@ -575,7 +575,7 @@ static ssize_t nrf91_socket_offload_sendto(int sd, const void *buf, size_t len,
 
 error:
 	retval = -1;
-	errno = -ENOTSUP;
+	errno = ENOTSUP;
 	return retval;
 }
 
