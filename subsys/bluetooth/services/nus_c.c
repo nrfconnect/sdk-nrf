@@ -11,9 +11,8 @@
 #include <bluetooth/services/nus.h>
 #include <bluetooth/services/nus_c.h>
 
-#define LOG_LEVEL CONFIG_BT_GATT_NUS_C_LOG_LEVEL
 #include <logging/log.h>
-LOG_MODULE_REGISTER(nus_c);
+LOG_MODULE_REGISTER(nus_c, CONFIG_BT_GATT_NUS_C_LOG_LEVEL);
 
 enum {
 	NUS_C_INITIALIZED,
