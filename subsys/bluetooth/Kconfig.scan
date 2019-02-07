@@ -92,29 +92,8 @@ config BT_SCAN_APPEARANCE_CNT
 
 endif
 
-choice
-	prompt "Scan logging level"
-	default BT_SCAN_LOG_LEVEL_INF
-
-config BT_SCAN_LOG_LEVEL_OFF
-	bool "Off"
-config BT_SCAN_LOG_LEVEL_ERR
-	bool "Error"
-config BT_SCAN_LOG_LEVEL_WRN
-	bool "Warning"
-config BT_SCAN_LOG_LEVEL_INF
-	bool "Info"
-config BT_SCAN_LOG_LEVEL_DBG
-	bool "Debug"
-
-endchoice
-
-config BT_SCAN_LOG_LEVEL
-	int
-	default 0 if BT_SCAN_LOG_LEVEL_OFF
-	default 1 if BT_SCAN_LOG_LEVEL_ERR
-	default 2 if BT_SCAN_LOG_LEVEL_WRN
-	default 3 if BT_SCAN_LOG_LEVEL_INF
-	default 4 if BT_SCAN_LOG_LEVEL_DBG
+module = BT_SCAN
+module-str = scan library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_SCAN
