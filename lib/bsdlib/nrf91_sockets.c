@@ -89,6 +89,9 @@ static int z_to_nrf_level(int z_in_level, int *nrf_out_level)
 	case SOL_TLS:
 		*nrf_out_level = NRF_SOL_SECURE;
 		break;
+	case SOL_SOCKET:
+		*nrf_out_level = NRF_SOL_SOCKET;
+		break;
 	default:
 		retval = -1;
 		break;
@@ -97,31 +100,58 @@ static int z_to_nrf_level(int z_in_level, int *nrf_out_level)
 	return retval;
 }
 
-static int z_to_nrf_optname(int z_in_optname, int *nrf_out_optname)
+static int z_to_nrf_optname(int z_in_level, int z_in_optname,
+			    int *nrf_out_optname)
 {
 	int retval = 0;
 
-	switch (z_in_optname) {
-	case TLS_SEC_TAG_LIST:
-		*nrf_out_optname = NRF_SO_SEC_TAG_LIST;
+	switch (z_in_level) {
+	case SOL_TLS:
+		switch (z_in_optname) {
+		case TLS_SEC_TAG_LIST:
+			*nrf_out_optname = NRF_SO_SEC_TAG_LIST;
+			break;
+		case TLS_HOSTNAME:
+			*nrf_out_optname = NRF_SO_HOSTNAME;
+			break;
+		case TLS_CIPHERSUITE_LIST:
+			*nrf_out_optname = NRF_SO_CIPHERSUITE_LIST;
+			break;
+		case TLS_CIPHERSUITE_USED:
+			*nrf_out_optname = NRF_SO_CIPHER_IN_USE;
+			break;
+		case TLS_PEER_VERIFY:
+			*nrf_out_optname = NRF_SO_SEC_PEER_VERIFY;
+			break;
+		case TLS_DTLS_ROLE:
+			*nrf_out_optname = NRF_SO_SEC_ROLE;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
 		break;
-	case TLS_HOSTNAME:
-		*nrf_out_optname = NRF_SO_HOSTNAME;
+
+	case SOL_SOCKET:
+		switch (z_in_optname) {
+		case SO_ERROR:
+			*nrf_out_optname = NRF_SO_ERROR;
+			break;
+		case SO_RCVTIMEO:
+			*nrf_out_optname = NRF_SO_RCVTIMEO;
+			break;
+		case SO_BINDTODEVICE:
+			*nrf_out_optname = NRF_SO_BINDTODEVICE;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
 		break;
-	case TLS_CIPHERSUITE_LIST:
-		*nrf_out_optname = NRF_SO_CIPHERSUITE_LIST;
-		break;
-	case TLS_CIPHERSUITE_USED:
-		*nrf_out_optname = NRF_SO_CIPHER_IN_USE;
-		break;
-	case TLS_PEER_VERIFY:
-		*nrf_out_optname = NRF_SO_SEC_PEER_VERIFY;
-		break;
-	case TLS_DTLS_ROLE:
-		*nrf_out_optname = NRF_SO_SEC_ROLE;
-		break;
+
 	default:
 		retval = -1;
+		break;
 	}
 
 	return retval;
@@ -465,7 +495,7 @@ static int nrf91_socket_offload_setsockopt(int sd, int level, int optname,
 
 	if (z_to_nrf_level(level, &nrf_level) < 0)
 		goto error;
-	if (z_to_nrf_optname(optname, &nrf_optname) < 0)
+	if (z_to_nrf_optname(level, optname, &nrf_optname) < 0)
 		goto error;
 
 	retval = nrf_setsockopt(sd, nrf_level, nrf_optname, optval,
@@ -488,11 +518,19 @@ static int nrf91_socket_offload_getsockopt(int sd, int level, int optname,
 
 	if (z_to_nrf_level(level, &nrf_level) < 0)
 		goto error;
-	if (z_to_nrf_optname(optname, &nrf_optname) < 0)
+	if (z_to_nrf_optname(level, optname, &nrf_optname) < 0)
 		goto error;
 
-	retval = nrf_getsockopt(sd, level, optname, optval,
+	retval = nrf_getsockopt(sd, nrf_level, nrf_optname, optval,
 				(nrf_socklen_t *)optlen);
+
+	if ((retval == 0) && optval &&
+	    (level == SOL_SOCKET) && (optname == SO_ERROR)) {
+		/* Use bsd_os_errno_set() to translate from nRF error
+		 * to native error. */
+		bsd_os_errno_set(*(int *)optval);
+		*(int *)optval = errno;
+	}
 
 	return retval;
 
