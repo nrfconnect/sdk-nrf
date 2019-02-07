@@ -1,0 +1,8 @@
+&spi3 {
+	status = "ok";
+	sck-pin = <10>;
+	mosi-pin = <11>;
+	miso-pin = <12>;
+	ss-pin = <13>;
+	spi-max-frequency = <4000000>;
+};
