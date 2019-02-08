@@ -11,10 +11,10 @@ MOUSE_PID = 0x52DE
 
 
 class ConfigEventID(Enum):
-    MOUSE_CPI = 1
-    DOWNSHIFT_RUN = 2
-    DOWNSHIFT_REST1 = 3
-    DOWNSHIFT_REST2 = 4
+    MOUSE_CPI = 0
+    DOWNSHIFT_RUN = 1
+    DOWNSHIFT_REST1 = 2
+    DOWNSHIFT_REST2 = 3
 
 
 def check_range(value, lower, upper, value_name):
