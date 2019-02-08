@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <zephyr.h>
+#include <spinlock.h>
 #include <misc/dlist.h>
 #include <event_manager.h>
 #include <logging/log.h>
@@ -23,20 +24,19 @@ static void trace_event_execution(const struct event_header *eh,
 #endif
 
 static u16_t profiler_event_ids[IDS_COUNT];
-
-K_WORK_DEFINE(event_processor, event_processor_fn);
-
+static K_WORK_DEFINE(event_processor, event_processor_fn);
 static sys_dlist_t eventq = SYS_DLIST_STATIC_INIT(&eventq);
+static struct k_spinlock lock;
 
 static void event_processor_fn(struct k_work *work)
 {
 	sys_dlist_t events;
 
 	/* Make current event list local. */
-	unsigned int flags = irq_lock();
+	k_spinlock_key_t key = k_spin_lock(&lock);
 
 	if (sys_dlist_is_empty(&eventq)) {
-		irq_unlock(flags);
+		k_spin_unlock(&lock, key);
 		return;
 	}
 
@@ -45,7 +45,7 @@ static void event_processor_fn(struct k_work *work)
 	events.prev->next = &events;
 	sys_dlist_init(&eventq);
 
-	irq_unlock(flags);
+	k_spin_unlock(&lock, key);
 
 
 	/* Traverse the list of events. */
@@ -114,11 +114,9 @@ static void event_processor_fn(struct k_work *work)
 
 void _event_submit(struct event_header *eh)
 {
-	unsigned int flags = irq_lock();
-
+	k_spinlock_key_t key = k_spin_lock(&lock);
 	sys_dlist_append(&eventq, &eh->node);
-
-	irq_unlock(flags);
+	k_spin_unlock(&lock, key);
 
 	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED)) {
 		const struct event_type *et = eh->type_id;
