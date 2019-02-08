@@ -110,10 +110,10 @@ static void create_device_list(struct device_list *dl)
 	dl->count = dcount;
 }
 
-int sys_suspend(s32_t ticks)
+enum power_states sys_suspend(s32_t ticks)
 {
 	if ((ticks != K_FOREVER) && (ticks < MSEC(100))) {
-		return SYS_PM_NOT_HANDLED;
+		return SYS_POWER_STATE_ACTIVE;
 	}
 
 	if (power_state == POWER_STATE_TURN_OFF) {
@@ -129,10 +129,10 @@ int sys_suspend(s32_t ticks)
 		/* System is off here - wake up leads to reboot. */
 		__ASSERT_NO_MSG(false);
 
-		return SYS_PM_DEEP_SLEEP;
+		return SYS_POWER_STATE_DEEP_SLEEP;
 	}
 
-	return SYS_PM_NOT_HANDLED;
+	return SYS_POWER_STATE_ACTIVE;
 }
 
 static void power_down(struct k_work *work)

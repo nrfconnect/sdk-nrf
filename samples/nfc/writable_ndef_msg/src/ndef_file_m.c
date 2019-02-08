@@ -27,13 +27,12 @@
 static const u8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". */
 	{'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'};
 
-#define NVS_SECTOR_SIZE    (FLASH_WRITE_BLOCK_SIZE * 1024) /* Flash block size
-							    * in bytes
-							    */
+ /* Flash block size in bytes */
+#define NVS_SECTOR_SIZE    (DT_FLASH_WRITE_BLOCK_SIZE * 1024)
 #define NVS_SECTOR_COUNT   2
-#define NVS_STORAGE_OFFSET FLASH_AREA_STORAGE_OFFSET /* Start address of the
-						      * filesystem in flash
-						      */
+ /* Start address of the filesystem in flash */
+#define NVS_STORAGE_OFFSET DT_FLASH_AREA_STORAGE_OFFSET_0
+
 static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
 	.sector_count = NVS_SECTOR_COUNT,

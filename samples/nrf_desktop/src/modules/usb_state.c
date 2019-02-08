@@ -26,6 +26,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 
 static enum usb_state state;
 static u8_t hid_protocol = HID_PROTOCOL_REPORT;
+static struct device *usb_dev;
 
 static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
@@ -133,7 +134,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		buffer[2] = y;
 
 	}
-	int err = hid_int_ep_write(buffer, sizeof(buffer), NULL);
+	int err = hid_int_ep_write(usb_dev, buffer, sizeof(buffer), NULL);
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
 		mouse_report_sent(true);
@@ -245,6 +246,9 @@ static void protocol_change(u8_t protocol)
 
 static int usb_init(void)
 {
+	usb_dev = device_get_binding(DT_NORDIC_NRF_USBD_0_LABEL);
+	__ASSERT_NO_MSG(usb_dev != NULL);
+
 	static const struct hid_ops ops = {
 		.get_report   		= get_report,
 		.set_report   		= set_report,
@@ -252,9 +256,11 @@ static int usb_init(void)
 		.status_cb    		= device_status,
 		.protocol_change 	= protocol_change,
 	};
-	usb_hid_register_device(hid_report_desc, hid_report_desc_size, &ops);
 
-	int err = usb_hid_init();
+	usb_hid_register_device(usb_dev, hid_report_desc,
+				hid_report_desc_size, &ops);
+
+	int err = usb_hid_init(usb_dev);
 	if (err) {
 		LOG_ERR("Cannot initialize HID class");
 	}
