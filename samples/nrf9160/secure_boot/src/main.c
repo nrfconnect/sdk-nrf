@@ -370,7 +370,7 @@ static void secure_boot_jump(void)
 	/* Extract initial MSP of the Non-Secure firmware image.
 	 * The assumption is that the MSP is located at VTOR_NS[0].
 	 */
-	u32_t *vtor_ns = (u32_t *)FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0;
+	u32_t *vtor_ns = (u32_t *)DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0;
 
 	printk("Secure Boot: MSP_NS %x\n", vtor_ns[0]);
 
