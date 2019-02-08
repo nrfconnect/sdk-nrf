@@ -100,7 +100,7 @@ static void ble_adv_update_fn(struct k_work *work)
 				ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 		}
 
-		if (err == -EIO) {
+		if (err == -ECONNREFUSED) {
 			LOG_WRN("Already connected, do not advertise");
 		} else if (err) {
 			LOG_ERR("Failed to restart advertising (err %d)", err);
