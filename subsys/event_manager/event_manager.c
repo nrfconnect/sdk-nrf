@@ -11,6 +11,13 @@
 #include <event_manager.h>
 #include <logging/log.h>
 
+#ifdef CONFIG_SHELL
+extern u32_t event_manager_displayed_events;
+#else
+/* By default, when there is no shell, all events are shown */
+static u32_t event_manager_displayed_events = 0xffffffff;
+#endif
+
 LOG_MODULE_REGISTER(event_manager, CONFIG_DESKTOP_EVENT_MANAGER_LOG_LEVEL);
 
 static void event_processor_fn(struct k_work *work);
@@ -59,8 +66,13 @@ static void event_processor_fn(struct k_work *work)
 
 		const struct event_type *et = eh->type_id;
 
+		__ASSERT_NO_MSG(et < __stop_event_types
+				&& et >= __start_event_types);
 		trace_event_execution(eh, true);
-		if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS)) {
+		if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_EVENTS)
+		    && (event_manager_displayed_events
+			& BIT(et - __start_event_types))) {
+
 			if (et->log_event) {
 				const size_t buf_len = CONFIG_DESKTOP_EVENT_MANAGER_EVENT_LOG_BUF_LEN;
 				char event_log_buf[buf_len];
@@ -138,54 +150,6 @@ void _event_submit(struct event_header *eh)
 		}
 	}
 	k_work_submit(&event_processor);
-}
-
-static void event_manager_show_listeners(void)
-{
-	LOG_INF("Registered Listeners:");
-	for (const struct event_listener *el = __start_event_listeners;
-	     el != __stop_event_listeners;
-	     el++) {
-		__ASSERT_NO_MSG(el != NULL);
-		LOG_INF("|\t[L:%s]", el->name);
-	}
-	LOG_INF("");
-}
-
-static void event_manager_show_subscribers(void)
-{
-	LOG_INF("Registered Subscribers:");
-	for (const struct event_type *et = __start_event_types;
-	     (et != NULL) && (et != __stop_event_types);
-	     et++) {
-
-		bool is_subscribed = false;
-
-		for (size_t prio = SUBS_PRIO_MIN;
-		     prio <= SUBS_PRIO_MAX;
-		     prio++) {
-			for (const struct event_subscriber *es =
-					et->subs_start[prio];
-			     es != et->subs_stop[prio];
-			     es++) {
-
-				__ASSERT_NO_MSG(es != NULL);
-				const struct event_listener *el = es->listener;
-
-				__ASSERT_NO_MSG(el != NULL);
-				LOG_INF("|\tprio:%u\t[E:%s] -> [L:%s]", prio,
-					et->name, el->name);
-
-				is_subscribed = true;
-			}
-		}
-
-		if (!is_subscribed) {
-			LOG_INF("|\t[E:%s] has no subscribers", et->name);
-		}
-		LOG_INF("");
-	}
-	LOG_INF("");
 }
 
 static void register_execution_tracking_events(void)
@@ -266,10 +230,6 @@ int event_manager_init(void)
 		register_events();
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_SHOW_LISTENERS)) {
-		event_manager_show_listeners();
-		event_manager_show_subscribers();
-	}
 	return 0;
 }
 

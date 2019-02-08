@@ -28,13 +28,6 @@ config DESKTOP_EVENT_MANAGER_SHOW_EVENT_HANDLERS
 	help
 	  This option controls if event handlers are printed to console.
 
-config DESKTOP_EVENT_MANAGER_SHOW_LISTENERS
-	bool "Show event listeners"
-	depends on LOG
-	help
-	  Show listeners with events they subscribe to.
-
-
 module = DESKTOP_EVENT_MANAGER
 module-str = Event Manager
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
