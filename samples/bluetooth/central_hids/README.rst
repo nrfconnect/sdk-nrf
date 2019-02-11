@@ -1,18 +1,53 @@
 .. _bluetooth_central_hids:
 
 Bluetooth: Central HIDS
-#######################################
+#######################
+
+The Central HIDS sample demonstrates how to use the :ref:`hids_c_readme` to interact with a HIDS server.
+Basically, the sample simulates a computer that connects to a mouse or a keyboard.
 
 Overview
 ********
 
-Bluetooth central application that connects to the HID devices.
+The sample scans available devices, searching for a HIDS server.
+If any HIDS server is found, the sample connects to it and discovers all characteristics.
+
+If any input reports are detected, the sample subscribes to them to receive notifications.
+If any boot reports are detected, the behavior depends on if they are boot mouse reports or boot keyboard reports:
+
+* If a boot mouse report is detected, the sample subscribes to it.
+* If a boot keyboard report is detected, the sample subscribes to its input report, and the sample functionality of changing the CAPSLOCK LED is enabled (Button 1 and 3).
+
 
 Requirements
 ************
 
-* BlueZ running on the host, or
-* A board with BLE support
+* One of the following development boards:
+
+  * nRF9160 DK board (PCA10090)
+  * nRF52840 Development Kit board (PCA10056)
+  * nRF52 Development Kit board (PCA10040)
+  * nRF51 Development Kit board (PCA10028)
+
+* HIDS device to connect with (for example, another board running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a Bluetooth Low Energy dongle and nRF Connect for Desktop)
+
+
+User interface
+**************
+
+Button 1:
+   Toggle the CAPSLOCK LED on the connected keyboard using Write without response.
+   This function is available only if the connected keyboard is set to work in Boot Protocol Mode.
+
+Button 2:
+   Switch between Boot Protocol Mode and Report Protocol Mode.
+   This function is available only if the connected peer supports the Protocol Mode Characteristic.
+
+Button 3:
+   Toggle the CAPSLOCK LED on the connected keyboard using Write with response.
+   This function is available only if the connected HID has boot keyboard reports.
+   It always writes CAPSLOCK information to the boot report, even if Report Protocol Mode is selected.
+
 
 Building and Running
 ********************
@@ -20,3 +55,97 @@ Building and Running
 This sample can be found under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
 
 See :ref:`gs_programming` for information about how to build and program the application.
+
+
+Testing
+=======
+
+After programming the sample to your board, you can test it either by connecting to another board that is running the :ref:`peripheral_hids_keyboard` sample, or by using `nRF Connect for Desktop`_ that emulates a HIDS server.
+
+
+Testing with another board
+--------------------------
+
+1. Connect the board that runs this sample to a terminal (for example, PuTTY).
+   See :ref:`putty` for the required settings.
+#. Program the other board with the :ref:`peripheral_hids_keyboard` sample.
+#. Wait until the HIDS keyboard is detected by the central.
+   All detected descriptors are listed.
+   In the terminal window, check for information similar to the following::
+
+      HIDS is ready to work
+      Subscribe to report id: 1
+      Subscribe to boot keyboard report
+
+#. Press Button 1 and Button 2 on the board that runs the keyboard sample and observe the notification values in the terminal window.
+   See :ref:`peripheral_hids_keyboard` for the expected values::
+
+      Notification, id: 1, size: 8, data: 0x0 0x0 0xb 0x0 0x0 0x0 0x0 0x0
+      Notification, id: 1, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
+
+#. Press Button 2 on the board that runs the Central HIDS sample and observe that the protocol mode is updated into boot mode::
+
+      Setting protocol mode: BOOT
+
+#. Press Button 1 and Button 2 on the board that runs the keyboard sample and observe the notification of the boot report values::
+
+      Notification, keyboard boot, size: 8, data: 0x0 0x0 0xf 0x0 0x0 0x0 0x0 0x0
+      Notification, keyboard boot, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
+
+
+#. Press Button 1 and Button 3 on the Central HIDS board and observe that LED 1 on the keyboard board changes its state.
+   The information is also displayed in the terminal window::
+
+      Caps lock send (val: 0x2)
+
+      Caps lock send using write with response (val: 0x2)
+      Capslock write result: 0
+      Received data (size: 1, data[0]: 0x2)
+
+
+Testing with nRF Connect for Desktop
+------------------------------------
+
+1. Connect the board that runs this sample to a terminal (for example, PuTTY).
+   See :ref:`putty` for the required settings.
+#. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
+#. Go to the **Server setup** tab.
+   Click the dongle configuration and select **Load setup**.
+   Load the ``hids_keyboard.ncs`` file that is located under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
+#. Click **Apply to device**.
+#. Go to the **Connection Map** tab.
+   Click the dongle configuration and select **Advertising setup**.
+
+   The current version of nRF Connect cannot store the advertising setup, so it must be configured manually.
+   See the following image for the required target configuration:
+
+   .. figure:: /images/bt_central_hids_nrfc_ad.png
+      :alt: Advertising setup for HIDS keyboard simulator
+
+   Advertising setup for HIDS keyboard simulator
+
+   Complete the following steps to configure the advertising setup:
+
+   a. Delete the default **Complete local name** from **Advertising data**.
+   #. Add a **Custom AD type** with **AD type value** set to ``19`` and **Value** set to ``03c1``.
+      This is the GAP Appearance advertising data.
+   #. Add a **Custom AD type** with **AD type value** set to ``01`` and **Value** set to ``06``.
+      This is the AD data with "General Discoverable" and "BR/EDR not supported" flags set.
+   #. Add a **UUID 16 bit complete list** with two comma-separated values: ``1812`` and ``180F``.
+      These are the values for HIDS and BAS.
+   #. Add a **Complete local name** of your choice to the **Scan response data**.
+   #. Click **Apply** and **Close**.
+
+#. In the Adapter settings, choose **Start advertising**.
+#. Wait until the board that runs the Central HIDS sample connects.
+   All detected descriptors are listed.
+   Check for information similar to the following::
+
+      HIDS is ready to work
+      Subscribe in report id: 1
+      Subscribe in boot keyboard report
+
+#. Explore the first record inside **Human Interface Device** (the one with six values).
+   Change any of the values and note that the board logs the change.
+#. Press Button 2 on the board and observe that the **Protocol Mode** value changes from ``01`` to ``00``.
+#. Press Button 1 and Button 3 and observe that the **Boot Keyboard Output Report** value toggles between ``00`` and ``02``.
