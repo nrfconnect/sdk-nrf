@@ -38,6 +38,18 @@ struct __packed fw_firmware_info {
 				   */
 };
 
+#define OFFSET_CHECK(type, member, value) \
+		static_assert(offsetof(type, member) == value, \
+				#member " has wrong offset")
+
+/* Static asserts to ensure compatibility */
+OFFSET_CHECK(struct fw_firmware_info, magic, 0);
+OFFSET_CHECK(struct fw_firmware_info, firmware_size, CONFIG_SB_MAGIC_LEN);
+OFFSET_CHECK(struct fw_firmware_info, firmware_version,
+	(CONFIG_SB_MAGIC_LEN + 4));
+OFFSET_CHECK(struct fw_firmware_info, firmware_address,
+	(CONFIG_SB_MAGIC_LEN + 8));
+
 struct __packed fw_validation_info {
 	/* Magic value */
 	u32_t magic[MAGIC_LEN_WORDS];
@@ -59,24 +71,43 @@ struct __packed fw_validation_info {
 	u8_t  signature[CONFIG_SB_SIGNATURE_LEN];
 };
 
+
+/* Static asserts to ensure compatibility */
+OFFSET_CHECK(struct fw_validation_info, magic, 0);
+OFFSET_CHECK(struct fw_validation_info, firmware_address, CONFIG_SB_MAGIC_LEN);
+OFFSET_CHECK(struct fw_validation_info, firmware_hash,
+	(CONFIG_SB_MAGIC_LEN + 4));
+OFFSET_CHECK(struct fw_validation_info, public_key,
+	(CONFIG_SB_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN));
+OFFSET_CHECK(struct fw_validation_info, signature,
+	(CONFIG_SB_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN
+	+ CONFIG_SB_SIGNATURE_LEN));
+
 /*
  * Can be used to make the firmware discoverable in other locations, e.g. when
  * searching backwards. This struct would typically be constructed locally, so
  * it needs no version.
  */
-struct fw_validation_pointer {
+struct __packed fw_validation_pointer {
 	u32_t magic[MAGIC_LEN_WORDS];
 	const struct fw_validation_info *validation_info;
 };
 
+/* Static asserts to ensure compatibility */
+OFFSET_CHECK(struct fw_validation_pointer, magic, 0);
+OFFSET_CHECK(struct fw_validation_pointer, validation_info,
+	CONFIG_SB_MAGIC_LEN);
 
-static inline bool memeq_32(const void *expected, const void *actual,
-		u32_t len)
+
+/* All parameters must be word-aligned */
+static inline bool memeq_32(const void *expected, const void *actual, u32_t len)
 {
-	u32_t *expected_32 = (u32_t *) expected;
-	u32_t *actual_32   = (u32_t *) actual;
-
-	__ASSERT(!(len & 3), "Length is not multiple of 4");
+	__ASSERT(!((u32_t)expected & 3)
+	      && !((u32_t)actual & 3)
+	      && !((u32_t)len & 3),
+		"A parameter is unaligned.");
+	const u32_t *expected_32 = (const u32_t *) expected;
+	const u32_t *actual_32   = (const u32_t *) actual;
 
 	for (u32_t i = 0; i < (len / sizeof(u32_t)); i++) {
 		if (expected_32[i] != actual_32[i]) {
@@ -84,6 +115,29 @@ static inline bool memeq_32(const void *expected, const void *actual,
 		}
 	}
 	return true;
+}
+
+static inline bool memeq_8(const void *expected, const void *actual, u32_t len)
+{
+	const u8_t *expected_8 = (const u8_t *) expected;
+	const u8_t *actual_8   = (const u8_t *) actual;
+
+	for (u32_t i = 0; i < len; i++) {
+		if (expected_8[i] != actual_8[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+static inline bool memeq(const void *expected, const void *actual, u32_t len)
+{
+	if (((u32_t)expected & 3) || ((u32_t)actual & 3) || ((u32_t)len & 3)) {
+		/* Parameters are not word aligned. */
+		return memeq_8(expected, actual, len);
+	} else {
+		return memeq_32(expected, actual, len);
+	}
 }
 
 /*
@@ -96,7 +150,7 @@ firmware_info_get(u32_t firmware_address) {
 	const u32_t firmware_info_magic[] = {FIRMWARE_INFO_MAGIC};
 
 	finfo = (const struct fw_firmware_info *)(finfo_addr);
-	if (memeq_32(finfo->magic, firmware_info_magic, CONFIG_SB_MAGIC_LEN)) {
+	if (memeq(finfo->magic, firmware_info_magic, CONFIG_SB_MAGIC_LEN)) {
 		return finfo;
 	}
 	return NULL;
@@ -114,7 +168,7 @@ validation_info_find(const struct fw_firmware_info *finfo, u32_t
 
 	for (int i = 0; i <= search_distance; i++) {
 		vinfo = (const struct fw_validation_info *)(vinfo_addr + i);
-		if (memeq_32(vinfo->magic, validation_info_magic,
+		if (memeq(vinfo->magic, validation_info_magic,
 					CONFIG_SB_MAGIC_LEN)) {
 			return vinfo;
 		}
