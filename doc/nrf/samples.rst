@@ -20,6 +20,13 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
 .. toctree::
    :maxdepth: 1
+   :caption: NFC samples:
+   :glob:
+
+   ../../samples/nfc/*/README
+
+.. toctree::
+   :maxdepth: 1
    :caption: nRF9160 samples:
    :glob:
 
