@@ -246,8 +246,10 @@ static void protocol_change(u8_t protocol)
 
 static int usb_init(void)
 {
-	usb_dev = device_get_binding(DT_NORDIC_NRF_USBD_0_LABEL);
-	__ASSERT_NO_MSG(usb_dev != NULL);
+	usb_dev = device_get_binding(CONFIG_USB_HID_DEVICE_NAME_0);
+	if (usb_dev == NULL) {
+		return -ENXIO;
+	}
 
 	static const struct hid_ops ops = {
 		.get_report   		= get_report,
