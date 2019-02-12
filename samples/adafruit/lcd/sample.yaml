@@ -1,0 +1,9 @@
+sample:
+  description: nRF52 / nRF91 Adafruit LCD LittlevGL demo
+  name: adafruit_lcd
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840_pca10056 nrf9160_pca10090
+    tags: ci_build
