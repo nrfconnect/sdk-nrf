@@ -83,20 +83,22 @@ The |NCS| consists of the following repositories:
 Every |NCS| release consists of a combination of these repositories at different revisions.
 
 .. note::
-   The latest state of development is on the master branches of the repositories.
-   Note that this might not be a stable state.
+   The latest state of development is on the master branch of the fw-nrfconnect-nrf repository.
    To ensure a usable state, the fw-nrfconnect-nrf repository defines the compatible states of the other repositories.
    However, this state is not necessarily tested.
+   For a higher degree of quality assurance, check out a tagged release.
 
    Therefore, unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`zephyr:west`.
-The main repository, fw-nrfconnect-nrf, contains a `west manifest file`_ that defines the versions of all repositories.
-This means that fw-nrfconnect-nrf acts as manifest repository (see :ref:`Repository structure <zephyr:west-struct>`), while the other repositories are project repositories.
-The version of the manifest file defines what versions of the project repositories are checked out.
+The main repository, fw-nrfconnect-nrf, contains a `west manifest file`_ that defines the versions of all other repositories.
+This means that fw-nrfconnect-nrf acts as the manifest repository (see :ref:`Repository structure <zephyr:west-struct>`), while the other repositories are project repositories.
+The revision (in Git terms) of the fw-nrfconnect-nrf repository determines the contents of the manifest file.
+This file in turn defines what versions of the project repositories are checked out.
+This means that the full revision set of all repositories can be uniquely identified by a particular Git revision of the fw-nrfconnect-nrf repository.
 
-In this way, you can decide to work with a specific |NCS| release either by initializing west with the manifest file for the release or by checking out the manifest file for the release and updating your project repositories to the corresponding state.
-Alternatively, you can work with the latest state of development by using the manifest file from the master branch of the fw-nrfconnect-nrf repository.
+In this way, you can decide to work with a specific |NCS| release either by initializing a new west installation at a particular tag or by checking out the corresponding tag for a release in an existing installation and then updating your project repositories to the corresponding state with west.
+Alternatively, you can work with the latest state of development by using the master branch of the fw-nrfconnect-nrf repository, updating it with Git regularly and then using west to update the project repositories after that.
 
 See the :ref:`west documentation <zephyr:west>` for detailed information about the tool.
 
@@ -111,7 +113,13 @@ Install the bootstrapper for west by entering the following command:
    pip3 |install_user| west
 
 You only need to do this once.
+Like any other Python package, the west bootstrapper is updated regularly.
+Therefore, remember to regularly check for updates:
 
+.. parsed-literal::
+   :class: highlight
+
+   pip3 |install_user| -U west
 
 Cloning the repositories
 ========================
@@ -183,6 +191,9 @@ To switch to the latest state of development, enter the following commands::
    git checkout master
    west update
 
+.. note::
+   Run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
+   This will bring the project repositories to the matching revision defined by the manifest file.
 
 Updating your existing clones to use west
 =========================================
@@ -201,6 +212,7 @@ To update your repositories to be managed by west, make sure that they are struc
 Then complete the following steps:
 
 1. Open a |bash| in the ``ncs`` folder.
+#. Do a ``git pull`` or rebase your branch so that you are on the latest fw-nrfconnect-nrf master.
 #. Initialize west with the manifest folder from the current branch of your ``nrf`` repository::
 
       west init -l nrf
