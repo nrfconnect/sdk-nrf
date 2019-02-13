@@ -108,9 +108,11 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   --outputs ${NRF_CONTENT_OUTPUTS}
   --ignore ${CMAKE_CURRENT_BINARY_DIR}
   "*:doc:${NRF_RST_OUT}"
+  "*.rst:applications:${NRF_RST_OUT}"
   "*.rst:samples:${NRF_RST_OUT}"
   "*.rst:boards:${NRF_RST_OUT}"
   "*.rst:include:${NRF_RST_OUT}"
+  "*.rst:applications:${NRF_RST_OUT}/doc/nrf"
   "*.rst:samples:${NRF_RST_OUT}/doc/nrf"
   "*.rst:boards:${NRF_RST_OUT}/doc/nrf"
   "release-notes*.rst:doc:${NRF_RST_OUT}/doc/nrf"
