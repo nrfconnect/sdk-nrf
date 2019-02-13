@@ -267,8 +267,11 @@ static bool event_handler(const struct event_header *eh)
 			case USB_STATE_POWERED:
 				usb_connected = true;
 				k_delayed_work_cancel(&power_down_trigger);
-				struct wake_up_event *wue = new_wake_up_event();
-				EVENT_SUBMIT(wue);
+				if (power_state != POWER_STATE_IDLE) {
+					struct wake_up_event *wue =
+						new_wake_up_event();
+					EVENT_SUBMIT(wue);
+				}
 				break;
 
 			case USB_STATE_DISCONNECTED:
