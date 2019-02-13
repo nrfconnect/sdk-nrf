@@ -332,7 +332,7 @@ u32_t coap_transport_write(const coap_transport_handle_t transport,
 					address_length_get(remote));
 		}
 
-		if (retval == -1) {
+		if (retval == -1 && errno != EAGAIN) {
 			/* Error in sendto. */
 			err_code = EIO;
 		} else {
@@ -427,15 +427,6 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote)
 					/* Free the allocated session. */
 					session_free(session);
 					return EIO;
-				}
-
-				if (local->non_blocking) {
-					/* Remove non-blocking mode. */
-					if (fcntl(session->local->socket_fd,
-						  F_SETFL, flags) == -1) {
-						session_free(session);
-						return EIO;
-					}
 				}
 
 				memcpy(&session->remote, remote,
