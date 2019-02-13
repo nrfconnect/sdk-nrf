@@ -34,6 +34,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 
 
 enum state {
+	STATE_DISABLED,
 	STATE_IDLE,
 	STATE_ACTIVE_FAST,
 	STATE_ACTIVE_SLOW,
@@ -318,6 +319,11 @@ static bool event_handler(const struct event_header *eh)
 				/* No action */
 				break;
 
+			case STATE_DISABLED:
+				/* Should never happen */
+				__ASSERT_NO_MSG(false);
+				break;
+
 			default:
 				__ASSERT_NO_MSG(false);
 				break;
@@ -327,10 +333,13 @@ static bool event_handler(const struct event_header *eh)
 		}
 
 		if (is_wake_up_event(eh)) {
+			bool was_idle = false;
 			int err;
 
 			switch (state) {
 			case STATE_IDLE:
+				was_idle = true;
+				/* fall through */
 			case STATE_GRACE_PERIOD:
 				err = ble_adv_stop();
 				if (!err) {
@@ -338,13 +347,14 @@ static bool event_handler(const struct event_header *eh)
 				}
 				if (err) {
 					module_set_state(MODULE_STATE_ERROR);
-				} else if (state == STATE_IDLE) {
+				} else if (was_idle) {
 					module_set_state(MODULE_STATE_READY);
 				}
 				break;
 
 			case STATE_ACTIVE_FAST:
 			case STATE_ACTIVE_SLOW:
+			case STATE_DISABLED:
 				/* No action */
 				break;
 
