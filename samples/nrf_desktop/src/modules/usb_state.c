@@ -171,7 +171,9 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 
 	switch (cb_status) {
 	case USB_DC_CONNECTED:
-		__ASSERT_NO_MSG(state == USB_STATE_DISCONNECTED);
+		if (state != USB_STATE_DISCONNECTED) {
+			LOG_WRN("USB_DC_CONNECTED when USB is not disconnected");
+		}
 		new_state = USB_STATE_POWERED;
 		break;
 
@@ -186,7 +188,9 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		break;
 
 	case USB_DC_RESET:
-		__ASSERT_NO_MSG(state != USB_STATE_DISCONNECTED);
+		if (state == USB_STATE_DISCONNECTED) {
+			LOG_WRN("USB_DC_RESET when USB is disconnected");
+		}
 		new_state = USB_STATE_POWERED;
 		break;
 
