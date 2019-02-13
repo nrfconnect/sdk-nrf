@@ -24,7 +24,7 @@ Documentation for different versions of the |NCS| is available at the following 
    release_notes
    getting_started
    user_guides
-   samples
+   examples
    libraries
    reference/kconfig/index
 

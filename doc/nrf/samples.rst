@@ -1,13 +1,12 @@
 .. _samples:
 
-Samples and demos
-#################
+Samples
+#######
 
-The `Zephyr Project`_ contains a variety of application sample and demos.
-Documentation for those is available in the :ref:`zephyr:samples-and-demos` section.
+For very simple samples, see the :ref:`zephyr:basic-sample` in Zephyr.
+Those samples are a good starting point for understanding how to put together your own application.
 
-Nordic Semiconductor provides additional examples that specifically target Nordic Semiconductor devices and show how to implement typical use cases with our libraries and drivers.
-The following demo applications are available:
+In addition, the |NCS| provides the following samples that showcase the use of a single feature or library:
 
 .. toctree::
    :maxdepth: 1
@@ -32,3 +31,5 @@ The following demo applications are available:
    :glob:
 
    ../../samples/*/README
+
+For more complex examples, see :ref:`applications`.
