@@ -1,0 +1,12 @@
+menuconfig BT_GATT_DFU_SMP_C
+	bool "DFU SMP service client"
+	help
+	  Enable GATT DFU SMP Service Client.
+
+if BT_GATT_DFU_SMP_C
+
+module = BT_GATT_DFU_SMP_C
+module-str = DFU SMP Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATT_DFU_SMP_C

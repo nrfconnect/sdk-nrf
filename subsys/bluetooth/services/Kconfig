@@ -1,8 +1,9 @@
 comment "BLE GATT Services"
 
+rsource "Kconfig.dfu_smp_c"
+rsource "Kconfig.hids"
+rsource "Kconfig.hids_c"
 rsource "Kconfig.lbs"
 rsource "Kconfig.nus"
 rsource "Kconfig.nus_c"
-rsource "Kconfig.hids"
-rsource "Kconfig.hids_c"
 rsource "Kconfig.throughput"

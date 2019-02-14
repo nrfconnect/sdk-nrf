@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+zephyr_sources_ifdef(CONFIG_BT_GATT_DFU_SMP_C dfu_smp_c.c)
 zephyr_sources_ifdef(CONFIG_BT_GATT_HIDS hids.c)
 zephyr_sources_ifdef(CONFIG_BT_GATT_HIDS_C hids_c.c)
 zephyr_sources_ifdef(CONFIG_BT_GATT_THROUGHPUT throughput.c)

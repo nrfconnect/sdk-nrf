@@ -91,6 +91,10 @@
 
 .. _`Unity`: http://www.throwtheswitch.org/unity
 
+.. _`MCUmgr`: https://github.com/apache/mynewt-mcumgr
+
+.. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
+
 
 
 .. ### Links to Bluetooth specs
