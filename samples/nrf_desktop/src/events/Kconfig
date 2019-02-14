@@ -1,0 +1,111 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if LOG
+
+menu "Event options"
+
+comment "Initially logged events"
+
+config DESKTOP_INIT_LOG_BATTERY_STATE_EVENT
+	bool "Battery state event"
+	default y
+
+config DESKTOP_INIT_LOG_BATTERY_LEVEL_EVENT
+	bool "Battery level event"
+	default y
+
+config DESKTOP_INIT_LOG_BLE_PEER_EVENT
+	bool "BLE peer event"
+	default y
+
+config DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT
+	bool "BLE discovery complete event"
+	default y
+
+config DESKTOP_INIT_LOG_BUTTON_EVENT
+	bool "Button event"
+	default y
+
+config DESKTOP_INIT_LOG_CONFIG_EVENT
+	bool "Config event"
+	default y
+
+config DESKTOP_INIT_LOG_HID_KEYBOARD_EVENT
+	bool "HID keyboard event"
+	default y
+
+config DESKTOP_INIT_LOG_HID_MOUSE_EVENT
+	bool "HID mouse event"
+	default y
+
+config DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT
+	bool "HID report subscriber event"
+	default y
+
+config DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT
+	bool "HID report sent event"
+	default y
+
+config DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT
+	bool "HID report subscription event"
+	default y
+
+config DESKTOP_INIT_LOG_LED_EVENT
+	bool "LED event"
+	default y
+
+config DESKTOP_INIT_LOG_MODULE_STATE_EVENT
+	bool "Module state event"
+	default y
+
+config DESKTOP_INIT_LOG_MOTION_EVENT
+	bool "Motion event"
+	default y
+
+config DESKTOP_INIT_LOG_POWER_DOWN_EVENT
+	bool "Power down event"
+	default y
+
+config DESKTOP_INIT_LOG_WAKE_UP_EVENT
+	bool "Wake up event"
+	default y
+
+config DESKTOP_INIT_LOG_USB_STATE_EVENT
+	bool "USB state event"
+	default y
+
+config DESKTOP_INIT_LOG_WHEEL_EVENT
+	bool "Wheel event"
+	default y
+
+endmenu
+
+endif
+
+if !LOG
+
+DESKTOP_INIT_LOG_BUTTON_EVENT=n
+DESKTOP_INIT_LOG_BATTERY_STATE_EVENT=n
+DESKTOP_INIT_LOG_BATTERY_LEVEL_EVENT=n
+DESKTOP_INIT_LOG_BLE_PEER_EVENT=n
+DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT=n
+DESKTOP_INIT_LOG_BUTTON_EVENT=n
+DESKTOP_INIT_LOG_CONFIG_EVENT=n
+DESKTOP_INIT_LOG_HID_KEYBOARD_EVENT=n
+DESKTOP_INIT_LOG_HID_MOUSE_EVENT=n
+DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT=n
+DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT=n
+DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT=n
+DESKTOP_INIT_LOG_LED_EVENT=n
+DESKTOP_INIT_LOG_MODULE_STATE_EVENT=n
+DESKTOP_INIT_LOG_MOTION_EVENT=n
+DESKTOP_INIT_LOG_POWER_DOWN_EVENT=n
+DESKTOP_INIT_LOG_WAKE_UP_EVENT=n
+DESKTOP_INIT_LOG_USB_STATE_EVENT=n
+DESKTOP_INIT_LOG_WHEEL_EVENT=n
+
+endif

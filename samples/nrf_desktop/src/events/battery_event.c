@@ -46,7 +46,9 @@ EVENT_INFO_DEFINE(battery_state_event,
 		  profile_battery_state_event);
 
 
-EVENT_TYPE_DEFINE(battery_state_event, log_battery_state_event,
+EVENT_TYPE_DEFINE(battery_state_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BATTERY_STATE_EVENT),
+		  log_battery_state_event,
 		  &battery_state_event_info);
 
 
@@ -73,5 +75,7 @@ EVENT_INFO_DEFINE(battery_level_event,
 		  profile_battery_level_event);
 
 
-EVENT_TYPE_DEFINE(battery_level_event, log_battery_level_event,
+EVENT_TYPE_DEFINE(battery_level_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BATTERY_LEVEL_EVENT),
+		  log_battery_level_event,
 		  &battery_level_event_info);

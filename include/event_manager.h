@@ -167,6 +167,9 @@ struct event_type {
 	 * subscribers. */
 	const struct event_subscriber	*subs_stop[SUBS_PRIO_COUNT];
 
+	/** Bool indicating if event is logged by default. */
+	bool init_log_enable;
+
 	/** Function to log data from this event. */
 	int (*log_event)(const struct event_header *eh, char *buf,
 			      size_t buf_len);
@@ -270,11 +273,12 @@ extern const struct event_type __stop_event_types[];
  * specific functions as well event type structure.
  *
  * @param ename     		Name of the event.
- * @param print_fn  		Function to stringify event of this type.
+ * @param init_log_en		Bool indicating if event is logged by default.
+ * @param log_fn  		Function to stringify event of this type.
  * @param ev_info_struct	Data structure describing event type.
  */
-#define EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct) \
-	_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct)
+#define EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct) \
+	_EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct)
 
 
 /** @def ASSERT_EVENT_ID

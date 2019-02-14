@@ -15,7 +15,10 @@ static const char * const target_report_name[] = {
 };
 
 
-EVENT_TYPE_DEFINE(hid_keyboard_event, NULL, NULL);
+EVENT_TYPE_DEFINE(hid_keyboard_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_KEYBOARD_EVENT),
+		  NULL,
+		  NULL);
 
 
 static int log_hid_mouse_event(const struct event_header *eh, char *buf,
@@ -48,7 +51,10 @@ EVENT_INFO_DEFINE(hid_mouse_event,
 		  ENCODE("subscriber", "buttons", "wheel", "dx", "dy"),
 		  profile_hid_mouse_event);
 
-EVENT_TYPE_DEFINE(hid_mouse_event, log_hid_mouse_event, &hid_mouse_event_info);
+EVENT_TYPE_DEFINE(hid_mouse_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_MOUSE_EVENT),
+		  log_hid_mouse_event,
+		  &hid_mouse_event_info);
 
 static int log_hid_report_subscriber_event(const struct event_header *eh,
 					      char *buf, size_t buf_len)
@@ -77,7 +83,9 @@ EVENT_INFO_DEFINE(hid_report_subscriber_event,
 		  ENCODE("subscriber", "connected"),
 		  profile_hid_report_subscriber_event);
 
-EVENT_TYPE_DEFINE(hid_report_subscriber_event, log_hid_report_subscriber_event,
+EVENT_TYPE_DEFINE(hid_report_subscriber_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT),
+		  log_hid_report_subscriber_event,
 		  &hid_report_subscriber_event_info);
 
 static int log_hid_report_sent_event(const struct event_header *eh,
@@ -115,7 +123,10 @@ EVENT_INFO_DEFINE(hid_report_sent_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
 		  ENCODE("subscriber", "report_type", "error"),
 		  profile_hid_report_sent_event);
-EVENT_TYPE_DEFINE(hid_report_sent_event, log_hid_report_sent_event,
+
+EVENT_TYPE_DEFINE(hid_report_sent_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT),
+		  log_hid_report_sent_event,
 		  &hid_report_sent_event_info);
 
 static int log_hid_report_subscription_event(const struct event_header *eh,
@@ -148,5 +159,6 @@ EVENT_INFO_DEFINE(hid_report_subscription_event,
 		  profile_hid_report_subscription_event);
 
 EVENT_TYPE_DEFINE(hid_report_subscription_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT),
 		  log_hid_report_subscription_event,
 		  &hid_report_subscription_event_info);

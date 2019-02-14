@@ -31,4 +31,7 @@ static int log_module_state_event(const struct event_header *eh, char *buf,
 		      (const char *)event->module_id, state_name[event->state]);
 }
 
-EVENT_TYPE_DEFINE(module_state_event, log_module_state_event, NULL);
+EVENT_TYPE_DEFINE(module_state_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_MODULE_STATE_EVENT),
+		  log_module_state_event,
+		  NULL);

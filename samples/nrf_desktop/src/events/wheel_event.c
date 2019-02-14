@@ -16,4 +16,7 @@ static int log_wheel_event(const struct event_header *eh, char *buf,
 	return snprintf(buf, buf_len, "wheel=%d", event->wheel);
 }
 
-EVENT_TYPE_DEFINE(wheel_event, log_wheel_event, NULL);
+EVENT_TYPE_DEFINE(wheel_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_WHEEL_EVENT),
+		  log_wheel_event,
+		  NULL);

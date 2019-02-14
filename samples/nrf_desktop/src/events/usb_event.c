@@ -32,4 +32,7 @@ static int log_usb_state_event(const struct event_header *eh, char *buf,
 			state_name[event->state]);
 }
 
-EVENT_TYPE_DEFINE(usb_state_event, log_usb_state_event, NULL);
+EVENT_TYPE_DEFINE(usb_state_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_STATE_EVENT),
+		  log_usb_state_event,
+		  NULL);

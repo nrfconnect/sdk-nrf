@@ -30,4 +30,7 @@ EVENT_INFO_DEFINE(config_event,
 		  ENCODE("id"),
 		  profile_config_event);
 
-EVENT_TYPE_DEFINE(config_event, log_config_event, &config_event_info);
+EVENT_TYPE_DEFINE(config_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_CONFIG_EVENT),
+		  log_config_event,
+		  &config_event_info);
