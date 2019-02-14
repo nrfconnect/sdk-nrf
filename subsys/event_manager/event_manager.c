@@ -14,8 +14,7 @@
 #ifdef CONFIG_SHELL
 extern u32_t event_manager_displayed_events;
 #else
-/* By default, when there is no shell, all events are shown */
-static u32_t event_manager_displayed_events = 0xffffffff;
+static u32_t event_manager_displayed_events;
 #endif
 
 LOG_MODULE_REGISTER(event_manager, CONFIG_DESKTOP_EVENT_MANAGER_LOG_LEVEL);
@@ -218,9 +217,23 @@ static void trace_event_execution(const struct event_header *eh, bool is_start)
 	}
 }
 
+static void displayed_events_init(void)
+{
+	if (IS_ENABLED(CONFIG_LOG)) {
+		for (const struct event_type *et = __start_event_types;
+				(et != NULL) && (et != __stop_event_types);
+				et++) {
+			if (et->init_log_enable) {
+				event_manager_displayed_events |=
+					BIT(et - __start_event_types);
+			}
+		}
+	}
+}
+
 int event_manager_init(void)
 {
-
+	displayed_events_init();
 	if (IS_ENABLED(CONFIG_DESKTOP_EVENT_MANAGER_PROFILER_ENABLED)) {
 		if (profiler_init()) {
 			LOG_ERR("System profiler: "

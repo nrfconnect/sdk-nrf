@@ -32,6 +32,12 @@ static int log_event(const struct event_header *eh, char *buf,
 }
 
 
-EVENT_TYPE_DEFINE(ble_peer_event, log_event, NULL);
+EVENT_TYPE_DEFINE(ble_peer_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_PEER_EVENT),
+		  log_event,
+		  NULL);
 
-EVENT_TYPE_DEFINE(ble_discovery_complete_event, NULL, NULL);
+EVENT_TYPE_DEFINE(ble_discovery_complete_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT),
+		  NULL,
+		  NULL);

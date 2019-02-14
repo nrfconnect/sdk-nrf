@@ -51,4 +51,7 @@ static int log_led_event(const struct event_header *eh, char *buf,
 	return pos;
 }
 
-EVENT_TYPE_DEFINE(led_event, log_led_event, NULL);
+EVENT_TYPE_DEFINE(led_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_LED_EVENT),
+		  log_led_event,
+		  NULL);

@@ -31,4 +31,8 @@ EVENT_INFO_DEFINE(motion_event,
 		  ENCODE(PROFILER_ARG_S32, PROFILER_ARG_S32),
 		  ENCODE("dx", "dy"),
 		  profile_motion_event);
-EVENT_TYPE_DEFINE(motion_event, log_motion_event, &motion_event_info);
+
+EVENT_TYPE_DEFINE(motion_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_MOTION_EVENT),
+		  log_motion_event,
+		  &motion_event_info);

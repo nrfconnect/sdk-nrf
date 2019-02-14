@@ -32,4 +32,7 @@ EVENT_INFO_DEFINE(button_event,
 		  ENCODE("button_id", "status"),
 		  profile_button_event);
 
-EVENT_TYPE_DEFINE(button_event, log_button_event, &button_event_info);
+EVENT_TYPE_DEFINE(button_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BUTTON_EVENT),
+		  log_button_event,
+		  &button_event_info);
