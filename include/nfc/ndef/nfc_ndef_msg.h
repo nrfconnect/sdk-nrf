@@ -42,7 +42,7 @@ struct nfc_ndef_msg_desc {
 };
 
 /**
- * @brief Function for encoding an NDEF message.
+ * @brief Encode an NDEF message.
  *
  * This function encodes an NDEF message according to the provided message
  * descriptor.
@@ -57,14 +57,15 @@ struct nfc_ndef_msg_desc {
  * @param msg_len Size of the available memory for the message as input. Size
  * of the generated message as output.
  *
- * @return 0 on success, or (negative) error code on failure.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 			u8_t *msg_buffer,
 			u32_t *msg_len);
 
 /**
- * @brief Function for clearing an NDEF message.
+ * @brief Clear an NDEF message.
  *
  * This function clears an NDEF message descriptor, thus empties the NDEF
  * message.
@@ -74,12 +75,13 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 void nfc_ndef_msg_clear(struct nfc_ndef_msg_desc *msg);
 
 /**
- * @brief Function for adding a record to an NDEF message.
+ * @brief Add a record to an NDEF message.
  *
  * @param record Pointer to the record descriptor.
  * @param msg Pointer to the message descriptor.
  *
- * @return 0 on success, or (negative) error code on failure.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_msg_record_add(struct nfc_ndef_msg_desc *msg,
 			    struct nfc_ndef_record_desc const *record);

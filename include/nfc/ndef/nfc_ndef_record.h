@@ -51,7 +51,8 @@ extern "C" {
  * payload will fit in the provided buffer. This must be checked by the caller
  * function.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 typedef int (*payload_constructor_t)(void *payload_descriptor,
 				     u8_t *buffer,
@@ -240,7 +241,7 @@ struct nfc_ndef_bin_payload_desc {
 #define NFC_NDEF_BIN_PAYLOAD_DESC(name) (name##_nfc_ndef_bin_payload_desc)
 
 /**
- * @brief Function for encoding an NDEF record.
+ * @brief Encode an NDEF record.
  *
  * @details This function encodes an NDEF record according to the provided
  * record descriptor.
@@ -252,7 +253,8 @@ struct nfc_ndef_bin_payload_desc {
  * @param record_len Size of the available memory for the record as input.
  * Size of the generated record as output.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 			   enum nfc_ndef_record_location const record_location,
@@ -260,20 +262,20 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 			   u32_t *record_len);
 
 /**
- * @brief Function for constructing the payload for an NFC NDEF record from
- *        binary data.
+ * @brief Construct the payload for an NFC NDEF record from binary data.
  *
  * This function copies data from a binary buffer to the payload field of the
  * NFC NDEF record.
  *
  * @param payload_descriptor Pointer to the descriptor of the binary data
- * location and size. *
+ * location and size.
  * @param buffer Pointer to the payload destination. If NULL, function will
  * calculate the expected size of the record payload.
  * @param len Size of the available memory for the payload as input. Size of
  * the copied payload as output.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_bin_payload_memcopy(
 			struct nfc_ndef_bin_payload_desc *payload_descriptor,

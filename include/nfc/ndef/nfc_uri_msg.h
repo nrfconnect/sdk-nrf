@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-/** @brief Function for encoding an NFC NDEF URI message.
+/** @brief Encode an NFC NDEF URI message.
  *
  * This function encodes an NFC NDEF message into a buffer.
  *
@@ -38,11 +38,11 @@ extern "C" {
  * @param len Size of the available memory for the message as input. Size
  * of the generated message as output.
  *
- * @return 0 If the description was successfully created.
- * @return -EINVAL If the URI string was invalid (equal to NULL).
- * @return -ENOMEM If the predicted message size is bigger than the provided
+ * @retval 0 If the description was successfully created.
+ * @retval -EINVAL If the URI string was invalid (equal to NULL).
+ * @retval -ENOMEM If the predicted message size is bigger than the provided
  * buffer space.
- * @return Other Other codes might be returned depending on the function
+ * @retval Other Other codes might be returned depending on the function
  * @ref nfc_ndef_msg_encode.
  */
 int nfc_uri_msg_encode(enum nfc_uri_id uri_id_code,

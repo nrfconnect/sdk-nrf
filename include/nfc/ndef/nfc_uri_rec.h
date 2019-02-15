@@ -75,9 +75,12 @@ enum nfc_uri_id {
  * @brief Type of description of the payload of a URI record.
  */
 struct uri_payload_desc {
-	enum nfc_uri_id uri_id_code;	/**< URI identifier code. */
-	u8_t const *uri_data;		/**< Pointer to a URI string. */
-	u8_t uri_data_len;		/**< Length of the URI string. */
+	/** URI identifier code. */
+	enum nfc_uri_id uri_id_code;
+	/** Pointer to a URI string. */
+	u8_t const *uri_data;
+	/** Length of the URI string. */
+	u8_t uri_data_len;
 };
 
 /**
@@ -88,7 +91,7 @@ struct uri_payload_desc {
 extern const u8_t ndef_uri_record_type;
 
 /**
- * @brief Function for constructing the payload for a URI record.
+ * @brief Construct the payload for a URI record.
  *
  * This function encodes the payload according to the URI record definition.
  * It implements an API compatible with @ref payload_constructor_t.
@@ -96,12 +99,11 @@ extern const u8_t ndef_uri_record_type;
  * @param input Pointer to the description of the payload.
  * @param buff Pointer to payload destination. If NULL, function will calculate
  * the expected size of the URI record payload.
- *
  * @param len Size of available memory to write as input. Size of generated
  * payload as output.
  *
- * @return 0 If the payload was encoded successfully.
- * @return -ENOMEM If the predicted payload size is bigger than the provided
+ * @retval 0 If the payload was encoded successfully.
+ * @retval -ENOMEM If the predicted payload size is bigger than the provided
  * buffer space.
  */
 int nfc_uri_payload_constructor(struct uri_payload_desc *input,
