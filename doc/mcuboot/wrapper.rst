@@ -10,7 +10,7 @@ MCUboot documentation
    release-notes.md
    design.md
    signed_images.md
-   encryped_images.md
+   encrypted_images.md
    imgtool.md
    readme-zephyr.md
    readme-mynewt.md
