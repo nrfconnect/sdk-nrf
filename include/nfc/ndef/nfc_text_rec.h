@@ -30,8 +30,10 @@ extern "C" {
  * Values to specify the type of UTF for an NFC NDEF Text record.
  */
 enum nfc_text_rec_utf_type {
-	UTF_8  = 0, /**< Unicode Transformation Format 8. */
-	UTF_16 = 1, /**< Unicode Transformation Format 16. */
+	/** Unicode Transformation Format 8. */
+	UTF_8  = 0,
+	/** Unicode Transformation Format 16. */
+	UTF_16 = 1,
 };
 
 /**
@@ -56,11 +58,11 @@ struct nfc_text_rec_payload_desc {
  * @param nfc_rec_text_payload_desc Pointer to the Text record description.
  * @param buff Pointer to the payload destination. If NULL, function will
  * calculate the expected size of the Text record payload.
- *
  * @param len Size of the available memory to write as input. Size of the
  * generated record payload as output.
  *
- * @return 0 on success, or (negative) error code on failure.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int nfc_text_rec_payload_constructor(
 		struct nfc_text_rec_payload_desc *nfc_rec_text_payload_desc,

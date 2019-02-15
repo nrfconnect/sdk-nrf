@@ -31,3 +31,4 @@ Here you can find documentation for these libraries, including API documentation
    :glob:
 
    ../../include/*
+   ../../include/nfc/ndef/nfc
