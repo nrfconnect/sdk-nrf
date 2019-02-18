@@ -33,12 +33,10 @@
 static struct device *dev;
 
 /* Text message in English with its language code. */
-/** @snippet [NFC text usage_1] */
 static const u8_t en_payload[] = {
 	'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'
 };
 static const u8_t en_code[] = {'e', 'n'};
-/** @snippet [NFC text usage_1] */
 
 /* Text message in Norwegian with its language code. */
 static const u8_t no_payload[] = {
@@ -81,7 +79,6 @@ static void nfc_callback(void *context,
  */
 static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 {
-	/** @snippet [NFC text usage_2] */
 	int err;
 
 	/* Create NFC NDEF text record description in English */
@@ -91,7 +88,6 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 				      sizeof(en_code),
 				      en_payload,
 				      sizeof(en_payload));
-	/** @snippet [NFC text usage_2] */
 
 	/* Create NFC NDEF text record description in Norwegian */
 	NFC_NDEF_TEXT_RECORD_DESC_DEF(nfc_no_text_rec,
@@ -112,26 +108,21 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 	/* Create NFC NDEF message description, capacity - MAX_REC_COUNT
 	 * records
 	 */
-	/** @snippet [NFC text usage_3] */
 	NFC_NDEF_MSG_DEF(nfc_text_msg, MAX_REC_COUNT);
-	/** @snippet [NFC text usage_3] */
 
 	/* Add text records to NDEF text message */
-	/** @snippet [NFC text usage_4] */
 	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_en_text_rec));
 	if (err < 0) {
 		printk("Cannot add first record!\n");
 		return err;
 	}
-	/** @snippet [NFC text usage_4] */
 	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_no_text_rec));
 	if (err < 0) {
 		printk("Cannot add second record!\n");
 		return err;
 	}
-
 	err = nfc_ndef_msg_record_add(&NFC_NDEF_MSG(nfc_text_msg),
 				   &NFC_NDEF_TEXT_RECORD_DESC(nfc_pl_text_rec));
 	if (err < 0) {
@@ -139,7 +130,6 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 		return err;
 	}
 
-	/** @snippet [NFC text usage_5] */
 	err = nfc_ndef_msg_encode(&NFC_NDEF_MSG(nfc_text_msg),
 				      buffer,
 				      len);
@@ -148,7 +138,6 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 	}
 
 	return err;
-	/** @snippet [NFC text usage_5] */
 }
 
 
