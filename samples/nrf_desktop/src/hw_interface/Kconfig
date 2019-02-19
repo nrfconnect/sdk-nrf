@@ -14,20 +14,6 @@ config DESKTOP_PORT_STATE
 	  Port state file specifies how ports are set when board is turned
 	  on and off.
 
-comment "Accelerometer configuration"
-
-choice
-	prompt "Select accelerometer interface"
-	default DESKTOP_ACCEL_NONE
-
-config DESKTOP_ACCEL_NONE
-	bool "Disable accelerometer"
-
-config DESKTOP_ACCEL_LIS3DH
-	bool "LIS3DH"
-
-endchoice
-
 comment "Motion configuration"
 
 choice
@@ -39,9 +25,6 @@ config DESKTOP_MOTION_NONE
 
 config DESKTOP_MOTION_OPTICAL_ENABLE
 	bool "Motion from optical sensor"
-
-config DESKTOP_MOTION_TOUCHPAD_ENABLE
-	bool "Motion from touchpad"
 
 config DESKTOP_MOTION_BUTTONS_ENABLE
 	bool "Motion from buttons"
@@ -119,9 +102,6 @@ choice
 
 config DESKTOP_BUTTONS_NONE
 	bool "Disable buttons"
-
-config DESKTOP_BUTTONS_EXPANDER_ENABLE
-	bool "Buttons read from SR3 Shield expander"
 
 config DESKTOP_BUTTONS_MATRIX_ENABLE
 	bool "Buttons scanned from key matrix"
@@ -260,12 +240,6 @@ comment "Log level configuration"
 module = DESKTOP_BOARD
 module-str = board module
 source "subsys/logging/Kconfig.template.log_config"
-
-if !DESKTOP_ACCEL_NONE
-module = DESKTOP_ACCEL
-module-str = accelerometer module
-source "subsys/logging/Kconfig.template.log_config"
-endif
 
 if !DESKTOP_MOTION_NONE
 module = DESKTOP_MOTION
