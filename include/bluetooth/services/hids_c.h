@@ -405,7 +405,7 @@ bool bt_gatt_hids_c_assign_check(const struct bt_gatt_hids_c *hids_c);
  * @retval false If the HIDS client is not ready.
  *
  */
-bool bt_gatt_hids_ready_check(const struct bt_gatt_hids_c *hids_c);
+bool bt_gatt_hids_c_ready_check(const struct bt_gatt_hids_c *hids_c);
 
 /**
  * @brief Send a read request addressing the report value descriptor.
