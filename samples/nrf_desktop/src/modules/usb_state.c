@@ -98,11 +98,11 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		    REPORT_SIZE_MOUSE_BOOT];
 
 	if (hid_protocol == HID_PROTOCOL_REPORT) {
-		s16_t wheel = max(min(event->wheel, REPORT_MOUSE_WHEEL_MAX),
+		s16_t wheel = MAX(MIN(event->wheel, REPORT_MOUSE_WHEEL_MAX),
 				REPORT_MOUSE_WHEEL_MIN);
-		s16_t x = max(min(event->dx, REPORT_MOUSE_XY_MAX),
+		s16_t x = MAX(MIN(event->dx, REPORT_MOUSE_XY_MAX),
 				REPORT_MOUSE_XY_MIN);
-		s16_t y = max(min(event->dy, REPORT_MOUSE_XY_MAX),
+		s16_t y = MAX(MIN(event->dy, REPORT_MOUSE_XY_MAX),
 				REPORT_MOUSE_XY_MIN);
 		/* Convert to little-endian. */
 		u8_t x_buff[2];
@@ -122,9 +122,9 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		buffer[5] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
 	} else {
-		s8_t x = max(min(event->dx, REPORT_MOUSE_XY_MAX_BOOT),
+		s8_t x = MAX(MIN(event->dx, REPORT_MOUSE_XY_MAX_BOOT),
 				REPORT_MOUSE_XY_MIN_BOOT);
-		s8_t y = max(min(event->dy, REPORT_MOUSE_XY_MAX_BOOT),
+		s8_t y = MAX(MIN(event->dy, REPORT_MOUSE_XY_MAX_BOOT),
 				REPORT_MOUSE_XY_MIN_BOOT);
 
 		__ASSERT(sizeof(buffer) == 3, "Invalid boot report size");

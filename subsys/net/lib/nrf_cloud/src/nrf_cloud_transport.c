@@ -214,7 +214,7 @@ static u32_t dc_send(const struct nct_dc_data *dc_data, u8_t qos)
 static bool strings_compare(const char *s1, const char *s2,
 			    u32_t s1_len, u32_t s2_len)
 {
-	return (strncmp(s1, s2, min(s1_len, s2_len))) ? false : true;
+	return (strncmp(s1, s2, MIN(s1_len, s2_len))) ? false : true;
 }
 
 /* Verify if the topic is a control channel topic or not. */

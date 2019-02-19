@@ -358,8 +358,8 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 		}
 
 		if (conn_mode[i].in_boot_mode) {
-			x_delta = max(min(x_delta, SCHAR_MAX), SCHAR_MIN);
-			y_delta = max(min(y_delta, SCHAR_MAX), SCHAR_MIN);
+			x_delta = MAX(MIN(x_delta, SCHAR_MAX), SCHAR_MIN);
+			y_delta = MAX(MIN(y_delta, SCHAR_MAX), SCHAR_MIN);
 
 			bt_gatt_hids_boot_mouse_inp_rep_send(&hids_obj,
 							     conn_mode[i].conn,
@@ -372,8 +372,8 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 			u8_t y_buff[2];
 			u8_t buffer[INPUT_REP_MOVEMENT_LEN];
 
-			s16_t x = max(min(x_delta, 0x07ff), -0x07ff);
-			s16_t y = max(min(y_delta, 0x07ff), -0x07ff);
+			s16_t x = MAX(MIN(x_delta, 0x07ff), -0x07ff);
+			s16_t y = MAX(MIN(y_delta, 0x07ff), -0x07ff);
 
 			/* Convert to little-endian. */
 			sys_put_le16(x, x_buff);

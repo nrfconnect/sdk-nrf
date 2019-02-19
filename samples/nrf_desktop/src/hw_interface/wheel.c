@@ -68,7 +68,7 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 		wheel /= CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER;
 	}
 
-	event->wheel = max(min(wheel, SCHAR_MAX), SCHAR_MIN);
+	event->wheel = MAX(MIN(wheel, SCHAR_MAX), SCHAR_MIN);
 
 	EVENT_SUBMIT(event);
 }

@@ -62,7 +62,7 @@ static ssize_t read_callback(struct bt_conn *conn,
 			     u16_t len, u16_t offset)
 {
 	const struct metrics *metrics = attr->user_data;
-	len = min(sizeof(struct metrics), len);
+	len = MIN(sizeof(struct metrics), len);
 
 	printk("\n[local] received %u bytes (%u KB)"
 	       " in %u GATT writes at %u bps\n",
