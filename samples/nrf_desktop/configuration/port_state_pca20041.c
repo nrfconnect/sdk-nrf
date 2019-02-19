@@ -11,9 +11,7 @@
 
 
 static const struct pin_state port0_on[] = {
-#if !defined(CONFIG_CONFIG_DESKTOP_ACCEL_BMA400)
 	{4,  0}, /* accelerometer power switch */
-#endif
 
 #if !defined(CONFIG_DESKTOP_MOTION_OPTICAL_ENABLE)
 	{14, 0}, /* motion power switch */
