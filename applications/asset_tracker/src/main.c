@@ -72,6 +72,10 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 	requires CONFIG_LTE_AUTO_INIT_AND_CONNECT to be disabled!"
 #endif
 
+#define CLOUD_LED_ON_STR "{\"led\":\"on\"}"
+#define CLOUD_LED_OFF_STR "{\"led\":\"off\"}"
+#define CLOUD_LED_MSK DK_LED1_MSK
+
 static enum {
 #ifdef CONFIG_BOARD_NRF9160_PCA20035
 	LEDS_INITIALIZING	= LED_ON(0),
@@ -488,6 +492,20 @@ static void on_user_association_req(const struct nrf_cloud_evt *p_evt)
 	}
 }
 
+/**@brief Callback for data received event from nRF Cloud. */
+static void on_data_received(const struct nrf_cloud_evt *p_evt)
+{
+	if (memcmp(p_evt->param.data.ptr, CLOUD_LED_ON_STR,
+		strlen(CLOUD_LED_ON_STR)) == 0) {
+		display_state |= CLOUD_LED_MSK;
+	} else if (memcmp(p_evt->param.data.ptr, CLOUD_LED_OFF_STR,
+		strlen(CLOUD_LED_OFF_STR)) == 0) {
+		display_state &= ~CLOUD_LED_MSK;
+	} else {
+		printk("Data not recognised\n");
+	}
+}
+
 /**@brief Attach available sensors to nRF Cloud. */
 void sensors_attach(void)
 {
@@ -560,6 +578,10 @@ static void cloud_event_handler(const struct nrf_cloud_evt *p_evt)
 		printk("NRF_CLOUD_EVT_ERROR, status: %d\n", p_evt->status);
 		atomic_set(&send_data_enable, 0);
 		nrf_cloud_error_handler(p_evt->status);
+		break;
+	case NRF_CLOUD_EVT_RX_DATA:
+		printk("NRF_CLOUD_EVT_RX_DATA\n");
+		on_data_received(p_evt);
 		break;
 	default:
 		printk("Received unknown %d\n", p_evt->type);
