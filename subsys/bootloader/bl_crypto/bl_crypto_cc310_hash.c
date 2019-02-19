@@ -30,7 +30,7 @@ static bool cc310_bl_hash(u8_t *out_hash, const u8_t *data,
 	if ((u32_t)data < CONFIG_SRAM_BASE_ADDRESS) {
 		/* Cryptocell has DMA access to RAM only */
 		u32_t remaining_copy_len = data_len;
-		u32_t block_len = min(remaining_copy_len, MAX_CHUNK_LEN);
+		u32_t block_len = MIN(remaining_copy_len, MAX_CHUNK_LEN);
 
 		for (u32_t i = 0; i < data_len; i += MAX_CHUNK_LEN) {
 			memcpy32(ram_buffer, &data[i], block_len);
@@ -42,13 +42,13 @@ static bool cc310_bl_hash(u8_t *out_hash, const u8_t *data,
 			}
 
 			remaining_copy_len -= block_len;
-			block_len = min(remaining_copy_len, MAX_CHUNK_LEN);
+			block_len = MIN(remaining_copy_len, MAX_CHUNK_LEN);
 		}
 	} else {
 		for (u32_t i = 0; i < data_len; i += MAX_CHUNK_LEN) {
 			if (nrf_cc310_bl_hash_sha256_update(
 				    &context, &data[i],
-				    min(data_len - i, MAX_CHUNK_LEN)) !=
+				    MIN(data_len - i, MAX_CHUNK_LEN)) !=
 			    CRYS_OK) {
 				return false;
 			}

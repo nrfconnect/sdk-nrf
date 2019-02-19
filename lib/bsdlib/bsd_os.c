@@ -265,7 +265,7 @@ int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
 	u32_t remaining_bytes = len;
 
 	while (remaining_bytes) {
-		u8_t transfer_len = min(remaining_bytes, UINT8_MAX);
+		u8_t transfer_len = MIN(remaining_bytes, UINT8_MAX);
 		u32_t idx = len - remaining_bytes;
 
 		nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);

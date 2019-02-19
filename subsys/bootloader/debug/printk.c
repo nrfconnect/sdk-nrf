@@ -17,7 +17,7 @@ void printk(const char *fmt, ...)
 	va_start(argptr, fmt);
 	int len = vsnprintf(_str, CONFIG_SB_DEBUG_PRINTF_BUF_LEN, fmt, argptr);
 
-	len = min(len, CONFIG_SB_DEBUG_PRINTF_BUF_LEN - 1);
+	len = MIN(len, CONFIG_SB_DEBUG_PRINTF_BUF_LEN - 1);
 	if (len > 0) {
 #ifdef CONFIG_SB_DEBUG_PORT_SEGGER_RTT
 		SEGGER_RTT_Write(0, _str, len);

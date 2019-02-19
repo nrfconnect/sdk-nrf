@@ -268,7 +268,7 @@ static u8_t read_fn(struct bt_conn *conn, u8_t err,
 	}
 
 	if (data) {
-		len = min(len, sizeof(met));
+		len = MIN(len, sizeof(met));
 		memcpy(&met, data, len);
 
 		printk("[peer] received %u bytes (%u KB)"

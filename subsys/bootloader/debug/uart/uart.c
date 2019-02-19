@@ -57,7 +57,7 @@ void uart_vprintf(const char *__fmt, va_list argptr)
 	int len = vsnprintf(_str, CONFIG_SB_DEBUG_PRINTF_BUF_LEN, __fmt, argptr);
 
 	if (len > 0) {
-		uart_print(_str, min(len, CONFIG_SB_DEBUG_PRINTF_BUF_LEN - 1));
+		uart_print(_str, MIN(len, CONFIG_SB_DEBUG_PRINTF_BUF_LEN - 1));
 	}
 }
 

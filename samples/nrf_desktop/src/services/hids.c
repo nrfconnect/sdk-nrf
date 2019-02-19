@@ -289,19 +289,19 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 	int err;
 
 	if (report_mode == REPORT_MODE_BOOT) {
-		s8_t x = max(min(event->dx, SCHAR_MAX), SCHAR_MIN);
-		s8_t y = max(min(event->dy, SCHAR_MAX), SCHAR_MIN);
+		s8_t x = MAX(MIN(event->dx, SCHAR_MAX), SCHAR_MIN);
+		s8_t y = MAX(MIN(event->dy, SCHAR_MAX), SCHAR_MIN);
 
 		err = bt_gatt_hids_boot_mouse_inp_rep_send(&hids_obj, NULL,
 							   &event->button_bm,
 							   x, y,
 							   mouse_report_sent_cb);
 	} else {
-		s16_t wheel = max(min(event->wheel, REPORT_MOUSE_WHEEL_MAX),
+		s16_t wheel = MAX(MIN(event->wheel, REPORT_MOUSE_WHEEL_MAX),
 				  REPORT_MOUSE_WHEEL_MIN);
-		s16_t x = max(min(event->dx, REPORT_MOUSE_XY_MAX),
+		s16_t x = MAX(MIN(event->dx, REPORT_MOUSE_XY_MAX),
 			      REPORT_MOUSE_XY_MIN);
-		s16_t y = max(min(event->dy, REPORT_MOUSE_XY_MAX),
+		s16_t y = MAX(MIN(event->dy, REPORT_MOUSE_XY_MAX),
 			      REPORT_MOUSE_XY_MIN);
 
 		/* Convert to little-endian. */
