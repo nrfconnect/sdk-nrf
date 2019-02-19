@@ -122,7 +122,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 /* Sampling thread poll timeout */
 #define OPTICAL_POLL_TIMEOUT_MS			500
 
-#define OPTICAL_THREAD_STACK_SIZE		400
+#define OPTICAL_THREAD_STACK_SIZE		464
 #define OPTICAL_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
 
 #define NODATA_LIMIT				10
@@ -933,6 +933,7 @@ static bool event_handler(const struct event_header *eh)
 					(k_thread_entry_t)optical_thread_fn,
 					NULL, NULL, NULL,
 					OPTICAL_THREAD_PRIORITY, 0, K_NO_WAIT);
+			k_thread_name_set(&thread, MODULE_NAME "_thread");
 
 			return false;
 		}
