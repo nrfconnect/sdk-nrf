@@ -341,7 +341,7 @@ static const struct bt_gatt_hids_c_init_params hids_c_init_params = {
 
 static void button_bootmode(void)
 {
-	if (!bt_gatt_hids_ready_check(&hids_c)) {
+	if (!bt_gatt_hids_c_ready_check(&hids_c)) {
 		printk("HID device not ready\n");
 		return;
 	}
@@ -366,7 +366,7 @@ static void button_capslock(void)
 	int err;
 	u8_t data;
 
-	if (!bt_gatt_hids_ready_check(&hids_c)) {
+	if (!bt_gatt_hids_c_ready_check(&hids_c)) {
 		printk("HID device not ready\n");
 		return;
 	}
@@ -428,7 +428,7 @@ static void capslock_write_cb(struct bt_gatt_hids_c *hids_c,
 
 static void button_capslock_rsp(void)
 {
-	if (!bt_gatt_hids_ready_check(&hids_c)) {
+	if (!bt_gatt_hids_c_ready_check(&hids_c)) {
 		printk("HID device not ready\n");
 		return;
 	}

@@ -39,7 +39,7 @@ The following functions are available to retrieve the readiness state of the ser
 :cpp:func:`bt_gatt_hids_c_assign_check`
   Checks if :cpp:func:`bt_gatt_hids_c_handles_assign` was already called and the post discovery process has been started.
 
-:cpp:func:`bt_gatt_hids_ready_check`
+:cpp:func:`bt_gatt_hids_c_ready_check`
   Checks if the client object is fully ready to interact with the HID server.
   The ready flag is set just before the :cpp:type:`bt_gatt_hids_c_ready_cb` function is called.
 
