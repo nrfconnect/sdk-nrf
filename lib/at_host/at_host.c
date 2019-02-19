@@ -206,6 +206,13 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 		err = poll(fds, nfds, K_FOREVER);
 		if (err < 0) {
 			LOG_ERR("Poll error: %d\n", err);
+			continue;
+		} else if (err == 0) {
+			/* Workaround for incomplete implementation of poll.
+			 * TODO: Fix this when underlying issues are resolved.
+			 */
+			k_sleep(20);
+			continue;
 		}
 
 		k_mutex_lock(&socket_mutex, K_FOREVER);
