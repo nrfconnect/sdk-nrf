@@ -1,9 +1,0 @@
-identifier: nrf52_pca63519
-name: nRF52-PCA63519
-type: mcu
-arch: arm
-toolchain:
-  - zephyr
-  - gnuarmemb
-ram: 64
-flash: 512
