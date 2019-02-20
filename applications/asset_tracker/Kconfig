@@ -286,6 +286,18 @@ config TEMP_DEV_NAME
 		sent to nRF Cloud.
 
 endif
+
+if MODEM_INFO
+
+config HOLD_TIME_RSRP
+	int "Minimum time [s] between RSRP subscription messages"
+	default 60
+	help
+		The minimum time in seconds where the modem
+		informer is allowed to submit RSRP data to the cloud.
+
+endif
+
 endmenu
 
 menu "Zephyr Kernel"
