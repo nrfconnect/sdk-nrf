@@ -14,4 +14,6 @@ rsource "dk_buttons_and_leds/Kconfig"
 
 rsource "at_cmd_parser/Kconfig"
 
+rsource "modem_info/Kconfig"
+
 endmenu
