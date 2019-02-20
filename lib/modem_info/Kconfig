@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig MODEM_INFO
+	bool "nRF91 modem information library"
+	select BSD_LIBRARY
+	select AT_CMD_PARSER
+
+if MODEM_INFO
+
+config MODEM_INFO_MAX_AT_PARAMS_RSP
+	int "Maximum number of response parameters"
+	default 8
+	help
+		Set the maximum number of parameters the parser
+		will check for in any given string.
+
+config MODEM_INFO_BUFFER_SIZE
+	int "Size of buffer used to read data from the socket"
+	default 128
+	help
+		Set the size of the buffer that contains the returned
+		string after an AT command. The buffer is processed
+		through the parser.
+
+config MODEM_INFO_SOCKET_BUF_SIZE
+	int "LI socket Rx buffer size"
+	default 328
+
+config MODEM_INFO_THREAD_PRIO
+	# Hidden option for preemptive LTE LI thread priority
+	int
+	range 0 NUM_PREEMPT_PRIORITIES
+	default 0 if !MULTITHREADING
+	default 9
+
+endif # MODEM_INFO
