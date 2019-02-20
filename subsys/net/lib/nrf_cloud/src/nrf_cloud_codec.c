@@ -39,6 +39,8 @@ static const char * const sensor_type_str[] = {
 	[NRF_CLOUD_SENSOR_HUMID] = "HUMID",
 	[NRF_CLOUD_SENSOR_AIR_PRESS] = "AIR_PRESS",
 	[NRF_CLOUD_SENSOR_AIR_QUAL] = "AIR_QUAL",
+	[NRF_CLOUD_LTE_LINK_RSRP] = "RSRP",
+	[NRF_CLOUD_DEVICE_INFO] = "DEVICE",
 };
 
 static const struct ua_encode_info ua_encode_info[] = {

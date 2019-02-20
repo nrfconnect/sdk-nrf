@@ -69,7 +69,10 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_SENSOR_AIR_PRESS,
 	/** The Air Quality sensor on the device. */
 	NRF_CLOUD_SENSOR_AIR_QUAL,
-
+	/** The RSPR data obtained from the modem. */
+	NRF_CLOUD_LTE_LINK_RSRP,
+	/** The descriptive DEVICE data indicating its status. */
+	NRF_CLOUD_DEVICE_INFO,
 };
 
 /** @brief User input sequence values for user association type
