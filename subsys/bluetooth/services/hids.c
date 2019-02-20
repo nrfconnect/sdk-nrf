@@ -113,7 +113,7 @@ static bool hids_is_notification_enabled(struct bt_conn *conn,
 {
 	const bt_addr_le_t *conn_addr = bt_conn_get_dst(conn);
 
-	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
+	for (size_t i = 0; i < BT_GATT_CCC_MAX; i++) {
 		bt_addr_le_t *ccd_addr = &ccd[i].peer;
 
 		if ((!memcmp(conn_addr, ccd_addr, sizeof(bt_addr_le_t))) &&
