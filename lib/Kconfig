@@ -12,4 +12,6 @@ rsource "at_host/Kconfig"
 
 rsource "dk_buttons_and_leds/Kconfig"
 
+rsource "at_cmd_parser/Kconfig"
+
 endmenu
