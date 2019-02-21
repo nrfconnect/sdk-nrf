@@ -8,15 +8,13 @@
 # Rules change the permissions to 0666 (world readable/writable) for specified
 # device on Linux systems.
 
-# Note that for kernels before 2.6.24, you must
-# substitute "usb" with "usb_device". It is recommended to use two lines
-# (one each way) for compatibility with older systems.
+### Mouse
+# HIDAPI + libusb/hidraw
+ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52de", MODE="0666", SYMLINK+="nrf52-desktop-mouse"
 
-# HIDAPI/libusb
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52de", MODE="0666", SYMLINK+="desktop-mouse-usb"
-
-# HIDAPI/hidraw
-KERNEL=="hidraw*", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52de", MODE="0666", SYMLINK+="desktop-mouse-hidraw"
+### Dongle
+# HIDAPI + libusb/hidraw
+ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52dc", MODE="0666", SYMLINK+="nrf52-desktop-dongle"
 
 # Note that the hexadecimal values for VID and PID are case sensitive and
 # must be lower case.
