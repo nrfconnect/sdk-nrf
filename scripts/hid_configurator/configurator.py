@@ -6,8 +6,9 @@ import argparse
 import logging
 
 REPORT_ID = 4
-MOUSE_VID = 0x1915
+NORDIC_VID = 0x1915
 MOUSE_PID = 0x52DE
+DONGLE_PID = 0x52DC
 
 
 class ConfigEventID(Enum):
@@ -26,7 +27,7 @@ def create_report(recipient, event_id, value):
     """ Function creating a HID feature report with 32-bit unsigned value.
         Recipient is a device product ID. """
 
-    data = struct.pack('<BBHI', REPORT_ID, recipient, event_id, value)
+    data = struct.pack('<BHBI', REPORT_ID, recipient, event_id, value)
     return data
 
 
@@ -48,9 +49,13 @@ def configurator():
                              'mode to Rest 3 mode')
     args = parser.parse_args()
 
-    # Open HID device
-    dev = hid.Device(vid=MOUSE_VID, pid=MOUSE_PID)
-    logging.debug('Opened device')
+    # Open HID device. If mouse is not connected, try dongle
+    try:
+        dev = hid.Device(vid=NORDIC_VID, pid=MOUSE_PID)
+        logging.info("Opened nRF52 Desktop Mouse")
+    except hid.HIDException:
+        dev = hid.Device(vid=NORDIC_VID, pid=DONGLE_PID)
+        logging.info("Opened nRF52 Desktop Dongle")
 
     if (args.cpi):
         name = 'CPI'
