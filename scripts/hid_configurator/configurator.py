@@ -22,10 +22,11 @@ def check_range(value, lower, upper, value_name):
         raise ValueError('{} {} out of range'.format(value_name, value))
 
 
-def create_report(event_id, value):
-    """ Function creating a HID feature report with 32-bit unsigned value """
+def create_report(recipient, event_id, value):
+    """ Function creating a HID feature report with 32-bit unsigned value.
+        Recipient is a device product ID. """
 
-    data = struct.pack('<BBI', REPORT_ID, event_id, value)
+    data = struct.pack('<BBHI', REPORT_ID, recipient, event_id, value)
     return data
 
 
@@ -57,7 +58,8 @@ def configurator():
         check_range(value, 100, 12000, name)
 
         event_id = ConfigEventID.MOUSE_CPI.value
-        data = create_report(event_id, value)
+        recipient = MOUSE_PID
+        data = create_report(recipient, event_id, value)
 
         # Send configuration report
         dev.send_feature_report(data)
@@ -69,7 +71,8 @@ def configurator():
         check_range(value, 10, 2550, name)
 
         event_id = ConfigEventID.DOWNSHIFT_RUN.value
-        data = create_report(event_id, value)
+        recipient = MOUSE_PID
+        data = create_report(recipient, event_id, value)
 
         # Send configuration report
         dev.send_feature_report(data)
@@ -81,7 +84,8 @@ def configurator():
         check_range(value, 320, 81600, name)
 
         event_id = ConfigEventID.DOWNSHIFT_REST1.value
-        data = create_report(event_id, value)
+        recipient = MOUSE_PID
+        data = create_report(recipient, event_id, value)
 
         # Send configuration report
         dev.send_feature_report(data)
@@ -93,7 +97,8 @@ def configurator():
         check_range(value, 3200, 816000, name)
 
         event_id = ConfigEventID.DOWNSHIFT_REST2.value
-        data = create_report(event_id, value)
+        recipient = MOUSE_PID
+        data = create_report(recipient, event_id, value)
 
         # Send configuration report
         dev.send_feature_report(data)
