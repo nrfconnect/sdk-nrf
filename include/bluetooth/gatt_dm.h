@@ -302,7 +302,13 @@ int bt_gatt_dm_data_release(struct bt_gatt_dm *dm);
  *
  * @param[in] dm Discovery Manager instance
  */
+#ifdef CONFIG_BT_GATT_DM_DATA_PRINT
 void bt_gatt_dm_data_print(const struct bt_gatt_dm *dm);
+#else
+static inline void bt_gatt_dm_data_print(const struct bt_gatt_dm *dm)
+{
+}
+#endif
 
 #ifdef __cplusplus
 }

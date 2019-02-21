@@ -18,10 +18,8 @@ config BT_GATT_DM_MAX_MEM_CHUNKS
 	  Maximum number of allocated memory blocks containing GATT attribute data.
 
 config BT_GATT_DM_DATA_PRINT
-	bool
-	prompt "Enable functions for printing discovery related data"
-	default y
-	select BT_DEBUG
+	bool "Enable functions for printing discovery related data"
+	depends on BT_DEBUG
 	help
 	  Enable functions for printing discovery related data
 
