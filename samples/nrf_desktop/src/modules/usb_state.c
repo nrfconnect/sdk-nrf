@@ -55,9 +55,9 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 
 			struct config_event *event = new_config_event();
 
-			event->id = buffer[1];
-			memcpy(event->data, &(buffer[2]), sizeof(event->data));
-			event->store_needed = true;
+			memcpy(&event->recipient, &(buffer[1]), sizeof(event->recipient));
+			event->id = buffer[3];
+			memcpy(event->data, &(buffer[4]), sizeof(event->data));
 
 			EVENT_SUBMIT(event);
 		}

@@ -17,6 +17,7 @@
 #include "hid_event.h"
 #include "ble_event.h"
 #include "usb_event.h"
+#include "config_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
@@ -148,6 +149,19 @@ static int assign_handles(struct bt_gatt_dm *dm)
 	return err;
 }
 
+void hidc_write_cb(struct bt_gatt_hids_c *hidc,
+		      struct bt_gatt_hids_c_rep_info *rep,
+		      u8_t err)
+{
+	if (err) {
+		LOG_WRN("Failed to write report via HIDS: %d", err);
+	} else {
+		struct config_sent_event *event = new_config_sent_event();
+
+		EVENT_SUBMIT(event);
+	}
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
@@ -233,6 +247,46 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		if (is_config_event(eh)) {
+			struct config_event *event = cast_config_event(eh);
+
+			/* Do not forward events addressed to current device */
+			if (event->recipient == CONFIG_USB_DEVICE_PID) {
+				return false;
+			}
+
+			if (!bt_gatt_hids_c_ready_check(&hidc)) {
+				LOG_WRN("Cannot forward, peer disconnected");
+				return false;
+			}
+
+			struct bt_gatt_hids_c_rep_info *config_rep =
+				bt_gatt_hids_c_rep_find(&hidc,
+					BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
+					REPORT_ID_USER_CONFIG);
+			if (config_rep == NULL) {
+				LOG_ERR("Feature report not found");
+				return false;
+			}
+
+			u8_t data[REPORT_SIZE_USER_CONFIG];
+
+			memcpy(&(data[0]), &event->recipient, sizeof(event->recipient));
+			data[2] = event->id;
+			memcpy(&(data[3]), event->data, sizeof(event->data));
+
+			int err = bt_gatt_hids_c_rep_write(&hidc, config_rep,
+					hidc_write_cb, data, sizeof(data));
+			if (err) {
+				LOG_ERR("Writing report failed, err:%d", err);
+				return false;
+			}
+
+			return false;
+		}
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -245,3 +299,6 @@ EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+EVENT_SUBSCRIBE(MODULE, config_event);
+#endif

@@ -168,9 +168,14 @@ static void feature_report_handler(struct bt_gatt_hids_rep const *rep,
 
 		struct config_event *event = new_config_event();
 
-		event->id = rep->data[0];
-		memcpy(event->data, &(rep->data[1]), sizeof(event->data));
-		event->store_needed = true;
+		memcpy(&event->recipient, &(rep->data[0]), sizeof(event->recipient));
+		if (event->recipient != CONFIG_USB_DEVICE_PID) {
+			LOG_DBG("Drop event addressed to %u", event->recipient);
+			k_free(event);
+		}
+
+		event->id = rep->data[2];
+		memcpy(event->data, &(rep->data[3]), sizeof(event->data));
 
 		EVENT_SUBMIT(event);
 	}

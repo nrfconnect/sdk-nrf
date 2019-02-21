@@ -34,16 +34,15 @@ enum config_event_id {
 	CONFIG_EVENT_ID_MAX
 };
 
-
 /** @brief Configuration channel event.
  * Used to change firmware parameters at runtime.
  */
 struct config_event {
 	struct event_header header;
 
+	u16_t recipient;
 	enum config_event_id id;
 	u8_t data[REPORT_SIZE_USER_CONFIG - 1];
-	bool store_needed;
 };
 
 EVENT_TYPE_DECLARE(config_event);
