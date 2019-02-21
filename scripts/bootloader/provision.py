@@ -71,6 +71,11 @@ def get_hashes(public_key_files):
         with open(fn, 'rb') as f:
             hashes.append(sha256(VerifyingKey.from_pem(f.read()).to_string()).digest()[:16])
         verbose_print("hash: " + hashes[-1].hex())
+
+    if len(hashes) != len(set(hashes)):
+        raise RuntimeError("Duplicate public key found. Note that the public key corresponding to the private"
+                           "key used for signing is automatically added, and must not be added explicitly.")
+
     return hashes
 
 
