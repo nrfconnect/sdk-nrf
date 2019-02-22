@@ -22,6 +22,8 @@
 
 .. _`nrfxlib`: https://github.com/NordicPlayground/nrfxlib
 
+.. _`change log`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/wiki/Changelog
+
 
 
 .. ### Links to Nordic documentation
