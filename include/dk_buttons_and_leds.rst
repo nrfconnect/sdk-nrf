@@ -11,7 +11,7 @@ You can pass a callback function during initialization.
 This function is then called every time the button state changes.
 
 If you want to control the LEDs on the board, initialize the library with :cpp:func:`dk_leds_init`.
-You can then set the value of single LEDs, or set all of them to a state specified through bitmasks.
+You can then set the value of a single LED, or set all of them to a state specified through bitmasks.
 
 API documentation
 *****************
