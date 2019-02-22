@@ -49,6 +49,13 @@ static const char status2[] = "+CEREG:1";
 static const char status3[] = "+CEREG: 5";
 static const char status4[] = "+CEREG:5";
 
+#if defined(CONFIG_LTE_PDP_CMD) && defined(CONFIG_LTE_PDP_CONTEXT)
+static const char cgdcont[] = "AT+CGDCONT="CONFIG_LTE_PDP_CONTEXT;
+#endif
+#if defined(CONFIG_LTE_LEGACY_PCO_MODE)
+static const char legacy_pco[] = "AT%XEPCO=0";
+#endif
+
 static int at_cmd(int fd, const char *cmd, size_t size)
 {
 	int len;
@@ -107,6 +114,22 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 		return err;
 	}
 #endif
+#if defined(CONFIG_LTE_LEGACY_PCO_MODE)
+	err = at_cmd(at_socket_fd, legacy_pco, AT_CMD_SIZE(legacy_pco));
+	if (err) {
+		close(at_socket_fd);
+		return err;
+	}
+	LOG_INF("Using legacy LTE PCO mode...");
+#endif
+#if defined(CONFIG_LTE_PDP_CMD)
+	err = at_cmd(at_socket_fd, cgdcont, AT_CMD_SIZE(cgdcont));
+	if (err) {
+		close(at_socket_fd);
+		return err;
+	}
+	LOG_INF("PDP Context: %s", cgdcont);
+#endif
 	err = at_cmd(at_socket_fd, normal, AT_CMD_SIZE(normal));
 	if (err) {
 		close(at_socket_fd);
@@ -126,6 +149,7 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 				break;
 			}
 		}
+		k_sleep(K_MSEC(10));
 	}
 
 	close(at_socket_fd);

@@ -69,7 +69,23 @@ config LTE_EDRX_REQ_VALUE
 		Extended DRX parameters information element.
 		See 3GPP TS 24.008, subclause 10.5.5.32.
 
+config LTE_LEGACY_PCO_MODE
+	bool "Enable legacy LTE Protocol Configuration Options mode"
+
+config LTE_PDP_CMD
+	bool "Enable Packet Data Protocol AT command"
+
+config LTE_PDP_CONTEXT
+	string "Packet Data Protocol Context"
+	depends on LTE_PDP_CMD
+	default "0,\"IPv4v6\",\"internet.apn\""
+	help
+		The +CGDCONT command defines Packet Data Protocol (PDP) Context.
+		For reference, see 3GPP 27.007 Ch. 10.1.1
+
+
 module = LTE_LINK_CONTROL
+module-dep = LOG
 module-str = LTE link control library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
