@@ -52,8 +52,8 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* ``include/nfc/ndef/nfc_ndef_msg.h``
-* ``include/nfc/ndef/nfc_text_rec.h``
+* :ref:`nfc_ndef_msg`
+* :ref:`nfc_text`
 
 In addition, it uses the Type 2 Tag library from nrfxlib:
 

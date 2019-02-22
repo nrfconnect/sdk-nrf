@@ -62,7 +62,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* ``include/nfc/ndef/nfc_uri_msg.h``
+* :ref:`nfc_uri`
 
 In addition, it uses the Type 4 Tag library from nrfxlib:
 
