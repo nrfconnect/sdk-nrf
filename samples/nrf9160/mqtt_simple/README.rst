@@ -36,7 +36,7 @@ Note that you must program two different applications as described in the follow
 Programming the sample
 ======================
 
-When you connect the nRF9160 development kit to your computer, you must first make sure that the :ref:`secure_boot` sample is programmed:
+When you connect the nRF9160 DK board to your computer, you must first make sure that the :ref:`secure_boot` sample is programmed:
 
 1. Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller.
 #. Build the :ref:`secure_boot` sample and program it.
