@@ -37,7 +37,7 @@ manifest:
       revision: 745326266d9c32ba3aa67d5af1f727059d9a88e3
     - name: fw-nrfconnect-mcuboot
       path: mcuboot
-      revision: d75212468ce0f88ed57a4aacac8aa07cc8a725bc
+      revision: 59fde9c792bfaa36887c860fb8cd0ca1f1bc4db5
     - name: nrfxlib
       path: nrfxlib
       revision: f1c37d3c78062ec517c2db303cad5a2a2d98c347
