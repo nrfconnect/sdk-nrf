@@ -256,8 +256,9 @@ Setting up the build environment
 ********************************
 
 If you want to build and program your applications from the command line, you must set up your build environment by defining the required environment variables every time you open a new |bash|.
+If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming>`, you can skip this step.
 
-To do so, navigate to the ``ncs`` folder and enter the following command: |envfile|
+To define the environment variables, navigate to the ``ncs`` folder and enter the following command: |envfile|
 
 If you need to define additional environment variables, create the file |rcfile| and add the variables there.
 This file is loaded automatically when you run the above command.
