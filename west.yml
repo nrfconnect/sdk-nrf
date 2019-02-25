@@ -40,7 +40,7 @@ manifest:
       revision: d75212468ce0f88ed57a4aacac8aa07cc8a725bc
     - name: nrfxlib
       path: nrfxlib
-      revision: c6a97f729d10ef12e4def970727db1aa4eff4f39
+      revision: 68e3ad894778a5b0ae3d8b525bd3b48abaf7626c
 
   self:
     path: nrf
