@@ -149,16 +149,23 @@ static int assign_handles(struct bt_gatt_dm *dm)
 	return err;
 }
 
+void notify_config_forwarded(enum forward_status status)
+{
+	struct config_forwarded_event *event = new_config_forwarded_event();
+
+	event->status = status;
+	EVENT_SUBMIT(event);
+}
+
 void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 		      struct bt_gatt_hids_c_rep_info *rep,
 		      u8_t err)
 {
 	if (err) {
-		LOG_WRN("Failed to write report via HIDS: %d", err);
+		LOG_WRN("Failed to write report: %d", err);
+		notify_config_forwarded(FORWARD_STATUS_WRITE_ERROR);
 	} else {
-		struct config_sent_event *event = new_config_sent_event();
-
-		EVENT_SUBMIT(event);
+		notify_config_forwarded(FORWARD_STATUS_SUCCESS);
 	}
 }
 
@@ -248,16 +255,11 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		if (is_config_event(eh)) {
-			struct config_event *event = cast_config_event(eh);
-
-			/* Do not forward events addressed to current device */
-			if (event->recipient == CONFIG_USB_DEVICE_PID) {
-				return false;
-			}
-
+		if (is_config_forward_event(eh)) {
 			if (!bt_gatt_hids_c_ready_check(&hidc)) {
 				LOG_WRN("Cannot forward, peer disconnected");
+
+				notify_config_forwarded(FORWARD_STATUS_DISCONNECTED_ERROR);
 				return false;
 			}
 
@@ -265,22 +267,26 @@ static bool event_handler(const struct event_header *eh)
 				bt_gatt_hids_c_rep_find(&hidc,
 					BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
 					REPORT_ID_USER_CONFIG);
-			if (config_rep == NULL) {
+			if (!config_rep) {
 				LOG_ERR("Feature report not found");
+				notify_config_forwarded(FORWARD_STATUS_WRITE_ERROR);
 				return false;
 			}
 
+			const struct config_forward_event *event = cast_config_forward_event(eh);
+
 			u8_t data[REPORT_SIZE_USER_CONFIG];
 
-			memcpy(&(data[0]), &event->recipient, sizeof(event->recipient));
-			data[2] = event->id;
-			memcpy(&(data[3]), event->data, sizeof(event->data));
+			memcpy(&data[0], &event->recipient, sizeof(event->recipient));
+			data[sizeof(event->recipient)] = event->id;
+			memcpy(&data[sizeof(event->recipient) + sizeof(event->id)],
+				event->data, sizeof(event->data));
 
 			int err = bt_gatt_hids_c_rep_write(&hidc, config_rep,
 					hidc_write_cb, data, sizeof(data));
 			if (err) {
 				LOG_ERR("Writing report failed, err:%d", err);
-				return false;
+				notify_config_forwarded(FORWARD_STATUS_WRITE_ERROR);
 			}
 
 			return false;
@@ -300,5 +306,5 @@ EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE(MODULE, config_event);
+EVENT_SUBSCRIBE(MODULE, config_forward_event);
 #endif

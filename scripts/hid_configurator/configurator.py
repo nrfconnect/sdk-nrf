@@ -1,14 +1,20 @@
 import hid
 import struct
+import time
 from enum import Enum
 
 import argparse
 import logging
 
 REPORT_ID = 4
+REPORT_SIZE = 8
+
 NORDIC_VID = 0x1915
 MOUSE_PID = 0x52DE
 DONGLE_PID = 0x52DC
+
+POLL_INTERVAL = 0.5
+POLL_MAX = 5
 
 
 class ConfigEventID(Enum):
@@ -16,6 +22,12 @@ class ConfigEventID(Enum):
     DOWNSHIFT_RUN = 1
     DOWNSHIFT_REST1 = 2
     DOWNSHIFT_REST2 = 3
+
+class ConfigForwardStatus(Enum):
+	PENDING = 0
+	SUCCESS = 1
+	WRITE_ERROR = 2
+	DISCONNECTED_ERROR = 3
 
 
 def check_range(value, lower, upper, value_name):
@@ -28,7 +40,37 @@ def create_report(recipient, event_id, value):
         Recipient is a device product ID. """
 
     data = struct.pack('<BHBI', REPORT_ID, recipient, event_id, value)
+    assert(len(data) == REPORT_SIZE)
     return data
+
+
+def write_feature_with_check(dev, data):
+    feat_ready = ConfigForwardStatus(ConfigForwardStatus.PENDING)
+    retries = 0
+
+    while not feat_ready in (ConfigForwardStatus.SUCCESS, ConfigForwardStatus.DISCONNECTED_ERROR):
+        dev.send_feature_report(data)
+
+        time.sleep(POLL_INTERVAL)
+
+        # Checking is useful when we write to USB dongle which forward configuration via BLE.
+        response = dev.get_feature_report(REPORT_ID, REPORT_SIZE)
+        feat_ready = ConfigForwardStatus(int.from_bytes(response, byteorder='little'))
+
+        if feat_ready == ConfigForwardStatus.SUCCESS:
+            logging.info('Success {}, retries {}'.format(feat_ready, retries))
+        elif feat_ready == ConfigForwardStatus.DISCONNECTED_ERROR:
+            logging.warning('Device disconnected, dongle cannot forward.')
+            return
+        else:
+            # BLE write may fail if the requests from USB come too often. In such case, we retry.
+            logging.info('Config event lost, retry...')
+
+        retries += 1
+
+        if (retries >= POLL_MAX):
+            logging.error('Failed, too many retries')
+            return
 
 
 def configurator():
@@ -57,19 +99,6 @@ def configurator():
         dev = hid.Device(vid=NORDIC_VID, pid=DONGLE_PID)
         logging.info("Opened nRF52 Desktop Dongle")
 
-    if (args.cpi):
-        name = 'CPI'
-        value = args.cpi
-        check_range(value, 100, 12000, name)
-
-        event_id = ConfigEventID.MOUSE_CPI.value
-        recipient = MOUSE_PID
-        data = create_report(recipient, event_id, value)
-
-        # Send configuration report
-        dev.send_feature_report(data)
-        logging.debug('Sent request to update {}: {}'.format(name, value))
-
     if (args.downshift_run):
         name = 'Downshift run time'
         value = args.downshift_run
@@ -79,9 +108,8 @@ def configurator():
         recipient = MOUSE_PID
         data = create_report(recipient, event_id, value)
 
-        # Send configuration report
-        dev.send_feature_report(data)
-        logging.debug('Sent request to update {}: {}'.format(name, value))
+        logging.debug('Send request to update {}: {}'.format(name, value))
+        write_feature_with_check(dev, data)
 
     if (args.downshift_rest1):
         name = 'Downshift rest1 time'
@@ -92,9 +120,8 @@ def configurator():
         recipient = MOUSE_PID
         data = create_report(recipient, event_id, value)
 
-        # Send configuration report
-        dev.send_feature_report(data)
-        logging.debug('Sent request to update {}: {}'.format(name, value))
+        logging.debug('Send request to update {}: {}'.format(name, value))
+        write_feature_with_check(dev, data)
 
     if (args.downshift_rest2):
         name = 'Downshift rest2 time'
@@ -105,10 +132,20 @@ def configurator():
         recipient = MOUSE_PID
         data = create_report(recipient, event_id, value)
 
-        # Send configuration report
-        dev.send_feature_report(data)
-        logging.debug('Sent request to update {}: {}'.format(name, value))
+        logging.debug('Send request to update {}: {}'.format(name, value))
+        write_feature_with_check(dev, data)
 
+    if (args.cpi):
+        name = 'CPI'
+        value = args.cpi
+        check_range(value, 100, 12000, name)
+
+        event_id = ConfigEventID.MOUSE_CPI.value
+        recipient = MOUSE_PID
+        data = create_report(recipient, event_id, value)
+
+        logging.debug('Send request to update {}: {}'.format(name, value))
+        write_feature_with_check(dev, data)
 
 if __name__ == '__main__':
     configurator()

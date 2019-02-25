@@ -59,7 +59,7 @@ static int settings_set(int argc, char **argv, void *val_ctx)
 		loaded_data[id] = new_config_event();
 		loaded_data[id]->id = id;
 		/* Do not store nor forward loaded config to other devices */
-		loaded_data[id]->recipient = 0;
+		loaded_data[id]->store_needed = false;
 	}
 
 	int len = settings_val_read_cb(val_ctx, loaded_data[id]->data,
@@ -208,11 +208,10 @@ static bool event_handler(const struct event_header *eh)
 		if (is_config_event(eh)) {
 			struct config_event *event = cast_config_event(eh);
 
-			/* Do not store events addressed to other devices.
-			 * Accept only events coming from transport. Do not
+			/* Accept only events coming from transport. Do not
 			 * write already stored information.
 			 */
-			if (event->recipient == CONFIG_USB_DEVICE_PID) {
+			if (event->store_needed) {
 				update_config(event->id, event->data,
 					      sizeof(event->data));
 			}

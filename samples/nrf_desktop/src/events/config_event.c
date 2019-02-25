@@ -34,3 +34,13 @@ EVENT_TYPE_DEFINE(config_event,
 		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_CONFIG_EVENT),
 		  log_config_event,
 		  &config_event_info);
+
+EVENT_TYPE_DEFINE(config_forward_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_CONFIG_EVENT),
+		  NULL,
+		  NULL);
+
+EVENT_TYPE_DEFINE(config_forwarded_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_CONFIG_EVENT),
+		  NULL,
+		  NULL);

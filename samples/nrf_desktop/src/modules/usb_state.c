@@ -28,8 +28,31 @@ static enum usb_state state;
 static u8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
 
+static atomic_t forward_status;
+
 static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		u8_t request_value[2];
+		sys_put_le16(setup->wValue, request_value);
+
+		if (request_value[1] == 0x03) {
+			/* Request for feature report */
+			if (request_value[0] == REPORT_ID_USER_CONFIG) {
+				static u8_t status;
+
+				status = atomic_get(&forward_status);
+				*len = sizeof(status);
+				*data = (u8_t *)(&status);
+
+				return 0;
+			} else {
+				LOG_WRN("Unsupported report ID");
+				return -ENOTSUP;
+			}
+		}
+	}
+
 	*len  = hid_report_desc_size;
 	*data = (u8_t *)hid_report_desc;
 
@@ -53,13 +76,46 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 				return -ENOTSUP;
 			}
 
-			struct config_event *event = new_config_event();
+			u16_t recipient = sys_get_le16(&buffer[1]);
 
-			memcpy(&event->recipient, &(buffer[1]), sizeof(event->recipient));
-			event->id = buffer[3];
-			memcpy(event->data, &(buffer[4]), sizeof(event->data));
+			if (recipient == CONFIG_USB_DEVICE_PID) {
+				/* Event intended for this device */
+				struct config_event *event = new_config_event();
 
-			EVENT_SUBMIT(event);
+				static_assert(REPORT_SIZE_USER_CONFIG >=
+					(sizeof(event->id) +
+					sizeof(event->data)),
+					"Incorrect report size");
+
+				event->id = buffer[1 + sizeof(recipient)];
+				memcpy(event->data,
+				       &buffer[1 + sizeof(recipient) + sizeof(event->id)],
+				       sizeof(event->data));
+				event->store_needed = true;
+
+				atomic_set(&forward_status, FORWARD_STATUS_SUCCESS);
+
+				EVENT_SUBMIT(event);
+			} else {
+				/* Forward event */
+				struct config_forward_event *event = new_config_forward_event();
+
+				static_assert(REPORT_SIZE_USER_CONFIG >=
+					(sizeof(event->recipient) +
+					sizeof(event->id) +
+					sizeof(event->data)),
+					"Incorrect report size");
+
+				event->recipient = recipient;
+				event->id = buffer[1 + sizeof(event->recipient)];
+				memcpy(event->data,
+				       &buffer[1 + sizeof(event->recipient) + sizeof(event->id)],
+				       sizeof(event->data));
+
+				atomic_set(&forward_status, FORWARD_STATUS_PENDING);
+
+				EVENT_SUBMIT(event);
+			}
 		}
 	}
 
@@ -304,6 +360,17 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		if (is_config_forwarded_event(eh)) {
+			struct config_forwarded_event *event =
+				cast_config_forwarded_event(eh);
+
+			atomic_set(&forward_status, event->status);
+
+			return false;
+		}
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -312,3 +379,6 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+EVENT_SUBSCRIBE(MODULE, config_forwarded_event);
+#endif
