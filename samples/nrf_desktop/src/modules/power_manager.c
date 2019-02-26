@@ -7,7 +7,6 @@
 #include <zephyr/types.h>
 #include <power.h>
 
-#include <soc_power.h>
 #include <nrf_power.h>
 #include <device.h>
 #include <gpio.h>
@@ -36,7 +35,6 @@ enum power_state {
 	POWER_STATE_IDLE,
 	POWER_STATE_SUSPENDING,
 	POWER_STATE_SUSPENDED,
-	POWER_STATE_TURN_OFF,
 	POWER_STATE_OFF,
 	POWER_STATE_WAKEUP
 };
@@ -110,31 +108,6 @@ static void create_device_list(struct device_list *dl)
 	dl->count = dcount;
 }
 
-enum power_states sys_suspend(s32_t ticks)
-{
-	if ((ticks != K_FOREVER) && (ticks < MSEC(100))) {
-		return SYS_POWER_STATE_ACTIVE;
-	}
-
-	if (power_state == POWER_STATE_TURN_OFF) {
-		LOG_WRN("System turned off");
-		LOG_PANIC();
-
-		power_state = POWER_STATE_OFF;
-
-		sys_pm_idle_exit_notification_disable();
-		suspend_devices(&device_list);
-		sys_set_power_state(SYS_POWER_STATE_DEEP_SLEEP);
-
-		/* System is off here - wake up leads to reboot. */
-		__ASSERT_NO_MSG(false);
-
-		return SYS_POWER_STATE_DEEP_SLEEP;
-	}
-
-	return SYS_POWER_STATE_ACTIVE;
-}
-
 static void power_down(struct k_work *work)
 {
 	__ASSERT_NO_MSG(!usb_connected);
@@ -154,6 +127,11 @@ static void power_down(struct k_work *work)
 	}
 }
 
+enum power_states sys_pm_policy_next_state(s32_t ticks)
+{
+	return SYS_POWER_STATE_ACTIVE;
+}
+
 static void system_off(void)
 {
 	/* Port events are needed to leave system off state. */
@@ -165,8 +143,15 @@ static void system_off(void)
 	 */
 	__DSB();
 
-	/* System will go off on next idle cycle. */
-	power_state = POWER_STATE_TURN_OFF;
+	/* System will go off now. */
+	power_state = POWER_STATE_OFF;
+
+	LOG_WRN("System turned off");
+	LOG_PANIC();
+
+	suspend_devices(&device_list);
+
+	sys_pm_force_power_state(SYS_POWER_STATE_DEEP_SLEEP_1);
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -181,7 +166,6 @@ static bool event_handler(const struct event_header *eh)
 			break;
 		case POWER_STATE_SUSPENDING:
 		case POWER_STATE_SUSPENDED:
-		case POWER_STATE_TURN_OFF:
 			break;
 		case POWER_STATE_OFF:
 		default:
@@ -307,6 +291,8 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			LOG_INF("Activate power manager");
+
+			sys_pm_force_power_state(SYS_POWER_STATE_ACTIVE);
 
 			create_device_list(&device_list);
 
