@@ -88,9 +88,15 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 
 	len = httpc_recv(dfu->fd, dfu->resp_buf, sizeof(dfu->resp_buf),MSG_PEEK);
 	if (len ==  -1) {
-		dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, 0);
+		dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, ENOTCONN);
 		return;
 	}
+    if (len ==  0) {
+		dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, ECONNRESET);
+		return;
+	}
+
+	LOG_INF("Received response of size %d", len);
 
 	int payload_size = 0;
 	int total_size = 0;
