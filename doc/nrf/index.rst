@@ -25,6 +25,7 @@ Documentation for different versions of the |NCS| is available at the following 
    getting_started
    user_guides
    examples
+   drivers
    libraries
    reference/kconfig/index
 

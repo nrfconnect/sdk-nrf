@@ -22,7 +22,7 @@ extern "C" {
 /** @defgroup st25r3911b_direct_command Direct command
  * @{
  *
- * @brief ST25R3911B direct command defined in IC documentation chapter 1.1
+ * @brief ST25R3911B direct command defined in IC documentation chapter 1.1.
  */
 #define ST25R3911B_CMD_SET_DEFAULT 0xC1
 #define ST25R3911B_CMD_CLEAR 0xC2
@@ -63,8 +63,8 @@ extern "C" {
 /** @defgroup st25r3911b_reg Registers
  * @{
  *
- * @brief The 6 - bit register addresses, defined in IC documentation
- *        chapter 1.3
+ * @brief The 6-bit register addresses, defined in IC documentation
+ *        chapter 1.3.
  */
 #define ST25R3911B_REG_IO_CONF1 0x00
 #define ST25R3911B_REG_IO_CONF2 0x01
@@ -248,7 +248,7 @@ extern "C" {
  */
 
 /** @defgroup st25r3911b_iso14443b_2_reg ISO14443B and FeliCa
- *            settings Register bits
+ *            settings Register 2 bits
  * @{
  */
 #define	ST25R3911B_REG_ISO14443B_2_F_P0 BIT(0)

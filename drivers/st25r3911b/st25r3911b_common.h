@@ -21,80 +21,75 @@
 extern "C" {
 #endif
 
-/** Max Tx packet length. */
+/** Maximum TX packet length. */
 #define ST25R3911B_MAX_TX_LEN 8191
 
 /** No automatic collision resolution. */
 #define ST25R3911B_NO_THRESHOLD_ANTICOLLISION 0xFF
 
-/** Max RF Collision Avoidance Threshold */
+/** Maximum collision resolution threshold. */
 #define ST25R3911B_MAX_THRESHOLD 0x0F
 
-/** FTD adjustment. */
+/** Frame delay time (FDT) adjustment. */
 #define ST25R3911B_FDT_ADJUST 64
 
-/** Mask Receive timer max FTD. */
+/** Maximum FDT for the Mask Receive timer. */
 #define ST25R3911B_MASK_RECEIVER_MAX_FDT 0xFC0
 
-/** Non-Response Timer max value for step 64/fc. */
+/** No-Response timer maximum value for step 64/fc. */
 #define ST25R3911B_NRT_64FC_MAX 0x3FFFC0
 
-/** Non-Response Timer max FTD in fc. */
+/** Maximum FDT for the No-Response timer (in fc). */
 #define ST25R3911B_NRT_FC_MAX 0x4095BF6A000
 
-/** Fc in 64/fc. */
+/** FC in 64/fc. */
 #define NFC_1FC_IN_64FC 64
 
-/** Fc in 4096/fc. */
+/** FC in 4096/fc. */
 #define NFC_1FC_IN_4096FC 4096
 
-/**
- * @defgroup st25r3911b_leds NFC Technology LEDs
- * @{
- * @brief ST25R3911B Leds pin.
- */
+/** ST25R3911B NFCF LED pin. */
 #define ST25R3911B_NFCF_LED 4
+/** ST25R3911B NFCB LED pin. */
 #define ST25R3911B_NFCB_LED 28
+/** ST25R3911B NFCA LED pin. */
 #define ST25R3911B_NFCA_LED 29
 
-/**
- * @}
- */
 
-/** Conversion FC to 64/FC. Timer register can be set
- *  using using the following formula: register value * 64fc.
+/** Conversion fc to 64/fc. The timer register can be set
+ *  using the following formula: <tt>register value * 64fc</tt>
  */
 #define ST25R3911B_FC_TO_64FC(_fc) \
 	ceiling_fraction((_fc), NFC_1FC_IN_64FC)
 
-/** Conversion FC to 4096/FC. Timer register can be set
- *  using the following formula: register value * 4096fc.
+/** Conversion fc to 4096/fc. The timer register can be set
+ *  using the following formula: <tt>register value * 4096fc</tt>
  */
 #define ST25R3911B_FC_TO_4096FC(_fc) \
 	ceiling_fraction((_fc), NFC_1FC_IN_4096FC)
 
-/** @brief Initialize NFC Reader
+/** @brief Initialize the NFC reader.
  *
- *  @details NFC Reader initialization common for all
- *           NFC technology.
+ *  @details The NFC reader initialization is common for all
+ *  NFC technology.
  *
- *  @return Returns 0 if initialization was successful,
- *          otherwise negative value.
+ *  @retval 0  If the operation was successful.
+ *             Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_init(void);
 
-/** @brief Set NFC Reader Tx packet length.
+/** @brief Set the NFC Reader TX packet length.
  *
- *  @details Maximum packet length is @ref ST25R3911B_MAX_TX_LEN.
+ *  @details The maximum packet length is @ref ST25R3911B_MAX_TX_LEN.
  *
- *  @param[in] len Tx packet length.
+ *  @param[in] len TX packet length.
  *
- *  @return Returns 0 if initialization was successful,
- *          otherwise negative value.
+ *  @retval 0  If the operation was successful.
+ *             Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_tx_len_set(u16_t len);
 
-/** @brief Set NFC Reader Non-Response timer.
+/** @brief Set NFC Reader No-Response timer.
  *
  *  @details This timer is set to verify whether a tag response is received
  *           within the configured time. Time measurement is started at the
@@ -102,63 +97,62 @@ int st25r3911b_tx_len_set(u16_t len);
  *           Digital 2.0 6.10.1.
  *
  *  @param[in] fc         Wait time defined in 64/fc or 4096/fc unit.
- *  @param[in] long_range Long range mode, if set one FTD time is fc x 4096,
- *                        otherwise fc x 64.
- *  @param[in] emv        Emv mode, if set the timer unconditionally
- *                        produces an IRQ when it expires, it is also not
- *                        stopped by direct command Clear. This means that
- *                        IRQ is independent of the fact whether or not a
- *                        tag reply was detected. In case at the moment of
- *                        timeout a tag reply is being processed no other
- *                        action is taken, in the opposite case, when no tag
- *                        response is being processed additionally the
- *                        signal rx_on is forced to low to stop receive
- *                        process. Otherwise when evm mode is not set the
- *                        IRQ is produced in case the No-Response Timer expires
- *                        before a start of a tag reply is detected and rx_on
- *                        is forced to low to stop receiver process. In the
- *                        opposite case, when start of a tag reply is detected
- *                        before timeout, the timer is stopped, and no IRQ is
+ *  @param[in] long_range Long range mode. If this parameter is set, one
+ *                        FDT time is fc * 4096, otherwise fc * 64.
+ *  @param[in] emv        Emv mode. If set, the timer unconditionally
+ *                        produces an IRQ when it expires and is not
+ *                        stopped by a direct command Clear. This means that
+ *                        IRQ is independent of whether a tag reply was
+ *                        detected. If a tag reply is being processed at the
+ *                        moment of time-out, no other action is taken. If no
+ *                        tag response is being processed, the signal rx_on
+ *                        is forced to low to stop the receive process.
+ *                        If emv mode is not set, the
+ *                        IRQ is produced if the No-Response timer expires
+ *                        before a start of a tag reply is detected, and rx_on
+ *                        is forced to low to stop the receiver process. If
+ *                        the start of a tag reply is detected
+ *                        before time-out, the timer is stopped, and no IRQ is
  *                        produced.
  *
- *  @return Returns 0 if setting was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_non_response_timer_set(u16_t fc, bool long_range, bool emv);
 
 /** Set NFC Reader Mask Receive timer.
  *
- *  @details The Mask Receive timer is blocking the receiver and
- *           reception process in framing logic by keeping the Rx
- *           disabled after the end of Tx during the time the tag
- *           reply is not expected. Mask Receive timer is automatically
+ *  @details The Mask Receive timer blocks the receiver and
+ *           reception process in framing logic by keeping the RX
+ *           disabled after the end of TX during the time the tag
+ *           reply is not expected. The Mask Receive timer is automatically
  *           started at the end of transmission (at the end of EOF).
  *           According to NFC Forum Digital 2.0 6.10.1.
  *
- *  @param[in] fc disable time in 64/fc.
+ *  @param[in] fc Disable time in 64/fc.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_mask_receive_timer_set(u32_t fc);
 
-/** @brief Initial RF Collision Avoidance and switch on the NFC Reader
+/** @brief Perform automatic collision resolution and switch on the NFC Reader
  *         field.
  *
- *  @details Perform the RF Collision Avoidance and switch
- *           the field on in case no collision was detected.
+ *  @details Perform automatic collision resolution and switch
+ *           the field on if no collision was detected.
  *           If thresholds are set to
  *           @ref ST25R3911B_NO_THRESHOLD_ANTICOLLISION,
  *           then RF Collision Avoidance will not be performed.
  *
- *  @param[in] collision_threshold Collision avoidance Threshold in mV
- *                                peek-to_peek.
- *  @param[in] peer_threshold Peer detection Threshold in mV peek-to_peek.
- *  @param[in] delay Delay after field on in milliseconds.
- *                   According to NFC Forum Digital 2.0 Guard Time
+ *  @param[in] collision_threshold Collision resolution threshold in mV
+ *                                peek-to-peek.
+ *  @param[in] peer_threshold Peer detection threshold in mV peek-to-peek.
+ *  @param[in] delay Delay after field on in milliseconds,
+ *                   according to NFC Forum Digital 2.0 Guard Time.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_field_on(u8_t collision_threshold, u8_t peer_threshold,
 			u8_t delay);
@@ -173,30 +167,30 @@ int st25r3911b_rx_tx_disable(void);
 /** @brief Get NFC Reader FIFO reload level.
  *
  *  @details The interrupt trigger level for read/write FIFO water level
- *           is configurable so it must be read to read/write FIFO bytes
- *           if necessary. NFC Reader support transfer up to
+ *           is configurable, so it must be read to read/write FIFO bytes
+ *           if necessary. The NFC Reader supports transfer up to
  *           @ref ST25R3911B_MAX_TX_LEN,
  *           but FIFO is only @ref ST25R3911B_MAX_FIFO_LEN bytes.
  *
- *  @param[out] tx_lvl Number of bytes to write to FIFO in case of
- *                     reload needed.
+ *  @param[out] tx_lvl Number of bytes to write to FIFO if a
+ *                     reload is needed.
  *  @param[out] rx_lvl Number of bytes to read to avoid FIFO overflow.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_fifo_reload_lvl_get(u8_t *tx_lvl, u8_t *rx_lvl);
 
-/** @brief Enable/Disable NFC Reader technology led.
+/** @brief Enable/disable NFC Reader technology LED.
  *
- *  @details NFC Reader have a several leds to indicate which
+ *  @details The NFC Reader has several LEDs to indicate which
  *           technology is used.
  *
- *  @param[in] led Led to set @ref st25r3911b_leds.
- *  @param[in] on If set, led is on, otherwise led is off.
+ *  @param[in] led LED to set @ref st25r3911b_leds.
+ *  @param[in] on If set, LED is on, otherwise LED is off.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_technology_led_set(u32_t led, bool on);
 
