@@ -4,9 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <nrf_cloud.h>
-#include <toolchain/common.h>
-
 /* Verify certificate file defines. */
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
