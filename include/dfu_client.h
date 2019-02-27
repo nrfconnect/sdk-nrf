@@ -24,15 +24,17 @@ extern "C" {
 
 struct dfu_client_object;
 
-/**@defgroup dfu_client_target DFU target type.
+/**@defgroup dfu_client_status DFU download status.
  *
- * @brief Firmware upgrade target identification.
+ * @brief Indicates the status of download.
  * @{
  */
-enum dfu_client_target {
-	DFU_CLIENT_TARGET_NETWORK_STACK = 0x01,
-	DFU_CLIENT_TARGET_LWM2M_STACK = 0x02,
-	DFU_CLIENT_TARGET_APPLICATION = 0x03,
+enum dfu_client_status {
+	DFU_CLIENT_STATUS_IDLE      = 0x00,
+	DFU_CLIENT_STATUS_CONNECTED = 0x01,
+	DFU_CLIENT_STATUS_DOWNLOAD_INPROGRESS = 0x02,
+	DFU_CLIENT_STATUS_DOWNLOAD_COMPLETE = 0x03,
+	DFU_CLIENT_STATUS_HALTED = 0x04
 };
 /* @} */
 
@@ -72,16 +74,13 @@ struct dfu_client_object {
 			     	 	 * If negative, download is in progress.
 						 * If zero, the size is unknown.
 				  		 */
-	int download_size;	/**< Size of firmware being downloaded. */
-	int status; 		/**< Status of transfer */
-	u32_t offset;       /**< Offset of the download. */
-	uint8_t current_revision[36]; /**< The current revision of firmware on target.
-				  				   */
+	volatile int download_size;	/**< Size of firmware being downloaded. */
+	volatile int status; 		/**< Status of transfer. Will be one of \ref dfu_client_status. */
 	u32_t available; 	/**< Available resources for firmware download.
 				  		 */
-	enum dfu_client_target target; /**< Target for the firmware upgrade. */
 	u32_t target_state;			   /**< Current state of the target. */
 	const char *host; 			   /**< The server that hosts the firmwares. */
+	const char *resource;          /**< Resource to be downloaded. */
 
 	const dfu_client_event_handler_t callback; /**< Event handler.
 					      						* Shall not be NULL.
