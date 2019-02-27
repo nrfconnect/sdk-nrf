@@ -113,6 +113,8 @@
 
 .. _`ST25R3911B chip documentation`: https://www.st.com/resource/en/datasheet/st25r3911b.pdf
 
+.. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
+
 
 
 .. ### Links to specific files on GitHub
