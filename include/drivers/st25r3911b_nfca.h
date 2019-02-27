@@ -47,7 +47,7 @@ extern "C" {
  * @}
  */
 
-/** @brief NFC-A Tag types
+/** @brief NFC-A Tag types.
  */
 enum st25r3911b_nfca_tag_type {
 	ST25R3911B_NFCA_TAG_TYPE_T2T,
@@ -64,7 +64,7 @@ enum st25r3911b_nfca_detect_cmd {
 	ST25R3911B_NFCA_DETECT_CMD_SENS_REQ
 };
 
-/** @brief NFC-A transceive buffer.
+/** @brief NFC-A transceiver buffer.
  */
 struct st25r3911b_nfca_buf {
 	/** Data to TX/RX. */
@@ -74,17 +74,17 @@ struct st25r3911b_nfca_buf {
 	size_t len;
 };
 
-/** @brief NFC-A SENS Response.
+/** @brief NFC-A SENS response.
  */
 struct st25r3911b_nfca_sens_resp {
 	/** Anticollision data. */
 	u8_t anticollison;
 
-	/** Platform info data.*/
+	/** Platform information data.*/
 	u8_t platform_info;
 };
 
-/** @brief NFC-A Tag information structure.
+/** @brief NFC-A Tag information.
  */
 struct st25r3911b_nfca_tag_info {
 	/** Tag type. */
@@ -93,7 +93,7 @@ struct st25r3911b_nfca_tag_info {
 	/** SENS response.*/
 	struct st25r3911b_nfca_sens_resp sens_resp;
 
-	/** SEL Response. */
+	/** SEL response. */
 	u8_t sel_resp;
 
 	/** NFCID1 length. */
@@ -106,14 +106,14 @@ struct st25r3911b_nfca_tag_info {
 	bool sleep;
 };
 
-/** @brief NFCA_A crc structure.
+/** @brief NFCA_A CRC structure.
  */
 struct st25r3911b_nfca_crc {
 	/** CRC - 16. */
 	u8_t crc[ST25R3911B_NFCA_CRC_LEN];
 };
 
-/** @brief NFC-A callback structure.
+/** @brief NFC-A callback.
  *
  *  This structure is used for tracking and synchronized NFC-A operation.
  */
@@ -130,9 +130,9 @@ struct st25r3911b_nfca_cb {
 
 	/** @brief Tag detected callback.
 	 *
-	 *  The SENS Response is received.
+	 *  The SENS response is received.
 	 *
-	 *  @param sens_resp Response to ALL Request or SENS Request.
+	 *  @param sens_resp Response to ALL request or SENS request.
 	 */
 	void (*tag_detected)(const struct st25r3911b_nfca_sens_resp *sens_resp);
 
@@ -144,113 +144,109 @@ struct st25r3911b_nfca_cb {
 	void (*anticollision_completed)(const struct st25r3911b_nfca_tag_info *tag_info,
 					int err);
 
-	/** @brief NFC-A transceive completed.
+	/** @brief NFC-A transceive operation completed.
 	 *
-	 *  @param data Received data from Tag.
+	 *  @param data Received data from tag.
 	 *  @param len Received data length.
-	 *  @param err Transfer error. If 0, transfer was successful.
+	 *  @param err Transfer error. If 0, the transfer was successful.
 	 */
 	void (*transfer_completed)(const u8_t *data, size_t len, int err);
 
-	/** @brief NFC-A Receive timeout.
+	/** @brief NFC-A receive time-out.
 	 *
-	 *  @param tag_sleep if, set tag is in sleep mode.
+	 *  @param tag_sleep If set, the tag is in sleep mode.
 	 */
 	void (*rx_timeout)(bool tag_sleep);
 };
 
-/** @brief Initialize NFC Reader NFC-A technology
+/** @brief Initialize NFC Reader NFC-A technology.
  *
- *  @details All necessary things will be initialized like
- *           interrupts and common reader functionality.
+ *  @details This function initializes everything that is required,
+ *           like interrupts and common reader functionality.
  *
  *  @param[out] events NFC-A Events.
  *  @param[in] cnt Event count. This driver needs 2 events.
  *  @param[in] cb Callback structure.
  *
- *  @return Returns 0 if initialization was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_nfca_init(struct k_poll_event *events, u8_t cnt,
 			  const struct st25r3911b_nfca_cb *cb);
 
-/** @brief Switch on NFC Reader field.
+/** @brief Switch on the NFC Reader field.
  *
- *  @details If field will be switched on successfully,
- *           then @ref nfca_cb.field_on callback will be
+ *  @details If the field is switched on successfully,
+ *           the @ref nfca_cb.field_on callback is
  *           called.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_nfca_field_on(void);
 
-/** @brief Switch off NFC Reader field.
+/** @brief Switch off the NFC Reader field.
  *
- *  @details If field will be switched off successfully,
- *           then @ref nfca_cb.field_off callback will be
+ *  @details If the field is switched off successfully,
+ *           the @ref nfca_cb.field_off callback is
  *           called.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_nfca_field_off(void);
 
 /** @brief Detect tag by sending a detection command.
  *
- *  @details Command is send according to NFC Forum Digital 2.0
- *           6.6. After success the @ref nfca_cb.tag_detected callback,
- *           will be called.
+ *  @details The command is sent according to NFC Forum Digital 2.0
+ *           6.6. After success, the @ref nfca_cb.tag_detected
+ *           callback is called.
  *
  *  @param cmd Command.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_nfca_tag_detect(enum st25r3911b_nfca_detect_cmd cmd);
 
-/** @brief NFC-A Collision Avoidance procedure.
+/** @brief NFC-A collision resolution procedure.
  *
- *  @details Collision Avoidance procedure describing in
+ *  @details The collision resolution procedure is described in
  *           NFC Forum Activity 2.0 9.4.4. After this
- *           procedure @ref nfca_cb.anticollision_completed will
- *           be called.
+ *           procedure, @ref nfca_cb.anticollision_completed
+ *           is called.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_nfca_anticollision_start(void);
 
-/** @brief Exchange the specified amount of data by NFC reader.
+/** @brief Exchange the specified amount of data.
  *
- *  @details Generic function for NFC-A data exchange.
+ *  @details This is a generic function for NFC-A data exchange.
  *
  *  @param[in] tx TX data buffer.
  *  @param[in,out] rx RX data buffer.
- *  @param[in] fdt Maximum Frame Delay Time. According to NFC Forum Digital 2.0
- *                 6.10.1
- *  @param[in] auto_crc If set, CRC will be generated automatically by Reader.
- *                      Otherwise, CRC have to be added manually to Tx buffer.
- *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @param[in] auto_crc If set, the CRC is generated automatically by the
+ *                      NFC Reader. Otherwise, the CRC must be added
+ *                      manually to the TX buffer.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_nfca_transfer(const struct st25r3911b_nfca_buf *tx,
 			     const struct st25r3911b_nfca_buf *rx,
 			     u32_t fdt, bool auto_crc);
 
-/** @brief Exchange the specified amount of data by NFC reader.
+/** @brief Exchange the specified amount of data with an automatically
+ *         generated CRC.
  *
- *  @details Function for NFC-A data exchange with automatically
- *           generated CRC.
+ *  @param[in] tx TX data buffer.
+ *  @param[in,out] rx RX data buffer.
+ *  @param[in] fdt Maximum frame delay time (according to NFC Forum Digital 2.0
+ *                 6.10.1).
  *
- *  @param[in] tx Transmit data buffer.
- *  @param[in,out] rx Rx data buffer.
- *  @param[in] fdt Maximum Frame Delay Time. According to NFC Forum Digital 2.0
- *                 6.10.1
- *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 static inline int st25r3911b_nfca_transfer_with_crc(const struct st25r3911b_nfca_buf *tx,
 						    const struct st25r3911b_nfca_buf *rx,
@@ -259,18 +255,18 @@ static inline int st25r3911b_nfca_transfer_with_crc(const struct st25r3911b_nfca
 	return st25r3911b_nfca_transfer(tx, rx, fdt, true);
 }
 
-/** @brief Exchange the specified amount of data by NFC reader.
+/** @brief Exchange the specified amount of data with a manually
+ *         generated CRC.
  *
- *  @details Function for NFC-A data exchange with manually
- *           generated CRC. CRC have to be add to the Tx buffer.
+ *  @details The CRC must be added manually to the TX buffer.
  *
- *  @param[in] tx Transmit data buffer.
- *  @param[in,out] rx Rx data buffer.
- *  @param[in] fdt Maximum Frame Delay Time. According to NFC Forum Digital 2.0
- *                 6.10.1
+ *  @param[in] tx TX data buffer.
+ *  @param[in,out] rx RX data buffer.
+ *  @param[in] fdt Maximum frame delay time (according to NFC Forum Digital 2.0
+ *                 6.10.1).
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 static inline int st25r3911b_nfca_transfer_without_crc(const struct st25r3911b_nfca_buf *tx,
 						       const struct st25r3911b_nfca_buf *rx,
@@ -281,19 +277,18 @@ static inline int st25r3911b_nfca_transfer_without_crc(const struct st25r3911b_n
 
 /** @brief Send NFC-A tag sleep command.
  *
- *  @details This function sending tag sleep command.
- *           According to NFC Forum Digital 2.0 6.9
+ *  @details This function sends the tag sleep command
+ *           (according to NFC Forum Digital 2.0 6.9).
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
-
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_nfca_tag_sleep(void);
 
 /** @brief Calculate CRC 16 for NFC-A payload.
  *
- *  @details Generate NFC-A CRC according to NFC Forum Digital 2.0
- *           6.4.1.3.
+ *  @details This function generates an NFC-A CRC (according to
+ *           NFC Forum Digital 2.0 6.4.1.3).
  *
  *  @param[in] data Payload data.
  *  @param[in] len Data length.

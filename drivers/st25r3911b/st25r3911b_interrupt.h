@@ -12,17 +12,17 @@
 
 /**
  * @file
- * @defgroup st25r3911b_interrupts ST25R3911B NFC Reader Interrupts
+ * @defgroup st25r3911b_interrupts ST25R3911B NFC Reader interrupts
  * @{
  *
- * @brief API for the ST25R3911B NFC Reader Interrupts.
+ * @brief API for the ST25R3911B NFC Reader interrupts.
  */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** @defgroup st25r3911b_irq_def ST25R3911B Interrupts Definition
+/** @defgroup st25r3911b_irq_def ST25R3911B interrupts definition
  * @{
  * @brief Interrupts are grouped in three registers.
  */
@@ -59,59 +59,60 @@ extern "C" {
  * @}
  */
 
-/** @brief Initialize NFC Reader interrupts
+/** @brief Initialize NFC Reader interrupts.
  *
- *  @details NFC reader informs about interruptions by
- *           a rising edge on the pin. This function initialize
- *           GPIO interface to handle it.
+ *  @details The NFC Reader informs about interruptions by
+ *           a rising edge on the pin. This function initializes
+ *           the GPIO interface to handle this.
  *
- *  @param[in] irq_sem Semaphore needed to synchronized
+ *  @param[in] irq_sem Semaphore needed to synchronize
  *                     processing interrupts from other context.
  *
- *  @return Returns 0 if initialization was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_irq_init(struct k_sem *irq_sem);
 
 /** @brief Modify NFC Reader interrupts.
  *
- *  @details This function can modify currently enabled interrupts.
- *           The setting mask covers the clearing mask so firstly
- *           interrupts from clear mask are disabled and then interrupts
- *           from set mask are enabled. The mask can be composed of several
- *           interrupts. For example mask = ST25R3911B_IRQ_MASK_PAR |
- *           ST25R3911B_IRQ_MASK_CRC.
- *           Available interrupts @ref st25r3911b_irq_def.
+ *  @details This function modifies the currently enabled interrupts.
+ *           The set mask covers the clear mask, which means that first,
+ *           interrupts from the clear mask are disabled, and then interrupts
+ *           from the set mask are enabled. The mask can be composed of several
+ *           interrupts. For example: <tt>mask = ST25R3911B_IRQ_MASK_PAR |
+ *           ST25R3911B_IRQ_MASK_CRC</tt>
  *
- *  @param[in] clr_mask Interrupts clear mask;
+ *           See @ref st25r3911b_irq_def for available interrupts.
+ *
+ *  @param[in] clr_mask Interrupts clear mask.
  *  @param[in] set_mask Interrupts set mask.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_irq_modify(u32_t clr_mask, u32_t set_mask);
 
 /** @brief Enable NFC Reader interrupts.
  *
- *  @details Interrupts mask can be composed of several interrupts
- *           @ref st25r3911b_irq_def
+ *  @details The interrupts mask can be composed of several interrupts
+ *           (see @ref st25r3911b_irq_def).
  *
  *  @param[in] mask Interrupts to enable mask.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_irq_enable(u32_t mask);
 
 /** @brief Disable NFC Reader interrupts.
  *
- *  @details Interrupts mask can be composed of several interrupts
- *           @ref st25r3911b_irq_def
+ *  @details The interrupts mask can be composed of several interrupts
+ *           (see @ref st25r3911b_irq_def).
  *
  *  @param[in] mask Interrupts to disable mask.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r3911b_irq_disable(u32_t mask);
 
@@ -120,28 +121,28 @@ int st25r3911b_irq_disable(u32_t mask);
  *  @details Interrupts are cleared by reading NFC Reader
  *           interrupts registers.
  *
- *  @return Returns 0 if operation was successful,
- *          otherwise negative value.
+ *  @retval 0 If the operation was successful.
+ *            Otherwise, a (negative) error code is returned.
  */
 int st25r39_irq_clear(void);
 
 /** @brief Wait for NFC Reader interrupts.
  *
- *  @details Function can wait for one interrupt or
- *           several defined by mask.
+ *  @details This function can wait for one interrupt or
+ *           for several (defined by a mask). It returns
+ *           after an interrupt occurs or after a time-out.
  *
- *  @param[in] mask Interrupts mask @ref st25r3911b_irq_def.
+ *  @param[in] mask Interrupts mask (see @ref st25r3911b_irq_def).
  *  @param[in] timeout Wait time in milliseconds.
  *
- *  @return Interrupts status, reading after timeout or when
- *          interrupt occurred.
+ *  @return Interrupts status.
  */
 u32_t st25r3911b_irq_wait_for_irq(u32_t mask, s32_t timeout);
 
 /** @brief Read NFC Reader interrupts status.
  *
  *  @details Three interrupts status registers are read and
- *           then their status is returned.
+ *           their status is returned.
  *
  *  @return Interrupts status.
  */

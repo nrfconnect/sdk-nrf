@@ -101,6 +101,8 @@
 
 .. _`reStructuredText Primer`: http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 
+.. _`ST25R3911B chip documentation`: https://www.st.com/resource/en/datasheet/st25r3911b.pdf
+
 
 
 .. ### Links to specific files on GitHub
