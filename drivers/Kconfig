@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -11,5 +11,7 @@ rsource "gps_sim/Kconfig"
 rsource "lte_link_control/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
+
+rsource "st25r3911b/Kconfig"
 
 endmenu

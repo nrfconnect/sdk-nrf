@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig ST25R3911B_LIB
+	bool "NFC ST25R3911B library"
+	help
+	  Enable the NFC ST25R3911B library
+
+if ST25R3911B_LIB
+
+config ST25R3911B_SPI_FREQ
+	int "ST25R3911B SPI frequency"
+	default 4000000
+	help
+	  ST25R3911B SPI frequency
+
+config ST25R3911B_SPI_PORT
+	int "ST25R3911 SPI port"
+	default 0
+	help
+	  Configure a SPI port for ST25R3911B
+
+config ST25R3911B_IRQ_PORT
+	int "ST25R3911B IRQ port"
+	default 0
+	help
+	  Configure an IRQ port for ST25R3911B
+
+config ST25R3911B_IRQ_PIN
+	int "ST25R3911B IRQ pin"
+	default 3
+	help
+	  Configure an IRQ pin for ST25R3911B
+
+module = ST25R3911B_LIB
+module-str = ST25R3911B
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ST25R3911B_LIB
