@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig  NRF_HTTP_DFU_CLIENT
+	bool "HTTP DFU client"
+
+if NRF_HTTP_DFU_CLIENT
+config  NRF_HTTP_CLIENT
+	bool "HTTP client"
+
+config NRF_DFU_HTTP_MAX_REQUEST_SIZE
+	int "HTTP request size"
+	default 256
+
+config NRF_DFU_HTTP_MAX_FRAGMENT_SIZE
+	int "HTTP fragment size"
+	default 1024
+
+config NRF_DFU_HTTP_MAX_RESPONSE_SIZE
+	int "HTTP response size"
+	default 2048
+
+endif
