@@ -9,19 +9,9 @@
 #include "nrf_cloud_mem.h"
 
 #include <zephyr.h>
-
-#if defined(CONFIG_NRF_CLOUD_LOG)
-#if !defined(LOG_LEVEL)
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#elif LOG_LEVEL < CONFIG_NRF_CLOUD_LOG_LEVEL
-	#undef LOG_LEVEL
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#endif
-#endif /* defined(CONFIG_NRF_CLOUD_LOG) */
-
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(nrf_cloud_fsm);
+LOG_MODULE_REGISTER(nrf_cloud_fsm, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 /**@brief Identifier for cloud state request.
  * Can be any unique unsigned 16-bit integer value except zero.

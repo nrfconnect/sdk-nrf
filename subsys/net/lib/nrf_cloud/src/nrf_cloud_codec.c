@@ -10,22 +10,11 @@
 #include <stdbool.h>
 #include <string.h>
 #include <zephyr.h>
-
-#if defined(CONFIG_NRF_CLOUD_LOG)
-#if !defined(LOG_LEVEL)
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#elif LOG_LEVEL < CONFIG_NRF_CLOUD_LOG_LEVEL
-	#undef LOG_LEVEL
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#endif
-#endif /* defined(CONFIG_NRF_CLOUD_LOG) */
-
 #include <logging/log.h>
-
-LOG_MODULE_REGISTER(nrf_cloud_codec);
-
 #include "cJSON.h"
 #include "cJSON_os.h"
+
+LOG_MODULE_REGISTER(nrf_cloud_codec, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 #define INITIATE_STR "initiate"
 #define PATTERN_MISMATCH_STR "pattern_mismatch"

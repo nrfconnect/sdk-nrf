@@ -4,33 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#if defined(CONFIG_NRF_CLOUD_LOG)
-#if !defined(LOG_LEVEL)
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#elif LOG_LEVEL < CONFIG_NRF_CLOUD_LOG_LEVEL
-	#undef LOG_LEVEL
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#endif
-#else
-#define LOG_LEVEL LOG_LEVEL_NONE
-#endif /* defined(CONFIG_NRF_CLOUD_LOG) */
-
-#include <logging/log.h>
-
-LOG_MODULE_REGISTER(nrf_cloud_transport);
-
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_mem.h"
 
 #include <zephyr.h>
+#include <stdio.h>
 #include <net/mqtt_socket.h>
 #include <net/socket.h>
-#include <stdio.h>
+#include <logging/log.h>
+#include <misc/util.h>
+
 #if defined(CONFIG_BSD_LIBRARY)
 #include "nrf_inbuilt_key.h"
 #endif
 
-#include <misc/util.h>
+LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #include CONFIG_NRF_CLOUD_CERTIFICATES_FILE

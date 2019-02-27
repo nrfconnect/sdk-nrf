@@ -10,18 +10,9 @@
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_mem.h"
 
-#if defined(CONFIG_NRF_CLOUD_LOG)
-#if !defined(LOG_LEVEL)
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#elif LOG_LEVEL < CONFIG_NRF_CLOUD_LOG_LEVEL
-	#undef LOG_LEVEL
-	#define LOG_LEVEL CONFIG_NRF_CLOUD_LOG_LEVEL
-#endif
-#endif /* defined(CONFIG_NRF_CLOUD_LOG) */
-
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(nrf_cloud);
+LOG_MODULE_REGISTER(nrf_cloud, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 /* Validates if the API was requested in the right state. */
 #define NOT_VALID_STATE(EXPECTED) ((EXPECTED) < m_current_state)
