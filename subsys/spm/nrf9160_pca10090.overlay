@@ -1,0 +1,9 @@
+/* needed to get the NRF_UARTE2 defined */
+&uart2 {
+	current-speed = <1000000>;
+	status = "ok";
+	tx-pin = <18>;
+	rx-pin = <17>;
+	rts-pin = <19>;
+	cts-pin = <21>;
+};

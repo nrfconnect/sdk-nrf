@@ -1,18 +1,22 @@
-.. _secure_boot:
+.. _secure_partition_manager:
 
-nRF9160: Secure Boot
-####################
+Secure Partition Manager
+#################################
 
-The Secure Boot sample application provides a reference implementation of a first-stage boot firmware.
-This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
+The Secure Partition Manager (SPM) provides a reference implementation of a
+secure partition configuration through the use of SPU.
+The SPM is required to set up the nRF9160 DK so that it can run user
+applications in the non-secure domain.
 
 Overview
 ********
 
-The sample configures secure attributions for the nRF9160 SiP and jumps into the non-secure application.
+The SPM configures secure attributions of the SPU peripheral and jumps into
+the non-secure application.
 
-It utilizes the SPU peripheral to configure security attributions for the nRF9160 flash, SRAM, and peripherals.
-After the configuration setup is complete, the sample loads the application firmware that is located on the device.
+It configures security attributions for flash, SRAM, and peripherals.
+After the configuration setup is complete, SPM jumps to the application firmware
+that is located on the device.
 
 Security attribution configuration
 ==================================
@@ -38,7 +42,7 @@ Peripherals configured as Non-Secure
    * EGU1, EGU2
    * FPU
 
-If your application requires a different security attribution configuration, you must update the Secure Boot sample code to reflect this.
+If your application requires a different security attribution configuration, you must update the SPM code to reflect this.
 
 Requirements for the application firmware
 =========================================
@@ -58,16 +62,17 @@ The following development board:
 Building and running
 ********************
 
-This sample can be found under :file:`samples/nrf9160/secure_boot` in the |NCS| folder structure.
+This subsys can be found under :file:`subsys/spm` in the |NCS| folder structure.
 
-The sample is built as a secure firmware image for the nrf9160_pca10090 board.
+The subsys is built as a secure firmware image for the nrf9160_pca10090 board.
 It can be programmed independently from the non-secure application firmware.
 
-See :ref:`gs_programming` for information about how to build and program the application.
+See :ref:`gs_programming` for information about how to build and program the
+subsys.
 
 Testing
 =======
 
-Program both the sample and your application firmware to the board. After power-up, the sample starts your application firmware.
+Program both SPM and your application firmware to the board. After power-up, the SPM starts your application firmware.
 
 Observe that the application firmware operates as expected.

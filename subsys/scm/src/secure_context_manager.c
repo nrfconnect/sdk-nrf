@@ -5,7 +5,7 @@
  */
 
 /*
- * Example code for a Secure Boot application.
+ * Example code for a Secure Context Manager
  * The application uses the SPU to set the security attributions of
  * the MCU resources (Flash, SRAM and Peripherals). It uses the core
  * TrustZone-M API to prepare the MCU to jump into Non-Secure firmware
@@ -81,7 +81,7 @@ extern int irq_target_state_is_secure(unsigned int irq);
 #define NRFX_PERIPHERAL_ID_GET(base_addr) \
 	(uint8_t)((uint32_t)(base_addr) >> 12)
 
-static void secure_boot_config_flash(void)
+static void scm_config_flash(void)
 {
 	int i;
 
@@ -90,7 +90,7 @@ static void secure_boot_config_flash(void)
 	 * allocated to Non-Secure firmware image, thus SPU attributes
 	 * it as Non-Secure.
 	 */
-	printk("Secure Boot: configure flash\n");
+	printk("SCM: configure flash\n");
 
 	/* Configuration for Regions 0 - 7 (0 - 256 kB):
 	 * Read/Write/Execute: Yes
@@ -118,7 +118,7 @@ static void secure_boot_config_flash(void)
 			((SPU_FLASHREGION_PERM_LOCK_Locked <<
 					SPU_FLASHREGION_PERM_LOCK_Pos)
 				& SPU_FLASHREGION_PERM_LOCK_Msk);
-		printk("Secure Boot: SPU: set region %u as Secure\n", i);
+		printk("SCM: SPU: set region %u as Secure\n", i);
 	}
 
 	/* Configuration for Regions 8 - 31 (256 kB - 1 MB):
@@ -147,12 +147,12 @@ static void secure_boot_config_flash(void)
 			((SPU_FLASHREGION_PERM_LOCK_Locked <<
 					SPU_FLASHREGION_PERM_LOCK_Pos)
 				& SPU_FLASHREGION_PERM_LOCK_Msk);
-		printk("Secure Boot: SPU: set Flash region %u as Non-Secure\n",
+		printk("SCM: SPU: set Flash region %u as Non-Secure\n",
 			i);
 	}
 }
 
-static void secure_boot_config_sram(void)
+static void scm_config_sram(void)
 {
 	int i;
 
@@ -160,7 +160,7 @@ static void secure_boot_config_sram(void)
 	 * The rest of SRAM is allocated to Non-Secure firmware image, thus
 	 * SPU attributes it as Non-Secure.
 	 */
-	printk("Secure Boot: configure SRAM\n");
+	printk("SCM: configure SRAM\n");
 
 	/* Configuration for Regions 0 - 7 (0 - 64 kB):
 	 * Read/Write/Execute: Yes
@@ -189,7 +189,7 @@ static void secure_boot_config_sram(void)
 					SPU_RAMREGION_PERM_LOCK_Pos)
 				& SPU_RAMREGION_PERM_LOCK_Msk);
 
-		printk("Secure Boot: SPU: set SRAM region %u as Secure\n", i);
+		printk("SCM: SPU: set SRAM region %u as Secure\n", i);
 	}
 
 	/* Configuration for Regions 8 - 31 (64 kB - 256 kB):
@@ -219,12 +219,12 @@ static void secure_boot_config_sram(void)
 					SPU_RAMREGION_PERM_LOCK_Pos)
 				& SPU_RAMREGION_PERM_LOCK_Msk);
 
-		printk("Secure Boot: SPU: set SRAM region %u as Non-Secure\n",
+		printk("SCM: SPU: set SRAM region %u as Non-Secure\n",
 			i);
 	}
 }
 
-static void secure_boot_config_peripheral(u8_t id, u32_t dma_present)
+static void scm_config_peripheral(u8_t id, u32_t dma_present)
 {
 	/* Set a peripheral to Non-Secure state, if
 	 * - it is present
@@ -273,82 +273,64 @@ static void secure_boot_config_peripheral(u8_t id, u32_t dma_present)
 	irq_target_state_set(id, 0);
 }
 
-static void secure_boot_config_peripherals(void)
+static void scm_config_peripherals(void)
 {
 	/* - All user peripherals are allocated to
 	 *   the Non-Secure domain.
 	 * - All GPIOs are allocated to the Non-Secure domain.
 	 */
-	printk("Secure Boot: configure peripherals\n");
+	printk("SCM: configure peripherals\n");
 
 	/* Configure GPIO pins to be non-Secure */
 	NRF_SPU->GPIOPORT[0].PERM = 0;
 
 	/* Configure Clock Control as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_CLOCK), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_CLOCK), 0);
 	/* Configure RTC1 as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_RTC1), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_RTC1), 0);
 	/* Configure IPC as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_IPC_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_IPC_S), 0);
 	/* Configure NVMC as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_NVMC), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_NVMC), 0);
 	/* Configure VMC as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_VMC_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_VMC_S), 0);
 	/* Configure GPIO as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_P0), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_P0), 0);
 	/* Make GPIOTE1 interrupt available in Non-Secure domain */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE1_NS), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE1_NS), 0);
 	/* Configure UARTE1 as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_UARTE1), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_UARTE1), 0);
 	/* Configure UARTE2 as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_UARTE2), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_UARTE2), 0);
 	/* Configure EGU1 as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_EGU1_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_EGU1_S), 0);
 	/* Configure EGU2 as Non-Secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_EGU2_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_EGU2_S), 0);
 	/* Configure FPU as non-secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_FPU_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_FPU_S), 0);
 	/* Configure TWIM2 as non-secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_TWIM2_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_TWIM2_S), 0);
 	/* Configure SPIM3 as non-secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_SPIM3_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_SPIM3_S), 0);
 	/* Configure TIMER0 as non-secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_TIMER0_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_TIMER0_S), 0);
 	/* Configure TIMER1 as non-secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_TIMER1_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_TIMER1_S), 0);
 	/* Configure TIMER2 as non-secure */
-	secure_boot_config_peripheral(
-		NRFX_PERIPHERAL_ID_GET(NRF_TIMER2_S), 0);
+	scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_TIMER2_S), 0);
 }
 
-static void secure_boot_config(void)
+static void scm_config(void)
 {
-	secure_boot_config_flash();
-	secure_boot_config_sram();
-	secure_boot_config_peripherals();
+	scm_config_flash();
+	scm_config_sram();
+	scm_config_peripherals();
 }
 
-static void secure_boot_configure_ns(const tz_nonsecure_setup_conf_t
-	*secure_boot_ns_conf)
+static void scm_configure_ns(const tz_nonsecure_setup_conf_t *scm_ns_conf)
 {
 	/* Configure core register block for Non-Secure state. */
-	tz_nonsecure_state_setup(secure_boot_ns_conf);
+	tz_nonsecure_state_setup(scm_ns_conf);
 	/* Prioritize Secure exceptions over Non-Secure */
 	tz_nonsecure_exception_prio_config(1);
 	/* Set non-banked exceptions to target Non-Secure */
@@ -365,17 +347,17 @@ static void secure_boot_configure_ns(const tz_nonsecure_setup_conf_t
 #endif /* CONFIG_ARMV7_M_ARMV8_M_FP */
 }
 
-static void secure_boot_jump(void)
+static void scm_jump(void)
 {
 	/* Extract initial MSP of the Non-Secure firmware image.
 	 * The assumption is that the MSP is located at VTOR_NS[0].
 	 */
 	u32_t *vtor_ns = (u32_t *)DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0;
 
-	printk("Secure Boot: MSP_NS %x\n", vtor_ns[0]);
+	printk("SCM: MSP_NS %x\n", vtor_ns[0]);
 
 	/* Configure Non-Secure stack */
-	tz_nonsecure_setup_conf_t secure_boot_ns_conf = {
+	tz_nonsecure_setup_conf_t scm_ns_conf = {
 		.vtor_ns = (u32_t)vtor_ns,
 		.msp_ns = vtor_ns[0],
 		.psp_ns = 0,
@@ -383,22 +365,21 @@ static void secure_boot_jump(void)
 		.control_ns.spsel = 0 /* Use MSP in Thread mode */
 	};
 
-	secure_boot_configure_ns(&secure_boot_ns_conf);
+	scm_configure_ns(&scm_ns_conf);
 
 	/* Generate function pointer for Non-Secure function call. */
 	TZ_NONSECURE_FUNC_PTR_DECLARE(reset_ns);
 	reset_ns = TZ_NONSECURE_FUNC_PTR_CREATE(vtor_ns[1]);
 
 	if (TZ_NONSECURE_FUNC_PTR_IS_NS(reset_ns)) {
-		printk("Secure Boot: prepare to jump to Non-Secure image\n");
+		printk("SCM: prepare to jump to Non-Secure image\n");
 
 		/* Note: Move UARTE0 before jumping, if it is
 		 * to be used on the Non-Secure domain.
 		 */
 
 		/* Configure UARTE0 as non-secure */
-		secure_boot_config_peripheral(
-			NRFX_PERIPHERAL_ID_GET(NRF_UARTE0), 0);
+		scm_config_peripheral(NRFX_PERIPHERAL_ID_GET(NRF_UARTE0), 0);
 
 		__DSB();
 		__ISB();
@@ -409,13 +390,13 @@ static void secure_boot_jump(void)
 		CODE_UNREACHABLE;
 
 	} else {
-		printk("Secure Boot: wrong pointer type: 0x%x\n",
+		printk("SCM: wrong pointer type: 0x%x\n",
 			(u32_t)reset_ns);
 	}
 }
 
 void main(void)
 {
-	secure_boot_config();
-	secure_boot_jump();
+	scm_config();
+	scm_jump();
 }

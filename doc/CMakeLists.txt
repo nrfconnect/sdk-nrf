@@ -115,6 +115,7 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   "*.rst:applications:${NRF_RST_OUT}/doc/nrf"
   "*.rst:samples:${NRF_RST_OUT}/doc/nrf"
   "*.rst:boards:${NRF_RST_OUT}/doc/nrf"
+  "*.rst:subsys:${NRF_RST_OUT}/doc/nrf"
   "release-notes*.rst:doc:${NRF_RST_OUT}/doc/nrf"
   "changelog.rst:doc:${NRF_RST_OUT}/doc/nrf"
   "*.rst:include:${NRF_RST_OUT}/doc/nrf"

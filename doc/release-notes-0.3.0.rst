@@ -92,7 +92,7 @@ nRF9160
 * Added target nRF52840_PCA10090 (used when compiling for the nRF9160 DK Board Controller).
 * Added the following samples:
 
-  * :ref:`secure_boot`:
+  * :ref:`secure_partition_manager`:
     This sample provides a reference implementation of a first-stage boot firmware.
     The sample configures resources for the secure domain and boots an application from the non-secure domain.
   * **at_client**:

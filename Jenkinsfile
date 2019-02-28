@@ -43,7 +43,7 @@ pipeline {
       COMPLIANCE_REPORT_ARGS = "-p $CHANGE_ID -S $GIT_COMMIT -g"
 
       // Build all custom samples that match the ci_build tag
-      SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --testcase-root $WORKSPACE/nrf/applications --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
+      SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --testcase-root $WORKSPACE/nrf/applications --testcase-root $WORKSPACE/nrf/subsys/spm/ --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
       ARCH = "-a arm"
       LC_ALL = "C.UTF-8"
 
@@ -94,10 +94,12 @@ pipeline {
               }
 
               /* Rename the nrf9160 samples */
-              samples = ['secure_boot']
+              samples = ['spm']
               for(int i=0; i<samples.size(); i++)
               {
-                file_path = "zephyr/sanity-out/nrf9160_pca10090/nrf9160/${samples[i]}/test_build/zephyr/zephyr.hex"
+                // Note that there is no sample name in the path as
+                // 'spm' is the only folder in 'subsys' that should be built.
+                file_path = "zephyr/sanity-out/nrf9160_pca10090/test_build/zephyr/zephyr.hex"
                 check_and_store_sample("$file_path", "${samples[i]}_nrf9160_pca10090.hex")
               }
               ns_samples = ['lte_ble_gateway', 'at_client']
