@@ -1,0 +1,19 @@
+# Kconfig - ADP536x
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig ADP536X
+	bool "ADP536x"
+	help
+	  Enable ADP536x.
+
+if ADP536X
+
+config ADP536X_BUS_NAME
+	string "I2C bus name"
+	default "I2C_2"
+
+endif # ADP536X
