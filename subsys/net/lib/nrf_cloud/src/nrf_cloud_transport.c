@@ -583,6 +583,58 @@ int nct_init(void)
 	return mqtt_init();
 }
 
+#if defined(CONFIG_NRF_CLOUD_STATIC_IPV4)
+/* Partly copy/paste from zephyr/subsys/net/ip/utils.c
+ * Cannot be used when BSD library selects NET_RAW_MODE
+ */
+int af_inet_addr_pton(sa_family_t family, const char *src, void *dst)
+{
+	if (family == AF_INET) {
+		struct in_addr *addr = (struct in_addr *)dst;
+		size_t i, len;
+
+		len = strlen(src);
+		for (i = 0; i < len; i++) {
+			if (!(src[i] >= '0' && src[i] <= '9') &&
+				src[i] != '.') {
+				return -EINVAL;
+			}
+		}
+
+		(void)memset(addr, 0, sizeof(struct in_addr));
+
+		for (i = 0; i < sizeof(struct in_addr); i++) {
+			char *endptr;
+
+			addr->s4_addr[i] = strtol(src, &endptr, 10);
+
+			src = ++endptr;
+		}
+	else {
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+
+int nct_connect(void)
+{
+	int err;
+
+	struct sockaddr_in *broker =
+		((struct sockaddr_in *)&nct.broker);
+
+	af_inet_addr_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR,
+		&broker->sin_addr);
+	broker->sin_family = AF_INET;
+	broker->sin_port = htons(NRF_CLOUD_PORT);
+
+	LOG_DBG("IPv4 Address %s", CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR);
+	err = nct_mqtt_connect();
+
+	return err;
+}
+#else
 int nct_connect(void)
 {
 	int err;
@@ -654,6 +706,7 @@ int nct_connect(void)
 
 	return err;
 }
+#endif /* defined(CONFIG_NRF_CLOUD_STATIC_IPV4) */
 
 int nct_cc_connect(void)
 {
