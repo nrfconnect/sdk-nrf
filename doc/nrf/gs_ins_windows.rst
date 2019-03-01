@@ -211,8 +211,12 @@ To update your repositories to be managed by west, make sure that they are struc
 
 Then complete the following steps:
 
-1. Open a |bash| in the ``ncs`` folder.
+1. Open a |bash| in the ``ncs\nrf`` folder.
 #. Do a ``git pull`` or rebase your branch so that you are on the latest fw-nrfconnect-nrf master.
+#. Navigate one folder level up to the ``ncs`` folder::
+
+      cd ..
+
 #. Initialize west with the manifest folder from the current branch of your ``nrf`` repository::
 
       west init -l nrf
