@@ -6,11 +6,10 @@
 
 menu "Device Drivers"
 
+rsource "adp536x/Kconfig"
 rsource "gps_sim/Kconfig"
-
 rsource "lte_link_control/Kconfig"
 rsource "net/Kconfig"
-
 rsource "sensor/Kconfig"
 
 endmenu
