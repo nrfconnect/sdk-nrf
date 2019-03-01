@@ -150,7 +150,10 @@ static int ble_adv_start(void)
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
 
-	if (err) {
+	if (err == -ECONNREFUSED) {
+		LOG_WRN("Already connected, do not advertise");
+		err = 0;
+	} else if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
 	} else {
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
@@ -343,8 +346,9 @@ static bool event_handler(const struct event_header *eh)
 			case STATE_GRACE_PERIOD:
 				err = ble_adv_stop();
 				if (!err) {
-					ble_adv_start();
+					err = ble_adv_start();
 				}
+
 				if (err) {
 					module_set_state(MODULE_STATE_ERROR);
 				} else if (was_idle) {
