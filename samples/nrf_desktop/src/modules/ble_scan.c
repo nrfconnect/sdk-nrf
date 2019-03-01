@@ -299,7 +299,7 @@ static bool event_handler(const struct event_header *eh)
 			} else {
 				module_set_state(MODULE_STATE_READY);
 			}
-		} else if (check_state(event, MODULE_ID(config), MODULE_STATE_READY)) {
+		} else if (check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
 			static bool started;
 
 			__ASSERT_NO_MSG(!started);

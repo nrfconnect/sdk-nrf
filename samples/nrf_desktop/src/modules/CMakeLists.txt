@@ -6,6 +6,8 @@
 
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_state.c)
 
+target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_bond.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_BLE_ADVERTISING_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_adv.c)
 

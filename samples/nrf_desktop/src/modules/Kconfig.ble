@@ -20,7 +20,6 @@ if DESKTOP_BLE_BOND_REMOVAL
 
 config DESKTOP_BLE_BOND_REMOVAL_BUTTON
 	hex "Key ID of button used to remove bonds when held during startup"
-	default 0x0002
 	range 0x0000 0xffff
 	help
 	  Button which should be held during device startup in order to
@@ -39,6 +38,9 @@ module = DESKTOP_BLE_STATE
 module-str = BLE state
 source "subsys/logging/Kconfig.template.log_config"
 
+module = DESKTOP_BLE_BOND
+module-str = BLE bonds
+source "subsys/logging/Kconfig.template.log_config"
 
 comment "BLE Advertising"
 
