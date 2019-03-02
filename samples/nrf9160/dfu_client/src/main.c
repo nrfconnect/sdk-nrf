@@ -75,7 +75,8 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 				  enum dfu_client_evt event,
 				  u32_t error)
 {
-	int retval;
+	LOG_INF("app_dfu_client_event_handler(), status %d, firmware size %d, downloaded %d\n",
+		dfu->status, dfu->firmware_size, dfu->download_size);
 
 	switch (event) {
 	case DFU_CLIENT_EVT_DOWNLOAD_INIT: {
@@ -93,7 +94,6 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 	}
 	case DFU_CLIENT_EVT_ERROR: {
 		LOG_ERR("DFU error");
-		dfu_client_abort(dfu);
 		dfu_client_disconnect(dfu);
 		__ASSERT(false, "Something went wrong, please restart the application\n");
 		break;
@@ -109,16 +109,24 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 
 int main(void)
 {
+	LOG_ERR("Requesting LTE Link");
+
+	lte_lc_init_and_connect();
+
+	LOG_ERR("Requesting DFU init");
+
 	app_dfu_init();
+
+	LOG_ERR("Requesting DFU start");
 
 	app_dfu_transfer_start();
 
 	while (true) {
         if(dfu.status == DFU_CLIENT_STATUS_DOWNLOAD_COMPLETE) {
-            LOG_INF("Download complete. Nothing more to do.");
+            LOG_ERR("Download complete. Nothing more to do.");
             break;
         }
-        k_sleep(1000);
+        k_cpu_idle();
 		dfu_client_process(&dfu);
 	}
 

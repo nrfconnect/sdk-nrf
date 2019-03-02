@@ -29,7 +29,7 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu, enu
 
 static struct dfu_client_object dfu = {
 	.host = "s3.amazonaws.com",
-	.resource = "/nordic-firmware-files/69bd3e0c-8d0c-4fba-8a99-d96dedcbe65e",
+	.resource = "/nordic-firmware-files/f81197c5-0353-4ac2-a961-3b2ce867329d",
 	.callback = app_dfu_client_event_handler
 };
 
@@ -231,6 +231,7 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 	}
 	case DFU_CLIENT_EVT_DOWNLOAD_FRAG: {
 		LOG_INF("Download fragment");
+		#if 0
 		int sent = 0;
 
 		sent = nrf_send(m_modem_dfu_fd,
@@ -249,6 +250,7 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 			nrf_close(m_modem_dfu_fd);
 			return -1;
 		}
+		#endif
 
 		break;
 	}
@@ -297,7 +299,7 @@ int main(void)
         else if (dfu.status == DFU_CLIENT_STATUS_HALTED) {
         	__ASSERT(false, "Download halted as modem rejected the fragment, restart!\n");
         }
-        k_sleep(1000);
+        k_cpu_idle();
 		dfu_client_process(&dfu);
 	}
 
