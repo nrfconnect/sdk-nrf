@@ -299,7 +299,7 @@ int main(void)
         else if (dfu.status == DFU_CLIENT_STATUS_HALTED) {
         	__ASSERT(false, "Download halted as modem rejected the fragment, restart!\n");
         }
-        k_cpu_idle();
+        k_yield();
 		dfu_client_process(&dfu);
 	}
 

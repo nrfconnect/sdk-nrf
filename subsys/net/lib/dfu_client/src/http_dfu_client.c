@@ -217,7 +217,7 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 
 			if (payload_size != expected_payload_size) {
 				/* Wait for entire payload. */
-				LOG_ERR("Expected payload %d, received %d\n", dfu->firmware_size, total_size);
+				LOG_ERR("Expected payload %d, received %d\n", payload_size, expected_payload_size);
 				return;
 			}
 

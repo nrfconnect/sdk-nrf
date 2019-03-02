@@ -126,7 +126,7 @@ int main(void)
             LOG_ERR("Download complete. Nothing more to do.");
             break;
         }
-        k_cpu_idle();
+        k_yield();
 		dfu_client_process(&dfu);
 	}
 
