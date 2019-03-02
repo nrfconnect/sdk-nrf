@@ -29,7 +29,7 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu, enu
 
 static struct dfu_client_object dfu = {
 	.host = "s3.amazonaws.com",
-	.resource = "/nordic-firmware-files/f81197c5-0353-4ac2-a961-3b2ce867329d",
+	.resource = "/nordic-firmware-files/69bd3e0c-8d0c-4fba-8a99-d96dedcbe65e",
 	.callback = app_dfu_client_event_handler
 };
 
@@ -129,12 +129,6 @@ static void app_modem_dfu_init(void)
 		LOG_INF("Reset offset.\n");
 	}
 
-	if (offset != 0)
-	{
-		dfu.download_size = offset;
-
-	}
-
 	retval = dfu_client_init(&dfu);
    __ASSERT(retval == 0, "dfu_init() failed, err %d", retval);
 }
@@ -222,8 +216,6 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 				  enum dfu_client_evt event,
 				  u32_t error)
 {
-	int retval;
-
 	switch (event) {
 	case DFU_CLIENT_EVT_DOWNLOAD_INIT: {
 		LOG_INF("Download started");
@@ -231,7 +223,6 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 	}
 	case DFU_CLIENT_EVT_DOWNLOAD_FRAG: {
 		LOG_INF("Download fragment");
-		#if 0
 		int sent = 0;
 
 		sent = nrf_send(m_modem_dfu_fd,
@@ -250,21 +241,11 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 			nrf_close(m_modem_dfu_fd);
 			return -1;
 		}
-		#endif
 
 		break;
 	}
 	case DFU_CLIENT_EVT_DOWNLOAD_DONE: {
 		LOG_INF("Download completed");
-		if (!error) {
-			dfu_client_disconnect(dfu);
-			retval = dfu_client_apply(dfu);
-			if (retval) {
-				/* Firmware upgrade failed. */
-				m_skip_upgrade = true;
-			}
-			app_modem_dfu_transfer_apply();
-		}
 		break;
 	}
 	case DFU_CLIENT_EVT_ERROR: {
@@ -302,6 +283,10 @@ int main(void)
         k_yield();
 		dfu_client_process(&dfu);
 	}
+
+	dfu_client_disconnect(&dfu);
+
+	app_modem_dfu_transfer_apply();
 
 	return 0;
 }

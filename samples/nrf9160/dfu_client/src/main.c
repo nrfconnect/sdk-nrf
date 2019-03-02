@@ -89,12 +89,11 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 	}
 	case DFU_CLIENT_EVT_DOWNLOAD_DONE: {
 		LOG_INF("Download completed");
-		dfu_client_disconnect(dfu);
 		break;
 	}
 	case DFU_CLIENT_EVT_ERROR: {
 		LOG_ERR("DFU error");
-		dfu_client_disconnect(dfu);
+
 		__ASSERT(false, "Something went wrong, please restart the application\n");
 		break;
 	}
@@ -109,15 +108,11 @@ static int app_dfu_client_event_handler(struct dfu_client_object *const dfu,
 
 int main(void)
 {
-	LOG_ERR("Requesting LTE Link");
-
-	lte_lc_init_and_connect();
-
-	LOG_ERR("Requesting DFU init");
+	LOG_INF("Requesting DFU init");
 
 	app_dfu_init();
 
-	LOG_ERR("Requesting DFU start");
+	LOG_INF("Requesting DFU start");
 
 	app_dfu_transfer_start();
 
@@ -129,6 +124,7 @@ int main(void)
         k_yield();
 		dfu_client_process(&dfu);
 	}
+	dfu_client_disconnect(&dfu);
 
 	return 0;
 }
