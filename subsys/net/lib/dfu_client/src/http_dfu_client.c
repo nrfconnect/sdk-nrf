@@ -19,16 +19,41 @@ LOG_MODULE_REGISTER(http_dfu);
 	"Range: bytes=%d-%d\r\n\r\n"
 
 
+static void rxdata_flush(struct dfu_client_object * const dfu) {
 
-static int fragment_request(struct dfu_client_object * const dfu) {
+	int flush_len = httpc_recv(dfu->fd, dfu->resp_buf, CONFIG_NRF_DFU_HTTP_MAX_RESPONSE_SIZE, 0);
+	LOG_ERR("rxdata_flush, len %d\n", flush_len);
+	if (flush_len == -1) {
+		if (errno == EAGAIN) {
+			LOG_ERR("flused %d\n", flush_len);
+		} else {
+			/* Something is wrong on the socket! */
+			dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, errno);
+		}
+	}
+    __ASSERT(flush_len != 0, "Could not flush?!");
+	memset(dfu->resp_buf, 0, CONFIG_NRF_DFU_HTTP_MAX_RESPONSE_SIZE);
+
+}
+
+
+static int fragment_request(struct dfu_client_object * const dfu, bool flush) {
 	if (dfu == NULL || dfu->host == NULL || dfu->callback == NULL || dfu->resource == NULL ) {
 		LOG_ERR("fragment_request(): Invalid dfu object");
 		return -1;
 	}
 
+	if (flush == true) {
+		rxdata_flush(dfu);
+	}
+
+	memset(dfu->req_buf, 0, CONFIG_NRF_DFU_HTTP_MAX_REQUEST_SIZE);
+
 	int request_len = snprintf (dfu->req_buf, CONFIG_NRF_DFU_HTTP_MAX_REQUEST_SIZE, REQUEST_TEMPLATE, dfu->resource,
 							dfu->host, dfu->download_size,
 							(dfu->download_size + CONFIG_NRF_DFU_HTTP_MAX_FRAGMENT_SIZE - 1));
+
+	LOG_INF("fragment_request(), request length %d, state = %d\n", request_len, dfu->status);
 
 	if (request_len > 0) {
 		dfu->status = DFU_CLIENT_STATUS_DOWNLOAD_INPROGRESS;
@@ -64,7 +89,7 @@ int dfu_client_connect(struct dfu_client_object *const dfu)
 	}
 
 	if ((dfu->fd != -1) && (dfu->status == DFU_CLIENT_STATUS_CONNECTED)) {
-		LOG_INF("dfu_client_connect(): already connected, fd %d", dfu->fd);
+		LOG_ERR("dfu_client_connect(): already connected, fd %d", dfu->fd);
 		return 0;
 	}
 
@@ -75,8 +100,11 @@ int dfu_client_connect(struct dfu_client_object *const dfu)
 		return -1;
 	}
 
+
 	dfu->fd = fd;
 	dfu->status = DFU_CLIENT_STATUS_CONNECTED;
+
+	LOG_INF("dfu_client_connect(): Success! State %d, fd %d", dfu->status, dfu->fd);
 
 	return 0;
 }
@@ -94,35 +122,46 @@ void dfu_client_disconnect(struct dfu_client_object *const dfu)
 
 int dfu_client_download(struct dfu_client_object *const dfu)
 {
-	if (dfu == NULL || dfu->fd < 0) {
+	if (dfu == NULL || dfu->fd < 0 ||  (dfu->status != DFU_CLIENT_STATUS_CONNECTED)) {
 		return -1;
 	}
 
 	dfu->firmware_size = -1;
-	return fragment_request(dfu);
+	return fragment_request(dfu, false);
 }
 
 void dfu_client_process(struct dfu_client_object *const dfu)
 {
 	int len;
 
-	if (dfu == NULL || dfu->fd < 0) {
+	if (dfu == NULL || dfu->fd < 0 || dfu->status != DFU_CLIENT_STATUS_DOWNLOAD_INPROGRESS) {
 		return;
 	}
 
-	len = httpc_recv(dfu->fd, dfu->resp_buf, sizeof(dfu->resp_buf),MSG_PEEK);
-	if (len ==  -1) {
+	memset(dfu->resp_buf, 0, sizeof(dfu->resp_buf));
+
+	len = httpc_recv(dfu->fd, dfu->resp_buf, sizeof(dfu->resp_buf), MSG_PEEK);
+	LOG_ERR("dfu_client_process(), fd = %d, state = %d, length = %d, errno %d\n", dfu->fd, dfu->status, len, errno);
+
+	if (len == -1) {
 		if (errno != EAGAIN) {
 			dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, ENOTCONN);
 		}
 		return;
 	}
-	if (len ==  0) {
+	if (len == 0) {
 		dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, ECONNRESET);
 		return;
 	}
 
-	LOG_INF("Received response of size %d", len);
+	LOG_ERR("Received response of size %d", len);
+
+	if (len == 2048) {
+		LOG_HEXDUMP_ERR(dfu->resp_buf, 1024, "Response-0");
+		LOG_HEXDUMP_ERR(&dfu->resp_buf[1024], 1024, "Response-1024");
+	}
+	__ASSERT(len != 2048, "Why does this happen at size %d, firmware size %d\n",
+	 dfu->download_size, dfu->firmware_size);
 
 	int payload_size = 0;
 	int total_size = 0;
@@ -141,12 +180,19 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 			total_size = atoi(p_totalsize+1);
 			LOG_DBG("Total size %d", total_size);
 		}
+	} else{
+		/* Return and wait for the header to arrive. */
+		return;
 	}
 
 	char * content_length_header = strstr(dfu->resp_buf, "Content-Length: ");
 	if (content_length_header != NULL) {
 		content_length_header += strlen("Content-Length: ");
 		payload_size = atoi(content_length_header);
+	}
+	else {
+		/* Return and wait for the header to arrive. */
+		return;
 	}
 
 	if (total_size)	{
@@ -161,50 +207,48 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 
 	/* Allow a full sized fragment, except the last one which can be smaller. */
 	if ((payload_size == CONFIG_NRF_DFU_HTTP_MAX_FRAGMENT_SIZE) ||
-		(dfu->download_size + payload_size == dfu->firmware_size))	{
-		len = httpc_recv(dfu->fd, dfu->resp_buf, sizeof(dfu->resp_buf),0);
-		if (len ==  -1) {
-			dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, 0);
-			return;
-		}
-	}
-	else {
-		len = httpc_recv(dfu->fd, dfu->resp_buf, sizeof(dfu->resp_buf),0);
-		fragment_request(dfu);
-		return;
-	}
+		(dfu->download_size + payload_size == dfu->firmware_size)) {
 
-	char * p_payload = strstr(dfu->resp_buf, "\r\n\r\n");
+		char * p_payload = strstr(dfu->resp_buf, "\r\n\r\n");
 
-	if ((p_payload != NULL) && (payload_size)) {
-		p_payload += strlen("\r\n\r\n");
+		if (p_payload != NULL) {
+			p_payload += strlen("\r\n\r\n");
+			int expected_payload_size = len - (int)(p_payload - dfu->resp_buf);
 
-		/* Parse the response, send the firmware to the modem. and
-		 * generate the right events.
-		 */
-		dfu->fragment = p_payload;
-		dfu->fragment_size = payload_size;
+			if (payload_size != expected_payload_size) {
+				/* Wait for entire payload. */
+				LOG_ERR("Expected payload %d, received %d\n", dfu->firmware_size, total_size);
+				return;
+			}
 
-		/* Continue download if application returns success, else. Halt. */
-		if (dfu->callback(dfu, DFU_CLIENT_EVT_DOWNLOAD_FRAG, 0) == 0) {
-			dfu->download_size += payload_size;
+			/* Parse the response, send the firmware to the modem. and
+			 * generate the right events.
+			 */
+			dfu->fragment = p_payload;
+			dfu->fragment_size = payload_size;
 
-			if (dfu->download_size == dfu->firmware_size) {
-				dfu->status = DFU_CLIENT_STATUS_DOWNLOAD_COMPLETE;
-				if (dfu->callback(dfu, DFU_CLIENT_EVT_DOWNLOAD_DONE, 0) != 0) {
-					dfu->download_size -= payload_size;
-					fragment_request(dfu);
+			/* Continue download if application returns success, else. Halt. */
+			if (dfu->callback(dfu, DFU_CLIENT_EVT_DOWNLOAD_FRAG, 0) == 0) {
+				dfu->download_size += payload_size;
+
+				if (dfu->download_size == dfu->firmware_size) {
+					dfu->status = DFU_CLIENT_STATUS_DOWNLOAD_COMPLETE;
+					if (dfu->callback(dfu, DFU_CLIENT_EVT_DOWNLOAD_DONE, 0) != 0) {
+						dfu->download_size -= payload_size;
+						fragment_request(dfu, true);
+					}
+				}
+				else {
+					fragment_request(dfu, true);
 				}
 			}
 			else {
-				fragment_request(dfu);
+				dfu->status = DFU_CLIENT_STATUS_HALTED;
 			}
-		}
-		else {
-			dfu->status = DFU_CLIENT_STATUS_HALTED;
 		}
 	}
 }
+
 
 void dfu_client_abort(struct dfu_client_object *dfu)
 {
