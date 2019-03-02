@@ -20,9 +20,12 @@ LOG_MODULE_REGISTER(http_dfu);
 
 
 static void rxdata_flush(struct dfu_client_object * const dfu) {
+	if (dfu == NULL || dfu->host == NULL || dfu->callback == NULL || dfu->status == DFU_CLIENT_STATUS_IDLE) {
+		return;
+	}
 
 	int flush_len = httpc_recv(dfu->fd, dfu->resp_buf, CONFIG_NRF_DFU_HTTP_MAX_RESPONSE_SIZE, 0);
-	LOG_ERR("rxdata_flush, len %d\n", flush_len);
+	LOG_INF("rxdata_flush, len %d\n", flush_len);
 	if (flush_len == -1) {
 		if (errno == EAGAIN) {
 			LOG_ERR("flused %d\n", flush_len);
@@ -31,7 +34,7 @@ static void rxdata_flush(struct dfu_client_object * const dfu) {
 			dfu->callback(dfu, DFU_CLIENT_EVT_ERROR, errno);
 		}
 	}
-    __ASSERT(flush_len != 0, "Could not flush?!");
+
 	memset(dfu->resp_buf, 0, CONFIG_NRF_DFU_HTTP_MAX_RESPONSE_SIZE);
 
 }
@@ -141,7 +144,7 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 	memset(dfu->resp_buf, 0, sizeof(dfu->resp_buf));
 
 	len = httpc_recv(dfu->fd, dfu->resp_buf, sizeof(dfu->resp_buf), MSG_PEEK);
-	LOG_ERR("dfu_client_process(), fd = %d, state = %d, length = %d, errno %d\n", dfu->fd, dfu->status, len, errno);
+	LOG_INF("dfu_client_process(), fd = %d, state = %d, length = %d, errno %d\n", dfu->fd, dfu->status, len, errno);
 
 	if (len == -1) {
 		if (errno != EAGAIN) {
@@ -154,14 +157,7 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 		return;
 	}
 
-	LOG_ERR("Received response of size %d", len);
-
-	if (len == 2048) {
-		LOG_HEXDUMP_ERR(dfu->resp_buf, 1024, "Response-0");
-		LOG_HEXDUMP_ERR(&dfu->resp_buf[1024], 1024, "Response-1024");
-	}
-	__ASSERT(len != 2048, "Why does this happen at size %d, firmware size %d\n",
-	 dfu->download_size, dfu->firmware_size);
+	LOG_INF("Received response of size %d", len);
 
 	int payload_size = 0;
 	int total_size = 0;
@@ -217,7 +213,7 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 
 			if (payload_size != expected_payload_size) {
 				/* Wait for entire payload. */
-				LOG_ERR("Expected payload %d, received %d\n", payload_size, expected_payload_size);
+				LOG_INF("Expected payload %d, received %d\n", payload_size, expected_payload_size);
 				return;
 			}
 
@@ -236,6 +232,9 @@ void dfu_client_process(struct dfu_client_object *const dfu)
 					if (dfu->callback(dfu, DFU_CLIENT_EVT_DOWNLOAD_DONE, 0) != 0) {
 						dfu->download_size -= payload_size;
 						fragment_request(dfu, true);
+					}
+					else {
+						rxdata_flush(dfu);
 					}
 				}
 				else {
