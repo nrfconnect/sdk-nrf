@@ -122,7 +122,7 @@ static void discovery_error_found_cb(struct bt_conn *conn,
 	printk("The discovery procedure failed with %d\n", err);
 }
 
-static struct bt_gatt_dm_cb discovery_cb = {
+static const struct bt_gatt_dm_cb discovery_cb = {
 	.completed = discovery_completed_cb,
 	.service_not_found = discovery_service_not_found_cb,
 	.error_found = discovery_error_found_cb,
@@ -472,6 +472,8 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 void main(void)
 {
 	int err;
+
+	printk("Starting HIDS Client example\n");
 
 	bt_gatt_hids_c_init(&hids_c, &hids_c_init_params);
 
