@@ -162,8 +162,7 @@ static int disable_event_displaying(const struct shell *shell, size_t argc,
 }
 
 
-SHELL_CREATE_STATIC_SUBCMD_SET(sub_event_manager)
-{
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_event_manager,
 	SHELL_CMD_ARG(show_listeners, NULL, "Show listeners",
 		      show_listeners, 0, 0),
 	SHELL_CMD_ARG(show_subscribers, NULL, "Show subscribers",
@@ -176,7 +175,7 @@ SHELL_CREATE_STATIC_SUBCMD_SET(sub_event_manager)
 		      enable_event_displaying, 0,
 		      sizeof(event_manager_displayed_events) * 8 - 1),
 	SHELL_SUBCMD_SET_END
-};
+);
 
 SHELL_CMD_REGISTER(event_manager, &sub_event_manager,
 		   "Event Manager commands", NULL);
