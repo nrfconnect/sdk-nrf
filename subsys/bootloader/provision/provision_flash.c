@@ -10,11 +10,14 @@
 #include <generated_dts_board.h>
 #include <errno.h>
 #include "../bootloader.h"
+#include <nrf.h>
+#include <assert.h>
+
 typedef struct {
 	u32_t s0_address;
 	u32_t s1_address;
 	u32_t num_public_keys;
-	u8_t pkd[1];
+	u32_t pkd[1];
 } provision_flash_t;
 
 static const provision_flash_t *p_provision_data =
@@ -35,8 +38,10 @@ u32_t num_public_keys_read(void)
 	return p_provision_data->num_public_keys;
 }
 
-int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
+int public_key_data_read(u32_t key_idx, u32_t *p_buf, size_t buf_size)
 {
+	const u32_t *p_key;
+
 	if (buf_size < CONFIG_SB_PUBLIC_KEY_HASH_LEN) {
 		return -ENOMEM;
 	}
@@ -45,9 +50,21 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 		return -EINVAL;
 	}
 
-	for (size_t i = 0; i < CONFIG_SB_PUBLIC_KEY_HASH_LEN; i++) {
-		p_buf[i] = p_provision_data->pkd[(key_idx *
-				CONFIG_SB_PUBLIC_KEY_HASH_LEN) + i];
+	p_key = &(p_provision_data->pkd[key_idx *
+			CONFIG_SB_PUBLIC_KEY_HASH_LEN]);
+
+#ifdef CONFIG_SOC_NRF9160
+	/* Ensure word alignment, as provision data is stored in memory region
+	 * with word sized read limitation. Perform both build time and run
+	 * time asserts to catch the issue as soon as possible.
+	 */
+	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
+	BUILD_ASSERT(offsetof(provision_flash_t, pkd) % 4 == 0);
+	__ASSERT((p_key % 4 == 0), "Key address is not word aligned");
+#endif /* CONFIG_SOC_NRF9160 */
+
+	for (size_t i = 0; i < CONFIG_SB_PUBLIC_KEY_HASH_LEN/4; i++) {
+		p_buf[i] = p_key[i];
 	}
 
 	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;

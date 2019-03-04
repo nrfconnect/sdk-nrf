@@ -46,12 +46,12 @@ u32_t num_public_keys_read(void);
  *
  * @param[in]  key_idx  Index of key.
  * @param[out] p_buf    Pointer to area where key data will be stored.
- * @param[in]  buf_size Size of buffer provided in p_buf.
+ * @param[in]  buf_size Size of buffer, in bytes, provided in p_buf.
  *
  * @return Number of bytes written to p_buf is successful. Otherwise negative
  *         error code.
  */
-int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size);
+int public_key_data_read(u32_t key_idx, u32_t *p_buf, size_t buf_size);
 
 #ifdef __cplusplus
 }
