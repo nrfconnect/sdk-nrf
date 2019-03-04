@@ -35,9 +35,9 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Generate provision hex file.",
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--s0-addr", type=int, required=True, help="Set address of s0 explicitly")
-    parser.add_argument("--s1-addr", type=int, required=True, help="Set address of s1 explicitly")
-    parser.add_argument("--provision-addr", type=int, required=True, help="Set address of provision data explicitly")
+    parser.add_argument("--s0-addr", type=lambda x: int(x,0), required=True, help="Set address of s0 explicitly")
+    parser.add_argument("--s1-addr", type=lambda x: int(x,0), required=True, help="Set address of s1 explicitly")
+    parser.add_argument("--provision-addr", type=lambda x: int(x,0), required=True, help="Set address of provision data explicitly")
     parser.add_argument("--public-key-files", required=True,
                         help="Semicolon-separated list of public key .pem files.")
     parser.add_argument("-o", "--output", required=False, default="provision.hex",
