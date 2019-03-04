@@ -8,22 +8,28 @@
 import hashlib
 import sys
 import argparse
+from intelhex import IntelHex
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Hash data from stdin or file.",
+        description="Hash data from file.",
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument("--infile", "-i", "--in", "-in", required=False,
-                        type=argparse.FileType('rb'), default=sys.stdin.buffer,
-                        help="Hash the contents of the specified file instead of stdin.")
-
-    args = parser.parse_args()
-
-    return args
+    parser.add_argument("--infile", "-i", "--in", "-in", required=True,
+                        help="Hash the contents of the specified file. If a *.hex file is given, the contents will "
+                             "first be converted to binary. For all other file types, no conversion is done.")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    sys.stdout.buffer.write(hashlib.sha256(args.infile.read()).digest())
+
+    if args.infile.endswith('.hex'):
+        ih = IntelHex(args.infile)
+        if len(ih) - 1 != (ih.maxaddr() - ih.minaddr()):
+            raise RuntimeError("Non-contiguous hex file not supported.")
+        to_hash = ih.tobinstr()
+    else:
+        to_hash = open(args.infile, 'rb').read()
+    sys.stdout.buffer.write(hashlib.sha256(to_hash).digest())
