@@ -93,6 +93,9 @@ static int z_to_nrf_level(int z_in_level, int *nrf_out_level)
 	case SOL_SOCKET:
 		*nrf_out_level = NRF_SOL_SOCKET;
 		break;
+	case SOL_PDN:
+		*nrf_out_level = NRF_SOL_PDN;
+		break;
 	default:
 		retval = -1;
 		break;
@@ -143,6 +146,17 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			break;
 		case SO_BINDTODEVICE:
 			*nrf_out_optname = NRF_SO_BINDTODEVICE;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
+		break;
+
+	case SOL_PDN:
+		switch (z_in_optname) {
+		case SO_PDN_AF:
+			*nrf_out_optname = NRF_SO_PDN_AF;
 			break;
 		default:
 			retval = -1;
@@ -392,6 +406,8 @@ static int nrf91_socket_offload_socket(int family, int type, int proto)
 		return -1;
 	}
 
+	type = z_to_nrf_socktype(type);
+
 	proto = z_to_nrf_protocol(proto);
 	if (proto == -EPROTONOSUPPORT) {
 		errno = EPROTONOSUPPORT;
@@ -492,7 +508,12 @@ static int nrf91_socket_offload_connect(int sd, const struct sockaddr *addr,
 		retval = nrf_connect(sd, (const struct nrf_sockaddr *)&ipv6,
 				  sizeof(struct nrf_sockaddr_in6));
 	} else {
-		goto error;
+		/* Pass in raw to library as it is non-IP address. */
+		retval = nrf_connect(sd, (void *)addr, addrlen);
+		if (retval < 0) {
+			/* Not supported by library. */
+			goto error;
+		}
 	}
 
 	return retval;
@@ -696,33 +717,29 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	int error;
 	struct nrf_addrinfo nrf_hints;
 	struct nrf_addrinfo nrf_hints_pdn;
-	struct nrf_addrinfo *nrf_hints_ptr = NULL;
-	struct nrf_addrinfo *nrf_hints_pdn_ptr = NULL;
 	struct nrf_addrinfo *nrf_res = NULL;
 
 	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
 
 	if (hints != NULL) {
-		nrf_hints_ptr = &nrf_hints;
 		error = z_to_nrf_addrinfo_hints(hints, &nrf_hints);
 		if (error == -EPROTONOSUPPORT) {
 			return DNS_EAI_SOCKTYPE;
 		} else if (error == -EAFNOSUPPORT) {
 			return DNS_EAI_ADDRFAMILY;
 		}
-		if (hints->ai_next != NULL)
-		{
-			nrf_hints_pdn_ptr = &nrf_hints_pdn;
+
+		if (hints->ai_next != NULL) {
 			z_to_nrf_addrinfo_hints(hints->ai_next, &nrf_hints_pdn);
 			if (error == -EPROTONOSUPPORT) {
 				return DNS_EAI_SOCKTYPE;
 			} else if (error == -EAFNOSUPPORT) {
 				return DNS_EAI_ADDRFAMILY;
 			}
-			nrf_hints_ptr->ai_next = nrf_hints_pdn_ptr;
+			nrf_hints.ai_next = &nrf_hints_pdn;
 		}
 	}
-	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
+	int retval = nrf_getaddrinfo(node, service, &nrf_hints, &nrf_res);
 
 	struct nrf_addrinfo *next_nrf_res = nrf_res;
 	struct addrinfo *latest_z_res = NULL;
