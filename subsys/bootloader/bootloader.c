@@ -21,10 +21,13 @@
 
 static bool verify_firmware(u32_t address)
 {
+	/* Some key data storage backends require word sized reads, hence
+	 * we need to ensure word alignment for 'key_data'
+	 */
+	u32_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN/4];
 	int retval = -EFAULT;
 	const struct fw_firmware_info *fw_info;
 	const struct fw_validation_info *fw_ver_info;
-	u8_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
 
 	fw_info = firmware_info_get(address);
 
@@ -54,7 +57,7 @@ static bool verify_firmware(u32_t address)
 			break;
 		}
 		retval = crypto_root_of_trust(fw_ver_info->public_key,
-					      key_data,
+					      (u8_t *)key_data,
 					      fw_ver_info->signature,
 					      (u8_t *)address,
 					      fw_info->firmware_size);
