@@ -26,7 +26,14 @@ void __secure_fault(void) ALIAS("dummy_handler");
 void __svc(void) ALIAS("dummy_handler");
 void __pendsv(void) ALIAS("dummy_handler");
 void __sys_tick(void) ALIAS("dummy_handler");
+void z_clock_isr(void) ALIAS("dummy_handler");
 void *__reserved;
+
+/* TODO: Remove when multi image is supported */
+void assert_post_action(void) ALIAS("dummy_func");
+void dummy_func(void)
+{
+}
 
 void dummy_handler(void)
 {
