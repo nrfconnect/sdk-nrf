@@ -11,6 +11,7 @@
 #include <nrf.h>
 #include <errno.h>
 #include <generated_dts_board.h>
+#include "bootloader.h" /* TODO: Remove multi_image */
 #include "bl_crypto.h"
 #include "fw_metadata.h"
 
@@ -32,17 +33,16 @@ static bool verify_firmware(u32_t address)
 	printk("Attempting to boot from address 0x%x.\n\r", address);
 
 	if (!fw_info) {
-		printk("%s\n\r", "Could not find valid firmware info inside "
-				    "firmware. Aborting boot!");
+		printk("Could not find valid firmware info inside "
+				    "firmware. Aborting boot!\n\r");
 		return false;
 	}
 
 	fw_ver_info = validation_info_find(fw_info, 4);
 
 	if (!fw_ver_info) {
-		printk("%s\n\r",
-			    "Could not find valid firmware validation "
-			    "info trailing firmware. Aborting boot!\n\r");
+		printk("Could not find valid firmware validation "
+			  "info trailing firmware. Aborting boot!\n\r");
 		return false;
 	}
 
@@ -86,9 +86,6 @@ void uninit_used_peripherals(void)
 }
 
 #ifdef CONFIG_SW_VECTOR_RELAY
-#ifndef CONFIG_SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR
-_GENERIC_SECTION(.vt_pointer_section) u32_t _vector_table_pointer;
-#endif
 extern u32_t _vector_table_pointer;
 #define VTOR _vector_table_pointer
 #else
@@ -152,24 +149,26 @@ static void boot_from(u32_t *address)
 	CODE_UNREACHABLE;
 }
 
-#if CONFIG_SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR
 void _Cstart(void) __attribute__((alias("main_bl")));
-#endif
 void main_bl(void)
 {
+#if defined(CONFIG_SB_DEBUG_PORT_SEGGER_RTT)
+	SEGGER_RTT_Init();
+#elif defined(CONFIG_SB_DEBUG_PORT_UART)
+	uart_init();
+#endif /* CONFIG_SB_RTT */
 #if CONFIG_SB_FLASH_PROTECT
 	int err;
-
-	err = fprotect_area(FLASH_AREA_SECURE_BOOT_OFFSET,
-			FLASH_AREA_SECURE_BOOT_SIZE);
+	err = fprotect_area(DT_FLASH_AREA_SECURE_BOOT_OFFSET,
+			DT_FLASH_AREA_SECURE_BOOT_SIZE);
 	if (err) {
 		printk("Protect B0 flash failed, cancel startup.\n\r");
 		return;
 	}
 
 #ifndef CONFIG_SOC_NRF9160
-	err = fprotect_area(FLASH_AREA_PROVISION_OFFSET,
-			FLASH_AREA_PROVISION_SIZE);
+	err = fprotect_area(DT_FLASH_AREA_PROVISION_OFFSET,
+			DT_FLASH_AREA_PROVISION_SIZE);
 	if (err) {
 		printk("Protect provision data failed, cancel startup.\n\r");
 		return;
@@ -178,11 +177,6 @@ void main_bl(void)
 
 #endif /* CONFIG_SB_FLASH_PROTECT */
 
-#if defined(CONFIG_SB_DEBUG_PORT_SEGGER_RTT)
-	SEGGER_RTT_Init();
-#elif defined(CONFIG_SB_DEBUG_PORT_UART)
-	uart_init();
-#endif /* CONFIG_SB_RTT */
-	boot_from((u32_t *)(0x00000000 + FLASH_AREA_APP_OFFSET));
+	boot_from((u32_t *)(0x00000000 + DT_FLASH_AREA_APP_OFFSET));
 	CODE_UNREACHABLE;
 }
