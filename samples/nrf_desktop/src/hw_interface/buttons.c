@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018-2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -12,6 +12,8 @@
 #include <device.h>
 #include <gpio.h>
 
+#include "buttons.h"
+
 #include "event_manager.h"
 #include "button_event.h"
 #include "power_event.h"
@@ -22,7 +24,10 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BUTTONS_LOG_LEVEL);
 
-#define SCAN_INTERVAL CONFIG_DESKTOP_BUTTONS_MATRIX_SCAN_INTERVAL
+#define SCAN_INTERVAL CONFIG_DESKTOP_BUTTONS_SCAN_INTERVAL
+
+/* For directly connected GPIO, scan rows once. */
+#define COLUMNS MAX(ARRAY_SIZE(col), 1)
 
 enum state {
 	STATE_IDLE,
@@ -31,26 +36,22 @@ enum state {
 	STATE_SUSPENDING
 };
 
-
-static const u8_t col_pin[] = { 2, 21, 20, 19};
-static const u8_t row_pin[] = {29, 31, 22, 24};
-
-static struct device *gpio_dev;
-static struct gpio_callback gpio_cb;
+static struct device *gpio_devs[ARRAY_SIZE(port_map)];
+static struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
 static struct k_delayed_work matrix_scan;
 static enum state state;
 static struct k_spinlock lock;
 
 
-static void matrix_scan_fn(struct k_work *work);
+static void scan_fn(struct k_work *work);
 
 
 static int set_cols(u32_t mask)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(col_pin); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
 		u32_t val = (mask & (1 << i)) ? (1) : (0);
 
-		if (gpio_pin_write(gpio_dev, col_pin[i], val)) {
+		if (gpio_pin_write(gpio_devs[col[i].port], col[i].pin, val)) {
 			LOG_ERR("Cannot set pin");
 
 			return -EFAULT;
@@ -62,15 +63,19 @@ static int set_cols(u32_t mask)
 
 static int get_rows(u32_t *mask)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(col_pin); i++) {
+	for (size_t i = 0; i < COLUMNS; i++) {
 		u32_t val;
 
-		if (gpio_pin_read(gpio_dev, row_pin[i], &val)) {
+		if (gpio_pin_read(gpio_devs[row[i].port], row[i].pin, &val)) {
 			LOG_ERR("Cannot get pin");
 			return -EFAULT;
 		}
 
-		(*mask) |= (val << i);
+		if (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED)) {
+			*mask |= (!val << i);
+		} else {
+			*mask |= (val << i);
+		}
 	}
 
 	return 0;
@@ -81,14 +86,17 @@ static int set_trig_mode(int trig_mode)
 	__ASSERT_NO_MSG((trig_mode == GPIO_INT_EDGE) ||
 			(trig_mode == GPIO_INT_LEVEL));
 
-	int flags = GPIO_PUD_PULL_DOWN | GPIO_DIR_IN | GPIO_INT |
-		    GPIO_INT_ACTIVE_HIGH;
-	flags |= trig_mode;
+	int flags = (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED) ?
+		(GPIO_PUD_PULL_UP | GPIO_INT_ACTIVE_LOW) :
+		(GPIO_PUD_PULL_DOWN | GPIO_INT_ACTIVE_HIGH));
+	flags |= (GPIO_DIR_IN | GPIO_INT | trig_mode);
 
 	int err = 0;
 
-	for (size_t i = 0; (i < ARRAY_SIZE(row_pin)) && !err; i++) {
-		err = gpio_pin_configure(gpio_dev, row_pin[i], flags);
+	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
+		__ASSERT_NO_MSG(row[i].port < ARRAY_SIZE(port_map));
+
+		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin, flags);
 	}
 
 	return err;
@@ -101,11 +109,13 @@ static int callback_ctrl(bool enable)
 	/* This must be done with irqs disabled to avoid pin callback
 	 * being fired before others are still not activated.
 	 */
-	for (size_t i = 0; (i < ARRAY_SIZE(row_pin)) && !err; i++) {
+	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
 		if (enable) {
-			err = gpio_pin_enable_callback(gpio_dev, row_pin[i]);
+			err = gpio_pin_enable_callback(gpio_devs[row[i].port],
+						       row[i].pin);
 		} else {
-			err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
+			err = gpio_pin_disable_callback(gpio_devs[row[i].port],
+							row[i].pin);
 		}
 	}
 
@@ -185,13 +195,13 @@ static void resume(void)
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
-		matrix_scan_fn(NULL);
+		scan_fn(NULL);
 
 		module_set_state(MODULE_STATE_READY);
 	}
 }
 
-static void matrix_scan_fn(struct k_work *work)
+static void scan_fn(struct k_work *work)
 {
 	if (IS_ENABLED(CONFIG_ASSERT)) {
 		/* Validate state */
@@ -202,10 +212,10 @@ static void matrix_scan_fn(struct k_work *work)
 	}
 
 	/* Get current state */
-	u32_t cur_state[ARRAY_SIZE(col_pin)] = {0};
+	u32_t cur_state[COLUMNS];
+	memset(cur_state, 0, sizeof(cur_state));
 
-	for (size_t i = 0; i < ARRAY_SIZE(col_pin); i++) {
-
+	for (size_t i = 0; i < COLUMNS; i++) {
 		int err = set_cols(1 << i);
 
 		if (!err) {
@@ -219,12 +229,11 @@ static void matrix_scan_fn(struct k_work *work)
 	}
 
 	/* Emit event for any key state change */
-
-	static u32_t old_state[ARRAY_SIZE(col_pin)];
+	static u32_t old_state[COLUMNS];
 	bool any_pressed = false;
 
-	for (size_t i = 0; i < ARRAY_SIZE(col_pin); i++) {
-		for (size_t j = 0; j < ARRAY_SIZE(row_pin); j++) {
+	for (size_t i = 0; i < COLUMNS; i++) {
+		for (size_t j = 0; j < ARRAY_SIZE(row); j++) {
 			bool is_pressed = (cur_state[i] & (1 << j));
 			bool was_pressed = (old_state[i] & (1 << j));
 
@@ -303,8 +312,9 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
 	/* Disable GPIO interrupt */
-	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
-		int err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
+	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
+		int err = gpio_pin_disable_callback(gpio_devs[row[i].port],
+						    row[i].pin);
 		if (err) {
 			LOG_ERR("Cannot disable callbacks");
 		}
@@ -318,7 +328,8 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 
 	case STATE_ACTIVE:
 		state = STATE_SCANNING;
-		k_delayed_work_submit(&matrix_scan, 0);
+		k_delayed_work_submit(&matrix_scan,
+				      CONFIG_DESKTOP_BUTTONS_DEBOUNCE_INTERVAL);
 		break;
 
 	case STATE_SCANNING:
@@ -335,15 +346,20 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 static void init_fn(void)
 {
 	/* Setup GPIO configuration */
-	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
-	if (!gpio_dev) {
-		LOG_ERR("Cannot get GPIO device binding");
-		return;
+	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
+		gpio_devs[i] = device_get_binding(port_map[i]);
+		if (!gpio_devs[i]) {
+			LOG_ERR("Cannot get GPIO device binding");
+			goto error;
+		}
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(col_pin); i++) {
-		int err = gpio_pin_configure(gpio_dev, col_pin[i],
-				GPIO_DIR_OUT);
+	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
+		__ASSERT_NO_MSG(col[i].port < ARRAY_SIZE(port_map));
+
+		int err = gpio_pin_configure(gpio_devs[col[i].port],
+					     col[i].pin,
+					     GPIO_DIR_OUT);
 
 		if (err) {
 			LOG_ERR("Cannot configure cols");
@@ -357,25 +373,28 @@ static void init_fn(void)
 		goto error;
 	}
 
-	u32_t pin_mask = 0;
-	for (size_t i = 0; i < ARRAY_SIZE(row_pin); i++) {
+	u32_t pin_mask[ARRAY_SIZE(port_map)] = {0};
+	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
 		/* Module starts in scanning mode and will switch to
 		 * callback mode if no button is pressed.
 		 */
-		err = gpio_pin_disable_callback(gpio_dev, row_pin[i]);
+		err = gpio_pin_disable_callback(gpio_devs[row[i].port],
+						row[i].pin);
 		if (err) {
 			LOG_ERR("Cannot configure rows");
 			goto error;
 		}
 
-		pin_mask |= BIT(row_pin[i]);
+		pin_mask[row[i].port] |= BIT(row[i].pin);
 	}
 
-	gpio_init_callback(&gpio_cb, button_pressed, pin_mask);
-	err = gpio_add_callback(gpio_dev, &gpio_cb);
-	if (err) {
-		LOG_ERR("Cannot add callback");
-		goto error;
+	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
+		gpio_init_callback(&gpio_cb[i], button_pressed, pin_mask[i]);
+		err = gpio_add_callback(gpio_devs[i], &gpio_cb[i]);
+		if (err) {
+			LOG_ERR("Cannot add callback");
+			goto error;
+		}
 	}
 
 	module_set_state(MODULE_STATE_READY);
@@ -383,7 +402,7 @@ static void init_fn(void)
 	/* Perform initial scan */
 	state = STATE_SCANNING;
 
-	matrix_scan_fn(NULL);
+	scan_fn(NULL);
 
 	return;
 
@@ -402,7 +421,7 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			k_delayed_work_init(&matrix_scan, matrix_scan_fn);
+			k_delayed_work_init(&matrix_scan, scan_fn);
 
 			init_fn();
 
