@@ -15,9 +15,7 @@
 #include "bl_crypto.h"
 #include "fw_metadata.h"
 
-#ifdef CONFIG_SB_FLASH_PROTECT
 #include <fprotect.h>
-#endif
 
 #include <provision.h>
 
@@ -157,7 +155,6 @@ void main_bl(void)
 #elif defined(CONFIG_SB_DEBUG_PORT_UART)
 	uart_init();
 #endif /* CONFIG_SB_RTT */
-#if CONFIG_SB_FLASH_PROTECT
 	int err;
 	err = fprotect_area(DT_FLASH_AREA_SECURE_BOOT_OFFSET,
 			DT_FLASH_AREA_SECURE_BOOT_SIZE);
@@ -174,8 +171,6 @@ void main_bl(void)
 		return;
 	}
 #endif /* CONFIG_SOC_NRF9160 */
-
-#endif /* CONFIG_SB_FLASH_PROTECT */
 
 	boot_from((u32_t *)(0x00000000 + DT_FLASH_AREA_APP_OFFSET));
 	CODE_UNREACHABLE;

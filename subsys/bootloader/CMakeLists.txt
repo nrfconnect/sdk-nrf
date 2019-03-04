@@ -24,8 +24,8 @@ target_link_libraries(bootloader PRIVATE libc)
 add_subdirectory(debug)
 target_link_libraries(bootloader PRIVATE debuglib)
 
-add_subdirectory_ifdef(CONFIG_SB_FLASH_PROTECT fprotect)
-target_link_libraries_ifdef(CONFIG_SB_FLASH_PROTECT bootloader PRIVATE fprotect)
+add_subdirectory(fprotect)
+target_link_libraries(bootloader PRIVATE fprotect)
 
 add_subdirectory(fw_metadata)
 target_link_libraries(bootloader PRIVATE fw_metadata)
