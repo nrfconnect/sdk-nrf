@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <generated_dts_board.h>
 #include <errno.h>
-
+#include "../bootloader.h"
 typedef struct {
 	u32_t s0_address;
 	u32_t s1_address;
@@ -18,7 +18,7 @@ typedef struct {
 } provision_flash_t;
 
 static const provision_flash_t *p_provision_data =
-	(provision_flash_t *)FLASH_AREA_PROVISION_OFFSET;
+	(provision_flash_t *)DT_FLASH_AREA_PROVISION_OFFSET;
 
 u32_t s0_address_read(void)
 {

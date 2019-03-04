@@ -12,6 +12,12 @@ menuconfig SECURE_BOOT
 
 if SECURE_BOOT
 
+#TODO: Remove when multi image
+config FLASH_LOAD_OFFSET
+	default 0x10000 if SOC_NRF9160
+	default 0x1c000 if SOC_NRF52840
+	default 0x1c000 if SOC_NRF52832
+
 config CUSTOM_DTS_OVERLAY_CMAKE_FILE
 	string
 	# We must use relative path from ZEPHYR_BASE here as the NRF_DIR
@@ -94,8 +100,6 @@ config SB_PUBLIC_KEY_FILES
 rsource "debug/Kconfig"
 
 rsource "bl_crypto/Kconfig"
-
-rsource "c_runtime_setup/Kconfig"
 
 rsource "fw_metadata/Kconfig"
 
