@@ -31,30 +31,13 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
     ih.write_hex_file(output)
 
 
-# Since cmake does not have access to DTS variables, fetch them manually.
-def find_provision_memory_section(config_file):
-    s0_address = 0
-    s1_address = 0
-    provision_address = 0
-
-    with open(config_file, 'r') as lf:
-        for line in lf.readlines():
-            if "FLASH_AREA_S0_OFFSET" in line:
-                s0_address = int(line.split('=')[1])
-            elif "FLASH_AREA_S1_OFFSET" in line:
-                s1_address = int(line.split('=')[1])
-            elif "FLASH_AREA_PROVISION_OFFSET" in line:
-                provision_address = int(line.split('=')[1])
-
-    return s0_address, s1_address, provision_address
-
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Generate provision hex file.",
         formatter_class=argparse.RawDescriptionHelpFormatter)
-
-    parser.add_argument("--generated-conf-file", required=True, help="Generated conf file.")
+    parser.add_argument("--s0-addr", type=int, required=True, help="Set address of s0 explicitly")
+    parser.add_argument("--s1-addr", type=int, required=True, help="Set address of s1 explicitly")
+    parser.add_argument("--provision-addr", type=int, required=True, help="Set address of provision data explicitly")
     parser.add_argument("--public-key-files", required=True,
                         help="Semicolon-separated list of public key .pem files.")
     parser.add_argument("-o", "--output", required=False, default="provision.hex",
@@ -85,7 +68,10 @@ def main():
     global VERBOSE
     VERBOSE = args.verbose
 
-    s0_address, s1_address, provision_address = find_provision_memory_section(args.generated_conf_file)
+    s0_address = args.s0_addr
+    s1_address = args.s1_addr
+    provision_address = args.provision_addr
+
     hashes = get_hashes(args.public_key_files.split(','))
     generate_provision_hex_file(s0_address=s0_address,
                                 s1_address=s1_address,

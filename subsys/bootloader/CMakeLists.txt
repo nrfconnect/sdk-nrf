@@ -18,10 +18,8 @@ target_link_libraries(bootloader PRIVATE c_runtime_setup)
 add_subdirectory(provision)
 target_link_libraries(bootloader PRIVATE provision)
 
-if(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR OR CONFIG_SECURE_BOOT_DEBUG)
-  add_subdirectory(libc)
-  target_link_libraries(bootloader PRIVATE libc)
-endif()
+add_subdirectory(libc)
+target_link_libraries(bootloader PRIVATE libc)
 
 add_subdirectory(debug)
 target_link_libraries(bootloader PRIVATE debuglib)
@@ -31,7 +29,6 @@ target_link_libraries_ifdef(CONFIG_SB_FLASH_PROTECT bootloader PRIVATE fprotect)
 
 add_subdirectory(fw_metadata)
 target_link_libraries(bootloader PRIVATE fw_metadata)
-
 
 add_dependencies(bootloader offsets_h)
 target_link_libraries(bootloader PRIVATE zephyr_interface)
@@ -71,12 +68,7 @@ set(bl_zephyr_lnk
 zephyr_get_include_directories_for_lang(C ZEPHYR_INCLUDES)
 
 # Set our custom linker script to be called when linking the bootloader.
-if(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_ZEPHYR)
 set(LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/include/linker.ld)
-endif()
-if(CONFIG_SB_C_RUNTIME_SETUP_VARIANT_MDK OR CONFIG_SB_C_RUNTIME_SETUP_VARIANT_CUSTOM)
-set(LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/include/bootloader.ld)
-endif()
 construct_add_custom_command_for_linker_pass(bootloader custom_command)
 unset(LINKER_SCRIPT)
 # For some reason, we need to have ${PROJECT_BINARY_DIR} before the
@@ -177,13 +169,45 @@ add_custom_target(
   offsets_h
   )
 
+if(DEFINED DT_FLASH_AREA_S0_OFFSET)
+	set(S0_ADDR ${DT_FLASH_AREA_S0_OFFSET})
+else()
+	if(CONFIG_SOC_NRF9160)
+		set(S0_ADDR 32768)
+	else()
+		set(S0_ADDR 16384)
+	endif()
+endif()
+
+if(DEFINED DT_FLASH_AREA_S1_OFFSET)
+	set(S1_ADDR ${DT_FLASH_AREA_S1_OFFSET})
+else()
+	if(CONFIG_SOC_NRF9160)
+		set(S1_ADDR 786432)
+	else()
+		set(S1_ADDR 65536)
+	endif()
+endif()
+
+if(DEFINED DT_FLASH_AREA_PROVISION_OFFSET)
+	set(PROVISION_ADDR ${DT_FLASH_AREA_PROVISION_OFFSET})
+else()
+	if(CONFIG_SOC_NRF52832)
+		set(PROVISION_ADDR 520192)
+	else()
+		set(PROVISION_ADDR 1044480)
+	endif()
+endif()
+
 add_custom_command(
   OUTPUT
   ${PROVISION_HEX}
   COMMAND
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/provision.py
-  --generated-conf-file ${PROJECT_BINARY_DIR}/include/generated/generated_dts_board.conf
+  --s0-addr ${S0_ADDR}
+  --s1-addr ${S1_ADDR}
+  --provision-addr ${PROVISION_ADDR}
   --public-key-files "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}"
   --output ${PROVISION_HEX}
   DEPENDS ${PROVISION_DEPENDS}
