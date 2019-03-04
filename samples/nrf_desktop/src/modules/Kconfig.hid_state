@@ -13,8 +13,7 @@ config DESKTOP_REPORT_DESC
 	  This option specifies a path to the HID report descriptor file.
 
 config DESKTOP_HID_STATE_ENABLE
-	bool
-	default y if DESKTOP_WHEEL_ENABLE || !DESKTOP_MOTION_NONE || !DESKTOP_BUTTONS_NONE
+	bool "Enable HID state"
 	help
 	  HID events processing module.
 
@@ -36,6 +35,13 @@ config DESKTOP_HID_EVENT_QUEUE_SIZE
 	int "HID event queue size"
 	default 12
 	range 2 255
+
+config DESKTOP_KEYMAP
+	string "Keymap"
+	depends on DESKTOP_HID_STATE_ENABLE
+	default ""
+	help
+	  This option specifies a path to the keymap file.
 
 module = DESKTOP_HID_STATE
 module-str = HID state

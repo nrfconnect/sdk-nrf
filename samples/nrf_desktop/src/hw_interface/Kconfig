@@ -103,24 +103,31 @@ choice
 config DESKTOP_BUTTONS_NONE
 	bool "Disable buttons"
 
-config DESKTOP_BUTTONS_MATRIX_ENABLE
-	bool "Buttons scanned from key matrix"
+config DESKTOP_BUTTONS_ENABLE
+	bool "Buttons scanned from key matrix or directly connected GPIO"
 
 endchoice
 
-config DESKTOP_KEYMAP
-	string "Keymap"
-	depends on !DESKTOP_BUTTONS_NONE
-	default ""
-	help
-	  This option specifies a path to the keymap file.
-
-config DESKTOP_BUTTONS_MATRIX_SCAN_INTERVAL
-	int "Key matrix scan interval in ms"
-	depends on DESKTOP_BUTTONS_MATRIX_ENABLE
+config DESKTOP_BUTTONS_SCAN_INTERVAL
+	int "Buttons scan interval in ms"
+	depends on DESKTOP_BUTTONS_ENABLE
 	default 15
 	help
 	  Interval at which key matrix is scanned.
+
+config DESKTOP_BUTTONS_DEBOUNCE_INTERVAL
+	int "Interval before first button scan in ms"
+	depends on DESKTOP_BUTTONS_ENABLE
+	default 1
+	help
+	  Interval before first scan. Introduced for debouncing reasons.
+
+config DESKTOP_BUTTONS_POLARITY_INVERSED
+	bool "Inverse buttons polarity"
+	depends on DESKTOP_BUTTONS_ENABLE
+	help
+	  When this option is enabled, button is pressed when the GPIO state
+	  is low.
 
 comment "Wheel configuration"
 	depends on HAS_DTS_QDEC
