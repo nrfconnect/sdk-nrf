@@ -1,0 +1,17 @@
+# Kconfig - nRF52840 PCA20035 board configuration
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+if SOC_NRF52840_QIAA
+
+config BOARD_NRF52840_PCA20035_V0_2_2
+	bool "nRF52840 PCA20035 v0.2.2"
+	select BOARD_NRF52840_PCA20035
+
+config BOARD_NRF52840_PCA20035_V0_3_0
+	bool "nRF52840 PCA20035 v0.3.0"
+	select BOARD_NRF52840_PCA20035
+
+endif # SOC_NRF52840_QIAA

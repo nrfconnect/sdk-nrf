@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
+/dts-v1/;
+#include "nrf52840_pca20035_common.dts"
+
+&uart0 {
+	compatible = "nordic,nrf-uart";
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <15>;
+	rx-pin = <18>;
+	rts-pin = <20>;
+	cts-pin = <32>;
+};
+
+&uart1 {
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <21>;
+	rx-pin = <25>;
+	rts-pin = <22>;
+	cts-pin = <19>;
+};

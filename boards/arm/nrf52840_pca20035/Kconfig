@@ -1,0 +1,17 @@
+# Kconfig - nRF52840 PCA20035 board configuration
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+config BOARD_NRF52840_PCA20035
+	bool
+
+if BOARD_NRF52840_PCA20035
+
+config BOARD_ENABLE_DCDC
+	bool "Enable DCDC mode"
+	select SOC_DCDC_NRF52X
+	default y
+
+endif # BOARD_NRF52840_PCA20035
