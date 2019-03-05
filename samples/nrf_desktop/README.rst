@@ -30,4 +30,4 @@ Testing
 *******
 
 The code is currently work-in-progress and as such is not fully functional, verified, or
-supported for product development.
+supported for product development. Simple smoke test executed for each PR in fw-nrfconnect-nrf.
