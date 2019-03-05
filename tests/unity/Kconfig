@@ -1,0 +1,2 @@
+config UNITY
+	bool "Use Unity test framework"
