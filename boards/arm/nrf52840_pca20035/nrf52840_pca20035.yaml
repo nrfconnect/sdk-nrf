@@ -1,0 +1,12 @@
+identifier: nrf52840_pca20035
+name: nRF52840-PCA20035
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - adc
+  - usb_device
+  - ble
+  - ieee802154
