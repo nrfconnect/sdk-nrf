@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#ifndef BT_GATT_NUS_H_
+#define BT_GATT_NUS_H_
+
 /** @file
  * @defgroup nrf_bt_nus Nordic UART (NUS) GATT Service
  * @{
@@ -81,3 +84,5 @@ int nus_send(const u8_t *data, u16_t len);
 #endif
 
 /** @} */
+
+#endif /* BT_GATT_NUS_H_ */
