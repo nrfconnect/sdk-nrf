@@ -76,7 +76,6 @@ struct report_data {
 struct report_state {
 	enum state state;
 	unsigned int cnt;
-	unsigned int err_cnt;
 };
 
 struct subscriber {
@@ -593,7 +592,51 @@ static void send_report_mouse(void)
 	}
 }
 
-static void report_send(enum target_report tr, bool check_state)
+static bool update_report(enum target_report tr)
+{
+	struct report_data *rd = &state.report_data[tr];
+	bool update_needed = false;
+
+	while (!update_needed && !eventq_is_empty(&rd->eventq)) {
+		/* There are enqueued events to handle. */
+		struct item_event *event = eventq_get(&rd->eventq);
+
+		__ASSERT_NO_MSG(event);
+
+		update_needed = key_value_set(&rd->items,
+					      event->item.usage_id,
+					      event->item.value);
+
+		k_free(event);
+
+		/* If no item was changed, try next event. */
+	}
+
+	switch (tr) {
+	case TARGET_REPORT_KEYBOARD:
+	case TARGET_REPORT_MPLAYER:
+		/* No action */
+		break;
+
+	case TARGET_REPORT_MOUSE:
+		if ((state.last_dx != 0) ||
+		    (state.last_dy != 0) ||
+		    (state.wheel_acc != 0)) {
+			update_needed = true;
+		}
+		break;
+
+	default:
+		/* Unhandled HID report type. */
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	return update_needed;
+}
+
+static void report_send(enum target_report tr, bool check_state,
+			bool send_always)
 {
 	if (!state.selected) {
 		LOG_WRN("No active subscriber");
@@ -611,7 +654,9 @@ static void report_send(enum target_report tr, bool check_state)
 			pipeline_depth = 2;
 		}
 
-		while (rs->cnt < pipeline_depth) {
+		while ((rs->cnt < pipeline_depth) &&
+		       (update_report(tr) || send_always)) {
+
 			switch (tr) {
 			case TARGET_REPORT_KEYBOARD:
 				send_report_keyboard();
@@ -639,7 +684,11 @@ static void report_send(enum target_report tr, bool check_state)
 			 */
 		}
 
-		rs->state = STATE_CONNECTED_BUSY;
+		if (rs->cnt == 0) {
+			rs->state = STATE_CONNECTED_IDLE;
+		} else {
+			rs->state = STATE_CONNECTED_BUSY;
+		}
 	}
 }
 
@@ -669,64 +718,27 @@ static void report_issued(const void *subscriber_id, enum target_report tr,
 	struct report_data *rd = &state.report_data[tr];
 
 	if (error) {
-		rs->err_cnt++;
-		if (rs->err_cnt > 1) {
-			/* To maintain the sanity of HID state, clear
-			 * all recorded events and items.
-			 */
-			LOG_ERR("Error while sending report");
-			memset(&rd->items, 0, sizeof(rd->items));
-			eventq_reset(&rd->eventq);
-
-			if (rs->cnt == 0) {
-				rs->state = STATE_CONNECTED_IDLE;
-			}
-			return;
-		}
-	} else {
-		rs->err_cnt = 0;
-	}
-
-	/* If there was an error try sending the state again. */
-	bool update_needed = error;
-
-	while (!update_needed) {
-		if (eventq_is_empty(&rd->eventq)) {
-			/* Module is connected but there are no events to
-			 * dequeue. If that was the last report switch to idle
-			 * state.
-			 */
-			if (rs->cnt == 0) {
-				rs->state = STATE_CONNECTED_IDLE;
-			}
-			break;
+		/* To maintain the sanity of HID state, clear
+		 * all recorded events and items.
+		 */
+		LOG_ERR("Error while sending report");
+		memset(&rd->items, 0, sizeof(rd->items));
+		eventq_reset(&rd->eventq);
+		if (tr == TARGET_REPORT_MOUSE) {
+			state.last_dx = 0;
+			state.last_dy = 0;
+			state.wheel_acc = 0;
 		}
 
-		/* There are enqueued events to handle. */
-		struct item_event *event = eventq_get(&rd->eventq);
-
-		__ASSERT_NO_MSG(event);
-
-		update_needed = key_value_set(&rd->items,
-					      event->item.usage_id,
-					      event->item.value);
-
-		k_free(event);
-
-		/* If no item was changed, try next event. */
-	}
-
-	if (!update_needed && (tr == TARGET_REPORT_MOUSE)) {
-		if ((state.last_dx != 0) ||
-		    (state.last_dy != 0) ||
-		    (state.wheel_acc != 0)) {
-			update_needed = true;
+		if (rs->cnt == 0) {
+			rs->state = STATE_CONNECTED_IDLE;
 		}
+
+		return;
 	}
 
-	if (update_needed && (rs->cnt == 0)) {
-		/* Something was updated. Report must be issued. */
-		report_send(tr, false);
+	if (rs->cnt == 0) {
+		report_send(tr, false, false);
 	}
 }
 
@@ -762,7 +774,7 @@ static void connect(const void *subscriber_id, enum target_report tr)
 			eventq_cleanup(&rd->eventq, MSEC(z_tick_get()));
 		}
 
-		report_send(tr, false);
+		report_send(tr, false, true);
 	}
 }
 
@@ -849,7 +861,7 @@ static void update_key(const struct hid_keymap *map, s16_t value)
 		/* Update state and issue report generation event. */
 		struct report_data *rd = &state.report_data[tr];
 		if (key_value_set(&rd->items, map->usage_id, value)) {
-			report_send(tr, false);
+			report_send(tr, false, true);
 		}
 	}
 }
@@ -877,7 +889,7 @@ static bool event_handler(const struct event_header *eh)
 		state.last_dx = event->dx;
 		state.last_dy = event->dy;
 
-		report_send(TARGET_REPORT_MOUSE, true);
+		report_send(TARGET_REPORT_MOUSE, true, true);
 
 		return false;
 	}
@@ -897,7 +909,7 @@ static bool event_handler(const struct event_header *eh)
 
 		state.wheel_acc += event->wheel;
 
-		report_send(TARGET_REPORT_MOUSE, true);
+		report_send(TARGET_REPORT_MOUSE, true, true);
 
 		return false;
 	}
