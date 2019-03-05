@@ -27,9 +27,10 @@ manifest:
       # nRF Connect SDK base URL.
     - name: ncs
       url-base: https://github.com/NordicPlayground
-
     - name: zephyrproject
       url-base: https://github.com/zephyrproject-rtos
+    - name: throwtheswitch
+      url-base: https://github.com/ThrowTheSwitch
 
   # The list of external projects for the nRF Connect SDK.
   #
@@ -48,6 +49,14 @@ manifest:
       path: modules/lib/tinycbor
       remote: zephyrproject
       revision: 111f7a215cc4efa49fd03a7835719adca83b4388
+    - name: cmock
+      path: test/cmock
+      revision: c243b9a7a7b3c471023193992b46cf1bd1910450
+      remote: throwtheswitch
+    - name: unity
+      path: test/cmock/vendor/unity
+      revision: 031f3bbe45f8adf504ca3d13e6f093869920b091
+      remote: throwtheswitch
 
   self:
     path: nrf
