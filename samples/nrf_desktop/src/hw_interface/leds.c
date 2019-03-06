@@ -107,16 +107,16 @@ static int leds_init(void)
 {
 	const char *dev_name[] = {
 #if CONFIG_PWM_0
-		CONFIG_PWM_0_NAME,
+		DT_NORDIC_NRF_PWM_PWM_0_LABEL,
 #endif
 #if CONFIG_PWM_1
-		CONFIG_PWM_1_NAME,
+		DT_NORDIC_NRF_PWM_PWM_1_LABEL,
 #endif
 #if CONFIG_PWM_2
-		CONFIG_PWM_2_NAME,
+		DT_NORDIC_NRF_PWM_PWM_2_LABEL,
 #endif
 #if CONFIG_PWM_3
-		CONFIG_PWM_3_NAME,
+		DT_NORDIC_NRF_PWM_PWM_3_LABEL,
 #endif
 	};
 
