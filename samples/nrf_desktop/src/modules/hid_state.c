@@ -223,7 +223,7 @@ static void eventq_append(struct eventq *eventq, u16_t usage_id, s16_t value)
 
 	hid_event->item.usage_id = usage_id;
 	hid_event->item.value = value;
-	hid_event->timestamp = MSEC(z_tick_get());
+	hid_event->timestamp = K_MSEC(z_tick_get());
 
 	/* Add a new event to the queue. */
 	sys_slist_append(&eventq->root, &hid_event->node);
@@ -771,7 +771,7 @@ static void connect(const void *subscriber_id, enum target_report tr)
 
 		if (!eventq_is_empty(&rd->eventq)) {
 			/* Remove all stale events from the queue. */
-			eventq_cleanup(&rd->eventq, MSEC(z_tick_get()));
+			eventq_cleanup(&rd->eventq, K_MSEC(z_tick_get()));
 		}
 
 		report_send(tr, false, true);
@@ -802,7 +802,7 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t value,
 {
 	struct report_data *rd = &state.report_data[tr];
 
-	eventq_cleanup(&rd->eventq, MSEC(z_tick_get()));
+	eventq_cleanup(&rd->eventq, K_MSEC(z_tick_get()));
 
 	if (eventq_is_full(&rd->eventq)) {
 		if (!connected) {
