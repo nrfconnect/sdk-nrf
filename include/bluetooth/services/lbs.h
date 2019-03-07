@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#ifndef BT_GATT_LBS_H_
+#define BT_GATT_LBS_H_
+
 /** @file
  *  @brief LED Button Service (LBS) sample
  */
@@ -68,3 +71,5 @@ int lbs_send_button_state(bool button_state);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* BT_GATT_LBS_H_ */
