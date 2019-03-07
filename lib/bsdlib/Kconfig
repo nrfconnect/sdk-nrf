@@ -21,7 +21,6 @@ comment "Nordic BSD Socket library configuration"
 config BSD_LIBRARY_TRACE_ENABLED
 	bool
 	prompt "Enable proprietary traces over UART"
-	default y
 	# Modem tracing over UART use the UARTE1 as dedicated peripheral.
 	# This enable UARTE1 peripheral and includes nrfx UARTE driver.
 	select NRFX_UARTE1
