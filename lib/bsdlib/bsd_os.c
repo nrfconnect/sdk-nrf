@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <string.h>
 #include <bsd_os.h>
 #include <bsd.h>
+#include <bsd_limits.h>
 #include <bsd_platform.h>
 #include <nrf.h>
 
@@ -49,12 +51,164 @@ static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 
 void IPC_IRQHandler(void);
 
-int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
+#define THREAD_MONITOR_ENTRIES 10
+
+struct sleeping_thread {
+	sys_snode_t node;
+	struct k_sem sem;
+};
+
+/* An array of thread ID and RPC counter pairs, used to avoid race conditions.
+ * It allows to identify whether it is safe to put the thread to sleep or not.
+ */
+static struct thread_monitor_entry {
+	k_tid_t id; /* Thread ID. */
+	int cnt; /* Last RPC event count. */
+} thread_event_monitor[THREAD_MONITOR_ENTRIES];
+
+/* A list of threads that are sleeping and should be woken up on next event. */
+static sys_slist_t sleeping_threads;
+
+/* RPC event counter, incremented on each RPC event. */
+static atomic_t rpc_event_cnt;
+
+/* Get thread monitor structure assigned to a specific thread id, with a RPC
+ * counter value at which bsdlib last checked the 'readiness' of a thread
+ */
+static struct thread_monitor_entry *thread_monitor_entry_get(k_tid_t id)
 {
-	/* TODO: to be implemented */
-	return 0;
+	struct thread_monitor_entry *entry = thread_event_monitor;
+	struct thread_monitor_entry *new_entry = thread_event_monitor;
+	int entry_age, oldest_entry_age = 0;
+
+	for ( ; PART_OF_ARRAY(thread_event_monitor, entry); entry++) {
+		if (entry->id == id) {
+			return entry;
+		} else if (entry->id == 0) {
+			/* Uninitialized field. */
+			new_entry = entry;
+			break;
+		}
+
+		/* Identify oldest entry. */
+		entry_age = rpc_event_cnt - entry->cnt;
+		if (entry_age > oldest_entry_age) {
+			oldest_entry_age = entry_age;
+			new_entry = entry;
+		}
+	}
+
+	new_entry->id = id;
+	new_entry->cnt = rpc_event_cnt - 1;
+
+	return new_entry;
 }
 
+/* Update thread monitor entry RPC counter. */
+static void thread_monitor_entry_update(struct thread_monitor_entry *entry)
+{
+	entry->cnt = rpc_event_cnt;
+}
+
+/* Verify that thread can be put into sleep (no RPC event occured in a
+ * meantime), or whether we should return to bsdlib to re-verify if a sleep is
+ * needed.
+ */
+static bool can_thread_sleep(struct thread_monitor_entry *entry)
+{
+	bool allow_to_sleep = true;
+
+	if (rpc_event_cnt != entry->cnt) {
+		thread_monitor_entry_update(entry);
+		allow_to_sleep = false;
+	}
+
+	return allow_to_sleep;
+}
+
+/* Initialize sleeping thread structure. */
+static void sleeping_thread_init(struct sleeping_thread *thread)
+{
+	k_sem_init(&thread->sem, 0, 1);
+}
+
+/* Add thread to the sleeping threads list. Will return information whether
+ * the thread was allowed to sleep or not.
+ */
+static bool sleeping_thread_add(struct sleeping_thread *thread)
+{
+	bool allow_to_sleep = false;
+	struct thread_monitor_entry *entry;
+
+	u32_t key = irq_lock();
+
+	entry = thread_monitor_entry_get(k_current_get());
+
+	if (can_thread_sleep(entry)) {
+		allow_to_sleep = true;
+		sys_slist_append(&sleeping_threads, &thread->node);
+	}
+
+	irq_unlock(key);
+
+	return allow_to_sleep;
+}
+
+/* Remove a thread form the sleeping threads list. */
+static void sleeping_thread_remove(struct sleeping_thread *thread)
+{
+	struct thread_monitor_entry *entry;
+
+	u32_t key = irq_lock();
+
+	sys_slist_find_and_remove(&sleeping_threads, &thread->node);
+
+	entry = thread_monitor_entry_get(k_current_get());
+	thread_monitor_entry_update(entry);
+
+	irq_unlock(key);
+}
+
+int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
+{
+	struct sleeping_thread thread;
+	s64_t start, remaining;
+
+	start = k_uptime_get();
+
+	if (*timeout == 0) {
+		k_yield();
+		return NRF_ETIMEDOUT;
+	}
+
+	if (*timeout < 0) {
+		*timeout = K_FOREVER;
+	}
+
+	sleeping_thread_init(&thread);
+
+	if (!sleeping_thread_add(&thread)) {
+		return 0;
+	}
+
+	(void)k_sem_take(&thread.sem, *timeout);
+
+	sleeping_thread_remove(&thread);
+
+	if (*timeout == K_FOREVER) {
+		return 0;
+	}
+
+	/* Calculate how much time is left until timeout. */
+	remaining = *timeout - (k_uptime_get() - start);
+	*timeout = remaining > 0 ? remaining : 0;
+
+	if (*timeout == 0) {
+		return NRF_ETIMEDOUT;
+	}
+
+	return 0;
+}
 
 void bsd_os_errno_set(int err_code)
 {
@@ -183,12 +337,23 @@ ISR_DIRECT_DECLARE(ipc_proxy_irq_handler)
 	IPC_IRQHandler();
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
+
 	return 1; /* We should check if scheduling decision should be made */
 }
 
 ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 {
+	atomic_inc(&rpc_event_cnt);
+
 	bsd_os_application_irq_handler();
+
+	struct sleeping_thread *thread;
+
+	/* Wake up all sleeping threads. */
+	SYS_SLIST_FOR_EACH_CONTAINER(&sleeping_threads, thread, node) {
+		k_sem_give(&thread->sem);
+	}
+
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
 	return 1; /* We should check if scheduling decision should be made */
@@ -249,6 +414,9 @@ void trace_uart_init(void)
 /* This function is called by bsd_init and must not be called explicitly. */
 void bsd_os_init(void)
 {
+	sys_slist_init(&sleeping_threads);
+	atomic_clear(&rpc_event_cnt);
+
 	read_task_create();
 
 	/* Configure and enable modem tracing over UART. */
