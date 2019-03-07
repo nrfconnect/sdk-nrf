@@ -1,9 +1,3 @@
-/**@file at_cmd_parser.h
- *
- * @brief Basic parser for AT commands.
- *
- */
-
 /*
  * Copyright (c) 2019 Nordic Semiconductor ASA
  *
@@ -13,29 +7,41 @@
 #ifndef AT_CMD_PARSER_H_
 #define AT_CMD_PARSER_H_
 
+/**@file at_cmd_parser.h
+ *
+ * @brief Basic parser for AT commands.
+ * @defgroup at_cmd_parser AT command parser
+ * @{
+ */
+
 #include <stdlib.h>
 #include <zephyr/types.h>
 #include <at_params.h>
 
 /**
- * @brief Parse AT command or response parameters from a string. Save parameters
- * in a list.
+ * @brief Parse a maximum number of AT command or response parameters from a string.
  *
- * If an error is returned by the parser, the content of @ref list should be
- * ignored. The @ref list list can be reused to parse multiple at commands.
- * When calling this function, the list is cleared. The @ref list list should
- * be initialized. The size of the list defines the maximum number of parameters
- * that can be parsed and stored. If there are more parameters than @ref
- * max_params_count, they will be ignored.
+ * This function parses the parameters from @p at_params_str and saves
+ * them in @p list. If there are more parameters than @p max_params_count,
+ * they are ignored.
  *
- * @param at_params_str   AT parameters as a null-terminated String. Can be
- * numeric or string parameters.
- * @param list            Pointer to an initialized list where parameters will
- * be stored. Should not be null.
- * @param max_params_count  Maximum number of parameters expected in @ref
- * at_params_str. Can be set to a smaller value to parse only some parameters.
+ * @p list must be initialized. It can be reused to parse multiple commands.
+ * When calling this function, the list is cleared. The maximum number of AT
+ * parameters that can be parsed and stored is limited by the size of @p list.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * If an error is returned by the parser, the content of @p list should be
+ * ignored.
+ *
+ * @param at_params_str    AT parameters as a null-terminated string. Can be
+ *                         numeric or string parameters.
+ * @param list             Pointer to an initialized list where parameters
+ *                         are stored. Must not be NULL.
+ * @param max_params_count Maximum number of parameters expected in @p
+ *                         at_params_str. Can be set to a smaller value to
+ *                         parse only some parameters.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int at_parser_max_params_from_str(char *at_params_str,
 				struct at_param_list *list,
@@ -43,13 +49,29 @@ int at_parser_max_params_from_str(char *at_params_str,
 
 
 /**
- * @brief Parse AT command or response parameters from a string. Save parameters
- * in a list. The size of the @ref list list defines the number of AT
- * parameters than can be parsed and stored.
+ * @brief Parse AT command or response parameters from a string.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * This function parses the parameters from @p at_params_str and saves
+ * them in @p list.
+ *
+ * @p list must be initialized. It can be reused to parse multiple commands.
+ * When calling this function, the list is cleared. The maximum number of AT
+ * parameters that can be parsed and stored is limited by the size of @p list.
+ *
+ * If an error is returned by the parser, the content of @p list should be
+ * ignored.
+ *
+ * @param at_params_str AT parameters as a null-terminated string. Can be
+ *                      numeric or string parameters.
+ * @param list          Pointer to an initialized list where parameters
+ *                      are stored. Must not be NULL.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
  */
 int at_parser_params_from_str(char *at_params_str,
 				struct at_param_list *list);
+
+/** @} */
 
 #endif /* AT_CMD_PARSER_H_ */
