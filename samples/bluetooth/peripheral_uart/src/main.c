@@ -12,6 +12,7 @@
 #include <zephyr.h>
 #include <uart.h>
 
+#include <device.h>
 #include <soc.h>
 #include <gpio.h>
 
@@ -31,16 +32,12 @@
 #define DEVICE_NAME_LEN	        (sizeof(DEVICE_NAME) - 1)
 
 /* Change this if you have an LED connected to a custom port */
-#ifndef LED0_GPIO_CONTROLLER
-#define LED0_GPIO_CONTROLLER    LED0_GPIO_PORT
-#endif
-
 #define LED_PORT                LED0_GPIO_CONTROLLER
 
 #define RUN_STATUS_LED          LED0_GPIO_PIN
 #define RUN_LED_BLINK_INTERVAL  1000
 
-#define CON_STATUS_LED          LED1_GPIO_PIN
+#define CON_STATUS_LED          LED0_GPIO_PIN
 
 #define LED_ON                  0
 #define LED_OFF                 1
@@ -53,6 +50,11 @@ static struct bt_conn *current_conn;
 
 static struct device  *led_port;
 static struct device  *uart;
+
+static u32_t led_pins[] = {LED0_GPIO_PIN,
+			   LED1_GPIO_PIN,
+			   LED2_GPIO_PIN,
+			   LED3_GPIO_PIN};
 
 struct uart_data_t {
 	void  *fifo_reserved;
@@ -329,8 +331,11 @@ static int init_leds(void)
 	}
 
 	if (!err) {
-		err = gpio_port_write(led_port, LED_OFF << RUN_STATUS_LED |
-						LED_OFF << CON_STATUS_LED);
+		err = gpio_pin_write(led_port, RUN_STATUS_LED, LED_OFF);
+	}
+
+	if (!err) {
+		err = gpio_pin_write(led_port, CON_STATUS_LED, LED_OFF);
 	}
 
 	if (err) {
@@ -348,14 +353,22 @@ void error(void)
 
 	led_port = device_get_binding(LED_PORT);
 	if (led_port) {
-		err = gpio_port_configure(led_port, GPIO_DIR_OUT);
+		for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
+			err = gpio_pin_configure(led_port, led_pins[i],
+						 GPIO_DIR_OUT);
+			if (err) {
+				break;
+			}
+		}
 	}
 
 	if (!err) {
-		gpio_port_write(led_port, LED_ON << LED0_GPIO_PIN |
-					  LED_ON << LED1_GPIO_PIN |
-					  LED_ON << LED2_GPIO_PIN |
-					  LED_ON << LED3_GPIO_PIN);
+		for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
+			err = gpio_pin_write(led_port, led_pins[i], LED_ON);
+			if (err) {
+				break;
+			}
+		}
 	}
 
 	while (true) {
