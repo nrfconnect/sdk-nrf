@@ -129,32 +129,47 @@ static void notif_handler(enum bt_gatt_hids_notif_evt evt,
 
 static void mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	LOG_INF("");
-	notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
+	if (cur_conn) {
+		notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
+	} else {
+		LOG_WRN("Notification before connection");
+	}
 }
 
 static void boot_mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	LOG_INF("");
-	notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_BOOT);
+	if (cur_conn) {
+		notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_BOOT);
+	} else {
+		LOG_WRN("Notification before connection");
+	}
 }
 
 static void keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	LOG_INF("");
-	notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_PROTOCOL);
+	if (cur_conn) {
+		notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_PROTOCOL);
+	} else {
+		LOG_WRN("Notification before connection");
+	}
 }
 
 static void boot_keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	LOG_INF("");
-	notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_BOOT);
+	if (cur_conn) {
+		notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_BOOT);
+	} else {
+		LOG_WRN("Notification before connection");
+	}
 }
 
 static void mplayer_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	LOG_INF("");
-	notif_handler(evt, TARGET_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
+	if (cur_conn) {
+		notif_handler(evt, TARGET_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
+	} else {
+		LOG_WRN("Notification before connection");
+	}
 }
 
 static void feature_report_handler(struct bt_gatt_hids_rep const *rep,
