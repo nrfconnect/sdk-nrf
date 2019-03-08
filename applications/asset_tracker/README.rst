@@ -3,17 +3,37 @@
 nRF9160: Asset Tracker
 ######################
 
-The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160 DK to the `nRF Cloud`_ via LTE and transmit GPS and sensor data.
+The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160 DK to the `nRF Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the modem.
 
 
 Overview
 ********
 
-The application sends GPS position, temperature, and accelerometer data that is collected by an nRF9160 DK to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where the data is visualized.
-The accelerometer data is used to infer the device's physical orientation, which is sent as the nRF Cloud sensor data type "FLIP".
-Temperature data is sent as the nRF Cloud sensor type "TEMP".
+The application sends data that is collected by an nRF9160 DK to Nordic Semiconductor's cloud solution, `nRF Cloud`_, where the data is visualized.
+This data includes the GPS position, accelerometer data (the device's physical orientation), and data from various environment sensors.
 
-By default, the application uses simulated sensor and GPS data, but it can be configured with Kconfig options to use real sensors to collect data.
+.. list-table::
+   :header-rows: 1
+   :align: center
+
+   * - Sensor data
+     - nRF Cloud sensor type
+   * - GPS coordinates
+     - GPS
+   * - Accelerometer data
+     - FLIP
+   * - Temperature
+     - TEMP
+   * - Humidity
+     - HUMID
+   * - Air pressure
+     - AIR_PRESS
+
+By default, the application uses simulated sensor data, but it can be configured with Kconfig options to use real sensors to collect data.
+
+In addition to the sensor data, the application retrieves information about the LTE modem, such as the signal strength, battery voltage, and current operator.
+This information is available in nRF Cloud under the sensor type "DEVICE".
+
 The LTE link control driver is used to establish the LTE link automatically.
 When the device is connected to the nRF Cloud, you can use the LTE Link Monitor to send AT commands and receive the response.
 
@@ -119,7 +139,7 @@ After programming the :ref:`secure_boot` sample to your board, test the Asset Tr
       Application started
 
 #. Observe that LED 3 starts blinking as the LTE link is established. This may take several minutes.
-#. Observe in the terminal window that connection to nRF Cloud is established.
+#. Observe in the terminal window that the connection to nRF Cloud is established.
 #. The first time you start the application, pair the device to your account:
 
    a. Observe that both LED 3 and 4 start blinking, indicating that the pairing procedure has been initiated.
@@ -131,7 +151,7 @@ After programming the :ref:`secure_boot` sample to your board, test the Asset Tr
    #. After reboot, the board connects to the nRF Cloud, and the pattern disappears from the web page.
 #. Observe that LED 4 is turned on to indicate that the connection is established.
 #. Observe that the device count on your nRF Cloud dashboard is incremented by one.
-#. Select the device from your device list on nRF Cloud, and observe that sensor data is received from the board.
+#. Select the device from your device list on nRF Cloud, and observe that sensor data and modem information is received from the board.
 #. Toggle switch 1 to simulate flipping the board orientation.
 #. Set switch 2 in the position marked **N.C.** and observe that simulated GPS data is sent to the nRF Cloud.
 #. Optionally send AT commands from the terminal, and observe that the reponse is received.
@@ -143,6 +163,8 @@ Dependencies
 This application uses the following |NCS| libraries and drivers:
 
     * :ref:`lib_nrf_cloud`
+    * :ref:`modem_info_readme`
+    * :ref:`at_cmd_parser_readme`
     * ``drivers/gps_sim``
     * ``lib/bsd_lib``
     * ``drivers/sensor/sensor_sim``
