@@ -186,8 +186,11 @@ Read out an objects.inv file::
 Doxygen
 =======
 
-.. doxygenfunction:: event_manager_init
-   :project: nrf
+We usually include doxygen groups::
+
+   .. doxygengroup:: group_name
+      :project: nrf
+      :members:
 
 See `the breathe documentation <https://breathe.readthedocs.io/en/latest/directives.html#directives>`_ for information about what you can link to.
 

@@ -1,4 +1,4 @@
-.. _event_manager:
+.. _event_manager_sample:
 
 Event Manager
 #############
