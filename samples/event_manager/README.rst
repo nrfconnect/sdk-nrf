@@ -3,7 +3,7 @@
 Event Manager
 #############
 
-The Event Manager sample demonstrates the functionality of the Event Manager subsystem.
+The Event Manager sample demonstrates the functionality of the :ref:`event_manager` subsystem.
 It uses an event-driven architecture, where different modules communicate through sending and processing events.
 
 
@@ -77,7 +77,7 @@ Dependencies
 
 This sample uses the following |NCS| subsystems:
 
-* ``include/event_manager.h``
+* :ref:`event_manager`
 
 In addition, it uses the following Zephyr subsystems:
 
