@@ -610,7 +610,7 @@ int af_inet_addr_pton(sa_family_t family, const char *src, void *dst)
 
 			src = ++endptr;
 		}
-	else {
+	} else {
 		return -ENOTSUP;
 	}
 
