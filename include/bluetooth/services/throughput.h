@@ -8,7 +8,7 @@
  * @file
  * @defgroup bt_gatt_throughput BLE GATT Throughput Service API
  * @{
- * @brief API for BT GATT Throughput Service.
+ * @brief API for the BLE GATT Throughput Service.
  */
 
 #ifndef BT_GATT_THROUGHPUT_H_
@@ -16,12 +16,13 @@
 
 #include <bluetooth/uuid.h>
 #include <bluetooth/conn.h>
+#include <bluetooth/gatt_dm.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** @brief BLE GATT throughput metrics. */
+/** @brief Throughput metrics. */
 struct bt_gatt_throughput_metrics {
 
         /** Number of GATT writes received. */
@@ -38,8 +39,8 @@ struct bt_gatt_throughput_metrics {
 struct bt_gatt_throughput_cb {
 	/** @brief Data read callback.
 	 *
-	 * The data has been read form Throughput characteristic.
-	 * Characteristic.
+	 * This function is called when data has been read from the
+	 * Throughput Characteristic.
 	 *
 	 * @param[in] met Throughput metrics.
 	 *
@@ -50,23 +51,29 @@ struct bt_gatt_throughput_cb {
 
 	/** @brief Data received callback.
 	 *
-	 *  @param[in] met Throughput metrics.
+	 * This function is called when data has been received by the
+	 * Throughput Characteristic.
+	 *
+	 * @param[in] met Throughput metrics.
 	 */
 	void (*data_received)(const struct bt_gatt_throughput_metrics *met);
 
 	/** @brief Data send callback.
 	 *
-	 *  @param[in] met Throughput metrics.
+	 * This function is called when data has been sent to the
+	 * Throughput Characteristic.
+	 *
+	 * @param[in] met Throughput metrics.
 	 */
 	void (*data_send)(const struct bt_gatt_throughput_metrics *met);
 };
 
 /** @brief Throughput structure. */
 struct bt_gatt_throughput {
-	/** Throughput characteristic handle */
+	/** Throughput Characteristic handle. */
 	u16_t char_handle;
 
-	/** GATT read parameters for Throughput Characteristic. */
+	/** GATT read parameters for the Throughput Characteristic. */
 	struct bt_gatt_read_params read_params;
 
 	/** Throughput callback structure. */
@@ -76,7 +83,7 @@ struct bt_gatt_throughput {
 	struct bt_conn *conn;
 };
 
-/** @brief Throughput characteristic UUID. */
+/** @brief Throughput Characteristic UUID. */
 #define BT_UUID_THROUGHPUT_CHAR BT_UUID_DECLARE_16(0x1524)
 
 /** @brief Throughput Service UUID. */
@@ -84,9 +91,9 @@ struct bt_gatt_throughput {
 	BT_UUID_DECLARE_128(0xBB, 0x4A, 0xFF, 0x4F, 0xAD, 0x03, 0x41, 0x5D,    \
 			    0xA9, 0x6C, 0x9D, 0x6C, 0xDD, 0xDA, 0x83, 0x04)
 
-/** @brief Initialize the BT GATT Throughput Service.
+/** @brief Initialize the GATT Throughput Service.
  *
- *  @param[in] throughput Throughput instance.
+ *  @param[in] throughput Throughput Service instance.
  *  @param[in] cb Callbacks.
  *
  *  @retval 0 If the operation was successful.
@@ -95,11 +102,30 @@ struct bt_gatt_throughput {
 int bt_gatt_throughput_init(struct bt_gatt_throughput *throughput,
 			    const struct bt_gatt_throughput_cb *cb);
 
+/** @brief Assign handles to the Throughput Service instance.
+ *
+ * This function should be called when a link with a peer has been established,
+ * to associate the link to this instance of the module. This makes it
+ * possible to handle several links and associate each link to a particular
+ * instance of this module. The GATT attribute handles are provided by the
+ * GATT Discovery Manager.
+ *
+ * @param[in] dm Discovery object.
+ * @param[in,out] throughput Throughput Service instance.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ * @retval (-ENOTSUP) Special error code used when the UUID
+ *         of the service does not match the expected UUID.
+ */
+int bt_gatt_throughput_handles_assign(struct bt_gatt_dm *dm,
+				      struct bt_gatt_throughput *throughput);
+
 /** @brief Read data from the server.
  *
  *  @note This procedure is asynchronous.
  *
- *  @param[in] throughput Throughput instance.
+ *  @param[in] throughput Throughput Service instance.
  *
  *  @retval 0 If the operation was successful.
  *            Otherwise, a negative error code is returned.
@@ -108,7 +134,7 @@ int bt_gatt_throughput_read(struct bt_gatt_throughput *throughput);
 
 /** @brief Write data to the server.
  *
- *  @param[in] throughput Throughput instance.
+ *  @param[in] throughput Throughput Service instance.
  *  @param[in] data Data.
  *  @param[in] len Data length.
  *

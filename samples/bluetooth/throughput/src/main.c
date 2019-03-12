@@ -17,6 +17,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/services/throughput.h>
 #include <bluetooth/scan.h>
+#include <bluetooth/gatt_dm.h>
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -25,11 +26,9 @@
 
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
-static struct bt_uuid *uuid16 = BT_UUID_THROUGHPUT_CHAR;
 static struct bt_gatt_throughput gatt_throughput;
 static struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
 static struct bt_gatt_exchange_params exchange_params;
-static struct bt_gatt_discover_params discover_params;
 static struct bt_le_conn_param *conn_param =
 	BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, 0, 400);
 
@@ -95,42 +94,46 @@ static void exchange_func(struct bt_conn *conn, u8_t err,
 	}
 }
 
-static u8_t discover_func(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-			  struct bt_gatt_discover_params *params)
+static void discovery_complete(struct bt_gatt_dm *dm,
+			       void *context)
 {
 	int err;
+	struct bt_gatt_throughput *throughput = context;
 
-	if (!attr) {
-		printk("Discover complete\n");
-		memset(params, 0, sizeof(*params));
-		return BT_GATT_ITER_STOP;
+	printk("Service discovery completed\n");
+
+	bt_gatt_dm_data_print(dm);
+	bt_gatt_throughput_handles_assign(dm, throughput);
+	bt_gatt_dm_data_release(dm);
+
+	exchange_params.func = exchange_func;
+
+	err = bt_gatt_exchange_mtu(default_conn, &exchange_params);
+	if (err) {
+		printk("MTU exchange failed (err %d)\n", err);
+	} else {
+		printk("MTU exchange pending\n");
 	}
-
-	if (!bt_uuid_cmp(discover_params.uuid, uuid128)) {
-		/* service found, discover characteristic */
-		discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
-		discover_params.uuid = &BT_UUID_16(uuid16)->uuid;
-		discover_params.start_handle = attr->handle + 1;
-
-		err = bt_gatt_discover(conn, &discover_params);
-		if (err) {
-			printk("Discover failed (err %d)\n", err);
-		}
-	} else if (!bt_uuid_cmp(discover_params.uuid, uuid16)) {
-		/* characteristic found */
-		gatt_throughput.char_handle = attr->handle + 1;
-		exchange_params.func = exchange_func;
-
-		err = bt_gatt_exchange_mtu(conn, &exchange_params);
-		if (err) {
-			printk("MTU exchange failed (err %d)\n", err);
-		} else {
-			printk("MTU exchange pending\n");
-		}
-	}
-
-	return BT_GATT_ITER_STOP;
 }
+
+static void discovery_service_not_found(struct bt_conn *conn,
+					void *context)
+{
+	printk("Service not found\n");
+}
+
+static void discovery_error(struct bt_conn *conn,
+			    int err,
+			    void *context)
+{
+	printk("Error while discovering GATT database: (%d)\n", err);
+}
+
+struct bt_gatt_dm_cb discovery_cb = {
+	.completed         = discovery_complete,
+	.service_not_found = discovery_service_not_found,
+	.error_found       = discovery_error,
+};
 
 static void connected(struct bt_conn *conn, u8_t err)
 {
@@ -155,18 +158,16 @@ static void connected(struct bt_conn *conn, u8_t err)
 	bt_le_adv_stop();
 	bt_scan_stop();
 
-	discover_params.type = BT_GATT_DISCOVER_PRIMARY;
-	discover_params.uuid = &BT_UUID_128(uuid128)->uuid;
-	discover_params.func = discover_func;
-	discover_params.start_handle = 0x0001;
-	discover_params.end_handle = 0xffff;
-
 	if (info.role == BT_CONN_ROLE_MASTER) {
-		err = bt_gatt_discover(default_conn, &discover_params);
+		err = bt_gatt_dm_start(default_conn,
+				       BT_UUID_THROUGHPUT,
+				       &discovery_cb,
+				       &gatt_throughput);
+
 		if (err) {
 			printk("Discover failed (err %d)\n", err);
 		}
-}
+	}
 }
 
 static void scan_init(void)
