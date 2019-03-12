@@ -34,13 +34,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 
 
 static const struct bt_le_adv_param adv_param_fast = {
-	.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME,
+	.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
+		   BT_LE_ADV_OPT_USE_NAME,
 	.interval_min = BT_GAP_ADV_FAST_INT_MIN_1,
 	.interval_max = BT_GAP_ADV_FAST_INT_MAX_1,
 };
 
 static const struct bt_le_adv_param adv_param_normal = {
-	.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME,
+	.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
+		   BT_LE_ADV_OPT_USE_NAME,
 	.interval_min = BT_GAP_ADV_FAST_INT_MIN_2,
 	.interval_max = BT_GAP_ADV_FAST_INT_MAX_2,
 };
@@ -69,6 +71,7 @@ static const struct bt_data ad[] = {
 
 enum state {
 	STATE_DISABLED,
+	STATE_OFF,
 	STATE_IDLE,
 	STATE_ACTIVE_FAST,
 	STATE_ACTIVE_SLOW,
@@ -228,6 +231,7 @@ static void sp_grace_period_fn(struct k_work *work)
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
+		state = STATE_OFF;
 		module_set_state(MODULE_STATE_OFF);
 	}
 }
@@ -319,6 +323,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_ble_peer_event(eh)) {
 		const struct ble_peer_event *event = cast_ble_peer_event(eh);
 		int err = 0;
+		bool can_fast_adv = false;
 
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
@@ -326,11 +331,13 @@ static bool event_handler(const struct event_header *eh)
 			break;
 
 		case PEER_STATE_DISCONNECTED:
-			err = ble_adv_start(true);
-			break;
+			can_fast_adv = true;
+			/* fall through */
 
 		case PEER_STATE_CONN_FAILED:
-			err = ble_adv_start(false);
+			if (state != STATE_OFF) {
+				err = ble_adv_start(can_fast_adv);
+			}
 			break;
 
 		default:
@@ -357,6 +364,7 @@ static bool event_handler(const struct event_header *eh)
 				} else {
 					err = ble_adv_stop();
 					if (!err) {
+						state = STATE_OFF;
 						module_set_state(MODULE_STATE_OFF);
 					}
 				}
@@ -366,11 +374,17 @@ static bool event_handler(const struct event_header *eh)
 			case STATE_ACTIVE_SLOW_DIRECT:
 				err = ble_adv_stop();
 				if (!err) {
+					state = STATE_OFF;
 					module_set_state(MODULE_STATE_OFF);
 				}
 				break;
 
 			case STATE_IDLE:
+				state = STATE_OFF;
+				module_set_state(MODULE_STATE_OFF);
+				break;
+
+			case STATE_OFF:
 			case STATE_GRACE_PERIOD:
 				/* No action */
 				break;
@@ -389,27 +403,30 @@ static bool event_handler(const struct event_header *eh)
 				module_set_state(MODULE_STATE_ERROR);
 			}
 
-			return state != STATE_IDLE;
+			return state != STATE_OFF;
 		}
 
 		if (is_wake_up_event(eh)) {
-			bool was_idle = false;
+			bool was_off = false;
 			int err;
 
 			switch (state) {
-			case STATE_IDLE:
-				was_idle = true;
+			case STATE_OFF:
+				was_off = true;
+				state = STATE_IDLE;
 				/* fall through */
+
 			case STATE_GRACE_PERIOD:
 				err = ble_adv_start(true);
 
 				if (err) {
 					module_set_state(MODULE_STATE_ERROR);
-				} else if (was_idle) {
+				} else if (was_off) {
 					module_set_state(MODULE_STATE_READY);
 				}
 				break;
 
+			case STATE_IDLE:
 			case STATE_ACTIVE_FAST:
 			case STATE_ACTIVE_SLOW:
 			case STATE_ACTIVE_FAST_DIRECT:
