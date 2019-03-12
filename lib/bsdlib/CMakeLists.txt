@@ -5,5 +5,6 @@
 #
 zephyr_library()
 zephyr_library_sources(bsd_os.c)
+zephyr_library_sources(bsd_sanity.c)
 zephyr_library_sources(nrf91_sockets.c)
 zephyr_library_include_directories(.)
