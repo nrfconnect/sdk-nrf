@@ -11,6 +11,4 @@ rsource "lib/Kconfig"
 rsource "drivers/Kconfig"
 rsource "ext/Kconfig"
 
-orsource "../nrfxlib/Kconfig.nrfxlib"
-
 endmenu

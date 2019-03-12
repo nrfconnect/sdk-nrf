@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+# Point to NCS root directory.
+set(NRF_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+
 if(NOT BOARD)
         set(BOARD $ENV{BOARD})
 endif()
@@ -21,9 +24,6 @@ if(DEFINED NRF_SUPPORTED_BUILD_TYPES)
                 message(FATAL_ERROR "${CMAKE_BUILD_TYPE} variant is not supported")
         endif()
 endif()
-
-# Point to NCS root directory.
-set(NRF_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 
 # Set BOARD_ROOT if board definition exists out of tree.
 find_path(_BOARD_DIR NAMES "${BOARD}_defconfig" PATHS ${NRF_DIR}/boards/*/*
