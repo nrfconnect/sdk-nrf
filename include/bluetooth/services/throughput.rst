@@ -3,7 +3,8 @@
 GATT Throughput Service
 #######################
 
-The GATT Throughput Service is a custom service that receives writes and returns metrics about these writes.
+The GATT Throughput Service is a custom service that receives and writes data and returns metrics about these operations.
+
 To test GATT throughput, the client (central) writes without response to the characteristic on the server (peripheral).
 The client can then read the characteristic to retrieve the metrics.
 
@@ -12,7 +13,7 @@ The GATT Throughput Service is used in the :ref:`ble_throughput` sample.
 Service UUID
 ************
 
-The 128-bit service UUID is 0xBB, 0x4A, 0xFF, 0x4F, 0xAD, 0x03, 0x41, 0x5D, 0xA9, 0x6C, 0x9D, 0x6C, 0xDD, 0xDA, 0x83, 0x04.
+The 128-bit service UUID is 0483DADD-6C9D-6CA9-5D41-03AD4FFF4ABB.
 
 Characteristics
 ***************

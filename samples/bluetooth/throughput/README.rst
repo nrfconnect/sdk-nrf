@@ -11,7 +11,9 @@ Overview
 ********
 
 The sample transmits data between two boards, the *tester* and the *peer*, and measures the throughput performance.
-It demonstrates the interaction of the following connection parameters:
+To do so, it uses the :ref:`throughput_readme`.
+
+The sample demonstrates the interaction of the following connection parameters:
 
 ATT_MTU size
    In *Bluetooth* Low Energy, the default Maximum Transmission Unit (MTU) is 23 bytes.
