@@ -542,4 +542,10 @@ void main(void)
 	}
 
 	configure_buttons();
+
+	while (1) {
+		k_sleep(MSEC_PER_SEC);
+		/* Battery level simulation */
+		bas_notify();
+	}
 }
