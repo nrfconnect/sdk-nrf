@@ -34,8 +34,9 @@ LOG_MODULE_REGISTER(modem_info);
 #define AT_CMD_VBAT		"AT%XVBAT"
 #define AT_CMD_TEMP		"AT%XTEMP"
 #define AT_CMD_FW_VERSION	"AT+CGMR"
+#define AT_CMD_CRSM		"AT+CRSM"
+#define AT_CMD_ICCID		"AT+CRSM=176,12258,0,0,10"
 #define AT_CMD_SUCCESS_SIZE	5
-
 #define RSRP_PARAM_INDEX 0
 #define RSRP_PARAM_COUNT 2
 #define RSRP_OFFSET_VAL 141
@@ -66,6 +67,9 @@ LOG_MODULE_REGISTER(modem_info);
 
 #define FW_PARAM_INDEX 0
 #define FW_PARAM_COUNT 1
+
+#define ICCID_PARAM_INDEX 2
+#define ICCID_PARAM_COUNT 3
 
 #define CMD_SIZE(x) (strlen(x) - 1)
 
@@ -148,6 +152,13 @@ static const struct modem_info_data fw_data = {
 	.data_type = AT_PARAM_TYPE_STRING,
 };
 
+static const struct modem_info_data iccid_data = {
+	.cmd = AT_CMD_ICCID,
+	.param_index = ICCID_PARAM_INDEX,
+	.param_count = ICCID_PARAM_COUNT,
+	.data_type = AT_PARAM_TYPE_STRING,
+};
+
 static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_RSRP] = &rsrp_data,
 	[MODEM_INFO_BAND] = &band_data,
@@ -159,6 +170,7 @@ static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_BATTERY] = &battery_data,
 	[MODEM_INFO_TEMP] = &temp_data,
 	[MODEM_INFO_FW_VERSION] = &fw_data,
+	[MODEM_INFO_ICCID] = &iccid_data,
 };
 
 static const char *const modem_data_name[] = {
@@ -172,6 +184,7 @@ static const char *const modem_data_name[] = {
 	[MODEM_INFO_BATTERY] = "BATTERY",
 	[MODEM_INFO_TEMP] = "TEMP",
 	[MODEM_INFO_FW_VERSION] = "FW",
+	[MODEM_INFO_ICCID] = "ICCID",
 };
 
 static rsrp_cb_t modem_info_rsrp_cb;
@@ -218,6 +231,42 @@ static int at_cmd_send(int fd, const char *cmd, size_t size, char *resp_buffer)
 static bool is_cesq_notification(char *buf, size_t len)
 {
 	return strstr(buf, AT_CMD_CESQ_RESP) ? true : false;
+}
+
+static void flip_iccid_string(char *buf)
+{
+	u8_t current_char;
+	u8_t next_char;
+
+	for (size_t i = 0; i < strlen(buf); i = i + 2) {
+		current_char = buf[i];
+		next_char = buf[i + 1];
+
+		buf[i] = next_char;
+		buf[i + 1] = current_char;
+	}
+}
+
+static int modem_info_parse_iccid(const struct modem_info_data *modem_data,
+				  char *buf)
+{
+	int err;
+	u32_t param_index;
+
+	err = at_parser_max_params_from_str(
+		&buf[CMD_SIZE(AT_CMD_CRSM)], &m_param_list,
+		modem_data->param_count);
+
+	if (err != 0) {
+		return err;
+	}
+
+	param_index = at_params_valid_count_get(&m_param_list);
+	if (param_index != modem_data->param_count) {
+		return -EAGAIN;
+	}
+
+	return err;
 }
 
 static int modem_info_parse(const struct modem_info_data *modem_data, char *buf)
@@ -328,7 +377,11 @@ int modem_info_string_get(enum modem_info info, char *buf)
 		return err;
 	}
 
-	err = modem_info_parse(modem_data[info], recv_buf);
+	if (info == MODEM_INFO_ICCID) {
+		err = modem_info_parse_iccid(modem_data[info], recv_buf);
+	} else {
+		err = modem_info_parse(modem_data[info], recv_buf);
+	}
 
 	if (err) {
 		return err;
@@ -349,6 +402,10 @@ int modem_info_string_get(enum modem_info info, char *buf)
 					   modem_data[info]->param_index,
 					   buf,
 					   MODEM_INFO_MAX_RESPONSE_SIZE);
+	}
+
+	if (info == MODEM_INFO_ICCID) {
+		flip_iccid_string(buf);
 	}
 
 	return len <= 0 ? -ENOTSUP : len;
