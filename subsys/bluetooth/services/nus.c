@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-/** @file
- *  @brief Nordic UART Bridge Service (NUS) sample
- */
-
 #include <bluetooth/conn.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
@@ -17,7 +13,7 @@
 static struct bt_gatt_ccc_cfg nuslc_ccc_cfg[BT_GATT_CCC_MAX];
 static bool                   notify_enabled;
 
-static struct bt_nus_cb nus_cb;
+static struct bt_gatt_nus_cb nus_cb;
 
 static void nuslc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 				  u16_t value)
@@ -69,7 +65,7 @@ static struct bt_gatt_attr attrs[] = {
 
 static struct bt_gatt_service nus_svc = BT_GATT_SERVICE(attrs);
 
-int nus_init(struct bt_nus_cb *callbacks)
+int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks)
 {
 	if (callbacks) {
 		nus_cb.received_cb = callbacks->received_cb;
@@ -79,7 +75,7 @@ int nus_init(struct bt_nus_cb *callbacks)
 	return bt_gatt_service_register(&nus_svc);
 }
 
-int nus_send(const u8_t *data, uint16_t len)
+int bt_gatt_nus_send(const u8_t *data, uint16_t len)
 {
 	if (!notify_enabled) {
 		return -EFAULT;

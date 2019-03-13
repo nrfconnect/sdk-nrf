@@ -7,8 +7,9 @@
 #ifndef BT_GATT_NUS_H_
 #define BT_GATT_NUS_H_
 
-/** @file
- * @defgroup nrf_bt_nus Nordic UART (NUS) GATT Service
+/**
+ * @file
+ * @defgroup bt_gatt_nus Nordic UART (NUS) GATT Service
  * @{
  * @brief Nordic UART (NUS) GATT Service API.
  */
@@ -40,7 +41,7 @@ typedef void (*nus_received_cb_t)(const u8_t *const data, u16_t len);
 typedef void (*nus_sent_cb_t)(const u8_t *data, u16_t len);
 
 /** @brief Pointers to the callback functions for service events. */
-struct bt_nus_cb {
+struct bt_gatt_nus_cb {
 
         /** Callback for data received. **/
 	nus_received_cb_t received_cb;
@@ -64,7 +65,7 @@ struct bt_nus_cb {
  * @retval 0 If initialization is successful.
  *           Otherwise, a negative value is returned.
  */
-int nus_init(struct bt_nus_cb *callbacks);
+int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks);
 
 /**@brief Send data.
  *
@@ -77,12 +78,14 @@ int nus_init(struct bt_nus_cb *callbacks);
  * @retval 0 If the data is sent.
  *           Otherwise, a negative value is returned.
  */
-int nus_send(const u8_t *data, u16_t len);
+int bt_gatt_nus_send(const u8_t *data, u16_t len);
 
 #ifdef __cplusplus
 }
 #endif
 
-/** @} */
+/**
+ *@}
+ */
 
 #endif /* BT_GATT_NUS_H_ */

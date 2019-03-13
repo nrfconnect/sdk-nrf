@@ -273,7 +273,7 @@ static void bt_receive_cb(const u8_t *const data, u16_t len)
 	uart_irq_tx_enable(uart);
 }
 
-static struct bt_nus_cb nus_cb = {
+static struct bt_gatt_nus_cb nus_cb = {
 	.received_cb = bt_receive_cb,
 };
 
@@ -284,7 +284,7 @@ static void bt_ready(int err)
 		return;
 	}
 
-	err = nus_init(&nus_cb);
+	err = bt_gatt_nus_init(&nus_cb);
 	if (err) {
 		printk("Failed to initialize UART service (err: %d)\n", err);
 		return;
@@ -408,7 +408,7 @@ void ble_write_thread(void)
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
 
-		if (nus_send(buf->data, buf->len)) {
+		if (bt_gatt_nus_send(buf->data, buf->len)) {
 			printk("Failed to send data over BLE connection\n");
 		}
 		k_free(buf);
