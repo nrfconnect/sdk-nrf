@@ -37,4 +37,11 @@ config MODEM_INFO_THREAD_PRIO
 	default 0 if !MULTITHREADING
 	default 9
 
+config MODEM_INFO_ADD_BOARD
+	bool "Add board name to JSON string"
+	default y
+	help
+		Add the name of the board to the returned
+		device JSON string.
+
 endif # MODEM_INFO

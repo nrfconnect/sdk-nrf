@@ -146,6 +146,10 @@ int modem_info_json_string_get(char *buf)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_BOARD)) {
+		ret += json_add_str(data_obj, "BOARD", CONFIG_BOARD);
+	}
+
 	if (ret != 0) {
 		cJSON_Delete(data_obj);
 		return -ENOMEM;
