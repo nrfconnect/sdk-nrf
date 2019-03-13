@@ -4,3 +4,11 @@ config BT_GATT_THROUGHPUT
 	default n
 	help
 	 Enable Nordic GATT throughput BLE service.
+
+if BT_GATT_THROUGHPUT
+
+module = BT_GATT_THROUGHPUT
+module-str = THROUGHPUT
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATT_THROUGHPUT
