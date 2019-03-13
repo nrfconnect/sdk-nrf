@@ -34,6 +34,6 @@ Notify
 API documentation
 *****************
 
-.. doxygengroup:: nrf_bt_nus
+.. doxygengroup:: bt_gatt_nus
    :project: nrf
    :members:
