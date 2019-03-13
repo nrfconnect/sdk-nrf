@@ -2,3 +2,10 @@ config BT_GATT_NUS
 	bool "Nordic UART service"
 	help
 	  Enable Nordic UART service.
+if BT_GATT_NUS
+
+module = BT_GATT_NUS
+module-str = NUS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATT_NUS
