@@ -22,7 +22,7 @@ If you lose this key the chain of trust unravels and you no longer trust this do
 It is important to note that a key alone is not a RoT, although a RoT may include a key.
 A RoT will consist of both hardware, software, and data components that must always behave in an expected manner, because any misbehavior cannot be detected.
 
-
+.. _ug_bootloader_architecture:
 
 Architecture
 ************
