@@ -235,8 +235,15 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 static struct bt_conn_auth_cb conn_auth_callbacks;
 #endif
 
-static void bt_receive_cb(const u8_t *const data, u16_t len)
+static void bt_receive_cb(struct bt_conn *conn, const u8_t *const data,
+			  u16_t len)
 {
+	char addr[BT_ADDR_LE_STR_LEN] = {0};
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, ARRAY_SIZE(addr));
+
+	printk("Received data from: %s\n", addr);
+
 	for (u16_t pos = 0; pos != len;) {
 		struct uart_data_t *tx = k_malloc(sizeof(*tx));
 
@@ -408,7 +415,7 @@ void ble_write_thread(void)
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
 
-		if (bt_gatt_nus_send(buf->data, buf->len)) {
+		if (bt_gatt_nus_send(NULL, buf->data, buf->len)) {
 			printk("Failed to send data over BLE connection\n");
 		}
 		k_free(buf);

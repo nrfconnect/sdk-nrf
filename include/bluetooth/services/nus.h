@@ -35,10 +35,12 @@ extern "C" {
 #define BT_UUID_NUS_TX        BT_UUID_DECLARE_128(NUS_UUID_NUS_TX_CHAR)
 
 /** @brief Callback type for data received. */
-typedef void (*nus_received_cb_t)(const u8_t *const data, u16_t len);
+typedef void (*nus_received_cb_t)(struct bt_conn *conn,
+				  const u8_t *const data, u16_t len);
 
 /** @brief Callback type for data sent. */
-typedef void (*nus_sent_cb_t)(const u8_t *data, u16_t len);
+typedef void (*nus_sent_cb_t)(struct bt_conn *conn,
+			      const u8_t *data, u16_t len);
 
 /** @brief Pointers to the callback functions for service events. */
 struct bt_gatt_nus_cb {
@@ -72,13 +74,14 @@ int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks);
  * @details This function sends data from the BLE unit that runs this service
  *          to another BLE unit that is connected to it.
  *
+ * @param[in] conn Pointer to connection Object.
  * @param[in] data Pointer to a data buffer.
  * @param[in] len  Length of the data in the buffer.
  *
  * @retval 0 If the data is sent.
  *           Otherwise, a negative value is returned.
  */
-int bt_gatt_nus_send(const u8_t *data, u16_t len);
+int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, u16_t len);
 
 #ifdef __cplusplus
 }
