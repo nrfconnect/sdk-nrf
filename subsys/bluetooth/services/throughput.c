@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
@@ -17,6 +16,10 @@
 #include <bluetooth/uuid.h>
 
 #include <bluetooth/services/throughput.h>
+
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(bt_gatt_throughput, CONFIG_BT_GATT_THROUGHPUT_LOG_LEVEL);
 
 static struct bt_gatt_throughput_metrics met;
 static const struct bt_gatt_throughput_cb *callbacks;
@@ -69,6 +72,8 @@ static ssize_t write_callback(struct bt_conn *conn,
 		    ((u64_t)met_data->write_len << 3) * 1000000000 / delta;
 	}
 
+	LOG_DBG("Received data.");
+
 	if (callbacks->data_received) {
 		callbacks->data_received(met_data);
 	}
@@ -87,6 +92,8 @@ static ssize_t read_callback(struct bt_conn *conn,
 	if (callbacks->data_send) {
 		callbacks->data_send(metrics);
 	}
+
+	LOG_DBG("Data send.");
 
 	return bt_gatt_attr_read(
 		conn, attr, buf, len, offset, attr->user_data, len);
@@ -117,6 +124,43 @@ int bt_gatt_throughput_init(struct bt_gatt_throughput *throughput,
 	return 0;
 }
 
+int bt_gatt_throughput_handles_assign(struct bt_gatt_dm *dm,
+				      struct bt_gatt_throughput *throughput)
+{
+	const struct bt_gatt_attr *gatt_service_attr =
+			bt_gatt_dm_service_get(dm);
+	const struct bt_gatt_service_val *gatt_service =
+			bt_gatt_dm_attr_service_val(gatt_service_attr);
+	const struct bt_gatt_attr *gatt_chrc;
+	const struct bt_gatt_attr *gatt_desc;
+
+	if (bt_uuid_cmp(gatt_service->uuid, BT_UUID_THROUGHPUT)) {
+		return -ENOTSUP;
+	}
+
+	LOG_DBG("Getting handles from Throughput service.");
+
+	/* Throughput Characteristic. */
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_THROUGHPUT_CHAR);
+	if (!gatt_chrc) {
+		LOG_ERR("Missing Throughput characteristic.");
+	}
+
+	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc,
+					    BT_UUID_THROUGHPUT_CHAR);
+	if (!gatt_desc) {
+		LOG_ERR("Missing Throughput characteristic value descriptor");
+		return -EINVAL;
+	}
+
+	LOG_DBG("Found handle for Throughput characteristic.");
+	throughput->char_handle = gatt_desc->handle;
+
+	/* Assign connection object. */
+	throughput->conn = bt_gatt_dm_conn_get(dm);
+	return 0;
+}
+
 int bt_gatt_throughput_read(struct bt_gatt_throughput *throughput)
 {
 	int err;
@@ -127,6 +171,9 @@ int bt_gatt_throughput_read(struct bt_gatt_throughput *throughput)
 	throughput->read_params.func = read_fn;
 
 	err = bt_gatt_read(throughput->conn, &throughput->read_params);
+	if (err) {
+		LOG_ERR("Characteristic read failed.");
+	}
 
 	return err;
 }
