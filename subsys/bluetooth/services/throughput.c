@@ -18,7 +18,28 @@
 
 #include <bluetooth/services/throughput.h>
 
-static struct metrics met;
+static struct bt_gatt_throughput_metrics met;
+static const struct bt_gatt_throughput_cb *callbacks;
+
+static u8_t read_fn(struct bt_conn *conn, u8_t err,
+		    struct bt_gatt_read_params *params, const void *data,
+		    u16_t len)
+{
+	struct bt_gatt_throughput_metrics metrics;
+
+	memset(&metrics, 0, sizeof(struct bt_gatt_throughput_metrics));
+
+	if (data) {
+		len = MIN(len, sizeof(struct bt_gatt_throughput_metrics));
+		memcpy(&metrics, data, len);
+
+		if (callbacks->data_read) {
+			return callbacks->data_read(&metrics);
+		}
+	}
+
+	return BT_GATT_ITER_STOP;
+}
 
 static ssize_t write_callback(struct bt_conn *conn,
 			      const struct bt_gatt_attr *attr, const void *buf,
@@ -29,7 +50,7 @@ static ssize_t write_callback(struct bt_conn *conn,
 
 	u64_t delta;
 
-	struct metrics *met_data = attr->user_data;
+	struct bt_gatt_throughput_metrics *met_data = attr->user_data;
 
 	delta = k_cycle_get_32() - clock_cycles;
 	delta = SYS_CLOCK_HW_CYCLES_TO_NS64(delta);
@@ -41,17 +62,15 @@ static ssize_t write_callback(struct bt_conn *conn,
 		met_data->write_len = 0;
 		met_data->write_rate = 0;
 		clock_cycles = k_cycle_get_32();
-		printk("\n");
 	} else {
 		met_data->write_count++;
 		met_data->write_len += len;
 		met_data->write_rate =
 		    ((u64_t)met_data->write_len << 3) * 1000000000 / delta;
+	}
 
-		if ((met_data->write_len / 1024) != kb) {
-			kb = (met_data->write_len / 1024);
-			printk("=");
-		}
+	if (callbacks->data_received) {
+		callbacks->data_received(met_data);
 	}
 
 	return len;
@@ -61,13 +80,13 @@ static ssize_t read_callback(struct bt_conn *conn,
 			     const struct bt_gatt_attr *attr, void *buf,
 			     u16_t len, u16_t offset)
 {
-	const struct metrics *metrics = attr->user_data;
-	len = MIN(sizeof(struct metrics), len);
+	const struct bt_gatt_throughput_metrics *metrics = attr->user_data;
 
-	printk("\n[local] received %u bytes (%u KB)"
-	       " in %u GATT writes at %u bps\n",
-	       metrics->write_len, metrics->write_len / 1024,
-	       metrics->write_count, metrics->write_rate);
+	len = MIN(sizeof(struct bt_gatt_throughput_metrics), len);
+
+	if (callbacks->data_send) {
+		callbacks->data_send(metrics);
+	}
 
 	return bt_gatt_attr_read(
 		conn, attr, buf, len, offset, attr->user_data, len);
@@ -84,7 +103,38 @@ static struct bt_gatt_attr attrs[] = {
 
 static struct bt_gatt_service throughput_svc = BT_GATT_SERVICE(attrs);
 
-void throughput_init(void)
+int bt_gatt_throughput_init(struct bt_gatt_throughput *throughput,
+			    const struct bt_gatt_throughput_cb *cb)
 {
+	if (!throughput || !cb) {
+		return -EINVAL;
+	}
+
+	callbacks = cb;
+
 	bt_gatt_service_register(&throughput_svc);
+
+	return 0;
+}
+
+int bt_gatt_throughput_read(struct bt_gatt_throughput *throughput)
+{
+	int err;
+
+	throughput->read_params.single.handle = throughput->char_handle;
+	throughput->read_params.single.offset = 0;
+	throughput->read_params.handle_count = 1;
+	throughput->read_params.func = read_fn;
+
+	err = bt_gatt_read(throughput->conn, &throughput->read_params);
+
+	return err;
+}
+
+int bt_gatt_throughput_write(struct bt_gatt_throughput *throughput,
+			     const u8_t *data, u16_t len)
+{
+	return bt_gatt_write_without_response(throughput->conn,
+					      throughput->char_handle,
+					      data, len, false);
 }

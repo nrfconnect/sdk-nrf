@@ -1,7 +1,3 @@
-/** @file
- *  @brief Throughput service sample
- */
-
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
@@ -20,7 +16,6 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/services/throughput.h>
-
 #include <bluetooth/scan.h>
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
@@ -28,12 +23,11 @@
 #define INTERVAL_MIN	0x140	/* 320 units, 400 ms */
 #define INTERVAL_MAX	0x140	/* 320 units, 400 ms */
 
-static u16_t char_handle;
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
 static struct bt_uuid *uuid16 = BT_UUID_THROUGHPUT_CHAR;
+static struct bt_gatt_throughput gatt_throughput;
 static struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
-static struct bt_gatt_read_params read_param;
 static struct bt_gatt_exchange_params exchange_params;
 static struct bt_gatt_discover_params discover_params;
 static struct bt_le_conn_param *conn_param =
@@ -124,7 +118,7 @@ static u8_t discover_func(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 		}
 	} else if (!bt_uuid_cmp(discover_params.uuid, uuid16)) {
 		/* characteristic found */
-		char_handle = attr->handle + 1;
+		gatt_throughput.char_handle = attr->handle + 1;
 		exchange_params.func = exchange_func;
 
 		err = bt_gatt_exchange_mtu(conn, &exchange_params);
@@ -172,7 +166,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 		if (err) {
 			printk("Discover failed (err %d)\n", err);
 		}
-	}
+}
 }
 
 static void scan_init(void)
@@ -242,6 +236,49 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	advertise_and_scan();
 }
 
+static u8_t throughput_read(const struct bt_gatt_throughput_metrics *met)
+{
+	printk("[peer] received %u bytes (%u KB)"
+	       " in %u GATT writes at %u bps\n",
+	       met->write_len, met->write_len / 1024, met->write_count,
+	       met->write_rate);
+
+	test_ready = true;
+
+	return BT_GATT_ITER_STOP;
+}
+
+static void throughput_received(const struct bt_gatt_throughput_metrics *met)
+{
+	static u32_t kb;
+
+	if (met->write_len == 0) {
+		kb = 0;
+		printk("\n");
+
+		return;
+	}
+
+	if ((met->write_len / 1024) != kb) {
+		kb = (met->write_len / 1024);
+		printk("=");
+	}
+}
+
+static void throughput_send(const struct bt_gatt_throughput_metrics *met)
+{
+	printk("\n[local] received %u bytes (%u KB)"
+		" in %u GATT writes at %u bps\n",
+		met->write_len, met->write_len / 1024,
+		met->write_count, met->write_rate);
+}
+
+static const struct bt_gatt_throughput_cb throughput_cb = {
+	.data_read = throughput_read,
+	.data_received = throughput_received,
+	.data_send = throughput_send
+};
+
 static void bt_ready(int err)
 {
 	if (err) {
@@ -252,34 +289,13 @@ static void bt_ready(int err)
 	printk("Bluetooth initialized\n");
 
 	scan_init();
-	throughput_init();
-	advertise_and_scan();
-}
-
-static u8_t read_fn(struct bt_conn *conn, u8_t err,
-		    struct bt_gatt_read_params *params, const void *data,
-		    u16_t len)
-{
-	struct metrics met = {0};
-
+	bt_gatt_throughput_init(&gatt_throughput, &throughput_cb);
 	if (err) {
-		printk("GATT read callback failed (err: %d)\n", err);
-		return 0;
+		printk("Throughput service initialization failed.\n");
+		return;
 	}
 
-	if (data) {
-		len = MIN(len, sizeof(met));
-		memcpy(&met, data, len);
-
-		printk("[peer] received %u bytes (%u KB)"
-		       " in %u GATT writes at %u bps\n",
-		       met.write_len, met.write_len / 1024, met.write_count,
-		       met.write_rate);
-
-		test_ready = true;
-	}
-
-	return BT_GATT_ITER_STOP;
+	advertise_and_scan();
 }
 
 static void test_run(void)
@@ -306,15 +322,17 @@ static void test_run(void)
 	test_ready = false;
 
 	/* reset peer metrics */
-	err = bt_gatt_write_without_response(
-		default_conn, char_handle, dummy, 1, false);
+	err = bt_gatt_throughput_write(&gatt_throughput, dummy, 1);
+	if (err) {
+		printk("Reset peer metrics failed.\n");
+		return;
+	}
 
 	/* get cycle stamp */
 	stamp = k_uptime_get_32();
 
 	while (prog < IMG_SIZE) {
-		err = bt_gatt_write_without_response(
-			default_conn, char_handle, dummy, 244, false);
+		err = bt_gatt_throughput_write(&gatt_throughput, dummy, 244);
 		if (err) {
 			printk("GATT write failed (err %d)\n", err);
 			break;
@@ -333,9 +351,7 @@ static void test_run(void)
 	       data, data / 1024, delta, ((u64_t)data * 8 / delta));
 
 	/* read back char from peer */
-	read_param.single.handle = char_handle;
-
-	err = bt_gatt_read(default_conn, &read_param);
+	err = bt_gatt_throughput_read(&gatt_throughput);
 	if (err) {
 		printk("GATT read failed (err %d)\n", err);
 	}
@@ -366,10 +382,6 @@ void main(void)
 	}
 
 	bt_conn_cb_register(&conn_callbacks);
-
-	read_param.func = read_fn;
-	read_param.handle_count = 1;
-	read_param.single.offset = 0;
 
 	for (;;) {
 		if (test_ready) {

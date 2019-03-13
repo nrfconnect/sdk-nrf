@@ -4,6 +4,3 @@ config BT_GATT_THROUGHPUT
 	default n
 	help
 	 Enable Nordic GATT throughput BLE service.
-
-if BT_GATT_THROUGHPUT
-endif # BT_GATT_THROUGHPUT
