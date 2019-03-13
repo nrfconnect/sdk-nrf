@@ -22,6 +22,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 #define BUTTONS_NUM	4
 #define MOVEMENT_SPEED	5
+#define WAKEUP_PIN	SW0_GPIO_PIN
 
 static struct device       *gpio_devs[BUTTONS_NUM];
 static struct gpio_callback gpio_cbs[BUTTONS_NUM];
@@ -106,12 +107,17 @@ static void async_term_fn(struct k_work *work)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
 		if (gpio_devs[i]) {
-			LOG_DBG("Port %zu unbound", i);
+			if (pin_id[i] == WAKEUP_PIN){
+				gpio_pin_configure(gpio_devs[i], pin_id[i], GPIO_DIR_IN |
+					GPIO_INT | GPIO_PUD_PULL_UP | GPIO_INT_ACTIVE_LOW);
+			}
+			else {
+				LOG_DBG("Port %zu unbound", i);
 
-			gpio_pin_disable_callback(gpio_devs[i], pin_id[i]);
-			gpio_remove_callback(gpio_devs[i], &gpio_cbs[i]);
-			gpio_pin_configure(gpio_devs[i], pin_id[i],
-					   GPIO_DIR_IN);
+				gpio_pin_disable_callback(gpio_devs[i], pin_id[i]);
+				gpio_remove_callback(gpio_devs[i], &gpio_cbs[i]);
+				gpio_pin_configure(gpio_devs[i], pin_id[i], GPIO_DIR_IN);
+			}
 		}
 	}
 
