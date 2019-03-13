@@ -50,6 +50,10 @@ static const struct lte_info modem_info_fw = {
 	.info = MODEM_INFO_FW_VERSION,
 };
 
+static const struct lte_info modem_info_iccid = {
+	.info = MODEM_INFO_ICCID,
+};
+
 static const struct lte_info *const modem_information[] = {
 	&modem_info_band,
 	&modem_info_mode,
@@ -58,6 +62,7 @@ static const struct lte_info *const modem_information[] = {
 	&modem_info_ip_address,
 	&modem_info_uicc,
 	&modem_info_battery,
+	&modem_info_iccid,
 	&modem_info_fw,
 };
 

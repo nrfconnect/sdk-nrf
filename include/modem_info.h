@@ -16,10 +16,10 @@
  */
 
 /** Largest expected parameter response size. */
-#define MODEM_INFO_MAX_RESPONSE_SIZE 32
+#define MODEM_INFO_MAX_RESPONSE_SIZE 64
 
 /** Size of the JSON string. */
-#define MODEM_INFO_JSON_STRING_SIZE 128
+#define MODEM_INFO_JSON_STRING_SIZE 256
 
 /** RSRP offset value. */
 #define MODEM_INFO_RSRP_OFFSET_VAL 141
@@ -39,6 +39,7 @@ enum modem_info {
 	MODEM_INFO_BATTERY,	/**< Battery voltage. */
 	MODEM_INFO_TEMP,	/**< Temperature level. */
 	MODEM_INFO_FW_VERSION,  /**< Modem firmware version. */
+	MODEM_INFO_ICCID,	/**< SIM ICCID */
 	MODEM_INFO_COUNT,	/**< Number of legal elements in the enum. */
 };
 
