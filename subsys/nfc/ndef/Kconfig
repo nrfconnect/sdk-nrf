@@ -20,6 +20,11 @@ config NFC_NDEF_RECORD
 	bool
 	prompt "NDEF Record generator library"
 
+config NFC_NDEF_LE_OOB_REC
+	bool
+	prompt "NDEF LE OOB record generator library"
+	depends on BT_HCI_HOST
+
 config NFC_NDEF_TEXT_RECORD
 	bool
 	prompt "Encoding data for a text record for NFC Tag"

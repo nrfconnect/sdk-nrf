@@ -134,6 +134,12 @@
 
 
 
+.. ### Links to NFC specs
+
+.. _`Bluetooth Secure Simple Pairing Using NFC`: http://nfc-forum.org/our-work/specifications-and-application-documents/application-documents
+
+
+
 .. ### Links to other documentation
 
 .. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
