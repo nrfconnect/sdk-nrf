@@ -37,6 +37,6 @@ Read
 API documentation
 *****************
 
-.. doxygengroup::  nrf_bt_throughput
+.. doxygengroup::  bt_gatt_throughput
    :project: nrf
    :members:
