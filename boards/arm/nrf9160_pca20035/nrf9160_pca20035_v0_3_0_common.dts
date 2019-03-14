@@ -97,7 +97,7 @@
 	cts-pin = <25>;
 };
 
-/* UART2 must be enabled for defines to be available for secure boot. */
+/* UART2 must be enabled for defines to be available for secure partition manager. */
 &uart2 {
 	status = "ok";
 };

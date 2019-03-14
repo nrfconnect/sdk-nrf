@@ -110,7 +110,7 @@
 						<title>Sheet.22</title>
 						<desc>BSD socket</desc>
 						<rect x="0" y="392.946" width="120.001" height="14.4002" class="st2"/>
-						<text x="0" y="403.75" class="st10">BSD socket</text>					</g>
+						<text x="-0" y="403.75" class="st10">BSD socket</text>					</g>
 				</g>
 				<g id="group23-42" transform="translate(19.8546,-168.024)">
 					<title>Sheet.23</title>
@@ -145,11 +145,11 @@
 					<title>Sheet.34</title>
 					<rect x="0" y="329.394" width="159.591" height="77.9528" class="st9"/>
 				</g>
-				<g id="shape35-57" transform="translate(71.5723,-312.825)">
+				<g id="shape35-57" transform="translate(38.7493,-312.825)">
 					<title>Sheet.35</title>
-					<desc>Secure boot</desc>
+					<desc>Secure Partition Manager</desc>
 					<rect x="0" y="392.946" width="132.001" height="14.4002" class="st2"/>
-					<text x="0" y="403.75" class="st10">Secure boot</text>				</g>
+					<text x="0" y="403.75" class="st10">Secure Partition Manager</text>				</g>
 			</g>
 		</g>
 	</g>
