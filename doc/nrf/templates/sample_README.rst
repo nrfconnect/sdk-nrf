@@ -73,7 +73,7 @@ Building and running
 
 This sample can be found under :file:`samples/bluetooth/XXX` in the |NCS| folder structure.
 
-See :ref:`bluetooth setup section <zephyr:bluetooth_setup>` for details.
+See :ref:`bluetooth samples section <zephyr:bluetooth-samples>` for details.
 
 *Link directly to the suitable Getting Started. We should have stock text here.*
 

@@ -63,7 +63,7 @@ pipeline {
           git branch: "master", url: "$REPO_CI_TOOLS"
         }
         // Install and initialize west
-        sh "pip3 install --user west==0.5.1"
+        sh "pip3 install --user west==0.5.4"
         sh "west init -l nrf/"
 
         // Checkout
