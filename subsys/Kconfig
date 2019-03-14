@@ -18,3 +18,5 @@ rsource "nfc/Kconfig"
 rsource "event_manager/Kconfig"
 
 rsource "profiler/Kconfig"
+
+rsource "spm/Kconfig"
