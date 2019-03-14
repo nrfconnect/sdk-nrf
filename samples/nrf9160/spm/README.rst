@@ -1,9 +1,9 @@
-.. _secure_boot:
+.. _secure_partition_manager:
 
-nRF9160: Secure Boot
+nRF9160: Secure Partition Manager
 ####################
 
-The Secure Boot sample application provides a reference implementation of a first-stage boot firmware.
+The Secure Partition Manager sample application provides a reference implementation of a first-stage boot firmware.
 This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
 Overview
@@ -38,7 +38,7 @@ Peripherals configured as Non-Secure
    * EGU1, EGU2
    * FPU
 
-If your application requires a different security attribution configuration, you must update the Secure Boot sample code to reflect this.
+If your application requires a different security attribution configuration, you must update the Secure Partition Manager sample code to reflect this.
 
 Requirements for the application firmware
 =========================================
@@ -58,7 +58,7 @@ The following development board:
 Building and running
 ********************
 
-This sample can be found under :file:`samples/nrf9160/secure_boot` in the |NCS| folder structure.
+This sample can be found under :file:`samples/nrf9160/secure_partition_manager` in the |NCS| folder structure.
 
 The sample is built as a secure firmware image for the nrf9160_pca10090 board.
 It can be programmed independently from the non-secure application firmware.

@@ -1,17 +1,26 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA.
+ * Copyright (c) 2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <zephyr.h>
+#include <misc/printk.h>
+#include <device.h>
+#include <gpio.h>
+
+#if !defined(CONFIG_ARM_SECURE_FIRMWARE)
+#error "Sample requires compiling for Secure ARM Firmware"
+#endif
+
+/* Include required APIs for TrustZone-M */
+#include <arm_cmse.h>
+#include <cortex_m/tz.h>
+
+#include <nrfx.h>
+
 /*
- * Example code for a Secure Boot application.
- * The application uses the SPU to set the security attributions of
- * the MCU resources (Flash, SRAM and Peripherals). It uses the core
- * TrustZone-M API to prepare the MCU to jump into Non-Secure firmware
- * execution.
- *
- * The following security configuration for Flash and SRAM is applied:
+ *  * The following security configuration for Flash and SRAM is applied:
  *
  *                FLASH
  *  1 MB  |---------------------|
@@ -46,21 +55,6 @@
  *        |       SRAM          |
  *  0 kB  |---------------------|
  */
-
-#include <zephyr.h>
-#include <misc/printk.h>
-#include <device.h>
-#include <gpio.h>
-
-#if !defined(CONFIG_ARM_SECURE_FIRMWARE)
-#error "Sample requires compiling for Secure ARM Firmware"
-#endif
-
-/* Include required APIs for TrustZone-M */
-#include <arm_cmse.h>
-#include <cortex_m/tz.h>
-
-#include <nrfx.h>
 
 extern void irq_target_state_set(unsigned int irq, int secure_state);
 extern int irq_target_state_is_secure(unsigned int irq);
@@ -166,7 +160,7 @@ extern int irq_target_state_is_secure(unsigned int irq);
 	((SPU_PERIPHID_PERM_LOCK_Locked << SPU_PERIPHID_PERM_LOCK_Pos) &       \
 	 SPU_PERIPHID_PERM_LOCK_Msk)
 
-static void secure_boot_config_flash(void)
+static void spm_config_flash(void)
 {
 	/* Lower 256 kB of flash is allocated to MCUboot (if present)
 	 * and to the Secure firmware image. The rest of flash is
@@ -201,7 +195,7 @@ static void secure_boot_config_flash(void)
 	PRINT("\n");
 }
 
-static void secure_boot_config_sram(void)
+static void spm_config_sram(void)
 {
 	/* Lower 64 kB of SRAM is allocated to the Secure firmware image.
 	 * The rest of SRAM is allocated to Non-Secure firmware image.
@@ -253,7 +247,7 @@ static bool usel_or_split(u8_t id)
 	return present && (usel || split);
 }
 
-static int secure_boot_config_peripheral(u8_t id, bool dma_present)
+static int spm_config_peripheral(u8_t id, bool dma_present)
 {
 	/* Set a peripheral to Non-Secure state, if
 	 * - it is present
@@ -285,7 +279,7 @@ static int secure_boot_config_peripheral(u8_t id, bool dma_present)
 	return 0;
 }
 
-static void secure_boot_config_peripherals(void)
+static void spm_config_peripherals(void)
 {
 	struct periph_cfg {
 #ifndef CONFIG_SB_BOOT_SILENTLY
@@ -343,7 +337,7 @@ static void secure_boot_config_peripherals(void)
 			continue;
 		}
 
-		err = secure_boot_config_peripheral(periph[i].id, false);
+		err = spm_config_peripheral(periph[i].id, false);
 		if (err) {
 			PRINT("\tERROR\n");
 		} else {
@@ -353,18 +347,12 @@ static void secure_boot_config_peripherals(void)
 	PRINT("\n");
 }
 
-static void secure_boot_config(void)
-{
-	secure_boot_config_flash();
-	secure_boot_config_sram();
-	secure_boot_config_peripherals();
-}
 
-static void secure_boot_configure_ns(const tz_nonsecure_setup_conf_t
-	*secure_boot_ns_conf)
+static void spm_configure_ns(const tz_nonsecure_setup_conf_t
+	*spm_ns_conf)
 {
 	/* Configure core register block for Non-Secure state. */
-	tz_nonsecure_state_setup(secure_boot_ns_conf);
+	tz_nonsecure_state_setup(spm_ns_conf);
 	/* Prioritize Secure exceptions over Non-Secure */
 	tz_nonsecure_exception_prio_config(1);
 	/* Set non-banked exceptions to target Non-Secure */
@@ -381,17 +369,17 @@ static void secure_boot_configure_ns(const tz_nonsecure_setup_conf_t
 #endif /* CONFIG_ARMV7_M_ARMV8_M_FP */
 }
 
-static void secure_boot_jump(void)
+void spm_jump(void)
 {
 	/* Extract initial MSP of the Non-Secure firmware image.
 	 * The assumption is that the MSP is located at VTOR_NS[0].
 	 */
 	u32_t *vtor_ns = (u32_t *)DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0;
 
-	PRINT("Secure Boot: MSP_NS %x\n", vtor_ns[0]);
+	PRINT("SPM: MSP_NS %x\n", vtor_ns[0]);
 
 	/* Configure Non-Secure stack */
-	tz_nonsecure_setup_conf_t secure_boot_ns_conf = {
+	tz_nonsecure_setup_conf_t spm_ns_conf = {
 		.vtor_ns = (u32_t)vtor_ns,
 		.msp_ns = vtor_ns[0],
 		.psp_ns = 0,
@@ -399,21 +387,21 @@ static void secure_boot_jump(void)
 		.control_ns.spsel = 0 /* Use MSP in Thread mode */
 	};
 
-	secure_boot_configure_ns(&secure_boot_ns_conf);
+	spm_configure_ns(&spm_ns_conf);
 
 	/* Generate function pointer for Non-Secure function call. */
 	TZ_NONSECURE_FUNC_PTR_DECLARE(reset_ns);
 	reset_ns = TZ_NONSECURE_FUNC_PTR_CREATE(vtor_ns[1]);
 
 	if (TZ_NONSECURE_FUNC_PTR_IS_NS(reset_ns)) {
-		PRINT("Secure Boot: prepare to jump to Non-Secure image\n");
+		PRINT("SPM: prepare to jump to Non-Secure image\n");
 
 		/* Note: Move UARTE0 before jumping, if it is
 		 * to be used on the Non-Secure domain.
 		 */
 
 		/* Configure UARTE0 as non-secure */
-		secure_boot_config_peripheral(
+		spm_config_peripheral(
 			NRFX_PERIPHERAL_ID_GET(NRF_UARTE0), 0);
 
 		__DSB();
@@ -425,13 +413,14 @@ static void secure_boot_jump(void)
 		CODE_UNREACHABLE;
 
 	} else {
-		PRINT("Secure Boot: wrong pointer type: 0x%x\n",
+		PRINT("SPM: wrong pointer type: 0x%x\n",
 		      (u32_t)reset_ns);
 	}
 }
 
-void main(void)
+void spm_config(void)
 {
-	secure_boot_config();
-	secure_boot_jump();
+	spm_config_flash();
+	spm_config_sram();
+	spm_config_peripherals();
 }
