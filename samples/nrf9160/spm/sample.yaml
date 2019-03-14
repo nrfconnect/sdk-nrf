@@ -1,5 +1,5 @@
 sample:
-  name: secure_boot Sample
+  name: spm Sample
 tests:
   test_build:
     build_only: true

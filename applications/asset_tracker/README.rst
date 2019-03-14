@@ -45,10 +45,10 @@ Requirements
 
     * nRF9160 DK board (PCA10090)
 
-* :ref:`secure_boot` must be programmed on the board.
+* :ref:`secure_partition_manager` must be programmed on the board.
 
   The applications is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
-  Therefore, it requires the :ref:`secure_boot` bootloader that prepares the required peripherals to be available for the application.
+  Therefore, it requires the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
 
 .. _asset_tracker_user_interface:
 
@@ -89,7 +89,7 @@ Building and running
 This application can be found under :file:`applications/asset_tracker` in the |NCS| folder structure.
 
 The application is built as a non-secure firmware image for the nrf9160_pca10090ns board.
-It can be programmed independently from the secure boot firmware.
+It can be programmed independently from the Secure Partition Manager firmware.
 
 See :ref:`gs_programming` for information about how to build and program the application.
 The Kconfig file of the application contains options to configure the application.
@@ -121,7 +121,7 @@ Request Power Saving Mode (PSM)
 Testing
 =======
 
-After programming the :ref:`secure_boot` sample to your board, test the Asset Tracker application by performing the following steps:
+After programming the :ref:`secure_partition_manager` sample to your board, test the Asset Tracker application by performing the following steps:
 
 1. Connect the board to the computer using a USB cable.
    The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
@@ -129,12 +129,12 @@ After programming the :ref:`secure_boot` sample to your board, test the Asset Tr
 #. Open a web browser and navigate to https://nrfcloud.com/.
    Follow the instructions to set up your account and add an LTE device.
    A pattern of switch and button actions is displayed.
-#. Make sure that the :ref:`secure_boot` sample is programmed to the board.
+#. Make sure that the :ref:`secure_partition_manager` sample is programmed to the board.
 #. Compile and program the Asset Tracker application to the board.
-#. Observe in the terminal window that the board starts up in secure boot and that the application starts.
+#. Observe in the terminal window that the board starts up in the Secure Partition Manager and that the application starts.
    This is indicated by output similar to the following lines::
 
-      Secure Boot: prepare to jump to Non-Secure image
+      SPM: prepare to jump to Non-Secure image
       ***** Booting Zephyr OS v1.13.99 *****
       Application started
 
@@ -171,6 +171,6 @@ This application uses the following |NCS| libraries and drivers:
     * :ref:`dk_buttons_and_leds_readme`
     * ``drivers/lte_link_control``
 
-In addition, it uses the secure boot sample:
+In addition, it uses the Secure Partition Manager sample:
 
-* :ref:`secure_boot`
+* :ref:`secure_partition_manager`

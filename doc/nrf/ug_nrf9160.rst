@@ -26,24 +26,24 @@ The figure illustrates the conceptual layout when targeting
 an nRF9160 Cortex-M33 application MCU with TrustZone.
 The M33 TrustZone divides the MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area,
-which in this case is the **Secure Boot** application.
-The **Secure Boot** application configures a part of memory and peripherals to be
+which in this case is the **Secure Partition Manager**.
+The **Secure Partition Manager** configures a part of memory and peripherals to be
 non-secure and then jumps to the main application located in the non-secure area.
 The **BSD Socket** library must be embedded in the application because
 BSD sockets are the primary interface to the LTE modem.
 
-.. _nrf9160_ug_secure_boot:
+.. _nrf9160_ug_secure_partition_manager:
 
-Secure boot
-===========
+Secure Partition Manager
+========================
 
 To use any of the nRF9160 samples, you must first compile and flash the
-**Secure Boot** sample.
-It provides a reference implementation of a first-stage boot firmware.
+**Secure Partition Manager** sample.
+It provides a reference implementation of a Secure Partition Manager firmware.
 This firmware is required to set up the nRF9160 DK so that it can run
 user applications in the non-secure domain.
 
-For detailed documentation of the sample, see :ref:`secure_boot`.
+For detailed documentation of the sample, see :ref:`secure_partition_manager`.
 
 .. _nrf9160_ug_band_lock:
 
@@ -145,11 +145,11 @@ Sensor simulator
 Samples
 *******
 
-Secure Boot
-	The **Secure Boot** sample application provides a reference implementation
+Secure Partition Manager
+	The **Secure Partition Manager** sample provides a reference implementation
 	of a first-stage boot firmware.
 	It must be preflashed to the board before any other sample.
-	For details, see :ref:`secure_boot`.
+	For details, see :ref:`secure_partition_manager`.
 
 Asset Tracker
 	The **Asset Tracker** sample is a comprehensive application that demonstrates

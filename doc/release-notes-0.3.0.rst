@@ -16,7 +16,7 @@ Highlights
   * New target nRF9160_PCA10090
   * Driver support
   * Samples and libraries demonstrating LTE functionality
-  * Cortex-M33 and TrustZone (limited) including secure boot
+  * Cortex-M33 and TrustZone (limited) including secure partition manager
 
 * Added the following samples for nRF9160:
 
@@ -92,7 +92,7 @@ nRF9160
 * Added target nRF52840_PCA10090 (used when compiling for the nRF9160 DK Board Controller).
 * Added the following samples:
 
-  * :ref:`secure_boot`:
+  * :ref:`secure_partition_manager`:
     This sample provides a reference implementation of a first-stage boot firmware.
     The sample configures resources for the secure domain and boots an application from the non-secure domain.
   * **at_client**:
