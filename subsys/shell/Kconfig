@@ -1,0 +1,79 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig SHELL_BT_NUS
+	bool
+	prompt "Shell Bluetooth NUS transport"
+	depends on BT
+	select SHELL
+	select BT_GATT_NUS
+	select RING_BUFFER
+	help
+	  Enable shell BT NUS transport.
+
+if SHELL_BT_NUS
+
+module = SHELL_BT_NUS
+module-str = Shell over Bluetooth NUS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+default-timeout = 100
+source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
+
+default-size = 10
+source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
+
+choice
+	prompt "Initial log level limit"
+	default SHELL_BT_NUS_INIT_LOG_LEVEL_WRN
+
+config SHELL_BT_NUS_INIT_LOG_LEVEL_DEFAULT
+	bool "System limit (LOG_MAX_LEVEL)"
+
+config SHELL_BT_NUS_INIT_LOG_LEVEL_DBG
+	bool "Debug"
+
+config SHELL_BT_NUS_INIT_LOG_LEVEL_INF
+	bool "Info"
+
+config SHELL_BT_NUS_INIT_LOG_LEVEL_WRN
+	bool "Warning"
+
+config SHELL_BT_NUS_INIT_LOG_LEVEL_ERR
+	bool "Error"
+
+config SHELL_BT_NUS_INIT_LOG_LEVEL_NONE
+	bool "None"
+
+endchoice
+
+config SHELL_BT_NUS_INIT_LOG_LEVEL
+	int
+	default 0 if SHELL_BT_NUS_INIT_LOG_LEVEL_NONE
+	default 1 if SHELL_BT_NUS_INIT_LOG_LEVEL_ERR
+	default 2 if SHELL_BT_NUS_INIT_LOG_LEVEL_WRN
+	default 3 if SHELL_BT_NUS_INIT_LOG_LEVEL_INF
+	default 4 if SHELL_BT_NUS_INIT_LOG_LEVEL_DBG
+	default 5 if SHELL_BT_NUS_INIT_LOG_LEVEL_DEFAULT
+
+config SHELL_BT_NUS_TX_RING_BUFFER_SIZE
+	int "Set TX ring buffer size"
+	default 32
+	help
+	  Should be increased if long MTU is used since it allows to transfer
+	  data in bigger chunks (up to size of the ring buffer).
+
+config SHELL_BT_NUS_RX_RING_BUFFER_SIZE
+	int "Set RX ring buffer size"
+	default 32
+	help
+	  RX ring buffer size impacts accepted latency of handling incoming
+	  bytes by shell. If shell input is coming from the keyboard then it is
+	  usually enough if ring buffer is few bytes (more than one due to
+	  escape sequences). However, if bulk data is transferred it may be
+	  required to increase it.
+
+endif #SHELL_BT_NUS
