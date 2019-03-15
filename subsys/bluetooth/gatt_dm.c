@@ -388,6 +388,7 @@ static u8_t discovery_callback(struct bt_conn *conn,
 
 	if (conn != bt_gatt_dm_inst.conn) {
 		LOG_ERR("Unexpected conn object. Aborting.");
+		discovery_complete_error(&bt_gatt_dm_inst, -EFAULT);
 		return BT_GATT_ITER_STOP;
 	}
 
