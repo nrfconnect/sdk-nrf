@@ -25,14 +25,14 @@ int orientation_detector_poll(
 	enum orientation_state current_orientation;
 
 	for (i = 0; i < MEASUREMENT_ITERATIONS; i++) {
-		err = sensor_sample_fetch_chan(dev, SENSOR_CHAN_ACCEL_XYZ);
+		err = sensor_sample_fetch_chan(dev, SENSOR_CHAN_ACCEL_Z);
 		if (err) {
 			printk("sensor_sample_fetch failed\n");
 			return err;
 		}
 
 		err = sensor_channel_get(dev,
-				SENSOR_CHAN_ACCEL_XYZ, &accel_data[0]);
+				SENSOR_CHAN_ACCEL_Z, &accel_data[2]);
 
 		if (err) {
 			printk("sensor_channel_get failed\n");
@@ -74,15 +74,18 @@ int orientation_detector_calibrate(void)
 	double aggregated_data[3] = {0};
 
 	for (i = 0; i < CALIBRATION_ITERATIONS; i++) {
-		err = sensor_sample_fetch_chan(dev, SENSOR_CHAN_ACCEL_XYZ);
+		err = sensor_sample_fetch(dev);
 		if (err) {
 			printk("sensor_sample_fetch failed\n");
 			return err;
 		}
 
 		err = sensor_channel_get(dev,
-				SENSOR_CHAN_ACCEL_XYZ, &accel_data[0]);
-
+				SENSOR_CHAN_ACCEL_X, &accel_data[0]);
+		err += sensor_channel_get(dev,
+				SENSOR_CHAN_ACCEL_Y, &accel_data[1]);
+		err += sensor_channel_get(dev,
+				SENSOR_CHAN_ACCEL_Z, &accel_data[2]);
 		if (err) {
 			printk("sensor_channel_get failed\n");
 			return err;

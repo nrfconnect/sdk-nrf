@@ -163,7 +163,6 @@ config ACCEL_INVERTED
 
 config ACCEL_CALIBRATE
 	bool "Calibrate accelerometer"
-	default y if BOARD_NRF9160_PCA20035NS
 	help
 		Calibrate the accelerometer on a flat surface to filter away
 		static measurement offset that could affect orientation

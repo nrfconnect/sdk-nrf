@@ -58,8 +58,12 @@
 #define CALIBRATION_INPUT		-1
 #else
 #define FLIP_INPUT			-1
+#ifdef CONFIG_ACCEL_CALIBRATE
 #define CALIBRATION_INPUT		BIT(CONFIG_CALIBRATION_INPUT - 1)
-#endif
+#else
+#define CALIBRATION_INPUT		-1
+#endif /* CONFIG_ACCEL_CALIBRATE */
+#endif /* CONFIG_ACCEL_USE_SIM */
 
 #if defined(CONFIG_BSD_LIBRARY) && \
 !defined(CONFIG_LTE_LINK_CONTROL)
@@ -799,7 +803,9 @@ static void accelerometer_calibrate(struct k_work *work)
 /**@brief Callback for button events from the DK buttons and LEDs library. */
 static void button_handler(u32_t buttons, u32_t has_changed)
 {
+#if defined(CONFIG_ACCEL_CALIBRATE)
 	static bool long_press_active;
+#endif
 
 	if (pattern_recording && IS_ENABLED(CONFIG_CLOUD_UA_BUTTONS)) {
 		pairing_button_register(buttons, has_changed);
@@ -815,7 +821,9 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 		button_send(buttons & CONFIG_CLOUD_BUTTON_INPUT);
 	}
 
-	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
+
+	if (IS_ENABLED(CONFIG_ACCEL_CALIBRATE) &&
+	    IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
 			(buttons & has_changed & CALIBRATION_INPUT)) {
 		if (!long_press_active) {
 			long_press_active = true;
@@ -824,7 +832,8 @@ static void button_handler(u32_t buttons, u32_t has_changed)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
+	if (IS_ENABLED(CONFIG_ACCEL_CALIBRATE) &&
+	    IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
 			(~buttons & has_changed & CALIBRATION_INPUT)) {
 		k_delayed_work_cancel(&long_press_button_work);
 		long_press_active = false;
