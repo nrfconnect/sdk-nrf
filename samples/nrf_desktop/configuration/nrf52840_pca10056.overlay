@@ -1,4 +1,10 @@
 &pwm0 {
 	status = "ok";
 	ch0-pin = <15>;
+	ch0-inverted;
+};
+&pwm1 {
+	status = "ok";
+	ch0-pin = <14>;
+	ch0-inverted;
 };
