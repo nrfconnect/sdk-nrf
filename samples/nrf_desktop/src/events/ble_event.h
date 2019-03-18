@@ -40,6 +40,24 @@ enum peer_state {
 	PEER_STATE_COUNT
 };
 
+/** @brief Peer operation list. */
+#define PEER_OPERATION_LIST	\
+	X(SELECT)		\
+	X(SELECTED)		\
+	X(ERASE)		\
+	X(ERASED)		\
+	X(CANCEL)
+
+/** @brief Peer operations. */
+enum peer_operation {
+#define X(name) _CONCAT(PEER_OPERATION_, name),
+	PEER_OPERATION_LIST
+#undef X
+
+	PEER_OPERATION_COUNT
+};
+
+
 /** @brief BLE peer event. */
 struct ble_peer_event {
 	struct event_header header;
@@ -49,6 +67,15 @@ struct ble_peer_event {
 };
 EVENT_TYPE_DECLARE(ble_peer_event);
 
+/** @brief BLE peer operation event. */
+struct ble_peer_operation_event {
+	struct event_header header;
+
+	enum peer_operation op;
+	u8_t arg;
+};
+EVENT_TYPE_DECLARE(ble_peer_operation_event);
+
 /** @brief BLE discovery complete event. */
 struct ble_discovery_complete_event {
 	struct event_header header;
@@ -56,7 +83,6 @@ struct ble_discovery_complete_event {
 	struct bt_gatt_dm *dm;
 };
 EVENT_TYPE_DECLARE(ble_discovery_complete_event);
-
 
 #ifdef __cplusplus
 }

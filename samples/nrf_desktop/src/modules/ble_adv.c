@@ -95,6 +95,7 @@ static enum state state;
 
 static struct k_delayed_work adv_update;
 static struct k_delayed_work sp_grace_period_to;
+static u8_t cur_identity = BT_ID_DEFAULT; /* We expect zero */
 
 
 static int ble_adv_stop(void)
@@ -133,14 +134,18 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 
 static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 {
-	const struct bt_le_adv_param *adv_param = BT_LE_ADV_CONN_DIR_LOW_DUTY;
+	struct bt_le_adv_param adv_param;
 
 	if (fast_adv) {
 		LOG_INF("Use fast advertising");
-		adv_param = BT_LE_ADV_CONN_DIR;
+		adv_param = *BT_LE_ADV_CONN_DIR;
+	} else {
+		adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY;
 	}
 
-	struct bt_conn *conn = bt_conn_create_slave_le(addr, adv_param);
+	adv_param.id = cur_identity;
+
+	struct bt_conn *conn = bt_conn_create_slave_le(addr, &adv_param);
 
 	if (conn == NULL) {
 		return -EFAULT;
@@ -158,14 +163,18 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 
 static int ble_adv_start_undirected(bool fast_adv)
 {
-	const struct bt_le_adv_param *adv_param = &adv_param_normal;
+	struct bt_le_adv_param adv_param;
 
 	LOG_INF("Use %s advertising", (fast_adv)?("fast"):("slow"));
 	if (fast_adv) {
-		adv_param = &adv_param_fast;
+		adv_param = adv_param_fast;
+	} else {
+		adv_param = adv_param_normal;
 	}
 
-	return bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	adv_param.id = cur_identity;
+
+	return bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 }
 
 static int ble_adv_start(bool can_fast_adv)
@@ -175,7 +184,7 @@ static int ble_adv_start(bool can_fast_adv)
 	struct bond_find_data bond_find_data = {
 		.peer_id = 0,
 	};
-	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
+	bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
 
 	int err = ble_adv_stop();
 	if (err) {
@@ -352,6 +361,59 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_ble_peer_operation_event(eh)) {
+		struct ble_peer_operation_event *event =
+			cast_ble_peer_operation_event(eh);
+		int err;
+
+		switch (event->op)  {
+		case PEER_OPERATION_SELECTED:
+			if ((state == STATE_OFF) || (state == STATE_GRACE_PERIOD)) {
+				cur_identity = event->arg;
+				__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
+				break;
+			}
+
+			err = ble_adv_stop();
+
+			struct bond_find_data bond_find_data = {
+				.peer_id = 0,
+			};
+			bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
+			__ASSERT_NO_MSG(bond_find_data.peer_count <= 1);
+
+			if (bond_find_data.peer_count > 0) {
+				struct bt_conn *conn =
+					bt_conn_lookup_addr_le(cur_identity,
+							       &bond_find_data.peer_address);
+
+				if (conn) {
+					bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+					bt_conn_unref(conn);
+				}
+			}
+
+			cur_identity = event->arg;
+			__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
+
+			err = ble_adv_start(true);
+			break;
+
+		case PEER_OPERATION_SELECT:
+		case PEER_OPERATION_ERASE:
+		case PEER_OPERATION_ERASED:
+		case PEER_OPERATION_CANCEL:
+			/* Ignore */
+			break;
+
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
+		}
+
+		return false;
+	}
+
 	if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE)) {
 		if (is_power_down_event(eh)) {
 			int err = 0;
@@ -452,5 +514,6 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);

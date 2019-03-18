@@ -50,7 +50,7 @@ enum report_mode {
 static enum report_mode report_mode;
 static bool report_enabled[TARGET_REPORT_COUNT][REPORT_MODE_COUNT];
 
-static const struct bt_conn *cur_conn;
+static struct bt_conn *cur_conn;
 
 
 static void broadcast_subscription_change(enum target_report tr,
@@ -303,6 +303,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		/* It's not us */
 		return;
 	}
+	__ASSERT_NO_MSG(cur_conn);
 
 	if (!report_enabled[TARGET_REPORT_MOUSE][report_mode]) {
 		/* Notification disabled */
@@ -315,7 +316,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		s8_t x = MAX(MIN(event->dx, SCHAR_MAX), SCHAR_MIN);
 		s8_t y = MAX(MIN(event->dy, SCHAR_MAX), SCHAR_MIN);
 
-		err = bt_gatt_hids_boot_mouse_inp_rep_send(&hids_obj, NULL,
+		err = bt_gatt_hids_boot_mouse_inp_rep_send(&hids_obj, cur_conn,
 							   &event->button_bm,
 							   x, y,
 							   mouse_report_sent_cb);
@@ -345,7 +346,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		buffer[3] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
 		buffer[4] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
-		err = bt_gatt_hids_inp_rep_send(&hids_obj, NULL,
+		err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
 						report_index[REPORT_ID_MOUSE],
 						buffer, sizeof(buffer),
 						mouse_report_sent_cb);
@@ -378,6 +379,7 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 		/* It's not us */
 		return;
 	}
+	__ASSERT_NO_MSG(cur_conn);
 
 	if (!report_enabled[TARGET_REPORT_KEYBOARD][report_mode]) {
 		/* Notification disabled */
@@ -404,11 +406,11 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	int err;
 
 	if (report_mode == REPORT_MODE_BOOT) {
-		err = bt_gatt_hids_boot_kb_inp_rep_send(&hids_obj, NULL, report,
+		err = bt_gatt_hids_boot_kb_inp_rep_send(&hids_obj, cur_conn, report,
 							sizeof(report) - sizeof(report[8]),
 							keyboard_report_sent_cb);
 	} else {
-		err = bt_gatt_hids_inp_rep_send(&hids_obj, NULL,
+		err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
 						report_index[REPORT_ID_KEYBOARD],
 						report, sizeof(report),
 						keyboard_report_sent_cb);

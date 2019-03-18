@@ -8,39 +8,50 @@ menu "BLE"
 
 comment "BLE State"
 
-config DESKTOP_BLE_BOND_REMOVAL
-	bool "Enable bond removal by pressing a button during startup"
-	default n
+module = DESKTOP_BLE_STATE
+module-str = BLE state
+source "subsys/logging/Kconfig.template.log_config"
+
+
+comment "BLE Bond"
+
+config DESKTOP_BLE_PEER_CONTROL
+	bool "Enable interaction with peer configuration"
 	depends on !DESKTOP_BUTTONS_NONE
 	help
-	  Let user remove all bonded Bluetooth peers by holding down a button
-	  during the device boot.
+	  Let user control Bluetooth peers by pressing a dedicated button.
 
-if DESKTOP_BLE_BOND_REMOVAL
+if DESKTOP_BLE_PEER_CONTROL
 
-config DESKTOP_BLE_BOND_REMOVAL_BUTTON
-	hex "Key ID of button used to remove bonds when held during startup"
+config DESKTOP_BLE_PEER_CONTROL_BUTTON
+	hex "Key ID of button used to control peers"
 	range 0x0000 0xffff
 	help
-	  Button which should be held during device startup in order to
-	  unpair all bonded Bluetooth peers.
+	  Button which should be used to control bonded Bluetooth peers.
+
+config DESKTOP_BLE_PEER_SELECT
+	bool "Enable switching between peers"
+	help
+	  Short click to switch peer. Double click to accept choice.
+
+config DESKTOP_BLE_PEER_ERASE
+	bool "Enable peer erase"
+	help
+	  Long click to start erase. Double click to confirm.
 endif
 
-if !DESKTOP_BLE_BOND_REMOVAL
+if !DESKTOP_BLE_PEER_CONTROL
 
-config DESKTOP_BLE_BOND_REMOVAL_BUTTON
+config DESKTOP_BLE_PEER_CONTROL_BUTTON
 	hex
 	default 0x0000
 
 endif
 
-module = DESKTOP_BLE_STATE
-module-str = BLE state
-source "subsys/logging/Kconfig.template.log_config"
-
 module = DESKTOP_BLE_BOND
 module-str = BLE bonds
 source "subsys/logging/Kconfig.template.log_config"
+
 
 comment "BLE Advertising"
 
