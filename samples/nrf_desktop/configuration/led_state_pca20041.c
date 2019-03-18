@@ -51,26 +51,29 @@ const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT] = {
 const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT] = {
 	[LED_PEER_STATE_DISCONNECTED] = {
 		.mode = LED_MODE_BLINKING,
-		.period = 2000,
+		.period = 1000,
 	},
 	[LED_PEER_STATE_CONNECTED] = {
 		.mode = LED_MODE_ON,
 	},
 	[LED_PEER_STATE_CONFIRM_SELECT] = {
 		.mode = LED_MODE_BLINKING,
-		.period = 500,
+		.period = 50,
 	},
 	[LED_PEER_STATE_CONFIRM_ERASE] = {
 		.mode = LED_MODE_BLINKING,
-		.period = 250
+		.period = 25
 	}
 };
 
 const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED] = {
 	[0] = {
-		.c = {200, 0, 0},
+		.c = {150, 0, 0},
 	},
 	[1] = {
-		.c = {0, 200, 0},
+		.c = {0, 150, 0},
+	},
+	[2] = {
+		.c = {0,   0, 150},
 	}
 };

@@ -22,14 +22,33 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STATE_LOG_LEVEL);
 static enum led_system_state system_state = LED_SYSTEM_STATE_IDLE;
 
 static bool connected;
-static u8_t peer_id;
+static enum peer_operation peer_op = PEER_OPERATION_CANCEL;
+static u8_t cur_peer_id;
+static u8_t tmp_peer_id;
 
 static void load_peer_state_led(void)
 {
 	enum led_peer_state state = LED_PEER_STATE_DISCONNECTED;
+	u8_t peer_id = cur_peer_id;
 
-	if (connected) {
-		state = LED_PEER_STATE_CONNECTED;
+	switch (peer_op) {
+	case PEER_OPERATION_SELECT:
+		peer_id = tmp_peer_id;
+		state = LED_PEER_STATE_CONFIRM_SELECT;
+		break;
+	case PEER_OPERATION_ERASE:
+		state = LED_PEER_STATE_CONFIRM_ERASE;
+		break;
+	case PEER_OPERATION_CANCEL:
+		if (connected) {
+			state = LED_PEER_STATE_CONNECTED;
+		}
+		break;
+	case PEER_OPERATION_SELECTED:
+	case PEER_OPERATION_ERASED:
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
 	}
 
 	struct led_event *event = new_led_event();
@@ -88,6 +107,32 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_ble_peer_operation_event(eh)) {
+		struct ble_peer_operation_event *event =
+			cast_ble_peer_operation_event(eh);
+
+		switch (event->op)  {
+		case PEER_OPERATION_SELECT:
+			tmp_peer_id = event->arg;
+		case PEER_OPERATION_ERASE:
+			peer_op = event->op;
+			break;
+		case PEER_OPERATION_SELECTED:
+			cur_peer_id = tmp_peer_id;
+			/* Fall through */
+		case PEER_OPERATION_ERASED:
+		case PEER_OPERATION_CANCEL:
+			peer_op = PEER_OPERATION_CANCEL;
+			break;
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
+		}
+		load_peer_state_led();
+
+		return false;
+	}
+
 	if (is_battery_state_event(eh)) {
 		struct battery_state_event *event = cast_battery_state_event(eh);
 
@@ -127,4 +172,5 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 EVENT_SUBSCRIBE(MODULE, battery_state_event);

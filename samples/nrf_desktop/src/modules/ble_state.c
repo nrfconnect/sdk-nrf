@@ -19,11 +19,30 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_STATE_LOG_LEVEL);
 
 
+struct bond_find_data {
+	bt_addr_le_t peer_address;
+	u8_t peer_id;
+	u8_t peer_count;
+};
+
+
+static void bond_find(const struct bt_bond_info *info, void *user_data)
+{
+	struct bond_find_data *bond_find_data = user_data;
+
+	if (bond_find_data->peer_id == bond_find_data->peer_count) {
+		bt_addr_le_copy(&bond_find_data->peer_address, &info->addr);
+	}
+
+	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
+	bond_find_data->peer_count++;
+}
+
 static void connected(struct bt_conn *conn, u8_t error)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
+	char addr_str[BT_ADDR_LE_STR_LEN];
 
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
 
 	if (error) {
 		struct ble_peer_event *event = new_ble_peer_event();
@@ -31,33 +50,64 @@ static void connected(struct bt_conn *conn, u8_t error)
 		event->state = PEER_STATE_CONN_FAILED;
 		EVENT_SUBMIT(event);
 
-		LOG_WRN("Failed to connect to %s (%u)", log_strdup(addr),
+		LOG_WRN("Failed to connect to %s (%u)", log_strdup(addr_str),
 			error);
 		return;
 	}
 
-	LOG_INF("Connected to %s", log_strdup(addr));
+	LOG_INF("Connected to %s", log_strdup(addr_str));
+
+	struct bt_conn_info info;
+
+	int err = bt_conn_get_info(conn, &info);
+	if (err) {
+		LOG_WRN("Cannot get conn info");
+		goto disconnect;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
+	    (info.role == BT_CONN_ROLE_SLAVE)) {
+		/* Assert one identity holds exactly one bond. */
+		__ASSERT_NO_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_ID_MAX);
+
+		struct bond_find_data bond_find_data = {
+			.peer_id = 0,
+		};
+		bt_foreach_bond(info.id, bond_find, &bond_find_data);
+
+		LOG_INF("Identity %u has %u bonds", info.id,
+			bond_find_data.peer_count);
+		if ((bond_find_data.peer_count > 0) &&
+		    bt_addr_le_cmp(bt_conn_get_dst(conn),
+				   &bond_find_data.peer_address)) {
+			bt_addr_le_to_str(&bond_find_data.peer_address, addr_str,
+					sizeof(addr_str));
+			LOG_INF("Already bonded to %s", log_strdup(addr_str));
+			goto disconnect;
+		}
+	}
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
 	event->state = PEER_STATE_CONNECTED;
 	EVENT_SUBMIT(event);
 
-	struct bt_conn_info info;
-
-	int err = bt_conn_get_info(conn, &info);
-	if (err) {
-		LOG_ERR("Cannot get conn info");
-		return;
-	}
-
-	if (info.role == BT_CONN_ROLE_SLAVE) {
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
+	    (info.role == BT_CONN_ROLE_SLAVE)) {
 		LOG_INF("Set security level");
 		err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
 		if (err) {
 			LOG_ERR("Failed to set security");
+			goto disconnect;
 		}
 	}
+
+	return;
+
+disconnect:
+	LOG_WRN("Disconnect");
+	bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	bt_conn_unref(conn);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
