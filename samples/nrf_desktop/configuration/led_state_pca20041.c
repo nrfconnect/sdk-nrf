@@ -21,72 +21,56 @@ const size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
 	}
 };
 
-const struct led_config led_config[SYSTEM_STATE_COUNT][CONFIG_DESKTOP_LED_COUNT] = {
-	/* SYSTEM_STATE_DISCONNECTED */
-	{
-		/* Back LED */
-		{
-			.mode = LED_MODE_ON,
-			.color.c = {255, 0, 20},
-		},
-		/* Front LED */
-		{
-			.mode = LED_MODE_BLINKING,
-			.color.c = {150, 0, 10},
-			.period = 1000,
-		}
+const u8_t led_map[LED_ID_COUNT] = {0, 1};
+
+const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] = {
+	[LED_SYSTEM_STATE_IDLE] = {
+		.mode = LED_MODE_ON,
 	},
-	/* SYSTEM_STATE_CONNECTED */
-	{
-		/* Back LED */
-		{
-			.mode = LED_MODE_ON,
-			.color.c = {255, 0, 20},
-		},
-		/* Front LED */
-		{
-			.mode = LED_MODE_ON,
-			.color.c = {200, 0, 15},
-		}
+	[LED_SYSTEM_STATE_CHARGING] = {
+		.mode = LED_MODE_ON,
 	},
-	/* SYSTEM_STATE_DISCONNECTED_CHARGING */
-	{
-		/* Back LED */
-		{
-			.mode = LED_MODE_ON,
-			.color.c = {250, 250, 250},
-		},
-		/* Front LED */
-		{
-			.mode = LED_MODE_BLINKING,
-			.color.c = {150, 0, 10},
-			.period = 1000,
-		}
+	[LED_SYSTEM_STATE_ERROR] = {
+		.mode = LED_MODE_BLINKING,
+		.period = 200,
+	}
+};
+
+const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT] = {
+	[LED_SYSTEM_STATE_IDLE] = {
+		.c = {255, 0, 20},
 	},
-	/* SYSTEM_STATE_CONNECTED_CHARGING */
-	{
-		/* Back LED */
-		{
-			.mode = LED_MODE_ON,
-			.color.c = {250, 250, 250},
-		},
-		/* Front LED */
-		{
-			.mode = LED_MODE_ON,
-			.color.c = {200, 0, 15},
-		}
+	[LED_SYSTEM_STATE_CHARGING] = {
+		.c = {250, 250, 250},
 	},
-	/* SYSTEM_STATE_ERROR */
-	{
-		/* Back LED */
-		{
-			.mode = LED_MODE_BLINKING,
-			.color.c = {255, 0, 0},
-			.period = 200,
-		},
-		/* Front LED */
-		{
-			.mode = LED_MODE_OFF,
-		}
+	[LED_SYSTEM_STATE_ERROR] = {
+		.c = {255, 0, 0},
+	}
+};
+
+const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT] = {
+	[LED_PEER_STATE_DISCONNECTED] = {
+		.mode = LED_MODE_BLINKING,
+		.period = 2000,
 	},
+	[LED_PEER_STATE_CONNECTED] = {
+		.mode = LED_MODE_ON,
+	},
+	[LED_PEER_STATE_CONFIRM_SELECT] = {
+		.mode = LED_MODE_BLINKING,
+		.period = 500,
+	},
+	[LED_PEER_STATE_CONFIRM_ERASE] = {
+		.mode = LED_MODE_BLINKING,
+		.period = 250
+	}
+};
+
+const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED] = {
+	[0] = {
+		.c = {200, 0, 0},
+	},
+	[1] = {
+		.c = {0, 200, 0},
+	}
 };

@@ -20,42 +20,43 @@
 extern "C" {
 #endif
 
-/** @brief State of the system. */
-enum system_state {
-	/** Device disconnected not charging. */
-	SYSTEM_STATE_DISCONNECTED,
+enum led_system_state {
+	LED_SYSTEM_STATE_IDLE,
+	LED_SYSTEM_STATE_CHARGING,
+	LED_SYSTEM_STATE_ERROR,
 
-	/** Device connected not charging. */
-	SYSTEM_STATE_CONNECTED,
-
-	/** Device disconnected and charging. */
-	SYSTEM_STATE_DISCONNECTED_CHARGING,
-
-	/** Device connected and charging. */
-	SYSTEM_STATE_CONNECTED_CHARGING,
-
-	/** Device error. */
-	SYSTEM_STATE_ERROR,
-
-	/** Number of states. */
-	SYSTEM_STATE_COUNT
+	LED_SYSTEM_STATE_COUNT
 };
 
-/** @brief LEDs configuration. */
-struct led_config {
-	/** LED operating mode. */
+enum led_peer_state {
+	LED_PEER_STATE_DISCONNECTED,
+	LED_PEER_STATE_CONNECTED,
+	LED_PEER_STATE_CONFIRM_SELECT,
+	LED_PEER_STATE_CONFIRM_ERASE,
+
+	LED_PEER_STATE_COUNT
+};
+
+enum led_id {
+	LED_ID_SYSTEM_STATE,
+	LED_ID_PEER_STATE,
+
+	LED_ID_COUNT
+};
+
+struct led_effect {
 	enum led_mode mode;
 
-	/** LED light color. */
-	struct led_color color;
-
-	/** Single led brightness change time. */
 	u16_t period;
-
 };
 
-/** @brief LED configuration defined for given board. */
-extern const struct led_config led_config[SYSTEM_STATE_COUNT][CONFIG_DESKTOP_LED_COUNT];
+extern const u8_t led_map[LED_ID_COUNT];
+
+extern const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT];
+extern const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT];
+
+extern const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT];
+extern const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED];
 
 #ifdef __cplusplus
 }
