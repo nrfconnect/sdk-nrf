@@ -28,11 +28,20 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
   set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
 endif()
 
+# Adding proper flash map if overlay exists.
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay")
+  if(DTC_OVERLAY_FILE)
+    set(DTC_OVERLAY_FILE "${DTC_OVERLAY_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay")
+  else()
+    set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay")
+  endif()
+endif()
+
 include(../../cmake/boilerplate.cmake)
 
 # Define configuration files.
 macro(set_conf_file)
-  set(CONF_FILE "configuration/${BOARD}_${CMAKE_BUILD_TYPE}.conf")
+  set(CONF_FILE "configuration/${BOARD}_app_${CMAKE_BUILD_TYPE}.conf")
 endmacro()
 
 ################################################################################
@@ -75,8 +84,14 @@ add_subdirectory(src/modules)
 add_subdirectory(src/services)
 
 if (${CONFIG_BOOTLOADER_MCUBOOT})
-  if (NOT EXISTS ${MCUBOOT_DIR})
-    message(FATAL_ERROR "Path to MCUBoot must be specified")
+  set(MCUBOOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../mcuboot)
+
+  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_mcuboot_${CMAKE_BUILD_TYPE}.conf")
+    message(FATAL_ERROR "Configuration ${BOARD}_mcuboot_${CMAKE_BUILD_TYPE}.conf must be specified")
+  endif()
+
+  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
+    message(FATAL_ERROR "Overlay ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay must be specified")
   endif()
 
   if (${CONFIG_DESKTOP_SIGNATURE_KEY_FILE})
@@ -117,6 +132,25 @@ if (${CONFIG_BOOTLOADER_MCUBOOT})
     ${cmd_sign_bin}
     COMMENT
     "Sign binary files"
+    USES_TERMINAL
+    )
+  set(BOARD_ROOT_STR "")
+  foreach(root ${BOARD_ROOT})
+    set(BOARD_ROOT_STR "${BOARD_ROOT_STR}\;${root}")
+  endforeach()
+
+  add_custom_target(mcuboot
+    COMMAND
+    rm -rf mcuboot && mkdir mcuboot && cd mcuboot
+    COMMAND
+    cmake ${MCUBOOT_DIR}/boot/zephyr/
+    -G${CMAKE_GENERATOR}
+    -DBOARD=${BOARD}
+    -DBOARD_ROOT="${BOARD_ROOT_STR}"
+    -DDTC_OVERLAY_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay"
+    -DCONF_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_mcuboot_${CMAKE_BUILD_TYPE}.conf"
+    COMMENT
+    "Generating bootloader for application in mcuboot folder"
     USES_TERMINAL
     )
 
