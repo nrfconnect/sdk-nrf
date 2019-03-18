@@ -16,7 +16,6 @@
 const struct hid_keymap hid_keymap[] = {
 	{ 0x0000, 0x05, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
 	{ 0x0001, 0x04, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
-	{ 0x0002, 0x06, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
 	{ 0x0102, 0x07, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
 	{ 0x0103, 0x08, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
 	{ 0x0200, 0x03, TARGET_REPORT_MOUSE }, /* Middle Mouse Button */
