@@ -30,6 +30,24 @@ static bool connected;
 /* File descriptor */
 struct pollfd fds;
 
+#if defined(CONFIG_BSD_LIBRARY)
+
+/**@brief Recoverable BSD library error. */
+void bsd_recoverable_error_handler(uint32_t err)
+{
+	printk("bsdlib recoverable error: %u\n", err);
+}
+
+/**@brief Irrecoverable BSD library error. */
+void bsd_irrecoverable_error_handler(uint32_t err)
+{
+	printk("bsdlib irrecoverable error: %u\n", err);
+
+	__ASSERT_NO_MSG(false);
+}
+
+#endif /* defined(CONFIG_BSD_LIBRARY) */
+
 /**@brief Function to print strings without null-termination
  */
 static void data_print(u8_t *prefix, u8_t *data, size_t len)

@@ -21,6 +21,24 @@ static struct sockaddr_storage server;
 static u16_t next_token;
 static int transport_handle;
 
+#if defined(CONFIG_BSD_LIBRARY)
+
+/**@brief Recoverable BSD library error. */
+void bsd_recoverable_error_handler(uint32_t err)
+{
+	printk("bsdlib recoverable error: %u\n", err);
+}
+
+/**@brief Irrecoverable BSD library error. */
+void bsd_irrecoverable_error_handler(uint32_t err)
+{
+	printk("bsdlib irrecoverable error: %u\n", err);
+
+	__ASSERT_NO_MSG(false);
+}
+
+#endif /* defined(CONFIG_BSD_LIBRARY) */
+
 /**@brief Handles an error notified by CoAP. */
 static void coap_client_error_handler(u32_t error_code, coap_message_t *message)
 {
