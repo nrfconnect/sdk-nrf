@@ -42,6 +42,6 @@ target_include_directories(
 
 add_library(kernel_init STATIC ${ZEPHYR_BASE}/kernel/init.c)
 target_link_libraries(kernel_init zephyr_interface libc)
-target_compile_definitions(kernel_init PRIVATE _Cstart=UNUSED_Cstart)
+target_compile_definitions(kernel_init PRIVATE z_cstart=UNUSED_z_cstart)
 add_dependencies(kernel_init offsets_h)
 target_link_libraries(c_runtime_setup PRIVATE kernel_init)
