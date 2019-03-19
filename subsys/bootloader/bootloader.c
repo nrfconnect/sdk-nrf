@@ -147,7 +147,7 @@ static void boot_from(u32_t *address)
 	CODE_UNREACHABLE;
 }
 
-void _Cstart(void) __attribute__((alias("main_bl")));
+void z_cstart(void) __attribute__((alias("main_bl")));
 void main_bl(void)
 {
 #if defined(CONFIG_SB_DEBUG_PORT_SEGGER_RTT)
