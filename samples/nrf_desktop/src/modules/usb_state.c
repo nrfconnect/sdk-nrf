@@ -239,15 +239,17 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		break;
 
 	case USB_DC_CONFIGURED:
-		__ASSERT_NO_MSG(state == USB_STATE_POWERED);
+		__ASSERT_NO_MSG(state != USB_STATE_DISCONNECTED);
 		new_state = USB_STATE_ACTIVE;
 		break;
 
 	case USB_DC_RESET:
-		if (state == USB_STATE_DISCONNECTED) {
-			LOG_WRN("USB_DC_RESET when USB is disconnected");
+		__ASSERT_NO_MSG(state != USB_STATE_DISCONNECTED);
+		if (state == USB_STATE_SUSPENDED) {
+			LOG_WRN("USB reset in suspended state, ignoring");
+		} else {
+			new_state = USB_STATE_IDLE;
 		}
-		new_state = USB_STATE_POWERED;
 		break;
 
 	case USB_DC_SUSPEND:
@@ -259,7 +261,7 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 
 	case USB_DC_RESUME:
 		__ASSERT_NO_MSG(state == USB_STATE_SUSPENDED);
-		new_state = USB_STATE_POWERED;
+		new_state = USB_STATE_IDLE;
 		/* Not supported yet */
 		LOG_WRN("USB resume");
 		break;
