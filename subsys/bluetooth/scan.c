@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(nrf_bt_scan, CONFIG_BT_SCAN_LOG_LEVEL);
 
 #define MODE_CHECK (BT_SCAN_NAME_FILTER | BT_SCAN_ADDR_FILTER | \
 	BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_APPEARANCE_FILTER | \
-	BT_SCAN_UUID_FILTER)
+	BT_SCAN_UUID_FILTER | BT_SCAN_MANUFACTURER_DATA_FILTER)
 
 /* Scan filter add mutex. */
 K_MUTEX_DEFINE(scan_add_mutex);
@@ -140,6 +140,28 @@ struct bt_scan_appearance_filter {
 	bool enabled;
 };
 
+/* Manufacturer data filter structure.
+ */
+struct bt_scan_manufacturer_data_filter {
+	struct {
+		/* Manufacturer data that the main application will scan for,
+		 * and that will be advertised by the peripherals.
+		 */
+		u8_t data[CONFIG_BT_SCAN_MANUFACTURER_DATA_MAX_LEN];
+
+		/* Length of the manufacturere data that the main application
+		 * will scan for.
+		 */
+		u8_t data_len;
+	} manufacturer_data[CONFIG_BT_SCAN_MANUFACTURER_DATA_CNT];
+
+	/* Name filter counter. */
+	u8_t cnt;
+
+	/* Flag to inform about enabling or disabling this filter. */
+	bool enabled;
+};
+
 /* Filters data.
  * This structure contains all filter data and the information
  * about enabling and disabling any type of filters.
@@ -164,6 +186,9 @@ struct bt_scan_filters {
 
 	/* Appearance filter data. */
 	struct bt_scan_appearance_filter appearance;
+
+	/* Manufacturer data filter data. */
+	struct bt_scan_manufacturer_data_filter manufacturer_data;
 
 	/* Filter mode. If true, all set filters must be
 	 * matched to generate an event.
@@ -791,6 +816,101 @@ static int scan_appearance_filter_add(u16_t appearance)
 	return 0;
 }
 
+static bool adv_manufacturer_data_cmp(const u8_t *data,
+				      u8_t data_len,
+				      const u8_t *target_data,
+				      u8_t target_data_len)
+{
+	if (target_data_len > data_len) {
+		return false;
+	}
+
+	if (memcmp(target_data, data, target_data_len) != 0) {
+		return false;
+	}
+
+	return true;
+}
+
+static bool adv_manufacturer_data_compare(const struct bt_data *data)
+{
+	const struct bt_scan_manufacturer_data_filter *md_filter =
+		&bt_scan.scan_filters.manufacturer_data;
+	u8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
+
+	/* Compare the name found with the name filter. */
+	for (size_t i = 0; i < counter; i++) {
+		if (adv_manufacturer_data_cmp(data->data,
+				data->data_len,
+				md_filter->manufacturer_data[i].data,
+				md_filter->manufacturer_data[i].data_len)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static bool is_manufacturer_data_filter_enabled(void)
+{
+	return bt_scan.scan_filters.manufacturer_data.enabled;
+}
+
+static void manufacturer_data_check(struct bt_scan_control *control,
+				    const struct bt_data *data)
+{
+	if (is_manufacturer_data_filter_enabled()) {
+		if (adv_manufacturer_data_compare(data)) {
+			control->filter_match_cnt++;
+
+			/* Information about the filters matched. */
+			control->filter_status.manufacturer_data = true;
+			control->filter_match = true;
+		}
+	}
+}
+
+static int scan_manufacturer_data_filter_add(const struct bt_scan_manufacturer_data *manufacturer_data)
+{
+	struct bt_scan_manufacturer_data_filter *md_filter =
+		&bt_scan.scan_filters.manufacturer_data;
+	u8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
+
+	/* If no memory for filter. */
+	if (counter >= CONFIG_BT_SCAN_MANUFACTURER_DATA_CNT) {
+		return -ENOMEM;
+	}
+
+	/* Check the data length. */
+	if ((manufacturer_data->data_len == 0) ||
+			(manufacturer_data->data_len >
+			 CONFIG_BT_SCAN_MANUFACTURER_DATA_MAX_LEN)) {
+		return -EINVAL;
+	}
+
+	/* Check for duplicated filter. */
+	for (size_t i = 0; i < counter; i++) {
+		if (adv_manufacturer_data_cmp(manufacturer_data->data,
+				manufacturer_data->data_len,
+				md_filter->manufacturer_data[i].data,
+				md_filter->manufacturer_data[i].data_len)) {
+			return 0;
+		}
+	}
+
+	/* Add manufacturer data to filter. */
+	memcpy(md_filter->manufacturer_data[counter].data,
+			manufacturer_data->data, manufacturer_data->data_len);
+	md_filter->manufacturer_data[counter].data_len =
+		manufacturer_data->data_len;
+
+	bt_scan.scan_filters.manufacturer_data.cnt++;
+
+	LOG_DBG("Adding filter on manufacturer data");
+
+	return 0;
+}
+
 static bool check_filter_mode(u8_t mode)
 {
 	return (mode & MODE_CHECK) != 0;
@@ -820,6 +940,7 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 	bt_addr_le_t *addr;
 	struct bt_uuid *uuid;
 	u16_t appearance;
+	struct bt_scan_manufacturer_data *manufacturer_data;
 	int err = 0;
 
 	if (!data) {
@@ -852,6 +973,11 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 	case BT_SCAN_FILTER_TYPE_APPEARANCE:
 		appearance = *((u16_t *)data);
 		err = scan_appearance_filter_add(appearance);
+		break;
+
+	case BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA:
+		manufacturer_data = (struct bt_scan_manufacturer_data *)data;
+		err = scan_manufacturer_data_filter_add(manufacturer_data);
 		break;
 
 	default:
@@ -888,6 +1014,10 @@ void bt_scan_filter_remove_all(void)
 			&bt_scan.scan_filters.appearance;
 	appearance_filter->cnt = 0;
 
+	struct bt_scan_manufacturer_data_filter *manufacturer_data_filter =
+		&bt_scan.scan_filters.manufacturer_data;
+	manufacturer_data_filter->cnt = 0;
+
 	k_mutex_unlock(&scan_add_mutex);
 }
 
@@ -899,6 +1029,7 @@ void bt_scan_filter_disable(void)
 	bt_scan.scan_filters.addr.enabled = false;
 	bt_scan.scan_filters.uuid.enabled = false;
 	bt_scan.scan_filters.appearance.enabled = false;
+	bt_scan.scan_filters.manufacturer_data.enabled = false;
 }
 
 int bt_scan_filter_enable(u8_t mode, bool match_all)
@@ -934,6 +1065,10 @@ int bt_scan_filter_enable(u8_t mode, bool match_all)
 		filters->appearance.enabled = true;
 	}
 
+	if (mode & BT_SCAN_MANUFACTURER_DATA_FILTER) {
+		filters->manufacturer_data.enabled = true;
+	}
+
 	/* Select the filter mode. */
 	filters->all_mode = match_all;
 
@@ -959,6 +1094,8 @@ int bt_scan_filter_get(struct bt_filter_status *status)
 			bt_scan.scan_filters.appearance.enabled;
 	status->appearance.cnt =
 			bt_scan.scan_filters.appearance.cnt;
+	status->manufacturer_data.cnt =
+			bt_scan.scan_filters.manufacturer_data.cnt;
 
 	return 0;
 }
@@ -1024,6 +1161,10 @@ static void check_enabled_filters(struct bt_scan_control *control)
 	if (is_appearance_filter_enabled()) {
 		control->filter_cnt++;
 	}
+
+	if (is_manufacturer_data_filter_enabled()) {
+		control->filter_cnt++;
+	}
 }
 
 static bool adv_data_found(struct bt_data *data, void *user_data)
@@ -1062,6 +1203,11 @@ static bool adv_data_found(struct bt_data *data, void *user_data)
 	case BT_DATA_UUID128_ALL:
 		/* Check the UUID filter. */
 		uuid_check(scan_control, data, BT_UUID_TYPE_128);
+		break;
+
+	case BT_DATA_MANUFACTURER_DATA:
+		/* Check the manufacturer data filter. */
+		manufacturer_data_check(scan_control, data);
 		break;
 
 	default:
