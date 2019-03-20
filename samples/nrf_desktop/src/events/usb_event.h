@@ -30,6 +30,7 @@ extern "C" {
 enum usb_state {
 	USB_STATE_DISCONNECTED, /**< Cable is not attached. */
 	USB_STATE_POWERED,      /**< Cable attached but no communication. */
+	USB_STATE_IDLE,		/**< Cable attached but no communication. */
 	USB_STATE_ACTIVE,       /**< Cable attached and data is exchanged. */
 	USB_STATE_SUSPENDED,    /**< Cable attached but port is suspended. */
 
