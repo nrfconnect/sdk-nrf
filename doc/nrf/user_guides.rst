@@ -12,3 +12,4 @@ They introduce you to important concepts and guide you through developing your a
    ug_nrf9160
    ug_esb
    ug_bootloader
+   ug_unity_testing
