@@ -212,8 +212,14 @@ static int power_mgmt_init(void)
 		return err;
 	}
 
-	/* The value 0x09 corresponds to 100 mA charging current. */
-	err = adp536x_charger_current_set(0x09);
+	/* The value 0x1F corresponds to 320 mA charging current. */
+	err = adp536x_charger_current_set(0x1F);
+	if (err) {
+		return err;
+	}
+
+	/* The value 0x07 corresponds to a 400 mA peak charge current. */
+	err = adp536x_oc_chg_current_set(0x07);
 	if (err) {
 		return err;
 	}
