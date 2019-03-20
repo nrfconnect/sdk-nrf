@@ -55,8 +55,11 @@ extern "C" {
 /**@brief Filters the device short name. */
 #define BT_SCAN_SHORT_NAME_FILTER 0x10
 
+/**@brief Filters the manufacturer data. */
+#define BT_SCAN_MANUFACTURER_DATA_FILTER 0x20
+
 /**@brief Uses the combination of all filters. */
-#define BT_SCAN_ALL_FILTER 0x1F
+#define BT_SCAN_ALL_FILTER 0x3F
 /* @} */
 
 
@@ -87,6 +90,9 @@ enum bt_scan_filter_type {
 
 	/** Filter for appearances. */
 	BT_SCAN_FILTER_TYPE_APPEARANCE,
+
+	/** Filter for manufacturer data. */
+	BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA,
 };
 
 /**@brief Filter information structure.
@@ -122,6 +128,9 @@ struct bt_filter_status {
 
 	/** Appearance filter info. */
 	struct bt_scan_filter_info appearance;
+
+	/** Appearance filter info. */
+	struct bt_scan_filter_info manufacturer_data;
 };
 
 /**@brief Advertising info structure.
@@ -144,6 +153,16 @@ struct bt_scan_short_name {
 
 	/** Minimum length of the short name. */
 	u8_t min_len;
+};
+
+/**@brief A helper structure to set filters for the manufacturer data.
+ */
+struct bt_scan_manufacturer_data {
+	/** Pointer to the manufacturer data. */
+	u8_t *data;
+
+	/** Manufacturer data length. */
+	u8_t data_len;
 };
 
 /**@brief Structure for Scanning Module initialization.
@@ -186,6 +205,9 @@ struct bt_scan_filter_match {
 
 	/** Set to 1 if short name filter is matched. */
 	u8_t short_name : 1;
+
+	/** Set to 1 if manufacturer data filter is matched. */
+	u8_t manufacturer_data : 1;
 };
 
 /**@brief Structure contains device data needed to establish
