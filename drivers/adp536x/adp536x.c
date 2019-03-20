@@ -23,6 +23,7 @@
 #define ADP536X_CHG_STATUS_1				0x08
 #define ADP536X_CHG_STATUS_2				0x09
 #define ADP536X_BAT_PROTECT_CTRL			0x11
+#define ADP536X_BAT_OC_CHG				0x15
 #define ADP536X_BUCK_OUTPUT				0x2A
 #define ADP536X_BUCKBST_CFG				0x2B
 #define ADP536X_BUCKBST_OUTPUT				0x2C
@@ -105,6 +106,11 @@
 #define ADP536X_BAT_PROTECT_CTRL_EN_CHGLB(x)		(((x) & 0x01) << 1)
 #define ADP536X_BAT_PROTECT_CTRL_EN_BATPRO_MSK		BIT(0)
 #define ADP536X_BAT_PROTECT_CTRL_EN_BATPRO(x)		((x) & 0x01)
+
+#define ADP536X_BAT_OC_CHG_OC_CHG_MSK			GENMASK(7, 5)
+#define ADP536X_BAT_OC_CHG_OC_CHG(x)			(((x) & 0x07) << 5)
+#define ADP536X_BAT_OC_CHG_DGT_OC_CHG_MSK		GENMASK(4, 3)
+#define ADP536X_BAT_OC_CHG_DGT_OC_CHG(x)		(((x) & 0x03) << 3)
 
 /* Buck output voltage setting register. */
 #define ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK		GENMASK(5, 0)
@@ -214,6 +220,13 @@ int adp536x_oc_chg_hiccup_set(bool enable)
 	return adp536x_reg_write_mask(ADP536X_BAT_PROTECT_CTRL,
 				ADP536X_BAT_PROTECT_CTRL_OC_CHG_HICCUP_MSK,
 				ADP536X_BAT_PROTECT_CTRL_OC_CHG_HICCUP(enable));
+}
+
+int adp536x_oc_chg_current_set(u8_t value)
+{
+	return adp536x_reg_write_mask(ADP536X_BAT_OC_CHG,
+					ADP536X_BAT_OC_CHG_OC_CHG_MSK,
+					ADP536X_BAT_OC_CHG_OC_CHG(value));
 }
 
 int adp536x_buck_1v8_set(void)
