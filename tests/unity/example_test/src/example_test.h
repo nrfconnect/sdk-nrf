@@ -9,12 +9,12 @@
 #include <misc/util.h>
 #include <stdbool.h>
 
-/* This header shows how to handle testing of compile time options in single
- * binary. It is done by overriding IS_ENABLED macro and redefining it to use
- * runtime variable.
+/* This header shows how to handle testing of compile time options in a single
+ * binary. It is done by overriding the IS_ENABLED macro and redefining it to
+ * use a runtime variable.
  *
- * Note that in some cases it may not be possible to use that feature. That is
- * if const variables are initialized based on IS_ENABLED result, like:
+ * Note that in some cases, it may not be possible to use that feature. That is
+ * if const variables are initialized based on the IS_ENABLED result, like:
  *
  * const int x = IS_ENABLED(CONFIG_FOO) ? 1 : 0;
  */

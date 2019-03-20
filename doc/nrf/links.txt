@@ -87,6 +87,10 @@
 
 .. _`SEGGER SystemView`: https://www.segger.com/products/development-tools/systemview/
 
+.. _`CMock`: http://www.throwtheswitch.org/cmock
+
+.. _`Unity`: http://www.throwtheswitch.org/unity
+
 
 
 .. ### Links to Bluetooth specs
@@ -112,3 +116,5 @@
 .. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
 
 .. _`west manifest file`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/west.yml
+
+.. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/tests/unity/example_test/CMakeLists.txt
