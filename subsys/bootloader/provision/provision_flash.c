@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <generated_dts_board.h>
 #include <errno.h>
-#include "../bootloader.h"
+#include "bootloader.h"
 #include <nrf.h>
 #include <assert.h>
 
