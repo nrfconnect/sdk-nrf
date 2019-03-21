@@ -206,20 +206,20 @@ static int power_mgmt_init(void)
 		return err;
 	}
 
-	/* The value 0x07 sets VBUS current limit to 500 mA. */
-	err = adp536x_vbus_current_set(0x07);
+	/* Sets the VBUS current limit to 500 mA. */
+	err = adp536x_vbus_current_set(ADP536X_VBUS_ILIM_500mA);
 	if (err) {
 		return err;
 	}
 
-	/* The value 0x1F corresponds to 320 mA charging current. */
-	err = adp536x_charger_current_set(0x1F);
+	/* Sets the charging current to 320 mA. */
+	err = adp536x_charger_current_set(ADP536X_CHG_CURRENT_320mA);
 	if (err) {
 		return err;
 	}
 
-	/* The value 0x07 corresponds to a 400 mA peak charge current. */
-	err = adp536x_oc_chg_current_set(0x07);
+	/* Sets the charge current protection threshold to 400 mA. */
+	err = adp536x_oc_chg_current_set(ADP536X_OC_CHG_THRESHOLD_400mA);
 	if (err) {
 		return err;
 	}
