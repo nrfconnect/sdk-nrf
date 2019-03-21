@@ -100,8 +100,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 #define OPTICAL_REG_LIFTCUTOFF_TUNE2		0x65
 
 /* Sensor pin configuration */
-#define OPTICAL_PIN_PWR_CTRL			14
-#define OPTICAL_PIN_MOTION			18
+#define OPTICAL_PIN_MOTION			21
 #define OPTICAL_PIN_CS				13
 
 /* Sensor initialization values */
@@ -661,17 +660,6 @@ static int init(struct config_options *options)
 	spi_dev = device_get_binding(DT_SPI_1_NAME);
 	if (!spi_dev) {
 		LOG_ERR("Cannot get SPI device");
-		goto error;
-	}
-
-	/* Power on the optical sensor */
-	err = gpio_pin_configure(gpio_dev, OPTICAL_PIN_PWR_CTRL, GPIO_DIR_OUT);
-	if (err) {
-		goto error;
-	}
-
-	err = gpio_pin_write(gpio_dev, OPTICAL_PIN_PWR_CTRL, 1);
-	if (err) {
 		goto error;
 	}
 

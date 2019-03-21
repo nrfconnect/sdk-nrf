@@ -50,7 +50,7 @@ static void scan_fn(struct k_work *work);
 static int set_cols(u32_t mask)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
-		u32_t val = (mask & (1 << i)) ? (1) : (0);
+		u32_t val = (mask & BIT(i)) ? (1) : (0);
 
 		if (gpio_pin_write(gpio_devs[col[i].port], col[i].pin, val)) {
 			LOG_ERR("Cannot set pin");
@@ -64,7 +64,7 @@ static int set_cols(u32_t mask)
 
 static int get_rows(u32_t *mask)
 {
-	for (size_t i = 0; i < COLUMNS; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
 		u32_t val;
 
 		if (gpio_pin_read(gpio_devs[row[i].port], row[i].pin, &val)) {
@@ -73,10 +73,10 @@ static int get_rows(u32_t *mask)
 		}
 
 		if (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED)) {
-			*mask |= (!val << i);
-		} else {
-			*mask |= (val << i);
+			val = !val;
 		}
+
+		*mask |= (val << i);
 	}
 
 	return 0;
@@ -97,7 +97,8 @@ static int set_trig_mode(int trig_mode)
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
 		__ASSERT_NO_MSG(row[i].port < ARRAY_SIZE(port_map));
 
-		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin, flags);
+		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin,
+					 flags);
 	}
 
 	return err;
@@ -140,10 +141,7 @@ static int suspend_nolock(void)
 		state = STATE_IDLE;
 
 		/* Leaving deep sleep requires level interrupt */
-		err = set_trig_mode(GPIO_INT_LEVEL);
-		if (!err) {
-			err = callback_ctrl(true);
-		}
+		err = callback_ctrl(true);
 		break;
 
 	case STATE_IDLE:
@@ -182,12 +180,7 @@ static void resume(void)
 	if (err) {
 		LOG_ERR("Cannot disable callbacks");
 	} else {
-		err = set_trig_mode(GPIO_INT_EDGE);
-		if (err) {
-			LOG_ERR("Cannot set trig mode");
-		} else {
-			state = STATE_SCANNING;
-		}
+		state = STATE_SCANNING;
 	}
 
 	/* GPIO callback is disabled - it is safe to unlock */
@@ -217,7 +210,7 @@ static void scan_fn(struct k_work *work)
 	memset(cur_state, 0, sizeof(cur_state));
 
 	for (size_t i = 0; i < COLUMNS; i++) {
-		int err = set_cols(1 << i);
+		int err = set_cols(BIT(i));
 
 		if (!err) {
 			err = get_rows(&cur_state[i]);
@@ -235,8 +228,8 @@ static void scan_fn(struct k_work *work)
 
 	for (size_t i = 0; i < COLUMNS; i++) {
 		for (size_t j = 0; j < ARRAY_SIZE(row); j++) {
-			bool is_pressed = (cur_state[i] & (1 << j));
-			bool was_pressed = (old_state[i] & (1 << j));
+			bool is_pressed = cur_state[i] & BIT(j);
+			bool was_pressed = old_state[i] & BIT(j);
 
 			if (is_pressed != was_pressed) {
 				struct button_event *event = new_button_event();
@@ -368,7 +361,11 @@ static void init_fn(void)
 		}
 	}
 
-	int err = set_trig_mode(GPIO_INT_EDGE);
+	/* Level interrupt is needed to leave deep sleep mode.
+	 * Edge interrupt gives only 7 channels so is not suitable
+	 * for larger matrix or number of GPIO buttons.
+	 */
+	int err = set_trig_mode(GPIO_INT_LEVEL);
 	if (err) {
 		LOG_ERR("Cannot set interrupt mode");
 		goto error;
