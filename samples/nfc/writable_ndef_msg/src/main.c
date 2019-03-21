@@ -13,29 +13,20 @@
  *
  */
 
-#include <zephyr/types.h>
+#include <zephyr.h>
 #include <stdbool.h>
 #include <nfc_t4t_lib.h>
 
 #include "ndef_file_m.h"
 #include <nfc/ndef/nfc_ndef_msg.h>
 
-#include <soc.h>
-#include <device.h>
-#include <gpio.h>
+#include <dk_buttons_and_leds.h>
 
-#define LED_ON  (u32_t)(0)
-#define LED_OFF (u32_t)(1)
+#define NFC_FIELD_LED		DK_LED1
+#define NFC_WRITE_LED		DK_LED2
+#define NFC_READ_LED		DK_LED4
 
-static struct device *LED0_dev;
-static struct device *LED1_dev;
-static struct device *LED3_dev;
-static struct device *button;
-
-#define BUTTON_PORT	SW0_GPIO_CONTROLLER
-/**< Button's GPIO port used to set default NDEF message. */
-#define BUTTON_PIN	SW0_GPIO_PIN
-/**< Button's GPIO pin used to set default NDEF message. */
+#define NDEF_RESTORE_BTN_MSK	DK_BTN1_MSK
 
 static u8_t ndef_msg_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for NDEF file. */
 
@@ -78,22 +69,20 @@ static void nfc_callback(void *context,
 
 	switch (event) {
 	case NFC_T4T_EVENT_FIELD_ON:
-		gpio_pin_write(LED0_dev, LED0_GPIO_PIN, LED_ON);
+		dk_set_led_on(NFC_FIELD_LED);
 		break;
 
 	case NFC_T4T_EVENT_FIELD_OFF:
-		gpio_pin_write(LED0_dev, LED0_GPIO_PIN, LED_OFF);
-		gpio_pin_write(LED1_dev, LED1_GPIO_PIN, LED_OFF);
-		gpio_pin_write(LED3_dev, LED3_GPIO_PIN, LED_OFF);
+		dk_set_leds(DK_NO_LEDS_MSK);
 		break;
 
 	case NFC_T4T_EVENT_NDEF_READ:
-		gpio_pin_write(LED3_dev, LED3_GPIO_PIN, LED_ON);
+		dk_set_led_on(NFC_READ_LED);
 		break;
 
 	case NFC_T4T_EVENT_NDEF_UPDATED:
 		if (data_length > 0) {
-			gpio_pin_write(LED1_dev, LED1_GPIO_PIN, LED_ON);
+			dk_set_led_on(NFC_WRITE_LED);
 			flash_buffer_prepare(data_length);
 		}
 		break;
@@ -105,61 +94,20 @@ static void nfc_callback(void *context,
 
 static int board_init(void)
 {
-	LED0_dev = device_get_binding(LED0_GPIO_CONTROLLER);
-	if (!LED0_dev) {
-		printk("LED0 device not found!\n");
-		return -ENXIO;
-	}
-
-	LED1_dev = device_get_binding(LED1_GPIO_CONTROLLER);
-	if (!LED1_dev) {
-		printk("LED1 device not found!\n");
-		return -ENXIO;
-	}
-
-	LED3_dev = device_get_binding(LED3_GPIO_CONTROLLER);
-	if (!LED3_dev) {
-		printk("LED3 device not found!\n");
-		return -ENXIO;
-	}
-
-	/* Set LED pin as output */
 	int err;
 
-	err = gpio_pin_configure(LED0_dev, LED0_GPIO_PIN, GPIO_DIR_OUT);
+	err = dk_buttons_init(NULL);
 	if (err) {
-		printk("Cannot configure led 0 port!\n");
+		printk("Cannot init buttons (err: %d)\n", err);
 		return err;
 	}
 
-	err = gpio_pin_configure(LED1_dev, LED1_GPIO_PIN, GPIO_DIR_OUT);
+	err = dk_leds_init();
 	if (err) {
-		printk("Cannot configure led 1 port!\n");
-		return err;
+		printk("Cannot init LEDs (err: %d)\n", err);
 	}
 
-	err = gpio_pin_configure(LED3_dev, LED3_GPIO_PIN, GPIO_DIR_OUT);
-	if (err) {
-		printk("Cannot configure led 3 port!\n");
-		return err;
-	}
-	/* Turn LEDs off */
-	gpio_pin_write(LED0_dev, LED0_GPIO_PIN, LED_OFF);
-	gpio_pin_write(LED1_dev, LED1_GPIO_PIN, LED_OFF);
-	gpio_pin_write(LED3_dev, LED3_GPIO_PIN, LED_OFF);
-
-	button = device_get_binding(BUTTON_PORT);
-	if (!button) {
-		printk("Button device not found!\n");
-		return -ENXIO;
-	}
-	err = gpio_pin_configure(button, BUTTON_PIN,
-				 GPIO_DIR_IN | GPIO_PUD_PULL_UP);
-	if (err) {
-		printk("Cannot configure button port!\n");
-		return err;
-	}
-	return 0;
+	return err;
 }
 
 /**
@@ -184,11 +132,12 @@ int main(void)
 		printk("Cannot load NDEF file!\n");
 		goto fail;
 	}
-	/* Restore default NDEF message if button is pressed. */
-	u32_t val = 0;
 
-	gpio_pin_read(button, BUTTON_PIN, &val);
-	if (!val) {
+	/* Restore default NDEF message if button is pressed. */
+	u32_t button_state;
+
+	dk_read_buttons(&button_state, NULL);
+	if (button_state & NDEF_RESTORE_BTN_MSK) {
 		if (ndef_restore_default(ndef_msg_buf,
 					 sizeof(ndef_msg_buf)) < 0) {
 			printk("Cannot flash NDEF message!\n");
