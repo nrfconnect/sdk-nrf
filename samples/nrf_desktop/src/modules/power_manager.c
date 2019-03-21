@@ -65,7 +65,8 @@ static void suspend_devices(struct device_list *dl)
 		 * if(device_busy_check(&device_list[idx])) {do something}
 		 */
 		int ret = device_set_power_state(&dl->devices[idx],
-				DEVICE_PM_SUSPEND_STATE);
+						 DEVICE_PM_SUSPEND_STATE,
+						 NULL, NULL);
 
 		dl->retval[dl->count - i - 1] = ret;
 	}
