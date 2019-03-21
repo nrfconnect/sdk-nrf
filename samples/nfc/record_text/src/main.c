@@ -15,7 +15,8 @@
 #include <device.h>
 #include <gpio.h>
 
-#define MAX_REC_COUNT	3
+#define MAX_REC_COUNT		3
+#define NDEF_MSG_BUF_SIZE	128
 
 /* Change this if you have an LED connected to a custom port */
 #ifndef LED0_GPIO_CONTROLLER
@@ -50,6 +51,9 @@ static const u8_t pl_payload[] = {
 	'e', '!'
 };
 static const u8_t pl_code[] = {'P', 'L'};
+
+/* Buffer used to hold an NFC NDEF message. */
+static u8_t ndef_msg_buf[NDEF_MSG_BUF_SIZE];
 
 
 static void nfc_callback(void *context,
@@ -165,7 +169,6 @@ static int board_init(void)
 
 int main(void)
 {
-	u8_t ndef_msg_buf[256]; /* Buffer used to hold an NFC NDEF message. */
 	u32_t len = sizeof(ndef_msg_buf);
 
 	printk("NFC configuration start\n");
