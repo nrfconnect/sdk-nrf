@@ -7,13 +7,12 @@
 set(EXTS ${ZEPHYR_BASE}/ext)
 set(SEGGER ${EXTS}/debug/segger)
 
-add_library(segger_rtt STATIC
+zephyr_library()
+
+zephyr_library_sources(
   ${SEGGER}/rtt/SEGGER_RTT.c
   ${SEGGER}/rtt/SEGGER_RTT_printf.c
-)
+  )
 
-target_link_libraries(segger_rtt PRIVATE libc)
-target_link_libraries(segger_rtt PRIVATE zephyr_interface)
-
-target_include_directories(segger_rtt PUBLIC ../../include/debug)
-target_include_directories(segger_rtt PUBLIC ${SEGGER}/rtt)
+zephyr_library_include_directories(../../include/debug)
+zephyr_include_directories(${SEGGER}/rtt)

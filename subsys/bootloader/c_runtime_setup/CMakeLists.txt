@@ -9,39 +9,21 @@ set(CORTEX_M ${ARM}/cortex_m)
 set(EXTS ${ZEPHYR_BASE}/ext)
 set(HAL ${EXTS}/hal)
 
-add_library(c_runtime_setup STATIC ${ZEPHYR_BASE}/misc/empty_file.c)
-target_link_libraries(c_runtime_setup PRIVATE zephyr_interface)
-# Make sure every generated file is present before trying to build the
-# library.
-target_link_libraries(c_runtime_setup PRIVATE bootloader)
+zephyr_library()
 
-target_sources_ifdef(CONFIG_CPU_CORTEX_M0
-  c_runtime_setup
-  PUBLIC
-  ${ARM}/irq_relay.S
-  )
-
-target_sources(
-  c_runtime_setup
-  PRIVATE
+# TODO Use zephyr build code for this directly?
+zephyr_library_sources(
   ${CORTEX_M}/prep_c.c
   ${CORTEX_M}/reset.S
   ${ARM}/irq_init.c
+  ${ARM}/exc_exit.S
   ${CORTEX_M}/vector_table.S
+  ${ZEPHYR_BASE}/drivers/timer/cortex_m_systick.c
   zephyr_dummy_interrupt_handlers.c
   )
+zephyr_library_link_libraries(kernel_init) # TODO multi_image
 
-target_include_directories(
-  c_runtime_setup
-  PRIVATE
-  ${CORTEX_M}
-  ${CORTEX_M}/mpu
-  ${ZEPHYR_BASE}/include
-  ${ARM_INC}/include/cortex_m
-  )
-
-add_library(kernel_init STATIC ${ZEPHYR_BASE}/kernel/init.c)
-target_link_libraries(kernel_init zephyr_interface libc)
-target_compile_definitions(kernel_init PRIVATE z_cstart=UNUSED_z_cstart)
-add_dependencies(kernel_init offsets_h)
-target_link_libraries(c_runtime_setup PRIVATE kernel_init)
+zephyr_library_named(kernel_init)
+zephyr_library_sources(${ZEPHYR_BASE}/kernel/init.c)
+zephyr_library_compile_definitions(z_cstart=UNUSED_z_cstart)
+add_dependencies(kernel_init offsets_h) # TODO multi_image

@@ -11,7 +11,7 @@
 #include <nrf.h>
 #include <errno.h>
 #include <generated_dts_board.h>
-#include "bootloader.h" /* TODO: Remove multi_image */
+#include "bootloader.h"
 #include "bl_crypto.h"
 #include "fw_metadata.h"
 
@@ -106,9 +106,7 @@ static void boot_from(u32_t *address)
 	__ISB();
 	__disable_irq();
 	NVIC_Type *nvic = NVIC;
-	/* Disable NVIC interrupts
-	 * TODO: @sigvartmh May be redundant CPSID would maybe clear this
-	 */
+	/* Disable NVIC interrupts */
 	for (u8_t i = 0; i < ARRAY_SIZE(nvic->ICER); i++) {
 		nvic->ICER[i] = 0xFFFFFFFF;
 	}
@@ -121,9 +119,7 @@ static void boot_from(u32_t *address)
 
 	SysTick->CTRL = 0;
 
-	/* Disable fault handlers used by the bootloader
-	 * TODO: @sigvartmh currently not implemented or used
-	 */
+	/* Disable fault handlers used by the bootloader */
 	SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk;
 
 #ifndef CONFIG_CPU_CORTEX_M0
@@ -150,8 +146,8 @@ static void boot_from(u32_t *address)
 	CODE_UNREACHABLE;
 }
 
-void z_cstart(void) __attribute__((alias("main_bl")));
-void main_bl(void)
+void z_cstart(void) __attribute__((alias("main")));
+void main(void)
 {
 #if defined(CONFIG_SB_DEBUG_PORT_SEGGER_RTT)
 	SEGGER_RTT_Init();
@@ -175,6 +171,6 @@ void main_bl(void)
 	}
 #endif /* CONFIG_SOC_NRF9160 */
 
-	boot_from((u32_t *)(0x00000000 + DT_FLASH_AREA_APP_OFFSET));
+	boot_from((u32_t *)s0_address_read());
 	CODE_UNREACHABLE;
 }

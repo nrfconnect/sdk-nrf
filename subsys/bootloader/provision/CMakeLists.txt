@@ -10,13 +10,5 @@ else()
   set(PROVISION_SRC provision_flash.c)
 endif()
 
-add_library(
-  provision
-  ${PROVISION_SRC})
-
-# SB_TODO Can we get the errno.h from somewhere else?
-target_include_directories(provision PRIVATE BEFORE ${ZEPHYR_BASE}/lib/libc/minimal/include)
-target_link_libraries(provision PRIVATE zephyr_interface)
-# Make sure every generated file is present before trying to build the
-# library.
-target_link_libraries(provision PRIVATE bootloader)
+zephyr_library()
+zephyr_library_sources(${PROVISION_SRC})
