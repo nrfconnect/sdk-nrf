@@ -115,3 +115,9 @@ add_custom_command(
   "Creating validation for ${KERNEL_HEX_NAME}, storing to ${SIGNED_KERNEL_HEX_NAME}"
   USES_TERMINAL
   )
+
+add_custom_target(
+  signed_kernel_hex_target
+  DEPENDS
+  ${SIGNED_KERNEL_HEX}
+  )
