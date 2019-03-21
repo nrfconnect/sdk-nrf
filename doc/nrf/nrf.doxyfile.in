@@ -1975,7 +1975,8 @@ PREDEFINED             = "CONFIG_SYS_CLOCK_EXISTS=y" \
 			 "CONFIG_BT_SCAN_NAME_CNT:=1" \
 			 "CONFIG_BT_SCAN_SHORT_NAME_CNT:=1" \
 			 "CONFIG_BT_SCAN_ADDRESS_CNT:=1" \
-			 "CONFIG_BT_SCAN_APPEARANCE_CNT:=1"
+			 "CONFIG_BT_SCAN_APPEARANCE_CNT:=1" \
+                         "CONFIG_PROFILER=y"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
