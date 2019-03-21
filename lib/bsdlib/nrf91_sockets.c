@@ -262,6 +262,16 @@ static int nrf_to_z_protocol(int proto)
 	}
 }
 
+static int z_to_nrf_socktype(int socktype)
+{
+	switch (socktype) {
+	case SOCK_MGMT:
+		return NRF_SOCK_MGMT;
+	default:
+		return socktype;
+	}
+}
+
 static int z_to_nrf_protocol(int proto)
 {
 	switch (proto) {
@@ -273,6 +283,8 @@ static int z_to_nrf_protocol(int proto)
 		return NRF_SPROTO_TLS1v2;
 	case NPROTO_AT:
 		return NRF_PROTO_AT;
+	case NPROTO_PDN:
+		return NRF_PROTO_PDN;
 	case PROTO_WILDCARD:
 		return 0;
 	/*
@@ -305,7 +317,7 @@ static int z_to_nrf_addrinfo_hints(const struct addrinfo *z_in,
 
 	memset(nrf_out, 0, sizeof(struct nrf_addrinfo));
 	nrf_out->ai_flags = z_to_nrf_addrinfo_flags(z_in->ai_flags);
-	nrf_out->ai_socktype = z_in->ai_socktype;
+	nrf_out->ai_socktype = z_to_nrf_socktype(z_in->ai_socktype);
 
 	family = z_to_nrf_family(z_in->ai_family);
 	if (family == -EAFNOSUPPORT) {
@@ -316,6 +328,10 @@ static int z_to_nrf_addrinfo_hints(const struct addrinfo *z_in,
 	nrf_out->ai_protocol = z_to_nrf_protocol(z_in->ai_protocol);
 	if (nrf_out->ai_protocol == -EPROTONOSUPPORT) {
 		return -EPROTONOSUPPORT;
+	}
+
+	if (z_in->ai_canonname != NULL) {
+		nrf_out->ai_canonname = z_in->ai_canonname;
 	}
 
 	return 0;
@@ -679,7 +695,9 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 {
 	int error;
 	struct nrf_addrinfo nrf_hints;
+	struct nrf_addrinfo nrf_hints_pdn;
 	struct nrf_addrinfo *nrf_hints_ptr = NULL;
+	struct nrf_addrinfo *nrf_hints_pdn_ptr = NULL;
 	struct nrf_addrinfo *nrf_res = NULL;
 
 	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
@@ -691,6 +709,17 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 			return DNS_EAI_SOCKTYPE;
 		} else if (error == -EAFNOSUPPORT) {
 			return DNS_EAI_ADDRFAMILY;
+		}
+		if (hints->ai_next != NULL)
+		{
+			nrf_hints_pdn_ptr = &nrf_hints_pdn;
+			z_to_nrf_addrinfo_hints(hints->ai_next, &nrf_hints_pdn);
+			if (error == -EPROTONOSUPPORT) {
+				return DNS_EAI_SOCKTYPE;
+			} else if (error == -EAFNOSUPPORT) {
+				return DNS_EAI_ADDRFAMILY;
+			}
+			nrf_hints_ptr->ai_next = nrf_hints_pdn_ptr;
 		}
 	}
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
