@@ -284,7 +284,7 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 	}
 
 	dm->discover_params.uuid         = NULL;
-	dm->discover_params.type         = BT_GATT_DISCOVER_DESCRIPTOR;
+	dm->discover_params.type         = BT_GATT_DISCOVER_ATTRIBUTE;
 	dm->discover_params.start_handle = attr->handle + 1;
 	dm->discover_params.end_handle   = service_val->end_handle;
 	LOG_DBG("Starting descriptors discovery");
@@ -299,7 +299,7 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 	return BT_GATT_ITER_STOP;
 }
 
-static u8_t discovery_process_descriptor(struct bt_gatt_dm *dm,
+static u8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 					 const struct bt_gatt_attr *attr,
 					 struct bt_gatt_discover_params *params)
 {
@@ -397,9 +397,9 @@ static u8_t discovery_callback(struct bt_conn *conn,
 	case BT_GATT_DISCOVER_SECONDARY:
 		return discovery_process_service(&bt_gatt_dm_inst,
 						 attr, params);
-	case BT_GATT_DISCOVER_DESCRIPTOR:
-		return discovery_process_descriptor(&bt_gatt_dm_inst,
-						    attr, params);
+	case BT_GATT_DISCOVER_ATTRIBUTE:
+		return discovery_process_attribute(&bt_gatt_dm_inst,
+						   attr, params);
 	case BT_GATT_DISCOVER_CHARACTERISTIC:
 		return discovery_process_characteristic(&bt_gatt_dm_inst,
 							attr,
