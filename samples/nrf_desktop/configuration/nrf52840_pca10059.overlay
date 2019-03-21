@@ -7,3 +7,13 @@
 	num-isoin-endpoints = <0>;
 	num-isoout-endpoints = <0>;
 };
+&pwm0 {
+	status = "ok";
+	ch0-pin = <6>;
+	ch0-inverted;
+};
+&pwm1 {
+	status = "ok";
+	ch0-pin = <12>;
+	ch0-inverted;
+};

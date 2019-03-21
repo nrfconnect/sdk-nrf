@@ -11,10 +11,7 @@
 
 
 static const struct pin_state port0_on[] = {
-	{DT_GPIO_LEDS_LED0_GREEN_GPIO_PIN, 0},
-
 	{DT_GPIO_LEDS_LED1_RED_GPIO_PIN, 1},
-	{DT_GPIO_LEDS_LED1_BLUE_GPIO_PIN, 0},
 };
 
 static const struct pin_state port1_on[] = {
