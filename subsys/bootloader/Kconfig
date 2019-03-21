@@ -16,13 +16,6 @@ config FLASH_LOAD_OFFSET
 	default 0x10000 if SOC_NRF9160
 	default 0x1c000 if SOC_NRF52840
 	default 0x1c000 if SOC_NRF52832
-
-config CUSTOM_DTS_OVERLAY_CMAKE_FILE
-	string
-	# We must use relative path from ZEPHYR_BASE here as the NRF_DIR
-	# variable is not yet available when this config is used.
-	default "${ZEPHYR_BASE}/../nrf/subsys/bootloader/dts/overlay.cmake"
-
 config SB_PRIVATE_KEY_PROVIDED
 	bool
 	help
