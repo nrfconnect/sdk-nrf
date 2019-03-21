@@ -8,8 +8,8 @@ if (CONFIG_BT OR CONFIG_BT_LL_NRFXLIB)
   add_subdirectory(bluetooth)
 endif()
 
-add_subdirectory_ifdef(CONFIG_SECURE_BOOT bootloader)
-add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO bootloader/bl_crypto)
+add_subdirectory_ifdef(CONFIG_IS_SECURE_BOOTLOADER bootloader)
+add_subdirectory_ifdef(CONFIG_SECURE_BOOT bootloader/image)
 
 add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_NRF_ESB		enhanced_shockburst)

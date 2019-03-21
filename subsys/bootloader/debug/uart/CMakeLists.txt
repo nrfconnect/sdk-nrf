@@ -6,12 +6,18 @@
 
 set(HALDRIVERS ${ZEPHYR_BASE}/ext/hal/nordic/nrfx/drivers/src)
 
-add_library(uart ${HALDRIVERS}/nrfx_uarte.c uart.c)
+#TODO get this from nrfx directly instead of doing it again
 
-target_compile_definitions(uart PRIVATE NRFX_UARTE0_ENABLED)
-target_compile_definitions(uart PRIVATE NRFX_UARTE_ENABLED)
+zephyr_library()
 
-target_link_libraries(uart PRIVATE zephyr_interface)
-target_link_libraries(uart PRIVATE libc)
+zephyr_library_sources(
+  ${HALDRIVERS}/nrfx_uarte.c
+  uart.c
+  )
 
-target_include_directories(uart PRIVATE BEFORE .)
+zephyr_library_compile_definitions(
+  NRFX_UARTE0_ENABLED
+  NRFX_UARTE_ENABLED
+  )
+
+zephyr_library_include_directories(.)

@@ -83,9 +83,10 @@ config SB_INFO_VERSION
 
 config SB_CRYPTO_ALGORITHM
 	int
-	range 0 255
+	range 1 2
 	default 1 if SB_ECDSA
 	default 2 if SB_RSA
+        default 0
 	help
 	  The algorithm used for signing the firmware (8 bits).
 	  Used to ensure compatibility.

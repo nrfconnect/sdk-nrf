@@ -15,9 +15,5 @@ else()
   message(FATAL_ERROR "No fprotect backend selected.")
 endif()
 
-add_library(
-  fprotect
-  ${FPROTECT_SRC})
-target_include_directories(fprotect PRIVATE BEFORE ${ZEPHYR_BASE}/lib/libc/minimal/include)
-target_link_libraries(fprotect PRIVATE zephyr_interface)
-add_dependencies(fprotect offsets_h)
+zephyr_library()
+zephyr_library_sources(${FPROTECT_SRC})

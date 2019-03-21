@@ -111,7 +111,9 @@ extern "C" {
 
 //------------------------------------------------------------------------------
 
+#ifdef CONFIG_KERNEL
 #include <kernel.h>
+#endif
 
 /**
  * @brief Macro for delaying the code execution for at least the specified time.

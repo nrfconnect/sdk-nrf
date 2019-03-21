@@ -4,18 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig SECURE_BOOT
-	bool "Secure Boot"
-	select SECURE_BOOT_CRYPTO
-	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
+config SECURE_BOOT
+	bool "Use Secure Bootloader"
+	depends on !IS_SECURE_BOOTLOADER
+        help
+          Set this option to enable the first stage bootloader which
+          verifies the signature of the app.
 
 if SECURE_BOOT
 
-#TODO: Remove when multi image
-config FLASH_LOAD_OFFSET
-	default 0x10000 if SOC_NRF9160
-	default 0x1c000 if SOC_NRF52840
-	default 0x1c000 if SOC_NRF52832
 config SB_PRIVATE_KEY_PROVIDED
 	bool
 	help
@@ -89,14 +86,28 @@ config SB_PUBLIC_KEY_FILES
 	  will be used.
 	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
 
-rsource "debug/Kconfig"
-
-rsource "bl_crypto/Kconfig"
-
-rsource "fw_metadata/Kconfig"
 
 endif # SECURE_BOOT
 
-if ZTEST && !SECURE_BOOT
+menuconfig IS_SECURE_BOOTLOADER
+	bool "Current app is bootloader"
+	select SECURE_BOOT_CRYPTO
+	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
+	depends on !KERNEL
+        help
+          This option is set by the first stage bootloader app to include all
+          files and set all the options required.
+
+if IS_SECURE_BOOTLOADER
+
+rsource "debug/Kconfig"
+
+endif # IS_SECURE_BOOTLOADER
+
+if IS_SECURE_BOOTLOADER || SECURE_BOOT
 rsource "bl_crypto/Kconfig"
-endif # ZTEST
+
+rsource "image/fw_metadata/Kconfig"
+endif # IS_SECURE_BOOTLOADER || SECURE_BOOT
+
+
