@@ -85,6 +85,8 @@
 
 .. _`HID usage tables`: https://www.usb.org/hid
 
+.. _`SEGGER SystemView`: https://www.segger.com/products/development-tools/systemview/
+
 
 
 .. ### Links to Bluetooth specs
