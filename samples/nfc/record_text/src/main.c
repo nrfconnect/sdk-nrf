@@ -11,27 +11,12 @@
 #include <nfc/ndef/nfc_ndef_msg.h>
 #include <nfc/ndef/nfc_text_rec.h>
 
-#include <soc.h>
-#include <device.h>
-#include <gpio.h>
+#include <dk_buttons_and_leds.h>
 
 #define MAX_REC_COUNT		3
 #define NDEF_MSG_BUF_SIZE	128
 
-/* Change this if you have an LED connected to a custom port */
-#ifndef LED0_GPIO_CONTROLLER
-#define LED0_GPIO_CONTROLLER	LED0_GPIO_PORT
-#endif
-
-#define LED_PORT LED0_GPIO_CONTROLLER
-
-/* Change this if you have an LED connected to a custom pin */
-#define LED_PIN	LED0_GPIO_PIN
-
-#define LED_ON  (u32_t)(0)
-#define LED_OFF (u32_t)(1)
-
-static struct device *dev;
+#define NFC_FIELD_LED		DK_LED1
 
 /* Text message in English with its language code. */
 static const u8_t en_payload[] = {
@@ -67,10 +52,10 @@ static void nfc_callback(void *context,
 
 	switch (event) {
 	case NFC_T2T_EVENT_FIELD_ON:
-		gpio_pin_write(dev, LED_PIN, LED_ON);
+		dk_set_led_on(NFC_FIELD_LED);
 		break;
 	case NFC_T2T_EVENT_FIELD_OFF:
-		gpio_pin_write(dev, LED_PIN, LED_OFF);
+		dk_set_led_off(NFC_FIELD_LED);
 		break;
 	default:
 		break;
@@ -145,28 +130,6 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 }
 
 
-static int board_init(void)
-{
-	dev = device_get_binding(LED_PORT);
-	if (!dev) {
-		printk("LED device not found\n");
-		return -ENXIO;
-	}
-
-	/* Set LED pin as output */
-	int err = gpio_pin_configure(dev, LED_PIN, GPIO_DIR_OUT);
-
-	if (err) {
-		printk("Cannot configure led port!\n");
-		return err;
-	}
-	/* Turn LED off */
-	gpio_pin_write(dev, LED_PIN, LED_OFF);
-
-	return 0;
-}
-
-
 int main(void)
 {
 	u32_t len = sizeof(ndef_msg_buf);
@@ -174,8 +137,8 @@ int main(void)
 	printk("NFC configuration start\n");
 
 	/* Configure LED-pins as outputs */
-	if (board_init() < 0) {
-		printk("Cannot initialize board!\n");
+	if (dk_leds_init() < 0) {
+		printk("Cannot init LEDs!\n");
 		goto fail;
 	}
 
