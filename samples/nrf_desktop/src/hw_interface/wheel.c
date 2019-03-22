@@ -182,7 +182,8 @@ static int init(void)
 
 static int enable(void)
 {
-	int err = device_set_power_state(qdec_dev, DEVICE_PM_ACTIVE_STATE);
+	int err = device_set_power_state(qdec_dev, DEVICE_PM_ACTIVE_STATE,
+					 NULL, NULL);
 	if (err) {
 		LOG_ERR("Cannot activate QDEC");
 		return err;
@@ -206,7 +207,8 @@ static int disable(void)
 		return err;
 	}
 
-	err = device_set_power_state(qdec_dev, DEVICE_PM_SUSPEND_STATE);
+	err = device_set_power_state(qdec_dev, DEVICE_PM_SUSPEND_STATE,
+				     NULL, NULL);
 	if (err) {
 		LOG_ERR("Cannot suspend QDEC");
 	}
