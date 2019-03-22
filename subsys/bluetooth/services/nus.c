@@ -66,20 +66,13 @@ static ssize_t on_receive(struct bt_conn *conn,
 	return len;
 }
 
-static ssize_t on_sent(struct bt_conn *conn,
-		       const struct bt_gatt_attr *attr,
-		       void *buf,
-		       u16_t len,
-		       u16_t offset)
+static void on_sent(struct bt_conn *conn)
 {
-	LOG_DBG("Data send, handle %d, conn %p",
-		attr->handle, conn);
+	LOG_DBG("Data send, conn %p", conn);
 
 	if (nus_cb.sent_cb) {
-		nus_cb.sent_cb(conn, buf, len);
-}
-
-	return len;
+		nus_cb.sent_cb(conn);
+	}
 }
 
 /* UART Service Declaration */
@@ -88,7 +81,7 @@ static struct bt_gatt_attr attrs[] = {
 	BT_GATT_CHARACTERISTIC(BT_UUID_NUS_TX,
 			       BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ,
-			       on_sent, NULL, NULL),
+			       NULL, NULL, NULL),
 	BT_GATT_CCC(nuslc_ccc_cfg, nuslc_ccc_cfg_changed),
 	BT_GATT_CHARACTERISTIC(BT_UUID_NUS_RX,
 			       BT_GATT_CHRC_WRITE |
@@ -113,9 +106,9 @@ int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, uint16_t len)
 {
 	if (!conn) {
 		LOG_DBG("Notification send to all connected peers");
-		return  bt_gatt_notify(NULL, &attrs[2], data, len);
+		return  bt_gatt_notify_cb(NULL, &attrs[2], data, len, on_sent);
 	} else if (is_notification_enabled(conn, nuslc_ccc_cfg)) {
-		return bt_gatt_notify(conn, &attrs[2], data, len);
+		return bt_gatt_notify_cb(conn, &attrs[2], data, len, on_sent);
 	} else {
 		return -EINVAL;
 	}
