@@ -252,6 +252,7 @@ void profiler_log_send(struct log_event_buf *buf, u16_t event_type_id)
 				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
 				buf->payload_start,
 				buf->payload - buf->payload_start);
+		ARG_UNUSED(num_bytes_send);
 		irq_unlock(key);
 		__ASSERT_NO_MSG(num_bytes_send > 0);
 	}
