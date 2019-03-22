@@ -17,6 +17,7 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STATE_LOG_LEVEL);
 
 #include "led_state.h"
+#include "led_state_def.h"
 
 
 static enum led_system_state system_state = LED_SYSTEM_STATE_IDLE;
@@ -155,6 +156,8 @@ static bool event_handler(const struct event_header *eh)
 		struct module_state_event *event = cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+			static_assert(LED_ID_COUNT <= CONFIG_DESKTOP_LED_COUNT,
+				      "Not enough LEDs configured");
 			load_system_state_led();
 			load_peer_state_led();
 		} else if (event->state == MODULE_STATE_ERROR) {

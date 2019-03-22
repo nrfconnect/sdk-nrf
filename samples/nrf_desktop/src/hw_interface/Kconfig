@@ -156,13 +156,6 @@ comment "LED configuration"
 config DESKTOP_LED_ENABLE
 	bool "Enable LED hardware interface"
 
-config DESKTOP_LED_STATE
-	string "LED state"
-	depends on DESKTOP_LED_ENABLE
-	default ""
-	help
-	  This option specifies a path to the led state file.
-
 config DESKTOP_LED_COUNT
 	int "Number of LEDs in use"
 	depends on DESKTOP_LED_ENABLE

@@ -50,14 +50,6 @@ struct led_effect {
 	u16_t period;
 };
 
-extern const u8_t led_map[LED_ID_COUNT];
-
-extern const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT];
-extern const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT];
-
-extern const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT];
-extern const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED];
-
 #ifdef __cplusplus
 }
 #endif

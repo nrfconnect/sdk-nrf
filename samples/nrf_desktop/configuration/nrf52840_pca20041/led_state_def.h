@@ -6,24 +6,16 @@
 
 #include "led_state.h"
 
-/* Mapping the PWM channels to pin numbers */
-const size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
-		     [CONFIG_DESKTOP_LED_COLOR_COUNT] = {
-	{
-		DT_NORDIC_NRF_PWM_PWM_0_CH0_PIN,
-		DT_NORDIC_NRF_PWM_PWM_0_CH1_PIN,
-		DT_NORDIC_NRF_PWM_PWM_0_CH2_PIN
-	},
-	{
-		DT_NORDIC_NRF_PWM_PWM_1_CH0_PIN,
-		DT_NORDIC_NRF_PWM_PWM_1_CH1_PIN,
-		DT_NORDIC_NRF_PWM_PWM_1_CH2_PIN
-	}
+/* This file must be included only once */
+const struct {} led_state_def_include_once;
+
+/* Map function to LED ID */
+static const u8_t led_map[LED_ID_COUNT] = {
+	[LED_ID_SYSTEM_STATE] = 0,
+	[LED_ID_PEER_STATE] = 1
 };
 
-const u8_t led_map[LED_ID_COUNT] = {0, 1};
-
-const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] = {
+static const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] = {
 	[LED_SYSTEM_STATE_IDLE] = {
 		.mode = LED_MODE_ON,
 	},
@@ -36,7 +28,7 @@ const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] = {
 	}
 };
 
-const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT] = {
+static const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT] = {
 	[LED_SYSTEM_STATE_IDLE] = {
 		.c = {255, 0, 20},
 	},
@@ -48,7 +40,7 @@ const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT] = {
 	}
 };
 
-const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT] = {
+static const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT] = {
 	[LED_PEER_STATE_DISCONNECTED] = {
 		.mode = LED_MODE_BLINKING,
 		.period = 1000,
@@ -62,11 +54,11 @@ const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT] = {
 	},
 	[LED_PEER_STATE_CONFIRM_ERASE] = {
 		.mode = LED_MODE_BLINKING,
-		.period = 25
+		.period = 25,
 	}
 };
 
-const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED] = {
+static const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED] = {
 	[0] = {
 		.c = {150, 0, 0},
 	},

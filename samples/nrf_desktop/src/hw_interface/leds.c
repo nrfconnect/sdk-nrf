@@ -12,11 +12,14 @@
 #include "power_event.h"
 #include "led_event.h"
 
+#include "leds_def.h"
+
 #define MODULE leds
 #include "module_state_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_LOG_LEVEL);
+
 
 struct led {
 	struct device *pwm_dev;
@@ -31,10 +34,8 @@ struct led {
 	struct k_delayed_work work;
 };
 
-extern size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
-		      [CONFIG_DESKTOP_LED_COLOR_COUNT];
-
 static struct led leds[CONFIG_DESKTOP_LED_COUNT];
+
 
 static void pwm_out(struct led *led, struct led_color *color)
 {
