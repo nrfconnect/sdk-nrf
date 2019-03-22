@@ -6,14 +6,6 @@
 
 menu "Hardware interface modules"
 
-config DESKTOP_PORT_STATE
-	string "Port state"
-	default ""
-	help
-	  This option specifies a path to the port state file.
-	  Port state file specifies how ports are set when board is turned
-	  on and off.
-
 comment "Motion configuration"
 
 choice
