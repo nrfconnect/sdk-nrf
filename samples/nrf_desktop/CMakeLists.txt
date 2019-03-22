@@ -24,16 +24,16 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE ZDebug)
 endif()
 
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
-  set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
+  set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
 endif()
 
 # Adding proper flash map if overlay exists.
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/flash.overlay")
   if(DTC_OVERLAY_FILE)
-    set(DTC_OVERLAY_FILE "${DTC_OVERLAY_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay")
+    set(DTC_OVERLAY_FILE "${DTC_OVERLAY_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/flash.overlay")
   else()
-    set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay")
+    set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/flash.overlay")
   endif()
 endif()
 
@@ -41,7 +41,7 @@ include(../../cmake/boilerplate.cmake)
 
 # Define configuration files.
 macro(set_conf_file)
-  set(CONF_FILE "configuration/${BOARD}_app_${CMAKE_BUILD_TYPE}.conf")
+  set(CONF_FILE "configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
 endmacro()
 
 ################################################################################
@@ -86,12 +86,12 @@ add_subdirectory(src/services)
 if (${CONFIG_BOOTLOADER_MCUBOOT})
   set(MCUBOOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../mcuboot)
 
-  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_mcuboot_${CMAKE_BUILD_TYPE}.conf")
-    message(FATAL_ERROR "Configuration ${BOARD}_mcuboot_${CMAKE_BUILD_TYPE}.conf must be specified")
+  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf")
+    message(FATAL_ERROR "Configuration ${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf must be specified")
   endif()
 
-  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
-    message(FATAL_ERROR "Overlay ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay must be specified")
+  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
+    message(FATAL_ERROR "Overlay ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay must be specified")
   endif()
 
   if (${CONFIG_DESKTOP_SIGNATURE_KEY_FILE})
@@ -147,8 +147,8 @@ if (${CONFIG_BOOTLOADER_MCUBOOT})
     -G${CMAKE_GENERATOR}
     -DBOARD=${BOARD}
     -DBOARD_ROOT="${BOARD_ROOT_STR}"
-    -DDTC_OVERLAY_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_flash.overlay"
-    -DCONF_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}_mcuboot_${CMAKE_BUILD_TYPE}.conf"
+    -DDTC_OVERLAY_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/flash.overlay"
+    -DCONF_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf"
     COMMENT
     "Generating bootloader for application in mcuboot folder"
     USES_TERMINAL
