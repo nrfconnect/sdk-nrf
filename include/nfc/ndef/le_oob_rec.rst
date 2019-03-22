@@ -16,6 +16,8 @@ The following BLE pairing methods can be used in combination with this module:
 
 For more information about NFC Connection Handover pairing methods, refer to the `Bluetooth Secure Simple Pairing Using NFC`_ and `Bluetooth Core Specification`_ Volume 3 Part H Chapter 2.
 
+The Bluetooth LE OOB record is used in the :ref:`peripheral_hids_keyboard` sample.
+
 API documentation
 *****************
 
