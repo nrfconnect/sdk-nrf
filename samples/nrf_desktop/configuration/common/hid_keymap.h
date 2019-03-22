@@ -38,9 +38,6 @@ struct hid_keymap {
 	enum target_report	target_report;	/**< Id of the target report. */
 };
 
-extern const struct hid_keymap	hid_keymap[];
-extern const size_t		hid_keymap_size;
-
 #ifdef __cplusplus
 }
 #endif

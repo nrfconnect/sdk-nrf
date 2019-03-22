@@ -25,6 +25,7 @@
 #include "usb_event.h"
 
 #include "hid_keymap.h"
+#include "hid_keymap_def.h"
 
 #define MODULE hid_state
 #include "module_state_event.h"
@@ -153,7 +154,7 @@ static struct hid_keymap *hid_keymap_get(u16_t key_id)
 
 	struct hid_keymap *map = bsearch(&key,
 					 (u8_t *)hid_keymap,
-					 hid_keymap_size,
+					 ARRAY_SIZE(hid_keymap),
 					 sizeof(key),
 					 hid_keymap_compare);
 
@@ -871,7 +872,7 @@ static void init(void)
 	if (IS_ENABLED(CONFIG_ASSERT) &&
 	    !IS_ENABLED(CONFIG_DESKTOP_BUTTONS_NONE)) {
 		/* Validate the order of key IDs on the key map array. */
-		for (size_t i = 1; i < hid_keymap_size; i++) {
+		for (size_t i = 1; i < ARRAY_SIZE(hid_keymap); i++) {
 			if (hid_keymap[i - 1].key_id >= hid_keymap[i].key_id) {
 				__ASSERT(false, "The hid_keymap array must be "
 						"sorted by key_id!");

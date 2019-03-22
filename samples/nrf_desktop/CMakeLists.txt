@@ -55,11 +55,6 @@ project("nRF52 Desktop"
 assert(CONFIG_DESKTOP_PORT_STATE  "Port state file must be specified")
 assert(CONFIG_DESKTOP_REPORT_DESC "HID report descriptor file must be specified")
 
-if (${CONFIG_DESKTOP_HID_STATE_ENABLE})
-  assert(CONFIG_DESKTOP_KEYMAP     "Keymap file must be specified")
-  target_sources(app PRIVATE ${CONFIG_DESKTOP_KEYMAP})
-endif()
-
 target_sources(app PRIVATE
   src/main.c
   ${CONFIG_DESKTOP_PORT_STATE}
