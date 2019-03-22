@@ -36,13 +36,6 @@ config DESKTOP_HID_EVENT_QUEUE_SIZE
 	default 12
 	range 2 255
 
-config DESKTOP_KEYMAP
-	string "Keymap"
-	depends on DESKTOP_HID_STATE_ENABLE
-	default ""
-	help
-	  This option specifies a path to the keymap file.
-
 module = DESKTOP_HID_STATE
 module-str = HID state
 source "subsys/logging/Kconfig.template.log_config"
