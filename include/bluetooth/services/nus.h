@@ -14,6 +14,10 @@
  * @brief Nordic UART (NUS) GATT Service API.
  */
 
+#include <zephyr/types.h>
+#include <bluetooth/conn.h>
+#include <bluetooth/uuid.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
