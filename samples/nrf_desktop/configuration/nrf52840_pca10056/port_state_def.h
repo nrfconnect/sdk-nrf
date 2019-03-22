@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <misc/util.h>
 #include <soc.h>
 
 #include "port_state.h"
 
+/* This file must be included only once */
+const struct {} port_state_def_include_once;
 
 static const struct pin_state port0_on[] = {
 };
@@ -23,7 +24,7 @@ static const struct pin_state port1_off[] = {
 };
 
 
-const struct port_state port_state_on[] = {
+static const struct port_state port_state_on[] = {
 	{
 		.name     = DT_GPIO_P0_DEV_NAME,
 		.ps       = port0_on,
@@ -36,9 +37,7 @@ const struct port_state port_state_on[] = {
 	}
 };
 
-const size_t port_state_on_size = ARRAY_SIZE(port_state_on);
-
-const struct port_state port_state_off[] = {
+static const struct port_state port_state_off[] = {
 	{
 		.name     = DT_GPIO_P0_DEV_NAME,
 		.ps       = port0_off,
@@ -50,5 +49,3 @@ const struct port_state port_state_off[] = {
 		.ps_count = ARRAY_SIZE(port1_off),
 	}
 };
-
-const size_t port_state_off_size = ARRAY_SIZE(port_state_off);

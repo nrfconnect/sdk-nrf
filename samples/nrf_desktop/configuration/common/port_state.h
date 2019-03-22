@@ -15,7 +15,6 @@
 extern "C" {
 #endif
 
-
 struct pin_state {
 	u32_t pin;
 	u32_t val;
@@ -26,14 +25,6 @@ struct port_state {
 	const struct pin_state *ps;
 	size_t                  ps_count;
 };
-
-
-extern const struct port_state	port_state_on[];
-extern const size_t		port_state_on_size;
-
-extern const struct port_state	port_state_off[];
-extern const size_t		port_state_off_size;
-
 
 #ifdef __cplusplus
 }

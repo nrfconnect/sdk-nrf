@@ -10,6 +10,7 @@
 #include <gpio.h>
 
 #include "port_state.h"
+#include "port_state_def.h"
 
 #include "power_event.h"
 
@@ -68,7 +69,7 @@ static int ports_setup(const struct port_state port_state[], size_t cnt)
 
 static void turn_board_on(void)
 {
-	int err = ports_setup(port_state_on, port_state_on_size);
+	int err = ports_setup(port_state_on, ARRAY_SIZE(port_state_on));
 	if (err) {
 		goto error;
 	}
@@ -84,7 +85,7 @@ error:
 
 static void turn_board_off(void)
 {
-	int err = ports_setup(port_state_off, port_state_off_size);
+	int err = ports_setup(port_state_off, ARRAY_SIZE(port_state_off));
 	if (err) {
 		goto error;
 	}
