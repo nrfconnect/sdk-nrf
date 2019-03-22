@@ -13,6 +13,7 @@
 #include <gpio.h>
 
 #include "buttons.h"
+#include "buttons_def.h"
 
 #include "event_manager.h"
 #include "button_event.h"
