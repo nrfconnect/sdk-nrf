@@ -60,11 +60,6 @@ if (${CONFIG_DESKTOP_HID_STATE_ENABLE})
   target_sources(app PRIVATE ${CONFIG_DESKTOP_KEYMAP})
 endif()
 
-if (${CONFIG_DESKTOP_LED_ENABLE})
-  assert(CONFIG_DESKTOP_LED_STATE  "Led state file must be specified")
-  target_sources(app PRIVATE ${CONFIG_DESKTOP_LED_STATE})
-endif()
-
 target_sources(app PRIVATE
   src/main.c
   ${CONFIG_DESKTOP_PORT_STATE}
