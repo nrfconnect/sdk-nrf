@@ -357,7 +357,7 @@ static int nct_provision(void)
 		err = nrf_inbuilt_key_write(CONFIG_NRF_CLOUD_SEC_TAG,
 					NRF_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 					NRF_CLOUD_CA_CERTIFICATE,
-					sizeof(NRF_CLOUD_CA_CERTIFICATE));
+					strlen(NRF_CLOUD_CA_CERTIFICATE));
 		if (err) {
 			LOG_ERR("NRF_CLOUD_CA_CERTIFICATE err: %d", err);
 			return err;
@@ -368,7 +368,7 @@ static int nct_provision(void)
 			CONFIG_NRF_CLOUD_SEC_TAG,
 			NRF_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
 			NRF_CLOUD_CLIENT_PRIVATE_KEY,
-			sizeof(NRF_CLOUD_CLIENT_PRIVATE_KEY));
+			strlen(NRF_CLOUD_CLIENT_PRIVATE_KEY));
 		if (err) {
 			LOG_ERR("NRF_CLOUD_CLIENT_PRIVATE_KEY err: %d", err);
 			return err;
@@ -379,7 +379,7 @@ static int nct_provision(void)
 			CONFIG_NRF_CLOUD_SEC_TAG,
 			NRF_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
 			NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE,
-			sizeof(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
+			strlen(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
 		if (err) {
 			LOG_ERR("NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE err: %d",
 				err);
