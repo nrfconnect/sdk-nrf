@@ -46,7 +46,7 @@ static void nuslc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 
 	bt_addr_le_to_str(&cfg->peer, addr, ARRAY_SIZE(addr));
 
-	LOG_DBG("%s CCCD has changed, state: %s", addr,
+	LOG_DBG("%s CCCD has changed, state: %s", log_strdup(addr),
 		value ? "notification enabled" : "notification disabled");
 }
 
