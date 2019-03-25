@@ -87,9 +87,6 @@ typedef struct {
 	 */
 	coap_sec_config_t *setting;
 
-	/** Indication to do a non-blocking socket connect. */
-	u8_t non_blocking : 1;
-
 	/** Optional local interface to bind the CoAP transport to.
 	 *  NULL indicates no preference.
 	 */

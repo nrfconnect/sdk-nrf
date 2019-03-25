@@ -12,7 +12,6 @@ LOG_MODULE_REGISTER(coap_transport);
 #include <string.h>
 #include <stdbool.h>
 #include <errno.h>
-#include <fcntl.h>
 
 #include <net/coap_api.h>
 #include <net/coap_transport.h>
@@ -420,48 +419,25 @@ u32_t coap_security_setup(coap_local_t *local, struct sockaddr const *remote)
 			transport = socket_create_and_bind(port_entry, local);
 
 			if (transport != -1) {
-				int flags = 0;
-
 				session->local = &port_table[port_entry];
-
-				if (local->non_blocking) {
-					/* Set non-blocking mode. */
-					flags = fcntl(session->local->socket_fd,
-						      F_GETFL, 0);
-					if ((flags == -1) ||
-					    (fcntl(session->local->socket_fd,
-						   F_SETFL,
-						   flags | O_NONBLOCK) == -1)) {
-						session_free(session);
-						return EIO;
-					}
-				}
 
 				/* Initiate a connection. */
 				int err = connect(session->local->socket_fd,
 						  remote,
 						  address_length_get(remote));
 
-				if (err && errno != EINPROGRESS) {
+				if (err) {
 					/* Free the allocated session. */
 					session_free(session);
-					return EIO;
-				}
 
-				if (local->non_blocking) {
-					/* Remove non-blocking mode. */
-					if (fcntl(session->local->socket_fd,
-						  F_SETFL, flags) == -1) {
-						session_free(session);
-						return EIO;
-					}
+					return EIO;
 				}
 
 				memcpy(&session->remote, remote,
 				       address_length_get(remote));
 				local->transport = transport;
 
-				return err ? errno : 0;
+				return 0;
 			}
 		}
 	}
