@@ -263,9 +263,13 @@ static int secure_boot_config_peripheral(u8_t id, bool dma_present)
 	 *
 	 * Note: the function assumes that the peripheral ID matches
 	 * the IRQ line.
+	 *
+	 * Note2: NRF_GPIOTE1_NS needs special handling as its
+	 * peripheral ID for non-secure han incorrect properties
+	 * in the NRF_SPM->PERIPHID[id].perm register.
 	 */
-
-	if (!usel_or_split(id)) {
+	if (id != NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE1_NS) &&
+	    !usel_or_split(id)) {
 		return -1;
 	}
 
