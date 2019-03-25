@@ -61,8 +61,5 @@ static const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT] = {
 static const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED] = {
 	[0] = {
 		.c = {100},
-	},
-	[1] = {
-		.c = {200},
 	}
 };
