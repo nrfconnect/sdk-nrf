@@ -665,4 +665,10 @@ void main(void)
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
+
+	while (1) {
+		k_sleep(MSEC_PER_SEC);
+		/* Battery level simulation */
+		bas_notify();
+	}
 }
