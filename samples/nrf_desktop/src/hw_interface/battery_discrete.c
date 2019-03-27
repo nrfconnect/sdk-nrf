@@ -240,6 +240,29 @@ static void battery_lvl_read_fn(struct k_work *work)
 	}
 }
 
+static int cso_pin_control(bool enable)
+{
+	int flags = GPIO_DIR_IN;
+
+	if (enable) {
+		flags |= GPIO_INT | GPIO_INT_EDGE | GPIO_INT_DOUBLE_EDGE;
+
+		if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_CSO_PULL_UP)) {
+			flags |= GPIO_PUD_PULL_UP;
+		} else if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_CSO_PULL_DOWN)) {
+			flags |= GPIO_PUD_PULL_DOWN;
+		}
+	}
+
+	int err = gpio_pin_configure(gpio_dev, CONFIG_DESKTOP_BATTERY_CSO_PIN,
+				     flags);
+	if (err) {
+		LOG_ERR("Cannot configure CSO pin");
+	}
+
+	return err;
+}
+
 static int init_fn(void)
 {
 	int err;
@@ -251,14 +274,7 @@ static int init_fn(void)
 		goto error;
 	}
 
-	int flags = GPIO_DIR_IN | GPIO_INT | GPIO_INT_EDGE |
-		    GPIO_INT_DOUBLE_EDGE;
-
-	err = gpio_pin_configure(gpio_dev, CONFIG_DESKTOP_BATTERY_CSO_PIN,
-				 flags);
-	if (err) {
-		goto error;
-	}
+	err = cso_pin_control(true);
 
 	gpio_init_callback(&gpio_cb, cs_change,
 			   BIT(CONFIG_DESKTOP_BATTERY_CSO_PIN));
@@ -328,8 +344,11 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_submit(&error_check,
 					      ERROR_CHECK_TIMEOUT_MS);
 
-			int err = gpio_pin_enable_callback(gpio_dev,
-					CONFIG_DESKTOP_BATTERY_CSO_PIN);
+			int err = cso_pin_control(true);
+			if (!err) {
+				err = gpio_pin_enable_callback(gpio_dev,
+						CONFIG_DESKTOP_BATTERY_CSO_PIN);
+			}
 			if (!err) {
 				err = battery_monitor_start();
 			}
@@ -347,8 +366,17 @@ static bool event_handler(const struct event_header *eh)
 	if (is_power_down_event(eh)) {
 		if (atomic_get(&active)) {
 			atomic_set(&active, false);
-			gpio_pin_disable_callback(gpio_dev,
+
+			int err = gpio_pin_disable_callback(gpio_dev,
 					CONFIG_DESKTOP_BATTERY_CSO_PIN);
+
+			if (!err) {
+				err = cso_pin_control(false);
+			}
+
+			if (err) {
+				module_set_state(MODULE_STATE_ERROR);
+			}
 
 			if (adc_async_read_pending) {
 				__ASSERT_NO_MSG(sampling);

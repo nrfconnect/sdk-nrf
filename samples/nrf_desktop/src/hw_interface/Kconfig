@@ -219,6 +219,21 @@ config DESKTOP_BATTERY_CSO_PIN
 	help
 	  A pin number to which CSO output is connected.
 
+choice
+	prompt "Select CSO pin pull"
+	default DESKTOP_BATTERY_CSO_PULL_NONE
+
+config DESKTOP_BATTERY_CSO_PULL_NONE
+	bool "Disable CSO pin pull"
+
+config DESKTOP_BATTERY_CSO_PULL_UP
+	bool "Enable CPI pin pull up"
+
+config DESKTOP_BATTERY_CSO_PULL_DOWN
+	bool "Enable CSO pin pull down"
+
+endchoice
+
 config DESKTOP_BATTERY_CSO_FREQ
 	int "CSO switching frequency (in Hz) on error state"
 	depends on DESKTOP_BATTERY_DISCRETE
