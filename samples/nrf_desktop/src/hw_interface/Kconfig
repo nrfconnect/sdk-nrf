@@ -227,7 +227,7 @@ config DESKTOP_BATTERY_CSO_PULL_NONE
 	bool "Disable CSO pin pull"
 
 config DESKTOP_BATTERY_CSO_PULL_UP
-	bool "Enable CPI pin pull up"
+	bool "Enable CPO pin pull up"
 
 config DESKTOP_BATTERY_CSO_PULL_DOWN
 	bool "Enable CSO pin pull down"

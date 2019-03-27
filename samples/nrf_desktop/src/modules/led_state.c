@@ -144,6 +144,9 @@ static bool event_handler(const struct event_header *eh)
 		case BATTERY_STATE_IDLE:
 			set_system_state_led(LED_SYSTEM_STATE_IDLE);
 			break;
+		case BATTERY_STATE_ERROR:
+			set_system_state_led(LED_SYSTEM_STATE_ERROR);
+			break;
 		default:
 			__ASSERT_NO_MSG(false);
 			break;
