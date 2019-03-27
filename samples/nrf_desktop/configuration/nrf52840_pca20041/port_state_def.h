@@ -14,14 +14,9 @@ const struct {} port_state_def_include_once;
 static const struct pin_state port0_on[] = {
 	{14, 1}, /* battery charger enable */
 
-	{5,  0}, /* battery monitor sense */
+#if !defined(CONFIG_DESKTOP_BATTERY_DISCRETE)
 	{6,  0}, /* battery monitor enable */
-
-	{9,  0}, /* NFC1 */
-	{10, 0}, /* NFC2 */
-
-	{19, 0}, /* DBG3 */
-	{20, 0}, /* DBG4 */
+#endif
 
 #if !defined(CONFIG_DESKTOP_LED_ENABLE)
 	{23, 0}, /* Front LED red */
@@ -31,6 +26,9 @@ static const struct pin_state port0_on[] = {
 	{26, 0}, /* Back LED green */
 	{27, 0}, /* Back LED blue */
 #endif
+
+	{9,  0}, /* NFC1 */
+	{10, 0}, /* NFC2 */
 };
 
 static const struct pin_state port1_on[] = {
@@ -38,22 +36,19 @@ static const struct pin_state port1_on[] = {
 	{5,  0}, /* LED3 */
 	{7,  0}, /* LED3 */
 
-	{0,  0}, /* DBG1 */
-	{1,  0}, /* DBG2 */
-	{2,  0}, /* N/C */
-	{4,  0}, /* N/C */
-	{6,  0}, /* N/C */
-	{9,  0}, /* N/C */
-	{10, 0}, /* N/C */
 #if defined(CONFIG_DESKTOP_LED_ENABLE)
 	{13, 1}, /* LED power enable */
+#else
+	{13, 0}, /* LED power enable */
 #endif
 };
 
 static const struct pin_state port0_off[] = {
+	{14, 0}, /* battery charger enable */
 };
 
 static const struct pin_state port1_off[] = {
+	{13, 0}, /* LED power enable */
 };
 
 
