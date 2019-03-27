@@ -17,6 +17,7 @@
 #include "event_manager.h"
 #include "power_event.h"
 #include "battery_event.h"
+#include "usb_event.h"
 
 #define MODULE battery
 #include "module_state_event.h"
@@ -263,6 +264,20 @@ static int cso_pin_control(bool enable)
 	return err;
 }
 
+static int charging_enable(void)
+{
+	return gpio_pin_write(gpio_dev,
+			      CONFIG_DESKTOP_BATTERY_CHARGE_ENABLE_PIN,
+			      1);
+}
+
+static int charging_disable(void)
+{
+	return gpio_pin_write(gpio_dev,
+			      CONFIG_DESKTOP_BATTERY_CHARGE_ENABLE_PIN,
+			      0);
+}
+
 static int init_fn(void)
 {
 	int err;
@@ -271,6 +286,18 @@ static int init_fn(void)
 	if (!gpio_dev) {
 		LOG_ERR("Cannot get GPIO device");
 		err = -ENXIO;
+		goto error;
+	}
+
+	err = gpio_pin_configure(gpio_dev,
+				 CONFIG_DESKTOP_BATTERY_CHARGE_ENABLE_PIN,
+				 GPIO_DIR_OUT);
+	if (err) {
+		goto error;
+	}
+
+	err = charging_disable();
+	if (err) {
 		goto error;
 	}
 
@@ -392,6 +419,33 @@ static bool event_handler(const struct event_header *eh)
 		return sampling;
 	}
 
+	if (is_usb_state_event(eh)) {
+		struct usb_state_event *event = cast_usb_state_event(eh);
+		int err;
+
+		switch (event->state) {
+		case USB_STATE_SUSPENDED:
+		case USB_STATE_DISCONNECTED:
+			err = charging_disable();
+			break;
+
+		case USB_STATE_POWERED:
+		case USB_STATE_ACTIVE:
+			err = charging_enable();
+			break;
+
+		default:
+			/* Ignore */
+			err = 0;
+			break;
+		}
+		if (err) {
+			module_set_state(MODULE_STATE_ERROR);
+		}
+
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -401,3 +455,4 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
+EVENT_SUBSCRIBE(MODULE, usb_state_event);

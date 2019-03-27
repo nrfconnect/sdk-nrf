@@ -207,6 +207,12 @@ config DESKTOP_BATTERY_POLL_INTERVAL_MS
 	default 10000
 	range 500 120000
 
+config DESKTOP_BATTERY_CHARGE_ENABLE_PIN
+	int "Battery charging enable pin"
+	depends on DESKTOP_BATTERY_DISCRETE
+	help
+	  A pin which enables battery charging.
+
 config DESKTOP_BATTERY_MONITOR_ENABLE_PIN
 	int "Battery monitoring enable pin"
 	depends on DESKTOP_BATTERY_DISCRETE

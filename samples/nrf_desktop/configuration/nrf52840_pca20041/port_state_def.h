@@ -12,7 +12,6 @@
 const struct {} port_state_def_include_once;
 
 static const struct pin_state port0_on[] = {
-	{14, 1}, /* battery charger enable */
 
 #if !defined(CONFIG_DESKTOP_BATTERY_DISCRETE)
 	{6,  0}, /* battery monitor enable */
@@ -44,7 +43,6 @@ static const struct pin_state port1_on[] = {
 };
 
 static const struct pin_state port0_off[] = {
-	{14, 0}, /* battery charger enable */
 };
 
 static const struct pin_state port1_off[] = {
