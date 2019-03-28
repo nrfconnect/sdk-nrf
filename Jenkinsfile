@@ -1,6 +1,7 @@
 // Due to JENKINS-42369 we put these defines outside the pipeline
 def IMAGE_TAG = "ncs-toolchain:1.08"
 def REPO_CI_TOOLS = "https://github.com/zephyrproject-rtos/ci-tools.git"
+def REPO_CI_TOOLS_SHA = "2538b53a18dc700af2af692eecc0de90206fa274"
 
 // Function to get the current repo URL, to be propagated to the downstream job
 def getRepoURL() {
@@ -61,6 +62,7 @@ pipeline {
         // Fetch the tools used to checking compliance
         dir("ci-tools") {
           git branch: "master", url: "$REPO_CI_TOOLS"
+	  sh "git checkout ${REPO_CI_TOOLS_SHA}"
         }
         // Initialize west
         sh "west init -l nrf/"
