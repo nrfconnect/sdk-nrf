@@ -16,7 +16,7 @@ Listeners can process events differently based on their type.
 You can easily define custom event types for your application.
 Currently, up to 32 event types can be used in an application.
 
-You can use the Profiler (see ``include/profiler.h``) to observe the propagation of an event in the system, view the data connected with the event, or create statistics.
+You can use the :ref:`profiler` to observe the propagation of an event in the system, view the data connected with the event, or create statistics.
 A shell integration is available to display additional information and to dynamically enable or disable logging for given event types.
 
 See the :ref:`event_manager_sample` sample for an example on how to use the Event Manager.
@@ -212,7 +212,7 @@ The following code example shows how to register an event listener with an event
 Profiling an event
 ******************
 
-Event Manager events can be profiled (see ``include/profiler.h``).
+Event Manager events can be profiled (see :ref:`profiler`).
 To profile a given Event Manager event, you must define an :cpp:class:`event_info` structure (with :c:macro:`EVENT_INFO_DEFINE`) and provide it as argument when defining the event type.
 This structure contains a profiling function and information about the data fields that are logged.
 
