@@ -19,7 +19,6 @@ Requirements
 
 Building and Running
 ********************
+.. |sample path| replace:: :file:`samples/bluetooth/peripheral_lbs`
 
-This sample can be found under :file:`samples/bluetooth/peripheral_lbs` in the |NCS| folder structure.
-
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt

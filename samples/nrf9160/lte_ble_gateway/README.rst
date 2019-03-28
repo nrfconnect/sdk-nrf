@@ -28,21 +28,15 @@ Requirements
   * nRF9160 DK board (PCA10090)
 
 * :ref:`zephyr:bluetooth-hci-uart-sample` must be programmed to the nRF52 board controller on the board.
-* :ref:`secure_partition_manager` must be programmed on the board.
-
-  The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
-  Therefore, it requires the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
+* .. include:: /includes/spm.txt
 
 Building and running
 ********************
 
-This sample can be found under :file:`samples/lte-gateway/` in the |NCS| folder structure.
+.. |sample path| replace:: :file:`samples/nrf9160/lte_ble_gateway`
 
-The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
-It can be programmed independently from the Secure Partition Manager firmware.
+.. include:: /includes/build_and_run_nrf9160.txt
 
-See :ref:`gs_programming` for information about how to build and program the application.
-Note that you must program two different applications as described in the following section.
 
 Programming the sample
 ======================

@@ -38,10 +38,9 @@ LED 2:
 
 Building and running
 ********************
+.. |sample path| replace:: :file:`samples/bluetooth/peripheral_uart`
 
-This sample can be found under :file:`samples/bluetooth/peripheral_uart` in the |NCS| folder structure.
-
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 .. _peripheral_uart_testing:
 
@@ -53,8 +52,7 @@ After programming the sample to your board, test it by performing the following 
 1. Connect the board to the computer using a USB cable. The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. Connect to the board with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
-#. Compile and program the application.
-   Observe that LED 1 is blinking and that the device is advertising with the device name that is configured in :option:`CONFIG_BT_DEVICE_NAME <zephyr:CONFIG_BT_DEVICE_NAME>`.
+#. Observe that LED 1 is blinking and that the device is advertising with the device name that is configured in :option:`CONFIG_BT_DEVICE_NAME <zephyr:CONFIG_BT_DEVICE_NAME>`.
 #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 #. Connect to the device using nRF Connect for Mobile.
    Observe that LED 2 is on.

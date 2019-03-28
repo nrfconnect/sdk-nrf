@@ -27,10 +27,10 @@ Requirements
 
 Building and running
 ********************
+.. |sample path| replace:: :file:`samples/bluetooth/central_uart`
 
-This sample can be found under :file:`samples/bluetooth/central_uart` in the |NCS| folder structure.
+.. include:: /includes/build_and_run.txt
 
-See :ref:`gs_programming` for information about how to build and program the application.
 
 .. _central_uart_testing:
 
@@ -42,7 +42,6 @@ After programming the sample to your board, test it by performing the following 
 1. Connect the board to the computer using a USB cable. The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. Connect to the board with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
-#. Compile and program the application.
 #. Observe that the text "Starting NUS Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripheral boards with NUS.
 #. Program the :ref:`peripheral_uart` sample to the second board.
    See the documentation for that sample for detailed instructions.

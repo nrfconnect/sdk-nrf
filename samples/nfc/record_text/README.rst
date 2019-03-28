@@ -4,6 +4,7 @@ NFC: Text Record
 ################
 
 The NFC Text Record sample shows how to use the NFC tag to expose a Text record to NFC polling devices.
+It uses the :ref:`nfc`.
 
 Overview
 ********
@@ -32,9 +33,9 @@ LED 1:
 Building and running
 ********************
 
-This sample can be found under :file:`samples/nfc/record_text` in the |NCS| folder structure.
+.. |sample path| replace:: :file:`samples/nfc/record_text`
 
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======

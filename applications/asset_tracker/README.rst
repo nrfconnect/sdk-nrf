@@ -45,10 +45,7 @@ Requirements
 
     * nRF9160 DK board (PCA10090)
 
-* :ref:`secure_partition_manager` must be programmed on the board.
-
-  The applications is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
-  Therefore, it requires the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
+* .. include:: /includes/spm.txt
 
 .. _asset_tracker_user_interface:
 
@@ -73,7 +70,7 @@ LED 3 and LED 4:
     * LED 4 blinking: Pattern sent - Pattern has been entered and sent to nRF Cloud for verification.
     * LED 4 ON: Connected - The device is ready for sensor data transfer.
 
-    .. figure:: ../../doc/nrf/images/nrf_cloud_led_states.svg
+    .. figure:: /images/nrf_cloud_led_states.svg
        :alt: Application state indicated by LEDs
 
     Application state indicated by LEDs
@@ -82,20 +79,6 @@ All LEDs (1-4):
     * Blinking simultaneously: Irrecoverable error in the BSD library.
     * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Recoverable error in the BSD library.
     * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with the nRF Cloud.
-
-Building and running
-********************
-
-This application can be found under :file:`applications/asset_tracker` in the |NCS| folder structure.
-
-The application is built as a non-secure firmware image for the nrf9160_pca10090ns board.
-It can be programmed independently from the Secure Partition Manager firmware.
-
-See :ref:`gs_programming` for information about how to build and program the application.
-The Kconfig file of the application contains options to configure the application.
-For example, configure ``CONFIG_POWER_OPTIMIZATION_ENABLE`` to enable power optimization or ``CONFIG_TEMP_USE_EXTERNAL`` to use an external temperature sensor instead of simulated temperature data.
-In |SES|, select **Project** > **Configure nRF Connect SDK project** to browse and configure these options.
-Alternatively, use the command line tool ``menuconfig`` or configure the options directly in ``prj.conf``.
 
 .. _power_opt:
 
@@ -118,10 +101,25 @@ Request Power Saving Mode (PSM)
 	To enable PSM, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then
 	set Switch 2 to OFF.
 
+
+Building and running
+********************
+
+.. |sample path| replace:: :file:`applications/asset_tracker`
+
+.. include:: /includes/build_and_run_nrf9160.txt
+
+The Kconfig file of the application contains options to configure the application.
+For example, configure ``CONFIG_POWER_OPTIMIZATION_ENABLE`` to enable power optimization or ``CONFIG_TEMP_USE_EXTERNAL`` to use an external temperature sensor instead of simulated temperature data.
+In |SES|, select **Project** > **Configure nRF Connect SDK project** to browse and configure these options.
+Alternatively, use the command line tool ``menuconfig`` or configure the options directly in ``prj.conf``.
+
+.. include:: /includes/programming.txt
+
 Testing
 =======
 
-After programming the :ref:`secure_partition_manager` sample to your board, test the Asset Tracker application by performing the following steps:
+After programming the application and all prerequisites to your board, test the Asset Tracker application by performing the following steps:
 
 1. Connect the board to the computer using a USB cable.
    The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
@@ -129,8 +127,6 @@ After programming the :ref:`secure_partition_manager` sample to your board, test
 #. Open a web browser and navigate to https://nrfcloud.com/.
    Follow the instructions to set up your account and add an LTE device.
    A pattern of switch and button actions is displayed.
-#. Make sure that the :ref:`secure_partition_manager` sample is programmed to the board.
-#. Compile and program the Asset Tracker application to the board.
 #. Observe in the terminal window that the board starts up in the Secure Partition Manager and that the application starts.
    This is indicated by output similar to the following lines::
 

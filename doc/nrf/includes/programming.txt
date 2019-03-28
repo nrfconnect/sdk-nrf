@@ -1,0 +1,10 @@
+Programming the sample
+======================
+
+When you connect the nRF9160 DK board to your computer, you must first make sure that the :ref:`secure_partition_manager` sample is programmed:
+
+1. Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller.
+#. Build the :ref:`secure_partition_manager` sample and program it.
+#. Build the application that you want to test (this sample) and program it.
+#. Verify that the sample was programmed successfully by connecting to the first serial port with a terminal emulator (for example, PuTTY) and checking the output.
+   See :ref:`putty` for the required settings.

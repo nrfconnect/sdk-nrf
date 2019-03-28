@@ -70,13 +70,9 @@ Button 1:
 
 Building and running
 ********************
+.. |sample path| replace:: :file:`samples/XXX`
 
-This sample can be found under :file:`samples/bluetooth/XXX` in the |NCS| folder structure.
-
-See :ref:`bluetooth samples section <zephyr:bluetooth-samples>` for details.
-
-*Link directly to the suitable Getting Started. We should have stock text here.*
-
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======
@@ -106,11 +102,20 @@ If the LEDs do not start blinking, check if the music is loud enough.
 Dependencies*
 *************
 
-This sample uses the following libraries:
+This sample uses the following |NCS| libraries:
 
-* XYZ driver (-> always link)
-* ABC library
-* and surely more
+* :ref:`customservice_readme`
+
+In addition, it uses the following Zephyr libraries:
+
+* ``include/console.h``
+* :ref:`zephyr:kernel`:
+
+  * ``include/kernel.h``
+
+.. tip::
+   If possible, link to the respective library.
+   If there is no documentation for the library, include the path.
 
 
 Known issues and limitations*

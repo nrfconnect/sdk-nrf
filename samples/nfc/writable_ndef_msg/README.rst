@@ -4,6 +4,7 @@ NFC: Writable NDEF Message
 ##########################
 
 The Writable NDEF Message sample shows how to use the NFC tag to expose an NDEF message, which can be overwritten with any other NDEF message by an NFC device.
+It uses the :ref:`nfc`.
 
 Overview
 ********
@@ -41,10 +42,9 @@ Button 1:
 
 Building and running
 ********************
+.. |sample path| replace:: :file:`samples/nfc/writable_ndef_msg`
 
-This sample can be found under :file:`samples/nfc/writable_ndef_msg` in the |NCS| folder structure.
-
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======
