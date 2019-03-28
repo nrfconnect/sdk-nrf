@@ -252,6 +252,11 @@ SECTIONS
 #include <linker/priv_stacks-rom.ld>
 #include <linker/kobject-rom.ld>
 
+	. = ALIGN(4);
+	_ext_abis_start = .;
+	KEEP(*(.ext_abis))
+	_ext_abis_size = ABSOLUTE((. - _ext_abis_start) / 4);
+
 	/*
 	 * For XIP images, in order to avoid the situation when __data_rom_start
 	 * is 32-bit aligned, but the actual data is placed right after rodata
