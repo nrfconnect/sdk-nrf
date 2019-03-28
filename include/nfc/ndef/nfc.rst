@@ -17,6 +17,11 @@ There are modules for specific message and record types as well as a generic gen
 See `Message types`_ for more information.
 If you use the provided modules, you do not need deep knowlege of the NDEF specification to start using NFC.
 
+The NFC NDEF libraries are used in the following samples:
+
+* :ref:`record_text`
+* :ref:`writable_ndef_msg`
+
 .. _nfc_ndef_format_dox:
 
 NDEF message and record format

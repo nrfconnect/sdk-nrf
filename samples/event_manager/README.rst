@@ -40,10 +40,9 @@ Requirements
 
 Building and running
 ********************
+.. |sample path| replace:: :file:`samples/event_manager`
 
-This sample can be found under :file:`samples/event_manager` in the |NCS| folder structure.
-
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 
 Testing

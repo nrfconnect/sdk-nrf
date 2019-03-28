@@ -40,12 +40,13 @@ The following development board:
 Building and running
 ********************
 
-This sample can be found under :file:`samples/nrf9160/spm` in the |NCS| folder structure.
+.. |sample path| replace:: :file:`samples/nrf9160/spm`
+
+.. include:: /includes/build_and_run.txt
 
 The sample is built as a secure firmware image for the nrf9160_pca10090 board.
 It can be programmed independently from the non-secure application firmware.
 
-See :ref:`gs_programming` for information about how to build and program the application.
 
 Testing
 =======

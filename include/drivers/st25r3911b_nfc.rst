@@ -5,7 +5,9 @@ NFC Reader ST25R3911B
 
 The NFC Device ST25R3911B can be used to read and write NFC-A compatible tags (tags that support the ISO/IEC 14443 standard), creating an NFC polling device.
 
-This library is intended to be used with the NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1).
+This driver is intended to be used with the NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1).
+
+The driver is used in the :ref:`nfc_tag_reader` sample.
 
 NFC Reader hardware
 *******************
@@ -23,7 +25,7 @@ For the documentation of the NFC chip, see the `ST25R3911B chip documentation`_.
 Functionality
 *************
 
-The library provides the following functionality:
+The driver provides the following functionality:
 
 * Detecting ISO/IEC 14443 A tags and reading their UID
 * Performing automatic collision resolution
@@ -34,19 +36,19 @@ The library provides the following functionality:
 
 * Putting the tag to sleep
 
-The library currently supports only NFC-A technology.
+The driver currently supports only NFC-A technology.
 
 Architecture
 ************
 
-The library consists of four layers:
+The driver consists of four layers:
 
 * Layer responsible for SPI communication
 * Layer to manage ST25R3911B interrupts
 * Layer with common reader functionality that can be shared by all NFC technologies
 * NFC-A layer, which is responsible for NFC-A technology activities
 
-The library requires calling its specific function periodically.
+The driver requires calling its specific function periodically.
 
 API documentation
 *****************

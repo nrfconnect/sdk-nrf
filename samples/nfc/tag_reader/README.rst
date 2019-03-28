@@ -30,10 +30,9 @@ Requirements
 
 Building and running
 ********************
+.. |sample path| replace:: :file:`samples/nfc/tag_reader`
 
-This sample can be found under :file:`samples/nfc/tag_reader` in the |NCS| folder structure.
-
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======

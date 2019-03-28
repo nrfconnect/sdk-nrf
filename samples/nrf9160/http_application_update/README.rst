@@ -25,20 +25,20 @@ Requirements
 
   * nRF9160 DK board (PCA10090)
 
-* A signed firmware image that is available for download from an HTTP server. This image is automatically generated when
-  building the application.
+* A signed firmware image that is available for download from an HTTP server.
+  This image is automatically generated when building the application.
 
 
 Building and running
 ********************
 
-This sample can be found under :file:`samples/nrf9160/http_application_update` in the |NCS| folder structure.
+.. |sample path| replace:: :file:`samples/nrf9160/http_application_update`
 
-The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board. Is uses MCUboot and SPM
-(Secure Partition Manager) and they will be automatically built and merged into the final hex-file when building
-the sample.
+.. include:: /includes/build_and_run.txt
 
-See :ref:`gs_programming` for information about how to build and program the application.
+The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
+It uses MCUboot and SPM (Secure Partition Manager).
+They are automatically built and merged into the final HEX file when building the sample.
 
 
 Specifying the image file
@@ -75,11 +75,14 @@ After programming the sample to the board, test it by performing the following s
     SPM: prepare to jump to Non-Secure image
     ***** Booting Zephyr OS v1.13.99 *****
 
-#. Observe that LED1 is lit. This indicates that version 1 of the application is running.
+#. Observe that LED1 is lit.
+   This indicates that version 1 of the application is running.
 #. Press Button 1 on the nRF9160 DK to start the download process and wait until "Download complete" is printed in the terminal.
-#. Press the **RESET** button on the board. MCUboot will now detect the downloaded image and write it to flash. This can take up to a
-   minute and nothing is printed in the terminal while this is processing.
-#. Observe that LED1 and LED2 is lit. This indicates that version 2 or higher of the application is running.
+#. Press the **RESET** button on the board.
+   MCUboot will now detect the downloaded image and write it to flash.
+   This can take up to a minute and nothing is printed in the terminal while this is processing.
+#. Observe that LED1 and LED2 is lit.
+   This indicates that version 2 or higher of the application is running.
 
 Dependencies
 ************
@@ -100,4 +103,3 @@ From Zephyr
 
 From MCUboot
   * `MCUboot`_
-

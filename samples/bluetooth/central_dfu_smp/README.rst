@@ -42,9 +42,9 @@ Button 1:
 Building and running
 ********************
 
-This sample can be found under :file:`samples/bluetooth/central_dfu_smp` in the |NCS| folder structure.
+.. |sample path| replace:: :file:`samples/bluetooth/central_dfu_smp`
 
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 .. _bluetooth_central_dfu_smp_testing:
 

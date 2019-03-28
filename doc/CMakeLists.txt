@@ -117,6 +117,7 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
   --outputs ${NRF_CONTENT_OUTPUTS}
   --ignore ${CMAKE_CURRENT_BINARY_DIR}
+  --sphinx-src-root ${NRF_DOC_DIR}
   "*:doc:${NRF_RST_OUT}"
   "*.rst:applications:${NRF_RST_OUT}"
   "*.rst:samples:${NRF_RST_OUT}"

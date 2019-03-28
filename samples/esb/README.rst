@@ -63,3 +63,23 @@ After programming the Transmitter sample on one of the boards and the Receiver s
 #. Optionally, connect to the boards with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 #. Observe the logging output for both boards.
+
+Dependencies
+************
+
+This sample uses the following |NCS| libraries:
+
+* :ref:`nrf_esb_readme`
+
+In addition, it uses the following Zephyr libraries:
+
+* ``include/zephyr/types.h``
+* :ref:`zephyr:logger`
+* :ref:`zephyr:kernel`:
+
+  * ``include/kernel.h``
+  * ``include/irq.h``
+
+* :ref:`zephyr:api_peripherals`:
+
+   * ``incude/gpio.h``

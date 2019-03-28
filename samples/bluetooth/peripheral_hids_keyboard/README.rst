@@ -43,10 +43,9 @@ LED 1:
 
 Building and running
 ********************
+.. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_keyboard`
 
-This sample can be found under :file:`samples/bluetooth/peripheral_hids_keyboard` in the |NCS| folder structure.
-
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======

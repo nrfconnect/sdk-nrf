@@ -6,6 +6,9 @@ GATT Human Interface Device (HID) Service Client
 The HID Service Client module can be used to interact with a connected HID server.
 The server can, for example, be an instance of the :ref:`hids_readme`.
 
+The HID Service Client is used in the :ref:`bluetooth_central_hids` sample.
+
+
 The client uses the :ref:`gatt_dm_readme` module to acquire all attribute handles that are required to interact with the HID server.
 Some additional data must be read from the discovered descriptors before the HID client is ready.
 This process is started automatically just after the handles are assigned.
