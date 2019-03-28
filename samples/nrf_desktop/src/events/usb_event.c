@@ -14,7 +14,6 @@
 static const char * const state_name[] = {
 	[USB_STATE_DISCONNECTED] = "DISCONNECTED",
 	[USB_STATE_POWERED]      = "POWERED",
-	[USB_STATE_IDLE]	 = "IDLE",
 	[USB_STATE_ACTIVE]       = "ACTIVE",
 	[USB_STATE_SUSPENDED]    = "SUSPENDED"
 };
