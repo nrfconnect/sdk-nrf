@@ -3,13 +3,13 @@
 Profiler
 ########
 
-The Profiler sample demonstrates the functionality of the Profiler subsystem.
+The Profiler sample demonstrates the functionality of the :ref:`profiler` subsystem.
 It shows how to use the Profiler to log and visualize data about custom events that are not part of the :ref:`event_manager`.
 
 Overview
 ********
 
-The sample initializes the Profiler, registers two event types, and profiles their occurrences periodically.
+The sample initializes the :ref:`profiler`, registers two event types, and profiles their occurrences periodically.
 
 Event without data (``no data event``):
   This event is used to signal the occurrence of an event only.
@@ -57,4 +57,4 @@ Dependencies
 
 This sample uses the following |NCS| subsystems:
 
-* profiler
+* :ref:`profiler`

@@ -11,6 +11,7 @@ The output is provided via RTT and can be visualized in `SEGGER SystemView`_ or 
 
 	Currently, you can register and profile up to 32 event types.
 
+See the :ref:`profiler_sample` sample for an example on how to use the Profiler.
 
 Configuration
 *************
