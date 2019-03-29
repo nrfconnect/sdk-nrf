@@ -28,19 +28,26 @@ manifest:
     - name: ncs
       url-base: https://github.com/NordicPlayground
 
+    - name: zephyrproject
+      url-base: https://github.com/zephyrproject-rtos
+
   # The list of external projects for the nRF Connect SDK.
   #
   projects:
     - name: fw-nrfconnect-zephyr
       path: zephyr
       west-commands: scripts/west-commands.yml
-      revision: de69d2df908fc7bccd8c03b106e7645e90b1503b
+      revision: 0bf5263b0522bb5cfac84eefdfdee86dc2c67e3e
     - name: fw-nrfconnect-mcuboot
       path: mcuboot
       revision: 59fde9c792bfaa36887c860fb8cd0ca1f1bc4db5
     - name: nrfxlib
       path: nrfxlib
       revision: 9bcc77b27d12162adc31d8c8c70f4e499338fbdb
+    - name: tinycbor
+      path: modules/lib/tinycbor
+      remote: zephyrproject
+      revision: 111f7a215cc4efa49fd03a7835719adca83b4388
 
   self:
     path: nrf

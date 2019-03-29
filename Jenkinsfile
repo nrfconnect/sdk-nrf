@@ -1,7 +1,7 @@
 // Due to JENKINS-42369 we put these defines outside the pipeline
 def IMAGE_TAG = "ncs-toolchain:1.08"
 def REPO_CI_TOOLS = "https://github.com/zephyrproject-rtos/ci-tools.git"
-def REPO_CI_TOOLS_SHA = "2538b53a18dc700af2af692eecc0de90206fa274"
+def REPO_CI_TOOLS_SHA = "9f4dc0be401c2b1e9b1c647513fb996bd8abd057"
 
 // Function to get the current repo URL, to be propagated to the downstream job
 def getRepoURL() {
