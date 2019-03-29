@@ -45,10 +45,38 @@ static const u8_t led_pins[] = {
 #endif
 };
 
+enum state {
+	STATE_WAITING,
+	STATE_SCANNING,
+};
+
+static enum state state;
 static struct k_delayed_work buttons_scan;
 static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
 static struct device *gpio_dev;
+static struct gpio_callback gpio_cb;
+static struct k_spinlock lock;
+
+static int callback_ctrl(bool enable)
+{
+	int err = 0;
+
+	/* This must be done with irqs disabled to avoid pin callback
+	 * being fired before others are still not activated.
+	 */
+	for (size_t i = 0; (i < ARRAY_SIZE(button_pins)) && !err; i++) {
+		if (enable) {
+			err = gpio_pin_enable_callback(gpio_dev,
+			  button_pins[i]);
+		} else {
+			err = gpio_pin_disable_callback(gpio_dev,
+			  button_pins[i]);
+		}
+	}
+
+	return err;
+}
 
 static u32_t get_buttons(void)
 {
@@ -92,11 +120,36 @@ static void buttons_scan_fn(struct k_work *work)
 	}
 
 	last_button_scan = button_scan;
-	int err = k_delayed_work_submit(&buttons_scan,
+
+	if (button_scan != 0) {
+		int err = k_delayed_work_submit(&buttons_scan,
 		  CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL);
 
-	if (err) {
-		LOG_ERR("Cannot add work to workqueue");
+		if (err) {
+			LOG_ERR("Cannot add work to workqueue");
+		}
+	} else {
+		/* If no button is pressed module can switch to callbacks */
+		int err = 0;
+
+		k_spinlock_key_t key = k_spin_lock(&lock);
+
+		switch (state) {
+		case STATE_SCANNING:
+			state = STATE_WAITING;
+			err = callback_ctrl(true);
+			break;
+
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
+		}
+
+		k_spin_unlock(&lock, key);
+
+		if (err) {
+			LOG_ERR("Cannot enable callbacks");
+		}
 	}
 }
 
@@ -123,6 +176,53 @@ int dk_leds_init(void)
 	return dk_set_leds_state(DK_NO_LEDS_MSK, DK_ALL_LEDS_MSK);
 }
 
+static int set_trig_mode(int trig_mode)
+{
+
+	int flags = (IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_BUTTONS) ?
+		(GPIO_PUD_PULL_UP | GPIO_INT_ACTIVE_LOW) :
+		(GPIO_PUD_PULL_DOWN | GPIO_INT_ACTIVE_HIGH));
+	flags |= (GPIO_DIR_IN | GPIO_INT | trig_mode);
+
+	int err = 0;
+
+	for (size_t i = 0; (i < ARRAY_SIZE(button_pins)) && !err; i++) {
+
+		err = gpio_pin_configure(gpio_dev, button_pins[i],
+					 flags);
+	}
+
+	return err;
+}
+
+static void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
+		    u32_t pins)
+{
+	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	/* Disable GPIO interrupt */
+	int err = callback_ctrl(false);
+
+	if (err) {
+		LOG_ERR("Cannot disable callbacks");
+	}
+
+	switch (state) {
+	case STATE_WAITING:
+		state = STATE_SCANNING;
+		k_delayed_work_submit(&buttons_scan, 1);
+		break;
+
+	case STATE_SCANNING:
+	default:
+		/* Invalid state */
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	k_spin_unlock(&lock, key);
+}
+
 int dk_buttons_init(button_handler_t button_handler)
 {
 	int err;
@@ -145,7 +245,38 @@ int dk_buttons_init(button_handler_t button_handler)
 		}
 	}
 
+	err = set_trig_mode(GPIO_INT_LEVEL);
+	if (err) {
+		LOG_ERR("Cannot set interrupt mode");
+		return err;
+	}
+
+	u32_t pin_mask = 0;
+
+	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
+		/* Module starts in scanning mode and will switch to
+		 * callback mode if no button is pressed.
+		 */
+		err = gpio_pin_disable_callback(gpio_dev, button_pins[i]);
+		if (err) {
+			LOG_ERR("Cannot disable callbacks()");
+			return err;
+		}
+
+		pin_mask |= BIT(button_pins[i]);
+	}
+
+	gpio_init_callback(&gpio_cb, button_pressed, pin_mask);
+	err = gpio_add_callback(gpio_dev, &gpio_cb);
+	if (err) {
+		LOG_ERR("Cannot add callback");
+		return err;
+	}
+
 	k_delayed_work_init(&buttons_scan, buttons_scan_fn);
+
+	state = STATE_SCANNING;
+
 	err = k_delayed_work_submit(&buttons_scan, 0);
 	if (err) {
 		LOG_ERR("Cannot add work to workqueue");
