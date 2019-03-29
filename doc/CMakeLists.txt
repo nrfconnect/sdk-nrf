@@ -144,6 +144,7 @@ add_custom_target(
   KERNELVERSION=${PROJECT_VERSION}
   SRCARCH=x86
   GENERATED_DTS_BOARD_CONF=not_applicable
+  CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
   KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
   KCONFIG_DOC_MODE=1
   ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py ${NRF_BASE}/Kconfig.nrf ${NRF_RST_OUT}/doc/nrf/reference/kconfig/
