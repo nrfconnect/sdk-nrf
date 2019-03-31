@@ -1,0 +1,57 @@
+# CODEOWNERS for autoreview assigning in github
+
+# Order is important; the last matching pattern takes the most
+# precedence.
+
+# Root folder
+/CODEOWNERS                               @carlescufi
+/LICENSE                                  @carlescufi
+/README.rst                               @ru-fu @carlescufi
+/Jenkinsfile                              @carlescufi
+/west.yml                                 @carlescufi @mbolivar @tejlmand
+
+# Applications
+/applications/asset_tracker/              @joakimtoe @jtguggedal @rlubos
+# Boards
+/boards/                                  @ioannisg @anangl
+# All cmake related files
+/cmake/                                   @SebastianBoe
+/CMakeLists.txt                           @SebastianBoe
+# All Kconfig related files
+/**/Kconfig*                              @SebastianBoe
+# All doc related files
+/doc/                                     @ru-fu
+/doc/CMakeLists.txt                       @carlescufi
+/doc/scripts/                             @carlescufi
+/doc/**/conf.py                           @carlescufi
+# All subfolders
+/drivers/                                 @anangl
+/ext/                                     @carlescufi
+/include/                                 @anangl @rlubos @pizi-nordic
+/include/bluetooth/                       @joerchan
+/include/drivers/                         @anangl
+/include/net/                             @rlubos
+/include/nfc/                             @anangl @grochu
+/lib/at_cmd_parser/                       @rlubos
+/lib/at_host/                             @rlubos
+/lib/bsdlib/                              @rlubos
+/lib/modem_info/                          @rlubos
+/lib/pdn_management/                      @rlubos
+/samples/bluetooth/                       @joerchan @lemrey @carlescufi
+/samples/bootloader/                      @hakonfam @ioannisg
+/samples/esb/                             @lemrey
+/samples/nfc/                             @grochu
+/samples/nrf9160/                         @rlubos @lemrey
+/samples/nrf_desktop/                     @pdunaj
+/samples/profiler/                        @pdunaj @pizi-nordic
+/scripts/                                 @mbolivar @tejlmand
+/subsys/bluetooth/                        @joerchan @carlescufi
+/subsys/bootloader/                       @hakonfam @ioannisg
+/subsys/enhanced_shockburst/              @Raane @lemrey
+/subsys/event_manager/                    @pdunaj
+/subsys/net/                              @rlubos
+/subsys/nfc/                              @grochu @anangl
+/subsys/profiler/                         @pdunaj
+/tests/                                   @rakons
+/zephyr/                                  @carlescufi
+
