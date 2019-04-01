@@ -4,12 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig SPM
-	bool "Secure Partition Manager"
-	default n
+config SPM
+	bool "Use Secure Partition Manager"
+	default y if BOARD_NRF9160_PCA10090NS
 
+menuconfig IS_SPM
+        bool "Current app is SPM"
+        default n
 
-if SPM
+if IS_SPM
 
 config SPM_BOOT_SILENTLY
 	bool "Boot silently"
@@ -84,4 +87,4 @@ config SPM_NRF_TIMER2_NS
 	default y
 
 
-endif # SPM
+endif # IS_SPM
