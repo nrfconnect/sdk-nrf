@@ -250,9 +250,7 @@ static int remove_vendor_section(void)
 	int err = bt_le_adv_update_data(ad, (ARRAY_SIZE(ad) - SWIFT_PAIR_SECTION_SIZE),
 					sd, ARRAY_SIZE(sd));
 
-	if (err) {
-		LOG_ERR("Cannot modify advertising data (err %d)", err);
-	} else {
+	if (!err) {
 		LOG_INF("Vendor section removed");
 
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
@@ -263,6 +261,15 @@ static int remove_vendor_section(void)
 				      K_SECONDS(CONFIG_DESKTOP_BLE_SWIFT_PAIR_GRACE_PERIOD));
 
 		state = STATE_GRACE_PERIOD;
+	} else if (err == -EAGAIN) {
+		LOG_INF("No active advertising");
+		err = ble_adv_stop();
+		if (!err) {
+			state = STATE_OFF;
+			module_set_state(MODULE_STATE_OFF);
+		}
+	} else {
+		LOG_ERR("Cannot modify advertising data (err %d)", err);
 	}
 
 	return err;
