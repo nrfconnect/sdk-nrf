@@ -978,7 +978,9 @@ static bool event_handler(const struct event_header *eh)
 
 			switch (event->state) {
 			case USB_STATE_POWERED:
-				connect_subscriber(event->id, true);
+				if (!get_subscriber_by_type(true)) {
+					connect_subscriber(event->id, true);
+				}
 				break;
 			case USB_STATE_DISCONNECTED:
 				disconnect_subscriber(event->id);
