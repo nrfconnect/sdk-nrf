@@ -32,6 +32,7 @@
 /include/drivers/                         @anangl
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
+/include/shell/                           @nordic-krch @jarz-nordic
 /lib/at_cmd_parser/                       @rlubos
 /lib/at_host/                             @rlubos
 /lib/bsdlib/                              @rlubos
@@ -56,6 +57,7 @@
 /subsys/nfc/                              @grochu @anangl
 /subsys/partition_manager/                @hakonfam
 /subsys/profiler/                         @pdunaj
+/subsys/shell/                            @nordic-krch @jarz-nordic
 /subsys/spm/                              @ioannisg
 /tests/                                   @rakons
 /zephyr/                                  @carlescufi
