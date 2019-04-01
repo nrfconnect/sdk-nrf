@@ -11,6 +11,7 @@ zephyr_include_directories(include)
 
 add_subdirectory(ext)
 add_subdirectory(lib)
+add_subdirectory(samples)
 add_subdirectory(subsys)
 add_subdirectory(drivers)
 add_subdirectory(tests)

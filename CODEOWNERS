@@ -45,6 +45,7 @@
 /samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
 /samples/nrf_desktop/                     @pdunaj
 /samples/profiler/                        @pdunaj @pizi-nordic
+/samples/CMakeLists.txt                   @SebastianBoe
 /scripts/                                 @mbolivar @tejlmand
 /subsys/bluetooth/                        @joerchan @carlescufi
 /subsys/bootloader/                       @hakonfam @ioannisg
