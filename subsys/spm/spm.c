@@ -62,7 +62,7 @@ extern int irq_target_state_is_secure(unsigned int irq);
 /* printk wrapper, to turn off logs when booting silently */
 #define PRINT(...)                                                             \
 	do {                                                                   \
-		if (!IS_ENABLED(CONFIG_SB_BOOT_SILENTLY)) {                    \
+		if (!IS_ENABLED(CONFIG_SPM_BOOT_SILENTLY)) {                   \
 			printk(__VA_ARGS__);                                   \
 		}                                                              \
 	} while (0)
@@ -73,7 +73,7 @@ extern int irq_target_state_is_secure(unsigned int irq);
 #define NRFX_PERIPHERAL_ID_GET(base_addr) \
 	(uint8_t)((uint32_t)(base_addr) >> 12)
 
-#ifdef CONFIG_SB_BOOT_SILENTLY
+#ifdef CONFIG_SPM_BOOT_SILENTLY
 #define PERIPH(name, reg, config)                                              \
 	{                                                                      \
 		.id = NRFX_PERIPHERAL_ID_GET(reg), IS_ENABLED(config)          \
@@ -282,7 +282,7 @@ static int spm_config_peripheral(u8_t id, bool dma_present)
 static void spm_config_peripherals(void)
 {
 	struct periph_cfg {
-#ifndef CONFIG_SB_BOOT_SILENTLY
+#ifndef CONFIG_SPM_BOOT_SILENTLY
 		char *name;
 #endif
 		u8_t id;
@@ -293,33 +293,33 @@ static void spm_config_peripherals(void)
 	 * - All GPIOs are allocated to the Non-Secure domain.
 	 */
 	static const struct periph_cfg periph[] = {
-		PERIPH("NRF_P0", NRF_P0, CONFIG_SB_NRF_P0_NS),
-		PERIPH("NRF_CLOCK", NRF_CLOCK, CONFIG_SB_NRF_CLOCK_NS),
-		PERIPH("NRF_RTC1", NRF_RTC1, CONFIG_SB_NRF_RTC1_NS),
-		PERIPH("NRF_NVMC", NRF_NVMC, CONFIG_SB_NRF_NVMC_NS),
-		PERIPH("NRF_UARTE1", NRF_UARTE1, CONFIG_SB_NRF_UARTE1_NS),
-		PERIPH("NRF_UARTE2", NRF_UARTE2, CONFIG_SB_NRF_UARTE2_NS),
+		PERIPH("NRF_P0", NRF_P0, CONFIG_SPM_NRF_P0_NS),
+		PERIPH("NRF_CLOCK", NRF_CLOCK, CONFIG_SPM_NRF_CLOCK_NS),
+		PERIPH("NRF_RTC1", NRF_RTC1, CONFIG_SPM_NRF_RTC1_NS),
+		PERIPH("NRF_NVMC", NRF_NVMC, CONFIG_SPM_NRF_NVMC_NS),
+		PERIPH("NRF_UARTE1", NRF_UARTE1, CONFIG_SPM_NRF_UARTE1_NS),
+		PERIPH("NRF_UARTE2", NRF_UARTE2, CONFIG_SPM_NRF_UARTE2_NS),
 		/* There is no DTS node for the peripherals below,
 		 * so address them using nrfx macros directly.
 		 */
-		PERIPH("NRF_IPC", NRF_IPC_S, CONFIG_SB_NRF_IPC_NS),
-		PERIPH("NRF_VMC", NRF_VMC_S, CONFIG_SB_NRF_VMC_NS),
-		PERIPH("NRF_FPU", NRF_FPU_S, CONFIG_SB_NRF_FPU_NS),
-		PERIPH("NRF_EGU1", NRF_EGU1_S, CONFIG_SB_NRF_EGU1_NS),
-		PERIPH("NRF_EGU2", NRF_EGU2_S, CONFIG_SB_NRF_EGU2_NS),
-		PERIPH("NRF_TWIM2", NRF_TWIM2_S, CONFIG_SB_NRF_TWIM2_NS),
-		PERIPH("NRF_SPIM3", NRF_SPIM3_S, CONFIG_SB_NRF_SPIM3_NS),
-		PERIPH("NRF_TIMER0", NRF_TIMER0_S, CONFIG_SB_NRF_TIMER0_NS),
-		PERIPH("NRF_TIMER1", NRF_TIMER1_S, CONFIG_SB_NRF_TIMER1_NS),
-		PERIPH("NRF_TIMER2", NRF_TIMER2_S, CONFIG_SB_NRF_TIMER2_NS),
+		PERIPH("NRF_IPC", NRF_IPC_S, CONFIG_SPM_NRF_IPC_NS),
+		PERIPH("NRF_VMC", NRF_VMC_S, CONFIG_SPM_NRF_VMC_NS),
+		PERIPH("NRF_FPU", NRF_FPU_S, CONFIG_SPM_NRF_FPU_NS),
+		PERIPH("NRF_EGU1", NRF_EGU1_S, CONFIG_SPM_NRF_EGU1_NS),
+		PERIPH("NRF_EGU2", NRF_EGU2_S, CONFIG_SPM_NRF_EGU2_NS),
+		PERIPH("NRF_TWIM2", NRF_TWIM2_S, CONFIG_SPM_NRF_TWIM2_NS),
+		PERIPH("NRF_SPIM3", NRF_SPIM3_S, CONFIG_SPM_NRF_SPIM3_NS),
+		PERIPH("NRF_TIMER0", NRF_TIMER0_S, CONFIG_SPM_NRF_TIMER0_NS),
+		PERIPH("NRF_TIMER1", NRF_TIMER1_S, CONFIG_SPM_NRF_TIMER1_NS),
+		PERIPH("NRF_TIMER2", NRF_TIMER2_S, CONFIG_SPM_NRF_TIMER2_NS),
 
 		PERIPH("NRF_GPIOTE1", NRF_GPIOTE1_NS,
-				      CONFIG_SB_NRF_GPIOTE1_NS),
+				      CONFIG_SPM_NRF_GPIOTE1_NS),
 	};
 
 	PRINT("Peripheral\t\tDomain\t\tStatus\n");
 
-	if (IS_ENABLED(CONFIG_SB_NRF_P0_NS)) {
+	if (IS_ENABLED(CONFIG_SPM_NRF_P0_NS)) {
 		/* Configure GPIO pins to be Non-Secure */
 		NRF_SPU->GPIOPORT[0].PERM = 0;
 	}
@@ -327,7 +327,7 @@ static void spm_config_peripherals(void)
 	for (size_t i = 0; i < ARRAY_SIZE(periph); i++) {
 		int err;
 
-#ifndef CONFIG_SB_BOOT_SILENTLY
+#ifndef CONFIG_SPM_BOOT_SILENTLY
 		PRINT("%02u %s\t\t%s", i, periph[i].name,
 		      periph[i].nonsecure ? "Non-Secure" : "Secure\t");
 #endif
