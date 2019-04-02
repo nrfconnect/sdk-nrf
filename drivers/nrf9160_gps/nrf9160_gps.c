@@ -16,7 +16,7 @@
 #include <net/socket.h>
 #ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 #include <at_cmd.h>
-#include <at_cmd_parser.h>
+#include <at_cmd_parser/at_cmd_parser.h>
 #endif
 
 LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
@@ -26,8 +26,8 @@ LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 #define AT_XSYSTEMMODE_REQUEST		"AT%XSYSTEMMODE?"
 #define AT_XSYSTEMMODE_RESPONSE		"%XSYSTEMMODE:"
 #define AT_XSYSTEMMODE_PROTO		"AT%%XSYSTEMMODE=%d,%d,%d,%d"
-#define AT_XSYSTEMMODE_PARAMS_COUNT	4
-#define AT_XSYSTEMMODE_GPS_PARAM_INDEX	2
+#define AT_XSYSTEMMODE_PARAMS_COUNT	5
+#define AT_XSYSTEMMODE_GPS_PARAM_INDEX	3
 #define AT_CFUN_REQUEST			"AT+CFUN?"
 #define AT_CFUN_RESPONSE		"+CFUN:"
 #define AT_CFUN_0			"AT+CFUN=0"
@@ -241,10 +241,10 @@ static int enable_gps(struct device *dev)
 		goto enable_gps_clean_exit;
 	}
 
-	err = at_parser_max_params_from_str(
-		&buf[sizeof(AT_XSYSTEMMODE_RESPONSE)],
-		&at_resp_list,
-		AT_XSYSTEMMODE_PARAMS_COUNT);
+	err = at_parser_max_params_from_str(buf,
+					    NULL,
+					    &at_resp_list,
+					    AT_XSYSTEMMODE_PARAMS_COUNT);
 	if (err) {
 		LOG_ERR("Could not parse AT response, error: %d", err);
 		goto enable_gps_clean_exit;
@@ -291,16 +291,16 @@ static int enable_gps(struct device *dev)
 		goto enable_gps_clean_exit;
 	}
 
-	err = at_parser_max_params_from_str(
-		&buf[sizeof(AT_CFUN_RESPONSE)],
-		&at_resp_list, 1);
+	err = at_parser_max_params_from_str(buf,
+					    NULL,
+					    &at_resp_list, 2);
 	if (err) {
 		LOG_ERR("Could not parse functional mode response, error: %d",
 			err);
 		goto enable_gps_clean_exit;
 	}
 
-	err = at_params_short_get(&at_resp_list, 0, &functional_mode);
+	err = at_params_short_get(&at_resp_list, 1, &functional_mode);
 	if (err) {
 		LOG_ERR("Could not get value of functional mode, error: %d",
 			err);

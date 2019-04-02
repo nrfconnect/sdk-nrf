@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <at_cmd_parser.h>
+#include <at_cmd_parser/at_cmd_parser.h>
 #include <at_cmd.h>
 #include <ctype.h>
 #include <device.h>
@@ -63,47 +63,47 @@ LOG_MODULE_REGISTER(modem_info);
 #define IMSI_DATA_NAME		"imsi"
 #define MODEM_IMEI_DATA_NAME	"imei"
 
-#define RSRP_PARAM_INDEX	0
-#define RSRP_PARAM_COUNT	2
+#define RSRP_PARAM_INDEX	1
+#define RSRP_PARAM_COUNT	3
 #define RSRP_OFFSET_VAL		141
 
-#define BAND_PARAM_INDEX	0 /* Index of desired parameter */
-#define BAND_PARAM_COUNT	1 /* Number of parameters */
+#define BAND_PARAM_INDEX	1 /* Index of desired parameter */
+#define BAND_PARAM_COUNT	2 /* Number of parameters */
 
-#define MODE_PARAM_INDEX	0
-#define MODE_PARAM_COUNT	1
+#define MODE_PARAM_INDEX	1
+#define MODE_PARAM_COUNT	2
 
-#define OPERATOR_PARAM_INDEX	2
-#define OPERATOR_PARAM_COUNT	4
+#define OPERATOR_PARAM_INDEX	3
+#define OPERATOR_PARAM_COUNT	5
 
-#define CELLID_PARAM_INDEX	3
-#define CELLID_PARAM_COUNT	5
+#define CELLID_PARAM_INDEX	4
+#define CELLID_PARAM_COUNT	6
 
-#define AREA_CODE_PARAM_INDEX	2
-#define AREA_CODE_PARAM_COUNT	5
+#define AREA_CODE_PARAM_INDEX	3
+#define AREA_CODE_PARAM_COUNT	6
 
-#define IP_ADDRESS_PARAM_INDEX	3
-#define IP_ADDRESS_PARAM_COUNT	6
+#define IP_ADDRESS_PARAM_INDEX	4
+#define IP_ADDRESS_PARAM_COUNT	7
 
-#define UICC_PARAM_INDEX	0
-#define UICC_PARAM_COUNT	1
+#define UICC_PARAM_INDEX	1
+#define UICC_PARAM_COUNT	2
 
-#define VBAT_PARAM_INDEX	0
-#define VBAT_PARAM_COUNT	1
+#define VBAT_PARAM_INDEX	1
+#define VBAT_PARAM_COUNT	2
 
-#define TEMP_PARAM_INDEX	1
-#define TEMP_PARAM_COUNT	2
+#define TEMP_PARAM_INDEX	2
+#define TEMP_PARAM_COUNT	3
 
 #define MODEM_FW_PARAM_INDEX	0
 #define MODEM_FW_PARAM_COUNT	1
 
-#define ICCID_PARAM_INDEX	2
-#define ICCID_PARAM_COUNT	3
+#define ICCID_PARAM_INDEX	3
+#define ICCID_PARAM_COUNT	4
 
-#define LTE_MODE_PARAM_INDEX	0
-#define NBIOT_MODE_PARAM_INDEX	1
-#define GPS_MODE_PARAM_INDEX	2
-#define SYSTEMMODE_PARAM_COUNT	4
+#define LTE_MODE_PARAM_INDEX	1
+#define NBIOT_MODE_PARAM_INDEX	2
+#define GPS_MODE_PARAM_INDEX	3
+#define SYSTEMMODE_PARAM_COUNT	5
 
 #define IMSI_PARAM_INDEX    0
 #define IMSI_PARAM_COUNT    1
@@ -340,12 +340,13 @@ static int modem_info_remove_cmd(char *buf)
 	return cmd_length;
 }
 
-static int modem_info_parse(const struct modem_info_data *modem_data, char *buf)
+static int modem_info_parse(const struct modem_info_data *modem_data,
+			    const char *buf)
 {
 	int err;
 	u32_t param_index;
 
-	err = at_parser_max_params_from_str(buf, &m_param_list,
+	err = at_parser_max_params_from_str(buf, NULL, &m_param_list,
 					    modem_data->param_count);
 
 	if (err != 0) {
@@ -413,10 +414,6 @@ int modem_info_short_get(enum modem_info info, u16_t *buf)
 		return -EIO;
 	}
 
-	if (info != MODEM_INFO_FW_VERSION) {
-		cmd_length = modem_info_remove_cmd(recv_buf);
-	}
-
 	err = modem_info_parse(modem_data[info], &recv_buf[cmd_length]);
 
 	if (err) {
@@ -437,7 +434,7 @@ int modem_info_short_get(enum modem_info info, u16_t *buf)
 int modem_info_string_get(enum modem_info info, char *buf)
 {
 	int err;
-	int len = 0;
+	size_t len = 0;
 	char recv_buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
 	u16_t param_value;
 	int cmd_length = 0;
@@ -453,12 +450,6 @@ int modem_info_string_get(enum modem_info info, char *buf)
 
 	if (err != 0) {
 		return -EIO;
-	}
-
-	if ((info != MODEM_INFO_FW_VERSION)
-		&& (info != MODEM_INFO_IMEI)
-		&& (info != MODEM_INFO_IMSI)) {
-		cmd_length = modem_info_remove_cmd(recv_buf);
 	}
 
 	err = modem_info_parse(modem_data[info], &recv_buf[cmd_length]);
@@ -477,13 +468,14 @@ int modem_info_string_get(enum modem_info info, char *buf)
 			return err;
 		}
 
-		len = snprintf(buf, MODEM_INFO_MAX_RESPONSE_SIZE,
+		err = snprintf(buf, MODEM_INFO_MAX_RESPONSE_SIZE,
 				"%d", param_value);
 	} else if (modem_data[info]->data_type == AT_PARAM_TYPE_STRING) {
-		len = at_params_string_get(&m_param_list,
+		len = MODEM_INFO_MAX_RESPONSE_SIZE;
+		err = at_params_string_get(&m_param_list,
 					   modem_data[info]->param_index,
 					   buf,
-					   MODEM_INFO_MAX_RESPONSE_SIZE);
+					   &len);
 	}
 
 	if (info == MODEM_INFO_ICCID) {
