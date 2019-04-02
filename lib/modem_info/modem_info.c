@@ -5,6 +5,7 @@
  */
 
 #include <at_cmd_parser.h>
+#include <at_cmd.h>
 #include <device.h>
 #include <errno.h>
 #include <modem_info.h>
@@ -18,8 +19,6 @@
 LOG_MODULE_REGISTER(modem_info);
 
 #define INVALID_DESCRIPTOR	-1
-#define THREAD_STACK_SIZE	(CONFIG_MODEM_INFO_SOCKET_BUF_SIZE + 512)
-#define THREAD_PRIORITY		K_PRIO_PREEMPT(CONFIG_MODEM_INFO_THREAD_PRIO)
 
 #define AT_CMD_CESQ		"AT%CESQ"
 #define AT_CMD_CESQ_ON		"AT%CESQ=1"
@@ -72,8 +71,6 @@ LOG_MODULE_REGISTER(modem_info);
 #define ICCID_PARAM_COUNT 3
 
 #define CMD_SIZE(x) (strlen(x) - 1)
-
-static const char success[] = "OK";
 
 struct modem_info_data {
 	const char *cmd;
@@ -188,45 +185,7 @@ static const char *const modem_data_name[] = {
 };
 
 static rsrp_cb_t modem_info_rsrp_cb;
-
 static struct at_param_list m_param_list;
-static struct k_thread socket_thread;
-static K_THREAD_STACK_DEFINE(socket_thread_stack, THREAD_STACK_SIZE);
-static struct k_mutex socket_mutex;
-static int at_socket_fd = INVALID_DESCRIPTOR;
-static struct pollfd fds;
-static int nfds;
-
-static int at_cmd_send(int fd, const char *cmd, size_t size, char *resp_buffer)
-{
-	int len;
-	size_t ret = 0;
-
-	k_mutex_lock(&socket_mutex, K_FOREVER);
-
-	LOG_DBG("send: %s\n", log_strdup(cmd));
-	len = send(fd, cmd, size, 0);
-	LOG_DBG("len: %d\n", len);
-	if (len != size) {
-		LOG_DBG("send: failed\n");
-		ret = -EIO;
-	}
-
-	if (resp_buffer != NULL && ret == 0) {
-		len = recv(fd, resp_buffer, CONFIG_MODEM_INFO_BUFFER_SIZE, 0);
-
-		if (memcmp(success,
-			   &resp_buffer[len-AT_CMD_SUCCESS_SIZE],
-			   strlen(success)) != 0) {
-			LOG_ERR("recv: %s", log_strdup(resp_buffer));
-			ret = -EIO;
-		}
-	}
-
-	k_mutex_unlock(&socket_mutex);
-
-	return ret;
-}
 
 static bool is_cesq_notification(char *buf, size_t len)
 {
@@ -331,13 +290,13 @@ int modem_info_short_get(enum modem_info info, u16_t *buf)
 		return -EINVAL;
 	}
 
-	err = at_cmd_send(at_socket_fd,
-			modem_data[info]->cmd,
-			strlen(modem_data[info]->cmd),
-			recv_buf);
+	err = at_cmd_write(modem_data[info]->cmd,
+			   recv_buf,
+			   CONFIG_MODEM_INFO_BUFFER_SIZE,
+			   NULL);
 
-	if (err) {
-		return err;
+	if (err != 0) {
+		return -EIO;
 	}
 
 	err = modem_info_parse(modem_data[info], recv_buf);
@@ -368,13 +327,13 @@ int modem_info_string_get(enum modem_info info, char *buf)
 		return -EINVAL;
 	}
 
-	err = at_cmd_send(at_socket_fd,
-			modem_data[info]->cmd,
-			strlen(modem_data[info]->cmd),
-			recv_buf);
+	err = at_cmd_write(modem_data[info]->cmd,
+			  recv_buf,
+			  CONFIG_MODEM_INFO_BUFFER_SIZE,
+			  NULL);
 
-	if (err) {
-		return err;
+	if (err != 0) {
+		return -EIO;
 	}
 
 	if (info == MODEM_INFO_ICCID) {
@@ -411,46 +370,15 @@ int modem_info_string_get(enum modem_info info, char *buf)
 	return len <= 0 ? -ENOTSUP : len;
 }
 
-static void modem_info_rsrp_subscribe_thread(void *arg1, void *arg2, void *arg3)
+static void modem_info_rsrp_subscribe_handler(char *response)
 {
-	char buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
 	u16_t param_value;
-	int err;
-	int r_bytes;
-	int len;
+	int   len = strlen(response);
 
-	ARG_UNUSED(arg1);
-	ARG_UNUSED(arg2);
-	ARG_UNUSED(arg3);
-
-	err = at_cmd_send(at_socket_fd,
-			AT_CMD_CESQ_ON,
-			strlen(AT_CMD_CESQ_ON),
-			NULL);
-
-	if (err) {
-		LOG_ERR("AT cmd error: %d\n", err);
-	}
-
-	while (1) {
-		err = poll(&fds, nfds, K_FOREVER);
-		if (err < 0) {
-			LOG_ERR("Poll error: %d\n", err);
-			continue;
-		}
-
-		k_mutex_lock(&socket_mutex, K_FOREVER);
-		r_bytes = recv(at_socket_fd, buf,
-				sizeof(buf), MSG_DONTWAIT);
-		k_mutex_unlock(&socket_mutex);
-
-		if (is_cesq_notification(buf, r_bytes)) {
-			modem_info_parse(modem_data[MODEM_INFO_RSRP],
-					buf);
-			len = modem_info_short_get(MODEM_INFO_RSRP,
-						   &param_value);
-			modem_info_rsrp_cb(param_value);
-		}
+	if (is_cesq_notification(response, len)) {
+		modem_info_parse(modem_data[MODEM_INFO_RSRP], response);
+		len = modem_info_short_get(MODEM_INFO_RSRP, &param_value);
+		modem_info_rsrp_cb(param_value);
 	}
 }
 
@@ -458,11 +386,11 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 {
 	modem_info_rsrp_cb = cb;
 
-	k_thread_create(&socket_thread, socket_thread_stack,
-			K_THREAD_STACK_SIZEOF(socket_thread_stack),
-			modem_info_rsrp_subscribe_thread,
-			NULL, NULL, NULL,
-			THREAD_PRIORITY, 0, K_NO_WAIT);
+	at_cmd_set_notification_handler(modem_info_rsrp_subscribe_handler);
+
+	if (at_cmd_write(AT_CMD_CESQ_ON, NULL, 0, NULL) != 0) {
+		return -EIO;
+	}
 
 	return 0;
 }
@@ -472,20 +400,6 @@ int modem_info_init(void)
 	/* Init at_cmd_parser storage module */
 	int err = at_params_list_init(&m_param_list,
 				CONFIG_MODEM_INFO_MAX_AT_PARAMS_RSP);
-
-	/* Occupy socket for AT command transmission */
-	at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
-	fds.fd = at_socket_fd;
-	fds.events = ZSOCK_POLLIN;
-	nfds += 1;
-
-	if (at_socket_fd == INVALID_DESCRIPTOR) {
-		LOG_ERR("Creating at_socket failed\n");
-		return -EFAULT;
-	}
-
-	/* Init thread for RSRP subscription */
-	k_mutex_init(&socket_mutex);
 
 	return err;
 }

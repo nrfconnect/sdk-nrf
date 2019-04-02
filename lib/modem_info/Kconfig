@@ -26,17 +26,6 @@ config MODEM_INFO_BUFFER_SIZE
 		string after an AT command. The buffer is processed
 		through the parser.
 
-config MODEM_INFO_SOCKET_BUF_SIZE
-	int "LI socket Rx buffer size"
-	default 328
-
-config MODEM_INFO_THREAD_PRIO
-	# Hidden option for preemptive LTE LI thread priority
-	int
-	range 0 NUM_PREEMPT_PRIORITIES
-	default 0 if !MULTITHREADING
-	default 9
-
 config MODEM_INFO_ADD_BOARD
 	bool "Add board name to JSON string"
 	default y
