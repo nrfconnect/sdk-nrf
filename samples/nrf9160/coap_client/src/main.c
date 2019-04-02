@@ -52,12 +52,10 @@ static int server_resolve(void)
 {
 	int err;
 	struct addrinfo *result;
-	struct addrinfo hints;
-
-	hints.ai_flags = 0;
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_DGRAM;
-	hints.ai_protocol = 0;
+	struct addrinfo hints = {
+		.ai_family = AF_INET,
+		.ai_socktype = SOCK_DGRAM
+	};
 
 	err = getaddrinfo(CONFIG_COAP_SERVER_HOSTNAME, NULL, &hints, &result);
 	if (err != 0) {
