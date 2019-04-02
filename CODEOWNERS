@@ -63,6 +63,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /subsys/debug/ppi_trace/                  @nordic-krch
 /subsys/shell/                            @nordic-krch @jarz-nordic
 /subsys/spm/                              @ioannisg
+/subsys/nonsecure/                        @ioannisg
 /tests/                                   @rakons
 /zephyr/                                  @carlescufi
 

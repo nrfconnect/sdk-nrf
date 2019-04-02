@@ -9,8 +9,10 @@ menu "SPM"
 config SPM
 	bool "Use Secure Partition Manager"
 	default y if TRUSTED_EXECUTION_NONSECURE
+	imply ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS
 
 if SPM
+
 choice
 	prompt "SPM build strategy"
 	default SPM_BUILD_STRATEGY_FROM_SOURCE
@@ -46,15 +48,32 @@ menuconfig IS_SPM
 	select TRUSTED_EXECUTION_SECURE
 
 if IS_SPM
-
 # Define used by partition_manager.py to deduce size of partition
 config PM_PARTITION_SIZE_SPM
-	hex "Flash space reserved for SPM."
+	hex "Flash space reserved for SPM"
 	default 0x8000
 	help
 	  Flash space set aside for the SPM. Note, the name
 	  of this configuration needs to match the requirements set by the
 	  script 'partition_manager.py'. See pm.yml.
+
+menuconfig SPM_SECURE_SERVICES
+	bool "Enable secure services"
+	default y
+	select ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS
+	help
+	  Secure services can be invoked from the Non-Secure Firmware via
+	  secure entry functions.
+
+if SPM_SECURE_SERVICES
+config SPM_SERVICE_REBOOT
+	bool "Request a reboot"
+	default y
+	select REBOOT
+	help
+	  The Non-Secure Firmware is not allowed to reboot the chip. This
+	  service allows it to request a reboot from the SPM.
+endif
 
 config SPM_BOOT_SILENTLY
 	bool "Boot silently"
@@ -151,3 +170,10 @@ config SPM_NRF_PWM3_NS
 endif # IS_SPM
 
 endmenu
+
+if SPM || IS_SPM
+# Set new default name for the veneers file. To avoid file name collisions if
+# someone has multiple secure firmwares with secure entry functions.
+config ARM_ENTRY_VENEERS_LIB_NAME
+	default "libspmsecureentries.a"
+endif
