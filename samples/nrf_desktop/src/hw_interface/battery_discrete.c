@@ -11,6 +11,7 @@
 #include <adc.h>
 #include <gpio.h>
 #include <atomic.h>
+#include <spinlock.h>
 
 #include <hal/nrf_saadc.h>
 
@@ -66,6 +67,7 @@ static struct gpio_callback gpio_cb;
 
 static struct k_delayed_work error_check;
 static unsigned int cso_counter;
+static struct k_spinlock lock;
 
 static enum battery_state battery_state = -1;
 static atomic_t active;
@@ -76,10 +78,10 @@ static void error_check_handler(struct k_work *work)
 {
 	unsigned int cnt;
 
-	unsigned int key = irq_lock();
+	k_spinlock_key_t key = k_spin_lock(&lock);
 	cnt = cso_counter;
 	cso_counter = 0;
-	irq_unlock(key);
+	k_spin_unlock(&lock, key);
 
 	enum battery_state state;
 
@@ -113,11 +115,12 @@ static void cs_change(struct device *gpio_dev, struct gpio_callback *cb,
 		return;
 	}
 
+	k_spinlock_key_t key = k_spin_lock(&lock);
 	if (cso_counter == 0) {
 		k_delayed_work_submit(&error_check, ERROR_CHECK_TIMEOUT_MS);
 	}
-
 	cso_counter++;
+	k_spin_unlock(&lock, key);
 }
 
 static int init_adc(void)
@@ -278,6 +281,27 @@ static int charging_disable(void)
 			      0);
 }
 
+static int start_battery_state_check(void)
+{
+	int err = gpio_pin_disable_callback(gpio_dev,
+					    CONFIG_DESKTOP_BATTERY_CSO_PIN);
+
+	if (!err) {
+		/* Lock is not needed as interrupt is disabled */
+		cso_counter = 1;
+		k_delayed_work_submit(&error_check, ERROR_CHECK_TIMEOUT_MS);
+
+		err = gpio_pin_enable_callback(gpio_dev,
+					       CONFIG_DESKTOP_BATTERY_CSO_PIN);
+	}
+
+	if (err) {
+		LOG_ERR("Cannot start battery state check");
+	}
+
+	return err;
+}
+
 static int init_fn(void)
 {
 	int err;
@@ -312,11 +336,10 @@ static int init_fn(void)
 
 	k_delayed_work_init(&error_check, error_check_handler);
 
-	cso_counter = 1;
-	k_delayed_work_submit(&error_check, ERROR_CHECK_TIMEOUT_MS);
-
-	err = gpio_pin_enable_callback(gpio_dev,
-				       CONFIG_DESKTOP_BATTERY_CSO_PIN);
+	err = start_battery_state_check();
+	if (err) {
+		goto error;
+	}
 
 	/* Enable battery monitoring */
 	err = gpio_pin_configure(gpio_dev,
@@ -367,15 +390,11 @@ static bool event_handler(const struct event_header *eh)
 		if (!atomic_get(&active)) {
 			atomic_set(&active, true);
 
-			cso_counter = 1;
-			k_delayed_work_submit(&error_check,
-					      ERROR_CHECK_TIMEOUT_MS);
-
 			int err = cso_pin_control(true);
 			if (!err) {
-				err = gpio_pin_enable_callback(gpio_dev,
-						CONFIG_DESKTOP_BATTERY_CSO_PIN);
+				err = start_battery_state_check();
 			}
+
 			if (!err) {
 				err = battery_monitor_start();
 			}
@@ -438,6 +457,9 @@ static bool event_handler(const struct event_header *eh)
 			/* Ignore */
 			err = 0;
 			break;
+		}
+		if (!err) {
+			err = start_battery_state_check();
 		}
 		if (err) {
 			module_set_state(MODULE_STATE_ERROR);
