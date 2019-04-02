@@ -111,14 +111,25 @@ static int callback_ctrl(bool enable)
 	/* This must be done with irqs disabled to avoid pin callback
 	 * being fired before others are still not activated.
 	 */
+
+	u32_t pin_mask[ARRAY_SIZE(port_map)] = {0};
+
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
 		if (enable) {
+			pin_mask[row[i].port] |= BIT(row[i].pin);
 			err = gpio_pin_enable_callback(gpio_devs[row[i].port],
 						       row[i].pin);
 		} else {
 			err = gpio_pin_disable_callback(gpio_devs[row[i].port],
 							row[i].pin);
 		}
+	}
+
+	/* Below code is workaround for Zephyr not allowing to disable
+	 * interrupt already pending for fire.
+	 */
+	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
+		gpio_cb[i].pin_mask = pin_mask[i];
 	}
 
 	return err;
@@ -305,13 +316,9 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 {
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
-	/* Disable GPIO interrupt */
-	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
-		int err = gpio_pin_disable_callback(gpio_devs[row[i].port],
-						    row[i].pin);
-		if (err) {
-			LOG_ERR("Cannot disable callbacks");
-		}
+	int err = callback_ctrl(false);
+	if (err) {
+		LOG_ERR("Cannot disable callbacks");
 	}
 
 	switch (state) {
