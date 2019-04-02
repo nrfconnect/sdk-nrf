@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "AT Command driver"
+
+config AT_CMD
+	bool "AT Command driver"
+	depends on BSD_LIBRARY
+
+if AT_CMD
+
+config AT_CMD_INIT_PRIORITY
+	int "AT Command driver init priority"
+	default 40
+
+config AT_CMD_THREAD_PRIO
+	int "AT thread priority level"
+	range 0 NUM_PREEMPT_PRIORITIES
+	default 0 if !MULTITHREADING
+	default 10
+
+config AT_CMD_THREAD_STACK_SIZE
+	int "AT thread stack size"
+	default 1024
+
+config AT_CMD_RESPONSE_MAX_LEN
+	int "Maximum AT command response length"
+	default 256
+
+module = AT_CMD
+module-str = AT command driver
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AT_CMD
+
+endmenu

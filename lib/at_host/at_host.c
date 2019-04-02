@@ -11,28 +11,22 @@ LOG_MODULE_REGISTER(LOG_DOMAIN);
 
 #include <zephyr.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <uart.h>
-#include <net/socket.h>
 #include <string.h>
 #include <init.h>
+#include <at_cmd.h>
 
-#define CONFIG_UART_0_NAME 	"UART_0"
-#define CONFIG_UART_1_NAME 	"UART_1"
-#define CONFIG_UART_2_NAME 	"UART_2"
+#define CONFIG_UART_0_NAME      "UART_0"
+#define CONFIG_UART_1_NAME      "UART_1"
+#define CONFIG_UART_2_NAME      "UART_2"
 
-#define INVALID_DESCRIPTOR 	-1
+#define INVALID_DESCRIPTOR      -1
 
-#define UART_RX_BUF_SIZE 	CONFIG_AT_HOST_UART_BUF_SIZE
+#define OK_STR    "OK\r\n"
+#define ERROR_STR "ERROR\r\n"
 
-#define THREAD_STACK_SIZE 	(CONFIG_AT_HOST_SOCKET_BUF_SIZE + 512)
-#define THREAD_PRIORITY 	K_PRIO_PREEMPT(CONFIG_AT_HOST_THREAD_PRIO)
-
-/**
- * @brief Size of the buffer used to parse an AT command.
- * Defines the maximum number of characters of an AT command (including null
- * termination) that we can store to decode. Must be a power of two.
- */
-#define AT_MAX_CMD_LEN		CONFIG_AT_HOST_UART_BUF_SIZE
+#define AT_MAX_CMD_LEN		CONFIG_AT_CMD_RESPONSE_MAX_LEN
 
 /** @brief Termination Modes. */
 enum term_modes {
@@ -53,28 +47,63 @@ enum select_uart {
 
 static enum term_modes term_mode;
 static struct device *uart_dev;
-static int at_socket_fd = INVALID_DESCRIPTOR;
-static struct pollfd fds[1];
-static int nfds;
 static u8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
-static struct k_work at_cmd_send_work;
-static struct k_thread socket_thread;
-static K_THREAD_STACK_DEFINE(socket_thread_stack, THREAD_STACK_SIZE);
-
-
+static struct k_work cmd_send_work;
 static const char termination[3] = { '\0', '\r', '\n' };
 
-static void at_cmd_send(struct k_work *work)
+
+
+static inline void write_uart_string(char *str, size_t len)
 {
-	int bytes_sent;
+	for (size_t i = 0; i < len; i++) {
+		uart_poll_out(uart_dev, str[i]);
+	}
+}
+
+static void response_handler(char *response)
+{
+	int len = strlen(response) + 1;
+	/* Forward the data over UART */
+	if (len > 1) {
+		write_uart_string(response, len);
+	}
+}
+
+static void cmd_send(struct k_work *work)
+{
+	size_t            chars;
+	char              str[15];
+	char              buf[AT_MAX_CMD_LEN] = {0};
+	enum at_cmd_state state;
+	int               err;
 
 	ARG_UNUSED(work);
 
-	bytes_sent = send(at_socket_fd, at_buf, at_buf_len, 0);
+	err = at_cmd_write(at_buf, buf, AT_MAX_CMD_LEN, &state);
+	if (err < 0) {
+		LOG_ERR("Could not send AT command to modem: %d", err);
+		return;
+	}
 
-	if (bytes_sent <= 0) {
-		LOG_ERR("Could not send AT command to modem: %d", bytes_sent);
+	switch (state) {
+	case AT_CMD_OK:
+		write_uart_string(buf, strlen(buf));
+		write_uart_string(OK_STR, sizeof(OK_STR));
+		break;
+	case AT_CMD_ERROR:
+		write_uart_string(ERROR_STR, sizeof(ERROR_STR));
+		break;
+	case AT_CMD_ERROR_CMS:
+		chars = sprintf(str, "+CMS: %d\r\n", err);
+		write_uart_string(str, ++chars);
+		break;
+	case AT_CMD_ERROR_CME:
+		chars = sprintf(str, "+CME: %d\r\n", err);
+		write_uart_string(str, ++chars);
+		break;
+	default:
+		break;
 	}
 
 	uart_irq_rx_enable(uart_dev);
@@ -149,7 +178,7 @@ static void uart_rx_handler(u8_t character)
 	return;
 send:
 	uart_irq_rx_disable(uart_dev);
-	k_work_submit(&at_cmd_send_work);
+	k_work_submit(&cmd_send_work);
 	at_buf_len = cmd_len;
 	cmd_len = 0;
 }
@@ -188,32 +217,6 @@ static int at_uart_init(char *uart_dev_name)
 	return err;
 }
 
-static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
-{
-	u8_t at_read_buff[CONFIG_AT_HOST_SOCKET_BUF_SIZE] = {0};
-	int r_bytes;
-
-	ARG_UNUSED(arg1);
-	ARG_UNUSED(arg2);
-	ARG_UNUSED(arg3);
-
-	while (1) {
-		/* Read AT socket in blocking mode. */
-		r_bytes = recv(at_socket_fd, at_read_buff,
-				sizeof(at_read_buff), 0);
-
-		/* Forward the data over UART if any. */
-		if (r_bytes > 0) {
-			/* Poll out what is in the buffer gathered from
-			 * the modem.
-			 */
-			for (size_t i = 0; i < r_bytes; i++) {
-				uart_poll_out(uart_dev, at_read_buff[i]);
-			}
-		}
-	}
-}
-
 static int at_host_init(struct device *arg)
 {
 	char *uart_dev_name;
@@ -246,30 +249,16 @@ static int at_host_init(struct device *arg)
 		return -EINVAL;
 	}
 
+	at_cmd_set_notification_handler(response_handler);
+
 	/* Initialize the UART module */
 	err = at_uart_init(uart_dev_name);
 	if (err) {
 		LOG_ERR("UART could not be initialized: %d", err);
 		return -EFAULT;
-	} else {
-		/* AT socket creation. Handle must be valid to continue. */
-		at_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
-		fds[0].fd = at_socket_fd;
-		fds[0].events = ZSOCK_POLLIN;
-		nfds += 1;
-
-		if (at_socket_fd == INVALID_DESCRIPTOR) {
-			LOG_ERR("Creating at_socket failed\n");
-			return -EFAULT;
-		}
 	}
 
-	k_work_init(&at_cmd_send_work, at_cmd_send);
-	k_thread_create(&socket_thread, socket_thread_stack,
-			K_THREAD_STACK_SIZEOF(socket_thread_stack),
-			socket_thread_fn,
-			NULL, NULL, NULL,
-			THREAD_PRIORITY, 0, K_NO_WAIT);
+	k_work_init(&cmd_send_work, cmd_send);
 	uart_irq_rx_enable(uart_dev);
 
 	return err;
