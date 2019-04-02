@@ -38,3 +38,4 @@ Here you can find documentation for these libraries, including API documentation
    ../../include/debug/*
    ../../include/shell/*
    ../../lib/lwm2m_carrier/lwm2m_carrier.rst
+   ../../include/at_cmd_parser/*

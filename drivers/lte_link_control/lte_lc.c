@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <device.h>
 #include <at_cmd.h>
+#include <at_cmd_parser/at_cmd_parser.h>
+#include <at_cmd_parser/at_params.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
@@ -67,12 +69,9 @@ static const char network_mode[] = "AT%XSYSTEMMODE=1,0,0,0";
 /* Set network mode to LTE-M and GPS*/
 static const char network_mode[] = "AT%XSYSTEMMODE=1,0,1,0";
 #endif
-/* Accepted network statuses read from modem */
-static const char   status1[] = "+CEREG: 1";
-static const char   status2[] = "+CEREG:1";
-static const char   status3[] = "+CEREG: 5";
-static const char   status4[] = "+CEREG:5";
+
 static struct k_sem link;
+static struct at_param_list params;
 
 #if defined(CONFIG_LTE_PDP_CMD) && defined(CONFIG_LTE_PDP_CONTEXT)
 static const char cgdcont[] = "AT+CGDCONT="CONFIG_LTE_PDP_CONTEXT;
@@ -86,13 +85,27 @@ static const char legacy_pco[] = "AT%XEPCO=0";
 
 void at_handler(char *response)
 {
+	char  id[16];
+	u32_t val;
+	size_t len = 16;
+
 	LOG_DBG("recv: %s", log_strdup(response));
 
-	if (!memcmp(status1, response, AT_CMD_SIZE(status1)) ||
-	    !memcmp(status2, response, AT_CMD_SIZE(status2)) ||
-	    !memcmp(status3, response, AT_CMD_SIZE(status3)) ||
-	    !memcmp(status4, response, AT_CMD_SIZE(status4))) {
-		k_sem_give(&link);
+	at_parser_params_from_str(response, NULL, &params);
+	at_params_string_get(&params, 0, id, &len);
+
+	/* Waiting to receive either a +CEREG: 1 or +CEREG: 5 string from
+	 * from the modem which means 'registered, home network' or
+	 * 'registered, roaming' respectively.
+	 **/
+
+	if ((len > 0) &&
+	    (memcmp(id, "+CEREG", 6) == 0)) {
+		at_params_int_get(&params, 1, &val);
+
+		if ((val == 1) || (val == 5)) {
+			k_sem_give(&link);
+		}
 	}
 }
 
@@ -158,7 +171,7 @@ static int w_lte_lc_connect(void)
 	}
 
 	k_sem_init(&link, 0, 1);
-
+	at_params_list_init(&params, 10);
 	at_cmd_set_notification_handler(at_handler);
 
 	if (at_cmd_write(normal, NULL, 0, NULL) != 0) {
@@ -167,6 +180,7 @@ static int w_lte_lc_connect(void)
 
 	k_sem_take(&link, K_FOREVER);
 
+	at_params_list_free(&params);
 	at_cmd_set_notification_handler(NULL);
 
 	return 0;

@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig AT_CMD_PARSER
+config AT_CMD_PARSER
 	bool "AT command parser library"
 
-if AT_CMD_PARSER
-
-endif # AT_CMD_PARSER
