@@ -7,6 +7,7 @@
 menuconfig SPM
 	bool "Secure Partition Manager"
 	default n
+	select TRUSTED_EXECUTION_SECURE
 
 
 if SPM
