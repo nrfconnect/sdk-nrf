@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <zephyr.h>
 #include <spinlock.h>
-#include <misc/dlist.h>
+#include <misc/slist.h>
 #include <event_manager.h>
 #include <logging/log.h>
 
@@ -31,7 +31,7 @@ static u32_t event_manager_displayed_events;
 
 static u16_t profiler_event_ids[IDS_COUNT];
 static K_WORK_DEFINE(event_processor, event_processor_fn);
-static sys_dlist_t eventq = SYS_DLIST_STATIC_INIT(&eventq);
+static sys_slist_t eventq = SYS_SLIST_STATIC_INIT(&eventq);
 static struct k_spinlock lock;
 
 
@@ -209,27 +209,24 @@ static int trace_event_init(void)
 
 static void event_processor_fn(struct k_work *work)
 {
-	sys_dlist_t events;
+	sys_slist_t events = SYS_SLIST_STATIC_INIT(&events);
 
 	/* Make current event list local. */
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
-	if (sys_dlist_is_empty(&eventq)) {
+	if (sys_slist_is_empty(&eventq)) {
 		k_spin_unlock(&lock, key);
 		return;
 	}
 
-	events = eventq;
-	events.next->prev = &events;
-	events.prev->next = &events;
-	sys_dlist_init(&eventq);
+	sys_slist_merge_slist(&events, &eventq);
 
 	k_spin_unlock(&lock, key);
 
 
 	/* Traverse the list of events. */
-	sys_dnode_t *node;
-	while (NULL != (node = sys_dlist_get(&events))) {
+	sys_snode_t *node;
+	while (NULL != (node = sys_slist_get(&events))) {
 		struct event_header *eh = CONTAINER_OF(node,
 						       struct event_header,
 						       node);
@@ -279,7 +276,7 @@ void _event_submit(struct event_header *eh)
 	trace_event_submission(eh);
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
-	sys_dlist_append(&eventq, &eh->node);
+	sys_slist_append(&eventq, &eh->node);
 	k_spin_unlock(&lock, key);
 
 	k_work_submit(&event_processor);
