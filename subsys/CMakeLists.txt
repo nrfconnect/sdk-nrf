@@ -18,3 +18,5 @@ add_subdirectory_ifdef(CONFIG_PROFILER		profiler)
 add_subdirectory_ifdef(CONFIG_NRFXLIB_NFC	nfc)
 add_subdirectory_ifdef(CONFIG_IS_SPM spm)
 add_subdirectory_ifdef(CONFIG_FW_METADATA	fw_metadata)
+
+add_subdirectory(partition_manager)
