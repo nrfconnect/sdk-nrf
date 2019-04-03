@@ -160,6 +160,41 @@ extern int irq_target_state_is_secure(unsigned int irq);
 	((SPU_PERIPHID_PERM_LOCK_Locked << SPU_PERIPHID_PERM_LOCK_Pos) &       \
 	 SPU_PERIPHID_PERM_LOCK_Msk)
 
+#define FLASH_NSC_REGION(reg_number)                                           \
+	((reg_number << SPU_FLASHNSC_REGION_REGION_Pos) &                      \
+	SPU_FLASHNSC_REGION_REGION_Msk)
+
+#define FLASH_NSC_REGION_LOCK                                                  \
+	((SPU_FLASHNSC_REGION_LOCK_Locked << SPU_FLASHNSC_REGION_LOCK_Pos) &   \
+	SPU_FLASHNSC_REGION_LOCK_Msk)
+
+#define FLASH_NSC_SIZE(reg_size)                                               \
+	((reg_size << SPU_FLASHNSC_SIZE_SIZE_Pos) &                            \
+	SPU_FLASHNSC_SIZE_SIZE_Msk)
+
+#define FLASH_NSC_SIZE_LOCK                                                    \
+	((SPU_FLASHNSC_SIZE_LOCK_Locked << SPU_FLASHNSC_SIZE_LOCK_Pos) &       \
+	SPU_FLASHNSC_SIZE_LOCK_Msk)
+
+#if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
+
+static void spm_config_ncs_flash(void)
+{
+	PRINT("Flash NSC region configured\n");
+
+	/* Configure a single region in Secure Flash as Non-Secure Callable
+	 * (NSC) area.
+	 *
+	 * Area to configure: the upper 1kB of the Secure Flash area.
+	 *
+	 * Note: any Secure Entry functions, exposing secure services to the
+	 * Non-Secure firmware, shall be located inside this NSC area.
+	 */
+	NRF_SPU->FLASHNSC[0].REGION = FLASH_NSC_REGION(5);
+	NRF_SPU->FLASHNSC[0].SIZE = FLASH_NSC_SIZE(SPU_FLASHNSC_SIZE_SIZE_1024);
+}
+#endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
+
 static void spm_config_flash(void)
 {
 	/* Lower 256 kB of flash is allocated to MCUboot (if present)
@@ -193,6 +228,10 @@ static void spm_config_flash(void)
 		PRINT("\n");
 	}
 	PRINT("\n");
+
+#if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
+	spm_config_ncs_flash();
+#endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
 }
 
 static void spm_config_sram(void)
