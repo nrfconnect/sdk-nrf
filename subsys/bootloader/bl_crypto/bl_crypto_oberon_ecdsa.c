@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <bl_crypto.h>
-#include <occ_ecdsa_p256.h>
+#include <ocrypto_ecdsa_p256.h>
 #include "bl_crypto_internal.h"
 
 
@@ -20,7 +20,7 @@ int bl_secp256r1_validate(const u8_t *hash, u32_t hash_len,
 			|| ! signature) {
 		return -EINVAL;
 	}
-	int retval = occ_ecdsa_p256_verify_hash(signature, hash, public_key);
+	int retval = ocrypto_ecdsa_p256_verify_hash(signature, hash, public_key);
 	if (retval == -1) {
 		return -ESIGINV;
 	}

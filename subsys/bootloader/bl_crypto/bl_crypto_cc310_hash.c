@@ -10,7 +10,7 @@
 #include <errno.h>
 #include <nrf_cc310_bl_hash_sha256.h>
 #include <generated_dts_board.h>
-#include <occ_constant_time.h>
+#include <ocrypto_constant_time.h>
 #include <bl_crypto.h>
 #include "bl_crypto_cc310_common.h"
 
