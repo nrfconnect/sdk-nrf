@@ -21,9 +21,9 @@ zephyr_library_sources(
   ${ZEPHYR_BASE}/drivers/timer/cortex_m_systick.c
   zephyr_dummy_interrupt_handlers.c
   )
-zephyr_library_link_libraries(kernel_init) # TODO multi_image
+zephyr_library_link_libraries(${IMAGE}kernel_init)
 
 zephyr_library_named(kernel_init)
 zephyr_library_sources(${ZEPHYR_BASE}/kernel/init.c)
 zephyr_library_compile_definitions(z_cstart=UNUSED_z_cstart)
-add_dependencies(kernel_init offsets_h) # TODO multi_image
+add_dependencies(${IMAGE}kernel_init ${IMAGE}offsets_h)
