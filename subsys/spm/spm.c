@@ -10,7 +10,7 @@
 #include <gpio.h>
 
 #if !defined(CONFIG_ARM_SECURE_FIRMWARE)
-#error "Sample requires compiling for Secure ARM Firmware"
+#error "Module requires compiling for Secure ARM Firmware"
 #endif
 
 /* Include required APIs for TrustZone-M */
