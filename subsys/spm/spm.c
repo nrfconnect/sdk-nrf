@@ -6,6 +6,8 @@
 
 #include <zephyr.h>
 #include <misc/printk.h>
+#include <misc/util.h>
+#include <linker/linker-defs.h>
 #include <device.h>
 #include <gpio.h>
 #include "spm_internal.h"
@@ -102,6 +104,36 @@ extern int irq_target_state_is_secure(unsigned int irq);
 	}
 #endif
 
+#if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
+
+static void spm_config_nsc_flash(void)
+{
+	/* Configure a single region in Secure Flash as Non-Secure Callable
+	 * (NSC) area.
+	 *
+	 * Area to configure is dynamically decided with help from linker code.
+	 *
+	 * Note: Any Secure Entry functions, exposing secure services to the
+	 * Non-Secure firmware, shall be located inside this NSC area.
+	 *
+	 * If the start address of the NSC area is hard-coded, it must follow
+	 * the HW restrictions: The size must be a power of 2 between 32 and
+	 * 4096, and the end address must fall on a SPU region boundary.
+	 */
+	u32_t nsc_size = FLASH_NSC_SIZE_FROM_ADDR(__sg_start);
+
+	__ASSERT((u32_t)__sg_size <= nsc_size,
+		"The Non-Secure Callable region is overflowed by %d byte(s).\n",
+		(u32_t)__sg_size - nsc_size);
+
+	NRF_SPU->FLASHNSC[0].REGION = FLASH_NSC_REGION_FROM_ADDR(__sg_start);
+	NRF_SPU->FLASHNSC[0].SIZE = FLASH_NSC_SIZE_REG(nsc_size);
+
+	PRINT("Non-secure callable region 0 placed in flash region %d with size %d.\n",
+		NRF_SPU->FLASHNSC[0].REGION, NRF_SPU->FLASHNSC[0].SIZE << 5);
+	PRINT("\n");
+}
+#endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
 
 static void spm_config_flash(void)
 {
@@ -137,6 +169,10 @@ static void spm_config_flash(void)
 		PRINT("\n");
 	}
 	PRINT("\n");
+
+#if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
+	spm_config_nsc_flash();
+#endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
 }
 
 static void spm_config_sram(void)
