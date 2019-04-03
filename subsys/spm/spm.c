@@ -19,8 +19,25 @@
 
 #include <nrfx.h>
 
+#if USE_PARTITION_MANAGER
+#include <pm_config.h>
+#define NON_SECURE_APP_ADDRESS PM_APP_ADDRESS
+#else
+#define NON_SECURE_APP_ADDRESS DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0
+#endif /* USE_PARTITION_MANAGER */
+
+/* Size of secure attribution configurable flash region */
+#define FLASH_SECURE_ATTRIBUTION_REGION_SIZE (32*1024)
+#define LAST_SECURE_ADDRESS (NON_SECURE_APP_ADDRESS - 1)
+#define LAST_SECURE_REGION \
+	(LAST_SECURE_ADDRESS / FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
+#define LAST_SECURE_REGION_INDEX \
+	(LAST_SECURE_REGION > 0 ? (LAST_SECURE_REGION - 1) : 0)
+
 /*
- *  * The following security configuration for Flash and SRAM is applied:
+ *  * The security configuration for depends on where the non secure app
+ *  * is placed. All flash regions before the region which contains the
+ *  * non secure app is configured as Secure.
  *
  *                FLASH
  *  1 MB  |---------------------|
@@ -32,12 +49,13 @@
  *        |     Non-Secure      |
  *        |       Flash         |
  *        |                     |
- * 256 kB |---------------------|
+ *  X kB  |---------------------|
  *        |                     |
  *        |     Secure          |
  *        |      Flash          |
  *  0 kB  |---------------------|
  *
+ *  * The security configuration for SRAM is applied:
  *
  *                SRAM
  * 256 kB |---------------------|
@@ -162,17 +180,18 @@ extern int irq_target_state_is_secure(unsigned int irq);
 
 static void spm_config_flash(void)
 {
-	/* Lower 256 kB of flash is allocated to MCUboot (if present)
-	 * and to the Secure firmware image. The rest of flash is
-	 * allocated to Non-Secure firmware image.
+	/* Regions of flash up to and including SPM are configured as Secure.
+	 * The rest of flash is configured as Non-Secure.
 	 */
 	static const u32_t flash_perm[] = {
-		/* Configuration for Regions 0 - 7 (0 - 256 kB) */
-		[0 ... 7] = FLASH_READ | FLASH_WRITE | FLASH_EXEC |
-			    FLASH_LOCK | FLASH_SECURE,
-		/* Configuration for Regions 8 - 31 (256 kB - 1 MB) */
-		[8 ... 31] = FLASH_READ | FLASH_WRITE | FLASH_EXEC |
-			     FLASH_LOCK | FLASH_NONSEC,
+		/* Configuration for Secure Regions */
+		[0 ... LAST_SECURE_REGION_INDEX] =
+			FLASH_READ | FLASH_WRITE | FLASH_EXEC |
+			FLASH_LOCK | FLASH_SECURE,
+		/* Configuration for Non Secure Regions */
+		[(LAST_SECURE_REGION_INDEX + 1) ... 31] =
+			FLASH_READ | FLASH_WRITE | FLASH_EXEC |
+			FLASH_LOCK | FLASH_NONSEC,
 	};
 
 	PRINT("Flash region\t\tDomain\t\tPermissions\n");
@@ -374,7 +393,7 @@ void spm_jump(void)
 	/* Extract initial MSP of the Non-Secure firmware image.
 	 * The assumption is that the MSP is located at VTOR_NS[0].
 	 */
-	u32_t *vtor_ns = (u32_t *)DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0;
+	u32_t *vtor_ns = (u32_t *)NON_SECURE_APP_ADDRESS;
 
 	PRINT("SPM: MSP_NS %x\n", vtor_ns[0]);
 

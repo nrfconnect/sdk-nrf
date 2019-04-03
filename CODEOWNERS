@@ -54,6 +54,7 @@
 /subsys/fw_metadata/                      @hakonfam
 /subsys/net/                              @rlubos
 /subsys/nfc/                              @grochu @anangl
+/subsys/partition_manager/                @hakonfam
 /subsys/profiler/                         @pdunaj
 /subsys/spm/                              @ioannisg
 /tests/                                   @rakons
