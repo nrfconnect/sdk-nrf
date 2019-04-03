@@ -42,6 +42,7 @@
 /samples/esb/                             @lemrey
 /samples/nfc/                             @grochu
 /samples/nrf9160/                         @rlubos @lemrey
+/samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
 /samples/nrf_desktop/                     @pdunaj
 /samples/profiler/                        @pdunaj @pizi-nordic
 /scripts/                                 @mbolivar @tejlmand
@@ -52,6 +53,7 @@
 /subsys/net/                              @rlubos
 /subsys/nfc/                              @grochu @anangl
 /subsys/profiler/                         @pdunaj
+/subsys/spm/                              @ioannisg
 /tests/                                   @rakons
 /zephyr/                                  @carlescufi
 
