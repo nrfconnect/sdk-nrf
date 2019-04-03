@@ -61,7 +61,7 @@ extern "C" {
  */
 struct event_header {
 	/** Linked list node used to chain events. */
-	sys_dlist_t node;
+	sys_snode_t node;
 
 	/** Pointer to the event type object. */
 	const struct event_type *type_id;
