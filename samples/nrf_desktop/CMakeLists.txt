@@ -136,7 +136,7 @@ if (${CONFIG_BOOTLOADER_MCUBOOT})
     -G${CMAKE_GENERATOR}
     -DBOARD=${BOARD}
     -DBOARD_ROOT="${BOARD_ROOT_STR}"
-    -DDTC_OVERLAY_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/flash.overlay"
+    -DDTC_OVERLAY_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/flash.overlay ${MCUBOOT_DIR}/boot/zephyr/dts.overlay"
     -DCONF_FILE="${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf"
     COMMENT
     "Generating bootloader for application in mcuboot folder"
