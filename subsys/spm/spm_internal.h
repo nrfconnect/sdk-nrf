@@ -7,7 +7,9 @@
 #ifndef SPM_INTERNAL_H__
 #define SPM_INTERNAL_H__
 
+#include <zephyr.h>
 #include <nrfx.h>
+#include <misc/util.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,6 +18,12 @@ extern "C" {
 
 /* Size of secure attribution configurable flash region. */
 #define FLASH_SECURE_ATTRIBUTION_REGION_SIZE (32*1024)
+
+/* Minimum size of Non-Secure Callable regions. */
+#define FLASH_NSC_MIN_SIZE 32
+
+/* Maximum size of Non-Secure Callable regions. */
+#define FLASH_NSC_MAX_SIZE 4096
 
 /* Local convenience macros for interfacing with the SPU. */
 
@@ -92,6 +100,30 @@ extern "C" {
 #define PERIPH_LOCK                                                            \
 	((SPU_PERIPHID_PERM_LOCK_Locked << SPU_PERIPHID_PERM_LOCK_Pos) &       \
 	 SPU_PERIPHID_PERM_LOCK_Msk)
+
+#define FLASH_NSC_REGION(reg_number)                                           \
+	(((reg_number) << SPU_FLASHNSC_REGION_REGION_Pos) &                    \
+	SPU_FLASHNSC_REGION_REGION_Msk)
+
+#define FLASH_NSC_REGION_FROM_ADDR(addr)                                       \
+	FLASH_NSC_REGION(((u32_t)addr / FLASH_SECURE_ATTRIBUTION_REGION_SIZE))
+
+#define FLASH_NSC_REGION_LOCK                                                  \
+	((SPU_FLASHNSC_REGION_LOCK_Locked << SPU_FLASHNSC_REGION_LOCK_Pos) &   \
+	SPU_FLASHNSC_REGION_LOCK_Msk)
+
+#define FLASH_NSC_SIZE(reg_size)                                               \
+	(((reg_size) << SPU_FLASHNSC_SIZE_SIZE_Pos) &                          \
+	SPU_FLASHNSC_SIZE_SIZE_Msk)
+
+#define FLASH_NSC_SIZE_LOCK                                                    \
+	((SPU_FLASHNSC_SIZE_LOCK_Locked << SPU_FLASHNSC_SIZE_LOCK_Pos) &       \
+	SPU_FLASHNSC_SIZE_LOCK_Msk)
+
+#define FLASH_NSC_SIZE_FROM_ADDR(addr) FLASH_SECURE_ATTRIBUTION_REGION_SIZE    \
+	- (((u32_t)(addr)) % FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
+
+#define FLASH_NSC_SIZE_REG(size) FLASH_NSC_SIZE((size) / FLASH_NSC_MIN_SIZE)
 
 #ifdef __cplusplus
 }
