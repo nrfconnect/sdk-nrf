@@ -9,7 +9,7 @@
 #include <bl_crypto.h>
 #include <fw_metadata.h>
 #include <assert.h>
-#include <occ_constant_time.h>
+#include <ocrypto_constant_time.h>
 #include "bl_crypto_internal.h"
 
 
@@ -47,7 +47,7 @@ static int verify_truncated_hash(const u8_t *data, u32_t data_len,
 	if (retval != 0) {
 		return retval;
 	}
-	if (!occ_constant_time_equal(expected, hash, hash_len)) {
+	if (!ocrypto_constant_time_equal(expected, hash, hash_len)) {
 		return -EHASHINV;
 	}
 	return 0;

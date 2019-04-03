@@ -17,9 +17,9 @@
 
 
 #if CONFIG_SB_CRYPTO_OBERON_SHA256
-	#include <occ_sha256.h>
-	#define SHA256_CTX_SIZE sizeof(occ_sha256_ctx)
-	typedef occ_sha256_ctx bl_sha256_ctx_t;
+	#include <ocrypto_sha256.h>
+	#define SHA256_CTX_SIZE sizeof(ocrypto_sha256_ctx)
+	typedef ocrypto_sha256_ctx bl_sha256_ctx_t;
 #elif CONFIG_SB_CRYPTO_CC310_SHA256
 	#include <nrf_cc310_bl_hash_sha256.h>
 	#define SHA256_CTX_SIZE sizeof(nrf_cc310_bl_hash_context_sha256_t)
