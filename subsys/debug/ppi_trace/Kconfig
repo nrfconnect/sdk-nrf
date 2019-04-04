@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig PPI_TRACE
+	bool "Enable PPI trace"
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	help
+	  Enable PPI trace module which enables forwarding hardware events to
+	  GPIOs.
+
+if PPI_TRACE
+module = PPI_TRACE
+module-str = PPI trace
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # PPI_TRACE

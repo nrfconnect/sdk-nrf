@@ -27,6 +27,7 @@
 # All subfolders
 /drivers/                                 @anangl
 /ext/                                     @carlescufi
+/include/debug/ppi_trace.h                @nordic-krch
 /include/                                 @anangl @rlubos @pizi-nordic
 /include/bluetooth/                       @joerchan
 /include/drivers/                         @anangl
@@ -57,6 +58,7 @@
 /subsys/nfc/                              @grochu @anangl
 /subsys/partition_manager/                @hakonfam
 /subsys/profiler/                         @pdunaj
+/subsys/debug/ppi_trace/                  @nordic-krch
 /subsys/shell/                            @nordic-krch @jarz-nordic
 /subsys/spm/                              @ioannisg
 /tests/                                   @rakons
