@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.8.2)
-project(nrf-connect-sdk-doc VERSION ${PROJECT_VERSION} LANGUAGES)
+cmake_minimum_required(VERSION 3.13.1)
+project(nrf-connect-sdk-doc LANGUAGES)
 
 set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
