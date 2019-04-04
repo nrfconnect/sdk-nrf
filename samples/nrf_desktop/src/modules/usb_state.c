@@ -267,10 +267,8 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		break;
 
 	case USB_DC_SET_HALT:
-		/* fall through */
 	case USB_DC_CLEAR_HALT:
-		/* Not supported */
-		__ASSERT_NO_MSG(false);
+		/* Ignore */
 		break;
 
 	case USB_DC_ERROR:
