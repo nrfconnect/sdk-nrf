@@ -49,7 +49,7 @@ static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 
 void IPC_IRQHandler(void);
 
-int32_t bsd_os_timedwait(uint32_t context, uint32_t timeout)
+int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
 {
 	/* TODO: to be implemented */
 	return 0;
