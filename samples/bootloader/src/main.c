@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include "debug.h"
 #include <zephyr/types.h>
 #include <toolchain.h>
 #include <misc/util.h>
@@ -14,10 +13,14 @@
 #include "bootloader.h"
 #include "bl_crypto.h"
 #include "fw_metadata.h"
+#include <misc/printk.h>
 
 #include <fprotect.h>
 
 #include <provision.h>
+#ifdef CONFIG_SECURE_BOOT_DEBUG_UART
+#include <nrf_uarte.h>
+#endif
 
 void *memcpy32(void *restrict d, const void *restrict s, size_t n)
 {
@@ -40,8 +43,6 @@ static bool verify_firmware(u32_t address)
 	const struct fw_validation_info *fw_ver_info;
 
 	fw_info = fw_firmware_info_get(address);
-
-	printk("Attempting to boot from address 0x%x.\n\r", address);
 
 	if (!fw_info) {
 		printk("Could not find valid firmware info inside "
@@ -92,13 +93,16 @@ static bool verify_firmware(u32_t address)
 	return true;
 }
 
-void uninit_used_peripherals(void)
+static void uninit_used_peripherals(void)
 {
-	/* We do not want to uninitialize cryptocell as we want to retain the
-	 * root of trust key loaded inside cryptocell.
-	 */
-#ifdef CONFIG_SB_DEBUG_PORT_UART
-	uart_uninit();
+#ifdef CONFIG_SECURE_BOOT_DEBUG_UART
+#ifdef CONFIG_UART_0_NRF_UARTE
+	nrf_uarte_disable(NRF_UARTE0);
+#elif defined(CONFIG_UART_1_NRF_UARTE)
+	nrf_uarte_disable(NRF_UARTE1);
+#elif defined(CONFIG_UART_2_NRF_UARTE)
+	nrf_uarte_disable(NRF_UARTE2);
+#endif
 #endif
 }
 
@@ -111,6 +115,8 @@ extern u32_t _vector_table_pointer;
 
 static void boot_from(u32_t *address)
 {
+	printk("Attempting to boot from address 0x%x.\n\r", (u32_t)address);
+
 	if (!verify_firmware((u32_t)address)) {
 		return;
 	}
@@ -169,11 +175,6 @@ static void boot_from(u32_t *address)
 void z_cstart(void) __attribute__((alias("main")));
 void main(void)
 {
-#if defined(CONFIG_SB_DEBUG_PORT_SEGGER_RTT)
-	SEGGER_RTT_Init();
-#elif defined(CONFIG_SB_DEBUG_PORT_UART)
-	uart_init();
-#endif /* CONFIG_SB_RTT */
 	int err;
 	err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
 	if (err) {

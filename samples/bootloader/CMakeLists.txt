@@ -10,4 +10,3 @@ include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(bootloader)
 
 zephyr_library_sources(src/main.c)
-
