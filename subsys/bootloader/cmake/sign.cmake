@@ -4,30 +4,40 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-set(sign_depends kernel_elf ${KEY_FILE_DEPENDS})
 
-set(hash_file firmware.sha256)
-set(signature_file firmware.signature)
-set(SIGNATURE_PUBLIC_KEY_FILE public.pem)
+#TODO: Detect what kernel_elf to depend on and resolve what
+#      image should be hashed and signed by b0.
+
+set(KERNEL_ELF_TO_BE_SIGNED kernel_elf)
+
+set(GENERATED_FILES_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
+
+# This is needed for make, ninja is able to resolve and create the path but make
+# are not able to resolve it.
+file(MAKE_DIRECTORY ${GENERATED_FILES_PATH})
+
+set(HASH_FILE ${GENERATED_FILES_PATH}/firmware.sha256)
+set(SIGNATURE_FILE ${GENERATED_FILES_PATH}/firmware.signature)
+set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_FILES_PATH}/public.pem)
 
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/fw_info_magic.cmake)
 
-set(hashcmd
+set(HASH_CMD
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/hash.py
   --in ${PROJECT_BINARY_DIR}/${KERNEL_BIN_NAME}
-  > ${hash_file}
+  > ${HASH_FILE}
   )
 
 if (CONFIG_SB_SIGNING_PYTHON)
-  set(signcmd
+  set(SIGN_CMD
     ${PYTHON_EXECUTABLE}
     ${NRF_BOOTLOADER_SCRIPTS}/do_sign.py
     --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
-    --in ${hash_file}
-    > ${signature_file}
+    --in ${HASH_FILE}
+    > ${SIGNATURE_FILE}
     )
-  set(pubgencmd
+  set(PUB_GEN_CMD
     ${PYTHON_EXECUTABLE}
     ${NRF_BOOTLOADER_SCRIPTS}/keygen.py
     --public
@@ -35,30 +45,30 @@ if (CONFIG_SB_SIGNING_PYTHON)
     --out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_OPENSSL)
-  set(signcmd
+  set(SIGN_CMD
     openssl dgst
     -sha256
-    -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${hash_file} |
+    -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${HASH_FILE} |
     ${PYTHON_EXECUTABLE}
     ${NRF_BOOTLOADER_SCRIPTS}/asn1parse.py
     --alg ecdsa
     --contents signature
-    > ${signature_file}
+    > ${SIGNATURE_FILE}
     )
-  set(pubgencmd
+  set(PUB_GEN_CMD
     openssl ec
     -pubout
     -in ${SIGNATURE_PRIVATE_KEY_FILE}
     -out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_CUSTOM)
-  set(signcmd
+  set(SIGN_CMD
     ${CONFIG_SB_SIGNING_COMMAND}
-    ${hash_file}
-    > ${signature_file}
+    ${HASH_FILE}
+    > ${SIGNATURE_FILE}
     )
   set(SIGNATURE_PUBLIC_KEY_FILE ${CONFIG_SB_SIGNING_PUBLIC_KEY})
-  if (signcmd STREQUAL "" OR NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE})
+  if (SIGN_CMD STREQUAL "" OR NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE})
     message(WARNING "You must specify a signing command and valid public key file.")
   endif()
 else ()
@@ -67,17 +77,24 @@ endif()
 
 add_custom_command(
   OUTPUT
-  ${signature_file}
+  ${SIGNATURE_FILE}
   COMMAND
-  ${hashcmd}
+  ${HASH_CMD}
   COMMAND
-  ${signcmd}
+  ${SIGN_CMD}
   DEPENDS
-  ${sign_depends}
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  ${KERNEL_ELF_TO_BE_SIGNED}
+  WORKING_DIRECTORY
+  ${PROJECT_BINARY_DIR}
   COMMENT
   "Creating signature of application"
   USES_TERMINAL
+  )
+
+add_custom_target(
+  signature_file_target
+  DEPENDS
+  ${SIGNATURE_FILE}
   )
 
 if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
@@ -85,14 +102,21 @@ if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
     OUTPUT
     ${SIGNATURE_PUBLIC_KEY_FILE}
     COMMAND
-    ${pubgencmd}
+    ${PUB_GEN_CMD}
     DEPENDS
-    ${sign_depends}
-    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+	${SIGNATURE_PRIVATE_KEY_FILE}
     COMMENT
     "Creating public key from private key used for signing"
+    WORKING_DIRECTORY
+    ${PROJECT_BINARY_DIR}
     USES_TERMINAL
     )
+
+  add_custom_target(
+    signature_public_key_file_target
+    DEPENDS
+    ${SIGNATURE_PUBLIC_KEY_FILE}
+  )
 endif()
 
 add_custom_command(
@@ -104,15 +128,14 @@ add_custom_command(
   --input ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
   --output ${SIGNED_KERNEL_HEX}
   --offset ${CONFIG_FW_VALIDATION_METADATA_OFFSET}
-  --signature ${signature_file}
+  --signature ${SIGNATURE_FILE}
   --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
   --magic-value "${VALIDATION_INFO_MAGIC}"
   --pk-hash-len ${CONFIG_SB_PUBLIC_KEY_HASH_LEN}
   DEPENDS
-  ${sign_depends}
-  ${signature_file}
-  ${SIGNATURE_PUBLIC_KEY_FILE}
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  ${SIGN_KEY_FILE_DEPENDS}
+  WORKING_DIRECTORY
+  ${PROJECT_BINARY_DIR}
   COMMENT
   "Creating validation for ${KERNEL_HEX_NAME}, storing to ${SIGNED_KERNEL_HEX_NAME}"
   USES_TERMINAL
@@ -122,4 +145,6 @@ add_custom_target(
   signed_kernel_hex_target
   DEPENDS
   ${SIGNED_KERNEL_HEX}
+  signature_file_target
+  signature_public_key_file_target
   )

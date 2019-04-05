@@ -11,7 +11,7 @@ endif()
 set(NRF_BOOTLOADER_SCRIPTS ${NRF_DIR}/scripts/bootloader)
 set(PROVISION_HEX_NAME     provision_data.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
-set(SIGNED_KERNEL_HEX      ${CMAKE_BINARY_DIR}/signed_by_b0_${KERNEL_HEX_NAME})
+set(SIGNED_KERNEL_HEX      ${PROJECT_BINARY_DIR}/signed_by_b0_${KERNEL_HEX_NAME})
 
 set_property(
   GLOBAL APPEND PROPERTY
@@ -72,15 +72,19 @@ add_custom_command(
   --provision-addr ${PROVISION_ADDR}
   --public-key-files "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}"
   --output ${PROVISION_HEX}
-  DEPENDS ${PROVISION_DEPENDS}
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  DEPENDS
+  ${PROVISION_KEY_DEPENDS}
+  WORKING_DIRECTORY
+  ${PROJECT_BINARY_DIR}
   COMMENT
   "Creating provision data for Bootloader, storing to ${PROVISION_HEX_NAME}"
   USES_TERMINAL
   )
+
 add_custom_target(
   provision_target
   DEPENDS
   ${PROVISION_HEX}
+  signature_public_key_file_target
   )
 
