@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include "debug.h"
 #include <zephyr/types.h>
 #include <bl_crypto.h>
 #include <fw_metadata.h>
