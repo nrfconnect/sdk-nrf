@@ -31,6 +31,8 @@ manifest:
       url-base: https://github.com/zephyrproject-rtos
     - name: throwtheswitch
       url-base: https://github.com/ThrowTheSwitch
+    - name: armmbed
+      url-base: https://github.com/ARMmbed
 
   # The list of external projects for the nRF Connect SDK.
   #
@@ -47,7 +49,7 @@ manifest:
       revision: ef1f9c3d87474ec3570b1f46e91fd4b54a4fb421
     - name: nrfxlib
       path: nrfxlib
-      revision: 1fdfe09fe8f7f5c7e523753c5244a1e5f49d9035
+      revision: b66f80a8b318b1ef434f32886e4e0cd6d470275b
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
@@ -56,6 +58,9 @@ manifest:
       path: test/cmock/vendor/unity
       revision: 031f3bbe45f8adf504ca3d13e6f093869920b091
       remote: throwtheswitch
+    - name: mbedtls
+      revision: 53546ea099f6f53d0be653a64accd250e170337f
+      remote: armmbed
 
   self:
     path: nrf
