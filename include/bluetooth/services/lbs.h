@@ -7,8 +7,10 @@
 #ifndef BT_GATT_LBS_H_
 #define BT_GATT_LBS_H_
 
-/** @file
- *  @brief LED Button Service (LBS) sample
+/**@file
+ * @defgroup bt_gatt_lbs LED Button Service API
+ * @{
+ * @brief API for the LED Button Service (LBS)
  */
 
 #ifdef __cplusplus
@@ -33,7 +35,7 @@ typedef void (*led_cb_t)(const bool led_state);
 typedef bool (*button_cb_t)(void);
 
 /** @brief Callback struct used by the LBS service */
-struct bt_lbs_cb {
+struct bt_gatt_lbs_cb {
 	led_cb_t    led_cb;
 	button_cb_t button_cb;
 };
@@ -54,7 +56,7 @@ struct bt_lbs_cb {
  * @return Returns 0 if initialization was successful,
  *         otherwise negative value
  */
-int lbs_init(struct bt_lbs_cb *callbacks);
+int bt_gatt_lbs_init(struct bt_gatt_lbs_cb *callbacks);
 
 /** @brief Send button state
  *
@@ -66,10 +68,14 @@ int lbs_init(struct bt_lbs_cb *callbacks);
  * @return Returns 0 if the operation was successful,
  *         otherwise negative value.
  */
-int lbs_send_button_state(bool button_state);
+int bt_gatt_lbs_send_button_state(bool button_state);
 
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* BT_GATT_LBS_H_ */

@@ -174,7 +174,7 @@ static bool app_button_cb(void)
 	return button_state;
 }
 
-static struct bt_lbs_cb lbs_callbacs = {
+static struct bt_gatt_lbs_cb lbs_callbacs = {
 	.led_cb    = app_led_cb,
 	.button_cb = app_button_cb,
 };
@@ -186,7 +186,7 @@ static void bt_ready(int err)
 		return;
 	}
 
-	err = lbs_init(&lbs_callbacs);
+	err = bt_gatt_lbs_init(&lbs_callbacs);
 
 	if (err) {
 		printk("Failed to init LBS (err:%d)\n", err);
@@ -209,7 +209,7 @@ static void button_pressed(struct device *button_port, struct gpio_callback *cb,
 		    u32_t pins)
 {
 	button_state = button_state ^ 0x01;
-	lbs_send_button_state(button_state);
+	bt_gatt_lbs_send_button_state(button_state);
 }
 
 static int init_button(void)

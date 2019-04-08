@@ -13,4 +13,8 @@ config BT_GATT_LBS_POLL_BUTTON
 	  Enable support for button state polling
 	  (button state change notify always supported)
 
+module = BT_GATT_LBS
+module-str = LBS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endif # BT_GATT_LBS
