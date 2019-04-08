@@ -26,6 +26,8 @@ struct bond_find_data {
 };
 
 
+static const struct bt_conn *active_conn;
+
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
 	struct bond_find_data *bond_find_data = user_data;
@@ -87,6 +89,9 @@ static void connected(struct bt_conn *conn, u8_t error)
 		}
 	}
 
+	__ASSERT_NO_MSG(!active_conn);
+	active_conn = conn;
+
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
 	event->state = PEER_STATE_CONNECTED;
@@ -94,6 +99,11 @@ static void connected(struct bt_conn *conn, u8_t error)
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
 	    (info.role == BT_CONN_ROLE_SLAVE)) {
+		/* Security must be enabled after peer event is sent.
+		 * This is to make sure notification events are propagated
+		 * in the right order.
+		 */
+
 		LOG_INF("Set security level");
 		err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
 		if (err) {
@@ -107,7 +117,6 @@ static void connected(struct bt_conn *conn, u8_t error)
 disconnect:
 	LOG_WRN("Disconnect");
 	bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-	bt_conn_unref(conn);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
@@ -118,10 +127,14 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	LOG_INF("Disconnected from %s (reason %u)", log_strdup(addr), reason);
 
-	struct ble_peer_event *event = new_ble_peer_event();
-	event->id = conn;
-	event->state = PEER_STATE_DISCONNECTED;
-	EVENT_SUBMIT(event);
+	if (conn == active_conn) {
+		struct ble_peer_event *event = new_ble_peer_event();
+		event->id = conn;
+		event->state = PEER_STATE_DISCONNECTED;
+		EVENT_SUBMIT(event);
+
+		active_conn = NULL;
+	}
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level)
