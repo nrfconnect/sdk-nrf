@@ -149,7 +149,6 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 				break;
 			}
 		}
-		k_sleep(K_MSEC(10));
 	}
 
 	close(at_socket_fd);
