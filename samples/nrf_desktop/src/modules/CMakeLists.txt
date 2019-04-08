@@ -14,7 +14,7 @@ target_sources_ifdef(CONFIG_DESKTOP_BLE_ADVERTISING_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_BLE_SCANNING_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_scan.c)
 
-target_sources_ifdef(CONFIG_SETTINGS
+target_sources_ifdef(CONFIG_DESKTOP_CONFIG_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/config.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_BLE_SCANNING_ENABLE
@@ -34,3 +34,6 @@ target_sources_ifdef(CONFIG_DESKTOP_POWER_MANAGER_ENABLE
 
 target_sources_ifdef(CONFIG_DESKTOP_SHELL_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/shell.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu.c)

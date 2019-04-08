@@ -9,6 +9,7 @@
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
+#include <bluetooth/gatt.h>
 
 #include "ble_event.h"
 
@@ -138,6 +139,14 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	}
 }
 
+static struct bt_gatt_exchange_params exchange_params;
+
+static void exchange_func(struct bt_conn *conn, u8_t err,
+			  struct bt_gatt_exchange_params *params)
+{
+	LOG_INF("MTU exchange done");
+}
+
 static void security_changed(struct bt_conn *conn, bt_security_t level)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -150,6 +159,22 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	event->id = conn;
 	event->state = PEER_STATE_SECURED;
 	EVENT_SUBMIT(event);
+
+	struct bt_conn_info info;
+
+	int err = bt_conn_get_info(conn, &info);
+	if (err) {
+		LOG_WRN("Cannot get conn info");
+	} else {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL) &&
+		    (info.role == BT_CONN_ROLE_MASTER)) {
+			exchange_params.func = exchange_func;
+			err = bt_gatt_exchange_mtu(conn, &exchange_params);
+			if (err) {
+				LOG_ERR("MTU exchange failed");
+			}
+		}
+	}
 }
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)

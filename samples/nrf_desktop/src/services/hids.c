@@ -176,23 +176,43 @@ static void feature_report_handler(struct bt_gatt_hids_rep const *rep,
 				   struct bt_conn *conn)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		if (rep->size != REPORT_SIZE_USER_CONFIG) {
-			LOG_WRN("Unsupported report size");
+		size_t length = rep->size;
+		u8_t *buffer = rep->data;
+
+		u16_t recipient;
+		u8_t  event_id;
+		u8_t  event_data_len;
+
+		const size_t min_size = sizeof(recipient) + sizeof(event_id) +
+					sizeof(event_data_len);
+		const size_t max_size = REPORT_SIZE_USER_CONFIG;
+
+		static_assert(min_size < max_size, "");
+
+		if ((length < min_size) || (length > max_size)) {
+			LOG_WRN("Unsupported report length %zu", length);
 			return;
 		}
 
-		u16_t recipient = sys_get_le16(&rep->data[0]);
+		size_t pos = 0;
+		recipient = sys_get_le16(&buffer[pos]);
+		pos += sizeof(recipient);
+
+		event_id = buffer[pos];
+		pos += sizeof(event_id);
+
+		event_data_len = buffer[pos];
+		pos += sizeof(event_data_len);
+
 		if (recipient != CONFIG_BT_GATT_DIS_PNP_PID) {
-			LOG_WRN("Drop event addressed to %x", recipient);
+			LOG_WRN("Unsupported recipient %" PRIx16, recipient);
 			return;
 		}
 
-		struct config_event *event = new_config_event();
+		struct config_event *event = new_config_event(event_data_len);
 
-		event->id = rep->data[sizeof(recipient)];
-		memcpy(event->data,
-		       &rep->data[sizeof(recipient) + sizeof(event->id)],
-		       sizeof(event->data));
+		event->id = event_id;
+		memcpy(event->dyndata.data, &buffer[pos], event_data_len);
 		event->store_needed = true;
 
 		EVENT_SUBMIT(event);

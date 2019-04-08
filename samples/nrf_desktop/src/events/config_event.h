@@ -20,20 +20,56 @@
 extern "C" {
 #endif
 
-#define DATA_SIZE_USER_CONFIG 4
 
-#if (REPORT_SIZE_USER_CONFIG <= DATA_SIZE_USER_CONFIG)
-#error "Invalid size of report"
-#endif
+/* Config event ID macros */
+#define GROUP_FIELD_POS		6
+#define GROUP_FIELD_SIZE	2
+#define GROUP_FIELD_MASK	BIT_MASK(GROUP_FIELD_SIZE)
+#define GROUP_FIELD_SET(group)	((group & GROUP_FIELD_MASK) << GROUP_FIELD_POS)
+#define GROUP_FIELD_GET(event_id) ((event_id >> GROUP_FIELD_POS) & GROUP_FIELD_MASK)
 
-enum config_event_id {
-	CONFIG_EVENT_ID_MOTION_CPI = 0,
-	CONFIG_EVENT_ID_MOTION_DOWNSHIFT_RUN = 1,
-	CONFIG_EVENT_ID_MOTION_DOWNSHIFT_REST1 = 2,
-	CONFIG_EVENT_ID_MOTION_DOWNSHIFT_REST2 = 3,
+#define TYPE_FIELD_POS		0
+#define TYPE_FIELD_SIZE		6
+#define TYPE_FIELD_MASK		BIT_MASK(TYPE_FIELD_SIZE)
+#define TYPE_FIELD_SET(type)	((type & TYPE_FIELD_MASK) << TYPE_FIELD_POS)
+#define TYPE_FIELD_GET(event_id) ((event_id >> TYPE_FIELD_POS) & TYPE_FIELD_MASK)
 
-	CONFIG_EVENT_ID_MAX
-};
+#define CONFIG_EVENT_ID(group, type) ((u8_t)(GROUP_FIELD_SET(group) | \
+					     TYPE_FIELD_SET(type)))
+
+#define EVENT_GROUP_SETUP	0x1
+#define EVENT_GROUP_DFU		0x2
+
+
+/* Config event, setup group macros */
+
+#define MOD_FIELD_POS		3
+#define MOD_FIELD_SIZE		3
+#define MOD_FIELD_MASK		BIT_MASK(MOD_FIELD_SIZE)
+#define MOD_FIELD_SET(module)	((module & MOD_FIELD_MASK) << MOD_FIELD_POS)
+#define MOD_FIELD_GET(event_id) ((event_id >> MOD_FIELD_POS) & MOD_FIELD_MASK)
+
+#define OPT_FIELD_POS		0
+#define OPT_FIELD_SIZE		3
+#define OPT_FIELD_MASK		BIT_MASK(OPT_FIELD_SIZE)
+#define OPT_FIELD_SET(option)	((option & OPT_FIELD_MASK) << OPT_FIELD_POS)
+#define OPT_FIELD_GET(event_id) ((event_id >> OPT_FIELD_POS) & OPT_FIELD_MASK)
+
+#define SETUP_EVENT_ID(module, option) CONFIG_EVENT_ID(EVENT_GROUP_SETUP, \
+						       MOD_FIELD_SET(module) | OPT_FIELD_SET(option))
+
+#define SETUP_MODULE_SENSOR	0x1
+#define SETUP_MODULE_LED	0x2
+
+
+/* Config event, setup group, sensor module macros */
+#define SENSOR_OPT_CPI			0x0
+#define SENSOR_OPT_DOWNSHIFT_RUN	0x1
+#define SENSOR_OPT_DOWNSHIFT_REST1	0x2
+#define SENSOR_OPT_DOWNSHIFT_REST2	0x3
+#define SENSOR_OPT_COUNT 4
+
+
 
 /** @brief Configuration channel event.
  * Used to change firmware parameters at runtime.
@@ -41,12 +77,12 @@ enum config_event_id {
 struct config_event {
 	struct event_header header;
 
-	enum config_event_id id;
-	u8_t data[DATA_SIZE_USER_CONFIG];
+	u8_t id;
 	bool store_needed;
+	struct event_dyndata dyndata;
 };
 
-EVENT_TYPE_DECLARE(config_event);
+EVENT_TYPE_DYNDATA_DECLARE(config_event);
 
 
 /** @brief Configuration channel forward event.
@@ -56,16 +92,16 @@ struct config_forward_event {
 	struct event_header header;
 
 	u16_t recipient;
-	enum config_event_id id;
-	u8_t data[DATA_SIZE_USER_CONFIG];
+	u8_t id;
+	struct event_dyndata dyndata;
 };
 
-EVENT_TYPE_DECLARE(config_forward_event);
+EVENT_TYPE_DYNDATA_DECLARE(config_forward_event);
 
 
 enum forward_status {
-	FORWARD_STATUS_PENDING,
 	FORWARD_STATUS_SUCCESS,
+	FORWARD_STATUS_PENDING,
 	FORWARD_STATUS_WRITE_ERROR,
 	FORWARD_STATUS_DISCONNECTED_ERROR,
 };

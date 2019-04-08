@@ -18,7 +18,7 @@ extern "C" {
 #define REPORT_SIZE_MOUSE_BOOT	3 /* bytes */
 #define REPORT_SIZE_KEYBOARD	9 /* bytes */
 #define REPORT_SIZE_MPLAYER	1 /* bytes */
-#define REPORT_SIZE_USER_CONFIG	7 /* bytes */
+#define REPORT_SIZE_USER_CONFIG	28 /* bytes */
 
 #define USAGE_PAGE_MOUSE_XY		0x01
 #define USAGE_PAGE_MOUSE_WHEEL		0x01

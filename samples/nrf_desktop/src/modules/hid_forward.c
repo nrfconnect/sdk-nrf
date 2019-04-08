@@ -256,6 +256,9 @@ static bool event_handler(const struct event_header *eh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		if (is_config_forward_event(eh)) {
+			const struct config_forward_event *event =
+				cast_config_forward_event(eh);
+
 			if (!bt_gatt_hids_c_ready_check(&hidc)) {
 				LOG_WRN("Cannot forward, peer disconnected");
 
@@ -273,17 +276,43 @@ static bool event_handler(const struct event_header *eh)
 				return false;
 			}
 
-			const struct config_forward_event *event = cast_config_forward_event(eh);
+			if (event->dyndata.size > UCHAR_MAX) {
+				LOG_ERR("Event data too big");
+				__ASSERT_NO_MSG(false);
+				return false;
+			}
 
-			u8_t data[REPORT_SIZE_USER_CONFIG];
+			u8_t event_data_len = event->dyndata.size;
 
-			memcpy(&data[0], &event->recipient, sizeof(event->recipient));
-			data[sizeof(event->recipient)] = event->id;
-			memcpy(&data[sizeof(event->recipient) + sizeof(event->id)],
-				event->data, sizeof(event->data));
+			const size_t min_size = sizeof(event->recipient) +
+						sizeof(event->id) +
+						sizeof(event_data_len);
+
+			u8_t report[REPORT_SIZE_USER_CONFIG];
+
+			static_assert(min_size <= sizeof(report), "");
+
+			if (sizeof(report) < min_size + event_data_len) {
+				LOG_ERR("Event data won't fit to report");
+				__ASSERT_NO_MSG(false);
+				return false;
+			}
+
+			size_t pos = 0;
+
+			sys_put_le16(event->recipient, &report[pos]);
+			pos += sizeof(event->recipient);
+
+			report[pos] = event->id;
+			pos += sizeof(event->id);
+
+			report[pos] = event_data_len;
+			pos += sizeof(event_data_len);
+
+			memcpy(&report[pos], event->dyndata.data, event_data_len);
 
 			int err = bt_gatt_hids_c_rep_write(&hidc, config_rep,
-					hidc_write_cb, data, sizeof(data));
+					hidc_write_cb, report, sizeof(report));
 			if (err) {
 				LOG_ERR("Writing report failed, err:%d", err);
 				notify_config_forwarded(FORWARD_STATUS_WRITE_ERROR);
