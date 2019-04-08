@@ -24,6 +24,7 @@
 #define ADP536X_CHG_STATUS_2				0x09
 #define ADP536X_BAT_PROTECT_CTRL			0x11
 #define ADP536X_BAT_OC_CHG				0x15
+#define ADP536X_BUCK_CFG				0x29
 #define ADP536X_BUCK_OUTPUT				0x2A
 #define ADP536X_BUCKBST_CFG				0x2B
 #define ADP536X_BUCKBST_OUTPUT				0x2C
@@ -111,6 +112,10 @@
 #define ADP536X_BAT_OC_CHG_OC_CHG(x)			(((x) & 0x07) << 5)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG_MSK		GENMASK(4, 3)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG(x)		(((x) & 0x03) << 3)
+
+/* Buck configure register. */
+#define ADP536X_BUCK_CFG_DISCHG_BUCK_MSK		BIT(1)
+#define ADP536X_BUCK_CFG_DISCHG_BUCK(x)			(((x) & 0x01) << 1)
 
 /* Buck output voltage setting register. */
 #define ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK		GENMASK(5, 0)
@@ -237,6 +242,13 @@ int adp536x_buck_1v8_set(void)
 	return adp536x_reg_write_mask(ADP536X_BUCK_OUTPUT,
 					ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK,
 					ADP536X_BUCK_OUTPUT_VOUT_BUCK(value));
+}
+
+int adp536x_buck_discharge_set(bool enable)
+{
+	return adp536x_reg_write_mask(ADP536X_BUCK_CFG,
+				ADP536X_BUCK_CFG_DISCHG_BUCK_MSK,
+				ADP536X_BUCK_CFG_DISCHG_BUCK(enable));
 }
 
 int adp536x_buckbst_3v3_set(void)

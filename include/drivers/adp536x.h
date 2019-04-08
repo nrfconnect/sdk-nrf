@@ -183,4 +183,14 @@ int adp536x_factory_reset(void);
  */
 int adp536x_oc_chg_current_set(u8_t value);
 
+/**
+ * @brief Set the buck discharge resistor status.
+ *
+ * @param[in] enable Boolean value to enable or disable the discharge resistor.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_buck_discharge_set(bool enable);
+
 #endif /* ADP536X_H_ */
