@@ -28,7 +28,7 @@ static struct sockaddr_storage broker;
 static bool connected;
 
 /* File descriptor */
-struct pollfd fds;
+static struct pollfd fds;
 
 #if defined(CONFIG_BSD_LIBRARY)
 
@@ -75,7 +75,7 @@ static int data_publish(struct mqtt_client *c, enum mqtt_qos qos,
 	param.dup_flag = 0;
 	param.retain_flag = 0;
 
-	data_print("Publish: ", data, len);
+	data_print("Publishing: ", data, len);
 	printk("to topic: %s len: %u\n",
 		CONFIG_MQTT_PUB_TOPIC,
 		(unsigned int)strlen(CONFIG_MQTT_PUB_TOPIC));
@@ -122,13 +122,20 @@ static int publish_get_payload(struct mqtt_client *c, size_t length)
 		int ret = mqtt_read_publish_payload(c, buf, end - buf);
 
 		if (ret < 0) {
-			if (ret == -EAGAIN) {
-				printk("mqtt_read_publish_payload: EAGAIN");
-				poll(&fds, 1, K_FOREVER);
-				continue;
+			int err;
+
+			if (ret != -EAGAIN) {
+				return ret;
 			}
 
-			return ret;
+			printk("mqtt_read_publish_payload: EAGAIN\n");
+
+			err = poll(&fds, 1, K_SECONDS(CONFIG_MQTT_KEEPALIVE));
+			if (err > 0 && (fds.revents & POLLIN) == POLLIN) {
+				continue;
+			} else {
+				return -EIO;
+			}
 		}
 
 		if (ret == 0) {
@@ -181,6 +188,12 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 				payload_buf, p->message.payload.len);
 		} else {
 			printk("mqtt_read_publish_payload: Failed! %d\n", err);
+			printk("Disconnecting MQTT client...\n");
+
+			err = mqtt_disconnect(c);
+			if (err) {
+				printk("Could not disconnect: %d\n", err);
+			}
 		}
 	} break;
 
@@ -354,18 +367,41 @@ void main(void)
 	}
 
 	while (1) {
-		err = mqtt_input(&client);
-		if (err != 0) {
-			printk("ERROR: mqtt_input %d\n", err);
+		err = poll(&fds, 1, K_SECONDS(CONFIG_MQTT_KEEPALIVE));
+		if (err < 0) {
+			printk("ERROR: poll %d\n", errno);
+			break;
 		}
 
 		err = mqtt_live(&client);
 		if (err != 0) {
 			printk("ERROR: mqtt_live %d\n", err);
+			break;
 		}
 
-		if (poll(&fds, 1, K_SECONDS(CONFIG_MQTT_KEEPALIVE)) < 0) {
-			printk("ERROR: poll %d\n", errno);
+		if ((fds.revents & POLLIN) == POLLIN) {
+			err = mqtt_input(&client);
+			if (err != 0) {
+				printk("ERROR: mqtt_input %d\n", err);
+				break;
+			}
 		}
+
+		if ((fds.revents & POLLERR) == POLLERR) {
+			printk("POLLERR\n");
+			break;
+		}
+
+		if ((fds.revents & POLLNVAL) == POLLNVAL) {
+			printk("POLLNVAL\n");
+			break;
+		}
+	}
+
+	printk("Disconnecting MQTT client...\n");
+
+	err = mqtt_disconnect(&client);
+	if (err) {
+		printk("Could not disconnect MQTT client. Error: %d\n", err);
 	}
 }
