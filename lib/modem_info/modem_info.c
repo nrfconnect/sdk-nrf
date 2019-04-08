@@ -437,10 +437,6 @@ static void modem_info_rsrp_subscribe_thread(void *arg1, void *arg2, void *arg3)
 		if (err < 0) {
 			LOG_ERR("Poll error: %d\n", err);
 			continue;
-		} else if (err == 0) {
-			LOG_DBG("Timeout");
-			k_sleep(200);
-			continue;
 		}
 
 		k_mutex_lock(&socket_mutex, K_FOREVER);
@@ -493,4 +489,3 @@ int modem_info_init(void)
 
 	return err;
 }
-
