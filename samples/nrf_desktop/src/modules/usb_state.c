@@ -65,57 +65,75 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 		size_t length = *len;
 		const u8_t *buffer = *data;
 
-		if (length > 0) {
-			if (buffer[0] != REPORT_ID_USER_CONFIG) {
-				LOG_WRN("Unsupported report ID");
-				return -ENOTSUP;
-			}
+		u8_t  report_id;
+		u16_t recipient;
+		u8_t  event_id;
+		u8_t  event_data_len;
 
-			if (length != (REPORT_SIZE_USER_CONFIG + 1)) {
-				LOG_WRN("Unsupported report size");
-				return -ENOTSUP;
-			}
+		const size_t min_size = sizeof(report_id) + sizeof(recipient) +
+					sizeof(event_id) + sizeof(event_data_len);
+		const size_t max_size = sizeof(report_id) + REPORT_SIZE_USER_CONFIG;
 
-			u16_t recipient = sys_get_le16(&buffer[1]);
+		static_assert(min_size < max_size, "");
 
-			if (recipient == CONFIG_USB_DEVICE_PID) {
-				/* Event intended for this device */
-				struct config_event *event = new_config_event();
+		if ((length < min_size) || (length > max_size)) {
+			LOG_WRN("Unsupported report length %zu", length);
+			return -ENOTSUP;
+		}
 
-				static_assert(REPORT_SIZE_USER_CONFIG >=
-					(sizeof(event->id) +
-					sizeof(event->data)),
-					"Incorrect report size");
+		if (atomic_get(&forward_status) == FORWARD_STATUS_PENDING) {
+			LOG_WRN("Busy forwarding");
+			return -EBUSY;
+		}
 
-				event->id = buffer[1 + sizeof(recipient)];
-				memcpy(event->data,
-				       &buffer[1 + sizeof(recipient) + sizeof(event->id)],
-				       sizeof(event->data));
-				event->store_needed = true;
+		size_t pos = 0;
+		report_id = buffer[pos];
+		pos += sizeof(report_id);
 
-				atomic_set(&forward_status, FORWARD_STATUS_SUCCESS);
+		recipient = sys_get_le16(&buffer[pos]);
+		pos += sizeof(recipient);
 
-				EVENT_SUBMIT(event);
-			} else {
-				/* Forward event */
-				struct config_forward_event *event = new_config_forward_event();
+		event_id = buffer[pos];
+		pos += sizeof(event_id);
 
-				static_assert(REPORT_SIZE_USER_CONFIG >=
-					(sizeof(event->recipient) +
-					sizeof(event->id) +
-					sizeof(event->data)),
-					"Incorrect report size");
+		event_data_len = buffer[pos];
+		pos += sizeof(event_data_len);
 
-				event->recipient = recipient;
-				event->id = buffer[1 + sizeof(event->recipient)];
-				memcpy(event->data,
-				       &buffer[1 + sizeof(event->recipient) + sizeof(event->id)],
-				       sizeof(event->data));
+		if (report_id != REPORT_ID_USER_CONFIG) {
+			LOG_WRN("Unsupported report ID %" PRIu8, report_id);
+			return -ENOTSUP;
+		}
 
-				atomic_set(&forward_status, FORWARD_STATUS_PENDING);
+		if (event_data_len > max_size - min_size) {
+			LOG_WRN("Unsupported event data length %" PRIu8,
+				event_data_len);
+			return -ENOTSUP;
+		}
 
-				EVENT_SUBMIT(event);
-			}
+		if (recipient == CONFIG_USB_DEVICE_PID) {
+			struct config_event *event =
+				new_config_event(event_data_len);
+
+			memcpy(event->dyndata.data, &buffer[pos], event_data_len);
+			event->id = event_id;
+			event->store_needed = true;
+
+			atomic_set(&forward_status, FORWARD_STATUS_SUCCESS);
+
+			EVENT_SUBMIT(event);
+		} else {
+			LOG_INF("Forwarding event to %" PRIx16, recipient);
+
+			struct config_forward_event *event =
+				new_config_forward_event(event_data_len);
+
+			event->recipient = recipient;
+			event->id = event_id;
+			memcpy(event->dyndata.data, &buffer[pos], event_data_len);
+
+			atomic_set(&forward_status, FORWARD_STATUS_PENDING);
+
+			EVENT_SUBMIT(event);
 		}
 	}
 

@@ -18,16 +18,21 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_LOG_LEVEL);
 
-#define KEY_LEN 9
+#define KEY_LEN 11
 
 /* Array of pointers to data loaded from settings */
-static struct config_event *loaded_data[CONFIG_EVENT_ID_MAX];
+#define LOADED_DATA_MAX SENSOR_OPT_COUNT
+static struct config_event *loaded_data[LOADED_DATA_MAX];
 
-static bool config_id_is_supported(u8_t id)
+
+static bool config_id_is_supported(u8_t event_id)
 {
+	if (GROUP_FIELD_GET(event_id) != EVENT_GROUP_SETUP) {
+		return false;
+	}
+
 	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_OPTICAL_ENABLE)) {
-		if ((id >= CONFIG_EVENT_ID_MOTION_CPI) &&
-		    (id <= CONFIG_EVENT_ID_MOTION_DOWNSHIFT_REST2)) {
+		if (MOD_FIELD_GET(event_id) == SETUP_MODULE_SENSOR) {
 			return true;
 		}
 	}
@@ -55,19 +60,43 @@ static int settings_set(int argc, char **argv, void *val_ctx)
 		return 0;
 	}
 
-	if (!loaded_data[id]) {
-		loaded_data[id] = new_config_event();
-		loaded_data[id]->id = id;
-		/* Do not store nor forward loaded config to other devices */
-		loaded_data[id]->store_needed = false;
+	size_t data_size = 0;
+	int len = settings_val_read_cb(val_ctx, &data_size, sizeof(data_size));
+
+	if (len != sizeof(data_size)) {
+		LOG_ERR("Can't read config data size (id:%u err:%d)", id, len);
+		return -EFAULT;
 	}
 
-	int len = settings_val_read_cb(val_ctx, loaded_data[id]->data,
-				       sizeof(loaded_data[id]->data));
-	if (len != sizeof(loaded_data[id]->data)) {
+	struct config_event **slot = NULL;
+	for (size_t i = 0; i < ARRAY_SIZE(loaded_data); i++) {
+		if (loaded_data[i] && (loaded_data[i]->id == id)) {
+			slot = &loaded_data[i];
+			break;
+		} else if (!loaded_data[i]) {
+			slot = &loaded_data[i];
+		}
+	}
+	if (!slot) {
+		LOG_ERR("No place to load configuration");
+		return -EFAULT;
+	}
+
+	if (!(*slot)) {
+		(*slot) = new_config_event(data_size);
+		(*slot)->id = id;
+		/* Do not store nor forward loaded config to other devices */
+		(*slot)->store_needed = false;
+	} else if ((*slot)->dyndata.size != data_size) {
+		LOG_ERR("Config size mismatch");
+		return -EFAULT;
+	}
+
+	len = settings_val_read_cb(val_ctx, (*slot)->dyndata.data, data_size);
+	if (len != data_size) {
 		LOG_ERR("Can't read config (id:%u err:%d)", id, len);
-		k_free(loaded_data[id]);
-		loaded_data[id] = NULL;
+		k_free(*slot);
+		*slot = NULL;
 		return len;
 	}
 
@@ -79,13 +108,13 @@ static int commit(void)
 	/* All settings loaded, including FCB duplicates.
 	 * We can apply values to application.
 	 */
-	for (u8_t id = 0; id < CONFIG_EVENT_ID_MAX; id++) {
-		if (!loaded_data[id]) {
+	for (size_t i = 0; i < ARRAY_SIZE(loaded_data); i++) {
+		if (!loaded_data[i]) {
 			continue;
 		}
 
-		EVENT_SUBMIT(loaded_data[id]);
-		loaded_data[id] = NULL;
+		EVENT_SUBMIT(loaded_data[i]);
+		loaded_data[i] = NULL;
 	}
 
 	return 0;
@@ -100,8 +129,13 @@ static void update_config(const u8_t config_id, u8_t *data, size_t size)
 	if (err < 0) {
 		LOG_ERR("Creating key failed");
 	} else {
+		u8_t cfg_data[sizeof(size) + size];
+
+		memcpy(&cfg_data[0], &size, sizeof(size));
+		memcpy(&cfg_data[sizeof(size)], data, size);
+
 		LOG_INF("Store %s", log_strdup(key));
-		err = settings_save_one(key, data, size);
+		err = settings_save_one(key, cfg_data, sizeof(cfg_data));
 		if (err) {
 			LOG_ERR("Cannot store err %d", err);
 		}
@@ -211,9 +245,10 @@ static bool event_handler(const struct event_header *eh)
 			/* Accept only events coming from transport. Do not
 			 * write already stored information.
 			 */
-			if (event->store_needed) {
-				update_config(event->id, event->data,
-					      sizeof(event->data));
+			if (event->store_needed &&
+			    config_id_is_supported(event->id)) {
+				update_config(event->id, event->dyndata.data,
+					      event->dyndata.size);
 			}
 
 			return false;

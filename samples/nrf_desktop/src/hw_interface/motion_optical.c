@@ -172,7 +172,7 @@ static atomic_t sensor_downshift_rest1;
 static atomic_t sensor_downshift_rest2;
 
 struct config_options {
-	u16_t cpi;
+	u32_t cpi;
 	u32_t time_run;
 	u32_t time_rest1;
 	u32_t time_rest2;
@@ -426,7 +426,7 @@ error:
 	return err;
 }
 
-static void update_cpi(u16_t cpi)
+static void update_cpi(u32_t cpi)
 {
 	/* Set resolution with CPI step of 100 cpi
 	 * 0x00: 100 cpi (minimum cpi)
@@ -752,36 +752,63 @@ error:
 	return err;
 }
 
-static void update_config(const u8_t config_id, const u8_t *data)
+static void update_config(const u8_t config_id, const u8_t *data, size_t size)
 {
-	switch (config_id) {
-	case CONFIG_EVENT_ID_MOTION_CPI:
-		atomic_set(&sensor_cpi, sys_get_le16(data));
-		break;
+	struct config_options *options;
 
-	case CONFIG_EVENT_ID_MOTION_DOWNSHIFT_RUN:
-		atomic_set(&sensor_downshift_run, sys_get_le32(data));
-		break;
-
-	case CONFIG_EVENT_ID_MOTION_DOWNSHIFT_REST1:
-		atomic_set(&sensor_downshift_rest1, sys_get_le32(data));
-		break;
-
-	case CONFIG_EVENT_ID_MOTION_DOWNSHIFT_REST2:
-		atomic_set(&sensor_downshift_rest2, sys_get_le32(data));
-		break;
-
-	default:
+	if ((GROUP_FIELD_GET(config_id) != EVENT_GROUP_SETUP) ||
+	    (MOD_FIELD_GET(config_id) != SETUP_MODULE_SENSOR)) {
 		/* Not for us */
 		return;
 	}
 
+	switch (OPT_FIELD_GET(config_id)) {
+	case SENSOR_OPT_CPI:
+		if (size == sizeof(options->cpi)) {
+			atomic_set(&sensor_cpi, sys_get_le32(data));
+		} else {
+			goto error;
+		}
+		break;
+
+	case SENSOR_OPT_DOWNSHIFT_RUN:
+		if (size == sizeof(options->time_run)) {
+			atomic_set(&sensor_downshift_run, sys_get_le32(data));
+		} else {
+			goto error;
+		}
+		break;
+
+	case SENSOR_OPT_DOWNSHIFT_REST1:
+		if (size == sizeof(options->time_rest1)) {
+			atomic_set(&sensor_downshift_rest1, sys_get_le32(data));
+		} else {
+			goto error;
+		}
+		break;
+
+	case SENSOR_OPT_DOWNSHIFT_REST2:
+		if (size == sizeof(options->time_rest2)) {
+			atomic_set(&sensor_downshift_rest2, sys_get_le32(data));
+		} else {
+			goto error;
+		}
+		break;
+
+	default:
+		goto error;
+	}
+
 	k_sem_give(&sem);
+
+error:
+	LOG_WRN("Unsupported sensor option (%" PRIu8 ") or wrong size (%zu)",
+		config_id, size);
 }
 
 static void write_config(struct config_options *options)
 {
-	u16_t new_cpi = atomic_get(&sensor_cpi);
+	u32_t new_cpi = atomic_get(&sensor_cpi);
 	if (new_cpi != options->cpi) {
 		options->cpi = new_cpi;
 		update_cpi(options->cpi);
@@ -985,7 +1012,8 @@ static bool event_handler(const struct event_header *eh)
 			const struct config_event *event =
 				cast_config_event(eh);
 
-			update_config(event->id, event->data);
+			update_config(event->id, event->dyndata.data,
+				      event->dyndata.size);
 
 			return false;
 		}
