@@ -90,6 +90,7 @@ extern "C" {
 	static inline struct ename *_CONCAT(new_, ename)(void)		\
 	{								\
 		struct ename *event = k_malloc(sizeof(*event));		\
+		static_assert(offsetof(struct ename, header) == 0, "");	\
 		if (unlikely(!event)) {					\
 			printk("Event Manager OOM error\n");		\
 			LOG_PANIC();					\
@@ -97,6 +98,30 @@ extern "C" {
 			return NULL;					\
 		}							\
 		event->header.type_id = _EVENT_ID(ename);		\
+		return event;						\
+	}
+
+
+/* Macro generates a function of name new_ename where ename is provided as
+ * an argument. Allocator function is used to create an event of the given
+ * ename type.
+ */
+#define _EVENT_ALLOCATOR_DYNDATA_FN(ename)				\
+	static inline struct ename *_CONCAT(new_, ename)(size_t size)	\
+	{								\
+		struct ename *event = k_malloc(sizeof(*event) + size);	\
+		static_assert((offsetof(struct ename, dyndata) +	\
+			       sizeof(event->dyndata.size)) ==		\
+			      sizeof(*event), "");			\
+		static_assert(offsetof(struct ename, header) == 0, "");	\
+		if (unlikely(!event)) {					\
+			printk("Event Manager OOM error\n");		\
+			LOG_PANIC();					\
+			sys_reboot(SYS_REBOOT_WARM);			\
+			return NULL;					\
+		}							\
+		event->header.type_id = _EVENT_ID(ename);		\
+		event->dyndata.size = size;				\
 		return event;						\
 	}
 
@@ -175,12 +200,21 @@ extern "C" {
 	}
 
 
-#define _EVENT_TYPE_DECLARE(ename)					\
+#define _EVENT_TYPE_DECLARE_COMMON(ename)				\
 	extern const struct event_type _CONCAT(__event_type_, ename);	\
 	_EVENT_SUBSCRIBERS_DECLARE(ename);				\
-	_EVENT_ALLOCATOR_FN(ename);					\
 	_EVENT_CASTER_FN(ename);					\
 	_EVENT_TYPECHECK_FN(ename)
+
+
+#define _EVENT_TYPE_DECLARE(ename)					\
+	_EVENT_TYPE_DECLARE_COMMON(ename);				\
+	_EVENT_ALLOCATOR_FN(ename)
+
+
+#define _EVENT_TYPE_DYNDATA_DECLARE(ename)				\
+	_EVENT_TYPE_DECLARE_COMMON(ename);				\
+	_EVENT_ALLOCATOR_DYNDATA_FN(ename)
 
 
 #define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct)							\
