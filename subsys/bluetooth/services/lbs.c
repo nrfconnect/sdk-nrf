@@ -24,10 +24,14 @@
 
 #include <bluetooth/services/lbs.h>
 
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(bt_gatt_lbs, CONFIG_BT_GATT_LBS_LOG_LEVEL);
+
 static struct bt_gatt_ccc_cfg lbslc_ccc_cfg[BT_GATT_CCC_MAX];
 static bool                   notify_enabled;
 static bool                   button_state;
-static struct bt_lbs_cb       lbs_cb;
+static struct bt_gatt_lbs_cb       lbs_cb;
 
 #define BT_UUID_LBS           BT_UUID_DECLARE_128(LBS_UUID_SERVICE)
 #define BT_UUID_LBS_BUTTON    BT_UUID_DECLARE_128(LBS_UUID_BUTTON_CHAR)
@@ -44,6 +48,8 @@ static ssize_t write_led(struct bt_conn *conn,
 			 const void *buf,
 			 u16_t len, u16_t offset, u8_t flags)
 {
+	LOG_DBG("Attribute write, handle: %u, conn: %p", attr->handle, conn);
+
 	if (lbs_cb.led_cb) {
 		lbs_cb.led_cb(*(bool *)buf);
 	}
@@ -59,6 +65,8 @@ static ssize_t read_button(struct bt_conn *conn,
 			  u16_t offset)
 {
 	const char *value = attr->user_data;
+
+	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle, conn);
 
 	if (lbs_cb.button_cb) {
 		button_state = lbs_cb.button_cb();
@@ -92,7 +100,7 @@ static struct bt_gatt_attr attrs[] = {
 
 static struct bt_gatt_service lbs_svc = BT_GATT_SERVICE(attrs);
 
-int lbs_init(struct bt_lbs_cb *callbacks)
+int bt_gatt_lbs_init(struct bt_gatt_lbs_cb *callbacks)
 {
 	if (callbacks) {
 		lbs_cb.led_cb    = callbacks->led_cb;
@@ -102,7 +110,7 @@ int lbs_init(struct bt_lbs_cb *callbacks)
 	return bt_gatt_service_register(&lbs_svc);
 }
 
-int lbs_send_button_state(bool button_state)
+int bt_gatt_lbs_send_button_state(bool button_state)
 {
 	if (!notify_enabled) {
 		return -EACCES;
