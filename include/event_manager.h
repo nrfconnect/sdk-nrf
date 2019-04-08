@@ -68,6 +68,20 @@ struct event_header {
 };
 
 
+/** @brief Dynamic event data.
+ *
+ * When defining an event structure, the dynamic event data
+ * must be placed as the last field.
+ */
+struct event_dyndata {
+	/** Size of the dynamic data. */
+	size_t size;
+
+	/** Dynamic data. */
+	u8_t data[0];
+};
+
+
 /** @brief Event listener.
  *
  * All event listeners must be defined using @ref EVENT_LISTENER.
@@ -210,6 +224,17 @@ extern const struct event_type __stop_event_types[];
  * @param ename  Name of the event.
  */
 #define EVENT_TYPE_DECLARE(ename) _EVENT_TYPE_DECLARE(ename)
+
+
+/** Declare an event type with dynamic data size.
+ *
+ * This macro provides declarations required for an event to be used
+ * by other modules.
+ * Declared event will use dynamic data.
+ *
+ * @param ename  Name of the event.
+ */
+#define EVENT_TYPE_DYNDATA_DECLARE(ename) _EVENT_TYPE_DYNDATA_DECLARE(ename)
 
 
 /** Define an event type.
