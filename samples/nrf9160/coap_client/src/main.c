@@ -221,21 +221,46 @@ static void modem_configure(void)
 #endif
 }
 
+/* Returns 0 if data is available.
+ * Returns -EAGAIN if timeout occured and there is no data.
+ * Returns other, negative error code in case of poll error.
+ */
 static int wait(int timeout)
 {
 	int ret = poll(&fds, 1, timeout);
 
 	if (ret < 0) {
 		printk("poll error: %d\n", errno);
+		return -errno;
 	}
 
-	return ret;
+	if (ret == 0) {
+		/* Timeout. */
+		return -EAGAIN;
+	}
+
+	if ((fds.revents & POLLERR) == POLLERR) {
+		printk("wait: POLLERR\n");
+		return -EIO;
+	}
+
+	if ((fds.revents & POLLNVAL) == POLLNVAL) {
+		printk("wait: POLLNVAL\n");
+		return -EBADF;
+	}
+
+	if ((fds.revents & POLLIN) != POLLIN) {
+		return -EAGAIN;
+	}
+
+	return 0;
 }
 
 void main(void)
 {
 	s64_t next_msg_time = APP_COAP_SEND_INTERVAL_MS;
 	s64_t next_tick_time = APP_COAP_TICK_INTERVAL_MS;
+	int err;
 
 	printk("The nRF CoAP client sample started\n");
 
@@ -258,7 +283,10 @@ void main(void)
 		}
 
 		if (k_uptime_get() >= next_msg_time) {
-			client_get_send();
+			if (client_get_send() != 0) {
+				printk("Failed to send GET request.\n");
+			}
+
 			next_msg_time += APP_COAP_SEND_INTERVAL_MS;
 		}
 
@@ -268,9 +296,16 @@ void main(void)
 			remaining = 0;
 		}
 
-		if (wait(remaining) > 0) {
-			coap_input();
+		err = wait(remaining);
+		if (err < 0) {
+			if (err == -EAGAIN) {
+				continue;
+			}
+
+			return;
 		}
+
+		coap_input();
 
 		/* A workaround for incomplete bsd_os_timedwait implementation. */
 		k_sleep(K_MSEC(10));
