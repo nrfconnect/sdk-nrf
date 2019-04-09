@@ -10,28 +10,28 @@ mainmenu "PPI trace sample"
 menu "PPI trace pins configuration"
 
 config PPI_TRACE_PIN_RTC_COMPARE_EVT
-	int "Trace pin for RTC Compare Event"
+	int "Trace pin for RTC Compare event"
 	default 17 if BOARD_NRF9160_PCA10090
 	default 1 if BOARD_NRF51_PCA10028
 	default 3
 	help
-	  Pin is toggled whenever RTC Compare event occurs.
+	  Pin is toggled when an RTC Compare event occurs.
 
 config PPI_TRACE_PIN_RTC_TICK_EVT
-	int "Trace pin for RTC Compare Event"
+	int "Trace pin for RTC Tick event"
 	default 18 if BOARD_NRF9160_PCA10090
 	default 2 if BOARD_NRF51_PCA10028
 	default 4
 	help
-	  Pin is toggled whenever RTC Tick event occurs.
+	  Pin is toggled when an RTC Tick event occurs.
 
 config PPI_TRACE_PIN_LFCLOCK_STARTED_EVT
-	int "Trace pin for LFCLOCK Started Event"
+	int "Trace pin for LFCLOCK Started event"
 	default 19 if BOARD_NRF9160_PCA10090
 	default 3 if BOARD_NRF51_PCA10028
 	default 28
 	help
-	  Pin is toggled when LFCLOCK started event occurred.
+	  Pin is toggled when an LFCLOCK Started event occurs.
 
 config USE_BLUETOOTH_RADIO_EVENTS
 	bool
@@ -42,10 +42,10 @@ config USE_BLUETOOTH_RADIO_EVENTS
 if USE_BLUETOOTH_RADIO_EVENTS
 
 config PPI_TRACE_PIN_RADIO_ACTIVE
-	int "Trace pin for Radio activity"
+	int "Trace pin for radio activity"
 	default 29
 	help
-	  Pin is high when Radio is active.
+	  Pin is high when the radio is active.
 
 endif # USE_BLUETOOTH_RADIO_EVENTS
 
