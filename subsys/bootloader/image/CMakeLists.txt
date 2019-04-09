@@ -73,7 +73,8 @@ add_custom_command(
   --provision-addr ${PROVISION_ADDR}
   --public-key-files "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}"
   --output ${PROVISION_HEX}
-  DEPENDS ${PROVISION_DEPENDS}
+  DEPENDS
+  ${PROVISION_DEPENDS}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMENT
   "Creating provision data for Bootloader, storing to ${PROVISION_HEX_NAME}"
@@ -83,5 +84,7 @@ add_custom_target(
   provision_target
   DEPENDS
   ${PROVISION_HEX}
+  ${SIGNATURE_PUBLIC_KEY_FILE}
+  signature_public_file_target
   )
 
