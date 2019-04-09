@@ -264,8 +264,8 @@ void main(void)
 
 		s64_t remaining = next_tick_time - k_uptime_get();
 
-		if (remaining <= 0) {
-			remaining = 1;
+		if (remaining < 0) {
+			remaining = 0;
 		}
 
 		if (wait(remaining) > 0) {
