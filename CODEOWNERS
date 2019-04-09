@@ -41,6 +41,8 @@
 /lib/pdn_management/                      @rlubos
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bootloader/                      @hakonfam @ioannisg
+subsys/debug/CMakeLists.txt               @nordic-krch
+/samples/debug/ppi_trace/                 @nordic-krch
 /samples/esb/                             @lemrey
 /samples/nfc/                             @grochu
 /samples/nrf9160/                         @rlubos @lemrey
