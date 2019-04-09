@@ -4,9 +4,41 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+menu "SPM"
+
 config SPM
 	bool "Use Secure Partition Manager"
 	default y if BOARD_NRF9160_PCA10090NS
+
+if SPM
+choice
+	prompt "SPM build strategy"
+	default SPM_BUILD_STRATEGY_FROM_SOURCE
+
+config SPM_BUILD_STRATEGY_USE_HEX_FILE
+	# Mandatory option when being built through 'zephyr_add_executable'
+	bool "Use hex file instead of building SPM"
+
+if SPM_BUILD_STRATEGY_USE_HEX_FILE
+
+config SPM_HEX_FILE
+	# Mandatory option when being built through 'zephyr_add_executable'
+	string "SPM hex file"
+
+endif # SPM_USE_HEX_FILE
+
+config SPM_BUILD_STRATEGY_SKIP_BUILD
+	# Mandatory option when being built through 'zephyr_add_executable'
+	bool "Skip building SPM"
+
+config SPM_BUILD_STRATEGY_FROM_SOURCE
+	# Mandatory option when being built through 'zephyr_add_executable'
+	bool "Build from source"
+
+endchoice
+
+endif
+
 
 menuconfig IS_SPM
         bool "Current app is SPM"
@@ -88,3 +120,5 @@ config SPM_NRF_TIMER2_NS
 
 
 endif # IS_SPM
+
+endmenu
