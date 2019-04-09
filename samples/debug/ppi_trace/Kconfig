@@ -1,0 +1,66 @@
+# Kconfig - Config options for PPI trace sample
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+mainmenu "PPI trace sample"
+
+menu "PPI trace pins configuration"
+
+config PPI_TRACE_PIN_RTC_COMPARE_EVT
+	int "Trace pin for RTC Compare Event"
+	default 17 if BOARD_NRF9160_PCA10090
+	default 1 if BOARD_NRF51_PCA10028
+	default 3
+	help
+	  Pin is toggled whenever RTC Compare event occurs.
+
+config PPI_TRACE_PIN_RTC_TICK_EVT
+	int "Trace pin for RTC Compare Event"
+	default 18 if BOARD_NRF9160_PCA10090
+	default 2 if BOARD_NRF51_PCA10028
+	default 4
+	help
+	  Pin is toggled whenever RTC Tick event occurs.
+
+config PPI_TRACE_PIN_LFCLOCK_STARTED_EVT
+	int "Trace pin for LFCLOCK Started Event"
+	default 19 if BOARD_NRF9160_PCA10090
+	default 3 if BOARD_NRF51_PCA10028
+	default 28
+	help
+	  Pin is toggled when LFCLOCK started event occurred.
+
+config USE_BLUETOOTH_RADIO_EVENTS
+	bool
+	default y
+	select BT
+	depends on SOC_SERIES_NRF52X
+
+if USE_BLUETOOTH_RADIO_EVENTS
+
+config PPI_TRACE_PIN_RADIO_ACTIVE
+	int "Trace pin for Radio activity"
+	default 29
+	help
+	  Pin is high when Radio is active.
+
+endif # USE_BLUETOOTH_RADIO_EVENTS
+
+config USE_RTC2
+	bool
+	default y
+	depends on HAS_HW_NRF_RTC2
+	select COUNTER_RTC2
+
+config USE_RTC0
+	bool
+	default y
+	depends on !HAS_HW_NRF_RTC2
+	select COUNTER_RTC0
+
+endmenu
+
+source "Kconfig.zephyr"
