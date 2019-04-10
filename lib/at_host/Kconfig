@@ -72,7 +72,7 @@ config AT_HOST_THREAD_PRIO
 
 config AT_HOST_SOCKET_BUF_SIZE
 	int "AT socket Rx buffer size"
-	default 328
+	default 1024
 
 config AT_HOST_UART_BUF_SIZE
 	int "UART Rx buffer size"
