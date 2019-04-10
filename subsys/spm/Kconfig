@@ -8,7 +8,7 @@ menu "SPM"
 
 config SPM
 	bool "Use Secure Partition Manager"
-	default y if BOARD_NRF9160_PCA10090NS
+	default y if TRUSTED_EXECUTION_NONSECURE
 
 if SPM
 choice
