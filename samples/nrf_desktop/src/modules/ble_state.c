@@ -74,6 +74,7 @@ static void connected(struct bt_conn *conn, u8_t error)
 
 		struct bond_find_data bond_find_data = {
 			.peer_id = 0,
+			.peer_count = 0,
 		};
 		bt_foreach_bond(info.id, bond_find, &bond_find_data);
 

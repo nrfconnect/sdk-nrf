@@ -183,6 +183,7 @@ static int ble_adv_start(bool can_fast_adv)
 
 	struct bond_find_data bond_find_data = {
 		.peer_id = 0,
+		.peer_count = 0,
 	};
 	bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
 
@@ -385,6 +386,7 @@ static bool event_handler(const struct event_header *eh)
 
 			struct bond_find_data bond_find_data = {
 				.peer_id = 0,
+				.peer_count = 0,
 			};
 			bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
 			__ASSERT_NO_MSG(bond_find_data.peer_count <= 1);
