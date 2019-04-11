@@ -50,6 +50,7 @@ static int configure_filters(void)
 
 	struct bond_find_data bond_find_data = {
 		.peer_id = 0,
+		.peer_count = 0,
 	};
 	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
 
