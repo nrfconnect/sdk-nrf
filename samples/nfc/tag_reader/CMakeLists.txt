@@ -18,13 +18,6 @@ endif()
 
 include(../../../cmake/boilerplate.cmake)
 
-# Define configuration file
-macro(set_conf_file)
-  set(CONF_FILE
-	"configuration/prj.conf"
-	)
-endmacro()
-
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(NONE)
 
