@@ -12,10 +12,6 @@ set(NRF_SUPPORTED_BOARDS
   nrf52840_pca10056
   )
 
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
-  set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}.overlay")
-endif()
-
 include(../../../cmake/boilerplate.cmake)
 
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
