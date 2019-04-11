@@ -5,12 +5,14 @@
 #
 
 config SECURE_BOOT_DEBUG
+	default n if SOC_SERIES_NRF51X
+	default y
 	bool "Enable Debug"
 
 if SECURE_BOOT_DEBUG
 choice
 	prompt "Output"
-	default SB_DEBUG_PORT_SEGGER_RTT
+	default SB_DEBUG_PORT_UART
 	config SB_DEBUG_PORT_SEGGER_RTT
 		bool "SEGGER RTT"
 	config SB_DEBUG_PORT_UART
