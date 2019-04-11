@@ -92,6 +92,7 @@ struct bond_find_data {
 static const struct bt_data sd[] = {};
 
 static enum state state;
+static bool adv_swift_pair;
 
 static struct k_delayed_work adv_update;
 static struct k_delayed_work sp_grace_period_to;
@@ -161,7 +162,7 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 	return 0;
 }
 
-static int ble_adv_start_undirected(bool fast_adv)
+static int ble_adv_start_undirected(bool fast_adv, bool swift_pair)
 {
 	struct bt_le_adv_param adv_param;
 
@@ -173,8 +174,16 @@ static int ble_adv_start_undirected(bool fast_adv)
 	}
 
 	adv_param.id = cur_identity;
+	size_t ad_size = ARRAY_SIZE(ad);
 
-	return bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR)) {
+		adv_swift_pair = swift_pair;
+		if (!swift_pair) {
+			ad_size = ARRAY_SIZE(ad) - SWIFT_PAIR_SECTION_SIZE;
+		}
+	}
+
+	return bt_le_adv_start(&adv_param, ad, ad_size, sd, ARRAY_SIZE(sd));
 }
 
 static int ble_adv_start(bool can_fast_adv)
@@ -194,13 +203,21 @@ static int ble_adv_start(bool can_fast_adv)
 	}
 
 	bool direct = false;
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV) &&
-	    (bond_find_data.peer_id < bond_find_data.peer_count)) {
+	bool swift_pair = true;
+
+	if (bond_find_data.peer_id < bond_find_data.peer_count) {
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
+			direct = true;
+		}
+
+		swift_pair = false;
+	}
+
+	if (direct) {
 		err = ble_adv_start_directed(&bond_find_data.peer_address,
 					     fast_adv);
-		direct = true;
 	} else {
-		err = ble_adv_start_undirected(fast_adv);
+		err = ble_adv_start_undirected(fast_adv, swift_pair);
 	}
 
 	if (err == -ECONNREFUSED) {
@@ -246,13 +263,14 @@ static void sp_grace_period_fn(struct k_work *work)
 	}
 }
 
-static int remove_vendor_section(void)
+static int remove_swift_pair_section(void)
 {
 	int err = bt_le_adv_update_data(ad, (ARRAY_SIZE(ad) - SWIFT_PAIR_SECTION_SIZE),
 					sd, ARRAY_SIZE(sd));
 
 	if (!err) {
-		LOG_INF("Vendor section removed");
+		LOG_INF("Swift Pair section removed");
+		adv_swift_pair = false;
 
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
 			k_delayed_work_cancel(&adv_update);
@@ -408,9 +426,12 @@ static bool event_handler(const struct event_header *eh)
 			err = ble_adv_start(true);
 			break;
 
-		case PEER_OPERATION_SELECT:
-		case PEER_OPERATION_ERASE:
 		case PEER_OPERATION_ERASED:
+			err = ble_adv_start(true);
+			break;
+
+		case PEER_OPERATION_ERASE:
+		case PEER_OPERATION_SELECT:
 		case PEER_OPERATION_CANCEL:
 			/* Ignore */
 			break;
@@ -430,8 +451,9 @@ static bool event_handler(const struct event_header *eh)
 			switch (state) {
 			case STATE_ACTIVE_FAST:
 			case STATE_ACTIVE_SLOW:
-				if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR)) {
-					err = remove_vendor_section();
+				if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
+				    adv_swift_pair) {
+					err = remove_swift_pair_section();
 				} else {
 					err = ble_adv_stop();
 					if (!err) {
