@@ -61,7 +61,6 @@ static size_t at_buf_len;
 static struct k_work at_cmd_send_work;
 static struct k_thread socket_thread;
 static K_THREAD_STACK_DEFINE(socket_thread_stack, THREAD_STACK_SIZE);
-static struct k_mutex socket_mutex;
 
 
 static const char termination[3] = { '\0', '\r', '\n' };
@@ -72,9 +71,7 @@ static void at_cmd_send(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	k_mutex_lock(&socket_mutex, K_FOREVER);
 	bytes_sent = send(at_socket_fd, at_buf, at_buf_len, 0);
-	k_mutex_unlock(&socket_mutex);
 
 	if (bytes_sent <= 0) {
 		LOG_ERR("Could not send AT command to modem: %d", bytes_sent);
@@ -194,7 +191,6 @@ static int at_uart_init(char *uart_dev_name)
 static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 {
 	u8_t at_read_buff[CONFIG_AT_HOST_SOCKET_BUF_SIZE] = {0};
-	int err;
 	int r_bytes;
 
 	ARG_UNUSED(arg1);
@@ -202,20 +198,11 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 	ARG_UNUSED(arg3);
 
 	while (1) {
-		/* Poll the socket for incoming data. */
-		err = poll(fds, nfds, K_FOREVER);
-		if (err < 0) {
-			LOG_ERR("Poll error: %d\n", err);
-		}
-
-		k_mutex_lock(&socket_mutex, K_FOREVER);
-		/* Read AT socket in non-blocking mode. */
+		/* Read AT socket in blocking mode. */
 		r_bytes = recv(at_socket_fd, at_read_buff,
-				sizeof(at_read_buff), MSG_DONTWAIT);
-		k_mutex_unlock(&socket_mutex);
+				sizeof(at_read_buff), 0);
 
 		/* Forward the data over UART if any. */
-		/* If no data, errno is set to EGAIN and we will try again. */
 		if (r_bytes > 0) {
 			/* Poll out what is in the buffer gathered from
 			 * the modem.
@@ -277,7 +264,6 @@ static int at_host_init(struct device *arg)
 		}
 	}
 
-	k_mutex_init(&socket_mutex);
 	k_work_init(&at_cmd_send_work, at_cmd_send);
 	k_thread_create(&socket_thread, socket_thread_stack,
 			K_THREAD_STACK_SIZEOF(socket_thread_stack),
