@@ -58,18 +58,33 @@ You can download it from the following links:
 #. Click **OK** to import the project into SES. You can now work with the
    project in the IDE.
 
-#. To build your project, select **Build -> Build zephyr/zephyr.elf**.
+#. Build and flash your project.
+   The required steps differ depending on if you build a single application or a multi-image project (such as the nRF9160 samples, which include :ref:`SPM <secure_partition_manager>`).
 
-    .. note::
+   To build and flash a single application:
+
+      a. Select your project in the Project Explorer.
+      #. From the menu, select **Build -> Build zephyr/zephyr.elf**.
+      #. When the build completes, you can flash the sample to a connected board.
+         To do this, select **Target -> Download zephyr/zephyr.elf**.
+
+      .. note::
 	   Alternatively, choose the **Build and Debug** option.
 	   **Build and Debug** will build the application and flash it when
 	   the build completes.
 
-6. Once the build completes, you can flash the sample to a connected board.
-To do this, select **Target -> Download zephyr/zephyr.elf**.
+   To build and flash a multi-image project:
 
-7. To inspect the details of the flashed code and the memory usage,
-click **Debug -> Go**.
+      a. Select your project in the Project Explorer.
+      #. From the menu, select **Build -> Build Solution**.
+      #. When the multi-image build completes, you can flash the sample to a connected board.
+         To do this, select **Target -> Download File -> Download Intel Hex File**.
+         Navigate to the ``zephyr`` folder in your build directory and choose ``merged.hex``.
+
+7. To inspect the details of the flashed code and the memory usage, click **Debug -> Go**.
+
+   .. note::
+   	In a multi-image build, this allows you to debug the source code of your application only.
 
 .. _gs_programming_ts:
 
