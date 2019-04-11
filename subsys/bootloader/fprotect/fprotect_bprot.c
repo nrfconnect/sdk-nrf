@@ -8,11 +8,13 @@
 #if defined(NRF_BPROT)
 	#include <nrf_bprot.h>
 	#define PROTECT nrf_bprot_nvm_blocks_protection_enable
+	#define ENABLE_PROTECTION_IN_DEBUG nrf_bprot_nvm_protection_in_debug_set
 #elif defined(NRF_MPU)
 	#include <nrf_mpu.h>
 	/* Rename nRF51's NRF_MPU to NRF_BPROT as they work the same. */
 	#define NRF_BPROT NRF_MPU
 	#define PROTECT nrf_mpu_nvm_blocks_protection_enable
+	#define ENABLE_PROTECTION_IN_DEBUG nrf_mpu_nvm_protection_in_debug_set
 #else
 	#error Either NRF_BPROT or NRF_MPU must be available to use this file.
 #endif
@@ -22,17 +24,17 @@
  /* The number of CONFIG registers present in the chip. */
 #define BPROT_CONFIGS_NUM ceiling_fraction(BPROT_REGIONS_NUM, BITS_PER_LONG)
 #if defined(CONFIG_SB_BPROT_IN_DEBUG)
-#define ENABLE_BPROT_IN_DEBUG true
+#define ENABLE_IN_DEBUG true
 #else
-#define ENABLE_BPROT_IN_DEBUG false
+#define ENABLE_IN_DEBUG false
 #endif
 
 
 int fprotect_area(u32_t start, size_t length)
 {
-	nrf_bprot_nvm_protection_in_debug_set(NRF_BPROT,
-					      ENABLE_BPROT_IN_DEBUG
-					      );
+	ENABLE_PROTECTION_IN_DEBUG(NRF_BPROT,
+				   ENABLE_IN_DEBUG
+				   );
 
 	u32_t block_start = start / BPROT_REGIONS_SIZE;
 	u32_t block_end   = (start + length) / BPROT_REGIONS_SIZE;
