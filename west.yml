@@ -44,7 +44,7 @@ manifest:
       revision: b6d368756888f1d169d5a02b56c70138f26ce578
     - name: nrfxlib
       path: nrfxlib
-      revision: 45475200c1c89f31d0398574e4657db99dc89940
+      revision: d3c1610d073a730fa486f36e4865be621c83583d
     - name: tinycbor
       path: modules/lib/tinycbor
       remote: zephyrproject
