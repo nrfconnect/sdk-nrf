@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if FLASH
+
+config SOC_FLASH_NRF_LL_NRFXLIB
+	bool "nRF BLE Controller flash driver"
+	default y
+	select FLASH_NRF_FORCE_ALT
+	select FLASH_HAS_PAGE_LAYOUT
+	select FLASH_HAS_DRIVER_ENABLED
+	select NRFX_NVMC
+	select MPU_ALLOW_FLASH_WRITE if CPU_HAS_MPU
+	help
+	  Enables nRF BLE Controller flash driver.
+
+endif # FLASH
