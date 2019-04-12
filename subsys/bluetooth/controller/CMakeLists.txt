@@ -7,6 +7,7 @@
 zephyr_library()
 
 zephyr_library_sources(
+  multithreading_lock.c
   hci_driver.c
   )
 
@@ -16,3 +17,5 @@ zephyr_library_sources_ifdef(
 )
 
 zephyr_library_link_libraries(subsys__bluetooth)
+
+zephyr_include_directories(.)

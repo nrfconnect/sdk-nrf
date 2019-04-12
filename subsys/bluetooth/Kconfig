@@ -6,11 +6,11 @@
 
 menu "Bluetooth Low Energy"
 
+if BT
+
 if BT_LL_NRFXLIB
 rsource "controller/Kconfig"
 endif # CONFIG_BT_LL_NRFXLIB
-
-if BT
 
 comment "BLE Libraries"
 rsource "Kconfig.pool"

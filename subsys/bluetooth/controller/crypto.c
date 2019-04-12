@@ -1,47 +1,101 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018-2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <zephyr/types.h>
+#include <misc/byteorder.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <soc.h>
+#include <ble_controller_soc.h>
+#include <random/rand32.h>
 
-#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
-#define LOG_MODULE_NAME bt_ctlr_crypto
-#include "common/log.h"
+#include "nrf_errno.h"
+#include "multithreading_lock.h"
 
-#include <blectlr_util.h>
+#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_KEYS)
+#define LOG_MODULE_NAME ble_controller_crypto
+#include <common/log.h>
+
+#define BT_ECB_BLOCK_SIZE 16
 
 int bt_rand(void *buf, size_t len)
 {
-	soc_rand_prio_low_vector_get_blocking(buf, len);
+	if (buf == NULL) {
+		return -NRF_EINVAL;
+	}
+
+	u8_t *buf8 = buf;
+	size_t bytes_left = len;
+
+	while (bytes_left) {
+		u32_t v = sys_rand32_get();
+
+		if (bytes_left >= sizeof(v)) {
+			memcpy(buf8, &v, sizeof(v));
+
+			buf8 += sizeof(v);
+			bytes_left -= sizeof(v);
+		} else {
+			memcpy(buf8, &v, bytes_left);
+			break;
+		}
+	}
+
 	return 0;
 }
 
-int bt_encrypt_le(const u8_t key[16], const u8_t plaintext[16],
-		  u8_t enc_data[16])
+int bt_encrypt_le(const u8_t key[BT_ECB_BLOCK_SIZE],
+		  const u8_t plaintext[BT_ECB_BLOCK_SIZE],
+		  u8_t enc_data[BT_ECB_BLOCK_SIZE])
 {
-	BT_DBG("key %s plaintext %s", bt_hex(key, 16), bt_hex(plaintext, 16));
+	u8_t key_le[BT_ECB_BLOCK_SIZE];
+	u8_t plaintext_le[BT_ECB_BLOCK_SIZE];
+	u8_t enc_data_le[BT_ECB_BLOCK_SIZE];
 
-	ll_util_block_encrypt(key, plaintext, true, enc_data);
+	BT_HEXDUMP_DBG(key, BT_ECB_BLOCK_SIZE, "key");
+	BT_HEXDUMP_DBG(plaintext, BT_ECB_BLOCK_SIZE, "plaintext");
 
-	BT_DBG("enc_data %s", bt_hex(enc_data, 16));
+	sys_memcpy_swap(key_le, key, BT_ECB_BLOCK_SIZE);
+	sys_memcpy_swap(plaintext_le, plaintext, BT_ECB_BLOCK_SIZE);
 
-	return 0;
+	int errcode = MULTITHREADING_LOCK_ACQUIRE();
+
+	if (!errcode) {
+		errcode = ble_controller_ecb_block_encrypt(key_le, plaintext_le,
+							   enc_data_le);
+		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (!errcode) {
+		sys_memcpy_swap(enc_data, enc_data_le, BT_ECB_BLOCK_SIZE);
+
+		BT_HEXDUMP_DBG(enc_data, BT_ECB_BLOCK_SIZE, "enc_data");
+	}
+
+	return errcode;
 }
 
-int bt_encrypt_be(const u8_t key[16], const u8_t plaintext[16],
-		  u8_t enc_data[16])
+int bt_encrypt_be(const u8_t key[BT_ECB_BLOCK_SIZE],
+		  const u8_t plaintext[BT_ECB_BLOCK_SIZE],
+		  u8_t enc_data[BT_ECB_BLOCK_SIZE])
 {
-	BT_DBG("key %s plaintext %s", bt_hex(key, 16), bt_hex(plaintext, 16));
+	BT_HEXDUMP_DBG(key, BT_ECB_BLOCK_SIZE, "key");
+	BT_HEXDUMP_DBG(plaintext, BT_ECB_BLOCK_SIZE, "plaintext");
 
-	u8_t key_be[16], plaintext_be[16];
+	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 
-	ll_util_revcpy(key_be, key, 16);
-	ll_util_revcpy(plaintext_be, plaintext, 16);
-	ll_util_block_encrypt(key_be, plaintext_be, false, enc_data);
+	if (!errcode) {
+		errcode = ble_controller_ecb_block_encrypt(key, plaintext,
+							   enc_data);
+		MULTITHREADING_LOCK_RELEASE();
+	}
 
-	BT_DBG("enc_data %s", bt_hex(enc_data, 16));
+	if (!errcode) {
+		BT_HEXDUMP_DBG(enc_data, BT_ECB_BLOCK_SIZE, "enc_data");
+	}
 
-	return 0;
+	return errcode;
 }
