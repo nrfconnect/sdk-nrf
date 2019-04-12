@@ -224,6 +224,8 @@ static const fsm_transition *state_event_handlers[] = {
 	[STATE_CC_CONNECTING]		= cc_connecting_fsm_transition,
 	[STATE_CC_CONNECTED]		= cc_connected_fsm_transition,
 	[STATE_CLOUD_STATE_REQUESTED]	= cloud_requested_fsm_transition,
+	[STATE_UA_PIN_WAIT]		= cloud_requested_fsm_transition,
+	[STATE_UA_PIN_COMPLETE]		= ua_complete_fsm_transition,
 	[STATE_UA_INITIATE]		= ua_initiate_fsm_transition,
 	[STATE_UA_INPUT_WAIT]		= ua_pattern_wait_fsm_transition,
 	[STATE_UA_INPUT_MISMATCH]	= not_implemented_fsm_transition,
@@ -335,6 +337,72 @@ static int state_ua_complete(void)
 	};
 
 	nfsm_set_current_state_and_notify(STATE_UA_COMPLETE, &evt);
+
+	return err;
+}
+
+static int state_ua_pin_wait(void)
+{
+	int err;
+	struct nct_cc_data msg = {
+		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.id = DEFAULT_REPORT_ID,
+	};
+
+	/* Publish report to the cloud on current status. */
+	err = nrf_cloud_encode_state(STATE_UA_PIN_WAIT, &msg.data);
+	if (err) {
+		LOG_ERR("nrf_cloud_encode_state failed %d", err);
+		return err;
+	}
+
+	err = nct_cc_send(&msg);
+	if (err) {
+		LOG_ERR("nct_cc_send failed %d", err);
+		nrf_cloud_free((void *)msg.data.ptr);
+		return err;
+	}
+
+	nrf_cloud_free((void *)msg.data.ptr);
+
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST,
+		.param.ua_req.sequence.len = 0,
+	};
+
+	nfsm_set_current_state_and_notify(STATE_UA_PIN_WAIT, &evt);
+
+	return 0;
+}
+
+static int state_ua_pin_complete(void)
+{
+	int err;
+	struct nct_cc_data msg = {
+		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.id = PAIRING_STATUS_REPORT_ID,
+	};
+
+	err = nrf_cloud_encode_state(STATE_UA_PIN_COMPLETE, &msg.data);
+	if (err) {
+		LOG_ERR("nrf_cloud_encode_state failed %d", err);
+		return err;
+	}
+
+	err = nct_cc_send(&msg);
+	if (err) {
+		LOG_ERR("nct_cc_send failed %d", err);
+		nrf_cloud_free((void *)msg.data.ptr);
+		return err;
+	}
+
+	nrf_cloud_free((void *)msg.data.ptr);
+
+	struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_USER_ASSOCIATED,
+	};
+
+	nfsm_set_current_state_and_notify(STATE_UA_PIN_COMPLETE, &evt);
 
 	return err;
 }
@@ -473,6 +541,27 @@ static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt)
 
 	/* Validate expected state and take appropriate action. */
 	switch (expected_state) {
+	case STATE_UA_PIN_WAIT: {
+		return state_ua_pin_wait();
+	}
+	case STATE_UA_PIN_COMPLETE: {
+		struct nrf_cloud_data rx;
+		struct nrf_cloud_data tx;
+		struct nrf_cloud_data m_endpoint;
+
+		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx,
+						     &m_endpoint);
+		if (err) {
+			LOG_ERR("nrf_cloud_decode_data_endpoint failed %d",
+				err);
+			return err;
+		}
+
+		/* Set the endpoint information. */
+		nct_dc_endpoint_set(&tx, &rx, &m_endpoint);
+
+		return state_ua_pin_complete();
+	}
 	case STATE_UA_INITIATE: {
 		return state_ua_initiate();
 	}
@@ -483,7 +572,7 @@ static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt)
 		struct nrf_cloud_data rx;
 		struct nrf_cloud_data tx;
 
-		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx);
+		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx, NULL);
 		if (err) {
 			LOG_ERR("nrf_cloud_decode_data_endpoint failed %d",
 				err);
@@ -491,7 +580,7 @@ static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt)
 		}
 
 		/* Set the endpoint information. */
-		nct_dc_endpoint_set(&tx, &rx);
+		nct_dc_endpoint_set(&tx, &rx, NULL);
 
 		return state_ua_complete();
 	}
@@ -516,6 +605,36 @@ static int all_ua_request_handler(const struct nct_evt *nct_evt)
 
 	/* Validate expected state and take appropriate action. */
 	switch (expected_state) {
+	case STATE_UA_PIN_WAIT: {
+		return state_ua_pin_wait();
+	}
+	case STATE_UA_PIN_COMPLETE: {
+		struct nrf_cloud_data rx;
+		struct nrf_cloud_data tx;
+		struct nrf_cloud_data m_endpoint;
+
+		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx,
+						     &m_endpoint);
+		if (err) {
+			LOG_ERR("nrf_cloud_decode_data_endpoint failed %d",
+				err);
+			return err;
+		}
+
+		/* Set the endpoint information. */
+		nct_dc_endpoint_set(&tx, &rx, &m_endpoint);
+
+		err = state_ua_pin_complete();
+		if (err) {
+			LOG_ERR("state_ua_pin_complete failed %d", err);
+			return err;
+		}
+
+		/* Disconnect the link. Must connect back. */
+		(void)nct_disconnect();
+
+		return err;
+	}
 	case STATE_UA_INITIATE: {
 		return state_ua_initiate();
 	}
@@ -526,13 +645,13 @@ static int all_ua_request_handler(const struct nct_evt *nct_evt)
 		struct nrf_cloud_data rx;
 		struct nrf_cloud_data tx;
 
-		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx);
+		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx, NULL);
 		if (err) {
 			LOG_ERR("nrf_cloud_decode_data_endpoint Failed %d",
 				err);
 			return err;
 		}
-		nct_dc_endpoint_set(&tx, &rx);
+		nct_dc_endpoint_set(&tx, &rx, NULL);
 
 		err = state_ua_complete();
 		/* Disconnect the link. Must connect back. */
@@ -572,6 +691,8 @@ static int initiate_cmd_handler(const struct nct_evt *nct_evt)
 	/* Validate expected state and take appropriate action. */
 	if (expected_state == STATE_UA_INITIATE) {
 		return state_ua_initiate();
+	} else if (expected_state == STATE_UA_PIN_WAIT) {
+		return state_ua_pin_wait();
 	}
 
 	/* Any other state is ignored. */
@@ -595,6 +716,9 @@ static int initiate_cmd_in_dc_conn_handler(const struct nct_evt *nct_evt)
 		/* Disconnect data channel to stop further data transfer. */
 		(void) nct_dc_disconnect();
 		return state_ua_initiate();
+	} else if (expected_state == STATE_UA_PIN_WAIT) {
+		(void) nct_dc_disconnect();
+		return state_ua_pin_wait();
 	}
 
 	/* Any other state is ignored. */

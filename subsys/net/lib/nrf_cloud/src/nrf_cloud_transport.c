@@ -88,6 +88,7 @@ static struct nct {
 	struct sockaddr_storage broker;
 	struct mqtt_utf8 dc_tx_endp;
 	struct mqtt_utf8 dc_rx_endp;
+	struct mqtt_utf8 dc_m_endp;
 	u32_t message_id;
 } nct;
 
@@ -146,6 +147,9 @@ static void dc_endpoint_reset(void)
 
 	nct.dc_tx_endp.utf8 = NULL;
 	nct.dc_tx_endp.size = 0;
+
+	nct.dc_m_endp.utf8 = NULL;
+	nct.dc_m_endp.size = 0;
 }
 
 /* Get the next unused message id. */
@@ -168,6 +172,9 @@ static void dc_endpoint_free(void)
 	}
 	if (nct.dc_tx_endp.utf8 != NULL) {
 		nrf_cloud_free(nct.dc_tx_endp.utf8);
+	}
+	if (nct.dc_m_endp.utf8 != NULL) {
+		nrf_cloud_free(nct.dc_m_endp.utf8);
 	}
 	dc_endpoint_reset();
 }
@@ -708,6 +715,8 @@ int nct_connect(void)
 
 int nct_cc_connect(void)
 {
+	LOG_DBG("nct_cc_connect");
+
 	const struct mqtt_subscription_list subscription_list = {
 		.list = (struct mqtt_topic *)&nct_cc_rx_list,
 		.list_count = ARRAY_SIZE(nct_cc_rx_list),
@@ -774,7 +783,8 @@ int nct_cc_disconnect(void)
 }
 
 void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endp,
-			 const struct nrf_cloud_data *rx_endp)
+			 const struct nrf_cloud_data *rx_endp,
+			 const struct nrf_cloud_data *m_endp)
 {
 	LOG_DBG("nct_dc_endpoint_set");
 
@@ -788,10 +798,16 @@ void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endp,
 
 	nct.dc_rx_endp.utf8 = (u8_t *)rx_endp->ptr;
 	nct.dc_rx_endp.size = rx_endp->len;
+
+	if (m_endp != NULL) {
+		nct.dc_m_endp.utf8 = (u8_t *)m_endp->ptr;
+		nct.dc_m_endp.size = m_endp->len;
+	}
 }
 
 void nct_dc_endpoint_get(struct nrf_cloud_data *const tx_endp,
-			 struct nrf_cloud_data *const rx_endp)
+			 struct nrf_cloud_data *const rx_endp,
+			 struct nrf_cloud_data *const m_endp)
 {
 	LOG_DBG("nct_dc_endpoint_get");
 
@@ -800,6 +816,11 @@ void nct_dc_endpoint_get(struct nrf_cloud_data *const tx_endp,
 
 	rx_endp->ptr = nct.dc_rx_endp.utf8;
 	rx_endp->len = nct.dc_rx_endp.size;
+
+	if (m_endp != NULL) {
+		m_endp->ptr = nct.dc_m_endp.utf8;
+		m_endp->len = nct.dc_m_endp.size;
+	}
 }
 
 int nct_dc_connect(void)

@@ -98,13 +98,15 @@ int nct_disconnect(void);
  * @note This routine must be called before @ref nrf_dc_connect.
  */
 void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endpoint,
-			 const struct nrf_cloud_data *rx_endpoint);
+			 const struct nrf_cloud_data *rx_endpoint,
+			 const struct nrf_cloud_data *m_endpoint);
 
 /**
  * @brief Get the endpoint information.
  */
 void nct_dc_endpoint_get(struct nrf_cloud_data *tx_endpoint,
-			 struct nrf_cloud_data *rx_endpoint);
+			 struct nrf_cloud_data *rx_endpoint,
+			 struct nrf_cloud_data *m_endpoint);
 
 /**@brief Needed for keep alive. */
 void nct_process(void);
