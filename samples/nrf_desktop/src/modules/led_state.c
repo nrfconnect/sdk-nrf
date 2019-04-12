@@ -25,7 +25,6 @@ static enum led_system_state system_state = LED_SYSTEM_STATE_IDLE;
 static bool connected;
 static enum peer_operation peer_op = PEER_OPERATION_CANCEL;
 static u8_t cur_peer_id;
-static u8_t tmp_peer_id;
 
 static void load_peer_state_led(void)
 {
@@ -34,19 +33,18 @@ static void load_peer_state_led(void)
 
 	switch (peer_op) {
 	case PEER_OPERATION_SELECT:
-		peer_id = tmp_peer_id;
 		state = LED_PEER_STATE_CONFIRM_SELECT;
 		break;
 	case PEER_OPERATION_ERASE:
 		state = LED_PEER_STATE_CONFIRM_ERASE;
 		break;
+	case PEER_OPERATION_SELECTED:
+	case PEER_OPERATION_ERASED:
 	case PEER_OPERATION_CANCEL:
 		if (connected) {
 			state = LED_PEER_STATE_CONNECTED;
 		}
 		break;
-	case PEER_OPERATION_SELECTED:
-	case PEER_OPERATION_ERASED:
 	default:
 		__ASSERT_NO_MSG(false);
 		break;
@@ -112,23 +110,8 @@ static bool event_handler(const struct event_header *eh)
 		struct ble_peer_operation_event *event =
 			cast_ble_peer_operation_event(eh);
 
-		switch (event->op)  {
-		case PEER_OPERATION_SELECT:
-			tmp_peer_id = event->arg;
-		case PEER_OPERATION_ERASE:
-			peer_op = event->op;
-			break;
-		case PEER_OPERATION_SELECTED:
-			cur_peer_id = tmp_peer_id;
-			/* Fall through */
-		case PEER_OPERATION_ERASED:
-		case PEER_OPERATION_CANCEL:
-			peer_op = PEER_OPERATION_CANCEL;
-			break;
-		default:
-			__ASSERT_NO_MSG(false);
-			break;
-		}
+		cur_peer_id = event->arg;
+		peer_op = event->op;
 		load_peer_state_led();
 
 		return false;
@@ -162,7 +145,6 @@ static bool event_handler(const struct event_header *eh)
 			static_assert(LED_ID_COUNT <= CONFIG_DESKTOP_LED_COUNT,
 				      "Not enough LEDs configured");
 			load_system_state_led();
-			load_peer_state_led();
 		} else if (event->state == MODULE_STATE_ERROR) {
 			set_system_state_led(LED_SYSTEM_STATE_ERROR);
 		}

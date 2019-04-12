@@ -6,6 +6,7 @@
 
 #include <bluetooth/bluetooth.h>
 #include <shell/shell.h>
+#include <settings/settings.h>
 
 #define MODULE ble_bond
 #include "module_state_event.h"
@@ -20,6 +21,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 #define LONG_CLICK_MIN  K_MSEC(5000)
 
 #define OPERATION_TIMEOUT K_SECONDS(10)
+#define MAX_KEY_LEN 20
 
 
 enum state {
@@ -69,6 +71,7 @@ static const struct state_switch state_switch[] = {
 static enum state state;
 static u32_t timestamp;
 static u8_t cur_peer_id = BT_ID_DEFAULT; /* We expect zero */
+#define PEER_ID_STORAGE_NAME "peer_id"
 
 static u8_t tmp_peer_id;
 
@@ -134,7 +137,7 @@ static void cancel_operation(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_CANCEL;
-	event->arg = 0;
+	event->arg = cur_peer_id;
 
 	EVENT_SUBMIT(event);
 }
@@ -178,6 +181,23 @@ static void select_next(void)
 	EVENT_SUBMIT(event);
 }
 
+static void store_peer_id(u8_t peer_id)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		char key[MAX_KEY_LEN];
+		int err = snprintk(key, sizeof(key), MODULE_NAME "/%s",
+				   PEER_ID_STORAGE_NAME);
+
+		if ((err > 0) && (err < MAX_KEY_LEN)) {
+			err = settings_save_one(key, &peer_id, sizeof(peer_id));
+		}
+
+		if (err) {
+			LOG_ERR("Problem storing peer_id: (err = %d)", err);
+		}
+	}
+}
+
 static void select_confirm(void)
 {
 	LOG_INF("Select peer");
@@ -189,9 +209,10 @@ static void select_confirm(void)
 
 		event->op = PEER_OPERATION_SELECTED;
 		event->arg = cur_peer_id;
+		store_peer_id(cur_peer_id);
 	} else {
 		event->op = PEER_OPERATION_CANCEL;
-		event->arg = 0;
+		event->arg = cur_peer_id;
 	}
 
 	EVENT_SUBMIT(event);
@@ -204,7 +225,7 @@ static void erase_start(void)
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
 	event->op = PEER_OPERATION_ERASE;
-	event->arg = 0;
+	event->arg = cur_peer_id;
 
 	EVENT_SUBMIT(event);
 }
@@ -219,7 +240,7 @@ static void erase_confirm(void)
 			new_ble_peer_operation_event();
 
 		event->op = PEER_OPERATION_ERASED;
-		event->arg = 0;
+		event->arg = cur_peer_id;
 
 		EVENT_SUBMIT(event);
 	} else {
@@ -328,7 +349,57 @@ static void silence_unused(void)
 	}
 }
 
-static void init(void)
+static int settings_set(int argc, char **argv, void *val_ctx)
+{
+	if (argc != 1) {
+		return -ENOENT;
+	}
+
+	if (!strcmp(argv[0], PEER_ID_STORAGE_NAME)) {
+		int len = settings_val_read_cb(val_ctx, &cur_peer_id,
+					       sizeof(cur_peer_id));
+		if (len != sizeof(cur_peer_id)) {
+			LOG_ERR("Can't read peer id from storage");
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+static int commit(void)
+{
+	struct ble_peer_operation_event *event_selected =
+		new_ble_peer_operation_event();
+
+	event_selected->op = PEER_OPERATION_SELECTED;
+	event_selected->arg = cur_peer_id;
+	EVENT_SUBMIT(event_selected);
+
+	return 0;
+}
+
+static int init_settings(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		static struct settings_handler sh = {
+			.name = MODULE_NAME,
+			.h_set = settings_set,
+			.h_commit = commit
+		};
+
+		int err = settings_register(&sh);
+		if (err) {
+			LOG_ERR("Cannot register settings handler (err %d)",
+				err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+static int init(void)
 {
 	silence_unused();
 
@@ -341,6 +412,8 @@ static void init(void)
 	}
 
 	load_identities();
+
+	return 0;
 }
 
 static bool peer_control_button_event(const struct button_event *event)
@@ -357,6 +430,7 @@ static bool peer_control_button_event(const struct button_event *event)
 	} else {
 		int err = k_delayed_work_cancel(&single_click);
 		bool double_pending = (err != -EINVAL);
+
 		k_delayed_work_cancel(&long_click);
 
 		if (timestamp != 0) {
@@ -381,15 +455,24 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		const struct module_state_event *event = cast_module_state_event(eh);
 
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+			/* Settings initialized before config module */
+			if (init_settings()) {
+				module_set_state(MODULE_STATE_ERROR);
+			}
+		}
+
 		if (check_state(event, MODULE_ID(config), MODULE_STATE_READY)) {
 			static bool initialized;
 
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			init();
-
-			module_set_state(MODULE_STATE_READY);
+			if (!init()) {
+				module_set_state(MODULE_STATE_READY);
+			} else {
+				module_set_state(MODULE_STATE_ERROR);
+			}
 		}
 
 		return false;
