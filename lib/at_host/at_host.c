@@ -253,6 +253,7 @@ static int at_host_init(struct device *arg)
 		break;
 	case UART_2:
 		uart_dev_name = CONFIG_UART_2_NAME;
+		break;
 	default:
 		LOG_ERR("Unknown UART instance %d", uart_id);
 		return -EINVAL;
