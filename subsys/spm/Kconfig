@@ -127,6 +127,9 @@ config SPM_NRF_TIMER2_NS
 	bool "TIMER2 is Non-Secure"
 	default y
 
+config SPM_NRF_SAADC_NS
+	bool "SAADC is Non-Secure"
+	default y
 
 endif # IS_SPM
 
