@@ -12,6 +12,12 @@ set_property(GLOBAL APPEND PROPERTY
   -DUSE_PARTITION_MANAGER=$<TARGET_EXISTS:partition_manager>
   )
 
+# Safeguard to make sure folder naming does not break building on Windows
+if(${PROJECT_BINARY_DIR} MATCHES "[|]")
+  message(FATAL_ERROR "The character \"|\" is not allowed as filename or"
+          " folder name.\nThe offending path is: $${PROJECT_BINARY_DIR}")
+endif()
+
 if((EXISTS ${APPLICATION_SOURCE_DIR}/pm.yml) AND IMAGE)
   # Only run partition manager when being built as sub image.
 
@@ -36,7 +42,7 @@ if((EXISTS ${APPLICATION_SOURCE_DIR}/pm.yml) AND IMAGE)
   set_property(
     GLOBAL APPEND PROPERTY
     PARTITION_MANAGER_CONFIG_FILES
-    "${image_name}:${PROJECT_BINARY_DIR}/include/generated/pm.yml:${PROJECT_BINARY_DIR}:${PROJECT_BINARY_DIR}/include/generated"
+    "${image_name}|${PROJECT_BINARY_DIR}/include/generated/pm.yml|${PROJECT_BINARY_DIR}|${PROJECT_BINARY_DIR}/include/generated"
     )
   set_property(
     GLOBAL APPEND PROPERTY
