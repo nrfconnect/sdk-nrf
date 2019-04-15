@@ -9,6 +9,6 @@
 	status = "ok";
 	tx-pin = <18>;
 	rx-pin = <17>;
-	rts-pin = <19>;
-	cts-pin = <21>;
+	rts-pin = <21>;
+	cts-pin = <19>;
 };
