@@ -40,9 +40,7 @@ endif()
 include(../../cmake/boilerplate.cmake)
 
 # Define configuration files.
-macro(set_conf_file)
-  set(CONF_FILE "configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
-endmacro()
+set(CONF_FILE "configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
 
 ################################################################################
 
