@@ -9,6 +9,7 @@
 #include <zephyr/types.h>
 #include <misc/byteorder.h>
 #include <flash_map.h>
+#include <pm_config.h>
 #include <dfu/mcuboot.h>
 #include <bluetooth/conn.h>
 
@@ -118,7 +119,7 @@ static void handle_dfu_data(u8_t *data, size_t size)
 			LOG_WRN("Previous DFU operation interrupted");
 		}
 
-		err = flash_area_open(DT_FLASH_AREA_IMAGE_1_ID, &flash_area);
+		err = flash_area_open(PM_MCUBOOT_PARTITIONS_SECONDARY_ID, &flash_area);
 		if (err) {
 			LOG_ERR("Cannot open flash area (%d)", err);
 			goto dfu_finish;
