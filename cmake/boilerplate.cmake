@@ -25,10 +25,5 @@ if(DEFINED NRF_SUPPORTED_BUILD_TYPES)
         endif()
 endif()
 
-# Set BOARD_ROOT if board definition exists out of tree.
-find_path(_BOARD_DIR NAMES "${BOARD}_defconfig" PATHS ${NRF_DIR}/boards/*/*
-          NO_DEFAULT_PATH)
-
-if (_BOARD_DIR)
-        set(BOARD_ROOT ${NRF_DIR})
-endif()
+# Add NRF_DIR as a BOARD_ROOT in case the board is in NRF_DIR
+list(APPEND BOARD_ROOT ${NRF_DIR})
