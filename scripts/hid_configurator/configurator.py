@@ -21,6 +21,7 @@ DONGLE_PID = 0x52DC
 POLL_INTERVAL = 0.02
 POLL_RETRY_COUNT = 100
 
+TYPE_FIELD_POS = 0
 GROUP_FIELD_POS = 6
 EVENT_GROUP_SETUP = 0x1
 EVENT_GROUP_DFU = 0x2
@@ -35,14 +36,65 @@ SENSOR_OPT_DOWNSHIFT_RUN = 0x1
 SENSOR_OPT_DOWNSHIFT_REST1 = 0x2
 SENSOR_OPT_DOWNSHIFT_REST2 = 0x3
 
+DFU_DATA = 0x0
+DFU_REBOOT = 0x1
+DFU_IMGINFO = 0x2
+
 class ConfigStatus(IntEnum):
-    SUCCESS = 0
-    PENDING = 1
-    FETCH = 2
-    TIMEOUT = 3
-    REJECT = 4
-    WRITE_ERROR = 5
+    SUCCESS            = 0
+    PENDING            = 1
+    FETCH              = 2
+    TIMEOUT            = 3
+    REJECT             = 4
+    WRITE_ERROR        = 5
     DISCONNECTED_ERROR = 6
+    FAULT              = 99
+
+class Response(object):
+    def __init__(self, recipient, event_id, status, data):
+        self.recipient = recipient
+        self.event_id  = event_id
+        self.status    = ConfigStatus(status)
+        self.data      = data
+
+    def __repr__(self):
+        base_str = ('Response:\n'
+                    '\trecipient 0x{:04x}\n'
+                    '\tevent_id  0x{:02x}\n'
+                    '\tstatus    {}\n').format(self.recipient,
+                                               self.event_id,
+                                               str(self.status))
+        if self.data is None:
+            data_str = '\tno data'
+        else:
+            data_str = ('\tdata_len {}\n'
+                        '\tdata {}\n').format(len(self.data), self.data)
+
+        return base_str + data_str
+
+    @staticmethod
+    def parse_response(response_raw):
+        data_field_len = len(response_raw) - struct.calcsize('HBBB')
+
+        if data_field_len < 0:
+            logging.error('Response too short')
+            return None
+
+        # Report ID is not included in the feature report from device
+        fmt = '<HBBB{}s'.format(data_field_len)
+
+        (rcpt, event_id, status, data_len, data) = struct.unpack(fmt, response_raw)
+
+        if data_len > len(data):
+            logging.error('Required data not present')
+            return None
+
+        if data_len == 0:
+            event_data = None
+        else:
+            event_data = data[:data_len]
+
+        return Response(rcpt, event_id, status, event_data)
 
 
 ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help')
@@ -68,7 +120,7 @@ def check_range(value, value_range):
     return True
 
 
-def create_set_report(recipient, event_id, event_data, is_fetch):
+def create_set_report(recipient, event_id, event_data):
     """ Function creating a report in order to set a specified configuration
         value.
         Recipient is a device product ID. """
@@ -108,51 +160,50 @@ def create_fetch_report(recipient, event_id):
     return report
 
 
-def parse_report(report):
-    data_field_len = len(report) - struct.calcsize('HBBB')
-    assert(data_field_len >= 0)
-
-    # Report ID is not included in the feature report from device
-    fmt = '<HBBB{}s'.format(data_field_len)
-    (recipient, event_id, status, event_data_len, data) = struct.unpack(fmt, report)
-
-    logging.debug('parsed: recipient 0x{:04x}, event_id 0x{:02x}, status 0x{:02x}, event_data_len {}, data {}'.format(
-        recipient, event_id, status, event_data_len, data))
-
-    return recipient, event_id, status, event_data_len, data
-
-
 def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
     if is_fetch:
         data = create_fetch_report(recipient, event_id)
     else:
-        data = create_set_report(recipient, event_id, event_data, is_fetch)
+        data = create_set_report(recipient, event_id, event_data)
 
     dev.send_feature_report(data)
 
     for retry in range(POLL_RETRY_COUNT):
         time.sleep(POLL_INTERVAL)
-        response = dev.get_feature_report(REPORT_ID, REPORT_SIZE)
 
-        resp_recipient, resp_event_id, resp_status, resp_len, resp_data = parse_report(response)
-        if is_fetch:
-            print('Fetched value:', int.from_bytes(resp_data, byteorder='little'))
+        response_raw = dev.get_feature_report(REPORT_ID, REPORT_SIZE)
+        response = Response.parse_response(response_raw)
 
-        if resp_recipient != recipient or resp_event_id != event_id:
+        if response is None:
+            logging.error('Invalid response')
+            op_status = ConfigStatus.FAULT
+            break
+
+        logging.debug('Parsed response: {}'.format(response))
+
+        if (response.recipient != recipient) or (response.event_id != event_id):
             logging.error('Response does not match the request:\n'
-                'request: recipient {} event_id {}\n'
-                'response: recipient {}, event_id {}'.format(
-                recipient, event_id, resp_recipient, resp_event_id)
-                )
+                          '\trequest: recipient {} event_id {}\n'
+                          '\tresponse: recipient {}, event_id {}'.format(recipient, event_id,
+                                                                         response.recipient, response.event_id))
+            op_status = ConfigStatus.FAULT
+            break;
 
-        op_status = ConfigStatus(resp_status)
+        op_status = response.status
         if op_status != ConfigStatus.PENDING:
             break
 
+    fetched_data = None
+    success = False
     if op_status == ConfigStatus.SUCCESS:
         logging.info('Success')
+        success = True
+        if is_fetch:
+            fetched_data = response.data
     else:
         logging.warning('Error: {}'.format(op_status.name))
+
+    return success, fetched_data
 
 
 def open_device():
@@ -177,7 +228,7 @@ def open_device():
 
 def perform_dfu(dev, args):
     dfu_image = args.dfu_image
-    event_id = EVENT_GROUP_DFU << GROUP_FIELD_POS
+    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_DATA << TYPE_FIELD_POS)
     recipient = MOUSE_PID
 
     if not os.path.isfile(dfu_image):
@@ -234,11 +285,16 @@ def perform_config(dev, args):
     event_id = (EVENT_GROUP_SETUP << GROUP_FIELD_POS) | (module_id << MOD_FIELD_POS) | (opt_id << OPT_FIELD_POS)
 
     if (args.value == 'fetch'):
-        print('Fetch the current value of {} from the firmware'.format(config_name))
-        event_data = b''
+        logging.debug('Fetch the current value of {} from the firmware'.format(config_name))
         try:
-            exchange_feature_report(dev, recipient, event_id, event_data, True)
+            success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
         except:
+            success = False
+
+        if success and fetched_data:
+            val = int.from_bytes(fetched_data, byteorder='little')
+            print('Fetched {}: {}'.format(config_name, val))
+        else:
             print('Failed to fetch {}'.format(config_name))
     else:
         config_value = int(args.value)
@@ -249,10 +305,56 @@ def perform_config(dev, args):
 
         event_data = struct.pack('<I', config_value)
         try:
-            exchange_feature_report(dev, recipient, event_id, event_data, False)
-            print('{} was set'.format(config_name))
+            success = exchange_feature_report(dev, recipient, event_id, event_data, False)
         except:
+            success = False
+
+        if success:
+            print('{} set to {}'.format(config_name, config_value))
+        else:
             print('Failed to set {}'.format(config_name))
+
+
+def perform_fwinfo(dev, args):
+    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_IMGINFO << TYPE_FIELD_POS)
+    recipient = MOUSE_PID
+
+    try:
+        success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
+    except:
+        success = False
+
+    if success and fetched_data:
+        fmt = '<BIBBHI'
+        assert(struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX)
+
+        (flash_area_id, image_len, ver_major, ver_minor, ver_rev, ver_build_nr) = struct.unpack(fmt, fetched_data)
+        print(('Firmware info\n'
+               '\tFLASH area id: {}\n'
+               '\tImage length: {}\n'
+               '\tVersion: {}.{}.{}.{}').format(flash_area_id,
+                                                image_len,
+                                                ver_major,
+                                                ver_minor,
+                                                ver_rev,
+                                                ver_build_nr))
+    else:
+        print('FW info request failed')
+
+
+def perform_fwreboot(dev, args):
+    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_REBOOT << TYPE_FIELD_POS)
+    recipient = MOUSE_PID
+
+    try:
+        success = exchange_feature_report(dev, recipient, event_id, None, True)
+    except:
+        success = False
+
+    if success:
+        print('Firmware rebooted')
+    else:
+        print('FW reboot request failed')
 
 
 def configurator():
@@ -264,6 +366,8 @@ def configurator():
     subparsers.required = True
     parser_dfu = subparsers.add_parser('dfu', help='Run DFU')
     parser_dfu.add_argument('dfu_image', type=str, help='Path to a DFU image')
+    parser_fwinfo = subparsers.add_parser('fwinfo', help='Obtain information about FW image')
+    parser_fwinfo = subparsers.add_parser('fwreboot', help='Request FW reboot')
     parser_config = subparsers.add_parser('config', help='Write configuration option')
     config_subparsers = parser_config.add_subparsers(dest='module')
     config_subparsers.required = True
@@ -282,6 +386,10 @@ def configurator():
 
     if args.command == 'dfu':
         perform_dfu(dev, args)
+    elif args.command == 'fwinfo':
+        perform_fwinfo(dev, args)
+    elif args.command == 'fwreboot':
+        perform_fwreboot(dev, args)
     elif args.command == 'config':
         perform_config(dev, args)
 

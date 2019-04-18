@@ -69,6 +69,11 @@ extern "C" {
 #define SENSOR_OPT_DOWNSHIFT_REST2	0x3
 #define SENSOR_OPT_COUNT 4
 
+/* Config event, DFU group macros */
+#define DFU_DATA	0x0
+#define DFU_REBOOT	0x1
+#define DFU_IMGINFO	0x2
+
 
 
 /** @brief Configuration channel event.

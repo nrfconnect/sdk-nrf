@@ -9,7 +9,7 @@
 
 #include "config_event.h"
 
-#define CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE 4
+#define CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE 16
 
 struct config_channel_frame {
 	u8_t report_id;
@@ -23,6 +23,7 @@ struct config_channel_frame {
 struct fetch {
 	atomic_t done;
 	u8_t data[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];
+	size_t data_len;
 
 	/* Recently fetched event_id and recipient. */
 	u8_t event_id;
