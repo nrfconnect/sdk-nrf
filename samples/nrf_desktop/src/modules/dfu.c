@@ -23,6 +23,13 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 
 
+#if defined(CONFIG_BT_PERIPHERAL)
+#define DEFAULT_LATENCY CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY
+#else
+#define DEFAULT_LATENCY 0
+#endif
+
+
 #define FLASH_PAGE_SIZE 0x1000
 
 #define DFU_TIMEOUT K_SECONDS(2)
@@ -53,7 +60,7 @@ static void set_ble_latency(bool dfu_start)
 		const struct bt_le_conn_param param = {
 			.interval_min = info.le.interval,
 			.interval_max = info.le.interval,
-			.latency = (dfu_start) ? (0) : (CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY),
+			.latency = (dfu_start) ? (0) : (DEFAULT_LATENCY),
 			.timeout = info.le.timeout
 		};
 
