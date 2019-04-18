@@ -183,7 +183,7 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 					cfg_chan->fetch.recipient, cfg_chan->fetch.event_id);
 			}
 
-			cfg_chan->frame.event_data_len = sizeof(cfg_chan->fetch.data);
+			cfg_chan->frame.event_data_len = cfg_chan->fetch.data_len;
 			cfg_chan->frame.event_data = (u8_t *) &cfg_chan->fetch.data;
 			cfg_chan->frame.status = CONFIG_STATUS_SUCCESS;
 		} else {
@@ -314,6 +314,7 @@ void config_channel_fetch_receive(struct config_channel_state *cfg_chan,
 
 	memcpy(cfg_chan->fetch.data, event->dyndata.data,
 	       event->dyndata.size);
+	cfg_chan->fetch.data_len = event->dyndata.size;
 
 	atomic_set(&cfg_chan->fetch.done, true);
 }
