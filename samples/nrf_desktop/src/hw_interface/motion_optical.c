@@ -721,7 +721,7 @@ static int init(struct config_options *options)
 				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
 				 GPIO_INT_LEVEL | GPIO_INT_ACTIVE_LOW);
 	if (err) {
-		LOG_ERR("Failed to confiugure GPIO");
+		LOG_ERR("Failed to configure GPIO");
 		goto error;
 	}
 
@@ -801,6 +801,7 @@ static void update_config(const u8_t config_id, const u8_t *data, size_t size)
 
 	k_sem_give(&sem);
 
+	return;
 error:
 	LOG_WRN("Unsupported sensor option (%" PRIu8 ") or wrong size (%zu)",
 		config_id, size);
