@@ -42,13 +42,12 @@ manifest:
     - name: fw-nrfconnect-mcuboot
       path: mcuboot
       revision: 1b930a96210edd2991cd16af4a8d659462b9c282
+    - name: fw-nrfconnect-tinycbor
+      path: modules/lib/tinycbor
+      revision: 111f7a215cc4efa49fd03a7835719adca83b4388
     - name: nrfxlib
       path: nrfxlib
       revision: 1fdfe09fe8f7f5c7e523753c5244a1e5f49d9035
-    - name: tinycbor
-      path: modules/lib/tinycbor
-      remote: zephyrproject
-      revision: 111f7a215cc4efa49fd03a7835719adca83b4388
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
