@@ -26,6 +26,7 @@
 
 #include "hid_keymap.h"
 #include "hid_keymap_def.h"
+#include "hid_report_desc.h"
 
 #define MODULE hid_state
 #include "module_state_event.h"
@@ -526,15 +527,24 @@ static void send_report_keyboard(void)
 		struct hid_keyboard_event *event = new_hid_keyboard_event();
 
 		event->subscriber = state.selected->id;
+		event->modifier_bm = 0;
 
 		size_t cnt = 0;
 		for (size_t i = 0;
 		     (i < max) && (cnt < ARRAY_SIZE(event->keys));
-		     i++, cnt++) {
+		     i++) {
 			struct item item = rd->items.item[max - i - 1];
 
 			if (item.value) {
-				event->keys[cnt] = item.usage_id;
+				if (item.usage_id <= KEYBOARD_REPORT_LAST_KEY) {
+					event->keys[cnt] = item.usage_id;
+					cnt++;
+				} else if ((item.usage_id >= KEYBOARD_REPORT_FIRST_MODIFIER) &&
+					   (item.usage_id <= KEYBOARD_REPORT_LAST_MODIFIER)) {
+					event->modifier_bm |= BIT(item.usage_id - KEYBOARD_REPORT_FIRST_MODIFIER);
+				} else {
+					LOG_WRN("Undefined usage 0x%x", item.usage_id);
+				}
 			} else {
 				break;
 			}
@@ -544,8 +554,6 @@ static void send_report_keyboard(void)
 		for (; cnt < ARRAY_SIZE(event->keys); cnt++) {
 			event->keys[cnt] = 0;
 		}
-
-		event->modifier_bm = 0;
 
 		EVENT_SUBMIT(event);
 	} else {
