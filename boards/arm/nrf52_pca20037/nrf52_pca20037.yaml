@@ -1,0 +1,9 @@
+identifier: nrf52_pca20037
+name: nRF52-PCA20037
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - ble
