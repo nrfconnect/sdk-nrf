@@ -68,17 +68,17 @@ const u8_t hid_report_desc[] = {
 #if CONFIG_DESKTOP_HID_KEYBOARD
 	/* Usage page - Keyboard */
 	0x05, 0x01,     /* Usage Page (Generic Desktop) */
-	0x09, 0x06,     /* Usage (Mouse) */
+	0x09, 0x06,     /* Usage (Keyboard) */
 
 	0xA1, 0x01,     /* Collection (Application) */
 
-	/* Report: Keyboard */
-	0x85, REPORT_ID_KEYBOARD,
+	/* Report: Keyboard Keys (input) */
+	0x85, REPORT_ID_KEYBOARD_KEYS,
 
 	/* Keyboard - Modifiers */
 	0x05, USAGE_PAGE_KEYBOARD,
-	0x19, 0xe0,       /* Usage Minimum (Left Ctrl) */
-	0x29, 0xe7,       /* Usage Maximum (Right GUI) */
+	0x19, KEYBOARD_REPORT_FIRST_MODIFIER, /* Usage Minimum */
+	0x29, KEYBOARD_REPORT_LAST_MODIFIER,  /* Usage Maximum */
 	0x15, 0x00,       /* Logical Minimum (0) */
 	0x25, 0x01,       /* Logical Maximum (1) */
 	0x75, 0x01,       /* Report Size (1) */
@@ -93,12 +93,15 @@ const u8_t hid_report_desc[] = {
 	/* Keyboard - Keys */
 	0x05, USAGE_PAGE_KEYBOARD,
 	0x19, 0x00,       /* Usage Minimum (0) */
-	0x29, 0x65,       /* Usage Maximum (101) */
+	0x29, KEYBOARD_REPORT_LAST_KEY, /* Usage Maximum */
 	0x15, 0x00,       /* Logical Minimum (0) */
-	0x25, 0x65,       /* Logical Maximum (101) */
+	0x25, KEYBOARD_REPORT_LAST_KEY, /* Logical Maximum */
 	0x75, 0x08,       /* Report Size (8) */
 	0x95, 0x06,       /* Report Count (6) */
 	0x81, 0x00,       /* Input (Data, Array) */
+
+	/* Report: Keyboard LEDS (output) */
+	0x85, REPORT_ID_KEYBOARD_LEDS,
 
 	/* Keyboard - LEDs */
 	0x05, USAGE_PAGE_LEDS,

@@ -20,6 +20,8 @@ Requirements
 Supported boards:
 * PCA10056 (nRF52840 DK) - example where the mouse is emulated using DK buttons
 * PCA20041 - nRF Desktop mouse reference design
+* PCA20037 - nRF Desktop keyboard reference design
+* PCA10059 - nRF Desktop dongle reference design
 
 Building and Running
 ********************

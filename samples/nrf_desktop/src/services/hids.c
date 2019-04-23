@@ -33,7 +33,8 @@ static size_t report_index[REPORT_ID_COUNT];
 
 BT_GATT_HIDS_DEF(hids_obj,
 		 REPORT_SIZE_MOUSE,
-		 REPORT_SIZE_KEYBOARD,
+		 REPORT_SIZE_KEYBOARD_KEYS,
+		 REPORT_SIZE_KEYBOARD_LEDS,
 		 REPORT_SIZE_MPLAYER
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		 , REPORT_SIZE_USER_CONFIG
@@ -172,6 +173,12 @@ static void mplayer_notif_handler(enum bt_gatt_hids_notif_evt evt)
 	}
 }
 
+static void keyboard_leds_handler(struct bt_gatt_hids_rep const *rep,
+				  struct bt_conn *conn)
+{
+	LOG_WRN("Keyboards LEDs report ignored");
+}
+
 static void feature_report_handler(struct bt_gatt_hids_rep const *rep,
 				   struct bt_conn *conn)
 {
@@ -238,7 +245,14 @@ static int module_init(void)
 
 	struct bt_gatt_hids_inp_rep *input_report =
 		&hids_init_param.inp_rep_group_init.reports[0];
+	struct bt_gatt_hids_outp_feat_rep *output_report =
+		&hids_init_param.outp_rep_group_init.reports[0];
+	struct bt_gatt_hids_outp_feat_rep *feature_report =
+		&hids_init_param.feat_rep_group_init.reports[0];
+
 	size_t ir_pos = 0;
+	size_t or_pos = 0;
+	size_t feat_pos = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
 		input_report[ir_pos].id       = REPORT_ID_MOUSE;
@@ -251,8 +265,8 @@ static int module_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		input_report[ir_pos].id      = REPORT_ID_KEYBOARD;
-		input_report[ir_pos].size    = REPORT_SIZE_KEYBOARD;
+		input_report[ir_pos].id      = REPORT_ID_KEYBOARD_KEYS;
+		input_report[ir_pos].size    = REPORT_SIZE_KEYBOARD_KEYS;
 		input_report[ir_pos].handler = keyboard_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
@@ -268,21 +282,29 @@ static int module_init(void)
 		ir_pos++;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		struct bt_gatt_hids_outp_feat_rep *feature_report =
-			&hids_init_param.feat_rep_group_init.reports[0];
-		size_t feat_pos = 0;
+	hids_init_param.inp_rep_group_init.cnt = ir_pos;
 
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		feature_report[feat_pos].id      = REPORT_ID_USER_CONFIG;
 		feature_report[feat_pos].size    = REPORT_SIZE_USER_CONFIG;
 		feature_report[feat_pos].handler = feature_report_handler;
 
+		report_index[feature_report[feat_pos].id] = feat_pos;
 		feat_pos++;
-
-		hids_init_param.feat_rep_group_init.cnt = feat_pos;
 	}
 
-	hids_init_param.inp_rep_group_init.cnt = ir_pos;
+	hids_init_param.feat_rep_group_init.cnt = feat_pos;
+
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+		output_report[or_pos].id      = REPORT_ID_KEYBOARD_LEDS;
+		output_report[or_pos].size    = REPORT_SIZE_KEYBOARD_LEDS;
+		output_report[or_pos].handler = keyboard_leds_handler;
+
+		report_index[output_report[or_pos].id] = or_pos;
+		or_pos++;
+	}
+
+	hids_init_param.outp_rep_group_init.cnt = or_pos;
 
 	/* Boot protocol setup */
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
@@ -406,9 +428,9 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 		return;
 	}
 
-	u8_t report[REPORT_SIZE_KEYBOARD];
+	u8_t report[REPORT_SIZE_KEYBOARD_KEYS];
 
-	static_assert(ARRAY_SIZE(report) == ARRAY_SIZE(event->keys) + 3,
+	static_assert(ARRAY_SIZE(report) == ARRAY_SIZE(event->keys) + 2,
 			"Incorrect number of keys in event");
 
 	/* Modifiers */
@@ -420,9 +442,6 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	/* Pressed keys */
 	memcpy(&report[2], &event->keys[0], sizeof(event->keys));
 
-	/* Led */
-	report[8] = 0;
-
 	int err;
 
 	if (report_mode == REPORT_MODE_BOOT) {
@@ -431,7 +450,7 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 							keyboard_report_sent_cb);
 	} else {
 		err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
-						report_index[REPORT_ID_KEYBOARD],
+						report_index[REPORT_ID_KEYBOARD_KEYS],
 						report, sizeof(report),
 						keyboard_report_sent_cb);
 	}
