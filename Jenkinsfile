@@ -1,5 +1,5 @@
 // Due to JENKINS-42369 we put these defines outside the pipeline
-def IMAGE_TAG = "ncs-toolchain:1.08"
+def IMAGE_TAG = "ncs-toolchain:1.09"
 def REPO_CI_TOOLS = "https://github.com/zephyrproject-rtos/ci-tools.git"
 def REPO_CI_TOOLS_SHA = "9f4dc0be401c2b1e9b1c647513fb996bd8abd057"
 
