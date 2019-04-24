@@ -718,6 +718,7 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	struct nrf_addrinfo nrf_hints;
 	struct nrf_addrinfo nrf_hints_pdn;
 	struct nrf_addrinfo *nrf_res = NULL;
+	struct nrf_addrinfo *nrf_hints_ptr = NULL;
 
 	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
 
@@ -738,8 +739,9 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 			}
 			nrf_hints.ai_next = &nrf_hints_pdn;
 		}
+		nrf_hints_ptr = &nrf_hints;
 	}
-	int retval = nrf_getaddrinfo(node, service, &nrf_hints, &nrf_res);
+	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
 
 	struct nrf_addrinfo *next_nrf_res = nrf_res;
 	struct addrinfo *latest_z_res = NULL;
