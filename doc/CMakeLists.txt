@@ -40,6 +40,16 @@ set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
 # Create the combined HTML output folder
 file(MAKE_DIRECTORY ${HTML_DIR})
 
+# Create a mbedtls config file with all settings on
+file(STRINGS ${NRFXLIB_BASE}/nrf_security/configs/nrf-config.h.template MBEDTLS_TEMPLATE_CONFIG)
+string(REGEX REPLACE
+       "#cmakedefine ([-_A-Z0-9]*)"
+       "#define \\1\n#define CONFIG_GLUE_\\1\n#define CONFIG_CC310_\\1\n#define CONFIG_VANILLA_\\1"
+       MBEDTLS_CONFIG "${MBEDTLS_TEMPLATE_CONFIG}"
+)
+string(REGEX REPLACE ";" "\n" MBEDTLS_CONFIG "${MBEDTLS_CONFIG}")
+file(WRITE ${NRFXLIB_BINARY_DIR}/mbedtls_doxygen_config.h ${MBEDTLS_CONFIG})
+
 # Build Zephyr documentation
 set(SPHINXOPTS -c ${NRF_BASE}/doc/zephyr)
 # Place the generated HTML in the common Sphinx HTML output folder
@@ -268,6 +278,23 @@ add_custom_target(
 )
 
 
+add_custom_target(
+  nrfxlib-kconfig
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_RST_OUT}/kconfig
+  COMMAND ${CMAKE_COMMAND} -E env
+  PYTHONPATH="${ZEPHYR_BASE}/scripts/kconfig${SEP}$ENV{PYTHONPATH}"
+  srctree=${NRFXLIB_BASE}
+  ENV_VAR_BOARD_DIR=boards/*/*/
+  ENV_VAR_ARCH=*
+  KERNELVERSION=${PROJECT_VERSION}
+  SRCARCH=x86
+  GENERATED_DTS_BOARD_CONF=not_applicable
+  CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
+  KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
+  KCONFIG_DOC_MODE=1
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py ${NRFXLIB_BASE}/Kconfig.nrfxlib ${NRFXLIB_RST_OUT}/kconfig
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
 
 set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
 
@@ -278,6 +305,7 @@ set(NRFXLIB_EXTRACT_CONTENT_COMMAND
   ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
   --ignore ${CMAKE_CURRENT_BINARY_DIR}
   "*.rst:.:${NRFXLIB_RST_OUT}"
+  "*.rst:include:${NRFXLIB_RST_OUT}/kconfig"
 )
 
 
@@ -299,7 +327,7 @@ add_custom_target(
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
-add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy)
+add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy nrfxlib-kconfig)
 
 add_custom_target(nrfxlib)
 add_dependencies(nrfxlib nrfxlib-html)
