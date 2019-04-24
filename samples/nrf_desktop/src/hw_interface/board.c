@@ -27,7 +27,7 @@ static int port_setup(const char *name,
 {
 	struct device *gpio_dev = device_get_binding(name);
 	int err = 0;
-
+	LOG_INF("+++ setting GPIOs 0:%d to 'OUT'", cnt);
 	if (!gpio_dev) {
 		LOG_ERR("Cannot bind %s", name);
 		return -ENXIO;
