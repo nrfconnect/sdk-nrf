@@ -258,7 +258,7 @@ static void scan_fn(struct k_work *work)
 
 	if (any_pressed) {
 		/* Avoid draining current between scans */
-		if (set_cols(0x00)) {
+		if (set_cols(0x00000000)) {
 			LOG_ERR("Cannot set neutral state");
 			goto error;
 		}
@@ -269,7 +269,7 @@ static void scan_fn(struct k_work *work)
 		/* If no button is pressed module can switch to callbacks */
 
 		/* Prepare to wait for a callback */
-		if (set_cols(0xFF)) {
+		if (set_cols(0xFFFFFFFF)) {
 			LOG_ERR("Cannot set neutral state");
 			goto error;
 		}
