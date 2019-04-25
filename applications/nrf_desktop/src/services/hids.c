@@ -170,8 +170,9 @@ static void mplayer_notif_handler(enum bt_gatt_hids_notif_evt evt)
 	async_notif_handler(evt, IN_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
 }
 
-static void keyboard_leds_handler(struct bt_gatt_hids_rep const *rep,
-				  struct bt_conn *conn)
+static void keyboard_leds_handler(struct bt_gatt_hids_rep *rep,
+				  struct bt_conn *conn,
+				  const bool write)
 {
 	LOG_WRN("Keyboards LEDs report ignored");
 }

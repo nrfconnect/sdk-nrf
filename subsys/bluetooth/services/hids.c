@@ -288,6 +288,14 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 				    rep->size);
 
+	if (rep->handler) {
+		struct bt_gatt_hids_rep report = {
+		    .data = buf,
+		    .size = rep->size,
+		};
+		rep->handler(&report, conn, false);
+	}
+
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
@@ -327,7 +335,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
-		rep->handler(&report, conn);
+		rep->handler(&report, conn, true);
 	}
 
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
@@ -377,6 +385,14 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 				    rep->size);
 
+	if (rep->handler) {
+		struct bt_gatt_hids_rep report = {
+		    .data = buf,
+		    .size = rep->size,
+		};
+		rep->handler(&report, conn, false);
+	}
+
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
@@ -416,7 +432,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
-		rep->handler(&report, conn);
+		rep->handler(&report, conn, true);
 	}
 
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
@@ -594,6 +610,14 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 	ret_len =
 	    bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 			      sizeof(conn_data->hids_boot_kb_outp_rep_ctx));
+
+	if (rep->handler) {
+		struct bt_gatt_hids_rep report = {
+		    .data = buf,
+		};
+		rep->handler(&report, conn, false);
+	}
+
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
 
 	return ret_len;
@@ -632,7 +656,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 		    .size = sizeof(conn_data->hids_boot_kb_outp_rep_ctx),
 		};
 
-		rep->handler(&report, conn);
+		rep->handler(&report, conn, true);
 	}
 
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);

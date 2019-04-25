@@ -234,10 +234,16 @@ static void caps_lock_handler(const struct bt_gatt_hids_rep *rep)
 }
 
 
-static void hids_outp_rep_handler(const struct bt_gatt_hids_rep *rep,
-				  struct bt_conn *conn)
+static void hids_outp_rep_handler(struct bt_gatt_hids_rep *rep,
+				  struct bt_conn *conn,
+				  bool write)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
+
+	if (!write) {
+		printk("Output report read\n");
+		return;
+	};
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 	printk("Output report has been received %s\n", addr);
@@ -245,10 +251,16 @@ static void hids_outp_rep_handler(const struct bt_gatt_hids_rep *rep,
 }
 
 
-static void hids_boot_kb_outp_rep_handler(const struct bt_gatt_hids_rep *rep,
-					  struct bt_conn *conn)
+static void hids_boot_kb_outp_rep_handler(struct bt_gatt_hids_rep *rep,
+					  struct bt_conn *conn,
+					  bool write)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
+
+	if (!write) {
+		printk("Output report read\n");
+		return;
+	};
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 	printk("Boot Keyboard Output report has been received %s\n", addr);
