@@ -34,9 +34,9 @@ Building and running
 
 This sample can be found under :file:`samples/nrf9160/http_application_update` in the |NCS| folder structure.
 
-The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board. Is uses MCUboot and SPM
-(Secure Partition Manager) and they will be automatically built and merged into the final hex-file when building
-the sample.
+The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
+Because of this, the sample will automatically include the :ref:`SPM<secure_partition_manager>`.
+The sample also uses MCUboot which is automatically built and merged into the final hex file when building the sample.
 
 See :ref:`gs_programming` for information about how to build and program the application.
 

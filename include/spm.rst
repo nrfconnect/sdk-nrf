@@ -14,13 +14,11 @@ Configuration
 *************
 
 Use Kconfig to configure the security attributions for the peripherals.
-Modify the source code of the SPM subsystem to configure the security attributions of flash or SRAM.
+Modify the source code of the SPM subsystem to configure the security attributions of SRAM.
+If Partition Manager is used, the security attributions of the flash regions are deduced from the generated file :file:`pm.config`.
+Otherwise, the security attributions of the flash regions are deduced from Device Tree information.
 
-The following security attribution configuration is applied:
-
-Flash (1 Mb)
-   * Lower 256 kB: Secure
-   * Upper 768 kB: Non-Secure
+For SRAM and peripherals, the following security attribution configuration is applied:
 
 SRAM (256 kB)
    * Lower 64 kB: Secure

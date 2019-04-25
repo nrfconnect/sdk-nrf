@@ -31,7 +31,6 @@ Requirements
 * :ref:`secure_partition_manager` must be programmed on the board.
 
   The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
-  Therefore, it requires the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
 
 Building and running
 ********************
@@ -39,7 +38,7 @@ Building and running
 This sample can be found under :file:`samples/lte-gateway/` in the |NCS| folder structure.
 
 The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
-It can be programmed independently from the Secure Partition Manager firmware.
+Because of this, the sample will automatically include the :ref:`SPM<secure_partition_manager>`.
 
 See :ref:`gs_programming` for information about how to build and program the application.
 Note that you must program two different applications as described in the following section.
@@ -60,7 +59,6 @@ Before you program the sample application onto the main controller, you must pro
 After programming the board controller, you must program the :ref:`secure_partition_manager` sample and the LTE Sensor Gateway sample to the main controller:
 
 1. Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller.
-#. Build the :ref:`secure_partition_manager` sample for the nrf9160_pca10090 board and program it.
 #. Build the LTE Sensor Gateway sample (this sample) for the nrf9160_pca10090ns board and program it.
 #. Verify that the sample was programmed successfully by connecting to the first serial port with a terminal emulator (for example, PuTTY) and checking the output.
    See :ref:`putty` for the required settings.

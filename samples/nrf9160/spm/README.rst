@@ -3,7 +3,7 @@
 nRF9160: Secure Partition Manager
 #################################
 
-The Secure Partition Manager sample provides a reference use of the Secure Partition Manager peripheral.
+The Secure Partition Manager sample provides a reference use of the System Protection Unit peripheral.
 This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
 Overview
@@ -13,6 +13,20 @@ The sample uses the SPM to configure secure attributions for the nRF9160 SiP and
 
 The SPM utilizes the SPU peripheral to configure security attributions for the nRF9160 flash, SRAM, and peripherals.
 After the configuration setup is complete, the sample loads the application firmware that is located on the device.
+
+The sample is automatically built by non-secure applications, when the
+nrf9160_pca10090ns board is used.
+
+Disable automatic building of SPM
+*********************************
+It might be desirable to flash SPM or the non-secure application individually.
+This can be done by disabling the automatic building of SPM.
+To do this set the option ``CONFIG_SPM=n`` in the applications ``prj.conf`` file.
+
+If this results in a single image build, the start address of the non-secure application will change.
+
+The security attribution configuration for the flash will change when SPM is not built as a sub-image.
+
 
 Security attribution configuration
 ==================================
