@@ -125,11 +125,13 @@ typedef void (*bt_gatt_hids_notif_handler_t) (enum bt_gatt_hids_notif_evt evt);
 
 /** @brief HID Report event handler.
  *
- * @param rep  Pointer to the report descriptor.
- * @param conn Pointer to Connection Object.
+ * @param rep	Pointer to the report descriptor.
+ * @param conn	Pointer to Connection Object.
+ * @param write	@c true if handler is called for report write.
  */
-typedef void (*bt_gatt_hids_rep_handler_t) (struct bt_gatt_hids_rep const *rep,
-					    struct bt_conn *conn);
+typedef void (*bt_gatt_hids_rep_handler_t) (struct bt_gatt_hids_rep *rep,
+					    struct bt_conn *conn,
+					    bool write);
 
 /** @brief Input Report.
  */
