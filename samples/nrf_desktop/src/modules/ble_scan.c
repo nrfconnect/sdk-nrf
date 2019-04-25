@@ -30,6 +30,9 @@ struct bond_find_data {
 };
 
 
+static bool scanning;
+
+
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
 	struct bond_find_data *bond_find_data = user_data;
@@ -115,6 +118,8 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	err = bt_scan_stop();
 	if (err) {
 		LOG_ERR("Stop LE scan failed (err %d)", err);
+	} else {
+		scanning = false;
 	}
 }
 
@@ -220,7 +225,17 @@ static void scan_init(void)
 
 static void scan_start(void)
 {
-	int err = configure_filters();
+	int err;
+
+	if (scanning) {
+		err = bt_scan_stop();
+		if (err) {
+			LOG_ERR("Stop LE scan failed (err %d)", err);
+			goto error;
+		}
+		scanning = false;
+	}
+	err = configure_filters();
 	if (err) {
 		LOG_ERR("Cannot set filters (err %d)", err);
 		goto error;
@@ -231,8 +246,8 @@ static void scan_start(void)
 		LOG_ERR("Cannot start scanning (err %d)", err);
 		goto error;
 	}
-
 	LOG_INF("Scan started");
+	scanning = true;
 	return;
 
 error:
@@ -291,6 +306,30 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_ble_peer_operation_event(eh)) {
+		const struct ble_peer_operation_event *event =
+			cast_ble_peer_operation_event(eh);
+
+		switch (event->op) {
+		case PEER_OPERATION_ERASED:
+			/* After peer erase restart scan to update filters */
+			scan_start();
+			break;
+
+		case PEER_OPERATION_SELECT:
+		case PEER_OPERATION_SELECTED:
+		case PEER_OPERATION_ERASE:
+		case PEER_OPERATION_CANCEL:
+			/* Ignore */
+			break;
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
+		}
+
+		return false;
+	}
+
 	if (is_ble_discovery_complete_event(eh)) {
 		const struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(eh);
@@ -311,4 +350,5 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, ble_discovery_complete_event);
