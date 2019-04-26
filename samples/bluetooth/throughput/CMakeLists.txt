@@ -9,8 +9,10 @@ include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(NONE)
 
 FILE(GLOB app_sources src/*.c)
+# NORDIC SDK APP START
 target_sources(app PRIVATE
 	${app_sources}
 )
+# NORDIC SDK APP END
 
 zephyr_library_include_directories(${ZEPHYR_BASE}/samples/bluetooth)
