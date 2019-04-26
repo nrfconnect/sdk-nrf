@@ -24,3 +24,4 @@ After that, pick a sample that is related to the application you want to create 
    gs_installing
    gs_programming
    gs_testing
+   gs_modifying

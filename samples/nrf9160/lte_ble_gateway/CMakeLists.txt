@@ -20,7 +20,9 @@ set(spm_CONF_FILE
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(lte-ble-gateway)
 
+# NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
+# NORDIC SDK APP END
 zephyr_include_directories(src)
 
 include_directories(src/orientation_detector)
