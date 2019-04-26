@@ -4,9 +4,6 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
-config BOARD_NRF52840_PCA20035
-	bool
-
 if BOARD_NRF52840_PCA20035
 
 config BOARD_ENABLE_DCDC
