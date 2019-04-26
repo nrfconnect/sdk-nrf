@@ -201,7 +201,7 @@ static void spm_config_flash(void)
 
 		NRF_SPU->FLASHREGION[i].PERM = flash_perm[i];
 
-		PRINT("%02u 0x%05x 0x%05x \t", i, 8 * KB(i), 8 * KB(i + 1));
+		PRINT("%02u 0x%05x 0x%05x \t", i, 32 * KB(i), 32 * KB(i + 1));
 		PRINT("%s", flash_perm[i] & FLASH_SECURE ? "Secure\t\t" :
 							   "Non-Secure\t");
 
@@ -235,7 +235,7 @@ static void spm_config_sram(void)
 
 		NRF_SPU->RAMREGION[i].PERM = sram_perm[i];
 
-		PRINT("%02u 0x%05x 0x%05x\t", i, 4 * KB(i), 4 * KB(i + 1));
+		PRINT("%02u 0x%05x 0x%05x\t", i, 8 * KB(i), 8 * KB(i + 1));
 		PRINT("%s", sram_perm[i] & SRAM_SECURE ? "Secure\t\t" :
 							 "Non-Secure\t");
 
@@ -396,7 +396,9 @@ void spm_jump(void)
 	 */
 	u32_t *vtor_ns = (u32_t *)NON_SECURE_APP_ADDRESS;
 
-	PRINT("SPM: MSP_NS %x\n", vtor_ns[0]);
+	PRINT("SPM: NS image at 0x%x\n", (u32_t)vtor_ns);
+	PRINT("SPM: NS MSP at 0x%x\n", vtor_ns[0]);
+	PRINT("SPM: NS reset vector at 0x%x\n", vtor_ns[1]);
 
 	/* Configure Non-Secure stack */
 	tz_nonsecure_setup_conf_t spm_ns_conf = {
@@ -414,7 +416,7 @@ void spm_jump(void)
 	reset_ns = TZ_NONSECURE_FUNC_PTR_CREATE(vtor_ns[1]);
 
 	if (TZ_NONSECURE_FUNC_PTR_IS_NS(reset_ns)) {
-		PRINT("SPM: prepare to jump to Non-Secure image\n");
+		PRINT("SPM: prepare to jump to Non-Secure image.\n");
 
 		/* Note: Move UARTE0 before jumping, if it is
 		 * to be used on the Non-Secure domain.
