@@ -54,7 +54,7 @@ static int app_dfu_init(void)
 {
 	int i;
 
-	flash_address = PM_MCUBOOT_PARTITIONS_SECONDARY_ADDRESS;
+	flash_address = PM_MCUBOOT_SECONDARY_ADDRESS;
 	for (i = 0; i < FLASH_PAGE_MAX_CNT; i++) {
 		is_flash_page_erased[i] = false;
 	}
@@ -140,7 +140,7 @@ static int app_download_client_event_handler(
 	switch (event) {
 	case DOWNLOAD_CLIENT_EVT_DOWNLOAD_FRAG: {
 
-		if (dfu->object_size > PM_MCUBOOT_PARTITIONS_SECONDARY_SIZE) {
+		if (dfu->object_size > PM_MCUBOOT_SECONDARY_SIZE) {
 			printk("Requested file too big to fit in flash\n");
 			return 1;
 		}
@@ -172,8 +172,8 @@ static int app_download_client_event_handler(
 	}
 
 	case DOWNLOAD_CLIENT_EVT_DOWNLOAD_DONE:
-		flash_address = PM_MCUBOOT_PARTITIONS_SECONDARY_ADDRESS
-			+PM_MCUBOOT_PARTITIONS_SECONDARY_SIZE-0x4;
+		flash_address = PM_MCUBOOT_SECONDARY_ADDRESS
+			+PM_MCUBOOT_SECONDARY_SIZE-0x4;
 		err = flash_page_erase_if_needed(flash_address);
 		if (err != 0) {
 			return 1;
