@@ -119,7 +119,7 @@ static void handle_dfu_data(u8_t *data, size_t size)
 			LOG_WRN("Previous DFU operation interrupted");
 		}
 
-		err = flash_area_open(PM_MCUBOOT_PARTITIONS_SECONDARY_ID, &flash_area);
+		err = flash_area_open(PM_MCUBOOT_SECONDARY_ID, &flash_area);
 		if (err) {
 			LOG_ERR("Cannot open flash area (%d)", err);
 			goto dfu_finish;
