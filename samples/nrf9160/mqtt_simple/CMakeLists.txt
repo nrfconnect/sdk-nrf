@@ -10,4 +10,6 @@ include(../../../cmake/boilerplate.cmake NO_POLICY_SCOPE)
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(mqtt-simple)
 
-target_sources(app PRIVATE src/main.c)
+target_sources(app PRIVATE src/main.c
+                           ${ZEPHYR_BASE}/subsys/net/ip/utils.c
+              )

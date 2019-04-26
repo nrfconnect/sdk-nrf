@@ -259,8 +259,13 @@ static void broker_init(void)
 				->sin_addr.s_addr;
 			broker4->sin_family = AF_INET;
 			broker4->sin_port = htons(CONFIG_MQTT_BROKER_PORT);
-			printk("IPv4 Address found 0x%08x\n",
-				broker4->sin_addr.s_addr);
+			/* ntop returns a \0 terminated string */
+			char ipv4_addr[NET_IPV4_ADDR_LEN + 1];
+			net_addr_ntop(AF_INET,
+				      &broker4->sin_addr.s_addr,
+				      ipv4_addr,
+				      NET_IPV4_ADDR_LEN + 1);
+			printk("IPv4 Address found %s\n", ipv4_addr);
 			break;
 		} else {
 			printk("ai_addrlen = %u should be %u or %u\n",
