@@ -185,9 +185,9 @@ To manage the ``nrf`` repository (the manifest repository), use Git.
 Checking out a branch or tag in the ``nrf`` repository gives you a different version of the manifest file.
 Running ``west update`` will then update the project repositories to the state specified in this manifest file.
 
-For example, to switch to release v0.5.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
+For example, to switch to release v0.4.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
 
-   git checkout v0.5.0
+   git checkout v0.4.0
    west update
 
 To switch to the latest state of development, enter the following commands::
@@ -248,6 +248,7 @@ To install those, open a |bash| in the ``ncs`` folder and enter the following co
 
    pip3 |install_user| -r zephyr/scripts/requirements.txt
    pip3 |install_user| -r nrf/scripts/requirements.txt
+   pip3 |install_user| -r mcuboot/scripts/requirements.txt
 
 .. add_deps_end
 
