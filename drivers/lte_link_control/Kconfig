@@ -83,6 +83,19 @@ config LTE_PDP_CONTEXT
 		The +CGDCONT command defines Packet Data Protocol (PDP) Context.
 		For reference, see 3GPP 27.007 Ch. 10.1.1
 
+choice
+	prompt "Select network mode"
+	default LTE_NETWORK_MODE_LTE_M
+	help
+		Select either LTE-M or Narrowband-IOT (NB-IoT) network mode
+
+config LTE_NETWORK_MODE_LTE_M
+	bool "LTE-M"
+
+config LTE_NETWORK_MODE_NBIOT
+	bool "NB-IoT"
+
+endchoice
 
 module = LTE_LINK_CONTROL
 module-dep = LOG
