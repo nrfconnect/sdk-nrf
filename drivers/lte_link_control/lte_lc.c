@@ -43,6 +43,13 @@ static const char normal[] = "AT+CFUN=1";
 static const char offline[] = "AT+CFUN=4";
 /* Successful return from modem */
 static const char success[] = "OK";
+#if defined(CONFIG_LTE_NETWORK_MODE_NBIOT)
+/* Set network mode to Narrowband-IoT */
+static const char network_mode[] = "AT%XSYSTEMMODE=0,1,0,0";
+#elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M)
+/* Set network mode to LTE-M */
+static const char network_mode[] = "AT%XSYSTEMMODE=1,0,0,0";
+#endif
 /* Accepted network statuses read from modem */
 static const char status1[] = "+CEREG: 1";
 static const char status2[] = "+CEREG:1";
@@ -130,6 +137,11 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 	}
 	LOG_INF("PDP Context: %s", cgdcont);
 #endif
+	err = at_cmd(at_socket_fd, network_mode, AT_CMD_SIZE(network_mode));
+	if (err) {
+		close(at_socket_fd);
+		return err;
+	}
 	err = at_cmd(at_socket_fd, normal, AT_CMD_SIZE(normal));
 	if (err) {
 		close(at_socket_fd);
@@ -141,7 +153,7 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 
 		bytes = recv(at_socket_fd, buffer, LC_MAX_READ_LENGTH, 0);
 		if (bytes) {
-			LOG_DBG("recv: %s", buffer);
+			printk("recv: %s", buffer);
 			if (!memcmp(status1, buffer, AT_CMD_SIZE(status1)) ||
 			    !memcmp(status2, buffer, AT_CMD_SIZE(status2)) ||
 			    !memcmp(status3, buffer, AT_CMD_SIZE(status3)) ||
