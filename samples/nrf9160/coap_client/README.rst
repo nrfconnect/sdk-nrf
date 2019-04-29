@@ -26,7 +26,6 @@ Building and running
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
-.. include:: /includes/programming.txt
 
 Testing
 =======

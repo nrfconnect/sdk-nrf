@@ -32,11 +32,13 @@
 
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
-.. _`LTE Link Monitor`: https://www.nordicsemi.com/DocLib/Content/User_Guides/link_monitor/latest/UG/link_monitor/lm_intro
+.. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
 
-.. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://www.nordicsemi.com/en/DocLib/Content/User_Guides/nrf91_dk/latest/UG/nrf91_DK/hw_description/board_controller
+.. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
 
-.. _`band lock section in the AT Commands reference document`: https://www.nordicsemi.com/DocLib/Content/User_Guides/at_commands/latest/REF/at_commands/mob_termination_ctrl_status/xbandlock
+.. _`band lock section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
+
+.. _`Device programming section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/mcu_device_programming.html
 
 
 

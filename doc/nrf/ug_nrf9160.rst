@@ -40,8 +40,10 @@ Secure Partition Manager
 To use any of the nRF9160 samples, you must first compile and flash the
 **Secure Partition Manager** sample.
 It provides a reference implementation of a Secure Partition Manager firmware.
-This firmware is required to set up the nRF9160 DK so that it can run
-user applications in the non-secure domain.
+This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
+
+Note that the **Secure Partition Manager** sample is automatically included in the build for the nrf9160_pca10090ns board.
+To disable the automatic inclusion of the **Secure Partition Manager** sample, set the option ``CONFIG_SPM=n`` in the project configuration.
 
 For detailed documentation of the sample, see :ref:`secure_partition_manager`.
 

@@ -1,7 +1,6 @@
 This sample can be found under |sample path| in the |NCS| folder structure.
 
 The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
-It can be programmed independently from the Secure Partition Manager firmware.
+Because of this, it automatically includes the :ref:`secure_partition_manager`.
 
 See :ref:`gs_programming` for information about how to build and program the application.
-Note that you must program two different applications as described in `Programming the sample`_.

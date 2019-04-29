@@ -114,8 +114,6 @@ For example, configure ``CONFIG_POWER_OPTIMIZATION_ENABLE`` to enable power opti
 In |SES|, select **Project** > **Configure nRF Connect SDK project** to browse and configure these options.
 Alternatively, use the command line tool ``menuconfig`` or configure the options directly in ``prj.conf``.
 
-.. include:: /includes/programming.txt
-
 Testing
 =======
 

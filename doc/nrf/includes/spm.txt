@@ -1,4 +1,2 @@
-:ref:`secure_partition_manager` must be programmed on the board.
-
 The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
-Therefore, it requires the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
+Therefore, it automatically includes the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
