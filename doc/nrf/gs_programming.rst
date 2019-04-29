@@ -61,6 +61,12 @@ You can download it from the following links:
 #. Build and flash your project.
    The required steps differ depending on if you build a single application or a multi-image project (such as the nRF9160 samples, which include :ref:`SPM <secure_partition_manager>`).
 
+   .. important::
+      If you are working with an nRF9160 DK, make sure to select the correct controller before you flash the application to your board.
+
+      Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller, or in the **NRF52** position to program the board controller.
+      See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
+
    To build and flash a single application:
 
       a. Select your project in the Project Explorer.

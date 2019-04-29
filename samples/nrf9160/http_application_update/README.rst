@@ -28,6 +28,8 @@ Requirements
 * A signed firmware image that is available for download from an HTTP server.
   This image is automatically generated when building the application.
 
+* .. include:: /includes/spm.txt
+
 
 Building and running
 ********************
@@ -37,8 +39,8 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
-It uses MCUboot and SPM (Secure Partition Manager).
-They are automatically built and merged into the final HEX file when building the sample.
+Because of this, it automatically includes the :ref:`secure_partition_manager`.
+The sample also uses MCUboot, which is automatically built and merged into the final HEX file when building the sample.
 
 
 Specifying the image file
@@ -50,16 +52,6 @@ To do so, open the :file:`prj.cnf` file of the sample and add the name of your s
 
    CONFIG_HOST="your.server.com"
    CONFIG_RESOURCE="filename.bin"
-
-
-Programming the sample
-======================
-
-1. Connect the nRF9160 DK board to your computer.
-#. Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller.
-#. Build the HTTP application update sample (this sample) for the nrf9160_pca10090ns board and program it.
-#. Verify that the sample was programmed successfully by connecting to the serial port with a terminal emulator (for example, PuTTY) and checking the output.
-   See :ref:`putty` for the required settings.
 
 
 Testing
