@@ -55,8 +55,7 @@ After programming the sample to your board, test it by performing the following 
 
 1. Connect the board to the computer using a USB cable.
    The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-#. Connect to the board with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+#. |connect_terminal|
 #. Reset the board.
 #. Observe that the text "Starting DFU SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripheral boards with SMP.
 #. Program the :ref:`smp_svr_sample` to another board.

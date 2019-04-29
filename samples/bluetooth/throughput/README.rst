@@ -87,9 +87,9 @@ Testing
 
 After programming the sample to both boards, test it by performing the following steps:
 
-1. Power on both boards.
-#. Connect to both boards with a terminal emulator (for example, PuTTY).
+1. Connect to both boards with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
+#. Reset both boards.
 #. Observe that the boards establish a connection.
    When they are connected, one of them serves as *tester* and the other one as *peer*.
    The tester outputs the following information::
