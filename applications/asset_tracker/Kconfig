@@ -130,7 +130,6 @@ endif
 
 config FLIP_POLL
 	bool "Use polling to detect flip"
-	default y if ACCEL_USE_EXTERNAL
 	help
 		Poll the defined accelerometer device at interval determined by
 		FLIP_POLL_INTERVAL. Data will be sent to nRF Cloud if a flip

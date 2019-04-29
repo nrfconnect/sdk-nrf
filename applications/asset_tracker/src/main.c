@@ -352,7 +352,7 @@ static void sensor_trigger_handler(struct device *dev,
 	ARG_UNUSED(dev);
 	ARG_UNUSED(trigger);
 
-	/* No action implemented. */
+	flip_send(NULL);
 }
 
 #if defined(CONFIG_DK_LIBRARY)
@@ -976,6 +976,39 @@ static void modem_configure(void)
 #endif
 }
 
+/**@brief Initializes the accelerometer device and
+ * configures trigger if set.
+ */
+static void accelerometer_init(void)
+{
+	if (!IS_ENABLED(CONFIG_FLIP_POLL) &&
+	     IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL)) {
+
+		struct device *accel_dev =
+		device_get_binding(CONFIG_ACCEL_DEV_NAME);
+
+		if (accel_dev == NULL) {
+			printk("Could not get %s device\n",
+				CONFIG_ACCEL_DEV_NAME);
+			return;
+		}
+
+		struct sensor_trigger sensor_trig = {
+			.type = SENSOR_TRIG_THRESHOLD,
+		};
+
+		printk("Setting trigger\n");
+		int err = 0;
+
+		err = sensor_trigger_set(accel_dev, &sensor_trig,
+				sensor_trigger_handler);
+
+		if (err) {
+			printk("Unable to set trigger\n");
+		}
+	}
+}
+
 /**@brief Initializes GPS device and configures trigger if set.
  * Gets initial sample from GPS device.
  */
@@ -1022,22 +1055,6 @@ static void flip_detection_init(void)
 	if (accel_dev == NULL) {
 		printk("Could not get %s device\n", CONFIG_ACCEL_DEV_NAME);
 		return;
-	}
-
-	struct sensor_trigger sensor_trig = {
-		.type = SENSOR_TRIG_DATA_READY,
-	};
-
-	if (IS_ENABLED(CONFIG_ACCEL_TRIGGER)) {
-		int err = 0;
-
-		err = sensor_trigger_set(accel_dev, &sensor_trig,
-				sensor_trigger_handler);
-
-		if (err) {
-			printk("Could not set trigger, error code: %d\n", err);
-			return;
-		}
 	}
 
 	orientation_detector_init(accel_dev);
@@ -1098,6 +1115,7 @@ static void modem_data_init(void)
 /**@brief Initializes the sensors that are used by the application. */
 static void sensors_init(void)
 {
+	accelerometer_init();
 	gps_init();
 	flip_detection_init();
 	env_sensor_init();
