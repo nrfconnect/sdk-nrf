@@ -74,6 +74,12 @@
 
 .. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
 
+.. _`nRF Connect for Mobile`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-mobile
+
+.. _`nRF Blinky`: https://github.com/NordicSemiconductor/Android-nRF-Blinky
+
+.. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
+
 
 
 .. ### Links to other websites and software
