@@ -31,7 +31,7 @@ Testing
 
 After programming the sample and all prerequisites to the board, test it by performing the following steps:
 
-1. Connect the USB cable and power on your nRF9160 DK.
+1. Connect the USB cable and power on or reset your nRF9160 DK.
 #. Open a terminal emulator and observe that the kit prints the following information::
 
        The MQTT simple sample started

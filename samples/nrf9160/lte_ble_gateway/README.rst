@@ -67,7 +67,7 @@ After programming the sample and all prerequisites to the board, test it by perf
 #. Open a web browser and navigate to https://nrfcloud.com/.
    Follow the instructions to set up your account and add an LTE device.
    A pattern of switch and button actions is displayed.
-#. Power on the board.
+#. Power on or reset the board.
 #. Observe in the terminal window connected to the first serial port that the board starts up in the Secure Partition Manager and that the application starts.
    This is indicated by output similar to the following lines::
 

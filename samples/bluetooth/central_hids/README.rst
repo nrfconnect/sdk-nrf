@@ -65,9 +65,9 @@ After programming the sample to your board, you can test it either by connecting
 Testing with another board
 --------------------------
 
-1. Connect the board that runs this sample to a terminal (for example, PuTTY).
-   See :ref:`putty` for the required settings.
-#. Program the other board with the :ref:`peripheral_hids_keyboard` sample.
+1. |connect_terminal|
+#. Reset the board.
+#. Program the other board with the :ref:`peripheral_hids_keyboard` sample and reset it.
 #. Wait until the HIDS keyboard is detected by the central.
    All detected descriptors are listed.
    In the terminal window, check for information similar to the following::

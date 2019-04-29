@@ -50,8 +50,8 @@ Testing
 After programming the sample to your board, test it by performing the following steps:
 
 1. Connect the board to the computer using a USB cable. The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-#. Connect to the board with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+#. |connect_terminal|
+#. Reset the board.
 #. Observe that LED 1 is blinking and that the device is advertising with the device name that is configured in :option:`CONFIG_BT_DEVICE_NAME <zephyr:CONFIG_BT_DEVICE_NAME>`.
 #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 #. Connect to the device using nRF Connect for Mobile.
