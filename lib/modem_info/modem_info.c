@@ -433,24 +433,17 @@ static void modem_info_rsrp_subscribe_thread(void *arg1, void *arg2, void *arg3)
 	}
 
 	while (1) {
-		err = poll(&fds, nfds, K_FOREVER);
-		if (err < 0) {
-			LOG_ERR("Poll error: %d\n", err);
+		k_mutex_lock(&socket_mutex, K_FOREVER);
+		r_bytes = recv(at_socket_fd, buf, sizeof(buf), 0);
+		k_mutex_unlock(&socket_mutex);
+
+		if (!is_cesq_notification(buf, r_bytes)) {
 			continue;
 		}
 
-		k_mutex_lock(&socket_mutex, K_FOREVER);
-		r_bytes = recv(at_socket_fd, buf,
-				sizeof(buf), MSG_DONTWAIT);
-		k_mutex_unlock(&socket_mutex);
-
-		if (is_cesq_notification(buf, r_bytes)) {
-			modem_info_parse(modem_data[MODEM_INFO_RSRP],
-					buf);
-			len = modem_info_short_get(MODEM_INFO_RSRP,
-						   &param_value);
-			modem_info_rsrp_cb(param_value);
-		}
+		modem_info_parse(modem_data[MODEM_INFO_RSRP], buf);
+		len = modem_info_short_get(MODEM_INFO_RSRP, &param_value);
+		modem_info_rsrp_cb(param_value);
 	}
 }
 
