@@ -4,7 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-/* This file must be included only once */
+/* This configuration file is included only once from leds module and holds
+ * information about LED mapping to PWM channels.
+ */
+
+/* This structure enforces the header file is included only once in the build.
+ * Violating this requirement triggers a multiple definition error at link time.
+ */
 const struct {} leds_def_include_once;
 
 /* Mapping the PWM channels to pin numbers */
