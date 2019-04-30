@@ -5,6 +5,13 @@
  */
 
 /dts-v1/;
+#include <nordic/nrf9160ns_sica.dtsi>
+#include "nrf9160_pca20035_common.dts"
 
-/* PCA20035 v0.3.0 is set as the default board. */
-#include "nrf9160_pca20035_v0_3_0ns.dts"
+/ {
+	chosen {
+		zephyr,flash = &flash0;
+		zephyr,sram = &sram0_ns;
+		zephyr,code-partition = &slot0_ns_partition;
+	};
+};
