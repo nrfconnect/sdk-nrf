@@ -1061,7 +1061,7 @@ static void modem_data_init(void)
 	device_cloud_data.type = NRF_CLOUD_DEVICE_INFO;
 	device_cloud_data.tag = 0x1;
 
-	k_work_submit(&device_status_work);
+	device_status_send(NULL);
 
 	modem_info_rsrp_register(modem_rsrp_handler);
 }
