@@ -207,18 +207,22 @@ static void scan_start(void)
 	printk("Scanning...\n");
 }
 
+static void ble_ready(int err)
+{
+	printk("Bluetooth ready\n");
+
+	bt_conn_cb_register(&conn_callbacks);
+	scan_start();
+}
+
 void ble_init(void)
 {
 	int err;
 
-	err = bt_enable(NULL);
+	printk("Initializing Bluetooth..\n");
+	err = bt_enable(ble_ready);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
-
-	printk("Bluetooth initialized\n");
-
-	bt_conn_cb_register(&conn_callbacks);
-	scan_start();
 }
