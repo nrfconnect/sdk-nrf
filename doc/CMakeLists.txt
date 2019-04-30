@@ -1,16 +1,51 @@
 cmake_minimum_required(VERSION 3.13.1)
 project(nrf-connect-sdk-doc LANGUAGES)
 
-set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
+find_program(
+  WEST
+  west
+  )
+
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
 set(ENV{NRF_BASE} ${NRF_BASE})
-if(NOT DEFINED ENV{MCUBOOT_BASE})
- get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../mcuboot/ REALPATH)
- set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
-endif()
-if(NOT DEFINED ENV{NRFXLIB_BASE})
- get_filename_component(NRFXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/../../nrfxlib/ REALPATH)
- set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
+
+if(${WEST} STREQUAL WEST-NOTFOUND)
+  # West is not installed; get project paths from the environment.
+  set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
+  if(NOT DEFINED ENV{MCUBOOT_BASE})
+    get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../mcuboot/ REALPATH)
+    set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
+  else()
+    set(MCUBOOT_BASE $ENV{MCUBOOT_BASE})
+  endif()
+  if(NOT DEFINED ENV{NRFXLIB_BASE})
+    get_filename_component(NRFXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/../../nrfxlib/ REALPATH)
+    set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
+  else()
+    set(NRFXLIB_BASE $ENV{NRFXLIB_BASE})
+  endif()
+else()
+  # Get project paths with west, but allow env overrides.
+  function(find_repo repo_name output_variable)
+    execute_process(COMMAND ${WEST} list --format={abspath} ${repo_name}
+      OUTPUT_VARIABLE out OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(${output_variable} ${out} PARENT_SCOPE)
+  endfunction()
+
+  if(NOT DEFINED ENV{ZEPHYR_BASE})
+    find_repo(fw-nrfconnect-zephyr ZEPHYR_BASE)
+    set(ENV{ZEPHYR_BASE} ${ZEPHYR_BASE})
+  else()
+    set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
+  endif()
+  if(NOT DEFINED ENV{MCUBOOT_BASE})
+    find_repo(fw-nrfconnect-mcuboot MCUBOOT_BASE)
+    set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
+  endif()
+  if(NOT DEFINED ENV{NRFXLIB_BASE})
+    find_repo(nrfxlib NRFXLIB_BASE)
+    set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
+  endif()
 endif()
 
 message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
@@ -152,6 +187,7 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env
   PYTHONPATH="${ZEPHYR_BASE}/scripts/kconfig${SEP}$ENV{PYTHONPATH}"
   srctree=${NRF_BASE}
+  ZEPHYR_BASE=${ZEPHYR_BASE}
   ENV_VAR_BOARD_DIR=boards/*/*/
   ENV_VAR_ARCH=*
   KERNELVERSION=${PROJECT_VERSION}
@@ -166,6 +202,7 @@ add_custom_target(
 
 set(NRF_SPHINX_BUILD_HTML_COMMAND
   ${CMAKE_COMMAND} -E env
+  ZEPHYR_BASE=${ZEPHYR_BASE}
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
   ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_BASE=${NRF_BASE}
@@ -237,6 +274,7 @@ add_custom_target(
   mcuboot-html
   COMMAND ${CMAKE_COMMAND} -E env
   NRF_BASE=${NRF_BASE}
+  ZEPHYR_BASE=${ZEPHYR_BASE}
   ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -285,6 +323,7 @@ add_custom_target(
   nrfxlib-kconfig
   COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_RST_OUT}/kconfig
   COMMAND ${CMAKE_COMMAND} -E env
+  ZEPHYR_BASE=${ZEPHYR_BASE}
   PYTHONPATH="${ZEPHYR_BASE}/scripts/kconfig${SEP}$ENV{PYTHONPATH}"
   srctree=${NRFXLIB_BASE}
   ENV_VAR_BOARD_DIR=boards/*/*/
@@ -326,6 +365,7 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env
   NRF_BASE=${NRF_BASE}
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
+  ZEPHYR_BASE=${ZEPHYR_BASE}
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
