@@ -35,10 +35,16 @@ After programming the sample and all prerequisites to the board, test it by perf
 #. Open a terminal emulator and observe that the kit prints the following information::
 
        The MQTT simple sample started
-#. Observe that the kit connects to the configured MQTT broker (``CONFIG_MQTT_BROKER_HOSTNAME``) after it gets LTE connection.
-   Now the kit is ready to echo whatever data is sent to it on the configured subscribe topic (``CONFIG_MQTT_SUB_TOPIC``).
+#. Observe that the kit connects to the configured MQTT broker (``MQTT_BROKER_HOSTNAME``) after it gets LTE connection.
+   Now the kit is ready to echo whatever data is sent to it on the configured subscribe topic (``MQTT_SUB_TOPIC``).
 #. Use an MQTT client like mosquitto to subscribe to and publish data to the broker.
-   Observe that the kit publishes all data that you publish to ``CONFIG_MQTT_SUB_TOPIC`` on ``CONFIG_MQTT_PUB_TOPIC``.
+   Observe that the kit publishes all data that you publish to ``MQTT_SUB_TOPIC`` on ``MQTT_PUB_TOPIC``.
+
+Troubleshooting
+===============
+
+Public MQTT brokers might be unstable.
+If you experience problems connecting to the MQTT broker, try switching to another broker by changing the value of the ``MQTT_BROKER_HOSTNAME`` configuration option.
 
 
 Dependencies
