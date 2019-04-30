@@ -1,4 +1,4 @@
-identifier: nrf9160_pca20035_v0_3_0ns
+identifier: nrf9160_pca20035ns
 name: nRF9160-PCA20035-Non-Secure
 type: mcu
 arch: arm

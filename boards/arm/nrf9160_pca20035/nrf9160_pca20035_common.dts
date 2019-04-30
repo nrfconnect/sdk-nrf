@@ -11,7 +11,63 @@
 
 	chosen {
 		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
 	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 26 GPIO_PUD_PULL_UP>;
+			label = "Button 1";
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		red_led: led_1 {
+			gpios = <&gpio0 29 0>;
+			label = "RGB red channel";
+		};
+		green_led: led_2 {
+			gpios = <&gpio0 30 0>;
+			label = "RGB green channel";
+		};
+		blue_led: led_3 {
+			gpios = <&gpio0 31 0>;
+			label = "RGB blue channel";
+		};
+		sense_red_led: led_4 {
+			gpios = <&gpio0 0 0>;
+			label = "RGB red channel";
+		};
+		sense_green_led: led_5 {
+			gpios = <&gpio0 1 0>;
+			label = "RGB green channel";
+		};
+		sense_blue_led: led_6 {
+			gpios = <&gpio0 2 0>;
+			label = "RGB blue channel";
+		};
+	};
+
+	aliases {
+		sw0 = &button0;
+		led0 = &red_led;
+		led1 = &green_led;
+		led2 = &blue_led;
+		sense-led0 = &sense_red_led;
+		sense-led1 = &sense_green_led;
+		sense-led2 = &sense_blue_led;
+		rgb-pwm = &pwm0;
+		buzzer-pwm = &pwm1;
+		nmos-pwm = &pwm2;
+	};
+};
+
+&adc {
+	status ="ok";
 };
 
 &gpiote {
@@ -19,6 +75,33 @@
 };
 
 &gpio0 {
+	status = "ok";
+};
+
+/* PWM0 is intended for RGB LED control */
+&pwm0 {
+	status = "ok";
+	ch0-pin = <29>;
+	ch1-pin = <30>;
+	ch2-pin = <31>;
+};
+
+/* PWM1 is intended for buzzer control */
+&pwm1 {
+	status = "ok";
+	ch0-pin = <28>;
+};
+
+/* PWM2 is intended for NMOS transistor control */
+&pwm2 {
+	status = "ok";
+	ch0-pin = <13>;
+	ch1-pin = <14>;
+	ch2-pin = <15>;
+	ch3-pin = <16>;
+};
+
+&pwm3 {
 	status = "ok";
 };
 
@@ -33,6 +116,65 @@
 		reg = <0x76>;
 		clock-frequency = <I2C_BITRATE_FAST>;
 	};
+};
+
+&spi3 {
+	status = "ok";
+	sck-pin = <3>;
+	mosi-pin = <4>;
+	miso-pin = <5>;
+	cs-gpios = <&gpio0 8 0>, <&gpio0 7 0>;
+
+	adxl362@0 {
+		compatible = "adi,adxl362";
+		label = "ADXL362";
+		spi-max-frequency = <8000000>;
+		reg = <0>;
+		int1-gpios = <&gpio0 9 0>;
+	};
+
+	adxl372@1 {
+		compatible = "adi,adxl372";
+		label = "ADXL372";
+		spi-max-frequency = <8000000>;
+		reg = <1>;
+		int1-gpios = <&gpio0 6 0>;
+	};
+};
+
+&timer0 {
+	status = "ok";
+};
+
+&timer1 {
+	status = "ok";
+};
+
+&timer2 {
+	status = "ok";
+};
+
+&uart0 {
+	current-speed = <115200>;
+	status = "ok";
+	tx-pin = <18>;
+	rx-pin = <19>;
+	rts-pin = <20>;
+	cts-pin = <21>;
+};
+
+&uart1 {
+	current-speed = <1000000>;
+	status = "ok";
+	tx-pin = <22>;
+	rx-pin = <23>;
+	rts-pin = <24>;
+	cts-pin = <25>;
+};
+
+/* UART2 must be enabled for defines to be available for SPM. */
+&uart2 {
+	status = "ok";
 };
 
 &flash0 {
