@@ -6,11 +6,28 @@
 
 #include "buttons.h"
 
-/* This file must be included only once */
+/* This configuration file is included only once from button module and holds
+ * information about pins forming keyboard matric.
+ */
+
+/* This structure enforces the header file is included only once in the build.
+ * Violating this requirement triggers a multiple definition error at link time.
+ */
 const struct {} buttons_def_include_once;
 
 static const char * const port_map[] = {
 	DT_GPIO_P0_DEV_NAME,
+};
+
+static const struct button col[] = {
+	{ .port = 0, .pin = 31 },
+	{ .port = 0, .pin = 24 },
+	{ .port = 0, .pin = 23 },
+	{ .port = 0, .pin = 22 },
+	{ .port = 0, .pin = 20 },
+	{ .port = 0, .pin = 21 },
+	{ .port = 0, .pin = 19 },
+	{ .port = 0, .pin = 18 },
 };
 
 static const struct button row[] = {
@@ -32,15 +49,4 @@ static const struct button row[] = {
 	{ .port = 0, .pin = 10 },
 	{ .port = 0, .pin = 16 },
 	{ .port = 0, .pin = 2  },
-};
-
-static const struct button col[] = {
-	{ .port = 0, .pin = 31 },
-	{ .port = 0, .pin = 24 },
-	{ .port = 0, .pin = 23 },
-	{ .port = 0, .pin = 22 },
-	{ .port = 0, .pin = 20 },
-	{ .port = 0, .pin = 21 },
-	{ .port = 0, .pin = 19 },
-	{ .port = 0, .pin = 18 },
 };
