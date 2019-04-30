@@ -6,8 +6,15 @@
 
 #include "led_state.h"
 
-/* This file must be included only once */
+/* This configuration file is included only once from led_state module and holds
+ * information about LED effect associated with each state.
+ */
+
+/* This structure enforces the header file is included only once in the build.
+ * Violating this requirement triggers a multiple definition error at link time.
+ */
 const struct {} led_state_def_include_once;
+
 
 /* Map function to LED ID */
 static const u8_t led_map[LED_ID_COUNT] = {

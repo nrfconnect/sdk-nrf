@@ -6,7 +6,13 @@
 
 #include "hid_keymap.h"
 
-/* This file must be included only once */
+/* This configuration file is included only once from hid_state module and holds
+ * information about mapping between buttons and generated reports.
+ */
+
+/* This structure enforces the header file is included only once in the build.
+ * Violating this requirement triggers a multiple definition error at link time.
+ */
 const struct {} hid_keymap_def_include_once;
 
 /*
