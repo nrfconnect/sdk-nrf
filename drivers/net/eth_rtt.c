@@ -312,7 +312,7 @@ static void recv_frame(struct eth_rtt_context *context, const u8_t *data,
 
 	LOG_DBG("Received %d byte(s) frame", (int)len);
 
-	pkt = net_pkt_get_reserve_rx(K_NO_WAIT);
+	pkt = net_pkt_rx_alloc(K_NO_WAIT);
 	if (!pkt) {
 		LOG_ERR("Could not allocate rx pkt");
 		return;
