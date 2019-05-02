@@ -32,3 +32,4 @@ Here you can find documentation for these libraries, including API documentation
 
    ../../include/*
    ../../include/nfc/ndef/nfc
+   ../../include/shell/*

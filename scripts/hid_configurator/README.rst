@@ -1,3 +1,5 @@
+:orphan:
+
 .. _configuration_channel:
 
 Configuration channel for nRF52 Desktop
@@ -66,4 +68,3 @@ You can either install without `--user` option or copy the DLL library next to t
 To uninstall all files, run
 
 	py -3 -m pip uninstall hid
-
