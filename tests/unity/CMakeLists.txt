@@ -13,7 +13,7 @@ find_program(
   RUBY_EXECUTABLE
   ruby
 )
-if(${RUBY_EXECUTABLE} STREQUAL RUBY-NOTFOUND)
+if(${RUBY_EXECUTABLE} STREQUAL RUBY_EXECUTABLE-NOTFOUND)
   message(FATAL_ERROR "Unable to find ruby")
 endif()
 
