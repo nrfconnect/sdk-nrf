@@ -153,7 +153,7 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 
 		bytes = recv(at_socket_fd, buffer, LC_MAX_READ_LENGTH, 0);
 		if (bytes) {
-			printk("recv: %s", buffer);
+			LOG_DBG("recv: %s", buffer);
 			if (!memcmp(status1, buffer, AT_CMD_SIZE(status1)) ||
 			    !memcmp(status2, buffer, AT_CMD_SIZE(status2)) ||
 			    !memcmp(status3, buffer, AT_CMD_SIZE(status3)) ||
