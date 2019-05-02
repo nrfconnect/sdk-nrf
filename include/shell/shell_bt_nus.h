@@ -14,9 +14,9 @@
 
 /**
  * @file
- * @defgroup shell_bt_nus Nordic UART (NUS) shell transport
+ * @defgroup shell_bt_nus Nordic UART Service (NUS) shell transport
  * @{
- * @brief Nordic UART (NUS) shell transport API.
+ * @brief Nordic UART Service (NUS) shell transport API.
  */
 
 #ifdef __cplusplus
@@ -25,7 +25,7 @@ extern "C" {
 
 extern const struct shell_transport_api shell_bt_nus_transport_api;
 
-/** @brief Shell BT NUS transport instance control block (RW data). */
+/** @brief Instance control block (RW data). */
 struct shell_bt_nus_ctrl_blk {
 	struct bt_conn *conn;
 	atomic_t tx_busy;
@@ -33,14 +33,14 @@ struct shell_bt_nus_ctrl_blk {
 	void *context;
 };
 
-/** @brief Shell BT NUS transport instance structure. */
+/** @brief Instance structure. */
 struct shell_bt_nus {
 	struct shell_bt_nus_ctrl_blk *ctrl_blk;
 	struct ring_buf *tx_ringbuf;
 	struct ring_buf *rx_ringbuf;
 };
 
-/** @brief Macro for creating shell BT NUS transport instance. */
+/** @brief Macro for creating an instance of the module. */
 #define SHELL_BT_NUS_DEFINE(_name, _tx_ringbuf_size, _rx_ringbuf_size)	\
 	static struct shell_bt_nus_ctrl_blk _name##_ctrl_blk;		\
 	RING_BUF_DECLARE(_name##_tx_ringbuf, _tx_ringbuf_size);		\
@@ -56,25 +56,26 @@ struct shell_bt_nus {
 	}
 
 /**
- * @brief Initialize shell BT NUS transport instance.
+ * @brief Initialize the NUS shell transport instance.
  *
- * Function initializes shell thread and BT NUS service.
+ * This function initializes a shell thread and the Nordic UART Service.
  *
- * @return 0 on success or error.
+ *  @retval 0           If the operation was successful.
+ *                      Otherwise, a (negative) error code is returned.
  */
 int shell_bt_nus_init(void);
 
 /**
- * @brief Enable BT NUS shell instance.
+ * @brief Enable the NUS shell transport instance.
  *
- * Should be called once connection is established.
+ * This function should be called when the connection is established.
  *
  * @param conn Connection handle.
  */
 void shell_bt_nus_enable(struct bt_conn *conn);
 
 /**
- * @brief Disable BT NUS shell instance.
+ * @brief Disable the NUS shell transport instance.
  */
 void shell_bt_nus_disable(void);
 
