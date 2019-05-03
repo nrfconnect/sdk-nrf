@@ -164,11 +164,11 @@ static void print_pvt_data(nrf_gnss_data_frame_t *pvt_data)
 					      pvt_data->pvt.datetime.seconds);
 }
 
-static void print_nmea_data()
+static void print_nmea_data(void)
 {
 	printk("NMEA strings:\n");
 
-	for(int i=0;i<nmea_string_cnt;++i) {
+	for (int i = 0; i < nmea_string_cnt; ++i) {
 		printk("%s\n", nmea_strings[i]);
 	}
 
@@ -179,9 +179,10 @@ int main(void)
 {
 	nrf_gnss_data_frame_t tmp_data;
 	nrf_gnss_data_frame_t gps_data;
-	u8_t		      cnt           = 0;
-	bool		      got_first_fix = false;
-	int 		      retval        = 0;
+
+	u8_t cnt           = 0;
+	bool got_first_fix = false;
+	int  retval        = 0;
 
 
 	printk("Staring GPS application\n");
@@ -201,10 +202,9 @@ int main(void)
 			if (retval > 0) {
 				switch (tmp_data.data_id) {
 				case NRF_GNSS_PVT_DATA_ID:
-					if((tmp_data.pvt.flags &
+					if ((tmp_data.pvt.flags &
 						NRF_GNSS_PVT_FLAG_FIX_VALID_BIT)
-						== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT)
-					{
+						== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
 						if (!got_first_fix) {
 							got_first_fix = true;
 						}
@@ -221,10 +221,9 @@ int main(void)
 					break;
 
 				case NRF_GNSS_NMEA_DATA_ID:
-					if((gps_data.pvt.flags &
+					if ((gps_data.pvt.flags &
 						NRF_GNSS_PVT_FLAG_FIX_VALID_BIT)
-						== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT)
-					{
+						== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
 						if (nmea_string_cnt < 10) {
 							memcpy(nmea_strings[nmea_string_cnt++],
 							       tmp_data.nmea,
@@ -262,4 +261,3 @@ int main(void)
 	return 0;
 
 }
-
