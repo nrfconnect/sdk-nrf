@@ -21,6 +21,7 @@ LOG_MODULE_REGISTER(nrf91_sockets);
 #include <bsd_os.h>
 #include <errno.h>
 #include <init.h>
+#include <net/net_offload.h>
 #include <net/socket_offload.h>
 #include <nrf_socket.h>
 #include <zephyr.h>
@@ -845,15 +846,42 @@ static const struct socket_offload nrf91_socket_offload_ops = {
 	.fcntl = nrf91_socket_offload_fcntl,
 };
 
+/* Create a network interface for nRF91 */
+
 static int nrf91_bsdlib_socket_offload_init(struct device *arg)
 {
 	ARG_UNUSED(arg);
 
-	socket_offload_register(&nrf91_socket_offload_ops);
-
 	return 0;
 }
 
-SYS_INIT(nrf91_bsdlib_socket_offload_init, APPLICATION,
-	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+/* Placeholders, until Zepyr IP stack updated to handle a NULL net_offload.
+ * Socket offloading is used, hece we will not use this API, yet it's still
+ * needed to create this structure.
+ */
+static struct net_offload nrf91_net_offload = { 0 };
+
+static struct nrf91_socket_iface_data {
+	struct net_if *iface;
+} nrf91_socket_iface_data;
+
+static void nrf91_socket_iface_init(struct net_if *iface)
+{
+	nrf91_socket_iface_data.iface = iface;
+
+	iface->if_dev->offload = &nrf91_net_offload;
+
+	socket_offload_register(&nrf91_socket_offload_ops);
+}
+
+static struct net_if_api nrf91_if_api = {
+	.init = nrf91_socket_iface_init,
+};
+
+/* TODO Get the actual MTU for the nRF91 LTE link. */
+NET_DEVICE_OFFLOAD_INIT(nrf91_socket, "nrf91_socket",
+			nrf91_bsdlib_socket_offload_init,
+			&nrf91_socket_iface_data, NULL,
+			0, &nrf91_if_api, 1280);
+
 #endif
