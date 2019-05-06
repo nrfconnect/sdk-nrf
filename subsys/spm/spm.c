@@ -252,6 +252,14 @@ static bool usel_or_split(u8_t id)
 {
 	const u32_t perm = NRF_SPU->PERIPHID[id].PERM;
 
+	/* NRF_GPIOTE1_NS needs special handling as its
+	 * peripheral ID for non-secure han incorrect properties
+	 * in the NRF_SPM->PERIPHID[id].perm register.
+	 */
+	if (id == NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE1_NS)) {
+		return true;
+	}
+
 	bool present = (perm & SPU_PERIPHID_PERM_PRESENT_Msk) ==
 		       SPU_PERIPHID_PERM_PRESENT_Msk;
 
@@ -276,20 +284,14 @@ static int spm_config_peripheral(u8_t id, bool dma_present)
 	 *
 	 * Note: the function assumes that the peripheral ID matches
 	 * the IRQ line.
-	 *
-	 * Note2: NRF_GPIOTE1_NS needs special handling as its
-	 * peripheral ID for non-secure han incorrect properties
-	 * in the NRF_SPM->PERIPHID[id].perm register.
 	 */
-	if (id != NRFX_PERIPHERAL_ID_GET(NRF_GPIOTE1_NS) &&
-	    !usel_or_split(id)) {
-		return -1;
-	}
-
 	NVIC_DisableIRQ(id);
-	NRF_SPU->PERIPHID[id].PERM = PERIPH_PRESENT | PERIPH_NONSEC |
-				     (dma_present ? PERIPH_DMA_NOSEP : 0) |
-				     PERIPH_LOCK;
+
+	if (usel_or_split(id)) {
+		NRF_SPU->PERIPHID[id].PERM = PERIPH_PRESENT | PERIPH_NONSEC |
+			(dma_present ? PERIPH_DMA_NOSEP : 0) |
+			PERIPH_LOCK;
+	}
 
 	/* Even for non-present peripherals we force IRQs to be rooted
 	 * to Non-Secure state.
