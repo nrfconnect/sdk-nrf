@@ -253,14 +253,18 @@ static void broker_init(void)
 		if (addr->ai_addrlen == sizeof(struct sockaddr_in)) {
 			struct sockaddr_in *broker4 =
 				((struct sockaddr_in *)&broker);
+			char ipv4_addr[NET_IPV4_ADDR_LEN];
 
 			broker4->sin_addr.s_addr =
 				((struct sockaddr_in *)addr->ai_addr)
 				->sin_addr.s_addr;
 			broker4->sin_family = AF_INET;
 			broker4->sin_port = htons(CONFIG_MQTT_BROKER_PORT);
-			printk("IPv4 Address found 0x%08x\n",
-				broker4->sin_addr.s_addr);
+
+			inet_ntop(AF_INET, &broker4->sin_addr.s_addr,
+				  ipv4_addr, sizeof(ipv4_addr));
+			printk("IPv4 Address found %s\n", ipv4_addr);
+
 			break;
 		} else {
 			printk("ai_addrlen = %u should be %u or %u\n",
