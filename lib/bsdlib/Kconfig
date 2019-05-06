@@ -9,7 +9,8 @@ config BSD_LIBRARY
 	bool
 	prompt "Use BSD Socket library for IP/TLS/DTLS"
 	select FLOAT
-	select NET_RAW_MODE
+	select NET_OFFLOAD
+	select NET_SOCKETS_OFFLOAD
 	depends on TRUSTED_EXECUTION_NONSECURE
 	help
 	  Use Nordic BSD Socket library.
