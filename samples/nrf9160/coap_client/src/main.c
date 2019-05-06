@@ -56,6 +56,7 @@ static int server_resolve(void)
 		.ai_family = AF_INET,
 		.ai_socktype = SOCK_DGRAM
 	};
+	char ipv4_addr[NET_IPV4_ADDR_LEN];
 
 	err = getaddrinfo(CONFIG_COAP_SERVER_HOSTNAME, NULL, &hints, &result);
 	if (err != 0) {
@@ -76,7 +77,9 @@ static int server_resolve(void)
 	server4->sin_family = AF_INET;
 	server4->sin_port = htons(CONFIG_COAP_SERVER_PORT);
 
-	printk("IPv4 Address found 0x%08x\n", server4->sin_addr.s_addr);
+	inet_ntop(AF_INET, &server4->sin_addr.s_addr, ipv4_addr,
+		  sizeof(ipv4_addr));
+	printk("IPv4 Address found %s\n", ipv4_addr);
 
 	/* Free the address. */
 	freeaddrinfo(result);
