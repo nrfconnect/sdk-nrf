@@ -82,6 +82,115 @@ span: list
    When creating sub_partitions, this option lists what partitions the sub_partitions should span across.
    This property cannot be used together with the `placement` property.
 
+region: list
+   The memory region (address space) this partition resides in.
+   The first existing memory region in the list is used.
+   The placement of partitions is solved separately for each region,
+   but the regions share the same namespace for partition names.
+
+runtime: dict
+   When this partition is active (running).
+   Only image partitions can have a runtime.
+   The runtimes are solved globally for all partitions together.
+   The valid keywords are:
+
+      before: list
+         This partition is active before all partitions in the list.
+         This typical indicates that it boots those partitions,
+         but it doesn't indicate that the partitions in the list run concurrently (this must be indicated explicitly).
+
+      after: list
+         This partition is active after all partitions in the list.
+         This typically indicates that it is booted by one of those partitions.
+
+      alongside: list
+         This partition is active at the same time as all partitions in the list.
+         This indicates that they run concurrently, so their lifetimes overlap.
+         This list is extended with all the ``alongside`` entries of the partitions
+         in its ``after`` list, except for duplicates and members of the ``after`` list itself.
+
+   The valid values in the lists are ``app``, ``start``, ``end``, or the name of any partition.
+   ``after: [end]`` and ``before: [start]`` are invalid configurations.
+
+lifetime: dict
+   When this partition must be alive (allocated).
+   A partition must have one single, unbroken lifetime.
+   The lifetimes are solved globally for all partitions together.
+   The default is alongside: [start, end].
+   Valid keywords are:
+
+      alongside: list
+         This partition's lifetime must cover the *runtimes* of all partitions in the list.
+         If the listed runtimes are not consecutive, the lifetime will also include the time in between.
+         Partitions cannot overlap if they reside in the same region, and have overlapping lifetimes.
+
+   The valid values in the lists are ``app``, ``start``, ``end``, or the name of any partition.
+
+
+.. code-block:: yaml
+   :caption: Region/runtime/lifetime example 1:
+
+   B0 boots SPM which boots app (SPM continues to run after booting app).
+   B0 and app both use RTT.
+
+   # The following partitions might have come from different files.
+   spm:
+      region: FLASH
+      placement:
+         before: [app]
+      size: CONFIG_SPM_FLASH_SIZE
+      runtime:
+         alongside: [app]
+
+   b0:
+      region: FLASH
+      placement:
+         before: [spm, app]
+      size: CONFIG_B0_FLASH_SIZE
+      runtime:
+         before: [spm, app]
+
+   secure_ram:
+      region: SRAM
+      placement:
+         after: [start]
+      size: CONFIG_SPM_RAM_SIZE
+      lifetime:
+         alongside: [spm]
+
+   rtt:
+      region: SRAM
+      placement:
+         before: [end]
+      size: CONFIG_RTT_RAM_SIZE
+      lifetime:
+         alongside: [b0, app] # Will also live alongside SPM, since app and SPM share runtime.
+
+
+.. code-block:: yaml
+   :caption: Region/runtime/lifetime example 2:
+
+   Bootloader has fallback option.
+   The fallback app is booted from RAM (the bootloader copies the code into RAM before booting).
+
+   # The following partitions might have come from different files.
+   bootloader:
+      placement:
+         before: [spm, app]
+      region: FLASH
+      size: CONFIG_BOOTLOADER_FLASH_SIZE
+      runtime:
+         before: [fallback, app] # Bootloader boots either fallback or app, not both.
+
+   fallback:
+      placement:
+         after: [start]
+      size: CONFIG_FALLBACK_RAM_SIZE
+      region: SRAM
+      lifetime:
+         alongside: [b0] # Bootloader copies code into this partition before running it.
+
+
 .. _pm_yaml_preprocessing:
 
 Configuration file preprocessing
