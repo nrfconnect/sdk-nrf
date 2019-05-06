@@ -293,7 +293,7 @@ static int spm_config_peripheral(u8_t id, bool dma_present)
 			PERIPH_LOCK;
 	}
 
-	/* Even for non-present peripherals we force IRQs to be rooted
+	/* Even for non-present peripherals we force IRQs to be routed
 	 * to Non-Secure state.
 	 */
 	irq_target_state_set(id, 0);
@@ -384,10 +384,9 @@ static void spm_configure_ns(const tz_nonsecure_setup_conf_t
 	/* Allow SPU to have precedence over (non-existing) ARMv8-M SAU. */
 	tz_sau_configure(0, 1);
 
-#if defined(CONFIG_ARMV7_M_ARMV8_M_FP)
+#if defined(CONFIG_ARMV7_M_ARMV8_M_FP) && defined(CONFIG_SPM_NRF_FPU_NS)
 	/* Allow Non-Secure firmware to use the FPU */
-	SCB->NSACR |=
-		(1UL << SCB_NSACR_CP10_Pos) | (1UL << SCB_NSACR_CP11_Pos);
+	tz_nonsecure_fpu_access_enable();
 #endif /* CONFIG_ARMV7_M_ARMV8_M_FP */
 }
 
