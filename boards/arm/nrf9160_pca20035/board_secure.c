@@ -41,6 +41,15 @@ static int power_mgmt_init(void)
 		return err;
 	}
 
+	/* Enables discharge resistor for buck regulator that brings the voltage
+	 * on its output faster down when it's inactive. Needed because some
+	 * components require to boot up from ~0V.
+	 */
+	err = adp536x_buck_discharge_set(true);
+	if (err) {
+		return err;
+	}
+
 	/* Sets the VBUS current limit to 500 mA. */
 	err = adp536x_vbus_current_set(ADP536X_VBUS_ILIM_500mA);
 	if (err) {
