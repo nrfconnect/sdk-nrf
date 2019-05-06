@@ -4,6 +4,7 @@ Partition Manager
 #################
 
 Partition Manager is a python script which sets the start address and size of all image partitions in a multi image build context.
+See :ref:`application` for a description of multi image building.
 An image partition is the flash area reserved for an image, to which the image binary is written.
 The start address and size of partitions not containing images are also set.
 The values set by Partition Manager are exposed through generated files.
@@ -15,11 +16,11 @@ Partition Manager is only invoked in a multi image build and will not be enabled
 Overview
 =============
 
-The Partition Manager script reads a set of Partition Manager and Kconfig configurations.
+The Partition Manager script reads a set of Partition Manager configurations.
 Using this information it deduces the start address and size of each partition.
 
-In a multi image build context there exist one root image, and one or more sub-images.
-The size of the root image partition is dynamic, while the size of all sub-image partitions are statically defined.
+In a multi image build context there exists one root image, and one or more sub-images.
+The size of the root image partition is dynamic, while the sizes of all sub-image partitions are statically defined.
 
 When the start addresses and sizes have been set, the values are used in the preprocessing of the linker script for each image.
 
@@ -36,11 +37,13 @@ You can define three types of partitions:
 Configuration
 =============
 Each sub-image is required to define its Partition Manager configuration in a file called :file:`pm.yml`.
+This file must be stored in the same folder as the :file:`CMakeLists.txt` of that sub-image.
 
 .. note::
-   The root application does not define its own :file:`pm.yml` because its partition size
-   and placement is implied by the size and placement of the sub image
-   partitions.
+   :file:`pm.yml` is only used for sub images.
+   Hence, the root application does not have to define its own :file:`pm.yml` because its partition size
+   and placement is implied by the size and placement of the sub image partitions.
+   If a root application defines a :file:`pm.yml` it will be silently ignored.
 
 .. _pm_yaml_format:
 
@@ -55,11 +58,13 @@ The format of the :file:`pm.yml` file is as follows:
       option_dict_name:
          option_specific_values
 
-
 Where ``option_dict_name`` can be:
 
-placement: dict{}
-   The placement of the partition relative to other partitions, the end of flash, or the root image partition `app`.
+placement: dict
+   The placement of the partition relative to other partitions, the end of flash, or the root image partition ``app``.
+   A partition with the placement property set is either an *image partition* or a *placeholder partition*.
+   The partition with the same name as the image is the image partitition; all the others are placeholder partitions.
+   It is required that each :file:`pm.yml` defines exactly one *image partition*.
    The placement is formatted as a yaml dict.
    The valid keywords are listed below.
 
@@ -69,18 +74,108 @@ placement: dict{}
       after: list
          Place the partition after the first existing partition in the list.
 
-   The valid values in the lists are `app`, `end`, or the name of any partition.
-   It is not possible to place the partition after `end`.
+   The valid values in the lists are ``app``, ``start``, ``end``, or the name of any partition.
+   It is not possible to place the partition after ``end`` or before ``start``.
 
-sub_partitions: list
-   Define sub partitions which span across one or more other partitions.
-   The sub partitions split the total size of the spanned partitions, and therefore have equal size.
-   This property cannot be used together with the `placement` property.
-   When this property is set for a partition, it is required that the `span` property is also set.
 
 span: list
-   When creating sub_partitions, this option lists what partitions the sub_partitions should span across.
-   This property cannot be used together with the `placement` property.
+   This property lists what partitions this partition should span across.
+   Partitions which have the ``span`` property set are *phony partitions*,
+   This property cannot be used together with the ``placement`` property.
+   Non-existing partitions are ignored.
+   The Partition Manager will fail if a span is empty, or the partitions are not consecutive after processing.
+
+   .. note::
+      Since configurations with ambiguous ordering are allowed, the Partition Manager may fail to find a solution,
+      even if one is theoretically possible.
+      I.e. the Partition Manager always detects unsatisfiable configuration (no false positives),
+      but may fail on some valid inputs (some false negatives).
+      Also, different versions of the script may produce different ordering.
+
+   Below are some examples of valid and invalid configurations.
+
+   .. code-block:: yaml
+      :caption: Span example 1 (fixed order, cannot work)
+
+      mcuboot:
+         placement:
+            before: [spm, app]
+
+      spm:
+         placement:
+            before: [app]
+
+      foo:
+         span: [mcuboot, app] # This will fail, because 'spm' will be placed between mcuboot and app.
+
+      # Order: mcuboot, spm, app
+
+   .. code-block:: yaml
+      :caption: Span example 2 (ambiguous order)
+
+      mcuboot:
+         placement:
+
+      spm:
+         placement:
+            after: [mcuboot]
+
+      app:
+         placement:
+            after: [mcuboot]
+
+      foo:
+         span: [mcuboot, app] # The order of spm and app is ambiguous in this case, but since
+                              # this span exists, Partition Manager will try to increase the
+                              # likelihood that mcuboot and app are placed next to each other.
+
+      # Order 1: mcuboot, spm, app
+      # Order 2: mcuboot, app, spm
+      # The algorithm should coerce order 2 to make foo work.
+
+   .. code-block:: yaml
+      :caption: Span example 3 (ambiguous order, and cannot work):
+
+      mcuboot:
+         placement:
+
+      spm:
+         placement:
+            after: [mcuboot]
+
+      app:
+         placement:
+            after: [mcuboot]
+
+      foo:
+         span: [mcuboot, app]
+
+      bar:
+         span: [mcuboot, spm]
+
+      # Order 1: mcuboot, spm, app
+      # Order 2: mcuboot, app, spm
+      # foo requires order 2, while bar requires order 1.
+
+inside: list
+   The inverse of ``span``.
+   ``partition_name`` will be added to the ``span`` list of the first existing partition in this list.
+
+.. code-block:: yaml
+
+   mcuboot:
+      inside: [b0]
+
+   b0:
+      span: [] # During processing, this span will contain mcuboot.
+
+share_size: list
+   The size of the current partition will be the same as the size of the
+   first existing partition in this list.
+   The list can contain any kind of partition.
+   This property cannot be used by phony partitions.
+   Note that if the target partition is the ``app`` or spans over the ``app``,
+   the size will effectively be split between them, since the ``app``'s size is dynamically decided.
 
 .. _pm_yaml_preprocessing:
 
@@ -88,6 +183,7 @@ Configuration file preprocessing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each :file:`pm.yml` file is preprocessed.
+Symbols from Kconfig and DTS are available.
 Example of preprocessing is shown below:
 
 .. code-block:: yaml
@@ -101,6 +197,9 @@ Example of preprocessing is shown below:
      # exists, otherwise it is stored before the app partition.
      placement: {before: [mcuboot, app]}
 
+     # The size of the b0 partition is configured in Kconfig.
+     size: CONFIG_BOOTLOADER_PARTITION_SIZE
+
    # Don't define the provision partition if the SoC is nRF9160, this because
    # the provisioning data will be stored in the UICR->OTP data region.
 
@@ -113,33 +212,6 @@ Example of preprocessing is shown below:
 
    #endif /* CONFIG_SOC_NRF9160 */
 
-.. _pm_yaml_partition_types:
-
-Partition types
-~~~~~~~~~~~~~~~
-
-It is required that each :file:`pm.yml` defines exactly one *image partition*.
-This is done by using the same name for the partition as the image name.
-
-All other partitions which have the `placement` property set are *placeholder
-partitions*.
-
-Partitions which have the `sub_partitions` property set are *phony partitions*,
-and do not occupy space in flash.
-
-In addition to the configuration provided in :file:`pm.yml`, each partition with the `placement` property set must have a corresponding size configuration in the image's ``Kconfig`` file.
-The format of this configuration is as follows:
-
-.. code-block:: none
-
-   config PM_PARTITION_SIZE_[PARTITION_NAME]
-   hex "Flash space reserved for [partition name]."
-   default 0xD000
-   help
-     Flash space set aside for [partition name]. Note, the name
-     of this configuration needs to match the requirements set by the
-     script 'partition_manager.py'. See pm.yaml.
-
 .. _pm_build_system:
 
 Build system
@@ -150,21 +222,25 @@ If one or more sub-images are included in a build, a set of properties for that 
 
 These properties are:
 
-Path to :file:`pm.yml`
+   * Path to :file:`pm.yml`
    * Build directory path
    * Path to generated include folder
 
-Once CMake finishes configuring the sub-images, the Partition Manager script is executed in configure time (`execute_process`) with the aforementioned list as argument.
-The configurations generated by the Partition Manager script are imported as CMake variables. See :ref:`pm_generated_output_and_usage`.
+Once CMake finishes configuring the sub-images, the Partition Manager script is executed in configure time (``execute_process``) with the aforementioned list as argument.
+The configurations generated by the Partition Manager script are imported as CMake variables.
+See :ref:`pm_generated_output_and_usage`.
 
 .. _pm_generated_output_and_usage:
 
 Generated output and usage
 ==========================
-For each sub-image and the root app, Partition Manager generates two files, one C header file, and one Kconfig file.
+For each sub-image and the root app, Partition Manager generates three files, one C header file :file:`pm_config.h`, one Kconfig file :file:`pm.config`, and one YAML file :file:`partitions.yml`.
 The C header file is used in the C code while the Kconfig file is imported in CMake.
 Both these files contain the start address and size of all partitions.
 The Kconfig file additionally contains the build directory and generated include folder for each image.
+The YAML file contains the internal state of the Partition Manager at the end of its processing.
+This means it contains the merged contents of all pm.yml files, as well as their sizes and addresses,
+and other info generated by the Partition Manager.
 
 C code usage
    When Partition Manager is enabled, all source files are compiled with the define ``USE_PARTITION_MANAGER`` set to 1.
@@ -178,12 +254,14 @@ C code usage
       #else
       ...
 
+rom_report
+   When using the Partition Manager, run ``ninja rom_report`` to see the addresses and sizes of flash partitions.
 
 CMake usage
    The CMake variables from Partition Manager are typically used through generator expressions.
    This is because these variables are made available at the end of the CMake configure stage.
    To read a Partition Manager variable through a generator expression, the variable must be assigned as a target property.
-   The `partition_manager` target is used for this already, and should be used for additional variables.
+   The ``partition_manager`` target is used for this already, and should be used for additional variables.
    Once the variable is available as a target property, the value can be read through generator expressions.
    Example usage from MCUboot is shown below.
 
