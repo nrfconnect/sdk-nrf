@@ -21,11 +21,11 @@ You must install a special version of SEGGER Embedded Studio to be able to open
 and compile the projects in the |NCS|.
 You can download it from the following links:
 
-* `Windows x86 <http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86>`_
-* `Windows x64 <http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64>`_
-* `Mac OS x64 <http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos>`_
-* `Linux x86 <http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86>`_
-* `Linux x64 <http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64>`_
+* `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
+* `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
+* `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
+* `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
+* `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
 
 1. Extract the downloaded package and run the file :file:`bin/emStudio`.
 
