@@ -52,7 +52,7 @@ Complete the following steps to build the documentation output:
      #. Hold shift and right-click on the new folder.
         Select **Open command window here**.
 
-   * On Linux:
+   * On Linux or macOS:
 
      a. Open a shell window.
      #. Navigate to ``ncs/nrf/doc``.
@@ -75,7 +75,7 @@ Complete the following steps to build the documentation output:
         .. code-block:: console
 
            ..\..\..\zephyr\zephyr-env.cmd
-   * On Linux:
+   * On Linux or macOS:
 
         .. code-block:: console
 

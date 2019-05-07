@@ -3,7 +3,7 @@
 Supported operating systems
 ###########################
 
-The |NCS| supports Microsoft Windows and Linux for development.
+The |NCS| supports Microsoft Windows, Linux, and macOS for development.
 However, there are some Zephyr features that are currently only available on Linux, including:
 
 * sanitycheck
