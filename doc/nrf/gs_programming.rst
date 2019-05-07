@@ -143,7 +143,3 @@ In addition, specify the path to the west tool as additional CMake option, repla
    :class: highlight
 
    -DWEST=\ *path_to_west*
-
-.. note::
-   Starting with |SES| v4.17, these options are automatically filled with the default location of the tools.
-   If you are using a non-standard installation, check and adapt the paths.
