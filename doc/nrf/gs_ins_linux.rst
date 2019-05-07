@@ -9,6 +9,7 @@
 .. |bash| replace:: terminal window
 .. |envfile| replace:: ``source zephyr/zephyr-env.sh``
 .. |rcfile| replace:: ``~/.zephyrrc``
+.. |setexport| replace:: export
 
 
 .. include:: gs_ins_windows.rst

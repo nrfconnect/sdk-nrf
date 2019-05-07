@@ -9,6 +9,7 @@
 .. |bash| replace:: command prompt
 .. |envfile| replace:: ``zephyr\zephyr-env.cmd``
 .. |rcfile| replace:: ``%userprofile%\zephyrrc.cmd``
+.. |setexport| replace:: set
 
 
 .. intro_start
@@ -63,8 +64,8 @@ To set up the toolchain, complete the following steps:
    .. parsed-literal::
       :class: highlight
 
-       set ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-       set GNUARMEMB_TOOLCHAIN_PATH=\ |tcfolder|
+       |setexport| ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
+       |setexport| GNUARMEMB_TOOLCHAIN_PATH=\ |tcfolder|
 
 #. Instead of setting the environment variables every time you open a |bash|, |system_vars| define them in the |rcfile| file as described in `Setting up the build environment`_.
 
