@@ -26,6 +26,7 @@ static bool connected;
 static enum peer_operation peer_op = PEER_OPERATION_CANCEL;
 static u8_t cur_peer_id;
 
+
 static void load_peer_state_led(void)
 {
 	enum led_peer_state state = LED_PEER_STATE_DISCONNECTED;
@@ -50,6 +51,10 @@ static void load_peer_state_led(void)
 		break;
 	}
 
+	if (led_map[LED_ID_PEER_STATE] == LED_UNAVAILABLE) {
+		return;
+	}
+
 	struct led_event *event = new_led_event();
 
 	event->led_id = led_map[LED_ID_PEER_STATE];
@@ -59,9 +64,12 @@ static void load_peer_state_led(void)
 	EVENT_SUBMIT(event);
 }
 
-
 static void load_system_state_led(void)
 {
+	if (led_map[LED_ID_SYSTEM_STATE] == LED_UNAVAILABLE) {
+		return;
+	}
+
 	struct led_event *event = new_led_event();
 
 	event->led_id = led_map[LED_ID_SYSTEM_STATE];
@@ -142,8 +150,6 @@ static bool event_handler(const struct event_header *eh)
 		struct module_state_event *event = cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			static_assert(LED_ID_COUNT <= CONFIG_DESKTOP_LED_COUNT,
-				      "Not enough LEDs configured");
 			load_system_state_led();
 		} else if (event->state == MODULE_STATE_ERROR) {
 			set_system_state_led(LED_SYSTEM_STATE_ERROR);
