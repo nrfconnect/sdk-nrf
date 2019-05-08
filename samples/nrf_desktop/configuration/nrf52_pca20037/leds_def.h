@@ -17,8 +17,6 @@ const struct {} leds_def_include_once;
 static const size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
 			    [CONFIG_DESKTOP_LED_COLOR_COUNT] = {
 	{
-		DT_NORDIC_NRF_PWM_PWM_0_CH0_PIN,
-		DT_NORDIC_NRF_PWM_PWM_0_CH1_PIN,
-		DT_NORDIC_NRF_PWM_PWM_0_CH2_PIN
+		DT_NORDIC_NRF_PWM_PWM_0_CH0_PIN
 	}
 };
