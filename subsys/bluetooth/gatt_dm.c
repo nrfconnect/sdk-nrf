@@ -15,6 +15,12 @@ LOG_MODULE_REGISTER(bt_gatt_dm, CONFIG_BT_GATT_DM_LOG_LEVEL);
 /* Available sizes: 128, 512, 2048... */
 #define CHUNK_SIZE (128 - sizeof(struct k_mem_block_id))
 
+#if __CORTEX_M == (0UL)
+#define UUID_ALIGN 4U
+#else
+#define UUID_ALIGN 1U
+#endif
+
 /* Flags for parsed attribute array state */
 enum {
 	STATE_ATTRS_LOCKED,
@@ -72,6 +78,11 @@ static void *user_data_store(struct bt_gatt_dm *dm,
 		if (!(dm->data_chunk.chunks[cur_chunk_id])) {
 			return NULL;
 		}
+	}
+
+	size_t misalign = dm->data_chunk.cur_len % UUID_ALIGN;
+	if (misalign) {
+		dm->data_chunk.cur_len += UUID_ALIGN - misalign;
 	}
 
 	if (dm->data_chunk.cur_len + len > CHUNK_SIZE) {
@@ -271,8 +282,7 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 		service_val->end_handle);
 
 	cur_attr->uuid = uuid_store(dm, attr->uuid);
-	service_val = user_data_store(dm, service_val,
-				      sizeof(*service_val));
+	service_val = user_data_store(dm, service_val, sizeof(*service_val));
 	service_val->uuid = uuid_store(dm, service_val->uuid);
 	cur_attr->user_data = service_val;
 
