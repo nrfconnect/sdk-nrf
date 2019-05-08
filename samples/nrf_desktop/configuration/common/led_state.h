@@ -44,6 +44,8 @@ enum led_id {
 	LED_ID_COUNT
 };
 
+#define LED_UNAVAILABLE CONFIG_DESKTOP_LED_COUNT
+
 struct led_effect {
 	enum led_mode mode;
 
