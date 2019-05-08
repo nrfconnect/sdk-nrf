@@ -10,7 +10,7 @@ import collections
 
 from enum import IntEnum
 
-REPORT_ID = 4
+REPORT_ID = 5
 REPORT_SIZE = 29
 EVENT_DATA_LEN_MAX = REPORT_SIZE - 5
 
