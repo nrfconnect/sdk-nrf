@@ -40,16 +40,16 @@ manifest:
     - name: fw-nrfconnect-zephyr
       path: zephyr
       west-commands: scripts/west-commands.yml
-      revision: 6c9637972f54e39640420c1e6ae096ac214c587c
+      revision: v1.14.99-ncs1
     - name: fw-nrfconnect-mcuboot
       path: mcuboot
-      revision: aebd4b96d2abbeea5a3392c623369dd61ddf40cb
+      revision: v1.3.99-ncs1
     - name: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
       revision: ef1f9c3d87474ec3570b1f46e91fd4b54a4fb421
     - name: nrfxlib
       path: nrfxlib
-      revision: 150cf3477061d560d43b19617f6cc7e246382794
+      revision: v0.4.0
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
@@ -59,7 +59,7 @@ manifest:
       revision: 031f3bbe45f8adf504ca3d13e6f093869920b091
       remote: throwtheswitch
     - name: mbedtls
-      revision: 53546ea099f6f53d0be653a64accd250e170337f
+      revision: mbedtls-2.13.1
       remote: armmbed
 
   self:
