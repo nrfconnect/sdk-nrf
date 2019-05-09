@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <stdlib.h>
 #include <zephyr/types.h>
 #include <settings/settings.h>
 
@@ -32,6 +33,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 
 #define SWIFT_PAIR_SECTION_SIZE 1 /* number of struct bt_data objects */
 
+#define MAX_KEY_LEN 30
+#define PEER_IS_RPA_STORAGE_NAME "peer_is_rpa_"
 
 static const struct bt_le_adv_param adv_param_fast = {
 	.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
@@ -98,6 +101,13 @@ static struct k_delayed_work adv_update;
 static struct k_delayed_work sp_grace_period_to;
 static u8_t cur_identity = BT_ID_DEFAULT; /* We expect zero */
 
+enum peer_rpa {
+	PEER_RPA_ERASED,
+	PEER_RPA_YES,
+	PEER_RPA_NO,
+};
+
+static enum peer_rpa peer_is_rpa[CONFIG_BT_ID_MAX];
 
 static int ble_adv_stop(void)
 {
@@ -213,6 +223,9 @@ static int ble_adv_start(bool can_fast_adv)
 		swift_pair = false;
 	}
 
+	/* Direct advertising only to peer without RPA. */
+	direct = direct && (peer_is_rpa[cur_identity] != PEER_RPA_YES);
+
 	if (direct) {
 		err = ble_adv_start_directed(&bond_find_data.peer_address,
 					     fast_adv);
@@ -305,8 +318,62 @@ static void ble_adv_update_fn(struct k_work *work)
 	}
 }
 
+static int settings_set(int argc, char **argv, void *val_ctx)
+{
+	if (argc != 1) {
+		return -ENOENT;
+	}
+	/* Assuming ID is written as one digit */
+	if (!strncmp(argv[0], PEER_IS_RPA_STORAGE_NAME,
+	     sizeof(PEER_IS_RPA_STORAGE_NAME) - 1)) {
+		char *end;
+		long int read_id = strtol(argv[0] + strlen(argv[0]) - 1, &end, 10);
+
+		if ((*end != '\0') || (read_id < 0) || (read_id >= CONFIG_BT_ID_MAX)) {
+			LOG_ERR("Identity is not a valid number");
+			return -ENOTSUP;
+		}
+
+		int len = settings_val_read_cb(val_ctx,
+					       &peer_is_rpa[read_id],
+					       sizeof(peer_is_rpa[read_id]));
+
+		if (len != sizeof(peer_is_rpa[read_id])) {
+			LOG_ERR("Can't read peer_is_rpa%ld from storage", read_id);
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+static int init_settings(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		static struct settings_handler sh = {
+			.name = MODULE_NAME,
+			.h_set = settings_set,
+		};
+
+		int err = settings_register(&sh);
+		if (err) {
+			LOG_ERR("Cannot register settings handler (err %d)",
+				err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 static void init(void)
 {
+
+	if (init_settings()) {
+		module_set_state(MODULE_STATE_ERROR);
+		return;
+	}
+
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
 		k_delayed_work_init(&adv_update, ble_adv_update_fn);
 	}
@@ -328,6 +395,28 @@ static void start(void)
 	}
 
 	return;
+}
+
+static void update_peer_is_rpa(enum peer_rpa new_peer_rpa)
+{
+	peer_is_rpa[cur_identity] = new_peer_rpa;
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		/* Assuming ID is written using only one digit. */
+		__ASSERT_NO_MSG(cur_identity < 10);
+		char key[MAX_KEY_LEN];
+		int err = snprintk(key, sizeof(key), MODULE_NAME "/%s%d",
+				   PEER_IS_RPA_STORAGE_NAME, cur_identity);
+
+		if ((err > 0) && (err < MAX_KEY_LEN)) {
+			err = settings_save_one(key, &peer_is_rpa[cur_identity],
+					sizeof(peer_is_rpa[cur_identity]));
+		}
+
+		if (err) {
+			LOG_ERR("Problem storing peer_is_rpa: (err = %d)", err);
+		}
+	}
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -363,6 +452,16 @@ static bool event_handler(const struct event_header *eh)
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
 			err = ble_adv_stop();
+			break;
+
+		case PEER_STATE_SECURED:
+			if (peer_is_rpa[cur_identity] == PEER_RPA_ERASED) {
+				if (bt_addr_le_is_rpa(bt_conn_get_dst(event->id))) {
+					update_peer_is_rpa(PEER_RPA_YES);
+				} else {
+					update_peer_is_rpa(PEER_RPA_NO);
+				}
+			}
 			break;
 
 		case PEER_STATE_DISCONNECTED:
@@ -427,6 +526,7 @@ static bool event_handler(const struct event_header *eh)
 			break;
 
 		case PEER_OPERATION_ERASED:
+			update_peer_is_rpa(PEER_RPA_ERASED);
 			err = ble_adv_start(true);
 			break;
 
