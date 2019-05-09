@@ -11,7 +11,7 @@ Overview
 ********
 
 The sample connects to an HTTP server to download a signed firmware image.
-You must provide the image file and configure where it can be downloaded.
+The image is generated when building the sample, but you must upload it to a server and configure where it can be downloaded.
 See `Specifying the image file`_ for more information.
 
 By default, the image is saved to `MCUboot`_ bootloader secondary slot.
@@ -46,12 +46,36 @@ The sample also uses MCUboot, which is automatically built and merged into the f
 Specifying the image file
 =========================
 
-Before building the sample, you must specify the location of the image file that should be downloaded.
+Before building the sample, you must specify where the image file will be located.
+If you do not want to host it yourself, you can upload it to nRF Cloud for testing purposes.
+See `Hosting your image on nRF Cloud`_ for instructions.
 
-To do so, open the :file:`prj.cnf` file of the sample and add the name of your server and the file to be downloaded::
+To specify the location in |SES|:
 
-   CONFIG_HOST="your.server.com"
-   CONFIG_RESOURCE="filename.bin"
+1. Select **Project** > **Configure nRF Connect SDK Project**.
+#. Navigate to **HTTP application update sample** and specify the **Download host name** (``CONFIG_DOWNLOAD_HOST``) and **The file to download** (``CONFIG_DOWNLOAD_FILE``).
+#. Click **Configure** to save the configuration.
+
+
+Hosting your image on nRF Cloud
+-------------------------------
+
+1. Go to `firmware.nrfcloud.com`_ and sign in.
+   If you already have an nRF Cloud account, you can use the same credentials.
+   Otherwise, create an account and sign in.
+#. In the menu on the left-hand side, select **Firmware**.
+#. Click **Generate new** to create a URL for the firmware image.
+
+   .. figure:: /images/http_upload_nrfcloud.png
+      :alt: Generate URL for firmware image in nRF Cloud
+
+   Generate URL for firmware image in nRF Cloud
+
+#. Click the **Copy URL** button to copy the address.
+
+When specifying the image file, use the ``s3.amazonaws.com`` part of the URL for the download host name.
+Make sure to not include the ``https``.
+Specify the rest of the URL as file name.
 
 
 Testing
@@ -59,8 +83,12 @@ Testing
 
 After programming the sample to the board, test it by performing the following steps:
 
-1. Change CONFIG_APPLICATION_VERSION to 2 in the ``prj.conf`` file and rebuild the application.
+1. Configure the application version to be 2.
+   To do so, either change ``CONFIG_APPLICATION_VERSION`` to 2 in the ``prj.conf`` file, or select **Project** > **Configure nRF Connect SDK Project** > **HTTP application update sample** in |SES| and change the value for **Application version**.
+   Then rebuild the application.
 #. Upload the file ``update.bin`` to the server you have chosen.
+   To upload the file on nRF Cloud, click **Upload** for the firmware URL that you generated earlier.
+   Then select the file ``update.bin`` and upload it.
 #. Reset your nRF9160 DK to start the application.
 #. Open a terminal emulator and observe that an output similar to this is printed::
 
