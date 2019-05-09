@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -7,6 +7,19 @@
 #include <zephyr/types.h>
 
 #include "hid_report_desc.h"
+
+#define USER_CONFIG_FEATURE_REPORT(id, size)				\
+	0x05, 0x01,       /* Usage Page (Generic Desktop) */		\
+	0xA1, 0x01,       /* Collection (Application) */		\
+	0x85, id,							\
+	0x09, 0x05,       /* Usage (Vendor Defined) */			\
+	0x15, 0x00,       /* Logical Minimum (0) */			\
+	0x25, 0xFF,       /* Logical Maximum (255) */			\
+	0x75, 0x08,       /* Report Size (8) */				\
+	0x95, size,       /* Report Count */				\
+	0xB1, 0x02,       /* Feature (Data, Variable, Absolute) */	\
+	0xC0              /* End Collection (Application) */
+
 
 const u8_t hid_report_desc[] = {
 #if CONFIG_DESKTOP_HID_MOUSE
@@ -48,19 +61,8 @@ const u8_t hid_report_desc[] = {
 	0x81, 0x06,         /* Input (Data, Variable, Relative) */
 
 	0xC0,             /* End Collection (Physical) */
-
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-	/* Report: Configuration feature report */
-	0x05, 0x01,       /* Usage Page (Generic Desktop) */
-	0xA1, 0x00,       /* Collection (Physical) */
-	0x85, REPORT_ID_USER_CONFIG,
-	0x09, 0x05,       /* Usage (Vendor Defined) */
-	0x15, 0x00,       /* Logical Minimum (0) */
-	0x25, 0xFF,       /* Logical Maximum (255) */
-	0x75, 0x08,       /* Report Size (8) */
-	0x95, REPORT_SIZE_USER_CONFIG, /* Report Count */
-	0xB1, 0x02,       /* Feature (Data, Variable, Absolute) */
-	0xC0,             /* End Collection (Physical) */
+	USER_CONFIG_FEATURE_REPORT(REPORT_ID_USER_CONFIG, REPORT_SIZE_USER_CONFIG),
 #endif
 	0xC0,           /* End Collection (Application) */
 #endif
@@ -116,6 +118,9 @@ const u8_t hid_report_desc[] = {
 	0x75, 0x03,       /* Report Size (3) (padding) */
 	0x91, 0x01,       /* Output (Data, Variable, Absolute) */
 
+#if (CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE && !CONFIG_DESKTOP_HID_MOUSE)
+	USER_CONFIG_FEATURE_REPORT(REPORT_ID_USER_CONFIG, REPORT_SIZE_USER_CONFIG),
+#endif
 	0xC0,           /* End Collection (Application) */
 #endif
 
