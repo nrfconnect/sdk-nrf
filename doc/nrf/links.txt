@@ -80,6 +80,8 @@
 
 .. _`nRF Cloud`: https://nrfcloud.com/
 
+.. _`firmware.nrfcloud.com`: https://firmware.nrfcloud.com/
+
 .. _`openSSL`: https://www.openssl.org/
 
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
