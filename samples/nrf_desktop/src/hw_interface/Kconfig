@@ -194,6 +194,14 @@ config DESKTOP_BATTERY_VOLTAGE_DIVIDER_UPPER
 	help
 	  Output voltage is measured on the lower resistor.
 
+config DESKTOP_VOLTAGE_TO_SOC_DELTA
+	int "Difference between adjacent elements in conversion LUT [mV]"
+	depends on DESKTOP_BATTERY_DISCRETE
+	default 10
+	range 1 100
+	help
+	  Value used to convert battery voltage [mV] to State of Charge [%].
+
 config DESKTOP_BATTERY_VOLTAGE_DIVIDER_LOWER
 	int "Lower resistor in battery measurement voltage divider [kOhm]"
 	depends on DESKTOP_BATTERY_DISCRETE

@@ -19,6 +19,7 @@
 #include "power_event.h"
 #include "battery_event.h"
 #include "usb_event.h"
+#include "battery_def.h"
 
 #define MODULE battery
 #include "module_state_event.h"
@@ -146,6 +147,13 @@ static int init_adc(void)
 		return err;
 	}
 
+	/* Check if number of elements in LUT is proper */
+	static_assert(CONFIG_DESKTOP_BATTERY_MAX_LEVEL
+		      - CONFIG_DESKTOP_BATTERY_MIN_LEVEL
+		      == (ARRAY_SIZE(battery_voltage_to_soc) - 1)
+		      * CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA,
+		      "Improper number of elements in lookup table");
+
 	return 0;
 }
 
@@ -193,9 +201,11 @@ static void battery_lvl_process(void)
 		level = 0;
 		LOG_WRN("Low battery");
 	} else {
-		/* Linear approximation */
-		level = 100 * (voltage - CONFIG_DESKTOP_BATTERY_MIN_LEVEL) /
-			(CONFIG_DESKTOP_BATTERY_MAX_LEVEL - CONFIG_DESKTOP_BATTERY_MIN_LEVEL);
+		/* Using lookup table to convert voltage[mV] to SoC[%] */
+		size_t lut_id = (voltage - CONFIG_DESKTOP_BATTERY_MIN_LEVEL
+				 + (CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA >> 1))
+				 / CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA;
+		level = battery_voltage_to_soc[lut_id];
 	}
 
 	struct battery_level_event *event = new_battery_level_event();
