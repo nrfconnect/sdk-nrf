@@ -217,14 +217,12 @@ static int ble_adv_start(bool can_fast_adv)
 
 	if (bond_find_data.peer_id < bond_find_data.peer_count) {
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
-			direct = true;
+			/* Direct advertising only to peer without RPA. */
+			direct = (peer_is_rpa[cur_identity] != PEER_RPA_YES);
 		}
 
 		swift_pair = false;
 	}
-
-	/* Direct advertising only to peer without RPA. */
-	direct = direct && (peer_is_rpa[cur_identity] != PEER_RPA_YES);
 
 	if (direct) {
 		err = ble_adv_start_directed(&bond_find_data.peer_address,
@@ -349,7 +347,8 @@ static int settings_set(int argc, char **argv, void *val_ctx)
 
 static int init_settings(void)
 {
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
+	if (IS_ENABLED(CONFIG_SETTINGS) &&
+	    IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
 		static struct settings_handler sh = {
 			.name = MODULE_NAME,
 			.h_set = settings_set,
@@ -399,9 +398,9 @@ static void start(void)
 
 static void update_peer_is_rpa(enum peer_rpa new_peer_rpa)
 {
-	peer_is_rpa[cur_identity] = new_peer_rpa;
-
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
+	if (IS_ENABLED(CONFIG_SETTINGS) &&
+	    IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
+		peer_is_rpa[cur_identity] = new_peer_rpa;
 		/* Assuming ID is written using only one digit. */
 		__ASSERT_NO_MSG(cur_identity < 10);
 		char key[MAX_KEY_LEN];
