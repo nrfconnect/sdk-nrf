@@ -51,10 +51,26 @@ static int set_cols(u32_t mask)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
 		u32_t val = (mask & BIT(i)) ? (1) : (0);
+		int err;
 
-		if (gpio_pin_write(gpio_devs[col[i].port], col[i].pin, val)) {
+		if (val) {
+			if (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED)) {
+				val = !val;
+			}
+
+			err = gpio_pin_configure(gpio_devs[col[i].port],
+						 col[i].pin, GPIO_DIR_OUT);
+			if (!err) {
+				err = gpio_pin_write(gpio_devs[col[i].port],
+						     col[i].pin, val);
+			}
+		} else {
+			err = gpio_pin_configure(gpio_devs[col[i].port],
+						 col[i].pin, GPIO_DIR_IN);
+		}
+
+		if (err) {
 			LOG_ERR("Cannot set pin");
-
 			return -EFAULT;
 		}
 	}
@@ -359,8 +375,7 @@ static void init_fn(void)
 		__ASSERT_NO_MSG(col[i].port < ARRAY_SIZE(port_map));
 
 		int err = gpio_pin_configure(gpio_devs[col[i].port],
-					     col[i].pin,
-					     GPIO_DIR_OUT);
+					     col[i].pin, GPIO_DIR_IN);
 
 		if (err) {
 			LOG_ERR("Cannot configure cols");
