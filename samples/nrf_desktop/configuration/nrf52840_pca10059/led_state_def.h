@@ -5,6 +5,7 @@
  */
 
 #include "led_state.h"
+#include "led_effect.h"
 
 /* This configuration file is included only once from led_state module and holds
  * information about LED effect associated with each state.
@@ -23,53 +24,22 @@ static const u8_t led_map[LED_ID_COUNT] = {
 };
 
 static const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] = {
-	[LED_SYSTEM_STATE_IDLE] = {
-		.mode = LED_MODE_ON,
-	},
-	[LED_SYSTEM_STATE_CHARGING] = {
-		.mode = LED_MODE_ON,
-	},
-	[LED_SYSTEM_STATE_ERROR] = {
-		.mode = LED_MODE_BLINKING,
-		.period = 200,
-	}
+	[LED_SYSTEM_STATE_IDLE]     = LED_EFFECT_LED_ON(LED_COLOR(200)),
+	[LED_SYSTEM_STATE_CHARGING] = LED_EFFECT_LED_ON(LED_COLOR(200)),
+	[LED_SYSTEM_STATE_ERROR]    = LED_EFFECT_LED_BLINK(200, LED_COLOR(200)),
 };
 
-static const struct led_color led_system_state_color[LED_SYSTEM_STATE_COUNT] = {
-	[LED_SYSTEM_STATE_IDLE] = {
-		.c = {200},
+static const struct led_effect led_peer_state_effect[CONFIG_BT_MAX_PAIRED][LED_PEER_STATE_COUNT] = {
+	{
+		[LED_PEER_STATE_DISCONNECTED]   = LED_EFFECT_LED_BREATH(1000, LED_COLOR(100)),
+		[LED_PEER_STATE_CONNECTED]      = LED_EFFECT_LED_ON(LED_COLOR(100)),
+		[LED_PEER_STATE_CONFIRM_SELECT] = LED_EFFECT_LED_BLINK(50, LED_COLOR(100)),
+		[LED_PEER_STATE_CONFIRM_ERASE]  = LED_EFFECT_LED_BLINK(25, LED_COLOR(100)),
 	},
-	[LED_SYSTEM_STATE_CHARGING] = {
-		.c = {200},
+	{
+		[LED_PEER_STATE_DISCONNECTED]   = LED_EFFECT_LED_BREATH(1000, LED_COLOR(100)),
+		[LED_PEER_STATE_CONNECTED]      = LED_EFFECT_LED_ON(LED_COLOR(100)),
+		[LED_PEER_STATE_CONFIRM_SELECT] = LED_EFFECT_LED_BLINK(50, LED_COLOR(100)),
+		[LED_PEER_STATE_CONFIRM_ERASE]  = LED_EFFECT_LED_BLINK(25, LED_COLOR(100)),
 	},
-	[LED_SYSTEM_STATE_ERROR] = {
-		.c = {200},
-	}
-};
-
-static const struct led_effect led_peer_state_effect[LED_PEER_STATE_COUNT] = {
-	[LED_PEER_STATE_DISCONNECTED] = {
-		.mode = LED_MODE_BLINKING,
-		.period = 1000,
-	},
-	[LED_PEER_STATE_CONNECTED] = {
-		.mode = LED_MODE_ON,
-	},
-	[LED_PEER_STATE_CONFIRM_SELECT] = {
-		.mode = LED_MODE_BLINKING,
-		.period = 50,
-	},
-	[LED_PEER_STATE_CONFIRM_ERASE] = {
-		.mode = LED_MODE_BLINKING,
-		.period = 25,
-	}
-};
-
-static const struct led_color led_peer_state_color[CONFIG_BT_MAX_PAIRED] = {
-	[0] = {
-		.c = {100},
-	},
-	[1] = {
-		.c = {200},
-	}
 };
