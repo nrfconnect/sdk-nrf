@@ -25,11 +25,10 @@ struct led {
 	struct device *pwm_dev;
 
 	size_t id;
-	enum led_mode mode;
 	struct led_color color;
-
-	u16_t period;
-	bool dir;
+	const struct led_effect *effect;
+	u16_t effect_step;
+	u16_t effect_substep;
 
 	struct k_delayed_work work;
 };
@@ -53,54 +52,64 @@ static void pwm_off(struct led *led)
 	pwm_out(led, &nocolor);
 }
 
-static void led_blink(struct led *led)
-{
-	if (led->dir) {
-		pwm_off(led);
-	} else {
-		pwm_out(led, &led->color);
-	}
-	led->dir = !led->dir;
-
-	k_delayed_work_submit(&led->work, led->period);
-}
-
 static void work_handler(struct k_work *work)
 {
 	struct led *led = CONTAINER_OF(work, struct led, work);
 
-	switch (led->mode) {
-	case LED_MODE_BLINKING:
-		led_blink(led);
-		break;
+	const struct led_effect_step *effect_step =
+		&led->effect->steps[led->effect_step];
 
-	default:
-		__ASSERT_NO_MSG(false);
-		break;
+	int substeps_left = effect_step->substep_count - led->effect_substep;
+	for (size_t i = 0; i < ARRAY_SIZE(led->color.c); i++) {
+		int diff = (effect_step->color.c[i] - led->color.c[i]) /
+			substeps_left;
+		led->color.c[i] += diff;
+	}
+	pwm_out(led, &led->color);
+
+	led->effect_substep++;
+	if (led->effect_substep == effect_step->substep_count) {
+		led->effect_substep = 0;
+		led->effect_step++;
+
+		if (led->effect_step == led->effect->step_count) {
+			if (led->effect->loop_forever) {
+				led->effect_step = 0;
+			}
+		} else {
+			__ASSERT_NO_MSG(led->effect->steps[led->effect_step].substep_count > 0);
+		}
+	}
+
+	if (led->effect_step < led->effect->step_count) {
+		s32_t next_delay =
+			led->effect->steps[led->effect_step].substep_time;
+
+		k_delayed_work_submit(&led->work, next_delay);
 	}
 }
 
-static void led_mode_update(struct led *led, enum led_mode mode)
+static void led_update(struct led *led)
 {
 	k_delayed_work_cancel(&led->work);
 
-	switch (mode) {
-	case LED_MODE_ON:
-		pwm_out(led, &led->color);
-		break;
+	led->effect_step = 0;
+	led->effect_substep = 0;
 
-	case LED_MODE_OFF:
-		pwm_off(led);
-		break;
+	if (!led->effect) {
+		LOG_WRN("No effect set");
+		return;
+	}
 
-	case LED_MODE_BLINKING:
-		__ASSERT_NO_MSG(led->period > 0);
-		k_delayed_work_submit(&led->work, 0);
-		break;
+	__ASSERT_NO_MSG(led->effect->steps);
 
-	default:
-		__ASSERT_NO_MSG(false);
-		break;
+	if (led->effect->step_count > 0) {
+		s32_t next_delay =
+			led->effect->steps[led->effect_step].substep_time;
+
+		k_delayed_work_submit(&led->work, next_delay);
+	} else {
+		LOG_WRN("LED effect with no effect");
 	}
 }
 
@@ -135,7 +144,7 @@ static int leds_init(void)
 			err = -ENXIO;
 		} else {
 			k_delayed_work_init(&leds[i].work, work_handler);
-			led_mode_update(&leds[i], leds[i].mode);
+			led_update(&leds[i]);
 		}
 	}
 
@@ -153,14 +162,17 @@ static void leds_start(void)
 			LOG_ERR("PWM enable failed");
 		}
 #endif
-		led_mode_update(&leds[i], leds[i].mode);
+		led_update(&leds[i]);
 	}
 }
 
 static void leds_stop(void)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
-		led_mode_update(&leds[i], LED_MODE_OFF);
+		k_delayed_work_cancel(&leds[i].work);
+
+		pwm_off(&leds[i]);
+
 #ifdef CONFIG_DEVICE_POWER_MANAGEMENT
 		int err = device_set_power_state(leds[i].pwm_dev,
 						 DEVICE_PM_SUSPEND_STATE,
@@ -177,27 +189,24 @@ static bool event_handler(const struct event_header *eh)
 	static bool initialized;
 
 	if (is_led_event(eh)) {
-		struct led_event *event = cast_led_event(eh);
+		const struct led_event *event = cast_led_event(eh);
 
 		__ASSERT_NO_MSG(event->led_id < CONFIG_DESKTOP_LED_COUNT);
 
-		/* Record params */
 		struct led *led = &leds[event->led_id];
 
-		led->id = event->led_id;
-		led->color = event->color;
-		led->mode = event->mode;
-		led->period = event->period;
+		led->effect = event->led_effect;
 
-		/* Update mode */
 		if (initialized) {
-			led_mode_update(led, led->mode);
+			led_update(led);
 		}
+
 		return false;
 	}
 
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			int err = leds_init();

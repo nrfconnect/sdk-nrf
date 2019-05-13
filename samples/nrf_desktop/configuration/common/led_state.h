@@ -46,12 +46,6 @@ enum led_id {
 
 #define LED_UNAVAILABLE CONFIG_DESKTOP_LED_COUNT
 
-struct led_effect {
-	enum led_mode mode;
-
-	u16_t period;
-};
-
 #ifdef __cplusplus
 }
 #endif
