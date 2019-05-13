@@ -58,9 +58,7 @@ static void load_peer_state_led(void)
 	struct led_event *event = new_led_event();
 
 	event->led_id = led_map[LED_ID_PEER_STATE];
-	event->mode   = led_peer_state_effect[state].mode;
-	event->period = led_peer_state_effect[state].period;
-	event->color  = led_peer_state_color[peer_id];
+	event->led_effect = &led_peer_state_effect[peer_id][state];
 	EVENT_SUBMIT(event);
 }
 
@@ -73,9 +71,7 @@ static void load_system_state_led(void)
 	struct led_event *event = new_led_event();
 
 	event->led_id = led_map[LED_ID_SYSTEM_STATE];
-	event->mode   = led_system_state_effect[system_state].mode;
-	event->period = led_system_state_effect[system_state].period;
-	event->color  = led_system_state_color[system_state];
+	event->led_effect = &led_system_state_effect[system_state];
 	EVENT_SUBMIT(event);
 }
 
