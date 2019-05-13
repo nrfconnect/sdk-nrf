@@ -12,6 +12,7 @@
 #include <zephyr/types.h>
 #include <at_params.h>
 #include <kernel.h>
+#include <errno.h>
 
 /* Internal function. */
 static void at_param_init(struct at_param *param)
@@ -20,7 +21,6 @@ static void at_param_init(struct at_param *param)
 
 	memset(param, 0, sizeof(struct at_param));
 }
-
 
 /* Internal function. */
 static void at_param_clear(struct at_param *param)
@@ -36,10 +36,9 @@ static void at_param_clear(struct at_param *param)
 	}
 }
 
-
 /* Internal function. */
 static struct at_param *at_params_get(const struct at_param_list *list,
-				size_t index)
+				      size_t index)
 {
 	__ASSERT(list != NULL, "Parameter list cannot be NULL.\n");
 
@@ -51,7 +50,6 @@ static struct at_param *at_params_get(const struct at_param_list *list,
 
 	return &param[index];
 }
-
 
 /* Internal function. Parameter cannot be null. */
 static size_t at_param_size(const struct at_param *param)
@@ -67,20 +65,14 @@ static size_t at_param_size(const struct at_param *param)
 	return 0;
 }
 
-
-int at_params_list_init(struct at_param_list *list,
-			size_t max_params_count)
+int at_params_list_init(struct at_param_list *list, size_t max_params_count)
 {
 	if (list == NULL) {
 		return -EINVAL;
 	}
 
-	if (list->params != NULL) {
-		return -EACCES;
-	}
-
-	list->params = k_calloc(max_params_count,
-				sizeof(struct at_param));
+	/* Create array of paramaters. */
+	list->params = k_calloc(max_params_count, sizeof(struct at_param));
 	if (list->params == NULL) {
 		return -ENOMEM;
 	}
@@ -90,22 +82,19 @@ int at_params_list_init(struct at_param_list *list,
 	return 0;
 }
 
-
 void at_params_list_clear(struct at_param_list *list)
 {
 	if (list == NULL || list->params == NULL) {
 		return;
 	}
 
-	for (size_t i = 0; i < list->param_count;
-		 ++i) {
+	for (size_t i = 0; i < list->param_count; ++i) {
 		struct at_param *params = list->params;
 
 		at_param_clear(&params[i]);
 		at_param_init(&params[i]);
 	}
 }
-
 
 void at_params_list_free(struct at_param_list *list)
 {
@@ -120,13 +109,11 @@ void at_params_list_free(struct at_param_list *list)
 	list->params = NULL;
 }
 
-
 int at_params_clear(struct at_param_list *list, size_t index)
 {
 	if (list == NULL || list->params == NULL) {
 		return -EINVAL;
 	}
-
 
 	struct at_param *param = at_params_get(list, index);
 
@@ -138,7 +125,6 @@ int at_params_clear(struct at_param_list *list, size_t index)
 	at_param_init(param);
 	return 0;
 }
-
 
 int at_params_short_put(const struct at_param_list *list, size_t index,
 			u16_t value)
@@ -160,9 +146,8 @@ int at_params_short_put(const struct at_param_list *list, size_t index,
 	return 0;
 }
 
-
 int at_params_int_put(const struct at_param_list *list, size_t index,
-			u32_t value)
+		      u32_t value)
 {
 	if (list == NULL || list->params == NULL) {
 		return -EINVAL;
@@ -180,7 +165,6 @@ int at_params_int_put(const struct at_param_list *list, size_t index,
 	param->value.int_val = value;
 	return 0;
 }
-
 
 int at_params_string_put(const struct at_param_list *list, size_t index,
 			 const char *str, size_t str_len)
@@ -206,14 +190,13 @@ int at_params_string_put(const struct at_param_list *list, size_t index,
 
 	at_param_clear(param);
 	param->type = AT_PARAM_TYPE_STRING;
-	param->value.str_val =	param_value;
+	param->value.str_val = param_value;
 
 	return 0;
 }
 
-
 int at_params_size_get(const struct at_param_list *list, size_t index,
-			size_t *len)
+		       size_t *len)
 {
 	if (list == NULL || list->params == NULL || len == NULL) {
 		return -EINVAL;
@@ -228,7 +211,6 @@ int at_params_size_get(const struct at_param_list *list, size_t index,
 	*len = at_param_size(param);
 	return 0;
 }
-
 
 int at_params_short_get(const struct at_param_list *list, size_t index,
 			u16_t *value)
@@ -251,9 +233,8 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
 	return 0;
 }
 
-
 int at_params_int_get(const struct at_param_list *list, size_t index,
-			u32_t *value)
+		      u32_t *value)
 {
 	if (list == NULL || list->params == NULL || value == NULL) {
 		return -EINVAL;
@@ -273,9 +254,8 @@ int at_params_int_get(const struct at_param_list *list, size_t index,
 	return 0;
 }
 
-
 int at_params_string_get(const struct at_param_list *list, size_t index,
-			char *value, size_t len)
+			 char *value, size_t len)
 {
 	if (list == NULL || list->params == NULL || value == NULL) {
 		return -EINVAL;
@@ -300,7 +280,6 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
 	memcpy(value, param->value.str_val, param_len);
 	return param_len;
 }
-
 
 u32_t at_params_valid_count_get(const struct at_param_list *list)
 {

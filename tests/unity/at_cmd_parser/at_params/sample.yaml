@@ -1,0 +1,9 @@
+sample:
+  description: AT params test
+  name: at_params_test
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: native_posix
+    tags: ci_build
