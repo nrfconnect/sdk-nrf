@@ -349,15 +349,15 @@ static void silence_unused(void)
 	}
 }
 
-static int settings_set(int argc, char **argv, void *val_ctx)
+static int settings_set(int argc, char **argv, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
 {
 	if (argc != 1) {
 		return -ENOENT;
 	}
 
 	if (!strcmp(argv[0], PEER_ID_STORAGE_NAME)) {
-		int len = settings_val_read_cb(val_ctx, &cur_peer_id,
-					       sizeof(cur_peer_id));
+		ssize_t len = read_cb(cb_arg, &cur_peer_id, sizeof(cur_peer_id));
 		if (len != sizeof(cur_peer_id)) {
 			LOG_ERR("Can't read peer id from storage");
 			return len;
