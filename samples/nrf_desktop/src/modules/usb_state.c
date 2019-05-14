@@ -324,7 +324,7 @@ static void protocol_change(u8_t protocol)
 
 static int usb_init(void)
 {
-	usb_dev = device_get_binding(CONFIG_USB_HID_DEVICE_NAME_0);
+	usb_dev = device_get_binding(CONFIG_USB_HID_DEVICE_NAME "_0");
 	if (usb_dev == NULL) {
 		return -ENXIO;
 	}

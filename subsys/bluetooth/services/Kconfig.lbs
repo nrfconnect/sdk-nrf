@@ -1,5 +1,6 @@
 menuconfig BT_GATT_LBS
 	bool "Led Button service"
+	select BT_GATT_DYNAMIC_DB
 	help
 	  Enable Led Button service.
 

@@ -40,20 +40,13 @@ static ssize_t read_blvl(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 }
 
 /* Battery Service Declaration */
-static struct bt_gatt_attr attrs[] = {
+BT_GATT_SERVICE_DEFINE(bas_svc,
 	BT_GATT_PRIMARY_SERVICE(BT_UUID_BAS),
 	BT_GATT_CHARACTERISTIC(BT_UUID_BAS_BATTERY_LEVEL,
 			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ, read_blvl, NULL, &battery),
 	BT_GATT_CCC(blvl_ccc_cfg, blvl_ccc_cfg_changed),
-};
-
-static int bas_init(void)
-{
-	static struct bt_gatt_service bas_svc = BT_GATT_SERVICE(attrs);
-
-	return bt_gatt_service_register(&bas_svc);
-}
+);
 
 static bool event_handler(const struct event_header *eh)
 {
@@ -65,8 +58,8 @@ static bool event_handler(const struct event_header *eh)
 		battery = event->level;
 
 		if (active) {
-			bt_gatt_notify(NULL, &attrs[1], &battery,
-					sizeof(battery));
+			bt_gatt_notify(NULL, &bas_svc.attrs[1], &battery,
+				       sizeof(battery));
 		}
 
 		return false;
@@ -80,13 +73,6 @@ static bool event_handler(const struct event_header *eh)
 
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
-
-			if (bas_init()) {
-				LOG_ERR("Service init failed");
-
-				return false;
-			}
-			LOG_INF("Service initialized");
 
 			module_set_state(MODULE_STATE_READY);
 		}

@@ -5,10 +5,10 @@
 #
 
 
-#TODO: Detect what kernel_elf to depend on and resolve what
+#TODO: Detect which elf to depend on and resolve which
 #      image should be hashed and signed by b0.
 
-set(KERNEL_ELF_TO_BE_SIGNED kernel_elf)
+set(KERNEL_ELF_TO_BE_SIGNED zephyr_final)
 
 set(GENERATED_FILES_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
 

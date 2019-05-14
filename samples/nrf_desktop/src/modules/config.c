@@ -40,7 +40,8 @@ static bool config_id_is_supported(u8_t event_id)
 	return false;
 }
 
-static int settings_set(int argc, char **argv, void *val_ctx)
+static int settings_set(int argc, char **argv, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
 {
 	if (argc != 1) {
 		return -ENOENT;
@@ -61,7 +62,7 @@ static int settings_set(int argc, char **argv, void *val_ctx)
 	}
 
 	size_t data_size = 0;
-	int len = settings_val_read_cb(val_ctx, &data_size, sizeof(data_size));
+	ssize_t len = read_cb(cb_arg, &data_size, sizeof(data_size));
 
 	if (len != sizeof(data_size)) {
 		LOG_ERR("Can't read config data size (id:%u err:%d)", id, len);
@@ -92,7 +93,7 @@ static int settings_set(int argc, char **argv, void *val_ctx)
 		return -EFAULT;
 	}
 
-	len = settings_val_read_cb(val_ctx, (*slot)->dyndata.data, data_size);
+	len = read_cb(cb_arg, (*slot)->dyndata.data, data_size);
 	if (len != data_size) {
 		LOG_ERR("Can't read config (id:%u err:%d)", id, len);
 		k_free(*slot);

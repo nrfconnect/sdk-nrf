@@ -52,6 +52,6 @@ if((EXISTS ${APPLICATION_SOURCE_DIR}/pm.yml) AND IMAGE)
   set_property(
     GLOBAL APPEND PROPERTY
     PM_HEX_FILES_TO_MERGE_TARGETS
-    ${IMAGE}kernel_elf
+    ${IMAGE}zephyr_final
     )
 endif()

@@ -316,7 +316,8 @@ static void ble_adv_update_fn(struct k_work *work)
 	}
 }
 
-static int settings_set(int argc, char **argv, void *val_ctx)
+static int settings_set(int argc, char **argv, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
 {
 	if (argc != 1) {
 		return -ENOENT;
@@ -332,9 +333,8 @@ static int settings_set(int argc, char **argv, void *val_ctx)
 			return -ENOTSUP;
 		}
 
-		int len = settings_val_read_cb(val_ctx,
-					       &peer_is_rpa[read_id],
-					       sizeof(peer_is_rpa[read_id]));
+		ssize_t len = read_cb(cb_arg, &peer_is_rpa[read_id],
+				  sizeof(peer_is_rpa[read_id]));
 
 		if (len != sizeof(peer_is_rpa[read_id])) {
 			LOG_ERR("Can't read peer_is_rpa%ld from storage", read_id);
