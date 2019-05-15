@@ -12,6 +12,13 @@ def header_prepare(in_file, out_file, out_wrap_file):
     with open(in_file) as f_in:
         content = f_in.read()
 
+    # remove comments
+    comments_pattern = re.compile(
+        r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+        re.DOTALL | re.MULTILINE
+    )
+    content = comments_pattern.sub(r"", content)
+
     # change static inline functions to normal function declaration
     static_inline_pattern = re.compile(
         r'((__deprecated\s+)?)((static\s+inline\s+)|(static\s+ALWAYS_INLINE\s+)'
@@ -30,14 +37,21 @@ def header_prepare(in_file, out_file, out_wrap_file):
         re.M | re.S)
     content = syscall_decl_pattern.sub("", content)
 
+    # For now it handles extern function declaration but maybe extended later
+    # if other cases are found.
+    prefixed_func_decl_pattern = re.compile(
+        r'((extern\s+)?)((struct\s+)?)([^\s#]\w*\s)(\*?)(\w+?\([\s\S]+?\);)',
+        re.M | re.S)
+    content = prefixed_func_decl_pattern.sub(r"\3\4\5\6\7", content)
+
     with open(out_file, 'w') as f_out:
         f_out.write(content)
 
     # Prepare file with functions prefixed with __wrap_ that will be used for
     # mock generation.
     func_pattern = re.compile(
-        r"((struct\s+)|\n)([^\s#]\w*\s)(\*?)(\w+?\([\s\S]+?\);)", re.M | re.S)
-    (content2, m2) = func_pattern.subn(r"\n\1\3\4__wrap_\5", content)
+        r"^(?!#define\s+)((extern\s+)?)((struct\s+)?)([^\s#]\w*\s)(\*?)(\w+?\([\s\S]+?\);)", re.M | re.S)
+    (content2, m2) = func_pattern.subn(r"\n\3\5\6__wrap_\7", content)
 
     with open(out_wrap_file, 'w') as f_wrap:
         f_wrap.write(content2)
