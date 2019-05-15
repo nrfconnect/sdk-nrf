@@ -10,17 +10,18 @@ Currently, the only supported protocol for the download is HTTP.
 The library is designed to download large objects like firmware images.
 However, it does not impose any requirements on the object that is being downloaded, which means that you can use the library for any kind of object, not only firmware images.
 There are also no constraints on the object if it is a firmware image.
-The image can be of any form, for example, a delta image or a full image with many merged HEX files, and there is no revision management or specification of the flash address where the image is downloaded.
+The image can be of any form, for example, a delta image or a full image with many merged HEX files.
+There is no revision management or specification of the flash address where the image is downloaded.
 
 The size of the object to download is obtained from the server.
 The object is then downloaded in fragments of a maximum fragment size (:option:`CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE`).
-For example, if the size of the object to be downloaded is 60478 bytes and the maximum fragment size is 1024 bytes, the module downloads 60 fragments of the object; 59 fragments with a size of 1024 bytes and one fragment with a size of 62 bytes.
+For example, if the size of the object to be downloaded is 60478 bytes and the maximum fragment size is 1024 bytes, the module downloads 60 fragments of the object: 59 fragments with a size of 1024 bytes and one fragment with a size of 62 bytes.
 If any of the download requests fail, they can be repeated.
 
-After every fragment download, a :cpp:enum:`download_client_evt` is returned, indicating if the download was successful (:cpp:member:`DOWNLOAD_CLIENT_EVT_DOWNLOAD_FRAG`), failed (:cpp:member:`DOWNLOAD_CLIENT_EVT_ERROR`), or is completed (:cpp:member:`DOWNLOAD_CLIENT_EVT_DOWNLOAD_DONE`).
+After every fragment download, a :c:type:`download_client_evt` event is returned, indicating whether the download was successful (:cpp:member:`DOWNLOAD_CLIENT_EVT_FRAGMENT`), failed (:cpp:member:`DOWNLOAD_CLIENT_EVT_ERROR`), or is completed (:cpp:member:`DOWNLOAD_CLIENT_EVT_DONE`).
 
-Make sure to configure :option:`CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE` in a way that suits your application.
-A low value causes many download requests, which can result in too much protocol overhead, while a large value requires a lot of RAM.
+Make sure to configure :option:`CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE` in a way that suits your application.
+A low value causes many download requests, which might result in too much protocol overhead, while a large value requires a lot of RAM.
 
 
 Protocols
@@ -38,7 +39,7 @@ For HTTP, the following requirements must be met:
 * TCP transport is used to communicate with the server.
 * The application protocol to communicate with the server is HTTP 1.1.
 * IETF RFC 7233 is supported by the HTTP Server.
-* :option:`CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE` is configured so that it can contain the entire HTTP response.
+* :option:`CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE` is configured so that it can contain the entire HTTP response.
 
 HTTPS is not supported.
 

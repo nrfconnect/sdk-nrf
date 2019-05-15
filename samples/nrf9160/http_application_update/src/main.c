@@ -18,20 +18,15 @@
 
 static struct		device	*flash_dev;
 static bool		is_flash_page_erased[FLASH_PAGE_MAX_CNT];
-static volatile bool	start_dfu;
 static struct		device *gpiob;
 static struct		gpio_callback gpio_cb;
 static u32_t		flash_address;
+static struct k_work	download_work;
 
-static int app_download_client_event_handler(struct download_client *const dfu,
-			enum download_client_evt event, u32_t status);
+static int download_client_callback(const struct download_client_evt *);
 
 
-static struct download_client dfu = {
-	.host = CONFIG_DOWNLOAD_HOST,
-	.resource = CONFIG_DOWNLOAD_FILE,
-	.callback = app_download_client_event_handler
-};
+static struct download_client dfu;
 
 
 /**@brief Recoverable BSD library error. */
@@ -52,46 +47,48 @@ void bsd_irrecoverable_error_handler(uint32_t err)
 /**@brief Initialize application. */
 static int app_dfu_init(void)
 {
-	int i;
+	int retval;
 
 	flash_address = PM_MCUBOOT_SECONDARY_ADDRESS;
-	for (i = 0; i < FLASH_PAGE_MAX_CNT; i++) {
+	for (int i = 0; i < FLASH_PAGE_MAX_CNT; i++) {
 		is_flash_page_erased[i] = false;
 	}
+
 	flash_dev = device_get_binding(DT_FLASH_DEV_NAME);
 	if (flash_dev == 0) {
 		printk("Nordic nRF flash driver was not found!\n");
 		return 1;
 	}
 
-	int retval = download_client_init(&dfu);
-
+	retval = download_client_init(&dfu, download_client_callback);
 	if (retval != 0) {
 		printk("download_client_init() failed, err %d", retval);
 		return 1;
 	}
+
+	retval = download_client_connect(&dfu, CONFIG_DOWNLOAD_HOST);
+	if (retval != 0) {
+		printk("download_client_connect() failed, err %d",
+			retval);
+			return 1;
+	}
+
 	return 0;
 }
 
 
 /**@brief Start transfer of the file. */
-static int app_dfu_transfer_start(void)
+static void app_dfu_transfer_start(struct k_work *unused)
 {
-	int retval = download_client_connect(&dfu);
+	int retval;
 
-	if (retval != 0) {
-		printk("download_client_connect() failed, err %d",
-			retval);
-		return 1;
-	}
-
-	retval = download_client_start(&dfu);
+	retval = download_client_start(&dfu, CONFIG_DOWNLOAD_FILE, 0);
 	if (retval != 0) {
 		printk("download_client_start() failed, err %d",
 			retval);
-		return 1;
 	}
-	return 0;
+
+	return;
 }
 
 static int flash_page_erase_if_needed(u32_t address)
@@ -131,19 +128,25 @@ static int flash_page_erase_if_needed(u32_t address)
 }
 
 
-static int app_download_client_event_handler(
-	struct download_client *const dfu,
-	enum download_client_evt event, u32_t error)
+static int download_client_callback(const struct download_client_evt *event)
 {
 	int err;
 
-	switch (event) {
-	case DOWNLOAD_CLIENT_EVT_DOWNLOAD_FRAG: {
+	switch (event->id) {
+	case DOWNLOAD_CLIENT_EVT_FRAGMENT: {
 
-		if (dfu->object_size > PM_MCUBOOT_SECONDARY_SIZE) {
+		size_t size;
+		err = download_client_file_size_get(&dfu, &size);
+		if (err != 0) {
+			printk("download_client_file_size_get returned error %d\n",
+				err);
+			return 1;
+		}
+		if (size > PM_MCUBOOT_SECONDARY_SIZE) {
 			printk("Requested file too big to fit in flash\n");
 			return 1;
 		}
+
 		err = flash_page_erase_if_needed(flash_address);
 		if (err != 0) {
 			return 1;
@@ -154,8 +157,8 @@ static int app_download_client_event_handler(
 				err);
 			return 1;
 		}
-		err = flash_write(flash_dev, flash_address, dfu->fragment,
-							dfu->fragment_size);
+		err = flash_write(flash_dev, flash_address,
+				  event->fragment.buf, event->fragment.len);
 		if (err != 0) {
 			printk("Flash write error %d at address %08x\n",
 				err, flash_address);
@@ -167,13 +170,13 @@ static int app_download_client_event_handler(
 				err);
 			return 1;
 		}
-		flash_address += dfu->fragment_size;
+		flash_address += event->fragment.len;
 		break;
 	}
 
-	case DOWNLOAD_CLIENT_EVT_DOWNLOAD_DONE:
-		flash_address = PM_MCUBOOT_SECONDARY_ADDRESS
-			+PM_MCUBOOT_SECONDARY_SIZE-0x4;
+	case DOWNLOAD_CLIENT_EVT_DONE:
+		flash_address = PM_MCUBOOT_SECONDARY_ADDRESS +
+				PM_MCUBOOT_SECONDARY_SIZE - 0x4;
 		err = flash_page_erase_if_needed(flash_address);
 		if (err != 0) {
 			return 1;
@@ -183,11 +186,14 @@ static int app_download_client_event_handler(
 			printk("boot_request_upgrade returned error %d\n", err);
 			return 1;
 		}
-		printk("DOWNLOAD_CLIENT_EVT_DOWNLOAD_DONE");
+
+		/* Re-enable button callback */
+		gpio_pin_enable_callback(gpiob, SW0_GPIO_PIN);
+
 		break;
 
 	case DOWNLOAD_CLIENT_EVT_ERROR: {
-		download_client_disconnect(dfu);
+		download_client_disconnect(&dfu);
 		printk("Download client error, please restart "
 			"the application\n");
 		break;
@@ -223,9 +229,9 @@ static int led_app_version(void)
 }
 
 void dfu_button_pressed(struct device *gpiob, struct gpio_callback *cb,
-		    u32_t pins)
+			u32_t pins)
 {
-	start_dfu = true;
+	k_work_submit(&download_work);
 	gpio_pin_disable_callback(gpiob, SW0_GPIO_PIN);
 }
 
@@ -239,11 +245,8 @@ static int dfu_button_init(void)
 		return 1;
 	}
 	err = gpio_pin_configure(gpiob, SW0_GPIO_PIN,
-		GPIO_DIR_IN		|
-		GPIO_INT		|
-		GPIO_PUD_PULL_UP|
-		GPIO_INT_EDGE	|
-		GPIO_INT_ACTIVE_LOW);
+				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
+					 GPIO_INT_EDGE | GPIO_INT_ACTIVE_LOW);
 	if (err == 0) {
 		gpio_init_callback(&gpio_cb, dfu_button_pressed,
 			BIT(SW0_GPIO_PIN));
@@ -259,58 +262,42 @@ static int dfu_button_init(void)
 	return 0;
 }
 
-static int application_update(void)
+static int application_init(void)
 {
 	int err;
 
-	start_dfu = false;
+	k_work_init(&download_work, app_dfu_transfer_start);
+
+	err = dfu_button_init();
+	if (err != 0) {
+		return err;
+	}
+
+	err = led_app_version();
+	if (err != 0) {
+		return err;
+	}
+
 	err = app_dfu_init();
 	if (err != 0) {
-		return 1;
+		return err;
 	}
 
-	err = app_dfu_transfer_start();
-	if (err != 0) {
-		return 1;
-	}
-
-	while (true) {
-		if ((dfu.status == DOWNLOAD_CLIENT_STATUS_HALTED) ||
-			(dfu.status == DOWNLOAD_CLIENT_ERROR)) {
-			printk("Something went wrong, please restart the application\n");
-			return 1;
-		} else if (dfu.status ==
-			DOWNLOAD_CLIENT_STATUS_DOWNLOAD_COMPLETE) {
-			printk("Download complete\n");
-			break;
-		}
-		download_client_process(&dfu);
-	}
-	download_client_disconnect(&dfu);
 	return 0;
 }
-
 
 void main(void)
 {
 	int err;
 
 	boot_write_img_confirmed();
-	start_dfu = false;
-	err = dfu_button_init();
+
+	err = application_init();
 	if (err != 0) {
 		return;
 	}
-	err = led_app_version();
-	if (err != 0) {
-		return;
-	}
-	while (true) {
-		if (start_dfu) {
-			err = application_update();
-			if (err != 0) {
-				return;
-			}
-		}
-	}
+
+	printk("Press Button 1 to start the download\n");
+
+	return;
 }
