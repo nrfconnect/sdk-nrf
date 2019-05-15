@@ -13,19 +13,6 @@ set(PROVISION_HEX_NAME     provision_data.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 set(SIGNED_KERNEL_HEX      ${PROJECT_BINARY_DIR}/signed_by_b0_${KERNEL_HEX_NAME})
 
-set_property(
-  GLOBAL APPEND PROPERTY
-  HEX_FILES_TO_MERGE
-  ${SIGNED_KERNEL_HEX}
-  ${PROVISION_HEX}
-)
-set_property(
-  GLOBAL APPEND PROPERTY
-  HEX_FILES_TO_MERGE_TARGET
-  signed_kernel_hex_target
-  provision_target
-)
-
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/debug_keys.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/sign.cmake)
 

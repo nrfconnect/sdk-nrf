@@ -36,14 +36,4 @@ if((EXISTS ${APPLICATION_SOURCE_DIR}/pm.yml) AND IMAGE)
     PM_IMAGES
     ${IMAGE}
     )
-  set_property(
-    GLOBAL APPEND PROPERTY
-    PM_HEX_FILES_TO_MERGE
-    ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
-    )
-  set_property(
-    GLOBAL APPEND PROPERTY
-    PM_HEX_FILES_TO_MERGE_TARGETS
-    ${IMAGE}zephyr_final
-    )
 endif()
