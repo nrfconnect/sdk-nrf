@@ -8,16 +8,27 @@ menuconfig  NRF_DOWNLOAD_CLIENT
 	bool "Download client"
 
 if NRF_DOWNLOAD_CLIENT
-config NRF_DOWNLOAD_MAX_REQUEST_SIZE
-	int "Request size"
-	default 256
 
 config NRF_DOWNLOAD_MAX_FRAGMENT_SIZE
 	int "Fragment size"
-	default 1024
+	default 2048
+	help
+	  Size of the data fragments reported to the application in each event.
 
 config NRF_DOWNLOAD_MAX_RESPONSE_SIZE
 	int "Response size"
 	default 2048
+	help
+	  Buffer to accommodate for the HTTP response.
+	  Must be large enough to accomodate for a full fragment.
+
+config NRF_DOWNLOAD_CLIENT_STACK_SIZE
+	int "Thread stack size"
+	default 2048
+
+module=NRF_DOWNLOAD_CLIENT
+module-dep=LOG
+module-str=Download client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif
