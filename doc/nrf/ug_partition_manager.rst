@@ -254,6 +254,49 @@ C code usage
       #else
       ...
 
+Hex files
+   Partition Manager associates 0 or 1 hex file with each partition.
+   A hex file can be assigned to a partition implicitly or explicitly.
+   Explicitly assigned hex files override implicitly assigned hex files.
+   Image partitions and phony partitions get a hex file assigned implicitly, while placeholder partitions do not.
+
+   Explicitly assigning a hex file to a partition is done by setting global properties in CMake.
+   The names of these properties must match a specific pattern, as shown below.
+
+   .. code-block:: cmake
+      :caption: Telling Partition manager about hex files.
+
+      set_property(
+         GLOBAL PROPERTY
+         app_PM_HEX_FILE # Has to match "*_PM_HEX_FILE"
+         ${PROJECT_BINARY_DIR}/signed.hex
+      )
+
+      set_property(
+         GLOBAL PROPERTY
+         app_PM_TARGET # Has to match "*_PM_TARGET
+         sign_target
+      )
+
+   Image partitions are implicitly assigned the compiled hex file, i.e. the hex file generated when building its corresponding image.
+   Phony partitions are implicitly assigned the result of merging the hex files assigned to its underlying partitions.
+
+   For example, if a bootloader needs an image partition to be cryptographically signed,
+   it must explicitly assign the signed hex file to that partition.
+   This is shown in the example below
+
+   Partition Manager creates a hex file called :file:`merged.hex`.
+   :file:`merged.hex` is flashed to the board when calling ``ninja flash``.
+   When creating :file:`merged.hex`, all assigned hex files are included in the merge operation.
+   When the hex files overlap the conflict will be resolved as follows:
+
+      * Hex files assigned to phony partitions overwrite hex files assigned to its underlying partitions.
+      * Hex files assigned to larger partitions overwrite hex files assigned to smaller partitions.
+      * Explcitly assigned hex files overwrite implicitly assigned hex files.
+
+   This effectively allows overwriting a partition's hex file by wrapping that partition in another partition,
+   and reporting a hex file for the new partition.
+
 rom_report
    When using the Partition Manager, run ``ninja rom_report`` to see the addresses and sizes of flash partitions.
 
