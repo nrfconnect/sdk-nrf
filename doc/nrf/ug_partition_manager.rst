@@ -63,7 +63,7 @@ Where ``option_dict_name`` can be:
 placement: dict
    The placement of the partition relative to other partitions, the end of flash, or the root image partition ``app``.
    A partition with the placement property set is either an *image partition* or a *placeholder partition*.
-   The partition with the same name as the image is the image partitition; all the others are placeholder partitions.
+   The partition with the same name as the image is the image partition; all the others are placeholder partitions.
    It is required that each :file:`pm.yml` defines exactly one *image partition*.
    The placement is formatted as a yaml dict.
    The valid keywords are listed below.
@@ -234,7 +234,7 @@ See :ref:`pm_generated_output_and_usage`.
 
 Generated output and usage
 ==========================
-For each sub-image and the root app, Partition Manager generates three files, one C header file :file:`pm_config.h`, one Kconfig file :file:`pm.config`, and one YAML file :file:`partitions.yml`.
+For each sub-image and the root app, Partition Manager generates three files, one C header file :file:`pm_config.h`, one Kconfig file :file:`pm.config`, and one YAML file :file:`pm_static.yml`.
 The C header file is used in the C code while the Kconfig file is imported in CMake.
 Both these files contain the start address and size of all partitions.
 The Kconfig file additionally contains the build directory and generated include folder for each image.
@@ -292,7 +292,7 @@ Hex files
 
       * Hex files assigned to phony partitions overwrite hex files assigned to its underlying partitions.
       * Hex files assigned to larger partitions overwrite hex files assigned to smaller partitions.
-      * Explcitly assigned hex files overwrite implicitly assigned hex files.
+      * Explicitly assigned hex files overwrite implicitly assigned hex files.
 
    This effectively allows overwriting a partition's hex file by wrapping that partition in another partition,
    and reporting a hex file for the new partition.
@@ -321,4 +321,76 @@ CMake usage
       :caption: mcuboot/zephyr/CmakeLists.txt
 
       --slot-size $<TARGET_PROPERTY:partition_manager,MCUBOOT_SLOT_SIZE>
+
+.. _ug_pm_static:
+
+Static configuration
+========================
+Static configuration is a feature intended for deployed products which consists of multiple images where
+only a subset of the included images will be upgradeable through firmware update mechanisms.
+One example of this is a device which includes a non-upgradable first stage bootloader and an upgradeable application.
+In these use cases, the images to be upgraded must be linked to the same address as that which is deployed.
+This is to avoid accidental overrides and incorrect configurations.
+
+Static configuration defines the static partitions.
+The area used by the static partitions is called the **static area**.
+Using static configuration, it is still allowed to configure partitions inside the **dynamic area**.
+The dynamic area consists of the "app" partition and all memory adjacent to the "app" partition which is not occupied by a static partition.
+Note that there exists only one dynamic area.
+When Partition Manager is executed, it only operates on the dynamic area, assuming that all other memory is reserved.
+Within the dynamic area, it is allowed to define new partitions.
+The dynamic area is re-sized by removing partitions from or adding partitions to the static configuration.
+
+.. _ug_pm_static_providing:
+
+Providing static configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The static configuration is provided through a YAML formatted configuration file.
+This file is similar to the regular :file:`pm.yml` configuration files, except
+that it also defines the start address for all partitions.
+The given configuration for a build can be found in :file:`${BUILD_DIR}/partitions.yml`.
+To apply the current configuration as a static configuration, copy this file to `${APPLICATION_SOURCE_DIR}/pm_static.yml``.
+
+.. note::
+  Configuration of the `app` partition inside the static configuration is ignored.
+
+When the build system sees a file named :file:`pm_static.yml` in an applications source directory, it is automatically provided to the partition manager script as the static configuration.
+If desired, the file can be modified as described below.
+
+.. _ug_pm_static_remove:
+
+Removing a static partition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A static partition is removed by deleting its entry in :file:`pm_static.yml`.
+Only partitions adjacent to the ``app`` partition or other removed partitions can itself be removed.
+
+.. _ug_pm_static_add_dynamic:
+
+Adding a dynamic partition
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+New dynamic partitions are added automatically by the build process if they are listed in a :file:`pm.yml` file, unless also listed in the static configuration.
+
+.. note::
+   When resolving the relative placement of dynamic partitions any placement
+   properties referencing static partitions will be ignored.
+
+.. _ug_pm_static_add:
+
+Adding a static partition
+~~~~~~~~~~~~~~~~~~~~~~~~~
+To add a new static partition, add an entry for it in the file :file:`pm_static.yml`.
+This entry must define the properties ``address``, ``size``, and if applicable - ``span``.
+
+.. code-block:: yaml
+   :caption: Example of static configuration of partition with span.
+
+   partition_name:
+      address: 0xab00
+      size: 0x1000
+      span: [example]  # Only if this partition had the `span` property set originally.
+
+.. note::
+  Sub-images with the build strategy `*_BUILD_STRATEGY_SKIP_BUILD` or
+  `*_BUILD_STRATEGY_USE_HEX_FILE` must define a static partition to ensure correct
+  placement of the dynamic partitions.
 
