@@ -162,6 +162,9 @@ API documentation
 Custom NDEF messages
 ====================
 
+| Header file: :file:`include/nfc_ndef_msg.h`
+| Source file: :file:`subsys/nfc/ndef/nfc_ndef_msg.c`
+
 .. doxygengroup:: nfc_ndef_msg
    :project: nrf
    :members:
@@ -170,6 +173,9 @@ Custom NDEF messages
 
 Custom NDEF records
 ===================
+
+| Header file: :file:`include/nfc_ndef_record.h`
+| Source file: :file:`subsys/nfc/ndef/nfc_ndef_record.c`
 
 .. doxygengroup:: nfc_ndef_record
    :project: nrf

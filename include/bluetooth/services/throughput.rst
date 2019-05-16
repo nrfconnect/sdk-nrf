@@ -38,6 +38,9 @@ Read
 API documentation
 *****************
 
+| Header file: :file:`include/throughput.h`
+| Source file: :file:`subsys/bluetooth/services/throughput.c`
+
 .. doxygengroup::  bt_gatt_throughput
    :project: nrf
    :members:

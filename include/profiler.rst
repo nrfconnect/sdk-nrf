@@ -154,6 +154,9 @@ This subcommand set contains the following commands:
 API documentation
 *****************
 
+| Header file: :file:`include/profiler.h`
+| Source files: :file:`subsys/profiler/`
+
 .. doxygengroup:: profiler
    :project: nrf
    :members:

@@ -25,6 +25,9 @@ If you are unsure about the proper values, print the module's statistics to see 
 API documentation
 *****************
 
+| Header file: :file:`include/bluetooth/gatt_pool.h`
+| Source file: :file:`subsys/bluetooth/gatt_pool.c`
+
 .. doxygengroup:: bt_gatt_pool
    :project: nrf
    :members:

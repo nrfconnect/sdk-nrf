@@ -44,6 +44,9 @@ Getting the last known value
 API documentation
 *****************
 
+| Header file: :file:`include/bas_c.h`
+| Source file: :file:`subsys/bluetooth/services/bas_c.c`
+
 .. doxygengroup:: bt_gatt_bas_c
    :project: nrf
    :members:

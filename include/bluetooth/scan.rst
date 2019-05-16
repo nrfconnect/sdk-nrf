@@ -84,6 +84,9 @@ Filter modes
 API documentation
 *****************
 
+| Header file: :file:`include/bluetooth/scan.h`
+| Source file: :file:`subsys/bluetooth/scan.c`
+
 .. doxygengroup:: nrf_bt_scan
    :project: nrf
    :members:

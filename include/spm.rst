@@ -42,6 +42,9 @@ Peripherals configured as Non-Secure
 API documentation
 *****************
 
+| Header file: :file:`include/spm.h`
+| Source files: :file:`subsys/spm/`
+
 .. doxygengroup:: secure_partition_manager
    :project: nrf
    :members:

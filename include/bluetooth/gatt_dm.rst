@@ -21,6 +21,9 @@ Limitations
 API documentation
 *****************
 
+| Header file: :file:`include/bluetooth/gatt_dm.h`
+| Source file: :file:`subsys/bluetooth/gatt_dm.c`
+
 .. doxygengroup:: bt_gatt_dm
    :project: nrf
    :members:

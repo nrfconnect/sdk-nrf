@@ -73,6 +73,9 @@ The offset size of the current part and the total size are available in fields o
 API documentation
 *****************
 
+| Header file: :file:`include/dfu_smp_c.h`
+| Source file: :file:`subsys/bluetooth/services/dfu_smp_c.c`
+
 .. doxygengroup:: bt_gatt_dfu_smp_c
    :project: nrf
    :members:

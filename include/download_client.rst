@@ -51,6 +51,9 @@ If the server response contains "Connection: close", the library automatically r
 API documentation
 *****************
 
+| Header file: :file:`include/download_client.h`
+| Source files: :file:`subsys/net/lib/download_client/src/`
+
 .. doxygengroup:: dl_client
    :project: nrf
    :members:
