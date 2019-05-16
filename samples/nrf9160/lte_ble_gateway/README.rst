@@ -30,6 +30,15 @@ Requirements
 * :ref:`zephyr:bluetooth-hci-uart-sample` must be programmed to the nRF52 board controller on the board.
 * .. include:: /includes/spm.txt
 
+User interface
+**************
+The two buttons and two switches are used to enter a pairing pattern to associate a specific board with an nRF Cloud user account.
+
+When the connection is established, set switch 2 to **N.C.** to send simulated GPS data to the nRF Cloud once every 2 seconds.
+
+See :ref:`asset_tracker_user_interface` in the :ref:`asset_tracker` documentation for detailed information about the different LED states used by the sample.
+
+
 Building and running
 ********************
 
@@ -77,8 +86,6 @@ After programming the sample and all prerequisites to the board, test it by perf
 #. Observe that "Application started" is printed to the terminal window after the LTE link is established.
    This might take several minutes.
 #. Observe that LED 3 starts blinking as the connection to nRF Cloud is established.
-
-   See :ref:`asset_tracker_user_interface` in the :ref:`asset_tracker` sample documentation for detailed information about the different LED states used by the sample.
 #. The first time you start the sample, pair the device to your account:
 
    a. Observe that both LED 3 and 4 start blinking, indicating that the pairing procedure has been initiated.
@@ -90,6 +97,7 @@ After programming the sample and all prerequisites to the board, test it by perf
    #. After reboot, the board connects to the nRF Cloud, and the pattern disappears from the web page.
 #. Observe that LED 4 is turned on to indicate that the connection is established.
 #. Observe that the device count on your nRF Cloud dashboard is incremented by one.
+#. Set switch 2 in the position marked **N.C.** and observe that simulated GPS data is sent to the nRF Cloud.
 #. Make sure that the Thingy:52 has established a connection to the application.
    This is indicated by it blinking green.
 #. Flip the Thingy:52 (so that the USB port points upward) to trigger sending the sensor data to the nRF Cloud.
