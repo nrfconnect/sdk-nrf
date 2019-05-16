@@ -11,6 +11,7 @@
 #include <soc.h>
 #include <device.h>
 #include <gpio.h>
+#include <misc/util.h>
 
 #include "buttons.h"
 #include "buttons_def.h"
@@ -252,25 +253,29 @@ static void scan_fn(struct k_work *work)
 	/* Emit event for any key state change */
 	static u32_t old_state[COLUMNS];
 	bool any_pressed = false;
+	size_t evt_limit = 0;
 
 	for (size_t i = 0; i < COLUMNS; i++) {
 		for (size_t j = 0; j < ARRAY_SIZE(row); j++) {
 			bool is_pressed = cur_state[i] & BIT(j);
 			bool was_pressed = old_state[i] & BIT(j);
 
-			if (is_pressed != was_pressed) {
+			if ((is_pressed != was_pressed) &&
+			    (evt_limit < CONFIG_DESKTOP_BUTTONS_EVENT_LIMIT)) {
 				struct button_event *event = new_button_event();
 
 				event->key_id = (i << 8) | (j & 0xFF);
 				event->pressed = is_pressed;
 				EVENT_SUBMIT(event);
+
+				evt_limit++;
+
+				WRITE_BIT(old_state[i], j, is_pressed);
 			}
-
-			any_pressed = any_pressed || is_pressed;
 		}
-	}
 
-	memcpy(old_state, cur_state, sizeof(old_state));
+		any_pressed = any_pressed || (old_state[i] != 0) || (cur_state[i] != 0);
+	}
 
 	if (any_pressed) {
 		/* Avoid draining current between scans */

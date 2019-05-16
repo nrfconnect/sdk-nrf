@@ -121,6 +121,17 @@ config DESKTOP_BUTTONS_POLARITY_INVERSED
 	  When this option is enabled, button is pressed when the GPIO state
 	  is low.
 
+config DESKTOP_BUTTONS_EVENT_LIMIT
+	int "Number of button events in single scan loop"
+	depends on DESKTOP_BUTTONS_ENABLE
+	default 4
+	range 0 255
+	help
+	  This option specifies the number of button events generated during
+	  a single scanning loop. If more keys change state between scanning
+	  intervals, subsequent changes will be ignored and picked up during
+	  the next scanning.
+
 comment "Wheel configuration"
 	depends on HAS_DTS_QDEC
 
