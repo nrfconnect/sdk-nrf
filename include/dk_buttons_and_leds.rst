@@ -16,6 +16,9 @@ You can then set the value of a single LED, or set all of them to a state specif
 API documentation
 *****************
 
+| Header file: :file:`include/dk_buttons_and_leds.h`
+| Source files: :file:`lib/dk_buttons_and_leds/`
+
 .. doxygengroup:: dk_buttons_and_leds
    :project: nrf
    :members:

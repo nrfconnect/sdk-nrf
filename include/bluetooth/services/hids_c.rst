@@ -117,6 +117,9 @@ To resume, call :cpp:func:`bt_gatt_hids_c_exit_suspend`.
 API documentation
 *****************
 
+| Header file: :file:`include/hids_c.h`
+| Source file: :file:`subsys/bluetooth/services/hids_c.c`
+
 .. doxygengroup:: bt_gatt_hids_c
    :project: nrf
    :members:

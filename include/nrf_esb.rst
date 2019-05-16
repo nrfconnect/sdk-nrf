@@ -11,6 +11,9 @@ Also, check out the :ref:`esb_prx_ptx` sample.
 API documentation
 *****************
 
+| Header file: :file:`include/nrf_esb.h`
+| Source files: :file:`subsys/enhanced_shockburst/`
+
 .. doxygengroup:: nrf_esb
    :project: nrf
    :members:

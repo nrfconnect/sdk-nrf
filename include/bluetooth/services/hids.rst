@@ -59,6 +59,9 @@ part of the report is not to be stored as a characteristic value.
 API documentation
 *****************
 
+| Header file: :file:`include/hids.h`
+| Source file: :file:`subsys/bluetooth/services/hids.c`
+
 .. doxygengroup:: bt_gatt_hids
    :project: nrf
    :members:

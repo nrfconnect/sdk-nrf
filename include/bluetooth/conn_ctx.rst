@@ -14,6 +14,9 @@ The following Bluetooth LE service shows how to use this library: :ref:`hids_rea
 API documentation
 *****************
 
+| Header file: :file:`include/bluetooth/conn_ctx.h`
+| Source file: :file:`subsys/bluetooth/conn_ctx.c`
+
 .. doxygengroup:: bt_conn_ctx
    :project: nrf
    :members:

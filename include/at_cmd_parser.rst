@@ -17,6 +17,9 @@ Then, to parse a string, simply pass the returned AT command string to the libra
 API documentation
 *****************
 
+| Header file: :file:`include/at_cmd_parser.h`
+| Source file: :file:`lib/at_cmd_parser/src/at_cmd_parser.c`
+
 .. doxygengroup:: at_cmd_parser
    :project: nrf
    :members:

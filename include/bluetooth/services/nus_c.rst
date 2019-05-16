@@ -25,6 +25,9 @@ Another dedicated callback is triggered when your request has been completed, to
 API documentation
 *****************
 
+| Header file: :file:`include/nus_c.h`
+| Source file: :file:`subsys/bluetooth/services/nus_c.c`
+
 .. doxygengroup:: bt_gatt_nus_c
    :project: nrf
    :members:

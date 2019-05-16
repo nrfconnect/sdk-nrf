@@ -49,6 +49,9 @@ API documentation
 URI messages
 ============
 
+| Header file: :file:`include/nfc_uri_msg.h`
+| Source file: :file:`subsys/nfc/ndef/nfc_uri_msg.c`
+
 .. doxygengroup:: nfc_uri_msg
    :project: nrf
    :members:
@@ -57,6 +60,9 @@ URI messages
 
 URI records
 ===========
+
+| Header file: :file:`include/nfc_uri_rec.h`
+| Source file: :file:`subsys/nfc/ndef/nfc_uri_rec.c`
 
 .. doxygengroup:: nfc_uri_rec
    :project: nrf

@@ -281,6 +281,9 @@ This subcommand set contains the following commands:
 API documentation
 *****************
 
+| Header file: :file:`include/event_manager.h`
+| Source files: :file:`subsys/event_manager/`
+
 .. doxygengroup:: event_manager
    :project: nrf
    :members:

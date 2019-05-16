@@ -34,6 +34,9 @@ Notify
 API documentation
 *****************
 
+| Header file: :file:`include/nus.h`
+| Source file: :file:`subsys/bluetooth/services/nus.c`
+
 .. doxygengroup:: bt_gatt_nus
    :project: nrf
    :members:
