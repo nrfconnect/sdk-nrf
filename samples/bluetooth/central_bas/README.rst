@@ -38,9 +38,9 @@ Button 1:
 Building and running
 ********************
 
-This sample can be found under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
+.. |sample path| replace:: :file:`samples/bluetooth/central_bas`
 
-See :ref:`gs_programming` for information about how to build and program the application.
+.. include:: /includes/build_and_run.txt
 
 .. _central_bas_testing:
 
@@ -54,9 +54,9 @@ After programming the sample to your board, you can test it either by connecting
 Testing with another board
 --------------------------
 
-1. Connect the board that runs this sample to a terminal (for example, PuTTY).
-   See :ref:`putty` for the required settings.
-#. Program the other board with the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample.
+1. |connect_terminal_specific|
+#. Reset the board.
+#. Program the other board with the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample and reset it.
 #. Wait until the BAS Server is detected by the central.
    In the terminal window, check for information similar to the following::
 
@@ -77,8 +77,8 @@ Testing with another board
 Testing with nRF Connect for Desktop
 ------------------------------------
 
-1. Connect the board that runs this sample to a terminal (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+1. |connect_terminal_specific|
+#. Reset the board.
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Go to the **Server setup** tab.
    Click the dongle configuration and select **Load setup**.

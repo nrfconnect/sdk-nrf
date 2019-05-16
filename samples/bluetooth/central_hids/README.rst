@@ -65,7 +65,7 @@ After programming the sample to your board, you can test it either by connecting
 Testing with another board
 --------------------------
 
-1. |connect_terminal|
+1. |connect_terminal_specific|
 #. Reset the board.
 #. Program the other board with the :ref:`peripheral_hids_keyboard` sample and reset it.
 #. Wait until the HIDS keyboard is detected by the central.
@@ -105,8 +105,8 @@ Testing with another board
 Testing with nRF Connect for Desktop
 ------------------------------------
 
-1. Connect the board that runs this sample to a terminal (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+1. |connect_terminal_specific|
+#. Reset the board.
 #. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Go to the **Server setup** tab.
    Click the dongle configuration and select **Load setup**.

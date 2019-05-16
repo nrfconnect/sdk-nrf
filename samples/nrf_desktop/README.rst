@@ -25,8 +25,9 @@ Supported boards:
 
 Building and Running
 ********************
+.. |sample path| replace:: :file:`samples/nrf_desktop`
 
-This sample can be found under :file:`samples/nrf_desktop` in the |NCS| folder structure.
+.. include:: /includes/build_and_run.txt
 
 Testing
 *******
