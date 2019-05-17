@@ -128,6 +128,23 @@ static void power_down(struct k_work *work)
 	}
 }
 
+static void power_down_counter_reset(void)
+{
+	switch (power_state) {
+	case POWER_STATE_IDLE:
+		atomic_set(&power_down_count, 0);
+		break;
+	case POWER_STATE_SUSPENDING:
+	case POWER_STATE_SUSPENDED:
+	case POWER_STATE_OFF:
+		/* No action */
+		break;
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+}
+
 enum power_states sys_pm_policy_next_state(s32_t ticks)
 {
 	return SYS_POWER_STATE_ACTIVE;
@@ -157,22 +174,10 @@ static void system_off(void)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (is_hid_mouse_event(eh)) {
-		/* Device is connected and sends reports to host.
-		 * Keep it active.
-		 */
-		switch (power_state) {
-		case POWER_STATE_IDLE:
-			atomic_set(&power_down_count, 0);
-			break;
-		case POWER_STATE_SUSPENDING:
-		case POWER_STATE_SUSPENDED:
-			break;
-		case POWER_STATE_OFF:
-		default:
-			__ASSERT_NO_MSG(false);
-			break;
-		}
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
+	    (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) && is_hid_keyboard_event(eh))) {
+		/* Device is connected and sends reports to host. */
+		power_down_counter_reset();
 
 		return false;
 	}
@@ -201,7 +206,7 @@ static bool event_handler(const struct event_header *eh)
 
 		power_state = POWER_STATE_IDLE;
 		if (!usb_connected) {
-			atomic_set(&power_down_count, 0);
+			power_down_counter_reset();
 			k_delayed_work_submit(&power_down_trigger,
 					      POWER_DOWN_CHECK_MS);
 		}
@@ -210,7 +215,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_ble_peer_event(eh)) {
-		struct ble_peer_event *event = cast_ble_peer_event(eh);
+		const struct ble_peer_event *event = cast_ble_peer_event(eh);
 
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
@@ -241,41 +246,42 @@ static bool event_handler(const struct event_header *eh)
 			system_off();
 		}
 
+		power_down_counter_reset();
+
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE)) {
-		if (is_usb_state_event(eh)) {
-			const struct usb_state_event *event =
-				cast_usb_state_event(eh);
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) && is_usb_state_event(eh)) {
+		const struct usb_state_event *event = cast_usb_state_event(eh);
 
-			switch (event->state) {
-			case USB_STATE_POWERED:
-				usb_connected = true;
-				k_delayed_work_cancel(&power_down_trigger);
-				if (power_state != POWER_STATE_IDLE) {
-					struct wake_up_event *wue =
-						new_wake_up_event();
-					EVENT_SUBMIT(wue);
-				}
-				break;
-
-			case USB_STATE_DISCONNECTED:
-				usb_connected = false;
-				k_delayed_work_submit(&power_down_trigger,
-						      POWER_DOWN_CHECK_MS);
-				break;
-
-			default:
-				/* Ignore */
-				break;
+		switch (event->state) {
+		case USB_STATE_POWERED:
+			usb_connected = true;
+			k_delayed_work_cancel(&power_down_trigger);
+			if (power_state != POWER_STATE_IDLE) {
+				struct wake_up_event *wue =
+					new_wake_up_event();
+				EVENT_SUBMIT(wue);
 			}
-			return false;
+			break;
+
+		case USB_STATE_DISCONNECTED:
+			usb_connected = false;
+			power_down_counter_reset();
+			k_delayed_work_submit(&power_down_trigger,
+					      POWER_DOWN_CHECK_MS);
+			break;
+
+		default:
+			/* Ignore */
+			break;
 		}
+		return false;
 	}
 
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
 
 		if (((event->state == MODULE_STATE_OFF) ||
 		     (event->state == MODULE_STATE_STANDBY)) &&
@@ -317,4 +323,5 @@ EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);
