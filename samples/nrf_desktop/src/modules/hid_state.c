@@ -54,6 +54,7 @@ struct item {
 struct items {
 	struct item item[CONFIG_DESKTOP_HID_STATE_ITEM_COUNT];
 	u8_t item_count;
+	bool update_needed;
 };
 
 /**@brief Enqueued HID state item. */
@@ -514,6 +515,8 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 		}
 	}
 
+	items->update_needed = items->update_needed || update_needed;
+
 	return update_needed;
 }
 
@@ -556,6 +559,8 @@ static void send_report_keyboard(void)
 		}
 
 		EVENT_SUBMIT(event);
+
+		rd->items.update_needed = false;
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
@@ -624,7 +629,9 @@ static bool update_report(enum target_report tr)
 	switch (tr) {
 	case TARGET_REPORT_KEYBOARD:
 	case TARGET_REPORT_MPLAYER:
-		/* No action */
+		if (rd->items.update_needed) {
+			update_needed = true;
+		}
 		break;
 
 	case TARGET_REPORT_MOUSE:
@@ -862,10 +869,9 @@ static void update_key(const struct hid_keymap *map, s16_t value)
 	enum target_report tr = map->target_report;
 
 	if (!state.selected ||
-	    (state.selected->state[tr].state != STATE_CONNECTED_IDLE)) {
+	    (state.selected->state[tr].state == STATE_DISCONNECTED)) {
 		/* Report cannot be sent yet - enqueue this HID event. */
-		enqueue(map->target_report, map->usage_id, value,
-			state.selected->state[tr].state != STATE_DISCONNECTED);
+		enqueue(map->target_report, map->usage_id, value, false);
 	} else {
 		/* Update state and issue report generation event. */
 		struct report_data *rd = &state.report_data[tr];
