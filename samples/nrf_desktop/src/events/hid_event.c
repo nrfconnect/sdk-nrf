@@ -15,16 +15,42 @@ static const char * const target_report_name[] = {
 };
 
 
+static int log_hid_keyboard_event(const struct event_header *eh, char *buf,
+				  size_t buf_len)
+{
+	const struct hid_keyboard_event *event = cast_hid_keyboard_event(eh);
+
+	char keys_str[ARRAY_SIZE(event->keys) * 5 + 1];
+	int pos = 0;
+
+	static_assert(sizeof(event->keys[0]) == 1, "");
+	for (size_t i = 0; i < ARRAY_SIZE(event->keys); i++) {
+		int tmp = snprintf(&keys_str[pos], sizeof(keys_str) - pos,
+				   "0x%02x ", event->keys[i]);
+		if (tmp < 0) {
+			return tmp;
+		}
+		pos += tmp;
+		if (pos > sizeof(keys_str)) {
+			break;
+		}
+	}
+
+	return snprintf(buf, buf_len,
+			"mod:0x%x keys:%s => %p",
+			event->modifier_bm, keys_str, event->subscriber);
+}
+
 EVENT_TYPE_DEFINE(hid_keyboard_event,
 		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_KEYBOARD_EVENT),
-		  NULL,
+		  log_hid_keyboard_event,
 		  NULL);
 
 
 static int log_hid_mouse_event(const struct event_header *eh, char *buf,
 				  size_t buf_len)
 {
-	struct hid_mouse_event *event = cast_hid_mouse_event(eh);
+	const struct hid_mouse_event *event = cast_hid_mouse_event(eh);
 
 	return snprintf(buf, buf_len,
 			"buttons:0x%x wheel:%d dx:%d dy:%d => %p",
@@ -35,7 +61,7 @@ static int log_hid_mouse_event(const struct event_header *eh, char *buf,
 static void profile_hid_mouse_event(struct log_event_buf *buf,
 			   const struct event_header *eh)
 {
-	struct hid_mouse_event *event = cast_hid_mouse_event(eh);
+	const struct hid_mouse_event *event = cast_hid_mouse_event(eh);
 
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
