@@ -18,9 +18,9 @@ static const char * const state_name[] = {
 };
 
 static int log_module_state_event(const struct event_header *eh, char *buf,
-					  size_t buf_len)
+				  size_t buf_len)
 {
-	struct module_state_event *event = cast_module_state_event(eh);
+	const struct module_state_event *event = cast_module_state_event(eh);
 
 	static_assert(ARRAY_SIZE(state_name) == MODULE_STATE_COUNT,
 		      "Invalid number of elements");

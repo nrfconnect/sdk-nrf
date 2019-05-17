@@ -12,18 +12,10 @@
 static int log_led_event(const struct event_header *eh, char *buf,
 			  size_t buf_len)
 {
-	struct led_event *event = cast_led_event(eh);
-	int temp;
-	int pos = 0;
+	const struct led_event *event = cast_led_event(eh);
 
-	temp = snprintf(buf, buf_len, "led_id:%u effect:%p",
+	return snprintf(buf, buf_len, "led_id:%u effect:%p",
 			event->led_id, event->led_effect);
-	if (temp < 0) {
-		return temp;
-	}
-	pos += temp;
-
-	return pos;
 }
 
 EVENT_TYPE_DEFINE(led_event,

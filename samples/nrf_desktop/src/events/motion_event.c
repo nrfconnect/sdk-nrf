@@ -11,7 +11,7 @@
 static int log_motion_event(const struct event_header *eh, char *buf,
 				size_t buf_len)
 {
-	struct motion_event *event = cast_motion_event(eh);
+	const struct motion_event *event = cast_motion_event(eh);
 
 	return snprintf(buf, buf_len, "dx=%d, dy=%d", event->dx, event->dy);
 }
@@ -19,7 +19,7 @@ static int log_motion_event(const struct event_header *eh, char *buf,
 static void profile_motion_event(struct log_event_buf *buf,
 				    const struct event_header *eh)
 {
-	struct motion_event *event = cast_motion_event(eh);
+	const struct motion_event *event = cast_motion_event(eh);
 
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->dx);
