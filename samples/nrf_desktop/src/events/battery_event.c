@@ -21,7 +21,7 @@ static const char * const state_name[] = {
 static int log_battery_state_event(const struct event_header *eh, char *buf,
 			  size_t buf_len)
 {
-	struct battery_state_event *event = cast_battery_state_event(eh);
+	const struct battery_state_event *event = cast_battery_state_event(eh);
 
 	static_assert(ARRAY_SIZE(state_name) == BATTERY_STATE_COUNT,
 		      "Invalid number of elements");
@@ -34,7 +34,7 @@ static int log_battery_state_event(const struct event_header *eh, char *buf,
 static void profile_battery_state_event(struct log_event_buf *buf,
 				    const struct event_header *eh)
 {
-	struct battery_state_event *event = cast_battery_state_event(eh);
+	const struct battery_state_event *event = cast_battery_state_event(eh);
 
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->state);
@@ -55,7 +55,7 @@ EVENT_TYPE_DEFINE(battery_state_event,
 static int log_battery_level_event(const struct event_header *eh, char *buf,
 			  size_t buf_len)
 {
-	struct battery_level_event *event = cast_battery_level_event(eh);
+	const struct battery_level_event *event = cast_battery_level_event(eh);
 
 	return snprintf(buf, buf_len, "level=%u", event->level);
 }
@@ -63,7 +63,7 @@ static int log_battery_level_event(const struct event_header *eh, char *buf,
 static void profile_battery_level_event(struct log_event_buf *buf,
 				    const struct event_header *eh)
 {
-	struct battery_level_event *event = cast_battery_level_event(eh);
+	const struct battery_level_event *event = cast_battery_level_event(eh);
 
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->level);

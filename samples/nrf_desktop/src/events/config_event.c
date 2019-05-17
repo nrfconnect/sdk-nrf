@@ -11,7 +11,7 @@
 static int log_config_event(const struct event_header *eh, char *buf,
 			   size_t buf_len)
 {
-	struct config_event *event = cast_config_event(eh);
+	const struct config_event *event = cast_config_event(eh);
 
 	return snprintf(buf, buf_len, "id=%u", event->id);
 }
@@ -19,7 +19,7 @@ static int log_config_event(const struct event_header *eh, char *buf,
 static void profile_config_event(struct log_event_buf *buf,
 				 const struct event_header *eh)
 {
-	struct config_event *event = cast_config_event(eh);
+	const struct config_event *event = cast_config_event(eh);
 
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->id);

@@ -20,7 +20,7 @@ static const char * const state_name[] = {
 static int log_ble_peer_event(const struct event_header *eh, char *buf,
 			      size_t buf_len)
 {
-	struct ble_peer_event *event = cast_ble_peer_event(eh);
+	const struct ble_peer_event *event = cast_ble_peer_event(eh);
 
 	static_assert(ARRAY_SIZE(state_name) == PEER_STATE_COUNT,
 		      "Invalid number of elements");
@@ -34,7 +34,7 @@ static int log_ble_peer_event(const struct event_header *eh, char *buf,
 static void profile_ble_peer_event(struct log_event_buf *buf,
 				   const struct event_header *eh)
 {
-	struct ble_peer_event *event = cast_ble_peer_event(eh);
+	const struct ble_peer_event *event = cast_ble_peer_event(eh);
 
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->id);
@@ -60,7 +60,7 @@ static const char * const op_name[] = {
 static int log_ble_peer_operation_event(const struct event_header *eh,
 					char *buf, size_t buf_len)
 {
-	struct ble_peer_operation_event *event =
+	const struct ble_peer_operation_event *event =
 		cast_ble_peer_operation_event(eh);
 
 	static_assert(ARRAY_SIZE(op_name) == PEER_OPERATION_COUNT,
@@ -75,7 +75,7 @@ static int log_ble_peer_operation_event(const struct event_header *eh,
 static void profile_ble_peer_operation_event(struct log_event_buf *buf,
 					     const struct event_header *eh)
 {
-	struct ble_peer_operation_event *event =
+	const struct ble_peer_operation_event *event =
 		cast_ble_peer_operation_event(eh);
 
 	ARG_UNUSED(event);

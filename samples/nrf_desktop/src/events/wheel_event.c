@@ -9,9 +9,9 @@
 #include "wheel_event.h"
 
 static int log_wheel_event(const struct event_header *eh, char *buf,
-			size_t buf_len)
+			   size_t buf_len)
 {
-	struct wheel_event *event = cast_wheel_event(eh);
+	const struct wheel_event *event = cast_wheel_event(eh);
 
 	return snprintf(buf, buf_len, "wheel=%d", event->wheel);
 }
