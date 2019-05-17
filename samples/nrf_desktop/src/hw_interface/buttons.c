@@ -234,19 +234,37 @@ static void scan_fn(struct k_work *work)
 	}
 
 	/* Get current state */
-	u32_t cur_state[COLUMNS];
-	memset(cur_state, 0, sizeof(cur_state));
+	u32_t raw_state[COLUMNS];
+	memset(raw_state, 0, sizeof(raw_state));
 
 	for (size_t i = 0; i < COLUMNS; i++) {
 		int err = set_cols(BIT(i));
 
 		if (!err) {
-			err = get_rows(&cur_state[i]);
+			err = get_rows(&raw_state[i]);
 		}
 
 		if (err) {
 			LOG_ERR("Cannot scan matrix");
 			goto error;
+		}
+	}
+
+	/* Prevent ghosting */
+	u32_t cur_state[COLUMNS];
+	for (size_t i = 0; i < COLUMNS; i++) {
+		u32_t blocking_mask = 0;
+		for (size_t j = 0; j < COLUMNS; j++) {
+			if (i == j) {
+				continue;
+			}
+			blocking_mask |= raw_state[j];
+		}
+		blocking_mask ^= raw_state[i];
+		cur_state[i] = raw_state[i];
+		if (!is_power_of_two(raw_state[i])) {
+			/* Power of two means only one bit is set */
+			cur_state[i] &= blocking_mask;
 		}
 	}
 
