@@ -10,6 +10,11 @@ config NFC_NDEF
 	help
 	  Enable NFC Data Exchange Format libraries
 
+config NFC_NDEF_PARSER
+	bool "NDEF parser libraries"
+	help
+	  Enable NFC Data Exchange Format parser libraries
+
 if NFC_NDEF
 
 config NFC_NDEF_MSG
@@ -49,3 +54,11 @@ config NDEF_FILE_SIZE
 		Set maximal NDEF file size
 
 endif # NFC_NDEF
+
+if NFC_NDEF_PARSER
+
+module = NFC_NDEF_PARSER
+module-str = nfc_ndef_parser
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_NDEF_PARSER
