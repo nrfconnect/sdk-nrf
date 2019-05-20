@@ -161,6 +161,16 @@ www.nordicsemi.com http://www.nordicsemi.com
 Use :ref: to link to IDs and :doc: to link to files.
 
 
+Images
+======
+
+.. figure:: /images/nrf9160_ug_overview.svg
+   :alt: Alt text
+
+   Figure caption
+
+Always link to the image with ``/images/...``.
+
 Footnotes
 =========
 
