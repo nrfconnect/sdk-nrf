@@ -12,19 +12,6 @@ NCS documentation is written in two formats:
 * Doxygen for API documentation
 * RST for conceptual documentation
 
-The Doxygen documentation is not automatically included in RST.
-Therefore, every group must be explicitly added to an RST file.
-
-See the following example example for including a doxygen group:
-
-.. code-block:: python
-
-   .. doxygengroup:: bluetooth_gatt_throughput
-      :project: nrf
-      :members:
-
-The `Breathe documentation`_ contains information about what you can link to.
-
 
 RST style guide
 ***************
@@ -57,6 +44,44 @@ It is also possible to define more than one default link text for a link, which 
    .. _`Link text one`:
    .. _`Link text two`: http://..
 
+Kconfig
+=======
+
+Kconfig options can be linked to from RST by using the ``:option:`` domain::
+
+   :option:`CONFIG_DEBUG`
+
+Breathe
+=======
+
+The Breathe Sphinx plugin provides a bridge between RST and Doxygen.
+
+The Doxygen documentation is not automatically included in RST.
+Therefore, every group must be explicitly added to an RST file.
+
+See the following example for including a doxygen group:
+
+.. code-block:: python
+
+   .. doxygengroup:: bluetooth_gatt_throughput
+      :project: nrf
+      :members:
+
+The `Breathe documentation`_ contains information about what you can link to.
+
+To link directly to a Doxygen reference from RST, use the following breathe
+domains:
+
+* Function: ``:cpp:func:``
+* Structure: ``:c:type:``
+* Enum (i.e. the list): ``:cpp:enum:``
+* Enumerator (i.e. an item): ``:cpp:enumerator:``
+* Macro: ``:c:macro:``
+* Structure member: ``:cpp:member:``
+
+.. note::
+   The ``:cpp:enum:`` and ``:cpp:enumerator:`` domains do not generate a link
+   due to an issue with Sphinx and breathe.
 
 Doxygen style guide
 *******************
