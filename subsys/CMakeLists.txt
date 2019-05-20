@@ -18,8 +18,9 @@ add_subdirectory_ifdef(CONFIG_PROFILER		profiler)
 add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 
-if (CONFIG_NRFXLIB_NFC OR
-    CONFIG_NFC_T2T_PARSER)
+if (CONFIG_NRFXLIB_NFC    OR
+    CONFIG_NFC_T2T_PARSER OR
+    CONFIG_NFC_NDEF_PARSER)
         add_subdirectory(nfc)
 endif()
 
