@@ -13,6 +13,7 @@
 #include <gpio.h>
 #include <misc/util.h>
 
+#include "key_id.h"
 #include "buttons.h"
 #include "buttons_def.h"
 
@@ -282,7 +283,7 @@ static void scan_fn(struct k_work *work)
 			    (evt_limit < CONFIG_DESKTOP_BUTTONS_EVENT_LIMIT)) {
 				struct button_event *event = new_button_event();
 
-				event->key_id = (i << 8) | (j & 0xFF);
+				event->key_id = KEY_ID(i, j);
 				event->pressed = is_pressed;
 				EVENT_SUBMIT(event);
 

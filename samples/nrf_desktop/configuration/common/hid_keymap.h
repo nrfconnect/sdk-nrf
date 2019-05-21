@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-
 #ifndef _HID_KEYMAP_H_
 #define _HID_KEYMAP_H_
 
@@ -30,6 +29,7 @@ enum target_report {
 
 	TARGET_REPORT_COUNT
 };
+
 
 /** @brief HID map entry. */
 struct hid_keymap {
