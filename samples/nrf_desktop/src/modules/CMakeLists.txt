@@ -37,3 +37,6 @@ target_sources_ifdef(CONFIG_DESKTOP_SHELL_ENABLE
 
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_FN_KEYS_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fn_keys.c)

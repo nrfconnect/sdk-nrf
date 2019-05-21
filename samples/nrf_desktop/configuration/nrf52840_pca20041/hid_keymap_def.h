@@ -5,6 +5,7 @@
  */
 
 #include "hid_keymap.h"
+#include "key_id.h"
 
 /* This configuration file is included only once from hid_state module and holds
  * information about mapping between buttons and generated reports.
@@ -21,11 +22,11 @@ const struct {} hid_keymap_def_include_once;
  * http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
  */
 static const struct hid_keymap hid_keymap[] = {
-	{ 0, 0x01, TARGET_REPORT_MOUSE }, /* Left Mouse Button */
-	{ 1, 0x02, TARGET_REPORT_MOUSE }, /* Right Mouse Button */
-	{ 2, 0x03, TARGET_REPORT_MOUSE }, /* Middle Mouse Button */
-	{ 3, 0x04, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
-	{ 4, 0x05, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
-	{ 5, 0x06, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
-	{ 6, 0x07, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 0), 0x01, TARGET_REPORT_MOUSE }, /* Left Mouse Button */
+	{ KEY_ID(0, 1), 0x02, TARGET_REPORT_MOUSE }, /* Right Mouse Button */
+	{ KEY_ID(0, 2), 0x03, TARGET_REPORT_MOUSE }, /* Middle Mouse Button */
+	{ KEY_ID(0, 3), 0x04, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 4), 0x05, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 5), 0x06, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 6), 0x07, TARGET_REPORT_MOUSE }, /* Additional Mouse Button */
 };
