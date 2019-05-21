@@ -36,10 +36,11 @@ struct gps_sim_data {
 	gps_trigger_handler_t drdy_handler;
 	struct gps_trigger drdy_trigger;
 
-	K_THREAD_STACK_MEMBER(thread_stack, CONFIG_GPS_SIM_THREAD_STACK_SIZE);
 	struct k_thread thread;
 #endif /* CONFIG_GPS_SIM_TRIGGER */
 };
+
+static K_THREAD_STACK_DEFINE(thread_stack, CONFIG_GPS_SIM_THREAD_STACK_SIZE);
 
 static struct gps_data nmea_sample;
 static struct k_mutex trigger_mutex;
@@ -127,8 +128,8 @@ static int gps_sim_init_thread(struct device *dev)
 		k_sem_init(&drv_data->gpio_sem, 0, 1);
 	}
 
-	k_thread_create(&drv_data->thread, drv_data->thread_stack,
-			CONFIG_GPS_SIM_THREAD_STACK_SIZE,
+	k_thread_create(&drv_data->thread, thread_stack,
+			K_THREAD_STACK_SIZEOF(thread_stack),
 			(k_thread_entry_t)gps_sim_thread, dev, NULL, NULL,
 			K_PRIO_COOP(CONFIG_GPS_SIM_THREAD_PRIORITY), 0, 0);
 
