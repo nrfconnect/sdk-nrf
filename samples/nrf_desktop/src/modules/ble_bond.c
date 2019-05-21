@@ -74,6 +74,8 @@ static u8_t cur_peer_id = BT_ID_DEFAULT; /* We expect zero */
 #define PEER_ID_STORAGE_NAME "peer_id"
 
 static u8_t tmp_peer_id;
+static bool button_pressed_on_init;
+
 
 static struct k_delayed_work timeout;
 static struct k_delayed_work single_click;
@@ -416,15 +418,11 @@ static int init(void)
 	return 0;
 }
 
-static bool peer_control_button_event(const struct button_event *event)
+static void peer_control_button_process(bool pressed)
 {
-	if (event->key_id != CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON) {
-		return false;
-	}
-
 	u32_t cur_time = k_uptime_get();
 
-	if (event->pressed) {
+	if (pressed) {
 		timestamp = cur_time;
 		k_delayed_work_submit(&long_click, LONG_CLICK_MIN);
 	} else {
@@ -446,6 +444,19 @@ static bool peer_control_button_event(const struct button_event *event)
 			}
 		}
 	}
+}
+
+static bool button_event_handler(const struct button_event *event)
+{
+	if (likely(event->key_id != CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON)) {
+		return false;
+	}
+
+	if (likely(state != STATE_DISABLED)) {
+		peer_control_button_process(event->pressed);
+	} else {
+		button_pressed_on_init = event->pressed;
+	}
 
 	return true;
 }
@@ -453,7 +464,8 @@ static bool peer_control_button_event(const struct button_event *event)
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			/* Settings initialized before config module */
@@ -463,13 +475,13 @@ static bool event_handler(const struct event_header *eh)
 		}
 
 		if (check_state(event, MODULE_ID(config), MODULE_STATE_READY)) {
-			static bool initialized;
-
-			__ASSERT_NO_MSG(!initialized);
-			initialized = true;
+			__ASSERT_NO_MSG(state == STATE_DISABLED);
 
 			if (!init()) {
 				module_set_state(MODULE_STATE_READY);
+				if (button_pressed_on_init) {
+					peer_control_button_process(true);
+				}
 			} else {
 				module_set_state(MODULE_STATE_ERROR);
 			}
@@ -478,10 +490,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)) {
-		if (is_button_event(eh)) {
-			return peer_control_button_event(cast_button_event(eh));
-		}
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL) &&
+	    is_button_event(eh)) {
+		return button_event_handler(cast_button_event(eh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
