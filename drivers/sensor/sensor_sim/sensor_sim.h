@@ -21,8 +21,6 @@ struct sensor_sim_data {
 	sensor_trigger_handler_t drdy_handler;
 	struct sensor_trigger drdy_trigger;
 
-	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_SENSOR_SIM_THREAD_STACK_SIZE);
 	struct k_thread thread;
 #endif  /* CONFIG_SENSOR_SIM_TRIGGER */
 };

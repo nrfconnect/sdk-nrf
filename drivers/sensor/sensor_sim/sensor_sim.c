@@ -19,6 +19,8 @@
 
 LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 
+static K_THREAD_STACK_DEFINE(thread_stack, CONFIG_SENSOR_SIM_THREAD_STACK_SIZE);
+
 static const double base_accel_samples[3] = {0.0, 0.0, 0.0};
 static double accel_samples[3];
 
@@ -128,8 +130,8 @@ static int sensor_sim_init_thread(struct device *dev)
 
 #endif   /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
 
-	k_thread_create(&drv_data->thread, drv_data->thread_stack,
-			CONFIG_SENSOR_SIM_THREAD_STACK_SIZE,
+	k_thread_create(&drv_data->thread, thread_stack,
+			K_THREAD_STACK_SIZEOF(thread_stack),
 			(k_thread_entry_t)sensor_sim_thread, dev,
 			NULL, NULL,
 			K_PRIO_COOP(CONFIG_SENSOR_SIM_THREAD_PRIORITY),
