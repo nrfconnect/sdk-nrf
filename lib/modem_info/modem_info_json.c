@@ -14,58 +14,6 @@
 
 LOG_MODULE_REGISTER(modem_info_json);
 
-struct lte_info {
-	enum modem_info info;
-};
-
-static const struct lte_info modem_info_band = {
-	.info = MODEM_INFO_BAND,
-};
-
-static const struct lte_info modem_info_mode = {
-	.info = MODEM_INFO_MODE,
-};
-
-static const struct lte_info modem_info_operator = {
-	.info = MODEM_INFO_OPERATOR,
-};
-
-static const struct lte_info modem_info_cellid = {
-	.info = MODEM_INFO_CELLID,
-};
-
-static const struct lte_info modem_info_ip_address = {
-	.info = MODEM_INFO_IP_ADDRESS,
-};
-
-static const struct lte_info modem_info_uicc = {
-	.info = MODEM_INFO_UICC,
-};
-
-static const struct lte_info modem_info_battery = {
-	.info = MODEM_INFO_BATTERY,
-};
-
-static const struct lte_info modem_info_fw = {
-	.info = MODEM_INFO_FW_VERSION,
-};
-
-static const struct lte_info modem_info_iccid = {
-	.info = MODEM_INFO_ICCID,
-};
-
-static const struct lte_info *const modem_information[] = {
-	&modem_info_band,
-	&modem_info_mode,
-	&modem_info_operator,
-	&modem_info_cellid,
-	&modem_info_ip_address,
-	&modem_info_uicc,
-	&modem_info_battery,
-	&modem_info_iccid,
-	&modem_info_fw,
-};
-
 static int json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
 	cJSON_AddItemToObject(parent, str, item);
@@ -97,69 +45,179 @@ static int json_add_str(cJSON *parent, const char *str, const char *item)
 	return json_add_obj(parent, str, json_str);
 }
 
-int modem_info_json_string_get(char *buf)
+static int json_add_data(struct lte_param *param, cJSON *json_obj)
 {
-	u16_t param_value;
-	size_t len = 0;
-	size_t total_len = 0;
-	int ret = 0;
-	char data_buffer[MODEM_INFO_MAX_RESPONSE_SIZE] = {0};
 	char data_name[MODEM_INFO_MAX_RESPONSE_SIZE];
-	cJSON *data_obj = cJSON_CreateObject();
 	enum at_param_type data_type;
+	int total_len = 0;
+	int ret;
 
-	if (data_obj == NULL) {
+	memset(data_name, 0, MODEM_INFO_MAX_RESPONSE_SIZE);
+	ret = modem_info_name_get(param->type,
+				data_name);
+	if (ret < 0) {
+		LOG_DBG("Data name not obtained: %d", ret);
+		return -EINVAL;
+	}
+
+	data_type = modem_info_type_get(param->type);
+	if (data_type < 0) {
+		return -EINVAL;
+	}
+
+	if (data_type == AT_PARAM_TYPE_STRING &&
+	    param->type != MODEM_INFO_AREA_CODE) {
+		total_len += strlen(param->value_string);
+		ret += json_add_str(json_obj, data_name, param->value_string);
+	} else {
+		total_len += sizeof(u16_t);
+		ret += json_add_num(json_obj, data_name, param->value);
+	}
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	return total_len;
+}
+
+static int network_data_add(struct network_param *network, cJSON *json_obj)
+{
+	char data_name[MODEM_INFO_MAX_RESPONSE_SIZE];
+	int total_len;
+	int ret;
+	int len;
+
+	static const char lte_string[]	 = "LTE-M";
+	static const char nbiot_string[] = "NB-IoT";
+	static const char gps_string[]	 = " GPS";
+
+	if (network == NULL || json_obj == NULL) {
+		return -EINVAL;
+	}
+
+	total_len = json_add_data(&network->current_band, json_obj);
+	total_len += json_add_data(&network->sup_band, json_obj);
+	total_len += json_add_data(&network->area_code, json_obj);
+	total_len += json_add_data(&network->current_operator, json_obj);
+	total_len += json_add_data(&network->ip_address, json_obj);
+	total_len += json_add_data(&network->ue_mode, json_obj);
+
+	len = modem_info_name_get(network->cellid_hex.type, data_name);
+	data_name[len] =  '\0';
+	ret = json_add_num(json_obj, data_name, network->cellid_dec);
+
+	if (ret) {
+		LOG_DBG("Unable to add the cell ID.");
+	} else {
+		total_len += sizeof(double);
+	}
+
+	if (network->lte_mode.value == 1) {
+		strcat(network->network_mode, lte_string);
+		total_len += sizeof(lte_string);
+	} else if (network->nbiot_mode.value == 1) {
+		strcat(network->network_mode, nbiot_string);
+		total_len += sizeof(nbiot_string);
+	}
+
+	if (network->gps_mode.value == 1) {
+		strcat(network->network_mode, gps_string);
+		total_len += sizeof(gps_string);
+	}
+
+	ret = json_add_str(json_obj, "ntwrkMode", network->network_mode);
+	if (ret) {
+		printk("Unable to add the network mode");
+	}
+
+	return total_len;
+}
+
+static int sim_data_add(struct sim_param *sim, cJSON *json_obj)
+{
+	int total_len;
+
+	if (sim == NULL || json_obj == NULL) {
+		return -EINVAL;
+	}
+
+	total_len = json_add_data(&sim->uicc, json_obj);
+	total_len += json_add_data(&sim->iccid, json_obj);
+
+	return total_len;
+}
+
+static int device_data_add(struct device_param *device, cJSON *json_obj)
+{
+	int total_len;
+
+	if (device == NULL || json_obj == NULL) {
+		return -EINVAL;
+	}
+
+	total_len = json_add_data(&device->modem_fw, json_obj);
+	total_len += json_add_data(&device->battery, json_obj);
+	total_len += json_add_str(json_obj, "board", device->board);
+	total_len += json_add_str(json_obj, "appVer", device->app_version);
+	total_len += json_add_str(json_obj, "appName", device->app_name);
+
+	return total_len;
+}
+
+int modem_info_json_string_encode(struct modem_param_info *modem,
+				  char *buf)
+{
+	int total_len = 0;
+	int ret;
+
+	cJSON *root_obj		= cJSON_CreateObject();
+	cJSON *network_obj	= cJSON_CreateObject();
+	cJSON *sim_obj		= cJSON_CreateObject();
+	cJSON *device_obj	= cJSON_CreateObject();
+
+	if (root_obj == NULL || network_obj == NULL || buf == NULL ||
+	    sim_obj == NULL || device_obj == NULL) {
 		return -ENOMEM;
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(modem_information); i++) {
-		memset(data_name, 0, MODEM_INFO_MAX_RESPONSE_SIZE);
-		len = modem_info_name_get(modem_information[i]->info,
-					  data_name);
-		if (len < 0) {
-			LOG_DBG("Data name not obtained: %d\n", len);
-			continue;
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK)) {
+		ret = network_data_add(&modem->network, network_obj);
+		if (ret < 0) {
+			return ret;
 		}
 
-		data_type = modem_info_type_get(modem_information[i]->info);
+		total_len += ret;
+		json_add_obj(root_obj, "networkInfo", network_obj);
+	}
 
-		if (data_type == AT_PARAM_TYPE_STRING) {
-			len = modem_info_string_get(modem_information[i]->info,
-						    data_buffer);
-			if (len < 0) {
-				LOG_DBG("Link data not obtained: %d\n", len);
-				continue;
-			}
-
-			total_len += len;
-			ret += json_add_str(data_obj, data_name, data_buffer);
-		} else if (data_type == AT_PARAM_TYPE_NUM_SHORT) {
-			len = modem_info_short_get(modem_information[i]->info,
-						   &param_value);
-			if (len < 0) {
-				LOG_DBG("Link data not obtained: %d\n", len);
-				continue;
-			}
-
-			total_len += len;
-			ret += json_add_num(data_obj, data_name, param_value);
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM)) {
+		ret = sim_data_add(&modem->sim, sim_obj);
+		if (ret < 0) {
+			return ret;
 		}
+
+		total_len += ret;
+		json_add_obj(root_obj, "simInfo", sim_obj);
 	}
 
-	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_BOARD)) {
-		ret += json_add_str(data_obj, "BOARD", CONFIG_BOARD);
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)) {
+		ret = device_data_add(&modem->device, device_obj);
+		if (ret < 0) {
+			return ret;
+		}
+
+		total_len += ret;
+		json_add_obj(root_obj, "deviceInfo", device_obj);
 	}
 
-	if (ret != 0) {
-		cJSON_Delete(data_obj);
-		return -ENOMEM;
+	if (total_len > 0) {
+		memcpy(buf,
+		       cJSON_PrintUnformatted(root_obj),
+		       MODEM_INFO_JSON_STRING_SIZE);
 	}
 
-	memcpy(buf,
-		cJSON_PrintUnformatted(data_obj),
-		MODEM_INFO_JSON_STRING_SIZE);
-
-	cJSON_Delete(data_obj);
+	cJSON_Delete(root_obj);
 
 	return total_len;
 }

@@ -115,6 +115,7 @@ static struct cloud_sensor_data env_cloud_data[ARRAY_SIZE(env_sensors)];
 #if CONFIG_MODEM_INFO
 static struct cloud_sensor_data signal_strength_cloud_data;
 static struct cloud_sensor_data device_cloud_data;
+static struct modem_param_info modem_param;
 #endif /* CONFIG_MODEM_INFO */
 static atomic_val_t send_data_enable;
 
@@ -385,14 +386,23 @@ static void modem_rsrp_data_send(struct k_work *work)
 /**@brief Poll device info and send data to the cloud. */
 static void device_status_send(struct k_work *work)
 {
-	int len;
 	char data_buffer[MODEM_INFO_JSON_STRING_SIZE] = {0};
+	int len;
+	int ret;
 
 	if (!atomic_get(&send_data_enable)) {
 		return;
 	}
 
-	len = modem_info_json_string_get(data_buffer);
+	ret = modem_info_params_get(&modem_param);
+
+	if (ret < 0) {
+		printk("Unable to obtain modem parameters: %d\n", ret);
+		return;
+	}
+
+	len = modem_info_json_string_encode(&modem_param, data_buffer);
+
 	if (len < 0) {
 		return;
 	}
@@ -728,13 +738,15 @@ static void modem_data_init(void)
 		return;
 	}
 
+	modem_info_params_init(&modem_param);
+
 	signal_strength_cloud_data.type = CLOUD_LTE_LINK_RSRP;
 	signal_strength_cloud_data.tag = 0x1;
 
 	device_cloud_data.type = CLOUD_DEVICE_INFO;
 	device_cloud_data.tag = 0x1;
 
-	k_work_submit(&device_status_work);
+	device_status_send(NULL);
 
 	modem_info_rsrp_register(modem_rsrp_handler);
 }
