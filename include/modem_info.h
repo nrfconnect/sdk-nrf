@@ -46,13 +46,14 @@ enum modem_info {
 	MODEM_INFO_BATTERY,	/**< Battery voltage. */
 	MODEM_INFO_TEMP,	/**< Temperature level. */
 	MODEM_INFO_FW_VERSION,  /**< Modem firmware version. */
-	MODEM_INFO_ICCID,	/**< SIM ICCID */
+	MODEM_INFO_ICCID,	/**< SIM ICCID. */
 	MODEM_INFO_LTE_MODE,	/**< LTE-M support mode. */
 	MODEM_INFO_NBIOT_MODE,	/**< NB-IoT support mode. */
 	MODEM_INFO_GPS_MODE,	/**< GPS support mode. */
 	MODEM_INFO_COUNT,	/**< Number of legal elements in the enum. */
 };
 
+/**@brief LTE parameter data. **/
 struct lte_param {
 	u16_t value; /**< The retrieved value. */
 	char value_string[MODEM_INFO_MAX_RESPONSE_SIZE]; /**< The retrieved value in string format. */
@@ -60,6 +61,7 @@ struct lte_param {
 	enum modem_info type; /**< The information type. */
 };
 
+/**@brief Network parameters. **/
 struct network_param {
 	struct lte_param current_band; /**< Current LTE band. */
 	struct lte_param sup_band; /**< Supported LTE bands. */
@@ -78,21 +80,26 @@ struct network_param {
 	char network_mode[MODEM_INFO_NETWORK_MODE_MAX_SIZE];
 };
 
+/**@brief SIM card parameters. */
 struct sim_param {
-	struct lte_param uicc;
-	struct lte_param iccid;
+	struct lte_param uicc; /**< UICC state. */
+	struct lte_param iccid; /**< SIM ICCID. */
 };
 
+/**@brief Device parameters. */
 struct device_param {
-	struct lte_param modem_fw;
-	struct lte_param battery;
-	const char *board;
+	struct lte_param modem_fw; /**< Modem firmware version. */
+	struct lte_param battery; /**< Battery voltage. */
+	const char *board; /**< Board version. */
+	const char *app_version; /**< Application version. */
+	const char *app_name; /**< Application name. */
 };
 
+/**@brief Modem parameters. */
 struct modem_param_info {
-	struct network_param network;
-	struct sim_param     sim;
-	struct device_param  device;
+	struct network_param network; /**< Network parameters. */
+	struct sim_param     sim; /**< SIM card parameters. */
+	struct device_param  device;/**< Device parameters. */
 };
 
 /** @brief Initialize the modem information module.
@@ -103,9 +110,9 @@ struct modem_param_info {
 int modem_info_init(void);
 
 
-/** @brief Initialize the modem information storage module.
+/** @brief Initialize the structure that stores modem information.
  *
- * @param modem_param Pointer to the storage parameter.
+ * @param modem_param Pointer to the modem parameter structure.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -149,8 +156,7 @@ int modem_info_string_get(enum modem_info info, char *buf);
  */
 int modem_info_short_get(enum modem_info info, u16_t *buf);
 
-/** @brief Function for requesting the name of a modem information
- *         data type.
+/** @brief Request the name of a modem information data type.
  *
  * @param info The requested information type.
  * @param buf  The string where to store the name.
@@ -160,8 +166,8 @@ int modem_info_short_get(enum modem_info info, u16_t *buf);
  */
 int modem_info_name_get(enum modem_info info, char *name);
 
-/** @brief Function for requesting the data type of the current
- *         modem information type.
+/** @brief Request the data type of the current modem information
+ *         type.
  *
  * @param info The requested information type.
  *
@@ -170,7 +176,7 @@ int modem_info_name_get(enum modem_info info, char *name);
  */
 enum at_param_type modem_info_type_get(enum modem_info info);
 
-/** @brief Function for encoding the modem parameters.
+/** @brief Encode the modem parameters.
  *
  * The data is stored to a JSON object.
  *
@@ -197,11 +203,11 @@ int modem_info_json_string_encode(struct modem_param_info *modem_param,
 int modem_info_json_string_encode(struct modem_param_info *modem,
 				  char *buf);
 
-/** @brief Function for obtaining the modem parameters.
+/** @brief Obtain the modem parameters.
  *
- * The data is stored to the provided info struct.
+ * The data is stored in the provided info structure.
  *
- * @param modem_param Pointer to the storage parameter.
+ * @param modem_param Pointer to the storage parameters.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
