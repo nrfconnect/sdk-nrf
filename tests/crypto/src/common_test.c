@@ -3,11 +3,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include "nrf_gpio.h"
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
-#include "boards.h"
+#include <stdint.h>
+#include <misc/printk.h>
+// #include "nrf_gpio.h"
 
 #include "common_test.h"
 
@@ -45,7 +43,7 @@ uint32_t unhexify(uint8_t * p_output, char const * p_input)
         }
         else
         {
-            NRF_LOG_ERROR("unhexify ERROR");
+            printk("unhexify ERROR");
         }
 
         c2 = *p_input++;
@@ -63,7 +61,7 @@ uint32_t unhexify(uint8_t * p_output, char const * p_input)
         }
         else
         {
-            NRF_LOG_ERROR("unhexify ERROR");
+            printk("unhexify ERROR");
         }
 
         *p_output++ = ( c << 4 ) | c2;
@@ -76,12 +74,12 @@ uint32_t unhexify(uint8_t * p_output, char const * p_input)
  */
 void start_time_measurement()
 {
-    nrf_gpio_pin_clear(LED_1);
+    // nrf_gpio_pin_clear(LED_1);
 }
 
 /**@brief Function for running stopping time measurements.
  */
 void stop_time_measurement()
 {
-    nrf_gpio_pin_set(LED_1);
+    // nrf_gpio_pin_set(LED_1);
 }

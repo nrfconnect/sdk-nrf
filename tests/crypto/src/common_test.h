@@ -2,16 +2,12 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include "nrf_gpio.h"
-#include "nrf_crypto_aes.h"
-#include "nrf_crypto_aead.h"
-#include "nrf_crypto_ecdh.h"
-#include "nrf_crypto_hash.h"
-#include "nrf_crypto_hmac.h"
-#include "nrf_crypto_hkdf.h"
+#include <stdint.h>
+#include <toolchain/common.h>
+#include <ztest.h>
 
-#define TEST_CASE_COUNT     NRF_SECTION_ITEM_COUNT(test_case_data, test_case_t)     /**< Get number of different test cases. */
-#define TEST_CASE_GET(i)    NRF_SECTION_ITEM_GET(test_case_data, test_case_t, (i))  /**< Get test case reference from array of test cases. */
+#define TEST_CASE_COUNT     ITEM_COUNT(test_case_data, test_case_t)     /**< Get number of different test cases. */
+#define TEST_CASE_GET(i)    ITEM_GET(test_case_data, test_case_t, (i))  /**< Get test case reference from array of test cases. */
 
 
 /**@brief Test vector expected result.
@@ -47,24 +43,24 @@ typedef struct
 
 /**@brief Test case setup function.
  */
-typedef ret_code_t (*test_setup_fn_t)(void);
+typedef void (*test_setup_fn_t)(void);
 
 
 /**@brief Test case execute function.
  *
  * @param[in] p_test_info    Pointer to global test info structure.
  */
-typedef ret_code_t (*test_exec_fn_t)(test_info_t * p_test_info);
+typedef void (*test_exec_fn_t)(void);
 
 
 /**@brief Test case teardown function.
  */
-typedef ret_code_t (*test_teardown_fn_t)(void);
+typedef void (*test_teardown_fn_t)(void);
 
 
 /**@brief General test case information.
  */
-typedef struct
+typedef const struct
 {
     char                              * p_test_case_name;           /**< Pointer to test case name. */
     test_setup_fn_t                     setup;                      /**< Setup function for test case. */
@@ -72,7 +68,10 @@ typedef struct
     test_teardown_fn_t                  teardown;                   /**< Teardown function for test case. */
 } test_case_t;
 
+extern test_case_t __start_test_case_data[];
+extern test_case_t __stop_test_case_data[];
 
+#if 0
 /**@brief AES test vector information.
  */
 typedef const struct
@@ -167,14 +166,13 @@ typedef const struct
     const char                        * p_responder_publ_y;         /**< Pointer to ECDH responder public key Y component in hex string format. */
     const char                        * p_expected_shared_secret;   /**< Pointer to ECDH expected Shared Secret in hex string format. */
 }test_vector_ecdh_t;
-
+#endif
 
 /**@brief Hash test vector information.
  */
 typedef const struct
 {
-    const nrf_crypto_hash_info_t    * p_hash_info;                  /**< Pointer to hash info type. */
-    const ret_code_t                  expected_err_code;            /**< Expected error code from hash operation. */
+    const int                         expected_err_code;            /**< Expected error code from hash operation. */
     const uint8_t                     expected_result;              /**< Expected result of hash operation. */
     const hash_mem_mode_t             mode;                         /**< Hash memory operation. */
     const uint32_t                    chunk_length;                 /**< Size of input chunks to hash function in bytes. */
@@ -182,9 +180,10 @@ typedef const struct
     const char                      * p_test_vector_name;           /**< Pointer to hash test vector name. */
     const char                      * p_input;                      /**< Pointer to input message in hex string format. */
     const char                      * p_expected_output;            /**< Pointer to expected message digest in hex string format. */
-}test_vector_hash_t;
+} test_vector_hash_t;
 
 
+#if 0
 /**@brief hmac test vector information.
  */
 typedef const struct
@@ -213,7 +212,7 @@ typedef const struct
     const char                      * p_salt;                       /**< Pointer to hkdf salt in hex string format. */
     const char                      * p_info;                       /**< Pointer to hkdf optional application specific information in hex string format. */
 }test_vector_hkdf_t;
-
+#endif
 
 /**@brief Function for converting hex string to bytes.
  *
@@ -236,6 +235,95 @@ void start_time_measurement(void);
  */
 void stop_time_measurement(void);
 
+/**
+ * @brief Macro for concatenating two tokens in macro expansion.
+ *
+ * @note This macro is expanded in two steps so that tokens given as macros
+ *       themselves are fully expanded before they are merged.
+ *
+ * @param[in] p1 First token.
+ * @param[in] p2 Second token.
+ *
+ * @return The two tokens merged into one, unless they cannot together form
+ *         a valid token (in such case, the preprocessor issues a warning and
+ *         does not perform the concatenation).
+ *
+ * @sa NRFX_CONCAT_3
+ */
+#define CONCAT_2(p1, p2)       CONCAT_2_(p1, p2)
+
+
+/** @brief Internal macro used by @ref CONCAT_2 to perform the expansion in two steps. */
+#define CONCAT_2_(p1, p2)      p1 ## p2
+
+
+/**@brief   Macro for obtaining the address of the beginning of a section.
+ *
+ * param[in]    section_name    Name of the section.
+ * @hideinitializer
+ */
+#define SECTION_START_ADDR(section_name)       &CONCAT_2(__start_, section_name)
+
+
+/**@brief    Macro for obtaining the address of the end of a section.
+ *
+ * @param[in]   section_name    Name of the section.
+ * @hideinitializer
+ */
+#define SECTION_END_ADDR(section_name)         &CONCAT_2(__stop_, section_name)
+
+
+/**@brief   Macro for retrieving the length of a given section, in bytes.
+ *
+ * @param[in]   section_name    Name of the section.
+ * @hideinitializer
+ */
+#define SECTION_LENGTH(section_name)                        \
+    ((size_t)SECTION_END_ADDR(section_name) -               \
+     (size_t)SECTION_START_ADDR(section_name))
+
+
+/**@brief   Macro for declaring a variable and registering it in a section.
+ *
+ * @details Declares a variable and registers it in a named section. This macro ensures that the
+ *          variable is not stripped away when using optimizations.
+ *
+ * @note The order in which variables are placed in a section is dependent on the order in
+ *       which the linker script encounters the variables during linking.
+ *
+ * @param[in]   section_name    Name of the section.
+ * @param[in]   section_var     Variable to register in the given section.
+ * @hideinitializer
+ */
+#define ITEM_REGISTER(section_name, section_var) \
+    Z_GENERIC_SECTION(section_name) __attribute__((used)) section_var
+
+
+/**@brief   Macro for retrieving a variable from a section.
+ *
+ * @warning     The stored symbol can only be resolved using this macro if the
+ *              type of the data is word aligned. The operation of acquiring
+ *              the stored symbol relies on the size of the stored type. No
+ *              padding can exist in the named section in between individual
+ *              stored items or this macro will fail.
+ *
+ * @param[in]   section_name    Name of the section.
+ * @param[in]   data_type       Data type of the variable.
+ * @param[in]   i               Index of the variable in section.
+ * @hideinitializer
+ */
+#define ITEM_GET(section_name, data_type, i) \
+    ((data_type*)SECTION_START_ADDR(section_name) + (i))
+
+
+/**@brief   Macro for getting the number of variables in a section.
+ *
+ * @param[in]   section_name    Name of the section.
+ * @param[in]   data_type       Data type of the variables in the section.
+ * @hideinitializer
+ */
+#define ITEM_COUNT(section_name, data_type) \
+    SECTION_LENGTH(section_name) / sizeof(data_type)
 
 /**@brief Macro for comparing two data buffers.
  *
@@ -275,17 +363,10 @@ void stop_time_measurement(void);
  * @param[in] condition     The condition to assert.
  * @param[in] tc_info       Additional information to log if condition is false.
  */
-#define TEST_VECTOR_ASSERT(condition, tc_info)                                                                  \
-    do                                                                                                          \
-    {                                                                                                           \
-        if (! condition)                                                                                        \
-        {                                                                                                       \
-            NRF_LOG_INFO("#%04d Test vector failed: %s %s, %s", p_test_info->current_id,                        \
-                         p_test_info->p_test_case_name, p_test_vector->p_test_vector_name, tc_info);            \
-            p_test_info->tests_failed++;                                                                        \
-            goto exit_test_vector;                                                                              \
-        }                                                                                                       \
-    } while (0)
+
+#define TEST_VECTOR_ASSERT(condition, tc_info) zassert(condition, "passed",      \
+    "#%04d Test vector failed: %s %s, %s", test_info.current_id,            \
+    test_info.p_test_case_name, p_test_vector->p_test_vector_name, tc_info)
 
 
 /**@brief Macro for checking buffer overflow for a given buffer. Requires that the two following
@@ -297,17 +378,8 @@ void stop_time_measurement(void);
  * @param[in] length     Length of buffer (Not including overflow bytes).
  * @param[in] tc_info    Additional information to log if condition is false.
  */
-#define TEST_VECTOR_OVERFLOW_ASSERT(p_buffer, length, tc_info)                                                  \
-    do                                                                                                          \
-    {                                                                                                           \
-        if ((p_buffer[length] != 0xFF) || (p_buffer[length + 1] != 0xFF))                                       \
-        {                                                                                                       \
-            NRF_LOG_INFO("#%04d Test vector failed: %s %s, %s", p_test_info->current_id,                        \
-                         p_test_info->p_test_case_name, p_test_vector->p_test_vector_name, tc_info);            \
-            p_test_info->tests_failed++;                                                                        \
-            goto exit_test_vector;                                                                              \
-        }                                                                                                       \
-    } while (0)
+#define TEST_VECTOR_OVERFLOW_ASSERT(p_buffer, length, tc_info) \
+    TEST_VECTOR_ASSERT(((p_buffer[length] != 0xFF) || (p_buffer[length + 1] != 0xFF)), tc_info)
 
 
 /**@brief Macro for verifying a memcmp inside a test vector test, and logging the result.
@@ -320,17 +392,9 @@ void stop_time_measurement(void);
  * @param[in] required_result   Required memcmp result to pass (EXPECTED_TO_PASS, EXPECTED_TO_FAIL).
  * @param[in] tc_info           Additional information to log if condition is false.
  */
-#define TEST_VECTOR_MEMCMP_ASSERT(buf1, buf2, len, expected_result, tc_info)                                    \
-    do                                                                                                          \
-    {                                                                                                           \
-        if (TEST_MEMCMP(buf1, buf2, len) != expected_result)                                                    \
-        {                                                                                                       \
-            NRF_LOG_INFO("#%04d Test vector failed: %s %s, %s", p_test_info->current_id,                        \
-                         p_test_info->p_test_case_name, p_test_vector->p_test_vector_name, tc_info);            \
-            p_test_info->tests_failed++;                                                                        \
-            goto exit_test_vector;                                                                              \
-        }                                                                                                       \
-    } while (0)
+#define TEST_VECTOR_MEMCMP_ASSERT(buf1, buf2, len, expected_result, tc_info) \
+    TEST_VECTOR_ASSERT((TEST_MEMCMP(buf1, buf2, len) == expected_result) , tc_info)
+    
 
 
 /**@brief Macro for verifying a nrf_crypto return value, and logging the result.
@@ -340,14 +404,6 @@ void stop_time_measurement(void);
  * @param[in] condition     The condition to assert.
  * @param[in] tc_info       Additional information to log if condition is false.
  */
-#define TEST_VECTOR_ASSERT_ERR_CODE(condition, tc_info)                                                         \
-    do                                                                                                          \
-    {                                                                                                           \
-        if (! condition)                                                                                        \
-        {                                                                                                       \
-            NRF_LOG_INFO("#%04d Test vector failed: %s %s, %s err: 0x%0x", p_test_info->current_id,             \
-                         p_test_info->p_test_case_name, p_test_vector->p_test_vector_name, tc_info, err_code);  \
-            p_test_info->tests_failed++;                                                                        \
-            goto exit_test_vector;                                                                              \
-        }                                                                                                       \
-    } while (0)
+#define TEST_VECTOR_ASSERT_ERR_CODE(condition, tc_info) \
+    TEST_VECTOR_ASSERT((condition), tc_info)
+

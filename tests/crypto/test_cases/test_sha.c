@@ -4,64 +4,60 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stddef.h>
-#include "boards.h"
 #include "nrf_gpio.h"
-#include "nrf_delay.h"
-#include "nrf_error.h"
-#include "app_util.h"
-#include "nrf_section.h"
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
 #include "common_test.h"
-#include "nrf_crypto.h"
+#include <sha256.h>
 
-#if NRF_MODULE_ENABLED(NRF_CRYPTO_HASH)
+#if 1//CONFIG_MBEDTLS
 
-NRF_SECTION_DEF(test_vector_hash_data, test_vector_hash_t);
-NRF_SECTION_DEF(test_vector_hash_long_data, test_vector_hash_t);
+extern test_vector_hash_t __start_test_vector_hash_data[];
+extern test_vector_hash_t __stop_test_vector_hash_data[];
+extern test_vector_hash_t __start_test_vector_hash_long_data[];
+extern test_vector_hash_t __stop_test_vector_hash_long_data[];
 
 #define CONTEXT_SIZE                (240)                                      /**< Temporary context size define. */
 #define INPUT_BUF_SIZE              (4125)                                     /**< Input buffer size for SHA. */
 
 /**< Get number of the SHA test vectors. */
 #define TEST_VECTOR_SHA_GET(i)      \
-    NRF_SECTION_ITEM_GET(test_vector_hash_data, test_vector_hash_t, (i))
+    &__start_test_vector_hash_data[i]
 
 /**< Get the test vector reference from the array of test vectors. */
 #define TEST_VECTOR_SHA_COUNT       \
-    NRF_SECTION_ITEM_COUNT(test_vector_hash_data, test_vector_hash_t)
+    ITEM_COUNT(test_vector_hash_data, test_vector_hash_t)
 
 /**< Get the number of long SHA test vectors. */
 #define TEST_VECTOR_LONG_SHA_GET(i) \
-    NRF_SECTION_ITEM_GET(test_vector_hash_long_data, test_vector_hash_t, (i))
+    &__start_test_vector_hash_long_data[i]
 
 /**< Get the test vector reference from the array of long test vectors. */
 #define TEST_VECTOR_LONG_SHA_COUNT  \
-    NRF_SECTION_ITEM_COUNT(test_vector_hash_long_data, test_vector_hash_t)
+    ITEM_COUNT(test_vector_hash_long_data, test_vector_hash_t)
 
-static nrf_crypto_hash_context_t hash_context;                                 /**< Hash context. */
+static mbedtls_sha256_context hash_context;                                 /**< Hash context. */
 
 static uint8_t m_sha_input_buf[INPUT_BUF_SIZE];                                /**< Buffer for storing the unhexified m_sha_input_buf data. */
-static uint8_t m_sha_output_buf[NRF_CRYPTO_HASH_SIZE_SHA512];                  /**< Buffer for holding the calculated hash. */
-static uint8_t m_sha_expected_output_buf[NRF_CRYPTO_HASH_SIZE_SHA512];         /**< Buffer for storing the unhexified expected ouput data. */
+static uint8_t m_sha_output_buf[64];                  /**< Buffer for holding the calculated hash. */
+static uint8_t m_sha_expected_output_buf[64];         /**< Buffer for storing the unhexified expected ouput data. */
 
 
 /**@brief Function for running the test setup.
  */
-ret_code_t setup_test_case_sha(void)
+void setup_test_case_sha(void)
 {
-    return NRF_SUCCESS;
+    return;
 }
 
 
+extern test_info_t test_info;
+
 /**@brief Function for the test execution.
  */
-ret_code_t exec_test_case_sha(test_info_t * p_test_info)
+void exec_test_case_sha(void)
 {
     uint32_t i;
     uint32_t in_len;
-    ret_code_t err_code;
+    int err_code;
     uint32_t expected_out_len;
     uint32_t sha_test_vector_count = TEST_VECTOR_SHA_COUNT;
     size_t   out_len;
@@ -69,7 +65,7 @@ ret_code_t exec_test_case_sha(test_info_t * p_test_info)
     for (i = 0; i < sha_test_vector_count; i++)
     {
         test_vector_hash_t * p_test_vector = TEST_VECTOR_SHA_GET(i);
-        p_test_info->current_id++;
+        test_info.current_id++;
 
         memset(m_sha_input_buf, 0x00, sizeof(m_sha_input_buf));
         memset(m_sha_output_buf, 0x00, sizeof(m_sha_output_buf));
@@ -82,52 +78,50 @@ ret_code_t exec_test_case_sha(test_info_t * p_test_info)
 
         // Initialize the hash.
         start_time_measurement();
-        err_code = nrf_crypto_hash_init(&hash_context, p_test_vector->p_hash_info);
-        TEST_VECTOR_ASSERT_ERR_CODE((err_code == NRF_SUCCESS), "nrf_crypto_hash_init");
+        mbedtls_sha256_init(&hash_context);
+        err_code = mbedtls_sha256_starts_ret(&hash_context, false);
+        TEST_VECTOR_ASSERT_ERR_CODE((err_code == 0), "mbedtls_sha256_starts_ret");
 
         // Update the hash.
-        err_code = nrf_crypto_hash_update(&hash_context, m_sha_input_buf, in_len);
+        err_code = mbedtls_sha256_update_ret(&hash_context, m_sha_input_buf, in_len);
         TEST_VECTOR_ASSERT_ERR_CODE((err_code == p_test_vector->expected_err_code),
-                                    "nrf_crypto_hash_update");
+                                    "mbedtls_sha256_update_ret");
 
         // Finalize the hash.
-        err_code = nrf_crypto_hash_finalize(&hash_context, m_sha_output_buf, &out_len);
+        err_code = mbedtls_sha256_finish_ret(&hash_context, m_sha_output_buf);
         stop_time_measurement();
 
-        // Verify the nrf_crypto_hash_finalize err_code.
+        // Verify the mbedtls_sha256_finish_ret err_code.
         TEST_VECTOR_ASSERT_ERR_CODE((err_code == p_test_vector->expected_err_code),
-                                    "nrf_crypto_hash_finalize");
+                                    "mbedtls_sha256_finish_ret");
 
         // Verify the generated digest.
         TEST_VECTOR_ASSERT((expected_out_len == out_len), "Incorrect length");
+
         TEST_VECTOR_MEMCMP_ASSERT(m_sha_output_buf,
                                   m_sha_expected_output_buf,
                                   expected_out_len,
                                   p_test_vector->expected_result,
                                   "Incorrect hash");
 
-        NRF_LOG_INFO("#%04d Test vector passed: %s %s",
-                     p_test_info->current_id,
-                     p_test_info->p_test_case_name,
+        printk("#%04d Test vector passed: %s %s\n",
+                     test_info.current_id,
+                     test_info.p_test_case_name,
                      p_test_vector->p_test_vector_name);
 
-        p_test_info->tests_passed++;
-
-exit_test_vector:
-
-        while (NRF_LOG_PROCESS());
+        test_info.tests_passed++;
 
     }
-    return NRF_SUCCESS;
+    return;
 }
 
 /**@brief Function for the test execution.
  */
-ret_code_t exec_test_case_sha_combined(test_info_t * p_test_info)
+void exec_test_case_sha_combined(void)
 {
     uint32_t i;
     uint32_t in_len;
-    ret_code_t err_code;
+    int err_code;
     uint32_t expected_out_len;
     uint32_t sha_test_vector_count = TEST_VECTOR_SHA_COUNT;
     size_t   out_len;
@@ -135,7 +129,7 @@ ret_code_t exec_test_case_sha_combined(test_info_t * p_test_info)
     for (i = 0; i < sha_test_vector_count; i++)
     {
         test_vector_hash_t * p_test_vector = TEST_VECTOR_SHA_GET(i);
-        p_test_info->current_id++;
+        test_info.current_id++;
 
         memset(m_sha_input_buf, 0x00, sizeof(m_sha_input_buf));
         memset(m_sha_output_buf, 0x00, sizeof(m_sha_output_buf));
@@ -148,17 +142,15 @@ ret_code_t exec_test_case_sha_combined(test_info_t * p_test_info)
 
         // Execute the hash method.
         start_time_measurement();
-        err_code = nrf_crypto_hash_calculate(&hash_context,
-                                             p_test_vector->p_hash_info,
-                                             m_sha_input_buf,
-                                             in_len,
-                                             m_sha_output_buf,
-                                             &out_len);
+        err_code = mbedtls_sha256_ret(m_sha_input_buf,
+                                      in_len,
+                                      m_sha_output_buf,
+                                      false);
         stop_time_measurement();
 
-        // Verify the nrf_crypto_hash_calculate err_code.
+        // Verify the mbedtls_sha256_ret err_code.
         TEST_VECTOR_ASSERT_ERR_CODE((err_code == p_test_vector->expected_err_code),
-                                    "nrf_crypto_hash_calculate");
+                                    "mbedtls_sha256_ret");
 
         // Verify the generated digest.
         TEST_VECTOR_ASSERT((expected_out_len == out_len), "Incorrect length");
@@ -168,30 +160,26 @@ ret_code_t exec_test_case_sha_combined(test_info_t * p_test_info)
                                   p_test_vector->expected_result,
                                   "Incorrect hash");
 
-        NRF_LOG_INFO("#%04d Test vector passed: %s %s",
-                     p_test_info->current_id,
-                     p_test_info->p_test_case_name,
+        printk("#%04d Test vector passed: %s %s\n",
+                     test_info.current_id,
+                     test_info.p_test_case_name,
                      p_test_vector->p_test_vector_name);
 
-        p_test_info->tests_passed++;
-
-exit_test_vector:
-
-        while (NRF_LOG_PROCESS());
+        test_info.tests_passed++;
 
     }
-    return NRF_SUCCESS;
+    return;
 }
 
 
 /**@brief Function for verifying the SHA digest of long messages.
  */
-ret_code_t exec_test_case_sha_long(test_info_t * p_test_info)
+void exec_test_case_sha_long(void)
 {
     uint32_t i;
     uint32_t j;
     uint32_t in_len;
-    ret_code_t err_code;
+    int err_code;
     uint32_t expected_out_len;
     uint32_t sha_test_vector_count = TEST_VECTOR_LONG_SHA_COUNT;
     size_t   out_len;
@@ -199,7 +187,7 @@ ret_code_t exec_test_case_sha_long(test_info_t * p_test_info)
     for (i = 0; i < sha_test_vector_count; i++)
     {
         test_vector_hash_t * p_test_vector = TEST_VECTOR_LONG_SHA_GET(i);
-        p_test_info->current_id++;
+        test_info.current_id++;
 
         memset(m_sha_input_buf, 0x00, sizeof(m_sha_input_buf));
         memset(m_sha_output_buf, 0x00, sizeof(m_sha_output_buf));
@@ -214,9 +202,10 @@ ret_code_t exec_test_case_sha_long(test_info_t * p_test_info)
 
         // Initialize the hash.
         start_time_measurement();
-        err_code = nrf_crypto_hash_init(&hash_context, p_test_vector->p_hash_info);
+        mbedtls_sha256_init(&hash_context);
+        err_code = mbedtls_sha256_starts_ret(&hash_context, false);
         TEST_VECTOR_ASSERT_ERR_CODE((err_code == p_test_vector->expected_err_code),
-                                    "nrf_crypto_hash_init");
+                                    "mbedtls_sha256_starts_ret");
 
         // Update the hash until all input data is processed.
         for (j = 0; j < p_test_vector->update_iterations; j++)
@@ -227,18 +216,18 @@ ret_code_t exec_test_case_sha_long(test_info_t * p_test_info)
                 memcpy(m_sha_input_buf, p_test_vector->p_input, 4096);
             }
 
-            err_code = nrf_crypto_hash_update(&hash_context, m_sha_input_buf, in_len);
+            err_code = mbedtls_sha256_update_ret(&hash_context, m_sha_input_buf, in_len);
             TEST_VECTOR_ASSERT_ERR_CODE((err_code == p_test_vector->expected_err_code),
-                                        "nrf_crypto_hash_update");
+                                        "mbedtls_sha256_update_ret");
         }
 
         // Finalize the hash.
-        err_code = nrf_crypto_hash_finalize(&hash_context, m_sha_output_buf, &out_len);
+        err_code = mbedtls_sha256_finish_ret(&hash_context, m_sha_output_buf);
         stop_time_measurement();
 
-        // Verify the nrf_crypto_hash_finalize err_code.
+        // Verify the mbedtls_sha256_finish_ret err_code.
         TEST_VECTOR_ASSERT_ERR_CODE((err_code == p_test_vector->expected_err_code),
-                                    "nrf_crypto_hash_finalize");
+                                    "mbedtls_sha256_finish_ret");
 
         // Verify the generated digest.
         TEST_VECTOR_ASSERT((expected_out_len == out_len), "Incorrect length");
@@ -248,27 +237,23 @@ ret_code_t exec_test_case_sha_long(test_info_t * p_test_info)
                                   p_test_vector->expected_result,
                                   "Incorrect hash");
 
-        NRF_LOG_INFO("#%04d Test vector passed: %s %s",
-                     p_test_info->current_id,
-                     p_test_info->p_test_case_name,
+        printk("#%04d Test vector passed: %s %s\n",
+                     test_info.current_id,
+                     test_info.p_test_case_name,
                      p_test_vector->p_test_vector_name);
 
-        p_test_info->tests_passed++;
-
-exit_test_vector:
-
-        while (NRF_LOG_PROCESS());
+        test_info.tests_passed++;
 
     }
-    return NRF_SUCCESS;
+    return;
 }
 
 
 /**@brief Function for running the test teardown.
  */
-ret_code_t teardown_test_case_sha(void)
+void teardown_test_case_sha(void)
 {
-    return NRF_SUCCESS;
+    return;
 }
 
 
@@ -277,7 +262,7 @@ ret_code_t teardown_test_case_sha(void)
  * @details     This macro places a variable in a section named "test_case_data",
  *              which is initialized by main.
  */
-NRF_SECTION_ITEM_REGISTER(test_case_data, test_case_t test_sha) =
+ITEM_REGISTER(test_case_data, test_case_t test_sha) =
 {
     .p_test_case_name = "SHA",
     .setup = setup_test_case_sha,
@@ -291,7 +276,7 @@ NRF_SECTION_ITEM_REGISTER(test_case_data, test_case_t test_sha) =
  * @details     This macro places a variable in a section named "test_case_data",
  *              which is initialized by main.
  */
-NRF_SECTION_ITEM_REGISTER(test_case_data, test_case_t test_sha_combined) =
+ITEM_REGISTER(test_case_data, test_case_t test_sha_combined) =
 {
     .p_test_case_name = "SHA combined",
     .setup = setup_test_case_sha,
@@ -305,7 +290,7 @@ NRF_SECTION_ITEM_REGISTER(test_case_data, test_case_t test_sha_combined) =
  * @details     This macro places a variable in a section named "test_case_data",
  *              which is initialized by main.
  */
-NRF_SECTION_ITEM_REGISTER(test_case_data, test_case_t test_sha_long) =
+ITEM_REGISTER(test_case_data, test_case_t test_sha_long) =
 {
     .p_test_case_name = "SHA long",
     .setup = setup_test_case_sha,
@@ -313,4 +298,4 @@ NRF_SECTION_ITEM_REGISTER(test_case_data, test_case_t test_sha_long) =
     .teardown = teardown_test_case_sha
 };
 
-#endif // NRF_CRYPTO_HASH_ENABLED
+#endif
