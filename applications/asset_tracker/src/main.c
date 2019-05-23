@@ -192,6 +192,10 @@ static bool flip_mode_enabled = true;
 
 /* Structures for work */
 static struct k_work connect_work;
+static struct k_work send_gps_data_work;
+static struct k_work send_env_data_work;
+static struct k_work send_button_data_work;
+static struct k_work send_flip_data_work;
 static struct k_delayed_work leds_update_work;
 static struct k_delayed_work flip_poll_work;
 static struct k_delayed_work long_press_button_work;
@@ -293,6 +297,27 @@ void bsd_irrecoverable_error_handler(uint32_t err)
 	error_handler(ERROR_BSD_IRRECOVERABLE, (int)err);
 }
 
+static void send_gps_data_work_fn(struct k_work *work)
+{
+	sensor_data_send(&gps_cloud_data);
+	env_data_send();
+}
+
+static void send_env_data_work_fn(struct k_work *work)
+{
+	env_data_send();
+}
+
+static void send_button_data_work_fn(struct k_work *work)
+{
+	sensor_data_send(&button_cloud_data);
+}
+
+static void send_flip_data_work_fn(struct k_work *work)
+{
+	sensor_data_send(&flip_cloud_data);
+}
+
 /**@brief Callback for GPS trigger events */
 static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 {
@@ -316,8 +341,7 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 			gps_cloud_data.tag = 0x1;
 		}
 
-		sensor_data_send(&gps_cloud_data);
-		env_data_send();
+		k_work_submit(&send_gps_data_work);
 	}
 }
 
@@ -335,7 +359,7 @@ static void sensor_trigger_handler(struct device *dev,
 /**@brief Send button presses to cloud */
 static void button_send(bool pressed)
 {
-	char data[] = "1";
+	static char data[] = "1";
 
 	if (!atomic_get(&send_data_enable)) {
 		return;
@@ -353,7 +377,7 @@ static void button_send(bool pressed)
 		button_cloud_data.tag = 0x1;
 	}
 
-	sensor_data_send(&button_cloud_data);
+	k_work_submit(&send_button_data_work);
 }
 #endif
 
@@ -386,9 +410,9 @@ static void flip_send(struct k_work *work)
 			goto exit;
 		}
 
-		sensor_data_send(&flip_cloud_data);
-
 		last_orientation_state = sensor_data.orientation;
+
+		k_work_submit(&send_flip_data_work);
 	}
 
 exit:
@@ -917,6 +941,10 @@ static void input_process(void)
 static void work_init(void)
 {
 	k_work_init(&connect_work, cloud_connect);
+	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
+	k_work_init(&send_env_data_work, send_env_data_work_fn);
+	k_work_init(&send_button_data_work, send_button_data_work_fn);
+	k_work_init(&send_flip_data_work, send_flip_data_work_fn);
 	k_delayed_work_init(&leds_update_work, leds_update);
 	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
@@ -1090,6 +1118,7 @@ static void sensors_init(void)
 	/* Send sensor data after initialization, as it may be a long time until
 	 * next time if the application is in power optimized mode.
 	 */
+	k_work_submit(&send_gps_data_work);
 	env_data_send();
 }
 
