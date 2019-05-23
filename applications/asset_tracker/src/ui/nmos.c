@@ -14,20 +14,18 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(ui_nmos, CONFIG_UI_LOG_LEVEL);
 
-#define NMOS_CONFIG_DEFAULT(_pin)	(.pin = _pin)
-#define NMOS_CONFIG_UNUSED		(.pin = -1)
-#define NMOS_CONFIG_PIN(_pin)		COND_CODE_0(_pin, NMOS_CONFIG_UNUSED,  \
-						NMOS_CONFIG_DEFAULT(_pin))
-#define NMOS_CONFIG(_pin)		{ NMOS_CONFIG_PIN(_pin),	       \
-						.mode = NMOS_MODE_GPIO }
-
+#define NMOS_CONFIG_DEFAULT(_pin) (.pin = _pin)
+#define NMOS_CONFIG_UNUSED (.pin = -1)
+#define NMOS_CONFIG_PIN(_pin)                                                  \
+	COND_CODE_0(_pin, NMOS_CONFIG_UNUSED, NMOS_CONFIG_DEFAULT(_pin))
+#define NMOS_CONFIG(_pin)                                                      \
+	{                                                                      \
+		NMOS_CONFIG_PIN(_pin), .mode = NMOS_MODE_GPIO                  \
+	}
 
 struct nmos_config {
 	int pin;
-	enum {
-		NMOS_MODE_GPIO,
-		NMOS_MODE_PWM
-	} mode;
+	enum { NMOS_MODE_GPIO, NMOS_MODE_PWM } mode;
 };
 
 static struct device *gpio_dev;
@@ -82,9 +80,8 @@ static void nmos_pwm_disable(u32_t nmos_idx)
 		return;
 	}
 
-	int err = device_set_power_state(pwm_dev,
-					 DEVICE_PM_SUSPEND_STATE,
-					 NULL, NULL);
+	int err = device_set_power_state(pwm_dev, DEVICE_PM_SUSPEND_STATE, NULL,
+					 NULL);
 	if (err) {
 		LOG_WRN("PWM disable failed");
 	}
@@ -106,9 +103,8 @@ static int nmos_pwm_enable(size_t nmos_idx)
 		return 0;
 	}
 
-	err = device_set_power_state(pwm_dev,
-					 DEVICE_PM_ACTIVE_STATE,
-					 NULL, NULL);
+	err = device_set_power_state(pwm_dev, DEVICE_PM_ACTIVE_STATE, NULL,
+				     NULL);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 		return err;
@@ -156,10 +152,10 @@ int ui_nmos_init(void)
 {
 	int err = 0;
 
-	gpio_dev = device_get_binding(DT_NORDIC_NRF_GPIO_0_LABEL);
+	gpio_dev = device_get_binding(DT_ALIAS_GPIO_0_LABEL);
 	if (!gpio_dev) {
 		LOG_ERR("Could not bind to device %s",
-			log_strdup(DT_NORDIC_NRF_GPIO_0_LABEL));
+			log_strdup(DT_ALIAS_GPIO_0_LABEL));
 		return -ENODEV;
 	}
 

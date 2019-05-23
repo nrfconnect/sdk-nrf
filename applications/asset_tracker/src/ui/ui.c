@@ -45,10 +45,10 @@ static void leds_update(struct k_work *work)
 	if (work) {
 		if (led_on) {
 			k_delayed_work_submit(&leds_update_work,
-						UI_LED_ON_PERIOD_NORMAL);
+					      UI_LED_ON_PERIOD_NORMAL);
 		} else {
 			k_delayed_work_submit(&leds_update_work,
-						UI_LED_OFF_PERIOD_NORMAL);
+					      UI_LED_OFF_PERIOD_NORMAL);
 		}
 	}
 }
@@ -75,9 +75,9 @@ static void button_handler(u32_t button_states, u32_t has_changed)
 		has_changed &= ~(1UL << (btn_num - 1));
 
 		evt.button = btn_num;
-		evt.type = (button_states & BIT(btn_num - 1))
-				? UI_EVT_BUTTON_ACTIVE
-				: UI_EVT_BUTTON_INACTIVE;
+		evt.type = (button_states & BIT(btn_num - 1)) ?
+				   UI_EVT_BUTTON_ACTIVE :
+				   UI_EVT_BUTTON_INACTIVE;
 
 		callback(evt);
 	}
@@ -98,10 +98,10 @@ enum ui_led_pattern ui_led_get_pattern(void)
 	return current_led_state;
 }
 
-int ui_led_set_color(u8_t red, u8_t green, u8_t blue)
+int ui_led_set_color(u8_t red, u8_t green, u8_t blue, size_t on, size_t off)
 {
 #ifdef CONFIG_UI_LED_USE_PWM
-	return ui_led_set_rgb(red, green, blue);
+	return ui_led_set_rgb(red, green, blue, on, off);
 #else
 	return -ENOTSUP;
 #endif /* CONFIG_UI_LED_USE_PWM */
@@ -129,6 +129,7 @@ int ui_init(ui_callback_t cb)
 		return err;
 	}
 #else
+#if defined(CONFIG_DK_LIBRARY)
 	err = dk_leds_init();
 	if (err) {
 		LOG_ERR("Could not initialize leds, err code: %d\n", err);
@@ -143,10 +144,11 @@ int ui_init(ui_callback_t cb)
 
 	k_delayed_work_init(&leds_update_work, leds_update);
 	k_delayed_work_submit(&leds_update_work, K_NO_WAIT);
+#endif /* CONFIG_DK_LIBRARY */
 #endif /* CONFIG_UI_LED_USE_PWM */
-
+#if defined(CONFIG_DK_LIBRARY)
 	if (cb) {
-		callback  = cb;
+		callback = cb;
 
 		err = dk_buttons_init(button_handler);
 		if (err) {
@@ -155,9 +157,15 @@ int ui_init(ui_callback_t cb)
 			return err;
 		}
 	}
-
+#endif
 #ifdef CONFIG_UI_BUZZER
 	err = ui_buzzer_init();
+	if (err) {
+		LOG_ERR("Could not enable buzzer, err code: %d\n", err);
+		return err;
+	}
+
+	err = ui_buzzer_set_frequency(0, 0);
 	if (err) {
 		LOG_ERR("Could not enable buzzer, err code: %d\n", err);
 		return err;
@@ -177,5 +185,9 @@ int ui_init(ui_callback_t cb)
 
 bool ui_button_is_active(u32_t button)
 {
+#if defined(CONFIG_DK_LIBRARY)
 	return dk_get_buttons() & BIT((button - 1));
+#else
+	return 0;
+#endif
 }

@@ -28,48 +28,55 @@ struct led {
 };
 
 static const struct led_effect effect[] = {
-	[UI_LTE_DISCONNECTED] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-					UI_LED_OFF_PERIOD_NORMAL,
-					UI_LTE_DISCONNECTED_COLOR),
+	[UI_LTE_DISCONNECTED] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_NORMAL, UI_LED_OFF_PERIOD_NORMAL,
+		UI_LTE_DISCONNECTED_COLOR),
 	[UI_LTE_CONNECTING] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-					UI_LED_OFF_PERIOD_NORMAL,
-					UI_LTE_CONNECTING_COLOR),
+						     UI_LED_OFF_PERIOD_NORMAL,
+						     UI_LTE_CONNECTING_COLOR),
 	[UI_LTE_CONNECTED] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-					UI_LED_OFF_PERIOD_NORMAL,
-					UI_LTE_CONNECTED_COLOR),
-	[UI_CLOUD_CONNECTING] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-					UI_LED_OFF_PERIOD_NORMAL,
-					UI_CLOUD_CONNECTING_COLOR),
+						    UI_LED_OFF_PERIOD_NORMAL,
+						    UI_LTE_CONNECTED_COLOR),
+	[UI_CLOUD_CONNECTING] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_NORMAL, UI_LED_OFF_PERIOD_NORMAL,
+		UI_CLOUD_CONNECTING_COLOR),
 	[UI_CLOUD_CONNECTED] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-					UI_LED_OFF_PERIOD_NORMAL,
-					UI_CLOUD_CONNECTED_COLOR),
+						      UI_LED_OFF_PERIOD_NORMAL,
+						      UI_CLOUD_CONNECTED_COLOR),
 	[UI_CLOUD_PAIRING] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-					UI_LED_OFF_PERIOD_NORMAL,
-					UI_CLOUD_PAIRING_COLOR),
-	[UI_ACCEL_CALIBRATING] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-					UI_LED_OFF_PERIOD_NORMAL,
-					UI_ACCEL_CALIBRATING_COLOR),
+						    UI_LED_OFF_PERIOD_NORMAL,
+						    UI_CLOUD_PAIRING_COLOR),
+	[UI_ACCEL_CALIBRATING] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_NORMAL, UI_LED_OFF_PERIOD_NORMAL,
+		UI_ACCEL_CALIBRATING_COLOR),
+	[UI_BATTERY_LEVEL_LOW] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_ERROR, UI_LED_OFF_PERIOD_ERROR,
+		UI_BATTERY_LEVEL_LOW_COLOR),
 	[UI_LED_ERROR_CLOUD] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
-					UI_LED_OFF_PERIOD_ERROR,
-					UI_LED_ERROR_CLOUD_COLOR),
-	[UI_LED_ERROR_BSD_REC] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
-					UI_LED_OFF_PERIOD_ERROR,
-					UI_LED_ERROR_BSD_REC_COLOR),
-	[UI_LED_ERROR_BSD_IRREC] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
-					UI_LED_OFF_PERIOD_ERROR,
-					UI_LED_ERROR_BSD_IRREC_COLOR),
-	[UI_LED_ERROR_LTE_LC] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
-					UI_LED_OFF_PERIOD_ERROR,
-					UI_LED_ERROR_LTE_LC_COLOR),
-	[UI_LED_ERROR_UNKNOWN] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
-					UI_LED_OFF_PERIOD_ERROR,
-					UI_LED_ERROR_UNKNOWN_COLOR),
+						      UI_LED_OFF_PERIOD_ERROR,
+						      UI_LED_ERROR_CLOUD_COLOR),
+	[UI_LED_ERROR_BSD_REC] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_ERROR, UI_LED_OFF_PERIOD_ERROR,
+		UI_LED_ERROR_BSD_REC_COLOR),
+	[UI_LED_ERROR_BSD_IRREC] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_ERROR, UI_LED_OFF_PERIOD_ERROR,
+		UI_LED_ERROR_BSD_IRREC_COLOR),
+	[UI_LED_ERROR_LTE_LC] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_ERROR, UI_LED_OFF_PERIOD_ERROR,
+		UI_LED_ERROR_LTE_LC_COLOR),
+	[UI_LED_ERROR_UNKNOWN] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_ERROR, UI_LED_OFF_PERIOD_ERROR,
+		UI_LED_ERROR_UNKNOWN_COLOR),
+	[UI_LED_GPS_SEARCHING] = LED_EFFECT_LED_BREATHE(
+		UI_LED_ON_PERIOD_ERROR, UI_LED_OFF_PERIOD_ERROR,
+		UI_LED_GPS_SEARCHING_COLOR),
+	[UI_LED_GPS_FIX] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
+						  UI_LED_OFF_PERIOD_ERROR,
+						  UI_LED_GPS_FIX_COLOR),
 };
 
-static struct led_effect custom_effect =
-	LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-		UI_LED_OFF_PERIOD_NORMAL,
-		LED_NOCOLOR());
+static struct led_effect custom_effect = LED_EFFECT_LED_BREATHE(
+	UI_LED_ON_PERIOD_NORMAL, UI_LED_OFF_PERIOD_NORMAL, LED_NOCOLOR());
 
 static struct led leds;
 static const size_t led_pins[3] = {
@@ -87,7 +94,7 @@ static void pwm_out(struct led *led, struct led_color *color)
 
 static void pwm_off(struct led *led)
 {
-	struct led_color nocolor = {0};
+	struct led_color nocolor = { 0 };
 
 	pwm_out(led, &nocolor);
 }
@@ -101,7 +108,7 @@ static void work_handler(struct k_work *work)
 
 	for (size_t i = 0; i < ARRAY_SIZE(leds.color.c); i++) {
 		int diff = (effect_step->color.c[i] - leds.color.c[i]) /
-			substeps_left;
+			   substeps_left;
 		leds.color.c[i] += diff;
 	}
 
@@ -117,7 +124,8 @@ static void work_handler(struct k_work *work)
 				leds.effect_step = 0;
 			}
 		} else {
-			__ASSERT_NO_MSG(leds.effect->steps[leds.effect_step].substep_count > 0);
+			__ASSERT_NO_MSG(leds.effect->steps[leds.effect_step]
+						.substep_count > 0);
 		}
 	}
 
@@ -176,9 +184,8 @@ int ui_leds_init(void)
 void ui_leds_start(void)
 {
 #ifdef CONFIG_DEVICE_POWER_MANAGEMENT
-	int err = device_set_power_state(leds.pwm_dev,
-						DEVICE_PM_ACTIVE_STATE,
-						NULL, NULL);
+	int err = device_set_power_state(leds.pwm_dev, DEVICE_PM_ACTIVE_STATE,
+					 NULL, NULL);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 	}
@@ -190,8 +197,7 @@ void ui_leds_stop(void)
 {
 	k_delayed_work_cancel(&leds.work);
 #ifdef CONFIG_DEVICE_POWER_MANAGEMENT
-	int err = device_set_power_state(leds.pwm_dev,
-					 DEVICE_PM_SUSPEND_STATE,
+	int err = device_set_power_state(leds.pwm_dev, DEVICE_PM_SUSPEND_STATE,
 					 NULL, NULL);
 	if (err) {
 		LOG_ERR("PWM disable failed");
@@ -206,15 +212,13 @@ void ui_led_set_effect(enum ui_led_pattern state)
 	led_update(&leds);
 }
 
-int ui_led_set_rgb(u8_t red, u8_t green, u8_t blue)
+int ui_led_set_rgb(u8_t red, u8_t green, u8_t blue, size_t on, size_t off)
 {
 	struct led_effect effect =
-		LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-			UI_LED_OFF_PERIOD_NORMAL,
-			LED_COLOR(red, green, blue));
+		LED_EFFECT_LED_BREATHE(on, off, LED_COLOR(red, green, blue));
 
 	memcpy((void *)custom_effect.steps, (void *)effect.steps,
-		effect.step_count * sizeof(struct led_effect_step));
+	       effect.step_count * sizeof(struct led_effect_step));
 
 	leds.effect = &custom_effect;
 	led_update(&leds);

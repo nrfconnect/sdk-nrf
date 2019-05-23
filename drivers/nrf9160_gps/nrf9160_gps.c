@@ -223,17 +223,6 @@ static int enable_gps(struct device *dev)
 	struct at_param_list at_response_list = {0};
 	u16_t gps_param_value, functional_mode;
 
-#if CONFIG_NRF9160_GPS_SET_MAGPIO
-	err = at_cmd_write(CONFIG_NRF9160_GPS_MAGPIO_STRING,
-			   buf, sizeof(buf), NULL);
-	if (err) {
-		LOG_ERR("Could not confiugure MAGPIO, error: %d", err);
-		return err;
-	}
-
-	LOG_DBG("MAGPIO set: %s", log_strdup(CONFIG_NRF9160_GPS_MAGPIO_STRING));
-#endif /* CONFIG_NRF9160_GPS_SET_MAGPIO */
-
 	err = at_cmd_write(AT_XSYSTEMMODE_REQUEST, buf, sizeof(buf), NULL);
 	if (err) {
 		LOG_ERR("Could not get modem's system mode");
@@ -322,6 +311,8 @@ static int enable_gps(struct device *dev)
 		}
 		LOG_DBG("Functional mode set to %d", FUNCTIONAL_MODE_ENABLED);
 	}
+
+	at_params_list_free(&at_response_list);
 
 	return 0;
 }
@@ -431,6 +422,19 @@ static int init(struct device *dev)
 
 	init_thread(dev);
 
+	#if CONFIG_NRF9160_GPS_SET_MAGPIO
+		int err;
+		char buf[50] = {0};
+		err = at_cmd_write(CONFIG_NRF9160_GPS_MAGPIO_STRING,
+				buf, sizeof(buf), NULL);
+		if (err) {
+			LOG_ERR("Could not confiugure MAGPIO, error: %d", err);
+			return err;
+		}
+
+		LOG_DBG("MAGPIO set: %s", log_strdup(CONFIG_NRF9160_GPS_MAGPIO_STRING));
+	#endif /* CONFIG_NRF9160_GPS_SET_MAGPIO */
+
 	return 0;
 }
 
@@ -517,5 +521,5 @@ static const struct gps_driver_api gps_api_funcs = {
 };
 
 DEVICE_AND_API_INIT(nrf9160_gps, CONFIG_NRF9160_GPS_DEV_NAME, init,
-		    &gps_drv_data, NULL, POST_KERNEL,
+		    &gps_drv_data, NULL, APPLICATION,
 		    CONFIG_NRF9160_GPS_INIT_PRIO, &gps_api_funcs);

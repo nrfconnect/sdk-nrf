@@ -4,42 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Application sample"
+menu "Asset tracker"
 
 rsource "src/ui/Kconfig"
 
-config CLOUD_BUTTON
-	bool "Enable button sensor"
-	default y
+menu "GPS"
 
-config CLOUD_BUTTON_INPUT
-	int "Enable button sensor"
-	range 1 4 if BOARD_NRF9160_PCA10090NS
-	range 1 1 if BOARD_NRF9160_PCA20035NS
-	default 1
-
-config POWER_OPTIMIZATION_ENABLE
-	bool "Enable power optimization"
-	default y
-	select LTE_EDRX_REQ
-
-config USE_AT_HOST
-	bool "Enable AT commands"
-	default y
-	select AT_HOST_LIBRARY
-	help
-		Enable the AT host library so that AT commands can be sent to and
-		received from a serial terminal.
-
-config GPS_SIM_TRIGGER_TIMER_MSEC
-	int
-	default 120000 if POWER_OPTIMIZATION_ENABLE
-	default 2000
-
-config MQTT_KEEPALIVE
-	int
-	default 1000 if POWER_OPTIMIZATION_ENABLE
-	default 120
 choice
 	prompt "GPS device"
 	default GPS_USE_SIM
@@ -61,26 +31,84 @@ config GPS_USE_EXTERNAL
 
 endchoice
 
-if GPS_USE_SIM
+rsource "src/gps_controller/Kconfig"
 
-config GPS_DEV_NAME
-	string
-	default GPS_SIM_DEV_NAME
-
-config GPS_TRIGGER
-	bool
-	default GPS_SIM_TRIGGER
-
-endif
-
-if GPS_USE_EXTERNAL
 config GPS_DEV_NAME
 	string "GPS device name"
+	default GPS_SIM_DEV_NAME if GPS_USE_SIM
 	help
 		GPS device from which location data will be fetched and sent
 		to nRF Cloud.
 
+config GPS_TRIGGER
+	bool
+	default GPS_SIM_TRIGGER if GPS_USE_SIM
+
+config GPS_SIM_TRIGGER_TIMER_MSEC
+	int
+	default 120000 if POWER_OPTIMIZATION_ENABLE
+	default 2000
+
+endmenu	# GPS
+
+menu "Device and modem"
+
+config POWER_OPTIMIZATION_ENABLE
+	bool "Enable power optimization"
+	default y
+	select LTE_EDRX_REQ
+
+config BATTERY_MONITOR
+	bool "Use battery charge monitoring"
+	help
+	    Poll the current battery charge of the device and
+	    act accordingly upon certain values.
+
+if BATTERY_MONITOR
+config BATTERY_MONITOR_THRESHOLD
+	int "The lowest accepted battery level percentage"
+	default 30
+	help
+	   Triggers an alarm if the battery level goes
+	   below this value.
+
+config BATTERY_MONITOR_INTERVAL
+	int "Battery monitor poll interval"
+	default 1000
+	help
+	    Battery monitor poll interval in milliseconds.
+
+config BATTERY_MONITOR_RED_VALUE
+	int "RED light intensity for low charge percentage"
+	default 127
+	help
+	    The light intensity of the red LED if
+	    the battery charge drops below a threshold value.
+	    Range 0 - 255 (Lowest to highest)
+
+config BATTERY_MONITOR_GREEN_VALUE
+	int "GREEN light intensity for low charge percentage"
+	default 127
+	help
+	    The light intensity of the green LED if
+	    the battery charge is above a threshold value.
+	    Range 0 - 255 (Lowest to highest)
 endif
+
+if MODEM_INFO
+
+config HOLD_TIME_RSRP
+	int "Minimum time [s] between RSRP subscription messages"
+	default 60
+	help
+		The minimum time in seconds where the modem
+		informer is allowed to submit RSRP data to the cloud.
+
+endif
+
+endmenu # Device
+
+menu "Motion"
 
 choice
 	prompt "Accelerometer device"
@@ -149,6 +177,7 @@ if ACCEL_USE_EXTERNAL
 
 config ACCEL_DEV_NAME
 	string "Accelerometer device name"
+	default "ADXL362"
 	help
 		Device from which accelerometer data will be fetched and used
 		for orientation detection and sent to nRF Cloud.
@@ -205,6 +234,33 @@ config ACCEL_ITERATIONS
 		the orientation detector determines the orientation of the
 		board. Used for simple filtering of noisy measurements.
 
+endmenu # Motion
+
+menu "Cloud"
+
+config MQTT_KEEPALIVE
+	int
+	default 1000 if POWER_OPTIMIZATION_ENABLE
+	default GPS_CONTROL_FIX_TRY_TIME if GPS_USE_EXTERNAL
+	default 120
+
+config CLOUD_BUTTON
+	bool "Enable button sensor"
+	default y
+
+config CLOUD_BUTTON_INPUT
+	int "Enable button sensor"
+	range 1 4 if BOARD_NRF9160_PCA10090NS
+	range 1 1 if BOARD_NRF9160_PCA20035NS
+	default 1
+
+config CLOUD_WAIT_DURATION
+	int "Cloud connection acknowledge wait duration"
+	default 30
+	help
+	    How long the device should wait for a CONNACK
+	    event from the cloud.
+
 choice
 	prompt "nRF Cloud user association"
 	default CLOUD_UA_BUTTONS
@@ -230,14 +286,35 @@ config CLOUD_UA_CONSOLE
 
 endchoice
 
+endmenu # Cloud
+
+menu "Environment sensors"
+
+config ENVIRONMENT_DATA_SEND_INTERVAL
+	int "Interval in seconds for sending environment data"
+	default 30
+	help
+	  Interval between each sampling and sending of environment sensor data.
+	  If the GPS is active, sensor data will not be sent before it is
+	  stopped. The unit is seconds.
+
+config ENVIRONMENT_DATA_BACKOFF_TIME
+	int "Time to delay sending environment data if GPS active"
+	default 20
+	help
+	  Time in seconds before retrying to send environment sensor data if
+	  the GPS is active.
+
+config USE_BME680_BSEC
+	bool "Use Bosch BME680 BSEC lib"
 
 choice
 	prompt "Temperature measurement device"
-	default TEMP_USE_SIM
+	default ENV_USE_SIM
 	help
 		Select which device will provide temperature data.
 
-config TEMP_USE_SIM
+config ENV_USE_SIM
 	bool "Use simulated temperature data"
 	select SENSOR
 	select SENSOR_SIM
@@ -245,7 +322,7 @@ config TEMP_USE_SIM
 		Use sensor simulator to generate temperature data to send to
 		nRF Cloud.
 
-config TEMP_USE_EXTERNAL
+config ENV_USE_EXTERNAL
 	bool "User provided temperature device"
 	help
 		The user provides a temperature device that is
@@ -253,16 +330,16 @@ config TEMP_USE_EXTERNAL
 
 endchoice
 
-if TEMP_USE_SIM
-config TEMP_DEV_NAME
+if ENV_USE_SIM
+config ENV_DEV_NAME
 	string
 	default SENSOR_SIM_DEV_NAME
 
-config TEMP_TRIGGER
+config ENV_TRIGGER
 	bool
 	default SENSOR_SIM_TRIGGER
 
-config TEMP_SIM_BUTTON
+config ENV_SIM_BUTTON
 	int "Button or switch to trigger 'data ready' event"
 	range 1 4 if BOARD_NRF9160_PCA10090NS
 	range 1 1 if BOARD_NRF9160_PCA20035NS
@@ -277,26 +354,26 @@ config TEMP_SIM_BUTTON
 		4 - Switch 2
 endif
 
-if TEMP_USE_EXTERNAL
+if ENV_USE_EXTERNAL
 
-config TEMP_DEV_NAME
+config ENV_DEV_NAME
 	string "Temperature device name"
+	default "BME680"
 	help
 		Device from which temperature data will be fetched and
 		sent to nRF Cloud.
 
 endif
 
-if MODEM_INFO
+endmenu # Environment sensors
 
-config HOLD_TIME_RSRP
-	int "Minimum time [s] between RSRP subscription messages"
-	default 60
+config USE_AT_HOST
+	bool "Enable AT commands"
+	default y
+	select AT_HOST_LIBRARY
 	help
-		The minimum time in seconds where the modem
-		informer is allowed to submit RSRP data to the cloud.
-
-endif
+		Enable the AT host library so that AT commands can be sent to and
+		received from a serial terminal.
 
 endmenu
 

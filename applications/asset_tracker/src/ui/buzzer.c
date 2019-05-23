@@ -12,33 +12,35 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(buzzer, CONFIG_UI_LOG_LEVEL);
 
-#define BUZZER_MIN_FREQUENCY		CONFIG_UI_BUZZER_MIN_FREQUENCY
-#define BUZZER_MAX_FREQUENCY		CONFIG_UI_BUZZER_MAX_FREQUENCY
-#define BUZZER_MIN_INTENSITY		0
-#define BUZZER_MAX_INTENSITY		100
-#define BUZZER_MIN_DUTY_CYCLE_DIV	100
-#define BUZZER_MAX_DUTY_CYCLE_DIV	2
+#define BUZZER_MIN_FREQUENCY CONFIG_UI_BUZZER_MIN_FREQUENCY
+#define BUZZER_MAX_FREQUENCY CONFIG_UI_BUZZER_MAX_FREQUENCY
+#define BUZZER_MIN_INTENSITY 0
+#define BUZZER_MAX_INTENSITY 100
+#define BUZZER_MIN_DUTY_CYCLE_DIV 100
+#define BUZZER_MAX_DUTY_CYCLE_DIV 2
 
 struct device *pwm_dev;
 static atomic_t buzzer_enabled;
 
 static u32_t intensity_to_duty_cycle_divisor(u8_t intensity)
 {
-	return MIN(
-		MAX(((intensity - BUZZER_MIN_INTENSITY) *
-		    (BUZZER_MAX_DUTY_CYCLE_DIV - BUZZER_MIN_DUTY_CYCLE_DIV) /
-		    (BUZZER_MAX_INTENSITY - BUZZER_MIN_INTENSITY) +
-		    BUZZER_MIN_DUTY_CYCLE_DIV),
-		    BUZZER_MAX_DUTY_CYCLE_DIV),
-		BUZZER_MIN_DUTY_CYCLE_DIV);
+	return MIN(MAX(((intensity - BUZZER_MIN_INTENSITY) *
+				(BUZZER_MAX_DUTY_CYCLE_DIV -
+				 BUZZER_MIN_DUTY_CYCLE_DIV) /
+				(BUZZER_MAX_INTENSITY - BUZZER_MIN_INTENSITY) +
+			BUZZER_MIN_DUTY_CYCLE_DIV),
+		       BUZZER_MAX_DUTY_CYCLE_DIV),
+		   BUZZER_MIN_DUTY_CYCLE_DIV);
 }
 
 static int pwm_out(u32_t frequency, u8_t intensity)
 {
 	static u32_t prev_period;
 	u32_t period = (frequency > 0) ? USEC_PER_SEC / frequency : 0;
-	u32_t duty_cycle = (intensity == 0) ? 0 :
-		period / intensity_to_duty_cycle_divisor(intensity);
+	u32_t duty_cycle =
+		(intensity == 0) ?
+			0 :
+			period / intensity_to_duty_cycle_divisor(intensity);
 
 	/* Applying workaround due to limitations in PWM driver that doesn't
 	 * allow changing period while PWM is running. Setting pulse to 0
@@ -51,8 +53,8 @@ static int pwm_out(u32_t frequency, u8_t intensity)
 
 	prev_period = period;
 
-	return pwm_pin_set_usec(pwm_dev, CONFIG_UI_BUZZER_PIN,
-				period, duty_cycle);
+	return pwm_pin_set_usec(pwm_dev, CONFIG_UI_BUZZER_PIN, period,
+				duty_cycle);
 }
 
 static void buzzer_disable(void)
@@ -62,9 +64,8 @@ static void buzzer_disable(void)
 	pwm_out(0, 0);
 
 #ifdef CONFIG_DEVICE_POWER_MANAGEMENT
-	int err = device_set_power_state(pwm_dev,
-					 DEVICE_PM_SUSPEND_STATE,
-					 NULL, NULL);
+	int err = device_set_power_state(pwm_dev, DEVICE_PM_SUSPEND_STATE, NULL,
+					 NULL);
 	if (err) {
 		LOG_ERR("PWM disable failed");
 	}
@@ -78,9 +79,8 @@ static int buzzer_enable(void)
 	atomic_set(&buzzer_enabled, 1);
 
 #ifdef CONFIG_DEVICE_POWER_MANAGEMENT
-	err = device_set_power_state(pwm_dev,
-					 DEVICE_PM_ACTIVE_STATE,
-					 NULL, NULL);
+	err = device_set_power_state(pwm_dev, DEVICE_PM_ACTIVE_STATE, NULL,
+				     NULL);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 		return err;

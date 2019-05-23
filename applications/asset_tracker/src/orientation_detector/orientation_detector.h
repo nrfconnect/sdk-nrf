@@ -21,21 +21,19 @@ extern "C" {
 
 /**@brief Orientation states. */
 enum orientation_state {
-	ORIENTATION_NOT_KNOWN,   /**< Initial state. */
-	ORIENTATION_NORMAL,      /**< Has normal orientation. */
+	ORIENTATION_NOT_KNOWN, /**< Initial state. */
+	ORIENTATION_NORMAL, /**< Has normal orientation. */
 	ORIENTATION_UPSIDE_DOWN, /**< System is upside down. */
-	ORIENTATION_ON_SIDE      /**< System is placed on its side. */
+	ORIENTATION_ON_SIDE /**< System is placed on its side. */
 };
-
 
 /**@brief Struct containing current orientation and 3 axis acceleration data. */
 struct orientation_detector_sensor_data {
-	double x;			    /**< X-axis acceleration [m/s^2]. */
-	double y;			    /**< y-axis acceleration [m/s^2]. */
-	double z;			    /**< z-axis acceleration [m/s^2]. */
+	double x; /**< X-axis acceleration [m/s^2]. */
+	double y; /**< y-axis acceleration [m/s^2]. */
+	double z; /**< z-axis acceleration [m/s^2]. */
 	enum orientation_state orientation; /**< Current orientation. */
 };
-
 
 /**@brief Initializes the orientation detector.
  *
@@ -43,7 +41,6 @@ struct orientation_detector_sensor_data {
  * providing data on accelerometer sensor channels.
  */
 void orientation_detector_init(struct device *accel_device);
-
 
 /**@brief Function to poll the orientation detector.
  *
@@ -54,7 +51,6 @@ void orientation_detector_init(struct device *accel_device);
  */
 int orientation_detector_poll(
 	struct orientation_detector_sensor_data *sensor_data);
-
 
 /**@brief Determine and store the static offset of the accelerometer that is
  * used to infer device orientation.
