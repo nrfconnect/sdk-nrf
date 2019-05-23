@@ -857,3 +857,8 @@ void nct_process(void)
 	mqtt_input(&nct.client);
 	mqtt_live();
 }
+
+int nct_socket_get(void)
+{
+	return nct.client.transport.tls.sock;
+}
