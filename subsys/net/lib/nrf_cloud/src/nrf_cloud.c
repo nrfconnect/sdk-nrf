@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <net/cloud.h>
+#include <net/cloud_backend.h>
 #include <nrf_cloud.h>
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_fsm.h"
@@ -29,7 +31,6 @@ static volatile enum nfsm_state m_current_state = STATE_IDLE;
  * asynchronous events.
  */
 static nrf_cloud_event_handler_t m_event_handler;
-
 
 enum nfsm_state nfsm_get_current_state(void)
 {
@@ -200,3 +201,169 @@ void nrf_cloud_process(void)
 {
 	nct_process();
 }
+
+#if defined(CONFIG_CLOUD_API)
+
+/* Cloud API specific wrappers. */
+
+static struct cloud_backend *nrf_cloud_backend;
+
+static void event_handler(const struct nrf_cloud_evt *evt)
+{
+	struct cloud_backend_config *backend_config =
+		nrf_cloud_backend->config;
+	struct cloud_event cloud_evt = { 0 };
+
+	switch (evt->type) {
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
+		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
+		cloud_evt.type = CLOUD_EVT_CONNECTED;
+		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
+				   backend_config->user_data);
+		break;
+	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
+		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
+		break;
+	case NRF_CLOUD_EVT_USER_ASSOCIATED:
+		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
+		break;
+	case NRF_CLOUD_EVT_READY:
+		LOG_DBG("NRF_CLOUD_EVT_READY");
+		cloud_evt.type = CLOUD_EVT_READY;
+		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
+				   backend_config->user_data);
+		break;
+	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
+		LOG_DBG("NRF_CLOUD_EVT_SENSOR_ATTACHED");
+		break;
+	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
+		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
+		cloud_evt.type = CLOUD_EVT_DATA_SENT;
+		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
+				   backend_config->user_data);
+		break;
+	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
+		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
+		cloud_evt.type = CLOUD_EVT_DISCONNECTED;
+		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
+				   backend_config->user_data);
+		break;
+	case NRF_CLOUD_EVT_ERROR:
+		LOG_DBG("NRF_CLOUD_EVT_ERROR, status: %d", evt->status);
+		cloud_evt.type = CLOUD_EVT_ERROR;
+		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
+				   backend_config->user_data);
+		break;
+	case NRF_CLOUD_EVT_RX_DATA:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
+		cloud_evt.type = CLOUD_EVT_DATA_RECEIVED;
+		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
+				   backend_config->user_data);
+		break;
+	default:
+		LOG_DBG("Received unknown %d", evt->type);
+		break;
+	}
+}
+
+static int init(const struct cloud_backend *const backend,
+		cloud_evt_handler_t handler)
+{
+	const struct nrf_cloud_init_param params = {
+		.event_handler = event_handler
+	};
+
+	backend->config->handler = handler;
+	nrf_cloud_backend = (struct cloud_backend *)backend;
+
+	return nrf_cloud_init(&params);
+}
+
+static int uninit(const struct cloud_backend *const backend)
+{
+	LOG_INF("uninit() is not implemented");
+
+	return 0;
+}
+
+static int connect(const struct cloud_backend *const backend)
+{
+	int err;
+
+	err = nrf_cloud_connect(NULL);
+
+	backend->config->socket = nct_socket_get();
+
+	return err;
+}
+
+static int disconnect(const struct cloud_backend *const backend)
+{
+	return nrf_cloud_disconnect();
+}
+
+static int send(const struct cloud_backend *const backend,
+		const struct cloud_msg *const msg)
+{
+	int err = 0;
+	struct nct_dc_data buf = {
+		.data.ptr = msg->buf,
+		.data.len = msg->len
+	};
+
+	if (msg->endpoint.len != 0) {
+		/* Unsupported case where topic is not the default. */
+		return -ENOTSUP;
+	}
+
+	if (msg->endpoint.type == CLOUD_EP_TOPIC_MSG) {
+		if (msg->qos == CLOUD_QOS_AT_MOST_ONCE) {
+			err = nct_dc_stream(&buf);
+		} else if (msg->qos == CLOUD_QOS_AT_LEAST_ONCE) {
+			err = nct_dc_send(&buf);
+		} else {
+			err = -EINVAL;
+			LOG_ERR("Unsupported QoS setting.");
+		}
+	}
+
+	return 0;
+}
+
+static int ping(const struct cloud_backend *const backend)
+{
+	/* TODO: Do only ping, nrf_cloud_process() also checks for input. */
+	nrf_cloud_process();
+
+	return 0;
+}
+
+static int input(const struct cloud_backend *const backend)
+{
+	nrf_cloud_process();
+
+	return 0;
+}
+
+static int user_data_set(const struct cloud_backend *const backend,
+			 void *user_data)
+{
+	backend->config->user_data = user_data;
+
+	return 0;
+}
+
+static const struct cloud_api nrf_cloud_api = {
+	.init = init,
+	.uninit = uninit,
+	.connect = connect,
+	.disconnect = disconnect,
+	.send = send,
+	.ping = ping,
+	.input = input,
+	.user_data_set = user_data_set
+};
+
+CLOUD_BACKEND_DEFINE(NRF_CLOUD, nrf_cloud_api);
+
+#endif /* CONFIG_CLOUD_API */

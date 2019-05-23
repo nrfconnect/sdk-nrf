@@ -55,6 +55,8 @@ struct nct_evt {
 	enum nct_evt_type type;
 };
 
+int nct_socket_get(void);
+
 /**@brief Initialization routine for the transport. */
 int nct_init(void);
 
