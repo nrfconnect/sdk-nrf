@@ -20,14 +20,26 @@ extern void ipc_proxy_irq_handler(void);
 
 static int _bsdlib_init(struct device *unused)
 {
+	int err;
+
 	/* Setup the network IRQ used by the BSD library.
-	 * Note: No call to irq_enable here, that is done through bsd_init.
+	 * Note: No call to irq_enable() here, that is done through bsd_init().
 	 */
 	IRQ_DIRECT_CONNECT(BSD_NETWORK_IRQ, BSD_NETWORK_IRQ_PRIORITY,
 			   ipc_proxy_irq_handler, 0);
-	bsd_init();
 
-	return 0;
+	err = bsd_init();
+
+	if (IS_ENABLED(CONFIG_BSD_LIBRARY_SYS_INIT)) {
+		/* bsd_init() returns values from a different namespace
+		 * than Zephyr's. Make sure to return something in Zephyr's
+		 * namespace, in this case 0, when called during SYS_INIT.
+		 * Non-zero values in SYS_INIT are currently ignored.
+		 */
+		return 0;
+	}
+
+	return err;
 }
 
 int bsdlib_init(void)
@@ -43,9 +55,6 @@ int bsdlib_shutdown(void)
 }
 
 #if defined(CONFIG_BSD_LIBRARY_SYS_INIT)
-/* Initialize during SYS_INIT
- * The option is given since initialization is synchronous and can
- * take a long time when the modem firmware is being updated.
- */
+/* Initialize during SYS_INIT */
 SYS_INIT(_bsdlib_init, POST_KERNEL, 0);
 #endif
