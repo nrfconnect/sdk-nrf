@@ -76,7 +76,7 @@ Testing with another board
       Subscribe to report id: 1
       Subscribe to boot keyboard report
 
-#. Press Button 1 and Button 2 on the board that runs the keyboard sample and observe the notification values in the terminal window.
+#. Press Button 1 and Button 2 one after another on the board that runs the keyboard sample and observe the notification values in the terminal window.
    See :ref:`peripheral_hids_keyboard` for the expected values::
 
       Notification, id: 1, size: 8, data: 0x0 0x0 0xb 0x0 0x0 0x0 0x0 0x0
@@ -86,16 +86,20 @@ Testing with another board
 
       Setting protocol mode: BOOT
 
-#. Press Button 1 and Button 2 on the board that runs the keyboard sample and observe the notification of the boot report values::
+#. Press Button 1 and Button 2 one after another on the board that runs the keyboard sample and observe the notification of the boot report values::
 
       Notification, keyboard boot, size: 8, data: 0x0 0x0 0xf 0x0 0x0 0x0 0x0 0x0
       Notification, keyboard boot, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
 
 
-#. Press Button 1 and Button 3 on the Central HIDS board and observe that LED 1 on the keyboard board changes its state.
-   The information is also displayed in the terminal window::
+#. Press Button 1 and Button 3 one after another on the Central HIDS board and observe that LED 1 on the keyboard board changes its state.
+   The following information is also displayed in the terminal window.
+
+   If Button 1 was pressed::
 
       Caps lock send (val: 0x2)
+
+   If Button 3 was pressed::
 
       Caps lock send using write with response (val: 0x2)
       Capslock write result: 0
@@ -147,7 +151,7 @@ Testing with nRF Connect for Desktop
 #. Explore the first record inside **Human Interface Device** (the one with six values).
    Change any of the values and note that the board logs the change.
 #. Press Button 2 on the board and observe that the **Protocol Mode** value changes from ``01`` to ``00``.
-#. Press Button 1 and Button 3 and observe that the **Boot Keyboard Output Report** value toggles between ``00`` and ``02``.
+#. Press Button 1 and Button 3 one after another and observe that the **Boot Keyboard Output Report** value toggles between ``00`` and ``02``.
 
 Dependencies
 *************
