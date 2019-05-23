@@ -39,7 +39,11 @@ static void load_peer_state_led(void)
 	case PEER_OPERATION_ERASE:
 		state = LED_PEER_STATE_CONFIRM_ERASE;
 		break;
+	case PEER_OPERATION_ERASE_ADV:
+		state = LED_PEER_STATE_ERASE_ADV;
+		break;
 	case PEER_OPERATION_SELECTED:
+	case PEER_OPERATION_ERASE_ADV_CANCEL:
 	case PEER_OPERATION_ERASED:
 	case PEER_OPERATION_CANCEL:
 		if (connected) {
@@ -114,7 +118,7 @@ static bool event_handler(const struct event_header *eh)
 		struct ble_peer_operation_event *event =
 			cast_ble_peer_operation_event(eh);
 
-		cur_peer_id = event->arg;
+		cur_peer_id = event->bt_app_id;
 		peer_op = event->op;
 		load_peer_state_led();
 

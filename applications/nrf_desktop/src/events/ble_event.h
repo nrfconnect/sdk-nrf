@@ -45,6 +45,8 @@ enum peer_state {
 	X(SELECT)		\
 	X(SELECTED)		\
 	X(ERASE)		\
+	X(ERASE_ADV)		\
+	X(ERASE_ADV_CANCEL)	\
 	X(ERASED)		\
 	X(CANCEL)
 
@@ -72,7 +74,8 @@ struct ble_peer_operation_event {
 	struct event_header header;
 
 	enum peer_operation op;
-	u8_t arg;
+	u8_t bt_app_id;
+	u8_t bt_stack_id;
 };
 EVENT_TYPE_DECLARE(ble_peer_operation_event);
 

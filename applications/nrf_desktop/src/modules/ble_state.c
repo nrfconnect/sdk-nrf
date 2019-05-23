@@ -70,8 +70,10 @@ static void connected(struct bt_conn *conn, u8_t error)
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
 	    (info.role == BT_CONN_ROLE_SLAVE)) {
-		/* Assert one identity holds exactly one bond. */
-		__ASSERT_NO_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_ID_MAX);
+		/* Assert one local identity holds exactly one bond.
+		 * One local identity is unused.
+		 */
+		__ASSERT_NO_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_ID_MAX - 1);
 
 		struct bond_find_data bond_find_data = {
 			.peer_id = 0,
