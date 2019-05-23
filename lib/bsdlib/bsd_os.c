@@ -6,11 +6,9 @@
 
 #include <string.h>
 #include <bsd_os.h>
-#include <bsd.h>
-#include <bsd_limits.h>
 #include <bsd_platform.h>
-#include <nrf.h>
 
+#include <nrf.h>
 #include <nrf_errno.h>
 
 #include <init.h>
@@ -443,17 +441,3 @@ int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
 
 	return 0;
 }
-
-static int _bsd_driver_init(struct device *unused)
-{
-	/* Setup the two IRQs used by the BSD library.
-	 * Note: No enable irq_enable here. This is done through bsd_init.
-	 */
-	IRQ_DIRECT_CONNECT(BSD_NETWORK_IRQ, BSD_NETWORK_IRQ_PRIORITY,
-			   ipc_proxy_irq_handler, UNUSED_FLAGS);
-	bsd_init();
-
-	return 0;
-}
-
-SYS_INIT(_bsd_driver_init, POST_KERNEL, 0);

@@ -16,7 +16,13 @@ config BSD_LIBRARY
 
 if BSD_LIBRARY
 
-comment "Nordic BSD Socket library configuration"
+config BSD_LIBRARY_SYS_INIT
+	bool "Initialize during SYS_INIT"
+	default y
+	help
+	  Initialize BSD library automatically during the SYS_INIT sequence.
+	  Please note that BSD library initialization is synchronous and can
+	  take up to one minute in case the modem firmware is updated.
 
 config BSD_LIBRARY_TRACE_ENABLED
 	bool

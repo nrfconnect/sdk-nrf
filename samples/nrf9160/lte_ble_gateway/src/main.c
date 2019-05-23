@@ -14,7 +14,7 @@
 #include <dk_buttons_and_leds.h>
 #include <lte_lc.h>
 #include <misc/reboot.h>
-#include <bsd.h>
+#include <net/bsdlib.h>
 
 #include "aggregator.h"
 #include "ble.h"
@@ -93,7 +93,7 @@ void error_handler(enum error_type err_type, int err)
 		k_sched_lock();
 		err = lte_lc_power_off();
 		__ASSERT(err == 0, "lte_lc_power_off failed: %d", err);
-		bsd_shutdown();
+		bsdlib_shutdown();
 	}
 
 #if !defined(CONFIG_DEBUG)

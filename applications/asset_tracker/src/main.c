@@ -14,7 +14,7 @@
 #include <dk_buttons_and_leds.h>
 #include <misc/reboot.h>
 #if defined(CONFIG_BSD_LIBRARY)
-#include <bsd.h>
+#include <net/bsdlib.h>
 #include <lte_lc.h>
 #include <modem_info.h>
 #endif
@@ -228,7 +228,7 @@ void error_handler(enum error_type err_type, int err_code)
 		__ASSERT(err == 0, "lte_lc_power_off failed: %d", err);
 #endif
 #if defined(CONFIG_BSD_LIBRARY)
-		bsd_shutdown();
+		bsdlib_shutdown();
 #endif
 	}
 
