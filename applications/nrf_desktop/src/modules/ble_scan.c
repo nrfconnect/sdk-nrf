@@ -31,6 +31,7 @@ struct bond_find_data {
 
 
 static bool scanning;
+static bool erasing_peer;
 
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
@@ -43,6 +44,17 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 
 	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
 	bond_find_data->peer_count++;
+}
+
+static void scan_stop(void)
+{
+	int err = bt_scan_stop();
+
+	if (err) {
+		LOG_ERR("Stop LE scan failed (err %d)", err);
+	} else {
+		scanning = false;
+	}
 }
 
 static int configure_filters(void)
@@ -60,7 +72,9 @@ static int configure_filters(void)
 	u8_t filter_mode = 0;
 	int err;
 
-	if (bond_find_data.peer_id < bond_find_data.peer_count) {
+	if ((bond_find_data.peer_id < bond_find_data.peer_count) &&
+	    (!erasing_peer)) {
+
 		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,
 					 &bond_find_data.peer_address);
 		if (err) {
@@ -107,7 +121,6 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
 			      bool connectable)
 {
-	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
@@ -115,12 +128,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	LOG_INF("Filters matched. %s %sconnectable",
 		log_strdup(addr), connectable ? "" : "non");
 
-	err = bt_scan_stop();
-	if (err) {
-		LOG_ERR("Stop LE scan failed (err %d)", err);
-	} else {
-		scanning = false;
-	}
+	scan_stop();
 }
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
@@ -228,12 +236,7 @@ static void scan_start(void)
 	int err;
 
 	if (scanning) {
-		err = bt_scan_stop();
-		if (err) {
-			LOG_ERR("Stop LE scan failed (err %d)", err);
-			goto error;
-		}
-		scanning = false;
+		scan_stop();
 	}
 	err = configure_filters();
 	if (err) {
@@ -253,6 +256,26 @@ static void scan_start(void)
 error:
 	LOG_ERR("Scanning failed to start (err %d)", err);
 	module_set_state(MODULE_STATE_ERROR);
+}
+
+void disconnect_peer(void)
+{
+	struct bond_find_data bond_find_data = {
+		.peer_id = 0,
+		.peer_count = 0,
+	};
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
+	__ASSERT_NO_MSG(bond_find_data.peer_count <= 1);
+
+	if (bond_find_data.peer_count > 0) {
+		struct bt_conn *conn =
+			bt_conn_lookup_addr_le(BT_ID_DEFAULT,
+					&bond_find_data.peer_address);
+		if (conn) {
+			bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			bt_conn_unref(conn);
+		}
+	}
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -311,8 +334,22 @@ static bool event_handler(const struct event_header *eh)
 			cast_ble_peer_operation_event(eh);
 
 		switch (event->op) {
+		case PEER_OPERATION_ERASE_ADV: {
+			scan_stop();
+			disconnect_peer();
+			erasing_peer = true;
+			scan_start();
+			break;
+		}
+
 		case PEER_OPERATION_ERASED:
-			/* After peer erase restart scan to update filters */
+			erasing_peer = false;
+			break;
+
+		case PEER_OPERATION_ERASE_ADV_CANCEL:
+			scan_stop();
+			disconnect_peer();
+			erasing_peer = false;
 			scan_start();
 			break;
 

@@ -382,6 +382,8 @@ static void init(void)
 		k_delayed_work_init(&sp_grace_period_to, sp_grace_period_fn);
 	}
 
+	/* We should not start advertising before ble_bond is ready */
+	state = STATE_OFF;
 	module_set_state(MODULE_STATE_READY);
 }
 
@@ -492,45 +494,55 @@ static bool event_handler(const struct event_header *eh)
 
 		switch (event->op)  {
 		case PEER_OPERATION_SELECTED:
+		case PEER_OPERATION_ERASE_ADV:
+		case PEER_OPERATION_ERASE_ADV_CANCEL:
 			if ((state == STATE_OFF) || (state == STATE_GRACE_PERIOD)) {
-				cur_identity = event->arg;
+				cur_identity = event->bt_stack_id;
 				__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
 				break;
 			}
 
 			err = ble_adv_stop();
 
+			/* Disconnect an old identity. */
 			struct bond_find_data bond_find_data = {
 				.peer_id = 0,
 				.peer_count = 0,
 			};
-			bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
+			bt_foreach_bond(cur_identity, bond_find,
+					&bond_find_data);
 			__ASSERT_NO_MSG(bond_find_data.peer_count <= 1);
 
-			if (bond_find_data.peer_count > 0) {
-				struct bt_conn *conn =
-					bt_conn_lookup_addr_le(cur_identity,
-							       &bond_find_data.peer_address);
+			struct bt_conn *conn = NULL;
 
+			if (bond_find_data.peer_count > 0) {
+				conn = bt_conn_lookup_addr_le(cur_identity,
+						&bond_find_data.peer_address);
 				if (conn) {
-					bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+					bt_conn_disconnect(conn,
+					    BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 					bt_conn_unref(conn);
 				}
 			}
 
-			cur_identity = event->arg;
+			cur_identity = event->bt_stack_id;
 			__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
 
-			err = ble_adv_start(true);
+			if (event->op == PEER_OPERATION_ERASE_ADV) {
+				update_peer_is_rpa(PEER_RPA_ERASED);
+			}
+			if (!conn) {
+				err = ble_adv_start(true);
+			}
 			break;
 
 		case PEER_OPERATION_ERASED:
-			update_peer_is_rpa(PEER_RPA_ERASED);
-			err = ble_adv_start(true);
+			__ASSERT_NO_MSG(cur_identity == event->bt_stack_id);
+			__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
 			break;
 
-		case PEER_OPERATION_ERASE:
 		case PEER_OPERATION_SELECT:
+		case PEER_OPERATION_ERASE:
 		case PEER_OPERATION_CANCEL:
 			/* Ignore */
 			break;
