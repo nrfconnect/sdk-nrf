@@ -81,7 +81,9 @@ domains:
 
 .. note::
    The ``:cpp:enum:`` and ``:cpp:enumerator:`` domains do not generate a link
-   due to an issue with Sphinx and breathe.
+   due to `breathe issue #437`_. As a workaround, use the following command::
+
+      :cpp:enumerator:`ENUM_VALUE <DOXYGEN_GROUP>::ENUM_VALUE`
 
 Doxygen style guide
 *******************
@@ -245,6 +247,24 @@ Make sure to add ``:members:`` when you include the API documentation in RST; ot
         	/** Pointer to the event type object. */
 		const struct event_type *type_id;
 	};
+
+References
+==========
+
+To link to functions, enums, or structs from within Doxygen itself, use the
+``@ref`` keyword.
+
+.. code-block:: c
+   :caption: Reference documentation example
+
+	/** @brief Event header structure.
+	 *  Use this structure with the function @ref function_name and
+         *  this structure is related to another structure, @ref structure_name.
+	 */
+
+.. note::
+   Linking to functions does not currently work due to `breathe issue #438`_.
+
 
 Typedefs - WIP
 ==============
