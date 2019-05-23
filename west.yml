@@ -43,7 +43,7 @@ manifest:
       revision: 5c5ba77d017071d7291d52e99d5460b1651e8de1
     - name: fw-nrfconnect-mcuboot
       path: mcuboot
-      revision: 447495faa326082198c8e12493a2097f2ae20a99
+      revision: 0a5c2987365abb0417610ecb7c2c7b5fb117159b
     - name: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
       revision: ef1f9c3d87474ec3570b1f46e91fd4b54a4fb421
