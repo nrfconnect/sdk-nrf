@@ -116,6 +116,8 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
+.. _`breathe issue #437`: https://github.com/michaeljones/breathe/issues/437
+.. _`breathe issue #438`: https://github.com/michaeljones/breathe/issues/438
 
 
 .. ### Links to Bluetooth specs
