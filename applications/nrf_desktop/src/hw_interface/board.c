@@ -104,7 +104,7 @@ static bool event_handler(const struct event_header *eh)
 	static bool initialized;
 
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+		const struct module_state_event *event = cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(!initialized);
@@ -126,6 +126,13 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_down_event(eh)) {
+		const struct power_down_event *event = cast_power_down_event(eh);
+
+		/* Do not cut off leds power on error */
+		if (event->error) {
+			return false;
+		}
+
 		if (initialized) {
 			initialized = false;
 
@@ -143,4 +150,4 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, wake_up_event);
+EVENT_SUBSCRIBE(MODULE, wake_up_event);

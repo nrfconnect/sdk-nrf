@@ -26,17 +26,20 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_POWER_MANAGER_LOG_LEVEL);
 
-
-#define POWER_DOWN_TIMEOUT_MS	(1000 * CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT)
-#define POWER_DOWN_CHECK_MS	1000
-#define DEVICE_POLICY_MAX	30
+#define POWER_DOWN_ERROR_TIMEOUT K_SECONDS(CONFIG_DESKTOP_POWER_MANAGER_ERROR_TIMEOUT)
+#define POWER_DOWN_TIMEOUT_MS	 K_SECONDS(CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT)
+#define POWER_DOWN_CHECK_MS	 1000
+#define DEVICE_POLICY_MAX	 30
 
 enum power_state {
 	POWER_STATE_IDLE,
 	POWER_STATE_SUSPENDING,
 	POWER_STATE_SUSPENDED,
 	POWER_STATE_OFF,
-	POWER_STATE_WAKEUP
+	POWER_STATE_WAKEUP,
+	POWER_STATE_ERROR,
+	POWER_STATE_ERROR_SUSPENDED,
+	POWER_STATE_ERROR_OFF
 };
 
 struct device_list {
@@ -51,6 +54,7 @@ static struct device_list device_list;
 
 static enum power_state power_state = POWER_STATE_IDLE;
 static struct k_delayed_work power_down_trigger;
+static struct k_delayed_work error_trigger;
 static atomic_t power_down_count;
 static unsigned int connection_count;
 static bool usb_connected;
@@ -120,6 +124,8 @@ static void power_down(struct k_work *work)
 		LOG_INF("System power down");
 
 		struct power_down_event *event = new_power_down_event();
+
+		event->error = false;
 		power_state = POWER_STATE_SUSPENDING;
 		EVENT_SUBMIT(event);
 	} else {
@@ -137,6 +143,7 @@ static void power_down_counter_reset(void)
 	case POWER_STATE_SUSPENDING:
 	case POWER_STATE_SUSPENDED:
 	case POWER_STATE_OFF:
+	case POWER_STATE_ERROR:
 		/* No action */
 		break;
 	default:
@@ -152,17 +159,11 @@ enum power_states sys_pm_policy_next_state(s32_t ticks)
 
 static void system_off(void)
 {
-	/* Port events are needed to leave system off state. */
-	nrf_gpiote_int_enable(GPIOTE_INTENSET_PORT_Msk);
-	irq_enable(GPIOTE_IRQn);
-
-	/* Make sure that port events are enabled before
-	 * the system goes off.
-	 */
-	__DSB();
-
-	/* System will go off now. */
-	power_state = POWER_STATE_OFF;
+	if (power_state == POWER_STATE_ERROR_SUSPENDED) {
+		power_state = POWER_STATE_ERROR_OFF;
+	} else {
+		power_state = POWER_STATE_OFF;
+	}
 
 	LOG_WRN("System turned off");
 	LOG_PANIC();
@@ -170,6 +171,16 @@ static void system_off(void)
 	suspend_devices(&device_list);
 
 	sys_pm_force_power_state(SYS_POWER_STATE_DEEP_SLEEP_1);
+}
+
+static void error(struct k_work *work)
+{
+	struct power_down_event *event = new_power_down_event();
+
+	/* Turning off all the modules (including leds). */
+	event->error = false;
+	EVENT_SUBMIT(event);
+	power_state = POWER_STATE_ERROR_SUSPENDED;
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -183,6 +194,15 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_down_event(eh)) {
+		if (power_state == POWER_STATE_ERROR) {
+			k_delayed_work_submit(&error_trigger,
+					      POWER_DOWN_ERROR_TIMEOUT);
+			return false;
+		} else if (power_state == POWER_STATE_ERROR_SUSPENDED) {
+			system_off();
+			return false;
+		}
+
 		if (!usb_connected && (power_state == POWER_STATE_SUSPENDING)) {
 			LOG_INF("Power down the board");
 
@@ -202,6 +222,14 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_wake_up_event(eh)) {
+		/* Consume event to prevent wakeup after application went into
+		 * error state.
+		 */
+		if ((power_state == POWER_STATE_ERROR) ||
+		    (power_state == POWER_STATE_ERROR_SUSPENDED)) {
+			LOG_INF("Wake up event consumed");
+			return true;
+		}
 		LOG_INF("Wake up the board");
 
 		power_state = POWER_STATE_IDLE;
@@ -254,6 +282,11 @@ static bool event_handler(const struct event_header *eh)
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) && is_usb_state_event(eh)) {
 		const struct usb_state_event *event = cast_usb_state_event(eh);
 
+		if ((power_state == POWER_STATE_ERROR_SUSPENDED) ||
+		    (power_state == POWER_STATE_ERROR)) {
+			return false;
+		}
+
 		switch (event->state) {
 		case USB_STATE_POWERED:
 			usb_connected = true;
@@ -283,13 +316,21 @@ static bool event_handler(const struct event_header *eh)
 		const struct module_state_event *event =
 			cast_module_state_event(eh);
 
-		if (((event->state == MODULE_STATE_OFF) ||
-		     (event->state == MODULE_STATE_STANDBY)) &&
-		    (power_state == POWER_STATE_SUSPENDING)) {
-			/* Some module is deactivated: re-iterate */
-			struct power_down_event *event = new_power_down_event();
-			EVENT_SUBMIT(event);
-			return false;
+		if ((event->state == MODULE_STATE_OFF) ||
+		     (event->state == MODULE_STATE_STANDBY)) {
+
+			if ((power_state == POWER_STATE_SUSPENDING) ||
+			    (power_state == POWER_STATE_ERROR) ||
+			    (power_state == POWER_STATE_ERROR_SUSPENDED)) {
+				/* Some module is deactivated: re-iterate */
+				struct power_down_event *event =
+					new_power_down_event();
+
+				event->error =
+					(power_state == POWER_STATE_ERROR);
+				EVENT_SUBMIT(event);
+				return false;
+			}
 		}
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
@@ -304,9 +345,19 @@ static bool event_handler(const struct event_header *eh)
 
 			create_device_list(&device_list);
 
+			k_delayed_work_init(&error_trigger, error);
 			k_delayed_work_init(&power_down_trigger, power_down);
 			k_delayed_work_submit(&power_down_trigger,
 					      POWER_DOWN_CHECK_MS);
+		} else if (event->state == MODULE_STATE_ERROR) {
+			LOG_PANIC();
+			power_state = POWER_STATE_ERROR;
+			k_delayed_work_cancel(&power_down_trigger);
+
+			struct power_down_event *event = new_power_down_event();
+
+			event->error = true;
+			EVENT_SUBMIT(event);
 		}
 
 		return false;
@@ -321,7 +372,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, usb_state_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);
