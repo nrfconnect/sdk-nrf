@@ -12,3 +12,4 @@ Here you can find documentation for these scripts.
    :glob:
 
    ../../scripts/shell/*/*
+   ../../scripts/partition_manager/*
