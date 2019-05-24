@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <zephyr.h>
 #include <flash.h>
-#include <bsd.h>
 #include <nrf_socket.h>
 #include <download_client.h>
 #include <logging/log.h>

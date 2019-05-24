@@ -5,7 +5,6 @@
  */
 
 #include <zephyr.h>
-#include <bsd.h>
 #include <nrf_socket.h>
 #include <net/socket.h>
 #include <stdio.h>
