@@ -23,6 +23,12 @@ config DESKTOP_POWER_MANAGER_TIMEOUT
 	help
 	  Time in seconds after which the device will enter low-power mode.
 
+config DESKTOP_POWER_MANAGER_ERROR_TIMEOUT
+	int "Power manager timeout on error [s]"
+	default 30
+	help
+	 Time in seconds after which the device will be turned off after an error.
+
 module = DESKTOP_POWER_MANAGER
 module-str = power manager
 source "subsys/logging/Kconfig.template.log_config"

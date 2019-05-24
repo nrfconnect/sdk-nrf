@@ -21,6 +21,7 @@ extern "C" {
 
 struct power_down_event {
 	struct event_header header;
+	bool error;
 };
 
 EVENT_TYPE_DECLARE(power_down_event);
