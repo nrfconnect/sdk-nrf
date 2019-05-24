@@ -140,7 +140,7 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
-
+.. _`generator expressions`: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html
 
 .. ### Links to specific files on GitHub
 

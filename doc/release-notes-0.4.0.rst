@@ -19,7 +19,7 @@ Highlights
 
 * Added sample showing how to use the new GPS API (tested on nRF9160 DK v0.8.5)
 * Added sample showing how to download a new image via HTTP
-* Added multi-image support (see :ref:`ug_pm`)
+* Added multi-image support (see :ref:`partition_manager`)
 
 Release tag
 ***********
@@ -164,7 +164,7 @@ Build and configuration system
 ==============================
 
 Bootloaders (such as SPM) and MCUboot no longer need to be built and flashed separately, but are instead automatically built and flashed (if enabled by the application).
-See :ref:`ug_pm` for more information.
+See :ref:`partition_manager` for more information.
 
 Documentation
 =============
@@ -194,7 +194,7 @@ Documentation
   * :ref:`gs_programming` - updated for new SES version
   * :ref:`gs_modifying` - added
   * :ref:`ug_unity_testing` - added
-  * :ref:`ug_pm` - added
+  * :ref:`partition_manager` - added
   * :ref:`ug_nrf9160` - updated Secure Partition Manager and Network mode sections
 
 
