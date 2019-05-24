@@ -47,6 +47,14 @@ config DESKTOP_SPI_FREQ_HZ
 	default 1800000
 	range 500000 2500000
 
+config DESKTOP_OPTICAL_THREAD_STACK_SIZE
+	int "Optical thread stack size"
+	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	range 0 4096
+	default 512
+	help
+	  Stack size for optical sensor thread.
+
 comment "Buttons configuration"
 
 choice
