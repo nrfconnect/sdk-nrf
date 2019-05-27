@@ -11,6 +11,11 @@
 #include <bsd.h>
 #include <bsd_platform.h>
 
+#ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#error  bsdlib must be run as non-secure firmware.\
+	Are you building for the correct board ?
+#endif
+
 extern void ipc_proxy_irq_handler(void);
 
 static int _bsdlib_init(struct device *unused)
@@ -33,6 +38,7 @@ int bsdlib_init(void)
 int bsdlib_shutdown(void)
 {
 	bsd_shutdown();
+
 	return 0;
 }
 
