@@ -11,6 +11,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <at_params.h>
+#include <at_params_alloc.h>
 #include <kernel.h>
 #include <errno.h>
 
@@ -72,7 +73,7 @@ int at_params_list_init(struct at_param_list *list, size_t max_params_count)
 	}
 
 	/* Create array of paramaters. */
-	list->params = k_calloc(max_params_count, sizeof(struct at_param));
+	list->params = at_params_calloc(max_params_count, sizeof(struct at_param));
 	if (list->params == NULL) {
 		return -ENOMEM;
 	}

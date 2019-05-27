@@ -8,7 +8,7 @@
 #include <at_params.h>
 #include <errno.h>
 
-#include "kernel/mock_kernel.h"
+#include "mock_at_params_alloc.h"
 
 void setUp(void)
 {
@@ -25,8 +25,8 @@ void test_at_params_list_init_no_mem(void)
 {
 	const size_t MAX_PARAMS = 4;
 
-	/* Want a null pointer when allocating memory in the at_params module. */
-	__wrap_k_calloc_ExpectAndReturn(MAX_PARAMS, sizeof(struct at_param), NULL);
+	/* Return a null pointer when allocating memory in the at_params module. */
+	__wrap_at_params_calloc_ExpectAndReturn(MAX_PARAMS, sizeof(struct at_param), NULL);
 
 	struct at_param_list list;
 	int err = at_params_list_init(&list, MAX_PARAMS);
