@@ -9,10 +9,10 @@
 #include <spinlock.h>
 #include <misc/byteorder.h>
 
-#include <soc.h>
 #include <device.h>
-#include <spi.h>
-#include <gpio.h>
+#include <sensor.h>
+
+#include <sensor/pmw3360.h>
 
 #include "event_manager.h"
 #include "motion_event.h"
@@ -27,107 +27,12 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 
-/* Use timings defined by spec */
-#define CORRECT_TIMINGS 1
-#if CORRECT_TIMINGS
-#define T_NCS_SCLK	1			/* 120 ns */
-#define T_SRX		(20 - T_NCS_SCLK)	/* 20 us */
-#define T_SCLK_NCS_WR	(35 - T_NCS_SCLK)	/* 35 us */
-#define T_SWX		(180 - T_SCLK_NCS_WR)	/* 180 us */
-#define T_SRAD		160			/* 160 us */
-#define T_SRAD_MOTBR	35			/* 35 us */
-#define T_BEXIT		1			/* 500 ns */
-#else
-#define T_NCS_SCLK	0
-#define T_SRX		19
-#define T_SCLK_NCS_WR	10
-#define T_SWX		50
-#define T_SRAD		160
-#define T_SRAD_MOTBR	20
-#define T_BEXIT		0
-#endif
-
-
-/* Sensor registers */
-#define OPTICAL_REG_PRODUCT_ID			0x00
-#define OPTICAL_REG_REVISION_ID			0x01
-#define OPTICAL_REG_MOTION			0x02
-#define OPTICAL_REG_DELTA_X_L			0x03
-#define OPTICAL_REG_DELTA_X_H			0x04
-#define OPTICAL_REG_DELTA_Y_L			0x05
-#define OPTICAL_REG_DELTA_Y_H			0x06
-#define OPTICAL_REG_SQUAL			0x07
-#define OPTICAL_REG_RAW_DATA_SUM		0x08
-#define OPTICAL_REG_MAXIMUM_RAW_DATA		0x09
-#define OPTICAL_REG_MINIMUM_RAW_DATA		0x0A
-#define OPTICAL_REG_SHUTTER_LOWER		0x0B
-#define OPTICAL_REG_SHUTTER_UPPER		0x0C
-#define OPTICAL_REG_CONTROL			0x0D
-#define OPTICAL_REG_CONFIG1			0x0F
-#define OPTICAL_REG_CONFIG2			0x10
-#define OPTICAL_REG_ANGLE_TUNE			0x11
-#define OPTICAL_REG_FRAME_CAPTURE		0x12
-#define OPTICAL_REG_SROM_ENABLE			0x13
-#define OPTICAL_REG_RUN_DOWNSHIFT		0x14
-#define OPTICAL_REG_REST1_RATE_LOWER		0x15
-#define OPTICAL_REG_REST1_RATE_UPPER		0x16
-#define OPTICAL_REG_REST1_DOWNSHIFT		0x17
-#define OPTICAL_REG_REST2_RATE_LOWER		0x18
-#define OPTICAL_REG_REST2_RATE_UPPER		0x19
-#define OPTICAL_REG_REST2_DOWNSHIFT		0x1A
-#define OPTICAL_REG_REST3_RATE_LOWER		0x1B
-#define OPTICAL_REG_REST3_RATE_UPPER		0x1C
-#define OPTICAL_REG_OBSERVATION			0x24
-#define OPTICAL_REG_DATA_OUT_LOWER		0x25
-#define OPTICAL_REG_DATA_OUT_UPPER		0x26
-#define OPTICAL_REG_RAW_DATA_DUMP		0x29
-#define OPTICAL_REG_SROM_ID			0x2A
-#define OPTICAL_REG_MIN_SQ_RUN			0x2B
-#define OPTICAL_REG_RAW_DATA_THRESHOLD		0x2C
-#define OPTICAL_REG_CONFIG5			0x2F
-#define OPTICAL_REG_POWER_UP_RESET		0x3A
-#define OPTICAL_REG_SHUTDOWN			0x3B
-#define OPTICAL_REG_INVERSE_PRODUCT_ID		0x3F
-#define OPTICAL_REG_LIFTCUTOFF_TUNE3		0x41
-#define OPTICAL_REG_ANGLE_SNAP			0x42
-#define OPTICAL_REG_LIFTCUTOFF_TUNE1		0x4A
-#define OPTICAL_REG_MOTION_BURST		0x50
-#define OPTICAL_REG_LIFTCUTOFF_TUNE_TIMEOUT	0x58
-#define OPTICAL_REG_LIFTCUTOFF_TUNE_MIN_LENGTH	0x5A
-#define OPTICAL_REG_SROM_LOAD_BURST		0x62
-#define OPTICAL_REG_LIFT_CONFIG			0x63
-#define OPTICAL_REG_RAW_DATA_BURST		0x64
-#define OPTICAL_REG_LIFTCUTOFF_TUNE2		0x65
-
-/* Sensor pin configuration */
-#define OPTICAL_PIN_MOTION			21
-#define OPTICAL_PIN_CS				13
-
-/* Sensor initialization values */
-#define OPTICAL_PRODUCT_ID			0x42
-#define OPTICAL_FIRMWARE_ID			0x04
-
-#define SPI_WRITE_MASK				0x80
-
-/* Max register count readable in a single motion burst */
-#define OPTICAL_MAX_BURST_SIZE			12
-
-/* Register count used for reading a single motion burst */
-#define OPTICAL_BURST_SIZE			6
-
-#define OPTICAL_MAX_CPI				12000
-#define OPTICAL_MIN_CPI				100
-
-/* Sampling thread poll timeout */
 #define OPTICAL_POLL_TIMEOUT_MS			500
 
 #define OPTICAL_THREAD_STACK_SIZE		512
 #define OPTICAL_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
 
 #define NODATA_LIMIT				10
-
-extern const u16_t firmware_length;
-extern const u8_t firmware_data[];
 
 
 enum state {
@@ -137,6 +42,15 @@ enum state {
 	STATE_SUSPENDED,
 };
 
+enum config_option {
+	CONFIG_OPTION_CPI,
+	CONFIG_OPTION_TIME_RUN,
+	CONFIG_OPTION_TIME_REST1,
+	CONFIG_OPTION_TIME_REST2,
+
+	CONFIG_OPTION_COUNT,
+};
+
 struct sensor_state {
 	struct k_spinlock lock;
 
@@ -144,14 +58,8 @@ struct sensor_state {
 	bool connected;
 	bool sample;
 	bool last_read_burst;
-};
-
-
-static const struct spi_config spi_cfg = {
-	.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB |
-		     SPI_MODE_CPOL | SPI_MODE_CPHA,
-	.frequency = CONFIG_DESKTOP_SPI_FREQ_HZ,
-	.slave = 0,
+	u32_t option[CONFIG_OPTION_COUNT];
+	u32_t option_mask;
 };
 
 
@@ -159,436 +67,43 @@ static K_SEM_DEFINE(sem, 1, 1);
 static K_THREAD_STACK_DEFINE(thread_stack, OPTICAL_THREAD_STACK_SIZE);
 static struct k_thread thread;
 
-static struct gpio_callback gpio_cb;
-
-static struct device *gpio_dev;
-static struct device *spi_dev;
+static struct device *sensor_dev;
 
 static struct sensor_state state;
 
-static atomic_t sensor_cpi;
-static atomic_t sensor_downshift_run;
-static atomic_t sensor_downshift_rest1;
-static atomic_t sensor_downshift_rest2;
 
-struct config_options {
-	u32_t cpi;
-	u32_t time_run;
-	u32_t time_rest1;
-	u32_t time_rest2;
-};
+static void data_ready_handler(struct device *dev, struct sensor_trigger *trig);
 
-static int spi_cs_ctrl(bool enable)
+
+static int enable_trigger(void)
 {
-	if (!enable) {
-		k_busy_wait(T_NCS_SCLK);
-	}
+	struct sensor_trigger trig = {
+		.type = SENSOR_TRIG_DATA_READY,
+		.chan = SENSOR_CHAN_ALL,
+	};
 
-	u32_t val = (enable) ? (0) : (1);
-	int err = gpio_pin_write(gpio_dev, OPTICAL_PIN_CS, val);
-	if (err) {
-		LOG_ERR("SPI CS ctrl failed");
-	}
-
-	if (enable) {
-		k_busy_wait(T_NCS_SCLK);
-	}
+	int err = sensor_trigger_set(sensor_dev, &trig, data_ready_handler);
 
 	return err;
 }
 
-static int reg_read(u8_t reg, u8_t *buf)
+static int disable_trigger(void)
 {
-	int err;
-
-	__ASSERT_NO_MSG((reg & SPI_WRITE_MASK) == 0);
-	state.last_read_burst = false;
-
-	err = spi_cs_ctrl(true);
-	if (err) {
-		goto error;
-	}
-
-	/* Write register address. */
-	const struct spi_buf tx_buf = {
-		.buf = &reg,
-		.len = 1
-	};
-	const struct spi_buf_set tx = {
-		.buffers = &tx_buf,
-		.count = 1
+	struct sensor_trigger trig = {
+		.type = SENSOR_TRIG_DATA_READY,
+		.chan = SENSOR_CHAN_ALL,
 	};
 
-	err = spi_transceive(spi_dev, &spi_cfg, &tx, NULL);
-	if (err) {
-		goto error;
-	}
-
-	k_busy_wait(T_SRAD);
-
-	/* Read register value. */
-	struct spi_buf rx_buf = {
-		.buf = buf,
-		.len = 1,
-	};
-	const struct spi_buf_set rx = {
-		.buffers = &rx_buf,
-		.count = 1
-	};
-
-	err = spi_transceive(spi_dev, &spi_cfg, NULL, &rx);
-	if (err) {
-		goto error;
-	}
-
-	err = spi_cs_ctrl(false);
-	if (err) {
-		goto error;
-	}
-	k_busy_wait(T_SRX);
-
-	return 0;
-
-error:
-	LOG_ERR("SPI reg read failed");
+	int err = sensor_trigger_set(sensor_dev, &trig, NULL);
 
 	return err;
 }
 
-static int reg_write(u8_t reg, u8_t val)
-{
-	int err;
-
-	__ASSERT_NO_MSG((reg & SPI_WRITE_MASK) == 0);
-	state.last_read_burst = false;
-
-	err = spi_cs_ctrl(true);
-	if (err) {
-		goto error;
-	}
-
-	u8_t buf[] = {
-		SPI_WRITE_MASK | reg,
-		val
-	};
-	const struct spi_buf tx_buf = {
-		.buf = buf,
-		.len = ARRAY_SIZE(buf)
-	};
-	const struct spi_buf_set tx = {
-		.buffers = &tx_buf,
-		.count = 1
-	};
-
-	err = spi_transceive(spi_dev, &spi_cfg, &tx, NULL);
-	if (err) {
-		goto error;
-	}
-
-	k_busy_wait(T_SCLK_NCS_WR);
-	err = spi_cs_ctrl(false);
-	if (err) {
-		goto error;
-	}
-	k_busy_wait(T_SWX);
-
-	return 0;
-
-error:
-	LOG_ERR("SPI reg write failed");
-
-	return err;
-}
-
-static int motion_burst_read(u8_t *data, size_t burst_size)
-{
-	int err;
-
-	__ASSERT_NO_MSG(burst_size <= OPTICAL_MAX_BURST_SIZE);
-
-	/* Write any value to motion burst register only if there have been
-	 * other SPI transmissions with sensor since last burst read.
-	 */
-	if (!state.last_read_burst) {
-		err = reg_write(OPTICAL_REG_MOTION_BURST, 0x00);
-		if (err) {
-			goto error;
-		}
-		state.last_read_burst = true;
-	}
-
-	err = spi_cs_ctrl(true);
-	if (err) {
-		goto error;
-	}
-
-	/* Send motion burst address */
-	u8_t reg_buf[] = {
-		OPTICAL_REG_MOTION_BURST
-	};
-	const struct spi_buf tx_buf = {
-		.buf = reg_buf,
-		.len = ARRAY_SIZE(reg_buf)
-	};
-	const struct spi_buf_set tx = {
-		.buffers = &tx_buf,
-		.count = 1
-	};
-
-	err = spi_transceive(spi_dev, &spi_cfg, &tx, NULL);
-	if (err) {
-		goto error;
-	}
-
-	k_busy_wait(T_SRAD_MOTBR);
-
-	/* Read up to 12 bytes in burst */
-	const struct spi_buf rx_buf = {
-		.buf = data,
-		.len = burst_size,
-	};
-	const struct spi_buf_set rx = {
-		.buffers = &rx_buf,
-		.count = 1
-	};
-
-	err = spi_transceive(spi_dev, &spi_cfg, NULL, &rx);
-	if (err) {
-		goto error;
-	}
-
-	/* Terminate burst */
-	err = spi_cs_ctrl(false);
-	if (err) {
-		goto error;
-	}
-	k_busy_wait(T_BEXIT);
-
-	return 0;
-
-error:
-	LOG_ERR("SPI burst write failed");
-
-	return err;
-}
-
-static int burst_write(u8_t reg, const u8_t *buf, size_t size)
-{
-	int err;
-
-	state.last_read_burst = false;
-	err = spi_cs_ctrl(true);
-	if (err) {
-		goto error;
-	}
-
-	/* Write address of burst register */
-	u8_t write_buf = reg | SPI_WRITE_MASK;
-	struct spi_buf tx_buf = {
-		.buf = &write_buf,
-		.len = 1
-	};
-	const struct spi_buf_set tx = {
-		.buffers = &tx_buf,
-		.count = 1
-	};
-
-	err = spi_transceive(spi_dev, &spi_cfg, &tx, NULL);
-	if (err) {
-		goto error;
-	}
-
-	/* Write data */
-	for (size_t i = 0; i < size; i++) {
-		write_buf = buf[i];
-
-		err = spi_transceive(spi_dev, &spi_cfg, &tx, NULL);
-		if (err) {
-			goto error;
-		}
-
-		k_busy_wait(15);
-	}
-
-	/* Terminate burst mode. */
-	err = spi_cs_ctrl(false);
-	if (err) {
-		goto error;
-	}
-
-	k_busy_wait(T_BEXIT);
-
-	return 0;
-
-error:
-	LOG_ERR("SPI reg write failed");
-
-	return err;
-}
-
-static void update_cpi(u32_t cpi)
-{
-	/* Set resolution with CPI step of 100 cpi
-	 * 0x00: 100 cpi (minimum cpi)
-	 * 0x01: 200 cpi
-	 * :
-	 * 0x31: 5000 cpi (default cpi)
-	 * :
-	 * 0x77: 12000 cpi (maximum cpi)
-	 */
-
-	if ((cpi > OPTICAL_MAX_CPI) || (cpi < OPTICAL_MIN_CPI)) {
-		LOG_WRN("CPI value %u out of range", cpi);
-		return;
-	}
-
-	/* Convert CPI to register value */
-	u8_t value = (cpi / 100) - 1;
-
-	LOG_INF("Setting CPI to %u (reg value 0x%x)", cpi, value);
-
-	int err = reg_write(OPTICAL_REG_CONFIG1, value);
-	if (err) {
-		LOG_ERR("Failed to change CPI");
-		module_set_state(MODULE_STATE_ERROR);
-	}
-}
-
-static void update_downshift_time(u8_t reg_addr, u32_t time)
-{
-	/* Set downshift time:
-	 * - Run downshift time (from Run to Rest1 mode)
-	 * - Rest 1 downshift time (from Rest1 to Rest2 mode)
-	 * - Rest 2 downshift time (from Rest2 to Rest3 mode)
-	 */
-	u32_t maxtime;
-	u32_t mintime;
-
-	switch (reg_addr) {
-	case OPTICAL_REG_RUN_DOWNSHIFT:
-		/*
-		 * Run downshift time = OPTICAL_REG_RUN_DOWNSHIFT * 10 ms
-		 */
-		maxtime = 2550;
-		mintime = 10;
-		break;
-
-	case OPTICAL_REG_REST1_DOWNSHIFT:
-		/*
-		 * Rest1 downshift time = OPTICAL_REG_RUN_DOWNSHIFT
-		 *                        * 320 * Rest1 rate (default 1 ms)
-		 */
-		maxtime = 81600;
-		mintime = 320;
-		break;
-
-	case OPTICAL_REG_REST2_DOWNSHIFT:
-		/*
-		 * Rest2 downshift time = OPTICAL_REG_REST2_DOWNSHIFT
-		 *                        * 32 * Rest2 rate (default 100 ms)
-		 */
-		maxtime = 816000;
-		mintime = 3200;
-		break;
-
-	default:
-		LOG_ERR("Not supported");
-		return;
-	}
-
-	if ((time > maxtime) || (time < mintime)) {
-		LOG_WRN("Downshift time %u out of range", time);
-		return;
-	}
-
-	__ASSERT_NO_MSG(mintime > 0);
-
-	/* Convert time to register value */
-	u8_t value = time / mintime;
-
-	LOG_INF("Setting downshift time to %u ms (reg value 0x%x)", time, value);
-
-	int err = reg_write(reg_addr, value);
-	if (err) {
-		LOG_ERR("Failed to change downshift time");
-		module_set_state(MODULE_STATE_ERROR);
-	}
-}
-
-static int firmware_load(void)
-{
-	int err;
-
-	LOG_INF("Uploading optical sensor firmware...");
-
-	/* Write 0 to Rest_En bit of Config2 register to disable Rest mode */
-	err = reg_write(OPTICAL_REG_CONFIG2, 0x00);
-	if (err) {
-		goto error;
-	}
-
-	/* Write 0x1D in SROM_enable register to initialize the operation */
-	err = reg_write(OPTICAL_REG_SROM_ENABLE, 0x1D);
-	if (err) {
-		goto error;
-	}
-
-	k_sleep(10);
-
-	/* Write 0x18 to SROM_enable to start SROM download */
-	err = reg_write(OPTICAL_REG_SROM_ENABLE, 0x18);
-	if (err) {
-		goto error;
-	}
-
-	/* Write SROM file into SROM_Load_Burst register.
-	 * Data must start with SROM_Load_Burst address.
-	 */
-	err = burst_write(OPTICAL_REG_SROM_LOAD_BURST, firmware_data,
-			firmware_length);
-	if (err) {
-		LOG_ERR("Loading firmware to optical sensor failed!");
-		goto error;
-	}
-
-	/* Read the SROM_ID register to verify the firmware ID before any
-	 * other register reads or writes
-	 */
-	k_busy_wait(200);
-	u8_t id;
-	err = reg_read(OPTICAL_REG_SROM_ID, &id);
-	if (err) {
-		goto error;
-	}
-
-	LOG_DBG("Optical chip firmware ID: 0x%x", id);
-	if (id != OPTICAL_FIRMWARE_ID) {
-		LOG_ERR("Chip is not running from SROM!");
-		err = -EIO;
-		goto error;
-	}
-
-	/* Write 0x20 to Config2 register for wireless mouse design.
-	 * This enables entering rest modes.
-	 */
-	err = reg_write(OPTICAL_REG_CONFIG2, 0x20);
-	if (err) {
-		goto error;
-	}
-
-	return 0;
-
-error:
-	LOG_ERR("SPI firmware load failed");
-
-	return err;
-}
-
-static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
-			u32_t pins)
+static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 {
 	/* Enter active polling mode until no motion */
-	gpio_pin_disable_callback(gpio_dev, OPTICAL_PIN_MOTION);
+
+	disable_trigger();
 
 	switch (state.state) {
 	case STATE_IDLE:
@@ -617,15 +132,28 @@ static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
 
 static int motion_read(bool send_event)
 {
-	u8_t data[OPTICAL_BURST_SIZE];
+	struct sensor_value value_x;
+	struct sensor_value value_y;
 
-	int err = motion_burst_read(data, sizeof(data));
+	int err;
+
+	err = sensor_sample_fetch(sensor_dev);
+
+	if (!err) {
+		err = sensor_channel_get(sensor_dev, SENSOR_CHAN_POS_DX,
+					 &value_x);
+	}
+	if (!err) {
+		err = sensor_channel_get(sensor_dev, SENSOR_CHAN_POS_DY,
+					 &value_y);
+	}
+
 	if (err || !send_event) {
 		return err;
 	}
 
 	static unsigned int nodata;
-	if (!data[2] && !data[3] && !data[4] && !data[5]) {
+	if (!value_x.val1 && !value_y.val1) {
 		if (nodata < NODATA_LIMIT) {
 			nodata++;
 		} else {
@@ -639,216 +167,154 @@ static int motion_read(bool send_event)
 
 	struct motion_event *event = new_motion_event();
 
-	event->dx =  ((s16_t)(data[5] << 8) | data[4]);
-	event->dy = -((s16_t)(data[3] << 8) | data[2]);
+	event->dx = value_x.val1;
+	event->dy = value_y.val1;
 	EVENT_SUBMIT(event);
 
 	return err;
 }
 
-static int init(struct config_options *options)
+static int init(void)
 {
 	int err = -ENXIO;
 
-	/* Obtain bindings */
-	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
-	if (!gpio_dev) {
-		LOG_ERR("Cannot get GPIO device");
-		goto error;
+	sensor_dev = device_get_binding("PMW3360");
+	if (!sensor_dev) {
+		LOG_ERR("Cannot get motion sensor device");
+		return err;
 	}
 
-	spi_dev = device_get_binding(DT_SPI_1_NAME);
-	if (!spi_dev) {
-		LOG_ERR("Cannot get SPI device");
-		goto error;
-	}
-
-	/* Wait for VCC to be stable */
-	k_sleep(1);
-
-	/* Setup SPI CS */
-	err = gpio_pin_configure(gpio_dev, OPTICAL_PIN_CS, GPIO_DIR_OUT);
-	if (err) {
-		goto error;
-	}
-
-	spi_cs_ctrl(false);
-
-	/* Reset sensor */
-	err = reg_write(OPTICAL_REG_POWER_UP_RESET, 0x5A);
-	if (err) {
-		goto error;
-	}
-	k_sleep(50);
-
-	/* Read from registers 0x02-0x06 regardless of the motion pin state. */
-	for (u8_t reg = 0x02; reg <= 0x06; reg++) {
-		u8_t buf[1];
-		err = reg_read(reg, buf);
-		if (err) {
-			goto error;
+	do {
+		err = enable_trigger();
+		if (err == -EBUSY) {
+			k_sleep(1);
 		}
+	} while (err == -EBUSY);
+
+	if (!err) {
+		state.state = STATE_IDLE;
+		module_set_state(MODULE_STATE_READY);
+	} else {
+		LOG_ERR("Cannot initialize");
+		module_set_state(MODULE_STATE_ERROR);
 	}
-
-	/* Perform SROM download. */
-	err = firmware_load();
-	if (err) {
-		goto error;
-	}
-
-	/* Set initial CPI resolution. */
-	update_cpi(options->cpi);
-	atomic_set(&sensor_cpi, options->cpi);
-
-	/* Set initial power mode downshift times. */
-	update_downshift_time(OPTICAL_REG_RUN_DOWNSHIFT, options->time_run);
-	update_downshift_time(OPTICAL_REG_REST1_DOWNSHIFT, options->time_rest1);
-	update_downshift_time(OPTICAL_REG_REST2_DOWNSHIFT, options->time_rest2);
-	atomic_set(&sensor_downshift_run, options->time_run);
-	atomic_set(&sensor_downshift_rest1, options->time_rest1);
-	atomic_set(&sensor_downshift_rest2, options->time_rest2);
-
-	/* Verify product id */
-	u8_t product_id;
-	err = reg_read(OPTICAL_REG_PRODUCT_ID, &product_id);
-	if (err || (product_id != OPTICAL_PRODUCT_ID)) {
-		LOG_ERR("Wrong product ID");
-		goto error;
-	}
-
-	/* Enable interrupt from motion pin falling edge. */
-	err = gpio_pin_configure(gpio_dev, OPTICAL_PIN_MOTION,
-				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
-				 GPIO_INT_LEVEL | GPIO_INT_ACTIVE_LOW);
-	if (err) {
-		LOG_ERR("Failed to configure GPIO");
-		goto error;
-	}
-
-	gpio_init_callback(&gpio_cb, irq_handler, BIT(OPTICAL_PIN_MOTION));
-	err = gpio_add_callback(gpio_dev, &gpio_cb);
-	if (err) {
-		LOG_ERR("Cannot add GPIO callback");
-		goto error;
-	}
-
-	k_spinlock_key_t key = k_spin_lock(&state.lock);
-	state.state = STATE_IDLE;
-	err = gpio_pin_enable_callback(gpio_dev, OPTICAL_PIN_MOTION);
-	k_spin_unlock(&state.lock, key);
-	if (err) {
-		LOG_ERR("Cannot enable GPIO interrupt");
-		goto error;
-	}
-
-	/* Inform all that module is ready */
-	module_set_state(MODULE_STATE_READY);
-
-	return 0;
-
-error:
-	module_set_state(MODULE_STATE_ERROR);
 
 	return err;
 }
 
 static void update_config(const u8_t config_id, const u8_t *data, size_t size)
 {
-	struct config_options *options;
-
 	if ((GROUP_FIELD_GET(config_id) != EVENT_GROUP_SETUP) ||
 	    (MOD_FIELD_GET(config_id) != SETUP_MODULE_SENSOR)) {
 		/* Not for us */
 		return;
 	}
 
+	enum config_option option;
+
 	switch (OPT_FIELD_GET(config_id)) {
 	case SENSOR_OPT_CPI:
-		if (size == sizeof(options->cpi)) {
-			atomic_set(&sensor_cpi, sys_get_le32(data));
-		} else {
-			goto error;
-		}
+		option = CONFIG_OPTION_CPI;
 		break;
 
 	case SENSOR_OPT_DOWNSHIFT_RUN:
-		if (size == sizeof(options->time_run)) {
-			atomic_set(&sensor_downshift_run, sys_get_le32(data));
-		} else {
-			goto error;
-		}
+		option = CONFIG_OPTION_TIME_RUN;
 		break;
 
 	case SENSOR_OPT_DOWNSHIFT_REST1:
-		if (size == sizeof(options->time_rest1)) {
-			atomic_set(&sensor_downshift_rest1, sys_get_le32(data));
-		} else {
-			goto error;
-		}
+		option = CONFIG_OPTION_TIME_REST1;
 		break;
 
 	case SENSOR_OPT_DOWNSHIFT_REST2:
-		if (size == sizeof(options->time_rest2)) {
-			atomic_set(&sensor_downshift_rest2, sys_get_le32(data));
-		} else {
-			goto error;
-		}
+		option = CONFIG_OPTION_TIME_REST2;
 		break;
 
 	default:
-		goto error;
+		LOG_WRN("Unsupported sensor option (%" PRIu8 ")", config_id);
+		return;
 	}
+
+	if (size != sizeof(state.option[option])) {
+		LOG_WRN("Invalid option size (%zu)", size);
+		return;
+	}
+
+	static_assert(CONFIG_OPTION_COUNT < 8 * sizeof(state.option_mask), "");
+
+	k_spinlock_key_t key = k_spin_lock(&state.lock);
+	state.option[option] = sys_get_le32(data);
+	WRITE_BIT(state.option_mask, option, true);
+	k_spin_unlock(&state.lock, key);
 
 	k_sem_give(&sem);
-
-	return;
-error:
-	LOG_WRN("Unsupported sensor option (%" PRIu8 ") or wrong size (%zu)",
-		config_id, size);
 }
 
-static void write_config(struct config_options *options)
+static int write_config(void)
 {
-	u32_t new_cpi = atomic_get(&sensor_cpi);
-	if (new_cpi != options->cpi) {
-		options->cpi = new_cpi;
-		update_cpi(options->cpi);
+	u32_t option[CONFIG_OPTION_COUNT];
+	u32_t mask;
+
+	static_assert(sizeof(option) == sizeof(state.option), "");
+
+	k_spinlock_key_t key = k_spin_lock(&state.lock);
+	mask = state.option_mask;
+	memcpy(option, state.option, sizeof(option));
+	state.option_mask = 0;
+	k_spin_unlock(&state.lock, key);
+
+	if ((mask & BIT(CONFIG_OPTION_CPI)) != 0) {
+		struct sensor_value val =
+			PMW3360_CPI_TO_SVALUE(state.option[CONFIG_OPTION_CPI]);
+		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
+					  PMW3360_ATTR_CPI, &val);
+
+		if (err) {
+			LOG_ERR("Cannot update CPI");
+			return err;
+		}
+	}
+	if ((mask & BIT(CONFIG_OPTION_TIME_RUN)) != 0) {
+		struct sensor_value val =
+			PMW3360_TIME_TO_SVALUE(state.option[CONFIG_OPTION_TIME_RUN]);
+		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
+					  PMW3360_ATTR_RUN_DOWNSHIFT_TIME, &val);
+
+		if (err) {
+			LOG_ERR("Cannot update RUN downshift time");
+			return err;
+		}
+	}
+	if ((mask & BIT(CONFIG_OPTION_TIME_REST1)) != 0) {
+		struct sensor_value val =
+			PMW3360_TIME_TO_SVALUE(state.option[CONFIG_OPTION_TIME_REST1]);
+		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
+					  PMW3360_ATTR_REST1_DOWNSHIFT_TIME, &val);
+
+		if (err) {
+			LOG_ERR("Cannot update REST1 downshift time");
+			return err;
+		}
+	}
+	if ((mask & BIT(CONFIG_OPTION_TIME_REST2)) != 0) {
+		struct sensor_value val =
+			PMW3360_TIME_TO_SVALUE(state.option[CONFIG_OPTION_TIME_REST2]);
+		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
+					  PMW3360_ATTR_REST2_DOWNSHIFT_TIME, &val);
+
+		if (err) {
+			LOG_ERR("Cannot update REST2 downshift time");
+			return err;
+		}
 	}
 
-	u32_t new_time = atomic_get(&sensor_downshift_run);
-	if (new_time != options->time_run) {
-		options->time_run = new_time;
-		update_downshift_time(OPTICAL_REG_RUN_DOWNSHIFT,
-				      options->time_run);
-	}
-
-	new_time = atomic_get(&sensor_downshift_rest1);
-	if (new_time != options->time_rest1) {
-		options->time_rest1 = new_time;
-		update_downshift_time(OPTICAL_REG_REST1_DOWNSHIFT,
-				      options->time_rest1);
-	}
-
-	new_time = atomic_get(&sensor_downshift_rest2);
-	if (new_time != options->time_rest2) {
-		options->time_rest2 = new_time;
-		update_downshift_time(OPTICAL_REG_REST2_DOWNSHIFT,
-				      options->time_rest2);
-	}
+	return 0;
 }
 
-/* Optical hardware interface state machine. */
 static void optical_thread_fn(void)
 {
 	s32_t timeout = K_MSEC(OPTICAL_POLL_TIMEOUT_MS);
-	struct config_options options = {
-		.cpi = CONFIG_DESKTOP_OPTICAL_DEFAULT_CPI,
-		.time_run = CONFIG_DESKTOP_OPTICAL_RUN_DOWNSHIFT_TIME_MS,
-		.time_rest1 = CONFIG_DESKTOP_OPTICAL_REST1_DOWNSHIFT_TIME_MS,
-		.time_rest2 = CONFIG_DESKTOP_OPTICAL_REST2_DOWNSHIFT_TIME_MS
-	};
 
-	int err = init(&options);
+	int err = init();
 
 	while (!err) {
 		err = k_sem_take(&sem, timeout);
@@ -856,18 +322,29 @@ static void optical_thread_fn(void)
 			continue;
 		}
 
-		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-			write_config(&options);
-		}
-
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
 		bool sample = (state.state == STATE_FETCHING) &&
 			      state.connected &&
 			      state.sample;
 		state.sample = false;
+		u32_t option_mask = state.option_mask;
 		k_spin_unlock(&state.lock, key);
 
 		err = motion_read(sample);
+
+		bool no_motion = (err == -ENODATA);
+		if (no_motion) {
+			err = 0;
+		}
+
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
+		    !err && option_mask) {
+			err = write_config();
+		}
+
+		if (err) {
+			continue;
+		}
 
 		if (!sample) {
 			timeout = K_MSEC(OPTICAL_POLL_TIMEOUT_MS);
@@ -876,11 +353,9 @@ static void optical_thread_fn(void)
 		timeout = K_FOREVER;
 
 		key = k_spin_lock(&state.lock);
-		if ((state.state == STATE_FETCHING) && (err == -ENODATA)) {
+		if ((state.state == STATE_FETCHING) && no_motion) {
 			state.state = STATE_IDLE;
-			gpio_pin_enable_callback(gpio_dev,
-						 OPTICAL_PIN_MOTION);
-			err = 0;
+			enable_trigger();
 		}
 		k_spin_unlock(&state.lock, key);
 	}
@@ -960,8 +435,7 @@ static bool event_handler(const struct event_header *eh)
 	if (is_wake_up_event(eh)) {
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
 		if (state.state == STATE_SUSPENDED) {
-			gpio_pin_disable_callback(gpio_dev,
-						  OPTICAL_PIN_MOTION);
+			disable_trigger();
 			state.state = STATE_FETCHING;
 			state.sample = true;
 			k_sem_give(&sem);
@@ -980,8 +454,7 @@ static bool event_handler(const struct event_header *eh)
 		switch (state.state) {
 		case STATE_FETCHING:
 		case STATE_IDLE:
-			gpio_pin_enable_callback(gpio_dev,
-						 OPTICAL_PIN_MOTION);
+			enable_trigger();
 			state.state = STATE_SUSPENDED;
 			module_set_state(MODULE_STATE_STANDBY);
 
