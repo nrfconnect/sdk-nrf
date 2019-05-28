@@ -27,7 +27,7 @@ pipeline {
   agent {
     docker {
       image "$IMAGE_TAG"
-      label "docker && build-node && ncs"
+      label "docker && build-node && ncs && linux"
       args '-e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/workdir/.local/bin'
     }
   }
@@ -62,7 +62,7 @@ pipeline {
         // Fetch the tools used to checking compliance
         dir("ci-tools") {
           git branch: "master", url: "$REPO_CI_TOOLS"
-	  sh "git checkout ${REPO_CI_TOOLS_SHA}"
+          sh "git checkout ${REPO_CI_TOOLS_SHA}"
         }
         // Initialize west
         sh "west init -l nrf/"
@@ -107,7 +107,7 @@ pipeline {
                 file_path = "zephyr/sanity-out/nrf9160_pca10090ns/nrf9160/${ns_samples[i]}/test_build/zephyr/zephyr.hex"
                 check_and_store_sample("$file_path", "${ns_samples[i]}_nrf9160_pca10090ns.hex")
               }
-	      ns_apps = ['asset_tracker']
+              ns_apps = ['asset_tracker']
               for(int i=0; i<ns_apps.size(); i++)
               {
                 file_path = "zephyr/sanity-out/nrf9160_pca10090ns/${ns_apps[i]}/test_build/zephyr/zephyr.hex"
