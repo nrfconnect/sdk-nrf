@@ -40,7 +40,7 @@ manifest:
     - name: fw-nrfconnect-zephyr
       path: zephyr
       west-commands: scripts/west-commands.yml
-      revision: 31529f68ec7fb266a4ec1761009e100ef9850ea5
+      revision: 518b504ce760c2308aee332ee26feb2e8b7fd19a
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
