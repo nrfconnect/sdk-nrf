@@ -12,5 +12,6 @@ menuconfig SENSOR
 if SENSOR
 
 rsource "sensor_sim/Kconfig"
+rsource "pmw3360/Kconfig"
 
 endif # SENSOR

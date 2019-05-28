@@ -4,5 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-add_subdirectory_ifdef(CONFIG_SENSOR_SIM sensor_sim)
-add_subdirectory_ifdef(CONFIG_PMW3360 pmw3360)
+zephyr_library()
+
+zephyr_library_sources(pmw3360.c)
+zephyr_library_sources(pmw3360_priv.c)
