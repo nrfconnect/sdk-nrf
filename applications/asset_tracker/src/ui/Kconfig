@@ -1,0 +1,95 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "User Interface"
+
+config UI_LED_USE_PWM
+	bool "Use PWM to control LEDs"
+	default y if BOARD_NRF9160_PCA20035NS
+	select PWM if BOARD_NRF9160_PCA20035NS
+	select PWM_0 if BOARD_NRF9160_PCA20035NS
+
+if UI_LED_USE_PWM
+
+config UI_LED_PWM_DEV_NAME
+	string "PWM device name for RGB LED"
+	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_0_LABEL)" if BOARD_NRF9160_PCA20035NS
+
+config UI_LED_RED_PIN
+	int "Red LED pin number"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH0_PIN)
+
+config UI_LED_GREEN_PIN
+	int "Green LED pin number"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH1_PIN)
+
+config UI_LED_BLUE_PIN
+	int "Blue LED pin number"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH2_PIN)
+
+endif # UI_LED_USE_PWM
+
+config UI_BUZZER
+	bool "Enable buzzer"
+	default y if BOARD_NRF9160_PCA20035NS
+	select PWM if BOARD_NRF9160_PCA20035NS
+	select PWM_1 if BOARD_NRF9160_PCA20035NS
+
+if UI_BUZZER
+
+config UI_BUZZER_PWM_DEV_NAME
+	string "PWM device name for buzzer"
+	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_1_LABEL)" if BOARD_NRF9160_PCA20035NS
+
+config UI_BUZZER_PIN
+	int "Buzzer pin number"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_1_CH0_PIN)
+
+config UI_BUZZER_MIN_FREQUENCY
+	int "Minimum buzzer frequency"
+	default 100
+
+config UI_BUZZER_MAX_FREQUENCY
+	int "Maximum buzzer frequency"
+	default 10000
+
+endif # UI_BUZZER
+
+config UI_NMOS
+	bool "Enable NMOS control"
+	default y if BOARD_NRF9160_PCA20035NS
+	select PWM if BOARD_NRF9160_PCA20035NS
+	select PWM_2 if BOARD_NRF9160_PCA20035NS
+
+if UI_NMOS
+
+config UI_NMOS_PWM_DEV_NAME
+	string "PWM device name for buzzer"
+	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_2_LABEL)" if BOARD_NRF9160_PCA20035NS
+
+config UI_NMOS_1_PIN
+	int "NMOS 1 pin"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH0_PIN)
+
+config UI_NMOS_2_PIN
+	int "NMOS 2 pin"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH1_PIN)
+
+config UI_NMOS_3_PIN
+	int "NMOS 3 pin"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH2_PIN)
+
+config UI_NMOS_4_PIN
+	int "NMOS 4 pin"
+	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH3_PIN)
+
+endif # UI_NMOS
+
+endmenu
+
+module = UI
+module-str = User Interface
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
