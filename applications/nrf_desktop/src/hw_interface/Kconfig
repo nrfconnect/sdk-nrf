@@ -147,94 +147,106 @@ comment "Battery charger configuration"
 
 choice
 	prompt "Select battery charging interface"
-	default DESKTOP_BATTERY_NONE
+	default DESKTOP_BATTERY_CHARGER_NONE
 
-config DESKTOP_BATTERY_NONE
+config DESKTOP_BATTERY_CHARGER_NONE
 	bool "No battery charging"
 
-config DESKTOP_BATTERY_DISCRETE
+config DESKTOP_BATTERY_CHARGER
 	bool "Discrete battery charger"
 
 endchoice
 
-config DESKTOP_BATTERY_MIN_LEVEL
-	int "Minimum battery voltage [mV] that corresponds to 0% level"
-	depends on DESKTOP_BATTERY_DISCRETE
-	default 3100
-
-config DESKTOP_BATTERY_MAX_LEVEL
-	int "Maximum battery voltage [mV] that corresponds to 100% level"
-	depends on DESKTOP_BATTERY_DISCRETE
-	default 4180
-
-config DESKTOP_BATTERY_VOLTAGE_DIVIDER_UPPER
-	int "Upper resistor in battery measurement voltage divider [kOhm]"
-	depends on DESKTOP_BATTERY_DISCRETE
-	default 1500
-	help
-	  Output voltage is measured on the lower resistor.
-
-config DESKTOP_VOLTAGE_TO_SOC_DELTA
-	int "Difference between adjacent elements in conversion LUT [mV]"
-	depends on DESKTOP_BATTERY_DISCRETE
-	default 10
-	range 1 100
-	help
-	  Value used to convert battery voltage [mV] to State of Charge [%].
-
-config DESKTOP_BATTERY_VOLTAGE_DIVIDER_LOWER
-	int "Lower resistor in battery measurement voltage divider [kOhm]"
-	depends on DESKTOP_BATTERY_DISCRETE
-	default 180
-	help
-	  Output voltage is measured on the lower resistor.
-
-config DESKTOP_BATTERY_POLL_INTERVAL_MS
-	int "Time between the subsequent battery measurements [ms]"
-	depends on DESKTOP_BATTERY_DISCRETE
-	default 10000
-	range 500 120000
-
-config DESKTOP_BATTERY_CHARGE_ENABLE_PIN
-	int "Battery charging enable pin"
-	depends on DESKTOP_BATTERY_DISCRETE
-	help
-	  A pin which enables battery charging.
-
-config DESKTOP_BATTERY_MONITOR_ENABLE_PIN
-	int "Battery monitoring enable pin"
-	depends on DESKTOP_BATTERY_DISCRETE
-	help
-	  A pin which enables the battery measurement circuit.
-
-config DESKTOP_BATTERY_CSO_PIN
+config DESKTOP_BATTERY_CHARGER_CSO_PIN
 	int "Charging status pin"
-	depends on DESKTOP_BATTERY_DISCRETE
+	depends on DESKTOP_BATTERY_CHARGER
 	help
 	  A pin number to which CSO output is connected.
 
 choice
 	prompt "Select CSO pin pull"
-	default DESKTOP_BATTERY_CSO_PULL_NONE
+	default DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE
 
-config DESKTOP_BATTERY_CSO_PULL_NONE
+config DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE
 	bool "Disable CSO pin pull"
 
-config DESKTOP_BATTERY_CSO_PULL_UP
+config DESKTOP_BATTERY_CHARGER_CSO_PULL_UP
 	bool "Enable CPO pin pull up"
 
-config DESKTOP_BATTERY_CSO_PULL_DOWN
+config DESKTOP_BATTERY_CHARGER_CSO_PULL_DOWN
 	bool "Enable CSO pin pull down"
 
 endchoice
 
-config DESKTOP_BATTERY_CSO_FREQ
+config DESKTOP_BATTERY_CHARGER_ENABLE_PIN
+	int "Battery charging enable pin"
+	depends on DESKTOP_BATTERY_CHARGER
+	help
+	  A pin which enables battery charging.
+
+config DESKTOP_BATTERY_CHARGER_CSO_FREQ
 	int "CSO switching frequency (in Hz) on error state"
-	depends on DESKTOP_BATTERY_DISCRETE
+	depends on DESKTOP_BATTERY_CHARGER
 	default 1000
 	help
 	  A frequency with which CSO pin switches state when charging
 	  error occurs.
+
+choice
+	prompt "Select battery measurement"
+	default DESKTOP_BATTERY_MEAS_NONE
+
+config DESKTOP_BATTERY_MEAS_NONE
+	bool "No battery measurement"
+
+config DESKTOP_BATTERY_MEAS
+	bool "Enable battery measurement circuit"
+
+endchoice
+
+config DESKTOP_BATTERY_MEAS_MIN_LEVEL
+	int "Minimum battery voltage [mV] that corresponds to 0% level"
+	depends on DESKTOP_BATTERY_MEAS
+	default 3100
+
+config DESKTOP_BATTERY_MEAS_MAX_LEVEL
+	int "Maximum battery voltage [mV] that corresponds to 100% level"
+	depends on DESKTOP_BATTERY_MEAS
+	default 4180
+
+config DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_UPPER
+	int "Upper resistor in battery measurement voltage divider [kOhm]"
+	depends on DESKTOP_BATTERY_MEAS
+	default 1500
+	help
+	  Output voltage is measured on the lower resistor.
+
+config DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_LOWER
+	int "Lower resistor in battery measurement voltage divider [kOhm]"
+	depends on DESKTOP_BATTERY_MEAS
+	default 180
+	help
+	  Output voltage is measured on the lower resistor.
+
+config DESKTOP_VOLTAGE_TO_SOC_DELTA
+	int "Difference between adjacent elements in conversion LUT [mV]"
+	depends on DESKTOP_BATTERY_MEAS
+	default 10
+	range 1 100
+	help
+	  Value used to convert battery voltage [mV] to State of Charge [%].
+
+config DESKTOP_BATTERY_MEAS_POLL_INTERVAL_MS
+	int "Time between the subsequent battery measurements [ms]"
+	depends on DESKTOP_BATTERY_MEAS
+	default 10000
+	range 500 120000
+
+config DESKTOP_BATTERY_MEAS_ENABLE_PIN
+	int "Battery monitoring enable pin"
+	depends on DESKTOP_BATTERY_MEAS
+	help
+	  A pin which enables the battery measurement circuit.
 
 comment "Log level configuration"
 
@@ -267,8 +279,14 @@ source "subsys/logging/Kconfig.template.log_config"
 endif
 
 if !DESKTOP_BATTERY_NONE
-module = DESKTOP_BATTERY
-module-str = battery module
+module = DESKTOP_BATTERY_CHARGER
+module-str = battery charger module
+source "subsys/logging/Kconfig.template.log_config"
+endif
+
+if DESKTOP_BATTERY_MEAS
+module = DESKTOP_BATTERY_MEAS
+module-str = battery measurement module
 source "subsys/logging/Kconfig.template.log_config"
 endif
 
