@@ -24,5 +24,8 @@ target_sources_ifdef(CONFIG_DESKTOP_WHEEL_ENABLE app
 target_sources_ifdef(CONFIG_DESKTOP_LED_ENABLE app
 		     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/leds.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_BATTERY_DISCRETE app
-                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/battery_discrete.c)
+target_sources_ifdef(CONFIG_DESKTOP_BATTERY_CHARGER app
+                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/battery_charger.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_BATTERY_MEAS app
+                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/battery_meas.c)
