@@ -6,6 +6,8 @@
 
 menu "Application sample"
 
+rsource "src/ui/Kconfig"
+
 config CLOUD_BUTTON
 	bool "Enable button sensor"
 	default y
