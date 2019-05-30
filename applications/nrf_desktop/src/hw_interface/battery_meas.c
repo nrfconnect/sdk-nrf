@@ -29,20 +29,27 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);
 #define ADC_RESOLUTION		12
 #define ADC_OVERSAMPLING	4 /* 2^ADC_OVERSAMPLING samples are averaged */
 #define ADC_MAX 		4096
-#define ADC_GAIN		ADC_GAIN_1
+#define ADC_GAIN		BATTERY_MEAS_ADC_GAIN
 #define ADC_REFERENCE		ADC_REF_INTERNAL
 #define ADC_REF_INTERNAL_MV	600UL
 #define ADC_ACQUISITION_TIME	ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 10)
 #define ADC_CHANNEL_ID		0
-#define ADC_CHANNEL_INPUT	NRF_SAADC_INPUT_AIN3
+#define ADC_CHANNEL_INPUT	BATTERY_MEAS_ADC_INPUT
 /* ADC asynchronous read is scheduled on odd works. Value read happens during
  * even works. This is done to avoid creating a thread for battery monitor.
  */
 #define BATTERY_WORK_INTERVAL	(CONFIG_DESKTOP_BATTERY_MEAS_POLL_INTERVAL_MS / 2)
-#define BATTERY_VOLTAGE(sample)	(sample * ADC_REF_INTERNAL_MV		\
-		* (CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_UPPER		\
-		+ CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_LOWER)		\
+
+#if IS_ENABLED(CONFIG_DESKTOP_BATTERY_MEAS_HAS_VOLTAGE_DIVIDER)
+#define BATTERY_VOLTAGE(sample)	(sample * BATTERY_MEAS_VOLTAGE_GAIN	\
+		* ADC_REF_INTERNAL_MV					\
+		* (CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_UPPER	\
+		+ CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_LOWER)	\
 		/ CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_LOWER / ADC_MAX)
+#else
+#define BATTERY_VOLTAGE(sample) (sample * BATTERY_MEAS_VOLTAGE_GAIN	\
+				 * ADC_REF_INTERNAL_MV / ADC_MAX)
+#endif
 
 static struct device *adc_dev;
 static s16_t adc_buffer;
@@ -95,12 +102,14 @@ static int init_adc(void)
 
 static int battery_monitor_start(void)
 {
-	int err = gpio_pin_write(gpio_dev,
-				 CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
-				 1);
-	if (err) {
-		 LOG_ERR("Cannot enable battery monitor circuit");
-		 return err;
+	if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN)) {
+		int err = gpio_pin_write(gpio_dev,
+					 CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
+					 1);
+		if (err) {
+			 LOG_ERR("Cannot enable battery monitor circuit");
+			 return err;
+		}
 	}
 
 	sampling = true;
@@ -114,16 +123,21 @@ static void battery_monitor_stop(void)
 {
 	k_delayed_work_cancel(&battery_lvl_read);
 	sampling = false;
+	int err = 0;
 
-	int err = gpio_pin_write(gpio_dev,
-				 CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
-				 0);
-	if (err) {
-		LOG_ERR("Cannot disable battery monitor circuit");
-		module_set_state(MODULE_STATE_ERROR);
-	} else {
-		module_set_state(MODULE_STATE_STANDBY);
+	if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN)) {
+		err = gpio_pin_write(gpio_dev,
+				     CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
+				     0);
+		if (err) {
+			LOG_ERR("Cannot disable battery monitor circuit");
+			module_set_state(MODULE_STATE_ERROR);
+
+			return;
+		}
 	}
+
+	module_set_state(MODULE_STATE_STANDBY);
 }
 
 static void battery_lvl_process(void)
@@ -192,19 +206,22 @@ static void battery_lvl_read_fn(struct k_work *work)
 
 static int init_fn(void)
 {
-	int err;
+	int err = 0;
 
-	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
-	if (!gpio_dev) {
-		LOG_ERR("Cannot get GPIO device");
-		err = -ENXIO;
-		goto error;
+	if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN)) {
+		gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
+		if (!gpio_dev) {
+			LOG_ERR("Cannot get GPIO device");
+			err = -ENXIO;
+			goto error;
+		}
+
+		/* Enable battery monitoring */
+		err = gpio_pin_configure(gpio_dev,
+					 CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
+					 GPIO_DIR_OUT);
 	}
 
-	/* Enable battery monitoring */
-	err = gpio_pin_configure(gpio_dev,
-				 CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
-				 GPIO_DIR_OUT);
 	if (!err) {
 		err = init_adc();
 	}
