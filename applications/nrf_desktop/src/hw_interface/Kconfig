@@ -152,14 +152,14 @@ choice
 config DESKTOP_BATTERY_CHARGER_NONE
 	bool "No battery charging"
 
-config DESKTOP_BATTERY_CHARGER
+config DESKTOP_BATTERY_CHARGER_DISCRETE
 	bool "Discrete battery charger"
 
 endchoice
 
 config DESKTOP_BATTERY_CHARGER_CSO_PIN
 	int "Charging status pin"
-	depends on DESKTOP_BATTERY_CHARGER
+	depends on DESKTOP_BATTERY_CHARGER_DISCRETE
 	help
 	  A pin number to which CSO output is connected.
 
@@ -180,13 +180,13 @@ endchoice
 
 config DESKTOP_BATTERY_CHARGER_ENABLE_PIN
 	int "Battery charging enable pin"
-	depends on DESKTOP_BATTERY_CHARGER
+	depends on DESKTOP_BATTERY_CHARGER_DISCRETE
 	help
 	  A pin which enables battery charging.
 
 config DESKTOP_BATTERY_CHARGER_CSO_FREQ
 	int "CSO switching frequency (in Hz) on error state"
-	depends on DESKTOP_BATTERY_CHARGER
+	depends on DESKTOP_BATTERY_CHARGER_DISCRETE
 	default 1000
 	help
 	  A frequency with which CSO pin switches state when charging
@@ -214,17 +214,19 @@ config DESKTOP_BATTERY_MEAS_MAX_LEVEL
 	depends on DESKTOP_BATTERY_MEAS
 	default 4180
 
+config DESKTOP_BATTERY_MEAS_HAS_VOLTAGE_DIVIDER
+	bool "Use voltage divider for battery measurement"
+	depends on DESKTOP_BATTERY_MEAS
+
 config DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_UPPER
 	int "Upper resistor in battery measurement voltage divider [kOhm]"
-	depends on DESKTOP_BATTERY_MEAS
-	default 1500
+	depends on DESKTOP_BATTERY_MEAS_HAS_VOLTAGE_DIVIDER
 	help
 	  Output voltage is measured on the lower resistor.
 
 config DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_LOWER
 	int "Lower resistor in battery measurement voltage divider [kOhm]"
-	depends on DESKTOP_BATTERY_MEAS
-	default 180
+	depends on DESKTOP_BATTERY_MEAS_HAS_VOLTAGE_DIVIDER
 	help
 	  Output voltage is measured on the lower resistor.
 
@@ -242,9 +244,14 @@ config DESKTOP_BATTERY_MEAS_POLL_INTERVAL_MS
 	default 10000
 	range 500 120000
 
+config DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN
+	bool "Use pin for enabling battery measurement"
+	depends on DESKTOP_BATTERY_MEAS
+
 config DESKTOP_BATTERY_MEAS_ENABLE_PIN
 	int "Battery monitoring enable pin"
 	depends on DESKTOP_BATTERY_MEAS
+	default 255 if !DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN
 	help
 	  A pin which enables the battery measurement circuit.
 
@@ -279,7 +286,7 @@ source "subsys/logging/Kconfig.template.log_config"
 endif
 
 if !DESKTOP_BATTERY_NONE
-module = DESKTOP_BATTERY_CHARGER
+module = DESKTOP_BATTERY_CHARGER_DISCRETE
 module-str = battery charger module
 source "subsys/logging/Kconfig.template.log_config"
 endif
