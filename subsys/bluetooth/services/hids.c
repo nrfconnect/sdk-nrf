@@ -1091,7 +1091,7 @@ static int inp_rep_notify_all(struct bt_gatt_hids *hids_obj,
 	if (rep_data != NULL) {
 		return bt_gatt_notify_cb(
 		    NULL, &hids_obj->svc.attrs[hids_inp_rep->att_ind], rep,
-		    hids_inp_rep->size, cb);
+		    hids_inp_rep->size, cb, NULL);
 	} else {
 		return -ENODATA;
 	}
@@ -1131,7 +1131,7 @@ int bt_gatt_hids_inp_rep_send(struct bt_gatt_hids *hids_obj,
 	store_input_report(hids_inp_rep, rep_data, rep, len);
 	int err =
 	    bt_gatt_notify_cb(conn, &hids_obj->svc.attrs[hids_inp_rep->att_ind],
-			      rep, hids_inp_rep->size, cb);
+			      rep, hids_inp_rep->size, cb, NULL);
 
 	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
@@ -1185,7 +1185,7 @@ static int boot_mouse_inp_report_notify_all(
 	if (rep_data != NULL) {
 		return bt_gatt_notify_cb(
 		    NULL, &hids_obj->svc.attrs[rep_ind], rep_buff,
-		    sizeof(conn_data->hids_boot_mouse_inp_rep_ctx), cb);
+		    sizeof(conn_data->hids_boot_mouse_inp_rep_ctx), cb, NULL);
 	} else {
 		return -ENODATA;
 	}
@@ -1234,7 +1234,7 @@ int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
 
 	int err = bt_gatt_notify_cb(
 	    conn, &hids_obj->svc.attrs[rep_ind], rep_data,
-	    sizeof(conn_data->hids_boot_mouse_inp_rep_ctx), cb);
+	    sizeof(conn_data->hids_boot_mouse_inp_rep_ctx), cb, NULL);
 
 	rep_data[1] = 0;
 	rep_data[2] = 0;
@@ -1283,7 +1283,7 @@ boot_kb_inp_notify_all(struct bt_gatt_hids *hids_obj, u8_t const *rep,
 	if (rep_data != NULL) {
 		return bt_gatt_notify_cb(
 		    NULL, &hids_obj->svc.attrs[rep_ind], rep_data,
-		    sizeof(conn_data->hids_boot_kb_inp_rep_ctx), cb);
+		    sizeof(conn_data->hids_boot_kb_inp_rep_ctx), cb, NULL);
 	} else {
 		return -ENODATA;
 	}
@@ -1327,7 +1327,8 @@ int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
 
 	int err =
 	    bt_gatt_notify_cb(conn, &hids_obj->svc.attrs[rep_ind], rep_data,
-			      sizeof(conn_data->hids_boot_kb_inp_rep_ctx), cb);
+			      sizeof(conn_data->hids_boot_kb_inp_rep_ctx),
+			      cb, NULL);
 
 	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
