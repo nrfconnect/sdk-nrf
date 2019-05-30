@@ -66,8 +66,10 @@ static ssize_t on_receive(struct bt_conn *conn,
 	return len;
 }
 
-static void on_sent(struct bt_conn *conn)
+static void on_sent(struct bt_conn *conn, void *user_data)
 {
+	ARG_UNUSED(user_data);
+
 	LOG_DBG("Data send, conn %p", conn);
 
 	if (nus_cb.sent_cb) {
@@ -106,9 +108,11 @@ int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, uint16_t len)
 {
 	if (!conn) {
 		LOG_DBG("Notification send to all connected peers");
-		return  bt_gatt_notify_cb(NULL, &attrs[2], data, len, on_sent);
+		return  bt_gatt_notify_cb(NULL, &attrs[2], data,
+					  len, on_sent, NULL);
 	} else if (is_notification_enabled(conn, nuslc_ccc_cfg)) {
-		return bt_gatt_notify_cb(conn, &attrs[2], data, len, on_sent);
+		return bt_gatt_notify_cb(conn, &attrs[2], data,
+					 len, on_sent, NULL);
 	} else {
 		return -EINVAL;
 	}

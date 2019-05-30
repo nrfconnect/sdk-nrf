@@ -334,8 +334,10 @@ static void mouse_report_sent(const struct bt_conn *conn, bool error)
 	EVENT_SUBMIT(event);
 }
 
-static void mouse_report_sent_cb(struct bt_conn *conn)
+static void mouse_report_sent_cb(struct bt_conn *conn, void *user_data)
 {
+	ARG_UNUSED(user_data);
+
 	mouse_report_sent(conn, false);
 }
 
@@ -410,8 +412,10 @@ static void keyboard_report_sent(const struct bt_conn *conn, bool error)
 	EVENT_SUBMIT(event);
 }
 
-static void keyboard_report_sent_cb(struct bt_conn *conn)
+static void keyboard_report_sent_cb(struct bt_conn *conn, void *user_data)
 {
+	ARG_UNUSED(user_data);
+
 	keyboard_report_sent(conn, false);
 }
 
