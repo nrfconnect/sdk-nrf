@@ -4,22 +4,24 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <zephyr.h>
 #include <stdio.h>
-#include <uart.h>
 #include <string.h>
 
-#include <net/coap_api.h>
+#include <zephyr.h>
+#include <net/coap.h>
 #include <net/socket.h>
 #include <lte_lc.h>
 
 #define APP_COAP_SEND_INTERVAL_MS K_MSEC(5000)
-#define APP_COAP_TICK_INTERVAL_MS K_MSEC(1000)
+#define APP_COAP_MAX_MSG_LEN 1280
+#define APP_COAP_VERSION 1
 
-struct pollfd fds;
+static int sock = 0;
+static struct pollfd fds;
 static struct sockaddr_storage server;
 static u16_t next_token;
-static int transport_handle;
+
+static u8_t coap_buf[APP_COAP_MAX_MSG_LEN];
 
 #if defined(CONFIG_BSD_LIBRARY)
 
@@ -38,14 +40,6 @@ void bsd_irrecoverable_error_handler(uint32_t err)
 }
 
 #endif /* defined(CONFIG_BSD_LIBRARY) */
-
-/**@brief Handles an error notified by CoAP. */
-static void coap_client_error_handler(u32_t error_code, coap_message_t *message)
-{
-	ARG_UNUSED(message);
-
-	printk("CoAP error handler: error_code: %u\n", error_code);
-}
 
 /**@brief Resolves the configured hostname. */
 static int server_resolve(void)
@@ -92,115 +86,98 @@ static int client_init(void)
 {
 	int err;
 
-	const struct sockaddr_in client_addr = {
-		.sin_port = 0,
-		.sin_family = AF_INET,
-		.sin_addr.s_addr = 0
-	};
-
-	coap_local_t local_port_list[] = {
-		{
-			.addr = (struct sockaddr *)&client_addr,
-			.protocol = IPPROTO_UDP,
-			.setting = NULL
-		}
-	};
-
-	coap_transport_init_t transport_param = {
-		.port_table = local_port_list
-	};
-
-	err = coap_init(sys_rand32_get(), &transport_param, k_malloc, k_free);
-	if (err != 0) {
-		printf("Failed to initialize CoAP %d\n", err);
-		return -err;
+	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock < 0) {
+		printk("Failed to create CoAP socket: %d.\n", errno);
+		return -errno;
 	}
 
-	/* NOTE: transport_handle is the socket descriptor. */
-	transport_handle = local_port_list[0].transport;
+	err = connect(sock, (struct sockaddr *)&server,
+		      sizeof(struct sockaddr_in));
+	if (err < 0) {
+		printk("Connect failed : %d\n", errno);
+		return -errno;
+	}
 
-	fds.fd = transport_handle;
+	/* Initialize FDS, for poll. */
+	fds.fd = sock;
 	fds.events = POLLIN;
 
-	err = coap_error_handler_register(coap_client_error_handler);
-	if (err != 0) {
-		printf("Failed to register CoAP error handler\n");
-		return -err;
-	}
-
+	/* Randomize token. */
 	next_token = sys_rand32_get();
 
 	return 0;
 }
 
 /**@brief Handles responses from the remote CoAP server. */
-static void client_get_response_handle(u32_t status, void *arg,
-				     coap_message_t *response)
+static int client_handle_get_response(u8_t *buf, int received)
 {
-	char buf[16];
+	int err;
+	struct coap_packet reply;
+	const u8_t *payload;
+	u16_t payload_len;
+	u8_t token[8];
+	u16_t token_len;
+	u8_t temp_buf[16];
 
-	printk("CoAP response: status: 0x%x", status);
-
-	if (status == 0) {
-		snprintf(buf, MAX(response->payload_len, sizeof(buf)), "%s",
-			 response->payload);
-		printk(", token 0x%02x%02x, payload: %s", response->token[0],
-		       response->token[1], buf);
+	err = coap_packet_parse(&reply, buf, received, NULL, 0);
+	if (err < 0) {
+		printk("Malformed response received: %d\n", err);
+		return err;
 	}
 
-	printk("\n");
+	payload = coap_packet_get_payload(&reply, &payload_len);
+	token_len = coap_header_get_token(&reply, token);
+
+	if ((token_len != sizeof(next_token)) &&
+	    (memcmp(&next_token, token, sizeof(next_token)) != 0)) {
+		printk("Invalid token received: 0x%02x%02x\n",
+		       token[1], token[0]);
+		return 0;
+	}
+
+	snprintf(temp_buf, MAX(payload_len, sizeof(temp_buf)), "%s", payload);
+
+	printk("CoAP response: code: 0x%x, token 0x%02x%02x, payload: %s\n",
+	       coap_header_get_code(&reply), token[1], token[0], temp_buf);
+
+	return 0;
 }
 
 /**@biref Send CoAP GET request. */
 static int client_get_send(void)
 {
 	int err;
-	u32_t handle;
-	coap_message_t *request;
-	coap_message_conf_t message_conf;
-
-	memset(&message_conf, 0x00, sizeof(message_conf));
-	message_conf.type = COAP_TYPE_CON;
-	message_conf.code = COAP_CODE_GET;
-	message_conf.transport = transport_handle;
-	message_conf.id = 0; /* Auto-generate message ID. */
-	message_conf.token[0] = (next_token >> 8) & 0xFF;
-	message_conf.token[1] = next_token & 0xFF;
-	message_conf.token_len = 2;
-	message_conf.response_callback = client_get_response_handle;
+	struct coap_packet request;
 
 	next_token++;
 
-	err = coap_message_new(&request, &message_conf);
-	if (err != 0) {
-		printk("Failed to allocate CoAP request message %d!\n", err);
-		return -err;
+	err = coap_packet_init(&request, coap_buf, sizeof(coap_buf),
+			       APP_COAP_VERSION, COAP_TYPE_NON_CON,
+			       sizeof(next_token), (u8_t *)&next_token,
+			       COAP_METHOD_GET, coap_next_id());
+	if (err < 0) {
+		printk("Failed to create CoAP request, %d\n", err);
+		return err;
 	}
 
-	err = coap_message_remote_addr_set(request, (struct sockaddr *)&server);
-	if (err != 0) {
-		goto exit;
+	err = coap_packet_append_option(&request, COAP_OPTION_URI_PATH,
+					(u8_t *)CONFIG_COAP_RESOURCE,
+					strlen(CONFIG_COAP_RESOURCE));
+	if (err < 0) {
+		printk("Failed to encode CoAP option, %d\n", err);
+		return err;
 	}
 
-	err = coap_message_opt_str_add(request, COAP_OPT_URI_PATH,
-				       (u8_t *)CONFIG_COAP_RESOURCE,
-				       strlen(CONFIG_COAP_RESOURCE));
-	if (err != 0) {
-		goto exit;
+	err = send(sock, request.data, request.offset, 0);
+	if (err < 0) {
+		printk("Failed to send CoAP request, %d\n", errno);
+		return -errno;
 	}
 
-	err = coap_message_send(&handle, request);
-	if (err != 0) {
-		goto exit;
-	}
+	printk("CoAP request sent: token 0x%04x\n", next_token);
 
-	printk("CoAP request sent: token 0x%02x%02x\n",
-	       request->token[0], request->token[1]);
-
-exit:
-	(void)coap_message_delete(request);
-
-	return -err;
+	return 0;
 }
 
 /**@brief Configures modem to provide LTE link. Blocks until link is
@@ -262,8 +239,7 @@ static int wait(int timeout)
 void main(void)
 {
 	s64_t next_msg_time = APP_COAP_SEND_INTERVAL_MS;
-	s64_t next_tick_time = APP_COAP_TICK_INTERVAL_MS;
-	int err;
+	int err, received;
 
 	printk("The nRF CoAP client sample started\n");
 
@@ -279,21 +255,19 @@ void main(void)
 		return;
 	}
 
-	while (1) {
-		if (k_uptime_get() >= next_tick_time) {
-			coap_time_tick();
-			next_tick_time += APP_COAP_TICK_INTERVAL_MS;
-		}
+	next_msg_time = k_uptime_get();
 
+	while (1) {
 		if (k_uptime_get() >= next_msg_time) {
 			if (client_get_send() != 0) {
-				printk("Failed to send GET request.\n");
+				printk("Failed to send GET request, exit...\n");
+				break;
 			}
 
 			next_msg_time += APP_COAP_SEND_INTERVAL_MS;
 		}
 
-		s64_t remaining = next_tick_time - k_uptime_get();
+		s64_t remaining = next_msg_time - k_uptime_get();
 
 		if (remaining < 0) {
 			remaining = 0;
@@ -305,12 +279,32 @@ void main(void)
 				continue;
 			}
 
-			return;
+			printk("Poll error, exit...\n");
+			break;
 		}
 
-		coap_input();
+		received = recv(sock, coap_buf, sizeof(coap_buf), MSG_DONTWAIT);
+		if (received < 0) {
+			if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				printk("socket EAGAIN\n");
+				continue;
+			} else {
+				printk("Socket error, exit...\n");
+				break;
+			}
+		}
 
-		/* A workaround for incomplete bsd_os_timedwait implementation. */
-		k_sleep(K_MSEC(10));
+		if (received == 0) {
+			printk("Empty datagram\n");
+			continue;
+		}
+
+		err = client_handle_get_response(coap_buf, received);
+		if (err < 0) {
+			printk("Invalid response, exit...\n");
+			break;
+		}
 	}
+
+	(void)close(sock);
 }
