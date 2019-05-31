@@ -47,10 +47,12 @@ This sample uses the following libraries:
 
 From |NCS|
   * ``drivers/lte_link_control``
-  * ``subsys/net/lib/coap``
 
 From nrfxlib
   * :ref:`nrfxlib:bsdlib`
+
+From Zephyr
+  * :ref:`CoAP <zephyr:networking_reference>`
 
 In addition, it uses the following samples:
 
