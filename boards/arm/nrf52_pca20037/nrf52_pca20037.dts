@@ -69,19 +69,19 @@
 		};
 		slot0_partition: partition@c000 {
 			label = "image-0";
-			reg = <0x0000C000 0x000032000>;
+			reg = <0x0000C000 0x000036000>;
 		};
-		slot1_partition: partition@3e000 {
+		slot1_partition: partition@42000 {
 			label = "image-1";
-			reg = <0x0003E000 0x000032000>;
+			reg = <0x00042000 0x000036000>;
 		};
-		scratch_partition: partition@70000 {
+		scratch_partition: partition@78000 {
 			label = "image-scratch";
-			reg = <0x00070000 0x0000A000>;
+			reg = <0x00078000 0x00004000>;
 		};
-		storage_partition: partition@7a000 {
+		storage_partition: partition@7c000 {
 			label = "storage";
-			reg = <0x0007A000 0x00006000>;
+			reg = <0x0007C000 0x00004000>;
 		};
 	};
 };
