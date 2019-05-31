@@ -29,11 +29,11 @@
 #define NON_SECURE_APP_ADDRESS DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0
 #endif /* USE_PARTITION_MANAGER */
 
-#define LAST_SECURE_ADDRESS (NON_SECURE_APP_ADDRESS - 1)
-#define LAST_SECURE_REGION \
-	(LAST_SECURE_ADDRESS / FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
+#define FIRST_NONSECURE_ADDRESS (NON_SECURE_APP_ADDRESS)
 #define LAST_SECURE_REGION_INDEX \
-	(LAST_SECURE_REGION > 0 ? (LAST_SECURE_REGION - 1) : 0)
+	((FIRST_NONSECURE_ADDRESS / FLASH_SECURE_ATTRIBUTION_REGION_SIZE) - 1)
+
+BUILD_ASSERT_MSG(LAST_SECURE_REGION_INDEX != -1, "SPM is too small.");
 
 /*
  *  * The security configuration for depends on where the non secure app
@@ -135,6 +135,7 @@ static void spm_config_nsc_flash(void)
 }
 #endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
 
+
 static void spm_config_flash(void)
 {
 	/* Regions of flash up to and including SPM are configured as Secure.
@@ -168,11 +169,20 @@ static void spm_config_flash(void)
 		PRINT("%c", flash_perm[i] & FLASH_LOCK  ? 'l' : '-');
 		PRINT("\n");
 	}
-	PRINT("\n");
 
 #if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
 	spm_config_nsc_flash();
+
+#if defined(CONFIG_SECURE_SERVICES)
+	int err = spm_secure_services_init();
+
+	if (err != 0) {
+		PRINT("Could not initialize secure services (err %d).\n", err);
+	}
+#endif
 #endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
+
+	PRINT("\n");
 }
 
 static void spm_config_sram(void)

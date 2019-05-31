@@ -51,6 +51,7 @@ if IS_SPM
 # Define used by partition_manager.py to deduce size of partition
 config PM_PARTITION_SIZE_SPM
 	hex "Flash space reserved for SPM"
+	default 0xc000 if SPM_SERVICE_RNG # To build correctly with MCUboot.
 	default 0x8000
 	help
 	  Flash space set aside for the SPM. Note, the name
@@ -73,6 +74,15 @@ config SPM_SERVICE_REBOOT
 	help
 	  The Non-Secure Firmware is not allowed to reboot the chip. This
 	  service allows it to request a reboot from the SPM.
+
+config SPM_SERVICE_RNG
+	bool "Request random numbers"
+	default y
+	select NORDIC_SECURITY_BACKEND
+	select FLOAT
+	help
+	  The Non-Secure Firmware is not allowed to use the crypto hardware.
+	  This service allows it to request random numbers from the SPM.
 endif
 
 config SPM_BOOT_SILENTLY

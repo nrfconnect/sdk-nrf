@@ -125,6 +125,13 @@ extern "C" {
 
 #define FLASH_NSC_SIZE_REG(size) FLASH_NSC_SIZE((size) / FLASH_NSC_MIN_SIZE)
 
+
+/** Initialze secure services.
+ *
+ * @return 0 if successful, negative error otherwise.
+ */
+int spm_secure_services_init(void);
+
 #ifdef __cplusplus
 }
 #endif
