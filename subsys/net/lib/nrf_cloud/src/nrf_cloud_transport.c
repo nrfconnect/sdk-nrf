@@ -268,7 +268,7 @@ static int nct_client_id_get(char *id)
 	memcpy(id, NRF_CLOUD_CLIENT_ID, NRF_CLOUD_CLIENT_ID_LEN + 1);
 #endif /* !defined(NRF_CLOUD_CLIENT_ID) */
 
-	LOG_DBG("client_id = %s", id);
+	LOG_DBG("client_id = %s", log_strdup(id));
 
 	return 0;
 }
@@ -287,42 +287,42 @@ static int nct_topics_populate(void)
 	if (ret != NCT_SHADOW_BASE_TOPIC_LEN) {
 		return -ENOMEM;
 	}
-	LOG_DBG("shadow_base_topic: %s", shadow_base_topic);
+	LOG_DBG("shadow_base_topic: %s", log_strdup(shadow_base_topic));
 
 	ret = snprintf(accepted_topic, sizeof(accepted_topic),
 		       NCT_ACCEPTED_TOPIC, client_id_buf);
 	if (ret != NCT_ACCEPTED_TOPIC_LEN) {
 		return -ENOMEM;
 	}
-	LOG_DBG("accepted_topic: %s", accepted_topic);
+	LOG_DBG("accepted_topic: %s", log_strdup(accepted_topic));
 
 	ret = snprintf(rejected_topic, sizeof(rejected_topic),
 		       NCT_REJECTED_TOPIC, client_id_buf);
 	if (ret != NCT_REJECTED_TOPIC_LEN) {
 		return -ENOMEM;
 	}
-	LOG_DBG("rejected_topic: %s", rejected_topic);
+	LOG_DBG("rejected_topic: %s", log_strdup(rejected_topic));
 
 	ret = snprintf(update_delta_topic, sizeof(update_delta_topic),
 		       NCT_UPDATE_DELTA_TOPIC, client_id_buf);
 	if (ret != NCT_UPDATE_DELTA_TOPIC_LEN) {
 		return -ENOMEM;
 	}
-	LOG_DBG("update_delta_topic: %s", update_delta_topic);
+	LOG_DBG("update_delta_topic: %s", log_strdup(update_delta_topic));
 
 	ret = snprintf(update_topic, sizeof(update_topic),
 		       NCT_UPDATE_TOPIC, client_id_buf);
 	if (ret != NCT_UPDATE_TOPIC_LEN) {
 		return -ENOMEM;
 	}
-	LOG_DBG("update_topic: %s", update_topic);
+	LOG_DBG("update_topic: %s", log_strdup(update_topic));
 
 	ret = snprintf(shadow_get_topic, sizeof(shadow_get_topic),
 		       NCT_SHADOW_GET, client_id_buf);
 	if (ret != NCT_SHADOW_GET_LEN) {
 		return -ENOMEM;
 	}
-	LOG_DBG("shadow_get_topic: %s", shadow_get_topic);
+	LOG_DBG("shadow_get_topic: %s", log_strdup(shadow_get_topic));
 
 	return 0;
 }

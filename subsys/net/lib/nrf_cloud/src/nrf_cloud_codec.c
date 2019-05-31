@@ -282,7 +282,8 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 
 	root_obj = cJSON_Parse(input->ptr);
 	if (root_obj == NULL) {
-		LOG_ERR("cJSON_Parse failed: %s", (char *)input->ptr);
+		LOG_ERR("cJSON_Parse failed: %s",
+			log_strdup((char *)input->ptr));
 		return -ENOENT;
 	}
 
