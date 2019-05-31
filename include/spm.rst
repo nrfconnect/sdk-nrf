@@ -32,6 +32,7 @@ Peripherals configured as Non-Secure
    * GPIOTE1
    * IPC
    * NVMC, VMC
+   * PWM0-3
    * RTC1
    * SAADC
    * SPIM3
