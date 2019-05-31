@@ -16,7 +16,7 @@
 #define APP_COAP_MAX_MSG_LEN 1280
 #define APP_COAP_VERSION 1
 
-static int sock = 0;
+static int sock;
 static struct pollfd fds;
 static struct sockaddr_storage server;
 static u16_t next_token;
