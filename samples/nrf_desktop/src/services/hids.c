@@ -49,12 +49,12 @@ enum report_mode {
 };
 
 static enum report_mode report_mode;
-static bool report_enabled[TARGET_REPORT_COUNT][REPORT_MODE_COUNT];
+static bool report_enabled[IN_REPORT_COUNT][REPORT_MODE_COUNT];
 
 static struct bt_conn *cur_conn;
 
 
-static void broadcast_subscription_change(enum target_report tr,
+static void broadcast_subscription_change(enum in_report tr,
 					  enum report_mode old_mode,
 					  enum report_mode new_mode)
 {
@@ -97,22 +97,22 @@ static void pm_evt_handler(enum bt_gatt_hids_pm_evt evt, struct bt_conn *conn)
 
 	if (report_mode != old_mode) {
 		if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-			broadcast_subscription_change(TARGET_REPORT_MOUSE,
+			broadcast_subscription_change(IN_REPORT_MOUSE,
 					old_mode, report_mode);
 		}
 		if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-			broadcast_subscription_change(TARGET_REPORT_MOUSE,
+			broadcast_subscription_change(IN_REPORT_MOUSE,
 					old_mode, report_mode);
 		}
 		if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
-			broadcast_subscription_change(TARGET_REPORT_MOUSE,
+			broadcast_subscription_change(IN_REPORT_MOUSE,
 					old_mode, report_mode);
 		}
 	}
 }
 
 static void notif_handler(enum bt_gatt_hids_notif_evt evt,
-			  enum target_report tr,
+			  enum in_report tr,
 			  enum report_mode mode)
 {
 	__ASSERT_NO_MSG((evt == BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED) ||
@@ -131,7 +131,7 @@ static void notif_handler(enum bt_gatt_hids_notif_evt evt,
 static void mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
 	if (cur_conn) {
-		notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
+		notif_handler(evt, IN_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
 	} else {
 		LOG_WRN("Notification before connection");
 	}
@@ -140,7 +140,7 @@ static void mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 static void boot_mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
 	if (cur_conn) {
-		notif_handler(evt, TARGET_REPORT_MOUSE, REPORT_MODE_BOOT);
+		notif_handler(evt, IN_REPORT_MOUSE, REPORT_MODE_BOOT);
 	} else {
 		LOG_WRN("Notification before connection");
 	}
@@ -149,7 +149,7 @@ static void boot_mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 static void keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
 	if (cur_conn) {
-		notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_PROTOCOL);
+		notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_PROTOCOL);
 	} else {
 		LOG_WRN("Notification before connection");
 	}
@@ -158,7 +158,7 @@ static void keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 static void boot_keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
 	if (cur_conn) {
-		notif_handler(evt, TARGET_REPORT_KEYBOARD, REPORT_MODE_BOOT);
+		notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_BOOT);
 	} else {
 		LOG_WRN("Notification before connection");
 	}
@@ -167,7 +167,7 @@ static void boot_keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 static void mplayer_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
 	if (cur_conn) {
-		notif_handler(evt, TARGET_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
+		notif_handler(evt, IN_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
 	} else {
 		LOG_WRN("Notification before connection");
 	}
@@ -328,7 +328,7 @@ static void mouse_report_sent(const struct bt_conn *conn, bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
-	event->report_type = TARGET_REPORT_MOUSE;
+	event->report_type = IN_REPORT_MOUSE;
 	event->subscriber  = cur_conn;
 	event->error = error;
 	EVENT_SUBMIT(event);
@@ -349,7 +349,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 	}
 	__ASSERT_NO_MSG(cur_conn);
 
-	if (!report_enabled[TARGET_REPORT_MOUSE][report_mode]) {
+	if (!report_enabled[IN_REPORT_MOUSE][report_mode]) {
 		/* Notification disabled */
 		return;
 	}
@@ -406,7 +406,7 @@ static void keyboard_report_sent(const struct bt_conn *conn, bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
-	event->report_type = TARGET_REPORT_KEYBOARD;
+	event->report_type = IN_REPORT_KEYBOARD_KEYS;
 	event->subscriber  = cur_conn;
 	event->error = error;
 	EVENT_SUBMIT(event);
@@ -427,7 +427,7 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	}
 	__ASSERT_NO_MSG(cur_conn);
 
-	if (!report_enabled[TARGET_REPORT_KEYBOARD][report_mode]) {
+	if (!report_enabled[IN_REPORT_KEYBOARD_KEYS][report_mode]) {
 		/* Notification disabled */
 		return;
 	}

@@ -84,12 +84,12 @@ struct report_state {
 struct subscriber {
 	const void *id;
 	bool is_usb;
-	struct report_state state[TARGET_REPORT_COUNT];
+	struct report_state state[IN_REPORT_COUNT];
 };
 
 /**@brief HID state structure. */
 struct hid_state {
-	struct report_data report_data[TARGET_REPORT_COUNT];
+	struct report_data report_data[IN_REPORT_COUNT];
 	struct subscriber subscriber[SUBSCRIBER_COUNT];
 	struct subscriber *selected;
 	s32_t wheel_acc;
@@ -408,7 +408,7 @@ static void disconnect_subscriber(const void *subscriber_id)
 	}
 
 	if (s == state.selected) {
-		enum target_report tr = TARGET_REPORT_MOUSE;
+		enum in_report tr = IN_REPORT_MOUSE;
 		struct report_state *rs = &s->state[tr];
 
 		if (rs->state != STATE_DISCONNECTED) {
@@ -523,7 +523,7 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 static void send_report_keyboard(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		struct report_data *rd = &state.report_data[TARGET_REPORT_KEYBOARD];
+		struct report_data *rd = &state.report_data[IN_REPORT_KEYBOARD_KEYS];
 
 		const size_t max = ARRAY_SIZE(rd->items.item);
 
@@ -570,7 +570,7 @@ static void send_report_keyboard(void)
 static void send_report_mouse(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		struct report_data *rd = &state.report_data[TARGET_REPORT_MOUSE];
+		struct report_data *rd = &state.report_data[IN_REPORT_MOUSE];
 
 		struct hid_mouse_event *event = new_hid_mouse_event();
 
@@ -606,7 +606,7 @@ static void send_report_mouse(void)
 	}
 }
 
-static bool update_report(enum target_report tr)
+static bool update_report(enum in_report tr)
 {
 	struct report_data *rd = &state.report_data[tr];
 	bool update_needed = false;
@@ -627,14 +627,14 @@ static bool update_report(enum target_report tr)
 	}
 
 	switch (tr) {
-	case TARGET_REPORT_KEYBOARD:
-	case TARGET_REPORT_MPLAYER:
+	case IN_REPORT_KEYBOARD_KEYS:
+	case IN_REPORT_MPLAYER:
 		if (rd->items.update_needed) {
 			update_needed = true;
 		}
 		break;
 
-	case TARGET_REPORT_MOUSE:
+	case IN_REPORT_MOUSE:
 		if ((state.last_dx != 0) ||
 		    (state.last_dy != 0) ||
 		    (state.wheel_acc != 0)) {
@@ -651,7 +651,7 @@ static bool update_report(enum target_report tr)
 	return update_needed;
 }
 
-static void report_send(enum target_report tr, bool check_state,
+static void report_send(enum in_report tr, bool check_state,
 			bool send_always)
 {
 	if (!state.selected) {
@@ -674,15 +674,15 @@ static void report_send(enum target_report tr, bool check_state,
 		       (update_report(tr) || send_always)) {
 
 			switch (tr) {
-			case TARGET_REPORT_KEYBOARD:
+			case IN_REPORT_KEYBOARD_KEYS:
 				send_report_keyboard();
 				break;
 
-			case TARGET_REPORT_MOUSE:
+			case IN_REPORT_MOUSE:
 				send_report_mouse();
 				break;
 
-			case TARGET_REPORT_MPLAYER:
+			case IN_REPORT_MPLAYER:
 				/* Not supported. */
 				__ASSERT_NO_MSG(false);
 				break;
@@ -708,7 +708,7 @@ static void report_send(enum target_report tr, bool check_state,
 	}
 }
 
-static void report_issued(const void *subscriber_id, enum target_report tr,
+static void report_issued(const void *subscriber_id, enum in_report tr,
 			  bool error)
 {
 	struct subscriber *subscriber = get_subscriber(subscriber_id);
@@ -740,7 +740,7 @@ static void report_issued(const void *subscriber_id, enum target_report tr,
 		LOG_ERR("Error while sending report");
 		memset(&rd->items, 0, sizeof(rd->items));
 		eventq_reset(&rd->eventq);
-		if (tr == TARGET_REPORT_MOUSE) {
+		if (tr == IN_REPORT_MOUSE) {
 			state.last_dx = 0;
 			state.last_dy = 0;
 			state.wheel_acc = 0;
@@ -758,7 +758,7 @@ static void report_issued(const void *subscriber_id, enum target_report tr,
 	}
 }
 
-static void connect(const void *subscriber_id, enum target_report tr)
+static void connect(const void *subscriber_id, enum in_report tr)
 {
 	struct subscriber *subscriber = get_subscriber(subscriber_id);
 
@@ -771,13 +771,13 @@ static void connect(const void *subscriber_id, enum target_report tr)
 
 	if (state.selected == subscriber) {
 		switch (tr) {
-		case TARGET_REPORT_MOUSE:
+		case IN_REPORT_MOUSE:
 			state.last_dx   = 0;
 			state.last_dy   = 0;
 			state.wheel_acc = 0;
 			break;
-		case TARGET_REPORT_KEYBOARD:
-		case TARGET_REPORT_MPLAYER:
+		case IN_REPORT_KEYBOARD_KEYS:
+		case IN_REPORT_MPLAYER:
 			break;
 		default:
 			break;
@@ -794,7 +794,7 @@ static void connect(const void *subscriber_id, enum target_report tr)
 	}
 }
 
-static void disconnect(const void *subscriber_id, enum target_report tr)
+static void disconnect(const void *subscriber_id, enum in_report tr)
 {
 	struct subscriber *subscriber = get_subscriber(subscriber_id);
 
@@ -813,7 +813,7 @@ static void disconnect(const void *subscriber_id, enum target_report tr)
 }
 
 /**@brief Enqueue event that updates a given usage. */
-static void enqueue(enum target_report tr, u16_t usage_id, s16_t value,
+static void enqueue(enum in_report tr, u16_t usage_id, s16_t value,
 		    bool connected)
 {
 	struct report_data *rd = &state.report_data[tr];
@@ -866,12 +866,12 @@ static void enqueue(enum target_report tr, u16_t usage_id, s16_t value,
 /**@brief Function for updating the value linked to the HID usage. */
 static void update_key(const struct hid_keymap *map, s16_t value)
 {
-	enum target_report tr = map->target_report;
+	enum in_report tr = map->in_report;
 
 	if (!state.selected ||
 	    (state.selected->state[tr].state == STATE_DISCONNECTED)) {
 		/* Report cannot be sent yet - enqueue this HID event. */
-		enqueue(map->target_report, map->usage_id, value, false);
+		enqueue(map->in_report, map->usage_id, value, false);
 	} else {
 		/* Update state and issue report generation event. */
 		struct report_data *rd = &state.report_data[tr];
@@ -904,7 +904,7 @@ static bool event_handler(const struct event_header *eh)
 		state.last_dx = event->dx;
 		state.last_dy = event->dy;
 
-		report_send(TARGET_REPORT_MOUSE, true, true);
+		report_send(IN_REPORT_MOUSE, true, true);
 
 		return false;
 	}
@@ -924,7 +924,7 @@ static bool event_handler(const struct event_header *eh)
 
 		state.wheel_acc += event->wheel;
 
-		report_send(TARGET_REPORT_MOUSE, true, true);
+		report_send(IN_REPORT_MOUSE, true, true);
 
 		return false;
 	}

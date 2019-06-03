@@ -144,7 +144,7 @@ static void mouse_report_sent(bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
-	event->report_type = TARGET_REPORT_MOUSE;
+	event->report_type = IN_REPORT_MOUSE;
 	event->subscriber = &state;
 	event->error = error;
 	EVENT_SUBMIT(event);
@@ -230,7 +230,7 @@ static void broadcast_subscription_change(void)
 	struct hid_report_subscription_event *event =
 		new_hid_report_subscription_event();
 
-	event->report_type = TARGET_REPORT_MOUSE;
+	event->report_type = IN_REPORT_MOUSE;
 	event->enabled     = state == USB_STATE_ACTIVE;
 	event->subscriber  = &state;
 
