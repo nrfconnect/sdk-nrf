@@ -370,7 +370,7 @@ static bool event_handler(const struct event_header *eh)
 		const struct hid_report_sent_event *event =
 			cast_hid_report_sent_event(eh);
 
-		if (event->report_type == TARGET_REPORT_MOUSE) {
+		if (event->report_type == IN_REPORT_MOUSE) {
 			k_spinlock_key_t key = k_spin_lock(&state.lock);
 			if (state.state == STATE_FETCHING) {
 				state.sample = true;
@@ -386,7 +386,7 @@ static bool event_handler(const struct event_header *eh)
 		const struct hid_report_subscription_event *event =
 			cast_hid_report_subscription_event(eh);
 
-		if (event->report_type == TARGET_REPORT_MOUSE) {
+		if (event->report_type == IN_REPORT_MOUSE) {
 			static u8_t peer_count;
 
 			if (event->enabled) {

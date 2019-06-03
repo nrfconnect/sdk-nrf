@@ -7,6 +7,11 @@
 #ifndef _HID_EVENT_H_
 #define _HID_EVENT_H_
 
+#include "event_manager.h"
+#include "profiler.h"
+#include "hid_report_desc.h"
+
+
 /**
  * @brief HID Events
  * @defgroup hid_event HID Events
@@ -16,10 +21,6 @@
  *
  * @{
  */
-
-#include "event_manager.h"
-#include "profiler.h"
-#include "hid_keymap.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,9 +67,9 @@ EVENT_TYPE_DECLARE(hid_report_subscriber_event);
 struct hid_report_sent_event {
 	struct event_header header; /**< Event header. */
 
-	const void *subscriber;         /**< Id of the report subscriber. */
-	enum target_report report_type; /**< Type of the report. */
-	bool error;                     /**< If true error occured on send. */
+	const void *subscriber;     /**< Id of the report subscriber. */
+	enum in_report report_type; /**< Type of the report. */
+	bool error;                 /**< If true error occured on send. */
 };
 
 EVENT_TYPE_DECLARE(hid_report_sent_event);
@@ -78,9 +79,9 @@ EVENT_TYPE_DECLARE(hid_report_sent_event);
 struct hid_report_subscription_event {
 	struct event_header header; /**< Event header. */
 
-	const void *subscriber;         /**< Id of the report subscriber. */
-	enum target_report report_type; /**< Type of the report. */
-	bool enabled;                   /**< True if notification are enabled. */
+	const void *subscriber;     /**< Id of the report subscriber. */
+	enum in_report report_type; /**< Type of the report. */
+	bool enabled;               /**< True if notification are enabled. */
 };
 
 EVENT_TYPE_DECLARE(hid_report_subscription_event);

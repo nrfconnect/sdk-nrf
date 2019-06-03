@@ -8,9 +8,9 @@
 
 #include "hid_event.h"
 
-static const char * const target_report_name[] = {
+static const char * const in_report_name[] = {
 #define X(name) STRINGIFY(name),
-	TARGET_REPORT_LIST
+	IN_REPORT_LIST
 #undef X
 };
 
@@ -123,12 +123,12 @@ static int log_hid_report_sent_event(const struct event_header *eh,
 	if (event->error) {
 		return snprintf(buf, buf_len,
 				"error while sending %s report by %p",
-				target_report_name[event->report_type],
+				in_report_name[event->report_type],
 				event->subscriber);
 	} else {
 		return snprintf(buf, buf_len,
 				"%s report sent by %p",
-				target_report_name[event->report_type],
+				in_report_name[event->report_type],
 				event->subscriber);
 	}
 }
@@ -163,7 +163,7 @@ static int log_hid_report_subscription_event(const struct event_header *eh,
 
 	return snprintf(buf, buf_len,
 			"%s report notification %sabled by %p",
-			target_report_name[event->report_type],
+			in_report_name[event->report_type],
 			(event->enabled)?("en"):("dis"), event->subscriber);
 }
 

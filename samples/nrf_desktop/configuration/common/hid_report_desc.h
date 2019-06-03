@@ -9,6 +9,7 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
+#include <toolchain/common.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,13 +40,51 @@ extern "C" {
 #define KEYBOARD_REPORT_FIRST_MODIFIER	0xE0 /* Keyboard Left Ctrl */
 #define KEYBOARD_REPORT_LAST_MODIFIER	0xE7 /* Keyboard Right GUI */
 
+
+#define IN_REPORT_LIST		\
+	X(MOUSE)		\
+	X(KEYBOARD_KEYS)	\
+	X(MPLAYER)
+
+#define OUT_REPORT_LIST		\
+	X(KEYBOARD_LEDS)
+
+#define FEATURE_REPORT_LIST	\
+	X(USER_CONFIG)
+
+enum in_report {
+#define X(name) _CONCAT(IN_REPORT_, name),
+	IN_REPORT_LIST
+#undef X
+
+	IN_REPORT_COUNT
+};
+
+enum out_report {
+#define X(name) _CONCAT(OUT_REPORT_, name),
+	OUT_REPORT_LIST
+#undef X
+
+	OUT_REPORT_COUNT
+};
+
+enum feature_report {
+#define X(name) _CONCAT(FEATURE_REPORT_, name),
+	FEATURE_REPORT_LIST
+#undef X
+
+	FEATURE_REPORT_COUNT
+};
+
+
 enum report_id {
 	REPORT_ID_RESERVED,
-	REPORT_ID_MOUSE,
-	REPORT_ID_KEYBOARD_KEYS,
-	REPORT_ID_KEYBOARD_LEDS,
-	REPORT_ID_MPLAYER,
-	REPORT_ID_USER_CONFIG,
+
+#define X(name) _CONCAT(REPORT_ID_, name),
+	IN_REPORT_LIST
+	OUT_REPORT_LIST
+	FEATURE_REPORT_LIST
+#undef X
 
 	REPORT_ID_COUNT
 };
