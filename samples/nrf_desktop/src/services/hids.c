@@ -13,6 +13,7 @@
 
 #include <bluetooth/services/hids.h>
 
+#include "hids_event.h"
 #include "hid_event.h"
 #include "ble_event.h"
 #include "config_event.h"
@@ -40,13 +41,6 @@ BT_GATT_HIDS_DEF(hids_obj,
 		 , REPORT_SIZE_USER_CONFIG
 #endif
 );
-
-enum report_mode {
-	REPORT_MODE_PROTOCOL,
-	REPORT_MODE_BOOT,
-
-	REPORT_MODE_COUNT
-};
 
 static enum report_mode report_mode;
 static bool report_enabled[IN_REPORT_COUNT][REPORT_MODE_COUNT];
@@ -111,12 +105,21 @@ static void pm_evt_handler(enum bt_gatt_hids_pm_evt evt, struct bt_conn *conn)
 	}
 }
 
-static void notif_handler(enum bt_gatt_hids_notif_evt evt,
-			  enum in_report tr,
-			  enum report_mode mode)
+static void sync_notif_handler(const struct hid_notification_event *event)
 {
+	enum bt_gatt_hids_notif_evt evt = event->event;
+	enum in_report tr = event->report_type;
+	enum report_mode mode = event->report_mode;
+
 	__ASSERT_NO_MSG((evt == BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED) ||
 			(evt == BT_GATT_HIDS_CCCD_EVT_NOTIF_DISABLED));
+	__ASSERT_NO_MSG(tr < IN_REPORT_COUNT);
+	__ASSERT_NO_MSG(mode < REPORT_MODE_COUNT);
+
+	if (!cur_conn) {
+		LOG_WRN("Notification before connection");
+		return;
+	}
 
 	bool enabled = (evt == BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED);
 	bool changed = (report_enabled[tr][mode] != enabled);
@@ -128,49 +131,43 @@ static void notif_handler(enum bt_gatt_hids_notif_evt evt,
 	}
 }
 
+static void async_notif_handler(enum bt_gatt_hids_notif_evt evt,
+				enum in_report tr,
+				enum report_mode mode)
+{
+	struct hid_notification_event *event =
+		new_hid_notification_event();
+
+	event->report_type = tr;
+	event->report_mode = mode;
+	event->event = evt;
+
+	EVENT_SUBMIT(event);
+}
+
 static void mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	if (cur_conn) {
-		notif_handler(evt, IN_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
-	} else {
-		LOG_WRN("Notification before connection");
-	}
+	async_notif_handler(evt, IN_REPORT_MOUSE, REPORT_MODE_PROTOCOL);
 }
 
 static void boot_mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	if (cur_conn) {
-		notif_handler(evt, IN_REPORT_MOUSE, REPORT_MODE_BOOT);
-	} else {
-		LOG_WRN("Notification before connection");
-	}
+	async_notif_handler(evt, IN_REPORT_MOUSE, REPORT_MODE_BOOT);
 }
 
 static void keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	if (cur_conn) {
-		notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_PROTOCOL);
-	} else {
-		LOG_WRN("Notification before connection");
-	}
+	async_notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_PROTOCOL);
 }
 
 static void boot_keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	if (cur_conn) {
-		notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_BOOT);
-	} else {
-		LOG_WRN("Notification before connection");
-	}
+	async_notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_BOOT);
 }
 
 static void mplayer_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	if (cur_conn) {
-		notif_handler(evt, IN_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
-	} else {
-		LOG_WRN("Notification before connection");
-	}
+	async_notif_handler(evt, IN_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
 }
 
 static void keyboard_leds_handler(struct bt_gatt_hids_rep const *rep,
@@ -523,6 +520,12 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_hid_notification_event(eh)) {
+		sync_notif_handler(cast_hid_notification_event(eh));
+
+		return false;
+	}
+
 	if (is_module_state_event(eh)) {
 		struct module_state_event *event = cast_module_state_event(eh);
 
@@ -552,5 +555,6 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+EVENT_SUBSCRIBE(MODULE, hid_notification_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);

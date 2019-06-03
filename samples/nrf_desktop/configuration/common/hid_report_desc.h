@@ -89,6 +89,14 @@ enum report_id {
 	REPORT_ID_COUNT
 };
 
+enum report_mode {
+	REPORT_MODE_PROTOCOL,
+	REPORT_MODE_BOOT,
+
+	REPORT_MODE_COUNT
+};
+
+
 extern const u8_t hid_report_desc[];
 extern const size_t hid_report_desc_size;
 
