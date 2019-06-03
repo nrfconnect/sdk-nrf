@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig FOTA_DOWNLOAD
+	bool "FOTA Download"
+	select NRF_DOWNLOAD_CLIENT
+	select IMG_MANAGER
+	select FLASH
+	select FLASH_PAGE_LAYOUT
+	select MPU_ALLOW_FLASH_WRITE
+	select IMG_ERASE_PROGRESSIVELY
+
+if (FOTA_DOWNLOAD)
+
+module=FOTA_DOWNLOAD
+module-dep=LOG
+module-str=Firmware Over the Air Download
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # FOTA_DOWNLOAD
