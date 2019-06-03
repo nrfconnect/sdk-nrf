@@ -86,6 +86,10 @@ config DESKTOP_INIT_LOG_WHEEL_EVENT
 	bool "Wheel event"
 	default y
 
+config DESKTOP_INIT_LOG_HID_NOTIFICATION_EVENT
+	bool "HID notification event"
+	default y
+
 endmenu
 
 endif

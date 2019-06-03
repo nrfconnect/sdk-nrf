@@ -28,3 +28,6 @@ target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/wheel_event.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_USB_ENABLE app
 			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb_event.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_HIDS_ENABLE app
+			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hids_event.c)
