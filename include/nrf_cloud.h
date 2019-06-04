@@ -245,6 +245,16 @@ int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param);
 int nrf_cloud_sensor_data_send(const struct nrf_cloud_sensor_data *param);
 
 /**
+ * @brief Update the device shadow with sensor data.
+ *
+ * @param[in] param Sensor data.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param);
+
+/**
  * @brief Stream sensor data.
  *
  * This API should only be called after receiving an

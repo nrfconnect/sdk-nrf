@@ -127,6 +127,33 @@ int nrf_cloud_user_associate(const struct nrf_cloud_ua_param *param)
 	return err;
 }
 
+int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param)
+{
+	int err;
+	struct nct_cc_data sensor_data = {
+		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.id = param->tag
+	};
+
+	if (NOT_VALID_STATE(STATE_DC_CONNECTED)) {
+		return -EACCES;
+	}
+
+	if (param == NULL) {
+		return -EINVAL;
+	}
+
+	err = nrf_cloud_encode_shadow_data(param, &sensor_data.data);
+	if (err) {
+		return err;
+	}
+
+	err = nct_cc_send(&sensor_data);
+	nrf_cloud_free((void *)sensor_data.data.ptr);
+
+	return err;
+}
+
 int nrf_cloud_sensor_attach(const struct nrf_cloud_sa_param *param)
 {
 	if (NOT_VALID_STATE(STATE_DC_CONNECTED)) {
@@ -306,6 +333,7 @@ static int send(const struct cloud_backend *const backend,
 		const struct cloud_msg *const msg)
 {
 	int err = 0;
+	struct nct_cc_data shadow_data;
 	struct nct_dc_data buf = {
 		.data.ptr = msg->buf,
 		.data.len = msg->len
@@ -325,6 +353,18 @@ static int send(const struct cloud_backend *const backend,
 			err = -EINVAL;
 			LOG_ERR("Unsupported QoS setting.");
 		}
+	}
+
+	if (msg->endpoint.type == CLOUD_EP_TOPIC_STATE) {
+		shadow_data.opcode = NCT_CC_OPCODE_UPDATE_REQ;
+		shadow_data.data.ptr = msg->buf;
+		shadow_data.data.len = msg->len;
+
+		err = nct_cc_send(&shadow_data);
+	}
+
+	if (err) {
+		return err;
 	}
 
 	return 0;

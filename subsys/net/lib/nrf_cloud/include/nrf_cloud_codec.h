@@ -26,6 +26,10 @@ int nrf_cloud_encode_ua(const struct nrf_cloud_ua_param *param,
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *input,
 				 struct nrf_cloud_data *output);
 
+/**@brief Encode the sensor data to be sent to the device shadow. */
+int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
+				 struct nrf_cloud_data *output);
+
 /**@brief Encode the user association data based on the indicated type. */
 int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *payload,
 				     enum nfsm_state *requested_state);
