@@ -7,6 +7,8 @@
 #ifndef ZEPHYR_INCLUDE_MODEM_INFO_H_
 #define ZEPHYR_INCLUDE_MODEM_INFO_H_
 
+#include <cJSON.h>
+
 /**
  * @file modem_info.h
  *
@@ -194,14 +196,14 @@ int modem_info_json_string_encode(struct modem_param_info *modem_param,
  *
  * The data is added to the string buffer with JSON formatting.
  *
- * @param buf  The string where to store the data.
+ * @param root_obj  The JSON object where to store the data.
  *
  * @return Length of the string buffer data if the operation was
  *         successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int modem_info_json_string_encode(struct modem_param_info *modem,
-				  char *buf);
+int modem_info_json_object_encode(struct modem_param_info *modem,
+				  cJSON *root_obj);
 
 /** @brief Obtain the modem parameters.
  *
