@@ -12,6 +12,7 @@
 
 # Applications
 /applications/asset_tracker/              @joakimtoe @jtguggedal @rlubos
+/applications/nrf_desktop/                @pdunaj
 # Boards
 /boards/                                  @ioannisg @anangl
 # All cmake related files
@@ -47,7 +48,6 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /samples/nfc/                             @grochu
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
-/samples/nrf_desktop/                     @pdunaj
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/CMakeLists.txt                   @SebastianBoe
 /scripts/                                 @mbolivar @tejlmand
