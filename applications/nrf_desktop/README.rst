@@ -8,7 +8,7 @@ Nordic Semiconductor HID reference design.
 Overview
 ********
 
-This sample is a reference design of a HID device.
+This application is a reference design of a HID device.
 
 The code is currently work-in-progress and as such is not fully functional, verified, or
 supported for product development.
@@ -25,7 +25,7 @@ Supported boards:
 
 Building and Running
 ********************
-.. |sample path| replace:: :file:`samples/nrf_desktop`
+.. |sample path| replace:: :file:`applications/nrf_desktop`
 
 .. include:: /includes/build_and_run.txt
 
