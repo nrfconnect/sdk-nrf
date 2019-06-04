@@ -26,6 +26,29 @@ BUILD_ASSERT_MSG(CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE <=
 		 CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
 	"The response buffer must accommodate for a full fragment");
 
+static int socket_timeout_set(int fd)
+{
+	int err;
+
+	if (CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS == K_FOREVER) {
+		return 0;
+	}
+
+	struct timeval timeo = {
+		.tv_sec = CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS,
+	};
+
+	LOG_INF("Configuring socket timeout (%ld ms)", timeo.tv_sec);
+
+	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
+	if (err) {
+		LOG_WRN("Failed to set socket timeout, errno %d", errno);
+		return -errno;
+	}
+
+	return 0;
+}
+
 static int resolve_and_connect(const char *const host, const char *const port,
 			       u32_t family, u32_t proto)
 {
@@ -368,6 +391,8 @@ int download_client_init(struct download_client *const client,
 
 int download_client_connect(struct download_client *const client, char *host)
 {
+	int err;
+
 	if (client == NULL || host == NULL) {
 		return -EINVAL;
 	}
@@ -388,6 +413,12 @@ int download_client_connect(struct download_client *const client, char *host)
 	}
 
 	LOG_INF("Connected");
+
+	/* Set socket timeout, if configured */
+	err = socket_timeout_set(client->fd);
+	if (err) {
+		return err;
+	}
 
 	return 0;
 }
