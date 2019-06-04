@@ -93,13 +93,16 @@ static int settings_set(int argc, char **argv, size_t len_rd,
 		return -EFAULT;
 	}
 
-	len = read_cb(cb_arg, (*slot)->dyndata.data, data_size);
-	if (len != data_size) {
+	u8_t cfg_data[sizeof(data_size) + data_size];
+
+	len = read_cb(cb_arg, cfg_data, sizeof(cfg_data));
+	if (len != sizeof(cfg_data)) {
 		LOG_ERR("Can't read config (id:%u err:%d)", id, len);
 		k_free(*slot);
 		*slot = NULL;
 		return len;
 	}
+	memcpy((*slot)->dyndata.data, &cfg_data[sizeof(data_size)], data_size);
 
 	return 0;
 }
