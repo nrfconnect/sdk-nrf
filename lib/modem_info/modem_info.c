@@ -204,7 +204,7 @@ static int at_cmd_send(int fd, const char *cmd, size_t size, char *resp_buffer)
 
 	k_mutex_lock(&socket_mutex, K_FOREVER);
 
-	LOG_DBG("send: %s\n", cmd);
+	LOG_DBG("send: %s\n", log_strdup(cmd));
 	len = send(fd, cmd, size, 0);
 	LOG_DBG("len: %d\n", len);
 	if (len != size) {
@@ -218,7 +218,7 @@ static int at_cmd_send(int fd, const char *cmd, size_t size, char *resp_buffer)
 		if (memcmp(success,
 			   &resp_buffer[len-AT_CMD_SUCCESS_SIZE],
 			   strlen(success)) != 0) {
-			LOG_ERR("recv: %s", resp_buffer);
+			LOG_ERR("recv: %s", log_strdup(resp_buffer));
 			ret = -EIO;
 		}
 	}
