@@ -26,6 +26,14 @@ config NRF_DOWNLOAD_CLIENT_STACK_SIZE
 	int "Thread stack size"
 	default 2048
 
+config NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS
+	int "Receive timeout, in millisec"
+	default -1
+	range -1 30000
+	help
+	  Socket timeout for recv() calls, in milliseconds.
+	  Set to -1 disable.
+
 module=NRF_DOWNLOAD_CLIENT
 module-dep=LOG
 module-str=Download client
