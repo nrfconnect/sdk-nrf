@@ -230,6 +230,49 @@ int nrf_cloud_encode_ua(const struct nrf_cloud_ua_param *input,
 	return 0;
 }
 
+int nrf_cloud_encode_shadow_data(const struct nrf_cloud_sensor_data *sensor,
+				 struct nrf_cloud_data *output)
+{
+	int ret;
+	char *buffer;
+
+	__ASSERT_NO_MSG(sensor != NULL);
+	__ASSERT_NO_MSG(sensor->data.ptr != NULL);
+	__ASSERT_NO_MSG(sensor->data.len != 0);
+	__ASSERT_NO_MSG(output != NULL);
+
+	cJSON *root_obj = cJSON_CreateObject();
+	cJSON *state_obj = cJSON_CreateObject();
+	cJSON *reported_obj = cJSON_CreateObject();
+
+	if (root_obj == NULL || state_obj == NULL || reported_obj == NULL) {
+		cJSON_Delete(root_obj);
+		cJSON_Delete(state_obj);
+		cJSON_Delete(reported_obj);
+		return -ENOMEM;
+	}
+
+	ret = json_add_obj(reported_obj, sensor_type_str[sensor->type],
+			   (cJSON *)sensor->data.ptr);
+	ret += json_add_obj(state_obj, "reported", reported_obj);
+	ret += json_add_obj(root_obj, "state", state_obj);
+
+	if (ret != 0) {
+		cJSON_Delete(root_obj);
+		cJSON_Delete(state_obj);
+		cJSON_Delete(reported_obj);
+	}
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	cJSON_Delete(root_obj);
+
+	output->ptr = buffer;
+	output->len = strlen(buffer);
+
+	return 0;
+
+}
+
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *sensor,
 				 struct nrf_cloud_data *output)
 {
