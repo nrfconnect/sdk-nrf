@@ -83,28 +83,20 @@ if(FIRST_BOILERPLATE_EXECUTION)
       message(FATAL_ERROR "Partition Manager output generation failed, aborting. Command: ${pm_output_cmd}")
     endif()
 
-    # Make Partition Manager configuration available in CMake
-    import_kconfig(PM_ ${CMAKE_BINARY_DIR}/pm.config)
-
     # Create a dummy target that we can add properties to for
     # extraction in generator expressions.
     add_custom_target(partition_manager)
 
-    set_property(
-      TARGET partition_manager
-      PROPERTY MCUBOOT_SLOT_SIZE
-      ${PM_MCUBOOT_PRIMARY_SIZE}
-      )
-    set_property(
-      TARGET partition_manager
-      PROPERTY MCUBOOT_HEADER_SIZE
-      ${PM_MCUBOOT_PAD_SIZE}
-      )
-    set_property(
-      TARGET partition_manager
-      PROPERTY MCUBOOT_SECONDARY_ADDRESS
-      ${PM_MCUBOOT_SECONDARY_ADDRESS}
-      )
+    # Make Partition Manager configuration available in CMake
+    import_kconfig(PM_ ${CMAKE_BINARY_DIR}/pm.config pm_var_names)
+
+    foreach(name ${pm_var_names})
+      set_property(
+        TARGET partition_manager
+        PROPERTY ${name}
+        ${${name}}
+        )
+    endforeach()
 
     # Turn the space-separated list into a Cmake list.
     string(REPLACE " " ";" PM_ALL_BY_SIZE ${PM_ALL_BY_SIZE})
