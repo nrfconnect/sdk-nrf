@@ -325,24 +325,15 @@ When using the Partition Manager, run ``ninja rom_report`` to see the addresses 
 
 CMake
 -----
-The CMake variables from Partition Manager are typically used through `generator expressions`_, because these variables are made available at the end of the CMake configure stage.
+The CMake variables from Partition Manager are typically used through `generator expressions`_, because these variables are only made available late in the CMake configure stage.
 To read a Partition Manager variable through a generator expression, the variable must be assigned as a target property.
-The ``partition_manager`` target is used for this already and should be used for additional variables.
-Once the variable is available as a target property, the value can be read through generator expressions.
-
-.. code-block:: cmake
-   :caption: partition_manager.cmake (from MCUboot)
-
-   set_property(
-     TARGET partition_manager
-     PROPERTY MCUBOOT_SLOT_SIZE
-     ${PM_MCUBOOT_PARTITIONS_PRIMARY_SIZE}
-     )
+Partition Manager stores all variables as target properties on the ``partition_manager`` target,
+which means they can be used in generator expressions in the following way.
 
 .. code-block:: none
-   :caption: mcuboot/zephyr/CmakeLists.txt
+   :caption: Reading partition manager variables in generator expressions.
 
-   --slot-size $<TARGET_PROPERTY:partition_manager,MCUBOOT_SLOT_SIZE>
+   --slot-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PARTITIONS_PRIMARY_SIZE>
 
 .. _ug_pm_static:
 
