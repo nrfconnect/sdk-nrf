@@ -184,6 +184,9 @@ static int init(void)
 		return err;
 	}
 
+	state.state = STATE_IDLE;
+	module_set_state(MODULE_STATE_READY);
+
 	do {
 		err = enable_trigger();
 		if (err == -EBUSY) {
@@ -191,11 +194,8 @@ static int init(void)
 		}
 	} while (err == -EBUSY);
 
-	if (!err) {
-		state.state = STATE_IDLE;
-		module_set_state(MODULE_STATE_READY);
-	} else {
-		LOG_ERR("Cannot initialize");
+	if (err) {
+		LOG_ERR("Cannot enable trigger");
 		module_set_state(MODULE_STATE_ERROR);
 	}
 
