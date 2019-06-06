@@ -185,5 +185,6 @@ if SPM || IS_SPM
 # Set new default name for the veneers file. To avoid file name collisions if
 # someone has multiple secure firmwares with secure entry functions.
 config ARM_ENTRY_VENEERS_LIB_NAME
+	string
 	default "libspmsecureentries.a"
 endif
