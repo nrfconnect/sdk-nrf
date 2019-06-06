@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018 - 2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -19,6 +19,7 @@
 #include "config_event.h"
 
 #include "hid_report_desc.h"
+#include "config_channel.h"
 
 #define MODULE hids
 #include "module_state_event.h"
@@ -47,6 +48,7 @@ static bool report_enabled[IN_REPORT_COUNT][REPORT_MODE_COUNT];
 
 static struct bt_conn *cur_conn;
 
+static struct config_channel_state cfg_chan;
 
 static void broadcast_subscription_change(enum in_report tr,
 					  enum report_mode old_mode,
@@ -172,55 +174,32 @@ static void mplayer_notif_handler(enum bt_gatt_hids_notif_evt evt)
 
 static void keyboard_leds_handler(struct bt_gatt_hids_rep *rep,
 				  struct bt_conn *conn,
-				  const bool write)
+				  bool write)
 {
 	LOG_WRN("Keyboards LEDs report ignored");
 }
 
-static void feature_report_handler(struct bt_gatt_hids_rep const *rep,
-				   struct bt_conn *conn)
+static void feature_report_handler(struct bt_gatt_hids_rep *rep,
+				   struct bt_conn *conn,
+				   bool write)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		size_t length = rep->size;
-		u8_t *buffer = rep->data;
+		if (!write) {
+			int err = config_channel_report_get(&cfg_chan, rep->data,
+							    rep->size, false);
 
-		u16_t recipient;
-		u8_t  event_id;
-		u8_t  event_data_len;
+			if (err) {
+				LOG_WRN("Failed to process report get");
+			}
+		} else {
+			int err = config_channel_report_set(&cfg_chan, rep->data,
+							    rep->size, false,
+							    CONFIG_BT_GATT_DIS_PNP_PID);
 
-		const size_t min_size = sizeof(recipient) + sizeof(event_id) +
-					sizeof(event_data_len);
-		const size_t max_size = REPORT_SIZE_USER_CONFIG;
-
-		static_assert(min_size < max_size, "");
-
-		if ((length < min_size) || (length > max_size)) {
-			LOG_WRN("Unsupported report length %zu", length);
-			return;
+			if (err) {
+				LOG_WRN("Failed to process report set");
+			}
 		}
-
-		size_t pos = 0;
-		recipient = sys_get_le16(&buffer[pos]);
-		pos += sizeof(recipient);
-
-		event_id = buffer[pos];
-		pos += sizeof(event_id);
-
-		event_data_len = buffer[pos];
-		pos += sizeof(event_data_len);
-
-		if (recipient != CONFIG_BT_GATT_DIS_PNP_PID) {
-			LOG_WRN("Unsupported recipient %" PRIx16, recipient);
-			return;
-		}
-
-		struct config_event *event = new_config_event(event_data_len);
-
-		event->id = event_id;
-		memcpy(event->dyndata.data, &buffer[pos], event_data_len);
-		event->store_needed = true;
-
-		EVENT_SUBMIT(event);
 	}
 }
 
@@ -240,7 +219,6 @@ static int module_init(void)
 	hids_init_param.rep_map.size = hid_report_desc_size;
 
 	/* Declare HID reports */
-
 	struct bt_gatt_hids_inp_rep *input_report =
 		&hids_init_param.inp_rep_group_init.reports[0];
 	struct bt_gatt_hids_outp_feat_rep *output_report =
@@ -315,6 +293,10 @@ static int module_init(void)
 		hids_init_param.is_kb = true;
 		hids_init_param.boot_kb_notif_handler =
 			boot_keyboard_notif_handler;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		config_channel_init(&cfg_chan);
 	}
 
 	hids_init_param.pm_evt_handler = pm_evt_handler;
@@ -480,6 +462,10 @@ static void notify_hids(const struct ble_peer_event *event)
 		__ASSERT_NO_MSG(cur_conn == event->id);
 		err = bt_gatt_hids_notify_disconnected(&hids_obj, event->id);
 		cur_conn = NULL;
+
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+			config_channel_disconnect(&cfg_chan);
+		}
 		break;
 
 	case PEER_STATE_SECURED:
@@ -548,6 +534,16 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		if (is_config_fetch_event(eh)) {
+			const struct config_fetch_event *event = cast_config_fetch_event(eh);
+
+			config_channel_fetch_receive(&cfg_chan, event);
+
+			return false;
+		}
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -558,4 +554,7 @@ EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 EVENT_SUBSCRIBE(MODULE, hid_notification_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+EVENT_SUBSCRIBE(MODULE, config_fetch_event);
+#endif
 EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);

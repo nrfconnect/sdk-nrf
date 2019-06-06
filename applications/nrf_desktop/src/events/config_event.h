@@ -84,6 +84,30 @@ struct config_event {
 
 EVENT_TYPE_DYNDATA_DECLARE(config_event);
 
+/** @brief Configuration channel fetch event.
+ * Used to fetch firmware parameters to host.
+ */
+struct config_fetch_event {
+	struct event_header header;
+
+	u16_t recipient;
+	u8_t id;
+	struct event_dyndata dyndata;
+};
+
+EVENT_TYPE_DYNDATA_DECLARE(config_fetch_event);
+
+/** @brief Configuration channel fetch request event.
+ * Used to request fetching firmware parameters to host.
+ */
+struct config_fetch_request_event {
+	struct event_header header;
+
+	u16_t recipient;
+	u8_t id;
+};
+
+EVENT_TYPE_DECLARE(config_fetch_request_event);
 
 /** @brief Configuration channel forward event.
  * Used to pass configuration from dongle to connected devices.
@@ -99,11 +123,14 @@ struct config_forward_event {
 EVENT_TYPE_DYNDATA_DECLARE(config_forward_event);
 
 
-enum forward_status {
-	FORWARD_STATUS_SUCCESS,
-	FORWARD_STATUS_PENDING,
-	FORWARD_STATUS_WRITE_ERROR,
-	FORWARD_STATUS_DISCONNECTED_ERROR,
+enum config_status {
+	CONFIG_STATUS_SUCCESS,
+	CONFIG_STATUS_PENDING,
+	CONFIG_STATUS_FETCH,
+	CONFIG_STATUS_TIMEOUT,
+	CONFIG_STATUS_REJECT,
+	CONFIG_STATUS_WRITE_ERROR,
+	CONFIG_STATUS_DISCONNECTED_ERROR,
 };
 
 /** @brief Configuration channel forwarded event.
@@ -112,7 +139,7 @@ enum forward_status {
 struct config_forwarded_event {
 	struct event_header header;
 
-	enum forward_status status;
+	enum config_status status;
 };
 
 EVENT_TYPE_DECLARE(config_forwarded_event);

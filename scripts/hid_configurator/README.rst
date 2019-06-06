@@ -30,10 +30,12 @@ Usage
 On Windows:
 
 	py -3 configurator.py config sensor cpi 12000
+	py -3 configurator.py config sensor downshift_rest1 fetch
 
 On Linux:
 
 	python3 configurator.py config sensor cpi 12000
+	python3 configurator.py config sensor downshift_rest1 fetch
 
 To get a list of possible arguments, call with `--help` option.
 
@@ -54,7 +56,7 @@ This installs:
 * HIDAPI library - on Windows provided by `hidapi.dll` or `hidapi-x64.dll`, on Linux provided by `libhidapi-hidraw0`.
 * pyhidapi Python wrapper - installed from GitHub repository with additional patches included. The version on PyPI is obsolete and will not work.
 
-When using configuration channel for BLE devices on Linux, it recommended to use BlueZ version >= 5.44.
+When using configuration channel for BLE devices on Linux, it is recommended to use BlueZ version >= 5.44.
 In previous versions, the HID device attached by BlueZ may obtain wrong VID and PID values (ignoring values in Device Information Service), which will stop HIDAPI from opening the device.
 
 On Linux, to call the Python script without root rights,
@@ -68,3 +70,5 @@ You can either install without `--user` option or copy the DLL library next to t
 To uninstall all files, run
 
 	py -3 -m pip uninstall hid
+
+To see location of DLL files on Windows, use above uninstall command and respond with 'n'.

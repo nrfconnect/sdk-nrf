@@ -20,7 +20,7 @@ extern "C" {
 #define REPORT_SIZE_KEYBOARD_KEYS	8 /* bytes */
 #define REPORT_SIZE_KEYBOARD_LEDS	1 /* bytes */
 #define REPORT_SIZE_MPLAYER		1 /* bytes */
-#define REPORT_SIZE_USER_CONFIG		28 /* bytes */
+#define REPORT_SIZE_USER_CONFIG		29 /* bytes */
 
 #define USAGE_PAGE_MOUSE_XY		0x01
 #define USAGE_PAGE_MOUSE_WHEEL		0x01

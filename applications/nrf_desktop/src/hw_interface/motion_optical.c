@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018-2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -184,6 +184,11 @@ static int init(void)
 		return err;
 	}
 
+	state.option[SENSOR_OPT_CPI] = CONFIG_PMW3360_CPI;
+	state.option[SENSOR_OPT_DOWNSHIFT_RUN] = CONFIG_PMW3360_RUN_DOWNSHIFT_TIME_MS;
+	state.option[SENSOR_OPT_DOWNSHIFT_REST1] = CONFIG_PMW3360_REST1_DOWNSHIFT_TIME_MS;
+	state.option[SENSOR_OPT_DOWNSHIFT_REST2] = CONFIG_PMW3360_REST2_DOWNSHIFT_TIME_MS;
+
 	state.state = STATE_IDLE;
 	module_set_state(MODULE_STATE_READY);
 
@@ -202,14 +207,47 @@ static int init(void)
 	return err;
 }
 
-static void update_config(const u8_t config_id, const u8_t *data, size_t size)
+static bool is_my_config_id(u8_t config_id)
 {
-	if ((GROUP_FIELD_GET(config_id) != EVENT_GROUP_SETUP) ||
-	    (MOD_FIELD_GET(config_id) != SETUP_MODULE_SENSOR)) {
-		/* Not for us */
+	return (GROUP_FIELD_GET(config_id) == EVENT_GROUP_SETUP) &&
+	       (MOD_FIELD_GET(config_id) == SETUP_MODULE_SENSOR);
+}
+
+static void fetch_config(u8_t config_id, u8_t *data)
+{
+	enum config_option option;
+
+	switch (OPT_FIELD_GET(config_id)) {
+	case SENSOR_OPT_CPI:
+		option = CONFIG_OPTION_CPI;
+		break;
+
+	case SENSOR_OPT_DOWNSHIFT_RUN:
+		option = CONFIG_OPTION_TIME_RUN;
+		break;
+
+	case SENSOR_OPT_DOWNSHIFT_REST1:
+		option = CONFIG_OPTION_TIME_REST1;
+		break;
+
+	case SENSOR_OPT_DOWNSHIFT_REST2:
+		option = CONFIG_OPTION_TIME_REST2;
+		break;
+
+	default:
+		LOG_WRN("Unsupported sensor option (%" PRIu8 ")", config_id);
 		return;
 	}
 
+	k_spinlock_key_t key = k_spin_lock(&state.lock);
+	sys_put_le32(state.option[option], data);
+	k_spin_unlock(&state.lock, key);
+
+	return;
+}
+
+static void update_config(const u8_t config_id, const u8_t *data, size_t size)
+{
 	enum config_option option;
 
 	switch (OPT_FIELD_GET(config_id)) {
@@ -483,11 +521,32 @@ static bool event_handler(const struct event_header *eh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		if (is_config_event(eh)) {
-			const struct config_event *event =
-				cast_config_event(eh);
+			const struct config_event *event = cast_config_event(eh);
 
-			update_config(event->id, event->dyndata.data,
+			if (is_my_config_id(event->id)) {
+				update_config(event->id, event->dyndata.data,
 				      event->dyndata.size);
+			}
+
+			return false;
+		}
+
+		if (is_config_fetch_request_event(eh)) {
+			const struct config_fetch_request_event *event =
+				cast_config_fetch_request_event(eh);
+
+			if (is_my_config_id(event->id)) {
+				size_t data_size = sizeof(u32_t);
+				struct config_fetch_event *fetch_event =
+					new_config_fetch_event(data_size);
+
+				fetch_event->id = event->id;
+				fetch_event->recipient = event->recipient;
+				fetch_config(fetch_event->id,
+					     fetch_event->dyndata.data);
+
+				EVENT_SUBMIT(fetch_event);
+			}
 
 			return false;
 		}
@@ -503,5 +562,8 @@ EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_event);
+EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
+#endif
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
