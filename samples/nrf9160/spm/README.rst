@@ -21,6 +21,13 @@ See the :ref:`lib_spm` subsystem for information about the security attribution 
 
 If your application requires a different security attribution configuration, you must update the SPM sample code to reflect this.
 
+Secure Services
+===============
+
+The SPM can provide access to secure services to the application firmware.
+See the :ref:`lib_spm` library for information about the available services.
+See the :ref:`secure_services` for example code for using the secure services.
+
 Requirements for the application firmware
 =========================================
 
