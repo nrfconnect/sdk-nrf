@@ -30,7 +30,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/aws_jobs.h`
-| Source files: :file:`subsys/aws_jobs/`
+| Source files: :file:`subsys/net/lib/aws_jobs/`
 
 .. doxygengroup:: aws_jobs
    :project: nrf

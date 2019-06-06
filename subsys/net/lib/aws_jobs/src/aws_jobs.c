@@ -11,6 +11,17 @@
 
 LOG_MODULE_REGISTER(aws_jobs, CONFIG_AWS_JOBS_LOG_LEVEL);
 
+/** @brief Mapping of enum to strings for Job Execution Status. */
+static const char *execution_status_strings[] = {
+	[AWS_JOBS_QUEUED] = "QUEUED",
+	[AWS_JOBS_IN_PROGRESS] = "IN_PROGRESS",
+	[AWS_JOBS_SUCCEEDED] = "SUCCEEDED",
+	[AWS_JOBS_FAILED] = "FAILED",
+	[AWS_JOBS_TIMED_OUT] = "TIMED_OUT",
+	[AWS_JOBS_REJECTED] = "REJECTED",
+	[AWS_JOBS_REMOVED] = "REMOVED",
+	[AWS_JOBS_CANCELED] = "CANCELED"
+};
 
 /**
  * @brief Local function used to error check snprintf outputs.
@@ -27,11 +38,11 @@ static inline int report_snprintf_err(u32_t ret, u32_t size, const char *entry)
 {
 	if (ret >= size) {
 		LOG_ERR("Unable to fit formated string into to allocate "
-			"memory for %s", entry);
+			"memory for %s", log_strdup(entry));
 		return -ENOMEM;
 	} else if (ret < 0) {
 		LOG_ERR("Output error for %s was encountered with return value "
-			"%d", entry, ret);
+			"%d", log_strdup(entry), ret);
 		return ret;
 	}
 	return 0;
@@ -58,7 +69,7 @@ static int construct_get_topic(const u8_t *client_id,
 			   GET_TOPIC_TEMPLATE,
 			   client_id,
 			   "#");
-	get_topic_len = ret + 1;
+	get_topic_len = ret;
 	ret = report_snprintf_err(ret, GET_TOPIC_LEN, "get_topic");
 
 	if (ret) {
@@ -92,7 +103,7 @@ int aws_jobs_subscribe_get(struct mqtt_client *const client)
 		.list_count = 1,
 		.message_id = SUBSCRIBE_GET
 	};
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_subscribe(client, &subscription_list);
 }
@@ -117,7 +128,7 @@ int aws_jobs_unsubscribe_get(struct mqtt_client *const client)
 		.list_count = 1,
 		.message_id = SUBSCRIBE_GET
 	};
-	LOG_DBG("Unsubscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Unsubscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_unsubscribe(client, &subscription_list);
 }
@@ -143,7 +154,7 @@ static int construct_notify_next_topic(const u8_t *client_id,
 			   NOTIFY_NEXT_TOPIC_MAX_LEN,
 			   NOTIFY_NEXT_TOPIC_TEMPLATE,
 			   client_id);
-	notify_next_topic_len = ret + 1;
+	notify_next_topic_len = ret;
 	ret = report_snprintf_err(ret,
 			    NOTIFY_NEXT_TOPIC_MAX_LEN,
 			    "notify_next_topic");
@@ -180,7 +191,8 @@ int aws_jobs_subscribe_notify_next(struct mqtt_client *const client)
 		return err;
 	}
 
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("%s Subscribe: %s", __func__,
+		log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_subscribe(client, &subscription_list);
 }
@@ -208,7 +220,7 @@ int aws_jobs_unsubscribe_notify_next(struct mqtt_client *const client)
 		return err;
 	}
 
-	LOG_DBG("Unsubscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Unsubscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_unsubscribe(client, &subscription_list);
 }
@@ -235,7 +247,7 @@ static int construct_notify_topic(const u8_t *client_id,
 			   NOTIFY_TOPIC_MAX_LEN,
 			   NOTIFY_TOPIC_TEMPLATE,
 			   client_id);
-	notify_topic_len = ret + 1;
+	notify_topic_len = ret;
 	ret = report_snprintf_err(ret, NOTIFY_TOPIC_MAX_LEN, "notify_topic");
 
 	if (ret) {
@@ -269,7 +281,7 @@ int aws_jobs_subscribe_notify(struct mqtt_client *const client)
 		.list_count = 1,
 		.message_id = SUBSCRIBE_NOTIFY
 	};
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_subscribe(client, &subscription_list);
 }
@@ -295,7 +307,7 @@ int aws_jobs_unsubscribe_notify(struct mqtt_client *const client)
 		.list_count = 1,
 		.message_id = SUBSCRIBE_NOTIFY
 	};
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_unsubscribe(client, &subscription_list);
 }
@@ -338,8 +350,8 @@ int aws_jobs_subscribe_expected_topics(struct mqtt_client *const client,
 		return err;
 	}
 
-	LOG_DBG("Subscribe: %s", subscribe_topics[0].topic.utf8);
-	LOG_DBG("Subscribe: %s", subscribe_topics[1].topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topics[0].topic.utf8));
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topics[1].topic.utf8));
 
 	const struct mqtt_subscription_list subscription_list = {
 		.list = subscribe_topics,
@@ -388,8 +400,8 @@ int aws_jobs_unsubscribe_expected_topics(struct mqtt_client *const client,
 		return err;
 	}
 
-	LOG_DBG("Subscribe: %s", subscribe_topics[0].topic.utf8);
-	LOG_DBG("Subscribe: %s", subscribe_topics[1].topic.utf8);
+	LOG_DBG("Unubscribe: %s", log_strdup(subscribe_topics[0].topic.utf8));
+	LOG_DBG("Unubscribe: %s", log_strdup(subscribe_topics[1].topic.utf8));
 
 	const struct mqtt_subscription_list subscription_list = {
 		.list = (struct mqtt_topic *)&subscribe_topics,
@@ -426,7 +438,7 @@ static int construct_job_id_get_topic(const u8_t *client_id,
 			  client_id,
 			  job_id,
 			  "#");
-	job_id_get_topic_len = ret + 1;
+	job_id_get_topic_len = ret;
 	ret = report_snprintf_err(ret,
 				  JOB_ID_GET_TOPIC_MAX_LEN,
 				  "job_id_get_topic");
@@ -463,7 +475,7 @@ int aws_jobs_subscribe_job_id_get_topic(struct mqtt_client *const client,
 		.list_count = 1,
 		.message_id = SUBSCRIBE_JOB_ID_GET
 	};
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_subscribe(client, &subscription_list);
 }
@@ -492,7 +504,7 @@ int aws_jobs_unsubscribe_job_id_get_topic(struct mqtt_client *const client,
 		.list_count = 1,
 		.message_id = SUBSCRIBE_JOB_ID_GET
 	};
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_unsubscribe(client, &subscription_list);
 }
@@ -523,7 +535,7 @@ static int construct_job_id_update_topic(const u8_t *client_id,
 			   client_id,
 			   job_id,
 			   suffix);
-	job_id_update_topic_len = ret + 1;
+	job_id_update_topic_len = ret;
 
 	ret = report_snprintf_err(ret,
 				  JOB_ID_UPDATE_TOPIC_MAX_LEN,
@@ -562,7 +574,7 @@ int aws_jobs_subscribe_job_id_update(struct mqtt_client *const client,
 		.list_count = 1,
 		.message_id = SUBSCRIBE_JOB_ID_UPDATE
 	};
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_subscribe(client, &subscription_list);
 }
@@ -591,14 +603,14 @@ int aws_jobs_unsubscribe_job_id_update(struct mqtt_client *const client,
 		.list_count = 1,
 		.message_id = SUBSCRIBE_JOB_ID_UPDATE
 	};
-	LOG_DBG("Subscribe: %s", subscribe_topic.topic.utf8);
+	LOG_DBG("Subscribe: %s", log_strdup(subscribe_topic.topic.utf8));
 
 	return mqtt_unsubscribe(client, &subscription_list);
 }
 
 
 #define UPDATE_JOB_PAYLOAD "{\"status\":\"%s\",\
-			    \"statusDetails\":\"%s\",\
+			    \"statusDetails\": %s,\
 			    \"expectedVersion\": \"%d\",\
 			    \"clientToken\": \"%s\"}"
 int aws_jobs_update_job_execution(struct mqtt_client *const client,
@@ -608,10 +620,7 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 			     int expected_version,
 			     const u8_t *client_token)
 {
-	if (client == NULL ||
-	    job_id == NULL ||
-	    client_token == NULL
-	    ) {
+	if (client == NULL || job_id == NULL || client_token == NULL) {
 		return -EINVAL;
 	}
 
@@ -630,9 +639,9 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 		       status_details,
 		       expected_version,
 		       client_token);
-	update_job_payload_len = ret + 1;
+	update_job_payload_len = ret;
 	ret = report_snprintf_err(ret,
-				  ARRAY_SIZE(update_job_payload),
+				  CONFIG_UPDATE_JOB_PAYLOAD_LEN,
 				  "update_job_payload");
 	if (ret) {
 		return ret;
@@ -649,6 +658,9 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 	if (ret) {
 		return ret;
 	}
+
+	LOG_DBG("Topic: %s", log_strdup(job_id_update_topic.topic.utf8));
+	LOG_DBG("Payload: %s", log_strdup(update_job_payload));
 
 	struct mqtt_publish_param param = {
 		.message.topic = job_id_update_topic,

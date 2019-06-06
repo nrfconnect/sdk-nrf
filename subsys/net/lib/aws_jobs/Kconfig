@@ -10,7 +10,7 @@ if AWS_JOBS
 
 config CLIENT_ID_MAX_LEN
 	int "MQTT Client ID length"
-	default 19
+	default 64
 
 config UPDATE_JOB_PAYLOAD_LEN
 	int "Update job document buffer size"
