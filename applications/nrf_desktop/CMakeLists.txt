@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018 - 2019 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -56,6 +56,7 @@ target_sources(app PRIVATE
 # Include application events and configuration headers
 zephyr_library_include_directories(
   src/events
+  src/util
   configuration/common
   configuration/${BOARD}
   )
@@ -65,6 +66,7 @@ add_subdirectory(src/events)
 add_subdirectory(src/hw_interface)
 add_subdirectory(src/modules)
 add_subdirectory(src/services)
+add_subdirectory(src/util)
 
 if(CONFIG_BOOTLOADER_MCUBOOT)
   assert_exists(mcuboot_CONF_FILE)

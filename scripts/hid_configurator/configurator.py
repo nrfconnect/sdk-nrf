@@ -11,8 +11,8 @@ import collections
 from enum import IntEnum
 
 REPORT_ID = 5
-REPORT_SIZE = 29
-EVENT_DATA_LEN_MAX = REPORT_SIZE - 5
+REPORT_SIZE = 30
+EVENT_DATA_LEN_MAX = REPORT_SIZE - 6
 
 NORDIC_VID = 0x1915
 MOUSE_PID = 0x52DE
@@ -20,7 +20,6 @@ DONGLE_PID = 0x52DC
 
 POLL_INTERVAL = 0.02
 POLL_RETRY_COUNT = 100
-
 
 GROUP_FIELD_POS = 6
 EVENT_GROUP_SETUP = 0x1
@@ -36,11 +35,14 @@ SENSOR_OPT_DOWNSHIFT_RUN = 0x1
 SENSOR_OPT_DOWNSHIFT_REST1 = 0x2
 SENSOR_OPT_DOWNSHIFT_REST2 = 0x3
 
-class ConfigForwardStatus(IntEnum):
-	SUCCESS = 0
-	PENDING = 1
-	WRITE_ERROR = 2
-	DISCONNECTED_ERROR = 3
+class ConfigStatus(IntEnum):
+    SUCCESS = 0
+    PENDING = 1
+    FETCH = 2
+    TIMEOUT = 3
+    REJECT = 4
+    WRITE_ERROR = 5
+    DISCONNECTED_ERROR = 6
 
 
 ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help')
@@ -59,50 +61,99 @@ def progress_bar(permil):
     percent = permil / 10.0
     print('\r{} {}%'.format(progress_line, percent), end='')
 
+
 def check_range(value, value_range):
     if value > value_range[1] or value < value_range[0]:
         return False
     return True
 
 
-def create_report(recipient, event_id, event_data):
-    """ Function creating a HID feature report with optional data.
+def create_set_report(recipient, event_id, event_data, is_fetch):
+    """ Function creating a report in order to set a specified configuration
+        value.
         Recipient is a device product ID. """
 
     assert(type(recipient) == int)
     assert(type(event_id) == int)
-
     if event_data:
         assert(type(event_data) == bytes)
         event_data_len = len(event_data)
-    else:
-        event_data_len = 0
 
-    report = struct.pack('<BHBB', REPORT_ID, recipient, event_id, event_data_len)
+    status = ConfigStatus.PENDING
+    report = struct.pack('<BHBBB', REPORT_ID, recipient, event_id, status,
+                         event_data_len)
     if event_data:
         report += event_data
 
     assert(len(report) <= REPORT_SIZE)
-
     report += b'\0' * (REPORT_SIZE - len(report))
 
     return report
 
 
-def write_feature_with_check(dev, data):
+def create_fetch_report(recipient, event_id):
+    """ Function for creating a report which requests fetching of
+        a configuration value from a device.
+        Recipient is a device product ID. """
+
+    assert(type(recipient) == int)
+    assert(type(event_id) == int)
+
+    status = ConfigStatus.FETCH
+    report = struct.pack('<BHBBB', REPORT_ID, recipient, event_id, status, 0)
+
+    assert(len(report) <= REPORT_SIZE)
+    report += b'\0' * (REPORT_SIZE - len(report))
+
+    return report
+
+
+def parse_report(report):
+    data_field_len = len(report) - struct.calcsize('HBBB')
+    assert(data_field_len >= 0)
+
+    # Report ID is not included in the feature report from device
+    fmt = '<HBBB{}s'.format(data_field_len)
+    (recipient, event_id, status, event_data_len, data) = struct.unpack(fmt, report)
+
+    logging.debug('parsed: recipient 0x{:04x}, event_id 0x{:02x}, status 0x{:02x}, event_data_len {}, data {}'.format(
+        recipient, event_id, status, event_data_len, data))
+
+    return recipient, event_id, status, event_data_len, data
+
+
+def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
+    if is_fetch:
+        data = create_fetch_report(recipient, event_id)
+    else:
+        data = create_set_report(recipient, event_id, event_data, is_fetch)
+
     dev.send_feature_report(data)
 
     for retry in range(POLL_RETRY_COUNT):
         time.sleep(POLL_INTERVAL)
         response = dev.get_feature_report(REPORT_ID, REPORT_SIZE)
-        feat_ready = ConfigForwardStatus(int.from_bytes(response, byteorder='little'))
-        if feat_ready != ConfigForwardStatus.PENDING:
+
+        resp_recipient, resp_event_id, resp_status, resp_len, resp_data = parse_report(response)
+        if is_fetch:
+            print('Fetched value:', int.from_bytes(resp_data, byteorder='little'))
+
+        if resp_recipient != recipient or resp_event_id != event_id:
+            logging.error('Response does not match the request:\n'
+                'request: recipient {} event_id {}\n'
+                'response: recipient {}, event_id {}'.format(
+                recipient, event_id, resp_recipient, resp_event_id)
+                )
+
+        op_status = ConfigStatus(resp_status)
+        if op_status != ConfigStatus.PENDING:
             break
 
-    if feat_ready == ConfigForwardStatus.SUCCESS:
+    if op_status == ConfigStatus.SUCCESS:
         logging.info('Success')
     else:
-        logging.warning('Error {}'.format(feat_ready))
+        logging.warning('Error: {}'.format(op_status.name))
+
 
 def open_device():
     # Open HID device. If mouse is not connected, try dongle
@@ -122,6 +173,7 @@ def open_device():
         return None
 
     return dev
+
 
 def perform_dfu(dev, args):
     dfu_image = args.dfu_image
@@ -150,10 +202,9 @@ def perform_dfu(dev, args):
             logging.debug('Send DFU request: offset {}, size {}'.format(offset, chunk_len))
 
             event_data = dfu_header + chunk_data
-            report = create_report(recipient, event_id, event_data)
 
             progress_bar(int(offset/img_length * 1000))
-            write_feature_with_check(dev, report)
+            exchange_feature_report(dev, recipient, event_id, event_data, False)
 
             offset += chunk_len
         print('')
@@ -174,29 +225,34 @@ def perform_config(dev, args):
         return
 
     config_name  = args.option
-    config_value = args.value
     config_opts  = options[config_name]
 
     value_range  = config_opts.range
     opt_id       = config_opts.event_id
 
-    if not check_range(config_value, value_range):
-        print('Config value for {} must be in range {}'.format(config_name, value_range))
-        return
-
     recipient = MOUSE_PID
-
     event_id = (EVENT_GROUP_SETUP << GROUP_FIELD_POS) | (module_id << MOD_FIELD_POS) | (opt_id << OPT_FIELD_POS)
 
-    logging.debug('Send request to update {}: {}'.format(config_name, config_value))
+    if (args.value == 'fetch'):
+        print('Fetch the current value of {} from the firmware'.format(config_name))
+        event_data = b''
+        try:
+            exchange_feature_report(dev, recipient, event_id, event_data, True)
+        except:
+            print('Failed to fetch {}'.format(config_name))
+    else:
+        config_value = int(args.value)
+        logging.debug('Send request to update {}: {}'.format(config_name, config_value))
+        if not check_range(config_value, value_range):
+            print('Failed. Config value for {} must be in range {}'.format(config_name, value_range))
+            return
 
-    event_data = struct.pack('<I', config_value)
-    report = create_report(recipient, event_id, event_data)
-    try:
-        write_feature_with_check(dev, report)
-        print('{} was set'.format(config_name))
-    except:
-        print('Failed to set {}'.format(config_name))
+        event_data = struct.pack('<I', config_value)
+        try:
+            exchange_feature_report(dev, recipient, event_id, event_data, False)
+            print('{} was set'.format(config_name))
+        except:
+            print('Failed to set {}'.format(config_name))
 
 
 def configurator():
@@ -216,7 +272,7 @@ def configurator():
     parser_config_sensor_subparsers.required = True
     for opt_name in SENSOR_OPTIONS.keys():
         parser_config_sensor_opt = parser_config_sensor_subparsers.add_parser(opt_name, help=SENSOR_OPTIONS[opt_name].help)
-        parser_config_sensor_opt.add_argument('value', type=int, help='value range: {}'.format(SENSOR_OPTIONS[opt_name].range))
+        parser_config_sensor_opt.add_argument('value', help='value range: {} or "fetch" to fetch the value from device'.format(SENSOR_OPTIONS[opt_name].range))
     args = parser.parse_args()
 
     dev = open_device()

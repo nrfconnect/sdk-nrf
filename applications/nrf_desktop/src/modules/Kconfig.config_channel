@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018 - 2019 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -17,6 +17,11 @@ config DESKTOP_CONFIG_CHANNEL_ENABLE
 	help
 	  Enables user to change firmware parameters at runtime over the
 	  configuration channel.
+
+config DESKTOP_CONFIG_CHANNEL_TIMEOUT
+	int "Transaction timeout on configuration channel in seconds"
+	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
+	default 10
 
 if DESKTOP_CONFIG_ENABLE
 

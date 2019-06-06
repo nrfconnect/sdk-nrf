@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018 - 2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -13,6 +13,7 @@
 #include "module_state_event.h"
 
 #include "hid_report_desc.h"
+#include "config_channel.h"
 
 #include "hid_event.h"
 #include "ble_event.h"
@@ -149,7 +150,7 @@ static int assign_handles(struct bt_gatt_dm *dm)
 	return err;
 }
 
-void notify_config_forwarded(enum forward_status status)
+void notify_config_forwarded(enum config_status status)
 {
 	struct config_forwarded_event *event = new_config_forwarded_event();
 
@@ -163,9 +164,9 @@ void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 {
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
-		notify_config_forwarded(FORWARD_STATUS_WRITE_ERROR);
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
 	} else {
-		notify_config_forwarded(FORWARD_STATUS_SUCCESS);
+		notify_config_forwarded(CONFIG_STATUS_SUCCESS);
 	}
 }
 
@@ -262,7 +263,7 @@ static bool event_handler(const struct event_header *eh)
 			if (!bt_gatt_hids_c_ready_check(&hidc)) {
 				LOG_WRN("Cannot forward, peer disconnected");
 
-				notify_config_forwarded(FORWARD_STATUS_DISCONNECTED_ERROR);
+				notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
 				return false;
 			}
 
@@ -272,7 +273,7 @@ static bool event_handler(const struct event_header *eh)
 					REPORT_ID_USER_CONFIG);
 			if (!config_rep) {
 				LOG_ERR("Feature report not found");
-				notify_config_forwarded(FORWARD_STATUS_WRITE_ERROR);
+				notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
 				return false;
 			}
 
@@ -282,40 +283,25 @@ static bool event_handler(const struct event_header *eh)
 				return false;
 			}
 
-			u8_t event_data_len = event->dyndata.size;
-
-			const size_t min_size = sizeof(event->recipient) +
-						sizeof(event->id) +
-						sizeof(event_data_len);
-
+			struct config_channel_frame frame;
 			u8_t report[REPORT_SIZE_USER_CONFIG];
 
-			static_assert(min_size <= sizeof(report), "");
+			frame.recipient = event->recipient;
+			frame.event_id = event->id;
+			frame.event_data_len = event->dyndata.size;
+			frame.event_data = (u8_t *) event->dyndata.data;
 
-			if (sizeof(report) < min_size + event_data_len) {
-				LOG_ERR("Event data won't fit to report");
-				__ASSERT_NO_MSG(false);
-				return false;
+			int pos = config_channel_report_fill(report, sizeof(report), &frame, true);
+			if (pos < 0) {
+				LOG_WRN("Could not set report");
+				return pos;
 			}
-
-			size_t pos = 0;
-
-			sys_put_le16(event->recipient, &report[pos]);
-			pos += sizeof(event->recipient);
-
-			report[pos] = event->id;
-			pos += sizeof(event->id);
-
-			report[pos] = event_data_len;
-			pos += sizeof(event_data_len);
-
-			memcpy(&report[pos], event->dyndata.data, event_data_len);
 
 			int err = bt_gatt_hids_c_rep_write(&hidc, config_rep,
 					hidc_write_cb, report, sizeof(report));
 			if (err) {
 				LOG_ERR("Writing report failed, err:%d", err);
-				notify_config_forwarded(FORWARD_STATUS_WRITE_ERROR);
+				notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
 			}
 
 			return false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018 - 2019 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -19,6 +19,7 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 
 #include "hid_report_desc.h"
+#include "config_channel.h"
 
 #include "hid_event.h"
 #include "usb_event.h"
@@ -28,7 +29,7 @@ static enum usb_state state;
 static u8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
 
-static atomic_t forward_status;
+static struct config_channel_state cfg_chan;
 
 static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
@@ -39,13 +40,17 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 		if (request_value[1] == 0x03) {
 			/* Request for feature report */
 			if (request_value[0] == REPORT_ID_USER_CONFIG) {
-				static u8_t status;
+				size_t length = *len;
+				u8_t *buffer = *data;
 
-				status = atomic_get(&forward_status);
-				*len = sizeof(status);
-				*data = (u8_t *)(&status);
-
-				return 0;
+				int err = config_channel_report_get(&cfg_chan,
+								    buffer,
+								    length,
+								    true);
+				if (err) {
+					LOG_WRN("Failed to process report get");
+				}
+				return err;
 			} else {
 				LOG_WRN("Unsupported report ID");
 				return -ENOTSUP;
@@ -63,77 +68,13 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		size_t length = *len;
-		const u8_t *buffer = *data;
+		u8_t *buffer = *data;
 
-		u8_t  report_id;
-		u16_t recipient;
-		u8_t  event_id;
-		u8_t  event_data_len;
-
-		const size_t min_size = sizeof(report_id) + sizeof(recipient) +
-					sizeof(event_id) + sizeof(event_data_len);
-		const size_t max_size = sizeof(report_id) + REPORT_SIZE_USER_CONFIG;
-
-		static_assert(min_size < max_size, "");
-
-		if ((length < min_size) || (length > max_size)) {
-			LOG_WRN("Unsupported report length %zu", length);
-			return -ENOTSUP;
-		}
-
-		if (atomic_get(&forward_status) == FORWARD_STATUS_PENDING) {
-			LOG_WRN("Busy forwarding");
-			return -EBUSY;
-		}
-
-		size_t pos = 0;
-		report_id = buffer[pos];
-		pos += sizeof(report_id);
-
-		recipient = sys_get_le16(&buffer[pos]);
-		pos += sizeof(recipient);
-
-		event_id = buffer[pos];
-		pos += sizeof(event_id);
-
-		event_data_len = buffer[pos];
-		pos += sizeof(event_data_len);
-
-		if (report_id != REPORT_ID_USER_CONFIG) {
-			LOG_WRN("Unsupported report ID %" PRIu8, report_id);
-			return -ENOTSUP;
-		}
-
-		if (event_data_len > max_size - min_size) {
-			LOG_WRN("Unsupported event data length %" PRIu8,
-				event_data_len);
-			return -ENOTSUP;
-		}
-
-		if (recipient == CONFIG_USB_DEVICE_PID) {
-			struct config_event *event =
-				new_config_event(event_data_len);
-
-			memcpy(event->dyndata.data, &buffer[pos], event_data_len);
-			event->id = event_id;
-			event->store_needed = true;
-
-			atomic_set(&forward_status, FORWARD_STATUS_SUCCESS);
-
-			EVENT_SUBMIT(event);
-		} else {
-			LOG_INF("Forwarding event to %" PRIx16, recipient);
-
-			struct config_forward_event *event =
-				new_config_forward_event(event_data_len);
-
-			event->recipient = recipient;
-			event->id = event_id;
-			memcpy(event->dyndata.data, &buffer[pos], event_data_len);
-
-			atomic_set(&forward_status, FORWARD_STATUS_PENDING);
-
-			EVENT_SUBMIT(event);
+		/* Feature report set */
+		int err = config_channel_report_set(&cfg_chan, buffer, length,
+						    true, CONFIG_USB_DEVICE_PID);
+		if (err) {
+			LOG_WRN("Failed to process report set");
 		}
 	}
 
@@ -313,6 +254,11 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		if (new_state == USB_STATE_ACTIVE) {
 			broadcast_subscription_change();
 		}
+
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
+		    new_state != USB_STATE_ACTIVE) {
+			config_channel_disconnect(&cfg_chan);
+		}
 	}
 }
 
@@ -343,6 +289,10 @@ static int usb_init(void)
 	int err = usb_hid_init(usb_dev);
 	if (err) {
 		LOG_ERR("Cannot initialize HID class");
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		config_channel_init(&cfg_chan);
 	}
 
 	return err;
@@ -383,7 +333,15 @@ static bool event_handler(const struct event_header *eh)
 			struct config_forwarded_event *event =
 				cast_config_forwarded_event(eh);
 
-			atomic_set(&forward_status, event->status);
+			config_channel_forwarded_receive(&cfg_chan, event);
+
+			return false;
+		}
+
+		if (is_config_fetch_event(eh)) {
+			struct config_fetch_event *event = cast_config_fetch_event(eh);
+
+			config_channel_fetch_receive(&cfg_chan, event);
 
 			return false;
 		}
@@ -399,4 +357,5 @@ EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_forwarded_event);
+EVENT_SUBSCRIBE(MODULE, config_fetch_event);
 #endif
