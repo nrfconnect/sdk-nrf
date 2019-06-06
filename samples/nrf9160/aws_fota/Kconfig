@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "MQTT FOTA Sample Settings"
+
+config APP_VERSION
+	string "Application version"
+	default "v1.0.0"
+
+config CLOUD_CERT_SEC_TAG
+	int "Secure tag fo TLS credentials"
+	default 16842753
+
+config MQTT_BROKER_HOSTNAME
+	string "AWS IoT MQTT broker hostname"
+	default "a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com"
+	help
+	  Default is set to be the NRF Cloud MQTT broker
+
+config MQTT_BROKER_PORT
+	int "AWS IoT MQTT broker port"
+	default 8883
+
+config USE_CLOUD_CLIENT_ID
+	bool "Custom MQTT Client Id"
+if USE_CLOUD_CLIENT_ID
+
+config CLOUD_CLIENT_ID
+	string "Client ID"
+	default "your_client_id"
+endif
+
+config USE_PROVISIONED_CERTIFICATES
+	bool "Use provisioned certificates"
+	default y
+	help
+	  If enabled, the application will not provide server certificates into
+	  the modem and use whatever certificates that are stored in the modem
+	  under the default secure tag (e. g. certificates provisioned by
+	  another sample, for instance, `asset_tracker`). Otherwise, a user
+	  should provide a valid server certificate in `certificates.h` file.
+
+config MQTT_MESSAGE_BUFFER_SIZE
+	int ""
+	default 128
+
+config MQTT_PAYLOAD_BUFFER_SIZE
+	int ""
+	default 128
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
