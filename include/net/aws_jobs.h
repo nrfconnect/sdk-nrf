@@ -113,32 +113,17 @@ extern "C" {
 				     JOB_ID_MAX_LEN +\
 				     (sizeof("/jobs//update/accepted") - 1))
 
-
 /** @brief Job Execution Status. */
 enum execution_status {
-	QUEUED = 0,
-	IN_PROGRESS,
-	SUCCEEDED,
-	FAILED,
-	TIMED_OUT,
-	REJECTED,
-	REMOVED,
-	CANCELED
+	AWS_JOBS_QUEUED = 0,
+	AWS_JOBS_IN_PROGRESS,
+	AWS_JOBS_SUCCEEDED,
+	AWS_JOBS_FAILED,
+	AWS_JOBS_TIMED_OUT,
+	AWS_JOBS_REJECTED,
+	AWS_JOBS_REMOVED,
+	AWS_JOBS_CANCELED
 };
-
-
-/** @brief Mapping of enum to strings for Job Execution Status. */
-const char *execution_status_strings[] = {
-	[QUEUED] = "QUEUED",
-	[IN_PROGRESS] = "IN_PROGRESS",
-	[SUCCEEDED] = "SUCCEEDED",
-	[FAILED] = "FAILED",
-	[TIMED_OUT] = "TIMED_OUT",
-	[REJECTED] = "REJECTED",
-	[REMOVED] = "REMOVED",
-	[CANCELED] = "CANCELED"
-};
-
 
 /**
  * @brief Construct the get topic for accepted/rejected AWS Jobs and subscribe
