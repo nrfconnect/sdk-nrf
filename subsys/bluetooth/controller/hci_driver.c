@@ -398,6 +398,10 @@ static int ble_enable(void)
 	       sizeof(ble_controller_mempool), required_memory);
 
 	if (required_memory > sizeof(ble_controller_mempool)) {
+		BT_ERR("Allocated memory too low: %u < %u",
+		       sizeof(ble_controller_mempool), required_memory);
+		k_panic();
+		/* No return from k_panic(). */
 		return -ENOMEM;
 	}
 
