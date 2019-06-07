@@ -5,3 +5,4 @@
 #
 
 add_subdirectory_ifdef(CONFIG_NFC_NDEF ndef)
+add_subdirectory_ifdef(CONFIG_NFC_T2T_PARSER t2t)
