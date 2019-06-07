@@ -31,7 +31,7 @@ static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_BLECTLR_SIGNAL_STACK_SIZE);
 
-static u8_t ble_controller_mempool[0x6000];
+static u8_t ble_controller_mempool[CONFIG_BLECTRL_MEMPOOL_SIZE];
 
 void blectlr_assertion_handler(const char *const file, const u32_t line)
 {
