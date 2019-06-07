@@ -7,5 +7,6 @@
 menu "NFC"
 
 rsource "ndef/Kconfig"
+rsource "t2t/Kconfig"
 
 endmenu
