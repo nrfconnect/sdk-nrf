@@ -348,24 +348,28 @@ static int ble_init(struct device *unused)
 static int ble_enable(void)
 {
 	int err;
+	int required_memory;
 	ble_controller_cfg_t cfg;
 
 	cfg.master_count.count = 1;
 
-	err = ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
-				     BLE_CONTROLLER_CFG_TYPE_MASTER_COUNT,
-				     &cfg);
-	if (err < 0 || err > sizeof(ble_controller_mempool)) {
-		return err;
+	/* NOTE: ble_controller_cfg_set() returns a negative errno on error. */
+	required_memory =
+		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
+				       BLE_CONTROLLER_CFG_TYPE_MASTER_COUNT,
+				       &cfg);
+	if (required_memory < 0) {
+		return required_memory;
 	}
 
 	cfg.slave_count.count = 1;
 
-	err = ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
-				     BLE_CONTROLLER_CFG_TYPE_SLAVE_COUNT,
-				     &cfg);
-	if (err < 0 || err > sizeof(ble_controller_mempool)) {
-		return err;
+	required_memory =
+		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
+				       BLE_CONTROLLER_CFG_TYPE_SLAVE_COUNT,
+				       &cfg);
+	if (required_memory < 0) {
+		return required_memory;
 	}
 
 	cfg.buffer_cfg.rx_packet_size = 251;
@@ -373,19 +377,28 @@ static int ble_enable(void)
 	cfg.buffer_cfg.rx_packet_count = 10;
 	cfg.buffer_cfg.tx_packet_count = 10;
 
-	err = ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
-				     BLE_CONTROLLER_CFG_TYPE_BUFFER_CFG,
-				     &cfg);
-	if (err < 0 || err > sizeof(ble_controller_mempool)) {
-		return err;
+	required_memory =
+		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
+				       BLE_CONTROLLER_CFG_TYPE_BUFFER_CFG,
+				       &cfg);
+	if (required_memory < 0) {
+		return required_memory;
 	}
 
 	cfg.event_length.event_length_us = 7500;
-	err = ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
-				     BLE_CONTROLLER_CFG_TYPE_EVENT_LENGTH,
-				     &cfg);
-	if (err < 0 || err > sizeof(ble_controller_mempool)) {
-		return err;
+	required_memory =
+		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
+				       BLE_CONTROLLER_CFG_TYPE_EVENT_LENGTH,
+				       &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+
+	BT_DBG("BT mempool size: %u, required: %u",
+	       sizeof(ble_controller_mempool), required_memory);
+
+	if (required_memory > sizeof(ble_controller_mempool)) {
+		return -ENOMEM;
 	}
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
