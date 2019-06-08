@@ -9,8 +9,9 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <toolchain/common.h>
-#include <download_client.h>
 #include <net/socket.h>
+#include <net/tls_credentials.h>
+#include <download_client.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(download_client, CONFIG_NRF_DOWNLOAD_CLIENT_LOG_LEVEL);
@@ -24,7 +25,13 @@ LOG_MODULE_REGISTER(download_client, CONFIG_NRF_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 BUILD_ASSERT_MSG(CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE <=
 		 CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
-	"The response buffer must accommodate for a full fragment");
+		 "The response buffer must accommodate for a full fragment");
+
+#if defined(CONFIG_LOG) && !defined(CONFIG_LOG_IMMEDIATE)
+BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS) ?
+			 CONFIG_LOG_BUFFER_SIZE >= 2048 : 1,
+		 "Please increase log buffer sizer");
+#endif
 
 static int socket_timeout_set(int fd)
 {
@@ -49,63 +56,116 @@ static int socket_timeout_set(int fd)
 	return 0;
 }
 
-static int resolve_and_connect(const char *const host, const char *const port,
-			       u32_t family, u32_t proto)
+static int socket_sectag_set(int fd, int sec_tag)
 {
-	int fd;
-	int rc;
+	int err;
+	int verify;
+	sec_tag_t sec_tag_list[] = { sec_tag };
 
-	if (host == NULL) {
+	enum {
+		NONE = 0,
+		OPTIONAL = 1,
+		REQUIRED = 2,
+	};
+
+	verify = OPTIONAL;
+
+	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	if (err) {
+		LOG_ERR("Failed to setup peer verification, errno %d", errno);
 		return -1;
 	}
 
-	struct addrinfo *addrinf = NULL;
+	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+			 sizeof(sec_tag_t) * ARRAY_SIZE(sec_tag_list));
+	if (err) {
+		LOG_ERR("Failed to setup socket security tag, errno %d", errno);
+		return -1;
+	}
+
+	return 0;
+}
+
+static int resolve_and_connect(const char *const host, int family, int sec_tag)
+{
+	int fd;
+	int err;
+	int proto;
+	u16_t port;
+	struct addrinfo *addr;
+	struct addrinfo *info;
+
+	__ASSERT_NO_MSG(host);
+
+	/* Set up port and protocol */
+	if (sec_tag == -1) {
+		/* HTTP, port 80 */
+		proto = IPPROTO_TCP;
+		port = htons(80);
+	} else {
+		/* HTTPS, port 443 */
+		proto = IPPROTO_TLS_1_2;
+		port = htons(443);
+	}
+
+	/* Lookup  host */
 	struct addrinfo hints = {
 		.ai_family = family,
 		.ai_socktype = SOCK_STREAM,
 		.ai_protocol = proto,
 	};
 
-	/* Resolve the port. */
-	rc = getaddrinfo(host, port, &hints, &addrinf);
-
-	if (rc < 0 || (addrinf == NULL)) {
-		LOG_ERR("getaddrinfo() failed, err %d", errno);
+	err = getaddrinfo(host, NULL, &hints, &info);
+	if (err) {
+		LOG_WRN("Failed to resolve hostname %s on %s", log_strdup(host),
+			family == AF_INET ? "IPv4" : "IPv6");
 		return -1;
 	}
 
-	struct addrinfo *addr = addrinf;
-	struct sockaddr *remoteaddr;
+	LOG_INF("Attempting to connect over %s",
+		family == AF_INET ? log_strdup("IPv4") : log_strdup("IPv6"));
 
-	int addrlen = (family == AF_INET6) ? sizeof(struct sockaddr_in6) :
-					     sizeof(struct sockaddr_in);
-
-	/* Open a socket based on the local address. */
 	fd = socket(family, SOCK_STREAM, proto);
-	if (fd >= 0) {
-		/* Look for IPv4 address of the broker. */
-		while (addr != NULL) {
-			remoteaddr = addr->ai_addr;
+	if (fd < 0) {
+		LOG_ERR("Failed to create socket, errno %d", errno);
+		goto cleanup;
+	}
 
-			if (remoteaddr->sa_family == family) {
-				((struct sockaddr_in *)remoteaddr)->sin_port =
-					htons(80);
-
-				/** TODO:
-				 *  Need to set security setting for HTTPS.
-				 */
-				rc = connect(fd, remoteaddr, addrlen);
-				if (rc == 0) {
-					break;
-				}
-			}
-			addr = addr->ai_next;
+	if (proto == IPPROTO_TLS_1_2) {
+		LOG_INF("Setting up TLS credentials");
+		err = socket_sectag_set(fd, sec_tag);
+		if (err) {
+			goto cleanup;
 		}
 	}
 
-	freeaddrinfo(addrinf);
+	/* Not connected */
+	err = -1;
 
-	if (rc < 0) {
+	for (addr = info; addr != NULL; addr = addr->ai_next) {
+		struct sockaddr * const sa = addr->ai_addr;
+
+		switch (sa->sa_family) {
+		case AF_INET6:
+			((struct sockaddr_in6 *)sa)->sin6_port = port;
+			break;
+		case AF_INET:
+			((struct sockaddr_in *)sa)->sin_port = port;
+			break;
+		}
+
+		err = connect(fd, sa, addr->ai_addrlen);
+		if (err == 0) {
+			break;
+		}
+	}
+
+cleanup:
+	freeaddrinfo(info);
+
+	if (err) {
+		/* Unable to connect, close socket */
+		LOG_ERR("Unable to connect");
 		close(fd);
 		fd = -1;
 	}
@@ -113,7 +173,7 @@ static int resolve_and_connect(const char *const host, const char *const port,
 	return fd;
 }
 
-static int http_request_send(const struct download_client *client, size_t len)
+static int socket_send(const struct download_client *client, size_t len)
 {
 	int sent;
 	size_t off = 0;
@@ -158,12 +218,14 @@ static int get_request_send(struct download_client *client)
 		return -ENOMEM;
 	}
 
-	LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
+	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS)) {
+		LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
+	}
 
-	LOG_INF("Sending HTTP request");
-
-	err = http_request_send(client, len);
+	LOG_DBG("Sending HTTP request");
+	err = socket_send(client, len);
 	if (err) {
+		LOG_ERR("Failed to send HTTP request, errno %d", errno);
 		return err;
 	}
 
@@ -193,7 +255,10 @@ static int header_parse(struct download_client *client)
 	__ASSERT(hdr < sizeof(client->buf), "Buffer overflow");
 
 	LOG_DBG("GET header size: %u", hdr);
-	LOG_HEXDUMP_DBG(client->buf, hdr, "GET");
+
+	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS)) {
+		LOG_HEXDUMP_DBG(client->buf, hdr, "GET");
+	}
 
 	/* If file size is not known, read it from the header */
 	if (client->file_size == 0) {
@@ -213,7 +278,7 @@ static int header_parse(struct download_client *client)
 
 		client->file_size = atoi(p + 1);
 
-		LOG_INF("File size = %d", client->file_size);
+		LOG_DBG("File size = %d", client->file_size);
 	}
 
 	if (client->offset != hdr) {
@@ -235,7 +300,7 @@ static int header_parse(struct download_client *client)
 	return 0;
 }
 
-static int fragment_send(const struct download_client *client)
+static int fragment_evt_send(const struct download_client *client)
 {
 	__ASSERT(client->offset <= CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE,
 		 "Fragment overflow!");
@@ -254,11 +319,24 @@ static int fragment_send(const struct download_client *client)
 	return client->callback(&evt);
 }
 
+static void error_evt_send(const struct download_client *dl, int error)
+{
+	/* Error will be sent as negative. */
+	__ASSERT_NO_MSG(error > 0);
+
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_ERROR,
+		.error = -error
+	};
+
+	dl->callback(&evt);
+}
+
 void download_thread(void *client, void *a, void *b)
 {
 	int rc;
 	size_t len;
-	struct download_client * const dl = client;
+	struct download_client *const dl = client;
 
 restart_and_suspend:
 	k_thread_suspend(dl->tid);
@@ -271,24 +349,15 @@ restart_and_suspend:
 			   sizeof(dl->buf) - dl->offset, 0);
 
 		if (len == -1) {
-			LOG_ERR("Error reading from socket: recv() errno %d",
-				errno);
-			const struct download_client_evt evt = {
-				.id = DOWNLOAD_CLIENT_EVT_ERROR,
-				.error = -ENOTCONN
-			};
-			dl->callback(&evt);
+			LOG_ERR("Error reading from socket, errno %d", errno);
+			error_evt_send(dl, ENOTCONN);
 			/* Restart and suspend */
 			break;
 		}
 
 		if (len == 0) {
 			LOG_WRN("Peer closed connection!");
-			const struct download_client_evt evt = {
-				.id = DOWNLOAD_CLIENT_EVT_ERROR,
-				.error = -ECONNRESET
-			};
-			dl->callback(&evt);
+			error_evt_send(dl, ECONNRESET);
 			/* Restart and suspend */
 			break;
 		}
@@ -327,12 +396,25 @@ restart_and_suspend:
 
 		LOG_INF("Downloaded bytes: %u/%u", dl->progress, dl->file_size);
 
-		LOG_HEXDUMP_DBG(dl->buf, dl->offset, "Fragment");
+		/* Have we received a whole fragment or the whole file? */
+		if ((dl->offset < CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE) &&
+		    (dl->progress != dl->file_size)) {
+			LOG_DBG("Awaiting full response (%u)", dl->offset);
+			continue;
+		}
+
+		/* Send fragment to application.
+		 * If the application callback returns non-zero, stop.
+		 */
+		rc = fragment_evt_send(dl);
+		if (rc) {
+			/* Restart and suspend */
+			LOG_INF("Fragment refused, download stopped.");
+			break;
+		}
 
 		if (dl->progress == dl->file_size) {
 			LOG_INF("Download complete");
-			/* Send out last fragment */
-			fragment_send(dl);
 			const struct download_client_evt evt = {
 				.id = DOWNLOAD_CLIENT_EVT_DONE,
 			};
@@ -341,26 +423,16 @@ restart_and_suspend:
 			break;
 		}
 
-		if (dl->offset < CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE) {
-			LOG_DBG("Awaiting full response (%u)", dl->offset);
-			continue;
-		}
-
-		/* Send fragment to application.
-		 * If the application callback returns non-zero, abort.
-		 */
-		rc = fragment_send(dl);
-		if (rc) {
-			/* Restart and suspend */
-			LOG_INF("Fragment refused, download stopped.");
-			break;
-		}
-
 		/* Request next fragment */
 		dl->offset = 0;
 		dl->has_header = false;
 
-		get_request_send(dl);
+		rc = get_request_send(dl);
+		if (rc) {
+			error_evt_send(dl, ECONNRESET);
+			/* Restart and suspend */
+			break;
+		}
 	}
 
 	/* Do not let the thread return, since it can't be restarted */
@@ -389,12 +461,19 @@ int download_client_init(struct download_client *const client,
 	return 0;
 }
 
-int download_client_connect(struct download_client *const client, char *host)
+int download_client_connect(struct download_client *const client, char *host,
+			    int sec_tag)
 {
 	int err;
 
 	if (client == NULL || host == NULL) {
 		return -EINVAL;
+	}
+
+	if (!IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_TLS)) {
+		if (sec_tag != -1) {
+			return -EINVAL;
+		}
 	}
 
 	if (client->fd != -1) {
@@ -404,11 +483,17 @@ int download_client_connect(struct download_client *const client, char *host)
 
 	client->host = host;
 
-	/* TODO: Parse the host for name, port and protocol. */
-	client->fd =
-		resolve_and_connect(client->host, NULL, AF_INET, IPPROTO_TCP);
+	/* Attempt IPv6 connection if configured, fallback to IPv4 */
+	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_IPV6)) {
+		client->fd =
+			resolve_and_connect(client->host, AF_INET6, sec_tag);
+	}
 	if (client->fd < 0) {
-		LOG_ERR("resolve_and_connect() failed, err %d", errno);
+		client->fd =
+			resolve_and_connect(client->host, AF_INET, sec_tag);
+	}
+
+	if (client->fd < 0) {
 		return -EINVAL;
 	}
 
@@ -433,6 +518,7 @@ int download_client_disconnect(struct download_client *const client)
 
 	err = close(client->fd);
 	if (err) {
+		LOG_ERR("Failed to close socket, errno %d", errno);
 		return -errno;
 	}
 
@@ -457,11 +543,8 @@ int download_client_start(struct download_client *client, char *file,
 	client->offset = 0;
 	client->has_header = false;
 
-	LOG_INF("Downloading: %s [%u]", client->file, client->progress);
-
-	if (client->progress % CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE) {
-		LOG_DBG("Attempting to continue from non-2^ offset..");
-	}
+	LOG_INF("Downloading: %s [%u]", log_strdup(client->file),
+		client->progress);
 
 	err = get_request_send(client);
 	if (err) {
@@ -491,5 +574,6 @@ int download_client_file_size_get(struct download_client *client, size_t *size)
 	}
 
 	*size = client->file_size;
+
 	return 0;
 }

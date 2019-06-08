@@ -105,7 +105,7 @@ int fota_download_start(char *host, char *file)
 		return -EALREADY;
 	}
 
-	int err = download_client_connect(&dfu, host);
+	int err = download_client_connect(&dfu, host,  -1 /* HTTP */);
 
 	if (err != 0) {
 		LOG_ERR("download_client_connect error %d", err);

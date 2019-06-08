@@ -87,7 +87,7 @@ typedef int (*download_client_callback_t)(
  * @brief Download client instance.
  */
 struct download_client {
-	/** Transport file descriptor. */
+	/** HTTP socket. */
 	int fd;
 	/** HTTP response buffer. */
 	char buf[CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE];
@@ -136,10 +136,13 @@ int download_client_init(struct download_client *client,
  *
  * @param[in] client	Client instance.
  * @param[in] host	HTTP server to connect to, null-terminated.
+ * @param[in] sec_tag	TLS credentials tag, used for HTTPS connections.
+ * 			Must be -1 when using HTTP.
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_connect(struct download_client *client, char *host);
+int download_client_connect(struct download_client *client, char *host,
+			    int sec_tag);
 
 /**
  * @brief Download a file.
