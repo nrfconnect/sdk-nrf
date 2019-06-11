@@ -12,4 +12,5 @@ Here you can find documentation for these scripts.
    :glob:
 
    ../../scripts/shell/*/*
+   ../../scripts/hid_configurator/*
    ../../scripts/partition_manager/*
