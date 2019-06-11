@@ -12,9 +12,6 @@ CONFIG_ARM_MPU=y
 # Enable TrustZone-M
 CONFIG_ARM_TRUSTZONE_M=y
 
-# This Board implies building Non-Secure firmware
-CONFIG_TRUSTED_EXECUTION_SECURE=y
-
 # Enable GPIO
 CONFIG_GPIO=y
 
