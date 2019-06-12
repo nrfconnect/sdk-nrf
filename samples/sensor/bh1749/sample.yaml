@@ -1,0 +1,8 @@
+sample:
+  name: BH1749 Sensor Sample
+tests:
+  test:
+    harness: sensor
+    tags: sensors
+    platform_whitelist: nrf9160_pca20035
+    depends_on: i2c
