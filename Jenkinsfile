@@ -110,7 +110,7 @@ pipeline {
             sh "(git remote --verbose)"
 
             if (env.CHANGE_TARGET) {
-              COMMIT_RANGE = "origin/${env.CHANGE_TARGET}..HEAD"
+              COMMIT_RANGE = "origin/${env.CHANGE_TARGET}..origin/${env.BRANCH_NAME}"
               COMPLIANCE_ARGS = "$COMPLIANCE_ARGS $COMPLIANCE_REPORT_ARGS"
               println "Building a PR: ${COMMIT_RANGE}"
             }
