@@ -50,6 +50,12 @@ enum at_cmd_state {
  */
 typedef void (*at_cmd_handler_t)(char *response);
 
+/**@brief Initialize AT command driver.
+ *
+ * @return Zero on success, non-zero otherwise.
+ */
+int at_cmd_init(void);
+
 /**
  * @brief Function to send an AT command to the modem, any data from the modem
  *        will trigger the callback defined by the handler parameter in the
