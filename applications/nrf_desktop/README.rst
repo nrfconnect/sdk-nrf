@@ -3,7 +3,7 @@
 nRF Desktop
 ##########################
 
-Nordic Semiconductor HID reference design.
+Nordic Semiconductor HID reference design. :)
 
 Overview
 ********
