@@ -365,7 +365,9 @@ static void button_send(bool pressed)
 		return;
 	}
 
-	if (!pressed) {
+	if (pressed) {
+		data[0] = '1';
+	} else {
 		data[0] = '0';
 	}
 
