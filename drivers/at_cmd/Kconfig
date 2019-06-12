@@ -12,9 +12,17 @@ config AT_CMD
 
 if AT_CMD
 
+config AT_CMD_SYS_INIT
+	bool "Initialize the AT Command driver during system init"
+	default y if BSD_LIBRARY_SYS_INIT
+
+if AT_CMD_SYS_INIT
+
 config AT_CMD_INIT_PRIORITY
 	int "AT Command driver init priority"
 	default 40
+
+endif
 
 config AT_CMD_THREAD_PRIO
 	int "AT thread priority level"

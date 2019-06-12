@@ -307,13 +307,16 @@ void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 	k_mutex_unlock(&cmd_pending);
 }
 
-static int at_cmd_init(struct device *dev)
+static int at_cmd_driver_init(struct device *dev)
 {
+	int err;
+
 	ARG_UNUSED(dev);
 
-	if (open_socket() != 0) {
-		LOG_ERR("Failed to open AT socket (err:%d)", errno);
-		return -1;
+	err = open_socket();
+	if (err) {
+		LOG_ERR("Failed to open AT socket (err:%d)", err);
+		return err;
 	}
 
 	LOG_DBG("Common AT socket created");
@@ -329,5 +332,12 @@ static int at_cmd_init(struct device *dev)
 	return 0;
 }
 
-SYS_INIT(at_cmd_init, APPLICATION, CONFIG_AT_CMD_INIT_PRIORITY);
+int at_cmd_init(void)
+{
+	return at_cmd_driver_init(NULL);
+}
 
+
+#ifdef CONFIG_AT_CMD_SYS_INIT
+SYS_INIT(at_cmd_driver_init, APPLICATION, CONFIG_AT_CMD_INIT_PRIORITY);
+#endif
