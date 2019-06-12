@@ -14,8 +14,8 @@ def getRepoURL() {
 
 def getPRHEADSHA() {
   dir('nrf') {
-    sh "git fetch $GIT_URL refs/pull/\$(echo $GIT_BRANCH | sed 's/PR-//')/head"
-    def GH_PR_HEAD_SHA = sh (script: "git rev-parse FETCH_HEAD", returnStdout: true)
+    sh "git fetch $GIT_URL refs/pull/\$(echo -n $GIT_BRANCH | sed 's/PR-//')/head"
+    def GH_PR_HEAD_SHA = sh (script: "git rev-parse FETCH_HEAD | tr -d '\\n' ", returnStdout: true)
     return "$GH_PR_HEAD_SHA"
   }
 }
@@ -105,7 +105,7 @@ pipeline {
             println("GIT_BRANCH = ${GIT_BRANCH}")
             println("GIT_LOCAL_BRANCH = ${GIT_LOCAL_BRANCH}")
             println("GIT_URL = ${GIT_URL}")
-            println("getPRHEADSHA = ${getPRHEADSHA()}")
+            println("getPRHEADSHA = ${getPRHEADSHA()} there is text after this")
 
             sh "(git remote --verbose)"
 
