@@ -11,6 +11,14 @@ def getRepoURL() {
   }
 }
 
+def getPRHEADSHA() {
+  dir('nrf') {
+    sh "git fetch $GIT_URL refs/pull/\$(echo $GIT_BRANCH | sed 's/PR-//')/head"
+    def GH_PR_HEAD_SHA = sh (script: "git rev-parse FETCH_HEAD", returnStatus: true)
+    return "$GH_PR_HEAD_SHA"
+  }
+}
+
 def check_and_store_sample(path, new_name) {
   script {
     if (fileExists(file_path)) {
@@ -41,7 +49,7 @@ pipeline {
       GH_TOKEN = credentials('nordicbuilder-compliance-token') // This token is used to by check_compliance to comment on PRs and use checks
       GH_USERNAME = "NordicBuilder"
       COMPLIANCE_ARGS = "-r NordicPlayground/fw-nrfconnect-nrf"
-      COMPLIANCE_REPORT_ARGS = "-p $CHANGE_ID -S $GIT_COMMIT -g"
+      COMPLIANCE_REPORT_ARGS = "-p $CHANGE_ID -S ${getPRHEADSHA()} -g"
 
       // Build all custom samples that match the ci_build tag
       SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --testcase-root $WORKSPACE/nrf/applications --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
