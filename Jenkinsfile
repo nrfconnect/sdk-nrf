@@ -25,7 +25,7 @@ void setBuildStatus(String message, String state) {
       $class: "GitHubCommitStatusSetter",
       reposSource: [$class: "ManuallyEnteredRepositorySource", url: "$GIT_URL"],
       contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "continuous-integration/jenkins/nrf-ci"],
-      commitShaSource: [$class: "ManuallyEnteredShaSource", sha: "$GIT_COMMIT"],
+      commitShaSource: [$class: "ManuallyEnteredShaSource", sha: "${getPRHEADSHA()}"],
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
