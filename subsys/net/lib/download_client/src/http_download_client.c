@@ -41,8 +41,11 @@ static int socket_timeout_set(int fd)
 		return 0;
 	}
 
+	const u32_t timeout_ms = CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS;
+
 	struct timeval timeo = {
-		.tv_sec = CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS,
+		.tv_sec = (timeout_ms / 1000),
+		.tv_usec = (timeout_ms % 1000) * 1000,
 	};
 
 	LOG_INF("Configuring socket timeout (%ld ms)", timeo.tv_sec);
