@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <errno.h>
 #include <bluetooth/gatt_pool.h>
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(bt_gatt_pool, CONFIG_BT_GATT_POOL_LOG_LEVEL);
+
 
 struct svc_el_pool {
 	void *elements;
@@ -106,51 +111,63 @@ static size_t free_element_find(struct svc_el_pool *el_pool, size_t el_cnt)
 	return el_cnt;
 }
 
-static void uuid_16_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
+static int uuid_16_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 {
 	size_t ind = free_element_find(uuid_pool,
 				       CONFIG_BT_GATT_UUID16_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_BT_GATT_UUID16_POOL_SIZE,
-		 "No more UUID16s in the pool!");
+	if (ind >= CONFIG_BT_GATT_UUID16_POOL_SIZE) {
+		LOG_ERR("No more UUID16s in the pool!");
+		return -ENOMEM;
+	}
 
 	*uuid = (struct bt_uuid *)
 		&((struct bt_uuid_16 *) uuid_pool->elements)[ind];
+	return 0;
 }
 
-static void uuid_32_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
+static int uuid_32_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 {
 	size_t ind = free_element_find(uuid_pool,
 				       CONFIG_BT_GATT_UUID32_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_BT_GATT_UUID32_POOL_SIZE,
-		 "No more UUID32s in the pool!");
+	if (ind >= CONFIG_BT_GATT_UUID32_POOL_SIZE) {
+		LOG_ERR("No more UUID32s in the pool!");
+		return -ENOMEM;
+	}
 
 	*uuid = (struct bt_uuid *)
 		&((struct bt_uuid_32 *) uuid_pool->elements)[ind];
+	return 0;
 }
 
-static void uuid_128_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
+static int uuid_128_get(struct bt_uuid **uuid, struct svc_el_pool *uuid_pool)
 {
 	size_t ind = free_element_find(uuid_pool,
 				       CONFIG_BT_GATT_UUID128_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_BT_GATT_UUID128_POOL_SIZE,
-		 "No more UUID128s in the pool!");
+	if (ind >= CONFIG_BT_GATT_UUID128_POOL_SIZE) {
+		LOG_ERR("No more UUID128s in the pool!");
+		return -ENOMEM;
+	}
 
 	*uuid = (struct bt_uuid *)
 		&((struct bt_uuid_128 *) uuid_pool->elements)[ind];
+	return 0;
 }
 
-static void chrc_get(struct bt_gatt_chrc **chrc)
+static int chrc_get(struct bt_gatt_chrc **chrc)
 {
 	size_t ind = free_element_find(&chrc_pool,
 				       CONFIG_BT_GATT_CHRC_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_BT_GATT_CHRC_POOL_SIZE,
-		 "No more chrc descriptors in the pool!");
+	if (ind >= CONFIG_BT_GATT_CHRC_POOL_SIZE) {
+		LOG_ERR("No more chrc descriptors in the pool!");
+		return -ENOMEM;
+	}
 
 	*chrc = &((struct bt_gatt_chrc *) chrc_pool.elements)[ind];
+	return 0;
 }
 
 static void chrc_release(struct bt_gatt_chrc const *chrc)
@@ -160,14 +177,17 @@ static void chrc_release(struct bt_gatt_chrc const *chrc)
 			 ADDR_2_INDEX(BT_GATT_CHRC_TAB, chrc));
 }
 
-static void ccc_get(struct _bt_gatt_ccc **ccc)
+static int ccc_get(struct _bt_gatt_ccc **ccc)
 {
 	size_t ind = free_element_find(&ccc_pool, CONFIG_BT_GATT_CCC_POOL_SIZE);
 
-	__ASSERT(ind < CONFIG_BT_GATT_CCC_POOL_SIZE,
-		 "No more chrc descriptors in the pool!");
+	if (ind >= CONFIG_BT_GATT_CCC_POOL_SIZE) {
+		LOG_ERR("No more chrc descriptors in the pool!");
+		return -ENOMEM;
+	}
 
 	*ccc = &((struct _bt_gatt_ccc *) ccc_pool.elements)[ind];
+	return 0;
 }
 
 static void ccc_release(struct _bt_gatt_ccc const *ccc)
@@ -177,30 +197,41 @@ static void ccc_release(struct _bt_gatt_ccc const *ccc)
 			 ADDR_2_INDEX(BT_GATT_CCC_TAB, ccc));
 }
 
-static void uuid_register(struct bt_uuid **dest_uuid,
+static int uuid_register(struct bt_uuid **dest_uuid,
 			  struct bt_uuid const *src_uuid)
 {
+	int ret = -EINVAL;
+
 	__ASSERT(*dest_uuid == NULL, "Overriding attribute UUID!");
 
 	switch (src_uuid->type) {
 	case BT_UUID_TYPE_16:
-		uuid_16_get(dest_uuid, &uuid_16_pool);
-		memcpy(*dest_uuid, src_uuid, sizeof(struct bt_uuid_16));
+		ret = uuid_16_get(dest_uuid, &uuid_16_pool);
+		if (!ret) {
+			memcpy(*dest_uuid, src_uuid, sizeof(struct bt_uuid_16));
+		}
 		break;
 
 	case BT_UUID_TYPE_32:
-		uuid_32_get(dest_uuid, &uuid_32_pool);
-		memcpy(*dest_uuid, src_uuid, sizeof(struct bt_uuid_32));
+		ret = uuid_32_get(dest_uuid, &uuid_32_pool);
+		if (!ret) {
+			memcpy(*dest_uuid, src_uuid, sizeof(struct bt_uuid_32));
+		}
 		break;
 
 	case BT_UUID_TYPE_128:
-		uuid_128_get(dest_uuid, &uuid_128_pool);
-		memcpy(*dest_uuid, src_uuid, sizeof(struct bt_uuid_128));
+		ret = uuid_128_get(dest_uuid, &uuid_128_pool);
+		if (!ret) {
+			memcpy(*dest_uuid, src_uuid,
+			       sizeof(struct bt_uuid_128));
+		}
 		break;
 
 	default:
-		__ASSERT(false, "Unknown UUID type");
+		LOG_ERR("Unknown UUID type");
+		break;
 	}
+	return ret;
 }
 
 static void uuid_unregister(struct bt_uuid const *uuid)
@@ -235,120 +266,201 @@ static void uuid_unregister(struct bt_uuid const *uuid)
 	}
 }
 
-void bt_gatt_pool_svc_get(struct bt_gatt_service *svc,
-			  struct bt_uuid const *svc_uuid)
+/** @brief Free a single attribute.
+ *
+ *  This function frees all the elements dynamically allocated for the single
+ *  attribute.
+ *
+ *  @param attr The attribute to be released to the pool.
+ *
+ *  @note
+ *  If the given attribute was not created using bt_gatt_pool functions,
+ *  the result of this function is undefined.
+ */
+static void bt_gatt_pool_attr_free(struct bt_gatt_attr const *attr)
 {
-	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
+	if (!attr) {
+		LOG_ERR("Attribute handle to free is NULL");
+		return;
+	}
+
+	if (!bt_uuid_cmp(attr->uuid, BT_UUID_GATT_PRIMARY)) {
+		uuid_unregister(attr->uuid);
+		uuid_unregister(attr->user_data);
+	} else if (!bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC)) {
+		uuid_unregister(((struct bt_gatt_chrc *)attr->user_data)->uuid);
+		chrc_release(attr->user_data);
+		uuid_unregister(attr->uuid);
+	} else if (!bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CCC)) {
+		uuid_unregister(attr->uuid);
+		ccc_release(attr->user_data);
+	} else {
+		/* Just a descriptor created using bt_gatt_pool_desc_alloc */
+		uuid_unregister(attr->uuid);
+	}
+}
+
+int bt_gatt_pool_svc_alloc(struct bt_gatt_pool *gp,
+			   struct bt_uuid const *svc_uuid)
+{
+	int ret;
+	struct bt_gatt_attr *attr;
 	struct bt_uuid      *uuid_gatt_primary = BT_UUID_GATT_PRIMARY;
 
-	__ASSERT_NO_MSG(svc->attrs != NULL);
+	if (!gp || !gp->svc.attrs || !svc_uuid) {
+		LOG_ERR("Invalid attribute");
+		return -EINVAL;
+	}
+	if (gp->svc.attr_count >= gp->attr_array_size) {
+		LOG_ERR("No space left on given svc");
+		return -ENOSPC;
+	}
 
+	attr = &gp->svc.attrs[gp->svc.attr_count];
 	memset(attr, 0, sizeof(*attr));
 
-	uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_primary);
-	uuid_register((struct bt_uuid **) &attr->user_data, svc_uuid);
+	ret = uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_primary);
+	if (ret) {
+		return ret;
+	}
+	ret = uuid_register((struct bt_uuid **) &attr->user_data, svc_uuid);
+	if (ret) {
+		return ret;
+	}
 	attr->perm = BT_GATT_PERM_READ;
 	attr->read = bt_gatt_attr_read_service;
 
-	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
-	svc->attr_count++;
+	gp->svc.attr_count++;
+	return 0;
 }
 
-void bt_gatt_pool_svc_put(struct bt_gatt_attr const *attr)
+int bt_gatt_pool_chrc_alloc(struct bt_gatt_pool *gp,
+			    struct bt_gatt_chrc const *chrc)
 {
-	__ASSERT_NO_MSG(attr != NULL);
-
-	uuid_unregister(attr->uuid);
-	uuid_unregister(attr->user_data);
-}
-
-void bt_gatt_pool_chrc_get(struct bt_gatt_service *svc,
-			   struct bt_gatt_chrc const *chrc)
-{
-	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
+	int ret;
+	struct bt_gatt_attr *attr;
 	struct bt_uuid      *uuid_gatt_chrc = BT_UUID_GATT_CHRC;
 	struct bt_gatt_chrc *dest_chrc;
 
-	__ASSERT_NO_MSG(svc->attrs != NULL);
+	if (!gp || !gp->svc.attrs || !chrc) {
+		LOG_ERR("Invalid attribute");
+		return -EINVAL;
+	}
+	if (gp->svc.attr_count >= gp->attr_array_size) {
+		LOG_ERR("No space left on given svc");
+		return -ENOSPC;
+	}
 
+	attr = &gp->svc.attrs[gp->svc.attr_count];
 	memset(attr, 0, sizeof(*attr));
 
-	uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_chrc);
+	ret = uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_chrc);
+	if (ret) {
+		return ret;
+	}
 	attr->perm = BT_GATT_PERM_READ;
 	attr->read = bt_gatt_attr_read_chrc;
 
 	/* Register user data for characteristic. */
-	chrc_get((struct bt_gatt_chrc **) &attr->user_data);
+	ret = chrc_get((struct bt_gatt_chrc **) &attr->user_data);
+	if (ret) {
+		return ret;
+	}
 	dest_chrc = (struct bt_gatt_chrc *) attr->user_data;
 	memset(dest_chrc, 0, sizeof(*dest_chrc));
 	dest_chrc->properties = chrc->properties;
-	uuid_register((struct bt_uuid **) &dest_chrc->uuid, chrc->uuid);
+	ret = uuid_register((struct bt_uuid **) &dest_chrc->uuid, chrc->uuid);
+	if (ret) {
+		return ret;
+	}
 
-	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
-	svc->attr_count++;
+	gp->svc.attr_count++;
+	return 0;
 }
 
-void bt_gatt_pool_chrc_put(struct bt_gatt_attr const *attr)
+int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
+			    struct bt_gatt_attr const *descriptor)
 {
-	__ASSERT_NO_MSG(attr != NULL);
+	int ret;
+	struct bt_gatt_attr *attr;
 
-	uuid_unregister(((struct bt_gatt_chrc *) attr->user_data)->uuid);
-	chrc_release(attr->user_data);
-	uuid_unregister(attr->uuid);
-}
+	if (!gp || !gp->svc.attrs || !descriptor) {
+		LOG_ERR("Invalid attribute");
+		return -EINVAL;
+	}
+	if (gp->svc.attr_count >= gp->attr_array_size) {
+		LOG_ERR("No space left on given svc");
+		return -ENOSPC;
+	}
 
-void bt_gatt_pool_desc_get(struct bt_gatt_service *svc,
-			   struct bt_gatt_attr const *descriptor)
-{
-	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
-
-	__ASSERT_NO_MSG(svc->attrs != NULL);
-
+	attr = &gp->svc.attrs[gp->svc.attr_count];
 	memset(attr, 0, sizeof(*attr));
 
 	memcpy(attr, descriptor, sizeof(*attr));
 	attr->uuid = NULL;
-	uuid_register((struct bt_uuid **) &attr->uuid, descriptor->uuid);
+	ret = uuid_register((struct bt_uuid **) &attr->uuid, descriptor->uuid);
+	if (ret) {
+		return ret;
+	}
 
-	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
-	svc->attr_count++;
+	gp->svc.attr_count++;
+	return 0;
 }
 
-void bt_gatt_pool_desc_put(struct bt_gatt_attr const *attr)
+int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
+			   struct _bt_gatt_ccc const *ccc)
 {
-	__ASSERT_NO_MSG(attr != NULL);
-
-	uuid_unregister(attr->uuid);
-}
-
-void bt_gatt_pool_ccc_get(struct bt_gatt_service *svc,
-			  struct _bt_gatt_ccc const *ccc)
-{
-	struct bt_gatt_attr *attr = &svc->attrs[svc->attr_count];
+	int ret;
+	struct bt_gatt_attr *attr;
 	struct bt_uuid      *uuid_gatt_ccc = BT_UUID_GATT_CCC;
 
-	__ASSERT_NO_MSG(svc->attrs != NULL);
+	if (!gp || !gp->svc.attrs || !ccc) {
+		LOG_ERR("Invalid attribute");
+		return -EINVAL;
+	}
+	if (gp->svc.attr_count >= gp->attr_array_size) {
+		LOG_ERR("No space left on given svc");
+		return -ENOSPC;
+	}
 
+	attr = &gp->svc.attrs[gp->svc.attr_count];
 	memset(attr, 0, sizeof(*attr));
 
-	uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_ccc);
+	ret = uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_ccc);
+	if (ret) {
+		return ret;
+	}
 	attr->perm = BT_GATT_PERM_READ | BT_GATT_PERM_WRITE;
 	attr->read = bt_gatt_attr_read_ccc;
 	attr->write = bt_gatt_attr_write_ccc;
-	ccc_get((struct _bt_gatt_ccc **) &attr->user_data);
+	ret = ccc_get((struct _bt_gatt_ccc **) &attr->user_data);
+	if (ret) {
+		return ret;
+	}
 	memcpy(attr->user_data, ccc, sizeof(struct _bt_gatt_ccc));
 
-	__ASSERT_NO_MSG(svc->attr_count < CONFIG_BT_GATT_HIDS_ATTR_MAX);
-	svc->attr_count++;
+	gp->svc.attr_count++;
+	return 0;
 }
 
-void bt_gatt_pool_ccc_put(struct bt_gatt_attr const *attr)
+
+void bt_gatt_pool_free(struct bt_gatt_pool *gp)
 {
-	__ASSERT_NO_MSG(attr != NULL);
+	if (!gp) {
+		LOG_ERR("Gatt pool is NULL");
+		return;
+	}
+	if (!gp->svc.attrs) {
+		LOG_ERR("Gatt pool attributes is NULL");
+		return;
+	}
 
-	uuid_unregister(attr->uuid);
-	ccc_release(attr->user_data);
+	for (size_t n = 0; n < gp->svc.attr_count; ++n) {
+		bt_gatt_pool_attr_free(&gp->svc.attrs[n]);
+	}
+	gp->svc.attr_count = 0;
 }
+
 
 #if CONFIG_BT_GATT_POOL_STATS != 0
 static size_t mask_print(atomic_t *mask, size_t mask_size)
