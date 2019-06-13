@@ -96,7 +96,8 @@ void config_channel_init(struct config_channel_state *cfg_chan);
  *	     code is returned.
  */
 int config_channel_report_get(struct config_channel_state *cfg_chan,
-			      u8_t *buffer, size_t length, bool usb);
+			      u8_t *buffer, size_t length, bool usb,
+			      u16_t local_product_id);
 /**
  * @brief Handle a report set operation on the configuration channel.
  *

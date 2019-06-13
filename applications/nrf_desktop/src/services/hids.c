@@ -186,7 +186,8 @@ static void feature_report_handler(struct bt_gatt_hids_rep *rep,
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		if (!write) {
 			int err = config_channel_report_get(&cfg_chan, rep->data,
-							    rep->size, false);
+							    rep->size, false,
+							    CONFIG_BT_GATT_DIS_PNP_PID);
 
 			if (err) {
 				LOG_WRN("Failed to process report get");

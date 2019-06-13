@@ -213,6 +213,7 @@ static void handle_reboot_request(const struct config_fetch_request_event *event
 
 	fetch_event->id = event->id;
 	fetch_event->recipient = event->recipient;
+	fetch_event->channel_id = event->channel_id;
 
 	EVENT_SUBMIT(fetch_event);
 
@@ -244,6 +245,7 @@ static void handle_image_info_request(const struct config_fetch_request_event *e
 
 		fetch_event->id = event->id;
 		fetch_event->recipient = event->recipient;
+		fetch_event->channel_id = event->channel_id;
 
 		size_t pos = 0;
 

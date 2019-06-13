@@ -152,7 +152,8 @@ int config_channel_report_fill(u8_t *buffer, const size_t length,
 }
 
 int config_channel_report_get(struct config_channel_state *cfg_chan,
-			      u8_t *buffer, size_t length, bool usb)
+			      u8_t *buffer, size_t length, bool usb,
+			      u16_t local_product_id)
 {
 	int pos;
 
@@ -188,10 +189,29 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 			cfg_chan->frame.event_data = (u8_t *) &cfg_chan->fetch.data;
 			cfg_chan->frame.status = CONFIG_STATUS_SUCCESS;
 		} else {
+			if (cfg_chan->frame.recipient != local_product_id) {
+				if (usb) {
+					LOG_INF("Forwarding fetch get request to %" PRIx16, cfg_chan->frame.recipient);
+
+					struct config_forward_get_event *event =
+						new_config_forward_get_event();
+
+					event->recipient = cfg_chan->frame.recipient;
+					event->id = cfg_chan->frame.event_id;
+					event->status = CONFIG_STATUS_FETCH;
+					event->channel_id = cfg_chan;
+
+					atomic_set(&cfg_chan->status, CONFIG_STATUS_PENDING);
+
+					EVENT_SUBMIT(event);
+				}
+			}
+
 			cfg_chan->frame.status = CONFIG_STATUS_PENDING;
 		}
 	} else {
 		/* Event ID and recipient are retained from latest request from host */
+		cfg_chan->transaction_active = false;
 	}
 
 	pos = config_channel_report_fill(buffer, length,
@@ -202,8 +222,6 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 	}
 
 	if (cfg_chan->frame.status != CONFIG_STATUS_PENDING) {
-		LOG_DBG("Config channel transaction finished");
-
 		k_delayed_work_cancel(&cfg_chan->timeout);
 		cfg_chan->transaction_active = false;
 	}
@@ -220,6 +238,13 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 		return -EBUSY;
 	}
 
+	if (cfg_chan->transaction_active) {
+		LOG_WRN("Transaction already in progress");
+
+		atomic_set(&cfg_chan->status, CONFIG_STATUS_REJECT);
+		return -EALREADY;
+	}
+
 	/* Feature report set */
 	int pos = config_channel_report_parse(buffer, length,
 					      &cfg_chan->frame, usb);
@@ -231,13 +256,6 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 	if (usb && (cfg_chan->frame.report_id != REPORT_ID_USER_CONFIG)) {
 		LOG_WRN("Unsupported report ID %" PRIu8, cfg_chan->frame.report_id);
 		return -ENOTSUP;
-	}
-
-	if (cfg_chan->transaction_active) {
-		LOG_WRN("Transaction already in progress");
-
-		atomic_set(&cfg_chan->status, CONFIG_STATUS_REJECT);
-		return -EALREADY;
 	}
 
 	/* Start transaction timeout. */
@@ -256,6 +274,9 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 
 			event->recipient = cfg_chan->frame.recipient;
 			event->id = cfg_chan->frame.event_id;
+			event->channel_id = cfg_chan;
+
+			atomic_set(&cfg_chan->status, CONFIG_STATUS_PENDING);
 
 			EVENT_SUBMIT(event);
 		} else {
@@ -265,9 +286,10 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 			event->store_needed = true;
 			event->id = cfg_chan->frame.event_id;
 
-			EVENT_SUBMIT(event);
-
 			atomic_set(&cfg_chan->status, CONFIG_STATUS_SUCCESS);
+			cfg_chan->transaction_active = false;
+
+			EVENT_SUBMIT(event);
 		}
 	} else {
 		if (usb) {
@@ -278,7 +300,12 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 
 			event->recipient = cfg_chan->frame.recipient;
 			event->id = cfg_chan->frame.event_id;
-			memcpy(event->dyndata.data, &buffer[pos], cfg_chan->frame.event_data_len);
+			if (cfg_chan->is_fetch) {
+				event->status = CONFIG_STATUS_FETCH;
+			} else {
+				event->status = CONFIG_STATUS_PENDING;
+				memcpy(event->dyndata.data, &buffer[pos], cfg_chan->frame.event_data_len);
+			}
 
 			atomic_set(&cfg_chan->status, CONFIG_STATUS_PENDING);
 
@@ -298,6 +325,12 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 void config_channel_fetch_receive(struct config_channel_state *cfg_chan,
 				  const struct config_fetch_event *event)
 {
+	if (event->channel_id != cfg_chan) {
+		/* Request was made by the other transport. */
+		LOG_DBG("Fetch dropped, not intended for this transport");
+		return;
+	}
+
 	cfg_chan->fetch.event_id = event->id;
 	cfg_chan->fetch.recipient = event->recipient;
 
@@ -329,5 +362,6 @@ void config_channel_disconnect(struct config_channel_state *cfg_chan)
 {
 	if (cfg_chan->transaction_active) {
 		cfg_chan->disconnected = true;
+		cfg_chan->transaction_active = false;
 	}
 }
