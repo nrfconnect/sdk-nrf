@@ -10,9 +10,6 @@ import sys
 from thread import *
 import argparse
 
-HOST = ''   # Symbolic name meaning all available interfaces
-PORT = 8889 # Arbitrary non-privileged port
-
 parser = argparse.ArgumentParser(description='BLE serial daemon.')
 parser.add_argument('--com', help='COM port name (e.g. COM110).',
                     nargs='*', required=False, default="")
@@ -22,7 +19,12 @@ parser.add_argument('--family', help='chip family.',
                     nargs=1, required=False, default="")
 parser.add_argument('--name', help='Device name (advertising name).',
                     nargs='*', required=True, default=None)
+parser.add_argument('--port', help='Local port to use.',
+                    required=False, default=8889)
 args = parser.parse_args()
+
+HOST = ''   # Symbolic name meaning all available interfaces
+PORT = int(args.port)
 
 def ble_driver_init(conn_ic_id):
     global BLEDriver, Flasher, DfuTransportBle
@@ -199,15 +201,17 @@ s.listen(10)
 print 'Socket now listening'
 
 #now keep talking with the client
-while 1:
-    #wait to accept a connection - blocking call
-    conn, addr = s.accept()
-    print 'Connected with ' + addr[0] + ':' + str(addr[1])
+#wait to accept a connection - blocking call
+try:
+    while 1:
+        conn, addr = s.accept()
+        print 'Connected with ' + addr[0] + ':' + str(addr[1])
 
-    b = BLE_Serial(comport, args.name, conn)
-    print 'BLE serial started'
+        b = BLE_Serial(comport, args.name, conn)
+        print 'BLE serial started'
 
-    #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
-    start_new_thread(clientthread ,(conn,))
-
-s.close()
+        #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
+        start_new_thread(clientthread ,(conn,))
+# make sure we always close the socket, even on Ctrl+C
+finally:
+    s.close()
