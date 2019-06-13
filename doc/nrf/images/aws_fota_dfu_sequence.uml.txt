@@ -1,0 +1,51 @@
+title AWS Firmware-over-the-air
+participant Device
+participant AWS IoT MQTT Broker
+participant AWS IoT Jobs
+participant AWS IoT Device Shadow
+participant AWS S3 Server
+activate AWS IoT MQTT Broker
+note left of Device: Device Boot
+activate Device
+Device->AWS IoT Device Shadow: Update device shadow
+activate AWS IoT Device Shadow
+
+note over Device,AWS IoT Device Shadow: {nrf_cloud_app_fw_version: v1.0.0}
+
+deactivate AWS IoT Device Shadow
+Device->AWS IoT MQTT Broker: MQTT: Connect
+AWS IoT MQTT Broker->Device: MQTT: CONNACK
+Device->AWS IoT MQTT Broker: MQTT: Subscribe
+note over Device,AWS IoT MQTT Broker: $aws/things/<thingName>/jobs/notify-next
+note right of AWS IoT Jobs: Job created
+activate AWS IoT Jobs
+AWS IoT Jobs->Device: MQTT: Publish
+note over AWS IoT Jobs,Device: Job description document
+Device->AWS IoT MQTT Broker:MQTT: PUBACK
+Device->AWS IoT MQTT Broker:MQTT: Unsubscribe
+note over Device,AWS IoT MQTT Broker: $aws/things/<thing_name>/jobs/notify-next
+Device->AWS IoT MQTT Broker: MQTT: Subscribe
+note over Device,AWS IoT MQTT Broker: $aws/things/<thingName>/jobs/<jobId>/update/accepted\n$aws/things/<thingName>/jobs/<jobId>/update/rejected
+Device->AWS IoT Jobs: MQTT: Publish update job
+note over Device,AWS IoT Jobs: $aws/things/<thingName>/jobs/<jobId>/update\n\nstatus: IN_PROGRESS\nnextState: download_firmware
+AWS IoT Jobs->Device: MQTT Publish: Job Id update accepted topic
+deactivate AWS IoT Jobs
+note left of Device: Start Firmware download
+deactivate AWS IoT MQTT Broker
+Device->AWS S3 Server: HTTP request: <file_path>
+activate AWS S3 Server
+AWS S3 Server->Device: HTTP response: with content-range header
+deactivate AWS S3 Server
+note left of Device: Download complete
+Device->AWS IoT Jobs: MQTT Publish: Update job
+note over Device,AWS IoT Jobs: status: IN_PROGRESS\nnextState: apply_frimware
+activate AWS IoT Jobs
+activate AWS IoT MQTT Broker
+AWS IoT Jobs->Device: Publish on accepted topic
+Device->AWS IoT Jobs: MQTT Publish: Update job
+note over Device,AWS IoT Jobs: status: SUCCEEDED\nnextState: none
+AWS IoT Jobs->Device: Publish on accepted topic
+deactivateafter Device
+deactivate AWS IoT Jobs
+note left of Device: Device reboots
+
