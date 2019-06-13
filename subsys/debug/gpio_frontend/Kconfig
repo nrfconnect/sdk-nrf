@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if LOG_FRONTEND
+config LOG_FRONTEND_GPIO
+	bool "Enable GPIO frontend"
+	help
+	  When enabled frontend is using GPIO pins to output logs.
+
+if LOG_FRONTEND_GPIO
+config LOG_FRONTEND_PORT_NUMBER
+	int "GPIO port"
+	default 0
+	range 0 1 if HAS_HW_NRF_GPIO1
+	range 0 0
+
+config LOG_FRONTEND_LSB_PIN_NUMBER
+	int "Pin number for least significant bit for GPIO frontend"
+	default 1
+	range 0 23 if LOG_FRONTEND_PORT_NUMBER = 0
+	range 0 7
+
+config LOG_FRONTEND_HEXDUMP_MAX_LENGTH
+	int "Maximal allowed length in bytes for hexdump logs with GPIO frontend"
+	default 16
+endif # LOG_FRONTEND_GPIO
+
+endif # LOG_FRONTEND

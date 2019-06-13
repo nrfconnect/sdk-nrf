@@ -4,5 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-rsource "ppi_trace/Kconfig"
-rsource "gpio_frontend/Kconfig"
+zephyr_sources(gpio_frontend.c)
