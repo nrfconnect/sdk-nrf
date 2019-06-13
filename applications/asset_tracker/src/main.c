@@ -167,8 +167,11 @@ void error_handler(enum error_type err_type, int err_code)
 #if defined(CONFIG_LTE_LINK_CONTROL)
 		/* Turn off and shutdown modem */
 		int err = lte_lc_power_off();
-		__ASSERT(err == 0, "lte_lc_power_off failed: %d", err);
-#endif
+		if (err) {
+			printk("Could not shut down the LTE link, error: %d\n",
+			       err);
+		}
+#endif /* CONFIG_LTE_LINK_CONTROL */
 #if defined(CONFIG_BSD_LIBRARY)
 		bsdlib_shutdown();
 #endif
