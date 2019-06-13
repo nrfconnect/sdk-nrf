@@ -157,6 +157,7 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 	int pos;
 
 	cfg_chan->frame.status = atomic_get(&cfg_chan->status);
+	cfg_chan->frame.event_data_len = 0;
 
 	if (cfg_chan->frame.status == CONFIG_STATUS_REJECT ||
 	    cfg_chan->frame.status == CONFIG_STATUS_TIMEOUT) {
@@ -191,7 +192,6 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 		}
 	} else {
 		/* Event ID and recipient are retained from latest request from host */
-		cfg_chan->frame.event_data_len = 0;
 	}
 
 	pos = config_channel_report_fill(buffer, length,
