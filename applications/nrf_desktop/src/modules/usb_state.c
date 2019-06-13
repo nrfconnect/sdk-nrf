@@ -46,7 +46,8 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 				int err = config_channel_report_get(&cfg_chan,
 								    buffer,
 								    length,
-								    true);
+								    true,
+								    CONFIG_USB_DEVICE_PID);
 				if (err) {
 					LOG_WRN("Failed to process report get");
 				}

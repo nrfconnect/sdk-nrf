@@ -542,6 +542,7 @@ static bool event_handler(const struct event_header *eh)
 
 				fetch_event->id = event->id;
 				fetch_event->recipient = event->recipient;
+				fetch_event->channel_id = event->channel_id;
 				fetch_config(fetch_event->id,
 					     fetch_event->dyndata.data);
 

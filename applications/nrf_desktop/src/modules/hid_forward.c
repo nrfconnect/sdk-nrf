@@ -29,7 +29,8 @@ static const void *usb_id;
 static atomic_t usb_ready;
 static struct hid_mouse_event *next_event;
 static bool usb_busy;
-
+static bool forward_pending;
+static void *channel_id;
 
 static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 		      struct bt_gatt_hids_c_rep_info *rep,
@@ -154,13 +155,15 @@ void notify_config_forwarded(enum config_status status)
 {
 	struct config_forwarded_event *event = new_config_forwarded_event();
 
+	forward_pending = (status == CONFIG_STATUS_PENDING);
+
 	event->status = status;
 	EVENT_SUBMIT(event);
 }
 
 void hidc_write_cb(struct bt_gatt_hids_c *hidc,
-		      struct bt_gatt_hids_c_rep_info *rep,
-		      u8_t err)
+		   struct bt_gatt_hids_c_rep_info *rep,
+		   u8_t err)
 {
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
@@ -168,6 +171,47 @@ void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 	} else {
 		notify_config_forwarded(CONFIG_STATUS_SUCCESS);
 	}
+}
+
+u8_t hidc_read_cb(struct bt_gatt_hids_c *hidc,
+		  struct bt_gatt_hids_c_rep_info *rep,
+		  u8_t err, const u8_t *data)
+{
+	if (err) {
+		LOG_WRN("Failed to write report: %d", err);
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+	} else {
+		struct config_channel_frame frame;
+
+		int pos = config_channel_report_parse(data, REPORT_SIZE_USER_CONFIG,
+						      &frame, true);
+		if (pos < 0) {
+			LOG_WRN("Could not set report");
+			return pos;
+		}
+
+		if ((frame.status != CONFIG_STATUS_SUCCESS) ||
+		    (frame.event_data_len == 0)) {
+			LOG_INF("GATT read done, but fetch was not ready yet");
+
+			/* Do not notify requester, host will schedule next read. */
+			forward_pending = false;
+			return 0;
+		}
+
+		struct config_fetch_event *event =
+			new_config_fetch_event(frame.event_data_len);
+
+		event->id = frame.event_id;
+		event->recipient = frame.recipient;
+		event->channel_id = channel_id;
+
+		memcpy(event->dyndata.data, &data[pos], frame.event_data_len);
+
+		EVENT_SUBMIT(event);
+	}
+
+	return 0;
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -286,6 +330,11 @@ static bool event_handler(const struct event_header *eh)
 			struct config_channel_frame frame;
 			u8_t report[REPORT_SIZE_USER_CONFIG];
 
+			if (event->status == CONFIG_STATUS_FETCH) {
+				LOG_INF("Forwarding fetch request");
+				frame.status = CONFIG_STATUS_FETCH;
+			}
+
 			frame.recipient = event->recipient;
 			frame.event_id = event->id;
 			frame.event_data_len = event->dyndata.size;
@@ -306,6 +355,46 @@ static bool event_handler(const struct event_header *eh)
 
 			return false;
 		}
+
+		if (is_config_forward_get_event(eh)) {
+			const struct config_forward_get_event *event =
+				cast_config_forward_get_event(eh);
+
+			if (forward_pending) {
+				LOG_DBG("GATT read already pending");
+				return false;
+			} else {
+				if (!bt_gatt_hids_c_ready_check(&hidc)) {
+					LOG_WRN("Cannot forward, peer disconnected");
+
+					notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
+					return false;
+				}
+
+				struct bt_gatt_hids_c_rep_info *config_rep =
+					bt_gatt_hids_c_rep_find(&hidc,
+						BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
+						REPORT_ID_USER_CONFIG);
+				if (!config_rep) {
+					LOG_ERR("Feature report not found");
+					notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+					return false;
+				}
+
+				notify_config_forwarded(CONFIG_STATUS_PENDING);
+
+				channel_id = event->channel_id;
+
+				int err = bt_gatt_hids_c_rep_read(&hidc, config_rep,
+								  hidc_read_cb);
+				if (err) {
+					LOG_ERR("Reading report failed, err:%d", err);
+					notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+				}
+
+				return false;
+			}
+		}
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -322,4 +411,5 @@ EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_forward_event);
+EVENT_SUBSCRIBE(MODULE, config_forward_get_event);
 #endif
