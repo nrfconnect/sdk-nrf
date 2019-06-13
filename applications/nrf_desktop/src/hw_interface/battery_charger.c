@@ -111,18 +111,14 @@ static int cso_pin_control(bool enable)
 	return err;
 }
 
-static int charging_enable(void)
+static int charging_switch(bool enable)
 {
-	return gpio_pin_write(gpio_dev,
-			      CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN,
-			      1);
-}
+	u32_t charging = (IS_ENABLED(CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_INVERSED))
+			  ? (!enable) : (enable);
 
-static int charging_disable(void)
-{
 	return gpio_pin_write(gpio_dev,
 			      CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN,
-			      0);
+			      charging);
 }
 
 static int start_battery_state_check(void)
@@ -160,11 +156,6 @@ static int init_fn(void)
 	err = gpio_pin_configure(gpio_dev,
 				 CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN,
 				 GPIO_DIR_OUT);
-	if (err) {
-		goto error;
-	}
-
-	err = charging_disable();
 	if (err) {
 		goto error;
 	}
@@ -259,12 +250,12 @@ static bool event_handler(const struct event_header *eh)
 		switch (event->state) {
 		case USB_STATE_SUSPENDED:
 		case USB_STATE_DISCONNECTED:
-			err = charging_disable();
+			err = charging_switch(false);
 			break;
 
 		case USB_STATE_POWERED:
 		case USB_STATE_ACTIVE:
-			err = charging_enable();
+			err = charging_switch(true);
 			break;
 
 		default:

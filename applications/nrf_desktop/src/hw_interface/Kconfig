@@ -193,6 +193,13 @@ config DESKTOP_BATTERY_CHARGER_ENABLE_PIN
 	help
 	  A pin which enables battery charging.
 
+config DESKTOP_BATTERY_CHARGER_ENABLE_INVERSED
+	bool "Inverse charging enable signal"
+	depends on DESKTOP_BATTERY_CHARGER_DISCRETE
+	help
+	  Set this option if battery is charged when enable signal
+	  is set to zero.
+
 config DESKTOP_BATTERY_CHARGER_CSO_FREQ
 	int "CSO switching frequency (in Hz) on error state"
 	depends on DESKTOP_BATTERY_CHARGER_DISCRETE
