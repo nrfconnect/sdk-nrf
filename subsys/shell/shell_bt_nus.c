@@ -39,7 +39,7 @@ static void tx_try(const struct shell_bt_nus *bt_nus)
 {
 	u8_t *buf;
 	u32_t size;
-	u32_t req_len = (u32_t)bt_gatt_get_mtu(bt_nus->ctrl_blk->conn);
+	u32_t req_len = bt_gatt_nus_max_send(bt_nus->ctrl_blk->conn);
 
 	size = ring_buf_get_claim(bt_nus->tx_ringbuf, &buf, req_len);
 
