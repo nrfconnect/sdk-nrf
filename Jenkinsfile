@@ -50,7 +50,6 @@ pipeline {
       GH_TOKEN = credentials('nordicbuilder-compliance-token') // This token is used to by check_compliance to comment on PRs and use checks
       GH_USERNAME = "NordicBuilder"
       COMPLIANCE_ARGS = "-r NordicPlayground/fw-nrfconnect-nrf"
-      COMPLIANCE_REPORT_ARGS = "-p $CHANGE_ID -S ${getPRHEADSHA()} -g"
 
       // Build all custom samples that match the ci_build tag
       SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --testcase-root $WORKSPACE/nrf/applications --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
@@ -140,6 +139,7 @@ pipeline {
 
                 if (env.CHANGE_TARGET) {
                   COMMIT_RANGE = "origin/${env.CHANGE_TARGET}..origin/${env.BRANCH_NAME}"
+                  COMPLIANCE_REPORT_ARGS = "-p $CHANGE_ID -S ${getPRHEADSHA()} -g"
                   COMPLIANCE_ARGS = "$COMPLIANCE_ARGS $COMPLIANCE_REPORT_ARGS"
                   println "Building a PR: ${COMMIT_RANGE}"
                 }
