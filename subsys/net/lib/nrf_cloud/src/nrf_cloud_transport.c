@@ -719,6 +719,8 @@ int nct_cc_connect(void)
 
 int nct_cc_send(const struct nct_cc_data *cc_data)
 {
+	static u32_t msg_id;
+
 	if (cc_data == NULL) {
 		LOG_ERR("cc_data == NULL");
 		return -EINVAL;
@@ -743,7 +745,7 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 		publish.message.payload.len = cc_data->data.len;
 	}
 
-	publish.message_id = cc_data->id;
+	publish.message_id = cc_data->id ? cc_data->id : ++msg_id;
 
 	LOG_DBG("mqtt_publish: id=%d opcode=%d len=%d",
 		publish.message_id, cc_data->opcode,

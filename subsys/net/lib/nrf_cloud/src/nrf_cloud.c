@@ -235,60 +235,84 @@ void nrf_cloud_process(void)
 
 static struct cloud_backend *nrf_cloud_backend;
 
-static void event_handler(const struct nrf_cloud_evt *evt)
+static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 {
-	struct cloud_backend_config *backend_config =
-		nrf_cloud_backend->config;
-	struct cloud_event cloud_evt = { 0 };
+	struct cloud_backend_config *config = nrf_cloud_backend->config;
+	struct cloud_event evt = { 0 };
 
-	switch (evt->type) {
+	switch (nrf_cloud_evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
-		cloud_evt.type = CLOUD_EVT_CONNECTED;
-		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
-				   backend_config->user_data);
+
+		evt.type = CLOUD_EVT_CONNECTED;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
+
+		evt.type = CLOUD_EVT_PAIR_REQUEST;
+
+		if (nrf_cloud_evt->param.ua_req.sequence.len > 0) {
+			evt.data.pair_info.type = CLOUD_PAIR_SEQUENCE;
+			evt.data.pair_info.buf =
+			      (u8_t *)&nrf_cloud_evt->param.ua_req.sequence.len;
+			evt.data.pair_info.len =
+			      sizeof(nrf_cloud_evt->param.ua_req.sequence.len);
+		} else {
+			evt.data.pair_info.type = CLOUD_PAIR_PIN;
+		}
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
+
+		evt.type = CLOUD_EVT_PAIR_DONE;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_READY:
 		LOG_DBG("NRF_CLOUD_EVT_READY");
-		cloud_evt.type = CLOUD_EVT_READY;
-		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
-				   backend_config->user_data);
+
+		evt.type = CLOUD_EVT_READY;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_ATTACHED");
+
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
-		cloud_evt.type = CLOUD_EVT_DATA_SENT;
-		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
-				   backend_config->user_data);
+
+		evt.type = CLOUD_EVT_DATA_SENT;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
-		cloud_evt.type = CLOUD_EVT_DISCONNECTED;
-		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
-				   backend_config->user_data);
+
+		evt.type = CLOUD_EVT_DISCONNECTED;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		LOG_DBG("NRF_CLOUD_EVT_ERROR, status: %d", evt->status);
-		cloud_evt.type = CLOUD_EVT_ERROR;
-		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
-				   backend_config->user_data);
+		LOG_DBG("NRF_CLOUD_EVT_ERROR: %d", nrf_cloud_evt->status);
+
+		evt.type = CLOUD_EVT_ERROR;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_RX_DATA:
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
-		cloud_evt.type = CLOUD_EVT_DATA_RECEIVED;
-		cloud_notify_event(nrf_cloud_backend, &cloud_evt,
-				   backend_config->user_data);
+
+		evt.type = CLOUD_EVT_DATA_RECEIVED;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	default:
-		LOG_DBG("Received unknown %d", evt->type);
+		LOG_DBG("Unknown event type: %d", nrf_cloud_evt->type);
 		break;
 	}
 }
@@ -333,18 +357,19 @@ static int send(const struct cloud_backend *const backend,
 		const struct cloud_msg *const msg)
 {
 	int err = 0;
-	struct nct_cc_data shadow_data;
-	struct nct_dc_data buf = {
-		.data.ptr = msg->buf,
-		.data.len = msg->len
-	};
 
 	if (msg->endpoint.len != 0) {
 		/* Unsupported case where topic is not the default. */
 		return -ENOTSUP;
 	}
 
-	if (msg->endpoint.type == CLOUD_EP_TOPIC_MSG) {
+	switch (msg->endpoint.type) {
+	case CLOUD_EP_TOPIC_MSG: {
+		const struct nct_dc_data buf = {
+			.data.ptr = msg->buf,
+			.data.len = msg->len
+		};
+
 		if (msg->qos == CLOUD_QOS_AT_MOST_ONCE) {
 			err = nct_dc_stream(&buf);
 		} else if (msg->qos == CLOUD_QOS_AT_LEAST_ONCE) {
@@ -352,15 +377,43 @@ static int send(const struct cloud_backend *const backend,
 		} else {
 			err = -EINVAL;
 			LOG_ERR("Unsupported QoS setting.");
+			return err;
 		}
+		break;
 	}
+	case CLOUD_EP_TOPIC_PAIR: {
+		const struct nrf_cloud_ua_param ua = {
+			.type = NRF_CLOUD_UA_BUTTON,
+			.sequence = {
+				.len = msg->len,
+				.ptr = msg->buf
+			}
+		};
 
-	if (msg->endpoint.type == CLOUD_EP_TOPIC_STATE) {
-		shadow_data.opcode = NCT_CC_OPCODE_UPDATE_REQ;
-		shadow_data.data.ptr = msg->buf;
-		shadow_data.data.len = msg->len;
+		err = nrf_cloud_user_associate(&ua);
+		if (err) {
+			LOG_ERR("nrf_cloud_user_associate failed: %d\n", err);
+			return err;
+		}
+		break;
+	}
+	case CLOUD_EP_TOPIC_STATE: {
+		struct nct_cc_data shadow_data = {
+			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+			.data.ptr = msg->buf,
+			.data.len = msg->len
+		};
 
 		err = nct_cc_send(&shadow_data);
+		if (err) {
+			LOG_ERR("nct_cc_send failed, error: %d\n", err);
+			return err;
+		}
+		break;
+	}
+	default:
+		LOG_DBG("Unknown cloud endpoint type: %d", msg->endpoint.type);
+		break;
 	}
 
 	if (err) {
