@@ -374,8 +374,8 @@ static int ble_enable(void)
 
 	cfg.buffer_cfg.rx_packet_size = 251;
 	cfg.buffer_cfg.tx_packet_size = 251;
-	cfg.buffer_cfg.rx_packet_count = 10;
-	cfg.buffer_cfg.tx_packet_count = 10;
+	cfg.buffer_cfg.rx_packet_count = BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT;
+	cfg.buffer_cfg.tx_packet_count = BLE_CONTROLLER_DEFAULT_TX_PACKET_COUNT;
 
 	required_memory =
 		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
