@@ -117,6 +117,15 @@ config DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER
 	  A value obtained from the wheel sensor will be divided
 	  by provided argument before being processed further.
 
+config DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT
+	int "Wheel sensor idle timeout"
+	depends on DESKTOP_WHEEL_ENABLE
+	range 0 3600
+	default 0
+	help
+	  Time in seconds before sensor goes to idle state.
+	  If set to zero sensor is always active.
+
 config DESKTOP_WHEEL_INVERT_AXIS
 	bool "Invert wheel axis"
 	depends on DESKTOP_WHEEL_ENABLE
