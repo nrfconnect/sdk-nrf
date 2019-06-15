@@ -11,6 +11,7 @@
 #include <sensor.h>
 #include <console.h>
 #include <misc/reboot.h>
+#include <logging/log_ctrl.h>
 #if defined(CONFIG_BSD_LIBRARY)
 #include <net/bsdlib.h>
 #include <lte_lc.h>
@@ -18,6 +19,7 @@
 #endif /* CONFIG_BSD_LIBRARY */
 #include <net/cloud.h>
 #include <net/socket.h>
+#include <nrf_cloud.h>
 
 #include "cloud_codec.h"
 #include "orientation_detector.h"
@@ -106,6 +108,14 @@ static struct env_sensor *env_sensors[] = {
 	&pressure_sensor
 };
 
+ /* Variables to keep track of nRF cloud user association. */
+static u8_t ua_pattern[6];
+static int buttons_to_capture;
+static int buttons_captured;
+static atomic_t pattern_recording;
+static bool recently_associated;
+static bool association_with_pin;
+
 /* Sensor data */
 static struct gps_data nmea_data;
 static struct cloud_channel_data flip_cloud_data;
@@ -164,7 +174,8 @@ void error_handler(enum error_type err_type, int err_code)
 #endif
 	}
 
-#if !defined(CONFIG_DEBUG)
+#if !defined(CONFIG_DEBUG) && defined(CONFIG_REBOOT)
+	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 #else
 	switch (err_type) {
@@ -528,6 +539,99 @@ void sensors_start(void)
 	}
 }
 
+/**@brief nRF Cloud specific callback for cloud association event. */
+static void on_user_pairing_req(const struct cloud_event *evt)
+{
+	if (evt->data.pair_info.type == CLOUD_PAIR_SEQUENCE) {
+		if (!atomic_get(&pattern_recording)) {
+			ui_led_set_pattern(UI_CLOUD_PAIRING);
+			atomic_set(&pattern_recording, 1);
+			buttons_captured = 0;
+			buttons_to_capture = *evt->data.pair_info.buf;
+
+			printk("Please enter the user association pattern ");
+			printk("using the buttons and switches\n");
+		}
+	} else if (evt->data.pair_info.type == CLOUD_PAIR_PIN) {
+		association_with_pin = true;
+		ui_led_set_pattern(UI_CLOUD_PAIRING);
+		printk("Waiting for cloud association with PIN\n");
+	}
+}
+
+/**@brief Send user association information to nRF Cloud. */
+static void cloud_user_associate(void)
+{
+	int err;
+	struct cloud_msg msg = {
+		.buf = ua_pattern,
+		.len = buttons_to_capture,
+		.endpoint = {
+			.type = CLOUD_EP_TOPIC_PAIR
+		}
+	};
+
+	atomic_set(&pattern_recording, 0);
+
+	err = cloud_send(cloud_backend, &msg);
+	if (err) {
+		printk("Could not send association message, error: %d\n", err);
+		cloud_error_handler(err);
+	}
+}
+
+/** @brief Handle procedures after successful association with nRF Cloud. */
+void on_pairing_done(void)
+{
+	if (association_with_pin || (buttons_captured > 0)) {
+		recently_associated = true;
+
+		printk("Successful user association.\n");
+		printk("The device will attempt to reconnect to ");
+		printk("nRF Cloud. It may reset in the process.\n");
+		printk("Manual reset may be required if connection ");
+		printk("to nRF Cloud is not established within ");
+		printk("20 - 30 seconds.\n");
+	}
+
+	if (!association_with_pin) {
+		return;
+	}
+
+	int err;
+
+	printk("Disconnecting from nRF cloud...\n");
+
+	err = cloud_disconnect(cloud_backend);
+	if (err == 0) {
+		printk("Reconnecting to cloud...\n");
+		err = cloud_connect(cloud_backend);
+		if (err == 0) {
+			return;
+		}
+		printk("Could not reconnect\n");
+	} else {
+		printk("Disconnection failed\n");
+	}
+
+	printk("Fallback to controlled reboot\n");
+	printk("Shutting down LTE link...\n");
+
+	err = lte_lc_power_off();
+	if (err) {
+		printk("Could not shut down link\n");
+	} else {
+		printk("LTE link disconnected\n");
+	}
+
+#ifdef CONFIG_REBOOT
+	printk("Rebooting...\n");
+	LOG_PANIC();
+	sys_reboot(SYS_REBOOT_COLD);
+#endif
+	printk("**** Manual reboot required ***\n");
+}
+
 void cloud_event_handler(const struct cloud_backend *const backend,
 			 const struct cloud_event *const evt,
 			 void *user_data)
@@ -558,8 +662,16 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		printk("CLOUD_EVT_DATA_RECEIVED\n");
 		cloud_decode_command(evt->data.msg.buf);
 		break;
+	case CLOUD_EVT_PAIR_REQUEST:
+		printk("CLOUD_EVT_PAIR_REQUEST\n");
+		on_user_pairing_req(evt);
+		break;
+	case CLOUD_EVT_PAIR_DONE:
+		printk("CLOUD_EVT_PAIR_DONE\n");
+		on_pairing_done();
+		break;
 	default:
-		printk("**** Unknown cloud event type ****\n");
+		printk("Unknown cloud event type: %d\n", evt->type);
 		break;
 	}
 }
@@ -575,6 +687,39 @@ static void app_connect(struct k_work *work)
 	if (err) {
 		printk("cloud_connect failed: %d\n", err);
 		cloud_error_handler(err);
+	}
+}
+
+/**@brief Function to keep track of user association input when using
+ *	  buttons and switches to register the association pattern.
+ *	  nRF Cloud specific.
+ */
+static void pairing_button_register(struct ui_evt *evt)
+{
+	if (buttons_captured < buttons_to_capture) {
+		if (evt->button == UI_BUTTON_1 &&
+		    evt->type == UI_EVT_BUTTON_ACTIVE) {
+			ua_pattern[buttons_captured++] =
+				NRF_CLOUD_UA_BUTTON_INPUT_3;
+			printk("Button 1\n");
+		} else if (evt->button == UI_BUTTON_2 &&
+		    evt->type == UI_EVT_BUTTON_ACTIVE) {
+			ua_pattern[buttons_captured++] =
+				NRF_CLOUD_UA_BUTTON_INPUT_4;
+			printk("Button 2\n");
+		} else if (evt->button == UI_SWITCH_1) {
+			ua_pattern[buttons_captured++] =
+				NRF_CLOUD_UA_BUTTON_INPUT_1;
+			printk("Switch 1\n");
+		} else if (evt->button == UI_SWITCH_2) {
+			ua_pattern[buttons_captured++] =
+				NRF_CLOUD_UA_BUTTON_INPUT_2;
+			printk("Switch 2\n");
+		}
+	}
+
+	if (buttons_captured == buttons_to_capture) {
+		cloud_user_associate();
 	}
 }
 
@@ -809,6 +954,11 @@ static void sensors_init(void)
 /**@brief User interface event handler. */
 static void ui_evt_handler(struct ui_evt evt)
 {
+	if (pattern_recording) {
+		pairing_button_register(&evt);
+		return;
+	}
+
 	if (IS_ENABLED(CONFIG_CLOUD_BUTTON) &&
 	   (evt.button == CONFIG_CLOUD_BUTTON_INPUT)) {
 		button_send(evt.type == UI_EVT_BUTTON_ACTIVE ? 1 : 0);
@@ -872,7 +1022,7 @@ void main(void)
 
 	work_init();
 	modem_configure();
-
+connect:
 	ret = cloud_connect(cloud_backend);
 	if (ret) {
 		printk("cloud_connect failed: %d\n", ret);
@@ -892,7 +1042,7 @@ void main(void)
 
 		if (ret < 0) {
 			printk("poll() returned an error: %d\n", ret);
-			/* TODO: No error handling implemented. */
+			error_handler(ERROR_CLOUD, ret);
 			continue;
 		}
 
@@ -906,14 +1056,24 @@ void main(void)
 		}
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
-			printk("POLLNVAL\n");
-			/* TODO: No error handling implemented. */
+			printk("Socket error: POLLNVAL\n");
+
+			/* If the device is recently associated, the cloud
+			 * will usually terminate the connection, and we'll
+			 * have to reconnect. Often we'll also have to reboot,
+			 * but attempt once to reconnect first.
+			 */
+			if (recently_associated) {
+				recently_associated = false;
+				goto connect;
+			}
+			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
 
 		if ((fds[0].revents & POLLERR) == POLLERR) {
-			printk("POLLERR\n");
-			/* TODO: No error handling implemented. */
+			printk("Socket error: POLLERR\n");
+			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
 	}
