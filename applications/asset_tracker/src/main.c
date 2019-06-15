@@ -10,7 +10,6 @@
 #include <gps.h>
 #include <sensor.h>
 #include <console.h>
-#include <dk_buttons_and_leds.h>
 #include <misc/reboot.h>
 #if defined(CONFIG_BSD_LIBRARY)
 #include <net/bsdlib.h>
@@ -22,20 +21,8 @@
 
 #include "cloud_codec.h"
 #include "orientation_detector.h"
+#include "ui.h"
 
-/* Interval in milliseconds between each time status LEDs are updated. */
-#if defined(CONFIG_BOARD_NRF9160_PCA20035NS)
-#define LEDS_ON_INTERVAL	        K_MSEC(1)
-#define LEDS_OFF_INTERVAL	        K_MSEC(2000)
-#else
-#define LEDS_ON_INTERVAL	        K_MSEC(500)
-#define LEDS_OFF_INTERVAL	        K_MSEC(500)
-#endif
-
-/* Interval in milliseconds between each time LEDs are updated when indicating
- * that an error has occurred.
- */
-#define LEDS_ERROR_UPDATE_INTERVAL      K_MSEC(250)
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
 
 #if defined(CONFIG_FLIP_POLL)
@@ -44,23 +31,13 @@
 #define FLIP_POLL_INTERVAL		0
 #endif
 
-#define BUTTON_1			BIT(0)
-#define BUTTON_2			BIT(1)
-#define SWITCH_1			BIT(2)
-#define SWITCH_2			BIT(3)
-
-#define LED_ON(x)			(x)
-#define LED_BLINK(x)			((x) << 8)
-#define LED_GET_ON(x)			((x) & 0xFF)
-#define LED_GET_BLINK(x)		(((x) >> 8) & 0xFF)
-
 #ifdef CONFIG_ACCEL_USE_SIM
-#define FLIP_INPUT			BIT(CONFIG_FLIP_INPUT - 1)
+#define FLIP_INPUT			CONFIG_FLIP_INPUT
 #define CALIBRATION_INPUT		-1
 #else
 #define FLIP_INPUT			-1
 #ifdef CONFIG_ACCEL_CALIBRATE
-#define CALIBRATION_INPUT		BIT(CONFIG_CALIBRATION_INPUT - 1)
+#define CALIBRATION_INPUT		CONFIG_CALIBRATION_INPUT
 #else
 #define CALIBRATION_INPUT		-1
 #endif /* CONFIG_ACCEL_CALIBRATE */
@@ -80,37 +57,7 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 
 #define CLOUD_LED_ON_STR "{\"led\":\"on\"}"
 #define CLOUD_LED_OFF_STR "{\"led\":\"off\"}"
-#define CLOUD_LED_MSK DK_LED1_MSK
-
-static enum {
-#ifdef CONFIG_BOARD_NRF9160_PCA20035NS
-	LEDS_INITIALIZING	= LED_ON(0),
-	LEDS_CONNECTING		= LED_BLINK(DK_LED3_MSK),
-	LEDS_PATTERN_WAIT	= LED_BLINK(DK_LED2_MSK | DK_LED3_MSK),
-	LEDS_PATTERN_ENTRY	= LED_BLINK(DK_LED1_MSK | DK_LED2_MSK),
-	LEDS_PATTERN_DONE	= LED_BLINK(DK_LED2_MSK | DK_LED3_MSK),
-	LEDS_PAIRED		= LED_BLINK(DK_LED2_MSK),
-	LEDS_CALIBRATING	= LED_ON(DK_LED1_MSK | DK_LED3_MSK),
-	LEDS_ERROR_CLOUD	= LED_BLINK(DK_LED1_MSK),
-	LEDS_ERROR_BSD_REC	= LED_BLINK(DK_LED1_MSK | DK_LED3_MSK),
-	LEDS_ERROR_BSD_IRREC	= LED_BLINK(DK_ALL_LEDS_MSK),
-	LEDS_ERROR_LTE_LC	= LED_BLINK(DK_LED1_MSK | DK_LED2_MSK),
-	LEDS_ERROR_UNKNOWN	= LED_BLINK(DK_ALL_LEDS_MSK)
-#else
-	LEDS_INITIALIZING	= LED_ON(0),
-	LEDS_CONNECTING		= LED_BLINK(DK_LED3_MSK),
-	LEDS_PATTERN_WAIT	= LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
-	LEDS_PATTERN_ENTRY	= LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
-	LEDS_PATTERN_DONE	= LED_BLINK(DK_LED4_MSK),
-	LEDS_PAIRED		= LED_ON(DK_LED4_MSK),
-	LEDS_CALIBRATING	= LED_ON(DK_LED1_MSK | DK_LED3_MSK),
-	LEDS_ERROR_CLOUD	= LED_BLINK(DK_LED1_MSK | DK_LED4_MSK),
-	LEDS_ERROR_BSD_REC	= LED_BLINK(DK_LED1_MSK | DK_LED3_MSK),
-	LEDS_ERROR_BSD_IRREC	= LED_BLINK(DK_ALL_LEDS_MSK),
-	LEDS_ERROR_LTE_LC	= LED_BLINK(DK_LED1_MSK | DK_LED2_MSK),
-	LEDS_ERROR_UNKNOWN	= LED_ON(DK_ALL_LEDS_MSK)
-#endif
-} display_state;
+#define CLOUD_LED_MSK UI_LED_1
 
 struct env_sensor {
 	enum cloud_sensor type;
@@ -169,7 +116,7 @@ static struct cloud_sensor_data env_cloud_data[ARRAY_SIZE(env_sensors)];
 static struct cloud_sensor_data signal_strength_cloud_data;
 static struct cloud_sensor_data device_cloud_data;
 #endif /* CONFIG_MODEM_INFO */
-static atomic_val_t send_data_enable = 1;
+static atomic_val_t send_data_enable;
 
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
@@ -180,7 +127,6 @@ static struct k_work send_gps_data_work;
 static struct k_work send_env_data_work;
 static struct k_work send_button_data_work;
 static struct k_work send_flip_data_work;
-static struct k_delayed_work leds_update_work;
 static struct k_delayed_work flip_poll_work;
 static struct k_delayed_work long_press_button_work;
 #if CONFIG_MODEM_INFO
@@ -202,14 +148,11 @@ static void env_data_send(void);
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct cloud_sensor_data *data);
-static void leds_update(struct k_work *work);
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
 {
 	if (err_type == ERROR_CLOUD) {
-		k_sched_lock();
-
 #if defined(CONFIG_LTE_LINK_CONTROL)
 		/* Turn off and shutdown modem */
 		int err = lte_lc_power_off();
@@ -228,38 +171,35 @@ void error_handler(enum error_type err_type, int err_code)
 		/* Blinking all LEDs ON/OFF in pairs (1 and 4, 2 and 3)
 		 * if there is an application error.
 		 */
-		display_state = LEDS_ERROR_CLOUD;
+		ui_led_set_pattern(UI_LED_ERROR_CLOUD);
 		printk("Error of type ERROR_CLOUD: %d\n", err_code);
 	break;
 	case ERROR_BSD_RECOVERABLE:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 3, 2 and 4)
 		 * if there is a recoverable error.
 		 */
-		display_state = LEDS_ERROR_BSD_REC;
+		ui_led_set_pattern(UI_LED_ERROR_BSD_REC);
 		printk("Error of type ERROR_BSD_RECOVERABLE: %d\n", err_code);
 	break;
 	case ERROR_BSD_IRRECOVERABLE:
 		/* Blinking all LEDs ON/OFF if there is an
 		 * irrecoverable error.
 		 */
-		display_state = LEDS_ERROR_BSD_IRREC;
+		ui_led_set_pattern(UI_LED_ERROR_BSD_IRREC);
 		printk("Error of type ERROR_BSD_IRRECOVERABLE: %d\n", err_code);
 	break;
 	default:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
 		 * undefined error.
 		 */
-		display_state = LEDS_ERROR_UNKNOWN;
+		ui_led_set_pattern(UI_LED_ERROR_UNKNOWN);
 		printk("Unknown error type: %d, code: %d\n",
 			err_type, err_code);
 	break;
 	}
 
 	while (true) {
-		leds_update(NULL);
-		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL * MSEC_PER_SEC);
-		leds_update(NULL);
-		k_busy_wait(LEDS_ERROR_UPDATE_INTERVAL * MSEC_PER_SEC);
+		k_cpu_idle();
 	}
 #endif /* CONFIG_DEBUG */
 }
@@ -306,27 +246,23 @@ static void send_flip_data_work_fn(struct k_work *work)
 static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 {
 	ARG_UNUSED(trigger);
-#if defined(CONFIG_DK_LIBRARY)
-	u32_t button_state, has_changed;
 
-	dk_read_buttons(&button_state, &has_changed);
-
-	if (!(button_state & SWITCH_2) && atomic_get(&send_data_enable)) {
-#else
-	{
-#endif
-		gps_sample_fetch(dev);
-		gps_channel_get(dev, GPS_CHAN_NMEA, &nmea_data);
-		gps_cloud_data.data.buf = nmea_data.str;
-		gps_cloud_data.data.len = nmea_data.len;
-		gps_cloud_data.tag += 1;
-
-		if (gps_cloud_data.tag == 0) {
-			gps_cloud_data.tag = 0x1;
-		}
-
-		k_work_submit(&send_gps_data_work);
+	if (ui_button_is_active(UI_SWITCH_2)
+	   || !atomic_get(&send_data_enable)) {
+		return;
 	}
+
+	gps_sample_fetch(dev);
+	gps_channel_get(dev, GPS_CHAN_NMEA, &nmea_data);
+	gps_cloud_data.data.buf = nmea_data.str;
+	gps_cloud_data.data.len = nmea_data.len;
+	gps_cloud_data.tag += 1;
+
+	if (gps_cloud_data.tag == 0) {
+		gps_cloud_data.tag = 0x1;
+	}
+
+	k_work_submit(&send_gps_data_work);
 }
 
 /**@brief Callback for sensor trigger events */
@@ -339,7 +275,6 @@ static void sensor_trigger_handler(struct device *dev,
 	flip_send(NULL);
 }
 
-#if defined(CONFIG_DK_LIBRARY)
 /**@brief Send button presses to cloud */
 static void button_send(bool pressed)
 {
@@ -365,7 +300,6 @@ static void button_send(bool pressed)
 
 	k_work_submit(&send_button_data_work);
 }
-#endif
 
 /**@brief Poll flip orientation and send to cloud if flip mode is enabled. */
 static void flip_send(struct k_work *work)
@@ -519,40 +453,6 @@ static void env_data_send(void)
 	}
 }
 
-/**@brief Update LEDs state. */
-static void leds_update(struct k_work *work)
-{
-	static bool led_on;
-	static u8_t current_led_on_mask;
-	u8_t led_on_mask;
-
-	led_on_mask = LED_GET_ON(display_state);
-	led_on = !led_on;
-
-	if (led_on) {
-		led_on_mask |= LED_GET_BLINK(display_state);
-	} else {
-		led_on_mask &= ~LED_GET_BLINK(display_state);
-	}
-
-	if (led_on_mask != current_led_on_mask) {
-#if defined(CONFIG_DK_LIBRARY)
-		dk_set_leds(led_on_mask);
-#endif
-		current_led_on_mask = led_on_mask;
-	}
-
-	if (work) {
-		if (led_on) {
-			k_delayed_work_submit(&leds_update_work,
-						LEDS_ON_INTERVAL);
-		} else {
-			k_delayed_work_submit(&leds_update_work,
-						LEDS_OFF_INTERVAL);
-		}
-	}
-}
-
 /**@brief Send sensor data to nRF Cloud. **/
 static void sensor_data_send(struct cloud_sensor_data *data)
 {
@@ -602,14 +502,16 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	switch (evt->type) {
 	case CLOUD_EVT_CONNECTED:
 		printk("CLOUD_EVT_CONNECTED\n");
-		display_state = LEDS_PAIRED;
+		ui_led_set_pattern(UI_CLOUD_CONNECTED);
 		break;
 	case CLOUD_EVT_READY:
 		printk("CLOUD_EVT_READY\n");
+		ui_led_set_pattern(UI_CLOUD_CONNECTED);
 		sensors_start();
 		break;
 	case CLOUD_EVT_DISCONNECTED:
 		printk("CLOUD_EVT_DISCONNECTED\n");
+		ui_led_set_pattern(UI_LTE_DISCONNECTED);
 		break;
 	case CLOUD_EVT_ERROR:
 		printk("CLOUD_EVT_ERROR\n");
@@ -631,7 +533,7 @@ static void app_connect(struct k_work *work)
 {
 	int err;
 
-	display_state = LEDS_CONNECTING;
+	ui_led_set_pattern(UI_CLOUD_CONNECTING);
 	err = cloud_connect(cloud_backend);
 
 	if (err) {
@@ -643,11 +545,11 @@ static void app_connect(struct k_work *work)
 static void accelerometer_calibrate(struct k_work *work)
 {
 	int err;
-	u32_t prev_display_state = display_state;
+	enum ui_led_pattern temp_led_state = ui_led_get_pattern();
 
 	printk("Starting accelerometer calibration...\n");
-	display_state = LEDS_CALIBRATING;
-	leds_update(NULL);
+
+	ui_led_set_pattern(UI_ACCEL_CALIBRATING);
 
 	err = orientation_detector_calibrate();
 	if (err) {
@@ -657,69 +559,8 @@ static void accelerometer_calibrate(struct k_work *work)
 		printk("Accelerometer calibration done.\n");
 	}
 
-	display_state = prev_display_state;
+	ui_led_set_pattern(temp_led_state);
 }
-
-#if defined(CONFIG_DK_LIBRARY)
-/**@brief Callback for button events from the DK buttons and LEDs library. */
-static void button_handler(u32_t buttons, u32_t has_changed)
-{
-	static bool long_press_active;
-
-	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (has_changed & FLIP_INPUT)) {
-		flip_send(NULL);
-	}
-
-	if (IS_ENABLED(CONFIG_CLOUD_BUTTON) &&
-	   (has_changed & CONFIG_CLOUD_BUTTON_INPUT)) {
-		button_send(buttons & CONFIG_CLOUD_BUTTON_INPUT);
-	}
-
-	if (IS_ENABLED(CONFIG_ACCEL_CALIBRATE) &&
-	    IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
-			(buttons & has_changed & CALIBRATION_INPUT)) {
-		if (!long_press_active) {
-			long_press_active = true;
-			k_delayed_work_submit(&long_press_button_work,
-						CALIBRATION_PRESS_DURATION);
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_ACCEL_CALIBRATE) &&
-	    IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL) &&
-			(~buttons & has_changed & CALIBRATION_INPUT)) {
-		k_delayed_work_cancel(&long_press_button_work);
-		long_press_active = false;
-	}
-
-#if defined(CONFIG_LTE_LINK_CONTROL)
-	if ((has_changed & SWITCH_2) &&
-	    IS_ENABLED(CONFIG_POWER_OPTIMIZATION_ENABLE)) {
-		int err;
-
-		if (buttons & SWITCH_2) {
-			err = lte_lc_edrx_req(false);
-			if (err) {
-				error_handler(ERROR_LTE_LC, err);
-			}
-			err = lte_lc_psm_req(true);
-			if (err) {
-				error_handler(ERROR_LTE_LC, err);
-			}
-		} else {
-			err = lte_lc_psm_req(false);
-			if (err) {
-				error_handler(ERROR_LTE_LC, err);
-			}
-			err = lte_lc_edrx_req(true);
-			if (err) {
-				error_handler(ERROR_LTE_LC, err);
-			}
-		}
-	}
-#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
-}
-#endif /* defined(CONFIG_DK_LIBRARY) */
 
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
@@ -729,10 +570,8 @@ static void work_init(void)
 	k_work_init(&send_env_data_work, send_env_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_flip_data_work, send_flip_data_work_fn);
-	k_delayed_work_init(&leds_update_work, leds_update);
 	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
-	k_delayed_work_submit(&leds_update_work, LEDS_ON_INTERVAL);
 #if CONFIG_MODEM_INFO
 	k_work_init(&device_status_work, device_status_send);
 	k_work_init(&rsrp_work, modem_rsrp_data_send);
@@ -752,10 +591,15 @@ static void modem_configure(void)
 	} else {
 		int err;
 
-		printk("LTE LC config ...\n");
-		display_state = LEDS_CONNECTING;
+		printk("Connecting to LTE network. ");
+		printk("This may take several minutes.\n");
+		ui_led_set_pattern(UI_LTE_CONNECTING);
+
 		err = lte_lc_init_and_connect();
 		__ASSERT(err == 0, "LTE link could not be established.");
+
+		printk("Connected to LTE network\n");
+		ui_led_set_pattern(UI_LTE_CONNECTED);
 	}
 #endif
 }
@@ -924,29 +768,44 @@ static void sensors_init(void)
 	env_data_send();
 }
 
-/**@brief Initializes buttons and LEDs, using the DK buttons and LEDs
- * library.
- */
-static void buttons_leds_init(void)
+/**@brief User interface event handler. */
+static void ui_evt_handler(struct ui_evt evt)
 {
-#if defined(CONFIG_DK_LIBRARY)
-	int err;
-
-	err = dk_buttons_init(button_handler);
-	if (err) {
-		printk("Could not initialize buttons, err code: %d\n", err);
+	if (IS_ENABLED(CONFIG_CLOUD_BUTTON) &&
+	   (evt.button == CONFIG_CLOUD_BUTTON_INPUT)) {
+		button_send(evt.type == UI_EVT_BUTTON_ACTIVE ? 1 : 0);
 	}
 
-	err = dk_leds_init();
-	if (err) {
-		printk("Could not initialize leds, err code: %d\n", err);
+	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (evt.button == FLIP_INPUT)
+	   && atomic_get(&send_data_enable)) {
+		flip_send(NULL);
 	}
 
-	err = dk_set_leds_state(0x00, DK_ALL_LEDS_MSK);
-	if (err) {
-		printk("Could not set leds state, err code: %d\n", err);
+#if defined(CONFIG_LTE_LINK_CONTROL)
+	if ((evt.button == UI_SWITCH_2) &&
+	    IS_ENABLED(CONFIG_POWER_OPTIMIZATION_ENABLE)) {
+		int err;
+		if (evt.type == UI_EVT_BUTTON_ACTIVE) {
+			err = lte_lc_edrx_req(false);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+			err = lte_lc_psm_req(true);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+		} else {
+			err = lte_lc_psm_req(false);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+			err = lte_lc_edrx_req(true);
+			if (err) {
+				error_handler(ERROR_LTE_LC, err);
+			}
+		}
 	}
-#endif
+#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 }
 
 void main(void)
@@ -965,11 +824,10 @@ void main(void)
 		cloud_error_handler(ret);
 	}
 
-	buttons_leds_init();
+	ui_init(ui_evt_handler);
 	work_init();
 	modem_configure();
 
-	display_state = LEDS_CONNECTING;
 	ret = cloud_connect(cloud_backend);
 	if (ret) {
 		printk("cloud_connect failed: %d\n", ret);
