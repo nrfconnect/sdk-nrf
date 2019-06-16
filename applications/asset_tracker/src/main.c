@@ -121,7 +121,7 @@ static bool recently_associated;
 static bool association_with_pin;
 
 /* Sensor data */
-static struct gps_data nmea_data;
+static struct gps_data gps_data;
 static struct cloud_channel_data flip_cloud_data;
 static struct cloud_channel_data gps_cloud_data;
 static struct cloud_channel_data button_cloud_data;
@@ -307,9 +307,9 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 	}
 
 	gps_sample_fetch(dev);
-	gps_channel_get(dev, GPS_CHAN_NMEA, &nmea_data);
-	gps_cloud_data.data.buf = nmea_data.str;
-	gps_cloud_data.data.len = nmea_data.len;
+	gps_channel_get(dev, GPS_CHAN_NMEA, &gps_data);
+	gps_cloud_data.data.buf = gps_data.nmea.buf;
+	gps_cloud_data.data.len = gps_data.nmea.len;
 	gps_cloud_data.tag += 1;
 
 	if (gps_cloud_data.tag == 0) {
@@ -946,7 +946,7 @@ static void gps_init(void)
 	err = gps_sample_fetch(gps_dev);
 	__ASSERT(err == 0, "GPS sample could not be fetched.");
 
-	err = gps_channel_get(gps_dev, GPS_CHAN_NMEA, &nmea_data);
+	err = gps_channel_get(gps_dev, GPS_CHAN_NMEA, &gps_data);
 	__ASSERT(err == 0, "GPS sample could not be retrieved.");
 }
 
@@ -1037,8 +1037,8 @@ static void sensors_init(void)
 
 	gps_cloud_data.type = CLOUD_CHANNEL_GPS;
 	gps_cloud_data.tag = 0x1;
-	gps_cloud_data.data.buf = nmea_data.str;
-	gps_cloud_data.data.len = nmea_data.len;
+	gps_cloud_data.data.buf = gps_data.nmea.buf;
+	gps_cloud_data.data.len = gps_data.nmea.len;
 
 	flip_cloud_data.type = CLOUD_CHANNEL_FLIP;
 

@@ -20,14 +20,62 @@ extern "C" {
 #include <errno.h>
 #include <zephyr/types.h>
 
-#define GPS_NMEA_SENTENCE_MAX_LENGTH 81
+#define GPS_NMEA_SENTENCE_MAX_LENGTH	83
+#define GPS_MAX_SATELLITES		12
 
-struct gps_data {
-	char str[GPS_NMEA_SENTENCE_MAX_LENGTH];
+enum gps_channel {
+	GPS_CHAN_NMEA,	/** Channel to receive NMEA strings. */
+	GPS_CHAN_PVT	/** Channel to receive position, velocity and time. */
+};
+
+struct gps_nmea {
+	char buf[GPS_NMEA_SENTENCE_MAX_LENGTH];
 	u8_t len;
 };
 
-enum gps_channel { GPS_CHAN_NMEA };
+struct gps_datetime {
+	u16_t year;
+	u8_t month;
+	u8_t day;
+	u8_t hour;
+	u8_t minute;
+	u8_t seconds;
+	u8_t ms;
+};
+
+struct gps_sv {
+	u16_t sv;
+	u16_t cn0;
+	s16_t  elevation;
+	s16_t  azimuth;
+	u8_t  flags;
+	u8_t  signal;
+};
+
+struct gps_pvt {
+	double latitude;
+	double longitude;
+	float altitude;
+	float accuracy;
+	float speed;
+	float heading;
+	float pdop;
+	float hdop;
+	float vdop;
+	float tdop;
+	u8_t flags;
+	struct gps_datetime datetime;
+	struct gps_sv sv[GPS_MAX_SATELLITES];
+};
+
+struct gps_data {
+	enum gps_channel chan;
+	union {
+		struct gps_nmea nmea;
+		struct gps_pvt pvt;
+	};
+
+};
 
 /**
  * @brief GPS trigger types.
@@ -35,6 +83,7 @@ enum gps_channel { GPS_CHAN_NMEA };
 enum gps_trigger_type {
 	GPS_TRIG_TIMER,
 	GPS_TRIG_DATA_READY,
+	GPS_TRIG_FIX
 };
 
 /**
@@ -85,6 +134,22 @@ typedef int (*gps_channel_get_t)(struct device *dev, enum gps_channel chan,
 				 struct gps_data *val);
 
 /**
+ * @typedef gps_start_t
+ * @brief Callback API for starting GPS operation.
+ *
+ * See gps_start() for argument description
+ */
+typedef int (*gps_start_t)(struct device *dev);
+
+/**
+ * @typedef gps_stop_t
+ * @brief Callback API for stopping GPS operation.
+ *
+ * See gps_stop() for argument description
+ */
+typedef int (*gps_stop_t)(struct device *dev);
+
+/**
  * @brief GPS driver API
  *
  * This is the API all GPS drivers must expose.
@@ -93,6 +158,8 @@ struct gps_driver_api {
 	gps_trigger_set_t trigger_set;
 	gps_sample_fetch_t sample_fetch;
 	gps_channel_get_t channel_get;
+	gps_start_t start;
+	gps_stop_t stop;
 };
 
 /**
@@ -139,6 +206,32 @@ static inline int gps_trigger_set(struct device *dev,
 		(const struct gps_driver_api *)dev->driver_api;
 
 	return api->trigger_set(dev, trigger, handler);
+}
+
+/**
+ * @brief Function to start GPS operation.
+ *
+ * @param dev Pointer to GPS device
+ */
+static inline int gps_start(struct device *dev)
+{
+	const struct gps_driver_api *api =
+		(const struct gps_driver_api *)dev->driver_api;
+
+	return api->start(dev);
+}
+
+/**
+ * @brief Function to stop GPS operation.
+ *
+ * @param dev Pointer to GPS device
+ */
+static inline int gps_stop(struct device *dev)
+{
+	const struct gps_driver_api *api =
+		(const struct gps_driver_api *)dev->driver_api;
+
+	return api->stop(dev);
 }
 
 #ifdef __cplusplus
