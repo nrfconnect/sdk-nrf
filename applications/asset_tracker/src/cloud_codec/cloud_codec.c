@@ -61,6 +61,7 @@ int cloud_encode_sensor_data(const struct cloud_sensor_data *const sensor,
 	cJSON *root_obj = cJSON_CreateObject();
 
 	if (root_obj == NULL) {
+		cJSON_Delete(root_obj);
 		return -ENOMEM;
 	}
 
@@ -74,6 +75,49 @@ int cloud_encode_sensor_data(const struct cloud_sensor_data *const sensor,
 	}
 
 	char *buffer;
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	cJSON_Delete(root_obj);
+
+	output->buf = buffer;
+	output->len = strlen(buffer);
+
+	return 0;
+}
+
+int cloud_encode_digital_twin_data(const struct cloud_sensor_data *sensor,
+				 struct cloud_data *output)
+{
+	int ret;
+	char *buffer;
+
+	__ASSERT_NO_MSG(sensor != NULL);
+	__ASSERT_NO_MSG(sensor->data.buf != NULL);
+	__ASSERT_NO_MSG(sensor->data.len != 0);
+	__ASSERT_NO_MSG(output != NULL);
+
+	cJSON *root_obj = cJSON_CreateObject();
+	cJSON *state_obj = cJSON_CreateObject();
+	cJSON *reported_obj = cJSON_CreateObject();
+
+	if (root_obj == NULL || state_obj == NULL || reported_obj == NULL) {
+		cJSON_Delete(root_obj);
+		cJSON_Delete(state_obj);
+		cJSON_Delete(reported_obj);
+		return -ENOMEM;
+	}
+
+	ret = json_add_obj(reported_obj, sensor_type_str[sensor->type],
+			   (cJSON *)sensor->data.buf);
+	ret += json_add_obj(state_obj, "reported", reported_obj);
+	ret += json_add_obj(root_obj, "state", state_obj);
+
+	if (ret != 0) {
+		cJSON_Delete(root_obj);
+		cJSON_Delete(state_obj);
+		cJSON_Delete(reported_obj);
+		return -EAGAIN;
+	}
 
 	buffer = cJSON_PrintUnformatted(root_obj);
 	cJSON_Delete(root_obj);
