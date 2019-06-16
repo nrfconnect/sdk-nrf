@@ -69,6 +69,19 @@ int cloud_encode_sensor_data(const struct cloud_sensor_data *const sensor,
 				 struct cloud_data *const output);
 
 /**
+ * @brief Encode data to be transmitted to the digital twin,
+ *	  from sensor data structure to a cloud data structure
+ *	  containing a JSON string.
+ *
+ * @param sensor Pointer to sensor data.
+ * @param output Pointer to encoded data structure.
+ *
+ * @return 0 if the operation was successful, otherwise a (negative) error code.
+ */
+int cloud_encode_digital_twin_data(const struct cloud_sensor_data *sensor,
+				 struct cloud_data *output);
+
+/**
  * @brief Releases memory used by cloud data structure.
  *
  * @param data Pointer to cloud data to be released.
