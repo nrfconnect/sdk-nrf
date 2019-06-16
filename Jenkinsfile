@@ -100,7 +100,7 @@ pipeline {
             // If we're a pull request, compare the target branch against the current HEAD (the PR), and also report issues to the PR
             def BUILD_TYPE = CI_CFG_OBJ.main.getBuildType(CI_STATE)
             if (BUILD_TYPE == "PR") {
-              COMMIT_RANGE = "origin/$CHANGE_TARGET..origin/$BRANCH_NAME"
+              COMMIT_RANGE = "$CI_STATE.NRF.MERGE_BASE..$CI_STATE.NRF.REPORT_SHA"
               COMPLIANCE_ARGS = "$COMPLIANCE_ARGS -p $CHANGE_ID -S $CI_STATE.NRF.REPORT_SHA -g"
               println "Building a PR [$CHANGE_ID]: $COMMIT_RANGE"
             }
