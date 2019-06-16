@@ -101,7 +101,6 @@ pipeline {
             def BUILD_TYPE = CI_CFG_OBJ.main.getBuildType(CI_STATE)
             if (BUILD_TYPE == "PR") {
               COMMIT_RANGE = "$CI_STATE.NRF.MERGE_BASE..$CI_STATE.NRF.REPORT_SHA"
-              COMMIT_RANGE = "origin/$CHANGE_TARGET..$CI_STATE.NRF.REPORT_SHA"
               COMPLIANCE_ARGS = "$COMPLIANCE_ARGS -p $CHANGE_ID -S $CI_STATE.NRF.REPORT_SHA -g"
               println "Building a PR [$CHANGE_ID]: $COMMIT_RANGE"
             }
