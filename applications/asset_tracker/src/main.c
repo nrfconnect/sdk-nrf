@@ -413,7 +413,7 @@ static void device_status_send(struct k_work *work)
 		return;
 	}
 
-	device_cloud_data.data.ptr = root_obj;
+	device_cloud_data.data.buf = (char *)root_obj;
 	device_cloud_data.data.len = len;
 	device_cloud_data.tag += 1;
 
@@ -480,7 +480,15 @@ static void sensor_data_send(struct cloud_sensor_data *data)
 		return;
 	}
 
-	err = cloud_encode_sensor_data(data, &output);
+	if (data->type != CLOUD_DEVICE_INFO) {
+		err = cloud_encode_sensor_data(data, &output);
+	} else {
+		err = cloud_encode_digital_twin_data(data, &output);
+	}
+
+	if (err) {
+		printk("Unable to encode cloud data: %d\n", err);
+	}
 
 	struct cloud_msg msg = {
 		.buf = output.buf,
@@ -488,6 +496,10 @@ static void sensor_data_send(struct cloud_sensor_data *data)
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
 		.endpoint.type = CLOUD_EP_TOPIC_MSG
 	};
+
+	if (data->type == CLOUD_DEVICE_INFO) {
+		msg.endpoint.type = CLOUD_EP_TOPIC_STATE;
+	}
 
 	err = cloud_send(cloud_backend, &msg);
 
