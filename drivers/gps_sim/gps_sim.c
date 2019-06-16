@@ -41,7 +41,7 @@ struct gps_sim_data {
 #endif /* CONFIG_GPS_SIM_TRIGGER */
 };
 
-static struct gps_data nmea_sample;
+static struct gps_data gps_sample;
 static struct k_mutex trigger_mutex;
 
 /**
@@ -172,15 +172,15 @@ static int gps_sim_trigger_set(struct device *dev,
 /**
  * @brief Calculates NMEA sentence checksum
  *
- * @param nmea_sentence Pointer to NMEA sentence.
+ * @param gps_data Pointer to NMEA sentence.
  */
-static u8_t nmea_checksum_get(const u8_t *nmea_sentence)
+static u8_t nmea_checksum_get(const u8_t *gps_data)
 {
-	const u8_t *i = nmea_sentence + 1;
+	const u8_t *i = gps_data + 1;
 	u8_t checksum = 0;
 
 	while (*i != '*') {
-		if ((i - nmea_sentence) > GPS_NMEA_SENTENCE_MAX_LENGTH) {
+		if ((i - gps_data) > GPS_NMEA_SENTENCE_MAX_LENGTH) {
 			return 0;
 		}
 		checksum ^= *i;
@@ -229,12 +229,12 @@ static double generate_pseudo_random(void)
 /**
  * @brief Function generatig GPS data
  *
- * @param nmea_sentence Pointer to gpssim_nmea struct where the NMEA
+ * @param gps_data Pointer to gpssim_nmea struct where the NMEA
  * sentence will be stored.
  * @param max_variation The maximum value the latitude and longitude in the
  * generated sentence can vary for each iteration. In units of minutes.
  */
-static void generate_gps_data(struct gps_data *nmea_sentence,
+static void generate_gps_data(struct gps_data *gps_data,
 			      double max_variation)
 {
 	static u8_t hour = BASE_GPS_SAMPLE_HOUR;
@@ -287,7 +287,7 @@ static void generate_gps_data(struct gps_data *nmea_sentence,
 	}
 
 	/* Format the sentence, excluding the CRC. */
-	snprintf(nmea_sentence->str,
+	snprintf(gps_data->nmea.buf,
 		 GPS_NMEA_SENTENCE_MAX_LENGTH, GPS_NMEA_SENTENCE,
 		 hour, minute, second, lat, lat_heading, lng, lng_heading, 0);
 
@@ -299,14 +299,14 @@ static void generate_gps_data(struct gps_data *nmea_sentence,
 	 * the NMEA sentence.
 	 */
 
-	u8_t checksum = nmea_checksum_get(nmea_sentence->str);
+	u8_t checksum = nmea_checksum_get(gps_data->nmea.buf);
 
-	nmea_sentence->len =
-		snprintf(nmea_sentence->str, GPS_NMEA_SENTENCE_MAX_LENGTH,
+	gps_data->nmea.len =
+		snprintf(gps_data->nmea.buf, GPS_NMEA_SENTENCE_MAX_LENGTH,
 			 GPS_NMEA_SENTENCE, hour, minute, second, lat,
 			 lat_heading, lng, lng_heading, checksum);
 
-	LOG_DBG("%s (%d bytes)", nmea_sentence->str, nmea_sentence->len);
+	LOG_DBG("%s (%d bytes)", gps_data->nmea.buf, gps_data->nmea.len);
 }
 
 static int gps_sim_init(struct device *dev)
@@ -340,7 +340,7 @@ static int gps_sim_generate_data(enum gps_channel chan)
 {
 	switch (chan) {
 	case GPS_CHAN_NMEA:
-		generate_gps_data(&nmea_sample,
+		generate_gps_data(&gps_sample,
 				  CONFIG_GPS_SIM_MAX_STEP / 1000.0);
 		break;
 	default:
@@ -360,8 +360,9 @@ static int gps_sim_channel_get(struct device *dev, enum gps_channel chan,
 {
 	switch (chan) {
 	case GPS_CHAN_NMEA:
-		memcpy(sample->str, nmea_sample.str, nmea_sample.len);
-		sample->len = nmea_sample.len;
+		memcpy(sample->nmea.buf, gps_sample.nmea.buf,
+		       gps_sample.nmea.len);
+		sample->nmea.len = gps_sample.nmea.len;
 		break;
 	default:
 		return -ENOTSUP;
