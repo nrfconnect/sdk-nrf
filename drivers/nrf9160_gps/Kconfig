@@ -1,0 +1,74 @@
+# Kconfig - nRF9160 GPS driver
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig NRF9160_GPS
+	bool "nRF9160 GPS driver"
+	depends on BSD_LIBRARY
+	# FP_SHARING needs to be enabled if FLOAT is enabled, as other contexts
+	# might also use the FPU.
+	select FP_SHARING if FLOAT
+	select AT_CMD_PARSER
+	help
+	  Enable nRF9160 GPS driver.
+
+if NRF9160_GPS
+
+config NRF9160_GPS_DEV_NAME
+	string "nRF9160 GPS device name"
+	default "NRF9160_GPS"
+
+config NRF9160_GPS_FIX_CHECK_INTERVAL
+	int "Interval in seconds to check for GPS fix"
+	default 1
+
+config NRF9160_GPS_SET_MAGPIO
+	bool "Let the driver set MAGPIO configuration"
+	default y if BOARD_NRF9160_PCA10090NS
+
+if NRF9160_GPS_SET_MAGPIO
+
+config NRF9160_GPS_MAGPIO_STRING
+	string "MAGPIO string"
+	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160_PCA10090NS
+
+endif # NRF9160_GPS_SET_MAGPIO
+
+menu "NMEA strings"
+config NRF9160_GPS_NMEA_GSV
+	bool "Enable GSV strings"
+
+config NRF9160_GPS_NMEA_GSA
+	bool "Enable GSA strings"
+
+config NRF9160_GPS_NMEA_GLL
+	bool "Enable GLL strings"
+
+config NRF9160_GPS_NMEA_GGA
+	bool "Enable GGA strings"
+	default y
+
+config NRF9160_GPS_NMEA_RMC
+	bool "Enable RMC strings"
+endmenu
+
+config NRF9160_GPS_INIT_PRIO
+	int "Initialization priority"
+	default 90
+
+config NRF9160_GPS_THREAD_PRIORITY
+	int "Thread (preemtible) priority"
+	default 10
+
+config NRF9160_GPS_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 2048
+
+module = NRF9160_GPS
+module-str = nRF9160 GPS driver
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #NRF9160_GPS
