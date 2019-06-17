@@ -1,0 +1,16 @@
+#include <autoconf.h>
+
+b0:
+  size: CONFIG_PM_PARTITION_SIZE_B0
+  placement: {after: start}
+s0:
+  # S0 spans over the image booted by B0
+  span: {one_of: [mcuboot, spm, app]}
+s1:
+  # Note that S1 will only exist if mcuboot exists.
+  share_size: mcuboot
+  placement: {after: s0}
+
+provision:
+  size: 0x1000
+  placement: {before: end}
