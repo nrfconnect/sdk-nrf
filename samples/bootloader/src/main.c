@@ -10,7 +10,7 @@
 #include <misc/util.h>
 #include <nrf.h>
 #include <errno.h>
-#include <generated_dts_board.h>
+#include <pm_config.h>
 #include "bootloader.h"
 #include "bl_crypto.h"
 #include "fw_metadata.h"
@@ -175,16 +175,14 @@ void main(void)
 	uart_init();
 #endif /* CONFIG_SB_RTT */
 	int err;
-	err = fprotect_area(DT_FLASH_AREA_SECURE_BOOT_OFFSET,
-			DT_FLASH_AREA_SECURE_BOOT_SIZE);
+	err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
 	if (err) {
 		printk("Protect B0 flash failed, cancel startup.\n\r");
 		return;
 	}
 
 #ifndef CONFIG_SOC_NRF9160
-	err = fprotect_area(DT_FLASH_AREA_PROVISION_OFFSET,
-			DT_FLASH_AREA_PROVISION_SIZE);
+	err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
 	if (err) {
 		printk("Protect provision data failed, cancel startup.\n\r");
 		return;

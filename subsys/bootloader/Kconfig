@@ -15,6 +15,9 @@ config SECURE_BOOT
 
 if SECURE_BOOT
 
+module=B0
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
+
 config SB_PRIVATE_KEY_PROVIDED
 	bool
 	help
@@ -102,6 +105,10 @@ menuconfig IS_SECURE_BOOTLOADER
 	  files and set all the options required.
 
 if IS_SECURE_BOOTLOADER
+
+partition=B0
+partition-size=0x8000
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
 
 rsource "debug/Kconfig"
 
