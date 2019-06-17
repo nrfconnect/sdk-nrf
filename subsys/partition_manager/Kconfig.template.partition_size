@@ -1,0 +1,6 @@
+# Define used by partition_manager.py to deduce size of partition
+config PM_PARTITION_SIZE_$(partition)
+	hex "Flash space reserved for $(partition)."
+	default $(partition-size)
+	help
+	  Flash space set aside for the $(partition) partition.
