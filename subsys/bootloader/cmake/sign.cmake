@@ -4,16 +4,14 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-
-#TODO: Detect which elf to depend on and resolve which
-#      image should be hashed and signed by b0.
-
-set(KERNEL_ELF_TO_BE_SIGNED zephyr_final)
+set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${KERNEL_HEX_NAME})
+set(sign_depends s0_hex)
+set(to_sign ${PROJECT_BINARY_DIR}/s0.hex)
 
 set(GENERATED_FILES_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
 
 # This is needed for make, ninja is able to resolve and create the path but make
-# are not able to resolve it.
+# is not able to resolve it.
 file(MAKE_DIRECTORY ${GENERATED_FILES_PATH})
 
 set(HASH_FILE ${GENERATED_FILES_PATH}/firmware.sha256)
@@ -25,7 +23,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/../cmake/fw_info_magic.cmake)
 set(HASH_CMD
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/hash.py
-  --in ${PROJECT_BINARY_DIR}/${KERNEL_BIN_NAME}
+  --in ${to_sign}
   > ${HASH_FILE}
   )
 
@@ -83,7 +81,7 @@ add_custom_command(
   COMMAND
   ${SIGN_CMD}
   DEPENDS
-  ${KERNEL_ELF_TO_BE_SIGNED}
+  ${sign_depends}
   WORKING_DIRECTORY
   ${PROJECT_BINARY_DIR}
   COMMENT
@@ -104,7 +102,7 @@ if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
     COMMAND
     ${PUB_GEN_CMD}
     DEPENDS
-	${SIGNATURE_PRIVATE_KEY_FILE}
+    ${SIGNATURE_PRIVATE_KEY_FILE}
     COMMENT
     "Creating public key from private key used for signing"
     WORKING_DIRECTORY
@@ -121,12 +119,12 @@ endif()
 
 add_custom_command(
   OUTPUT
-  ${SIGNED_KERNEL_HEX}
+  ${signed_hex}
   COMMAND
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/validation_data.py
-  --input ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
-  --output ${SIGNED_KERNEL_HEX}
+  --input ${to_sign}
+  --output ${signed_hex}
   --offset ${CONFIG_FW_VALIDATION_METADATA_OFFSET}
   --signature ${SIGNATURE_FILE}
   --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
@@ -143,7 +141,21 @@ add_custom_command(
 add_custom_target(
   signed_kernel_hex_target
   DEPENDS
-  ${SIGNED_KERNEL_HEX}
+  ${signed_hex}
   signature_file_target
   signature_public_key_file_target
   )
+
+# Set hex file and target for the 's0' container partition. This includes the
+# hex file (and its corresponding target) to the build.
+set_property(
+  GLOBAL PROPERTY
+  s0_PM_HEX_FILE
+  ${signed_hex}
+)
+
+set_property(
+  GLOBAL PROPERTY
+  s0_PM_TARGET
+  signed_kernel_hex_target
+)

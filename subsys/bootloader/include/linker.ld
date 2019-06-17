@@ -15,8 +15,6 @@
 #define _ASMLANGUAGE
 
 #include <autoconf.h>
-/* TODO: remove file when MULTI_IMAGE */
-#include <bootloader.h>
 #include <linker/sections.h>
 #include <generated_dts_board.h>
 

@@ -7,11 +7,11 @@
 #include "provision.h"
 #include <string.h>
 #include <stdbool.h>
-#include <generated_dts_board.h>
 #include <errno.h>
 #include "bootloader.h"
 #include <nrf.h>
 #include <assert.h>
+#include <pm_config.h>
 
 typedef struct {
 	u32_t s0_address;
@@ -21,7 +21,7 @@ typedef struct {
 } provision_flash_t;
 
 static const provision_flash_t *p_provision_data =
-	(provision_flash_t *)DT_FLASH_AREA_PROVISION_OFFSET;
+	(provision_flash_t *)PM_PROVISION_ADDRESS;
 
 u32_t s0_address_read(void)
 {
