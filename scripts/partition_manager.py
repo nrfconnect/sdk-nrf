@@ -13,9 +13,7 @@ from pprint import pformat
 
 
 def remove_item_not_in_list(list_to_remove_from, list_to_check):
-    for x in list_to_remove_from:
-        if x not in list_to_check and x != 'app':
-            list_to_remove_from.remove(x)
+    [list_to_remove_from.remove(x) for x in list_to_remove_from.copy() if x not in list_to_check and x is not 'app']
 
 
 def item_is_placed(d, item, after_or_before):
@@ -25,23 +23,23 @@ def item_is_placed(d, item, after_or_before):
 
 
 def remove_irrelevant_requirements(reqs):
-    # Remove items dependencies to partitions which are not present
-    for x in reqs.keys():
+    # Remove dependencies to partitions which are not present
+    for k, v in reqs.items():
         for before_after in ['before', 'after']:
-            if 'placement' in reqs[x].keys() and before_after in reqs[x]['placement'].keys():
-                [remove_item_not_in_list(reqs[x]['placement'][before_after], [*reqs.keys(), 'start', 'end'])]
-                if not reqs[x]['placement'][before_after]:
-                    del reqs[x]['placement'][before_after]
-        if 'span' in reqs[x].keys():
-            [remove_item_not_in_list(reqs[x]['span'], reqs.keys())]
-        if 'inside' in reqs[x].keys():
-            [remove_item_not_in_list(reqs[x]['inside'], reqs.keys())]
-            if not reqs[x]['inside']:
-                del reqs[x]['inside']
-        if 'share_size' in reqs[x].keys():
-            [remove_item_not_in_list(reqs[x]['share_size'], reqs.keys())]
-            if not reqs[x]['share_size']:
-                del reqs[x]['share_size']
+            if 'placement' in v.keys() and before_after in v['placement'].keys():
+                remove_item_not_in_list(v['placement'][before_after], [*reqs.keys(), 'start', 'end'])
+                if not v['placement'][before_after]:
+                    del v['placement'][before_after]
+        if 'span' in v.keys():
+            remove_item_not_in_list(v['span'], reqs.keys())
+        if 'inside' in v.keys():
+            remove_item_not_in_list(v['inside'], reqs.keys())
+            if not v['inside']:
+                del v['inside']
+        if 'share_size' in v.keys():
+            remove_item_not_in_list(v['share_size'], reqs.keys())
+            if not v['share_size']:
+                del v['share_size']
 
 
 def get_images_which_need_resolving(reqs, sub_partitions):
@@ -352,6 +350,12 @@ def expect_addr_size(td, name, expected_address, expected_size):
 
 
 def test():
+    list_one = [1, 2, 3, 4]
+    items_to_check = [4]
+    remove_item_not_in_list(list_one, items_to_check)
+    assert list_one[0] == 4
+    assert len(list_one) == 1
+
     test_config = {
         'first': {'address': 0,    'size': 10},
         # Gap from deleted partition.
