@@ -281,6 +281,12 @@ static int header_parse(struct download_client *client)
 		LOG_DBG("File size = %d", client->file_size);
 	}
 
+	p = strstr(client->buf, "Connection: close");
+	if (p) {
+		LOG_WRN("Peer closed connection, will attempt to re-connect");
+		client->connection_close = true;
+	}
+
 	if (client->offset != hdr) {
 		/* The current buffer contains some payload bytes.
 		 * Copy them at the beginning of the buffer
@@ -399,7 +405,7 @@ restart_and_suspend:
 		/* Have we received a whole fragment or the whole file? */
 		if ((dl->offset < CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE) &&
 		    (dl->progress != dl->file_size)) {
-			LOG_DBG("Awaiting full response (%u)", dl->offset);
+			LOG_DBG("Awaiting full fragment (%u)", dl->offset);
 			continue;
 		}
 
@@ -426,6 +432,13 @@ restart_and_suspend:
 		/* Request next fragment */
 		dl->offset = 0;
 		dl->has_header = false;
+
+		/* Attempt to reconnect if the connection was closed */
+		if (dl->connection_close) {
+			dl->connection_close = false;
+			download_client_disconnect(dl);
+			download_client_connect(dl, dl->host, dl->sec_tag);
+		}
 
 		rc = get_request_send(dl);
 		if (rc) {
@@ -482,6 +495,7 @@ int download_client_connect(struct download_client *const client, char *host,
 	}
 
 	client->host = host;
+	client->sec_tag = sec_tag;
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_IPV6)) {
