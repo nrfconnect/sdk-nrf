@@ -600,6 +600,8 @@ static void send_report_mouse(void)
 		}
 
 		EVENT_SUBMIT(event);
+
+		rd->items.update_needed = false;
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
@@ -626,26 +628,16 @@ static bool update_report(enum in_report tr)
 		/* If no item was changed, try next event. */
 	}
 
-	switch (tr) {
-	case IN_REPORT_KEYBOARD_KEYS:
-	case IN_REPORT_MPLAYER:
-		if (rd->items.update_needed) {
-			update_needed = true;
-		}
-		break;
-
-	case IN_REPORT_MOUSE:
+	if (tr == IN_REPORT_MOUSE) {
 		if ((state.last_dx != 0) ||
 		    (state.last_dy != 0) ||
 		    (state.wheel_acc != 0)) {
 			update_needed = true;
 		}
-		break;
+	}
 
-	default:
-		/* Unhandled HID report type. */
-		__ASSERT_NO_MSG(false);
-		break;
+	if (rd->items.update_needed) {
+		update_needed = true;
 	}
 
 	return update_needed;
