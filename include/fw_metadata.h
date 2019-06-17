@@ -25,7 +25,6 @@
 #include <toolchain.h>
 #include <assert.h>
 #include <string.h>
-#include <debug.h>
 
 #define MAGIC_LEN_WORDS (CONFIG_FW_MAGIC_LEN / sizeof(u32_t))
 

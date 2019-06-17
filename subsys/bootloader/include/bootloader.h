@@ -7,47 +7,7 @@
 #ifndef BOOTLOADER_H__
 #define BOOTLOADER_H__
 
-#include <autoconf.h>
 #include <fw_metadata.h>
-
-/*TODO: Remove DT_ defines when multi-image has been merged*/
-#define ROM_ADDR_SIZE (CONFIG_FLASH_SIZE * 1024)
-#define DT_FLASH_AREA_PROVISION_SIZE		0x1000
-#ifdef CONFIG_SOC_NRF9160
-#define DT_FLASH_AREA_PROVISION_OFFSET	(NRF_UICR_S->OTP)
-#define DT_FLASH_AREA_PROVISION_ROM_SIZE	0 /* OTP is not in the regular ROM region, so it takes no code space from the app. */
-#else
-#define DT_FLASH_AREA_PROVISION_OFFSET	(ROM_ADDR_SIZE - DT_FLASH_AREA_PROVISION_SIZE)
-#define DT_FLASH_AREA_PROVISION_ROM_SIZE	DT_FLASH_AREA_PROVISION_SIZE
-#endif
-
-#if CONFIG_SOC_NRF52840  ||\
-	CONFIG_SOC_NRF52832  ||\
-	CONFIG_SOC_NRF52810  ||\
-	CONFIG_SOC_NRF51822_QFAA ||\
-	CONFIG_SOC_NRF51822_QFAB ||\
-	CONFIG_SOC_NRF51822_QFAC ||\
-	CONFIG_SOC_NRF9160
-/* partition@0 */
-#define DT_FLASH_AREA_SECURE_BOOT_OFFSET	0x0
-#define DT_FLASH_AREA_SECURE_BOOT_SIZE		0x8000
-
-/* partition@8000 */
-#define DT_FLASH_AREA_S0_OFFSET		0x8000
-#define DT_FLASH_AREA_S0_SIZE		0x4000
-
-/* partition@C000 */
-#define DT_FLASH_AREA_S1_OFFSET		0xc000
-#define DT_FLASH_AREA_S1_SIZE		0x4000
-
-/* partition@10000 */
-#define DT_FLASH_AREA_APP_OFFSET	0x10000
-#define DT_FLASH_AREA_APP_SIZE		(ROM_ADDR_SIZE - DT_FLASH_AREA_APP_OFFSET - DT_FLASH_AREA_PROVISION_ROM_SIZE)
-
-#else
-#error "Board not supported for SECURE BOOT"
-#endif /* CONFIG_SOC_NRF52840 */
-
 
 struct __packed fw_validation_info {
 	/* Magic value to verify that the struct has the correct type. */

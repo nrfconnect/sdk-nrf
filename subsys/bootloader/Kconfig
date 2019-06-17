@@ -4,6 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+
+config SECURE_BOOT_CRYPTO_CLIENT
+	bool "Include Secure Bootloader crypto client API"
+	help
+	  Set this option to enable the crypto client API
+	  which gives access to the cryptographic functions
+	  from the secure bootloader. This will only work
+	  when the secure bootloader is enabled.
+
 config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
@@ -14,6 +23,9 @@ config SECURE_BOOT
 	  verifies the signature of the app.
 
 if SECURE_BOOT
+
+module=B0
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
 
 config SB_PRIVATE_KEY_PROVIDED
 	bool
@@ -102,6 +114,10 @@ menuconfig IS_SECURE_BOOTLOADER
 	  files and set all the options required.
 
 if IS_SECURE_BOOTLOADER
+
+partition=B0
+partition-size=0x8000
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
 
 rsource "debug/Kconfig"
 
