@@ -98,15 +98,20 @@ struct download_client {
 	size_t file_size;
 	/** Download progress, number of bytes downloaded. */
 	size_t progress;
+
 	/** Whether the HTTP header for
 	 * the current fragment has been processed.
 	 */
 	bool has_header;
+	/** The server has closed the connection. */
+	bool connection_close;
 
 	/** Server hosting the file, null-terminated. */
 	char *host;
 	/** File name, null-terminated. */
 	char *file;
+	/** TLS security tag. */
+	int sec_tag;
 
 	/** Internal thread ID. */
 	k_tid_t tid;
