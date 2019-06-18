@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <kernel.h>
 #include <misc/util.h>
+#include <settings/settings.h>
 
 #define MODULE fn_keys
 #include "module_state_event.h"
@@ -19,6 +20,7 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_FN_KEYS_LOG_LEVEL);
 
+#define FN_LOCK_STORAGE_NAME "fn_lock"
 
 static bool fn_switch_active;
 static bool fn_lock_active;
@@ -97,6 +99,22 @@ static bool fn_key_enabled(u16_t key_id)
 	return (p != NULL);
 }
 
+static void store_fn_lock(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS) &&
+	    IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
+		char key[] = MODULE_NAME "/" FN_LOCK_STORAGE_NAME;
+
+		int err = settings_save_one(key, &fn_lock_active,
+					    sizeof(fn_lock_active));
+
+		if (err) {
+			LOG_ERR("Problem storing fn_lock_active(err:%d)", err);
+			module_set_state(MODULE_STATE_ERROR);
+		}
+	}
+}
+
 static bool button_event_handler(const struct button_event *event)
 {
 	if (unlikely(event->key_id == CONFIG_DESKTOP_FN_KEYS_SWITCH)) {
@@ -107,6 +125,7 @@ static bool button_event_handler(const struct button_event *event)
 	if (unlikely(event->key_id == CONFIG_DESKTOP_FN_KEYS_LOCK)) {
 		if (event->pressed) {
 			fn_lock_active = !fn_lock_active;
+			store_fn_lock();
 		}
 		return true;
 	}
@@ -168,10 +187,66 @@ static bool button_event_handler(const struct button_event *event)
 	return false;
 }
 
+static int settings_set(int argc, char **argv, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	if (argc != 1) {
+		return -ENOENT;
+	}
+
+	if (!strcmp(argv[0], FN_LOCK_STORAGE_NAME)) {
+		ssize_t len = read_cb(cb_arg, &fn_lock_active,
+				      sizeof(fn_lock_active));
+		if (len != sizeof(fn_lock_active)) {
+			LOG_ERR("Can't read fn_lock_active from storage");
+
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+static int init_settings(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS) &&
+	    IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
+		static struct settings_handler sh = {
+			.name = MODULE_NAME,
+			.h_set = settings_set,
+		};
+
+		int err = settings_register(&sh);
+
+		if (err) {
+			LOG_ERR("Cannot register settings handler(err:%d)",
+				err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_button_event(eh)) {
 		return button_event_handler(cast_button_event(eh));
+	}
+
+	if (is_module_state_event(eh)) {
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
+
+		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+			if (init_settings()) {
+				module_set_state(MODULE_STATE_ERROR);
+				return false;
+			}
+			module_set_state(MODULE_STATE_READY);
+		}
+
+		return false;
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -179,5 +254,7 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
+
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
+EVENT_SUBSCRIBE(MODULE, module_state_event);
