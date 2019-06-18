@@ -14,6 +14,14 @@ The following repositories must be combined with fw-nrfconnect-nrf:
 * fw-nrfconnect-mcuboot
 * nrfxlib
 
+Documentation
+*************
+
+Official documentation at:
+
+* Latest: http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest
+* All versions: http://developer.nordicsemi.com/nRF_Connect_SDK/doc/
+
 Disclaimer
 **********
 
