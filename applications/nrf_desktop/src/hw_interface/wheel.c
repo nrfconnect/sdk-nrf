@@ -274,7 +274,7 @@ static void idle_timeout_fn(struct k_work *work)
 
 static int init(void)
 {
-	__ASSERT_NO_MSG(state = STATE_DISABLED);
+	__ASSERT_NO_MSG(state == STATE_DISABLED);
 
 	if (SENSOR_IDLE_TIMEOUT > 0) {
 		k_delayed_work_init(&idle_timeout, idle_timeout_fn);
