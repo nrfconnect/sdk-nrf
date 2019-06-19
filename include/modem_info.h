@@ -95,6 +95,7 @@ struct device_param {
 	const char *board; /**< Board version. */
 	const char *app_version; /**< Application version. */
 	const char *app_name; /**< Application name. */
+	double bat_charge; /**< The current battery charge, in percentage. */
 };
 
 /**@brief Modem parameters. */
