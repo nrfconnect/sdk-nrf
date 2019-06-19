@@ -58,27 +58,29 @@ To get a list of possible arguments at each subcommand level, call the command w
 
 Installation
 ************
-To set up dependencies for the HID configurator, run:
+To set up dependencies for the HID configurator, follow these instructions.
 
-On Windows:
+Windows
+~~~~~~~
+
+* Download the HIDAPI library from `HIDAPI releases`_.
+  Use the bundled DLL or build it according to instructions in `HIDAPI library`_.
+
+* Install `pyhidapi Python wrapper`_:
 
 .. parsed-literal::
    :class: highlight
 
    py -3 -m pip install -r requirements.txt
 
-On Debian/Ubuntu/Linux Mint:
+Debian/Ubuntu/Linux Mint
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. parsed-literal::
    :class: highlight
 
-   pip3 install --user -r requirements.txt
    sudo apt install libhidapi-hidraw0
-
-This command installs the following components:
-
-* HIDAPI library - on Windows provided by ``hidapi.dll`` or ``hidapi-x64.dll``, on Linux provided by ``libhidapi-hidraw0``.
-* pyhidapi Python wrapper - installed from GitHub repository with additional patches included. The version on PyPI is obsolete and will not work.
+   pip3 install --user -r requirements.txt
 
 Installation troubleshooting
 ============================
@@ -86,16 +88,6 @@ Installation troubleshooting
 1. When using the configuration channel for BLE devices on Linux, it is recommended to use BlueZ version >= 5.44.
    In previous versions, the HID device attached by BlueZ may obtain wrong VID and PID values (ignoring values in Device Information Service), which will stop HIDAPI from opening the device.
 #. On Linux, to call the Python script without root rights, install the provided udev rule ``99-hid.rules`` by copying it to ``/etc/udev/rules.d`` and replugging the device.
-#. When using Python Launcher for Windows, the ``--user`` installation option will not work, since DLL files will be copied to ``user\AppData\Roaming\Python\PythonX`` which is not searched for DLL libraries by default.
-   You can either install without the ``--user`` option or copy the DLL library next to the program being run.
-   To uninstall all files, run
-
-      .. parsed-literal::
-         :class: highlight
-
-         py -3 -m pip uninstall hid
-
-   To see the location of DLL files on Windows, use the above uninstall command and respond with ``n``.
 
 Dependencies
 ************

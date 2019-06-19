@@ -120,6 +120,7 @@
 .. _`breathe issue #438`: https://github.com/michaeljones/breathe/issues/438
 
 .. _`HIDAPI library`: https://github.com/libusb/hidapi
+.. _`HIDAPI releases`: https://github.com/libusb/hidapi/releases
 .. _`pyhidapi Python wrapper`: https://github.com/apmorton/pyhidapi
 
 
