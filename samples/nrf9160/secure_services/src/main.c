@@ -14,7 +14,7 @@ void print_number(u8_t *num, size_t len)
 {
 	printk("Random number len %d: 0x", len);
 	for (int i = 0; i < len; i++) {
-		printk("%x", num[i]);
+		printk("%02x", num[i]);
 	}
 	printk("\n");
 }
