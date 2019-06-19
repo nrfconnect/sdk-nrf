@@ -24,6 +24,9 @@
 #define ADP536X_CHG_STATUS_2				0x09
 #define ADP536X_BAT_PROTECT_CTRL			0x11
 #define ADP536X_BAT_OC_CHG				0x15
+#define ADP536X_BAT_CAP					0x20
+#define ADP536X_BAT_SOC					0x21
+#define ADP536X_FUEL_GAUGE_MODE				0x27
 #define ADP536X_BUCK_CFG				0x29
 #define ADP536X_BUCK_OUTPUT				0x2A
 #define ADP536X_BUCKBST_CFG				0x2B
@@ -112,6 +115,26 @@
 #define ADP536X_BAT_OC_CHG_OC_CHG(x)			(((x) & 0x07) << 5)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG_MSK		GENMASK(4, 3)
 #define ADP536X_BAT_OC_CHG_DGT_OC_CHG(x)		(((x) & 0x03) << 3)
+
+/* Battery fuel gauge mode register. */
+#define ADP536X_FUEL_GAUGE_MODE_SOC_LOW_TH_MSK		GENMASK(7, 6)
+#define ADP536X_FUEL_GAUGE_MODE_SOC_LOW_TH(x)		(((x) & 0xC0) << 6)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_CURR_MSK		GENMASK(5, 4)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_CURR(x)		(((x) & 0x30) << 4)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_TIME_MSK		GENMASK(3, 2)
+#define ADP536X_FUEL_GAUGE_MODE_SLP_TIME(x)		(((x) & 0x0C) << 2)
+#define ADP536X_FUEL_GAUGE_MODE_FG_MSK			BIT(1)
+#define ADP536X_FUEL_GAUGE_MODE_FG(x)			(((x) & 0x01) << 1)
+#define ADP536X_FUEL_GAUGE_MODE_EN_FG_MSK		BIT(0)
+#define ADP536X_FUEL_GAUGE_MODE_EN_FG(x)		((x) & 0x01)
+
+/* Battery capacity register. */
+#define ADP536X_BAT_CAP_MSK				GENMASK(7, 0)
+#define ADP536X_BAT_CAP_SET(x)				(((x) & 0xFF) << 0)
+
+/* Battery state of charge register */
+#define ADP536X_BAT_SOC_MSK				GENMASK(6, 0)
+#define ADP536X_BAT_SOC_SET(x)				(((x) & 0xFF) << 0)
 
 /* Buck configure register. */
 #define ADP536X_BUCK_CFG_DISCHG_BUCK_MSK		BIT(1)
@@ -213,6 +236,11 @@ int adp536x_charger_status_2_read(u8_t *buf)
 	return adp536x_reg_read(ADP536X_CHG_STATUS_2, buf);
 }
 
+int adp536x_bat_soc_read(u8_t *buf)
+{
+	return adp536x_reg_read(ADP536X_BAT_SOC, buf);
+}
+
 int adp536x_oc_dis_hiccup_set(bool enable)
 {
 	return adp536x_reg_write_mask(ADP536X_BAT_PROTECT_CTRL,
@@ -232,6 +260,34 @@ int adp536x_oc_chg_current_set(u8_t value)
 	return adp536x_reg_write_mask(ADP536X_BAT_OC_CHG,
 					ADP536X_BAT_OC_CHG_OC_CHG_MSK,
 					ADP536X_BAT_OC_CHG_OC_CHG(value));
+}
+
+int adp536x_bat_cap_set(u8_t value)
+{
+	return adp536x_reg_write_mask(ADP536X_BAT_CAP,
+					ADP536X_BAT_CAP_MSK,
+					ADP536X_BAT_CAP_SET(value));
+}
+
+int adp536x_fuel_gauge_set(bool enable)
+{
+	return adp536x_reg_write_mask(ADP536X_FUEL_GAUGE_MODE,
+				      ADP536X_FUEL_GAUGE_MODE_EN_FG_MSK,
+				      ADP536X_FUEL_GAUGE_MODE_EN_FG(enable));
+}
+
+int adp536x_fuel_gauge_enable_sleep_mode(bool enable)
+{
+	return adp536x_reg_write_mask(ADP536X_FUEL_GAUGE_MODE,
+				      ADP536X_FUEL_GAUGE_MODE_FG_MSK,
+				      ADP536X_FUEL_GAUGE_MODE_FG(enable));
+}
+
+int adp536x_fuel_gauge_update_rate_set(u8_t rate)
+{
+	return adp536x_reg_write_mask(ADP536X_FUEL_GAUGE_MODE,
+				      ADP536X_FUEL_GAUGE_MODE_SLP_TIME_MSK,
+				      ADP536X_FUEL_GAUGE_MODE_SLP_TIME(rate));
 }
 
 int adp536x_buck_1v8_set(void)
