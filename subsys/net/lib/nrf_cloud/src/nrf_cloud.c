@@ -308,8 +308,11 @@ static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
 
 		evt.type = CLOUD_EVT_DATA_RECEIVED;
+		evt.data.msg.buf = (char *)nrf_cloud_evt->param.data.ptr;
+		evt.data.msg.len = nrf_cloud_evt->param.data.len;
 
-		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
+		cloud_notify_event(nrf_cloud_backend, &evt,
+				   config->user_data);
 		break;
 	default:
 		LOG_DBG("Unknown event type: %d", nrf_cloud_evt->type);
