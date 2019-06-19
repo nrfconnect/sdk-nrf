@@ -35,6 +35,7 @@ static const char edrx_disable[] = "AT+CEDRXS=3";
 /* Request modem to go to power saving mode */
 static const char psm_req[] = "AT+CPSMS=1,,,\""CONFIG_LTE_PSM_REQ_RPTAU
 			      "\",\""CONFIG_LTE_PSM_REQ_RAT"\"";
+
 /* Request PSM to be disabled */
 static const char psm_disable[] = "AT+CPSMS=";
 /* Set the modem to power off mode */
@@ -46,10 +47,10 @@ static const char offline[] = "AT+CFUN=4";
 /* Successful return from modem */
 #if defined(CONFIG_LTE_NETWORK_MODE_NBIOT)
 /* Set network mode to Narrowband-IoT */
-static const char network_mode[] = "AT%XSYSTEMMODE=0,1,0,0";
+static const char network_mode[] = "AT%XSYSTEMMODE=0,1,1,0";
 #elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M)
 /* Set network mode to LTE-M */
-static const char network_mode[] = "AT%XSYSTEMMODE=1,0,0,0";
+static const char network_mode[] = "AT%XSYSTEMMODE=1,0,1,0";
 #endif
 /* Accepted network statuses read from modem */
 static const char   status1[] = "+CEREG: 1";
