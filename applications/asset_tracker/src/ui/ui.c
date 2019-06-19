@@ -98,10 +98,10 @@ enum ui_led_pattern ui_led_get_pattern(void)
 	return current_led_state;
 }
 
-int ui_led_set_color(u8_t red, u8_t green, u8_t blue)
+int ui_led_set_color(u8_t red, u8_t green, u8_t blue, size_t on, size_t off)
 {
 #ifdef CONFIG_UI_LED_USE_PWM
-	return ui_led_set_rgb(red, green, blue);
+	return ui_led_set_rgb(red, green, blue, on, off);
 #else
 	return -ENOTSUP;
 #endif /* CONFIG_UI_LED_USE_PWM */
@@ -158,6 +158,12 @@ int ui_init(ui_callback_t cb)
 
 #ifdef CONFIG_UI_BUZZER
 	err = ui_buzzer_init();
+	if (err) {
+		LOG_ERR("Could not enable buzzer, err code: %d\n", err);
+		return err;
+	}
+
+	err = ui_buzzer_set_frequency(0, 0);
 	if (err) {
 		LOG_ERR("Could not enable buzzer, err code: %d\n", err);
 		return err;

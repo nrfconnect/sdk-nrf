@@ -49,6 +49,9 @@ static const struct led_effect effect[] = {
 	[UI_ACCEL_CALIBRATING] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
 					UI_LED_OFF_PERIOD_NORMAL,
 					UI_ACCEL_CALIBRATING_COLOR),
+	[UI_BATTERY_LEVEL_LOW] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
+					UI_LED_OFF_PERIOD_ERROR,
+					UI_BATTERY_LEVEL_LOW_COLOR),
 	[UI_LED_ERROR_CLOUD] = LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_ERROR,
 					UI_LED_OFF_PERIOD_ERROR,
 					UI_LED_ERROR_CLOUD_COLOR),
@@ -206,12 +209,10 @@ void ui_led_set_effect(enum ui_led_pattern state)
 	led_update(&leds);
 }
 
-int ui_led_set_rgb(u8_t red, u8_t green, u8_t blue)
+int ui_led_set_rgb(u8_t red, u8_t green, u8_t blue, size_t on, size_t off)
 {
 	struct led_effect effect =
-		LED_EFFECT_LED_BREATHE(UI_LED_ON_PERIOD_NORMAL,
-			UI_LED_OFF_PERIOD_NORMAL,
-			LED_COLOR(red, green, blue));
+		LED_EFFECT_LED_BREATHE(on, off, LED_COLOR(red, green, blue));
 
 	memcpy((void *)custom_effect.steps, (void *)effect.steps,
 		effect.step_count * sizeof(struct led_effect_step));

@@ -47,6 +47,8 @@ extern "C" {
 #define UI_LED_OFF_PERIOD_NORMAL	5000
 #define UI_LED_ON_PERIOD_ERROR		500
 #define UI_LED_OFF_PERIOD_ERROR		500
+#define UI_LED_ON_PERIOD_CRITICAL	50
+#define UI_LED_OFF_PERIOD_CRITICAL	5000
 
 #define UI_LED_MAX			50
 
@@ -67,6 +69,7 @@ extern "C" {
 #define UI_CLOUD_CONNECTED_COLOR	UI_LED_COLOR_GREEN
 #define UI_CLOUD_PAIRING_COLOR		UI_LED_COLOR_YELLOW
 #define UI_ACCEL_CALIBRATING_COLOR	UI_LED_COLOR_PURPLE
+#define UI_BATTERY_LEVEL_LOW_COLOR	UI_LED_COLOR_RED
 #define UI_LED_ERROR_CLOUD_COLOR	UI_LED_COLOR_RED
 #define UI_LED_ERROR_BSD_REC_COLOR	UI_LED_COLOR_RED
 #define UI_LED_ERROR_BSD_IRREC_COLOR	UI_LED_COLOR_RED
@@ -77,6 +80,8 @@ extern "C" {
 
 #define UI_LED_ON_PERIOD_NORMAL		500
 #define UI_LED_OFF_PERIOD_NORMAL	500
+#define UI_LED_ON_PERIOD_CRITICAL	50
+#define UI_LED_OFF_PERIOD_CRITICAL	5000
 
 #endif /* CONFIG_UI_LED_USE_PWM */
 
@@ -90,6 +95,7 @@ enum ui_led_pattern {
 	UI_CLOUD_CONNECTED,
 	UI_CLOUD_PAIRING,
 	UI_ACCEL_CALIBRATING,
+	UI_BATTERY_LEVEL_LOW,
 	UI_LED_ERROR_CLOUD,
 	UI_LED_ERROR_BSD_REC,
 	UI_LED_ERROR_BSD_IRREC,
@@ -103,6 +109,7 @@ enum ui_led_pattern {
 	UI_CLOUD_CONNECTED	= UI_LED_ON(DK_LED4_MSK),
 	UI_CLOUD_PAIRING	= UI_LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
 	UI_ACCEL_CALIBRATING	= UI_LED_ON(DK_LED1_MSK | DK_LED3_MSK),
+	UI_BATTERY_LEVEL_LOW	= UI_LED_BLINK(DK_LED1_MSK | DK_LED4_MSK),
 	UI_LED_ERROR_CLOUD	= UI_LED_BLINK(DK_LED1_MSK | DK_LED4_MSK),
 	UI_LED_ERROR_BSD_REC	= UI_LED_BLINK(DK_LED1_MSK | DK_LED3_MSK),
 	UI_LED_ERROR_BSD_IRREC	= UI_LED_BLINK(DK_ALL_LEDS_MSK),
@@ -172,10 +179,12 @@ enum ui_led_pattern ui_led_get_pattern(void);
  * @param red Red, in range 0 - 255.
  * @param green Green, in range 0 - 255.
  * @param blue Blue, in range 0 - 255.
+ * @param on On period, in milliseconds.
+ * @param off Off period, in milliseconds.
  *
  * @return 0 on success or negative error value on failure.
  */
-int ui_led_set_color(u8_t red, u8_t green, u8_t blue);
+int ui_led_set_color(u8_t red, u8_t green, u8_t blue, size_t on, size_t off);
 
 /**
  * @brief Get the state of a button.
