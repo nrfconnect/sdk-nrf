@@ -887,132 +887,161 @@ static void init(void)
 	}
 }
 
+static bool handle_motion_event(const struct motion_event *event)
+{
+	/* Do not accumulate mouse motion data */
+	state.last_dx = event->dx;
+	state.last_dy = event->dy;
+
+	report_send(IN_REPORT_MOUSE, true, true);
+
+	return false;
+}
+
+static bool handle_wheel_event(const struct wheel_event *event)
+{
+	state.wheel_acc += event->wheel;
+
+	report_send(IN_REPORT_MOUSE, true, true);
+
+	return false;
+}
+
+static bool handle_button_event(const struct button_event *event)
+{
+	/* Get usage ID and target report from HID Keymap */
+	struct hid_keymap *map = hid_keymap_get(event->key_id);
+
+	if (!map || !map->usage_id) {
+		LOG_WRN("No mapping, button ignored");
+	} else {
+		/* Keydown increases ref counter, keyup decreases it. */
+		s16_t value = (event->pressed != false) ? (1) : (-1);
+		update_key(map, value);
+	}
+
+	return false;
+}
+
+static bool handle_hid_report_sent_event(
+		const struct hid_report_sent_event *event)
+{
+	report_issued(event->subscriber, event->report_type, event->error);
+
+	return false;
+}
+
+static bool handle_hid_report_subscription_event(
+		const struct hid_report_subscription_event *event)
+{
+	if (event->enabled) {
+		connect(event->subscriber, event->report_type);
+	} else {
+		disconnect(event->subscriber, event->report_type);
+	}
+
+	return false;
+}
+
+static bool handle_ble_peer_event(const struct ble_peer_event *event)
+{
+	switch (event->state) {
+	case PEER_STATE_CONNECTED:
+		connect_subscriber(event->id, false);
+		break;
+
+	case PEER_STATE_DISCONNECTED:
+		disconnect_subscriber(event->id);
+		report_send(IN_REPORT_MOUSE, true, true);
+		break;
+
+	case PEER_STATE_SECURED:
+	case PEER_STATE_CONN_FAILED:
+		/* Ignore */
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+
+	return false;
+}
+
+static bool handle_usb_state_event(const struct usb_state_event *event)
+{
+	switch (event->state) {
+	case USB_STATE_POWERED:
+		if (!get_subscriber_by_type(true)) {
+			connect_subscriber(event->id, true);
+		}
+		break;
+
+	case USB_STATE_DISCONNECTED:
+		disconnect_subscriber(event->id);
+		break;
+
+	default:
+		/* Ignore */
+		break;
+	}
+
+	return false;
+}
+
+static bool handle_module_state_event(const struct module_state_event *event)
+{
+	if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+		static bool initialized;
+
+		__ASSERT_NO_MSG(!initialized);
+		initialized = true;
+
+		LOG_INF("Init HID state!");
+		init();
+	}
+
+	return false;
+}
+
 static bool event_handler(const struct event_header *eh)
 {
-	if (is_motion_event(eh)) {
-		const struct motion_event *event = cast_motion_event(eh);
-
-		/* Do not accumulate mouse motion data */
-		state.last_dx = event->dx;
-		state.last_dy = event->dy;
-
-		report_send(IN_REPORT_MOUSE, true, true);
-
-		return false;
+	if (!IS_ENABLED(CONFIG_DESKTOP_MOTION_NONE) &&
+	    is_motion_event(eh)) {
+		return handle_motion_event(cast_motion_event(eh));
 	}
 
 	if (is_hid_report_sent_event(eh)) {
-		const struct hid_report_sent_event *event =
-			cast_hid_report_sent_event(eh);
-
-		report_issued(event->subscriber, event->report_type,
-			      event->error);
-
-		return false;
+		return handle_hid_report_sent_event(
+				cast_hid_report_sent_event(eh));
 	}
 
-	if (is_wheel_event(eh)) {
-		const struct wheel_event *event = cast_wheel_event(eh);
-
-		state.wheel_acc += event->wheel;
-
-		report_send(IN_REPORT_MOUSE, true, true);
-
-		return false;
+	if (IS_ENABLED(CONFIG_DESKTOP_WHEEL_ENABLE) &&
+	    is_wheel_event(eh)) {
+		return handle_wheel_event(cast_wheel_event(eh));
 	}
 
-	if (!IS_ENABLED(CONFIG_DESKTOP_BUTTONS_NONE)) {
-		if (is_button_event(eh)) {
-			const struct button_event *event =
-				cast_button_event(eh);
-
-			/* Get usage ID and target report from HID Keymap */
-			struct hid_keymap *map = hid_keymap_get(event->key_id);
-			if (!map || !map->usage_id) {
-				LOG_WRN("No mapping, button ignored.");
-				return false;
-			}
-
-			/* Keydown increases ref counter, keyup decreases it. */
-			s16_t value = (event->pressed != false) ? (1) : (-1);
-			update_key(map, value);
-
-			return false;
-		}
+	if (!IS_ENABLED(CONFIG_DESKTOP_BUTTONS_NONE) &&
+	    is_button_event(eh)) {
+		return handle_button_event(cast_button_event(eh));
 	}
 
 	if (is_hid_report_subscription_event(eh)) {
-		const struct hid_report_subscription_event *event =
-			cast_hid_report_subscription_event(eh);
-
-		if (event->enabled) {
-			connect(event->subscriber, event->report_type);
-		} else {
-			disconnect(event->subscriber, event->report_type);
-		}
-
-		return false;
+		return handle_hid_report_subscription_event(
+				cast_hid_report_subscription_event(eh));
 	}
 
 	if (is_ble_peer_event(eh)) {
-		const struct ble_peer_event *event =
-			cast_ble_peer_event(eh);
-
-		switch (event->state) {
-		case PEER_STATE_CONNECTED:
-			connect_subscriber(event->id, false);
-			break;
-		case PEER_STATE_DISCONNECTED:
-			disconnect_subscriber(event->id);
-			break;
-		case PEER_STATE_SECURED:
-		case PEER_STATE_CONN_FAILED:
-			/* Ignore */
-			break;
-		default:
-			__ASSERT_NO_MSG(false);
-			break;
-		}
-		return false;
+		return handle_ble_peer_event(cast_ble_peer_event(eh));
 	}
 
-
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE)) {
-		if (is_usb_state_event(eh)) {
-			const struct usb_state_event *event =
-				cast_usb_state_event(eh);
-
-			switch (event->state) {
-			case USB_STATE_POWERED:
-				if (!get_subscriber_by_type(true)) {
-					connect_subscriber(event->id, true);
-				}
-				break;
-			case USB_STATE_DISCONNECTED:
-				disconnect_subscriber(event->id);
-				break;
-			default:
-				/* Ignore */
-				break;
-			}
-			return false;
-		}
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) &&
+	    is_usb_state_event(eh)) {
+		return handle_usb_state_event(cast_usb_state_event(eh));
 	}
 
 	if (is_module_state_event(eh)) {
-		const struct module_state_event *event =
-			cast_module_state_event(eh);
-
-		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			static bool initialized;
-
-			__ASSERT_NO_MSG(!initialized);
-			initialized = true;
-
-			LOG_INF("Init HID state!");
-			init();
-		}
-		return false;
+		return handle_module_state_event(cast_module_state_event(eh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
