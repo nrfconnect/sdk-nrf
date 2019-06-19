@@ -161,6 +161,7 @@ static void env_data_send(void);
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct cloud_channel_data *data);
+static void device_status_send(struct k_work *work);
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
@@ -362,6 +363,21 @@ exit:
 static void cloud_cmd_handler(struct cloud_command *cmd)
 {
 	/* Command handling goes here. */
+	if (cmd->recipient == CLOUD_RCPT_MODEM_INFO) {
+#if CONFIG_MODEM_INFO
+		if (cmd->type == CLOUD_CMD_READ) {
+			device_status_send(NULL);
+		}
+#endif
+	} else if (cmd->recipient == CLOUD_RCPT_UI) {
+		if (cmd->type == CLOUD_CMD_LED_RED) {
+			ui_led_set_color(127, 0, 0);
+		} else if (cmd->type == CLOUD_CMD_LED_GREEN) {
+			ui_led_set_color(0, 127, 0);
+		} else if (cmd->type == CLOUD_CMD_LED_BLUE) {
+			ui_led_set_color(0, 0, 127);
+		}
+	}
 }
 
 #if CONFIG_MODEM_INFO
