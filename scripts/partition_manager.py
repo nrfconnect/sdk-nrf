@@ -31,7 +31,14 @@ def remove_irrelevant_requirements(reqs):
                 if not v['placement'][before_after]:
                     del v['placement'][before_after]
         if 'span' in v.keys():
-            remove_item_not_in_list(v['span'], reqs.keys())
+            if type(v['span']) == dict and 'one_of' in v['span'].keys():
+                remove_item_not_in_list(v['span']['one_of'], reqs.keys())
+                tmp = v['span']['one_of'].copy()
+                del v['span']['one_of']
+                v['span'] = list()
+                v['span'].append(tmp[0])
+            else:
+                remove_item_not_in_list(v['span'], reqs.keys())
         if 'inside' in v.keys():
             remove_item_not_in_list(v['inside'], reqs.keys())
             if not v['inside']:
@@ -420,6 +427,27 @@ def test():
           'mcuboot_pad': {'placement': {'after': ['mcuboot']}, 'inside': ['mcuboot_slot0'], 'size': 10},
           'app_partition': {'span': ['spm', 'app'], 'inside': ['mcuboot_slot0']},
           'mcuboot_slot0': {'span': ['app', 'foo']},
+          'mcuboot_data': {'placement': {'after': ['mcuboot_slot0']}, 'size': 200},
+          'mcuboot_slot1': {'share_size': ['mcuboot_slot0'], 'placement': {'after': ['mcuboot_data']}},
+          'mcuboot_slot2': {'share_size': ['mcuboot_slot1'], 'placement': {'after': ['mcuboot_slot1']}},
+          'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'mcuboot', 0, None)
+    expect_addr_size(td, 'spm', 210, None)
+    expect_addr_size(td, 'mcuboot_slot0', 200, 200)
+    expect_addr_size(td, 'mcuboot_slot1', 600, 200)
+    expect_addr_size(td, 'mcuboot_slot2', 800, 200)
+    expect_addr_size(td, 'app', 310, 90)
+    expect_addr_size(td, 'mcuboot_pad', 200, 10)
+    expect_addr_size(td, 'mcuboot_data', 400, 200)
+
+    td = {'spm': {'placement': {'before': ['app']}, 'size': 100, 'inside': ['mcuboot_slot0']},
+          'mcuboot': {'placement': {'before': ['app']}, 'size': 200},
+          'mcuboot_pad': {'placement': {'after': ['mcuboot']}, 'inside': ['mcuboot_slot0'], 'size': 10},
+          'app_partition': {'span': ['spm', 'app'], 'inside': ['mcuboot_slot0']},
+          'mcuboot_slot0': {'span': {'one_of': ['app', 'mcuboot', 'foo', 'mcuboot_pad']}},
           'mcuboot_data': {'placement': {'after': ['mcuboot_slot0']}, 'size': 200},
           'mcuboot_slot1': {'share_size': ['mcuboot_slot0'], 'placement': {'after': ['mcuboot_data']}},
           'mcuboot_slot2': {'share_size': ['mcuboot_slot1'], 'placement': {'after': ['mcuboot_slot1']}},

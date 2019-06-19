@@ -86,8 +86,10 @@ placement: dict
    It is not possible to place the partition after ``end`` or before ``start``.
 
 
-span: list
-   This property lists which partitions this partition should span across.
+span: list OR dict: list
+   If the value type is a list, this property lists which partitions this partition should span across.
+   If the value type is a dict with key ``one_of``, the semantics are equivalent
+   to having a list with only the first existing partition in the ``one_of``-list.
    Partitions with this property are container partitions.
    Therefore, this property cannot be used together with the ``placement`` property.
 
