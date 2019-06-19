@@ -952,7 +952,11 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 
 	case PEER_STATE_DISCONNECTED:
 		disconnect_subscriber(event->id);
-		report_send(IN_REPORT_MOUSE, true, true);
+
+		/* Refresh state of newly routed subscriber if any. */
+		for (size_t tr = 0; tr < IN_REPORT_COUNT; tr++) {
+			report_send(tr, true, true);
+		}
 		break;
 
 	case PEER_STATE_SECURED:
@@ -979,6 +983,11 @@ static bool handle_usb_state_event(const struct usb_state_event *event)
 
 	case USB_STATE_DISCONNECTED:
 		disconnect_subscriber(event->id);
+
+		/* Refresh state of newly routed subscriber if any. */
+		for (size_t tr = 0; tr < IN_REPORT_COUNT; tr++) {
+			report_send(tr, true, true);
+		}
 		break;
 
 	default:
