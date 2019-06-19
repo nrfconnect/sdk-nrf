@@ -26,6 +26,7 @@
 #include "ui.h"
 
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
+#define CLOUD_CONNACK_WAIT_DURATION	K_SECONDS(CONFIG_CLOUD_WAIT_DURATION)
 
 #if defined(CONFIG_FLIP_POLL)
 #define FLIP_POLL_INTERVAL		K_MSEC(CONFIG_FLIP_POLL_INTERVAL)
@@ -140,6 +141,7 @@ static struct k_work send_button_data_work;
 static struct k_work send_flip_data_work;
 static struct k_delayed_work flip_poll_work;
 static struct k_delayed_work long_press_button_work;
+static struct k_delayed_work cloud_reboot_work;
 #if CONFIG_MODEM_INFO
 static struct k_work device_status_work;
 static struct k_work rsrp_work;
@@ -531,6 +533,12 @@ static void sensor_data_send(struct cloud_channel_data *data)
 	}
 }
 
+/**@brief Reboot the device if CONNACK has not arrived. */
+static void cloud_reboot_handler(struct k_work *work)
+{
+	error_handler(ERROR_CLOUD, -ETIMEDOUT);
+}
+
 /**@brief Callback for sensor attached event from nRF Cloud. */
 void sensors_start(void)
 {
@@ -644,6 +652,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	switch (evt->type) {
 	case CLOUD_EVT_CONNECTED:
 		printk("CLOUD_EVT_CONNECTED\n");
+		k_delayed_work_cancel(&cloud_reboot_work);
 		ui_led_set_pattern(UI_CLOUD_CONNECTED);
 		break;
 	case CLOUD_EVT_READY:
@@ -756,6 +765,7 @@ static void work_init(void)
 	k_work_init(&send_flip_data_work, send_flip_data_work_fn);
 	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
+	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
 #if CONFIG_MODEM_INFO
 	k_work_init(&device_status_work, device_status_send);
 	k_work_init(&rsrp_work, modem_rsrp_data_send);
@@ -1030,6 +1040,9 @@ connect:
 	if (ret) {
 		printk("cloud_connect failed: %d\n", ret);
 		cloud_error_handler(ret);
+	} else {
+		k_delayed_work_submit(&cloud_reboot_work,
+				      CLOUD_CONNACK_WAIT_DURATION);
 	}
 
 	struct pollfd fds[] = {
