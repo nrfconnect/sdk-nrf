@@ -22,6 +22,7 @@
 #include "cloud_codec.h"
 #include "orientation_detector.h"
 #include "ui.h"
+#include "battery_monitor.h"
 
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
 
@@ -29,6 +30,12 @@
 #define FLIP_POLL_INTERVAL		K_MSEC(CONFIG_FLIP_POLL_INTERVAL)
 #else
 #define FLIP_POLL_INTERVAL		0
+#endif
+
+#if CONFIG_BATTERY_MONITOR
+#define BATTERY_MONITOR_INTERVAL	K_MSEC(CONFIG_BATTERY_MONITOR_INTERVAL)
+#else
+#define BATTERY_MONITOR_INTERVAL		0
 #endif
 
 #ifdef CONFIG_ACCEL_USE_SIM
@@ -130,6 +137,7 @@ static struct k_work send_button_data_work;
 static struct k_work send_flip_data_work;
 static struct k_delayed_work flip_poll_work;
 static struct k_delayed_work long_press_button_work;
+static struct k_delayed_work battery_monitor_work;
 #if CONFIG_MODEM_INFO
 static struct k_work device_status_work;
 static struct k_work rsrp_work;
@@ -348,6 +356,41 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 	/* Command handling goes here. */
 }
 
+#if CONFIG_BATTERY_MONITOR
+static void battery_monitor_check(struct k_work *work)
+{
+	static u8_t bat_charge;
+	static bool bat_level_acceptable = true;
+
+	battery_monitor_read(&bat_charge);
+
+	if (bat_charge < CONFIG_BATTERY_MONITOR_THRESHOLD &&
+	    bat_level_acceptable == true) {
+		ui_led_set_color(CONFIG_BATTERY_MONITOR_RED_VALUE,
+				 0,
+				 0,
+				 UI_LED_ON_PERIOD_CRITICAL,
+				 UI_LED_OFF_PERIOD_CRITICAL);
+		bat_level_acceptable = false;
+	} else if (bat_charge >= CONFIG_BATTERY_MONITOR_THRESHOLD &&
+	   bat_level_acceptable == false) {
+		ui_led_set_color(0,
+				 CONFIG_BATTERY_MONITOR_GREEN_VALUE,
+				 0,
+				 UI_LED_ON_PERIOD_NORMAL,
+				 UI_LED_OFF_PERIOD_NORMAL);
+		bat_level_acceptable = true;
+	}
+#if CONFIG_MODEM_INFO
+	modem_param.device.bat_charge = bat_charge;
+#endif
+	if (work) {
+		k_delayed_work_submit(&battery_monitor_work,
+				      BATTERY_MONITOR_INTERVAL);
+	}
+}
+#endif
+
 #if CONFIG_MODEM_INFO
 /**@brief Callback handler for LTE RSRP data. */
 static void modem_rsrp_handler(char rsrp_value)
@@ -494,7 +537,6 @@ static void sensor_data_send(struct cloud_channel_data *data)
 	if (err) {
 		printk("Unable to encode cloud data: %d\n", err);
 	}
-	err = cloud_encode_data(data, &output);
 
 	struct cloud_msg msg = {
 		.buf = output.buf,
@@ -525,6 +567,11 @@ void sensors_start(void)
 
 	if (IS_ENABLED(CONFIG_FLIP_POLL)) {
 		k_delayed_work_submit(&flip_poll_work, K_NO_WAIT);
+	}
+
+	if (IS_ENABLED(CONFIG_BATTERY_MONITOR)) {
+		k_delayed_work_submit(&battery_monitor_work,
+				      BATTERY_MONITOR_INTERVAL);
 	}
 }
 
@@ -608,6 +655,9 @@ static void work_init(void)
 	k_work_init(&send_flip_data_work, send_flip_data_work_fn);
 	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
+#if CONFIG_BATTERY_MONITOR
+	k_delayed_work_init(&battery_monitor_work, battery_monitor_check);
+#endif
 #if CONFIG_MODEM_INFO
 	k_work_init(&device_status_work, device_status_send);
 	k_work_init(&rsrp_work, modem_rsrp_data_send);
@@ -788,6 +838,11 @@ static void sensors_init(void)
 #if CONFIG_MODEM_INFO
 	modem_data_init();
 #endif /* CONFIG_MODEM_INFO */
+
+	if (IS_ENABLED(CONFIG_BATTERY_MONITOR)) {
+		battery_monitor_init();
+	}
+
 	if (IS_ENABLED(CONFIG_CLOUD_BUTTON)) {
 		button_sensor_init();
 	}

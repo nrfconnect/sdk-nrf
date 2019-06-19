@@ -145,6 +145,43 @@ config FLIP_POLL_INTERVAL
 		Flip polling interval in milliseconds.
 endif
 
+config BATTERY_MONITOR
+	bool "Use battery charge monitoring"
+	help
+	    Poll the current battery charge of the device and
+	    act accordingly upon certain values.
+
+if BATTERY_MONITOR
+config BATTERY_MONITOR_THRESHOLD
+	int "The lowest accepted battery level percentage"
+	default 30
+	help
+	   Triggers an alarm if the battery level goes
+	   below this value.
+
+config BATTERY_MONITOR_INTERVAL
+	int "Battery monitor poll interval"
+	default 1000
+	help
+	    Battery monitor poll interval in milliseconds.
+
+config BATTERY_MONITOR_RED_VALUE
+	int "RED light intensity for low charge percentage"
+	default 127
+	help
+	    The light intensity of the red LED if
+	    the battery charge drops below a threshold value.
+	    Range 0 - 255 (Lowest to highest)
+
+config BATTERY_MONITOR_GREEN_VALUE
+	int "GREEN light intensity for low charge percentage"
+	default 127
+	help
+	    The light intensity of the green LED if
+	    the battery charge is above a threshold value.
+	    Range 0 - 255 (Lowest to highest)
+endif
+
 if ACCEL_USE_EXTERNAL
 
 config ACCEL_DEV_NAME
