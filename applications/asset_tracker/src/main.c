@@ -5,6 +5,7 @@
  */
 
 #include <zephyr.h>
+#include <kernel_structs.h>
 #include <stdio.h>
 #include <string.h>
 #include <gps.h>
@@ -151,7 +152,8 @@ enum error_type {
 	ERROR_CLOUD,
 	ERROR_BSD_RECOVERABLE,
 	ERROR_BSD_IRRECOVERABLE,
-	ERROR_LTE_LC
+	ERROR_LTE_LC,
+	ERROR_SYSTEM_FAULT
 };
 
 /* Forward declaration of functions */
@@ -220,6 +222,36 @@ void error_handler(enum error_type err_type, int err_code)
 		k_cpu_idle();
 	}
 #endif /* CONFIG_DEBUG */
+}
+
+void z_SysFatalErrorHandler(unsigned int reason,
+			    const NANO_ESF *pEsf)
+{
+	ARG_UNUSED(pEsf);
+
+#if !defined(CONFIG_SIMPLE_FATAL_ERROR_HANDLER)
+#if defined(CONFIG_STACK_SENTINEL)
+	if (reason == _NANO_ERR_STACK_CHK_FAIL) {
+		goto error_handler;
+	}
+#endif
+	if (reason == _NANO_ERR_KERNEL_PANIC) {
+		goto error_handler;
+	}
+
+	if (z_is_thread_essential()) {
+		printk("Fatal fault in essential thread!\n");
+		goto error_handler;
+	}
+
+	printk("Fatal fault in thread %p! Aborting.\n", _current);
+	k_thread_abort(_current);
+
+	return;
+#endif
+
+error_handler:
+	error_handler(ERROR_SYSTEM_FAULT, reason);
 }
 
 void cloud_error_handler(int err)
