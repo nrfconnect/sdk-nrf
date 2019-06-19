@@ -12,6 +12,9 @@ import sys
 from pprint import pformat
 
 
+PERMITTED_STR_KEYS = ['size']
+
+
 def remove_item_not_in_list(list_to_remove_from, list_to_check):
     [list_to_remove_from.remove(x) for x in list_to_remove_from.copy() if x not in list_to_check and x is not 'app']
 
@@ -139,7 +142,17 @@ def extract_sub_partitions(reqs):
     return sub_partitions
 
 
+def convert_str_to_list(with_str):
+    for k, v in with_str.items():
+        if type(v) is dict:
+            convert_str_to_list(v)
+        elif type(v) is str and k not in PERMITTED_STR_KEYS:
+            with_str[k] = list()
+            with_str[k].append(v)
+
+
 def resolve(reqs):
+    convert_str_to_list(reqs)
     solution = list(['app'])
     remove_irrelevant_requirements(reqs)
     sub_partitions = extract_sub_partitions(reqs)
@@ -244,7 +257,7 @@ def sizeof(reqs, req, total_size):
 
 def load_reqs(reqs, input_config):
     for name, ymlpath in input_config.items():
-        if (path.exists(ymlpath)):
+        if path.exists(ymlpath):
             with open(ymlpath, 'r') as f:
                 reqs.update(yaml.safe_load(f))
 
@@ -422,14 +435,14 @@ def test():
     expect_addr_size(td, 'app', 300, 700)
     expect_addr_size(td, 'mcuboot_slot0', 200, 800)
 
-    td = {'spm': {'placement': {'before': ['app']}, 'size': 100, 'inside': ['mcuboot_slot0']},
-          'mcuboot': {'placement': {'before': ['app']}, 'size': 200},
-          'mcuboot_pad': {'placement': {'after': ['mcuboot']}, 'inside': ['mcuboot_slot0'], 'size': 10},
-          'app_partition': {'span': ['spm', 'app'], 'inside': ['mcuboot_slot0']},
+    td = {'spm': {'placement': {'before': 'app'}, 'size': 100, 'inside': 'mcuboot_slot0'},
+          'mcuboot': {'placement': {'before': 'app'}, 'size': 200},
+          'mcuboot_pad': {'placement': {'after': 'mcuboot'}, 'inside': 'mcuboot_slot0', 'size': 10},
+          'app_partition': {'span': ['spm', 'app'], 'inside': 'mcuboot_slot0'},
           'mcuboot_slot0': {'span': ['app', 'foo']},
           'mcuboot_data': {'placement': {'after': ['mcuboot_slot0']}, 'size': 200},
-          'mcuboot_slot1': {'share_size': ['mcuboot_slot0'], 'placement': {'after': ['mcuboot_data']}},
-          'mcuboot_slot2': {'share_size': ['mcuboot_slot1'], 'placement': {'after': ['mcuboot_slot1']}},
+          'mcuboot_slot1': {'share_size': 'mcuboot_slot0', 'placement': {'after': 'mcuboot_data'}},
+          'mcuboot_slot2': {'share_size': 'mcuboot_slot1', 'placement': {'after': 'mcuboot_slot1'}},
           'app': {}}
     s, sub_partitions = resolve(td)
     set_addresses(td, sub_partitions, s, 1000)
