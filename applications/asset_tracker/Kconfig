@@ -18,6 +18,13 @@ config CLOUD_BUTTON_INPUT
 	range 1 1 if BOARD_NRF9160_PCA20035NS
 	default 1
 
+config CLOUD_WAIT_DURATION
+	int "Cloud connection acknowledge wait duration"
+	default 30
+	help
+		How long the device should wait in seconds for a CONNACK
+		event from the cloud.
+
 config POWER_OPTIMIZATION_ENABLE
 	bool "Enable power optimization"
 	default y
