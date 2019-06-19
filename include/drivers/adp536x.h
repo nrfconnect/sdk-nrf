@@ -120,6 +120,16 @@ int adp536x_charger_status_1_read(u8_t *buf);
 int adp536x_charger_status_2_read(u8_t *buf);
 
 /**
+ * @brief Read the BAT_SOC register.
+ *
+ * @param[out] buf The read value of the BAT_SOC register.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_bat_soc_read(u8_t *buf);
+
+/**
  * @brief Enable charge hiccup protection mode.
  *
  * @param[in] enable The requested hiccup protection state.
@@ -187,10 +197,52 @@ int adp536x_oc_chg_current_set(u8_t value);
  * @brief Set the buck discharge resistor status.
  *
  * @param[in] enable Boolean value to enable or disable the discharge resistor.
+ */
+int adp536x_buck_discharge_set(bool enable);
+
+/** @brief Set the battery capacity input.
+ *
+ * @param[in] value The battery capacity input.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int adp536x_buck_discharge_set(bool enable);
+int adp536x_bat_cap_set(u8_t value);
+
+
+/**
+ * @brief Enable/disable the fuel gauge.
+ *
+ * @param[in] enable The requested fuel gauge operation mode.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_fuel_gauge_set(bool enable);
+
+/**
+ * @brief Enable the fuel gauge sleep mode.
+ *
+ * @param[in] enable The requested fuel gauge operation mode.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_fuel_gauge_enable_sleep_mode(bool enable);
+
+
+/**
+ * @brief Set the fuel gauge update rate.
+ *
+ * @param[in] rate Set the fuel gauge update rate.
+ *                 0: 1 min
+ *                 1: 4 min
+ *                 2: 8 min
+ *                 3: 16 min
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int adp536x_fuel_gauge_update_rate_set(u8_t rate);
 
 #endif /* ADP536X_H_ */
