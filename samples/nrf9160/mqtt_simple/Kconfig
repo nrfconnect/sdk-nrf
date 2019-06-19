@@ -26,11 +26,11 @@ config MQTT_BROKER_PORT
 	default 1883
 
 config MQTT_MESSAGE_BUFFER_SIZE
-	int ""
+	int "MQTT message buffer size"
 	default 128
 
 config MQTT_PAYLOAD_BUFFER_SIZE
-	int ""
+	int "MQTT payload buffer size"
 	default 128
 
 endmenu
