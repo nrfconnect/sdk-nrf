@@ -27,6 +27,7 @@ def item_is_placed(d, item, after_or_before):
 
 def remove_irrelevant_requirements(reqs):
     # Remove dependencies to partitions which are not present
+    to_delete = list()
     for k, v in reqs.items():
         for before_after in ['before', 'after']:
             if 'placement' in v.keys() and before_after in v['placement'].keys():
@@ -50,6 +51,12 @@ def remove_irrelevant_requirements(reqs):
             remove_item_not_in_list(v['share_size'], reqs.keys())
             if not v['share_size']:
                 del v['share_size']
+                if 'size' not in v.keys():
+                    # The partition has no size, delete it
+                    to_delete.append(k)
+
+    for x in to_delete:
+        del reqs[x]
 
 
 def get_images_which_need_resolving(reqs, sub_partitions):
@@ -412,6 +419,26 @@ def test():
     start, size = get_dynamic_area_start_and_size(test_config, 100)
     assert (start == 10)
     assert (size == 100 - 10)
+
+    # Verify that if a partition X uses 'share_size' with a non-existing partition, then partition X is given size 0,
+    # and is hence not created.
+    td = {'should_not_exist': {'placement': {'before': 'exists'}, 'share_size': 'does_not_exist'},
+          'exists': {'placement': {'before': 'app'}, 'size': 100},
+          'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    assert 'should_not_exist' not in td.keys()
+
+    # Verify that if a partition X uses 'share_size' with a non-existing partition, but has set a default size,
+    # then partition X is created with the default size.
+    td = {'should_exist': {'placement': {'before': 'exists'}, 'share_size': 'does_not_exist', 'size': 200},
+          'exists': {'placement': {'before': 'app'}, 'size': 100},
+          'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'should_exist', 0, 200)
 
     td = {'spm': {'placement': {'before': ['app']}, 'size': 100},
           'mcuboot': {'placement': {'before': ['spm', 'app']}, 'size': 200},
