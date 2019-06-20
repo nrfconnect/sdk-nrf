@@ -51,7 +51,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/CMakeLists.txt                   @SebastianBoe
 /scripts/                                 @mbolivar @tejlmand
-/scripts/hid_configurator                 @pdunaj
+/scripts/hid_configurator/                @pdunaj
 /subsys/bluetooth/                        @joerchan @carlescufi
 /subsys/bootloader/                       @hakonfam @ioannisg
 /subsys/enhanced_shockburst/              @Raane @lemrey
