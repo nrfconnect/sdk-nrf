@@ -107,12 +107,12 @@ def solve_direction(reqs, sub_partitions, unsolved, solution, ab):
 
 
 def solve_first_last(reqs, unsolved, solution):
-    for fl in [('after', 'start', 0), ('before', 'end', len(solution))]:
+    for fl in [('after', 'start', lambda x: solution.insert(0, x)), ('before', 'end', solution.append)]:
         first_or_last = [x for x in reqs.keys() if 'placement' in reqs[x]
                          and fl[0] in reqs[x]['placement'].keys()
                          and fl[1] in reqs[x]['placement'][fl[0]]]
         if first_or_last:
-            solution.insert(fl[2], first_or_last[0])
+            fl[2](first_or_last[0])
             if first_or_last[0] in unsolved:
                 unsolved.remove(first_or_last[0])
 
