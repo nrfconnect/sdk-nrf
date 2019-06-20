@@ -194,7 +194,7 @@ int ui_nmos_pwm_set(size_t nmos_idx, u32_t period, u32_t pulse)
 		return -EINVAL;
 	}
 
-	if (nmos_idx > (ARRAY_SIZE(nmos_pins) - 4)) {
+	if (nmos_idx > (ARRAY_SIZE(nmos_pins) - 1)) {
 		LOG_ERR("Invalid NMOS instance: %d", nmos_idx);
 		return -EINVAL;
 	}
