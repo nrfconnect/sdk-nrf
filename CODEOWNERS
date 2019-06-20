@@ -13,6 +13,7 @@
 # Applications
 /applications/asset_tracker/              @joakimtoe @jtguggedal @rlubos
 /applications/nrf_desktop/                @pdunaj
+/applications/usb_uart_bridge/            @joakimtoe @jtguggedal
 # Boards
 /boards/                                  @ioannisg @anangl
 # All cmake related files
