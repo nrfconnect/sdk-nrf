@@ -14,6 +14,12 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(ui_nmos, CONFIG_UI_LOG_LEVEL);
 
+/*
+ * Period to use for always-on/always-off before any PWM period is specified.
+ * Needs to be supported by the PWM prescaler setting
+ */
+#define DEFAULT_PERIOD_US 20000
+
 #define NMOS_CONFIG_DEFAULT(_pin)	(.pin = _pin)
 #define NMOS_CONFIG_UNUSED		(.pin = -1)
 #define NMOS_CONFIG_PIN(_pin)		COND_CODE_0(_pin, NMOS_CONFIG_UNUSED,  \
@@ -33,6 +39,8 @@ struct nmos_config {
 static struct device *gpio_dev;
 static struct device *pwm_dev;
 
+static u32_t current_period_us;
+
 static struct nmos_config nmos_pins[] = {
 	[UI_NMOS_1] = NMOS_CONFIG(CONFIG_UI_NMOS_1_PIN),
 	[UI_NMOS_2] = NMOS_CONFIG(CONFIG_UI_NMOS_2_PIN),
@@ -42,18 +50,18 @@ static struct nmos_config nmos_pins[] = {
 
 static int pwm_out(u32_t pin, u32_t period_us, u32_t duty_cycle_us)
 {
-	static u32_t prev_period;
 
 	/* Applying workaround due to limitations in PWM driver that doesn't
 	 * allow changing period while PWM is running. Setting pulse to 0
 	 * disables the PWM, but not before the current period is finished.
 	 */
-	if (prev_period) {
-		pwm_pin_set_usec(pwm_dev, pin, prev_period, 0);
-		k_sleep(MAX(K_MSEC(prev_period / USEC_PER_MSEC), K_MSEC(1)));
+	if (current_period_us != period_us) {
+		pwm_pin_set_usec(pwm_dev, pin, current_period_us, 0);
+		k_sleep(MAX(K_MSEC(current_period_us / USEC_PER_MSEC),
+			    K_MSEC(1)));
 	}
 
-	prev_period = period_us;
+	current_period_us = period_us;
 
 	return pwm_pin_set_usec(pwm_dev, pin, period_us, duty_cycle_us);
 }
@@ -73,7 +81,7 @@ static bool pwm_is_in_use(void)
 
 static void nmos_pwm_disable(u32_t nmos_idx)
 {
-	pwm_out(nmos_pins[nmos_idx].pin, 0, 0);
+	pwm_out(nmos_pins[nmos_idx].pin, current_period_us, 0);
 
 	nmos_pins[nmos_idx].mode = NMOS_MODE_GPIO;
 
@@ -184,6 +192,15 @@ int ui_nmos_init(void)
 		return -ENODEV;
 	}
 
+	for (size_t i = 0; i < ARRAY_SIZE(nmos_pins); i++) {
+		pwm_pin_set_usec(pwm_dev,
+				 nmos_pins[i].pin,
+				 DEFAULT_PERIOD_US,
+				 0);
+	}
+
+	current_period_us = DEFAULT_PERIOD_US;
+
 	return err;
 }
 
@@ -232,5 +249,7 @@ int ui_nmos_write(size_t nmos_idx, u8_t value)
 		return err;
 	}
 
-	return err;
+	return pwm_out(nmos_pins[nmos_idx].pin,
+		       current_period_us,
+		       current_period_us * value);
 }
