@@ -84,6 +84,41 @@ static bool is_fix(struct gps_pvt *pvt)
 		== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT);
 }
 
+static u64_t fix_timestamp;
+
+static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
+{
+	u8_t  tracked          = 0;
+	u8_t  in_fix           = 0;
+	u8_t  unhealthy        = 0;
+
+	for (int i = 0; i < NRF_GNSS_MAX_SATELLITES; ++i) {
+
+		if ((pvt_data->pvt.sv[i].sv > 0) &&
+		    (pvt_data->pvt.sv[i].sv < 33)) {
+
+			tracked++;
+
+			if (pvt_data->pvt.sv[i].flags &
+					NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
+				in_fix++;
+			}
+
+			if (pvt_data->pvt.sv[i].flags &
+					NRF_GNSS_SV_FLAG_UNHEALTHY) {
+				unhealthy++;
+			}
+		}
+	}
+
+	LOG_DBG("Tracking: %d Using: %d Unhealthy: %d", tracked,
+						       in_fix,
+						       unhealthy);
+
+	LOG_DBG("Seconds since last fix %lld",
+			(k_uptime_get() - fix_timestamp) / 1000);
+}
+
 static void gps_thread(int dev_ptr)
 {
 	struct device *dev = INT_TO_POINTER(dev_ptr);
@@ -106,6 +141,8 @@ wait:
 			continue;
 		}
 
+		print_satellite_stats(&raw_gps_data);
+
 		switch (raw_gps_data.data_id) {
 		case NRF_GNSS_PVT_DATA_ID:
 			copy_pvt(&fresh_pvt.pvt, &raw_gps_data.pvt);
@@ -122,6 +159,7 @@ wait:
 					trigger_send = true;
 				}
 				LOG_DBG("PVT: Position fix");
+				fix_timestamp = k_uptime_get();
 			}
 
 			break;
