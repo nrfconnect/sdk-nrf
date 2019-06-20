@@ -238,6 +238,14 @@ config CLOUD_UA_CONSOLE
 endchoice
 
 
+config ENVIRONMENT_DATA_SEND_INTERVAL
+	int "Interval in seconds for sending environment data"
+	default 30
+	help
+	  Interval between each sampling and sending of environment sensor data.
+	  If the GPS is active, sensor data will not be sent before it is
+	  stopped. The unit is seconds.
+
 choice
 	prompt "Temperature measurement device"
 	default TEMP_USE_SIM
