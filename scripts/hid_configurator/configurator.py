@@ -187,7 +187,7 @@ def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
                           '\tresponse: recipient {}, event_id {}'.format(recipient, event_id,
                                                                          response.recipient, response.event_id))
             op_status = ConfigStatus.FAULT
-            break;
+            break
 
         op_status = response.status
         if op_status != ConfigStatus.PENDING:
@@ -203,7 +203,9 @@ def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
     else:
         logging.warning('Error: {}'.format(op_status.name))
 
-    return success, fetched_data
+    if is_fetch:
+        return success, fetched_data
+    return success
 
 
 def open_device():
@@ -248,23 +250,29 @@ def perform_dfu(dev, args):
             chunk_data = img_file.read(EVENT_DATA_LEN_MAX - len(dfu_header))
             chunk_len = len(chunk_data)
             if chunk_len == 0:
-                break;
+                break
 
             logging.debug('Send DFU request: offset {}, size {}'.format(offset, chunk_len))
 
             event_data = dfu_header + chunk_data
 
             progress_bar(int(offset/img_length * 1000))
-            exchange_feature_report(dev, recipient, event_id, event_data, False)
+            success = exchange_feature_report(dev, recipient, event_id, event_data, False)
+            if not success:
+                break
 
             offset += chunk_len
-        print('')
-        print('DFU transfer completed')
     except:
-        print('')
-        print('DFU transfer failed')
+        success = False
     finally:
         img_file.close()
+
+    if success:
+        print('')
+        print('DFU transfer completed')
+    else:
+        print('')
+        print('DFU transfer failed')
 
 
 def perform_config(dev, args):
@@ -347,7 +355,7 @@ def perform_fwreboot(dev, args):
     recipient = MOUSE_PID
 
     try:
-        success = exchange_feature_report(dev, recipient, event_id, None, True)
+        success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
     except:
         success = False
 
