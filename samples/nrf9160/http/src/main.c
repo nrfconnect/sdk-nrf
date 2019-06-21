@@ -100,6 +100,7 @@ void app_http_start(void)
 	} while (num_bytes > 0);
 
 	printk("\n\rFinished. Closing socket");
+	freeaddrinfo(res);
 	err = close(client_fd);
 }
 

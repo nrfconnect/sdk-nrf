@@ -178,6 +178,7 @@ void app_udp_start(void)
 	}
 
 error:
+	freeaddrinfo(res);
 	printk("Finished\n");
 	(void)close(client_fd);
 }
