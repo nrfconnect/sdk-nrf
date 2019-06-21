@@ -134,7 +134,7 @@ void app_ntp_socket_start(void)
 	struct addrinfo *res;
 	struct ntp_format ntp = { 0 };
 	socklen_t addrlen = sizeof(struct sockaddr_storage);
-	
+
 	ntp.flags = 0xe3;
 	int err = getaddrinfo(NTP_HOST, NULL, NULL, &res);
 
@@ -158,7 +158,7 @@ void app_ntp_socket_start(void)
 	if (err < 0) {
 		printk("connect err: %d\n\r", errno);
 	}
-	
+
 	err = send(client_fd, &ntp, sizeof(struct ntp_format), 0);
 	printk("sendto ret: %d\n\r", err);
 	if (err < 0) {
@@ -172,7 +172,7 @@ void app_ntp_socket_start(void)
 	}
 	ntp_swap_endianess(&ntp);
 	ntp_print(&ntp);
-
+	freeaddrinfo(res);
 	(void)close(client_fd);
 }
 

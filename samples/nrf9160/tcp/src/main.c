@@ -100,7 +100,7 @@ void app_tcp_socket_start(void)
 	} while (ret > 0);
 
 	printk("\n\rfin");
-
+	freeaddrinfo(res);
 	err = close(client_fd);
 }
 
