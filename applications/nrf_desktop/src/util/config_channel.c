@@ -222,6 +222,7 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 	}
 
 	if (cfg_chan->frame.status != CONFIG_STATUS_PENDING) {
+		atomic_set(&cfg_chan->status, cfg_chan->frame.status);
 		k_delayed_work_cancel(&cfg_chan->timeout);
 		cfg_chan->transaction_active = false;
 	}
@@ -287,6 +288,8 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 			event->id = cfg_chan->frame.event_id;
 
 			atomic_set(&cfg_chan->status, CONFIG_STATUS_SUCCESS);
+
+			k_delayed_work_cancel(&cfg_chan->timeout);
 			cfg_chan->transaction_active = false;
 
 			EVENT_SUBMIT(event);
@@ -300,6 +303,7 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 
 			event->recipient = cfg_chan->frame.recipient;
 			event->id = cfg_chan->frame.event_id;
+
 			if (cfg_chan->is_fetch) {
 				event->status = CONFIG_STATUS_FETCH;
 			} else {
@@ -307,14 +311,18 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 				memcpy(event->dyndata.data, &buffer[pos], cfg_chan->frame.event_data_len);
 			}
 
+			EVENT_SUBMIT(event);
+
 			atomic_set(&cfg_chan->status, CONFIG_STATUS_PENDING);
 
-			EVENT_SUBMIT(event);
 		} else {
 			LOG_WRN("Unsupported recipient %" PRIx16, cfg_chan->frame.recipient);
 
+			atomic_set(&cfg_chan->status, CONFIG_STATUS_REJECT);
+
 			k_delayed_work_cancel(&cfg_chan->timeout);
 			cfg_chan->transaction_active = false;
+
 			return -ENOTSUP;
 		}
 	}
@@ -363,5 +371,6 @@ void config_channel_disconnect(struct config_channel_state *cfg_chan)
 	if (cfg_chan->transaction_active) {
 		cfg_chan->disconnected = true;
 		cfg_chan->transaction_active = false;
+		k_delayed_work_cancel(&cfg_chan->timeout);
 	}
 }
