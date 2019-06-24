@@ -7,6 +7,7 @@
 cmake_minimum_required(VERSION 3.8.2)
 
 set(NRF_SUPPORTED_BOARDS
+  nrf52810_pca20045
   nrf52840_pca20041
   nrf52840_pca10056
   nrf52840_pca10059
