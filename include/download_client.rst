@@ -118,8 +118,12 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 		 * calling download_client_connect().
 		 */
 
-		/* Pass the security tag to the download library */
-		err = download_client_connect(&dl, HOST, sec_tag);
+		/* Specify the security tag in the configuration structure */
+		download_client_cfg config = {
+			.sec_tag = sec_tag,
+		};
+
+		err = download_client_connect(&dl, HOST, &config);
 		if (err) {
 			return err;
 		}

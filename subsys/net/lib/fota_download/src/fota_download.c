@@ -96,6 +96,10 @@ static int download_client_callback(const struct download_client_evt *event)
 
 int fota_download_start(char *host, char *file)
 {
+	struct download_client_cfg config = {
+		.sec_tag = -1, /* HTTP */
+	};
+
 	if (host == NULL || file == NULL || callback == NULL) {
 		return -EINVAL;
 	}
@@ -112,7 +116,7 @@ int fota_download_start(char *host, char *file)
 		return err;
 	}
 
-	err = download_client_connect(&dfu, host,  -1 /* HTTP */);
+	err = download_client_connect(&dfu, host, &config);
 
 	if (err != 0) {
 		LOG_ERR("download_client_connect error %d", err);

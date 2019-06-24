@@ -89,7 +89,32 @@ static int socket_sectag_set(int fd, int sec_tag)
 	return 0;
 }
 
-static int resolve_and_connect(const char *const host, int family, int sec_tag)
+static int socket_apn_set(int fd, const char *apn)
+{
+	int err;
+	size_t len;
+	struct ifreq ifr = {0};
+
+	__ASSERT_NO_MSG(apn);
+
+	len = strlen(apn);
+	if (len >= sizeof(ifr.ifr_name)) {
+		LOG_ERR("Access point name is too long.");
+		return -1;
+	}
+
+	memcpy(ifr.ifr_name, apn, len);
+	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
+	if (err) {
+		LOG_ERR("Failed to bind socket, errno %d", errno);
+		return -1;
+	}
+
+	return 0;
+}
+
+static int resolve_and_connect(int family, const char *host,
+			       const struct download_client_cfg *cfg)
 {
 	int fd;
 	int err;
@@ -99,9 +124,10 @@ static int resolve_and_connect(const char *const host, int family, int sec_tag)
 	struct addrinfo *info;
 
 	__ASSERT_NO_MSG(host);
+	__ASSERT_NO_MSG(cfg);
 
 	/* Set up port and protocol */
-	if (sec_tag == -1) {
+	if (cfg->sec_tag == -1) {
 		/* HTTP, port 80 */
 		proto = IPPROTO_TCP;
 		port = htons(80);
@@ -111,11 +137,13 @@ static int resolve_and_connect(const char *const host, int family, int sec_tag)
 		port = htons(443);
 	}
 
-	/* Lookup  host */
+	/* Lookup host */
 	struct addrinfo hints = {
 		.ai_family = family,
 		.ai_socktype = SOCK_STREAM,
 		.ai_protocol = proto,
+		/* Either a valid, NULL-terminated access point name or NULL. */
+		.ai_canonname = (char *)cfg->apn
 	};
 
 	err = getaddrinfo(host, NULL, &hints, &info);
@@ -134,9 +162,17 @@ static int resolve_and_connect(const char *const host, int family, int sec_tag)
 		goto cleanup;
 	}
 
+	if (cfg->apn != NULL) {
+		LOG_INF("Setting up APN: %s", log_strdup(cfg->apn));
+		err = socket_apn_set(fd, cfg->apn);
+		if (err) {
+			goto cleanup;
+		}
+	}
+
 	if (proto == IPPROTO_TLS_1_2) {
 		LOG_INF("Setting up TLS credentials");
-		err = socket_sectag_set(fd, sec_tag);
+		err = socket_sectag_set(fd, cfg->sec_tag);
 		if (err) {
 			goto cleanup;
 		}
@@ -158,7 +194,11 @@ static int resolve_and_connect(const char *const host, int family, int sec_tag)
 		}
 
 		err = connect(fd, sa, addr->ai_addrlen);
-		if (err == 0) {
+		if (err) {
+			/* Try next address */
+			LOG_ERR("Unable to connect, errno %d", errno);
+		} else {
+			/* Connected */
 			break;
 		}
 	}
@@ -168,7 +208,6 @@ cleanup:
 
 	if (err) {
 		/* Unable to connect, close socket */
-		LOG_ERR("Unable to connect");
 		close(fd);
 		fd = -1;
 	}
@@ -440,7 +479,7 @@ restart_and_suspend:
 		if (dl->connection_close) {
 			dl->connection_close = false;
 			download_client_disconnect(dl);
-			download_client_connect(dl, dl->host, dl->sec_tag);
+			download_client_connect(dl, dl->host, &dl->config);
 		}
 
 		rc = get_request_send(dl);
@@ -477,17 +516,17 @@ int download_client_init(struct download_client *const client,
 	return 0;
 }
 
-int download_client_connect(struct download_client *const client, char *host,
-			    int sec_tag)
+int download_client_connect(struct download_client *client, char *host,
+			    const struct download_client_cfg *config)
 {
 	int err;
 
-	if (client == NULL || host == NULL) {
+	if (client == NULL || host == NULL || config == NULL) {
 		return -EINVAL;
 	}
 
 	if (!IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_TLS)) {
-		if (sec_tag != -1) {
+		if (config->sec_tag != -1) {
 			return -EINVAL;
 		}
 	}
@@ -497,22 +536,22 @@ int download_client_connect(struct download_client *const client, char *host,
 		return 0;
 	}
 
-	client->host = host;
-	client->sec_tag = sec_tag;
-
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_IPV6)) {
 		client->fd =
-			resolve_and_connect(client->host, AF_INET6, sec_tag);
+			resolve_and_connect(AF_INET6, host, config);
 	}
 	if (client->fd < 0) {
 		client->fd =
-			resolve_and_connect(client->host, AF_INET, sec_tag);
+			resolve_and_connect(AF_INET, host, config);
 	}
 
 	if (client->fd < 0) {
 		return -EINVAL;
 	}
+
+	client->host = host;
+	client->config = *config;
 
 	LOG_INF("Connected");
 
