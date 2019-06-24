@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
+/dts-v1/;
+#include <nordic/nrf52810_qfaa.dtsi>
+
+/ {
+	model = "Nordic PCA20045";
+	compatible = "nordic,nrf52810-qfaa",
+		     "nordic,nrf52810";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+&adc {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&uart0 {
+	status = "okay";
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	tx-pin = <18>;
+	rx-pin = <20>;
+	rts-pin = <16>;
+	rts-pin = <15>;
+};
+
+&qdec {
+	status = "okay";
+	a-pin = <21>;
+	b-pin = <5>;
+	enable-pin = <6>;
+	led-pin = <0xFFFFFFFF>;
+	led-pre = <0>;
+	steps = <24>;
+};
+
+&spi0 {
+	status = "okay";
+	sck-pin = <9>;
+	mosi-pin = <10>;
+	miso-pin = <10>;
+};
+
+&flash0 {
+	/*
+	 * For more information, see:
+	 * http://docs.zephyrproject.org/latest/guides/dts/index.html#flash-partitions
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0xc000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 0xd000>;
+		};
+		slot1_partition: partition@19000 {
+			label = "image-1";
+			reg = <0x00019000 0xd000>;
+		};
+		scratch_partition: partition@26000 {
+			label = "image-scratch";
+			reg = <0x00026000 0x3000>;
+		};
+		storage_partition: partition@29000 {
+			label = "storage";
+			reg = <0x00029000 0x00007000>;
+		};
+	};
+};
