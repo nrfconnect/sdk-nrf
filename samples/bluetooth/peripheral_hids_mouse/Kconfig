@@ -15,4 +15,8 @@ config BT_GATT_HIDS_SECURITY_ENABLED
 	help
 	  "Enable BLE security for the HIDS service"
 
+config BT_DIRECTED_ADVERTISING
+	bool "Enable directed advertising"
+	default y
+
 endmenu
