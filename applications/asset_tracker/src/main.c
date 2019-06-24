@@ -174,21 +174,27 @@ static void device_status_send(struct k_work *work);
 void error_handler(enum error_type err_type, int err_code)
 {
 	if (err_type == ERROR_CLOUD) {
+		if (gps_control_is_enabled()) {
+			printk("Reboot\n");
+			sys_reboot(0);
+		}
 #if defined(CONFIG_LTE_LINK_CONTROL)
 		/* Turn off and shutdown modem */
+		printk("LTE link disconnect\n");
 		int err = lte_lc_power_off();
 		if (err) {
 			printk("lte_lc_power_off failed: %d\n", err);
 		}
 #endif /* CONFIG_LTE_LINK_CONTROL */
 #if defined(CONFIG_BSD_LIBRARY)
+		printk("Shutdown modem\n");
 		bsdlib_shutdown();
 #endif
 	}
 
 #if !defined(CONFIG_DEBUG) && defined(CONFIG_REBOOT)
 	LOG_PANIC();
-	sys_reboot(SYS_REBOOT_COLD);
+	sys_reboot(0);
 #else
 	switch (err_type) {
 	case ERROR_CLOUD:
@@ -820,6 +826,11 @@ static void pairing_button_register(struct ui_evt *evt)
 
 static void long_press_handler(struct k_work *work)
 {
+	if (!atomic_get(&send_data_enable)) {
+		printk("Link not ready, long press disregarded\n");
+		return;
+	}
+
 	if (gps_control_is_enabled()) {
 		printk("Stopping GPS\n");
 		gps_control_disable();
@@ -1126,16 +1137,6 @@ connect:
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
 			printk("Socket error: POLLNVAL\n");
-
-			/* If the device is recently associated, the cloud
-			 * will usually terminate the connection, and we'll
-			 * have to reconnect. Often we'll also have to reboot,
-			 * but attempt once to reconnect first.
-			 */
-			if (recently_associated) {
-				recently_associated = false;
-				goto connect;
-			}
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
