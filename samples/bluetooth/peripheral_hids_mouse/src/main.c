@@ -86,6 +86,16 @@ K_MSGQ_DEFINE(hids_queue,
 	      HIDS_QUEUE_SIZE,
 	      4);
 
+#if CONFIG_BT_DIRECTED_ADVERTISING
+/* Bonded address queue. */
+K_MSGQ_DEFINE(bonds_queue,
+	      sizeof(bt_addr_le_t),
+	      CONFIG_BT_MAX_PAIRED,
+	      4);
+#endif
+
+static struct k_delayed_work adv_work;
+
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
 		      (CONFIG_BT_DEVICE_APPEARANCE >> 0) & 0xff,
@@ -105,18 +115,112 @@ static struct conn_mode {
 	bool in_boot_mode;
 } conn_mode[CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT];
 
-
-static void advertising_start(void)
+#if CONFIG_BT_DIRECTED_ADVERTISING
+static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
-	int err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
-				  sd, ARRAY_SIZE(sd));
+	int err;
 
-	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
-		return;
+	/* Filter already connected peers. */
+	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
+		if (conn_mode[i].conn) {
+			if (!bt_addr_le_cmp(&info->addr,
+				    bt_conn_get_dst(conn_mode[i].conn))) {
+				return;
+			}
+		}
 	}
 
-	printk("Advertising successfully started\n");
+	err = k_msgq_put(&bonds_queue, (void *) &info->addr, K_NO_WAIT);
+	if (err) {
+		printk("No space in the queue for the bond.\n");
+	}
+}
+#endif
+
+
+static void advertising_continue(void)
+{
+	struct bt_le_adv_param adv_param;
+
+#if CONFIG_BT_DIRECTED_ADVERTISING
+	bt_addr_le_t addr;
+
+	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT)) {
+		char addr_buf[BT_ADDR_LE_STR_LEN];
+		struct bt_conn *conn;
+
+		adv_param = *BT_LE_ADV_CONN_DIR;
+		conn = bt_conn_create_slave_le(&addr, &adv_param);
+		if (!conn) {
+			printk("Directed advertising failed to start\n");
+			return;
+		}
+		bt_conn_unref(conn);
+
+		bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
+		printk("Direct advertising to %s started\n", addr_buf);
+	} else
+#endif
+	{
+		int err;
+
+		adv_param = *BT_LE_ADV_CONN;
+		adv_param.options |= BT_LE_ADV_OPT_ONE_TIME;
+		err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad),
+				  sd, ARRAY_SIZE(sd));
+		if (err) {
+			printk("Advertising failed to start (err %d)\n", err);
+			return;
+		}
+
+		printk("Regular advertising started\n");
+	}
+}
+
+
+static void advertising_start(struct k_work *work)
+{
+	int err;
+
+	/* Clear the application start for advertising restart. */
+	err = bt_le_adv_stop();
+	if (err) {
+		printk("Failed to stop advertising (err %d)\n", err);
+	}
+
+#if CONFIG_BT_DIRECTED_ADVERTISING
+	k_msgq_purge(&bonds_queue);
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find, NULL);
+#endif
+
+	advertising_continue();
+}
+
+
+static void insert_conn_object(struct bt_conn *conn)
+{
+	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
+		if (!conn_mode[i].conn) {
+			conn_mode[i].conn = conn;
+			conn_mode[i].in_boot_mode = false;
+
+			return;
+		}
+	}
+
+	printk("Connection object could not be inserted %p\n", conn);
+}
+
+
+static bool is_conn_slot_free(void)
+{
+	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
+		if (!conn_mode[i].conn) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 
@@ -127,7 +231,12 @@ static void connected(struct bt_conn *conn, u8_t err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
-		printk("Failed to connect to %s (%u)\n", addr, err);
+		if (err == BT_HCI_ERR_ADV_TIMEOUT) {
+			printk("Direct advertising to %s timed out\n", addr);
+			advertising_continue();
+		} else {
+			printk("Failed to connect to %s (%u)\n", addr, err);
+		}
 		return;
 	}
 
@@ -140,12 +249,10 @@ static void connected(struct bt_conn *conn, u8_t err)
 		return;
 	}
 
-	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
-		if (!conn_mode[i].conn) {
-			conn_mode[i].conn = conn;
-			conn_mode[i].in_boot_mode = false;
-			return;
-		}
+	insert_conn_object(conn);
+
+	if (is_conn_slot_free()) {
+		advertising_start(NULL);
 	}
 }
 
@@ -172,6 +279,12 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 			break;
 		}
 	}
+
+	/* Let Bluetooth stack clean up disconnected connection object
+	 * so that it is possible to create a new one for directed
+	 * advertising.
+	 */
+	k_delayed_work_submit(&adv_work, K_MSEC(100));
 }
 
 
@@ -420,12 +533,13 @@ static void bt_ready(int err)
 	hid_init();
 
 	k_delayed_work_init(&hids_work, mouse_handler);
+	k_delayed_work_init(&adv_work, advertising_start);
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
 
-	advertising_start();
+	advertising_start(NULL);
 }
 
 
