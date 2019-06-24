@@ -531,14 +531,24 @@ static int nrf91_socket_offload_setsockopt(int sd, int level, int optname,
 	int retval;
 	int nrf_level;
 	int nrf_optname;
+	struct nrf_timeval nrf_rcvtimeo;
+	void *nrf_optval = (void *)optval;
+	nrf_socklen_t nrf_optlen = optlen;
 
 	if (z_to_nrf_level(level, &nrf_level) < 0)
 		goto error;
 	if (z_to_nrf_optname(level, optname, &nrf_optname) < 0)
 		goto error;
 
-	retval = nrf_setsockopt(sd, nrf_level, nrf_optname, optval,
-				(nrf_socklen_t)optlen);
+	if ((level == SOL_SOCKET) && (optname == SO_RCVTIMEO)) {
+		nrf_rcvtimeo.tv_sec = ((struct timeval *)optval)->tv_sec;
+		nrf_rcvtimeo.tv_usec = ((struct timeval *)optval)->tv_usec;
+		nrf_optval = &nrf_rcvtimeo;
+		nrf_optlen = sizeof(struct nrf_timeval);
+	}
+
+	retval = nrf_setsockopt(sd, nrf_level, nrf_optname, nrf_optval,
+				nrf_optlen);
 
 	return retval;
 
@@ -554,21 +564,42 @@ static int nrf91_socket_offload_getsockopt(int sd, int level, int optname,
 	int retval;
 	int nrf_level;
 	int nrf_optname;
+	struct nrf_timeval nrf_rcvtimeo = {0, 0};
+	void *nrf_optval = optval;
+	nrf_socklen_t nrf_optlen = (nrf_socklen_t)*optlen;
 
 	if (z_to_nrf_level(level, &nrf_level) < 0)
 		goto error;
 	if (z_to_nrf_optname(level, optname, &nrf_optname) < 0)
 		goto error;
 
-	retval = nrf_getsockopt(sd, nrf_level, nrf_optname, optval,
-				(nrf_socklen_t *)optlen);
+	if ((level == SOL_SOCKET) && (optname == SO_RCVTIMEO)) {
+		nrf_optval = &nrf_rcvtimeo;
+		nrf_optlen = sizeof(struct nrf_timeval);
+	}
 
-	if ((retval == 0) && optval &&
-	    (level == SOL_SOCKET) && (optname == SO_ERROR)) {
-		/* Use bsd_os_errno_set() to translate from nRF error
-		 * to native error. */
-		bsd_os_errno_set(*(int *)optval);
-		*(int *)optval = errno;
+	retval = nrf_getsockopt(sd, nrf_level, nrf_optname, nrf_optval,
+				&nrf_optlen);
+
+
+	if ((retval == 0) && (optval != NULL)) {
+		*optlen = nrf_optlen;
+
+		if (level == SOL_SOCKET) {
+			if (optname == SO_ERROR) {
+				/* Use bsd_os_errno_set() to translate from nRF
+				 * error to native error.
+				 */
+				bsd_os_errno_set(*(int *)optval);
+				*(int *)optval = errno;
+			} else if (optname == SO_RCVTIMEO) {
+				((struct timeval *)optval)->tv_sec =
+					nrf_rcvtimeo.tv_sec;
+				((struct timeval *)optval)->tv_usec =
+					nrf_rcvtimeo.tv_usec;
+				*optlen = sizeof(struct timeval);
+			}
+		}
 	}
 
 	return retval;
