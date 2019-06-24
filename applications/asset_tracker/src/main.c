@@ -229,14 +229,17 @@ void error_handler(enum error_type err_type, int err_code)
 #if defined(CONFIG_LTE_LINK_CONTROL)
 		/* Turn off and shutdown modem */
 		int err = lte_lc_power_off();
-		__ASSERT(err == 0, "lte_lc_power_off failed: %d", err);
-#endif
+		if (err) {
+			printk("Could not shut down the LTE link, error: %d\n",
+			       err);
+		}
+#endif /* CONFIG_LTE_LINK_CONTROL */
 #if defined(CONFIG_BSD_LIBRARY)
 		bsdlib_shutdown();
 #endif
 	}
 
-#if !defined(CONFIG_DEBUG)
+#if !defined(CONFIG_DEBUG) && defined(CONFIG_REBOOT)
 	sys_reboot(SYS_REBOOT_COLD);
 #else
 	switch (err_type) {
@@ -365,7 +368,9 @@ static void button_send(bool pressed)
 		return;
 	}
 
-	if (!pressed) {
+	if (pressed) {
+		data[0] = '1';
+	} else {
 		data[0] = '0';
 	}
 
@@ -714,8 +719,10 @@ static void cloud_init(void)
 	};
 
 	int err = nrf_cloud_init(&param);
-
-	__ASSERT(err == 0, "nRF Cloud library could not be initialized.");
+	if (err) {
+		printk("nRF Cloud library could not be initialized.");
+		nrf_cloud_error_handler(err);
+	}
 }
 
 /**@brief Connect to nRF Cloud, */

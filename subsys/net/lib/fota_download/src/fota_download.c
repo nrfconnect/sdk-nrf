@@ -105,7 +105,14 @@ int fota_download_start(char *host, char *file)
 		return -EALREADY;
 	}
 
-	int err = download_client_connect(&dfu, host,  -1 /* HTTP */);
+	int err = flash_img_init(&flash_img);
+
+	if (err != 0) {
+		LOG_ERR("flash_img_init error %d", err);
+		return err;
+	}
+
+	err = download_client_connect(&dfu, host,  -1 /* HTTP */);
 
 	if (err != 0) {
 		LOG_ERR("download_client_connect error %d", err);
@@ -129,14 +136,8 @@ int fota_download_init(fota_download_callback_t client_callback)
 
 	callback = client_callback;
 
-	int err = flash_img_init(&flash_img);
+	int err = download_client_init(&dfu, download_client_callback);
 
-	if (err != 0) {
-		LOG_ERR("flash_img_init error %d", err);
-		return err;
-	}
-
-	err = download_client_init(&dfu, download_client_callback);
 	if (err != 0) {
 		LOG_ERR("download_client_init error %d", err);
 		return err;
@@ -144,4 +145,3 @@ int fota_download_init(fota_download_callback_t client_callback)
 
 	return 0;
 }
-
