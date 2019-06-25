@@ -6,8 +6,8 @@
 
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/board.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_MOTION_OPTICAL_ENABLE app PRIVATE
-                     ${CMAKE_CURRENT_SOURCE_DIR}/motion_optical.c)
+target_sources_ifdef(CONFIG_DESKTOP_MOTION_SENSOR_ENABLE app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/motion_sensor.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/motion_buttons.c)

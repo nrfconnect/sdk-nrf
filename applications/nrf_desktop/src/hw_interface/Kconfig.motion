@@ -13,8 +13,13 @@ choice
 config DESKTOP_MOTION_NONE
 	bool "Disable motion"
 
-config DESKTOP_MOTION_OPTICAL_ENABLE
-	bool "Motion from optical sensor"
+config DESKTOP_MOTION_PMW3360_ENABLE
+	bool "Motion from optical sensor PMW3360"
+	select DESKTOP_MOTION_SENSOR_ENABLE
+
+config DESKTOP_MOTION_PAW3212_ENABLE
+	bool "Motion from optical sensor PAW3212"
+	select DESKTOP_MOTION_SENSOR_ENABLE
 
 config DESKTOP_MOTION_BUTTONS_ENABLE
 	bool "Motion from buttons"
@@ -24,6 +29,9 @@ config DESKTOP_MOTION_SIMULATED_ENABLE
 	depends on SHELL
 
 endchoice
+
+config DESKTOP_MOTION_SENSOR_ENABLE
+	bool
 
 config DESKTOP_MOTION_SIMULATED_EDGE_TIME
 	int "Time for transition between two points in a trajectory [ms]"
@@ -41,17 +49,47 @@ config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
 
 config DESKTOP_SPI_FREQ_HZ
 	int "SPI clock frequency for communication with the optical sensor"
-	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
 	default 1800000
 	range 500000 2500000
 
-config DESKTOP_OPTICAL_THREAD_STACK_SIZE
-	int "Optical thread stack size"
-	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+config DESKTOP_MOTION_THREAD_STACK_SIZE
+	int "Motion module thread stack size"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
 	range 0 4096
 	default 512
 	help
-	  Stack size for optical sensor thread.
+	  Stack size for motion sensor thread.
+
+config DESKTOP_MOTION_SENSOR_CPI
+	int "Motion sensor default CPI"
+	default 0
+	help
+	  Default CPI value.
+
+config DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS
+	int "Motion sensor default sleep 1 timeout in ms"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default 0
+	help
+	  Time in milliseconds after last motion detection in which sensor
+	  enters a low power mode 1.
+
+config DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS
+	int "Motion sensor default sleep 2 timeout in ms"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default 0
+	help
+	  Time in milliseconds after last motion detection in which sensor
+	  enters a low power mode 2.
+
+config DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS
+	int "Motion sensor default sleep 3 timeout in ms"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default 0
+	help
+	  Time in milliseconds after last motion detection in which sensor
+	  enters a low power mode 3.
 
 if !DESKTOP_MOTION_NONE
 module = DESKTOP_MOTION

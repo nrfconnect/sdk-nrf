@@ -31,7 +31,7 @@ static bool config_id_is_supported(u8_t event_id)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_OPTICAL_ENABLE)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_SENSOR_ENABLE)) {
 		if (MOD_FIELD_GET(event_id) == SETUP_MODULE_SENSOR) {
 			return true;
 		}
@@ -198,7 +198,7 @@ static bool module_event_handler(const struct module_state_event *event)
 #if CONFIG_DESKTOP_BLE_ADVERTISING_ENABLE
 		MODULE_ID(ble_adv),
 #endif
-#if CONFIG_DESKTOP_MOTION_OPTICAL_ENABLE
+#if CONFIG_DESKTOP_MOTION_SENSOR_ENABLE
 		MODULE_ID(motion),
 #endif
 #if CONFIG_DESKTOP_BLE_SCANNING_ENABLE
