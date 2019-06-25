@@ -9,18 +9,16 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
+#include <string.h>
 
 #define MODULE ble_scan
 #include "module_state_event.h"
 
 #include "ble_event.h"
+#include "ble_scan.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
-
-
-#define DEVICE_NAME	CONFIG_DESKTOP_BLE_SHORT_NAME
-#define DEVICE_NAME_LEN	(sizeof(DEVICE_NAME) - 1)
 
 
 struct bond_find_data {
@@ -61,7 +59,8 @@ static int configure_filters(void)
 {
 	bt_scan_filter_remove_all();
 
-	static_assert(DEVICE_NAME_LEN > 0, "Invalid device name");
+	static_assert(ARRAY_SIZE(bt_peripherals) <= CONFIG_BT_SCAN_SHORT_NAME_CNT,
+		      "Insufficient number of short name filers");
 
 	struct bond_find_data bond_find_data = {
 		.peer_id = 0,
@@ -88,14 +87,20 @@ static int configure_filters(void)
 				  addr_str, sizeof(addr_str));
 		LOG_INF("Address filter added %s", log_strdup(addr_str));
 	} else {
-		static const struct bt_scan_short_name short_name = {
-			.name = DEVICE_NAME,
-			.min_len = DEVICE_NAME_LEN,
-		};
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME, &short_name);
-		if (err) {
-			LOG_ERR("Name filter cannot be added (err %d)", err);
-			goto error;
+		/* Bluetooth scan filters are defined in separate header. */
+		for (size_t i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
+			const struct bt_scan_short_name filter = {
+				.name = bt_peripherals[i],
+				.min_len = strlen(bt_peripherals[i]),
+			};
+
+			err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,
+						 &filter);
+			if (err) {
+				LOG_ERR("Name filter cannot be added (err %d)",
+					err);
+				goto error;
+			}
 		}
 		filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
 
