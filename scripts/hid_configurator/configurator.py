@@ -17,6 +17,7 @@ EVENT_DATA_LEN_MAX = REPORT_SIZE - 6
 NORDIC_VID = 0x1915
 MOUSE_PID = 0x52DE
 DONGLE_PID = 0x52DC
+KEYBOARD_PID = 0x52DD
 
 POLL_INTERVAL = 0.02
 POLL_RETRY_COUNT = 200
@@ -208,19 +209,32 @@ def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
     return success
 
 
-def open_device():
-    # Open HID device. If mouse is not connected, try dongle
+def get_device_pid(device_type):
+    if device_type == 'mouse':
+        return MOUSE_PID
+    elif device_type == 'keyboard':
+        return KEYBOARD_PID
+    elif device_type == 'dongle':
+        return DONGLE_PID
+    else:
+        return None
+
+
+def open_device(device_type):
+    if device_type not in ['mouse', 'keyboard', 'dongle']:
+        print("Unsupported device type")
+        return None
+
     try:
+        dev = hid.Device(vid=NORDIC_VID, pid=get_device_pid(device_type))
+        print("Found device")
+    except hid.HIDException:
         try:
-            dev = hid.Device(vid=NORDIC_VID, pid=MOUSE_PID)
-            print("Found nRF52 Desktop Mouse")
+            dev = hid.Device(vid=NORDIC_VID, pid=DONGLE_PID)
+            print("Try to connect via dongle")
         except hid.HIDException:
-            try:
-                dev = hid.Device(vid=NORDIC_VID, pid=DONGLE_PID)
-                print("Found nRF52 Desktop Dongle")
-            except hid.HIDException:
-                logging.error("No device connected")
-                return None
+            print("Cannot find selected device nor dongle")
+            return None
     except:
         logging.error("Unknown error: {}".format(sys.exc_info()[0]))
         return None
@@ -231,7 +245,7 @@ def open_device():
 def perform_dfu(dev, args):
     dfu_image = args.dfu_image
     event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_DATA << TYPE_FIELD_POS)
-    recipient = MOUSE_PID
+    recipient = get_device_pid(args.device_type)
 
     if not os.path.isfile(dfu_image):
         print('DFU image file does not exists')
@@ -289,7 +303,7 @@ def perform_config(dev, args):
     value_range  = config_opts.range
     opt_id       = config_opts.event_id
 
-    recipient = MOUSE_PID
+    recipient = get_device_pid(args.device_type)
     event_id = (EVENT_GROUP_SETUP << GROUP_FIELD_POS) | (module_id << MOD_FIELD_POS) | (opt_id << OPT_FIELD_POS)
 
     if (args.value == 'fetch'):
@@ -325,7 +339,7 @@ def perform_config(dev, args):
 
 def perform_fwinfo(dev, args):
     event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_IMGINFO << TYPE_FIELD_POS)
-    recipient = MOUSE_PID
+    recipient = get_device_pid(args.device_type)
 
     try:
         success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
@@ -352,7 +366,7 @@ def perform_fwinfo(dev, args):
 
 def perform_fwreboot(dev, args):
     event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_REBOOT << TYPE_FIELD_POS)
-    recipient = MOUSE_PID
+    recipient = get_device_pid(args.device_type)
 
     try:
         success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
@@ -370,12 +384,13 @@ def configurator():
     logging.info('Configuration channel for nRF52 Desktop')
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('device_type', help='Selected device type: mouse/dongle')
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
     parser_dfu = subparsers.add_parser('dfu', help='Run DFU')
     parser_dfu.add_argument('dfu_image', type=str, help='Path to a DFU image')
     parser_fwinfo = subparsers.add_parser('fwinfo', help='Obtain information about FW image')
-    parser_fwinfo = subparsers.add_parser('fwreboot', help='Request FW reboot')
+    parser_fwreboot = subparsers.add_parser('fwreboot', help='Request FW reboot')
     parser_config = subparsers.add_parser('config', help='Write configuration option')
     config_subparsers = parser_config.add_subparsers(dest='module')
     config_subparsers.required = True
@@ -387,9 +402,8 @@ def configurator():
         parser_config_sensor_opt.add_argument('value', help='value range: {} or "fetch" to fetch the value from device'.format(SENSOR_OPTIONS[opt_name].range))
     args = parser.parse_args()
 
-    dev = open_device()
+    dev = open_device(args.device_type)
     if not dev:
-        print('No device connected')
         return
 
     if args.command == 'dfu':
