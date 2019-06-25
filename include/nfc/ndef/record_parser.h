@@ -21,7 +21,7 @@ extern "C" {
  */
 
 
-/** @brief Function for parsing NDEF records.
+/** @brief Parse NDEF records.
  *
  *  This parsing implementation uses the binary payload descriptor
  *  (@ref nfc_ndef_bin_payload_desc) to describe the payload for the record.
@@ -46,7 +46,7 @@ int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 			  const u8_t *nfc_data,
 			  u32_t *nfc_data_len);
 
-/** @brief Function for printing the parsed contents of the NDEF record.
+/** @brief Print the parsed contents of the NDEF record.
  *
  *  @param[in] num Sequence number of the record within the NDEF message.
  *  @param[in] rec_desc Pointer to the descriptor of the record that should
