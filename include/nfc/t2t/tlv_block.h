@@ -28,7 +28,7 @@ extern "C" {
  * Possible values for the tag field in a TLV block.
  */
 enum nfc_t2t_tlv_block_types {
-	/** Might be used for padding of memory areas. */
+	/** Can be used for padding of memory areas. */
 	NFC_T2T_TLV_NULL = 0x00,
 
 	/** Defines details of the lock bits. */

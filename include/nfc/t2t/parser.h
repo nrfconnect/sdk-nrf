@@ -17,7 +17,7 @@ extern "C" {
  * @file
  * @defgroup nfc_t2t_parser Type 2 Tag
  * @{
- * @brief NFC TYPE 2 TAG parser.
+ * @brief NFC Type 2 Tag parser.
  */
 
 /** @brief Descriptor for the internal bytes of a Type 2 Tag.
@@ -89,17 +89,18 @@ struct nfc_t2t {
 	u16_t tlv_count;
 };
 
-/** @brief Macro for creating and initializing a Type 2 Tag descriptor.
+/** @brief Create and initialize a Type 2 Tag descriptor.
  *
- * This macro creates and initializes a static instance of a
+ * This macro creates and initializes a static instance of an
  * @ref nfc_t2t structure and an array of @ref nfc_t2t_tlv_block descriptors.
  *
  * Use the macro @ref NFC_T2T_DESC to access the Type 2 Tag
  * descriptor instance.
  *
  * @param[in] _name          Name of the created descriptor instance.
- * @param[in] _max_blocks    Maximum number of @ref nfc_t2t_tlv_block descriptors
- *                           that can be stored in the array.
+ * @param[in] _max_blocks    Maximum number of @ref nfc_t2t_tlv_block
+ *                           descriptors that can be stored in the array.
+ *
  *
  */
 #define NFC_T2T_DESC_DEF(_name, _max_blocks)                                   \
@@ -111,7 +112,7 @@ struct nfc_t2t {
 		.tlv_count = 0                                                 \
 	}
 
-/** @brief Macro for accessing the @ref nfc_t2t instance that was created
+/** @brief Access the @ref nfc_t2t instance that was created
  *         with @ref NFC_T2T_DESC_DEF.
  */
 #define NFC_T2T_DESC(_name) (_name##_t2t)
@@ -141,14 +142,14 @@ struct nfc_t2t {
 #define NFC_T2T_FIRST_DATA_BLOCK_OFFSET     16
 
 
-/** @brief Function for clearing the @ref nfc_t2t structure.
+/** @brief Clear the @ref nfc_t2t structure.
  *
  *  @param[in,out] t2t Pointer to the structure that should be cleared.
  *
  */
 void nfc_t2t_clear(struct nfc_t2t *t2t);
 
-/** @brief Function for parsing raw data read from a Type 2 Tag.
+/** @brief Parse raw data that was read from a Type 2 Tag.
  *
  *  This function parses the header and the following TLV blocks of a
  *  Type 2 Tag. The data is read from a buffer and stored in a
@@ -165,7 +166,7 @@ void nfc_t2t_clear(struct nfc_t2t *t2t);
  */
 int nfc_t2t_parse(struct nfc_t2t *t2t, const u8_t *raw_data);
 
-/** @brief Function for printing parsed contents of the Type 2 Tag.
+/** @brief Print parsed contents of the Type 2 Tag.
  *
  *  @param[in] t2t Pointer to the structure that should be printed.
  *
