@@ -280,7 +280,7 @@ static int provision_certificates(void)
 
 		for (nrf_key_mgnt_cred_type_t type = 0; type < 3; type++) {
 			err = nrf_inbuilt_key_delete(sec_tag, type);
-			printk("nrf_inbuilt_key_delete(%lu, %d) => result=%d\n",
+			printk("nrf_inbuilt_key_delete(%u, %d) => result=%d\n",
 				sec_tag, type, err);
 		}
 
@@ -320,6 +320,7 @@ static int provision_certificates(void)
 			return err;
 		}
 	}
+	return 0;
 }
 #endif
 
