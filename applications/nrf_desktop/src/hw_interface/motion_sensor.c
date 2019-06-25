@@ -12,7 +12,7 @@
 #include <device.h>
 #include <sensor.h>
 
-#include <sensor/pmw3360.h>
+#include "motion_sensor.h"
 
 #include "event_manager.h"
 #include "motion_event.h"
@@ -27,12 +27,12 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 
-#define OPTICAL_POLL_TIMEOUT_MS		500
+#define POLL_TIMEOUT_MS		K_MSEC(500)
 
-#define OPTICAL_THREAD_STACK_SIZE	CONFIG_DESKTOP_OPTICAL_THREAD_STACK_SIZE
-#define OPTICAL_THREAD_PRIORITY		K_PRIO_PREEMPT(0)
+#define THREAD_STACK_SIZE	CONFIG_DESKTOP_MOTION_THREAD_STACK_SIZE
+#define THREAD_PRIORITY		K_PRIO_PREEMPT(0)
 
-#define NODATA_LIMIT			10
+#define NODATA_LIMIT		10
 
 
 enum state {
@@ -42,15 +42,6 @@ enum state {
 	STATE_SUSPENDED,
 };
 
-enum config_option {
-	CONFIG_OPTION_CPI,
-	CONFIG_OPTION_TIME_RUN,
-	CONFIG_OPTION_TIME_REST1,
-	CONFIG_OPTION_TIME_REST2,
-
-	CONFIG_OPTION_COUNT,
-};
-
 struct sensor_state {
 	struct k_spinlock lock;
 
@@ -58,13 +49,13 @@ struct sensor_state {
 	bool connected;
 	bool sample;
 	bool last_read_burst;
-	u32_t option[CONFIG_OPTION_COUNT];
+	u32_t option[MOTION_SENSOR_OPTION_COUNT];
 	u32_t option_mask;
 };
 
 
 static K_SEM_DEFINE(sem, 1, 1);
-static K_THREAD_STACK_DEFINE(thread_stack, OPTICAL_THREAD_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
 static struct k_thread thread;
 
 static struct device *sensor_dev;
@@ -174,20 +165,46 @@ static int motion_read(bool send_event)
 	return err;
 }
 
+static bool set_option(enum motion_sensor_option option, u32_t value)
+{
+	if (motion_sensor_option_attr[option] != -ENOTSUP) {
+		k_spinlock_key_t key = k_spin_lock(&state.lock);
+		state.option[option] = value;
+		WRITE_BIT(state.option_mask, option, true);
+		k_spin_unlock(&state.lock, key);
+
+		return true;
+	}
+
+	LOG_INF("Sensor option %d is not supported", option);
+
+	return false;
+}
+
+static void set_default_configuration(void)
+{
+	static_assert(MOTION_SENSOR_OPTION_COUNT < 8 * sizeof(state.option_mask), "");
+
+	set_option(MOTION_SENSOR_OPTION_CPI, CONFIG_DESKTOP_MOTION_SENSOR_CPI);
+	set_option(MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT,
+			CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS);
+	set_option(MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT,
+			CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS);
+	set_option(MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT,
+			CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS);
+}
+
 static int init(void)
 {
 	int err = -ENXIO;
 
-	sensor_dev = device_get_binding("PMW3360");
+	sensor_dev = device_get_binding(MOTION_SENSOR_DEV_NAME);
 	if (!sensor_dev) {
 		LOG_ERR("Cannot get motion sensor device");
 		return err;
 	}
 
-	state.option[SENSOR_OPT_CPI] = CONFIG_PMW3360_CPI;
-	state.option[SENSOR_OPT_DOWNSHIFT_RUN] = CONFIG_PMW3360_RUN_DOWNSHIFT_TIME_MS;
-	state.option[SENSOR_OPT_DOWNSHIFT_REST1] = CONFIG_PMW3360_REST1_DOWNSHIFT_TIME_MS;
-	state.option[SENSOR_OPT_DOWNSHIFT_REST2] = CONFIG_PMW3360_REST2_DOWNSHIFT_TIME_MS;
+	set_default_configuration();
 
 	state.state = STATE_IDLE;
 	module_set_state(MODULE_STATE_READY);
@@ -213,83 +230,61 @@ static bool is_my_config_id(u8_t config_id)
 	       (MOD_FIELD_GET(config_id) == SETUP_MODULE_SENSOR);
 }
 
-static void fetch_config(u8_t config_id, u8_t *data)
+static enum motion_sensor_option configid_2_option(u8_t config_id)
 {
-	enum config_option option;
-
 	switch (OPT_FIELD_GET(config_id)) {
 	case SENSOR_OPT_CPI:
-		option = CONFIG_OPTION_CPI;
-		break;
+		return MOTION_SENSOR_OPTION_CPI;
 
 	case SENSOR_OPT_DOWNSHIFT_RUN:
-		option = CONFIG_OPTION_TIME_RUN;
-		break;
+		return MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT;
 
 	case SENSOR_OPT_DOWNSHIFT_REST1:
-		option = CONFIG_OPTION_TIME_REST1;
-		break;
+		return MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT;
 
 	case SENSOR_OPT_DOWNSHIFT_REST2:
-		option = CONFIG_OPTION_TIME_REST2;
-		break;
+		return MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT;
 
 	default:
 		LOG_WRN("Unsupported sensor option (%" PRIu8 ")", config_id);
-		return;
+		return MOTION_SENSOR_OPTION_COUNT;
 	}
+}
 
-	k_spinlock_key_t key = k_spin_lock(&state.lock);
-	sys_put_le32(state.option[option], data);
-	k_spin_unlock(&state.lock, key);
+static void fetch_config(u8_t config_id, u8_t *data)
+{
+	enum motion_sensor_option option = configid_2_option(config_id);
+
+	if (option < MOTION_SENSOR_OPTION_COUNT) {
+		k_spinlock_key_t key = k_spin_lock(&state.lock);
+		sys_put_le32(state.option[option], data);
+		k_spin_unlock(&state.lock, key);
+	} else {
+		sys_put_le32(0, data);
+	}
 
 	return;
 }
 
 static void update_config(const u8_t config_id, const u8_t *data, size_t size)
 {
-	enum config_option option;
+	enum motion_sensor_option option = configid_2_option(config_id);
 
-	switch (OPT_FIELD_GET(config_id)) {
-	case SENSOR_OPT_CPI:
-		option = CONFIG_OPTION_CPI;
-		break;
+	if (option < MOTION_SENSOR_OPTION_COUNT) {
+		if (size != sizeof(state.option[option])) {
+			LOG_WRN("Invalid option size (%zu)", size);
+			return;
+		}
 
-	case SENSOR_OPT_DOWNSHIFT_RUN:
-		option = CONFIG_OPTION_TIME_RUN;
-		break;
-
-	case SENSOR_OPT_DOWNSHIFT_REST1:
-		option = CONFIG_OPTION_TIME_REST1;
-		break;
-
-	case SENSOR_OPT_DOWNSHIFT_REST2:
-		option = CONFIG_OPTION_TIME_REST2;
-		break;
-
-	default:
-		LOG_WRN("Unsupported sensor option (%" PRIu8 ")", config_id);
-		return;
+		if (set_option(option, sys_get_le32(data))) {
+			k_sem_give(&sem);
+		}
 	}
-
-	if (size != sizeof(state.option[option])) {
-		LOG_WRN("Invalid option size (%zu)", size);
-		return;
-	}
-
-	static_assert(CONFIG_OPTION_COUNT < 8 * sizeof(state.option_mask), "");
-
-	k_spinlock_key_t key = k_spin_lock(&state.lock);
-	state.option[option] = sys_get_le32(data);
-	WRITE_BIT(state.option_mask, option, true);
-	k_spin_unlock(&state.lock, key);
-
-	k_sem_give(&sem);
 }
 
-static int write_config(void)
+static void write_config(void)
 {
-	u32_t option[CONFIG_OPTION_COUNT];
+	u32_t option[MOTION_SENSOR_OPTION_COUNT];
 	u32_t mask;
 
 	static_assert(sizeof(option) == sizeof(state.option), "");
@@ -300,57 +295,33 @@ static int write_config(void)
 	state.option_mask = 0;
 	k_spin_unlock(&state.lock, key);
 
-	if ((mask & BIT(CONFIG_OPTION_CPI)) != 0) {
-		struct sensor_value val =
-			PMW3360_CPI_TO_SVALUE(state.option[CONFIG_OPTION_CPI]);
-		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
-					  PMW3360_ATTR_CPI, &val);
-
-		if (err) {
-			LOG_ERR("Cannot update CPI");
-			return err;
-		}
-	}
-	if ((mask & BIT(CONFIG_OPTION_TIME_RUN)) != 0) {
-		struct sensor_value val =
-			PMW3360_TIME_TO_SVALUE(state.option[CONFIG_OPTION_TIME_RUN]);
-		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
-					  PMW3360_ATTR_RUN_DOWNSHIFT_TIME, &val);
-
-		if (err) {
-			LOG_ERR("Cannot update RUN downshift time");
-			return err;
-		}
-	}
-	if ((mask & BIT(CONFIG_OPTION_TIME_REST1)) != 0) {
-		struct sensor_value val =
-			PMW3360_TIME_TO_SVALUE(state.option[CONFIG_OPTION_TIME_REST1]);
-		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
-					  PMW3360_ATTR_REST1_DOWNSHIFT_TIME, &val);
-
-		if (err) {
-			LOG_ERR("Cannot update REST1 downshift time");
-			return err;
-		}
-	}
-	if ((mask & BIT(CONFIG_OPTION_TIME_REST2)) != 0) {
-		struct sensor_value val =
-			PMW3360_TIME_TO_SVALUE(state.option[CONFIG_OPTION_TIME_REST2]);
-		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
-					  PMW3360_ATTR_REST2_DOWNSHIFT_TIME, &val);
-
-		if (err) {
-			LOG_ERR("Cannot update REST2 downshift time");
-			return err;
-		}
+	if (IS_ENABLED(MOTION_SENSOR_ATTR_CPI) &&
+	    ((mask & BIT(MOTION_SENSOR_OPTION_CPI)) != 0)) {
 	}
 
-	return 0;
+	for (enum motion_sensor_option i = 0;
+	     i < MOTION_SENSOR_OPTION_COUNT;
+	     i++) {
+		int attr = motion_sensor_option_attr[i];
+
+		__ASSERT_NO_MSG(attr != -ENOTSUP);
+
+		struct sensor_value val = {
+			.val1 = option[i]
+		};
+
+		int err = sensor_attr_set(sensor_dev, SENSOR_CHAN_ALL,
+					  (enum sensor_attribute)attr, &val);
+
+		if (err) {
+			LOG_WRN("Cannot update attr %d (err:%d)", attr, err);
+		}
+	}
 }
 
-static void optical_thread_fn(void)
+static void motion_thread_fn(void)
 {
-	s32_t timeout = K_MSEC(OPTICAL_POLL_TIMEOUT_MS);
+	s32_t timeout = POLL_TIMEOUT_MS;
 
 	int err = init();
 
@@ -377,7 +348,7 @@ static void optical_thread_fn(void)
 
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
 		    !err && option_mask) {
-			err = write_config();
+			write_config();
 		}
 
 		if (err) {
@@ -385,7 +356,7 @@ static void optical_thread_fn(void)
 		}
 
 		if (!sample) {
-			timeout = K_MSEC(OPTICAL_POLL_TIMEOUT_MS);
+			timeout = POLL_TIMEOUT_MS;
 			continue;
 		}
 		timeout = K_FOREVER;
@@ -458,10 +429,10 @@ static bool event_handler(const struct event_header *eh)
 			/* Start state machine thread */
 			__ASSERT_NO_MSG(state.state == STATE_DISABLED);
 			k_thread_create(&thread, thread_stack,
-					OPTICAL_THREAD_STACK_SIZE,
-					(k_thread_entry_t)optical_thread_fn,
+					THREAD_STACK_SIZE,
+					(k_thread_entry_t)motion_thread_fn,
 					NULL, NULL, NULL,
-					OPTICAL_THREAD_PRIORITY, 0, K_NO_WAIT);
+					THREAD_PRIORITY, 0, K_NO_WAIT);
 			k_thread_name_set(&thread, MODULE_NAME "_thread");
 
 			return false;
