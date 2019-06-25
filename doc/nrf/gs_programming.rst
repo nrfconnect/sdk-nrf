@@ -74,25 +74,19 @@ You can download it from the following links:
       Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller, or in the **NRF52** position to program the board controller.
       See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
 
-   To build and flash a single application:
+   To build and flash an application:
 
       a. Select your project in the Project Explorer.
-      #. From the menu, select **Build -> Build zephyr/zephyr.elf**.
-      #. When the build completes, you can flash the sample to a connected board.
-         To do this, select **Target -> Download zephyr/zephyr.elf**.
+      #. From the menu, select **Build -> Build Solution**.
+      #. When the build completes, you can flash the sample to a connected board:
+
+         * For a single-image application, select **Target -> Download zephyr/zephyr.elf**.
+         * For a multi-image application, select **Target -> Download zephyr/merged.hex**.
 
       .. note::
 	   Alternatively, choose the **Build and Debug** option.
 	   **Build and Debug** will build the application and flash it when
 	   the build completes.
-
-   To build and flash a multi-image project:
-
-      a. Select your project in the Project Explorer.
-      #. From the menu, select **Build -> Build Solution**.
-      #. When the multi-image build completes, you can flash the sample to a connected board.
-         To do this, select **Target -> Download File -> Download Intel Hex File**.
-         Navigate to the ``zephyr`` folder in your build directory and choose ``merged.hex``.
 
 7. To inspect the details of the flashed code and the memory usage, click **Debug -> Go**.
 
