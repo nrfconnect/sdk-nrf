@@ -47,7 +47,7 @@ struct nfc_ndef_msg_parser_msg_2 {
 #define NFC_NDEF_MSG_PARSER_DELTA (sizeof(struct nfc_ndef_msg_parser_msg_2) - \
 				   sizeof(struct nfc_ndef_msg_parser_msg_1))
 
-/** @brief Macro for calculating the memory size required for holding the
+/** @brief Calculate the memory size required for holding the
  *         description of a message that consists of a certain number of
  *         NDEF records.
  *
@@ -57,7 +57,7 @@ struct nfc_ndef_msg_parser_msg_2 {
 	(sizeof(struct nfc_ndef_msg_parser_msg_1) +                           \
 	 ((NFC_NDEF_MSG_PARSER_DELTA) * ((u32_t)(max_count_of_records) - 1)))
 
-/** @brief Function for parsing NFC NDEF messages.
+/** @brief Parse NFC NDEF messages.
  *
  *  This function parses NDEF messages using NDEF binary record descriptors.
  *
@@ -84,7 +84,7 @@ int nfc_ndef_msg_parse(const u8_t  *result_buf,
 		       const u8_t *raw_data,
 		       u32_t *raw_data_len);
 
-/** @brief Function for printing the parsed contents of an NDEF message.
+/** @brief Print the parsed contents of an NDEF message.
  *
  *  @param[in] msg_desc Pointer to the descriptor of the message that should
  *                      be printed.

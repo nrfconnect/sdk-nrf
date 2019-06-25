@@ -61,7 +61,7 @@ int nfc_ndef_msg_parser_memo_resolve(const u8_t *result_buf,
 				     struct nfc_ndef_parser_memo_desc *parser_memo_desc);
 
 
-/** @brief Function for parsing NFC NDEF messages.
+/** @brief Parse NFC NDEF messages.
  *
  *  This internal function parses NDEF messages into certain data instances.
  *

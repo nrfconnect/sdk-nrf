@@ -32,7 +32,7 @@ Here you can find documentation for these libraries, including API documentation
 
    ../../include/*
    ../../include/net/*
-   ../../include/nfc/ndef/nfc
+   ../../include/nfc/ndef/*
    ../../include/nfc/t2t/*
    ../../include/debug/*
    ../../include/shell/*
