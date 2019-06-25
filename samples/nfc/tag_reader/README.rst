@@ -9,6 +9,8 @@ Overview
 ********
 
 The sample shows how to use the ST25R3911B NFC Reader to read data from a tag that supports the ISO/IEC 14443 standard (NFC-A technology).
+This device can be used to read and parse content of an NFC Type 2 Tag.
+After successful parsing, the tag content is printed using the logging subsystem.
 
 Before reading data, the sample detects which NFC technology is used by sending the appropriate initialization commands (ALL Request, SENS Request).
 It also performs automatic collision resolution.
@@ -43,7 +45,7 @@ After programming the sample to your board, you can test it with an NFC-A Type 2
 #. Reset the board.
 #. Touch the ST25R3911B NFC Reader with a Type 2 Tag.
 #. Observe the output in the terminal.
-   The content of the tag block is printed there.
+   The content of the tag is printed there.
 #. After a little delay, the tag can be read again.
 
 
@@ -53,6 +55,11 @@ Dependencies
 This sample uses the following |NCS| drivers:
 
 * :ref:`st25r3911b_nfc_readme`
+
+This sample uses the following |NCS| libraries:
+
+* :ref:`nfc_t2t_parser_readme`
+* :ref:`nfc_ndef_parser_readme`
 
 In addition, it uses the following Zephyr libraries:
 
