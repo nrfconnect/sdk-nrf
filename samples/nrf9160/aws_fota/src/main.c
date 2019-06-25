@@ -337,7 +337,7 @@ static int client_id_get(char *id_buf)
 
 	snprintf(id_buf, CLIENT_ID_LEN + 1, "nrf-%s", imei_buf);
 #else
-	memcpy(id, CONFIG_CLOUD_CLIENT_ID, CLIENT_ID_LEN + 1);
+	memcpy(id_buf, CONFIG_CLOUD_CLIENT_ID, CLIENT_ID_LEN + 1);
 #endif /* !defined(NRF_CLOUD_CLIENT_ID) */
 	return 0;
 }
