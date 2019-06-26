@@ -172,7 +172,8 @@ static int device_data_add(struct device_param *device, cJSON *json_obj)
 	total_len += json_add_str(json_obj, "appName", device->app_name);
 
 	if (device->bat_charge < 0xFF) {
-		total_len += json_add_num(json_obj, "batteryCharge", device->bat_charge);
+		total_len += json_add_num(json_obj, "batteryCharge",
+			device->bat_charge);
 	}
 
 	return total_len;
