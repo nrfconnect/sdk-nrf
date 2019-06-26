@@ -157,6 +157,11 @@ static void transfer_completed(const u8_t *data, size_t len, int err)
 	k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
 }
 
+static void tag_sleep(void)
+{
+	printk("Tag entered the Sleep state.\n");
+}
+
 static const struct st25r3911b_nfca_cb cb = {
 	.field_on = nfc_field_on,
 	.field_off = nfc_field_off,
@@ -164,6 +169,7 @@ static const struct st25r3911b_nfca_cb cb = {
 	.anticollision_completed = anticollision_completed,
 	.rx_timeout = nfc_timeout,
 	.transfer_completed = transfer_completed,
+	.tag_sleep = tag_sleep
 };
 
 void main(void)
