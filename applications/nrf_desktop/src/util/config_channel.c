@@ -125,7 +125,7 @@ int config_channel_report_fill(u8_t *buffer, const size_t length,
 	size_t pos = 0;
 
 	/* BLE HID service removes report ID, according to HOGP_SPEC_V10 */
-	if (!usb) {
+	if (usb) {
 		buffer[pos] = REPORT_ID_USER_CONFIG;
 		pos += sizeof(frame->report_id);
 	}
