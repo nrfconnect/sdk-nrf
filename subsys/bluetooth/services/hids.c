@@ -1113,9 +1113,14 @@ static int inp_rep_notify_all(struct bt_gatt_hids *hids_obj,
 	}
 
 	if (rep_data != NULL) {
-		return bt_gatt_notify_cb(
-		    NULL, &hids_obj->svc.attrs[hids_inp_rep->att_ind], rep,
-		    hids_inp_rep->size, cb, NULL);
+		struct bt_gatt_notify_params params = {0};
+
+		params.attr = &hids_obj->svc.attrs[hids_inp_rep->att_ind];
+		params.data = rep;
+		params.len = hids_inp_rep->size;
+		params.func = cb;
+
+		return bt_gatt_notify_cb(NULL, &params);
 	} else {
 		return -ENODATA;
 	}
@@ -1153,9 +1158,15 @@ int bt_gatt_hids_inp_rep_send(struct bt_gatt_hids *hids_obj,
 	rep_data = conn_data->inp_rep_ctx + hids_inp_rep->offset;
 
 	store_input_report(hids_inp_rep, rep_data, rep, len);
-	int err =
-	    bt_gatt_notify_cb(conn, &hids_obj->svc.attrs[hids_inp_rep->att_ind],
-			      rep, hids_inp_rep->size, cb, NULL);
+
+	struct bt_gatt_notify_params params = {0};
+
+	params.attr = &hids_obj->svc.attrs[hids_inp_rep->att_ind];
+	params.data = rep;
+	params.len = hids_inp_rep->size;
+	params.func = cb;
+
+	int err = bt_gatt_notify_cb(conn, &params);
 
 	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 
@@ -1207,9 +1218,14 @@ static int boot_mouse_inp_report_notify_all(
 	}
 
 	if (rep_data != NULL) {
-		return bt_gatt_notify_cb(
-		    NULL, &hids_obj->svc.attrs[rep_ind], rep_buff,
-		    sizeof(conn_data->hids_boot_mouse_inp_rep_ctx), cb, NULL);
+		struct bt_gatt_notify_params params = {0};
+
+		params.attr = &hids_obj->svc.attrs[rep_ind];
+		params.data = rep_buff;
+		params.len = sizeof(conn_data->hids_boot_mouse_inp_rep_ctx);
+		params.func = cb;
+
+		return bt_gatt_notify_cb(NULL, &params);
 	} else {
 		return -ENODATA;
 	}
@@ -1256,9 +1272,14 @@ int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
 	rep_data[1] = (u8_t)x_delta;
 	rep_data[2] = (u8_t)y_delta;
 
-	int err = bt_gatt_notify_cb(
-	    conn, &hids_obj->svc.attrs[rep_ind], rep_data,
-	    sizeof(conn_data->hids_boot_mouse_inp_rep_ctx), cb, NULL);
+	struct bt_gatt_notify_params params = {0};
+
+	params.attr = &hids_obj->svc.attrs[rep_ind];
+	params.data = rep_data;
+	params.len = sizeof(conn_data->hids_boot_mouse_inp_rep_ctx);
+	params.func = cb;
+
+	int err = bt_gatt_notify_cb(conn, &params);
 
 	rep_data[1] = 0;
 	rep_data[2] = 0;
@@ -1305,9 +1326,14 @@ boot_kb_inp_notify_all(struct bt_gatt_hids *hids_obj, u8_t const *rep,
 	}
 
 	if (rep_data != NULL) {
-		return bt_gatt_notify_cb(
-		    NULL, &hids_obj->svc.attrs[rep_ind], rep_data,
-		    sizeof(conn_data->hids_boot_kb_inp_rep_ctx), cb, NULL);
+		struct bt_gatt_notify_params params = {0};
+
+		params.attr = &hids_obj->svc.attrs[rep_ind];
+		params.data = rep_data;
+		params.len = sizeof(conn_data->hids_boot_kb_inp_rep_ctx);
+		params.func = cb;
+
+		return bt_gatt_notify_cb(NULL, &params);
 	} else {
 		return -ENODATA;
 	}
@@ -1349,10 +1375,14 @@ int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
 	memset(&rep_data[len], 0,
 	       (sizeof(conn_data->hids_boot_kb_inp_rep_ctx) - len));
 
-	int err =
-	    bt_gatt_notify_cb(conn, &hids_obj->svc.attrs[rep_ind], rep_data,
-			      sizeof(conn_data->hids_boot_kb_inp_rep_ctx),
-			      cb, NULL);
+	struct bt_gatt_notify_params params = {0};
+
+	params.attr = &hids_obj->svc.attrs[rep_ind];
+	params.data = rep_data;
+	params.len = sizeof(conn_data->hids_boot_kb_inp_rep_ctx);
+	params.func = cb;
+
+	int err = bt_gatt_notify_cb(conn, &params);
 
 	bt_conn_ctx_release(hids_obj->conn_ctx, (void *)conn_data);
 

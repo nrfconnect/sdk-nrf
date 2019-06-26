@@ -316,17 +316,14 @@ static void ble_adv_update_fn(struct k_work *work)
 	}
 }
 
-static int settings_set(int argc, char **argv, size_t len_rd,
+static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	if (argc != 1) {
-		return -ENOENT;
-	}
 	/* Assuming ID is written as one digit */
-	if (!strncmp(argv[0], PEER_IS_RPA_STORAGE_NAME,
+	if (!strncmp(key, PEER_IS_RPA_STORAGE_NAME,
 	     sizeof(PEER_IS_RPA_STORAGE_NAME) - 1)) {
 		char *end;
-		long int read_id = strtol(argv[0] + strlen(argv[0]) - 1, &end, 10);
+		long int read_id = strtol(key + strlen(key) - 1, &end, 10);
 
 		if ((*end != '\0') || (read_id < 0) || (read_id >= CONFIG_BT_ID_MAX)) {
 			LOG_ERR("Identity is not a valid number");
