@@ -24,7 +24,8 @@ static const char subscribe[] = "AT+CEREG=2";
 
 #if defined(CONFIG_LTE_LOCK_BANDS)
 /* Lock LTE bands 3, 4, 13 and 20 (volatile setting) */
-static const char lock_bands[] = "AT%XBANDLOCK=2,\"10000001000000001100\"";
+static const char lock_bands[] = "AT%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK
+				 "\"";
 #endif
 /* Request eDRX settings to be used */
 static const char edrx_req[] = "AT+CEDRXS=1,"CONFIG_LTE_EDRX_REQ_ACTT_TYPE
