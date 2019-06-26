@@ -130,40 +130,48 @@ int modem_info_params_get(struct modem_param_info *modem)
 		return -EINVAL;
 	}
 
-	ret = modem_data_get(&modem->network.current_band);
-	ret += modem_data_get(&modem->network.sup_band);
-	ret += modem_data_get(&modem->network.ip_address);
-	ret += modem_data_get(&modem->network.ue_mode);
-	ret += modem_data_get(&modem->network.current_operator);
-	ret += modem_data_get(&modem->network.cellid_hex);
-	ret += modem_data_get(&modem->network.area_code);
-	ret += modem_data_get(&modem->network.lte_mode);
-	ret += modem_data_get(&modem->network.nbiot_mode);
-	ret += modem_data_get(&modem->network.gps_mode);
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK)) {
+		ret = modem_data_get(&modem->network.current_band);
+		ret += modem_data_get(&modem->network.sup_band);
+		ret += modem_data_get(&modem->network.ip_address);
+		ret += modem_data_get(&modem->network.ue_mode);
+		ret += modem_data_get(&modem->network.current_operator);
+		ret += modem_data_get(&modem->network.cellid_hex);
+		ret += modem_data_get(&modem->network.area_code);
+		ret += modem_data_get(&modem->network.lte_mode);
+		ret += modem_data_get(&modem->network.nbiot_mode);
+		ret += modem_data_get(&modem->network.gps_mode);
 
-	ret += mcc_mnc_parse(&modem->network.current_operator,
-			     &modem->network.mcc,
-			     &modem->network.mnc);
-	ret += cellid_to_dec(&modem->network.cellid_hex,
-			     &modem->network.cellid_dec);
-	ret += area_code_parse(&modem->network.area_code);
-	if (ret) {
-		LOG_DBG("Network data not obtained: %d", ret);
-		return -EAGAIN;
+		ret += mcc_mnc_parse(&modem->network.current_operator,
+				&modem->network.mcc,
+				&modem->network.mnc);
+		ret += cellid_to_dec(&modem->network.cellid_hex,
+				&modem->network.cellid_dec);
+		ret += area_code_parse(&modem->network.area_code);
+		if (ret) {
+			LOG_DBG("Network data not obtained: %d", ret);
+			return -EAGAIN;
+		}
 	}
 
-	ret += modem_data_get(&modem->sim.uicc);
-	ret += modem_data_get(&modem->sim.iccid);
-	if (ret) {
-		LOG_DBG("Sim data not obtained: %d", ret);
-		return -EAGAIN;
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM)) {
+		ret = modem_data_get(&modem->sim.uicc);
+		if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM_ICCID)) {
+			ret += modem_data_get(&modem->sim.iccid);
+		}
+		if (ret) {
+			LOG_DBG("Sim data not obtained: %d", ret);
+			return -EAGAIN;
+		}
 	}
 
-	ret += modem_data_get(&modem->device.modem_fw);
-	ret += modem_data_get(&modem->device.battery);
-	if (ret) {
-		LOG_DBG("Device data not obtained: %d", ret);
-		return -EAGAIN;
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)) {
+		ret = modem_data_get(&modem->device.modem_fw);
+		ret += modem_data_get(&modem->device.battery);
+		if (ret) {
+			LOG_DBG("Device data not obtained: %d", ret);
+			return -EAGAIN;
+		}
 	}
 
 	return 0;
