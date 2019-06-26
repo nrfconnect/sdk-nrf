@@ -184,7 +184,7 @@ u8_t hidc_read_cb(struct bt_gatt_hids_c *hidc,
 		struct config_channel_frame frame;
 
 		int pos = config_channel_report_parse(data, REPORT_SIZE_USER_CONFIG,
-						      &frame, true);
+						      &frame, false);
 		if (pos < 0) {
 			LOG_WRN("Could not set report");
 			return pos;
@@ -340,7 +340,7 @@ static bool event_handler(const struct event_header *eh)
 			frame.event_data_len = event->dyndata.size;
 			frame.event_data = (u8_t *) event->dyndata.data;
 
-			int pos = config_channel_report_fill(report, sizeof(report), &frame, true);
+			int pos = config_channel_report_fill(report, sizeof(report), &frame, false);
 			if (pos < 0) {
 				LOG_WRN("Could not set report");
 				return pos;
