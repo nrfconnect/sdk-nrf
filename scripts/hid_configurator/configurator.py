@@ -75,16 +75,20 @@ class Response(object):
 
     @staticmethod
     def parse_response(response_raw):
-        data_field_len = len(response_raw) - struct.calcsize('HBBB')
+        data_field_len = len(response_raw) - struct.calcsize('<BHBBB')
 
         if data_field_len < 0:
             logging.error('Response too short')
             return None
 
         # Report ID is not included in the feature report from device
-        fmt = '<HBBB{}s'.format(data_field_len)
+        fmt = '<BHBBB{}s'.format(data_field_len)
 
-        (rcpt, event_id, status, data_len, data) = struct.unpack(fmt, response_raw)
+        (report_id, rcpt, event_id, status, data_len, data) = struct.unpack(fmt, response_raw)
+
+        if report_id != REPORT_ID:
+            logging.error("Improper report ID")
+            return None
 
         if data_len > len(data):
             logging.error('Required data not present')
