@@ -157,6 +157,10 @@ struct st25r3911b_nfca_cb {
 	 *  @param tag_sleep If set, the tag is in sleep mode.
 	 */
 	void (*rx_timeout)(bool tag_sleep);
+
+	/** @brief NFC-A tag sleep state notification.
+	 */
+	void (*tag_sleep)(void);
 };
 
 /** @brief Initialize NFC Reader NFC-A technology.

@@ -711,6 +711,10 @@ static int irq_process(void)
 
 		if (atomic_get(&nfca.state.tag) == STATE_SLEEP) {
 			state_set(STATE_IDLE);
+
+			if (nfca.cb->tag_sleep) {
+				nfca.cb->tag_sleep();
+			}
 		}
 	}
 
