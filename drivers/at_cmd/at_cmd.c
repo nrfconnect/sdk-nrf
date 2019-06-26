@@ -244,7 +244,7 @@ static inline int at_write(const char *const cmd, enum at_cmd_state *state)
 	int bytes_to_send = strlen(cmd);
 	struct return_state_object ret;
 
-	LOG_DBG("Sending command %s", cmd);
+	LOG_DBG("Sending command %s", log_strdup(cmd));
 	bytes_sent = send(common_socket_fd, cmd, bytes_to_send, 0);
 
 	if (bytes_sent != bytes_to_send) {
