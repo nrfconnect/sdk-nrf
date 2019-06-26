@@ -80,7 +80,7 @@ static int cs_ctrl_gpio_config(void)
 	spi_cs.gpio_dev = device_get_binding(CS_PORT_NUM(CONFIG_ST25R3911B_SPI_PORT));
 	if (!spi_cs.gpio_dev) {
 		LOG_ERR("Cannot find %s!",
-			DT_NORDIC_NRF_SPI_0_CS_GPIOS_CONTROLLER);
+			DT_INST_0_NORDIC_NRF_SPI_CS_GPIOS_CONTROLLER);
 
 		return -ENXIO;
 	}
@@ -295,4 +295,3 @@ error:
 
 	return err;
 }
-

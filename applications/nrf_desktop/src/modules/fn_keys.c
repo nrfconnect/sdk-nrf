@@ -187,14 +187,11 @@ static bool button_event_handler(const struct button_event *event)
 	return false;
 }
 
-static int settings_set(int argc, char **argv, size_t len_rd,
+static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	if (argc != 1) {
-		return -ENOENT;
-	}
 
-	if (!strcmp(argv[0], FN_LOCK_STORAGE_NAME)) {
+	if (!strcmp(key, FN_LOCK_STORAGE_NAME)) {
 		ssize_t len = read_cb(cb_arg, &fn_lock_active,
 				      sizeof(fn_lock_active));
 		if (len != sizeof(fn_lock_active)) {

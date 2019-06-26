@@ -40,7 +40,7 @@ manifest:
     - name: fw-nrfconnect-zephyr
       path: zephyr
       west-commands: scripts/west-commands.yml
-      revision: 7e64ac737daead12d2dbdda5daec04188243a81c
+      revision: a8933a2ead01db56a3d3828d81887535be8b5bda
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -49,18 +49,21 @@ manifest:
       revision: 6fcf61606d6012d2c44129edc033f59331e268bc
       path: modules/debug/segger
       remote: zephyrproject
+    - name: fw-nrfconnect-mbedtls
+      path: modules/crypto/mbedtls
+      revision: 900c7eea92e45adba1067e044ec705d4541c84a5
     - name: fw-nrfconnect-mcuboot
       path: mcuboot
       revision: 8b0e50cd5898e66e8bf92b5378c5b29fb0838471
     - name: fw-nrfconnect-mcumgr
-      revision: c8f675a5fa7f62106b9d913844bd5ed6e16ae69e
+      revision: f663988d35da559a37f263d369842dbce309d1fa
       path: modules/lib/mcumgr
     - name: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
       revision: 543ecb7c8662580ef803d59ceda7bd3b8a84a11b
     - name: nrfxlib
       path: nrfxlib
-      revision: be4d8e08958e4ad960f39be24cf2816ced008841
+      revision: 4229e9a4beadb533b3dee2cee732f7dc0f49a5e4
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
@@ -72,7 +75,6 @@ manifest:
     - name: mbedtls
       revision: mbedtls-2.13.1
       remote: armmbed
-
 
   self:
     path: nrf

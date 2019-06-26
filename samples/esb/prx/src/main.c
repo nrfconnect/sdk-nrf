@@ -96,7 +96,7 @@ int clocks_start(void)
 	int err;
 	struct device *hfclk;
 
-	hfclk = device_get_binding(DT_NORDIC_NRF_CLOCK_0_LABEL "_16M");
+	hfclk = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_16M");
 	if (!hfclk) {
 		LOG_ERR("HF Clock device not found!");
 		return -EIO;

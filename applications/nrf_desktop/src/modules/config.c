@@ -40,15 +40,11 @@ static bool config_id_is_supported(u8_t event_id)
 	return false;
 }
 
-static int settings_set(int argc, char **argv, size_t len_rd,
+static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	if (argc != 1) {
-		return -ENOENT;
-	}
-
 	char *end;
-	long int val = strtol(argv[0], &end, 10);
+	long int val = strtol(key, &end, 10);
 	if ((*end != '\0') || (val < 0) || (val > UCHAR_MAX)) {
 		LOG_WRN("ID is not a valid number");
 		return 0;

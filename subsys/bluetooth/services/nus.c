@@ -106,13 +106,18 @@ int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks)
 
 int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, uint16_t len)
 {
+	struct bt_gatt_notify_params params = {0};
+
+	params.attr = &attrs[2];
+	params.data = data;
+	params.len = len;
+	params.func = on_sent;
+
 	if (!conn) {
 		LOG_DBG("Notification send to all connected peers");
-		return  bt_gatt_notify_cb(NULL, &attrs[2], data,
-					  len, on_sent, NULL);
+		return  bt_gatt_notify_cb(NULL, &params);
 	} else if (is_notification_enabled(conn, nuslc_ccc_cfg)) {
-		return bt_gatt_notify_cb(conn, &attrs[2], data,
-					 len, on_sent, NULL);
+		return bt_gatt_notify_cb(conn, &params);
 	} else {
 		return -EINVAL;
 	}
