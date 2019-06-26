@@ -90,6 +90,7 @@ span: list OR dict: list
    If the value type is a list, this property lists which partitions this partition should span across.
    If the value type is a dict with key ``one_of``, the semantics are equivalent
    to having a list with only the first existing partition in the ``one_of``-list.
+   A string formatted value is interpreted as a single item list.
    Partitions with this property are container partitions.
    Therefore, this property cannot be used together with the ``placement`` property.
 
@@ -189,6 +190,7 @@ share_size: list
    This property can be set for image or placeholder partitions.
    It cannot be used by container partitions.
    The list can contain any kind of partition.
+   ``share_size`` takes precedence over ``size`` if one or more partitions in ``share_size`` exists.
 
    If the target partition is the ``app`` or a partition that spans over the ``app``, the size is effectively split between them, because the size of the ``app`` is dynamically decided.
 

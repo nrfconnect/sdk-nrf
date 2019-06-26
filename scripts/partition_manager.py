@@ -207,10 +207,17 @@ def set_shared_size(reqs, sub_partitions, total_size):
                 all_reqs[size_source]['sharers'] = 0
             all_reqs[size_source]['sharers'] += 1
             all_reqs[req]['share_size'] = [size_source]
+
     new_sizes = dict()
-    for req in all_reqs.keys():
-        if 'share_size' in all_reqs[req].keys():
-            new_sizes[req] = shared_size(all_reqs, all_reqs[req]['share_size'][0], total_size)
+    dynamic_size_sharers = [k for k,v in all_reqs.items() if 'share_size' in v.keys()
+                                                              and (v['share_size'][0] == 'app'
+                                                                  or ('span' in all_reqs[v['share_size'][0]].keys()
+                                                                      and 'app' in all_reqs[v['share_size'][0]]['span']))]
+    static_size_sharers  = [k for k,v in all_reqs.items() if 'share_size' in v.keys() and k not in dynamic_size_sharers]
+    for req in static_size_sharers:
+        all_reqs[req]['size'] = shared_size(all_reqs, all_reqs[req]['share_size'][0], total_size)
+    for req in dynamic_size_sharers:
+        new_sizes[req] = shared_size(all_reqs, all_reqs[req]['share_size'][0], total_size)
     # Update all sizes after-the-fact or else the calculation will be messed up.
     for key, value in new_sizes.items():
         all_reqs[key]['size'] = value
