@@ -23,8 +23,16 @@ config LTE_LOCK_BANDS
 	bool "Enable LTE bands lock"
 	default n
 	help
-		Enable LTE band locks for bands 3, 4, 13 and 20.
-		Other bands cannot be used when this setting is enabled.
+		Enable LTE band locks. Bands not enabled in LTE_LOCK_BAND_MASK
+		cannot be used when this setting is enabled.
+if LTE_LOCK_BANDS
+config LTE_LOCK_BAND_MASK
+	string "Band lock mask bit string"
+	default "10000001000000001100"
+	help
+		Bit string of enabled bands. LSB is band 1. Leading zeroes
+		can be omitted. The maximum length is 88 characters.
+endif # LTE_LOCK_BANDS
 
 config LTE_PSM_REQ_RPTAU
 	string "PSM setting requested periodic TAU"
