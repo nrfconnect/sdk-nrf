@@ -172,7 +172,6 @@ static void boot_from(u32_t *address)
 	CODE_UNREACHABLE;
 }
 
-void z_cstart(void) __attribute__((alias("main")));
 void main(void)
 {
 	int err;
