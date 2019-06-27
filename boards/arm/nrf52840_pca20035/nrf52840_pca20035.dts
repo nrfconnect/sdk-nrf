@@ -21,25 +21,25 @@
 };
 
 &adc {
-	status ="ok";
+	status = "okay";
 };
 
 &gpiote {
-	status ="ok";
+	status = "okay";
 };
 
 &gpio0 {
-	status ="ok";
+	status = "okay";
 };
 
 &gpio1 {
-	status ="ok";
+	status = "okay";
 };
 
 &uart0 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
-	status = "ok";
+	status = "okay";
 	tx-pin = <15>;
 	rx-pin = <11>;
 	rts-pin = <21>;
@@ -48,7 +48,7 @@
 
 &uart1 {
 	current-speed = <1000000>;
-	status = "ok";
+	status = "okay";
 	tx-pin = <25>;
 	rx-pin = <32>;
 	rts-pin = <22>;
@@ -56,7 +56,7 @@
 };
 
 &usbd {
-	status = "ok";
+	status = "okay";
 };
 
 &flash0 {

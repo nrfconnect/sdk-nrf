@@ -67,20 +67,20 @@
 };
 
 &adc {
-	status ="ok";
+	status = "okay";
 };
 
 &gpiote {
-	status = "ok";
+	status = "okay";
 };
 
 &gpio0 {
-	status = "ok";
+	status = "okay";
 };
 
 /* PWM0 is intended for RGB LED control */
 &pwm0 {
-	status = "ok";
+	status = "okay";
 	ch0-pin = <29>;
 	ch1-pin = <30>;
 	ch2-pin = <31>;
@@ -88,13 +88,13 @@
 
 /* PWM1 is intended for buzzer control */
 &pwm1 {
-	status = "ok";
+	status = "okay";
 	ch0-pin = <28>;
 };
 
 /* PWM2 is intended for NMOS transistor control */
 &pwm2 {
-	status = "ok";
+	status = "okay";
 	ch0-pin = <13>;
 	ch1-pin = <14>;
 	ch2-pin = <15>;
@@ -102,11 +102,11 @@
 };
 
 &pwm3 {
-	status = "ok";
+	status = "okay";
 };
 
 &i2c2 {
-	status = "ok";
+	status = "okay";
 	sda-pin = <11>;
 	scl-pin = <12>;
 
@@ -119,7 +119,7 @@
 };
 
 &spi3 {
-	status = "ok";
+	status = "okay";
 	sck-pin = <3>;
 	mosi-pin = <4>;
 	miso-pin = <5>;
@@ -143,20 +143,20 @@
 };
 
 &timer0 {
-	status = "ok";
+	status = "okay";
 };
 
 &timer1 {
-	status = "ok";
+	status = "okay";
 };
 
 &timer2 {
-	status = "ok";
+	status = "okay";
 };
 
 &uart0 {
 	current-speed = <115200>;
-	status = "ok";
+	status = "okay";
 	tx-pin = <18>;
 	rx-pin = <19>;
 	rts-pin = <20>;
@@ -165,7 +165,7 @@
 
 &uart1 {
 	current-speed = <1000000>;
-	status = "ok";
+	status = "okay";
 	tx-pin = <22>;
 	rx-pin = <23>;
 	rts-pin = <24>;
@@ -174,7 +174,7 @@
 
 /* UART2 must be enabled for defines to be available for SPM. */
 &uart2 {
-	status = "ok";
+	status = "okay";
 };
 
 &flash0 {
