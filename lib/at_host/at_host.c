@@ -80,6 +80,9 @@ static void cmd_send(struct k_work *work)
 
 	ARG_UNUSED(work);
 
+	/* Make sure the string is 0-terminated */
+	at_buf[MIN(at_buf_len, AT_MAX_CMD_LEN - 1)] = 0;
+
 	err = at_cmd_write(at_buf, buf, AT_MAX_CMD_LEN, &state);
 	if (err < 0) {
 		LOG_ERR("Could not send AT command to modem: %d", err);
