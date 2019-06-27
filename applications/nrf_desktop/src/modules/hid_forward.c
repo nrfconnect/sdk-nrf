@@ -190,8 +190,7 @@ u8_t hidc_read_cb(struct bt_gatt_hids_c *hidc,
 			return pos;
 		}
 
-		if ((frame.status != CONFIG_STATUS_SUCCESS) ||
-		    (frame.event_data_len == 0)) {
+		if (frame.status != CONFIG_STATUS_SUCCESS) {
 			LOG_INF("GATT read done, but fetch was not ready yet");
 
 			/* Do not notify requester, host will schedule next read. */
