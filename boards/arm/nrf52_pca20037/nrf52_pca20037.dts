@@ -24,19 +24,19 @@
 };
 
 &adc {
-	status ="ok";
+	status = "okay";
 };
 
 &gpiote {
-	status ="ok";
+	status = "okay";
 };
 
 &gpio0 {
-	status ="ok";
+	status = "okay";
 };
 
 &uart0 {
-	status = "ok";
+	status = "okay";
 	compatible = "nordic,nrf-uart";
 	current-speed = <115200>;
 	tx-pin = <35>;
@@ -44,7 +44,7 @@
 };
 
 &pwm0 {
-	status = "ok";
+	status = "okay";
 	ch0-pin = <30>;
 	ch0-inverted = "true";
 	ch1-pin = <29>;
