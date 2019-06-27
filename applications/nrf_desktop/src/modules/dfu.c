@@ -43,7 +43,7 @@ static struct k_delayed_work reboot_request;
 static const struct flash_area *flash_area;
 
 
-static void set_ble_latency(bool dfu_start)
+static void set_ble_latency(bool low_latency)
 {
 	if (!active_conn) {
 		LOG_INF("No active_connection");
@@ -63,7 +63,7 @@ static void set_ble_latency(bool dfu_start)
 		const struct bt_le_conn_param param = {
 			.interval_min = info.le.interval,
 			.interval_max = info.le.interval,
-			.latency = (dfu_start) ? (0) : (DEFAULT_LATENCY),
+			.latency = (low_latency) ? (0) : (DEFAULT_LATENCY),
 			.timeout = info.le.timeout
 		};
 
@@ -74,7 +74,7 @@ static void set_ble_latency(bool dfu_start)
 		}
 	}
 
-	LOG_INF("BLE latency %screased for DFU", dfu_start ? "de" : "in");
+	LOG_INF("BLE latency %screased", low_latency ? "de" : "in");
 }
 
 static void dfu_timeout_handler(struct k_work *work)
@@ -207,6 +207,9 @@ dfu_finish:
 static void handle_reboot_request(const struct config_fetch_request_event *event)
 {
 	LOG_INF("System reboot requested");
+
+	/* Decrease latency to ensure device will send response in time. */
+	set_ble_latency(true);
 
 	struct config_fetch_event *fetch_event =
 		new_config_fetch_event(0);
