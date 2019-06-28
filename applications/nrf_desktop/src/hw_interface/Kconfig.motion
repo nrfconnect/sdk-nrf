@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Motion configuration"
+
+choice
+	prompt "Select motion interface"
+	default DESKTOP_MOTION_NONE
+
+config DESKTOP_MOTION_NONE
+	bool "Disable motion"
+
+config DESKTOP_MOTION_OPTICAL_ENABLE
+	bool "Motion from optical sensor"
+
+config DESKTOP_MOTION_BUTTONS_ENABLE
+	bool "Motion from buttons"
+
+config DESKTOP_MOTION_SIMULATED_ENABLE
+	bool "Simulated motion"
+	depends on SHELL
+
+endchoice
+
+config DESKTOP_MOTION_SIMULATED_EDGE_TIME
+	int "Time for transition between two points in a trajectory [ms]"
+	depends on DESKTOP_MOTION_SIMULATED_ENABLE
+	range 8 1000000
+	default 16
+	help
+	  Must be power of two (calculations speedup).
+
+config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
+	int "Scale factor for given shape"
+	depends on DESKTOP_MOTION_SIMULATED_ENABLE
+	range 1 5
+	default 2
+
+config DESKTOP_SPI_FREQ_HZ
+	int "SPI clock frequency for communication with the optical sensor"
+	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	default 1800000
+	range 500000 2500000
+
+config DESKTOP_OPTICAL_THREAD_STACK_SIZE
+	int "Optical thread stack size"
+	depends on DESKTOP_MOTION_OPTICAL_ENABLE
+	range 0 4096
+	default 512
+	help
+	  Stack size for optical sensor thread.
+
+if !DESKTOP_MOTION_NONE
+module = DESKTOP_MOTION
+module-str = motion module
+source "subsys/logging/Kconfig.template.log_config"
+endif
+
+endmenu
