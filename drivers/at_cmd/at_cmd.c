@@ -122,7 +122,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 {
 	int                        bytes_read;
 	int                        payload_len;
-	char                       buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+	static char                buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 	bool                       callback = true;
 	struct return_state_object ret = {
 						.state = AT_CMD_OK,
