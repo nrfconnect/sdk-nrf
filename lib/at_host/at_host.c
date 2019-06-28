@@ -86,7 +86,7 @@ static void cmd_send(struct k_work *work)
 	err = at_cmd_write(at_buf, buf, AT_MAX_CMD_LEN, &state);
 	if (err < 0) {
 		LOG_ERR("Could not send AT command to modem: %d", err);
-		return;
+		state = AT_CMD_ERROR;
 	}
 
 	switch (state) {
