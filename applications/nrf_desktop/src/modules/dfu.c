@@ -226,17 +226,17 @@ static void handle_reboot_request(const struct config_fetch_request_event *event
 static void handle_image_info_request(const struct config_fetch_request_event *event)
 {
 	struct mcuboot_img_header header;
-	int err = boot_read_bank_header(DT_FLASH_AREA_IMAGE_0_ID, &header,
+	u8_t flash_area_id = PM_MCUBOOT_PRIMARY_ID;
+	int err = boot_read_bank_header(flash_area_id, &header,
 					sizeof(header));
 
 	if (!err) {
-		LOG_INF("Slot 0| image size:%" PRIu32
+		LOG_INF("Primary slot| image size:%" PRIu32
 			" major:%" PRIu8 " minor:%" PRIu8 " rev:0x%" PRIx16
 			" build:0x%" PRIx32, header.h.v1.image_size,
 			header.h.v1.sem_ver.major, header.h.v1.sem_ver.minor,
 			header.h.v1.sem_ver.revision, header.h.v1.sem_ver.build_num);
 
-		u8_t flash_area_id = DT_FLASH_AREA_IMAGE_0_ID;
 		size_t data_size = sizeof(flash_area_id) +
 				   sizeof(header.h.v1.image_size) +
 				   sizeof(header.h.v1.sem_ver.major) +
