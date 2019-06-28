@@ -74,7 +74,7 @@ static void cmd_send(struct k_work *work)
 {
 	size_t            chars;
 	char              str[15];
-	char              buf[AT_MAX_CMD_LEN] = {0};
+	static char       buf[AT_MAX_CMD_LEN];
 	enum at_cmd_state state;
 	int               err;
 
