@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "LEDs configuration"
+
+config DESKTOP_LED_ENABLE
+	bool "Enable LED hardware interface"
+
+config DESKTOP_LED_COUNT
+	int "Number of LEDs in use"
+	depends on DESKTOP_LED_ENABLE
+	default 0
+
+config DESKTOP_LED_COLOR_COUNT
+	int "Number of color channels per diode"
+	depends on DESKTOP_LED_ENABLE
+	default 3
+
+config DESKTOP_LED_BRIGHTNESS_MAX
+	int "Maximum value for LED brightness"
+	depends on DESKTOP_LED_ENABLE
+	default 255
+
+if DESKTOP_LED_ENABLE
+module = DESKTOP_LED
+module-str = LED module
+source "subsys/logging/Kconfig.template.log_config"
+endif
+
+endmenu
