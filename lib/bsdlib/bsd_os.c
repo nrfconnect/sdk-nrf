@@ -15,6 +15,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <errno.h>
+#include <logging/log.h>
 
 #ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
 #include <nrfx_uarte.h>
@@ -50,6 +51,8 @@ static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 void IPC_IRQHandler(void);
 
 #define THREAD_MONITOR_ENTRIES 10
+
+LOG_MODULE_REGISTER(bsdlib);
 
 struct sleeping_thread {
 	sys_snode_t node;
@@ -305,7 +308,13 @@ void bsd_os_errno_set(int err_code)
 		errno = EKEYREJECTED;
 		break;
 	default:
-		errno = EINVAL;
+		/* Catch untranslated errnos.
+		 * Log the untranslated errno and return a magic value
+		 * to make sure this sitation is clearly distinguishable.
+		 */
+		__ASSERT(false, "Untranslated errno %d set by bsdlib!", errno);
+		LOG_ERR("Untranslated errno %d set by bsdlib!", errno);
+		errno = 0xBAADBAAD;
 		break;
 	}
 }
