@@ -24,10 +24,14 @@
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
+#include <dk_buttons_and_leds.h>
 #include <uart.h>
 
 /* UART payload buffer element size. */
 #define UART_BUF_SIZE 20
+
+#define KEY_PASSKEY_ACCEPT DK_BTN1_MSK
+#define KEY_PASSKEY_REJECT DK_BTN2_MSK
 
 static struct device  *uart;
 
@@ -41,6 +45,7 @@ static K_FIFO_DEFINE(fifo_uart_tx_data);
 static K_FIFO_DEFINE(fifo_uart_rx_data);
 
 static struct bt_conn *default_conn;
+static struct bt_conn *auth_conn;
 static struct bt_gatt_nus_c gatt_nus_c;
 
 static void ble_data_sent(u8_t err, const u8_t *const data, u16_t len)
@@ -218,18 +223,6 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 	if ((!err) && (err != -EALREADY)) {
 		printk("Stop LE scan failed (err %d)\n", err);
 	}
-
-	if (conn == default_conn) {
-		err = bt_gatt_dm_start(conn,
-				       BT_UUID_NUS_SERVICE,
-				       &discovery_cb,
-				       &gatt_nus_c);
-
-		if (err) {
-			printk("Failed to start discovery process (err:%d)\n",
-				err);
-		}
-	}
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
@@ -240,6 +233,11 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	printk("Disconnected: %s (reason %u)\n", addr, reason);
+
+	if (auth_conn) {
+		bt_conn_unref(auth_conn);
+		auth_conn = NULL;
+	}
 
 	if (default_conn != conn) {
 		return;
@@ -355,11 +353,124 @@ static int scan_init(void)
 	return err;
 }
 
+static void gatt_discover(struct bt_conn *conn)
+{
+	if (conn == default_conn) {
+		int err = bt_gatt_dm_start(conn,
+					   BT_UUID_NUS_SERVICE,
+					   &discovery_cb,
+					   &gatt_nus_c);
+		if (err) {
+			printk("could not start the discovery procedure, error "
+			       "code: %d\n", err);
+		}
+	}
+}
+
+static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, passkey);
+}
+
+static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	auth_conn = bt_conn_ref(conn);
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, passkey);
+	printk("Press Button 1 to confirm, Button 2 to reject.\n");
+}
+
+static void auth_cancel(struct bt_conn *conn)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing cancelled: %s\n", addr);
+
+	gatt_discover(conn);
+}
+
+static void auth_done(struct bt_conn *conn)
+{
+	printk("%s()\n", __func__);
+	bt_conn_auth_pairing_confirm(conn);
+
+	gatt_discover(conn);
+}
+
+
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	printk("Paired conn: %p, bonded: %d\n", conn, bonded);
+
+	gatt_discover(conn);
+}
+
+static void pairing_failed(struct bt_conn *conn)
+{
+	printk("Pairing failed conn: %p\n", conn);
+
+	gatt_discover(conn);
+}
+
+static struct bt_conn_auth_cb conn_auth_callbacks = {
+	.passkey_display = auth_passkey_display,
+	.passkey_confirm = auth_passkey_confirm,
+	.cancel = auth_cancel,
+	.pairing_confirm = auth_done,
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
+};
+
+static void num_comp_reply(bool accept)
+{
+	if (accept) {
+		bt_conn_auth_passkey_confirm(auth_conn);
+		printk("Numeric Match, conn %p\n", auth_conn);
+	} else {
+		bt_conn_auth_cancel(auth_conn);
+		printk("Numeric Reject, conn %p\n", auth_conn);
+	}
+
+	bt_conn_unref(auth_conn);
+	auth_conn = NULL;
+}
+
+static void button_handler(u32_t button_state, u32_t has_changed)
+{
+	u32_t buttons = button_state & has_changed;
+
+	if (auth_conn) {
+		if (buttons & KEY_PASSKEY_ACCEPT) {
+			num_comp_reply(true);
+		}
+
+		if (buttons & KEY_PASSKEY_REJECT) {
+			num_comp_reply(false);
+		}
+	}
+}
+
 void main(void)
 {
 	int err;
 
 	printk("Starting NUS Client example\n");
+
+	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+	if (err) {
+		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -376,6 +487,12 @@ void main(void)
 		if (err) {
 			return;
 		}
+	}
+
+	err = dk_buttons_init(button_handler);
+	if (err) {
+		printk("Failed to initialize buttons (err %d)\n", err);
+		return;
 	}
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
