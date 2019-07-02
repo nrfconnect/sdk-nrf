@@ -68,6 +68,10 @@
 /* Key used to move cursor down */
 #define KEY_DOWN_MASK   DK_BTN4_MSK
 
+/* Key used to accept or reject passkey value */
+#define KEY_PAIRING_ACCEPT DK_BTN1_MSK
+#define KEY_PAIRING_REJECT DK_BTN2_MSK
+
 /* HIDS instance. */
 BT_GATT_HIDS_DEF(hids_obj,
 		 INPUT_REP_BUTTONS_LEN,
@@ -114,6 +118,17 @@ static struct conn_mode {
 	struct bt_conn *conn;
 	bool in_boot_mode;
 } conn_mode[CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT];
+
+static struct k_work pairing_work;
+struct pairing_data_mitm {
+	struct bt_conn *conn;
+	unsigned int passkey;
+};
+
+K_MSGQ_DEFINE(mitm_queue,
+	      sizeof(struct pairing_data_mitm),
+	      CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT,
+	      4);
 
 #if CONFIG_BT_DIRECTED_ADVERTISING
 static void bond_find(const struct bt_bond_info *info, void *user_data)
@@ -194,6 +209,26 @@ static void advertising_start(struct k_work *work)
 #endif
 
 	advertising_continue();
+}
+
+
+static void pairing_process(struct k_work *work)
+{
+	int err;
+	struct pairing_data_mitm pairing_data;
+
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	err = k_msgq_peek(&mitm_queue, &pairing_data);
+	if (err) {
+		return;
+	}
+
+	bt_addr_le_to_str(bt_conn_get_dst(pairing_data.conn),
+			  addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, pairing_data.passkey);
+	printk("Press Button 1 to confirm, Button 2 to reject.\n");
 }
 
 
@@ -534,6 +569,7 @@ static void bt_ready(int err)
 
 	k_delayed_work_init(&hids_work, mouse_handler);
 	k_delayed_work_init(&adv_work, advertising_start);
+	k_work_init(&pairing_work, pairing_process);
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
@@ -554,6 +590,32 @@ static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 }
 
 
+static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
+{
+	int err;
+
+	struct pairing_data_mitm pairing_data;
+
+	pairing_data.conn    = bt_conn_ref(conn);
+	pairing_data.passkey = passkey;
+
+	err = k_msgq_put(&mitm_queue, &pairing_data, K_NO_WAIT);
+	if (err) {
+		printk("Pairing queue is full. Purge previous data.\n");
+	}
+
+	/* In the case of multiple pairing requests, trigger
+	 * pairing confirmation which needed user interaction only
+	 * once to avoid display information about all devices at
+	 * the same time. Passkey confirmation for next devices will
+	 * be proccess from queue after handling the earlier ones.
+	 */
+	if (k_msgq_num_used_get(&mitm_queue) == 1) {
+		k_work_submit(&pairing_work);
+	}
+}
+
+
 static void auth_cancel(struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -571,15 +633,56 @@ static void auth_done(struct bt_conn *conn)
 }
 
 
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	printk("Paired conn: %p, bonded: %d\n", conn, bonded);
+}
+
+
+static void pairing_failed(struct bt_conn *conn)
+{
+	printk("Pairing failed conn: %p\n", conn);
+}
+
+
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
-	.passkey_entry = NULL,
+	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
 	.pairing_confirm = auth_done,
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 #else
 static struct bt_conn_auth_cb conn_auth_callbacks;
 #endif
+
+
+static void num_comp_reply(bool accept)
+{
+	struct pairing_data_mitm pairing_data;
+	struct bt_conn *conn;
+
+	if (k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT) != 0) {
+		return;
+	}
+
+	conn = pairing_data.conn;
+
+	if (accept) {
+		bt_conn_auth_passkey_confirm(conn);
+		printk("Numeric Match, conn %p\n", conn);
+	} else {
+		bt_conn_auth_cancel(conn);
+		printk("Numeric Reject, conn %p\n", conn);
+	}
+
+	bt_conn_unref(pairing_data.conn);
+
+	if (k_msgq_num_used_get(&mitm_queue)) {
+		k_work_submit(&pairing_work);
+	}
+}
 
 
 void button_changed(u32_t button_state, u32_t has_changed)
@@ -589,6 +692,20 @@ void button_changed(u32_t button_state, u32_t has_changed)
 	u32_t buttons = button_state & has_changed;
 
 	memset(&pos, 0, sizeof(struct mouse_pos));
+
+	if (k_msgq_num_used_get(&mitm_queue)) {
+		if (buttons & KEY_PAIRING_ACCEPT) {
+			num_comp_reply(true);
+
+			return;
+		}
+
+		if (buttons & KEY_PAIRING_REJECT) {
+			num_comp_reply(false);
+
+			return;
+		}
+	}
 
 	if (buttons & KEY_LEFT_MASK) {
 		pos.x_val -= MOVEMENT_SPEED;

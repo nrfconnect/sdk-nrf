@@ -43,9 +43,13 @@
  */
 #define KEY_CAPSLOCK_RSP_MASK DK_BTN3_MSK
 
+/* Key used to accept or reject passkey value */
+#define KEY_PAIRING_ACCEPT DK_BTN1_MSK
+#define KEY_PAIRING_REJECT DK_BTN2_MSK
 
 static struct bt_conn *default_conn;
 static struct bt_gatt_hids_c hids_c;
+static struct bt_conn *auth_conn;
 static u8_t capslock_state;
 
 
@@ -155,17 +159,6 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 	if (bt_conn_security(conn, BT_SECURITY_MEDIUM)) {
 		printk("Failed to set security\n");
 	}
-
-	if (conn == default_conn) {
-		int err = bt_gatt_dm_start(conn,
-					   BT_UUID_HIDS,
-					   &discovery_cb,
-					   NULL);
-		if (err) {
-			printk("Could not start the discovery procedure, error "
-			       "code: %d\n", err);
-		}
-	}
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
@@ -174,6 +167,11 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	int err;
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	if (auth_conn) {
+		bt_conn_unref(auth_conn);
+		auth_conn = NULL;
+	}
 
 	printk("Disconnected: %s (reason %u)\n", addr, reason);
 
@@ -196,9 +194,19 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	}
 }
 
+static void security_changed(struct bt_conn *conn, bt_security_t level)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Security changed: %s level %u\n", addr, level);
+}
+
 static struct bt_conn_cb conn_callbacks = {
-	.connected = connected,
-	.disconnected = disconnected,
+	.connected        = connected,
+	.disconnected     = disconnected,
+	.security_changed = security_changed
 };
 
 static void scan_init(void)
@@ -464,9 +472,36 @@ static void button_capslock_rsp(void)
 }
 
 
+static void num_comp_reply(bool accept)
+{
+	if (accept) {
+		bt_conn_auth_passkey_confirm(auth_conn);
+		printk("Numeric Match, conn %p\n", auth_conn);
+	} else {
+		bt_conn_auth_cancel(auth_conn);
+		printk("Numeric Reject, conn %p\n", auth_conn);
+	}
+
+	bt_conn_unref(auth_conn);
+	auth_conn = NULL;
+}
+
+
 static void button_handler(u32_t button_state, u32_t has_changed)
 {
 	u32_t button = button_state & has_changed;
+
+	if (auth_conn) {
+		if (button & KEY_PAIRING_ACCEPT) {
+			num_comp_reply(true);
+		}
+
+		if (button & KEY_PAIRING_REJECT) {
+			num_comp_reply(false);
+		}
+
+		return;
+	}
 
 	if (button & KEY_BOOTMODE_MASK) {
 		button_bootmode();
@@ -480,6 +515,89 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 }
 
 
+static void gatt_discover(struct bt_conn *conn)
+{
+	if (conn == default_conn) {
+		int err = bt_gatt_dm_start(conn,
+					   BT_UUID_HIDS,
+					   &discovery_cb,
+					   NULL);
+		if (err) {
+			printk("could not start the discovery procedure, error "
+			       "code: %d\n", err);
+		}
+	}
+}
+
+static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, passkey);
+}
+
+static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	auth_conn = bt_conn_ref(conn);
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, passkey);
+	printk("Press Button 1 to confirm, Button 2 to reject.\n");
+}
+
+
+static void auth_cancel(struct bt_conn *conn)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing cancelled: %s\n", addr);
+
+	gatt_discover(conn);
+}
+
+
+static void auth_done(struct bt_conn *conn)
+{
+	printk("%s()\n", __func__);
+	bt_conn_auth_pairing_confirm(conn);
+
+	gatt_discover(conn);
+}
+
+
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	printk("Paired conn: %p, bonded: %d\n", conn, bonded);
+
+	gatt_discover(conn);
+}
+
+
+static void pairing_failed(struct bt_conn *conn)
+{
+	printk("Pairing failed conn: %p\n", conn);
+
+	gatt_discover(conn);
+}
+
+
+static struct bt_conn_auth_cb conn_auth_callbacks = {
+	.passkey_display = auth_passkey_display,
+	.passkey_confirm = auth_passkey_confirm,
+	.cancel = auth_cancel,
+	.pairing_confirm = auth_done,
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
+};
+
+
 void main(void)
 {
 	int err;
@@ -487,6 +605,14 @@ void main(void)
 	printk("Starting HIDS Client example\n");
 
 	bt_gatt_hids_c_init(&hids_c, &hids_c_init_params);
+
+	bt_conn_cb_register(&conn_callbacks);
+
+	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+	if (err) {
+		printk("failed to register authorization callbacks.\n");
+		return;
+	}
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -497,7 +623,6 @@ void main(void)
 	printk("Bluetooth initialized\n");
 
 	scan_init();
-	bt_conn_cb_register(&conn_callbacks);
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
