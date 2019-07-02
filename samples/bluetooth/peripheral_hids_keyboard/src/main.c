@@ -56,6 +56,10 @@
 #define KEY_SHIFT_MASK DK_BTN2_MSK
 #define KEY_ADV_MASK   DK_BTN4_MSK
 
+/* Key used to accept or reject passkey value */
+#define KEY_PAIRING_ACCEPT DK_BTN1_MSK
+#define KEY_PAIRING_REJECT DK_BTN2_MSK
+
 /* HIDs queue elements. */
 #define HIDS_QUEUE_SIZE 10
 
@@ -153,6 +157,17 @@ static struct keyboard_state {
 static struct k_work adv_work;
 #endif
 
+static struct k_work pairing_work;
+struct pairing_data_mitm {
+	struct bt_conn *conn;
+	unsigned int passkey;
+};
+
+K_MSGQ_DEFINE(mitm_queue,
+	      sizeof(struct pairing_data_mitm),
+	      CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT,
+	      4);
+
 static void advertising_start(void)
 {
 	int err;
@@ -204,6 +219,26 @@ void nfc_field_lost(void)
 	dk_set_led_off(NFC_LED);
 }
 #endif
+
+
+static void pairing_process(struct k_work *work)
+{
+	int err;
+	struct pairing_data_mitm pairing_data;
+
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	err = k_msgq_peek(&mitm_queue, &pairing_data);
+	if (err) {
+		return;
+	}
+
+	bt_addr_le_to_str(bt_conn_get_dst(pairing_data.conn),
+			  addr, sizeof(addr));
+
+	printk("Passkey for %s: %06u\n", addr, pairing_data.passkey);
+	printk("Press Button 1 to confirm, Button 2 to reject.\n");
+}
 
 
 static void connected(struct bt_conn *conn, u8_t err)
@@ -493,8 +528,9 @@ static void bt_ready(int err)
 #else
 	advertising_start();
 #endif
-}
 
+	k_work_init(&pairing_work, pairing_process);
+}
 
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
@@ -503,6 +539,31 @@ static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	printk("Passkey for %s: %06u\n", addr, passkey);
+}
+
+static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
+{
+	int err;
+
+	struct pairing_data_mitm pairing_data;
+
+	pairing_data.conn    = bt_conn_ref(conn);
+	pairing_data.passkey = passkey;
+
+	err = k_msgq_put(&mitm_queue, &pairing_data, K_NO_WAIT);
+	if (err) {
+		printk("Pairing queue is full. Purge previous data.\n");
+	}
+
+	/* In the case of multiple pairing requests, trigger
+	 * pairing confirmation which needed user interaction only
+	 * once to avoid display information about all devices at
+	 * the same time. Passkey confirmation for next devices will
+	 * be proccess from queue after handling the earlier ones.
+	 */
+	if (k_msgq_num_used_get(&mitm_queue) == 1) {
+		k_work_submit(&pairing_work);
+	}
 }
 
 
@@ -553,14 +614,28 @@ static void auth_oob_data_request(struct bt_conn *conn,
 #endif
 
 
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	printk("Paired conn: %p, bonded: %d\n", conn, bonded);
+}
+
+
+static void pairing_failed(struct bt_conn *conn)
+{
+	printk("Pairing failed conn: %p\n", conn);
+}
+
+
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
-	.passkey_entry = NULL,
+	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
 	.pairing_confirm = auth_done,
 #if CONFIG_NFC_OOB_PAIRING
 	.oob_data_request = auth_oob_data_request,
 #endif
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 
 
@@ -743,6 +818,7 @@ static void button_text_changed(bool down)
 	}
 }
 
+
 static void button_shift_changed(bool down)
 {
 	if (down) {
@@ -752,8 +828,53 @@ static void button_shift_changed(bool down)
 	}
 }
 
+
+static void num_comp_reply(bool accept)
+{
+	struct pairing_data_mitm pairing_data;
+	struct bt_conn *conn;
+
+	if (k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT) != 0) {
+		return;
+	}
+
+	conn = pairing_data.conn;
+
+	if (accept) {
+		bt_conn_auth_passkey_confirm(conn);
+		printk("Numeric Match, conn %p\n", conn);
+	} else {
+		bt_conn_auth_cancel(conn);
+		printk("Numeric Reject, conn %p\n", conn);
+	}
+
+	bt_conn_unref(pairing_data.conn);
+
+	if (k_msgq_num_used_get(&mitm_queue)) {
+		k_work_submit(&pairing_work);
+	}
+}
+
+
 static void button_changed(u32_t button_state, u32_t has_changed)
 {
+
+	u32_t buttons = button_state & has_changed;
+
+	if (k_msgq_num_used_get(&mitm_queue)) {
+		if (buttons & KEY_PAIRING_ACCEPT) {
+			num_comp_reply(true);
+
+			return;
+		}
+
+		if (buttons & KEY_PAIRING_REJECT) {
+			num_comp_reply(false);
+
+			return;
+		}
+	}
+
 	if (has_changed & KEY_TEXT_MASK) {
 		button_text_changed((button_state & KEY_TEXT_MASK) != 0);
 	}
