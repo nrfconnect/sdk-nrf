@@ -24,7 +24,8 @@ LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 
 static K_THREAD_STACK_DEFINE(socket_thread_stack, \
 				CONFIG_AT_CMD_THREAD_STACK_SIZE);
-static K_MUTEX_DEFINE(cmd_pending);
+
+static K_SEM_DEFINE(cmd_pending, 1, 1);
 
 static int              common_socket_fd;
 static char             *response_buf;
@@ -146,7 +147,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			    (open_socket() == 0)) {
 				LOG_INF("AT socket recovered");
 
-				if (cmd_pending.lock_count > 0) {
+				if (k_sem_count_get(&cmd_pending) == 0) {
 					ret.state = AT_CMD_ERROR;
 					ret.code  = -errno;
 					goto next;
@@ -267,14 +268,17 @@ int at_cmd_write_with_callback(const char *const cmd,
 			       at_cmd_handler_t  handler,
 			       enum at_cmd_state *state)
 {
-	int return_code;
+	int return_code = k_sem_take(&cmd_pending, K_FOREVER);
 
-	k_mutex_lock(&cmd_pending, K_FOREVER);
+	if (return_code != 0) {
+		LOG_WRN("Not able to take semaphore (err: %d)", return_code);
+	} else {
+		current_cmd_handler = handler;
 
-	current_cmd_handler = handler;
-	return_code = at_write(cmd, state);
+		return_code = at_write(cmd, state);
 
-	k_mutex_unlock(&cmd_pending);
+		k_sem_give(&cmd_pending);
+	}
 
 	return return_code;
 }
@@ -284,27 +288,34 @@ int at_cmd_write(const char *const cmd,
 		 size_t buf_len,
 		 enum at_cmd_state *state)
 {
-	int return_code;
+	int return_code = k_sem_take(&cmd_pending, K_FOREVER);
 
-	k_mutex_lock(&cmd_pending, K_FOREVER);
+	if (return_code != 0) {
+		LOG_WRN("Not able to take semaphore (err: %d)", return_code);
+	} else {
+		response_buf     = buf;
+		response_buf_len = buf_len;
 
-	response_buf     = buf;
-	response_buf_len = buf_len;
+		return_code = at_write(cmd, state);
 
-	return_code = at_write(cmd, state);
-
-	k_mutex_unlock(&cmd_pending);
+		k_sem_give(&cmd_pending);
+	}
 
 	return return_code;
 }
 
 void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 {
-	k_mutex_lock(&cmd_pending, K_FOREVER);
 
-	notification_handler = handler;
+	int return_code = k_sem_take(&cmd_pending, K_FOREVER);
 
-	k_mutex_unlock(&cmd_pending);
+	if (return_code != 0) {
+		LOG_WRN("Not able to take semaphore (err: %d)", return_code);
+	} else {
+		notification_handler = handler;
+	}
+
+	k_sem_give(&cmd_pending);
 }
 
 static int at_cmd_driver_init(struct device *dev)
