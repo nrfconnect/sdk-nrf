@@ -111,7 +111,7 @@ static void callback_worker(struct k_work *item)
 	struct callback_work_item *data =
 		CONTAINER_OF(item, struct callback_work_item, work);
 
-	if ((data != NULL) && (data->callback != NULL)) {
+	if (data != NULL) {
 		data->callback(data->data);
 	}
 
@@ -196,27 +196,34 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 		}
 
 		if (callback) {
+			at_cmd_handler_t tmp_callback;
+
+			if (ret.state == AT_CMD_NOTIFICATION) {
+				tmp_callback = notification_handler;
+			} else {
+				tmp_callback = current_cmd_handler;
+			}
+
+			if (!tmp_callback) {
+				goto next;
+			}
+
 			struct callback_work_item *item =
 			k_malloc(sizeof(struct callback_work_item));
 
 			if (!item) {
 				LOG_DBG("Failed to allocate work item");
 
-				ret.state = AT_CMD_ERROR;
 				ret.code  = -ENOMEM;
 
 				goto next;
 			}
 
+			item->callback = tmp_callback;
+
 			k_work_init(&item->work, callback_worker);
 
 			memcpy(item->data, buf, payload_len);
-
-			if (ret.state == AT_CMD_NOTIFICATION) {
-				item->callback = notification_handler;
-			} else {
-				item->callback = current_cmd_handler;
-			}
 
 			k_work_submit(&item->work);
 		}
