@@ -97,11 +97,11 @@ static void pm_evt_handler(enum bt_gatt_hids_pm_evt evt, struct bt_conn *conn)
 					old_mode, report_mode);
 		}
 		if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-			broadcast_subscription_change(IN_REPORT_MOUSE,
+			broadcast_subscription_change(IN_REPORT_KEYBOARD_KEYS,
 					old_mode, report_mode);
 		}
 		if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
-			broadcast_subscription_change(IN_REPORT_MOUSE,
+			broadcast_subscription_change(IN_REPORT_MPLAYER,
 					old_mode, report_mode);
 		}
 	}
