@@ -46,13 +46,55 @@ To create a policy, go to `AWS IoT Console <https://console.aws.amazon.com/iot/h
     {
       "Version": "2012-10-17",
       "Statement": [
-          {
-            "Effect": "Allow",
-            "Action": "iot:*",
-            "Resource": "*"
+        {
+          "Effect": "Allow",
+          "Action": [
+            "iot:Connect"
+          ],
+          "Resource": [
+            "arn:aws:iot:*:*:client/${iot:ClientId}"
+          ],
+          "Condition": {
+            "Bool": {
+              "iot:Connection.Thing.IsAttached": [
+                "true"
+              ]
+            }
           }
-       ]
-     }
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "iot:Receive"
+          ],
+          "Resource": [
+            "*"
+          ]
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "iot:Subscribe"
+          ],
+          "Resource": [
+            "arn:aws:iot:*:*:topicfilter/$aws/things/${iot:ClientId}/shadow/get/*",
+            "arn:aws:iot:*:*:topicfilter/$aws/things/${iot:ClientId}/shadow/update/*",
+            "arn:aws:iot:*:*:topicfilter/$aws/things/${iot:ClientId}/jobs/*"
+          ]
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "iot:Publish"
+          ],
+          "Resource": [
+            "arn:aws:iot:*:*:topic/$aws/things/${iot:ClientId}/shadow/get",
+            "arn:aws:iot:*:*:topic/$aws/things/${iot:ClientId}/shadow/update",
+            "arn:aws:iot:*:*:topic/$aws/things/${iot:ClientId}/jobs/*"
+          ]
+        }
+      ]
+    }
 
 To create a thing, log in to the `AWS IoT Console <https://console.aws.amazon.com/iot/home>`_ and select **Manage->Things->Create->Create a single thing**.
 Provide it with a name which corresponds to your device's MQTT Client ID.
