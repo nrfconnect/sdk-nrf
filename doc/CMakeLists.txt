@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
 cmake_minimum_required(VERSION 3.13.1)
 project(nrf-connect-sdk-doc LANGUAGES)
 
