@@ -39,7 +39,7 @@
 	tx-pin = <18>;
 	rx-pin = <20>;
 	rts-pin = <16>;
-	rts-pin = <15>;
+	cts-pin = <15>;
 };
 
 &qdec {
