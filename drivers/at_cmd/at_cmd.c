@@ -252,15 +252,22 @@ static inline int at_write(const char *const cmd, enum at_cmd_state *state)
 	struct return_state_object ret;
 
 	LOG_DBG("Sending command %s", log_strdup(cmd));
+
 	bytes_sent = send(common_socket_fd, cmd, bytes_to_send, 0);
 
-	if (bytes_sent != bytes_to_send) {
-		LOG_ERR("Failed to send AT command");
-		ret.code  = -EIO;
+	if (bytes_sent == -1) {
+		LOG_ERR("Failed to send AT command (err:%d)", bytes_sent);
+		ret.code  = -errno;
 		ret.state = AT_CMD_ERROR;
 	} else {
 		k_msgq_get(&return_code_msq, &ret, K_FOREVER);
 		LOG_DBG("Bytes sent: %d", bytes_sent);
+
+		if (bytes_sent != bytes_to_send) {
+			LOG_ERR("Bytes sent (%d) was not the "
+				"same as expected (%d)",
+				bytes_sent, bytes_to_send);
+		}
 	}
 
 	if (state) {
