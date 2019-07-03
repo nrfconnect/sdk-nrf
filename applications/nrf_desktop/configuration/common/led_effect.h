@@ -14,6 +14,7 @@
  */
 
 #include <zephyr/types.h>
+#include <misc/util.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -113,6 +114,38 @@ struct led_effect {
 			},							\
 		}),								\
 		.step_count = 4,						\
+		.loop_forever = true,						\
+	}
+
+
+#define LED_CLOCK_BLINK_PERIOD 200
+#define LED_CLOCK_SLEEP_PERIOD 1000
+#define LED_CLOCK_TIK(i, _color)					\
+		{							\
+			.color = _color,				\
+			.substep_count = 1,				\
+			.substep_time = LED_CLOCK_BLINK_PERIOD,		\
+		},							\
+		{							\
+			.color = LED_NOCOLOR(),				\
+			.substep_count = 1,				\
+			.substep_time = LED_CLOCK_BLINK_PERIOD,		\
+		},							\
+
+/* UTIL_LISTIFY accepts just one additional argument - period is defined
+ * separately.
+ */
+#define LED_EFFECT_LED_CLOCK(_ticks, _color)					\
+	{									\
+		.steps = ((const struct led_effect_step[]) {			\
+			{							\
+				.color = LED_NOCOLOR(),				\
+				.substep_count = 1,				\
+				.substep_time = LED_CLOCK_SLEEP_PERIOD,		\
+			},							\
+			UTIL_LISTIFY(_ticks, LED_CLOCK_TIK, _color)		\
+		}),								\
+		.step_count = (2 * _ticks + 1),					\
 		.loop_forever = true,						\
 	}
 

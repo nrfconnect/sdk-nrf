@@ -47,6 +47,17 @@ enum led_id {
 
 #define LED_UNAVAILABLE CONFIG_DESKTOP_LED_COUNT
 
+#if (defined(CONFIG_BT_PERIPHERAL) && defined(CONFIG_BT_CENTRAL)) || \
+    (!defined(CONFIG_BT_PERIPHERAL) && !defined(CONFIG_BT_CENTRAL))
+#error Device should be either Bluetooth peripheral or central
+#endif
+
+#if defined(CONFIG_BT_PERIPHERAL)
+#define LED_PEER_CNT (CONFIG_BT_MAX_PAIRED - 1)
+#else
+#define LED_PEER_CNT (CONFIG_BT_MAX_PAIRED)
+#endif
+
 #ifdef __cplusplus
 }
 #endif
