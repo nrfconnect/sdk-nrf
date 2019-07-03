@@ -28,6 +28,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 static enum usb_state state;
 static u8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
+static enum in_report sent_report_type;
 
 static struct config_channel_state cfg_chan;
 
@@ -82,19 +83,19 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 	return 0;
 }
 
-static void mouse_report_sent(bool error)
+static void report_sent(bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
-	event->report_type = IN_REPORT_MOUSE;
+	event->report_type = sent_report_type;
 	event->subscriber = &state;
 	event->error = error;
 	EVENT_SUBMIT(event);
 }
 
-static void mouse_report_sent_cb(void)
+static void report_sent_cb(void)
 {
-	mouse_report_sent(false);
+	report_sent(false);
 }
 
 static void send_mouse_report(const struct hid_mouse_event *event)
@@ -151,11 +152,48 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 
 	}
 	int err = hid_int_ep_write(usb_dev, buffer, sizeof(buffer), NULL);
+
+	sent_report_type = IN_REPORT_MOUSE;
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
-		mouse_report_sent(true);
+		report_sent(true);
 	}
 }
+
+static void send_keyboard_report(const struct hid_keyboard_event *event)
+{
+	if (&state != event->subscriber) {
+		/* It's not us */
+		return;
+	}
+
+	if (state != USB_STATE_ACTIVE) {
+		/* USB not connected. */
+		return;
+	}
+
+	u8_t buffer[REPORT_SIZE_KEYBOARD_KEYS + sizeof(u8_t)];
+
+	if (hid_protocol == HID_PROTOCOL_REPORT) {
+		__ASSERT(sizeof(buffer) == 9, "Invalid report size");
+		/* Encode report. */
+		buffer[0] = REPORT_ID_KEYBOARD_KEYS;
+		buffer[1] = event->modifier_bm;
+		buffer[2] = 0;
+		memcpy(&buffer[3], event->keys, ARRAY_SIZE(event->keys));
+	} else {
+		__ASSERT_NO_MSG(false);
+	}
+
+	int err = hid_int_ep_write(usb_dev, buffer, sizeof(buffer), NULL);
+
+	sent_report_type = IN_REPORT_KEYBOARD_KEYS;
+	if (err) {
+		LOG_ERR("Cannot send report (%d)", err);
+		report_sent(true);
+	}
+}
+
 
 static void broadcast_usb_state(void)
 {
@@ -169,16 +207,29 @@ static void broadcast_usb_state(void)
 
 static void broadcast_subscription_change(void)
 {
-	struct hid_report_subscription_event *event =
-		new_hid_report_subscription_event();
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+		struct hid_report_subscription_event *event_mouse =
+			new_hid_report_subscription_event();
 
-	event->report_type = IN_REPORT_MOUSE;
-	event->enabled     = state == USB_STATE_ACTIVE;
-	event->subscriber  = &state;
+		event_mouse->report_type = IN_REPORT_MOUSE;
+		event_mouse->enabled     = (state == USB_STATE_ACTIVE);
+		event_mouse->subscriber  = &state;
 
-	LOG_INF("USB HID %sabled", (event->enabled)?("en"):("dis"));
+		EVENT_SUBMIT(event_mouse);
+	}
 
-	EVENT_SUBMIT(event);
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+		struct hid_report_subscription_event *event_kbd =
+			new_hid_report_subscription_event();
+
+		event_kbd->report_type = IN_REPORT_KEYBOARD_KEYS;
+		event_kbd->enabled     = (state == USB_STATE_ACTIVE);
+		event_kbd->subscriber  = &state;
+
+		EVENT_SUBMIT(event_kbd);
+	}
+
+	LOG_INF("USB HID %sabled", (state == USB_STATE_ACTIVE) ? ("en"):("dis"));
 }
 
 static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
@@ -279,7 +330,7 @@ static int usb_init(void)
 	static const struct hid_ops ops = {
 		.get_report   		= get_report,
 		.set_report   		= set_report,
-		.int_in_ready 		= mouse_report_sent_cb,
+		.int_in_ready		= report_sent_cb,
 		.status_cb    		= device_status,
 		.protocol_change 	= protocol_change,
 	};
@@ -304,6 +355,14 @@ static bool event_handler(const struct event_header *eh)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
 		if (is_hid_mouse_event(eh)) {
 			send_mouse_report(cast_hid_mouse_event(eh));
+
+			return false;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+		if (is_hid_keyboard_event(eh)) {
+			send_keyboard_report(cast_hid_keyboard_event(eh));
 
 			return false;
 		}
@@ -356,6 +415,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_forwarded_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_event);
