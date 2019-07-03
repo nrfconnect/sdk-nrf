@@ -77,7 +77,7 @@ static int get_return_code(char *buf, struct return_state_object *ret)
 		tmpstr = strstr(buf, AT_CMD_ERROR_STR);
 		if (tmpstr) {
 			ret->state = AT_CMD_ERROR;
-			ret->code  = ENOEXEC;
+			ret->code  = -ENOEXEC;
 			break;
 		}
 
@@ -165,7 +165,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 
 			LOG_ERR("AT message to large for reception buffer or "
 				"missing termination character");
-			ret.state = AT_CMD_ERROR;
+
 			ret.code  = -ENOBUFS;
 			goto next;
 		}
@@ -182,8 +182,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 					LOG_ERR("Response buffer not large "
 						"enough");
 
-					ret.code = -EMSGSIZE;
-					ret.code = AT_CMD_ERROR;
+					ret.code  = -EMSGSIZE;
 				}
 
 				callback         = false;
