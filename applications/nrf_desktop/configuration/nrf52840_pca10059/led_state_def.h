@@ -29,7 +29,7 @@ static const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] =
 	[LED_SYSTEM_STATE_ERROR]    = LED_EFFECT_LED_BLINK(200, LED_COLOR(200)),
 };
 
-static const struct led_effect led_peer_state_effect[CONFIG_BT_MAX_PAIRED][LED_PEER_STATE_COUNT] = {
+static const struct led_effect led_peer_state_effect[LED_PEER_CNT][LED_PEER_STATE_COUNT] = {
 	{
 		[LED_PEER_STATE_DISCONNECTED]   = LED_EFFECT_LED_BREATH(1000, LED_COLOR(100)),
 		[LED_PEER_STATE_CONNECTED]      = LED_EFFECT_LED_ON(LED_COLOR(100)),
