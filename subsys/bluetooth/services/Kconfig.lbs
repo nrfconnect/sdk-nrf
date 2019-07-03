@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
 menuconfig BT_GATT_LBS
 	bool "Led Button service"
 	select BT_GATT_DYNAMIC_DB
