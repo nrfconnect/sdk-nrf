@@ -1,0 +1,92 @@
+{
+  "GPIO backend": [
+    {
+      "Name": "ENABLE",
+      "AsArg": "--gpio-on",
+      "Help": "Enable GPIO backend",
+      "Default": false
+    },
+    {
+      "Name": "TCP",
+      "AsArg": "--tcp-gpio",
+      "Help": "TCP port",
+      "Default": 1337
+    },
+    {
+      "Name": "OUTPUT_FILE",
+      "AsArg": "--outfile",
+      "Help": "File for Saleae dump",
+      "Default": "gpio_dump.csv"
+    },
+    {
+      "Name": "ACQUISITION TIME",
+      "AsArg": "--capture-time",
+      "Help": "Saleae acquisition time",
+      "Default": 10.0
+    }
+  ],
+  "UART backend": [
+    {
+      "Name": "ENABLE",
+      "AsArg": "--uart-on",
+      "Help": "Enable UART backend",
+      "Default": false
+    },
+    {
+      "Name": "TCP",
+      "AsArg": "--tcp-uart",
+      "Help": "TCP port",
+      "Default": 1338
+    },
+    {
+      "Name": "SERIAL_DEVICE",
+      "AsArg": "--serial",
+      "Help": "Choose serial device",
+      "Default": "UNSPECIFIED"
+    },
+    {
+      "Name": "BAUDRATE",
+      "AsArg": "--baud",
+      "Help": "Choose serial baudrate",
+      "Default": 115200
+    }
+  ],
+  "RTT backend": [
+    {
+      "Name": "ENABLE",
+      "AsArg": "--rtt-on",
+      "Help": "Enable RTT backend",
+      "Default": false
+    },
+    {
+      "Name": "TCP",
+      "AsArg": "--tcp-rtt",
+      "Help": "TCP port",
+      "Default": 1339
+    }
+  ],
+  "General": [
+    {
+      "Name": "ELFFILE",
+      "AsArg": "--elf",
+      "Help": "Specify .ELF file for log parsing",
+      "Default": "UNSPECIFIED",
+      "Required": true
+    }
+  ],
+  "nRF Shell /* OUT OF ORDER */" : [
+    {
+      "Name": "SHELL_BACKEND",
+      "AsArg": "--sh-backend",
+      "Help": "Specify backend for nRF shell I/O",
+      "Default": "",
+      "Choices": ["uart", "rtt"]
+    },
+    {
+      "Name": "TCP",
+      "AsArg": "--sh-tcp",
+      "Help": "TCP port for nRF shell I/O",
+      "Default": 1340
+    }
+  ]
+}
