@@ -46,6 +46,7 @@
 /samples/bootloader/                      @hakonfam @ioannisg
 subsys/debug/CMakeLists.txt               @nordic-krch
 /samples/debug/ppi_trace/                 @nordic-krch
+/samples/debug/gpio_frontend/             @nordic-krch @masz-nordic
 /samples/esb/                             @lemrey
 /samples/nfc/                             @grochu
 /samples/nrf9160/                         @rlubos @lemrey
@@ -64,6 +65,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /subsys/partition_manager/                @hakonfam
 /subsys/profiler/                         @pdunaj
 /subsys/debug/ppi_trace/                  @nordic-krch
+/subsys/debug/gpio_frontend/              @nordic-krch @masz-nordic
 /subsys/shell/                            @nordic-krch @jarz-nordic
 /subsys/spm/                              @ioannisg
 /subsys/nonsecure/                        @ioannisg
