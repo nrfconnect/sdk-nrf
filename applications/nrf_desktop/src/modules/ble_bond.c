@@ -55,6 +55,7 @@ static void select_confirm(void);
 
 static void erase_start(void);
 static void erase_adv_confirm(void);
+static void erase_confirm(void);
 
 static const struct state_switch state_switch[] = {
 	 /* State           Event         Next state         Callback */
@@ -66,8 +67,12 @@ static const struct state_switch state_switch[] = {
 
 #if CONFIG_DESKTOP_BLE_PEER_ERASE
 	{STATE_IDLE,        CLICK_LONG,   STATE_ERASE_PEER,  erase_start},
+#if CONFIG_BT_PERIPHERAL
 	{STATE_ERASE_PEER,  CLICK_DOUBLE, STATE_ERASE_ADV,   erase_adv_confirm},
-#endif
+#else
+	{STATE_ERASE_PEER,  CLICK_DOUBLE, STATE_IDLE,	     erase_confirm},
+#endif /* CONFIG_BT_PERIPHERAL */
+#endif /* CONFIG_DESKTOP_BLE_PEER_ERASE */
 };
 
 
@@ -155,30 +160,11 @@ static void swap_bt_stack_peer_id(void)
 	}
 }
 
-static void remove_old_bond(const struct bt_bond_info *info, void *user_data)
+static int remove_peers(u8_t identity)
 {
-	struct bt_conn *new_bond_conn = user_data;
+	LOG_INF("Remove peers on identity %u", identity);
 
-	if (bt_addr_le_cmp(&info->addr, bt_conn_get_dst(new_bond_conn))) {
-		int err = bt_unpair(BT_ID_DEFAULT, &info->addr);
-
-		if (err) {
-			LOG_ERR("Cannot unpair");
-			module_set_state(MODULE_STATE_ERROR);
-		}
-	}
-}
-
-static void remove_old_bonds(void *new_conn)
-{
-	bt_foreach_bond(BT_ID_DEFAULT, remove_old_bond, new_conn);
-}
-
-static int remove_peers(void)
-{
-	LOG_INF("Remove peers on identity %u", cur_peer_id);
-
-	int err = bt_unpair(get_bt_stack_peer_id(cur_peer_id), BT_ADDR_LE_ANY);
+	int err = bt_unpair(get_bt_stack_peer_id(identity), BT_ADDR_LE_ANY);
 	if (err) {
 		LOG_ERR("Failed to remove");
 	}
@@ -216,7 +202,7 @@ static int shell_show_peers(const struct shell *shell, size_t argc, char **argv)
 static int shell_remove_peers(const struct shell *shell, size_t argc,
 			      char **argv)
 {
-	return remove_peers();
+	return remove_peers(cur_peer_id);
 }
 
 static void cancel_operation(void)
@@ -328,20 +314,30 @@ static void erase_start(void)
 	EVENT_SUBMIT(event);
 }
 
+static void erase_confirm(void)
+{
+	remove_peers(BT_ID_DEFAULT);
+
+	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
+
+	event->op = PEER_OPERATION_ERASED;
+	event->bt_app_id = cur_peer_id;
+	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+
+	EVENT_SUBMIT(event);
+}
+
 static void erase_adv_confirm(void)
 {
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		int err = bt_id_reset(get_bt_stack_peer_id(cur_peer_id),
-				      NULL, NULL);
+	int err = bt_id_reset(get_bt_stack_peer_id(cur_peer_id),
+			NULL, NULL);
 
-		if (err < 0) {
-			LOG_ERR("Cannot reset id %u (err:%d)",
-				get_bt_stack_peer_id(cur_peer_id), err);
-			module_set_state(MODULE_STATE_ERROR);
-			return;
-		}
+	if (err < 0) {
+		LOG_ERR("Cannot reset id %u (err:%d)",
+			get_bt_stack_peer_id(cur_peer_id), err);
+		module_set_state(MODULE_STATE_ERROR);
+		return;
 	}
-
 	LOG_INF("Start advertising for peer erase");
 
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
@@ -449,6 +445,7 @@ static void silence_unused(void)
 	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_ERASE)) {
 		ARG_UNUSED(erase_start);
 		ARG_UNUSED(erase_adv_confirm);
+		ARG_UNUSED(erase_confirm);
 	}
 
 	if (!IS_ENABLED(CONFIG_SHELL)) {
@@ -644,8 +641,6 @@ static bool event_handler(const struct event_header *eh)
 			LOG_INF("Erased peer");
 			if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 				swap_bt_stack_peer_id();
-			} else if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-				remove_old_bonds(event->id);
 			}
 
 			state = STATE_IDLE;

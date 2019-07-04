@@ -27,7 +27,7 @@ struct bond_find_data {
 };
 
 
-static const struct bt_conn *active_conn;
+static const struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
@@ -93,8 +93,17 @@ static void connected(struct bt_conn *conn, u8_t error)
 		}
 	}
 
-	__ASSERT_NO_MSG(!active_conn);
-	active_conn = conn;
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
+		if (!active_conn[i]) {
+			break;
+		}
+	}
+	if (i >= ARRAY_SIZE(active_conn)) {
+		k_panic();
+	}
+	active_conn[i] = conn;
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
@@ -131,14 +140,25 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 	LOG_INF("Disconnected from %s (reason %u)", log_strdup(addr), reason);
 
-	if (conn == active_conn) {
-		struct ble_peer_event *event = new_ble_peer_event();
-		event->id = conn;
-		event->state = PEER_STATE_DISCONNECTED;
-		EVENT_SUBMIT(event);
+	size_t i;
 
-		active_conn = NULL;
+	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
+		if (active_conn[i] == conn) {
+			break;
+		}
 	}
+
+	if (i == ARRAY_SIZE(active_conn)) {
+		return;
+	}
+
+	active_conn[i] = NULL;
+
+	struct ble_peer_event *event = new_ble_peer_event();
+
+	event->id = conn;
+	event->state = PEER_STATE_DISCONNECTED;
+	EVENT_SUBMIT(event);
 }
 
 static struct bt_gatt_exchange_params exchange_params;
