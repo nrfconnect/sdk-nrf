@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/types.h>
+#include <misc/slist.h>
 
 #include <bluetooth/services/hids_c.h>
 #include <misc/byteorder.h>
@@ -23,28 +24,25 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
+struct keyboard_event_item {
+	sys_snode_t node;
+	struct hid_keyboard_event *evt;
+};
 
-static struct bt_gatt_hids_c hidc;
+static struct bt_gatt_hids_c hidc[CONFIG_BT_MAX_CONN];
 static const void *usb_id;
 static atomic_t usb_ready;
-static struct hid_mouse_event *next_event;
 static bool usb_busy;
 static bool forward_pending;
 static void *channel_id;
 
-static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
-		      struct bt_gatt_hids_c_rep_info *rep,
-		      u8_t err,
-		      const u8_t *data)
+static struct hid_mouse_event *next_mouse_event;
+static sys_slist_t keyboard_event_list;
+
+static struct k_spinlock lock;
+
+static void process_mouse_report(const u8_t *data)
 {
-	if (!data) {
-		return BT_GATT_ITER_STOP;
-	}
-
-	if (err || !atomic_get(&usb_ready)) {
-		return BT_GATT_ITER_CONTINUE;
-	}
-
 	u8_t button_bm = data[0];
 	s16_t wheel = (s8_t)data[1];
 
@@ -63,13 +61,13 @@ static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 
 	struct hid_mouse_event *event;
 
-	u32_t key = irq_lock();
+	k_spinlock_key_t key = k_spin_lock(&lock);
 
-	if (next_event) {
+	if (next_mouse_event) {
 		__ASSERT_NO_MSG(usb_busy);
 
 		LOG_WRN("Event override");
-		event = next_event;
+		event = next_mouse_event;
 	} else {
 		event = new_hid_mouse_event();
 	}
@@ -86,10 +84,64 @@ static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 		EVENT_SUBMIT(event);
 		usb_busy = true;
 	} else {
-		next_event = event;
+		next_mouse_event = event;
 	}
 
-	irq_unlock(key);
+	k_spin_unlock(&lock, key);
+}
+
+static void process_keyboard_report(const u8_t *data)
+{
+	struct hid_keyboard_event *event = new_hid_keyboard_event();
+
+	event->subscriber = usb_id;
+	event->modifier_bm = data[0];
+	memcpy(event->keys, &data[2], ARRAY_SIZE(event->keys));
+
+	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	if (!usb_busy) {
+		EVENT_SUBMIT(event);
+		usb_busy = true;
+	} else {
+		struct keyboard_event_item *evt_item = k_malloc(sizeof(*evt_item));
+
+		if (!evt_item) {
+			LOG_ERR("OOM error");
+			k_panic();
+		}
+
+		evt_item->evt = event;
+		sys_slist_append(&keyboard_event_list, &evt_item->node);
+	}
+	k_spin_unlock(&lock, key);
+}
+
+static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
+		      struct bt_gatt_hids_c_rep_info *rep,
+		      u8_t err,
+		      const u8_t *data)
+{
+	if (!data) {
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (err || !atomic_get(&usb_ready)) {
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	switch (bt_gatt_hids_c_rep_id(rep)) {
+	case REPORT_ID_MOUSE:
+		process_mouse_report(data);
+		break;
+
+	case REPORT_ID_KEYBOARD_KEYS:
+		process_keyboard_report(data);
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+	}
 
 	return BT_GATT_ITER_CONTINUE;
 }
@@ -137,12 +189,23 @@ static void init(void)
 		.pm_update_cb = hidc_pm_update,
 	};
 
-	bt_gatt_hids_c_init(&hidc, &params);
+	for (size_t i = 0; i < ARRAY_SIZE(hidc); i++) {
+		bt_gatt_hids_c_init(&hidc[i], &params);
+	}
+	sys_slist_init(&keyboard_event_list);
 }
 
 static int assign_handles(struct bt_gatt_dm *dm)
 {
-	int err = bt_gatt_hids_c_handles_assign(dm, &hidc);
+	size_t i;
+	for (i = 0; i < ARRAY_SIZE(hidc); i++) {
+		if (!bt_gatt_hids_c_assign_check(&hidc[i])) {
+			break;
+		}
+	}
+	__ASSERT_NO_MSG(i < ARRAY_SIZE(hidc));
+
+	int err = bt_gatt_hids_c_handles_assign(dm, &hidc[i]);
 
 	if (err) {
 		LOG_ERR("Cannot assign handles (err:%d)", err);
@@ -151,7 +214,7 @@ static int assign_handles(struct bt_gatt_dm *dm)
 	return err;
 }
 
-void notify_config_forwarded(enum config_status status)
+static void notify_config_forwarded(enum config_status status)
 {
 	struct config_forwarded_event *event = new_config_forwarded_event();
 
@@ -161,9 +224,9 @@ void notify_config_forwarded(enum config_status status)
 	EVENT_SUBMIT(event);
 }
 
-void hidc_write_cb(struct bt_gatt_hids_c *hidc,
-		   struct bt_gatt_hids_c_rep_info *rep,
-		   u8_t err)
+static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
+			  struct bt_gatt_hids_c_rep_info *rep,
+			  u8_t err)
 {
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
@@ -173,9 +236,9 @@ void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 	}
 }
 
-u8_t hidc_read_cb(struct bt_gatt_hids_c *hidc,
-		  struct bt_gatt_hids_c_rep_info *rep,
-		  u8_t err, const u8_t *data)
+static u8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
+			  struct bt_gatt_hids_c_rep_info *rep,
+			  u8_t err, const u8_t *data)
 {
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
@@ -216,14 +279,24 @@ u8_t hidc_read_cb(struct bt_gatt_hids_c *hidc,
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
-		u32_t key = irq_lock();
-		if (next_event) {
-			EVENT_SUBMIT(next_event);
-			next_event = NULL;
+		struct keyboard_event_item *next_item = NULL;
+		k_spinlock_key_t key = k_spin_lock(&lock);
+		sys_snode_t *kbd_event_node = sys_slist_get(&keyboard_event_list);
+
+		if (kbd_event_node) {
+			next_item = CONTAINER_OF(kbd_event_node,
+						 struct keyboard_event_item,
+						 node);
+
+			EVENT_SUBMIT(next_item->evt);
+		} else if (next_mouse_event) {
+			EVENT_SUBMIT(next_mouse_event);
+			next_mouse_event = NULL;
 		} else {
 			usb_busy = false;
 		}
-		irq_unlock(key);
+		k_spin_unlock(&lock, key);
+		k_free(next_item);
 
 		return false;
 	}
@@ -251,7 +324,6 @@ static bool event_handler(const struct event_header *eh)
 			cast_ble_discovery_complete_event(eh);
 
 		assign_handles(event->dm);
-
 		return false;
 	}
 
@@ -270,10 +342,14 @@ static bool event_handler(const struct event_header *eh)
 		const struct ble_peer_event *event =
 			cast_ble_peer_event(eh);
 
-		if ((event->state == PEER_STATE_DISCONNECTED) &&
-		    bt_gatt_hids_c_assign_check(&hidc)) {
-			LOG_INF("HID device disconnected");
-			bt_gatt_hids_c_release(&hidc);
+		if (event->state == PEER_STATE_DISCONNECTED) {
+			for (size_t i = 0; i < ARRAY_SIZE(hidc); i++) {
+				if ((bt_gatt_hids_c_assign_check(&hidc[i])) &&
+				    (bt_gatt_hids_c_conn(&hidc[i]) == event->id)) {
+					LOG_INF("HID device disconnected");
+					bt_gatt_hids_c_release(&hidc[i]);
+				}
+			}
 		}
 
 		return false;
@@ -299,11 +375,12 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		/* TODO: Proper handling config event for multiple peers */
 		if (is_config_forward_event(eh)) {
 			const struct config_forward_event *event =
 				cast_config_forward_event(eh);
 
-			if (!bt_gatt_hids_c_ready_check(&hidc)) {
+			if (!bt_gatt_hids_c_ready_check(&hidc[0])) {
 				LOG_WRN("Cannot forward, peer disconnected");
 
 				notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
@@ -311,7 +388,7 @@ static bool event_handler(const struct event_header *eh)
 			}
 
 			struct bt_gatt_hids_c_rep_info *config_rep =
-				bt_gatt_hids_c_rep_find(&hidc,
+				bt_gatt_hids_c_rep_find(&hidc[0],
 					BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
 					REPORT_ID_USER_CONFIG);
 			if (!config_rep) {
@@ -345,7 +422,7 @@ static bool event_handler(const struct event_header *eh)
 				return pos;
 			}
 
-			int err = bt_gatt_hids_c_rep_write(&hidc, config_rep,
+			int err = bt_gatt_hids_c_rep_write(&hidc[0], config_rep,
 					hidc_write_cb, report, sizeof(report));
 			if (err) {
 				LOG_ERR("Writing report failed, err:%d", err);
@@ -363,7 +440,7 @@ static bool event_handler(const struct event_header *eh)
 				LOG_DBG("GATT read already pending");
 				return false;
 			} else {
-				if (!bt_gatt_hids_c_ready_check(&hidc)) {
+				if (!bt_gatt_hids_c_ready_check(&hidc[0])) {
 					LOG_WRN("Cannot forward, peer disconnected");
 
 					notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
@@ -371,7 +448,7 @@ static bool event_handler(const struct event_header *eh)
 				}
 
 				struct bt_gatt_hids_c_rep_info *config_rep =
-					bt_gatt_hids_c_rep_find(&hidc,
+					bt_gatt_hids_c_rep_find(&hidc[0],
 						BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
 						REPORT_ID_USER_CONFIG);
 				if (!config_rep) {
@@ -384,8 +461,8 @@ static bool event_handler(const struct event_header *eh)
 
 				channel_id = event->channel_id;
 
-				int err = bt_gatt_hids_c_rep_read(&hidc, config_rep,
-								  hidc_read_cb);
+				int err = bt_gatt_hids_c_rep_read(&hidc[0], config_rep,
+								  hidc_read_cfg);
 				if (err) {
 					LOG_ERR("Reading report failed, err:%d", err);
 					notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);

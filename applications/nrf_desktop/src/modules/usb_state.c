@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 static enum usb_state state;
 static u8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
-static enum in_report sent_report_type;
+static enum in_report sent_report_type = IN_REPORT_COUNT;
 
 static struct config_channel_state cfg_chan;
 
@@ -91,6 +91,9 @@ static void report_sent(bool error)
 	event->subscriber = &state;
 	event->error = error;
 	EVENT_SUBMIT(event);
+
+	/* Used to assert if previous report was sent before sending new one. */
+	sent_report_type = IN_REPORT_COUNT;
 }
 
 static void report_sent_cb(void)
@@ -153,6 +156,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 	}
 	int err = hid_int_ep_write(usb_dev, buffer, sizeof(buffer), NULL);
 
+	__ASSERT_NO_MSG(sent_report_type == IN_REPORT_COUNT);
 	sent_report_type = IN_REPORT_MOUSE;
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
@@ -187,13 +191,13 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 
 	int err = hid_int_ep_write(usb_dev, buffer, sizeof(buffer), NULL);
 
+	__ASSERT_NO_MSG(sent_report_type == IN_REPORT_COUNT);
 	sent_report_type = IN_REPORT_KEYBOARD_KEYS;
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
 		report_sent(true);
 	}
 }
-
 
 static void broadcast_usb_state(void)
 {
