@@ -22,22 +22,26 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
 
 struct bond_find_data {
-	bt_addr_le_t peer_address;
-	u8_t peer_id;
+	bt_addr_le_t peer_address[CONFIG_BT_MAX_PAIRED];
+	u8_t conn_count;
 	u8_t peer_count;
 };
 
 
 static bool scanning;
-static bool erasing_peer;
-
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
 	struct bond_find_data *bond_find_data = user_data;
 
-	if (bond_find_data->peer_id == bond_find_data->peer_count) {
-		bt_addr_le_copy(&bond_find_data->peer_address, &info->addr);
+	bt_addr_le_copy(&bond_find_data->peer_address[bond_find_data->peer_count],
+			&info->addr);
+
+	struct bt_conn *conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT,
+						      &info->addr);
+	if (conn) {
+		bond_find_data->conn_count++;
+		bt_conn_unref(conn);
 	}
 
 	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
@@ -58,12 +62,13 @@ static void scan_stop(void)
 static int configure_filters(void)
 {
 	bt_scan_filter_remove_all();
-
+	static_assert(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
+		      "Insufficient number of address filters");
 	static_assert(ARRAY_SIZE(bt_peripherals) <= CONFIG_BT_SCAN_SHORT_NAME_CNT,
 		      "Insufficient number of short name filers");
 
 	struct bond_find_data bond_find_data = {
-		.peer_id = 0,
+		.conn_count = 0,
 		.peer_count = 0,
 	};
 	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
@@ -71,22 +76,23 @@ static int configure_filters(void)
 	u8_t filter_mode = 0;
 	int err;
 
-	if ((bond_find_data.peer_id < bond_find_data.peer_count) &&
-	    (!erasing_peer)) {
+	if (bond_find_data.peer_count == CONFIG_BT_MAX_PAIRED) {
+		for (size_t i = 0; i < bond_find_data.peer_count; i++) {
+			err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,
+						 &bond_find_data.peer_address[i]);
+			if (err) {
+				LOG_ERR("Address filter cannot be added (err %d)", err);
+				goto error;
+			}
 
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,
-					 &bond_find_data.peer_address);
-		if (err) {
-			LOG_ERR("Address filter cannot be added (err %d)", err);
-			goto error;
+			char addr_str[BT_ADDR_LE_STR_LEN];
+			bt_addr_le_to_str(&bond_find_data.peer_address[i],
+					  addr_str, sizeof(addr_str));
+			LOG_INF("Address filter added %s", log_strdup(addr_str));
 		}
 		filter_mode |= BT_SCAN_ADDR_FILTER;
-
-		char addr_str[BT_ADDR_LE_STR_LEN];
-		bt_addr_le_to_str(&bond_find_data.peer_address,
-				  addr_str, sizeof(addr_str));
-		LOG_INF("Address filter added %s", log_strdup(addr_str));
 	} else {
+		LOG_INF("Device type filters added");
 		/* Bluetooth scan filters are defined in separate header. */
 		for (size_t i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
 			const struct bt_scan_short_name filter = {
@@ -122,6 +128,33 @@ error:
 	return err;
 }
 
+static void scan_start(void)
+{
+	int err;
+
+	if (scanning) {
+		scan_stop();
+	}
+	err = configure_filters();
+	if (err) {
+		LOG_ERR("Cannot set filters (err %d)", err);
+		goto error;
+	}
+
+	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	if (err) {
+		LOG_ERR("Cannot start scanning (err %d)", err);
+		goto error;
+	}
+	LOG_INF("Scan started");
+	scanning = true;
+	return;
+
+error:
+	LOG_ERR("Scanning failed to start (err %d)", err);
+	module_set_state(MODULE_STATE_ERROR);
+}
+
 static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
 			      bool connectable)
@@ -139,6 +172,8 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
 	LOG_WRN("Connecting failed");
+	/* Restarting scan. */
+	scan_start();
 }
 
 static void scan_connecting(struct bt_scan_device_info *device_info,
@@ -236,48 +271,21 @@ static void scan_init(void)
 	bt_conn_cb_register(&conn_callbacks);
 }
 
-static void scan_start(void)
-{
-	int err;
-
-	if (scanning) {
-		scan_stop();
-	}
-	err = configure_filters();
-	if (err) {
-		LOG_ERR("Cannot set filters (err %d)", err);
-		goto error;
-	}
-
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
-		LOG_ERR("Cannot start scanning (err %d)", err);
-		goto error;
-	}
-	LOG_INF("Scan started");
-	scanning = true;
-	return;
-
-error:
-	LOG_ERR("Scanning failed to start (err %d)", err);
-	module_set_state(MODULE_STATE_ERROR);
-}
-
 void disconnect_peer(void)
 {
 	struct bond_find_data bond_find_data = {
-		.peer_id = 0,
+		.conn_count = 0,
 		.peer_count = 0,
 	};
 	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
-	__ASSERT_NO_MSG(bond_find_data.peer_count <= 1);
 
-	if (bond_find_data.peer_count > 0) {
+	for (size_t i = 0; i < bond_find_data.peer_count; i++) {
 		struct bt_conn *conn =
 			bt_conn_lookup_addr_le(BT_ID_DEFAULT,
-					&bond_find_data.peer_address);
+					&bond_find_data.peer_address[i]);
 		if (conn) {
-			bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			bt_conn_disconnect(conn,
+					BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 			bt_conn_unref(conn);
 		}
 	}
@@ -339,25 +347,13 @@ static bool event_handler(const struct event_header *eh)
 			cast_ble_peer_operation_event(eh);
 
 		switch (event->op) {
-		case PEER_OPERATION_ERASE_ADV: {
-			scan_stop();
-			disconnect_peer();
-			erasing_peer = true;
-			scan_start();
-			break;
-		}
 
 		case PEER_OPERATION_ERASED:
-			erasing_peer = false;
-			break;
-
-		case PEER_OPERATION_ERASE_ADV_CANCEL:
-			scan_stop();
-			disconnect_peer();
-			erasing_peer = false;
 			scan_start();
 			break;
 
+		case PEER_OPERATION_ERASE_ADV:
+		case PEER_OPERATION_ERASE_ADV_CANCEL:
 		case PEER_OPERATION_SELECT:
 		case PEER_OPERATION_SELECTED:
 		case PEER_OPERATION_ERASE:
@@ -379,6 +375,16 @@ static bool event_handler(const struct event_header *eh)
 		int err = bt_gatt_dm_data_release(event->dm);
 		if (err) {
 			LOG_ERR("Discovery data release failed (err %d)", err);
+		}
+
+
+		struct bond_find_data bond_find_data = {
+			.conn_count = 0,
+			.peer_count = 0,
+		};
+		bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
+		if (bond_find_data.conn_count < CONFIG_BT_MAX_CONN) {
+			scan_start();
 		}
 
 		return false;
