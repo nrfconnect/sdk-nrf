@@ -6,7 +6,6 @@
 
 config BT_GATT_THROUGHPUT
 	bool
-	select BT_GATT_DYNAMIC_DB
 	prompt "Throughput service"
 	default n
 	help

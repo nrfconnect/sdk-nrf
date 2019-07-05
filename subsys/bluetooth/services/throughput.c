@@ -99,16 +99,14 @@ static ssize_t read_callback(struct bt_conn *conn,
 		conn, attr, buf, len, offset, attr->user_data, len);
 }
 
-/* Throughput service declaration */
-static struct bt_gatt_attr attrs[] = {
-	BT_GATT_PRIMARY_SERVICE(BT_UUID_THROUGHPUT),
+
+BT_GATT_SERVICE_DEFINE(throughput_svc,
+BT_GATT_PRIMARY_SERVICE(BT_UUID_THROUGHPUT),
 	BT_GATT_CHARACTERISTIC(BT_UUID_THROUGHPUT_CHAR,
 		BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
 		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,
 		read_callback, write_callback, &met),
-};
-
-static struct bt_gatt_service throughput_svc = BT_GATT_SERVICE(attrs);
+);
 
 int bt_gatt_throughput_init(struct bt_gatt_throughput *throughput,
 			    const struct bt_gatt_throughput_cb *cb)
@@ -118,8 +116,6 @@ int bt_gatt_throughput_init(struct bt_gatt_throughput *throughput,
 	}
 
 	callbacks = cb;
-
-	bt_gatt_service_register(&throughput_svc);
 
 	return 0;
 }
