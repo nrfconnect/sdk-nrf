@@ -6,7 +6,6 @@
 
 config BT_GATT_NUS
 	bool "Nordic UART service"
-	select BT_GATT_DYNAMIC_DB
 	help
 	  Enable Nordic UART service.
 if BT_GATT_NUS
