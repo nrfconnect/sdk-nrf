@@ -50,6 +50,11 @@ Peripherals configured as Non-Secure
    * TWIM2
    * UARTE0, UARTE1
 
+If you want to use software breakpoints when stepping through your code, it is necessary to disable the lock bit on permissions for flash and RAM.
+You can use the :option:`CONFIG_SPM_DEBUG` option to prevent SPM from setting this lock bit.
+Keep in mind however, that this configuration disables some security features and must never be used in production.
+By setting :option:`CONFIG_SPM_DEBUG` the SPM does not set the lock bit for the permissions; hence disabling some of the security features in the SPM and should never be used in production.
+
 .. _lib_spm_secure_services:
 
 Secure Services

@@ -55,7 +55,9 @@ config SPM_DEBUG
 	default y if DEBUG_OPTIMIZATIONS
 	default n
 	help
-	  Disables the lock bit of the flash and sram allowing it to be changed by a
+	  Disables the lock bit of the flash and SRAM.
+	  This allows a debugger to write software breakpoints to flash
+	  and to modify SRAM.
 	  debugger so that software breakpoints can be written to flash and sram can
 	  be modified.
 
