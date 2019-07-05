@@ -48,6 +48,17 @@ menuconfig IS_SPM
 	select TRUSTED_EXECUTION_SECURE
 
 if IS_SPM
+
+config SPM_DEBUG
+	bool "SPM debug mode"
+	default y if NO_OPTIMIZATIONS
+	default y if DEBUG_OPTIMIZATIONS
+	default n
+	help
+	  Disables the lock bit of the flash and sram allowing it to be changed by a
+	  debugger so that software breakpoints can be written to flash and sram can
+	  be modified.
+
 # Define used by partition_manager.py to deduce size of partition
 config PM_PARTITION_SIZE_SPM
 	hex "Flash space reserved for SPM"

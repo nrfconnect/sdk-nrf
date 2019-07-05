@@ -29,6 +29,14 @@
 #define NON_SECURE_APP_ADDRESS DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0
 #endif /* USE_PARTITION_MANAGER */
 
+#if defined(CONFIG_SPM_DEBUG)
+#define SPM_DEBUG true
+#warning "SPM debug is enabled, so some security features are disabled. Do not"\
+	 " use this configuration in the final product."
+#else
+#define SPM_DEBUG false
+#endif /* CONFIG_SPM_DEBUG */
+
 #define FIRST_NONSECURE_ADDRESS (NON_SECURE_APP_ADDRESS)
 #define LAST_SECURE_REGION_INDEX \
 	((FIRST_NONSECURE_ADDRESS / FLASH_SECURE_ATTRIBUTION_REGION_SIZE) - 1)
@@ -135,7 +143,6 @@ static void spm_config_nsc_flash(void)
 }
 #endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
 
-
 static void spm_config_flash(void)
 {
 	/* Regions of flash up to and including SPM are configured as Secure.
@@ -145,11 +152,11 @@ static void spm_config_flash(void)
 		/* Configuration for Secure Regions */
 		[0 ... LAST_SECURE_REGION_INDEX] =
 			FLASH_READ | FLASH_WRITE | FLASH_EXEC |
-			FLASH_LOCK | FLASH_SECURE,
+			(SPM_DEBUG ? 0 : FLASH_LOCK) | FLASH_SECURE,
 		/* Configuration for Non Secure Regions */
 		[(LAST_SECURE_REGION_INDEX + 1) ... 31] =
 			FLASH_READ | FLASH_WRITE | FLASH_EXEC |
-			FLASH_LOCK | FLASH_NONSEC,
+			(SPM_DEBUG ? 0 : FLASH_LOCK) | FLASH_NONSEC,
 	};
 
 	PRINT("Flash region\t\tDomain\t\tPermissions\n");
@@ -193,10 +200,10 @@ static void spm_config_sram(void)
 	static const u32_t sram_perm[] = {
 		/* Configuration for Regions 0 - 7 (0 - 64 kB) */
 		[0 ... 7] = SRAM_READ | SRAM_WRITE | SRAM_EXEC |
-			    SRAM_LOCK | SRAM_SECURE,
+			    (SPM_DEBUG ? 0 : SRAM_LOCK) | SRAM_SECURE,
 		/* Configuration for Regions 8 - 31 (64 - 256 kB) */
 		[8 ... 31] = SRAM_READ | SRAM_WRITE | SRAM_EXEC |
-			     SRAM_LOCK | SRAM_NONSEC,
+			     (SPM_DEBUG ? 0 : SRAM_LOCK) | SRAM_NONSEC,
 	};
 
 	PRINT("SRAM region\t\tDomain\t\tPermissions\n");
