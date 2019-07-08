@@ -36,6 +36,12 @@ LED 1:
 LED 2:
    * On when connected.
 
+Button 1:
+   * Confirm the passkey value that is printed on the COM listener to pair/bond with the other device.
+
+Button 2:
+   * Reject the passkey value that is printed on the COM listener to prevent pairing/bonding with the other device.
+
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_uart`
@@ -56,6 +62,9 @@ After programming the sample to your board, test it by performing the following 
 #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 #. Connect to the device using nRF Connect for Mobile.
    Observe that LED 2 is on.
+#. Optionally, pair/bond with the device with MITM protection.
+   To confirm pairing/bonding, press Button 1 on the device and accept the passkey value on the smartphone.
+   If tested with :ref:`central_uart` use the Button 1 on the both devices to confirm bonding.
 #. In the app, observe that the services are shown in the connected device.
 #. Select the UART RX characteristic value in nRF Connect.
    You can write hexadecimal ASCII values to the UART RX and get the text displayed on the COM listener.
@@ -73,6 +82,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`nus_service_readme`
+* :ref:`dk_buttons_and_leds_readme`
 
 In addition, it uses the following Zephyr libraries:
 
