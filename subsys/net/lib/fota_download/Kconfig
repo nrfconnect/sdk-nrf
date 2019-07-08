@@ -6,7 +6,7 @@
 
 menuconfig FOTA_DOWNLOAD
 	bool "FOTA Download"
-	select NRF_DOWNLOAD_CLIENT
+	select HTTP_DOWNLOAD
 	select IMG_MANAGER
 	select FLASH
 	select FLASH_PAGE_LAYOUT

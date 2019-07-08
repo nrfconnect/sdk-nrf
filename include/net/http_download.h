@@ -4,21 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-/**@file download_client.h
+/**@file http_download.h
  *
- * @defgroup dl_client Download client
+ * @defgroup http_downloader HTTP downloader
  * @{
- * @brief Client for downloading an object.
+ * @brief Library for downloading files over HTTP or HTTPS.
  *
- * @details The download client provides APIs for:
+ * @details The HTTP downloader provides APIs for:
  *  - connecting to a remote server,
- *  - downloading an object from the server,
+ *  - downloading a file from the server,
  *  - disconnecting from the server,
- *  - receiving asynchronous event notifications on the download status.
+ *  - receiving asynchronous event notifications on the download progress.
  */
 
-#ifndef DOWNLOAD_CLIENT_H__
-#define DOWNLOAD_CLIENT_H__
+#ifndef HTTP_DOWNLOAD_H__
+#define HTTP_DOWNLOAD_H__
 
 #include <zephyr.h>
 #include <zephyr/types.h>
@@ -28,13 +28,13 @@ extern "C" {
 #endif
 
 /**
- * @brief Download client event IDs.
+ * @brief HTTP download event IDs.
  */
-enum download_client_evt_id {
+enum http_download_evt_id {
 	/** Event contains a fragment. */
-	DOWNLOAD_CLIENT_EVT_FRAGMENT,
+	HTTP_DOWNLOAD_EVT_FRAGMENT,
 	/** Download complete. */
-	DOWNLOAD_CLIENT_EVT_DONE,
+	HTTP_DOWNLOAD_EVT_DONE,
 	/**
 	 * An error has occurred during download and
 	 * the connection to the server has been lost.
@@ -42,20 +42,20 @@ enum download_client_evt_id {
 	 * - ECONNRESET: peer closed connection
 	 *
 	 * In both cases, the application should
-	 * disconnect (@ref download_client_disconnect)
-	 * and connect (@ref download_client_connect)
+	 * disconnect (@ref http_download_disconnect)
+	 * and connect (@ref http_download_connect)
 	 * before reattempting the download, to
 	 * reinitialize the network socket.
 	 */
-	DOWNLOAD_CLIENT_EVT_ERROR,
+	HTTP_DOWNLOAD_EVT_ERROR,
 };
 
 /**
- * @brief Download client event.
+ * @brief HTTP download event.
  */
-struct download_client_evt {
+struct http_download_evt {
 	/** Event ID. */
-	enum download_client_evt_id id;
+	enum http_download_evt_id id;
 	union {
 		/** Error cause. */
 		int error;
@@ -68,9 +68,9 @@ struct download_client_evt {
 };
 
 /**
- * @brief Download client TLS and APN configuration options.
+ * @brief HTTP download TLS and APN configuration options.
  */
-struct download_client_cfg {
+struct http_download_cfg {
 	/** TLS security tag. If -1, TLS is disabled. */
 	int sec_tag;
 	/** Access point name identifying a packet data network.
@@ -80,29 +80,28 @@ struct download_client_cfg {
 };
 
 /**
- * @brief Download client asynchronous event handler.
+ * @brief HTTP download asynchronous event handler.
  *
  * Through this callback, the application receives events, such as
  * download of a fragment, download completion, or errors.
  *
  * If the callback returns a non-zero value, the download stops.
- * To resume the download, use @ref download_client_start().
+ * To resume the download, use @ref http_download_start().
  *
  * @param[in] event	The event.
  *
  * @return Zero to continue the download, non-zero otherwise.
  */
-typedef int (*download_client_callback_t)(
-	const struct download_client_evt *event);
+typedef int (*http_download_callback_t)(const struct http_download_evt *event);
 
 /**
- * @brief Download client instance.
+ * @brief HTTP download instance.
  */
-struct download_client {
+struct http_download {
 	/** HTTP socket. */
 	int fd;
 	/** HTTP response buffer. */
-	char buf[CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE];
+	char buf[CONFIG_HTTP_DOWNLOAD_MAX_RESPONSE_SIZE];
 	/** Buffer offset. */
 	size_t offset;
 
@@ -123,30 +122,29 @@ struct download_client {
 	/** File name, null-terminated. */
 	char *file;
 	/** TLS and APN configuration options. */
-	struct download_client_cfg config;
+	struct http_download_cfg config;
 
 	/** Internal thread ID. */
 	k_tid_t tid;
 	/** Internal download thread. */
 	struct k_thread thread;
 	/** Internal thread stack. */
-	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_NRF_DOWNLOAD_CLIENT_STACK_SIZE);
+	K_THREAD_STACK_MEMBER(thread_stack, CONFIG_HTTP_DOWNLOAD_STACK_SIZE);
 
 	/** Event handler. */
-	download_client_callback_t callback;
+	http_download_callback_t callback;
 };
 
 /**
- * @brief Initialize the download client.
+ * @brief Initialize the HTTP downloader.
  *
  * @param[in] client	Client instance.
  * @param[in] callback	Callback function.
  *
  * @retval int Zero on success, otherwise a negative error code.
  */
-int download_client_init(struct download_client *client,
-			 download_client_callback_t callback);
+int http_download_init(struct http_download *client,
+		       http_download_callback_t callback);
 
 /**
  * @brief Establish a connection to the server.
@@ -157,16 +155,16 @@ int download_client_init(struct download_client *client,
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_connect(struct download_client *client, char *host,
-			    struct download_client_cfg *config);
+int http_download_connect(struct http_download *client, char *host,
+			  struct http_download_cfg *config);
 
 /**
  * @brief Download a file.
  *
  * The download is carried out in fragments of @c
- * CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE bytes,
+ * CONFIG_HTTP_DOWNLOAD_MAX_FRAGMENT_SIZE bytes,
  * which are delivered to the application
- * via @ref DOWNLOAD_CLIENT_EVT_FRAGMENT events.
+ * via @ref HTTP_DOWNLOAD_EVT_FRAGMENT events.
  *
  * @param[in] client	Client instance.
  * @param[in] file	File to download, null-terminated.
@@ -175,22 +173,21 @@ int download_client_connect(struct download_client *client, char *host,
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_start(struct download_client *client, char *file,
-			  size_t from);
+int http_download_start(struct http_download *client, char *file, size_t from);
 
 /**
  * @brief Pause the download.
  *
  * @param[in] client	Client instance.
  */
-void download_client_pause(struct download_client *client);
+void http_download_pause(struct http_download *client);
 
 /**
  * @brief Resume the download.
  *
  * @param[in] client	Client instance.
  */
-void download_client_resume(struct download_client *client);
+void http_download_resume(struct http_download *client);
 
 /**
  * @brief Retrieve the size of the file being downloaded, in bytes.
@@ -202,7 +199,7 @@ void download_client_resume(struct download_client *client);
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_file_size_get(struct download_client *client, size_t *size);
+int http_download_file_size_get(struct http_download *client, size_t *size);
 
 /**
  * @brief Disconnect from the server.
@@ -211,12 +208,12 @@ int download_client_file_size_get(struct download_client *client, size_t *size);
  *
  * @return Zero on success, a negative error code otherwise.
  */
-int download_client_disconnect(struct download_client *client);
+int http_download_disconnect(struct http_download *client);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DOWNLOAD_CLIENT_H__ */
+#endif /* HTTP_DOWNLOAD_H__ */
 
 /**@} */

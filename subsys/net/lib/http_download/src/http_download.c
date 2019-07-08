@@ -8,13 +8,13 @@
 #include <string.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
-#include <toolchain/common.h>
 #include <net/socket.h>
 #include <net/tls_credentials.h>
-#include <download_client.h>
+#include <net/http_download.h>
+#include <toolchain/common.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(download_client, CONFIG_NRF_DOWNLOAD_CLIENT_LOG_LEVEL);
+LOG_MODULE_REGISTER(http_download, CONFIG_HTTP_DOWNLOAD_LOG_LEVEL);
 
 #define GET_TEMPLATE                                                           \
 	"GET /%s HTTP/1.1\r\n"                                                 \
@@ -23,12 +23,12 @@ LOG_MODULE_REGISTER(download_client, CONFIG_NRF_DOWNLOAD_CLIENT_LOG_LEVEL);
 	"Range: bytes=%u-%u\r\n"                                               \
 	"\r\n"
 
-BUILD_ASSERT_MSG(CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE <=
-		 CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
+BUILD_ASSERT_MSG(CONFIG_HTTP_DOWNLOAD_MAX_FRAGMENT_SIZE <=
+		 CONFIG_HTTP_DOWNLOAD_MAX_RESPONSE_SIZE,
 		 "The response buffer must accommodate for a full fragment");
 
 #if defined(CONFIG_LOG) && !defined(CONFIG_LOG_IMMEDIATE)
-BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS) ?
+BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_HTTP_DOWNLOAD_LOG_HEADERS) ?
 			 CONFIG_LOG_BUFFER_SIZE >= 2048 : 1,
 		 "Please increase log buffer sizer");
 #endif
@@ -37,11 +37,11 @@ static int socket_timeout_set(int fd)
 {
 	int err;
 
-	if (CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS == K_FOREVER) {
+	if (CONFIG_HTTP_DOWNLOAD_SOCK_TIMEOUT_MS == K_FOREVER) {
 		return 0;
 	}
 
-	const u32_t timeout_ms = CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS;
+	const u32_t timeout_ms = CONFIG_HTTP_DOWNLOAD_SOCK_TIMEOUT_MS;
 
 	struct timeval timeo = {
 		.tv_sec = (timeout_ms / 1000),
@@ -65,10 +65,9 @@ static int socket_sectag_set(int fd, int sec_tag)
 	int verify;
 	sec_tag_t sec_tag_list[] = { sec_tag };
 
-	enum {
-		NONE = 0,
-		OPTIONAL = 1,
-		REQUIRED = 2,
+	enum { NONE = 0,
+	       OPTIONAL = 1,
+	       REQUIRED = 2,
 	};
 
 	verify = REQUIRED;
@@ -93,7 +92,7 @@ static int socket_bind(int fd, const char *apn)
 {
 	int err;
 	size_t len;
-	struct ifreq ifr = {0};
+	struct ifreq ifr = { 0 };
 
 	__ASSERT_NO_MSG(apn);
 
@@ -114,7 +113,7 @@ static int socket_bind(int fd, const char *apn)
 }
 
 static int resolve_and_connect(int family, const char *host,
-			       struct download_client_cfg *cfg)
+			       struct http_download_cfg *cfg)
 {
 	int fd;
 	int err;
@@ -182,7 +181,7 @@ static int resolve_and_connect(int family, const char *host,
 	err = -1;
 
 	for (addr = info; addr != NULL; addr = addr->ai_next) {
-		struct sockaddr * const sa = addr->ai_addr;
+		struct sockaddr *const sa = addr->ai_addr;
 
 		switch (sa->sa_family) {
 		case AF_INET6:
@@ -212,13 +211,13 @@ cleanup:
 	return fd;
 }
 
-static int socket_send(const struct download_client *client, size_t len)
+static int socket_send(const struct http_download *httpd, size_t len)
 {
 	int sent;
 	size_t off = 0;
 
 	while (len) {
-		sent = send(client->fd, client->buf + off, len, 0);
+		sent = send(httpd->fd, httpd->buf + off, len, 0);
 		if (sent <= 0) {
 			return -EIO;
 		}
@@ -230,39 +229,39 @@ static int socket_send(const struct download_client *client, size_t len)
 	return 0;
 }
 
-static int get_request_send(struct download_client *client)
+static int get_request_send(struct http_download *httpd)
 {
 	int err;
 	int len;
 	size_t off;
 
-	__ASSERT_NO_MSG(client);
-	__ASSERT_NO_MSG(client->host);
-	__ASSERT_NO_MSG(client->file);
+	__ASSERT_NO_MSG(httpd);
+	__ASSERT_NO_MSG(httpd->host);
+	__ASSERT_NO_MSG(httpd->file);
 
 	/* Offset of last byte in range (Content-Range) */
-	off = client->progress + CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE - 1;
+	off = httpd->progress + CONFIG_HTTP_DOWNLOAD_MAX_FRAGMENT_SIZE - 1;
 
-	if (client->file_size != 0) {
+	if (httpd->file_size != 0) {
 		/* Don't request bytes past the end of file */
-		off = MIN(off, client->file_size);
+		off = MIN(off, httpd->file_size);
 	}
 
-	len = snprintf(client->buf, CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
-		       GET_TEMPLATE, client->file, client->host,
-		       client->progress, off);
+	len = snprintf(httpd->buf, CONFIG_HTTP_DOWNLOAD_MAX_RESPONSE_SIZE,
+		       GET_TEMPLATE, httpd->file, httpd->host,
+		       httpd->progress, off);
 
-	if (len < 0 || len > CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE) {
+	if (len < 0 || len > CONFIG_HTTP_DOWNLOAD_MAX_RESPONSE_SIZE) {
 		LOG_ERR("Cannot create GET request, buffer too small");
 		return -ENOMEM;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
+	if (IS_ENABLED(CONFIG_HTTP_DOWNLOAD_LOG_HEADERS)) {
+		LOG_HEXDUMP_DBG(httpd->buf, len, "HTTP request");
 	}
 
 	LOG_DBG("Sending HTTP request");
-	err = socket_send(client, len);
+	err = socket_send(httpd, len);
 	if (err) {
 		LOG_ERR("Failed to send HTTP request, errno %d", errno);
 		return err;
@@ -276,12 +275,12 @@ static int get_request_send(struct download_client *client)
  *  0 if the header has been fully received
  * -1 on error
  */
-static int header_parse(struct download_client *client)
+static int header_parse(struct http_download *httpd)
 {
 	char *p;
 	size_t hdr;
 
-	p = strstr(client->buf, "\r\n\r\n");
+	p = strstr(httpd->buf, "\r\n\r\n");
 	if (!p) {
 		/* Awaiting full GET response */
 		LOG_DBG("Awaiting full header in response");
@@ -289,19 +288,19 @@ static int header_parse(struct download_client *client)
 	}
 
 	/* Offset of the end of the HTTP header in the buffer */
-	hdr = p + strlen("\r\n\r\n") - client->buf;
+	hdr = p + strlen("\r\n\r\n") - httpd->buf;
 
-	__ASSERT(hdr < sizeof(client->buf), "Buffer overflow");
+	__ASSERT(hdr < sizeof(httpd->buf), "Buffer overflow");
 
 	LOG_DBG("GET header size: %u", hdr);
 
-	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(client->buf, hdr, "GET");
+	if (IS_ENABLED(CONFIG_HTTP_DOWNLOAD_LOG_HEADERS)) {
+		LOG_HEXDUMP_DBG(httpd->buf, hdr, "GET");
 	}
 
 	/* If file size is not known, read it from the header */
-	if (client->file_size == 0) {
-		p = strstr(client->buf, "Content-Range: bytes");
+	if (httpd->file_size == 0) {
+		p = strstr(httpd->buf, "Content-Range: bytes");
 		if (!p) {
 			/* Cannot continue */
 			LOG_ERR("Server did not send "
@@ -315,73 +314,69 @@ static int header_parse(struct download_client *client)
 			return -1;
 		}
 
-		client->file_size = atoi(p + 1);
+		httpd->file_size = atoi(p + 1);
 
-		LOG_DBG("File size = %d", client->file_size);
+		LOG_DBG("File size = %d", httpd->file_size);
 	}
 
-	p = strstr(client->buf, "Connection: close");
+	p = strstr(httpd->buf, "Connection: close");
 	if (p) {
 		LOG_WRN("Peer closed connection, will attempt to re-connect");
-		client->connection_close = true;
+		httpd->connection_close = true;
 	}
 
-	if (client->offset != hdr) {
+	if (httpd->offset != hdr) {
 		/* The current buffer contains some payload bytes.
 		 * Copy them at the beginning of the buffer
 		 * then update the offset.
 		 */
-		LOG_WRN("Copying %u payload bytes", client->offset - hdr);
-		memcpy(client->buf, client->buf + hdr, client->offset - hdr);
+		LOG_WRN("Copying %u payload bytes", httpd->offset - hdr);
+		memcpy(httpd->buf, httpd->buf + hdr, httpd->offset - hdr);
 
-		client->offset -= hdr;
+		httpd->offset -= hdr;
 	} else {
 		/* Reset the offset.
 		 * The payload is received in an empty buffer.
 		 */
-		client->offset = 0;
+		httpd->offset = 0;
 	}
 
 	return 0;
 }
 
-static int fragment_evt_send(const struct download_client *client)
+static int fragment_evt_send(const struct http_download *httpd)
 {
-	__ASSERT(client->offset <= CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE,
+	__ASSERT(httpd->offset <= CONFIG_HTTP_DOWNLOAD_MAX_FRAGMENT_SIZE,
 		 "Fragment overflow!");
 
-	__ASSERT(client->offset <= CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
+	__ASSERT(httpd->offset <= CONFIG_HTTP_DOWNLOAD_MAX_RESPONSE_SIZE,
 		 "Buffer overflow!");
 
-	const struct download_client_evt evt = {
-		.id = DOWNLOAD_CLIENT_EVT_FRAGMENT,
-		.fragment = {
-			.buf = client->buf,
-			.len = client->offset,
-		}
-	};
+	const struct http_download_evt evt = { .id = HTTP_DOWNLOAD_EVT_FRAGMENT,
+					       .fragment = {
+						       .buf = httpd->buf,
+						       .len = httpd->offset,
+					       } };
 
-	return client->callback(&evt);
+	return httpd->callback(&evt);
 }
 
-static void error_evt_send(const struct download_client *dl, int error)
+static void error_evt_send(const struct http_download *dl, int error)
 {
 	/* Error will be sent as negative. */
 	__ASSERT_NO_MSG(error > 0);
 
-	const struct download_client_evt evt = {
-		.id = DOWNLOAD_CLIENT_EVT_ERROR,
-		.error = -error
-	};
+	const struct http_download_evt evt = { .id = HTTP_DOWNLOAD_EVT_ERROR,
+					       .error = -error };
 
 	dl->callback(&evt);
 }
 
-void download_thread(void *client, void *a, void *b)
+void download_thread(void *httpd, void *a, void *b)
 {
 	int rc;
 	size_t len;
-	struct download_client *const dl = client;
+	struct http_download *const dl = httpd;
 
 restart_and_suspend:
 	k_thread_suspend(dl->tid);
@@ -442,7 +437,7 @@ restart_and_suspend:
 		LOG_INF("Downloaded bytes: %u/%u", dl->progress, dl->file_size);
 
 		/* Have we received a whole fragment or the whole file? */
-		if ((dl->offset < CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE) &&
+		if ((dl->offset < CONFIG_HTTP_DOWNLOAD_MAX_FRAGMENT_SIZE) &&
 		    (dl->progress != dl->file_size)) {
 			LOG_DBG("Awaiting full fragment (%u)", dl->offset);
 			continue;
@@ -460,8 +455,8 @@ restart_and_suspend:
 
 		if (dl->progress == dl->file_size) {
 			LOG_INF("Download complete");
-			const struct download_client_evt evt = {
-				.id = DOWNLOAD_CLIENT_EVT_DONE,
+			const struct http_download_evt evt = {
+				.id = HTTP_DOWNLOAD_EVT_DONE,
 			};
 			dl->callback(&evt);
 			/* Restart and suspend */
@@ -475,8 +470,8 @@ restart_and_suspend:
 		/* Attempt to reconnect if the connection was closed */
 		if (dl->connection_close) {
 			dl->connection_close = false;
-			download_client_disconnect(dl);
-			download_client_connect(dl, dl->host, &dl->config);
+			http_download_disconnect(dl);
+			http_download_connect(dl, dl->host, &dl->config);
 		}
 
 		rc = get_request_send(dl);
@@ -491,69 +486,67 @@ restart_and_suspend:
 	goto restart_and_suspend;
 }
 
-int download_client_init(struct download_client *const client,
-			 download_client_callback_t callback)
+int http_download_init(struct http_download *const httpd,
+		       http_download_callback_t callback)
 {
-	if (client == NULL || callback == NULL) {
+	if (httpd == NULL || callback == NULL) {
 		return -EINVAL;
 	}
 
-	client->fd = -1;
-	client->callback = callback;
+	httpd->fd = -1;
+	httpd->callback = callback;
 
 	/* The thread is spawned now, but it will suspend itself;
 	 * it is resumed when the download is started via the API.
 	 */
-	client->tid =
-		k_thread_create(&client->thread, client->thread_stack,
-				K_THREAD_STACK_SIZEOF(client->thread_stack),
-				download_thread, client, NULL, NULL,
+	httpd->tid =
+		k_thread_create(&httpd->thread, httpd->thread_stack,
+				K_THREAD_STACK_SIZEOF(httpd->thread_stack),
+				download_thread, httpd, NULL, NULL,
 				K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
 
 	return 0;
 }
 
-int download_client_connect(struct download_client *client, char *host,
-			    struct download_client_cfg *config)
+int http_download_connect(struct http_download *httpd, char *host,
+			  struct http_download_cfg *config)
 {
 	int err;
 
-	if (client == NULL || host == NULL || config == NULL) {
+	if (httpd == NULL || host == NULL || config == NULL) {
 		return -EINVAL;
 	}
 
-	if (!IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_TLS)) {
+	if (!IS_ENABLED(CONFIG_HTTP_DOWNLOAD_TLS)) {
 		if (config->sec_tag != -1) {
 			return -EINVAL;
 		}
 	}
 
-	if (client->fd != -1) {
+	if (httpd->fd != -1) {
 		/* Already connected */
 		return 0;
 	}
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
-	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_IPV6)) {
-		client->fd =
-			resolve_and_connect(AF_INET6, host, config);
+	if (IS_ENABLED(CONFIG_HTTP_DOWNLOAD_IPV6)) {
+		httpd->fd = resolve_and_connect(AF_INET6, host, config);
 	}
-	if (client->fd < 0) {
-		client->fd =
-			resolve_and_connect(AF_INET, host, config);
+	if (httpd->fd < 0) {
+		httpd->fd = resolve_and_connect(AF_INET, host, config);
 	}
 
-	if (client->fd < 0) {
+	if (httpd->fd < 0) {
 		return -EINVAL;
 	}
 
-	client->host = host;
-	client->config = *config;
+	httpd->host = host;
+	httpd->config = *config;
 
 	LOG_INF("Connected");
 
 	/* Set socket timeout, if configured */
-	err = socket_timeout_set(client->fd);
+	err = socket_timeout_set(httpd->fd);
 	if (err) {
 		return err;
 	}
@@ -561,72 +554,71 @@ int download_client_connect(struct download_client *client, char *host,
 	return 0;
 }
 
-int download_client_disconnect(struct download_client *const client)
+int http_download_disconnect(struct http_download *const httpd)
 {
 	int err;
 
-	if (client == NULL || client->fd < 0) {
+	if (httpd == NULL || httpd->fd < 0) {
 		return -EINVAL;
 	}
 
-	err = close(client->fd);
+	err = close(httpd->fd);
 	if (err) {
 		LOG_ERR("Failed to close socket, errno %d", errno);
 		return -errno;
 	}
 
-	client->fd = -1;
+	httpd->fd = -1;
 
 	return 0;
 }
 
-int download_client_start(struct download_client *client, char *file,
-			  size_t from)
+int http_download_start(struct http_download *httpd, char *file, size_t from)
 {
 	int err;
 
-	if (client == NULL || client->fd < 0) {
+	if (httpd == NULL || httpd->fd < 0) {
 		return -EINVAL;
 	}
 
-	client->file = file;
-	client->file_size = 0;
-	client->progress = from;
+	httpd->file = file;
+	httpd->file_size = 0;
+	httpd->progress = from;
 
-	client->offset = 0;
-	client->has_header = false;
+	httpd->offset = 0;
+	httpd->has_header = false;
 
-	LOG_INF("Downloading: %s [%u]", log_strdup(client->file),
-		client->progress);
+	LOG_INF("Downloading: %s [%u]", log_strdup(httpd->file),
+		httpd->progress);
 
-	err = get_request_send(client);
+	err = get_request_send(httpd);
 	if (err) {
 		return err;
 	}
 
 	/* Let the thread run */
-	k_thread_resume(client->tid);
+	k_thread_resume(httpd->tid);
 
 	return 0;
 }
 
-void download_client_pause(struct download_client *client)
+void http_download_pause(struct http_download *httpd)
 {
-	k_thread_suspend(client->tid);
+	k_thread_suspend(httpd->tid);
 }
 
-void download_client_resume(struct download_client *client)
+void http_download_resume(struct http_download *httpd)
 {
-	k_thread_resume(client->tid);
+	k_thread_resume(httpd->tid);
 }
 
-int download_client_file_size_get(struct download_client *client, size_t *size)
+int http_download_file_size_get(struct http_download *httpd, size_t *size)
 {
-	if (!client || !size) {
+	if (!httpd || !size) {
 		return -EINVAL;
 	}
 
-	*size = client->file_size;
+	*size = httpd->file_size;
 
 	return 0;
 }

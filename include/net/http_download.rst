@@ -1,21 +1,21 @@
-.. _lib_download_client:
+.. _lib_http_download:
 
-Download client
+HTTP downloader
 ###############
 
-The download client library can be used to download files from an HTTP or HTTPS server. It supports IPv4 and IPv6 protocols.
+The HTTP downloader library can be used to download files from an HTTP or HTTPS server. It supports IPv4 and IPv6 protocols.
 
-The file is downloaded in fragments of configurable size (:option:`CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE`), that are returned to the application via events (:cpp:member:`DOWNLOAD_CLIENT_EVT_FRAGMENT`).
+The file is downloaded in fragments of configurable size (:option:`CONFIG_HTTP_DOWNLOAD_MAX_FRAGMENT_SIZE`), that are returned to the application via events (:cpp:member:`HTTP_DOWNLOAD_EVT_FRAGMENT`).
 
-The library can detect the size of the file that is downloaded and sends an event (:cpp:member:`DOWNLOAD_CLIENT_EVT_DONE`) to the application when the download has completed.
+The library can detect the size of the file that is downloaded and sends an event (:cpp:member:`HTTP_DOWNLOAD_EVT_DONE`) to the application when the download has completed.
 
 The library can detect when the server has closed the connection.
 When it happens, it returns an event to the application with an appropriate error code.
-The application can then resume the download by calling the :cpp:func:`download_client_connect` and :cpp:func:`download_client_start` functions again.
+The application can then resume the download by calling the :cpp:func:`http_download_connect` and :cpp:func:`http_download_start` functions again.
 
 The download happens in a separate thread which can be paused and resumed.
 
-Make sure to configure :option:`CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE` in a way that suits your application.
+Make sure to configure :option:`CONFIG_HTTP_DOWNLOAD_MAX_FRAGMENT_SIZE` in a way that suits your application.
 A large fragment size requires more RAM, while a small fragment size results in more download requests, and thus a higher protocol overhead.
 If the size of the file being downloaded is larger than a hundred times the size of one fragment, the server might close the HTTP connection
 after the hundreth fragment has been transfered. The library is able to detect when the server has closed the HTTP connection
@@ -36,13 +36,13 @@ For HTTP, the following requirements must be met:
 
 * The application protocol to communicate with the server is HTTP 1.1.
 * IETF RFC 7233 is supported by the HTTP Server.
-* :option:`CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE` is configured so that it can contain the entire HTTP response.
+* :option:`CONFIG_HTTP_DOWNLOAD_MAX_RESPONSE_SIZE` is configured so that it can contain the entire HTTP response.
 
 HTTPS
 =====
 
 The library uses TLS version 1.2.
-When using HTTPS, the application must provision the TLS credentials and pass the security tag to the library when calling :cpp:func:`download_client_connect`.
+When using HTTPS, the application must provision the TLS credentials and pass the security tag to the library when calling :cpp:func:`http_download_connect`.
 
 To provision a TLS certificate to the modem, the application can use the nrf_inbuilt_key APIs (see the :file:`nrf_inbuilt_key.h` file in the `nrfxlib`_ repository).
 The following snippet illustrates how to provision a TLS certificate, associate it to TLS security tag, and pass that tag to the library.
@@ -51,7 +51,7 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 
 	#include <nrf_key_mgmt.h>
 	#include <nrf_inbuilt_key.h>
-	#include <download_client.h>
+	#include <net/http_download.h>
 
 	/* A TLS certificate, in PEM format.
 	 *
@@ -91,8 +91,8 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 	/* The host to connect to */
 	#define HOST "s3.amazonaws.com"
 
-	/* Download client instance */
-	static struct download_client dl;
+	/* HTTP download instance */
+	static struct http_download dl;
 
 	int cert_provision_and_connect(void)
 	{
@@ -112,18 +112,18 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 		}
 
 		/* Note:
-		 * It is assumed, for simplicity, that the download_client library
-		 * has already been initialized via download_client_init().
+		 * It is assumed, for simplicity, that the http_download library
+		 * has already been initialized via http_download_init().
 		 * You need to initialize it in your own application prior to
-		 * calling download_client_connect().
+		 * calling http_download_connect().
 		 */
 
-		download_client_cfg config = {
+		http_download_cfg config = {
 			.sec_tag = sec_tag,
 		};
 
 		/* Pass the security tag to the download library */
-		err = download_client_connect(&dl, HOST, &config);
+		err = http_download_connect(&dl, HOST, &config);
 		if (err) {
 			return err;
 		}
@@ -135,9 +135,9 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 API documentation
 *****************
 
-| Header file: :file:`include/download_client.h`
-| Source files: :file:`subsys/net/lib/download_client/src/`
+| Header file: :file:`include/net/http_download.h`
+| Source files: :file:`subsys/net/lib/http_download/src/`
 
-.. doxygengroup:: dl_client
+.. doxygengroup:: http_downloader
    :project: nrf
    :members:

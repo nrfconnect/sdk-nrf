@@ -51,10 +51,10 @@ Limitations
 ***********
 
 * Currently, the library only uses HTTP for downloading the firmware.
-  It is, however, possible to have it work with HTTPS - see :ref:`lib_download_client`.
+  It is, however, possible to have it work with HTTPS - see :ref:`lib_http_download`.
   These changes need to be applied to :ref:`lib_fota_download` to enable downloading firmware through HTTPS.
 * The library requires content-range header to be present in the HTTP response from the server.
-  This limitation is inherited from :ref:`lib_download_client` which is used by :ref:`lib_fota_download`.
+  This limitation is inherited from :ref:`lib_http_download` which is used by :ref:`lib_fota_download`.
 
 API documentation
 *****************

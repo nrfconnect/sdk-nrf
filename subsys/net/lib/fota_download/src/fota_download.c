@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <zephyr.h>
 #include <flash.h>
-#include <download_client.h>
+#include <net/http_download.h>
 #include <dfu/mcuboot.h>
 #include <dfu/flash_img.h>
 #include <pm_config.h>
@@ -18,9 +18,9 @@ LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static		fota_download_callback_t callback;
 static struct	flash_img_context flash_img;
-static struct	download_client dfu;
+static struct	http_download dfu;
 
-static int download_client_callback(const struct download_client_evt *event)
+static int http_download_callback(const struct http_download_evt *event)
 {
 	int err;
 
@@ -29,12 +29,12 @@ static int download_client_callback(const struct download_client_evt *event)
 	}
 
 	switch (event->id) {
-	case DOWNLOAD_CLIENT_EVT_FRAGMENT: {
+	case HTTP_DOWNLOAD_EVT_FRAGMENT: {
 		size_t size;
 
-		err = download_client_file_size_get(&dfu, &size);
+		err = http_download_file_size_get(&dfu, &size);
 		if (err != 0) {
-			LOG_ERR("download_client_file_size_get error %d", err);
+			LOG_ERR("http_download_file_size_get error %d", err);
 			callback(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
 		}
@@ -55,7 +55,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		break;
 	}
 
-	case DOWNLOAD_CLIENT_EVT_DONE:
+	case HTTP_DOWNLOAD_EVT_DONE:
 		/* Write with 0 length to flush the write operation to flash. */
 		err = flash_img_buffered_write(&flash_img,
 				(u8_t *)event->fragment.buf,
@@ -72,18 +72,18 @@ static int download_client_callback(const struct download_client_evt *event)
 			callback(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
 		}
-		err = download_client_disconnect(&dfu);
+		err = http_download_disconnect(&dfu);
 		if (err != 0) {
-			LOG_ERR("download_client_disconncet error %d", err);
+			LOG_ERR("http_download_disconnect error %d", err);
 			callback(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
 		}
 		callback(FOTA_DOWNLOAD_EVT_FINISHED);
 		break;
 
-	case DOWNLOAD_CLIENT_EVT_ERROR: {
-		download_client_disconnect(&dfu);
-		LOG_ERR("Download client error");
+	case HTTP_DOWNLOAD_EVT_ERROR: {
+		http_download_disconnect(&dfu);
+		LOG_ERR("HTTP download failed");
 		callback(FOTA_DOWNLOAD_EVT_ERROR);
 		return event->error;
 	}
@@ -96,7 +96,7 @@ static int download_client_callback(const struct download_client_evt *event)
 
 int fota_download_start(char *host, char *file)
 {
-	struct download_client_cfg config = {
+	struct http_download_cfg config = {
 		.sec_tag = -1, /* HTTP */
 	};
 
@@ -116,17 +116,17 @@ int fota_download_start(char *host, char *file)
 		return err;
 	}
 
-	err = download_client_connect(&dfu, host, &config);
+	err = http_download_connect(&dfu, host, &config);
 
 	if (err != 0) {
-		LOG_ERR("download_client_connect error %d", err);
+		LOG_ERR("http_download_connect error %d", err);
 		return err;
 	}
 
-	err = download_client_start(&dfu, file, 0);
+	err = http_download_start(&dfu, file, 0);
 	if (err != 0) {
-		LOG_ERR("download_client_start error %d", err);
-		download_client_disconnect(&dfu);
+		LOG_ERR("http_download_start error %d", err);
+		http_download_disconnect(&dfu);
 		return err;
 	}
 	return 0;
@@ -140,10 +140,10 @@ int fota_download_init(fota_download_callback_t client_callback)
 
 	callback = client_callback;
 
-	int err = download_client_init(&dfu, download_client_callback);
+	int err = http_download_init(&dfu, http_download_callback);
 
 	if (err != 0) {
-		LOG_ERR("download_client_init error %d", err);
+		LOG_ERR("http_download_init error %d", err);
 		return err;
 	}
 
