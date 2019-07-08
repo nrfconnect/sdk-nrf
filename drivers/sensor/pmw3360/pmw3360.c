@@ -790,21 +790,21 @@ static int pmw3360_sample_fetch(struct device *dev, enum sensor_channel chan)
 	int err = motion_burst_read(dev_data, data, sizeof(data));
 
 	if (!err) {
-		s32_t x = sys_get_le16(&data[PMW3360_DX_POS]);
-		s32_t y = sys_get_le16(&data[PMW3360_DY_POS]);
+		s16_t x = sys_get_le16(&data[PMW3360_DX_POS]);
+		s16_t y = sys_get_le16(&data[PMW3360_DY_POS]);
 
 		if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_0)) {
-			dev_data->x = x;
+			dev_data->x = -x;
 			dev_data->y = y;
 		} else if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_90)) {
 			dev_data->x = y;
-			dev_data->y = -x;
+			dev_data->y = x;
 		} else if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_180)) {
-			dev_data->x = -x;
+			dev_data->x = x;
 			dev_data->y = -y;
 		} else if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_270)) {
 			dev_data->x = -y;
-			dev_data->y = x;
+			dev_data->y = -x;
 		}
 	}
 
