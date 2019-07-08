@@ -7,7 +7,6 @@
 #include <zephyr.h>
 #include <string.h>
 #include <stdlib.h>
-#include <cJSON.h>
 #include <modem_info.h>
 #include <at_params.h>
 #include <logging/log.h>

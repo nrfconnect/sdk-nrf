@@ -6,8 +6,8 @@
 
 zephyr_library()
 zephyr_library_sources(modem_info.c)
-zephyr_library_sources(modem_info_json.c)
 zephyr_library_sources(modem_info_params.c)
+zephyr_library_sources_ifdef(CONFIG_CJSON_LIB modem_info_json.c)
 
 find_package(Git QUIET)
 if(NOT APP_VERSION AND GIT_FOUND)
