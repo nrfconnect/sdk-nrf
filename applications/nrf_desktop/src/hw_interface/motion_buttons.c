@@ -57,7 +57,7 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 		LOG_DBG("Left");
 	}
 	if (pins & (1 << SW1_GPIO_PIN)) {
-		val_y -= MOVEMENT_SPEED;
+		val_y += MOVEMENT_SPEED;
 		LOG_DBG("Up");
 	}
 	if (pins & (1 << SW2_GPIO_PIN)) {
@@ -65,7 +65,7 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 		LOG_DBG("Right");
 	}
 	if (pins & (1 << SW3_GPIO_PIN)) {
-		val_y += MOVEMENT_SPEED;
+		val_y -= MOVEMENT_SPEED;
 		LOG_DBG("Down");
 	}
 
