@@ -310,7 +310,7 @@ static void mouse_report_sent(const struct bt_conn *conn, bool error)
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = IN_REPORT_MOUSE;
-	event->subscriber  = cur_conn;
+	event->subscriber  = conn;
 	event->error = error;
 	EVENT_SUBMIT(event);
 }
@@ -388,7 +388,7 @@ static void keyboard_report_sent(const struct bt_conn *conn, bool error)
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_type = IN_REPORT_KEYBOARD_KEYS;
-	event->subscriber  = cur_conn;
+	event->subscriber  = conn;
 	event->error = error;
 	EVENT_SUBMIT(event);
 }
