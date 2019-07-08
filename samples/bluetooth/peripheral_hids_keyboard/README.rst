@@ -52,8 +52,12 @@ User interface
 Button 1:
    Sends one character of the predefined input ("hello\\n") to the computer.
 
+   When pairing/bonding, press this button to confirm the passkey value that is printed on the COM listener to pair/bond with the other device.
+
 Button 2:
    Simulates the Shift key.
+
+   When pairing/bonding, press this button to reject the passkey value which is printed on the COM listener to prevent pairing/bonding with the other device.
 
 LED 1:
    Blinks with a period of 2 seconds (duty cycle 50%) when the device is advertising.
@@ -118,7 +122,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
    Advertising is indicated by blinking LED 1.
 #. Connect to the device from nRF Connect (the device is advertising as "NCS HIDS keyboard").
 #. Optionally, bond to the device.
-   To bond, click the settings button for the device in nRF Connect, select **Pair**, check **Perform Bonding**, and click **Pair**.
+   To bond, click the settings button for the device in nRF Connect, select **Pair**, check **Perform Bonding**, and click **Pair**. Optionally, check **Enable MITM protection** to pair with MITM protection and use a button on the device to confirm or reject the passkey value. Click **Match** in the nRF Connect app.
    Wait until the bond is established before you continue.
 #. Observe that the connection state is indicated by LED 2.
 #. Observe that the services of the connected device are shown.
@@ -182,6 +186,7 @@ This sample uses the following |NCS| libraries:
 When the `NFC_OOB_PAIRING` feature is enabled, it also uses the Type 2 Tag library from nrfxlib:
 
 * :ref:`nrfxlib:nfc_api_type2`
+* :ref:`dk_buttons_and_leds_readme`
 
 The sample uses the following Zephyr libraries:
 
