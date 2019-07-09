@@ -11,7 +11,7 @@
 #include <toolchain/common.h>
 #include <net/socket.h>
 #include <net/tls_credentials.h>
-#include <download_client.h>
+#include <net/download_client.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(download_client, CONFIG_NRF_DOWNLOAD_CLIENT_LOG_LEVEL);
