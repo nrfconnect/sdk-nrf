@@ -211,7 +211,7 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 
 	printk("Connected: %s\n", addr);
 	if (bt_conn_security(conn, BT_SECURITY_MEDIUM)) {
-		printk("Failed to set security level %d\n", BT_SECURITY_HIGH);
+		printk("Failed to set security level %d\n", BT_SECURITY_MEDIUM);
 	}
 
 	err = bt_scan_stop();
