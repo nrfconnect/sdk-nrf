@@ -51,7 +51,7 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 
 	#include <nrf_key_mgmt.h>
 	#include <nrf_inbuilt_key.h>
-	#include <download_client.h>
+	#include <net/download_client.h>
 
 	/* A TLS certificate, in PEM format.
 	 *
