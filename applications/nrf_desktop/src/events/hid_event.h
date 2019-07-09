@@ -52,6 +52,17 @@ struct hid_mouse_event {
 EVENT_TYPE_DECLARE(hid_mouse_event);
 
 
+/** @brief Consumer control report data event. */
+struct hid_consumer_ctrl_event {
+	struct event_header header; /**< Event header. */
+
+	const void *subscriber; /**< Id of the report subscriber. */
+	u16_t bitmask;		/**< Bitmask send in consumer control report. */
+};
+
+EVENT_TYPE_DECLARE(hid_consumer_ctrl_event);
+
+
 /** @brief Report subscriber event. */
 struct hid_report_subscriber_event {
 	struct event_header header; /**< Event header. */
