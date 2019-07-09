@@ -20,7 +20,7 @@
 
 #include <zephyr.h>
 #include <zephyr/types.h>
-#include <download_client.h>
+#include <net/download_client.h>
 
 #ifdef __cplusplus
 extern "C" {

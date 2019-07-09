@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <zephyr.h>
 #include <flash.h>
-#include <download_client.h>
+#include <net/download_client.h>
 #include <dfu/mcuboot.h>
 #include <dfu/flash_img.h>
 #include <pm_config.h>
