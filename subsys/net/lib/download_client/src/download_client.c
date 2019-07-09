@@ -14,7 +14,7 @@
 #include <net/download_client.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(download_client, CONFIG_NRF_DOWNLOAD_CLIENT_LOG_LEVEL);
+LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 #define GET_TEMPLATE                                                           \
 	"GET /%s HTTP/1.1\r\n"                                                 \
@@ -23,12 +23,12 @@ LOG_MODULE_REGISTER(download_client, CONFIG_NRF_DOWNLOAD_CLIENT_LOG_LEVEL);
 	"Range: bytes=%u-%u\r\n"                                               \
 	"\r\n"
 
-BUILD_ASSERT_MSG(CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE <=
-		 CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
+BUILD_ASSERT_MSG(CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE <=
+		 CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
 		 "The response buffer must accommodate for a full fragment");
 
 #if defined(CONFIG_LOG) && !defined(CONFIG_LOG_IMMEDIATE)
-BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS) ?
+BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS) ?
 			 CONFIG_LOG_BUFFER_SIZE >= 2048 : 1,
 		 "Please increase log buffer sizer");
 #endif
@@ -37,11 +37,11 @@ static int socket_timeout_set(int fd)
 {
 	int err;
 
-	if (CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS == K_FOREVER) {
+	if (CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS == K_FOREVER) {
 		return 0;
 	}
 
-	const u32_t timeout_ms = CONFIG_NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS;
+	const u32_t timeout_ms = CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS;
 
 	struct timeval timeo = {
 		.tv_sec = (timeout_ms / 1000),
@@ -244,23 +244,23 @@ static int get_request_send(struct download_client *client)
 	__ASSERT_NO_MSG(client->file);
 
 	/* Offset of last byte in range (Content-Range) */
-	off = client->progress + CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE - 1;
+	off = client->progress + CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE - 1;
 
 	if (client->file_size != 0) {
 		/* Don't request bytes past the end of file */
 		off = MIN(off, client->file_size);
 	}
 
-	len = snprintf(client->buf, CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
+	len = snprintf(client->buf, CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
 		       GET_TEMPLATE, client->file, client->host,
 		       client->progress, off);
 
-	if (len < 0 || len > CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE) {
+	if (len < 0 || len > CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE) {
 		LOG_ERR("Cannot create GET request, buffer too small");
 		return -ENOMEM;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS)) {
+	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
 		LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
 	}
 
@@ -298,7 +298,7 @@ static int header_parse(struct download_client *client)
 
 	LOG_DBG("GET header size: %u", hdr);
 
-	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_LOG_HEADERS)) {
+	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
 		LOG_HEXDUMP_DBG(client->buf, hdr, "GET");
 	}
 
@@ -350,10 +350,10 @@ static int header_parse(struct download_client *client)
 
 static int fragment_evt_send(const struct download_client *client)
 {
-	__ASSERT(client->offset <= CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE,
+	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE,
 		 "Fragment overflow!");
 
-	__ASSERT(client->offset <= CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE,
+	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
 		 "Buffer overflow!");
 
 	const struct download_client_evt evt = {
@@ -446,7 +446,7 @@ restart_and_suspend:
 			dl->file_size, (dl->progress * 100) / dl->file_size);
 
 		/* Have we received a whole fragment or the whole file? */
-		if ((dl->offset < CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE) &&
+		if ((dl->offset < CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE) &&
 		    (dl->progress != dl->file_size)) {
 			LOG_DBG("Awaiting full fragment (%u)", dl->offset);
 			continue;
@@ -526,7 +526,7 @@ int download_client_connect(struct download_client *client, const char *host,
 		return -EINVAL;
 	}
 
-	if (!IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_TLS)) {
+	if (!IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_TLS)) {
 		if (config->sec_tag != -1) {
 			return -EINVAL;
 		}
@@ -538,7 +538,7 @@ int download_client_connect(struct download_client *client, const char *host,
 	}
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
-	if (IS_ENABLED(CONFIG_NRF_DOWNLOAD_CLIENT_IPV6)) {
+	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
 		client->fd =
 			resolve_and_connect(AF_INET6, host, config);
 	}

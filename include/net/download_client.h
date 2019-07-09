@@ -102,7 +102,7 @@ struct download_client {
 	/** HTTP socket. */
 	int fd;
 	/** HTTP response buffer. */
-	char buf[CONFIG_NRF_DOWNLOAD_MAX_RESPONSE_SIZE];
+	char buf[CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE];
 	/** Buffer offset. */
 	size_t offset;
 
@@ -131,7 +131,7 @@ struct download_client {
 	struct k_thread thread;
 	/** Internal thread stack. */
 	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_NRF_DOWNLOAD_CLIENT_STACK_SIZE);
+			      CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
 
 	/** Event handler. */
 	download_client_callback_t callback;
@@ -164,7 +164,7 @@ int download_client_connect(struct download_client *client, const char *host,
  * @brief Download a file.
  *
  * The download is carried out in fragments of @c
- * CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE bytes,
+ * CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE bytes,
  * which are delivered to the application
  * via @ref DOWNLOAD_CLIENT_EVT_FRAGMENT events.
  *
