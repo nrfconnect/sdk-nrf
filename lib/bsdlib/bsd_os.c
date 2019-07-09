@@ -315,8 +315,8 @@ void bsd_os_errno_set(int err_code)
 		 * Log the untranslated errno and return a magic value
 		 * to make sure this sitation is clearly distinguishable.
 		 */
-		__ASSERT(false, "Untranslated errno %d set by bsdlib!", errno);
-		LOG_ERR("Untranslated errno %d set by bsdlib!", errno);
+		__ASSERT(false, "Untranslated errno %d set by bsdlib!", err_code);
+		LOG_ERR("Untranslated errno %d set by bsdlib!", err_code);
 		errno = 0xBAADBAAD;
 		break;
 	}
