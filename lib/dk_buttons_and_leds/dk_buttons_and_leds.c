@@ -15,33 +15,47 @@
 
 LOG_MODULE_REGISTER(dk_buttons_and_leds, CONFIG_DK_LIBRARY_LOG_LEVEL);
 
-static const u8_t button_pins[] = {
+
+struct gpio_pin {
+	const char * const port;
+	const u8_t number;
+};
+
+static const struct gpio_pin button_pins[] = {
 #ifdef SW0_GPIO_PIN
-	SW0_GPIO_PIN,
+	{SW0_GPIO_CONTROLLER,
+	SW0_GPIO_PIN,},
 #endif
 #ifdef SW1_GPIO_PIN
-	SW1_GPIO_PIN,
+	{SW1_GPIO_CONTROLLER,
+	SW1_GPIO_PIN,},
 #endif
 #ifdef SW2_GPIO_PIN
-	SW2_GPIO_PIN,
+	{SW2_GPIO_CONTROLLER,
+	SW2_GPIO_PIN,},
 #endif
 #ifdef SW3_GPIO_PIN
-	SW3_GPIO_PIN,
+	{SW3_GPIO_CONTROLLER,
+	SW3_GPIO_PIN,},
 #endif
 };
 
-static const u8_t led_pins[] = {
+static const struct gpio_pin led_pins[] = {
 #ifdef LED0_GPIO_PIN
-	LED0_GPIO_PIN,
+	{LED0_GPIO_CONTROLLER,
+	LED0_GPIO_PIN,},
 #endif
 #ifdef LED1_GPIO_PIN
-	LED1_GPIO_PIN,
+	{LED1_GPIO_CONTROLLER,
+	LED1_GPIO_PIN,},
 #endif
 #ifdef LED2_GPIO_PIN
-	LED2_GPIO_PIN,
+	{LED2_GPIO_CONTROLLER,
+	LED2_GPIO_PIN,},
 #endif
 #ifdef LED3_GPIO_PIN
-	LED3_GPIO_PIN,
+	{LED3_GPIO_CONTROLLER,
+	LED3_GPIO_PIN,},
 #endif
 };
 
@@ -54,7 +68,8 @@ static enum state state;
 static struct k_delayed_work buttons_scan;
 static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
-static struct device *gpio_dev;
+static struct device *button_devs[ARRAY_SIZE(button_pins)];
+static struct device *led_devs[ARRAY_SIZE(led_pins)];
 static struct gpio_callback gpio_cb;
 static struct k_spinlock lock;
 
@@ -67,11 +82,11 @@ static int callback_ctrl(bool enable)
 	 */
 	for (size_t i = 0; (i < ARRAY_SIZE(button_pins)) && !err; i++) {
 		if (enable) {
-			err = gpio_pin_enable_callback(gpio_dev,
-			  button_pins[i]);
+			err = gpio_pin_enable_callback(button_devs[i],
+			  button_pins[i].number);
 		} else {
-			err = gpio_pin_disable_callback(gpio_dev,
-			  button_pins[i]);
+			err = gpio_pin_disable_callback(button_devs[i],
+			  button_pins[i].number);
 		}
 	}
 
@@ -84,7 +99,8 @@ static u32_t get_buttons(void)
 	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
 		u32_t val;
 
-		if (gpio_pin_read(gpio_dev, button_pins[i], &val)) {
+		if (gpio_pin_read(
+			button_devs[i], button_pins[i].number, &val)) {
 			LOG_ERR("Cannot read gpio pin");
 			return 0;
 		}
@@ -157,16 +173,15 @@ int dk_leds_init(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
-	if (!gpio_dev) {
-		LOG_ERR("Cannot bind gpio device");
-		return -ENODEV;
-	}
-
 	for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
-		err = gpio_pin_configure(gpio_dev, led_pins[i],
-					 GPIO_DIR_OUT);
+		led_devs[i] = device_get_binding(led_pins[i].port);
+		if (!led_devs[i]) {
+			LOG_ERR("Cannot bind gpio device");
+			return -ENODEV;
+		}
 
+		err = gpio_pin_configure(led_devs[i], led_pins[i].number,
+					 GPIO_DIR_OUT);
 		if (err) {
 			LOG_ERR("Cannot configure LED gpio");
 			return err;
@@ -188,7 +203,7 @@ static int set_trig_mode(int trig_mode)
 
 	for (size_t i = 0; (i < ARRAY_SIZE(button_pins)) && !err; i++) {
 
-		err = gpio_pin_configure(gpio_dev, button_pins[i],
+		err = gpio_pin_configure(button_devs[i], button_pins[i].number,
 					 flags);
 	}
 
@@ -229,14 +244,14 @@ int dk_buttons_init(button_handler_t button_handler)
 
 	button_handler_cb = button_handler;
 
-	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
-	if (!gpio_dev) {
-		LOG_ERR("Cannot bind gpio device");
-		return -ENODEV;
-	}
-
 	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
-		err = gpio_pin_configure(gpio_dev, button_pins[i],
+		button_devs[i] = device_get_binding(button_pins[i].port);
+		if (!button_devs[i]) {
+			LOG_ERR("Cannot bind gpio device");
+			return -ENODEV;
+		}
+
+		err = gpio_pin_configure(button_devs[i], button_pins[i].number,
 					 GPIO_DIR_IN | GPIO_PUD_PULL_UP);
 
 		if (err) {
@@ -257,20 +272,24 @@ int dk_buttons_init(button_handler_t button_handler)
 		/* Module starts in scanning mode and will switch to
 		 * callback mode if no button is pressed.
 		 */
-		err = gpio_pin_disable_callback(gpio_dev, button_pins[i]);
+		err = gpio_pin_disable_callback(button_devs[i],
+			button_pins[i].number);
 		if (err) {
 			LOG_ERR("Cannot disable callbacks()");
 			return err;
 		}
 
-		pin_mask |= BIT(button_pins[i]);
+		pin_mask |= BIT(button_pins[i].number);
 	}
 
 	gpio_init_callback(&gpio_cb, button_pressed, pin_mask);
-	err = gpio_add_callback(gpio_dev, &gpio_cb);
-	if (err) {
-		LOG_ERR("Cannot add callback");
-		return err;
+
+	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
+		err = gpio_add_callback(button_devs[i], &gpio_cb);
+		if (err) {
+			LOG_ERR("Cannot add callback");
+			return err;
+		}
 	}
 
 	k_delayed_work_init(&buttons_scan, buttons_scan_fn);
@@ -329,8 +348,8 @@ int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask)
 				val = 1 - val;
 			}
 
-			int err = gpio_pin_write(gpio_dev, led_pins[i], val);
-
+			int err = gpio_pin_write(led_devs[i],
+						 led_pins[i].number, val);
 			if (err) {
 				LOG_ERR("Cannot write LED gpio");
 				return err;
@@ -349,7 +368,7 @@ int dk_set_led(u8_t led_idx, u32_t val)
 		LOG_ERR("LED index out of the range");
 		return -EINVAL;
 	}
-	err = gpio_pin_write(gpio_dev, led_pins[led_idx],
+	err = gpio_pin_write(led_devs[led_idx], led_pins[led_idx].number,
 			IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_LEDS) ? !val : val);
 	if (err) {
 		LOG_ERR("Cannot write LED gpio");
