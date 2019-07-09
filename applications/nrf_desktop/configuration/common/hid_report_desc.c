@@ -116,7 +116,7 @@ const u8_t hid_report_desc[] = {
 	/* Keyboard - LEDs padding */
 	0x95, 0x01,       /* Report Count (1) */
 	0x75, 0x03,       /* Report Size (3) (padding) */
-	0x91, 0x01,       /* Output (Data, Variable, Absolute) */
+	0x91, 0x01,       /* Output (Constant, Array, Absolute) */
 
 #if (CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE && !CONFIG_DESKTOP_HID_MOUSE)
 	USER_CONFIG_FEATURE_REPORT(REPORT_ID_USER_CONFIG, REPORT_SIZE_USER_CONFIG),
@@ -124,36 +124,41 @@ const u8_t hid_report_desc[] = {
 	0xC0,           /* End Collection (Application) */
 #endif
 
-#if CONFIG_DESKTOP_HID_MPLAYER
+#if CONFIG_DESKTOP_HID_CONSUMER_CTRL
 	/* Usage page - Consumer Control */
-	0x05, USAGE_PAGE_MPLAYER,
+	0x05, USAGE_PAGE_CONSUMER_CTRL,
 	0x09, 0x01,     /* Usage (Consumer Control) */
 
 	0xA1, 0x01,     /* Collection (Application) */
 
-	0x85, REPORT_ID_MPLAYER,
+	0x85, REPORT_ID_CONSUMER_CTRL,
 	0x15, 0x00,       /* Logical minimum (0) */
 	0x25, 0x01,       /* Logical maximum (1) */
 	0x75, 0x01,       /* Report Size (1) */
-	0x95, 0x01,       /* Report Count (1) */
+	0x95, 0x02,       /* Report Count (2) */
 
-	0x09, 0xCD,       /* Usage (Play/Pause) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
-	0x0A, 0x83, 0x01, /* Usage (Consumer Control Configuration) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
-	0x09, 0xB5,       /* Usage (Scan Next Track) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
-	0x09, 0xB6,       /* Usage (Scan Previous Track) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
+	0x09, 0xEA,       /* Usage (Volume Decrement)		BIT 0  */
+	0x09, 0xE9,       /* Usage (Volume Increment)		BIT 1  */
+	0x81, 0x02,	  /* Input (Data,Variable,Absolute) */
 
-	0x09, 0xEA,       /* Usage (Volume Down) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
-	0x09, 0xE9,       /* Usage (Volume Up) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
-	0x0A, 0x25, 0x02, /* Usage (AC Forward) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
-	0x0A, 0x24, 0x02, /* Usage (AC Back) */
-	0x81, 0x06,       /* Input (Data,Value,Relative,Bit Field) */
+	0x95, 0x09,       /* Report Count (9) */
+	0x09, 0xE2,	  /* Usage (Mute)			BIT 2  */
+
+	0x09, 0xCD,       /* Usage (Play/Pause)			BIT 3  */
+	0x09, 0xB5,       /* Usage (Scan Next Track)		BIT 4  */
+	0x09, 0xB6,       /* Usage (Scan Previous Track)	BIT 5  */
+
+	0x09, 0x32,	  /* Usage (Sleep)			BIT 6  */
+
+	0x0A, 0x1F, 0x02, /* Usage (AC Find)			BIT 7  */
+	0x0A, 0x92, 0x01, /* Usage (AL Calculator)		BIT 8  */
+	0x0A, 0x8A, 0x01, /* Usage (AL Email Reader)		BIT 9  */
+	0x0A, 0x96, 0x01, /* Usage (AL Internet Browser)	BIT 10 */
+	0x81, 0x06,	  /* Input (Data,Variable,Relative) */
+
+	0x95, 0x05,       /* Report Count (5) (padding) */
+	0x81, 0x01,       /* Input (Constant) */
+
 	0xC0            /* End Collection */
 #endif
 };

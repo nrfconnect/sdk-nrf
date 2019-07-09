@@ -349,6 +349,25 @@ static void eventq_cleanup(struct eventq *eventq, u32_t timestamp)
 	}
 }
 
+static void sort_by_usage_id(struct item items[], size_t array_size)
+{
+	for (size_t k = 0; k < array_size; k++) {
+		size_t id = k;
+
+		for (size_t l = k + 1; l < array_size; l++) {
+			if (items[l].usage_id < items[id].usage_id) {
+				id = l;
+			}
+		}
+		if (id != k) {
+			struct item tmp = items[k];
+
+			items[k] = items[id];
+			items[id] = tmp;
+		}
+	}
+}
+
 static struct subscriber *get_subscriber(const void *subscriber_id)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
@@ -498,21 +517,7 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 		/* Sort elements on the list. Use simple algorithm
 		 * with small footprint.
 		 */
-		for (size_t k = 0; k < ARRAY_SIZE(items->item); k++) {
-			size_t id = k;
-
-			for (size_t l = k + 1; l < ARRAY_SIZE(items->item); l++) {
-				if (items->item[l].usage_id < items->item[id].usage_id) {
-					id = l;
-				}
-			}
-			if (id != k) {
-				struct item tmp = items->item[k];
-
-				items->item[k] = items->item[id];
-				items->item[id] = tmp;
-			}
-		}
+		sort_by_usage_id(items->item, ARRAY_SIZE(items->item));
 	}
 
 	items->update_needed = items->update_needed || update_needed;
@@ -538,7 +543,8 @@ static void send_report_keyboard(void)
 		     i++) {
 			struct item item = rd->items.item[max - i - 1];
 
-			if (item.value) {
+			if (item.usage_id) {
+				__ASSERT_NO_MSG(item.value > 0);
 				if (item.usage_id <= KEYBOARD_REPORT_LAST_KEY) {
 					event->keys[cnt] = item.usage_id;
 					cnt++;
@@ -589,9 +595,9 @@ static void send_report_mouse(void)
 		for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
 			struct item item = rd->items.item[i];
 
-			if (item.value) {
-				__ASSERT_NO_MSG(item.usage_id != 0);
+			if (item.usage_id) {
 				__ASSERT_NO_MSG(item.usage_id <= 8);
+				__ASSERT_NO_MSG(item.value > 0);
 
 				u8_t mask = 1 << (item.usage_id - 1);
 
@@ -603,6 +609,106 @@ static void send_report_mouse(void)
 
 		rd->items.update_needed = false;
 	} else {
+		/* Not supported. */
+		__ASSERT_NO_MSG(false);
+	}
+}
+
+static bool consumer_ctrl_process_item(struct item *item, u16_t *bitmask)
+{
+	if (!item->usage_id) {
+		return false;
+	}
+	__ASSERT_NO_MSG(item->value > 0);
+
+	bool remove_item = true;
+
+	switch (item->usage_id) {
+	case 0x00EA:
+		*bitmask |= BIT(0);
+		remove_item = false;
+		break;
+
+	case 0x00E9:
+		*bitmask |= BIT(1);
+		remove_item = false;
+		break;
+
+	case 0x00E2:
+		*bitmask |= BIT(2);
+		break;
+
+	case 0x00CD:
+		*bitmask |= BIT(3);
+		break;
+
+	case 0x00B5:
+		*bitmask |= BIT(4);
+		break;
+
+	case 0x00B6:
+		*bitmask |= BIT(5);
+		break;
+
+	case 0x0032:
+		*bitmask |= BIT(6);
+		break;
+
+	case 0x021F:
+		*bitmask |= BIT(7);
+		break;
+
+	case 0x0192:
+		*bitmask |= BIT(8);
+		break;
+
+	case 0x018A:
+		*bitmask |= BIT(9);
+		break;
+
+	case 0x0196:
+		*bitmask |= BIT(10);
+		break;
+
+	default:
+		/* Unknown usage_id. */
+		__ASSERT_NO_MSG(false);
+
+	}
+
+	return remove_item;
+}
+
+static void send_report_consumer_ctrl(void)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+		struct report_data *rd =
+			&state.report_data[IN_REPORT_CONSUMER_CTRL];
+		struct hid_consumer_ctrl_event *event =
+			new_hid_consumer_ctrl_event();
+
+		event->subscriber = state.selected->id;
+		event->bitmask = 0;
+
+		/* Traverse pressed keys and build consumer control report */
+		for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
+			struct item *item = &rd->items.item[i];
+
+			if (consumer_ctrl_process_item(item, &event->bitmask)) {
+				__ASSERT_NO_MSG(rd->items.item_count != 0);
+				rd->items.item_count--;
+				item->value = 0;
+				item->usage_id = 0;
+			}
+		}
+
+		sort_by_usage_id(rd->items.item,
+				 ARRAY_SIZE(rd->items.item));
+
+		EVENT_SUBMIT(event);
+
+		rd->items.update_needed = false;
+	}  else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
 	}
@@ -674,9 +780,8 @@ static void report_send(enum in_report tr, bool check_state,
 				send_report_mouse();
 				break;
 
-			case IN_REPORT_MPLAYER:
-				/* Not supported. */
-				__ASSERT_NO_MSG(false);
+			case IN_REPORT_CONSUMER_CTRL:
+				send_report_consumer_ctrl();
 				break;
 
 			default:
@@ -769,7 +874,7 @@ static void connect(const void *subscriber_id, enum in_report tr)
 			state.wheel_acc = 0;
 			break;
 		case IN_REPORT_KEYBOARD_KEYS:
-		case IN_REPORT_MPLAYER:
+		case IN_REPORT_CONSUMER_CTRL:
 			break;
 		default:
 			break;
