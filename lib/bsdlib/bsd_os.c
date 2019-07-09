@@ -223,6 +223,9 @@ void bsd_os_errno_set(int err_code)
 	case NRF_EIO:
 		errno = EIO;
 		break;
+	case NRF_ENOEXEC:
+		errno = ENOEXEC;
+		break;
 	case NRF_EBADF:
 		errno = EBADF;
 		break;
