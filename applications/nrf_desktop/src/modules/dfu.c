@@ -41,6 +41,9 @@ static struct k_delayed_work dfu_timeout;
 static struct k_delayed_work reboot_request;
 
 static const struct flash_area *flash_area;
+static u32_t cur_offset;
+static u32_t img_csum;
+static u32_t img_length;
 
 
 static void set_ble_latency(bool low_latency)
@@ -106,64 +109,17 @@ static void handle_dfu_data(const struct config_event *event)
 {
 	const u8_t *data = event->dyndata.data;
 	size_t size = event->dyndata.size;
-
 	int err;
-
-	u32_t img_length;
-	u32_t chunk_offset;
-	u32_t chunk_size;
-
-	size_t min_size = sizeof(img_length) + sizeof(chunk_offset);
-
-	if (size < min_size) {
-		LOG_INF("Invalid DFU data header");
-		return;
-	}
-
-	img_length = sys_get_le32(&data[0]);
-	chunk_offset = sys_get_le32(&data[sizeof(img_length)]);
-	chunk_size = size - min_size;
-
-	LOG_INF("DFU data received img_length:%" PRIu32
-		" chunk_offset:%" PRIu32 " chunk_size:%" PRIu32,
-		img_length, chunk_offset, chunk_size);
-
-	static size_t cur_offset;
-
-	if (chunk_offset == 0) {
-		set_ble_latency(true);
-
-		if (cur_offset) {
-			LOG_WRN("Previous DFU operation interrupted");
-		}
-
-		err = flash_area_open(PM_MCUBOOT_SECONDARY_ID, &flash_area);
-		if (err) {
-			LOG_ERR("Cannot open flash area (%d)", err);
-			goto dfu_finish;
-		}
-
-		cur_offset = 0;
-	}
 
 	if (!flash_area) {
 		LOG_WRN("DFU was not started");
-		goto dfu_finish;
+		return;
 	}
 
-	if (flash_area->fa_size < img_length) {
-		LOG_WRN("Insufficient space for DFU (%zu < %" PRIu32 ")",
-			flash_area->fa_size, img_length);
-		goto dfu_finish;
-	}
+	LOG_INF("DFU data received cur_offset:%" PRIu32, cur_offset);
 
-	if (chunk_offset != cur_offset) {
-		LOG_WRN("Invalid chunk sequence");
-		goto dfu_finish;
-	}
-
-	if (!chunk_size) {
-		LOG_WRN("No data to store");
+	if (size == 0) {
+		LOG_WRN("Invalid DFU data header");
 		goto dfu_finish;
 	}
 
@@ -175,17 +131,16 @@ static void handle_dfu_data(const struct config_event *event)
 		}
 	}
 
-	const void *chunk_data = &data[min_size];
-
-	err = flash_area_write(flash_area, cur_offset, chunk_data, chunk_size);
+	err = flash_area_write(flash_area, cur_offset, data, size);
 	if (err) {
 		LOG_ERR("Cannot write data (%d)", err);
 		goto dfu_finish;
 	}
 
-	cur_offset += chunk_size;
+	cur_offset += size;
 
 	LOG_INF("DFU chunk written");
+
 	if (img_length == cur_offset) {
 		LOG_INF("DFU image written");
 		boot_request_upgrade(false);
@@ -202,6 +157,120 @@ dfu_finish:
 	flash_area = NULL;
 	set_ble_latency(false);
 	k_delayed_work_cancel(&dfu_timeout);
+}
+
+static void handle_dfu_start(const struct config_event *event)
+{
+	const u8_t *data = event->dyndata.data;
+	size_t size = event->dyndata.size;
+
+	u32_t length;
+	u32_t csum;
+	u32_t offset;
+
+	size_t data_size = sizeof(length) + sizeof(csum) +
+			   sizeof(offset);
+
+	static_assert(sizeof(length) == sizeof(img_length), "");
+	static_assert(sizeof(csum) == sizeof(img_csum), "");
+	static_assert(sizeof(offset) == sizeof(cur_offset), "");
+
+	if (size < data_size) {
+		LOG_WRN("Invalid DFU start header");
+		return;
+	}
+
+	if (flash_area) {
+		LOG_WRN("DFU already in progress");
+		return;
+	}
+
+	size_t pos = 0;
+
+	length = sys_get_le32(&data[pos]);
+	pos += sizeof(length);
+
+	csum = sys_get_le32(&data[pos]);
+	pos += sizeof(csum);
+
+	offset = sys_get_le32(&data[pos]);
+	pos += sizeof(offset);
+
+	LOG_INF("DFU start received img_length:%" PRIu32
+		" img_csum:0x%" PRIx32 " offset:%" PRIu32,
+		length, csum, offset);
+
+	if (offset != 0) {
+		if ((offset != cur_offset) ||
+		    (length != img_length) ||
+		    (csum != img_csum)) {
+			LOG_WRN("Cannot restart DFU"
+				" length: %" PRIu32 " %" PRIu32
+				" csum: 0x%" PRIx32 " 0x%" PRIx32
+				" offset: %" PRIu32 " %" PRIu32,
+				length, img_length,
+				csum, img_csum,
+				offset, cur_offset);
+			return;
+		} else {
+			LOG_INF("Restart DFU");
+		}
+	} else {
+		img_length = length;
+		img_csum = csum;
+		cur_offset = 0;
+	}
+
+	int err = flash_area_open(PM_MCUBOOT_SECONDARY_ID, &flash_area);
+	if (err) {
+		LOG_ERR("Cannot open flash area (%d)", err);
+
+		flash_area = NULL;
+	} else if (flash_area->fa_size < img_length) {
+		LOG_WRN("Insufficient space for DFU (%zu < %" PRIu32 ")",
+			flash_area->fa_size, img_length);
+
+		flash_area_close(flash_area);
+		flash_area = NULL;
+	} else {
+		LOG_INF("DFU started");
+
+		set_ble_latency(true);
+	}
+
+	k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
+}
+
+static void handle_dfu_sync(const struct config_fetch_request_event *event)
+{
+	LOG_INF("DFU sync requested");
+
+	u8_t dfu_active = (flash_area != NULL) ? 0x01 : 0x00;
+
+	size_t data_size = sizeof(dfu_active) + sizeof(img_length) +
+			   sizeof(img_csum) + sizeof(cur_offset);
+
+	struct config_fetch_event *fetch_event =
+		new_config_fetch_event(data_size);
+	fetch_event->id = event->id;
+	fetch_event->recipient = event->recipient;
+	fetch_event->channel_id = event->channel_id;
+
+	size_t pos = 0;
+
+	fetch_event->dyndata.data[pos] = dfu_active;
+	pos += sizeof(dfu_active);
+
+	sys_put_le32(img_length, &fetch_event->dyndata.data[pos]);
+	pos += sizeof(img_length);
+
+	sys_put_le32(img_csum, &fetch_event->dyndata.data[pos]);
+	pos += sizeof(img_csum);
+
+	sys_put_le32(cur_offset, &fetch_event->dyndata.data[pos]);
+	pos += sizeof(cur_offset);
+
+	EVENT_SUBMIT(fetch_event);
 }
 
 static void handle_reboot_request(const struct config_fetch_request_event *event)
@@ -293,6 +362,10 @@ static void handle_config_event(const struct config_event *event)
 		handle_dfu_data(event);
 		break;
 
+	case DFU_START:
+		handle_dfu_start(event);
+		break;
+
 	default:
 		/* Ignore unknown event. */
 		LOG_WRN("Unknown DFU event");
@@ -314,6 +387,10 @@ static void handle_config_fetch_request_event(const struct config_fetch_request_
 
 	case DFU_IMGINFO:
 		handle_image_info_request(event);
+		break;
+
+	case DFU_SYNC:
+		handle_dfu_sync(event);
 		break;
 
 	default:
