@@ -5,5 +5,5 @@
 #
 zephyr_library()
 zephyr_library_sources(
-	src/http_download_client.c
+	src/download_client.c
 )
