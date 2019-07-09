@@ -516,7 +516,7 @@ int download_client_init(struct download_client *const client,
 	return 0;
 }
 
-int download_client_connect(struct download_client *client, char *host,
+int download_client_connect(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config)
 {
 	int err;
@@ -583,7 +583,7 @@ int download_client_disconnect(struct download_client *const client)
 	return 0;
 }
 
-int download_client_start(struct download_client *client, char *file,
+int download_client_start(struct download_client *client, const char *file,
 			  size_t from)
 {
 	int err;
