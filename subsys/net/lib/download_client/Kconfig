@@ -4,15 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig  NRF_DOWNLOAD_CLIENT
+menuconfig  DOWNLOAD_CLIENT
 	bool "Download client"
 
-if NRF_DOWNLOAD_CLIENT
+if DOWNLOAD_CLIENT
 
-config NRF_DOWNLOAD_MAX_FRAGMENT_SIZE
+config DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE
 	int "Fragment size"
-	range 512 2048 if BSD_LIBRARY && NRF_DOWNLOAD_CLIENT_TLS
-	default 2048 if BSD_LIBRARY && NRF_DOWNLOAD_CLIENT_TLS
+	range 512 2048 if BSD_LIBRARY && DOWNLOAD_CLIENT_TLS
+	default 2048 if BSD_LIBRARY && DOWNLOAD_CLIENT_TLS
 	range 512 4096
 	default 4096
 	help
@@ -21,18 +21,18 @@ config NRF_DOWNLOAD_MAX_FRAGMENT_SIZE
 	  When not using TLS, prefer a larger fragment size to reduce the
 	  bandwidth overhead due to the HTTP headers.
 
-config NRF_DOWNLOAD_MAX_RESPONSE_SIZE
+config DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE
 	int "Response size"
-	default NRF_DOWNLOAD_MAX_FRAGMENT_SIZE
+	default DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE
 	help
 	  Buffer to accommodate for the HTTP response.
 	  Must be large enough to accomodate for a full fragment.
 
-config NRF_DOWNLOAD_CLIENT_STACK_SIZE
+config DOWNLOAD_CLIENT_STACK_SIZE
 	int "Thread stack size"
 	default 2048
 
-config NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS
+config DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS
 	int "Receive timeout, in milliseconds"
 	default -1
 	range -1 30000
@@ -40,23 +40,23 @@ config NRF_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS
 	  Socket timeout for recv() calls, in milliseconds.
 	  Set to -1 disable.
 
-config NRF_DOWNLOAD_CLIENT_IPV6
+config DOWNLOAD_CLIENT_IPV6
 	bool "Prefer IPv6 connections"
 	help
 	  Prefer IPv6 protocol but fallback to
 	  IPv4 when the hostname can't be resolved.
 
-config NRF_DOWNLOAD_CLIENT_TLS
+config DOWNLOAD_CLIENT_TLS
 	bool "Download over HTTPS"
 
-module=NRF_DOWNLOAD_CLIENT
+module=DOWNLOAD_CLIENT
 module-dep=LOG
 module-str=Download client
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-if NRF_DOWNLOAD_CLIENT_LOG_LEVEL_DBG
+if DOWNLOAD_CLIENT_LOG_LEVEL_DBG
 
-config NRF_DOWNLOAD_CLIENT_LOG_HEADERS
+config DOWNLOAD_CLIENT_LOG_HEADERS
 	bool "Log HTTP headers to Console [Debug]"
 
 endif
