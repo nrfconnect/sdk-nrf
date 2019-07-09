@@ -119,9 +119,9 @@ struct download_client {
 	bool connection_close;
 
 	/** Server hosting the file, null-terminated. */
-	char *host;
+	const char *host;
 	/** File name, null-terminated. */
-	char *file;
+	const char *file;
 	/** Configuration options. */
 	struct download_client_cfg config;
 
@@ -157,7 +157,7 @@ int download_client_init(struct download_client *client,
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_connect(struct download_client *client, char *host,
+int download_client_connect(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config);
 
 /**
@@ -175,7 +175,7 @@ int download_client_connect(struct download_client *client, char *host,
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_start(struct download_client *client, char *file,
+int download_client_start(struct download_client *client, const char *file,
 			  size_t from);
 
 /**
