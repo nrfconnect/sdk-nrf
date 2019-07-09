@@ -442,7 +442,8 @@ restart_and_suspend:
 		 */
 		dl->progress += MIN(dl->offset, len);
 
-		LOG_INF("Downloaded bytes: %u/%u", dl->progress, dl->file_size);
+		LOG_INF("Downloaded %u/%u bytes (%d%%)", dl->progress,
+			dl->file_size, (dl->progress * 100) / dl->file_size);
 
 		/* Have we received a whole fragment or the whole file? */
 		if ((dl->offset < CONFIG_NRF_DOWNLOAD_MAX_FRAGMENT_SIZE) &&
@@ -553,7 +554,7 @@ int download_client_connect(struct download_client *client, const char *host,
 	client->host = host;
 	client->config = *config;
 
-	LOG_INF("Connected");
+	LOG_INF("Connected to %s", log_strdup(host));
 
 	/* Set socket timeout, if configured */
 	err = socket_timeout_set(client->fd);
