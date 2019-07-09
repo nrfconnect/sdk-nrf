@@ -19,7 +19,7 @@ extern "C" {
 #define REPORT_SIZE_MOUSE_BOOT		3 /* bytes */
 #define REPORT_SIZE_KEYBOARD_KEYS	8 /* bytes */
 #define REPORT_SIZE_KEYBOARD_LEDS	1 /* bytes */
-#define REPORT_SIZE_MPLAYER		1 /* bytes */
+#define REPORT_SIZE_CONSUMER_CTRL	2 /* bytes */
 #define REPORT_SIZE_USER_CONFIG		29 /* bytes */
 
 #define USAGE_PAGE_MOUSE_XY		0x01
@@ -27,7 +27,7 @@ extern "C" {
 #define USAGE_PAGE_KEYBOARD		0x07
 #define USAGE_PAGE_LEDS			0x08
 #define USAGE_PAGE_MOUSE_BUTTONS	0x09
-#define USAGE_PAGE_MPLAYER		0x0C
+#define USAGE_PAGE_CONSUMER_CTRL	0x0C
 
 #define REPORT_MOUSE_WHEEL_MIN		(-0x7F)
 #define REPORT_MOUSE_WHEEL_MAX		(0x7F)
@@ -40,11 +40,12 @@ extern "C" {
 #define KEYBOARD_REPORT_FIRST_MODIFIER	0xE0 /* Keyboard Left Ctrl */
 #define KEYBOARD_REPORT_LAST_MODIFIER	0xE7 /* Keyboard Right GUI */
 
+#define CONSUMER_CTRL_REPORT_RTC_CNT	2
 
 #define IN_REPORT_LIST		\
 	X(MOUSE)		\
 	X(KEYBOARD_KEYS)	\
-	X(MPLAYER)
+	X(CONSUMER_CTRL)
 
 #define OUT_REPORT_LIST		\
 	X(KEYBOARD_LEDS)

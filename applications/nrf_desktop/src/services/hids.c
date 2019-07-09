@@ -37,7 +37,7 @@ BT_GATT_HIDS_DEF(hids_obj,
 		 REPORT_SIZE_MOUSE,
 		 REPORT_SIZE_KEYBOARD_KEYS,
 		 REPORT_SIZE_KEYBOARD_LEDS,
-		 REPORT_SIZE_MPLAYER
+		 REPORT_SIZE_CONSUMER_CTRL
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		 , REPORT_SIZE_USER_CONFIG
 #endif
@@ -100,8 +100,8 @@ static void pm_evt_handler(enum bt_gatt_hids_pm_evt evt, struct bt_conn *conn)
 			broadcast_subscription_change(IN_REPORT_KEYBOARD_KEYS,
 					old_mode, report_mode);
 		}
-		if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
-			broadcast_subscription_change(IN_REPORT_MPLAYER,
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+			broadcast_subscription_change(IN_REPORT_CONSUMER_CTRL,
 					old_mode, report_mode);
 		}
 	}
@@ -167,9 +167,9 @@ static void boot_keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 	async_notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_BOOT);
 }
 
-static void mplayer_notif_handler(enum bt_gatt_hids_notif_evt evt)
+static void consumer_ctrl_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	async_notif_handler(evt, IN_REPORT_MPLAYER, REPORT_MODE_PROTOCOL);
+	async_notif_handler(evt, IN_REPORT_CONSUMER_CTRL, REPORT_MODE_PROTOCOL);
 }
 
 static void keyboard_leds_handler(struct bt_gatt_hids_rep *rep,
@@ -250,10 +250,10 @@ static int module_init(void)
 		ir_pos++;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MPLAYER)) {
-		input_report[ir_pos].id      = REPORT_ID_MPLAYER;
-		input_report[ir_pos].size    = REPORT_SIZE_MPLAYER;
-		input_report[ir_pos].handler = mplayer_notif_handler;
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+		input_report[ir_pos].id      = REPORT_ID_CONSUMER_CTRL;
+		input_report[ir_pos].size    = REPORT_SIZE_CONSUMER_CTRL;
+		input_report[ir_pos].handler = consumer_ctrl_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -446,6 +446,52 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	}
 }
 
+static void consumer_ctrl_report_sent(const struct bt_conn *conn, bool error)
+{
+	struct hid_report_sent_event *event = new_hid_report_sent_event();
+
+	event->report_type = IN_REPORT_CONSUMER_CTRL;
+	event->subscriber  = conn;
+	event->error = error;
+	EVENT_SUBMIT(event);
+}
+
+static void consumer_ctrl_report_sent_cb(struct bt_conn *conn, void *user_data)
+{
+	ARG_UNUSED(user_data);
+	consumer_ctrl_report_sent(conn, false);
+}
+
+static void send_consumer_ctrl_report(const struct hid_consumer_ctrl_event *event)
+{
+	if (cur_conn != event->subscriber) {
+		/* It's not us */
+		return;
+	}
+	__ASSERT_NO_MSG(cur_conn);
+
+	if (!report_enabled[IN_REPORT_CONSUMER_CTRL][report_mode]) {
+		/* Notification disabled */
+		return;
+	}
+
+	u8_t report[REPORT_SIZE_CONSUMER_CTRL];
+
+	static_assert(ARRAY_SIZE(report) == sizeof(event->bitmask),
+		      "Incorrect bitmask in event");
+
+	/* Set selected flags */
+	sys_put_le16(event->bitmask, report);
+	int err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
+					report_index[REPORT_ID_CONSUMER_CTRL],
+					report, sizeof(report),
+					consumer_ctrl_report_sent_cb);
+	if (err) {
+		LOG_ERR("Cannot send report (%d)", err);
+		consumer_ctrl_report_sent(cur_conn, true);
+	}
+}
+
 static void notify_hids(const struct ble_peer_event *event)
 {
 	int err = 0;
@@ -502,6 +548,15 @@ static bool event_handler(const struct event_header *eh)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+		if (is_hid_consumer_ctrl_event(eh)) {
+			send_consumer_ctrl_report(
+				cast_hid_consumer_ctrl_event(eh));
+
+			return false;
+		}
+	}
+
 	if (is_ble_peer_event(eh)) {
 		notify_hids(cast_ble_peer_event(eh));
 
@@ -553,6 +608,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+EVENT_SUBSCRIBE(MODULE, hid_consumer_ctrl_event);
 EVENT_SUBSCRIBE(MODULE, hid_notification_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
