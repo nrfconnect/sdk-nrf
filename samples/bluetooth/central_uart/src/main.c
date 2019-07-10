@@ -286,12 +286,6 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 	default_conn = bt_conn_ref(conn);
 }
 
-static struct bt_scan_cb scan_cb = {
-	.filter_match = scan_filter_match,
-	.connecting_error = scan_connecting_error,
-	.connecting = scan_connecting,
-};
-
 static int uart_init(void)
 {
 	uart = device_get_binding(DT_UART_0_NAME);
@@ -326,6 +320,9 @@ static int nus_client_init(void)
 	printk("NUS Client module initialized\n");
 	return err;
 }
+
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
+		scan_connecting_error, scan_connecting);
 
 static int scan_init(void)
 {

@@ -75,11 +75,8 @@ void scan_connecting_error(struct bt_scan_device_info *device_info)
 	printk("Connecting failed\n");
 }
 
-static struct bt_scan_cb scan_cb = {
-	.filter_match = scan_filter_match,
-	.filter_no_match = scan_filter_no_match,
-	.connecting_error = scan_connecting_error,
-};
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
+		scan_connecting_error, NULL);
 
 static void exchange_func(struct bt_conn *conn, u8_t err,
 			  struct bt_gatt_exchange_params *params)

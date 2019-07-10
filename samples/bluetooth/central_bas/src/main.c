@@ -69,11 +69,8 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 	default_conn = bt_conn_ref(conn);
 }
 
-static struct bt_scan_cb scan_cb = {
-	.filter_match = scan_filter_match,
-	.connecting_error = scan_connecting_error,
-	.connecting = scan_connecting
-};
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
+		scan_connecting_error, scan_connecting);
 
 static void discovery_completed_cb(struct bt_gatt_dm *dm,
 				   void *context)

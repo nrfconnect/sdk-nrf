@@ -163,10 +163,7 @@ void scan_connecting_error(struct bt_scan_device_info *device_info)
 	printk("Connection to peer failed!\n");
 }
 
-static struct bt_scan_cb scan_cb = {
-	.filter_match = scan_filter_match,
-	.connecting_error = scan_connecting_error,
-};
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, NULL);
 
 static void scan_start(void)
 {

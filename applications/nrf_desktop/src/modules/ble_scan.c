@@ -367,6 +367,9 @@ static int settings_init(void)
 	return 0;
 }
 
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
+		scan_connecting_error, scan_connecting);
+
 static void scan_init(void)
 {
 	reset_subscribers();
@@ -392,12 +395,6 @@ static void scan_init(void)
 	};
 
 	bt_scan_init(&scan_init);
-
-	static struct bt_scan_cb scan_cb = {
-		.filter_match = scan_filter_match,
-		.connecting_error = scan_connecting_error,
-		.connecting = scan_connecting
-	};
 
 	bt_scan_cb_register(&scan_cb);
 
