@@ -89,7 +89,7 @@ static const struct hid_keymap hid_keymap[] = {
 	{ KEY_ID(0x04, 0x0D), 0x55, IN_REPORT_KEYBOARD_KEYS }, /* keypad * */
 	{ KEY_ID(0x05, 0x04), 0x05, IN_REPORT_KEYBOARD_KEYS }, /* B */
 	{ KEY_ID(0x05, 0x05), 0x11, IN_REPORT_KEYBOARD_KEYS }, /* N */
-	{ KEY_ID(0x05, 0x07), 0xE7, IN_REPORT_KEYBOARD_KEYS }, /* right gui */
+	{ KEY_ID(0x05, 0x07), 0x65, IN_REPORT_KEYBOARD_KEYS }, /* Keyboard Application */
 	{ KEY_ID(0x05, 0x08), 0x38, IN_REPORT_KEYBOARD_KEYS }, /* / */
 	{ KEY_ID(0x05, 0x09), 0xE6, IN_REPORT_KEYBOARD_KEYS }, /* right alt */
 	{ KEY_ID(0x05, 0x0A), 0x45, IN_REPORT_KEYBOARD_KEYS }, /* f12 */
