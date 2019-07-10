@@ -292,17 +292,40 @@ struct bt_scan_device_info {
 	const struct bt_le_conn_param *conn_param;
 };
 
-/** @brief Scanning callback structure.
+/** @brief Initializing macro for scanning module.
  *
- *  This structure is used for tracking the state of a scanning.
- *  It is registered with the help of the @ref bt_scan_cb_register() API.
- *  It's permissible to register multiple instances of this @ref bt_scan_cb
- *  type, in case different modules of an application are interested in
- *  tracking the scanning state. If a callback is not of interest for
- *  an instance, it may be set to NULL and will as a consequence not be
- *  used for that instance.
+ * This is macro initializing necessary structures for @ref bt_scan_cb type.
+ *
+ * @param[in] _name Unique name for @ref bt_scan_cb structure.
+ * @param[in] match_fun Scan filter matched function pointer.
+ * @param[in] no_match_fun Scan filter unmatched (the device was not found)
+		 function pointer.
+ * @param[in] error_fun Error when connecting function pointer.
+ * @param[in] connecting_fun Connecting data function pointer.
  */
-struct bt_scan_cb {
+
+#define BT_SCAN_CB_INIT(_name,				\
+			match_fun,			\
+			no_match_fun,			\
+			error_fun,			\
+			connecting_fun)			\
+	static const struct cb_data _name ## _data = { 	\
+		.filter_match = match_fun,		\
+		.filter_no_match = no_match_fun,	\
+		.connecting_error = error_fun,		\
+		.connecting = connecting_fun,		\
+	};						\
+	static struct bt_scan_cb _name = {		\
+		.cb_addr = &_name ## _data,		\
+	}
+
+/** @brief Data for scanning callback structure.
+ *
+ * This structure is used for storing callback functions pointers.
+ * It is used by @ref bt_scan_cb structure.
+ */
+
+struct cb_data {
 	/**@brief Scan filter matched.
 	 *
 	 * @param[in] device_info Data needed to establish
@@ -342,6 +365,21 @@ struct bt_scan_cb {
 	void (*connecting)(struct bt_scan_device_info *device_info,
 			   struct bt_conn *conn);
 
+};
+
+/** @brief Scanning callback structure.
+ *
+ *  This structure is used for tracking the state of a scanning.
+ *  It is registered with the help of the @ref bt_scan_cb_register() API.
+ *  It's permissible to register multiple instances of this @ref bt_scan_cb
+ *  type, in case different modules of an application are interested in
+ *  tracking the scanning state. If a callback is not of interest for
+ *  an instance, it may be set to NULL and will as a consequence not be
+ *  used for that instance.
+ */
+
+struct bt_scan_cb {
+	const struct cb_data *cb_addr;
 	sys_snode_t node;
 };
 

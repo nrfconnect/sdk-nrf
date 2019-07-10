@@ -241,9 +241,9 @@ static void notify_filter_matched(struct bt_scan_device_info *device_info,
 	struct bt_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
-		if (cb->filter_match) {
-			cb->filter_match(device_info, filter_match,
-					 connectable);
+		if (cb->cb_addr->filter_match) {
+			cb->cb_addr->filter_match(device_info, filter_match,
+						  connectable);
 		}
 	}
 }
@@ -254,8 +254,8 @@ static void notify_filter_no_match(struct bt_scan_device_info *device_info,
 	struct bt_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
-		if (cb->filter_no_match) {
-			cb->filter_no_match(device_info, connectable);
+		if (cb->cb_addr->filter_no_match) {
+			cb->cb_addr->filter_no_match(device_info, connectable);
 		}
 	}
 }
@@ -266,8 +266,8 @@ static void notify_connecting(struct bt_scan_device_info *device_info,
 	struct bt_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
-		if (cb->connecting) {
-			cb->connecting(device_info, conn);
+		if (cb->cb_addr->connecting) {
+			cb->cb_addr->connecting(device_info, conn);
 		}
 	}
 }
@@ -277,8 +277,8 @@ static void notify_connecting_error(struct bt_scan_device_info *device_info)
 	struct bt_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
-		if (cb->connecting_error) {
-			cb->connecting_error(device_info);
+		if (cb->cb_addr->connecting_error) {
+			cb->cb_addr->connecting_error(device_info);
 		}
 	}
 }
