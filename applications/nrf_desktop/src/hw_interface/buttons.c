@@ -7,7 +7,6 @@
 #include <zephyr/types.h>
 
 #include <kernel.h>
-#include <spinlock.h>
 #include <soc.h>
 #include <device.h>
 #include <gpio.h>
@@ -42,8 +41,8 @@ enum state {
 static struct device *gpio_devs[ARRAY_SIZE(port_map)];
 static struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
 static struct k_delayed_work matrix_scan;
+static struct k_delayed_work button_pressed;
 static enum state state;
-static struct k_spinlock lock;
 
 
 static void scan_fn(struct k_work *work);
@@ -126,15 +125,19 @@ static int callback_ctrl(bool enable)
 {
 	int err = 0;
 
-	/* This must be done with irqs disabled to avoid pin callback
+	/* Normally this should be done with irqs disabled to avoid pin callback
 	 * being fired before others are still not activated.
+	 * Since we defer the handling code to work we can however assume
+	 * cancel executed after callbacks maintenance will keep things safe.
+	 *
+	 * Note that this code MUST be executed from a system workqueue context.
+	 *
+	 * We are also safe to access state without a lock as long as it is
+	 * done only from system workqueue context.
 	 */
-
-	u32_t pin_mask[ARRAY_SIZE(port_map)] = {0};
 
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
 		if (enable) {
-			pin_mask[row[i].port] |= BIT(row[i].pin);
 			err = gpio_pin_enable_callback(gpio_devs[row[i].port],
 						       row[i].pin);
 		} else {
@@ -142,18 +145,17 @@ static int callback_ctrl(bool enable)
 							row[i].pin);
 		}
 	}
-
-	/* Below code is workaround for Zephyr not allowing to disable
-	 * interrupt already pending for fire.
-	 */
-	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
-		gpio_cb[i].pin_mask = pin_mask[i];
+	if (!enable) {
+		/* Callbacks are disabled but they could fire in the meantime.
+		 * Make sure pending work is canceled.
+		 */
+		k_delayed_work_cancel(&button_pressed);
 	}
 
 	return err;
 }
 
-static int suspend_nolock(void)
+static int suspend(void)
 {
 	int err = -EBUSY;
 
@@ -168,8 +170,6 @@ static int suspend_nolock(void)
 
 	case STATE_ACTIVE:
 		state = STATE_IDLE;
-
-		/* Leaving deep sleep requires level interrupt */
 		err = callback_ctrl(true);
 		break;
 
@@ -185,23 +185,10 @@ static int suspend_nolock(void)
 	return err;
 }
 
-static int suspend(void)
-{
-	int err;
-
-	k_spinlock_key_t key = k_spin_lock(&lock);
-	err = suspend_nolock();
-	k_spin_unlock(&lock, key);
-
-	return err;
-}
-
 static void resume(void)
 {
-	k_spinlock_key_t key = k_spin_lock(&lock);
 	if (state != STATE_IDLE) {
 		/* Already activated. */
-		k_spin_unlock(&lock, key);
 		return;
 	}
 
@@ -211,9 +198,6 @@ static void resume(void)
 	} else {
 		state = STATE_SCANNING;
 	}
-
-	/* GPIO callback is disabled - it is safe to unlock */
-	k_spin_unlock(&lock, key);
 
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
@@ -226,13 +210,9 @@ static void resume(void)
 
 static void scan_fn(struct k_work *work)
 {
-	if (IS_ENABLED(CONFIG_ASSERT)) {
-		/* Validate state */
-		k_spinlock_key_t key = k_spin_lock(&lock);
-		__ASSERT_NO_MSG((state == STATE_SCANNING) ||
-				(state == STATE_SUSPENDING));
-		k_spin_unlock(&lock, key);
-	}
+	/* Validate state */
+	__ASSERT_NO_MSG((state == STATE_SCANNING) ||
+			(state == STATE_SUSPENDING));
 
 	/* Get current state */
 	u32_t raw_state[COLUMNS];
@@ -319,7 +299,6 @@ static void scan_fn(struct k_work *work)
 		/* Make sure that mode is set before callbacks are enabled */
 		int err = 0;
 
-		k_spinlock_key_t key = k_spin_lock(&lock);
 		switch (state) {
 		case STATE_SCANNING:
 			state = STATE_ACTIVE;
@@ -328,7 +307,7 @@ static void scan_fn(struct k_work *work)
 
 		case STATE_SUSPENDING:
 			state = STATE_ACTIVE;
-			err = suspend_nolock();
+			err = suspend();
 			if (!err) {
 				module_set_state(MODULE_STATE_STANDBY);
 			}
@@ -339,7 +318,6 @@ static void scan_fn(struct k_work *work)
 			__ASSERT_NO_MSG(false);
 			break;
 		}
-		k_spin_unlock(&lock, key);
 
 		if (err) {
 			LOG_ERR("Cannot enable callbacks");
@@ -353,14 +331,43 @@ error:
 	module_set_state(MODULE_STATE_ERROR);
 }
 
-void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
-		    u32_t pins)
+static void button_pressed_isr(struct device *gpio_dev,
+			       struct gpio_callback *cb,
+			       u32_t pins)
 {
-	k_spinlock_key_t key = k_spin_lock(&lock);
+	int err = 0;
 
-	int err = callback_ctrl(false);
+	/* Disable all interrupts synchronously requires holding a spinlock.
+	 * The problem is that GPIO callback disable code takes time. If lock
+	 * is kept during this operation BLE stack can fail in some cases.
+	 * Instead we disable callbacks associated with the pins. This is to
+	 * make sure CPU is avialable for threads. The remaining callbacks are
+	 * disabled in the workqueue thread context. Work code also cancels
+	 * itselfs to prevent double execution when interrupt for another
+	 * pin was triggered in-between.
+	 */
+	for (u32_t pin = 0; (pins != 0) && !err; pins >>= 1, pin++) {
+		if ((pins & 1) != 0) {
+			err = gpio_pin_disable_callback(gpio_dev, pin);
+		}
+	}
+
 	if (err) {
 		LOG_ERR("Cannot disable callbacks");
+		module_set_state(MODULE_STATE_ERROR);
+	} else {
+		k_delayed_work_submit(&button_pressed, 0);
+	}
+}
+
+static void button_pressed_fn(struct k_work *work)
+{
+	int err = callback_ctrl(false);
+
+	if (err) {
+		LOG_ERR("Cannot disable callbacks");
+		module_set_state(MODULE_STATE_ERROR);
+		return;
 	}
 
 	switch (state) {
@@ -382,8 +389,6 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 		__ASSERT_NO_MSG(false);
 		break;
 	}
-
-	k_spin_unlock(&lock, key);
 }
 
 static void init_fn(void)
@@ -435,7 +440,7 @@ static void init_fn(void)
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
-		gpio_init_callback(&gpio_cb[i], button_pressed, pin_mask[i]);
+		gpio_init_callback(&gpio_cb[i], button_pressed_isr, pin_mask[i]);
 		err = gpio_add_callback(gpio_devs[i], &gpio_cb[i]);
 		if (err) {
 			LOG_ERR("Cannot add callback");
@@ -468,6 +473,7 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			k_delayed_work_init(&matrix_scan, scan_fn);
+			k_delayed_work_init(&button_pressed, button_pressed_fn);
 
 			init_fn();
 
