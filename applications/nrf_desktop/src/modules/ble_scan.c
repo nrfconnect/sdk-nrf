@@ -249,9 +249,17 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 
 static void scan_init(void)
 {
+	static const struct bt_le_scan_param sp = {
+		.type = BT_HCI_LE_SCAN_ACTIVE,
+		.filter_dup = BT_HCI_LE_SCAN_FILTER_DUP_ENABLE,
+		.interval = BT_GAP_SCAN_FAST_INTERVAL,
+		.window = BT_GAP_SCAN_FAST_WINDOW,
+	};
+
 	static const struct bt_scan_init_param scan_init = {
 		.connect_if_match = true,
-		.scan_param = NULL,
+		.scan_param = &sp,
+		.conn_param = NULL,
 	};
 
 	bt_scan_init(&scan_init);
