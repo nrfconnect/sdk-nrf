@@ -276,10 +276,12 @@ static void scan_fn(struct k_work *work)
 
 	for (size_t i = 0; i < COLUMNS; i++) {
 		for (size_t j = 0; j < ARRAY_SIZE(row); j++) {
+			bool is_raw_pressed = raw_state[i] & BIT(j);
 			bool is_pressed = cur_state[i] & BIT(j);
 			bool was_pressed = old_state[i] & BIT(j);
 
 			if ((is_pressed != was_pressed) &&
+			    (is_pressed == is_raw_pressed) &&
 			    (evt_limit < CONFIG_DESKTOP_BUTTONS_EVENT_LIMIT)) {
 				struct button_event *event = new_button_event();
 
