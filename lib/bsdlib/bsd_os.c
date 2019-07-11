@@ -401,10 +401,10 @@ void trace_uart_init(void)
 	/* UART pins are defined in "nrf9160_pca10090.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
-		.pseltxd = DT_NORDIC_NRF_UARTE_1_TX_PIN,
-		.pselrxd = DT_NORDIC_NRF_UARTE_1_RX_PIN,
-		.pselcts = DT_NORDIC_NRF_UARTE_1_CTS_PIN,
-		.pselrts = DT_NORDIC_NRF_UARTE_1_RTS_PIN,
+		.pseltxd = DT_NORDIC_NRF_UARTE_UART_1_TX_PIN,
+		.pselrxd = DT_NORDIC_NRF_UARTE_UART_1_RX_PIN,
+		.pselcts = DT_NORDIC_NRF_UARTE_UART_1_CTS_PIN,
+		.pselrts = DT_NORDIC_NRF_UARTE_UART_1_RTS_PIN,
 
 		.hwfc = NRF_UARTE_HWFC_DISABLED,
 		.parity = NRF_UARTE_PARITY_EXCLUDED,
@@ -437,9 +437,10 @@ void bsd_os_init(void)
 int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
 {
 #ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
-	/* FIXME: Due to a bug in nrfx, max DMA transfers are 255 bytes. */
-
-	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
+	/* Max DMA transfers are 255 bytes.
+	 * Split RAM buffer into smaller chunks
+	 * to be transferred using DMA.
+	 */
 	u32_t remaining_bytes = len;
 
 	while (remaining_bytes) {
