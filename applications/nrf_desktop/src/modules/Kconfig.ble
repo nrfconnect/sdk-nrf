@@ -61,6 +61,11 @@ config DESKTOP_BLE_ADVERTISING_ENABLE
 	help
 	  Make device discoverable via BLE.
 
+config DESKTOP_BLE_SHORT_NAME
+	string "Short device name used for advertising"
+	default ""
+	depends on DESKTOP_BLE_ADVERTISING_ENABLE
+
 config DESKTOP_BLE_DIRECT_ADV_AVAILABLE
 	bool
 	default y if BT_PERIPHERAL
@@ -131,6 +136,22 @@ config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 	  After this time peripheral device disconnects if security is not
 	  established.
 
+config DESKTOP_BLE_SCAN_START_TIMEOUT_S
+	int "Scan start timeout [s]"
+	default 5
+	depends on DESKTOP_BLE_SCANNING_ENABLE
+	help
+	  After disabled, scanning is re-enabled after defined time of connected
+	  peripherals inactivity (scanning has negative impact on user
+	  experience - e.g. may cause mouse pointer lags).
+
+config DESKTOP_BLE_SCAN_DURATION_S
+	int "Scan duration [s]"
+	default 5
+	depends on DESKTOP_BLE_SCANNING_ENABLE
+	help
+	  After this time scan is disabled if any peripheral is connected.
+
 if DESKTOP_BLE_SCANNING_ENABLE
 
 module = DESKTOP_BLE_SCANNING
@@ -138,12 +159,5 @@ module-str = BLE scanning
 source "subsys/logging/Kconfig.template.log_config"
 
 endif
-
-config DESKTOP_BLE_SHORT_NAME
-	string "Short device name used for advertising and as a scan filter"
-	default ""
-	help
-	  Name of the device to which central shall connect to. Used also to
-	  determine shortened device name for advertising.
 
 endmenu
