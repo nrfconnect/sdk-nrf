@@ -111,7 +111,9 @@ static struct env_sensor *env_sensors[] = {
 };
 
  /* Variables to keep track of nRF cloud user association. */
+#if defined(CONFIG_DK_LIBRARY)
 static u8_t ua_pattern[6];
+#endif
 static int buttons_to_capture;
 static int buttons_captured;
 static atomic_t pattern_recording;
@@ -163,7 +165,9 @@ static void env_data_send(void);
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct cloud_channel_data *data);
+#if CONFIG_MODEM_INFO
 static void device_status_send(struct k_work *work);
+#endif
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
@@ -325,6 +329,7 @@ static void sensor_trigger_handler(struct device *dev,
 	flip_send(NULL);
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 /**@brief Send button presses to cloud */
 static void button_send(bool pressed)
 {
@@ -350,6 +355,7 @@ static void button_send(bool pressed)
 
 	k_work_submit(&send_button_data_work);
 }
+#endif
 
 /**@brief Poll flip orientation and send to cloud if flip mode is enabled. */
 static void flip_send(struct k_work *work)
@@ -618,6 +624,7 @@ static void on_user_pairing_req(const struct cloud_event *evt)
 	}
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 /**@brief Send user association information to nRF Cloud. */
 static void cloud_user_associate(void)
 {
@@ -638,6 +645,7 @@ static void cloud_user_associate(void)
 		cloud_error_handler(err);
 	}
 }
+#endif
 
 /** @brief Handle procedures after successful association with nRF Cloud. */
 void on_pairing_done(void)
@@ -676,12 +684,14 @@ void on_pairing_done(void)
 	printk("Fallback to controlled reboot\n");
 	printk("Shutting down LTE link...\n");
 
+#if defined(CONFIG_BSD_LIBRARY)
 	err = lte_lc_power_off();
 	if (err) {
 		printk("Could not shut down link\n");
 	} else {
 		printk("LTE link disconnected\n");
 	}
+#endif
 
 #ifdef CONFIG_REBOOT
 	printk("Rebooting...\n");
@@ -750,6 +760,7 @@ static void app_connect(struct k_work *work)
 	}
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 /**@brief Function to keep track of user association input when using
  *	  buttons and switches to register the association pattern.
  *	  nRF Cloud specific.
@@ -782,6 +793,7 @@ static void pairing_button_register(struct ui_evt *evt)
 		cloud_user_associate();
 	}
 }
+#endif
 
 static void accelerometer_calibrate(struct k_work *work)
 {
@@ -1012,6 +1024,7 @@ static void sensors_init(void)
 	env_data_send();
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 /**@brief User interface event handler. */
 static void ui_evt_handler(struct ui_evt evt)
 {
@@ -1056,6 +1069,7 @@ static void ui_evt_handler(struct ui_evt evt)
 	}
 #endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 }
+#endif /* defined(CONFIG_DK_LIBRARY) */
 
 void main(void)
 {
@@ -1073,7 +1087,9 @@ void main(void)
 		cloud_error_handler(ret);
 	}
 
+#if defined(CONFIG_DK_LIBRARY)
 	ui_init(ui_evt_handler);
+#endif
 
 	ret = cloud_decode_init(cloud_cmd_handler);
 	if (ret) {

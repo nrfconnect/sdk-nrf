@@ -177,5 +177,9 @@ int ui_init(ui_callback_t cb)
 
 bool ui_button_is_active(u32_t button)
 {
+#if defined(CONFIG_DK_LIBRARY)
 	return dk_get_buttons() & BIT((button - 1));
+#else
+	return false;
+#endif
 }
