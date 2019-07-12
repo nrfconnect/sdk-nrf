@@ -13,6 +13,7 @@
 
 #define MODULE ble_scan
 #include "module_state_event.h"
+#include "hid_event.h"
 
 #include "ble_event.h"
 #include "ble_scan.h"
@@ -20,6 +21,9 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
+#define SCAN_TRIG_CHECK_MS    K_SECONDS(1)
+#define SCAN_TRIG_TIMEOUT_MS  K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S)
+#define SCAN_DURATION_MS      K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_DURATION_S)
 
 struct bond_find_data {
 	bt_addr_le_t peer_address[CONFIG_BT_MAX_PAIRED];
@@ -28,7 +32,10 @@ struct bond_find_data {
 };
 
 
-static bool scanning;
+static int scan_counter;
+static struct bt_conn *discovering_peer_conn;
+static struct k_delayed_work scan_start_trigger;
+static struct k_delayed_work scan_stop_trigger;
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
@@ -52,10 +59,27 @@ static void scan_stop(void)
 {
 	int err = bt_scan_stop();
 
-	if (err) {
+	if (err == -EALREADY) {
+		LOG_WRN("Active scan already disabled");
+	} else if (err) {
 		LOG_ERR("Stop LE scan failed (err %d)", err);
+		module_set_state(MODULE_STATE_ERROR);
+		return;
 	} else {
-		scanning = false;
+		LOG_INF("Scan stopped");
+	}
+
+	struct bond_find_data bond_find_data = {
+		.conn_count = 0,
+		.peer_count = 0,
+	};
+
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find,
+			&bond_find_data);
+	if (bond_find_data.conn_count < CONFIG_BT_MAX_CONN) {
+		scan_counter = 0;
+		k_delayed_work_submit(&scan_start_trigger, SCAN_TRIG_CHECK_MS);
+		k_delayed_work_cancel(&scan_stop_trigger);
 	}
 }
 
@@ -132,9 +156,21 @@ static void scan_start(void)
 {
 	int err;
 
-	if (scanning) {
-		scan_stop();
+	struct bond_find_data bond_find_data = {
+		.conn_count = 0,
+		.peer_count = 0,
+	};
+
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find,
+			&bond_find_data);
+	if (bond_find_data.conn_count == CONFIG_BT_MAX_CONN) {
+		LOG_INF("Max number of peers connected - scanning disabled");
+		return;
+	} else if (discovering_peer_conn) {
+		LOG_INF("Discovery in progress - scanning disabled");
+		return;
 	}
+
 	err = configure_filters();
 	if (err) {
 		LOG_ERR("Cannot set filters (err %d)", err);
@@ -142,17 +178,52 @@ static void scan_start(void)
 	}
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
-	if (err) {
+	if (err == -EALREADY) {
+		LOG_WRN("Scanning already enabled");
+	} else if (err) {
 		LOG_ERR("Cannot start scanning (err %d)", err);
 		goto error;
+	} else {
+		LOG_INF("Scan started");
 	}
-	LOG_INF("Scan started");
-	scanning = true;
+
+	k_delayed_work_submit(&scan_stop_trigger, SCAN_DURATION_MS);
+	k_delayed_work_cancel(&scan_start_trigger);
+
 	return;
 
 error:
-	LOG_ERR("Scanning failed to start (err %d)", err);
 	module_set_state(MODULE_STATE_ERROR);
+}
+
+static void scan_start_trigger_fn(struct k_work *w)
+{
+	static_assert((SCAN_TRIG_TIMEOUT_MS > SCAN_TRIG_CHECK_MS) &&
+		      (SCAN_TRIG_CHECK_MS > 0), "");
+
+	scan_counter += SCAN_TRIG_CHECK_MS;
+	if (scan_counter > SCAN_TRIG_TIMEOUT_MS) {
+		scan_counter = 0;
+		scan_start();
+	} else {
+		k_delayed_work_submit(&scan_start_trigger, SCAN_TRIG_CHECK_MS);
+	}
+}
+
+static void scan_stop_trigger_fn(struct k_work *w)
+{
+	static_assert(SCAN_DURATION_MS > 0, "");
+
+	struct bond_find_data bond_find_data = {
+		.conn_count = 0,
+		.peer_count = 0,
+	};
+
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find,
+			&bond_find_data);
+	if (bond_find_data.conn_count != 0) {
+		scan_stop();
+	}
 }
 
 static void scan_filter_match(struct bt_scan_device_info *device_info,
@@ -180,6 +251,9 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
 	LOG_INF("Connecting done");
+	__ASSERT_NO_MSG(!discovering_peer_conn);
+	discovering_peer_conn = conn;
+	bt_conn_ref(discovering_peer_conn);
 }
 
 static void discovery_completed(struct bt_gatt_dm *dm, void *context)
@@ -202,12 +276,18 @@ static void discovery_completed(struct bt_gatt_dm *dm, void *context)
 
 static void discovery_service_not_found(struct bt_conn *conn, void *context)
 {
-	LOG_WRN("Cannot find service during the discovery");
+	LOG_ERR("Cannot find service during the discovery");
+	/* discovering_peer_conn updated on PEER_DISCONNECTED event */
+	__ASSERT_NO_MSG(discovering_peer_conn == conn);
+	bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 }
 
 static void discovery_error_found(struct bt_conn *conn, int err, void *context)
 {
 	LOG_WRN("The discovery failed (err %d)", err);
+	/* discovering_peer_conn updated on PEER_DISCONNECTED event */
+	__ASSERT_NO_MSG(discovering_peer_conn == conn);
+	bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 }
 
 static void start_discovery(struct bt_conn *conn)
@@ -222,7 +302,10 @@ static void start_discovery(struct bt_conn *conn)
 				   BT_UUID_HIDS,
 				   &discovery_cb,
 				   NULL);
-	if (err) {
+
+	if (err == -EALREADY) {
+		LOG_ERR("Discovery already in progress");
+	} else if (err) {
 		LOG_ERR("Cannot start the discovery (err %d)", err);
 	}
 }
@@ -277,30 +360,21 @@ static void scan_init(void)
 	};
 
 	bt_conn_cb_register(&conn_callbacks);
-}
-
-void disconnect_peer(void)
-{
-	struct bond_find_data bond_find_data = {
-		.conn_count = 0,
-		.peer_count = 0,
-	};
-	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
-
-	for (size_t i = 0; i < bond_find_data.peer_count; i++) {
-		struct bt_conn *conn =
-			bt_conn_lookup_addr_le(BT_ID_DEFAULT,
-					&bond_find_data.peer_address[i]);
-		if (conn) {
-			bt_conn_disconnect(conn,
-					BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-			bt_conn_unref(conn);
-		}
-	}
+	k_delayed_work_init(&scan_start_trigger, scan_start_trigger_fn);
+	k_delayed_work_init(&scan_stop_trigger, scan_stop_trigger_fn);
 }
 
 static bool event_handler(const struct event_header *eh)
 {
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
+	    (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) && is_hid_keyboard_event(eh)) ||
+	    (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL) && is_hid_consumer_ctrl_event(eh))) {
+		/* Do not enable scan when devices are in use. */
+		scan_counter = 0;
+
+		return false;
+	}
+
 	if (is_module_state_event(eh)) {
 		const struct module_state_event *event =
 			cast_module_state_event(eh);
@@ -338,6 +412,11 @@ static bool event_handler(const struct event_header *eh)
 			/* Ignore */
 			break;
 		case PEER_STATE_DISCONNECTED:
+			if (discovering_peer_conn == event->id) {
+				bt_conn_unref(discovering_peer_conn);
+				discovering_peer_conn = NULL;
+			}
+			scan_stop();
 			scan_start();
 			break;
 		case PEER_STATE_SECURED:
@@ -357,6 +436,7 @@ static bool event_handler(const struct event_header *eh)
 		switch (event->op) {
 
 		case PEER_OPERATION_ERASED:
+			scan_stop();
 			scan_start();
 			break;
 
@@ -384,16 +464,14 @@ static bool event_handler(const struct event_header *eh)
 		if (err) {
 			LOG_ERR("Discovery data release failed (err %d)", err);
 		}
-
-
-		struct bond_find_data bond_find_data = {
-			.conn_count = 0,
-			.peer_count = 0,
-		};
-		bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
-		if (bond_find_data.conn_count < CONFIG_BT_MAX_CONN) {
-			scan_start();
-		}
+		bt_conn_unref(discovering_peer_conn);
+		discovering_peer_conn = NULL;
+		/* Cannot start scanning right after discovery - problems
+		 * establishing security - using delayed work as workaround.
+		 */
+		k_delayed_work_submit(&scan_start_trigger,
+				      SCAN_TRIG_TIMEOUT_MS);
+		scan_counter = SCAN_TRIG_TIMEOUT_MS;
 
 		return false;
 	}
@@ -407,4 +485,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
+EVENT_SUBSCRIBE(MODULE, hid_consumer_ctrl_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, ble_discovery_complete_event);
