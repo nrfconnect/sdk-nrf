@@ -33,6 +33,15 @@ The script uses an additional Nordic Development Kit (for example, PCA10040) as 
 It connects to the specified device and forwards all NUS traffic to the network port.
 You can then use a terminal application, for example PuTTY, to connect to that port (the default port is 8889) and use the shell.
 
+The script requires ``nrfutil`` Python package to be installed.
+
+To install it, open a terminal window and enter the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   pip2 install --user nrfutil==4.0.0
+
 The script requires the following parameters:
 
 * ``com`` - port of the development board used by the script
