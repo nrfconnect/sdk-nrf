@@ -60,9 +60,20 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
+	if (!filter_match->uuid.match ||
+	    (filter_match->uuid.count != 1)) {
+
+		printk("Invalid device connected\n");
+
+		return;
+	}
+
+	const struct bt_uuid *uuid = filter_match->uuid.uuid[0];
+
 	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
 
-	printk("Filters matched. Address: %s connectable: %s\n",
+	printk("Filters matched on UUID 0x%04x.\nAddress: %s connectable: %s\n",
+		BT_UUID_16(uuid)->val,
 		addr, connectable ? "yes" : "no");
 
 	err = bt_scan_stop();
