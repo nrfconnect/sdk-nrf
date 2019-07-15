@@ -313,7 +313,8 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 	}
 }
 
-static bool adv_addr_compare(const bt_addr_le_t *target_addr)
+static bool adv_addr_compare(const bt_addr_le_t *target_addr,
+			     struct bt_scan_control *control)
 {
 	const bt_addr_le_t *addr =
 			bt_scan.scan_filters.addr.target_addr;
@@ -321,6 +322,8 @@ static bool adv_addr_compare(const bt_addr_le_t *target_addr)
 
 	for (size_t i = 0; i < counter; i++) {
 		if (bt_addr_le_cmp(target_addr, &addr[i]) == 0) {
+			control->filter_status.addr.addr = &addr[i];
+
 			return true;
 		}
 	}
@@ -337,11 +340,11 @@ static void check_addr(struct bt_scan_control *control,
 		       const bt_addr_le_t *addr)
 {
 	if (is_addr_filter_enabled()) {
-		if (adv_addr_compare(addr)) {
+		if (adv_addr_compare(addr, control)) {
 			control->filter_match_cnt++;
 
 			/* Information about the filters matched. */
-			control->filter_status.address = true;
+			control->filter_status.addr.match = true;
 			control->filter_match = true;
 		}
 	}
@@ -389,7 +392,8 @@ static bool adv_name_cmp(const u8_t *data,
 	return strncmp(target_name, data, data_len) == 0;
 }
 
-static bool adv_name_compare(const struct bt_data *data)
+static bool adv_name_compare(const struct bt_data *data,
+			     struct bt_scan_control *control)
 {
 	struct bt_scan_name_filter const *name_filter =
 			&bt_scan.scan_filters.name;
@@ -401,6 +405,11 @@ static bool adv_name_compare(const struct bt_data *data)
 		if (adv_name_cmp(data->data,
 				 data_len,
 				 name_filter->target_name[i])) {
+
+			control->filter_status.name.name =
+				name_filter->target_name[i];
+			control->filter_status.name.len = data_len;
+
 			return true;
 		}
 	}
@@ -417,11 +426,11 @@ static void name_check(struct bt_scan_control *control,
 		       const struct bt_data *data)
 {
 	if (is_name_filter_enabled()) {
-		if (adv_name_compare(data)) {
+		if (adv_name_compare(data, control)) {
 			control->filter_match_cnt++;
 
 			/* Information about the filters matched. */
-			control->filter_status.name = true;
+			control->filter_status.name.match = true;
 			control->filter_match = true;
 		}
 	}
@@ -475,7 +484,8 @@ static bool adv_short_name_cmp(const u8_t *data,
 	return false;
 }
 
-static bool adv_short_name_compare(const struct bt_data *data)
+static bool adv_short_name_compare(const struct bt_data *data,
+				   struct bt_scan_control *control)
 {
 	const struct bt_scan_short_name_filter *name_filter =
 			&bt_scan.scan_filters.short_name;
@@ -488,6 +498,11 @@ static bool adv_short_name_compare(const struct bt_data *data)
 				       data_len,
 				       name_filter->name[i].target_name,
 				       name_filter->name[i].min_len)) {
+
+			control->filter_status.short_name.name =
+				name_filter->name[i].target_name;
+			control->filter_status.short_name.len = data_len;
+
 			return true;
 		}
 	}
@@ -504,11 +519,11 @@ static void short_name_check(struct bt_scan_control *control,
 			     const struct bt_data *data)
 {
 	if (is_short_name_filter_enabled()) {
-		if (adv_short_name_compare(data)) {
+		if (adv_short_name_compare(data, control)) {
 			control->filter_match_cnt++;
 
 			/* Information about the filters matched. */
-			control->filter_status.short_name = true;
+			control->filter_status.short_name.match = true;
 			control->filter_match = true;
 		}
 	}
@@ -617,7 +632,8 @@ static bool find_uuid(const u8_t *data,
 	return false;
 }
 
-static bool adv_uuid_compare(const struct bt_data *data, u8_t uuid_type)
+static bool adv_uuid_compare(const struct bt_data *data, u8_t uuid_type,
+			     struct bt_scan_control *control)
 {
 	const struct bt_scan_uuid_filter *uuid_filter =
 			&bt_scan.scan_filters.uuid;
@@ -630,6 +646,9 @@ static bool adv_uuid_compare(const struct bt_data *data, u8_t uuid_type)
 
 		if (find_uuid(data->data, data_len, uuid_type,
 			      &uuid_filter->uuid[i])) {
+			control->filter_status.uuid.uuid[uuid_match_cnt] =
+				uuid_filter->uuid[i].uuid;
+
 			uuid_match_cnt++;
 
 			/* In the normal filter mode,
@@ -643,6 +662,8 @@ static bool adv_uuid_compare(const struct bt_data *data, u8_t uuid_type)
 			break;
 		}
 	}
+
+	control->filter_status.uuid.count = uuid_match_cnt;
 
 	/* In the multifilter mode, all UUIDs must be found in
 	 * the advertisement packets.
@@ -665,11 +686,11 @@ static void uuid_check(struct bt_scan_control *control,
 		       u8_t type)
 {
 	if (is_uuid_filter_enabled()) {
-		if (adv_uuid_compare(data, type)) {
+		if (adv_uuid_compare(data, type, control)) {
 			control->filter_match_cnt++;
 
 			/* Information about the filters matched. */
-			control->filter_status.uuid = true;
+			control->filter_status.uuid.match = true;
 			control->filter_match = true;
 		}
 	}
@@ -749,7 +770,8 @@ static bool find_appearance(const u8_t *data,
 	return false;
 }
 
-static bool adv_appearance_compare(const struct bt_data *data)
+static bool adv_appearance_compare(const struct bt_data *data,
+				   struct bt_scan_control *control)
 {
 	const struct bt_scan_appearance_filter *appearance_filter =
 			&bt_scan.scan_filters.appearance;
@@ -764,6 +786,10 @@ static bool adv_appearance_compare(const struct bt_data *data)
 		if (find_appearance(data->data,
 				    data_len,
 				    &appearance_filter->appearance[i])) {
+
+			control->filter_status.appearance.appearance =
+					&appearance_filter->appearance[i];
+
 			return true;
 		}
 	}
@@ -780,11 +806,11 @@ static void appearance_check(struct bt_scan_control *control,
 			     const struct bt_data *data)
 {
 	if (is_appearance_filter_enabled()) {
-		if (adv_appearance_compare(data)) {
+		if (adv_appearance_compare(data, control)) {
 			control->filter_match_cnt++;
 
 			/* Information about the filters matched. */
-			control->filter_status.appearance = true;
+			control->filter_status.appearance.match = true;
 			control->filter_match = true;
 		}
 	}
@@ -832,7 +858,8 @@ static bool adv_manufacturer_data_cmp(const u8_t *data,
 	return true;
 }
 
-static bool adv_manufacturer_data_compare(const struct bt_data *data)
+static bool adv_manufacturer_data_compare(const struct bt_data *data,
+					  struct bt_scan_control *control)
 {
 	const struct bt_scan_manufacturer_data_filter *md_filter =
 		&bt_scan.scan_filters.manufacturer_data;
@@ -844,6 +871,12 @@ static bool adv_manufacturer_data_compare(const struct bt_data *data)
 				data->data_len,
 				md_filter->manufacturer_data[i].data,
 				md_filter->manufacturer_data[i].data_len)) {
+
+			control->filter_status.manufacturer_data.data =
+				md_filter->manufacturer_data[i].data;
+			control->filter_status.manufacturer_data.len =
+				md_filter->manufacturer_data[i].data_len;
+
 			return true;
 		}
 	}
@@ -860,11 +893,11 @@ static void manufacturer_data_check(struct bt_scan_control *control,
 				    const struct bt_data *data)
 {
 	if (is_manufacturer_data_filter_enabled()) {
-		if (adv_manufacturer_data_compare(data)) {
+		if (adv_manufacturer_data_compare(data, control)) {
 			control->filter_match_cnt++;
 
 			/* Information about the filters matched. */
-			control->filter_status.manufacturer_data = true;
+			control->filter_status.manufacturer_data.match = true;
 			control->filter_match = true;
 		}
 	}
