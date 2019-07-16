@@ -156,9 +156,10 @@ static int clock_control_init(struct device *dev)
 	 * ble_init() at PRE_KERNEL_1. ble_init() will call
 	 * ble_controller_init() that in turn will start the LFCLK.
 	 */
-	IRQ_CONNECT(DT_NORDIC_NRF_CLOCK_0_IRQ_0,
-		    DT_NORDIC_NRF_CLOCK_0_IRQ_0_PRIORITY,
+	IRQ_CONNECT(DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0,
+		    DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0_PRIORITY,
 		    nrf_power_clock_isr, 0, 0);
+
 	return 0;
 }
 
@@ -169,7 +170,7 @@ static const struct clock_control_driver_api hf_clock_control_api = {
 };
 
 DEVICE_AND_API_INIT(hf_clock,
-		    DT_NORDIC_NRF_CLOCK_0_LABEL "_16M",
+		    DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_16M",
 		    clock_control_init, NULL, NULL, PRE_KERNEL_1,
 		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &hf_clock_control_api);
 
@@ -183,7 +184,7 @@ static const struct clock_control_driver_api lf_clock_control_api = {
 };
 
 DEVICE_AND_API_INIT(lf_clock,
-		    DT_NORDIC_NRF_CLOCK_0_LABEL "_32K",
+		    DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_32K",
 		    clock_control_init, NULL, NULL, PRE_KERNEL_1,
 		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &lf_clock_control_api);
 
