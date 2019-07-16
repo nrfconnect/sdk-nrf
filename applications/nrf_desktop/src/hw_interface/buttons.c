@@ -54,7 +54,7 @@ static int set_cols(u32_t mask)
 		u32_t val = (mask & BIT(i)) ? (1) : (0);
 		int err;
 
-		if (val) {
+		if (val || !mask) {
 			if (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED)) {
 				val = !val;
 			}
@@ -231,6 +231,12 @@ static void scan_fn(struct k_work *work)
 		}
 	}
 
+	/* Avoid draining current between scans */
+	if (set_cols(0x00000000)) {
+		LOG_ERR("Cannot set neutral state");
+		goto error;
+	}
+
 	/* Prevent ghosting */
 	u32_t cur_state[COLUMNS];
 	for (size_t i = 0; i < COLUMNS; i++) {
@@ -275,30 +281,20 @@ static void scan_fn(struct k_work *work)
 			}
 		}
 
-		any_pressed = any_pressed || (old_state[i] != 0) || (cur_state[i] != 0);
+		any_pressed = any_pressed ||
+			      (old_state[i] != 0) ||
+			      (cur_state[i] != 0);
 	}
 
 	if (any_pressed) {
-		/* Avoid draining current between scans */
-		if (set_cols(0x00000000)) {
-			LOG_ERR("Cannot set neutral state");
-			goto error;
-		}
-
 		/* Schedule next scan */
 		k_delayed_work_submit(&matrix_scan, SCAN_INTERVAL);
 	} else {
 		/* If no button is pressed module can switch to callbacks */
 
-		/* Prepare to wait for a callback */
-		if (set_cols(0xFFFFFFFF)) {
-			LOG_ERR("Cannot set neutral state");
-			goto error;
-		}
-
-		/* Make sure that mode is set before callbacks are enabled */
 		int err = 0;
 
+		/* Enable callbacks and switch state, then set pins */
 		switch (state) {
 		case STATE_SCANNING:
 			state = STATE_ACTIVE;
@@ -323,6 +319,12 @@ static void scan_fn(struct k_work *work)
 			LOG_ERR("Cannot enable callbacks");
 			goto error;
 		}
+
+		/* Prepare to wait for a callback */
+		if (set_cols(0xFFFFFFFF)) {
+			LOG_ERR("Cannot set neutral state");
+			goto error;
+		}
 	}
 
 	return;
@@ -336,6 +338,12 @@ static void button_pressed_isr(struct device *gpio_dev,
 			       u32_t pins)
 {
 	int err = 0;
+
+	/* Scanning will be scheduled, switch off pins */
+	if (set_cols(0x00000000)) {
+		LOG_ERR("Cannot control pins");
+		err = -EFAULT;
+	}
 
 	/* Disable all interrupts synchronously requires holding a spinlock.
 	 * The problem is that GPIO callback disable code takes time. If lock
