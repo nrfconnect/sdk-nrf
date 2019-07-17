@@ -1,0 +1,197 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Application sample"
+
+rsource "src/ui/Kconfig"
+
+config APP_LWM2M_SERVER
+	string "LwM2M server name or IP address"
+	help
+	  Choose the LwM2M server you wish to connect to.
+
+config APP_HOLD_TIME_RSRP
+	int "Minimum time [s] between RSRP notification messages"
+	default 60
+	help
+	  The minimum time in seconds that notifications can be sent to
+	  observers of the Connectivity Monitoring data.
+
+config APP_HOLD_TIME_GPS
+	int "Minimum time [s] between RSRP notification messages"
+	default 60
+	help
+	  The minimum time in seconds that notifications can be sent to
+	  observers of the Location data.
+
+choice
+	prompt "GPS device"
+	default GPS_USE_SIM
+	help
+		Select from which device GPS data will be fetched.
+
+config GPS_USE_SIM
+	bool "Use GPS simulator"
+	select GPS_SIM
+	select GPS_SIM_TRIGGER
+	help
+		Use simulated GPS data.
+
+config GPS_USE_EXTERNAL
+	bool "User provided GPS device"
+	help
+		Provide a GPS device that location data will be fetched from and
+		sent to nRF Cloud
+
+endchoice
+
+if GPS_USE_SIM
+
+config GPS_DEV_NAME
+	string
+	default GPS_SIM_DEV_NAME
+
+config GPS_TRIGGER
+	bool
+	default GPS_SIM_TRIGGER
+
+endif
+
+if GPS_USE_EXTERNAL
+config GPS_DEV_NAME
+	string "GPS device name"
+	help
+		GPS device from which location data will be fetched and sent
+		to nRF Cloud.
+
+endif
+
+choice
+	prompt "Accelerometer device"
+	default ACCEL_USE_SIM
+	help
+		Select which device will provide accelerometer data.
+
+config ACCEL_USE_SIM
+	bool "Use simulated accelerometer data"
+	select SENSOR
+	select SENSOR_SIM
+	select SENSOR_SIM_TRIGGER
+	select SENSOR_SIM_STATIC_VALUES
+	help
+		Use sensor simulator to generate accelerometer data for
+		flip detection data sent to nRF Cloud.
+
+config ACCEL_USE_EXTERNAL
+	bool "User provided accelerometer device"
+	help
+		The user will provide an accelerometer device that will
+		be used for flip detection.
+
+endchoice
+
+if ACCEL_USE_SIM
+config ACCEL_DEV_NAME
+	string
+	default SENSOR_SIM_DEV_NAME
+
+config ACCEL_TRIGGER
+	bool
+	default SENSOR_SIM_TRIGGER
+
+config FLIP_INPUT
+	int "Button or switch number to simulate flip"
+	range 1 4 if BOARD_NRF9160_PCA10090NS
+	default 3 if BOARD_NRF9160_PCA10090NS
+	help
+		Button or switch number to use for simulating
+		a board flip event.
+		1 - Button 1
+		2 - Button 2
+		3 - Switch 1
+		4 - Switch 2
+endif
+
+config FLIP_POLL
+	bool "Use polling to detect flip"
+	help
+		Poll the defined accelerometer device at interval determined by
+		FLIP_POLL_INTERVAL. Data will be sent to nRF Cloud if a flip
+		has happened and the orientation thus has changed.
+
+if FLIP_POLL
+config FLIP_POLL_INTERVAL
+	int "Flip detection poll interval"
+	default 1000
+	help
+		Flip polling interval in milliseconds.
+endif
+
+if ACCEL_USE_EXTERNAL
+
+config ACCEL_DEV_NAME
+	string "Accelerometer device name"
+	help
+		Device from which accelerometer data will be fetched and used
+		for orientation detection and sent to nRF Cloud.
+
+endif
+
+config ACCEL_INVERTED
+	bool "Accelerometer inverted"
+	help
+		Enable if the accelerometer is mounted with the top side facing
+		down when the board itself is in normal position.
+
+config ACCEL_CALIBRATE
+	bool "Calibrate accelerometer"
+	help
+		Calibrate the accelerometer on a flat surface to filter away
+		static measurement offset that could affect orientation
+		detection.
+
+if ACCEL_CALIBRATE
+config ACCEL_CALIBRATION_ITERATIONS
+	int "Number of readings for calibration"
+	help
+		Number of measurement readings to average over to find the
+		static offset in the readings when calibrating the
+		accelerometer.
+
+config CALIBRATION_INPUT
+	int "Button to trigger accelerometer calibration"
+	range 1 2 if BOARD_NRF9160_PCA10090NS
+	default 1 if BOARD_NRF9160_PCA10090NS
+	help
+		Button number to use to trigger accelerometer calibration:
+		1 - Button 1
+		2 - Button 2
+endif
+
+if !ACCEL_CALIBRATE
+config ACCEL_CALIBRATION_ITERATIONS
+	int
+	default 0
+endif
+
+config ACCEL_ITERATIONS
+	int "Number of readings per measurement"
+	default 1
+	help
+		Number of measurement readings to average over for each time
+		the orientation detector determines the orientation of the
+		board. Used for simple filtering of noisy measurements.
+
+module = APP
+module-dep = LOG
+module-str = Log level for sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
