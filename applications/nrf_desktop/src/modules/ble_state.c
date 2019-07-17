@@ -10,8 +10,13 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
 #include <bluetooth/gatt.h>
+#include <bluetooth/hci.h>
 
 #include "ble_event.h"
+
+#ifdef CONFIG_BT_LL_NRFXLIB
+#include "ble_controller_hci_vs.h"
+#endif
 
 #define MODULE ble_state
 #include "module_state_event.h"
@@ -253,6 +258,24 @@ static void bt_ready(int err)
 	}
 
 	LOG_INF("Bluetooth initialized");
+
+#ifdef CONFIG_BT_LL_NRFXLIB
+	hci_vs_cmd_llpm_mode_set_t *p_cmd_enable;
+
+	struct net_buf *buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
+						sizeof(*p_cmd_enable));
+
+	p_cmd_enable = net_buf_add(buf, sizeof(*p_cmd_enable));
+	p_cmd_enable->enable = 1;
+
+	int hci_err = bt_hci_cmd_send(HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf);
+
+	if (hci_err) {
+		LOG_ERR("Error enabling LLPM (err:%" PRIu8 ")", hci_err);
+	} else {
+		LOG_INF("LLPM enabled");
+	}
+#endif
 
 	module_set_state(MODULE_STATE_READY);
 }

@@ -9,6 +9,8 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
 #include <settings/settings.h>
+#include <bluetooth/gatt_dm.h>
+
 #include <string.h>
 
 #define MODULE ble_scan
@@ -264,16 +266,13 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
 	LOG_INF("Connection parameter update request");
 
-	param->interval_min = 1;
-	param->interval_max = 1;
-
-	if (bt_le_conn_params_valid(param)) {
-		LOG_INF("Low latency operation");
-	} else {
-		LOG_INF("Normal operation");
-		param->interval_min = 6;
-		param->interval_max = 6;
+	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+		LOG_INF("Keep LLPM params");
+		return false;
 	}
+
+	param->interval_min = 6;
+	param->interval_max = 6;
 
 	return true;
 }
@@ -407,6 +406,26 @@ static void scan_init(void)
 	k_delayed_work_init(&scan_stop_trigger, scan_stop_trigger_fn);
 }
 
+static void enable_llpm(struct bt_conn *conn)
+{
+	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+		struct bt_le_conn_param param = {
+			.interval_min = 0x0D01,
+			.interval_max = 0x0D01,
+			.latency = 99,
+			.timeout = 400
+		};
+
+		int err = bt_conn_le_param_update(conn, &param);
+
+		if (err) {
+			LOG_ERR("Cannot set LLPM params (err:%d)", err);
+		} else {
+			LOG_INF("LLPM params set");
+		}
+	}
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
@@ -536,6 +555,8 @@ static bool event_handler(const struct event_header *eh)
 		k_delayed_work_submit(&scan_start_trigger,
 				      SCAN_TRIG_TIMEOUT_MS);
 		scan_counter = SCAN_TRIG_TIMEOUT_MS;
+
+		enable_llpm(bt_gatt_dm_conn_get(event->dm));
 
 		return false;
 	}
