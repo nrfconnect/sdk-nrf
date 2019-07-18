@@ -123,6 +123,14 @@ config DESKTOP_BLE_SCANNING_ENABLE
 	help
 	  Enable device to scan for peripheral devices.
 
+config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
+	int "Security fail timeout [s]"
+	default 10
+	depends on BT_PERIPHERAL
+	help
+	  After this time peripheral device disconnects if security is not
+	  established.
+
 if DESKTOP_BLE_SCANNING_ENABLE
 
 module = DESKTOP_BLE_SCANNING

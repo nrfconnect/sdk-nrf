@@ -19,6 +19,12 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_STATE_LOG_LEVEL);
 
+#ifdef CONFIG_BT_PERIPHERAL
+#define SECURITY_FAIL_TIMEOUT_MS \
+	K_SECONDS(CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S)
+#else
+#define SECURITY_FAIL_TIMEOUT_MS 0
+#endif
 
 struct bond_find_data {
 	bt_addr_le_t peer_address;
@@ -26,8 +32,22 @@ struct bond_find_data {
 	u8_t peer_count;
 };
 
+static struct k_delayed_work security_timeout;
+static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
 
-static const struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
+
+static void security_timeout_fn(struct k_work *w)
+{
+	static_assert(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
+		      (ARRAY_SIZE(active_conn) == 1), "");
+	static_assert(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
+		      (SECURITY_FAIL_TIMEOUT_MS > 0), "");
+	__ASSERT_NO_MSG(active_conn[0]);
+	bt_conn_disconnect(active_conn[0],
+			   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+
+	LOG_ERR("Security establishmend failed - device disconnected");
+}
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
@@ -123,6 +143,8 @@ static void connected(struct bt_conn *conn, u8_t error)
 			LOG_ERR("Failed to set security");
 			goto disconnect;
 		}
+		k_delayed_work_submit(&security_timeout,
+				      SECURITY_FAIL_TIMEOUT_MS);
 	}
 
 	return;
@@ -159,6 +181,10 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	event->id = conn;
 	event->state = PEER_STATE_DISCONNECTED;
 	EVENT_SUBMIT(event);
+
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		k_delayed_work_cancel(&security_timeout);
+	}
 }
 
 static struct bt_gatt_exchange_params exchange_params;
@@ -176,6 +202,11 @@ static void security_changed(struct bt_conn *conn, bt_security_t level)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	LOG_INF("Security with %s level %u", log_strdup(addr), level);
+
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		__ASSERT_NO_MSG(active_conn[0] == conn);
+		k_delayed_work_cancel(&security_timeout);
+	}
 
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
@@ -255,6 +286,10 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
+			if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+				k_delayed_work_init(&security_timeout,
+						    security_timeout_fn);
+			}
 			if (ble_state_init()) {
 				LOG_ERR("Cannot initialize");
 			}
