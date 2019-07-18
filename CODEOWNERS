@@ -27,6 +27,7 @@
 /doc/**/conf.py                           @carlescufi
 # All subfolders
 /drivers/                                 @anangl
+/dts/                                     @anangl
 /ext/                                     @carlescufi
 /include/debug/ppi_trace.h                @nordic-krch
 /include/                                 @anangl @rlubos @pizi-nordic
