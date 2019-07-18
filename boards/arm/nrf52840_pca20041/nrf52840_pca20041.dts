@@ -67,7 +67,7 @@
 		compatible = "pixart,pmw3360";
 		reg = <0>;
 		irq-gpios = <&gpio0 21 0>;
-		spi-max-frequency = <1800000>;
+		spi-max-frequency = <2000000>;
 		label = "PMW3360";
 	};
 };
