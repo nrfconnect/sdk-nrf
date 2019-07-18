@@ -17,6 +17,15 @@
 LOG_MODULE_REGISTER(pmw3360, CONFIG_PMW3360_LOG_LEVEL);
 
 
+#define PMW3360_SPI_DEV_NAME DT_INST_0_PIXART_PMW3360_BUS_NAME
+
+#define PMW3360_IRQ_GPIO_DEV_NAME DT_INST_0_PIXART_PMW3360_IRQ_GPIOS_CONTROLLER
+#define PMW3360_IRQ_GPIO_PIN      DT_INST_0_PIXART_PMW3360_IRQ_GPIOS_PIN
+
+#define PMW3360_CS_GPIO_DEV_NAME DT_INST_0_PIXART_PMW3360_CS_GPIO_CONTROLLER
+#define PMW3360_CS_GPIO_PIN      DT_INST_0_PIXART_PMW3360_CS_GPIO_PIN
+
+
 /* Timings defined by spec */
 #define T_NCS_SCLK	1			/* 120 ns */
 #define T_SRX		(20 - T_NCS_SCLK)	/* 20 us */
@@ -135,8 +144,8 @@ struct pmw3360_data {
 static const struct spi_config spi_cfg = {
 	.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB |
 		     SPI_MODE_CPOL | SPI_MODE_CPHA,
-	.frequency = CONFIG_DESKTOP_SPI_FREQ_HZ,
-	.slave = 0,
+	.frequency = DT_INST_0_PIXART_PMW3360_SPI_MAX_FREQUENCY,
+	.slave = DT_INST_0_PIXART_PMW3360_BASE_ADDRESS,
 };
 
 static const s32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
@@ -176,7 +185,7 @@ static int spi_cs_ctrl(struct pmw3360_data *dev_data, bool enable)
 		k_busy_wait(T_NCS_SCLK);
 	}
 
-	err = gpio_pin_write(dev_data->cs_gpio_dev, CONFIG_PMW3360_CS_GPIO_PIN,
+	err = gpio_pin_write(dev_data->cs_gpio_dev, PMW3360_CS_GPIO_PIN,
 			     val);
 	if (err) {
 		LOG_ERR("SPI CS ctrl failed");
@@ -685,14 +694,13 @@ static int pmw3360_init_cs(struct pmw3360_data *dev_data)
 	int err;
 
 	dev_data->cs_gpio_dev =
-		device_get_binding(CONFIG_PMW3360_CS_GPIO_DEV_NAME);
+		device_get_binding(PMW3360_CS_GPIO_DEV_NAME);
 	if (!dev_data->cs_gpio_dev) {
 		LOG_ERR("Cannot get CS GPIO device");
 		return -ENXIO;
 	}
 
-	err = gpio_pin_configure(dev_data->cs_gpio_dev,
-				 CONFIG_PMW3360_CS_GPIO_PIN,
+	err = gpio_pin_configure(dev_data->cs_gpio_dev, PMW3360_CS_GPIO_PIN,
 				 GPIO_DIR_OUT);
 	if (!err) {
 		err = spi_cs_ctrl(dev_data, false);
@@ -708,14 +716,14 @@ static int pmw3360_init_irq(struct pmw3360_data *dev_data)
 	int err;
 
 	dev_data->irq_gpio_dev =
-		device_get_binding(CONFIG_PMW3360_IRQ_GPIO_DEV_NAME);
+		device_get_binding(PMW3360_IRQ_GPIO_DEV_NAME);
 	if (!dev_data->irq_gpio_dev) {
 		LOG_ERR("Cannot get IRQ GPIO device");
 		return -ENXIO;
 	}
 
 	err = gpio_pin_configure(dev_data->irq_gpio_dev,
-				 CONFIG_PMW3360_IRQ_GPIO_PIN,
+				 PMW3360_IRQ_GPIO_PIN,
 				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
 				 GPIO_INT_LEVEL | GPIO_INT_ACTIVE_LOW);
 	if (err) {
@@ -724,7 +732,7 @@ static int pmw3360_init_irq(struct pmw3360_data *dev_data)
 	}
 
 	gpio_init_callback(&dev_data->irq_gpio_cb, irq_handler,
-			   BIT(CONFIG_PMW3360_IRQ_GPIO_PIN));
+			   BIT(PMW3360_IRQ_GPIO_PIN));
 
 	err = gpio_add_callback(dev_data->irq_gpio_dev, &dev_data->irq_gpio_cb);
 	if (err) {
@@ -736,7 +744,7 @@ static int pmw3360_init_irq(struct pmw3360_data *dev_data)
 
 static int pmw3360_init_spi(struct pmw3360_data *dev_data)
 {
-	dev_data->spi_dev = device_get_binding(CONFIG_PMW3360_SPI_DEV_NAME);
+	dev_data->spi_dev = device_get_binding(PMW3360_SPI_DEV_NAME);
 	if (!dev_data->spi_dev) {
 		LOG_ERR("Cannot get SPI device");
 		return -ENXIO;
@@ -867,10 +875,10 @@ static int pmw3360_trigger_set(struct device *dev,
 
 	if (handler) {
 		err = gpio_pin_enable_callback(dev_data->irq_gpio_dev,
-					       CONFIG_PMW3360_IRQ_GPIO_PIN);
+					       PMW3360_IRQ_GPIO_PIN);
 	} else {
 		err = gpio_pin_disable_callback(dev_data->irq_gpio_dev,
-						CONFIG_PMW3360_IRQ_GPIO_PIN);
+						PMW3360_IRQ_GPIO_PIN);
 	}
 
 	if (!err) {
@@ -938,6 +946,6 @@ static const struct sensor_driver_api pmw3360_driver_api = {
 	.attr_set     = pmw3360_attr_set,
 };
 
-DEVICE_AND_API_INIT(pmw3360, CONFIG_PMW3360_DEV_NAME, pmw3360_init, NULL, NULL,
-		    POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
+DEVICE_AND_API_INIT(pmw3360, DT_INST_0_PIXART_PMW3360_LABEL, pmw3360_init,
+		    NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
 		    &pmw3360_driver_api);

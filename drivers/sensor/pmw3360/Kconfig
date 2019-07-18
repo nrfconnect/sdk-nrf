@@ -12,42 +12,6 @@ menuconfig PMW3360
 
 if PMW3360
 
-config PMW3360_DEV_NAME
-	string "PMW3360 device name"
-	default "PMW3360"
-	help
-	  Device name for PMW3360.
-
-config PMW3360_SPI_DEV_NAME
-	string "PMW3360 SPI device"
-	default "SPI_0"
-	help
-	  SPI device to which sensor is connected.
-
-config PMW3360_CS_GPIO_DEV_NAME
-	string "PMW3360 CS GPIO device"
-	default "GPIO_0"
-	help
-	  Device to which CS pin is connected.
-
-config PMW3360_CS_GPIO_PIN
-	int "PMW3360 CS GPIO pin number"
-	default 0
-	help
-	  CS pin number.
-
-config PMW3360_IRQ_GPIO_DEV_NAME
-	string "PMW3360 IRQ GPIO device"
-	default "GPIO_0"
-	help
-	  Device to which IRQ pin is connected.
-
-config PMW3360_IRQ_GPIO_PIN
-	int "PMW3360 IRQ GPIO pin number"
-	default 0
-	help
-	  IRQ pin number.
-
 config PMW3360_CPI
 	int "PMW3360's default CPI"
 	default 1600
