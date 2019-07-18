@@ -61,6 +61,15 @@
 	sck-pin = <16>;
 	mosi-pin = <17>;
 	miso-pin = <15>;
+	cs-gpios = <&gpio0 13 0>;
+
+	pmw3360@0 {
+		compatible = "pixart,pmw3360";
+		reg = <0>;
+		irq-gpios = <&gpio0 21 0>;
+		spi-max-frequency = <1800000>;
+		label = "PMW3360";
+	};
 };
 
 &qdec {
