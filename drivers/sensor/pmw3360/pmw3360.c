@@ -134,6 +134,7 @@ struct pmw3360_data {
 	s16_t                        x;
 	s16_t                        y;
 	sensor_trigger_handler_t     data_ready_handler;
+	struct k_work                trigger_handler_work;
 	struct k_delayed_work        init_work;
 	enum async_init_step         async_init_step;
 	int                          err;
@@ -618,17 +619,49 @@ static int pmw3360_async_init_fw_load_verify(struct pmw3360_data *dev_data)
 static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
 			u32_t pins)
 {
+	int err;
+
+	err = gpio_pin_disable_callback(pmw3360_data.irq_gpio_dev,
+					PMW3360_IRQ_GPIO_PIN);
+	if (unlikely(err)) {
+		LOG_ERR("Cannot disable IRQ");
+		k_panic();
+	}
+
+	k_work_submit(&pmw3360_data.trigger_handler_work);
+}
+
+static void trigger_handler(struct k_work *work)
+{
 	sensor_trigger_handler_t handler;
+	int err = 0;
 
 	k_spinlock_key_t key = k_spin_lock(&pmw3360_data.lock);
 	handler = pmw3360_data.data_ready_handler;
 	k_spin_unlock(&pmw3360_data.lock, key);
 
+	if (!handler) {
+		return;
+	}
+
 	struct sensor_trigger trig = {
 		.type = SENSOR_TRIG_DATA_READY,
 		.chan = SENSOR_CHAN_ALL,
 	};
+
 	handler(DEVICE_GET(pmw3360), &trig);
+
+	key = k_spin_lock(&pmw3360_data.lock);
+	if (pmw3360_data.data_ready_handler) {
+		err = gpio_pin_enable_callback(pmw3360_data.irq_gpio_dev,
+					       PMW3360_IRQ_GPIO_PIN);
+	}
+	k_spin_unlock(&pmw3360_data.lock, key);
+
+	if (unlikely(err)) {
+		LOG_ERR("Cannot re-enable IRQ");
+		k_panic();
+	}
 }
 
 static int pmw3360_async_init_power_up(struct pmw3360_data *dev_data)
@@ -759,6 +792,8 @@ static int pmw3360_init(struct device *dev)
 	int err;
 
 	ARG_UNUSED(dev);
+
+	k_work_init(&dev_data->trigger_handler_work, trigger_handler);
 
 	err = pmw3360_init_cs(dev_data);
 	if (err) {
