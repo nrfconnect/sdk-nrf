@@ -13,6 +13,22 @@
 #define ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 
 /** @brief Function for initializing
+ * the modem.  NOTE: a follow-up call to lte_lc_connect()
+ * must be made.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_init(void);
+
+/** @brief Function to make a connection with the modem.
+ * NOTE: prior to calling this function a call to lte_lc_init()
+ * must be made.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_connect(void);
+
+/** @brief Function for initializing
  * and make a connection with the modem
  *
  * @return Zero on success or (negative) error code otherwise.

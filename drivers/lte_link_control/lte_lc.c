@@ -76,7 +76,7 @@ void at_handler(char *response)
 	}
 }
 
-static int w_lte_lc_init_and_connect(struct device *unused)
+static int w_lte_lc_init(void)
 {
 #if defined(CONFIG_LTE_EDRX_REQ)
 	/* Request configured eDRX settings to save power */
@@ -108,6 +108,12 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 	}
 	LOG_INF("PDP Context: %s", cgdcont);
 #endif
+
+	return 0;
+}
+
+static int w_lte_lc_connect(void)
+{
 	if (at_cmd_write(network_mode, NULL, 0, NULL) != 0) {
 		return -EIO;
 	}
@@ -125,6 +131,30 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 	at_cmd_set_notification_handler(NULL);
 
 	return 0;
+}
+
+static int w_lte_lc_init_and_connect(struct device *unused)
+{
+	int ret;
+
+	ret = w_lte_lc_init();
+	if (ret) {
+		return ret;
+	}
+
+	return w_lte_lc_connect();
+}
+
+/* lte lc Init wrapper */
+int lte_lc_init(void)
+{
+	return w_lte_lc_init();
+}
+
+/* lte lc Connect wrapper */
+int lte_lc_connect(void)
+{
+	return w_lte_lc_connect();
 }
 
 /* lte lc Init and connect wrapper */
