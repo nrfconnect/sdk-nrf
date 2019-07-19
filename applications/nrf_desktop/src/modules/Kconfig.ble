@@ -160,4 +160,21 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+
+comment "BLE Discovery"
+
+config DESKTOP_BLE_DISCOVERY_ENABLE
+	bool "Enable BLE discovery"
+	depends on DESKTOP_BLE_SCANNING_ENABLE
+	help
+	  Enable device to read Device Information Service and discover HIDS.
+
+if DESKTOP_BLE_DISCOVERY_ENABLE
+
+module = DESKTOP_BLE_DISCOVERY
+module-str = BLE discovery
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
 endmenu
