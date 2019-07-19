@@ -1,43 +1,32 @@
-// Due to JENKINS-42369 we put these defines outside the pipeline
-def IMAGE_TAG = "ncs-toolchain:1.09"
-def REPO_CI_TOOLS = "https://github.com/zephyrproject-rtos/ci-tools.git"
-def REPO_CI_TOOLS_SHA = "bfe635f102271a4ad71c1a14824f9d5e64734e57"
-def CI_CFG_URL = 'https://projecttools.nordicsemi.no/bitbucket/scm/ncs-test/test-ci-nrfconnect-cfg.git'
-def CI_CFG_BRANCH = 'master'
-def CI_CFG_OBJ = new HashMap()
-def CI_STATE = new HashMap()
 
-def check_and_store_sample(path, new_name) {
-  script {
-    if (fileExists(file_path)) {
-      sh "cp ${path} artifacts/${new_name}"
-    }
-    else {
-      echo "Build for ${new_name} failed"
-      currentBuild.result = 'FAILURE'
-    }
-  }
-}
+@Library("CI_LIB") _
+
+def AGENT_LABELS = lib_Main.getAgentLabels(JOB_NAME)
+def IMAGE_TAG    = lib_Main.getDockerImage(JOB_NAME)
+def TIMEOUT      = lib_Main.getTimeout(JOB_NAME)
+def INPUT_STATE  = lib_Main.getInputState(JOB_NAME)
+def CI_STATE = new HashMap()
 
 pipeline {
 
   parameters {
-       string(name: 'RUN_DOWNSTREAM', description: 'if true skip actual testing', defaultValue: "true")
-       string(name: 'RUN_TESTS', description: 'if true skip actual testing', defaultValue: "true")
-       string(name: 'RUN_BUILD', description: 'if true skip actual testing', defaultValue: "true")
+       booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
+       booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: true)
+       booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: false)
+       string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: INPUT_STATE)
   }
 
   agent {
     docker {
-      image "$IMAGE_TAG"
-      label "docker && build-node && ncs && linux"
+      image IMAGE_TAG
+      label AGENT_LABELS
       args '-e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/workdir/.local/bin'
     }
   }
 
   options {
     checkoutToSubdirectory('nrf')
-    disableConcurrentBuilds()
+    timeout(time: TIMEOUT.time, unit: TIMEOUT.unit)
   }
 
   triggers {
@@ -61,44 +50,31 @@ pipeline {
   }
 
   stages {
-    stage('Load') {
-      steps {
-        println "Using Node:$NODE_NAME and Input Parameters:$params"
-        dir("ci-tools") {
-          git branch: "master", url: "$REPO_CI_TOOLS"
-          sh "git checkout ${REPO_CI_TOOLS_SHA}"
+    stage('Load') { steps { script { CI_STATE = lib_Stage.load('NRF') }}}
+    stage('Checkout') {
+      steps { script {
+        lib_Main.cloneCItools(JOB_NAME)
+        dir('nrf') {
+          CI_STATE.NRF.REPORT_SHA = lib_Main.checkoutRepo(CI_STATE.NRF.GIT_URL, "NRF", CI_STATE.NRF, false)
+          lib_West.AddManifestUpdate("NRF", 'nrf', CI_STATE.NRF.GIT_URL, CI_STATE.NRF.GIT_REF, CI_STATE)
         }
-        dir("ci-cfg") {
-          git branch: CI_CFG_BRANCH, url: CI_CFG_URL, credentialsId: '0075d160-104a-4b0f-b21e-0a66c6d526df'
-          script {
-            def CI_CFG_SHA = sh (script: "git rev-parse HEAD | tr -d '\\n' ", returnStdout: true)
-            println "CI_CFG_SHA = ${CI_CFG_SHA}"
-            CI_CFG_OBJ.load = load "${pwd()}/load.gvy"
-            CI_CFG_OBJ << CI_CFG_OBJ.load.all()
-            // println "CI_CFG_OBJ = $CI_CFG_OBJ"
-            CI_STATE = CI_CFG_OBJ.state.store('NRF', CI_STATE)
-            println "CI_STATE = $CI_STATE"
-          }
-        }
-      }
+      }}
     }
-    stage('Checkout repositories') {
-      when { expression { CI_STATE.NRF.RUN_TESTS.toBoolean() } }
-      steps {
-        script {
-          CI_STATE.NRF.REPORT_SHA = CI_CFG_OBJ.main.checkoutRepo(CI_STATE.NRF.GIT_URL, "nrf", CI_STATE, false)
-          println "CI_STATE.NRF.REPORT_SHA = " + CI_STATE.NRF.REPORT_SHA
-          CI_CFG_OBJ.main.westInitUpdate('nrf')
-        }
-      }
+    stage('Get nRF && Apply Parent Manifest Updates') {
+      when { expression { CI_STATE.NRF.RUN_TESTS || CI_STATE.NRF.RUN_BUILD } }
+      steps { script {
+        lib_Status.set("PENDING", 'NRF', CI_STATE)
+        lib_West.InitUpdate('nrf')
+        lib_West.ApplyManifestUpdates(CI_STATE)
+      }}
     }
     stage('Run compliance check') {
-      when { expression { CI_STATE.NRF.RUN_TESTS.toBoolean() } }
+      when { expression { CI_STATE.NRF.RUN_TESTS } }
       steps {
         dir('nrf') {
           script {
             // If we're a pull request, compare the target branch against the current HEAD (the PR), and also report issues to the PR
-            def BUILD_TYPE = CI_CFG_OBJ.main.getBuildType(CI_STATE)
+            def BUILD_TYPE = lib_Main.getBuildType(CI_STATE.NRF)
             if (BUILD_TYPE == "PR") {
               COMMIT_RANGE = "$CI_STATE.NRF.MERGE_BASE..$CI_STATE.NRF.REPORT_SHA"
               COMPLIANCE_ARGS = "$COMPLIANCE_ARGS -p $CHANGE_ID -S $CI_STATE.NRF.REPORT_SHA -g"
@@ -130,8 +106,9 @@ pipeline {
       }
     }
     stage('Build samples') {
-      when { expression { CI_STATE.NRF.RUN_BUILD.toBoolean() } }
+      when { expression { CI_STATE.NRF.RUN_BUILD } }
       steps {
+        println "CI_STATE.NRF.RUN_BUILD = " + CI_STATE.NRF.RUN_BUILD
         // Create a folder to store artifacts in
         sh 'mkdir artifacts'
 
@@ -173,31 +150,68 @@ pipeline {
         archiveArtifacts allowEmptyArchive: true, artifacts: 'artifacts/*.hex'
       }
     }
-    stage('Trigger testing build') {
-      when { expression { CI_STATE.NRF.RUN_DOWNSTREAM.toBoolean() } }
+    stage('Trigger Downstream Jobs') {
+      when { expression { CI_STATE.NRF.RUN_DOWNSTREAM } }
       steps {
         script {
           CI_STATE.NRF.WAITING = true
-          def jsonstr_CI_STATE = CI_CFG_OBJ.state.HashMap2Str(CI_STATE)
-          println "jsonstr_CI_STATE = " + jsonstr_CI_STATE
-          def DOWNSTREAM_PROJECTS = CI_CFG_OBJ.main.getDownStreamProjects(CI_STATE, 'NRF')
-          println "DOWNSTREAM_PROJECTS = " + DOWNSTREAM_PROJECTS
-          def projs = [:]
-          DOWNSTREAM_PROJECTS.each {
-            projs["${it}"] = {
-              build job: "${it}", propagate: true, wait: true, parameters: [
-                        string(name: 'jsonstr_CI_STATE', value: CI_CFG_OBJ.state.HashMap2Str(CI_STATE))]
+          def DOWNSTREAM_JOBS = lib_Main.getDownStreamJobs(JOB_NAME)
+          def jobs = [:]
+          DOWNSTREAM_JOBS.each {
+            jobs["${it}"] = {
+              build job: "${it}", propagate: CI_STATE.NRF.WAITING, wait: CI_STATE.NRF.WAITING,
+                  parameters: [string(name: 'jsonstr_CI_STATE', value: lib_Util.HashMap2Str(CI_STATE))]
             }
           }
-          parallel projs
+          parallel jobs
         }
       }
     }
   }
   post {
+    // This is the order that the methods are run. {always->success/abort/failure/unstable->cleanup}
     always {
-      // Clean up the working space at the end (including tracked files)
-      cleanWs()
+      echo "always"
+    }
+    success {
+      echo "success"
+      script { lib_Status.set("SUCCESS", 'NRF', CI_STATE) }
+    }
+    aborted {
+      echo "aborted"
+      script { lib_Status.set("ABORTED", 'NRF', CI_STATE) }
+    }
+    unstable {
+      echo "unstable"
+    }
+    failure {
+      echo "failure"
+      script { lib_Status.set("FAILURE", 'NRF', CI_STATE) }
+    }
+    cleanup {
+        echo "cleanup"
+        cleanWs()
+    }
+  }
+}
+
+
+
+/**
+  * Copy files to artifacts dir if they exist
+  *
+  * @param path path
+  * @param new_name new_name
+  *
+  */
+def check_and_store_sample(path, new_name) {
+  script {
+    if (fileExists(file_path)) {
+      sh "cp ${path} artifacts/${new_name}"
+    }
+    else {
+      echo "Build for ${new_name} failed"
+      currentBuild.result = 'FAILURE'
     }
   }
 }
