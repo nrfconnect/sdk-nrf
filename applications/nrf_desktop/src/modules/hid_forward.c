@@ -34,7 +34,12 @@ struct consumer_ctrl_event_item {
 	struct hid_consumer_ctrl_event *evt;
 };
 
-static struct bt_gatt_hids_c hidc[CONFIG_BT_MAX_CONN];
+struct hids_subscriber {
+	struct bt_gatt_hids_c hidc;
+	u16_t pid;
+};
+
+static struct hids_subscriber subscribers[CONFIG_BT_MAX_CONN];
 static const void *usb_id;
 static atomic_t usb_ready;
 static bool usb_busy;
@@ -225,23 +230,24 @@ static void init(void)
 		.pm_update_cb = hidc_pm_update,
 	};
 
-	for (size_t i = 0; i < ARRAY_SIZE(hidc); i++) {
-		bt_gatt_hids_c_init(&hidc[i], &params);
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		bt_gatt_hids_c_init(&subscribers[i].hidc, &params);
 	}
 	sys_slist_init(&keyboard_event_list);
 }
 
-static int assign_handles(struct bt_gatt_dm *dm)
+static int register_subscriber(struct bt_gatt_dm *dm, u16_t pid)
 {
 	size_t i;
-	for (i = 0; i < ARRAY_SIZE(hidc); i++) {
-		if (!bt_gatt_hids_c_assign_check(&hidc[i])) {
+	for (i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		if (!bt_gatt_hids_c_assign_check(&subscribers[i].hidc)) {
 			break;
 		}
 	}
-	__ASSERT_NO_MSG(i < ARRAY_SIZE(hidc));
+	__ASSERT_NO_MSG(i < ARRAY_SIZE(subscribers));
 
-	int err = bt_gatt_hids_c_handles_assign(dm, &hidc[i]);
+	subscribers[i].pid = pid;
+	int err = bt_gatt_hids_c_handles_assign(dm, &subscribers[i].hidc);
 
 	if (err) {
 		LOG_ERR("Cannot assign handles (err:%d)", err);
@@ -312,6 +318,16 @@ static u8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 	return 0;
 }
 
+static struct bt_gatt_hids_c *find_subscriber_hidc(u16_t pid)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		if (subscribers[i].pid == pid) {
+			return &subscribers[i].hidc;
+		}
+	}
+	return NULL;
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
@@ -372,7 +388,8 @@ static bool event_handler(const struct event_header *eh)
 		const struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(eh);
 
-		assign_handles(event->dm);
+		register_subscriber(event->dm, event->pid);
+
 		return false;
 	}
 
@@ -392,11 +409,12 @@ static bool event_handler(const struct event_header *eh)
 			cast_ble_peer_event(eh);
 
 		if (event->state == PEER_STATE_DISCONNECTED) {
-			for (size_t i = 0; i < ARRAY_SIZE(hidc); i++) {
-				if ((bt_gatt_hids_c_assign_check(&hidc[i])) &&
-				    (bt_gatt_hids_c_conn(&hidc[i]) == event->id)) {
+			for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+				if ((bt_gatt_hids_c_assign_check(&subscribers[i].hidc)) &&
+				    (bt_gatt_hids_c_conn(&subscribers[i].hidc) == event->id)) {
 					LOG_INF("HID device disconnected");
-					bt_gatt_hids_c_release(&hidc[i]);
+					bt_gatt_hids_c_release(
+					  &subscribers[i].hidc);
 				}
 			}
 		}
@@ -424,12 +442,20 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		/* TODO: Proper handling config event for multiple peers */
 		if (is_config_forward_event(eh)) {
 			const struct config_forward_event *event =
 				cast_config_forward_event(eh);
 
-			if (!bt_gatt_hids_c_ready_check(&hidc[0])) {
+			struct bt_gatt_hids_c *recipient_hidc =
+				find_subscriber_hidc(event->recipient);
+
+			if (!recipient_hidc) {
+				LOG_INF("Recipent %02x not found",
+					event->recipient);
+				return false;
+			}
+
+			if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
 				LOG_WRN("Cannot forward, peer disconnected");
 
 				notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
@@ -437,7 +463,7 @@ static bool event_handler(const struct event_header *eh)
 			}
 
 			struct bt_gatt_hids_c_rep_info *config_rep =
-				bt_gatt_hids_c_rep_find(&hidc[0],
+				bt_gatt_hids_c_rep_find(recipient_hidc,
 					BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
 					REPORT_ID_USER_CONFIG);
 			if (!config_rep) {
@@ -471,8 +497,11 @@ static bool event_handler(const struct event_header *eh)
 				return pos;
 			}
 
-			int err = bt_gatt_hids_c_rep_write(&hidc[0], config_rep,
-					hidc_write_cb, report, sizeof(report));
+			int err = bt_gatt_hids_c_rep_write(recipient_hidc,
+							   config_rep,
+							   hidc_write_cb,
+							   report,
+							   sizeof(report));
 			if (err) {
 				LOG_ERR("Writing report failed, err:%d", err);
 				notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
@@ -485,11 +514,20 @@ static bool event_handler(const struct event_header *eh)
 			const struct config_forward_get_event *event =
 				cast_config_forward_get_event(eh);
 
+			struct bt_gatt_hids_c *recipient_hidc =
+				find_subscriber_hidc(event->recipient);
+
+			if (!recipient_hidc) {
+				LOG_INF("Recipent %02x not found",
+					event->recipient);
+				return false;
+			}
+
 			if (forward_pending) {
 				LOG_DBG("GATT read already pending");
 				return false;
 			} else {
-				if (!bt_gatt_hids_c_ready_check(&hidc[0])) {
+				if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
 					LOG_WRN("Cannot forward, peer disconnected");
 
 					notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
@@ -497,7 +535,7 @@ static bool event_handler(const struct event_header *eh)
 				}
 
 				struct bt_gatt_hids_c_rep_info *config_rep =
-					bt_gatt_hids_c_rep_find(&hidc[0],
+					bt_gatt_hids_c_rep_find(recipient_hidc,
 						BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
 						REPORT_ID_USER_CONFIG);
 				if (!config_rep) {
@@ -510,7 +548,8 @@ static bool event_handler(const struct event_header *eh)
 
 				channel_id = event->channel_id;
 
-				int err = bt_gatt_hids_c_rep_read(&hidc[0], config_rep,
+				int err = bt_gatt_hids_c_rep_read(recipient_hidc,
+								  config_rep,
 								  hidc_read_cfg);
 				if (err) {
 					LOG_ERR("Reading report failed, err:%d", err);
@@ -529,7 +568,7 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
