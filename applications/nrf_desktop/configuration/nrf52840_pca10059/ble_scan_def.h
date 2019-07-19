@@ -13,5 +13,9 @@
  */
 const struct {} ble_scan_include_once;
 
-/* Filters used for scanning */
-char *bt_peripherals[] = { "Mouse nRF52", "Kbd nRF52" };
+#include "ble_event.h"
+
+static const char *peer_type_short_name[] = {
+	[PEER_TYPE_MOUSE] = "Mouse nRF52",
+	[PEER_TYPE_KEYBOARD] = "Kbd nRF52",
+};

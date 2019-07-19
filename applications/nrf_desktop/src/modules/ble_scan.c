@@ -7,16 +7,15 @@
 #include <zephyr/types.h>
 
 #include <bluetooth/bluetooth.h>
-#include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 #include <string.h>
 
 #define MODULE ble_scan
 #include "module_state_event.h"
 #include "hid_event.h"
-
 #include "ble_event.h"
-#include "ble_scan.h"
+
+#include "ble_scan_def.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
@@ -31,11 +30,26 @@ struct bond_find_data {
 	u8_t peer_count;
 };
 
+struct subscribed_peer {
+	bt_addr_le_t addr;
+	enum peer_type peer_type;
+};
 
-static int scan_counter;
+static struct subscribed_peer subscribed_peers[CONFIG_BT_MAX_CONN];
+
 static struct bt_conn *discovering_peer_conn;
+static unsigned int scan_counter;
 static struct k_delayed_work scan_start_trigger;
 static struct k_delayed_work scan_stop_trigger;
+
+
+static void reset_subscribers(void)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		bt_addr_le_copy(&subscribed_peers[i].addr, BT_ADDR_LE_NONE);
+		subscribed_peers[i].peer_type = PEER_TYPE_COUNT;
+	}
+}
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
@@ -86,10 +100,13 @@ static void scan_stop(void)
 static int configure_filters(void)
 {
 	bt_scan_filter_remove_all();
+	static_assert(CONFIG_BT_MAX_PAIRED == CONFIG_BT_MAX_CONN, "");
 	static_assert(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
 		      "Insufficient number of address filters");
-	static_assert(ARRAY_SIZE(bt_peripherals) <= CONFIG_BT_SCAN_SHORT_NAME_CNT,
+	static_assert(ARRAY_SIZE(peer_type_short_name) <=
+			CONFIG_BT_SCAN_SHORT_NAME_CNT,
 		      "Insufficient number of short name filers");
+	static_assert(ARRAY_SIZE(peer_type_short_name) == PEER_TYPE_COUNT, "");
 
 	struct bond_find_data bond_find_data = {
 		.conn_count = 0,
@@ -116,12 +133,21 @@ static int configure_filters(void)
 		}
 		filter_mode |= BT_SCAN_ADDR_FILTER;
 	} else {
-		LOG_INF("Device type filters added");
+		u8_t peers_mask = 0;
+
+		for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+			peers_mask |= BIT(subscribed_peers[i].peer_type);
+		}
+
 		/* Bluetooth scan filters are defined in separate header. */
-		for (size_t i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
+		for (size_t i = 0; i < ARRAY_SIZE(peer_type_short_name); i++) {
+			if (!(BIT(i) & (~peers_mask))) {
+				continue;
+			}
+
 			const struct bt_scan_short_name filter = {
-				.name = bt_peripherals[i],
-				.min_len = strlen(bt_peripherals[i]),
+				.name = peer_type_short_name[i],
+				.min_len = strlen(peer_type_short_name[i]),
 			};
 
 			err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,
@@ -132,7 +158,9 @@ static int configure_filters(void)
 				goto error;
 			}
 		}
+
 		filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
+		LOG_INF("Device type filters added");
 
 		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
 		if (err) {
@@ -256,60 +284,6 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 	bt_conn_ref(discovering_peer_conn);
 }
 
-static void discovery_completed(struct bt_gatt_dm *dm, void *context)
-{
-	LOG_INF("The discovery procedure succeeded");
-
-	bt_gatt_dm_data_print(dm);
-
-	struct ble_discovery_complete_event *event =
-		new_ble_discovery_complete_event();
-
-	event->dm = dm;
-
-	EVENT_SUBMIT(event);
-
-	/* This module is the last one to process this event and release
-	 * the discovery data.
-	 */
-}
-
-static void discovery_service_not_found(struct bt_conn *conn, void *context)
-{
-	LOG_ERR("Cannot find service during the discovery");
-	/* discovering_peer_conn updated on PEER_DISCONNECTED event */
-	__ASSERT_NO_MSG(discovering_peer_conn == conn);
-	bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-}
-
-static void discovery_error_found(struct bt_conn *conn, int err, void *context)
-{
-	LOG_WRN("The discovery failed (err %d)", err);
-	/* discovering_peer_conn updated on PEER_DISCONNECTED event */
-	__ASSERT_NO_MSG(discovering_peer_conn == conn);
-	bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-}
-
-static void start_discovery(struct bt_conn *conn)
-{
-	static const struct bt_gatt_dm_cb discovery_cb = {
-		.completed = discovery_completed,
-		.service_not_found = discovery_service_not_found,
-		.error_found = discovery_error_found,
-	};
-
-	int err = bt_gatt_dm_start(conn,
-				   BT_UUID_HIDS,
-				   &discovery_cb,
-				   NULL);
-
-	if (err == -EALREADY) {
-		LOG_ERR("Discovery already in progress");
-	} else if (err) {
-		LOG_ERR("Cannot start the discovery (err %d)", err);
-	}
-}
-
 extern bool bt_le_conn_params_valid(const struct bt_le_conn_param *param);
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
@@ -362,6 +336,7 @@ static void scan_init(void)
 	bt_conn_cb_register(&conn_callbacks);
 	k_delayed_work_init(&scan_start_trigger, scan_start_trigger_fn);
 	k_delayed_work_init(&scan_stop_trigger, scan_stop_trigger_fn);
+	reset_subscribers();
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -409,6 +384,7 @@ static bool event_handler(const struct event_header *eh)
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
 		case PEER_STATE_CONN_FAILED:
+		case PEER_STATE_SECURED:
 			/* Ignore */
 			break;
 		case PEER_STATE_DISCONNECTED:
@@ -418,9 +394,6 @@ static bool event_handler(const struct event_header *eh)
 			}
 			scan_stop();
 			scan_start();
-			break;
-		case PEER_STATE_SECURED:
-			start_discovery(event->id);
 			break;
 		default:
 			__ASSERT_NO_MSG(false);
@@ -437,6 +410,7 @@ static bool event_handler(const struct event_header *eh)
 
 		case PEER_OPERATION_ERASED:
 			scan_stop();
+			reset_subscribers();
 			scan_start();
 			break;
 
@@ -459,11 +433,20 @@ static bool event_handler(const struct event_header *eh)
 	if (is_ble_discovery_complete_event(eh)) {
 		const struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(eh);
+		size_t i;
 
-		int err = bt_gatt_dm_data_release(event->dm);
-		if (err) {
-			LOG_ERR("Discovery data release failed (err %d)", err);
+		for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+			if (!bt_addr_le_cmp(&subscribed_peers[i].addr,
+					    BT_ADDR_LE_NONE)) {
+				bt_addr_le_copy(&subscribed_peers[i].addr,
+					bt_conn_get_dst(discovering_peer_conn));
+				subscribed_peers[i].peer_type =
+					event->peer_type;
+				break;
+			}
 		}
+		__ASSERT_NO_MSG(i < ARRAY_SIZE(subscribed_peers));
+
 		bt_conn_unref(discovering_peer_conn);
 		discovering_peer_conn = NULL;
 		/* Cannot start scanning right after discovery - problems
@@ -488,4 +471,4 @@ EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE(MODULE, hid_consumer_ctrl_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, ble_discovery_complete_event);
+EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
