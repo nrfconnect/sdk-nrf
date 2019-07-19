@@ -59,6 +59,19 @@ enum peer_operation {
 	PEER_OPERATION_COUNT
 };
 
+/** @brief Peer type list. */
+#define PEER_TYPE_LIST			\
+	X(MOUSE)			\
+	X(KEYBOARD)			\
+
+/** @brief Peer types (position in bitmask). */
+enum peer_type {
+#define X(name) _CONCAT(PEER_TYPE_, name),
+	PEER_TYPE_LIST
+#undef X
+
+	PEER_TYPE_COUNT
+};
 
 /** @brief BLE peer event. */
 struct ble_peer_event {
@@ -84,6 +97,8 @@ struct ble_discovery_complete_event {
 	struct event_header header;
 
 	struct bt_gatt_dm *dm;
+	u16_t pid;
+	enum peer_type peer_type;
 };
 EVENT_TYPE_DECLARE(ble_discovery_complete_event);
 
