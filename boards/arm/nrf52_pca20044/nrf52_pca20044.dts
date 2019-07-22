@@ -57,6 +57,15 @@
 	sck-pin = <5>;
 	mosi-pin = <6>;
 	miso-pin = <6>;
+	cs-gpios = <&gpio0 8 0>;
+
+	paw3212@0 {
+		compatible = "pixart,paw3212";
+		reg = <0>;
+		irq-gpios = <&gpio0 7 0>;
+		spi-max-frequency = <2000000>;
+		label = "PAW3212";
+	};
 };
 
 &flash0 {
