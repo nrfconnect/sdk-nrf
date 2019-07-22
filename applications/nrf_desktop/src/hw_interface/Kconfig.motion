@@ -47,12 +47,6 @@ config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
 	range 1 5
 	default 2
 
-config DESKTOP_SPI_FREQ_HZ
-	int "SPI clock frequency for communication with the optical sensor"
-	depends on DESKTOP_MOTION_SENSOR_ENABLE
-	default 1800000
-	range 500000 2500000
-
 config DESKTOP_MOTION_THREAD_STACK_SIZE
 	int "Motion module thread stack size"
 	depends on DESKTOP_MOTION_SENSOR_ENABLE
