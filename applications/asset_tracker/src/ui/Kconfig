@@ -4,7 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+config USE_UI_MODULE
+	bool "Enable UI module"
+	default y
+	help
+		Enable the User Interface module for user interaction on
+		development kit / Thingy91 hardware.
+
 menu "User Interface"
+	visible if USE_UI_MODULE
 
 config UI_LED_USE_PWM
 	bool "Use PWM to control LEDs"

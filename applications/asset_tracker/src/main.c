@@ -111,7 +111,7 @@ static struct env_sensor *env_sensors[] = {
 };
 
  /* Variables to keep track of nRF cloud user association. */
-#if defined(CONFIG_DK_LIBRARY)
+#if defined(CONFIG_USE_UI_MODULE)
 static u8_t ua_pattern[6];
 #endif
 static int buttons_to_capture;
@@ -329,7 +329,7 @@ static void sensor_trigger_handler(struct device *dev,
 	flip_send(NULL);
 }
 
-#if defined(CONFIG_DK_LIBRARY)
+#if defined(CONFIG_USE_UI_MODULE)
 /**@brief Send button presses to cloud */
 static void button_send(bool pressed)
 {
@@ -624,7 +624,7 @@ static void on_user_pairing_req(const struct cloud_event *evt)
 	}
 }
 
-#if defined(CONFIG_DK_LIBRARY)
+#if defined(CONFIG_USE_UI_MODULE)
 /**@brief Send user association information to nRF Cloud. */
 static void cloud_user_associate(void)
 {
@@ -760,7 +760,7 @@ static void app_connect(struct k_work *work)
 	}
 }
 
-#if defined(CONFIG_DK_LIBRARY)
+#if defined(CONFIG_USE_UI_MODULE)
 /**@brief Function to keep track of user association input when using
  *	  buttons and switches to register the association pattern.
  *	  nRF Cloud specific.
@@ -1024,7 +1024,7 @@ static void sensors_init(void)
 	env_data_send();
 }
 
-#if defined(CONFIG_DK_LIBRARY)
+#if defined(CONFIG_USE_UI_MODULE)
 /**@brief User interface event handler. */
 static void ui_evt_handler(struct ui_evt evt)
 {
@@ -1069,7 +1069,7 @@ static void ui_evt_handler(struct ui_evt evt)
 	}
 #endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 }
-#endif /* defined(CONFIG_DK_LIBRARY) */
+#endif /* defined(CONFIG_USE_UI_MODULE) */
 
 void main(void)
 {
@@ -1087,7 +1087,7 @@ void main(void)
 		cloud_error_handler(ret);
 	}
 
-#if defined(CONFIG_DK_LIBRARY)
+#if defined(CONFIG_USE_UI_MODULE)
 	ui_init(ui_evt_handler);
 #endif
 
