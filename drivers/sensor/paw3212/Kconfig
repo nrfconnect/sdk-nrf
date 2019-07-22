@@ -12,42 +12,6 @@ menuconfig PAW3212
 
 if PAW3212
 
-config PAW3212_DEV_NAME
-	string "PAW3212 device name"
-	default "PAW3212"
-	help
-	  Device name for PAW3212.
-
-config PAW3212_SPI_DEV_NAME
-	string "PAW3212 SPI device"
-	default "SPI_0"
-	help
-	  SPI device to which sensor is connected.
-
-config PAW3212_CS_GPIO_DEV_NAME
-	string "PAW3212 CS GPIO device"
-	default "GPIO_0"
-	help
-	  Device to which CS pin is connected.
-
-config PAW3212_CS_GPIO_PIN
-	int "PAW3212 CS GPIO pin number"
-	default 0
-	help
-	  CS pin number.
-
-config PAW3212_IRQ_GPIO_DEV_NAME
-	string "PAW3212 IRQ GPIO device"
-	default "GPIO_0"
-	help
-	  Device to which IRQ pin is connected.
-
-config PAW3212_IRQ_GPIO_PIN
-	int "PAW3212 IRQ GPIO pin number"
-	default 0
-	help
-	  IRQ pin number.
-
 choice
 	prompt "Select PAW3212 sensor orientation"
 	default PAW3212_ORIENTATION_0
