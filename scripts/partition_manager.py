@@ -120,7 +120,7 @@ def extract_sub_partitions(reqs):
         done = True
         for name, req in reqs.items():
             if 'span' in req.keys():
-                assert len(req['span']) > 0, "partition %s is empty" % name
+                assert len(req['span']) > 0, "partition {} is empty".format(name)
                 for part in req['span']:
                     if 'span' in reqs[part].keys():
                         req['span'].extend(reqs[part]['span'])
@@ -149,10 +149,10 @@ def resolve(reqs):
     for sub in sub_partitions.keys():
         indices = [solution.index(part) for part in sub_partitions[sub]['span']]
         assert ((not indices) or (max(indices) - min(indices) + 1 == len(indices))), \
-            "partition %s (%s) does not span over consecutive parts. Solution: %s" % \
-            (sub, str(sub_partitions[sub]['span']), str(solution))
-        assert all(part in solution for part in sub_partitions[sub]['span']), \
-            "Some or all parts of partition %s have not been placed."
+            "partition {} ({}) does not span over consecutive parts." \
+            " Solution: {}".format(sub, str(sub_partitions[sub]['span']), str(solution))
+        for part in sub_partitions[sub]['span']:
+            assert (part in solution), "Some or all parts of partition {} have not been placed.".format(part)
 
     return solution, sub_partitions
 
@@ -218,7 +218,7 @@ def set_sub_partition_address_and_size(reqs, sub_partitions):
     for sp_name, sp_value in sub_partitions.items():
         size = sum([reqs[part]['size'] for part in sp_value['span']])
         if size == 0:
-            raise RuntimeError("No compatible parent partition found for %s" % sp_name)
+            raise RuntimeError("No compatible parent partition found for {}".format(sp_name))
         address = min([reqs[part]['address'] for part in sp_value['span']])
 
         reqs[sp_name] = sp_value
@@ -344,11 +344,11 @@ def main():
 
 def expect_addr_size(td, name, expected_address, expected_size):
     if expected_size:
-        assert td[name]['size'] == expected_size, "Size of %s was %d, expected %d.\ntd:%s" % \
-                                                  (name, td[name]['size'], expected_size, pformat(td))
+        assert td[name]['size'] == expected_size, \
+            "Size of {} was {}, expected {}.\ntd:{}".format(name, td[name]['size'], expected_size, pformat(td))
     if expected_address:
-        assert td[name]['address'] == expected_address, "Address of %s was %d, expected %d.\ntd:%s" % \
-                                                        (name, td[name]['address'], expected_address, pformat(td))
+        assert td[name]['address'] == expected_address, \
+            "Address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['address'], expected_address, pformat(td))
 
 
 def test():
