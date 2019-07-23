@@ -88,7 +88,7 @@ struct paw3212_data {
 	s16_t                        x;
 	s16_t                        y;
 	sensor_trigger_handler_t     data_ready_handler;
-	struct k_work                handler_trigger_work;
+	struct k_work                trigger_handler_work;
 	struct k_delayed_work        init_work;
 	enum async_init_step         async_init_step;
 	int                          err;
@@ -269,16 +269,21 @@ static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
 		k_panic();
 	}
 
-	k_work_submit(&paw3212_data.handler_trigger_work);
+	k_work_submit(&paw3212_data.trigger_handler_work);
 }
 
-static void handler_trigger(struct k_work *work)
+static void trigger_handler(struct k_work *work)
 {
 	sensor_trigger_handler_t handler;
+	int err = 0;
 
 	k_spinlock_key_t key = k_spin_lock(&paw3212_data.lock);
 	handler = paw3212_data.data_ready_handler;
 	k_spin_unlock(&paw3212_data.lock, key);
+
+	if (!handler) {
+		return;
+	}
 
 	struct sensor_trigger trig = {
 		.type = SENSOR_TRIG_DATA_READY,
@@ -286,6 +291,18 @@ static void handler_trigger(struct k_work *work)
 	};
 
 	handler(DEVICE_GET(paw3212), &trig);
+
+	key = k_spin_lock(&paw3212_data.lock);
+	if (paw3212_data.data_ready_handler) {
+		err = gpio_pin_enable_callback(paw3212_data.irq_gpio_dev,
+					       PAW3212_IRQ_GPIO_PIN);
+	}
+	k_spin_unlock(&paw3212_data.lock, key);
+
+	if (unlikely(err)) {
+		LOG_ERR("Cannot re-enable IRQ");
+		k_panic();
+	}
 }
 
 static int paw3212_async_init_power_up(struct paw3212_data *dev_data)
@@ -446,7 +463,7 @@ static int paw3212_init(struct device *dev)
 	/* Assert that negative numbers are processed as expected */
 	__ASSERT_NO_MSG(-1 == expand_s12(0xFFF));
 
-	k_work_init(&dev_data->handler_trigger_work, handler_trigger);
+	k_work_init(&dev_data->trigger_handler_work, trigger_handler);
 
 	err = paw3212_init_cs(dev_data);
 	if (err) {
