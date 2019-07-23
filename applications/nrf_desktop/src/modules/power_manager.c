@@ -230,6 +230,12 @@ static bool event_handler(const struct event_header *eh)
 			LOG_INF("Wake up event consumed");
 			return true;
 		}
+
+		if (power_state == POWER_STATE_OFF) {
+			LOG_INF("Wake up when going into sleep - rebooting");
+			sys_reboot(SYS_REBOOT_WARM);
+		}
+
 		LOG_INF("Wake up the board");
 
 		power_state = POWER_STATE_IDLE;
