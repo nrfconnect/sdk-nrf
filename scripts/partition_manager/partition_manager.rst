@@ -32,8 +32,8 @@ Placeholder partitions
    A placeholder partition does not contain an image, but reserves space for other uses.
    For example, you might want to reserve space in flash to hold an updated application image while it is being downloaded and before it is copied to the application image partition.
 
-Phony partitions
-   A phony partition does not reserve space, but is used to logically and/or physically group other partitions.
+Container partitions
+   A container partition does not reserve space, but is used to logically and/or physically group other partitions.
 
 The start addresses and sizes for image partitions are used in the preprocessing of the linker script for each image.
 
@@ -88,7 +88,7 @@ placement: dict
 
 span: list
    This property lists which partitions this partition should span across.
-   Partitions with this property are phony partitions.
+   Partitions with this property are container partitions.
    Therefore, this property cannot be used together with the ``placement`` property.
 
    The Partition Manager fails if a span is empty or if the partitions are not consecutive after processing.
@@ -166,7 +166,7 @@ span: list
 
 inside: list
    This property is the inverse of ``span``.
-   The name of the partition that specifies this property is added to the ``span`` list of the first existing phony partition in the list.
+   The name of the partition that specifies this property is added to the ``span`` list of the first existing container partition in the list.
    This property can be set for image or placeholder partitions.
 
    .. code-block:: yaml
@@ -185,7 +185,7 @@ size: hexadecimal value
 share_size: list
    This properties defines the size of the current partition to be the same as the size of the first existing partition in the list.
    This property can be set for image or placeholder partitions.
-   It cannot be used by phony partitions.
+   It cannot be used by container partitions.
    The list can contain any kind of partition.
 
    Note that if the target partition is the ``app`` or a partition that spans over the ``app``, the size is effectively split between them, because the size of the ``app`` is dynamically decided.
@@ -283,7 +283,7 @@ HEX files
 Partition Manager may implicitly or explicitly assign a HEX file to a partition.
 
 Image partitions are implicitly assigned the compiled HEX file, i.e. the HEX file that is generated when building the corresponding image.
-Phony partitions are implicitly assigned the result of merging the HEX files that are assigned to the underlying partitions.
+Container partitions are implicitly assigned the result of merging the HEX files that are assigned to the underlying partitions.
 Placeholder partitions are not implicitly assigned a HEX file.
 
 To explicitly assign a HEX file to a partition, set the global properties *partition_name*\ _PM_HEX_FILE and *partition_name*\ _PM_TARGET in CMake, where *partition_name* is the name of the partition.
@@ -311,7 +311,7 @@ As output, Partition Manager creates a HEX file called :file:`merged.hex`, which
 When creating :file:`merged.hex`, all assigned HEX files are included in the merge operation.
 If the HEX files overlap, the conflict is resolved as follows:
 
-   * HEX files assigned to phony partitions overwrite HEX files assigned to their underlying partitions.
+   * HEX files assigned to container partitions overwrite HEX files assigned to their underlying partitions.
    * HEX files assigned to larger partitions overwrite HEX files assigned to smaller partitions.
    * Explicitly assigned HEX files overwrite implicitly assigned HEX files.
 

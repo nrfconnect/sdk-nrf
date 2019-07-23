@@ -106,10 +106,10 @@ if(FIRST_BOILERPLATE_EXECUTION)
       string(TOUPPER ${part} PART)
       get_property(${part}_PM_HEX_FILE GLOBAL PROPERTY ${part}_PM_HEX_FILE)
 
-      # Process phony partitions (if it has a SPAN list it is a phony partition).
+      # Process container partitions (if it has a SPAN list it is a container partition).
       if(DEFINED PM_${PART}_SPAN)
         string(REPLACE " " ";" PM_${PART}_SPAN ${PM_${PART}_SPAN})
-        list(APPEND phonies ${part})
+        list(APPEND containers ${part})
       endif()
 
       # Include the partition in the merge operation if it has a hex file.
@@ -121,7 +121,7 @@ if(FIRST_BOILERPLATE_EXECUTION)
           get_property(${part}_KERNEL_NAME GLOBAL PROPERTY ${part}_KERNEL_NAME)
           set(${part}_PM_HEX_FILE ${${part}_PROJECT_BINARY_DIR}/${${part}_KERNEL_NAME}.hex)
           set(${part}_PM_TARGET ${part}_zephyr_final)
-        elseif(${part} IN_LIST phonies)
+        elseif(${part} IN_LIST containers)
           set(${part}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${part}.hex)
           set(${part}_PM_TARGET ${part}_hex)
         endif()
@@ -132,38 +132,38 @@ if(FIRST_BOILERPLATE_EXECUTION)
     set(PM_MERGED_SPAN ${implicitly_assigned} ${explicitly_assigned})
     set(merged_overlap TRUE) # Enable overlapping for the merged hex file.
 
-    # Iterate over all phony partitions, plus the "fake" merged paritition.
+    # Iterate over all container partitions, plus the "fake" merged paritition.
     # The loop will create a hex file for each iteration.
-    foreach(phony ${phonies} merged)
-      string(TOUPPER ${phony} PHONY)
+    foreach(container ${containers} merged)
+      string(TOUPPER ${container} CONTAINER)
 
       # Prepare the list of hex files and list of dependencies for the merge command.
-      foreach(part ${PM_${PHONY}_SPAN})
+      foreach(part ${PM_${CONTAINER}_SPAN})
         string(TOUPPER ${part} PART)
-        list(APPEND ${phony}hex_files ${${part}_PM_HEX_FILE})
-        list(APPEND ${phony}targets ${${part}_PM_TARGET})
+        list(APPEND ${container}hex_files ${${part}_PM_HEX_FILE})
+        list(APPEND ${container}targets ${${part}_PM_TARGET})
       endforeach()
 
       # If overlapping is enabled, add the appropriate argument.
-      if(${${phony}_overlap})
-        set(${phony}overlap_arg --overlap=replace)
+      if(${${container}_overlap})
+        set(${container}overlap_arg --overlap=replace)
       endif()
 
       # Add command to merge files.
       add_custom_command(
-        OUTPUT ${PROJECT_BINARY_DIR}/${phony}.hex
+        OUTPUT ${PROJECT_BINARY_DIR}/${container}.hex
         COMMAND
         ${PYTHON_EXECUTABLE}
         ${ZEPHYR_BASE}/scripts/mergehex.py
-        -o ${PROJECT_BINARY_DIR}/${phony}.hex
-        ${${phony}overlap_arg}
-        ${${phony}hex_files}
+        -o ${PROJECT_BINARY_DIR}/${container}.hex
+        ${${container}overlap_arg}
+        ${${container}hex_files}
         DEPENDS
-        ${${phony}targets}
+        ${${container}targets}
         )
 
       # Wrapper target for the merge command.
-      add_custom_target(${phony}_hex ALL DEPENDS ${PROJECT_BINARY_DIR}/${phony}.hex)
+      add_custom_target(${container}_hex ALL DEPENDS ${PROJECT_BINARY_DIR}/${container}.hex)
     endforeach()
 
     # Add merged.hex as the representative hex file for flashing this app.
