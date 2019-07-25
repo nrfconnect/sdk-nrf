@@ -131,7 +131,6 @@ add_custom_command(
   --signature ${SIGNATURE_FILE}
   --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
   --magic-value "${VALIDATION_INFO_MAGIC}"
-  --pk-hash-len ${CONFIG_SB_PUBLIC_KEY_HASH_LEN}
   DEPENDS
   ${SIGN_KEY_FILE_DEPENDS}
   WORKING_DIRECTORY
