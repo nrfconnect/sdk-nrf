@@ -24,8 +24,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 #define SCAN_TRIG_TIMEOUT_MS  K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S)
 #define SCAN_DURATION_MS      K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_DURATION_S)
 
-struct bond_find_data {
-	bt_addr_le_t peer_address[CONFIG_BT_MAX_PAIRED];
+struct subscriber_data {
 	u8_t conn_count;
 	u8_t peer_count;
 };
@@ -51,22 +50,24 @@ static void reset_subscribers(void)
 	}
 }
 
-static void bond_find(const struct bt_bond_info *info, void *user_data)
+static size_t count_conn(void)
 {
-	struct bond_find_data *bond_find_data = user_data;
+	size_t conn_count = 0;
 
-	bt_addr_le_copy(&bond_find_data->peer_address[bond_find_data->peer_count],
-			&info->addr);
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
+			return conn_count;
+		}
+		struct bt_conn *conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT,
+						&subscribed_peers[i].addr);
 
-	struct bt_conn *conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT,
-						      &info->addr);
-	if (conn) {
-		bond_find_data->conn_count++;
-		bt_conn_unref(conn);
+		if (conn) {
+			conn_count++;
+			bt_conn_unref(conn);
+		}
 	}
 
-	__ASSERT_NO_MSG(bond_find_data->peer_count < UCHAR_MAX);
-	bond_find_data->peer_count++;
+	return conn_count;
 }
 
 static void scan_stop(void)
@@ -83,14 +84,7 @@ static void scan_stop(void)
 		LOG_INF("Scan stopped");
 	}
 
-	struct bond_find_data bond_find_data = {
-		.conn_count = 0,
-		.peer_count = 0,
-	};
-
-	bt_foreach_bond(BT_ID_DEFAULT, bond_find,
-			&bond_find_data);
-	if (bond_find_data.conn_count < CONFIG_BT_MAX_CONN) {
+	if (count_conn() < CONFIG_BT_MAX_CONN) {
 		scan_counter = 0;
 		k_delayed_work_submit(&scan_start_trigger, SCAN_TRIG_CHECK_MS);
 		k_delayed_work_cancel(&scan_stop_trigger);
@@ -108,90 +102,76 @@ static int configure_filters(void)
 		      "Insufficient number of short name filers");
 	static_assert(ARRAY_SIZE(peer_type_short_name) == PEER_TYPE_COUNT, "");
 
-	struct bond_find_data bond_find_data = {
-		.conn_count = 0,
-		.peer_count = 0,
-	};
-	bt_foreach_bond(BT_ID_DEFAULT, bond_find, &bond_find_data);
-
 	u8_t filter_mode = 0;
 	int err;
+	size_t i;
 
-	if (bond_find_data.peer_count == CONFIG_BT_MAX_PAIRED) {
-		for (size_t i = 0; i < bond_find_data.peer_count; i++) {
-			err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,
-						 &bond_find_data.peer_address[i]);
-			if (err) {
-				LOG_ERR("Address filter cannot be added (err %d)", err);
-				goto error;
-			}
-
-			char addr_str[BT_ADDR_LE_STR_LEN];
-			bt_addr_le_to_str(&bond_find_data.peer_address[i],
-					  addr_str, sizeof(addr_str));
-			LOG_INF("Address filter added %s", log_strdup(addr_str));
-		}
-		filter_mode |= BT_SCAN_ADDR_FILTER;
-	} else {
-		u8_t peers_mask = 0;
-
-		for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-			peers_mask |= BIT(subscribed_peers[i].peer_type);
+	for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
+			break;
 		}
 
-		/* Bluetooth scan filters are defined in separate header. */
-		for (size_t i = 0; i < ARRAY_SIZE(peer_type_short_name); i++) {
-			if (!(BIT(i) & (~peers_mask))) {
-				continue;
-			}
-
-			const struct bt_scan_short_name filter = {
-				.name = peer_type_short_name[i],
-				.min_len = strlen(peer_type_short_name[i]),
-			};
-
-			err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,
-						 &filter);
-			if (err) {
-				LOG_ERR("Name filter cannot be added (err %d)",
-					err);
-				goto error;
-			}
-		}
-
-		filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
-		LOG_INF("Device type filters added");
-
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
+		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,
+					 &subscribed_peers[i].addr);
 		if (err) {
-			LOG_ERR("UUID filter cannot be added (err %d)", err);
-			goto error;
+			LOG_ERR("Address filter cannot be added (err %d)", err);
+			return err;
 		}
-		filter_mode |= BT_SCAN_UUID_FILTER;
+
+		char addr_str[BT_ADDR_LE_STR_LEN];
+
+		bt_addr_le_to_str(&subscribed_peers[i].addr, addr_str,
+				  sizeof(addr_str));
+		LOG_INF("Address filter added %s", log_strdup(addr_str));
+		filter_mode |= BT_SCAN_ADDR_FILTER;
 	}
 
-	err = bt_scan_filter_enable(filter_mode, true);
+	if (i == CONFIG_BT_MAX_PAIRED) {
+		goto filter_enable;
+	}
+
+	u8_t peers_mask = 0;
+
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		peers_mask |= BIT(subscribed_peers[i].peer_type);
+	}
+
+	/* Bluetooth scan filters are defined in separate header. */
+	for (size_t i = 0; i < ARRAY_SIZE(peer_type_short_name); i++) {
+		if (!(BIT(i) & (~peers_mask))) {
+			continue;
+		}
+
+		const struct bt_scan_short_name filter = {
+			.name = peer_type_short_name[i],
+			.min_len = strlen(peer_type_short_name[i]),
+		};
+
+		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,
+					 &filter);
+		if (err) {
+			LOG_ERR("Name filter cannot be added (err %d)", err);
+			return err;
+		}
+		filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
+	}
+	LOG_INF("Device type filters added");
+
+filter_enable:
+	err = bt_scan_filter_enable(filter_mode, false);
 	if (err) {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
-		goto error;
+		return err;
 	}
 
-error:
-	return err;
+	return 0;
 }
 
 static void scan_start(void)
 {
 	int err;
 
-	struct bond_find_data bond_find_data = {
-		.conn_count = 0,
-		.peer_count = 0,
-	};
-
-	bt_foreach_bond(BT_ID_DEFAULT, bond_find,
-			&bond_find_data);
-	if (bond_find_data.conn_count == CONFIG_BT_MAX_CONN) {
+	if (count_conn() == CONFIG_BT_MAX_CONN) {
 		LOG_INF("Max number of peers connected - scanning disabled");
 		return;
 	} else if (discovering_peer_conn) {
@@ -242,14 +222,7 @@ static void scan_stop_trigger_fn(struct k_work *w)
 {
 	static_assert(SCAN_DURATION_MS > 0, "");
 
-	struct bond_find_data bond_find_data = {
-		.conn_count = 0,
-		.peer_count = 0,
-	};
-
-	bt_foreach_bond(BT_ID_DEFAULT, bond_find,
-			&bond_find_data);
-	if (bond_find_data.conn_count != 0) {
+	if (count_conn() != 0) {
 		scan_stop();
 	}
 }
@@ -436,6 +409,11 @@ static bool event_handler(const struct event_header *eh)
 		size_t i;
 
 		for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+			if (!bt_addr_le_cmp(&subscribed_peers[i].addr,
+				  bt_conn_get_dst(discovering_peer_conn))) {
+				break;
+			}
+
 			if (!bt_addr_le_cmp(&subscribed_peers[i].addr,
 					    BT_ADDR_LE_NONE)) {
 				bt_addr_le_copy(&subscribed_peers[i].addr,

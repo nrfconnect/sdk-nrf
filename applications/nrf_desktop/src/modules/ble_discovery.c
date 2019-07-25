@@ -57,9 +57,7 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 	event->dm = dm;
 	event->pid = peer_pid;
 
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
 		if (bt_peripherals[i].pid == peer_pid) {
 			event->peer_type = bt_peripherals[i].peer_type;
 			EVENT_SUBMIT(event);
