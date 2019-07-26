@@ -25,6 +25,14 @@ static const u16_t vendor_vid = 0x1915;
 /* Peripherals parameters. */
 static const struct bt_peripheral bt_peripherals[] = {
 	{
+		.pid = 0x52da,
+		.peer_type = PEER_TYPE_MOUSE,
+	},
+	{
+		.pid = 0x52db,
+		.peer_type = PEER_TYPE_MOUSE,
+	},
+	{
 		.pid = 0x52de,
 		.peer_type = PEER_TYPE_MOUSE,
 	},
