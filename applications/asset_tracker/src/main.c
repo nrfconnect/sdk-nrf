@@ -229,17 +229,17 @@ void error_handler(enum error_type err_type, int err_code)
 }
 
 void z_SysFatalErrorHandler(unsigned int reason,
-			    const NANO_ESF *pEsf)
+			    const z_arch_esf_t *pEsf)
 {
 	ARG_UNUSED(pEsf);
 
 #if !defined(CONFIG_SIMPLE_FATAL_ERROR_HANDLER)
 #if defined(CONFIG_STACK_SENTINEL)
-	if (reason == _NANO_ERR_STACK_CHK_FAIL) {
+	if (reason == K_ERR_STACK_CHK_FAIL) {
 		goto error_handler;
 	}
 #endif
-	if (reason == _NANO_ERR_KERNEL_PANIC) {
+	if (reason == K_ERR_KERNEL_PANIC) {
 		goto error_handler;
 	}
 
