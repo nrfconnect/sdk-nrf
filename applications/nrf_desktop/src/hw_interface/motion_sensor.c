@@ -37,18 +37,18 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 enum state {
 	STATE_DISABLED,
+	STATE_DISCONNECTED,
 	STATE_IDLE,
 	STATE_FETCHING,
 	STATE_SUSPENDED,
+	STATE_SUSPENDED_DISCONNECTED,
 };
 
 struct sensor_state {
 	struct k_spinlock lock;
 
 	enum state state;
-	bool connected;
 	bool sample;
-	bool last_read_burst;
 	u32_t option[MOTION_SENSOR_OPTION_COUNT];
 	u32_t option_mask;
 };
@@ -92,19 +92,23 @@ static int disable_trigger(void)
 
 static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 {
-	/* Enter active polling mode until no motion */
+	k_spinlock_key_t key = k_spin_lock(&state.lock);
 
 	disable_trigger();
 
 	switch (state.state) {
 	case STATE_IDLE:
-		/* Wake up thread */
 		state.state = STATE_FETCHING;
 		state.sample = true;
+		/* Fall-through */
+
+	case STATE_DISCONNECTED:
+		/* Wake up thread */
 		k_sem_give(&sem);
 		break;
 
 	case STATE_SUSPENDED:
+	case STATE_SUSPENDED_DISCONNECTED:
 		/* Wake up system - this will wake up thread */
 		EVENT_SUBMIT(new_wake_up_event());
 		break;
@@ -119,6 +123,8 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 		__ASSERT_NO_MSG(false);
 		break;
 	}
+
+	k_spin_unlock(&state.lock, key);
 }
 
 static int motion_read(bool send_event)
@@ -126,9 +132,7 @@ static int motion_read(bool send_event)
 	struct sensor_value value_x;
 	struct sensor_value value_y;
 
-	int err;
-
-	err = sensor_sample_fetch(sensor_dev);
+	int err = sensor_sample_fetch(sensor_dev);
 
 	if (!err) {
 		err = sensor_channel_get(sensor_dev, SENSOR_CHAN_POS_DX,
@@ -206,9 +210,6 @@ static int init(void)
 
 	set_default_configuration();
 
-	state.state = STATE_IDLE;
-	module_set_state(MODULE_STATE_READY);
-
 	do {
 		err = enable_trigger();
 		if (err == -EBUSY) {
@@ -218,7 +219,6 @@ static int init(void)
 
 	if (err) {
 		LOG_ERR("Cannot enable trigger");
-		module_set_state(MODULE_STATE_ERROR);
 	}
 
 	return err;
@@ -321,49 +321,41 @@ static void write_config(void)
 
 static void motion_thread_fn(void)
 {
-	s32_t timeout = POLL_TIMEOUT_MS;
-
 	int err = init();
 
+	if (!err) {
+		module_set_state(MODULE_STATE_READY);
+	}
+
 	while (!err) {
-		err = k_sem_take(&sem, timeout);
-		if (err && (err != -EAGAIN)) {
-			continue;
-		}
+		bool send_event;
+		u32_t option_bm;
+
+		k_sem_take(&sem, K_FOREVER);
 
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
-		bool sample = (state.state == STATE_FETCHING) &&
-			      state.connected &&
-			      state.sample;
+		send_event = (state.state == STATE_FETCHING) && state.sample;
 		state.sample = false;
-		u32_t option_mask = state.option_mask;
+		option_bm = state.option_mask;
 		k_spin_unlock(&state.lock, key);
 
-		err = motion_read(sample);
+		err = motion_read(send_event);
 
 		bool no_motion = (err == -ENODATA);
-		if (no_motion) {
+		if (unlikely(no_motion)) {
 			err = 0;
 		}
 
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-		    !err && option_mask) {
+		    !err && unlikely(option_bm)) {
 			write_config();
 		}
-
-		if (err) {
-			continue;
-		}
-
-		if (!sample) {
-			timeout = POLL_TIMEOUT_MS;
-			continue;
-		}
-		timeout = K_FOREVER;
 
 		key = k_spin_lock(&state.lock);
 		if ((state.state == STATE_FETCHING) && no_motion) {
 			state.state = STATE_IDLE;
+		}
+		if (state.state != STATE_FETCHING) {
 			enable_trigger();
 		}
 		k_spin_unlock(&state.lock, key);
@@ -409,8 +401,36 @@ static bool event_handler(const struct event_header *eh)
 			bool is_connected = (peer_count != 0);
 
 			k_spinlock_key_t key = k_spin_lock(&state.lock);
-			state.connected = is_connected;
+			switch (state.state) {
+			case STATE_DISCONNECTED:
+				if (is_connected) {
+					state.state = STATE_IDLE;
+				}
+				break;
+			case STATE_IDLE:
+			case STATE_FETCHING:
+				if (!is_connected) {
+					state.state = STATE_DISCONNECTED;
+				}
+				break;
+			case STATE_SUSPENDED:
+				if (!is_connected) {
+					state.state = STATE_SUSPENDED_DISCONNECTED;
+				}
+				break;
+			case STATE_SUSPENDED_DISCONNECTED:
+				if (is_connected) {
+					state.state = STATE_SUSPENDED;
+				}
+				break;
+			default:
+				/* Ignore */
+				break;
+			}
+
 			k_spin_unlock(&state.lock, key);
+
+			k_sem_give(&sem);
 		}
 
 		return false;
@@ -421,13 +441,9 @@ static bool event_handler(const struct event_header *eh)
 			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			static bool initialized;
-
-			__ASSERT_NO_MSG(!initialized);
-			initialized = true;
-
 			/* Start state machine thread */
 			__ASSERT_NO_MSG(state.state == STATE_DISABLED);
+			state.state = STATE_DISCONNECTED;
 			k_thread_create(&thread, thread_stack,
 					THREAD_STACK_SIZE,
 					(k_thread_entry_t)motion_thread_fn,
@@ -443,10 +459,15 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_wake_up_event(eh)) {
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
-		if (state.state == STATE_SUSPENDED) {
+		if ((state.state == STATE_SUSPENDED) ||
+		    (state.state == STATE_SUSPENDED_DISCONNECTED)) {
 			disable_trigger();
-			state.state = STATE_FETCHING;
-			state.sample = true;
+			if (state.state == STATE_SUSPENDED) {
+				state.state = STATE_FETCHING;
+				state.sample = true;
+			} else {
+				state.state = STATE_DISCONNECTED;
+			}
 			k_sem_give(&sem);
 
 			module_set_state(MODULE_STATE_READY);
@@ -463,8 +484,13 @@ static bool event_handler(const struct event_header *eh)
 		switch (state.state) {
 		case STATE_FETCHING:
 		case STATE_IDLE:
+		case STATE_DISCONNECTED:
 			enable_trigger();
-			state.state = STATE_SUSPENDED;
+			if (state.state == STATE_DISCONNECTED) {
+				state.state = STATE_SUSPENDED_DISCONNECTED;
+			} else {
+				state.state = STATE_SUSPENDED;
+			}
 			module_set_state(MODULE_STATE_STANDBY);
 
 			/* Sensor will downshift to "rest modes" when inactive.
@@ -474,6 +500,7 @@ static bool event_handler(const struct event_header *eh)
 			/* Fall-through */
 
 		case STATE_SUSPENDED:
+		case STATE_SUSPENDED_DISCONNECTED:
 			suspended = true;
 			break;
 
