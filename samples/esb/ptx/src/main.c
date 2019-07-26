@@ -121,14 +121,15 @@ int esb_init(void)
 
 static int leds_init(void)
 {
-	led_port = device_get_binding(LED0_GPIO_CONTROLLER);
+	led_port = device_get_binding(DT_ALIAS_LED0_GPIOS_CONTROLLER);
 	if (!led_port) {
-		LOG_ERR("Could not bind to LED port %s", LED0_GPIO_CONTROLLER);
+		LOG_ERR("Could not bind to LED port %s",
+			DT_ALIAS_LED0_GPIOS_CONTROLLER);
 		return -EIO;
 	}
 
-	const u8_t pins[] = {LED0_GPIO_PIN, LED1_GPIO_PIN,
-			     LED2_GPIO_PIN, LED3_GPIO_PIN};
+	const u8_t pins[] = {DT_ALIAS_LED0_GPIOS_PIN, DT_ALIAS_LED1_GPIOS_PIN,
+			     DT_ALIAS_LED2_GPIOS_PIN, DT_ALIAS_LED3_GPIOS_PIN};
 
 	for (size_t i = 0; i < ARRAY_SIZE(pins); i++) {
 		int err = gpio_pin_configure(led_port, pins[i], GPIO_DIR_OUT);
@@ -151,11 +152,11 @@ static void leds_update(u8_t value)
 	bool led3_status = !(value % 8 > 3);
 
 	if (led_port != NULL) {
-		(void)gpio_port_write(led_port,
-				      led0_status << LED0_GPIO_PIN |
-				      led1_status << LED1_GPIO_PIN |
-				      led2_status << LED2_GPIO_PIN |
-				      led3_status << LED3_GPIO_PIN);
+		(void)gpio_write(led_port, GPIO_ACCESS_BY_PORT, 0,
+				 led0_status << DT_ALIAS_LED0_GPIOS_PIN |
+				 led1_status << DT_ALIAS_LED1_GPIOS_PIN |
+				 led2_status << DT_ALIAS_LED2_GPIOS_PIN |
+				 led3_status << DT_ALIAS_LED3_GPIOS_PIN);
 	}
 }
 
