@@ -12,7 +12,7 @@
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
 
-#define LED_PORT	LED0_GPIO_CONTROLLER
+#define LED_PORT	DT_ALIAS_LED0_GPIOS_CONTROLLER
 
 static struct		device *gpiob;
 static struct		gpio_callback gpio_cb;
@@ -60,12 +60,12 @@ static int led_app_version(void)
 		return 1;
 	}
 
-	gpio_pin_configure(dev, LED0_GPIO_PIN, GPIO_DIR_OUT);
-	gpio_pin_write(dev, LED0_GPIO_PIN, 1);
+	gpio_pin_configure(dev, DT_ALIAS_LED0_GPIOS_PIN, GPIO_DIR_OUT);
+	gpio_pin_write(dev, DT_ALIAS_LED0_GPIOS_PIN, 1);
 
 #if CONFIG_APPLICATION_VERSION == 2
-	gpio_pin_configure(dev, LED1_GPIO_PIN, GPIO_DIR_OUT);
-	gpio_pin_write(dev, LED1_GPIO_PIN, 1);
+	gpio_pin_configure(dev, DT_ALIAS_LED1_GPIOS_PIN, GPIO_DIR_OUT);
+	gpio_pin_write(dev, DT_ALIAS_LED1_GPIOS_PIN, 1);
 #endif
 	return 0;
 }
@@ -74,31 +74,31 @@ void dfu_button_pressed(struct device *gpiob, struct gpio_callback *cb,
 			u32_t pins)
 {
 	k_work_submit(&fota_work);
-	gpio_pin_disable_callback(gpiob, SW0_GPIO_PIN);
+	gpio_pin_disable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
 }
 
 static int dfu_button_init(void)
 {
 	int err;
 
-	gpiob = device_get_binding(SW0_GPIO_CONTROLLER);
+	gpiob = device_get_binding(DT_ALIAS_SW0_GPIOS_CONTROLLER);
 	if (gpiob == 0) {
 		printk("Nordic nRF GPIO driver was not found!\n");
 		return 1;
 	}
-	err = gpio_pin_configure(gpiob, SW0_GPIO_PIN,
+	err = gpio_pin_configure(gpiob, DT_ALIAS_SW0_GPIOS_PIN,
 				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
 					 GPIO_INT_EDGE | GPIO_INT_ACTIVE_LOW);
 	if (err == 0) {
 		gpio_init_callback(&gpio_cb, dfu_button_pressed,
-			BIT(SW0_GPIO_PIN));
+			BIT(DT_ALIAS_SW0_GPIOS_PIN));
 		err = gpio_add_callback(gpiob, &gpio_cb);
 	}
 	if (err == 0) {
-		err = gpio_pin_enable_callback(gpiob, SW0_GPIO_PIN);
+		err = gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
 	}
 	if (err != 0) {
-		printk("Unable to configure SW0_GPIO_PIN!\n");
+		printk("Unable to configure SW0 GPIO pin!\n");
 		return 1;
 	}
 	return 0;
@@ -110,7 +110,7 @@ void fota_dl_handler(enum fota_download_evt_id evt_id)
 	switch (evt_id) {
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		/* Re-enable button callback */
-		gpio_pin_enable_callback(gpiob, SW0_GPIO_PIN);
+		gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		printk("Received error from fota_download\n");
