@@ -34,12 +34,12 @@
 #define DEVICE_NAME_LEN	        (sizeof(DEVICE_NAME) - 1)
 
 /* Change this if you have an LED connected to a custom port */
-#define LED_PORT                LED0_GPIO_CONTROLLER
+#define LED_PORT                DT_ALIAS_LED0_GPIOS_CONTROLLER
 
-#define RUN_STATUS_LED          LED0_GPIO_PIN
+#define RUN_STATUS_LED          DT_ALIAS_LED0_GPIOS_PIN
 #define RUN_LED_BLINK_INTERVAL  1000
 
-#define CON_STATUS_LED          LED0_GPIO_PIN
+#define CON_STATUS_LED          DT_ALIAS_LED0_GPIOS_PIN
 
 #define LED_ON                  0
 #define LED_OFF                 1
@@ -57,10 +57,10 @@ static struct bt_conn *auth_conn;
 static struct device  *led_port;
 static struct device  *uart;
 
-static u32_t led_pins[] = {LED0_GPIO_PIN,
-			   LED1_GPIO_PIN,
-			   LED2_GPIO_PIN,
-			   LED3_GPIO_PIN};
+static u32_t led_pins[] = {DT_ALIAS_LED0_GPIOS_PIN,
+			   DT_ALIAS_LED1_GPIOS_PIN,
+			   DT_ALIAS_LED2_GPIOS_PIN,
+			   DT_ALIAS_LED3_GPIOS_PIN};
 
 struct uart_data_t {
 	void  *fifo_reserved;
