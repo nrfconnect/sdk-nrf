@@ -20,11 +20,6 @@ REPORT_ID = 5
 REPORT_SIZE = 30
 EVENT_DATA_LEN_MAX = REPORT_SIZE - 6
 
-NORDIC_VID = 0x1915
-MOUSE_PID = 0x52DE
-DONGLE_PID = 0x52DC
-KEYBOARD_PID = 0x52DD
-
 TYPE_FIELD_POS = 0
 GROUP_FIELD_POS = 6
 EVENT_GROUP_SETUP = 0x1
@@ -54,6 +49,14 @@ POLL_RETRY_COUNT = 200
 DFU_SYNC_RETRIES = 3
 DFU_SYNC_INTERVAL = 1
 
+NORDIC_VID = 0x1915
+DEVICE_PID = {
+    'desktop_mouse_nrf52832'    : 0x52DA,
+    'desktop_mouse_nrf52810'    : 0x52DB,
+    'gaming_mouse'              : 0x52DE,
+    'keyboard'                  : 0x52DD,
+    'dongle'                    : 0x52DC,
+}
 
 class ConfigStatus(IntEnum):
     SUCCESS            = 0
@@ -228,18 +231,14 @@ def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
 
 
 def get_device_pid(device_type):
-    if device_type == 'mouse':
-        return MOUSE_PID
-    elif device_type == 'keyboard':
-        return KEYBOARD_PID
-    elif device_type == 'dongle':
-        return DONGLE_PID
+    if device_type in DEVICE_PID:
+        return DEVICE_PID[device_type]
     else:
         return None
 
 
 def open_device(device_type):
-    if device_type not in ['mouse', 'keyboard', 'dongle']:
+    if get_device_pid(device_type) is None:
         print("Unsupported device type")
         return None
 
@@ -248,7 +247,7 @@ def open_device(device_type):
         print("Found device")
     except hid.HIDException:
         try:
-            dev = hid.Device(vid=NORDIC_VID, pid=DONGLE_PID)
+            dev = hid.Device(vid=NORDIC_VID, pid=get_device_pid('dongle'))
             print("Try to connect via dongle")
         except hid.HIDException:
             print("Cannot find selected device nor dongle")
@@ -534,7 +533,8 @@ def configurator():
     logging.info('Configuration channel for nRF52 Desktop')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('device_type', help='Selected device type: mouse/dongle')
+    parser.add_argument('device_type', help='Selected device type: ' +
+	    ''.join("%s, " % dt for dt in DEVICE_PID)[:-2])
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
     parser_dfu = subparsers.add_parser('dfu', help='Run DFU')
