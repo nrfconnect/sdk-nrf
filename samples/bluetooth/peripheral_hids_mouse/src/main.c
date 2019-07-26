@@ -23,7 +23,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 
-#include <gatt/bas.h>
+#include <bluetooth/services/bas.h>
 #include <bluetooth/services/hids.h>
 #include <bluetooth/services/dis.h>
 #include <dk_buttons_and_leds.h>
@@ -564,7 +564,6 @@ static void bt_ready(int err)
 	printk("Bluetooth initialized\n");
 
 	/* DIS initialized at system boot with SYS_INIT macro. */
-	bas_init();
 	hid_init();
 
 	k_delayed_work_init(&hids_work, mouse_handler);
@@ -751,6 +750,20 @@ void configure_buttons(void)
 	if (err) {
 		printk("Cannot init buttons (err: %d)\n", err);
 	}
+}
+
+
+static void bas_notify(void)
+{
+	u8_t battery_level = bt_gatt_bas_get_battery_level();
+
+	battery_level--;
+
+	if (!battery_level) {
+		battery_level = 100U;
+	}
+
+	bt_gatt_bas_set_battery_level(battery_level);
 }
 
 
