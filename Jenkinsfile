@@ -116,15 +116,26 @@ pipeline {
         dir('zephyr') {
           sh "source zephyr-env.sh && ./scripts/sanitycheck $SANITYCHECK_OPTIONS"
         }
-
         script {
           /* Rename the nrf52 desktop samples */
+          sh "mkdir artifacts/nrf_desktop"
           desktop_platforms = ['nrf52840_pca20041', 'nrf52_pca20037', 'nrf52840_pca10059']
           for(int i=0; i<desktop_platforms.size(); i++) {
             file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.hex"
-            check_and_store_sample("$file_path", "nrf_desktop_${desktop_platforms[i]}.hex")
+            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}.hex")
+            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.elf"
+            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}.elf")
             file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_zrelease/zephyr/zephyr.hex"
-            check_and_store_sample("$file_path", "nrf_desktop_${desktop_platforms[i]}_ZRelease.hex")
+            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZRelease.hex")
+            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_zrelease/zephyr/zephyr.elf"
+            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZRelease.elf")
+            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_debug_mcuboot/zephyr/merged.hex"
+            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZDebugMCUBoot.hex")
+            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_debug_mcuboot/zephyr/update.bin"
+            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZDebugMCUBoot_update.bin")
+            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_debug_mcuboot/zephyr/zephyr.elf"
+            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZDebugMCUBoot.elf")
+            sh "tar -zcvf artifacts/nrf_desktop.tar.gz artifacts/nrf_desktop"
           }
 
           /* Rename the nrf9160 samples */
@@ -147,7 +158,7 @@ pipeline {
             check_and_store_sample("$file_path", "${ns_apps[i]}_nrf9160_pca10090ns.hex")
           }
         }
-        archiveArtifacts allowEmptyArchive: true, artifacts: 'artifacts/*.hex'
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'artifacts/*.hex,artifacts/*.tar.gz'
       }
     }
     stage('Trigger Downstream Jobs') {
@@ -215,3 +226,4 @@ def check_and_store_sample(path, new_name) {
     }
   }
 }
+
