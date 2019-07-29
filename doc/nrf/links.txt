@@ -4,22 +4,28 @@
 
 .. _`Zephyr Project documentation`: http://docs.zephyrproject.org/
 
-.. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr/issues
+.. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
+.. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 
 .. _`Zephyr coding style`: http://docs.zephyrproject.org/contribute/contribute_guidelines.html
 
+.. ### Links to MCUboot
 
+.. _`MCUboot`: https://mcuboot.com
+.. _`MCUboot repository`: https://github.com/JuulLabs-OSS/mcuboot
 
 .. ### Link to the NCS repositories
 
 .. |ncs_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-nrf
+.. _`fw-nrfconnect-nrf`: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 
 .. |ncs_zephyr_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
+.. _`fw-nrfconnect-zephyr`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
 
 .. |ncs_mcuboot_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
+.. _`fw-nrfconnect-mcuboot`: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/NordicPlayground/nrfxlib
-
 .. _`nrfxlib`: https://github.com/NordicPlayground/nrfxlib
 
 .. _`change log`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/wiki/Changelog
@@ -86,6 +92,12 @@
 
 .. ### Links to other websites and software
 
+.. _Git: https://git-scm.com/
+
+.. _GitHub: https://github.com/
+
+.. _GitHub fork: https://help.github.com/en/articles/fork-a-repo
+
 .. _`Semantic Versioning 2.0.0`: https://semver.org/
 
 .. _`nRF Cloud`: https://nrfcloud.com/
@@ -104,7 +116,6 @@
 .. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
 .. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
 
-.. _`MCUboot`: https://mcuboot.com
 
 .. _`HID usage tables`: https://www.usb.org/hid
 

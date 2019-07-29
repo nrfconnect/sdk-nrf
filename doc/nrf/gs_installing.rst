@@ -24,4 +24,3 @@ In addition, it will help you clone the |NCS| repositories and set up your first
    gs_ins_windows
    gs_ins_linux
    gs_ins_mac
-   gs_ins_fork
