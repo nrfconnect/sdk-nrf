@@ -11,6 +11,7 @@
 #include <spi.h>
 #include <gpio.h>
 #include <misc/byteorder.h>
+#include <sensor/paw3212.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
@@ -43,6 +44,30 @@ LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
 #define PAW3212_REG_WRITE_PROTECT	0x09
 #define PAW3212_REG_DELTA_XY_HIGH	0x12
 #define PAW3212_REG_MOUSE_OPTION	0x19
+#define PAW3212_REG_SLEEP1		0x0A
+#define PAW3212_REG_SLEEP2		0x0B
+#define PAW3212_REG_SLEEP3		0x0C
+#define PAW3212_REG_CPI_X		0x0D
+#define PAW3212_REG_CPI_Y		0x0E
+
+/* CPI */
+#define PAW3212_CPI_STEP		38u
+#define PAW3212_CPI_MIN			(0x00 * PAW3212_CPI_STEP)
+#define PAW3212_CPI_MAX			(0x3F * PAW3212_CPI_STEP)
+
+/* Sleep */
+#define PAW3212_ETM_POS			0u
+#define PAW3212_ETM_SIZE		4u
+#define PAW3212_FREQ_POS		(PAW3212_ETM_POS + PAW3212_ETM_SIZE)
+#define PAW3212_FREQ_SIZE		4u
+
+#define PAW3212_ETM_MIN			0u
+#define PAW3212_ETM_MAX			BIT_MASK(PAW3212_ETM_SIZE)
+#define PAW3212_ETM_MASK		(PAW3212_ETM_MAX << PAW3212_ETM_POS)
+
+#define PAW3212_FREQ_MIN		0u
+#define PAW3212_FREQ_MAX		BIT_MASK(PAW3212_FREQ_SIZE)
+#define PAW3212_FREQ_MASK		(PAW3212_FREQ_MAX << PAW3212_FREQ_POS)
 
 /* Motion status bits */
 #define PAW3212_MOTION_STATUS_MOTION	BIT(7)
@@ -255,6 +280,114 @@ static int reg_write(struct paw3212_data *dev_data, u8_t reg, u8_t val)
 	k_busy_wait(T_SWX);
 
 	return 0;
+}
+
+static int update_cpi(struct paw3212_data *dev_data, u32_t cpi)
+{
+	int err;
+
+	if ((cpi > PAW3212_CPI_MAX) || (cpi < PAW3212_CPI_MIN)) {
+		LOG_ERR("CPI %" PRIu32 " out of range", cpi);
+		return -EINVAL;
+	}
+
+	u8_t regval = cpi / PAW3212_CPI_STEP;
+
+	LOG_INF("Set CPI: %u (requested: %u, reg:0x%" PRIx8 ")",
+		regval * PAW3212_CPI_STEP, cpi, regval);
+
+	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, PAW3212_WPMAGIC);
+	if (err) {
+		LOG_ERR("Cannot disable write protect");
+		return err;
+	}
+
+	err = reg_write(dev_data, PAW3212_REG_CPI_X, regval);
+	if (err) {
+		LOG_ERR("Failed to change x CPI");
+		return err;
+	}
+
+	err = reg_write(dev_data, PAW3212_REG_CPI_Y, regval);
+	if (err) {
+		LOG_ERR("Failed to change y CPI");
+		return err;
+	}
+
+	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, 0);
+	if (err) {
+		LOG_ERR("Cannot enable write protect");
+	}
+
+	return err;
+}
+
+static int update_sleep_timeout(struct paw3212_data *dev_data, u8_t reg_addr,
+				u32_t timeout_ms)
+{
+	u32_t timeout_step_ms;
+
+	switch (reg_addr) {
+	case PAW3212_REG_SLEEP1:
+		timeout_step_ms = 32;
+		break;
+
+	case PAW3212_REG_SLEEP2:
+	case PAW3212_REG_SLEEP3:
+		timeout_step_ms = 20480;
+		break;
+
+	default:
+		LOG_ERR("Not supported");
+		return -ENOTSUP;
+	}
+
+	u32_t etm = timeout_ms / timeout_step_ms - 1;
+
+	if ((etm < PAW3212_ETM_MIN) || (etm > PAW3212_ETM_MAX)) {
+		LOG_WRN("Sleep timeout %" PRIu32 " out of range", timeout_ms);
+		return -EINVAL;
+	}
+
+	LOG_INF("Set sleep%d timeout: %u (requested: %u, reg:0x%" PRIx8 ")",
+		reg_addr - PAW3212_REG_SLEEP1 + 1,
+		(etm + 1) * timeout_step_ms,
+		timeout_ms,
+		etm);
+
+	int err;
+
+	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, PAW3212_WPMAGIC);
+	if (err) {
+		LOG_ERR("Cannot disable write protect");
+		return err;
+	}
+
+	u8_t regval;
+
+	err = reg_read(dev_data, reg_addr, &regval);
+	if (err) {
+		LOG_ERR("Failed to read sleep register");
+		return err;
+	}
+
+	__ASSERT_NO_MSG((etm & PAW3212_ETM_MASK) == etm);
+
+	regval &= ~PAW3212_ETM_MASK;
+	regval |= (etm << PAW3212_ETM_POS);
+
+	err = reg_write(dev_data, reg_addr, regval);
+	if (err) {
+		LOG_ERR("Failed to change sleep time");
+		return err;
+	}
+
+	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, 0);
+	if (err) {
+		LOG_ERR("Cannot enable write protect");
+	}
+
+	return err;
 }
 
 static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
@@ -634,6 +767,7 @@ static int paw3212_attr_set(struct device *dev, enum sensor_channel chan,
 			    const struct sensor_value *val)
 {
 	struct paw3212_data *dev_data = &paw3212_data;
+	int err;
 
 	ARG_UNUSED(dev);
 
@@ -647,12 +781,34 @@ static int paw3212_attr_set(struct device *dev, enum sensor_channel chan,
 	}
 
 	switch ((u32_t)attr) {
+	case PAW3212_ATTR_CPI:
+		err = update_cpi(dev_data, PAW3212_SVALUE_TO_CPI(*val));
+		break;
+
+	case PAW3212_ATTR_SLEEP1_TIMEOUT:
+		err = update_sleep_timeout(dev_data,
+					   PAW3212_REG_SLEEP1,
+					   PAW3212_SVALUE_TO_TIME(*val));
+		break;
+
+	case PAW3212_ATTR_SLEEP2_TIMEOUT:
+		err = update_sleep_timeout(dev_data,
+					   PAW3212_REG_SLEEP2,
+					   PAW3212_SVALUE_TO_TIME(*val));
+		break;
+
+	case PAW3212_ATTR_SLEEP3_TIMEOUT:
+		err = update_sleep_timeout(dev_data,
+					   PAW3212_REG_SLEEP3,
+					   PAW3212_SVALUE_TO_TIME(*val));
+		break;
+
 	default:
 		LOG_ERR("Unknown attribute");
 		return -ENOTSUP;
 	}
 
-	return 0;
+	return err;
 }
 
 static const struct sensor_driver_api paw3212_driver_api = {
