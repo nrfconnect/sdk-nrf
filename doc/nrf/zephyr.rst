@@ -12,5 +12,5 @@ The Zephyr repository, and the |NCS| fork of the Zephyr repository, contain the 
 See the :doc:`documentation <zephyr:index>` of Nordic Semiconductor's Zephyr fork for more information.
 
 The history of the downstream |NCS| Zephyr fork is periodically rewritten to
-clean up intermediate work, merges of upstream, etc. See :ref:`downstreams` for
-more details.
+clean up intermediate work, merges of upstream, etc. See
+:ref:`dm-oss-downstreams` for more details.

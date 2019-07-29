@@ -78,34 +78,26 @@ To set up the toolchain, complete the following steps:
 Getting the |NCS| code
 **********************
 
-The |NCS| consists of the following repositories:
-
-* |ncs_repo|
-* |ncs_zephyr_repo|
-* |ncs_mcuboot_repo|
-* |ncs_nrfxlib_repo|
+The |NCS| consists of a set of Git repositories.
 
 Every |NCS| release consists of a combination of these repositories at different revisions.
+The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, `fw-nrfconnect-nrf`_.
 
 .. note::
-   The latest state of development is on the master branch of the fw-nrfconnect-nrf repository.
-   To ensure a usable state, the fw-nrfconnect-nrf repository defines the compatible states of the other repositories.
+   The latest state of development is on the master branch of the `fw-nrfconnect-nrf`_ repository.
+   To ensure a usable state, the `fw-nrfconnect-nrf`_ repository defines the compatible states of the other repositories.
    However, this state is not necessarily tested.
    For a higher degree of quality assurance, check out a tagged release.
 
    Therefore, unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`zephyr:west`.
-The main repository, fw-nrfconnect-nrf, contains a `west manifest file`_ that defines the versions of all other repositories.
-This means that fw-nrfconnect-nrf acts as the manifest repository (see :ref:`Repository structure <zephyr:west-struct>`), while the other repositories are project repositories.
-The revision (in Git terms) of the fw-nrfconnect-nrf repository determines the contents of the manifest file.
-This file in turn defines what versions of the project repositories are checked out.
-This means that the full revision set of all repositories can be uniquely identified by a particular Git revision of the fw-nrfconnect-nrf repository.
+The main repository, `fw-nrfconnect-nrf`_, contains a `west manifest file`_, :file:`west.yml`, that determines the revision of all other repositories.
+This means that fw-nrfconnect-nrf acts as the :ref:`manifest repository <zephyr:west-multi-repo>`, while the other repositories are project repositories.
 
-In this way, you can decide to work with a specific |NCS| release either by initializing a new west installation at a particular tag or by checking out the corresponding tag for a release in an existing installation and then updating your project repositories to the corresponding state with west.
-Alternatively, you can work with the latest state of development by using the master branch of the fw-nrfconnect-nrf repository, updating it with Git regularly and then using west to update the project repositories after that.
+You can find additional information about the repository and development model in the :ref:`development model section <dev-model>`.
 
-See the :ref:`west documentation <zephyr:west>` for detailed information about the tool.
+See the :ref:`west documentation <zephyr:west>` for detailed information about the tool itself.
 
 Installing west
 ===============
@@ -128,7 +120,6 @@ Therefore, remember to regularly check for updates:
 
 Cloning the repositories
 ========================
-
 
 .. tip::
    If you already cloned the |NCS| repositories in Git and want to continue using these clones instead of creating new ones, see `Updating your existing clones to use west`_.
@@ -161,7 +152,7 @@ To clone the repositories, complete the following steps:
 
         west init -m https\://github.com/NordicPlayground/fw-nrfconnect-nrf
 
-   This will clone the manifest repository (``nrf``).
+   This will clone the manifest repository `fw-nrfconnect-nrf`_ into :file:`nrf`.
 #. Enter the following command to clone the project repositories::
 
       west update
@@ -174,6 +165,7 @@ Your directory structure now looks like this::
     |___ nrf
     |___ nrfxlib
     |___ zephyr
+    |___ ...
 
 
 Updating the repositories
@@ -213,6 +205,7 @@ To update your repositories to be managed by west, make sure that they are struc
     |___ nrf
     |___ nrfxlib
     |___ zephyr
+    |___ ...
 
 Then complete the following steps:
 
