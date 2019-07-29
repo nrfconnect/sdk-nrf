@@ -13,7 +13,7 @@ find_package(Git QUIET)
 if(NOT APP_VERSION AND GIT_FOUND)
   execute_process(
     COMMAND ${GIT_EXECUTABLE} describe --abbrev=12
-    WORKING_DIRECTORY                "."
+    WORKING_DIRECTORY                ${NRF_DIR}
     OUTPUT_VARIABLE                  APP_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_STRIP_TRAILING_WHITESPACE
