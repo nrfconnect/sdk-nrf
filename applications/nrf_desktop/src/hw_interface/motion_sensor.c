@@ -189,13 +189,25 @@ static void set_default_configuration(void)
 {
 	static_assert(MOTION_SENSOR_OPTION_COUNT < 8 * sizeof(state.option_mask), "");
 
-	set_option(MOTION_SENSOR_OPTION_CPI, CONFIG_DESKTOP_MOTION_SENSOR_CPI);
-	set_option(MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT,
-			CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS);
-	set_option(MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT,
-			CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS);
-	set_option(MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT,
-			CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS);
+	if (CONFIG_DESKTOP_MOTION_SENSOR_CPI) {
+		set_option(MOTION_SENSOR_OPTION_CPI,
+			   CONFIG_DESKTOP_MOTION_SENSOR_CPI);
+	}
+
+	if (CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS) {
+		set_option(MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT,
+			   CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS);
+	}
+
+	if (CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS) {
+		set_option(MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT,
+			   CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS);
+	}
+
+	if (CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS) {
+		set_option(MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT,
+			   CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS);
+	}
 }
 
 static int init(void)
@@ -295,14 +307,14 @@ static void write_config(void)
 	state.option_mask = 0;
 	k_spin_unlock(&state.lock, key);
 
-	if (IS_ENABLED(MOTION_SENSOR_ATTR_CPI) &&
-	    ((mask & BIT(MOTION_SENSOR_OPTION_CPI)) != 0)) {
-	}
-
 	for (enum motion_sensor_option i = 0;
 	     i < MOTION_SENSOR_OPTION_COUNT;
 	     i++) {
 		int attr = motion_sensor_option_attr[i];
+
+		if ((mask & BIT(i)) == 0) {
+			continue;
+		}
 
 		__ASSERT_NO_MSG(attr != -ENOTSUP);
 
@@ -523,7 +535,7 @@ static bool event_handler(const struct event_header *eh)
 
 			if (is_my_config_id(event->id)) {
 				update_config(event->id, event->dyndata.data,
-				      event->dyndata.size);
+					      event->dyndata.size);
 			}
 
 			return false;
