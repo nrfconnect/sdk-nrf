@@ -587,7 +587,6 @@ static void sensor_data_send(struct cloud_channel_data *data)
 	if (err) {
 		printk("Unable to encode cloud data: %d\n", err);
 	}
-	err = cloud_encode_data(data, &output);
 
 	struct cloud_msg msg = {
 		.buf = output.buf,
