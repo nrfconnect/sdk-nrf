@@ -25,7 +25,16 @@ int orientation_detector_poll(
 	enum orientation_state current_orientation;
 
 	for (i = 0; i < MEASUREMENT_ITERATIONS; i++) {
-		err = sensor_sample_fetch_chan(dev, SENSOR_CHAN_ACCEL_Z);
+
+		/* If using the ADXL362 driver, all channels must be fetched */
+		if (IS_ENABLED(CONFIG_ADXL362)) {
+			err = sensor_sample_fetch_chan(dev,
+						       SENSOR_CHAN_ALL);
+		} else {
+			err = sensor_sample_fetch_chan(dev,
+						       SENSOR_CHAN_ACCEL_Z);
+		}
+
 		if (err) {
 			printk("sensor_sample_fetch failed\n");
 			return err;

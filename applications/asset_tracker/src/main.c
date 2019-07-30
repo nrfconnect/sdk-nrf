@@ -514,19 +514,42 @@ static void env_data_send(void)
 		return;
 	}
 
-	for (int i = 0; i < num_sensors; i++) {
-		err = sensor_sample_fetch_chan(env_sensors[i]->dev,
-			env_sensors[i]->channel);
-		if (err) {
-			printk("Failed to fetch data from %s, error: %d\n",
-				env_sensors[i]->dev_name, err);
+	/* If the BME680 is being used, all data has to be fetched at once */
+	if (IS_ENABLED(CONFIG_BME680)) {
+		struct device *dev = device_get_binding("BME680");
+
+		if (dev == NULL) {
+			printk("Could not get BME680 device\n");
 			return;
+		}
+
+		err = sensor_sample_fetch_chan(dev,
+					       SENSOR_CHAN_ALL);
+		if (err) {
+			printk("Failed to fetch data from BME680, error: %d\n",
+				err);
+			return;
+		}
+	}
+
+	for (int i = 0; i < num_sensors; i++) {
+
+		/* Only fetch data if the sensor is not BME680 */
+		if (!(IS_ENABLED(CONFIG_BME680) &&
+		      strcmp(env_sensors[i]->dev_name, "BME680") == 0)) {
+			err = sensor_sample_fetch_chan(env_sensors[i]->dev,
+						       env_sensors[i]->channel);
+			if (err) {
+				printk("Failed to fetch data from %s, error: %d\n",
+					env_sensors[i]->dev_name, err);
+				return;
+			}
 		}
 
 		err = sensor_channel_get(env_sensors[i]->dev,
 			env_sensors[i]->channel, &data[i]);
 		if (err) {
-			printk("Failed to fetch data from %s, error: %d\n",
+			printk("Failed to get data from %s, error: %d\n",
 				env_sensors[i]->dev_name, err);
 			return;
 		}
