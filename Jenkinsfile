@@ -164,12 +164,12 @@ pipeline {
         // sh "tar -zcvf artifacts/$JOBNAME/$BUILD_ID/samples.tar.gz build-linux"
         sh "tar -zcvf artifacts/samples.tar.gz build-linux"
         dir('artifacts') {
-          cifsPublisher(publishers: [[configName: 'ncs_nrf_samples_linux',
+          cifsPublisher(publishers: [[configName: 'ncs_nrf_samples',
                                       transfers: [[cleanRemote: false, excludes: '',
                                                    flatten: false,
                                                    makeEmptyDirs: true,
                                                    noDefaultExcludes: false,
-                                                   remoteDirectory: "$JOBNAME/$BUILD_ID",
+                                                   remoteDirectory: "$JOBNAME/$BUILD_ID/linux",
                                                    remoteDirectorySDF: false,
                                                    removePrefix: '',
                                                 sourceFiles: '**/*.*']],
