@@ -140,12 +140,12 @@ pipeline {
         DESK_PLATFORM_LIST = ['nrf52840_pca20041', 'nrf52_pca20037', 'nrf52840_pca10059']
         SANITYCHECK_OPTIONS = SANITYCHECK_OPTIONS_COMMON + """ \
                                   --build-only \
+                                  --outdir build-linux \
                               """
                                   // --subset 1/2 \
                                   // --tag ci_build \
 
         // Create a folder to store artifacts in
-        sh 'mkdir artifacts'
 
         // Build all the samples
         DESK_PLATFORM_LIST.eachWithIndex { PLATFORM, index ->
@@ -157,10 +157,27 @@ pipeline {
           """
           println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
           sh FULL_SANITYCHECK_CMD
-
           archiveArtifacts allowEmptyArchive: false,
-                           artifacts: "sanity-out/${PLATFORM}/**/*.hex,sanity-out/${PLATFORM}/**/*.elf"
+                           artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
         } // eachWithIndex
+        // sh 'mkdir --parents artifacts/$JOBNAME/$BUILD_ID'
+        // sh "tar -zcvf artifacts/$JOBNAME/$BUILD_ID/samples.tar.gz build-linux"
+        sh "tar -zcvf artifacts/samples.tar.gz build-linux"
+        dir('artifacts') {
+          cifsPublisher(publishers: [[configName: 'ncs_nrf_samples_linux',
+                                      transfers: [[cleanRemote: false, excludes: '',
+                                                   flatten: false,
+                                                   makeEmptyDirs: true,
+                                                   noDefaultExcludes: false,
+                                                   remoteDirectory: "$JOBNAME/$BUILD_ID",
+                                                   remoteDirectorySDF: false,
+                                                   removePrefix: '',
+                                                sourceFiles: '**/*.*']],
+                                      usePromotionTimestamp: false,
+                                      useWorkspaceInPromotion: false,
+                                      verbose: true]])
+        }
+
       } } // steps scripts
     }   // Stage
     stage('Trigger Downstream Jobs') {
