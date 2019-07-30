@@ -164,10 +164,10 @@ int ui_nmos_init(void)
 {
 	int err = 0;
 
-	gpio_dev = device_get_binding(DT_NORDIC_NRF_GPIO_0_LABEL);
+	gpio_dev = device_get_binding(DT_NORDIC_NRF_GPIO_GPIO_0_LABEL);
 	if (!gpio_dev) {
 		LOG_ERR("Could not bind to device %s",
-			log_strdup(DT_NORDIC_NRF_GPIO_0_LABEL));
+			log_strdup(DT_NORDIC_NRF_GPIO_GPIO_0_LABEL));
 		return -ENODEV;
 	}
 
