@@ -165,17 +165,13 @@ pipeline {
         sh "tar -zcvf artifacts/ncs-samples-linux.tar.gz build-linux"
         dir('artifacts') {
           cifsPublisher(publishers: [[configName: 'ncs_nrf',
-                                      transfers: [[cleanRemote: false, excludes: '',
-                                                   flatten: false,
-                                                   makeEmptyDirs: true,
-                                                   noDefaultExcludes: false,
-                                                   remoteDirectory: "$JOBNAME/$BUILD_ID/samples",
-                                                   remoteDirectorySDF: false,
-                                                   removePrefix: '',
-                                                sourceFiles: '**/*.*']],
-                                      usePromotionTimestamp: false,
-                                      useWorkspaceInPromotion: false,
-                                      verbose: true]])
+                transfers: [[cleanRemote: false, excludes: '', flatten: false,
+                             makeEmptyDirs: true, noDefaultExcludes: false,
+                             remoteDirectory: "$JOBNAME/$BUILD_ID/samples",
+                             remoteDirectorySDF: false, removePrefix: '',
+                             sourceFiles: '**/*.*']],
+                usePromotionTimestamp: false, useWorkspaceInPromotion: false,
+                verbose: true]])
         }
 
       } } // steps scripts
