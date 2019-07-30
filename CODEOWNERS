@@ -41,6 +41,7 @@
 /lib/bsdlib/                              @rlubos
 /lib/modem_info/                          @rlubos
 /lib/pdn_management/                      @rlubos
+/samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bootloader/                      @hakonfam @ioannisg
 subsys/debug/CMakeLists.txt               @nordic-krch
