@@ -162,14 +162,14 @@ pipeline {
         } // eachWithIndex
         // sh 'mkdir --parents artifacts/$JOBNAME/$BUILD_ID'
         // sh "tar -zcvf artifacts/$JOBNAME/$BUILD_ID/samples.tar.gz build-linux"
-        sh "tar -zcvf artifacts/samples.tar.gz build-linux"
+        sh "tar -zcvf artifacts/ncs-samples-linux.tar.gz build-linux"
         dir('artifacts') {
-          cifsPublisher(publishers: [[configName: 'ncs_nrf_samples',
+          cifsPublisher(publishers: [[configName: 'ncs_nrf',
                                       transfers: [[cleanRemote: false, excludes: '',
                                                    flatten: false,
                                                    makeEmptyDirs: true,
                                                    noDefaultExcludes: false,
-                                                   remoteDirectory: "$JOBNAME/$BUILD_ID/linux",
+                                                   remoteDirectory: "$JOBNAME/$BUILD_ID/samples",
                                                    remoteDirectorySDF: false,
                                                    removePrefix: '',
                                                 sourceFiles: '**/*.*']],
