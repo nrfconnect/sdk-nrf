@@ -168,7 +168,7 @@ pipeline {
           cifsPublisher(publishers: [[configName: 'ncs_nrf',
                 transfers: [[cleanRemote: false, excludes: '', flatten: false,
                              makeEmptyDirs: true, noDefaultExcludes: false,
-                             remoteDirectory: "$JOBNAME/$BUILD_ID/samples",
+                             remoteDirectory: "$JOB_NAME/$BUILD_ID/samples",
                              remoteDirectorySDF: false, removePrefix: '',
                              sourceFiles: '**/*.*']],
                 usePromotionTimestamp: false, useWorkspaceInPromotion: false,
