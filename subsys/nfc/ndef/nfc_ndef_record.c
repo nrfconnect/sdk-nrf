@@ -128,11 +128,11 @@ int nfc_ndef_bin_payload_memcopy(
 	if (buffer) {
 		if (*len < payload_descriptor->payload_length) {
 			return -ENOSR;
-	}
+		}
 
-	memcpy(buffer,
-	       payload_descriptor->payload,
-	       payload_descriptor->payload_length);
+		memcpy(buffer,
+		       payload_descriptor->payload,
+		       payload_descriptor->payload_length);
 	}
 
 	*len = payload_descriptor->payload_length;
