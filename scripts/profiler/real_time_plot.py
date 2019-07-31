@@ -23,10 +23,7 @@ def rtt_thread(queue, finish_event, event_filename, event_types_filename, log_lv
 def main():
     parser = argparse.ArgumentParser(
         description='Collecting data from Nordic profiler for given time and saving to files.')
-    parser.add_argument('event_csv', help='.csv file to save collected events')
-    parser.add_argument(
-        'event_descr',
-        help='.json file to save events descriptions')
+    parser.add_argument('dataset_name', help='Name of dataset')
     parser.add_argument('--log', help='Log level')
     args = parser.parse_args()
 
@@ -39,7 +36,8 @@ def main():
     que = queue.Queue()
     t_rtt = threading.Thread(
         target=rtt_thread,
-        args=[que, ev, args.event_csv, args.event_descr, log_lvl_number])
+        args=[que, ev, args.dataset_name + ".csv",
+              args.dataset_name + ".json", log_lvl_number])
     t_rtt.start()
 
     pn = PlotNordic(log_lvl=log_lvl_number)
