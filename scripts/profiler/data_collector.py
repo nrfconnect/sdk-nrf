@@ -15,8 +15,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Collecting data from Nordic profiler for given time and saving to files.')
     parser.add_argument('time', type=int, help='Time of collecting data [s]')
-    parser.add_argument('event_csv', help='.csv file to save collected events')
-    parser.add_argument('event_descr', help='.json file to save events descriptions')
+    parser.add_argument('dataset_name', help='Name of dataset')
     parser.add_argument('--log', help='Log level')
     args = parser.parse_args()
 
@@ -31,10 +30,11 @@ def main():
     signal.signal(signal.SIGINT, sigint_handler)
     end_ev = threading.Event()
 
-    profiler = RttNordicProfilerHost(event_filename=args.event_csv,
-                                     finish_event=end_ev,
-                                     event_types_filename=args.event_descr,
-                                     log_lvl=log_lvl_number)
+    profiler = RttNordicProfilerHost(
+                event_filename=args.dataset_name + ".csv",
+                finish_event=end_ev,
+                event_types_filename=args.dataset_name + ".json",
+                log_lvl=log_lvl_number)
     profiler.get_events_descriptions()
     profiler.read_events_rtt(args.time)
 
