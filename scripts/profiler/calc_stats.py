@@ -21,7 +21,7 @@ def main():
     if args.log is not None:
         log_lvl_number = int(getattr(logging, args.log.upper(), None))
     else:
-        log_lvl_number = logging.WARNING
+        log_lvl_number = logging.INFO
 
     if args.start_time is None:
         args.start_time = 0
