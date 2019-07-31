@@ -62,10 +62,10 @@ pipeline {
           lib_West.AddManifestUpdate("NRF", 'nrf', CI_STATE.NRF.GIT_URL, CI_STATE.NRF.GIT_REF, CI_STATE)
         }
         sh 'mkdir --parents artifacts'
-        // dir('artifacts') {
-        //   sh "echo world > NRF.txt"
-        //   lib_Main.storeArtifacts("samples", '**/*.*', 'NRF', CI_STATE)
-        // }
+        dir('artifacts') {
+          sh "echo world > NRF.txt"
+          lib_Main.storeArtifacts("samples", '**/*.*', 'NRF', CI_STATE)
+        }
       }}
     }
     stage('Get nRF && Apply Parent Manifest Updates') {
@@ -160,6 +160,7 @@ pipeline {
             source zephyr/zephyr-env.sh && \
             $SANITYCHECK_CMD
           """
+
           println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
           sh FULL_SANITYCHECK_CMD
           archiveArtifacts allowEmptyArchive: false,
