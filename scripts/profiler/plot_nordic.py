@@ -141,7 +141,7 @@ class PlotNordic():
                     minimum = j
                 ticks.append(j)
                 labels.append(self.processed_events.raw_data.registered_events_types[j].name)
-        plt.yticks(ticks, labels, rotation=45)
+        plt.yticks(ticks, labels)
 
         # min and max range of y axis are bigger by one so markers fit nicely
         # on plot
@@ -164,9 +164,10 @@ class PlotNordic():
 
         fig.canvas.mpl_connect('scroll_event', self.scroll_event)
         fig.canvas.mpl_connect('button_press_event', self.button_press_event)
-        fig.canvas.mpl_connect(
-            'button_release_event',
-            self.button_release_event)
+        fig.canvas.mpl_connect('button_release_event',
+                               self.button_release_event)
+        fig.canvas.mpl_connect('resize_event', self.resize_event)
+        plt.tight_layout()
 
         return fig
 
@@ -383,6 +384,9 @@ class PlotNordic():
             if self.draw_state.duration_marker is not None:
                 self.draw_state.duration_marker.remove()
                 self.draw_state.duration_marker = None
+
+    def resize_event(self, event):
+        plt.tight_layout()
 
     def real_time_close_event(self, event):
         self.finish_event.set()
