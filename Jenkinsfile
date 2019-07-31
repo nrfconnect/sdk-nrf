@@ -160,6 +160,7 @@ pipeline {
           archiveArtifacts allowEmptyArchive: false,
                            artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
         } // eachWithIndex
+        sh 'mkdir --parents artifacts'
         // sh 'mkdir --parents artifacts/$JOBNAME/$BUILD_ID'
         // sh "tar -zcvf artifacts/$JOBNAME/$BUILD_ID/samples.tar.gz build-linux"
         sh "tar -zcvf artifacts/ncs-samples-linux.tar.gz build-linux"
