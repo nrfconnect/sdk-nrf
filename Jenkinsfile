@@ -61,6 +61,14 @@ pipeline {
           CI_STATE.NRF.REPORT_SHA = lib_Main.checkoutRepo(CI_STATE.NRF.GIT_URL, "NRF", CI_STATE.NRF, false)
           lib_West.AddManifestUpdate("NRF", 'nrf', CI_STATE.NRF.GIT_URL, CI_STATE.NRF.GIT_REF, CI_STATE)
         }
+        sh 'mkdir --parents artifacts'
+        dir('artifacts') {
+          sh "echo world > hello.txt"
+          lib_Main.storeArtifacts(remoteDirectory:"samples",
+                                  regex:'**/*.*',
+                                  JobKey:'NRF',
+                                  CI_STATE:CI_STATE)
+        }
       }}
     }
     stage('Get nRF && Apply Parent Manifest Updates') {
@@ -160,19 +168,27 @@ pipeline {
           archiveArtifacts allowEmptyArchive: false,
                            artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
         } // eachWithIndex
-        sh 'mkdir --parents artifacts'
         // sh 'mkdir --parents artifacts/$JOBNAME/$BUILD_ID'
         // sh "tar -zcvf artifacts/$JOBNAME/$BUILD_ID/samples.tar.gz build-linux"
+        // archiveArtifacts allowEmptyArchive: false,
+        //                    artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
+
+                //  cifsPublisher(publishers: [[configName: 'ncs_nrf',
+                // transfers: [[cleanRemote: false, excludes: '', flatten: false,
+                //              makeEmptyDirs: true, noDefaultExcludes: false,
+                //              remoteDirectory: "$JOB_NAME/$BUILD_ID/samples",
+                //              remoteDirectorySDF: false, removePrefix: '',
+                //              sourceFiles: '**/*.*']],
+                // usePromotionTimestamp: false, useWorkspaceInPromotion: false,
+                // verbose: true]])
+
+        sh 'mkdir --parents artifacts'
         sh "tar -zcvf artifacts/ncs-samples-linux.tar.gz build-linux"
         dir('artifacts') {
-          cifsPublisher(publishers: [[configName: 'ncs_nrf',
-                transfers: [[cleanRemote: false, excludes: '', flatten: false,
-                             makeEmptyDirs: true, noDefaultExcludes: false,
-                             remoteDirectory: "$JOB_NAME/$BUILD_ID/samples",
-                             remoteDirectorySDF: false, removePrefix: '',
-                             sourceFiles: '**/*.*']],
-                usePromotionTimestamp: false, useWorkspaceInPromotion: false,
-                verbose: true]])
+          lib_Main.storeArtifacts(remoteDirectory:"samples",
+                                  regex:'**/*.*',
+                                  JobKey:'NRF',
+                                  CI_STATE:CI_STATE)
         }
 
       } } // steps scripts
