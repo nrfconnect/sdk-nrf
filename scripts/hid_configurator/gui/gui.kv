@@ -1,0 +1,147 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+StackLayout:
+    StackLayout:
+        size_hint_y: 0.08
+        __safe_id: [dropdown.__self__]
+        Button:
+            id: btn
+            text: 'Select device'
+            on_release: dropdown.open(self)
+            size_hint_y: None
+            height: '48dp'
+            on_press: app.update_device_list()
+        Widget:
+            on_parent: dropdown.dismiss()
+        DropDown:
+            id: dropdown
+            on_select: btn.text = 'Selected device: {}'.format(args[1])
+    StackLayout:
+        TabbedPanel:
+            id: tp
+            do_default_tab: False
+            TabbedPanelItem:
+                id: settings_tab
+                text:'Settings'
+                StackLayout:
+                    id: settings_tab_layout
+
+                    Label:
+                        size_hint_y: None
+                        id: fwinfo_label
+                        text: 'Please select device'
+                    Label:
+                        size_hint_y: None
+                        id: settings_label
+                    GridLayout:
+                        cols:1
+                        id: possible_settings_place
+            TabbedPanelItem:
+                id: firmware_tab
+                text:'DFU'
+                StackLayout:
+                    Label:
+                        size_hint_y: None
+                        id: update_label
+                        text: 'Firmware Update'
+                    GridLayout:
+                        size_hint_y: None
+                        cols:1
+                        id: dfu_buttons_place
+                    Label:
+                        id: dfu_label
+                        size_hint_y: None
+                        height: '48dp'
+
+<MouseOptions>:
+    cols:1
+    GridLayout:
+        cols:2
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+
+            Label:
+                text: 'CPI'
+            Slider:
+                index: 0
+                id: cpi_s
+                value: app.fetchcpi_callback()
+                step: 100
+                max: 12000
+                min: 100
+                on_touch_up: if self.collide_point(*args[1].pos): app.setcpi_callback(self.value)
+            Label:
+                text: '{:.0f}'.format(cpi_s.value)
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+            Label:
+                text: 'LED'
+            Switch:
+                disabled: True
+                active: False
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+
+<DfuButtons>:
+    cols:1
+    Button:
+        size_hint_y: None
+        height: '48dp'
+        text: 'Choose update file'
+        on_release: app.show_load_list()
+    Button:
+        size_hint_y: None
+        height: '48dp'
+        text: 'Start uploading to device'
+        on_release: root.start_dfu_thread()
+    Label:
+        size_hint_y: None
+        height: '48dp'
+    Label:
+        text: 'Progression: {:3.1f}%'.format(pb.value)
+        size_hint_y: None
+        height: '48dp'
+    ProgressBar:
+        id: pb
+        size_hint_x: .5
+        size_hint_y: None
+        height: '48dp'
+        value: 0
+    Button:
+        size_hint_y: None
+        height: '48dp'
+        text: 'Change DFU'
+        on_release: app.perform_fwreboot()
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            path: './'
+            filters: ['*.bin']
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.selection)
+
+<DropDownButton@Button>:
+    size_hint_y: None
+    height: '48dp'
+    on_release: app.show_fwinfo()
+    on_release: app.show_possible_settings()
+    on_release: app.clear_possible_settings()
+
