@@ -64,10 +64,11 @@ pipeline {
         sh 'mkdir --parents artifacts'
         dir('artifacts') {
           sh "echo world > NRF.txt"
-          lib_Main.storeArtifacts(remoteDirectory:"samples",
-                                  regex:'**/*.*',
-                                  JobKey:'NRF',
-                                  CI_STATE:CI_STATE)
+          // lib_Main.storeArtifacts(remoteDirectory:"samples",
+          //                         regex:'**/*.*',
+          //                         JobKey:'NRF',
+          //                         CI_STATE:CI_STATE)
+          lib_Main.storeArtifacts("samples", '**/*.*', 'NRF', CI_STATE)
         }
       }}
     }
