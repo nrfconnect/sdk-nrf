@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import logging
 import csv
+import os
+
+
+OUTPUT_FOLDER = "data_stats/"
 
 
 class EventState(Enum):
@@ -25,6 +29,7 @@ class StatsNordic():
         self.processed_data.raw_data.read_data_from_files(
                                       events_filename, events_types_filename)
         self.processed_data.match_event_processing()
+
         self.logger = logging.getLogger('Stats Nordic')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
@@ -173,4 +178,11 @@ class StatsNordic():
 
         plt.yscale('log')
         plt.grid(True)
-        plt.savefig(title.lower().replace(' ', '_').replace('\n', '_') +'.png')
+
+        dir_name = "{}{}_{}_{}/".format(OUTPUT_FOLDER, self.data_name,
+                                        int(start_meas), int(end_meas))
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+
+        plt.savefig(dir_name +
+                    title.lower().replace(' ', '_').replace('\n', '_') +'.png')
