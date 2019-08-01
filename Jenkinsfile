@@ -182,8 +182,7 @@ pipeline {
     }   // Stage
     stage('Trigger Downstream Jobs') {
       when { expression { CI_STATE.NRF.RUN_DOWNSTREAM } }
-      steps {
-        script {
+      steps { script {
           CI_STATE.NRF.WAITING = true
           def DOWNSTREAM_JOBS = lib_Main.getDownStreamJobs(JOB_NAME)
           def jobs = [:]
@@ -194,8 +193,13 @@ pipeline {
             }
           }
           parallel jobs
-        }
-      }
+      } }
+    }
+    stage('Report') {
+      when { expression { CI_STATE.NRF.RUN_TESTS } }
+      steps { script {
+          println 'no report generation yet'
+      } }
     }
   }
   post {
