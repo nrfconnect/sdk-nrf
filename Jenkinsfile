@@ -11,7 +11,7 @@ pipeline {
   parameters {
        booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
        booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: false)
-       booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: false)
+       booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
        string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: INPUT_STATE)
   }
