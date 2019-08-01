@@ -63,11 +63,11 @@ pipeline {
 
 
 
-        sh 'mkdir --parents artifacts'
-        dir('artifacts') {
-          sh "echo world > NRF.txt"
-          lib_Main.storeArtifacts("samples", '**/*.*', 'NRF', CI_STATE)
-        }
+        // sh 'mkdir --parents artifacts'
+        // dir('artifacts') {
+        //   sh "echo Current JobKey > NRF.jobkey"
+        //   lib_Main.storeArtifacts("", '**/*.jobkey', 'NRF', CI_STATE)
+        // }
 
 
 
