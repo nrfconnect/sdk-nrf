@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 import threading
+
 from kivy.app import App
 from kivy.clock import mainthread
 from kivy.config import Config
@@ -12,6 +13,7 @@ from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
+from plyer import notification
 
 from gui_backend import Device
 
@@ -37,10 +39,12 @@ class DropDownButton(Button):
 class Gui(App):
     def add_mouse_settings(self):
         mouse_options = MouseOptions()
+        self.root.ids.mouse_options = mouse_options
         self.root.ids.possible_settings_place.add_widget(mouse_options)
 
     def add_dfu_buttons(self):
         dfu_buttons = DfuButtons()
+        self.root.ids.dfu_buttons = dfu_buttons
         self.root.ids.dfu_buttons_place.add_widget(dfu_buttons)
 
     def clear_possible_settings(self):
@@ -98,12 +102,18 @@ class Gui(App):
         self.initialize_dropdown()
 
     def show_fwinfo(self):
-        label = self.root.ids.fwinfo_label
         info = self.device.perform_fwinfo()
         if info:
-            label.text = info.__str__()
+            info = info.__str__()
         else:
-            label.text = 'FW info request failed'
+            info = 'FW info request failed'
+
+        settings_info = self.root.ids.settings_info_label
+        settings_info.text = info
+        settings_info.halign = 'left'
+        dfu_info = self.root.ids.dfu_info_label
+        dfu_info.text = info
+        dfu_info.halign = 'left'
 
     def show_load_list(self):
         content = LoadDialog(load=self.load_list, cancel=self.dismiss_popup)
@@ -113,6 +123,8 @@ class Gui(App):
     def load_list(self, files_path):
         print(files_path)
         self.filepath = files_path[0]
+        self.root.ids.dfu_buttons.ids.choose_file_button.disabled = True
+        self.root.ids.dfu_buttons.ids.start_uploading_button.disabled = False
         self.dismiss_popup()
 
     def dismiss_popup(self):
@@ -124,11 +136,15 @@ class Gui(App):
         print(self.filepath)
         success = self.device.perform_dfu(self.filepath, update_progressbar)
         if success:
-            print('DFU transfer completed')
-            dfu_label.text = 'DFU transfer completed'
+            info = 'DFU transfer completed'
+            message = 'Firmware will be switched on next reboot'
+            self.root.ids.dfu_buttons.ids.reboot_firmware_button.disabled = False
         else:
-            print('DFU transfer failed')
-            dfu_label.text = 'DFU transfer failed'
+            info = 'DFU transfer failed'
+            message = 'Restart application and try again'
+        print(info)
+        dfu_label.text = info
+        notification.notify(app_name='GUI Configurator', app_icon='nordic.ico', title=info, message=message)
 
     def perform_fwreboot(self):
         print('Performing fwreboot, please wait')

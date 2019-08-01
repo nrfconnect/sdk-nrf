@@ -31,7 +31,10 @@ StackLayout:
 
                     Label:
                         size_hint_y: None
-                        id: fwinfo_label
+                        id: settings_info_label
+                        text_size: self.size
+                        valign: 'middle'
+                        halign: 'center'
                         text: 'Please select device'
                     Label:
                         size_hint_y: None
@@ -45,8 +48,14 @@ StackLayout:
                 StackLayout:
                     Label:
                         size_hint_y: None
-                        id: update_label
+                        id: dfu_info_label
+                        text_size: self.size
+                        valign: 'middle'
+                        halign: 'center'
                         text: 'Firmware Update'
+                    Label:
+                        size_hint_y: None
+                        height: '48dp'
                     GridLayout:
                         size_hint_y: None
                         cols:1
@@ -91,33 +100,48 @@ StackLayout:
 <DfuButtons>:
     cols:1
     Button:
+        id: choose_file_button
         size_hint_y: None
         height: '48dp'
         text: 'Choose update file'
         on_release: app.show_load_list()
     Button:
+        id: start_uploading_button
+        disabled: True
         size_hint_y: None
         height: '48dp'
         text: 'Start uploading to device'
         on_release: root.start_dfu_thread()
+        on_release: self.disabled = True
+        on_release: progress_info_label.disabled = False
+        on_release: progression_label.disabled = False
+        on_release: pb.disabled = False
     Label:
+        id: progress_info_label
+        disabled: True
         size_hint_y: None
         height: '48dp'
     Label:
+        disabled: True
+        id: progression_label
         text: 'Progression: {:3.1f}%'.format(pb.value)
         size_hint_y: None
         height: '48dp'
     ProgressBar:
+        disabled: True
         id: pb
         size_hint_x: .5
         size_hint_y: None
         height: '48dp'
         value: 0
     Button:
+        disabled: True
+        id: reboot_firmware_button
         size_hint_y: None
         height: '48dp'
-        text: 'Change DFU'
+        text: 'Firmware reboot'
         on_release: app.perform_fwreboot()
+        on_release: self.disabled = True
 
 <LoadDialog>:
     BoxLayout:
