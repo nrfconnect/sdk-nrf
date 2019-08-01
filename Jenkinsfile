@@ -158,8 +158,8 @@ pipeline {
 
           println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
           sh FULL_SANITYCHECK_CMD
-          // archiveArtifacts allowEmptyArchive: false,
-          //                  artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
+          archiveArtifacts allowEmptyArchive: false,
+                           artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
         } // eachWithIndex
 
         sh 'mkdir --parents artifacts'
