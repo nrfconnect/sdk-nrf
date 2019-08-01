@@ -175,7 +175,7 @@ pipeline {
         sh 'mkdir --parents artifacts'
         sh "tar -zcvf artifacts/ncs-samples-linux.tar.gz build-linux"
         dir('artifacts') {
-          lib_Main.storeArtifacts("samples", '**/*.*', 'NRF', CI_STATE)
+          lib_Main.storeArtifacts("samples", '**/*.tar.gz', 'NRF', CI_STATE)
         }
 
       } } // steps scripts
