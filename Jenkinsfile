@@ -10,9 +10,8 @@ pipeline {
 
   parameters {
        booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
-       booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: true)
-       booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
-       // string(name: 'PLATFORMS', description: 'HW Platforms to test', defaultValue: 'nrf52840_pca10056')
+       booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: false)
+       booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: false)
        string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: INPUT_STATE)
   }
@@ -61,11 +60,18 @@ pipeline {
           CI_STATE.NRF.REPORT_SHA = lib_Main.checkoutRepo(CI_STATE.NRF.GIT_URL, "NRF", CI_STATE.NRF, false)
           lib_West.AddManifestUpdate("NRF", 'nrf', CI_STATE.NRF.GIT_URL, CI_STATE.NRF.GIT_REF, CI_STATE)
         }
+
+
+
         sh 'mkdir --parents artifacts'
         dir('artifacts') {
           sh "echo world > NRF.txt"
           lib_Main.storeArtifacts("samples", '**/*.*', 'NRF', CI_STATE)
         }
+
+
+
+
       }}
     }
     stage('Get nRF && Apply Parent Manifest Updates') {
@@ -146,8 +152,8 @@ pipeline {
         SANITYCHECK_OPTIONS = SANITYCHECK_OPTIONS_COMMON + """ \
                                   --build-only \
                                   --outdir build-linux \
-                                  --subset 1/4 \
                               """
+                                  // --subset 1/4 \
                                   // --tag ci_build \
 
         // Create a folder to store artifacts in
