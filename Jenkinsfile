@@ -146,8 +146,8 @@ pipeline {
         SANITYCHECK_OPTIONS = SANITYCHECK_OPTIONS_COMMON + """ \
                                   --build-only \
                                   --outdir build-linux \
+                                  --subset 1/4 \
                               """
-                                  // --subset 1/2 \
                                   // --tag ci_build \
 
         // Create a folder to store artifacts in
