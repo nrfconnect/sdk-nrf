@@ -16,6 +16,8 @@ import collections
 
 from enum import IntEnum
 
+ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help')
+
 REPORT_ID = 5
 REPORT_SIZE = 30
 EVENT_DATA_LEN_MAX = REPORT_SIZE - 6
@@ -49,14 +51,70 @@ POLL_RETRY_COUNT = 200
 DFU_SYNC_RETRIES = 3
 DFU_SYNC_INTERVAL = 1
 
-NORDIC_VID = 0x1915
-DEVICE_PID = {
-    'desktop_mouse_nrf52832'    : 0x52DA,
-    'desktop_mouse_nrf52810'    : 0x52DB,
-    'gaming_mouse'              : 0x52DE,
-    'keyboard'                  : 0x52DD,
-    'dongle'                    : 0x52DC,
+
+PMW3360_OPTIONS = {
+    'downshift_run':    ConfigOption((10,   2550),   SENSOR_OPT_DOWNSHIFT_RUN,   'Run to Rest 1 switch time [ms]'),
+    'downshift_rest1':  ConfigOption((320,  81600),  SENSOR_OPT_DOWNSHIFT_REST1, 'Rest 1 to Rest 2 switch time [ms]'),
+    'downshift_rest2':  ConfigOption((3200, 816000), SENSOR_OPT_DOWNSHIFT_REST2, 'Rest 2 to Rest 3 switch time [ms]'),
+    'cpi':              ConfigOption((100,  12000),  SENSOR_OPT_CPI,             'CPI resolution'),
 }
+
+PAW3212_OPTIONS = {
+    'sleep1_timeout':  ConfigOption((32,    512),    SENSOR_OPT_DOWNSHIFT_RUN,   'Sleep 1 switch time [ms]'),
+    'sleep2_timeout':  ConfigOption((20480, 327680), SENSOR_OPT_DOWNSHIFT_REST1, 'Sleep 2 switch time [ms]'),
+    'sleep3_timeout':  ConfigOption((20480, 327680), SENSOR_OPT_DOWNSHIFT_REST2, 'Sleep 3 switch time [ms]'),
+    'cpi':             ConfigOption((0,     2394),   SENSOR_OPT_CPI,             'CPI resolution'),
+}
+
+PCA20041_CONFIG = {
+    'sensor' : {
+        'id' : SETUP_MODULE_SENSOR,
+        'options' : PMW3360_OPTIONS
+    }
+}
+
+PCA20044_CONFIG = {
+    'sensor' : {
+        'id' : SETUP_MODULE_SENSOR,
+        'options' : PAW3212_OPTIONS
+    }
+}
+
+PCA20045_CONFIG = {
+    'sensor' : {
+        'id' : SETUP_MODULE_SENSOR,
+        'options' : PAW3212_OPTIONS
+    }
+}
+
+DEVICE = {
+    'desktop_mouse_nrf52832' : {
+        'vid' : 0x1915,
+        'pid' : 0x52DA,
+        'config' : PCA20044_CONFIG
+    },
+    'desktop_mouse_nrf52810' : {
+        'vid' : 0x1915,
+        'pid' : 0x52DB,
+        'config' : PCA20045_CONFIG
+    },
+    'gaming_mouse' : {
+        'vid' : 0x1915,
+        'pid' : 0x52DE,
+        'config' : PCA20041_CONFIG
+    },
+    'keyboard' : {
+        'vid' : 0x1915,
+        'pid' : 0x52DD,
+        'config' : None
+    },
+    'dongle' : {
+        'vid' : 0x1915,
+        'pid' : 0x52DC,
+        'config' : None
+    }
+}
+
 
 class ConfigStatus(IntEnum):
     SUCCESS            = 0
@@ -104,7 +162,7 @@ class Response(object):
         (report_id, rcpt, event_id, status, data_len, data) = struct.unpack(fmt, response_raw)
 
         if report_id != REPORT_ID:
-            logging.error("Improper report ID")
+            logging.error('Improper report ID')
             return None
 
         if data_len > len(data):
@@ -117,15 +175,6 @@ class Response(object):
             event_data = data[:data_len]
 
         return Response(rcpt, event_id, status, event_data)
-
-
-ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help')
-SENSOR_OPTIONS = {
-    'downshift_run':    ConfigOption((10,   2550),   SENSOR_OPT_DOWNSHIFT_RUN,   'Time in milliseconds of switching from mode Run to Rest 1'),
-    'downshift_rest1':  ConfigOption((320,  81600),  SENSOR_OPT_DOWNSHIFT_REST1, 'Time in milliseconds of switching from mode Rest 1 to Rest 2.'),
-    'downshift_rest2':  ConfigOption((3200, 816000), SENSOR_OPT_DOWNSHIFT_REST2, 'Time in milliseconds of switching from mode Rest 2 to Rest 3.'),
-    'cpi':              ConfigOption((100,  12000),  SENSOR_OPT_CPI,             'CPI resolution of a mouse sensor'),
-}
 
 
 def progress_bar(permil):
@@ -231,30 +280,37 @@ def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
 
 
 def get_device_pid(device_type):
-    if device_type in DEVICE_PID:
-        return DEVICE_PID[device_type]
-    else:
-        return None
+    return DEVICE[device_type]['pid']
+
+
+def get_device_vid(device_type):
+    return DEVICE[device_type]['vid']
 
 
 def open_device(device_type):
-    if get_device_pid(device_type) is None:
-        print("Unsupported device type")
-        return None
+    dev = None
 
-    try:
-        dev = hid.Device(vid=NORDIC_VID, pid=get_device_pid(device_type))
-        print("Found device")
-    except hid.HIDException:
+    devlist = [device_type]
+    if 'dongle' not in devlist:
+        devlist.append('dongle')
+
+    for i in devlist:
         try:
-            dev = hid.Device(vid=NORDIC_VID, pid=get_device_pid('dongle'))
-            print("Try to connect via dongle")
+            vid=get_device_vid(i)
+            pid=get_device_pid(i)
+            dev = hid.Device(vid=vid, pid=pid)
+            break
         except hid.HIDException:
-            print("Cannot find selected device nor dongle")
-            return None
-    except:
-        logging.error("Unknown error: {}".format(sys.exc_info()[0]))
-        return None
+            pass
+        except:
+            logging.error('Unknown error: {}'.format(sys.exc_info()[0]))
+
+    if dev is None:
+        print('Cannot find selected device nor dongle')
+    elif i == device_type:
+        print('Device found')
+    else:
+        print('Device connected via {}'.format(i))
 
     return dev
 
@@ -297,7 +353,7 @@ def dfu_start(dev, args, img_length, img_csum, offset):
 def file_crc(dfu_image):
     crc32 = 1
 
-    img_file = open(dfu_image, "rb")
+    img_file = open(dfu_image, 'rb')
     if img_file is None:
         return None
 
@@ -372,7 +428,7 @@ def perform_dfu(dev, args):
     if not success:
         print('Cannot start DFU operation')
 
-    img_file = open(dfu_image, "rb")
+    img_file = open(dfu_image, 'rb')
     img_file.seek(offset)
 
     try:
@@ -437,12 +493,9 @@ def perform_dfu(dev, args):
 
 
 def perform_config(dev, args):
-    if args.module == 'sensor':
-        module_id = SETUP_MODULE_SENSOR
-        options = SENSOR_OPTIONS
-    else:
-        print('Unknown module')
-        return
+    module_config = DEVICE[args.device_type]['config'][args.module]
+    module_id = module_config['id']
+    options = module_config['options']
 
     config_name  = args.option
     config_opts  = options[config_name]
@@ -453,7 +506,7 @@ def perform_config(dev, args):
     recipient = get_device_pid(args.device_type)
     event_id = (EVENT_GROUP_SETUP << GROUP_FIELD_POS) | (module_id << MOD_FIELD_POS) | (opt_id << OPT_FIELD_POS)
 
-    if (args.value == 'fetch'):
+    if args.value is None:
         logging.debug('Fetch the current value of {} from the firmware'.format(config_name))
         try:
             success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
@@ -533,23 +586,41 @@ def configurator():
     logging.info('Configuration channel for nRF52 Desktop')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('device_type', help='Selected device type: ' +
-	    ''.join("%s, " % dt for dt in DEVICE_PID)[:-2])
-    subparsers = parser.add_subparsers(dest='command')
-    subparsers.required = True
-    parser_dfu = subparsers.add_parser('dfu', help='Run DFU')
-    parser_dfu.add_argument('dfu_image', type=str, help='Path to a DFU image')
-    parser_fwinfo = subparsers.add_parser('fwinfo', help='Obtain information about FW image')
-    parser_fwreboot = subparsers.add_parser('fwreboot', help='Request FW reboot')
-    parser_config = subparsers.add_parser('config', help='Write configuration option')
-    config_subparsers = parser_config.add_subparsers(dest='module')
-    config_subparsers.required = True
-    parser_config_sensor = config_subparsers.add_parser('sensor', help='Optical sensor options')
-    parser_config_sensor_subparsers = parser_config_sensor.add_subparsers(dest='option')
-    parser_config_sensor_subparsers.required = True
-    for opt_name in SENSOR_OPTIONS.keys():
-        parser_config_sensor_opt = parser_config_sensor_subparsers.add_parser(opt_name, help=SENSOR_OPTIONS[opt_name].help)
-        parser_config_sensor_opt.add_argument('value', help='value range: {} or "fetch" to fetch the value from device'.format(SENSOR_OPTIONS[opt_name].range))
+    sp_devices = parser.add_subparsers(dest='device_type')
+    sp_devices.required = True
+    for device_name in DEVICE:
+        device_parser = sp_devices.add_parser(device_name)
+
+        sp_commands = device_parser.add_subparsers(dest='command')
+        sp_commands.required = True
+
+        parser_dfu = sp_commands.add_parser('dfu', help='Run DFU')
+        parser_dfu.add_argument('dfu_image', type=str, help='Path to a DFU image')
+
+        sp_commands.add_parser('fwinfo', help='Obtain information about FW image')
+        sp_commands.add_parser('fwreboot', help='Request FW reboot')
+
+        device_config = DEVICE[device_name]['config']
+        if device_config is not None:
+            assert(type(device_config) == dict)
+            parser_config = sp_commands.add_parser('config', help='Configuration option get/set')
+
+            sp_config = parser_config.add_subparsers(dest='module')
+            sp_config.required = True
+
+            for module_name in device_config:
+                module_config = device_config[module_name]
+                assert(type(module_config) == dict)
+                module_opts = module_config['options']
+                assert(type(module_opts) == dict)
+
+                parser_config_module = sp_config.add_parser(module_name, help='{} module options'.format(module_name))
+                sp_config_module = parser_config_module.add_subparsers(dest='option')
+                sp_config_module.required = True
+
+                for opt_name in module_opts:
+                    parser_config_module_opt = sp_config_module.add_parser(opt_name, help=module_opts[opt_name].help)
+                    parser_config_module_opt.add_argument('value', type=int, default=None, nargs='?', help='int from range {}'.format(module_opts[opt_name].range))
     args = parser.parse_args()
 
     dev = open_device(args.device_type)
