@@ -8,6 +8,7 @@
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
+#include <settings/settings.h>
 #include <string.h>
 
 #define MODULE ble_scan
@@ -24,6 +25,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 #define SCAN_TRIG_TIMEOUT_MS  K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S)
 #define SCAN_DURATION_MS      K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_DURATION_S)
 
+#define SUBSCRIBED_PEERS_STORAGE_NAME "subscribers"
+
 struct subscriber_data {
 	u8_t conn_count;
 	u8_t peer_count;
@@ -34,21 +37,13 @@ struct subscribed_peer {
 	enum peer_type peer_type;
 };
 
-static struct subscribed_peer subscribed_peers[CONFIG_BT_MAX_CONN];
+static struct subscribed_peer subscribed_peers[CONFIG_BT_MAX_PAIRED];
 
 static struct bt_conn *discovering_peer_conn;
 static unsigned int scan_counter;
 static struct k_delayed_work scan_start_trigger;
 static struct k_delayed_work scan_stop_trigger;
 
-
-static void reset_subscribers(void)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-		bt_addr_le_copy(&subscribed_peers[i].addr, BT_ADDR_LE_NONE);
-		subscribed_peers[i].peer_type = PEER_TYPE_COUNT;
-	}
-}
 
 static size_t count_conn(void)
 {
@@ -277,8 +272,106 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 	return true;
 }
 
+static int store_subscribed_peers(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		char key[] = MODULE_NAME "/" SUBSCRIBED_PEERS_STORAGE_NAME;
+		int err = settings_save_one(key, subscribed_peers,
+					    sizeof(subscribed_peers));
+
+		if (err) {
+			LOG_ERR("Problem storing subscribed_peers (err %d)",
+				err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+static void reset_subscribers(void)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		bt_addr_le_copy(&subscribed_peers[i].addr, BT_ADDR_LE_NONE);
+		subscribed_peers[i].peer_type = PEER_TYPE_COUNT;
+	}
+}
+
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	if (!strcmp(key, SUBSCRIBED_PEERS_STORAGE_NAME)) {
+		ssize_t len = read_cb(cb_arg, &subscribed_peers,
+				      sizeof(subscribed_peers));
+		if (len != sizeof(subscribed_peers)) {
+			LOG_ERR("Can't read subscribed_peers from storage");
+			module_set_state(MODULE_STATE_ERROR);
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+static void verify_bond(const struct bt_bond_info *info, void *user_data)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, &info->addr)) {
+			return;
+		}
+	}
+
+	LOG_WRN("Peer data inconsistency. Removing unknown peer.");
+	int err = bt_unpair(BT_ID_DEFAULT, &info->addr);
+
+	if (err) {
+		LOG_ERR("Cannot unpair peer (err %d)", err);
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
+static int verify_subscribed_peers(void)
+{
+	/* On commit we should verify data to prevent inconsistency.
+	 * Inconsistency could be caused e.g. by reset after secure,
+	 * but before storing peer type in ble_scan module.
+	 */
+	bt_foreach_bond(BT_ID_DEFAULT, verify_bond, NULL);
+
+	return 0;
+}
+
+static int settings_init(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		static struct settings_handler sh = {
+			.name = MODULE_NAME,
+			.h_set = settings_set,
+			.h_commit = verify_subscribed_peers,
+		};
+
+		int err = settings_register(&sh);
+
+		if (err) {
+			LOG_ERR("Cannot register settings (err %d)", err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 static void scan_init(void)
 {
+	reset_subscribers();
+
+	int err = settings_init();
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+		return;
+	}
+
 	static const struct bt_le_scan_param sp = {
 		.type = BT_HCI_LE_SCAN_ACTIVE,
 		.filter_dup = BT_HCI_LE_SCAN_FILTER_DUP_ENABLE,
@@ -309,7 +402,6 @@ static void scan_init(void)
 	bt_conn_cb_register(&conn_callbacks);
 	k_delayed_work_init(&scan_start_trigger, scan_start_trigger_fn);
 	k_delayed_work_init(&scan_stop_trigger, scan_stop_trigger_fn);
-	reset_subscribers();
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -384,6 +476,7 @@ static bool event_handler(const struct event_header *eh)
 		case PEER_OPERATION_ERASED:
 			scan_stop();
 			reset_subscribers();
+			store_subscribed_peers();
 			scan_start();
 			break;
 
@@ -409,17 +502,20 @@ static bool event_handler(const struct event_header *eh)
 		size_t i;
 
 		for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+			/* Already saved. */
 			if (!bt_addr_le_cmp(&subscribed_peers[i].addr,
 				  bt_conn_get_dst(discovering_peer_conn))) {
 				break;
 			}
 
+			/* Save data about new subscriber. */
 			if (!bt_addr_le_cmp(&subscribed_peers[i].addr,
 					    BT_ADDR_LE_NONE)) {
 				bt_addr_le_copy(&subscribed_peers[i].addr,
 					bt_conn_get_dst(discovering_peer_conn));
 				subscribed_peers[i].peer_type =
 					event->peer_type;
+				store_subscribed_peers();
 				break;
 			}
 		}
