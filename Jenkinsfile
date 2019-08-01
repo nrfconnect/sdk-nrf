@@ -126,13 +126,6 @@ pipeline {
         """
         println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
         sh FULL_SANITYCHECK_CMD
-
-        /* // SAVE for parallel execution in the future
-          def PLATFORM_LIST = lib_Main.getPlatformList(CI_STATE.NRF.PLATFORMS)
-          PLATFORM_LIST.eachWithIndex { PLATFORM, index ->
-          }
-        */
-
       } }
     }
     stage('Build Samples') {
@@ -145,7 +138,6 @@ pipeline {
                               """
                                   // --subset 1/4 \
                                   // --tag ci_build \
-
 
         // Build all the samples
         DESK_PLATFORM_LIST.eachWithIndex { PLATFORM, index ->
@@ -162,12 +154,10 @@ pipeline {
                            artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
         } // eachWithIndex
 
-        sh 'mkdir --parents artifacts'
-        sh "tar -zcvf artifacts/ncs-samples-linux.tar.gz build-linux"
-        dir('artifacts') {
-          lib_Main.storeArtifacts("samples", '**/*.tar.gz', 'NRF', CI_STATE)
+        dir('build-linux') {
+          sh "tar -zcvf ncs-samples-linux.tar.gz ."
+          lib_Main.storeArtifacts("samples", '*.tar.gz', 'NRF', CI_STATE)
         }
-
       } } // steps scripts
     }   // Stage
     stage('Trigger Downstream Jobs') {
