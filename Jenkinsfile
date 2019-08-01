@@ -11,7 +11,7 @@ pipeline {
   parameters {
        booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
        booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: false)
-       booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: false)
+       booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
        // string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056')
        string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf52840_pca10056')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: INPUT_STATE)
@@ -128,38 +128,6 @@ pipeline {
         sh FULL_SANITYCHECK_CMD
       } }
     }
-    stage('Build Samples') {
-      when { expression { CI_STATE.NRF.RUN_BUILD } }
-      steps { script {
-        DESK_PLATFORM_LIST = ['nrf52840_pca20041', 'nrf52_pca20037', 'nrf52840_pca10059']
-        SANITYCHECK_OPTIONS = SANITYCHECK_OPTIONS_COMMON + """ \
-                                  --build-only \
-                                  --outdir build-linux \
-                              """
-                                  // --subset 1/4 \
-                                  // --tag ci_build \
-
-        // Build all the samples
-        DESK_PLATFORM_LIST.eachWithIndex { PLATFORM, index ->
-          PLATFORM_ARGS = lib_Main.getPlatformArgs(PLATFORM)
-          SANITYCHECK_CMD = "./zephyr/scripts/sanitycheck $SANITYCHECK_OPTIONS $PLATFORM_ARGS"
-          FULL_SANITYCHECK_CMD = """
-            source zephyr/zephyr-env.sh && \
-            $SANITYCHECK_CMD
-          """
-
-          println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
-          sh FULL_SANITYCHECK_CMD
-          archiveArtifacts allowEmptyArchive: false,
-                           artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
-        } // eachWithIndex
-
-        dir('build-linux') {
-          sh "tar -zcvf ncs-samples-linux.tar.gz ."
-          lib_Main.storeArtifacts("samples", '*.tar.gz', 'NRF', CI_STATE)
-        }
-      } } // steps scripts
-    }   // Stage
     stage('Trigger Downstream Jobs') {
       when { expression { CI_STATE.NRF.RUN_DOWNSTREAM } }
       steps { script {
