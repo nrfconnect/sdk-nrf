@@ -103,6 +103,7 @@ pipeline {
             finally {
               junit 'compliance.xml'
               archiveArtifacts artifacts: 'compliance.xml'
+              lib_Main.storeArtifacts("compliance", 'compliance.xml', 'NRF', CI_STATE)
             }
           }
         }
