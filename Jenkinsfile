@@ -31,9 +31,9 @@ pipeline {
     timeout(time: TIMEOUT.time, unit: TIMEOUT.unit)
   }
 
-  // triggers {
-  //   cron(env.BRANCH_NAME == 'master' ? '0 */4 * * 1-7' : '') // Only master will be build periodically
-  // }
+  triggers {
+    cron(env.BRANCH_NAME == 'master' ? '0 */12 * * 1-7' : '') // Only master will be build periodically
+  }
 
   environment {
       GH_TOKEN = credentials('nordicbuilder-compliance-token') // This token is used to by check_compliance to comment on PRs and use checks
