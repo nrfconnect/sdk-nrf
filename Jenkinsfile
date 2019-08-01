@@ -146,7 +146,6 @@ pipeline {
                                   // --subset 1/4 \
                                   // --tag ci_build \
 
-        // Create a folder to store artifacts in
 
         // Build all the samples
         DESK_PLATFORM_LIST.eachWithIndex { PLATFORM, index ->
@@ -159,9 +158,10 @@ pipeline {
 
           println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
           sh FULL_SANITYCHECK_CMD
-          archiveArtifacts allowEmptyArchive: false,
-                           artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
+          // archiveArtifacts allowEmptyArchive: false,
+          //                  artifacts: "build-linux/${PLATFORM}/**/*.hex,build-linux/${PLATFORM}/**/*.elf"
         } // eachWithIndex
+
         sh 'mkdir --parents artifacts'
         sh "tar -zcvf artifacts/ncs-samples-linux.tar.gz build-linux"
         dir('artifacts') {
