@@ -43,6 +43,7 @@ static struct bt_conn *discovering_peer_conn;
 static unsigned int scan_counter;
 static struct k_delayed_work scan_start_trigger;
 static struct k_delayed_work scan_stop_trigger;
+static bool scanning;
 
 
 static size_t count_conn(void)
@@ -79,10 +80,12 @@ static void scan_stop(void)
 		LOG_INF("Scan stopped");
 	}
 
+	scanning = false;
+	k_delayed_work_cancel(&scan_stop_trigger);
+
 	if (count_conn() < CONFIG_BT_MAX_CONN) {
 		scan_counter = 0;
 		k_delayed_work_submit(&scan_start_trigger, SCAN_TRIG_CHECK_MS);
-		k_delayed_work_cancel(&scan_stop_trigger);
 	}
 }
 
@@ -189,6 +192,8 @@ static void scan_start(void)
 	} else {
 		LOG_INF("Scan started");
 	}
+
+	scanning = true;
 
 	k_delayed_work_submit(&scan_stop_trigger, SCAN_DURATION_MS);
 	k_delayed_work_cancel(&scan_start_trigger);
@@ -409,8 +414,12 @@ static bool event_handler(const struct event_header *eh)
 	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
 	    (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) && is_hid_keyboard_event(eh)) ||
 	    (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL) && is_hid_consumer_ctrl_event(eh))) {
-		/* Do not enable scan when devices are in use. */
+		/* Do not scan when devices are in use. */
 		scan_counter = 0;
+
+		if (scanning) {
+			scan_stop();
+		}
 
 		return false;
 	}
