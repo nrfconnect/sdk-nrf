@@ -41,6 +41,7 @@
 /lib/bsdlib/                              @rlubos
 /lib/modem_info/                          @rlubos
 /lib/pdn_management/                      @rlubos
+/lib/lwm2m_carrier/                       @rlubos @lemrey
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bootloader/                      @hakonfam @ioannisg

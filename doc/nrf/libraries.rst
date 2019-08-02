@@ -37,3 +37,4 @@ Here you can find documentation for these libraries, including API documentation
    ../../include/nfc/t4t/*
    ../../include/debug/*
    ../../include/shell/*
+   ../../lib/lwm2m_carrier/lwm2m_carrier.rst
