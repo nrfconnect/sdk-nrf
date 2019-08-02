@@ -113,10 +113,10 @@ pipeline {
     stage('Run Sanity Check') {
       when { expression { CI_STATE.NRF.RUN_BUILD } }
       steps { script {
-        SANITYCHECK_OPTIONS = SANITYCHECK_OPTIONS_COMMON + """ \
-                              --tag ci_build \
-                              --subset 1/10 \
-                          """
+        SANITYCHECK_OPTIONS = """ $SANITYCHECK_OPTIONS_COMMON \
+                                  --tag ci_build \
+                                  --subset 1/10 \
+                              """
         PLATFORM_ARGS = lib_Main.getPlatformArgs(CI_STATE.NRF.PLATFORMS)
         SANITYCHECK_CMD = "./zephyr/scripts/sanitycheck $SANITYCHECK_OPTIONS $PLATFORM_ARGS"
         FULL_SANITYCHECK_CMD = """
