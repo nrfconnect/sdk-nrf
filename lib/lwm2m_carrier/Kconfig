@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig LWM2M_CARRIER
+	bool "LwM2M carrier library"
+	depends on NEWLIB_LIBC
+	depends on BSD_LIBRARY && !BSD_LIBRARY_SYS_INIT
+	# Need a source of entropy
+	depends on TEST_RANDOM_GENERATOR
+	# Flash settings
+	depends on FLASH && FLASH_PAGE_LAYOUT
+	depends on MPU_ALLOW_FLASH_WRITE
+	depends on NVS
+	# Heap requirements
+	depends on (HEAP_MEM_POOL_SIZE >= 16384)
+	# NCS dependencies
+	# Networking - Zephyr
+	depends on NETWORKING
+	depends on NET_SOCKETS
+	depends on NET_SOCKETS_OFFLOAD
+	# Networking NCS
+	depends on LTE_LINK_CONTROL && !LTE_AUTO_INIT_AND_CONNECT
+	depends on DOWNLOAD_CLIENT && DOWNLOAD_CLIENT_TLS
+	depends on PDN_MANAGEMENT
+	# AT libraries
+	depends on AT_CMD
+	depends on AT_CMD_PARSER
+	help
+	  A library for cellular connection management.
+
+if LWM2M_CARRIER
+
+config LWM2M_CARRIER_BOOTSTRAP_URI
+	string "LwM2M carrier bootstrap URI"
+	default ""
+	help
+	  An URI of the bootstrap server.
+	  Leave empty to use the library defaults.
+
+module=LWM2M_CARRIER
+module-dep=LOG
+module-str=LwM2M carrier library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LWM2M_CARRIER

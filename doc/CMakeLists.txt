@@ -128,6 +128,7 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   "*.rst:samples:${NRF_RST_OUT}"
   "*.rst:boards:${NRF_RST_OUT}"
   "*.rst:include:${NRF_RST_OUT}"
+  "*.rst:lib:${NRF_RST_OUT}"
   "*.rst:scripts:${NRF_RST_OUT}"
   "*.rst:applications:${NRF_RST_OUT}/doc/nrf"
   "*.rst:samples:${NRF_RST_OUT}/doc/nrf"
@@ -135,6 +136,7 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   "release-notes*.rst:doc:${NRF_RST_OUT}/doc/nrf"
   "changelog.rst:doc:${NRF_RST_OUT}/doc/nrf"
   "*.rst:include:${NRF_RST_OUT}/doc/nrf"
+  "*.rst:lib:${NRF_RST_OUT}/doc/nrf"
   "*.rst:scripts:${NRF_RST_OUT}/doc/nrf"
 )
 
