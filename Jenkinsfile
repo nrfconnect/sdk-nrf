@@ -43,11 +43,10 @@ pipeline {
       ZEPHYR_TOOLCHAIN_VARIANT = 'gnuarmemb'
       GNUARMEMB_TOOLCHAIN_PATH = '/workdir/gcc-arm-none-eabi-7-2018-q2-update'
 
-      SRC_DIR = '.'
-      SANITYCHECK_OPTIONS_COMMON = '''--board-root $WORKSPACE/$SRC_DIR/nrf/boards \
-                                      --board-root $WORKSPACE/$SRC_DIR/zephyr/boards \
-                                      --testcase-root $WORKSPACE/$SRC_DIR/nrf/samples \
-                                      --testcase-root $WORKSPACE/$SRC_DIR/nrf/applications \
+      SANITYCHECK_OPTIONS_COMMON = '''--board-root nrf/boards \
+                                      --board-root zephyr/boards \
+                                      --testcase-root nrf/samples \
+                                      --testcase-root nrf/applications \
                                       --inline-logs --disable-unrecognized-section-test \
                                    '''
   }
