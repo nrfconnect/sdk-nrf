@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <nfc_t2t_lib.h>
 #include <nfc/ndef/nfc_ndef_msg.h>
 #include <nfc/ndef/nfc_uri_msg.h>
 #include <nfc/ndef/le_oob_rec.h>

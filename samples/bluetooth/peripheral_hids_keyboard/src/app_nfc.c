@@ -7,6 +7,7 @@
 #if CONFIG_NFC_OOB_PAIRING
 
 #include "app_nfc.h"
+#include <nfc_t2t_lib.h>
 
 static struct bt_le_oob oob_local;
 static u8_t ndef_msg_buf[256]; /* Buffer used to hold an NFC NDEF message. */
