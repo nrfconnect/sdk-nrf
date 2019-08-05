@@ -45,26 +45,32 @@ BT_GATT_HIDS_DEF(hids_obj,
 
 static enum report_mode report_mode;
 static bool report_enabled[IN_REPORT_COUNT][REPORT_MODE_COUNT];
+static bool subscribed[IN_REPORT_COUNT];
 
 static struct bt_conn *cur_conn;
+static bool secured;
 
 static struct config_channel_state cfg_chan;
 
-static void broadcast_subscription_change(enum in_report tr,
-					  enum report_mode old_mode,
-					  enum report_mode new_mode)
+static void broadcast_subscription_change(enum in_report tr, bool enabled)
 {
-	if ((old_mode != new_mode) &&
-	    (report_enabled[tr][old_mode] == report_enabled[tr][new_mode])) {
-		/* No change in report state. */
+	if (enabled == subscribed[tr]) {
+		/* No change in subscription. */
 		return;
 	}
+
+	if (!secured) {
+		/* Ignore the change. */
+		return;
+	}
+
+	subscribed[tr] = enabled;
 
 	struct hid_report_subscription_event *event =
 		new_hid_report_subscription_event();
 
 	event->report_type = tr;
-	event->enabled     = report_enabled[tr][new_mode];
+	event->enabled     = enabled;
 	event->subscriber  = cur_conn;
 
 	LOG_INF("Notifications %sabled", (event->enabled)?("en"):("dis"));
@@ -92,17 +98,9 @@ static void pm_evt_handler(enum bt_gatt_hids_pm_evt evt, struct bt_conn *conn)
 	}
 
 	if (report_mode != old_mode) {
-		if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-			broadcast_subscription_change(IN_REPORT_MOUSE,
-					old_mode, report_mode);
-		}
-		if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-			broadcast_subscription_change(IN_REPORT_KEYBOARD_KEYS,
-					old_mode, report_mode);
-		}
-		if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
-			broadcast_subscription_change(IN_REPORT_CONSUMER_CTRL,
-					old_mode, report_mode);
+		for (size_t tr = 0; tr < IN_REPORT_COUNT; tr++) {
+			bool enabled = report_enabled[tr][report_mode];
+			broadcast_subscription_change(tr, enabled);
 		}
 	}
 }
@@ -124,13 +122,10 @@ static void sync_notif_handler(const struct hid_notification_event *event)
 	}
 
 	bool enabled = (evt == BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED);
-	bool changed = (report_enabled[tr][mode] != enabled);
 
 	report_enabled[tr][mode] = enabled;
 
-	if ((report_mode == mode) && changed) {
-		broadcast_subscription_change(tr, mode, mode);
-	}
+	broadcast_subscription_change(tr, enabled);
 }
 
 static void async_notif_handler(enum bt_gatt_hids_notif_evt evt,
@@ -499,23 +494,34 @@ static void notify_hids(const struct ble_peer_event *event)
 	switch (event->state) {
 	case PEER_STATE_CONNECTED:
 		__ASSERT_NO_MSG(cur_conn == NULL);
-		err = bt_gatt_hids_notify_connected(&hids_obj, event->id);
-		if (!err) {
-			cur_conn = event->id;
-		}
+		cur_conn = event->id;
 		break;
 
 	case PEER_STATE_DISCONNECTED:
 		__ASSERT_NO_MSG(cur_conn == event->id);
 		err = bt_gatt_hids_notify_disconnected(&hids_obj, event->id);
-		cur_conn = NULL;
 
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 			config_channel_disconnect(&cfg_chan);
 		}
+
+		cur_conn = NULL;
+		secured = false;
 		break;
 
 	case PEER_STATE_SECURED:
+		__ASSERT_NO_MSG(cur_conn == event->id);
+		secured = true;
+		err = bt_gatt_hids_notify_connected(&hids_obj, event->id);
+		if (!err) {
+			for (size_t tr = 0; tr < IN_REPORT_COUNT; tr++) {
+				bool enabled = report_enabled[tr][report_mode];
+				broadcast_subscription_change(tr, enabled);
+			}
+		}
+
+		break;
+
 	case PEER_STATE_CONN_FAILED:
 		/* No action */
 		break;
