@@ -910,11 +910,9 @@ static void disconnect(const void *subscriber_id, enum in_report tr)
 }
 
 /**@brief Enqueue event that updates a given usage. */
-static void enqueue(enum in_report tr, u16_t usage_id, s16_t value,
+static void enqueue(struct report_data *rd, u16_t usage_id, s16_t value,
 		    bool connected)
 {
-	struct report_data *rd = &state.report_data[tr];
-
 	eventq_cleanup(&rd->eventq, K_MSEC(z_tick_get()));
 
 	if (eventq_is_full(&rd->eventq)) {
@@ -964,14 +962,15 @@ static void enqueue(enum in_report tr, u16_t usage_id, s16_t value,
 static void update_key(const struct hid_keymap *map, s16_t value)
 {
 	enum in_report tr = map->in_report;
+	struct report_data *rd = &state.report_data[tr];
+	bool connected = state.selected &&
+		(state.selected->state[tr].state != STATE_DISCONNECTED);
 
-	if (!state.selected ||
-	    (state.selected->state[tr].state == STATE_DISCONNECTED)) {
+	if (!connected || !eventq_is_empty(&rd->eventq)) {
 		/* Report cannot be sent yet - enqueue this HID event. */
-		enqueue(map->in_report, map->usage_id, value, false);
+		enqueue(rd, map->usage_id, value, connected);
 	} else {
 		/* Update state and issue report generation event. */
-		struct report_data *rd = &state.report_data[tr];
 		if (key_value_set(&rd->items, map->usage_id, value)) {
 			report_send(tr, false, true);
 		}
