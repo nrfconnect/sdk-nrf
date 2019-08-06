@@ -220,7 +220,7 @@ static void send_consumer_ctrl_report(const struct hid_consumer_ctrl_event *even
 		__ASSERT(sizeof(buffer) == 3, "Invalid report size");
 		/* Encode report. */
 		buffer[0] = REPORT_ID_CONSUMER_CTRL;
-		sys_put_le16(event->bitmask, &buffer[1]);
+		sys_put_le16(event->usage, &buffer[1]);
 	} else {
 		/* Do not send when in boot mode. */
 		sent_report_type = IN_REPORT_CONSUMER_CTRL;

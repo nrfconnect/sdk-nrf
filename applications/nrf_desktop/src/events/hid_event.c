@@ -89,8 +89,8 @@ static int log_hid_consumer_ctrl_event(const struct event_header *eh, char *buf,
 		cast_hid_consumer_ctrl_event(eh);
 
 	return snprintf(buf, buf_len,
-			"bitmask value: %u => %p",
-			event->bitmask, event->subscriber);
+			"usage: 0x%" PRIx16 " => %p",
+			event->usage, event->subscriber);
 }
 
 static void profile_hid_consumer_ctrl_event(struct log_event_buf *buf,
@@ -101,12 +101,12 @@ static void profile_hid_consumer_ctrl_event(struct log_event_buf *buf,
 
 	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
-	profiler_log_encode_u32(buf, event->bitmask);
+	profiler_log_encode_u32(buf, event->usage);
 }
 
 EVENT_INFO_DEFINE(hid_consumer_ctrl_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U16),
-		  ENCODE("subscriber", "bitmask"),
+		  ENCODE("subscriber", "usage"),
 		  profile_hid_consumer_ctrl_event);
 
 EVENT_TYPE_DEFINE(hid_consumer_ctrl_event,
