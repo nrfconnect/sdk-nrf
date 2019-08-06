@@ -89,9 +89,10 @@ extern "C" {
 #define _EVENT_ALLOCATOR_FN(ename)					\
 	static inline struct ename *_CONCAT(new_, ename)(void)		\
 	{								\
-		struct ename *event = k_malloc(sizeof(*event));		\
-		static_assert(offsetof(struct ename, header) == 0, "");	\
-		if (unlikely(!event)) {					\
+		struct ename *event = k_malloc(sizeof(*event));	\
+		BUILD_ASSERT_MSG(offsetof(struct ename, header) == 0,	\
+				 "");					\
+		if (unlikely(!event)) {				\
 			printk("Event Manager OOM error\n");		\
 			LOG_PANIC();					\
 			sys_reboot(SYS_REBOOT_WARM);			\
@@ -110,11 +111,12 @@ extern "C" {
 	static inline struct ename *_CONCAT(new_, ename)(size_t size)	\
 	{								\
 		struct ename *event = k_malloc(sizeof(*event) + size);	\
-		static_assert((offsetof(struct ename, dyndata) +	\
-			       sizeof(event->dyndata.size)) ==		\
-			      sizeof(*event), "");			\
-		static_assert(offsetof(struct ename, header) == 0, "");	\
-		if (unlikely(!event)) {					\
+		BUILD_ASSERT_MSG((offsetof(struct ename, dyndata) +	\
+				  sizeof(event->dyndata.size)) ==	\
+				 sizeof(*event), "");			\
+		BUILD_ASSERT_MSG(offsetof(struct ename, header) == 0,	\
+				 "");					\
+		if (unlikely(!event)) {				\
 			printk("Event Manager OOM error\n");		\
 			LOG_PANIC();					\
 			sys_reboot(SYS_REBOOT_WARM);			\

@@ -58,7 +58,8 @@ static void log_event(const struct event_header *eh)
 		if (pos < 0) {
 			log_buf[0] = '\0';
 		} else if (pos >= sizeof(log_buf)) {
-			static_assert(sizeof(log_buf) >= 2, "Buffer invalid");
+			BUILD_ASSERT_MSG(sizeof(log_buf) >= 2,
+					 "Buffer invalid");
 			log_buf[sizeof(log_buf) - 2] = '~';
 		}
 

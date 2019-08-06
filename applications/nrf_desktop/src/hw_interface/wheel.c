@@ -81,8 +81,8 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 		wheel *= -1;
 	}
 
-	static_assert(CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER > 0,
-		      "Divider must be non-negative");
+	BUILD_ASSERT_MSG(CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER > 0,
+			 "Divider must be non-negative");
 	if (CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER > 1) {
 		wheel /= CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER;
 	}
@@ -292,7 +292,7 @@ static int init(void)
 		return -ENXIO;
 	}
 
-	static_assert(ARRAY_SIZE(qdec_pin) == ARRAY_SIZE(gpio_cbs),
+	BUILD_ASSERT_MSG(ARRAY_SIZE(qdec_pin) == ARRAY_SIZE(gpio_cbs),
 		      "Invalid array size");
 	int err = 0;
 

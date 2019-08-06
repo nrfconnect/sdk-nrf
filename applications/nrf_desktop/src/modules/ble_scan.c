@@ -92,13 +92,14 @@ static void scan_stop(void)
 static int configure_filters(void)
 {
 	bt_scan_filter_remove_all();
-	static_assert(CONFIG_BT_MAX_PAIRED == CONFIG_BT_MAX_CONN, "");
-	static_assert(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
-		      "Insufficient number of address filters");
-	static_assert(ARRAY_SIZE(peer_type_short_name) <=
+	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_MAX_CONN, "");
+	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
+			 "Insufficient number of address filters");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) <=
 			CONFIG_BT_SCAN_SHORT_NAME_CNT,
-		      "Insufficient number of short name filers");
-	static_assert(ARRAY_SIZE(peer_type_short_name) == PEER_TYPE_COUNT, "");
+			 "Insufficient number of short name filers");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) == PEER_TYPE_COUNT,
+			 "");
 
 	u8_t filter_mode = 0;
 	int err;
@@ -206,7 +207,7 @@ error:
 
 static void scan_start_trigger_fn(struct k_work *w)
 {
-	static_assert((SCAN_TRIG_TIMEOUT_MS > SCAN_TRIG_CHECK_MS) &&
+	BUILD_ASSERT_MSG((SCAN_TRIG_TIMEOUT_MS > SCAN_TRIG_CHECK_MS) &&
 		      (SCAN_TRIG_CHECK_MS > 0), "");
 
 	scan_counter += SCAN_TRIG_CHECK_MS;
@@ -220,7 +221,7 @@ static void scan_start_trigger_fn(struct k_work *w)
 
 static void scan_stop_trigger_fn(struct k_work *w)
 {
-	static_assert(SCAN_DURATION_MS > 0, "");
+	BUILD_ASSERT_MSG(SCAN_DURATION_MS > 0, "");
 
 	if (count_conn() != 0) {
 		scan_stop();

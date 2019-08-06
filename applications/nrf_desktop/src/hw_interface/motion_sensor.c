@@ -187,7 +187,9 @@ static bool set_option(enum motion_sensor_option option, u32_t value)
 
 static void set_default_configuration(void)
 {
-	static_assert(MOTION_SENSOR_OPTION_COUNT < 8 * sizeof(state.option_mask), "");
+	BUILD_ASSERT_MSG((MOTION_SENSOR_OPTION_COUNT < 8 *
+			  sizeof(state.option_mask)),
+			 "");
 
 	if (CONFIG_DESKTOP_MOTION_SENSOR_CPI) {
 		set_option(MOTION_SENSOR_OPTION_CPI,
@@ -299,7 +301,7 @@ static void write_config(void)
 	u32_t option[MOTION_SENSOR_OPTION_COUNT];
 	u32_t mask;
 
-	static_assert(sizeof(option) == sizeof(state.option), "");
+	BUILD_ASSERT_MSG(sizeof(option) == sizeof(state.option), "");
 
 	k_spinlock_key_t key = k_spin_lock(&state.lock);
 	mask = state.option_mask;

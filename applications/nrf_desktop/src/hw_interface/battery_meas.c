@@ -91,11 +91,11 @@ static int init_adc(void)
 	}
 
 	/* Check if number of elements in LUT is proper */
-	static_assert(CONFIG_DESKTOP_BATTERY_MEAS_MAX_LEVEL
-		      - CONFIG_DESKTOP_BATTERY_MEAS_MIN_LEVEL
-		      == (ARRAY_SIZE(battery_voltage_to_soc) - 1)
-		      * CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA,
-		      "Improper number of elements in lookup table");
+	BUILD_ASSERT_MSG(CONFIG_DESKTOP_BATTERY_MEAS_MAX_LEVEL
+			 - CONFIG_DESKTOP_BATTERY_MEAS_MIN_LEVEL
+			 == (ARRAY_SIZE(battery_voltage_to_soc) - 1)
+			 * CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA,
+			 "Improper number of elements in lookup table");
 
 	return 0;
 }

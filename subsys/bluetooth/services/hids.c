@@ -1202,8 +1202,8 @@ int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
 	struct bt_gatt_hids_conn_data *conn_data =
 		bt_conn_ctx_get(hids_obj->conn_ctx, conn);
 
-	static_assert(sizeof(conn_data->hids_boot_mouse_inp_rep_ctx) >= 3,
-		      "buffer is too short");
+	BUILD_ASSERT_MSG(sizeof(conn_data->hids_boot_mouse_inp_rep_ctx) >= 3,
+			 "buffer is too short");
 
 	if (!conn_data) {
 		LOG_WRN("The context was not found");

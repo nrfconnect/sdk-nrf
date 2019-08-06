@@ -171,9 +171,9 @@ static void handle_dfu_start(const struct config_event *event)
 	size_t data_size = sizeof(length) + sizeof(csum) +
 			   sizeof(offset);
 
-	static_assert(sizeof(length) == sizeof(img_length), "");
-	static_assert(sizeof(csum) == sizeof(img_csum), "");
-	static_assert(sizeof(offset) == sizeof(cur_offset), "");
+	BUILD_ASSERT_MSG(sizeof(length) == sizeof(img_length), "");
+	BUILD_ASSERT_MSG(sizeof(csum) == sizeof(img_csum), "");
+	BUILD_ASSERT_MSG(sizeof(offset) == sizeof(cur_offset), "");
 
 	if (size < data_size) {
 		LOG_WRN("Invalid DFU start header");
