@@ -5,8 +5,10 @@
 #
 
 if (CONFIG_NFC_NDEF OR
-    CONFIG_NFC_NDEF_PARSER)
+    CONFIG_NFC_NDEF_PARSER OR
+    CONFIG_NFC_TNEP)
         add_subdirectory(ndef)
 endif()
 
 add_subdirectory_ifdef(CONFIG_NFC_T2T_PARSER t2t)
+add_subdirectory_ifdef(CONFIG_NFC_TNEP tnep)

@@ -21,7 +21,8 @@ add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 
 if (CONFIG_NRFXLIB_NFC    OR
     CONFIG_NFC_T2T_PARSER OR
-    CONFIG_NFC_NDEF_PARSER)
+    CONFIG_NFC_NDEF_PARSER OR
+    CONFIG_NFC_TNEP)
         add_subdirectory(nfc)
 endif()
 
