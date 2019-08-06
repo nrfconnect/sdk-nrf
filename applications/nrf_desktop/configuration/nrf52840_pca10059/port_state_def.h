@@ -19,11 +19,11 @@ const struct {} port_state_def_include_once;
 
 
 static const struct pin_state port0_on[] = {
-	{DT_GPIO_LEDS_LED1_RED_GPIO_PIN, 1},
+	{DT_GPIO_LEDS_LED_1_GPIOS_PIN, 1},
 };
 
 static const struct pin_state port1_on[] = {
-	{DT_GPIO_LEDS_LED1_GREEN_GPIO_PIN, 1},
+	{DT_GPIO_LEDS_LED1_GREEN_GPIOS_PIN, 1},
 };
 
 static const struct pin_state port0_off[] = {

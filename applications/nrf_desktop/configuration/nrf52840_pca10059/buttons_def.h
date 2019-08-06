@@ -22,5 +22,5 @@ static const char * const port_map[] = {
 static const struct button col[] = {};
 
 static const struct button row[] = {
-	{ .port = 0, .pin = SW0_GPIO_PIN },
+	{ .port = 0, .pin = DT_ALIAS_SW0_GPIOS_PIN },
 };
