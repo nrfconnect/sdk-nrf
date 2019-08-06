@@ -691,7 +691,8 @@ static void report_send(enum in_report tr, bool check_state,
 	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
 		unsigned int pipeline_depth;
 
-		if (state.selected->is_usb) {
+		if ((state.selected->is_usb) ||
+		    (tr == IN_REPORT_CONSUMER_CTRL))  {
 			pipeline_depth = 1;
 		} else {
 			pipeline_depth = 2;
