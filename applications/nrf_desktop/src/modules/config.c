@@ -208,8 +208,8 @@ static bool module_event_handler(const struct module_state_event *event)
 
 	static u32_t req_state;
 
-	static_assert(ARRAY_SIZE(req_modules) < (8 * sizeof(req_state)),
-		      "Array size bigger than number of bits");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(req_modules) < (8 * sizeof(req_state)),
+			 "Array size bigger than number of bits");
 
 	if (req_state == BIT_MASK(ARRAY_SIZE(req_modules))) {
 		/* Already initialized */

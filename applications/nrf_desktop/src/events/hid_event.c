@@ -23,7 +23,7 @@ static int log_hid_keyboard_event(const struct event_header *eh, char *buf,
 	char keys_str[ARRAY_SIZE(event->keys) * 5 + 1];
 	int pos = 0;
 
-	static_assert(sizeof(event->keys[0]) == 1, "");
+	BUILD_ASSERT_MSG(sizeof(event->keys[0]) == 1, "");
 	for (size_t i = 0; i < ARRAY_SIZE(event->keys); i++) {
 		int tmp = snprintf(&keys_str[pos], sizeof(keys_str) - pos,
 				   "0x%02x ", event->keys[i]);

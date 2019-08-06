@@ -132,8 +132,8 @@ static int leds_init(void)
 
 	int err = 0;
 
-	static_assert(ARRAY_SIZE(leds) <= ARRAY_SIZE(dev_name),
-		      "not enough PWMs");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(leds) <= ARRAY_SIZE(dev_name),
+			 "not enough PWMs");
 
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		leds[i].pwm_dev = device_get_binding(dev_name[i]);

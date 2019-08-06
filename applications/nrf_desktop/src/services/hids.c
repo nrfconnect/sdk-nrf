@@ -358,7 +358,7 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 		/* Encode report. */
 		u8_t buffer[REPORT_SIZE_MOUSE];
 
-		static_assert(sizeof(buffer) == 5, "Invalid report size");
+		BUILD_ASSERT_MSG(sizeof(buffer) == 5, "Invalid report size");
 
 		buffer[0] = event->button_bm;
 		buffer[1] = wheel;
@@ -410,8 +410,8 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 
 	u8_t report[REPORT_SIZE_KEYBOARD_KEYS];
 
-	static_assert(ARRAY_SIZE(report) == ARRAY_SIZE(event->keys) + 2,
-			"Incorrect number of keys in event");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(report) == ARRAY_SIZE(event->keys) + 2,
+			 "Incorrect number of keys in event");
 
 	/* Modifiers */
 	report[0] = event->modifier_bm;
@@ -472,8 +472,8 @@ static void send_consumer_ctrl_report(const struct hid_consumer_ctrl_event *even
 
 	u8_t report[REPORT_SIZE_CONSUMER_CTRL];
 
-	static_assert(ARRAY_SIZE(report) == sizeof(event->usage),
-		      "Incorrect data size in event");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(report) == sizeof(event->usage),
+			 "Incorrect data size in event");
 
 	/* Set selected flags */
 	sys_put_le16(event->usage, report);

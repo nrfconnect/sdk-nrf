@@ -46,7 +46,7 @@ static void peer_unpair(void)
 static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 {
 	__ASSERT_NO_MSG(bt_gatt_dm_conn_get(dm) == discovering_peer_conn);
-	static_assert(PEER_TYPE_COUNT <= __CHAR_BIT__, "");
+	BUILD_ASSERT_MSG(PEER_TYPE_COUNT <= __CHAR_BIT__, "");
 	LOG_INF("HIDS discovery procedure succeeded");
 
 	bt_gatt_dm_data_print(dm);

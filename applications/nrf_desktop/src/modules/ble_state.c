@@ -38,10 +38,10 @@ static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
 
 static void security_timeout_fn(struct k_work *w)
 {
-	static_assert(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
-		      (ARRAY_SIZE(active_conn) == 1), "");
-	static_assert(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
-		      (SECURITY_FAIL_TIMEOUT_MS > 0), "");
+	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
+			 (ARRAY_SIZE(active_conn) == 1), "");
+	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
+			 (SECURITY_FAIL_TIMEOUT_MS > 0), "");
 	__ASSERT_NO_MSG(active_conn[0]);
 	bt_conn_disconnect(active_conn[0],
 			   BT_HCI_ERR_REMOTE_USER_TERM_CONN);

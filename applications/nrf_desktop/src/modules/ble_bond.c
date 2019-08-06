@@ -229,7 +229,7 @@ static void cancel_operation(void)
 static u8_t next_peer_id(u8_t id)
 {
 	id++;
-	static_assert(TEMP_PEER_ID == (CONFIG_BT_MAX_PAIRED - 1), "");
+	BUILD_ASSERT_MSG(TEMP_PEER_ID == (CONFIG_BT_MAX_PAIRED - 1), "");
 	if (id == TEMP_PEER_ID) {
 		id = 0;
 	}

@@ -65,8 +65,8 @@ static void motion_event_send(s16_t dx, s16_t dy)
 
 static void generate_motion_event(void)
 {
-	static_assert((edge_time & (edge_time - 1)) == 0,
-		      "Edge time must be power of 2");
+	BUILD_ASSERT_MSG((edge_time & (edge_time - 1)) == 0,
+			 "Edge time must be power of 2");
 
 	u32_t t = k_uptime_get_32();
 	size_t v1_id = (t / edge_time) % ARRAY_SIZE(coords);
