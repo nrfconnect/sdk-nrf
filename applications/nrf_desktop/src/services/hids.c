@@ -341,12 +341,12 @@ static void send_mouse_report(const struct hid_mouse_event *event)
 							   x, y,
 							   mouse_report_sent_cb);
 	} else {
-		s16_t wheel = MAX(MIN(event->wheel, REPORT_MOUSE_WHEEL_MAX),
-				  REPORT_MOUSE_WHEEL_MIN);
-		s16_t x = MAX(MIN(event->dx, REPORT_MOUSE_XY_MAX),
-			      REPORT_MOUSE_XY_MIN);
-		s16_t y = MAX(MIN(event->dy, REPORT_MOUSE_XY_MAX),
-			      REPORT_MOUSE_XY_MIN);
+		s16_t wheel = MAX(MIN(event->wheel, MOUSE_REPORT_WHEEL_MAX),
+				  MOUSE_REPORT_WHEEL_MIN);
+		s16_t x = MAX(MIN(event->dx, MOUSE_REPORT_XY_MAX),
+			      MOUSE_REPORT_XY_MIN);
+		s16_t y = MAX(MIN(event->dy, MOUSE_REPORT_XY_MAX),
+			      MOUSE_REPORT_XY_MIN);
 
 		/* Convert to little-endian. */
 		u8_t x_buff[2];
