@@ -11,6 +11,9 @@
 #include <net/coap.h>
 #include <net/socket.h>
 #include <lte_lc.h>
+#if defined(CONFIG_LWM2M_CARRIER)
+#include <lwm2m_carrier.h>
+#endif
 
 #define APP_COAP_SEND_INTERVAL_MS K_MSEC(5000)
 #define APP_COAP_MAX_MSG_LEN 1280
@@ -28,13 +31,13 @@ static u8_t coap_buf[APP_COAP_MAX_MSG_LEN];
 /**@brief Recoverable BSD library error. */
 void bsd_recoverable_error_handler(uint32_t err)
 {
-	printk("bsdlib recoverable error: %u\n", err);
+	printk("bsdlib recoverable error: %u\n", (unsigned int)err);
 }
 
 /**@brief Irrecoverable BSD library error. */
 void bsd_irrecoverable_error_handler(uint32_t err)
 {
-	printk("bsdlib irrecoverable error: %u\n", err);
+	printk("bsdlib irrecoverable error: %u\n", (unsigned int)err);
 
 	__ASSERT_NO_MSG(false);
 }
@@ -180,6 +183,35 @@ static int client_get_send(void)
 	return 0;
 }
 
+#if defined(CONFIG_LWM2M_CARRIER)
+K_SEM_DEFINE(carrier_registered, 0, 1);
+
+void lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
+{
+	switch (event->type) {
+	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
+		printk("LWM2M_CARRIER_EVENT_BSDLIB_INIT\n");
+		break;
+	case LWM2M_CARRIER_EVENT_CONNECT:
+		printk("LWM2M_CARRIER_EVENT_CONNECT\n");
+		break;
+	case LWM2M_CARRIER_EVENT_DISCONNECT:
+		printk("LWM2M_CARRIER_EVENT_DISCONNECT\n");
+		break;
+	case LWM2M_CARRIER_EVENT_READY:
+		printk("LWM2M_CARRIER_EVENT_READY\n");
+		k_sem_give(&carrier_registered);
+		break;
+	case LWM2M_CARRIER_EVENT_FOTA_START:
+		printk("LWM2M_CARRIER_EVENT_FOTA_START\n");
+		break;
+	case LWM2M_CARRIER_EVENT_REBOOT:
+		printk("LWM2M_CARRIER_EVENT_REBOOT\n");
+		break;
+	}
+}
+#endif /* defined(CONFIG_LWM2M_CARRIER) */
+
 /**@brief Configures modem to provide LTE link. Blocks until link is
  * successfully established.
  */
@@ -191,14 +223,23 @@ static void modem_configure(void)
 		 * and connected.
 		 */
 	} else {
+#if defined(CONFIG_LWM2M_CARRIER)
+		/* Wait for the LWM2M_CARRIER to configure the modem and
+		 * start the connection.
+		 */
+		printk("Waitng for carrier registration...\n");
+		k_sem_take(&carrier_registered, K_FOREVER);
+		printk("Registered!\n");
+#else /* defined(CONFIG_LWM2M_CARRIER) */
 		int err;
 
 		printk("LTE Link Connecting ...\n");
 		err = lte_lc_init_and_connect();
 		__ASSERT(err == 0, "LTE link could not be established.");
 		printk("LTE Link Connected!\n");
+#endif /* defined(CONFIG_LWM2M_CARRIER) */
 	}
-#endif
+#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 }
 
 /* Returns 0 if data is available.
