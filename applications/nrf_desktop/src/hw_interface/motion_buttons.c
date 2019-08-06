@@ -26,7 +26,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 static struct device       *gpio_devs[BUTTONS_NUM];
 static struct gpio_callback gpio_cbs[BUTTONS_NUM];
 static const  u32_t         pin_id[BUTTONS_NUM] = {
-	SW0_GPIO_PIN, SW1_GPIO_PIN, SW2_GPIO_PIN, SW3_GPIO_PIN
+	DT_ALIAS_SW0_GPIOS_PIN, DT_ALIAS_SW1_GPIOS_PIN,
+	DT_ALIAS_SW2_GPIOS_PIN, DT_ALIAS_SW3_GPIOS_PIN
 };
 
 enum {
@@ -52,19 +53,19 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 	s8_t val_x = 0;
 	s8_t val_y = 0;
 
-	if (pins & (1 << SW0_GPIO_PIN)) {
+	if (pins & (1 << DT_ALIAS_SW0_GPIOS_PIN)) {
 		val_x -= MOVEMENT_SPEED;
 		LOG_DBG("Left");
 	}
-	if (pins & (1 << SW1_GPIO_PIN)) {
+	if (pins & (1 << DT_ALIAS_SW1_GPIOS_PIN)) {
 		val_y += MOVEMENT_SPEED;
 		LOG_DBG("Up");
 	}
-	if (pins & (1 << SW2_GPIO_PIN)) {
+	if (pins & (1 << DT_ALIAS_SW2_GPIOS_PIN)) {
 		val_x += MOVEMENT_SPEED;
 		LOG_DBG("Right");
 	}
-	if (pins & (1 << SW3_GPIO_PIN)) {
+	if (pins & (1 << DT_ALIAS_SW3_GPIOS_PIN)) {
 		val_y -= MOVEMENT_SPEED;
 		LOG_DBG("Down");
 	}
@@ -76,10 +77,10 @@ void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 static void async_init_fn(struct k_work *work)
 {
 	static const char *port_name[BUTTONS_NUM] = {
-		SW0_GPIO_CONTROLLER,
-		SW1_GPIO_CONTROLLER,
-		SW2_GPIO_CONTROLLER,
-		SW3_GPIO_CONTROLLER
+		DT_ALIAS_SW0_GPIOS_CONTROLLER,
+		DT_ALIAS_SW1_GPIOS_CONTROLLER,
+		DT_ALIAS_SW2_GPIOS_CONTROLLER,
+		DT_ALIAS_SW3_GPIOS_CONTROLLER
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(pin_id); i++) {
