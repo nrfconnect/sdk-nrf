@@ -26,11 +26,6 @@ config DESKTOP_HID_REPORT_EXPIRATION
 	  Define the time after which a HID report expires
 	  and is not sent again.
 
-config DESKTOP_HID_STATE_ITEM_COUNT
-	int "HID state item count"
-	default 10
-	range 1 255
-
 config DESKTOP_HID_EVENT_QUEUE_SIZE
 	int "HID event queue size"
 	default 12
