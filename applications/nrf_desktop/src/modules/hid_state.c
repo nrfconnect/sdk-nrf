@@ -43,6 +43,9 @@ enum state {
 };
 
 #define SUBSCRIBER_COUNT 2
+#define ITEM_COUNT MAX(MAX(REPORT_MOUSE_BUTTON_COUNT_MAX,  \
+			   KEYBOARD_REPORT_KEY_COUNT_MAX), \
+		       CONSUMER_CTRL_REPORT_KEY_COUNT_MAX)
 
 /**@brief HID state item. */
 struct item {
@@ -52,8 +55,9 @@ struct item {
 
 /**@brief Structure keeping state for a single target HID report. */
 struct items {
-	struct item item[CONFIG_DESKTOP_HID_STATE_ITEM_COUNT];
+	struct item item[ITEM_COUNT];
 	u8_t item_count;
+	u8_t item_count_max;
 	bool update_needed;
 };
 
@@ -465,6 +469,7 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 	struct item *p_item;
 
 	__ASSERT_NO_MSG(usage_id != 0);
+	__ASSERT_NO_MSG(items->item_count_max > 0);
 
 	/* Report equal to zero brings no change. This should never happen. */
 	__ASSERT_NO_MSG(value != 0);
@@ -491,7 +496,7 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 		 * could happen if a key up event is lost and the state
 		 * receives an unpaired key down event.
 		 */
-	} else if (prev_item_count >= ARRAY_SIZE(items->item)) {
+	} else if (prev_item_count >= items->item_count_max) {
 		/* Configuration should allow the HID module to hold data
 		 * about the maximum number of simultaneously pressed keys.
 		 * Generate a warning if an item cannot be recorded.
@@ -614,96 +619,20 @@ static void send_report_mouse(void)
 	}
 }
 
-static bool consumer_ctrl_process_item(struct item *item, u16_t *bitmask)
-{
-	if (!item->usage_id) {
-		return false;
-	}
-	__ASSERT_NO_MSG(item->value > 0);
-
-	bool remove_item = true;
-
-	switch (item->usage_id) {
-	case 0x00EA:
-		*bitmask |= BIT(0);
-		remove_item = false;
-		break;
-
-	case 0x00E9:
-		*bitmask |= BIT(1);
-		remove_item = false;
-		break;
-
-	case 0x00E2:
-		*bitmask |= BIT(2);
-		break;
-
-	case 0x00CD:
-		*bitmask |= BIT(3);
-		break;
-
-	case 0x00B5:
-		*bitmask |= BIT(4);
-		break;
-
-	case 0x00B6:
-		*bitmask |= BIT(5);
-		break;
-
-	case 0x0032:
-		*bitmask |= BIT(6);
-		break;
-
-	case 0x021F:
-		*bitmask |= BIT(7);
-		break;
-
-	case 0x0192:
-		*bitmask |= BIT(8);
-		break;
-
-	case 0x018A:
-		*bitmask |= BIT(9);
-		break;
-
-	case 0x0196:
-		*bitmask |= BIT(10);
-		break;
-
-	default:
-		/* Unknown usage_id. */
-		__ASSERT_NO_MSG(false);
-
-	}
-
-	return remove_item;
-}
-
 static void send_report_consumer_ctrl(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
 		struct report_data *rd =
 			&state.report_data[IN_REPORT_CONSUMER_CTRL];
+		const size_t max = ARRAY_SIZE(rd->items.item);
+
 		struct hid_consumer_ctrl_event *event =
 			new_hid_consumer_ctrl_event();
 
 		event->subscriber = state.selected->id;
-		event->bitmask = 0;
 
-		/* Traverse pressed keys and build consumer control report */
-		for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
-			struct item *item = &rd->items.item[i];
-
-			if (consumer_ctrl_process_item(item, &event->bitmask)) {
-				__ASSERT_NO_MSG(rd->items.item_count != 0);
-				rd->items.item_count--;
-				item->value = 0;
-				item->usage_id = 0;
-			}
-		}
-
-		sort_by_usage_id(rd->items.item,
-				 ARRAY_SIZE(rd->items.item));
+		/* Only one item can fit in the consumer control report. */
+		event->usage = rd->items.item[max - 1].usage_id;
 
 		EVENT_SUBMIT(event);
 
@@ -989,6 +918,12 @@ static void init(void)
 			}
 		}
 	}
+	state.report_data[IN_REPORT_MOUSE].items.item_count_max =
+		REPORT_MOUSE_BUTTON_COUNT_MAX;
+	state.report_data[IN_REPORT_KEYBOARD_KEYS].items.item_count_max =
+		KEYBOARD_REPORT_KEY_COUNT_MAX;
+	state.report_data[IN_REPORT_CONSUMER_CTRL].items.item_count_max =
+		CONSUMER_CTRL_REPORT_KEY_COUNT_MAX;
 }
 
 static bool handle_motion_event(const struct motion_event *event)

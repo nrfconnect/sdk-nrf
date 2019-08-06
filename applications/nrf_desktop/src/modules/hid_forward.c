@@ -133,7 +133,7 @@ static void process_consumer_ctrl_report(const u8_t *data)
 	struct hid_consumer_ctrl_event *event = new_hid_consumer_ctrl_event();
 
 	event->subscriber = usb_id;
-	event->bitmask = sys_get_le16(data);
+	event->usage = sys_get_le16(data);
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 

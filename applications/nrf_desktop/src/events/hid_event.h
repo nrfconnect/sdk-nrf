@@ -57,7 +57,7 @@ struct hid_consumer_ctrl_event {
 	struct event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
-	u16_t bitmask;		/**< Bitmask send in consumer control report. */
+	u16_t usage;            /**< Usage of CC button pressed. */
 };
 
 EVENT_TYPE_DECLARE(hid_consumer_ctrl_event);

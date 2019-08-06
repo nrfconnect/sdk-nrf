@@ -472,11 +472,11 @@ static void send_consumer_ctrl_report(const struct hid_consumer_ctrl_event *even
 
 	u8_t report[REPORT_SIZE_CONSUMER_CTRL];
 
-	static_assert(ARRAY_SIZE(report) == sizeof(event->bitmask),
-		      "Incorrect bitmask in event");
+	static_assert(ARRAY_SIZE(report) == sizeof(event->usage),
+		      "Incorrect data size in event");
 
 	/* Set selected flags */
-	sys_put_le16(event->bitmask, report);
+	sys_put_le16(event->usage, report);
 	int err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
 					report_index[REPORT_ID_CONSUMER_CTRL],
 					report, sizeof(report),
