@@ -14,7 +14,7 @@
 #define NFC_TNEP_K_TIMER_START_DELAY 0
 
 /** Timer signal to indicate timeout events. */
-extern struct k_poll_signal nfc_tnep_timer_signal;
+extern struct k_poll_signal nfc_tnep_sig_timer;
 
 /** @brief Timer signal values */
 enum nfc_tnep_timer_signal {
