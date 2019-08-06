@@ -1024,7 +1024,7 @@ int bt_gatt_hids_c_rep_subscribe(struct bt_gatt_hids_c *hids_c,
 	rep->notify_params.value = BT_GATT_CCC_NOTIFY;
 	rep->notify_params.value_handle = rep->handlers.val;
 	rep->notify_params.ccc_handle = rep->handlers.ccc;
-	rep->notify_params.flags = BT_GATT_SUBSCRIBE_FLAG_VOLATILE;
+	atomic_set(rep->notify_params.flags, BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	LOG_DBG("Subscribe: val: %u, ccc: %u",
 		rep->notify_params.value_handle,
