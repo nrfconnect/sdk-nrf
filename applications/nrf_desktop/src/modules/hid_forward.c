@@ -63,10 +63,10 @@ static void process_mouse_report(const u8_t *data)
 	u16_t x = sys_get_le16(x_buff);
 	u16_t y = sys_get_le16(y_buff);
 
-	if (x > REPORT_MOUSE_XY_MAX) {
+	if (x > MOUSE_REPORT_XY_MAX) {
 		x |= 0xF000;
 	}
-	if (y > REPORT_MOUSE_XY_MAX) {
+	if (y > MOUSE_REPORT_XY_MAX) {
 		y |= 0xF000;
 	}
 

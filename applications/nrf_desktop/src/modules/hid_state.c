@@ -43,7 +43,7 @@ enum state {
 };
 
 #define SUBSCRIBER_COUNT 2
-#define ITEM_COUNT MAX(MAX(REPORT_MOUSE_BUTTON_COUNT_MAX,  \
+#define ITEM_COUNT MAX(MAX(MOUSE_REPORT_BUTTON_COUNT_MAX,  \
 			   KEYBOARD_REPORT_KEY_COUNT_MAX), \
 		       CONSUMER_CTRL_REPORT_KEY_COUNT_MAX)
 
@@ -919,7 +919,7 @@ static void init(void)
 		}
 	}
 	state.report_data[IN_REPORT_MOUSE].items.item_count_max =
-		REPORT_MOUSE_BUTTON_COUNT_MAX;
+		MOUSE_REPORT_BUTTON_COUNT_MAX;
 	state.report_data[IN_REPORT_KEYBOARD_KEYS].items.item_count_max =
 		KEYBOARD_REPORT_KEY_COUNT_MAX;
 	state.report_data[IN_REPORT_CONSUMER_CTRL].items.item_count_max =
