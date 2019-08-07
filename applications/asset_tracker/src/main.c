@@ -177,8 +177,7 @@ void error_handler(enum error_type err_type, int err_code)
 		/* Turn off and shutdown modem */
 		int err = lte_lc_power_off();
 		if (err) {
-			printk("Could not shut down the LTE link, error: %d\n",
-			       err);
+			printk("lte_lc_power_off failed: %d\n", err);
 		}
 #endif /* CONFIG_LTE_LINK_CONTROL */
 #if defined(CONFIG_BSD_LIBRARY)
@@ -873,7 +872,10 @@ static void modem_configure(void)
 		ui_led_set_pattern(UI_LTE_CONNECTING);
 
 		err = lte_lc_init_and_connect();
-		__ASSERT(err == 0, "LTE link could not be established.");
+		if (err) {
+			printk("LTE link could not be established.\n");
+			error_handler(ERROR_LTE_LC, err);
+		}
 
 		printk("Connected to LTE network\n");
 		ui_led_set_pattern(UI_LTE_CONNECTED);
@@ -1174,10 +1176,19 @@ connect:
 			return;
 		}
 
+		if ((fds[0].revents & POLLHUP) == POLLHUP) {
+			printk("Socket error: POLLHUP\n");
+			error_handler(ERROR_CLOUD, -EIO);
+			return;
+		}
+
 		if ((fds[0].revents & POLLERR) == POLLERR) {
 			printk("Socket error: POLLERR\n");
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
 	}
+
+	cloud_disconnect(cloud_backend);
+	goto connect;
 }
