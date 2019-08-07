@@ -229,7 +229,7 @@ void nrf5_power_usb_power_int_enable(bool enable)
 
 	if (enable) {
 		nrf_power_int_enable(mask);
-		irq_enable(DT_NORDIC_NRF_CLOCK_0_IRQ_0);
+		irq_enable(DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0);
 	} else {
 		nrf_power_int_disable(mask);
 	}
