@@ -1,16 +1,16 @@
 /* Needed to get NRF_UARTE2 and NRF_PWMn defined. */
 &uart2 {
-	status = "ok";
+	status = "okay";
 };
 
 &pwm1 {
-	status = "ok";
+	status = "okay";
 };
 
 &pwm2 {
-	status = "ok";
+	status = "okay";
 };
 
 &pwm3 {
-	status = "ok";
+	status = "okay";
 };

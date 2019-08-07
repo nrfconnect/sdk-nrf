@@ -6,7 +6,7 @@
 
 &uart2 {
 	current-speed = <1000000>;
-	status = "ok";
+	status = "okay";
 	tx-pin = <18>;
 	rx-pin = <17>;
 	rts-pin = <21>;

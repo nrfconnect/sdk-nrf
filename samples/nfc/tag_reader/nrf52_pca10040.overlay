@@ -1,5 +1,5 @@
 &spi0 {
-            status = "ok";
+            status = "okay";
             sck-pin = <25>;
             mosi-pin = <23>;
             miso-pin = <24>;
