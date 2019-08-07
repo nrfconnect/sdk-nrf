@@ -55,9 +55,9 @@ struct item {
 
 /**@brief Structure keeping state for a single target HID report. */
 struct items {
-	struct item item[ITEM_COUNT];
+	const u8_t item_count_max;
 	u8_t item_count;
-	u8_t item_count_max;
+	struct item item[ITEM_COUNT];
 	bool update_needed;
 };
 
@@ -102,7 +102,14 @@ struct hid_state {
 };
 
 
-static struct hid_state state;
+static struct hid_state state = {
+	.report_data[IN_REPORT_MOUSE].items.item_count_max =
+		MOUSE_REPORT_BUTTON_COUNT_MAX,
+	.report_data[IN_REPORT_KEYBOARD_KEYS].items.item_count_max =
+		KEYBOARD_REPORT_KEY_COUNT_MAX,
+	.report_data[IN_REPORT_CONSUMER_CTRL].items.item_count_max =
+		CONSUMER_CTRL_REPORT_KEY_COUNT_MAX,
+};
 
 
 /**@brief Binary search. Input array must be already sorted.
@@ -372,6 +379,13 @@ static void sort_by_usage_id(struct item items[], size_t array_size)
 	}
 }
 
+static void clear_items(struct items *items)
+{
+	memset(items->item, 0, sizeof(items->item));
+	items->item_count = 0;
+	items->update_needed = false;
+}
+
 static struct subscriber *get_subscriber(const void *subscriber_id)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
@@ -441,7 +455,7 @@ static void disconnect_subscriber(const void *subscriber_id)
 			struct report_data *rd = &state.report_data[tr];
 
 			LOG_INF("Clear mouse report data");
-			memset(&rd->items, 0, sizeof(rd->items));
+			clear_items(&rd->items);
 			eventq_reset(&rd->eventq);
 		}
 	}
@@ -765,7 +779,7 @@ static void report_issued(const void *subscriber_id, enum in_report tr,
 		 * all recorded events and items.
 		 */
 		LOG_ERR("Error while sending report");
-		memset(&rd->items, 0, sizeof(rd->items));
+		clear_items(&rd->items);
 		eventq_reset(&rd->eventq);
 		if (tr == IN_REPORT_MOUSE) {
 			state.last_dx = 0;
@@ -835,7 +849,7 @@ static void disconnect(const void *subscriber_id, enum in_report tr)
 	struct report_data *rd = &state.report_data[tr];
 
 	LOG_INF("Clear report data (%d)", tr);
-	memset(&rd->items, 0, sizeof(rd->items));
+	clear_items(&rd->items);
 	eventq_reset(&rd->eventq);
 }
 
@@ -880,7 +894,7 @@ static void enqueue(struct report_data *rd, u16_t usage_id, s16_t value,
 			 * all recorded events and items.
 			 */
 			LOG_WRN("Queue is full, all events are dropped!");
-			memset(&rd->items, 0, sizeof(rd->items));
+			clear_items(&rd->items);
 			eventq_reset(&rd->eventq);
 		}
 	}
@@ -919,12 +933,6 @@ static void init(void)
 			}
 		}
 	}
-	state.report_data[IN_REPORT_MOUSE].items.item_count_max =
-		MOUSE_REPORT_BUTTON_COUNT_MAX;
-	state.report_data[IN_REPORT_KEYBOARD_KEYS].items.item_count_max =
-		KEYBOARD_REPORT_KEY_COUNT_MAX;
-	state.report_data[IN_REPORT_CONSUMER_CTRL].items.item_count_max =
-		CONSUMER_CTRL_REPORT_KEY_COUNT_MAX;
 }
 
 static bool handle_motion_event(const struct motion_event *event)
