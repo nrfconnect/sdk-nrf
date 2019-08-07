@@ -5,6 +5,7 @@
  */
 #include <stdint.h>
 #include <stdbool.h>
+#include <errno.h>
 #include <logging/log.h>
 #include <misc/util.h>
 #include <misc/byteorder.h>
