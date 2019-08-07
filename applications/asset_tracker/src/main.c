@@ -25,6 +25,7 @@
 #include "cloud_codec.h"
 #include "orientation_detector.h"
 #include "ui.h"
+#include "gps_controller.h"
 
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
 #define CLOUD_CONNACK_WAIT_DURATION	K_SECONDS(CONFIG_CLOUD_WAIT_DURATION)
@@ -227,34 +228,15 @@ void error_handler(enum error_type err_type, int err_code)
 #endif /* CONFIG_DEBUG */
 }
 
-void z_SysFatalErrorHandler(unsigned int reason,
-			    const z_arch_esf_t *pEsf)
+void k_sys_fatal_error_handler(unsigned int reason,
+			       const z_arch_esf_t *esf)
 {
-	ARG_UNUSED(pEsf);
+	ARG_UNUSED(esf);
 
-#if !defined(CONFIG_SIMPLE_FATAL_ERROR_HANDLER)
-#if defined(CONFIG_STACK_SENTINEL)
-	if (reason == K_ERR_STACK_CHK_FAIL) {
-		goto error_handler;
-	}
-#endif
-	if (reason == K_ERR_KERNEL_PANIC) {
-		goto error_handler;
-	}
-
-	if (z_is_thread_essential()) {
-		printk("Fatal fault in essential thread!\n");
-		goto error_handler;
-	}
-
-	printk("Fatal fault in thread %p! Aborting.\n", _current);
-	k_thread_abort(_current);
-
-	return;
-#endif
-
-error_handler:
+	LOG_PANIC();
+	z_fatal_print("Running main.c error handler");
 	error_handler(ERROR_SYSTEM_FAULT, reason);
+	CODE_UNREACHABLE;
 }
 
 void cloud_error_handler(int err)
@@ -282,8 +264,6 @@ static void send_gps_data_work_fn(struct k_work *work)
 static void send_env_data_work_fn(struct k_work *work)
 {
 	env_data_send();
-	k_delayed_work_submit(&send_env_data_work,
-		K_SECONDS(CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL));
 }
 
 static void send_button_data_work_fn(struct k_work *work)
@@ -299,12 +279,22 @@ static void send_flip_data_work_fn(struct k_work *work)
 /**@brief Callback for GPS trigger events */
 static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 {
+	static u32_t fix_count;
+
 	ARG_UNUSED(trigger);
 
 	if (ui_button_is_active(UI_SWITCH_2)
 	   || !atomic_get(&send_data_enable)) {
 		return;
 	}
+
+	if (++fix_count < CONFIG_GPS_CONTROL_FIX_COUNT) {
+		return;
+	}
+
+	fix_count = 0;
+
+	ui_led_set_pattern(UI_LED_GPS_FIX);
 
 	gps_sample_fetch(dev);
 	gps_channel_get(dev, GPS_CHAN_NMEA, &gps_data);
@@ -316,7 +306,9 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 		gps_cloud_data.tag = 0x1;
 	}
 
+	gps_control_stop(K_NO_WAIT);
 	k_work_submit(&send_gps_data_work);
+	k_delayed_work_submit(&send_env_data_work, K_NO_WAIT);
 }
 
 /**@brief Callback for sensor trigger events */
@@ -514,6 +506,15 @@ static void env_data_send(void)
 		return;
 	}
 
+	if (gps_control_is_active()) {
+		k_delayed_work_submit(&send_env_data_work,
+			K_SECONDS(CONFIG_ENVIRONMENT_DATA_BACKOFF_TIME));
+		return;
+	}
+
+	k_delayed_work_submit(&send_env_data_work,
+		K_SECONDS(CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL));
+
 	/* If the BME680 is being used, all data has to be fetched at once */
 	if (IS_ENABLED(CONFIG_BME680)) {
 		struct device *dev = device_get_binding("BME680");
@@ -574,7 +575,7 @@ static void sensor_data_send(struct cloud_channel_data *data)
 	int err = 0;
 	struct cloud_data output;
 
-	if (!atomic_get(&send_data_enable)) {
+	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
 		return;
 	}
 
@@ -817,24 +818,16 @@ static void pairing_button_register(struct ui_evt *evt)
 }
 #endif
 
-static void accelerometer_calibrate(struct k_work *work)
+static void long_press_handler(struct k_work *work)
 {
-	int err;
-	enum ui_led_pattern temp_led_state = ui_led_get_pattern();
-
-	printk("Starting accelerometer calibration...\n");
-
-	ui_led_set_pattern(UI_ACCEL_CALIBRATING);
-
-	err = orientation_detector_calibrate();
-	if (err) {
-		printk("Accelerometer calibration failed: %d\n",
-			err);
+	if (gps_control_is_enabled()) {
+		printk("Stopping GPS\n");
+		gps_control_disable();
 	} else {
-		printk("Accelerometer calibration done.\n");
+		printk("Starting GPS\n");
+		gps_control_enable();
+		gps_control_start(K_SECONDS(1));
 	}
-
-	ui_led_set_pattern(temp_led_state);
 }
 
 /**@brief Initializes and submits delayed work. */
@@ -846,7 +839,7 @@ static void work_init(void)
 	k_work_init(&send_flip_data_work, send_flip_data_work_fn);
 	k_delayed_work_init(&send_env_data_work, send_env_data_work_fn);
 	k_delayed_work_init(&flip_poll_work, flip_send);
-	k_delayed_work_init(&long_press_button_work, accelerometer_calibrate);
+	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
 #if CONFIG_MODEM_INFO
 	k_work_init(&device_status_work, device_status_send);
@@ -914,40 +907,6 @@ static void accelerometer_init(void)
 			printk("Unable to set trigger\n");
 		}
 	}
-}
-
-/**@brief Initializes GPS device and configures trigger if set.
- * Gets initial sample from GPS device.
- */
-static void gps_init(void)
-{
-	int err;
-	struct device *gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);
-	struct gps_trigger gps_trig = {
-		.type = GPS_TRIG_DATA_READY,
-	};
-
-	if (gps_dev == NULL) {
-		printk("Could not get %s device\n", CONFIG_GPS_DEV_NAME);
-		return;
-	}
-	printk("GPS device found\n");
-
-	if (IS_ENABLED(CONFIG_GPS_TRIGGER)) {
-		err = gps_trigger_set(gps_dev, &gps_trig,
-				gps_trigger_handler);
-
-		if (err) {
-			printk("Could not set trigger, error code: %d\n", err);
-			return;
-		}
-	}
-
-	err = gps_sample_fetch(gps_dev);
-	__ASSERT(err == 0, "GPS sample could not be fetched.");
-
-	err = gps_channel_get(gps_dev, GPS_CHAN_NMEA, &gps_data);
-	__ASSERT(err == 0, "GPS sample could not be retrieved.");
 }
 
 /**@brief Initializes flip detection using orientation detector module
@@ -1025,7 +984,6 @@ static void modem_data_init(void)
 static void sensors_init(void)
 {
 	accelerometer_init();
-	gps_init();
 	flip_detection_init();
 	env_sensor_init();
 #if CONFIG_MODEM_INFO
@@ -1035,17 +993,13 @@ static void sensors_init(void)
 		button_sensor_init();
 	}
 
-	gps_cloud_data.type = CLOUD_CHANNEL_GPS;
-	gps_cloud_data.tag = 0x1;
-	gps_cloud_data.data.buf = gps_data.nmea.buf;
-	gps_cloud_data.data.len = gps_data.nmea.len;
+	gps_control_init(gps_trigger_handler);
 
 	flip_cloud_data.type = CLOUD_CHANNEL_FLIP;
 
 	/* Send sensor data after initialization, as it may be a long time until
 	 * next time if the application is in power optimized mode.
 	 */
-	k_work_submit(&send_gps_data_work);
 	k_delayed_work_submit(&send_env_data_work, K_SECONDS(5));
 }
 
@@ -1066,6 +1020,16 @@ static void ui_evt_handler(struct ui_evt evt)
 	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (evt.button == FLIP_INPUT)
 	   && atomic_get(&send_data_enable)) {
 		flip_send(NULL);
+	}
+
+	if (IS_ENABLED(CONFIG_GPS_CONTROL_ON_LONG_PRESS) &&
+	   (evt.button == UI_BUTTON_1)) {
+		if (evt.type == UI_EVT_BUTTON_ACTIVE) {
+			k_delayed_work_submit(&long_press_button_work,
+			K_SECONDS(5));
+		} else {
+			k_delayed_work_cancel(&long_press_button_work);
+		}
 	}
 
 #if defined(CONFIG_LTE_LINK_CONTROL)
