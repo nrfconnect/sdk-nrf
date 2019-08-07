@@ -37,8 +37,8 @@ manifest:
   # The list of external projects for the nRF Connect SDK.
   #
   projects:
-    - name: fw-nrfconnect-zephyr
-      path: zephyr
+    - name: zephyr
+      repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
       revision: ec52cc75e99ca715f8d6d5c0aed906a79b1e2879
     - name: nffs
@@ -49,21 +49,24 @@ manifest:
       revision: 6fcf61606d6012d2c44129edc033f59331e268bc
       path: modules/debug/segger
       remote: zephyrproject
-    - name: fw-nrfconnect-mbedtls
+    - name: mbedtls
+      repo-path: fw-nrfconnect-mbedtls
       path: modules/crypto/mbedtls
       revision: 900c7eea92e45adba1067e044ec705d4541c84a5
-    - name: fw-nrfconnect-mcuboot
-      path: mcuboot
+    - name: mcuboot
+      repo-path: fw-nrfconnect-mcuboot
       revision: 0cf7965a146bad1becb1e260481d0e32e853d38e
-    - name: fw-nrfconnect-mcumgr
+    - name: mcumgr
+      repo-path: fw-nrfconnect-mcumgr
       revision: f663988d35da559a37f263d369842dbce309d1fa
       path: modules/lib/mcumgr
-    - name: fw-nrfconnect-tinycbor
+    - name: tinycbor
+      repo-path: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
       revision: 543ecb7c8662580ef803d59ceda7bd3b8a84a11b
     - name: nrfxlib
       path: nrfxlib
-      revision: f423938e8eeae075d64cd22f997c343950169333
+      revision: 757708d44dfc118397c7586af45e5d1ebed08509
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
@@ -72,7 +75,9 @@ manifest:
       path: test/cmock/vendor/unity
       revision: 031f3bbe45f8adf504ca3d13e6f093869920b091
       remote: throwtheswitch
-    - name: mbedtls
+    - name: mbedtls-nrf
+      path: mbedtls
+      repo-path: mbedtls
       revision: mbedtls-2.13.1
       remote: armmbed
 
