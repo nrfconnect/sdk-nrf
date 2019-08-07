@@ -32,12 +32,6 @@ config DESKTOP_HIDS_ENABLE
 	help
 	  This option enables HID over GATT service.
 
-config DESKTOP_SMP_ENABLE
-	bool "DFU via BLE"
-	depends on BT_SMP
-	help
-	  This option enables SMP service allowing DFU via BLE.
-
 config DESKTOP_HID_PERIPHERAL
 	bool
 	default y
@@ -62,14 +56,6 @@ if DESKTOP_HIDS_ENABLE
 
 module = DESKTOP_HIDS
 module-str = HID over GATT service
-source "subsys/logging/Kconfig.template.log_config"
-
-endif
-
-if DESKTOP_SMP_ENABLE
-
-module = DESKTOP_SMP
-module-str = SMP service
 source "subsys/logging/Kconfig.template.log_config"
 
 endif
