@@ -8,6 +8,44 @@ menu "Application sample"
 
 rsource "src/ui/Kconfig"
 
+menu "GPS"
+
+choice
+	prompt "GPS device"
+	default GPS_USE_SIM
+	help
+		Select from which device GPS data will be fetched.
+
+config GPS_USE_SIM
+	bool "Use GPS simulator"
+	select GPS_SIM
+	select GPS_SIM_TRIGGER
+	help
+		Use simulated GPS data.
+
+config GPS_USE_EXTERNAL
+	bool "User provided GPS device"
+	help
+		Provide a GPS device that location data will be fetched from and
+		sent to nRF Cloud
+
+rsource "src/gps_controller/Kconfig"
+
+endchoice
+
+config GPS_DEV_NAME
+	string "GPS device name"
+	default GPS_SIM_DEV_NAME if GPS_USE_SIM
+	help
+		GPS device from which location data will be fetched and sent
+		to nRF Cloud.
+
+config GPS_TRIGGER
+	bool
+	default GPS_SIM_TRIGGER if GPS_USE_SIM
+
+endmenu	# GPS
+
 config CLOUD_BUTTON
 	bool "Enable button sensor"
 	default y
@@ -46,48 +84,8 @@ config GPS_SIM_TRIGGER_TIMER_MSEC
 config MQTT_KEEPALIVE
 	int
 	default 1000 if POWER_OPTIMIZATION_ENABLE
+	default GPS_CONTROL_FIX_TRY_TIME if GPS_USE_EXTERNAL
 	default 120
-choice
-	prompt "GPS device"
-	default GPS_USE_SIM
-	help
-		Select from which device GPS data will be fetched.
-
-config GPS_USE_SIM
-	bool "Use GPS simulator"
-	select GPS_SIM
-	select GPS_SIM_TRIGGER
-	help
-		Use simulated GPS data.
-
-config GPS_USE_EXTERNAL
-	bool "User provided GPS device"
-	help
-		Provide a GPS device that location data will be fetched from and
-		sent to nRF Cloud
-
-endchoice
-
-if GPS_USE_SIM
-
-config GPS_DEV_NAME
-	string
-	default GPS_SIM_DEV_NAME
-
-config GPS_TRIGGER
-	bool
-	default GPS_SIM_TRIGGER
-
-endif
-
-if GPS_USE_EXTERNAL
-config GPS_DEV_NAME
-	string "GPS device name"
-	help
-		GPS device from which location data will be fetched and sent
-		to nRF Cloud.
-
-endif
 
 choice
 	prompt "Accelerometer device"
@@ -245,6 +243,13 @@ config ENVIRONMENT_DATA_SEND_INTERVAL
 	  Interval between each sampling and sending of environment sensor data.
 	  If the GPS is active, sensor data will not be sent before it is
 	  stopped. The unit is seconds.
+
+config ENVIRONMENT_DATA_BACKOFF_TIME
+	int "Time to delay sending environment data if GPS active"
+	default 20
+	help
+	  Time in seconds before retrying to send environment sensor data if
+	  the GPS is active.
 
 choice
 	prompt "Temperature measurement device"
