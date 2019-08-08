@@ -15,10 +15,6 @@
 # new NCS installation. See the west documentation for more
 # information.
 
-west:
-  url: https://github.com/zephyrproject-rtos/west
-  revision: v0.5.8
-
 manifest:
   defaults:
     remote: ncs
