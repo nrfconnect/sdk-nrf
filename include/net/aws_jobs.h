@@ -94,7 +94,7 @@ extern "C" {
  * @param[in] identifier The identifier of the topic you want to subscribe to.
  *	This can be either "accepted", "rejected", or "#" for both.
  */
-#define JOB_ID_GET_TOPIC_TEMPLATE AWS "%s/jobs/%s/get/%s"
+#define JOB_ID_GET_TOPIC_TEMPLATE AWS "%s/jobs/%s/get%s"
 #define JOB_ID_GET_TOPIC_MAX_LEN (AWS_LEN +\
 				 CONFIG_CLIENT_ID_MAX_LEN +\
 				 JOB_ID_MAX_LEN +\
@@ -329,6 +329,21 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 			     int expected_version,
 			     const u8_t *client_token);
 
+/**
+ * @brief AWS Jobs get job execution.
+ *
+ * This implements fetching a job from the queue in AWS.
+ *
+ * @param[in] client	Initialized and connected MQTT Client instance.
+ * @param[in] job_id	The ID of the job you are fetching use "$next" for
+ *			fetching the next IN_PROGRESS. or QUEUED job. It will
+ *			fetch the first created job if multiple exsists.
+ *
+ * @retval 0       If the update is published successfully, otherwise return
+ *		   mqtt_publish error code or the error code of snprintf.
+ */
+int aws_jobs_get_job_execution(struct mqtt_client *const client,
+			       const char *job_id);
 #ifdef __cplusplus
 }
 #endif
