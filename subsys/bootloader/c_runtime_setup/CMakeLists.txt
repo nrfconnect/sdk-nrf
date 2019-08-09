@@ -13,9 +13,9 @@ zephyr_library()
 
 # TODO Use zephyr build code for this directly?
 zephyr_library_sources(
-  ${CORTEX_M}/prep_c.c
+  ${ARM}/prep_c.c
   ${CORTEX_M}/reset.S
-  ${ARM}/irq_init.c
+  ${CORTEX_M}/irq_init.c
   ${ARM}/exc_exit.S
   ${CORTEX_M}/vector_table.S
   ${ZEPHYR_BASE}/drivers/timer/cortex_m_systick.c
