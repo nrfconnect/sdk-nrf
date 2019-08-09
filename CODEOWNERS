@@ -8,7 +8,7 @@
 /LICENSE                                  @carlescufi
 /README.rst                               @ru-fu @carlescufi
 /Jenkinsfile                              @carlescufi
-/west.yml                                 @carlescufi @mbolivar @tejlmand
+/west.yml                                 @carlescufi @tejlmand
 
 # Applications
 /applications/asset_tracker/              @joakimtoe @jtguggedal @rlubos
