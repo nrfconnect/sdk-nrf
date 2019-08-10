@@ -57,7 +57,7 @@ static void event_module_description(void)
 static u32_t shorten_mem_address(const void *event_mem_address)
 {
 #ifdef CONFIG_SRAM_BASE_ADDRESS
-	return (u32_t)(event_mem_address - CONFIG_SRAM_BASE_ADDRESS);
+	return (u32_t)(((u8_t *)event_mem_address) - CONFIG_SRAM_BASE_ADDRESS);
 #else
 	return (u32_t)event_mem_address;
 #endif
