@@ -106,9 +106,7 @@ static int disable_event_profiling(const struct shell *shell, size_t argc,
 	return 0;
 }
 
-
-SHELL_CREATE_STATIC_SUBCMD_SET(sub_profiler)
-{
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_profiler,
 	SHELL_CMD_ARG(list, NULL, "Display list of events",
 			display_registered_events, 0, 0),
 	SHELL_CMD_ARG(enable, NULL, "Enable profiling of event with given ID",
@@ -118,6 +116,5 @@ SHELL_CREATE_STATIC_SUBCMD_SET(sub_profiler)
 			disable_event_profiling, 1,
 			sizeof(profiler_enabled_events) * 8),
 	SHELL_SUBCMD_SET_END
-};
-
+);
 SHELL_CMD_REGISTER(profiler, &sub_profiler, "Profiler commands", NULL);
