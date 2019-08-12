@@ -256,7 +256,7 @@ static inline int at_write(const char *const cmd, enum at_cmd_state *state)
 	bytes_sent = send(common_socket_fd, cmd, bytes_to_send, 0);
 
 	if (bytes_sent == -1) {
-		LOG_ERR("Failed to send AT command (err:%d)", bytes_sent);
+		LOG_ERR("Failed to send AT command (err:%d)", errno);
 		ret.code  = -errno;
 		ret.state = AT_CMD_ERROR;
 	} else {
@@ -281,17 +281,13 @@ int at_cmd_write_with_callback(const char *const cmd,
 			       at_cmd_handler_t  handler,
 			       enum at_cmd_state *state)
 {
-	int return_code = k_sem_take(&cmd_pending, K_FOREVER);
+	k_sem_take(&cmd_pending, K_FOREVER);
 
-	if (return_code != 0) {
-		LOG_WRN("Not able to take semaphore (err: %d)", return_code);
-	} else {
-		current_cmd_handler = handler;
+	current_cmd_handler = handler;
 
-		return_code = at_write(cmd, state);
+	int return_code = at_write(cmd, state);
 
-		k_sem_give(&cmd_pending);
-	}
+	k_sem_give(&cmd_pending);
 
 	return return_code;
 }
@@ -301,18 +297,14 @@ int at_cmd_write(const char *const cmd,
 		 size_t buf_len,
 		 enum at_cmd_state *state)
 {
-	int return_code = k_sem_take(&cmd_pending, K_FOREVER);
+	k_sem_take(&cmd_pending, K_FOREVER);
 
-	if (return_code != 0) {
-		LOG_WRN("Not able to take semaphore (err: %d)", return_code);
-	} else {
-		response_buf     = buf;
-		response_buf_len = buf_len;
+	response_buf     = buf;
+	response_buf_len = buf_len;
 
-		return_code = at_write(cmd, state);
+	int return_code = at_write(cmd, state);
 
-		k_sem_give(&cmd_pending);
-	}
+	k_sem_give(&cmd_pending);
 
 	return return_code;
 }
@@ -320,13 +312,9 @@ int at_cmd_write(const char *const cmd,
 void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 {
 
-	int return_code = k_sem_take(&cmd_pending, K_FOREVER);
+	k_sem_take(&cmd_pending, K_FOREVER);
 
-	if (return_code != 0) {
-		LOG_WRN("Not able to take semaphore (err: %d)", return_code);
-	} else {
-		notification_handler = handler;
-	}
+	notification_handler = handler;
 
 	k_sem_give(&cmd_pending);
 }
