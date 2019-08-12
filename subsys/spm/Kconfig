@@ -12,33 +12,8 @@ config SPM
 	imply ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS
 
 if SPM
-
-choice
-	prompt "SPM build strategy"
-	default SPM_BUILD_STRATEGY_FROM_SOURCE
-
-config SPM_BUILD_STRATEGY_USE_HEX_FILE
-	# Mandatory option when being built through 'zephyr_add_executable'
-	bool "Use hex file instead of building SPM"
-
-if SPM_BUILD_STRATEGY_USE_HEX_FILE
-
-config SPM_HEX_FILE
-	# Mandatory option when being built through 'zephyr_add_executable'
-	string "SPM hex file"
-
-endif # SPM_USE_HEX_FILE
-
-config SPM_BUILD_STRATEGY_SKIP_BUILD
-	# Mandatory option when being built through 'zephyr_add_executable'
-	bool "Skip building SPM"
-
-config SPM_BUILD_STRATEGY_FROM_SOURCE
-	# Mandatory option when being built through 'zephyr_add_executable'
-	bool "Build from source"
-
-endchoice
-
+module=SPM
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
 endif
 
 
@@ -48,7 +23,8 @@ menuconfig IS_SPM
 	select TRUSTED_EXECUTION_SECURE
 
 if IS_SPM
-# Define used by partition_manager.py to deduce size of partition
+# Define used by partition_manager.py to deduce size of partition.
+# Unable to use the size template due to non-trivial defaults.
 config PM_PARTITION_SIZE_SPM
 	hex "Flash space reserved for SPM"
 	default 0xc000 if SPM_SERVICE_RNG # To build correctly with MCUboot.
