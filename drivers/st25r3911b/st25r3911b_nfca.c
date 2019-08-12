@@ -592,8 +592,6 @@ static int tx_fifo_water(void)
 	bytes_to_send = MIN(nfca.transfer.tx_buf->len - nfca.transfer.written_byte,
 			    nfca.water_lvl.tx);
 
-	bytes_to_send = nfca.transfer.tx_buf->len - nfca.transfer.written_byte;
-
 	buff = nfca.transfer.tx_buf->data + nfca.transfer.written_byte;
 
 	nfca.transfer.written_byte += bytes_to_send;
