@@ -68,7 +68,7 @@ static const char legacy_pco[] = "AT%XEPCO=0";
 
 void at_handler(char *response)
 {
-	LOG_DBG("recv: %s", response);
+	LOG_DBG("recv: %s", log_strdup(response));
 
 	if (!memcmp(status1, response, AT_CMD_SIZE(status1)) ||
 	    !memcmp(status2, response, AT_CMD_SIZE(status2)) ||
