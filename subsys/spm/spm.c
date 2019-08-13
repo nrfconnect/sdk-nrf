@@ -285,22 +285,54 @@ static void spm_config_peripherals(void)
 	 * - All GPIOs are allocated to the Non-Secure domain.
 	 */
 	static const struct periph_cfg periph[] = {
+#ifdef NRF_P0
 		PERIPH("NRF_P0", NRF_P0, CONFIG_SPM_NRF_P0_NS),
+#endif
+#ifdef NRF_CLOCK
 		PERIPH("NRF_CLOCK", NRF_CLOCK, CONFIG_SPM_NRF_CLOCK_NS),
+#endif
+#ifdef NRF_RTC1
 		PERIPH("NRF_RTC1", NRF_RTC1, CONFIG_SPM_NRF_RTC1_NS),
+#endif
+#ifdef NRF_NVMC
 		PERIPH("NRF_NVMC", NRF_NVMC, CONFIG_SPM_NRF_NVMC_NS),
+#endif
+#ifdef NRF_UARTE1
 		PERIPH("NRF_UARTE1", NRF_UARTE1, CONFIG_SPM_NRF_UARTE1_NS),
+#endif
+#ifdef NRF_UARTE2
 		PERIPH("NRF_UARTE2", NRF_UARTE2, CONFIG_SPM_NRF_UARTE2_NS),
+#endif
+#ifdef NRF_TWIM2
 		PERIPH("NRF_TWIM2", NRF_TWIM2, CONFIG_SPM_NRF_TWIM2_NS),
+#endif
+#ifdef NRF_SPIM3
 		PERIPH("NRF_SPIM3", NRF_SPIM3, CONFIG_SPM_NRF_SPIM3_NS),
+#endif
+#ifdef NRF_TIMER0
 		PERIPH("NRF_TIMER0", NRF_TIMER0, CONFIG_SPM_NRF_TIMER0_NS),
+#endif
+#ifdef NRF_TIMER1
 		PERIPH("NRF_TIMER1", NRF_TIMER1, CONFIG_SPM_NRF_TIMER1_NS),
+#endif
+#ifdef NRF_TIMER2
 		PERIPH("NRF_TIMER2", NRF_TIMER2, CONFIG_SPM_NRF_TIMER2_NS),
+#endif
+#ifdef NRF_SAADC
 		PERIPH("NRF_SAADC", NRF_SAADC, CONFIG_SPM_NRF_SAADC_NS),
+#endif
+#ifdef NRF_PWM0
 		PERIPH("NRF_PWM0", NRF_PWM0, CONFIG_SPM_NRF_PWM0_NS),
+#endif
+#ifdef NRF_PWM1
 		PERIPH("NRF_PWM1", NRF_PWM1, CONFIG_SPM_NRF_PWM1_NS),
+#endif
+#ifdef NRF_PWM2
 		PERIPH("NRF_PWM2", NRF_PWM2, CONFIG_SPM_NRF_PWM2_NS),
+#endif
+#ifdef NRF_PWM3
 		PERIPH("NRF_PWM3", NRF_PWM3, CONFIG_SPM_NRF_PWM3_NS),
+#endif
 		/* There is no DTS node for the peripherals below,
 		 * so address them using nrfx macros directly.
 		 */
