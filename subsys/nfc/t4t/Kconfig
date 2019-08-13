@@ -7,7 +7,7 @@
 config NFC_T4T_ISODEP
 	bool "NFC Type 4 Tag isodep"
 	help
-	  Enable NFC Type 4 Tag isodep.
+	  Enable NFC Type 4 Tag ISO-DEP.
 
 
 if NFC_T4T_ISODEP
