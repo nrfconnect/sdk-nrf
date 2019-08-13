@@ -34,5 +34,6 @@ Here you can find documentation for these libraries, including API documentation
    ../../include/net/*
    ../../include/nfc/ndef/*
    ../../include/nfc/t2t/*
+   ../../include/nfc/t4t/*
    ../../include/debug/*
    ../../include/shell/*
