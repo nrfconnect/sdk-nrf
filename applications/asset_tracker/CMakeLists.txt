@@ -29,3 +29,5 @@ add_subdirectory(src/orientation_detector)
 add_subdirectory(src/ui)
 add_subdirectory(src/cloud_codec)
 add_subdirectory(src/gps_controller)
+add_subdirectory(src/env_sensors)
+
