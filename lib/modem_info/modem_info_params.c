@@ -34,9 +34,11 @@ int modem_info_params_init(struct modem_param_info *modem)
 
 	modem->sim.uicc.type			= MODEM_INFO_UICC;
 	modem->sim.iccid.type			= MODEM_INFO_ICCID;
+	modem->sim.imsi.type		        = MODEM_INFO_IMSI;
 
 	modem->device.modem_fw.type		= MODEM_INFO_FW_VERSION;
 	modem->device.battery.type		= MODEM_INFO_BATTERY;
+	modem->device.imei.type			= MODEM_INFO_IMEI;
 	modem->device.board			= CONFIG_BOARD;
 	modem->device.app_version		= STRINGIFY(APP_VERSION);
 	modem->device.app_name			= STRINGIFY(PROJECT_NAME);
@@ -159,6 +161,9 @@ int modem_info_params_get(struct modem_param_info *modem)
 		if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM_ICCID)) {
 			ret += modem_data_get(&modem->sim.iccid);
 		}
+		if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM_IMSI)) {
+			ret += modem_data_get(&modem->sim.imsi);
+		}
 		if (ret) {
 			LOG_DBG("Sim data not obtained: %d", ret);
 			return -EAGAIN;
@@ -168,6 +173,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)) {
 		ret = modem_data_get(&modem->device.modem_fw);
 		ret += modem_data_get(&modem->device.battery);
+		ret += modem_data_get(&modem->device.imei);
 		if (ret) {
 			LOG_DBG("Device data not obtained: %d", ret);
 			return -EAGAIN;

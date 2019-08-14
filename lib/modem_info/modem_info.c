@@ -38,6 +38,8 @@ LOG_MODULE_REGISTER(modem_info);
 #define AT_CMD_CRSM		"AT+CRSM"
 #define AT_CMD_ICCID		"AT+CRSM=176,12258,0,0,10"
 #define AT_CMD_SYSTEMMODE	"AT%XSYSTEMMODE?"
+#define AT_CMD_IMSI		"AT+CIMI"
+#define AT_CMD_IMEI		"AT+CGSN"
 #define AT_CMD_SUCCESS_SIZE	5
 
 #define RSRP_DATA_NAME		"rsrp"
@@ -58,6 +60,8 @@ LOG_MODULE_REGISTER(modem_info);
 #define LTE_MODE_DATA_NAME	"lteMode"
 #define NBIOT_MODE_DATA_NAME	"nbiotMode"
 #define GPS_MODE_DATA_NAME	"gpsMode"
+#define IMSI_DATA_NAME		"imsi"
+#define MODEM_IMEI_DATA_NAME	"imei"
 
 #define RSRP_PARAM_INDEX	0
 #define RSRP_PARAM_COUNT	2
@@ -100,6 +104,12 @@ LOG_MODULE_REGISTER(modem_info);
 #define NBIOT_MODE_PARAM_INDEX	1
 #define GPS_MODE_PARAM_INDEX	2
 #define SYSTEMMODE_PARAM_COUNT	4
+
+#define IMSI_PARAM_INDEX    0
+#define IMSI_PARAM_COUNT    1
+
+#define MODEM_IMEI_PARAM_INDEX	0
+#define MODEM_IMEI_PARAM_COUNT  1
 
 struct modem_info_data {
 	const char *cmd;
@@ -253,6 +263,22 @@ static const struct modem_info_data gps_mode_data = {
 	.data_type	= AT_PARAM_TYPE_NUM_SHORT,
 };
 
+static const struct modem_info_data imsi_data = {
+	.cmd		= AT_CMD_IMSI,
+	.data_name	= IMSI_DATA_NAME,
+	.param_index	= IMSI_PARAM_INDEX,
+	.param_count	= IMSI_PARAM_COUNT,
+	.data_type	= AT_PARAM_TYPE_STRING,
+};
+
+static const struct modem_info_data imei_data = {
+	.cmd		= AT_CMD_IMEI,
+	.data_name	= MODEM_IMEI_DATA_NAME,
+	.param_index	= MODEM_IMEI_PARAM_INDEX,
+	.param_count	= MODEM_IMEI_PARAM_COUNT,
+	.data_type	= AT_PARAM_TYPE_STRING,
+};
+
 static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_RSRP]	= &rsrp_data,
 	[MODEM_INFO_CUR_BAND]	= &band_data,
@@ -272,6 +298,8 @@ static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_LTE_MODE]	= &lte_mode_data,
 	[MODEM_INFO_NBIOT_MODE] = &nbiot_mode_data,
 	[MODEM_INFO_GPS_MODE]   = &gps_mode_data,
+	[MODEM_INFO_IMSI]	= &imsi_data,
+	[MODEM_INFO_IMEI]	= &imei_data,
 };
 
 static rsrp_cb_t modem_info_rsrp_cb;
@@ -427,7 +455,9 @@ int modem_info_string_get(enum modem_info info, char *buf)
 		return -EIO;
 	}
 
-	if (info != MODEM_INFO_FW_VERSION) {
+	if ((info != MODEM_INFO_FW_VERSION)
+		&& (info != MODEM_INFO_IMEI)
+		&& (info != MODEM_INFO_IMSI)) {
 		cmd_length = modem_info_remove_cmd(recv_buf);
 	}
 

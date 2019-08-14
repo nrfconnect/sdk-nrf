@@ -54,6 +54,8 @@ enum modem_info {
 	MODEM_INFO_LTE_MODE,	/**< LTE-M support mode. */
 	MODEM_INFO_NBIOT_MODE,	/**< NB-IoT support mode. */
 	MODEM_INFO_GPS_MODE,	/**< GPS support mode. */
+	MODEM_INFO_IMSI,	/**< Mobile subscriber identity. */
+	MODEM_INFO_IMEI,	/**< Modem serial number. */
 	MODEM_INFO_COUNT,	/**< Number of legal elements in the enum. */
 };
 
@@ -88,12 +90,14 @@ struct network_param {
 struct sim_param {
 	struct lte_param uicc; /**< UICC state. */
 	struct lte_param iccid; /**< SIM ICCID. */
+	struct lte_param imsi; /**< Mobile subscriber identity. */
 };
 
 /**@brief Device parameters. */
 struct device_param {
 	struct lte_param modem_fw; /**< Modem firmware version. */
 	struct lte_param battery; /**< Battery voltage. */
+	struct lte_param imei; /**< Modem serial number. */
 	const char *board; /**< Board version. */
 	const char *app_version; /**< Application version. */
 	const char *app_name; /**< Application name. */
