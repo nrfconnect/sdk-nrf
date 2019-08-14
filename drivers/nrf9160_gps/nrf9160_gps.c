@@ -220,32 +220,37 @@ static int enable_gps(struct device *dev)
 {
 	int err;
 	char buf[50] = {0};
-	struct at_param_list at_response_list = {0};
+	struct at_param_list at_resp_list = {0};
 	u16_t gps_param_value, functional_mode;
+
+	err = at_params_list_init(&at_resp_list, AT_XSYSTEMMODE_PARAMS_COUNT);
+	if (err) {
+		LOG_ERR("Could init AT params list, error: %d", err);
+		return err; /* No need to clean up; the list was never init'd */
+	}
 
 	err = at_cmd_write(AT_XSYSTEMMODE_REQUEST, buf, sizeof(buf), NULL);
 	if (err) {
 		LOG_ERR("Could not get modem's system mode");
-		return -EIO;
+		err = -EIO;
+		goto enable_gps_clean_exit;
 	}
-
-	at_params_list_init(&at_response_list, AT_XSYSTEMMODE_PARAMS_COUNT);
 
 	err = at_parser_max_params_from_str(
 		&buf[sizeof(AT_XSYSTEMMODE_RESPONSE)],
-		&at_response_list,
+		&at_resp_list,
 		AT_XSYSTEMMODE_PARAMS_COUNT);
 	if (err) {
 		LOG_ERR("Could not parse AT response, error: %d", err);
-		return err;
+		goto enable_gps_clean_exit;
 	}
 
-	err = at_params_short_get(&at_response_list,
+	err = at_params_short_get(&at_resp_list,
 				  AT_XSYSTEMMODE_GPS_PARAM_INDEX,
 				  &gps_param_value);
 	if (err) {
 		LOG_ERR("Could not get GPS mode state, error: %d", err);
-		return err;
+		goto enable_gps_clean_exit;
 	}
 
 	if (gps_param_value != 1) {
@@ -256,7 +261,7 @@ static int enable_gps(struct device *dev)
 		LOG_DBG("GPS mode is not enabled, attempting to enable it");
 
 		for (size_t i = 0; i < AT_XSYSTEMMODE_PARAMS_COUNT; i++) {
-			at_params_short_get(&at_response_list, i, &values[i]);
+			at_params_short_get(&at_resp_list, i, &values[i]);
 		}
 
 		values[AT_XSYSTEMMODE_GPS_PARAM_INDEX] = 1;
@@ -269,7 +274,7 @@ static int enable_gps(struct device *dev)
 		err = at_cmd_write(cmd, NULL, 0, NULL);
 		if (err) {
 			LOG_ERR("Could not enable GPS mode, error: %d", err);
-			return err;
+			goto enable_gps_clean_exit;
 		}
 	}
 
@@ -278,23 +283,23 @@ static int enable_gps(struct device *dev)
 	err = at_cmd_write(AT_CFUN_REQUEST, buf, sizeof(buf), NULL);
 	if (err) {
 		LOG_ERR("Could not get functional mode, error: %d", err);
-		return err;
+		goto enable_gps_clean_exit;
 	}
 
 	err = at_parser_max_params_from_str(
 		&buf[sizeof(AT_CFUN_RESPONSE)],
-		&at_response_list, 1);
+		&at_resp_list, 1);
 	if (err) {
 		LOG_ERR("Could not parse functional mode response, error: %d",
 			err);
-		return err;
+		goto enable_gps_clean_exit;
 	}
 
-	err = at_params_short_get(&at_response_list, 0, &functional_mode);
+	err = at_params_short_get(&at_resp_list, 0, &functional_mode);
 	if (err) {
 		LOG_ERR("Could not get value of functional mode, error: %d",
 			err);
-		return err;
+		goto enable_gps_clean_exit;
 	}
 
 	LOG_DBG("Functional mode: %d", functional_mode);
@@ -307,14 +312,14 @@ static int enable_gps(struct device *dev)
 		if (err) {
 			LOG_ERR("Could not set functional mode to %d",
 				FUNCTIONAL_MODE_ENABLED);
-			return err;
+			goto enable_gps_clean_exit;
 		}
 		LOG_DBG("Functional mode set to %d", FUNCTIONAL_MODE_ENABLED);
 	}
 
-	at_params_list_free(&at_response_list);
-
-	return 0;
+enable_gps_clean_exit:
+	at_params_list_free(&at_resp_list);
+	return err;
 }
 
 static int start(struct device *dev)
