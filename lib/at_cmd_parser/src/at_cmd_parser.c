@@ -23,8 +23,8 @@
 static int at_parse_param_u32(char *at_str, u32_t *val,
 				size_t *consumed)
 {
-	u32_t value = 0;
-	u32_t check_value;
+	u64_t value = 0;
+	u64_t check_value;
 	bool negative = false;
 
 	*consumed = 0;
@@ -44,7 +44,7 @@ static int at_parse_param_u32(char *at_str, u32_t *val,
 		check_value = value * 10;
 		value = check_value + ((*at_str) - '0');
 
-		if ((value < check_value) || (value == UINT32_MAX)) {
+		if (value >= UINT32_MAX) {
 			return -EINVAL;
 		}
 		at_str++;
@@ -70,7 +70,7 @@ static int at_parse_param_numeric(char *at_str,
 
 	u32_t val;
 	size_t consumed_bytes;
-	u32_t err = at_parse_param_u32(at_str, &val, &consumed_bytes);
+	int err = at_parse_param_u32(at_str, &val, &consumed_bytes);
 
 	if (err) {
 		*consumed = 0;
