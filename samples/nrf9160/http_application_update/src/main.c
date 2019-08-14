@@ -121,6 +121,28 @@ void fota_dl_handler(enum fota_download_evt_id evt_id)
 	}
 }
 
+/**@brief Configures modem to provide LTE link.
+ *
+ * Blocks until link is successfully established.
+ */
+static void modem_configure(void)
+{
+#if defined(CONFIG_LTE_LINK_CONTROL)
+	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
+		/* Do nothing, modem is already turned on
+		 * and connected.
+		 */
+	} else {
+		int err;
+
+		printk("LTE Link Connecting ...\n");
+		err = lte_lc_init_and_connect();
+		__ASSERT(err == 0, "LTE link could not be established.");
+		printk("LTE Link Connected!\n");
+	}
+#endif
+}
+
 static int application_init(void)
 {
 	int err;
@@ -148,6 +170,8 @@ static int application_init(void)
 void main(void)
 {
 	int err;
+
+	modem_configure();
 
 	boot_write_img_confirmed();
 
