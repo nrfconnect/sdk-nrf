@@ -47,6 +47,13 @@ config MODEM_INFO_ADD_SIM_ICCID
 	  Add the SIM card ICCID to the returned
 	  device JSON object.
 
+config MODEM_INFO_ADD_SIM_IMSI
+	bool "Read the SIM card IMSI from the modem"
+	default y
+	help
+	  Add the SIM card IMSI to the returned
+	  device JSON object.
+
 config MODEM_INFO_ADD_DEVICE
 	bool "Add the device information to the modem informer"
 	default y

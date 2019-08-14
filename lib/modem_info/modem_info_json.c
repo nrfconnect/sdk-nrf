@@ -153,6 +153,7 @@ static int sim_data_add(struct sim_param *sim, cJSON *json_obj)
 
 	total_len = json_add_data(&sim->uicc, json_obj);
 	total_len += json_add_data(&sim->iccid, json_obj);
+	total_len += json_add_data(&sim->imsi, json_obj);
 
 	return total_len;
 }
@@ -167,6 +168,7 @@ static int device_data_add(struct device_param *device, cJSON *json_obj)
 
 	total_len = json_add_data(&device->modem_fw, json_obj);
 	total_len += json_add_data(&device->battery, json_obj);
+	total_len += json_add_data(&device->imei, json_obj);
 	total_len += json_add_str(json_obj, "board", device->board);
 	total_len += json_add_str(json_obj, "appVersion", device->app_version);
 	total_len += json_add_str(json_obj, "appName", device->app_name);

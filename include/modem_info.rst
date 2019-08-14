@@ -11,9 +11,10 @@ It issues AT commands to retrieve the following data:
 * Tracking area code, mobile country code, and mobile network code
 * Current mode and operator
 * The cell ID and IP address of the device
-* UICC state and SIM ICCID
+* UICC state, SIM ICCID and SIM IMSI
 * The battery voltage and temperature level, measured by the modem
 * The modem firmware version
+* The modem serial number
 * The LTE-M, NB-IoT, and GPS support mode
 
 The modem information library uses the :ref:`at_cmd_parser_readme`.
