@@ -13,6 +13,9 @@
 #ifndef CLOUD_CODEC_H__
 #define CLOUD_CODEC_H__
 
+#include "env_sensors.h"
+#include <net/cloud.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -113,7 +116,7 @@ typedef void (*cloud_cmd_cb_t)(struct cloud_command *cmd);
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */
 int cloud_encode_data(const struct cloud_channel_data *channel,
-		      struct cloud_data *output);
+		      struct cloud_msg *output);
 
 /**
  * @brief Decode cloud data.
@@ -144,7 +147,7 @@ int cloud_decode_init(cloud_cmd_cb_t cb);
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */
 int cloud_encode_digital_twin_data(const struct cloud_channel_data *channel,
-				 struct cloud_data *output);
+				 struct cloud_msg *output);
 
 /**
  * @brief Releases memory used by cloud data structure.
@@ -153,10 +156,14 @@ int cloud_encode_digital_twin_data(const struct cloud_channel_data *channel,
  *
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */
-static inline void cloud_release_data(struct cloud_data *data)
+static inline void cloud_release_data(struct cloud_msg *data)
 {
 	k_free(data->buf);
 }
+
+int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
+				  struct cloud_msg *output);
+
 /**
  * @}
  */

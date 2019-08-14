@@ -7,14 +7,17 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
+#include <net/cloud.h>
 
 #include "cJSON.h"
 #include "cJSON_os.h"
 #include "cloud_codec.h"
 
 #include <logging/log.h>
+#include "env_sensors.h"
 
 struct cmd {
 	char *name;
@@ -221,7 +224,7 @@ static cJSON *json_object_decode(cJSON *obj, const char *str)
 }
 
 int cloud_encode_data(const struct cloud_channel_data *channel,
-		      struct cloud_data *output)
+		      struct cloud_msg *output)
 {
 	int ret;
 
@@ -256,7 +259,7 @@ int cloud_encode_data(const struct cloud_channel_data *channel,
 }
 
 int cloud_encode_digital_twin_data(const struct cloud_channel_data *channel,
-				 struct cloud_data *output)
+				 struct cloud_msg *output)
 {
 	int ret;
 	char *buffer;
@@ -396,4 +399,39 @@ int cloud_decode_init(cloud_cmd_cb_t cb)
 	cloud_command_cb = cb;
 
 	return 0;
+}
+
+int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
+				 struct cloud_msg *output)
+{
+	__ASSERT_NO_MSG(sensor_data != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
+	char buf[6];
+	u8_t len;
+	struct cloud_channel_data cloud_sensor;
+
+	switch (sensor_data->type) {
+	case ENV_SENSOR_TEMPERATURE:
+		cloud_sensor.type = CLOUD_CHANNEL_TEMP;
+		break;
+
+	case ENV_SENSOR_HUMIDITY:
+		cloud_sensor.type = CLOUD_CHANNEL_HUMID;
+		break;
+
+	case ENV_SENSOR_AIR_PRESSURE:
+		cloud_sensor.type = CLOUD_CHANNEL_AIR_PRESS;
+		break;
+
+	default:
+		return -1;
+	}
+
+	len = snprintf(buf, sizeof(buf), "%.1f",
+		sensor_data->value);
+	cloud_sensor.data.buf = buf;
+	cloud_sensor.data.len = len;
+
+	return cloud_encode_data(&cloud_sensor, output);
 }
