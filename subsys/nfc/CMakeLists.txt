@@ -10,3 +10,4 @@ if (CONFIG_NFC_NDEF OR
 endif()
 
 add_subdirectory_ifdef(CONFIG_NFC_T2T_PARSER t2t)
+add_subdirectory_ifdef(CONFIG_NFC_T4T_ISODEP t4t)
