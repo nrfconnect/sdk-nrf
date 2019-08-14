@@ -67,7 +67,7 @@ following line in the configuration you've chosen::
 
     CONFIG_APP_LWM2M_SERVER="{IP address of LwM2M server}"
 
-Build the sample::
+Build the sample:
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_client`
 
@@ -86,10 +86,15 @@ The following are instructions specific to `Leshan Demo Server`_::
 - Click on "Security" in the upper-right
 - Click on "Add new client security configuration"
 - Enter the following data:
+
     Client endpoint: nrf-{Your Device IMEI}
+
     Security mode: Pre-Shared Key
+
     Identity: Client_identity
+
     Key: 000102030405060708090a0b0c0d0e0f
+
 - Start the Zephyr sample
 
 Connecting to the LwM2M Server
