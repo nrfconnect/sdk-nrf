@@ -9,6 +9,7 @@ They introduce you to important concepts and guide you through developing your a
 .. toctree::
    :maxdepth: 2
 
+   ug_app_dev
    ug_nrf9160
    ug_bt_ll_nrfxlib
    ug_esb
