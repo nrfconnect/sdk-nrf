@@ -1,0 +1,46 @@
+menu "GPS"
+
+choice
+	prompt "GPS device"
+	default GPS_USE_SIM
+	help
+		Select from which device GPS data will be fetched.
+
+config GPS_USE_SIM
+	bool "Use GPS simulator"
+	select GPS_SIM
+	select GPS_SIM_TRIGGER
+	help
+		Use simulated GPS data.
+
+config GPS_USE_EXTERNAL
+	bool "User provided GPS device"
+	help
+		Provide a GPS device that location data will be fetched from and
+		sent to nRF Cloud
+
+endchoice
+
+rsource "src/gps_controller/Kconfig"
+
+config GPS_DEV_NAME
+	string "GPS device name"
+	default GPS_SIM_DEV_NAME if GPS_USE_SIM
+	help
+		GPS device from which location data will be fetched and sent
+		to nRF Cloud.
+
+config GPS_TRIGGER
+	bool
+	default GPS_SIM_TRIGGER if GPS_USE_SIM
+
+config GPS_SIM_TRIGGER_TIMER_MSEC
+	int
+	default 120000 if POWER_OPTIMIZATION_ENABLE
+	default 2000
+
+endmenu	# GPS
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
