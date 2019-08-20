@@ -172,11 +172,6 @@
 	cts-pin = <25>;
 };
 
-/* UART2 must be enabled for defines to be available for SPM. */
-&uart2 {
-	status = "okay";
-};
-
 &flash0 {
 	/*
 	 * For more information, see:
