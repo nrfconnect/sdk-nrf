@@ -36,7 +36,7 @@ static bool verify_firmware(u32_t address)
 	const struct fw_firmware_info *fw_info;
 	const struct fw_validation_info *fw_ver_info;
 
-	fw_info = fw_firmware_info_get(address);
+	fw_info = fw_find_firmware_info(address);
 
 	if (!fw_info) {
 		printk("Could not find valid firmware info inside "
@@ -161,7 +161,7 @@ static void boot_from(const struct fw_firmware_info *fw_info)
 
 	VTOR = fw_info->firmware_address;
 
-	fw_abi_provide(fw_info->firmware_address);
+	fw_abi_provide(fw_info);
 
 	/* Set MSP to the new address and clear any information from PSP */
 	__set_MSP(vector_table[0]);
@@ -183,8 +183,8 @@ void main(void)
 
 	u32_t s0_addr = s0_address_read();
 	u32_t s1_addr = s1_address_read();
-	const struct fw_firmware_info *s0_info = fw_firmware_info_get(s0_addr);
-	const struct fw_firmware_info *s1_info = fw_firmware_info_get(s1_addr);
+	const struct fw_firmware_info *s0_info = fw_find_firmware_info(s0_addr);
+	const struct fw_firmware_info *s1_info = fw_find_firmware_info(s1_addr);
 
 	if (!s1_info || (s0_info->firmware_version >=
 			 s1_info->firmware_version)) {
