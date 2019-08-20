@@ -1,0 +1,17 @@
+config REDUCED_TEST_SUITE
+	bool "Reduced test suite"
+	default n
+	help
+		If False, all test vectors in all test_vector_* files are used as a test basis.
+		If True, only the test vectors in test_vectors.c are used.
+
+config CRYPTO_LONG_RUNNING_VECTORS_DISABLE
+	bool "Disable slow test vectors"
+	default n
+	help
+	  Some test vectors are much slower than others.
+	  If True these will not be tested.
+	  Do a search of CRYPTO_LONG_RUNNING_VECTORS_DISABLE amongst the
+	  test_vectors_* files to see which vectors are affected.
+
+source "Kconfig.zephyr"
