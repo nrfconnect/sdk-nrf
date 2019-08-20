@@ -26,10 +26,10 @@ TYPE_FIELD_POS = 0
 GROUP_FIELD_POS = 6
 EVENT_GROUP_SETUP = 0x1
 EVENT_GROUP_DFU = 0x2
+EVENT_GROUP_LED_STREAM = 0x3
 
 MOD_FIELD_POS = 3
 SETUP_MODULE_SENSOR = 0x1
-SETUP_MODULE_LED = 0x1
 
 OPT_FIELD_POS = 0
 SENSOR_OPT_CPI = 0x0
@@ -42,6 +42,8 @@ DFU_DATA = 0x1
 DFU_SYNC = 0x2
 DFU_REBOOT = 0x3
 DFU_IMGINFO = 0x4
+
+LED_STREAM_DATA = 0x0
 
 FLASH_PAGE_SIZE = 4096
 
@@ -90,27 +92,32 @@ DEVICE = {
     'desktop_mouse_nrf52832' : {
         'vid' : 0x1915,
         'pid' : 0x52DA,
-        'config' : PCA20044_CONFIG
+        'config' : PCA20044_CONFIG,
+        'stream_led_cnt' : 0,
     },
     'desktop_mouse_nrf52810' : {
         'vid' : 0x1915,
         'pid' : 0x52DB,
-        'config' : PCA20045_CONFIG
+        'config' : PCA20045_CONFIG,
+        'stream_led_cnt' : 0,
     },
     'gaming_mouse' : {
         'vid' : 0x1915,
         'pid' : 0x52DE,
-        'config' : PCA20041_CONFIG
+        'config' : PCA20041_CONFIG,
+        'stream_led_cnt' : 2,
     },
     'keyboard' : {
         'vid' : 0x1915,
         'pid' : 0x52DD,
-        'config' : None
+        'config' : None,
+        'stream_led_cnt' : 0,
     },
     'dongle' : {
         'vid' : 0x1915,
         'pid' : 0x52DC,
-        'config' : None
+        'config' : None,
+        'stream_led_cnt' : 0,
     }
 }
 
@@ -637,6 +644,47 @@ def get_dfu_image_version(dfu_image):
         return None
 
     return ver
+
+
+class Step:
+    def __init__(self, r, g, b, substep_count, substep_time):
+        self.r = r
+        self.g = g
+        self.b = b
+        self.substep_count = substep_count
+        self.substep_time = substep_time
+
+
+def led_send_single_step(dev, recipient, step, led_id):
+    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) \
+               | (LED_STREAM_DATA << TYPE_FIELD_POS)
+
+    event_data = struct.pack('<BBBHHB', step.r, step.g, step.b,
+                             step.substep_count, step.substep_time, led_id)
+
+    success = exchange_feature_report(dev, recipient, event_id,
+                                      event_data, False)
+
+    return success
+
+
+def fetch_free_steps_buffer_info(dev, recipient, led_id):
+    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) \
+               | (led_id << MOD_FIELD_POS)
+
+    success, fetched_data = exchange_feature_report(dev, recipient,
+                                                    event_id, None, True)
+
+    if (not success) or (fetched_data is None):
+        return False, (None, None)
+
+    fmt = '<B?'
+    assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
+
+    if len(fetched_data) != struct.calcsize(fmt):
+        return False, (None, None)
+
+    return success, struct.unpack(fmt, fetched_data)
 
 
 if __name__ == '__main__':

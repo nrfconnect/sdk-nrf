@@ -10,6 +10,7 @@ from configurator_core import DEVICE
 from configurator_core import get_device_pid, open_device
 from configurator_core import fwinfo, fwreboot, change_config, fetch_config
 from configurator_core import dfu_transfer, get_dfu_image_version
+from led_stream import send_continuous_led_stream
 
 
 def progress_bar(permil):
@@ -111,6 +112,22 @@ def perform_fwreboot(dev, args):
         print('FW reboot request failed')
 
 
+def perform_led_stream(dev, args):
+    if args.freq <= 0:
+        print('Frequency has to be greater than zero Hz')
+    elif DEVICE[args.device_type]['stream_led_cnt'] == 0:
+        print('Device does not support LED stream')
+    elif args.led_id < 0:
+        print('LED ID cannot be less than zero')
+    elif args.led_id >= DEVICE[args.device_type]['stream_led_cnt']:
+        print('LED with selected ID is not supported on selected device')
+    else:
+        print('LED stream started, press Ctrl+C to interrupt')
+        recipient = get_device_pid(args.device_type)
+        send_continuous_led_stream(dev, recipient, args.led_id, args.freq)
+        print('LED stream ended')
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
     sp_devices = parser.add_subparsers(dest='device_type')
@@ -130,6 +147,11 @@ def parse_arguments():
 
         sp_commands.add_parser('fwinfo', help='Obtain information about FW image')
         sp_commands.add_parser('fwreboot', help='Request FW reboot')
+
+        parser_stream = sp_commands.add_parser('led_stream',
+                                    help='Send continuous LED effects stream')
+        parser_stream.add_argument('led_id', type=int, help='Stream LED ID')
+        parser_stream.add_argument('freq', type=int, help='Color change frequency (in Hz)')
 
         device_config = DEVICE[device_name]['config']
 
@@ -177,6 +199,8 @@ def configurator():
         perform_fwreboot(dev, args)
     elif args.command == 'config':
         perform_config(dev, args)
+    elif args.command == 'led_stream':
+        perform_led_stream(dev, args)
 
 
 if __name__ == '__main__':
