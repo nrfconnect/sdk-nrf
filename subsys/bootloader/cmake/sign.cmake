@@ -4,37 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${KERNEL_HEX_NAME})
-set(sign_depends s0_hex)
-set(to_sign ${PROJECT_BINARY_DIR}/s0.hex)
-
-set(GENERATED_FILES_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
+set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
 
 # This is needed for make, ninja is able to resolve and create the path but make
 # is not able to resolve it.
-file(MAKE_DIRECTORY ${GENERATED_FILES_PATH})
+file(MAKE_DIRECTORY ${GENERATED_PATH})
 
-set(HASH_FILE ${GENERATED_FILES_PATH}/firmware.sha256)
-set(SIGNATURE_FILE ${GENERATED_FILES_PATH}/firmware.signature)
-set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_FILES_PATH}/public.pem)
-
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/fw_info_magic.cmake)
-
-set(HASH_CMD
-  ${PYTHON_EXECUTABLE}
-  ${NRF_BOOTLOADER_SCRIPTS}/hash.py
-  --in ${to_sign}
-  > ${HASH_FILE}
-  )
+set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem)
 
 if (CONFIG_SB_SIGNING_PYTHON)
-  set(SIGN_CMD
-    ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/do_sign.py
-    --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
-    --in ${HASH_FILE}
-    > ${SIGNATURE_FILE}
-    )
   set(PUB_GEN_CMD
     ${PYTHON_EXECUTABLE}
     ${NRF_BOOTLOADER_SCRIPTS}/keygen.py
@@ -43,16 +21,6 @@ if (CONFIG_SB_SIGNING_PYTHON)
     --out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_OPENSSL)
-  set(SIGN_CMD
-    openssl dgst
-    -sha256
-    -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${HASH_FILE} |
-    ${PYTHON_EXECUTABLE}
-    ${NRF_BOOTLOADER_SCRIPTS}/asn1parse.py
-    --alg ecdsa
-    --contents signature
-    > ${SIGNATURE_FILE}
-    )
   set(PUB_GEN_CMD
     openssl ec
     -pubout
@@ -60,40 +28,10 @@ elseif (CONFIG_SB_SIGNING_OPENSSL)
     -out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
 elseif (CONFIG_SB_SIGNING_CUSTOM)
-  set(SIGN_CMD
-    ${CONFIG_SB_SIGNING_COMMAND}
-    ${HASH_FILE}
-    > ${SIGNATURE_FILE}
-    )
   set(SIGNATURE_PUBLIC_KEY_FILE ${CONFIG_SB_SIGNING_PUBLIC_KEY})
-  if (SIGN_CMD STREQUAL "" OR NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE})
-    message(WARNING "You must specify a signing command and valid public key file.")
-  endif()
 else ()
   message(WARNING "Unable to parse signing config.")
 endif()
-
-add_custom_command(
-  OUTPUT
-  ${SIGNATURE_FILE}
-  COMMAND
-  ${HASH_CMD}
-  COMMAND
-  ${SIGN_CMD}
-  DEPENDS
-  ${sign_depends}
-  WORKING_DIRECTORY
-  ${PROJECT_BINARY_DIR}
-  COMMENT
-  "Creating signature of application"
-  USES_TERMINAL
-  )
-
-add_custom_target(
-  signature_file_target
-  DEPENDS
-  ${SIGNATURE_FILE}
-  )
 
 if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
   add_custom_command(
@@ -117,6 +55,75 @@ if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
   )
 endif()
 
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/fw_info_magic.cmake)
+
+  set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_s0.hex)
+  set(sign_depends s0_hex)
+  set(to_sign ${PROJECT_BINARY_DIR}/s0.hex)
+  set(hash_file ${GENERATED_PATH}/s0_firmware.sha256)
+  set(signature_file ${GENERATED_PATH}/s0_firmware.signature)
+
+  set(hash_cmd
+    ${PYTHON_EXECUTABLE}
+    ${NRF_BOOTLOADER_SCRIPTS}/hash.py
+    --in ${to_sign}
+    > ${hash_file}
+    )
+
+if (CONFIG_SB_SIGNING_PYTHON)
+  set(sign_cmd
+    ${PYTHON_EXECUTABLE}
+    ${NRF_BOOTLOADER_SCRIPTS}/do_sign.py
+    --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
+    --in ${hash_file}
+    > ${signature_file}
+    )
+elseif (CONFIG_SB_SIGNING_OPENSSL)
+  set(sign_cmd
+    openssl dgst
+    -sha256
+    -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${hash_file} |
+    ${PYTHON_EXECUTABLE}
+    ${NRF_BOOTLOADER_SCRIPTS}/asn1parse.py
+    --alg ecdsa
+    --contents signature
+    > ${signature_file}
+    )
+elseif (CONFIG_SB_SIGNING_CUSTOM)
+  set(sign_cmd
+    ${CONFIG_SB_SIGNING_COMMAND}
+    ${hash_file}
+    > ${signature_file}
+    )
+  if (sign_cmd STREQUAL "" OR NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE})
+    message(WARNING "You must specify a signing command and valid public key file.")
+  endif()
+else ()
+  message(WARNING "Unable to parse signing config.")
+endif()
+
+add_custom_command(
+  OUTPUT
+  ${signature_file}
+  COMMAND
+  ${hash_cmd}
+  COMMAND
+  ${sign_cmd}
+  DEPENDS
+  ${sign_depends}
+  WORKING_DIRECTORY
+  ${PROJECT_BINARY_DIR}
+  COMMENT
+  "Creating signature of application"
+  USES_TERMINAL
+  )
+
+add_custom_target(
+  signature_file_target
+  DEPENDS
+  ${signature_file}
+  )
+
 add_custom_command(
   OUTPUT
   ${signed_hex}
@@ -126,7 +133,7 @@ add_custom_command(
   --input ${to_sign}
   --output ${signed_hex}
   --offset ${CONFIG_FW_VALIDATION_METADATA_OFFSET}
-  --signature ${SIGNATURE_FILE}
+  --signature ${signature_file}
   --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
   --magic-value "${VALIDATION_INFO_MAGIC}"
   DEPENDS
