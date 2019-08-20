@@ -10,6 +10,7 @@ from configurator_core import DEVICE
 from configurator_core import get_device_pid, open_device
 from configurator_core import fwinfo, fwreboot, change_config, fetch_config
 from configurator_core import dfu_transfer, get_dfu_image_version
+from led_stream import send_continuous_led_stream
 
 
 def progress_bar(permil):
@@ -111,6 +112,12 @@ def perform_fwreboot(dev, args):
         print('FW reboot request failed')
 
 
+def perform_led_stream(dev, args):
+    recipient = get_device_pid(args.device_type)
+    send_continuous_led_stream(dev, recipient, DEVICE[args.device_type],
+                               args.led_id, args.freq)
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
     sp_devices = parser.add_subparsers(dest='device_type')
@@ -130,6 +137,11 @@ def parse_arguments():
 
         sp_commands.add_parser('fwinfo', help='Obtain information about FW image')
         sp_commands.add_parser('fwreboot', help='Request FW reboot')
+
+        parser_stream = sp_commands.add_parser('led_stream',
+                                    help='Send continuous LED effects stream')
+        parser_stream.add_argument('led_id', type=int, help='Stream LED ID')
+        parser_stream.add_argument('freq', type=int, help='Color change frequency (in Hz)')
 
         device_config = DEVICE[device_name]['config']
 
@@ -169,14 +181,15 @@ def configurator():
     if not dev:
         return
 
-    if args.command == 'dfu':
-        perform_dfu(dev, args)
-    elif args.command == 'fwinfo':
-        perform_fwinfo(dev, args)
-    elif args.command == 'fwreboot':
-        perform_fwreboot(dev, args)
-    elif args.command == 'config':
-        perform_config(dev, args)
+    configurator.ALLOWED_COMMANDS[args.command](dev, args)
+
+configurator.ALLOWED_COMMANDS = {
+    'dfu' : perform_dfu,
+    'fwinfo' : perform_fwinfo,
+    'fwreboot' : perform_fwreboot,
+    'config' : perform_config,
+    'led_stream' : perform_led_stream
+}
 
 
 if __name__ == '__main__':
