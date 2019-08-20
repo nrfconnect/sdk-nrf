@@ -23,6 +23,7 @@
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <toolchain.h>
+#include <sys/util.h>
 #include <assert.h>
 #include <string.h>
 
@@ -184,17 +185,55 @@ static inline bool memeq(const void *expected, const void *actual, u32_t len)
 	}
 }
 
-/* Get a pointer to the firmware_info structure inside the firmware. */
+/* Check and provide a pointer to a firmware_info structure.
+ *
+ * @return pointer if valid, NULL if not.
+ */
 static inline const struct fw_firmware_info *
-fw_firmware_info_get(u32_t firmware_address)
+fw_check_firmware_info(u32_t fw_info_addr)
 {
-	u32_t finfo_addr = firmware_address + CONFIG_FW_FIRMWARE_INFO_OFFSET;
 	const struct fw_firmware_info *finfo;
 	const u32_t firmware_info_magic[] = {FIRMWARE_INFO_MAGIC};
 
-	finfo = (const struct fw_firmware_info *)(finfo_addr);
+	finfo = (const struct fw_firmware_info *)(fw_info_addr);
 	if (memeq(finfo->magic, firmware_info_magic, CONFIG_FW_MAGIC_LEN)) {
 		return finfo;
+	}
+	return NULL;
+}
+
+
+/* The supported offsets for the fw_info struct. */
+#define FW_INFO_OFFSET0 0x200
+#define FW_INFO_OFFSET1 0x400
+#define FW_INFO_OFFSET2 0x800
+#define FW_INFO_OFFSET_COUNT 3
+
+static const u32_t allowed_offsets[] = {FW_INFO_OFFSET0, FW_INFO_OFFSET1,
+					FW_INFO_OFFSET2};
+
+BUILD_ASSERT_MSG(ARRAY_SIZE(allowed_offsets) == FW_INFO_OFFSET_COUNT,
+		"Mismatch in the number of allowed offsets.");
+
+#if (FW_INFO_OFFSET_COUNT != 3) || \
+	((CONFIG_FW_FIRMWARE_INFO_OFFSET) != (FW_INFO_OFFSET0) && \
+	(CONFIG_FW_FIRMWARE_INFO_OFFSET) != (FW_INFO_OFFSET1) && \
+	(CONFIG_FW_FIRMWARE_INFO_OFFSET) != (FW_INFO_OFFSET2))
+	#error FW_FIRMWARE_INFO_OFFSET not set to one of the allowed values.
+#endif
+
+/* Search for the firmware_info structure inside the firmware. */
+static inline const struct fw_firmware_info *
+fw_find_firmware_info(u32_t firmware_address)
+{
+	const struct fw_firmware_info *finfo;
+
+	for (u32_t i = 0; i < FW_INFO_OFFSET_COUNT; i++) {
+		finfo = fw_check_firmware_info(firmware_address +
+						allowed_offsets[i]);
+		if (finfo) {
+			return finfo;
+		}
 	}
 	return NULL;
 }
@@ -212,7 +251,7 @@ static inline bool fw_abi_info_check(const struct fw_abi_info *abi_info)
  * immediately before booting the aforementioned firmware since it will likely
  * corrupt the memory of the running firmware.
  */
-void fw_abi_provide(u32_t address);
+void fw_abi_provide(const struct fw_firmware_info *fw_info);
 
 /* Get a single ABI.
  *

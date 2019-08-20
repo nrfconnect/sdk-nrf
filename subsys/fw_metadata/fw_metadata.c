@@ -49,12 +49,10 @@ __fw_info struct fw_firmware_info m_firmware_info =
 	.abi_out = &abi_getter,
 };
 
-void fw_abi_provide(u32_t address)
+void fw_abi_provide(const struct fw_firmware_info *fw_info)
 {
-	const struct fw_firmware_info *their_fw_info = fw_firmware_info_get(address);
-
-	if (their_fw_info != NULL && their_fw_info->abi_in != NULL) {
-		*(their_fw_info->abi_in) = &abi_getter;
+	if (fw_info->abi_in != NULL) {
+		*(fw_info->abi_in) = &abi_getter;
 	}
 }
 

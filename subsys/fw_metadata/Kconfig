@@ -18,11 +18,13 @@ config FW_VALIDATION_METADATA_OFFSET
 	  aligned to closest word.
 
 config FW_FIRMWARE_INFO_OFFSET
-	hex "The location of firmware info inside firmware."
-	default 0x800
+	hex "The location of firmware info inside this firmware."
+	default 0x200
 	help
-	  Note that all space between the vector table and this address will be
-	  unused.
+	  The location of firmware info inside the current firmware image. Valid
+	  values are 0x200, 0x400 and 0x800. Compatible readers of FW info
+	  should search all the possible offsets. Note that all space between
+	  the vector table and this address is unused.
 
 config FW_FIRMWARE_VERSION
 	int "Version number of the firmware."
