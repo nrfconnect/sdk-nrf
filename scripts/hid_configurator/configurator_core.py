@@ -3,17 +3,19 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
-import os
+import collections
+import logging
+import signal
 import sys
-import hid
-import struct
 import time
 import zlib
 
-import logging
-import collections
-import imgtool.image as img
 
+import hid
+import imgtool.image as img
+import os
+import random
+import struct
 from enum import IntEnum
 
 ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help')
@@ -26,10 +28,10 @@ TYPE_FIELD_POS = 0
 GROUP_FIELD_POS = 6
 EVENT_GROUP_SETUP = 0x1
 EVENT_GROUP_DFU = 0x2
+EVENT_GROUP_LED_STREAM = 0x3
 
 MOD_FIELD_POS = 3
 SETUP_MODULE_SENSOR = 0x1
-SETUP_MODULE_LED = 0x1
 
 OPT_FIELD_POS = 0
 SENSOR_OPT_CPI = 0x0
@@ -43,9 +45,11 @@ DFU_SYNC = 0x2
 DFU_REBOOT = 0x3
 DFU_IMGINFO = 0x4
 
+LED_STREAM_DATA = 0x0
+
 FLASH_PAGE_SIZE = 4096
 
-POLL_INTERVAL = 0.02
+POLL_INTERVAL = 0.005
 POLL_RETRY_COUNT = 200
 
 DFU_SYNC_RETRIES = 3
@@ -90,27 +94,32 @@ DEVICE = {
     'desktop_mouse_nrf52832' : {
         'vid' : 0x1915,
         'pid' : 0x52DA,
-        'config' : PCA20044_CONFIG
+        'config' : PCA20044_CONFIG,
+        'stream' : False,
     },
     'desktop_mouse_nrf52810' : {
         'vid' : 0x1915,
         'pid' : 0x52DB,
-        'config' : PCA20045_CONFIG
+        'config' : PCA20045_CONFIG,
+        'stream' : False,
     },
     'gaming_mouse' : {
         'vid' : 0x1915,
         'pid' : 0x52DE,
-        'config' : PCA20041_CONFIG
+        'config' : PCA20041_CONFIG,
+        'stream' : True,
     },
     'keyboard' : {
         'vid' : 0x1915,
         'pid' : 0x52DD,
-        'config' : None
+        'config' : None,
+        'stream' : False,
     },
     'dongle' : {
         'vid' : 0x1915,
         'pid' : 0x52DC,
-        'config' : None
+        'config' : None,
+        'stream' : False,
     }
 }
 
@@ -637,6 +646,138 @@ def get_dfu_image_version(dfu_image):
         return None
 
     return ver
+
+
+class Step:
+    def __init__(self,
+                 r=random.randint(0, 255),
+                 g=random.randint(0, 255),
+                 b=random.randint(0, 255),
+                 substep_count=100, substep_time=20):
+        self.r = r
+        self.g = g
+        self.b = b
+        self.substep_count = substep_count
+        self.substep_time = substep_time
+
+
+def led_send_single_step(dev, recipient, step, led_id):
+    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) | (LED_STREAM_DATA << TYPE_FIELD_POS)
+
+    event_data = struct.pack('<BBBHHB', step.r, step.g, step.b, step.substep_count, step.substep_time, led_id)
+
+    try:
+        success = exchange_feature_report(dev, recipient, event_id, event_data, False)
+    except:
+        success = False
+
+    return success
+
+
+def fetch_free_steps_buffor_info(dev, recipient, led_id):
+    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) | (led_id << MOD_FIELD_POS)
+
+    try:
+        success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
+    except:
+        success = False
+        fetched_data = None
+
+    if not success:
+        print('Fetch failed')
+        return None, None
+
+    fmt = '<B?'
+    assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
+
+    if (fetched_data is None) or (len(fetched_data) < struct.calcsize(fmt)):
+        print('Fetched data corrupted')
+        return None, None
+
+    return struct.unpack(fmt, fetched_data)
+
+
+STREAM_HZ = 30
+substep_count = int(1000/STREAM_HZ)
+count = 1
+first_time = 0
+last_time = None
+free = 0
+
+
+class Color:
+    def __init__(self, r=0, g=0, b=0):
+        self.r = r
+        self.g = g
+        self.b = b
+
+
+def led_send_hz(dev, recipient, color, led_id):
+    global substep_count
+    global last_time
+    global count
+    global first_time
+    global free
+
+    if free is not None:
+        if STREAM_HZ < 5:
+            print('Frequency too low')
+            return
+
+        was_sleeping = False
+        cur_time = time.time()
+
+        if last_time is not None:
+            freq = 1/((cur_time - first_time)/count)
+            cur_dif = cur_time - last_time
+            if cur_dif < 1/STREAM_HZ:
+                time.sleep((1/STREAM_HZ-cur_dif))
+                was_sleeping = True
+        else:
+            cur_dif = 0
+            first_time = cur_time
+            freq = 0
+
+        count +=1
+
+        if free < 1:
+            substep_count -= 1/8
+        elif free > 2:
+            substep_count += 1/8
+        elif free > 3:
+            substep_count += 1/4
+
+        if substep_count <1:
+            substep_count = 1
+
+        step = Step(color.r, color.g, color.b, int(substep_count), 3)
+        led_send_single_step(dev, recipient, step, led_id)
+        last_time = time.time()
+        print('free: {}, substeps: {}, was_sleeping {}, cur_dif {}, freq {}'.format(free, substep_count, was_sleeping, cur_dif, freq))
+    free, _ = fetch_free_steps_buffor_info(dev, recipient, led_id)
+
+
+interrupted = False
+
+
+def send_continuous_led_stream(dev, recipient, led_id):
+    def signal_handler(signal, frame):
+        global interrupted
+        interrupted = True
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    while not interrupted:
+        free, _ = fetch_free_steps_buffor_info(dev, recipient, led_id)
+        if free is None:
+            return
+        if free > 0:
+            step = Step(
+                random.randint(0, 255),
+                random.randint(0, 255),
+                random.randint(0, 255),
+            )
+            led_send_single_step(dev, recipient, step, led_id)
 
 
 if __name__ == '__main__':
