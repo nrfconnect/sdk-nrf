@@ -152,7 +152,7 @@ static int pack_utf8_str(const struct mqtt_utf8 *str, u32_t buffer_len,
 	if (buffer_len > *offset) {
 		const u32_t available_len = buffer_len - *offset;
 
-		MQTT_TRC(">> USL:%08x BL:%08x, B:%p, O:%08x A:%08x",
+		MQTT_TRC(">> USL:%08zx BL:%08x, B:%p, O:%08x A:%08x",
 			 GET_UT8STR_BUFFER_SIZE(str), buffer_len,
 			 buffer, *offset, available_len);
 
