@@ -1,8 +1,8 @@
 sample:
-  name: nrf_cloud Sample
+  name: Asset Tracker Application
 tests:
   test_build:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf9160_pca10090ns
+    platform_whitelist: nrf9160_pca10090ns nrf9160_pca20035ns
     tags: ci_build
