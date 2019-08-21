@@ -4,6 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+config MCUBOOT_BUILD_S1_VARIANT
+	# This can not depend on BOOTLOADER_MCUBOOT, or SECURE_BOOT as this
+	# option has to be set when building MCUBoot itself. Instead an error
+	# is raised by CMake if an incorrect configuration is found.
+	bool "Build S1 variant of MCUBoot"
+	help
+	  Build upgrade candidate of MCUBoot for alternative slot S1.
 
 config SECURE_BOOT_CRYPTO_CLIENT
 	bool "Include Secure Bootloader crypto client API"
