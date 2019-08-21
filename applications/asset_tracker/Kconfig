@@ -252,6 +252,19 @@ endmenu # Cloud
 
 menu "Environment sensors"
 
+config USE_BME680_BSEC
+	bool "Use Bosch BME680 BSEC lib"
+	default n
+	help
+	  Enable use of Bosch BSEC library. The library itself is not a part of
+	  NCS and must be downloaded from Bosch Sensortec.
+
+config BOSCH_BSEC_LIBRARY_PATH
+	string "Path to Bosch BSEC library folder"
+	default "$(ZEPHYR_BASE)/../nrf/ext/BSEC_1.4.7.4_Generic_Release"
+	help
+	  Path to the folder where the Bosch BSEC library is placed.
+
 config ENVIRONMENT_DATA_SEND_INTERVAL
 	int "Interval in seconds for sending environment data"
 	default 30
