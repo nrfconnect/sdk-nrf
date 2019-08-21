@@ -518,6 +518,16 @@ static void env_data_send(void)
 		}
 	}
 
+	if (env_sensors_get_air_quality(&env_data) == 0) {
+		if (cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
+			err = cloud_send(cloud_backend, &msg);
+			cloud_release_data(&msg);
+			if (err) {
+				goto error;
+			}
+		}
+	}
+
 	k_delayed_work_submit(&send_env_data_work,
 	K_SECONDS(CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL));
 
