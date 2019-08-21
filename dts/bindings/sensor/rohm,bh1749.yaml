@@ -5,7 +5,6 @@
 #
 
 title: BH1749 Digital 16bit Serial Output Type Color Sensor IC
-version: 0.1
 
 description: >
     This is a representation of the BH1749 sensor
@@ -20,4 +19,3 @@ properties:
     int-gpios:
       type: compound
       category: required
-      generation: define, use-prop-name
