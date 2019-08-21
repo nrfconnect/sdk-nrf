@@ -11,10 +11,28 @@
 
 if (CONFIG_BOOTLOADER_MCUBOOT)
   set(image_to_boot mcuboot_)
+
   # Partition S1 is only enabled when MCUBoot is enabled.
-  set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_MCUBOOT_ADDRESS>)
-elseif(CONFIG_SPM)
+  set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_IMAGE_ADDRESS>)
+
+  if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
+    # Include a kconfig file which enables CONFIG_MCUBOOT_BUILD_S1_VARIANT
+    # for mcuboot.
+    set(old_conf ${mcuboot_OVERLAY_CONFIG})
+    set(mcuboot_OVERLAY_CONFIG
+      "${old_conf} ${CMAKE_CURRENT_SOURCE_DIR}/build_s1.conf"
+      CACHE STRING "" FORCE)
+  endif()
+else()
+
+  if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
+    message(WARNING "kconfig option 'MCUBOOT_BUILD_S1_VARIANT' is set,
+but MCUboot is not being built.")
+  endif()
+
+  if (CONFIG_SPM)
     set(image_to_boot spm_)
+  endif()
 endif()
 
 # Include a kconfig file which enables CONFIG_FW_METADATA in the image
@@ -28,7 +46,7 @@ if (${found} EQUAL -1)
 endif()
 
 # Partition S0 will always contain the image to be booted by B0.
-set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
+set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_IMAGE_ADDRESS>)
 if (s1_addr)
   set(s1_arg --s1-addr ${s1_addr})
 endif()
