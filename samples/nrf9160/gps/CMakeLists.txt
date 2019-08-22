@@ -6,6 +6,7 @@
 
 cmake_minimum_required(VERSION 3.8.2)
 
+include(../../../cmake/boilerplate.cmake)
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(gps_socket_sample)
 
