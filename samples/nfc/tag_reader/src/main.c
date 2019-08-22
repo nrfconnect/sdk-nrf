@@ -16,6 +16,7 @@
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/t2t/parser.h>
 #include <nfc/t4t/isodep.h>
+#include <nfc/t4t/apdu.h>
 
 #define NFCA_BD 128
 #define BITS_IN_BYTE 8
@@ -31,6 +32,7 @@
 
 #define NFC_T4T_ISODEP_FSD 256
 #define NFC_T4T_ISODEP_RX_DATA_MAX_SIZE 1024
+#define NFC_T4T_APDU_MAX_SIZE 1024
 
 #define NFC_TX_DATA_LEN NFC_T4T_ISODEP_FSD
 #define NFC_RX_DATA_LEN NFC_T4T_ISODEP_FSD
@@ -39,6 +41,9 @@
 #define TAG_TYPE_2_DATA_AREA_MULTIPLICATOR 8
 #define TAG_TYPE_2_DATA_AREA_SIZE_OFFSET (NFC_T2T_CC_BLOCK_OFFSET + 2)
 #define TAG_TYPE_2_BLOCKS_PER_EXCHANGE (T2T_MAX_DATA_EXCHANGE / NFC_T2T_BLOCK_SIZE)
+
+#define NFC_T4T_APDU_APP_SELECT_DATA  {0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01}
+#define NFC_T4T_APDU_RSP_ALL 256
 
 #define TRANSMIT_DELAY 3000
 #define ALL_REQ_DELAY 2000
@@ -79,6 +84,7 @@ struct t2t_tag {
 
 struct t4t_tag {
 	u8_t data[NFC_T4T_ISODEP_RX_DATA_MAX_SIZE];
+	u8_t apdu_raw[NFC_T4T_APDU_MAX_SIZE];
 };
 
 static enum nfc_tag_type tag_type;
@@ -109,6 +115,31 @@ static int ftd_calculate(u8_t *data, size_t len)
 		NFCA_FDT_ALIGN_84 : NFCA_FDT_ALIGN_20;
 
 	return len * NFCA_BD * BITS_IN_BYTE + ftd_align;
+}
+
+static int nfc_t4t_tag_app_select(void)
+{
+	int err;
+	struct nfc_t4t_apdu_comm apdu_comm;
+	u16_t len = sizeof(t4t.apdu_raw);
+	u8_t t4t_app_name[] = NFC_T4T_APDU_APP_SELECT_DATA;
+
+	nfc_t4t_apdu_comm_clear(&apdu_comm);
+
+	apdu_comm.instruction = NFC_T4T_APDU_COMM_SELECT_INS;
+	apdu_comm.parameter = NFC_T4T_APDU_SELECT_BY_NAME;
+	apdu_comm.data.buff = t4t_app_name;
+	apdu_comm.data.len = sizeof(t4t_app_name);
+	apdu_comm.resp_len = NFC_T4T_APDU_RSP_ALL;
+
+	err = nfc_t4t_apdu_comm_encode(&apdu_comm,
+				       t4t.apdu_raw,
+				       &len);
+	if (err) {
+		return err;
+	}
+
+	return nfc_t4t_isodep_transmit(t4t.apdu_raw, len);
 }
 
 static int nfc_t2t_read_block_cmd_make(u8_t *tx_data,
@@ -403,6 +434,8 @@ static const struct st25r3911b_nfca_cb cb = {
 
 static void t4t_isodep_selected(const struct nfc_t4t_isodep_tag *t4t_tag)
 {
+	int err;
+
 	printk("NFC T4T selected.\n");
 
 	if ((t4t_tag->lp_divisor != 0) &&
@@ -410,9 +443,11 @@ static void t4t_isodep_selected(const struct nfc_t4t_isodep_tag *t4t_tag)
 		printk("Unsupported bitrate divisor by Reader/Writer.\n");
 	}
 
-	st25r3911b_nfca_tag_sleep();
-
-	k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
+	err = nfc_t4t_tag_app_select();
+	if (err) {
+		printk("NFC T4T app select err %d.\n", err);
+		return;
+	}
 }
 
 static void t4t_isodep_error(int err)
@@ -435,10 +470,36 @@ static void t4t_isodep_data_send(u8_t *data, size_t data_len, u32_t ftd)
 	}
 }
 
+static void t4t_isodep_received(const u8_t *data, size_t data_len)
+{
+	int err;
+	struct nfc_t4t_apdu_resp apdu_resp;
+
+	nfc_t4t_apdu_resp_clear(&apdu_resp);
+
+	err = nfc_t4t_apdu_resp_decode(&apdu_resp, data, data_len);
+	if (err) {
+		printk("NFC APDU data decode err %d.\n", err);
+		return;
+	}
+
+	if (apdu_resp.status == NFC_T4T_APDU_RAPDU_STATUS_CMD_COMPLETED) {
+		printk("NFC T4T app selected successfully.\n");
+	} else {
+		printk("NFC T4T app not selected.\n");
+	}
+
+	st25r3911b_nfca_tag_sleep();
+
+	k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
+
+}
+
 static const struct nfc_t4t_isodep_cb t4t_isodep_cb = {
 	.selected = t4t_isodep_selected,
 	.error = t4t_isodep_error,
-	.data_send = t4t_isodep_data_send
+	.data_send = t4t_isodep_data_send,
+	.data_received = t4t_isodep_received
 };
 
 void main(void)
