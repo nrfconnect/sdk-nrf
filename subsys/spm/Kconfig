@@ -153,10 +153,6 @@ config SPM_NRF_PWM3_NS
 	bool "PWM3 is Non-Secure"
 	default y
 
-config SPM_NRF_REGULATORS_NS
-	bool "Regulators is Non-Secure"
-	default y
-
 endif # IS_SPM
 
 endmenu
