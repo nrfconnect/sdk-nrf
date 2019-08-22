@@ -39,6 +39,7 @@ extern "C" {
 
 #define EVENT_GROUP_SETUP	0x1
 #define EVENT_GROUP_DFU		0x2
+#define EVENT_GROUP_LED_STREAM	0x3
 
 
 /* Config event, setup group macros */
@@ -76,6 +77,8 @@ extern "C" {
 #define DFU_REBOOT	0x3
 #define DFU_IMGINFO	0x4
 
+/* Config event, led stream group macros */
+#define LED_STREAM_DATA 0x0
 
 /** @brief Configuration channel event.
  * Used to change firmware parameters at runtime.
