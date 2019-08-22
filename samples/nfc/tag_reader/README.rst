@@ -60,6 +60,8 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`nfc_t2t_parser_readme`
 * :ref:`nfc_ndef_parser_readme`
+* :ref:`nfc_t4t_apdu_readme`
+* :ref:`nfc_t4t_isodep_readme`
 
 In addition, it uses the following Zephyr libraries:
 
