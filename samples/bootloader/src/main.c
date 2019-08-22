@@ -189,6 +189,25 @@ void main(void)
 	}
 #endif /* CONFIG_SOC_NRF9160 */
 
-	boot_from((u32_t *)s0_address_read());
+	u32_t s0_addr = s0_address_read();
+	u32_t s1_addr = s1_address_read();
+	const struct fw_firmware_info *s0_info = fw_firmware_info_get(s0_addr);
+	const struct fw_firmware_info *s1_info = fw_firmware_info_get(s1_addr);
+
+	if (s0_info != NULL && s1_info != NULL) {
+		if (s0_info->firmware_version >= s1_info->firmware_version) {
+			boot_from((u32_t *)s0_addr);
+		} else {
+			boot_from((u32_t *)s1_addr);
+		}
+	} else if (s0_info != NULL) {
+		boot_from((u32_t *)s0_addr);
+	} else if (s1_info != NULL) {
+		boot_from((u32_t *)s1_addr);
+	} else {
+		printk("No bootable image found. aborting...\n\r");
+		return;
+	}
+
 	CODE_UNREACHABLE;
 }
