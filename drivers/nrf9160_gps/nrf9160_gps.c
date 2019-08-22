@@ -436,12 +436,13 @@ static int init(struct device *dev)
 
 	init_thread(dev);
 
-	#if CONFIG_NRF9160_GPS_SET_MAGPIO
+	#if CONFIG_NRF9160_GPS_SET_MAGPIO || CONFIG_NRF9160_GPS_SET_COEX0
 		int err;
-		char buf[50] = {0};
+	#endif
 
+	#if CONFIG_NRF9160_GPS_SET_MAGPIO
 		err = at_cmd_write(CONFIG_NRF9160_GPS_MAGPIO_STRING,
-				buf, sizeof(buf), NULL);
+				   NULL, 0, NULL);
 		if (err) {
 			LOG_ERR("Could not confiugure MAGPIO, error: %d", err);
 			return err;
@@ -450,6 +451,18 @@ static int init(struct device *dev)
 		LOG_DBG("MAGPIO set: %s",
 			log_strdup(CONFIG_NRF9160_GPS_MAGPIO_STRING));
 	#endif /* CONFIG_NRF9160_GPS_SET_MAGPIO */
+
+	#if CONFIG_NRF9160_GPS_SET_COEX0
+		err = at_cmd_write(CONFIG_NRF9160_GPS_COEX0_STRING,
+				   NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Could not confiugure COEX0, error: %d", err);
+			return err;
+		}
+
+		LOG_DBG("COEX0 set: %s",
+			log_strdup(CONFIG_NRF9160_GPS_COEX0_STRING));
+	#endif /* CONFIG_NRF9160_GPS_SET_COEX0 */
 
 	return 0;
 }
