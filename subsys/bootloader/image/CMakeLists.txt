@@ -20,9 +20,12 @@ endif()
 # Include a kconfig file which enables CONFIG_FW_METADATA in the image
 # which is booted by B0.
 set(old_conf ${${image_to_boot}OVERLAY_CONFIG})
-set(${image_to_boot}OVERLAY_CONFIG
-  "${old_conf} ${CMAKE_CURRENT_SOURCE_DIR}/fw_metadata.conf"
-  CACHE STRING "" FORCE)
+string(FIND "${old_conf}" "${CMAKE_CURRENT_SOURCE_DIR}/fw_metadata.conf" found)
+if (${found} EQUAL -1)
+  set(${image_to_boot}OVERLAY_CONFIG
+    "${old_conf} ${CMAKE_CURRENT_SOURCE_DIR}/fw_metadata.conf"
+    CACHE STRING "" FORCE)
+endif()
 
 # Partition S0 will always contain the image to be booted by B0.
 set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
