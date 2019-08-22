@@ -6,7 +6,6 @@
 
 #include <zephyr.h>
 #include <assert.h>
-#include <misc/util.h>
 #include <pwm.h>
 
 #include "power_event.h"
@@ -75,6 +74,13 @@ static void work_handler(struct k_work *work)
 		if (led->effect_step == led->effect->step_count) {
 			if (led->effect->loop_forever) {
 				led->effect_step = 0;
+			} else {
+				struct led_ready_event *ready_event = new_led_ready_event();
+
+				ready_event->led_id = led->id;
+				ready_event->led_effect = led->effect;
+
+				EVENT_SUBMIT(ready_event);
 			}
 		} else {
 			__ASSERT_NO_MSG(led->effect->steps[led->effect_step].substep_count > 0);
