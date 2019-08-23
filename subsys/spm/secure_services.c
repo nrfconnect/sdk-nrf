@@ -6,8 +6,14 @@
 #include <errno.h>
 #include <cortex_m/tz.h>
 #include <misc/reboot.h>
+#include <misc/util.h>
 #include <autoconf.h>
 #include <secure_services.h>
+#include <string.h>
+
+#if USE_PARTITION_MANAGER
+#include <pm_config.h>
+#endif
 
 /*
  * Secure Entry functions to allow access to secure services from non-secure
@@ -30,7 +36,7 @@
 /** @brief Structure holding the memory required to generate entropy
  */
 static mbedtls_rng_workbuf_internal rng_workbuf;
-#endif
+#endif /* CONFIG_SPM_SERVICE_RNG */
 
 
 int spm_secure_services_init(void)
@@ -46,6 +52,41 @@ int spm_secure_services_init(void)
 	return err;
 }
 
+
+#ifdef CONFIG_SPM_SERVICE_READ
+struct read_range {
+	u32_t start;
+	size_t size;
+};
+
+__TZ_NONSECURE_ENTRY_FUNC
+int spm_request_read(void *destination, u32_t addr, size_t len)
+{
+	static const struct read_range ranges[] = {
+#ifdef PM_MCUBOOT_ADDRESS
+		/* Allow reads of mcuboot metadata */
+		{.start = PM_MCUBOOT_PAD_ADDRESS,
+		 .size = PM_MCUBOOT_PAD_SIZE},
+#endif
+	};
+
+	if (destination == NULL || len <= 0) {
+		return -EINVAL;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(ranges); i++) {
+		u32_t start = ranges[i].start;
+		u32_t size = ranges[i].size;
+
+		if (addr >= start && addr + len <= start + size) {
+			memcpy(destination, (const void *)addr, len);
+			return 0;
+		}
+	}
+
+	return -EPERM;
+}
+#endif /* CONFIG_SPM_SERVICE_READ */
 
 #ifdef CONFIG_SPM_SERVICE_REBOOT
 __TZ_NONSECURE_ENTRY_FUNC

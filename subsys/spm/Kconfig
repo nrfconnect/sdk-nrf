@@ -59,6 +59,16 @@ config SPM_SERVICE_RNG
 	help
 	  The Non-Secure Firmware is not allowed to use the crypto hardware.
 	  This service allows it to request random numbers from the SPM.
+
+config SPM_SERVICE_READ
+	bool "Read from memory"
+	default y
+	help
+	  The Non-Secure Firmware is not allowed to read the memory
+	  marked as secure. This service allows it to request random
+	  read operations within the ranges configured in
+	  secure_services.c.
+
 endif
 
 config SPM_BOOT_SILENTLY
