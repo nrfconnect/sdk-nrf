@@ -32,6 +32,18 @@ struct led_event {
 
 EVENT_TYPE_DECLARE(led_event);
 
+/** @brief LED ready event used to notify that leds are ready for next
+ * LED stream effect.
+ */
+struct led_ready_event {
+	struct event_header header;
+
+	size_t led_id;
+	const struct led_effect *led_effect;
+};
+
+EVENT_TYPE_DECLARE(led_ready_event);
+
 #ifdef __cplusplus
 }
 #endif
