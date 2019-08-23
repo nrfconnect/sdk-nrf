@@ -52,6 +52,20 @@ void spm_request_system_reboot(void);
 int spm_request_random_number(u8_t *output, size_t len, size_t *olen);
 
 
+/** Request a read operation to be executed from Secure Firmware.
+ *
+ * @param[out] destination Pointer to destination array where the content is
+ *                         to be copied.
+ * @param[in]  addr        Address to be copied from.
+ * @param[in]  len         Number of bytes to copy.
+ *
+ * @retval 0        If successful.
+ * @retval -EINVAL  If destination is NULL, or if len is <= 0.
+ * @retval -EPERM   If source is outside of allowed ranges.
+ */
+int spm_request_read(void *destination, u32_t addr, size_t len);
+
+
 #ifdef __cplusplus
 }
 #endif
