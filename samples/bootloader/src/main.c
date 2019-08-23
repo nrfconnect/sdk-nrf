@@ -51,7 +51,8 @@ static void boot_from(const struct fw_firmware_info *fw_info)
 	printk("Attempting to boot from address 0x%x.\n\r",
 		fw_info->firmware_address);
 
-	if (!verify_firmware(fw_info->firmware_address)) {
+	if (!bl_validate_firmware_local(fw_info->firmware_address,
+					fw_info)) {
 		printk("Failed to validate!\n\r");
 		return;
 	}

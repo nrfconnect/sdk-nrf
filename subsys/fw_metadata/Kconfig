@@ -40,7 +40,7 @@ config FW_MAGIC_COMMON
 	  FW_INFO_VERSION, FW_CRYPTO_ID, and FW_CUSTOM_COMPATIBILITY_ID.
 	  The other two u32_ts are defined in FW_MAGIC_COMMON (common to
 	  all structs), and in one of FW_MAGIC_FIRMWARE_INFO,
-	  FW_MAGIC_VALIDATION_INFO, and FW_MAGIC_POINTER.
+	  SB_VALIDATION_INFO_MAGIC, and SB_VALIDATION_POINTER_MAGIC.
 	  The bootloader expects a certain value for each struct, and if it
 	  attempts to read a struct without a matching magic word, the struct
 	  will be rejected. The config values here apply both to this build of
@@ -52,20 +52,6 @@ config FW_MAGIC_FIRMWARE_INFO
 	default 0x8fcebb4c
 	help
 	  Magic word value specific to firmware info structs (inside firmware).
-	  For more info, see FW_MAGIC_COMMON.
-
-config FW_MAGIC_VALIDATION_INFO
-	hex "Magic word used for validation info structs (32 bits)."
-	default 0x86518483
-	help
-	  Magic word value specific to validation info structs (after firmware).
-	  For more info, see FW_MAGIC_COMMON.
-
-config FW_MAGIC_POINTER
-	hex "Magic word used for validation info pointer structs (32 bits)."
-	default 0x6919b47e
-	help
-	  Magic word value specific to validation info pointer structs.
 	  For more info, see FW_MAGIC_COMMON.
 
 config FW_MAGIC_ABI_GETTER_INFO
@@ -100,34 +86,9 @@ config FW_INFO_VERSION
 	  Used to ensure binary compatibility.
 	  For more info, see FW_MAGIC_COMMON.
 
-config FW_ECDSA_SECP256R1
-	bool
-config FW_RSA_PSS2048
-	bool
-config FW_SHA256
-	bool
-
-config FW_VALIDATION_INFO_CRYPTO_ID
-	int
-	range 0 255
-	default 1 if FW_ECDSA_SECP256R1 && FW_SHA256
-	default 2 if FW_RSA_PSS2048 && FW_SHA256
-	help
-	  The algorithm used for signing the firmware (8 bits).
-	  Used to ensure compatibility.
-	  For more info, see FW_MAGIC_COMMON.
-
 config FW_INFO_CRYPTO_ID
 	int
 	default 0
-
-config FW_VALIDATION_INFO_VERSION
-	int "Version number of the fw_validation_info* structs (8 bits)."
-	range 0 255
-	default 1
-	help
-	  Used to ensure binary compatibility.
-	  For more info, see FW_MAGIC_COMMON.
 
 config FW_CUSTOM_COMPATIBILITY_ID
 	int "Compatibility ID for user-defined purposes (8 bits)."

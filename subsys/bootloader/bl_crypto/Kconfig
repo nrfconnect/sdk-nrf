@@ -11,13 +11,10 @@ menuconfig SECURE_BOOT_CRYPTO
 if (SECURE_BOOT_CRYPTO)
 config SB_ECDSA_SECP256R1
 	bool
-	select FW_ECDSA_SECP256R1
 config SB_RSA_PSS2048
 	bool
-	select FW_RSA_PSS2048
 config SB_SHA256
 	bool
-	select FW_SHA256
 
 config SB_SIGNATURE_LEN
 	int
