@@ -74,6 +74,10 @@ config DESKTOP_INIT_LOG_LED_EVENT
 	bool "LED event"
 	default y
 
+config DESKTOP_INIT_LOG_LED_READY_EVENT
+	bool "LED ready event"
+	default y
+
 config DESKTOP_INIT_LOG_MODULE_STATE_EVENT
 	bool "Module state event"
 	default y
