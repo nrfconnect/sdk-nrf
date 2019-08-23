@@ -9,6 +9,7 @@
 #include <misc/reboot.h>
 #include <secure_services.h>
 #include <kernel.h>
+#include <pm_config.h>
 
 void print_number(u8_t *num, size_t len)
 {
@@ -24,6 +25,7 @@ void main(void)
 	const int sleep_time_ms = 5000;
 	const int random_number_count = 16;
 	const int random_number_len = 144;
+	int ret;
 
 	printk("Secure Services example.\n");
 	printk("Generate %d strings of %d random bytes, sleep, then reboot.\n\n",
@@ -32,7 +34,6 @@ void main(void)
 	for (int i = 0; i < random_number_count; i++) {
 		u8_t random_number[random_number_len];
 		size_t olen = random_number_len;
-		int ret;
 
 		ret = spm_request_random_number(random_number, random_number_len, &olen);
 		if (ret != 0) {
@@ -41,6 +42,23 @@ void main(void)
 		}
 		print_number(random_number, olen);
 	}
+
+#ifdef CONFIG_BOOTLOADER_MCUBOOT
+	const int num_bytes_to_read = PM_MCUBOOT_PAD_SIZE;
+	const int read_address = PM_MCUBOOT_PAD_ADDRESS;
+	u8_t buf[num_bytes_to_read];
+
+	printk("\nRead %d bytes from address %d\n", num_bytes_to_read,
+			read_address);
+	ret = spm_request_read(buf, read_address, num_bytes_to_read);
+	if (ret != 0) {
+		printk("Could not read data (err: %d)\n", ret);
+	}
+	for (int i = 0; i < num_bytes_to_read; i++) {
+		printk("%d", buf[i]);
+	}
+#endif
+
 	printk("\nReboot in %d ms.\n", sleep_time_ms);
 	k_sleep(sleep_time_ms);
 
