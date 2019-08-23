@@ -12,6 +12,8 @@
 #include <bl_crypto.h>
 #include <provision.h>
 
+#define PRINT(...) printk(__VA_ARGS__)
+
 struct __packed fw_validation_info {
 	/* Magic value to verify that the struct has the correct type. */
 	u32_t magic[MAGIC_LEN_WORDS];
@@ -59,27 +61,35 @@ OFFSET_CHECK(struct fw_validation_pointer, magic, 0);
 OFFSET_CHECK(struct fw_validation_pointer, validation_info,
 	CONFIG_FW_MAGIC_LEN);
 
-
-/* Find the validation_info at the end of the firmware. */
-static inline const struct fw_validation_info *
-validation_info_find(const struct fw_firmware_info *finfo,
-			u32_t search_distance)
+static bool validation_info_check(const struct fw_validation_info *vinfo)
 {
-	u32_t vinfo_addr = finfo->firmware_address + finfo->firmware_size;
-	const struct fw_validation_info *vinfo;
 	const u32_t validation_info_magic[] = {VALIDATION_INFO_MAGIC};
 
+	if (memeq(vinfo->magic, validation_info_magic, CONFIG_FW_MAGIC_LEN)) {
+		return vinfo;
+	}
+	return NULL;
+}
+
+
+/* Find the validation_info at the end of the firmware. */
+static const struct fw_validation_info *
+validation_info_find(u32_t start_address, u32_t search_distance)
+{
+	const struct fw_validation_info *vinfo;
+
 	for (int i = 0; i <= search_distance; i++) {
-		vinfo = (const struct fw_validation_info *)(vinfo_addr + i);
-		if (memeq(vinfo->magic, validation_info_magic,
-					CONFIG_FW_MAGIC_LEN)) {
+		vinfo = (const struct fw_validation_info *)(start_address + i);
+		if (validation_info_check(vinfo)) {
 			return vinfo;
 		}
 	}
 	return NULL;
 }
 
-bool verify_firmware(u32_t address)
+
+static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
+		const struct fw_firmware_info *fw_info)
 {
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
@@ -87,32 +97,52 @@ bool verify_firmware(u32_t address)
 	u32_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN/4];
 	int retval = -EFAULT;
 	int err;
-	const struct fw_firmware_info *fw_info;
-	const struct fw_validation_info *fw_ver_info;
-
-	fw_info = fw_find_firmware_info(address);
+	const struct fw_validation_info *fw_val_info;
+	u32_t num_public_keys;
+	bl_root_of_trust_verify_t rot_verify = bl_root_of_trust_verify;
 
 	if (!fw_info) {
-		printk("Could not find valid firmware info inside "
-				    "firmware. Aborting boot!\n\r");
+		PRINT("NULL parameter.\n\r");
 		return false;
 	}
 
-	fw_ver_info = validation_info_find(fw_info, 4);
+	if (!fw_check_firmware_info((u32_t)fw_info)) {
+		PRINT("Invalid firmware info format.\n\r");
+		return false;
+	}
 
-	if (!fw_ver_info) {
-		printk("Could not find valid firmware validation "
-			  "info trailing firmware. Aborting boot!\n\r");
+	if (!(((u32_t)fw_info >= fw_src_address)
+		&& (((u32_t)fw_info + sizeof(*fw_info))
+			< (fw_src_address + fw_info->firmware_size)))) {
+		PRINT("Firmware info is not within signed region.");
+		return false;
+	}
+
+	if (fw_dst_address != fw_info->firmware_address) {
+		PRINT("The firmware doesn't belong at destination addr.\n\r");
+		return false;
+	}
+
+	fw_val_info = validation_info_find(
+		fw_src_address + fw_info->firmware_size, 4);
+
+	if (!fw_val_info) {
+		PRINT("Could not find valid firmware validation.\n\r");
+		return false;
+	}
+
+	if (fw_val_info->firmware_address != fw_info->firmware_address) {
+		PRINT("Validation info doesn't belong to this firmware.\n\r");
 		return false;
 	}
 
 	err = bl_crypto_init();
 	if (err) {
-		printk("bl_crypto_init() returned %d. Aborting boot!\n\r", err);
+		PRINT("bl_crypto_init() returned %d.\n\r", err);
 		return false;
 	}
 
-	u32_t num_public_keys = num_public_keys_read();
+	num_public_keys = num_public_keys_read();
 
 	for (u32_t key_data_idx = 0; key_data_idx < num_public_keys;
 			key_data_idx++) {
@@ -121,22 +151,32 @@ bool verify_firmware(u32_t address)
 			retval = -EFAULT;
 			break;
 		}
-		retval = bl_root_of_trust_verify(fw_ver_info->public_key,
+
+		PRINT("Verifying signature against key %d.\n\r", key_data_idx);
+		retval = rot_verify(fw_val_info->public_key,
 					(u8_t *)key_data,
-					fw_ver_info->signature,
-					(u8_t *)fw_ver_info->firmware_address,
+					fw_val_info->signature,
+					(u8_t *)fw_val_info->firmware_address,
 					fw_info->firmware_size);
+
 		if (retval != -ESIGINV) {
 			break;
 		}
 	}
 
+	PRINT("Signature verified.\n\r");
+
 	if (retval != 0) {
-		printk("Firmware validation failed with error %d. "
-			    "Aborting boot!\n\r",
+		PRINT("Firmware validation failed with error %d.\n\r",
 			    retval);
 		return false;
 	}
 
 	return true;
+}
+
+bool bl_validate_firmware_local(u32_t fw_address,
+				const struct fw_firmware_info *fw_info)
+{
+	return validate_firmware(fw_address, fw_address, fw_info);
 }

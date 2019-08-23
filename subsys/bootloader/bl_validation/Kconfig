@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig SECURE_BOOT_VALIDATION
+	bool
+	prompt "Secure Boot firmware validation"
+	select SECURE_BOOT_CRYPTO
+	select FW_METADATA
+
+if SECURE_BOOT_VALIDATION
+
+config SB_VALIDATION_INFO_MAGIC
+	hex "Magic word used for validation info structs (32 bits)."
+	default 0x86518483
+	help
+	  Magic word value specific to validation info structs (after firmware).
+	  For more info, see FW_MAGIC_COMMON.
+
+config SB_VALIDATION_POINTER_MAGIC
+	hex "Magic word used for validation info pointer structs (32 bits)."
+	default 0x6919b47e
+	help
+	  Magic word value specific to validation info pointer structs.
+	  For more info, see FW_MAGIC_COMMON.
+
+config SB_VALIDATION_INFO_CRYPTO_ID
+	int
+	range 0 255
+	default 1 if SB_ECDSA_SECP256R1 && SB_SHA256
+	default 2 if SB_RSA_PSS2048 && SB_SHA256
+	help
+	  The algorithm used for signing the firmware (8 bits).
+	  Used to ensure compatibility.
+	  For more info, see FW_MAGIC_COMMON.
+
+config SB_VALIDATION_INFO_VERSION
+	int "Version number of the fw_validation_info* structs (8 bits)."
+	range 0 255
+	default 2
+	help
+	  Used to ensure binary compatibility.
+	  For more info, see FW_MAGIC_COMMON.
+
+endif # SECURE_BOOT_VALIDATION
+
+if SECURE_BOOT_VALIDATION
+
+endif # SECURE_BOOT_VALIDATION

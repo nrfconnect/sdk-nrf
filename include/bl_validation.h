@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <fw_metadata.h>
 
-bool verify_firmware(u32_t address);
+bool bl_validate_firmware_local(u32_t fw_address,
+				const struct fw_firmware_info *fw_info);
 
 #endif /* BL_VALIDATION_H__ */
