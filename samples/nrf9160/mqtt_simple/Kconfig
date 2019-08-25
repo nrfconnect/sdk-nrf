@@ -19,7 +19,7 @@ config MQTT_CLIENT_ID
 
 config MQTT_BROKER_HOSTNAME
 	string "MQTT broker hostname"
-	default "iot.eclipse.org"
+	default "mqtt.eclipse.org"
 
 config MQTT_BROKER_PORT
 	int "MQTT broker port"
