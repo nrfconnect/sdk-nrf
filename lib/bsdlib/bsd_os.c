@@ -274,6 +274,9 @@ void bsd_os_errno_set(int err_code)
 	case NRF_ENETUNREACH:
 		errno = ENETUNREACH;
 		break;
+	case NRF_ENETRESET:
+		errno = ENETRESET;
+		break;
 	case NRF_ECONNRESET:
 		errno = ECONNRESET;
 		break;
