@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Click detector configuration"
+
+config DESKTOP_CLICK_DETECTOR_ENABLE
+	bool "Enable click detector"
+	depends on !DESKTOP_BUTTONS_NONE
+
+if DESKTOP_CLICK_DETECTOR_ENABLE
+
+module = DESKTOP_CLICK_DETECTOR
+module-str = click detector module
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

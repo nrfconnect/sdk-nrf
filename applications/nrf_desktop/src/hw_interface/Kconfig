@@ -8,6 +8,7 @@ menu "Hardware interface modules"
 
 rsource "Kconfig.motion"
 rsource "Kconfig.buttons"
+rsource "Kconfig.click_detector"
 rsource "Kconfig.wheel"
 rsource "Kconfig.leds"
 rsource "Kconfig.battery_charger"
