@@ -826,7 +826,7 @@ static int pmw3360_sample_fetch(struct device *dev, enum sensor_channel chan)
 	ARG_UNUSED(dev);
 
 	if (unlikely(!dev_data->ready)) {
-		LOG_INF("Device is not initialized yet");
+		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
 
@@ -862,7 +862,7 @@ static int pmw3360_channel_get(struct device *dev, enum sensor_channel chan,
 	ARG_UNUSED(dev);
 
 	if (unlikely(!dev_data->ready)) {
-		LOG_INF("Device is not initialized yet");
+		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
 
@@ -902,7 +902,7 @@ static int pmw3360_trigger_set(struct device *dev,
 	}
 
 	if (unlikely(!dev_data->ready)) {
-		LOG_INF("Device is not initialized yet");
+		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
 
@@ -939,7 +939,7 @@ static int pmw3360_attr_set(struct device *dev, enum sensor_channel chan,
 	}
 
 	if (unlikely(!dev_data->ready)) {
-		LOG_INF("Device is not initialized yet");
+		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
 
