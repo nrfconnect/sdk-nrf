@@ -344,6 +344,8 @@ static void spm_config_peripherals(void)
 
 		PERIPH("NRF_GPIOTE1", NRF_GPIOTE1_NS,
 				      CONFIG_SPM_NRF_GPIOTE1_NS),
+		PERIPH("NRF_REGULATORS", NRF_REGULATORS_S,
+				      CONFIG_SPM_NRF_REGULATORS_NS),
 	};
 
 	PRINT("Peripheral\t\tDomain\t\tStatus\n");
