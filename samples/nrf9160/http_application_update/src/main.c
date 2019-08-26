@@ -11,6 +11,7 @@
 #include <gpio.h>
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
+#include <lte_lc.h>
 
 #define LED_PORT	DT_ALIAS_LED0_GPIOS_CONTROLLER
 
