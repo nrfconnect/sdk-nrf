@@ -249,6 +249,14 @@ static void broadcast_usb_state(void)
 	EVENT_SUBMIT(event);
 }
 
+static void reset_pending_report(void)
+{
+	if (sent_report_type != IN_REPORT_COUNT) {
+		LOG_WRN("USB clear report notification waiting flag");
+		sent_report_type = IN_REPORT_COUNT;
+	}
+}
+
 static void broadcast_subscription_change(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
@@ -354,6 +362,7 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 
 		if (old_state == USB_STATE_ACTIVE) {
 			broadcast_subscription_change();
+			reset_pending_report();
 		}
 
 		broadcast_usb_state();
