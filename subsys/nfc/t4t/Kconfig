@@ -70,3 +70,16 @@ module-str = APDU
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_T4T_APDU
+
+config NFC_T4T_CC_FILE
+	bool "NFC Type 4 Tag CC file"
+	help
+	  Enable NFC Type 4 TAG CC file
+
+if NFC_T4T_CC_FILE
+
+module = NFC_T4T_CC_FILE
+module-str = CC_FILE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_T4T_CC_FILE
