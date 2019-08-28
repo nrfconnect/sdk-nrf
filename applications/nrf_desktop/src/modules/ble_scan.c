@@ -458,10 +458,10 @@ static bool event_handler(const struct event_header *eh)
 
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
-		case PEER_STATE_CONN_FAILED:
 		case PEER_STATE_SECURED:
 			/* Ignore */
 			break;
+		case PEER_STATE_CONN_FAILED:
 		case PEER_STATE_DISCONNECTED:
 			if (discovering_peer_conn == event->id) {
 				bt_conn_unref(discovering_peer_conn);
