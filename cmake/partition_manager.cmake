@@ -176,4 +176,26 @@ if(FIRST_BOILERPLATE_EXECUTION)
     set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${PROJECT_BINARY_DIR}/merged.hex"
       CACHE STRING "Path to merged image in Intel Hex format" FORCE)
   endif()
+
+  if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
+    # Create symbols for the offsets required for moving test update hex files
+    # to MCUBoots secondary slot. This is needed because objcopy does not
+    # support arithmetic expressions as argument (e.g. '0x100+0x200'), and all
+    # of the symbols used to generate the offset is only available as a
+    # generator expression when MCUBoots cmake code exectues. This because
+    # partition manager is performed as the last step in the configuration stage.
+    math(EXPR s0_offset "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${PM_S0_ADDRESS}")
+    math(EXPR s1_offset "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${PM_S1_ADDRESS}")
+
+    set_property(
+      TARGET partition_manager
+      PROPERTY s0_TO_SECONDARY
+      ${s0_offset}
+      )
+    set_property(
+      TARGET partition_manager
+      PROPERTY s1_TO_SECONDARY
+      ${s1_offset}
+      )
+  endif()
 endif()
