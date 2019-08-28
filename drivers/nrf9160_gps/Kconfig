@@ -11,7 +11,6 @@ menuconfig NRF9160_GPS
 	# FP_SHARING needs to be enabled if FLOAT is enabled, as other contexts
 	# might also use the FPU.
 	select FP_SHARING if FLOAT
-	select AT_CMD_PARSER
 	help
 	  Enable nRF9160 GPS driver.
 
@@ -25,6 +24,21 @@ config NRF9160_GPS_FIX_CHECK_INTERVAL
 	int "Interval in seconds to check for GPS fix"
 	default 1
 
+config NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
+	bool "The GPS driver will handle modem configuration directly"
+	default y
+	select AT_CMD
+	select AT_CMD_PARSER
+	help
+	  Disabling this will cause the GPS driver to do no modem
+	  configuration.  This is useful if you need to remove the
+	  dependency on the at_cmd_host library from the GPS driver,
+	  but it will require that some other part of the
+	  application send the AT commands to configure the GPS
+	  properly.
+
+if NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
+
 config NRF9160_GPS_SET_MAGPIO
 	bool "Let the driver set MAGPIO configuration"
 	default y if BOARD_NRF9160_PCA10090NS
@@ -36,6 +50,8 @@ config NRF9160_GPS_MAGPIO_STRING
 	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160_PCA10090NS
 
 endif # NRF9160_GPS_SET_MAGPIO
+
+endif # NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 
 menu "NMEA strings"
 config NRF9160_GPS_NMEA_GSV
