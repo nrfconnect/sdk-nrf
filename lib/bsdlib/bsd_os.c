@@ -406,8 +406,8 @@ void trace_uart_init(void)
 		/* Use UARTE1 pins routed on VCOM2. */
 		.pseltxd = DT_NORDIC_NRF_UARTE_UART_1_TX_PIN,
 		.pselrxd = DT_NORDIC_NRF_UARTE_UART_1_RX_PIN,
-		.pselcts = DT_NORDIC_NRF_UARTE_UART_1_CTS_PIN,
-		.pselrts = DT_NORDIC_NRF_UARTE_UART_1_RTS_PIN,
+		.pselcts = NRF_UARTE_PSEL_DISCONNECTED,
+		.pselrts = NRF_UARTE_PSEL_DISCONNECTED,
 
 		.hwfc = NRF_UARTE_HWFC_DISABLED,
 		.parity = NRF_UARTE_PARITY_EXCLUDED,
