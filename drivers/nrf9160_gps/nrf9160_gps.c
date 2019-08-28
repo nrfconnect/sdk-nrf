@@ -14,11 +14,14 @@
 #include <logging/log.h>
 #include <nrf_socket.h>
 #include <net/socket.h>
+#ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 #include <at_cmd.h>
 #include <at_cmd_parser.h>
+#endif
 
 LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 
+#ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 #define AT_CMD_LEN(x)			(sizeof(x) - 1)
 #define AT_XSYSTEMMODE_REQUEST		"AT%XSYSTEMMODE?"
 #define AT_XSYSTEMMODE_RESPONSE		"%XSYSTEMMODE:"
@@ -30,6 +33,7 @@ LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 #define AT_CFUN_0			"AT+CFUN=0"
 #define AT_CFUN_1			"AT+CFUN=1"
 #define FUNCTIONAL_MODE_ENABLED		1
+#endif
 
 struct gps_drv_data {
 	gps_trigger_handler_t trigger_handler;
@@ -216,6 +220,7 @@ static int init_thread(struct device *dev)
 	return 0;
 }
 
+#ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 static int enable_gps(struct device *dev)
 {
 	int err;
@@ -321,6 +326,7 @@ enable_gps_clean_exit:
 	at_params_list_free(&at_resp_list);
 	return err;
 }
+#endif
 
 static int start(struct device *dev)
 {
@@ -346,10 +352,12 @@ static int start(struct device *dev)
 	nmea_mask |= NRF_CONFIG_NMEA_RMC_MASK;
 #endif
 
+#ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 	if (enable_gps(dev) != 0) {
 		LOG_ERR("Failed to enable GPS");
 		return -EIO;
 	}
+#endif
 
 	if (drv_data->socket < 0) {
 		drv_data->socket = nrf_socket(NRF_AF_LOCAL, NRF_SOCK_DGRAM,
