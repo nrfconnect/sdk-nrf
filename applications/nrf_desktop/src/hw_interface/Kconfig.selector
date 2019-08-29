@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Selector configuration"
+
+config DESKTOP_SELECTOR_HW_ENABLE
+	bool "Enable HW based selector"
+
+if DESKTOP_SELECTOR_HW_ENABLE
+
+module = DESKTOP_SELECTOR_HW
+module-str = selector hw module
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu
