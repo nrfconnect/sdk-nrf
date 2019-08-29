@@ -99,19 +99,19 @@ Set :option:`CONFIG_PROFILER_NORDIC` to enable this backend.
 
 To use the tools, run the scripts on the command line:
 
-* ``python3 data_collector.py 5 a.csv a.json``
+* ``python3 data_collector.py 5 test1``
 
   Connects to the device via RTT, receives profiling data, and saves it to files.
-  As command line arguments, provide the time for collecting data (in seconds) and the files where to save the data.
+  As command line arguments, provide the time for collecting data (in seconds) and a dataset name.
 
-* ``python3 plot_from_files.py a.csv a.json``
+* ``python3 plot_from_files.py test1``
 
-  Plots events from the files that are provided as command line arguments.
+  Plots events from the dataset that is provided as the command line argument.
 
-* ``python3 real_time_plot.py a.csv a.json``
+* ``python3 real_time_plot.py test1``
 
   Connects to the device via RTT, plots data in real time, and saves the data.
-  As command line arguments, provide the files where to save the data.
+  As command line arguments, provide a dataset name.
 
 
 Visualization
