@@ -167,6 +167,10 @@ config SPM_NRF_REGULATORS_NS
 	bool "Regulators is Non-Secure"
 	default n
 
+config SPM_NRF_WDT_NS
+	bool "WDT is Non-Secure"
+	default n
+
 endif # IS_SPM
 
 endmenu
