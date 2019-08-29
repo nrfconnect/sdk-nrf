@@ -9,40 +9,48 @@ import argparse
 
 
 def main():
-    descr = "Merge data from device and dongle. ble_peer_events should be" \
-            " registered at the beginning and at the end of measurements"  \
-            " (used to compensate clock drift)."
+    descr = "Merge data from peripheral and central. Synchronization events" \
+            " should be registered at the beginning and at the end of" \
+            " measurements (used to compensate clock drift)."
     parser = argparse.ArgumentParser(description=descr)
-    parser.add_argument("device_dataset", help="Name of device dataset")
-    parser.add_argument("dongle_dataset", help="Name of dongle dataset")
-    parser.add_argument('result_dataset', help="Name for result dataset")
+    parser.add_argument("peripheral_dataset", help="Name of peripheral dataset")
+    parser.add_argument("peripheral_sync_event",
+                        help="Event used for synchronization - peripheral")
+    parser.add_argument("central_dataset", help="Name of central dataset")
+    parser.add_argument("central_sync_event",
+                        help="Event used for synchronization - central")
+    parser.add_argument("result_dataset", help="Name for result dataset")
     args = parser.parse_args()
 
-    evt_device = EventsData([], {})
-    evt_device.read_data_from_files(args.device_dataset + ".csv",
-                                    args.device_dataset + ".json")
+    evt_peripheral = EventsData([], {})
+    evt_peripheral.read_data_from_files(args.peripheral_dataset + ".csv",
+                                        args.peripheral_dataset + ".json")
 
-    evt_dongle = EventsData([], {})
-    evt_dongle.read_data_from_files(args.dongle_dataset + ".csv",
-                                    args.dongle_dataset + ".json")
+    evt_central = EventsData([], {})
+    evt_central.read_data_from_files(args.central_dataset + ".csv",
+                                     args.central_dataset + ".json")
 
-    # Compensating clock drift - based on ble_peer_event
-    peer_evt_device = evt_device.get_event_type_id("ble_peer_event")
-    peer_evt_dongle = evt_dongle.get_event_type_id("ble_peer_event")
+    # Compensating clock drift - based on synchronization events
+    sync_evt_peripheral = evt_peripheral.get_event_type_id(
+            args.peripheral_sync_event)
+    sync_evt_central = evt_central.get_event_type_id(args.central_sync_event)
 
-    peer_device = list(filter(lambda x: x.type_id == peer_evt_device,
-                             evt_device.events))
-    peer_dongle = list(filter(lambda x: x.type_id == peer_evt_dongle,
-                              evt_dongle.events))
+    sync_peripheral = list(filter(lambda x: x.type_id == sync_evt_peripheral,
+                             evt_peripheral.events))
+    sync_central = list(filter(lambda x: x.type_id == sync_evt_central,
+                              evt_central.events))
 
+    if len(sync_central) < 2 or len(sync_peripheral) < 2:
+        print("Not enough synchronization events (require at least two)")
+        return
 
-    diff_start = peer_device[0].timestamp - peer_dongle[0].timestamp
-    diff_end = peer_device[-1].timestamp - peer_dongle[-1].timestamp
-    diff_time = peer_dongle[-1].timestamp - peer_dongle[0].timestamp
-    time_start = peer_dongle[0].timestamp
+    diff_start = sync_peripheral[0].timestamp - sync_central[0].timestamp
+    diff_end = sync_peripheral[-1].timestamp - sync_central[-1].timestamp
+    diff_time = sync_central[-1].timestamp - sync_central[0].timestamp
+    time_start = sync_central[0].timestamp
 
-    # Using linear approximation of clock drift between device and dongle
-    # t_dongle = t_device + (diff_time * a) + b
+    # Using linear approximation of clock drift between peripheral and central
+    # t_central = t_peripheral + (diff_time * a) + b
 
     b = diff_start
     a = (diff_end - diff_start) / diff_time
@@ -53,26 +61,29 @@ def main():
         print("This could be caused by measurements missmatch or very long" \
               " measurement time.")
 
-    # Reindexing, renaming and compensating time differences for dongle events
-    max_device_id = max([int(i) for i in evt_device.registered_events_types])
+    # Reindexing, renaming and compensating time differences for central events
+    max_peripheral_id = max([int(i)
+                            for i in evt_peripheral.registered_events_types])
 
-    evt_dongle.events = list(map(lambda x: Event(x.type_id + max_device_id + 1,
+    evt_central.events = list(map(lambda x:
+                            Event(x.type_id + max_peripheral_id + 1,
                             x.timestamp + a * (x.timestamp - time_start) + b,
                             x.data),
-                            evt_dongle.events))
+                            evt_central.events))
 
-    evt_dongle.registered_events_types = {k + max_device_id + 1 :
-                EventType(v.name + "_dongle", v.data_types, v.data_descriptions)
-                for k, v in evt_dongle.registered_events_types.items()}
+    evt_central.registered_events_types = {k + max_peripheral_id + 1 :
+                EventType(v.name + "_central", v.data_types, v.data_descriptions)
+                for k, v in evt_central.registered_events_types.items()}
 
-    evt_device.registered_events_types = {k :
-                EventType(v.name + "_device", v.data_types, v.data_descriptions)
-                for k, v in evt_device.registered_events_types.items()}
+    evt_peripheral.registered_events_types = {
+                k : EventType(v.name + "_peripheral",
+                              v.data_types, v.data_descriptions)
+                for k, v in evt_peripheral.registered_events_types.items()}
 
-    all_registered_events_types = evt_device.registered_events_types.copy()
-    all_registered_events_types.update(evt_dongle.registered_events_types)
+    all_registered_events_types = evt_peripheral.registered_events_types.copy()
+    all_registered_events_types.update(evt_central.registered_events_types)
 
-    result_events = EventsData(evt_device.events + evt_dongle.events,
+    result_events = EventsData(evt_peripheral.events + evt_central.events,
                                all_registered_events_types)
 
     result_events.write_data_to_files(args.result_dataset + ".csv",
