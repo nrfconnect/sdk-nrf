@@ -137,6 +137,10 @@ config SPM_NRF_SAADC_NS
 	bool "SAADC is Non-Secure"
 	default y
 
+config SPM_NRF_WDT_NS
+	bool "WDT is Non-Secure"
+	default y
+
 config SPM_NRF_PWM0_NS
 	bool "PWM0 is Non-Secure"
 	default y
