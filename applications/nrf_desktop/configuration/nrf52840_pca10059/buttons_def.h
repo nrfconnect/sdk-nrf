@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include "buttons.h"
+#include "gpio_pins.h"
 
 /* This configuration file is included only once from button module and holds
  * information about pins forming keyboard matric.
@@ -15,12 +15,8 @@
  */
 const struct {} buttons_def_include_once;
 
-static const char * const port_map[] = {
-	DT_GPIO_P1_DEV_NAME
-};
+static const struct gpio_pin col[] = {};
 
-static const struct button col[] = {};
-
-static const struct button row[] = {
-	{ .port = 0, .pin = DT_ALIAS_SW0_GPIOS_PIN },
+static const struct gpio_pin row[] = {
+	{ .port = 1, .pin = DT_ALIAS_SW0_GPIOS_PIN },
 };

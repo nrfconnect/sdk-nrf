@@ -13,7 +13,7 @@
 #include <misc/util.h>
 
 #include "key_id.h"
-#include "buttons.h"
+#include "gpio_pins.h"
 #include "buttons_def.h"
 
 #include "event_manager.h"
