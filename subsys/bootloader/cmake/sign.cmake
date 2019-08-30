@@ -65,7 +65,7 @@ endif ()
 
 foreach (slot ${slots})
   set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)
-  set(sign_depends ${slot}_hex)
+  set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex;${slot}_hex)
   set(to_sign ${PROJECT_BINARY_DIR}/${slot}.hex)
   set(hash_file ${GENERATED_PATH}/${slot}_firmware.sha256)
   set(signature_file ${GENERATED_PATH}/${slot}_firmware.signature)
@@ -145,6 +145,8 @@ foreach (slot ${slots})
     --magic-value "${VALIDATION_INFO_MAGIC}"
     DEPENDS
     ${SIGN_KEY_FILE_DEPENDS}
+    ${signature_file}
+    ${slot}_signature_file_target
     WORKING_DIRECTORY
     ${PROJECT_BINARY_DIR}
     COMMENT
