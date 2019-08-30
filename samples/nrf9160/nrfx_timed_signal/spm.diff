@@ -1,0 +1,33 @@
+diff --git a/subsys/spm/spm.c b/subsys/spm/spm.c
+index ec00037..b4e4807 100644
+--- a/subsys/spm/spm.c
++++ b/subsys/spm/spm.c
+@@ -271,6 +271,11 @@ static int spm_config_peripheral(u8_t id, bool dma_present)
+ 	return 0;
+ }
+ 
++void spm_dppi_configure(u32_t mask) 
++{
++	NRF_SPU->DPPI[0].PERM = (mask & 0x0000FFFF);
++}
++
+ static void spm_config_peripherals(void)
+ {
+ 	struct periph_cfg {
+@@ -309,13 +314,15 @@ static void spm_config_peripherals(void)
+ 		PERIPH("NRF_FPU", NRF_FPU_S, CONFIG_SPM_NRF_FPU_NS),
+ 		PERIPH("NRF_EGU1", NRF_EGU1_S, CONFIG_SPM_NRF_EGU1_NS),
+ 		PERIPH("NRF_EGU2", NRF_EGU2_S, CONFIG_SPM_NRF_EGU2_NS),
+-
++		PERIPH("NRF_DPPIC", NRF_DPPIC, 1),
+ 		PERIPH("NRF_GPIOTE1", NRF_GPIOTE1_NS,
+ 				      CONFIG_SPM_NRF_GPIOTE1_NS),
+ 	};
+ 
+ 	PRINT("Peripheral\t\tDomain\t\tStatus\n");
+ 
++	spm_dppi_configure(0x0000);
++
+ 	if (IS_ENABLED(CONFIG_SPM_NRF_P0_NS)) {
+ 		/* Configure GPIO pins to be Non-Secure */
+ 		NRF_SPU->GPIOPORT[0].PERM = 0;
