@@ -5,7 +5,7 @@ def AGENT_LABELS = lib_Main.getAgentLabels(JOB_NAME)
 def IMAGE_TAG    = lib_Main.getDockerImage(JOB_NAME)
 def TIMEOUT      = lib_Main.getTimeout(JOB_NAME)
 def INPUT_STATE  = lib_Main.getInputState(JOB_NAME)
-def CI_STATE = new HashMap()
+def CI_STATE     = new HashMap()
 
 pipeline {
 
@@ -13,6 +13,7 @@ pipeline {
        booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
        booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: true)
        booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
+       string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: INPUT_STATE)
   }
 
@@ -20,37 +21,38 @@ pipeline {
     docker {
       image IMAGE_TAG
       label AGENT_LABELS
-      args '-e PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/workdir/.local/bin'
     }
   }
 
   options {
     checkoutToSubdirectory('nrf')
+    parallelsAlwaysFailFast()
     timeout(time: TIMEOUT.time, unit: TIMEOUT.unit)
   }
 
   triggers {
-    cron(env.BRANCH_NAME == 'master' ? '0 */4 * * 1-7' : '') // Only master will be build periodically
+    cron(env.BRANCH_NAME == 'master' ? '0 */12 * * 1-7' : '') // Only master will be build periodically
   }
 
   environment {
-      // ENVs for check-compliance
       GH_TOKEN = credentials('nordicbuilder-compliance-token') // This token is used to by check_compliance to comment on PRs and use checks
       GH_USERNAME = "NordicBuilder"
       COMPLIANCE_ARGS = "-r NordicPlayground/fw-nrfconnect-nrf"
-
-      // Build all custom samples that match the ci_build tag
-      SANITYCHECK_OPTIONS = "--board-root $WORKSPACE/nrf/boards --testcase-root $WORKSPACE/nrf/samples --testcase-root $WORKSPACE/nrf/applications --build-only --disable-unrecognized-section-test -t ci_build --inline-logs"
       ARCH = "-a arm"
-      LC_ALL = "C.UTF-8"
-
-      // ENVs for building (triggered by sanitycheck)
       ZEPHYR_TOOLCHAIN_VARIANT = 'gnuarmemb'
       GNUARMEMB_TOOLCHAIN_PATH = '/workdir/gcc-arm-none-eabi-7-2018-q2-update'
+
+      SANITYCHECK_OPTIONS_COMMON = '''--board-root nrf/boards \
+                                      --board-root zephyr/boards \
+                                      --testcase-root nrf/samples \
+                                      --testcase-root nrf/applications \
+                                      --inline-logs --disable-unrecognized-section-test \
+                                   '''
   }
 
   stages {
-    stage('Load') { steps { script { CI_STATE = lib_Stage.load('NRF') }}}
+    stage('Load') { steps { script { CI_STATE = lib_Stage.load('NRF') }}
+    }
     stage('Checkout') {
       steps { script {
         lib_Main.cloneCItools(JOB_NAME)
@@ -100,73 +102,36 @@ pipeline {
             finally {
               junit 'compliance.xml'
               archiveArtifacts artifacts: 'compliance.xml'
+              lib_Main.storeArtifacts("compliance", 'compliance.xml', 'NRF', CI_STATE)
             }
           }
         }
       }
     }
-    stage('Build samples') {
+    stage('Run Sanity Check') {
       when { expression { CI_STATE.NRF.RUN_BUILD } }
-      steps {
-        println "CI_STATE.NRF.RUN_BUILD = " + CI_STATE.NRF.RUN_BUILD
-        // Create a folder to store artifacts in
-        sh 'mkdir artifacts'
-
-        // Build all the samples
-        dir('zephyr') {
-          sh "source zephyr-env.sh && ./scripts/sanitycheck $SANITYCHECK_OPTIONS"
-        }
-        script {
-          /* Rename the nrf52 desktop samples */
-          sh "mkdir artifacts/nrf_desktop"
-          desktop_platforms = ['nrf52840_pca20041', 'nrf52_pca20037', 'nrf52840_pca10059']
-          for(int i=0; i<desktop_platforms.size(); i++) {
-            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.hex"
-            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}.hex")
-            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test/zephyr/zephyr.elf"
-            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}.elf")
-            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_zrelease/zephyr/zephyr.hex"
-            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZRelease.hex")
-            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_zrelease/zephyr/zephyr.elf"
-            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZRelease.elf")
-            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_debug_mcuboot/zephyr/merged.hex"
-            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZDebugMCUBoot.hex")
-            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_debug_mcuboot/zephyr/update.bin"
-            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZDebugMCUBoot_update.bin")
-            file_path = "zephyr/sanity-out/${desktop_platforms[i]}/nrf_desktop/test_debug_mcuboot/zephyr/zephyr.elf"
-            check_and_store_sample("$file_path", "nrf_desktop/nrf_desktop_${desktop_platforms[i]}_ZDebugMCUBoot.elf")
-            sh "tar -zcvf artifacts/nrf_desktop.tar.gz artifacts/nrf_desktop"
-          }
-
-          /* Rename the nrf9160 samples */
-          samples = ['spm']
-          for(int i=0; i<samples.size(); i++)
-          {
-            file_path = "zephyr/sanity-out/nrf9160_pca10090/nrf9160/${samples[i]}/test_build/zephyr/zephyr.hex"
-            check_and_store_sample("$file_path", "${samples[i]}_nrf9160_pca10090.hex")
-          }
-          ns_samples = ['lte_ble_gateway', 'at_client']
-          for(int i=0; i<ns_samples.size(); i++)
-          {
-            file_path = "zephyr/sanity-out/nrf9160_pca10090ns/nrf9160/${ns_samples[i]}/test_build/zephyr/zephyr.hex"
-            check_and_store_sample("$file_path", "${ns_samples[i]}_nrf9160_pca10090ns.hex")
-          }
-          ns_apps = ['asset_tracker']
-          for(int i=0; i<ns_apps.size(); i++)
-          {
-            file_path = "zephyr/sanity-out/nrf9160_pca10090ns/${ns_apps[i]}/test_build/zephyr/zephyr.hex"
-            check_and_store_sample("$file_path", "${ns_apps[i]}_nrf9160_pca10090ns.hex")
-          }
-        }
-        archiveArtifacts allowEmptyArchive: true, artifacts: 'artifacts/*.hex,artifacts/*.tar.gz'
-      }
+      steps { script {
+        SANITYCHECK_OPTIONS = """ $SANITYCHECK_OPTIONS_COMMON \
+                                  --tag ci_build \
+                              """
+        PLATFORM_ARGS = lib_Main.getPlatformArgs(CI_STATE.NRF.PLATFORMS)
+        SANITYCHECK_CMD = "./zephyr/scripts/sanitycheck $SANITYCHECK_OPTIONS $PLATFORM_ARGS"
+        FULL_SANITYCHECK_CMD = """
+          source zephyr/zephyr-env.sh && \
+          $SANITYCHECK_CMD || \
+          (sleep 10; $SANITYCHECK_CMD --only-failed --outdir=out-2nd-pass) || \
+          (sleep 10; $SANITYCHECK_CMD --only-failed --outdir=out-3rd-pass)
+        """
+        println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
+        sh FULL_SANITYCHECK_CMD
+      } }
     }
     stage('Trigger Downstream Jobs') {
       when { expression { CI_STATE.NRF.RUN_DOWNSTREAM } }
-      steps {
-        script {
+      steps { script {
           CI_STATE.NRF.WAITING = true
           def DOWNSTREAM_JOBS = lib_Main.getDownStreamJobs(JOB_NAME)
+          println 'DOWNSTREAM_JOBS: ' + DOWNSTREAM_JOBS
           def jobs = [:]
           DOWNSTREAM_JOBS.each {
             jobs["${it}"] = {
@@ -175,8 +140,13 @@ pipeline {
             }
           }
           parallel jobs
-        }
-      }
+      } }
+    }
+    stage('Report') {
+      when { expression { CI_STATE.NRF.RUN_TESTS } }
+      steps { script {
+          println 'no report generation yet'
+      } }
     }
   }
   post {
@@ -205,25 +175,3 @@ pipeline {
     }
   }
 }
-
-
-
-/**
-  * Copy files to artifacts dir if they exist
-  *
-  * @param path path
-  * @param new_name new_name
-  *
-  */
-def check_and_store_sample(path, new_name) {
-  script {
-    if (fileExists(file_path)) {
-      sh "cp ${path} artifacts/${new_name}"
-    }
-    else {
-      echo "Build for ${new_name} failed"
-      currentBuild.result = 'FAILURE'
-    }
-  }
-}
-
