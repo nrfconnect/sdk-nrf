@@ -403,6 +403,10 @@ static void init_fn(void)
 {
 	/* Setup GPIO configuration */
 	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
+		if (!port_map[i]) {
+			/* Skip non-existing ports */
+			continue;
+		}
 		gpio_devs[i] = device_get_binding(port_map[i]);
 		if (!gpio_devs[i]) {
 			LOG_ERR("Cannot get GPIO device binding");
@@ -412,6 +416,7 @@ static void init_fn(void)
 
 	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
 		__ASSERT_NO_MSG(col[i].port < ARRAY_SIZE(port_map));
+		__ASSERT_NO_MSG(gpio_devs[col[i].port] != NULL);
 
 		int err = gpio_pin_configure(gpio_devs[col[i].port],
 					     col[i].pin, GPIO_DIR_IN);
@@ -448,6 +453,10 @@ static void init_fn(void)
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
+		if (!port_map[i]) {
+			/* Skip non-existing ports */
+			continue;
+		}
 		gpio_init_callback(&gpio_cb[i], button_pressed_isr, pin_mask[i]);
 		err = gpio_add_callback(gpio_devs[i], &gpio_cb[i]);
 		if (err) {
