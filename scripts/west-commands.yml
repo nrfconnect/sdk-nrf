@@ -1,0 +1,10 @@
+# Keep the help strings in sync with the values in the .py files!
+west-commands:
+  - file: scripts/west_commands/ncs_commands.py
+    commands:
+      - name: ncs-loot
+        class: NcsLoot
+        help: list out of tree unreverted NCS patches
+      - name: ncs-compare
+        class: NcsCompare
+        help: compare upstream manifest with NCS
