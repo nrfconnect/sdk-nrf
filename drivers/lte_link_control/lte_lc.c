@@ -19,6 +19,10 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define LC_MAX_READ_LENGTH 128
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
+#if defined(CONFIG_BSD_LIBRARY_TRACE_ENABLED)
+/* Enable modem trace */
+static const char mdm_trace[] = "AT%XMODEMTRACE=1,2";
+#endif
 /* Subscribes to notifications with level 2 */
 static const char subscribe[] = "AT+CEREG=2";
 
@@ -26,6 +30,11 @@ static const char subscribe[] = "AT+CEREG=2";
 /* Lock LTE bands 3, 4, 13 and 20 (volatile setting) */
 static const char lock_bands[] = "AT%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK
 				 "\"";
+#endif
+#if defined(CONFIG_LTE_LOCK_PLMN)
+/* Lock PLMN */
+static const char lock_plmn[] = "AT+COPS=1,2,\""
+				 CONFIG_LTE_LOCK_PLMN_STRING"\"";
 #endif
 /* Request eDRX settings to be used */
 static const char edrx_req[] = "AT+CEDRXS=1,"CONFIG_LTE_EDRX_REQ_ACTT_TYPE
@@ -47,9 +56,15 @@ static const char offline[] = "AT+CFUN=4";
 /* Successful return from modem */
 #if defined(CONFIG_LTE_NETWORK_MODE_NBIOT)
 /* Set network mode to Narrowband-IoT */
+static const char network_mode[] = "AT%XSYSTEMMODE=0,1,0,0";
+#elif defined(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)
+/* Set network mode to Narrowband-IoT and GPS */
 static const char network_mode[] = "AT%XSYSTEMMODE=0,1,1,0";
 #elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M)
 /* Set network mode to LTE-M */
+static const char network_mode[] = "AT%XSYSTEMMODE=1,0,0,0";
+#elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)
+/* Set network mode to LTE-M and GPS*/
 static const char network_mode[] = "AT%XSYSTEMMODE=1,0,1,0";
 #endif
 /* Accepted network statuses read from modem */
@@ -61,6 +76,9 @@ static struct k_sem link;
 
 #if defined(CONFIG_LTE_PDP_CMD) && defined(CONFIG_LTE_PDP_CONTEXT)
 static const char cgdcont[] = "AT+CGDCONT="CONFIG_LTE_PDP_CONTEXT;
+#endif
+#if defined(CONFIG_LTE_PDN_AUTH_CMD) && defined(CONFIG_LTE_PDN_AUTH)
+static const char cgauth[] = "AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
 #endif
 #if defined(CONFIG_LTE_LEGACY_PCO_MODE)
 static const char legacy_pco[] = "AT%XEPCO=0";
@@ -86,6 +104,11 @@ static int w_lte_lc_init(void)
 		return -EIO;
 	}
 #endif
+#if defined(CONFIG_BSD_LIBRARY_TRACE_ENABLED)
+	if (at_cmd_write(mdm_trace, NULL, 0, NULL) != 0) {
+		return -EIO;
+	}
+#endif
 	if (at_cmd_write(subscribe, NULL, 0, NULL) != 0) {
 		return -EIO;
 	}
@@ -95,6 +118,14 @@ static int w_lte_lc_init(void)
 	 * Has to be done every time before activating the modem.
 	 */
 	if (at_cmd_write(lock_bands, NULL, 0, NULL) != 0) {
+		return -EIO;
+	}
+#endif
+#if defined(CONFIG_LTE_LOCK_PLMN)
+	/* Set Operator (volatile setting).
+	 * Has to be done every time before activating the modem.
+	 */
+	if (at_cmd_write(lock_plmn, NULL, 0, NULL) != 0) {
 		return -EIO;
 	}
 #endif
@@ -108,7 +139,13 @@ static int w_lte_lc_init(void)
 	if (at_cmd_write(cgdcont, NULL, 0, NULL) != 0) {
 		return -EIO;
 	}
-	LOG_INF("PDP Context: %s", cgdcont);
+	LOG_INF("PDP Context: %s", log_strdup(cgdcont));
+#endif
+#if defined(CONFIG_LTE_PDN_AUTH_CMD)
+	if (at_cmd_write(cgauth, NULL, 0, NULL) != 0) {
+		return -EIO;
+	}
+	LOG_INF("PDN Auth: %s", log_strdup(cgauth));
 #endif
 
 	return 0;
