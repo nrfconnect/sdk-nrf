@@ -189,12 +189,11 @@ static int stop_motion(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-SHELL_CREATE_STATIC_SUBCMD_SET(sub_motion_sim)
-{
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_motion_sim,
 	SHELL_CMD(start, NULL, "Start motion", start_motion),
 	SHELL_CMD(stop, NULL, "Stop motion", stop_motion),
 	SHELL_SUBCMD_SET_END
-};
+);
 
 SHELL_CMD_REGISTER(motion_sim, &sub_motion_sim,
 		   "Simulated motion commands", NULL);
