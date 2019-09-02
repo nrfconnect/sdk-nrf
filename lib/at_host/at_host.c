@@ -204,17 +204,34 @@ static void isr(struct device *dev)
 static int at_uart_init(char *uart_dev_name)
 {
 	int err;
+	u8_t dummy;
 
 	uart_dev = device_get_binding(uart_dev_name);
 	if (uart_dev == NULL) {
 		LOG_ERR("Cannot bind %s\n", uart_dev_name);
 		return -EINVAL;
 	}
-	err = uart_err_check(uart_dev);
-	if (err) {
-		LOG_ERR("UART check failed\n");
-		return -EINVAL;
-	}
+
+	u32_t start_time = k_uptime_get_32();
+
+	/* Wait for the UART line to become valid */
+	do {
+		err = uart_err_check(uart_dev);
+		if (err) {
+			if (k_uptime_get_32() - start_time >
+			    CONFIG_AT_HOST_UART_INIT_TIMEOUT) {
+				return -EIO;
+			}
+
+			LOG_ERR("UART check failed: %d. "
+				"Dropping buffer and retrying.", err);
+
+			while (uart_fifo_read(uart_dev, &dummy, 1)) {
+				/* Do nothing with the data */
+			}
+			k_sleep(10);
+		}
+	} while (err);
 
 	uart_irq_callback_set(uart_dev, isr);
 	return err;
