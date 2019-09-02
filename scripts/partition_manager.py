@@ -16,8 +16,8 @@ PERMITTED_STR_KEYS = ['size']
 
 
 def remove_item_not_in_list(list_to_remove_from, list_to_check):
-    [list_to_remove_from.remove(x) for x in list_to_remove_from.copy() if x not in list_to_check and x is not 'app']
-
+    to_remove = [x for x in list_to_remove_from.copy() if x not in list_to_check and x is not 'app']
+    list(map(list_to_remove_from.remove, to_remove))
 
 def item_is_placed(d, item, after_or_before):
     assert(after_or_before in ['after', 'before'])
@@ -27,7 +27,6 @@ def item_is_placed(d, item, after_or_before):
 
 def remove_irrelevant_requirements(reqs):
     # Remove dependencies to partitions which are not present
-    to_delete = list()
     for k, v in reqs.items():
         for before_after in ['before', 'after']:
             if 'placement' in v.keys() and before_after in v['placement'].keys():
@@ -52,11 +51,10 @@ def remove_irrelevant_requirements(reqs):
             if not v['share_size']:
                 del v['share_size']
                 if 'size' not in v.keys():
-                    # The partition has no size, delete it
-                    to_delete.append(k)
-
-    for x in to_delete:
-        del reqs[x]
+                    # The partition has no size, delete it, and rerun this function with the new reqs.
+                    del reqs[k]
+                    remove_irrelevant_requirements(reqs)
+                    return
 
 
 def get_images_which_need_resolving(reqs, sub_partitions):
@@ -122,31 +120,51 @@ def extract_sub_partitions(reqs):
     keys_to_delete = list()
 
     for key, value in reqs.items():
-        if 'inside' in value.keys():
-            reqs[value['inside'][0]]['span'].append(key)
         if 'span' in value.keys():
             sub_partitions[key] = value
-            sub_partitions[key]['orig_span'] = sub_partitions[key]['span'].copy() # Take a "backup" of the span.
             keys_to_delete.append(key)
-
-    # "Flatten" by changing all span lists to contain the innermost partitions.
-    done = False
-    while not done:
-        done = True
-        for name, req in reqs.items():
-            if 'span' in req.keys():
-                assert len(req['span']) > 0, "partition {} is empty".format(name)
-                for part in req['span']:
-                    if 'span' in reqs[part].keys():
-                        req['span'].extend(reqs[part]['span'])
-                        req['span'].remove(part)
-                        req['span'] = list(set(req['span']))  # remove duplicates
-                        done = False
 
     for key in keys_to_delete:
         del reqs[key]
 
     return sub_partitions
+
+def solve_inside(reqs, sub_partitions):
+    for key, value in reqs.items():
+        if 'inside' in value.keys():
+            sub_partitions[value['inside'][0]]['span'].append(key)
+
+
+def clean_sub_partitions(reqs, sub_partitions):
+    keys_to_delete = list()
+    new_deletion = True
+
+    # Remove empty partitions and partitions containing only empty partitions.
+    while new_deletion:
+        new_deletion = False
+        for key, value in sub_partitions.items():
+            if (len(value['span']) == 0) or all(x in keys_to_delete for x in value['span']):
+                if key not in keys_to_delete:
+                    keys_to_delete.append(key)
+                    new_deletion = True
+
+    for key in keys_to_delete:
+        del sub_partitions[key]
+
+    # "Flatten" by changing all span lists to contain the innermost partitions.
+    done = False
+    while not done:
+        done = True
+        for key, value in sub_partitions.items():
+            assert len(value['span']) > 0, "partition {} is empty".format(key)
+            value['orig_span'] = value['span'].copy() # Take a "backup" of the span.
+            for part in (part for part in value['span'] if part in sub_partitions):
+                value['span'].extend(sub_partitions[part]['span'])
+                value['span'].remove(part)
+                value['span'] = list(set(value['span']))  # remove duplicates
+                done = False
+            for part in (part for part in value['span'] if part not in sub_partitions and part not in reqs):
+                value['span'].remove(part)
 
 
 def convert_str_to_list(with_str):
@@ -161,10 +179,13 @@ def convert_str_to_list(with_str):
 def resolve(reqs):
     convert_str_to_list(reqs)
     solution = list(['app'])
+
     remove_irrelevant_requirements(reqs)
     sub_partitions = extract_sub_partitions(reqs)
-    unsolved = get_images_which_need_resolving(reqs, sub_partitions)
+    solve_inside(reqs, sub_partitions)
+    clean_sub_partitions(reqs, sub_partitions)
 
+    unsolved = get_images_which_need_resolving(reqs, sub_partitions)
     solve_first_last(reqs, unsolved, solution)
     while unsolved:
         solve_direction(reqs, sub_partitions, unsolved, solution, 'before')
@@ -382,6 +403,10 @@ def expect_addr_size(td, name, expected_address, expected_size):
         assert td[name]['address'] == expected_address, \
             "Address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['address'], expected_address, pformat(td))
 
+def expect_list(expected, actual):
+    expected_list = list(sorted(expected))
+    actual_list = list(sorted(actual))
+    assert sorted(expected_list) == sorted(actual_list), "Expected list %s, was %s" % (str(expected_list), str(actual_list))
 
 def test():
     list_one = [1, 2, 3, 4]
@@ -576,6 +601,26 @@ def test():
     expect_addr_size(td, 'spu', 150, None)
     expect_addr_size(td, 'app', 250, 650)
     expect_addr_size(td, 'provision', 900, None)
+
+    # Test #1 for removal of empty container partitions.
+    td = {'a': {'share_size': 'does_not_exist'}, # a should be removed
+          'b': {'span': 'a'}, # b through d should be removed because a is removed
+          'c': {'span': 'b'},
+          'd': {'span': 'c'},
+          'e': {'placement': {'before': ['end']}}}
+    s, sub = resolve(td)
+    expect_list(['e', 'app'], s)
+    expect_list([], sub)
+
+    # Test #2 for removal of empty container partitions.
+    td = {'a': {'share_size': 'does_not_exist'}, # a should be removed
+          'b': {'span': 'a'}, # b should not be removed, since d is placed inside it.
+          'c': {'placement': {'after': ['start']}},
+          'd': {'inside': ['does_not_exist', 'b'], 'placement': {'after': ['c']}}}
+    s, sub = resolve(td)
+    expect_list(['c', 'd', 'app'], s)
+    expect_list(['b'], sub)
+    expect_list(['d'], sub['b']['orig_span']) # Backup must contain edits.
 
     print("All tests passed!")
 
