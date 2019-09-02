@@ -6,11 +6,9 @@
 
 import argparse
 import yaml
-import re
 from os import path
 import sys
 from pprint import pformat
-
 
 PERMITTED_STR_KEYS = ['size']
 
@@ -18,6 +16,7 @@ PERMITTED_STR_KEYS = ['size']
 def remove_item_not_in_list(list_to_remove_from, list_to_check):
     to_remove = [x for x in list_to_remove_from.copy() if x not in list_to_check and x is not 'app']
     list(map(list_to_remove_from.remove, to_remove))
+
 
 def item_is_placed(d, item, after_or_before):
     assert(after_or_before in ['after', 'before'])
@@ -219,8 +218,7 @@ def get_size_source(reqs, sharer):
     return size_source
 
 
-def set_shared_size(reqs, sub_partitions, total_size):
-    all_reqs = dict(reqs, **sub_partitions)
+def set_shared_size(all_reqs, total_size):
     for req in all_reqs.keys():
         if 'share_size' in all_reqs[req].keys():
             size_source = get_size_source(all_reqs, req)
@@ -230,11 +228,10 @@ def set_shared_size(reqs, sub_partitions, total_size):
             all_reqs[req]['share_size'] = [size_source]
 
     new_sizes = dict()
-    dynamic_size_sharers = [k for k,v in all_reqs.items() if 'share_size' in v.keys()
-                                                              and (v['share_size'][0] == 'app'
-                                                                  or ('span' in all_reqs[v['share_size'][0]].keys()
-                                                                      and 'app' in all_reqs[v['share_size'][0]]['span']))]
-    static_size_sharers  = [k for k,v in all_reqs.items() if 'share_size' in v.keys() and k not in dynamic_size_sharers]
+
+    # Find all partitions which share size with 'app' or a container partition which spans 'app'.
+    dynamic_size_sharers = get_dependent_partitions(all_reqs, 'app')
+    static_size_sharers = [k for k, v in all_reqs.items() if 'share_size' in v.keys() and k not in dynamic_size_sharers]
     for req in static_size_sharers:
         all_reqs[req]['size'] = shared_size(all_reqs, all_reqs[req]['share_size'][0], total_size)
     for req in dynamic_size_sharers:
@@ -244,22 +241,139 @@ def set_shared_size(reqs, sub_partitions, total_size):
         all_reqs[key]['size'] = value
 
 
+def get_dependent_partitions(all_reqs, target):
+    return [k for k, v in all_reqs.items() if 'share_size' in v.keys()
+            and (v['share_size'][0] == target
+                 or ('span' in all_reqs[v['share_size'][0]].keys()
+                     and target in all_reqs[v['share_size'][0]]['span']))]
+
+
 def app_size(reqs, total_size):
     size = total_size - sum([req['size'] for name, req in reqs.items() if 'size' in req.keys() and name is not 'app'])
     return size
 
 
-def set_addresses(reqs, sub_partitions, solution, size, start=0):
-    set_shared_size(reqs, sub_partitions, size)
+def verify_layout(reqs, solution, total_size):
+    # Verify no overlap, that all flash is assigned, and that the total amount of flash
+    # assigned corresponds to the total size available.
+    expected_address = reqs[solution[0]]['size']
+    for p in solution[1:]:
+        actual_address = reqs[p]['address']
+        if actual_address != expected_address:
+            raise RuntimeError("Error when inspecting {}, invalid address {}".format(p, actual_address))
+        expected_address += reqs[p]['size']
+    last = reqs[solution[-1]]
+    assert last['address'] + last['size'] == total_size
 
+
+def set_addresses_and_align(reqs, sub_partitions, solution, size, start=0):
+    all_reqs = dict(reqs, **sub_partitions)
+    set_shared_size(all_reqs, size)
+    dynamic_partitions = ['app']
+    dynamic_partitions += get_dependent_partitions(all_reqs, 'app')
     reqs['app']['size'] = app_size(reqs, size)
-
-    # First image starts at 0, or at start of dynamic area if static configuration is given.
     reqs[solution[0]]['address'] = start
-    for i in range(1, len(solution)):
+    _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions)
+    verify_layout(reqs, solution, size)
+
+
+def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions):
+    # Perform address assignment and alignment in two steps, first from start to app, and the from end to app.
+    for i in range(1, solution.index('app') + 1):
         current = solution[i]
         previous = solution[i - 1]
+
         reqs[current]['address'] = reqs[previous]['address'] + reqs[previous]['size']
+
+        if align_if_required(i, dynamic_partitions, True, reqs, solution):
+            _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions)
+
+    for i in range(len(solution) - 1, solution.index('app'), -1):
+        current = solution[i]
+
+        if i == len(solution) - 1:
+            reqs[current]['address'] = size - reqs[current]['size']
+        else:
+            higher_partition = solution[i + 1]
+            reqs[current]['address'] = reqs[higher_partition]['address'] - reqs[current]['size']
+
+        if align_if_required(i, dynamic_partitions, False, reqs, solution):
+            _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions)
+
+
+def align_if_required(i, dynamic_partitions, move_up, reqs, solution):
+    current = solution[i]
+    if 'placement' in reqs[current] and 'align' in reqs[current]['placement']:
+        required_offset = align_partition(current, reqs, move_up, dynamic_partitions)
+        if required_offset:
+            solution_index = i if move_up else i + 1
+            solution.insert(solution_index, required_offset)
+            return True
+    return False
+
+
+def align_partition(current, reqs, move_up, dynamic_partitions):
+    required_offset = get_required_offset(align=reqs[current]['placement']['align'], start=reqs[current]['address'],
+                                          size=reqs[current]['size'], move_up=move_up)
+    if not required_offset:
+        return None
+
+    empty_partition_size = required_offset
+
+    if current not in dynamic_partitions:
+        if move_up:
+            empty_partition_address = reqs[current]['address']
+            reqs[current]['address'] += required_offset
+        else:
+            empty_partition_address = reqs[current]['address'] + reqs[current]['size']
+            reqs[current]['address'] -= required_offset
+    elif not move_up:
+        empty_partition_address, empty_partition_size = \
+            align_dynamic_partition(dynamic_partitions, current, reqs, required_offset)
+    else:
+        raise RuntimeError("Invalid combination, can not have dynamic partition in front of app with alignment")
+
+    e = 'EMPTY_{}'.format(len([x for x in reqs.keys() if 'EMPTY' in x]))
+    reqs[e] = {'address': empty_partition_address,
+               'size': empty_partition_size,
+               'placement': {'before' if move_up else 'after': [current]}}
+
+    if current not in dynamic_partitions:
+        # We have stolen space from the 'app' partition. Hence, all partitions which share size with 'app' partition
+        # must have their sizes reduced. Note that the total amount of 'stealing' is divided between the partitions
+        # sharing size with app (including 'app' itself).
+        for p in dynamic_partitions:
+            reqs[p]['size'] = reqs[p]['size'] - (reqs[e]['size'] // len(dynamic_partitions))
+
+    return e
+
+
+def align_dynamic_partition(app_dep_parts, current, reqs, required_offset):
+    # Since this is a dynamic partition, the introduced empty partition will take space from the 'app' partition
+    # and the partition being aligned. Take special care to ensure the offset becomes correct.
+    required_offset *= 2
+    for p in app_dep_parts:
+        reqs[p]['size'] -= required_offset // 2
+    reqs[current]['address'] -= required_offset
+    empty_partition_address = reqs[current]['address'] + reqs[current]['size']
+    empty_partition_size = required_offset
+    return empty_partition_address, empty_partition_size
+
+
+def get_required_offset(align, start, size, move_up):
+    if len(align) != 1 or ('start' not in align and 'end' not in align):
+        raise RuntimeError("Invalid alignment requirement {}".format(align))
+
+    end = start + size
+    align_start = 'start' in align
+
+    if (align_start and start % align['start'] == 0) or (not align_start and end % align['end'] == 0):
+        return 0
+
+    if move_up:
+        return align['start'] - (start % align['start']) if align_start else align['end'] - (end % align['end'])
+    else:
+        return start % align['start'] if align_start else end % align['end']
 
 
 def set_size_addr(entry, size, address):
@@ -330,7 +444,7 @@ def get_pm_config(input_config, flash_size, static_config):
             return static_config
 
     solution, sub_partitions = resolve(to_resolve)
-    set_addresses(to_resolve, sub_partitions, solution, free_size, start)
+    set_addresses_and_align(to_resolve, sub_partitions, solution, free_size, start)
     set_sub_partition_address_and_size(to_resolve, sub_partitions)
 
     if static_config:
@@ -452,13 +566,110 @@ def test():
     assert (start == 10)
     assert (size == 100 - 10)
 
+    # Test a single partition with alignment where the address is smaller than the alignment value.
+    td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},
+          'with_alignment': {'placement': {'before': 'app', 'align': {'start': 200}}, 'size': 100},
+          'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'EMPTY_0', 100, 100)
+    expect_addr_size(td, 'with_alignment', 200, 100)
+
+    # Test alignment after 'app'
+    td = {'without_alignment': {'placement': {'after': 'app'}, 'size': 100},
+          'with_alignment': {'placement': {'after': 'without_alignment', 'align': {'start': 400}}, 'size': 100},
+          'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'app', 0, 700)
+    expect_addr_size(td, 'with_alignment', 800, 100)
+    expect_addr_size(td, 'EMPTY_0', 900, 100)
+
+    # Test two partitions with alignment where the address is smaller than the alignment value.
+    td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},
+          'with_alignment': {'placement': {'before': 'with_alignment_2', 'align': {'end': 400}}, 'size': 100},
+          'with_alignment_2': {'placement': {'before': 'app', 'align': {'start': 1000}}, 'size': 100},
+          'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 10000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'EMPTY_0', 100, 200)
+    expect_addr_size(td, 'with_alignment', 300, 100)
+    expect_addr_size(td, 'EMPTY_1', 400, 600)
+    expect_addr_size(td, 'with_alignment_2', 1000, 100)
+
+    # Test three partitions with alignment where the address is BIGGER than the alignment value.
+    td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 10000},
+          'with_alignment': {'placement': {'before': 'with_alignment_2', 'align': {'end': 400}}, 'size': 100},
+          'with_alignment_2': {'placement': {'before': 'app', 'align': {'start': 1000}}, 'size': 100},
+          'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 10000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'EMPTY_0', 10000, 300)
+    expect_addr_size(td, 'with_alignment', 10300, 100)
+    expect_addr_size(td, 'EMPTY_1', 10400, 600)
+    expect_addr_size(td, 'with_alignment_2', 11000, 100)
+
+
+    '''
+    FLASH (0x100000):
+    +------------------------------------------+
+    | 0x0: b0 (0x8000)                         |
+    +---0x8000: s0 (0xc200)--------------------+
+    | 0x8000: s0_pad (0x200)                   |
+    +---0x8200: s0_image (0xc000)--------------+
+    | 0x8200: mcuboot (0xc000)                 |
+    | 0x14200: EMPTY_0 (0xe00)                 |
+    +---0x15000: s1 (0xc200)-------------------+
+    | 0x15000: s1_pad (0x200)                  |
+    | 0x15200: s1_image (0xc000)               |
+    | 0x21200: EMPTY_1 (0xe00)                 |
+    +---0x22000: mcuboot_primary (0x5d000)-----+
+    | 0x22000: mcuboot_pad (0x200)             |
+    +---0x22200: mcuboot_primary_app (0x5ce00)-+
+    | 0x22200: app (0x5ce00)                   |
+    | 0x7f000: mcuboot_secondary (0x5d000)     |
+    | 0xdc000: EMPTY_2 (0x1000)                |
+    | 0xdd000: mcuboot_scratch (0x1e000)       |
+    | 0xfb000: mcuboot_storage (0x4000)        |
+    | 0xff000: provision (0x1000)              |
+    +------------------------------------------+
+    '''
+    # Verify that alignment works with partition which shares size with app.
+    td = {'b0': {'placement': {'after': 'start'}, 'size': 0x8000},
+          's0': {'span': ['s0_pad', 's0_image']},
+          's0_pad': {'placement': {'after': 'b0', 'align': {'start': 0x1000}}, 'share_size': 'mcuboot_pad'},
+          's0_image': {'span': {'one_of': ['mcuboot', 'spm', 'app']}},
+          'mcuboot': {'placement': {'before': 'mcuboot_primary'}, 'size': 0xc000},
+          's1': {'span': ['s1_pad', 's1_image']},
+          's1_pad': {'placement': {'after': 's0', 'align': {'start': 0x1000}}, 'share_size': 'mcuboot_pad'},
+          's1_image': {'placement': {'after': 's1_pad'}, 'share_size': 'mcuboot'},
+          'mcuboot_primary': {'span': ['mcuboot_pad', 'mcuboot_primary_app']},
+          'mcuboot_pad': {'placement': {'before': 'mcuboot_primary_app', 'align': {'start': 0x1000}}, 'size': 0x200},
+          'mcuboot_primary_app': {'span': ['app']},
+          'app': {},
+          'mcuboot_secondary': {'placement': {'after': 'mcuboot_primary', 'align': {'start': 0x1000}}, 'share_size': 'mcuboot_primary'},
+          'mcuboot_scratch': {'placement': {'after': 'app', 'align': {'start': 0x1000}}, 'size': 0x1e000},
+          'mcuboot_storage': {'placement': {'after': 'mcuboot_scratch', 'align': {'start': 0x1000}}, 'size': 0x4000},
+          'provision': {'placement': {'before': 'end', 'align': {'start': 0x1000}}, 'size': 0x1000}}
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 0x100000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'EMPTY_0', 0x14200, 0xe00)
+    expect_addr_size(td, 'EMPTY_1', 0x21200, 0xe00)
+    expect_addr_size(td, 'EMPTY_2', 0xdc000, 0x1000)
+    assert td['mcuboot_secondary']['size'] == td['mcuboot_primary']['size']
+
     # Verify that if a partition X uses 'share_size' with a non-existing partition, then partition X is given size 0,
     # and is hence not created.
     td = {'should_not_exist': {'placement': {'before': 'exists'}, 'share_size': 'does_not_exist'},
           'exists': {'placement': {'before': 'app'}, 'size': 100},
           'app': {}}
     s, sub_partitions = resolve(td)
-    set_addresses(td, sub_partitions, s, 1000)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
     set_sub_partition_address_and_size(td, sub_partitions)
     assert 'should_not_exist' not in td.keys()
 
@@ -468,7 +679,7 @@ def test():
           'exists': {'placement': {'before': 'app'}, 'size': 100},
           'app': {}}
     s, sub_partitions = resolve(td)
-    set_addresses(td, sub_partitions, s, 1000)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
     set_sub_partition_address_and_size(td, sub_partitions)
     expect_addr_size(td, 'should_exist', 0, 200)
 
@@ -476,7 +687,7 @@ def test():
           'mcuboot': {'placement': {'before': ['spm', 'app']}, 'size': 200},
           'app': {}}
     s, sub_partitions = resolve(td)
-    set_addresses(td, sub_partitions, s, 1000)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
     set_sub_partition_address_and_size(td, sub_partitions)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 200, None)
@@ -487,7 +698,7 @@ def test():
           'mcuboot_slot0': {'span': ['app']},
           'app': {}}
     s, sub_partitions = resolve(td)
-    set_addresses(td, sub_partitions, s, 1000)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
     set_sub_partition_address_and_size(td, sub_partitions)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 200, 100)
@@ -504,7 +715,7 @@ def test():
           'mcuboot_slot2': {'share_size': 'mcuboot_slot1', 'placement': {'after': 'mcuboot_slot1'}},
           'app': {}}
     s, sub_partitions = resolve(td)
-    set_addresses(td, sub_partitions, s, 1000)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
     set_sub_partition_address_and_size(td, sub_partitions)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 210, None)
@@ -525,7 +736,7 @@ def test():
           'mcuboot_slot2': {'share_size': ['mcuboot_slot1'], 'placement': {'after': ['mcuboot_slot1']}},
           'app': {}}
     s, sub_partitions = resolve(td)
-    set_addresses(td, sub_partitions, s, 1000)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
     set_sub_partition_address_and_size(td, sub_partitions)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spm', 210, None)
@@ -550,7 +761,7 @@ def test():
         'k': {'span': []},
         'app': {}}
     s, sub_partitions = resolve(td)
-    set_addresses(td, {}, s, 1000)
+    set_addresses_and_align(td, {}, s, 1000)
     set_sub_partition_address_and_size(td, sub_partitions)
     expect_addr_size(td, 'a', 0, None)
     expect_addr_size(td, 'b', 100, None)
@@ -569,14 +780,14 @@ def test():
           'b0': {'placement': {'before': ['mcuboot', 'app']}, 'size': 100},
           'app': {}}
     s, _ = resolve(td)
-    set_addresses(td, {}, s, 1000)
+    set_addresses_and_align(td, {}, s, 1000)
     expect_addr_size(td, 'b0', 0, None)
     expect_addr_size(td, 'mcuboot', 100, None)
     expect_addr_size(td, 'app', 300, 700)
 
     td = {'b0': {'placement': {'before': ['mcuboot', 'app']}, 'size': 100}, 'app': {}}
     s, _ = resolve(td)
-    set_addresses(td, {}, s, 1000)
+    set_addresses_and_align(td, {}, s, 1000)
     expect_addr_size(td, 'b0', 0, None)
     expect_addr_size(td, 'app', 100, 900)
 
@@ -584,7 +795,7 @@ def test():
           'mcuboot': {'placement': {'before': ['spu', 'app']}, 'size': 200},
           'app': {}}
     s, _ = resolve(td)
-    set_addresses(td, {}, s, 1000)
+    set_addresses_and_align(td, {}, s, 1000)
     expect_addr_size(td, 'mcuboot', 0, None)
     expect_addr_size(td, 'spu', 200, None)
     expect_addr_size(td, 'app', 300, 700)
@@ -595,7 +806,7 @@ def test():
           'spu': {'placement': {'before': ['app']}, 'size': 100},
           'app': {}}
     s, _ = resolve(td)
-    set_addresses(td, {}, s, 1000)
+    set_addresses_and_align(td, {}, s, 1000)
     expect_addr_size(td, 'b0', 0, None)
     expect_addr_size(td, 'mcuboot', 50, None)
     expect_addr_size(td, 'spu', 150, None)
