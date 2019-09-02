@@ -388,6 +388,12 @@ int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
 		LOG_ERR("Invalid attribute");
 		return -EINVAL;
 	}
+	if (!bt_uuid_cmp(descriptor->uuid, BT_UUID_GATT_PRIMARY) ||
+	    !bt_uuid_cmp(descriptor->uuid, BT_UUID_GATT_CHRC)    ||
+	    !bt_uuid_cmp(descriptor->uuid, BT_UUID_GATT_CCC)) {
+		LOG_ERR("Wrong function used for special attribute allocation");
+		return -EINVAL;
+	}
 	if (gp->svc.attr_count >= gp->attr_array_size) {
 		LOG_ERR("No space left on given svc");
 		return -ENOSPC;
