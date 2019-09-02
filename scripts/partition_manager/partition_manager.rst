@@ -94,8 +94,7 @@ span: list OR dict: list
    Partitions with this property are container partitions.
    Therefore, this property cannot be used together with the ``placement`` property.
 
-   The Partition Manager fails if a span is empty or if the partitions are not consecutive after processing.
-   Non-existing partitions are ignored.
+   Non-existing partitions are removed from the ``span`` list before processing, and partitions with empty ``span`` lists are removed altogether (unless filled via ``inside``).
 
    .. note::
       You can specify configurations with an ambiguous ordering (see the following examples).
