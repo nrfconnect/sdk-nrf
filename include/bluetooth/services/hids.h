@@ -153,6 +153,21 @@ struct bt_gatt_hids_inp_rep {
 	/** Report data offset. */
 	u8_t offset;
 
+	/** Report permissions
+	 *
+	 * Use GATT attribute permission bit field values here.
+	 * As input report can only be read only 3 flags are used:
+	 * - BT_GATT_PERM_READ
+	 * - BT_GATT_PERM_READ_ENCRYPT
+	 * - BT_GATT_PERM_READ_AUTHEN
+	 *
+	 * If no attribute is chosen, the configured default is used.
+	 *
+	 * The CCC register would have set the proper permissions for read and
+	 * write, based on the read permissions for the whole report.
+	 */
+	u8_t perm;
+
 	/** Pointer to report mask. The least significant bit
 	 * corresponds to the least significant byte of the report value.
 	 * If this bit is set to 1 then the first byte of report is stored.
@@ -187,6 +202,21 @@ struct bt_gatt_hids_outp_feat_rep {
 
 	/** Index in the service attribute array. */
 	u8_t att_ind;
+
+	/** Report permissions
+	 *
+	 * Use GATT attribute permission bit field values here.
+	 * Different permissions may be used for write and read:
+	 * - BT_GATT_PERM_READ
+	 * - BT_GATT_PERM_READ_ENCRYPT
+	 * - BT_GATT_PERM_READ_AUTHEN
+	 * - BT_GATT_PERM_WRITE
+	 * - BT_GATT_PERM_WRITE_ENCRYPT
+	 * - BT_GATT_PERM_WRITE_AUTHEN
+	 *
+	 * If no attribute is chosen, the configured default is used.
+	 */
+	u8_t perm;
 
 	/** Callback with updated report data. */
 	bt_gatt_hids_rep_handler_t handler;

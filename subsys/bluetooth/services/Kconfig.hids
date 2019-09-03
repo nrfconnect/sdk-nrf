@@ -48,6 +48,25 @@ config BT_GATT_HIDS_FEATURE_REP_MAX
 	help
 	  Maximum number of HIDS Feature Reports that can be set for HIDS.
 
+choice
+	prompt "Default permissions used for HID attributes"
+	default BT_GATT_HIDS_DEFAULT_PERM_RW
+	help
+	  Default permissions for HID characteristic attributes
+	  used when no permission is set for the report.
+	  Used also for boot reports.
+
+config BT_GATT_HIDS_DEFAULT_PERM_RW
+	bool "Read and write allowed"
+
+config BT_GATT_HIDS_DEFAULT_PERM_RW_ENCRYPT
+	bool "Require encryption for access"
+
+config BT_GATT_HIDS_DEFAULT_PERM_RW_AUTHEN
+	bool "Require encryption using authenticated link-key for access"
+
+endchoice
+
 module = BT_GATT_HIDS
 module-str = HIDS
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

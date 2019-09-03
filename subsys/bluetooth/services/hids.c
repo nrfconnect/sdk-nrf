@@ -24,6 +24,32 @@
 
 #define BOOT_MOUSE_INPUT_REPORT_MIN_SIZE 3
 
+#define GATT_PERM_READ_MASK     (BT_GATT_PERM_READ | \
+				 BT_GATT_PERM_READ_ENCRYPT | \
+				 BT_GATT_PERM_READ_AUTHEN)
+#define GATT_PERM_WRITE_MASK    (BT_GATT_PERM_WRITE | \
+				 BT_GATT_PERM_WRITE_ENCRYPT | \
+				 BT_GATT_PERM_WRITE_AUTHEN)
+
+#ifndef CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW_AUTHEN
+#define CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW_AUTHEN 0
+#endif
+#ifndef CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW_ENCRYPT
+#define CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW_ENCRYPT 0
+#endif
+#ifndef CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW
+#define CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW 0
+#endif
+
+#define HIDS_GATT_PERM_DEFAULT ( \
+	CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW_AUTHEN ?                 \
+	(BT_GATT_PERM_READ_AUTHEN | BT_GATT_PERM_WRITE_AUTHEN) :     \
+	CONFIG_BT_GATT_HIDS_DEFAULT_PERM_RW_ENCRYPT ?                \
+	(BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT) :   \
+	(BT_GATT_PERM_READ | BT_GATT_PERM_WRITE)                     \
+	)
+
+
 LOG_MODULE_REGISTER(bt_gatt_hids, CONFIG_BT_GATT_HIDS_LOG_LEVEL);
 
 /* HID Protocol modes. */
@@ -738,6 +764,18 @@ hids_input_reports_register(struct bt_gatt_hids *hids_obj,
 	for (size_t i = 0; i < hids_obj->inp_rep_group.cnt; i++) {
 		struct bt_gatt_hids_inp_rep *hids_inp_rep =
 		    &hids_obj->inp_rep_group.reports[i];
+		u8_t rperm = hids_inp_rep->perm & GATT_PERM_READ_MASK;
+		u8_t wperm;
+
+		if (rperm == 0) {
+			rperm = HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK;
+		}
+		wperm = ((rperm & BT_GATT_PERM_READ) ?
+				BT_GATT_PERM_WRITE : 0) |
+			((rperm & BT_GATT_PERM_READ_ENCRYPT) ?
+				BT_GATT_PERM_WRITE_ENCRYPT : 0) |
+			((rperm & BT_GATT_PERM_READ_AUTHEN) ?
+				BT_GATT_PERM_WRITE_AUTHEN : 0);
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_REPORT,
@@ -750,11 +788,11 @@ hids_input_reports_register(struct bt_gatt_hids *hids_obj,
 		BT_GATT_POOL_DESC(
 		    &hids_obj->gp,
 		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
-				       BT_GATT_PERM_READ,
+				       rperm,
 				       hids_inp_rep_read, NULL, hids_inp_rep));
 
 		BT_GATT_POOL_CCC(&hids_obj->gp, hids_inp_rep->ccc,
-				 hids_input_report_ccc_changed);
+				 hids_input_report_ccc_changed, wperm | rperm);
 		BT_GATT_POOL_DESC(
 		    &hids_obj->gp,
 		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF,
@@ -778,6 +816,14 @@ static void hids_outp_reports_register(struct bt_gatt_hids *hids_obj,
 	for (size_t i = 0; i < hids_obj->outp_rep_group.cnt; i++) {
 		struct bt_gatt_hids_outp_feat_rep *hids_outp_rep =
 		    &hids_obj->outp_rep_group.reports[i];
+		u8_t perm = hids_outp_rep->perm;
+
+		if (0 == (perm & GATT_PERM_READ_MASK)) {
+			perm |= HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK;
+		}
+		if (0 == (perm & GATT_PERM_WRITE_MASK)) {
+			perm |= HIDS_GATT_PERM_DEFAULT & GATT_PERM_WRITE_MASK;
+		}
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_REPORT,
@@ -790,8 +836,7 @@ static void hids_outp_reports_register(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_DESC(
 		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
-				       (BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT, perm,
 				       hids_outp_rep_read, hids_outp_rep_write,
 				       hids_outp_rep));
 		BT_GATT_POOL_DESC(
@@ -818,6 +863,14 @@ static void hids_feat_reports_register(struct bt_gatt_hids *hids_obj,
 	for (size_t i = 0; i < hids_obj->feat_rep_group.cnt; i++) {
 		struct bt_gatt_hids_outp_feat_rep *hids_feat_rep =
 		    &hids_obj->feat_rep_group.reports[i];
+		u8_t perm = hids_feat_rep->perm;
+
+		if (0 == (perm & GATT_PERM_READ_MASK)) {
+			perm |= HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK;
+		}
+		if (0 == (perm & GATT_PERM_WRITE_MASK)) {
+			perm |= HIDS_GATT_PERM_DEFAULT & GATT_PERM_WRITE_MASK;
+		}
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_REPORT,
@@ -829,8 +882,7 @@ static void hids_feat_reports_register(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_DESC(
 		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
-				       (BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT, perm,
 				       hids_feat_rep_read, hids_feat_rep_write,
 				       hids_feat_rep));
 		BT_GATT_POOL_DESC(
@@ -904,14 +956,16 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_DESC(
 		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
-				       BT_GATT_PERM_READ,
-				       hids_boot_mouse_inp_report_read, NULL,
-				       &hids_obj->boot_mouse_inp_rep));
+		    BT_GATT_DESCRIPTOR(
+			BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
+			HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
+			hids_boot_mouse_inp_report_read, NULL,
+			&hids_obj->boot_mouse_inp_rep));
 
 		BT_GATT_POOL_CCC(&hids_obj->gp,
 				 hids_obj->boot_mouse_inp_rep.ccc,
-				 hids_boot_mouse_inp_rep_ccc_changed);
+				 hids_boot_mouse_inp_rep_ccc_changed,
+				 HIDS_GATT_PERM_DEFAULT);
 	}
 
 	/* Register HID Boot Keyboard Input/Output Report characteristic, its
@@ -930,14 +984,16 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_DESC(
 		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_BOOT_KB_IN_REPORT,
-				       BT_GATT_PERM_READ,
-				       hids_boot_kb_inp_report_read, NULL,
-				       &hids_obj->boot_kb_inp_rep));
+		    BT_GATT_DESCRIPTOR(
+			BT_UUID_HIDS_BOOT_KB_IN_REPORT,
+			HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
+			hids_boot_kb_inp_report_read, NULL,
+			&hids_obj->boot_kb_inp_rep));
 
 		BT_GATT_POOL_CCC(&hids_obj->gp,
 				 hids_obj->boot_kb_inp_rep.ccc,
-				 hids_boot_kb_inp_rep_ccc_changed);
+				 hids_boot_kb_inp_rep_ccc_changed,
+				 HIDS_GATT_PERM_DEFAULT);
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
@@ -952,7 +1008,7 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 		BT_GATT_POOL_DESC(
 		    &hids_obj->gp,
 		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
-				       (BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+				       HIDS_GATT_PERM_DEFAULT,
 				       hids_boot_kb_outp_report_read,
 				       hids_boot_kb_outp_report_write,
 				       &hids_obj->boot_kb_outp_rep));
