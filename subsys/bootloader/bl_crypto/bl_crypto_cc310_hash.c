@@ -41,6 +41,16 @@ static u32_t __noinit ram_buffer
 	[RAM_BUFFER_LEN_WORDS]; /* Not stack allocated because of its size. */
 
 
+static inline void *memcpy32(void *restrict d, const void *restrict s, size_t n)
+{
+	size_t len_words = ROUND_UP(n, 4) / 4;
+
+	for (size_t i = 0; i < len_words; i++) {
+		((u32_t *)d)[i] = ((u32_t *)s)[i];
+	}
+	return d;
+}
+
 int crypto_init_hash(void)
 {
 	return cc310_bl_init();
