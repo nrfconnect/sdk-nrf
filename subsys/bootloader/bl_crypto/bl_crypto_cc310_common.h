@@ -15,6 +15,4 @@ void cc310_bl_backend_enable(void);
 
 void cc310_bl_backend_disable(void);
 
-void *memcpy32(void *d, const void *s, size_t n);
-
 #endif
