@@ -5,18 +5,16 @@
  */
 
 #include <zephyr/types.h>
+#include <errno.h>
 #include <toolchain.h>
 #include <misc/util.h>
+#include <misc/printk.h>
 #include <nrf.h>
-#include <errno.h>
 #include <pm_config.h>
 #include "bootloader.h"
-#include "bl_crypto.h"
-#include "fw_metadata.h"
-#include <misc/printk.h>
-
+#include <bl_crypto.h>
+#include <fw_metadata.h>
 #include <fprotect.h>
-
 #include <provision.h>
 #ifdef CONFIG_UART_NRFX
 #ifdef CONFIG_UART_0_NRF_UART
@@ -25,6 +23,7 @@
 #include <hal/nrf_uarte.h>
 #endif
 #endif
+
 
 static bool verify_firmware(u32_t address)
 {
@@ -108,11 +107,15 @@ extern u32_t _vector_table_pointer;
 #define VTOR SCB->VTOR
 #endif
 
-static void boot_from(u32_t *address)
+static void boot_from(const struct fw_firmware_info *fw_info)
 {
-	printk("Attempting to boot from address 0x%x.\n\r", (u32_t)address);
+	u32_t *vector_table = (u32_t *)fw_info->firmware_address;
 
-	if (!verify_firmware((u32_t)address)) {
+	printk("Attempting to boot from address 0x%x.\n\r",
+		fw_info->firmware_address);
+
+	if (!verify_firmware(fw_info->firmware_address)) {
+		printk("Failed to validate!\n\r");
 		return;
 	}
 
@@ -134,7 +137,7 @@ static void boot_from(u32_t *address)
 		nvic->ICPR[i] = 0xFFFFFFFF;
 	}
 
-	printk("Booting (0x%x).\r\n", (u32_t)address);
+	printk("Booting (0x%x).\r\n", fw_info->firmware_address);
 
 	uninit_used_peripherals();
 
@@ -154,25 +157,25 @@ static void boot_from(u32_t *address)
 	}
 
 	__DSB(); /* Force Memory Write before continuing */
-	__ISB(); /* Flush and refill pipeline with updated premissions */
+	__ISB(); /* Flush and refill pipeline with updated permissions */
 
-	VTOR = (u32_t)address;
+	VTOR = fw_info->firmware_address;
 
-	fw_abi_provide((u32_t)address);
+	fw_abi_provide(fw_info->firmware_address);
 
 	/* Set MSP to the new address and clear any information from PSP */
-	__set_MSP(address[0]);
+	__set_MSP(vector_table[0]);
 	__set_PSP(0);
 
 	/* Call reset handler. */
-	((void (*)(void))address[1])();
+	((void (*)(void))vector_table[1])();
 	CODE_UNREACHABLE;
 }
 
 void main(void)
 {
-	int err;
-	err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+
 	if (err) {
 		printk("Protect B0 flash failed, cancel startup.\n\r");
 		return;
@@ -183,20 +186,15 @@ void main(void)
 	const struct fw_firmware_info *s0_info = fw_firmware_info_get(s0_addr);
 	const struct fw_firmware_info *s1_info = fw_firmware_info_get(s1_addr);
 
-	if (s0_info != NULL && s1_info != NULL) {
-		if (s0_info->firmware_version >= s1_info->firmware_version) {
-			boot_from((u32_t *)s0_addr);
-		} else {
-			boot_from((u32_t *)s1_addr);
-		}
-	} else if (s0_info != NULL) {
-		boot_from((u32_t *)s0_addr);
-	} else if (s1_info != NULL) {
-		boot_from((u32_t *)s1_addr);
+	if (!s1_info || (s0_info->firmware_version >=
+			 s1_info->firmware_version)) {
+		boot_from(s0_info);
+		boot_from(s1_info);
 	} else {
-		printk("No bootable image found. aborting...\n\r");
-		return;
+		boot_from(s1_info);
+		boot_from(s0_info);
 	}
 
-	CODE_UNREACHABLE;
+	printk("No bootable image found. Aborting boot.\n\r");
+	return;
 }
