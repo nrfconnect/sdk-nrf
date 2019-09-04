@@ -121,8 +121,8 @@ menuconfig IS_SECURE_BOOTLOADER
 
 if IS_SECURE_BOOTLOADER
 
-partition=B0
-partition-size=0x8000
+partition=B0_IMAGE
+partition-size=0x7000
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
 
 menuconfig SECURE_BOOT_DEBUG
