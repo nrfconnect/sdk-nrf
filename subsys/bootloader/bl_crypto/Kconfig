@@ -32,6 +32,7 @@ config SB_HASH_LEN
 
 choice SB_CRYPTO_SIG
 	prompt "Firmware verification Algorithm"
+	default SB_CRYPTO_CLIENT_ECDSA_SECP256R1 if !IS_SECURE_BOOTLOADER
 	default SB_CRYPTO_CC310_ECDSA_SECP256R1 if HAS_HW_NRF_CC310
 	default SB_CRYPTO_OBERON_ECDSA_SECP256R1
 	help
@@ -50,6 +51,13 @@ choice SB_CRYPTO_SIG
 		select SB_ECDSA_SECP256R1
 		help
 		  Hardware implementation of ECDSA with NIST curve secp256r1.
+
+	config SB_CRYPTO_CLIENT_ECDSA_SECP256R1
+		bool "Use another image's ECDSA secp256r1 implementation"
+		select BL_SECP256R1_EXT_API_REQUIRED
+		select SB_ECDSA_SECP256R1
+		help
+		  Using EXT_APIs from fw_info.
 
 	#config SB_CRYPTO_OBERON_RSA_2048
 	#	bool #"Software RSA-PSS 2048-bits"
@@ -71,6 +79,7 @@ endchoice
 
 choice SB_CRYPTO_HASH
 	prompt "Hashing Implementation"
+	default SB_CRYPTO_CLIENT_SHA256 if !IS_SECURE_BOOTLOADER
 	default SB_CRYPTO_CC310_SHA256 if HAS_HW_NRF_CC310
 	default SB_CRYPTO_OBERON_SHA256
 	help
@@ -90,6 +99,12 @@ choice SB_CRYPTO_HASH
 		select SB_SHA256
 		help
 		  Hardware implementation of SHA256.
+
+	config SB_CRYPTO_CLIENT_SHA256
+		bool "Use another image's SHA256 implementation"
+		select SB_SHA256
+		help
+		  Using EXT_APIs from fw_info.
 
 endchoice
 
@@ -115,4 +130,4 @@ flags = 1
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
-endif # SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT
+endif # SECURE_BOOT_CRYPTO
