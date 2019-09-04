@@ -42,7 +42,8 @@ pipeline {
       ZEPHYR_TOOLCHAIN_VARIANT = 'gnuarmemb'
       GNUARMEMB_TOOLCHAIN_PATH = '/workdir/gcc-arm-none-eabi-7-2018-q2-update'
 
-      SANITYCHECK_OPTIONS_COMMON = '''--board-root nrf/boards \
+      SANITYCHECK_OPTIONS_COMMON = '''--ninja \
+                                      --board-root nrf/boards \
                                       --board-root zephyr/boards \
                                       --testcase-root nrf/samples \
                                       --testcase-root nrf/applications \
