@@ -178,14 +178,6 @@ void main(void)
 		return;
 	}
 
-#ifndef CONFIG_SOC_NRF9160
-	err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
-	if (err) {
-		printk("Protect provision data failed, cancel startup.\n\r");
-		return;
-	}
-#endif /* CONFIG_SOC_NRF9160 */
-
 	u32_t s0_addr = s0_address_read();
 	u32_t s1_addr = s1_address_read();
 	const struct fw_firmware_info *s0_info = fw_firmware_info_get(s0_addr);
