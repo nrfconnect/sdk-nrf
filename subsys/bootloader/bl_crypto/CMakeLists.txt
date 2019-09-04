@@ -16,6 +16,8 @@ elseif (CONFIG_SB_CRYPTO_CC310_ECDSA_SECP256R1)
     bl_crypto_cc310_ecdsa.c
     bl_crypto_cc310_common.c
     )
+elseif (CONFIG_SB_CRYPTO_CLIENT_ECDSA_SECP256R1)
+  zephyr_library_sources(../bl_crypto_client/bl_crypto_client.c)
 else()
   message(FATAL_ERROR "No signature implementation chosen for bootloader.")
 endif()
@@ -27,6 +29,8 @@ elseif (CONFIG_SB_CRYPTO_CC310_SHA256)
     bl_crypto_cc310_hash.c
     bl_crypto_cc310_common.c
     )
+elseif (CONFIG_SB_CRYPTO_CLIENT_SHA256)
+  zephyr_library_sources(../bl_crypto_client/bl_crypto_client.c)
 else()
   message(FATAL_ERROR "No hash implementation chosen for bootloader.")
 endif()

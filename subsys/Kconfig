@@ -7,6 +7,8 @@
 
 rsource "bootloader/Kconfig"
 
+rsource "bootloader/bl_crypto/Kconfig"
+
 rsource "bluetooth/Kconfig"
 
 rsource "dfu/Kconfig"

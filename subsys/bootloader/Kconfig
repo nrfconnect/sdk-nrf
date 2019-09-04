@@ -12,17 +12,6 @@ config MCUBOOT_BUILD_S1_VARIANT
 	help
 	  Build upgrade candidate of MCUBoot for alternative slot S1.
 
-config SECURE_BOOT_CRYPTO_CLIENT
-	bool "Include Secure Bootloader crypto client API"
-	imply BL_ROT_VERIFY_EXT_API_REQUIRED
-	imply BL_SHA256_EXT_API_REQUIRED
-	imply BL_SECP256R1_EXT_API_REQUIRED
-	help
-	  Set this option to enable the crypto client API
-	  which gives access to the cryptographic functions
-	  from the secure bootloader. This will only work
-	  when the secure bootloader is enabled.
-
 config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
@@ -165,9 +154,8 @@ config SB_BPROT_IN_DEBUG
 endif # SECURE_BOOT_DEBUG
 endif # IS_SECURE_BOOTLOADER
 
-if IS_SECURE_BOOTLOADER || SECURE_BOOT || SECURE_BOOT_CRYPTO_CLIENT
+if IS_SECURE_BOOTLOADER || SECURE_BOOT
 
-rsource "bl_crypto/Kconfig"
 rsource "bl_validation/Kconfig"
 
 endif
