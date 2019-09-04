@@ -80,10 +80,11 @@ const struct bl_secp256r1_ext_api *get_bl_secp256r1_ext_api(void)
 #endif
 
 #ifdef CONFIG_BL_ROT_VERIFY_EXT_API_REQUIRED
-int bl_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
+int root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
 			 const u8_t *signature, const u8_t *firmware,
-			 const u32_t firmware_len)
+			 const u32_t firmware_len, bool external)
 {
+	(void)external; /* Unused parameter, only for compatibility. */
 	return get_bl_rot_verify_ext_api()->ext_api.bl_root_of_trust_verify(
 		public_key, public_key_hash, signature, firmware, firmware_len);
 }
@@ -114,6 +115,25 @@ int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 {
 	return get_bl_sha256_ext_api()->ext_api.bl_sha256_verify(data, data_len,
 								expected);
+}
+
+int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external)
+{
+	bl_sha256_ctx_t ctx;
+	int retval;
+
+	retval = bl_sha256_init(&ctx);
+	if (retval != 0) {
+		return retval;
+	}
+
+	retval = bl_sha256_update(&ctx, data, data_len);
+	if (retval != 0) {
+		return retval;
+	}
+
+	retval = bl_sha256_finalize(&ctx, hash);
+	return retval;
 }
 #endif
 

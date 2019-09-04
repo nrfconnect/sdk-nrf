@@ -7,9 +7,6 @@
 #include <zephyr/types.h>
 #include <bl_crypto.h>
 #include <fw_info.h>
-#include <assert.h>
-#include <ocrypto_constant_time.h>
-#include "bl_crypto_internal.h"
 
 
 __weak int crypto_init_signing(void)
@@ -34,6 +31,11 @@ int bl_crypto_init(void)
 
 BUILD_ASSERT_MSG(CONFIG_SB_PUBLIC_KEY_HASH_LEN <= CONFIG_SB_HASH_LEN,
 		"Invalid value for SB_PUBLIC_KEY_HASH_LEN.");
+
+#ifndef CONFIG_BL_ROT_VERIFY_EXT_API_REQUIRED
+#include <assert.h>
+#include <ocrypto_constant_time.h>
+#include "bl_crypto_internal.h"
 
 static int verify_truncated_hash(const u8_t *data, u32_t data_len,
 		const u8_t *expected, u32_t hash_len, bool external)
@@ -89,6 +91,13 @@ static int root_of_trust_verify(
 	return verify_signature(firmware, firmware_len, signature, public_key,
 			external);
 }
+#endif
+
+
+int root_of_trust_verify(
+		const u8_t *public_key, const u8_t *public_key_hash,
+		const u8_t *signature, const u8_t *firmware,
+		const u32_t firmware_len, bool external);
 
 
 /* For use by the bootloader. */
@@ -111,10 +120,12 @@ int bl_root_of_trust_verify_external(
 					firmware, firmware_len, true);
 }
 
+#ifndef CONFIG_BL_SHA256_EXT_API_REQUIRED
 int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 {
 	return verify_truncated_hash(data, data_len, expected, CONFIG_SB_HASH_LEN, true);
 }
+#endif
 
 #ifdef CONFIG_BL_ROT_VERIFY_EXT_API_ENABLED
 EXT_API(struct bl_rot_verify_ext_api, bl_rot_verify_ext_api) = {
