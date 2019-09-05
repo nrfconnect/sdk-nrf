@@ -538,29 +538,25 @@ static void notify_hids(const struct ble_peer_event *event)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		if (is_hid_mouse_event(eh)) {
-			send_mouse_report(cast_hid_mouse_event(eh));
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) &&
+	    is_hid_mouse_event(eh)) {
+		send_mouse_report(cast_hid_mouse_event(eh));
 
-			return false;
-		}
+		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
-		if (is_hid_keyboard_event(eh)) {
-			send_keyboard_report(cast_hid_keyboard_event(eh));
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) &&
+	    is_hid_keyboard_event(eh)) {
+		send_keyboard_report(cast_hid_keyboard_event(eh));
 
-			return false;
-		}
+		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
-		if (is_hid_consumer_ctrl_event(eh)) {
-			send_consumer_ctrl_report(
-				cast_hid_consumer_ctrl_event(eh));
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL) &&
+	    is_hid_consumer_ctrl_event(eh)) {
+		send_consumer_ctrl_report(cast_hid_consumer_ctrl_event(eh));
 
-			return false;
-		}
+		return false;
 	}
 
 	if (is_ble_peer_event(eh)) {
@@ -596,14 +592,19 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		if (is_config_fetch_event(eh)) {
-			const struct config_fetch_event *event = cast_config_fetch_event(eh);
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
+	    is_config_fetch_event(eh)) {
+		config_channel_fetch_receive(&cfg_chan,
+					     cast_config_fetch_event(eh));
 
-			config_channel_fetch_receive(&cfg_chan, event);
+		return false;
+	}
 
-			return false;
-		}
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
+	    is_config_event(eh)) {
+		config_channel_event_done(&cfg_chan, cast_config_event(eh));
+
+		return false;
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -619,5 +620,6 @@ EVENT_SUBSCRIBE(MODULE, hid_notification_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_fetch_event);
+EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
 EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);

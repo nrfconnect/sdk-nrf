@@ -462,7 +462,7 @@ static bool event_handler(const struct event_header *eh)
 }
 
 EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, config_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
+EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
