@@ -15,4 +15,5 @@ by creating events understandable by the application.
    click_detector.rst
    motion.rst
    wheel.rst
+   leds.rst
 
