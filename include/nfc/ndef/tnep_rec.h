@@ -219,7 +219,7 @@ int nfc_ndef_tnep_svc_param_payload(
 				min_waiting_time_arg,			\
 				max_waiting_time_exec_arg,		\
 				max_message_size_arg)			\
-	const struct nfc_ndef_tnep_svc_param name =			\
+	struct nfc_ndef_tnep_svc_param name =				\
 	{								\
 		.tnep_version = tnep_version_arg,			\
 		.svc_name_uri_length = svc_name_length_arg,		\
