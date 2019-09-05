@@ -576,7 +576,7 @@ EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE(MODULE, config_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 #endif
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

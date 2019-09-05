@@ -287,10 +287,9 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 			event->store_needed = true;
 			event->id = cfg_chan->frame.event_id;
 
-			atomic_set(&cfg_chan->status, CONFIG_STATUS_SUCCESS);
+			cfg_chan->pending_config_event = event;
 
-			k_delayed_work_cancel(&cfg_chan->timeout);
-			cfg_chan->transaction_active = false;
+			atomic_set(&cfg_chan->status, CONFIG_STATUS_PENDING);
 
 			EVENT_SUBMIT(event);
 		}
@@ -364,6 +363,17 @@ void config_channel_forwarded_receive(struct config_channel_state *cfg_chan,
 				      const struct config_forwarded_event *event)
 {
 	atomic_set(&cfg_chan->status, event->status);
+}
+
+void config_channel_event_done(struct config_channel_state *cfg_chan,
+			       const struct config_event *event)
+{
+	if (event == cfg_chan->pending_config_event) {
+		atomic_set(&cfg_chan->status, CONFIG_STATUS_SUCCESS);
+
+		k_delayed_work_cancel(&cfg_chan->timeout);
+		cfg_chan->transaction_active = false;
+	}
 }
 
 void config_channel_disconnect(struct config_channel_state *cfg_chan)

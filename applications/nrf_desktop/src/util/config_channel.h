@@ -75,6 +75,9 @@ struct config_channel_state {
 
 	/** State of the fetch operation. */
 	struct fetch fetch;
+
+	/** Currently processed config event. */
+	void *pending_config_event;
 };
 
 /** @brief Initialize the configuration channel instance.
@@ -162,6 +165,16 @@ void config_channel_fetch_receive(struct config_channel_state *cfg_chan,
  */
 void config_channel_forwarded_receive(struct config_channel_state *cfg_chan,
 				      const struct config_forwarded_event *event);
+
+/**
+ * @brief Handle the confirmation that a configuration event is processed.
+ *
+ * @param cfg_chan Pointer to the configuration channel instance.
+ * @param event    Pointer to the event with status of the forwarded request.
+ *
+ */
+void config_channel_event_done(struct config_channel_state *cfg_chan,
+			       const struct config_event *event);
 
 /**
  * @brief Function for notifying a configuration channel instance that the
