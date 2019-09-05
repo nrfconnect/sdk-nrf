@@ -14,3 +14,4 @@ part of its functionality.
    hid_state.rst
    hids.rst
    usb_state.rst
+   led_state.rst
