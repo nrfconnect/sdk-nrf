@@ -18,6 +18,6 @@ const struct {} click_detector_def_include_once;
 static const struct click_detector_config click_detector_config[] = {
 	{
 		.key_id = 0x0007,
-		.consume_button_event = false,
+		.consume_button_event = true,
 	},
 };

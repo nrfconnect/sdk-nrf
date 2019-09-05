@@ -11,20 +11,18 @@
 
 #define MODULE ble_bond
 #include "module_state_event.h"
-#include "button_event.h"
+#include "click_event.h"
 #include "ble_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 
+#define CONFIRM_TIMEOUT			K_SECONDS(10)
+#define ERASE_ADV_TIMEOUT		K_SECONDS(30)
 
-#define SHORT_CLICK_MAX K_MSEC(500)
-#define LONG_CLICK_MIN  K_MSEC(5000)
+#define PEER_ID_STORAGE_NAME		"peer_id"
+#define BT_ID_LUT_STORAGE_NAME		"bt_lut"
 
-#define OPERATION_TIMEOUT K_SECONDS(30)
-
-#define PEER_ID_STORAGE_NAME "peer_id"
-#define BT_ID_LUT_STORAGE_NAME "bt_lut"
 
 enum state {
 	STATE_DISABLED,
@@ -32,13 +30,6 @@ enum state {
 	STATE_ERASE_PEER,
 	STATE_ERASE_ADV,
 	STATE_SELECT_PEER
-};
-
-enum click {
-	CLICK_NONE,
-	CLICK_SHORT,
-	CLICK_LONG,
-	CLICK_DOUBLE,
 };
 
 struct state_switch {
@@ -77,11 +68,8 @@ static const struct state_switch state_switch[] = {
 
 
 static enum state state;
-static u32_t timestamp;
 static u8_t cur_peer_id;
-
 static u8_t tmp_peer_id;
-static bool button_pressed_on_init;
 
 
 #ifdef CONFIG_BT_PERIPHERAL
@@ -95,10 +83,7 @@ static bool button_pressed_on_init;
 static u8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
 #define TEMP_PEER_ID (CONFIG_BT_MAX_PAIRED - 1)
 
-
 static struct k_delayed_work timeout;
-static struct k_delayed_work single_click;
-static struct k_delayed_work long_click;
 
 
 static u8_t get_bt_stack_peer_id(u8_t id)
@@ -208,8 +193,6 @@ static int shell_remove_peers(const struct shell *shell, size_t argc,
 static void cancel_operation(void)
 {
 	LOG_INF("Cancel peer operation");
-
-	timestamp = 0;
 
 	k_delayed_work_cancel(&timeout);
 
@@ -349,14 +332,6 @@ static void erase_adv_confirm(void)
 	EVENT_SUBMIT(event);
 }
 
-static enum click get_click(u32_t time_diff)
-{
-	if (time_diff < SHORT_CLICK_MAX) {
-		return CLICK_SHORT;
-	}
-	return CLICK_NONE;
-}
-
 static void handle_click(enum click click)
 {
 	if (click != CLICK_NONE) {
@@ -367,12 +342,22 @@ static void handle_click(enum click click)
 					state_switch[i].func();
 				}
 				state = state_switch[i].next_state;
+
 				if (state != STATE_IDLE) {
+					s32_t work_delay;
+
+					if (state == STATE_ERASE_ADV) {
+						work_delay = ERASE_ADV_TIMEOUT;
+					} else {
+						work_delay = CONFIRM_TIMEOUT;
+					}
+
 					k_delayed_work_submit(&timeout,
-							OPERATION_TIMEOUT);
+							      work_delay);
 				} else {
 					k_delayed_work_cancel(&timeout);
 				}
+
 				return;
 			}
 		}
@@ -386,23 +371,6 @@ static void timeout_handler(struct k_work *work)
 	__ASSERT_NO_MSG(state != STATE_DISABLED);
 
 	cancel_operation();
-}
-
-static void single_click_handler(struct k_work *work)
-{
-	handle_click(CLICK_SHORT);
-
-	/* Reset workqueue to make sure cancel will notice work was done. */
-	single_click.work_q = NULL;
-}
-
-static void long_click_handler(struct k_work *work)
-{
-	timestamp = 0;
-	handle_click(CLICK_LONG);
-
-	/* Reset workqueue to make sure cancel will notice work was done. */
-	single_click.work_q = NULL;
 }
 
 static void load_identities(void)
@@ -533,8 +501,6 @@ static int init(void)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)) {
 		k_delayed_work_init(&timeout, timeout_handler);
-		k_delayed_work_init(&single_click, single_click_handler);
-		k_delayed_work_init(&long_click, long_click_handler);
 	}
 
 	load_identities();
@@ -542,47 +508,17 @@ static int init(void)
 	return 0;
 }
 
-static void peer_control_button_process(bool pressed)
-{
-	u32_t cur_time = k_uptime_get();
-
-	if (pressed) {
-		timestamp = cur_time;
-		k_delayed_work_submit(&long_click, LONG_CLICK_MIN);
-	} else {
-		int err = k_delayed_work_cancel(&single_click);
-		bool double_pending = (err != -EINVAL);
-
-		k_delayed_work_cancel(&long_click);
-
-		if (timestamp != 0) {
-			enum click click = get_click(cur_time - timestamp);
-
-			if ((click == CLICK_SHORT) && double_pending) {
-				click = CLICK_DOUBLE;
-			}
-			if (click == CLICK_SHORT) {
-				k_delayed_work_submit(&single_click, SHORT_CLICK_MAX);
-			} else {
-				handle_click(click);
-			}
-		}
-	}
-}
-
-static bool button_event_handler(const struct button_event *event)
+static bool click_event_handler(const struct click_event *event)
 {
 	if (likely(event->key_id != CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON)) {
 		return false;
 	}
 
 	if (likely(state != STATE_DISABLED)) {
-		peer_control_button_process(event->pressed);
-	} else {
-		button_pressed_on_init = event->pressed;
+		handle_click(event->click);
 	}
 
-	return true;
+	return false;
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -604,9 +540,6 @@ static bool event_handler(const struct event_header *eh)
 
 			if (!init()) {
 				module_set_state(MODULE_STATE_READY);
-				if (button_pressed_on_init) {
-					peer_control_button_process(true);
-				}
 			} else {
 				module_set_state(MODULE_STATE_ERROR);
 			}
@@ -660,8 +593,8 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL) &&
-	    is_button_event(eh)) {
-		return button_event_handler(cast_button_event(eh));
+	    is_click_event(eh)) {
+		return click_event_handler(cast_click_event(eh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -673,7 +606,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #if CONFIG_DESKTOP_BLE_PEER_CONTROL
-EVENT_SUBSCRIBE(MODULE, button_event);
+EVENT_SUBSCRIBE(MODULE, click_event);
 #endif
 
 #if CONFIG_SHELL
