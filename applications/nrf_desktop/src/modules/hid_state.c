@@ -1113,6 +1113,6 @@ EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, button_event);
+EVENT_SUBSCRIBE_FINAL(MODULE, button_event);
 EVENT_SUBSCRIBE(MODULE, motion_event);
 EVENT_SUBSCRIBE(MODULE, wheel_event);
