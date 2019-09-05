@@ -466,13 +466,32 @@ int modem_info_string_get(enum modem_info info, char *buf)
 static void modem_info_rsrp_subscribe_handler(char *response)
 {
 	u16_t param_value;
-	int   len = strlen(response);
+	int cmd_len;
+	int err;
 
-	if (is_cesq_notification(response, len)) {
-		modem_info_parse(modem_data[MODEM_INFO_RSRP], response);
-		len = modem_info_short_get(MODEM_INFO_RSRP, &param_value);
-		modem_info_rsrp_cb(param_value);
+	if (!is_cesq_notification(response, strlen(response))) {
+		return;
 	}
+
+	cmd_len = modem_info_remove_cmd(response);
+
+	err = modem_info_parse(modem_data[MODEM_INFO_RSRP],
+			       &response[cmd_len]);
+	if (err != 0) {
+		LOG_ERR("modem_info_parse failed to parse "
+			"CESQ notification, %d", err);
+		return;
+	}
+
+	err = at_params_short_get(&m_param_list,
+				  modem_data[MODEM_INFO_RSRP]->param_index,
+				  &param_value);
+	if (err != 0) {
+		LOG_ERR("Failed to obtain RSRP value, %d", err);
+		return;
+	}
+
+	modem_info_rsrp_cb(param_value);
 }
 
 int modem_info_rsrp_register(rsrp_cb_t cb)
