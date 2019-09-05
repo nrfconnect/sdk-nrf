@@ -152,6 +152,12 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_PDN_AF:
 			*nrf_out_optname = NRF_SO_PDN_AF;
 			break;
+		case SO_PDN_CONTEXT_ID:
+			*nrf_out_optname = NRF_SO_PDN_CONTEXT_ID;
+			break;
+		case SO_PDN_STATE:
+			*nrf_out_optname = NRF_SO_PDN_STATE;
+			break;
 		default:
 			retval = -1;
 			break;
