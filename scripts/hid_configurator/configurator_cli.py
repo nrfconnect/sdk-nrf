@@ -25,6 +25,9 @@ def perform_dfu(dev, args):
     success = dfu_transfer(dev, recipient, dfu_image, progress_bar)
 
     if success:
+        success = fwreboot(dev, recipient)
+
+    if success:
         print('DFU transfer completed')
     else:
         print('DFU transfer failed')
