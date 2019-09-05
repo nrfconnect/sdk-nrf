@@ -183,6 +183,20 @@ config SPM_NRF_WDT_NS
 	default n
 endmenu
 
+config SPM_NRF_DPPIC_NS
+	bool "DPPIC is Non-Secure"
+	default y
+
+config SPM_NRF_DPPIC_PERM_MASK
+	hex "Set DPPIC PERM mask for Non-secure"
+	default 0x0000FFFF
+	depends on SPM_NRF_DPPIC_NS
+	help
+	  The input mask is a mirror of the permission bits set in
+	  register SPU.DPPI.PERM[] to allow non-secure application to
+	  control DPPIC per the given input mask.
+	  The default value is to allow all DPPI channels to non-secure region.
+
 endif # IS_SPM
 
 endmenu
