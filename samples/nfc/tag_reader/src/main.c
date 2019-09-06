@@ -16,7 +16,8 @@
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/t2t/parser.h>
 #include <nfc/t4t/isodep.h>
-#include <nfc/t4t/apdu.h>
+#include <nfc/t4t/hl_procedure.h>
+#include <sys/byteorder.h>
 
 #define NFCA_BD 128
 #define BITS_IN_BYTE 8
@@ -33,6 +34,7 @@
 #define NFC_T4T_ISODEP_FSD 256
 #define NFC_T4T_ISODEP_RX_DATA_MAX_SIZE 1024
 #define NFC_T4T_APDU_MAX_SIZE 1024
+#define TAG_TYPE_4_NLEN_FIELD_SIZE 2
 
 #define NFC_TX_DATA_LEN NFC_T4T_ISODEP_FSD
 #define NFC_RX_DATA_LEN NFC_T4T_ISODEP_FSD
@@ -42,9 +44,6 @@
 #define TAG_TYPE_2_DATA_AREA_SIZE_OFFSET (NFC_T2T_CC_BLOCK_OFFSET + 2)
 #define TAG_TYPE_2_BLOCKS_PER_EXCHANGE (T2T_MAX_DATA_EXCHANGE / NFC_T2T_BLOCK_SIZE)
 
-#define NFC_T4T_APDU_APP_SELECT_DATA  {0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01}
-#define NFC_T4T_APDU_RSP_ALL 256
-
 #define TRANSMIT_DELAY 3000
 #define ALL_REQ_DELAY 2000
 
@@ -53,6 +52,8 @@ static u8_t rx_data[NFC_RX_DATA_LEN];
 
 static struct k_poll_event events[ST25R3911B_NFCA_EVENT_CNT];
 static struct k_delayed_work transmit_work;
+
+NFC_T4T_CC_DESC_DEF(t4t_cc, MAX_TLV_BLOCKS);
 
 static struct st25r3911b_nfca_buf tx_buf = {
 	.data = tx_data,
@@ -84,7 +85,8 @@ struct t2t_tag {
 
 struct t4t_tag {
 	u8_t data[NFC_T4T_ISODEP_RX_DATA_MAX_SIZE];
-	u8_t apdu_raw[NFC_T4T_APDU_MAX_SIZE];
+	u8_t ndef[MAX_TLV_BLOCKS][NFC_T4T_APDU_MAX_SIZE];
+	u8_t tlv_index;
 };
 
 static enum nfc_tag_type tag_type;
@@ -103,7 +105,7 @@ static void nfc_tag_detect(bool all_request)
 
 	err = st25r3911b_nfca_tag_detect(cmd);
 	if (err) {
-		printk("Tag detect error: %d\n", err);
+		printk("Tag detect error: %d.\n", err);
 	}
 }
 
@@ -115,31 +117,6 @@ static int ftd_calculate(u8_t *data, size_t len)
 		NFCA_FDT_ALIGN_84 : NFCA_FDT_ALIGN_20;
 
 	return len * NFCA_BD * BITS_IN_BYTE + ftd_align;
-}
-
-static int nfc_t4t_tag_app_select(void)
-{
-	int err;
-	struct nfc_t4t_apdu_comm apdu_comm;
-	u16_t len = sizeof(t4t.apdu_raw);
-	u8_t t4t_app_name[] = NFC_T4T_APDU_APP_SELECT_DATA;
-
-	nfc_t4t_apdu_comm_clear(&apdu_comm);
-
-	apdu_comm.instruction = NFC_T4T_APDU_COMM_INS_SELECT;
-	apdu_comm.parameter = NFC_T4T_APDU_SELECT_BY_NAME;
-	apdu_comm.data.buff = t4t_app_name;
-	apdu_comm.data.len = sizeof(t4t_app_name);
-	apdu_comm.resp_len = NFC_T4T_APDU_RSP_ALL;
-
-	err = nfc_t4t_apdu_comm_encode(&apdu_comm,
-				       t4t.apdu_raw,
-				       &len);
-	if (err) {
-		return err;
-	}
-
-	return nfc_t4t_isodep_transmit(t4t.apdu_raw, len);
 }
 
 static int nfc_t2t_read_block_cmd_make(u8_t *tx_data,
@@ -305,7 +282,7 @@ static void transfer_handler(struct k_work *work)
 
 static void nfc_field_on(void)
 {
-	printk("NFC field on\n");
+	printk("NFC field on.\n");
 
 	nfc_tag_detect(false);
 }
@@ -313,7 +290,7 @@ static void nfc_field_on(void)
 static void nfc_timeout(bool tag_sleep)
 {
 	if (tag_sleep) {
-		printk("Tag sleep or no detected, sending ALL Request\n");
+		printk("Tag sleep or no detected, sending ALL Request.\n");
 	} else if (tag_type == NFC_TAG_TYPE_T4T) {
 		nfc_t4t_isodep_on_timeout();
 
@@ -330,19 +307,19 @@ static void nfc_timeout(bool tag_sleep)
 
 static void nfc_field_off(void)
 {
-	printk("NFC field off\n");
+	printk("NFC field off.\n");
 }
 
 static void tag_detected(const struct st25r3911b_nfca_sens_resp *sens_resp)
 {
-	printk("Anticollision: 0x%x Platform: 0x%x\n",
+	printk("Anticollision: 0x%x Platform: 0x%x.\n",
 		sens_resp->anticollison,
 		sens_resp->platform_info);
 
 	int err = st25r3911b_nfca_anticollision_start();
 
 	if (err) {
-		printk("Anticollision error: %d\n", err);
+		printk("Anticollision error: %d.\n", err);
 	}
 }
 
@@ -357,7 +334,7 @@ static void anticollision_completed(const struct st25r3911b_nfca_tag_info *tag_i
 		return;
 	}
 
-	printk("Tag info, type: %d\n", tag_info->type);
+	printk("Tag info, type: %d.\n", tag_info->type);
 
 	if (tag_info->type == ST25R3911B_NFCA_TAG_TYPE_T2T) {
 		printk("Type 2 Tag.\n");
@@ -392,7 +369,7 @@ static void anticollision_completed(const struct st25r3911b_nfca_tag_info *tag_i
 static void transfer_completed(const u8_t *data, size_t len, int err)
 {
 	if (err) {
-		printk("NFC Transfer error: %d\n", err);
+		printk("NFC Transfer error: %d.\n", err);
 		return;
 	}
 
@@ -444,7 +421,7 @@ static void t4t_isodep_selected(const struct nfc_t4t_isodep_tag *t4t_tag)
 		printk("Unsupported bitrate divisor by Reader/Writer.\n");
 	}
 
-	err = nfc_t4t_tag_app_select();
+	err = nfc_t4t_hl_procedure_ndef_tag_app_select();
 	if (err) {
 		printk("NFC T4T app select err %d.\n", err);
 		return;
@@ -453,7 +430,7 @@ static void t4t_isodep_selected(const struct nfc_t4t_isodep_tag *t4t_tag)
 
 static void t4t_isodep_error(int err)
 {
-	printk("ISO-DEP Protocol error %d\n.", err);
+	printk("ISO-DEP Protocol error %d.\n", err);
 
 	nfc_tag_detect(false);
 }
@@ -467,47 +444,164 @@ static void t4t_isodep_data_send(u8_t *data, size_t data_len, u32_t ftd)
 
 	err = st25r3911b_nfca_transfer_with_crc(&tx_buf, &rx_buf, ftd);
 	if (err) {
-		printk("NFC T4T ISO-DEP transfer error: %d\n.", err);
+		printk("NFC T4T ISO-DEP transfer error: %d.\n", err);
 	}
 }
 
 static void t4t_isodep_received(const u8_t *data, size_t data_len)
 {
 	int err;
-	struct nfc_t4t_apdu_resp apdu_resp;
 
-	nfc_t4t_apdu_resp_clear(&apdu_resp);
-
-	err = nfc_t4t_apdu_resp_decode(&apdu_resp, data, data_len);
+	err = nfc_t4t_hl_procedure_on_data_received(data, data_len);
 	if (err) {
-		printk("NFC APDU data decode err %d.\n", err);
-		return;
+		printk("NFC Type 4 Tag HL data received error: %d.\n", err);
 	}
+}
 
-	if (apdu_resp.status == NFC_T4T_APDU_RAPDU_STATUS_CMD_COMPLETED) {
-		printk("NFC T4T app selected successfully.\n");
-	} else {
-		printk("NFC T4T app not selected.\n");
-	}
-
+static void t4t_isodep_deselected(void)
+{
 	st25r3911b_nfca_tag_sleep();
 
 	k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
-
 }
 
 static const struct nfc_t4t_isodep_cb t4t_isodep_cb = {
 	.selected = t4t_isodep_selected,
+	.deselected = t4t_isodep_deselected,
 	.error = t4t_isodep_error,
 	.ready_to_send = t4t_isodep_data_send,
 	.data_received = t4t_isodep_received
+};
+
+static void t4t_hl_selected(enum nfc_t4t_hl_procedure_select type)
+{
+	int err = 0;
+
+	switch (type) {
+	case NFC_T4T_HL_PROCEDURE_NDEF_APP_SELECT:
+		printk("NFC T4T NDEF Application selected.\n");
+
+		err = nfc_t4t_hl_procedure_cc_select();
+		if (err) {
+			printk("NFC T4T Capability Container select error: %d.\n",
+				err);
+		}
+
+		break;
+
+	case NFC_T4T_HL_PROCEDURE_CC_SELECT:
+		printk("NFC T4T Capability Container file selected.\n");
+
+		err = nfc_t4t_hl_procedure_cc_read(&NFC_T4T_CC_DESC(t4t_cc));
+		if (err) {
+			printk("Capability Container read error: %d.\n", err);
+		}
+
+		break;
+
+	case NFC_T4T_HL_PROCEDURE_NDEF_FILE_SELECT:
+		printk("NFC T4T NDEF file selected.\n");
+
+		err = nfc_t4t_hl_procedure_ndef_read(&NFC_T4T_CC_DESC(t4t_cc),
+						     t4t.ndef[t4t.tlv_index], NFC_T4T_APDU_MAX_SIZE);
+		if (err) {
+			printk("NFC T4T NDEF file read error %d.\n", err);
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
+	if (err) {
+		st25r3911b_nfca_tag_sleep();
+
+		k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
+	}
+}
+
+static void t4t_hl_cc_read(struct nfc_t4t_cc_file *cc)
+{
+	printk("NFC T4T Capability Container file read.\n");
+
+	for (size_t i = 0; i < cc->tlv_count; i++) {
+		int err;
+		struct nfc_t4t_tlv_block *tlv_block = &cc->tlv_block_array[i];
+
+		if ((tlv_block->type == NFC_T4T_TLV_BLOCK_TYPE_NDEF_FILE_CONTROL_TLV) &&
+		    (tlv_block->value.read_access == NFC_T4T_TLV_BLOCK_CONTROL_FILE_READ_ACCESS_GRANTED)) {
+			err = nfc_t4t_hl_procedure_ndef_file_select(tlv_block->value.file_id);
+			if (err) {
+				printk("NFC T4T NDEF file select error: %d.\n", err);
+			}
+
+			return;
+		}
+	}
+
+	printk("No NDEF File TLV in Capability Container.");
+}
+
+static void t4t_hl_ndef_read(u16_t file_id, const u8_t *data, size_t len)
+{
+	int err;
+	struct nfc_t4t_cc_file *cc;
+	struct nfc_t4t_tlv_block *tlv_block;
+
+	printk("NDEF file read, id: 0x%x.\n", file_id);
+
+	t4t.tlv_index++;
+	cc = &NFC_T4T_CC_DESC(t4t_cc);
+
+	for (size_t i = t4t.tlv_index; i < cc->tlv_count; i++) {
+		tlv_block = &cc->tlv_block_array[i];
+
+		if ((tlv_block->type == NFC_T4T_TLV_BLOCK_TYPE_NDEF_FILE_CONTROL_TLV) &&
+		    (tlv_block->value.read_access == NFC_T4T_TLV_BLOCK_CONTROL_FILE_READ_ACCESS_GRANTED)) {
+
+			err = nfc_t4t_hl_procedure_ndef_file_select(tlv_block->value.file_id);
+			if (err) {
+				printk("NFC T4T NDEF file select error: %d.\n", err);
+			}
+
+			return;
+		}
+
+		t4t.tlv_index++;
+	}
+
+	nfc_t4t_cc_file_printout(cc);
+
+	tlv_block = cc->tlv_block_array;
+	for (size_t i = 0; i < cc->tlv_count; i++) {
+		if ((tlv_block[i].type == NFC_T4T_TLV_BLOCK_TYPE_NDEF_FILE_CONTROL_TLV) ||
+		    (tlv_block[i].value.file.content != NULL)) {
+			ndef_data_analyze(tlv_block[i].value.file.content + TAG_TYPE_4_NLEN_FIELD_SIZE,
+					tlv_block[i].value.file.len - TAG_TYPE_4_NLEN_FIELD_SIZE);
+		}
+	}
+
+	t4t.tlv_index = 0;
+
+	err = nfc_t4t_isodep_tag_deselect();
+	if (err) {
+		printk("NFC T4T Deselect error: %d.\n", err);
+	}
+}
+
+static const struct nfc_t4t_hl_procedure_cb t4t_hl_procedure_cb = {
+	.selected = t4t_hl_selected,
+	.cc_read = t4t_hl_cc_read,
+	.ndef_read = t4t_hl_ndef_read
 };
 
 void main(void)
 {
 	int err;
 
-	printk("NFC reader sample started\n");
+	printk("NFC reader sample started.\n");
+	nfc_t4t_hl_procedure_cb_register(&t4t_hl_procedure_cb);
 
 	k_delayed_work_init(&transmit_work, transfer_handler);
 
@@ -515,20 +609,20 @@ void main(void)
 				  t4t.data, sizeof(t4t.data),
 				  &t4t_isodep_cb);
 	if (err) {
-		printk("NFC T4T ISO-DEP Protocol initialization failed err: %d\n",
+		printk("NFC T4T ISO-DEP Protocol initialization failed err: %d.\n",
 		       err);
 		return;
 	}
 
 	err = st25r3911b_nfca_init(events, ARRAY_SIZE(events), &cb);
 	if (err) {
-		printk("NFCA initialization failed err: %d\n", err);
+		printk("NFCA initialization failed err: %d.\n", err);
 		return;
 	}
 
 	err = st25r3911b_nfca_field_on();
 	if (err) {
-		printk("Field on error %d", err);
+		printk("Field on error %d.", err);
 		return;
 	}
 
@@ -536,7 +630,7 @@ void main(void)
 		k_poll(events, ARRAY_SIZE(events), K_FOREVER);
 		err = st25r3911b_nfca_process();
 		if (err) {
-			printk("NFC-A process failed, err: %d\n", err);
+			printk("NFC-A process failed, err: %d.\n", err);
 			return;
 		}
 	}
