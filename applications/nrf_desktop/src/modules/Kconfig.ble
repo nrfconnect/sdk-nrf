@@ -38,6 +38,12 @@ config DESKTOP_BLE_PEER_ERASE
 	bool "Enable peer erase"
 	help
 	  Long click to start erase. Double click to confirm.
+
+config DESKTOP_BLE_PEER_ERASE_ON_START
+	bool "Enable peer erase (on system start)"
+	depends on BT_PERIPHERAL
+	help
+	  Hold dedicated button during system start to erase peer.
 endif
 
 if !DESKTOP_BLE_PEER_CONTROL
