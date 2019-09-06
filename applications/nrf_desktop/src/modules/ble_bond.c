@@ -23,6 +23,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 #define PEER_ID_STORAGE_NAME		"peer_id"
 #define BT_ID_LUT_STORAGE_NAME		"bt_lut"
 
+#define ON_START_CLICK(CLICK)		(CLICK + CLICK_COUNT)
+#define ON_START_CLICK_UPTIME_MAX	K_SECONDS(6)
+
 
 enum state {
 	STATE_DISABLED,
@@ -64,6 +67,10 @@ static const struct state_switch state_switch[] = {
 	{STATE_ERASE_PEER,  CLICK_DOUBLE, STATE_IDLE,	     erase_confirm},
 #endif /* CONFIG_BT_PERIPHERAL */
 #endif /* CONFIG_DESKTOP_BLE_PEER_ERASE */
+
+#if CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START
+	{STATE_IDLE,	ON_START_CLICK(CLICK_LONG), STATE_ERASE_ADV, erase_adv_confirm},
+#endif /* CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START */
 };
 
 
@@ -299,6 +306,8 @@ static void erase_start(void)
 
 static void erase_confirm(void)
 {
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_CENTRAL));
+
 	remove_peers(BT_ID_DEFAULT);
 
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
@@ -312,6 +321,11 @@ static void erase_confirm(void)
 
 static void erase_adv_confirm(void)
 {
+	/* Update state to ensure that proper bt_stack_id will be used. */
+	if (state == STATE_IDLE) {
+		state = STATE_ERASE_PEER;
+	}
+
 	int err = bt_id_reset(get_bt_stack_peer_id(cur_peer_id),
 			NULL, NULL);
 
@@ -515,7 +529,11 @@ static bool click_event_handler(const struct click_event *event)
 	}
 
 	if (likely(state != STATE_DISABLED)) {
-		handle_click(event->click);
+		if (k_uptime_get_32() < ON_START_CLICK_UPTIME_MAX) {
+			handle_click(ON_START_CLICK(event->click));
+		} else {
+			handle_click(event->click);
+		}
 	}
 
 	return false;
