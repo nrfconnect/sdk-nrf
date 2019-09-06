@@ -8,6 +8,7 @@
 #include <misc/slist.h>
 
 #include <bluetooth/services/hids_c.h>
+#include <bluetooth/conn.h>
 #include <misc/byteorder.h>
 
 #define MODULE hid_forward
@@ -24,6 +25,12 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
+#define LATENCY_LOW		0
+#define LATENCY_DEFAULT		99
+
+#define FORWARD_TIMEOUT		K_SECONDS(5)
+#define FORWARD_WORK_DELAY	K_SECONDS(1)
+
 struct keyboard_event_item {
 	sys_snode_t node;
 	struct hid_keyboard_event *evt;
@@ -37,7 +44,10 @@ struct consumer_ctrl_event_item {
 struct hids_subscriber {
 	struct bt_gatt_hids_c hidc;
 	u16_t pid;
+	u32_t timestamp;
 };
+
+static struct k_delayed_work config_fwd_timeout;
 
 static struct hids_subscriber subscribers[CONFIG_BT_MAX_CONN];
 static const void *usb_id;
@@ -51,6 +61,80 @@ static sys_slist_t keyboard_event_list;
 static sys_slist_t consumer_ctrl_event_list;
 
 static struct k_spinlock lock;
+
+static int change_connection_latency(struct hids_subscriber *subscriber, u16_t latency)
+{
+	__ASSERT_NO_MSG(subscriber != NULL);
+
+	struct bt_conn *conn = bt_gatt_hids_c_conn(&subscriber->hidc);
+
+	if (!conn) {
+		LOG_WRN("There is no connection for a HIDS subscriber: %"
+			PRIx16, subscriber->pid);
+		return -ENXIO;
+	}
+
+	struct bt_conn_info info;
+	int err = bt_conn_get_info(conn, &info);
+
+	if (err) {
+		LOG_WRN("Cannot get conn info (%d)", err);
+		return err;
+	}
+
+	__ASSERT_NO_MSG(info.role == BT_CONN_ROLE_MASTER);
+
+	const struct bt_le_conn_param param = {
+		.interval_min = info.le.interval,
+		.interval_max = info.le.interval,
+		.latency = latency,
+		.timeout = info.le.timeout
+	};
+
+	err = bt_conn_le_param_update(conn, &param);
+	if (err == -EALREADY) {
+		LOG_WRN("Slave latency already changed");
+		err = 0;
+	} else if (err) {
+		LOG_WRN("Cannot update parameters (%d)", err);
+	} else {
+		LOG_INF("BLE latency changed to: %"PRIu16, latency);
+	}
+
+	return err;
+}
+
+static void forward_config_timeout(struct k_work *work_desc)
+{
+	__ASSERT_NO_MSG(work_desc != NULL);
+
+	u32_t cur_time = k_uptime_get_32();
+	bool forward_is_pending = false;
+	int err = 0;
+
+	for (size_t idx = 0; idx < ARRAY_SIZE(subscribers); idx++) {
+		if ((subscribers[idx].timestamp != 0) &&
+		    (bt_gatt_hids_c_assign_check(&subscribers[idx].hidc))) {
+			if ((cur_time - subscribers[idx].timestamp) > FORWARD_TIMEOUT) {
+				LOG_WRN("Configuration forward timed out");
+
+				err = change_connection_latency(&subscribers[idx], LATENCY_DEFAULT);
+				if (err) {
+					LOG_WRN("Can't set latency to default");
+					continue;
+				}
+
+				subscribers[idx].timestamp = 0;
+			} else {
+				forward_is_pending = true;
+			}
+		}
+	}
+
+	if (forward_is_pending) {
+		k_delayed_work_submit(&config_fwd_timeout, FORWARD_WORK_DELAY);
+	}
+}
 
 static void process_mouse_report(const u8_t *data)
 {
@@ -234,6 +318,8 @@ static void init(void)
 		bt_gatt_hids_c_init(&subscribers[i].hidc, &params);
 	}
 	sys_slist_init(&keyboard_event_list);
+
+	k_delayed_work_init(&config_fwd_timeout, forward_config_timeout);
 }
 
 static int register_subscriber(struct bt_gatt_dm *dm, u16_t pid)
@@ -318,14 +404,173 @@ static u8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 	return 0;
 }
 
-static struct bt_gatt_hids_c *find_subscriber_hidc(u16_t pid)
+static struct hids_subscriber *find_subscriber_hidc(u16_t pid)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 		if (subscribers[i].pid == pid) {
-			return &subscribers[i].hidc;
+			return &subscribers[i];
 		}
 	}
 	return NULL;
+}
+
+static int switch_to_low_latency(struct hids_subscriber *subscriber)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+		if (subscriber->timestamp == 0) {
+			LOG_INF("DFU next forward");
+			err = change_connection_latency(subscriber, LATENCY_LOW);
+			if (err) {
+				LOG_WRN("Error while change of connection parameters");
+				return err;
+			}
+		}
+		subscriber->timestamp = k_uptime_get_32();
+
+		if (!k_delayed_work_remaining_get(&config_fwd_timeout)) {
+			k_delayed_work_submit(&config_fwd_timeout,
+					      FORWARD_WORK_DELAY);
+		}
+	}
+
+	return err;
+}
+
+static void handle_config_forward(const struct config_forward_event *event)
+{
+	struct hids_subscriber *subscriber = find_subscriber_hidc(event->recipient);
+
+	if (!subscriber) {
+		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
+		return;
+	}
+
+	struct bt_gatt_hids_c *recipient_hidc =	&subscriber->hidc;
+
+	__ASSERT_NO_MSG(recipient_hidc != NULL);
+
+	if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
+		LOG_WRN("Cannot forward, peer disconnected");
+
+		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
+		return;
+	}
+
+	struct bt_gatt_hids_c_rep_info *config_rep =
+		bt_gatt_hids_c_rep_find(recipient_hidc,
+					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
+					REPORT_ID_USER_CONFIG);
+
+	if (!config_rep) {
+		LOG_ERR("Feature report not found");
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+		return;
+	}
+
+	if (event->dyndata.size > UCHAR_MAX) {
+		LOG_WRN("Event data too big");
+		return;
+	}
+
+	struct config_channel_frame frame;
+	u8_t report[REPORT_SIZE_USER_CONFIG];
+
+	if (event->status == CONFIG_STATUS_FETCH) {
+		LOG_INF("Forwarding fetch request");
+		frame.status = CONFIG_STATUS_FETCH;
+	}
+
+	frame.recipient = event->recipient;
+	frame.event_id = event->id;
+	frame.event_data_len = event->dyndata.size;
+	frame.event_data = (u8_t *)event->dyndata.data;
+
+	int err = switch_to_low_latency(subscriber);
+
+	if (err) {
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+		return;
+	}
+
+	int pos = config_channel_report_fill(report, sizeof(report), &frame,
+					     false);
+
+	if (pos < 0) {
+		LOG_WRN("Could not set report");
+		return;
+	}
+
+	err = bt_gatt_hids_c_rep_write(recipient_hidc,
+				       config_rep,
+				       hidc_write_cb,
+				       report,
+				       sizeof(report));
+	if (err) {
+		LOG_ERR("Writing report failed, err:%d", err);
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+	}
+
+	return;
+}
+
+static void handle_config_forward_get(const struct config_forward_get_event *event)
+{
+	struct hids_subscriber *subscriber =
+		find_subscriber_hidc(event->recipient);
+
+	if (!subscriber) {
+		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
+		return;
+	}
+
+	struct bt_gatt_hids_c *recipient_hidc =	&subscriber->hidc;
+
+	__ASSERT_NO_MSG(recipient_hidc != NULL);
+
+	int err = switch_to_low_latency(subscriber);
+
+	if (err) {
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+		return;
+	}
+
+	if (forward_pending) {
+		LOG_DBG("GATT read already pending");
+		return;
+	}
+
+	if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
+		LOG_WRN("Cannot forward, peer disconnected");
+
+		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
+		return;
+	}
+
+	struct bt_gatt_hids_c_rep_info *config_rep =
+		bt_gatt_hids_c_rep_find(recipient_hidc,
+					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
+					REPORT_ID_USER_CONFIG);
+
+	if (!config_rep) {
+		LOG_ERR("Feature report not found");
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+		return;
+	}
+
+	notify_config_forwarded(CONFIG_STATUS_PENDING);
+
+	channel_id = event->channel_id;
+
+	err = bt_gatt_hids_c_rep_read(recipient_hidc,
+				      config_rep,
+				      hidc_read_cfg);
+
+	if (err) {
+		LOG_ERR("Reading report failed, err:%d", err);
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+	}
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -415,6 +660,8 @@ static bool event_handler(const struct event_header *eh)
 					LOG_INF("HID device disconnected");
 					bt_gatt_hids_c_release(
 					  &subscribers[i].hidc);
+					subscribers[i].pid = 0;
+					subscribers[i].timestamp = 0;
 				}
 			}
 		}
@@ -443,121 +690,15 @@ static bool event_handler(const struct event_header *eh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		if (is_config_forward_event(eh)) {
-			const struct config_forward_event *event =
-				cast_config_forward_event(eh);
-
-			struct bt_gatt_hids_c *recipient_hidc =
-				find_subscriber_hidc(event->recipient);
-
-			if (!recipient_hidc) {
-				LOG_INF("Recipent %02x not found",
-					event->recipient);
-				return false;
-			}
-
-			if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
-				LOG_WRN("Cannot forward, peer disconnected");
-
-				notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
-				return false;
-			}
-
-			struct bt_gatt_hids_c_rep_info *config_rep =
-				bt_gatt_hids_c_rep_find(recipient_hidc,
-					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
-					REPORT_ID_USER_CONFIG);
-			if (!config_rep) {
-				LOG_ERR("Feature report not found");
-				notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-				return false;
-			}
-
-			if (event->dyndata.size > UCHAR_MAX) {
-				LOG_ERR("Event data too big");
-				__ASSERT_NO_MSG(false);
-				return false;
-			}
-
-			struct config_channel_frame frame;
-			u8_t report[REPORT_SIZE_USER_CONFIG];
-
-			if (event->status == CONFIG_STATUS_FETCH) {
-				LOG_INF("Forwarding fetch request");
-				frame.status = CONFIG_STATUS_FETCH;
-			}
-
-			frame.recipient = event->recipient;
-			frame.event_id = event->id;
-			frame.event_data_len = event->dyndata.size;
-			frame.event_data = (u8_t *) event->dyndata.data;
-
-			int pos = config_channel_report_fill(report, sizeof(report), &frame, false);
-			if (pos < 0) {
-				LOG_WRN("Could not set report");
-				return pos;
-			}
-
-			int err = bt_gatt_hids_c_rep_write(recipient_hidc,
-							   config_rep,
-							   hidc_write_cb,
-							   report,
-							   sizeof(report));
-			if (err) {
-				LOG_ERR("Writing report failed, err:%d", err);
-				notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-			}
+			handle_config_forward(cast_config_forward_event(eh));
 
 			return false;
 		}
 
 		if (is_config_forward_get_event(eh)) {
-			const struct config_forward_get_event *event =
-				cast_config_forward_get_event(eh);
+			handle_config_forward_get(cast_config_forward_get_event(eh));
 
-			struct bt_gatt_hids_c *recipient_hidc =
-				find_subscriber_hidc(event->recipient);
-
-			if (!recipient_hidc) {
-				LOG_INF("Recipent %02x not found",
-					event->recipient);
-				return false;
-			}
-
-			if (forward_pending) {
-				LOG_DBG("GATT read already pending");
-				return false;
-			} else {
-				if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
-					LOG_WRN("Cannot forward, peer disconnected");
-
-					notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
-					return false;
-				}
-
-				struct bt_gatt_hids_c_rep_info *config_rep =
-					bt_gatt_hids_c_rep_find(recipient_hidc,
-						BT_GATT_HIDS_REPORT_TYPE_FEATURE,
-						REPORT_ID_USER_CONFIG);
-				if (!config_rep) {
-					LOG_ERR("Feature report not found");
-					notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-					return false;
-				}
-
-				notify_config_forwarded(CONFIG_STATUS_PENDING);
-
-				channel_id = event->channel_id;
-
-				int err = bt_gatt_hids_c_rep_read(recipient_hidc,
-								  config_rep,
-								  hidc_read_cfg);
-				if (err) {
-					LOG_ERR("Reading report failed, err:%d", err);
-					notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-				}
-
-				return false;
-			}
+			return false;
 		}
 	}
 
@@ -566,6 +707,7 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
+
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
