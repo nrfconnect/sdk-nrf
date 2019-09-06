@@ -230,8 +230,8 @@ static int init(void)
 	int err;
 
 	for (size_t i = 0; i < ARRAY_SIZE(selectors); i++) {
-		selectors[i].config = &selector_config[i];
-		__ASSERT_NO_MSG(selector_config[i].pins_size > 0);
+		selectors[i].config = selector_config[i];
+		__ASSERT_NO_MSG(selector_config[i]->pins_size > 0);
 
 		err = configure(&selectors[i]);
 		if (err) {

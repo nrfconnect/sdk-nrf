@@ -25,6 +25,6 @@ static const struct selector_config config0 = {
 	.pins_size = ARRAY_SIZE(pins0)
 };
 
-static const struct selector_config selector_config[] = {
-	config0,
+static const struct selector_config *selector_config[] = {
+	&config0,
 };
