@@ -146,7 +146,7 @@ add_custom_target(
 )
 
 if(WIN32)
-  set(SEP ;)
+  set(SEP $<SEMICOLON>)
 else()
   set(SEP :)
 endif()
