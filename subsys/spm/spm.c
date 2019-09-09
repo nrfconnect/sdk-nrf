@@ -362,7 +362,7 @@ static void spm_config_peripherals(void)
 		int err;
 
 #ifndef CONFIG_SPM_BOOT_SILENTLY
-		PRINT("%02u %s\t\t%s", i, periph[i].name,
+		PRINT("%02u %-21s%s", i, periph[i].name,
 		      periph[i].nonsecure ? "Non-Secure" : "Secure\t");
 #endif
 
