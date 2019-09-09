@@ -306,6 +306,6 @@ static const struct sensor_driver_api bh1749_driver_api = {
 
 static struct bh1749_data bh1749_data;
 
-DEVICE_DEFINE(bh1749, DT_NORDIC_NRF_I2C_5000A000_ROHM_BH1749_38_LABEL,
+DEVICE_DEFINE(bh1749, DT_INST_0_ROHM_BH1749_LABEL,
 	      bh1749_init, device_pm_control_nop, &bh1749_data, NULL,
 	      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY, &bh1749_driver_api);
