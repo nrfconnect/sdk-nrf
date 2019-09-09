@@ -73,3 +73,7 @@ add_subdirectory(src/util)
 if(CONFIG_BOOTLOADER_MCUBOOT)
   assert_exists(mcuboot_CONF_FILE)
 endif()
+
+execute_process(COMMAND echo dupa ${CMAKE_C_COMPILER})
+execute_process(COMMAND ${CMAKE_C_COMPILER} --version OUTPUT_VARIABLE MEGADUPA)
+message(FATAL_ERROR dupa ${CMAKE_C_COMPILER} dupa ${MEGADUPA})
