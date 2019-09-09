@@ -283,6 +283,9 @@ class NcsCompare(NcsWestCommand):
             zrev = zp.revision
 
         log.small_banner(zp.format('{ncs_name} ({path}):', ncs_name=nn))
+        if not np.is_cloned():
+            log.wrn('project is not cloned; please run "west update"')
+            return
 
         try:
             nsha = np.sha(nrev)
