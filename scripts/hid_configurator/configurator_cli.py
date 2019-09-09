@@ -7,7 +7,9 @@ import argparse
 import logging
 
 from configurator_core import DEVICE
-from configurator_core import get_device_pid, open_device, fwinfo, fwreboot, change_config, fetch_config, dfu_transfer
+from configurator_core import get_device_pid, open_device
+from configurator_core import fwinfo, fwreboot, change_config, fetch_config
+from configurator_core import dfu_transfer, get_dfu_image_version
 
 
 def progress_bar(permil):
@@ -21,6 +23,36 @@ def progress_bar(permil):
 def perform_dfu(dev, args):
     dfu_image = args.dfu_image
     recipient = get_device_pid(args.device_type)
+
+    img_ver_file = get_dfu_image_version(dfu_image)
+    if img_ver_file is None:
+        print('Cannot read image version from file')
+        return
+
+    info = fwinfo(dev, recipient)
+    if info is None:
+        print('Cannot get FW info from device')
+        return
+    img_ver_dev = info.get_fw_version()
+
+    print('Current FW version from device: ' +
+          '.'.join([str(i) for i in img_ver_dev]))
+    print('Current FW version from file: ' +
+          '.'.join([str(i) for i in img_ver_file]))
+    print('Perform update? [y/n]')
+
+    if not args.autoconfirm:
+        rsp = input().lower()
+        if rsp == 'y':
+            pass
+
+        elif rsp == 'n':
+            print('DFU rejected by user')
+            return
+
+        else:
+            print('Improper user input. Operation terminated.')
+            return
 
     success = dfu_transfer(dev, recipient, dfu_image, progress_bar)
 
@@ -92,6 +124,9 @@ def parse_arguments():
 
         parser_dfu = sp_commands.add_parser('dfu', help='Run DFU')
         parser_dfu.add_argument('dfu_image', type=str, help='Path to a DFU image')
+        parser_dfu.add_argument('--autoconfirm',
+                                help='Automatically confirm user input',
+                                action='store_true')
 
         sp_commands.add_parser('fwinfo', help='Obtain information about FW image')
         sp_commands.add_parser('fwreboot', help='Request FW reboot')
