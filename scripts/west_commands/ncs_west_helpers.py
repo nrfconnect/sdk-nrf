@@ -271,8 +271,6 @@ class RepoAnalyzer:
         # Convert downstream and upstream revisions to SHAs.
         dsha = self._dp.sha(self._dr)
         usha = self._up.sha(self._ur)
-        log.dbg('** NCS sha:', dsha)
-        log.dbg('** upstream sha:', usha)
 
         # First, get a list of all downstream OOT patches. Note:
         # pygit2 doesn't seem to have any ready-made rev-list

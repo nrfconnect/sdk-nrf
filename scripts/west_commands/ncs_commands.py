@@ -28,6 +28,19 @@ class NcsWestCommand(WestCommand):
                     '(your west version is {}, but must be at least {}).'.
                     format(west_ver, min_ver))
 
+    @staticmethod
+    def checked_sha(project, revision):
+        # get revision's SHA and check that it exists in the project.
+        # returns the SHA on success, or None if we can't unwrap revision
+        # to a SHA which is present in the project.
+
+        try:
+            sha = project.sha(revision)
+            project.git('cat-file -e ' + sha)
+            return sha
+        except subprocess.CalledProcessError:
+            return None
+
     def add_zephyr_rev_arg(self, parser):
         parser.add_argument('-z', '--zephyr-rev',
                             help='''upstream git ref to use for zephyr project;
@@ -249,31 +262,42 @@ class NcsCompare(NcsWestCommand):
                 log.small_banner(p.format('{name_and_path}'))
 
         if missing_blacklisted and log.VERBOSE >= log.VERBOSE_NORMAL:
-            log.banner('blacklisted but missing in NCS (these are all OK):')
+            log.banner('blacklisted zephyr projects',
+                       'not in nrf (these are all OK):')
             print_lst(missing_blacklisted)
 
+        log.banner('blacklisted zephyr projects in nrf:')
         if present_blacklisted:
-            log.banner('blacklisted upstream projects that are in NCS:')
-            log.wrn('these names should be removed from nrf/west.yml')
+            log.wrn('these should all be removed from nrf')
             print_lst(present_blacklisted)
+        else:
+            log.inf('none (OK)')
 
+        log.banner('non-blacklisted zephyr projects',
+                   'missing from nrf:')
         if missing_allowed:
-            log.banner('non-blacklisted upstream projects missing in NCS:')
-            log.wrn('these should be blacklisted or added to nrf/west.yml')
+            log.wrn('these should be blacklisted or added to nrf')
             for p in missing_allowed:
                 log.small_banner(p.format('{name_and_path}'))
                 log.inf(p.format('upstream revision: {revision}'))
                 log.inf(p.format('upstream URL: {url}'))
+        else:
+            log.inf('none (OK)')
 
         if present_allowed:
-            log.banner('projects present in NCS:')
+            log.banner('projects in both zephyr and nrf:')
             for zp in present_allowed:
                 # Do some extra checking on unmerged commits.
                 self.allowed_project(zp)
 
+        if log.VERBOSE <= log.VERBOSE_NONE:
+            log.inf('\nNote: verbose output was omitted,',
+                    'use "west -v ncs-compare" for more details.')
+
     def allowed_project(self, zp):
         nn = self.to_ncs_name(zp)
         np = self.ncs_pmap[nn]
+        banner = zp.format('{ncs_name} ({path}):', ncs_name=nn)
 
         if np.name == 'zephyr':
             nrev = self.manifest.get_projects(['zephyr'])[0].revision
@@ -282,34 +306,21 @@ class NcsCompare(NcsWestCommand):
             nrev = np.revision
             zrev = zp.revision
 
-        log.small_banner(zp.format('{ncs_name} ({path}):', ncs_name=nn))
-        if not np.is_cloned():
-            log.wrn('project is not cloned; please run "west update"')
-            return
+        nsha = self.checked_sha(np, nrev)
+        zsha = self.checked_sha(zp, zrev)
 
-        try:
-            nsha = np.sha(nrev)
-            np.git('cat-file -e ' + nsha)
-        except subprocess.CalledProcessError:
-            log.wrn("can't compare; please run \"west update {}\"".
-                    format(nn),
-                    '(need revision {})'.format(np.revision))
+        if not np.is_cloned() or nsha is None or zsha is None:
+            log.small_banner(banner)
+            if not np.is_cloned():
+                log.wrn('project is not cloned; please run "west update"')
+            elif nsha is None:
+                log.wrn("can't compare; please run \"west update {}\"".
+                        format(nn),
+                        '(need revision {})'.format(np.revision))
+            elif zsha is None:
+                log.wrn("can't compare; please fetch upstream URL", zp.url,
+                        '(need revision {})'.format(zp.revision))
             return
-        try:
-            zsha = np.sha(zrev)
-            np.git('cat-file -e ' + zsha)
-        except subprocess.CalledProcessError:
-            log.wrn("can't compare; please fetch upstream URL", zp.url,
-                    '(need revision {})'.format(zp.revision))
-            return
-
-        upstream_rev = 'upstream revision: ' + zrev
-        if zrev != zsha:
-            upstream_rev += ' ({})'.format(zsha)
-
-        downstream_rev = 'NCS revision: ' + nrev
-        if nrev != nsha:
-            downstream_rev += ' ({})'.format(nsha)
 
         cp = np.git('rev-list --left-right --count {}...{}'.format(zsha, nsha),
                     capture_stdout=True)
@@ -326,15 +337,32 @@ class NcsCompare(NcsWestCommand):
             status = ('diverged from upstream: {} ahead, {} behind'.
                       format(ahead, behind))
 
-        if 'behind' in status or 'diverged' in status:
-            color = log.WRN_COLOR
+        upstream_rev = 'upstream revision: ' + zrev
+        if zrev != zsha:
+            upstream_rev += ' ({})'.format(zsha)
+
+        downstream_rev = 'NCS revision: ' + nrev
+        if nrev != nsha:
+            downstream_rev += ' ({})'.format(nsha)
+
+        if 'up to date' in status or 'ahead by' in status:
+            if log.VERBOSE > log.VERBOSE_NONE:
+                # Up to date or ahead: only print in verbose mode.
+                log.small_banner(banner)
+                status += ', ' + downstream_rev
+                if 'ahead by' in status:
+                    status += ', ' + upstream_rev
+                log.inf(status)
+                self.likely_merged(np, zp, nsha, zsha)
         else:
-            color = log.INF_COLOR
+            # Behind or diverged: always print.
+            log.small_banner(banner)
+            log.msg(status, color=log.WRN_COLOR)
+            log.inf(upstream_rev)
+            log.inf(downstream_rev)
+            self.likely_merged(np, zp, nsha, zsha)
 
-        log.msg(status, color=color)
-        log.inf(upstream_rev)
-        log.inf(downstream_rev)
-
+    def likely_merged(self, np, zp, nsha, zsha):
         analyzer = nwh.RepoAnalyzer(np, zp, nsha, zsha)
         likely_merged = analyzer.likely_merged
         if likely_merged:
