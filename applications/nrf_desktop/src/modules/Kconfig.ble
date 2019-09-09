@@ -54,6 +54,21 @@ config DESKTOP_BLE_PEER_CONTROL_BUTTON
 
 endif
 
+config DESKTOP_BLE_DONGLE_PEER_ENABLE
+	bool "Enable dongle peer"
+	help
+	  Enable additional peer to connect with dongle.
+
+config DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID
+	int "Dongle peer selector ID"
+	range 0 255
+	default 0
+
+config DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS
+	int "Dongle peer selector position"
+	range 0 255
+	default 0
+
 module = DESKTOP_BLE_BOND
 module-str = BLE bonds
 source "subsys/logging/Kconfig.template.log_config"
