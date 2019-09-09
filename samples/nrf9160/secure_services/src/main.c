@@ -11,24 +11,31 @@
 #include <kernel.h>
 #include <pm_config.h>
 
-void print_number(u8_t *num, size_t len)
+void print_hex_number(u8_t *num, size_t len)
 {
-	printk("Random number len %d: 0x", len);
+	printk("0x");
 	for (int i = 0; i < len; i++) {
 		printk("%02x", num[i]);
 	}
 	printk("\n");
 }
 
+void print_random_number(u8_t *num, size_t len)
+{
+	printk("Random number len %d: ", len);
+	print_hex_number(num, len);
+}
+
 void main(void)
 {
-	const int sleep_time_ms = 5000;
+	const int sleep_time_s = 5;
 	const int random_number_count = 16;
 	const int random_number_len = 144;
 	int ret;
 
 	printk("Secure Services example.\n");
-	printk("Generate %d strings of %d random bytes, sleep, then reboot.\n\n",
+	printk("Generate %d strings of %d random bytes, read MCUboot header, "
+		"sleep, then reboot.\n\n",
 		random_number_count, random_number_len);
 
 	for (int i = 0; i < random_number_count; i++) {
@@ -40,7 +47,7 @@ void main(void)
 			printk("Could not get random number (err: %d)\n", ret);
 			continue;
 		}
-		print_number(random_number, olen);
+		print_random_number(random_number, olen);
 	}
 
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
@@ -48,19 +55,18 @@ void main(void)
 	const int read_address = PM_MCUBOOT_PAD_ADDRESS;
 	u8_t buf[num_bytes_to_read];
 
-	printk("\nRead %d bytes from address %d\n", num_bytes_to_read,
-			read_address);
+	printk("\nRead %d bytes from address 0x%x (MCUboot header for current "
+		"image):\n", num_bytes_to_read, read_address);
 	ret = spm_request_read(buf, read_address, num_bytes_to_read);
 	if (ret != 0) {
 		printk("Could not read data (err: %d)\n", ret);
 	}
-	for (int i = 0; i < num_bytes_to_read; i++) {
-		printk("%d", buf[i]);
-	}
+
+	print_hex_number(buf, num_bytes_to_read);
 #endif
 
-	printk("\nReboot in %d ms.\n", sleep_time_ms);
-	k_sleep(sleep_time_ms);
+	printk("\nReboot in %d seconds.\n", sleep_time_s);
+	k_sleep(K_SECONDS(5));
 
 	sys_reboot(0); /* Argument is ignored. */
 }
