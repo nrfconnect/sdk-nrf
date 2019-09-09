@@ -12,6 +12,7 @@ import zlib
 
 import logging
 import collections
+import imgtool.image as img
 
 from enum import IntEnum
 
@@ -188,6 +189,9 @@ class FwInfo:
         self.ver_minor = ver_minor
         self.ver_rev = ver_rev
         self.ver_build_nr = ver_build_nr
+
+    def get_fw_version(self):
+        return (self.ver_major, self.ver_minor, self.ver_rev, self.ver_build_nr)
 
     def __str__(self):
         return ('Firmware info\n'
@@ -617,7 +621,22 @@ def is_dfu_image_correct(dfu_image):
 
     print('DFU image size: {} bytes'.format(img_length))
 
+    res, _ = img.Image.verify(dfu_image, None)
+
+    if res != img.VerifyResult.OK:
+        print('DFU image is invalid')
+        return False
+
     return True
+
+def get_dfu_image_version(dfu_image):
+    res, ver = img.Image.verify(dfu_image, None)
+
+    if res != img.VerifyResult.OK:
+        print('Image in file is invalid')
+        return None
+
+    return ver
 
 
 if __name__ == '__main__':
