@@ -20,7 +20,7 @@ static const struct gpio_pin pins0[] = {
 	{ .port = 1, .pin = 12 },
 };
 static const struct selector_config config0 = {
-	.id = 0,
+	.id = CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID,
 	.pins = pins0,
 	.pins_size = ARRAY_SIZE(pins0)
 };

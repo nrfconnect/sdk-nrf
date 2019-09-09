@@ -13,6 +13,7 @@
 #include "module_state_event.h"
 #include "click_event.h"
 #include "ble_event.h"
+#include "selector_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
@@ -32,7 +33,8 @@ enum state {
 	STATE_IDLE,
 	STATE_ERASE_PEER,
 	STATE_ERASE_ADV,
-	STATE_SELECT_PEER
+	STATE_SELECT_PEER,
+	STATE_DONGLE_CONN
 };
 
 struct state_switch {
@@ -77,9 +79,10 @@ static const struct state_switch state_switch[] = {
 static enum state state;
 static u8_t cur_peer_id;
 static u8_t tmp_peer_id;
+static bool dongle_peer_selected_on_init;
 
 
-#ifdef CONFIG_BT_PERIPHERAL
+#if CONFIG_BT_PERIPHERAL
 #define BT_STACK_ID_LUT_SIZE CONFIG_BT_MAX_PAIRED
 #elif CONFIG_BT_CENTRAL
 #define BT_STACK_ID_LUT_SIZE 0
@@ -88,7 +91,14 @@ static u8_t tmp_peer_id;
 #endif
 
 static u8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
+
 #define TEMP_PEER_ID (CONFIG_BT_MAX_PAIRED - 1)
+#if CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
+#define DONGLE_PEER_ID (TEMP_PEER_ID - 1)
+#else
+#define DONGLE_PEER_ID (TEMP_PEER_ID)
+#endif
+
 
 static struct k_delayed_work timeout;
 
@@ -219,8 +229,9 @@ static void cancel_operation(void)
 static u8_t next_peer_id(u8_t id)
 {
 	id++;
-	BUILD_ASSERT_MSG(TEMP_PEER_ID == (CONFIG_BT_MAX_PAIRED - 1), "");
-	if (id == TEMP_PEER_ID) {
+	BUILD_ASSERT(TEMP_PEER_ID == (CONFIG_BT_MAX_PAIRED - 1));
+	BUILD_ASSERT(DONGLE_PEER_ID <= TEMP_PEER_ID);
+	if (id == DONGLE_PEER_ID) {
 		id = 0;
 	}
 
@@ -346,6 +357,37 @@ static void erase_adv_confirm(void)
 	EVENT_SUBMIT(event);
 }
 
+static void select_dongle_peer(void)
+{
+	state = STATE_DONGLE_CONN;
+
+	LOG_INF("Selected dongle peer");
+	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
+
+	event->op = PEER_OPERATION_SELECTED;
+	event->bt_app_id = DONGLE_PEER_ID;
+	event->bt_stack_id = get_bt_stack_peer_id(DONGLE_PEER_ID);
+
+	/* BT stack ID for dongle peer should not be changed. */
+	__ASSERT_NO_MSG(event->bt_stack_id == (event->bt_app_id + 1));
+
+	EVENT_SUBMIT(event);
+}
+
+static void select_ble_peers(void)
+{
+	LOG_INF("Selected BLE peers");
+	state = STATE_IDLE;
+
+	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
+
+	event->op = PEER_OPERATION_SELECTED;
+	event->bt_app_id = cur_peer_id;
+	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+
+	EVENT_SUBMIT(event);
+}
+
 static void handle_click(enum click click)
 {
 	if (click != CLICK_NONE) {
@@ -377,7 +419,9 @@ static void handle_click(enum click click)
 		}
 	}
 
-	cancel_operation();
+	if (state != STATE_DONGLE_CONN) {
+		cancel_operation();
+	}
 }
 
 static void timeout_handler(struct k_work *work)
@@ -461,19 +505,6 @@ static int settings_set(const char *key, size_t len_rd,
 	return 0;
 }
 
-static int commit(void)
-{
-	struct ble_peer_operation_event *event_selected =
-		new_ble_peer_operation_event();
-
-	event_selected->op = PEER_OPERATION_SELECTED;
-	event_selected->bt_app_id = cur_peer_id;
-	event_selected->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
-	EVENT_SUBMIT(event_selected);
-
-	return 0;
-}
-
 static void init_bt_stack_lut_id(void)
 {
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
@@ -493,7 +524,6 @@ static int init_settings(void)
 		static struct settings_handler sh = {
 			.name = MODULE_NAME,
 			.h_set = settings_set,
-			.h_commit = commit
 		};
 
 		int err = settings_register(&sh);
@@ -519,12 +549,18 @@ static int init(void)
 
 	load_identities();
 
+	if (dongle_peer_selected_on_init) {
+		select_dongle_peer();
+	} else {
+		select_ble_peers();
+	}
+
 	return 0;
 }
 
 static bool click_event_handler(const struct click_event *event)
 {
-	if (likely(event->key_id != CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON)) {
+	if (event->key_id != CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON) {
 		return false;
 	}
 
@@ -537,6 +573,28 @@ static bool click_event_handler(const struct click_event *event)
 	}
 
 	return false;
+}
+
+static void selector_event_handler(const struct selector_event *event)
+{
+	if (event->selector_id != CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID) {
+		return;
+	}
+
+	if (event->position == CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS) {
+		if (likely(state != STATE_DISABLED)) {
+			cancel_operation();
+			select_dongle_peer();
+		} else {
+			dongle_peer_selected_on_init = true;
+		}
+	} else {
+		if (likely(state != STATE_DISABLED)) {
+			select_ble_peers();
+		} else {
+			dongle_peer_selected_on_init = false;
+		}
+	}
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -615,6 +673,12 @@ static bool event_handler(const struct event_header *eh)
 		return click_event_handler(cast_click_event(eh));
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE) &&
+	    is_selector_event(eh)) {
+		selector_event_handler(cast_selector_event(eh));
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -625,6 +689,9 @@ EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #if CONFIG_DESKTOP_BLE_PEER_CONTROL
 EVENT_SUBSCRIBE(MODULE, click_event);
+#endif
+#if CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
+EVENT_SUBSCRIBE(MODULE, selector_event);
 #endif
 
 #if CONFIG_SHELL
