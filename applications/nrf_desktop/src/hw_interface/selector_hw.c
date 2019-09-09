@@ -266,7 +266,7 @@ static void sleep(void)
 
 static void wake_up(void)
 {
-	for (size_t i = 0; ARRAY_SIZE(selectors); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(selectors); i++) {
 		int err = read_state_and_enable_interrupts(&selectors[i]);
 
 		if (err) {
