@@ -156,8 +156,9 @@ static size_t did_include(u8_t *data, size_t pos)
 		data[pos] |= I_BLOCK_DID_BIT;
 		pos++;
 		data[pos] = t4t_isodep.tag.did;
-		pos++;
 	}
+
+	pos++;
 
 	return pos;
 }
@@ -703,7 +704,7 @@ int nfc_t4t_isodep_rats_send(enum nfc_t4t_isodep_fsd fsd, u8_t did)
 {
 	u8_t param;
 
-	if (atomic_cas(&t4t_isodep.state, ISODEP_STATE_UNINITIALIZED,
+	if (atomic_cas(&t4t_isodep.state, ISODEP_STATE_INITIALIZED,
 		       ISODEP_STATE_TRANSFER)) {
 	} else if (atomic_cas(&t4t_isodep.state, ISODEP_STATE_SELECTED,
 			      ISODEP_STATE_TRANSFER)) {
