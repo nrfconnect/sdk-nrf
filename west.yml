@@ -29,6 +29,8 @@ manifest:
       url-base: https://github.com/ThrowTheSwitch
     - name: armmbed
       url-base: https://github.com/ARMmbed
+    - name: civetweb
+      url-base: https://github.com/civetweb
 
   # The list of external projects for the nRF Connect SDK.
   #
@@ -60,6 +62,14 @@ manifest:
       repo-path: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
       revision: 543ecb7c8662580ef803d59ceda7bd3b8a84a11b
+    - name: ci-tools
+      path: tools/ci-tools
+      remote: zephyrproject
+      revision: d56f2dd3510e20fa8cf4aad442495c08a658113f
+    - name: net-tools
+      path: tools/net-tools
+      remote: zephyrproject
+      revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
       revision: 35120d32233dc354c89d8c62eaa6267093c7e35b
@@ -76,6 +86,48 @@ manifest:
       repo-path: mbedtls
       revision: mbedtls-2.13.1
       remote: armmbed
+
+    # The projects below are included for completeness, but they are
+    # not known to work properly with the NCS multi-image / partition
+    # manager patchset. Please report any issues.
+    #
+    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/scripts/partition_manager/partition_manager.html
+    - name: civetweb
+      path: modules/lib/civetweb
+      remote: civetweb
+      revision: 99129c5efc907ea613c4b73ccff07581feb58a7a
+    - name: fatfs
+      path: modules/fs/fatfs
+      remote: zephyrproject
+      revision: df96914dd989907f3a5de4cb95b116c2f305820d
+    - name: hal_nordic
+      path: modules/hal/nordic
+      remote: zephyrproject
+      revision: 7bf2d404d0bf7f36d77d5090b5207f8b4676776c
+    - name: hal_st
+      path: modules/hal/st
+      remote: zephyrproject
+      revision: 0ec40aed8087f26bd9ac1b70fb5a6c326a6451aa
+    - name: libmetal
+      path: modules/hal/libmetal
+      remote: zephyrproject
+      revision: 45e630d6152824f807d3f919958605c4626cbdff
+    - name: lvgl
+      path: modules/lib/gui/lvgl
+      remote: zephyrproject
+      revision: 6e3316da412649f02d133231078427e452f65db6
+    - name: open-amp
+      path: modules/lib/open-amp
+      remote: zephyrproject
+      revision: 9b591b289e1f37339bd038b5a1f0e6c8ad39c63a
+    - name: openthread
+      path: modules/lib/openthread
+      remote: zephyrproject
+      revision: 0dbecf508e7a79aae8ed9631f1a63fc65478b213
+    - name: littlefs
+      path: modules/fs/littlefs
+      remote: zephyrproject
+      revision: fe9572dd5a9fcf93a249daa4233012692bd2881d
 
   self:
     path: nrf
