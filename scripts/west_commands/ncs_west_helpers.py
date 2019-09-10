@@ -10,6 +10,7 @@
 # https://github.com/foundriesio/zephyr_tools/.
 
 from collections import OrderedDict
+from pathlib import PurePath
 import re
 import textwrap
 
@@ -23,7 +24,7 @@ __all__ = [
     'shortlog_is_revert', 'shortlog_reverts_what', 'shortlog_has_sauce',
     'shortlog_no_sauce',
 
-    'commit_reverts_what', 'commit_shortlog',
+    'commit_reverts_what', 'commit_shortlog', 'commit_affects_files',
 
     'RepoAnalyzer',
 ]
@@ -134,6 +135,22 @@ def commit_shortlog(commit):
 
     :param commit: pygit2 commit object'''
     return commit.message.splitlines()[0]
+
+def commit_affects_files(commit, files):
+    '''True if and only if the commit affects one or more files.
+
+    :param commit: pygit2 commit object
+    :param files: sequence of paths relative to commit object
+                  repository root
+    '''
+    as_paths = set(PurePath(f) for f in files)
+    for p in commit.parents:
+        diff = commit.tree.diff_to_tree(p.tree)
+        for d in diff.deltas:
+            if (PurePath(d.old_file.path) in as_paths or
+                    PurePath(d.new_file.path) in as_paths):
+                return True
+    return False
 
 #
 # Repository analysis

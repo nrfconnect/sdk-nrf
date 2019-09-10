@@ -141,11 +141,18 @@ class NcsLoot(NcsWestCommand):
         parser = parser_adder.add_parser(self.name, help=self.help,
                                          description=self.description)
         self.add_zephyr_rev_arg(parser)
+        parser.add_argument('-f', '--file', dest='files', action='append',
+                            help='''restrict output to patches touching
+                            this file; may be given multiple times. If used,
+                            a single project must be given''')
         self.add_projects_arg(parser)
         return parser
 
     def do_run(self, args, unknown_args):
         self.check_west_version()
+        if args.files and len(args.projects) != 1:
+            self.parser.error('--file used, so expected 1 project argument,' +
+                              ' but got: {}'.format(len(args.projects)))
         self.setup_upstream_downstream(args)
 
         for name, project in self.ncs_pmap.items():
@@ -157,9 +164,9 @@ class NcsLoot(NcsWestCommand):
                 log.dbg('skipping downstream project {}'.format(name),
                         level=log.VERBOSE_VERY)
                 continue
-            self.print_loot(name, project, z_project)
+            self.print_loot(name, project, z_project, args.files)
 
-    def print_loot(self, name, project, z_project):
+    def print_loot(self, name, project, z_project, files):
         # Print a list of out of tree outstanding patches in the given
         # project.
         #
@@ -202,6 +209,10 @@ class NcsLoot(NcsWestCommand):
             log.die(str(ire))
         try:
             for c in analyzer.downstream_outstanding:
+                if files and not nwh.commit_affects_files(c, files):
+                    log.dbg('skipping {}; it does not affect file filter'.
+                            format(c.oid), level=log.VERBOSE_VERY)
+                    continue
                 log.inf('- {} {}'.format(c.oid, nwh.commit_shortlog(c)))
         except nwh.UnknownCommitsError as uce:
             log.die('unknown commits:', str(uce))
