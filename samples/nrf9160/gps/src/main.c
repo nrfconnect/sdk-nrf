@@ -169,7 +169,7 @@ static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 			tracked++;
 
 			if (pvt_data->pvt.sv[i].flags &
-					NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
+					NRF_GNSS_SV_FLAG_USED_IN_FIX) {
 				in_fix++;
 			}
 
