@@ -87,6 +87,18 @@ config SPM_SERVICE_FIND_FIRMWARE_INFO
 	  marked as secure. This service allows it to request firmware info
 	  about image stored at a given address.
 
+config SPM_SERVICE_PREVALIDATE
+	bool "Prevalidate B1 upgrades"
+	default y
+	select SECURE_BOOT_CRYPTO
+	select SECURE_BOOT_VALIDATION
+	select BL_VALIDATE_FW_EXT_API_ATLEAST_OPTIONAL
+	help
+	  The B0 bootloader allows calls into it for prevalidating upgrades of
+	  the stage it verifies. The B0 bootloader is in secure memory, so this
+	  secure service is needed for the app to access the prevalidation
+	  function.
+
 endif # SPM_SECURE_SERVICES
 
 config SPM_BLOCK_NON_SECURE_RESET
