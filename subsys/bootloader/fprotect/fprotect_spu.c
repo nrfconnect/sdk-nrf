@@ -21,7 +21,7 @@ int fprotect_area(u32_t start, size_t length)
 	for (u32_t i = 0; i < length / SPU_LOCK_REGION_SIZE; i++) {
 		nrf_spu_flashregion_set(NRF_SPU_S,
 				(start / SPU_LOCK_REGION_SIZE) + i,
-				false,
+				true,
 				NRF_SPU_MEM_PERM_EXECUTE |
 				NRF_SPU_MEM_PERM_READ,
 				true);
