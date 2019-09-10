@@ -11,6 +11,7 @@
 #include <autoconf.h>
 #include <secure_services.h>
 #include <string.h>
+#include <bl_validation.h>
 
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
@@ -143,3 +144,16 @@ int spm_firmware_info(u32_t fw_address, struct fw_info *info)
 	return -EFAULT;
 }
 #endif /* CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO */
+
+
+#ifdef CONFIG_SPM_SERVICE_PREVALIDATE
+__TZ_NONSECURE_ENTRY_FUNC
+int spm_prevalidate_b1_upgrade(u32_t dst_addr, u32_t src_addr)
+{
+	if (!bl_validate_firmware_available()) {
+		return -ENOTSUP;
+	}
+	bool result = bl_validate_firmware(dst_addr, src_addr);
+	return result;
+}
+#endif /* CONFIG_SPM_SERVICE_PREVALIDATE */

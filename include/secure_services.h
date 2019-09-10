@@ -77,6 +77,20 @@ int spm_request_read(void *destination, u32_t addr, size_t len);
  */
 int spm_firmware_info(u32_t fw_address, struct fw_info *info);
 
+/** Prevalidate a B1 update
+ *
+ * This is performed by the B0 bootloader.
+ *
+ * @param[in]  dst_addr  Target location for the upgrade. This will typically
+ *                       be the start address of either S0 or S1.
+ * @param[in]  src_addr  Current location of the upgrade.
+ *
+ * @retval 1         If the upgrade is valid.
+ * @retval 0         If the upgrade is invalid.
+ * @retval -ENOTSUP  If the functionality is unavailable.
+ */
+int spm_prevalidate_b1_upgrade(u32_t dst_addr, u32_t src_addr);
+
 #ifdef __cplusplus
 }
 #endif

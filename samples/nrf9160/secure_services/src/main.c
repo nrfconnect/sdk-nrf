@@ -36,8 +36,8 @@ void main(void)
 	int ret;
 
 	printk("Secure Services example.\n");
-	printk("Generate %d strings of %d random bytes, read MCUboot header, "
-		"sleep, then reboot.\n\n",
+	printk("Generate %d strings of %d random bytes, read MCUboot header "
+		"or validate S0 if present, sleep, then reboot.\n\n",
 		random_number_count, random_number_len);
 
 	for (int i = 0; i < random_number_count; i++) {
@@ -73,6 +73,18 @@ void main(void)
 	}
 
 	print_hex_number(buf, num_bytes_to_read);
+#endif
+
+#if defined(PM_S0_ADDRESS)
+	int valid = spm_prevalidate_b1_upgrade(PM_S0_ADDRESS, PM_S0_ADDRESS);
+
+	if (valid < 0 && valid != -ENOTSUP) {
+		printk("Unexpected error from spm_prevalidate_b1_upgrade: %d\n",
+			valid);
+	} else {
+		printk("\nS0 valid? %s\n",
+			valid == 1 ? "True" : valid == 0 ? "False" : "Unknown");
+	}
 #endif
 
 	u32_t info_part = 0;
