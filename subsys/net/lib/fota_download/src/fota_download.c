@@ -19,6 +19,7 @@ LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 static		fota_download_callback_t callback;
 static struct	flash_img_context flash_img;
 static struct	download_client dfu;
+static size_t	bytes_sent_to_flash;
 
 static int download_client_callback(const struct download_client_evt *event)
 {
@@ -52,6 +53,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			callback(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
 		}
+		bytes_sent_to_flash += event->fragment.len;
 		break;
 	}
 
@@ -74,7 +76,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		}
 		err = download_client_disconnect(&dfu);
 		if (err != 0) {
-			LOG_ERR("download_client_disconncet error %d", err);
+			LOG_ERR("download_client_disconnect error %d", err);
 			callback(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
 		}
@@ -94,11 +96,32 @@ static int download_client_callback(const struct download_client_evt *event)
 	return 0;
 }
 
-int fota_download_start(char *host, char *file)
+static int fota_download_from_offset(char *host, char *file, size_t offset)
 {
+	int err;
 	struct download_client_cfg config = {
 		.sec_tag = -1, /* HTTP */
 	};
+
+	err = download_client_connect(&dfu, host, &config);
+	if (err != 0) {
+		LOG_ERR("download_client_connect error %d", err);
+		return err;
+	}
+
+	err = download_client_start(&dfu, file, offset);
+	if (err != 0) {
+		LOG_ERR("download_client_start error %d", err);
+		download_client_disconnect(&dfu);
+		return err;
+	}
+
+	return 0;
+}
+
+int fota_download_start(char *host, char *file)
+{
+	int err;
 
 	if (host == NULL || file == NULL || callback == NULL) {
 		return -EINVAL;
@@ -109,39 +132,50 @@ int fota_download_start(char *host, char *file)
 		return -EALREADY;
 	}
 
-	int err = flash_img_init(&flash_img);
-
+	err = flash_img_init(&flash_img);
 	if (err != 0) {
 		LOG_ERR("flash_img_init error %d", err);
 		return err;
 	}
 
-	err = download_client_connect(&dfu, host, &config);
+	bytes_sent_to_flash = 0;
 
-	if (err != 0) {
-		LOG_ERR("download_client_connect error %d", err);
-		return err;
+	return fota_download_from_offset(host, file, 0);
+}
+
+int fota_download_continue(char *host, char *file)
+{
+	if (host == NULL || file == NULL ||
+	    callback == NULL || bytes_sent_to_flash == 0) {
+		return -EINVAL;
 	}
 
-	err = download_client_start(&dfu, file, 0);
-	if (err != 0) {
-		LOG_ERR("download_client_start error %d", err);
-		download_client_disconnect(&dfu);
-		return err;
+	/* If an existing socket it still open, close it in case that
+	 * connection is stuck
+	 */
+	if (dfu.fd != -1) {
+		int err = download_client_disconnect(&dfu);
+
+		if (err != 0) {
+			LOG_ERR("download_client_disconnect error %d", err);
+			return err;
+		}
 	}
-	return 0;
+
+	return fota_download_from_offset(host, file, bytes_sent_to_flash);
 }
 
 int fota_download_init(fota_download_callback_t client_callback)
 {
+	int err;
+
 	if (client_callback == NULL) {
 		return -EINVAL;
 	}
 
 	callback = client_callback;
 
-	int err = download_client_init(&dfu, download_client_callback);
-
+	err = download_client_init(&dfu, download_client_callback);
 	if (err != 0) {
 		LOG_ERR("download_client_init error %d", err);
 		return err;

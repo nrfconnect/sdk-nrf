@@ -64,6 +64,21 @@ int fota_download_init(fota_download_callback_t client_callback);
  */
 int fota_download_start(char *host, char *file);
 
+/**@brief Restart a failed download of the given file from the given host.
+ *
+ * Can be used to restart a download that has made progress before reporting a
+ * FOTA_DOWNLOAD_EVT_ERROR event.  Note that due to semaphore handling issues,
+ * the restart cannot be triggered within the fota_download callback that
+ * reports the error, and must be triggered after that callback has completed.
+ * This function will close and reopen the socket connection to the server as
+ * needed.
+ *
+ * @retval 0	     If download has restarted successfully.
+ * @retval -EALREADY If download is already ongoing.
+ *                   Otherwise, a negative value is returned.
+ */
+int fota_download_continue(char *host, char *file);
+
 #ifdef __cplusplus
 }
 #endif
