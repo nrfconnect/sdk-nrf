@@ -9,16 +9,16 @@ import argparse
 
 
 def main():
-    descr = "Merge data from peripheral and central. Synchronization events" \
+    descr = "Merge data from Peripheral and Central. Synchronization events" \
             " should be registered at the beginning and at the end of" \
             " measurements (used to compensate clock drift)."
     parser = argparse.ArgumentParser(description=descr)
-    parser.add_argument("peripheral_dataset", help="Name of peripheral dataset")
+    parser.add_argument("peripheral_dataset", help="Name of Peripheral dataset")
     parser.add_argument("peripheral_sync_event",
-                        help="Event used for synchronization - peripheral")
-    parser.add_argument("central_dataset", help="Name of central dataset")
+                        help="Event used for synchronization - Peripheral")
+    parser.add_argument("central_dataset", help="Name of Central dataset")
     parser.add_argument("central_sync_event",
-                        help="Event used for synchronization - central")
+                        help="Event used for synchronization - Central")
     parser.add_argument("result_dataset", help="Name for result dataset")
     args = parser.parse_args()
 
