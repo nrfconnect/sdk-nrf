@@ -11,6 +11,8 @@ by creating events understandable by the application.
    :maxdepth: 1
 
    buttons.rst
+   fn_keys.rst
+   click_detector.rst
    motion.rst
    wheel.rst
 
