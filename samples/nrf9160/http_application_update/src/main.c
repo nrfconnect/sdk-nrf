@@ -17,7 +17,8 @@
 
 static struct		device *gpiob;
 static struct		gpio_callback gpio_cb;
-static struct k_work	fota_work;
+static struct		k_delayed_work fota_work;
+static int		restarts_left;
 
 
 /**@brief Recoverable BSD library error. */
@@ -38,12 +39,20 @@ void bsd_irrecoverable_error_handler(uint32_t err)
 static void app_dfu_transfer_start(struct k_work *unused)
 {
 	int retval;
+	static bool already_started;
 
-	retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
-				     CONFIG_DOWNLOAD_FILE);
+	if (!already_started) {
+		retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
+					     CONFIG_DOWNLOAD_FILE);
+	} else {
+		retval = fota_download_continue(CONFIG_DOWNLOAD_HOST,
+					       CONFIG_DOWNLOAD_FILE);
+	}
 	if (retval != 0) {
 		printk("fota_download_start() failed, err %d\n",
 			retval);
+	} else {
+		already_started = true;
 	}
 
 	return;
@@ -74,7 +83,7 @@ static int led_app_version(void)
 void dfu_button_pressed(struct device *gpiob, struct gpio_callback *cb,
 			u32_t pins)
 {
-	k_work_submit(&fota_work);
+	k_delayed_work_submit(&fota_work, 0);
 	gpio_pin_disable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
 }
 
@@ -115,6 +124,16 @@ void fota_dl_handler(enum fota_download_evt_id evt_id)
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		printk("Received error from fota_download\n");
+		if (restarts_left > 0) {
+			restarts_left--;
+			printk("Attempting restart (%d retries left)\n",
+				restarts_left);
+			/* We cannot call fota_download_continue until after
+			 * this callback handler has completed, so we use
+			 * k_delayed_work
+			 */
+			k_delayed_work_submit(&fota_work, K_MSEC(2));
+		}
 		break;
 
 	default:
@@ -148,7 +167,9 @@ static int application_init(void)
 {
 	int err;
 
-	k_work_init(&fota_work, app_dfu_transfer_start);
+	restarts_left = CONFIG_DOWNLOAD_RESTARTS;
+
+	k_delayed_work_init(&fota_work, app_dfu_transfer_start);
 
 	err = dfu_button_init();
 	if (err != 0) {

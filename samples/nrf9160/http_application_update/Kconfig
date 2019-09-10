@@ -12,6 +12,10 @@ config DOWNLOAD_HOST
 config DOWNLOAD_FILE
 	string "The file to download"
 
+config DOWNLOAD_RESTARTS
+	int "Number of times to try restarting download on failure"
+	default 2
+
 config APPLICATION_VERSION
 	int "Application version"
 	default 1
