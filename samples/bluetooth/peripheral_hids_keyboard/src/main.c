@@ -625,9 +625,9 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 }
 
 
-static void pairing_failed(struct bt_conn *conn)
+static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-	printk("Pairing failed conn: %p\n", conn);
+	printk("Pairing failed conn: %p, reason %d\n", conn, reason);
 }
 
 
