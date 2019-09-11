@@ -1,0 +1,8 @@
+mainmenu "NRFX Timed signal"
+
+config FORCE_NRFX_MODULES
+	bool "Test to force nrfx enabled"
+	select NRFX_RTC
+	default y
+
+source "$ZEPHYR_BASE/Kconfig.zephyr"
