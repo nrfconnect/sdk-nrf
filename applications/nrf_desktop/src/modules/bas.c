@@ -19,8 +19,6 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BAS_LOG_LEVEL);
 
 
-static struct bt_gatt_ccc_cfg blvl_ccc_cfg[BT_GATT_CCC_MAX];
-
 static bool active;
 static u8_t battery = 100;
 
@@ -45,7 +43,7 @@ BT_GATT_SERVICE_DEFINE(bas_svc,
 	BT_GATT_CHARACTERISTIC(BT_UUID_BAS_BATTERY_LEVEL,
 			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ, read_blvl, NULL, &battery),
-	BT_GATT_CCC(blvl_ccc_cfg, blvl_ccc_cfg_changed),
+	BT_GATT_CCC(blvl_ccc_cfg_changed),
 );
 
 static bool event_handler(const struct event_header *eh)

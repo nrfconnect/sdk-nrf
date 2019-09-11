@@ -28,7 +28,6 @@
 
 LOG_MODULE_REGISTER(bt_gatt_lbs, CONFIG_BT_GATT_LBS_LOG_LEVEL);
 
-static struct bt_gatt_ccc_cfg lbslc_ccc_cfg[BT_GATT_CCC_MAX];
 static bool                   notify_enabled;
 static bool                   button_state;
 static struct bt_gatt_lbs_cb       lbs_cb;
@@ -91,7 +90,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_LBS),
 			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ, NULL, NULL, NULL),
 #endif
-	BT_GATT_CCC(lbslc_ccc_cfg, lbslc_ccc_cfg_changed),
+	BT_GATT_CCC(lbslc_ccc_cfg_changed),
 	BT_GATT_CHARACTERISTIC(BT_UUID_LBS_LED,
 			       BT_GATT_CHRC_WRITE,
 			       BT_GATT_PERM_WRITE,
