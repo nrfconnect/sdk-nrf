@@ -138,7 +138,7 @@ static void connected(struct bt_conn *conn, u8_t error)
 		 */
 
 		LOG_INF("Set security level");
-		err = bt_conn_security(conn, BT_SECURITY_MEDIUM);
+		err = bt_conn_set_security(conn, BT_SECURITY_L2);
 		if (err) {
 			LOG_ERR("Failed to set security");
 			goto disconnect;
