@@ -9,13 +9,11 @@ title: BH1749 Digital 16bit Serial Output Type Color Sensor IC
 description: >
     This is a representation of the BH1749 sensor
 
-inherits:
-    !include i2c-device.yaml
+compatible: "rohm,bh1749"
+
+include: i2c-device.yaml
 
 properties:
-    compatible:
-      constraint: "rohm,bh1749"
-
     int-gpios:
       type: compound
-      category: required
+      required: true

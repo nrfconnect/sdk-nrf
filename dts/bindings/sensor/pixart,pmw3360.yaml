@@ -10,13 +10,11 @@ title: PMW3360 optical motion sensor
 description: >
     This is a representation of the PMW3360 optical motion sensor
 
-inherits:
-    !include spi-device.yaml
+compatible: "pixart,pmw3360"
+
+include: spi-device.yaml
 
 properties:
-    compatible:
-      constraint: "pixart,pmw3360"
-
     irq-gpios:
       type: compound
-      category: required
+      required: true
