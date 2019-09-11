@@ -13,18 +13,16 @@
 
 LOG_MODULE_REGISTER(bt_gatt_nus, CONFIG_BT_GATT_NUS_LOG_LEVEL);
 
-static struct bt_gatt_ccc_cfg nuslc_ccc_cfg[BT_GATT_CCC_MAX];
-
 static struct bt_gatt_nus_cb nus_cb;
 
 static bool is_notification_enabled(struct bt_conn *conn,
-				    struct bt_gatt_ccc_cfg *ccd)
+				    const struct bt_gatt_ccc_cfg *ccd)
 {
 	const bt_addr_le_t *conn_addr = bt_conn_get_dst(conn);
 
 	for (size_t i = 0; i < BT_GATT_CCC_MAX; i++) {
 
-		bt_addr_le_t *ccd_addr = &ccd[i].peer;
+		const bt_addr_le_t *ccd_addr = &ccd[i].peer;
 
 		if ((!memcmp(conn_addr, ccd_addr, sizeof(bt_addr_le_t))) &&
 		    (ccd[i].value == BT_GATT_CCC_NOTIFY)) {
@@ -84,7 +82,7 @@ BT_GATT_PRIMARY_SERVICE(BT_UUID_NUS_SERVICE),
 			       BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ,
 			       NULL, NULL, NULL),
-	BT_GATT_CCC(nuslc_ccc_cfg, nuslc_ccc_cfg_changed),
+	BT_GATT_CCC(nuslc_ccc_cfg_changed),
 	BT_GATT_CHARACTERISTIC(BT_UUID_NUS_RX,
 			       BT_GATT_CHRC_WRITE |
 			       BT_GATT_CHRC_WRITE_WITHOUT_RESP,
@@ -105,8 +103,10 @@ int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks)
 int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, uint16_t len)
 {
 	struct bt_gatt_notify_params params = {0};
+	const struct bt_gatt_attr *ccc_attr = &nus_svc.attrs[2];
+	const struct bt_gatt_ccc_cfg *ccc_cfg = ccc_attr->user_data;
 
-	params.attr = &nus_svc.attrs[2];
+	params.attr = ccc_attr;
 	params.data = data;
 	params.len = len;
 	params.func = on_sent;
@@ -114,7 +114,7 @@ int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, uint16_t len)
 	if (!conn) {
 		LOG_DBG("Notification send to all connected peers");
 		return  bt_gatt_notify_cb(NULL, &params);
-	} else if (is_notification_enabled(conn, nuslc_ccc_cfg)) {
+	} else if (is_notification_enabled(conn, ccc_cfg)) {
 		return bt_gatt_notify_cb(conn, &params);
 	} else {
 		return -EINVAL;

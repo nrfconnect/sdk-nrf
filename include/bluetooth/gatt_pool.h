@@ -104,11 +104,10 @@ extern "C" {
 #define BT_GATT_POOL_CCC(_gp, _ccc_cfg, _ccc_cb)                               \
 	do {                                                                   \
 		int _ret;                                                      \
-		const struct _bt_gatt_ccc _ccc = {                             \
-		    .cfg = _ccc_cfg,                                           \
-		    .cfg_len = ARRAY_SIZE(_ccc_cfg),                           \
+		struct _bt_gatt_ccc _ccc = {                                   \
 		    .cfg_changed = _ccc_cb,                                    \
 		};                                                             \
+		memcpy(&_ccc.cfg, (_ccc_cfg), sizeof(_ccc.cfg));               \
 		_ret = bt_gatt_pool_ccc_alloc(_gp, &_ccc);                     \
 		__ASSERT_NO_MSG(!_ret);                                        \
 		(void)_ret;                                                    \
