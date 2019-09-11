@@ -46,7 +46,7 @@ static void security_timeout_fn(struct k_work *w)
 	bt_conn_disconnect(active_conn[0],
 			   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 
-	LOG_ERR("Security establishmend failed - device disconnected");
+	LOG_ERR("Security establishment failed - device disconnected");
 }
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
@@ -195,13 +195,20 @@ static void exchange_func(struct bt_conn *conn, u8_t err,
 	LOG_INF("MTU exchange done");
 }
 
-static void security_changed(struct bt_conn *conn, bt_security_t level)
+static void security_changed(struct bt_conn *conn, bt_security_t level,
+			     enum bt_security_err bt_err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Security with %s level %u", log_strdup(addr), level);
+	if (!bt_err) {
+		LOG_INF("Security with %s level %u", log_strdup(addr), level);
+	} else {
+		LOG_ERR("Security failed: %s level %u err %d", log_strdup(addr),
+			level, bt_err);
+		return;		/* Let the timeout handle the failure. */
+	}
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 		__ASSERT_NO_MSG(active_conn[0] == conn);
