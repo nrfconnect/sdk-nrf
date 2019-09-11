@@ -1286,7 +1286,7 @@ struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
 	/* Searching current report in array */
 	rep_arr = hids_c->rep_info;
 
-	for (n = 0; n + 1 <= hids_c->rep_cnt; ++n) {
+	for (n = 0; n + 1 < hids_c->rep_cnt; ++n) {
 		if (*rep_arr++ == rep) {
 			return *rep_arr;
 		}
