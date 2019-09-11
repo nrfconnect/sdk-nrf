@@ -43,11 +43,11 @@
 &pwm0 {
 	status = "okay";
 	ch0-pin = <30>;
-	ch0-inverted = "true";
+	ch0-inverted;
 	ch1-pin = <29>;
-	ch1-inverted = "true";
+	ch1-inverted;
 	ch2-pin = <28>;
-	ch2-inverted = "true";
+	ch2-inverted;
 };
 
 &flash0 {
