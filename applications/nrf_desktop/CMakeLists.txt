@@ -67,7 +67,6 @@ zephyr_library_include_directories(
 add_subdirectory(src/events)
 add_subdirectory(src/hw_interface)
 add_subdirectory(src/modules)
-add_subdirectory(src/services)
 add_subdirectory(src/util)
 
 if(CONFIG_BOOTLOADER_MCUBOOT)

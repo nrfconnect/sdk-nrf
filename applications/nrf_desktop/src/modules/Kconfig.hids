@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "BLE Services"
+menu "BLE HID Service"
 
 config DESKTOP_HID_MOUSE
 	bool "Mouse HID device"
@@ -22,11 +22,6 @@ config DESKTOP_HID_CONSUMER_CTRL
 	  This option controls if target is visible as consumer control HID
 	  device.
 
-config DESKTOP_BAS_ENABLE
-	bool
-	help
-	  This option enables battery service.
-
 config DESKTOP_HIDS_ENABLE
 	bool
 	help
@@ -43,14 +38,6 @@ config DESKTOP_HID_PERIPHERAL
 	select DESKTOP_HIDS_ENABLE
 	help
 	  This option selects required options if device is HID peripheral.
-
-if DESKTOP_BAS_ENABLE
-
-module = DESKTOP_BAS
-module-str = battery service
-source "subsys/logging/Kconfig.template.log_config"
-
-endif
 
 if DESKTOP_HIDS_ENABLE
 
