@@ -52,6 +52,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
 /samples/profiler/                        @pdunaj @pizi-nordic
+/samples/usb/usb_uart_bridge/             @joakimtoe @jtguggedal
 /samples/CMakeLists.txt                   @SebastianBoe
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
