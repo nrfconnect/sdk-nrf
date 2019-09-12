@@ -12,3 +12,5 @@ part of its functionality.
 
    config_channel.rst
    hid_state.rst
+   hids.rst
+   usb_state.rst
