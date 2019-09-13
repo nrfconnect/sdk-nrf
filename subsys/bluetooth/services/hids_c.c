@@ -13,11 +13,6 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(hids_c, CONFIG_BT_GATT_HIDS_C_LOG_LEVEL);
 
-/* Suspend value for Control Point  */
-#define BT_GATT_HIDS_C_CP_SUSPEND      0x00
-/* Exit suspend value for Control Point */
-#define BT_GATT_HIDS_C_CP_EXIT_SUSPEND 0x01
-
 /* Real report structure definition */
 struct bt_gatt_hids_c_rep_info {
 	/** HIDS client object
@@ -43,7 +38,7 @@ struct bt_gatt_hids_c_rep_info {
 	/** Report reference information */
 	struct {
 		u8_t id;                              /**< Report identifier */
-		enum bt_gatt_hids_c_report_type type; /**< Report type       */
+		enum bt_gatt_hids_report_type type; /**< Report type       */
 	} ref;
 	u8_t size; /**< The size of the value */
 };
@@ -132,10 +127,10 @@ static int rep_new(struct bt_gatt_hids_c *hids_c,
 	/* Guess the type depending on the flags */
 	if (chrc_val->properties & BT_GATT_CHRC_WRITE_WITHOUT_RESP) {
 		/* Only Out Report has this properties */
-		rep->ref.type = BT_GATT_HIDS_C_REPORT_TYPE_OUTPUT;
+		rep->ref.type = BT_GATT_HIDS_REPORT_TYPE_OUTPUT;
 	} else if (chrc_val->properties & BT_GATT_CHRC_NOTIFY) {
 		/* Only In Report has this properties */
-		rep->ref.type = BT_GATT_HIDS_C_REPORT_TYPE_INPUT;
+		rep->ref.type = BT_GATT_HIDS_REPORT_TYPE_INPUT;
 		/* And it has CCC descriptor */
 		gatt_desc = bt_gatt_dm_desc_by_uuid(dm, rep_chrc,
 						    BT_UUID_GATT_CCC);
@@ -147,7 +142,7 @@ static int rep_new(struct bt_gatt_hids_c *hids_c,
 		rep->handlers.ccc = gatt_desc->handle;
 	} else {
 		/* It has to be feature report */
-		rep->ref.type = BT_GATT_HIDS_C_REPORT_TYPE_FEATURE;
+		rep->ref.type = BT_GATT_HIDS_REPORT_TYPE_FEATURE;
 	}
 	/* Get common report handlers */
 	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, rep_chrc,
@@ -351,7 +346,7 @@ static u8_t pm_read_process(struct bt_conn *conn, u8_t err,
 		return BT_GATT_ITER_STOP;
 	}
 
-	hids_c->pm = (enum bt_gatt_hids_c_pm)((u8_t *)data)[0];
+	hids_c->pm = (enum bt_gatt_hids_pm)((u8_t *)data)[0];
 	LOG_DBG("Read PM success: %d", (int)hids_c->pm);
 	hids_mark_ready(hids_c);
 	return BT_GATT_ITER_STOP;
@@ -955,7 +950,7 @@ int bt_gatt_hids_c_rep_write_wo_rsp(struct bt_gatt_hids_c *hids_c,
 	if (!hids_c || !rep) {
 		return -EINVAL;
 	}
-	if (rep->ref.type != BT_GATT_HIDS_C_REPORT_TYPE_OUTPUT) {
+	if (rep->ref.type != BT_GATT_HIDS_REPORT_TYPE_OUTPUT) {
 		return -ENOTSUP;
 	}
 
@@ -1011,7 +1006,7 @@ int bt_gatt_hids_c_rep_subscribe(struct bt_gatt_hids_c *hids_c,
 	if (!hids_c || !rep || !func) {
 		return -EINVAL;
 	}
-	if (rep->ref.type != BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
+	if (rep->ref.type != BT_GATT_HIDS_REPORT_TYPE_INPUT) {
 		return -ENOTSUP;
 	}
 	if (rep->notify_cb) {
@@ -1145,7 +1140,7 @@ static u8_t pm_update_process(struct bt_conn *conn, u8_t err,
 	} else if (length != 1) {
 		LOG_ERR("Unexpected PM size");
 	} else {
-		hids_c->pm = (enum bt_gatt_hids_c_pm)((u8_t *)data)[0];
+		hids_c->pm = (enum bt_gatt_hids_pm)((u8_t *)data)[0];
 	}
 
 	if (hids_c->pm_update_cb) {
@@ -1178,14 +1173,14 @@ int bt_gatt_hids_c_pm_update(struct bt_gatt_hids_c *hids_c, s32_t timeout)
 	return 0;
 }
 
-enum bt_gatt_hids_c_pm bt_gatt_hids_c_pm_get(
+enum bt_gatt_hids_pm bt_gatt_hids_c_pm_get(
 	const struct bt_gatt_hids_c *hids_c)
 {
 	return hids_c->pm;
 }
 
 int bt_gatt_hids_c_pm_write(struct bt_gatt_hids_c *hids_c,
-			    enum bt_gatt_hids_c_pm pm)
+			    enum bt_gatt_hids_pm pm)
 {
 	int err;
 	u8_t data[] = {(u8_t)pm};
@@ -1211,7 +1206,7 @@ int bt_gatt_hids_c_pm_write(struct bt_gatt_hids_c *hids_c,
 int bt_gatt_hids_c_suspend(struct bt_gatt_hids_c *hids_c)
 {
 	int err;
-	u8_t data[] = {BT_GATT_HIDS_C_CP_SUSPEND};
+	u8_t data[] = {BT_GATT_HIDS_CONTROL_POINT_SUSPEND};
 
 	err = bt_gatt_write_without_response(hids_c->conn,
 					     hids_c->handlers.cp,
@@ -1224,7 +1219,7 @@ int bt_gatt_hids_c_suspend(struct bt_gatt_hids_c *hids_c)
 int bt_gatt_hids_c_exit_suspend(struct bt_gatt_hids_c *hids_c)
 {
 	int err;
-	u8_t data[] = {BT_GATT_HIDS_C_CP_EXIT_SUSPEND};
+	u8_t data[] = {BT_GATT_HIDS_CONTROL_POINT_EXIT_SUSPEND};
 
 	err = bt_gatt_write_without_response(hids_c->conn,
 					     hids_c->handlers.cp,
@@ -1239,7 +1234,7 @@ struct bt_conn *bt_gatt_hids_c_conn(const struct bt_gatt_hids_c *hids_c)
 	return hids_c->conn;
 }
 
-const struct bt_gatt_hids_c_info_val *bt_gatt_hids_c_conn_info_val(
+const struct bt_gatt_hids_info *bt_gatt_hids_c_conn_info_val(
 	const struct bt_gatt_hids_c *hids_c)
 {
 	return &hids_c->info_val;
@@ -1296,7 +1291,7 @@ struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
 
 struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_find(
 	struct bt_gatt_hids_c *hids_c,
-	enum bt_gatt_hids_c_report_type type,
+	enum bt_gatt_hids_report_type type,
 	u8_t id)
 {
 	struct bt_gatt_hids_c_rep_info **rep_arr;
@@ -1330,7 +1325,7 @@ u8_t bt_gatt_hids_c_rep_id(const struct bt_gatt_hids_c_rep_info *rep)
 	return rep->ref.id;
 }
 
-enum bt_gatt_hids_c_report_type bt_gatt_hids_c_rep_type(
+enum bt_gatt_hids_report_type bt_gatt_hids_c_rep_type(
 	const struct bt_gatt_hids_c_rep_info *rep)
 {
 	return rep->ref.type;

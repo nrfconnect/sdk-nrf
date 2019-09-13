@@ -22,6 +22,18 @@ extern "C" {
 #include <bluetooth/gatt.h>
 #include <bluetooth/conn_ctx.h>
 
+#ifndef CONFIG_BT_GATT_HIDS_INPUT_REP_MAX
+#define CONFIG_BT_GATT_HIDS_INPUT_REP_MAX 0
+#endif
+
+#ifndef CONFIG_BT_GATT_HIDS_OUTPUT_REP_MAX
+#define CONFIG_BT_GATT_HIDS_OUTPUT_REP_MAX 0
+#endif
+
+#ifndef CONFIG_BT_GATT_HIDS_FEATURE_REP_MAX
+#define CONFIG_BT_GATT_HIDS_FEATURE_REP_MAX 0
+#endif
+
 /** Length of the Boot Mouse Input Report. */
 #define BT_GATT_HIDS_BOOT_MOUSE_REP_LEN		8
 /** Length of the Boot Keyboard Input Report. */
@@ -61,12 +73,62 @@ extern "C" {
  */
 #define _BLE_GATT_HIDS_REPORT_ADD(_report_size) (_report_size) +
 
-/** HID Service information flags. */
+/** @brief Possible values for the Protocol Mode Characteristic value.
+ */
+enum bt_gatt_hids_pm {
+	/** Boot protocol. */
+	BT_GATT_HIDS_PM_BOOT = 0x00,
+	/** Report protocol. */
+	BT_GATT_HIDS_PM_REPORT = 0x01
+};
+
+/** @brief Report types as defined in the Report Reference Characteristic
+ *         descriptor.
+ */
+enum bt_gatt_hids_report_type {
+	/** Reserved value. */
+	BT_GATT_HIDS_REPORT_TYPE_RESERVED = 0x00,
+
+	/** Input Report. */
+	BT_GATT_HIDS_REPORT_TYPE_INPUT = 0x01,
+
+	/** Output report. */
+	BT_GATT_HIDS_REPORT_TYPE_OUTPUT = 0x02,
+
+	/** Feature Report. */
+	BT_GATT_HIDS_REPORT_TYPE_FEATURE = 0x03
+};
+
+/** @brief HID Service information.
+ */
+struct bt_gatt_hids_info {
+	/** Version of the base USB HID specification. */
+	u16_t bcd_hid;
+
+	/** Country ID code. HID device hardware localization.
+	 * Most hardware is not localized (value 0x00).
+	 */
+	u8_t b_country_code;
+
+	/** Information flags (see @ref bt_gatt_hids_flags). */
+	u8_t flags;
+};
+
+/** @brief HID Service information flags. */
 enum bt_gatt_hids_flags {
 	/** Device is capable of sending a wake-signal to a host. */
-	BT_GATT_HIDS_REMOTE_WAKE          = BIT(0),
+	BT_GATT_HIDS_REMOTE_WAKE = BIT(0),
 	/** Device advertises when bonded but not connected. */
 	BT_GATT_HIDS_NORMALLY_CONNECTABLE = BIT(1),
+};
+
+/** @brief HID Control Point settings. */
+enum bt_gatt_hids_control_point {
+	/** Suspend value for Control Point.  */
+	BT_GATT_HIDS_CONTROL_POINT_SUSPEND = 0x00,
+
+	/** Exit suspend value for Control Point.*/
+	BT_GATT_HIDS_CONTROL_POINT_EXIT_SUSPEND = 0x01
 };
 
 /** HID Service Protocol Mode events. */
@@ -91,19 +153,6 @@ enum bt_gatt_hids_notif_evt {
 	BT_GATT_HIDS_CCCD_EVT_NOTIF_ENABLED,
 	/** Notification disabled event. */
 	BT_GATT_HIDS_CCCD_EVT_NOTIF_DISABLED,
-};
-
-/** @brief HID Service information.
- */
-struct bt_gatt_hids_info {
-	/** Version of the base USB HID specification. */
-	u16_t bcd_hid;
-
-	/** Country ID code. */
-	u8_t b_country_code;
-
-	/** Information flags (see @ref bt_gatt_hids_flags). */
-	u8_t flags;
 };
 
 /** @brief Report data.
@@ -309,7 +358,7 @@ typedef void (*bt_gatt_hids_pm_evt_handler_t) (enum bt_gatt_hids_pm_evt evt,
 
 /** @brief Protocol Mode.
  */
-struct bt_gatt_hids_pm {
+struct bt_gatt_hids_pm_data {
 	/** Callback with new Protocol Mode. */
 	bt_gatt_hids_pm_evt_handler_t evt_handler;
 };
@@ -399,7 +448,7 @@ struct bt_gatt_hids {
 	struct bt_gatt_hids_rep_map rep_map;
 
 	/** Protocol Mode. */
-	struct bt_gatt_hids_pm pm;
+	struct bt_gatt_hids_pm_data pm;
 
 	/** Control Point. */
 	struct bt_gatt_hids_cp cp;

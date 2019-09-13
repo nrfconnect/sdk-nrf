@@ -194,7 +194,7 @@ static void hidc_ready(struct bt_gatt_hids_c *hids_c)
 
 	while (NULL != (rep = bt_gatt_hids_c_rep_next(hids_c, rep))) {
 		if (bt_gatt_hids_c_rep_type(rep) ==
-		    BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
+		    BT_GATT_HIDS_REPORT_TYPE_INPUT) {
 			int err = bt_gatt_hids_c_rep_subscribe(hids_c,
 							       rep,
 							       hidc_read);
@@ -464,7 +464,7 @@ static bool event_handler(const struct event_header *eh)
 
 			struct bt_gatt_hids_c_rep_info *config_rep =
 				bt_gatt_hids_c_rep_find(recipient_hidc,
-					BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
+					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
 					REPORT_ID_USER_CONFIG);
 			if (!config_rep) {
 				LOG_ERR("Feature report not found");
@@ -536,7 +536,7 @@ static bool event_handler(const struct event_header *eh)
 
 				struct bt_gatt_hids_c_rep_info *config_rep =
 					bt_gatt_hids_c_rep_find(recipient_hidc,
-						BT_GATT_HIDS_C_REPORT_TYPE_FEATURE,
+						BT_GATT_HIDS_REPORT_TYPE_FEATURE,
 						REPORT_ID_USER_CONFIG);
 				if (!config_rep) {
 					LOG_ERR("Feature report not found");

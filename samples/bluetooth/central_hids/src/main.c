@@ -310,7 +310,7 @@ static void hids_on_ready(struct k_work *work)
 
 	while (NULL != (rep = bt_gatt_hids_c_rep_next(&hids_c, rep))) {
 		if (bt_gatt_hids_c_rep_type(rep) ==
-		    BT_GATT_HIDS_C_REPORT_TYPE_INPUT) {
+		    BT_GATT_HIDS_REPORT_TYPE_INPUT) {
 			printk("Subscribe to report id: %u\n",
 			       bt_gatt_hids_c_rep_id(rep));
 			err = bt_gatt_hids_c_rep_subscribe(&hids_c, rep,
@@ -348,7 +348,7 @@ static void hids_c_prep_fail_cb(struct bt_gatt_hids_c *hids_c, int err)
 static void hids_c_pm_update_cb(struct bt_gatt_hids_c *hids_c)
 {
 	printk("Protocol mode updated: %s\n",
-	      bt_gatt_hids_c_pm_get(hids_c) == BT_GATT_HIDS_C_PM_BOOT ?
+	      bt_gatt_hids_c_pm_get(hids_c) == BT_GATT_HIDS_PM_BOOT ?
 	      "BOOT" : "REPORT");
 }
 
@@ -367,15 +367,15 @@ static void button_bootmode(void)
 		return;
 	}
 	int err;
-	enum bt_gatt_hids_c_pm pm = bt_gatt_hids_c_pm_get(&hids_c);
+	enum bt_gatt_hids_pm pm = bt_gatt_hids_c_pm_get(&hids_c);
 
 	printk("Setting protocol mode: %s\n",
-	       (pm == BT_GATT_HIDS_C_PM_BOOT) ?
+	       (pm == BT_GATT_HIDS_PM_BOOT) ?
 	       "BOOT" : "REPORT");
 	err = bt_gatt_hids_c_pm_write(&hids_c,
-				      (pm == BT_GATT_HIDS_C_PM_BOOT) ?
-				      BT_GATT_HIDS_C_PM_REPORT :
-				      BT_GATT_HIDS_C_PM_BOOT);
+				      (pm == BT_GATT_HIDS_PM_BOOT) ?
+				      BT_GATT_HIDS_PM_REPORT :
+				      BT_GATT_HIDS_PM_BOOT);
 	if (err) {
 		printk("Cannot change protocol mode (err %d)\n", err);
 	}
@@ -395,7 +395,7 @@ static void button_capslock(void)
 		printk("HID device does not have Keyboard OUT report\n");
 		return;
 	}
-	if (bt_gatt_hids_c_pm_get(&hids_c) != BT_GATT_HIDS_C_PM_BOOT) {
+	if (bt_gatt_hids_c_pm_get(&hids_c) != BT_GATT_HIDS_PM_BOOT) {
 		printk("This function works only in BOOT Report mode\n");
 		return;
 	}

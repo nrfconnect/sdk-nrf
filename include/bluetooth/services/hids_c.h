@@ -21,34 +21,10 @@ extern "C" {
 #include <bluetooth/gatt.h>
 #include <bluetooth/conn.h>
 #include <bluetooth/gatt_dm.h>
+#include <bluetooth/services/hids.h>
 
 struct bt_gatt_hids_c;
 struct bt_gatt_hids_c_rep_info;
-
-/**
- * @brief Possible values for the Protocol Mode Characteristic value.
- */
-enum bt_gatt_hids_c_pm {
-	/** Boot protocol. */
-	BT_GATT_HIDS_C_PM_BOOT   = 0x00,
-	/** Report protocol. */
-	BT_GATT_HIDS_C_PM_REPORT = 0x01
-};
-
-/**
- * @brief Report types as defined in the Report Reference Characteristic
- *        descriptor.
- */
-enum bt_gatt_hids_c_report_type {
-	/** Reserved value. */
-	BT_GATT_HIDS_C_REPORT_TYPE_RESERVED = 0x00,
-	/** Input Report. */
-	BT_GATT_HIDS_C_REPORT_TYPE_INPUT    = 0x01,
-	/** Output Report. */
-	BT_GATT_HIDS_C_REPORT_TYPE_OUTPUT   = 0x02,
-	/** Feature Report. */
-	BT_GATT_HIDS_C_REPORT_TYPE_FEATURE  = 0x03
-};
 
 /**
  * @brief Callback function that is called when a notification or read response
@@ -140,55 +116,6 @@ typedef void (*bt_gatt_hids_c_map_cb)(struct bt_gatt_hids_c *hids_c,
 typedef void (*bt_gatt_hids_c_pm_update_cb)(struct bt_gatt_hids_c *hids_c);
 
 /**
- * @brief RemoteWake flag position.
- *
- * Used in @ref bt_gatt_hids_c_info_val::Flags.
- */
-#define BT_GATT_HIDS_C_INFO_FLAG_RW_POS 0
-
-/**
- * @brief NormallyConnectable flag position.
- *
- * Used in @ref bt_gatt_hids_c_info_val::Flags.
- */
-#define BT_GATT_HIDS_C_INFO_FLAG_NC_POS 1
-
-/**
- * @brief RemoteWake flag value.
- *
- * Used in @ref bt_gatt_hids_c_info_val::Flags.
- */
-#define BT_GATT_HIDS_C_INFO_FLAG_RW (1U << BT_GATT_HIDS_C_INFO_FLAG_RW_POS)
-
-/**
- * @brief NormallyConnectable flag value.
- *
- * Used in @ref bt_gatt_hids_c_info_val::Flags.
- */
-#define BT_GATT_HIDS_C_INFO_FLAG_NC (1U << BT_GATT_HIDS_C_INFO_FLAG_NC_POS)
-
-/**
- * @brief HID Information Characteristic value.
- */
-struct bt_gatt_hids_c_info_val {
-	/**
-	 * BCD representation of the version number of the base USB HID
-	 * Specification implemented by the HID device.
-	 */
-	u16_t bcd_hid;
-	/**
-	 * HID device hardware localization.
-	 * Most hardware is not localized (value 0x00).
-	 */
-	u8_t  b_country_code;
-	/**
-	 * Flags to mark available functions.
-	 * @sa BT_GATT_HIDS_C_INFO_FLAG_RW, BT_GATT_HIDS_C_INFO_FLAG_NC
-	 */
-	u8_t  flags;
-};
-
-/**
  * @brief HIDS client parameters for the initialization function.
  */
 struct bt_gatt_hids_c_init_params {
@@ -231,7 +158,7 @@ struct bt_gatt_hids_c {
 	/** Connection object. */
 	struct bt_conn *conn;
 	/** HIDS client information. */
-	struct bt_gatt_hids_c_info_val info_val;
+	struct bt_gatt_hids_info info_val;
 	/** Handlers for descriptors */
 	struct bt_gatt_hids_c_handlers {
 		/** Protocol Mode Characteristic value handle. */
@@ -307,7 +234,7 @@ struct bt_gatt_hids_c {
 	/** Current state. */
 	bool ready;
 	/** Current protocol mode. */
-	enum bt_gatt_hids_c_pm pm;
+	enum bt_gatt_hids_pm pm;
 };
 
 /**
@@ -553,7 +480,7 @@ int bt_gatt_hids_c_pm_update(struct bt_gatt_hids_c *hids_c, s32_t timeout);
  *
  * @return Current protocol mode.
  */
-enum bt_gatt_hids_c_pm bt_gatt_hids_c_pm_get(
+enum bt_gatt_hids_pm bt_gatt_hids_c_pm_get(
 	const struct bt_gatt_hids_c *hids_c);
 
 /**
@@ -573,7 +500,7 @@ enum bt_gatt_hids_c_pm bt_gatt_hids_c_pm_get(
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_gatt_hids_c_pm_write(struct bt_gatt_hids_c *hids_c,
-			    enum bt_gatt_hids_c_pm pm);
+			    enum bt_gatt_hids_pm pm);
 
 /**
  * @brief Suspend the device.
@@ -624,7 +551,7 @@ struct bt_conn *bt_gatt_hids_c_conn(const struct bt_gatt_hids_c *hids_c);
  *
  * @return Pointer to the decoded HID information structure.
  */
-const struct bt_gatt_hids_c_info_val *bt_gatt_hids_c_conn_info_val(
+const struct bt_gatt_hids_info *bt_gatt_hids_c_conn_info_val(
 	const struct bt_gatt_hids_c *hids_c);
 
 /**
@@ -703,7 +630,7 @@ struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
  */
 struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_find(
 	struct bt_gatt_hids_c *hids_c,
-	enum bt_gatt_hids_c_report_type type,
+	enum bt_gatt_hids_report_type type,
 	u8_t id);
 
 /**
@@ -741,7 +668,7 @@ u8_t bt_gatt_hids_c_rep_id(const struct bt_gatt_hids_c_rep_info *rep);
  *
  * @return Report type.
  */
-enum bt_gatt_hids_c_report_type bt_gatt_hids_c_rep_type(
+enum bt_gatt_hids_report_type bt_gatt_hids_c_rep_type(
 	const struct bt_gatt_hids_c_rep_info *rep);
 
 /**
