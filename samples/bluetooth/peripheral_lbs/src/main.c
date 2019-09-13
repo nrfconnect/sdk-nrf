@@ -71,9 +71,19 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 }
 
 #ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
-static void security_changed(struct bt_conn *conn, bt_security_t level)
+static void security_changed(struct bt_conn *conn, bt_security_t level,
+			     enum bt_security_err err)
 {
-	printk("Security level was raised to %d\n", level);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Security changed: %s level %u\n", addr, level);
+	if (!err) {
+		printk("Security changed: %s level %u", addr, level);
+	} else {
+		printk("Security failed: %s level %u err %d", addr, level, err);
+	}
 }
 #endif
 
