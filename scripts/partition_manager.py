@@ -409,7 +409,12 @@ def load_reqs(reqs, input_config):
     for ymlpath in input_config:
         if path.exists(ymlpath):
             with open(ymlpath, 'r') as f:
-                reqs.update(yaml.safe_load(f))
+                loaded_reqs = yaml.safe_load(f)
+                for key in loaded_reqs.keys():
+                    if key in reqs.keys() and loaded_reqs[key] != reqs[key]:
+                        raise RuntimeError("Conflicting configuration found for '{}' value for key '{}' differs."
+                                           "val1: {} val2: {} ".format(f.name, key, loaded_reqs[key], reqs[key]))
+                reqs.update(loaded_reqs)
 
     reqs['app'] = dict()
 
