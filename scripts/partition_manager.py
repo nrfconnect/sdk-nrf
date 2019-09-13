@@ -128,6 +128,7 @@ def extract_sub_partitions(reqs):
 
     return sub_partitions
 
+
 def solve_inside(reqs, sub_partitions):
     for key, value in reqs.items():
         if 'inside' in value.keys():
@@ -405,7 +406,7 @@ def sizeof(reqs, req, total_size):
 
 
 def load_reqs(reqs, input_config):
-    for name, ymlpath in input_config.items():
+    for ymlpath in input_config:
         if path.exists(ymlpath):
             with open(ymlpath, 'r') as f:
                 reqs.update(yaml.safe_load(f))
@@ -474,13 +475,8 @@ This file contains all addresses and sizes of all partitions.
 
 "pm_config.h" is in the same folder as the given 'pm.yml' file.''',
         formatter_class=argparse.RawDescriptionHelpFormatter)
-
-    parser.add_argument("--input-names", required=True, type=str, nargs="+",
-                        help="List of names of image partitions.")
-
     parser.add_argument("--input-files", required=True, type=str, nargs="+",
-                        help="List of paths to input yaml files. "
-                             "These will be matched to the --input-names.")
+                        help="List of paths to input yaml files. ")
 
     parser.add_argument("--flash-size", required=True, type=int,
                         help="Flash size of chip.")
@@ -502,7 +498,7 @@ def main():
         if args.static_config:
             print("Partition Manager using static configuration at " + args.static_config.name)
             static_config = yaml.safe_load(args.static_config)
-        pm_config = get_pm_config(dict(zip(args.input_names, args.input_files)), args.flash_size, static_config)
+        pm_config = get_pm_config(args.input_files, args.flash_size, static_config)
         write_yaml_out_file(pm_config, args.output)
     else:
         print("No input, running tests.")
