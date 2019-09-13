@@ -47,7 +47,6 @@ if(FIRST_BOILERPLATE_EXECUTION)
     set(pm_cmd
       ${PYTHON_EXECUTABLE}
       ${NRF_DIR}/scripts/partition_manager.py
-      --input-names ${images}
       --input-files ${input_files}
       --flash-size ${flash_size}
       --output ${CMAKE_BINARY_DIR}/partitions.yml
