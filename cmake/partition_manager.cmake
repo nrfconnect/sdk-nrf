@@ -15,6 +15,7 @@ set(${IMAGE}logical_target ${logical_target_for_zephyr_elf} CACHE STRING "" FORC
 
 if(FIRST_BOILERPLATE_EXECUTION)
   get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
+  get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 
   set(static_configuration_file ${APPLICATION_SOURCE_DIR}/pm_static.yml)
 
@@ -41,6 +42,9 @@ if(FIRST_BOILERPLATE_EXECUTION)
       list(APPEND input_files ${${IMAGE}PROJECT_BINARY_DIR}/${generated_path}/pm.yml)
       list(APPEND header_files ${${IMAGE}PROJECT_BINARY_DIR}/${generated_path}/pm_config.h)
     endforeach()
+
+    # Add subsys defined pm.yml to the input_files
+    list(APPEND input_files ${PM_SUBSYS_PREPROCESSED})
 
     math(EXPR flash_size "${CONFIG_FLASH_SIZE} * 1024")
 

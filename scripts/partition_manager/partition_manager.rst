@@ -49,6 +49,21 @@ This file must be stored in the same folder as the main :file:`CMakeLists.txt` f
    The root application does not need to define a :file:`pm.yml` file, because its partition size and placement is implied by the size and placement of the sub-image partitions.
    If a root application defines a :file:`pm.yml` file, it is silently ignored.
 
+A subsystem can also provide Partition Manager configuration.
+Subsystem Partition Manager configurations can not define image partitions.
+
+There are some limitations when multiple images include the same subsystem which defines a Partition Manager configuration.
+All partitions are global, and will only be included once, even if multiple configurations define them.
+When multiple configurations define the same partition, the configuration of that partition must be identical in all definitions.
+An exception is raised if the configuration differs.
+
+The listing below shows how to properly define the Partition Manager configuration for a subsystem.
+This must be placed in the :file:`CMakeLists.txt` that defines the subsystem.
+
+.. code-block:: cmake
+
+  add_partition_manager_config(pm.yml)
+
 .. _pm_yaml_format:
 
 Configuration file format
