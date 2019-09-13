@@ -26,25 +26,6 @@
 
 LOG_MODULE_REGISTER(bt_gatt_hids, CONFIG_BT_GATT_HIDS_LOG_LEVEL);
 
-/* HID Protocol modes. */
-enum {
-	HIDS_PROTOCOL_MODE_BOOT = 0x00,
-	HIDS_PROTOCOL_MODE_REPORT = 0x01
-};
-
-/* HID Control Point settings. */
-enum {
-	HIDS_CONTROL_POINT_SUSPEND = 0x00,
-	HIDS_CONTROL_POINT_EXIT_SUSPEND = 0x01
-};
-
-/* HIDS report type values. */
-enum {
-	HIDS_INPUT = 0x01,
-	HIDS_OUTPUT = 0x02,
-	HIDS_FEATURE = 0x03,
-};
-
 int bt_gatt_hids_notify_connected(struct bt_gatt_hids *hids_obj,
 				  struct bt_conn *conn)
 {
@@ -62,7 +43,7 @@ int bt_gatt_hids_notify_connected(struct bt_gatt_hids *hids_obj,
 
 	memset(conn_data, 0, bt_conn_ctx_block_size_get(hids_obj->conn_ctx));
 
-	conn_data->pm_ctx_value = HIDS_PROTOCOL_MODE_REPORT;
+	conn_data->pm_ctx_value = BT_GATT_HIDS_PM_REPORT;
 
 	/* Assign input report context. */
 	conn_data->inp_rep_ctx =
@@ -131,7 +112,7 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 {
 	LOG_DBG("Writing to Protocol Mode characteristic.");
 
-	struct bt_gatt_hids_pm *pm = attr->user_data;
+	struct bt_gatt_hids_pm_data *pm = attr->user_data;
 	struct bt_gatt_hids *hids = CONTAINER_OF(pm, struct bt_gatt_hids, pm);
 	u8_t const *new_pm = (u8_t const *)buf;
 
@@ -150,13 +131,13 @@ static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 	}
 
 	switch (*new_pm) {
-	case HIDS_PROTOCOL_MODE_BOOT:
+	case BT_GATT_HIDS_PM_BOOT:
 		if (pm->evt_handler) {
 			pm->evt_handler(BT_GATT_HIDS_PM_EVT_BOOT_MODE_ENTERED,
 					conn);
 		}
 		break;
-	case HIDS_PROTOCOL_MODE_REPORT:
+	case BT_GATT_HIDS_PM_REPORT:
 		if (pm->evt_handler) {
 			pm->evt_handler(BT_GATT_HIDS_PM_EVT_REPORT_MODE_ENTERED,
 					conn);
@@ -179,7 +160,7 @@ static ssize_t hids_protocol_mode_read(struct bt_conn *conn,
 {
 	LOG_DBG("Reading from Protocol Mode characteristic.");
 
-	struct bt_gatt_hids_pm *pm = attr->user_data;
+	struct bt_gatt_hids_pm_data *pm = attr->user_data;
 	struct bt_gatt_hids *hids = CONTAINER_OF(pm, struct bt_gatt_hids, pm);
 	ssize_t ret_len;
 
@@ -254,7 +235,7 @@ static ssize_t hids_inp_rep_ref_read(struct bt_conn *conn,
 	u8_t report_ref[2];
 
 	report_ref[0] = *((u8_t *)attr->user_data); /* Report ID */
-	report_ref[1] = HIDS_INPUT;
+	report_ref[1] = BT_GATT_HIDS_REPORT_TYPE_INPUT;
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, report_ref,
 				 sizeof(report_ref));
@@ -351,7 +332,7 @@ static ssize_t hids_outp_rep_ref_read(struct bt_conn *conn,
 	u8_t report_ref[2];
 
 	report_ref[0] = *((u8_t *)attr->user_data); /* Report ID */
-	report_ref[1] = HIDS_OUTPUT;
+	report_ref[1] = BT_GATT_HIDS_REPORT_TYPE_OUTPUT;
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, report_ref,
 				 sizeof(report_ref));
@@ -448,7 +429,7 @@ static ssize_t hids_feat_rep_ref_read(struct bt_conn *conn,
 	u8_t report_ref[2];
 
 	report_ref[0] = *((u8_t *)attr->user_data); /* Report ID */
-	report_ref[1] = HIDS_FEATURE;
+	report_ref[1] = BT_GATT_HIDS_REPORT_TYPE_FEATURE;
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, report_ref,
 				 sizeof(report_ref));
@@ -690,12 +671,12 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 	}
 
 	switch (*new_cp) {
-	case HIDS_CONTROL_POINT_SUSPEND:
+	case BT_GATT_HIDS_CONTROL_POINT_SUSPEND:
 		if (cp->evt_handler) {
 			cp->evt_handler(BT_GATT_HIDS_CP_EVT_HOST_SUSP);
 		}
 		break;
-	case HIDS_CONTROL_POINT_EXIT_SUSPEND:
+	case BT_GATT_HIDS_CONTROL_POINT_EXIT_SUSPEND:
 		if (cp->evt_handler) {
 			cp->evt_handler(BT_GATT_HIDS_CP_EVT_HOST_EXIT_SUSP);
 		}
