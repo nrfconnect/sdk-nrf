@@ -183,9 +183,24 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	}
 }
 
+static void security_changed(struct bt_conn *conn, bt_security_t level,
+			     enum bt_security_err err)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	if (!err) {
+		printk("Security changed: %s level %u", addr, level);
+	} else {
+		printk("Security failed: %s level %u err %d", addr, level, err);
+	}
+}
+
 static struct bt_conn_cb conn_callbacks = {
 	.connected = connected,
 	.disconnected = disconnected,
+	.security_changed = security_changed
 };
 
 static void scan_init(void)
