@@ -259,7 +259,6 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Security changed: %s level %u\n", addr, level);
 	if (!err) {
 		printk("Security changed: %s level %u", addr, level);
 	} else {
