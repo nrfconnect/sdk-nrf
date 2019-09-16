@@ -128,10 +128,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 	int                        payload_len;
 	static char                buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 	bool                       callback = true;
-	struct return_state_object ret = {
-						.state = AT_CMD_OK,
-						.code  = 0,
-					};
+	struct return_state_object ret;
 
 	ARG_UNUSED(arg1);
 	ARG_UNUSED(arg2);
@@ -140,6 +137,10 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 	LOG_DBG("AT socket thread started");
 
 	for (;;) {
+		callback  = true;
+		ret.code  = 0;
+		ret.state = AT_CMD_OK;
+
 		bytes_read = recv(common_socket_fd, buf, sizeof(buf), 0);
 
 		if (bytes_read < 0) {
@@ -150,13 +151,9 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			    (open_socket() == 0)) {
 				LOG_INF("AT socket recovered");
 
-				if (k_sem_count_get(&cmd_pending) == 0) {
-					ret.state = AT_CMD_ERROR;
-					ret.code  = -errno;
-					goto next;
-				} else {
-					continue;
-				}
+				ret.state = AT_CMD_ERROR;
+				ret.code  = -errno;
+				goto next;
 			}
 
 			LOG_ERR("Unrecoverable reception error (err: %d), "
@@ -232,20 +229,12 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			k_work_submit(&item->work);
 		}
 next:
-		callback = true;
-
-		if (ret.state != AT_CMD_NOTIFICATION) {
+		/* Notify back only if command was sent. */
+		if ((k_sem_count_get(&cmd_pending) == 0) &&
+		    (ret.state != AT_CMD_NOTIFICATION)) {
 			current_cmd_handler = NULL;
 
-			struct return_state_object ret_copy = {
-				.state = ret.state,
-				.code  = ret.code,
-			};
-
-			ret.code  = 0;
-			ret.state = AT_CMD_OK;
-
-			k_msgq_put(&return_code_msq, &ret_copy, K_FOREVER);
+			k_msgq_put(&return_code_msq, &ret, K_FOREVER);
 		}
 	}
 }
