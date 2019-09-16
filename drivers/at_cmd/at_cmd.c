@@ -48,6 +48,9 @@ struct callback_work_item {
 	at_cmd_handler_t callback;
 };
 
+K_MEM_SLAB_DEFINE(rsp_work_items, sizeof(struct callback_work_item),
+		  CONFIG_AT_CMD_RESPONSE_BUFFER_COUNT, 4);
+
 static int open_socket(void)
 {
 	common_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
@@ -115,7 +118,7 @@ static void callback_worker(struct k_work *item)
 		data->callback(data->data);
 	}
 
-	k_free(data);
+	k_mem_slab_free(&rsp_work_items, (void **)&data);
 }
 
 
@@ -208,10 +211,11 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 				goto next;
 			}
 
-			struct callback_work_item *item =
-			k_malloc(sizeof(struct callback_work_item));
+			struct callback_work_item *item;
 
-			if (!item) {
+
+			if (k_mem_slab_alloc(&rsp_work_items,
+					     (void **)&item, K_NO_WAIT) != 0) {
 				LOG_DBG("Failed to allocate work item");
 
 				ret.code  = -ENOMEM;
