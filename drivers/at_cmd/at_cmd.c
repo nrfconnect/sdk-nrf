@@ -232,10 +232,11 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			k_work_submit(&item->work);
 		}
 next:
-		callback            = true;
-		current_cmd_handler = NULL;
+		callback = true;
 
 		if (ret.state != AT_CMD_NOTIFICATION) {
+			current_cmd_handler = NULL;
+
 			struct return_state_object ret_copy = {
 				.state = ret.state,
 				.code  = ret.code,
