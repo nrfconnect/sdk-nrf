@@ -126,9 +126,8 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 {
 	int                        bytes_read;
 	int                        payload_len;
-	static char                buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
-	bool                       callback = true;
 	struct return_state_object ret;
+	struct callback_work_item *item;
 
 	ARG_UNUSED(arg1);
 	ARG_UNUSED(arg2);
@@ -137,12 +136,14 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 	LOG_DBG("AT socket thread started");
 
 	for (;;) {
-		callback  = true;
+		k_mem_slab_alloc(&rsp_work_items, (void **)&item, K_FOREVER);
+
 		ret.code  = 0;
 		ret.state = AT_CMD_OK;
+		item->callback = NULL;
 
-		bytes_read = recv(common_socket_fd, buf, sizeof(buf), 0);
-
+		bytes_read = recv(common_socket_fd, item->data,
+				  sizeof(item->data), 0);
 		if (bytes_read < 0) {
 			LOG_ERR("AT socket recv failed with err %d",
 				bytes_read);
@@ -160,8 +161,8 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 				"thread killed", errno);
 			close(common_socket_fd);
 			return;
-		} else if (bytes_read == sizeof(buf) ||
-			   buf[bytes_read - 1] != '\0') {
+		} else if (bytes_read == sizeof(item->data) ||
+			   item->data[bytes_read - 1] != '\0') {
 
 			LOG_ERR("AT message to large for reception buffer or "
 				"missing termination character");
@@ -170,14 +171,14 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			goto next;
 		}
 
-		payload_len = get_return_code(buf, &ret);
+		payload_len = get_return_code(item->data, &ret);
 
 		if (ret.state != AT_CMD_NOTIFICATION) {
 			if ((response_buf_len > 0) &&
 			    (response_buf != NULL)) {
 				if (response_buf_len > payload_len) {
-					memcpy(response_buf,
-						buf, payload_len);
+					memcpy(response_buf, item->data,
+					       payload_len);
 				} else {
 					LOG_ERR("Response buffer not large "
 						"enough");
@@ -185,9 +186,10 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 					ret.code  = -EMSGSIZE;
 				}
 
-				callback         = false;
 				response_buf_len = 0;
 				response_buf     = NULL;
+
+				goto next;
 			}
 		}
 
@@ -195,40 +197,22 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			goto next;
 		}
 
-		if (callback) {
-			at_cmd_handler_t tmp_callback;
-
-			if (ret.state == AT_CMD_NOTIFICATION) {
-				tmp_callback = notification_handler;
-			} else {
-				tmp_callback = current_cmd_handler;
-			}
-
-			if (!tmp_callback) {
-				goto next;
-			}
-
-			struct callback_work_item *item;
-
-
-			if (k_mem_slab_alloc(&rsp_work_items,
-					     (void **)&item, K_NO_WAIT) != 0) {
-				LOG_DBG("Failed to allocate work item");
-
-				ret.code  = -ENOMEM;
-
-				goto next;
-			}
-
-			item->callback = tmp_callback;
-
-			k_work_init(&item->work, callback_worker);
-
-			memcpy(item->data, buf, payload_len);
-
-			k_work_submit(&item->work);
+		if (ret.state == AT_CMD_NOTIFICATION) {
+			item->callback = notification_handler;
+		} else {
+			item->callback = current_cmd_handler;
 		}
 next:
+		/* If no callback was set, free the item.
+		 * Otherwise, work queue callback will free it.
+		 */
+		if (item->callback == NULL) {
+			k_mem_slab_free(&rsp_work_items, (void **)&item);
+		} else {
+			k_work_init(&item->work, callback_worker);
+			k_work_submit(&item->work);
+		}
+
 		/* Notify back only if command was sent. */
 		if ((k_sem_count_get(&cmd_pending) == 0) &&
 		    (ret.state != AT_CMD_NOTIFICATION)) {
