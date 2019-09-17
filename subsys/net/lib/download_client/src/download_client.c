@@ -48,7 +48,7 @@ static int socket_timeout_set(int fd)
 		.tv_usec = (timeout_ms % 1000) * 1000,
 	};
 
-	LOG_INF("Configuring socket timeout (%ld ms)", timeo.tv_sec);
+	LOG_INF("Configuring socket timeout (%ld s)", timeo.tv_sec);
 
 	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
 	if (err) {
