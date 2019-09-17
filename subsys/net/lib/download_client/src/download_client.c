@@ -442,15 +442,15 @@ restart_and_suspend:
 		 */
 		dl->progress += MIN(dl->offset, len);
 
-		LOG_INF("Downloaded %u/%u bytes (%d%%)", dl->progress,
-			dl->file_size, (dl->progress * 100) / dl->file_size);
-
 		/* Have we received a whole fragment or the whole file? */
 		if ((dl->offset < CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE) &&
 		    (dl->progress != dl->file_size)) {
 			LOG_DBG("Awaiting full fragment (%u)", dl->offset);
 			continue;
 		}
+
+		LOG_INF("Downloaded %u/%u bytes (%d%%)", dl->progress,
+			dl->file_size, (dl->progress * 100) / dl->file_size);
 
 		/* Send fragment to application.
 		 * If the application callback returns non-zero, stop.
