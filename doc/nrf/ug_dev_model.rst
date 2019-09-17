@@ -194,7 +194,7 @@ If you already have a copy of the |NCS| and wish to update it or switch to a new
   west update
 
 Where ``{remote}`` is the Git remote that points to the official Nordic repository.
-Typically, this is called ``origin`` but may have been renamed.
+This is called ``origin`` by default for the `fw-nrfconnect-nrf`_ repository and ``ncs`` for most others, but :ref:`may have another name <dm-wf-fork>`.
 You can use ``git remote -v`` to list all your remotes.
 
 Note that using ``git checkout`` is one of multiple ways of achieving this.
