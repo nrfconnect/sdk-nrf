@@ -19,11 +19,11 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_LOG_LEVEL);
 
+#define LED_ID(led) ((led) - &leds[0])
 
 struct led {
 	struct device *pwm_dev;
 
-	size_t id;
 	struct led_color color;
 	const struct led_effect *effect;
 	u16_t effect_step;
@@ -38,7 +38,7 @@ static struct led leds[CONFIG_DESKTOP_LED_COUNT];
 static void pwm_out(struct led *led, struct led_color *color)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
-		pwm_pin_set_usec(led->pwm_dev, led_pins[led->id][i],
+		pwm_pin_set_usec(led->pwm_dev, led_pins[LED_ID(led)][i],
 				 CONFIG_DESKTOP_LED_BRIGHTNESS_MAX,
 				 color->c[i]);
 	}
@@ -58,7 +58,9 @@ static void work_handler(struct k_work *work)
 	const struct led_effect_step *effect_step =
 		&led->effect->steps[led->effect_step];
 
+	__ASSERT_NO_MSG(effect_step->substep_count > 0);
 	int substeps_left = effect_step->substep_count - led->effect_substep;
+
 	for (size_t i = 0; i < ARRAY_SIZE(led->color.c); i++) {
 		int diff = (effect_step->color.c[i] - led->color.c[i]) /
 			substeps_left;
@@ -77,13 +79,11 @@ static void work_handler(struct k_work *work)
 			} else {
 				struct led_ready_event *ready_event = new_led_ready_event();
 
-				ready_event->led_id = led->id;
+				ready_event->led_id = LED_ID(led);
 				ready_event->led_effect = led->effect;
 
 				EVENT_SUBMIT(ready_event);
 			}
-		} else {
-			__ASSERT_NO_MSG(led->effect->steps[led->effect_step].substep_count > 0);
 		}
 	}
 
@@ -143,7 +143,6 @@ static int leds_init(void)
 
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		leds[i].pwm_dev = device_get_binding(dev_name[i]);
-		leds[i].id = i;
 
 		if (!leds[i].pwm_dev) {
 			LOG_ERR("Cannot bind %s", dev_name[i]);
