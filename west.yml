@@ -51,7 +51,7 @@ manifest:
       revision: 900c7eea92e45adba1067e044ec705d4541c84a5
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: d65666f6608222e27c724bbbf934877101bde43b
+      revision: 0c59d5f4bb2de49b5491b018fc7fd41afc154f1b
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
       revision: f663988d35da559a37f263d369842dbce309d1fa
