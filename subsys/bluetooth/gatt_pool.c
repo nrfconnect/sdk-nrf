@@ -56,16 +56,6 @@ static ATOMIC_DEFINE(chrc_locks, ARRAY_SIZE(chrc_tab));
 #define BT_GATT_CHRC_LOCKS NULL
 #endif
 
-#if CONFIG_BT_GATT_CCC_POOL_SIZE != 0
-static struct _bt_gatt_ccc ccc_tab[CONFIG_BT_GATT_CCC_POOL_SIZE];
-static ATOMIC_DEFINE(ccc_locks, ARRAY_SIZE(ccc_tab));
-#define BT_GATT_CCC_TAB ccc_tab
-#define BT_GATT_CCC_LOCKS ccc_locks
-#else
-#define BT_GATT_CCC_TAB NULL
-#define BT_GATT_CCC_LOCKS NULL
-#endif
-
 static struct svc_el_pool uuid_16_pool = {
 	.elements = BT_UUID_16_TAB,
 	.locks = BT_UUID_16_LOCKS,
@@ -81,10 +71,6 @@ static struct svc_el_pool uuid_128_pool = {
 static struct svc_el_pool chrc_pool = {
 	.elements = BT_GATT_CHRC_TAB,
 	.locks = BT_GATT_CHRC_LOCKS,
-};
-static struct svc_el_pool ccc_pool = {
-	.elements = BT_GATT_CCC_TAB,
-	.locks = BT_GATT_CCC_LOCKS,
 };
 
 #define EL_IN_POOL_VERIFY(pool, el)                                            \
@@ -175,26 +161,6 @@ static void chrc_release(struct bt_gatt_chrc const *chrc)
 	EL_IN_POOL_VERIFY(BT_GATT_CHRC_TAB, chrc);
 	atomic_clear_bit(chrc_pool.locks,
 			 ADDR_2_INDEX(BT_GATT_CHRC_TAB, chrc));
-}
-
-static int ccc_get(struct _bt_gatt_ccc **ccc)
-{
-	size_t ind = free_element_find(&ccc_pool, CONFIG_BT_GATT_CCC_POOL_SIZE);
-
-	if (ind >= CONFIG_BT_GATT_CCC_POOL_SIZE) {
-		LOG_ERR("No more chrc descriptors in the pool!");
-		return -ENOMEM;
-	}
-
-	*ccc = &((struct _bt_gatt_ccc *) ccc_pool.elements)[ind];
-	return 0;
-}
-
-static void ccc_release(struct _bt_gatt_ccc const *ccc)
-{
-	EL_IN_POOL_VERIFY(BT_GATT_CCC_TAB, ccc);
-	atomic_clear_bit(ccc_pool.locks,
-			 ADDR_2_INDEX(BT_GATT_CCC_TAB, ccc));
 }
 
 static int uuid_register(struct bt_uuid **dest_uuid,
@@ -293,7 +259,6 @@ static void bt_gatt_pool_attr_free(struct bt_gatt_attr const *attr)
 		uuid_unregister(attr->uuid);
 	} else if (!bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CCC)) {
 		uuid_unregister(attr->uuid);
-		ccc_release(attr->user_data);
 	} else {
 		/* Just a descriptor created using bt_gatt_pool_desc_alloc */
 		uuid_unregister(attr->uuid);
@@ -414,7 +379,7 @@ int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
 }
 
 int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
-			   struct _bt_gatt_ccc const *ccc)
+			   struct _bt_gatt_ccc *ccc)
 {
 	int ret;
 	struct bt_gatt_attr *attr;
@@ -430,20 +395,13 @@ int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
 	}
 
 	attr = &gp->svc.attrs[gp->svc.attr_count];
-	memset(attr, 0, sizeof(*attr));
+	*attr = (struct bt_gatt_attr)BT_GATT_CCC_MANAGED(ccc);
 
+	attr->uuid = NULL;
 	ret = uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_ccc);
 	if (ret) {
 		return ret;
 	}
-	attr->perm = BT_GATT_PERM_READ | BT_GATT_PERM_WRITE;
-	attr->read = bt_gatt_attr_read_ccc;
-	attr->write = bt_gatt_attr_write_ccc;
-	ret = ccc_get((struct _bt_gatt_ccc **) &attr->user_data);
-	if (ret) {
-		return ret;
-	}
-	memcpy(attr->user_data, ccc, sizeof(struct _bt_gatt_ccc));
 
 	gp->svc.attr_count++;
 	return 0;
@@ -526,14 +484,4 @@ void bt_gatt_pool_stats_print(void)
 	       CONFIG_BT_GATT_CHRC_POOL_SIZE);
 #endif
 
-#if CONFIG_BT_GATT_CCC_POOL_SIZE != 0
-	printk("CCC Pool. Locked elements mask:\n");
-
-	used_el_cnt = mask_print(BT_GATT_CCC_LOCKS,
-				 ARRAY_SIZE(BT_GATT_CCC_LOCKS));
-
-	printk("\nPool element usage: %d out of %d\n\n", used_el_cnt,
-	       CONFIG_BT_GATT_CCC_POOL_SIZE);
-#endif
-}
-#endif
+#endif /* CONFIG_BT_GATT_POOL_STATS */

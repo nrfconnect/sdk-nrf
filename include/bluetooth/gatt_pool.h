@@ -98,16 +98,14 @@ extern "C" {
 /** @brief Register a CCC descriptor.
  *
  *  @param _gp GATT service object with dynamic attribute allocation.
- *  @param _ccc_cfg CCC descriptor configuration.
- *  @param _ccc_cb CCC descriptor callback.
+ *  @param _ccc CCC descriptor configuration.
+ *  @param _cb CCC descriptor callback.
  */
-#define BT_GATT_POOL_CCC(_gp, _ccc_cfg, _ccc_cb)                               \
+#define BT_GATT_POOL_CCC(_gp, _ccc, _ccc_changed)                              \
 	do {                                                                   \
 		int _ret;                                                      \
-		struct _bt_gatt_ccc _ccc = {                                   \
-		    .cfg_changed = _ccc_cb,                                    \
-		};                                                             \
-		memcpy(&_ccc.cfg, (_ccc_cfg), sizeof(_ccc.cfg));               \
+		_ccc = (struct _bt_gatt_ccc)BT_GATT_CCC_INITIALIZER(\
+			_ccc_changed, NULL, NULL);      \
 		_ret = bt_gatt_pool_ccc_alloc(_gp, &_ccc);                     \
 		__ASSERT_NO_MSG(!_ret);                                        \
 		(void)_ret;                                                    \
@@ -167,7 +165,7 @@ int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
  *  @return 0 or negative error code.
  */
 int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
-			   struct _bt_gatt_ccc const *ccc);
+			   struct _bt_gatt_ccc *ccc);
 
 /** @brief Free the whole dynamically created GATT service.
  *
