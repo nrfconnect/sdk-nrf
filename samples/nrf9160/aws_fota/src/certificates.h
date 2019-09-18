@@ -11,7 +11,7 @@
 
 #define CLOUD_CLIENT_PUBLIC_CERTIFICATE \
 	"-----BEGIN CERTIFICATE-----\n" \
-	"AWS IoT certificate public key\n"\
+	"AWS IoT public certificate\n"\
 	"-----END CERTIFICATE-----\n"
 
 #define CLOUD_CA_CERTIFICATE \
