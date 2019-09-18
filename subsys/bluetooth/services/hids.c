@@ -460,7 +460,7 @@ static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 	LOG_DBG("Input Report CCCD has changed.");
 
 	struct bt_gatt_hids_inp_rep *inp_rep =
-	    CONTAINER_OF(((struct _bt_gatt_ccc *)attr->user_data)->cfg,
+	    CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
 			 struct bt_gatt_hids_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
@@ -514,7 +514,7 @@ static void hids_boot_mouse_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 	LOG_DBG("Boot Mouse Input Report CCCD has changed.");
 
 	struct bt_gatt_hids_boot_mouse_inp_rep *boot_mouse_rep =
-	    CONTAINER_OF(((struct _bt_gatt_ccc *)attr->user_data)->cfg,
+	    CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
 			 struct bt_gatt_hids_boot_mouse_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
@@ -566,7 +566,7 @@ static void hids_boot_kb_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 	LOG_DBG("Boot Keyboard Input Report CCCD has changed.");
 
 	struct bt_gatt_hids_boot_kb_inp_rep *boot_kb_inp_rep =
-	    CONTAINER_OF(((struct _bt_gatt_ccc *)attr->user_data)->cfg,
+	    CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
 			 struct bt_gatt_hids_boot_kb_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
@@ -1044,7 +1044,7 @@ static int inp_rep_notify_all(struct bt_gatt_hids *hids_obj,
 		if (ctx) {
 			bool notification_enabled =
 			    hids_is_notification_enabled(ctx->conn,
-							 hids_inp_rep->ccc);
+							 hids_inp_rep->ccc.cfg);
 			if (notification_enabled) {
 				conn_data = ctx->data;
 				rep_data = conn_data->inp_rep_ctx +
@@ -1090,7 +1090,7 @@ int bt_gatt_hids_inp_rep_send(struct bt_gatt_hids *hids_obj,
 		return inp_rep_notify_all(hids_obj, hids_inp_rep, rep, len, cb);
 	}
 
-	if (!hids_is_notification_enabled(conn, hids_inp_rep->ccc)) {
+	if (!hids_is_notification_enabled(conn, hids_inp_rep->ccc.cfg)) {
 		return -EACCES;
 	}
 
@@ -1142,7 +1142,7 @@ static int boot_mouse_inp_report_notify_all(
 		if (ctx) {
 			bool notification_enabled =
 			    hids_is_notification_enabled(
-				ctx->conn, boot_mouse_inp_rep->ccc);
+				ctx->conn, boot_mouse_inp_rep->ccc.cfg);
 
 			if (notification_enabled) {
 				conn_data = ctx->data;
@@ -1195,7 +1195,7 @@ int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
 							x_delta, y_delta, cb);
 	}
 
-	if (!hids_is_notification_enabled(conn, boot_mouse_inp_rep->ccc)) {
+	if (!hids_is_notification_enabled(conn, boot_mouse_inp_rep->ccc.cfg)) {
 		return -EACCES;
 	}
 
@@ -1255,7 +1255,7 @@ boot_kb_inp_notify_all(struct bt_gatt_hids *hids_obj, u8_t const *rep,
 		if (ctx) {
 			bool notification_enabled =
 			    hids_is_notification_enabled(
-				ctx->conn, boot_kb_inp_rep->ccc);
+				ctx->conn, boot_kb_inp_rep->ccc.cfg);
 
 			if (notification_enabled) {
 				conn_data = ctx->data;
@@ -1300,7 +1300,7 @@ int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
 					      boot_kb_input_report, cb);
 	}
 
-	if (!hids_is_notification_enabled(conn, boot_kb_input_report->ccc)) {
+	if (!hids_is_notification_enabled(conn, boot_kb_input_report->ccc.cfg)) {
 		return -EACCES;
 	}
 

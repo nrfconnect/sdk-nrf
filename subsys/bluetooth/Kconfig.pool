@@ -40,13 +40,6 @@ config BT_GATT_CHRC_POOL_SIZE
 	help
 	  Maximum number of characteristic descriptors that can be stored in the pool.
 
-config BT_GATT_CCC_POOL_SIZE
-	int "Number of CCCD descriptors"
-	default 5
-	range 0 255
-	help
-	  Maximum number of CCCD descriptors that can be stored in the pool.
-
 config BT_GATT_POOL_STATS
 	bool
 	prompt "Enable functions for printing module statistics"
