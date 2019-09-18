@@ -67,6 +67,10 @@ config AT_HOST_TERMINATION
 	default 2 if LF_TERMINATION
 	default 3 if CR_LF_TERMINATION
 
+module = AT_HOST
+module-str = AT host
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endif # AT_HOST_LIBRARY
 
 endmenu
