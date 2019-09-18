@@ -31,7 +31,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 #endif
 
 
-#define FLASH_PAGE_SIZE 0x1000
+#define FLASH_PAGE_SIZE_LOG2	12
+#define FLASH_PAGE_SIZE		BIT(FLASH_PAGE_SIZE_LOG2)
+#define FLASH_PAGE_ID(off)	((off) >> FLASH_PAGE_SIZE_LOG2)
 
 #define DFU_TIMEOUT K_SECONDS(2)
 #define REBOOT_REQUEST_TIMEOUT K_MSEC(250)
@@ -105,6 +107,11 @@ static void reboot_request_handler(struct k_work *work)
 	sys_reboot(SYS_REBOOT_WARM);
 }
 
+static bool is_new_page_started(u32_t off, size_t data_size)
+{
+	return FLASH_PAGE_ID(off - 1) != FLASH_PAGE_ID(off + data_size - 1);
+}
+
 static void handle_dfu_data(const struct config_event *event)
 {
 	const u8_t *data = event->dyndata.data;
@@ -123,8 +130,10 @@ static void handle_dfu_data(const struct config_event *event)
 		goto dfu_finish;
 	}
 
-	if (cur_offset % FLASH_PAGE_SIZE == 0) {
-		err = flash_area_erase(flash_area, cur_offset, FLASH_PAGE_SIZE);
+	if (is_new_page_started(cur_offset, size)) {
+		err = flash_area_erase(flash_area,
+		       FLASH_PAGE_ID(cur_offset + size - 1) << FLASH_PAGE_SIZE_LOG2,
+		       FLASH_PAGE_SIZE);
 		if (err) {
 			LOG_ERR("Cannot erase page (%d)", err);
 			goto dfu_finish;
