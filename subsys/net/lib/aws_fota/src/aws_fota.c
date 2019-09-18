@@ -239,13 +239,12 @@ static int aws_fota_on_publish_evt(struct mqtt_client *const client,
 				   u32_t payload_len)
 {
 	int err;
-	LOG_DBG("%s recived", __func__);
 
-	/* If not processing job */
-	/* Receiving a publish on notify_next_topic could be a job */
+	/* Receiving a publish on notify_next_topic could be a queued job */
 	bool is_notify_next_topic = (topic_len <= NOTIFY_NEXT_TOPIC_MAX_LEN) &&
 				    !strncmp(notify_next_topic, topic,
 					     topic_len);
+	/* Receiving a publish on get next job exectuion could be a queued job */
 	bool is_get_next_topic = (topic_len <= JOB_ID_GET_TOPIC_MAX_LEN) &&
 				 !strncmp(get_next_job_execution_topic, topic,
 					  topic_len);
@@ -255,8 +254,7 @@ static int aws_fota_on_publish_evt(struct mqtt_client *const client,
 			LOG_ERR("Error when getting the payload: %d", err);
 			return err;
 		}
-		/*
-		 * Check if the current message received on notify-next is a
+		/* Check if the current message received on notify-next is a
 		 * job.
 		 */
 		err = aws_fota_parse_notify_next_document(payload_buf,
@@ -316,7 +314,7 @@ static int aws_fota_on_publish_evt(struct mqtt_client *const client,
 		 */
 		fota_state = DOWNLOAD_FIRMWARE;
 
-		/* Handled by the library*/
+		/* Handled by the library */
 		return 1;
 
 	} else if (topic_len <= JOB_ID_UPDATE_TOPIC_MAX_LEN &&
@@ -331,8 +329,9 @@ static int aws_fota_on_publish_evt(struct mqtt_client *const client,
 		doc_version_number++;
 
 		if (fota_state == DOWNLOAD_FIRMWARE) {
-			/* Job document is updated and we are ready to download
-			 * the firmware. */
+			/*Job document is updated and we are ready to download
+			 * the firmware.
+			 */
 			execution_state = AWS_JOBS_IN_PROGRESS;
 			LOG_INF("Start downloading firmware from %s%s",
 				log_strdup(hostname), log_strdup(file_path));
@@ -370,6 +369,8 @@ static int aws_fota_on_publish_evt(struct mqtt_client *const client,
 		callback(AWS_FOTA_EVT_ERROR);
 		return -EFAULT;
 	}
+	LOG_INF("Recived an unhandled MQTT publish event on topic: %s",
+		log_strdup(topic));
 	return 0;
 
 }
