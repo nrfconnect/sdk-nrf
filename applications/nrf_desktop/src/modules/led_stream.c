@@ -21,8 +21,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STREAM_LOG_LEVEL);
 #define FETCH_CONFIG_SIZE 2
 #define LED_ID_POS 7
 
+#define LED_ID(led) ((led) - &leds[0])
+
 struct led {
-	size_t id;
 	const struct led_effect *state_effect;
 	struct led_effect led_stream_effect;
 	struct led_effect_step steps_queue[CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE];
@@ -45,7 +46,7 @@ static bool queue_data(const struct event_dyndata *dyndata, struct led *led)
 	static const size_t min_len = CONFIG_DESKTOP_LED_COLOR_COUNT * sizeof(led->steps_queue[led->rx_idx].color.c[0])
 			 + sizeof(led->steps_queue[led->rx_idx].substep_count)
 			 + sizeof(led->steps_queue[led->rx_idx].substep_time)
-			 + sizeof(u8_t);
+			 + sizeof(u8_t); /* LED ID */
 
 	BUILD_ASSERT_MSG(min_len <= LED_STREAM_DATA_SIZE, "");
 
@@ -68,6 +69,11 @@ static bool queue_data(const struct event_dyndata *dyndata, struct led *led)
 
 	led->steps_queue[led->rx_idx].substep_time = sys_get_le16(&dyndata->data[pos]);
 
+	if (led->steps_queue[led->rx_idx].substep_count == 0) {
+		LOG_WRN("Dropped led_effect with substep count equal 0");
+		return false;
+	}
+
 	led->rx_idx = next_index(led->rx_idx);
 
 	return true;
@@ -79,7 +85,7 @@ static void send_effect(const struct led_effect *effect, struct led *led)
 
 	struct led_event *led_event = new_led_event();
 
-	led_event->led_id = led->id;
+	led_event->led_id = LED_ID(led);
 	led_event->led_effect = effect;
 
 	__ASSERT_NO_MSG(led_event->led_effect->steps);
@@ -145,9 +151,13 @@ static void handle_incoming_step(const struct config_event *event)
 	}
 
 	size_t led_id = event->dyndata.data[LED_ID_POS];
-	struct led *led = &leds[led_id];
 
-	led->id = led_id;
+	if (led_id >= ARRAY_SIZE(leds)) {
+		LOG_WRN("Wrong LED ID, effect ignored");
+		return;
+	}
+
+	struct led *led = &leds[led_id];
 
 	if (!store_data(&event->dyndata, led)) {
 		return;
