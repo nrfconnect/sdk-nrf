@@ -397,11 +397,6 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			return err;
 		}
 
-		err = aws_jobs_subscribe_job_id_get_topic(client, "$next");
-		if (err) {
-			LOG_ERR("Unable to subscribe to jobs/$next/get");
-		}
-
 		err = update_device_shadow_version(client);
 		if (err) {
 			LOG_ERR("Unable to update device shadow");
@@ -538,7 +533,7 @@ int aws_fota_init(struct mqtt_client *const client,
 
 	err = construct_job_id_get_topic(client->client_id.utf8,
 					 "$next",
-					 "",
+					 "/accepted",
 					 get_next_job_execution_topic);
 	if (err != 0) {
 		LOG_ERR("construct_job_id_get_topic error %d", err);
