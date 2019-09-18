@@ -10,13 +10,6 @@
  * @brief nrf91 socket offload provider
  */
 
-/* TODO A workaround for intrusive behavior of networking subsystem logging.
- *      Upstream issue #11659.
- */
-#include <logging/log.h>
-#define LOG_LEVEL LOG_LEVEL_NONE
-LOG_MODULE_REGISTER(nrf91_sockets);
-
 #include <bsd_limits.h>
 #include <bsd_os.h>
 #include <errno.h>
