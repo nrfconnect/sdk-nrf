@@ -437,7 +437,7 @@ void main(void)
 	/* The mqtt client struct */
 	struct mqtt_client client;
 
-	printk("The MQTT AWS Jobs FOTA Sample\n");
+	printk("MQTT AWS Jobs FOTA Sample, version: %s\n", CONFIG_APP_VERSION);
 
 #if !defined(CONFIG_USE_PROVISIONED_CERTIFICATES)
 	provision_certificates();
