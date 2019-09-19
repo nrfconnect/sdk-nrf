@@ -28,13 +28,12 @@ StackLayout:
                 text:'Settings'
                 StackLayout:
                     id: settings_tab_layout
-
                     Label:
                         size_hint_y: None
                         id: settings_info_label
                         text_size: self.size
                         valign: 'middle'
-                        halign: 'center'
+                        halign: 'left'
                         text: 'Please select device'
                     Label:
                         size_hint_y: None
@@ -46,13 +45,23 @@ StackLayout:
                 id: firmware_tab
                 text:'DFU'
                 StackLayout:
-                    Label:
+                    BoxLayout:
                         size_hint_y: None
-                        id: dfu_info_label
-                        text_size: self.size
-                        valign: 'middle'
                         halign: 'center'
-                        text: 'Firmware Update'
+                        Label:
+                            size_hint_y: None
+                            id: dfu_info_label
+                            text_size: self.size
+                            valign: 'top'
+                            halign: 'left'
+                            text: 'Firmware Update'
+                        Label:
+                            size_hint_y: None
+                            id: new_firmware_label
+                            text_size: self.size
+                            valign: 'top'
+                            halign: 'left'
+                            text: ''
                     Label:
                         size_hint_y: None
                         height: '48dp'
@@ -140,8 +149,9 @@ StackLayout:
         size_hint_y: None
         height: '48dp'
         text: 'Firmware reboot'
-        on_release: app.perform_fwreboot()
+        on_release: root.start_dfu_fwreboot_thread()
         on_release: self.disabled = True
+        on_release: progression_label.text = 'Rebooting firmware'
 
 <LoadDialog>:
     BoxLayout:

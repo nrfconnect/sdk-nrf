@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 import threading
+import os
 
 from kivy.app import App
 from kivy.clock import mainthread
@@ -12,6 +13,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from plyer import notification
 
@@ -27,10 +29,27 @@ class DfuButtons(GridLayout):
         app_ref = App.get_running_app()
         threading.Thread(target=app_ref.dfu, args=(self.update_progressbar,)).start()
 
+    def start_dfu_fwreboot_thread(self):
+        app_ref = App.get_running_app()
+        threading.Thread(target=app_ref.dfu_fwreboot, args=(self.update_reboot_animation,)).start()
+
     @mainthread
     def update_progressbar(self, permil):
         self.ids.pb.value = permil / 10 + 0.1
 
+    @mainthread
+    def update_reboot_animation(self):
+        TEXT_BASE = 'Rebooting firmware'
+        MAX_DOT_CNT = 5
+
+        # Do not change text if it was set to other string
+        if TEXT_BASE not in self.ids.progression_label.text:
+            return
+
+        if len(self.ids.progression_label.text) < len(TEXT_BASE) + MAX_DOT_CNT:
+            self.ids.progression_label.text = self.ids.progression_label.text + '.'
+        else:
+            self.ids.progression_label.text = TEXT_BASE
 
 class DropDownButton(Button):
     pass
@@ -51,6 +70,8 @@ class Gui(App):
         print("Clear possible settings")
         self.root.ids.possible_settings_place.clear_widgets()
         self.root.ids.dfu_buttons_place.clear_widgets()
+        self.root.ids.new_firmware_label.text = ''
+        self.root.ids.dfu_label.text = ''
 
     def setcpi_callback(self, value):
         self.device.setcpi(value)
@@ -110,10 +131,9 @@ class Gui(App):
 
         settings_info = self.root.ids.settings_info_label
         settings_info.text = info
-        settings_info.halign = 'left'
+
         dfu_info = self.root.ids.dfu_info_label
         dfu_info.text = info
-        dfu_info.halign = 'left'
 
     def show_load_list(self):
         content = LoadDialog(load=self.load_list, cancel=self.dismiss_popup)
@@ -123,14 +143,20 @@ class Gui(App):
     def load_list(self, files_path):
         print(files_path)
         self.filepath = files_path[0]
-        self.root.ids.dfu_buttons.ids.choose_file_button.disabled = True
         self.root.ids.dfu_buttons.ids.start_uploading_button.disabled = False
+
+        text = 'File:\n   {}\n'.format(os.path.split(self.filepath)[1])
+        text += 'New firmware version:\n   {}\n'.format(
+            self.device.dfu_image_version(self.filepath))
+        self.root.ids.new_firmware_label.text = text
+
         self.dismiss_popup()
 
     def dismiss_popup(self):
         self._popup.dismiss()
 
     def dfu(self, update_progressbar):
+        self.root.ids.dfu_buttons.ids.choose_file_button.disabled = True
         dfu_label = self.root.ids.dfu_label
         dfu_label.text = 'Transfer in progress'
         print(self.filepath)
@@ -142,13 +168,30 @@ class Gui(App):
         else:
             info = 'DFU transfer failed'
             message = 'Restart application and try again'
-        print(info)
+
         dfu_label.text = info
         notification.notify(app_name='GUI Configurator', app_icon='nordic.ico', title=info, message=message)
 
-    def perform_fwreboot(self):
-        print('Performing fwreboot, please wait')
-        self.device.perform_fwreboot()
+    def dfu_fwreboot(self, update_reboot_animation):
+        dfu_label = self.root.ids.dfu_label
+        dfu_label.text = 'Image swap in progress'
+
+        success = self.device.perform_dfu_fwreboot(update_reboot_animation)
+        if success:
+            info = 'Device is ready'
+            progression_text = 'Firmware rebooted'
+            message = 'Image swap completed'
+            self.root.ids.dfu_buttons.ids.choose_file_button.disabled = False
+        else:
+            info = 'Image swap failed'
+            progression_text = 'Firmware reboot failed'
+            message = 'Restart application and try again'
+
+        dfu_label.text = info
+        self.root.ids.dfu_buttons.ids.progression_label.text = progression_text
+        self.show_fwinfo()
+
+        notification.notify(app_name='GUI Configurator', app_icon='nordic.ico', title=info, message=message)
 
 
 class LoadDialog(FloatLayout):
