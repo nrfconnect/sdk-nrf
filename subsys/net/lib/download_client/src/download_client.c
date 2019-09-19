@@ -422,6 +422,8 @@ restart_and_suspend:
 				continue;
 			}
 			if (rc < 0) {
+				/* Something was wrong with the header */
+				error_evt_send(dl, EBADMSG);
 				/* Restart and suspend */
 				break;
 			}

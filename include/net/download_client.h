@@ -40,6 +40,8 @@ enum download_client_evt_id {
 	 * the connection to the server has been lost.
 	 * - ENOTCONN: error reading from socket
 	 * - ECONNRESET: peer closed connection
+	 * - EBADMSG: HTTP response header not
+	 *            as expected
 	 *
 	 * In both cases, the application should
 	 * disconnect (@ref download_client_disconnect)
