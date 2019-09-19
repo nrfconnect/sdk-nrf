@@ -140,7 +140,7 @@ StackLayout:
         size_hint_y: None
         height: '48dp'
         text: 'Firmware reboot'
-        on_release: app.perform_fwreboot()
+        on_release: root.start_dfu_fwreboot_thread()
         on_release: self.disabled = True
 
 <LoadDialog>:

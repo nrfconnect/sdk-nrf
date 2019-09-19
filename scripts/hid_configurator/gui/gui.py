@@ -27,6 +27,10 @@ class DfuButtons(GridLayout):
         app_ref = App.get_running_app()
         threading.Thread(target=app_ref.dfu, args=(self.update_progressbar,)).start()
 
+    def start_dfu_fwreboot_thread(self):
+        app_ref = App.get_running_app()
+        threading.Thread(target=app_ref.dfu_fwreboot, args=(self.update_progressbar,)).start()
+
     @mainthread
     def update_progressbar(self, permil):
         self.ids.pb.value = permil / 10 + 0.1
@@ -146,9 +150,20 @@ class Gui(App):
         dfu_label.text = info
         notification.notify(app_name='GUI Configurator', app_icon='nordic.ico', title=info, message=message)
 
-    def perform_fwreboot(self):
-        print('Performing fwreboot, please wait')
-        self.device.perform_fwreboot()
+    def dfu_fwreboot(self, update_progressbar):
+        dfu_label = self.root.ids.dfu_label
+        dfu_label.text = 'Image swap in progress'
+        success = self.device.perform_dfu_fwreboot(update_progressbar)
+        if success:
+            info = 'Device is ready'
+            message = 'Image swap completed'
+            self.root.ids.dfu_buttons.ids.choose_file_button.disabled = False
+        else:
+            info = 'Image swap failed'
+            message = 'Restart application and try again'
+        print(info)
+        dfu_label.text = info
+        notification.notify(app_name='GUI Configurator', app_icon='nordic.ico', title=info, message=message)
 
 
 class LoadDialog(FloatLayout):

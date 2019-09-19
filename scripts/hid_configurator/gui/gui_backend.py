@@ -15,7 +15,7 @@ from configurator_core import get_device_pid, open_device, fwinfo, fwreboot, fet
     get_device_type
 
 GENERIC_DESKTOP_PAGE = 1
-FWREBOOT_TIME = 10
+FWREBOOT_TIME = 25
 
 
 class Device:
@@ -40,11 +40,25 @@ class Device:
     def perform_fwinfo(self):
         return fwinfo(self.dev, self.pid)
 
-    def perform_fwreboot(self):
+    def perform_dfu_fwreboot(self, update_progressbar):
         fwreboot(self.dev, self.pid)
         self.dev.close()
-        time.sleep(FWREBOOT_TIME)
-        self.dev = open_device(self.device)
+        t = 0
+        while t < FWREBOOT_TIME:
+            time.sleep(1)
+            update_progressbar(t * 1 / FWREBOOT_TIME * 800)
+            t += 1
+        self.dev = None
+        t = 1
+        while self.dev is None:
+            self.dev = open_device(self.type)
+            update_progressbar(t * 1 / FWREBOOT_TIME * 800 + 800)
+            time.sleep(1)
+            t += 1/t
+        update_progressbar(1000)
+        print('DFU completed')
+        return True
+
 
     def setcpi(self, value):
         config_name = 'cpi'
