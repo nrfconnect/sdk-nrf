@@ -11,11 +11,10 @@ import hid
 # configurator_core.py is in upper directory so we add it to path
 sys.path.append('..')
 from configurator_core import DEVICE
-from configurator_core import get_device_pid, open_device, fwinfo, fwreboot, fetch_config, change_config, dfu_transfer,\
-    get_device_type
+from configurator_core import get_device_pid, open_device, get_device_type, get_dfu_image_version
+from configurator_core import fwinfo, fwreboot, fetch_config, change_config, dfu_transfer
 
 GENERIC_DESKTOP_PAGE = 1
-FWREBOOT_TIME = 10
 
 
 class Device:
@@ -40,11 +39,32 @@ class Device:
     def perform_fwinfo(self):
         return fwinfo(self.dev, self.pid)
 
-    def perform_fwreboot(self):
+    def perform_dfu_fwreboot(self, update_animation):
         fwreboot(self.dev, self.pid)
         self.dev.close()
-        time.sleep(FWREBOOT_TIME)
-        self.dev = open_device(self.device)
+
+        WAIT_TIME_MAX = 60
+        CHECK_PERIOD = 0.5
+        start_time = time.time()
+
+        # Wait until device turns off
+        while self.dev is not None:
+            self.dev.close()
+            self.dev = open_device(self.type)
+            time.sleep(CHECK_PERIOD)
+
+        while self.dev is None:
+            update_animation()
+            self.dev = open_device(self.type)
+            if time.time() - start_time > WAIT_TIME_MAX:
+                break
+            time.sleep(CHECK_PERIOD)
+
+        if self.dev is not None:
+            print('DFU completed')
+        else:
+            print('Cannot connect to device after reboot')
+        return (self.dev is not None)
 
     def setcpi(self, value):
         config_name = 'cpi'
@@ -74,6 +94,14 @@ class Device:
     def perform_dfu(self, file, update_progressbar):
         dfu_image = file
         return dfu_transfer(self.dev, self.pid, dfu_image, update_progressbar)
+
+    def dfu_image_version(self, filepath):
+        ver = get_dfu_image_version(filepath)
+        if ver is None:
+            return "Wrong image"
+        else:
+            v = '.'.join([str(i) for i in ver])
+            return v
 
 
 if __name__ == '__main__':

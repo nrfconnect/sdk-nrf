@@ -637,6 +637,7 @@ def is_dfu_image_correct(dfu_image):
 
     return True
 
+
 def get_dfu_image_version(dfu_image):
     res, ver = img.Image.verify(dfu_image, None)
 
