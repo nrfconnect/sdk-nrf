@@ -8,6 +8,7 @@
 #include <string.h>
 #include <json.h>
 #include <misc/util.h>
+#include <net/aws_jobs.h>
 
 #include "aws_fota_json.h"
 
@@ -171,7 +172,7 @@ int aws_fota_parse_notify_next_document(char *job_document,
 		if (job.execution.job_id != 0) {
 			memcpy(job_id_buf, job.execution.job_id,
 				MIN(strlen(job.execution.job_id),
-				    JOB_ID_MAX_LEN));
+					AWS_JOBS_JOB_ID_MAX_LEN));
 		}
 
 		if (job.execution.job_document.location.host != 0) {
