@@ -14,5 +14,6 @@ by creating events understandable by the application.
    fn_keys.rst
    click_detector.rst
    motion.rst
+   selector.rst
    wheel.rst
 
