@@ -28,7 +28,6 @@ StackLayout:
                 text:'Settings'
                 StackLayout:
                     id: settings_tab_layout
-
                     Label:
                         size_hint_y: None
                         id: settings_info_label
@@ -46,13 +45,17 @@ StackLayout:
                 id: firmware_tab
                 text:'DFU'
                 StackLayout:
-                    Label:
+                    BoxLayout:
+                        id: dfu_info_place
                         size_hint_y: None
-                        id: dfu_info_label
-                        text_size: self.size
-                        valign: 'middle'
                         halign: 'center'
-                        text: 'Firmware Update'
+                        Label:
+                            size_hint_y: None
+                            id: dfu_info_label
+                            text_size: self.size
+                            valign: 'middle'
+                            halign: 'center'
+                            text: 'Firmware Update'
                     Label:
                         size_hint_y: None
                         height: '48dp'

@@ -12,6 +12,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from plyer import notification
 
@@ -127,14 +128,24 @@ class Gui(App):
     def load_list(self, files_path):
         print(files_path)
         self.filepath = files_path[0]
-        self.root.ids.dfu_buttons.ids.choose_file_button.disabled = True
         self.root.ids.dfu_buttons.ids.start_uploading_button.disabled = False
+
+        if 'new_firmware_label' not in list(self.root.ids):
+            label = Label()
+            label.id = 'new_firmware_label'
+            self.root.ids.new_firmware_label = label
+            self.root.ids.dfu_info_place.add_widget(label)
+        text = 'New firmware version: \n  '
+        text +=self.device.dfu_image_version(self.filepath)
+        self.root.ids.new_firmware_label.text = text
+
         self.dismiss_popup()
 
     def dismiss_popup(self):
         self._popup.dismiss()
 
     def dfu(self, update_progressbar):
+        self.root.ids.dfu_buttons.ids.choose_file_button.disabled = True
         dfu_label = self.root.ids.dfu_label
         dfu_label.text = 'Transfer in progress'
         print(self.filepath)

@@ -12,7 +12,7 @@ import hid
 sys.path.append('..')
 from configurator_core import DEVICE
 from configurator_core import get_device_pid, open_device, fwinfo, fwreboot, fetch_config, change_config, dfu_transfer,\
-    get_device_type
+    get_device_type, get_dfu_image_version
 
 GENERIC_DESKTOP_PAGE = 1
 FWREBOOT_TIME = 25
@@ -88,6 +88,14 @@ class Device:
     def perform_dfu(self, file, update_progressbar):
         dfu_image = file
         return dfu_transfer(self.dev, self.pid, dfu_image, update_progressbar)
+
+    def dfu_image_version(self, filepath):
+        ver = get_dfu_image_version(filepath)
+        if ver is None:
+            return "Wrong image"
+        else:
+            v = '.'.join([str(i) for i in ver])
+            return v
 
 
 if __name__ == '__main__':
