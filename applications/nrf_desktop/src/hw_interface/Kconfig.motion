@@ -33,6 +33,34 @@ endchoice
 config DESKTOP_MOTION_SENSOR_ENABLE
 	bool
 
+config DESKTOP_MOTION_UP_KEY_ID
+	int "Up key ID"
+	depends on DESKTOP_MOTION_BUTTONS_ENABLE
+	default 0
+	help
+	  ID of key use for generating up motion.
+
+config DESKTOP_MOTION_DOWN_KEY_ID
+	int "Down key ID"
+	depends on DESKTOP_MOTION_BUTTONS_ENABLE
+	default 0
+	help
+	  ID of key use for generating down motion.
+
+config DESKTOP_MOTION_LEFT_KEY_ID
+	int "Legy key ID"
+	depends on DESKTOP_MOTION_BUTTONS_ENABLE
+	default 0
+	help
+	  ID of key use for generating left motion.
+
+config DESKTOP_MOTION_RIGHT_KEY_ID
+	int "Right key ID"
+	depends on DESKTOP_MOTION_BUTTONS_ENABLE
+	default 0
+	help
+	  ID of key use for generating right motion.
+
 config DESKTOP_MOTION_SIMULATED_EDGE_TIME
 	int "Time for transition between two points in a trajectory [ms]"
 	depends on DESKTOP_MOTION_SIMULATED_ENABLE
@@ -57,6 +85,7 @@ config DESKTOP_MOTION_THREAD_STACK_SIZE
 
 config DESKTOP_MOTION_SENSOR_CPI
 	int "Motion sensor default CPI"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
 	default 0
 	help
 	  Default CPI value.
