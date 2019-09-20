@@ -324,22 +324,6 @@ static void flip_iccid_string(char *buf)
 	}
 }
 
-static int modem_info_remove_cmd(char *buf)
-{
-	int cmd_length = 0;
-
-	if (buf == NULL) {
-		return -EINVAL;
-	}
-
-	while (!isspace(*buf)) {
-		buf++;
-		cmd_length++;
-	}
-
-	return cmd_length;
-}
-
 static int modem_info_parse(const struct modem_info_data *modem_data,
 			    const char *buf)
 {
@@ -488,17 +472,14 @@ int modem_info_string_get(enum modem_info info, char *buf)
 static void modem_info_rsrp_subscribe_handler(char *response)
 {
 	u16_t param_value;
-	int cmd_len;
 	int err;
 
 	if (!is_cesq_notification(response, strlen(response))) {
 		return;
 	}
 
-	cmd_len = modem_info_remove_cmd(response);
-
 	err = modem_info_parse(modem_data[MODEM_INFO_RSRP],
-			       &response[cmd_len]);
+			       response);
 	if (err != 0) {
 		LOG_ERR("modem_info_parse failed to parse "
 			"CESQ notification, %d", err);
