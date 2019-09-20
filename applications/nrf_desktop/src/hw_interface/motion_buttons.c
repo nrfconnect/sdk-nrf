@@ -6,13 +6,10 @@
 
 #include <zephyr.h>
 
-#include <soc.h>
-#include <device.h>
-#include <gpio.h>
-
 #include "event_manager.h"
+#include "button_event.h"
 #include "motion_event.h"
-#include "power_event.h"
+#include "hid_event.h"
 
 #define MODULE motion
 #include "module_state_event.h"
@@ -20,127 +17,205 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
-#define BUTTONS_NUM	4
-#define MOVEMENT_SPEED	5
 
-static struct device       *gpio_devs[BUTTONS_NUM];
-static struct gpio_callback gpio_cbs[BUTTONS_NUM];
-static const  u32_t         pin_id[BUTTONS_NUM] = {
-	DT_ALIAS_SW0_GPIOS_PIN, DT_ALIAS_SW1_GPIOS_PIN,
-	DT_ALIAS_SW2_GPIOS_PIN, DT_ALIAS_SW3_GPIOS_PIN
+enum state {
+	STATE_IDLE,
+	STATE_CONNECTED,
+	STATE_PENDING
 };
 
-enum {
-	IDLE_STATE,
-	ACTIVE_STATE,
-	TERMINATING_STATE,
-	STATES_NUM
-};
-static atomic_t state;
+enum dir {
+	DIR_UP,
+	DIR_DOWN,
+	DIR_LEFT,
+	DIR_RIGHT,
 
-static void motion_event_send(s8_t dx, s8_t dy)
+	DIR_COUNT
+};
+
+
+static u32_t timestamp[DIR_COUNT];
+static enum state state;
+
+
+static void motion_event_send(s16_t dx, s16_t dy)
 {
 	struct motion_event *event = new_motion_event();
+
 	event->dx = dx;
 	event->dy = dy;
+
 	EVENT_SUBMIT(event);
 }
 
-
-void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
-		    u32_t pins)
+static enum dir key_to_dir(u16_t key_id)
 {
-	s8_t val_x = 0;
-	s8_t val_y = 0;
+	enum dir dir = DIR_COUNT;
+	switch (key_id) {
+	case CONFIG_DESKTOP_MOTION_UP_KEY_ID:
+		dir = DIR_UP;
+		break;
 
-	if (pins & (1 << DT_ALIAS_SW0_GPIOS_PIN)) {
-		val_x -= MOVEMENT_SPEED;
-		LOG_DBG("Left");
-	}
-	if (pins & (1 << DT_ALIAS_SW1_GPIOS_PIN)) {
-		val_y += MOVEMENT_SPEED;
-		LOG_DBG("Up");
-	}
-	if (pins & (1 << DT_ALIAS_SW2_GPIOS_PIN)) {
-		val_x += MOVEMENT_SPEED;
-		LOG_DBG("Right");
-	}
-	if (pins & (1 << DT_ALIAS_SW3_GPIOS_PIN)) {
-		val_y -= MOVEMENT_SPEED;
-		LOG_DBG("Down");
+	case CONFIG_DESKTOP_MOTION_DOWN_KEY_ID:
+		dir = DIR_DOWN;
+		break;
+
+	case CONFIG_DESKTOP_MOTION_LEFT_KEY_ID:
+		dir = DIR_LEFT;
+		break;
+
+	case CONFIG_DESKTOP_MOTION_RIGHT_KEY_ID:
+		dir = DIR_RIGHT;
+		break;
+
+	default:
+		break;
 	}
 
-	motion_event_send(val_x, val_y);
+	return dir;
 }
 
-
-static void async_init_fn(struct k_work *work)
+static s16_t update_motion_dir(enum dir dir, u32_t ts)
 {
-	static const char *port_name[BUTTONS_NUM] = {
-		DT_ALIAS_SW0_GPIOS_CONTROLLER,
-		DT_ALIAS_SW1_GPIOS_CONTROLLER,
-		DT_ALIAS_SW2_GPIOS_CONTROLLER,
-		DT_ALIAS_SW3_GPIOS_CONTROLLER
-	};
+	u32_t time_diff = ts - timestamp[dir];
 
-	for (size_t i = 0; i < ARRAY_SIZE(pin_id); i++) {
-		gpio_devs[i] = device_get_binding(port_name[i]);
-		if (gpio_devs[i]) {
-			LOG_DBG("Port %zu bound", i);
-
-			gpio_pin_configure(gpio_devs[i], pin_id[i],
-					   GPIO_PUD_PULL_UP | GPIO_DIR_IN |
-					   GPIO_INT | GPIO_INT_EDGE |
-					   GPIO_INT_ACTIVE_LOW);
-			gpio_init_callback(&gpio_cbs[i], button_pressed,
-					   BIT(pin_id[i]));
-			gpio_add_callback(gpio_devs[i], &gpio_cbs[i]);
-			gpio_pin_enable_callback(gpio_devs[i], pin_id[i]);
-		}
+	if (time_diff > UCHAR_MAX) {
+		time_diff = UCHAR_MAX;
 	}
 
-	module_set_state(MODULE_STATE_READY);
-}
-K_WORK_DEFINE(motion_async_init, async_init_fn);
-
-static void async_term_fn(struct k_work *work)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
-		if (gpio_devs[i]) {
-			LOG_DBG("Port %zu unbound", i);
-
-			gpio_pin_disable_callback(gpio_devs[i], pin_id[i]);
-			gpio_remove_callback(gpio_devs[i], &gpio_cbs[i]);
-			gpio_pin_configure(gpio_devs[i], pin_id[i],
-					   GPIO_DIR_IN);
-		}
+	if (timestamp[dir] > 0) {
+		timestamp[dir] = ts;
+		return time_diff;
 	}
 
-	atomic_set(&state, IDLE_STATE);
-	module_set_state(MODULE_STATE_OFF);
+	return 0;
 }
-K_WORK_DEFINE(motion_async_term, async_term_fn);
 
-static bool event_handler(const struct event_header *eh)
+static void send_motion(void)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	u32_t ts = k_uptime_get();
+	s16_t x = 0;
+	s16_t y = 0;
 
-		if (check_state(event, MODULE_ID(board), MODULE_STATE_READY)) {
-			if (atomic_cas(&state, IDLE_STATE, ACTIVE_STATE)) {
-				k_work_submit(&motion_async_init);
-			}
-		}
+	y += update_motion_dir(DIR_UP, ts);
+	y -= update_motion_dir(DIR_DOWN, ts);
+	x += update_motion_dir(DIR_RIGHT, ts);
+	x -= update_motion_dir(DIR_LEFT, ts);
 
+	motion_event_send(x, y);
+}
+
+static bool handle_button_event(const struct button_event *event)
+{
+	enum dir dir = key_to_dir(event->key_id);
+
+	if (dir == DIR_COUNT) {
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
-		if (atomic_cas(&state, ACTIVE_STATE, TERMINATING_STATE)) {
-			k_work_submit(&motion_async_term);
+	u32_t *ts = &timestamp[dir];
+
+	if (!event->pressed) {
+		*ts = 0;
+	} else {
+		*ts = k_uptime_get() - 1;
+	}
+
+	if (state == STATE_CONNECTED) {
+		send_motion();
+		state = STATE_PENDING;
+	}
+
+	return true;
+}
+
+static bool handle_module_state_event(const struct module_state_event *event)
+{
+	/* Replicate the state of buttons module */
+	if (event->module_id == MODULE_ID(buttons)) {
+		module_set_state(event->state);
+	}
+
+	return false;
+}
+
+static bool is_motion_active(void)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(timestamp); i++) {
+		if (timestamp[i] > 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static bool handle_hid_report_sent_event(const struct hid_report_sent_event *event)
+{
+	if (event->report_type == IN_REPORT_MOUSE) {
+		if (state == STATE_PENDING) {
+			if (is_motion_active()) {
+				send_motion();
+			} else {
+				state = STATE_CONNECTED;
+			}
+		}
+	}
+
+	return false;
+}
+
+static bool handle_hid_report_subscription_event(const struct hid_report_subscription_event *event)
+{
+	if (event->report_type == IN_REPORT_MOUSE) {
+		static u8_t peer_count;
+
+		if (event->enabled) {
+			__ASSERT_NO_MSG(peer_count < UCHAR_MAX);
+			peer_count++;
+		} else {
+			__ASSERT_NO_MSG(peer_count > 0);
+			peer_count--;
 		}
 
-		return (atomic_get(&state) != IDLE_STATE);
+		bool is_connected = (peer_count != 0);
+
+		if ((state == STATE_IDLE) && is_connected) {
+			if (is_motion_active()) {
+				send_motion();
+				state = STATE_PENDING;
+			} else {
+				state = STATE_CONNECTED;
+			}
+			return false;
+		}
+		if ((state != STATE_IDLE) && !is_connected) {
+			state = STATE_IDLE;
+			return false;
+		}
+	}
+
+	return false;
+}
+
+static bool event_handler(const struct event_header *eh)
+{
+	if (is_hid_report_sent_event(eh)) {
+		return handle_hid_report_sent_event(
+				cast_hid_report_sent_event(eh));
+	}
+
+	if (is_button_event(eh)) {
+		return handle_button_event(cast_button_event(eh));
+	}
+
+	if (is_module_state_event(eh)) {
+		return handle_module_state_event(cast_module_state_event(eh));
+	}
+
+	if (is_hid_report_subscription_event(eh)) {
+		return handle_hid_report_subscription_event(
+				cast_hid_report_subscription_event(eh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -149,5 +224,7 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 EVENT_LISTENER(MODULE, event_handler);
+EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
