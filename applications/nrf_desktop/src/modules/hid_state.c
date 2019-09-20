@@ -237,7 +237,7 @@ static void eventq_append(struct eventq *eventq, u16_t usage_id, s16_t value)
 
 	hid_event->item.usage_id = usage_id;
 	hid_event->item.value = value;
-	hid_event->timestamp = K_MSEC(z_tick_get());
+	hid_event->timestamp = K_MSEC(k_uptime_get());
 
 	/* Add a new event to the queue. */
 	sys_slist_append(&eventq->root, &hid_event->node);
@@ -828,7 +828,7 @@ static void connect(const void *subscriber_id, enum in_report tr)
 
 		if (!eventq_is_empty(&rd->eventq)) {
 			/* Remove all stale events from the queue. */
-			eventq_cleanup(&rd->eventq, K_MSEC(z_tick_get()));
+			eventq_cleanup(&rd->eventq, K_MSEC(k_uptime_get()));
 		}
 
 		report_send(tr, false, true);
@@ -857,7 +857,7 @@ static void disconnect(const void *subscriber_id, enum in_report tr)
 static void enqueue(struct report_data *rd, u16_t usage_id, s16_t value,
 		    bool connected)
 {
-	eventq_cleanup(&rd->eventq, K_MSEC(z_tick_get()));
+	eventq_cleanup(&rd->eventq, K_MSEC(k_uptime_get()));
 
 	if (eventq_is_full(&rd->eventq)) {
 		if (!connected) {
