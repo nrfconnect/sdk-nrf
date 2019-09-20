@@ -147,6 +147,24 @@ config LTE_NETWORK_MODE_NBIOT_GPS
 
 endchoice
 
+config LTE_NETWORK_USE_FALLBACK
+	bool "Use fallback network mode if selected mode fails"
+	default y
+	help
+		When enabled, the network mode will be switched to the other
+		available if the preferred fails to establish connection within
+		specified timeout.
+		If LTE-M is selected as the network mode, NB-IoT will be the
+		fallback mode and vice versa.
+
+config LTE_NETWORK_TIMEOUT
+	int "Time period [s] to attempt establishing connection"
+	default 600
+	help
+		Time period in seconds to attempt establishing an LTE link, before timing
+		out. If fallback mode is enabled, the fallback mode will also be
+		tried for the same period.
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library

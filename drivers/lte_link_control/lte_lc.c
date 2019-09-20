@@ -55,19 +55,27 @@ static const char power_off[] = "AT+CFUN=0";
 static const char normal[] = "AT+CFUN=1";
 /* Set the modem to Offline mode */
 static const char offline[] = "AT+CFUN=4";
-/* Successful return from modem */
+
 #if defined(CONFIG_LTE_NETWORK_MODE_NBIOT)
-/* Set network mode to Narrowband-IoT */
-static const char network_mode[] = "AT%XSYSTEMMODE=0,1,0,0";
+/* Preferred network mode: Narrowband-IoT */
+static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=0,1,0,0";
+/* Fallback network mode: LTE-M */
+static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=1,0,0,0";
 #elif defined(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)
-/* Set network mode to Narrowband-IoT and GPS */
-static const char network_mode[] = "AT%XSYSTEMMODE=0,1,1,0";
+/* Preferred network mode: Narrowband-IoT and GPS */
+static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=0,1,0,1";
+/* Fallback network mode: LTE-M and GPS*/
+static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=1,0,0,1";
 #elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M)
-/* Set network mode to LTE-M */
-static const char network_mode[] = "AT%XSYSTEMMODE=1,0,0,0";
+/* Preferred network mode: LTE-M */
+static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,0,0";
+/* Fallback network mode: Narrowband-IoT */
+static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,0,0";
 #elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)
-/* Set network mode to LTE-M and GPS*/
-static const char network_mode[] = "AT%XSYSTEMMODE=1,0,1,0";
+/* Preferred network mode: LTE-M and GPS*/
+static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,0,1";
+/* Fallback network mode: Narrowband-IoT and GPS */
+static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,0,1";
 #endif
 
 static struct k_sem link;
@@ -166,24 +174,55 @@ static int w_lte_lc_init(void)
 
 static int w_lte_lc_connect(void)
 {
-	if (at_cmd_write(network_mode, NULL, 0, NULL) != 0) {
-		return -EIO;
-	}
+	int err;
+	const char *current_network_mode = nw_mode_preferred;
+	bool retry;
 
 	k_sem_init(&link, 0, 1);
-	at_params_list_init(&params, 10);
 	at_cmd_set_notification_handler(at_handler);
+	at_params_list_init(&params, 10);
 
-	if (at_cmd_write(normal, NULL, 0, NULL) != 0) {
-		return -EIO;
-	}
+	do {
+		retry = false;
 
-	k_sem_take(&link, K_FOREVER);
+		LOG_DBG("Network mode: %s", log_strdup(current_network_mode));
 
+		if (at_cmd_write(current_network_mode, NULL, 0, NULL) != 0) {
+			err = -EIO;
+			goto exit;
+		}
+
+		if (at_cmd_write(normal, NULL, 0, NULL) != 0) {
+			err = -EIO;
+			goto exit;
+		}
+
+		err = k_sem_take(&link, K_SECONDS(CONFIG_LTE_NETWORK_TIMEOUT));
+		if (err == -EAGAIN) {
+			LOG_INF("Network connection attempt timed out");
+
+			if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) &&
+			    (current_network_mode == nw_mode_preferred)) {
+				current_network_mode = nw_mode_fallback;
+				retry = true;
+
+				if (at_cmd_write(offline, NULL, 0, NULL) != 0) {
+					err = -EIO;
+					goto exit;
+				}
+
+				LOG_INF("Using fallback network mode");
+			} else {
+				err = -ETIMEDOUT;
+			}
+		}
+	} while (retry);
+
+exit:
 	at_params_list_free(&params);
 	at_cmd_set_notification_handler(NULL);
 
-	return 0;
+	return err;
 }
 
 static int w_lte_lc_init_and_connect(struct device *unused)
