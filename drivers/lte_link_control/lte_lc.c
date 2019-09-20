@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 static const char mdm_trace[] = "AT%XMODEMTRACE=1,2";
 #endif
 /* Subscribes to notifications with level 2 */
-static const char subscribe[] = "AT+CEREG=2";
+static const char subscribe[] = "AT+CEREG=5";
 
 #if defined(CONFIG_LTE_LOCK_BANDS)
 /* Lock LTE bands 3, 4, 13 and 20 (volatile setting) */
