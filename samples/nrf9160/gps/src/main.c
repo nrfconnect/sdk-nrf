@@ -87,8 +87,8 @@ static int init_app(void)
 
 	nrf_gnss_fix_retry_t    fix_retry    = 0;
 	nrf_gnss_fix_interval_t fix_interval = 1;
-	nrf_gnss_nmea_mask_t    delete_mask  = 0;
-	nrf_gnss_delete_mask_t  nmea_mask    = NRF_GNSS_NMEA_GSV_MASK |
+	nrf_gnss_delete_mask_t	delete_mask  = 0;
+	nrf_gnss_nmea_mask_t	nmea_mask    = NRF_GNSS_NMEA_GSV_MASK |
 					       NRF_GNSS_NMEA_GSA_MASK |
 					       NRF_GNSS_NMEA_GLL_MASK |
 					       NRF_GNSS_NMEA_GGA_MASK |
