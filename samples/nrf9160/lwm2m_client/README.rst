@@ -91,7 +91,7 @@ The following are instructions specific to `Leshan Demo Server`_::
 
     Security mode: Pre-Shared Key
 
-    Identity: Client_identity
+    Identity: nrf-{Your Device IMEI}
 
     Key: 000102030405060708090a0b0c0d0e0f
 
