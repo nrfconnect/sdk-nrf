@@ -15,14 +15,6 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
   # Partition S1 is only enabled when MCUBoot is enabled.
   set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_IMAGE_ADDRESS>)
 
-  if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
-    # Include a kconfig file which enables CONFIG_MCUBOOT_BUILD_S1_VARIANT
-    # for mcuboot.
-    set(old_conf ${mcuboot_OVERLAY_CONFIG})
-    set(mcuboot_OVERLAY_CONFIG
-      "${old_conf} ${CMAKE_CURRENT_SOURCE_DIR}/build_s1.conf"
-      CACHE STRING "" FORCE)
-  endif()
 else()
 
   if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
