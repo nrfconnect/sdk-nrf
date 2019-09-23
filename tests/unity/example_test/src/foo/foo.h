@@ -7,6 +7,8 @@
 #ifndef __FOO_H
 #define __FOO_H
 
+#include <toolchain/common.h>
+
 int foo_init(void *handle);
 
 static inline int foo_execute(void)
