@@ -8,11 +8,9 @@
 #include <zephyr.h>
 #include <lwm2m_carrier.h>
 
-#include "bootstrap_psk.h"
-
-BUILD_ASSERT_MSG((sizeof(CONFIG_LWM2M_CARRIER_BOOTSTRAP_URI) == 1) ||
-		 (sizeof(bootstrap_psk) > 0),
-		 "Custom bootstrap URI specified, please provide a valid PSK.");
+#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
+#include <bootstrap_psk.h>
+#endif
 
 #define LWM2M_CARRIER_THREAD_STACK_SIZE 8192
 #define LWLM2_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
@@ -28,14 +26,11 @@ void lwm2m_carrier_thread_run(void)
 {
 	int err;
 
-	if (strlen(CONFIG_LWM2M_CARRIER_BOOTSTRAP_URI) > 0) {
-		config.bootstrap_uri = CONFIG_LWM2M_CARRIER_BOOTSTRAP_URI;
-	}
-
-	if (sizeof(bootstrap_psk) > 0) {
-		config.psk = (char *)bootstrap_psk;
-		config.psk_length = sizeof(bootstrap_psk);
-	}
+#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
+	config.bootstrap_uri = CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI;
+	config.psk = (char *)bootstrap_psk;
+	config.psk_length = sizeof(bootstrap_psk);
+#endif
 
 	err = lwm2m_carrier_init(&config);
 	__ASSERT(err == 0, "Failed to initialize LwM2M carrier library");
