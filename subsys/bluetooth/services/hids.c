@@ -760,25 +760,19 @@ hids_input_reports_register(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_REPORT,
-				  BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
+				  BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+				  rperm, hids_inp_rep_read, NULL,
+				  hids_inp_rep);
 
 		hids_inp_rep->att_ind = hids_obj->gp.svc.attr_count;
 		hids_inp_rep->offset = offset;
 		hids_inp_rep->idx = i;
 
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT,
-				       rperm,
-				       hids_inp_rep_read, NULL, hids_inp_rep));
-
 		BT_GATT_POOL_CCC(&hids_obj->gp, hids_inp_rep->ccc,
-				 hids_input_report_ccc_changed, wperm | rperm);
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF,
-				       BT_GATT_PERM_READ, hids_inp_rep_ref_read,
-				       NULL, &hids_inp_rep->id));
+				 hids_input_report_ccc_changed,  wperm | rperm);
+		BT_GATT_POOL_DESC(&hids_obj->gp, BT_UUID_HIDS_REPORT_REF,
+				  BT_GATT_PERM_READ, hids_inp_rep_ref_read,
+				  NULL, &hids_inp_rep->id);
 		offset += hids_inp_rep->size;
 	}
 }
@@ -809,22 +803,17 @@ static void hids_outp_reports_register(struct bt_gatt_hids *hids_obj,
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_REPORT,
 				  BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE |
-				  BT_GATT_CHRC_WRITE_WITHOUT_RESP);
+				  BT_GATT_CHRC_WRITE_WITHOUT_RESP, perm,
+				  hids_outp_rep_read, hids_outp_rep_write,
+				  hids_outp_rep);
 
 		hids_outp_rep->att_ind = hids_obj->gp.svc.attr_count;
 		hids_outp_rep->offset = offset;
 		hids_outp_rep->idx = i;
 
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT, perm,
-				       hids_outp_rep_read, hids_outp_rep_write,
-				       hids_outp_rep));
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(
-			BT_UUID_HIDS_REPORT_REF, BT_GATT_PERM_READ,
-			hids_outp_rep_ref_read, NULL, &hids_outp_rep->id));
+		BT_GATT_POOL_DESC(&hids_obj->gp, BT_UUID_HIDS_REPORT_REF,
+				  BT_GATT_PERM_READ, hids_outp_rep_ref_read,
+				  NULL, &hids_outp_rep->id);
 
 		offset += hids_outp_rep->size;
 	}
@@ -855,22 +844,17 @@ static void hids_feat_reports_register(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_REPORT,
-				  BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE);
+				  BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE, perm,
+				  hids_feat_rep_read, hids_feat_rep_write,
+				  hids_feat_rep);
 
 		hids_feat_rep->att_ind = hids_obj->gp.svc.attr_count;
 		hids_feat_rep->offset = offset;
 		hids_feat_rep->idx = i;
 
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT, perm,
-				       hids_feat_rep_read, hids_feat_rep_write,
-				       hids_feat_rep));
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(
-			BT_UUID_HIDS_REPORT_REF, BT_GATT_PERM_READ,
-			hids_feat_rep_ref_read, NULL, &hids_feat_rep->id));
+		BT_GATT_POOL_DESC(&hids_obj->gp, BT_UUID_HIDS_REPORT_REF,
+				  BT_GATT_PERM_READ, hids_feat_rep_ref_read,
+				  NULL, &hids_feat_rep->id);
 
 		offset += hids_feat_rep->size;
 	}
@@ -891,13 +875,10 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_PROTOCOL_MODE,
 			  BT_GATT_CHRC_READ |
-			  BT_GATT_CHRC_WRITE_WITHOUT_RESP);
-	BT_GATT_POOL_DESC(
-	    &hids_obj->gp,
-	    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_PROTOCOL_MODE,
-			       BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,
-			       hids_protocol_mode_read,
-			       hids_protocol_mode_write, &hids_obj->pm));
+			  BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+			  BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,
+			  hids_protocol_mode_read, hids_protocol_mode_write,
+			  &hids_obj->pm);
 
 	/* Register Input Report characteristics. */
 	hids_input_reports_register(hids_obj, init_param);
@@ -914,11 +895,8 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_REPORT_MAP,
-			  BT_GATT_CHRC_READ);
-	BT_GATT_POOL_DESC(
-	    &hids_obj->gp,
-	    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_MAP, BT_GATT_PERM_READ,
-			       hids_report_map_read, NULL, &hids_obj->rep_map));
+			  BT_GATT_CHRC_READ, BT_GATT_PERM_READ,
+			  hids_report_map_read, NULL, &hids_obj->rep_map);
 
 	/* Register HID Boot Mouse Input Report characteristic, its descriptor
 	 * and CCC.
@@ -928,20 +906,15 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
-				  BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
+				  BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+				  HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
+				  hids_boot_mouse_inp_report_read, NULL,
+				  &hids_obj->boot_mouse_inp_rep);
 
 		hids_obj->boot_mouse_inp_rep.att_ind =
 			hids_obj->gp.svc.attr_count;
 		hids_obj->boot_mouse_inp_rep.handler =
 			init_param->boot_mouse_notif_handler;
-
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(
-			BT_UUID_HIDS_BOOT_MOUSE_IN_REPORT,
-			HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
-			hids_boot_mouse_inp_report_read, NULL,
-			&hids_obj->boot_mouse_inp_rep));
 
 		BT_GATT_POOL_CCC(&hids_obj->gp,
 				 hids_obj->boot_mouse_inp_rep.ccc,
@@ -957,19 +930,14 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_BOOT_KB_IN_REPORT,
-				  BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY);
+				  BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+				  HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
+				  hids_boot_kb_inp_report_read, NULL,
+				  &hids_obj->boot_kb_inp_rep);
 
 		hids_obj->boot_kb_inp_rep.att_ind = hids_obj->gp.svc.attr_count;
 		hids_obj->boot_kb_inp_rep.handler =
 		    init_param->boot_kb_notif_handler;
-
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(
-			BT_UUID_HIDS_BOOT_KB_IN_REPORT,
-			HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
-			hids_boot_kb_inp_report_read, NULL,
-			&hids_obj->boot_kb_inp_rep));
 
 		BT_GATT_POOL_CCC(&hids_obj->gp,
 				 hids_obj->boot_kb_inp_rep.ccc,
@@ -979,20 +947,16 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 		BT_GATT_POOL_CHRC(&hids_obj->gp,
 				  BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
 				  BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE |
-				  BT_GATT_CHRC_WRITE_WITHOUT_RESP);
+				  BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+				  HIDS_GATT_PERM_DEFAULT,
+				  hids_boot_kb_outp_report_read,
+				  hids_boot_kb_outp_report_write,
+				  &hids_obj->boot_kb_outp_rep);
 
 		hids_obj->boot_kb_outp_rep.att_ind =
 			hids_obj->gp.svc.attr_count;
 		hids_obj->boot_kb_outp_rep.handler =
 			init_param->boot_kb_outp_rep_handler;
-
-		BT_GATT_POOL_DESC(
-		    &hids_obj->gp,
-		    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
-				       HIDS_GATT_PERM_DEFAULT,
-				       hids_boot_kb_outp_report_read,
-				       hids_boot_kb_outp_report_write,
-				       &hids_obj->boot_kb_outp_rep));
 	}
 
 	/* Register HID Information characteristic and its descriptor. */
@@ -1000,20 +964,15 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_INFO,
-			  BT_GATT_CHRC_READ);
-	BT_GATT_POOL_DESC(
-	    &hids_obj->gp,
-	    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_INFO, BT_GATT_PERM_READ,
-			       hids_info_read, NULL, hids_obj->info));
+			  BT_GATT_CHRC_READ, BT_GATT_PERM_READ,
+			  hids_info_read, NULL, hids_obj->info);
 
 	/* Register HID Control Point characteristic and its descriptor. */
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_CTRL_POINT,
-			  BT_GATT_CHRC_WRITE_WITHOUT_RESP);
-	BT_GATT_POOL_DESC(
-	    &hids_obj->gp,
-	    BT_GATT_DESCRIPTOR(BT_UUID_HIDS_CTRL_POINT, BT_GATT_PERM_WRITE,
-			       NULL, hids_ctrl_point_write, &hids_obj->cp));
+			  BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+			  BT_GATT_PERM_WRITE,
+			  NULL, hids_ctrl_point_write, &hids_obj->cp);
 
 	/* Register HIDS attributes in GATT database. */
 	return bt_gatt_service_register(&hids_obj->gp.svc);
