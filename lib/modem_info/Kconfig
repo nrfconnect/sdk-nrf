@@ -13,7 +13,7 @@ if MODEM_INFO
 
 config MODEM_INFO_MAX_AT_PARAMS_RSP
 	int "Maximum number of response parameters"
-	default 8
+	default 10
 	help
 	  Set the maximum number of parameters the parser
 	  will check for in any given string.
