@@ -439,7 +439,7 @@ int modem_info_string_get(enum modem_info info, char *buf)
 	err = modem_info_parse(modem_data[info], &recv_buf[cmd_length]);
 
 	if (err) {
-		LOG_DBG("Unable to parse data: %d", err);
+		LOG_ERR("Unable to parse data: %d", err);
 		return err;
 	}
 
@@ -448,7 +448,7 @@ int modem_info_string_get(enum modem_info info, char *buf)
 					  modem_data[info]->param_index,
 					  &param_value);
 		if (err) {
-			LOG_DBG("Unable to obtain short: %d", err);
+			LOG_ERR("Unable to obtain short: %d", err);
 			return err;
 		}
 

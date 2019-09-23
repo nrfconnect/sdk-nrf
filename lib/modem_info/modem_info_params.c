@@ -110,13 +110,13 @@ static int modem_data_get(struct lte_param *param)
 	if (data_type == AT_PARAM_TYPE_STRING) {
 		ret = modem_info_string_get(param->type, param->value_string);
 		if (ret < 0) {
-			LOG_DBG("Link data not obtained: %d", ret);
+			LOG_ERR("Link data not obtained: %d %d", param->type, ret);
 			return ret;
 		}
 	} else if (data_type == AT_PARAM_TYPE_NUM_SHORT) {
 		ret = modem_info_short_get(param->type, &param->value);
 		if (ret < 0) {
-			LOG_DBG("Link data not obtained: %d", ret);
+			LOG_ERR("Link data not obtained: %d", ret);
 			return ret;
 		}
 	}
@@ -151,7 +151,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 				&modem->network.cellid_dec);
 		ret += area_code_parse(&modem->network.area_code);
 		if (ret) {
-			LOG_DBG("Network data not obtained: %d", ret);
+			LOG_ERR("Network data not obtained: %d", ret);
 			return -EAGAIN;
 		}
 	}
@@ -165,7 +165,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 			ret += modem_data_get(&modem->sim.imsi);
 		}
 		if (ret) {
-			LOG_DBG("Sim data not obtained: %d", ret);
+			LOG_ERR("Sim data not obtained: %d", ret);
 			return -EAGAIN;
 		}
 	}
@@ -175,7 +175,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 		ret += modem_data_get(&modem->device.battery);
 		ret += modem_data_get(&modem->device.imei);
 		if (ret) {
-			LOG_DBG("Device data not obtained: %d", ret);
+			LOG_ERR("Device data not obtained: %d", ret);
 			return -EAGAIN;
 		}
 	}
