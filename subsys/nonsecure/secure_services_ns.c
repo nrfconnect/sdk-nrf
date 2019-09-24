@@ -11,8 +11,10 @@
  * Call into secure firmware if in the non-secure firmware since the non-secure
  * firmware is not allowed to directly reboot the system.
  */
+#ifdef CONFIG_SPM_SERVICE_REBOOT
 void sys_arch_reboot(int type)
 {
 	ARG_UNUSED(type);
 	spm_request_system_reboot();
 }
+#endif
