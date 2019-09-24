@@ -26,10 +26,10 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_POWER_MANAGER_LOG_LEVEL);
 
+
 #define POWER_DOWN_ERROR_TIMEOUT K_SECONDS(CONFIG_DESKTOP_POWER_MANAGER_ERROR_TIMEOUT)
 #define POWER_DOWN_TIMEOUT_MS	 K_SECONDS(CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT)
 #define POWER_DOWN_CHECK_MS	 1000
-#define DEVICE_POLICY_MAX	 30
 
 enum power_state {
 	POWER_STATE_IDLE,
@@ -42,15 +42,6 @@ enum power_state {
 	POWER_STATE_ERROR_OFF
 };
 
-struct device_list {
-	struct device	*devices;
-
-	size_t		count;
-	char		ordered[DEVICE_POLICY_MAX];
-	int		retval[DEVICE_POLICY_MAX];
-};
-
-static struct device_list device_list;
 
 static enum power_state power_state = POWER_STATE_IDLE;
 static struct k_delayed_work power_down_trigger;
@@ -59,59 +50,6 @@ static atomic_t power_down_count;
 static unsigned int connection_count;
 static bool usb_connected;
 
-static void suspend_devices(struct device_list *dl)
-{
-	for (size_t i = 0; i < dl->count; i++) {
-		size_t idx = dl->ordered[dl->count - i - 1];
-
-		/* If necessary  the policy manager can check if a specific
-		 * device in the device list is busy as shown below :
-		 * if(device_busy_check(&device_list[idx])) {do something}
-		 */
-		int ret = device_set_power_state(&dl->devices[idx],
-						 DEVICE_PM_SUSPEND_STATE,
-						 NULL, NULL);
-
-		dl->retval[dl->count - i - 1] = ret;
-	}
-}
-
-/* TODO this function was copied from an example and is of poor quality.
- * Fix it. */
-static void create_device_list(struct device_list *dl)
-{
-	/*
-	 * Following is an example of how the device list can be used
-	 * to suspend devices based on custom policies.
-	 *
-	 * Create an ordered list of devices that will be suspended.
-	 * Ordering should be done based on dependencies. Devices
-	 * in the beginning of the list will be resumed first.
-	 */
-
-	int count;
-
-	device_list_get(&dl->devices, &count);
-
-
-	int dcount = 3; /* Reserve for 32KHz, 16MHz and system clock */
-
-	for (size_t i = 0;
-	     (i < count) && (dcount < ARRAY_SIZE(dl->ordered));
-	     i++) {
-		if (!strcmp(dl->devices[i].config->name, "clk_k32src")) {
-			dl->ordered[0] = i;
-		} else if (!strcmp(dl->devices[i].config->name, "clk_m16src")) {
-			dl->ordered[1] = i;
-		} else if (!strcmp(dl->devices[i].config->name, "sys_clock")) {
-			dl->ordered[2] = i;
-		} else {
-			dl->ordered[dcount] = i;
-			dcount++;
-		}
-	}
-	dl->count = dcount;
-}
 
 static void power_down(struct k_work *work)
 {
@@ -167,8 +105,6 @@ static void system_off(void)
 
 	LOG_WRN("System turned off");
 	LOG_PANIC();
-
-	suspend_devices(&device_list);
 
 	sys_pm_force_power_state(SYS_POWER_STATE_DEEP_SLEEP_1);
 }
@@ -348,8 +284,6 @@ static bool event_handler(const struct event_header *eh)
 			LOG_INF("Activate power manager");
 
 			sys_pm_force_power_state(SYS_POWER_STATE_ACTIVE);
-
-			create_device_list(&device_list);
 
 			k_delayed_work_init(&error_trigger, error);
 			k_delayed_work_init(&power_down_trigger, power_down);
