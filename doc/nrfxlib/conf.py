@@ -98,6 +98,7 @@ todo_include_todos = False
 #
 html_theme = 'nrfxlib'
 html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
+html_favicon = '{}/doc/static/images/favicon.ico'.format(NRF_BASE)
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
