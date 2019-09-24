@@ -18,8 +18,12 @@
 #include <fprotect.h>
 
 #include <provision.h>
-#ifdef CONFIG_SECURE_BOOT_DEBUG_UART
+#ifdef CONFIG_UART_NRFX
+#ifdef CONFIG_UART_0_NRF_UART
+#include <nrf_uart.h>
+#else
 #include <nrf_uarte.h>
+#endif
 #endif
 
 static bool verify_firmware(u32_t address)
@@ -86,14 +90,14 @@ static bool verify_firmware(u32_t address)
 
 static void uninit_used_peripherals(void)
 {
-#ifdef CONFIG_SECURE_BOOT_DEBUG_UART
-#ifdef CONFIG_UART_0_NRF_UARTE
+#ifdef CONFIG_UART_0_NRF_UART
+	nrf_uart_disable(NRF_UART0);
+#elif defined(CONFIG_UART_0_NRF_UARTE)
 	nrf_uarte_disable(NRF_UARTE0);
 #elif defined(CONFIG_UART_1_NRF_UARTE)
 	nrf_uarte_disable(NRF_UARTE1);
 #elif defined(CONFIG_UART_2_NRF_UARTE)
 	nrf_uarte_disable(NRF_UARTE2);
-#endif
 #endif
 }
 
@@ -129,6 +133,8 @@ static void boot_from(u32_t *address)
 	for (u8_t i = 0; i < ARRAY_SIZE(nvic->ICPR); i++) {
 		nvic->ICPR[i] = 0xFFFFFFFF;
 	}
+
+	printk("Booting (0x%x).\r\n", (u32_t)address);
 
 	uninit_used_peripherals();
 
