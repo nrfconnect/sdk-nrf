@@ -10,6 +10,7 @@ by creating events understandable by the application.
 .. toctree::
    :maxdepth: 1
 
+   battery_charger.rst
    buttons.rst
    fn_keys.rst
    click_detector.rst
