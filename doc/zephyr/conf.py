@@ -181,6 +181,7 @@ rst_epilog = """
 
 html_theme = "zephyr"
 html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
+html_favicon = '{}/doc/static/images/favicon.ico'.format(NRF_BASE)
 
 if tags.has('release'):
     is_release = True
