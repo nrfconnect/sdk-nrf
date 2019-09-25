@@ -63,9 +63,9 @@ static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=0,1,0,0";
 static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=1,0,0,0";
 #elif defined(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)
 /* Preferred network mode: Narrowband-IoT and GPS */
-static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=0,1,0,1";
+static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=0,1,1,0";
 /* Fallback network mode: LTE-M and GPS*/
-static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=1,0,0,1";
+static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=1,0,1,0";
 #elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M)
 /* Preferred network mode: LTE-M */
 static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,0,0";
@@ -73,9 +73,9 @@ static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,0,0";
 static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,0,0";
 #elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)
 /* Preferred network mode: LTE-M and GPS*/
-static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,0,1";
+static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,1,0";
 /* Fallback network mode: Narrowband-IoT and GPS */
-static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,0,1";
+static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,1,0";
 #endif
 
 static struct k_sem link;
