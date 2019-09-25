@@ -198,8 +198,6 @@ static bool event_handler(const struct event_header *eh)
 				module_set_state(MODULE_STATE_READY);
 				atomic_set(&active, true);
 			}
-
-			return false;
 		}
 
 		return false;
@@ -231,6 +229,7 @@ static bool event_handler(const struct event_header *eh)
 			int err = gpio_pin_disable_callback(gpio_dev,
 					CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN);
 
+			k_delayed_work_cancel(&error_check);
 			if (!err) {
 				err = cso_pin_control(false);
 			}
