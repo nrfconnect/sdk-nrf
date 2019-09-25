@@ -121,21 +121,6 @@ config FLIP_INPUT
 		4 - Switch 2
 endif
 
-config FLIP_POLL
-	bool "Use polling to detect flip"
-	help
-		Poll the defined accelerometer device at interval determined by
-		FLIP_POLL_INTERVAL. Data will be sent to nRF Cloud if a flip
-		has happened and the orientation thus has changed.
-
-if FLIP_POLL
-config FLIP_POLL_INTERVAL
-	int "Flip detection poll interval"
-	default 1000
-	help
-		Flip polling interval in milliseconds.
-endif
-
 if ACCEL_USE_EXTERNAL
 
 config ACCEL_DEV_NAME
