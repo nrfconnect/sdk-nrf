@@ -202,7 +202,7 @@ void k_sys_fatal_error_handler(unsigned int reason,
 	ARG_UNUSED(esf);
 
 	LOG_PANIC();
-	z_fatal_print("Running main.c error handler");
+	printk("Running main.c error handler");
 	error_handler(ERROR_SYSTEM_FAULT, reason);
 	CODE_UNREACHABLE;
 }

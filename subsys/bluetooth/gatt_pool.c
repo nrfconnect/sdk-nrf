@@ -396,8 +396,7 @@ int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
 	}
 
 	attr = &gp->svc.attrs[gp->svc.attr_count];
-	*attr = (struct bt_gatt_attr)BT_GATT_CCC_MANAGED(ccc);
-	attr->perm = perm;
+	*attr = (struct bt_gatt_attr)BT_GATT_CCC_MANAGED(ccc, perm);
 
 	attr->uuid = NULL;
 	ret = uuid_register((struct bt_uuid **) &attr->uuid, uuid_gatt_ccc);

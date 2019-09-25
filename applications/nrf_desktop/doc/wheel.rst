@@ -21,7 +21,7 @@ Configuration
 The module is enabled by the ``CONFIG_DESKTOP_WHEEL_ENABLE`` define.
 
 For detecting rotation, ``wheel`` uses Zephyr's QDEC driver. The module can be enabled
-only when QDEC is configured in DTS (:option:`CONFIG_HAS_DTS_QDEC` is set).
+only when QDEC is configured in DTS (:option:`CONFIG_QDEC_NRFX` is set).
 
 The QDEC DTS configuration specifies how many steps are done during one full angle.
 The sensor reports the rotation data in angle degrees.

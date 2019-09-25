@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <nrf_acl.h>
+#include <hal/nrf_acl.h>
 #include <errno.h>
 
 int fprotect_area(u32_t start, size_t length)

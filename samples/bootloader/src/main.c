@@ -20,9 +20,9 @@
 #include <provision.h>
 #ifdef CONFIG_UART_NRFX
 #ifdef CONFIG_UART_0_NRF_UART
-#include <nrf_uart.h>
+#include <hal/nrf_uart.h>
 #else
-#include <nrf_uarte.h>
+#include <hal/nrf_uarte.h>
 #endif
 #endif
 

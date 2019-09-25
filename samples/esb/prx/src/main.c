@@ -8,7 +8,6 @@
 #include <irq.h>
 #include <logging/log.h>
 #include <nrf.h>
-#include <nrf_common.h>
 #include <nrf_esb.h>
 #include <zephyr.h>
 #include <zephyr/types.h>

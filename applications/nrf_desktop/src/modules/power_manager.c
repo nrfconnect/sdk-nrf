@@ -7,10 +7,10 @@
 #include <zephyr/types.h>
 #include <power.h>
 
-#include <nrf_power.h>
 #include <device.h>
 #include <gpio.h>
 #include <hal/nrf_gpiote.h>
+#include <hal/nrf_power.h>
 
 #include <profiler.h>
 
