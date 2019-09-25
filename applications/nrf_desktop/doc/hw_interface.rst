@@ -12,6 +12,7 @@ by creating events understandable by the application.
 
    battery_charger.rst
    battery_meas.rst
+   board.rst
    buttons.rst
    click_detector.rst
    motion.rst
