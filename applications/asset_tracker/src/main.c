@@ -31,12 +31,6 @@
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
 #define CLOUD_CONNACK_WAIT_DURATION	K_SECONDS(CONFIG_CLOUD_WAIT_DURATION)
 
-#if defined(CONFIG_FLIP_POLL)
-#define FLIP_POLL_INTERVAL		K_MSEC(CONFIG_FLIP_POLL_INTERVAL)
-#else
-#define FLIP_POLL_INTERVAL		0
-#endif
-
 #ifdef CONFIG_ACCEL_USE_SIM
 #define FLIP_INPUT			CONFIG_FLIP_INPUT
 #define CALIBRATION_INPUT		-1
@@ -112,7 +106,6 @@ static struct k_work send_gps_data_work;
 static struct k_work send_button_data_work;
 static struct k_work send_flip_data_work;
 static struct k_delayed_work send_env_data_work;
-static struct k_delayed_work flip_poll_work;
 static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
 #if CONFIG_MODEM_INFO
@@ -332,12 +325,12 @@ static void flip_send(struct k_work *work)
 	static struct orientation_detector_sensor_data sensor_data;
 
 	if (!flip_mode_enabled || !atomic_get(&send_data_enable)) {
-		goto exit;
+		return;
 	}
 
 	if (orientation_detector_poll(&sensor_data) == 0) {
 		if (sensor_data.orientation == last_orientation_state) {
-			goto exit;
+			return;
 		}
 
 		switch (sensor_data.orientation) {
@@ -350,18 +343,12 @@ static void flip_send(struct k_work *work)
 			flip_cloud_data.data.len = sizeof("UPSIDE_DOWN") - 1;
 			break;
 		default:
-			goto exit;
+			return;
 		}
 
 		last_orientation_state = sensor_data.orientation;
 
 		k_work_submit(&send_flip_data_work);
-	}
-
-exit:
-	if (work) {
-		k_delayed_work_submit(&flip_poll_work,
-					FLIP_POLL_INTERVAL);
 	}
 }
 
@@ -585,10 +572,6 @@ void sensors_start(void)
 {
 	atomic_set(&send_data_enable, 1);
 	sensors_init();
-
-	if (IS_ENABLED(CONFIG_FLIP_POLL)) {
-		k_delayed_work_submit(&flip_poll_work, K_NO_WAIT);
-	}
 }
 
 /**@brief nRF Cloud specific callback for cloud association event. */
@@ -807,7 +790,6 @@ static void work_init(void)
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_flip_data_work, send_flip_data_work_fn);
 	k_delayed_work_init(&send_env_data_work, send_env_data_work_fn);
-	k_delayed_work_init(&flip_poll_work, flip_send);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
 #if CONFIG_MODEM_INFO
@@ -850,8 +832,7 @@ static void modem_configure(void)
  */
 static void accelerometer_init(void)
 {
-	if (!IS_ENABLED(CONFIG_FLIP_POLL) &&
-	     IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL)) {
+	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL)) {
 
 		struct device *accel_dev =
 		device_get_binding(CONFIG_ACCEL_DEV_NAME);
