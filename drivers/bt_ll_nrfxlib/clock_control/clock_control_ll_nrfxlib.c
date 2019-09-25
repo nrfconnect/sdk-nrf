@@ -13,7 +13,7 @@
 #include <ble_controller_soc.h>
 #include <multithreading_lock.h>
 #if IS_ENABLED(CONFIG_USB_NRF52840)
-#include <nrf_power.h>
+#include <hal/nrf_power.h>
 #endif
 
 static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)

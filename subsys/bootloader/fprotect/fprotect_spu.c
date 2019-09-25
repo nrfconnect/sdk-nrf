@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <nrf_spu.h>
+#include <hal/nrf_spu.h>
 #include <errno.h>
 
 #define SPU_LOCK_REGION_SIZE (32 * 1024)

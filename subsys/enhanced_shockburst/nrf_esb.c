@@ -7,7 +7,6 @@
 #include <irq.h>
 #include <misc/byteorder.h>
 #include <nrf.h>
-#include <nrf_common.h>
 #include <nrf_esb.h>
 #include <stddef.h>
 #include <string.h>
@@ -1022,15 +1021,15 @@ int nrf_esb_init(const struct nrf_esb_config *config)
 	sys_timer_init();
 	ppi_init();
 
-	IRQ_DIRECT_CONNECT(NRF5_IRQ_RADIO_IRQn, config->radio_irq_priority,
+	IRQ_DIRECT_CONNECT(RADIO_IRQn, config->radio_irq_priority,
 			   RADIO_IRQHandler, 0);
-	IRQ_DIRECT_CONNECT(NRF5_IRQ_SWI0_IRQn, config->event_irq_priority,
+	IRQ_DIRECT_CONNECT(SWI0_IRQn, config->event_irq_priority,
 			   ESB_EVT_IRQHandler, 0);
 	IRQ_DIRECT_CONNECT(ESB_SYS_TIMER_IRQn, config->event_irq_priority,
 			   NRF_ESB_SYS_TIMER_IRQHandler, 0);
 
-	irq_enable(NRF5_IRQ_RADIO_IRQn);
-	irq_enable(NRF5_IRQ_SWI0_IRQn);
+	irq_enable(RADIO_IRQn);
+	irq_enable(SWI0_IRQn);
 	irq_enable(ESB_SYS_TIMER_IRQn);
 
 #ifdef CONFIG_NRF_ESB_ADDR_HANG_BUGFIX
@@ -1755,4 +1754,3 @@ int nrf_esb_reuse_pid(u8_t pipe)
 
 	return 0;
 }
-

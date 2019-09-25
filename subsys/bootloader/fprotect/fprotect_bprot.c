@@ -6,11 +6,11 @@
 
 #include <nrf.h>
 #if defined(NRF_BPROT)
-	#include <nrf_bprot.h>
+	#include <hal/nrf_bprot.h>
 	#define PROTECT nrf_bprot_nvm_blocks_protection_enable
 	#define ENABLE_PROTECTION_IN_DEBUG nrf_bprot_nvm_protection_in_debug_set
 #elif defined(NRF_MPU)
-	#include <nrf_mpu.h>
+	#include <hal/nrf_mpu.h>
 	/* Rename nRF51's NRF_MPU to NRF_BPROT as they work the same. */
 	#define NRF_BPROT NRF_MPU
 	#define PROTECT nrf_mpu_nvm_blocks_protection_enable

@@ -5,11 +5,11 @@
 #
 
 menu "Wheel configuration"
-	depends on HAS_DTS_QDEC
+	depends on QDEC_NRFX
 
 config DESKTOP_WHEEL_ENABLE
 	bool "Enable wheel hardware interface"
-	depends on HAS_DTS_QDEC
+	depends on QDEC_NRFX
 
 config DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER
 	int "Wheel sensor value divider"

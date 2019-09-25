@@ -43,7 +43,8 @@ BT_GATT_SERVICE_DEFINE(bas_svc,
 	BT_GATT_CHARACTERISTIC(BT_UUID_BAS_BATTERY_LEVEL,
 			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_READ, read_blvl, NULL, &battery),
-	BT_GATT_CCC(blvl_ccc_cfg_changed),
+	BT_GATT_CCC(blvl_ccc_cfg_changed,
+		    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
 );
 
 static bool event_handler(const struct event_header *eh)
