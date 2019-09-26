@@ -11,8 +11,9 @@ part of its functionality.
    :maxdepth: 1
 
    ble_bond.rst
+   ble_state.rst
    config_channel.rst
    hid_state.rst
    hids.rst
-   usb_state.rst
    led_state.rst
+   usb_state.rst
