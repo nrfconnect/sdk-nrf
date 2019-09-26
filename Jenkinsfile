@@ -14,8 +14,8 @@ def generateParallelStage(platform, compiler, AGENT_LABELS,
   return {
     node (AGENT_LABELS) {
       stage('.'){
+        println "Using Node:$NODE_NAME"
         docker.image("$DOCKER_REG/$IMAGE_TAG").inside {
-          lib_Main.cloneCItools(JOB_NAME)
           dir('nrf') {
             checkout scm
             CI_STATE.NRF.REPORT_SHA = lib_Main.checkoutRepo(
@@ -57,7 +57,6 @@ pipeline {
   agent { label AGENT_LABELS }
 
   options {
-    checkoutToSubdirectory('nrf')
     parallelsAlwaysFailFast()
     timeout(time: TIMEOUT.time, unit: TIMEOUT.unit)
   }
@@ -90,8 +89,8 @@ pipeline {
       TestStages["compliance"] = {
         node (AGENT_LABELS) {
           stage('Compliance Test'){
+            println "Using Node:$NODE_NAME"
             docker.image("$DOCKER_REG/$IMAGE_TAG").inside {
-              lib_Main.cloneCItools(JOB_NAME)
               dir('nrf') {
                 checkout scm
                 CI_STATE.NRF.REPORT_SHA = lib_Main.checkoutRepo(
@@ -126,7 +125,7 @@ pipeline {
 
                   // Run the compliance check
                   try {
-                    sh "(source ../zephyr/zephyr-env.sh && ../ci-tools/scripts/check_compliance.py $COMPLIANCE_ARGS --commits $COMMIT_RANGE)"
+                    sh "(source ../zephyr/zephyr-env.sh && ../tools/ci-tools/scripts/check_compliance.py $COMPLIANCE_ARGS --commits $COMMIT_RANGE)"
                   }
                   finally {
                     junit 'compliance.xml'
@@ -136,6 +135,7 @@ pipeline {
                 }
               }
             }
+            cleanWs()
           }
         }
       }
