@@ -83,7 +83,6 @@ pipeline {
   stages {
     stage('Load') { steps { script { CI_STATE = lib_Stage.load('NRF') }}}
     stage('Specification') { steps { script {
-
       def TestStages = [:]
 
       TestStages["compliance"] = {
@@ -95,6 +94,7 @@ pipeline {
                 checkout scm
                 CI_STATE.NRF.REPORT_SHA = lib_Main.checkoutRepo(
                       CI_STATE.NRF.GIT_URL, "NRF", CI_STATE.NRF, false)
+                lib_Status.set("PENDING", 'NRF', CI_STATE);
                 lib_West.AddManifestUpdate("NRF", 'nrf',
                       CI_STATE.NRF.GIT_URL, CI_STATE.NRF.GIT_REF, CI_STATE)
               }
