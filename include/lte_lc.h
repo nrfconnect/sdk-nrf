@@ -61,6 +61,19 @@ int lte_lc_normal(void);
  */
 int lte_lc_psm_req(bool enable);
 
+/* @brief Function for getting the current PSM (Power Saving Mode)
+ *	  configurations for periodic TAU (Tracking Area Update) and
+ *	  active time, both in units of seconds.
+ *
+ * @param tau Pointer to the variable for parsed periodic TAU interval in
+ *	      seconds. Positive integer, or -1 if timer is deactivated.
+ * @param active_time Pointer to the variable for parsed active time in seconds.
+ *		      Positive integer, or -1 if timer is deactivated.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_psm_get(int *tau, int *active_time);
+
 /** @brief Function for requesting modem to use eDRX or disable
  * use of values defined in kconfig.
  * For reference see 3GPP 27.007 Ch. 7.40.
