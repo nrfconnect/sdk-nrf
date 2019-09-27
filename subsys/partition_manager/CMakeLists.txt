@@ -45,21 +45,3 @@ if((EXISTS ${APPLICATION_SOURCE_DIR}/pm.yml) AND IMAGE)
     ${IMAGE}
     )
 endif()
-
-get_property(img_pm_subsys GLOBAL PROPERTY ${IMAGE}PM_SUBSYS)
-if (img_pm_subsys)
-  foreach (subsys_pm_yml ${img_pm_subsys})
-    file(RELATIVE_PATH rel_path_to_yml ${ZEPHYR_BASE} ${subsys_pm_yml})
-    set(subsys_pm_preprocessed
-      ${PROJECT_BINARY_DIR}/${rel_path_to_yml})
-    preprocess_pm_yml(
-      ${subsys_pm_yml}
-      ${subsys_pm_preprocessed}
-      )
-  set_property(
-    GLOBAL APPEND PROPERTY
-    PM_SUBSYS_PREPROCESSED
-      ${subsys_pm_preprocessed}
-    )
-  endforeach()
-endif()
