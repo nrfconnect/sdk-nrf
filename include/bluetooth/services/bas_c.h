@@ -1,7 +1,3 @@
-/** @file
- *  @brief Battery Service Client implementation.
- */
-
 /*
  * Copyright (c) 2018 Nordic Semiconductor
  *
@@ -75,7 +71,7 @@ typedef void (*bt_gatt_bas_c_read_cb)(struct bt_gatt_bas_c *bas_c,
 				      int err);
 
 /**
- * @brief Battery Service Client characteristic read periodic read.
+ * @brief Battery Service Client characteristic periodic read.
  */
 struct bt_gatt_bas_c_periodic_read {
 	/** Work queue used to measure the read interval. */
@@ -98,8 +94,8 @@ struct bt_gatt_bas_c {
 	struct bt_gatt_subscribe_params notify_params;
 	/** Read parameters. */
 	struct bt_gatt_read_params read_params;
-	/** Read characteristic value timing, used when characteristic do not
-	 *  have CCCD descriptor.
+	/** Read characteristic value timing. Used when characteristic do not
+	 *  have a CCCD descriptor.
 	 */
 	struct bt_gatt_bas_c_periodic_read periodic_read;
 	/** Notification callback. */
@@ -214,12 +210,12 @@ int bt_gatt_bas_c_read(struct bt_gatt_bas_c *bas_c, bt_gatt_bas_c_read_cb func);
 int bt_gatt_bas_c_get(struct bt_gatt_bas_c *bas_c);
 
 /**
- * @brief Check if notification is supported by service.
+ * @brief Check whether notification is supported by the service.
  *
  * @param bas_c BAS Client object.
  *
- * @return true If notifications are supported.
- *              Otherwise false is returned.
+ * @retval true If notifications are supported.
+ *              Otherwise, @c false is returned.
  */
 static inline bool bt_gatt_bas_c_notify_supported(struct bt_gatt_bas_c *bas_c)
 {
@@ -227,22 +223,8 @@ static inline bool bt_gatt_bas_c_notify_supported(struct bt_gatt_bas_c *bas_c)
 }
 
 /**
- * @brief Read periodically the battery level value from the device with
+ * @brief Periodically read the battery level value from the device with
  *        specific time interval.
- *
- * This function sends a read request to the connected device periodically.
- * Can be used only when BAS do not support notification. Time interval
- * K_NO_WAIT or K_FOREVER causes reading charasteristic value as soon as
- * possible.
- *
- * For many devices, the battery level value will not change frequently. Based
- * on the type of connected device. You can decide how offen read it.
- * For example, if the expected battery life is in the order of years,
- * reading the battery level value more frequently than once a week is not
- * recommended
- *
- * Periodic read interval can be changed while periodic read is active,
- * the next read period will be started with the new interval.
  *
  * @param bas_c BAS Client object.
  * @param interval Characteristic Read interval in milliseconds.
@@ -256,7 +238,7 @@ int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
 				      bt_gatt_bas_c_notify_cb func);
 
 /**
- * @brief Stop periodic read of the battery value from the device.
+ * @brief Stop periodic reading of the battery value from the device.
  *
  * @param bas_c BAS Client object.
  */
