@@ -9,7 +9,7 @@
 
 /**
  * @brief LED Effect
- * @defgroup led_effect LED Effect
+ * @defgroup led_effect_DESK LED Effect
  * @{
  */
 
@@ -20,34 +20,73 @@
 extern "C" {
 #endif
 
+
+/** @brief Color of LED.
+ */
 struct led_color {
+	/** Values for color channels. */
 	u8_t c[CONFIG_DESKTOP_LED_COLOR_COUNT];
 };
 
+
+/** @brief Single step of a LED effect.
+ *
+ * During a single step, color of LED changes from the color before the step
+ * to the color defined in the step. The color update may be done in multiple
+ * substeps to achieve smooth, gradual change.
+ */
 struct led_effect_step {
+	/** LED color at the end of the step. */
 	struct led_color color;
+
+	/** Number of substeps. */
 	u16_t substep_count;
+
+	/** Duration of a single substep. */
 	u16_t substep_time;
 };
 
+
+/** @brief Single LED effect.
+ */
 struct led_effect {
+	/** Sequence of LED color changes. It is defined by subsequent steps. */
 	const struct led_effect_step *steps;
+
+	/** Number of steps for the given effect. */
 	u16_t step_count;
+
+	/** Flag that indicates if the sequence should start again after it finishes. */
 	bool loop_forever;
 };
 
 
+/** Create LED color initializer for LED turned on.
+ *
+ * @note As arguments, pass the brightness levels for every color channel.
+ * The amount of the color channels is defined in the configuration (three
+ * channels by default).
+ */
 #if CONFIG_DESKTOP_LED_COLOR_COUNT == 1
 	#define LED_COLOR(_brightness) {	\
 			.c = {_brightness}	\
-		}
-	#define LED_NOCOLOR() {			\
-			.c = {0}		\
 		}
 #elif CONFIG_DESKTOP_LED_COLOR_COUNT == 3
 	#define LED_COLOR(_r, _g, _b) {		\
 			.c = {_r, _g, _b}	\
 	}
+#else
+	#error "Unsupported color count"
+#endif
+
+
+/** Create LED color initializer for LED turned off.
+ */
+#if CONFIG_DESKTOP_LED_COLOR_COUNT == 1
+	#define LED_NOCOLOR() {			\
+			.c = {0}		\
+		}
+#elif CONFIG_DESKTOP_LED_COLOR_COUNT == 3
 	#define LED_NOCOLOR() {			\
 			.c = {0, 0, 0}		\
 	}
@@ -55,6 +94,13 @@ struct led_effect {
 	#error "Unsupported color count"
 #endif
 
+
+/** Create LED turned on effect initializer.
+ *
+ * LED color remains constant.
+ *
+ * @param _color	Selected LED color.
+ */
 #define LED_EFFECT_LED_ON(_color)						\
 	{									\
 		.steps = ((const struct led_effect_step[]) {			\
@@ -68,8 +114,20 @@ struct led_effect {
 		.loop_forever = false,						\
 	}
 
+
+/** Create LED turned off effect initializer.
+ */
 #define LED_EFFECT_LED_OFF() LED_EFFECT_LED_ON(LED_NOCOLOR())
 
+
+/** Create LED blinking effect initializer.
+ *
+ * LED color is periodically changed between the selected color and the LED
+ * turned off.
+ *
+ * @param _period	Period of time between LED color switches.
+ * @param _color	Selected LED color.
+ */
 #define LED_EFFECT_LED_BLINK(_period, _color)					\
 	{									\
 		.steps = ((const struct led_effect_step[]) {			\
@@ -88,7 +146,22 @@ struct led_effect {
 		.loop_forever = true,						\
 	}
 
+
+/** @def _BREATH_SUBSTEPS
+ *
+ * @brief Substeps for color update for LED breathing effect.
+ */
 #define _BREATH_SUBSTEPS 15
+
+
+/** Create LED breathing effect initializer.
+ *
+ * LED color is smoothly, gradually changed between the LED turned off
+ * and the selected color.
+ *
+ * @param _period	Period of time for single substep.
+ * @param _color	Selected LED color.
+ */
 #define LED_EFFECT_LED_BREATH(_period, _color)					\
 	{									\
 		.steps = ((const struct led_effect_step[]) {			\
@@ -118,8 +191,29 @@ struct led_effect {
 	}
 
 
+/** @def LED_CLOCK_BLINK_PERIOD
+ *
+ * @brief Period of time between color changes while the LED is blinking
+ * (LED clock effect).
+ */
 #define LED_CLOCK_BLINK_PERIOD 200
+
+
+/** @def LED_CLOCK_SLEEP_PERIOD
+ *
+ * @brief Period of time when the LED is turned off (LED clock effect).
+ */
 #define LED_CLOCK_SLEEP_PERIOD 1000
+
+
+/** Create LED steps initializer for single clock tick.
+ *
+ * A single clock tick is a single LED blink with the defined color.
+ * This macro is used by UTIL_LISTIFY macro.
+ *
+ * @param i		Tick number (required by UTIL_LISTIFY).
+ * @param _color	Selected LED color.
+ */
 #define LED_CLOCK_TIK(i, _color)					\
 		{							\
 			.color = _color,				\
@@ -132,8 +226,17 @@ struct led_effect {
 			.substep_time = LED_CLOCK_BLINK_PERIOD,		\
 		},							\
 
-/* UTIL_LISTIFY accepts just one additional argument - period is defined
- * separately.
+
+/** Create LED clock effect initializer.
+ *
+ * LED blinks a defined number of times, then it is turned off for a defined
+ * period of time. The sequence is repeated periodically.
+ *
+ * @note You can pass only one additional argument to the UTIL_LISTIFY macro,
+ * which in this case is LED color. Period is defined separately.
+ *
+ * @param _ticks	Number of ticks.
+ * @param _color	Selected LED color.
  */
 #define LED_EFFECT_LED_CLOCK(_ticks, _color)					\
 	{									\
