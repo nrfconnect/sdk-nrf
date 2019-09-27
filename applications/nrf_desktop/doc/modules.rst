@@ -13,6 +13,7 @@ part of its functionality.
    ble_bond.rst
    ble_state.rst
    config_channel.rst
+   fn_keys.rst
    hid_state.rst
    hids.rst
    led_state.rst
