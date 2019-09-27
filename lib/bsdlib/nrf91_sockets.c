@@ -254,6 +254,8 @@ static int nrf_to_z_protocol(int proto)
 		return IPPROTO_UDP;
 	case NRF_SPROTO_TLS1v2:
 		return IPPROTO_TLS_1_2;
+	case NRF_PROTO_PDN:
+		return NPROTO_PDN;
 	case NRF_PROTO_AT:
 		return NPROTO_AT;
 	case 0:
