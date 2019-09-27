@@ -582,17 +582,44 @@ static void selector_event_handler(const struct selector_event *event)
 	}
 
 	if (event->position == CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS) {
-		if (likely(state != STATE_DISABLED)) {
-			cancel_operation();
-			select_dongle_peer();
-		} else {
+		switch (state) {
+		case STATE_DISABLED:
 			dongle_peer_selected_on_init = true;
+			break;
+		case STATE_DONGLE_CONN:
+			/* Ignore */
+			break;
+		case STATE_ERASE_PEER:
+		case STATE_ERASE_ADV:
+		case STATE_SELECT_PEER:
+			cancel_operation();
+			/* Fall-though */
+		case STATE_IDLE:
+			select_dongle_peer();
+			break;
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
 		}
 	} else {
-		if (likely(state != STATE_DISABLED)) {
-			select_ble_peers();
-		} else {
+		switch (state) {
+		case STATE_DISABLED:
 			dongle_peer_selected_on_init = false;
+			break;
+		case STATE_IDLE:
+			/* Ignore */
+			break;
+		case STATE_ERASE_PEER:
+		case STATE_ERASE_ADV:
+		case STATE_SELECT_PEER:
+			cancel_operation();
+			/* Fall-though */
+		case STATE_DONGLE_CONN:
+			select_ble_peers();
+			break;
+		default:
+			__ASSERT_NO_MSG(false);
+			break;
 		}
 	}
 }
