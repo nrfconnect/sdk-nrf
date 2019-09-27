@@ -32,6 +32,8 @@
  */
 #define KEY_READVAL_MASK DK_BTN1_MSK
 
+#define BAS_READ_VALUE_INTERVAL K_SECONDS(10)
+
 
 static struct bt_conn *default_conn;
 static struct bt_gatt_bas_c bas_c;
@@ -87,11 +89,20 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm,
 		printk("Could not init BAS client object, error: %d\n", err);
 	}
 
-	err = bt_gatt_bas_c_subscribe(&bas_c, bas_c_notify_cb);
-	if (err) {
-		printk("Cannot subscribe to BAS value notification (err: %d)\n",
-		       err);
-		/* Continue anyway */
+	if (bt_gatt_bas_c_notify_supported(&bas_c)) {
+		err = bt_gatt_bas_c_subscribe(&bas_c, bas_c_notify_cb);
+		if (err) {
+			printk("Cannot subscribe to BAS value notification (err: %d)\n",
+			       err);
+			/* Continue anyway */
+		}
+	} else {
+		err = bt_gatt_bas_c_periodic_read_start(&bas_c,
+							BAS_READ_VALUE_INTERVAL,
+							bas_c_notify_cb);
+		if (err) {
+			printk("Could not turn on periodic BAS value reading\n");
+		}
 	}
 
 	err = bt_gatt_dm_data_release(dm);
@@ -258,7 +269,6 @@ static void bas_c_read_cb(struct bt_gatt_bas_c *bas_c,
 	}
 	printk("[%s] Battery read: %"PRIu8"%%\n", addr, battery_level);
 }
-
 
 static void button_readval(void)
 {
