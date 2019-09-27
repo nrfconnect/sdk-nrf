@@ -87,6 +87,9 @@ static int z_to_nrf_level(int z_in_level, int *nrf_out_level)
 	case SOL_SOCKET:
 		*nrf_out_level = NRF_SOL_SOCKET;
 		break;
+	case SOL_DFU:
+		*nrf_out_level = NRF_SOL_DFU;
+		break;
 	case SOL_PDN:
 		*nrf_out_level = NRF_SOL_PDN;
 		break;
@@ -140,6 +143,38 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			break;
 		case SO_BINDTODEVICE:
 			*nrf_out_optname = NRF_SO_BINDTODEVICE;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
+		break;
+
+	case SOL_DFU:
+		switch (z_in_optname) {
+		case SO_DFU_FW_VERSION:
+			*nrf_out_optname = NRF_SO_DFU_FW_VERSION;
+			break;
+		case SO_DFU_RESOURCES:
+			*nrf_out_optname = NRF_SO_DFU_RESOURCES;
+			break;
+		case SO_DFU_TIMEO:
+			*nrf_out_optname = NRF_SO_DFU_TIMEO;
+			break;
+		case SO_DFU_APPLY:
+			*nrf_out_optname = NRF_SO_DFU_APPLY;
+			break;
+		case SO_DFU_REVERT:
+			*nrf_out_optname = NRF_SO_DFU_REVERT;
+			break;
+		case SO_DFU_BACKUP_DELETE:
+			*nrf_out_optname = NRF_SO_DFU_BACKUP_DELETE;
+			break;
+		case SO_DFU_OFFSET:
+			*nrf_out_optname = NRF_SO_DFU_OFFSET;
+			break;
+		case SO_DFU_ERROR:
+			*nrf_out_optname = NRF_SO_DFU_ERROR;
 			break;
 		default:
 			retval = -1;
@@ -256,6 +291,8 @@ static int nrf_to_z_protocol(int proto)
 		return IPPROTO_TLS_1_2;
 	case NRF_PROTO_PDN:
 		return NPROTO_PDN;
+	case NRF_PROTO_DFU:
+		return NPROTO_DFU;
 	case NRF_PROTO_AT:
 		return NPROTO_AT;
 	case 0:
@@ -293,6 +330,8 @@ static int z_to_nrf_protocol(int proto)
 		return NRF_SPROTO_TLS1v2;
 	case NPROTO_AT:
 		return NRF_PROTO_AT;
+	case NPROTO_DFU:
+		return NRF_PROTO_DFU;
 	case NPROTO_PDN:
 		return NRF_PROTO_PDN;
 	case PROTO_WILDCARD:
