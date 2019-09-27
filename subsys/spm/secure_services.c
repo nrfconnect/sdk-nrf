@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+#include <zephyr.h>
 #include <errno.h>
 #include <cortex_m/tz.h>
 #include <misc/reboot.h>
@@ -50,6 +51,13 @@ int spm_secure_services_init(void)
 }
 
 #ifdef CONFIG_SPM_SERVICE_READ
+
+#define FICR_BASE               NRF_FICR_S_BASE
+#define FICR_PUBLIC_ADDR        (FICR_BASE + 0x204)
+#define FICR_PUBLIC_SIZE        0xA1C
+#define FICR_RESTRICTED_ADDR    (FICR_BASE + 0x130)
+#define FICR_RESTRICTED_SIZE    0x8
+
 struct read_range {
 	u32_t start;
 	size_t size;
@@ -64,6 +72,10 @@ int spm_request_read(void *destination, u32_t addr, size_t len)
 		{.start = PM_MCUBOOT_PAD_ADDRESS,
 		 .size = PM_MCUBOOT_PAD_SIZE},
 #endif
+		{.start = FICR_PUBLIC_ADDR,
+		 .size = FICR_PUBLIC_SIZE},
+		{.start = FICR_RESTRICTED_ADDR,
+		 .size = FICR_RESTRICTED_SIZE},
 	};
 
 	if (destination == NULL || len <= 0) {
