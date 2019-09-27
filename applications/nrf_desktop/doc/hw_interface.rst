@@ -12,7 +12,6 @@ by creating events understandable by the application.
 
    battery_charger.rst
    buttons.rst
-   fn_keys.rst
    click_detector.rst
    motion.rst
    selector.rst

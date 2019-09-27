@@ -12,6 +12,7 @@ part of its functionality.
 
    ble_bond.rst
    config_channel.rst
+   fn_keys.rst
    hid_state.rst
    hids.rst
    usb_state.rst
