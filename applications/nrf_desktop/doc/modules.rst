@@ -10,6 +10,7 @@ part of its functionality.
 .. toctree::
    :maxdepth: 1
 
+   bas.rst
    ble_bond.rst
    ble_state.rst
    config_channel.rst

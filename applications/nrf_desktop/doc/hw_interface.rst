@@ -11,6 +11,7 @@ by creating events understandable by the application.
    :maxdepth: 1
 
    battery_charger.rst
+   battery_meas.rst
    buttons.rst
    click_detector.rst
    motion.rst
