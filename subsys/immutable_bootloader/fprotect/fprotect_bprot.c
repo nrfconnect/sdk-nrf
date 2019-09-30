@@ -23,7 +23,7 @@
 
  /* The number of CONFIG registers present in the chip. */
 #define BPROT_CONFIGS_NUM ceiling_fraction(BPROT_REGIONS_NUM, BITS_PER_LONG)
-#if defined(CONFIG_SB_BPROT_IN_DEBUG)
+#if defined(CONFIG_IB_BPROT_IN_DEBUG)
 #define ENABLE_IN_DEBUG true
 #else
 #define ENABLE_IN_DEBUG false

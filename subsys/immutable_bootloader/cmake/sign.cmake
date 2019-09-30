@@ -12,7 +12,7 @@ file(MAKE_DIRECTORY ${GENERATED_PATH})
 
 set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem)
 
-if (CONFIG_SB_SIGNING_PYTHON)
+if (CONFIG_IB_SIGNING_PYTHON)
   set(PUB_GEN_CMD
     ${PYTHON_EXECUTABLE}
     ${NRF_BOOTLOADER_SCRIPTS}/keygen.py
@@ -20,20 +20,20 @@ if (CONFIG_SB_SIGNING_PYTHON)
     --in ${SIGNATURE_PRIVATE_KEY_FILE}
     --out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
-elseif (CONFIG_SB_SIGNING_OPENSSL)
+elseif (CONFIG_IB_SIGNING_OPENSSL)
   set(PUB_GEN_CMD
     openssl ec
     -pubout
     -in ${SIGNATURE_PRIVATE_KEY_FILE}
     -out ${SIGNATURE_PUBLIC_KEY_FILE}
     )
-elseif (CONFIG_SB_SIGNING_CUSTOM)
-  set(SIGNATURE_PUBLIC_KEY_FILE ${CONFIG_SB_SIGNING_PUBLIC_KEY})
+elseif (CONFIG_IB_SIGNING_CUSTOM)
+  set(SIGNATURE_PUBLIC_KEY_FILE ${CONFIG_IB_SIGNING_PUBLIC_KEY})
 else ()
   message(WARNING "Unable to parse signing config.")
 endif()
 
-if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
+if (CONFIG_IB_PRIVATE_KEY_PROVIDED)
   add_custom_command(
     OUTPUT
     ${SIGNATURE_PUBLIC_KEY_FILE}
@@ -77,7 +77,7 @@ foreach (slot ${slots})
     > ${hash_file}
     )
 
-  if (CONFIG_SB_SIGNING_PYTHON)
+  if (CONFIG_IB_SIGNING_PYTHON)
     set(sign_cmd
       ${PYTHON_EXECUTABLE}
       ${NRF_BOOTLOADER_SCRIPTS}/do_sign.py
@@ -85,7 +85,7 @@ foreach (slot ${slots})
       --in ${hash_file}
       > ${signature_file}
       )
-  elseif (CONFIG_SB_SIGNING_OPENSSL)
+  elseif (CONFIG_IB_SIGNING_OPENSSL)
     set(sign_cmd
       openssl dgst
       -sha256
@@ -96,9 +96,9 @@ foreach (slot ${slots})
       --contents signature
       > ${signature_file}
       )
-  elseif (CONFIG_SB_SIGNING_CUSTOM)
+  elseif (CONFIG_IB_SIGNING_CUSTOM)
     set(sign_cmd
-      ${CONFIG_SB_SIGNING_COMMAND}
+      ${CONFIG_IB_SIGNING_COMMAND}
       ${hash_file}
       > ${signature_file}
       )

@@ -16,11 +16,11 @@
 #define ESIGINV  102
 
 
-#if CONFIG_SB_CRYPTO_OBERON_SHA256
+#if CONFIG_IB_CRYPTO_OBERON_SHA256
 	#include <ocrypto_sha256.h>
 	#define SHA256_CTX_SIZE sizeof(ocrypto_sha256_ctx)
 	typedef ocrypto_sha256_ctx bl_sha256_ctx_t;
-#elif CONFIG_SB_CRYPTO_CC310_SHA256
+#elif CONFIG_IB_CRYPTO_CC310_SHA256
 	#include <nrf_cc310_bl_hash_sha256.h>
 	#define SHA256_CTX_SIZE sizeof(nrf_cc310_bl_hash_context_sha256_t)
 	typedef nrf_cc310_bl_hash_context_sha256_t bl_sha256_ctx_t;

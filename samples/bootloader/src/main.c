@@ -31,7 +31,7 @@ static bool verify_firmware(u32_t address)
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
 	 */
-	u32_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN/4];
+	u32_t key_data[CONFIG_IB_PUBLIC_KEY_HASH_LEN/4];
 	int retval = -EFAULT;
 	int err;
 	const struct fw_firmware_info *fw_info;
@@ -64,7 +64,7 @@ static bool verify_firmware(u32_t address)
 	for (u32_t key_data_idx = 0; key_data_idx < num_public_keys;
 			key_data_idx++) {
 		if (public_key_data_read(key_data_idx, &key_data[0],
-				CONFIG_SB_PUBLIC_KEY_HASH_LEN) < 0) {
+				CONFIG_IB_PUBLIC_KEY_HASH_LEN) < 0) {
 			retval = -EFAULT;
 			break;
 		}

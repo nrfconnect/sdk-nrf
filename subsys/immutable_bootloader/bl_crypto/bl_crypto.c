@@ -32,15 +32,15 @@ int bl_crypto_init(void)
 	return crypto_init_hash();
 }
 
-BUILD_ASSERT_MSG(CONFIG_SB_PUBLIC_KEY_HASH_LEN <= CONFIG_SB_HASH_LEN,
+BUILD_ASSERT_MSG(CONFIG_IB_PUBLIC_KEY_HASH_LEN <= CONFIG_IB_HASH_LEN,
 		"Invalid value for SB_PUBLIC_KEY_HASH_LEN.");
 
 static int verify_truncated_hash(const u8_t *data, u32_t data_len,
 		const u8_t *expected, u32_t hash_len, bool external)
 {
-	u8_t hash[CONFIG_SB_HASH_LEN];
+	u8_t hash[CONFIG_IB_HASH_LEN];
 
-	__ASSERT(hash_len <= CONFIG_SB_HASH_LEN, "truncated hash length too long.");
+	__ASSERT(hash_len <= CONFIG_IB_HASH_LEN, "truncated hash length too long.");
 
 	int retval = get_hash(hash, data, data_len, external);
 	if (retval != 0) {
@@ -55,20 +55,20 @@ static int verify_truncated_hash(const u8_t *data, u32_t data_len,
 static int verify_signature(const u8_t *data, u32_t data_len,
 		const u8_t *signature, const u8_t *public_key, bool external)
 {
-	u8_t hash1[CONFIG_SB_HASH_LEN];
-	u8_t hash2[CONFIG_SB_HASH_LEN];
+	u8_t hash1[CONFIG_IB_HASH_LEN];
+	u8_t hash2[CONFIG_IB_HASH_LEN];
 
 	int retval = get_hash(hash1, data, data_len, external);
 	if (retval != 0) {
 		return retval;
 	}
 
-	retval = get_hash(hash2, hash1, CONFIG_SB_HASH_LEN, external);
+	retval = get_hash(hash2, hash1, CONFIG_IB_HASH_LEN, external);
 	if (retval != 0) {
 		return retval;
 	}
 
-	return bl_secp256r1_validate(hash2, CONFIG_SB_HASH_LEN, public_key, signature);
+	return bl_secp256r1_validate(hash2, CONFIG_IB_HASH_LEN, public_key, signature);
 }
 
 /* Base implementation, with 'external' parameter. */
@@ -79,8 +79,8 @@ static int root_of_trust_verify(
 {
 	__ASSERT(public_key && public_key_hash && signature && firmware,
 			"A parameter was NULL.");
-	int retval = verify_truncated_hash(public_key, CONFIG_SB_PUBLIC_KEY_LEN,
-			public_key_hash, CONFIG_SB_PUBLIC_KEY_HASH_LEN, external);
+	int retval = verify_truncated_hash(public_key, CONFIG_IB_PUBLIC_KEY_LEN,
+			public_key_hash, CONFIG_IB_PUBLIC_KEY_HASH_LEN, external);
 
 	if (retval != 0) {
 		return retval;
@@ -113,7 +113,7 @@ int bl_root_of_trust_verify_external(
 
 int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 {
-	return verify_truncated_hash(data, data_len, expected, CONFIG_SB_HASH_LEN, true);
+	return verify_truncated_hash(data, data_len, expected, CONFIG_IB_HASH_LEN, true);
 }
 
 __ext_abi(struct bl_rot_verify_abi, bl_rot_verify_abi) = {

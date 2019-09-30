@@ -17,17 +17,17 @@ struct __packed fw_validation_info {
 	u32_t firmware_address;
 
 	/* The hash of the firmware.*/
-	u8_t  firmware_hash[CONFIG_SB_HASH_LEN];
+	u8_t  firmware_hash[CONFIG_IB_HASH_LEN];
 
 	/* Public key to be used for signature verification. This must be
 	 * checked against a trusted hash.
 	 */
-	u8_t  public_key[CONFIG_SB_PUBLIC_KEY_LEN];
+	u8_t  public_key[CONFIG_IB_PUBLIC_KEY_LEN];
 
 	/* Signature over the firmware as represented by the firmware_address
 	 * and firmware_size in the firmware_info.
 	 */
-	u8_t  signature[CONFIG_SB_SIGNATURE_LEN];
+	u8_t  signature[CONFIG_IB_SIGNATURE_LEN];
 };
 
 
@@ -37,10 +37,10 @@ OFFSET_CHECK(struct fw_validation_info, firmware_address, CONFIG_FW_MAGIC_LEN);
 OFFSET_CHECK(struct fw_validation_info, firmware_hash,
 	(CONFIG_FW_MAGIC_LEN + 4));
 OFFSET_CHECK(struct fw_validation_info, public_key,
-	(CONFIG_FW_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN));
+	(CONFIG_FW_MAGIC_LEN + 4 + CONFIG_IB_HASH_LEN));
 OFFSET_CHECK(struct fw_validation_info, signature,
-	(CONFIG_FW_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN
-	+ CONFIG_SB_SIGNATURE_LEN));
+	(CONFIG_FW_MAGIC_LEN + 4 + CONFIG_IB_HASH_LEN
+	+ CONFIG_IB_SIGNATURE_LEN));
 
 /* Can be used to make the firmware discoverable in other locations, e.g. when
  * searching backwards. This struct would typically be constructed locally, so

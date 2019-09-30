@@ -9,93 +9,93 @@ menuconfig IB_CRYPTO
 	prompt "Secure Boot Crypto"
 
 if (SECURE_BOOT_CRYPTO)
-config SB_ECDSA_SECP256R1
+config IB_ECDSA_SECP256R1
 	bool
 	select FW_ECDSA_SECP256R1
-config SB_RSA_PSS2048
+config IB_RSA_PSS2048
 	bool
 	select FW_RSA_PSS2048
-config SB_SHA256
+config IB_SHA256
 	bool
 	select FW_SHA256
 
-config SB_SIGNATURE_LEN
+config IB_SIGNATURE_LEN
 	int
-	default 64 if SB_ECDSA_SECP256R1
-	default 256 if SB_RSA_PSS2048
+	default 64 if IB_ECDSA_SECP256R1
+	default 256 if IB_RSA_PSS2048
 
-config SB_PUBLIC_KEY_LEN
+config IB_PUBLIC_KEY_LEN
 	int
-	default 64 if SB_ECDSA_SECP256R1
-	default 256 if SB_RSA_PSS2048
+	default 64 if IB_ECDSA_SECP256R1
+	default 256 if IB_RSA_PSS2048
 
-config SB_HASH_LEN
+config IB_HASH_LEN
 	def_int 32
 
-choice SB_CRYPTO_SIG
+choice IB_CRYPTO_SIG
 	prompt "Firmware verification Algorithm"
-	default SB_CRYPTO_CC310_ECDSA_SECP256R1 if HAS_HW_NRF_CC310
-	default SB_CRYPTO_OBERON_ECDSA_SECP256R1
+	default IB_CRYPTO_CC310_ECDSA_SECP256R1 if HAS_HW_NRF_CC310
+	default IB_CRYPTO_OBERON_ECDSA_SECP256R1
 	help
 	  Crypto implementation to use for signature verification of firmware in Bootloader.
 
-	config SB_CRYPTO_OBERON_ECDSA_SECP256R1
+	config IB_CRYPTO_OBERON_ECDSA_SECP256R1
 		bool "Software ECDSA secp256r1"
 		select NRF_OBERON
-		select SB_ECDSA_SECP256R1
+		select IB_ECDSA_SECP256R1
 		help
 		  Software implementation of ECDSA with NIST curve secp256r1.
 
-	config SB_CRYPTO_CC310_ECDSA_SECP256R1
+	config IB_CRYPTO_CC310_ECDSA_SECP256R1
 		bool "Hardware ECDSA secp256r1" if HAS_HW_NRF_CC310
 		select NRF_CC310_BL
-		select SB_ECDSA_SECP256R1
+		select IB_ECDSA_SECP256R1
 		help
 		  Hardware implementation of ECDSA with NIST curve secp256r1.
 
-	#config SB_CRYPTO_OBERON_RSA_2048
+	#config IB_CRYPTO_OBERON_RSA_2048
 	#	bool #"Software RSA-PSS 2048-bits"
 	#	select NRF_OBERON
-	#	select SB_RSA_PSS2048
+	#	select IB_RSA_PSS2048
 	#	help
 	#	  Software implementation of RSASSA-PSS, 2048-bits.
 	#	  Not available yet.
 
-	#config SB_CRYPTO_CC310_RSA_2048
+	#config IB_CRYPTO_CC310_RSA_2048
 	#	bool #"Hardware RSA-PSS 2048-bits" if HAS_HW_NRF_CC310
 	#	select NRF_CC310_BL
-	#	select SB_RSA_PSS2048
+	#	select IB_RSA_PSS2048
 	#	help
 	#	  Hardware implementation of RSASSA-PSS, 2048-bits.
 	#	  Not available yet.
 
 endchoice
 
-choice SB_CRYPTO_HASH
+choice IB_CRYPTO_HASH
 	prompt "Hashing Implementation"
-	default SB_CRYPTO_CC310_SHA256 if HAS_HW_NRF_CC310
-	default SB_CRYPTO_OBERON_SHA256
+	default IB_CRYPTO_CC310_SHA256 if HAS_HW_NRF_CC310
+	default IB_CRYPTO_OBERON_SHA256
 	help
 	  Crypto implementation to use for hash generation in Bootloader.
 
-	config SB_CRYPTO_OBERON_SHA256
+	config IB_CRYPTO_OBERON_SHA256
 		bool "Software SHA256"
 		select NRF_OBERON
-		select SB_SHA256
+		select IB_SHA256
 		help
 		  Software implementation of SHA256.
 
-	config SB_CRYPTO_CC310_SHA256
+	config IB_CRYPTO_CC310_SHA256
 		bool "Hardware SHA256" if HAS_HW_NRF_CC310
 		select NRF_CC310_BL
 		select NRF_OBERON
-		select SB_SHA256
+		select IB_SHA256
 		help
 		  Hardware implementation of SHA256.
 
 endchoice
 
-config SB_PUBLIC_KEY_HASH_LEN
+config IB_PUBLIC_KEY_HASH_LEN
 	int "Public key hash size (bytes)"
 	default 16
 	help

@@ -34,7 +34,7 @@ if IMMUTABLE_BOOTLOADER
 module=B0
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
 
-config SB_PRIVATE_KEY_PROVIDED
+config IB_PRIVATE_KEY_PROVIDED
 	bool
 	help
 	  Hidden config specifying whether the build system has access to the
@@ -42,24 +42,24 @@ config SB_PRIVATE_KEY_PROVIDED
 	  create the public key for the provision page.
 
 
-choice SB_SIGNING
+choice IB_SIGNING
 	prompt "Firmware signing method"
-	default SB_SIGNING_PYTHON
-	config SB_SIGNING_PYTHON
+	default IB_SIGNING_PYTHON
+	config IB_SIGNING_PYTHON
 		bool "Sign with Python ecdsa library."
-		select SB_PRIVATE_KEY_PROVIDED
+		select IB_PRIVATE_KEY_PROVIDED
 
-	config SB_SIGNING_OPENSSL
+	config IB_SIGNING_OPENSSL
 		bool "Sign with openssl command line tool."
-		select SB_PRIVATE_KEY_PROVIDED
+		select IB_PRIVATE_KEY_PROVIDED
 
-	config SB_SIGNING_CUSTOM
+	config IB_SIGNING_CUSTOM
 		bool "Sign with custom command."
 endchoice
 
-config SB_SIGNING_KEY_FILE
+config IB_SIGNING_KEY_FILE
 	string
-	prompt "Private key PEM file" if SB_PRIVATE_KEY_PROVIDED
+	prompt "Private key PEM file" if IB_PRIVATE_KEY_PROVIDED
 	default ""
 	help
 	  Absolute path to the private key PEM file.
@@ -69,20 +69,20 @@ config SB_SIGNING_KEY_FILE
 	  This value can also be set by exporting an environment variable
 	  named 'SB_SIGNING_KEY_FILE' or passing
 	  '-DSB_SIGNING_KEY_FILE=/path/to/my/pem' when running cmake.
-	  See also SB_PUBLIC_KEY_FILES.
+	  See also IB_PUBLIC_KEY_FILES.
 
-config SB_SIGNING_COMMAND
+config IB_SIGNING_COMMAND
 	string
 	prompt "Custom signing command" if !SB_PRIVATE_KEY_PROVIDED
 	default ""
 	help
 	  This command will be called to produce a signature of the firmware.
-	  It will be called as "${CONFIG_SB_SIGNING_COMMAND} <file>"
+	  It will be called as "${CONFIG_IB_SIGNING_COMMAND} <file>"
 	  The command must take calculate the signature over the the contents
 	  of the <file> and write the signature to stdout.
 	  The signature must be on DER format.
 
-config SB_SIGNING_PUBLIC_KEY
+config IB_SIGNING_PUBLIC_KEY
 	string
 	prompt "Public key PEM file" if !SB_PRIVATE_KEY_PROVIDED
 	default ""
@@ -90,16 +90,16 @@ config SB_SIGNING_PUBLIC_KEY
 	  Path to a PEM file.
 	  When using a custom signing command, specify the corresponding public
 	  key here. This public key is checked during building, and added to
-	  the provision page as the first entry. See SB_PUBLIC_KEY_FILES.
+	  the provision page as the first entry. See IB_PUBLIC_KEY_FILES.
 
-config SB_PUBLIC_KEY_FILES
+config IB_PUBLIC_KEY_FILES
 	string "Public Key PEM files"
 	default ""
 	help
 	  Comma-separated list of absolute paths to public key pem files.
 	  The provision hex file will contain a list of hashes of public keys.
 	  The first public key hash is the one corresponding to the private
-	  signing key used to sign the image. See SB_SIGNING_KEY_FILE.
+	  signing key used to sign the image. See IB_SIGNING_KEY_FILE.
 	  The hashes of the public keys specified in this configuration will be
 	  placed after the aforementioned public key hash, in the order
 	  they appear in this config.
@@ -148,7 +148,7 @@ config IB_DEBUG_RTT
 	select USE_SEGGER_RTT
 endchoice
 
-config SB_BPROT_IN_DEBUG
+config IB_BPROT_IN_DEBUG
 	bool "Enable block protect in debug"
 	default y
 	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
@@ -157,7 +157,7 @@ endif # IB_DEBUG
 endif # IS_IMMUTABLE_BOOTLOADER
 
 if IS_IMMUTABLE_BOOTLOADER || IMMUTABLE_BOOTLOADER
-config SB_FIRMWARE_INFO_OFFSET
+config IB_FIRMWARE_INFO_OFFSET
 	hex
 	default FW_FIRMWARE_INFO_OFFSET
 
