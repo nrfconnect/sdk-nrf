@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/bootloader/generated)
+set(GENERATED_PATH ${PROJECT_BINARY_DIR}/nrf/subsys/immutable_bootloader/generated)
 
 # This is needed for make, ninja is able to resolve and create the path but make
 # is not able to resolve it.
