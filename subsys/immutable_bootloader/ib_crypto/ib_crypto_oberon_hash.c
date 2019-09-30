@@ -10,11 +10,11 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <errno.h>
-#include <bl_crypto.h>
+#include <ib_crypto.h>
 
 
 BUILD_ASSERT_MSG(SHA256_CTX_SIZE >= sizeof(ocrypto_sha256_ctx), \
-		"ocrypto_sha256_ctx can no longer fit inside bl_sha256_ctx_t.");
+		"ocrypto_sha256_ctx can no longer fit inside ib_sha256_ctx_t.");
 
 int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external)
 {
@@ -25,7 +25,7 @@ int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external)
 	return 0;
 }
 
-int bl_sha256_init(ocrypto_sha256_ctx *ctx)
+int ib_sha256_init(ocrypto_sha256_ctx *ctx)
 {
 	if (ctx == NULL) {
 		return -EFAULT;
@@ -34,7 +34,7 @@ int bl_sha256_init(ocrypto_sha256_ctx *ctx)
 	return 0;
 }
 
-int bl_sha256_update(ocrypto_sha256_ctx *ctx, const u8_t *data, u32_t data_len)
+int ib_sha256_update(ocrypto_sha256_ctx *ctx, const u8_t *data, u32_t data_len)
 {
 	if (!ctx || !data) {
 		return -EINVAL;
@@ -43,7 +43,7 @@ int bl_sha256_update(ocrypto_sha256_ctx *ctx, const u8_t *data, u32_t data_len)
 	return 0;
 }
 
-int bl_sha256_finalize(ocrypto_sha256_ctx *ctx, u8_t *output)
+int ib_sha256_finalize(ocrypto_sha256_ctx *ctx, u8_t *output)
 {
 	if (!ctx || !output) {
 		return -EINVAL;

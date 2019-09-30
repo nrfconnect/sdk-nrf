@@ -8,11 +8,11 @@
 #include <linker/sections.h>
 #include <misc/util.h>
 #include <errno.h>
-#include <nrf_cc310_bl_hash_sha256.h>
+#include <nrf_cc310_ib_hash_sha256.h>
 #include <generated_dts_board.h>
 #include <ocrypto_constant_time.h>
-#include <bl_crypto.h>
-#include "bl_crypto_cc310_common.h"
+#include <ib_crypto.h>
+#include "ib_crypto_cc310_common.h"
 
 #define MAX_CHUNK_LEN 0x8000 /* Must be 4 byte aligned. */
 #define CHUNK_LEN_STACK 0x1000
@@ -33,9 +33,9 @@
 #define CRYS_HASH_LAST_BLOCK_ALREADY_PROCESSED_ERROR \
 	(CRYS_HASH_MODULE_ERROR_BASE + 0xCUL)
 
-BUILD_ASSERT_MSG(SHA256_CTX_SIZE >= sizeof(nrf_cc310_bl_hash_context_sha256_t), \
-		"nrf_cc310_bl_hash_context_sha256_t can no longer fit inside " \
-		"bl_sha256_ctx_t.");
+BUILD_ASSERT_MSG(SHA256_CTX_SIZE >= sizeof(nrf_cc310_ib_hash_context_sha256_t), \
+		"nrf_cc310_ib_hash_context_sha256_t can no longer fit inside " \
+		"ib_sha256_ctx_t.");
 
 static u32_t __noinit ram_buffer
 	[RAM_BUFFER_LEN_WORDS]; /* Not stack allocated because of its size. */
@@ -53,20 +53,20 @@ static inline void *memcpy32(void *restrict d, const void *restrict s, size_t n)
 
 int crypto_init_hash(void)
 {
-	return cc310_bl_init();
+	return cc310_ib_init();
 }
 
 
-int bl_sha256_init(nrf_cc310_bl_hash_context_sha256_t * const ctx)
+int ib_sha256_init(nrf_cc310_ib_hash_context_sha256_t * const ctx)
 {
-	CRYSError_t retval = nrf_cc310_bl_hash_sha256_init(ctx);
+	CRYSError_t retval = nrf_cc310_ib_hash_sha256_init(ctx);
 	if (retval == CRYS_HASH_INVALID_USER_CONTEXT_POINTER_ERROR) {
 		return -EINVAL;
 	}
 	return retval;
 }
 
-static int hash_blocks(nrf_cc310_bl_hash_context_sha256_t *const ctx,
+static int hash_blocks(nrf_cc310_ib_hash_context_sha256_t *const ctx,
 		const u8_t *data, u32_t data_len, const u32_t max_chunk_len,
 		u32_t *buffer)
 {
@@ -74,7 +74,7 @@ static int hash_blocks(nrf_cc310_bl_hash_context_sha256_t *const ctx,
 	u32_t chunk_len = MIN(data_len, max_chunk_len);
 	CRYSError_t retval = CRYS_OK;
 
-	cc310_bl_backend_enable();
+	cc310_ib_backend_enable();
 	for (u32_t i = 0; i < data_len; i += max_chunk_len) {
 		u8_t const * source = &data[i];
 		if (buffer) {
@@ -82,7 +82,7 @@ static int hash_blocks(nrf_cc310_bl_hash_context_sha256_t *const ctx,
 			source = (u8_t *)buffer;
 		}
 
-		retval = nrf_cc310_bl_hash_sha256_update(ctx, source, chunk_len);
+		retval = nrf_cc310_ib_hash_sha256_update(ctx, source, chunk_len);
 
 		if (retval != CRYS_OK) {
 			break;
@@ -91,13 +91,13 @@ static int hash_blocks(nrf_cc310_bl_hash_context_sha256_t *const ctx,
 		remaining_copy_len -= chunk_len;
 		chunk_len = MIN(remaining_copy_len, max_chunk_len);
 	}
-	cc310_bl_backend_disable();
+	cc310_ib_backend_disable();
 
 	return retval;
 }
 
 
-static inline int hash_blocks_stack(nrf_cc310_bl_hash_context_sha256_t *const ctx,
+static inline int hash_blocks_stack(nrf_cc310_ib_hash_context_sha256_t *const ctx,
 		const u8_t *data, u32_t data_len, u32_t chunk_len)
 {
 	u32_t stack_buffer[chunk_len/4];
@@ -105,7 +105,7 @@ static inline int hash_blocks_stack(nrf_cc310_bl_hash_context_sha256_t *const ct
 }
 
 /* Base implementation with 'external' parameter. */
-static int sha256_update(nrf_cc310_bl_hash_context_sha256_t *const ctx,
+static int sha256_update(nrf_cc310_ib_hash_context_sha256_t *const ctx,
 		const u8_t *data, u32_t data_len, bool external)
 {
 	CRYSError_t retval;
@@ -132,18 +132,18 @@ static int sha256_update(nrf_cc310_bl_hash_context_sha256_t *const ctx,
 	}
 }
 
-int bl_sha256_update(nrf_cc310_bl_hash_context_sha256_t *ctx,
+int ib_sha256_update(nrf_cc310_ib_hash_context_sha256_t *ctx,
 		const u8_t * data, u32_t data_len)
 {
 	return sha256_update(ctx, data, data_len, true);
 }
 
-int bl_sha256_finalize(nrf_cc310_bl_hash_context_sha256_t *ctx, u8_t *output)
+int ib_sha256_finalize(nrf_cc310_ib_hash_context_sha256_t *ctx, u8_t *output)
 {
-	cc310_bl_backend_enable();
-	CRYSError_t retval = nrf_cc310_bl_hash_sha256_finalize(ctx,
-			(nrf_cc310_bl_hash_digest_sha256_t *) output);
-	cc310_bl_backend_disable();
+	cc310_ib_backend_enable();
+	CRYSError_t retval = nrf_cc310_ib_hash_sha256_finalize(ctx,
+			(nrf_cc310_ib_hash_digest_sha256_t *) output);
+	cc310_ib_backend_disable();
 
 	switch (retval) {
 	case CRYS_HASH_INVALID_USER_CONTEXT_POINTER_ERROR:
@@ -157,10 +157,10 @@ int bl_sha256_finalize(nrf_cc310_bl_hash_context_sha256_t *ctx, u8_t *output)
 
 int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external)
 {
-	nrf_cc310_bl_hash_context_sha256_t ctx;
+	nrf_cc310_ib_hash_context_sha256_t ctx;
 	int retval;
 
-	retval = bl_sha256_init(&ctx);
+	retval = ib_sha256_init(&ctx);
 	if (retval != 0) {
 		return retval;
 	}
@@ -170,6 +170,6 @@ int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external)
 		return retval;
 	}
 
-	retval = bl_sha256_finalize(&ctx, hash);
+	retval = ib_sha256_finalize(&ctx, hash);
 	return retval;
 }

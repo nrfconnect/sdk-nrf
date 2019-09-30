@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <pm_config.h>
 #include "bootloader.h"
-#include "bl_crypto.h"
+#include "ib_crypto.h"
 #include "fw_metadata.h"
 #include <misc/printk.h>
 
@@ -53,9 +53,9 @@ static bool verify_firmware(u32_t address)
 		return false;
 	}
 
-	err = bl_crypto_init();
+	err = ib_crypto_init();
 	if (err) {
-		printk("bl_crypto_init() returned %d. Aborting boot!\n\r", err);
+		printk("ib_crypto_init() returned %d. Aborting boot!\n\r", err);
 		return false;
 	}
 
@@ -68,7 +68,7 @@ static bool verify_firmware(u32_t address)
 			retval = -EFAULT;
 			break;
 		}
-		retval = bl_root_of_trust_verify(fw_ver_info->public_key,
+		retval = ib_root_of_trust_verify(fw_ver_info->public_key,
 					      (u8_t *)key_data,
 					      fw_ver_info->signature,
 					      (u8_t *)address,

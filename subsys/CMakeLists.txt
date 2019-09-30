@@ -10,7 +10,7 @@ endif()
 
 add_subdirectory_ifdef(CONFIG_IS_IMMUTABLE_BOOTLOADER bootloader)
 add_subdirectory_ifdef(CONFIG_IMMUTABLE_BOOTLOADER bootloader/image)
-add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO_CLIENT bootloader/bl_crypto_client)
+add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO_CLIENT bootloader/ib_crypto_client)
 
 add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_NRF_ESB		enhanced_shockburst)

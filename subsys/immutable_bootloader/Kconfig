@@ -161,6 +161,6 @@ config IB_FIRMWARE_INFO_OFFSET
 	hex
 	default FW_FIRMWARE_INFO_OFFSET
 
-rsource "bl_crypto/Kconfig"
+rsource "ib_crypto/Kconfig"
 endif # IS_IMMUTABLE_BOOTLOADER || IMMUTABLE_BOOTLOADER
 

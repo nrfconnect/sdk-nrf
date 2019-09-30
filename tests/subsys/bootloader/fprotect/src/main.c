@@ -76,14 +76,14 @@ void test_flash_write_protected(void)
 
 void test_main(void)
 {
-	ztest_test_suite(test_bl_fprotect_readback,
+	ztest_test_suite(test_ib_fprotect_readback,
 			ztest_unit_test(test_flash_write),
 			ztest_unit_test(test_flash_read)
 			);
-	ztest_test_suite(test_bl_fprotect,
+	ztest_test_suite(test_ib_fprotect,
 			ztest_unit_test(test_flash_read_protected),
 			ztest_unit_test(test_flash_write_protected)
 			);
-	ztest_run_test_suite(test_bl_fprotect_readback);
-	ztest_run_test_suite(test_bl_fprotect);
+	ztest_run_test_suite(test_ib_fprotect_readback);
+	ztest_run_test_suite(test_ib_fprotect);
 }

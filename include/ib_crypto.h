@@ -19,15 +19,15 @@
 #if CONFIG_IB_CRYPTO_OBERON_SHA256
 	#include <ocrypto_sha256.h>
 	#define SHA256_CTX_SIZE sizeof(ocrypto_sha256_ctx)
-	typedef ocrypto_sha256_ctx bl_sha256_ctx_t;
+	typedef ocrypto_sha256_ctx ib_sha256_ctx_t;
 #elif CONFIG_IB_CRYPTO_CC310_SHA256
-	#include <nrf_cc310_bl_hash_sha256.h>
-	#define SHA256_CTX_SIZE sizeof(nrf_cc310_bl_hash_context_sha256_t)
-	typedef nrf_cc310_bl_hash_context_sha256_t bl_sha256_ctx_t;
+	#include <nrf_cc310_ib_hash_sha256.h>
+	#define SHA256_CTX_SIZE sizeof(nrf_cc310_ib_hash_context_sha256_t)
+	typedef nrf_cc310_ib_hash_context_sha256_t ib_sha256_ctx_t;
 #else
 	#define SHA256_CTX_SIZE 128
 	// u32_t to make sure it is aligned equally as the other contexts.
-	typedef u32_t bl_sha256_ctx_t[SHA256_CTX_SIZE/4];
+	typedef u32_t ib_sha256_ctx_t[SHA256_CTX_SIZE/4];
 #endif
 
 #define BL_ROT_VERIFY_ABI_ID 0x1001
@@ -51,7 +51,7 @@
  * @retval 0        On success.
  * @retval -EFAULT  If crypto module reported an error.
  */
-int bl_crypto_init(void);
+int ib_crypto_init(void);
 
 
 /**
@@ -70,13 +70,13 @@ int bl_crypto_init(void);
  * @retval 0          On success.
  * @retval -EHASHINV  If public_key_hash didn't match public_key.
  * @retval -ESIGINV   If signature validation failed.
- * @return Any error code from @ref bl_sha256_init, @ref bl_sha256_update,
- *         @ref bl_sha256_finalize, or @ref bl_secp256r1_validate if something
+ * @return Any error code from @ref ib_sha256_init, @ref ib_sha256_update,
+ *         @ref ib_sha256_finalize, or @ref ib_secp256r1_validate if something
  *         else went wrong.
  *
  * @remark No parameter can be NULL.
  */
-EXT_ABI_FUNCTION(int, bl_root_of_trust_verify, const u8_t *public_key,
+EXT_ABI_FUNCTION(int, ib_root_of_trust_verify, const u8_t *public_key,
 					       const u8_t *public_key_hash,
 					       const u8_t *signature,
 					       const u8_t *firmware,
@@ -90,7 +90,7 @@ EXT_ABI_FUNCTION(int, bl_root_of_trust_verify, const u8_t *public_key,
  * @retval 0         On success.
  * @retval -EINVAL   If @p ctx was NULL.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_init, bl_sha256_ctx_t *ctx);
+EXT_ABI_FUNCTION(int, ib_sha256_init, ib_sha256_ctx_t *ctx);
 
 /**
  * @brief Hash a portion of data.
@@ -108,7 +108,7 @@ EXT_ABI_FUNCTION(int, bl_sha256_init, bl_sha256_ctx_t *ctx);
  * @retval -EINVAL   If @p ctx was NULL, uninitialized, or corrupted.
  * @retval -ENOSYS   If the context has already been finalized.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_update, bl_sha256_ctx_t *ctx,
+EXT_ABI_FUNCTION(int, ib_sha256_update, ib_sha256_ctx_t *ctx,
 					const u8_t *data,
 					u32_t data_len);
 
@@ -122,7 +122,7 @@ EXT_ABI_FUNCTION(int, bl_sha256_update, bl_sha256_ctx_t *ctx,
  * @retval 0         On success.
  * @retval -EINVAL   If @p ctx was NULL or corrupted, or @p output was NULL.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_finalize, bl_sha256_ctx_t *ctx,
+EXT_ABI_FUNCTION(int, ib_sha256_finalize, ib_sha256_ctx_t *ctx,
 					  u8_t *output);
 
 /**
@@ -135,10 +135,10 @@ EXT_ABI_FUNCTION(int, bl_sha256_finalize, bl_sha256_ctx_t *ctx,
  * @retval 0          If the procedure succeeded and the resulting digest is
  *                    identical to @p expected.
  * @retval -EHASHINV  If the procedure succeeded, but the digests don't match.
- * @return Any error code from @ref bl_sha256_init, @ref bl_sha256_update, or
- *         @ref bl_sha256_finalize if something else went wrong.
+ * @return Any error code from @ref ib_sha256_init, @ref ib_sha256_update, or
+ *         @ref ib_sha256_finalize if something else went wrong.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_verify, const u8_t *data,
+EXT_ABI_FUNCTION(int, ib_sha256_verify, const u8_t *data,
 					u32_t data_len,
 					const u8_t *expected);
 
@@ -155,33 +155,33 @@ EXT_ABI_FUNCTION(int, bl_sha256_verify, const u8_t *data,
  * @retval -EINVAL   A parameter was NULL, or the @hash_len was not 32 bytes.
  * @retval -ESIGINV  The signature validation failed.
  */
-EXT_ABI_FUNCTION(int, bl_secp256r1_validate, const u8_t *hash,
+EXT_ABI_FUNCTION(int, ib_secp256r1_validate, const u8_t *hash,
 					     u32_t hash_len,
 					     const u8_t *signature,
 					     const u8_t *public_key);
 
-struct bl_rot_verify_abi {
+struct ib_rot_verify_abi {
 	struct fw_abi_info header;
 	struct {
-		bl_root_of_trust_verify_t bl_root_of_trust_verify;
+		ib_root_of_trust_verify_t ib_root_of_trust_verify;
 	} abi;
 };
 
-struct bl_sha256_abi {
+struct ib_sha256_abi {
 	struct fw_abi_info header;
 	struct {
-		bl_sha256_init_t bl_sha256_init;
-		bl_sha256_update_t bl_sha256_update;
-		bl_sha256_finalize_t bl_sha256_finalize;
-		bl_sha256_verify_t bl_sha256_verify;
-		u32_t bl_sha256_ctx_size;
+		ib_sha256_init_t ib_sha256_init;
+		ib_sha256_update_t ib_sha256_update;
+		ib_sha256_finalize_t ib_sha256_finalize;
+		ib_sha256_verify_t ib_sha256_verify;
+		u32_t ib_sha256_ctx_size;
 	} abi;
 };
 
-struct bl_secp256r1_abi {
+struct ib_secp256r1_abi {
 	struct fw_abi_info header;
 	struct {
-		bl_secp256r1_validate_t bl_secp256r1_validate;
+		ib_secp256r1_validate_t ib_secp256r1_validate;
 	} abi;
 };
 

@@ -6,7 +6,7 @@
 
 #include <ztest.h>
 
-#include "bl_crypto.h"
+#include "ib_crypto.h"
 #include "test_vector.c"
 
 
@@ -15,105 +15,105 @@ void test_ecdsa_verify(void)
 	u32_t hash_len = ARRAY_SIZE(hash_sha256);
 
 	/* Success */
-	int retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
+	int retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
 	zassert_equal(0, retval, "retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(const_hash_sha256, hash_len, pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(const_hash_sha256, hash_len, pub_concat, sig_concat);
 	zassert_equal(0, retval, "retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, const_pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, const_pub_concat, sig_concat);
 	zassert_equal(0, retval, "retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, const_sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, const_sig_concat);
 	zassert_equal(0, retval, "retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, const_pub_concat, const_sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, const_pub_concat, const_sig_concat);
 	zassert_equal(0, retval, "retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(const_hash_sha256, hash_len, const_pub_concat, const_sig_concat);
+	retval = ib_secp256r1_validate(const_hash_sha256, hash_len, const_pub_concat, const_sig_concat);
 	zassert_equal(0, retval, "retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(const_hash_sha256, hash_len, const_pub_concat, const_sig_concat);
+	retval = ib_secp256r1_validate(const_hash_sha256, hash_len, const_pub_concat, const_sig_concat);
 	zassert_equal(0, retval, "retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, image_public_key, image_gen_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, image_public_key, image_gen_sig);
 	zassert_equal(0, retval, "gen sig failed retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, image_public_key, image_fw_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, image_public_key, image_fw_sig);
 	zassert_equal(0, retval, "fw_sig retval: 0x%x", retval);
 	image_fw_hash[0]++;
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, image_public_key, image_fw_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, image_public_key, image_fw_sig);
 	image_fw_hash[0]--;
 	zassert_not_equal(0, retval, "fw_sig retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(const_fw_hash, hash_len, image_public_key, image_fw_sig);
+	retval = ib_secp256r1_validate(const_fw_hash, hash_len, image_public_key, image_fw_sig);
 	zassert_equal(0, retval, "const_fw retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, const_public_key, image_fw_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, const_public_key, image_fw_sig);
 	zassert_equal(0, retval, "const_pubk retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, image_public_key, const_fw_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, image_public_key, const_fw_sig);
 	zassert_equal(0, retval, "const_sig retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, image_public_key, const_fw_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, image_public_key, const_fw_sig);
 	zassert_equal(0, retval, "const_sig retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, image_public_key, const_gen_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, image_public_key, const_gen_sig);
 	zassert_equal(0, retval, "const_gen_sig retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(image_fw_hash, hash_len, const_public_key, const_fw_sig);
+	retval = ib_secp256r1_validate(image_fw_hash, hash_len, const_public_key, const_fw_sig);
 	zassert_equal(0, retval, "const_sig const_pk retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(const_fw_hash, hash_len, const_public_key, const_fw_sig);
+	retval = ib_secp256r1_validate(const_fw_hash, hash_len, const_public_key, const_fw_sig);
 	zassert_equal(0, retval, "const_sig const_pk const_fw retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(const_fw_hash, hash_len, image_public_key, const_fw_sig);
+	retval = ib_secp256r1_validate(const_fw_hash, hash_len, image_public_key, const_fw_sig);
 	zassert_equal(0, retval, "const_sig const_fw retval: 0x%x", retval);
 
-	retval = bl_secp256r1_validate(const_fw_hash, hash_len, const_public_key, image_fw_sig);
+	retval = ib_secp256r1_validate(const_fw_hash, hash_len, const_public_key, image_fw_sig);
 	zassert_equal(0, retval, "const_pk const_fw retval: 0x%x", retval);
 
 	/* pub key does not match */
 	pub_concat[1]++;
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
 	pub_concat[1]--;
 	zassert_equal(-ESIGINV, retval, "retval: 0x%x", retval);
 
 	pub_concat[1]++;
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
 	zassert_equal(-ESIGINV, retval, "retval: 0x%x", retval);
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, const_sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, const_sig_concat);
 	zassert_equal(-ESIGINV, retval, "retval: 0x%x", retval);
-	retval = bl_secp256r1_validate(const_hash_sha256, hash_len, pub_concat, const_sig_concat);
+	retval = ib_secp256r1_validate(const_hash_sha256, hash_len, pub_concat, const_sig_concat);
 	zassert_equal(-ESIGINV, retval, "retval: 0x%x", retval);
 	pub_concat[1]--;
 
 	/* hash does not match */
 	hash_sha256[2]++;
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
 	hash_sha256[2]--;
 	zassert_equal(-ESIGINV, retval, "retval: 0x%x", retval);
 
 	/* signature does not match */
 	sig_concat[3]++;
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, sig_concat);
 	sig_concat[3]--;
 	zassert_equal(-ESIGINV, retval, "retval: 0x%x", retval);
 
 	/* Null pointer passed as hash */
-	retval = bl_secp256r1_validate(NULL, hash_len, pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(NULL, hash_len, pub_concat, sig_concat);
 	zassert_equal(-EINVAL, retval, "retval: 0x%x", retval);
 
 	/* Wrong hash LEN */
-	retval = bl_secp256r1_validate(hash_sha256, 24, pub_concat, sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, 24, pub_concat, sig_concat);
 	zassert_equal(-EINVAL, retval, "retval: 0x%x", retval);
 
 	/* Null pointer passed as public key */
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, NULL, sig_concat);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, NULL, sig_concat);
 	zassert_equal(-EINVAL, retval, "retval: 0x%x", retval);
 
 	/* Null pointer passed as signature */
-	retval = bl_secp256r1_validate(hash_sha256, hash_len, pub_concat, NULL);
+	retval = ib_secp256r1_validate(hash_sha256, hash_len, pub_concat, NULL);
 	zassert_equal(-EINVAL, retval, "retval: 0x%x", retval);
 }
 
@@ -121,12 +121,12 @@ void test_sha256_string(const uint8_t * input, uint32_t input_len, const uint8_t
 {
 	int rc = 0;
 	uint8_t output[32] = {0};
-	bl_sha256_ctx_t ctx;
+	ib_sha256_ctx_t ctx;
 	static u32_t run_count = 0;
 
-	rc = bl_sha256_init(&ctx);
-	rc = bl_sha256_update(&ctx, input, input_len);
-	rc = bl_sha256_finalize(&ctx, output);
+	rc = ib_sha256_init(&ctx);
+	rc = ib_sha256_update(&ctx, input, input_len);
+	rc = ib_sha256_finalize(&ctx, output);
 	zassert_equal(0, rc, "hash updated failed retval was: %d");
 
 	for(size_t i = 0; i < ARRAY_SIZE(output); i++) {
@@ -137,10 +137,10 @@ void test_sha256_string(const uint8_t * input, uint32_t input_len, const uint8_t
 		}
 	}
 
-	rc = bl_sha256_verify(input, input_len, test_vector);
+	rc = ib_sha256_verify(input, input_len, test_vector);
 
 	int expected_rc = eq ? 0 : -EHASHINV;
-	zassert_equal(expected_rc, rc, "bl_sha256_verify returned %d instead of %d", rc, expected_rc);
+	zassert_equal(expected_rc, rc, "ib_sha256_verify returned %d instead of %d", rc, expected_rc);
 
 	run_count++;
 }
@@ -175,23 +175,23 @@ void test_sha256(void)
 	test_sha256_string(hash_in, 65, hash_res65, true);
 }
 
-void test_bl_root_of_trust_verify(void)
+void test_ib_root_of_trust_verify(void)
 {
 
 	/* Success. */
-	int retval = bl_root_of_trust_verify(pk, pk_hash, sig, firmware,
+	int retval = ib_root_of_trust_verify(pk, pk_hash, sig, firmware,
 			sizeof(firmware));
 
 	zassert_equal(0, retval, "retval was %d", retval);
 
-	retval = bl_root_of_trust_verify(const_pk, const_pk_hash, const_sig, const_firmware,
+	retval = ib_root_of_trust_verify(const_pk, const_pk_hash, const_sig, const_firmware,
 			sizeof(const_firmware));
 	zassert_equal(0, retval, "retval was %d", retval);
 
 	zassert_equal(0, retval, "retval was %d", retval);
 	/* pk doesn't match pk_hash. */
 	pk[1]++;
-	retval = bl_root_of_trust_verify(pk, pk_hash, sig, firmware,
+	retval = ib_root_of_trust_verify(pk, pk_hash, sig, firmware,
 			sizeof(firmware));
 	pk[1]--;
 
@@ -199,7 +199,7 @@ void test_bl_root_of_trust_verify(void)
 
 	/* metadata doesn't match signature */
 	firmware[0]++;
-	retval = bl_root_of_trust_verify(pk, pk_hash, sig, firmware,
+	retval = ib_root_of_trust_verify(pk, pk_hash, sig, firmware,
 			sizeof(firmware));
 	firmware[0]--;
 
@@ -208,10 +208,10 @@ void test_bl_root_of_trust_verify(void)
 
 void test_main(void)
 {
-	ztest_test_suite(test_bl_crypto,
-			 ztest_unit_test(test_bl_root_of_trust_verify),
+	ztest_test_suite(test_ib_crypto,
+			 ztest_unit_test(test_ib_root_of_trust_verify),
 			 ztest_unit_test(test_sha256),
 			 ztest_unit_test(test_ecdsa_verify)
 	);
-	ztest_run_test_suite(test_bl_crypto);
+	ztest_run_test_suite(test_ib_crypto);
 }

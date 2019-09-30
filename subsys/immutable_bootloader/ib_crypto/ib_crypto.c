@@ -5,11 +5,11 @@
  */
 
 #include <zephyr/types.h>
-#include <bl_crypto.h>
+#include <ib_crypto.h>
 #include <fw_metadata.h>
 #include <assert.h>
 #include <ocrypto_constant_time.h>
-#include "bl_crypto_internal.h"
+#include "ib_crypto_internal.h"
 
 
 __weak int crypto_init_signing(void)
@@ -22,7 +22,7 @@ __weak int crypto_init_hash(void)
 	return 0;
 }
 
-int bl_crypto_init(void)
+int ib_crypto_init(void)
 {
 	int retval = crypto_init_signing();
 	if (retval) {
@@ -68,7 +68,7 @@ static int verify_signature(const u8_t *data, u32_t data_len,
 		return retval;
 	}
 
-	return bl_secp256r1_validate(hash2, CONFIG_IB_HASH_LEN, public_key, signature);
+	return ib_secp256r1_validate(hash2, CONFIG_IB_HASH_LEN, public_key, signature);
 }
 
 /* Base implementation, with 'external' parameter. */
@@ -92,7 +92,7 @@ static int root_of_trust_verify(
 
 
 /* For use by the bootloader. */
-int bl_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
+int ib_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
 			 const u8_t *signature, const u8_t *firmware,
 			 const u32_t firmware_len)
 {
@@ -102,7 +102,7 @@ int bl_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
 
 
 /* For use through ext_abi. */
-int bl_root_of_trust_verify_external(
+int ib_root_of_trust_verify_external(
 			const u8_t *public_key, const u8_t *public_key_hash,
 			const u8_t *signature, const u8_t *firmware,
 			const u32_t firmware_len)
@@ -111,35 +111,35 @@ int bl_root_of_trust_verify_external(
 					firmware, firmware_len, true);
 }
 
-int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
+int ib_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 {
 	return verify_truncated_hash(data, data_len, expected, CONFIG_IB_HASH_LEN, true);
 }
 
-__ext_abi(struct bl_rot_verify_abi, bl_rot_verify_abi) = {
+__ext_abi(struct ib_rot_verify_abi, ib_rot_verify_abi) = {
 	.header = ABI_INFO_INIT(BL_ROT_VERIFY_ABI_ID, BL_ROT_VERIFY_ABI_FLAGS,
-				BL_ROT_VERIFY_ABI_VER, sizeof(struct bl_rot_verify_abi)),
+				BL_ROT_VERIFY_ABI_VER, sizeof(struct ib_rot_verify_abi)),
 	.abi = {
-		.bl_root_of_trust_verify = bl_root_of_trust_verify_external,
+		.ib_root_of_trust_verify = ib_root_of_trust_verify_external,
 	}
 };
 
-__ext_abi(struct bl_sha256_abi, bl_sha256_abi) = {
+__ext_abi(struct ib_sha256_abi, ib_sha256_abi) = {
 	.header = ABI_INFO_INIT(BL_SHA256_ABI_ID, BL_SHA256_ABI_FLAGS,
-				BL_SHA256_ABI_VER, sizeof(struct bl_sha256_abi)),
+				BL_SHA256_ABI_VER, sizeof(struct ib_sha256_abi)),
 	.abi = {
-		.bl_sha256_init = bl_sha256_init,
-		.bl_sha256_update = bl_sha256_update,
-		.bl_sha256_finalize = bl_sha256_finalize,
-		.bl_sha256_verify = bl_sha256_verify,
-		.bl_sha256_ctx_size = SHA256_CTX_SIZE,
+		.ib_sha256_init = ib_sha256_init,
+		.ib_sha256_update = ib_sha256_update,
+		.ib_sha256_finalize = ib_sha256_finalize,
+		.ib_sha256_verify = ib_sha256_verify,
+		.ib_sha256_ctx_size = SHA256_CTX_SIZE,
 	},
 };
 
-__ext_abi(struct bl_secp256r1_abi, bl_secp256r1_abi) = {
+__ext_abi(struct ib_secp256r1_abi, ib_secp256r1_abi) = {
 	.header = ABI_INFO_INIT(BL_SECP256R1_ABI_ID, BL_SECP256R1_ABI_FLAGS,
-				BL_SECP256R1_ABI_VER, sizeof(struct bl_secp256r1_abi)),
+				BL_SECP256R1_ABI_VER, sizeof(struct ib_secp256r1_abi)),
 	.abi = {
-		.bl_secp256r1_validate = bl_secp256r1_validate,
+		.ib_secp256r1_validate = ib_secp256r1_validate,
 	},
 };

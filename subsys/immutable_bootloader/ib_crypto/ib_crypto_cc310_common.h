@@ -9,10 +9,10 @@
 
 #include <stddef.h>
 
-int cc310_bl_init(void);
+int cc310_ib_init(void);
 
-void cc310_bl_backend_enable(void);
+void cc310_ib_backend_enable(void);
 
-void cc310_bl_backend_disable(void);
+void cc310_ib_backend_disable(void);
 
 #endif
