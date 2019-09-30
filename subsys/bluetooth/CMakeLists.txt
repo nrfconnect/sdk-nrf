@@ -10,6 +10,7 @@ zephyr_sources_ifdef(CONFIG_BT_SCAN scan.c)
 zephyr_sources_ifdef(CONFIG_BT_CONN_CTX conn_ctx.c)
 
 add_subdirectory_ifdef(CONFIG_BT_LL_NRFXLIB controller)
+add_subdirectory_ifdef(CONFIG_BT_MESH_NORDIC_MODELS mesh)
 
 if (CONFIG_BT_GATT_BAS_C     OR
     CONFIG_BT_GATT_DFU_SMP_C OR
