@@ -5,14 +5,14 @@
 #
 
 config MCUBOOT_BUILD_S1_VARIANT
-	# This can not depend on BOOTLOADER_MCUBOOT, or SECURE_BOOT as this
+	# This can not depend on BOOTLOADER_MCUBOOT, or IMMUTABLE_BOOTLOADER as this
 	# option has to be set when building MCUBoot itself. Instead an error
 	# is raised by CMake if an incorrect configuration is found.
 	bool "Build S1 variant of MCUBoot"
 	help
 	  Build upgrade candidate of MCUBoot for alternative slot S1.
 
-config SECURE_BOOT_CRYPTO_CLIENT
+config IB_CRYPTO_CLIENT
 	bool "Include Secure Bootloader crypto client API"
 	help
 	  Set this option to enable the crypto client API
@@ -20,16 +20,16 @@ config SECURE_BOOT_CRYPTO_CLIENT
 	  from the secure bootloader. This will only work
 	  when the secure bootloader is enabled.
 
-config SECURE_BOOT
+config IMMUTABLE_BOOTLOADER
 	bool "Use Secure Bootloader"
-	depends on !IS_SECURE_BOOTLOADER
+	depends on !IS_IMMUTABLE_BOOTLOADER
 	select FW_METADATA
-	select SECURE_BOOT_CRYPTO
+	select IB_CRYPTO
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
 
-if SECURE_BOOT
+if IMMUTABLE_BOOTLOADER
 
 module=B0
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
@@ -108,41 +108,41 @@ config SB_PUBLIC_KEY_FILES
 	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
 
 
-endif # SECURE_BOOT
+endif # IMMUTABLE_BOOTLOADER
 
-menuconfig IS_SECURE_BOOTLOADER
+menuconfig IS_IMMUTABLE_BOOTLOADER
 	bool "Current app is bootloader"
-	select SECURE_BOOT_CRYPTO
+	select IB_CRYPTO
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 	select FW_METADATA
 	help
 	  This option is set by the first stage bootloader app to include all
 	  files and set all the options required.
 
-if IS_SECURE_BOOTLOADER
+if IS_IMMUTABLE_BOOTLOADER
 
 partition=B0
 partition-size=0x8000
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
 
-menuconfig SECURE_BOOT_DEBUG
+menuconfig IB_DEBUG
 	bool "Printing"
 	select BOOT_BANNER
 	select PRINTK
 	select CONSOLE
 	select SERIAL
 
-if SECURE_BOOT_DEBUG
-choice SECURE_BOOT_DEBUG_BACKEND
+if IB_DEBUG
+choice IB_DEBUG_BACKEND
 	prompt "Where to print to"
-	default SECURE_BOOT_DEBUG_UART
+	default IB_DEBUG_UART
 
-config SECURE_BOOT_DEBUG_UART
+config IB_DEBUG_UART
 	bool "Print to UART."
 	select UART_NRFX
 	select UART_CONSOLE
 
-config SECURE_BOOT_DEBUG_RTT
+config IB_DEBUG_RTT
 	bool "Print to RTT"
 	select RTT_CONSOLE
 	select USE_SEGGER_RTT
@@ -153,14 +153,14 @@ config SB_BPROT_IN_DEBUG
 	default y
 	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
 
-endif # SECURE_BOOT_DEBUG
-endif # IS_SECURE_BOOTLOADER
+endif # IB_DEBUG
+endif # IS_IMMUTABLE_BOOTLOADER
 
-if IS_SECURE_BOOTLOADER || SECURE_BOOT
+if IS_IMMUTABLE_BOOTLOADER || IMMUTABLE_BOOTLOADER
 config SB_FIRMWARE_INFO_OFFSET
 	hex
 	default FW_FIRMWARE_INFO_OFFSET
 
 rsource "bl_crypto/Kconfig"
-endif # IS_SECURE_BOOTLOADER || SECURE_BOOT
+endif # IS_IMMUTABLE_BOOTLOADER || IMMUTABLE_BOOTLOADER
 

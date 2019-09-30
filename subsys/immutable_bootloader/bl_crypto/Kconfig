@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig SECURE_BOOT_CRYPTO
+menuconfig IB_CRYPTO
 	bool
 	prompt "Secure Boot Crypto"
 
@@ -102,4 +102,4 @@ config SB_PUBLIC_KEY_HASH_LEN
 	  The length to which public key hashes in the list of Root of Trust
 	  Public Keys are truncated.
 
-endif # SECURE_BOOT_CRYPTO
+endif # IB_CRYPTO

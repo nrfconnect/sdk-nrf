@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
-if (CONFIG_FW_METADATA OR CONFIG_IS_SECURE_BOOTLOADER)
+if (CONFIG_FW_METADATA OR CONFIG_IS_IMMUTABLE_BOOTLOADER)
   zephyr_library()
   zephyr_library_sources(fw_metadata.c)
 endif ()

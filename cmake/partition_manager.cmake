@@ -176,7 +176,7 @@ if(FIRST_BOILERPLATE_EXECUTION)
       CACHE STRING "Path to merged image in Intel Hex format" FORCE)
   endif()
 
-  if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
+  if (CONFIG_IMMUTABLE_BOOTLOADER AND CONFIG_BOOTLOADER_MCUBOOT)
     # Create symbols for the offsets required for moving test update hex files
     # to MCUBoots secondary slot. This is needed because objcopy does not
     # support arithmetic expressions as argument (e.g. '0x100+0x200'), and all
