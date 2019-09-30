@@ -187,9 +187,10 @@ enum at_param_type modem_info_type_get(enum modem_info info);
 #ifdef CONFIG_CJSON_LIB
 /** @brief Encode the modem parameters.
  *
- * The data is stored to a JSON object.
+ * The data is added to the string buffer with JSON formatting.
  *
- * @param buf  The JSON object where the data is stored.
+ * @param modem_param Pointer to the modem parameter structure.
+ * @param buf         The buffer where the string will be written.
  *
  * @return Length of the string buffer data if the operation was
  *         successful.
@@ -201,12 +202,13 @@ int modem_info_json_string_encode(struct modem_param_info *modem_param,
 
 /** @brief Encode the modem parameters.
  *
- * The data is added to the string buffer with JSON formatting.
+ * The data is stored to a JSON object.
  *
- * @param root_obj  The JSON object where to store the data.
+ * @param modem_param Pointer to the modem parameter structure.
+ * @param root_obj    The JSON object where to store the data.
  *
- * @return Length of the string buffer data if the operation was
- *         successful.
+ * @return Number of JSON objects added to root_obj if the
+ *         operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
 int modem_info_json_object_encode(struct modem_param_info *modem,
