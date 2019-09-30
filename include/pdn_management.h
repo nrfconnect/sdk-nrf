@@ -13,21 +13,18 @@
 #ifndef PDN_MANAGEMENT_H_
 #define PDN_MANAGEMENT_H_
 
-
-/**@brief  Initialize and connect PDN to APN 'apn_name'
+/**@brief Connect to a packet data network.
  *
- * @param[in] apn_name Identifies the APN name for which the PDN connection
- *                     is requested.
+ * Creates a PDN socket and connect to an access point, if necessary.
  *
- * @retval -1 in case of failure, else, an fd identifying the PDN connection.
+ * @param[in,out]	fd	The socket handle.
+ * @param[in]		apn	The packet data network name.
+ *
+ * @return 0 if PDN socket was valid and already connected.
+ * @return 1 if PDN socket has been recreated.
+ * @return -1 on error.
  */
-int pdn_init_and_connect(char *apn_name);
-
-/**@brief Diconnect the  PDN connection.
- *
- * @param[in] pdn_fd Identifies the PDN for which the procedure is requested.
- */
-void pdn_disconnect(int pdn_fd);
+int pdn_activate(int *fd, const char *apn);
 
 #endif /* PDN_MANAGEMENT_H_ */
 

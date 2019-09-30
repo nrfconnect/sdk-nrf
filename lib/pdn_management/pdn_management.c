@@ -3,34 +3,48 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
-#include <stdint.h>
+
 #include <stddef.h>
-#include <string.h>
-#include <stdio.h>
 #include <net/socket.h>
+#include <nrf_socket.h>
 
-int pdn_init_and_connect(const char *apn_name)
+int pdn_activate(int *fd, const char *apn)
 {
-	int pdn_fd = socket(AF_LTE, SOCK_MGMT, NPROTO_PDN);
+	int err;
+	nrf_pdn_state_t active = 0;
+	nrf_socklen_t len = sizeof(active);
 
-	if (pdn_fd >= 0) {
-		/* Connect to the APN. */
-		int err = connect(pdn_fd,
-				  (struct sockaddr *)apn_name,
-				  strlen(apn_name));
-
-		if (err != 0) {
-			close(pdn_fd);
-			return -1;
-		}
+	if (fd == NULL || apn == NULL) {
+		return -1;
 	}
 
-	return pdn_fd;
+	if (*fd != -1) {
+		/* If handle is valid, check if PDN is active */
+		err = getsockopt(*fd, SOL_PDN, SO_PDN_STATE, &active, &len);
+		if (err) {
+			return -1;
+		}
+
+		if (active) {
+			return 0;
+		}
+
+		/* PDN is not active, close socket and reactivate it */
+		close(*fd);
+	}
+
+	*fd = socket(AF_LTE, SOCK_MGMT, NPROTO_PDN);
+	if (*fd < 0) {
+		return -1;
+	}
+
+	/* Connect to the PDN. */
+	err = connect(*fd, (struct sockaddr *)apn, strlen(apn));
+	if (err) {
+		close(*fd);
+		return -1;
+	}
+
+	/* PDN is active, but fd might have changed */
+	return 1;
 }
-
-
-void pdn_disconnect(int pdn_fd)
-{
-	close(pdn_fd);
-}
-
