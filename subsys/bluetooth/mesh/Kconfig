@@ -14,6 +14,19 @@ config BT_MESH_NORDIC_MODELS
 	  Common Mesh model support modules, required by all Nordic BT Mesh
 	  models.
 
+
+config BT_MESH_ONOFF_SRV
+	bool "Generic OnOff Server"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic OnOff Server model.
+
+config BT_MESH_ONOFF_CLI
+	bool "Generic OnOff Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic OnOff Client model.
+
 endmenu
 
 endif # BT_MESH
