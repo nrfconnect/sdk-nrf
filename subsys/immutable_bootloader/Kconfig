@@ -121,7 +121,7 @@ menuconfig IS_IMMUTABLE_BOOTLOADER
 
 if IS_IMMUTABLE_BOOTLOADER
 
-partition=B0
+partition=IB
 partition-size=0x8000
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
 

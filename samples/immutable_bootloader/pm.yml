@@ -1,8 +1,8 @@
 #include <autoconf.h>
 #include <generated_dts_board_unfixed.h>
 
-b0:
-  size: CONFIG_PM_PARTITION_SIZE_B0
+ib:
+  size: CONFIG_PM_PARTITION_SIZE_IB
   placement:
     after: start
     align: {end: 0x8000}
