@@ -17,4 +17,8 @@
 #include <bluetooth/mesh/health_cli.h>
 #include <bluetooth/mesh/health_srv.h>
 
+/* Generic models */
+#include <bluetooth/mesh/gen_onoff_srv.h>
+#include <bluetooth/mesh/gen_onoff_cli.h>
+
 #endif /* BT_MESH_MODELS_H__ */
