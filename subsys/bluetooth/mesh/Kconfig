@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if BT_MESH
+
+menu "nRF BT Mesh Models"
+
+config BT_MESH_NORDIC_MODELS
+	bool "nRF BT Mesh Model support"
+	help
+	  Common Mesh model support modules, required by all Nordic BT Mesh
+	  models.
+
+endmenu
+
+endif # BT_MESH
