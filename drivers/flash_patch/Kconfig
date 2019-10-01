@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config DISABLE_FLASH_PATCH
+	bool "Disable Cortex-M4 Flash Patch capabilities"
+	depends on SOC_NRF52840
+	depends on REBOOT
+	help
+	  The flash patch can be used by malicious code to circumvent secure
+	  boot checks. Note that disabling flash patching also disables
+	  breakpoints.
