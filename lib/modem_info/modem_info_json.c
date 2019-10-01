@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <cJSON.h>
+#include <cJSON_os.h>
 #include <modem_info.h>
 #include <at_cmd_parser/at_params.h>
 #include <logging/log.h>
@@ -292,9 +293,11 @@ int modem_info_json_string_encode(struct modem_param_info *modem,
 	}
 
 	if (total_len > 0) {
-		memcpy(buf,
-		       cJSON_PrintUnformatted(root_obj),
+		char *root_obj_string = cJSON_PrintUnformatted(root_obj);
+
+		memcpy(buf, root_obj_string,
 		       MODEM_INFO_JSON_STRING_SIZE);
+		cJSON_FreeString(root_obj_string);
 	}
 
 delete_object:
