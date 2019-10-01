@@ -17,3 +17,4 @@ part of its functionality.
    hids.rst
    led_state.rst
    usb_state.rst
+   watchdog.rst
