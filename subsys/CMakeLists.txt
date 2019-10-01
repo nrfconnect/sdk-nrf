@@ -8,9 +8,9 @@ if (CONFIG_BT)
   add_subdirectory(bluetooth)
 endif()
 
-add_subdirectory_ifdef(CONFIG_IS_IMMUTABLE_BOOTLOADER bootloader)
-add_subdirectory_ifdef(CONFIG_IMMUTABLE_BOOTLOADER bootloader/image)
-add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO_CLIENT bootloader/ib_crypto_client)
+add_subdirectory_ifdef(CONFIG_IS_IMMUTABLE_BOOTLOADER immutable_bootloader)
+add_subdirectory_ifdef(CONFIG_IMMUTABLE_BOOTLOADER immutable_bootloader/image)
+add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO_CLIENT immutable_bootloader/ib_crypto_client)
 
 add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_NRF_ESB		enhanced_shockburst)
