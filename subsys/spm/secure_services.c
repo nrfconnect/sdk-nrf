@@ -14,6 +14,9 @@
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
 #endif
+#ifdef CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
+#include <fw_metadata.h>
+#endif
 
 /*
  * Secure Entry functions to allow access to secure services from non-secure
@@ -45,7 +48,6 @@ int spm_secure_services_init(void)
 #endif
 	return err;
 }
-
 
 #ifdef CONFIG_SPM_SERVICE_READ
 struct read_range {
@@ -105,3 +107,24 @@ int spm_request_random_number(u8_t *output, size_t len, size_t *olen)
 	return err;
 }
 #endif /* CONFIG_SPM_SERVICE_RNG */
+
+#ifdef CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
+__TZ_NONSECURE_ENTRY_FUNC
+int spm_firmware_info(u32_t fw_address, struct fw_firmware_info *info)
+{
+	const struct fw_firmware_info *tmp_info;
+
+	if (info == NULL) {
+		return -EINVAL;
+	}
+
+	tmp_info = fw_find_firmware_info(fw_address);
+
+	if (tmp_info != NULL) {
+		memcpy(info, tmp_info, sizeof(*tmp_info));
+		return 0;
+	}
+
+	return -EFAULT;
+}
+#endif

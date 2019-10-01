@@ -22,6 +22,7 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
+#include <fw_metadata.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,6 +66,16 @@ int spm_request_random_number(u8_t *output, size_t len, size_t *olen);
  */
 int spm_request_read(void *destination, u32_t addr, size_t len);
 
+/** Search for the firmware_info structure in firmware image located at address.
+ *
+ * @param[in]   firmware_address Address where firmware image is stored.
+ * @param[out]  info		 Pointer to where found info is stored.
+ *
+ * @retval 0        If successful.
+ * @retval -EINVAL  If info is NULL.
+ * @retval -EFAULT  If no info is found.
+ */
+int spm_firmware_info(u32_t fw_address, struct fw_firmware_info *info);
 
 #ifdef __cplusplus
 }
