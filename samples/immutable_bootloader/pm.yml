@@ -10,11 +10,11 @@ ib:
 s0_pad:
   share_size: mcuboot_pad
   placement:
-    after: b0
+    after: ib
     align: {start: DT_FLASH_ERASE_BLOCK_SIZE}
 
 s0_image:
-  # S0 spans over the image booted by B0
+  # S0 spans over the image booted by the immutable bootloader
   span: {one_of: [mcuboot, spm, app]}
 
 s0:
