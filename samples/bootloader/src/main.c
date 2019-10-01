@@ -68,10 +68,10 @@ static bool verify_firmware(u32_t address)
 			break;
 		}
 		retval = bl_root_of_trust_verify(fw_ver_info->public_key,
-					      (u8_t *)key_data,
-					      fw_ver_info->signature,
-					      (u8_t *)address,
-					      fw_info->firmware_size);
+					(u8_t *)key_data,
+					fw_ver_info->signature,
+					(u8_t *)fw_ver_info->firmware_address,
+					fw_info->firmware_size);
 		if (retval != -ESIGINV) {
 			break;
 		}
