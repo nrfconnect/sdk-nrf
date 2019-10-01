@@ -764,7 +764,7 @@ hids_input_reports_register(struct bt_gatt_hids *hids_obj,
 				  rperm, hids_inp_rep_read, NULL,
 				  hids_inp_rep);
 
-		hids_inp_rep->att_ind = hids_obj->gp.svc.attr_count;
+		hids_inp_rep->att_ind = hids_obj->gp.svc.attr_count - 1;
 		hids_inp_rep->offset = offset;
 		hids_inp_rep->idx = i;
 
@@ -807,7 +807,7 @@ static void hids_outp_reports_register(struct bt_gatt_hids *hids_obj,
 				  hids_outp_rep_read, hids_outp_rep_write,
 				  hids_outp_rep);
 
-		hids_outp_rep->att_ind = hids_obj->gp.svc.attr_count;
+		hids_outp_rep->att_ind = hids_obj->gp.svc.attr_count - 1;
 		hids_outp_rep->offset = offset;
 		hids_outp_rep->idx = i;
 
@@ -848,7 +848,7 @@ static void hids_feat_reports_register(struct bt_gatt_hids *hids_obj,
 				  hids_feat_rep_read, hids_feat_rep_write,
 				  hids_feat_rep);
 
-		hids_feat_rep->att_ind = hids_obj->gp.svc.attr_count;
+		hids_feat_rep->att_ind = hids_obj->gp.svc.attr_count - 1;
 		hids_feat_rep->offset = offset;
 		hids_feat_rep->idx = i;
 
@@ -912,7 +912,7 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 				  &hids_obj->boot_mouse_inp_rep);
 
 		hids_obj->boot_mouse_inp_rep.att_ind =
-			hids_obj->gp.svc.attr_count;
+			hids_obj->gp.svc.attr_count - 1;
 		hids_obj->boot_mouse_inp_rep.handler =
 			init_param->boot_mouse_notif_handler;
 
@@ -935,7 +935,8 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 				  hids_boot_kb_inp_report_read, NULL,
 				  &hids_obj->boot_kb_inp_rep);
 
-		hids_obj->boot_kb_inp_rep.att_ind = hids_obj->gp.svc.attr_count;
+		hids_obj->boot_kb_inp_rep.att_ind =
+			hids_obj->gp.svc.attr_count - 1;
 		hids_obj->boot_kb_inp_rep.handler =
 		    init_param->boot_kb_notif_handler;
 
@@ -954,7 +955,7 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 				  &hids_obj->boot_kb_outp_rep);
 
 		hids_obj->boot_kb_outp_rep.att_ind =
-			hids_obj->gp.svc.attr_count;
+			hids_obj->gp.svc.attr_count - 1;
 		hids_obj->boot_kb_outp_rep.handler =
 			init_param->boot_kb_outp_rep_handler;
 	}
