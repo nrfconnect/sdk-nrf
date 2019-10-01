@@ -101,8 +101,7 @@ static bool fn_key_enabled(u16_t key_id)
 
 static void store_fn_lock(void)
 {
-	if (IS_ENABLED(CONFIG_SETTINGS) &&
-	    IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
 		char key[] = MODULE_NAME "/" FN_LOCK_STORAGE_NAME;
 
 		int err = settings_save_one(key, &fn_lock_active,
@@ -206,8 +205,7 @@ static int settings_set(const char *key, size_t len_rd,
 
 static int init_settings(void)
 {
-	if (IS_ENABLED(CONFIG_SETTINGS) &&
-	    IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
 		static struct settings_handler sh = {
 			.name = MODULE_NAME,
 			.h_set = settings_set,
