@@ -26,6 +26,7 @@
 #include <sys/util.h>
 #include <assert.h>
 #include <string.h>
+#include <pm_config.h>
 
 #define MAGIC_LEN_WORDS (CONFIG_FW_MAGIC_LEN / sizeof(u32_t))
 
@@ -209,16 +210,31 @@ fw_check_firmware_info(u32_t fw_info_addr)
 #define FW_INFO_OFFSET2 0x800
 #define FW_INFO_OFFSET_COUNT 3
 
+/* Find the difference between the start of the current image and the address
+ * from which the firmware info offset is calculated.
+ */
+#if defined(PM_S0_PAD_SIZE) && (PM_ADDRESS == PM_S0_IMAGE_ADDRESS)
+	#define VECTOR_OFFSET PM_S0_PAD_SIZE
+#elif defined(PM_S1_PAD_SIZE) && (PM_ADDRESS == PM_S1_IMAGE_ADDRESS)
+	#define VECTOR_OFFSET PM_S1_PAD_SIZE
+#elif defined(PM_MCUBOOT_PAD_SIZE) && \
+		(PM_ADDRESS == PM_MCUBOOT_PRIMARY_APP_ADDRESS)
+	#define VECTOR_OFFSET PM_MCUBOOT_PAD_SIZE
+#else
+	#define VECTOR_OFFSET 0
+#endif
+
+#define CURRENT_OFFSET (CONFIG_FW_FIRMWARE_INFO_OFFSET + VECTOR_OFFSET)
+
 static const u32_t allowed_offsets[] = {FW_INFO_OFFSET0, FW_INFO_OFFSET1,
 					FW_INFO_OFFSET2};
 
 BUILD_ASSERT_MSG(ARRAY_SIZE(allowed_offsets) == FW_INFO_OFFSET_COUNT,
 		"Mismatch in the number of allowed offsets.");
 
-#if (FW_INFO_OFFSET_COUNT != 3) || \
-	((CONFIG_FW_FIRMWARE_INFO_OFFSET) != (FW_INFO_OFFSET0) && \
-	(CONFIG_FW_FIRMWARE_INFO_OFFSET) != (FW_INFO_OFFSET1) && \
-	(CONFIG_FW_FIRMWARE_INFO_OFFSET) != (FW_INFO_OFFSET2))
+#if (FW_INFO_OFFSET_COUNT != 3) || ((CURRENT_OFFSET) != (FW_INFO_OFFSET0) && \
+				(CURRENT_OFFSET) != (FW_INFO_OFFSET1) && \
+				(CURRENT_OFFSET) != (FW_INFO_OFFSET2))
 	#error FW_FIRMWARE_INFO_OFFSET not set to one of the allowed values.
 #endif
 

@@ -13,7 +13,7 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
   set(image_to_boot mcuboot_)
 
   # Partition S1 is only enabled when MCUBoot is enabled.
-  set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_IMAGE_ADDRESS>)
+  set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>)
 
 else()
 
@@ -38,7 +38,7 @@ if (${found} EQUAL -1)
 endif()
 
 # Partition S0 will always contain the image to be booted by B0.
-set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_IMAGE_ADDRESS>)
+set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
 if (s1_addr)
   set(s1_arg --s1-addr ${s1_addr})
 endif()
