@@ -32,10 +32,6 @@
 
 #include <mbedtls/platform.h>
 #include <mbedtls/entropy_poll.h>
-
-/** @brief Structure holding the memory required to generate entropy
- */
-static mbedtls_rng_workbuf_internal rng_workbuf;
 #endif /* CONFIG_SPM_SERVICE_RNG */
 
 
@@ -44,9 +40,7 @@ int spm_secure_services_init(void)
 	int err = 0;
 
 #ifdef CONFIG_SPM_SERVICE_RNG
-	mbedtls_platform_context platform_ctx = {
-		.p_rnd_workbuf = &rng_workbuf
-	};
+	mbedtls_platform_context platform_ctx = {0};
 	err = mbedtls_platform_setup(&platform_ctx);
 #endif
 	return err;
@@ -107,7 +101,7 @@ int spm_request_random_number(u8_t *output, size_t len, size_t *olen)
 		return -EINVAL;
 	}
 
-	err = mbedtls_hardware_poll(&rng_workbuf, output, len, olen);
+	err = mbedtls_hardware_poll(NULL, output, len, olen);
 	return err;
 }
 #endif /* CONFIG_SPM_SERVICE_RNG */
