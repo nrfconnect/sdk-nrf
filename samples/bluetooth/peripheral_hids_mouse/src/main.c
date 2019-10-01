@@ -98,8 +98,6 @@ K_MSGQ_DEFINE(bonds_queue,
 	      4);
 #endif
 
-static struct k_delayed_work adv_work;
-
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
 		      (CONFIG_BT_DEVICE_APPEARANCE >> 0) & 0xff,
@@ -193,7 +191,7 @@ static void advertising_continue(void)
 }
 
 
-static void advertising_start(struct k_work *work)
+static void advertising_start(void)
 {
 	int err;
 
@@ -287,7 +285,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	insert_conn_object(conn);
 
 	if (is_conn_slot_free()) {
-		advertising_start(NULL);
+		advertising_start();
 	}
 }
 
@@ -315,11 +313,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 		}
 	}
 
-	/* Let Bluetooth stack clean up disconnected connection object
-	 * so that it is possible to create a new one for directed
-	 * advertising.
-	 */
-	k_delayed_work_submit(&adv_work, K_MSEC(100));
+	advertising_start();
 }
 
 
@@ -573,14 +567,13 @@ static void bt_ready(int err)
 	hid_init();
 
 	k_delayed_work_init(&hids_work, mouse_handler);
-	k_delayed_work_init(&adv_work, advertising_start);
 	k_work_init(&pairing_work, pairing_process);
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
 
-	advertising_start(NULL);
+	advertising_start();
 }
 
 
