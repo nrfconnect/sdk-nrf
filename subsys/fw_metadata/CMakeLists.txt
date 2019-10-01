@@ -3,10 +3,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
-if (CONFIG_FW_METADATA OR CONFIG_IS_SECURE_BOOTLOADER)
-  zephyr_library()
-  zephyr_library_sources(fw_metadata.c)
-endif ()
+zephyr_library()
+zephyr_library_sources(fw_metadata.c)
 
 # The following creates variables with the magic numbers used for firmware
 # metadata as comma-separated lists of numbers.

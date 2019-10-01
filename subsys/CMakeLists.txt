@@ -27,7 +27,9 @@ if (CONFIG_NRFXLIB_NFC     OR
         add_subdirectory(nfc)
 endif()
 
-add_subdirectory_ifdef(CONFIG_FW_METADATA	fw_metadata)
+if (CONFIG_FW_METADATA OR CONFIG_IS_SECURE_BOOTLOADER)
+  add_subdirectory(fw_metadata)
+endif()
 add_subdirectory_ifdef(CONFIG_SHELL_BT_NUS	shell)
 
 add_subdirectory(debug)
