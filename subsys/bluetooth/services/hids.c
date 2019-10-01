@@ -771,7 +771,7 @@ hids_input_reports_register(struct bt_gatt_hids *hids_obj,
 		BT_GATT_POOL_CCC(&hids_obj->gp, hids_inp_rep->ccc,
 				 hids_input_report_ccc_changed,  wperm | rperm);
 		BT_GATT_POOL_DESC(&hids_obj->gp, BT_UUID_HIDS_REPORT_REF,
-				  BT_GATT_PERM_READ, hids_inp_rep_ref_read,
+				  rperm, hids_inp_rep_ref_read,
 				  NULL, &hids_inp_rep->id);
 		offset += hids_inp_rep->size;
 	}
@@ -812,7 +812,8 @@ static void hids_outp_reports_register(struct bt_gatt_hids *hids_obj,
 		hids_outp_rep->idx = i;
 
 		BT_GATT_POOL_DESC(&hids_obj->gp, BT_UUID_HIDS_REPORT_REF,
-				  BT_GATT_PERM_READ, hids_outp_rep_ref_read,
+				  perm & GATT_PERM_READ_MASK,
+				  hids_outp_rep_ref_read,
 				  NULL, &hids_outp_rep->id);
 
 		offset += hids_outp_rep->size;
@@ -853,7 +854,8 @@ static void hids_feat_reports_register(struct bt_gatt_hids *hids_obj,
 		hids_feat_rep->idx = i;
 
 		BT_GATT_POOL_DESC(&hids_obj->gp, BT_UUID_HIDS_REPORT_REF,
-				  BT_GATT_PERM_READ, hids_feat_rep_ref_read,
+				  perm & GATT_PERM_READ_MASK,
+				  hids_feat_rep_ref_read,
 				  NULL, &hids_feat_rep->id);
 
 		offset += hids_feat_rep->size;
@@ -876,7 +878,7 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 			  BT_UUID_HIDS_PROTOCOL_MODE,
 			  BT_GATT_CHRC_READ |
 			  BT_GATT_CHRC_WRITE_WITHOUT_RESP,
-			  BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,
+			  HIDS_GATT_PERM_DEFAULT,
 			  hids_protocol_mode_read, hids_protocol_mode_write,
 			  &hids_obj->pm);
 
@@ -895,7 +897,8 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_REPORT_MAP,
-			  BT_GATT_CHRC_READ, BT_GATT_PERM_READ,
+			  BT_GATT_CHRC_READ,
+			  HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
 			  hids_report_map_read, NULL, &hids_obj->rep_map);
 
 	/* Register HID Boot Mouse Input Report characteristic, its descriptor
@@ -965,14 +968,15 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_INFO,
-			  BT_GATT_CHRC_READ, BT_GATT_PERM_READ,
+			  BT_GATT_CHRC_READ,
+			  HIDS_GATT_PERM_DEFAULT & GATT_PERM_READ_MASK,
 			  hids_info_read, NULL, hids_obj->info);
 
 	/* Register HID Control Point characteristic and its descriptor. */
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_CTRL_POINT,
 			  BT_GATT_CHRC_WRITE_WITHOUT_RESP,
-			  BT_GATT_PERM_WRITE,
+			  HIDS_GATT_PERM_DEFAULT | GATT_PERM_WRITE_MASK,
 			  NULL, hids_ctrl_point_write, &hids_obj->cp);
 
 	/* Register HIDS attributes in GATT database. */
