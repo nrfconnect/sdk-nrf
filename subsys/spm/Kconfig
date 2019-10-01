@@ -74,7 +74,16 @@ config SPM_SERVICE_REBOOT
 	  If Non-Secure Firmware is blocked from issuing system reset, this
 	  service will allow it to issue a request to do a system reset through
 	  a secure service.
-endif
+
+config SPM_SERVICE_FIND_FIRMWARE_INFO
+	bool "Find firmware info"
+	default y
+	help
+	  The Non-Secure Firmware is not allowed to read the memory
+	  marked as secure. This service allows it to request firmware info
+	  about image stored at a given address.
+
+endif # SPM_SECURE_SERVICES
 
 config SPM_BLOCK_NON_SECURE_RESET
 	bool "Block system reset calls from Non-Secure domain"
