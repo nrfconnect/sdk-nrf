@@ -34,12 +34,4 @@ choice BLE_CONTROLLER_VARIANT
 
 endchoice
 
-config BLECTRL_MEMPOOL_SIZE
-	int "Reserved RAM for the BLE controller"
-	default 5344
-	help
-	  Reserved RAM for the BLE Controller. This size is dependent on the
-	  configuration set before the controller is enabled. If the size is too
-	  small, the HCI driver initialization will return an error.
-
 endmenu

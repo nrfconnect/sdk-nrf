@@ -31,7 +31,29 @@ static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_BLECTLR_SIGNAL_STACK_SIZE);
 
-static u8_t ble_controller_mempool[CONFIG_BLECTRL_MEMPOOL_SIZE];
+#ifdef CONFIG_BT_CTLR_DATA_LENGTH_MAX
+	#define MAX_TX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
+	#define MAX_RX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
+#else
+	#define MAX_TX_PACKET_SIZE BLE_CONTROLLER_DEFAULT_TX_PACKET_SIZE
+	#define MAX_RX_PACKET_SIZE BLE_CONTROLLER_DEFAULT_RX_PACKET_SIZE
+#endif
+
+#define MASTER_MEM_SIZE (BLE_CONTROLLER_MEM_PER_MASTER_LINK( \
+	MAX_TX_PACKET_SIZE, \
+	MAX_RX_PACKET_SIZE, \
+	BLE_CONTROLLER_DEFAULT_TX_PACKET_COUNT, \
+	BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT) \
+	+ BLE_CONTROLLER_MEM_MASTER_LINKS_SHARED)
+
+#define SLAVE_MEM_SIZE (BLE_CONTROLLER_MEM_PER_SLAVE_LINK( \
+	MAX_TX_PACKET_SIZE, \
+	MAX_RX_PACKET_SIZE, \
+	BLE_CONTROLLER_DEFAULT_TX_PACKET_COUNT, \
+	BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT) \
+	+ BLE_CONTROLLER_MEM_SLAVE_LINKS_SHARED)
+
+static u8_t ble_controller_mempool[SLAVE_MEM_SIZE + MASTER_MEM_SIZE];
 
 void blectlr_assertion_handler(const char *const file, const u32_t line)
 {
@@ -372,8 +394,8 @@ static int ble_enable(void)
 		return required_memory;
 	}
 
-	cfg.buffer_cfg.rx_packet_size = 251;
-	cfg.buffer_cfg.tx_packet_size = 251;
+	cfg.buffer_cfg.rx_packet_size = MAX_RX_PACKET_SIZE;
+	cfg.buffer_cfg.tx_packet_size = MAX_TX_PACKET_SIZE;
 	cfg.buffer_cfg.rx_packet_count = BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT;
 	cfg.buffer_cfg.tx_packet_count = BLE_CONTROLLER_DEFAULT_TX_PACKET_COUNT;
 
