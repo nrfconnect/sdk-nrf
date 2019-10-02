@@ -34,6 +34,24 @@ static void test_notify_next(void)
 	zassert_true(!strcmp(file_path, expected_file_path), NULL);
 }
 
+static void test_update_job_longer_than_max(void)
+{
+	char expected_status[STATUS_MAX_LEN] = "12345678901";
+	char encoded[] = "{\"status\":\"12345678901234567890\","
+			  "\"statusDetails\":{\"nextState\":"
+			  "\"download_firmware\"},\"expectedVersion\":"
+			  "\"1\",\"clientToken\": \"\"}";
+	char status[100];
+	int ret;
+
+	memset(status, 0xff, sizeof(status));
+
+	ret = aws_fota_parse_update_job_exec_state_rsp(encoded,
+			sizeof(encoded) - 1, status);
+	zassert_true(!strcmp(status, expected_status), NULL);
+}
+
+
 static void test_timestamp_only(void)
 {
 	int ret;
@@ -82,6 +100,7 @@ void test_main(void)
 	ztest_test_suite(lib_json_test,
 			 ztest_unit_test(test_update_job_exec_rsp_minimal),
 			 ztest_unit_test(test_update_job_exec_rsp),
+			 ztest_unit_test(test_update_job_longer_than_max),
 			 ztest_unit_test(test_timestamp_only),
 			 ztest_unit_test(test_notify_next)
 			 );
