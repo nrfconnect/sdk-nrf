@@ -1,10 +1,28 @@
-#
 # Copyright (c) 2019 Nordic Semiconductor ASA
-#
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+# Builds combined documentation for all documentation sets: nRF (including
+# Doxygen documentation), Zephyr, MCUboot, etc.
 #
+# We use our own Sphinx configuration files when building the documentation set
+# for each repository, instead of reusing configuration files. See e.g.
+# doc/nrf/conf.py and doc/zephyr/conf.py.
+#
+# Intersphinx (http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html)
+# is used to link documentation sets together. It is configured in the Sphinx
+# configuration files.
+#
+# The *-content targets copy/create .rst files that later get built by Sphinx.
+
 cmake_minimum_required(VERSION 3.13.1)
 project(nrf-connect-sdk-doc LANGUAGES)
+
+#
+# Set various *_BASE variables pointing to the nrf/, zephyr/, etc.,
+# directories. Derive them automatically if they're not set in the environment,
+# by assuming that e.g. nrfxlib can be found at ../../nrfxlib/. Also add them
+# to the environment if they're not there.
+#
 
 set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
@@ -23,8 +41,12 @@ message(STATUS "NRF_BASE: $ENV{NRF_BASE}")
 message(STATUS "MCUBOOT_BASE: $ENV{MCUBOOT_BASE}")
 message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
 
+#
+# Find programs we need (Python, Sphinx, and Doxygen)
+#
+
 find_package(PythonInterp 3.4)
-set(DOXYGEN_SKIP_DOT True)
+set(DOXYGEN_SKIP_DOT True) # Skip the otional Dot component
 find_package(Doxygen REQUIRED)
 
 find_program(
@@ -35,14 +57,20 @@ if(${SPHINXBUILD} STREQUAL SPHINXBUILD-NOTFOUND)
   message(FATAL_ERROR "The 'sphinx-build' command was not found. Make sure you have Sphinx installed.")
 endif()
 
+#
+# CMake build directories (build/zephyr, build/nrf, etc.) and the shared HTML
+# output directory
+#
+
 set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
 set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
 set(MCUBOOT_DOC_DIR ${MCUBOOT_BASE}/docs)
+
+# HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
-# Create the combined HTML output folder
 file(MAKE_DIRECTORY ${HTML_DIR})
 
 # Create a mbedtls config file with all settings on
@@ -55,19 +83,31 @@ string(REGEX REPLACE
 string(REGEX REPLACE ";" "\n" MBEDTLS_CONFIG "${MBEDTLS_CONFIG}")
 file(WRITE ${NRFXLIB_BINARY_DIR}/mbedtls_doxygen_config.h ${MBEDTLS_CONFIG})
 
-# Build Zephyr documentation
+#
+# Add the 'zephyr' target for building the Zephyr documentation. We reuse
+# doc/CMakeLists.txt from the Zephyr repository, but use our own Sphinx
+# configuration from doc/zephyr/conf.py. The generated HTML is placed in the
+# common Sphinx HTML output folder.
+#
+
+# Parameters to doc/CMakeLists.txt in Zephyr
 set(SPHINXOPTS -c ${NRF_BASE}/doc/zephyr)
-# Place the generated HTML in the common Sphinx HTML output folder
 set(SPHINX_OUTPUT_DIR ${HTML_DIR}/zephyr)
+
+# Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
 
 add_custom_target(
   zephyr
 )
 
+# The 'html' target is from Zephyr
 add_dependencies(zephyr html)
 
-# Common code
+#
+# Add 'clean-zephyr', 'clean-nrf', etc., targets
+#
+
 set(TARGET_LIST zephyr nrf mcuboot nrfxlib)
 
 foreach(target ${TARGET_LIST})
@@ -85,9 +125,9 @@ foreach(target ${TARGET_LIST})
   )
 endforeach()
 
-###################################################
-# Everything below this line is nrf-specific
-###################################################
+#
+# Add nRF-related targets
+#
 
 set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
 
@@ -192,9 +232,9 @@ add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
 add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
 
-###################################################
-# Everything below this line is mcuboot-specific
-###################################################
+#
+# Add mcuboot-related targets
+#
 
 set(MCUBOOT_SPHINXOPTS -d ${MCUBOOT_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/mcuboot ${MCUBOOT_SPHINXOPTS})
 
@@ -247,11 +287,9 @@ add_dependencies(mcuboot-html mcuboot-content)
 add_custom_target(mcuboot)
 add_dependencies(mcuboot mcuboot-html)
 
-
-
-###################################################
-# Everything below this line is nrfxlib-specific
-###################################################
+#
+# Add nrfxlib-related targets
+#
 
 set(NRFXLIB_SPHINXOPTS -d ${NRFXLIB_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/nrfxlib ${NRFXLIB_SPHINXOPTS})
 
