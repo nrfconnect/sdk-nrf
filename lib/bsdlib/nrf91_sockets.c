@@ -14,7 +14,6 @@
 #include <bsd_os.h>
 #include <errno.h>
 #include <init.h>
-#include <net/net_offload.h>
 #include <net/socket_offload.h>
 #include <nrf_socket.h>
 #include <zephyr.h>
@@ -933,21 +932,20 @@ static int nrf91_bsdlib_socket_offload_init(struct device *arg)
 	return 0;
 }
 
-/* Placeholders, until Zepyr IP stack updated to handle a NULL net_offload.
- * Socket offloading is used, hece we will not use this API, yet it's still
- * needed to create this structure.
- */
-static struct net_offload nrf91_net_offload = { 0 };
-
 static struct nrf91_socket_iface_data {
 	struct net_if *iface;
+	u8_t dummy_link_addr;
 } nrf91_socket_iface_data;
 
 static void nrf91_socket_iface_init(struct net_if *iface)
 {
 	nrf91_socket_iface_data.iface = iface;
 
-	iface->if_dev->offload = &nrf91_net_offload;
+	/* FIXME Zephyr's interface initialization function checks for link
+	 *       address presence, set dummy placeholder for now.
+	 */
+	net_if_set_link_addr(iface, &nrf91_socket_iface_data.dummy_link_addr, 1,
+			     NET_LINK_UNKNOWN);
 
 	socket_offload_register(&nrf91_socket_offload_ops);
 }
