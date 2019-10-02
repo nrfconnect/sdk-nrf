@@ -1,3 +1,4 @@
+DNM: THST touch file for dev/NCSDK-3089_fork_url
 
 nRF Connect SDK: fw-nrfconnect-nrf
 ##################################
