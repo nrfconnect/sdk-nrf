@@ -150,7 +150,7 @@ int aws_fota_parse_update_job_exec_state_rsp(char *update_rsp_document,
 	/* Check if the status field(1st field) of the object has been parsed */
 	if (ret & 0x01) {
 		memcpy(status, rsp.status,
-			MIN(strlen(rsp.status), STATUS_MAX_LEN));
+			MIN(strlen(rsp.status) + 1, STATUS_MAX_LEN));
 	}
 
 	return ret;
@@ -161,31 +161,32 @@ int aws_fota_parse_notify_next_document(char *job_document,
 		char *file_path_buf)
 {
 	struct notify_next_obj job;
+	struct job_document_obj *job_doc_obj;
 
 	int ret = json_obj_parse(job_document,
 				 payload_len,
 				 notify_next_obj_descr,
 				 ARRAY_SIZE(notify_next_obj_descr),
 				 &job);
-	/* Check if the execution field(2nd field) of the object has been parsed */
+	job_doc_obj = &job.execution.job_document;
+
+	/* Check if the execution field of the object has been parsed */
 	if (ret & 0x02) {
 		if (job.execution.job_id != 0) {
 			memcpy(job_id_buf, job.execution.job_id,
-				MIN(strlen(job.execution.job_id),
+				MIN(strlen(job.execution.job_id) + 1,
 					AWS_JOBS_JOB_ID_MAX_LEN));
 		}
 
-		if (job.execution.job_document.location.host != 0) {
-			memcpy(hostname_buf,
-			       job.execution.job_document.location.host,
-			MIN(strlen(job.execution.job_document.location.host),
+		if (job_doc_obj->location.host != 0) {
+			memcpy(hostname_buf, job_doc_obj->location.host,
+			MIN(strlen(job_doc_obj->location.host) + 1,
 			    CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN));
 		}
 
-		if (job.execution.job_document.location.path != 0) {
-			memcpy(file_path_buf,
-			       job.execution.job_document.location.path,
-			MIN(strlen(job.execution.job_document.location.path),
+		if (job_doc_obj->location.path != 0) {
+			memcpy(file_path_buf, job_doc_obj->location.path,
+			MIN(strlen(job_doc_obj->location.path) + 1,
 			    CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN));
 		}
 
