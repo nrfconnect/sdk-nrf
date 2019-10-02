@@ -25,15 +25,18 @@ project(nrf-connect-sdk-doc LANGUAGES)
 #
 
 set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
+
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
 set(ENV{NRF_BASE} ${NRF_BASE})
+
 if(NOT DEFINED ENV{MCUBOOT_BASE})
- get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../mcuboot/ REALPATH)
- set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
+  get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../mcuboot/ REALPATH)
+  set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
 endif()
+
 if(NOT DEFINED ENV{NRFXLIB_BASE})
- get_filename_component(NRFXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/../../nrfxlib/ REALPATH)
- set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
+  get_filename_component(NRFXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/../../nrfxlib/ REALPATH)
+  set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
 endif()
 
 message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
@@ -49,10 +52,7 @@ find_package(PythonInterp 3.4)
 set(DOXYGEN_SKIP_DOT True) # Skip the otional Dot component
 find_package(Doxygen REQUIRED)
 
-find_program(
-  SPHINXBUILD
-  sphinx-build
-  )
+find_program(SPHINXBUILD sphinx-build)
 if(${SPHINXBUILD} STREQUAL SPHINXBUILD-NOTFOUND)
   message(FATAL_ERROR "The 'sphinx-build' command was not found. Make sure you have Sphinx installed.")
 endif()
@@ -87,9 +87,7 @@ set(SPHINX_OUTPUT_DIR ${HTML_DIR}/zephyr)
 # Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
 
-add_custom_target(
-  zephyr
-)
+add_custom_target(zephyr)
 
 # The 'html' target is from Zephyr
 add_dependencies(zephyr html)
@@ -98,9 +96,7 @@ add_dependencies(zephyr html)
 # Add 'clean-zephyr', 'clean-nrf', etc., targets
 #
 
-set(TARGET_LIST zephyr nrf mcuboot nrfxlib)
-
-foreach(target ${TARGET_LIST})
+foreach(target zephyr nrf mcuboot nrfxlib)
   set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
   # Cleanup build output
   add_custom_target(
@@ -131,13 +127,11 @@ set(NRF_CONTENT_OUTPUTS ${NRF_BINARY_DIR}/extracted-content.txt)
 
 configure_file(${NRF_DOXYFILE_IN} ${NRF_DOXYFILE_OUT} @ONLY)
 
-set(ARGS ${NRF_DOXYFILE_OUT})
-
 add_custom_target(
   nrf-doxy
   COMMAND ${CMAKE_COMMAND}
     -DCOMMAND=${DOXYGEN_EXECUTABLE}
-    -DARGS="${ARGS}"
+    -DARGS="${NRF_DOXYFILE_OUT}"
     -DOUTPUT_FILE=${NRF_DOXY_LOG}
     -DERROR_FILE=${NRF_DOXY_LOG}
     -DWORKING_DIRECTORY=${CMAKE_CURRENT_LIST_DIR}
@@ -229,8 +223,6 @@ set(MCUBOOT_SPHINXOPTS -d ${MCUBOOT_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/mcub
 set(MCUBOOT_RST_OUT ${MCUBOOT_BINARY_DIR}/rst)
 set(MCUBOOT_SPHINX_LOG ${MCUBOOT_BINARY_DIR}/sphinx.log)
 
-set(FIX_MARKDOWN ${NRF_BASE}/doc/scripts/fix_markdown.py)
-
 file(GLOB MDFILES ${MCUBOOT_DOC_DIR}/*.md)
 
 set(MCUBOOT_EXTRACT_CONTENT_COMMAND
@@ -253,7 +245,8 @@ add_custom_target(
 
   # Fix problems in markdown files
   COMMAND ${CMAKE_COMMAND} -E env
-  ${PYTHON_EXECUTABLE} ${FIX_MARKDOWN} ${MCUBOOT_RST_OUT}/doc/mcuboot
+  ${PYTHON_EXECUTABLE} ${NRF_BASE}/doc/scripts/fix_markdown.py
+    ${MCUBOOT_RST_OUT}/doc/mcuboot
 
   WORKING_DIRECTORY ${MCUBOOT_DOC_DIR}
 )
@@ -298,13 +291,11 @@ set(NRFXLIB_SPHINX_LOG ${NRFXLIB_BINARY_DIR}/sphinx.log)
 
 configure_file(${NRFXLIB_DOXYFILE_IN} ${NRFXLIB_DOXYFILE_OUT} @ONLY)
 
-set(ARGS ${NRFXLIB_DOXYFILE_OUT})
-
 add_custom_target(
   nrfxlib-doxy
   COMMAND ${CMAKE_COMMAND}
     -DCOMMAND=${DOXYGEN_EXECUTABLE}
-    -DARGS="${ARGS}"
+    -DARGS="${NRFXLIB_DOXYFILE_OUT}"
     -DOUTPUT_FILE=${NRFXLIB_DOXY_LOG}
     -DERROR_FILE=${NRFXLIB_DOXY_LOG}
     -DWORKING_DIRECTORY=${NRFXLIB_BASE}
