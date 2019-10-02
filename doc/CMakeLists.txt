@@ -134,11 +134,9 @@ set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
 set(NRF_DOXYFILE_IN ${NRF_DOC_DIR}/nrf.doxyfile.in)
 set(NRF_DOXYFILE_OUT ${NRF_BINARY_DIR}/nrf.doxyfile)
 set(NRF_RST_OUT ${NRF_BINARY_DIR}/rst)
-set(NRF_CONF_PY ${NRF_DOC_DIR}/conf.py)
 set(NRF_DOC_LOG ${NRF_BINARY_DIR}/doc.log)
 set(NRF_DOXY_LOG ${NRF_BINARY_DIR}/doxy.log)
 set(NRF_SPHINX_LOG ${NRF_BINARY_DIR}/sphinx.log)
-set(NRF_DOC_WARN ${NRF_BINARY_DIR}/doc.warnings)
 set(NRF_CONTENT_OUTPUTS ${NRF_BINARY_DIR}/extracted-content.txt)
 
 configure_file(${NRF_DOXYFILE_IN} ${NRF_DOXYFILE_OUT} @ONLY)
@@ -239,12 +237,8 @@ add_dependencies(nrf nrf-html)
 set(MCUBOOT_SPHINXOPTS -d ${MCUBOOT_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/mcuboot ${MCUBOOT_SPHINXOPTS})
 
 set(MCUBOOT_RST_OUT ${MCUBOOT_BINARY_DIR}/rst)
-set(MCUBOOT_CONF_PY ${NRF_BASE}/doc/mcuboot/conf.py)
-set(MCUBOOT_DOC_LOG ${MCUBOOT_BINARY_DIR}/doc.log)
 set(MCUBOOT_SPHINX_LOG ${MCUBOOT_BINARY_DIR}/sphinx.log)
-set(MCUBOOT_DOC_WARN ${MCUBOOT_BINARY_DIR}/doc.warnings)
 
-set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
 set(FIX_MARKDOWN ${NRF_BASE}/doc/scripts/fix_markdown.py)
 
 file(GLOB MDFILES ${MCUBOOT_DOC_DIR}/*.md)
@@ -297,11 +291,8 @@ set(NRFXLIB_SPHINXOPTS -d ${NRFXLIB_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/nrfx
 set(NRFXLIB_DOXYFILE_IN ${NRF_BASE}/doc/nrfxlib/nrfxlib.doxyfile.in)
 set(NRFXLIB_DOXYFILE_OUT ${NRFXLIB_BINARY_DIR}/nrfxlib.doxyfile)
 set(NRFXLIB_RST_OUT ${NRFXLIB_BINARY_DIR}/rst)
-set(NRFXLIB_CONF_PY ${NRF_BASE}/doc/nrfxlib/conf.py)
-set(NRFXLIB_DOC_LOG ${NRFXLIB_BINARY_DIR}/doc.log)
 set(NRFXLIB_DOXY_LOG ${NRFXLIB_BINARY_DIR}/doxy.log)
 set(NRFXLIB_SPHINX_LOG ${NRFXLIB_BINARY_DIR}/sphinx.log)
-set(NRFXLIB_DOC_WARN ${NRFXLIB_BINARY_DIR}/doc.warnings)
 
 
 configure_file(${NRFXLIB_DOXYFILE_IN} ${NRFXLIB_DOXYFILE_OUT} @ONLY)
@@ -331,8 +322,6 @@ add_custom_target(
   ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py ${NRFXLIB_BASE}/Kconfig.nrfxlib ${NRFXLIB_RST_OUT}/kconfig
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
-
-set(EXTRACT_CONTENT ${ZEPHYR_BASE}/doc/scripts/extract_content.py)
 
 set(NRFXLIB_EXTRACT_CONTENT_COMMAND
  ${CMAKE_COMMAND} -E env
