@@ -60,7 +60,6 @@ extern "C" {
 						       MOD_FIELD_SET(module) | OPT_FIELD_SET(option))
 
 #define SETUP_MODULE_SENSOR	0x1
-#define SETUP_MODULE_LED	0x2
 
 
 /* Config event, setup group, sensor module macros */
