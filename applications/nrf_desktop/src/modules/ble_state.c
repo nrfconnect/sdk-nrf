@@ -43,10 +43,11 @@ static void security_timeout_fn(struct k_work *w)
 	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 			 (SECURITY_FAIL_TIMEOUT_MS > 0), "");
 	__ASSERT_NO_MSG(active_conn[0]);
+
 	bt_conn_disconnect(active_conn[0],
 			   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 
-	LOG_ERR("Security establishment failed - device disconnected");
+	LOG_WRN("Security establishment failed - device disconnected");
 }
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
@@ -198,21 +199,26 @@ static void exchange_func(struct bt_conn *conn, u8_t err,
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err bt_err)
 {
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		__ASSERT_NO_MSG(active_conn[0] == conn);
+		k_delayed_work_cancel(&security_timeout);
+	}
+
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	if (!bt_err) {
+	if (!bt_err && (level >= BT_SECURITY_L2)) {
 		LOG_INF("Security with %s level %u", log_strdup(addr), level);
 	} else {
-		LOG_ERR("Security failed: %s level %u err %d", log_strdup(addr),
-			level, bt_err);
-		return;		/* Let the timeout handle the failure. */
-	}
+		LOG_WRN("Security with %s failed, level %u err %d",
+			log_strdup(addr), level, bt_err);
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			bt_conn_disconnect(active_conn[0],
+					   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+		}
 
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		__ASSERT_NO_MSG(active_conn[0] == conn);
-		k_delayed_work_cancel(&security_timeout);
+		return;
 	}
 
 	struct ble_peer_event *event = new_ble_peer_event();
