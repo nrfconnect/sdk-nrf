@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig AT_NOTIF
+	bool "AT-command notification manager"
+	depends on AT_CMD
+	help
+	  A library for managing AT-command notifications.
+
+if AT_NOTIF
+
+config AT_NOTIF_SYS_INIT
+	bool "Initialize the AT-command notification manager during system init"
+	default y if AT_CMD_SYS_INIT
+
+module=AT_NOTIF
+module-dep=LOG
+module-str= AT-command notification management library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AT_NOTIF
