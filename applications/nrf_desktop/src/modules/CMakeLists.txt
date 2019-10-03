@@ -41,6 +41,9 @@ target_sources_ifdef(CONFIG_DESKTOP_LED_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_LED_STREAM_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_stream.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_CPI_STATE_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpi_state.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_POWER_MANAGER_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/power_manager.c)
 

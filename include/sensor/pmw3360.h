@@ -19,6 +19,10 @@ enum pmw3360_attribute {
 	PMW3360_ATTR_REST2_DOWNSHIFT_TIME,
 };
 
+/* CPI */
+#define PMW3360_CPI_MIN 100
+#define PMW3360_CPI_MAX 12000
+
 #define PMW3360_SVALUE_TO_CPI(svalue) ((u32_t)(svalue).val1)
 #define PMW3360_CPI_TO_SVALUE(cpi) ((struct sensor_value) {.val1 = cpi})
 

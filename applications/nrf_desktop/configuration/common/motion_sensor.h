@@ -21,6 +21,9 @@ enum motion_sensor_option {
 
  #define MOTION_SENSOR_DEV_NAME "PMW3360"
 
+ #define MOTION_SENSOR_CPI_MIN PMW3360_CPI_MIN
+ #define MOTION_SENSOR_CPI_MAX PMW3360_CPI_MAX
+
  static const int motion_sensor_option_attr[MOTION_SENSOR_OPTION_COUNT] = {
 	[MOTION_SENSOR_OPTION_CPI] = PMW3360_ATTR_CPI,
 	[MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT] = PMW3360_ATTR_RUN_DOWNSHIFT_TIME,
@@ -33,6 +36,9 @@ enum motion_sensor_option {
  #include <sensor/paw3212.h>
 
  #define MOTION_SENSOR_DEV_NAME "PAW3212"
+
+ #define MOTION_SENSOR_CPI_MIN PAW3212_CPI_MIN
+ #define MOTION_SENSOR_CPI_MAX PAW3212_CPI_MAX
 
  static const int motion_sensor_option_attr[MOTION_SENSOR_OPTION_COUNT] = {
 	[MOTION_SENSOR_OPTION_CPI] = PAW3212_ATTR_CPI,

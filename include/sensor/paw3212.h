@@ -19,6 +19,11 @@ enum paw3212_attribute {
 	PAW3212_ATTR_SLEEP3_TIMEOUT,
 };
 
+/* CPI */
+#define PAW3212_CPI_STEP		38u
+#define PAW3212_CPI_MIN			(0x01 * PAW3212_CPI_STEP)
+#define PAW3212_CPI_MAX			(0x3F * PAW3212_CPI_STEP)
+
 #define PAW3212_SVALUE_TO_CPI(svalue) ((u32_t)(svalue).val1)
 #define PAW3212_CPI_TO_SVALUE(cpi) ((struct sensor_value) {.val1 = cpi})
 

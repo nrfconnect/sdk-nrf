@@ -57,7 +57,7 @@ extern "C" {
 #define OPT_FIELD_GET(event_id) ((event_id >> OPT_FIELD_POS) & OPT_FIELD_MASK)
 
 #define SETUP_EVENT_ID(module, option) CONFIG_EVENT_ID(EVENT_GROUP_SETUP, \
-						       MOD_FIELD_SET(module) | OPT_FIELD_SET(option))
+						       (MOD_FIELD_SET(module) | OPT_FIELD_SET(option)))
 
 #define SETUP_MODULE_SENSOR	0x1
 #define SETUP_MODULE_QOS	0x2
