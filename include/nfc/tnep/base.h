@@ -22,6 +22,7 @@
  *  A major version number in high nibble, a minor version number in low nibble.
  */
 #define NFC_TNEP_VERSION 0x10
+#define NFC_TNEP_NDEF_NLEN_SIZE 2
 
 /** @brief Service communication modes. */
 enum nfc_tnep_comm_mode {
