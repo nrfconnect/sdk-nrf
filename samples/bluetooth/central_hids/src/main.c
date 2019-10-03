@@ -49,7 +49,6 @@
 
 static struct bt_conn *default_conn;
 static struct bt_gatt_hids_c hids_c;
-static struct bt_conn *auth_conn;
 static u8_t capslock_state;
 
 
@@ -164,11 +163,6 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	int err;
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	if (auth_conn) {
-		bt_conn_unref(auth_conn);
-		auth_conn = NULL;
-	}
 
 	printk("Disconnected: %s (reason %u)\n", addr, reason);
 
@@ -474,36 +468,9 @@ static void button_capslock_rsp(void)
 }
 
 
-static void num_comp_reply(bool accept)
-{
-	if (accept) {
-		bt_conn_auth_passkey_confirm(auth_conn);
-		printk("Numeric Match, conn %p\n", auth_conn);
-	} else {
-		bt_conn_auth_cancel(auth_conn);
-		printk("Numeric Reject, conn %p\n", auth_conn);
-	}
-
-	bt_conn_unref(auth_conn);
-	auth_conn = NULL;
-}
-
-
 static void button_handler(u32_t button_state, u32_t has_changed)
 {
 	u32_t button = button_state & has_changed;
-
-	if (auth_conn) {
-		if (button & KEY_PAIRING_ACCEPT) {
-			num_comp_reply(true);
-		}
-
-		if (button & KEY_PAIRING_REJECT) {
-			num_comp_reply(false);
-		}
-
-		return;
-	}
 
 	if (button & KEY_BOOTMODE_MASK) {
 		button_bootmode();
@@ -529,27 +496,6 @@ static void gatt_discover(struct bt_conn *conn)
 			       "code: %d\n", err);
 		}
 	}
-}
-
-static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	printk("Passkey for %s: %06u\n", addr, passkey);
-}
-
-static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	auth_conn = bt_conn_ref(conn);
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	printk("Passkey for %s: %06u\n", addr, passkey);
-	printk("Press Button 1 to confirm, Button 2 to reject.\n");
 }
 
 
@@ -591,8 +537,6 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
-	.passkey_display = auth_passkey_display,
-	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
 	.pairing_confirm = auth_done,
 	.pairing_complete = pairing_complete,

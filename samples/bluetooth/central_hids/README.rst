@@ -39,13 +39,9 @@ Button 1:
    Toggle the CAPSLOCK LED on the connected keyboard using Write without response.
    This function is available only if the connected keyboard is set to work in Boot Protocol Mode.
 
-   When pairing/bonding, press this button to confirm the passkey value that is printed on the COM listener to pair/bond with the other device.
-
 Button 2:
    Switch between Boot Protocol Mode and Report Protocol Mode.
    This function is available only if the connected peer supports the Protocol Mode Characteristic.
-
-   When pairing/bonding, press this button to reject the passkey value that is printed on the COM listener to prevent pairing/bonding with the other device.
 
 Button 3:
    Toggle the CAPSLOCK LED on the connected keyboard using Write with response.
@@ -72,7 +68,6 @@ Testing with another board
 1. |connect_terminal_specific|
 #. Reset the board.
 #. Program the other board with the :ref:`peripheral_hids_keyboard` sample and reset it.
-#. When connected, press Button 1 on both devices to confirm the passkey value used for bonding, or press Button 2 to reject it.
 #. Wait until the HIDS keyboard is detected by the central.
    All detected descriptors are listed.
    In the terminal window, check for information similar to the following::
