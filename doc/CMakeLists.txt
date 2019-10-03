@@ -66,8 +66,6 @@ set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
-set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
-set(MCUBOOT_DOC_DIR ${MCUBOOT_BASE}/docs)
 
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
@@ -116,6 +114,8 @@ endforeach()
 #
 
 set(NRF_SPHINXOPTS -d ${NRF_BINARY_DIR}/doctrees ${NRF_SPHINXOPTS})
+
+set(NRF_DOC_DIR ${NRF_BASE}/doc/nrf)
 
 set(NRF_DOXYFILE_IN ${NRF_DOC_DIR}/nrf.doxyfile.in)
 set(NRF_DOXYFILE_OUT ${NRF_BINARY_DIR}/nrf.doxyfile)
@@ -222,6 +222,8 @@ set(MCUBOOT_SPHINXOPTS -d ${MCUBOOT_BINARY_DIR}/doctrees -c ${NRF_BASE}/doc/mcub
 
 set(MCUBOOT_RST_OUT ${MCUBOOT_BINARY_DIR}/rst)
 set(MCUBOOT_SPHINX_LOG ${MCUBOOT_BINARY_DIR}/sphinx.log)
+
+set(MCUBOOT_DOC_DIR ${MCUBOOT_BASE}/docs)
 
 file(GLOB MDFILES ${MCUBOOT_DOC_DIR}/*.md)
 
