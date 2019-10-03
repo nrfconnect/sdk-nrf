@@ -78,6 +78,7 @@ static const struct state_switch state_switch[] = {
 
 static enum state state;
 static u8_t cur_peer_id;
+static bool cur_peer_id_valid;
 static u8_t tmp_peer_id;
 static bool dongle_peer_selected_on_init;
 
@@ -91,6 +92,7 @@ static bool dongle_peer_selected_on_init;
 #endif
 
 static u8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
+static bool bt_stack_id_lut_valid;
 
 #define TEMP_PEER_ID (CONFIG_BT_MAX_PAIRED - 1)
 #if CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
@@ -156,6 +158,7 @@ static void swap_bt_stack_peer_id(void)
 	bt_stack_id_lut[cur_peer_id] = temp;
 
 	int err = store_bt_stack_id_lut();
+
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
 		return;
@@ -231,7 +234,8 @@ static u8_t next_peer_id(u8_t id)
 	id++;
 	BUILD_ASSERT(TEMP_PEER_ID == (CONFIG_BT_MAX_PAIRED - 1));
 	BUILD_ASSERT(DONGLE_PEER_ID <= TEMP_PEER_ID);
-	if (id == DONGLE_PEER_ID) {
+	if (id >= DONGLE_PEER_ID) {
+		__ASSERT_NO_MSG(id == DONGLE_PEER_ID);
 		id = 0;
 	}
 
@@ -268,7 +272,7 @@ static void select_next(void)
 	EVENT_SUBMIT(event);
 }
 
-static void store_peer_id(u8_t peer_id)
+static int store_peer_id(u8_t peer_id)
 {
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		char key[] = MODULE_NAME "/" PEER_ID_STORAGE_NAME;
@@ -276,26 +280,37 @@ static void store_peer_id(u8_t peer_id)
 		int err = settings_save_one(key, &peer_id, sizeof(peer_id));
 
 		if (err) {
-			LOG_ERR("Problem storing peer_id: (err = %d)", err);
+			LOG_ERR("Problem storing peer_id: (err %d)", err);
+			return err;
 		}
 	}
+
+	return 0;
 }
 
 static void select_confirm(void)
 {
 	LOG_INF("Select peer");
 
-	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
+	enum peer_operation op;
 
 	if (tmp_peer_id != cur_peer_id) {
 		cur_peer_id = tmp_peer_id;
+		op = PEER_OPERATION_SELECTED;
 
-		event->op = PEER_OPERATION_SELECTED;
-		store_peer_id(cur_peer_id);
+		int err = store_peer_id(cur_peer_id);
+
+		if (err) {
+			module_set_state(MODULE_STATE_ERROR);
+			return;
+		}
 	} else {
-		event->op = PEER_OPERATION_CANCEL;
+		op = PEER_OPERATION_CANCEL;
 	}
 
+	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
+
+	event->op = op;
 	event->bt_app_id = cur_peer_id;
 	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
 
@@ -337,8 +352,7 @@ static void erase_adv_confirm(void)
 		state = STATE_ERASE_PEER;
 	}
 
-	int err = bt_id_reset(get_bt_stack_peer_id(cur_peer_id),
-			NULL, NULL);
+	int err = bt_id_reset(get_bt_stack_peer_id(cur_peer_id), NULL, NULL);
 
 	if (err < 0) {
 		LOG_ERR("Cannot reset id %u (err:%d)",
@@ -431,6 +445,19 @@ static void timeout_handler(struct k_work *work)
 	cancel_operation();
 }
 
+static void init_bt_stack_id_lut(void)
+{
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		for (size_t i = 0; i < ARRAY_SIZE(bt_stack_id_lut); i++) {
+			/* BT_ID_DEFAULT cannot be reset. */
+			bt_stack_id_lut[i] = i + 1;
+		}
+
+		/* Temporary fix for tests */
+		bt_stack_id_lut[0] = BT_ID_DEFAULT;
+	}
+}
+
 static void load_identities(void)
 {
 	bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
@@ -483,39 +510,49 @@ static void silence_unused(void)
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
+	ssize_t rc;
+
 	if (!strcmp(key, PEER_ID_STORAGE_NAME)) {
-		ssize_t len = read_cb(cb_arg, &cur_peer_id, sizeof(cur_peer_id));
-		if (len != sizeof(cur_peer_id)) {
-			LOG_ERR("Can't read peer id from storage");
-			return len;
+		/* Ignore record when size is improper. */
+		if (len_rd != sizeof(cur_peer_id)) {
+			cur_peer_id_valid = false;
+			return 0;
 		}
-	}
 
-	if (!strcmp(key, BT_ID_LUT_STORAGE_NAME)) {
-		ssize_t len = read_cb(cb_arg, &bt_stack_id_lut,
-				      sizeof(bt_stack_id_lut));
+		rc = read_cb(cb_arg, &cur_peer_id, sizeof(cur_peer_id));
 
-		if (len != sizeof(bt_stack_id_lut)) {
-			LOG_ERR("Can't read bt_stack_id_lut from storage");
-			module_set_state(MODULE_STATE_ERROR);
-			return len;
+		if (rc == sizeof(cur_peer_id)) {
+			cur_peer_id_valid = true;
+		} else {
+			cur_peer_id_valid = false;
+
+			if (rc < 0) {
+				LOG_ERR("Settings read-out error");
+				return rc;
+			}
+		}
+	} else if (!strcmp(key, BT_ID_LUT_STORAGE_NAME)) {
+		/* Ignore record when size is improper. */
+		if (len_rd != sizeof(bt_stack_id_lut)) {
+			bt_stack_id_lut_valid = false;
+			return 0;
+		}
+
+		rc = read_cb(cb_arg, &bt_stack_id_lut, sizeof(bt_stack_id_lut));
+
+		if (rc == sizeof(bt_stack_id_lut)) {
+			bt_stack_id_lut_valid = true;
+		} else {
+			bt_stack_id_lut_valid = false;
+
+			if (rc < 0) {
+				LOG_ERR("Settings read-out error");
+				return rc;
+			}
 		}
 	}
 
 	return 0;
-}
-
-static void init_bt_stack_lut_id(void)
-{
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		for (size_t i = 0; i < ARRAY_SIZE(bt_stack_id_lut); i++) {
-			/* BT_ID_DEFAULT cannot be resetted - cannot be used */
-			bt_stack_id_lut[i] = i + 1;
-		}
-
-		/* Temporary fix for tests */
-		bt_stack_id_lut[0] = BT_ID_DEFAULT;
-	}
 }
 
 static int init_settings(void)
@@ -537,6 +574,63 @@ static int init_settings(void)
 	return 0;
 }
 
+static bool storage_data_is_valid(void)
+{
+	if (!(bt_stack_id_lut_valid && cur_peer_id_valid)) {
+		return false;
+	}
+
+	if (cur_peer_id >= DONGLE_PEER_ID) {
+		return false;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(bt_stack_id_lut); i++) {
+		if (bt_stack_id_lut[i] >= CONFIG_BT_ID_MAX) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static void storage_data_overwrite(void)
+{
+	LOG_WRN("No valid data in storage, write default values");
+
+	cur_peer_id = 0;
+	init_bt_stack_id_lut();
+
+	int err = store_peer_id(cur_peer_id);
+
+	if (!err) {
+		err = store_bt_stack_id_lut();
+	}
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+		return;
+	}
+
+	err = bt_unpair(BT_ID_DEFAULT, NULL);
+
+	if (err) {
+		LOG_ERR("Cannot unpair for default ID");
+		module_set_state(MODULE_STATE_ERROR);
+		return;
+	}
+
+	/* Reset Bluetooth local identities. */
+	for (size_t i = 1; i < CONFIG_BT_ID_MAX; i++) {
+		err = bt_id_reset(i, NULL, NULL);
+
+		if (err < 0) {
+			LOG_ERR("Cannot reset id %u (err %d)", i, err);
+			module_set_state(MODULE_STATE_ERROR);
+			break;
+		}
+	}
+}
+
 static int init(void)
 {
 	silence_unused();
@@ -548,6 +642,12 @@ static int init(void)
 	}
 
 	load_identities();
+
+	if (!storage_data_is_valid()) {
+		storage_data_overwrite();
+		bt_stack_id_lut_valid = true;
+		cur_peer_id_valid = true;
+	}
 
 	if (dongle_peer_selected_on_init) {
 		select_dongle_peer();
@@ -565,7 +665,8 @@ static bool click_event_handler(const struct click_event *event)
 	}
 
 	if (likely(state != STATE_DISABLED)) {
-		if (k_uptime_get_32() < ON_START_CLICK_UPTIME_MAX) {
+		if ((k_uptime_get_32() < ON_START_CLICK_UPTIME_MAX) &&
+		    (event->click == CLICK_LONG)) {
 			handle_click(ON_START_CLICK(event->click));
 		} else {
 			handle_click(event->click);
@@ -632,7 +733,6 @@ static bool event_handler(const struct event_header *eh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			/* Settings initialized before config module */
-			init_bt_stack_lut_id();
 			if (init_settings()) {
 				module_set_state(MODULE_STATE_ERROR);
 			}
