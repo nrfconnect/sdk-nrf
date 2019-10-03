@@ -587,15 +587,12 @@ static bool event_handler(const struct event_header *eh)
 
 			case STATE_OFF:
 			case STATE_GRACE_PERIOD:
+			case STATE_DISABLED:
 				/* No action */
 				break;
 
-			case STATE_DISABLED:
-				/* Should never happen */
-				__ASSERT_NO_MSG(false);
-				break;
-
 			default:
+				/* Should never happen */
 				__ASSERT_NO_MSG(false);
 				break;
 			}

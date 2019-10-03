@@ -290,7 +290,6 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_submit(&power_down_trigger,
 					      POWER_DOWN_CHECK_MS);
 		} else if (event->state == MODULE_STATE_ERROR) {
-			LOG_PANIC();
 			power_state = POWER_STATE_ERROR;
 			k_delayed_work_cancel(&power_down_trigger);
 

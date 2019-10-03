@@ -35,6 +35,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 enum state {
 	STATE_DISABLED,
+	STATE_DISABLED_SUSPENDED,
 	STATE_DISCONNECTED,
 	STATE_IDLE,
 	STATE_FETCHING,
@@ -47,6 +48,7 @@ struct sensor_state {
 
 	enum state state;
 	bool sample;
+	u8_t peer_count;
 	u32_t option[MOTION_SENSOR_OPTION_COUNT];
 	u32_t option_mask;
 };
@@ -113,6 +115,7 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 
 	case STATE_FETCHING:
 	case STATE_DISABLED:
+	case STATE_DISABLED_SUSPENDED:
 		/* Invalid state */
 		__ASSERT_NO_MSG(false);
 		break;
@@ -221,6 +224,31 @@ static int init(void)
 	}
 
 	set_default_configuration();
+
+	k_spinlock_key_t key = k_spin_lock(&state.lock);
+	bool is_connected = (state.peer_count != 0);
+
+	switch (state.state) {
+	case STATE_DISABLED:
+		if (is_connected) {
+			state.state = STATE_IDLE;
+		} else {
+			state.state = STATE_DISCONNECTED;
+		}
+		break;
+	case STATE_DISABLED_SUSPENDED:
+		if (is_connected) {
+			state.state = STATE_SUSPENDED;
+		} else {
+			state.state = STATE_SUSPENDED_DISCONNECTED;
+		}
+		break;
+	default:
+		/* No action */
+		break;
+	}
+
+	k_spin_unlock(&state.lock, key);
 
 	do {
 		err = enable_trigger();
@@ -400,17 +428,15 @@ static bool event_handler(const struct event_header *eh)
 			cast_hid_report_subscription_event(eh);
 
 		if (event->report_type == IN_REPORT_MOUSE) {
-			static u8_t peer_count;
-
 			if (event->enabled) {
-				__ASSERT_NO_MSG(peer_count < UCHAR_MAX);
-				peer_count++;
+				__ASSERT_NO_MSG(state.peer_count < UCHAR_MAX);
+				state.peer_count++;
 			} else {
-				__ASSERT_NO_MSG(peer_count > 0);
-				peer_count--;
+				__ASSERT_NO_MSG(state.peer_count > 0);
+				state.peer_count--;
 			}
 
-			bool is_connected = (peer_count != 0);
+			bool is_connected = (state.peer_count != 0);
 
 			k_spinlock_key_t key = k_spin_lock(&state.lock);
 			switch (state.state) {
@@ -435,6 +461,8 @@ static bool event_handler(const struct event_header *eh)
 					state.state = STATE_SUSPENDED;
 				}
 				break;
+			case STATE_DISABLED:
+			case STATE_DISABLED_SUSPENDED:
 			default:
 				/* Ignore */
 				break;
@@ -455,7 +483,6 @@ static bool event_handler(const struct event_header *eh)
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			/* Start state machine thread */
 			__ASSERT_NO_MSG(state.state == STATE_DISABLED);
-			state.state = STATE_DISCONNECTED;
 			k_thread_create(&thread, thread_stack,
 					THREAD_STACK_SIZE,
 					(k_thread_entry_t)motion_thread_fn,
@@ -483,6 +510,8 @@ static bool event_handler(const struct event_header *eh)
 			k_sem_give(&sem);
 
 			module_set_state(MODULE_STATE_READY);
+		} else if (state.state == STATE_DISABLED_SUSPENDED) {
+			state.state = STATE_DISABLED;
 		}
 		k_spin_unlock(&state.lock, key);
 
@@ -490,16 +519,21 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_power_down_event(eh)) {
-		bool suspended = false;
-
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
+
 		switch (state.state) {
 		case STATE_FETCHING:
 		case STATE_IDLE:
 		case STATE_DISCONNECTED:
 			enable_trigger();
+
+			/* Fall-through */
+
+		case STATE_DISABLED:
 			if (state.state == STATE_DISCONNECTED) {
 				state.state = STATE_SUSPENDED_DISCONNECTED;
+			} else if (state.state == STATE_DISABLED) {
+				state.state = STATE_DISABLED_SUSPENDED;
 			} else {
 				state.state = STATE_SUSPENDED;
 			}
@@ -507,16 +541,14 @@ static bool event_handler(const struct event_header *eh)
 
 			/* Sensor will downshift to "rest modes" when inactive.
 			 * Interrupt is left enabled to wake system up.
+			 * If module is still disabled interrupt will be
+			 * enabled when initialization completes.
 			 */
-
-			/* Fall-through */
+			break;
 
 		case STATE_SUSPENDED:
 		case STATE_SUSPENDED_DISCONNECTED:
-			suspended = true;
-			break;
-
-		case STATE_DISABLED:
+		case STATE_DISABLED_SUSPENDED:
 			/* No action */
 			break;
 
@@ -524,9 +556,10 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(false);
 			break;
 		}
+
 		k_spin_unlock(&state.lock, key);
 
-		return !suspended;
+		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
