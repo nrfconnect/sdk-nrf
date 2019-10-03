@@ -8,6 +8,7 @@ menuconfig LTE_LINK_CONTROL
 	bool "nRF91 LTE Link control library"
 	select AT_CMD
 	select AT_CMD_PARSER
+	select AT_NOTIF
 	default n
 
 if LTE_LINK_CONTROL
