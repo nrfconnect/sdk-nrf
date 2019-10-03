@@ -64,7 +64,6 @@ After programming the sample to your board, test it by performing the following 
    Observe that LED 2 is on.
 #. Optionally, pair/bond with the device with MITM protection.
    To confirm pairing/bonding, press Button 1 on the device and accept the passkey value on the smartphone.
-   If tested with :ref:`central_uart` use the Button 1 on the both devices to confirm bonding.
 #. In the app, observe that the services are shown in the connected device.
 #. Select the UART RX characteristic value in nRF Connect.
    You can write hexadecimal ASCII values to the UART RX and get the text displayed on the COM listener.
