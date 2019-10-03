@@ -6,6 +6,7 @@
 
 #include <at_cmd_parser/at_cmd_parser.h>
 #include <at_cmd.h>
+#include <at_notif.h>
 #include <ctype.h>
 #include <device.h>
 #include <errno.h>
@@ -483,8 +484,10 @@ int modem_info_string_get(enum modem_info info, char *buf)
 	return len <= 0 ? -ENOTSUP : len;
 }
 
-static void modem_info_rsrp_subscribe_handler(char *response)
+static void modem_info_rsrp_subscribe_handler(void *context, char *response)
 {
+	ARG_UNUSED(context);
+
 	u16_t param_value;
 	int err;
 
@@ -515,7 +518,12 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 {
 	modem_info_rsrp_cb = cb;
 
-	at_cmd_set_notification_handler(modem_info_rsrp_subscribe_handler);
+	int rc = at_notif_register_handler(NULL,
+		modem_info_rsrp_subscribe_handler);
+	if (rc != 0) {
+		LOG_ERR("Can't register handler rc=%d", rc);
+		return rc;
+	}
 
 	if (at_cmd_write(AT_CMD_CESQ_ON, NULL, 0, NULL) != 0) {
 		return -EIO;
