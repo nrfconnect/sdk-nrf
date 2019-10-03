@@ -9,6 +9,7 @@ menu "AT Host Library for nrf91"
 config AT_HOST_LIBRARY
 	bool "AT Host Library for nrf91"
 	select AT_CMD
+	select AT_NOTIF
 
 if AT_HOST_LIBRARY
 
