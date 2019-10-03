@@ -10,6 +10,8 @@ rsource "bsdlib/Kconfig"
 
 rsource "lwm2m_carrier/Kconfig"
 
+rsource "at_notif/Kconfig"
+
 rsource "at_host/Kconfig"
 
 rsource "dk_buttons_and_leds/Kconfig"
