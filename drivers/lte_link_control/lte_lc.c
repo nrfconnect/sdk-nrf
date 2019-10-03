@@ -15,6 +15,7 @@
 #include <at_cmd.h>
 #include <at_cmd_parser/at_cmd_parser.h>
 #include <at_cmd_parser/at_params.h>
+#include <at_notif.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
@@ -131,8 +132,10 @@ static const char cgauth[] = "AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
 static const char legacy_pco[] = "AT%XEPCO=0";
 #endif
 
-void at_handler(char *response)
+void at_handler(void *context, char *response)
 {
+	ARG_UNUSED(context);
+
 	int err;
 	enum lte_lc_nw_reg_status status;
 
@@ -212,12 +215,17 @@ static int w_lte_lc_init(void)
 
 static int w_lte_lc_connect(void)
 {
-	int err;
+	int err, rc;
 	const char *current_network_mode = nw_mode_preferred;
 	bool retry;
 
 	k_sem_init(&link, 0, 1);
-	at_cmd_set_notification_handler(at_handler);
+
+	rc = at_notif_register_handler(NULL, at_handler);
+	if (rc != 0) {
+		LOG_ERR("Can't register handler rc=%d", rc);
+		return rc;
+	}
 
 	do {
 		retry = false;
@@ -256,7 +264,10 @@ static int w_lte_lc_connect(void)
 	} while (retry);
 
 exit:
-	at_cmd_set_notification_handler(NULL);
+	rc = at_notif_deregister_handler(NULL, at_handler);
+	if (rc != 0) {
+		LOG_ERR("Can't de-register handler rc=%d", rc);
+	}
 
 	return err;
 }
