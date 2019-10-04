@@ -28,6 +28,8 @@ menuconfig LWM2M_CARRIER
 	# AT libraries
 	depends on AT_CMD
 	depends on AT_CMD_PARSER
+	# reboot functionality
+	depends on REBOOT
 	help
 	  A library for cellular connection management.
 

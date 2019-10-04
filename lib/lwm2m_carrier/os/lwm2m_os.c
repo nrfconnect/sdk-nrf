@@ -12,6 +12,8 @@
 #include <logging/log.h>
 #include <secure_services.h>
 #include <misc/util.h>
+#include <misc/reboot.h>
+
 
 /* NVS-related defines */
 
@@ -62,7 +64,7 @@ int lwm2m_os_sleep(int ms)
 
 void lwm2m_os_sys_reset(void)
 {
-	spm_request_system_reboot();
+	sys_reboot(SYS_REBOOT_COLD);
 	CODE_UNREACHABLE;
 }
 
