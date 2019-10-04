@@ -265,6 +265,8 @@ static int z_to_nrf_family(sa_family_t z_family)
 		return NRF_AF_INET6;
 	case AF_LTE:
 		return NRF_AF_LTE;
+	case AF_LOCAL:
+		return NRF_AF_LOCAL;
 	case AF_UNSPEC:
 	/* No NRF_AF_UNSPEC defined. */
 	default:
@@ -281,6 +283,8 @@ static int nrf_to_z_family(nrf_socket_family_t nrf_family)
 		return AF_INET6;
 	case NRF_AF_LTE:
 		return AF_LTE;
+	case NRF_AF_LOCAL:
+		return AF_LOCAL;
 	default:
 		return -EAFNOSUPPORT;
 	}
