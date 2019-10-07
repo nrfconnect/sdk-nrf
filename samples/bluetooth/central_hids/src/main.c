@@ -23,6 +23,8 @@
 #include <bluetooth/services/hids_c.h>
 #include <dk_buttons_and_leds.h>
 
+#include <settings/settings.h>
+
 /**
  * Switch between boot protocol and report protocol mode.
  */
@@ -139,8 +141,24 @@ static const struct bt_gatt_dm_cb discovery_cb = {
 	.error_found = discovery_error_found_cb,
 };
 
+static void gatt_discover(struct bt_conn *conn)
+{
+	int err;
+
+	if (conn != default_conn) {
+		return;
+	}
+
+	err = bt_gatt_dm_start(conn, BT_UUID_HIDS, &discovery_cb, NULL);
+	if (err) {
+		printk("could not start the discovery procedure, error "
+			"code: %d\n", err);
+	}
+}
+
 static void connected(struct bt_conn *conn, u8_t conn_err)
 {
+	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
@@ -152,8 +170,11 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 
 	printk("Connected: %s\n", addr);
 
-	if (bt_conn_set_security(conn, BT_SECURITY_L2)) {
-		printk("Failed to set security\n");
+	err = bt_conn_set_security(conn, BT_SECURITY_L2);
+	if (err) {
+		printk("Failed to set security: %d\n", err);
+
+		gatt_discover(conn);
 	}
 }
 
@@ -197,6 +218,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	} else {
 		printk("Security failed: %s level %u err %d", addr, level, err);
 	}
+
+	gatt_discover(conn);
 }
 
 static struct bt_conn_cb conn_callbacks = {
@@ -484,21 +507,6 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 }
 
 
-static void gatt_discover(struct bt_conn *conn)
-{
-	if (conn == default_conn) {
-		int err = bt_gatt_dm_start(conn,
-					   BT_UUID_HIDS,
-					   &discovery_cb,
-					   NULL);
-		if (err) {
-			printk("could not start the discovery procedure, error "
-			       "code: %d\n", err);
-		}
-	}
-}
-
-
 static void auth_cancel(struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -506,8 +514,6 @@ static void auth_cancel(struct bt_conn *conn)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	printk("Pairing cancelled: %s\n", addr);
-
-	gatt_discover(conn);
 }
 
 
@@ -515,24 +521,18 @@ static void auth_done(struct bt_conn *conn)
 {
 	printk("%s()\n", __func__);
 	bt_conn_auth_pairing_confirm(conn);
-
-	gatt_discover(conn);
 }
 
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	printk("Paired conn: %p, bonded: %d\n", conn, bonded);
-
-	gatt_discover(conn);
 }
 
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
 	printk("Pairing failed conn: %p, reason %d\n", conn, reason);
-
-	gatt_discover(conn);
 }
 
 
@@ -567,6 +567,10 @@ void main(void)
 	}
 
 	printk("Bluetooth initialized\n");
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
 
 	scan_init();
 
