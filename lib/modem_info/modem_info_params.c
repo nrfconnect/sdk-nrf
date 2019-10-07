@@ -31,6 +31,7 @@ int modem_info_params_init(struct modem_param_info *modem)
 	modem->network.lte_mode.type		= MODEM_INFO_LTE_MODE;
 	modem->network.nbiot_mode.type		= MODEM_INFO_NBIOT_MODE;
 	modem->network.gps_mode.type		= MODEM_INFO_GPS_MODE;
+	modem->network.date_time.type		= MODEM_INFO_DATE_TIME;
 
 	modem->sim.uicc.type			= MODEM_INFO_UICC;
 	modem->sim.iccid.type			= MODEM_INFO_ICCID;
@@ -143,6 +144,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 		ret += modem_data_get(&modem->network.lte_mode);
 		ret += modem_data_get(&modem->network.nbiot_mode);
 		ret += modem_data_get(&modem->network.gps_mode);
+		ret += modem_data_get(&modem->network.date_time);
 
 		ret += mcc_mnc_parse(&modem->network.current_operator,
 				&modem->network.mcc,
