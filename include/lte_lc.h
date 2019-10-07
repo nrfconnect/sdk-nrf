@@ -12,6 +12,20 @@
 #ifndef ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 #define ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 
+/* NOTE: enum lte_lc_nw_reg_status maps directly to the registration status
+ *	 as returned by the AT command "AT+CEREG?".
+ */
+enum lte_lc_nw_reg_status {
+	LTE_LC_NW_REG_NOT_REGISTERED		= 0,
+	LTE_LC_NW_REG_REGISTERED_HOME		= 1,
+	LTE_LC_NW_REG_SEARCHING			= 2,
+	LTE_LC_NW_REG_REGISTRATION_DENIED	= 3,
+	LTE_LC_NW_REG_UNKNOWN			= 4,
+	LTE_LC_NW_REG_REGISTERED_ROAMING	= 5,
+	LTE_LC_NW_REG_REGISTERED_EMERGENCY	= 8,
+	LTE_LC_NW_REG_UICC_FAIL			= 90
+};
+
 /** @brief Function for initializing
  * the modem.  NOTE: a follow-up call to lte_lc_connect()
  * must be made.
@@ -61,7 +75,7 @@ int lte_lc_normal(void);
  */
 int lte_lc_psm_req(bool enable);
 
-/* @brief Function for getting the current PSM (Power Saving Mode)
+/**@brief Function for getting the current PSM (Power Saving Mode)
  *	  configurations for periodic TAU (Tracking Area Update) and
  *	  active time, both in units of seconds.
  *
@@ -81,5 +95,13 @@ int lte_lc_psm_get(int *tau, int *active_time);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_edrx_req(bool enable);
+
+/**@brief Get the current network registration status.
+ *
+ * @param status Pointer for network registation status.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
 
 #endif /* ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_ */
