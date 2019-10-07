@@ -31,25 +31,33 @@ extern "C" {
  * @brief Download client event IDs.
  */
 enum download_client_evt_id {
-	/** Event contains a fragment. */
+	/**
+	 * Event contains a fragment.
+	 * The application may return any non-zero value to stop the download.
+	 */
 	DOWNLOAD_CLIENT_EVT_FRAGMENT,
-	/** Download complete. */
-	DOWNLOAD_CLIENT_EVT_DONE,
 	/**
 	 * An error has occurred during download and
 	 * the connection to the server has been lost.
-	 * - ENOTCONN: error reading from socket
-	 * - ECONNRESET: peer closed connection
-	 * - EBADMSG: HTTP response header not
-	 *            as expected
 	 *
-	 * In both cases, the application should
-	 * disconnect (@ref download_client_disconnect)
-	 * and connect (@ref download_client_connect)
-	 * before reattempting the download, to
-	 * reinitialize the network socket.
+	 * Error reason may be one of the following:
+	 * - ENOTCONN: socket error during send() or recv()
+	 * - ECONNRESET: peer closed connection
+	 * - EBADMSG: HTTP response header not as expected
+	 *
+	 * In case of network-related errors (ENOTCONN or ECONNRESET),
+	 * returning zero from the callback will let the library attempt
+	 * to reconnect to the server and download the last fragment again.
+	 * Otherwise, the application may return any non-zero value
+	 * to stop the download.
+	 *
+	 * In case the download is stopped, the application should manually
+	 * disconnect (@ref download_client_disconnect) to clean up the
+	 * network socket as necessary before re-attempting the download.
 	 */
 	DOWNLOAD_CLIENT_EVT_ERROR,
+	/** Download complete. */
+	DOWNLOAD_CLIENT_EVT_DONE,
 };
 
 /**
