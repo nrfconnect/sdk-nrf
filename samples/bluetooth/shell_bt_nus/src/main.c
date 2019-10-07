@@ -74,9 +74,10 @@ static void __attribute__((unused)) security_changed(struct bt_conn *conn,
 	char *addr = log_addr(conn);
 
 	if (!err) {
-		printk("Security changed: %s level %u", addr, level);
+		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d", addr, level, err);
+		LOG_INF("Security failed: %s level %u err %d", addr, level,
+			err);
 	}
 }
 
