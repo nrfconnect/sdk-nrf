@@ -582,7 +582,7 @@ static void auth_cancel(struct bt_conn *conn)
 }
 
 
-static void auth_done(struct bt_conn *conn)
+static void pairing_confirm(struct bt_conn *conn)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -590,7 +590,7 @@ static void auth_done(struct bt_conn *conn)
 
 	bt_conn_auth_pairing_confirm(conn);
 
-	printk("Authentication done: %s\n", addr);
+	printk("Pairing confirmed: %s\n", addr);
 }
 
 
@@ -648,7 +648,7 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
-	.pairing_confirm = auth_done,
+	.pairing_confirm = pairing_confirm,
 #if CONFIG_NFC_OOB_PAIRING
 	.oob_data_request = auth_oob_data_request,
 #endif
