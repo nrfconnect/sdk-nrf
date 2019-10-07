@@ -23,10 +23,17 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_CMD_SIZE(x)			(sizeof(x) - 1)
 #define AT_CEREG_5			"AT+CEREG=5"
 #define AT_CEREG_READ			"AT+CEREG?"
+#define AT_CEREG_RESPONSE_PREFIX	"+CEREG"
 #define AT_CEREG_PARAMS_COUNT		10
+#define AT_CEREG_PREFIX_INDEX		0
+#define AT_CEREG_REG_STATUS_INDEX	1
 #define AT_CEREG_ACTIVE_TIME_INDEX	8
 #define AT_CEREG_TAU_INDEX		9
 #define AT_CEREG_RESPONSE_MAX_LEN	80
+
+/* Forward declaration */
+static int parse_nw_reg_status(char *at_response,
+			       enum lte_lc_nw_reg_status *status);
 
 /* Lookup table for T3324 timer used for PSM active time. Unit is seconds.
  * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
@@ -111,27 +118,25 @@ static const char legacy_pco[] = "AT%XEPCO=0";
 
 void at_handler(char *response)
 {
-	char  id[16];
-	u32_t val;
-	size_t len = 16;
+	int err;
+	enum lte_lc_nw_reg_status status;
+
+	if (response == NULL) {
+		LOG_ERR("Response buffer is NULL-pointer");
+		return;
+	}
 
 	LOG_DBG("recv: %s", log_strdup(response));
 
-	at_parser_params_from_str(response, NULL, &params);
-	at_params_string_get(&params, 0, id, &len);
+	err = parse_nw_reg_status(response, &status);
+	if (err) {
+		LOG_ERR("Could not get network registration status");
+		return;
+	}
 
-	/* Waiting to receive either a +CEREG: 1 or +CEREG: 5 string from
-	 * from the modem which means 'registered, home network' or
-	 * 'registered, roaming' respectively.
-	 **/
-
-	if ((len > 0) &&
-	    (memcmp(id, "+CEREG", 6) == 0)) {
-		at_params_int_get(&params, 1, &val);
-
-		if ((val == 1) || (val == 5)) {
-			k_sem_give(&link);
-		}
+	if ((status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+	    (status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		k_sem_give(&link);
 	}
 }
 
@@ -198,7 +203,6 @@ static int w_lte_lc_connect(void)
 
 	k_sem_init(&link, 0, 1);
 	at_cmd_set_notification_handler(at_handler);
-	at_params_list_init(&params, 10);
 
 	do {
 		retry = false;
@@ -237,7 +241,6 @@ static int w_lte_lc_connect(void)
 	} while (retry);
 
 exit:
-	at_params_list_free(&params);
 	at_cmd_set_notification_handler(NULL);
 
 	return err;
@@ -421,6 +424,124 @@ int lte_lc_edrx_req(bool enable)
 	}
 
 	return 0;
+}
+
+/**@brief Parses an AT command response, and returns the current network
+ *	  registration status if it's available in the string.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param status Pointer to where the registration status is stored.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+static int parse_nw_reg_status(char *at_response,
+			       enum lte_lc_nw_reg_status *status)
+{
+	int err, reg_status;
+	struct at_param_list resp_list = {0};
+	char  response_prefix[sizeof(AT_CEREG_RESPONSE_PREFIX)] = {0};
+	size_t response_prefix_len = sizeof(response_prefix);
+
+	if ((at_response == NULL) || (status == NULL)) {
+		return -EINVAL;
+	}
+
+	err = at_params_list_init(&resp_list, AT_CEREG_PARAMS_COUNT);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	/* Parse CEREG response and populate AT parameter list */
+	err = at_parser_max_params_from_str(at_response,
+					    NULL,
+					    &resp_list,
+					    AT_CEREG_PARAMS_COUNT);
+	if (err) {
+		LOG_ERR("Could not parse AT+CEREG response, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Check if AT command response starts with +CEREG */
+	err = at_params_string_get(&resp_list,
+				   AT_CEREG_PREFIX_INDEX,
+				   response_prefix,
+				   &response_prefix_len);
+	if (err) {
+		LOG_ERR("Could not get response prefix, error: %d", err);
+		goto clean_exit;
+	}
+
+	if ((response_prefix_len < (sizeof(AT_CEREG_RESPONSE_PREFIX) - 1)) ||
+	    (memcmp(response_prefix, AT_CEREG_RESPONSE_PREFIX,
+		    sizeof(AT_CEREG_RESPONSE_PREFIX) - 1) != 0)) {
+		LOG_ERR("Invalid CEREG response");
+		err = -EIO;
+		goto clean_exit;
+	}
+
+	/* Get the network registration status parameter from the response */
+	err = at_params_int_get(&resp_list, AT_CEREG_REG_STATUS_INDEX,
+				&reg_status);
+	if (err) {
+		LOG_ERR("Could not get registration status, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Check if the parsed value maps to a valid registration status */
+	switch (reg_status) {
+	case LTE_LC_NW_REG_NOT_REGISTERED:
+	case LTE_LC_NW_REG_REGISTERED_HOME:
+	case LTE_LC_NW_REG_SEARCHING:
+	case LTE_LC_NW_REG_REGISTRATION_DENIED:
+	case LTE_LC_NW_REG_UNKNOWN:
+	case LTE_LC_NW_REG_REGISTERED_ROAMING:
+	case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
+	case LTE_LC_NW_REG_UICC_FAIL:
+		*status = reg_status;
+		LOG_DBG("Network registration status: %d", reg_status);
+		break;
+	default:
+		LOG_ERR("Invalid network registration status: %d", reg_status);
+		err = -EIO;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+
+	return err;
+}
+
+int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
+{
+	int err;
+	char buf[AT_CEREG_RESPONSE_MAX_LEN] = {0};
+
+	if (status == NULL) {
+		return -EINVAL;
+	}
+
+	/* Enable network registration status with level 5 */
+	err = at_cmd_write(AT_CEREG_5, NULL, 0, NULL);
+	if (err) {
+		LOG_ERR("Could not set CEREG level 5, error: %d", err);
+		return err;
+	}
+
+	/* Read network registration status */
+	err = at_cmd_write(AT_CEREG_READ, buf, sizeof(buf), NULL);
+	if (err) {
+		LOG_ERR("Could not get CEREG response, error: %d", err);
+		return err;
+	}
+
+	err = parse_nw_reg_status(buf, status);
+	if (err) {
+		LOG_ERR("Could not parse registration status, err: %d", err);
+		return err;
+	}
+
+	return err;
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
