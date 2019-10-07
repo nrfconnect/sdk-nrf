@@ -21,6 +21,9 @@
 #include <bluetooth/gatt.h>
 
 #include <bluetooth/services/lbs.h>
+
+#include <settings/settings.h>
+
 #include <dk_buttons_and_leds.h>
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
@@ -144,8 +147,11 @@ static void bt_ready(int err)
 		return;
 	}
 
-	err = bt_gatt_lbs_init(&lbs_callbacs);
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
 
+	err = bt_gatt_lbs_init(&lbs_callbacs);
 	if (err) {
 		printk("Failed to init LBS (err:%d)\n", err);
 		return;

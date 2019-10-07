@@ -25,6 +25,8 @@
 
 #include <dk_buttons_and_leds.h>
 
+#include <settings/settings.h>
+
 #include <stdio.h>
 
 #define STACKSIZE               CONFIG_BT_GATT_NUS_THREAD_STACK_SIZE
@@ -347,6 +349,10 @@ static void bt_ready(int err)
 	if (err) {
 		printk("BLE init failed with error code %d\n", err);
 		return;
+	}
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
 	}
 
 	err = bt_gatt_nus_init(&nus_cb);
