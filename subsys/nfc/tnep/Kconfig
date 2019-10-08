@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config NFC_TNEP_TAG
+	bool "Tag NDEF Exchange Protocol."
+	select NFC_NDEF
+	select NFC_NDEF_MSG
+	select NFC_NDEF_TNEP_RECORD
+	select NFC_NDEF_PARSER
+	help
+	  Enable TAG NDEF Exchange Protocol
+
+if NFC_TNEP_TAG
+
+config NFC_TNEP_RX_MAX_RECORD_CNT
+	int "Maximum count of NDEF Records in the received NDEF Message"
+	default 16
+	help
+	  Set the maximum count of NDEF Records in the received NDEF Message
+
+config NFC_TNEP_RX_MAX_RECORD_SIZE
+	int "Maximum size of received NDEF Record"
+	default 64
+	help
+	  Set the maximum size of received NDEF Record
+
+module = NFC_TNEP_TAG
+module-str = TNEP_TAG
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_TNEP_TAG

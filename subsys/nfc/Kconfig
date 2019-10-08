@@ -10,5 +10,6 @@ rsource "ndef/Kconfig"
 rsource "t2t/Kconfig"
 rsource "t4t/Kconfig"
 rsource "lib/Kconfig"
+rsource "tnep/Kconfig"
 
 endmenu
