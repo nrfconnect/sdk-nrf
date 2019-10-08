@@ -67,6 +67,9 @@ div.figure {
 .nrfxlib {
  background-color: #ff9933;
 }
+.kconfig {
+ background-color: #e82424
+}
 
 
 /* dbk tweak for doxygen-generated API headings (for RTD theme) */

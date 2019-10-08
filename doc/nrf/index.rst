@@ -32,6 +32,5 @@ Documentation for different versions of the |NCS| is available at the following 
    drivers
    libraries
    scripts
-   reference/kconfig/index
 
 ..   cheat_sheet

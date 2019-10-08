@@ -32,6 +32,18 @@ if "NRFXLIB_BUILD" not in os.environ:
     sys.exit("$NRFXLIB_BUILD environment variable undefined.")
 NRFXLIB_BUILD = os.path.abspath(os.environ["NRFXLIB_BUILD"])
 
+if "NRFXLIB_OUTPUT" not in os.environ:
+    sys.exit("$NRFXLIB_OUTPUT environment variable undefined.")
+NRFXLIB_OUTPUT = os.path.abspath(os.environ["NRFXLIB_OUTPUT"])
+
+if "NRFXLIB_RST_SRC" not in os.environ:
+    sys.exit("$NRFXLIB_RST_SRC environment variable undefined.")
+NRFXLIB_RST_SRC = os.path.abspath(os.environ["NRFXLIB_RST_SRC"])
+
+if "KCONFIG_OUTPUT" not in os.environ:
+    sys.exit("$KCONFIG_OUTPUT environment variable undefined.")
+KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -136,6 +148,13 @@ html_show_copyright = True
 # If true, license is shown in the HTML footer. Default is True.
 html_show_license = True
 
+# Link the Kconfig docs with Intersphinx so that references to Kconfig symbols
+# (via :option:`CONFIG_FOO`) turn into links
+intersphinx_mapping = {
+    'kconfig': (os.path.relpath(KCONFIG_OUTPUT, NRFXLIB_OUTPUT),
+                os.path.join(os.path.relpath(KCONFIG_OUTPUT, NRFXLIB_RST_SRC),
+                             'objects.inv'))
+}
 
 breathe_projects = {
     "nrfxlib": "{}/doxygen/xml".format(NRFXLIB_BUILD),

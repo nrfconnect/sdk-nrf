@@ -94,7 +94,7 @@ The |NCS| provides the following samples for the nRF53 network core:
   You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.
   For example:
 
-  * :option:`zephyr:CONFIG_BT_MAX_CONN` must be equal to the maximum number of connections supported by the application sample.
+  * :option:`CONFIG_BT_MAX_CONN` must be equal to the maximum number of connections supported by the application sample.
   * If the application sample uses a specific Bluetooth LE functionality, this functionality must be enabled in the network sample as well.
     For example, you must modify the configuration of the network sample to make it compatible with the :ref:`ble_throughput` sample::
 
