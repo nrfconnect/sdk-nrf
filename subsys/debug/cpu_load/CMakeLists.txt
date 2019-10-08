@@ -4,5 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-rsource "ppi_trace/Kconfig"
-rsource "cpu_load/Kconfig"
+zephyr_sources(cpu_load.c)
