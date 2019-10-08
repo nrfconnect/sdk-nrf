@@ -84,7 +84,7 @@ struct nfc_ndef_tnep_rec_svc_param {
  * @retval 0 If the operation was successful.
  * Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_status *payload_desc,
+int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_rec_status *payload_desc,
 				     u8_t *buffer, u32_t *len);
 
 /**
@@ -100,7 +100,7 @@ int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_status *payload_desc,
  * @retval 0 If the operation was successful.
  *	   Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_tnep_rec_svc_select_payload(struct nfc_ndef_tnep_svc_select *payload_desc,
+int nfc_ndef_tnep_rec_svc_select_payload(struct nfc_ndef_tnep_rec_svc_select *payload_desc,
 					 u8_t *buffer, u32_t *len);
 
 /**
@@ -116,7 +116,7 @@ int nfc_ndef_tnep_rec_svc_select_payload(struct nfc_ndef_tnep_svc_select *payloa
  * @retval 0 If the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_svc_param *payload_desc,
+int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payload_desc,
 					u8_t *buffer, u32_t *len);
 
 /**
@@ -136,7 +136,7 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_svc_param *payload_
  */
 #define NFC_TNEP_STATUS_RECORD_DESC_DEF(_name, _status)                   \
 	struct nfc_ndef_tnep_rec_status _name = {                         \
-		.status = status,                                         \
+		.status = _status,                                        \
 	};                                                                \
 									  \
 	NFC_NDEF_GENERIC_RECORD_DESC_DEF(_name, TNF_WELL_KNOWN,           \
