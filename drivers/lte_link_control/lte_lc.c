@@ -19,21 +19,32 @@
 
 LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
-#define LC_MAX_READ_LENGTH		128
-#define AT_CMD_SIZE(x)			(sizeof(x) - 1)
-#define AT_CEREG_5			"AT+CEREG=5"
-#define AT_CEREG_READ			"AT+CEREG?"
-#define AT_CEREG_RESPONSE_PREFIX	"+CEREG"
-#define AT_CEREG_PARAMS_COUNT		10
-#define AT_CEREG_PREFIX_INDEX		0
-#define AT_CEREG_REG_STATUS_INDEX	1
-#define AT_CEREG_ACTIVE_TIME_INDEX	8
-#define AT_CEREG_TAU_INDEX		9
-#define AT_CEREG_RESPONSE_MAX_LEN	80
+#define LC_MAX_READ_LENGTH			128
+#define AT_CMD_SIZE(x)				(sizeof(x) - 1)
+#define AT_RESPONSE_PREFIX_INDEX		0
+#define AT_CEREG_5				"AT+CEREG=5"
+#define AT_CEREG_READ				"AT+CEREG?"
+#define AT_CEREG_RESPONSE_PREFIX		"+CEREG"
+#define AT_CEREG_PARAMS_COUNT			10
+#define AT_CEREG_REG_STATUS_INDEX		1
+#define AT_CEREG_ACTIVE_TIME_INDEX		8
+#define AT_CEREG_TAU_INDEX			9
+#define AT_CEREG_RESPONSE_MAX_LEN		80
+#define AT_XSYSTEMMODE_READ			"AT%XSYSTEMMODE?"
+#define AT_XSYSTEMMODE_RESPONSE_PREFIX		"%XSYSTEMMODE"
+#define AT_XSYSTEMMODE_PROTO			"AT%%XSYSTEMMODE=%d,%d,%d,%d"
+/* The indices are for the set command. Add 1 for the read command indices. */
+#define AT_XSYSTEMMODE_LTEM_INDEX		0
+#define AT_XSYSTEMMODE_NBIOT_INDEX		1
+#define AT_XSYSTEMMODE_GPS_INDEX		2
+#define AT_XSYSTEMMODE_PARAMS_COUNT		5
+#define AT_XSYSTEMMODE_RESPONSE_MAX_LEN		30
 
-/* Forward declaration */
-static int parse_nw_reg_status(char *at_response,
+/* Forward declarations */
+static int parse_nw_reg_status(const char *at_response,
 			       enum lte_lc_nw_reg_status *status);
+static bool response_is_valid(const char *response, size_t response_len,
+			      const char *check);
 
 /* Lookup table for T3324 timer used for PSM active time. Unit is seconds.
  * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
@@ -104,7 +115,6 @@ static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,1,0";
 #endif
 
 static struct k_sem link;
-static struct at_param_list params;
 
 #if defined(CONFIG_LTE_PDP_CMD) && defined(CONFIG_LTE_PDP_CONTEXT)
 static const char cgdcont[] = "AT+CGDCONT="CONFIG_LTE_PDP_CONTEXT;
@@ -426,6 +436,31 @@ int lte_lc_edrx_req(bool enable)
 	return 0;
 }
 
+/**@brief Helper function to check if a response is what was expected
+ *
+ * @param response Pointer to response prefix
+ * @param response_len Length of the response to be checked
+ * @param check The buffer with "truth" to verify the response against,
+ *		for example "+CEREG"
+ *
+ * @return True if the provided buffer and check are equal, false otherwise.
+ */
+static bool response_is_valid(const char *response, size_t response_len,
+			      const char *check)
+{
+	if ((response == NULL) || (check == NULL)) {
+		LOG_ERR("Invalid pointer provided");
+		return false;
+	}
+
+	if ((response_len < strlen(check)) ||
+	    (memcmp(response, check, response_len) != 0)) {
+		return false;
+	}
+
+	return true;
+}
+
 /**@brief Parses an AT command response, and returns the current network
  *	  registration status if it's available in the string.
  *
@@ -434,7 +469,7 @@ int lte_lc_edrx_req(bool enable)
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-static int parse_nw_reg_status(char *at_response,
+static int parse_nw_reg_status(const char *at_response,
 			       enum lte_lc_nw_reg_status *status)
 {
 	int err, reg_status;
@@ -464,7 +499,7 @@ static int parse_nw_reg_status(char *at_response,
 
 	/* Check if AT command response starts with +CEREG */
 	err = at_params_string_get(&resp_list,
-				   AT_CEREG_PREFIX_INDEX,
+				   AT_RESPONSE_PREFIX_INDEX,
 				   response_prefix,
 				   &response_prefix_len);
 	if (err) {
@@ -472,9 +507,8 @@ static int parse_nw_reg_status(char *at_response,
 		goto clean_exit;
 	}
 
-	if ((response_prefix_len < (sizeof(AT_CEREG_RESPONSE_PREFIX) - 1)) ||
-	    (memcmp(response_prefix, AT_CEREG_RESPONSE_PREFIX,
-		    sizeof(AT_CEREG_RESPONSE_PREFIX) - 1) != 0)) {
+	if (!response_is_valid(response_prefix, response_prefix_len,
+			       AT_CEREG_RESPONSE_PREFIX)) {
 		LOG_ERR("Invalid CEREG response");
 		err = -EIO;
 		goto clean_exit;
@@ -540,6 +574,155 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 		LOG_ERR("Could not parse registration status, err: %d", err);
 		return err;
 	}
+
+	return err;
+}
+
+int lte_lc_system_mode_set(enum lte_lc_system_mode mode)
+{
+	int len, err = 0;
+	u8_t mode_params[4] = {0};
+	char cmd[sizeof(AT_XSYSTEMMODE_PROTO)];
+
+	switch (mode) {
+	case LTE_LC_SYSTEM_MODE_NONE:
+		LOG_DBG("No system mode set");
+		goto exit;
+	case LTE_LC_SYSTEM_MODE_LTEM:
+		mode_params[AT_XSYSTEMMODE_LTEM_INDEX] = 1;
+		break;
+	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
+		mode_params[AT_XSYSTEMMODE_LTEM_INDEX] = 1;
+		mode_params[AT_XSYSTEMMODE_GPS_INDEX] = 1;
+		break;
+	case LTE_LC_SYSTEM_MODE_NBIOT:
+		mode_params[AT_XSYSTEMMODE_NBIOT_INDEX] = 1;
+		break;
+	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
+		mode_params[AT_XSYSTEMMODE_NBIOT_INDEX] = 1;
+		mode_params[AT_XSYSTEMMODE_GPS_INDEX] = 1;
+		break;
+	case LTE_LC_SYSTEM_MODE_GPS:
+		mode_params[AT_XSYSTEMMODE_GPS_INDEX] = 1;
+		break;
+	default:
+		LOG_ERR("Invalid system mode requested");
+		err = -EINVAL;
+		goto exit;
+	}
+
+	/* System mode array is populated, proceed to compile the AT command */
+	len = snprintf(cmd, sizeof(AT_XSYSTEMMODE_PROTO), AT_XSYSTEMMODE_PROTO,
+		       mode_params[0], mode_params[1], mode_params[2],
+		       mode_params[3]);
+
+	LOG_DBG("Sending command: %s", log_strdup(cmd));
+
+	err = at_cmd_write(cmd, NULL, 0, NULL);
+	if (err) {
+		LOG_ERR("Could not send AT command, err: %d", err);
+	}
+
+exit:
+	return err;
+}
+
+int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
+{
+	int err, bitmask = 0;
+	struct at_param_list resp_list = {0};
+	char response[AT_XSYSTEMMODE_RESPONSE_MAX_LEN] = {0};
+	char response_prefix[sizeof(AT_XSYSTEMMODE_RESPONSE_PREFIX)] = {0};
+	size_t response_prefix_len = sizeof(response_prefix);
+
+	if (mode == NULL) {
+		return -EINVAL;
+	}
+
+	err = at_cmd_write(AT_XSYSTEMMODE_READ, response, sizeof(response),
+			   NULL);
+	if (err) {
+		LOG_ERR("Could not send AT command");
+		return err;
+	}
+
+	err = at_params_list_init(&resp_list, AT_XSYSTEMMODE_PARAMS_COUNT);
+	if (err) {
+		LOG_ERR("Could init AT params list, error: %d", err);
+		return err;
+	}
+
+	err = at_parser_max_params_from_str(response, NULL, &resp_list,
+					    AT_XSYSTEMMODE_PARAMS_COUNT);
+	if (err) {
+		LOG_ERR("Could not parse AT response, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Check if AT command response starts with %XSYSTEMMODE */
+	err = at_params_string_get(&resp_list,
+				   AT_RESPONSE_PREFIX_INDEX,
+				   response_prefix,
+				   &response_prefix_len);
+	if (err) {
+		LOG_ERR("Could not get response prefix, error: %d", err);
+		goto clean_exit;
+	}
+
+	if (!response_is_valid(response_prefix, response_prefix_len,
+			       AT_XSYSTEMMODE_RESPONSE_PREFIX)) {
+		LOG_ERR("Invalid XSYSTEMMODE response");
+		err = -EIO;
+		goto clean_exit;
+	}
+
+	/* We skip the first parameter, as that's the response prefix,
+	 * "%XSYSTEMMODE:" in this case."
+	 */
+	for (size_t i = 1; i < AT_XSYSTEMMODE_PARAMS_COUNT; i++) {
+		int param;
+
+		err = at_params_int_get(&resp_list, i, &param);
+		if (err) {
+			LOG_ERR("Could not parse mode parameter, err: %d", err);
+			goto clean_exit;
+		}
+
+		bitmask = param ? bitmask | BIT(i) : bitmask;
+	}
+
+	/* When checking the bitmask, we need to add 1 to the indices,
+	 * as the response prefix is also counted as a parameter.
+	 */
+	switch (bitmask) {
+	case 0:
+		*mode = LTE_LC_SYSTEM_MODE_NONE;
+		break;
+	case BIT(AT_XSYSTEMMODE_LTEM_INDEX + 1):
+		*mode = LTE_LC_SYSTEM_MODE_LTEM;
+		break;
+	case BIT(AT_XSYSTEMMODE_NBIOT_INDEX + 1):
+		*mode = LTE_LC_SYSTEM_MODE_NBIOT;
+		break;
+	case BIT(AT_XSYSTEMMODE_GPS_INDEX + 1):
+		*mode = LTE_LC_SYSTEM_MODE_GPS;
+		break;
+	case (BIT(AT_XSYSTEMMODE_LTEM_INDEX + 1) |
+	      BIT(AT_XSYSTEMMODE_GPS_INDEX + 1)):
+		*mode = LTE_LC_SYSTEM_MODE_LTEM_GPS;
+		break;
+	case (BIT(AT_XSYSTEMMODE_NBIOT_INDEX + 1) |
+	      BIT(AT_XSYSTEMMODE_GPS_INDEX + 1)):
+		*mode = LTE_LC_SYSTEM_MODE_NBIOT_GPS;
+		break;
+	default:
+		LOG_ERR("Invalid system mode, assuming parsing error");
+		err = -EFAULT;
+		break;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
 
 	return err;
 }

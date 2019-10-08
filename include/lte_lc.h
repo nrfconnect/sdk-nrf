@@ -26,6 +26,15 @@ enum lte_lc_nw_reg_status {
 	LTE_LC_NW_REG_UICC_FAIL			= 90
 };
 
+enum lte_lc_system_mode {
+	LTE_LC_SYSTEM_MODE_NONE,
+	LTE_LC_SYSTEM_MODE_LTEM,
+	LTE_LC_SYSTEM_MODE_NBIOT,
+	LTE_LC_SYSTEM_MODE_GPS,
+	LTE_LC_SYSTEM_MODE_LTEM_GPS,
+	LTE_LC_SYSTEM_MODE_NBIOT_GPS
+};
+
 /** @brief Function for initializing
  * the modem.  NOTE: a follow-up call to lte_lc_connect()
  * must be made.
@@ -103,5 +112,21 @@ int lte_lc_edrx_req(bool enable);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
+
+/**@brief Set the modem's system mode.
+ *
+ * @param mode System mode to set.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_system_mode_set(enum lte_lc_system_mode mode);
+
+/**@brief Get the modem's system mode.
+ *
+ * @param mode Pointer to system mode variable.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_system_mode_get(enum lte_lc_system_mode *mode);
 
 #endif /* ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_ */
