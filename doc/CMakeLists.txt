@@ -67,6 +67,9 @@ set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
 
+# Output directory for the shared Kconfig documentation
+set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/kconfig)
+
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
 file(MAKE_DIRECTORY ${HTML_DIR})
@@ -78,9 +81,12 @@ file(MAKE_DIRECTORY ${HTML_DIR})
 # common Sphinx HTML output folder.
 #
 
-# Parameters to doc/CMakeLists.txt in Zephyr
+# Parameters to doc/CMakeLists.txt in Zephyr. KCONFIG_OUTPUT is used to find
+# objects.inv from the Kconfig docs, to link the Zephyr docs to the Kconfig
+# docs.
 set(SPHINXOPTS -c ${NRF_BASE}/doc/zephyr)
 set(SPHINX_OUTPUT_DIR ${HTML_DIR}/zephyr)
+set(KCONFIG_OUTPUT ${HTML_DIR}/kconfig)
 
 # Get access to the 'html' target from doc/CMakeLists.txt in Zephyr
 add_subdirectory(${ZEPHYR_BASE}/doc ${ZEPHYR_BINARY_DIR})
@@ -94,7 +100,7 @@ add_dependencies(zephyr html)
 # Add 'clean-zephyr', 'clean-nrf', etc., targets
 #
 
-foreach(target zephyr nrf mcuboot nrfxlib)
+foreach(target zephyr nrf mcuboot nrfxlib kconfig)
   set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
   # Cleanup build output
   add_custom_target(
@@ -176,18 +182,6 @@ else()
   set(SEP :)
 endif()
 
-add_custom_target(
-  nrf-kconfig
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRF_RST_OUT}/doc/nrf/reference/kconfig
-  COMMAND ${CMAKE_COMMAND} -E env
-  PYTHONPATH="${ZEPHYR_BASE}/scripts/kconfig${SEP}$ENV{PYTHONPATH}"
-  srctree=${NRF_BASE}
-  KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
-  KCONFIG_DOC_MODE=1
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py --kconfig ${NRF_BASE}/Kconfig.nrf ${NRF_RST_OUT}/doc/nrf/reference/kconfig/
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-)
-
 set(NRF_SPHINX_BUILD_HTML_COMMAND
   ${CMAKE_COMMAND} -E env
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
@@ -195,6 +189,7 @@ set(NRF_SPHINX_BUILD_HTML_COMMAND
   NRF_BASE=${NRF_BASE}
   NRF_BUILD=${NRF_BINARY_DIR}
   NRF_OUTPUT=${HTML_DIR}/nrf
+  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
@@ -210,7 +205,7 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/static/html/index.html ${HTML_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
-add_dependencies(nrf-html nrf-doxy nrf-content nrf-kconfig)
+add_dependencies(nrf-html nrf-doxy nrf-content)
 
 add_custom_target(nrf)
 add_dependencies(nrf nrf-html)
@@ -261,6 +256,9 @@ add_custom_target(
   ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
+  MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
+  MCUBOOT_RST_SRC=${MCUBOOT_RST_OUT}
+  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
   ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -309,18 +307,6 @@ add_custom_target(
 )
 
 
-add_custom_target(
-  nrfxlib-kconfig
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${NRFXLIB_RST_OUT}/kconfig
-  COMMAND ${CMAKE_COMMAND} -E env
-  PYTHONPATH="${ZEPHYR_BASE}/scripts/kconfig${SEP}$ENV{PYTHONPATH}"
-  srctree=${NRFXLIB_BASE}
-  KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
-  KCONFIG_DOC_MODE=1
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py --kconfig ${NRFXLIB_BASE}/Kconfig.nrfxlib ${NRFXLIB_RST_OUT}/kconfig
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-)
-
 set(NRFXLIB_EXTRACT_CONTENT_COMMAND
  ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${NRFXLIB_BASE}
@@ -346,11 +332,75 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env
   NRF_BASE=${NRF_BASE}
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
+  NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
+  NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
+  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
   ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b html ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
-add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy nrfxlib-kconfig)
+add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy)
 
 add_custom_target(nrfxlib)
 add_dependencies(nrfxlib nrfxlib-html)
+
+#
+# Add targets for building the shared Kconfig documentation
+#
+
+# The Kconfig documentation is a separate documentation set that's shared
+# between all modules (nRF, Zephyr, etc.). This makes it possible to link to
+# Kconfig symbols regardless of where they are defined.
+#
+# We rely on the Zephyr Kconfig files pulling in the other Kconfig files, and
+# use the --modules option to genrest.py to split the documentation into a
+# separate page for each module.
+
+set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/rst)
+
+# The 'kconfig-content' target uses genrest.py to generate .rst files for all
+# Kconfig symbols, as well as index pages that point to them
+add_custom_target(
+  kconfig-content
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${KCONFIG_RST_OUT}
+  COMMAND ${CMAKE_COMMAND} -E env
+    PYTHONPATH=${ZEPHYR_BASE}/scripts/kconfig${SEP}$ENV{PYTHONPATH}
+    ZEPHYR_BASE=${ZEPHYR_BASE}
+    srctree=${ZEPHYR_BASE}
+    BOARD_DIR=boards/*/*/
+    ARCH=*
+    ARCH_DIR=arch/
+    SOC_DIR=soc/
+    CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
+    KCONFIG_WARN_UNDEF=y
+    KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
+    KCONFIG_DOC_MODE=1
+      ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py ${KCONFIG_RST_OUT}
+        --separate-all-index
+        --modules nRF,nrf,${NRF_BASE}
+                  nrfxlib,nrfxlib,${NRFXLIB_BASE}
+
+  VERBATIM
+)
+
+# No 'kconfig' target exists, because it clashes with the imported 'kconfig'
+# target from the Zephyr repository
+
+add_custom_target(
+  kconfig-html
+  COMMAND ${CMAKE_COMMAND} -E env
+    ZEPHYR_BASE=${ZEPHYR_BASE}
+    ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
+      ${SPHINXBUILD}
+        -b html
+        -c ${NRF_BASE}/doc/kconfig
+        -d ${KCONFIG_BINARY_DIR}/doctrees
+        -N
+        -w ${KCONFIG_BINARY_DIR}/sphinx.log
+        # The Kconfig reference build doesn't use Breathe, so we can safely
+        # parallelize it
+        -j auto
+        ${KCONFIG_RST_OUT}
+        ${HTML_DIR}/kconfig
+)
+add_dependencies(kconfig-html kconfig-content)

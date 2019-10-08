@@ -60,6 +60,10 @@ if "NRFXLIB_OUTPUT" not in os.environ:
     sys.exit("$NRFXLIB_OUTPUT environment variable undefined.")
 NRFXLIB_OUTPUT = os.path.abspath(os.environ["NRFXLIB_OUTPUT"])
 
+if "KCONFIG_OUTPUT" not in os.environ:
+    sys.exit("$KCONFIG_OUTPUT environment variable undefined.")
+KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -168,7 +172,10 @@ html_show_license = True
 intersphinx_mapping = {
     'zephyr': ('{}'.format(os.path.relpath(ZEPHYR_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(ZEPHYR_OUTPUT, NRF_RST_SRC)), 'objects.inv')),
     'mcuboot': ('{}'.format(os.path.relpath(MCUBOOT_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(MCUBOOT_OUTPUT, NRF_RST_SRC)), 'objects.inv')),
-    'nrfxlib': ('{}'.format(os.path.relpath(NRFXLIB_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(NRFXLIB_OUTPUT, NRF_RST_SRC)), 'objects.inv'))
+    'nrfxlib': ('{}'.format(os.path.relpath(NRFXLIB_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(NRFXLIB_OUTPUT, NRF_RST_SRC)), 'objects.inv')),
+    'kconfig': (os.path.relpath(KCONFIG_OUTPUT, NRF_OUTPUT),
+                os.path.join(os.path.relpath(KCONFIG_OUTPUT, NRF_RST_SRC),
+                             'objects.inv'))
 }
 
 breathe_projects = {
