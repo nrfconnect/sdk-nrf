@@ -15,6 +15,14 @@ source "subsys/logging/Kconfig.template.log_config"
 
 comment "BLE Bond"
 
+config DESKTOP_BLE_USE_DEFAULT_ID
+	bool "Use default Bluetooth local identity"
+	depends on BT_PERIPHERAL
+	help
+	  Bluetooth default local identity is used as ID 0. This identity
+	  cannot be reset. After bond for the default identity is removed,
+	  it is not longer used.
+
 config DESKTOP_BLE_PEER_CONTROL
 	bool "Enable interaction with peer configuration"
 	depends on !DESKTOP_BUTTONS_NONE

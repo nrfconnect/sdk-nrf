@@ -140,17 +140,18 @@ static void swap_bt_stack_peer_id(void)
 {
 	__ASSERT_NO_MSG(state == STATE_ERASE_ADV);
 
-	/* Temporary fix for tests */
-	if ((bt_stack_id_lut[0] == BT_ID_DEFAULT) &&
-	    (cur_peer_id == 0)) {
-		int err = bt_unpair(BT_ID_DEFAULT, NULL);
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_DEFAULT_ID)) {
+		if ((bt_stack_id_lut[0] == BT_ID_DEFAULT) &&
+		    (cur_peer_id == 0)) {
+			int err = bt_unpair(BT_ID_DEFAULT, NULL);
 
-		if (err) {
-			LOG_ERR("Cannot unpair for default id");
-			module_set_state(MODULE_STATE_ERROR);
-			return;
+			if (err) {
+				LOG_ERR("Cannot unpair for default id");
+				module_set_state(MODULE_STATE_ERROR);
+				return;
+			}
+			bt_stack_id_lut[0] = 1;
 		}
-		bt_stack_id_lut[0] = 1;
 	}
 	u8_t temp = bt_stack_id_lut[TEMP_PEER_ID];
 
@@ -453,8 +454,9 @@ static void init_bt_stack_id_lut(void)
 			bt_stack_id_lut[i] = i + 1;
 		}
 
-		/* Temporary fix for tests */
-		bt_stack_id_lut[0] = BT_ID_DEFAULT;
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_DEFAULT_ID)) {
+			bt_stack_id_lut[0] = BT_ID_DEFAULT;
+		}
 	}
 }
 
@@ -576,7 +578,7 @@ static int init_settings(void)
 
 static bool storage_data_is_valid(void)
 {
-	if (!(bt_stack_id_lut_valid && cur_peer_id_valid)) {
+	if (!bt_stack_id_lut_valid || !cur_peer_id_valid) {
 		return false;
 	}
 
