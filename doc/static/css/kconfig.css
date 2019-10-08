@@ -1,0 +1,24 @@
+/* background color top and bottom left */
+
+.wy-side-nav-search {
+ background-color: #e82424
+}
+
+.rst-versions .rst-current-version {
+ background-color: #e82424;
+}
+
+/* text color navigation menu */
+
+/* l1 not selected */
+.wy-menu-vertical a {
+ color: #e82424;
+}
+/* expanded container nodes */
+.wy-menu-vertical li.on a, .wy-menu-vertical li.current > a {
+ color: #e82424;
+}
+/* expanded nodes, not selected */
+.wy-menu-vertical li.current a {
+ color: #e82424;
+}

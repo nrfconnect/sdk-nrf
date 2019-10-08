@@ -8,7 +8,7 @@ See :doc:`readme-zephyr` for general information on how to integrate MCUboot wit
 nRF Connect SDK's `fork of MCUboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_ provides additional functionality that is available when MCUboot is included.
 This functionality is implemented in the files in the ``zephyr`` subfolder.
 
-To include MCUboot in your nRF Connect SDK application, enable :option:`zephyr:CONFIG_BOOTLOADER_MCUBOOT`.
+To include MCUboot in your nRF Connect SDK application, enable :option:`CONFIG_BOOTLOADER_MCUBOOT`.
 
 When you build your application with this option set, the following files that can be used for firmware over-the-air (FOTA) upgrades are automatically generated:
 

@@ -87,6 +87,12 @@ Complete the following steps to build the documentation output:
 
            cmake -GNinja ..
 
+#. Run ninja to build the Kconfig documentation:
+
+        .. code-block:: console
+
+           ninja kconfig-html
+
 #. Run ninja to build the Zephyr documentation:
 
         .. code-block:: console
