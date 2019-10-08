@@ -22,6 +22,11 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define LC_MAX_READ_LENGTH			128
 #define AT_CMD_SIZE(x)				(sizeof(x) - 1)
 #define AT_RESPONSE_PREFIX_INDEX		0
+#define AT_CFUN_READ				"AT+CFUN?"
+#define AT_CFUN_RESPONSE_PREFIX			"+CFUN"
+#define AT_CFUN_MODE_INDEX			1
+#define AT_CFUN_PARAMS_COUNT			2
+#define AT_CFUN_RESPONSE_MAX_LEN		20
 #define AT_CEREG_5				"AT+CEREG=5"
 #define AT_CEREG_READ				"AT+CEREG?"
 #define AT_CEREG_RESPONSE_PREFIX		"+CEREG"
@@ -720,6 +725,68 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
 		err = -EFAULT;
 		break;
 	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+
+	return err;
+}
+
+int lte_lc_func_mode_get(enum lte_lc_func_mode *mode)
+{
+	int err, resp_mode;
+	struct at_param_list resp_list = {0};
+	char response[AT_CFUN_RESPONSE_MAX_LEN] = {0};
+	char response_prefix[sizeof(AT_CFUN_RESPONSE_PREFIX)] = {0};
+	size_t response_prefix_len = sizeof(response_prefix);
+
+	if (mode == NULL) {
+		return -EINVAL;
+	}
+
+	err = at_cmd_write(AT_CFUN_READ, response, sizeof(response), NULL);
+	if (err) {
+		LOG_ERR("Could not send AT command");
+		return err;
+	}
+
+	err = at_params_list_init(&resp_list, AT_CFUN_PARAMS_COUNT);
+	if (err) {
+		LOG_ERR("Could init AT params list, error: %d", err);
+		return err;
+	}
+
+	err = at_parser_max_params_from_str(response, NULL, &resp_list,
+					    AT_CFUN_PARAMS_COUNT);
+	if (err) {
+		LOG_ERR("Could not parse AT response, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Check if AT command response starts with +CFUN */
+	err = at_params_string_get(&resp_list,
+				   AT_RESPONSE_PREFIX_INDEX,
+				   response_prefix,
+				   &response_prefix_len);
+	if (err) {
+		LOG_ERR("Could not get response prefix, error: %d", err);
+		goto clean_exit;
+	}
+
+	if (!response_is_valid(response_prefix, response_prefix_len,
+			       AT_CFUN_RESPONSE_PREFIX)) {
+		LOG_ERR("Invalid CFUN response");
+		err = -EIO;
+		goto clean_exit;
+	}
+
+	err = at_params_int_get(&resp_list, AT_CFUN_MODE_INDEX, &resp_mode);
+	if (err) {
+		LOG_ERR("Could not parse mode parameter, err: %d", err);
+		goto clean_exit;
+	}
+
+	*mode = resp_mode;
 
 clean_exit:
 	at_params_list_free(&resp_list);

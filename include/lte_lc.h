@@ -35,6 +35,16 @@ enum lte_lc_system_mode {
 	LTE_LC_SYSTEM_MODE_NBIOT_GPS
 };
 
+/* NOTE: enum lte_lc_func_mode maps directly to the functional mode
+ *	 as returned by the AT command "AT+CFUN?".
+ */
+enum lte_lc_func_mode {
+	LTE_LC_FUNC_MODE_POWER_OFF		= 0,
+	LTE_LC_FUNC_MODE_NORMAL			= 1,
+	LTE_LC_FUNC_MODE_OFFLINE		= 4,
+	LTE_LC_FUNC_MODE_OFFLINE_UICC_ON	= 44
+};
+
 /** @brief Function for initializing
  * the modem.  NOTE: a follow-up call to lte_lc_connect()
  * must be made.
@@ -128,5 +138,13 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_system_mode_get(enum lte_lc_system_mode *mode);
+
+/**@brief Get the modem's functional mode.
+ *
+ * @param mode Pointer to functional mode variable.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
 
 #endif /* ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_ */
