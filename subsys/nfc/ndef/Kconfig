@@ -34,6 +34,10 @@ config NFC_NDEF_TEXT_RECORD
 	bool
 	prompt "Encoding data for a text record for NFC Tag"
 
+config NFC_NDEF_TNEP_RECORD
+	bool
+	prompt "Encoding data for a tnep record for NFC Tag"
+
 config NFC_NDEF_URI_MSG
 	bool
 	prompt "NDEF URI messages generator library"
