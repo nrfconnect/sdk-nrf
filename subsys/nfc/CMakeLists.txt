@@ -18,7 +18,10 @@ if (CONFIG_NFC_T4T_ISODEP OR
 	add_subdirectory(t4t)
 endif()
 
+
 if (CONFIG_NFC_T2T_NRFXLIB OR
     CONFIG_NFC_T4T_NRFXLIB)
 	add_subdirectory(lib)
 endif()
+
+add_subdirectory_ifdef(CONFIG_NFC_TNEP_TAG tnep)
