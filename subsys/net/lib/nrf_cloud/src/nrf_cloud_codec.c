@@ -333,9 +333,10 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	}
 
 	state_obj = json_object_decode(root_obj, "state");
-	desired_obj = json_object_decode(state_obj, "desired");
-	if (desired_obj == NULL) {
-		desired_obj = state_obj;
+	if (state_obj == NULL) {
+		desired_obj = json_object_decode(root_obj, "desired");
+	} else {
+		desired_obj = json_object_decode(state_obj, "desired");
 	}
 
 	topic_prefix_obj = json_object_decode(desired_obj,
@@ -567,10 +568,10 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 	}
 
 	state_obj = json_object_decode(root_obj, "state");
-	parent_obj = json_object_decode(state_obj, "desired");
-
-	if (parent_obj == NULL) {
-		parent_obj = state_obj;
+	if (state_obj == NULL) {
+		parent_obj = json_object_decode(root_obj, "desired");
+	} else {
+		parent_obj = json_object_decode(state_obj, "desired");
 	}
 
 	if (m_endpoint != NULL) {
