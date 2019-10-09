@@ -238,7 +238,8 @@ static void broker_init(const char *hostname)
 			broker->sin_family = AF_INET;
 			broker->sin_port = htons(CONFIG_MQTT_BROKER_PORT);
 
-			printk("IPv4 Address 0x%08x\n", broker->sin_addr.s_addr);
+			printk("IPv4 Address 0x%08x\n",
+				broker->sin_addr.s_addr);
 			break;
 		} else if (addr->ai_addrlen == sizeof(struct sockaddr_in6)) {
 			/* IPv6 Address. */
@@ -268,57 +269,48 @@ static void broker_init(const char *hostname)
 	/* Free the address. */
 	freeaddrinfo(result);
 }
-
-#if !defined(CONFIG_USE_PROVISIONED_CERTIFICATES)
+#if defined(CONFIG_PROVISION_CERTIFICATES)
+#warning Not for prodcution use. This should only be used once to provisioning the certificates please deselect the provision certificates configuration and compile again.
+#define MAX_OF_2 MAX(sizeof(CLOUD_CA_CERTIFICATE),\
+		     sizeof(CLOUD_CLIENT_PRIVATE_KEY))
+#define MAX_LEN MAX(MAX_OF_2, sizeof(CLOUD_CLIENT_PUBLIC_CERTIFICATE))
+static u8_t certificates[][MAX_LEN] = {{CLOUD_CA_CERTIFICATE},
+				       {CLOUD_CLIENT_PRIVATE_KEY},
+				       {CLOUD_CLIENT_PUBLIC_CERTIFICATE} };
+static const size_t cert_len[] = {
+	sizeof(CLOUD_CA_CERTIFICATE) - 1, sizeof(CLOUD_CLIENT_PRIVATE_KEY) - 1,
+	sizeof(CLOUD_CLIENT_PUBLIC_CERTIFICATE) - 1
+};
 static int provision_certificates(void)
 {
-	{
-		int err;
+	int err;
 
-		/* Delete certificates */
-		nrf_sec_tag_t sec_tag = CONFIG_CLOUD_CERT_SEC_TAG;
+	printk("************************* WARNING *************************\n");
+	printk("%s called do not use this in production!\n", __func__);
+	printk("This will store the certificates in readable flash and leave\n");
+	printk("them exposed on modem_traces. Only use this once for\n");
+	printk("provisioning certificates for development to reduce flash tear."
+		"\n");
+	printk("************************* WARNING *************************\n");
+	nrf_sec_tag_t sec_tag = CONFIG_CLOUD_CERT_SEC_TAG;
+	nrf_key_mgnt_cred_type_t cred[] = {
+		NRF_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+		NRF_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
+		NRF_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
+	};
 
-		for (nrf_key_mgnt_cred_type_t type = 0; type < 3; type++) {
-			err = nrf_inbuilt_key_delete(sec_tag, type);
-			printk("nrf_inbuilt_key_delete(%u, %d) => result=%d\n",
+	/* Delete certificates */
+	for (nrf_key_mgnt_cred_type_t type = 0; type < 3; type++) {
+		err = nrf_inbuilt_key_delete(sec_tag, type);
+		printk("nrf_inbuilt_key_delete(%u, %d) => result=%d\n",
 				sec_tag, type, err);
-		}
+	}
 
-		/* Provision CA Certificate. */
-		err = nrf_inbuilt_key_write(CONFIG_CLOUD_CERT_SEC_TAG,
-					NRF_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-					CLOUD_CA_CERTIFICATE,
-					strlen(CLOUD_CA_CERTIFICATE));
+	/* Write certificates */
+	for (nrf_key_mgnt_cred_type_t type = 0; type < 3; type++) {
+		err = nrf_inbuilt_key_write(sec_tag, cred[type],
+				certificates[type], cert_len[type]);
 		printk("nrf_inbuilt_key_write => result=%d\n", err);
-		if (err) {
-			printk("CLOUD_CA_CERTIFICATE err: %d", err);
-			return err;
-		}
-
-		/* Provision Private Certificate. */
-		err = nrf_inbuilt_key_write(
-			CONFIG_CLOUD_CERT_SEC_TAG,
-			NRF_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
-			CLOUD_CLIENT_PRIVATE_KEY,
-			strlen(CLOUD_CLIENT_PRIVATE_KEY));
-		printk("nrf_inbuilt_key_write => result=%d\n", err);
-		if (err) {
-			printk("NRF_CLOUD_CLIENT_PRIVATE_KEY err: %d", err);
-			return err;
-		}
-
-		/* Provision Public Certificate. */
-		err = nrf_inbuilt_key_write(
-			CONFIG_CLOUD_CERT_SEC_TAG,
-			NRF_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
-				 CLOUD_CLIENT_PUBLIC_CERTIFICATE,
-				 strlen(CLOUD_CLIENT_PUBLIC_CERTIFICATE));
-		printk("nrf_inbuilt_key_write => result=%d\n", err);
-		if (err) {
-			printk("CLOUD_CLIENT_PUBLIC_CERTIFICATE err: %d",
-				err);
-			return err;
-		}
 	}
 	return 0;
 }
@@ -329,10 +321,11 @@ static int client_id_get(char *id_buf)
 #if !defined(CONFIG_CLOUD_CLIENT_ID)
 	enum at_cmd_state at_state;
 	char imei_buf[IMEI_LEN + 5];
-
 	int err = at_cmd_write("AT+CGSN", imei_buf, (IMEI_LEN + 5), &at_state);
+
 	if (err) {
-		printk("Error when trying to do at_cmd_write: %d, at_state: %d", err, at_state);
+		printk("Error when trying to do at_cmd_write: %d, at_state: %d",
+			err, at_state);
 	}
 
 	snprintf(id_buf, CLIENT_ID_LEN + 1, "nrf-%s", imei_buf);
@@ -347,10 +340,9 @@ static int client_init(struct mqtt_client *client, char *hostname)
 {
 	mqtt_client_init(client);
 	broker_init(hostname);
-
 	int ret = client_id_get(client_id_buf);
-	printk("client_id: %s\n", client_id_buf);
 
+	printk("client_id: %s\n", client_id_buf);
 	if (ret != 0) {
 		return ret;
 	}
@@ -373,7 +365,13 @@ static int client_init(struct mqtt_client *client, char *hostname)
 	/* MQTT transport configuration */
 	client->transport.type = MQTT_TRANSPORT_SECURE;
 
-	static sec_tag_t sec_tag_list[] = {CONFIG_CLOUD_CERT_SEC_TAG};
+	static sec_tag_t sec_tag_list[] = {
+#ifdef CONFIG_USE_NRF_CLOUD
+		16842753
+#else
+		CONFIG_CLOUD_CERT_SEC_TAG
+#endif
+	};
 	struct mqtt_sec_config *tls_config = &(client->transport).tls.config;
 
 	tls_config->peer_verify = 2;
@@ -460,9 +458,9 @@ void main(void)
 	}
 	printk("Initialized bsdlib\n");
 
-#if !defined(CONFIG_USE_PROVISIONED_CERTIFICATES)
+#if defined(CONFIG_PROVISION_CERTIFICATES)
 	provision_certificates();
-#endif /* CONFIG_USE_PROVISIONED_CERTIFICATES  */
+#endif /* CONFIG_PROVISION_CERTIFICATES */
 	modem_configure();
 
 	client_init(&client, CONFIG_MQTT_BROKER_HOSTNAME);
@@ -486,7 +484,8 @@ void main(void)
 	}
 
 	/* All initializations were successful mark image as working so that we
-	 * will not revert upon reboot. */
+	 * will not revert upon reboot.
+	 */
 	boot_write_img_confirmed();
 
 	while (1) {

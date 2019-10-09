@@ -10,38 +10,50 @@ config APP_VERSION
 	string "Application version"
 	default "v1.0.0"
 
+config USE_NRF_CLOUD
+	bool "Use nRF Cloud certificates"
+	default n
+
+if !USE_NRF_CLOUD
 config CLOUD_CERT_SEC_TAG
-	int "Secure tag fo TLS credentials"
-	default 16842753
+	int "Security tag for TLS credentials"
+	default 12345678
 
-config MQTT_BROKER_HOSTNAME
-	string "AWS IoT MQTT broker hostname"
-	default "a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com"
+config PROVISION_CERTIFICATES
+	bool "Provision certificates from the certificates.h file"
+	default n
 	help
-	  Default is set to be the NRF Cloud MQTT broker
-
-config MQTT_BROKER_PORT
-	int "AWS IoT MQTT broker port"
-	default 8883
+	  If enabled, the sample provisions server certificates into
+	  the modem by storing the certificates defined in the
+	  certificates.h file in the modem under the given security tag.
+	  Use this option only once to provision the device.
+	  The certificates are stored in the application binary and are
+	  therefore shown in the modem trace information. This is a
+	  security risk. After provisioning the certificates, turn off
+	  this option and compile and program the sample again.
+	  Also, do not share the binary that includes the compiled
+	  certificates with anyone.
 
 config USE_CLOUD_CLIENT_ID
-	bool "Custom MQTT Client Id"
+	bool "Custom MQTT client ID"
 if USE_CLOUD_CLIENT_ID
 
 config CLOUD_CLIENT_ID
 	string "Client ID"
 	default "your_client_id"
 endif
+endif
 
-config USE_PROVISIONED_CERTIFICATES
-	bool "Use provisioned certificates"
-	default y
+config MQTT_BROKER_HOSTNAME
+	string "AWS IoT MQTT broker hostname"
+	default "a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com"
 	help
-	  If enabled, the application will not provide server certificates into
-	  the modem and use whatever certificates that are stored in the modem
-	  under the default secure tag (e. g. certificates provisioned by
-	  another sample, for instance, `asset_tracker`). Otherwise, a user
-	  should provide a valid server certificate in `certificates.h` file.
+	  Default is set to be the nRF Cloud MQTT broker.
+
+config MQTT_BROKER_PORT
+	int "AWS IoT MQTT broker port"
+	default 8883
+
 
 config MQTT_MESSAGE_BUFFER_SIZE
 	int "MQTT message buffer size"
