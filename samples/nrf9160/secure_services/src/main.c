@@ -74,6 +74,17 @@ void main(void)
 	print_hex_number(buf, num_bytes_to_read);
 #endif
 
+	u32_t info_part = 0;
+	u32_t ficr_addr = (u32_t)&NRF_FICR_S->INFO.PART;
+
+	printk("\nRead FICR, offset 0x20C (address 0x%08x):\n", ficr_addr);
+	ret = spm_request_read(&info_part, ficr_addr, sizeof(u32_t));
+	if (ret != 0) {
+		printk("Could not read FICR (err: %d)\n", ret);
+	} else {
+		printk("FICR.INFO.PART (+0x20C) = 0x%08X\n", info_part);
+	}
+
 	printk("\nReboot in %d seconds.\n", sleep_time_s);
 	k_sleep(K_SECONDS(5));
 
