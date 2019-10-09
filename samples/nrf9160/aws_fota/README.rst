@@ -61,9 +61,15 @@ Also, make sure to download one of the `root CA certificates <https://docs.aws.a
 
 Then, attach the policy you created earlier to the certificates. You must also add the information from the Root CA, Public Certificate, and Private Key into :file:`certificates.h`.
 
-When these steps are done, deselect ``CONFIG_USE_PROVISIONED_CERTIFICATES`` in menuconfig.
-This will write your new certificates to the secure tag :c:type:`sec_tag_t` defined in menuconfig ``CONFIG_CLOUD_CERT_SEC_TAG`` into the modem.
+When these steps are done, select ``CONFIG_PROVISION_CERTIFICATES`` in Kconfig.
+This will write your new certificates into the modem, to the security tag :c:type:`sec_tag_t` defined in the Kconfig variable ``CONFIG_CLOUD_CERT_SEC_TAG``.
 
+.. warning::
+
+   After provisioning the certificates once, make sure to deselect this option and compile and program the sample again.
+   Otherwise, the certificates are stored in the area of readable flash on the device, and they are visible in the compiled binary and on a modem trace.
+   This is a security risk for your private key and certificate if the binary is published or leaked, or if the device flash is dumped.
+   In production, never store certificates in readable flash on the device or write them to the modem, because these writes are visible on a modem trace.
 
 Usage
 *****
