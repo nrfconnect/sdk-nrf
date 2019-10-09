@@ -173,7 +173,7 @@ static void spm_config_flash(void)
 #if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
 	spm_config_nsc_flash();
 
-#if defined(CONFIG_SECURE_SERVICES)
+#if defined(CONFIG_SPM_SECURE_SERVICES)
 	int err = spm_secure_services_init();
 
 	if (err != 0) {
