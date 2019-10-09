@@ -18,7 +18,7 @@ The download happens in a separate thread which can be paused and resumed.
 Make sure to configure :option:`CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE` in a way that suits your application.
 A large fragment size requires more RAM, while a small fragment size results in more download requests, and thus a higher protocol overhead.
 If the size of the file being downloaded is larger than a hundred times the size of one fragment, the server might close the HTTP connection
-after the hundreth fragment has been transfered. The library is able to detect when the server has closed the HTTP connection
+after the hundredth fragment has been transferred. The library is able to detect when the server has closed the HTTP connection
 and reconnect automatically. Increasing the fragment size prevents having to establish several HTTP connections and thus helps
 in keeping protocol overhead to a minimum.
 
