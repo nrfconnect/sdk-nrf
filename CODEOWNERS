@@ -58,6 +58,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /scripts/hid_configurator/                @pdunaj
 /subsys/bluetooth/                        @joerchan @carlescufi
 /subsys/bootloader/                       @hakonfam @ioannisg
+/subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/enhanced_shockburst/              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_metadata/                      @hakonfam
