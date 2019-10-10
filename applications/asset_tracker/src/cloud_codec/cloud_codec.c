@@ -262,9 +262,9 @@ int cloud_encode_data(const struct cloud_channel_data *channel,
 }
 
 int cloud_encode_digital_twin_data(const struct cloud_channel_data *channel,
-				 struct cloud_msg *output)
+				   struct cloud_msg *output)
 {
-	int ret;
+	int ret = 0;
 	char *buffer;
 
 	__ASSERT_NO_MSG(channel != NULL);
@@ -283,7 +283,25 @@ int cloud_encode_digital_twin_data(const struct cloud_channel_data *channel,
 		return -ENOMEM;
 	}
 
-	ret = json_add_obj(reported_obj, channel_type_str[channel->type],
+	/* Workaround for deleting "DEVICE" objects (with uppercase key) if
+	 * it already exists in the digital twin.
+	 * The cloud implementations expect the key to be lowercase "device",
+	 * but that would duplicate the information and needlessly increase
+	 * the size of the digital twin document if the "DEVICE" is not
+	 * deleted at the same time.
+	 */
+	if (channel->type == CLOUD_CHANNEL_DEVICE_INFO) {
+		cJSON *dummy_obj = cJSON_CreateNull();
+		if (dummy_obj == NULL) {
+			/* Dummy creation failed, but we'll let it do so
+			 * silently as it's not a functionally critical error.
+			 */
+		} else {
+			ret += json_add_obj(reported_obj, "DEVICE", dummy_obj);
+		}
+	}
+
+	ret += json_add_obj(reported_obj, channel_type_str[channel->type],
 			   (cJSON *)channel->data.buf);
 	ret += json_add_obj(state_obj, "reported", reported_obj);
 	ret += json_add_obj(root_obj, "state", state_obj);
