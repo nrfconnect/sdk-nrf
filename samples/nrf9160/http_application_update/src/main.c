@@ -3,15 +3,16 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
-#include <stdint.h>
 #include <zephyr.h>
-#include <flash.h>
-#include <nrf_socket.h>
-#include <logging/log.h>
 #include <gpio.h>
+#include <flash.h>
+#include <bsd.h>
+#include <lte_lc.h>
+#include <at_cmd.h>
+#include <logging/log.h>
+#include <net/bsdlib.h>
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
-#include <lte_lc.h>
 
 #define LED_PORT	DT_ALIAS_LED0_GPIOS_CONTROLLER
 
@@ -42,12 +43,14 @@ static void app_dfu_transfer_start(struct k_work *unused)
 	retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
 				     CONFIG_DOWNLOAD_FILE);
 	if (retval != 0) {
+		/* Re-enable button callback */
+		gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
+
 		printk("fota_download_start() failed, err %d\n",
 			retval);
 	}
-
-	return;
 }
+
 /**@brief Turn on LED0 and LED1 if CONFIG_APPLICATION_VERSION
  * is 2 and LED0 otherwise.
  */
@@ -109,12 +112,12 @@ static int dfu_button_init(void)
 void fota_dl_handler(enum fota_download_evt_id evt_id)
 {
 	switch (evt_id) {
+	case FOTA_DOWNLOAD_EVT_ERROR:
+		printk("Received error from fota_download\n");
+		/* Fallthrough */
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		/* Re-enable button callback */
 		gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
-		break;
-	case FOTA_DOWNLOAD_EVT_ERROR:
-		printk("Received error from fota_download\n");
 		break;
 
 	default:
@@ -129,18 +132,16 @@ void fota_dl_handler(enum fota_download_evt_id evt_id)
 static void modem_configure(void)
 {
 #if defined(CONFIG_LTE_LINK_CONTROL)
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already turned on
-		 * and connected.
-		 */
-	} else {
-		int err;
+	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
+			"This sample does not support auto init and connect");
+	int err;
 
-		printk("LTE Link Connecting ...\n");
-		err = lte_lc_init_and_connect();
-		__ASSERT(err == 0, "LTE link could not be established.");
-		printk("LTE Link Connected!\n");
-	}
+	err = at_cmd_init();
+	__ASSERT(err == 0, "AT CMD could not be established.");
+	printk("LTE Link Connecting ...\n");
+	err = lte_lc_init_and_connect();
+	__ASSERT(err == 0, "LTE link could not be established.");
+	printk("LTE Link Connected!\n");
 #endif
 }
 
@@ -171,6 +172,29 @@ static int application_init(void)
 void main(void)
 {
 	int err;
+	printk("Initializing bsdlib\n");
+	err = bsdlib_init();
+	switch (err) {
+	case MODEM_DFU_RESULT_OK:
+		printk("Modem firmware update successful!\n");
+		printk("Modem will run the new firmware after reboot\n");
+		k_thread_suspend(k_current_get());
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		printk("Modem firmware update failed\n");
+		printk("Modem will run non-updated firmware on reboot.\n");
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		printk("Modem firmware update failed\n");
+		printk("Fatal error.\n");
+		break;
+
+	default:
+		break;
+	}
+	printk("Initialized bsdlib\n");
 
 	modem_configure();
 
@@ -182,6 +206,4 @@ void main(void)
 	}
 
 	printk("Press Button 1 to start the FOTA download\n");
-
-	return;
 }
