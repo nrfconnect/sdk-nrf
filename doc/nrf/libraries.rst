@@ -27,12 +27,19 @@ Here you can find documentation for these libraries, including API documentation
 
 .. toctree::
    :maxdepth: 1
+   :caption: Libraries for FOTA updates:
+   :glob:
+
+   ../../include/net/*
+
+
+.. toctree::
+   :maxdepth: 1
    :caption: Other libraries:
    :glob:
 
    ../../include/*
    ../../include/dfu/*
-   ../../include/net/*
    ../../include/nfc/ndef/*
    ../../include/nfc/t2t/*
    ../../include/nfc/t4t/*

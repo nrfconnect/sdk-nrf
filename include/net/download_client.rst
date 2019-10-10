@@ -38,14 +38,16 @@ For HTTP, the following requirements must be met:
 * IETF RFC 7233 is supported by the HTTP Server.
 * :option:`CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE` is configured so that it can contain the entire HTTP response.
 
+.. _download_client_https:
+
 HTTPS
 =====
 
 The library uses TLS version 1.2.
 When using HTTPS, the application must provision the TLS credentials and pass the security tag to the library when calling :cpp:func:`download_client_connect`.
 
-To provision a TLS certificate to the modem, the application can use the nrf_inbuilt_key APIs (see the :file:`nrf_inbuilt_key.h` file in the `nrfxlib`_ repository).
-The following snippet illustrates how to provision a TLS certificate, associate it to TLS security tag, and pass that tag to the library.
+To provision a TLS certificate to the modem, use :cpp:func:`nrf_inbuilt_key_write` and other nrf_inbuilt_key APIs from the :file:`bdslib/include/nrf_inbuilt_key.h` file in the `nrfxlib`_ repository.
+The following snippet illustrates how to provision a TLS certificate, associate it to a TLS security tag, and pass that tag to the library.
 
 .. code::
 
@@ -131,6 +133,16 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 		return 0;
 	}
 
+
+Limitations
+***********
+
+The library requires the host server to provide a Content-Range field in the HTTP GET header.
+If this header field is missing, the library logs the following error::
+
+   <err> download_client: Server did not send "Content-Range" in response
+
+To debug your application when getting such an error, set the log level of the library to debug (:option:`CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL_DBG`) and select :option:`CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS`.
 
 API documentation
 *****************
