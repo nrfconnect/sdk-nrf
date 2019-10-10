@@ -5,14 +5,14 @@
  */
 
 #include <zephyr.h>
-#include <stdio.h>
 #include <uart.h>
-#include <string.h>
-
+#include <stdio.h>
 #include <at_cmd.h>
+#include <bsd.h>
 #include <lte_lc.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
+#include <net/bsdlib.h>
 #include <net/aws_fota.h>
 
 #include <dfu/mcuboot.h>
@@ -401,18 +401,16 @@ static int fds_init(struct mqtt_client *c)
 static void modem_configure(void)
 {
 #if defined(CONFIG_LTE_LINK_CONTROL)
-	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already turned on
-		 * and connected.
-		 */
-	} else {
-		int err;
+	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
+			"This sample does not support auto init and connect");
+	int err;
 
-		printk("LTE Link Connecting ...\n");
-		err = lte_lc_init_and_connect();
-		__ASSERT(err == 0, "LTE link could not be established.");
-		printk("LTE Link Connected!\n");
-	}
+	err = at_cmd_init();
+	__ASSERT(err == 0, "AT CMD could not be established.");
+	printk("LTE Link Connecting ...\n");
+	err = lte_lc_init_and_connect();
+	__ASSERT(err == 0, "LTE link could not be established.");
+	printk("LTE Link Connected!\n");
 #endif
 }
 
@@ -438,6 +436,29 @@ void main(void)
 	struct mqtt_client client;
 
 	printk("MQTT AWS Jobs FOTA Sample, version: %s\n", CONFIG_APP_VERSION);
+	printk("Initializing bsdlib\n");
+	err = bsdlib_init();
+	switch (err) {
+	case MODEM_DFU_RESULT_OK:
+		printk("Modem firmware update successful!\n");
+		printk("Modem will run the new firmware after reboot\n");
+		k_thread_suspend(k_current_get());
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		printk("Modem firmware update failed\n");
+		printk("Modem will run non-updated firmware on reboot.\n");
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		printk("Modem firmware update failed\n");
+		printk("Fatal error.\n");
+		break;
+
+	default:
+		break;
+	}
+	printk("Initialized bsdlib\n");
 
 #if !defined(CONFIG_USE_PROVISIONED_CERTIFICATES)
 	provision_certificates();
