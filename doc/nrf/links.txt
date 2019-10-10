@@ -142,6 +142,8 @@
 .. _`AWS IoT console`: https://console.aws.amazon.com/iot/home
 .. _`AWS S3 console`: https://console.aws.amazon.com/s3/home
 
+.. _`TLS`: https://www.ietf.org/rfc/rfc5246.txt
+
 
 .. ### Links to Bluetooth specs
 
@@ -172,10 +174,16 @@
 .. _`generator expressions`: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html
 
 .. _`AWS IoT Developer Guide`: https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html
-.. _`AWS MQTT broker`: https://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html
+.. _`AWS IoT MQTT`: https://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html
 .. _`AWS IoT Developer Guide: Basic Policy Variables`: https://docs.aws.amazon.com/iot/latest/developerguide/basic-policy-variables.html
 .. _`AWS IoT Developer Guide: Security Best Practices`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
+.. _`AWS IoT jobs`:
 .. _`AWS IoT Developer Guide: Jobs`: https://docs.aws.amazon.com/iot/latest/developerguide/iot-jobs.html
+
+.. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
+.. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
+
+.. _`AWS Simple Storage Service (S3)`: https://docs.aws.amazon.com/s3/index.html
 
 .. ### Links to specific files on GitHub
 
