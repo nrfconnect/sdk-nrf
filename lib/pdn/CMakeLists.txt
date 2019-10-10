@@ -5,4 +5,4 @@
 #
 
 zephyr_library()
-zephyr_library_sources(pdn_management.c)
+zephyr_library_sources(pdn.c)

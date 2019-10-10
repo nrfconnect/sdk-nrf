@@ -24,7 +24,7 @@ menuconfig LWM2M_CARRIER
 	# Networking NCS
 	depends on LTE_LINK_CONTROL && !LTE_AUTO_INIT_AND_CONNECT
 	depends on DOWNLOAD_CLIENT && DOWNLOAD_CLIENT_TLS
-	depends on PDN_MANAGEMENT
+	depends on PDN
 	# AT libraries
 	depends on AT_CMD
 	depends on AT_CMD_PARSER

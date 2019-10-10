@@ -5,13 +5,13 @@
  */
 
 /**
- * @file pdn_management.h
+ * @file pdn.h
  *
  * @brief Public APIs for the PDN management library.
  */
 
-#ifndef PDN_MANAGEMENT_H_
-#define PDN_MANAGEMENT_H_
+#ifndef PDN_H_
+#define PDN_H_
 
 /**@brief Connect to a packet data network.
  *
@@ -26,5 +26,5 @@
  */
 int pdn_activate(int *fd, const char *apn);
 
-#endif /* PDN_MANAGEMENT_H_ */
+#endif /* PDN_H_ */
 
