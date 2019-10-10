@@ -7,9 +7,10 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdio.h>
+
 #include <net/socket.h>
 
-int pdn_init_and_connect(const char *apn_name)
+int pdn_init_and_connect(const char * const apn_name)
 {
 	int pdn_fd = socket(AF_LTE, SOCK_MGMT, NPROTO_PDN);
 
@@ -20,7 +21,7 @@ int pdn_init_and_connect(const char *apn_name)
 				  strlen(apn_name));
 
 		if (err != 0) {
-			close(pdn_fd);
+			pdn_disconnect(pdn_fd);
 			return -1;
 		}
 	}
