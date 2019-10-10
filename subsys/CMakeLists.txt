@@ -16,6 +16,7 @@ add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_NRF_ESB		enhanced_shockburst)
 add_subdirectory_ifdef(CONFIG_EVENT_MANAGER	event_manager)
 add_subdirectory_ifdef(CONFIG_PROFILER		profiler)
+add_subdirectory_ifdef(CONFIG_DFU_TARGET		dfu)
 add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 

@@ -9,6 +9,8 @@ rsource "bootloader/Kconfig"
 
 rsource "bluetooth/Kconfig"
 
+rsource "dfu/Kconfig"
+
 rsource "enhanced_shockburst/Kconfig"
 
 rsource "net/Kconfig"

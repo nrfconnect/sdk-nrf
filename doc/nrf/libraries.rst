@@ -31,6 +31,7 @@ Here you can find documentation for these libraries, including API documentation
    :glob:
 
    ../../include/*
+   ../../include/dfu/*
    ../../include/net/*
    ../../include/nfc/ndef/*
    ../../include/nfc/t2t/*
