@@ -14,7 +14,6 @@
 
 #include <device.h>
 #include <soc.h>
-#include <gpio.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/uuid.h>
@@ -35,16 +34,10 @@
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN	        (sizeof(DEVICE_NAME) - 1)
 
-/* Change this if you have an LED connected to a custom port */
-#define LED_PORT                DT_ALIAS_LED0_GPIOS_CONTROLLER
-
-#define RUN_STATUS_LED          DT_ALIAS_LED0_GPIOS_PIN
+#define RUN_STATUS_LED          DK_LED1
 #define RUN_LED_BLINK_INTERVAL  1000
 
-#define CON_STATUS_LED          DT_ALIAS_LED0_GPIOS_PIN
-
-#define LED_ON                  0
-#define LED_OFF                 1
+#define CON_STATUS_LED          DK_LED2
 
 #define KEY_PASSKEY_ACCEPT DK_BTN1_MSK
 #define KEY_PASSKEY_REJECT DK_BTN2_MSK
@@ -56,13 +49,7 @@ static K_SEM_DEFINE(ble_init_ok, 0, 2);
 static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
 
-static struct device  *led_port;
 static struct device  *uart;
-
-static u32_t led_pins[] = {DT_ALIAS_LED0_GPIOS_PIN,
-			   DT_ALIAS_LED1_GPIOS_PIN,
-			   DT_ALIAS_LED2_GPIOS_PIN,
-			   DT_ALIAS_LED3_GPIOS_PIN};
 
 struct uart_data_t {
 	void  *fifo_reserved;
@@ -81,13 +68,6 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, NUS_UUID_SERVICE),
 };
-
-static void set_led_state(int led, bool state)
-{
-	if (led_port) {
-		gpio_pin_write(led_port, led, state);
-	}
-}
 
 static void uart_cb(struct device *uart)
 {
@@ -188,7 +168,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	printk("Connected\n");
 	current_conn = bt_conn_ref(conn);
 
-	set_led_state(CON_STATUS_LED, LED_ON);
+	dk_set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
@@ -203,7 +183,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	if (current_conn) {
 		bt_conn_unref(current_conn);
 		current_conn = NULL;
-		set_led_state(CON_STATUS_LED, LED_OFF);
+		dk_set_led_off(CON_STATUS_LED);
 	}
 }
 
@@ -388,64 +368,9 @@ static void bt_ready(int err)
 	k_sem_give(&ble_init_ok);
 }
 
-static int init_leds(void)
-{
-	int err = 0;
-
-	led_port = device_get_binding(LED_PORT);
-
-	if (!led_port) {
-		printk("Could not bind to LED port\n");
-		return -ENXIO;
-	}
-
-	err = gpio_pin_configure(led_port, RUN_STATUS_LED,
-			   GPIO_DIR_OUT);
-	if (!err) {
-		err = gpio_pin_configure(led_port, CON_STATUS_LED,
-			   GPIO_DIR_OUT);
-	}
-
-	if (!err) {
-		err = gpio_pin_write(led_port, RUN_STATUS_LED, LED_OFF);
-	}
-
-	if (!err) {
-		err = gpio_pin_write(led_port, CON_STATUS_LED, LED_OFF);
-	}
-
-	if (err) {
-		printk("Not able to correctly initialize LED pins (err:%d)",
-			err);
-		led_port = NULL;
-	}
-
-	return err;
-}
-
 void error(void)
 {
-	int err = -1;
-
-	led_port = device_get_binding(LED_PORT);
-	if (led_port) {
-		for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
-			err = gpio_pin_configure(led_port, led_pins[i],
-						 GPIO_DIR_OUT);
-			if (err) {
-				break;
-			}
-		}
-	}
-
-	if (!err) {
-		for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
-			err = gpio_pin_write(led_port, led_pins[i], LED_ON);
-			if (err) {
-				break;
-			}
-		}
-	}
+	dk_set_leds_state(DK_ALL_LEDS_MSK, DK_NO_LEDS_MSK);
 
 	while (true) {
 		/* Spin for ever */
@@ -482,12 +407,18 @@ void button_changed(u32_t button_state, u32_t has_changed)
 	}
 }
 
-void configure_buttons(void)
+static void configure_gpio(void)
 {
-	int err = dk_buttons_init(button_changed);
+	int err;
 
+	err = dk_buttons_init(button_changed);
 	if (err) {
 		printk("Cannot init buttons (err: %d)\n", err);
+	}
+
+	err = dk_leds_init();
+	if (err) {
+		printk("Cannot init LEDs (err: %d)\n", err);
 	}
 }
 
@@ -503,7 +434,7 @@ static void led_blink_thread(void)
 		err = bt_enable(bt_ready);
 	}
 
-	configure_buttons();
+	configure_gpio();
 
 	if (!err) {
 		bt_conn_cb_register(&conn_callbacks);
@@ -526,10 +457,8 @@ static void led_blink_thread(void)
 		error();
 	}
 
-	init_leds();
-
 	for (;;) {
-		set_led_state(RUN_STATUS_LED, (++blink_status) % 2);
+		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(RUN_LED_BLINK_INTERVAL);
 	}
 }
