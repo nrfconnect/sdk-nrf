@@ -1,0 +1,11 @@
+tests:
+  testing.cpu_load:
+    platform_whitelist: nrf52840_pca10056 nrf9160_pca10090
+    build_only: true
+    tags: debug
+  testing.cpu_load.shared_dppi:
+    platform_whitelist: nrf9160_pca10090
+    build_only: true
+    tags: debug
+    extra_configs:
+      - CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS=y
