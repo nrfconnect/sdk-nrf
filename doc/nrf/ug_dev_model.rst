@@ -27,6 +27,25 @@ Basic familiarity with Git is required to understand the architecture of the rep
 
 All |NCS| repositories are publicly hosted on `GitHub`_, and accessible to both individual users and companies.
 
+Forks and upstream/downstream repositories
+==========================================
+
+Git is a distributed version control system that allows repositories to be easily duplicated.
+Every time you take an existing Git repository and create a copy of it, you are creating a *fork* of that repository.
+This means that you create an identical copy that might diverge from the original over time, since commits to the original will not be automatically reflected in the copy, and commits to your copy will not be automatically reflected in the original.
+
+.. note::
+   When we talk about forks or copying Git repositories, we refer to the creation of a new repository hosted on a server and accessible to other users.
+   If you clone a repository to your local machine using ``git clone``, that is referred to as a *clone* and not a fork.
+
+When you create a fork by copying an existing repository, the original repository is called the *upstream* repository and the newly created copy the *downstream* repository.
+
+A fork can be hosted on any server, including a public Git hosting site like `GitHub`_.
+It is, however, important to differentiate between the generic concept of a fork and GitHub's concept of a `GitHub fork`_.
+When you create a GitHub fork, GitHub copies the original repository and tags the downstream repository (the fork) with a flag that allows users to send pull requests from the fork to its upstream repository.
+GitHub also supports creating forks without linking them to the upstream respository.
+See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
+
 .. _dm-repo-types:
 
 Repository types
@@ -369,7 +388,7 @@ Upmerge
    The act of updating a downstream repository with a new revision of its upstream counterpart.
 
 Clone
-   A local copy of a remote Git repository.
+   A local copy of a remote Git repository obtained with ``git clone``.
 
 Fork
    A server-hosted copy of a repository (upstream) that intends to follow the changes made in the original repository as time goes by, while at the same time keeping some other changes unique to it.
@@ -404,4 +423,3 @@ Commit tag
 
 Pull Request
    A GitHub Pull Request, a set of commits that are sent for code review using GitHub.
-
