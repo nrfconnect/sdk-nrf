@@ -160,12 +160,16 @@ static int init_uart(void)
 
 static void connected(struct bt_conn *conn, u8_t err)
 {
+	char addr[BT_ADDR_LE_STR_LEN];
+
 	if (err) {
 		printk("Connection failed (err %u)\n", err);
 		return;
 	}
 
-	printk("Connected\n");
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+	printk("Connected %s\n", addr);
+
 	current_conn = bt_conn_ref(conn);
 
 	dk_set_led_on(CON_STATUS_LED);
@@ -173,7 +177,11 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
 {
-	printk("Disconnected (reason %u)\n", reason);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Disconnected: %s (reason %u)\n", addr, reason);
 
 	if (auth_conn) {
 		bt_conn_unref(auth_conn);
