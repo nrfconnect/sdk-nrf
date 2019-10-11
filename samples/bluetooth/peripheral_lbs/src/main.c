@@ -34,9 +34,6 @@
 #define CON_STATUS_LED          DK_LED2
 #define RUN_LED_BLINK_INTERVAL  1000
 
-#define LED_ON                  1
-#define LED_OFF                 0
-
 #define USER_LED                DK_LED3
 
 #define USER_BUTTON             DK_BTN1_MSK
@@ -63,14 +60,14 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	printk("Connected\n");
 
-	dk_set_led(CON_STATUS_LED, LED_ON);
+	dk_set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
 {
 	printk("Disconnected (reason %u)\n", reason);
 
-	dk_set_led(CON_STATUS_LED, LED_OFF);
+	dk_set_led_off(CON_STATUS_LED);
 }
 
 #ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
