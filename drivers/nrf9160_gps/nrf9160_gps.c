@@ -35,6 +35,10 @@ LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 #define FUNCTIONAL_MODE_ENABLED		1
 #endif
 
+/* Aligned strings describing sattelite states based on flags */
+#define sv_used_str(x) ((x)?"    used":"not used")
+#define sv_unhealthy_str(x) ((x)?"not healthy":"    healthy")
+
 struct gps_drv_data {
 	gps_trigger_handler_t trigger_handler;
 	struct gps_trigger trigger;
@@ -92,32 +96,35 @@ static u64_t fix_timestamp;
 
 static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 {
-	u8_t  tracked          = 0;
-	u8_t  in_fix           = 0;
-	u8_t  unhealthy        = 0;
+	u8_t  n_tracked = 0;
+	u8_t  n_used = 0;
+	u8_t  n_unhealthy = 0;
 
 	for (int i = 0; i < NRF_GNSS_MAX_SATELLITES; ++i) {
+		u8_t sv = pvt_data->pvt.sv[i].sv;
+		bool used = (pvt_data->pvt.sv[i].flags &
+			     NRF_GNSS_SV_FLAG_USED_IN_FIX) ? true : false;
+		bool unhealthy = (pvt_data->pvt.sv[i].flags &
+				  NRF_GNSS_SV_FLAG_UNHEALTHY) ? true : false;
 
-		if ((pvt_data->pvt.sv[i].sv > 0) &&
-		    (pvt_data->pvt.sv[i].sv < 33)) {
-
-			tracked++;
-
-			if (pvt_data->pvt.sv[i].flags &
-					NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
-				in_fix++;
+		if (sv) { /* SV number 0 indicates no satellite */
+			n_tracked++;
+			if (used) {
+				n_used++;
+			}
+			if (unhealthy) {
+				n_unhealthy++;
 			}
 
-			if (pvt_data->pvt.sv[i].flags &
-					NRF_GNSS_SV_FLAG_UNHEALTHY) {
-				unhealthy++;
-			}
+			LOG_DBG("Tracking SV %2u: %s, %s", sv,
+				sv_used_str(used),
+				sv_unhealthy_str(unhealthy));
 		}
 	}
 
-	LOG_DBG("Tracking: %d Using: %d Unhealthy: %d", tracked,
-						       in_fix,
-						       unhealthy);
+	LOG_DBG("Tracking: %d Using: %d Unhealthy: %d", n_tracked,
+							n_used,
+							n_unhealthy);
 
 	LOG_DBG("Seconds since last fix %lld",
 			(k_uptime_get() - fix_timestamp) / 1000);
@@ -145,10 +152,9 @@ wait:
 			continue;
 		}
 
-		print_satellite_stats(&raw_gps_data);
-
 		switch (raw_gps_data.data_id) {
 		case NRF_GNSS_PVT_DATA_ID:
+			print_satellite_stats(&raw_gps_data);
 			copy_pvt(&fresh_pvt.pvt, &raw_gps_data.pvt);
 
 			if ((drv_data->trigger.chan == GPS_CHAN_PVT)
