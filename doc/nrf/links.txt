@@ -92,11 +92,13 @@
 
 .. ### Links to other websites and software
 
-.. _Git: https://git-scm.com/
+.. _`Git`: https://git-scm.com/
 
-.. _GitHub: https://github.com/
+.. _`GitHub`: https://github.com/
 
-.. _GitHub fork: https://help.github.com/en/articles/fork-a-repo
+.. _`GitHub fork`: https://help.github.com/en/articles/fork-a-repo
+
+.. _`GitHub duplicate`: https://help.github.com/en/articles/duplicating-a-repository
 
 .. _`Semantic Versioning 2.0.0`: https://semver.org/
 
