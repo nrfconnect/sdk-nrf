@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef BOOTLOADER_H__
-#define BOOTLOADER_H__
+#ifndef BL_VALIDATION_H__
+#define BL_VALIDATION_H__
 
+#include <stdbool.h>
 #include <fw_metadata.h>
 
 struct __packed fw_validation_info {
@@ -76,5 +77,6 @@ validation_info_find(const struct fw_firmware_info *finfo,
 	return NULL;
 }
 
-#endif /* BOOTLOADER_H__ */
+bool verify_firmware(u32_t address);
 
+#endif /* BL_VALIDATION_H__ */

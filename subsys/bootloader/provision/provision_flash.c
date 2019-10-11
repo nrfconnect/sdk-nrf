@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <errno.h>
-#include "bootloader.h"
 #include <nrf.h>
 #include <assert.h>
 #include <pm_config.h>
