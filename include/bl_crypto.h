@@ -30,20 +30,14 @@
 	typedef u32_t bl_sha256_ctx_t[SHA256_CTX_SIZE/4];
 #endif
 
+/* ABI ID for the bl_root_of_trust_verify ABI. */
 #define BL_ROT_VERIFY_ABI_ID 0x1001
-#define BL_ROT_VERIFY_ABI_FLAGS 2
-#define BL_ROT_VERIFY_ABI_VER 1
-#define BL_ROT_VERIFY_ABI_MAX_VER 0xFF
 
+/* ABI ID for the bl_sha256_* ABI set. */
 #define BL_SHA256_ABI_ID 0x1002
-#define BL_SHA256_ABI_FLAGS 0
-#define BL_SHA256_ABI_VER 1
-#define BL_SHA256_ABI_MAX_VER 0xFF
 
+/* ABI ID for the bl_secp256r1_validate ABI. */
 #define BL_SECP256R1_ABI_ID 0x1003
-#define BL_SECP256R1_ABI_FLAGS 1
-#define BL_SECP256R1_ABI_VER 1
-#define BL_SECP256R1_ABI_MAX_VER 0xFF
 
 /**
  * @brief Initialize bootloader crypto module.
