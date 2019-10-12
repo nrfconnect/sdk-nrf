@@ -20,16 +20,22 @@ const struct fw_abi_info *get_bl_crypto_abi(enum abi_index abi)
 	if (!bl_crypto_abis[abi]) {
 		switch(abi) {
 		case BL_ROT_VERIFY:
-			bl_crypto_abis[abi] = fw_abi_find(BL_ROT_VERIFY_ABI_ID, BL_ROT_VERIFY_ABI_FLAGS,
-					BL_ROT_VERIFY_ABI_VER, BL_ROT_VERIFY_ABI_MAX_VER);
+			bl_crypto_abis[abi] = fw_abi_find(BL_ROT_VERIFY_ABI_ID,
+					CONFIG_BL_ROT_VERIFY_ABI_FLAGS,
+					CONFIG_BL_ROT_VERIFY_ABI_VER,
+					CONFIG_BL_ROT_VERIFY_ABI_MAX_VER);
 			break;
 		case BL_SHA256:
-			bl_crypto_abis[abi] = fw_abi_find(BL_SHA256_ABI_ID, BL_SHA256_ABI_FLAGS,
-					BL_SHA256_ABI_VER, BL_SHA256_ABI_MAX_VER);
+			bl_crypto_abis[abi] = fw_abi_find(BL_SHA256_ABI_ID,
+					CONFIG_BL_SHA256_ABI_FLAGS,
+					CONFIG_BL_SHA256_ABI_VER,
+					CONFIG_BL_SHA256_ABI_MAX_VER);
 			break;
 		case BL_SECP256R1:
-			bl_crypto_abis[abi] = fw_abi_find(BL_SECP256R1_ABI_ID, BL_SECP256R1_ABI_FLAGS,
-					BL_SECP256R1_ABI_VER, BL_SECP256R1_ABI_MAX_VER);
+			bl_crypto_abis[abi] = fw_abi_find(BL_SECP256R1_ABI_ID,
+					CONFIG_BL_SECP256R1_ABI_FLAGS,
+					CONFIG_BL_SECP256R1_ABI_VER,
+					CONFIG_BL_SECP256R1_ABI_MAX_VER);
 			break;
 		default:
 			k_oops();

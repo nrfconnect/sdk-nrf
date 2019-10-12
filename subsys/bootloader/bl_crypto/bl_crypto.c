@@ -117,16 +117,20 @@ int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 }
 
 __ext_abi(struct bl_rot_verify_abi, bl_rot_verify_abi) = {
-	.header = ABI_INFO_INIT(BL_ROT_VERIFY_ABI_ID, BL_ROT_VERIFY_ABI_FLAGS,
-				BL_ROT_VERIFY_ABI_VER, sizeof(struct bl_rot_verify_abi)),
+	.header = ABI_INFO_INIT(BL_ROT_VERIFY_ABI_ID,
+				CONFIG_BL_ROT_VERIFY_ABI_FLAGS,
+				CONFIG_BL_ROT_VERIFY_ABI_VER,
+				sizeof(struct bl_rot_verify_abi)),
 	.abi = {
 		.bl_root_of_trust_verify = bl_root_of_trust_verify_external,
 	}
 };
 
 __ext_abi(struct bl_sha256_abi, bl_sha256_abi) = {
-	.header = ABI_INFO_INIT(BL_SHA256_ABI_ID, BL_SHA256_ABI_FLAGS,
-				BL_SHA256_ABI_VER, sizeof(struct bl_sha256_abi)),
+	.header = ABI_INFO_INIT(BL_SHA256_ABI_ID,
+				CONFIG_BL_SHA256_ABI_FLAGS,
+				CONFIG_BL_SHA256_ABI_VER,
+				sizeof(struct bl_sha256_abi)),
 	.abi = {
 		.bl_sha256_init = bl_sha256_init,
 		.bl_sha256_update = bl_sha256_update,
@@ -137,8 +141,10 @@ __ext_abi(struct bl_sha256_abi, bl_sha256_abi) = {
 };
 
 __ext_abi(struct bl_secp256r1_abi, bl_secp256r1_abi) = {
-	.header = ABI_INFO_INIT(BL_SECP256R1_ABI_ID, BL_SECP256R1_ABI_FLAGS,
-				BL_SECP256R1_ABI_VER, sizeof(struct bl_secp256r1_abi)),
+	.header = ABI_INFO_INIT(BL_SECP256R1_ABI_ID,
+				CONFIG_BL_SECP256R1_ABI_FLAGS,
+				CONFIG_BL_SECP256R1_ABI_VER,
+				sizeof(struct bl_secp256r1_abi)),
 	.abi = {
 		.bl_secp256r1_validate = bl_secp256r1_validate,
 	},
