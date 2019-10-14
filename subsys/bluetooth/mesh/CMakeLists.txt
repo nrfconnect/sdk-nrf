@@ -17,3 +17,6 @@ zephyr_sources_ifdef(CONFIG_BT_MESH_DTT_CLI gen_dtt_cli.c)
 
 zephyr_sources_ifdef(CONFIG_BT_MESH_PONOFF_SRV gen_ponoff_srv.c)
 zephyr_sources_ifdef(CONFIG_BT_MESH_PONOFF_CLI gen_ponoff_cli.c)
+
+zephyr_sources_ifdef(CONFIG_BT_MESH_PLVL_SRV gen_plvl_srv.c)
+zephyr_sources_ifdef(CONFIG_BT_MESH_PLVL_CLI gen_plvl_cli.c)

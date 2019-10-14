@@ -79,6 +79,21 @@ config BT_MESH_PONOFF_CLI
 	help
 	  Enable Mesh Generic Power OnOff Client model.
 
+
+config BT_MESH_PLVL_SRV
+	bool "Generic Power Level Server"
+	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_PONOFF_SRV
+	help
+	  Enable Mesh Generic Power Level Server model.
+
+config BT_MESH_PLVL_CLI
+	bool "Generic Power Level Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Power Level Client model.
+
 endmenu
 
 endif # BT_MESH
