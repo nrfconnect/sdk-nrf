@@ -24,9 +24,11 @@
 #include <stddef.h>
 #include <toolchain.h>
 #include <sys/util.h>
-#include <assert.h>
+#include <sys/__assert.h>
 #include <string.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#endif
 
 #define MAGIC_LEN_WORDS (CONFIG_FW_MAGIC_LEN / sizeof(u32_t))
 
