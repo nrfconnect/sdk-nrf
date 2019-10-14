@@ -24,5 +24,7 @@
 #include <bluetooth/mesh/gen_lvl_cli.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
 #include <bluetooth/mesh/gen_dtt_cli.h>
+#include <bluetooth/mesh/gen_ponoff_srv.h>
+#include <bluetooth/mesh/gen_ponoff_cli.h>
 
 #endif /* BT_MESH_MODELS_H__ */
