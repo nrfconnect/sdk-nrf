@@ -6,6 +6,7 @@
 
 #include <soc.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <device.h>
 #include <kernel_includes.h>
 #include <clock_control.h>
@@ -21,6 +22,14 @@
 #include <hal/nrf_power.h>
 #endif
 
+static bool is_context_atomic(void)
+{
+	int key = irq_lock();
+	irq_unlock(key);
+
+	return arch_irq_unlocked(key) || k_is_in_isr();
+}
+
 static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 {
 	int errcode;
@@ -29,9 +38,9 @@ static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 
 	bool blocking = POINTER_TO_UINT(sub_system);
 
-	if (!k_is_in_isr()) {
+	if (!is_context_atomic()) {
 		errcode = MULTITHREADING_LOCK_ACQUIRE();
-	} else { /* in isr */
+	} else {
 		errcode = MULTITHREADING_LOCK_ACQUIRE_NO_WAIT();
 	}
 	if (errcode) {
@@ -56,9 +65,9 @@ static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 #endif
 
 		do {
-			if (!k_is_in_isr()) {
+			if (!is_context_atomic()) {
 				errcode = MULTITHREADING_LOCK_ACQUIRE();
-			} else { /* in isr */
+			} else {
 				errcode = MULTITHREADING_LOCK_ACQUIRE_NO_WAIT();
 			}
 			if (errcode) {
@@ -96,7 +105,7 @@ static int hf_clock_stop(struct device *dev, clock_control_subsys_t sub_system)
 	ARG_UNUSED(dev);
 	ARG_UNUSED(sub_system);
 
-	if (!k_is_in_isr()) {
+	if (!is_context_atomic()) {
 		errcode = MULTITHREADING_LOCK_ACQUIRE();
 	} else {
 		errcode = MULTITHREADING_LOCK_ACQUIRE_NO_WAIT();
