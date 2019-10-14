@@ -107,6 +107,19 @@ config BT_MESH_BATTERY_CLI
 	help
 	  Enable Mesh Generic Battery Client model.
 
+
+config BT_MESH_LOC_SRV
+	bool "Generic Location Server"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Location Server model.
+
+config BT_MESH_LOC_CLI
+	bool "Generic Location Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Location Client model.
+
 endmenu
 
 endif # BT_MESH
