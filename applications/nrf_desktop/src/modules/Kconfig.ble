@@ -157,14 +157,6 @@ config DESKTOP_BLE_SCANNING_ENABLE
 	help
 	  Enable device to scan for peripheral devices.
 
-config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
-	int "Security fail timeout [s]"
-	default 10
-	depends on BT_PERIPHERAL
-	help
-	  After this time peripheral device disconnects if security is not
-	  established.
-
 config DESKTOP_BLE_SCAN_START_TIMEOUT_S
 	int "Scan start timeout [s]"
 	default 5
@@ -202,6 +194,23 @@ if DESKTOP_BLE_DISCOVERY_ENABLE
 
 module = DESKTOP_BLE_DISCOVERY
 module-str = BLE discovery
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+comment "BLE Latency"
+
+if BT_PERIPHERAL
+
+config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
+	int "Security fail timeout [s]"
+	default 10
+	help
+	  After this time peripheral device disconnects if security is not
+	  established.
+
+module = DESKTOP_BLE_LATENCY
+module-str = BLE latency
 source "subsys/logging/Kconfig.template.log_config"
 
 endif
