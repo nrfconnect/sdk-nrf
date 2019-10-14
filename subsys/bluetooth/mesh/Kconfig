@@ -27,6 +27,19 @@ config BT_MESH_ONOFF_CLI
 	help
 	  Enable Mesh Generic OnOff Client model.
 
+
+config BT_MESH_LVL_SRV
+	bool "Generic Level Server"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Level Server model.
+
+config BT_MESH_LVL_CLI
+	bool "Generic Level Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Level Client model.
+
 endmenu
 
 endif # BT_MESH
