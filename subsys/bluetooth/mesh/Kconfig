@@ -63,6 +63,22 @@ config BT_MESH_DTT_CLI
 	help
 	  Enable Mesh Generic Default Transition Time Client model.
 
+
+config BT_MESH_PONOFF_SRV
+	bool "Generic Power OnOff Server"
+	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_DTT_SRV
+	select BT_MESH_ONOFF_SRV
+	imply BT_SETTINGS
+	help
+	  Enable Mesh Generic Power OnOff Server model.
+
+config BT_MESH_PONOFF_CLI
+	bool "Generic Power OnOff Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Power OnOff Client model.
+
 endmenu
 
 endif # BT_MESH
