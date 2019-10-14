@@ -32,5 +32,7 @@
 #include <bluetooth/mesh/gen_battery_cli.h>
 #include <bluetooth/mesh/gen_loc_srv.h>
 #include <bluetooth/mesh/gen_loc_cli.h>
+#include <bluetooth/mesh/gen_prop_srv.h>
+#include <bluetooth/mesh/gen_prop_cli.h>
 
 #endif /* BT_MESH_MODELS_H__ */

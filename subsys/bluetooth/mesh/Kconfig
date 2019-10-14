@@ -120,6 +120,41 @@ config BT_MESH_LOC_CLI
 	help
 	  Enable Mesh Generic Location Client model.
 
+config BT_MESH_PROP_SRV
+	bool "Generic Property Server"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Property Server models.
+
+config BT_MESH_PROP_CLI
+	bool "Generic Property Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Property Client models.
+
+menu "Generic Property Model configuration"
+
+config BT_MESH_PROP_MAXSIZE
+	int "Generic Property value max size"
+	default 8
+	range 1 376
+	help
+	  The upper boundary of a Generic Property value's size. The entire
+	  value with an 4 byte overhead must fit within a full TX packet
+	  payload (see BT_MESH_TX_SEG_MAX).
+
+config BT_MESH_PROP_MAXCOUNT
+	int "Generic Property value max count"
+	default 8
+	range 1 189
+	help
+	  The largest number of Generic Property values that can be listed by
+	  a Generic Property server. Each property ID is 2 bytes long, and
+	  the full list plus a 1 byte overhead must fit within a full TX packet
+	  payload (see BT_MESH_TX_SEG_MAX).
+
+endmenu
+
 endmenu
 
 endif # BT_MESH
