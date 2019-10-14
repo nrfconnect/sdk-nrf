@@ -26,3 +26,6 @@ zephyr_sources_ifdef(CONFIG_BT_MESH_BATTERY_CLI gen_battery_cli.c)
 
 zephyr_sources_ifdef(CONFIG_BT_MESH_LOC_SRV gen_loc_srv.c)
 zephyr_sources_ifdef(CONFIG_BT_MESH_LOC_CLI gen_loc_cli.c)
+
+zephyr_sources_ifdef(CONFIG_BT_MESH_PROP_SRV gen_prop_srv.c)
+zephyr_sources_ifdef(CONFIG_BT_MESH_PROP_CLI gen_prop_cli.c)
