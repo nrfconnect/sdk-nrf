@@ -94,6 +94,19 @@ config BT_MESH_PLVL_CLI
 	help
 	  Enable Mesh Generic Power Level Client model.
 
+
+config BT_MESH_BATTERY_SRV
+	bool "Generic Battery Server"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Battery Server model.
+
+config BT_MESH_BATTERY_CLI
+	bool "Generic Battery Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Battery Client model.
+
 endmenu
 
 endif # BT_MESH
