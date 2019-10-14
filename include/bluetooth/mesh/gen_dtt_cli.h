@@ -1,0 +1,134 @@
+/*
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
+
+/**
+ *
+ * @file
+ * @defgroup bt_mesh_dtt_cli Generic Default Transition Time Client API
+ * @{
+ * @brief API for the Generic Default Transition Time (DTT) Client.
+ */
+
+#ifndef BT_MESH_GEN_DTT_CLI_H__
+#define BT_MESH_GEN_DTT_CLI_H__
+
+#include <bluetooth/mesh/gen_dtt.h>
+#include <bluetooth/mesh/model_types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct bt_mesh_dtt_cli;
+
+/** @def BT_MESH_DTT_CLI_INIT
+ *
+ * @brief Initialization parameters for the @ref bt_mesh_dtt_cli.
+ *
+ * @param[in] _status_handler Optional status message handler.
+ * @sa bt_mesh_dtt_cli::status_handler
+ */
+#define BT_MESH_DTT_CLI_INIT(_status_handler)                                  \
+	{                                                                      \
+		.pub = { .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
+				 BT_MESH_DTT_OP_SET,                           \
+				 BT_MESH_DTT_MSG_LEN_SET)) },                  \
+		.status_handler = _status_handler,                             \
+	}
+
+/** @def BT_MESH_MODEL_DTT_CLI
+ *
+ * @brief Generic DTT Client model composition data entry.
+ *
+ * @param[in] _cli Pointer to a @ref bt_mesh_dtt_cli instance.
+ */
+#define BT_MESH_MODEL_DTT_CLI(_cli)                                            \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_CLI,              \
+			 _bt_mesh_dtt_cli_op, &(_cli)->pub,                    \
+			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_dtt_cli,       \
+						 _cli),                        \
+			 &_bt_mesh_dtt_cli_cb)
+
+/**
+ * Generic DTT client structure.
+ *
+ * Should be initialized using the @ref BT_MESH_DTT_CLI_INIT macro.
+ */
+struct bt_mesh_dtt_cli {
+	/** @brief Default Transition Time status message handler.
+	 *
+	 * @param[in] cli Client that received the message.
+	 * @param[in] ctx Message context.
+	 * @param[in] transition_time Transition time presented in the message.
+	 */
+	void (*const status_handler)(struct bt_mesh_dtt_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     s32_t transition_time);
+
+	/** Response context for tracking acknowledged messages. */
+	struct bt_mesh_model_ack_ctx ack_ctx;
+	/** Model publish parameters. */
+	struct bt_mesh_model_pub pub;
+	/** Composition data model entry pointer. */
+	struct bt_mesh_model *model;
+};
+
+/** @brief Get the Default Transition Time of the server.
+ *
+ * This call is blocking if the @p rsp_transition_time buffer is non-NULL.
+ * Otherwise, this function will not request a response from the server, and
+ * return immediately.
+ *
+ * @param[in] cli Client making the request.
+ * @param[in] ctx Message context to use for sending, or NULL to publish with
+ * the configured parameters.
+ * @param[out] rsp_transition_time Pointer to a response buffer. Cannot be
+ * NULL. Note that the response is a signed value, that can be K_FOREVER if the
+ * current state is unknown or too large to represent.
+ *
+ * @retval 0 Successfully retrieved the status of the bound srv.
+ * @retval -EALREADY A blocking operation is already in progress in this model.
+ * @retval -EAGAIN The request timed out.
+ */
+int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
+		    s32_t *rsp_transition_time);
+
+/** @brief Set the Default Transition Time of the server.
+ *
+ * This call is blocking if the @p rsp_transition_time buffer is non-NULL.
+ * Otherwise, this function will not request a response from the server, and
+ * return immediately.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context to use for sending, or NULL to publish with
+ * the configured parameters.
+ * @param[in] transition_time Transition time to set (in milliseconds). Must be
+ * less than @ref BT_MESH_MODEL_TRANSITION_TIME_MAX_MS.
+ * @param[out] rsp_transition_time Response buffer, or NULL to send an
+ * unacknowledged message. Note that the response is a signed value, that can
+ * be K_FOREVER if the current state is unknown or too large to represent.
+ *
+ * @retval 0 Successfully sent the message. If the message is acknowledged,
+ * the response buffer has been set according to the srv's response.
+ * @retval -EINVAL The given transition time is invalid.
+ * @retval -EALREADY A blocking operation is already in progress in this model.
+ * @retval -EAGAIN The request timed out.
+ */
+int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
+		    u32_t transition_time, s32_t *rsp_transition_time);
+
+/** @cond INTERNAL_HIDDEN */
+extern const struct bt_mesh_model_op _bt_mesh_dtt_cli_op[];
+extern const struct bt_mesh_model_cb _bt_mesh_dtt_cli_cb;
+/** @endcond */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* BT_MESH_GEN_DTT_CLI_H__ */
+
+/** @} */

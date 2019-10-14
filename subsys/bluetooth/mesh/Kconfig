@@ -40,6 +40,29 @@ config BT_MESH_LVL_CLI
 	help
 	  Enable Mesh Generic Level Client model.
 
+
+menuconfig BT_MESH_DTT_SRV
+	bool "Generic Default Transition Time Server"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Default Transition Time Server model.
+
+if BT_MESH_DTT_SRV && BT_SETTINGS
+
+config BT_MESH_DTT_SRV_PERSISTENT
+	bool "Store the Default Transition Time persistently"
+	default y
+	help
+	  Enable persistent storage for the Default Transition Time state.
+
+endif
+
+config BT_MESH_DTT_CLI
+	bool "Generic Default Transition Time Client"
+	select BT_MESH_NORDIC_MODELS
+	help
+	  Enable Mesh Generic Default Transition Time Client model.
+
 endmenu
 
 endif # BT_MESH
