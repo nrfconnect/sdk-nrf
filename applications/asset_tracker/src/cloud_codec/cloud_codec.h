@@ -50,6 +50,19 @@ enum cloud_channel {
 	CLOUD_CHANNEL_DEVICE_INFO,
 };
 
+#define CLOUD_CHANNEL_STR_GPS "GPS"
+#define CLOUD_CHANNEL_STR_FLIP "FLIP"
+#define CLOUD_CHANNEL_STR_BUTTON "BUTTON"
+#define CLOUD_CHANNEL_STR_TEMP "TEMP"
+#define CLOUD_CHANNEL_STR_HUMID "HUMID"
+#define CLOUD_CHANNEL_STR_AIR_PRESS "AIR_PRESS"
+#define CLOUD_CHANNEL_STR_AIR_QUAL "AIR_QUAL"
+#define CLOUD_CHANNEL_STR_LTE_LINK_RSRP "RSRP"
+/* The "device" is intended for the shadow, which expects its objects
+ * to have lowercase keys.
+ */
+#define CLOUD_CHANNEL_STR_DEVICE_INFO "device"
+
 struct cloud_data {
 	char *buf;
 	size_t len;
