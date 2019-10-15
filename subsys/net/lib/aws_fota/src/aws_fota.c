@@ -41,7 +41,7 @@ static enum fota_status fota_state = NONE;
 static u32_t doc_version_number = 1;
 
 /* Buffer for reporting the current application version */
-static char version[CONFIG_VERSION_STRING_MAX_LEN];
+static char version[CONFIG_AWS_FOTA_VERSION_STRING_MAX_LEN];
 
 /* Allocated strings for topics */
 static u8_t notify_next_topic[AWS_JOBS_TOPIC_MAX_LEN];
@@ -372,7 +372,7 @@ int aws_fota_init(struct mqtt_client *const client,
 		return -EINVAL;
 	}
 
-	if (strlen(app_version) >= CONFIG_VERSION_STRING_MAX_LEN) {
+	if (strlen(app_version) >= CONFIG_AWS_FOTA_VERSION_STRING_MAX_LEN) {
 		return -EINVAL;
 	}
 
@@ -386,7 +386,7 @@ int aws_fota_init(struct mqtt_client *const client,
 		return err;
 	}
 
-	strncpy(version, app_version, CONFIG_VERSION_STRING_MAX_LEN);
+	strncpy(version, app_version, CONFIG_AWS_FOTA_VERSION_STRING_MAX_LEN);
 
 	return 0;
 }
