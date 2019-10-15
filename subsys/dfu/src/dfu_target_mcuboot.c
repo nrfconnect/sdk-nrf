@@ -12,10 +12,45 @@
 
 LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
+#define MAX_FILE_SEARCH_LEN 500
 #define MCUBOOT_HEADER_MAGIC 0x96f3b83d
 
 static struct flash_img_context flash_img;
 static size_t offset;
+
+int dfu_ctx_mcuboot_set_b1_file(char *file, bool s0_active, char **update)
+{
+	if (file == NULL || update == NULL) {
+		return -EINVAL;
+	}
+
+	/* Ensure that 'file' is null-terminated. */
+	if (strnlen(file, MAX_FILE_SEARCH_LEN) == MAX_FILE_SEARCH_LEN) {
+		return -ENOTSUP;
+	}
+
+	/* We have verified that there is a null-terminator, so this is safe */
+	char *space = strstr(file, " ");
+
+	if (space == NULL) {
+		/* Could not find space separator in input */
+		*update = NULL;
+
+		return 0;
+	}
+
+	if (s0_active) {
+		/* Point after space to 'activate' second file path (S1) */
+		*update = space + 1;
+	} else {
+		*update = file;
+
+		/* Insert null-terminator to 'activate' first file path (S0) */
+		*space = '\0';
+	}
+
+	return 0;
+}
 
 bool dfu_target_mcuboot_identify(const void *const buf)
 {
