@@ -84,7 +84,7 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.13.1
+      revision: mbedtls-2.16.3
       remote: armmbed
 
     # The projects below are included for completeness, but they are
