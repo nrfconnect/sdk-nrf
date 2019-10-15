@@ -9,6 +9,14 @@
 #include <net/fota_download.h>
 #include <net/download_client.h>
 #include <dfu/dfu_target.h>
+#include <pm_config.h>
+
+#ifdef PM_S1_ADDRESS
+/* MCUBoot support is required */
+#include <fw_metadata.h>
+#include <secure_services.h>
+#include <dfu_target_mcuboot.h>
+#endif
 
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
@@ -133,6 +141,38 @@ int fota_download_start(char *host, char *file)
 		return -EINVAL;
 	}
 
+#ifdef PM_S1_ADDRESS
+	/* B1 upgrade is supported, check what B1 slot is active,
+	 * (s0 or s1), and update file to point to correct candidate if
+	 * space separated file is given.
+	 */
+	char *update;
+	struct fw_firmware_info s0;
+	struct fw_firmware_info s1;
+
+	err = spm_firmware_info(PM_S0_ADDRESS, &s0);
+	if (err != 0) {
+		return err;
+	}
+
+	err = spm_firmware_info(PM_S1_ADDRESS, &s1);
+	if (err != 0) {
+		return err;
+	}
+
+	bool s0_active = s0.firmware_version >= s1.firmware_version;
+
+	err = dfu_ctx_mcuboot_set_b1_file(file, s0_active, &update);
+	if (err != 0) {
+		return err;
+	}
+
+	if (update != NULL) {
+		LOG_INF("B1 update, selected file:\n%s", update);
+		file = update;
+	}
+#endif /* PM_S1_ADDRESS */
+
 	err = download_client_connect(&dlc, host, &config);
 	if (err != 0) {
 		return err;
@@ -144,6 +184,7 @@ int fota_download_start(char *host, char *file)
 		download_client_disconnect(&dlc);
 		return err;
 	}
+
 	return 0;
 }
 
