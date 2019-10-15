@@ -11,7 +11,7 @@ int fprotect_area(u32_t start, size_t length)
 {
 	static u32_t region_idx;
 
-	if (region_idx > ACL_REGIONS_COUNT) {
+	if (region_idx >= ACL_REGIONS_COUNT) {
 		return -ENOSPC;
 	}
 

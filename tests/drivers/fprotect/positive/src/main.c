@@ -15,10 +15,10 @@
 #include <device.h>
 #include <flash.h>
 
-u8_t write_data[] = "Hello world";
-u32_t valid_write_addr = 0x1C000;
+static u8_t write_data[] = "Hello world";
+static u32_t valid_write_addr = 0x1C000;
 
-void test_flash_write(void)
+static void test_flash_write(void)
 {
 	int retval = 0;
 	struct device *flash_dev = device_get_binding(DT_FLASH_DEV_NAME);
@@ -27,7 +27,7 @@ void test_flash_write(void)
 	zassert_true(retval == 0, "flash_write failed");
 }
 
-void test_flash_read(void)
+static void test_flash_read(void)
 {
 	int retval = 0;
 	u8_t read_data[strlen(write_data)+1];
@@ -51,7 +51,7 @@ void test_flash_read(void)
 	}
 }
 
-void test_flash_read_protected(void)
+static void test_flash_read_protected(void)
 {
 	int retval;
 	u8_t rd[256];
@@ -60,30 +60,12 @@ void test_flash_read_protected(void)
 	zassert_true(retval == 0, "flash read to protected area failed");
 }
 
-void test_flash_write_protected(void)
-{
-	u8_t wd[256];
-	u32_t invalid_write_addr = 0x7000;
-	(void)memset(wd, 0xa5, sizeof(wd));
-	struct device *flash_dev = device_get_binding(DT_FLASH_DEV_NAME);
-	(void) flash_write_protection_set(flash_dev, false);
-	printk("NOTE: A BUS FAULT (BFAR addr 0x%x) immediately after this message"
-		" means the test passed!\n", invalid_write_addr);
-	int err = flash_write(flash_dev, invalid_write_addr, wd, sizeof(wd));
-	zassert_equal(0, err, "flash_write failed with err code %d\r\n", err);
-	zassert_unreachable("Should have BUS FAULTed before coming here.");
-}
-
 void test_main(void)
 {
-	ztest_test_suite(test_bl_fprotect_readback,
+	ztest_test_suite(test_fprotect_positive,
 			ztest_unit_test(test_flash_write),
-			ztest_unit_test(test_flash_read)
+			ztest_unit_test(test_flash_read),
+			ztest_unit_test(test_flash_read_protected)
 			);
-	ztest_test_suite(test_bl_fprotect,
-			ztest_unit_test(test_flash_read_protected),
-			ztest_unit_test(test_flash_write_protected)
-			);
-	ztest_run_test_suite(test_bl_fprotect_readback);
-	ztest_run_test_suite(test_bl_fprotect);
+	ztest_run_test_suite(test_fprotect_positive);
 }
