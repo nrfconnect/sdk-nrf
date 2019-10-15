@@ -79,41 +79,7 @@ In addition, it can provide functionality for upgrading both itself and the foll
 
 A default implementation of an upgradable bootloader is not available yet.
 
-
 Adding a bootloader chain to your application
 *********************************************
 
-Complete the following steps to add a secure bootloader chain to your application:
-
-1. Create a private key in PEM format.
-   To do so, run the following command, which stores your private key in a file name ``priv.pem`` in the current folder::
-
-       openssl ecparam -name prime256v1 -genkey -noout -out priv.pem
-
-   OpenSSL is installed with GIT, so it should be available in your GIT bash.
-   See `openSSL`_ for more information.
-
-   .. note::
-      This step is optional for testing the bootloader chain.
-      If you do not provide your own keys, debug keys are created automatically.
-      However, you should never go into production with an application that is not protected by secure keys.
-
-#. Run ``menuconfig`` to enable Secure Boot:
-
-   a. Select **Project** > **Configure nRF Connect SDK project**.
-   #. Go to **Nordic nRF Connect** and select **Secure Boot** to enable :option:`CONFIG_SECURE_BOOT`.
-   #. Under **Private key PEM file** (:option:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
-      If you choose to run the sample with default debug keys, you can skip this step.
-
-      There are additional configuration options that you can modify, but it is not recommended to do so.
-      The default settings are suitable for most use cases.
-
-   .. note::
-      If you need more flexibility with signing, or you don't want the build system to handle your private key, choose CONFIG_SB_SIGNING_CUSTOM.
-      When choosing CONFIG_SB_SIGNING_CUSTOM, you must also specify CONFIG_SB_SIGNING_COMMAND and CONFIG_SB_SIGNING_PUBLIC_KEY.
-
-   #. Click **Configure**.
-
-#. Select **Build** > **Build Solution** to compile your application.
-   The build process creates two images, one for the bootloader and one for the application, and merges them together.
-#.  Select **Build** > **Build and Run** to program the resulting image to your device.
+See :ref:`bootloader_build_and_run` in the documentation of the :ref:`bootloader` sample for instructions on how to enable the secure bootloader chain.
