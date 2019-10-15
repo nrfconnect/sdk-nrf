@@ -36,19 +36,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 #define MAX_KEY_LEN 30
 #define PEER_IS_RPA_STORAGE_NAME "peer_is_rpa_"
 
-static const struct bt_le_adv_param adv_param_fast = {
-	.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
-		   BT_LE_ADV_OPT_USE_NAME,
-	.interval_min = BT_GAP_ADV_FAST_INT_MIN_1,
-	.interval_max = BT_GAP_ADV_FAST_INT_MAX_1,
-};
-
-static const struct bt_le_adv_param adv_param_normal = {
-	.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
-		   BT_LE_ADV_OPT_USE_NAME,
-	.interval_min = BT_GAP_ADV_FAST_INT_MIN_2,
-	.interval_max = BT_GAP_ADV_FAST_INT_MAX_2,
-};
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -172,15 +159,40 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 	return 0;
 }
 
-static int ble_adv_start_undirected(bool fast_adv, bool swift_pair)
+static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
+				    bool fast_adv, bool swift_pair)
 {
-	struct bt_le_adv_param adv_param;
+	struct bt_le_adv_param adv_param = {
+		.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
+			   BT_LE_ADV_OPT_USE_NAME,
+	};
 
 	LOG_INF("Use %s advertising", (fast_adv)?("fast"):("slow"));
 	if (fast_adv) {
-		adv_param = adv_param_fast;
+		adv_param.interval_min = BT_GAP_ADV_FAST_INT_MIN_1;
+		adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_1;
 	} else {
-		adv_param = adv_param_normal;
+		adv_param.interval_min = BT_GAP_ADV_FAST_INT_MIN_2;
+		adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_2;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_WHITELIST)) {
+		int err = bt_le_whitelist_clear();
+
+		if (err) {
+			LOG_ERR("Cannot clear whitelist (err: %d)", err);
+			return err;
+		}
+
+		if (bt_addr_le_cmp(bond_addr, BT_ADDR_LE_ANY)) {
+			adv_param.options |= BT_LE_ADV_OPT_FILTER_CONN;
+			err = bt_le_whitelist_add(bond_addr);
+		}
+
+		if (err) {
+			LOG_ERR("Cannot add peer to whitelist (err: %d)", err);
+			return err;
+		}
 	}
 
 	adv_param.id = cur_identity;
@@ -204,6 +216,7 @@ static int ble_adv_start(bool can_fast_adv)
 		.peer_id = 0,
 		.peer_count = 0,
 	};
+	bt_addr_le_copy(&bond_find_data.peer_address, BT_ADDR_LE_ANY);
 	bt_foreach_bond(cur_identity, bond_find, &bond_find_data);
 
 	int err = ble_adv_stop();
@@ -228,7 +241,8 @@ static int ble_adv_start(bool can_fast_adv)
 		err = ble_adv_start_directed(&bond_find_data.peer_address,
 					     fast_adv);
 	} else {
-		err = ble_adv_start_undirected(fast_adv, swift_pair);
+		err = ble_adv_start_undirected(&bond_find_data.peer_address,
+					       fast_adv, swift_pair);
 	}
 
 	if (err == -ECONNREFUSED) {
@@ -364,7 +378,6 @@ static int init_settings(void)
 
 static void init(void)
 {
-
 	if (init_settings()) {
 		module_set_state(MODULE_STATE_ERROR);
 		return;
