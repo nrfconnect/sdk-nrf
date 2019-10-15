@@ -13,7 +13,7 @@ menuconfig AWS_FOTA
 
 if AWS_FOTA
 
-config VERSION_STRING_MAX_LEN
+config AWS_FOTA_VERSION_STRING_MAX_LEN
 	int "Application version string max length"
 	default 10
 
