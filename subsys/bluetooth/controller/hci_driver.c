@@ -53,7 +53,10 @@ static K_THREAD_STACK_DEFINE(signal_thread_stack,
 	BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT) \
 	+ BLE_CONTROLLER_MEM_SLAVE_LINKS_SHARED)
 
-static u8_t ble_controller_mempool[SLAVE_MEM_SIZE + MASTER_MEM_SIZE];
+#define MEMPOOL_SIZE ((CONFIG_BLECTRL_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
+		      (CONFIG_BLECTRL_MASTER_COUNT * MASTER_MEM_SIZE))
+
+static u8_t ble_controller_mempool[MEMPOOL_SIZE];
 
 void blectlr_assertion_handler(const char *const file, const u32_t line)
 {
@@ -373,7 +376,7 @@ static int ble_enable(void)
 	int required_memory;
 	ble_controller_cfg_t cfg;
 
-	cfg.master_count.count = 1;
+	cfg.master_count.count = CONFIG_BLECTRL_MASTER_COUNT;
 
 	/* NOTE: ble_controller_cfg_set() returns a negative errno on error. */
 	required_memory =
@@ -384,7 +387,7 @@ static int ble_enable(void)
 		return required_memory;
 	}
 
-	cfg.slave_count.count = 1;
+	cfg.slave_count.count = CONFIG_BLECTRL_SLAVE_COUNT;
 
 	required_memory =
 		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
