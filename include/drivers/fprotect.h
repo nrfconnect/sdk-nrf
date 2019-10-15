@@ -9,6 +9,19 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <zephyr/types.h>
+
+/**
+ * @file
+ * @defgroup fprotect Hardware flash write protection.
+ * @{
+ *
+ * @brief API for write protection of flash areas using Hardware peripheral
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief Protect flash area against writes.
@@ -23,5 +36,13 @@
  *                  registers which are used for all address ranges.
  */
 int fprotect_area(u32_t start, size_t length);
+
+#ifdef __cplusplus
+}
+#endif
+
+/**
+ * @}
+ */
 
 #endif /* FPROTECT_H_ */

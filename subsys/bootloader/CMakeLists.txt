@@ -5,7 +5,6 @@
 #
 
 add_subdirectory(provision)
-add_subdirectory(fprotect)
 add_subdirectory(bl_validation)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO bl_crypto)
 
