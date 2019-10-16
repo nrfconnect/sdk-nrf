@@ -46,10 +46,25 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 	bond_find_data->peer_count++;
 }
 
+static void disconnect_peer(struct bt_conn *conn)
+{
+	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+
+	if (err == -ENOTCONN) {
+		err = 0;
+	}
+	LOG_WRN("Device %s", err ? "failed to disconnect" : "disconnected");
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
 static void connected(struct bt_conn *conn, u8_t error)
 {
 	/* Make sure that connection will remain valid. */
 	bt_conn_ref(conn);
+
 	char addr_str[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
@@ -67,6 +82,24 @@ static void connected(struct bt_conn *conn, u8_t error)
 	}
 
 	LOG_INF("Connected to %s", log_strdup(addr_str));
+
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
+		if (!active_conn[i]) {
+			break;
+		}
+	}
+	if (i >= ARRAY_SIZE(active_conn)) {
+		k_panic();
+	}
+	active_conn[i] = conn;
+
+	struct ble_peer_event *event = new_ble_peer_event();
+
+	event->id = conn;
+	event->state = PEER_STATE_CONNECTED;
+	EVENT_SUBMIT(event);
 
 	struct bt_conn_info info;
 
@@ -95,28 +128,6 @@ static void connected(struct bt_conn *conn, u8_t error)
 			LOG_INF("Already bonded to %s", log_strdup(addr_str));
 			goto disconnect;
 		}
-	}
-
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
-		if (!active_conn[i]) {
-			break;
-		}
-	}
-	if (i >= ARRAY_SIZE(active_conn)) {
-		k_panic();
-	}
-	active_conn[i] = conn;
-
-	struct ble_peer_event *event = new_ble_peer_event();
-
-	event->id = conn;
-	event->state = PEER_STATE_CONNECTED;
-	EVENT_SUBMIT(event);
-
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
-	    (info.role == BT_CONN_ROLE_SLAVE)) {
 		/* Security must be enabled after peer event is sent.
 		 * This is to make sure notification events are propagated
 		 * in the right order.
@@ -133,12 +144,7 @@ static void connected(struct bt_conn *conn, u8_t error)
 	return;
 
 disconnect:
-	err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-
-	if (err == -ENOTCONN) {
-		err = 0;
-	}
-	LOG_WRN("Device %s", err ? "failed to disconnect" : "disconnected");
+	disconnect_peer(conn);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
@@ -158,6 +164,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	}
 
 	if (i == ARRAY_SIZE(active_conn)) {
+		__ASSERT_NO_MSG(false);
 		return;
 	}
 
@@ -196,14 +203,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 		LOG_WRN("Security with %s failed, level %u err %d",
 			log_strdup(addr), level, bt_err);
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-			err = bt_conn_disconnect(conn,
-					BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-
-			if (err == -ENOTCONN) {
-				err = 0;
-			}
-			LOG_WRN("Device %s", err ?
-				"failed to disconnect" : "disconnected");
+			disconnect_peer(conn);
 		}
 
 		return;
