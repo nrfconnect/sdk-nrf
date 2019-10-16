@@ -53,10 +53,10 @@ static int area_code_parse(struct lte_param *area_code)
 		return -EINVAL;
 	}
 
-	area_code->value_string[2] = '\0';
+	area_code->value_string[4] = '\0';
 	/* Parses the string, interpreting its content as an 	*/
 	/* integral number with base 16. (Hexadecimal)		*/
-	area_code->value = (double)strtol(area_code->value_string, NULL, 16);
+	area_code->value = strtol(area_code->value_string, NULL, 16);
 
 	return 0;
 }
