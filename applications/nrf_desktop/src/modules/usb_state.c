@@ -328,7 +328,15 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		break;
 
 	case USB_DC_SUSPEND:
-		__ASSERT_NO_MSG(state != USB_STATE_DISCONNECTED);
+		if (state == USB_STATE_DISCONNECTED) {
+			/* Due to the way USB driver and stack are written
+			 * some events may be issued before application
+			 * connect its callback.
+			 * We assume that device was powered.
+			 */
+			state = USB_STATE_POWERED;
+			LOG_WRN("USB suspended while disconnected");
+		}
 		before_suspend = state;
 		new_state = USB_STATE_SUSPENDED;
 		LOG_WRN("USB suspend");
