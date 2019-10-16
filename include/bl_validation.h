@@ -7,6 +7,14 @@
 #ifndef BL_VALIDATION_H__
 #define BL_VALIDATION_H__
 
+/*
+ * The FW package will consist of (firmware | (padding) | validation_info),
+ * where the firmware contains the firmware_info at a predefined location. The
+ * padding is present if the validation_info needs alignment. The
+ * validation_info is not directly referenced from the firmware_info since the
+ * validation_info doesn't actually have to be placed after the firmware.
+ */
+
 #include <stdbool.h>
 #include <fw_info.h>
 

@@ -7,18 +7,9 @@
 #ifndef FW_INFO_H__
 #define FW_INFO_H__
 
-/*
- * The package will consist of (firmware | (padding) | validation_info),
- * where the firmware contains the firmware_info at a predefined location. The
- * padding is present if the validation_info needs alignment. The
- * validation_info is not directly referenced from the firmware_info since the
- * validation_info doesn't actually have to be placed after the firmware.
- *
- * Putting the firmware info inside the firmware instead of in front of it
- * removes the need to consider the padding before the vector table of the
- * firmware. It will also likely make it easier to add all the info at compile
- * time.
- */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <zephyr/types.h>
 #include <stddef.h>
@@ -29,6 +20,10 @@
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
 #endif
+
+/** @defgroup fw_info Firmware info structure
+ * @{
+ */
 
 #define MAGIC_LEN_WORDS (CONFIG_FW_INFO_MAGIC_LEN / sizeof(u32_t))
 
@@ -75,7 +70,9 @@ struct __packed fw_info {
 	const fw_info_abi_getter abi_out;
 };
 
-
+/** @cond
+ *  Remove from doc building.
+ */
 #define OFFSET_CHECK(type, member, value) \
 		BUILD_ASSERT_MSG(offsetof(type, member) == value, \
 				#member " has wrong offset")
@@ -87,6 +84,9 @@ OFFSET_CHECK(struct fw_info, firmware_version,
 	(CONFIG_FW_INFO_MAGIC_LEN + 4));
 OFFSET_CHECK(struct fw_info, firmware_address,
 	(CONFIG_FW_INFO_MAGIC_LEN + 8));
+
+/** @endcond
+ */
 
 /* For declaring this firmware's firmware info. */
 #define __fw_info Z_GENERIC_SECTION(.firmware_info) __attribute__((used)) const
@@ -238,8 +238,13 @@ static inline const struct fw_info *fw_info_check(u32_t fw_info_addr)
 static const u32_t allowed_offsets[] = {FW_INFO_OFFSET0, FW_INFO_OFFSET1,
 					FW_INFO_OFFSET2};
 
+/** @cond
+ *  Remove from doc building.
+ */
 BUILD_ASSERT_MSG(ARRAY_SIZE(allowed_offsets) == FW_INFO_OFFSET_COUNT,
 		"Mismatch in the number of allowed offsets.");
+/** @endcond
+ */
 
 #if (FW_INFO_OFFSET_COUNT != 3) || ((CURRENT_OFFSET) != (FW_INFO_OFFSET0) && \
 				(CURRENT_OFFSET) != (FW_INFO_OFFSET1) && \
@@ -305,5 +310,11 @@ const struct fw_info_abi *fw_info_abi_get(u32_t id, u32_t index);
  */
 const struct fw_info_abi *fw_info_abi_find(u32_t id, u32_t flags,
 					u32_t min_version, u32_t max_version);
+
+  /** @} */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
