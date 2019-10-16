@@ -157,6 +157,7 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   "*.rst:boards:${NRF_RST_OUT}/doc/nrf"
   "release-notes*.rst:doc:${NRF_RST_OUT}/doc/nrf"
   "changelog.rst:doc:${NRF_RST_OUT}/doc/nrf"
+  "*.rst:doc/nrf/drivers:${NRF_RST_OUT}"
   "*.rst:include:${NRF_RST_OUT}/doc/nrf"
   "*.rst:lib:${NRF_RST_OUT}/doc/nrf"
   "*.rst:scripts:${NRF_RST_OUT}/doc/nrf"

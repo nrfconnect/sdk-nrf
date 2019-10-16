@@ -13,3 +13,4 @@ Here you can find documentation for these drivers, including API documentation.
    :glob:
 
    ../../include/drivers/*
+   drivers/*
