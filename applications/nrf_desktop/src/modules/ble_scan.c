@@ -484,7 +484,11 @@ static bool event_handler(const struct event_header *eh)
 				discovering_peer_conn = NULL;
 			}
 			scan_stop();
-			scan_start();
+			/* ble_state keeps reference to connection object.
+			 * Cannot create new connection now.
+			 */
+			k_delayed_work_submit(&scan_start_trigger, 0);
+			scan_counter = SCAN_TRIG_TIMEOUT_MS;
 			break;
 		default:
 			__ASSERT_NO_MSG(false);
