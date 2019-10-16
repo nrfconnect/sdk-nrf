@@ -74,7 +74,16 @@ class RttNordicProfilerHost:
             self.jlink.sys_reset()
             self.jlink.go()
         self.jlink.rtt_start()
-        time.sleep(1)  # time required for initialization
+
+        TIMEOUT = 20
+        start_time = time.time()
+        while not self.jlink.rtt_is_control_block_found():
+            if time.time() - start_time > TIMEOUT:
+                self.logger.error("Cannot find RTT control block")
+                sys.exit()
+
+            time.sleep(1)
+
         self.logger.info("Connected to device via RTT")
 
     def shutdown(self):
