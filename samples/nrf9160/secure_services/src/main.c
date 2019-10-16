@@ -10,7 +10,7 @@
 #include <secure_services.h>
 #include <kernel.h>
 #include <pm_config.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 
 void print_hex_number(u8_t *num, size_t len)
 {
@@ -29,7 +29,7 @@ void print_random_number(u8_t *num, size_t len)
 
 void main(void)
 {
-	struct fw_firmware_info info_app;
+	struct fw_info info_app;
 	const int sleep_time_s = 5;
 	const int random_number_count = 16;
 	const int random_number_len = 144;

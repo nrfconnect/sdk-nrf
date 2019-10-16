@@ -6,7 +6,7 @@
 
 #include <bl_crypto.h>
 #include "bl_crypto_internal.h"
-#include <fw_metadata.h>
+#include <fw_info.h>
 #include <kernel.h>
 
 enum abi_index {BL_ROT_VERIFY, BL_SHA256, BL_SECP256R1, LAST};

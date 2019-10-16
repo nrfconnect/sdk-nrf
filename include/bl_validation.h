@@ -8,9 +8,9 @@
 #define BL_VALIDATION_H__
 
 #include <stdbool.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 
 bool bl_validate_firmware_local(u32_t fw_address,
-				const struct fw_firmware_info *fw_info);
+				const struct fw_info *fwinfo);
 
 #endif /* BL_VALIDATION_H__ */

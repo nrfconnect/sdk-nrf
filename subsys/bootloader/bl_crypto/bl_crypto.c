@@ -6,7 +6,7 @@
 
 #include <zephyr/types.h>
 #include <bl_crypto.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 #include <assert.h>
 #include <ocrypto_constant_time.h>
 #include "bl_crypto_internal.h"
@@ -117,7 +117,7 @@ int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 }
 
 __ext_abi(struct bl_rot_verify_abi, bl_rot_verify_abi) = {
-	.header = ABI_INFO_INIT(BL_ROT_VERIFY_ABI_ID,
+	.header = FW_INFO_ABI_INIT(BL_ROT_VERIFY_ABI_ID,
 				CONFIG_BL_ROT_VERIFY_ABI_FLAGS,
 				CONFIG_BL_ROT_VERIFY_ABI_VER,
 				sizeof(struct bl_rot_verify_abi)),
@@ -127,7 +127,7 @@ __ext_abi(struct bl_rot_verify_abi, bl_rot_verify_abi) = {
 };
 
 __ext_abi(struct bl_sha256_abi, bl_sha256_abi) = {
-	.header = ABI_INFO_INIT(BL_SHA256_ABI_ID,
+	.header = FW_INFO_ABI_INIT(BL_SHA256_ABI_ID,
 				CONFIG_BL_SHA256_ABI_FLAGS,
 				CONFIG_BL_SHA256_ABI_VER,
 				sizeof(struct bl_sha256_abi)),
@@ -141,7 +141,7 @@ __ext_abi(struct bl_sha256_abi, bl_sha256_abi) = {
 };
 
 __ext_abi(struct bl_secp256r1_abi, bl_secp256r1_abi) = {
-	.header = ABI_INFO_INIT(BL_SECP256R1_ABI_ID,
+	.header = FW_INFO_ABI_INIT(BL_SECP256R1_ABI_ID,
 				CONFIG_BL_SECP256R1_ABI_FLAGS,
 				CONFIG_BL_SECP256R1_ABI_VER,
 				sizeof(struct bl_secp256r1_abi)),

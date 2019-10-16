@@ -64,7 +64,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/enhanced_shockburst/              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
-/subsys/fw_metadata/                      @hakonfam
+/subsys/fw_info/                          @hakonfam
 /subsys/net/                              @rlubos
 /subsys/nfc/                              @grochu @anangl
 /subsys/partition_manager/                @hakonfam

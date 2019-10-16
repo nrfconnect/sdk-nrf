@@ -13,7 +13,7 @@
 #include <pm_config.h>
 #include <bl_validation.h>
 #include <bl_crypto.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 #include <drivers/fprotect.h>
 #include <provision.h>
 #ifdef CONFIG_UART_NRFX
@@ -44,7 +44,7 @@ extern u32_t _vector_table_pointer;
 #define VTOR SCB->VTOR
 #endif
 
-static void boot_from(const struct fw_firmware_info *fw_info)
+static void boot_from(const struct fw_info *fw_info)
 {
 	u32_t *vector_table = (u32_t *)fw_info->firmware_address;
 
@@ -99,7 +99,7 @@ static void boot_from(const struct fw_firmware_info *fw_info)
 
 	VTOR = fw_info->firmware_address;
 
-	fw_abi_provide(fw_info);
+	fw_info_abi_provide(fw_info);
 
 	/* Set MSP to the new address and clear any information from PSP */
 	__set_MSP(vector_table[0]);
@@ -121,8 +121,8 @@ void main(void)
 
 	u32_t s0_addr = s0_address_read();
 	u32_t s1_addr = s1_address_read();
-	const struct fw_firmware_info *s0_info = fw_find_firmware_info(s0_addr);
-	const struct fw_firmware_info *s1_info = fw_find_firmware_info(s1_addr);
+	const struct fw_info *s0_info = fw_info_find(s0_addr);
+	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
 	if (!s1_info || (s0_info->firmware_version >=
 			 s1_info->firmware_version)) {

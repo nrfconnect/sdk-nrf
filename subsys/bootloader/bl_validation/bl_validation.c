@@ -8,7 +8,7 @@
 #include <zephyr/types.h>
 #include <errno.h>
 #include <misc/printk.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 #include <bl_crypto.h>
 #include <provision.h>
 
@@ -38,13 +38,14 @@ struct __packed fw_validation_info {
 
 /* Static asserts to ensure compatibility */
 OFFSET_CHECK(struct fw_validation_info, magic, 0);
-OFFSET_CHECK(struct fw_validation_info, firmware_address, CONFIG_FW_MAGIC_LEN);
+OFFSET_CHECK(struct fw_validation_info, firmware_address,
+	CONFIG_FW_INFO_MAGIC_LEN);
 OFFSET_CHECK(struct fw_validation_info, firmware_hash,
-	(CONFIG_FW_MAGIC_LEN + 4));
+	(CONFIG_FW_INFO_MAGIC_LEN + 4));
 OFFSET_CHECK(struct fw_validation_info, public_key,
-	(CONFIG_FW_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN));
+	(CONFIG_FW_INFO_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN));
 OFFSET_CHECK(struct fw_validation_info, signature,
-	(CONFIG_FW_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN
+	(CONFIG_FW_INFO_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN
 	+ CONFIG_SB_SIGNATURE_LEN));
 
 /* Can be used to make the firmware discoverable in other locations, e.g. when
@@ -59,13 +60,14 @@ struct __packed fw_validation_pointer {
 /* Static asserts to ensure compatibility */
 OFFSET_CHECK(struct fw_validation_pointer, magic, 0);
 OFFSET_CHECK(struct fw_validation_pointer, validation_info,
-	CONFIG_FW_MAGIC_LEN);
+	CONFIG_FW_INFO_MAGIC_LEN);
 
 static bool validation_info_check(const struct fw_validation_info *vinfo)
 {
 	const u32_t validation_info_magic[] = {VALIDATION_INFO_MAGIC};
 
-	if (memeq(vinfo->magic, validation_info_magic, CONFIG_FW_MAGIC_LEN)) {
+	if (memeq(vinfo->magic, validation_info_magic,
+						CONFIG_FW_INFO_MAGIC_LEN)) {
 		return vinfo;
 	}
 	return NULL;
@@ -89,7 +91,7 @@ validation_info_find(u32_t start_address, u32_t search_distance)
 
 
 static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
-		const struct fw_firmware_info *fw_info)
+		const struct fw_info *fwinfo)
 {
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
@@ -101,37 +103,37 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 	u32_t num_public_keys;
 	bl_root_of_trust_verify_t rot_verify = bl_root_of_trust_verify;
 
-	if (!fw_info) {
+	if (!fwinfo) {
 		PRINT("NULL parameter.\n\r");
 		return false;
 	}
 
-	if (!fw_check_firmware_info((u32_t)fw_info)) {
+	if (!fw_info_check((u32_t)fwinfo)) {
 		PRINT("Invalid firmware info format.\n\r");
 		return false;
 	}
 
-	if (!(((u32_t)fw_info >= fw_src_address)
-		&& (((u32_t)fw_info + sizeof(*fw_info))
-			< (fw_src_address + fw_info->firmware_size)))) {
+	if (!(((u32_t)fwinfo >= fw_src_address)
+		&& (((u32_t)fwinfo + sizeof(*fwinfo))
+			< (fw_src_address + fwinfo->firmware_size)))) {
 		PRINT("Firmware info is not within signed region.");
 		return false;
 	}
 
-	if (fw_dst_address != fw_info->firmware_address) {
+	if (fw_dst_address != fwinfo->firmware_address) {
 		PRINT("The firmware doesn't belong at destination addr.\n\r");
 		return false;
 	}
 
 	fw_val_info = validation_info_find(
-		fw_src_address + fw_info->firmware_size, 4);
+		fw_src_address + fwinfo->firmware_size, 4);
 
 	if (!fw_val_info) {
 		PRINT("Could not find valid firmware validation.\n\r");
 		return false;
 	}
 
-	if (fw_val_info->firmware_address != fw_info->firmware_address) {
+	if (fw_val_info->firmware_address != fwinfo->firmware_address) {
 		PRINT("Validation info doesn't belong to this firmware.\n\r");
 		return false;
 	}
@@ -157,7 +159,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 					(u8_t *)key_data,
 					fw_val_info->signature,
 					(u8_t *)fw_val_info->firmware_address,
-					fw_info->firmware_size);
+					fwinfo->firmware_size);
 
 		if (retval != -ESIGINV) {
 			break;
@@ -176,7 +178,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 }
 
 bool bl_validate_firmware_local(u32_t fw_address,
-				const struct fw_firmware_info *fw_info)
+				const struct fw_info *fwinfo)
 {
-	return validate_firmware(fw_address, fw_address, fw_info);
+	return validate_firmware(fw_address, fw_address, fwinfo);
 }
