@@ -242,14 +242,6 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 	return true;
 }
 
-static void le_param_updated(struct bt_conn *conn, u16_t interval,
-			     u16_t latency, u16_t timeout)
-{
-	LOG_INF("Conn parameters updated:"
-		"\n\tinterval 0x%04x\n\tlat %d\n\ttimeout %d\n",
-		interval, latency, timeout);
-}
-
 static void bt_ready(int err)
 {
 	if (err) {
@@ -290,7 +282,6 @@ static int ble_state_init(void)
 		.disconnected = disconnected,
 		.security_changed = security_changed,
 		.le_param_req = le_param_req,
-		.le_param_updated = le_param_updated,
 	};
 	bt_conn_cb_register(&conn_callbacks);
 
