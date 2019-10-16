@@ -28,7 +28,7 @@ if (CONFIG_NRFXLIB_NFC     OR
         add_subdirectory(nfc)
 endif()
 
-add_subdirectory_ifdef(CONFIG_FW_METADATA	fw_metadata)
+add_subdirectory_ifdef(CONFIG_FW_INFO	fw_info)
 add_subdirectory_ifdef(CONFIG_SHELL_BT_NUS	shell)
 
 add_subdirectory(debug)

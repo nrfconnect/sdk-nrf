@@ -22,7 +22,7 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,7 +75,7 @@ int spm_request_read(void *destination, u32_t addr, size_t len);
  * @retval -EINVAL  If info is NULL.
  * @retval -EFAULT  If no info is found.
  */
-int spm_firmware_info(u32_t fw_address, struct fw_firmware_info *info);
+int spm_firmware_info(u32_t fw_address, struct fw_info *info);
 
 #ifdef __cplusplus
 }

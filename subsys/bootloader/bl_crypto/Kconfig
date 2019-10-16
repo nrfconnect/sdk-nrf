@@ -105,16 +105,16 @@ if SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT
 ABI = BL_ROT_VERIFY
 flags = 2
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_metadata/Kconfig.template.fw_metadata_abi"
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
 
 ABI = BL_SHA256
 flags = 0
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_metadata/Kconfig.template.fw_metadata_abi"
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
 
 ABI = BL_SECP256R1
 flags = 1
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_metadata/Kconfig.template.fw_metadata_abi"
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
 
 endif # SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT

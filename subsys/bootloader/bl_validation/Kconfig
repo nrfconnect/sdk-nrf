@@ -8,7 +8,7 @@ menuconfig SECURE_BOOT_VALIDATION
 	bool
 	prompt "Secure Boot firmware validation"
 	select SECURE_BOOT_CRYPTO
-	select FW_METADATA
+	select FW_INFO
 
 if SECURE_BOOT_VALIDATION
 
@@ -17,14 +17,14 @@ config SB_VALIDATION_INFO_MAGIC
 	default 0x86518483
 	help
 	  Magic word value specific to validation info structs (after firmware).
-	  For more info, see FW_MAGIC_COMMON.
+	  For more info, see FW_INFO_MAGIC_COMMON.
 
 config SB_VALIDATION_POINTER_MAGIC
 	hex "Magic word used for validation info pointer structs (32 bits)."
 	default 0x6919b47e
 	help
 	  Magic word value specific to validation info pointer structs.
-	  For more info, see FW_MAGIC_COMMON.
+	  For more info, see FW_INFO_MAGIC_COMMON.
 
 config SB_VALIDATION_INFO_CRYPTO_ID
 	int
@@ -34,7 +34,7 @@ config SB_VALIDATION_INFO_CRYPTO_ID
 	help
 	  The algorithm used for signing the firmware (8 bits).
 	  Used to ensure compatibility.
-	  For more info, see FW_MAGIC_COMMON.
+	  For more info, see FW_INFO_MAGIC_COMMON.
 
 config SB_VALIDATION_INFO_VERSION
 	int "Version number of the fw_validation_info* structs (8 bits)."
@@ -42,7 +42,7 @@ config SB_VALIDATION_INFO_VERSION
 	default 2
 	help
 	  Used to ensure binary compatibility.
-	  For more info, see FW_MAGIC_COMMON.
+	  For more info, see FW_INFO_MAGIC_COMMON.
 
 endif # SECURE_BOOT_VALIDATION
 

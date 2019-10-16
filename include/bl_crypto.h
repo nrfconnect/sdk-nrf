@@ -8,7 +8,7 @@
 #define BOOTLOADER_CRYPTO_H__
 
 #include <zephyr/types.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 
 /* Placeholder defines. Values should be updated, if no existing errors can be
  * used instead. */
@@ -155,14 +155,14 @@ EXT_ABI_FUNCTION(int, bl_secp256r1_validate, const u8_t *hash,
 					     const u8_t *public_key);
 
 struct bl_rot_verify_abi {
-	struct fw_abi_info header;
+	struct fw_info_abi header;
 	struct {
 		bl_root_of_trust_verify_t bl_root_of_trust_verify;
 	} abi;
 };
 
 struct bl_sha256_abi {
-	struct fw_abi_info header;
+	struct fw_info_abi header;
 	struct {
 		bl_sha256_init_t bl_sha256_init;
 		bl_sha256_update_t bl_sha256_update;
@@ -173,7 +173,7 @@ struct bl_sha256_abi {
 };
 
 struct bl_secp256r1_abi {
-	struct fw_abi_info header;
+	struct fw_info_abi header;
 	struct {
 		bl_secp256r1_validate_t bl_secp256r1_validate;
 	} abi;

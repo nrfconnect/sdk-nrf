@@ -27,13 +27,13 @@ but MCUboot is not being built.")
   endif()
 endif()
 
-# Include a kconfig file which enables CONFIG_FW_METADATA in the image
+# Include a kconfig file which enables CONFIG_FW_INFO in the image
 # which is booted by B0.
 set(old_conf ${${image_to_boot}OVERLAY_CONFIG})
-string(FIND "${old_conf}" "${CMAKE_CURRENT_SOURCE_DIR}/fw_metadata.conf" found)
+string(FIND "${old_conf}" "${CMAKE_CURRENT_SOURCE_DIR}/fw_info.conf" found)
 if (${found} EQUAL -1)
   set(${image_to_boot}OVERLAY_CONFIG
-    "${old_conf} ${CMAKE_CURRENT_SOURCE_DIR}/fw_metadata.conf"
+    "${old_conf} ${CMAKE_CURRENT_SOURCE_DIR}/fw_info.conf"
     CACHE STRING "" FORCE)
 endif()
 
