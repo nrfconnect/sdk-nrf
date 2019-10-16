@@ -49,6 +49,12 @@ static int at_parse_detect_type(const char **str, int index)
 		 * notification ID, (eg +CEREG:)
 		 */
 		set_new_state(NOTIFICATION);
+	} else if (index == 0) {
+		/* If the string start without an notification
+		 * ID, we treat the whole string as one string
+		 * parameter
+		 */
+		set_new_state(STRING);
 	} else if ((index > 0) &&
 		is_notification(*tmpstr)) {
 		/* If notifications is detected later in the
@@ -81,13 +87,6 @@ static int at_parse_detect_type(const char **str, int index)
 	} else if (is_lfcr(*tmpstr) &&
 		   (state == OPTIONAL)) {
 		set_new_state(OPTIONAL);
-	} else if ((index == 0) &&
-		    !is_notification(*tmpstr)) {
-		/* If the string start without an notification
-		 *  ID, we treat the whole string as one string
-		 *  parameter
-		 */
-		set_new_state(STRING);
 	} else if (is_separator(*tmpstr)) {
 		/* If a separator is detected we have detected
 		 * and empty optional parameter
