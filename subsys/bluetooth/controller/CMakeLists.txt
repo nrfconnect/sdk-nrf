@@ -7,7 +7,6 @@
 zephyr_library()
 
 zephyr_library_sources(
-  multithreading_lock.c
   hci_driver.c
   )
 

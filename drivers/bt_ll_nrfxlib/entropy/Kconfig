@@ -11,6 +11,7 @@ config ENTROPY_NRF_LL_NRFXLIB
 	default y
 	select ENTROPY_NRF_FORCE_ALT
 	select ENTROPY_HAS_DRIVER
+	select MULTITHREADING_LOCK
 	help
 	  This option enables the RNG peripheral, which is a random number
 	  generator, based on internal thermal noise, that provides a

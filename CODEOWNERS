@@ -44,6 +44,7 @@
 /lib/modem_info/                          @rlubos
 /lib/pdn_management/                      @rlubos
 /lib/lwm2m_carrier/                       @rlubos @lemrey
+/lib/multithreading_lock/                 @joerchan
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bootloader/                      @hakonfam @ioannisg
@@ -65,6 +66,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /subsys/enhanced_shockburst/              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
+/subsys/mpsl/                             @joerchan
 /subsys/net/                              @rlubos
 /subsys/nfc/                              @grochu @anangl
 /subsys/partition_manager/                @hakonfam
