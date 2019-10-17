@@ -378,6 +378,13 @@ static void modem_rsrp_handler(char rsrp_value)
 {
 	rsrp.value = rsrp_value;
 
+	/* If the RSRP value is 255, it's documented as 'not known or not
+	 * detectable'. Therefore, we should not send those values.
+	 */
+	if (rsrp.value == 255) {
+		return;
+	}
+
 	k_work_submit(&rsrp_work);
 }
 
