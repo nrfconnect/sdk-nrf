@@ -9,8 +9,13 @@
 #include <device.h>
 #include <kernel_includes.h>
 #include <clock_control.h>
+#ifdef CONFIG_BT_LL_NRFXLIB
 #include <ble_controller.h>
 #include <ble_controller_soc.h>
+#else /* CONFIG_MPSL */
+#include <mpsl.h>
+#include <mpsl_clock.h>
+#endif
 #include <multithreading_lock.h>
 #if IS_ENABLED(CONFIG_USB_NRF52840)
 #include <hal/nrf_power.h>
@@ -33,14 +38,22 @@ static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 		return -EFAULT;
 	}
 
+#ifdef CONFIG_BT_LL_NRFXLIB
 	errcode = ble_controller_hf_clock_request(NULL);
+#else /* CONFIG_MPSL */
+	errcode = mpsl_clock_hfclk_request(NULL);
+#endif
 	MULTITHREADING_LOCK_RELEASE();
 	if (errcode) {
 		return -EFAULT;
 	}
 
 	if (blocking) {
+#ifdef CONFIG_BT_LL_NRFXLIB
 		bool is_running = false;
+#else /* CONFIG_MPSL */
+		u32_t is_running = 0;
+#endif
 
 		do {
 			if (!k_is_in_isr()) {
@@ -52,7 +65,11 @@ static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 				return -EFAULT;
 			}
 
+#ifdef CONFIG_BT_LL_NRFXLIB
 			errcode = ble_controller_hf_clock_is_running(&is_running);
+#else /* CONFIG_MPSL */
+			errcode = mpsl_clock_hfclk_is_running(&is_running);
+#endif
 			MULTITHREADING_LOCK_RELEASE();
 			if (errcode) {
 				return -EFAULT;
@@ -88,7 +105,11 @@ static int hf_clock_stop(struct device *dev, clock_control_subsys_t sub_system)
 		return -EFAULT;
 	}
 
+#ifdef CONFIG_BT_LL_NRFXLIB
 	errcode = ble_controller_hf_clock_release();
+#else /* CONFIG_MPSL */
+	errcode = mpsl_clock_hfclk_release();
+#endif
 	MULTITHREADING_LOCK_RELEASE();
 	if (errcode) {
 		return -EFAULT;
@@ -168,22 +189,30 @@ void nrf_power_clock_isr(void)
 		power_event_cb(NRF_POWER_EVENT_USBREMOVED);
 	}
 #endif
+
+#ifdef CONFIG_BT_LL_NRFXLIB
 	/* FIXME/NOTE: This handler is called _after_ the USB registers are
 	 * checked. The reason is that the BLE controller also checks these
 	 * registsers _and clears them_, but there is currently no event
 	 * propagated from the controller.
 	 */
 	ble_controller_POWER_CLOCK_IRQHandler();
+#else /* CONFIG_MPSL */
+	MPSL_IRQ_CLOCK_Handler();
+#endif
 }
 
 static int clock_control_init(struct device *dev)
 {
 	ARG_UNUSED(dev);
-
-	/* No-op. Initialized in subsys/bluetooth/controller/hci_driver.c by
+	/* No-op. For BLE Controller, LFCLK is initialized
+	 * in subsys/bluetooth/controller/hci_driver.c by
 	 * ble_init() at PRE_KERNEL_1. ble_init() will call
 	 * ble_controller_init() that in turn will start the LFCLK.
+	 * For MPSL, LFCLK is initialized in subsys/mpsl/mpsl_init.c by
+	 * mpsl_lib_init() which calls mpsl_init() at PRE_KERNEL_1.
 	 */
+
 	IRQ_CONNECT(DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0,
 		    DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0_PRIORITY,
 		    nrf_power_clock_isr, 0, 0);

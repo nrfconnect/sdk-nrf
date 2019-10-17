@@ -19,6 +19,7 @@ add_subdirectory_ifdef(CONFIG_PROFILER		profiler)
 add_subdirectory_ifdef(CONFIG_DFU_TARGET		dfu)
 add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
+add_subdirectory_ifdef(CONFIG_MPSL mpsl)
 
 if (CONFIG_NRFXLIB_NFC     OR
     CONFIG_NFC_T2T_PARSER  OR

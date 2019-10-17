@@ -22,4 +22,6 @@ rsource "modem_info/Kconfig"
 
 rsource "pdn_management/Kconfig"
 
+rsource "multithreading_lock/Kconfig"
+
 endmenu

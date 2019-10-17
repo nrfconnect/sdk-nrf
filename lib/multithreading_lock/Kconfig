@@ -4,5 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-zephyr_library()
-zephyr_library_sources(clock_control_ll_nrfxlib.c)
+config MULTITHREADING_LOCK
+	bool
+	help
+	  Enable APIs for ensuring threadsafe operation.
