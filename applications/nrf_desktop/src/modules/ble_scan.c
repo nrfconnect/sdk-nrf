@@ -68,6 +68,19 @@ static size_t count_conn(void)
 	return conn_count;
 }
 
+static size_t count_bond(void)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
+			break;
+		}
+	}
+
+	return i;
+}
+
 static void scan_stop(void)
 {
 	int err = bt_scan_stop();
@@ -91,32 +104,29 @@ static void scan_stop(void)
 	}
 }
 
-static int configure_filters(void)
+static int configure_address_filters(u8_t *filter_mode)
 {
-	bt_scan_filter_remove_all();
-	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_MAX_CONN, "");
-	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
-			 "Insufficient number of address filters");
-	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) <=
-			CONFIG_BT_SCAN_SHORT_NAME_CNT,
-			 "Insufficient number of short name filers");
-	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) == PEER_TYPE_COUNT,
-			 "");
-
-	u8_t filter_mode = 0;
-	int err;
 	size_t i;
+	int err = 0;
 
 	for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
 		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
 			break;
 		}
 
+		struct bt_conn *conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT,
+						&subscribed_peers[i].addr);
+
+		if (conn) {
+			bt_conn_unref(conn);
+			continue;
+		}
+
 		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR,
 					 &subscribed_peers[i].addr);
 		if (err) {
 			LOG_ERR("Address filter cannot be added (err %d)", err);
-			return err;
+			break;
 		}
 
 		char addr_str[BT_ADDR_LE_STR_LEN];
@@ -124,14 +134,16 @@ static int configure_filters(void)
 		bt_addr_le_to_str(&subscribed_peers[i].addr, addr_str,
 				  sizeof(addr_str));
 		LOG_INF("Address filter added %s", log_strdup(addr_str));
-		filter_mode |= BT_SCAN_ADDR_FILTER;
+		*filter_mode |= BT_SCAN_ADDR_FILTER;
 	}
 
-	if (i == CONFIG_BT_MAX_PAIRED) {
-		goto filter_enable;
-	}
+	return err;
+}
 
+static int configure_short_name_filters(u8_t *filter_mode)
+{
 	u8_t peers_mask = 0;
+	int err = 0;
 
 	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
 		peers_mask |= BIT(subscribed_peers[i].peer_type);
@@ -152,20 +164,44 @@ static int configure_filters(void)
 					 &filter);
 		if (err) {
 			LOG_ERR("Name filter cannot be added (err %d)", err);
-			return err;
+			break;
 		}
-		filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
+		*filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
 	}
-	LOG_INF("Device type filters added");
 
-filter_enable:
-	err = bt_scan_filter_enable(filter_mode, false);
-	if (err) {
+	if (!err) {
+		LOG_INF("Device type filters added");
+	}
+
+	return err;
+}
+
+static int configure_filters(void)
+{
+	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_MAX_CONN, "");
+	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
+			 "Insufficient number of address filters");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) <=
+			 CONFIG_BT_SCAN_SHORT_NAME_CNT,
+			 "Insufficient number of short name filers");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) == PEER_TYPE_COUNT,
+			 "");
+	bt_scan_filter_remove_all();
+
+	u8_t filter_mode = 0;
+	int err = configure_address_filters(&filter_mode);
+
+	if (!err && (count_bond() < CONFIG_BT_MAX_PAIRED)) {
+		err = configure_short_name_filters(&filter_mode);
+	}
+
+	if (!err) {
+		err = bt_scan_filter_enable(filter_mode, false);
+	} else {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
-		return err;
 	}
 
-	return 0;
+	return err;
 }
 
 static void scan_start(void)
