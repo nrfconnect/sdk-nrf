@@ -72,6 +72,7 @@ def perform_config(dev, args):
     device_options = module_config['options']
 
     config_name = args.option
+    value_type = device_options[config_name].type
     recipient = get_device_pid(args.device_type)
 
     if args.value is None:
@@ -81,7 +82,11 @@ def perform_config(dev, args):
         else:
             print('Failed to fetch {}'.format(config_name))
     else:
-        config_value = int(args.value)
+        try:
+            config_value = value_type(args.value)
+        except ValueError:
+            print('Invalid type for {}. Expected {}'.format(config_name, value_type))
+            return
         success = change_config(dev, recipient, config_name, config_value, device_options, module_id)
 
         if success:
@@ -165,7 +170,7 @@ def parse_arguments():
                 for opt_name in module_opts:
                     parser_config_module_opt = sp_config_module.add_parser(opt_name, help=module_opts[opt_name].help)
                     parser_config_module_opt.add_argument(
-                        'value', type=int, default=None, nargs='?',
+                        'value', type=str, default=None, nargs='?',
                         help='int from range {}'.format(module_opts[opt_name].range))
 
     return parser.parse_args()

@@ -60,6 +60,7 @@ extern "C" {
 						       MOD_FIELD_SET(module) | OPT_FIELD_SET(option))
 
 #define SETUP_MODULE_SENSOR	0x1
+#define SETUP_MODULE_QOS	0x2
 
 
 /* Config event, setup group, sensor module macros */
@@ -68,6 +69,13 @@ extern "C" {
 #define SENSOR_OPT_DOWNSHIFT_REST1	0x2
 #define SENSOR_OPT_DOWNSHIFT_REST2	0x3
 #define SENSOR_OPT_COUNT 4
+
+/* Config event, setup group, qos module macros */
+#define QOS_OPT_BLACKLIST	0x0
+#define QOS_OPT_CHMAP		0x1
+#define QOS_OPT_PARAM_BLE	0x2
+#define QOS_OPT_PARAM_WIFI	0x3
+#define QOS_OPT_COUNT		4
 
 /* Config event, DFU group macros */
 #define DFU_START	0x0

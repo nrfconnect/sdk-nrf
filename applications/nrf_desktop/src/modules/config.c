@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_LOG_LEVEL);
 #define KEY_LEN 11
 
 /* Array of pointers to data loaded from settings */
-#define LOADED_DATA_MAX SENSOR_OPT_COUNT
+#define LOADED_DATA_MAX MAX(SENSOR_OPT_COUNT, QOS_OPT_COUNT)
 static struct config_event *loaded_data[LOADED_DATA_MAX];
 
 
@@ -33,6 +33,14 @@ static bool config_id_is_supported(u8_t event_id)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_SENSOR_ENABLE)) {
 		if (MOD_FIELD_GET(event_id) == SETUP_MODULE_SENSOR) {
+			return true;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_ENABLE)) {
+		if ((MOD_FIELD_GET(event_id) == SETUP_MODULE_QOS) &&
+			((OPT_FIELD_GET(event_id) == QOS_OPT_PARAM_BLE) ||
+			(OPT_FIELD_GET(event_id) == QOS_OPT_PARAM_WIFI))) {
 			return true;
 		}
 	}
