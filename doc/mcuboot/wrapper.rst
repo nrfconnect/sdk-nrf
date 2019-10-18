@@ -20,3 +20,4 @@ MCUboot documentation
    testplan-mynewt.md
    release.md
    PORTING.md
+   SECURITY.md
