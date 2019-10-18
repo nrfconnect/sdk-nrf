@@ -32,7 +32,28 @@ struct bond_find_data {
 };
 
 static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
+static bool low_latency_pending;
 
+
+static void enable_low_latency(struct bt_conn *conn)
+{
+	struct bt_le_conn_param param = {
+		.interval_min = 0x0006,
+		.interval_max = 0x0006,
+		.latency = 0,
+		.timeout = 400
+	};
+
+	int err = bt_conn_le_param_update(conn, &param);
+
+	if (err) {
+		LOG_ERR("Cannot enable low latency (err:%d)", err);
+	} else {
+		LOG_INF("Enable low latency");
+	}
+
+	low_latency_pending = true;
+}
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
@@ -177,8 +198,6 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	EVENT_SUBMIT(event);
 }
 
-static struct bt_gatt_exchange_params exchange_params;
-
 static void exchange_func(struct bt_conn *conn, u8_t err,
 			  struct bt_gatt_exchange_params *params)
 {
@@ -222,11 +241,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	} else {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL) &&
 		    (info.role == BT_CONN_ROLE_MASTER)) {
-			exchange_params.func = exchange_func;
-			err = bt_gatt_exchange_mtu(conn, &exchange_params);
-			if (err) {
-				LOG_ERR("MTU exchange failed");
-			}
+			enable_low_latency(conn);
 		}
 	}
 }
@@ -240,6 +255,30 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 
 	/* Accept the request */
 	return true;
+}
+
+static void le_param_updated(struct bt_conn *conn, u16_t interval,
+			     u16_t latency, u16_t timeout)
+{
+	LOG_INF("Conn parameters updated:"
+		"\n\tinterval 0x%04x\n\tlat %d\n\ttimeout %d\n",
+		interval, latency, timeout);
+
+	if (IS_ENABLED(CONFIG_BT_CENTRAL) && low_latency_pending) {
+		low_latency_pending = false;
+
+		static struct bt_gatt_exchange_params exchange_params;
+
+		exchange_params.func = exchange_func;
+
+		int err = bt_gatt_exchange_mtu(conn, &exchange_params);
+
+		if (err) {
+			LOG_ERR("MTU exchange failed");
+		} else {
+			LOG_INF("MTU exchanged");
+		}
+	}
 }
 
 static void bt_ready(int err)
@@ -282,6 +321,7 @@ static int ble_state_init(void)
 		.disconnected = disconnected,
 		.security_changed = security_changed,
 		.le_param_req = le_param_req,
+		.le_param_updated = le_param_updated,
 	};
 	bt_conn_cb_register(&conn_callbacks);
 
