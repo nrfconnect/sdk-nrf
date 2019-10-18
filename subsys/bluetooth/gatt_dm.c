@@ -487,7 +487,11 @@ const struct bt_gatt_attr *bt_gatt_dm_char_by_uuid(
 	while ((curr = bt_gatt_dm_char_next(dm, curr)) != NULL) {
 		struct bt_gatt_chrc *chrc = bt_gatt_dm_attr_chrc_val(curr);
 
-		__ASSERT_NO_MSG(chrc != NULL);
+		if (chrc == NULL) {
+			LOG_ERR("No characteristic - device disconnected");
+			break;
+		}
+
 		if (!bt_uuid_cmp(uuid, chrc->uuid)) {
 			return curr;
 		}
