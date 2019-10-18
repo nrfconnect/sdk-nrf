@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: d6e67554cfeb28df5525e53c073f61a00836f283
+      revision: ede6735dd84e050965a8516d33848c2f1d930721
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -61,7 +61,7 @@ manifest:
     - name: tinycbor
       repo-path: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
-      revision: 543ecb7c8662580ef803d59ceda7bd3b8a84a11b
+      revision: 86d5ed5dd544b107d2d0882961a19c2c6cb06572
     - name: ci-tools
       path: tools/ci-tools
       remote: zephyrproject
