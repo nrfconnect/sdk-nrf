@@ -215,4 +215,56 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+comment "BLE QoS management"
+
+config DESKTOP_BLE_QOS_ENABLE
+	bool "Enable BLE channel map management"
+	depends on BT_CENTRAL
+	depends on BT_LL_NRFXLIB
+	select BT_HCI_VS_EVT_USER
+	help
+	  Enable device to avoid congested RF channels.
+
+config DESKTOP_BLE_QOS_INTERVAL
+	int "Processing interval for QoS thread [ms]"
+	default 1000
+	depends on DESKTOP_BLE_QOS_ENABLE
+	help
+	  Configure processing interval for QoS algorithm.
+	  Longer intervals means more time to accumulate CRC stats,
+	  and vice versa.
+
+config DESKTOP_BLE_QOS_STACK_SIZE
+	int "Base stack size for QoS thread"
+	default 240
+	depends on DESKTOP_BLE_QOS_ENABLE
+	help
+	  Configure base stack size for QoS processing thread.
+
+config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
+	bool "Enable BLE QoS statistics printout"
+	depends on DESKTOP_BLE_QOS_ENABLE
+	select USB_COMPOSITE_DEVICE
+	select USB_CDC_ACM
+	select SERIAL
+	select UART_LINE_CTRL
+	help
+	  Enable to get real-time QoS information printouts via CDC ACM.
+
+config DESKTOP_BLE_QOS_STATS_PRINT_STACK_SIZE
+	int "Stack size addition for QoS printout"
+	default 784
+	depends on DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
+	help
+	  This size increase is added to the QoS base stack size
+	  to facilitate statistics printout.
+
+if DESKTOP_BLE_QOS_ENABLE
+
+module = DESKTOP_BLE_QOS
+module-str = BLE channel map management
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
 endmenu
