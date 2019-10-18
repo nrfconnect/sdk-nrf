@@ -257,7 +257,8 @@ bool aws_jobs_cmp(const char *sub, const char *pub, size_t pub_len,
 {
 	int ret;
 
-	if (sub == NULL || pub == NULL || suffix == NULL) {
+	if (sub == NULL || pub == NULL || suffix == NULL ||
+	    sub[0] == '\0' || pub[0] == '\0') {
 		return false;
 	}
 

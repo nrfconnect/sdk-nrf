@@ -38,6 +38,19 @@ static void test_aws_jobs_cmp__null(void)
 	zassert_false(ret, "");
 }
 
+static void test_aws_jobs_cmp__empty(void)
+{
+	const char *published = "$aws/things/nrf-id/jobs/notify-next";
+	const char *subscribed = "$aws/things/nrf-id/jobs/notify-next";
+	int ret;
+
+	ret = aws_jobs_cmp("", published, strlen(published), "");
+	zassert_false(ret, "Should not be equal, blank subscribed matched");
+
+	ret = aws_jobs_cmp(subscribed, "", strlen(published), "");
+	zassert_false(ret, "Should not be equal, blank published matched");
+}
+
 static void test_aws_jobs_cmp__no_suffix(void)
 {
 	const char *published = "$aws/things/nrf-id/jobs/notify-next";
@@ -99,6 +112,7 @@ void test_main(void)
 {
 	ztest_test_suite(aws_jobs_test,
 			 ztest_unit_test(test_aws_jobs_cmp__null),
+			 ztest_unit_test(test_aws_jobs_cmp__empty),
 			 ztest_unit_test(test_aws_jobs_cmp__no_suffix),
 			 ztest_unit_test(test_aws_jobs_cmp__suffix),
 			 ztest_unit_test(test_aws_jobs_subscribe_topic_update),
