@@ -113,6 +113,7 @@ static int set_trig_mode(int trig_mode)
 
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
 		__ASSERT_NO_MSG(row[i].port < ARRAY_SIZE(port_map));
+		__ASSERT_NO_MSG(port_map[row[i].port] != NULL);
 
 		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin,
 					 flags);
