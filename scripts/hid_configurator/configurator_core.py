@@ -10,6 +10,7 @@ import struct
 import time
 import zlib
 import random
+import re
 
 import logging
 import collections
@@ -17,7 +18,7 @@ import imgtool.image as img
 
 from enum import IntEnum
 
-ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help')
+ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help type')
 
 REPORT_ID = 5
 REPORT_SIZE = 30
@@ -31,12 +32,18 @@ EVENT_GROUP_LED_STREAM = 0x3
 
 MOD_FIELD_POS = 3
 SETUP_MODULE_SENSOR = 0x1
+SETUP_MODULE_QOS = 0x2
 
 OPT_FIELD_POS = 0
 SENSOR_OPT_CPI = 0x0
 SENSOR_OPT_DOWNSHIFT_RUN = 0x1
 SENSOR_OPT_DOWNSHIFT_REST1 = 0x2
 SENSOR_OPT_DOWNSHIFT_REST2 = 0x3
+
+QOS_OPT_BLACKLIST = 0x0
+QOS_OPT_CHMAP = 0x1
+QOS_OPT_PARAM_BLE = 0x2
+QOS_OPT_PARAM_WIFI = 0x3
 
 DFU_START = 0x0
 DFU_DATA = 0x1
@@ -55,17 +62,43 @@ DFU_SYNC_RETRIES = 3
 DFU_SYNC_INTERVAL = 1
 
 PMW3360_OPTIONS = {
-    'downshift_run':    ConfigOption((10,   2550),   SENSOR_OPT_DOWNSHIFT_RUN,   'Run to Rest 1 switch time [ms]'),
-    'downshift_rest1':  ConfigOption((320,  81600),  SENSOR_OPT_DOWNSHIFT_REST1, 'Rest 1 to Rest 2 switch time [ms]'),
-    'downshift_rest2':  ConfigOption((3200, 816000), SENSOR_OPT_DOWNSHIFT_REST2, 'Rest 2 to Rest 3 switch time [ms]'),
-    'cpi':              ConfigOption((100,  12000),  SENSOR_OPT_CPI,             'CPI resolution'),
+    'downshift_run':    ConfigOption((10,   2550),   SENSOR_OPT_DOWNSHIFT_RUN,   'Run to Rest 1 switch time [ms]', int),
+    'downshift_rest1':  ConfigOption((320,  81600),  SENSOR_OPT_DOWNSHIFT_REST1, 'Rest 1 to Rest 2 switch time [ms]', int),
+    'downshift_rest2':  ConfigOption((3200, 816000), SENSOR_OPT_DOWNSHIFT_REST2, 'Rest 2 to Rest 3 switch time [ms]', int),
+    'cpi':              ConfigOption((100,  12000),  SENSOR_OPT_CPI,             'CPI resolution', int),
 }
 
 PAW3212_OPTIONS = {
-    'sleep1_timeout':  ConfigOption((32,    512),    SENSOR_OPT_DOWNSHIFT_RUN,   'Sleep 1 switch time [ms]'),
-    'sleep2_timeout':  ConfigOption((20480, 327680), SENSOR_OPT_DOWNSHIFT_REST1, 'Sleep 2 switch time [ms]'),
-    'sleep3_timeout':  ConfigOption((20480, 327680), SENSOR_OPT_DOWNSHIFT_REST2, 'Sleep 3 switch time [ms]'),
-    'cpi':             ConfigOption((0,     2394),   SENSOR_OPT_CPI,             'CPI resolution'),
+    'sleep1_timeout':  ConfigOption((32,    512),    SENSOR_OPT_DOWNSHIFT_RUN,   'Sleep 1 switch time [ms]', int),
+    'sleep2_timeout':  ConfigOption((20480, 327680), SENSOR_OPT_DOWNSHIFT_REST1, 'Sleep 2 switch time [ms]', int),
+    'sleep3_timeout':  ConfigOption((20480, 327680), SENSOR_OPT_DOWNSHIFT_REST2, 'Sleep 3 switch time [ms]', int),
+    'cpi':             ConfigOption((0,     2394),   SENSOR_OPT_CPI,             'CPI resolution', int),
+}
+
+QOS_OPTIONS = {
+    'sample_count_min':       ConfigOption((0,      65535), QOS_OPT_PARAM_BLE,    'Minimum number of samples needed for channel map processing', int),
+    'min_channel_count':      ConfigOption((2,      37),    QOS_OPT_PARAM_BLE,    'Minimum BLE channel count', int),
+    'weight_crc_ok':          ConfigOption((-32767, 32767), QOS_OPT_PARAM_BLE,    'Weight of CRC OK [Fixed point with 1/100 scaling]', int),
+    'weight_crc_error':       ConfigOption((-32767, 32767), QOS_OPT_PARAM_BLE,    'Weight of CRC ERROR [Fixed point with 1/100 scaling]', int),
+    'ble_block_threshold':    ConfigOption((1,      65535), QOS_OPT_PARAM_BLE,    'Threshold relative to average rating for blocking BLE channels [Fixed point with 1/100 scaling]', int),
+    'eval_max_count':         ConfigOption((1,      37),    QOS_OPT_PARAM_BLE,    'Maximum number of blocked channels that can be evaluated', int),
+    'eval_duration':          ConfigOption((1,      65535), QOS_OPT_PARAM_BLE,    'Duration of channel evaluation [seconds]', int),
+    'eval_keepout_duration':  ConfigOption((1,      65535), QOS_OPT_PARAM_BLE,    'Duration that a channel will be blocked before considered for re-evaluation [seconds]', int),
+    'eval_success_threshold': ConfigOption((1,      65535), QOS_OPT_PARAM_BLE,    'Threshold relative to average rating for approving blocked BLE channel under evaluation [Fixed point with 1/100 scaling]', int),
+    'wifi_rating_inc':        ConfigOption((1,      65535), QOS_OPT_PARAM_WIFI,   'Wifi strength rating multiplier. Increase value to block wifi faster [Fixed point with 1/100 scaling]', int),
+    'wifi_present_threshold': ConfigOption((1,      65535), QOS_OPT_PARAM_WIFI,   'Threshold relative to average rating for considering a wifi present [Fixed point with 1/100 scaling]', int),
+    'wifi_active_threshold':  ConfigOption((1,      65535), QOS_OPT_PARAM_WIFI,   'Threshold relative to average rating for considering a wifi active(blockable) [Fixed point with 1/100 scaling]', int),
+    'channel_map':            ConfigOption(('0',      '0x1FFFFFFFFF'), QOS_OPT_CHMAP, '5-byte BLE channel map bitmask', str),
+    'wifi_blacklist':         ConfigOption(('0',      '1,2,...,11'), QOS_OPT_BLACKLIST,'List of blacklisted wifi channels', str),
+}
+
+# Formatting details for QoS, which uses a struct containing multiple configuration values:
+# OPTION_ID: (struct format, struct member names, binary to human-readable conversion function, human-readable to binary conversion function)
+QOS_OPTIONS_FORMAT = {
+    QOS_OPT_BLACKLIST: ('<H', ['wifi_blacklist'], lambda x: [i for i in range(0,16) if x & (1 << i) != 0], lambda x: sum(map(lambda y: (1 << int(y)), re.findall(r'([\d]{2}|[1-9]{1})', x)))),
+    QOS_OPT_CHMAP: ('<5s', ['channel_map'], lambda x: '0x{:02X}{:02X}{:02X}{:02X}{:02X}'.format(x[4],x[3],x[2],x[1],x[0]), None),
+    QOS_OPT_PARAM_BLE: ('<HBhhHBHHH', ['sample_count_min', 'min_channel_count', 'weight_crc_ok', 'weight_crc_error', 'ble_block_threshold', 'eval_max_count', 'eval_duration', 'eval_keepout_duration', 'eval_success_threshold'], None, None),
+    QOS_OPT_PARAM_WIFI: ('<HHH', ['wifi_rating_inc', 'wifi_present_threshold', 'wifi_active_threshold'], None, None),
 }
 
 PCA20041_CONFIG = {
@@ -86,6 +119,14 @@ PCA20045_CONFIG = {
     'sensor' : {
         'id' : SETUP_MODULE_SENSOR,
         'options' : PAW3212_OPTIONS
+    }
+}
+
+PCA10059_CONFIG = {
+    'qos' : {
+        'id' : SETUP_MODULE_QOS,
+        'options' : QOS_OPTIONS,
+        'format' : QOS_OPTIONS_FORMAT,
     }
 }
 
@@ -117,7 +158,7 @@ DEVICE = {
     'dongle' : {
         'vid' : 0x1915,
         'pid' : 0x52DC,
-        'config' : None,
+        'config' : PCA10059_CONFIG,
         'stream_led_cnt' : 0,
     }
 }
@@ -184,7 +225,6 @@ class Response(object):
 
         return Response(rcpt, event_id, status, event_data)
 
-
 class FwInfo:
     def __init__(self, fetched_data):
         fmt = '<BIBBHI'
@@ -208,6 +248,45 @@ class FwInfo:
                 '  Version: {}.{}.{}.{}').format(self.flash_area_id, self.image_len, self.ver_major, self.ver_minor,
                                                  self.ver_rev, self.ver_build_nr)
 
+class ConfigParser:
+    """ Class used to simplify "read-modify-write" handling of parameter structs.
+        For example when the python argument modifies one value within struct,
+        and the remaining struct values should remain unchanged. """
+
+    def __init__(self, fetched_data, fmt, member_names, value_presenter, value_formatter):
+        assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
+        self.fmt = fmt
+
+        if value_presenter is not None:
+            self.presenter = value_presenter
+        else:
+            self.presenter = lambda x: x
+
+        if value_formatter is not None:
+            self.formatter = value_formatter
+        else:
+            self.formatter = lambda x: x
+
+        vals = struct.unpack(self.fmt, fetched_data)
+        if len(member_names) != len(vals):
+            raise Exception('format does not match member name list')
+        self.members = collections.OrderedDict()
+        for key, val in zip(member_names, vals):
+            self.members[key] = val
+
+    def __str__(self):
+        return ''.join(map(lambda x: '{}: {}\n'.format(x[0], x[1]), self.members.items()))
+
+    def config_get(self, name):
+        return self.presenter(self.members[name])
+
+    def config_update(self, name, val):
+        if name not in self.members:
+            raise KeyError
+        self.members[name] = self.formatter(val)
+
+    def serialize(self):
+        return struct.pack(self.fmt, *self.members.values())
 
 def create_set_report(recipient, event_id, event_data):
     """ Function creating a report in order to set a specified configuration
@@ -386,11 +465,32 @@ def change_config(dev, recipient, config_name, config_value, device_options, mod
     value_range = config_opts.range
     logging.debug('Send request to update {}: {}'.format(config_name, config_value))
 
-    if not check_range(config_value, value_range):
-        print('Failed. Config value for {} must be in range {}'.format(config_name, value_range))
-        return False
+    # Check if option has formatting rules
+    dev_name = [dev for dev in DEVICE if DEVICE[dev]['pid'] == recipient][0]
+    try:
+        format = [DEVICE[dev_name]['config'][config]['format'] for config in DEVICE[dev_name]['config'].keys() if DEVICE[dev_name]['config'][config]['id'] == module_id][0]
+    except KeyError:
+        format = None
 
-    event_data = struct.pack('<I', config_value)
+    if format is not None:
+        # Read out first, then modify and write back (even if there is only one member in struct, to simplify code)
+        success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
+        if not success:
+            return success
+
+        try:
+            config = ConfigParser(fetched_data, format[opt_id][0], format[opt_id][1], format[opt_id][2], format[opt_id][3])
+            config.config_update(config_name, config_value)
+            event_data = config.serialize()
+        except Exception:
+            print('Failed. Invalid value for {}'.format(config_name))
+            return False
+    else:
+        if not check_range(config_value, value_range):
+            print('Failed. Config value for {} must be in range {}'.format(config_name, value_range))
+            return False
+
+        event_data = struct.pack('<I', config_value)
 
     success = exchange_feature_report(dev, recipient, event_id, event_data, False)
 
@@ -408,15 +508,22 @@ def fetch_config(dev, recipient, config_name, device_options, module_id):
     event_id = (EVENT_GROUP_SETUP << GROUP_FIELD_POS) | (module_id << MOD_FIELD_POS) | (opt_id << OPT_FIELD_POS)
     logging.debug('Fetch the current value of {} from the firmware'.format(config_name))
 
+    # Check if option has formatting rules
+    dev_name = [dev for dev in DEVICE if DEVICE[dev]['pid'] == recipient][0]
+    try:
+        format = [DEVICE[dev_name]['config'][config]['format'] for config in DEVICE[dev_name]['config'].keys() if DEVICE[dev_name]['config'][config]['id'] == module_id][0]
+    except KeyError:
+        format = None
+
     success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
 
-    if success and fetched_data:
-        val = int.from_bytes(fetched_data, byteorder='little')
+    if not success or not fetched_data:
+        return success, None
+
+    if format is None:
+        return success, config_opts.type.from_bytes(fetched_data, byteorder='little')
     else:
-        val = None
-
-    return success, val
-
+        return success, ConfigParser(fetched_data, format[opt_id][0], format[opt_id][1], format[opt_id][2], format[opt_id][3]).config_get(config_name)
 
 def dfu_sync(dev, recipient):
     event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_SYNC << TYPE_FIELD_POS)
