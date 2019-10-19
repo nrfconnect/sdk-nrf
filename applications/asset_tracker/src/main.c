@@ -129,6 +129,9 @@ enum error_type {
 static void app_connect(struct k_work *work);
 static void flip_send(struct k_work *work);
 static void env_data_send(void);
+#if CONFIG_LIGHT_SENSOR
+static void light_sensor_data_send(void);
+#endif /* CONFIG_LIGHT_SENSOR */
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct cloud_channel_data *data);
@@ -458,7 +461,10 @@ static void device_status_send(struct k_work *work)
 		CLOUD_CHANNEL_STR_HUMID,
 		CLOUD_CHANNEL_STR_AIR_PRESS,
 #if IS_ENABLED(CONFIG_CLOUD_BUTTON)
-		CLOUD_CHANNEL_STR_BUTTON
+		CLOUD_CHANNEL_STR_BUTTON,
+#endif
+#if IS_ENABLED(CONFIG_LIGHT_SENSOR)
+		CLOUD_CHANNEL_STR_LIGHT_SENSOR,
 #endif
 	};
 
@@ -552,6 +558,41 @@ error:
 	printk("sensor_data_send failed: %d\n", err);
 	cloud_error_handler(err);
 }
+
+#if defined(CONFIG_LIGHT_SENSOR)
+void light_sensor_data_send(void)
+{
+	int err;
+	struct light_sensor_data light_data;
+	struct cloud_msg msg = { .qos = CLOUD_QOS_AT_MOST_ONCE,
+				 .endpoint.type = CLOUD_EP_TOPIC_MSG };
+
+	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
+		return;
+	}
+
+	err = light_sensor_get_data(&light_data);
+	if (err) {
+		printk("Failed to get light sensor data, error %d\n", err);
+		return;
+	}
+
+	err = cloud_encode_light_sensor_data(&light_data, &msg);
+	if (err) {
+		printk("Failed to encode light sensor data, error %d\n", err);
+		return;
+	}
+
+	err = cloud_send(cloud_backend, &msg);
+	cloud_release_data(&msg);
+
+	if (err) {
+		printk("Failed to send light sensor data to cloud, error: %d\n",
+		       err);
+		cloud_error_handler(err);
+	}
+}
+#endif /* CONFIG_LIGHT_SENSOR */
 
 /**@brief Send sensor data to nRF Cloud. **/
 static void sensor_data_send(struct cloud_channel_data *data)
@@ -945,10 +986,20 @@ static void modem_data_init(void)
 /**@brief Initializes the sensors that are used by the application. */
 static void sensors_init(void)
 {
+	int err;
+
 	accelerometer_init();
 	flip_detection_init();
-	env_sensors_init_and_start();
-
+	err = env_sensors_init_and_start();
+	if (err) {
+		printk("Environmental sensors init failed, error: %d\n", err);
+	}
+#if CONFIG_LIGHT_SENSOR
+	err = light_sensor_init_and_start(light_sensor_data_send);
+	if (err) {
+		printk("Light sensor init failed, error: %d\n", err);
+	}
+#endif /* CONFIG_LIGHT_SENSOR */
 #if CONFIG_MODEM_INFO
 	modem_data_init();
 #endif /* CONFIG_MODEM_INFO */

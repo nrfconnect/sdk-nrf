@@ -23,6 +23,7 @@ zephyr_library_include_directories(
   src/ui
   src/cloud_codec
   src/env_sensors
+  src/light_sensor
   )
 
 # Application sources
@@ -31,6 +32,7 @@ add_subdirectory(src/ui)
 add_subdirectory(src/cloud_codec)
 add_subdirectory(src/gps_controller)
 add_subdirectory(src/env_sensors)
+add_subdirectory_ifdef(CONFIG_LIGHT_SENSOR src/light_sensor)
 
 if (CONFIG_USE_BME680_BSEC)
   target_link_libraries(app PUBLIC bsec_lib)
