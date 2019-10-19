@@ -13,8 +13,9 @@
 #ifndef CLOUD_CODEC_H__
 #define CLOUD_CODEC_H__
 
-#include "env_sensors.h"
 #include <net/cloud.h>
+#include "env_sensors.h"
+#include "light_sensor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +49,8 @@ enum cloud_channel {
 	CLOUD_CHANNEL_LTE_LINK_RSRP,
 	/** The descriptive DEVICE data indicating its status. */
 	CLOUD_CHANNEL_DEVICE_INFO,
+	/** The RBG IR light levels on the device. */
+	CLOUD_CHANNEL_LIGHT_SENSOR,
 };
 
 #define CLOUD_CHANNEL_STR_GPS "GPS"
@@ -62,6 +65,7 @@ enum cloud_channel {
  * to have lowercase keys.
  */
 #define CLOUD_CHANNEL_STR_DEVICE_INFO "device"
+#define CLOUD_CHANNEL_STR_LIGHT_SENSOR "LIGHT"
 
 struct cloud_data {
 	char *buf;
@@ -176,6 +180,11 @@ static inline void cloud_release_data(struct cloud_msg *data)
 
 int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
 				  struct cloud_msg *output);
+
+#if CONFIG_LIGHT_SENSOR
+int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
+				   struct cloud_msg *output);
+#endif /* CONFIG_LIGHT_SENSOR */
 
 /**
  * @}
