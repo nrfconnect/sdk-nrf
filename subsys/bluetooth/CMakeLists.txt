@@ -19,6 +19,8 @@ if (CONFIG_BT_GATT_BAS_C     OR
     CONFIG_BT_GATT_LBS       OR
     CONFIG_BT_GATT_NUS       OR
     CONFIG_BT_GATT_NUS_C     OR
+    CONFIG_BT_GATT_LATENCY   OR
+    CONFIG_BT_GATT_LATENCY_C OR
     CONFIG_BT_GATT_THROUGHPUT)
 	add_subdirectory(services)
 endif()
