@@ -15,5 +15,5 @@ include: i2c-device.yaml
 
 properties:
     int-gpios:
-      type: compound
+      type: phandle-array
       required: true
