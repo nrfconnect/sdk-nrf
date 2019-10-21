@@ -209,7 +209,7 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	static u8_t hci_buffer[256 + 4];
+	static u8_t hci_buffer[HCI_MSG_BUFFER_MAX_SIZE];
 	int errcode;
 
 	BT_DBG("Started");
