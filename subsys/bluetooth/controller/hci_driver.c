@@ -10,6 +10,7 @@
 #include <kernel.h>
 #include <soc.h>
 #include <misc/byteorder.h>
+#include <stdbool.h>
 
 #include <ble_controller.h>
 #include <ble_controller_hci.h>
@@ -22,7 +23,7 @@
 #define BLE_CONTROLLER_IRQ_PRIO_LOW  4
 #define BLE_CONTROLLER_IRQ_PRIO_HIGH 0
 
-static K_SEM_DEFINE(sem_recv, 0, UINT_MAX);
+static K_SEM_DEFINE(sem_recv, 0, 1);
 static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 
 static struct k_thread recv_thread_data;
@@ -203,6 +204,43 @@ static void event_packet_process(u8_t *hci_buf)
 	}
 }
 
+static bool fetch_and_process_hci_evt(uint8_t *p_hci_buffer)
+{
+	int errcode;
+
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	if (!errcode) {
+		errcode = hci_evt_get(p_hci_buffer);
+		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (errcode) {
+		return false;
+	}
+
+	event_packet_process(p_hci_buffer);
+	return true;
+
+}
+
+static bool fetch_and_process_acl_data(uint8_t *p_hci_buffer)
+{
+	int errcode;
+
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	if (!errcode) {
+		errcode = hci_data_get(p_hci_buffer);
+		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (errcode) {
+		return false;
+	}
+
+	data_packet_process(p_hci_buffer);
+	return true;
+}
+
 static void recv_thread(void *p1, void *p2, void *p3)
 {
 	ARG_UNUSED(p1);
@@ -210,36 +248,19 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p3);
 
 	static u8_t hci_buffer[HCI_MSG_BUFFER_MAX_SIZE];
-	int errcode;
 
-	BT_DBG("Started");
+	bool received_evt = false;
+	bool received_data = false;
+
 	while (true) {
-		k_sem_take(&sem_recv, K_FOREVER);
-		while (true) {
-			errcode = MULTITHREADING_LOCK_ACQUIRE();
-			if (!errcode) {
-				errcode = hci_evt_get(hci_buffer);
-				MULTITHREADING_LOCK_RELEASE();
-			}
-			if (!errcode) {
-				event_packet_process(hci_buffer);
-			} else {
-				break;
-			}
+		if (!received_evt && !received_data) {
+			/* Wait for a signal from the controller. */
+			k_sem_take(&sem_recv, K_FOREVER);
 		}
 
-		while (true) {
-			errcode = MULTITHREADING_LOCK_ACQUIRE();
-			if (!errcode) {
-				errcode = hci_data_get(hci_buffer);
-				MULTITHREADING_LOCK_RELEASE();
-			}
-			if (!errcode) {
-				data_packet_process(hci_buffer);
-			} else {
-				break;
-			}
-		}
+		received_evt = fetch_and_process_hci_evt(&hci_buffer[0]);
+
+		received_data = fetch_and_process_acl_data(&hci_buffer[0]);
 
 		/* Let other threads of same priority run in between. */
 		k_yield();
