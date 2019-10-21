@@ -16,5 +16,5 @@ include: spi-device.yaml
 
 properties:
     irq-gpios:
-      type: compound
+      type: phandle-array
       required: true
