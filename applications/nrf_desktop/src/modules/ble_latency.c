@@ -107,10 +107,6 @@ static void low_latency_check_fn(struct k_work *w)
 static void le_param_updated(struct bt_conn *conn, u16_t interval,
 			     u16_t latency, u16_t timeout)
 {
-	LOG_INF("Conn parameters updated:"
-		"\n\tinterval 0x%04x\n\tlat %d\n\ttimeout %d\n",
-		interval, latency, timeout);
-
 	if (latency == 0) {
 		latency_state |= LOW_LATENCY_ENABLED;
 		k_delayed_work_submit(&low_latency_check,
