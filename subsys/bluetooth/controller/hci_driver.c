@@ -246,11 +246,6 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	}
 }
 
-void _signal_handler_irq(void)
-{
-	k_sem_give(&sem_recv);
-}
-
 static void signal_thread(void *p1, void *p2, void *p3)
 {
 	ARG_UNUSED(p1);
