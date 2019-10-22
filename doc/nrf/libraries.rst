@@ -57,6 +57,7 @@ Here you can find documentation for these libraries, including API documentation
    ../../include/nfc/ndef/*
    ../../include/nfc/t2t/*
    ../../include/nfc/t4t/*
+   ../../include/nfc/tnep/*
    ../../include/debug/*
    ../../include/shell/*
    ../../include/at_cmd_parser/*
