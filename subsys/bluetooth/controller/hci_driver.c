@@ -328,7 +328,7 @@ static int ble_init(struct device *unused)
 	clock_cfg.lf_clk_source = NRF_LF_CLOCK_SRC_RC;
 #elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL
 	clock_cfg.lf_clk_source = NRF_LF_CLOCK_SRC_XTAL;
-#elif CLOCK_CONTROL_NRF_K32SRC_SYNTH
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH
 	clock_cfg.lf_clk_source = NRF_LF_CLOCK_SRC_SYNTH;
 #else
 #error "Clock source is not defined"
@@ -350,13 +350,13 @@ static int ble_init(struct device *unused)
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_30_PPM;
 #elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_20PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_20_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_10PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_10PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_10_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_5PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_5PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_5_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_2PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_2PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_2_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_1PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_1PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_1_PPM;
 #else
 #error "Clock accuracy is not defined"
