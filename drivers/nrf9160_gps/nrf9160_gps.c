@@ -74,6 +74,10 @@ static void copy_pvt(struct gps_pvt *dest, nrf_gnss_pvt_data_frame_t *src)
 	dest->datetime.minute = src->datetime.minute;
 	dest->datetime.seconds = src->datetime.seconds;
 	dest->datetime.ms = src->datetime.ms;
+	dest->pdop = src->pdop;
+	dest->hdop = src->hdop;
+	dest->vdop = src->vdop;
+	dest->tdop = src->tdop;
 
 	for (size_t i = 0;
 	     i < MIN(NRF_GNSS_MAX_SATELLITES, GPS_MAX_SATELLITES); i++) {
