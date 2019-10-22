@@ -183,7 +183,7 @@ add_custom_target(
   srctree=${NRF_BASE}
   KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
   KCONFIG_DOC_MODE=1
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py ${NRF_BASE}/Kconfig.nrf ${NRF_RST_OUT}/doc/nrf/reference/kconfig/
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py --kconfig ${NRF_BASE}/Kconfig.nrf ${NRF_RST_OUT}/doc/nrf/reference/kconfig/
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
@@ -313,7 +313,7 @@ add_custom_target(
   srctree=${NRFXLIB_BASE}
   KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
   KCONFIG_DOC_MODE=1
-  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py ${NRFXLIB_BASE}/Kconfig.nrfxlib ${NRFXLIB_RST_OUT}/kconfig
+  ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py --kconfig ${NRFXLIB_BASE}/Kconfig.nrfxlib ${NRFXLIB_RST_OUT}/kconfig
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
