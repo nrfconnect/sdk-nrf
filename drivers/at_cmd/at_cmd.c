@@ -171,6 +171,8 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			goto next;
 		}
 
+		LOG_DBG("at_cmd_rx: %s", log_strdup(item->data));
+
 		payload_len = get_return_code(item->data, &ret);
 
 		if (ret.state != AT_CMD_NOTIFICATION) {
@@ -289,6 +291,11 @@ int at_cmd_write(const char *const cmd,
 
 void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 {
+	LOG_DBG("Setting notification handler to %p", handler);
+	if ((notification_handler != NULL) && (handler != NULL)) {
+		LOG_WRN("Forgetting prior notification handler %p",
+			notification_handler);
+	}
 
 	k_sem_take(&cmd_pending, K_FOREVER);
 
