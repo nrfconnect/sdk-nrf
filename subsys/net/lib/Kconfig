@@ -11,5 +11,6 @@ rsource "fota_download/Kconfig"
 rsource "aws_jobs/Kconfig"
 rsource "aws_fota/Kconfig"
 rsource "cloud/Kconfig"
+rsource "zzhc/Kconfig"
 
 endmenu
