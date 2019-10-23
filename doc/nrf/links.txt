@@ -131,8 +131,9 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
-.. _`breathe issue #437`: https://github.com/michaeljones/breathe/issues/437
-.. _`breathe issue #438`: https://github.com/michaeljones/breathe/issues/438
+.. _`Breathe issue #437`: https://github.com/michaeljones/breathe/issues/437
+.. _`Breathe issue #438`: https://github.com/michaeljones/breathe/issues/438
+.. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
 
 .. _`HIDAPI library`: https://github.com/libusb/hidapi
 .. _`HIDAPI releases`: https://github.com/libusb/hidapi/releases
