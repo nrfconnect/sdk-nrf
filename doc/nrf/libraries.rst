@@ -32,6 +32,12 @@ Here you can find documentation for these libraries, including API documentation
 
    ../../include/net/*
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Libraries for networking:
+   :glob:
+
+   ../../include/net/zzhc/*
 
 .. toctree::
    :maxdepth: 1

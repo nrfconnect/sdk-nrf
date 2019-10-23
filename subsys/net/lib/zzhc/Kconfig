@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Self-Registration (Zi ZHu Ce)"
+
+config ZZHC
+	bool "Self-Registration Daemon"
+	depends on TRUSTED_EXECUTION_NONSECURE
+	select BSD_LIBRARY
+	select SETTINGS
+	select AT_CMD
+	select AT_CMD_PARSER
+	select AT_NOTIF
+	select BASE64
+	select JSON_LIBRARY
+
+if ZZHC
+
+config ZZHC_STACK_SIZE
+	int "Background thread Stack size"
+	default 2048
+
+config ZZHC_THREAD_PRIO
+	int "Background thread priority level"
+	range 0 NUM_PREEMPT_PRIORITIES
+	default 0 if !MULTITHREADING
+	default 10
+
+module = ZZHC
+module-str = ZZHC Daemon
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ZZHC
+
+endmenu
