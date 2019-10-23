@@ -189,11 +189,11 @@ static int configure_callbacks(struct selector *selector)
 	for (size_t i = 0; (i < ARRAY_SIZE(gpio_dev)) && !err; i++) {
 		if (!gpio_dev[i]) {
 			__ASSERT_NO_MSG(bitmask[i] == 0);
+			continue;
 		}
 		gpio_init_callback(&selector->gpio_cb[i], selector_isr,
 				   bitmask[i]);
 		err = gpio_add_callback(gpio_dev[i], &selector->gpio_cb[i]);
-
 	}
 
 	if (err) {
