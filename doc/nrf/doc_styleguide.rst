@@ -3,28 +3,27 @@
 Documentation style guide
 #########################
 
-.. note::
-
-   These style guides are not finalized. Details may change.
-
 NCS documentation is written in two formats:
 
-* Doxygen for API documentation
+* doxygen for API documentation
 * RST for conceptual documentation
 
 
 RST style guide
 ***************
 
-See :ref:`zephyr:doc_guidelines` for a short introduction to RST and, most importantly, to the conventions used in Zephyr.
+See Zephyr's :ref:`zephyr:doc_guidelines` for a short introduction to RST and, most importantly, to the conventions used in Zephyr.
 More information about RST is available in the `reStructuredText Primer`_.
 
 The |NCS| documentation follows the Zephyr style guide, and adds a few more restrictive rules:
 
 * Headings use sentence case, which means that the first word is capitalized, and the following words use normal capitalization.
 * Do not use consecutive headings without intervening text.
-* For readability reasons, start every sentence on a new line in the source files.
+* For readability reasons, start every sentence on a new line in the source files and do not add line breaks within the sentence.
   In the output, consecutive lines without blank lines in between are combined into one paragraph.
+
+    .. note:: For the conceptual documentation written in RST, you can have more than 80 characters per line.
+              The requirement for 80 characters per line applies only to the code documentation written in doxygen.
 
 Hyperlinks
 ==========
@@ -44,6 +43,39 @@ It is also possible to define more than one default link text for a link, which 
    .. _`Link text one`:
    .. _`Link text two`: http://..
 
+Diagrams
+========
+
+You can include Message Sequence Chart (MSC) diagrams in RST by using the ``.. msc::`` directive and including the MSC content, for example:
+
+.. code-block:: python
+
+    .. msc::
+        hscale = "1.3";
+        Module,Application;
+        Module<<Application      [label="nrf_cloud_connect() returns successfully"];
+        Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
+        Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
+        Module<<Application      [label="nrf_cloud_user_associate()"];
+        Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
+        Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+        Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
+
+
+This will generate the following output:
+
+    .. msc::
+        hscale = "1.3";
+        Module,Application;
+        Module<<Application      [label="nrf_cloud_connect() returns successfully"];
+        Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
+        Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
+        Module<<Application      [label="nrf_cloud_user_associate()"];
+        Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
+        Module>>Application      [label="NRF_CLOUD_EVT_READY"];
+        Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
+
+
 Kconfig
 =======
 
@@ -54,23 +86,26 @@ Kconfig options can be linked to from RST by using the ``:option:`` domain::
 Breathe
 =======
 
-The Breathe Sphinx plugin provides a bridge between RST and Doxygen.
+The Breathe Sphinx plugin provides a bridge between RST and doxygen.
 
-The Doxygen documentation is not automatically included in RST.
+The doxygen documentation is not automatically included in RST.
 Therefore, every group must be explicitly added to an RST file.
 
-See the following example for including a doxygen group:
-
 .. code-block:: python
+   :caption: Example of how to include a doxygen group
 
    .. doxygengroup:: bluetooth_gatt_throughput
       :project: nrf
       :members:
 
+
+.. note::
+    Including a group on a page does not include all its subgroups automatically.
+    To include subgroups, list them on the page of the group they belong to.
+
 The `Breathe documentation`_ contains information about what you can link to.
 
-To link directly to a Doxygen reference from RST, use the following breathe
-domains:
+To link directly to a doxygen reference from RST, use the following Breathe domains:
 
 * Function: ``:cpp:func:``
 * Structure: ``:c:type:``
@@ -80,23 +115,23 @@ domains:
 * Structure member: ``:cpp:member:``
 
 .. note::
-   The ``:cpp:enum:`` and ``:cpp:enumerator:`` domains do not generate a link
-   due to `breathe issue #437`_. As a workaround, use the following command::
+   The ``:cpp:enum:`` and ``:cpp:enumerator:`` domains do not generate a link due to `Breathe issue #437`_.
+   As a workaround, use the following command::
 
-      :cpp:enumerator:`ENUM_VALUE <DOXYGEN_GROUP>::ENUM_VALUE`
+      :cpp:enumerator:`ENUM_VALUE <DOXYGEN_GROUP::ENUM_VALUE>`
 
 Doxygen style guide
 *******************
 
-This style guide covers guidelines for the Doxygen-based API documentation.
+This style guide covers guidelines for the doxygen-based API documentation.
 
 General documentation guidelines
 ================================
 
 #. Always use full sentences, except for descriptions for variables, structs, and enums, where sentence fragments with no verb are accepted, and always end everything with period.
 #. Everything that is documented must belong to a group (see below).
-#. Use capitalization sparingly; when in doubt, use lowercase. *We'll create a list of terms that should be capitalized.*
-#. Line breaks: In Doxygen, break after 80 characters (following the dev guidelines). In RST, break after each sentence.
+#. Use capitalization sparingly. When in doubt, use lowercase.
+#. Line breaks: In doxygen, break after 80 characters (following the dev guidelines). In RST, break after each sentence.
 #. **@note** and **@warning** should only be used in the details section, and only when really needed for emphasis.
    Use notes for emphasis and warnings if things will really really go wrong if you ignore the warning.
 
@@ -104,7 +139,7 @@ File headers and groups
 =======================
 
 #. **@file** element is always required at the start of a file.
-#. **There is no need to use @brief** for **@file**. *Coding Style page on Vestavind needs to be updated.*
+#. There is no need to use **@brief** for **@file**.
 #. **@defgroup** or **@addgroup** usually follows **@file**.
    You can divide a file into several groups as well.
 #. **@{** must open the group, **@}** must close it.
@@ -165,10 +200,17 @@ File headers and groups
 Functions
 =========
 
-#. **Do not use @fn**. Instead, document each function where it is defined.
+#. Do not use **@fn**. Instead, document each function where it is defined.
 #. **@brief** is mandatory.
 
-   * Start the brief with the "do sth" form (for example, "Initialize the module", "Send Boot Keyboard Input Report").
+   * Start the brief with the "do sth" form.
+
+    .. code-block:: none
+        :caption: Brief documentation examples
+
+        /** @brief Request a read operation to be executed from Secure Firmware.
+
+        /** @brief Send Boot Keyboard Input Report.
 
 #. **@details** is optional.
    It can be introduced either by using **@details** or by leaving a blank line after **@brief**.
@@ -176,40 +218,69 @@ Functions
 
    * Always add parameter description.
      Use a sentence fragment (no verb) with period at the end.
-   * Specify for all parameters whether they are ``[in]``, ``[out]``, or ``[in,out]``. *- TBD*
+   * Make sure the parameter documentation within the function is consistently using the parameter type: ``[in]``, ``[out]``, or ``[in,out]``.
+
+    .. code-block:: none
+        :caption: Parameter documentation example
+
+        * @param[out] destination Pointer to destination array where the content is
+        *                         to be copied.
+        * @param[in]  addr        Address to be copied from.
+        * @param[in]  len         Number of bytes to copy.
 
 #. If you include more than one **@sa** ("see also", optional), add them this way::
 
       @sa first_function
       @sa second_function
 
-#. **@return** should be used to describe a return value (for example, "@return The length of ...", "@return The handle").
+#. **@return** should be used to describe a generic return value without a specific value (for example, "@return The length of ...", "@return The handle").
    There is usually only one return value.
+
+   .. code-block:: none
+      :caption: Return documentation example
+
+      *  @return  Initializer that sets up the pipe, length, and byte array for
+      *           content of the TX data.
+
 #. **@retval** should be used for specific return values (for example, "@retval true", "@retval CONN_ERROR").
    Describe the condition for each of the return values (for example, "If the function completes successfully", "If the connection cannot be established").
-   If there is only one retval, add what happens otherwise. Example: "Otherwise, an error code is returned".
-#. **Do not use @returns**.
+
+    .. code-block:: none
+       :caption: Retval documentation example
+
+       *  @retval 0 If the operation was successful.
+       *            Otherwise, a (negative) error code is returned.
+       *  @retval (-ENOTSUP) Special error code used when the UUID
+       *            of the service does not match the expected UUID.
+
+#. Do not use **@returns**.
    Use **@return** instead.
 
 .. code-block:: c
-   :caption: Function documentation example
+   :caption: Complete function documentation example
 
-	/** @brief Send Boot Keyboard Input Report.
-	 *
-	 *  @param hids_obj  	HIDS instance.
-	 *  @param rep 		Pointer to the report data.
-	 *  @param len 		Length of report data.
-	 *
-	 *  @retval 0 		If the operation was successful.
-         *                      Otherwise, a (negative) error code is returned.
-	 */
-	int hids_boot_kb_inp_rep_send(struct hids *hids_obj, u8_t const *rep,
-					  u16_t len);
+    /** @brief Request a random number from the Secure Firmware.
+     *
+     * This function provides a True Random Number from the on-board random number generator.
+     *
+     * @note Currently, the RNG hardware is run each time this function is called. This
+     *       consumes significant time and power.
+     *
+     * @param[out] output  The random number. Must be at least @p len long.
+     * @param[in]  len     The length of the output array. Currently, @p len must be
+     *                     144.
+     * @param[out] olen    The length of the random number provided.
+     *
+     * @retval 0        If the operation was successful.
+     * @retval -EINVAL  If @p len is invalid. Currently, @p len must be 144.
+     */
+     int spm_request_random_number(u8_t *output, size_t len, size_t *olen);
 
 Enums
 =====
 
 The documentation block should precede the documented element.
+This is in accordance with the `Zephyr coding style`_.
 
 
 .. code-block:: c
@@ -229,6 +300,7 @@ Structs
 =======
 
 The documentation block should precede the documented element.
+This is in accordance with the `Zephyr coding style`_.
 Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
 
 .. code-block:: c
@@ -248,43 +320,52 @@ Make sure to add ``:members:`` when you include the API documentation in RST; ot
 		const struct event_type *type_id;
 	};
 
+
+.. note::
+   Always add a name for the struct.
+   Avoid using unnamed structs due to `Sphinx parser issue`_.
+
+
 References
 ==========
 
-To link to functions, enums, or structs from within Doxygen itself, use the
+To link to functions, enums, or structs from within doxygen itself, use the
 ``@ref`` keyword.
 
-.. code-block:: c
+.. code-block:: none
    :caption: Reference documentation example
 
-	/** @brief Event header structure.
-	 *  Use this structure with the function @ref function_name and
-         *  this structure is related to another structure, @ref structure_name.
-	 */
+    /** @brief Event header structure.
+     *  Use this structure with the function @ref function_name and
+     *  this structure is related to another structure, @ref structure_name.
+     */
 
 .. note::
-   Linking to functions does not currently work due to `breathe issue #438`_.
+   Linking to functions does not currently work due to `Breathe issue #438`_.
 
 
-Typedefs - WIP
-==============
+Typedefs
+========
 
-#. The documentation block should follow, not precede, the documented element.
-#. The C99-style single line comment, ``//``, is not allowed, as per `Zephyr coding style`_.
+The documentation block should precede the documented element.
+This is in accordance with the `Zephyr coding style`_.
 
 .. code-block:: c
-   :caption: Typedef documentation example -- PH
+   :caption: Typedef documentation example
 
-   TBD
+   /**
+    * @brief Download client asynchronous event handler.
+    *
+    * Through this callback, the application receives events, such as
+    * download of a fragment, download completion, or errors.
+    *
+    * If the callback returns a non-zero value, the download stops.
+    * To resume the download, use @ref download_client_start().
+    *
+    * @param[in] event	The event.
+    *
+    * @retval 0 The download continues.
+    * @retval non-zero The download stops.
+    */
+    typedef int (*download_client_callback_t)(const struct download_client_evt *event);
 
-TBD
-==============
-
-@def, @fn should not be used for defines or functions; Zephyr seems to require this but we should be ok without this.
-Just use a @brief and let doxygen figure out what exactly you are documenting.
-
-For parameters, it is recommended to specify whether they are [in], [out], or [in,out].
-If you specify this for one parameter in a function, all others must have it as well, for consistency. *To be discussed if this should be a requirement.*
-
-What about @warning, @pre, and other rare doxygen tags?
-Should we have a rule for these?
