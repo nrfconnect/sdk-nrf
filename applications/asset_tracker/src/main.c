@@ -120,7 +120,6 @@ static struct k_work rsrp_work;
 enum error_type {
 	ERROR_CLOUD,
 	ERROR_BSD_RECOVERABLE,
-	ERROR_BSD_IRRECOVERABLE,
 	ERROR_LTE_LC,
 	ERROR_SYSTEM_FAULT
 };
@@ -178,13 +177,6 @@ void error_handler(enum error_type err_type, int err_code)
 		ui_led_set_pattern(UI_LED_ERROR_BSD_REC);
 		printk("Error of type ERROR_BSD_RECOVERABLE: %d\n", err_code);
 	break;
-	case ERROR_BSD_IRRECOVERABLE:
-		/* Blinking all LEDs ON/OFF if there is an
-		 * irrecoverable error.
-		 */
-		ui_led_set_pattern(UI_LED_ERROR_BSD_IRREC);
-		printk("Error of type ERROR_BSD_IRRECOVERABLE: %d\n", err_code);
-	break;
 	default:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
 		 * undefined error.
@@ -221,12 +213,6 @@ void cloud_error_handler(int err)
 void bsd_recoverable_error_handler(uint32_t err)
 {
 	error_handler(ERROR_BSD_RECOVERABLE, (int)err);
-}
-
-/**@brief Irrecoverable BSD library error. */
-void bsd_irrecoverable_error_handler(uint32_t err)
-{
-	error_handler(ERROR_BSD_IRRECOVERABLE, (int)err);
 }
 
 static void send_gps_data_work_fn(struct k_work *work)

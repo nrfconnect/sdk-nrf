@@ -55,14 +55,6 @@ void bsd_recoverable_error_handler(uint32_t err)
 	printk("bsdlib recoverable error: %u\n", err);
 }
 
-/**@brief Irrecoverable BSD library error. */
-void bsd_irrecoverable_error_handler(uint32_t err)
-{
-	printk("bsdlib irrecoverable error: %u\n", err);
-
-	__ASSERT_NO_MSG(false);
-}
-
 #endif /* defined(CONFIG_BSD_LIBRARY) */
 
 /**@brief Function to print strings without null-termination. */
@@ -454,7 +446,10 @@ void main(void)
 		printk("Modem firmware update failed\n");
 		printk("Fatal error.\n");
 		break;
-
+	case -1:
+		printk("Could not initialize bsdlib.\n");
+		printk("Fatal error.\n");
+		return;
 	default:
 		break;
 	}
