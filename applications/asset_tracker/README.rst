@@ -76,7 +76,6 @@ LED 3 and LED 4:
     Application state indicated by LEDs
 
 All LEDs (1-4):
-    * Blinking simultaneously: Irrecoverable error in the BSD library.
     * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Recoverable error in the BSD library.
     * Blinking in cross pattern (LED 1 and 4, LED 2 and 3): Communication error with the nRF Cloud.
 

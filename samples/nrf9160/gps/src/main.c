@@ -40,11 +40,6 @@ void bsd_recoverable_error_handler(uint32_t error)
 	printf("Err: %lu\n", (unsigned long)error);
 }
 
-void bsd_irrecoverable_error_handler(uint32_t error)
-{
-	printf("Irrecoverable: %lu\n", (unsigned long)error);
-}
-
 static int enable_gps(void)
 {
 	int  at_sock;
