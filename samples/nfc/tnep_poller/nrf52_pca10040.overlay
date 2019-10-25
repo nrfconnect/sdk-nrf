@@ -1,0 +1,7 @@
+&spi0 {
+            status = "okay";
+            sck-pin = <25>;
+            mosi-pin = <23>;
+            miso-pin = <24>;
+            cs-gpios = <&gpio0 22 0>;
+};
