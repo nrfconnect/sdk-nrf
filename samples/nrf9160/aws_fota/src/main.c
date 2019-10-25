@@ -57,6 +57,55 @@ void bsd_recoverable_error_handler(uint32_t err)
 
 #endif /* defined(CONFIG_BSD_LIBRARY) */
 
+/* Topic for updating shadow topic with version number */
+#define AWS "$aws/things/"
+#define UPDATE_DELTA_TOPIC AWS "%s/shadow/update"
+#define SHADOW_STATE_UPDATE \
+"{\"state\":{\"reported\":{\"nrfcloud__dfu_v1__app_v\":\"%s\"}}}"
+
+static int update_device_shadow_version(struct mqtt_client *const client)
+{
+	struct mqtt_publish_param param;
+	char update_delta_topic[strlen(AWS) + strlen("/shadow/update") +
+				CLIENT_ID_LEN];
+	u8_t shadow_update_payload[CONFIG_DEVICE_SHADOW_PAYLOAD_SIZE];
+
+	int ret = snprintf(update_delta_topic,
+			   sizeof(update_delta_topic),
+			   UPDATE_DELTA_TOPIC,
+			   client->client_id.utf8);
+	u32_t update_delta_topic_len = ret;
+
+	if (ret >= sizeof(update_delta_topic)) {
+		return -ENOMEM;
+	} else if (ret < 0) {
+		return ret;
+	}
+
+	ret = snprintf(shadow_update_payload,
+		       sizeof(shadow_update_payload),
+		       SHADOW_STATE_UPDATE,
+		       CONFIG_APP_VERSION);
+	u32_t shadow_update_payload_len = ret;
+
+	if (ret >= sizeof(shadow_update_payload)) {
+		return -ENOMEM;
+	} else if (ret < 0) {
+		return ret;
+	}
+
+	param.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	param.message.topic.topic.utf8 = update_delta_topic;
+	param.message.topic.topic.size = update_delta_topic_len;
+	param.message.payload.data = shadow_update_payload;
+	param.message.payload.len = shadow_update_payload_len;
+	param.message_id = sys_rand32_get();
+	param.dup_flag = 0;
+	param.retain_flag = 0;
+
+	return mqtt_publish(client, &param);
+}
+
 /**@brief Function to print strings without null-termination. */
 static void data_print(u8_t *prefix, u8_t *data, size_t len)
 {
@@ -114,6 +163,12 @@ void mqtt_evt_handler(struct mqtt_client * const c,
 		}
 
 		printk("[%s:%d] MQTT client connected!\n", __func__, __LINE__);
+#if !defined(CONFIG_USE_NRF_CLOUD)
+		err = update_device_shadow_version(c);
+		if (err) {
+			printk("Unable to update device shadow err: %d\n", err);
+		}
+#endif
 		break;
 
 	case MQTT_EVT_DISCONNECT:
