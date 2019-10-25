@@ -21,10 +21,6 @@ config AWS_FOTA_PAYLOAD_SIZE
 	int "MQTT payload reception buffer size for AWS IoT Jobs messages"
 	default 1350
 
-config DEVICE_SHADOW_PAYLOAD_SIZE
-	int "MQTT payload transmission buffer size for AWS IoT device shadow updates"
-	default 255
-
 config AWS_FOTA_HOSTNAME_MAX_LEN
 	int "Hostname buffer size"
 	default 255
