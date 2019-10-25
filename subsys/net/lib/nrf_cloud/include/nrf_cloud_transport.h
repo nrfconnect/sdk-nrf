@@ -114,6 +114,9 @@ void nct_process(void);
 /**@brief Input from the cloud module. */
 int nct_input(const struct nct_evt *evt);
 
+/**@brief Signal to apply FOTA update. */
+void nct_apply_update(void);
+
 #ifdef __cplusplus
 }
 #endif

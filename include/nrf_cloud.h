@@ -42,6 +42,8 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_SENSOR_DATA_ACK,
 	/** The transport was disconnected. */
 	NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
+	/** The device should be restarted to apply a firmware upgrade */
+	NRF_CLOUD_EVT_FOTA_DONE,
 	/** There was an error communicating with the cloud. */
 	NRF_CLOUD_EVT_ERROR = 0xFF
 };
