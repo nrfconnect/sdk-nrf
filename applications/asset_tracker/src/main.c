@@ -15,12 +15,17 @@
 #include <logging/log_ctrl.h>
 #if defined(CONFIG_BSD_LIBRARY)
 #include <net/bsdlib.h>
+#include <bsd.h>
 #include <lte_lc.h>
 #include <modem_info.h>
 #endif /* CONFIG_BSD_LIBRARY */
 #include <net/cloud.h>
 #include <net/socket.h>
 #include <nrf_cloud.h>
+
+#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+#include <dfu/mcuboot.h>
+#endif
 
 #include "cloud_codec.h"
 #include "env_sensors.h"
@@ -454,8 +459,19 @@ static void device_status_send(struct k_work *work)
 #endif
 	};
 
-	if (service_info_json_object_encode(ui, ARRAY_SIZE(ui), NULL, 0,
-			SERVICE_INFO_FOTA_VER_CURRENT, root_obj) == 0) {
+	const char *const fota[] = {
+#if defined(CONFIG_CLOUD_FOTA_APP)
+		SERVICE_INFO_FOTA_STR_APP,
+#endif
+#if defined(CONFIG_CLOUD_FOTA_MODEM)
+		SERVICE_INFO_FOTA_STR_MODEM
+#endif
+	};
+
+	if (service_info_json_object_encode(ui, ARRAY_SIZE(ui),
+					    fota, ARRAY_SIZE(fota),
+					    SERVICE_INFO_FOTA_VER_CURRENT,
+					    root_obj) == 0) {
 		++item_cnt;
 	}
 
@@ -742,6 +758,12 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_READY:
 		printk("CLOUD_EVT_READY\n");
 		ui_led_set_pattern(UI_CLOUD_CONNECTED);
+
+#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+		/* Mark image as good to avoid rolling back after update */
+		boot_write_img_confirmed();
+#endif
+
 		sensors_start();
 		break;
 	case CLOUD_EVT_DISCONNECTED:
@@ -765,6 +787,10 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_PAIR_DONE:
 		printk("CLOUD_EVT_PAIR_DONE\n");
 		on_pairing_done();
+		break;
+	case CLOUD_EVT_FOTA_DONE:
+		printk("CLOUD_EVT_FOTA_DONE\n");
+		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	default:
 		printk("Unknown cloud event type: %d\n", evt->type);
@@ -1063,11 +1089,40 @@ static void ui_evt_handler(struct ui_evt evt)
 }
 #endif /* defined(CONFIG_USE_UI_MODULE) */
 
+void handle_bsdlib_init_ret(void)
+{
+	#if defined(CONFIG_BSD_LIBRARY)
+	int ret = bsdlib_get_init_ret();
+
+	/* Handle return values relating to modem firmware update */
+	switch (ret) {
+	case MODEM_DFU_RESULT_OK:
+		printk("MODEM UPDATE OK. Will run new firmware\n");
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		printk("MODEM UPDATE ERROR %d. Will run old firmware\n", ret);
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		printk("MODEM UPDATE FATAL ERROR %d. Modem failiure\n", ret);
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	default:
+		break;
+	}
+	#endif /* CONFIG_BSD_LIBRARY */
+}
+
 void main(void)
 {
 	int ret;
 
 	printk("Asset tracker started\n");
+
+	handle_bsdlib_init_ret();
 
 	cloud_backend = cloud_get_binding("NRF_CLOUD");
 	__ASSERT(cloud_backend != NULL, "nRF Cloud backend not found");
