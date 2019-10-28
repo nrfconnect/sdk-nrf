@@ -5,16 +5,15 @@
  */
 
 #include <zephyr.h>
-#include <uart.h>
 #include <stdio.h>
-#include <at_cmd.h>
 #include <bsd.h>
 #include <lte_lc.h>
+#include <at_cmd.h>
+#include <at_notif.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <net/bsdlib.h>
 #include <net/aws_fota.h>
-
 #include <dfu/mcuboot.h>
 #include <misc/reboot.h>
 
@@ -441,6 +440,8 @@ static void modem_configure(void)
 			"This sample does not support auto init and connect");
 	int err;
 
+	err = at_notif_init();
+	__ASSERT(err == 0, "AT Notify could not be initialized.");
 	err = at_cmd_init();
 	__ASSERT(err == 0, "AT CMD could not be established.");
 	printk("LTE Link Connecting ...\n");
