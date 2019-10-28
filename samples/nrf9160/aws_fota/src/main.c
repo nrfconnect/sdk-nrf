@@ -104,11 +104,6 @@ void mqtt_evt_handler(struct mqtt_client * const c,
 		return;
 	} else if (err < 0) {
 		printk("aws_fota_mqtt_evt_handler: Failed! %d\n", err);
-		printk("Disconnecting MQTT client...\n");
-		err = mqtt_disconnect(c);
-		if (err) {
-			printk("Could not disconnect: %d\n", err);
-		}
 	}
 
 	switch (evt->type) {
@@ -119,14 +114,6 @@ void mqtt_evt_handler(struct mqtt_client * const c,
 		}
 
 		printk("[%s:%d] MQTT client connected!\n", __func__, __LINE__);
-		if (err) {
-			printk("Unable to initialize AWS jobs upon "
-			       "connection\n");
-			err = mqtt_disconnect(c);
-			if (err) {
-				printk("Could not disconnect: %d\n", err);
-			}
-		}
 		break;
 
 	case MQTT_EVT_DISCONNECT:
