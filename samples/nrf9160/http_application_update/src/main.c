@@ -9,7 +9,7 @@
 #include <bsd.h>
 #include <lte_lc.h>
 #include <at_cmd.h>
-#include <logging/log.h>
+#include <at_notif.h>
 #include <net/bsdlib.h>
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
@@ -128,6 +128,8 @@ static void modem_configure(void)
 			"This sample does not support auto init and connect");
 	int err;
 
+	err = at_notif_init();
+	__ASSERT(err == 0, "AT Notify could not be initialized.");
 	err = at_cmd_init();
 	__ASSERT(err == 0, "AT CMD could not be established.");
 	printk("LTE Link Connecting ...\n");
