@@ -18,17 +18,17 @@
 
 extern void ipc_proxy_irq_handler(void);
 
+static int init_ret;
+
 static int _bsdlib_init(struct device *unused)
 {
-	int err;
-
 	/* Setup the network IRQ used by the BSD library.
 	 * Note: No call to irq_enable() here, that is done through bsd_init().
 	 */
 	IRQ_DIRECT_CONNECT(BSD_NETWORK_IRQ, BSD_NETWORK_IRQ_PRIORITY,
 			   ipc_proxy_irq_handler, 0);
 
-	err = bsd_init();
+	init_ret = bsd_init();
 
 	if (IS_ENABLED(CONFIG_BSD_LIBRARY_SYS_INIT)) {
 		/* bsd_init() returns values from a different namespace
@@ -39,12 +39,17 @@ static int _bsdlib_init(struct device *unused)
 		return 0;
 	}
 
-	return err;
+	return init_ret;
 }
 
 int bsdlib_init(void)
 {
 	return _bsdlib_init(NULL);
+}
+
+int bsdlib_get_init_ret(void)
+{
+	return init_ret;
 }
 
 int bsdlib_shutdown(void)
