@@ -55,7 +55,7 @@ LED_STREAM_DATA = 0x0
 
 FLASH_PAGE_SIZE = 4096
 
-POLL_INTERVAL = 0.02
+POLL_INTERVAL_DEFAULT = 0.02
 POLL_RETRY_COUNT = 200
 
 DFU_SYNC_RETRIES = 3
@@ -332,7 +332,8 @@ def check_range(value, value_range):
     return value_range[0] <= value <= value_range[1]
 
 
-def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
+def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch,
+                            poll_interval=POLL_INTERVAL_DEFAULT):
     if is_fetch:
         data = create_fetch_report(recipient, event_id)
     else:
@@ -347,7 +348,7 @@ def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch):
             return False, None
 
     for retry in range(POLL_RETRY_COUNT):
-        time.sleep(POLL_INTERVAL)
+        time.sleep(poll_interval)
 
         try:
             response_raw = dev.get_feature_report(REPORT_ID, REPORT_SIZE)
@@ -781,7 +782,8 @@ def led_send_single_step(dev, recipient, step, led_id):
                              step.substep_count, step.substep_time, led_id)
 
     success = exchange_feature_report(dev, recipient, event_id,
-                                      event_data, False)
+                                      event_data, False,
+                                      poll_interval=0.001)
 
     return success
 
@@ -791,7 +793,8 @@ def fetch_free_steps_buffer_info(dev, recipient, led_id):
                | (led_id << MOD_FIELD_POS)
 
     success, fetched_data = exchange_feature_report(dev, recipient,
-                                                    event_id, None, True)
+                                                    event_id, None, True,
+                                                    poll_interval=0.001)
 
     if (not success) or (fetched_data is None):
         return False, (None, None)
