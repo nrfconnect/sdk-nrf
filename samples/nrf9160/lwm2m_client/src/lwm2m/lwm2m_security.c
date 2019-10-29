@@ -12,7 +12,6 @@ LOG_MODULE_REGISTER(app_lwm2m_security, CONFIG_APP_LOG_LEVEL);
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #include <net/tls_credentials.h>
-#include "nrf_inbuilt_key.h"
 
 #define TLS_TAG			35724861
 #endif

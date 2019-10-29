@@ -22,6 +22,7 @@ config NRF_CLOUD_STATIC_IPV4_ADDR
 
 config NRF_CLOUD_PROVISION_CERTIFICATES
 	bool "nRF Cloud library provision of certificate"
+	select MODEM_KEY_MGMT if BSD_LIBRARY
 	help
 		Enable run-time provisioning of certificates from the
 		certificates header file selected by using NRF_CLOUD_CERTIFICATES_FILE

@@ -53,6 +53,7 @@ Kconfig*                                  @SebastianBoe
 /lib/at_notif/                            @pkchan
 /lib/bsdlib/                              @rlubos
 /lib/modem_info/                          @rlubos
+/lib/modem_key_mgmt/                      @rlubos
 /lib/pdn_management/                      @rlubos
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /lib/fatal_error/                         @ioannisg
