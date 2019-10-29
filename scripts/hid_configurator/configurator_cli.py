@@ -10,7 +10,7 @@ from configurator_core import DEVICE
 from configurator_core import get_device_pid, open_device
 from configurator_core import fwinfo, fwreboot, change_config, fetch_config
 from configurator_core import dfu_transfer, get_dfu_image_version
-from led_stream import send_continuous_led_stream
+from led_stream import send_continuous_led_stream, send_music_led_stream
 
 
 def progress_bar(permil):
@@ -119,8 +119,13 @@ def perform_fwreboot(dev, args):
 
 def perform_led_stream(dev, args):
     recipient = get_device_pid(args.device_type)
-    send_continuous_led_stream(dev, recipient, DEVICE[args.device_type],
-                               args.led_id, args.freq)
+
+    if args.file is not None:
+        send_music_led_stream(dev, recipient, DEVICE[args.device_type],
+                              args.led_id, args.freq, args.file)
+    else:
+        send_continuous_led_stream(dev, recipient, DEVICE[args.device_type],
+                                   args.led_id, args.freq)
 
 
 def parse_arguments():
@@ -147,6 +152,7 @@ def parse_arguments():
                                     help='Send continuous LED effects stream')
         parser_stream.add_argument('led_id', type=int, help='Stream LED ID')
         parser_stream.add_argument('freq', type=int, help='Color change frequency (in Hz)')
+        parser_stream.add_argument('--file', type=str, help='Selected audio file (*.wav)')
 
         device_config = DEVICE[device_name]['config']
 
