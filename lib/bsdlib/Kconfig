@@ -10,7 +10,7 @@ config BSD_LIBRARY
 	prompt "Use BSD Socket library for IP/TLS/DTLS"
 	select FLOAT
 	select FP_SHARING
-	select NET_SOCKETS_OFFLOAD
+	imply NET_SOCKETS_OFFLOAD
 	depends on TRUSTED_EXECUTION_NONSECURE
 	help
 	  Use Nordic BSD Socket library.
