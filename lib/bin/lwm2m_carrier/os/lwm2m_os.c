@@ -6,6 +6,8 @@
 
 #include <lwm2m_os.h>
 
+#include <stdlib.h>
+#include <stdbool.h>
 #include <zephyr.h>
 #include <string.h>
 #include <at_cmd.h>
@@ -16,7 +18,6 @@
 #include <lte_lc.h>
 #include <net/bsdlib.h>
 #include <net/download_client.h>
-#include <pdn_management.h>
 #include <misc/reboot.h>
 #include <misc/util.h>
 #include <toolchain.h>
@@ -24,6 +25,7 @@
 #include <logging/log.h>
 #include <errno.h>
 #include <nrf_errno.h>
+#include <modem_key_mgmt.h>
 
 /* NVS-related defines */
 
@@ -629,18 +631,6 @@ int lwm2m_os_lte_power_down(void)
 	return lte_lc_power_off();
 }
 
-/* PDN management module abstractions. */
-
-void lwm2m_os_pdn_disconnect(int pdn_fd)
-{
-	pdn_disconnect(pdn_fd);
-}
-
-int lwm2m_os_pdn_init_and_connect(const char *apn_name)
-{
-	return pdn_init_and_connect((char *)apn_name);
-}
-
 #ifndef ENOKEY
 #define ENOKEY 2001
 #endif
@@ -733,4 +723,47 @@ int lwm2m_os_errno(void)
 		__ASSERT(false, "Untranslated errno %d", errno);
 		return 0xDEADBEEF;
 	}
+}
+
+const char *lwm2m_os_strerror(void)
+{
+	return strerror(errno);
+}
+
+int lwm2m_os_sec_ca_chain_exists(uint32_t sec_tag, bool *exists,
+				 uint8_t *perm_flags)
+{
+	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+				     exists, perm_flags);
+}
+
+int lwm2m_os_sec_ca_chain_write(uint32_t sec_tag, const void *buf, uint16_t len)
+{
+	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+				    buf, len);
+}
+
+int lwm2m_os_sec_psk_exists(uint32_t sec_tag, bool *exists, uint8_t *perm_flags)
+{
+	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK,
+				     exists, perm_flags);
+}
+
+int lwm2m_os_sec_psk_write(uint32_t sec_tag, const void *buf, uint16_t len)
+{
+	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, buf,
+				    len);
+}
+
+int lwm2m_os_sec_identity_exists(uint32_t sec_tag, bool *exists,
+				 uint8_t *perm_flags)
+{
+	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY,
+				     exists, perm_flags);
+}
+
+int lwm2m_os_sec_identity_write(uint32_t sec_tag, const void *buf, uint16_t len)
+{
+	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY,
+				    buf, len);
 }

@@ -5,6 +5,34 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.8.1
+**********************
+
+Release for modem firmware version 1.1.0, with support for Verizon Wireless.
+
+Certification status
+====================
+
+The library is certified with Verizon Wireless.
+
+Changes
+=======
+
+* Numerous stability fixes and improvements.
+* Updated bsdlib version dependency.
+* Fixed an issue where high LTE network activity could prevent modem firmware updates over LwM2M.
+
+* Added the following library events:
+   * LWM2M_CARRIER_EVENT_CONNECTING, to indicate that the LTE link is about to be brought up.
+   * LWM2M_CARRIER_EVENT_DISCONNECTING, to indicate that the LTE link is about to be brought down.
+   * LWM2M_CARRIER_EVENT_DEFERRED, to indicate that the LwM2M operation is deferred for 24 hours.
+   * LWM2M_CARRIER_EVENT_ERROR, to indicate that an error has occurred.
+
+* Renamed the following library events:
+   * LWM2M_CARRIER_EVENT_CONNECT to LWM2M_CARRIER_EVENT_CONNECTED.
+   * LWM2M_CARRIER_EVENT_DISCONNECT to LWM2M_CARRIER_EVENT_DISCONNECTED.
+
+
 liblwm2m_carrier 0.8.0
 **********************
 
@@ -13,7 +41,7 @@ Release for modem firmware version 1.1.0 and |NCS| v1.1.0, with support for Veri
 Certification status
 ====================
 
-The library is undergoing Verizon Wireless certification.
+The library is not certified with Verizon Wireless.
 
 Changes
 =======

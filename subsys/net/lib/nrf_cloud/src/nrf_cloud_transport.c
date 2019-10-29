@@ -15,7 +15,7 @@
 #include <misc/util.h>
 
 #if defined(CONFIG_BSD_LIBRARY)
-#include "nrf_inbuilt_key.h"
+#include <nrf_socket.h>
 #endif
 
 #if defined(CONFIG_AWS_FOTA)
@@ -26,6 +26,9 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #include CONFIG_NRF_CLOUD_CERTIFICATES_FILE
+#if defined(CONFIG_MODEM_KEY_MGMT)
+#include <modem_key_mgmt.h>
+#endif
 #endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
 
 #if !defined(NRF_CLOUD_CLIENT_ID)
@@ -348,7 +351,7 @@ static int nct_topics_populate(void)
 	return 0;
 }
 
-/* Provisions root CA certificate using nrf_inbuilt_key API */
+/* Provisions root CA certificate using modem_key_mgmt API */
 static int nct_provision(void)
 {
 	static sec_tag_t sec_tag_list[] = { CONFIG_NRF_CLOUD_SEC_TAG };
@@ -368,26 +371,27 @@ static int nct_provision(void)
 		/* Delete certificates */
 		nrf_sec_tag_t sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
 
-		for (nrf_key_mgnt_cred_type_t type = 0; type < 5; type++) {
-			err = nrf_inbuilt_key_delete(sec_tag, type);
-			LOG_DBG("nrf_inbuilt_key_delete(%lu, %d) => result = %d",
+		for (enum modem_key_mgnt_cred_type_t type = 0; type < 5;
+		     type++) {
+			err = modem_key_mgmt_delete(sec_tag, type);
+			LOG_DBG("modem_key_mgmt_delete(%u, %d) => result = %d",
 				sec_tag, type, err);
 		}
 
 		/* Provision CA Certificate. */
-		err = nrf_inbuilt_key_write(CONFIG_NRF_CLOUD_SEC_TAG,
-					    NRF_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-					    NRF_CLOUD_CA_CERTIFICATE,
-					    strlen(NRF_CLOUD_CA_CERTIFICATE));
+		err = modem_key_mgmt_write(CONFIG_NRF_CLOUD_SEC_TAG,
+					   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+					   NRF_CLOUD_CA_CERTIFICATE,
+					   strlen(NRF_CLOUD_CA_CERTIFICATE));
 		if (err) {
 			LOG_ERR("NRF_CLOUD_CA_CERTIFICATE err: %d", err);
 			return err;
 		}
 
 		/* Provision Private Certificate. */
-		err = nrf_inbuilt_key_write(
+		err = modem_key_mgmt_write(
 			CONFIG_NRF_CLOUD_SEC_TAG,
-			NRF_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
+			MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
 			NRF_CLOUD_CLIENT_PRIVATE_KEY,
 			strlen(NRF_CLOUD_CLIENT_PRIVATE_KEY));
 		if (err) {
@@ -396,9 +400,9 @@ static int nct_provision(void)
 		}
 
 		/* Provision Public Certificate. */
-		err = nrf_inbuilt_key_write(
+		err = modem_key_mgmt_write(
 			CONFIG_NRF_CLOUD_SEC_TAG,
-			NRF_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
+			MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
 			NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE,
 			strlen(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
 		if (err) {

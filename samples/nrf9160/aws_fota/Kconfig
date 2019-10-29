@@ -21,6 +21,7 @@ config CLOUD_CERT_SEC_TAG
 
 config PROVISION_CERTIFICATES
 	bool "Provision certificates from the certificates.h file"
+	select MODEM_KEY_MGMT
 	default n
 	help
 	  If enabled, the sample provisions server certificates into

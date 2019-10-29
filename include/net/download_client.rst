@@ -46,13 +46,12 @@ HTTPS
 The library uses TLS version 1.2.
 When using HTTPS, the application must provision the TLS credentials and pass the security tag to the library when calling :cpp:func:`download_client_connect`.
 
-To provision a TLS certificate to the modem, use :cpp:func:`nrf_inbuilt_key_write` and other nrf_inbuilt_key APIs from the :file:`bdslib/include/nrf_inbuilt_key.h` file in the `nrfxlib`_ repository.
+To provision a TLS certificate to the modem, use :cpp:func:`modem_key_mgmt_write` and other :ref:`modem_key_mgmt` APIs.
 The following snippet illustrates how to provision a TLS certificate, associate it to a TLS security tag, and pass that tag to the library.
 
 .. code::
 
-	#include <nrf_key_mgmt.h>
-	#include <nrf_inbuilt_key.h>
+	#include <modem_key_mgmt.h>
 	#include <net/download_client.h>
 
 	/* A TLS certificate, in PEM format.
@@ -107,8 +106,8 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 		 * The certificate is stored in persistent memory, so
 		 * it is not necessary to provision it again across reboots.
 		 */
-		err = nrf_inbuilt_key_write(sec_tag, NRF_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-									certificate, sizeof(certificate) - 1);
+		err = modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+							       certificate, sizeof(certificate) - 1);
 		if (err) {
 			return err;
 		}
