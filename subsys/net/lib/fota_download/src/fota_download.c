@@ -13,7 +13,7 @@
 
 #ifdef PM_S1_ADDRESS
 /* MCUBoot support is required */
-#include <fw_metadata.h>
+#include <fw_info.h>
 #include <secure_services.h>
 #include <dfu_target_mcuboot.h>
 #endif
@@ -147,8 +147,8 @@ int fota_download_start(char *host, char *file)
 	 * space separated file is given.
 	 */
 	char *update;
-	struct fw_firmware_info s0;
-	struct fw_firmware_info s1;
+	struct fw_info s0;
+	struct fw_info s1;
 
 	err = spm_firmware_info(PM_S0_ADDRESS, &s0);
 	if (err != 0) {
