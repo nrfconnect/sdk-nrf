@@ -540,7 +540,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	case MQTT_EVT_PUBLISH: {
 		const struct mqtt_publish_param *p = &_mqtt_evt->param.publish;
 
-		LOG_DBG("MQTT_EVT_PUBLISH: id=%d len=%d ",
+		LOG_DBG("MQTT_EVT_PUBLISH: id = %d len = %d",
 			p->message_id,
 			p->message.payload.len);
 

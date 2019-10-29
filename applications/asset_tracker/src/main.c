@@ -495,7 +495,8 @@ static void env_data_send(void)
 	}
 
 	if (env_sensors_get_temperature(&env_data) == 0) {
-		if (cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
+		if (cloud_is_send_allowed(CLOUD_CHANNEL_TEMP, env_data.value) &&
+		    cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
 			err = cloud_send(cloud_backend, &msg);
 			cloud_release_data(&msg);
 			if (err) {
@@ -505,7 +506,9 @@ static void env_data_send(void)
 	}
 
 	if (env_sensors_get_humidity(&env_data) == 0) {
-		if (cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
+		if (cloud_is_send_allowed(CLOUD_CHANNEL_HUMID,
+					  env_data.value) &&
+		    cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
 			err = cloud_send(cloud_backend, &msg);
 			cloud_release_data(&msg);
 			if (err) {
@@ -515,7 +518,9 @@ static void env_data_send(void)
 	}
 
 	if (env_sensors_get_pressure(&env_data) == 0) {
-		if (cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
+		if (cloud_is_send_allowed(CLOUD_CHANNEL_AIR_PRESS,
+					  env_data.value) &&
+		    cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
 			err = cloud_send(cloud_backend, &msg);
 			cloud_release_data(&msg);
 			if (err) {
@@ -525,7 +530,9 @@ static void env_data_send(void)
 	}
 
 	if (env_sensors_get_air_quality(&env_data) == 0) {
-		if (cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
+		if (cloud_is_send_allowed(CLOUD_CHANNEL_AIR_QUAL,
+					  env_data.value) &&
+		    cloud_encode_env_sensors_data(&env_data, &msg) == 0) {
 			err = cloud_send(cloud_backend, &msg);
 			cloud_release_data(&msg);
 			if (err) {
@@ -558,6 +565,15 @@ void light_sensor_data_send(void)
 	err = light_sensor_get_data(&light_data);
 	if (err) {
 		printk("Failed to get light sensor data, error %d\n", err);
+		return;
+	}
+
+	if (!cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_RED, light_data.red) &&
+	    !cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_GREEN,
+				   light_data.green) &&
+	    !cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_BLUE, light_data.blue) &&
+	    !cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_IR, light_data.ir)) {
+		printk("Light values not sent due to config settings\n");
 		return;
 	}
 
