@@ -11,28 +11,30 @@
 
 enum abi_index {BL_ROT_VERIFY, BL_SHA256, BL_SECP256R1, LAST};
 
-const struct fw_abi_info *get_bl_crypto_abi(enum abi_index abi)
+const struct fw_info_abi *get_bl_crypto_abi(enum abi_index abi)
 {
 	__ASSERT(abi < LAST, "invalid abi argument.");
 
-	static const struct fw_abi_info *bl_crypto_abis[LAST] = {NULL};
+	static const struct fw_info_abi *bl_crypto_abis[LAST] = {NULL};
 
 	if (!bl_crypto_abis[abi]) {
 		switch(abi) {
 		case BL_ROT_VERIFY:
-			bl_crypto_abis[abi] = fw_abi_find(BL_ROT_VERIFY_ABI_ID,
+			bl_crypto_abis[abi] = fw_info_abi_find(
+					BL_ROT_VERIFY_ABI_ID,
 					CONFIG_BL_ROT_VERIFY_ABI_FLAGS,
 					CONFIG_BL_ROT_VERIFY_ABI_VER,
 					CONFIG_BL_ROT_VERIFY_ABI_MAX_VER);
 			break;
 		case BL_SHA256:
-			bl_crypto_abis[abi] = fw_abi_find(BL_SHA256_ABI_ID,
+			bl_crypto_abis[abi] = fw_info_abi_find(BL_SHA256_ABI_ID,
 					CONFIG_BL_SHA256_ABI_FLAGS,
 					CONFIG_BL_SHA256_ABI_VER,
 					CONFIG_BL_SHA256_ABI_MAX_VER);
 			break;
 		case BL_SECP256R1:
-			bl_crypto_abis[abi] = fw_abi_find(BL_SECP256R1_ABI_ID,
+			bl_crypto_abis[abi] = fw_info_abi_find(
+					BL_SECP256R1_ABI_ID,
 					CONFIG_BL_SECP256R1_ABI_FLAGS,
 					CONFIG_BL_SECP256R1_ABI_VER,
 					CONFIG_BL_SECP256R1_ABI_MAX_VER);
