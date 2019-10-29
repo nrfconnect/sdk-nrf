@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <ztest.h>
 #include <download_client.h>
-#include <fw_metadata.h>
+#include <fw_info.h>
 #include <pm_config.h>
 #include <fota_download.h>
 
@@ -79,7 +79,7 @@ int download_client_init(struct download_client *client,
 	return 0;
 }
 
-int spm_firmware_info(u32_t fw_address, struct fw_firmware_info *info)
+int spm_firmware_info(u32_t fw_address, struct fw_info *info)
 {
 	zassert_true(info != NULL, NULL);
 
