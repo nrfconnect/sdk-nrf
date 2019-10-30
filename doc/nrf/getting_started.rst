@@ -3,7 +3,7 @@
 Getting started
 ###############
 
-To quickly get started with the |NCS|, use the `Getting Started Assistant <Getting Started Information_>`_ to set up your development environment.
+To quickly get started with the |NCS|, use the :ref:`Getting Started Assistant <gs_assistant>` to set up your development environment.
 Alternatively, check the :ref:`gs_installing` section for instructions on setting up your environment manually.
 
 We recommend using SEGGER Embedded Studio for building your applications. See :ref:`gs_programming` for the download links and instructions.
@@ -16,6 +16,7 @@ After that, pick a sample that is related to the application you want to create 
 .. toctree::
    :maxdepth: 2
 
+   gs_assistant
    gs_installing
    gs_programming
    gs_testing
