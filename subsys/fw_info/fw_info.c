@@ -43,7 +43,7 @@ __fw_info struct fw_info m_firmware_info =
 {
 	.magic = {FIRMWARE_INFO_MAGIC},
 	.firmware_size = (u32_t)&_flash_used,
-	.firmware_version = CONFIG_FW_INFO_VERSION,
+	.firmware_version = CONFIG_FW_INFO_FIRMWARE_VERSION,
 	.firmware_address = (u32_t)&_image_rom_start,
 	.abi_in = &abi_getter_in,
 	.abi_out = &abi_getter,
