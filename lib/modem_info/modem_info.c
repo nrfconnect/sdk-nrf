@@ -353,7 +353,7 @@ static int modem_info_parse(const struct modem_info_data *modem_data,
 	}
 
 	param_index = at_params_valid_count_get(&m_param_list);
-	if (param_index != modem_data->param_count) {
+	if (param_index > modem_data->param_count) {
 		return -EAGAIN;
 	}
 
