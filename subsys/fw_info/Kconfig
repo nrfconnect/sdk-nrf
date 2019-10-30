@@ -26,7 +26,7 @@ config FW_INFO_OFFSET
 	  of firmware information should search all possible offsets. Note
 	  that all space between the vector table and this address is unused.
 
-config FW_INFO_VERSION
+config FW_INFO_FIRMWARE_VERSION
 	int "Version number of the firmware."
 	default 1
 
