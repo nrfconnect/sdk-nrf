@@ -23,10 +23,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STREAM_LOG_LEVEL);
 
 #define LED_ID(led) ((led) - &leds[0])
 
+#define STEPS_QUEUE_ARRAY_SIZE (CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE + 1)
+
 struct led {
 	const struct led_effect *state_effect;
 	struct led_effect led_stream_effect;
-	struct led_effect_step steps_queue[CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE];
+	struct led_effect_step steps_queue[STEPS_QUEUE_ARRAY_SIZE];
 	u8_t rx_idx;
 	u8_t tx_idx;
 	bool streaming;
@@ -38,7 +40,7 @@ static bool initialized;
 
 static size_t next_index(size_t index)
 {
-	return (index + 1) % CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE;
+	return (index + 1) % STEPS_QUEUE_ARRAY_SIZE;
 }
 
 static bool queue_data(const struct event_dyndata *dyndata, struct led *led)
@@ -95,9 +97,9 @@ static void send_effect(const struct led_effect *effect, struct led *led)
 
 static size_t count_free_places(struct led *led)
 {
-	size_t len = (CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE + led->rx_idx - led->tx_idx)
-		     % CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE;
-	return CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE - len - 1;
+	size_t len = (STEPS_QUEUE_ARRAY_SIZE + led->rx_idx - led->tx_idx)
+		     % STEPS_QUEUE_ARRAY_SIZE;
+	return STEPS_QUEUE_ARRAY_SIZE - len - 1;
 }
 
 static bool is_queue_empty(struct led *led)
