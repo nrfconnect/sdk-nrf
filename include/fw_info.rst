@@ -13,10 +13,10 @@ Purpose
 The purpose of the firmware information is to allow other images such as bootloaders, or infrastructure such as firmware servers, to gain information about the firmware image.
 
 The firmware information structure has a 12-byte magic header and a verified binary layout to ensure that the format is portable and identifiable.
-It must be located at one of three offsets from the start of the image: 0x200, 0x400, or 0x800.
+It must be located at one of the following offsets from the start of the image: 0x0, 0x200, 0x400, 0x800, 0x1000.
 The reason that the structure is not located at 0x00 is that this can be problematic in some use cases, such as when the vector table must be located at 0x00.
 
-These rules make it simple to retrieve the information by checking for each possible offset (0x200, 0x400, 0x800) if the first 12 bytes match the magic value.
+These rules make it simple to retrieve the information by checking for each possible offset (0x0, 0x200, 0x400, 0x800, 0x1000) if the first 12 bytes match the magic value.
 If they do, the information can be retrieved according to the definition in :c:type:`fw_info`.
 
 Information structure

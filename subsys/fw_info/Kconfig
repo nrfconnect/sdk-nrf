@@ -23,9 +23,10 @@ config FW_INFO_OFFSET
 	default 0x200
 	help
 	  The location of firmware information inside the current firmware
-	  image. Valid values are 0x200, 0x400 and 0x800. Compatible readers
-	  of firmware information should search all possible offsets. Note
-	  that all space between the vector table and this address is unused.
+	  image. Valid values are 0x0, 0x200, 0x400, 0x800, and 0x1000.
+	  Compatible readers of firmware information should search all possible
+	  offsets. Note that all space between the vector table and this address
+	  is unused.
 
 config FW_INFO_FIRMWARE_VERSION
 	int "Version number of the firmware."
