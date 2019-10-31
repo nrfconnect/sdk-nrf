@@ -59,5 +59,8 @@ target_sources_ifdef(CONFIG_DESKTOP_WATCHDOG_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_BAS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/bas.c)
 
+target_sources_ifdef(CONFIG_BT_PERIPHERAL
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dev_descr.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_HIDS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hids.c)
