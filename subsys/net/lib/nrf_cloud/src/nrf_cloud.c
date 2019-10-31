@@ -93,7 +93,7 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param)
 
 int nrf_cloud_disconnect(void)
 {
-	if (NOT_VALID_STATE(STATE_CONNECTED)) {
+	if (NOT_VALID_STATE(STATE_DC_CONNECTED)) {
 		return -EACCES;
 	}
 	return nct_disconnect();
