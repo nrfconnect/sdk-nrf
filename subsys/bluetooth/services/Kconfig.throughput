@@ -5,9 +5,8 @@
 #
 
 config BT_GATT_THROUGHPUT
-	bool
-	prompt "Throughput service"
-	default n
+	bool "Throughput service"
+	select BT_NRF_SERVICES
 	help
 	 Enable Nordic GATT throughput BLE service.
 

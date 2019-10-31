@@ -6,6 +6,7 @@
 
 menuconfig BT_GATT_HIDS
 	bool "Human Interface Device service"
+	select BT_NRF_SERVICES
 	select BT_GATT_POOL
 	select BT_GATT_DYNAMIC_DB
 	help

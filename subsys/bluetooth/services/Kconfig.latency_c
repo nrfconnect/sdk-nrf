@@ -6,6 +6,7 @@
 
 config BT_GATT_LATENCY_C
 	bool "Latency service client"
+	select BT_NRF_SERVICES
 	select BT_GATT_DM
 	select BT_GATT_CLIENT
 	help

@@ -6,6 +6,7 @@
 
 menuconfig BT_GATT_DFU_SMP_C
 	bool "DFU SMP service client"
+	select BT_NRF_SERVICES
 	help
 	  Enable GATT DFU SMP Service Client.
 
