@@ -79,6 +79,9 @@ static const char lock_bands[] = "AT%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK
 /* Lock PLMN */
 static const char lock_plmn[] = "AT+COPS=1,2,\""
 				 CONFIG_LTE_LOCK_PLMN_STRING"\"";
+#elif defined(CONFIG_LTE_UNLOCK_PLMN)
+/* Unlock PLMN */
+static const char unlock_plmn[] = "AT+COPS=0";
 #endif
 /* Request eDRX settings to be used */
 static const char edrx_req[] = "AT+CEDRXS=1,"CONFIG_LTE_EDRX_REQ_ACTT_TYPE
@@ -184,10 +187,16 @@ static int w_lte_lc_init(void)
 	}
 #endif
 #if defined(CONFIG_LTE_LOCK_PLMN)
-	/* Set Operator (volatile setting).
+	/* Manually select Operator (volatile setting).
 	 * Has to be done every time before activating the modem.
 	 */
 	if (at_cmd_write(lock_plmn, NULL, 0, NULL) != 0) {
+		return -EIO;
+	}
+#elif defined(CONFIG_LTE_UNLOCK_PLMN)
+	/* Automatically select Operator (volatile setting).
+	 */
+	if (at_cmd_write(unlock_plmn, NULL, 0, NULL) != 0) {
 		return -EIO;
 	}
 #endif
