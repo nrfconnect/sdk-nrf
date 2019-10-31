@@ -116,7 +116,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 	if (!(((u32_t)fwinfo >= fw_src_address)
 		&& (((u32_t)fwinfo + sizeof(*fwinfo))
 			< (fw_src_address + fwinfo->firmware_size)))) {
-		PRINT("Firmware info is not within signed region.");
+		PRINT("Firmware info is not within signed region.\n\r");
 		return false;
 	}
 
@@ -129,7 +129,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 		fw_src_address + fwinfo->firmware_size, 4);
 
 	if (!fw_val_info) {
-		PRINT("Could not find valid firmware validation.\n\r");
+		PRINT("Could not find valid firmware validation info.\n\r");
 		return false;
 	}
 
@@ -155,6 +155,8 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 		}
 
 		PRINT("Verifying signature against key %d.\n\r", key_data_idx);
+		PRINT("Hash: 0x%02x...%02x\r\n", key_data[0] & 0xFF,
+			key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN/4-1] >> 24);
 		retval = rot_verify(fw_val_info->public_key,
 					(u8_t *)key_data,
 					fw_val_info->signature,
@@ -166,13 +168,13 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 		}
 	}
 
-	PRINT("Signature verified.\n\r");
-
 	if (retval != 0) {
 		PRINT("Firmware validation failed with error %d.\n\r",
 			    retval);
 		return false;
 	}
+
+	PRINT("Signature verified.\n\r");
 
 	return true;
 }
