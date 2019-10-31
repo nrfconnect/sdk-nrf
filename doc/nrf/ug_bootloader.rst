@@ -32,7 +32,7 @@ To establish a root of trust, the first image verifies the signature of the next
 If the next image is another bootloader image, that one must verify the image following it to maintain the chain of trust.
 After all images in the bootloader chain have been verified successfully, the application starts.
 
-In the current implementation, only the first stage in the chain, the immutable bootloader, is implemented.
+The current implementation provides the first stage in the chain, the :ref:`bootloader`, and uses :doc:`mcuboot:index` as upgradable bootloader.
 
 The following image shows an abstract representation of the memory layout, assuming that there are two bootloader images (one immutable, one upgradable) and one application:
 
@@ -66,6 +66,7 @@ Signature verification
 Metadata verification
    Checks that the images are compatible.
 
+.. _upgradable_bootloader:
 
 Upgradable bootloader
 =====================
@@ -77,9 +78,19 @@ It is protected by the root of trust in form of the immutable bootloader, and it
 The upgradable bootloader should carry out the same signature and metadata verification as the immutable bootloader.
 In addition, it can provide functionality for upgrading both itself and the following image in the boot sequence (in most cases, the application).
 
-A default implementation of an upgradable bootloader is not available yet.
+There are two partitions where the upgradable bootloader can be stored: slot 0 and slot 1 (also called *S0* and *S1*).
+A new bootloader image is stored in the partition that is not currently used.
+When booting, the immutable bootloader checks the version information for the images in slot 0 and slot 1 and boots the one with the highest version.
+If this image is faulty and cannot be booted, the other partition will always hold a working image, and this one is booted instead.
+
+Set the option :option:`CONFIG_MCUBOOT_BUILD_S1_VARIANT` when building the upgradable bootloader to automatically generate pre-signed variants of the image for both slots.
+These signed variants can be used to perform an upgrade procedure through the :ref:`lib_fota_download` library.
+
 
 Adding a bootloader chain to your application
 *********************************************
 
-See :ref:`bootloader_build_and_run` in the documentation of the :ref:`bootloader` sample for instructions on how to enable the secure bootloader chain.
+See :ref:`bootloader_build_and_run` in the documentation of the :ref:`bootloader` sample for instructions on how to add an immutable bootloader as first stage of the secure bootloader chain.
+
+See :doc:`mcuboot:index` for information on how to implement an upgradable bootlader.
+:ref:`mcuboot:mcuboot_ncs` gives details on the integration of MCUboot in |NCS|.
