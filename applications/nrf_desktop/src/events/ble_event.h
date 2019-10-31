@@ -107,6 +107,7 @@ struct ble_discovery_complete_event {
 
 	struct bt_gatt_dm *dm;
 	u16_t pid;
+	bool peer_llpm_support;
 	enum peer_type peer_type;
 };
 EVENT_TYPE_DECLARE(ble_discovery_complete_event);
