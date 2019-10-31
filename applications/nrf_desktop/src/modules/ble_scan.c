@@ -45,6 +45,7 @@ static struct bt_conn *discovering_peer_conn;
 static unsigned int scan_counter;
 static struct k_delayed_work scan_start_trigger;
 static struct k_delayed_work scan_stop_trigger;
+static bool peers_only = !IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT);
 static bool scanning;
 
 
@@ -191,7 +192,15 @@ static int configure_filters(void)
 	u8_t filter_mode = 0;
 	int err = configure_address_filters(&filter_mode);
 
-	if (!err && (count_bond() < CONFIG_BT_MAX_PAIRED)) {
+	bool use_name_filters = true;
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST) &&
+	    peers_only) {
+		use_name_filters = false;
+	}
+
+	if (!err && use_name_filters &&
+	    (count_bond() < CONFIG_BT_MAX_PAIRED)) {
 		err = configure_short_name_filters(&filter_mode);
 	}
 
@@ -206,13 +215,19 @@ static int configure_filters(void)
 
 static void scan_start(void)
 {
+	size_t conn_count = count_conn();
+	size_t bond_count = count_bond();
 	int err;
 
-	if (count_conn() == CONFIG_BT_MAX_CONN) {
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST) &&
+	    (conn_count == bond_count) && peers_only) {
+		LOG_INF("All known peers connected - scanning disabled");
+		return;
+	} else if (conn_count == CONFIG_BT_MAX_CONN) {
 		LOG_INF("Max number of peers connected - scanning disabled");
 		return;
 	} else if (discovering_peer_conn) {
-		LOG_INF("Discovery in progress - scanning disabled");
+		LOG_INF("Discovery in progress");
 		return;
 	}
 
@@ -262,6 +277,7 @@ static void scan_stop_trigger_fn(struct k_work *w)
 	BUILD_ASSERT_MSG(SCAN_DURATION_MS > 0, "");
 
 	if (count_conn() != 0) {
+		peers_only = true;
 		scan_stop();
 	}
 }
@@ -283,7 +299,6 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
 	LOG_WRN("Connecting failed");
-	/* Restarting scan. */
 	scan_start();
 }
 
@@ -495,10 +510,10 @@ static bool event_handler(const struct event_header *eh)
 			static bool started;
 
 			__ASSERT_NO_MSG(!started);
+			started = true;
 
 			/* Settings need to be loaded before scan start */
 			scan_start();
-			started = true;
 		}
 
 		return false;
@@ -538,11 +553,14 @@ static bool event_handler(const struct event_header *eh)
 			cast_ble_peer_operation_event(eh);
 
 		switch (event->op) {
-
 		case PEER_OPERATION_ERASED:
-			scan_stop();
 			reset_subscribers();
 			store_subscribed_peers();
+			/* Fall-through */
+
+		case PEER_OPERATION_SCAN_REQUEST:
+			peers_only = false;
+			scan_stop();
 			scan_start();
 			break;
 

@@ -46,6 +46,7 @@ static void load_peer_state_led(void)
 	case PEER_OPERATION_ERASE_ADV_CANCEL:
 	case PEER_OPERATION_ERASED:
 	case PEER_OPERATION_CANCEL:
+	case PEER_OPERATION_SCAN_REQUEST:
 		if (connected) {
 			state = LED_PEER_STATE_CONNECTED;
 		}
