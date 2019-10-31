@@ -39,7 +39,6 @@ endif # LTE_LOCK_BANDS
 
 config LTE_LOCK_PLMN
 	bool "Enable LTE PLMN lock"
-	default n
 	help
 		Enable PLMN locks for network selection.
 
@@ -51,6 +50,12 @@ config LTE_LOCK_PLMN_STRING
 		Mobile Country Code (MCC) and Mobile Network Code (MNC) values.
 		Only numeric string formats supported.
 endif # LTE_LOCK_PLMN
+
+config LTE_UNLOCK_PLMN
+	bool "Disable LTE PLMN lock"
+	depends on !LTE_LOCK_PLMN
+	help
+		Disable PLMN locks for network selection.
 
 config LTE_PSM_REQ_RPTAU
 	string "PSM setting requested periodic TAU"
