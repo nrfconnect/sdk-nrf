@@ -258,6 +258,9 @@ add_custom_target(
   mcuboot-html
   COMMAND ${CMAKE_COMMAND} -E env
   NRF_BASE=${NRF_BASE}
+  ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
+  NRF_OUTPUT=${HTML_DIR}/nrf
+  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   ${SPHINXBUILD} -w ${MCUBOOT_SPHINX_LOG} -N -b html ${MCUBOOT_SPHINXOPTS} ${MCUBOOT_RST_OUT}/doc/mcuboot ${HTML_DIR}/mcuboot
 
   WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
