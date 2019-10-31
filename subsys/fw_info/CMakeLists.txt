@@ -3,11 +3,10 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
-if (CONFIG_FW_INFO OR CONFIG_IS_SECURE_BOOTLOADER)
-  zephyr_linker_sources(RODATA ext_apis.ld)
-
+if (CONFIG_FW_INFO)
   zephyr_library()
   zephyr_library_sources(fw_info.c)
+  zephyr_linker_sources(RODATA ext_apis.ld)
 endif ()
 
 zephyr_linker_sources_ifdef(CONFIG_FW_INFO

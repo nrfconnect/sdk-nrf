@@ -114,7 +114,9 @@ static void boot_from(const struct fw_info *fw_info)
 
 	VTOR = fw_info->address;
 
-	fw_info_ext_api_provide(fw_info);
+	if (!fw_info_ext_api_provide(fw_info, true)) {
+		return;
+	}
 
 	/* Set MSP to the new address and clear any information from PSP */
 	__set_MSP(vector_table[0]);

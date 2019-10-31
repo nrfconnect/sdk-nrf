@@ -33,18 +33,19 @@ It includes the following information:
   See :option:`CONFIG_FW_INFO_VALID_VAL`.
   If this option is set to any other value than :option:`CONFIG_FW_INFO_VALID_VAL` (for example, by the bootloader), the image can quickly be established as invalid.
   The bootloader sets this option to 0 when the image fails validation, so that there is no need to perform a costly validation on every boot.
+  If the firmware is write-protected before being booted by the bootloader, only the bootloader can invalidate it.
 
-Additionally, there is information for exchanging arbitrary data:
+At the end of the information structure, there is a variable-size list containing:
 
-* External API (EXT_API) getter (:cpp:member:`ext_api_out`)
-* Pointer to EXT_API getter (:cpp:member:`ext_api_in`)
+* External APIs
+* External API requests
 
 .. _doc_fw_info_ext_api:
 
-EXT_APIs
-********
+External APIs
+*************
 
-The firmware information structure allows for exchange of arbitrary tagged and versioned interfaces called External APIs (EXT_APIs).
+The firmware information structure allows for exchange of arbitrary tagged and versioned interfaces called *external APIs* (EXT_APIs).
 
 An EXT_API structure is a structure consisting of a header followed by arbitrary data.
 The header consists of the following information:
@@ -54,25 +55,45 @@ The header consists of the following information:
 * EXT_API flags (32 individual bits for indicating the particulars of the EXT_API)
 * EXT_API length (length of the following data)
 
-To retrieve an EXT_API, a firmware image calls another firmware image's EXT_API getter.
-Every image must provide an EXT_API getter (:cpp:member:`ext_api_out`) that other images can use to retrieve its EXT_APIs.
-This EXT_API getter is a function pointer that retrieves EXT_API structs (or rather pointers to EXT_API structs).
+The EXT_API structures of the image are placed at the end of the information structure, immediately before its EXT_API requests.
 
-In addition, every image can access other EXT_APIs through a second EXT_API getter (:cpp:member:`ext_api_in`).
-This EXT_API getter must be provided when booting the image.
-In other words, an image should expect its :cpp:member:`ext_api_in` EXT_API getter to be filled at the time it boots, and will not touch it during booting.
-After booting, an image can call :cpp:member:`ext_api_in` to retrieve EXT_APIs from the image or images that booted it without knowing where they are located.
+An EXT_API request structure is a structure consisting of a description of the requested EXT_API (in the form of an EXT_API header), plus a few more pieces of data.
+The structure also contains the location of a RAM buffer into which a pointer to a matching EXT_API can be placed before booting.
+The RAM buffer must not be initialized or otherwise touched when booting the image, to ensure that the value written there before booting is preserved.
+The :c:macro:`EXT_API_REQ` helper macro uses the ``__noinit`` decorator provided by Zephyr to achieve this.
 
-Each image can provide multiple EXT_APIs.
-An EXT_API getter function takes an index, and each index from 0 to *n* must return a different EXT_API, given that the image provides *n* EXT_APIs with the same ID.
+The EXT_API system allows a bootloader to parse the image's requests and find matches for these requests by parsing its own (the bootloader's) EXT_APIs or EXT_APIs of other images.
+After finding the matches, the bootloader populates the RAM buffers with pointers to the other images' EXT_APIs.
+In this way, the bootloader will be aware of whether all images have access to their dependencies.
 
-Typically, the actual EXT_API will be a function pointer (or a list of function pointers), but the data can be anything, though it should be considered read-only.
-The reason for making the EXT_API getters function pointers instead of pointing to a list of EXT_APIs is to allow dynamic creation of EXT_API lists without using RAM.
+Each image can provide multiple EXT_APIs and make multiple requests.
+It is also possible for images to search other images directly for matching EXT_APIs, without using EXT_API requests.
+
+Typically, the data of an EXT_API structure contains a function pointer (or a list of function pointers), but it could consist of anything.
+The data should be considered read-only though.
+
+Binary compatibility
+********************
+
+When exposing an interface between images that have not been compiled and linked together, you must take extra care to ensure binary-compatibility between how the interface is implemented and how it is used.
+The data placed into EXT_APIs must always have the same format for a given ID/version/flags combination.
+
+To facilitate this, the :file:`fw_info.h` file contains a number of static asserts to ensure that the memory mapping of structures is the same every time the code is compiled.
+There are a number of things that can change from compilation to compilation, depending on compiler options or just chance interactions with the rest of the code.
+
+Some things to look out for are:
+
+* Struct padding: The space between members of a struct can be different.
+* Flag ordering: When splitting an integer into smaller chunks (with ``:``), like flags, the order in which they are mapped to memory can be different.
+* Function ABI: The way the function uses registers and stack can be different.
+* Size of certain types: The size of chars and enums can differ depending on compiler flags.
+* Floating point ABI: The way floating point numbers are processed can be different (hard/soft/softfp).
+
 
 Usage
 *****
 
-To locate and verify firmware info structures, use :cpp:func:`fw_info_find` and :cpp:func:`fw_info_check`, respectively.
+To locate and verify firmware information structures, use :cpp:func:`fw_info_find` and :cpp:func:`fw_info_check`, respectively.
 
 To find an EXT_API with a given version and flags, call :cpp:func:`fw_info_ext_api_find`.
 This function calls :cpp:member:`ext_api_in` under the hood, checks the EXT_API's version against the allowed range, and checks that it has all the flags set.
@@ -86,31 +107,50 @@ Creating EXT_APIs
 
 To create an EXT_API, complete the following steps:
 
-1. Declare a new struct type that starts with the :c:type:`fw_info_ext_api` struct:
+1. Create a unique ID for the EXT_API:
+
+   .. code-block:: c
+
+      #define MY_EXT_API_ID 0xBEEF
+
+#. Create Kconfig entries using :file:`Kconfig.template.fw_info_ext_api`:
+
+   .. code-block:: Kconfig
+
+      EXT_API = MY
+      flags = 0
+      ver = 1
+      source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+
+#. Declare a new struct type that starts with the :c:type:`fw_info_ext_api` struct:
 
    .. code-block:: c
 
       struct my_ext_api {
-      	   struct fw_info_ext_api header;
-   	   struct {
-   		   /* Actual EXT_API/data goes here. */
-   	   } ext_api;
+      	struct fw_info_ext_api header;
+      	struct {
+      		/* Actual EXT_API/data goes here. */
+      		my_ext_api_foo_t my_foo;
+      	} ext_api;
       };
 
 #. Use the :c:macro:`EXT_API` macro to initialize the EXT_API struct in an arbitrary location.
-   :c:macro:`EXT_API` will automatically include the EXT_API in the list provided via :cpp:func:`fw_info_ext_api_provide`.
+   :c:macro:`EXT_API` will automatically include the EXT_API in the list at the end of the firmware information structure.
 
    .. code-block:: c
 
+      #ifdef CONFIG_MY_EXT_API_ENABLED
       EXT_API(struct my_ext_api, my_ext_api) = {
-   	   .header = FW_INFO_EXT_API_INIT(MY_EXT_API_ID,
-   				   CONFIG_MY_EXT_API_FLAGS,
-   				   CONFIG_MY_EXT_API_VER,
-   				   sizeof(struct my_ext_api)),
-   	   .ext_api = {
-   		   /* EXT_API initialization goes here. */
-   	   }
+      	.header = FW_INFO_EXT_API_INIT(MY_EXT_API_ID,
+      				CONFIG_MY_EXT_API_FLAGS,
+      				CONFIG_MY_EXT_API_VER,
+      				sizeof(struct my_ext_api)),
+      	.ext_api = {
+      		/* EXT_API initialization goes here. */
+      		.my_foo = my_foo_impl,
+      	}
       };
+      #endif
 
 #. To include function pointers in your EXT_API, call the :c:macro:`EXT_API_FUNCTION` macro to forward-declare the function and create a typedef for the function pointer:
 
@@ -118,6 +158,35 @@ To create an EXT_API, complete the following steps:
 
       EXT_API_FUNCTION(int, my_ext_api_foo, bool arg1, int *arg2);
 
+#. Enable the EXT_API in Kconfig:
+
+   .. code-block:: none
+
+      CONFIG_MY_EXT_API_ENABLED=y
+
+
+Creating EXT_API requests
+*************************
+
+To create an EXT_API request, complete the following steps:
+
+1. Assuming that the ID and the Kconfig entries are already created (see `Creating EXT_APIs`_), use the :c:macro:`EXT_API_REQ` macro to create a request structure:
+
+   .. code-block:: c
+
+      EXT_API_REQ(MY, 1, struct my_ext_api, my);
+
+#. Use the EXT_API through the name given to :c:macro:`EXT_API_REQ`:
+
+   .. code-block:: c
+
+      my->ext_api.my_foo(my_arg1, my_arg2);
+
+#. Request the EXT_API in Kconfig:
+
+   .. code-block:: none
+
+      CONFIG_MY_EXT_API_REQUIRED=y
 
 
 API documentation
