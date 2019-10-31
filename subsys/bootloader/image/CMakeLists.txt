@@ -90,16 +90,23 @@ add_custom_target(
   signature_public_key_file_target
   )
 
-# Set hex file and target for the 'provision' placeholder partition.
-# This includes the hex file (and its corresponding target) to the build.
-set_property(
-  GLOBAL PROPERTY
-  provision_PM_HEX_FILE
-  ${PROVISION_HEX}
+get_property(
+  provision_set
+  GLOBAL PROPERTY provision_PM_HEX_FILE SET
   )
 
-set_property(
-  GLOBAL PROPERTY
-  provision_PM_TARGET
-  provision_target
-  )
+if(NOT provision_set)
+  # Set hex file and target for the 'provision' placeholder partition.
+  # This includes the hex file (and its corresponding target) to the build.
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_HEX_FILE
+    ${PROVISION_HEX}
+    )
+
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_TARGET
+    provision_target
+    )
+endif()
