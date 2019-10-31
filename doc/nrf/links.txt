@@ -44,6 +44,8 @@
 
 .. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
 
+.. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem.html
+
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
 
 .. _`band lock section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xbandlock.html
@@ -64,6 +66,8 @@
 
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160-SiP
 
+.. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
+
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/Nordic-Thingy-52
@@ -72,13 +76,13 @@
 
 .. ### Links to Nordic software
 
-.. _`nRF5 Command Line Tools`:
+.. _`nRF Command Line Tools`:
 .. _`nRF5x Command Line Tools`:
 .. _`nRF5x Command Line Tools Linux 32`:
 .. _`nRF5x Command Line Tools Linux 64`:
 .. _`nRF5x Command Line Tools Windows 32`:
 .. _`nRF5x Command Line Tools Windows 64`:
-.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF5-Command-Line-Tools
+.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools
 
 .. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
 .. _`Download nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs

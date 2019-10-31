@@ -13,10 +13,7 @@ The result of this call can then be given as input to the :cpp:func:`dfu_target_
 
 
 .. note::
-   After starting a DFU procedure for a given target, it is not supported to
-   initialize a new DFU procedure with a different firmware file for the same
-   target until either the DFU procedure has completed successfully, or the
-   device has been restarted.
+   After starting a DFU procedure for a given target, you cannot initialize a new DFU procedure with a different firmware file for the same target until the DFU procedure has completed successfully or the device has been restarted.
 
 
 Supported DFU targets
@@ -29,10 +26,19 @@ The following sections describe the DFU targets that are currently supported.
 MCUboot style upgrades
 ======================
 
-This type of firmware upgrade writes the data given to the :cpp:func:`dfu_target_write` function into the secondary slot specified by MCUboot's flash partitions.
+This type of firmware upgrade can be used for application updates and updates to the upgradable bootloader.
+It writes the data given to the :cpp:func:`dfu_target_write` function into the secondary slot specified by MCUboot's flash partitions.
 
-When the complete transfer is done, call the :cpp:func:`dfu_target_done` function to mark the firmware that is stored in the secondary slot as ready to be booted.
+For application updates, the new image replaces the existing application.
+For bootloader updates, the new firmware is placed in the non-active partition (slot 0 or slot 1, see :ref:`upgradable_bootloader`).
+
+.. note::
+   When updating the bootloader, you must ensure that the provided bootloader firmware is linked against the correct partition.
+   This is handled automatically by the :ref:`lib_fota_download` library.
+
+When the complete transfer is done, call the :cpp:func:`dfu_target_done` function to mark the firmware as ready to be booted.
 On the next reboot, the device will run the new firmware.
+
 
 Modem firmware upgrades
 =======================
