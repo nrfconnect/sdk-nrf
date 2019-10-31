@@ -75,7 +75,6 @@ void test_fw_info_find(void)
 	}
 }
 
-
 void test_main(void)
 {
 	ztest_test_suite(test_fw_info,

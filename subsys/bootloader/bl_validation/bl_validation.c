@@ -11,20 +11,10 @@
 
 
 #ifdef CONFIG_BL_VALIDATE_FW_EXT_API_REQUIRED
+EXT_API_REQ(BL_VALIDATE_FW, 1, struct bl_validate_fw_ext_api, bl_validate_fw);
+
 bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address)
 {
-	const struct bl_validate_fw_ext_api *bl_validate_fw =
-		(const struct bl_validate_fw_ext_api *)
-		fw_info_ext_api_find(BL_VALIDATE_FW_EXT_API_ID,
-				CONFIG_BL_VALIDATE_FW_EXT_API_FLAGS,
-				CONFIG_BL_VALIDATE_FW_EXT_API_VER,
-				CONFIG_BL_VALIDATE_FW_EXT_API_MAX_VER);
-
-	if (bl_validate_fw == NULL) {
-		k_oops();
-		return false;
-	}
-
 	return bl_validate_fw->ext_api.bl_validate_firmware(fw_dst_address,
 							fw_src_address);
 }
@@ -147,7 +137,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 	}
 
 	if (!(((u32_t)fwinfo >= fw_src_address)
-		&& (((u32_t)fwinfo + sizeof(*fwinfo))
+		&& (((u32_t)fwinfo + fwinfo->total_size)
 			< (fw_src_address + fwinfo->size)))) {
 		PRINT("Firmware info is not within signed region.\n\r");
 		return false;
