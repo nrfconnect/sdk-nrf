@@ -29,6 +29,10 @@ It includes the following information:
 * The single, monotonically increasing version number of the image.
 * The address through which to boot into the firmware (the vector table address).
   This address is not necessarily the start of the image.
+* A value that can be modified in place to invalidate the firmware.
+  See :option:`CONFIG_FW_INFO_VALID_VAL`.
+  If this option is set to any other value than :option:`CONFIG_FW_INFO_VALID_VAL` (for example, by the bootloader), the image can quickly be established as invalid.
+  The bootloader sets this option to 0 when the image fails validation, so that there is no need to perform a costly validation on every boot.
 
 Additionally, there is information for exchanging arbitrary data:
 

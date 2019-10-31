@@ -63,6 +63,11 @@ struct __packed fw_info {
 	/* The address of the start (vector table) of the firmware. */
 	u32_t address;
 
+	/* Value that can be modified to invalidate the firmware. Has the value
+	 * CONFIG_FW_INFO_VALID_VAL when valid.
+	 */
+	u32_t valid;
+
 	/* Where to place the getter for the EXT_API provided to this firmware.
 	 */
 	fw_info_ext_api_getter *ext_api_in;
@@ -85,6 +90,7 @@ OFFSET_CHECK(struct fw_info, version,
 	(CONFIG_FW_INFO_MAGIC_LEN + 4));
 OFFSET_CHECK(struct fw_info, address,
 	(CONFIG_FW_INFO_MAGIC_LEN + 8));
+OFFSET_CHECK(struct fw_info, valid, 24);
 
 /** @endcond
  */
@@ -280,6 +286,17 @@ const struct fw_info_ext_api *fw_info_ext_api_get(u32_t id, u32_t index);
  */
 const struct fw_info_ext_api *fw_info_ext_api_find(u32_t id, u32_t flags,
 					u32_t min_version, u32_t max_version);
+
+/**Invalidate an image by manipulating its fw_info.
+ *
+ * @details Invalidation happens by setting the @c valid value to 0x0.
+ *
+ * @note This function needs to have CONFIG_NRF_NVMC enabled.
+ *
+ * @param[in]  fw_info  The info structure to invalidate.
+ *                      This memory will be modified directly in flash.
+ */
+void fw_info_invalidate(const struct fw_info *fw_info);
 
   /** @} */
 

@@ -140,6 +140,12 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 		return false;
 	}
 
+	if (fwinfo->valid != CONFIG_FW_INFO_VALID_VAL) {
+		PRINT("Firwmare has been invalidated: 0x%x.\n\r",
+			fwinfo->valid);
+		return false;
+	}
+
 	if (!(((u32_t)fwinfo >= fw_src_address)
 		&& (((u32_t)fwinfo + sizeof(*fwinfo))
 			< (fw_src_address + fwinfo->size)))) {

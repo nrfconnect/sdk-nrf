@@ -8,6 +8,7 @@
 #include <linker/sections.h>
 #include <errno.h>
 #include <string.h>
+#include <nrfx_nvmc.h>
 
 
 extern const u32_t _image_rom_start;
@@ -46,6 +47,7 @@ const struct fw_info m_firmware_info =
 	.size = (u32_t)&_flash_used,
 	.version = CONFIG_FW_INFO_FIRMWARE_VERSION,
 	.address = (u32_t)&_image_rom_start,
+	.valid = CONFIG_FW_INFO_VALID_VAL,
 	.ext_api_in = &ext_api_getter_in,
 	.ext_api_out = &ext_api_getter,
 };
@@ -81,3 +83,21 @@ const struct fw_info_ext_api *fw_info_ext_api_find(u32_t id, u32_t flags,
 	return NULL;
 }
 
+/** Value to write to the "valid" member of fw_info to invalidate the image. */
+#define INVALID_VAL 0xFFFF0000
+
+BUILD_ASSERT_MSG((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL) \
+			!= CONFIG_FW_INFO_VALID_VAL, \
+		"CONFIG_FW_INFO_VALID_VAL has been configured such that the "
+		"image cannot be invalidated. Change the value so that writing "
+		"INVALID_VAL has an effect.");
+
+#ifdef CONFIG_NRFX_NVMC
+void fw_info_invalidate(const struct fw_info *fw_info)
+{
+	/* Check if value has been written. */
+	if (fw_info->valid == CONFIG_FW_INFO_VALID_VAL) {
+		nrfx_nvmc_word_write((u32_t)&(fw_info->valid), INVALID_VAL);
+	}
+}
+#endif
