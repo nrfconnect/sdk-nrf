@@ -161,7 +161,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 					(u8_t *)fw_val_info->firmware_address,
 					fwinfo->firmware_size);
 
-		if (retval != -ESIGINV) {
+		if (retval != -EHASHINV) {
 			break;
 		}
 	}
