@@ -39,8 +39,27 @@ config DESKTOP_BLE_PEER_CONTROL_BUTTON
 
 config DESKTOP_BLE_PEER_SELECT
 	bool "Enable switching between peers"
+	depends on BT_PERIPHERAL
 	help
 	  Short click to switch peer. Double click to accept choice.
+
+config DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+	bool "Enable scanning on request"
+	depends on BT_CENTRAL
+	help
+	  Short click to start new peer scanning. When enabled the device will
+	  look for non-bonded devices only when requested.
+	  When disabled the device always search for non-bonded devices while
+	  scanning.
+	  Regardless of the choice made the device scans periodically for
+	  already bonded peers.
+
+config DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT
+	bool "Look for peers after boot"
+	depends on DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+	help
+	  When enabled the device will look for new peers also after it was
+	  booted.
 
 config DESKTOP_BLE_PEER_ERASE
 	bool "Enable peer erase"

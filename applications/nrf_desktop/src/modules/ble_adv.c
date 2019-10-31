@@ -477,7 +477,7 @@ static bool event_handler(const struct event_header *eh)
 
 		case PEER_STATE_DISCONNECTED:
 			can_fast_adv = true;
-			/* fall through */
+			/* Fall-through */
 
 		case PEER_STATE_CONN_FAILED:
 			if (state != STATE_OFF) {
@@ -557,6 +557,7 @@ static bool event_handler(const struct event_header *eh)
 			/* Ignore */
 			break;
 
+		case PEER_OPERATION_SCAN_REQUEST:
 		default:
 			__ASSERT_NO_MSG(false);
 			break;
@@ -625,7 +626,7 @@ static bool event_handler(const struct event_header *eh)
 			case STATE_OFF:
 				was_off = true;
 				state = STATE_IDLE;
-				/* fall through */
+				/* Fall-through */
 
 			case STATE_GRACE_PERIOD:
 				err = ble_adv_start(true);

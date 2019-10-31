@@ -163,7 +163,9 @@ static bool event_handler(const struct event_header *eh)
 			/* Clear BLE latency state. */
 			latency_state = 0;
 			k_delayed_work_cancel(&low_latency_check);
-			/* Fall through. */
+
+			/* Fall-through */
+
 		case PEER_STATE_SECURED:
 			k_delayed_work_cancel(&security_timeout);
 			break;
