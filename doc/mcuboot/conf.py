@@ -28,6 +28,18 @@ if "NRF_BASE" not in os.environ:
     sys.exit("$NRF_BASE environment variable undefined.")
 NRF_BASE = os.path.abspath(os.environ["NRF_BASE"])
 
+if "ZEPHYR_OUTPUT" not in os.environ:
+    sys.exit("$ZEPHYR_OUTPUT environment variable undefined.")
+ZEPHYR_OUTPUT = os.path.abspath(os.environ["ZEPHYR_OUTPUT"])
+
+if "NRF_OUTPUT" not in os.environ:
+    sys.exit("$NRF_OUTPUT environment variable undefined.")
+NRF_OUTPUT = os.path.abspath(os.environ["NRF_OUTPUT"])
+
+if "NRF_RST_SRC" not in os.environ:
+    sys.exit("$NRF_RST_SRC environment variable undefined.")
+NRF_RST_SRC = os.path.abspath(os.environ["NRF_RST_SRC"])
+
 
 # -- General configuration ------------------------------------------------
 
@@ -134,6 +146,10 @@ html_show_copyright = True
 # If true, license is shown in the HTML footer. Default is True.
 html_show_license = True
 
+
+intersphinx_mapping = {
+    'zephyr': ('{}'.format(os.path.relpath(ZEPHYR_OUTPUT, NRF_OUTPUT)), os.path.join('{}'.format(os.path.relpath(ZEPHYR_OUTPUT, NRF_RST_SRC)), 'objects.inv'))
+}
 
 def setup(app):
    app.add_stylesheet("css/common.css")
