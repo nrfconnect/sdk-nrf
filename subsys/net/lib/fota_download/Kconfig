@@ -11,6 +11,10 @@ menuconfig FOTA_DOWNLOAD
 
 if (FOTA_DOWNLOAD)
 
+menuconfig FOTA_SOCKET_RETRIES
+	int "Number of retries for socket-related download issues"
+	default 2
+
 module=FOTA_DOWNLOAD
 module-dep=LOG
 module-str=Firmware Over the Air Download
