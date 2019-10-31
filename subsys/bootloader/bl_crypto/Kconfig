@@ -102,19 +102,19 @@ config SB_PUBLIC_KEY_HASH_LEN
 endif # SECURE_BOOT_CRYPTO
 
 if SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT
-ABI = BL_ROT_VERIFY
+EXT_API = BL_ROT_VERIFY
 flags = 2
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
-ABI = BL_SHA256
+EXT_API = BL_SHA256
 flags = 0
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
-ABI = BL_SECP256R1
+EXT_API = BL_SECP256R1
 flags = 1
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 endif # SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT

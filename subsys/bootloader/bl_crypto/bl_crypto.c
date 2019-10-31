@@ -101,7 +101,7 @@ int bl_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
 }
 
 
-/* For use through ext_abi. */
+/* For use through EXT_API. */
 int bl_root_of_trust_verify_external(
 			const u8_t *public_key, const u8_t *public_key_hash,
 			const u8_t *signature, const u8_t *firmware,
@@ -116,22 +116,22 @@ int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 	return verify_truncated_hash(data, data_len, expected, CONFIG_SB_HASH_LEN, true);
 }
 
-__ext_abi(struct bl_rot_verify_abi, bl_rot_verify_abi) = {
-	.header = FW_INFO_ABI_INIT(BL_ROT_VERIFY_ABI_ID,
-				CONFIG_BL_ROT_VERIFY_ABI_FLAGS,
-				CONFIG_BL_ROT_VERIFY_ABI_VER,
-				sizeof(struct bl_rot_verify_abi)),
-	.abi = {
+__ext_api(struct bl_rot_verify_ext_api, bl_rot_verify_ext_api) = {
+	.header = FW_INFO_EXT_API_INIT(BL_ROT_VERIFY_EXT_API_ID,
+				CONFIG_BL_ROT_VERIFY_EXT_API_FLAGS,
+				CONFIG_BL_ROT_VERIFY_EXT_API_VER,
+				sizeof(struct bl_rot_verify_ext_api)),
+	.ext_api = {
 		.bl_root_of_trust_verify = bl_root_of_trust_verify_external,
 	}
 };
 
-__ext_abi(struct bl_sha256_abi, bl_sha256_abi) = {
-	.header = FW_INFO_ABI_INIT(BL_SHA256_ABI_ID,
-				CONFIG_BL_SHA256_ABI_FLAGS,
-				CONFIG_BL_SHA256_ABI_VER,
-				sizeof(struct bl_sha256_abi)),
-	.abi = {
+__ext_api(struct bl_sha256_ext_api, bl_sha256_ext_api) = {
+	.header = FW_INFO_EXT_API_INIT(BL_SHA256_EXT_API_ID,
+				CONFIG_BL_SHA256_EXT_API_FLAGS,
+				CONFIG_BL_SHA256_EXT_API_VER,
+				sizeof(struct bl_sha256_ext_api)),
+	.ext_api = {
 		.bl_sha256_init = bl_sha256_init,
 		.bl_sha256_update = bl_sha256_update,
 		.bl_sha256_finalize = bl_sha256_finalize,
@@ -140,12 +140,12 @@ __ext_abi(struct bl_sha256_abi, bl_sha256_abi) = {
 	},
 };
 
-__ext_abi(struct bl_secp256r1_abi, bl_secp256r1_abi) = {
-	.header = FW_INFO_ABI_INIT(BL_SECP256R1_ABI_ID,
-				CONFIG_BL_SECP256R1_ABI_FLAGS,
-				CONFIG_BL_SECP256R1_ABI_VER,
-				sizeof(struct bl_secp256r1_abi)),
-	.abi = {
+__ext_api(struct bl_secp256r1_ext_api, bl_secp256r1_ext_api) = {
+	.header = FW_INFO_EXT_API_INIT(BL_SECP256R1_EXT_API_ID,
+				CONFIG_BL_SECP256R1_EXT_API_FLAGS,
+				CONFIG_BL_SECP256R1_EXT_API_VER,
+				sizeof(struct bl_secp256r1_ext_api)),
+	.ext_api = {
 		.bl_secp256r1_validate = bl_secp256r1_validate,
 	},
 };

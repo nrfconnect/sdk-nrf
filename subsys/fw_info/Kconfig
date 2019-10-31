@@ -62,11 +62,11 @@ config FW_INFO_MAGIC_ABI_GETTER_INFO
 	  Magic word value specific to ABI getter structs.
 	  For more information, see FW_INFO_MAGIC_COMMON.
 
-config FW_INFO_MAGIC_ABI_INFO
-	hex "Magic word for ABI structs (32 bits)."
+config FW_INFO_MAGIC_EXT_API
+	hex "Magic word for EXT_API structs (32 bits)."
 	default 0xb845acea
 	help
-	  Magic word value specific to ABI structs.
+	  Magic word value specific to EXT_API structs.
 	  For more information, see FW_INFO_MAGIC_COMMON.
 
 config FW_INFO_HARDWARE_ID

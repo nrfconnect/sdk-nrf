@@ -39,9 +39,9 @@ This is accomplished by the following steps:
 #. Boot the next stage in the boot chain.
     After verifying the next boot stage, the bootloader sample uninitializes all peripherals that it used and boots the next boot stage.
 
-#. Share the cryptographic library over ABI.
+#. Share the cryptographic library over EXT_API.
      The bootloader sample does not contain any flash writing code.
-     Therefore, it is safe to share some of its functionality through an Application Binary Interface (ABI, see :ref:`doc_fw_info_abi`).
+     Therefore, it is safe to share some of its functionality through an External API (EXT_API, see :ref:`doc_fw_info_ext_api`).
      For more information, see :file:`bl_crypto.h`.
 
 

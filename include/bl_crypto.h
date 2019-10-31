@@ -30,14 +30,14 @@
 	typedef u32_t bl_sha256_ctx_t[SHA256_CTX_SIZE/4];
 #endif
 
-/* ABI ID for the bl_root_of_trust_verify ABI. */
-#define BL_ROT_VERIFY_ABI_ID 0x1001
+/* EXT_API ID for the bl_root_of_trust_verify EXT_API. */
+#define BL_ROT_VERIFY_EXT_API_ID 0x1001
 
-/* ABI ID for the bl_sha256_* ABI set. */
-#define BL_SHA256_ABI_ID 0x1002
+/* EXT_API ID for the bl_sha256_* EXT_API set. */
+#define BL_SHA256_EXT_API_ID 0x1002
 
-/* ABI ID for the bl_secp256r1_validate ABI. */
-#define BL_SECP256R1_ABI_ID 0x1003
+/* EXT_API ID for the bl_secp256r1_validate EXT_API. */
+#define BL_SECP256R1_EXT_API_ID 0x1003
 
 /**
  * @brief Initialize bootloader crypto module.
@@ -70,7 +70,7 @@ int bl_crypto_init(void);
  *
  * @remark No parameter can be NULL.
  */
-EXT_ABI_FUNCTION(int, bl_root_of_trust_verify, const u8_t *public_key,
+EXT_API_FUNCTION(int, bl_root_of_trust_verify, const u8_t *public_key,
 					       const u8_t *public_key_hash,
 					       const u8_t *signature,
 					       const u8_t *firmware,
@@ -84,7 +84,7 @@ EXT_ABI_FUNCTION(int, bl_root_of_trust_verify, const u8_t *public_key,
  * @retval 0         On success.
  * @retval -EINVAL   If @p ctx was NULL.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_init, bl_sha256_ctx_t *ctx);
+EXT_API_FUNCTION(int, bl_sha256_init, bl_sha256_ctx_t *ctx);
 
 /**
  * @brief Hash a portion of data.
@@ -102,7 +102,7 @@ EXT_ABI_FUNCTION(int, bl_sha256_init, bl_sha256_ctx_t *ctx);
  * @retval -EINVAL   If @p ctx was NULL, uninitialized, or corrupted.
  * @retval -ENOSYS   If the context has already been finalized.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_update, bl_sha256_ctx_t *ctx,
+EXT_API_FUNCTION(int, bl_sha256_update, bl_sha256_ctx_t *ctx,
 					const u8_t *data,
 					u32_t data_len);
 
@@ -116,7 +116,7 @@ EXT_ABI_FUNCTION(int, bl_sha256_update, bl_sha256_ctx_t *ctx,
  * @retval 0         On success.
  * @retval -EINVAL   If @p ctx was NULL or corrupted, or @p output was NULL.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_finalize, bl_sha256_ctx_t *ctx,
+EXT_API_FUNCTION(int, bl_sha256_finalize, bl_sha256_ctx_t *ctx,
 					  u8_t *output);
 
 /**
@@ -132,7 +132,7 @@ EXT_ABI_FUNCTION(int, bl_sha256_finalize, bl_sha256_ctx_t *ctx,
  * @return Any error code from @ref bl_sha256_init, @ref bl_sha256_update, or
  *         @ref bl_sha256_finalize if something else went wrong.
  */
-EXT_ABI_FUNCTION(int, bl_sha256_verify, const u8_t *data,
+EXT_API_FUNCTION(int, bl_sha256_verify, const u8_t *data,
 					u32_t data_len,
 					const u8_t *expected);
 
@@ -149,34 +149,34 @@ EXT_ABI_FUNCTION(int, bl_sha256_verify, const u8_t *data,
  * @retval -EINVAL   A parameter was NULL, or the @hash_len was not 32 bytes.
  * @retval -ESIGINV  The signature validation failed.
  */
-EXT_ABI_FUNCTION(int, bl_secp256r1_validate, const u8_t *hash,
+EXT_API_FUNCTION(int, bl_secp256r1_validate, const u8_t *hash,
 					     u32_t hash_len,
 					     const u8_t *signature,
 					     const u8_t *public_key);
 
-struct bl_rot_verify_abi {
-	struct fw_info_abi header;
+struct bl_rot_verify_ext_api {
+	struct fw_info_ext_api header;
 	struct {
 		bl_root_of_trust_verify_t bl_root_of_trust_verify;
-	} abi;
+	} ext_api;
 };
 
-struct bl_sha256_abi {
-	struct fw_info_abi header;
+struct bl_sha256_ext_api {
+	struct fw_info_ext_api header;
 	struct {
 		bl_sha256_init_t bl_sha256_init;
 		bl_sha256_update_t bl_sha256_update;
 		bl_sha256_finalize_t bl_sha256_finalize;
 		bl_sha256_verify_t bl_sha256_verify;
 		u32_t bl_sha256_ctx_size;
-	} abi;
+	} ext_api;
 };
 
-struct bl_secp256r1_abi {
-	struct fw_info_abi header;
+struct bl_secp256r1_ext_api {
+	struct fw_info_ext_api header;
 	struct {
 		bl_secp256r1_validate_t bl_secp256r1_validate;
-	} abi;
+	} ext_api;
 };
 
 #endif
