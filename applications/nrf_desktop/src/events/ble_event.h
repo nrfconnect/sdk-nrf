@@ -44,6 +44,7 @@ enum peer_state {
 #define PEER_OPERATION_LIST	\
 	X(SELECT)		\
 	X(SELECTED)		\
+	X(SCAN_REQUEST)		\
 	X(ERASE)		\
 	X(ERASE_ADV)		\
 	X(ERASE_ADV_CANCEL)	\

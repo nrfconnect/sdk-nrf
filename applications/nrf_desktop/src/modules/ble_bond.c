@@ -49,6 +49,8 @@ static void select_start(void);
 static void select_next(void);
 static void select_confirm(void);
 
+static void scan_request(void);
+
 static void erase_start(void);
 static void erase_adv_confirm(void);
 static void erase_confirm(void);
@@ -59,6 +61,10 @@ static const struct state_switch state_switch[] = {
 	{STATE_IDLE,        CLICK_SHORT,  STATE_SELECT_PEER, select_start},
 	{STATE_SELECT_PEER, CLICK_SHORT,  STATE_SELECT_PEER, select_next},
 	{STATE_SELECT_PEER, CLICK_DOUBLE, STATE_IDLE,        select_confirm},
+#endif
+
+#if CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+	{STATE_IDLE,        CLICK_SHORT,  STATE_IDLE,        scan_request},
 #endif
 
 #if CONFIG_DESKTOP_BLE_PEER_ERASE
@@ -318,6 +324,19 @@ static void select_confirm(void)
 	EVENT_SUBMIT(event);
 }
 
+static void scan_request(void)
+{
+	LOG_INF("Peer scan request");
+
+	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
+
+	event->op = PEER_OPERATION_SCAN_REQUEST;
+	event->bt_app_id = cur_peer_id;
+	event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+
+	EVENT_SUBMIT(event);
+}
+
 static void erase_start(void)
 {
 	LOG_INF("Start peer erase");
@@ -495,6 +514,10 @@ static void silence_unused(void)
 		ARG_UNUSED(select_start);
 		ARG_UNUSED(select_next);
 		ARG_UNUSED(select_confirm);
+	}
+
+	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST)) {
+		ARG_UNUSED(scan_request);
 	}
 
 	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_ERASE)) {
@@ -696,7 +719,7 @@ static void selector_event_handler(const struct selector_event *event)
 		case STATE_ERASE_ADV:
 		case STATE_SELECT_PEER:
 			cancel_operation();
-			/* Fall-though */
+			/* Fall-through */
 		case STATE_IDLE:
 			select_dongle_peer();
 			break;
@@ -716,7 +739,7 @@ static void selector_event_handler(const struct selector_event *event)
 		case STATE_ERASE_ADV:
 		case STATE_SELECT_PEER:
 			cancel_operation();
-			/* Fall-though */
+			/* Fall-through */
 		case STATE_DONGLE_CONN:
 			select_ble_peers();
 			break;
