@@ -8,8 +8,8 @@ if BT_MESH
 
 menu "nRF BT Mesh Models"
 
-config BT_MESH_NORDIC_MODELS
-	bool "nRF BT Mesh Model support"
+config BT_MESH_NRF_MODELS
+	bool
 	help
 	  Common Mesh model support modules, required by all Nordic BT Mesh
 	  models.
@@ -17,33 +17,33 @@ config BT_MESH_NORDIC_MODELS
 
 config BT_MESH_ONOFF_SRV
 	bool "Generic OnOff Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic OnOff Server model.
 
 config BT_MESH_ONOFF_CLI
 	bool "Generic OnOff Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic OnOff Client model.
 
 
 config BT_MESH_LVL_SRV
 	bool "Generic Level Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Level Server model.
 
 config BT_MESH_LVL_CLI
 	bool "Generic Level Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Level Client model.
 
 
 menuconfig BT_MESH_DTT_SRV
 	bool "Generic Default Transition Time Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Default Transition Time Server model.
 
@@ -59,14 +59,14 @@ endif
 
 config BT_MESH_DTT_CLI
 	bool "Generic Default Transition Time Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Default Transition Time Client model.
 
 
 config BT_MESH_PONOFF_SRV
 	bool "Generic Power OnOff Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	select BT_MESH_DTT_SRV
 	select BT_MESH_ONOFF_SRV
 	imply BT_SETTINGS
@@ -75,14 +75,14 @@ config BT_MESH_PONOFF_SRV
 
 config BT_MESH_PONOFF_CLI
 	bool "Generic Power OnOff Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Power OnOff Client model.
 
 
 config BT_MESH_PLVL_SRV
 	bool "Generic Power Level Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	select BT_MESH_LVL_SRV
 	select BT_MESH_PONOFF_SRV
 	help
@@ -90,45 +90,45 @@ config BT_MESH_PLVL_SRV
 
 config BT_MESH_PLVL_CLI
 	bool "Generic Power Level Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Power Level Client model.
 
 
 config BT_MESH_BATTERY_SRV
 	bool "Generic Battery Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Battery Server model.
 
 config BT_MESH_BATTERY_CLI
 	bool "Generic Battery Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Battery Client model.
 
 
 config BT_MESH_LOC_SRV
 	bool "Generic Location Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Location Server model.
 
 config BT_MESH_LOC_CLI
 	bool "Generic Location Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Location Client model.
 
 config BT_MESH_PROP_SRV
 	bool "Generic Property Server"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Property Server models.
 
 config BT_MESH_PROP_CLI
 	bool "Generic Property Client"
-	select BT_MESH_NORDIC_MODELS
+	select BT_MESH_NRF_MODELS
 	help
 	  Enable Mesh Generic Property Client models.
 

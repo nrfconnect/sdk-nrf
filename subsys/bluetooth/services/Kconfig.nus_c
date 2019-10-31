@@ -6,6 +6,7 @@
 
 menuconfig BT_GATT_NUS_C
 	bool "Nordic UART service client"
+	select BT_NRF_SERVICES
 	help
 	  Enable BLE GATT Nordic UART service client.
 

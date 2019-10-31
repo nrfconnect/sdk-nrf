@@ -4,7 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-comment "BLE GATT Services"
+config BT_NRF_SERVICES
+	bool
+	help
+	  Common Bluetooth GATT Services support modules, required by all Nordic
+	  Services.
 
 rsource "Kconfig.bas_c"
 rsource "Kconfig.dfu_smp_c"
