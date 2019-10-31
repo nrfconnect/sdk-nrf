@@ -23,6 +23,7 @@ LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 static fota_download_callback_t callback;
 static struct download_client   dlc;
 static struct k_delayed_work    dlc_with_offset_work;
+static int socket_retries_left;
 
 static int download_client_callback(const struct download_client_evt *event)
 {
@@ -98,16 +99,30 @@ static int download_client_callback(const struct download_client_evt *event)
 		break;
 
 	case DOWNLOAD_CLIENT_EVT_ERROR: {
-		download_client_disconnect(&dlc);
-		LOG_ERR("Download client error");
-		err = dfu_target_done(false);
-		if (err != 0) {
-			LOG_ERR("Unable to deinitialze resources used "
-				"by dfu_target.");
+		/* In case of socket errors we can return 0 to retry/continue,
+		 * or non-zero to stop
+		 */
+		if ((socket_retries_left) && ((event->error == -ENOTCONN) ||
+					      (event->error == -ECONNRESET))) {
+			LOG_WRN("Download socket error. %d retries left...",
+				socket_retries_left);
+			socket_retries_left--;
+			/* Fall through and return 0 below to tell
+			 * download_client to retry
+			 */
+		} else {
+			download_client_disconnect(&dlc);
+			LOG_ERR("Download client error");
+			err = dfu_target_done(false);
+			if (err != 0) {
+				LOG_ERR("Unable to deinitialze resources "
+					"used by dfu_target.");
+			}
+			first_fragment = true;
+			callback(FOTA_DOWNLOAD_EVT_ERROR);
+			/* Return non-zero to tell download_client to stop */
+			return event->error;
 		}
-		first_fragment = true;
-		callback(FOTA_DOWNLOAD_EVT_ERROR);
-		return event->error;
 	}
 	default:
 		break;
@@ -140,6 +155,8 @@ int fota_download_start(char *host, char *file)
 	if (host == NULL || file == NULL || callback == NULL) {
 		return -EINVAL;
 	}
+
+	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
 
 #ifdef PM_S1_ADDRESS
 	/* B1 upgrade is supported, check what B1 slot is active,
