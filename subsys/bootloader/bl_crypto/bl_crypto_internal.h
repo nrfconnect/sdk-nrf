@@ -18,7 +18,7 @@
  * @param[out] hash     Buffer to store hash in
  * @param[in]  data     Data to produce hash over
  * @param[in]  data_len Length of data to hash
- * @param[in]  external Whether this function is called through an ext_abi, in
+ * @param[in]  external Whether this function is called through an EXT_API, in
  *                      which case it can only use stack memory.
  *
  * @return 0 if success, error code otherwise.
