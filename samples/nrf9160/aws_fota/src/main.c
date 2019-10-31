@@ -246,6 +246,7 @@ void mqtt_evt_handler(struct mqtt_client * const c,
 static void broker_init(const char *hostname)
 {
 	int err;
+	char addr_str[INET6_ADDRSTRLEN];
 	struct addrinfo *result;
 	struct addrinfo *addr;
 	struct addrinfo hints = {
@@ -275,8 +276,9 @@ static void broker_init(const char *hostname)
 			broker->sin_family = AF_INET;
 			broker->sin_port = htons(CONFIG_MQTT_BROKER_PORT);
 
-			printk("IPv4 Address 0x%08x\n",
-				broker->sin_addr.s_addr);
+			inet_ntop(AF_INET, &broker->sin_addr, addr_str,
+				  sizeof(addr_str));
+			printk("IPv4 Address %s\n", addr_str);
 			break;
 		} else if (addr->ai_addrlen == sizeof(struct sockaddr_in6)) {
 			/* IPv6 Address. */
@@ -290,7 +292,9 @@ static void broker_init(const char *hostname)
 			broker->sin6_family = AF_INET6;
 			broker->sin6_port = htons(CONFIG_MQTT_BROKER_PORT);
 
-			printk("IPv6 Address");
+			inet_ntop(AF_INET6, &broker->sin6_addr, addr_str,
+				  sizeof(addr_str));
+			printk("IPv6 Address %s\n", addr_str);
 			break;
 		} else {
 			printk("error: ai_addrlen = %u should be %u or %u\n",
