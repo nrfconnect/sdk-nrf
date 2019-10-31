@@ -66,10 +66,10 @@ void test_fw_info_find(void)
 		const struct fw_info *fwinfo_res;
 
 		memset(fw_info_find_buf, 0xFF, sizeof(fw_info_find_buf));
-		memcpy(&fw_info_find_buf[allowed_offsets[i]], &dummy_s1,
+		memcpy(&fw_info_find_buf[fw_info_allowed_offsets[i]], &dummy_s1,
 			sizeof(dummy_s1));
 		fwinfo_res = fw_info_find((u32_t)fw_info_find_buf);
-		zassert_equal_ptr(&fw_info_find_buf[allowed_offsets[i]],
+		zassert_equal_ptr(&fw_info_find_buf[fw_info_allowed_offsets[i]],
 			fwinfo_res,
 			"fw_info_find returned 0x%x", (u32_t)fwinfo_res);
 	}

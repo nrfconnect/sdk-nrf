@@ -180,41 +180,53 @@ static inline const struct fw_info *fw_info_check(u32_t fw_info_addr)
 
 
 /* The supported offsets for the fw_info struct. */
-#define FW_INFO_OFFSET0 0x200
-#define FW_INFO_OFFSET1 0x400
-#define FW_INFO_OFFSET2 0x800
-#define FW_INFO_OFFSET_COUNT 3
+#define FW_INFO_OFFSET0 0x0
+#define FW_INFO_OFFSET1 0x200
+#define FW_INFO_OFFSET2 0x400
+#define FW_INFO_OFFSET3 0x800
+#define FW_INFO_OFFSET4 0x1000
+#define FW_INFO_OFFSET_COUNT 5
 
 /* Find the difference between the start of the current image and the address
  * from which the firmware info offset is calculated.
  */
 #if defined(PM_S0_PAD_SIZE) && (PM_ADDRESS == PM_S0_IMAGE_ADDRESS)
-	#define VECTOR_OFFSET PM_S0_PAD_SIZE
+	#define FW_INFO_VECTOR_OFFSET PM_S0_PAD_SIZE
 #elif defined(PM_S1_PAD_SIZE) && (PM_ADDRESS == PM_S1_IMAGE_ADDRESS)
-	#define VECTOR_OFFSET PM_S1_PAD_SIZE
+	#define FW_INFO_VECTOR_OFFSET PM_S1_PAD_SIZE
 #elif defined(PM_MCUBOOT_PAD_SIZE) && \
 		(PM_ADDRESS == PM_MCUBOOT_PRIMARY_APP_ADDRESS)
-	#define VECTOR_OFFSET PM_MCUBOOT_PAD_SIZE
+	#define FW_INFO_VECTOR_OFFSET PM_MCUBOOT_PAD_SIZE
 #else
-	#define VECTOR_OFFSET 0
+	#define FW_INFO_VECTOR_OFFSET 0
 #endif
 
-#define CURRENT_OFFSET (CONFIG_FW_INFO_OFFSET + VECTOR_OFFSET)
+/* The actual fw_info struct offset accounting for any space in front of the
+ * image, e.g. when there's a header.
+ */
+#define FW_INFO_CURRENT_OFFSET (CONFIG_FW_INFO_OFFSET + FW_INFO_VECTOR_OFFSET)
 
-static const u32_t allowed_offsets[] = {FW_INFO_OFFSET0, FW_INFO_OFFSET1,
-					FW_INFO_OFFSET2};
+/* Array for run time usage. */
+static const u32_t fw_info_allowed_offsets[] = {
+					FW_INFO_OFFSET0, FW_INFO_OFFSET1,
+					FW_INFO_OFFSET2, FW_INFO_OFFSET3,
+					FW_INFO_OFFSET4};
 
 /** @cond
  *  Remove from doc building.
  */
-BUILD_ASSERT_MSG(ARRAY_SIZE(allowed_offsets) == FW_INFO_OFFSET_COUNT,
+BUILD_ASSERT_MSG(ARRAY_SIZE(fw_info_allowed_offsets) == FW_INFO_OFFSET_COUNT,
 		"Mismatch in the number of allowed offsets.");
 /** @endcond
  */
 
-#if (FW_INFO_OFFSET_COUNT != 3) || ((CURRENT_OFFSET) != (FW_INFO_OFFSET0) && \
-				(CURRENT_OFFSET) != (FW_INFO_OFFSET1) && \
-				(CURRENT_OFFSET) != (FW_INFO_OFFSET2))
+/* Build time check of CONFIG_FW_INFO_OFFSET. */
+#if (FW_INFO_OFFSET_COUNT != 5) \
+			|| ((FW_INFO_CURRENT_OFFSET) != (FW_INFO_OFFSET0) && \
+			(FW_INFO_CURRENT_OFFSET) != (FW_INFO_OFFSET1) && \
+			(FW_INFO_CURRENT_OFFSET) != (FW_INFO_OFFSET2) && \
+			(FW_INFO_CURRENT_OFFSET) != (FW_INFO_OFFSET3) && \
+			(FW_INFO_CURRENT_OFFSET) != (FW_INFO_OFFSET4))
 	#error FW_INFO_OFFSET not set to one of the allowed values.
 #endif
 
@@ -232,7 +244,7 @@ static inline const struct fw_info *fw_info_find(u32_t firmware_address)
 
 	for (u32_t i = 0; i < FW_INFO_OFFSET_COUNT; i++) {
 		finfo = fw_info_check(firmware_address +
-						allowed_offsets[i]);
+						fw_info_allowed_offsets[i]);
 		if (finfo) {
 			return finfo;
 		}
