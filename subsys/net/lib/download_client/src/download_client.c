@@ -410,24 +410,39 @@ restart_and_suspend:
 	while (true) {
 		__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
 
-		LOG_DBG("Receiving bytes..");
+		LOG_DBG("Receiving up to %d bytes at %p...",
+			(sizeof(dl->buf) - dl->offset), (dl->buf + dl->offset));
+
 		len = recv(dl->fd, dl->buf + dl->offset,
 			   sizeof(dl->buf) - dl->offset, 0);
 
-		if (len == -1) {
-			LOG_ERR("Error reading from socket, errno %d", errno);
-			rc = error_evt_send(dl, ENOTCONN);
-			if (rc) {
-				/* Restart and suspend */
-				break;
-			}
-			reconnect(dl);
-			goto send_again;
-		}
+		if ((len == 0) || (len == -1)) {
+			/* We just had an unexpected socket error or closure */
 
-		if (len == 0) {
-			LOG_WRN("Peer closed connection!");
-			rc = error_evt_send(dl, ECONNRESET);
+			/* If there is a partial data payload in our buffer,
+			 * and it has been accounted in our progress, we have
+			 * to hand it to the application before discarding it.
+			 */
+			if ((dl->offset > 0) && (dl->has_header)) {
+				rc = fragment_evt_send(dl);
+				if (rc) {
+					/* Restart and suspend */
+					LOG_INF("Fragment refused, download "
+						"stopped.");
+					break;
+				}
+			}
+
+			if (len == -1) {
+				LOG_ERR("Error in recv(), errno %d", errno);
+				rc = error_evt_send(dl, ENOTCONN);
+			}
+
+			if (len == 0) {
+				LOG_WRN("Peer closed connection!");
+				rc = error_evt_send(dl, ECONNRESET);
+			}
+
 			if (rc) {
 				/* Restart and suspend */
 				break;
@@ -501,18 +516,18 @@ restart_and_suspend:
 			break;
 		}
 
-		/* Request next fragment */
-		dl->offset = 0;
-		dl->has_header = false;
-
 		/* Attempt to reconnect if the connection was closed */
 		if (dl->connection_close) {
 			dl->connection_close = false;
 			reconnect(dl);
 		}
 
+		/* Request next fragment */
 		/* Send a GET request for the next bytes */
 send_again:
+		dl->offset = 0;
+		dl->has_header = false;
+
 		rc = get_request_send(dl);
 		if (rc) {
 			rc = error_evt_send(dl, ECONNRESET);
