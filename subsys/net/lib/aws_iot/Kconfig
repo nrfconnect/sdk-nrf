@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig AWS_IOT
+	bool "AWS IoT library"
+	select MQTT_LIB
+	select MQTT_LIB_TLS
+
+if AWS_IOT
+
+config AWS_IOT_STATIC_IPV4
+	bool "Enable use of static IPv4"
+
+config AWS_IOT_STATIC_IPV4_ADDR
+	string "Static IPv4 address"
+	depends on AWS_IOT_STATIC_IPV4
+
+config AWS_IOT_SEC_TAG
+	int "Security tag to use for AWS IoT connection"
+
+config AWS_IOT_BROKER_HOST_NAME
+	string "AWS IoT server hostname"
+
+config AWS_IOT_PORT
+	int "AWS server port"
+	default 8883
+
+config AWS_IOT_MQTT_RX_TX_BUFFER_LEN
+	int "Buffer sizes for the MQTT library."
+	default 256
+	help
+	  Specifies maximum message size can be transmitted/received through
+	  MQTT (exluding MQTT PUBLISH payload).
+
+config AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN
+	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)."
+	default 256
+
+config AWS_IOT_IPV6
+	bool "Configure AWS IoT library to use IPv6 addressing. Otherwise IPv4 is used."
+
+config AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT
+	int "Amount of entries in the application subscription list"
+	default 0
+
+config AWS_IOT_CLIENT_ID_MAX_LEN
+	int "Maximum length of cliend id"
+	default 20
+
+config AWS_IOT_CLIENT_ID_STATIC
+	string "Static client id"
+	default "my-thing"
+
+config AWS_IOT_CLIENT_ID_APP
+	bool "Client ID provided by application run-time"
+
+config AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE
+	bool "Subscribe to get accepted shadow topic, $aws/things/<thing-name>/shadow/get/accepted"
+
+config AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE
+	bool "Subscribe to get rejected shadow topic, $aws/things/<thing-name>/shadow/get/rejected"
+
+config AWS_IOT_TOPIC_UPDATE_ACCEPTED_SUBSCRIBE
+	bool "Subscribe to update accepted shadow topic, $aws/things/<thing-name>/shadow/update/accepted"
+
+config AWS_IOT_TOPIC_UPDATE_REJECTED_SUBSCRIBE
+	bool "Subscribe to update rejected shadow topic, $aws/things/<thing-name>/shadow/update/rejected"
+
+config AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE
+	bool "Subscribe to update delta shadow topic, $aws/things/<thing-name>/shadow/update/delta"
+
+config AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE
+	bool "Subscribe to delete accepted shadow topic, $aws/things/<thing-name>/shadow/delete/accepted"
+
+config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
+	bool "Subscribe to delete rejected shadow topic, $aws/things/<thing-name>/shadow/delete/rejected"
+
+module=AWS_IOT
+module-dep=LOG
+module-str=AWS IoT
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AWS_IOT
