@@ -50,7 +50,7 @@ int public_key_data_read(u32_t key_idx, u32_t *p_buf, size_t buf_size)
 	}
 
 	p_key = &(p_provision_data->pkd[key_idx *
-			CONFIG_SB_PUBLIC_KEY_HASH_LEN]);
+			CONFIG_SB_PUBLIC_KEY_HASH_LEN / 4]);
 
 #ifdef CONFIG_SOC_NRF9160
 	/* Ensure word alignment, as provision data is stored in memory region
