@@ -22,7 +22,6 @@ MCUboot bootloader
    In this scenario, the application is the parent image and MCUboot is the child image.
 
    See :ref:`about_mcuboot` for more information.
-   The MCUboot bootloader is used in the :ref:`http_application_update_sample` sample.
 
 In such cases where the firmware consists of several images, you can build each of the images separately and program it to the correct place in flash.
 

@@ -16,8 +16,6 @@ When the consumer of the library receives this event, it should issue a reboot c
 By default, the FOTA download library uses HTTP for downloading the firmware file.
 To use HTTPS instead, apply the changes described in :ref:`the HTTPS section of the download client documentation <download_client_https>` to the library.
 
-The FOTA download library is used in the :ref:`http_application_update_sample` sample.
-
 
 API documentation
 *****************
