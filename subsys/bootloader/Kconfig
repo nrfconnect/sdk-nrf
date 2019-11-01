@@ -106,6 +106,14 @@ config SB_PUBLIC_KEY_FILES
 	  will be used.
 	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
 
+config SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
+	bool "[DEBUG] Place signing public key last"
+	default n
+	help
+	  Place the public key used for signing last in the list instead of
+	  first. This is meant to be used for testing looping through the
+	  public keys.
+
 
 endif # SECURE_BOOT
 
