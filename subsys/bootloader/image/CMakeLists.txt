@@ -51,6 +51,18 @@ set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/debug_keys.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/sign.cmake)
 
+if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
+  set(ALL_PUBLIC_KEY_FILES "${PUBLIC_KEY_FILES},${SIGNATURE_PUBLIC_KEY_FILE}")
+  message(WARNING
+    "
+      -----------------------------------------------------------------
+      --- WARNING: SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST is enabled.   ---
+      --- This config should only be enabled for testing/debugging. ---
+      -----------------------------------------------------------------")
+else()
+  set(ALL_PUBLIC_KEY_FILES "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}")
+endif()
+
 add_custom_command(
   OUTPUT
   ${PROVISION_HEX}
@@ -60,7 +72,7 @@ add_custom_command(
   --s0-addr ${s0_addr}
   ${s1_arg}
   --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
-  --public-key-files "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}"
+  --public-key-files ${ALL_PUBLIC_KEY_FILES}
   --output ${PROVISION_HEX}
   DEPENDS
   ${PROVISION_KEY_DEPENDS}
