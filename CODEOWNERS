@@ -19,7 +19,7 @@
 /cmake/                                   @SebastianBoe
 /CMakeLists.txt                           @SebastianBoe
 # All Kconfig related files
-/**/Kconfig*                              @SebastianBoe
+Kconfig*                                  @SebastianBoe
 # All doc related files
 /doc/                                     @ru-fu
 /doc/CMakeLists.txt                       @carlescufi
@@ -36,7 +36,7 @@
 /include/drivers/                         @anangl
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
-/include/shell/                           @nordic-krch @jarz-nordic
+/include/shell/                           @nordic-krch
 /lib/at_cmd_parser/                       @rlubos
 /lib/at_host/                             @rlubos
 /lib/at_notif/                            @pkchan
@@ -48,7 +48,7 @@
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
-subsys/debug/CMakeLists.txt               @nordic-krch
+/subsys/debug/CMakeLists.txt              @nordic-krch
 /samples/debug/ppi_trace/                 @nordic-krch
 /samples/esb/                             @lemrey
 /samples/nfc/                             @grochu
@@ -71,7 +71,7 @@ subsys/debug/CMakeLists.txt               @nordic-krch
 /subsys/partition_manager/                @hakonfam
 /subsys/profiler/                         @pdunaj
 /subsys/debug/ppi_trace/                  @nordic-krch
-/subsys/shell/                            @nordic-krch @jarz-nordic
+/subsys/shell/                            @nordic-krch
 /subsys/spm/                              @ioannisg
 /subsys/nonsecure/                        @ioannisg
 /tests/                                   @rakons
