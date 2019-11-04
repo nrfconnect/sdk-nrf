@@ -33,6 +33,7 @@ bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address)
 #else
 #include <errno.h>
 #include <sys/printk.h>
+#include <toolchain.h>
 #include <bl_crypto.h>
 #include <provision.h>
 
@@ -120,7 +121,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
 	 */
-	u32_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN/4];
+	__aligned(4) u8_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
 	int retval = -EFAULT;
 	int err;
 	const struct fw_validation_info *fw_val_info;
@@ -174,21 +175,37 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 
 	for (u32_t key_data_idx = 0; key_data_idx < num_public_keys;
 			key_data_idx++) {
-		if (public_key_data_read(key_data_idx, &key_data[0],
-				CONFIG_SB_PUBLIC_KEY_HASH_LEN) < 0) {
-			retval = -EFAULT;
-			break;
+		int read_retval = public_key_data_read(key_data_idx,
+				key_data, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
+		if (read_retval < 0) {
+			if (read_retval == -EINVAL) {
+				/* Invalidated key, try next key. */
+				PRINT("Key %d has been invalidated.\n\r",
+					key_data_idx);
+				continue;
+			} else {
+				PRINT("public_key_data_read failed: %d.\n\r",
+					read_retval);
+				retval = -EFAULT;
+				break;
+			}
 		}
 
 		PRINT("Verifying signature against key %d.\n\r", key_data_idx);
-		PRINT("Hash: 0x%02x...%02x\r\n", key_data[0] & 0xFF,
-			key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN/4-1] >> 24);
+		PRINT("Hash: 0x%02x...%02x\r\n", key_data[0],
+			key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN-1]);
 		retval = rot_verify(fw_val_info->public_key,
-					(u8_t *)key_data,
+					key_data,
 					fw_val_info->signature,
 					(u8_t *)fw_src_address,
 					fwinfo->size);
 
+		if (retval == 0) {
+			for (u32_t i = 0; i < key_data_idx; i++) {
+				PRINT("Invalidating key %d.\n\r", i);
+				invalidate_public_key(i);
+			}
+		}
 		if (retval != -EHASHINV) {
 			break;
 		}

@@ -94,10 +94,11 @@ config SB_PUBLIC_KEY_FILES
 	  signing key used to sign the image. See SB_SIGNING_KEY_FILE.
 	  The hashes of the public keys specified in this configuration will be
 	  placed after the aforementioned public key hash, in the order
-	  they appear in this config.
-	  If config is an empty string, 2 generated debug files
-	  will be used.
+	  they appear in this config. The order is significant since if an image
+	  is successfully validated against a public key in the list, all
+	  public keys before it in the list will be invalidated.
 	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
+	  If config is an empty string, 2 generated debug files will be used.
 
 config SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
 	bool "[DEBUG] Place signing public key last"
@@ -113,15 +114,27 @@ menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
 	depends on SECURE_BOOT_VALIDATION
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
+	depends on NRFX_NVMC
 	help
 	  This option is set by the first stage bootloader app to include all
 	  files and set all the options required.
 
 if IS_SECURE_BOOTLOADER
 
-partition=B0_IMAGE
-partition-size=0x7000
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
+config PM_PARTITION_SIZE_PROVISION
+	hex
+	default 0x0 if SOC_NRF9160
+	default 0x1000 if !SOC_NRF9160
+	prompt "Flash space reserved for PROVISION" if !SOC_NRF9160
+	help
+	  Flash space set aside for the PROVISION partition.
+
+config PM_PARTITION_SIZE_B0_IMAGE
+	hex "Flash space reserved for B0_IMAGE"
+	default 0x8000 if SOC_NRF9160
+	default 0x7000 if !SOC_NRF9160
+	help
+	  Flash space set aside for the B0_IMAGE partition.
 
 menuconfig SECURE_BOOT_DEBUG
 	bool "Printing"

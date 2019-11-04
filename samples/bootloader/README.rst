@@ -33,15 +33,17 @@ This is accomplished by the following steps:
      This metadata contains the full public key corresponding to the private key that was used to sign the firmware.
      The bootloader sample checks the public key against a set of provisioned keys.
      Note that to save space, only the hashes of the provisioned keys are stored, and only the hashes of the keys are compared.
-     If the public key in the metadata matches one of the provisioned public key hashes, the image is considered valid.
-     If the public key does not match any of the provisioned hashes, validation fails.
+     If the public key in the metadata matches one of the valid provisioned public key hashes, the image is considered valid.
+     All public key hashes at lower indices than the matching hash are permanently invalidated at this point, which means that images can no longer be validated with those public keys.
+     For example, if an image is successfully validated with the public key at index 2, the public keys 0 and 1 are invalidated.
+     This mechanism can be used to decommission broken keys.
+     If the public key does not match any of the still valid provisioned hashes, validation fails.
 
 #. Boot the next stage in the boot chain.
     After verifying the next boot stage, the bootloader sample uninitializes all peripherals that it used and boots the next boot stage.
 
 #. Share the cryptographic library over EXT_API.
-     The bootloader sample does not contain any flash writing code.
-     Therefore, it is safe to share some of its functionality through an External API (EXT_API, see :ref:`doc_fw_info_ext_api`).
+     The bootloader shares some of its functionality through an external API (EXT_API, see :ref:`doc_fw_info_ext_api`).
      For more information, see :file:`bl_crypto.h`.
 
 
@@ -61,10 +63,10 @@ Provisioning
 ============
 
 The public key hashes are not compiled in with the source code of the bootloader sample.
-Instead, they are stored in a separate memory region through a process called *provisioning*.
+Instead, they must be stored in a separate memory region through a process called *provisioning*.
 
-By default, the bootloader sample will automatically generate and provision public keys for the specified private key.
-To facilitate the manufacturing process of a device with the bootloader sample, it is possible to decouple this process and program the sample HEX file and the HEX file containing the public key hashes separately.
+By default, the bootloader sample will automatically generate and provision public key hashes directly into the bootloader HEX file, based on the specified private key and additional public keys.
+Alternatively, to facilitate the manufacturing process of a device with the bootloader sample, it is possible to decouple this process and program the sample HEX file and the HEX file containing the public key hashes separately.
 If you choose to do so, use the Python scripts in ``scripts\bootloader`` to create and provision the keys manually.
 
 

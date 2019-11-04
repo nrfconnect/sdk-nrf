@@ -42,7 +42,7 @@ s1:
   span: [s1_pad, s1_image]
 
 provision:
-  size: 0x1000
+  size: CONFIG_PM_PARTITION_SIZE_PROVISION
   placement:
     after: b0_image
     align: {start: 0x1000}
