@@ -11,16 +11,33 @@
 #include <nrf.h>
 #include <assert.h>
 #include <pm_config.h>
+#include <nrfx_nvmc.h>
+
 
 typedef struct {
 	u32_t s0_address;
 	u32_t s1_address;
 	u32_t num_public_keys;
-	u32_t pkd[1];
+	struct {
+		u32_t valid;
+		u8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
+	} key_data[1];
 } provision_flash_t;
 
+
+#if defined(CONFIG_SOC_NRF9160)
+static const provision_flash_t *p_provision_data =
+	(provision_flash_t *)&(NRF_UICR_S->OTP[0]);
+
+#elif defined(PM_PROVISION_ADDRESS)
 static const provision_flash_t *p_provision_data =
 	(provision_flash_t *)PM_PROVISION_ADDRESS;
+
+#else
+#error "Provision data location unknown."
+
+#endif
+
 
 u32_t s0_address_read(void)
 {
@@ -37,34 +54,48 @@ u32_t num_public_keys_read(void)
 	return p_provision_data->num_public_keys;
 }
 
-int public_key_data_read(u32_t key_idx, u32_t *p_buf, size_t buf_size)
+
+/* Value written to the invalidation token when invalidating an entry. */
+#define INVALID_VAL 0xFFFF0000
+
+int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 {
-	const u32_t *p_key;
+	const u8_t *p_key;
+
+	if (p_provision_data->key_data[key_idx].valid == INVALID_VAL) {
+		return -EINVAL;
+	}
 
 	if (buf_size < CONFIG_SB_PUBLIC_KEY_HASH_LEN) {
 		return -ENOMEM;
 	}
 
-	if (key_idx >= p_provision_data->num_public_keys) {
-		return -EINVAL;
+	if (key_idx >= num_public_keys_read()) {
+		return -EFAULT;
 	}
 
-	p_key = &(p_provision_data->pkd[key_idx *
-			CONFIG_SB_PUBLIC_KEY_HASH_LEN / 4]);
+	p_key = p_provision_data->key_data[key_idx].hash;
 
-#ifdef CONFIG_SOC_NRF9160
 	/* Ensure word alignment, as provision data is stored in memory region
 	 * with word sized read limitation. Perform both build time and run
 	 * time asserts to catch the issue as soon as possible.
 	 */
 	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
-	BUILD_ASSERT(offsetof(provision_flash_t, pkd) % 4 == 0);
+	BUILD_ASSERT(offsetof(provision_flash_t, key_data) % 4 == 0);
 	__ASSERT(((u32_t)p_key % 4 == 0), "Key address is not word aligned");
-#endif /* CONFIG_SOC_NRF9160 */
 
-	for (size_t i = 0; i < CONFIG_SB_PUBLIC_KEY_HASH_LEN/4; i++) {
-		p_buf[i] = p_key[i];
-	}
+	memcpy(p_buf, p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
 
 	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;
+}
+
+void invalidate_public_key(u32_t key_idx)
+{
+	const u32_t *invalidation_token =
+			&p_provision_data->key_data[key_idx].valid;
+
+	if (*invalidation_token != INVALID_VAL) {
+		/* Write if not already written. */
+		nrfx_nvmc_word_write((u32_t)invalidation_token, INVALID_VAL);
+	}
 }

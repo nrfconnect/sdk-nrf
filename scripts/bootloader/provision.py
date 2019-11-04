@@ -16,7 +16,9 @@ from hashlib import sha256
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output):
     # Add addresses
     provision_data = struct.pack('III', s0_address, s1_address, len(hashes))
-    provision_data += b''.join(hashes)
+    for mhash in hashes:
+        provision_data += struct.pack('I', 0xFFFFFFFF) # Invalidation token
+        provision_data += mhash
 
     ih = IntelHex()
     ih.frombytes(provision_data, offset=provision_address)

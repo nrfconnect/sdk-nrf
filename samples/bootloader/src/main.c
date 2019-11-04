@@ -57,6 +57,20 @@ static void boot_from(const struct fw_info *fw_info)
 		return;
 	}
 
+#ifndef CONFIG_SOC_NRF9160
+	/* Protect provision page after firmware is validated so invalidation
+	 * of public keys can be written directly into the page. Note that for
+	 * nRF91, the provision page is kept in OTP which does not need or
+	 * support protection.
+	 */
+	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
+
+	if (err) {
+		printk("Failed to protect B0 provision page.\n\r");
+		return;
+	}
+#endif
+
 #if CONFIG_ARCH_HAS_USERSPACE
 	__ASSERT(!(CONTROL_nPRIV_Msk & __get_CONTROL()),
 			"Not in Privileged mode");
@@ -112,10 +126,10 @@ static void boot_from(const struct fw_info *fw_info)
 
 void main(void)
 {
-	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	int err = fprotect_area(PM_B0_IMAGE_ADDRESS, PM_B0_IMAGE_SIZE);
 
 	if (err) {
-		printk("Protect B0 flash failed, cancel startup.\n\r");
+		printk("Failed to protect B0 flash, cancel startup.\n\r");
 		return;
 	}
 

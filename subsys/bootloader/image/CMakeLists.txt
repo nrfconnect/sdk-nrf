@@ -59,8 +59,18 @@ if (s1_addr)
   set(s1_arg --s1-addr ${s1_addr})
 endif()
 
+if (CONFIG_SOC_NRF9160)
+  # Override PM_PROVISION_ADDRESS since Partition Manager cannot yet place
+  # partitions in OTP.
+  set(otp_start_addr "0xff8108")
+  set(provision_addr ${otp_start_addr})
+else ()
+  set(provision_addr "$<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>")
+endif()
+
 # Build and include hex file with provision data about the image to be booted.
-set(NRF_BOOTLOADER_SCRIPTS ${NRF_DIR}/scripts/bootloader)
+set(NRF_SCRIPTS            ${NRF_DIR}/scripts)
+set(NRF_BOOTLOADER_SCRIPTS ${NRF_SCRIPTS}/bootloader)
 set(PROVISION_HEX_NAME     provision.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 
@@ -87,7 +97,7 @@ add_custom_command(
   ${NRF_BOOTLOADER_SCRIPTS}/provision.py
   --s0-addr ${s0_addr}
   ${s1_arg}
-  --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+  --provision-addr ${provision_addr}
   --public-key-files ${ALL_PUBLIC_KEY_FILES}
   --output ${PROVISION_HEX}
   DEPENDS
