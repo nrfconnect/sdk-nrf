@@ -467,23 +467,28 @@ static void scan_init(void)
 	k_delayed_work_init(&scan_stop_trigger, scan_stop_trigger_fn);
 }
 
-static void enable_llpm(struct bt_conn *conn)
+static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 {
-	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
-		struct bt_le_conn_param param = {
-			.interval_min = 0x0D01,
-			.interval_max = 0x0D01,
-			.latency = 99,
-			.timeout = 400
-		};
+	struct bt_le_conn_param param = {
+		.latency = 99,
+		.timeout = 400
+	};
 
-		int err = bt_conn_le_param_update(conn, &param);
+	if (peer_llpm_support && IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+		param.interval_min = 0x0D01;
+		param.interval_max = 0x0D01;
+	} else {
+		param.interval_min = 0x0006;
+		param.interval_max = 0x0006;
+	}
 
-		if (err) {
-			LOG_ERR("Cannot set LLPM params (err:%d)", err);
-		} else {
-			LOG_INF("LLPM params set");
-		}
+	int err = bt_conn_le_param_update(conn, &param);
+
+	if (err) {
+		LOG_ERR("Cannot set conn params (err:%d)", err);
+	} else {
+		LOG_INF("%s conn params set",
+			peer_llpm_support ? "LLPM" : "BLE");
 	}
 }
 
@@ -624,7 +629,8 @@ static bool event_handler(const struct event_header *eh)
 				      SCAN_TRIG_TIMEOUT_MS);
 		scan_counter = SCAN_TRIG_TIMEOUT_MS;
 
-		enable_llpm(bt_gatt_dm_conn_get(event->dm));
+		set_conn_params(bt_gatt_dm_conn_get(event->dm),
+				event->peer_llpm_support);
 
 		return false;
 	}
