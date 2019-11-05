@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: 9be97c63368aa5ddfb7613446794a3ec85801a49
+      revision: pull/231/head
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -50,10 +50,10 @@ manifest:
     - name: mbedtls
       repo-path: fw-nrfconnect-mbedtls
       path: modules/crypto/mbedtls
-      revision: c3be1b52f5e56aaba6039c423478cfaf62a91622
+      revision: pull/5/head
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: a631263274e7220e008138e7f26c2d35bbcb2203
+      revision: pull/70/head
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
       revision: f663988d35da559a37f263d369842dbce309d1fa
@@ -65,7 +65,7 @@ manifest:
     - name: ci-tools
       path: tools/ci-tools
       remote: zephyrproject
-      revision: e01f3bce2a94847253369efb9a081f5c0e9ec882
+      revision: 20aa511fbd302ba8429a9ab04ee96c201b547743
     - name: net-tools
       path: tools/net-tools
       remote: zephyrproject
@@ -103,11 +103,11 @@ manifest:
     - name: hal_nordic
       path: modules/hal/nordic
       remote: zephyrproject
-      revision: 1b14177ff2176a1d17f3dd5e7e217f44337255db
+      revision: 080d1dff4a07b5798ab979fde40dde8da452b854
     - name: hal_st
       path: modules/hal/st
       remote: zephyrproject
-      revision: 0ec40aed8087f26bd9ac1b70fb5a6c326a6451aa
+      revision: fa481784b3c49780f18d50bafe00390ccb62b2ec
     - name: libmetal
       path: modules/hal/libmetal
       remote: zephyrproject
@@ -123,11 +123,15 @@ manifest:
     - name: openthread
       path: modules/lib/openthread
       remote: zephyrproject
-      revision: 3c32244f098f8daf8741efe0a2ad839b67f8567f
+      revision: 882e7074b5986027b85cb4f3ba1dc563a11ca013
     - name: littlefs
       path: modules/fs/littlefs
       remote: zephyrproject
       revision: fe9572dd5a9fcf93a249daa4233012692bd2881d
+    - name: mipi-sys-t
+      path: modules/debug/mipi-sys-t
+      remote: zephyrproject
+      revision: baf51863f19f009b92e762115ba5572a5b996b92
 
   self:
     path: nrf
