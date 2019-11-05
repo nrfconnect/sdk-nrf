@@ -93,6 +93,14 @@ struct ble_peer_operation_event {
 };
 EVENT_TYPE_DECLARE(ble_peer_operation_event);
 
+/** @brief BLE peer search event. */
+struct ble_peer_search_event {
+	struct event_header header;
+
+	bool active;
+};
+EVENT_TYPE_DECLARE(ble_peer_search_event);
+
 /** @brief BLE discovery complete event. */
 struct ble_discovery_complete_event {
 	struct event_header header;

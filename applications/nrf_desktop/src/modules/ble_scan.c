@@ -82,6 +82,13 @@ static size_t count_bond(void)
 	return i;
 }
 
+static void broadcast_scan_state(bool active)
+{
+	struct ble_peer_search_event *event = new_ble_peer_search_event();
+	event->active = active;
+	EVENT_SUBMIT(event);
+}
+
 static void scan_stop(void)
 {
 	int err = bt_scan_stop();
@@ -97,6 +104,8 @@ static void scan_stop(void)
 	}
 
 	scanning = false;
+	broadcast_scan_state(scanning);
+
 	k_delayed_work_cancel(&scan_stop_trigger);
 
 	if (count_conn() < CONFIG_BT_MAX_CONN) {
@@ -248,6 +257,7 @@ static void scan_start(void)
 	}
 
 	scanning = true;
+	broadcast_scan_state(scanning);
 
 	k_delayed_work_submit(&scan_stop_trigger, SCAN_DURATION_MS);
 	k_delayed_work_cancel(&scan_start_trigger);
