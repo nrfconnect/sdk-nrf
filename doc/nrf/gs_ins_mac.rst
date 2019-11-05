@@ -51,6 +51,14 @@ Install Homebrew and install the required tools using the ``brew`` command line 
 
 
 
+.. _installing_ses_mac:
+
+.. include:: gs_ins_windows.rst
+   :start-after: installing_ses_start
+   :end-before: installing_ses_end
+
+
+
 .. _build_environment_mac:
 
 .. include:: gs_ins_windows.rst

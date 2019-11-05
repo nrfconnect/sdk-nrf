@@ -265,6 +265,54 @@ To install those, open a |bash| in the ``ncs`` folder and enter the following co
 
 .. add_deps_end
 
+.. _installing_ses_win:
+
+.. installing_ses_start
+
+Installing |SES|
+****************
+
+You must install a special version of |SES| (SES) to be able to open and compile projects in the |NCS|.
+
+|SES| is free of charge for use with Nordic Semiconductor devices.
+
+To install |SES|, complete the following steps:
+
+1. Download the package for your operating system from the following links:
+
+    * `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
+    * `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
+    * `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
+    * `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
+    * `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
+
+#. Extract the downloaded package in the directory of your choice.
+#. Register and activate a free license.
+   |SES| is free of charge for use with Nordic Semiconductor devices, but you still need to request and activate a license.
+   Complete the following steps:
+
+    a. Run the file :file:`bin/emStudio`.
+       |SES| will open the Dashboard window and inform you about the missing license.
+
+        .. figure:: images/ses_license.PNG
+           :alt: SEGGER Embedded Studio Dashboard notification about missing license
+
+           No commercial-use license detected SES prompt
+
+    #. Click :guilabel:`Activate Your Free License`.
+       A request form appears.
+
+    #. Fill in your information and click :guilabel:`Request License`.
+       The license is sent to you in an email.
+
+    #. After you receive your license key, click :guilabel:`Enter Activation Key` to activate the license.
+
+    #. Copy-paste the license key and click :guilabel:`Install License`.
+       The license activation window will close and SES will open the Project Explorer window.
+
+
+
+.. installing_ses_end
 
 .. _build_environment_win:
 
@@ -273,8 +321,41 @@ To install those, open a |bash| in the ``ncs`` folder and enter the following co
 Setting up the build environment
 ********************************
 
+Before you start :ref:`building and programming a sample application <gs_programming>`, you must set up your build environment.
+
+Setting up the SES environment
+==============================
+
+If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming_ses>`, the first time you import an |NCS| project, SES will prompt you to set the paths to the Zephyr Base directory and the GNU ARM Embedded Toolchain.
+This must be done only once per project.
+
+Complete the following steps to set up the |SES| environment:
+
+1. Run the file :file:`bin/emStudio`.
+
+#. Select :guilabel:`File` -> :guilabel:`Open nRF Connect SDK Project`.
+
+    .. figure:: images/ses_open.png
+       :alt: Open nRF Connect SDK Project menu
+
+       Open nRF Connect SDK Project menu
+
+#. Set the Zephyr Base directory to the full path to ``ncs\zephyr``.
+   The GNU ARM Embedded Toolchain directory is the directory where you installed the toolchain (for example, ``c:\gnuarmemb``).
+
+    .. figure:: images/ses_notset.png
+       :alt: Zephyr Base Not Set prompt
+
+       Zephyr Base Not Set prompt
+
+
+If you want to change these settings later, click :guilabel:`Tools` -> :guilabel:`Options` and select the :guilabel:`nRF Connect` tab (see :ref:`ses_options_figure`).
+
+
+Setting up the command line build environment
+=============================================
+
 If you want to build and program your applications from the command line, you must set up your build environment by defining the required environment variables every time you open a new |bash|.
-If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming>`, you can skip this step.
 
 To define the environment variables, navigate to the ``ncs`` folder and enter the following command: |envfile|
 
