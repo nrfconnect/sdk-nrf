@@ -52,6 +52,8 @@
 
 .. _`system mode section in the AT Commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/mob_termination_ctrl_status/xsystemmode.html
 
+.. _`AT Commands reference`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/intro.html
+
 
 
 .. ### Links to the Nordic website
