@@ -45,7 +45,20 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 #. Click **OK** to import the project into SES. You can now work with the
    project in the IDE.
 
+   .. note::
+
+      At this stage, you might get an error indicating a project load failure. For example::
+
+        Can't load project file
+        The project file <filepath> is invalid.
+        The reported error is 'solution load command failed (1)'
+
+      This issue might be caused by a variety of problems, such as incorrectly specified project file paths.
+      SES helps you to identify the source of the issue by providing a text output with detailed information about the error.
+      Make sure to click :guilabel:`OK` on the error pop-up message and then inspect the text output in SES.
+
 #. Build and program your project.
+
    The required steps differ depending on if you build a single application or a multi-image project (such as the nRF9160 samples, which include :ref:`SPM <secure_partition_manager>`).
 
    .. important::
@@ -73,47 +86,5 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
    .. note::
    	In a multi-image build, this allows you to debug the source code of your application only.
 
-.. _gs_programming_ts:
-
-Troublehooting SES
-******************
-
-When using SES to build the |NCS| samples,
-it might return an error indicating a project load failure. For example::
-
-	Can't load project file
-	The project file <filepath> is invalid.
-	The reported error is 'solution load command failed (1)'
-
-This issue might be caused by a variety of problems, such as incorrectly specified project file paths.
-SES helps you to identify the source of the issue by providing a text output with detailed information about the error.
-Make sure to click **OK** on the error pop-up message and then inspect the text output in SES.
-
-Missing executables
-===================
-
-On Windows and Linux, SES uses the PATH variable to find executables.
 If you get an error that a tool or command cannot be found, first make sure that the tool is installed.
-If it is installed, add its location to the PATH variable.
-
-For some tools, you can explicitly specify the location under **Tools -> Options** (select the **nRF Connect** tab).
-
-  .. _ses_options_figure:
-
-  .. figure:: images/ses_options.png
-     :alt: nRF Connect SDK options in SES
-
-     nRF Connect SDK options in SES
-
-Setup on macOS
-==============
-
-On macOS, the global PATH variable is used only if you start SES from the command line.
-If you start SES by running the file :file:`bin/emStudio`, the global PATH is not used, and you must specify the path to all executables under **Tools -> Options** (select the **nRF Connect** tab, see :ref:`ses_options_figure`).
-
-In addition, specify the path to the west tool as additional CMake option, replacing *path_to_west* with the path to the west executable (for example, ``/usr/local/bin/west``):
-
-.. parsed-literal::
-   :class: highlight
-
-   -DWEST=\ *path_to_west*
+If it is installed, verify that its location is correct in the PATH variable or, if applicable, in the SES settings.
