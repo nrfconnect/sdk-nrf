@@ -165,6 +165,6 @@ function(cmock_handle header_file)
 
   cmock_linker_wrap_trick(${mod_header_path})
 
-  target_include_directories(zephyr_interface BEFORE INTERFACE ${CMOCK_PRODUCTS_DIR})
+  target_include_directories(app BEFORE PRIVATE ${CMOCK_PRODUCTS_DIR})
   message(STATUS "Generating cmock for header ${header_file}")
 endfunction()
