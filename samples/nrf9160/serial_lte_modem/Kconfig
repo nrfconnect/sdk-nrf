@@ -1,0 +1,105 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+
+menu "Nordic Serial LTE Modem"
+
+config SLM_AT_MODE
+	bool "Serial LTE Modem by raw AT mode"
+	default y
+	select AT_CMD
+	select AT_CMD_PARSER
+
+config SLM_AT_MAX_PARAM
+	int "Max number of parameters in AT command"
+	default 8
+
+#
+# TCP/IP
+#
+config SLM_TCPIP_AT_MODE
+	bool "Support TCP/IP by raw AT mode"
+	default y
+
+#
+# GPS
+#
+config SLM_GPS_AT_MODE
+	bool "Support GPS by raw AT mode"
+	default y
+
+#
+# Inter-Connect
+#
+choice
+	prompt "UART for Interconnect"
+	default SLM_CONNECT_UART_0
+	help
+		Sets the UART to use for interconnect
+		-  UART 0
+		-  UART 1
+		-  UART 2
+	config SLM_CONNECT_UART_0
+		bool "UART 0"
+	config SLM_CONNECT_UART_1
+		bool "UART 1"
+	config SLM_CONNECT_UART_2
+		bool "UART 2"
+endchoice
+
+config SLM_CONNECT_UART
+	int
+	default 0 if SLM_CONNECT_UART_0
+	default 1 if SLM_CONNECT_UART_1
+	default 2 if SLM_CONNECT_UART_2
+
+choice
+	prompt "Termination Mode"
+	default SLM_CR_LF_TERMINATION
+	help
+		Sets the termination ending from the serial terminal
+		Levels are:
+		-  NULL Termination
+		-  CR Termination
+		-  LF Termination
+		-  CR+LF Termination
+	config SLM_NULL_TERMINATION
+		bool "NULL Termination"
+	config SLM_CR_TERMINATION
+		bool "CR Termination"
+	config SLM_LF_TERMINATION
+		bool "LF Termination"
+	config SLM_CR_LF_TERMINATION
+		bool "CR+LF Termination"
+endchoice
+
+config SLM_AT_HOST_TERMINATION
+	int
+	default 0 if SLM_NULL_TERMINATION
+	default 1 if SLM_CR_TERMINATION
+	default 2 if SLM_LF_TERMINATION
+	default 3 if SLM_CR_LF_TERMINATION
+
+#
+# GPIO wakeup
+#
+config SLM_GPIO_WAKEUP
+	bool "Support of GPIO wakeup"
+	help
+	  Enable GPIO wakeup on nRF9160 side
+
+config SLM_MODEM_WAKEUP_PIN
+	int "GPIO for wakeup"
+	depends on SLM_GPIO_WAKEUP
+	default 31
+
+module = SLM
+module-str = serial modem
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
