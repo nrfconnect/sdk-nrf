@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: 94fc160fdeb3abd0c0dfdd81c43c9035f9a93ecd
+      revision: eedc25e5b239d52699d2d42159d308a75d566b4e
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -72,7 +72,7 @@ manifest:
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
-      revision: 2c2d24b04c8563eb674dccd1e5bf61e407792dc6
+      revision: 5833d1fae2141667e410f0e6e585243c1c2935d6
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
