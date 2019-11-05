@@ -340,26 +340,59 @@ Complete the following steps to set up the |SES| environment:
 
        Open nRF Connect SDK Project menu
 
-#. Set the Zephyr Base directory to the full path to ``ncs\zephyr``.
-   The GNU ARM Embedded Toolchain directory is the directory where you installed the toolchain (for example, ``c:\gnuarmemb``).
+#. Set the Zephyr Base directory to the full path to ``ncs/zephyr``.
+   The GNU ARM Embedded Toolchain directory is the directory where you installed the toolchain (for example, ``c:/gnuarmemb``).
 
     .. figure:: images/ses_notset.png
        :alt: Zephyr Base Not Set prompt
 
        Zephyr Base Not Set prompt
 
+.. buildenv_end
 
-If you want to change these settings later, click :guilabel:`Tools` -> :guilabel:`Options` and select the :guilabel:`nRF Connect` tab (see :ref:`ses_options_figure`).
+.. buildenv_path_start
 
+4. Make sure the locations of tools are added to the PATH variable.
+   On Windows and Linux, SES uses the PATH variable to find executables if they are not set in SES.
+
+.. buildenv_path_end
+
+.. _build_environment_settings_changes_win:
+
+.. buildenv_settings_changes_intro_start
+
+Changing the SES environment settings
+-------------------------------------
+
+If you want to change the SES environment settings, click :guilabel:`Tools` -> :guilabel:`Options` and select the :guilabel:`nRF Connect` tab, as shown on the following screenshot from the Windows installation.
+
+.. buildenv_settings_changes_intro_end
+
+.. _ses_options_figure:
+
+.. figure:: images/ses_options.png
+     :alt: nRF Connect SDK options in SES on Windows
+
+     nRF Connect SDK options in SES (Windows)
+
+.. buildenv_settings_changes_ctd_start
+
+If you want to configure tools that are not listed in the SES options, add them to the PATH variable.
+
+.. buildenv_settings_changes_ctd_end
+
+.. _build_environment_cli_win:
+
+.. buildenv_cli_start
 
 Setting up the command line build environment
 =============================================
 
-If you want to build and program your applications from the command line, you must set up your build environment by defining the required environment variables every time you open a new |bash|.
+If you want to build and program your application from the command line, you must set up your build environment by defining the required environment variables every time you open a new |bash|.
 
 To define the environment variables, navigate to the ``ncs`` folder and enter the following command: |envfile|
 
 If you need to define additional environment variables, create the file |rcfile| and add the variables there.
 This file is loaded automatically when you run the above command.
 
-.. buildenv_end
+.. buildenv_cli_end

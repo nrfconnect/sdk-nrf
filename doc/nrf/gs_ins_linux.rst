@@ -75,3 +75,35 @@ If you use Ubuntu, install v1.4.7 from Cosmic by entering the following commands
 .. include:: gs_ins_windows.rst
    :start-after: buildenv_start
    :end-before: buildenv_end
+
+
+.. include:: gs_ins_windows.rst
+   :start-after: buildenv_path_start
+   :end-before: buildenv_path_end
+
+
+
+.. _build_environment_settings_changes_linux:
+
+.. include:: gs_ins_windows.rst
+   :start-after: buildenv_settings_changes_intro_start
+   :end-before: buildenv_settings_changes_intro_end
+
+.. _ses_options_figure_reuse:
+
+.. figure:: images/ses_options.png
+     :alt: nRF Connect SDK options in SES on Windows
+
+     nRF Connect SDK options in SES (Windows)
+
+.. include:: gs_ins_windows.rst
+   :start-after: buildenv_settings_changes_ctd_start
+   :end-before: buildenv_settings_changes_ctd_end
+
+
+.. _build_environment_cli_linux:
+
+.. include:: gs_ins_windows.rst
+   :start-after: buildenv_cli_start
+   :end-before: buildenv_cli_end
+
