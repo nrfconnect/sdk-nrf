@@ -40,38 +40,7 @@ The following sequence diagram shows how a firmware over-the-air update is imple
    :alt: AWS FOTA sequence diagram for doing FOTA through AWS jobs
 
 
-AWS S3 server
-=============
-
-The firmware files for download must be stored in a bucket on an AWS S3 server.
-You can use an AWS instance that is already set up, such as `nRF Cloud`_, or set up your own bucket.
-
-When setting up your own bucket, make sure to configure the permissions as shown in the following screenshot:
-
-.. figure:: /images/aws_s3_bucket_permissions.png
-   :alt: Bucket permissions in AWS S3
-
-To update the permissions for an existing bucket, select your bucket and navigate to **Permissions** > **Block public access**.
-
-In addition to the permissions, you must configure a bucket policy.
-To determine a suitable security scheme for your application, see `AWS S3 Developer Guide: Using Bucket Policies and User Policies`_ and `AWS S3 Developer Guide: Bucket Policy Examples`_.
-To configure the policy, select your bucket and navigate to **Permissions** > **Bucket Policy**.
-
-For testing purposes, you can use the following, very permissive, bucket policy (replace *bucket_name* with the name of your bucket):
-
-.. parsed-literal::
-   :class: highlight
-
-   {    "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": "*",
-                "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::*bucket_name*/\*"
-            }
-         ]
-    }
+.. include:: /includes/aws_s3_bucket.txt
 
 
 AWS IoT jobs
