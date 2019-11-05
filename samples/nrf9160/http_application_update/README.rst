@@ -47,8 +47,8 @@ Specifying the image file
 =========================
 
 Before building the sample, you must specify where the image file will be located.
-If you do not want to host it yourself, you can upload it to nRF Cloud for testing purposes.
-See `Hosting your image on nRF Cloud`_ for instructions.
+If you do not want to host it yourself, you can upload it to a public S3 bucket on Amazon Web Services (AWS).
+See `Setting up an AWS S3 bucket`_ for instructions.
 
 To specify the location in |SES|:
 
@@ -56,24 +56,17 @@ To specify the location in |SES|:
 #. Navigate to **HTTP application update sample** and specify the **Download host name** (``CONFIG_DOWNLOAD_HOST``) and **The file to download** (``CONFIG_DOWNLOAD_FILE``).
 #. Click **Configure** to save the configuration.
 
+.. include:: /includes/aws_s3_bucket.txt
 
-Hosting your image on nRF Cloud
--------------------------------
+Hosting your image on an AWS S3 Server
+--------------------------------------
 
-1. Go to `firmware.nrfcloud.com`_ and sign in.
-   If you already have an nRF Cloud account, you can use the same credentials.
-   Otherwise, create an account and sign in.
-#. In the menu on the left-hand side, select **Firmware**.
-#. Click **Generate new** to create a URL for the firmware image.
+1. Go to `AWS S3 console`_ and sign in.
+#. Go to the bucket you have created.
+#. Click **Upload** and select the file ``app_update.bin`` (located in the ``zephyr`` subfolder of your build directory).
+#. Click the file you uploaded in the bucket and check the **Object URL** field to find the download URL for the file.
 
-   .. figure:: /images/http_upload_nrfcloud.png
-      :alt: Generate URL for firmware image in nRF Cloud
-
-   Generate URL for firmware image in nRF Cloud
-
-#. Click the **Copy URL** button to copy the address.
-
-When specifying the image file, use the ``s3.amazonaws.com`` part of the URL for the download host name.
+When specifying the image file, use the ``<bucket-name>.s3.<region>.amazonaws.com`` part of the URL for the download hostname.
 Make sure to not include the ``https``.
 Specify the rest of the URL as file name.
 
