@@ -23,6 +23,11 @@
 #define BLE_CONTROLLER_IRQ_PRIO_LOW  4
 #define BLE_CONTROLLER_IRQ_PRIO_HIGH 0
 
+#if (CONFIG_BLECTRL_SLAVE_COUNT + CONFIG_BLECTRL_MASTER_COUNT) != \
+     CONFIG_BT_MAX_CONN
+	#warning Unaligned configuration between BLE Host and Controller (number of connections)
+#endif
+
 static K_SEM_DEFINE(sem_recv, 0, 1);
 static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 
