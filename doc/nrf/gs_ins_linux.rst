@@ -62,6 +62,14 @@ If you use Ubuntu, install v1.4.7 from Cosmic by entering the following commands
 
 
 
+.. _installing_ses_linux:
+
+.. include:: gs_ins_windows.rst
+   :start-after: installing_ses_start
+   :end-before: installing_ses_end
+
+
+
 .. _build_environment_linux:
 
 .. include:: gs_ins_windows.rst
