@@ -96,6 +96,16 @@ enum peer_rpa {
 
 static enum peer_rpa peer_is_rpa[CONFIG_BT_ID_MAX];
 
+
+static void broadcast_adv_state(bool active)
+{
+	struct ble_peer_search_event *event = new_ble_peer_search_event();
+	event->active = active;
+	EVENT_SUBMIT(event);
+
+	LOG_INF("Advertising %s", (active)?("started"):("stopped"));
+}
+
 static int ble_adv_stop(void)
 {
 	int err = bt_le_adv_stop();
@@ -112,7 +122,7 @@ static int ble_adv_stop(void)
 
 		state = STATE_IDLE;
 
-		LOG_INF("Advertising stopped");
+		broadcast_adv_state(false);
 	}
 
 	return err;
@@ -270,8 +280,7 @@ static int ble_adv_start(bool can_fast_adv)
 		}
 	}
 
-	LOG_INF("Advertising started");
-
+	broadcast_adv_state(true);
 error:
 	return err;
 }

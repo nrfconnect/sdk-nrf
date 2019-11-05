@@ -22,6 +22,10 @@ config DESKTOP_INIT_LOG_BLE_PEER_EVENT
 	bool "BLE peer event"
 	default y
 
+config DESKTOP_INIT_LOG_BLE_PEER_SEARCH_EVENT
+	bool "BLE peer search event"
+	default y
+
 config DESKTOP_INIT_LOG_BLE_PEER_OPERATION_EVENT
 	bool "BLE peer operation event"
 	default y

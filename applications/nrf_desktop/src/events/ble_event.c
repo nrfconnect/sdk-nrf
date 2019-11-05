@@ -51,6 +51,34 @@ EVENT_TYPE_DEFINE(ble_peer_event,
 		  log_ble_peer_event,
 		  &ble_peer_event_info);
 
+static int log_ble_peer_search_event(const struct event_header *eh, char *buf,
+				     size_t buf_len)
+{
+	const struct ble_peer_search_event *event = cast_ble_peer_search_event(eh);
+
+	return snprintf(buf, buf_len, "%sactive", (event->active)?(""):("in"));
+}
+
+static void profile_ble_peer_search_event(struct log_event_buf *buf,
+					  const struct event_header *eh)
+{
+	const struct ble_peer_search_event *event = cast_ble_peer_search_event(eh);
+
+	ARG_UNUSED(event);
+	profiler_log_encode_u32(buf, (u32_t)event->active);
+}
+
+EVENT_INFO_DEFINE(ble_peer_search_event,
+		  ENCODE(PROFILER_ARG_U32),
+		  ENCODE("active"),
+		  profile_ble_peer_search_event);
+
+EVENT_TYPE_DEFINE(ble_peer_search_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_PEER_SEARCH_EVENT),
+		  log_ble_peer_search_event,
+		  &ble_peer_search_event_info);
+
+
 static const char * const op_name[] = {
 #define X(name) STRINGIFY(name),
 	PEER_OPERATION_LIST
