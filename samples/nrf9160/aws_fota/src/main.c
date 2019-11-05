@@ -60,6 +60,7 @@ void bsd_recoverable_error_handler(uint32_t err)
 
 #endif /* defined(CONFIG_BSD_LIBRARY) */
 
+#if !defined(CONFIG_USE_NRF_CLOUD)
 /* Topic for updating shadow topic with version number */
 #define AWS "$aws/things/"
 #define UPDATE_DELTA_TOPIC AWS "%s/shadow/update"
@@ -70,7 +71,7 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 {
 	struct mqtt_publish_param param;
 	char update_delta_topic[strlen(AWS) + strlen("/shadow/update") +
-				CLIENT_ID_LEN];
+				CLIENT_ID_LEN + 1];
 	u8_t shadow_update_payload[CONFIG_DEVICE_SHADOW_PAYLOAD_SIZE];
 
 	int ret = snprintf(update_delta_topic,
@@ -108,6 +109,7 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 
 	return mqtt_publish(client, &param);
 }
+#endif /* !defined(CONFIG_USE_NRF_CLOUD) */
 
 /**@brief Function to print strings without null-termination. */
 static void data_print(u8_t *prefix, u8_t *data, size_t len)
