@@ -23,6 +23,11 @@
 #include <net/socket.h>
 #include <nrf_cloud.h>
 
+#if defined(CONFIG_LWM2M_CARRIER)
+#include <lwm2m_carrier.h>
+#include <at_cmd.h>
+#endif
+
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 #include <dfu/mcuboot.h>
 #endif
@@ -104,7 +109,8 @@ static struct cloud_channel_data device_cloud_data = {
 static struct modem_param_info modem_param;
 static struct cloud_channel_data signal_strength_cloud_data;
 #endif /* CONFIG_MODEM_INFO */
-static atomic_val_t send_data_enable;
+static atomic_t carrier_requested_disconnect;
+static atomic_t send_data_enable;
 
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
@@ -140,6 +146,50 @@ static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct cloud_channel_data *data);
 static void device_status_send(struct k_work *work);
+
+K_SEM_DEFINE(cloud_ready_to_connect, 0, 1);
+K_SEM_DEFINE(cloud_disconnected, 0, 1);
+
+#if defined(CONFIG_LWM2M_CARRIER)
+static void app_disconnect(void);
+K_SEM_DEFINE(bsdlib_initialized, 0, 1);
+K_SEM_DEFINE(lte_connected, 0, 1);
+
+int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
+{
+	switch (event->type) {
+	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
+		printk("LWM2M_CARRIER_EVENT_BSDLIB_INIT\n");
+		k_sem_give(&bsdlib_initialized);
+		break;
+	case LWM2M_CARRIER_EVENT_CONNECT:
+		printk("LWM2M_CARRIER_EVENT_CONNECT\n");
+		k_sem_give(&lte_connected);
+		break;
+	case LWM2M_CARRIER_EVENT_DISCONNECT:
+		printk("LWM2M_CARRIER_EVENT_DISCONNECT\n");
+		break;
+	case LWM2M_CARRIER_EVENT_READY:
+		printk("LWM2M_CARRIER_EVENT_READY\n");
+		k_sem_give(&cloud_ready_to_connect);
+		break;
+	case LWM2M_CARRIER_EVENT_FOTA_START:
+		printk("LWM2M_CARRIER_EVENT_FOTA_START\n");
+		/* Due to limitations in the number of secure sockets, the cloud
+		 * socket has to be closed when the carrier library initiates
+		 * firmware upgrade download.
+		 */
+		atomic_set(&carrier_requested_disconnect, 1);
+		app_disconnect();
+		break;
+	case LWM2M_CARRIER_EVENT_REBOOT:
+		printk("LWM2M_CARRIER_EVENT_REBOOT\n");
+		break;
+	}
+
+	return 0;
+}
+#endif /* defined(CONFIG_LWM2M_CARRIER) */
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
@@ -769,6 +819,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_DISCONNECTED:
 		printk("CLOUD_EVT_DISCONNECTED\n");
 		ui_led_set_pattern(UI_LTE_DISCONNECTED);
+		k_sem_give(&cloud_disconnected);
 		break;
 	case CLOUD_EVT_ERROR:
 		printk("CLOUD_EVT_ERROR\n");
@@ -798,7 +849,7 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	}
 }
 
-/**@brief Connect to nRF Cloud, */
+/**@brief Connects to cloud, */
 static void app_connect(struct k_work *work)
 {
 	int err;
@@ -811,6 +862,45 @@ static void app_connect(struct k_work *work)
 		cloud_error_handler(err);
 	}
 }
+
+#if CONFIG_LWM2M_CARRIER
+/**@brief Disconnects from cloud. First it tries using the cloud backend's
+ *	  disconnect() implementation. If that fails, it falls back to close the
+ *	  socket directly, using close().
+ */
+static void app_disconnect(void)
+{
+	int err;
+
+	atomic_set(&send_data_enable, 0);
+	printk("Disconnecting from cloud.\n");
+
+	err = cloud_disconnect(cloud_backend);
+	if (err == -ENOTCONN) {
+		printk("Cloud connection was not established.\n");
+		return;
+	}
+
+	if (err) {
+		printk("Could not disconnect from cloud, err: %d\n", err);
+		printk("Closing the cloud socket directly\n");
+
+		err = close(cloud_backend->config->socket);
+		if (err) {
+			printk("Failed to close socket, error: %d\n", err);
+			return;
+		}
+
+		printk("Socket was closed successfully\n");
+		return;
+	}
+
+	/* Ensure that the socket is indeed closed before returning. */
+	k_sem_take(&cloud_disconnected, K_FOREVER);
+
+	printk("Disconnected from cloud.\n");
+}
+#endif /* CONFIG_LWM2M_CARRIER */
 
 #if defined(CONFIG_USE_UI_MODULE)
 /**@brief Function to keep track of user association input when using
@@ -890,23 +980,55 @@ static void modem_configure(void)
 		/* Do nothing, modem is already turned on
 		 * and connected.
 		 */
-	} else {
-		int err;
-
-		printk("Connecting to LTE network. ");
-		printk("This may take several minutes.\n");
-		ui_led_set_pattern(UI_LTE_CONNECTING);
-
-		err = lte_lc_init_and_connect();
-		if (err) {
-			printk("LTE link could not be established.\n");
-			error_handler(ERROR_LTE_LC, err);
-		}
-
-		printk("Connected to LTE network\n");
-		ui_led_set_pattern(UI_LTE_CONNECTED);
+		goto connected;
 	}
+
+	ui_led_set_pattern(UI_LTE_CONNECTING);
+	printk("Connecting to LTE network. ");
+	printk("This may take several minutes.\n");
+
+#if defined(CONFIG_LWM2M_CARRIER)
+/* Usually the modem configuration is done during boot, but when LWM2M carrier
+ * library is enabled, BSD library is not enabled before now, leaving the
+ * configuration to the application.
+ */
+#if defined(CONFIG_BOARD_NRF9160_PCA20035NS)
+	char *cmds[] =	{ "AT%XMAGPIO=1,1,1,7,1,746,803,2,698,748,"
+			  "2,1710,2200,3,824,894,4,880,960,5,791,849,"
+			  "7,1574,1577",
+			  "AT%XMODEMTRACE=0" };
+#elif defined(CONFIG_BOARD_NRF9160_PCA10090NS)
+	char *cmds[] =	{ "AT\%XMAGPIO=1,0,0,1,1,1574,1577",
+			  "AT\%XCOEX0=1,1,1570,1580" };
 #endif
+	/* Configuring MAGPIO/COEX, so that the correct antenna matching network
+	 * is used for each LTE band and GPS. */
+	for (size_t i = 0; i < ARRAY_SIZE(cmds); i++) {
+		int err = at_cmd_write(cmds[i], NULL, 0, NULL);
+		if (err) {
+			printk("AT command \"%s\" failed, error: %d\n",
+			       cmds[i], err);
+		}
+	}
+
+	/* Wait for the LWM2M carrier library to configure the modem and
+	 * set up the LTE connection.
+	 */
+	k_sem_take(&lte_connected, K_FOREVER);
+
+#else /* defined(CONFIG_LWM2M_CARRIER) */
+
+	int err = lte_lc_init_and_connect();
+	if (err) {
+		printk("LTE link could not be established.\n");
+		error_handler(ERROR_LTE_LC, err);
+	}
+#endif /* defined(CONFIG_LWM2M_CARRIER) */
+#endif /* defined(CONFIG_BSD_LIBRARY) */
+
+connected:
+	printk("Connected to LTE network\n");
+	ui_led_set_pattern(UI_LTE_CONNECTED);
 }
 
 /**@brief Initializes the accelerometer device and
@@ -966,8 +1088,6 @@ static void flip_detection_init(void)
 		printk("Could not calibrate accelerometer device: %d\n", err);
 	}
 }
-
-
 
 static void button_sensor_init(void)
 {
@@ -1127,6 +1247,10 @@ void main(void)
 	cloud_backend = cloud_get_binding("NRF_CLOUD");
 	__ASSERT(cloud_backend != NULL, "nRF Cloud backend not found");
 
+#if defined(CONFIG_LWM2M_CARRIER)
+	k_sem_take(&bsdlib_initialized, K_FOREVER);
+#endif /* defined(CONFIG_LWM2M_CARRIER) */
+
 	ret = cloud_init(cloud_backend, cloud_event_handler);
 	if (ret) {
 		printk("Cloud backend could not be initialized, error: %d\n",
@@ -1146,7 +1270,18 @@ void main(void)
 
 	work_init();
 	modem_configure();
+
 connect:
+	k_sem_take(&cloud_ready_to_connect, K_FOREVER);
+
+	/* Carrier FOTA happens in the background, but it uses the TLS socket
+	 * that cloud also would use. The carrier library will reboot the device
+	 * when the FOTA is done.
+	 */
+	if (atomic_get(&carrier_requested_disconnect)) {
+		return;
+	}
+
 	ret = cloud_connect(cloud_backend);
 	if (ret) {
 		printk("cloud_connect failed: %d\n", ret);
@@ -1184,18 +1319,33 @@ connect:
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
 			printk("Socket error: POLLNVAL\n");
+
+			if (atomic_get(&carrier_requested_disconnect)) {
+				return;
+			}
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
 
 		if ((fds[0].revents & POLLHUP) == POLLHUP) {
 			printk("Socket error: POLLHUP\n");
+			cloud_input(cloud_backend);
+
+			if (atomic_get(&carrier_requested_disconnect)) {
+				return;
+			}
+
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
 
 		if ((fds[0].revents & POLLERR) == POLLERR) {
 			printk("Socket error: POLLERR\n");
+
+			if (atomic_get(&carrier_requested_disconnect)) {
+				return;
+			}
+
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}

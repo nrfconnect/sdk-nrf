@@ -22,7 +22,8 @@ LOG_MODULE_REGISTER(board_nonsecure, CONFIG_BOARD_LOG_LEVEL);
 
 static int pca20035_magpio_configure(void)
 {
-#if defined(CONFIG_BSD_LIBRARY) && defined(CONFIG_NET_SOCKETS_OFFLOAD)
+#if defined(CONFIG_BSD_LIBRARY) && defined(CONFIG_NET_SOCKETS_OFFLOAD) && \
+    !defined(CONFIG_LWM2M_CARRIER)
 	int at_socket_fd;
 	int buffer;
 	u8_t read_buffer[AT_CMD_MAX_READ_LENGTH];
