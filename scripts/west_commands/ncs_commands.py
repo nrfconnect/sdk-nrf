@@ -5,6 +5,7 @@
 '''The "ncs-xyz" extension commands.'''
 
 from pathlib import PurePath
+import re
 import subprocess
 from textwrap import dedent
 
@@ -188,14 +189,22 @@ class NcsLoot(NcsWestCommand):
 
         log.banner(msg)
 
+        nrev = project.revision
+        if re.fullmatch(r"pull/\d+/head", nrev):
+            # As a special case, match GitHub's magic pull request
+            # ref space.
+            log.small_banner('fetching latest version of ' + nrev)
+            project.git('fetch {url} ' + nrev)
+            nrev = 'FETCH_HEAD'
         try:
-            nsha = project.sha(project.revision)
+            nsha = project.sha(nrev)
             project.git('cat-file -e ' + nsha)
         except subprocess.CalledProcessError:
             log.wrn("can't get loot; please run \"west update {}\"".
                     format(project.name),
                     '(need revision {})'.format(project.revision))
             return
+
         try:
             zsha = z_project.sha(z_project.revision)
             z_project.git('cat-file -e ' + zsha)
@@ -207,7 +216,7 @@ class NcsLoot(NcsWestCommand):
 
         try:
             analyzer = nwh.RepoAnalyzer(project, z_project,
-                                        project.revision, z_rev)
+                                        nrev, z_rev)
         except nwh.InvalidRepositoryError as ire:
             log.die(str(ire))
         try:
