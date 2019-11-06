@@ -9,6 +9,5 @@ kivy
 hid>=1.0.3
 imgtool==1.4.0a1
 numpy
-colorsys
 wave
 pyaudio
