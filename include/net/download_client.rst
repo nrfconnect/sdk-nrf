@@ -5,7 +5,8 @@ Download client
 
 The download client library can be used to download files from an HTTP or HTTPS server. It supports IPv4 and IPv6 protocols.
 
-The file is downloaded in fragments of configurable size (:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE`), that are returned to the application via events (:cpp:member:`DOWNLOAD_CLIENT_EVT_FRAGMENT`).
+The file is downloaded in fragments whose size can be configured independently for TLS and non-TLS connections (:option:`CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE` and :option:`CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE`).
+These fragments are returned to the application via events (:cpp:member:`DOWNLOAD_CLIENT_EVT_FRAGMENT`).
 
 The library can detect the size of the file that is downloaded and sends an event (:cpp:member:`DOWNLOAD_CLIENT_EVT_DONE`) to the application when the download has completed.
 
@@ -15,7 +16,7 @@ The application can then resume the download by calling the :cpp:func:`download_
 
 The download happens in a separate thread which can be paused and resumed.
 
-Make sure to configure :option:`CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE` in a way that suits your application.
+Make sure to configure the fragment size in a way that suits your application.
 A large fragment size requires more RAM, while a small fragment size results in more download requests, and thus a higher protocol overhead.
 If the size of the file being downloaded is larger than a hundred times the size of one fragment, the server might close the HTTP connection
 after the hundredth fragment has been transferred. The library is able to detect when the server has closed the HTTP connection
