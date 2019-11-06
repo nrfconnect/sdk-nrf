@@ -1,3 +1,4 @@
+
 @Library("CI_LIB") _
 
 def AGENT_LABELS = lib_Main.getAgentLabels(JOB_NAME)
@@ -37,7 +38,6 @@ def generateParallelStage(platform, compiler, AGENT_LABELS,
           println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
           sh FULL_SANITYCHECK_CMD
         }
-        cleanWs()
       }
     }
   }
@@ -50,7 +50,7 @@ pipeline {
        booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
        booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: true)
        booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
-       string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056')
+       string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056 nrf52810_pca20045 nrf52840_pca20035')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: INPUT_STATE)
   }
   agent { label AGENT_LABELS }
@@ -134,7 +134,6 @@ pipeline {
                 }
               }
             }
-            cleanWs()
           }
         }
       }
