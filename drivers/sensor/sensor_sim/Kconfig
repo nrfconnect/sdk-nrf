@@ -24,7 +24,7 @@ config SENSOR_SIM_DEV_NAME
 config SENSOR_SIM_DYNAMIC_VALUES
 	bool "Sensor simulator with dynamic values"
 	default y
-	select NEWLIB_LIBC
+	select REQUIRES_FULL_LIBC
 	help
 		Enables dynamically created simulator otuput as opposed
 		to static values.

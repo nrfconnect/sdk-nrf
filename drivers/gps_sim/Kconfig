@@ -68,7 +68,7 @@ config GPS_SIM_PSEUDO_RANDOM
 config GPS_SIM_DYNAMIC_VALUES
 	bool "GPS simulator dynamically creates data values"
 	default y
-	select NEWLIB_LIBC
+	select REQUIRES_FULL_LIBC
 	select NEWLIB_LIBC_FLOAT_PRINTF
 	help
 		Enables dynamically created simulator otuput as opposed
