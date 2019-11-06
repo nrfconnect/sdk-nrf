@@ -12,6 +12,7 @@
 #include <string.h>
 #include <init.h>
 #include <at_cmd.h>
+#include <at_notif.h>
 
 LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
@@ -71,9 +72,12 @@ static inline void write_uart_string(char *str, size_t len)
 	}
 }
 
-static void response_handler(char *response)
+static void response_handler(void *context, char *response)
 {
 	int len = strlen(response) + 1;
+
+	ARG_UNUSED(context);
+
 	/* Forward the data over UART */
 	if (len > 1) {
 		write_uart_string(response, len);
@@ -307,7 +311,11 @@ int slm_at_host_init(void)
 		return -EINVAL;
 	}
 
-	at_cmd_set_notification_handler(response_handler);
+	err = at_notif_register_handler(NULL, response_handler);
+	if (err != 0) {
+		LOG_ERR("Can't register handler err=%d", err);
+		return err;
+	}
 
 	/* Initialize the UART module */
 	err = at_uart_init(uart_dev_name);
