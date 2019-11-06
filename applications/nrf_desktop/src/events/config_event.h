@@ -61,6 +61,7 @@ extern "C" {
 
 #define SETUP_MODULE_SENSOR	0x1
 #define SETUP_MODULE_QOS	0x2
+#define SETUP_MODULE_BLE_BOND	0x3
 
 
 /* Config event, setup group, sensor module macros */
@@ -76,6 +77,11 @@ extern "C" {
 #define QOS_OPT_PARAM_BLE	0x2
 #define QOS_OPT_PARAM_WIFI	0x3
 #define QOS_OPT_COUNT		4
+
+/* Config event, setup group, ble_bond module macros */
+#define BLE_BOND_PEER_ERASE	0x0
+#define BLE_BOND_PEER_SEARCH	0x1
+#define BLE_BOND_COUNT		2
 
 /* Config event, DFU group macros */
 #define DFU_START	0x0
