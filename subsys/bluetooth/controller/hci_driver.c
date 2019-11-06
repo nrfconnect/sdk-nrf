@@ -32,6 +32,21 @@ static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_BLECTLR_SIGNAL_STACK_SIZE);
 
+
+/* It should not be possible to set CONFIG_BLECTRL_SLAVE_COUNT larger than
+ * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
+ * verify that assumption.
+ */
+BUILD_ASSERT(CONFIG_BLECTRL_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
+
+#define BLECTRL_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BLECTRL_SLAVE_COUNT)
+
+BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
+			 (BLECTRL_MASTER_COUNT > 0));
+
+BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
+			 (CONFIG_BLECTRL_SLAVE_COUNT > 0));
+
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH_MAX
 	#define MAX_TX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
 	#define MAX_RX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
@@ -55,7 +70,7 @@ static K_THREAD_STACK_DEFINE(signal_thread_stack,
 	+ BLE_CONTROLLER_MEM_SLAVE_LINKS_SHARED)
 
 #define MEMPOOL_SIZE ((CONFIG_BLECTRL_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
-		      (CONFIG_BLECTRL_MASTER_COUNT * MASTER_MEM_SIZE))
+		      (BLECTRL_MASTER_COUNT * MASTER_MEM_SIZE))
 
 static u8_t ble_controller_mempool[MEMPOOL_SIZE];
 
@@ -392,7 +407,7 @@ static int ble_enable(void)
 	int required_memory;
 	ble_controller_cfg_t cfg;
 
-	cfg.master_count.count = CONFIG_BLECTRL_MASTER_COUNT;
+	cfg.master_count.count = BLECTRL_MASTER_COUNT;
 
 	/* NOTE: ble_controller_cfg_set() returns a negative errno on error. */
 	required_memory =
