@@ -10,16 +10,25 @@ menuconfig  DOWNLOAD_CLIENT
 if DOWNLOAD_CLIENT
 
 config DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE
-	int "Fragment size"
-	range 512 2048 if BSD_LIBRARY && DOWNLOAD_CLIENT_TLS
-	default 2048 if BSD_LIBRARY && DOWNLOAD_CLIENT_TLS
+	int "Non-TLS fragment size"
 	range 512 4096
 	default 4096
 	help
-	  Size of the data fragments reported to the application in each event.
-	  When using BSD library and TLS, the fragment can not exceed 2.3kB.
-	  When not using TLS, prefer a larger fragment size to reduce the
+	  Size of the data fragments reported to the application in each event
+	  when not using TLS. Use a larger fragment size to reduce the
 	  bandwidth overhead due to the HTTP headers.
+
+config DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE
+	int "TLS fragment size"
+	range 512 2048 if BSD_LIBRARY
+	default 2048 if BSD_LIBRARY
+	range 512 4096
+	default 4096
+	help
+	  Size of the data fragments reported to the application in each event
+	  when using TLS. Use a larger fragment size to reduce the
+	  bandwidth overhead due to the HTTP headers. When using the BSD library,
+	  the fragment cannot exceed 2.3 kB.
 
 config DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE
 	int "Response size"

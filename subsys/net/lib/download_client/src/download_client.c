@@ -25,7 +25,11 @@ LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 BUILD_ASSERT_MSG(CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE <=
 		 CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
-		 "The response buffer must accommodate for a full fragment");
+		 "The response buffer must accommodate for a full non-TLS fragment");
+
+BUILD_ASSERT_MSG(CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE <=
+		 CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
+		 "The response buffer must accommodate for a full TLS fragment");
 
 #if defined(CONFIG_LOG) && !defined(CONFIG_LOG_IMMEDIATE)
 BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS) ?
@@ -244,7 +248,7 @@ static int get_request_send(struct download_client *client)
 	__ASSERT_NO_MSG(client->file);
 
 	/* Offset of last byte in range (Content-Range) */
-	off = client->progress + CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE - 1;
+	off = client->progress + client->fragment_size - 1;
 
 	if (client->file_size != 0) {
 		/* Don't request bytes past the end of file */
@@ -350,7 +354,7 @@ static int header_parse(struct download_client *client)
 
 static int fragment_evt_send(const struct download_client *client)
 {
-	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE,
+	__ASSERT(client->offset <= client->fragment_size,
 		 "Fragment overflow!");
 
 	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
@@ -487,7 +491,7 @@ restart_and_suspend:
 		dl->progress += MIN(dl->offset, len);
 
 		/* Have we received a whole fragment or the whole file? */
-		if ((dl->offset < CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE) &&
+		if ((dl->offset < dl->fragment_size) &&
 		    (dl->progress != dl->file_size)) {
 			LOG_DBG("Awaiting full fragment (%u)", dl->offset);
 			continue;
@@ -579,6 +583,14 @@ int download_client_connect(struct download_client *client, const char *host,
 		if (config->sec_tag != -1) {
 			return -EINVAL;
 		}
+	}
+
+	if (config->sec_tag != -1) {
+		client->fragment_size =
+			CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE;
+	} else {
+		client->fragment_size =
+			CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE;
 	}
 
 	if (client->fd != -1) {

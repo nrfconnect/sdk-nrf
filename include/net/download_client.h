@@ -120,6 +120,8 @@ struct download_client {
 	size_t file_size;
 	/** Download progress, number of bytes downloaded. */
 	size_t progress;
+	/** Fragment size being used for this download. */
+	size_t fragment_size;
 
 	/** Whether the HTTP header for
 	 * the current fragment has been processed.
