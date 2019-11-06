@@ -87,7 +87,7 @@ static void bt_gatt_discover_work(struct k_work *work)
 				break;
 			}
 			continue; /* Skip */
-		case BT_GATT_DISCOVER_DESCRIPTOR:
+		case BT_GATT_DISCOVER_ATTRIBUTE:
 			break;
 		default:
 			zassert_unreachable(
