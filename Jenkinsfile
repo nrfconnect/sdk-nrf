@@ -1,4 +1,3 @@
-
 @Library("CI_LIB") _
 
 def AGENT_LABELS = lib_Main.getAgentLabels(JOB_NAME)
