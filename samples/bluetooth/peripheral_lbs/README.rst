@@ -18,6 +18,7 @@ Requirements
 
 * One of the Nordic development boards:
 
+  * |nRF5340DK|
   * nRF52840 Dongle (PCA10059)
   * nRF52840 Development Kit board (PCA10056)
   * nRF52 Development Kit board (PCA10040)

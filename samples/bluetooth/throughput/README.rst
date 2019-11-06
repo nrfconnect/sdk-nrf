@@ -67,6 +67,13 @@ Requirements
 
 * Two of the following development boards:
 
+  * |nRF5340DK|
+
+    If you use this board, you must add the following options to the network sample configuration::
+
+       CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
+       CONFIG_BT_CTLR_DATA_LENGTH_MAX=251
+
   * nRF52840 Development Kit board (PCA10056)
   * nRF52 Development Kit board (PCA10040)
   * nRF51 Development Kit board (PCA10028) - limited support;
