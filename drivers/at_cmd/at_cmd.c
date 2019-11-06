@@ -292,7 +292,7 @@ int at_cmd_write(const char *const cmd,
 void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 {
 	LOG_DBG("Setting notification handler to %p", handler);
-	if ((notification_handler != NULL) && (handler != NULL)) {
+	if (notification_handler != NULL && handler != notification_handler) {
 		LOG_WRN("Forgetting prior notification handler %p",
 			notification_handler);
 	}
