@@ -75,22 +75,28 @@ def perform_config(dev, args):
     value_type = device_options[config_name].type
     recipient = get_device_pid(args.device_type)
 
-    if args.value is None:
+    if value_type is not None and args.value is None:
         success, val = fetch_config(dev, recipient, config_name, device_options, module_id)
         if success:
             print('Fetched {}: {}'.format(config_name, val))
         else:
             print('Failed to fetch {}'.format(config_name))
     else:
-        try:
-            config_value = value_type(args.value)
-        except ValueError:
-            print('Invalid type for {}. Expected {}'.format(config_name, value_type))
-            return
+        if value_type is None:
+            config_value = None
+        else:
+            try:
+                config_value = value_type(args.value)
+            except ValueError:
+                print('Invalid type for {}. Expected {}'.format(config_name, value_type))
+                return
         success = change_config(dev, recipient, config_name, config_value, device_options, module_id)
 
         if success:
-            print('{} set to {}'.format(config_name, config_value))
+            if value_type is None:
+                print('{} set')
+            else:
+                print('{} set to {}'.format(config_name, config_value))
         else:
             print('Failed to set {}'.format(config_name))
 
@@ -175,9 +181,14 @@ def parse_arguments():
 
                 for opt_name in module_opts:
                     parser_config_module_opt = sp_config_module.add_parser(opt_name, help=module_opts[opt_name].help)
-                    parser_config_module_opt.add_argument(
-                        'value', type=str, default=None, nargs='?',
-                        help='int from range {}'.format(module_opts[opt_name].range))
+                    if module_opts[opt_name].type == int:
+                        parser_config_module_opt.add_argument(
+                            'value', type=int, default=None, nargs='?',
+                            help='int from range {}'.format(module_opts[opt_name].range))
+                    elif module_opts[opt_name].type == str:
+                        parser_config_module_opt.add_argument(
+                            'value', type=str, default=None, nargs='?',
+                            help='str from range {}'.format(module_opts[opt_name].range))
 
     return parser.parse_args()
 

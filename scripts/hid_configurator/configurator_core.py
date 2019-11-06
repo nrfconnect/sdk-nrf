@@ -33,6 +33,7 @@ EVENT_GROUP_LED_STREAM = 0x3
 MOD_FIELD_POS = 3
 SETUP_MODULE_SENSOR = 0x1
 SETUP_MODULE_QOS = 0x2
+SETUP_MODULE_BLE_BOND = 0x3
 
 OPT_FIELD_POS = 0
 SENSOR_OPT_CPI = 0x0
@@ -44,6 +45,9 @@ QOS_OPT_BLACKLIST = 0x0
 QOS_OPT_CHMAP = 0x1
 QOS_OPT_PARAM_BLE = 0x2
 QOS_OPT_PARAM_WIFI = 0x3
+
+BLE_BOND_PEER_ERASE = 0x0
+BLE_BOND_PEER_SEARCH = 0x1
 
 DFU_START = 0x0
 DFU_DATA = 0x1
@@ -92,6 +96,15 @@ QOS_OPTIONS = {
     'wifi_blacklist':         ConfigOption(('0',      '1,2,...,11'), QOS_OPT_BLACKLIST,'List of blacklisted wifi channels', str),
 }
 
+BLE_BOND_OPTIONS_DONGLE = {
+    'peer_erase':             ConfigOption(None, BLE_BOND_PEER_ERASE,  'Trigger peer erase', None),
+    'peer_search':            ConfigOption(None, BLE_BOND_PEER_SEARCH, 'Trigger peer search', None),
+}
+
+BLE_BOND_OPTIONS_DEVICE = {
+    'peer_erase':             ConfigOption(None, BLE_BOND_PEER_ERASE,  'Trigger peer erase', None),
+}
+
 # Formatting details for QoS, which uses a struct containing multiple configuration values:
 # OPTION_ID: (struct format, struct member names, binary to human-readable conversion function, human-readable to binary conversion function)
 QOS_OPTIONS_FORMAT = {
@@ -105,6 +118,11 @@ PCA20041_CONFIG = {
     'sensor' : {
         'id' : SETUP_MODULE_SENSOR,
         'options' : PMW3360_OPTIONS
+    },
+
+    'ble_bond' : {
+        'id' : SETUP_MODULE_BLE_BOND,
+        'options' : BLE_BOND_OPTIONS_DEVICE
     }
 }
 
@@ -112,6 +130,11 @@ PCA20044_CONFIG = {
     'sensor' : {
         'id' : SETUP_MODULE_SENSOR,
         'options' : PAW3212_OPTIONS
+    },
+
+    'ble_bond' : {
+        'id' : SETUP_MODULE_BLE_BOND,
+        'options' : BLE_BOND_OPTIONS_DEVICE
     }
 }
 
@@ -119,6 +142,18 @@ PCA20045_CONFIG = {
     'sensor' : {
         'id' : SETUP_MODULE_SENSOR,
         'options' : PAW3212_OPTIONS
+    },
+
+    'ble_bond' : {
+        'id' : SETUP_MODULE_BLE_BOND,
+        'options' : BLE_BOND_OPTIONS_DEVICE
+    }
+}
+
+PCA20037_CONFIG = {
+    'ble_bond' : {
+        'id' : SETUP_MODULE_BLE_BOND,
+        'options' : BLE_BOND_OPTIONS_DEVICE
     }
 }
 
@@ -126,7 +161,12 @@ PCA10059_CONFIG = {
     'qos' : {
         'id' : SETUP_MODULE_QOS,
         'options' : QOS_OPTIONS,
-        'format' : QOS_OPTIONS_FORMAT,
+        'format' : QOS_OPTIONS_FORMAT
+    },
+
+    'ble_bond' : {
+        'id' : SETUP_MODULE_BLE_BOND,
+        'options' : BLE_BOND_OPTIONS_DONGLE
     }
 }
 
@@ -152,7 +192,7 @@ DEVICE = {
     'keyboard' : {
         'vid' : 0x1915,
         'pid' : 0x52DD,
-        'config' : None,
+        'config' : PCA20037_CONFIG,
         'stream_led_cnt' : 0,
     },
     'dongle' : {
@@ -298,6 +338,8 @@ def create_set_report(recipient, event_id, event_data):
     if event_data:
         assert type(event_data) == bytes
         event_data_len = len(event_data)
+    else:
+        event_data_len = 0
 
     status = ConfigStatus.PENDING
     report = struct.pack('<BHBBB', REPORT_ID, recipient, event_id, status,
@@ -494,11 +536,13 @@ def change_config(dev, recipient, config_name, config_value, device_options, mod
             print('Failed. Invalid value for {}'.format(config_name))
             return False
     else:
-        if not check_range(config_value, value_range):
-            print('Failed. Config value for {} must be in range {}'.format(config_name, value_range))
-            return False
-
-        event_data = struct.pack('<I', config_value)
+        if config_value is not None:
+            if not check_range(config_value, value_range):
+                print('Failed. Config value for {} must be in range {}'.format(config_name, value_range))
+                return False
+            event_data = struct.pack('<I', config_value)
+        else:
+            event_data = None
 
     success = exchange_feature_report(dev, recipient, event_id, event_data, False)
 
