@@ -14,6 +14,7 @@
 
 #include "event_manager.h"
 #include "config_event.h"
+#include "hid_event.h"
 
 #define MODULE dfu
 #include "module_state_event.h"
@@ -25,18 +26,55 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 #define FLASH_PAGE_SIZE_LOG2	12
 #define FLASH_PAGE_SIZE		BIT(FLASH_PAGE_SIZE_LOG2)
 #define FLASH_PAGE_ID(off)	((off) >> FLASH_PAGE_SIZE_LOG2)
+#define FLASH_CLEAN_VAL		UINT32_MAX
+#define FLASH_READ_CHUNK_SIZE	(FLASH_PAGE_SIZE / 8)
 
-#define DFU_TIMEOUT		K_SECONDS(2)
-#define REBOOT_REQUEST_TIMEOUT	K_MSEC(250)
+#define DFU_TIMEOUT			K_SECONDS(2)
+#define REBOOT_REQUEST_TIMEOUT		K_MSEC(250)
+#define BACKGROUND_FLASH_ERASE_TIMEOUT	K_SECONDS(15)
 
 static struct k_delayed_work dfu_timeout;
 static struct k_delayed_work reboot_request;
+static struct k_delayed_work background_erase;
 
 static const struct flash_area *flash_area;
 static u32_t cur_offset;
 static u32_t img_csum;
 static u32_t img_length;
 
+static bool device_in_use;
+static bool is_flash_area_clean;
+
+
+static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
+{
+	static const size_t chunk_size = FLASH_READ_CHUNK_SIZE;
+	static const size_t chunk_cnt = FLASH_PAGE_SIZE / chunk_size;
+
+	BUILD_ASSERT(chunk_size * chunk_cnt == FLASH_PAGE_SIZE);
+	BUILD_ASSERT(chunk_size % sizeof(u32_t) == 0);
+
+	u32_t buf[chunk_size / sizeof(u32_t)];
+
+	int err;
+
+	for (size_t i = 0; i < chunk_cnt; i++) {
+		err = flash_area_read(fa, off + i * chunk_size, buf, chunk_size);
+
+		if (err) {
+			LOG_ERR("Cannot read flash");
+			return false;
+		}
+
+		for (size_t j = 0; j < ARRAY_SIZE(buf); j++) {
+			if (buf[j] != FLASH_CLEAN_VAL) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
 
 static void dfu_timeout_handler(struct k_work *work)
 {
@@ -61,9 +99,58 @@ static void reboot_request_handler(struct k_work *work)
 	sys_reboot(SYS_REBOOT_WARM);
 }
 
-static bool is_new_page_started(u32_t off, size_t data_size)
+static void background_erase_handler(struct k_work *work)
 {
-	return FLASH_PAGE_ID(off - 1) != FLASH_PAGE_ID(off + data_size - 1);
+	static u32_t erase_offset;
+	int err;
+
+	__ASSERT_NO_MSG(!is_flash_area_clean);
+
+	/* During page erase operation CPU stalls. As page erase takes tens of
+	 * milliseconds let's perform it in background, when user is not
+	 * interacting with the device.
+	 */
+	if (device_in_use) {
+		device_in_use = false;
+		k_delayed_work_submit(&background_erase,
+				      BACKGROUND_FLASH_ERASE_TIMEOUT);
+		return;
+	}
+
+	if (!flash_area) {
+		err = flash_area_open(PM_MCUBOOT_SECONDARY_ID, &flash_area);
+		if (err) {
+			LOG_ERR("Cannot open flash area (%d)", err);
+			flash_area = NULL;
+			return;
+		}
+	}
+
+	__ASSERT_NO_MSG(erase_offset + FLASH_PAGE_SIZE <= flash_area->fa_size);
+
+	if (!is_page_clean(flash_area, erase_offset, FLASH_PAGE_SIZE)) {
+		err = flash_area_erase(flash_area, erase_offset, FLASH_PAGE_SIZE);
+		if (err) {
+			LOG_ERR("Cannot erase page (%d)", err);
+			flash_area_close(flash_area);
+			flash_area = NULL;
+			return;
+		}
+	}
+
+	erase_offset += FLASH_PAGE_SIZE;
+
+	if (erase_offset < flash_area->fa_size) {
+		k_delayed_work_submit(&background_erase, 0);
+	} else {
+		LOG_INF("Secondary image slot is clean");
+
+		is_flash_area_clean = true;
+		erase_offset = 0;
+
+		flash_area_close(flash_area);
+		flash_area = NULL;
+	}
 }
 
 static void handle_dfu_data(const struct config_event *event)
@@ -72,26 +159,21 @@ static void handle_dfu_data(const struct config_event *event)
 	size_t size = event->dyndata.size;
 	int err;
 
+	if (!is_flash_area_clean) {
+		LOG_WRN("Flash is not clean");
+		return;
+	}
+
 	if (!flash_area) {
 		LOG_WRN("DFU was not started");
 		return;
 	}
 
-	LOG_INF("DFU data received cur_offset:%" PRIu32, cur_offset);
+	LOG_DBG("DFU data received cur_offset:%" PRIu32, cur_offset);
 
 	if (size == 0) {
 		LOG_WRN("Invalid DFU data header");
 		goto dfu_finish;
-	}
-
-	if (is_new_page_started(cur_offset, size)) {
-		err = flash_area_erase(flash_area,
-		       FLASH_PAGE_ID(cur_offset + size - 1) << FLASH_PAGE_SIZE_LOG2,
-		       FLASH_PAGE_SIZE);
-		if (err) {
-			LOG_ERR("Cannot erase page (%d)", err);
-			goto dfu_finish;
-		}
 	}
 
 	err = flash_area_write(flash_area, cur_offset, data, size);
@@ -102,7 +184,7 @@ static void handle_dfu_data(const struct config_event *event)
 
 	cur_offset += size;
 
-	LOG_INF("DFU chunk written");
+	LOG_DBG("DFU chunk written");
 
 	if (img_length == cur_offset) {
 		LOG_INF("DFU image written");
@@ -130,8 +212,7 @@ static void handle_dfu_start(const struct config_event *event)
 	u32_t csum;
 	u32_t offset;
 
-	size_t data_size = sizeof(length) + sizeof(csum) +
-			   sizeof(offset);
+	size_t data_size = sizeof(length) + sizeof(csum) + sizeof(offset);
 
 	BUILD_ASSERT_MSG(sizeof(length) == sizeof(img_length), "");
 	BUILD_ASSERT_MSG(sizeof(csum) == sizeof(img_csum), "");
@@ -139,6 +220,11 @@ static void handle_dfu_start(const struct config_event *event)
 
 	if (size < data_size) {
 		LOG_WRN("Invalid DFU start header");
+		return;
+	}
+
+	if (!is_flash_area_clean) {
+		LOG_WRN("Flash is not clean yet.");
 		return;
 	}
 
@@ -178,12 +264,23 @@ static void handle_dfu_start(const struct config_event *event)
 			LOG_INF("Restart DFU");
 		}
 	} else {
-		img_length = length;
-		img_csum = csum;
-		cur_offset = 0;
+		if (cur_offset != 0) {
+			k_delayed_work_submit(&background_erase, 0);
+			is_flash_area_clean = false;
+			cur_offset = 0;
+			img_length = 0;
+			img_csum = 0;
+
+			return;
+		} else {
+			img_length = length;
+			img_csum = csum;
+		}
 	}
 
+	__ASSERT_NO_MSG(flash_area == NULL);
 	int err = flash_area_open(PM_MCUBOOT_SECONDARY_ID, &flash_area);
+
 	if (err) {
 		LOG_ERR("Cannot open flash area (%d)", err);
 
@@ -196,9 +293,8 @@ static void handle_dfu_start(const struct config_event *event)
 		flash_area = NULL;
 	} else {
 		LOG_INF("DFU started");
+		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
 	}
-
-	k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
 }
 
 static void handle_dfu_sync(const struct config_fetch_request_event *event)
@@ -359,6 +455,13 @@ static void handle_config_fetch_request_event(const struct config_fetch_request_
 
 static bool event_handler(const struct event_header *eh)
 {
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
+	    (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) && is_hid_keyboard_event(eh))) {
+		device_in_use = true;
+
+		return false;
+	}
+
 	if (is_config_event(eh)) {
 		handle_config_event(cast_config_event(eh));
 
@@ -383,6 +486,9 @@ static bool event_handler(const struct event_header *eh)
 
 			k_delayed_work_init(&dfu_timeout, dfu_timeout_handler);
 			k_delayed_work_init(&reboot_request, reboot_request_handler);
+			k_delayed_work_init(&background_erase, background_erase_handler);
+
+			k_delayed_work_submit(&background_erase, 0);
 		}
 		return false;
 	}
@@ -394,6 +500,8 @@ static bool event_handler(const struct event_header *eh)
 }
 
 EVENT_LISTENER(MODULE, event_handler);
+EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
