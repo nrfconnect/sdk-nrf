@@ -8,6 +8,7 @@
 #include <gpio.h>
 #include <gps.h>
 #include <init.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -96,6 +97,26 @@ static bool is_fix(struct gps_pvt *pvt)
 		== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT);
 }
 
+/**@brief Checks if GPS operation is blocked due to insufficient time windows */
+static bool gps_is_blocked(nrf_gnss_pvt_data_frame_t *pvt)
+{
+/* TODO: Use bitmask from nrf_socket.h when it's available. */
+#define PVT_FLAG_OP_BLOCKED_TIME_WINDOW BIT(4)
+
+	return ((pvt->flags & PVT_FLAG_OP_BLOCKED_TIME_WINDOW)
+		== PVT_FLAG_OP_BLOCKED_TIME_WINDOW);
+}
+
+/**@brief Checks if PVT frame is invalid due to missed processing deadline */
+static bool pvt_deadline_missed(nrf_gnss_pvt_data_frame_t *pvt)
+{
+/* TODO: Use bitmask from nrf_socket.h when it's available. */
+#define PVT_FLAG_DEADLINE_MISSED BIT(3)
+
+	return ((pvt->flags & PVT_FLAG_DEADLINE_MISSED)
+		== PVT_FLAG_DEADLINE_MISSED);
+}
+
 static u64_t fix_timestamp;
 
 static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
@@ -141,6 +162,7 @@ static void gps_thread(int dev_ptr)
 	int len;
 	nrf_gnss_data_frame_t raw_gps_data;
 	bool trigger_send = false;
+	bool operation_blocked = false;
 wait:
 	k_sem_take(&drv_data->thread_run_sem, K_FOREVER);
 
@@ -158,6 +180,30 @@ wait:
 
 		switch (raw_gps_data.data_id) {
 		case NRF_GNSS_PVT_DATA_ID:
+			if (gps_is_blocked(&raw_gps_data.pvt)) {
+				if (operation_blocked) {
+					/* Avoid spamming the logs. */
+					continue;
+				}
+
+				/* If LTE is used alongside GPS, PSM, eDRX or
+				 * DRX needs to be enabled for the GPS to
+				 * operate. If PSM is used, the GPS will
+				 * normally operate when active time expires.
+				 */
+				LOG_DBG("Waiting for time window to operate");
+
+				operation_blocked = true;
+				continue;
+			}
+
+			operation_blocked = false;
+
+			if (pvt_deadline_missed(&raw_gps_data.pvt)) {
+				LOG_DBG("Invalid PVT frame, discarding");
+				continue;
+			}
+
 			print_satellite_stats(&raw_gps_data);
 			copy_pvt(&fresh_pvt.pvt, &raw_gps_data.pvt);
 
@@ -179,6 +225,10 @@ wait:
 			break;
 
 		case NRF_GNSS_NMEA_DATA_ID:
+			if (operation_blocked) {
+				continue;
+			}
+
 			memcpy(fresh_nmea.nmea.buf, raw_gps_data.nmea, len);
 			fresh_nmea.nmea.len = strlen(raw_gps_data.nmea);
 
