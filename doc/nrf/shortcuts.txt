@@ -2,7 +2,7 @@
 
 .. |SES| replace:: SEGGER Embedded Studio
 
-.. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, drivers, samples, and applications are not supported for product development.
+.. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, drivers, samples, and applications are currently not supported for product development.
 
 .. |connect_terminal| replace:: Connect to the board with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
@@ -11,3 +11,6 @@
    See :ref:`putty` for the required settings.
 
 .. |GSA| replace:: Getting Started Assistant
+
+.. |nRF9160DK| replace:: nRF9160 DK board (PCA10090) - see :ref:`ug_nrf9160`
+.. |nRF5340DK| replace:: nRF5340 PDK board (PCA10095) - see :ref:`ug_nrf5340`

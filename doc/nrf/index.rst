@@ -3,8 +3,8 @@
 Welcome to the |NCS|!
 #####################
 
-The |NCS| is where you begin building low power cellular IoT applications with LTE-M and NB-IoT on the nRF9160.
-It offers a range of application samples and reference implementations, as well as a full suite of device drivers for the nRF9160 SiP.
+The |NCS| is where you begin building low power cellular IoT applications with LTE-M and NB-IoT on the nRF9160, and Bluetooth Low Energy applications on the nRF5340.
+It offers a range of application samples and reference implementations, as well as a full suite of drivers for Nordic Semiconductor's devices.
 The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is built for connected low power products.
 
 .. note::
