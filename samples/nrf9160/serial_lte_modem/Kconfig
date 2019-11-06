@@ -12,6 +12,7 @@ config SLM_AT_MODE
 	bool "Serial LTE Modem by raw AT mode"
 	default y
 	select AT_CMD
+	select AT_NOTIF
 	select AT_CMD_PARSER
 
 config SLM_AT_MAX_PARAM

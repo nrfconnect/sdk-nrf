@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 #include <logging/log.h>
-LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 
 #include <zephyr.h>
 #include <stdio.h>
@@ -12,16 +11,16 @@ LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 #include <string.h>
 #include <bsd.h>
 #include <lte_lc.h>
-
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
-
 #include "slm_at_host.h"
 
 #if defined(CONFIG_SLM_CONNECT_UART_0) && defined(CONFIG_SLM_GPIO_WAKEUP)
 #error CONFIG_SLM_GPIO_WAKEUP should not be defined when UART0 is used
 #endif
+
+LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 
 /* global variable used across different files */
 struct at_param_list m_param_list;
