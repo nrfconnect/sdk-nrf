@@ -615,6 +615,12 @@ int bt_gatt_dm_continue(struct bt_gatt_dm *dm, void *context)
 		return -EALREADY;
 	}
 
+	if (dm->discover_params.end_handle == 0xffff) {
+		/* No more handles to discover. */
+		discovery_complete_not_found(dm);
+		return 0;
+	}
+
 	dm->context = context;
 	dm->discover_params.start_handle = dm->discover_params.end_handle + 1;
 	dm->discover_params.end_handle = 0xffff;
