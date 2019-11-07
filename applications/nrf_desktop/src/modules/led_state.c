@@ -63,6 +63,9 @@ static void load_peer_state_led(void)
 		return;
 	}
 
+	__ASSERT_NO_MSG(peer_id < LED_PEER_COUNT);
+	__ASSERT_NO_MSG(state < LED_PEER_STATE_COUNT);
+
 	struct led_event *event = new_led_event();
 
 	event->led_id = led_map[LED_ID_PEER_STATE];
