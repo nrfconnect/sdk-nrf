@@ -80,17 +80,6 @@ config LTE_EDRX_REQ
 		Enable request for use of eDRX using AT+CEDRXS.
 		For reference, see 3GPP 27.007 Ch. 7.40.
 
-config LTE_EDRX_REQ_ACTT_TYPE
-	string "Select ActT-type."
-	default "4"
-	help
-		Select ActT-type.
-
-		 - "4" E-UTRAN (WB-S1 mode)
-		 - "5" E-UTRAN (NB-S1 mode)
-
-		For reference, see 3GPP 27.007 Ch. 7.40.
-
 config LTE_EDRX_REQ_VALUE
 	string "Requested eDRX value"
 	default "1000"
