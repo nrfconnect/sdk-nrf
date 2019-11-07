@@ -156,5 +156,4 @@ In addition, it uses the Secure Partition Manager sample:
 References
 **********
 
-* nRF91 `AT Commands reference`_ in Nordic Infocenter
-
+* nRF91 `AT Commands Reference Guide`_ in Nordic Infocenter
