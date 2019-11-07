@@ -45,6 +45,9 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_XSYSTEMMODE_GPS_INDEX		2
 #define AT_XSYSTEMMODE_PARAMS_COUNT		5
 #define AT_XSYSTEMMODE_RESPONSE_MAX_LEN		30
+/* Parameter values for AT+CEDRXS command. */
+#define AT_CEDRXS_ACTT_WB			4
+#define AT_CEDRXS_ACTT_NB			5
 
 /* Forward declarations */
 static int parse_nw_reg_status(const char *at_response,
@@ -80,9 +83,6 @@ static const char lock_bands[] = "AT%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK
 static const char lock_plmn[] = "AT+COPS=1,2,\""
 				 CONFIG_LTE_LOCK_PLMN_STRING"\"";
 #endif
-/* Request eDRX settings to be used */
-static const char edrx_req[] = "AT+CEDRXS=1,"CONFIG_LTE_EDRX_REQ_ACTT_TYPE
-	",\""CONFIG_LTE_EDRX_REQ_VALUE"\"";
 /* Request eDRX to be disabled */
 static const char edrx_disable[] = "AT+CEDRXS=3";
 /* Request modem to go to power saving mode */
@@ -160,9 +160,13 @@ void at_handler(void *context, char *response)
 
 static int w_lte_lc_init(void)
 {
+	if (at_cmd_write(nw_mode_preferred, NULL, 0, NULL) != 0) {
+		return -EIO;
+	}
+
 #if defined(CONFIG_LTE_EDRX_REQ)
 	/* Request configured eDRX settings to save power */
-	if (at_cmd_write(edrx_req, NULL, 0, NULL) != 0) {
+	if (lte_lc_edrx_req(true) != 0) {
 		return -EIO;
 	}
 #endif
@@ -444,9 +448,36 @@ parse_psm_clean_exit:
 
 int lte_lc_edrx_req(bool enable)
 {
-	if (at_cmd_write(enable ? edrx_req : edrx_disable,
-			 NULL, 0, NULL) != 0) {
-		return -EIO;
+	char edrx_req[25];
+	int err, actt;
+	enum lte_lc_system_mode mode;
+
+	err = lte_lc_system_mode_get(&mode);
+	if (err) {
+		return err;
+	}
+
+	switch (mode) {
+	case LTE_LC_SYSTEM_MODE_LTEM:
+	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
+		actt = AT_CEDRXS_ACTT_WB;
+		break;
+	case LTE_LC_SYSTEM_MODE_NBIOT:
+	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
+		actt = AT_CEDRXS_ACTT_NB;
+		break;
+	default:
+		LOG_ERR("Unknown system mode");
+		LOG_ERR("Cannot request eDRX for unknown system mode");
+		return -EOPNOTSUPP;
+	}
+
+	snprintf(edrx_req, sizeof(edrx_req),
+		 "AT+CEDRXS=1,%d,\""CONFIG_LTE_EDRX_REQ_VALUE"\"", actt);
+
+	err = at_cmd_write(enable ? edrx_req : edrx_disable, NULL, 0, NULL);
+	if (err) {
+		return err;
 	}
 
 	return 0;
