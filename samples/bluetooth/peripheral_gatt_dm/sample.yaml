@@ -1,0 +1,9 @@
+sample:
+  description: BLE Gatt client discovery manager sample
+  name: BLE Gatt Discovery
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf51_pca10028 nrf52_pca10040 nrf52840_pca10056 nrf52810_pca10040
+    tags: bluetooth ci_build
