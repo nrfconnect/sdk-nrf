@@ -14,6 +14,7 @@
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
+#include <bluetooth/hci.h>
 
 #include "ble_controller_hci_vs.h"
 
