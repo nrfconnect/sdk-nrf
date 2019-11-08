@@ -416,7 +416,7 @@ static struct hids_subscriber *find_subscriber_hidc(u16_t pid)
 
 static int switch_to_low_latency(struct hids_subscriber *subscriber)
 {
-	int err;
+	int err = 0;
 
 	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
 		if (subscriber->timestamp == 0) {
