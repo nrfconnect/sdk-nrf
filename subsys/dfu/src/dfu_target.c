@@ -54,7 +54,7 @@ int dfu_target_init(int img_type, size_t file_size)
 {
 	const struct dfu_target *new_target = NULL;
 
-	if (IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&
+	if (IS_ENABLED(CONFIG_DFU_TARGET_MCUBOOT) &&
 	    img_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
 		new_target = &dfu_target_mcuboot;
 	} else if (IS_ENABLED(CONFIG_DFU_TARGET_MODEM) &&
