@@ -8,6 +8,19 @@ cmake_minimum_required(VERSION 3.8.2)
 
 include(../../../cmake/boilerplate.cmake NO_POLICY_SCOPE)
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+if(CONFIG_PROVISION_CERTIFICATES)
+  message(WARNING "
+      ------------------------------------------------------------
+      --- WARNING: Provisioning certificates is ENABLED. Do    ---
+      --- not use this binary in production or share it with   ---
+      --- anyone. It has certificates stored in readable flash,---
+      --- the binary, and the modem traces. Only use this      ---
+      --- binary once to provision certificates for development---
+      --- to reduce flash tear. After the certificates are     ---
+      --- provisioned, disable this option and rebuild the     ---
+      --- sample.                                              ---
+      ------------------------------------------------------------")
+endif()
 project(mqtt-aws-jobs-fota)
 
 # NORDIC SDK APP START

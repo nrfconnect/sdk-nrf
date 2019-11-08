@@ -98,8 +98,6 @@ K_MSGQ_DEFINE(bonds_queue,
 	      4);
 #endif
 
-static struct k_delayed_work adv_work;
-
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
 		      (CONFIG_BT_DEVICE_APPEARANCE >> 0) & 0xff,
@@ -193,7 +191,7 @@ static void advertising_continue(void)
 }
 
 
-static void advertising_start(struct k_work *work)
+static void advertising_start(void)
 {
 	int err;
 
@@ -287,7 +285,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	insert_conn_object(conn);
 
 	if (is_conn_slot_free()) {
-		advertising_start(NULL);
+		advertising_start();
 	}
 }
 
@@ -315,11 +313,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 		}
 	}
 
-	/* Let Bluetooth stack clean up disconnected connection object
-	 * so that it is possible to create a new one for directed
-	 * advertising.
-	 */
-	k_delayed_work_submit(&adv_work, K_MSEC(100));
+	advertising_start();
 }
 
 
@@ -331,11 +325,11 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Security changed: %s level %u\n", addr, level);
 	if (!err) {
-		printk("Security changed: %s level %u", addr, level);
+		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d", addr, level, err);
+		printk("Security failed: %s level %u err %d\n", addr, level,
+			err);
 	}
 }
 #endif
@@ -573,14 +567,13 @@ static void bt_ready(int err)
 	hid_init();
 
 	k_delayed_work_init(&hids_work, mouse_handler);
-	k_delayed_work_init(&adv_work, advertising_start);
 	k_work_init(&pairing_work, pairing_process);
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
 
-	advertising_start(NULL);
+	advertising_start();
 }
 
 
@@ -631,22 +624,35 @@ static void auth_cancel(struct bt_conn *conn)
 }
 
 
-static void auth_done(struct bt_conn *conn)
+static void pairing_confirm(struct bt_conn *conn)
 {
-	printk("%s()\n", __func__);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
 	bt_conn_auth_pairing_confirm(conn);
+
+	printk("Pairing confirmed: %s\n", addr);
 }
 
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
-	printk("Paired conn: %p, bonded: %d\n", conn, bonded);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing completed: %s, bonded: %d\n", addr, bonded);
 }
 
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-	printk("Pairing failed conn: %p, reason %d\n", conn, reason);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
 }
 
 
@@ -654,7 +660,7 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
-	.pairing_confirm = auth_done,
+	.pairing_confirm = pairing_confirm,
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };

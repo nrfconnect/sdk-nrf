@@ -9,3 +9,5 @@
 
 .. |connect_terminal_specific| replace:: Connect to the board that runs this sample with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
+
+.. |GSA| replace:: Getting Started Assistant

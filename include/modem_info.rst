@@ -16,6 +16,7 @@ It issues AT commands to retrieve the following data:
 * The modem firmware version
 * The modem serial number
 * The LTE-M, NB-IoT, and GPS support mode
+* Mobile network time and date
 
 The modem information library uses the :ref:`at_cmd_parser_readme`.
 

@@ -13,7 +13,7 @@ char *string_return     = "mfw_nrf9160_0.7.0-23.prealpha";
 
 static void test_notification_detection(void)
 {
-	for (char c = 0; c < sizeof(c); ++c) {
+	for (char c = 0; c < 127; ++c) {
 		if ((c == '%') || (c == '+')) {
 			continue;
 		}
@@ -28,9 +28,23 @@ static void test_notification_detection(void)
 		     "Notification char was not detected");
 }
 
+static void test_command_detection(void)
+{
+	zassert_true(is_command("AT+"), "Command was not detected");
+	zassert_true(is_command("AT%"), "Command was not detected");
+	zassert_true(is_command("AT#"), "Command was not detected");
+	zassert_true(is_command("at+"), "Command was not detected");
+	zassert_true(is_command("at%"), "Command was not detected");
+	zassert_true(is_command("at#"), "Command was not detected");
+	zassert_false(is_command("AT"), "Should fail, command too short");
+	zassert_false(is_command("BT+"), "Should fail, invalid string");
+	zassert_false(is_command("AB+"), "Should fail, invalid string");
+	zassert_false(is_command("AT$"), "Should fail, invalid string");
+}
+
 static void test_valid_notification_char_detection(void)
 {
-	for (char c = 0; c < sizeof(c); ++c) {
+	for (char c = 0; c < 127; ++c) {
 		if ((c >= 'A') && (c <= 'Z')) {
 			continue;
 		}
@@ -56,7 +70,7 @@ static void test_valid_notification_char_detection(void)
 
 static void test_string_termination(void)
 {
-	for (char c = 1; c < sizeof(c); ++c) {
+	for (char c = 1; c < 127; ++c) {
 		zassert_false(is_terminated(c), "String termination detected");
 	}
 
@@ -66,21 +80,22 @@ static void test_string_termination(void)
 
 static void test_string_separator(void)
 {
-	for (char c = 0; c < sizeof(c); ++c) {
-		if ((c == ':') || (c == ',')) {
+	for (char c = 0; c < 127; ++c) {
+		if ((c == ':') || (c == ',') || (c == '=')) {
 			continue;
 		}
 
 		zassert_false(is_separator(c), "Separator detected");
 	}
 
+	zassert_true(is_separator('='), "Separator not detected");
 	zassert_true(is_separator(':'), "Separator not detected");
 	zassert_true(is_separator(','), "Separator not detected");
 }
 
 static void test_lfcr(void)
 {
-	for (char c = 0; c < sizeof(c); ++c) {
+	for (char c = 0; c < 127; ++c) {
 		if ((c == '\r') || (c == '\n')) {
 			continue;
 		}
@@ -94,7 +109,7 @@ static void test_lfcr(void)
 
 static void test_dblquote(void)
 {
-	for (char c = 0; c < sizeof(c); ++c) {
+	for (char c = 0; c < 127; ++c) {
 		if (c == '"') {
 			continue;
 		}
@@ -107,7 +122,7 @@ static void test_dblquote(void)
 
 static void test_array_detection(void)
 {
-	for (char c = 0; c < sizeof(c); ++c) {
+	for (char c = 0; c < 127; ++c) {
 		if ((c == '(') || (c == ')')) {
 			continue;
 		}
@@ -122,8 +137,8 @@ static void test_array_detection(void)
 
 static void test_number_detection(void)
 {
-	for (char c = 0; c < sizeof(c); ++c) {
-		if ((c <= 0) && (c >= 9)) {
+	for (char c = 0; c < 127; ++c) {
+		if ((c >= '0') && (c <= '9')) {
 			continue;
 		}
 
@@ -146,6 +161,7 @@ void test_main(void)
 {
 	ztest_test_suite(at_cmd_parser,
 			ztest_unit_test(test_notification_detection),
+			ztest_unit_test(test_command_detection),
 			ztest_unit_test(test_valid_notification_char_detection),
 			ztest_unit_test(test_string_termination),
 			ztest_unit_test(test_string_separator),

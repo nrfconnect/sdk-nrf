@@ -152,7 +152,18 @@ To clone the repositories, complete the following steps:
 
         west init -m https\://github.com/NordicPlayground/fw-nrfconnect-nrf
 
+   * More generally, to check out an arbitrary revision, enter the following command:
+
+     .. parsed-literal::
+        :class: highlight
+
+        west init -m https\://github.com/NordicPlayground/fw-nrfconnect-nrf --mr *NCS_revision*
+
+     .. note::
+        *NCS_revision* can be a branch (eg. ``master``), a tag (for example, ``v1.0.0``), or even a SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``). When not specified, it defaults to ``master``.
+
    This will clone the manifest repository `fw-nrfconnect-nrf`_ into :file:`nrf`.
+
 #. Enter the following command to clone the project repositories::
 
       west update
@@ -175,17 +186,25 @@ If you work with a specific release of the |NCS|, you do not need to update your
 However, you might want to switch to a newer release or check out the latest state of development.
 
 To manage the ``nrf`` repository (the manifest repository), use Git.
+To make sure that you have the latest changes, run ``git fetch origin`` to :ref:`fetch the latest code <dm-wf-update-ncs>` from the `fw-nrfconnect-nrf`_ repository.
 Checking out a branch or tag in the ``nrf`` repository gives you a different version of the manifest file.
 Running ``west update`` will then update the project repositories to the state specified in this manifest file.
+For example, to switch to release v1.0.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
 
-For example, to switch to release v0.4.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
+   git fetch origin
+   git checkout v1.0.0
+   west update
 
-   git checkout v0.4.0
+To update to a particular revision (SHA), make sure that you have that particular revision locally before you check it out (by running ``git fetch origin``)::
+
+   git fetch origin
+   git checkout 224bee9055d986fe2677149b8cbda0ff10650a6e
    west update
 
 To switch to the latest state of development, enter the following commands::
 
-   git checkout master
+   git fetch origin
+   git checkout origin/master
    west update
 
 .. note::

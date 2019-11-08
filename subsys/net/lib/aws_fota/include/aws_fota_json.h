@@ -25,7 +25,6 @@ extern "C" {
 /** @brief The max JOB_ID_LEN according to AWS docs
  * https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html
  */
-#define JOB_ID_MAX_LEN (64)
 #define STATUS_MAX_LEN (12)
 
 int aws_fota_parse_notify_next_document(char *job_document,

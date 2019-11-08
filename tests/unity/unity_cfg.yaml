@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+# Configuration for Unity and CMock
+#
+# See https://github.com/ThrowTheSwitch/CMock/blob/master/docs/CMock_Summary.md#config-options
+# and https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityHelperScriptsGuide.md#options-accepted-by-generate_test_runnerrb
+#
+# Some additional options are passed to cmock on the command line, see CMakeLists.txt.
+:cmock:
+    :plugins:
+        - :ignore
+        - :ignore_arg
+        - :array
+        - :callback
+        - :return_thru_ptr
+        - :expect_any_args
+    :treat_externs: :include
+    :callback_after_arg_check: true
+    :treat_as:
+        's8_t': 'INT8'
+        'u8_t': 'HEX8'
+        's16_t': 'INT16'
+        'u16_t': 'HEX16'
+        's32_t': 'INT32'
+        'u32_t': 'HEX32'
+        's64_t': 'INT64'
+        'u64_t': 'HEX64'

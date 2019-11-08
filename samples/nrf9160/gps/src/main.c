@@ -14,6 +14,7 @@
 
 #ifdef CONFIG_BOARD_NRF9160_PCA10090NS
 #define AT_MAGPIO      "AT\%XMAGPIO=1,0,0,1,1,1574,1577"
+#define AT_COEX0       "AT\%XCOEX0=1,1,1570,1580"
 #endif
 
 static const char     update_indicator[] = {'\\', '|', '/', '-'};
@@ -21,6 +22,7 @@ static const char     at_commands[][31]  = {
 				AT_XSYSTEMMODE,
 #ifdef CONFIG_BOARD_NRF9160_PCA10090NS
 				AT_MAGPIO,
+				AT_COEX0,
 #endif
 				AT_CFUN
 			};
@@ -38,11 +40,6 @@ nrf_gnss_data_frame_t last_fix;
 void bsd_recoverable_error_handler(uint32_t error)
 {
 	printf("Err: %lu\n", (unsigned long)error);
-}
-
-void bsd_irrecoverable_error_handler(uint32_t error)
-{
-	printf("Irrecoverable: %lu\n", (unsigned long)error);
 }
 
 static int enable_gps(void)

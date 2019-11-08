@@ -10,6 +10,7 @@
 #include <secure_services.h>
 #include <kernel.h>
 #include <pm_config.h>
+#include <fw_info.h>
 
 void print_hex_number(u8_t *num, size_t len)
 {
@@ -28,6 +29,7 @@ void print_random_number(u8_t *num, size_t len)
 
 void main(void)
 {
+	struct fw_info info_app;
 	const int sleep_time_s = 5;
 	const int random_number_count = 16;
 	const int random_number_len = 144;
@@ -50,6 +52,13 @@ void main(void)
 		print_random_number(random_number, olen);
 	}
 
+	ret = spm_firmware_info(PM_APP_ADDRESS, &info_app);
+	if (ret != 0) {
+		printk("Could find firmware info (err: %d)\n", ret);
+	}
+
+	printk("App FW version: %d\n", info_app.firmware_version);
+
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
 	const int num_bytes_to_read = PM_MCUBOOT_PAD_SIZE;
 	const int read_address = PM_MCUBOOT_PAD_ADDRESS;
@@ -64,6 +73,17 @@ void main(void)
 
 	print_hex_number(buf, num_bytes_to_read);
 #endif
+
+	u32_t info_part = 0;
+	u32_t ficr_addr = (u32_t)&NRF_FICR_S->INFO.PART;
+
+	printk("\nRead FICR, offset 0x20C (address 0x%08x):\n", ficr_addr);
+	ret = spm_request_read(&info_part, ficr_addr, sizeof(u32_t));
+	if (ret != 0) {
+		printk("Could not read FICR (err: %d)\n", ret);
+	} else {
+		printk("FICR.INFO.PART (+0x20C) = 0x%08X\n", info_part);
+	}
 
 	printk("\nReboot in %d seconds.\n", sleep_time_s);
 	k_sleep(K_SECONDS(5));

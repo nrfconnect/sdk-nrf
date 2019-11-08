@@ -28,6 +28,7 @@ config DESKTOP_FN_KEYS_LOCK
 config DESKTOP_STORE_FN_LOCK
 	bool "Store Fn lock state"
 	default y
+	depends on SETTINGS
 	help
 	  Define if device should store Fn lock state after reboot.
 

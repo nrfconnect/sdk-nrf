@@ -11,12 +11,6 @@ void bsd_recoverable_error_handler(uint32_t err)
 	printk("bsdlib recoverable error: %u\n", (unsigned int)err);
 }
 
-void bsd_irrecoverable_error_handler(uint32_t err)
-{
-	printk("bsdlib irrecoverable error: %u\n", (unsigned int)err);
-	__ASSERT_NO_MSG(false);
-}
-
 void lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
 	switch (event->type) {

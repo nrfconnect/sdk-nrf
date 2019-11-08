@@ -501,6 +501,10 @@ static void notify_hids(const struct ble_peer_event *event)
 		__ASSERT_NO_MSG(cur_conn == event->id);
 		err = bt_gatt_hids_notify_disconnected(&hids_obj, event->id);
 
+		if (err) {
+			LOG_WRN("Connection was not secured");
+		}
+
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 			config_channel_disconnect(&cfg_chan);
 		}
@@ -518,6 +522,9 @@ static void notify_hids(const struct ble_peer_event *event)
 				bool enabled = report_enabled[tr][report_mode];
 				broadcast_subscription_change(tr, enabled);
 			}
+		} else {
+			LOG_ERR("Failed to notify the HID service about the "
+				"connection");
 		}
 
 		break;
@@ -529,10 +536,6 @@ static void notify_hids(const struct ble_peer_event *event)
 	default:
 		__ASSERT_NO_MSG(false);
 		break;
-	}
-
-	if (err) {
-		LOG_ERR("Failed to notify the HID service about the connection");
 	}
 }
 

@@ -10,6 +10,7 @@
 #include <kernel.h>
 #include <soc.h>
 #include <misc/byteorder.h>
+#include <stdbool.h>
 
 #include <ble_controller.h>
 #include <ble_controller_hci.h>
@@ -22,7 +23,7 @@
 #define BLE_CONTROLLER_IRQ_PRIO_LOW  4
 #define BLE_CONTROLLER_IRQ_PRIO_HIGH 0
 
-static K_SEM_DEFINE(sem_recv, 0, UINT_MAX);
+static K_SEM_DEFINE(sem_recv, 0, 1);
 static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 
 static struct k_thread recv_thread_data;
@@ -31,7 +32,47 @@ static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_BLECTLR_SIGNAL_STACK_SIZE);
 
-static u8_t ble_controller_mempool[CONFIG_BLECTRL_MEMPOOL_SIZE];
+
+/* It should not be possible to set CONFIG_BLECTRL_SLAVE_COUNT larger than
+ * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
+ * verify that assumption.
+ */
+BUILD_ASSERT(CONFIG_BLECTRL_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
+
+#define BLECTRL_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BLECTRL_SLAVE_COUNT)
+
+BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
+			 (BLECTRL_MASTER_COUNT > 0));
+
+BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
+			 (CONFIG_BLECTRL_SLAVE_COUNT > 0));
+
+#ifdef CONFIG_BT_CTLR_DATA_LENGTH_MAX
+	#define MAX_TX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
+	#define MAX_RX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
+#else
+	#define MAX_TX_PACKET_SIZE BLE_CONTROLLER_DEFAULT_TX_PACKET_SIZE
+	#define MAX_RX_PACKET_SIZE BLE_CONTROLLER_DEFAULT_RX_PACKET_SIZE
+#endif
+
+#define MASTER_MEM_SIZE (BLE_CONTROLLER_MEM_PER_MASTER_LINK( \
+	MAX_TX_PACKET_SIZE, \
+	MAX_RX_PACKET_SIZE, \
+	BLE_CONTROLLER_DEFAULT_TX_PACKET_COUNT, \
+	BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT) \
+	+ BLE_CONTROLLER_MEM_MASTER_LINKS_SHARED)
+
+#define SLAVE_MEM_SIZE (BLE_CONTROLLER_MEM_PER_SLAVE_LINK( \
+	MAX_TX_PACKET_SIZE, \
+	MAX_RX_PACKET_SIZE, \
+	BLE_CONTROLLER_DEFAULT_TX_PACKET_COUNT, \
+	BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT) \
+	+ BLE_CONTROLLER_MEM_SLAVE_LINKS_SHARED)
+
+#define MEMPOOL_SIZE ((CONFIG_BLECTRL_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
+		      (BLECTRL_MASTER_COUNT * MASTER_MEM_SIZE))
+
+static u8_t ble_controller_mempool[MEMPOOL_SIZE];
 
 void blectlr_assertion_handler(const char *const file, const u32_t line)
 {
@@ -178,52 +219,67 @@ static void event_packet_process(u8_t *hci_buf)
 	}
 }
 
+static bool fetch_and_process_hci_evt(uint8_t *p_hci_buffer)
+{
+	int errcode;
+
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	if (!errcode) {
+		errcode = hci_evt_get(p_hci_buffer);
+		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (errcode) {
+		return false;
+	}
+
+	event_packet_process(p_hci_buffer);
+	return true;
+
+}
+
+static bool fetch_and_process_acl_data(uint8_t *p_hci_buffer)
+{
+	int errcode;
+
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	if (!errcode) {
+		errcode = hci_data_get(p_hci_buffer);
+		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (errcode) {
+		return false;
+	}
+
+	data_packet_process(p_hci_buffer);
+	return true;
+}
+
 static void recv_thread(void *p1, void *p2, void *p3)
 {
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	static u8_t hci_buffer[256 + 4];
-	int errcode;
+	static u8_t hci_buffer[HCI_MSG_BUFFER_MAX_SIZE];
 
-	BT_DBG("Started");
+	bool received_evt = false;
+	bool received_data = false;
+
 	while (true) {
-		k_sem_take(&sem_recv, K_FOREVER);
-		while (true) {
-			errcode = MULTITHREADING_LOCK_ACQUIRE();
-			if (!errcode) {
-				errcode = hci_evt_get(hci_buffer);
-				MULTITHREADING_LOCK_RELEASE();
-			}
-			if (!errcode) {
-				event_packet_process(hci_buffer);
-			} else {
-				break;
-			}
+		if (!received_evt && !received_data) {
+			/* Wait for a signal from the controller. */
+			k_sem_take(&sem_recv, K_FOREVER);
 		}
 
-		while (true) {
-			errcode = MULTITHREADING_LOCK_ACQUIRE();
-			if (!errcode) {
-				errcode = hci_data_get(hci_buffer);
-				MULTITHREADING_LOCK_RELEASE();
-			}
-			if (!errcode) {
-				data_packet_process(hci_buffer);
-			} else {
-				break;
-			}
-		}
+		received_evt = fetch_and_process_hci_evt(&hci_buffer[0]);
+
+		received_data = fetch_and_process_acl_data(&hci_buffer[0]);
 
 		/* Let other threads of same priority run in between. */
 		k_yield();
 	}
-}
-
-void _signal_handler_irq(void)
-{
-	k_sem_give(&sem_recv);
 }
 
 static void signal_thread(void *p1, void *p2, void *p3)
@@ -303,7 +359,7 @@ static int ble_init(struct device *unused)
 	clock_cfg.lf_clk_source = NRF_LF_CLOCK_SRC_RC;
 #elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL
 	clock_cfg.lf_clk_source = NRF_LF_CLOCK_SRC_XTAL;
-#elif CLOCK_CONTROL_NRF_K32SRC_SYNTH
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH
 	clock_cfg.lf_clk_source = NRF_LF_CLOCK_SRC_SYNTH;
 #else
 #error "Clock source is not defined"
@@ -325,13 +381,13 @@ static int ble_init(struct device *unused)
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_30_PPM;
 #elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_20PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_20_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_10PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_10PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_10_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_5PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_5PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_5_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_2PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_2PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_2_PPM;
-#elif CLOCK_CONTROL_NRF_K32SRC_1PPM
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_1PPM
 	clock_cfg.accuracy = NRF_LF_CLOCK_ACCURACY_1_PPM;
 #else
 #error "Clock accuracy is not defined"
@@ -351,7 +407,7 @@ static int ble_enable(void)
 	int required_memory;
 	ble_controller_cfg_t cfg;
 
-	cfg.master_count.count = 1;
+	cfg.master_count.count = BLECTRL_MASTER_COUNT;
 
 	/* NOTE: ble_controller_cfg_set() returns a negative errno on error. */
 	required_memory =
@@ -362,7 +418,7 @@ static int ble_enable(void)
 		return required_memory;
 	}
 
-	cfg.slave_count.count = 1;
+	cfg.slave_count.count = CONFIG_BLECTRL_SLAVE_COUNT;
 
 	required_memory =
 		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
@@ -372,8 +428,8 @@ static int ble_enable(void)
 		return required_memory;
 	}
 
-	cfg.buffer_cfg.rx_packet_size = 251;
-	cfg.buffer_cfg.tx_packet_size = 251;
+	cfg.buffer_cfg.rx_packet_size = MAX_RX_PACKET_SIZE;
+	cfg.buffer_cfg.tx_packet_size = MAX_TX_PACKET_SIZE;
 	cfg.buffer_cfg.rx_packet_count = BLE_CONTROLLER_DEFAULT_RX_PACKET_COUNT;
 	cfg.buffer_cfg.tx_packet_count = BLE_CONTROLLER_DEFAULT_TX_PACKET_COUNT;
 

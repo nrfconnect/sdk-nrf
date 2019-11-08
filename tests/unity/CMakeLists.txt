@@ -8,6 +8,7 @@ zephyr_library()
 
 set_property(GLOBAL PROPERTY CMOCK_DIR ${ZEPHYR_BASE}/../test/cmock)
 get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
+set(UNITY_CONFIG_FILE ${CMAKE_CURRENT_LIST_DIR}/unity_cfg.yaml CACHE STRING "")
 
 find_program(
   RUBY_EXECUTABLE
@@ -26,6 +27,8 @@ zephyr_library_sources(
 	${CMOCK_DIR}/vendor/unity/src/unity.c
 	${CMOCK_DIR}/src/cmock.c
 )
+
+zephyr_library_sources_ifdef(CONFIG_BOARD_NATIVE_POSIX src/native_posix.c)
 
 # Generate test runner file.
 function(test_runner_generate test_file_path)
@@ -53,27 +56,23 @@ function(cmock_generate header_path dst_path)
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
   set(MOCK_PREFIX mock_)
 
+  get_filename_component(file_name "${header_path}" NAME_WE)
+  set(MOCK_FILE ${dst_path}/${MOCK_PREFIX}${file_name}.c)
+
   file(MAKE_DIRECTORY "${dst_path}")
 
-  execute_process(
+  add_custom_command(OUTPUT ${MOCK_FILE}
     COMMAND ${RUBY_EXECUTABLE}
     ${CMOCK_DIR}/lib/cmock.rb
     --mock_prefix=${MOCK_PREFIX}
-    --plugins=return_thru_ptr\;ignore_arg\;ignore\;callback\;array
     --mock_path=${dst_path}
+    -o${UNITY_CONFIG_FILE}
     ${header_path}
+    DEPENDS ${header_path} ${UNITY_CONFIG_FILE}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    RESULT_VARIABLE op_result
-    OUTPUT_VARIABLE output_result
   )
 
-  if (NOT ${op_result} EQUAL 0)
-    message(SEND_ERROR "${output_result}")
-    message(FATAL_ERROR "Failed to generate runner ${output_file}")
-  endif()
-
-  get_filename_component(file_name "${header_path}" NAME_WE)
-  target_sources(app PRIVATE ${dst_path}/${MOCK_PREFIX}${file_name}.c)
+  target_sources(app PRIVATE ${MOCK_FILE})
 endfunction()
 
 # Add --wrap linker option for each function listed in the input file.

@@ -11,11 +11,9 @@
 #include <flash_map.h>
 #include <pm_config.h>
 #include <dfu/mcuboot.h>
-#include <bluetooth/conn.h>
 
 #include "event_manager.h"
 #include "config_event.h"
-#include "ble_event.h"
 
 #define MODULE dfu
 #include "module_state_event.h"
@@ -24,21 +22,13 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 
 
-#if defined(CONFIG_BT_PERIPHERAL)
-#define DEFAULT_LATENCY CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY
-#else
-#define DEFAULT_LATENCY 0
-#endif
-
-
 #define FLASH_PAGE_SIZE_LOG2	12
 #define FLASH_PAGE_SIZE		BIT(FLASH_PAGE_SIZE_LOG2)
 #define FLASH_PAGE_ID(off)	((off) >> FLASH_PAGE_SIZE_LOG2)
 
-#define DFU_TIMEOUT K_SECONDS(2)
-#define REBOOT_REQUEST_TIMEOUT K_MSEC(250)
+#define DFU_TIMEOUT		K_SECONDS(2)
+#define REBOOT_REQUEST_TIMEOUT	K_MSEC(250)
 
-static struct bt_conn *active_conn;
 static struct k_delayed_work dfu_timeout;
 static struct k_delayed_work reboot_request;
 
@@ -48,45 +38,9 @@ static u32_t img_csum;
 static u32_t img_length;
 
 
-static void set_ble_latency(bool low_latency)
-{
-	if (!active_conn) {
-		LOG_INF("No active_connection");
-		return;
-	}
-
-	struct bt_conn_info info;
-
-	int err = bt_conn_get_info(active_conn, &info);
-	if (err) {
-		LOG_WRN("Cannot get conn info (%d)", err);
-		return;
-	}
-
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
-	    (info.role == BT_CONN_ROLE_SLAVE)) {
-		const struct bt_le_conn_param param = {
-			.interval_min = info.le.interval,
-			.interval_max = info.le.interval,
-			.latency = (low_latency) ? (0) : (DEFAULT_LATENCY),
-			.timeout = info.le.timeout
-		};
-
-		err = bt_conn_le_param_update(active_conn, &param);
-		if (err) {
-			LOG_WRN("Cannot update parameters (%d)", err);
-			return;
-		}
-	}
-
-	LOG_INF("BLE latency %screased", low_latency ? "de" : "in");
-}
-
 static void dfu_timeout_handler(struct k_work *work)
 {
 	LOG_WRN("DFU timed out");
-
-	set_ble_latency(false);
 
 	if (flash_area) {
 		flash_area_close(flash_area);
@@ -164,7 +118,6 @@ static void handle_dfu_data(const struct config_event *event)
 dfu_finish:
 	flash_area_close(flash_area);
 	flash_area = NULL;
-	set_ble_latency(false);
 	k_delayed_work_cancel(&dfu_timeout);
 }
 
@@ -243,8 +196,6 @@ static void handle_dfu_start(const struct config_event *event)
 		flash_area = NULL;
 	} else {
 		LOG_INF("DFU started");
-
-		set_ble_latency(true);
 	}
 
 	k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
@@ -285,9 +236,6 @@ static void handle_dfu_sync(const struct config_fetch_request_event *event)
 static void handle_reboot_request(const struct config_fetch_request_event *event)
 {
 	LOG_INF("System reboot requested");
-
-	/* Decrease latency to ensure device will send response in time. */
-	set_ble_latency(true);
 
 	struct config_fetch_event *fetch_event =
 		new_config_fetch_event(0);
@@ -423,31 +371,6 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_event(eh)) {
-		struct ble_peer_event *event = cast_ble_peer_event(eh);
-
-		switch (event->state) {
-		case PEER_STATE_CONNECTED:
-			active_conn = event->id;
-			break;
-
-		case PEER_STATE_DISCONNECTED:
-			active_conn = NULL;
-			break;
-
-		case PEER_STATE_SECURED:
-		case PEER_STATE_CONN_FAILED:
-			/* No action */
-			break;
-
-		default:
-			__ASSERT_NO_MSG(false);
-			break;
-		}
-
-		return false;
-	}
-
 	if (is_module_state_event(eh)) {
 		const struct module_state_event *event =
 			cast_module_state_event(eh);
@@ -474,4 +397,3 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);

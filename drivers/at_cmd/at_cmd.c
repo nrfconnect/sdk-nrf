@@ -19,8 +19,8 @@ LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 
 #define AT_CMD_OK_STR    "OK"
 #define AT_CMD_ERROR_STR "ERROR"
-#define AT_CMD_CMS_STR   "+CMS:"
-#define AT_CMD_CME_STR   "+CME:"
+#define AT_CMD_CMS_STR   "+CMS ERROR:"
+#define AT_CMD_CME_STR   "+CME ERROR:"
 
 static K_THREAD_STACK_DEFINE(socket_thread_stack, \
 				CONFIG_AT_CMD_THREAD_STACK_SIZE);
@@ -77,13 +77,6 @@ static int get_return_code(char *buf, struct return_state_object *ret)
 			break;
 		}
 
-		tmpstr = strstr(buf, AT_CMD_ERROR_STR);
-		if (tmpstr) {
-			ret->state = AT_CMD_ERROR;
-			ret->code  = -ENOEXEC;
-			break;
-		}
-
 		tmpstr = strstr(buf, AT_CMD_CMS_STR);
 		if (tmpstr) {
 			ret->state = AT_CMD_ERROR_CMS;
@@ -95,6 +88,13 @@ static int get_return_code(char *buf, struct return_state_object *ret)
 		if (tmpstr) {
 			ret->state = AT_CMD_ERROR_CME;
 			ret->code = atoi(&buf[ARRAY_SIZE(AT_CMD_CMS_STR) - 1]);
+			break;
+		}
+
+		tmpstr = strstr(buf, AT_CMD_ERROR_STR);
+		if (tmpstr) {
+			ret->state = AT_CMD_ERROR;
+			ret->code  = -ENOEXEC;
 			break;
 		}
 	} while (0);
@@ -170,6 +170,8 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			ret.code  = -ENOBUFS;
 			goto next;
 		}
+
+		LOG_DBG("at_cmd_rx: %s", log_strdup(item->data));
 
 		payload_len = get_return_code(item->data, &ret);
 
@@ -289,6 +291,11 @@ int at_cmd_write(const char *const cmd,
 
 void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 {
+	LOG_DBG("Setting notification handler to %p", handler);
+	if (notification_handler != NULL && handler != notification_handler) {
+		LOG_WRN("Forgetting prior notification handler %p",
+			notification_handler);
+	}
 
 	k_sem_take(&cmd_pending, K_FOREVER);
 

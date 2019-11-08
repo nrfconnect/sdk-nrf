@@ -1,0 +1,4 @@
+tests:
+  testing.dfu_target.mcuboot:
+    tags: test_dfu_target
+    type: unit

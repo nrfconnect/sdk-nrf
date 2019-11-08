@@ -42,6 +42,7 @@ th,td {
 
 .rst-versions .rst-current-version {
  background-color: #a67dfb;
+ padding: 12px;
 }
 
 /* text color navigation menu */
@@ -57,4 +58,18 @@ th,td {
 /* expanded nodes, not selected */
 .wy-menu-vertical li.current a {
  color: #a67dfb;
+}
+
+/* overriding some of the grid settings */
+.grid-item a {
+ background-color: #fff;
+ color: #404040;
+}
+.grid-item a:hover {
+ background-color: #c6cbce;
+}
+
+/* overriding the positioning of the doc set switcher */
+.rst-versions {
+ position: fixed !important;
 }

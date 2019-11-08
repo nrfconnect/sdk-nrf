@@ -14,4 +14,11 @@
  */
 void cJSON_Init(void);
 
+/**
+ * @brief Free a string created and returned by cJSON.
+ * @return returns the return value of the free implementation.
+ * @param ptr IN -- pointer to string to free
+ */
+void cJSON_FreeString(char *ptr);
+
 #endif /* cJSON_OS_H__ */

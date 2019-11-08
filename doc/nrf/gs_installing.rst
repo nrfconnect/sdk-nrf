@@ -1,21 +1,15 @@
 .. _gs_installing:
 
 
-Installing the |NCS|
-####################
+Installing the |NCS| manually
+#############################
 
 The recommended way to get started with the |NCS| is to run the Getting Started Assistant app in nRF Connect for Desktop.
-See the `Getting Started information`_ on the nRF9160 DK product page for information about how to install the Getting Started Assistant.
+See the :ref:`gs_assistant` section for information about how to install the Getting Started Assistant.
 
-The Getting Started Assistant checks which of the required tools are already installed on your computer and guides you through installing the parts of the toolchain that you are missing.
-In addition, it will help you clone the |NCS| repositories and set up your first project in |SES|.
-
-.. important::
-   With the introduction of the :ref:`zephyr:west` tool, the way to clone the repositories has changed considerably.
-   Therefore, if you work with the latest version of the |NCS| repositories instead of the latest release, follow the steps outlined in this section for cloning the repositories.
-
-.. If you use the Getting Started Assistant, you can skip this section of the documentation.
-.. If you prefer to install the toolchain manually, or if you run into problems during the installation process, see the following documentation for instructions.
+.. note::
+   If you use the Getting Started Assistant, you can skip this section of the documentation.
+   If you prefer to install the toolchain manually, or if you run into problems during the installation process, see the following documentation for instructions.
 
 
 .. toctree::

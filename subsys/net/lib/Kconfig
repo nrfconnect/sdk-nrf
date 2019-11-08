@@ -5,7 +5,6 @@
 
 menu "Application protocols"
 
-rsource "mqtt_socket/Kconfig"
 rsource "nrf_cloud/Kconfig"
 rsource "download_client/Kconfig"
 rsource "fota_download/Kconfig"

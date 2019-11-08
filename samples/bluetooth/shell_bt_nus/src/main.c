@@ -74,9 +74,10 @@ static void __attribute__((unused)) security_changed(struct bt_conn *conn,
 	char *addr = log_addr(conn);
 
 	if (!err) {
-		printk("Security changed: %s level %u", addr, level);
+		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d", addr, level, err);
+		LOG_INF("Security failed: %s level %u err %d", addr, level,
+			err);
 	}
 }
 
@@ -97,10 +98,29 @@ static void auth_cancel(struct bt_conn *conn)
 	LOG_INF("Pairing cancelled: %s", log_addr(conn));
 }
 
+static void pairing_confirm(struct bt_conn *conn)
+{
+	bt_conn_auth_pairing_confirm(conn);
+
+	LOG_INF("Pairing confirmed: %s", log_addr(conn));
+}
+
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	LOG_INF("Pairing completed: %s, bonded: %d", log_addr(conn), bonded);
+}
+
+static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
+{
+	LOG_INF("Pairing failed conn: %s, reason %d", log_addr(conn), reason);
+}
+
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
-	.passkey_entry = NULL,
 	.cancel = auth_cancel,
+	.pairing_confirm = pairing_confirm,
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 
 static void bt_ready(int err)

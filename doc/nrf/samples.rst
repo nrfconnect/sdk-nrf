@@ -14,6 +14,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    :glob:
 
    ../../samples/bluetooth/*/README
+   ../../samples/bluetooth/mesh/*/README
 
 .. note::
    |noBLE|

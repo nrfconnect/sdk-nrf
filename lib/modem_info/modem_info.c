@@ -6,6 +6,7 @@
 
 #include <at_cmd_parser/at_cmd_parser.h>
 #include <at_cmd.h>
+#include <at_notif.h>
 #include <ctype.h>
 #include <device.h>
 #include <errno.h>
@@ -40,6 +41,7 @@ LOG_MODULE_REGISTER(modem_info);
 #define AT_CMD_SYSTEMMODE	"AT%XSYSTEMMODE?"
 #define AT_CMD_IMSI		"AT+CIMI"
 #define AT_CMD_IMEI		"AT+CGSN"
+#define AT_CMD_DATE_TIME	"AT+CCLK?"
 #define AT_CMD_SUCCESS_SIZE	5
 
 #define RSRP_DATA_NAME		"rsrp"
@@ -62,9 +64,10 @@ LOG_MODULE_REGISTER(modem_info);
 #define GPS_MODE_DATA_NAME	"gpsMode"
 #define IMSI_DATA_NAME		"imsi"
 #define MODEM_IMEI_DATA_NAME	"imei"
+#define DATE_TIME_DATA_NAME	"dateTime"
 
 #define RSRP_PARAM_INDEX	1
-#define RSRP_PARAM_COUNT	3
+#define RSRP_PARAM_COUNT	5
 #define RSRP_OFFSET_VAL		141
 
 #define BAND_PARAM_INDEX	1 /* Index of desired parameter */
@@ -105,11 +108,14 @@ LOG_MODULE_REGISTER(modem_info);
 #define GPS_MODE_PARAM_INDEX	3
 #define SYSTEMMODE_PARAM_COUNT	5
 
-#define IMSI_PARAM_INDEX    0
-#define IMSI_PARAM_COUNT    1
+#define IMSI_PARAM_INDEX	0
+#define IMSI_PARAM_COUNT	1
 
 #define MODEM_IMEI_PARAM_INDEX	0
 #define MODEM_IMEI_PARAM_COUNT  1
+
+#define DATE_TIME_PARAM_INDEX	1
+#define DATE_TIME_PARAM_COUNT	2
 
 struct modem_info_data {
 	const char *cmd;
@@ -279,6 +285,14 @@ static const struct modem_info_data imei_data = {
 	.data_type	= AT_PARAM_TYPE_STRING,
 };
 
+static const struct modem_info_data date_time_data = {
+	.cmd		= AT_CMD_DATE_TIME,
+	.data_name	= DATE_TIME_DATA_NAME,
+	.param_index	= DATE_TIME_PARAM_INDEX,
+	.param_count	= DATE_TIME_PARAM_COUNT,
+	.data_type	= AT_PARAM_TYPE_STRING,
+};
+
 static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_RSRP]	= &rsrp_data,
 	[MODEM_INFO_CUR_BAND]	= &band_data,
@@ -300,6 +314,7 @@ static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_GPS_MODE]   = &gps_mode_data,
 	[MODEM_INFO_IMSI]	= &imsi_data,
 	[MODEM_INFO_IMEI]	= &imei_data,
+	[MODEM_INFO_DATE_TIME]	= &date_time_data,
 };
 
 static rsrp_cb_t modem_info_rsrp_cb;
@@ -338,7 +353,7 @@ static int modem_info_parse(const struct modem_info_data *modem_data,
 	}
 
 	param_index = at_params_valid_count_get(&m_param_list);
-	if (param_index != modem_data->param_count) {
+	if (param_index > modem_data->param_count) {
 		return -EAGAIN;
 	}
 
@@ -469,8 +484,10 @@ int modem_info_string_get(enum modem_info info, char *buf)
 	return len <= 0 ? -ENOTSUP : len;
 }
 
-static void modem_info_rsrp_subscribe_handler(char *response)
+static void modem_info_rsrp_subscribe_handler(void *context, char *response)
 {
+	ARG_UNUSED(context);
+
 	u16_t param_value;
 	int err;
 
@@ -501,7 +518,12 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 {
 	modem_info_rsrp_cb = cb;
 
-	at_cmd_set_notification_handler(modem_info_rsrp_subscribe_handler);
+	int rc = at_notif_register_handler(NULL,
+		modem_info_rsrp_subscribe_handler);
+	if (rc != 0) {
+		LOG_ERR("Can't register handler rc=%d", rc);
+		return rc;
+	}
 
 	if (at_cmd_write(AT_CMD_CESQ_ON, NULL, 0, NULL) != 0) {
 		return -EIO;

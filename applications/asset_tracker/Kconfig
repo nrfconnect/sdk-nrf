@@ -233,6 +233,18 @@ config CLOUD_UA_CONSOLE
 
 endchoice
 
+config CLOUD_FOTA_APP
+	bool "Enable firmware over-the-air upgrades for application"
+	depends on AWS_FOTA
+	depends on DFU_TARGET_MCUBOOT
+	default y
+
+config CLOUD_FOTA_MODEM
+	bool "Enable firmware over-the-air upgrades for modem"
+	depends on AWS_FOTA
+	depends on DFU_TARGET_MODEM
+	default y
+
 endmenu # Cloud
 
 menu "Environment sensors"
@@ -322,6 +334,27 @@ config TEMP_DEV_NAME
 endif
 
 endmenu # Environment sensors
+
+menuconfig LIGHT_SENSOR
+	bool "Light sensor"
+	select BH1749 if BOARD_NRF9160_PCA20035NS
+	default y if BOARD_NRF9160_PCA20035NS
+
+if LIGHT_SENSOR
+
+config LIGHT_SENSOR_DEV_NAME
+	string "Light sensor device name"
+	default "BH1749" if BOARD_NRF9160_PCA20035NS
+
+config LIGHT_SENSOR_DATA_SEND_INTERVAL
+	int "Interval in seconds for sending light sensor data"
+	default 60
+	help
+	  Interval between each sampling and sending of light sensor data.
+	  If the GPS is active, sensor data will not be sent before it is
+	  stopped. The unit is seconds.
+
+endif # LIGHT_SENSOR
 
 config USE_AT_HOST
 	bool "Enable AT commands"

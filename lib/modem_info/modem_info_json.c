@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <cJSON.h>
+#include <cJSON_os.h>
 #include <modem_info.h>
 #include <at_cmd_parser/at_params.h>
 #include <logging/log.h>
@@ -179,59 +180,40 @@ static int device_data_add(struct device_param *device, cJSON *json_obj)
 int modem_info_json_object_encode(struct modem_param_info *modem,
 				  cJSON *root_obj)
 {
-	int total_len = 0;
-	int ret;
-
 	if (root_obj == NULL || modem == NULL) {
 		return -EINVAL;
 	}
+
+	int obj_count = cJSON_GetArraySize(root_obj);
 
 	cJSON *network_obj	= cJSON_CreateObject();
 	cJSON *sim_obj		= cJSON_CreateObject();
 	cJSON *device_obj	= cJSON_CreateObject();
 
 	if (network_obj == NULL || sim_obj == NULL || device_obj == NULL) {
-		total_len = -ENOMEM;
+		obj_count = -ENOMEM;
 		goto delete_object;
 	}
 
-	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK)) {
-		ret = network_data_add(&modem->network, network_obj);
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK) &&
+	    (network_data_add(&modem->network, network_obj) > 0)) {
 
-		if (ret < 0) {
-			total_len = ret;
-			goto delete_object;
-		}
-
-		total_len += ret;
-		json_add_str(root_obj, "networkInfo",
-			     cJSON_PrintUnformatted(network_obj));
+		json_add_obj(root_obj, "networkInfo", network_obj);
+		network_obj = NULL;
 	}
 
-	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM)) {
-		ret = sim_data_add(&modem->sim, sim_obj);
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM) &&
+	    (sim_data_add(&modem->sim, sim_obj) > 0)) {
 
-		if (ret < 0) {
-			total_len = ret;
-			goto delete_object;
-		}
-
-		total_len += ret;
-		json_add_str(root_obj, "simInfo",
-			     cJSON_PrintUnformatted(sim_obj));
+		json_add_obj(root_obj, "simInfo", sim_obj);
+		sim_obj = NULL;
 	}
 
-	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)) {
-		ret = device_data_add(&modem->device, device_obj);
+	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE) &&
+	    (device_data_add(&modem->device, device_obj) > 0)) {
 
-		if (ret < 0) {
-			total_len = ret;
-			goto delete_object;
-		}
-
-		total_len += ret;
-		json_add_str(root_obj, "deviceInfo",
-			     cJSON_PrintUnformatted(device_obj));
+		json_add_obj(root_obj, "deviceInfo", device_obj);
+		device_obj = NULL;
 	}
 
 delete_object:
@@ -239,7 +221,11 @@ delete_object:
 	cJSON_Delete(sim_obj);
 	cJSON_Delete(device_obj);
 
-	return total_len;
+	if (obj_count >= 0) {
+		obj_count = cJSON_GetArraySize(root_obj) - obj_count;
+	}
+
+	return obj_count;
 }
 
 int modem_info_json_string_encode(struct modem_param_info *modem,
@@ -292,9 +278,11 @@ int modem_info_json_string_encode(struct modem_param_info *modem,
 	}
 
 	if (total_len > 0) {
-		memcpy(buf,
-		       cJSON_PrintUnformatted(root_obj),
+		char *root_obj_string = cJSON_PrintUnformatted(root_obj);
+
+		memcpy(buf, root_obj_string,
 		       MODEM_INFO_JSON_STRING_SIZE);
+		cJSON_FreeString(root_obj_string);
 	}
 
 delete_object:

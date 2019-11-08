@@ -32,6 +32,11 @@ Reading the current value
   Use :cpp:func:`bt_gatt_bas_c_read` to read the battery level.
   When subscribing to notifications, you can call this function to retrieve the current value even when there is no change.
 
+Periodically reading the current value with time interval
+  Use :cpp:func:`bt_gatt_bas_c_periodic_read_start` to periodically read the battery level with a given time interval.
+  You can call this function only when notification support is not enabled in BAS.
+  See :ref:`bas_c_readme_periodic` for more details.
+
 Getting the last known value
   The BAS Client stores the last known battery level information internally.
   Use :cpp:func:`bt_gatt_bas_c_get` to access it.
@@ -40,6 +45,25 @@ Getting the last known value
      The internally stored value is updated every time a notification or read response is received.
      If no value is received from the server, the get function returns :cpp:type:`BT_GATT_BAS_VAL_INVALID`.
 
+.. _bas_c_readme_periodic:
+
+Periodic reading of the battery level
+*************************************
+
+You can use the :cpp:func:`bt_gatt_bas_c_periodic_read_start` function to periodically read the battery level with a specific time interval.
+This function sends a read request to the connected device periodically.
+It can be used only when support for notifications is not enabled in BAS.
+
+For many devices, the battery level value does not change frequently.
+Depending on the type of connected device, you can decide how often to read the battery level value.
+For example, if the expected battery life is in the order of years, reading the battery level value more frequently than once a week is not recommended.
+
+Periodic read interval can be changed while the periodic read is active.
+In such case, the next read period is started with the new interval.
+
+.. note::
+   Providing the ``K_NO_WAIT`` and ``K_FOREVER`` arguments as the time interval causes reading of the charasteristic value as soon and as often as possible.
+
 
 API documentation
 *****************
@@ -47,6 +71,6 @@ API documentation
 | Header file: :file:`include/bas_c.h`
 | Source file: :file:`subsys/bluetooth/services/bas_c.c`
 
-.. doxygengroup:: bt_gatt_bas_c
+.. doxygengroup:: bt_gatt_bas_c_api
    :project: nrf
    :members:

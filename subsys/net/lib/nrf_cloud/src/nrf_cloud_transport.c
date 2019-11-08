@@ -9,13 +9,17 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <net/mqtt_socket.h>
+#include <net/mqtt.h>
 #include <net/socket.h>
 #include <logging/log.h>
 #include <misc/util.h>
 
 #if defined(CONFIG_BSD_LIBRARY)
 #include "nrf_inbuilt_key.h"
+#endif
+
+#if defined(CONFIG_AWS_FOTA)
+#include <net/aws_fota.h>
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
@@ -46,8 +50,8 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #define NCT_SHADOW_BASE_TOPIC AWS "%s/shadow"
 #define NCT_SHADOW_BASE_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 7)
 
-#define NCT_ACCEPTED_TOPIC AWS "%s/shadow/get/accepted"
-#define NCT_ACCEPTED_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 20)
+#define NCT_ACCEPTED_TOPIC "%s/shadow/get/accepted"
+#define NCT_ACCEPTED_TOPIC_LEN (NRF_CLOUD_CLIENT_ID_LEN + 20)
 
 #define NCT_REJECTED_TOPIC AWS "%s/shadow/get/rejected"
 #define NCT_REJECTED_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 20)
@@ -90,6 +94,9 @@ static struct nct {
 	struct mqtt_utf8 dc_rx_endp;
 	struct mqtt_utf8 dc_m_endp;
 	u32_t message_id;
+	u8_t rx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
+	u8_t tx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
+	u8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN];
 } nct;
 
 static const struct mqtt_topic nct_cc_rx_list[] = {
@@ -343,7 +350,7 @@ static int nct_provision(void)
 	nct.tls_config.cipher_count = 0;
 	nct.tls_config.cipher_list = NULL;
 	nct.tls_config.sec_tag_count = ARRAY_SIZE(sec_tag_list);
-	nct.tls_config.seg_tag_list = sec_tag_list;
+	nct.tls_config.sec_tag_list = sec_tag_list;
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
@@ -432,6 +439,23 @@ static int nct_provision(void)
 	return 0;
 }
 
+#if defined(CONFIG_AWS_FOTA)
+/* Handle AWS FOTA events */
+static void aws_fota_cb_handler(enum aws_fota_evt_id evt)
+{
+	switch (evt) {
+	case AWS_FOTA_EVT_DONE:
+		LOG_DBG("AWS_FOTA_EVT_DONE, rebooting to apply update.");
+		nct_apply_update();
+		break;
+
+	case AWS_FOTA_EVT_ERROR:
+		LOG_ERR("AWS_FOTA_EVT_ERROR");
+		break;
+	}
+}
+#endif /* defined(CONFIG_AWS_FOTA) */
+
 /* Connect to MQTT broker. */
 int nct_mqtt_connect(void)
 {
@@ -446,6 +470,10 @@ int nct_mqtt_connect(void)
 	nct.client.user_name = NULL;
 #if defined(CONFIG_MQTT_LIB_TLS)
 	nct.client.transport.type = MQTT_TRANSPORT_SECURE;
+	nct.client.rx_buf = nct.rx_buf;
+	nct.client.rx_buf_size = sizeof(nct.rx_buf);
+	nct.client.tx_buf = nct.tx_buf;
+	nct.client.tx_buf_size = sizeof(nct.tx_buf);
 
 	struct mqtt_sec_config *tls_config = &nct.client.transport.tls.config;
 
@@ -453,20 +481,53 @@ int nct_mqtt_connect(void)
 #else
 	nct.client.transport.type = MQTT_TRANSPORT_NON_SECURE;
 #endif
-
+#if defined(CONFIG_AWS_FOTA)
+	int err = aws_fota_init(&nct.client, STRINGIFY(APP_VERSION),
+				aws_fota_cb_handler);
+	if (err != 0) {
+		LOG_ERR("ERROR: aws_fota_init %d", err);
+		return err;
+	}
+#endif /* defined(CONFIG_AWS_FOTA) */
 	return mqtt_connect(&nct.client);
+}
+
+static int publish_get_payload(struct mqtt_client *client, size_t length)
+{
+	if (length > sizeof(nct.payload_buf)) {
+		return -EMSGSIZE;
+	}
+
+	return mqtt_readall_publish_payload(client, nct.payload_buf, length);
 }
 
 /* Handle MQTT events. */
 static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 				 const struct mqtt_evt *_mqtt_evt)
 {
+	int err;
 	struct nct_evt evt = {
 		.status = _mqtt_evt->result
 	};
 	struct nct_cc_data cc;
 	struct nct_dc_data dc;
 	bool event_notify = false;
+
+#if defined(CONFIG_AWS_FOTA)
+	err = aws_fota_mqtt_evt_handler(mqtt_client, _mqtt_evt);
+	if (err > 0) {
+		/* Event handled by FOTA library so we can skip it */
+		return;
+	} else if (err < 0) {
+		LOG_ERR("aws_fota_mqtt_evt_handler: Failed! %d", err);
+		LOG_DBG("Disconnecting MQTT client...");
+
+		err = mqtt_disconnect(mqtt_client);
+		if (err) {
+			LOG_ERR("Could not disconnect: %d", err);
+		}
+	}
+#endif /* defined(CONFIG_AWS_FOTA) */
 
 	switch (_mqtt_evt->type) {
 	case MQTT_EVT_CONNACK: {
@@ -483,6 +544,16 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			p->message_id,
 			p->message.payload.len);
 
+		int err = publish_get_payload(mqtt_client,
+					      p->message.payload.len);
+
+		if (err < 0) {
+			LOG_ERR("publish_get_payload: failed %d", err);
+			mqtt_disconnect(mqtt_client);
+			event_notify = false;
+			break;
+		}
+
 		/* If the data arrives on one of the subscribed control channel
 		 * topic. Then we notify the same.
 		 */
@@ -490,7 +561,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			NCT_RX_LIST, &p->message.topic, &cc.opcode)) {
 
 			cc.id = p->message_id;
-			cc.data.ptr = p->message.payload.data;
+			cc.data.ptr = nct.payload_buf;
 			cc.data.len = p->message.payload.len;
 
 			evt.type = NCT_EVT_CC_RX_DATA;
@@ -563,7 +634,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 
 	if (event_notify) {
-		int err = nct_input(&evt);
+		err = nct_input(&evt);
 
 		if (err != 0) {
 			LOG_ERR("nct_input: failed %d", err);
@@ -582,12 +653,7 @@ int nct_init(void)
 		return err;
 	}
 
-	err = nct_provision();
-	if (err) {
-		return err;
-	}
-
-	return mqtt_init();
+	return nct_provision();
 }
 
 #if defined(CONFIG_NRF_CLOUD_STATIC_IPV4)
@@ -845,7 +911,7 @@ int nct_disconnect(void)
 void nct_process(void)
 {
 	mqtt_input(&nct.client);
-	mqtt_live();
+	mqtt_live(&nct.client);
 }
 
 int nct_socket_get(void)

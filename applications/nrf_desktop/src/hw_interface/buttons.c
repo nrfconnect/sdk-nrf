@@ -113,6 +113,7 @@ static int set_trig_mode(int trig_mode)
 
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
 		__ASSERT_NO_MSG(row[i].port < ARRAY_SIZE(port_map));
+		__ASSERT_NO_MSG(port_map[row[i].port] != NULL);
 
 		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin,
 					 flags);
@@ -237,6 +238,17 @@ static void scan_fn(struct k_work *work)
 		goto error;
 	}
 
+	static u32_t settled_state[COLUMNS];
+
+	/* Prevent bouncing */
+	static u32_t prev_state[COLUMNS];
+	for (size_t i = 0; i < COLUMNS; i++) {
+		u32_t bounce_mask = prev_state[i] ^ raw_state[i];
+		prev_state[i] = raw_state[i];
+		raw_state[i] &= ~bounce_mask;
+		raw_state[i] |= settled_state[i] & bounce_mask;
+	}
+
 	/* Prevent ghosting */
 	u32_t cur_state[COLUMNS];
 	for (size_t i = 0; i < COLUMNS; i++) {
@@ -256,7 +268,6 @@ static void scan_fn(struct k_work *work)
 	}
 
 	/* Emit event for any key state change */
-	static u32_t old_state[COLUMNS];
 	bool any_pressed = false;
 	size_t evt_limit = 0;
 
@@ -264,7 +275,7 @@ static void scan_fn(struct k_work *work)
 		for (size_t j = 0; j < ARRAY_SIZE(row); j++) {
 			bool is_raw_pressed = raw_state[i] & BIT(j);
 			bool is_pressed = cur_state[i] & BIT(j);
-			bool was_pressed = old_state[i] & BIT(j);
+			bool was_pressed = settled_state[i] & BIT(j);
 
 			if ((is_pressed != was_pressed) &&
 			    (is_pressed == is_raw_pressed) &&
@@ -277,12 +288,12 @@ static void scan_fn(struct k_work *work)
 
 				evt_limit++;
 
-				WRITE_BIT(old_state[i], j, is_pressed);
+				WRITE_BIT(settled_state[i], j, is_pressed);
 			}
 		}
 
 		any_pressed = any_pressed ||
-			      (old_state[i] != 0) ||
+			      (settled_state[i] != 0) ||
 			      (cur_state[i] != 0);
 	}
 

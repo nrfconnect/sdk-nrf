@@ -9,7 +9,7 @@
 #include <uart.h>
 #include <nrfx.h>
 #include <string.h>
-#include <nrf_power.h>
+#include <hal/nrf_power.h>
 #include <power/reboot.h>
 
 /* Overriding weak function to set iSerial runtime. */

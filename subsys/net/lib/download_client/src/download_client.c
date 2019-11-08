@@ -367,7 +367,7 @@ static int fragment_evt_send(const struct download_client *client)
 	return client->callback(&evt);
 }
 
-static void error_evt_send(const struct download_client *dl, int error)
+static int error_evt_send(const struct download_client *dl, int error)
 {
 	/* Error will be sent as negative. */
 	__ASSERT_NO_MSG(error > 0);
@@ -377,7 +377,25 @@ static void error_evt_send(const struct download_client *dl, int error)
 		.error = -error
 	};
 
-	dl->callback(&evt);
+	return dl->callback(&evt);
+}
+
+static int reconnect(struct download_client *dl)
+{
+	int err;
+
+	LOG_INF("Reconnecting..");
+	err = download_client_disconnect(dl);
+	if (err) {
+		return err;
+	}
+
+	err = download_client_connect(dl, dl->host, &dl->config);
+	if (err) {
+		return err;
+	}
+
+	return 0;
 }
 
 void download_thread(void *client, void *a, void *b)
@@ -398,16 +416,24 @@ restart_and_suspend:
 
 		if (len == -1) {
 			LOG_ERR("Error reading from socket, errno %d", errno);
-			error_evt_send(dl, ENOTCONN);
-			/* Restart and suspend */
-			break;
+			rc = error_evt_send(dl, ENOTCONN);
+			if (rc) {
+				/* Restart and suspend */
+				break;
+			}
+			reconnect(dl);
+			goto send_again;
 		}
 
 		if (len == 0) {
 			LOG_WRN("Peer closed connection!");
-			error_evt_send(dl, ECONNRESET);
-			/* Restart and suspend */
-			break;
+			rc = error_evt_send(dl, ECONNRESET);
+			if (rc) {
+				/* Restart and suspend */
+				break;
+			}
+			reconnect(dl);
+			goto send_again;
 		}
 
 		LOG_DBG("Read %d bytes from socket", len);
@@ -422,7 +448,10 @@ restart_and_suspend:
 				continue;
 			}
 			if (rc < 0) {
-				/* Restart and suspend */
+				/* Something was wrong with the header.
+				 * Restart and suspend, no point in retrying.
+				 */
+				error_evt_send(dl, EBADMSG);
 				break;
 			}
 
@@ -479,15 +508,20 @@ restart_and_suspend:
 		/* Attempt to reconnect if the connection was closed */
 		if (dl->connection_close) {
 			dl->connection_close = false;
-			download_client_disconnect(dl);
-			download_client_connect(dl, dl->host, &dl->config);
+			reconnect(dl);
 		}
 
+		/* Send a GET request for the next bytes */
+send_again:
 		rc = get_request_send(dl);
 		if (rc) {
-			error_evt_send(dl, ECONNRESET);
-			/* Restart and suspend */
-			break;
+			rc = error_evt_send(dl, ECONNRESET);
+			if (rc) {
+				/* Restart and suspend */
+				break;
+			}
+			reconnect(dl);
+			goto send_again;
 		}
 	}
 

@@ -141,6 +141,9 @@ class NcsLoot(NcsWestCommand):
         parser = parser_adder.add_parser(self.name, help=self.help,
                                          description=self.description)
         self.add_zephyr_rev_arg(parser)
+        parser.add_argument('-s', '--sha', dest='sha_only',
+                            action='store_true',
+                            help='only print SHAs of OOT commits')
         parser.add_argument('-f', '--file', dest='files', action='append',
                             help='''restrict output to patches touching
                             this file; may be given multiple times. If used,
@@ -164,9 +167,9 @@ class NcsLoot(NcsWestCommand):
                 log.dbg('skipping downstream project {}'.format(name),
                         level=log.VERBOSE_VERY)
                 continue
-            self.print_loot(name, project, z_project, args.files)
+            self.print_loot(name, project, z_project, args)
 
-    def print_loot(self, name, project, z_project, files):
+    def print_loot(self, name, project, z_project, args):
         # Print a list of out of tree outstanding patches in the given
         # project.
         #
@@ -209,11 +212,14 @@ class NcsLoot(NcsWestCommand):
             log.die(str(ire))
         try:
             for c in analyzer.downstream_outstanding:
-                if files and not nwh.commit_affects_files(c, files):
+                if args.files and not nwh.commit_affects_files(c, args.files):
                     log.dbg('skipping {}; it does not affect file filter'.
                             format(c.oid), level=log.VERBOSE_VERY)
                     continue
-                log.inf('- {} {}'.format(c.oid, nwh.commit_shortlog(c)))
+                if args.sha_only:
+                    log.inf(str(c.oid))
+                else:
+                    log.inf('- {} {}'.format(c.oid, nwh.commit_shortlog(c)))
         except nwh.UnknownCommitsError as uce:
             log.die('unknown commits:', str(uce))
 

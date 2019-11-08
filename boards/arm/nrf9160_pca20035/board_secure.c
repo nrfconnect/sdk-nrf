@@ -10,7 +10,7 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(board_secure, CONFIG_BOARD_LOG_LEVEL);
 
-#define ADP536X_I2C_DEV_NAME	DT_NORDIC_NRF_I2C_I2C_2_LABEL
+#define ADP536X_I2C_DEV_NAME	DT_NORDIC_NRF_TWIM_I2C_2_LABEL
 #define LC_MAX_READ_LENGTH	128
 
 static int power_mgmt_init(void)

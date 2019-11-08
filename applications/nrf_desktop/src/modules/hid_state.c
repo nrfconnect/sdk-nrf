@@ -680,7 +680,8 @@ static bool update_report(enum in_report tr)
 	if (tr == IN_REPORT_MOUSE) {
 		if ((state.last_dx != 0) ||
 		    (state.last_dy != 0) ||
-		    (state.wheel_acc != 0)) {
+		    (state.wheel_acc < -1) ||
+		    (state.wheel_acc > 1)) {
 			update_needed = true;
 		}
 	}

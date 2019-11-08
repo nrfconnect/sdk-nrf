@@ -313,10 +313,13 @@ void bsd_os_errno_set(int err_code)
 	case NRF_EKEYREJECTED:
 		errno = EKEYREJECTED;
 		break;
+	case NRF_EMSGSIZE:
+		errno = EMSGSIZE;
+		break;
 	default:
 		/* Catch untranslated errnos.
 		 * Log the untranslated errno and return a magic value
-		 * to make sure this sitation is clearly distinguishable.
+		 * to make sure this situation is clearly distinguishable.
 		 */
 		__ASSERT(false, "Untranslated errno %d set by bsdlib!", err_code);
 		LOG_ERR("Untranslated errno %d set by bsdlib!", err_code);

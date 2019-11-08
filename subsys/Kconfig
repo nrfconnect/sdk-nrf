@@ -9,6 +9,8 @@ rsource "bootloader/Kconfig"
 
 rsource "bluetooth/Kconfig"
 
+rsource "dfu/Kconfig"
+
 rsource "enhanced_shockburst/Kconfig"
 
 rsource "net/Kconfig"
@@ -21,7 +23,7 @@ rsource "profiler/Kconfig"
 
 rsource "spm/Kconfig"
 
-rsource "fw_metadata/Kconfig"
+rsource "fw_info/Kconfig"
 
 rsource "debug/Kconfig"
 

@@ -21,6 +21,9 @@
 #include <bluetooth/gatt.h>
 
 #include <bluetooth/services/lbs.h>
+
+#include <settings/settings.h>
+
 #include <dk_buttons_and_leds.h>
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
@@ -30,9 +33,6 @@
 #define RUN_STATUS_LED          DK_LED1
 #define CON_STATUS_LED          DK_LED2
 #define RUN_LED_BLINK_INTERVAL  1000
-
-#define LED_ON                  1
-#define LED_OFF                 0
 
 #define USER_LED                DK_LED3
 
@@ -60,14 +60,14 @@ static void connected(struct bt_conn *conn, u8_t err)
 
 	printk("Connected\n");
 
-	dk_set_led(CON_STATUS_LED, LED_ON);
+	dk_set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
 {
 	printk("Disconnected (reason %u)\n", reason);
 
-	dk_set_led(CON_STATUS_LED, LED_OFF);
+	dk_set_led_off(CON_STATUS_LED);
 }
 
 #ifdef CONFIG_BT_GATT_LBS_SECURITY_ENABLED
@@ -79,9 +79,10 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		printk("Security changed: %s level %u", addr, level);
+		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d", addr, level, err);
+		printk("Security failed: %s level %u err %d\n", addr, level,
+			err);
 	}
 }
 #endif
@@ -113,10 +114,41 @@ static void auth_cancel(struct bt_conn *conn)
 	printk("Pairing cancelled: %s\n", addr);
 }
 
+static void pairing_confirm(struct bt_conn *conn)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	bt_conn_auth_pairing_confirm(conn);
+
+	printk("Pairing confirmed: %s\n", addr);
+}
+
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing completed: %s, bonded: %d\n", addr, bonded);
+}
+
+static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+}
+
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
-	.passkey_entry = NULL,
 	.cancel = auth_cancel,
+	.pairing_confirm = pairing_confirm,
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 #else
 static struct bt_conn_auth_cb conn_auth_callbacks;
@@ -144,8 +176,11 @@ static void bt_ready(int err)
 		return;
 	}
 
-	err = bt_gatt_lbs_init(&lbs_callbacs);
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
 
+	err = bt_gatt_lbs_init(&lbs_callbacs);
 	if (err) {
 		printk("Failed to init LBS (err:%d)\n", err);
 		return;

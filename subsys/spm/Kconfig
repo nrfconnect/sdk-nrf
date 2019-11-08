@@ -9,6 +9,7 @@ menu "SPM"
 config SPM
 	bool "Use Secure Partition Manager"
 	default y if TRUSTED_EXECUTION_NONSECURE
+	select FW_INFO
 	imply ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS
 
 if SPM
@@ -34,7 +35,11 @@ config PM_PARTITION_SIZE_SPM
 	  of this configuration needs to match the requirements set by the
 	  script 'partition_manager.py'. See pm.yml.
 
-menuconfig SPM_SECURE_SERVICES
+config SPM_BOOT_SILENTLY
+	bool "Boot silently"
+	default n
+
+config SPM_SECURE_SERVICES
 	bool "Enable secure services"
 	default y
 	select ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS
@@ -43,14 +48,6 @@ menuconfig SPM_SECURE_SERVICES
 	  secure entry functions.
 
 if SPM_SECURE_SERVICES
-config SPM_SERVICE_REBOOT
-	bool "Request a reboot"
-	default y
-	select REBOOT
-	help
-	  The Non-Secure Firmware is not allowed to reboot the chip. This
-	  service allows it to request a reboot from the SPM.
-
 config SPM_SERVICE_RNG
 	bool "Request random numbers"
 	default y
@@ -69,11 +66,35 @@ config SPM_SERVICE_READ
 	  read operations within the ranges configured in
 	  secure_services.c.
 
-endif
-
-config SPM_BOOT_SILENTLY
-	bool "Boot silently"
+config SPM_SERVICE_REBOOT
+	bool "Enable system reset as a secure service"
 	default n
+	select REBOOT
+	help
+	  If Non-Secure Firmware is blocked from issuing system reset, this
+	  service will allow it to issue a request to do a system reset through
+	  a secure service.
+
+config SPM_SERVICE_FIND_FIRMWARE_INFO
+	bool "Find firmware info"
+	default y
+	help
+	  The Non-Secure Firmware is not allowed to read the memory
+	  marked as secure. This service allows it to request firmware info
+	  about image stored at a given address.
+
+endif # SPM_SECURE_SERVICES
+
+config SPM_BLOCK_NON_SECURE_RESET
+	bool "Block system reset calls from Non-Secure domain"
+	default n #FIXME: Remove mention of debugger with regards to reboot in help text when NRF91-313 has been resolved
+	help
+	  This will block the application running in Non-Secure from being able
+	  to issue a system reset of the chip without going through a secure
+	  service. If not enabled, a debugger will not be able to issue a
+	  system reset while the core is executing Non-Secure code.
+
+menu "Configure Non-Secure peripherals"
 
 config SPM_NRF_CLOCK_NS
 	bool "Clock control is Non-Secure"
@@ -170,6 +191,21 @@ config SPM_NRF_REGULATORS_NS
 config SPM_NRF_WDT_NS
 	bool "WDT is Non-Secure"
 	default n
+endmenu
+
+config SPM_NRF_DPPIC_NS
+	bool "DPPIC is Non-Secure"
+	default y
+
+config SPM_NRF_DPPIC_PERM_MASK
+	hex "Set DPPIC PERM mask for Non-secure"
+	default 0x0000FFFF
+	depends on SPM_NRF_DPPIC_NS
+	help
+	  The input mask is a mirror of the permission bits set in
+	  register SPU.DPPI.PERM[] to allow non-secure application to
+	  control DPPIC per the given input mask.
+	  The default value is to allow all DPPI channels to non-secure region.
 
 endif # IS_SPM
 

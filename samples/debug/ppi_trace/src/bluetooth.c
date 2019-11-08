@@ -8,8 +8,8 @@
 #include <bluetooth/hci.h>
 #include <logging/log.h>
 #include <debug/ppi_trace.h>
-#include <nrf_radio.h>
-#include <nrf_uarte.h>
+#include <hal/nrf_radio.h>
+#include <hal/nrf_uarte.h>
 
 LOG_MODULE_DECLARE(app);
 

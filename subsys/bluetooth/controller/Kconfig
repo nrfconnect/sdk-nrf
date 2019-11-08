@@ -6,6 +6,18 @@
 
 menu "Nordic BLE controller"
 
+config BLECTRL_SLAVE_COUNT
+	int "Number of concurrent slave roles"
+	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
+	default 1 if BT_PERIPHERAL
+	default 0
+	range 0 BT_MAX_CONN
+	help
+	  Number of concurrent slave roles defines how many simultaneous
+	  connections can be created with the device working as a slave.
+	  NOTE: the number of master roles is defined as
+	  BT_MAX_CONN - BLECTRL_SLAVE_COUNT
+
 config BLECTLR_PRIO
 	# Hidden option to set the priority of the controller threads
 	int
@@ -25,6 +37,7 @@ config BLECTLR_SIGNAL_STACK_SIZE
 	help
 	  Size of the signal handler thread stack, used to process lower
 	  priority signals in the controller.
+
 # The BLE controller library variants are defined in nrfxlib, here we redefine
 # the choice to 'import' them, so they appear in the same menu as the rest.
 
@@ -33,13 +46,5 @@ choice BLE_CONTROLLER_VARIANT
 	bool
 
 endchoice
-
-config BLECTRL_MEMPOOL_SIZE
-	int "Reserved RAM for the BLE controller"
-	default 5344
-	help
-	  Reserved RAM for the BLE Controller. This size is dependent on the
-	  configuration set before the controller is enabled. If the size is too
-	  small, the HCI driver initialization will return an error.
 
 endmenu

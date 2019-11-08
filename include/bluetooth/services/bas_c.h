@@ -1,7 +1,3 @@
-/** @file
- *  @brief Battery Service Client implementation.
- */
-
 /*
  * Copyright (c) 2018 Nordic Semiconductor
  *
@@ -12,11 +8,12 @@
 
 /**
  * @file
- * @defgroup bt_gatt_bas_c Battery Service Client API
+ * @defgroup bt_gatt_bas_c_api Battery Service Client API
  * @{
  * @brief API for the BLE GATT Battery Service (BAS) Client.
  */
 
+#include <kernel.h>
 #include <sys/types.h>
 #include <bluetooth/gatt.h>
 #include <bluetooth/conn.h>
@@ -74,6 +71,20 @@ typedef void (*bt_gatt_bas_c_read_cb)(struct bt_gatt_bas_c *bas_c,
 				      int err);
 
 /**
+ * @brief Battery Service Client characteristic periodic read.
+ */
+struct bt_gatt_bas_c_periodic_read {
+	/** Work queue used to measure the read interval. */
+	struct k_delayed_work read_work;
+	/** Read parameters. */
+	struct bt_gatt_read_params params;
+	/** Read value interval. */
+	atomic_t interval;
+	/** Active processing flag. */
+	atomic_t process;
+};
+
+/**
  * @brief Battery Service Client instance.
  */
 struct bt_gatt_bas_c {
@@ -83,6 +94,10 @@ struct bt_gatt_bas_c {
 	struct bt_gatt_subscribe_params notify_params;
 	/** Read parameters. */
 	struct bt_gatt_read_params read_params;
+	/** Read characteristic value timing. Used when characteristic do not
+	 *  have a CCCD descriptor.
+	 */
+	struct bt_gatt_bas_c_periodic_read periodic_read;
 	/** Notification callback. */
 	bt_gatt_bas_c_notify_cb notify_cb;
 	/** Read value callback. */
@@ -95,6 +110,8 @@ struct bt_gatt_bas_c {
 	u8_t battery_level;
 	/** Properties of the service. */
 	u8_t properties;
+	/** Notification supported. */
+	bool notify;
 };
 
 /**
@@ -191,6 +208,41 @@ int bt_gatt_bas_c_read(struct bt_gatt_bas_c *bas_c, bt_gatt_bas_c_read_cb func);
  * @return Battery level or negative error code.
  */
 int bt_gatt_bas_c_get(struct bt_gatt_bas_c *bas_c);
+
+/**
+ * @brief Check whether notification is supported by the service.
+ *
+ * @param bas_c BAS Client object.
+ *
+ * @retval true If notifications are supported.
+ *              Otherwise, @c false is returned.
+ */
+static inline bool bt_gatt_bas_c_notify_supported(struct bt_gatt_bas_c *bas_c)
+{
+	return bas_c->notify;
+}
+
+/**
+ * @brief Periodically read the battery level value from the device with
+ *        specific time interval.
+ *
+ * @param bas_c BAS Client object.
+ * @param interval Characteristic Read interval in milliseconds.
+ * @param func The callback function.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
+				      s32_t interval,
+				      bt_gatt_bas_c_notify_cb func);
+
+/**
+ * @brief Stop periodic reading of the battery value from the device.
+ *
+ * @param bas_c BAS Client object.
+ */
+void bt_gatt_bas_c_periodic_read_stop(struct bt_gatt_bas_c *bas_c);
 
 /**
  * @}

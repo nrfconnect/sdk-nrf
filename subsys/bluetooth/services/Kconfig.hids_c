@@ -6,6 +6,7 @@
 
 menuconfig BT_GATT_HIDS_C
 	bool "HID service client"
+	select BT_NRF_SERVICES
 	help
 	  Enable HID GATT Human Interface Device service client.
 

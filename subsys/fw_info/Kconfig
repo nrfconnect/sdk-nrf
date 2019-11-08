@@ -1,0 +1,110 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig FW_INFO
+	bool
+	prompt "Firmware Metadata"
+
+if (FW_INFO)
+config FW_VALIDATION_METADATA_OFFSET
+	int "Offset at which to store validation metadata."
+	default 0
+	help
+	  Must be either 0 or larger than the size of the application. If 0,
+	  the metadata is appended directly after the application image,
+	  aligned to the closest word.
+
+config FW_INFO_OFFSET
+	hex "The location of firmware info inside this firmware."
+	default 0x200
+	help
+	  The location of firmware information inside the current firmware
+	  image. Valid values are 0x200, 0x400 and 0x800. Compatible readers
+	  of firmware information should search all possible offsets. Note
+	  that all space between the vector table and this address is unused.
+
+config FW_INFO_FIRMWARE_VERSION
+	int "Version number of the firmware."
+	default 1
+
+config FW_INFO_MAGIC_COMMON
+	hex "Magic word for all structs (32 bits)."
+	default 0x281ee6de
+	help
+	  This is used by different metadata structs (in fw_info.h and
+	  elsewhere). They each have their own magic word composed of three
+	  u32_t values, where one is always this option (FW_INFO_MAGIC_COMMON).
+	  One of the u32_ts is a compatibility ID constructed from
+	  FW_INFO_HARDWARE_ID, FW_INFO_VERSION, FW_CRYPTO_ID, and
+	  FW_INFO_MAGIC_COMPATIBILITY_ID, while the final u32_t is completely
+	  different for each struct, e.g. FW_INFO_MAGIC_FIRMWARE_INFO.
+	  The bootloader expects a certain value for each struct, and if it
+	  attempts to read a struct without a matching magic word, the struct
+	  will be rejected. The config values here apply both to this build of
+	  the bootloader and to the metadata constructed for the app.
+	  Refer to this module's CMakeLists.txt to see how the magic words are
+	  composed.
+
+config FW_INFO_MAGIC_FIRMWARE_INFO
+	hex "Magic word for firmware information structs (32 bits)."
+	default 0x8fcebb4c
+	help
+	  Magic word value specific to firmware information structs (inside
+	  the firmware). For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_MAGIC_ABI_GETTER_INFO
+	hex "Magic word for ABI getter structs (32 bits)."
+	default 0x2ed9a4c5
+	help
+	  Magic word value specific to ABI getter structs.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_MAGIC_ABI_INFO
+	hex "Magic word for ABI structs (32 bits)."
+	default 0xb845acea
+	help
+	  Magic word value specific to ABI structs.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_HARDWARE_ID
+	int "The SoC a firmware is built to run on (8 bits)."
+	range 0 255
+	default 51 if SOC_SERIES_NRF51X
+	default 52 if SOC_SERIES_NRF52X
+	default 91 if SOC_SERIES_NRF91X
+	help
+	  Used to ensure binary compatibility.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_VERSION
+	int "Version number of the fw_*_info structs (8 bits)."
+	range 0 255
+	default 1
+	help
+	  Used to ensure binary compatibility.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_CRYPTO_ID
+	int
+	default 0
+
+config FW_INFO_MAGIC_COMPATIBILITY_ID
+	int "Compatibility ID for user-defined purposes (8 bits)."
+	range 0 255
+	default 0
+	help
+	  User defined value.
+	  Used to ensure compatibility between bootloader and metadata.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_MAGIC_LEN
+	int
+	default 12
+	help
+	  Total length of magic words (in bytes).
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+endif # FW_INFO

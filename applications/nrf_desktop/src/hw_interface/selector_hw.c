@@ -170,55 +170,109 @@ static void selector_work_fn(struct k_work *w)
 	}
 }
 
-static int configure(struct selector *selector)
+static int configure_callbacks(struct selector *selector)
 {
 	const struct gpio_pin *sel_pins = selector->config->pins;
-	u32_t bitmask = 0;
-	int err;
+	u32_t bitmask[ARRAY_SIZE(gpio_dev)] = {0};
+	int err = 0;
 
-	for (size_t i = 0; i < ARRAY_SIZE(gpio_dev); i++) {
-		for (size_t j = 0; j < selector->config->pins_size; j++) {
-			if (sel_pins[j].port == i) {
-				bitmask |= BIT(sel_pins[j].pin);
-			}
-		}
-		gpio_init_callback(&selector->gpio_cb[i], selector_isr,
-				   bitmask);
-		err = gpio_add_callback(gpio_dev[i], &selector->gpio_cb[i]);
-
-		if (err) {
-			LOG_ERR("Cannot add callback (err %d)", err);
-			return err;
-		}
-
-		bitmask = 0;
-	}
+	__ASSERT_NO_MSG(selector->config->pins_size > 0);
 
 	for (size_t i = 0; i < selector->config->pins_size; i++) {
-		err = gpio_pin_configure(gpio_dev[sel_pins[i].port],
-					 sel_pins[i].pin,
-					 GPIO_PUD_PULL_DOWN | GPIO_DIR_IN |
-					 GPIO_INT | GPIO_INT_LEVEL |
-					 GPIO_INT_ACTIVE_HIGH);
+		__ASSERT_NO_MSG(sel_pins[i].port < ARRAY_SIZE(bitmask));
+		__ASSERT_NO_MSG(
+			sel_pins[i].pin < __CHAR_BIT__ * sizeof(bitmask[0]));
 
-		if (err) {
-			LOG_ERR("Cannot configure pin (err %d)", err);
-			break;
+		bitmask[sel_pins[i].port] |= BIT(sel_pins[i].pin);
+	}
+
+	for (size_t i = 0; (i < ARRAY_SIZE(gpio_dev)) && !err; i++) {
+		if (!gpio_dev[i]) {
+			__ASSERT_NO_MSG(bitmask[i] == 0);
+			continue;
+		}
+		gpio_init_callback(&selector->gpio_cb[i], selector_isr,
+				   bitmask[i]);
+		err = gpio_add_callback(gpio_dev[i], &selector->gpio_cb[i]);
+	}
+
+	if (err) {
+		LOG_ERR("Cannot add callback (err %d)", err);
+	}
+
+	return err;
+}
+
+static int configure_pins(struct selector *selector, bool enabled)
+{
+	const struct gpio_pin *sel_pins = selector->config->pins;
+	int err = 0;
+	int flags;
+
+	if (enabled) {
+		flags = GPIO_DIR_IN | GPIO_PUD_PULL_DOWN |
+			GPIO_INT | GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH;
+	} else {
+		flags = GPIO_DIR_IN;
+	}
+
+	for (size_t i = 0; (i < selector->config->pins_size) && !err; i++) {
+		err = gpio_pin_configure(gpio_dev[sel_pins[i].port],
+					 sel_pins[i].pin, flags);
+	}
+
+	if (err) {
+		LOG_ERR("Cannot configure pin (err %d)", err);
+	}
+
+	return err;
+}
+
+static int sleep(void)
+{
+	int err = 0;
+
+	for (size_t i = 0; (i < ARRAY_SIZE(selectors)) && !err; i++) {
+		err = disable_interrupts_nolock(&selectors[i]);
+
+		if (!err) {
+			k_delayed_work_cancel(&selectors[i].work);
+			err = configure_pins(&selectors[i], false);
 		}
 	}
 
-	k_delayed_work_init(&selector->work, selector_work_fn);
+	return err;
+}
+
+static int wake_up(void)
+{
+	int err = 0;
+
+	for (size_t i = 0; (i < ARRAY_SIZE(selectors)) && !err; i++) {
+		err = configure_pins(&selectors[i], true);
+
+		if (!err) {
+			err = read_state_and_enable_interrupts(&selectors[i]);
+		}
+	}
 
 	return err;
 }
 
 static int init(void)
 {
+	int err = 0;
+
 	BUILD_ASSERT_MSG(ARRAY_SIZE(selector_config) <= UCHAR_MAX,
 			 "Maximum number of selectors is 255");
 	BUILD_ASSERT_MSG(ARRAY_SIZE(selector_config) > 0,
 			 "There is no active selector");
+
 	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
+		if (!port_map[i]) {
+			continue;
+		}
+
 		gpio_dev[i] = device_get_binding(port_map[i]);
 
 		if (!gpio_dev[i]) {
@@ -227,56 +281,19 @@ static int init(void)
 		}
 	}
 
-	int err;
-
-	for (size_t i = 0; i < ARRAY_SIZE(selectors); i++) {
+	for (size_t i = 0; (i < ARRAY_SIZE(selectors)) && !err; i++) {
 		selectors[i].config = selector_config[i];
-		__ASSERT_NO_MSG(selector_config[i]->pins_size > 0);
 
-		err = configure(&selectors[i]);
-		if (err) {
-			break;
-		}
-		err = read_state_and_enable_interrupts(&selectors[i]);
-		if (err) {
-			break;
-		}
+		k_delayed_work_init(&selectors[i].work, selector_work_fn);
+
+		err = configure_callbacks(&selectors[i]);
 	}
-	state = STATE_ACTIVE;
+
+	if (!err) {
+		err = wake_up();
+	}
 
 	return err;
-}
-
-static void sleep(void)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(selectors); i++) {
-		int err = disable_interrupts_nolock(&selectors[i]);
-
-		if (err) {
-			module_set_state(MODULE_STATE_ERROR);
-			return;
-		}
-
-		k_delayed_work_cancel(&selectors[i].work);
-	}
-
-	state = STATE_OFF;
-	module_set_state(MODULE_STATE_OFF);
-}
-
-static void wake_up(void)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(selectors); i++) {
-		int err = read_state_and_enable_interrupts(&selectors[i]);
-
-		if (err) {
-			module_set_state(MODULE_STATE_ERROR);
-			return;
-		}
-	}
-
-	state = STATE_ACTIVE;
-	module_set_state(MODULE_STATE_READY);
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -287,9 +304,13 @@ static bool event_handler(const struct event_header *eh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
-			if (init()) {
+
+			int err = init();
+
+			if (err) {
 				module_set_state(MODULE_STATE_ERROR);
 			} else {
+				state = STATE_ACTIVE;
 				module_set_state(MODULE_STATE_READY);
 			}
 		}
@@ -299,7 +320,14 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_power_down_event(eh)) {
 		if (state == STATE_ACTIVE) {
-			sleep();
+			int err = sleep();
+
+			if (err) {
+				module_set_state(MODULE_STATE_ERROR);
+			} else {
+				state = STATE_OFF;
+				module_set_state(MODULE_STATE_OFF);
+			}
 		}
 
 		return false;
@@ -307,7 +335,14 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_wake_up_event(eh)) {
 		if (state == STATE_OFF) {
-			wake_up();
+			int err = wake_up();
+
+			if (err) {
+				module_set_state(MODULE_STATE_ERROR);
+			} else {
+				state = STATE_ACTIVE;
+				module_set_state(MODULE_STATE_READY);
+			}
 		}
 
 		return false;

@@ -15,6 +15,7 @@
 #include <logging/log_ctrl.h>
 #if defined(CONFIG_BSD_LIBRARY)
 #include <net/bsdlib.h>
+#include <bsd.h>
 #include <lte_lc.h>
 #include <modem_info.h>
 #endif /* CONFIG_BSD_LIBRARY */
@@ -22,11 +23,16 @@
 #include <net/socket.h>
 #include <nrf_cloud.h>
 
+#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+#include <dfu/mcuboot.h>
+#endif
+
 #include "cloud_codec.h"
 #include "env_sensors.h"
 #include "orientation_detector.h"
 #include "ui.h"
 #include "gps_controller.h"
+#include "service_info.h"
 
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
 #define CLOUD_CONNACK_WAIT_DURATION	K_SECONDS(CONFIG_CLOUD_WAIT_DURATION)
@@ -89,11 +95,14 @@ static struct gps_data gps_data;
 static struct cloud_channel_data flip_cloud_data;
 static struct cloud_channel_data gps_cloud_data;
 static struct cloud_channel_data button_cloud_data;
+static struct cloud_channel_data device_cloud_data = {
+	.type = CLOUD_CHANNEL_DEVICE_INFO,
+	.tag = 0x1
+};
 
 #if CONFIG_MODEM_INFO
 static struct modem_param_info modem_param;
 static struct cloud_channel_data signal_strength_cloud_data;
-static struct cloud_channel_data device_cloud_data;
 #endif /* CONFIG_MODEM_INFO */
 static atomic_val_t send_data_enable;
 
@@ -108,15 +117,14 @@ static struct k_work send_flip_data_work;
 static struct k_delayed_work send_env_data_work;
 static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
-#if CONFIG_MODEM_INFO
 static struct k_work device_status_work;
+#if CONFIG_MODEM_INFO
 static struct k_work rsrp_work;
 #endif /* CONFIG_MODEM_INFO */
 
 enum error_type {
 	ERROR_CLOUD,
 	ERROR_BSD_RECOVERABLE,
-	ERROR_BSD_IRRECOVERABLE,
 	ERROR_LTE_LC,
 	ERROR_SYSTEM_FAULT
 };
@@ -125,12 +133,13 @@ enum error_type {
 static void app_connect(struct k_work *work);
 static void flip_send(struct k_work *work);
 static void env_data_send(void);
+#if CONFIG_LIGHT_SENSOR
+static void light_sensor_data_send(void);
+#endif /* CONFIG_LIGHT_SENSOR */
 static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct cloud_channel_data *data);
-#if CONFIG_MODEM_INFO
 static void device_status_send(struct k_work *work);
-#endif
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
@@ -173,13 +182,6 @@ void error_handler(enum error_type err_type, int err_code)
 		ui_led_set_pattern(UI_LED_ERROR_BSD_REC);
 		printk("Error of type ERROR_BSD_RECOVERABLE: %d\n", err_code);
 	break;
-	case ERROR_BSD_IRRECOVERABLE:
-		/* Blinking all LEDs ON/OFF if there is an
-		 * irrecoverable error.
-		 */
-		ui_led_set_pattern(UI_LED_ERROR_BSD_IRREC);
-		printk("Error of type ERROR_BSD_IRRECOVERABLE: %d\n", err_code);
-	break;
 	default:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
 		 * undefined error.
@@ -202,7 +204,7 @@ void k_sys_fatal_error_handler(unsigned int reason,
 	ARG_UNUSED(esf);
 
 	LOG_PANIC();
-	z_fatal_print("Running main.c error handler");
+	printk("Running main.c error handler");
 	error_handler(ERROR_SYSTEM_FAULT, reason);
 	CODE_UNREACHABLE;
 }
@@ -216,12 +218,6 @@ void cloud_error_handler(int err)
 void bsd_recoverable_error_handler(uint32_t err)
 {
 	error_handler(ERROR_BSD_RECOVERABLE, (int)err);
-}
-
-/**@brief Irrecoverable BSD library error. */
-void bsd_irrecoverable_error_handler(uint32_t err)
-{
-	error_handler(ERROR_BSD_IRRECOVERABLE, (int)err);
 }
 
 static void send_gps_data_work_fn(struct k_work *work)
@@ -378,6 +374,13 @@ static void modem_rsrp_handler(char rsrp_value)
 {
 	rsrp.value = rsrp_value;
 
+	/* If the RSRP value is 255, it's documented as 'not known or not
+	 * detectable'. Therefore, we should not send those values.
+	 */
+	if (rsrp.value == 255) {
+		return;
+	}
+
 	k_work_submit(&rsrp_work);
 }
 
@@ -411,12 +414,14 @@ static void modem_rsrp_data_send(struct k_work *work)
 	sensor_data_send(&signal_strength_cloud_data);
 	timestamp_prev = k_uptime_get_32();
 }
+#endif /* CONFIG_MODEM_INFO */
 
 /**@brief Poll device info and send data to the cloud. */
 static void device_status_send(struct k_work *work)
 {
-	int len;
-	int ret;
+	if (!atomic_get(&send_data_enable)) {
+		return;
+	}
 
 	cJSON *root_obj = cJSON_CreateObject();
 
@@ -425,25 +430,58 @@ static void device_status_send(struct k_work *work)
 		return;
 	}
 
-	if (!atomic_get(&send_data_enable)) {
-		return;
-	}
+	size_t item_cnt = 0;
 
-	ret = modem_info_params_get(&modem_param);
+#ifdef CONFIG_MODEM_INFO
+	int ret = modem_info_params_get(&modem_param);
 
 	if (ret < 0) {
 		printk("Unable to obtain modem parameters: %d\n", ret);
-		return;
+	} else {
+		ret = modem_info_json_object_encode(&modem_param, root_obj);
+		if (ret > 0) {
+			item_cnt = (size_t)ret;
+		}
+	}
+#endif /* CONFIG_MODEM_INFO */
+
+	const char *const ui[] = {
+		CLOUD_CHANNEL_STR_GPS,
+		CLOUD_CHANNEL_STR_FLIP,
+		CLOUD_CHANNEL_STR_TEMP,
+		CLOUD_CHANNEL_STR_HUMID,
+		CLOUD_CHANNEL_STR_AIR_PRESS,
+#if IS_ENABLED(CONFIG_CLOUD_BUTTON)
+		CLOUD_CHANNEL_STR_BUTTON,
+#endif
+#if IS_ENABLED(CONFIG_LIGHT_SENSOR)
+		CLOUD_CHANNEL_STR_LIGHT_SENSOR,
+#endif
+	};
+
+	const char *const fota[] = {
+#if defined(CONFIG_CLOUD_FOTA_APP)
+		SERVICE_INFO_FOTA_STR_APP,
+#endif
+#if defined(CONFIG_CLOUD_FOTA_MODEM)
+		SERVICE_INFO_FOTA_STR_MODEM
+#endif
+	};
+
+	if (service_info_json_object_encode(ui, ARRAY_SIZE(ui),
+					    fota, ARRAY_SIZE(fota),
+					    SERVICE_INFO_FOTA_VER_CURRENT,
+					    root_obj) == 0) {
+		++item_cnt;
 	}
 
-	len = modem_info_json_object_encode(&modem_param, root_obj);
-
-	if (len < 0) {
+	if (item_cnt == 0) {
+		cJSON_Delete(root_obj);
 		return;
 	}
 
 	device_cloud_data.data.buf = (char *)root_obj;
-	device_cloud_data.data.len = len;
+	device_cloud_data.data.len = item_cnt;
 	device_cloud_data.tag += 1;
 
 	if (device_cloud_data.tag == 0) {
@@ -453,7 +491,6 @@ static void device_status_send(struct k_work *work)
 	/* Transmits the data to the cloud. Frees the JSON object. */
 	sensor_data_send(&device_cloud_data);
 }
-#endif /* CONFIG_MODEM_INFO */
 
 /**@brief Get environment data from sensors and send to cloud. */
 static void env_data_send(void)
@@ -523,6 +560,41 @@ error:
 	printk("sensor_data_send failed: %d\n", err);
 	cloud_error_handler(err);
 }
+
+#if defined(CONFIG_LIGHT_SENSOR)
+void light_sensor_data_send(void)
+{
+	int err;
+	struct light_sensor_data light_data;
+	struct cloud_msg msg = { .qos = CLOUD_QOS_AT_MOST_ONCE,
+				 .endpoint.type = CLOUD_EP_TOPIC_MSG };
+
+	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
+		return;
+	}
+
+	err = light_sensor_get_data(&light_data);
+	if (err) {
+		printk("Failed to get light sensor data, error %d\n", err);
+		return;
+	}
+
+	err = cloud_encode_light_sensor_data(&light_data, &msg);
+	if (err) {
+		printk("Failed to encode light sensor data, error %d\n", err);
+		return;
+	}
+
+	err = cloud_send(cloud_backend, &msg);
+	cloud_release_data(&msg);
+
+	if (err) {
+		printk("Failed to send light sensor data to cloud, error: %d\n",
+		       err);
+		cloud_error_handler(err);
+	}
+}
+#endif /* CONFIG_LIGHT_SENSOR */
 
 /**@brief Send sensor data to nRF Cloud. **/
 static void sensor_data_send(struct cloud_channel_data *data)
@@ -686,6 +758,12 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_READY:
 		printk("CLOUD_EVT_READY\n");
 		ui_led_set_pattern(UI_CLOUD_CONNECTED);
+
+#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+		/* Mark image as good to avoid rolling back after update */
+		boot_write_img_confirmed();
+#endif
+
 		sensors_start();
 		break;
 	case CLOUD_EVT_DISCONNECTED:
@@ -709,6 +787,10 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_PAIR_DONE:
 		printk("CLOUD_EVT_PAIR_DONE\n");
 		on_pairing_done();
+		break;
+	case CLOUD_EVT_FOTA_DONE:
+		printk("CLOUD_EVT_FOTA_DONE\n");
+		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	default:
 		printk("Unknown cloud event type: %d\n", evt->type);
@@ -792,8 +874,8 @@ static void work_init(void)
 	k_delayed_work_init(&send_env_data_work, send_env_data_work_fn);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
-#if CONFIG_MODEM_INFO
 	k_work_init(&device_status_work, device_status_send);
+#if CONFIG_MODEM_INFO
 	k_work_init(&rsrp_work, modem_rsrp_data_send);
 #endif /* CONFIG_MODEM_INFO */
 }
@@ -909,11 +991,6 @@ static void modem_data_init(void)
 	signal_strength_cloud_data.type = CLOUD_CHANNEL_LTE_LINK_RSRP;
 	signal_strength_cloud_data.tag = 0x1;
 
-	device_cloud_data.type = CLOUD_CHANNEL_DEVICE_INFO;
-	device_cloud_data.tag = 0x1;
-
-	k_work_submit(&device_status_work);
-
 	modem_info_rsrp_register(modem_rsrp_handler);
 }
 #endif /* CONFIG_MODEM_INFO */
@@ -921,13 +998,26 @@ static void modem_data_init(void)
 /**@brief Initializes the sensors that are used by the application. */
 static void sensors_init(void)
 {
+	int err;
+
 	accelerometer_init();
 	flip_detection_init();
-	env_sensors_init_and_start();
-
+	err = env_sensors_init_and_start();
+	if (err) {
+		printk("Environmental sensors init failed, error: %d\n", err);
+	}
+#if CONFIG_LIGHT_SENSOR
+	err = light_sensor_init_and_start(light_sensor_data_send);
+	if (err) {
+		printk("Light sensor init failed, error: %d\n", err);
+	}
+#endif /* CONFIG_LIGHT_SENSOR */
 #if CONFIG_MODEM_INFO
 	modem_data_init();
 #endif /* CONFIG_MODEM_INFO */
+
+	k_work_submit(&device_status_work);
+
 	if (IS_ENABLED(CONFIG_CLOUD_BUTTON)) {
 		button_sensor_init();
 	}
@@ -999,11 +1089,40 @@ static void ui_evt_handler(struct ui_evt evt)
 }
 #endif /* defined(CONFIG_USE_UI_MODULE) */
 
+void handle_bsdlib_init_ret(void)
+{
+	#if defined(CONFIG_BSD_LIBRARY)
+	int ret = bsdlib_get_init_ret();
+
+	/* Handle return values relating to modem firmware update */
+	switch (ret) {
+	case MODEM_DFU_RESULT_OK:
+		printk("MODEM UPDATE OK. Will run new firmware\n");
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		printk("MODEM UPDATE ERROR %d. Will run old firmware\n", ret);
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		printk("MODEM UPDATE FATAL ERROR %d. Modem failiure\n", ret);
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+	default:
+		break;
+	}
+	#endif /* CONFIG_BSD_LIBRARY */
+}
+
 void main(void)
 {
 	int ret;
 
 	printk("Asset tracker started\n");
+
+	handle_bsdlib_init_ret();
 
 	cloud_backend = cloud_get_binding("NRF_CLOUD");
 	__ASSERT(cloud_backend != NULL, "nRF Cloud backend not found");

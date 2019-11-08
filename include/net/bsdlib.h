@@ -19,6 +19,17 @@
 int bsdlib_init(void);
 
 /**
+ * @brief Get the last return value of bsdlib_init.
+ *
+ * This function can be used to access the last return value of
+ * bsdlib_init. This can be used to check the state of a modem
+ * firmware exchange when bsdlib was initialized at boot-time.
+ *
+ * @return int The last return value of bsdlib_init.
+ */
+int bsdlib_get_init_ret(void);
+
+/**
  * @brief Shutdown bsdlib, releasing its resources.
  *
  * @return int Zero on success, non-zero otherwise.

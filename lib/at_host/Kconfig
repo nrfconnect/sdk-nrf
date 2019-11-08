@@ -9,6 +9,7 @@ menu "AT Host Library for nrf91"
 config AT_HOST_LIBRARY
 	bool "AT Host Library for nrf91"
 	select AT_CMD
+	select AT_NOTIF
 
 if AT_HOST_LIBRARY
 
@@ -66,6 +67,21 @@ config AT_HOST_TERMINATION
 	default 1 if CR_TERMINATION
 	default 2 if LF_TERMINATION
 	default 3 if CR_LF_TERMINATION
+
+config AT_HOST_CMD_MAX_LEN
+	int "Maximum AT command length"
+	help
+		The maximum allowed length of an AT command passed through the
+		AT host. The space is allocated statically.
+		This limit is in turn limited by bsdlib's BSD_AT_MAX_CMD_SIZE.
+	range 0 4096
+	default 4096
+
+config AT_HOST_THREAD_PRIO
+	int "AT host workqueue thread priority level"
+	range 0 NUM_PREEMPT_PRIORITIES
+	default 0 if !MULTITHREADING
+	default 10
 
 module = AT_HOST
 module-str = AT host

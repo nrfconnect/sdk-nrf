@@ -25,11 +25,14 @@
 #include <bluetooth/services/bas_c.h>
 #include <dk_buttons_and_leds.h>
 
+#include <settings/settings.h>
 
 /**
  * Button to read the battery value
  */
 #define KEY_READVAL_MASK DK_BTN1_MSK
+
+#define BAS_READ_VALUE_INTERVAL K_SECONDS(10)
 
 
 static struct bt_conn *default_conn;
@@ -86,11 +89,20 @@ static void discovery_completed_cb(struct bt_gatt_dm *dm,
 		printk("Could not init BAS client object, error: %d\n", err);
 	}
 
-	err = bt_gatt_bas_c_subscribe(&bas_c, bas_c_notify_cb);
-	if (err) {
-		printk("Cannot subscribe to BAS value notification (err: %d)\n",
-		       err);
-		/* Continue anyway */
+	if (bt_gatt_bas_c_notify_supported(&bas_c)) {
+		err = bt_gatt_bas_c_subscribe(&bas_c, bas_c_notify_cb);
+		if (err) {
+			printk("Cannot subscribe to BAS value notification (err: %d)\n",
+			       err);
+			/* Continue anyway */
+		}
+	} else {
+		err = bt_gatt_bas_c_periodic_read_start(&bas_c,
+							BAS_READ_VALUE_INTERVAL,
+							bas_c_notify_cb);
+		if (err) {
+			printk("Could not turn on periodic BAS value reading\n");
+		}
 	}
 
 	err = bt_gatt_dm_data_release(dm);
@@ -119,8 +131,24 @@ static struct bt_gatt_dm_cb discovery_cb = {
 	.error_found = discovery_error_found_cb,
 };
 
+static void gatt_discover(struct bt_conn *conn)
+{
+	int err;
+
+	if (conn != default_conn) {
+		return;
+	}
+
+	err = bt_gatt_dm_start(conn, BT_UUID_BAS, &discovery_cb, NULL);
+	if (err) {
+		printk("Could not start the discovery procedure, error "
+			"code: %d\n", err);
+	}
+}
+
 static void connected(struct bt_conn *conn, u8_t conn_err)
 {
+	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
@@ -132,19 +160,11 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 
 	printk("Connected: %s\n", addr);
 
-	if (bt_conn_set_security(conn, BT_SECURITY_L2)) {
-		printk("Failed to set security\n");
-	}
+	err = bt_conn_set_security(conn, BT_SECURITY_L2);
+	if (err) {
+		printk("Failed to set security: %d\n", err);
 
-	if (conn == default_conn) {
-		int err = bt_gatt_dm_start(conn,
-					   BT_UUID_BAS,
-					   &discovery_cb,
-					   NULL);
-		if (err) {
-			printk("Could not start the discovery procedure, error "
-			       "code: %d\n", err);
-		}
+		gatt_discover(conn);
 	}
 }
 
@@ -179,10 +199,13 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		printk("Security changed: %s level %u", addr, level);
+		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d", addr, level, err);
+		printk("Security failed: %s level %u err %d\n", addr, level,
+			err);
 	}
+
+	gatt_discover(conn);
 }
 
 static struct bt_conn_cb conn_callbacks = {
@@ -247,7 +270,6 @@ static void bas_c_read_cb(struct bt_gatt_bas_c *bas_c,
 	printk("[%s] Battery read: %"PRIu8"%%\n", addr, battery_level);
 }
 
-
 static void button_readval(void)
 {
 	int err;
@@ -270,6 +292,56 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 }
 
 
+static void auth_cancel(struct bt_conn *conn)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing cancelled: %s\n", addr);
+}
+
+
+static void pairing_confirm(struct bt_conn *conn)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	bt_conn_auth_pairing_confirm(conn);
+
+	printk("Pairing confirmed: %s\n", addr);
+}
+
+
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing completed: %s, bonded: %d\n", addr, bonded);
+}
+
+
+static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+}
+
+
+static struct bt_conn_auth_cb conn_auth_callbacks = {
+	.cancel = auth_cancel,
+	.pairing_confirm = pairing_confirm,
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
+};
+
+
 void main(void)
 {
 	int err;
@@ -284,8 +356,18 @@ void main(void)
 
 	printk("Bluetooth initialized\n");
 
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
+
 	scan_init();
 	bt_conn_cb_register(&conn_callbacks);
+
+	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+	if (err) {
+		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
 
 	err = dk_buttons_init(button_handler);
 	if (err) {

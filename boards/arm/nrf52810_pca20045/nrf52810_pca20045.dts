@@ -36,33 +36,34 @@
 	status = "okay";
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
-	tx-pin = <18>;
-	rx-pin = <20>;
-	rts-pin = <16>;
-	cts-pin = <15>;
+	tx-pin = <20>;
+	rx-pin = <21>;
+	rts-pin = <18>;
+	cts-pin = <16>;
 };
 
 &qdec {
 	status = "okay";
-	a-pin = <21>;
-	b-pin = <5>;
-	enable-pin = <6>;
+	a-pin = <5>;
+	b-pin = <6>;
+	enable-pin = <9>;
 	led-pin = <0xFFFFFFFF>;
 	led-pre = <0>;
 	steps = <24>;
 };
 
 &spi0 {
+	compatible = "nordic,nrf-spim";
 	status = "okay";
-	sck-pin = <9>;
-	mosi-pin = <10>;
-	miso-pin = <10>;
-	cs-gpios = <&gpio0 14 0>;
+	sck-pin = <10>;
+	mosi-pin = <12>;
+	miso-pin = <12>;
+	cs-gpios = <&gpio0 15 0>;
 
 	paw3212@0 {
 		compatible = "pixart,paw3212";
 		reg = <0>;
-		irq-gpios = <&gpio0 12 0>;
+		irq-gpios = <&gpio0 14 0>;
 		spi-max-frequency = <2000000>;
 		label = "PAW3212";
 	};

@@ -93,7 +93,7 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param)
 
 int nrf_cloud_disconnect(void)
 {
-	if (NOT_VALID_STATE(STATE_CONNECTED)) {
+	if (NOT_VALID_STATE(STATE_DC_CONNECTED)) {
 		return -EACCES;
 	}
 	return nct_disconnect();
@@ -224,6 +224,15 @@ int nct_input(const struct nct_evt *evt)
 	return nfsm_handle_incoming_event(evt, m_current_state);
 }
 
+void nct_apply_update(void)
+{
+	static const struct nrf_cloud_evt evt = {
+		.type = NRF_CLOUD_EVT_FOTA_DONE
+	};
+
+	m_event_handler(&evt);
+}
+
 void nrf_cloud_process(void)
 {
 	nct_process();
@@ -313,6 +322,13 @@ static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 
 		cloud_notify_event(nrf_cloud_backend, &evt,
 				   config->user_data);
+		break;
+	case NRF_CLOUD_EVT_FOTA_DONE:
+		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE");
+
+		evt.type = CLOUD_EVT_FOTA_DONE;
+
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	default:
 		LOG_DBG("Unknown event type: %d", nrf_cloud_evt->type);

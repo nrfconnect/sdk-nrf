@@ -15,6 +15,14 @@ source "subsys/logging/Kconfig.template.log_config"
 
 comment "BLE Bond"
 
+config DESKTOP_BLE_USE_DEFAULT_ID
+	bool "Use default Bluetooth local identity"
+	depends on BT_PERIPHERAL
+	help
+	  Bluetooth default local identity is used as ID 0. This identity
+	  cannot be reset. After bond for the default identity is removed,
+	  it is not longer used.
+
 config DESKTOP_BLE_PEER_CONTROL
 	bool "Enable interaction with peer configuration"
 	depends on !DESKTOP_BUTTONS_NONE
@@ -31,8 +39,27 @@ config DESKTOP_BLE_PEER_CONTROL_BUTTON
 
 config DESKTOP_BLE_PEER_SELECT
 	bool "Enable switching between peers"
+	depends on BT_PERIPHERAL
 	help
 	  Short click to switch peer. Double click to accept choice.
+
+config DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+	bool "Enable scanning on request"
+	depends on BT_CENTRAL
+	help
+	  Short click to start new peer scanning. When enabled the device will
+	  look for non-bonded devices only when requested.
+	  When disabled the device always search for non-bonded devices while
+	  scanning.
+	  Regardless of the choice made the device scans periodically for
+	  already bonded peers.
+
+config DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT
+	bool "Look for peers after boot"
+	depends on DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+	help
+	  When enabled the device will look for new peers also after it was
+	  booted.
 
 config DESKTOP_BLE_PEER_ERASE
 	bool "Enable peer erase"
@@ -149,14 +176,6 @@ config DESKTOP_BLE_SCANNING_ENABLE
 	help
 	  Enable device to scan for peripheral devices.
 
-config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
-	int "Security fail timeout [s]"
-	default 10
-	depends on BT_PERIPHERAL
-	help
-	  After this time peripheral device disconnects if security is not
-	  established.
-
 config DESKTOP_BLE_SCAN_START_TIMEOUT_S
 	int "Scan start timeout [s]"
 	default 5
@@ -194,6 +213,75 @@ if DESKTOP_BLE_DISCOVERY_ENABLE
 
 module = DESKTOP_BLE_DISCOVERY
 module-str = BLE discovery
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+comment "BLE Latency"
+
+if BT_PERIPHERAL
+
+config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
+	int "Security fail timeout [s]"
+	default 10
+	help
+	  After this time peripheral device disconnects if security is not
+	  established.
+
+module = DESKTOP_BLE_LATENCY
+module-str = BLE latency
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+comment "BLE QoS management"
+
+config DESKTOP_BLE_QOS_ENABLE
+	bool "Enable BLE channel map management"
+	depends on BT_CENTRAL
+	depends on BT_LL_NRFXLIB
+	select BT_HCI_VS_EVT_USER
+	help
+	  Enable device to avoid congested RF channels.
+
+config DESKTOP_BLE_QOS_INTERVAL
+	int "Processing interval for QoS thread [ms]"
+	default 1000
+	depends on DESKTOP_BLE_QOS_ENABLE
+	help
+	  Configure processing interval for QoS algorithm.
+	  Longer intervals means more time to accumulate CRC stats,
+	  and vice versa.
+
+config DESKTOP_BLE_QOS_STACK_SIZE
+	int "Base stack size for QoS thread"
+	default 240
+	depends on DESKTOP_BLE_QOS_ENABLE
+	help
+	  Configure base stack size for QoS processing thread.
+
+config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
+	bool "Enable BLE QoS statistics printout"
+	depends on DESKTOP_BLE_QOS_ENABLE
+	select USB_COMPOSITE_DEVICE
+	select USB_CDC_ACM
+	select SERIAL
+	select UART_LINE_CTRL
+	help
+	  Enable to get real-time QoS information printouts via CDC ACM.
+
+config DESKTOP_BLE_QOS_STATS_PRINT_STACK_SIZE
+	int "Stack size addition for QoS printout"
+	default 784
+	depends on DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
+	help
+	  This size increase is added to the QoS base stack size
+	  to facilitate statistics printout.
+
+if DESKTOP_BLE_QOS_ENABLE
+
+module = DESKTOP_BLE_QOS
+module-str = BLE channel map management
 source "subsys/logging/Kconfig.template.log_config"
 
 endif

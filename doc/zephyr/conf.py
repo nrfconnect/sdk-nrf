@@ -181,6 +181,7 @@ rst_epilog = """
 
 html_theme = "zephyr"
 html_theme_path = ['{}/doc/themes'.format(NRF_BASE)]
+html_favicon = '{}/doc/static/images/favicon.ico'.format(NRF_BASE)
 
 if tags.has('release'):
     is_release = True
@@ -212,7 +213,8 @@ html_title = "Zephyr Project Documentation"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['{}/doc/static'.format(NRF_BASE)]
+html_static_path = ['{}/doc/static'.format(NRF_BASE),
+                    '{}/doc/static'.format(ZEPHYR_BASE)]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -318,5 +320,6 @@ linkcheck_workers = 10
 linkcheck_anchors = False
 
 def setup(app):
+   app.add_stylesheet("zephyr-custom.css")
    app.add_stylesheet("css/zephyr.css")
    app.add_stylesheet("css/common.css")

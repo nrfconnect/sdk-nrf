@@ -10,8 +10,13 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
 #include <bluetooth/gatt.h>
+#include <bluetooth/hci.h>
 
 #include "ble_event.h"
+
+#ifdef CONFIG_BT_LL_NRFXLIB
+#include "ble_controller_hci_vs.h"
+#endif
 
 #define MODULE ble_state
 #include "module_state_event.h"
@@ -19,12 +24,6 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_STATE_LOG_LEVEL);
 
-#ifdef CONFIG_BT_PERIPHERAL
-#define SECURITY_FAIL_TIMEOUT_MS \
-	K_SECONDS(CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S)
-#else
-#define SECURITY_FAIL_TIMEOUT_MS 0
-#endif
 
 struct bond_find_data {
 	bt_addr_le_t peer_address;
@@ -32,22 +31,8 @@ struct bond_find_data {
 	u8_t peer_count;
 };
 
-static struct k_delayed_work security_timeout;
 static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
 
-
-static void security_timeout_fn(struct k_work *w)
-{
-	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
-			 (ARRAY_SIZE(active_conn) == 1), "");
-	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
-			 (SECURITY_FAIL_TIMEOUT_MS > 0), "");
-	__ASSERT_NO_MSG(active_conn[0]);
-	bt_conn_disconnect(active_conn[0],
-			   BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-
-	LOG_ERR("Security establishment failed - device disconnected");
-}
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
@@ -61,14 +46,32 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 	bond_find_data->peer_count++;
 }
 
+static void disconnect_peer(struct bt_conn *conn)
+{
+	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+
+	if (err == -ENOTCONN) {
+		err = 0;
+	}
+	LOG_WRN("Device %s", err ? "failed to disconnect" : "disconnected");
+
+	if (err) {
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
 static void connected(struct bt_conn *conn, u8_t error)
 {
+	/* Make sure that connection will remain valid. */
+	bt_conn_ref(conn);
+
 	char addr_str[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
 
 	if (error) {
 		struct ble_peer_event *event = new_ble_peer_event();
+
 		event->id = conn;
 		event->state = PEER_STATE_CONN_FAILED;
 		EVENT_SUBMIT(event);
@@ -80,9 +83,28 @@ static void connected(struct bt_conn *conn, u8_t error)
 
 	LOG_INF("Connected to %s", log_strdup(addr_str));
 
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
+		if (!active_conn[i]) {
+			break;
+		}
+	}
+	if (i >= ARRAY_SIZE(active_conn)) {
+		k_panic();
+	}
+	active_conn[i] = conn;
+
+	struct ble_peer_event *event = new_ble_peer_event();
+
+	event->id = conn;
+	event->state = PEER_STATE_CONNECTED;
+	EVENT_SUBMIT(event);
+
 	struct bt_conn_info info;
 
 	int err = bt_conn_get_info(conn, &info);
+
 	if (err) {
 		LOG_WRN("Cannot get conn info");
 		goto disconnect;
@@ -90,11 +112,6 @@ static void connected(struct bt_conn *conn, u8_t error)
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
 	    (info.role == BT_CONN_ROLE_SLAVE)) {
-		/* Assert one local identity holds exactly one bond.
-		 * One local identity is unused.
-		 */
-		__ASSERT_NO_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_ID_MAX - 1);
-
 		struct bond_find_data bond_find_data = {
 			.peer_id = 0,
 			.peer_count = 0,
@@ -111,27 +128,6 @@ static void connected(struct bt_conn *conn, u8_t error)
 			LOG_INF("Already bonded to %s", log_strdup(addr_str));
 			goto disconnect;
 		}
-	}
-
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
-		if (!active_conn[i]) {
-			break;
-		}
-	}
-	if (i >= ARRAY_SIZE(active_conn)) {
-		k_panic();
-	}
-	active_conn[i] = conn;
-
-	struct ble_peer_event *event = new_ble_peer_event();
-	event->id = conn;
-	event->state = PEER_STATE_CONNECTED;
-	EVENT_SUBMIT(event);
-
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
-	    (info.role == BT_CONN_ROLE_SLAVE)) {
 		/* Security must be enabled after peer event is sent.
 		 * This is to make sure notification events are propagated
 		 * in the right order.
@@ -143,15 +139,12 @@ static void connected(struct bt_conn *conn, u8_t error)
 			LOG_ERR("Failed to set security");
 			goto disconnect;
 		}
-		k_delayed_work_submit(&security_timeout,
-				      SECURITY_FAIL_TIMEOUT_MS);
 	}
 
 	return;
 
 disconnect:
-	LOG_WRN("Disconnect");
-	bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	disconnect_peer(conn);
 }
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
@@ -171,6 +164,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	}
 
 	if (i == ARRAY_SIZE(active_conn)) {
+		__ASSERT_NO_MSG(false);
 		return;
 	}
 
@@ -181,10 +175,6 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	event->id = conn;
 	event->state = PEER_STATE_DISCONNECTED;
 	EVENT_SUBMIT(event);
-
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		k_delayed_work_cancel(&security_timeout);
-	}
 }
 
 static struct bt_gatt_exchange_params exchange_params;
@@ -198,21 +188,25 @@ static void exchange_func(struct bt_conn *conn, u8_t err,
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err bt_err)
 {
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		__ASSERT_NO_MSG(active_conn[0] == conn);
+	}
+
+	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	if (!bt_err) {
+	if (!bt_err && (level >= BT_SECURITY_L2)) {
 		LOG_INF("Security with %s level %u", log_strdup(addr), level);
 	} else {
-		LOG_ERR("Security failed: %s level %u err %d", log_strdup(addr),
-			level, bt_err);
-		return;		/* Let the timeout handle the failure. */
-	}
+		LOG_WRN("Security with %s failed, level %u err %d",
+			log_strdup(addr), level, bt_err);
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			disconnect_peer(conn);
+		}
 
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		__ASSERT_NO_MSG(active_conn[0] == conn);
-		k_delayed_work_cancel(&security_timeout);
+		return;
 	}
 
 	struct ble_peer_event *event = new_ble_peer_event();
@@ -222,7 +216,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 	struct bt_conn_info info;
 
-	int err = bt_conn_get_info(conn, &info);
+	err = bt_conn_get_info(conn, &info);
 	if (err) {
 		LOG_WRN("Cannot get conn info");
 	} else {
@@ -265,11 +259,32 @@ static void bt_ready(int err)
 
 	LOG_INF("Bluetooth initialized");
 
+#ifdef CONFIG_BT_LL_NRFXLIB
+	hci_vs_cmd_llpm_mode_set_t *p_cmd_enable;
+
+	struct net_buf *buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
+						sizeof(*p_cmd_enable));
+
+	p_cmd_enable = net_buf_add(buf, sizeof(*p_cmd_enable));
+	p_cmd_enable->enable = 1;
+
+	int hci_err = bt_hci_cmd_send(HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf);
+
+	if (hci_err) {
+		LOG_ERR("Error enabling LLPM (err:%" PRIu8 ")", hci_err);
+	} else {
+		LOG_INF("LLPM enabled");
+	}
+#endif
+
 	module_set_state(MODULE_STATE_READY);
 }
 
 static int ble_state_init(void)
 {
+	BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
+		     (ARRAY_SIZE(active_conn) == 1));
+
 	static struct bt_conn_cb conn_callbacks = {
 		.connected = connected,
 		.disconnected = disconnected,
@@ -285,7 +300,8 @@ static int ble_state_init(void)
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+		const struct module_state_event *event =
+			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -293,13 +309,26 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
-			if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-				k_delayed_work_init(&security_timeout,
-						    security_timeout_fn);
-			}
 			if (ble_state_init()) {
 				LOG_ERR("Cannot initialize");
 			}
+		}
+
+		return false;
+	}
+
+	if (is_ble_peer_event(eh)) {
+		const struct ble_peer_event *event = cast_ble_peer_event(eh);
+
+		switch (event->state) {
+		case PEER_STATE_CONN_FAILED:
+		case PEER_STATE_DISCONNECTED:
+			/* Connection object is no longer in use. */
+			bt_conn_unref(event->id);
+			break;
+		default:
+			/* Ignore. */
+			break;
 		}
 
 		return false;
@@ -312,3 +341,4 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+EVENT_SUBSCRIBE_FINAL(MODULE, ble_peer_event);

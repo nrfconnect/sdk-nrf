@@ -10,11 +10,16 @@ rsource "adp536x/Kconfig"
 rsource "at_cmd/Kconfig"
 
 rsource "gps_sim/Kconfig"
+rsource "entropy/Kconfig"
+rsource "hw_cc310/Kconfig"
 rsource "nrf9160_gps/Kconfig"
 rsource "lte_link_control/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "st25r3911b/Kconfig"
+rsource "fprotect/Kconfig"
+rsource "flash_patch/Kconfig"
+rsource "clock_control/Kconfig"
 
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"

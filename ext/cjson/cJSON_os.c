@@ -25,3 +25,8 @@ void cJSON_Init(void)
 
 	cJSON_InitHooks(&_cjson_hooks);
 }
+
+void cJSON_FreeString(char *ptr)
+{
+	free_fn_hook(ptr);
+}

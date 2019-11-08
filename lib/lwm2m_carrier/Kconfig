@@ -9,7 +9,7 @@ menuconfig LWM2M_CARRIER
 	depends on NEWLIB_LIBC
 	depends on BSD_LIBRARY && !BSD_LIBRARY_SYS_INIT
 	# Need a source of entropy
-	depends on TEST_RANDOM_GENERATOR
+	depends on ENTROPY_HAS_DRIVER
 	# Flash settings
 	depends on FLASH && FLASH_PAGE_LAYOUT
 	depends on MPU_ALLOW_FLASH_WRITE
@@ -28,6 +28,8 @@ menuconfig LWM2M_CARRIER
 	# AT libraries
 	depends on AT_CMD
 	depends on AT_CMD_PARSER
+	# reboot functionality
+	depends on REBOOT
 	help
 	  A library for cellular connection management.
 

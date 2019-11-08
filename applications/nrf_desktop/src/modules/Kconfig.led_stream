@@ -15,8 +15,8 @@ config DESKTOP_LED_STREAM_ENABLE
 config DESKTOP_LED_STREAM_QUEUE_SIZE
 	int "Stream led event queue size"
 	depends on DESKTOP_LED_ENABLE && DESKTOP_CONFIG_CHANNEL_ENABLE
-	default 5
-	range 2 255
+	default 15
+	range 2 254
 
 if DESKTOP_LED_STREAM_ENABLE
 

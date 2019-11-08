@@ -11,13 +11,10 @@ menuconfig SECURE_BOOT_CRYPTO
 if (SECURE_BOOT_CRYPTO)
 config SB_ECDSA_SECP256R1
 	bool
-	select FW_ECDSA_SECP256R1
 config SB_RSA_PSS2048
 	bool
-	select FW_RSA_PSS2048
 config SB_SHA256
 	bool
-	select FW_SHA256
 
 config SB_SIGNATURE_LEN
 	int
@@ -103,3 +100,21 @@ config SB_PUBLIC_KEY_HASH_LEN
 	  Public Keys are truncated.
 
 endif # SECURE_BOOT_CRYPTO
+
+if SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT
+ABI = BL_ROT_VERIFY
+flags = 2
+ver = 1
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
+
+ABI = BL_SHA256
+flags = 0
+ver = 1
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
+
+ABI = BL_SECP256R1
+flags = 1
+ver = 1
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_abi"
+
+endif # SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT

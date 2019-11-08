@@ -331,11 +331,11 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Security changed: %s level %u\n", addr, level);
 	if (!err) {
-		printk("Security changed: %s level %u", addr, level);
+		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d", addr, level, err);
+		printk("Security failed: %s level %u err %d\n", addr, level,
+			err);
 	}
 }
 
@@ -582,10 +582,15 @@ static void auth_cancel(struct bt_conn *conn)
 }
 
 
-static void auth_done(struct bt_conn *conn)
+static void pairing_confirm(struct bt_conn *conn)
 {
-	printk("%s()\n", __func__);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
 	bt_conn_auth_pairing_confirm(conn);
+
+	printk("Pairing confirmed: %s\n", addr);
 }
 
 
@@ -621,13 +626,21 @@ static void auth_oob_data_request(struct bt_conn *conn,
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
-	printk("Paired conn: %p, bonded: %d\n", conn, bonded);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing completed: %s, bonded: %d\n", addr, bonded);
 }
 
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-	printk("Pairing failed conn: %p, reason %d\n", conn, reason);
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
 }
 
 
@@ -635,7 +648,7 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
-	.pairing_confirm = auth_done,
+	.pairing_confirm = pairing_confirm,
 #if CONFIG_NFC_OOB_PAIRING
 	.oob_data_request = auth_oob_data_request,
 #endif

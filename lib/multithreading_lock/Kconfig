@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config MULTITHREADING_LOCK
+	bool
+	help
+	  Enable APIs for ensuring threadsafe operation.

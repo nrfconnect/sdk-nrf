@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 #include <zephyr/types.h>
+#include <stddef.h>
 
 /**
  * @brief AT command return codes

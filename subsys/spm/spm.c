@@ -104,6 +104,13 @@ extern int irq_target_state_is_secure(unsigned int irq);
 	}
 #endif
 
+/* Check if configuration exceeds the number of
+ * DPPI Channels available on device.
+ */
+#if (CONFIG_SPM_NRF_DPPIC_PERM_MASK >= (1 << DPPI_CH_NUM))
+#error "SPM_NRF_DPPIC_PERM_MASK exceeds number of available DPPI channels"
+#endif
+
 #if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
 
 static void spm_config_nsc_flash(void)
@@ -173,7 +180,7 @@ static void spm_config_flash(void)
 #if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
 	spm_config_nsc_flash();
 
-#if defined(CONFIG_SECURE_SERVICES)
+#if defined(CONFIG_SPM_SECURE_SERVICES)
 	int err = spm_secure_services_init();
 
 	if (err != 0) {
@@ -271,6 +278,11 @@ static int spm_config_peripheral(u8_t id, bool dma_present)
 	return 0;
 }
 
+static void spm_dppi_configure(u32_t mask)
+{
+	NRF_SPU->DPPI[0].PERM = mask;
+}
+
 static void spm_config_peripherals(void)
 {
 	struct periph_cfg {
@@ -344,12 +356,17 @@ static void spm_config_peripherals(void)
 		PERIPH("NRF_FPU", NRF_FPU_S, CONFIG_SPM_NRF_FPU_NS),
 		PERIPH("NRF_EGU1", NRF_EGU1_S, CONFIG_SPM_NRF_EGU1_NS),
 		PERIPH("NRF_EGU2", NRF_EGU2_S, CONFIG_SPM_NRF_EGU2_NS),
+		PERIPH("NRF_DPPIC", NRF_DPPIC_S, CONFIG_SPM_NRF_DPPIC_NS),
 
 		PERIPH("NRF_GPIOTE1", NRF_GPIOTE1_NS,
 				      CONFIG_SPM_NRF_GPIOTE1_NS),
 		PERIPH("NRF_REGULATORS", NRF_REGULATORS_S,
 				      CONFIG_SPM_NRF_REGULATORS_NS),
 	};
+
+	if (IS_ENABLED(CONFIG_SPM_NRF_DPPIC_NS)) {
+		spm_dppi_configure(CONFIG_SPM_NRF_DPPIC_PERM_MASK);
+	}
 
 	PRINT("Peripheral\t\tDomain\t\tStatus\n");
 
@@ -391,8 +408,12 @@ static void spm_configure_ns(const tz_nonsecure_setup_conf_t
 	tz_nonsecure_exception_prio_config(1);
 	/* Set non-banked exceptions to target Non-Secure */
 	tz_nbanked_exception_target_state_set(0);
-	/* Don't allow Non-Secure firmware to issue System resets. */
-	tz_nonsecure_system_reset_req_block(1);
+	/* Configure if Non-Secure firmware should be allowed to issue System
+	 * reset. If not it could be enabled through a secure service.
+	 */
+	tz_nonsecure_system_reset_req_block(
+		IS_ENABLED(CONFIG_SPM_BLOCK_NON_SECURE_RESET)
+	);
 	/* Allow SPU to have precedence over (non-existing) ARMv8-M SAU. */
 	tz_sau_configure(0, 1);
 

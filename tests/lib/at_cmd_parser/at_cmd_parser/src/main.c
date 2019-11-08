@@ -522,6 +522,90 @@ static void test_testcases_teardown(void)
 	at_params_list_free(&test_list2);
 }
 
+static void test_at_cmd_setup(void)
+{
+	at_params_list_init(&test_list2, TEST_PARAMS2);
+}
+
+static void test_at_cmd(void)
+{
+	int ret;
+	char tmpbuf[32];
+	u32_t tmpbuf_len;
+	u16_t tmpshrt;
+
+	static const char at_cmd_cclk[] = "AT+CCLK=\"18/12/06,22:10:00+08\"";
+
+	ret = at_parser_params_from_str(at_cmd_cclk, NULL, &test_list2);
+	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+
+	ret = at_params_valid_count_get(&test_list2);
+	zassert_true(ret == 2,
+		     "at_params_valid_count_get returns wrong valid count");
+
+	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+		     "Param type at index 0 should be a string");
+	zassert_true(at_params_type_get(&test_list2, 1) == AT_PARAM_TYPE_STRING,
+		     "Param type at index 1 should be a string");
+
+	tmpbuf_len = sizeof(tmpbuf);
+	zassert_equal(0, at_params_string_get(&test_list2, 0,
+					      tmpbuf, &tmpbuf_len),
+		      "Get string should not fail");
+	zassert_equal(0, memcmp("AT+CCLK", tmpbuf, tmpbuf_len),
+		      "The string in tmpbuf should equal to AT+CCLK");
+
+	tmpbuf_len = sizeof(tmpbuf);
+	zassert_equal(0, at_params_string_get(&test_list2, 1,
+					      tmpbuf, &tmpbuf_len),
+		      "Get string should not fail");
+	zassert_equal(0, memcmp("18/12/06,22:10:00+08", tmpbuf, tmpbuf_len),
+		      "The string in tmpbuf should equal to "
+		      "18/12/06,22:10:00+08");
+
+	static const char at_cmd_xsystemmode[] = "AT%XSYSTEMMODE=1,2,3,4";
+
+	ret = at_parser_params_from_str(at_cmd_xsystemmode, NULL, &test_list2);
+	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+
+	ret = at_params_valid_count_get(&test_list2);
+	zassert_true(ret == 5,
+		     "at_params_valid_count_get returns wrong valid count");
+
+	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+		     "Param type at index 0 should be a string");
+	zassert_true(at_params_type_get(&test_list2, 1) ==
+							AT_PARAM_TYPE_NUM_SHORT,
+		     "Param type at index 1 should be a string");
+	zassert_true(at_params_type_get(&test_list2, 2) ==
+							AT_PARAM_TYPE_NUM_SHORT,
+		     "Param type at index 2 should be a string");
+	zassert_true(at_params_type_get(&test_list2, 3) ==
+							AT_PARAM_TYPE_NUM_SHORT,
+		     "Param type at index 3 should be a string");
+	zassert_true(at_params_type_get(&test_list2, 4) ==
+							AT_PARAM_TYPE_NUM_SHORT,
+		     "Param type at index 4 should be a string");
+
+	zassert_equal(0, at_params_short_get(&test_list2, 1, &tmpshrt),
+		      "Get short should not fail");
+	zassert_equal(1, tmpshrt, "Short should be 1");
+	zassert_equal(0, at_params_short_get(&test_list2, 2, &tmpshrt),
+		      "Get short should not fail");
+	zassert_equal(2, tmpshrt, "Short should be 2");
+	zassert_equal(0, at_params_short_get(&test_list2, 3, &tmpshrt),
+		      "Get short should not fail");
+	zassert_equal(3, tmpshrt, "Short should be 3");
+	zassert_equal(0, at_params_short_get(&test_list2, 4, &tmpshrt),
+		      "Get short should not fail");
+	zassert_equal(4, tmpshrt, "Short should be 4");
+}
+
+static void test_at_cmd_teardown(void)
+{
+	at_params_list_free(&test_list2);
+}
+
 void test_main(void)
 {
 	ztest_test_suite(at_cmd_parser,
@@ -540,7 +624,11 @@ void test_main(void)
 			 ztest_unit_test_setup_teardown(
 				test_testcases,
 				test_testcases_setup,
-				test_testcases_teardown)
+				test_testcases_teardown),
+			 ztest_unit_test_setup_teardown(
+				test_at_cmd,
+				test_at_cmd_setup,
+				test_at_cmd_teardown)
 			);
 
 	ztest_run_test_suite(at_cmd_parser);

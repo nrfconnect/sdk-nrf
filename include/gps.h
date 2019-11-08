@@ -40,7 +40,7 @@ struct gps_datetime {
 	u8_t hour;
 	u8_t minute;
 	u8_t seconds;
-	u8_t ms;
+	u16_t ms;
 };
 
 struct gps_sv {

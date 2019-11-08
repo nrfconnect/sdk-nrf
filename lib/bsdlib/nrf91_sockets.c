@@ -14,7 +14,6 @@
 #include <bsd_os.h>
 #include <errno.h>
 #include <init.h>
-#include <net/net_offload.h>
 #include <net/socket_offload.h>
 #include <nrf_socket.h>
 #include <zephyr.h>
@@ -87,6 +86,9 @@ static int z_to_nrf_level(int z_in_level, int *nrf_out_level)
 	case SOL_SOCKET:
 		*nrf_out_level = NRF_SOL_SOCKET;
 		break;
+	case SOL_DFU:
+		*nrf_out_level = NRF_SOL_DFU;
+		break;
 	case SOL_PDN:
 		*nrf_out_level = NRF_SOL_PDN;
 		break;
@@ -147,10 +149,48 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		}
 		break;
 
+	case SOL_DFU:
+		switch (z_in_optname) {
+		case SO_DFU_FW_VERSION:
+			*nrf_out_optname = NRF_SO_DFU_FW_VERSION;
+			break;
+		case SO_DFU_RESOURCES:
+			*nrf_out_optname = NRF_SO_DFU_RESOURCES;
+			break;
+		case SO_DFU_TIMEO:
+			*nrf_out_optname = NRF_SO_DFU_TIMEO;
+			break;
+		case SO_DFU_APPLY:
+			*nrf_out_optname = NRF_SO_DFU_APPLY;
+			break;
+		case SO_DFU_REVERT:
+			*nrf_out_optname = NRF_SO_DFU_REVERT;
+			break;
+		case SO_DFU_BACKUP_DELETE:
+			*nrf_out_optname = NRF_SO_DFU_BACKUP_DELETE;
+			break;
+		case SO_DFU_OFFSET:
+			*nrf_out_optname = NRF_SO_DFU_OFFSET;
+			break;
+		case SO_DFU_ERROR:
+			*nrf_out_optname = NRF_SO_DFU_ERROR;
+			break;
+		default:
+			retval = -1;
+			break;
+		}
+		break;
+
 	case SOL_PDN:
 		switch (z_in_optname) {
 		case SO_PDN_AF:
 			*nrf_out_optname = NRF_SO_PDN_AF;
+			break;
+		case SO_PDN_CONTEXT_ID:
+			*nrf_out_optname = NRF_SO_PDN_CONTEXT_ID;
+			break;
+		case SO_PDN_STATE:
+			*nrf_out_optname = NRF_SO_PDN_STATE;
 			break;
 		default:
 			retval = -1;
@@ -224,6 +264,10 @@ static int z_to_nrf_family(sa_family_t z_family)
 		return NRF_AF_INET6;
 	case AF_LTE:
 		return NRF_AF_LTE;
+	case AF_LOCAL:
+		return NRF_AF_LOCAL;
+	case AF_PACKET:
+		return NRF_AF_PACKET;
 	case AF_UNSPEC:
 	/* No NRF_AF_UNSPEC defined. */
 	default:
@@ -240,6 +284,10 @@ static int nrf_to_z_family(nrf_socket_family_t nrf_family)
 		return AF_INET6;
 	case NRF_AF_LTE:
 		return AF_LTE;
+	case NRF_AF_LOCAL:
+		return AF_LOCAL;
+	case NRF_AF_PACKET:
+		return AF_PACKET;
 	default:
 		return -EAFNOSUPPORT;
 	}
@@ -254,6 +302,10 @@ static int nrf_to_z_protocol(int proto)
 		return IPPROTO_UDP;
 	case NRF_SPROTO_TLS1v2:
 		return IPPROTO_TLS_1_2;
+	case NRF_PROTO_PDN:
+		return NPROTO_PDN;
+	case NRF_PROTO_DFU:
+		return NPROTO_DFU;
 	case NRF_PROTO_AT:
 		return NPROTO_AT;
 	case 0:
@@ -275,6 +327,8 @@ static int z_to_nrf_socktype(int socktype)
 	switch (socktype) {
 	case SOCK_MGMT:
 		return NRF_SOCK_MGMT;
+	case SOCK_RAW:
+		return NRF_SOCK_RAW;
 	default:
 		return socktype;
 	}
@@ -291,6 +345,8 @@ static int z_to_nrf_protocol(int proto)
 		return NRF_SPROTO_TLS1v2;
 	case NPROTO_AT:
 		return NRF_PROTO_AT;
+	case NPROTO_DFU:
+		return NRF_PROTO_DFU;
 	case NPROTO_PDN:
 		return NRF_PROTO_PDN;
 	case PROTO_WILDCARD:
@@ -882,12 +938,6 @@ static int nrf91_bsdlib_socket_offload_init(struct device *arg)
 	return 0;
 }
 
-/* Placeholders, until Zepyr IP stack updated to handle a NULL net_offload.
- * Socket offloading is used, hece we will not use this API, yet it's still
- * needed to create this structure.
- */
-static struct net_offload nrf91_net_offload = { 0 };
-
 static struct nrf91_socket_iface_data {
 	struct net_if *iface;
 } nrf91_socket_iface_data;
@@ -896,7 +946,7 @@ static void nrf91_socket_iface_init(struct net_if *iface)
 {
 	nrf91_socket_iface_data.iface = iface;
 
-	iface->if_dev->offload = &nrf91_net_offload;
+	iface->if_dev->offloaded = true;
 
 	socket_offload_register(&nrf91_socket_offload_ops);
 }

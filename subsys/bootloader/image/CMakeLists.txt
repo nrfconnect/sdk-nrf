@@ -4,6 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+function(add_overlay_config image overlay_file)
+  set(old_conf ${${image}OVERLAY_CONFIG})
+  string(FIND "${old_conf}" "${overlay_file}" found)
+  if (${found} EQUAL -1)
+    set(${image}OVERLAY_CONFIG
+      "${old_conf} ${overlay_file}"
+      CACHE STRING "" FORCE)
+  endif()
+endfunction()
+
 # This CMakeLists.txt is executed by the root application only when
 # B0 (SECURE_BOOT) is enabled. First, figure out what image will be
 # booted by B0, and set the required properties for that image to be
@@ -12,8 +22,13 @@
 if (CONFIG_BOOTLOADER_MCUBOOT)
   set(image_to_boot mcuboot_)
 
+  add_overlay_config(
+    mcuboot_
+    ${CMAKE_CURRENT_SOURCE_DIR}/multi_image_mcuboot.conf
+    )
+
   # Partition S1 is only enabled when MCUBoot is enabled.
-  set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_IMAGE_ADDRESS>)
+  set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>)
 
 else()
 
@@ -27,18 +42,19 @@ but MCUboot is not being built.")
   endif()
 endif()
 
-# Include a kconfig file which enables CONFIG_FW_METADATA in the image
-# which is booted by B0.
-set(old_conf ${${image_to_boot}OVERLAY_CONFIG})
-string(FIND "${old_conf}" "${CMAKE_CURRENT_SOURCE_DIR}/fw_metadata.conf" found)
-if (${found} EQUAL -1)
-  set(${image_to_boot}OVERLAY_CONFIG
-    "${old_conf} ${CMAKE_CURRENT_SOURCE_DIR}/fw_metadata.conf"
-    CACHE STRING "" FORCE)
+if (image_to_boot)
+  # Include a kconfig file which enables CONFIG_FW_INFO in the image
+  # which is booted by B0.
+  add_overlay_config(
+    ${image_to_boot}
+    ${CMAKE_CURRENT_SOURCE_DIR}/fw_info.conf
+    )
+else()
+  assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")
 endif()
 
 # Partition S0 will always contain the image to be booted by B0.
-set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_IMAGE_ADDRESS>)
+set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
 if (s1_addr)
   set(s1_arg --s1-addr ${s1_addr})
 endif()
@@ -51,6 +67,18 @@ set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/debug_keys.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/sign.cmake)
 
+if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
+  set(ALL_PUBLIC_KEY_FILES "${PUBLIC_KEY_FILES},${SIGNATURE_PUBLIC_KEY_FILE}")
+  message(WARNING
+    "
+      -----------------------------------------------------------------
+      --- WARNING: SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST is enabled.   ---
+      --- This config should only be enabled for testing/debugging. ---
+      -----------------------------------------------------------------")
+else()
+  set(ALL_PUBLIC_KEY_FILES "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}")
+endif()
+
 add_custom_command(
   OUTPUT
   ${PROVISION_HEX}
@@ -60,7 +88,7 @@ add_custom_command(
   --s0-addr ${s0_addr}
   ${s1_arg}
   --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
-  --public-key-files "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}"
+  --public-key-files ${ALL_PUBLIC_KEY_FILES}
   --output ${PROVISION_HEX}
   DEPENDS
   ${PROVISION_KEY_DEPENDS}
@@ -78,16 +106,23 @@ add_custom_target(
   signature_public_key_file_target
   )
 
-# Set hex file and target for the 'provision' placeholder partition.
-# This includes the hex file (and its corresponding target) to the build.
-set_property(
-  GLOBAL PROPERTY
-  provision_PM_HEX_FILE
-  ${PROVISION_HEX}
+get_property(
+  provision_set
+  GLOBAL PROPERTY provision_PM_HEX_FILE SET
   )
 
-set_property(
-  GLOBAL PROPERTY
-  provision_PM_TARGET
-  provision_target
-  )
+if(NOT provision_set)
+  # Set hex file and target for the 'provision' placeholder partition.
+  # This includes the hex file (and its corresponding target) to the build.
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_HEX_FILE
+    ${PROVISION_HEX}
+    )
+
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_TARGET
+    provision_target
+    )
+endif()

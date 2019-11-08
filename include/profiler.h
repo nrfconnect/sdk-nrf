@@ -16,6 +16,8 @@
 
 
 #include <zephyr/types.h>
+#include <misc/util.h>
+#include <misc/__assert.h>
 
 #ifndef CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS
 /** Maximum number of custom events. */

@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: a2c36f15843f9e11bd997cf5e72b0b4d69a552f7
+      revision: 919640cdd332d64a0694fc686027d1e919f30ce1
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -50,10 +50,10 @@ manifest:
     - name: mbedtls
       repo-path: fw-nrfconnect-mbedtls
       path: modules/crypto/mbedtls
-      revision: 900c7eea92e45adba1067e044ec705d4541c84a5
+      revision: c3be1b52f5e56aaba6039c423478cfaf62a91622
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: 45e7a2404625d50dcc651d0392a93691f4eaa1cd
+      revision: a631263274e7220e008138e7f26c2d35bbcb2203
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
       revision: f663988d35da559a37f263d369842dbce309d1fa
@@ -61,18 +61,18 @@ manifest:
     - name: tinycbor
       repo-path: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
-      revision: 543ecb7c8662580ef803d59ceda7bd3b8a84a11b
+      revision: 86d5ed5dd544b107d2d0882961a19c2c6cb06572
     - name: ci-tools
       path: tools/ci-tools
       remote: zephyrproject
-      revision: d56f2dd3510e20fa8cf4aad442495c08a658113f
+      revision: e01f3bce2a94847253369efb9a081f5c0e9ec882
     - name: net-tools
       path: tools/net-tools
       remote: zephyrproject
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
-      revision: 35120d32233dc354c89d8c62eaa6267093c7e35b
+      revision: 52afb8282f4369204d1096121dd31485c479196a
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
@@ -84,7 +84,7 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.13.1
+      revision: mbedtls-2.16.3
       remote: armmbed
 
     # The projects below are included for completeness, but they are
@@ -103,7 +103,7 @@ manifest:
     - name: hal_nordic
       path: modules/hal/nordic
       remote: zephyrproject
-      revision: 7bf2d404d0bf7f36d77d5090b5207f8b4676776c
+      revision: 1b14177ff2176a1d17f3dd5e7e217f44337255db
     - name: hal_st
       path: modules/hal/st
       remote: zephyrproject
@@ -115,7 +115,7 @@ manifest:
     - name: lvgl
       path: modules/lib/gui/lvgl
       remote: zephyrproject
-      revision: 6e3316da412649f02d133231078427e452f65db6
+      revision: d4708d0a432e95f51bdc712591ba5295b751140c
     - name: open-amp
       path: modules/lib/open-amp
       remote: zephyrproject
@@ -123,7 +123,7 @@ manifest:
     - name: openthread
       path: modules/lib/openthread
       remote: zephyrproject
-      revision: 0dbecf508e7a79aae8ed9631f1a63fc65478b213
+      revision: 3c32244f098f8daf8741efe0a2ad839b67f8567f
     - name: littlefs
       path: modules/fs/littlefs
       remote: zephyrproject

@@ -35,6 +35,10 @@ LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 #define FUNCTIONAL_MODE_ENABLED		1
 #endif
 
+/* Aligned strings describing sattelite states based on flags */
+#define sv_used_str(x) ((x)?"    used":"not used")
+#define sv_unhealthy_str(x) ((x)?"not healthy":"    healthy")
+
 struct gps_drv_data {
 	gps_trigger_handler_t trigger_handler;
 	struct gps_trigger trigger;
@@ -70,6 +74,10 @@ static void copy_pvt(struct gps_pvt *dest, nrf_gnss_pvt_data_frame_t *src)
 	dest->datetime.minute = src->datetime.minute;
 	dest->datetime.seconds = src->datetime.seconds;
 	dest->datetime.ms = src->datetime.ms;
+	dest->pdop = src->pdop;
+	dest->hdop = src->hdop;
+	dest->vdop = src->vdop;
+	dest->tdop = src->tdop;
 
 	for (size_t i = 0;
 	     i < MIN(NRF_GNSS_MAX_SATELLITES, GPS_MAX_SATELLITES); i++) {
@@ -92,32 +100,35 @@ static u64_t fix_timestamp;
 
 static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 {
-	u8_t  tracked          = 0;
-	u8_t  in_fix           = 0;
-	u8_t  unhealthy        = 0;
+	u8_t  n_tracked = 0;
+	u8_t  n_used = 0;
+	u8_t  n_unhealthy = 0;
 
 	for (int i = 0; i < NRF_GNSS_MAX_SATELLITES; ++i) {
+		u8_t sv = pvt_data->pvt.sv[i].sv;
+		bool used = (pvt_data->pvt.sv[i].flags &
+			     NRF_GNSS_SV_FLAG_USED_IN_FIX) ? true : false;
+		bool unhealthy = (pvt_data->pvt.sv[i].flags &
+				  NRF_GNSS_SV_FLAG_UNHEALTHY) ? true : false;
 
-		if ((pvt_data->pvt.sv[i].sv > 0) &&
-		    (pvt_data->pvt.sv[i].sv < 33)) {
-
-			tracked++;
-
-			if (pvt_data->pvt.sv[i].flags &
-					NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
-				in_fix++;
+		if (sv) { /* SV number 0 indicates no satellite */
+			n_tracked++;
+			if (used) {
+				n_used++;
+			}
+			if (unhealthy) {
+				n_unhealthy++;
 			}
 
-			if (pvt_data->pvt.sv[i].flags &
-					NRF_GNSS_SV_FLAG_UNHEALTHY) {
-				unhealthy++;
-			}
+			LOG_DBG("Tracking SV %2u: %s, %s", sv,
+				sv_used_str(used),
+				sv_unhealthy_str(unhealthy));
 		}
 	}
 
-	LOG_DBG("Tracking: %d Using: %d Unhealthy: %d", tracked,
-						       in_fix,
-						       unhealthy);
+	LOG_DBG("Tracking: %d Using: %d Unhealthy: %d", n_tracked,
+							n_used,
+							n_unhealthy);
 
 	LOG_DBG("Seconds since last fix %lld",
 			(k_uptime_get() - fix_timestamp) / 1000);
@@ -145,10 +156,9 @@ wait:
 			continue;
 		}
 
-		print_satellite_stats(&raw_gps_data);
-
 		switch (raw_gps_data.data_id) {
 		case NRF_GNSS_PVT_DATA_ID:
+			print_satellite_stats(&raw_gps_data);
 			copy_pvt(&fresh_pvt.pvt, &raw_gps_data.pvt);
 
 			if ((drv_data->trigger.chan == GPS_CHAN_PVT)
@@ -436,12 +446,13 @@ static int init(struct device *dev)
 
 	init_thread(dev);
 
-	#if CONFIG_NRF9160_GPS_SET_MAGPIO
+	#if CONFIG_NRF9160_GPS_SET_MAGPIO || CONFIG_NRF9160_GPS_SET_COEX0
 		int err;
-		char buf[50] = {0};
+	#endif
 
+	#if CONFIG_NRF9160_GPS_SET_MAGPIO
 		err = at_cmd_write(CONFIG_NRF9160_GPS_MAGPIO_STRING,
-				buf, sizeof(buf), NULL);
+				   NULL, 0, NULL);
 		if (err) {
 			LOG_ERR("Could not confiugure MAGPIO, error: %d", err);
 			return err;
@@ -450,6 +461,18 @@ static int init(struct device *dev)
 		LOG_DBG("MAGPIO set: %s",
 			log_strdup(CONFIG_NRF9160_GPS_MAGPIO_STRING));
 	#endif /* CONFIG_NRF9160_GPS_SET_MAGPIO */
+
+	#if CONFIG_NRF9160_GPS_SET_COEX0
+		err = at_cmd_write(CONFIG_NRF9160_GPS_COEX0_STRING,
+				   NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Could not confiugure COEX0, error: %d", err);
+			return err;
+		}
+
+		LOG_DBG("COEX0 set: %s",
+			log_strdup(CONFIG_NRF9160_GPS_COEX0_STRING));
+	#endif /* CONFIG_NRF9160_GPS_SET_COEX0 */
 
 	return 0;
 }

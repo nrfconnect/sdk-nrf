@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <nrf_gpiote.h>
+#include <hal/nrf_gpiote.h>
 #ifdef DPPI_PRESENT
 #include <nrfx_dppi.h>
 #else

@@ -7,10 +7,9 @@
 #include <zephyr/types.h>
 #include <power.h>
 
-#include <nrf_power.h>
 #include <device.h>
 #include <gpio.h>
-#include <hal/nrf_gpiote.h>
+#include <hal/nrf_power.h>
 
 #include <profiler.h>
 
@@ -289,8 +288,12 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_init(&power_down_trigger, power_down);
 			k_delayed_work_submit(&power_down_trigger,
 					      POWER_DOWN_CHECK_MS);
+
+			if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_CONSTLAT)) {
+				nrf_power_task_trigger(NRF_POWER_TASK_CONSTLAT);
+				LOG_WRN("Constant latency enabled");
+			}
 		} else if (event->state == MODULE_STATE_ERROR) {
-			LOG_PANIC();
 			power_state = POWER_STATE_ERROR;
 			k_delayed_work_cancel(&power_down_trigger);
 

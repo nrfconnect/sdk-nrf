@@ -23,8 +23,7 @@ config SECURE_BOOT_CRYPTO_CLIENT
 config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
-	select FW_METADATA
-	select SECURE_BOOT_CRYPTO
+	select SECURE_BOOT_VALIDATION
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
@@ -107,22 +106,29 @@ config SB_PUBLIC_KEY_FILES
 	  will be used.
 	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
 
+config SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
+	bool "[DEBUG] Place signing public key last"
+	default n
+	help
+	  Place the public key used for signing last in the list instead of
+	  first. This is meant to be used for testing looping through the
+	  public keys.
+
 
 endif # SECURE_BOOT
 
 menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
-	select SECURE_BOOT_CRYPTO
+	select SECURE_BOOT_VALIDATION
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
-	select FW_METADATA
 	help
 	  This option is set by the first stage bootloader app to include all
 	  files and set all the options required.
 
 if IS_SECURE_BOOTLOADER
 
-partition=B0
-partition-size=0x8000
+partition=B0_IMAGE
+partition-size=0x7000
 source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
 
 menuconfig SECURE_BOOT_DEBUG
@@ -156,11 +162,10 @@ config SB_BPROT_IN_DEBUG
 endif # SECURE_BOOT_DEBUG
 endif # IS_SECURE_BOOTLOADER
 
-if IS_SECURE_BOOTLOADER || SECURE_BOOT
-config SB_FIRMWARE_INFO_OFFSET
-	hex
-	default FW_FIRMWARE_INFO_OFFSET
+if IS_SECURE_BOOTLOADER || SECURE_BOOT || SECURE_BOOT_CRYPTO_CLIENT
 
 rsource "bl_crypto/Kconfig"
-endif # IS_SECURE_BOOTLOADER || SECURE_BOOT
+rsource "bl_validation/Kconfig"
+
+endif
 

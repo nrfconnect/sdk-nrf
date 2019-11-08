@@ -6,6 +6,7 @@
 
 menuconfig BT_GATT_BAS_C
 	bool "Battery service client"
+	select BT_NRF_SERVICES
 	help
 	  Enable Battery Service Client.
 

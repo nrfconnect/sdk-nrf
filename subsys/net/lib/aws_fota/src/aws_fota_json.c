@@ -8,6 +8,7 @@
 #include <string.h>
 #include <json.h>
 #include <misc/util.h>
+#include <net/aws_jobs.h>
 
 #include "aws_fota_json.h"
 
@@ -137,6 +138,18 @@ static const struct json_obj_descr update_job_exec_stat_rsp_descr[] = {
 			client_token, JSON_TOK_STRING),
 };
 
+/**@brief Copy max maxlen bytes from src to dst. Insert null-terminator.
+ */
+static void strncpy_nullterm(char *dst, const char *src, size_t maxlen)
+{
+	size_t len = strlen(src) + 1;
+
+	memcpy(dst, src, MIN(len, maxlen));
+	if (len > maxlen) {
+		dst[maxlen - 1] = '\0';
+	}
+}
+
 int aws_fota_parse_update_job_exec_state_rsp(char *update_rsp_document,
 		size_t payload_len, char *status)
 {
@@ -148,8 +161,7 @@ int aws_fota_parse_update_job_exec_state_rsp(char *update_rsp_document,
 
 	/* Check if the status field(1st field) of the object has been parsed */
 	if (ret & 0x01) {
-		memcpy(status, rsp.status,
-			MIN(strlen(rsp.status), STATUS_MAX_LEN));
+		strncpy_nullterm(status, rsp.status, STATUS_MAX_LEN);
 	}
 
 	return ret;
@@ -160,32 +172,30 @@ int aws_fota_parse_notify_next_document(char *job_document,
 		char *file_path_buf)
 {
 	struct notify_next_obj job;
+	struct job_document_obj *job_doc_obj;
 
 	int ret = json_obj_parse(job_document,
 				 payload_len,
 				 notify_next_obj_descr,
 				 ARRAY_SIZE(notify_next_obj_descr),
 				 &job);
-	/* Check if the execution field(2nd field) of the object has been parsed */
+	job_doc_obj = &job.execution.job_document;
+
+	/* Check if the execution field of the object has been parsed */
 	if (ret & 0x02) {
 		if (job.execution.job_id != 0) {
-			memcpy(job_id_buf, job.execution.job_id,
-				MIN(strlen(job.execution.job_id),
-				    JOB_ID_MAX_LEN));
+			strncpy_nullterm(job_id_buf, job.execution.job_id,
+				      AWS_JOBS_JOB_ID_MAX_LEN);
 		}
-
-		if (job.execution.job_document.location.host != 0) {
-			memcpy(hostname_buf,
-			       job.execution.job_document.location.host,
-			MIN(strlen(job.execution.job_document.location.host),
-			    CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN));
+		if (job_doc_obj->location.host != 0) {
+			strncpy_nullterm(hostname_buf,
+					 job_doc_obj->location.host,
+					 CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN);
 		}
-
-		if (job.execution.job_document.location.path != 0) {
-			memcpy(file_path_buf,
-			       job.execution.job_document.location.path,
-			MIN(strlen(job.execution.job_document.location.path),
-			    CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN));
+		if (job_doc_obj->location.path != 0) {
+			strncpy_nullterm(file_path_buf,
+					 job_doc_obj->location.path,
+					  CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN);
 		}
 
 	}
