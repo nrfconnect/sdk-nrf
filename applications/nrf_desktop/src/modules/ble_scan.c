@@ -49,22 +49,19 @@ static bool peers_only = !IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT);
 static bool scanning;
 
 
+static void conn_cnt_foreach(struct bt_conn *conn, void *data)
+{
+	size_t *cur_cnt = data;
+
+	(*cur_cnt)++;
+}
+
 static size_t count_conn(void)
 {
 	size_t conn_count = 0;
 
-	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
-			return conn_count;
-		}
-		struct bt_conn *conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT,
-						&subscribed_peers[i].addr);
-
-		if (conn) {
-			conn_count++;
-			bt_conn_unref(conn);
-		}
-	}
+	bt_conn_foreach(BT_CONN_TYPE_LE, conn_cnt_foreach, &conn_count);
+	__ASSERT_NO_MSG(conn_count <= CONFIG_BT_MAX_CONN);
 
 	return conn_count;
 }
@@ -571,6 +568,10 @@ static bool event_handler(const struct event_header *eh)
 		case PEER_OPERATION_ERASED:
 			reset_subscribers();
 			store_subscribed_peers();
+			if (count_conn() == CONFIG_BT_MAX_CONN) {
+				peers_only = false;
+				break;
+			}
 			/* Fall-through */
 
 		case PEER_OPERATION_SCAN_REQUEST:
