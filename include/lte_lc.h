@@ -12,6 +12,8 @@
 #ifndef ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 #define ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 
+#include <stdbool.h>
+
 /* NOTE: enum lte_lc_nw_reg_status maps directly to the registration status
  *	 as returned by the AT command "AT+CEREG?".
  */
