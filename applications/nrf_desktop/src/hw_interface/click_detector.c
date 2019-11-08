@@ -188,6 +188,7 @@ static void power_down(void)
 static void wake_up(void)
 {
 	state = STATE_ACTIVE;
+	module_set_state(MODULE_STATE_READY);
 }
 
 static bool event_handler(const struct event_header *eh)
