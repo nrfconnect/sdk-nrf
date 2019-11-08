@@ -82,12 +82,14 @@ config LTE_EDRX_REQ
 
 config LTE_EDRX_REQ_VALUE
 	string "Requested eDRX value"
-	default "1000"
+	default "1001"
 	help
 		Sets the eDRX value to request. Half a byte in a four-bit
 		format. The eDRX value refers to bit 4 to 1 of octet 3 of the
 		Extended DRX parameters information element.
 		See 3GPP TS 24.008, subclause 10.5.5.32.
+		The value 1001 corresponds to 163.84 seconds, and is valid for
+		both LTE-M and NB-IoT networks.
 
 config LTE_LEGACY_PCO_MODE
 	bool "Enable legacy LTE Protocol Configuration Options mode"
