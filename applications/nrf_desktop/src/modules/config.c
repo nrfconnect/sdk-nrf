@@ -20,10 +20,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_LOG_LEVEL);
 
 #define KEY_LEN 11
 
+#define THREAD_STACK_SIZE	CONFIG_DESKTOP_SETTINGS_LOAD_THREAD_STACK_SIZE
+#define THREAD_PRIORITY		K_PRIO_PREEMPT(K_LOWEST_APPLICATION_THREAD_PRIO)
+static struct k_thread thread;
+static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
+
+
 /* Array of pointers to data loaded from settings */
 #define LOADED_DATA_MAX MAX(SENSOR_OPT_COUNT, QOS_OPT_COUNT)
 static struct config_event *loaded_data[LOADED_DATA_MAX];
-
 
 static bool config_id_is_supported(u8_t event_id)
 {
@@ -150,7 +155,32 @@ static void update_config(const u8_t config_id, u8_t *data, size_t size)
 	}
 }
 
-static int enable_settings(void)
+static void load_settings_thread(void)
+{
+	LOG_INF("Settings load thread started");
+
+	int err = settings_load();
+
+	if (err) {
+		LOG_ERR("Cannot load settings");
+		module_set_state(MODULE_STATE_ERROR);
+	} else {
+		LOG_INF("Settings loaded");
+		module_set_state(MODULE_STATE_READY);
+	}
+}
+
+static void start_loading_thread(void)
+{
+	k_thread_create(&thread, thread_stack,
+			THREAD_STACK_SIZE,
+			(k_thread_entry_t)load_settings_thread,
+			NULL, NULL, NULL,
+			THREAD_PRIORITY, 0, K_NO_WAIT);
+	k_thread_name_set(&thread, MODULE_NAME "_thread");
+}
+
+static void init_settings(void)
 {
 	int err = 0;
 
@@ -163,37 +193,31 @@ static int enable_settings(void)
 
 		err = settings_register(&sh);
 		if (err) {
-			LOG_ERR("Cannot register settings handler");
-			goto error;
+			LOG_ERR("Cannot register settings handler: %d", err);
+			module_set_state(MODULE_STATE_ERROR);
+		} else {
+			if (IS_ENABLED(CONFIG_DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE)) {
+				start_loading_thread();
+			} else {
+				err = settings_load();
+				if (err) {
+					LOG_ERR("Cannot load settings");
+					module_set_state(MODULE_STATE_ERROR);
+				} else {
+					LOG_INF("Settings loaded");
+					module_set_state(MODULE_STATE_READY);
+				}
+			}
 		}
-	}
-
-	/* This module loads settings for all application modules */
-	err = settings_load();
-	if (err) {
-		LOG_ERR("Cannot load settings");
-		goto error;
-	}
-
-	LOG_INF("Settings loaded");
-
-error:
-	return err;
-}
-
-static void init(void)
-{
-	int err = enable_settings();
-
-	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
-	} else {
-		module_set_state(MODULE_STATE_READY);
 	}
 }
 
 static bool module_event_handler(const struct module_state_event *event)
 {
+	if (event->module_id == MODULE_ID(MODULE)) {
+		return false;
+	}
+
 	/* Settings need to be loaded after all client modules are ready. */
 	const void * const req_modules[] = {
 		MODULE_ID(main),
@@ -217,7 +241,7 @@ static bool module_event_handler(const struct module_state_event *event)
 	static u32_t req_state;
 
 	BUILD_ASSERT_MSG(ARRAY_SIZE(req_modules) < (8 * sizeof(req_state)),
-			 "Array size bigger than number of bits");
+			"Array size bigger than number of bits");
 
 	if (req_state == BIT_MASK(ARRAY_SIZE(req_modules))) {
 		/* Already initialized */
@@ -234,13 +258,12 @@ static bool module_event_handler(const struct module_state_event *event)
 			req_state |= flag;
 
 			if (req_state == BIT_MASK(ARRAY_SIZE(req_modules))) {
-				init();
+				init_settings();
 			}
 
 			break;
 		}
 	}
-
 	return false;
 }
 
