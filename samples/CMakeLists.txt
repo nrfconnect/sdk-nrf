@@ -5,15 +5,11 @@
 #
 
 if (CONFIG_SPM)
-  zephyr_add_executable(spm require_build)
-  if (${require_build})
-    add_subdirectory(nrf9160/spm ${CMAKE_BINARY_DIR}/spm)
-  endif ()
+  if(CONFIG_SPM_BUILD_STRATEGY_FROM_SOURCE)
+    zephyr_add_external_image("spm" ${CMAKE_CURRENT_LIST_DIR}/nrf9160/spm)
+  endif()
 endif()
 
 if (CONFIG_SECURE_BOOT)
-  zephyr_add_executable(b0 require_build)
-  if(${require_build})
-    add_subdirectory(bootloader ${CMAKE_BINARY_DIR}/b0)
-  endif ()
+  zephyr_add_external_image("b0" ${CMAKE_CURRENT_LIST_DIR}/bootloader)
 endif ()

@@ -22,4 +22,11 @@ config $(module)_BUILD_STRATEGY_FROM_SOURCE
 	# Mandatory option when being built through 'zephyr_add_executable'
 	bool "Build from source"
 
+if $(module)_BUILD_STRATEGY_FROM_SOURCE
+
+config $(module)_CONTAINS_SECURE_ENTRIES
+	bool
+
+endif # $(module)_BUILD_STRATEGY_FROM_SOURCE
+
 endchoice
