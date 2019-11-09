@@ -12,5 +12,5 @@ zephyr_library_sources_if_kconfig(entropy_cc310.c)
 # -nRF9150 device that is using SPM and in a secure image
 #  (CONFIG_SPM is not defined in a secure image)
 if (CONFIG_SOC_NRF52840 OR (CONFIG_SOC_NRF9160 AND (NOT CONFIG_SPM)))
-  zephyr_link_libraries_ifdef(CONFIG_ENTROPY_CC310 ${IMAGE}platform_cc310)
+  zephyr_link_libraries_ifdef(CONFIG_ENTROPY_CC310 platform_cc310)
 endif ()
