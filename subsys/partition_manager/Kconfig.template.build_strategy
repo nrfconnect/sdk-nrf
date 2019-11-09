@@ -3,23 +3,23 @@ choice
 	default $(module)_BUILD_STRATEGY_FROM_SOURCE
 
 config $(module)_BUILD_STRATEGY_USE_HEX_FILE
-	# Mandatory option when being built through 'zephyr_add_executable'
+	# Mandatory option when being built through add_child_image'
 	bool "Use hex file instead of building $(module)"
 
 if $(module)_BUILD_STRATEGY_USE_HEX_FILE
 
 config $(module)_HEX_FILE
-	# Mandatory option when being built through 'zephyr_add_executable'
+	# Mandatory option when being built through add_child_image'
 	string "$(module) hex file"
 
 endif # $(module)_BUILD_STRATEGY_USE_HEX_FILE
 
 config $(module)_BUILD_STRATEGY_SKIP_BUILD
-	# Mandatory option when being built through 'zephyr_add_executable'
+	# Mandatory option when being built through add_child_image'
 	bool "Skip building $(module)"
 
 config $(module)_BUILD_STRATEGY_FROM_SOURCE
-	# Mandatory option when being built through 'zephyr_add_executable'
+	# Mandatory option when being built through add_child_image'
 	bool "Build from source"
 
 endchoice

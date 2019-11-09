@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: b687d5d02214db82e5bd224e73b8050742a234e0
+      revision: 1907c07852a6fc94882d5c8f31b32dcf60203bf1
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -48,20 +48,20 @@ manifest:
       path: modules/debug/segger
       remote: zephyrproject
     - name: mbedtls
-      repo-path: fw-nrfconnect-mbedtls
       path: modules/crypto/mbedtls
-      revision: 9d56815aa4abf99a6e96af6ed035968add4b8cab
+      revision: 4f1e8f5a78dc08aa42a47cc1ad059cce558c26c3
+      remote: zephyrproject
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: f1beb319b074115883ef1f7f1e5dbe9281e5e2d0
+      revision: 0b59f48e4dce86d0c8d4e09688feb362c7223ad3
     - name: mcumgr
-      repo-path: fw-nrfconnect-mcumgr
-      revision: f663988d35da559a37f263d369842dbce309d1fa
       path: modules/lib/mcumgr
+      revision: 84934959d2d1722a23b7e7e200191ae4a6f96168
+      remote: zephyrproject
     - name: tinycbor
-      repo-path: fw-nrfconnect-tinycbor
       path: modules/lib/tinycbor
-      revision: 86d5ed5dd544b107d2d0882961a19c2c6cb06572
+      revision: 0fc68fceacd1efc1ce809c5880c380f3d98b7b6e
+      remote: zephyrproject
     - name: ci-tools
       path: tools/ci-tools
       remote: zephyrproject
@@ -72,7 +72,7 @@ manifest:
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
-      revision: 562c6785b3ac863cc3d0a994d6f53c780a858891
+      revision: fec2a3c3b4d79b7eb6d1ebdf24e6813476116769
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450

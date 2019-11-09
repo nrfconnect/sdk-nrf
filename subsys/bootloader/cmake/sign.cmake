@@ -61,11 +61,19 @@ set(slots s0_image)
 
 if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
   list(APPEND slots s1_image)
+  set(s1_image_is_from_child_image mcuboot)
 endif ()
 
 foreach (slot ${slots})
   set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)
-  set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex;${slot}_hex)
+
+  set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex)
+  if(DEFINED ${slot}_is_from_child_image)
+    list(APPEND sign_depends ${${slot}_is_from_child_image}_subimage)
+  else()
+    list(APPEND sign_depends ${slot}_hex)
+  endif()
+
   set(to_sign ${PROJECT_BINARY_DIR}/${slot}.hex)
   set(hash_file ${GENERATED_PATH}/${slot}_firmware.sha256)
   set(signature_file ${GENERATED_PATH}/${slot}_firmware.signature)
