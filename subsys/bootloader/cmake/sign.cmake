@@ -154,7 +154,7 @@ foreach (slot ${slots})
     --input ${to_sign}
     --output-hex ${signed_hex}
     --output-bin ${signed_bin}
-    --offset ${CONFIG_FW_VALIDATION_METADATA_OFFSET}
+    --offset ${CONFIG_SB_VALIDATION_METADATA_OFFSET}
     --signature ${signature_file}
     --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
     --magic-value "${VALIDATION_INFO_MAGIC}"

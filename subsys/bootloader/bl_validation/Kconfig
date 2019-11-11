@@ -42,6 +42,14 @@ config SB_VALIDATION_INFO_VERSION
 	  Used to ensure binary compatibility.
 	  For more info, see FW_INFO_MAGIC_COMMON.
 
+config SB_VALIDATION_METADATA_OFFSET
+	int "Offset at which to store validation metadata."
+	default 0
+	help
+	  Must be either 0 or larger than the size of the application. If 0,
+	  the metadata is appended directly after the application image,
+	  aligned to the closest word.
+
 if SECURE_BOOT_VALIDATION
 
 EXT_API = BL_VALIDATE_FW
@@ -50,4 +58,5 @@ ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 endif # SECURE_BOOT_VALIDATION
+
 endmenu
