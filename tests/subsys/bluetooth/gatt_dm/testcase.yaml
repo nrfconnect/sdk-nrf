@@ -1,0 +1,4 @@
+tests:
+  bluetooth.gatt_dm:
+    platform_whitelist: nrf52840_pca10056
+    tags: discovery_manager

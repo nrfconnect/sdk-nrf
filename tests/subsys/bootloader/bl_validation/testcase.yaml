@@ -1,3 +1,4 @@
 tests:
   bootloader.bl_validation:
-    platform_whitelist: nrf9160_pca10090 nrf52840_pca10056 nrf52_pca10040 nrf51_pca10028
+    platform_whitelist: nrf9160_pca10090 nrf52840_pca10056 nrf52_pca10040
+    tags: bootloader

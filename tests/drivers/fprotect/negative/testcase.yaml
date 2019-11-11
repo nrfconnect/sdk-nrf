@@ -1,0 +1,12 @@
+tests:
+  drivers.fprotect.negative:
+    platform_whitelist: nrf9160_pca10090 nrf52840_pca10056 nrf52_pca10040 nrf51_pca10028
+    tags: fprotect
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "NOTE: A BUS FAULT \\(BFAR addr 0x[a-fA-F\\d]+\\)"
+        - "(?:Imprecise|Precise) data bus error"
+        - "Halting system"

@@ -1,5 +1,4 @@
 tests:
-  testing.net.lib.fota_download
+  net.lib.fota_download:
     platform_whitelist: qemu_cortex_m3
-    build_only: false
-    tags: fota_download
+    tags: aws fota

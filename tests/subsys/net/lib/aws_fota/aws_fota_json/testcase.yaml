@@ -1,4 +1,4 @@
 tests:
-  libraries.encoding:
-    filter: not CONFIG_NEWLIB_LIBC
-    tags: json
+  net.lib.fota.json:
+    platform_whitelist: native_posix
+    tags: aws fota json
