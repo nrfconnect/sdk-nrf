@@ -1,5 +1,4 @@
 tests:
-  testing.dfu_target.mcuboot:
-    platform_whitelist: qemu_cortex_m3
-    build_only: false
-    tags: dfu_target_mcuboot
+  dfu_target.mcuboot:
+    platform_whitelist: qemu_cortex_m3 native_posix
+    tags: dfu mcuboot

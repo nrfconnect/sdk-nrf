@@ -34,6 +34,7 @@ zephyr_library_sources_ifdef(CONFIG_BOARD_NATIVE_POSIX src/native_posix.c)
 function(test_runner_generate test_file_path)
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
   set(UNITY_PRODUCTS_DIR ${APPLICATION_BINARY_DIR}/runner)
+  file(MAKE_DIRECTORY "${UNITY_PRODUCTS_DIR}")
   get_filename_component(test_file_name "${test_file_path}" NAME)
   set(output_file "${UNITY_PRODUCTS_DIR}/runner_${test_file_name}")
 

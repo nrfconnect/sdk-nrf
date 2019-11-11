@@ -1,5 +1,4 @@
 tests:
-  testing.at_cmd_parser.at_utils:
-    platform_whitelist: qemu_cortex_m3
-    build_only: false
+  at_cmd_parser.at_utils:
+    platform_whitelist: qemu_cortex_m3 native_posix
     tags: at_cmd_parser

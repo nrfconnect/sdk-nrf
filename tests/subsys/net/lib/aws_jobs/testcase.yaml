@@ -1,4 +1,4 @@
 tests:
-  libraries.encoding:
-    filter: not CONFIG_NEWLIB_LIBC
+  net.lib.aws_jobs:
+    platform_whitelist: native_posix
     tags: aws

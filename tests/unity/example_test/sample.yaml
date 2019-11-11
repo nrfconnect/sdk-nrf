@@ -2,8 +2,6 @@ sample:
   description: Example Unity/Cmock test
   name: example_unity_test
 tests:
-  test_build:
-    build_only: true
-    build_on_all: true
+  unity.example:
     platform_whitelist: native_posix
-    tags: ci_build
+    tags: example
