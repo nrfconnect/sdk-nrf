@@ -11,7 +11,7 @@ void bsd_recoverable_error_handler(uint32_t err)
 	printk("bsdlib recoverable error: %u\n", (unsigned int)err);
 }
 
-void lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
+int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
@@ -33,6 +33,8 @@ void lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		printk("LWM2M_CARRIER_EVENT_REBOOT\n");
 		break;
 	}
+
+	return 0;
 }
 
 void main(void)
