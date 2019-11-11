@@ -10,14 +10,6 @@ menuconfig FW_INFO
 	imply NRFX_NVMC
 
 if (FW_INFO)
-config FW_VALIDATION_METADATA_OFFSET
-	int "Offset at which to store validation metadata."
-	default 0
-	help
-	  Must be either 0 or larger than the size of the application. If 0,
-	  the metadata is appended directly after the application image,
-	  aligned to the closest word.
-
 config FW_INFO_OFFSET
 	hex "The location of firmware info inside this firmware."
 	default 0x200
@@ -33,9 +25,10 @@ config FW_INFO_FIRMWARE_VERSION
 	default 1
 
 config FW_INFO_MAGIC_COMMON
-	hex "Magic word for all structs (32 bits)."
+	hex
 	default 0x281ee6de
 	help
+	  Magic word for all structs (32 bits).
 	  This is used by different metadata structs (in fw_info.h and
 	  elsewhere). They each have their own magic word composed of three
 	  u32_t values, where one is always this option (FW_INFO_MAGIC_COMMON).
@@ -51,14 +44,15 @@ config FW_INFO_MAGIC_COMMON
 	  composed.
 
 config FW_INFO_MAGIC_FIRMWARE_INFO
-	hex "Magic word for firmware information structs (32 bits)."
+	hex
 	default 0x8fcebb4c
 	help
+	  Magic word for firmware information structs (32 bits).
 	  Magic word value specific to firmware information structs (inside
 	  the firmware). For more information, see FW_INFO_MAGIC_COMMON.
 
 config FW_INFO_MAGIC_EXT_API
-	hex "Magic word for EXT_API structs (32 bits)."
+	hex
 	default 0xb845acea
 	help
 	  Magic word value specific to EXT_API structs.
@@ -76,10 +70,11 @@ config FW_INFO_HARDWARE_ID
 	  For more information, see FW_INFO_MAGIC_COMMON.
 
 config FW_INFO_VERSION
-	int "Version number of the fw_*_info structs (8 bits)."
+	int
 	range 0 255
 	default 2
 	help
+	  Version number of the fw_*_info structs (8 bits).
 	  Used to ensure binary compatibility.
 	  For more information, see FW_INFO_MAGIC_COMMON.
 
