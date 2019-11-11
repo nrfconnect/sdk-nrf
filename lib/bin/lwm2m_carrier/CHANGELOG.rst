@@ -5,6 +5,34 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.8.0
+**********************
+
+Release for modem firmware version 1.1.0 with support for Verizon Wireless.
+
+Certification status
+====================
+
+The library is undergoing Verizon Wireless certification.
+
+Changes
+=======
+
+* Abstracted several new functions in the glue layer to improve compatibility on top of the master branch.
+* Re-organized NVS keys usage to make it range-bound (0xCA00, 0xCAFF); this range is not backward compatible, so you should not rely on pre-existing information saved in flash by earlier versions of this library.
+* Added APIs to set the following values from the application. The application should set and maintain these values to reflect the state of the device. Updated values are pushed to the servers autonomously.
+	* Available Power Sources, Power Source Voltage, Power Source Current, Battery Level, Battery Status, Memory Free, Memory Total, Error Code.
+* Added API to set the "Device Type" resource. If not set, this is reported as "Smart Device".
+* Added API to set the "Software Version" resource. If not set, this is reported as "LwM2M 0.8.0".
+* Added API to set the "Hardware Version" resource. If not set, this is reported as "1.0".
+
+Known issues and limitations
+============================
+
+* It is not possible to use a DTLS connection in parallel with the library.
+* It is not possible to use a TLS connection in parallel with LwM2M-managed modem firmware updates.
+  The application should close any TLS connections when it receives the LWM2M_CARRIER_EVENT_FOTA_START event from the library.
+
 
 liblwm2m_carrier 0.6.0
 **********************

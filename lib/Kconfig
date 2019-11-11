@@ -6,9 +6,9 @@
 
 menu "Libraries"
 
-rsource "bsdlib/Kconfig"
+rsource "bin/Kconfig"
 
-rsource "lwm2m_carrier/Kconfig"
+rsource "bsdlib/Kconfig"
 
 rsource "at_notif/Kconfig"
 
