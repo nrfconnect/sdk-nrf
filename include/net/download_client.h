@@ -173,7 +173,7 @@ int download_client_connect(struct download_client *client, const char *host,
 /**
  * @brief Download a file.
  *
- * The download is carried out in fragments of @c
+ * The download is carried out in fragments of up to @c
  * CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE bytes,
  * which are delivered to the application
  * via @ref DOWNLOAD_CLIENT_EVT_FRAGMENT events.
