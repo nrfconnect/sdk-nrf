@@ -15,9 +15,11 @@
 #define LWM2M_CARRIER_THREAD_STACK_SIZE 8192
 #define LWLM2_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
 
-__weak void lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
+__weak int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 {
 	ARG_UNUSED(event);
+
+	return 0;
 }
 
 static lwm2m_carrier_config_t config;
