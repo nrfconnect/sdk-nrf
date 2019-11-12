@@ -128,6 +128,10 @@ Available drivers, libraries, and samples
 Currently the following drivers, libraries, and samples can be used to develop and test
 applications on the nRF9160 SiP.
 
+.. warning::
+   The following sections are currently outdated.
+   See the :ref:`drivers`, :ref:`libraries`, and :ref:`nRF9160 samples <nrf9160_samples>` sections and the respective repository folders for up-to-date information.
+
 Drivers
 *******
 
