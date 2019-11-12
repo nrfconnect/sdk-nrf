@@ -51,7 +51,7 @@ By default, the following connection parameter values are used:
 Changing connection parameter values
 ====================================
 
-You can experiment with different connection parameter values by reconfiguring the values using menuconfig and then compiling and flashing the sample again to at least one of the boards.
+You can experiment with different connection parameter values by reconfiguring the values using menuconfig and then compiling and programming the sample again to at least one of the boards.
 
 .. note::
    In a *Bluetooth* Low Energy connection, the different devices negotiate the connection parameters that are used.
