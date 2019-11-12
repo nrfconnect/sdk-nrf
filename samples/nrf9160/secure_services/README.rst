@@ -19,19 +19,15 @@ The following development board:
 
 * nRF9160 DK board (PCA10090)
 
-The following sample must be also flashed (happens automatically with the default configuration):
-
-* :ref:`secure_partition_manager`
+* .. include:: /includes/spm.txt
 
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/secure_services`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_nrf9160.txt
 
-The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
-:ref:`secure_partition_manager` will by default be automatically built and flashed together with this sample.
 
 
 Dependencies

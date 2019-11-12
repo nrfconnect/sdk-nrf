@@ -338,7 +338,7 @@ See the following example, which assigns a cryptographically signed HEX file bui
    )
 
 
-As output, Partition Manager creates a HEX file called :file:`merged.hex`, which is flashed to the board when calling ``ninja flash``.
+As output, Partition Manager creates a HEX file called :file:`merged.hex`, which is programmed to the board when calling ``ninja flash``.
 When creating :file:`merged.hex`, all assigned HEX files are included in the merge operation.
 If the HEX files overlap, the conflict is resolved as follows:
 

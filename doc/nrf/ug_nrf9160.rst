@@ -285,7 +285,7 @@ Samples
 Secure Partition Manager
 	The **Secure Partition Manager** sample provides a reference implementation
 	of a first-stage boot firmware.
-	It must be preflashed to the board before any other sample.
+	It must be programmed to the board before any other sample.
 	For details, see :ref:`secure_partition_manager`.
 
 Asset Tracker
