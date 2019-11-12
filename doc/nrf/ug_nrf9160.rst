@@ -1,7 +1,7 @@
 .. _ug_nrf9160:
 
-Working with nRF9160 samples
-############################
+Working with nRF9160
+####################
 
 The |NCS| provides support for developing on the nRF9160 System in Package
 (SiP) using the nRF9160 DK (PCA10090), and offers samples
