@@ -43,7 +43,7 @@ Automatic building of SPM
 The sample is automatically built by the non-secure applications when the nrf9160_pca10090ns board is used.
 However, it is not a part of the non-secure application.
 
-Instead of flashing SPM and the non-secure application at the same time, you might want to flash them individually.
+Instead of programming SPM and the non-secure application at the same time, you might want to program them individually.
 To do this, disable the automatic building of SPM by setting the option ``CONFIG_SPM=n`` in the ``prj.conf`` file of the application.
 
 If this results in a single-image build, the start address of the non-secure application will change.
