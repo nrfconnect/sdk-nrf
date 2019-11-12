@@ -95,13 +95,13 @@ static void scan_init(void)
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LATENCY);
 	if (err) {
-		printk("Scanning filters cannot be set\n");
+		printk("Scanning filters cannot be set (err %d)\n", err);
 		return;
 	}
 
 	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
 	if (err) {
-		printk("Filters cannot be turned on\n");
+		printk("Filters cannot be turned on (err %d)\n", err);
 	}
 }
 
@@ -126,7 +126,7 @@ static void discovery_service_not_found(struct bt_conn *conn, void *context)
 
 static void discovery_error(struct bt_conn *conn, int err, void *context)
 {
-	printk("Error while discovering GATT database: (%d)\n", err);
+	printk("Error while discovering GATT database: (err %d)\n", err);
 }
 
 struct bt_gatt_dm_cb discovery_cb = {
@@ -151,6 +151,7 @@ static void advertise_and_scan(void)
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
 		printk("Starting scanning failed (err %d)\n", err);
+		return;
 	}
 
 	printk("Scanning successfully started\n");
@@ -166,7 +167,8 @@ static void connected(struct bt_conn *conn, u8_t err)
 	default_conn = bt_conn_ref(conn);
 	err = bt_conn_get_info(default_conn, &conn_info);
 	if (err) {
-		printk("Error %d while getting bt conn info\n", err);
+		printk("Getting conn info failed (err %d)\n", err);
+		return;
 	}
 
 	printk("Connected as %s\n",
@@ -217,6 +219,7 @@ static int enable_llpm_mode(void)
 				sizeof(*cmd_enable));
 	if (!buf) {
 		printk("Could not allocate LLPM command buffer\n");
+		return -ENOMEM;
 	}
 
 	cmd_enable = net_buf_add(buf, sizeof(*cmd_enable));
@@ -225,11 +228,11 @@ static int enable_llpm_mode(void)
 	err = bt_hci_cmd_send(HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf);
 	if (err) {
 		printk("Error enabling LLPM %d\n", err);
-	} else {
-		printk("LLPM mode enabled\n");
+		return err;
 	}
 
-	return err;
+	printk("LLPM mode enabled\n");
+	return 0;
 }
 
 static int enable_llpm_short_connection_interval(void)
@@ -245,9 +248,10 @@ static int enable_llpm_short_connection_interval(void)
 	err = bt_conn_le_param_update(default_conn, &conn_param);
 	if (err) {
 		printk("Update connection parameters failed (err %d)\n", err);
+		return err;
 	}
 
-	return err;
+	return 0;
 }
 
 static bool on_vs_evt(struct net_buf_simple *buf)
@@ -277,7 +281,9 @@ static int enable_qos_conn_evt_report(void)
 
 	err = bt_hci_register_vnd_evt_cb(on_vs_evt);
 	if (err) {
-		printk("Failed registering vendor specific callback\n");
+		printk("Failed registering vendor specific callback (err %d)\n",
+		       err);
+		return err;
 	}
 
 	hci_vs_cmd_qos_conn_event_report_enable_t *cmd_enable;
@@ -286,6 +292,7 @@ static int enable_qos_conn_evt_report(void)
 				sizeof(*cmd_enable));
 	if (!buf) {
 		printk("Could not allocate command buffer\n");
+		return -ENOMEM;
 	}
 
 	cmd_enable = net_buf_add(buf, sizeof(*cmd_enable));
@@ -294,12 +301,12 @@ static int enable_qos_conn_evt_report(void)
 	err = bt_hci_cmd_send(HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE,
 			      buf);
 	if (err) {
-		printk("Could not send command buffer\n");
-	} else {
-		printk("Connection event reports enabled\n");
+		printk("Could not send command buffer (err %d)\n", err);
+		return err;
 	}
 
-	return err;
+	printk("Connection event reports enabled\n");
+	return 0;
 }
 
 static void latency_response_handler(const void *buf, u16_t len)
