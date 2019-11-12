@@ -68,6 +68,9 @@ struct __packed fw_info {
 	 */
 	u32_t valid;
 
+	/* Reserved values (set to 0) */
+	u32_t reserved[4];
+
 	/* Where to place the getter for the EXT_API provided to this firmware.
 	 */
 	fw_info_ext_api_getter *ext_api_in;
@@ -91,7 +94,6 @@ OFFSET_CHECK(struct fw_info, version,
 OFFSET_CHECK(struct fw_info, address,
 	(CONFIG_FW_INFO_MAGIC_LEN + 8));
 OFFSET_CHECK(struct fw_info, valid, 24);
-
 /** @endcond
  */
 
