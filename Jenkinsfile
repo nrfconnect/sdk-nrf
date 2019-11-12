@@ -174,7 +174,7 @@ pipeline {
       when { expression { CI_STATE.NRF.RUN_DOWNSTREAM } }
       steps { script {
           CI_STATE.NRF.WAITING = true
-          def DOWNSTREAM_JOBS = lib_Main.getDownStreamJobs(JOB_NAME)
+          def DOWNSTREAM_JOBS = lib_Main.getDownStreamJobs(JOB_NAME, CI_STATE)
           if (DOWNSTREAM_JOBS.size() == 1){
             DOWNSTREAM_JOBS.add("thst/test-ci-nrfconnect-cfg-null/lib")
           }
