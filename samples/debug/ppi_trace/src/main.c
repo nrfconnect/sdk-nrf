@@ -60,7 +60,8 @@ static void ppi_trace_setup(void)
 		nrf_rtc_event_address_get(RTC, NRF_RTC_EVENT_TICK));
 
 	ppi_trace_pin_setup(CONFIG_PPI_TRACE_PIN_LFCLOCK_STARTED_EVT,
-		nrf_clock_event_address_get(NRF_CLOCK_EVENT_LFCLKSTARTED));
+		nrf_clock_event_address_get(NRF_CLOCK,
+					    NRF_CLOCK_EVENT_LFCLKSTARTED));
 
 	LOG_INF("PPI trace setup done.");
 }
