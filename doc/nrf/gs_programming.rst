@@ -45,30 +45,30 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 #. Click **OK** to import the project into SES. You can now work with the
    project in the IDE.
 
-#. Build and flash your project.
+#. Build and program your project.
    The required steps differ depending on if you build a single application or a multi-image project (such as the nRF9160 samples, which include :ref:`SPM <secure_partition_manager>`).
 
    .. important::
-      If you are working with an nRF9160 DK, make sure to select the correct controller before you flash the application to your board.
+      If you are working with an nRF9160 DK, make sure to select the correct controller before you program the application to your board.
 
       Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller, or in the **NRF52** position to program the board controller.
       See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
 
-   To build and flash an application:
+   To build and program an application:
 
       a. Select your project in the Project Explorer.
       #. From the menu, select **Build -> Build Solution**.
-      #. When the build completes, you can flash the sample to a connected board:
+      #. When the build completes, you can program the sample to a connected board:
 
          * For a single-image application, select **Target -> Download zephyr/zephyr.elf**.
          * For a multi-image application, select **Target -> Download zephyr/merged.hex**.
 
       .. note::
 	   Alternatively, choose the **Build and Debug** option.
-	   **Build and Debug** will build the application and flash it when
+	   **Build and Debug** will build the application and program it when
 	   the build completes.
 
-7. To inspect the details of the flashed code and the memory usage, click **Debug -> Go**.
+7. To inspect the details of the code that was programmed and the memory usage, click **Debug -> Go**.
 
    .. note::
    	In a multi-image build, this allows you to debug the source code of your application only.
