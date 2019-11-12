@@ -32,8 +32,10 @@ static void radio_ppi_trace_setup(void)
 	u32_t stop_evt;
 	void *handle;
 
-	start_evt = nrf_radio_event_address_get(NRF_RADIO_EVENT_READY);
-	stop_evt = nrf_radio_event_address_get(NRF_RADIO_EVENT_DISABLED);
+	start_evt = nrf_radio_event_address_get(NRF_RADIO,
+				NRF_RADIO_EVENT_READY);
+	stop_evt = nrf_radio_event_address_get(NRF_RADIO,
+				NRF_RADIO_EVENT_DISABLED);
 
 	handle = ppi_trace_pair_config(CONFIG_PPI_TRACE_PIN_RADIO_ACTIVE,
 				start_evt, stop_evt);
