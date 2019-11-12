@@ -11,6 +11,7 @@ config ENTROPY_CC310
 	depends on ENTROPY_GENERATOR
 	depends on !BT_LL_SW_LEGACY
 	depends on !BT_LLL_VENDOR_NORDIC
+	depends on !MPU_STACK_GUARD
 	select ENTROPY_HAS_DRIVER
 	select ENTROPY_NRF_FORCE_ALT
 	default y
