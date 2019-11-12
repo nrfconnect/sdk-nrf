@@ -48,6 +48,7 @@ const struct fw_info m_firmware_info =
 	.version = CONFIG_FW_INFO_FIRMWARE_VERSION,
 	.address = (u32_t)&_image_rom_start,
 	.valid = CONFIG_FW_INFO_VALID_VAL,
+	.reserved = {0, 0, 0, 0},
 	.ext_api_in = &ext_api_getter_in,
 	.ext_api_out = &ext_api_getter,
 };
