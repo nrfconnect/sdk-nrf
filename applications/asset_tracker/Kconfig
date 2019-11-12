@@ -187,9 +187,7 @@ menu "Cloud"
 
 config MQTT_KEEPALIVE
 	int
-	default 1000 if POWER_OPTIMIZATION_ENABLE
-	default GPS_CONTROL_FIX_TRY_TIME if GPS_USE_EXTERNAL
-	default 120
+	default 1200
 
 config CLOUD_BUTTON
 	bool "Enable button sensor"
