@@ -441,7 +441,8 @@ static int ble_enable(void)
 		return required_memory;
 	}
 
-	cfg.event_length.event_length_us = 7500;
+	cfg.event_length.event_length_us =
+		CONFIG_BLECTRL_MAX_CONN_EVENT_LEN_DEFAULT;
 	required_memory =
 		ble_controller_cfg_set(BLE_CONTROLLER_DEFAULT_RESOURCE_CFG_TAG,
 				       BLE_CONTROLLER_CFG_TYPE_EVENT_LENGTH,
