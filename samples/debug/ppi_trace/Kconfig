@@ -1,4 +1,4 @@
-# Kconfig - Config options for PPI trace sample
+# Config options for PPI trace sample
 #
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
@@ -11,7 +11,7 @@ menu "PPI trace pins configuration"
 
 config PPI_TRACE_PIN_RTC_COMPARE_EVT
 	int "Trace pin for RTC Compare event"
-	default 17 if BOARD_NRF9160_PCA10090
+	default 2 if BOARD_NRF9160_PCA10090 || BOARD_NRF9160_PCA10090NS
 	default 1 if BOARD_NRF51_PCA10028
 	default 3
 	help
@@ -19,7 +19,7 @@ config PPI_TRACE_PIN_RTC_COMPARE_EVT
 
 config PPI_TRACE_PIN_RTC_TICK_EVT
 	int "Trace pin for RTC Tick event"
-	default 18 if BOARD_NRF9160_PCA10090
+	default 3 if BOARD_NRF9160_PCA10090 || BOARD_NRF9160_PCA10090NS
 	default 2 if BOARD_NRF51_PCA10028
 	default 4
 	help
@@ -27,7 +27,7 @@ config PPI_TRACE_PIN_RTC_TICK_EVT
 
 config PPI_TRACE_PIN_LFCLOCK_STARTED_EVT
 	int "Trace pin for LFCLOCK Started event"
-	default 19 if BOARD_NRF9160_PCA10090
+	default 4 if BOARD_NRF9160_PCA10090 || BOARD_NRF9160_PCA10090NS
 	default 3 if BOARD_NRF51_PCA10028
 	default 28
 	help
