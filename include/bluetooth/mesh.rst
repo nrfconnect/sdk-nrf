@@ -14,4 +14,5 @@ development of Bluetooth Mesh-based applications:
 
    mesh/models.rst
    mesh/properties.rst
+   mesh/dk_prov.rst
 

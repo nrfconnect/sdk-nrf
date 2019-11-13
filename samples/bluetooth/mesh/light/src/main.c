@@ -9,8 +9,8 @@
  */
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
+#include <bluetooth/mesh/dk_prov.h>
 #include <dk_buttons_and_leds.h>
-#include "prov_handler.h"
 #include "model_handler.h"
 
 void main(void)
@@ -18,6 +18,7 @@ void main(void)
 	int err;
 
 	dk_leds_init();
+	dk_buttons_init(NULL);
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -25,7 +26,7 @@ void main(void)
 		return;
 	}
 
-	err = bt_mesh_init(prov_handler_init(), model_handler_init());
+	err = bt_mesh_init(bt_mesh_dk_prov_init(), model_handler_init());
 	if (err) {
 		printk("Initializing mesh failed (err %d)\n", err);
 		return;
