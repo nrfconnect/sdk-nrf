@@ -24,6 +24,7 @@ Requirements
 
   * nRF9160 DK board (PCA10090)
 
+* .. include:: /includes/spm.txt
 
 Building and running
 ********************
