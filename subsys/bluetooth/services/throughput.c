@@ -56,7 +56,7 @@ static ssize_t write_callback(struct bt_conn *conn,
 	struct bt_gatt_throughput_metrics *met_data = attr->user_data;
 
 	delta = k_cycle_get_32() - clock_cycles;
-	delta = SYS_CLOCK_HW_CYCLES_TO_NS64(delta);
+	delta = k_cyc_to_ns_floor64(delta);
 
 	if (len == 1) {
 		/* reset metrics */
