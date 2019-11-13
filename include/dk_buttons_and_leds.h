@@ -14,6 +14,7 @@
  */
 
 #include <zephyr/types.h>
+#include <sys/slist.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,6 +52,12 @@ extern "C" {
  */
 typedef void (*button_handler_t)(u32_t button_state, u32_t has_changed);
 
+/** Button handler list entry. */
+struct button_handler {
+	button_handler_t cb; /**< Callback function. */
+	sys_snode_t node; /**< Linked list node, for internal use. */
+};
+
 /** @brief Initialize the library to control the LEDs.
  *
  *  @retval 0           If the operation was successful.
@@ -66,6 +73,26 @@ int dk_leds_init(void);
  *                      Otherwise, a (negative) error code is returned.
  */
 int dk_buttons_init(button_handler_t button_handler);
+
+/** @brief Add a dynamic button handler callback.
+ *
+ * In addition to the button handler function passed to
+ * @ref dk_buttons_init, any number of button handlers can be added and removed
+ * at runtime.
+ *
+ * @param[in] handler Handler structure. Must point to statically allocated
+ * memory.
+ */
+void dk_button_handler_add(struct button_handler *handler);
+
+/** @brief Remove a dynamic button handler callback.
+ *
+ * @param[in] handler Handler to remove.
+ *
+ * @retval 0 Successfully removed the handler.
+ * @retval -ENOENT This button handler was not present.
+ */
+int dk_button_handler_remove(struct button_handler *handler);
 
 /** @brief Read current button states.
  *

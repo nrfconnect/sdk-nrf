@@ -22,6 +22,10 @@ config DK_LIBRARY_INVERT_LEDS
 	bool "Invert LED pins on DK"
 	default y
 
+config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
+	bool "Enable the runtime assignable button handler API"
+	default y
+
 module = DK_LIBRARY
 module-str = DK library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
