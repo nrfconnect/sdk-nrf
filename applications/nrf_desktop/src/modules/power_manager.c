@@ -290,7 +290,8 @@ static bool event_handler(const struct event_header *eh)
 					      POWER_DOWN_CHECK_MS);
 
 			if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_CONSTLAT)) {
-				nrf_power_task_trigger(NRF_POWER_TASK_CONSTLAT);
+				nrf_power_task_trigger(NRF_POWER,
+						NRF_POWER_TASK_CONSTLAT);
 				LOG_WRN("Constant latency enabled");
 			}
 		} else if (event->state == MODULE_STATE_ERROR) {
