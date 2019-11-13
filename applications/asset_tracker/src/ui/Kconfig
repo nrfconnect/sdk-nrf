@@ -24,19 +24,19 @@ if UI_LED_USE_PWM
 
 config UI_LED_PWM_DEV_NAME
 	string "PWM device name for RGB LED"
-	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_0_LABEL)" if BOARD_NRF9160_PCA20035NS
+	default "PWM_0" if BOARD_NRF9160_PCA20035NS
 
 config UI_LED_RED_PIN
 	int "Red LED pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH0_PIN)
+	default 29 if BOARD_NRF9160_PCA20035NS
 
 config UI_LED_GREEN_PIN
 	int "Green LED pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH1_PIN)
+	default 30 if BOARD_NRF9160_PCA20035NS
 
 config UI_LED_BLUE_PIN
 	int "Blue LED pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH2_PIN)
+	default 31 if BOARD_NRF9160_PCA20035NS
 
 endif # UI_LED_USE_PWM
 
@@ -50,11 +50,11 @@ if UI_BUZZER
 
 config UI_BUZZER_PWM_DEV_NAME
 	string "PWM device name for buzzer"
-	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_1_LABEL)" if BOARD_NRF9160_PCA20035NS
+	default "PWM_1" if BOARD_NRF9160_PCA20035NS
 
 config UI_BUZZER_PIN
 	int "Buzzer pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_1_CH0_PIN)
+	default 28 if BOARD_NRF9160_PCA20035NS
 
 config UI_BUZZER_MIN_FREQUENCY
 	int "Minimum buzzer frequency"
@@ -76,23 +76,23 @@ if UI_NMOS
 
 config UI_NMOS_PWM_DEV_NAME
 	string "PWM device name for buzzer"
-	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_2_LABEL)" if BOARD_NRF9160_PCA20035NS
+	default "PWM_2" if BOARD_NRF9160_PCA20035NS
 
 config UI_NMOS_1_PIN
 	int "NMOS 1 pin"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH0_PIN)
+	default 13 if BOARD_NRF9160_PCA20035NS
 
 config UI_NMOS_2_PIN
 	int "NMOS 2 pin"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH1_PIN)
+	default 14 if BOARD_NRF9160_PCA20035NS
 
 config UI_NMOS_3_PIN
 	int "NMOS 3 pin"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH2_PIN)
+	default 15 if BOARD_NRF9160_PCA20035NS
 
 config UI_NMOS_4_PIN
 	int "NMOS 4 pin"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_2_CH3_PIN)
+	default 16 if BOARD_NRF9160_PCA20035NS
 
 endif # UI_NMOS
 
