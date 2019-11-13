@@ -170,22 +170,25 @@ void nrf_power_clock_isr(void)
 #if IS_ENABLED(CONFIG_USB_NRF52840)
 	bool usb_detected, usb_pwr_rdy, usb_removed;
 
-	usb_detected = nrf_power_event_check(NRF_POWER_EVENT_USBDETECTED);
-	usb_pwr_rdy = nrf_power_event_check(NRF_POWER_EVENT_USBPWRRDY);
-	usb_removed = nrf_power_event_check(NRF_POWER_EVENT_USBREMOVED);
+	usb_detected = nrf_power_event_check(NRF_POWER,
+					NRF_POWER_EVENT_USBDETECTED);
+	usb_pwr_rdy = nrf_power_event_check(NRF_POWER,
+					NRF_POWER_EVENT_USBPWRRDY);
+	usb_removed = nrf_power_event_check(NRF_POWER,
+					NRF_POWER_EVENT_USBREMOVED);
 
 	if (usb_detected) {
-		nrf_power_event_clear(NRF_POWER_EVENT_USBDETECTED);
+		nrf_power_event_clear(NRF_POWER, NRF_POWER_EVENT_USBDETECTED);
 		power_event_cb(NRF_POWER_EVENT_USBDETECTED);
 	}
 
 	if (usb_pwr_rdy) {
-		nrf_power_event_clear(NRF_POWER_EVENT_USBPWRRDY);
+		nrf_power_event_clear(NRF_POWER, NRF_POWER_EVENT_USBPWRRDY);
 		power_event_cb(NRF_POWER_EVENT_USBPWRRDY);
 	}
 
 	if (usb_removed) {
-		nrf_power_event_clear(NRF_POWER_EVENT_USBREMOVED);
+		nrf_power_event_clear(NRF_POWER, NRF_POWER_EVENT_USBREMOVED);
 		power_event_cb(NRF_POWER_EVENT_USBREMOVED);
 	}
 #endif
@@ -257,10 +260,10 @@ void nrf5_power_usb_power_int_enable(bool enable)
 	       NRF_POWER_INT_USBPWRRDY_MASK;
 
 	if (enable) {
-		nrf_power_int_enable(mask);
+		nrf_power_int_enable(NRF_POWER, mask);
 		irq_enable(DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0);
 	} else {
-		nrf_power_int_disable(mask);
+		nrf_power_int_disable(NRF_POWER, mask);
 	}
 }
 
