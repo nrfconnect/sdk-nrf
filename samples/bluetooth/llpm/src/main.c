@@ -310,7 +310,7 @@ static void latency_response_handler(const void *buf, u16_t len)
 		/* compute how long the time spent */
 		latency_time = *((u32_t *)buf);
 		u32_t cycles_spent = k_cycle_get_32() - latency_time;
-		u32_t us_spent = SYS_CLOCK_HW_CYCLES_TO_NS(cycles_spent) / 2000;
+		u32_t us_spent = (u32_t)k_cyc_to_ns_floor64(cycles_spent) / 2000;
 
 		printk("Transmission Latency: %u (us)\n", us_spent);
 	}
