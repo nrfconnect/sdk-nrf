@@ -240,8 +240,7 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 
 	ARG_UNUSED(trigger);
 
-	if (ui_button_is_active(UI_SWITCH_2)
-	   || !atomic_get(&send_data_enable)) {
+	if (!atomic_get(&send_data_enable)) {
 		return;
 	}
 
