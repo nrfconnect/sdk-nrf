@@ -5,6 +5,8 @@ nRF9160: Asset Tracker
 
 The Asset Tracker demonstrates how to use the :ref:`lib_nrf_cloud` to connect an nRF9160 DK to the `nRF Cloud`_ via LTE, transmit GPS and sensor data, and retrieve information about the modem.
 
+.. note::
+   Some parts of this documentation are outdated with regards to the supported devices and functionality.
 
 Overview
 ********
