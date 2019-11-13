@@ -18,6 +18,16 @@ config BLECTRL_SLAVE_COUNT
 	  NOTE: the number of master roles is defined as
 	  BT_MAX_CONN - BLECTRL_SLAVE_COUNT
 
+config BLECTRL_MAX_CONN_EVENT_LEN_DEFAULT
+	int "Default max connection event length [us]"
+	default 7500
+	range 2500 4000000
+	help
+	  The time set aside for connections on every connection interval in
+	  microseconds. The event length and the connection interval are the
+	  primary parameters for setting the throughput of a connection.
+
+
 config BLECTLR_PRIO
 	# Hidden option to set the priority of the controller threads
 	int
