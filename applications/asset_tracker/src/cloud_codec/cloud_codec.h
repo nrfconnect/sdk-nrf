@@ -15,6 +15,7 @@
 
 #include <net/cloud.h>
 #include "env_sensors.h"
+#include "motion.h"
 #include "light_sensor.h"
 
 #ifdef __cplusplus
@@ -179,6 +180,9 @@ static inline void cloud_release_data(struct cloud_msg *data)
 }
 
 int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
+				  struct cloud_msg *output);
+
+int cloud_encode_motion_data(const motion_data_t *motion_data,
 				  struct cloud_msg *output);
 
 #if CONFIG_LIGHT_SENSOR

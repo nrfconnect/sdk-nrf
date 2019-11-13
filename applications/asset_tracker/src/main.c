@@ -29,7 +29,7 @@
 
 #include "cloud_codec.h"
 #include "env_sensors.h"
-#include "orientation_detector.h"
+#include "motion.h"
 #include "ui.h"
 #include "gps_controller.h"
 #include "service_info.h"
@@ -92,7 +92,6 @@ static bool association_with_pin;
 
 /* Sensor data */
 static struct gps_data gps_data;
-static struct cloud_channel_data flip_cloud_data;
 static struct cloud_channel_data gps_cloud_data;
 static struct cloud_channel_data button_cloud_data;
 static struct cloud_channel_data device_cloud_data = {
@@ -113,7 +112,6 @@ static bool flip_mode_enabled = true;
 static struct k_work connect_work;
 static struct k_work send_gps_data_work;
 static struct k_work send_button_data_work;
-static struct k_work send_flip_data_work;
 static struct k_delayed_work send_env_data_work;
 static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
@@ -131,7 +129,7 @@ enum error_type {
 
 /* Forward declaration of functions */
 static void app_connect(struct k_work *work);
-static void flip_send(struct k_work *work);
+static void motion_handler(motion_data_t  motion_data);
 static void env_data_send(void);
 #if CONFIG_LIGHT_SENSOR
 static void light_sensor_data_send(void);
@@ -235,11 +233,6 @@ static void send_button_data_work_fn(struct k_work *work)
 	sensor_data_send(&button_cloud_data);
 }
 
-static void send_flip_data_work_fn(struct k_work *work)
-{
-	sensor_data_send(&flip_cloud_data);
-}
-
 /**@brief Callback for GPS trigger events */
 static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 {
@@ -275,16 +268,6 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 	k_delayed_work_submit(&send_env_data_work, K_NO_WAIT);
 }
 
-/**@brief Callback for sensor trigger events */
-static void sensor_trigger_handler(struct device *dev,
-			struct sensor_trigger *trigger)
-{
-	ARG_UNUSED(dev);
-	ARG_UNUSED(trigger);
-
-	flip_send(NULL);
-}
-
 #if defined(CONFIG_USE_UI_MODULE)
 /**@brief Send button presses to cloud */
 static void button_send(bool pressed)
@@ -313,39 +296,39 @@ static void button_send(bool pressed)
 }
 #endif
 
-/**@brief Poll flip orientation and send to cloud if flip mode is enabled. */
-static void flip_send(struct k_work *work)
+/**@brief Callback from the motion module. Sends motion data to cloud. */
+static void motion_handler(motion_data_t  motion_data)
 {
-	static enum orientation_state last_orientation_state =
-		ORIENTATION_NOT_KNOWN;
-	static struct orientation_detector_sensor_data sensor_data;
+	static motion_orientation_state_t last_orientation_state =
+		MOTION_ORIENTATION_NOT_KNOWN;
 
-	if (!flip_mode_enabled || !atomic_get(&send_data_enable)) {
+	if (motion_data.orientation == last_orientation_state) {
 		return;
 	}
 
-	if (orientation_detector_poll(&sensor_data) == 0) {
-		if (sensor_data.orientation == last_orientation_state) {
-			return;
-		}
-
-		switch (sensor_data.orientation) {
-		case ORIENTATION_NORMAL:
-			flip_cloud_data.data.buf = "NORMAL";
-			flip_cloud_data.data.len = sizeof("NORMAL") - 1;
-			break;
-		case ORIENTATION_UPSIDE_DOWN:
-			flip_cloud_data.data.buf = "UPSIDE_DOWN";
-			flip_cloud_data.data.len = sizeof("UPSIDE_DOWN") - 1;
-			break;
-		default:
-			return;
-		}
-
-		last_orientation_state = sensor_data.orientation;
-
-		k_work_submit(&send_flip_data_work);
+	if (!flip_mode_enabled || !atomic_get(&send_data_enable)
+		|| gps_control_is_active()) {
+		return;
 	}
+
+	struct cloud_msg msg = {
+		.qos = CLOUD_QOS_AT_MOST_ONCE,
+		.endpoint.type = CLOUD_EP_TOPIC_MSG
+	};
+
+	int err;
+
+	if (cloud_encode_motion_data(&motion_data, &msg) == 0) {
+		err = cloud_send(cloud_backend, &msg);
+		cloud_release_data(&msg);
+		if (err) {
+			printk("Transmisison of motion data failed: %d\n", err);
+			cloud_error_handler(err);
+			return;
+		}
+	}
+
+	last_orientation_state = motion_data.orientation;
 }
 
 static void cloud_cmd_handler(struct cloud_command *cmd)
@@ -870,7 +853,6 @@ static void work_init(void)
 	k_work_init(&connect_work, app_connect);
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
-	k_work_init(&send_flip_data_work, send_flip_data_work_fn);
 	k_delayed_work_init(&send_env_data_work, send_env_data_work_fn);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
@@ -909,66 +891,6 @@ static void modem_configure(void)
 #endif
 }
 
-/**@brief Initializes the accelerometer device and
- * configures trigger if set.
- */
-static void accelerometer_init(void)
-{
-	if (IS_ENABLED(CONFIG_ACCEL_USE_EXTERNAL)) {
-
-		struct device *accel_dev =
-		device_get_binding(CONFIG_ACCEL_DEV_NAME);
-
-		if (accel_dev == NULL) {
-			printk("Could not get %s device\n",
-				CONFIG_ACCEL_DEV_NAME);
-			return;
-		}
-
-		struct sensor_trigger sensor_trig = {
-			.type = SENSOR_TRIG_THRESHOLD,
-		};
-
-		printk("Setting trigger\n");
-		int err = 0;
-
-		err = sensor_trigger_set(accel_dev, &sensor_trig,
-				sensor_trigger_handler);
-
-		if (err) {
-			printk("Unable to set trigger\n");
-		}
-	}
-}
-
-/**@brief Initializes flip detection using orientation detector module
- * and configured accelerometer device.
- */
-static void flip_detection_init(void)
-{
-	int err;
-	struct device *accel_dev =
-		device_get_binding(CONFIG_ACCEL_DEV_NAME);
-
-	if (accel_dev == NULL) {
-		printk("Could not get %s device\n", CONFIG_ACCEL_DEV_NAME);
-		return;
-	}
-
-	orientation_detector_init(accel_dev);
-
-	if (!IS_ENABLED(CONFIG_ACCEL_CALIBRATE)) {
-		return;
-	}
-
-	err = orientation_detector_calibrate();
-	if (err) {
-		printk("Could not calibrate accelerometer device: %d\n", err);
-	}
-}
-
-
-
 static void button_sensor_init(void)
 {
 	button_cloud_data.type = CLOUD_CHANNEL_BUTTON;
@@ -1000,8 +922,11 @@ static void sensors_init(void)
 {
 	int err;
 
-	accelerometer_init();
-	flip_detection_init();
+	err = motion_init_and_start(motion_handler);
+	if (err) {
+		printk("motion module init failed, error: %d\n", err);
+	}
+
 	err = env_sensors_init_and_start();
 	if (err) {
 		printk("Environmental sensors init failed, error: %d\n", err);
@@ -1023,8 +948,6 @@ static void sensors_init(void)
 	}
 
 	gps_control_init(gps_trigger_handler);
-
-	flip_cloud_data.type = CLOUD_CHANNEL_FLIP;
 
 	/* Send sensor data after initialization, as it may be a long time until
 	 * next time if the application is in power optimized mode.
@@ -1048,7 +971,7 @@ static void ui_evt_handler(struct ui_evt evt)
 
 	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (evt.button == FLIP_INPUT)
 	   && atomic_get(&send_data_enable)) {
-		flip_send(NULL);
+		motion_simulate_trigger();
 	}
 
 	if (IS_ENABLED(CONFIG_GPS_CONTROL_ON_LONG_PRESS) &&
