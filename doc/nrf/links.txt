@@ -156,6 +156,8 @@
 
 .. _`OpenAMP`: https://github.com/OpenAMP/open-amp/
 
+.. _`SSL Labs`: https://www.ssllabs.com/ssltest/
+
 
 .. ### Links to Bluetooth specs
 
@@ -213,3 +215,5 @@
 .. _`CoAP response codes`: https://tools.ietf.org/html/rfc7252#section-12.1.2
 
 .. _`RFC 7252 - The Constrained Application Protocol`: https://tools.ietf.org/html/rfc7252
+
+.. _`tutorial on SSL.com`: https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
