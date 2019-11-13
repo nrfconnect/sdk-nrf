@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+menu "Bluetooth Services"
+
 config BT_NRF_SERVICES
 	bool
 	help
@@ -20,3 +22,5 @@ rsource "Kconfig.nus_c"
 rsource "Kconfig.throughput"
 rsource "Kconfig.latency"
 rsource "Kconfig.latency_c"
+
+endmenu
