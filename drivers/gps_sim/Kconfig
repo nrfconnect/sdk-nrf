@@ -150,7 +150,7 @@ config GPS_SIM_THREAD_PRIORITY
 config GPS_SIM_THREAD_STACK_SIZE
 	int "Trigger thread stack size"
 	depends on GPS_SIM_TRIGGER
-	default 512
+	default 1024
 	help
 	  Stack size of thread used by the driver to handle interrupts.
 
