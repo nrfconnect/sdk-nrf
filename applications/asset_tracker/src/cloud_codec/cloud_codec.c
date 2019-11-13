@@ -458,6 +458,32 @@ int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
 	return cloud_encode_data(&cloud_sensor, output);
 }
 
+int cloud_encode_motion_data(const motion_data_t *motion_data,
+				  struct cloud_msg *output)
+{
+	__ASSERT_NO_MSG(motion_data != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
+	struct cloud_channel_data cloud_sensor;
+
+	cloud_sensor.type = CLOUD_CHANNEL_FLIP;
+
+	switch (motion_data->orientation) {
+	case MOTION_ORIENTATION_NORMAL:
+		cloud_sensor.data.buf = "NORMAL";
+		break;
+	case MOTION_ORIENTATION_UPSIDE_DOWN:
+		cloud_sensor.data.buf = "UPSIDE_DOWN";
+		break;
+	default:
+		return -1;
+	}
+
+	cloud_sensor.data.len = sizeof(cloud_sensor.data.buf) - 1;
+
+	return cloud_encode_data(&cloud_sensor, output);
+
+}
 #if CONFIG_LIGHT_SENSOR
 /* 4 32-bit ints, 3 spaces, NULL */
 #define LIGHT_SENSOR_DATA_STRING_MAX_LEN ((4 * 11) + 3 + 1)
