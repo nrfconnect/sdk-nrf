@@ -64,6 +64,8 @@ static struct device *button_devs[ARRAY_SIZE(button_pins)];
 static struct device *led_devs[ARRAY_SIZE(led_pins)];
 static struct gpio_callback gpio_cb;
 static struct k_spinlock lock;
+static sys_slist_t button_handlers;
+static struct k_mutex button_handler_mut;
 
 static int callback_ctrl(bool enable)
 {
@@ -105,6 +107,23 @@ static u32_t get_buttons(void)
 	return ret;
 }
 
+static void button_handlers_call(u32_t button_state, u32_t has_changed)
+{
+	struct button_handler *handler;
+
+	if (button_handler_cb != NULL) {
+		button_handler_cb(button_state, has_changed);
+	}
+
+	if (IS_ENABLED(CONFIG_DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS)) {
+		k_mutex_lock(&button_handler_mut, K_FOREVER);
+		SYS_SLIST_FOR_EACH_CONTAINER(&button_handlers, handler, node) {
+			handler->cb(button_state, has_changed);
+		}
+		k_mutex_unlock(&button_handler_mut);
+	}
+}
+
 static void buttons_scan_fn(struct k_work *work)
 {
 	static u32_t last_button_scan;
@@ -115,13 +134,10 @@ static void buttons_scan_fn(struct k_work *work)
 	atomic_set(&my_buttons, (atomic_val_t)button_scan);
 
 	if (!initial_run) {
-		if (button_handler_cb != NULL) {
-			if (button_scan != last_button_scan) {
-				u32_t has_changed;
+		if (button_scan != last_button_scan) {
+			u32_t has_changed = (button_scan ^ last_button_scan);
 
-				has_changed = (button_scan ^ last_button_scan);
-				button_handler_cb(button_scan, has_changed);
-			}
+			button_handlers_call(button_scan, has_changed);
 		}
 	} else {
 		initial_run = false;
@@ -236,6 +252,10 @@ int dk_buttons_init(button_handler_t button_handler)
 
 	button_handler_cb = button_handler;
 
+	if (IS_ENABLED(CONFIG_DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS)) {
+		k_mutex_init(&button_handler_mut);
+	}
+
 	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
 		button_devs[i] = device_get_binding(button_pins[i].port);
 		if (!button_devs[i]) {
@@ -298,6 +318,26 @@ int dk_buttons_init(button_handler_t button_handler)
 
 	return 0;
 }
+
+#ifdef CONFIG_DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
+void dk_button_handler_add(struct button_handler *handler)
+{
+	k_mutex_lock(&button_handler_mut, K_FOREVER);
+	sys_slist_append(&button_handlers, &handler->node);
+	k_mutex_unlock(&button_handler_mut);
+}
+
+int dk_button_handler_remove(struct button_handler *handler)
+{
+	bool found;
+
+	k_mutex_lock(&button_handler_mut, K_FOREVER);
+	found = sys_slist_find_and_remove(&button_handlers, &handler->node);
+	k_mutex_unlock(&button_handler_mut);
+
+	return found ? 0 : -ENOENT;
+}
+#endif
 
 void dk_read_buttons(u32_t *button_state, u32_t *has_changed)
 {
