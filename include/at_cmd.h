@@ -108,6 +108,10 @@ int at_cmd_write_with_callback(const char *const cmd,
  *                the function return code as a positive value. NULL pointer is
  *                allowed.
  *
+ * @note It is allowed to use the same buffer for both, @ref cmd and @ref buf
+ *       parameters in order to save RAM. The function will not modify @ref buf
+ *       contents until the entire @ref cmd is sent.
+ *
  * @retval 0 If command execution was successful (same as OK returned from
  *           modem). Error codes returned from the driver or by the socket are
  *           returned as negative values, CMS and CME errors are returned as
