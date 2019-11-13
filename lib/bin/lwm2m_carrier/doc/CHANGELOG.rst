@@ -8,7 +8,7 @@ All notable changes to this project are documented in this file.
 liblwm2m_carrier 0.8.0
 **********************
 
-Release for modem firmware version 1.1.0 with support for Verizon Wireless.
+Release for modem firmware version 1.1.0 and |NCS| v1.1.0, with support for Verizon Wireless.
 
 Certification status
 ====================
@@ -19,9 +19,21 @@ Changes
 =======
 
 * Abstracted several new functions in the glue layer to improve compatibility on top of the master branch.
-* Re-organized NVS keys usage to make it range-bound (0xCA00, 0xCAFF); this range is not backward compatible, so you should not rely on pre-existing information saved in flash by earlier versions of this library.
-* Added APIs to set the following values from the application. The application should set and maintain these values to reflect the state of the device. Updated values are pushed to the servers autonomously.
-	* Available Power Sources, Power Source Voltage, Power Source Current, Battery Level, Battery Status, Memory Free, Memory Total, Error Code.
+* Reorganized NVS keys usage to make it range-bound (0xCA00, 0xCAFF).
+  This range is not backward compatible, so you should not rely on pre-existing information saved in flash by earlier versions of this library.
+* Added APIs to set the following values from the application:
+
+   * Available Power Sources
+   * Power Source Voltage
+   * Power Source Current
+   * Battery Level
+   * Battery Status
+   * Memory Total
+   * Error Code
+
+  The application must set and maintain these values to reflect the state of the device.
+  Updated values are pushed to the servers autonomously.
+
 * Added API to set the "Device Type" resource. If not set, this is reported as "Smart Device".
 * Added API to set the "Software Version" resource. If not set, this is reported as "LwM2M 0.8.0".
 * Added API to set the "Hardware Version" resource. If not set, this is reported as "1.0".
