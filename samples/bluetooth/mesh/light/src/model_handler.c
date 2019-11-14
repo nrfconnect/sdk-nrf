@@ -115,7 +115,7 @@ static struct bt_mesh_cfg_srv cfg_srv = {
 	.beacon = BT_MESH_BEACON_ENABLED,
 	.frnd = IS_ENABLED(CONFIG_BT_MESH_FRIEND),
 	.gatt_proxy = IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY),
-	.default_ttl = 7,
+	.default_ttl = BT_MESH_TTL_DEFAULT,
 
 	/* 3 transmissions with 20ms interval */
 	.net_transmit = BT_MESH_TRANSMIT(2, 20),
@@ -137,12 +137,12 @@ static void attention_blink(struct k_work *work)
 		BIT(3) | BIT(0),
 	};
 	dk_set_leds(pattern[idx++ % ARRAY_SIZE(pattern)]);
-	k_delayed_work_submit(&attention_blink_work, 30);
+	k_delayed_work_submit(&attention_blink_work, K_MSEC(30));
 }
 
 static void attention_on(struct bt_mesh_model *mod)
 {
-	k_delayed_work_submit(&attention_blink_work, 0);
+	k_delayed_work_submit(&attention_blink_work, K_NO_WAIT);
 }
 
 static void attention_off(struct bt_mesh_model *mod)
@@ -161,8 +161,6 @@ static struct bt_mesh_health_srv health_srv = {
 };
 
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
-
-#define BT_MESH_MODEL_LIST(...) ((struct bt_mesh_model[]){ __VA_ARGS__ })
 
 static struct bt_mesh_elem elements[] = {
 	BT_MESH_ELEM(

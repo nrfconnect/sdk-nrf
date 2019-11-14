@@ -43,4 +43,7 @@
  */
 bool bt_mesh_model_pub_is_unicast(const struct bt_mesh_model *mod);
 
+/** Shorthand macro for defining a model list directly in the element. */
+#define BT_MESH_MODEL_LIST(...) ((struct bt_mesh_model[]){ __VA_ARGS__ })
+
 #endif /* BT_MESH_MODELS_H__ */
