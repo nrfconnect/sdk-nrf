@@ -31,6 +31,20 @@ function(image_board_selection board_in board_out)
 endfunction()
 
 function(zephyr_add_external_image name sourcedir)
+  string(TOUPPER ${name} UPNAME)
+
+  if (CONFIG_${UPNAME}_BUILD_STRATEGY_USE_HEX_FILE)
+    assert_exists(CONFIG_${UPNAME}_HEX_FILE)
+    message("Using ${CONFIG_${UPNAME}_HEX_FILE} instead of building ${name}")
+  elseif (CONFIG_${UPNAME}_BUILD_STRATEGY_SKIP_BUILD)
+    message("Skipping building of ${name}")
+  else()
+    # Build normally
+    zephyr_add_external_image_from_source(${name} ${sourcedir})
+  endif()
+endfunction()
+
+function(zephyr_add_external_image_from_source name sourcedir)
   string(TOUPPER ${name} NAME)
   set(${NAME}_CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/${name})
   set(${NAME}_PROJECT_BINARY_DIR ${CMAKE_BINARY_DIR}/${name}/zephyr)
