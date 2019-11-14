@@ -144,8 +144,6 @@ void at_handler(void *context, char *response)
 		return;
 	}
 
-	LOG_DBG("recv: %s", log_strdup(response));
-
 	err = parse_nw_reg_status(response, &status);
 	if (err) {
 		LOG_ERR("Could not get network registration status");
@@ -556,8 +554,8 @@ static int parse_nw_reg_status(const char *at_response,
 
 	if (!response_is_valid(response_prefix, response_prefix_len,
 			       AT_CEREG_RESPONSE_PREFIX)) {
-		LOG_ERR("Invalid CEREG response");
-		err = -EIO;
+		/* The unsolicited response is not a CEREG response, ignore it.
+		 */
 		goto clean_exit;
 	}
 
