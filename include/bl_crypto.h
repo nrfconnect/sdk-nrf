@@ -39,15 +39,6 @@ extern "C" {
 	typedef u32_t bl_sha256_ctx_t[SHA256_CTX_SIZE/4];
 #endif
 
-/* EXT_API ID for the bl_root_of_trust_verify EXT_API. */
-#define BL_ROT_VERIFY_EXT_API_ID 0x1001
-
-/* EXT_API ID for the bl_sha256_* EXT_API set. */
-#define BL_SHA256_EXT_API_ID 0x1002
-
-/* EXT_API ID for the bl_secp256r1_validate EXT_API. */
-#define BL_SECP256R1_EXT_API_ID 0x1003
-
 /**
  * @brief Initialize bootloader crypto module.
  *
@@ -209,34 +200,25 @@ typedef int (*bl_secp256r1_validate_t)(
  * @brief Structure describing the BL_ROT_VERIFY EXT_API.
  */
 struct bl_rot_verify_ext_api {
-	struct fw_info_ext_api header;
-	struct {
-		bl_root_of_trust_verify_t bl_root_of_trust_verify;
-	} ext_api;
+	bl_root_of_trust_verify_t bl_root_of_trust_verify;
 };
 
 /**
  * @brief Structure describing the BL_SHA256 EXT_API.
  */
 struct bl_sha256_ext_api {
-	struct fw_info_ext_api header;
-	struct {
-		bl_sha256_init_t bl_sha256_init;
-		bl_sha256_update_t bl_sha256_update;
-		bl_sha256_finalize_t bl_sha256_finalize;
-		bl_sha256_verify_t bl_sha256_verify;
-		u32_t bl_sha256_ctx_size;
-	} ext_api;
+	bl_sha256_init_t bl_sha256_init;
+	bl_sha256_update_t bl_sha256_update;
+	bl_sha256_finalize_t bl_sha256_finalize;
+	bl_sha256_verify_t bl_sha256_verify;
+	u32_t bl_sha256_ctx_size;
 };
 
 /**
  * @brief Structure describing the BL_SECP256R1 EXT_API.
  */
 struct bl_secp256r1_ext_api {
-	struct fw_info_ext_api header;
-	struct {
-		bl_secp256r1_validate_t bl_secp256r1_validate;
-	} ext_api;
+	bl_secp256r1_validate_t bl_secp256r1_validate;
 };
 
   /** @} */

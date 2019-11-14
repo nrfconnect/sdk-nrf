@@ -19,6 +19,12 @@ config $(EXT_API)_EXT_API_ENABLED
 	  Provide this EXT_API to other images.
 
 if ($(EXT_API)_EXT_API_ENABLED || $(EXT_API)_EXT_API_REQUIRED)
+config $(EXT_API)_EXT_API_ID
+	hex
+	default $(id)
+	help
+	  Unique ID for the $(ABI) ABI.
+
 config $(EXT_API)_EXT_API_FLAGS
 	int
 	default $(flags)
@@ -38,3 +44,10 @@ config $(EXT_API)_EXT_API_MAX_VER
 	help
 	  The maximum requested version for the $(EXT_API) EXT_API.
 endif
+
+# Unset variables. Otherwise, if the file is included again without setting all
+# variables, the variables will silently keep the old values.
+EXT_API = NOT_SET
+id = NOT_SET
+flags = NOT_SET
+ver = NOT_SET

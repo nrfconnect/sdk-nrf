@@ -235,13 +235,9 @@ bool bl_validate_firmware_local(u32_t fw_address,
 
 
 #ifdef CONFIG_BL_VALIDATE_FW_EXT_API_ENABLED
-EXT_API(struct bl_validate_fw_ext_api, bl_validate_fw_ext_api) = {
-	.header = FW_INFO_EXT_API_INIT(BL_VALIDATE_FW_EXT_API_ID,
-				CONFIG_BL_VALIDATE_FW_EXT_API_FLAGS,
-				CONFIG_BL_VALIDATE_FW_EXT_API_VER,
-				sizeof(struct bl_validate_fw_ext_api)),
-	.ext_api = {
+EXT_API(BL_VALIDATE_FW, struct bl_validate_fw_ext_api,
+						bl_validate_fw_ext_api) = {
 		.bl_validate_firmware = bl_validate_firmware,
-	},
+	}
 };
 #endif

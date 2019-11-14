@@ -128,41 +128,26 @@ int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 #endif
 
 #ifdef CONFIG_BL_ROT_VERIFY_EXT_API_ENABLED
-EXT_API(struct bl_rot_verify_ext_api, bl_rot_verify_ext_api) = {
-	.header = FW_INFO_EXT_API_INIT(BL_ROT_VERIFY_EXT_API_ID,
-				CONFIG_BL_ROT_VERIFY_EXT_API_FLAGS,
-				CONFIG_BL_ROT_VERIFY_EXT_API_VER,
-				sizeof(struct bl_rot_verify_ext_api)),
-	.ext_api = {
+EXT_API(BL_ROT_VERIFY, struct bl_rot_verify_ext_api, bl_rot_verify_ext_api) = {
 		.bl_root_of_trust_verify = bl_root_of_trust_verify_external,
 	}
 };
 #endif
 
 #ifdef CONFIG_BL_SHA256_EXT_API_ENABLED
-EXT_API(struct bl_sha256_ext_api, bl_sha256_ext_api) = {
-	.header = FW_INFO_EXT_API_INIT(BL_SHA256_EXT_API_ID,
-				CONFIG_BL_SHA256_EXT_API_FLAGS,
-				CONFIG_BL_SHA256_EXT_API_VER,
-				sizeof(struct bl_sha256_ext_api)),
-	.ext_api = {
+EXT_API(BL_SHA256, struct bl_sha256_ext_api, bl_sha256_ext_api) = {
 		.bl_sha256_init = bl_sha256_init,
 		.bl_sha256_update = bl_sha256_update,
 		.bl_sha256_finalize = bl_sha256_finalize,
 		.bl_sha256_verify = bl_sha256_verify,
 		.bl_sha256_ctx_size = SHA256_CTX_SIZE,
-	},
+	}
 };
 #endif
 
 #ifdef CONFIG_BL_SECP256R1_EXT_API_ENABLED
-EXT_API(struct bl_secp256r1_ext_api, bl_secp256r1_ext_api) = {
-	.header = FW_INFO_EXT_API_INIT(BL_SECP256R1_EXT_API_ID,
-				CONFIG_BL_SECP256R1_EXT_API_FLAGS,
-				CONFIG_BL_SECP256R1_EXT_API_VER,
-				sizeof(struct bl_secp256r1_ext_api)),
-	.ext_api = {
+EXT_API(BL_SECP256R1, struct bl_secp256r1_ext_api, bl_secp256r1_ext_api) = {
 		.bl_secp256r1_validate = bl_secp256r1_validate,
-	},
+	}
 };
 #endif

@@ -45,6 +45,7 @@ config SB_VALIDATION_INFO_VERSION
 if SECURE_BOOT_VALIDATION
 
 EXT_API = BL_VALIDATE_FW
+id = 0x1101
 flags = 3
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"

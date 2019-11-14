@@ -18,10 +18,6 @@ extern "C" {
  * @{
  */
 
-/* EXT_API ID for the bl_validate_firmware EXT_API. */
-#define BL_VALIDATE_FW_EXT_API_ID 0x1101
-
-
 /** Function for validating firmware.
  *
  * @details This will run a series of checks on the fw_info contents, then
@@ -58,10 +54,7 @@ bool bl_validate_firmware_local(u32_t fw_address,
  * @brief Structure describing the BL_VALIDATE_FW EXT_API.
  */
 struct bl_validate_fw_ext_api {
-	struct fw_info_ext_api header;
-	struct {
-		bl_validate_firmware_t bl_validate_firmware;
-	} ext_api;
+	bl_validate_firmware_t bl_validate_firmware;
 };
 
   /** @} */
