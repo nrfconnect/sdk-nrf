@@ -66,6 +66,9 @@ static int bt_mesh_battery_cli_init(struct bt_mesh_model *model)
 	struct bt_mesh_battery_cli *cli = model->user_data;
 
 	cli->model = model;
+	net_buf_simple_init(model->pub->msg, 0);
+	model_ack_init(&cli->ack_ctx);
+
 	return 0;
 }
 
