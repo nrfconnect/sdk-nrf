@@ -255,8 +255,6 @@ static int bh1749_async_init_rgb_enable(struct bh1749_data *data)
 
 static int bh1749_async_init_configure(struct bh1749_data *data)
 {
-	int err;
-
 	if (i2c_reg_write_byte(data->i2c, DT_INST_0_ROHM_BH1749_BASE_ADDRESS,
 			       BH1749_MODE_CONTROL1,
 			       BH1749_MODE_CONTROL1_DEFAULTS)) {
@@ -266,7 +264,7 @@ static int bh1749_async_init_configure(struct bh1749_data *data)
 	}
 
 #ifdef CONFIG_BH1749_TRIGGER
-	err = bh1749_gpio_interrupt_init(bh1749_dev);
+	int err = bh1749_gpio_interrupt_init(bh1749_dev);
 	if (err) {
 		LOG_ERR("Failed to initialize interrupt with error %d", err);
 		return -EIO;
