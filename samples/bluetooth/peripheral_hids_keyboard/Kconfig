@@ -12,8 +12,7 @@ config NFC_OOB_PAIRING
 	bool "Enable NFC OOB pairing"
 	default y if BOARD_NRF52840_PCA10056
 	default y if BOARD_NRF52_PCA10040
-	select NRFXLIB_NFC
-	select NFC_T2T_LIB_ENABLED
+	select NFC_T2T_NRFXLIB
 	select NFC_NDEF
 	select NFC_NDEF_MSG
 	select NFC_NDEF_RECORD

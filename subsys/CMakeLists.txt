@@ -21,7 +21,8 @@ add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 add_subdirectory_ifdef(CONFIG_MPSL mpsl)
 
-if (CONFIG_NRFXLIB_NFC     OR
+if (CONFIG_NFC_T2T_NRFXLIB OR
+    CONFIG_NFC_T4T_NRFXLIB OR
     CONFIG_NFC_T2T_PARSER  OR
     CONFIG_NFC_NDEF_PARSER OR
     CONFIG_NFC_T4T_ISODEP OR

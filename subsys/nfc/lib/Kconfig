@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+config NFC_PLATFORM
+	bool "Common NFC configuration"
+	default y if NFC_T2T_NRFXLIB || NFC_T4T_NRFXLIB
+	select NRFX_NFCT
+	help
+	  Enable common configuration for the NFC
+
+if NFC_PLATFORM
+
+config NFCT_IRQ_PRIORITY
+	int "Interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 1
+	help
+	  Sets NFC interrupt priority.
+	  Levels are from 0 (highest priority) to 6 (lowest priority)
+
+module = NFC_PLATFORM
+module-str = nfc_platform
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_PLATFORM
+
+
