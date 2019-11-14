@@ -16,3 +16,8 @@ if (CONFIG_NFC_T4T_ISODEP OR
     CONFIG_NFC_T4T_HL_PROCEDURE)
 	add_subdirectory(t4t)
 endif()
+
+if (CONFIG_NFC_T2T_NRFXLIB OR
+    CONFIG_NFC_T4T_NRFXLIB)
+	add_subdirectory(lib)
+endif()
