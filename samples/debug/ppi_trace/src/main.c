@@ -48,11 +48,8 @@ static void ppi_trace_pin_setup(u32_t pin, u32_t evt)
 
 static void ppi_trace_setup(void)
 {
-	/* chan_id=0 maps to COMPARE_1, COMPARE_0 is internally used by the
-	 * driver.
-	 */
 	ppi_trace_pin_setup(CONFIG_PPI_TRACE_PIN_RTC_COMPARE_EVT,
-		nrf_rtc_event_address_get(RTC, NRF_RTC_EVENT_COMPARE_1));
+		nrf_rtc_event_address_get(RTC, NRF_RTC_EVENT_COMPARE_0));
 
 	/* Due to low power domain events must be explicitly enabled in RTC. */
 	nrf_rtc_event_enable(RTC, NRF_RTC_INT_TICK_MASK);
