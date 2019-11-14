@@ -4,6 +4,32 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+function(image_board_selection board_in board_out)
+  # Unless parent was "ns" in which case we assume that the child images are
+  # all secure, and should be build using the secure version of the board.
+  # It is assumed that only the root app will be built as non-secure.
+  # This is not a valid assumption as there might be multiple non-secure
+  # images defined. With this technique, it is not possible to have multiple
+  # images defined as non-secure.
+  # TODO: Allow multiple non-secure images by using Kconfig to set the
+  # secure/non-secure property rather than using a separate board definition.
+  set(${board_out} ${board_in} PARENT_SCOPE)
+  if(${board_in} STREQUAL nrf9160_pca10090ns)
+    set(${board_out} nrf9160_pca10090 PARENT_SCOPE)
+    message("Changed board to secure nrf9160_pca10090 (NOT NS)")
+  endif()
+
+  if(${BOARD} STREQUAL nrf9160_pca20035ns)
+    set(${board_out} nrf9160_pca20035 PARENT_SCOPE)
+    message("Changed board to secure nrf9160_pca20035 (NOT NS)")
+  endif()
+
+  if(${BOARD} STREQUAL actinius_icarus_ns)
+    set(BOARD actinius_icarus)
+    message("Changed board to secure actinius_icarus (NOT NS)")
+  endif()
+endfunction()
+
 function(zephyr_add_external_image name sourcedir)
   string(TOUPPER ${name} NAME)
   set(${NAME}_CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/${name})
@@ -11,11 +37,12 @@ function(zephyr_add_external_image name sourcedir)
 
   file(MAKE_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR})
   message("=== child image ${name} begin ===")
+  image_board_selection(${BOARD} IMAGE_BOARD)
   execute_process(
     COMMAND ${CMAKE_COMMAND}
     # Add other toolchain here,
     -G${CMAKE_GENERATOR}
-    -DBOARD=nrf9160_pca10090
+    -DBOARD=${IMAGE_BOARD}
     -DGENERATE_PARTITION_MANAGER_ENTRY=True
     ${sourcedir}
     WORKING_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR}
