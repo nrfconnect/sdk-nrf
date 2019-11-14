@@ -412,8 +412,8 @@ void trace_uart_init(void)
 		.pselcts = NRF_UARTE_PSEL_DISCONNECTED,
 		.pselrts = NRF_UARTE_PSEL_DISCONNECTED,
 
-		.hwfc = NRF_UARTE_HWFC_DISABLED,
-		.parity = NRF_UARTE_PARITY_EXCLUDED,
+		.hal_cfg.hwfc = NRF_UARTE_HWFC_DISABLED,
+		.hal_cfg.parity = NRF_UARTE_PARITY_EXCLUDED,
 		.baudrate = NRF_UARTE_BAUDRATE_1000000,
 
 		/* IRQ handler not used. Blocking mode.*/
