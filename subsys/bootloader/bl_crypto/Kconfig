@@ -114,16 +114,19 @@ config SB_PUBLIC_KEY_HASH_LEN
 	  Public Keys are truncated.
 
 EXT_API = BL_ROT_VERIFY
+id = 0x1001
 flags = 2
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 EXT_API = BL_SHA256
+id = 0x1002
 flags = 0
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 EXT_API = BL_SECP256R1
+id = 0x1003
 flags = 1
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"

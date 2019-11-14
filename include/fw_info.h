@@ -77,28 +77,30 @@ OFFSET_CHECK(struct fw_info_ext_api, ext_api_version, 24);
  */
 
 
-/* Decorator for struct fw_info_ext_api instances to place them in the correct
+/* Macro for initializing struct fw_info_ext_api instances in the correct
  * linker section. Also creates a u8_t in another section to provide a count of
  * the number of struct fw_info_ext_api instances.
  */
-#define EXT_API(type, name) \
+#define EXT_API(ext_api_name, type, name) \
 	Z_GENERIC_SECTION(.ext_apis) \
 	const u8_t _CONCAT(name, _ext_api_counter) = 0xFF; \
 	BUILD_ASSERT_MSG((sizeof(type) % 4) == 0, \
-			"EXT_API " #type " is not word-aligned"); \
-	Z_GENERIC_SECTION(.firmware_info.1) __attribute__((used)) \
-	const type name
-
-
-/* Macro for initializing struct fw_info_ext_api instances. */
-#define FW_INFO_EXT_API_INIT(id, flags, version, total_size) \
+			"Size of EXT_API " #type " is not word-aligned"); \
+	struct __packed _CONCAT(name, _t) \
 	{ \
-		.magic = {EXT_API_MAGIC},\
-		.ext_api_len = total_size, \
-		.ext_api_id = id, \
-		.ext_api_flags = flags, \
-		.ext_api_version = version, \
-	}
+		struct fw_info_ext_api header; \
+		type ext_api; \
+	}; \
+	Z_GENERIC_SECTION(.firmware_info.1) __attribute__((used)) \
+	const struct _CONCAT(name, _t) name = { \
+	.header = {\
+		.magic = {EXT_API_MAGIC}, \
+		.ext_api_id = CONFIG_ ## ext_api_name ## _EXT_API_ID, \
+		.ext_api_flags = CONFIG_ ## ext_api_name ## _EXT_API_FLAGS, \
+		.ext_api_version = CONFIG_ ## ext_api_name ## _EXT_API_VER, \
+		.ext_api_len = sizeof(struct __packed _CONCAT(name, _t)), \
+	}, \
+	.ext_api
 
 
 /* Check and provide a pointer to a fw_info_ext_api structure.
@@ -172,15 +174,22 @@ OFFSET_CHECK(struct fw_info_ext_api_request, ext_api, 36);
 #define EXT_API_REQ(name, req, type, var_name) \
 	Z_GENERIC_SECTION(.ext_apis_req) \
 	const u8_t _CONCAT(var_name, _ext_api_req_counter) = 0xFF; \
-	__noinit static const type *var_name; \
+	__noinit const struct __packed \
+	{ \
+		struct fw_info_ext_api header; \
+		type ext_api; \
+	} *var_name; \
 	Z_GENERIC_SECTION(.firmware_info.2) \
 	__attribute__((used)) \
 	const struct fw_info_ext_api_request _CONCAT(var_name, _req) = \
 	{ \
-		.request = FW_INFO_EXT_API_INIT(name ## _EXT_API_ID, \
-				CONFIG_ ## name ## _EXT_API_FLAGS, \
-				CONFIG_ ## name ## _EXT_API_VER, \
-				sizeof(struct fw_info_ext_api_request)), \
+		.request = {\
+			.magic = {EXT_API_MAGIC}, \
+			.ext_api_id = CONFIG_ ## name ## _EXT_API_ID, \
+			.ext_api_flags = CONFIG_ ## name ## _EXT_API_FLAGS, \
+			.ext_api_version = CONFIG_ ## name ## _EXT_API_VER, \
+			.ext_api_len = sizeof(struct fw_info_ext_api_request), \
+		}, \
 		.ext_api_max_version = CONFIG_ ## name ## _EXT_API_MAX_VER, \
 		.required = req, \
 		.ext_api = (void *) &var_name, \
