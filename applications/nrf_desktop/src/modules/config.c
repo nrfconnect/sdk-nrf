@@ -192,22 +192,22 @@ static void init_settings(void)
 		};
 
 		err = settings_register(&sh);
+	}
+
+	if (err) {
+		LOG_ERR("Cannot register settings handler: %d", err);
+		module_set_state(MODULE_STATE_ERROR);
+	} else if (IS_ENABLED(CONFIG_DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE)) {
+		start_loading_thread();
+	} else {
+		err = settings_load();
+
 		if (err) {
-			LOG_ERR("Cannot register settings handler: %d", err);
+			LOG_ERR("Cannot load settings");
 			module_set_state(MODULE_STATE_ERROR);
 		} else {
-			if (IS_ENABLED(CONFIG_DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE)) {
-				start_loading_thread();
-			} else {
-				err = settings_load();
-				if (err) {
-					LOG_ERR("Cannot load settings");
-					module_set_state(MODULE_STATE_ERROR);
-				} else {
-					LOG_INF("Settings loaded");
-					module_set_state(MODULE_STATE_READY);
-				}
-			}
+			LOG_INF("Settings loaded");
+			module_set_state(MODULE_STATE_READY);
 		}
 	}
 }
