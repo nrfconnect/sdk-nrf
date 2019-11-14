@@ -53,14 +53,10 @@ struct __packed fw_validation_info {
 
 /* Static asserts to ensure compatibility */
 OFFSET_CHECK(struct fw_validation_info, magic, 0);
-OFFSET_CHECK(struct fw_validation_info, address,
-	CONFIG_FW_INFO_MAGIC_LEN);
-OFFSET_CHECK(struct fw_validation_info, hash,
-	(CONFIG_FW_INFO_MAGIC_LEN + 4));
-OFFSET_CHECK(struct fw_validation_info, public_key,
-	(CONFIG_FW_INFO_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN));
-OFFSET_CHECK(struct fw_validation_info, signature,
-	(CONFIG_FW_INFO_MAGIC_LEN + 4 + CONFIG_SB_HASH_LEN
+OFFSET_CHECK(struct fw_validation_info, address, 12);
+OFFSET_CHECK(struct fw_validation_info, hash, 16);
+OFFSET_CHECK(struct fw_validation_info, public_key, (16 + CONFIG_SB_HASH_LEN));
+OFFSET_CHECK(struct fw_validation_info, signature, (16 + CONFIG_SB_HASH_LEN
 	+ CONFIG_SB_SIGNATURE_LEN));
 
 /* Can be used to make the firmware discoverable in other locations, e.g. when
@@ -74,8 +70,7 @@ struct __packed fw_validation_pointer {
 
 /* Static asserts to ensure compatibility */
 OFFSET_CHECK(struct fw_validation_pointer, magic, 0);
-OFFSET_CHECK(struct fw_validation_pointer, validation_info,
-	CONFIG_FW_INFO_MAGIC_LEN);
+OFFSET_CHECK(struct fw_validation_pointer, validation_info, 12);
 
 static bool validation_info_check(const struct fw_validation_info *vinfo)
 {
