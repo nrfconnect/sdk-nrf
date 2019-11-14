@@ -53,6 +53,7 @@ Kconfig*                                  @SebastianBoe
 /subsys/debug/CMakeLists.txt              @nordic-krch
 /samples/debug/ppi_trace/                 @nordic-krch
 /samples/esb/                             @lemrey
+/samples/mpsl/                            @joerchan @rugeGerritsen
 /samples/nfc/                             @grochu
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
