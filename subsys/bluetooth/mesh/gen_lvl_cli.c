@@ -51,6 +51,9 @@ static int bt_mesh_lvl_init(struct bt_mesh_model *mod)
 	struct bt_mesh_lvl_cli *cli = mod->user_data;
 
 	cli->model = mod;
+	net_buf_simple_init(mod->pub->msg, 0);
+	model_ack_init(&cli->ack_ctx);
+
 	return 0;
 }
 

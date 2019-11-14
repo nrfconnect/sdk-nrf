@@ -61,6 +61,9 @@ static int bt_mesh_onoff_cli_init(struct bt_mesh_model *model)
 	struct bt_mesh_onoff_cli *cli = model->user_data;
 
 	cli->model = model;
+	net_buf_simple_init(cli->pub.msg, 0);
+	model_ack_init(&cli->ack_ctx);
+
 	return 0;
 }
 

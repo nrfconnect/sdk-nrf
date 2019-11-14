@@ -67,6 +67,11 @@ int model_ackd_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 		    struct bt_mesh_model_ack_ctx *ack, u32_t rsp_op,
 		    void *user_data);
 
+static inline void model_ack_init(struct bt_mesh_model_ack_ctx *ack)
+{
+	k_sem_init(&ack->sem, 0, 1);
+}
+
 static inline int model_ack_ctx_prepare(struct bt_mesh_model_ack_ctx *ack,
 					u32_t op, u16_t dst, void *user_data)
 {

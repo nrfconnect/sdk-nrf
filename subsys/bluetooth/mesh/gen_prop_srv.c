@@ -464,6 +464,7 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *mod)
 	struct bt_mesh_prop_srv *srv = mod->user_data;
 
 	srv->mod = mod;
+	net_buf_simple_init(mod->pub->msg, 0);
 
 	if (IS_MFR_SRV(mod)) {
 		/* Manufacturer properties aren't writable */

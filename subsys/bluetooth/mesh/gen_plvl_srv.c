@@ -525,6 +525,7 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *mod)
 
 	srv->plvl_model = mod;
 	bt_mesh_plvl_srv_reset(mod);
+	net_buf_simple_init(mod->pub->msg, 0);
 
 	return 0;
 }

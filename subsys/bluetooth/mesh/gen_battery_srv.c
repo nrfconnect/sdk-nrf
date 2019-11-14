@@ -78,6 +78,8 @@ static int bt_mesh_battery_srv_init(struct bt_mesh_model *model)
 	struct bt_mesh_battery_srv *srv = model->user_data;
 
 	srv->model = model;
+	net_buf_simple_init(model->pub->msg, 0);
+
 	return 0;
 }
 
