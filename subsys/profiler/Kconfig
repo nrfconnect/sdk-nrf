@@ -24,17 +24,17 @@ config MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
 
 choice
 	prompt "Profiler selection"
-	default PROFILER_SYSVIEW
+	default PROFILER_NORDIC
 	depends on PROFILER
 
 config PROFILER_SYSVIEW
 	bool "SysView profiler"
-	select RTT_CONSOLE
+	select USE_SEGGER_RTT
 	select SEGGER_SYSTEMVIEW
 
 config PROFILER_NORDIC
 	bool "Nordic profiler"
-	select RTT_CONSOLE
+	select USE_SEGGER_RTT
 
 endchoice
 
