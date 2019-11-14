@@ -19,14 +19,14 @@
  * BSEC_SAMPLE_RATE_ULP = 0.0033333 Hz = 300 second interval
  * BSEC_SAMPLE_RATE_LP = 0.33333 Hz = 3 second interval
  */
-#define BSEC_SAMPLE_RATE	BSEC_SAMPLE_RATE_ULP
+#define BSEC_SAMPLE_RATE	BSEC_SAMPLE_RATE_LP
 
 /* @breif Interval for saving BSEC state to flash
  *
  * Interval = BSEC_STATE_INTERVAL * 1/BSEC_SAMPLE_RATE
- * Example:  12 * 1/0.0033333 = 3600 seconds = 1 hour
+ * Example:  600 * 1/0.33333 Hz = 1800 seconds = 0.5 hour
  */
-#define BSEC_STATE_SAVE_INTERVAL	12
+#define BSEC_STATE_SAVE_INTERVAL	600
 
 struct device *i2c_master;
 
