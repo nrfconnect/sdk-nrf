@@ -164,8 +164,8 @@ static void uart_interrupt_handler(void *user_data)
 void power_thread(void)
 {
 	while (1) {
-		if (!nrf_power_usbregstatus_vbusdet_get()) {
-			nrf_power_system_off();
+		if (!nrf_power_usbregstatus_vbusdet_get(NRF_POWER)) {
+			nrf_power_system_off(NRF_POWER);
 		}
 		k_sleep(100);
 	}
