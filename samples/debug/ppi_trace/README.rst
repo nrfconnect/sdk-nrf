@@ -11,12 +11,12 @@ Overview
 
 The sample initializes trace pins to observe the following hardware events:
 
-* RTC Compare event (``NRF_RTC_EVENT_COMPARE_1``)
+* RTC Compare event (``NRF_RTC_EVENT_COMPARE_0``)
 * RTC Tick event (``NRF_RTC_EVENT_TICK``)
 * Low frequency clock (LFCLK) Started event (``NRF_CLOCK_EVENT_LFCLKSTARTED``)
 * Radio activity during *Bluetooth* advertising (available only for Bluetooth capable devices)
 
-The sample sets up a :ref:`zephyr:counter_interface` to generate an ``NRF_RTC_EVENT_COMPARE_1`` event every 50 ms.
+The sample sets up a :ref:`zephyr:counter_interface` to generate an ``NRF_RTC_EVENT_COMPARE_0`` event every 50 ms.
 Initially, RTC runs on RC low frequency (lower precision) as clock source.
 When the crystal is ready, it switches seamlessly to crystal (precise) as clock source.
 When the low-frequency crystal is ready, an ``NRF_CLOCK_EVENT_LFCLKSTARTED`` event is generated.
