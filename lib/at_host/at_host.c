@@ -78,7 +78,7 @@ static void response_handler(void *context, char *response)
 
 static void cmd_send(struct k_work *work)
 {
-	char              str[19];
+	char              str[25];
 	enum at_cmd_state state;
 	int               err;
 
