@@ -3,6 +3,19 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+
+/*
+ * Ensure 'strnlen' is available even with -std=c99. If
+ * _POSIX_C_SOURCE was defined we will get a warning when referencing
+ * 'strnlen'. If this proves to cause trouble we could easily
+ * re-implement strnlen instead, perhaps with a different name, as it
+ * is such a simple function.
+ */
+#if !defined(_POSIX_C_SOURCE)
+#define _POSIX_C_SOURCE 200809L
+#endif
+#include <string.h>
+
 #include <zephyr.h>
 #include <flash.h>
 #include <pm_config.h>
