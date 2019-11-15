@@ -590,7 +590,8 @@ static int settings_set(const char *key, size_t len_rd,
 
 static int init_settings(void)
 {
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
+	    IS_ENABLED(CONFIG_SETTINGS)) {
 		static struct settings_handler sh = {
 			.name = MODULE_NAME,
 			.h_set = settings_set,
@@ -676,7 +677,8 @@ static int init(void)
 
 	load_identities();
 
-	if (!storage_data_is_valid()) {
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
+	    !storage_data_is_valid()) {
 		storage_data_overwrite();
 		bt_stack_id_lut_valid = true;
 		cur_peer_id_valid = true;
