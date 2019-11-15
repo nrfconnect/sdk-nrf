@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+config BT_SMP_ALLOW_UNAUTH_OVERWRITE
+	default y
+
 menu "Nordic nRF Connect"
 
 rsource "subsys/Kconfig"
