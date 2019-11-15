@@ -27,9 +27,9 @@ if(NOT EXISTS ${LWM2M_CARRIER_LIB_PATH})
                   "(${LWM2M_CARRIER_LIB_PATH} doesn't exist.)")
 endif()
 
-set(                    LWM2M_CARRIER_TARGET ${IMAGE}liblwm2m_carrier)
+set(                    LWM2M_CARRIER_TARGET liblwm2m_carrier)
 zephyr_library_import(${LWM2M_CARRIER_TARGET} ${LWM2M_CARRIER_LIB_PATH}/liblwm2m_carrier.a)
-target_link_libraries(${LWM2M_CARRIER_TARGET} INTERFACE ${IMAGE}bsd_nrf9160_xxaa -lc)
+target_link_libraries(${LWM2M_CARRIER_TARGET} INTERFACE bsd_nrf9160_xxaa -lc)
 
 zephyr_include_directories(include)
 zephyr_library()

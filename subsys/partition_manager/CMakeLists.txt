@@ -36,7 +36,7 @@ if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND GENERATE_PARTITION_MANAGER_ENTRY)
     )
 endif()
 
-get_property(img_pm_subsys GLOBAL PROPERTY ${IMAGE}PM_SUBSYS)
+get_property(img_pm_subsys GLOBAL PROPERTY PM_SUBSYS)
 if (img_pm_subsys)
   foreach (subsys_pm_yml ${img_pm_subsys})
     file(RELATIVE_PATH rel_path_to_yml ${ZEPHYR_BASE} ${subsys_pm_yml})
