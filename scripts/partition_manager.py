@@ -14,7 +14,7 @@ PERMITTED_STR_KEYS = ['size']
 
 
 def remove_item_not_in_list(list_to_remove_from, list_to_check):
-    to_remove = [x for x in list_to_remove_from.copy() if x not in list_to_check and x is not 'app']
+    to_remove = [x for x in list_to_remove_from.copy() if x not in list_to_check and x != 'app']
     list(map(list_to_remove_from.remove, to_remove))
 
 
@@ -250,7 +250,7 @@ def get_dependent_partitions(all_reqs, target):
 
 
 def app_size(reqs, total_size):
-    size = total_size - sum([req['size'] for name, req in reqs.items() if 'size' in req.keys() and name is not 'app'])
+    size = total_size - sum([req['size'] for name, req in reqs.items() if 'size' in req.keys() and name != 'app'])
     return size
 
 
