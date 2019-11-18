@@ -23,6 +23,9 @@ rsource "pdn_management/Kconfig"
 rsource "multithreading_lock/Kconfig"
 
 rsource "fatal_error/Kconfig"
+
+rsource "sms/Kconfig"
+
 rsource "modem_key_mgmt/Kconfig"
 
 endmenu

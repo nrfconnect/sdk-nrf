@@ -64,6 +64,7 @@ Kconfig*                                  @SebastianBoe
 /lib/pdn_management/                      @rlubos
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /lib/fatal_error/                         @ioannisg
+/lib/sms/                                 @metc
 /lib/st25r3911b/                          @grochu
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
