@@ -208,14 +208,27 @@ int bt_mesh_prop_cli_user_prop_set(struct bt_mesh_prop_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_USER_PROP_SET,
 				 BT_MESH_PROP_MSG_MAXLEN_USER_PROP_SET);
 
-	bt_mesh_model_msg_init(&msg, rsp ? BT_MESH_PROP_OP_USER_PROP_SET :
-					   BT_MESH_PROP_OP_USER_PROP_SET_UNACK);
+	bt_mesh_model_msg_init(&msg, BT_MESH_PROP_OP_USER_PROP_SET);
 	net_buf_simple_add_le16(&msg, val->meta.id);
 	net_buf_simple_add_mem(&msg, val->value, val->size);
 
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_PROP_OP_PROPS_STATUS, rsp);
+}
+
+int bt_mesh_prop_cli_user_prop_set_unack(struct bt_mesh_prop_cli *cli,
+					 struct bt_mesh_msg_ctx *ctx,
+					 const struct bt_mesh_prop_val *val)
+{
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_USER_PROP_SET_UNACK,
+				 BT_MESH_PROP_MSG_MAXLEN_USER_PROP_SET);
+
+	bt_mesh_model_msg_init(&msg, BT_MESH_PROP_OP_USER_PROP_SET_UNACK);
+	net_buf_simple_add_le16(&msg, val->meta.id);
+	net_buf_simple_add_mem(&msg, val->value, val->size);
+
+	return model_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_prop_cli_admin_prop_set(struct bt_mesh_prop_cli *cli,
@@ -226,9 +239,7 @@ int bt_mesh_prop_cli_admin_prop_set(struct bt_mesh_prop_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_ADMIN_PROP_SET,
 				 BT_MESH_PROP_MSG_MAXLEN_ADMIN_PROP_SET);
 
-	bt_mesh_model_msg_init(&msg,
-			       rsp ? BT_MESH_PROP_OP_ADMIN_PROP_SET :
-				     BT_MESH_PROP_OP_ADMIN_PROP_SET_UNACK);
+	bt_mesh_model_msg_init(&msg, BT_MESH_PROP_OP_ADMIN_PROP_SET);
 	net_buf_simple_add_le16(&msg, val->meta.id);
 	net_buf_simple_add_u8(&msg, val->meta.user_access);
 	net_buf_simple_add_mem(&msg, val->value, val->size);
@@ -236,6 +247,21 @@ int bt_mesh_prop_cli_admin_prop_set(struct bt_mesh_prop_cli *cli,
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_PROP_OP_PROPS_STATUS, rsp);
+}
+
+int bt_mesh_prop_cli_admin_prop_set_unack(struct bt_mesh_prop_cli *cli,
+					  struct bt_mesh_msg_ctx *ctx,
+					  const struct bt_mesh_prop_val *val)
+{
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_ADMIN_PROP_SET_UNACK,
+				 BT_MESH_PROP_MSG_MAXLEN_ADMIN_PROP_SET);
+
+	bt_mesh_model_msg_init(&msg, BT_MESH_PROP_OP_ADMIN_PROP_SET_UNACK);
+	net_buf_simple_add_le16(&msg, val->meta.id);
+	net_buf_simple_add_u8(&msg, val->meta.user_access);
+	net_buf_simple_add_mem(&msg, val->value, val->size);
+
+	return model_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_prop_cli_mfr_prop_set(struct bt_mesh_prop_cli *cli,
@@ -246,12 +272,25 @@ int bt_mesh_prop_cli_mfr_prop_set(struct bt_mesh_prop_cli *cli,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_MFR_PROP_SET,
 				 BT_MESH_PROP_MSG_LEN_MFR_PROP_SET);
 
-	bt_mesh_model_msg_init(&msg, rsp ? BT_MESH_PROP_OP_MFR_PROP_SET :
-					   BT_MESH_PROP_OP_MFR_PROP_SET_UNACK);
+	bt_mesh_model_msg_init(&msg, BT_MESH_PROP_OP_MFR_PROP_SET);
 	net_buf_simple_add_le16(&msg, prop->id);
 	net_buf_simple_add_u8(&msg, prop->user_access);
 
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_PROP_OP_PROPS_STATUS, rsp);
+}
+
+int bt_mesh_prop_cli_mfr_prop_set_unack(struct bt_mesh_prop_cli *cli,
+					struct bt_mesh_msg_ctx *ctx,
+					const struct bt_mesh_prop *prop)
+{
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_MFR_PROP_SET_UNACK,
+				 BT_MESH_PROP_MSG_LEN_MFR_PROP_SET);
+
+	bt_mesh_model_msg_init(&msg, BT_MESH_PROP_OP_MFR_PROP_SET_UNACK);
+	net_buf_simple_add_le16(&msg, prop->id);
+	net_buf_simple_add_u8(&msg, prop->user_access);
+
+	return model_send(cli->model, ctx, &msg);
 }

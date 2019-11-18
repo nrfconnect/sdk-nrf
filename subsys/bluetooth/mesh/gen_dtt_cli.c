@@ -67,13 +67,23 @@ int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_DTT_OP_SET,
 				 BT_MESH_DTT_MSG_LEN_SET);
-	bt_mesh_model_msg_init(&msg, rsp_transition_time ?
-					     BT_MESH_DTT_OP_SET :
-					     BT_MESH_DTT_OP_SET_UNACK);
+	bt_mesh_model_msg_init(&msg, BT_MESH_DTT_OP_SET);
 	net_buf_simple_add_u8(&msg,
 			      model_transition_encode((s32_t)transition_time));
 
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp_transition_time ? &cli->ack_ctx : NULL,
 			       BT_MESH_DTT_OP_STATUS, rsp_transition_time);
+}
+
+int bt_mesh_dtt_set_unack(struct bt_mesh_dtt_cli *cli,
+			  struct bt_mesh_msg_ctx *ctx, u32_t transition_time)
+{
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_DTT_OP_SET_UNACK,
+				 BT_MESH_DTT_MSG_LEN_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_DTT_OP_SET_UNACK);
+	net_buf_simple_add_u8(&msg,
+			      model_transition_encode((s32_t)transition_time));
+
+	return model_send(cli->model, ctx, &msg);
 }

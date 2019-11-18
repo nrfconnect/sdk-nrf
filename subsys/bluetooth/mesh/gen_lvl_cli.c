@@ -85,8 +85,7 @@ int bt_mesh_lvl_cli_set(struct bt_mesh_lvl_cli *cli,
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_SET,
 				 BT_MESH_LVL_MSG_MAXLEN_SET);
-	bt_mesh_model_msg_init(&msg, rsp ? BT_MESH_LVL_OP_SET :
-					   BT_MESH_LVL_OP_SET_UNACK);
+	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_SET);
 
 	net_buf_simple_add_le16(&msg, set->lvl);
 	net_buf_simple_add_u8(&msg, cli->tid);
@@ -97,6 +96,27 @@ int bt_mesh_lvl_cli_set(struct bt_mesh_lvl_cli *cli,
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LVL_OP_STATUS, rsp);
+}
+
+int bt_mesh_lvl_cli_set_unack(struct bt_mesh_lvl_cli *cli,
+			      struct bt_mesh_msg_ctx *ctx,
+			      const struct bt_mesh_lvl_set *set)
+{
+	if (set->new_transaction) {
+		cli->tid++;
+	}
+
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_SET_UNACK,
+				 BT_MESH_LVL_MSG_MAXLEN_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_SET_UNACK);
+
+	net_buf_simple_add_le16(&msg, set->lvl);
+	net_buf_simple_add_u8(&msg, cli->tid);
+	if (set->transition) {
+		model_transition_buf_add(&msg, set->transition);
+	}
+
+	return model_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_lvl_cli_delta_set(struct bt_mesh_lvl_cli *cli,
@@ -110,8 +130,7 @@ int bt_mesh_lvl_cli_delta_set(struct bt_mesh_lvl_cli *cli,
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_DELTA_SET,
 				 BT_MESH_LVL_MSG_MAXLEN_DELTA_SET);
-	bt_mesh_model_msg_init(&msg, rsp ? BT_MESH_LVL_OP_DELTA_SET :
-					   BT_MESH_LVL_OP_DELTA_SET_UNACK);
+	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_DELTA_SET);
 
 	net_buf_simple_add_le32(&msg, delta_set->delta);
 	net_buf_simple_add_u8(&msg, cli->tid);
@@ -122,6 +141,27 @@ int bt_mesh_lvl_cli_delta_set(struct bt_mesh_lvl_cli *cli,
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LVL_OP_STATUS, rsp);
+}
+
+int bt_mesh_lvl_cli_delta_set_unack(
+	struct bt_mesh_lvl_cli *cli, struct bt_mesh_msg_ctx *ctx,
+	const struct bt_mesh_lvl_delta_set *delta_set)
+{
+	if (delta_set->new_transaction) {
+		cli->tid++;
+	}
+
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_DELTA_SET_UNACK,
+				 BT_MESH_LVL_MSG_MAXLEN_DELTA_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_DELTA_SET_UNACK);
+
+	net_buf_simple_add_le32(&msg, delta_set->delta);
+	net_buf_simple_add_u8(&msg, cli->tid);
+	if (delta_set->transition) {
+		model_transition_buf_add(&msg, delta_set->transition);
+	}
+
+	return model_send(cli->model, ctx, &msg);
 }
 
 int bt_mesh_lvl_cli_move_set(struct bt_mesh_lvl_cli *cli,
@@ -135,8 +175,7 @@ int bt_mesh_lvl_cli_move_set(struct bt_mesh_lvl_cli *cli,
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_MOVE_SET,
 				 BT_MESH_LVL_MSG_MAXLEN_MOVE_SET);
-	bt_mesh_model_msg_init(&msg, rsp ? BT_MESH_LVL_OP_MOVE_SET :
-					   BT_MESH_LVL_OP_MOVE_SET_UNACK);
+	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_MOVE_SET);
 
 	net_buf_simple_add_le16(&msg, move_set->delta);
 	net_buf_simple_add_u8(&msg, cli->tid);
@@ -148,4 +187,26 @@ int bt_mesh_lvl_cli_move_set(struct bt_mesh_lvl_cli *cli,
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_LVL_OP_STATUS, rsp);
+}
+
+int bt_mesh_lvl_cli_move_set_unack(struct bt_mesh_lvl_cli *cli,
+				   struct bt_mesh_msg_ctx *ctx,
+				   const struct bt_mesh_lvl_move_set *move_set)
+{
+	if (move_set->new_transaction) {
+		cli->tid++;
+	}
+
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_MOVE_SET_UNACK,
+				 BT_MESH_LVL_MSG_MAXLEN_MOVE_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_MOVE_SET_UNACK);
+
+	net_buf_simple_add_le16(&msg, move_set->delta);
+	net_buf_simple_add_u8(&msg, cli->tid);
+
+	if (move_set->transition) {
+		model_transition_buf_add(&msg, move_set->transition);
+	}
+
+	return model_send(cli->model, ctx, &msg);
 }

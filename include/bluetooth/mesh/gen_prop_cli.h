@@ -160,23 +160,18 @@ int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
 
 /** @brief Set a property value in a User Property Server.
  *
- * The User Property may only be set if the server enabled user write access to
- * it. If this is not the case, the server will only respond with the set user
- * access mode for the given property.
+ * @copydetails bt_mesH_prop_cli_user_prop_set_unack
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
- *
- * @note The @p val::meta::user_access level will be ignored.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_prop_cli::prop_status callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] val New property value to set. Note that the user_access mode
  * will be ignored.
- * @param[out] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -192,18 +187,43 @@ int bt_mesh_prop_cli_user_prop_set(struct bt_mesh_prop_cli *cli,
 				   const struct bt_mesh_prop_val *val,
 				   struct bt_mesh_prop_val *rsp);
 
+/** @brief Set a property value in a User Property Server without requesting a
+ * response.
+ *
+ * The User Property may only be set if the server enabled user write access to
+ * it. If this is not the case, the server will only respond with the set user
+ * access mode for the given property.
+ *
+ * @note The @p val::meta::user_access level will be ignored.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] val New property value to set. Note that the user_access mode
+ * will be ignored.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_prop_cli_user_prop_set_unack(struct bt_mesh_prop_cli *cli,
+					 struct bt_mesh_msg_ctx *ctx,
+					 const struct bt_mesh_prop_val *val);
+
 /** @brief Set a property value in an Admin Property server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_prop_cli::prop_status callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] val New property value to set.
- * @param[out] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -219,18 +239,36 @@ int bt_mesh_prop_cli_admin_prop_set(struct bt_mesh_prop_cli *cli,
 				    const struct bt_mesh_prop_val *val,
 				    struct bt_mesh_prop_val *rsp);
 
-/** @brief Set the user access of a property in a Manufacturer Property server.
- *
- * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+/** @brief Set a property value in an Admin Property server without requesting
+ * a response.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] val New property value to set.
- * @param[out] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_prop_cli_admin_prop_set_unack(struct bt_mesh_prop_cli *cli,
+					  struct bt_mesh_msg_ctx *ctx,
+					  const struct bt_mesh_prop_val *val);
+
+/** @brief Set the user access of a property in a Manufacturer Property server.
+ *
+ * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_prop_cli::prop_status callback.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] val New property value to set.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -245,6 +283,25 @@ int bt_mesh_prop_cli_mfr_prop_set(struct bt_mesh_prop_cli *cli,
 				  struct bt_mesh_msg_ctx *ctx,
 				  const struct bt_mesh_prop *prop,
 				  struct bt_mesh_prop_val *rsp);
+
+/** @brief Set the user access of a property in a Manufacturer Property server
+ * without requesting a response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] val New property value to set.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_prop_cli_mfr_prop_set_unack(struct bt_mesh_prop_cli *cli,
+					struct bt_mesh_msg_ctx *ctx,
+					const struct bt_mesh_prop *prop);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_prop_cli_op[];

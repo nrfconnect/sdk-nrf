@@ -169,6 +169,23 @@ int bt_mesh_plvl_cli_power_set(struct bt_mesh_plvl_cli *cli,
 			       BT_MESH_PLVL_OP_LEVEL_STATUS, rsp);
 }
 
+int bt_mesh_plvl_cli_power_set_unack(struct bt_mesh_plvl_cli *cli,
+			       struct bt_mesh_msg_ctx *ctx,
+			       const struct bt_mesh_plvl_set *set)
+{
+	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_PLVL_OP_LEVEL_SET_UNACK,
+				 BT_MESH_PLVL_MSG_MAXLEN_LEVEL_SET);
+	bt_mesh_model_msg_init(&buf, BT_MESH_PLVL_OP_LEVEL_SET_UNACK);
+
+	net_buf_simple_add_le16(&buf, set->power_lvl);
+	net_buf_simple_add_u8(&buf, cli->tid++);
+	if (set->transition) {
+		model_transition_buf_add(&buf, set->transition);
+	}
+
+	return model_send(cli->model, ctx, &buf);
+}
+
 int bt_mesh_plvl_cli_range_get(struct bt_mesh_plvl_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
 			       struct bt_mesh_plvl_range_status *rsp)
@@ -198,6 +215,19 @@ int bt_mesh_plvl_cli_range_set(struct bt_mesh_plvl_cli *cli,
 			       BT_MESH_PLVL_OP_RANGE_STATUS, rsp);
 }
 
+int bt_mesh_plvl_cli_range_set_unack(struct bt_mesh_plvl_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     const struct bt_mesh_plvl_range *range)
+{
+	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_PLVL_OP_RANGE_SET_UNACK,
+				 BT_MESH_PLVL_MSG_LEN_RANGE_SET);
+	bt_mesh_model_msg_init(&buf, BT_MESH_PLVL_OP_RANGE_SET_UNACK);
+	net_buf_simple_add_le16(&buf, range->min);
+	net_buf_simple_add_le16(&buf, range->max);
+
+	return model_send(cli->model, ctx, &buf);
+}
+
 int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx, u16_t *rsp)
 {
@@ -222,6 +252,18 @@ int bt_mesh_plvl_cli_default_set(struct bt_mesh_plvl_cli *cli,
 	return model_ackd_send(cli->model, ctx, &buf,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_PLVL_OP_DEFAULT_STATUS, rsp);
+}
+
+int bt_mesh_plvl_cli_default_set_unack(struct bt_mesh_plvl_cli *cli,
+				       struct bt_mesh_msg_ctx *ctx,
+				       u16_t default_power)
+{
+	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_PLVL_OP_DEFAULT_SET_UNACK,
+				 BT_MESH_PLVL_MSG_LEN_DEFAULT_SET);
+	bt_mesh_model_msg_init(&buf, BT_MESH_PLVL_OP_DEFAULT_SET_UNACK);
+	net_buf_simple_add_le16(&buf, default_power);
+
+	return model_send(cli->model, ctx, &buf);
 }
 
 int bt_mesh_plvl_cli_last_get(struct bt_mesh_plvl_cli *cli,

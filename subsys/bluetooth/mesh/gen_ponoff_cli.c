@@ -83,3 +83,19 @@ int bt_mesh_ponoff_cli_on_power_up_set(struct bt_mesh_ponoff_cli *cli,
 			       (rsp ? &cli->ack_ctx : NULL),
 			       BT_MESH_PONOFF_OP_STATUS, rsp);
 }
+
+int bt_mesh_ponoff_cli_on_power_up_set_unack(
+	struct bt_mesh_ponoff_cli *cli, struct bt_mesh_msg_ctx *ctx,
+	enum bt_mesh_on_power_up on_power_up)
+{
+	if (on_power_up >= BT_MESH_ON_POWER_UP_INVALID) {
+		return -EINVAL;
+	}
+
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PONOFF_OP_SET_UNACK,
+				 BT_MESH_PONOFF_MSG_LEN_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_PONOFF_OP_SET_UNACK);
+	net_buf_simple_add_u8(&msg, on_power_up);
+
+	return model_send(cli->model, ctx, &msg);
+}

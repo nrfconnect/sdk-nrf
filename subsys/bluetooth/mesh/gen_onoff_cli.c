@@ -91,8 +91,7 @@ int bt_mesh_onoff_cli_set(struct bt_mesh_onoff_cli *cli,
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_ONOFF_OP_SET,
 				 BT_MESH_ONOFF_MSG_MAXLEN_SET);
-	bt_mesh_model_msg_init(&msg, (rsp ? BT_MESH_ONOFF_OP_SET :
-					    BT_MESH_ONOFF_OP_SET_UNACK));
+	bt_mesh_model_msg_init(&msg, BT_MESH_ONOFF_OP_SET);
 
 	net_buf_simple_add_u8(&msg, set->on_off);
 	net_buf_simple_add_u8(&msg, cli->tid++);
@@ -103,4 +102,21 @@ int bt_mesh_onoff_cli_set(struct bt_mesh_onoff_cli *cli,
 	return model_ackd_send(cli->model, ctx, &msg,
 			       rsp ? &cli->ack_ctx : NULL,
 			       BT_MESH_ONOFF_OP_STATUS, rsp);
+}
+
+int bt_mesh_onoff_cli_set_unack(struct bt_mesh_onoff_cli *cli,
+				struct bt_mesh_msg_ctx *ctx,
+				const struct bt_mesh_onoff_set *set)
+{
+	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_ONOFF_OP_SET_UNACK,
+				 BT_MESH_ONOFF_MSG_MAXLEN_SET);
+	bt_mesh_model_msg_init(&msg, BT_MESH_ONOFF_OP_SET_UNACK);
+
+	net_buf_simple_add_u8(&msg, set->on_off);
+	net_buf_simple_add_u8(&msg, cli->tid++);
+	if (set->transition) {
+		model_transition_buf_add(&msg, set->transition);
+	}
+
+	return model_send(cli->model, ctx, &msg);
 }
