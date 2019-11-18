@@ -5,4 +5,5 @@
 #
 
 
-add_subdirectory_ifdef(CONFIG_PPI_TRACE		ppi_trace)
+add_subdirectory_ifdef(CONFIG_PPI_TRACE            ppi_trace)
+add_subdirectory_ifdef(CONFIG_STACK_SIZE_ANALYZER  stack_size_analyzer)

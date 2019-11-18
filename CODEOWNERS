@@ -97,6 +97,7 @@ Kconfig*                                  @SebastianBoe
 /subsys/bluetooth/controller/             @joerchan @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
 /subsys/debug/                            @nordic-krch @anangl
+/subsys/debug/stack_size_analyzer/        @rakons
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj

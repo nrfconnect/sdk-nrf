@@ -4,5 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-rsource "ppi_trace/Kconfig"
-rsource "stack_size_analyzer/Kconfig"
+zephyr_sources(stack_size_analyzer.c)
