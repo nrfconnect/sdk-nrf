@@ -30,6 +30,13 @@ function(image_board_selection board_in board_out)
   endif()
 endfunction()
 
+function(image_menuconfig target_out command_out)
+  if(EXTRA_KCONFIG_TARGETS)
+    set(${target_out}  "-DEXTRA_KCONFIG_TARGETS=${EXTRA_KCONFIG_TARGETS}" PARENT_SCOPE)
+    set(${command_out} "-DEXTRA_KCONFIG_TARGET_COMMAND_FOR_${EXTRA_KCONFIG_TARGETS}=${EXTRA_KCONFIG_TARGET_COMMAND_FOR_${EXTRA_KCONFIG_TARGETS}}" PARENT_SCOPE)
+  endif()
+endfunction()
+
 function(zephyr_add_external_image name sourcedir)
   string(TOUPPER ${name} UPNAME)
 
@@ -52,11 +59,14 @@ function(zephyr_add_external_image_from_source name sourcedir)
   file(MAKE_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR})
   message("=== child image ${name} begin ===")
   image_board_selection(${BOARD} IMAGE_BOARD)
+  image_menuconfig(IMAGE_KCONFIG_TARGET IMAGE_COMMAND_TARGET)
   execute_process(
     COMMAND ${CMAKE_COMMAND}
     # Add other toolchain here,
     -G${CMAKE_GENERATOR}
     -DBOARD=${IMAGE_BOARD}
+    ${IMAGE_KCONFIG_TARGET}
+    ${IMAGE_COMMAND_TARGET}
     -DGENERATE_PARTITION_MANAGER_ENTRY=True
     ${sourcedir}
     WORKING_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR}
@@ -106,10 +116,16 @@ function(zephyr_add_external_image_from_source name sourcedir)
     # with the files as names and deps.
     # That would allow to cleanup logic found in partition_manager.cmake
 
-    add_custom_target(${name}_menuconfig ${CMAKE_MAKE_PROGRAM} menuconfig
-                      WORKING_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR}
-		      USES_TERMINAL
-		      )
+    foreach(kconfig_target
+        menuconfig
+        guiconfig
+        ${EXTRA_KCONFIG_TARGETS}
+        )
+        add_custom_target(${name}_${kconfig_target} ${CMAKE_MAKE_PROGRAM} ${kconfig_target}
+                          WORKING_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR}
+                          USES_TERMINAL
+                         )
+    endforeach()
 
     if (APP_CONFIG_ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS AND spm_veneers_lib)
       # Link the entry veneers library file with the Non-Secure Firmware that needs it.
