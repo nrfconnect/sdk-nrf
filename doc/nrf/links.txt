@@ -34,6 +34,8 @@
 
 .. ### Links to Nordic documentation
 
+.. _`nRF Connect SDK v1.1.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.1.0/nrf/index.html
+
 .. _`nRF Connect SDK v1.0.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.0.0/nrf/index.html
 
 .. _`nRF Connect SDK v0.4.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.4.0/nrf/index.html
@@ -72,7 +74,7 @@
 
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 
-.. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/Nordic-Thingy-52
+.. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
 
 
 
@@ -111,8 +113,6 @@
 .. _`Semantic Versioning 2.0.0`: https://semver.org/
 
 .. _`nRF Cloud`: https://nrfcloud.com/
-
-.. _`firmware.nrfcloud.com`: https://firmware.nrfcloud.com/
 
 .. _`openSSL`: https://www.openssl.org/
 
