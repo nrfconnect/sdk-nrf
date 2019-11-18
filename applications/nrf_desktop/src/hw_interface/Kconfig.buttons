@@ -50,6 +50,29 @@ config DESKTOP_BUTTONS_EVENT_LIMIT
 	  intervals, subsequent changes will be ignored and picked up during
 	  the next scanning.
 
+config DESKTOP_BUTTONS_SIM_ENABLE
+	bool "Enable simulated button presses generator"
+	depends on !DESKTOP_BUTTONS_NONE
+
+config DESKTOP_BUTTONS_SIM_INTERVAL
+	int "Interval between subsequent simulated button presses [ms]"
+	depends on DESKTOP_BUTTONS_SIM_ENABLE
+	default 1000
+	range 1 60000
+
+config DESKTOP_BUTTONS_SIM_LOOP_FOREVER
+	bool "Generate buttons in infinite loop"
+	depends on DESKTOP_BUTTONS_SIM_ENABLE
+	help
+	  When this option is disabled sequence of buttons is generated once.
+	  Enabling this option makes the sequence start from the beginning
+	  after it ends.
+
+config DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID
+	hex "Button used to start/stop generating button presses"
+	depends on DESKTOP_BUTTONS_SIM_ENABLE
+	default 0x0000
+
 if !DESKTOP_BUTTONS_NONE
 module = DESKTOP_BUTTONS
 module-str = buttons module
