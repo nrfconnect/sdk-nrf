@@ -56,6 +56,21 @@ function(zephyr_add_external_image_from_source name sourcedir)
   set(${NAME}_CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/${name})
   set(${NAME}_PROJECT_BINARY_DIR ${CMAKE_BINARY_DIR}/${name}/zephyr)
 
+  get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
+  get_cmake_property(VARIABLES              VARIABLES)
+
+  unset(image_cmake_args)
+  foreach(var_name
+      ${VARIABLES}
+      ${VARIABLES_CACHED}
+      )
+    if("${var_name}" MATCHES "^${name}_(.+)") # TODO: How expensive?
+      list(APPEND image_cmake_args
+        -D${CMAKE_MATCH_1}=${${var_name}}
+        )
+    endif()
+  endforeach()
+
   file(MAKE_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR})
   message("=== child image ${name} begin ===")
   image_board_selection(${BOARD} IMAGE_BOARD)
@@ -69,6 +84,7 @@ function(zephyr_add_external_image_from_source name sourcedir)
     ${IMAGE_COMMAND_TARGET}
     -DGENERATE_PARTITION_MANAGER_ENTRY=True
     ${sourcedir}
+    ${image_cmake_args}
     WORKING_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR}
     RESULT_VARIABLE ret
     )
