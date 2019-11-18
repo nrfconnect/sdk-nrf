@@ -79,13 +79,15 @@ void blectlr_assertion_handler(const char *const file, const u32_t line)
 #ifdef CONFIG_BT_CTLR_ASSERT_HANDLER
 	bt_ctlr_assert_handle(file, line);
 #else
-	BT_ERR("BleCtlr ASSERT: %s, %d", file, line);
+	BT_ERR("BleCtlr ASSERT: %s, %d", log_strdup(file), line);
 	k_oops();
 #endif
 }
 
 static int cmd_handle(struct net_buf *cmd)
 {
+	BT_DBG("");
+
 	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 
 	if (!errcode) {
