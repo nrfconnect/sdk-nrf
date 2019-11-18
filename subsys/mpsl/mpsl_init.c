@@ -43,6 +43,7 @@ static int mpsl_lib_init(struct device *dev)
 	ARG_UNUSED(dev);
 
 	int err = 0;
+
 	mpsl_clock_lf_cfg_t clock_cfg;
 
 	clock_cfg.source = m_config_clock_source_get();
@@ -54,8 +55,14 @@ static int mpsl_lib_init(struct device *dev)
 		return err;
 	}
 
+	IRQ_DIRECT_CONNECT(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			   MPSL_IRQ_TIMER0_Handler, IRQ_ZERO_LATENCY);
+	IRQ_DIRECT_CONNECT(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			   MPSL_IRQ_RTC0_Handler, IRQ_ZERO_LATENCY);
+	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			   MPSL_IRQ_RADIO_Handler, IRQ_ZERO_LATENCY);
 	IRQ_CONNECT(MPSL_LOW_PRIO_IRQ, MPSL_LOW_PRIO,
-		mpsl_low_prio_irq_handler, NULL, 0);
+		    mpsl_low_prio_irq_handler, NULL, 0);
 	irq_enable(MPSL_LOW_PRIO_IRQ);
 
 	return 0;
