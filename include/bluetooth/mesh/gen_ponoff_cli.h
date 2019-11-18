@@ -88,6 +88,8 @@ struct bt_mesh_ponoff_cli {
  * @retval 0 Successfully sent a get message. If a response buffer is
  * provided, it has been populated.
  * @retval -EALREADY A blocking request is already in progress.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -99,16 +101,22 @@ int bt_mesh_ponoff_cli_on_power_up_get(struct bt_mesh_ponoff_cli *cli,
 
 /** @brief Set the OnPowerUp state of a server.
  *
+ * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_ponoff_cli::status_handler callback.
+ *
  * @param[in] cli Power OnOff client to send the message on.
  * @param[in] ctx Context of the message, or NULL to send with the configured
  * publish parameters.
  * @param[in] on_power_up New OnPowerUp state of the server.
  * @param[out] rsp Response buffer to put the received response in, or NULL to
- * send an unacknowledged message.
+ * keep from blocking.
  *
  * @retval 0 Successfully sent a set message. If a response buffer is
  * provided, it has been populated.
  * @retval -EALREADY A blocking request is already in progress.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
  * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
@@ -118,6 +126,24 @@ int bt_mesh_ponoff_cli_on_power_up_set(struct bt_mesh_ponoff_cli *cli,
 				       struct bt_mesh_msg_ctx *ctx,
 				       enum bt_mesh_on_power_up on_power_up,
 				       enum bt_mesh_on_power_up *rsp);
+
+/** @brief Set the OnPowerUp state of a server without requesting a response.
+ *
+ * @param[in] cli Power OnOff client to send the message on.
+ * @param[in] ctx Context of the message, or NULL to send with the configured
+ * publish parameters.
+ * @param[in] on_power_up New OnPowerUp state of the server.
+ *
+ * @retval 0 Successfully sent a set message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_ponoff_cli_on_power_up_set_unack(
+	struct bt_mesh_ponoff_cli *cli, struct bt_mesh_msg_ctx *ctx,
+	enum bt_mesh_on_power_up on_power_up);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_ponoff_cli_op[];

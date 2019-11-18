@@ -122,15 +122,14 @@ int bt_mesh_loc_cli_global_get(struct bt_mesh_loc_cli *cli,
 /** @brief Set the Global Location in the server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_loc_cli_handlers::global_status callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] loc New Global Location value to set.
- * @param[out] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -145,6 +144,24 @@ int bt_mesh_loc_cli_global_set(struct bt_mesh_loc_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
 			       const struct bt_mesh_loc_global *loc,
 			       struct bt_mesh_loc_global *rsp);
+
+/** @brief Set the Global Location in the server without requesting a response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] loc New Global Location value to set.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_loc_cli_global_set_unack(struct bt_mesh_loc_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     const struct bt_mesh_loc_global *loc);
 
 /** @brief Get the local location of the bound srv.
  *
@@ -174,15 +191,14 @@ int bt_mesh_loc_cli_local_get(struct bt_mesh_loc_cli *cli,
 /** @brief Set the Local Location in the server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_loc_cli_handlers::local_status callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] loc New Local Location value to set.
- * @param[out] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[out] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -197,6 +213,24 @@ int bt_mesh_loc_cli_local_set(struct bt_mesh_loc_cli *cli,
 			      struct bt_mesh_msg_ctx *ctx,
 			      const struct bt_mesh_loc_local *loc,
 			      struct bt_mesh_loc_local *rsp);
+
+/** @brief Set the Local Location in the server without requesting a response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] loc New Local Location value to set.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_loc_cli_local_set_unack(struct bt_mesh_loc_cli *cli,
+				    struct bt_mesh_msg_ctx *ctx,
+				    const struct bt_mesh_loc_local *loc);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_loc_cli_op[];

@@ -102,8 +102,8 @@ int bt_mesh_onoff_cli_get(struct bt_mesh_onoff_cli *cli,
 /** @brief Set the OnOff state in the srv.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_onoff_cli::status_handler callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
@@ -111,8 +111,7 @@ int bt_mesh_onoff_cli_get(struct bt_mesh_onoff_cli *cli,
  * @param[in] set New OnOff parameters to set. @p set::transition can either
  * point to a transition structure, or be left to NULL to use the default
  * transition parameters on the server.
- * @param[out] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[in] rsp Status response buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -127,6 +126,26 @@ int bt_mesh_onoff_cli_set(struct bt_mesh_onoff_cli *cli,
 			  struct bt_mesh_msg_ctx *ctx,
 			  const struct bt_mesh_onoff_set *set,
 			  struct bt_mesh_onoff_status *rsp);
+
+/** @brief Set the OnOff state in the srv without requesting a response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] set New OnOff parameters to set. @p set::transition can either
+ * point to a transition structure, or be left to NULL to use the default
+ * transition parameters on the server.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_onoff_cli_set_unack(struct bt_mesh_onoff_cli *cli,
+				struct bt_mesh_msg_ctx *ctx,
+				const struct bt_mesh_onoff_set *set);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_onoff_cli_op[];

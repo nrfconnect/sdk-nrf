@@ -79,15 +79,15 @@ struct bt_mesh_dtt_cli {
 /** @brief Get the Default Transition Time of the server.
  *
  * This call is blocking if the @p rsp_transition_time buffer is non-NULL.
- * Otherwise, this function will not request a response from the server, and
- * return immediately.
+ * Otherwise, this function will return, and the response will be passed to the
+ * @ref bt_mesh_dtt_cli::status_handler callback.
  *
  * @param[in] cli Client making the request.
  * @param[in] ctx Message context to use for sending, or NULL to publish with
  * the configured parameters.
- * @param[out] rsp_transition_time Pointer to a response buffer. Cannot be
- * NULL. Note that the response is a signed value, that can be K_FOREVER if the
- * current state is unknown or too large to represent.
+ * @param[out] rsp_transition_time Pointer to a response buffer, or NULL to keep
+ * from blocking. Note that the response is a signed value, that can be
+ * K_FOREVER if the current state is unknown or too large to represent.
  *
  * @retval 0 Successfully retrieved the status of the bound srv.
  * @retval -EALREADY A blocking operation is already in progress in this model.
@@ -99,26 +99,46 @@ int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 /** @brief Set the Default Transition Time of the server.
  *
  * This call is blocking if the @p rsp_transition_time buffer is non-NULL.
- * Otherwise, this function will not request a response from the server, and
- * return immediately.
+ * Otherwise, this function will return, and the response will be passed to the
+ * @ref bt_mesh_dtt_cli::status_handler callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context to use for sending, or NULL to publish with
  * the configured parameters.
  * @param[in] transition_time Transition time to set (in milliseconds). Must be
  * less than @ref BT_MESH_MODEL_TRANSITION_TIME_MAX_MS.
- * @param[out] rsp_transition_time Response buffer, or NULL to send an
- * unacknowledged message. Note that the response is a signed value, that can
- * be K_FOREVER if the current state is unknown or too large to represent.
+ * @param[out] rsp_transition_time Response buffer, or NULL to keep from
+ * blocking. Note that the response is a signed value, that can be K_FOREVER if
+ * the current state is unknown or too large to represent.
  *
- * @retval 0 Successfully sent the message. If the message is acknowledged,
- * the response buffer has been set according to the srv's response.
+ * @retval 0 Successfully sent the message and populated the
+ * @p rsp_transition_time buffer.
  * @retval -EINVAL The given transition time is invalid.
  * @retval -EALREADY A blocking operation is already in progress in this model.
  * @retval -EAGAIN The request timed out.
  */
 int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
 		    u32_t transition_time, s32_t *rsp_transition_time);
+
+/** @brief Set the Default Transition Time of the server without requesting a
+ * response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context to use for sending, or NULL to publish with
+ * the configured parameters.
+ * @param[in] transition_time Transition time to set (in milliseconds). Must be
+ * less than @ref BT_MESH_MODEL_TRANSITION_TIME_MAX_MS.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -EINVAL The given transition time is invalid.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_dtt_set_unack(struct bt_mesh_dtt_cli *cli,
+			  struct bt_mesh_msg_ctx *ctx, u32_t transition_time);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_dtt_cli_op[];

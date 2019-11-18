@@ -35,4 +35,12 @@
 #include <bluetooth/mesh/gen_prop_srv.h>
 #include <bluetooth/mesh/gen_prop_cli.h>
 
+/** @brief Check whether the model publishes to a unicast address.
+ *
+ * @param[in] mod Model to check
+ *
+ * @return true if the model publishes to a unicast address, false otherwise.
+ */
+bool bt_mesh_model_pub_is_unicast(const struct bt_mesh_model *mod);
+
 #endif /* BT_MESH_MODELS_H__ */

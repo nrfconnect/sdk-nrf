@@ -137,16 +137,15 @@ int bt_mesh_plvl_cli_power_get(struct bt_mesh_plvl_cli *cli,
 /** @brief Set the Power Level of the server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_plvl_cli_handlers::power_status callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] set New Power Level value to set. Set @p set::transition to NULL
  * to use the server's default transition parameters.
- * @param[in] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[in] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -161,6 +160,25 @@ int bt_mesh_plvl_cli_power_set(struct bt_mesh_plvl_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
 			       const struct bt_mesh_plvl_set *set,
 			       struct bt_mesh_plvl_status *rsp);
+
+/** @brief Set the Power Level of the server without requesting a response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] set New Power Level value to set. Set @p set::transition to NULL
+ * to use the server's default transition parameters.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_plvl_cli_power_set_unack(struct bt_mesh_plvl_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     const struct bt_mesh_plvl_set *set);
 
 /** @brief Get the Power Range of the bound server.
  *
@@ -189,15 +207,14 @@ int bt_mesh_plvl_cli_range_get(struct bt_mesh_plvl_cli *cli,
 /** @brief Set the Power Range state in the server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_plvl_cli_handlers::range_status callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] range New Power Range value to set.
- * @param[in] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[in] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -212,6 +229,25 @@ int bt_mesh_plvl_cli_range_set(struct bt_mesh_plvl_cli *cli,
 			       struct bt_mesh_msg_ctx *ctx,
 			       const struct bt_mesh_plvl_range *range,
 			       struct bt_mesh_plvl_range_status *rsp);
+
+/** @brief Set the Power Range state in the server without requesting a
+ * response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] range New Power Range value to set.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ */
+int bt_mesh_plvl_cli_range_set_unack(struct bt_mesh_plvl_cli *cli,
+				     struct bt_mesh_msg_ctx *ctx,
+				     const struct bt_mesh_plvl_range *range);
 
 /** @brief Get the Default Power of the bound server.
  *
@@ -239,15 +275,14 @@ int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
 /** @brief Set the Default Power state in the server.
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
- * function will not request a response from the server, and return
- * immediately.
+ * function will return, and the response will be passed to the
+ * @ref bt_mesh_plvl_cli_handlers::default_status callback.
  *
  * @param[in] cli Client model to send on.
  * @param[in] ctx Message context, or NULL to use the configured publish
  * parameters.
  * @param[in] default_power New Default Power value to set.
- * @param[in] rsp Response status buffer, or NULL to send an unacknowledged
- * message.
+ * @param[in] rsp Response status buffer, or NULL to keep from blocking.
  *
  * @retval 0 Successfully sent the message and populated the @p rsp buffer.
  * @retval -EALREADY A blocking request is already in progress.
@@ -261,6 +296,27 @@ int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
 int bt_mesh_plvl_cli_default_set(struct bt_mesh_plvl_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx,
 				 u16_t default_power, u16_t *rsp);
+
+/** @brief Set the Default Power state in the server without requesting a
+ * response.
+ *
+ * @param[in] cli Client model to send on.
+ * @param[in] ctx Message context, or NULL to use the configured publish
+ * parameters.
+ * @param[in] default_power New Default Power value to set.
+ *
+ * @retval 0 Successfully sent the message.
+ * @retval -EALREADY A blocking request is already in progress.
+ * @retval -ENOTSUP A message context was not provided and publishing is not
+ * supported.
+ * @retval -EADDRNOTAVAIL A message context was not provided and publishing is
+ * not configured.
+ * @retval -EAGAIN The device has not been provisioned.
+ * @retval -ETIMEDOUT The request timed out without a response.
+ */
+int bt_mesh_plvl_cli_default_set_unack(struct bt_mesh_plvl_cli *cli,
+				 struct bt_mesh_msg_ctx *ctx,
+				 u16_t default_power);
 
 /** @brief Get the last non-zero Power Level of the bound server.
  *
