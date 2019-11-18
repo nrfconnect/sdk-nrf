@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig SMS
+	bool "SMS subscriber"
+	select AT_CMD
+	select AT_CMD_PARSER
+	select AT_NOTIF
+	help
+	  A library for managing SMS subscriptions.
+
+if SMS
+
+config SMS_MAX_SUBSCRIBERS_CNT
+	int "Maximum number of subscribers"
+	default 2
+
+module=SMS
+module-dep=LOG
+module-str= SMS library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # SMS
