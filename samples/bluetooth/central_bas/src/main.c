@@ -346,6 +346,8 @@ void main(void)
 {
 	int err;
 
+	printk("Starting Bluetooth Central BAS example\n");
+
 	bt_gatt_bas_c_init(&bas_c);
 
 	err = bt_enable(NULL);

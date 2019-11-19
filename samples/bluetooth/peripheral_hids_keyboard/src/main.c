@@ -952,7 +952,7 @@ void main(void)
 	int err;
 	int blink_status = 0;
 
-	printk("Starting Nordic HID service keyboard example\n");
+	printk("Starting Bluetooth Peripheral HIDS keyboard example\n");
 
 	configure_gpio();
 

@@ -783,7 +783,7 @@ void main(void)
 {
 	int err;
 
-	printk("Start zephyr\n");
+	printk("Starting Bluetooth Peripheral HIDS mouse example\n");
 
 	bt_conn_cb_register(&conn_callbacks);
 

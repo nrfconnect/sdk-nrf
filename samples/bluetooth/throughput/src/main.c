@@ -371,6 +371,8 @@ void main(void)
 	    .le_param_req = le_param_req,
 	};
 
+	printk("Starting Bluetooth Throughput example\n");
+
 	console_init();
 
 	err = bt_enable(bt_ready);

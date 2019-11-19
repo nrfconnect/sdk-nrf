@@ -406,6 +406,8 @@ void main(void)
 		.le_param_updated = le_param_updated,
 	};
 
+	printk("Starting Bluetooth LLPM example\n");
+
 	console_init();
 
 	err = bt_enable(bt_ready);
