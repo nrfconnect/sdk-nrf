@@ -44,7 +44,7 @@ We recommend installing according to :ref:`zephyr:windows_install_native`.
 Installing the toolchain
 ************************
 
-To be able to cross-compile your applications for Arm targets, you must install  version 7-2018-q2-update of the `GNU Arm Embedded Toolchain`_.
+To be able to cross-compile your applications for Arm targets, you must install  version 8-2019-q3-update of the `GNU Arm Embedded Toolchain`_.
 
 .. important::
    Make sure to install the version that is mentioned above.
