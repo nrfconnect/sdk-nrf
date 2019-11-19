@@ -451,7 +451,7 @@ static void led_blink_thread(void)
 			bt_conn_auth_cb_register(&conn_auth_callbacks);
 		}
 
-		err = k_sem_take(&ble_init_ok, K_MSEC(100));
+		err = k_sem_take(&ble_init_ok, K_MSEC(1000));
 
 		if (!err) {
 			printk("Bluetooth initialized\n");
