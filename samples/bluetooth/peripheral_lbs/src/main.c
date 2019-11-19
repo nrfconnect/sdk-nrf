@@ -251,8 +251,8 @@ void main(void)
 			bt_conn_auth_cb_register(&conn_auth_callbacks);
 		}
 
-		/* Bluetooth stack should be ready in less than 100 msec */
-		err = k_sem_take(&ble_init_ok, K_MSEC(100));
+		/* Bluetooth stack should be ready in less than 1 second */
+		err = k_sem_take(&ble_init_ok, K_MSEC(1000));
 
 		if (!err) {
 			printk("Bluetooth initialized\n");
