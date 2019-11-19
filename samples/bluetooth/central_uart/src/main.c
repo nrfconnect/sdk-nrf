@@ -432,7 +432,7 @@ void main(void)
 {
 	int err;
 
-	printk("Starting NUS Client example\n");
+	printk("Starting Bluetooth Central UART example\n");
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {

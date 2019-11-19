@@ -134,7 +134,7 @@ int main(void)
 {
 	u32_t len = sizeof(ndef_msg_buf);
 
-	printk("NFC configuration start\n");
+	printk("Starting NFC Text Record example\n");
 
 	/* Configure LED-pins as outputs */
 	if (dk_leds_init() < 0) {

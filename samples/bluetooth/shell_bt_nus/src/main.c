@@ -150,6 +150,8 @@ void main(void)
 {
 	int err;
 
+	printk("Starting Bluetooth NUS shell transport example\n");
+
 	err = bt_enable(bt_ready);
 	if (err) {
 		LOG_ERR("BLE enable failed (err: %d)", err);

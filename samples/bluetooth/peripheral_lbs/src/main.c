@@ -233,7 +233,7 @@ void main(void)
 	int blink_status = 0;
 	int err;
 
-	printk("Starting Nordic LED-Button service example\n");
+	printk("Starting Bluetooth Peripheral LBS example\n");
 
 	err = dk_leds_init();
 	if (!err) {

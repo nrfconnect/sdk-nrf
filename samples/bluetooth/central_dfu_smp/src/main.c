@@ -383,7 +383,7 @@ void main(void)
 {
 	int err;
 
-	printk("Starting DFU SMP Client example\n");
+	printk("Starting Bluetooth Central DFU SMP example\n");
 
 	bt_gatt_dfu_smp_c_init(&dfu_smp_c, &init_params);
 

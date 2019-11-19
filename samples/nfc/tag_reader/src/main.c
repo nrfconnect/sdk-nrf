@@ -600,7 +600,7 @@ void main(void)
 {
 	int err;
 
-	printk("NFC reader sample started.\n");
+	printk("Starting NFC TAG Reader example\n");
 	nfc_t4t_hl_procedure_cb_register(&t4t_hl_procedure_cb);
 
 	k_delayed_work_init(&transmit_work, transfer_handler);

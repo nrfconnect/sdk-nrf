@@ -561,7 +561,7 @@ void main(void)
 {
 	int err;
 
-	printk("Starting HIDS Client example\n");
+	printk("Starting Bluetooth Central HIDS example\n");
 
 	bt_gatt_hids_c_init(&hids_c, &hids_c_init_params);
 
