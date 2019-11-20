@@ -1,4 +1,4 @@
 tests:
-  testing.dfu_target.mcuboot:
-    tags: test_dfu_target
-    type: unit
+  dfu_target.mcuboot:
+    platform_whitelist: nrf52840_pca10056 nrf52_pca10040 nrf51_pca10028 nrf9160_pca10090 native_posix
+    tags: dfu mcuboot
