@@ -451,8 +451,6 @@ Documentation
   * Bluetooth Low Energy:
 
     * :ref:`bas_c_readme`
-    * :ref:`latency_readme`
-    * :ref:`latency_c_readme`
     * :ref:`bt_mesh`
 
 
@@ -483,7 +481,6 @@ Documentation
   * :ref:`nrfxlib:ble_controller`
   * :ref:`nrfxlib:bsdlib`
   * :ref:`nrfxlib:nrf_cc310_platform_readme`
-  * :ref:`nrfxlib:mpsl`
   * :ref:`nrf_security_readme`
   * :ref:`mcuboot:mcuboot_wrapper`
   * :ref:`mcuboot:mcuboot_ncs`
