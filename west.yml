@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: eedc25e5b239d52699d2d42159d308a75d566b4e
+      revision: v2.0.99-ncs1
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -53,7 +53,7 @@ manifest:
       revision: c3be1b52f5e56aaba6039c423478cfaf62a91622
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: 99d395ce554bc53b1b84128e05c6cfb60a6ca70c
+      revision: v1.4.99-ncs1
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
       revision: f663988d35da559a37f263d369842dbce309d1fa
@@ -72,7 +72,7 @@ manifest:
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
-      revision: 9da9943d870096a5c9cc49dbf5e515783d0f9911
+      revision: v1.1.0
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
