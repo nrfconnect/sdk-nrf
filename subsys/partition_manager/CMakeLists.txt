@@ -27,7 +27,7 @@ zephyr_compile_definitions(
   USE_PARTITION_MANAGER=$<TARGET_EXISTS:partition_manager>
   )
 
-if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND GENERATE_PARTITION_MANAGER_ENTRY)
+if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND IS_CHILD_IMAGE)
   # Only preprocess pm.yml when being built as sub image.
 
   preprocess_pm_yml(

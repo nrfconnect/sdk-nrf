@@ -82,7 +82,7 @@ function(zephyr_add_external_image_from_source name sourcedir)
     -DBOARD=${IMAGE_BOARD}
     ${IMAGE_KCONFIG_TARGET}
     ${IMAGE_COMMAND_TARGET}
-    -DGENERATE_PARTITION_MANAGER_ENTRY=True
+    -DIS_CHILD_IMAGE=True
     ${sourcedir}
     ${image_cmake_args}
     WORKING_DIRECTORY ${${UPNAME}_CMAKE_BINARY_DIR}
