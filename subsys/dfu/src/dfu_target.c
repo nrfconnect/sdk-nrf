@@ -109,14 +109,13 @@ int dfu_target_done(bool successful)
 	}
 
 	err = current_target->done(successful);
-
-	if (successful) {
-		current_target = NULL;
-	}
-
 	if (err != 0) {
 		LOG_ERR("Unable to clean up dfu_target");
 		return err;
+	}
+
+	if (successful) {
+		current_target = NULL;
 	}
 
 	return 0;
