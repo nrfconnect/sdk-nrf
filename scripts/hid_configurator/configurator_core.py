@@ -765,7 +765,8 @@ def is_dfu_operation_pending(dfu_info):
         return True
 
     if dfu_info[0] != 0:
-        print('Cannot start DFU, already in progress')
+        print('Cannot start DFU. DFU in progress or memory is not clean.')
+        print('Please stop ongoing DFU and wait until mouse cleans memory.')
         return True
 
     return False
