@@ -23,8 +23,19 @@ function(preprocess_pm_yml in_file out_file)
 
 endfunction()
 
+# We are using partition manager if we are a child image or if we are
+# the root image and the 'partition_manager' target exists.
+set(using_partition_manager
+  $<OR:$<BOOL:${IS_CHILD_IMAGE}>,$<TARGET_EXISTS:partition_manager>>
+  )
 zephyr_compile_definitions(
-  USE_PARTITION_MANAGER=$<TARGET_EXISTS:partition_manager>
+  USE_PARTITION_MANAGER=${using_partition_manager}
+  )
+
+# TODO: check how this patch got lost and if more are missing
+set_property(GLOBAL APPEND PROPERTY
+  PROPERTY_LINKER_SCRIPT_DEFINES
+  -DUSE_PARTITION_MANAGER=${using_partition_manager}
   )
 
 if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND IS_CHILD_IMAGE)
