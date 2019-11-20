@@ -160,7 +160,7 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 		retval = rot_verify(fw_val_info->public_key,
 					(u8_t *)key_data,
 					fw_val_info->signature,
-					(u8_t *)fw_val_info->address,
+					(u8_t *)fw_src_address,
 					fwinfo->size);
 
 		if (retval != -EHASHINV) {
