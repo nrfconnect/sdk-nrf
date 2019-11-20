@@ -174,7 +174,13 @@ pipeline {
       when { expression { CI_STATE.NRF.RUN_DOWNSTREAM } }
       steps { script {
           CI_STATE.NRF.WAITING = true
+
           def DOWNSTREAM_JOBS = lib_Main.getDownStreamJobs(JOB_NAME)
+          if ( (CI_STATE.NRF.BUILD_TYPE == "PR") && CI_STATE.NRF.containsKey('CHANGE_TARGET') ) {
+            def NEW_JOB_NAME = JOB_NAME.replace(CI_STATE.NRF.BRANCH_NAME, CI_STATE.NRF.CHANGE_TARGET)
+            println "INFO: new JOB_NAME based on PR target branch."
+            DOWNSTREAM_JOBS = lib_Main.getDownStreamJobs(NEW_JOB_NAME)
+          }
           if (DOWNSTREAM_JOBS.size() == 1){
             DOWNSTREAM_JOBS.add("thst/test-ci-nrfconnect-cfg-null/lib")
           }
