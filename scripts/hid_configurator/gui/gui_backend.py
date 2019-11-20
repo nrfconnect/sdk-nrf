@@ -11,10 +11,8 @@ import hid
 # configurator_core.py is in upper directory so we add it to path
 sys.path.append('..')
 from configurator_core import DEVICE
-from configurator_core import get_device_pid, open_device, get_device_type, get_dfu_image_version
+from configurator_core import get_device_pid, get_device_vid, open_device, get_device_type, get_dfu_image_version
 from configurator_core import fwinfo, fwreboot, fetch_config, change_config, dfu_transfer
-
-GENERIC_DESKTOP_PAGE = 1
 
 
 class Device:
@@ -28,12 +26,12 @@ class Device:
         devices = hid.enumerate()
         device_list = []
         for device in devices:
-            print(device)
-            if device['usage_page'] == GENERIC_DESKTOP_PAGE:
-                device_type = get_device_type(device['product_id'])
-                if device_type:
+            device_type = get_device_type(device['product_id'])
+            if device_type is not None and \
+               get_device_vid(device_type) == device['vendor_id']:
                     print("Add {} to device list".format(device_type))
                     device_list.append(device_type)
+
         return device_list
 
     def perform_fwinfo(self):
