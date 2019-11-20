@@ -52,9 +52,9 @@ function(zephyr_add_external_image name sourcedir)
 endfunction()
 
 function(zephyr_add_external_image_from_source name sourcedir)
-  string(TOUPPER ${name} NAME)
-  set(${NAME}_CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/${name})
-  set(${NAME}_PROJECT_BINARY_DIR ${CMAKE_BINARY_DIR}/${name}/zephyr)
+  string(TOUPPER ${name} UPNAME)
+  set(${UPNAME}_CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/${name})
+  set(${UPNAME}_PROJECT_BINARY_DIR ${CMAKE_BINARY_DIR}/${name}/zephyr)
 
   get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
   get_cmake_property(VARIABLES              VARIABLES)
@@ -71,7 +71,7 @@ function(zephyr_add_external_image_from_source name sourcedir)
     endif()
   endforeach()
 
-  file(MAKE_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR})
+  file(MAKE_DIRECTORY ${${UPNAME}_CMAKE_BINARY_DIR})
   message("=== child image ${name} begin ===")
   image_board_selection(${BOARD} IMAGE_BOARD)
   image_menuconfig(IMAGE_KCONFIG_TARGET IMAGE_COMMAND_TARGET)
@@ -85,11 +85,11 @@ function(zephyr_add_external_image_from_source name sourcedir)
     -DGENERATE_PARTITION_MANAGER_ENTRY=True
     ${sourcedir}
     ${image_cmake_args}
-    WORKING_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR}
+    WORKING_DIRECTORY ${${UPNAME}_CMAKE_BINARY_DIR}
     RESULT_VARIABLE ret
     )
-  set(${NAME}_DOTCONFIG ${${NAME}_PROJECT_BINARY_DIR}/.config)
-  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${${NAME}_DOTCONFIG})
+  set(${UPNAME}_DOTCONFIG ${${UPNAME}_PROJECT_BINARY_DIR}/.config)
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${${UPNAME}_DOTCONFIG})
 
   if(NOT ${ret} EQUAL "0")
     message(FATAL_ERROR "CMake generation for ${name} failed, aborting. Command: ${ret}")
@@ -100,12 +100,12 @@ function(zephyr_add_external_image_from_source name sourcedir)
   # The variables inhereted from PARENT_SCOPE might be overwritten when additional Kconfig is loaded locally.
   # Therefore, safe guard the variables from parent scope that are needed.
   set(APP_CONFIG_ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS ${CONFIG_ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS})
-  import_kconfig(CONFIG_ ${${NAME}_PROJECT_BINARY_DIR}/.config)
+  import_kconfig(CONFIG_ ${${UPNAME}_PROJECT_BINARY_DIR}/.config)
 
   # Clear it, just in case it was defined in parent scope
   set(spm_veneers_lib)
-  if(CONFIG_${NAME}_CONTAINS_SECURE_ENTRIES)
-    set(spm_veneers_lib ${${NAME}_CMAKE_BINARY_DIR}/${CONFIG_ARM_ENTRY_VENEERS_LIB_NAME})
+  if(CONFIG_${UPNAME}_CONTAINS_SECURE_ENTRIES)
+    set(spm_veneers_lib ${${UPNAME}_CMAKE_BINARY_DIR}/${CONFIG_ARM_ENTRY_VENEERS_LIB_NAME})
   endif()
 
   define_property(GLOBAL PROPERTY ${name}_KERNEL_NAME
@@ -115,11 +115,11 @@ function(zephyr_add_external_image_from_source name sourcedir)
   set_property(GLOBAL PROPERTY ${name}_KERNEL_NAME ${CONFIG_KERNEL_BIN_NAME})
 
   include(ExternalProject)
-  ExternalProject_Add(${NAME}_subimage
+  ExternalProject_Add(${UPNAME}_subimage
       SOURCE_DIR ${sourcedir}
-      BINARY_DIR ${${NAME}_CMAKE_BINARY_DIR}
+      BINARY_DIR ${${UPNAME}_CMAKE_BINARY_DIR}
       BUILD_BYPRODUCTS "${spm_veneers_lib}"
-                        ${${NAME}_PROJECT_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.hex
+                        ${${UPNAME}_PROJECT_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.hex
       # The CMake configure has been executed above due to cross
       # dependencies between the multiple CMake configure stages.
       CONFIGURE_COMMAND ""
@@ -138,7 +138,7 @@ function(zephyr_add_external_image_from_source name sourcedir)
         ${EXTRA_KCONFIG_TARGETS}
         )
         add_custom_target(${name}_${kconfig_target} ${CMAKE_MAKE_PROGRAM} ${kconfig_target}
-                          WORKING_DIRECTORY ${${NAME}_CMAKE_BINARY_DIR}
+                          WORKING_DIRECTORY ${${UPNAME}_CMAKE_BINARY_DIR}
                           USES_TERMINAL
                          )
     endforeach()
