@@ -136,7 +136,7 @@ struct cloud_backend {
  * @param handler Handler to receive events from the backend.
  */
 static inline int cloud_init(struct cloud_backend *const backend,
-			     cloud_evt_handler_t handler)
+							 cloud_evt_handler_t handler)
 {
 	if (backend == NULL || backend->api == NULL ||
 	    backend->api->init == NULL) {
@@ -292,15 +292,19 @@ static inline int cloud_user_data_set(struct cloud_backend *const backend,
  **/
 struct cloud_backend *cloud_get_binding(const char *name);
 
-#define CLOUD_BACKEND_DEFINE(_name, _api)                                      \
-                                                                               \
-	static struct cloud_backend_config UTIL_CAT(                           \
-		_name, _config) = { .name = STRINGIFY(_name) };                \
-                                                                               \
-	static const struct cloud_backend _name                                \
-		__attribute__((section(".cloud_backends"))) __attribute__(     \
-			(used)) = { .api = &_api,                              \
-				    .config = &UTIL_CAT(_name, _config) };
+#define CLOUD_BACKEND_DEFINE(_name, _api)			               \
+									       \
+	static struct cloud_backend_config UTIL_CAT(_name, _config) =	       \
+	{								       \
+		.name = STRINGIFY(_name)				       \
+	};								       \
+									       \
+	static const struct cloud_backend _name				       \
+	__attribute__ ((section(".cloud_backends"))) __attribute__((used)) =   \
+	{								       \
+		.api = &_api,						       \
+		.config = &UTIL_CAT(_name, _config)			       \
+	};
 
 /**
  * @}
