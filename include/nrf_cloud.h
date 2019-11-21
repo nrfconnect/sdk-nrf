@@ -17,15 +17,12 @@ extern "C" {
  * @{
  */
 
-
 /** @brief Asynchronous nRF Cloud events notified by the module. */
 enum nrf_cloud_evt_type {
 	/** The transport to the nRF Cloud is established. */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECTED = 0x1,
 	/** There was a request from nRF Cloud to associate the device
-	 * with a user on the nRF Cloud. On receiving this
-	 * event, the user must enter the user association sequence using
-	 * the @ref nrf_cloud_user_associate API.
+	 * with a user on the nRF Cloud.
 	 */
 	NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST,
 	/** The device is successfully associated with a user. */
@@ -46,13 +43,6 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_FOTA_DONE,
 	/** There was an error communicating with the cloud. */
 	NRF_CLOUD_EVT_ERROR = 0xFF
-};
-
-
-/** @brief User association types supported by the nRF Cloud. */
-enum nrf_cloud_ua {
-	/** Button input. */
-	NRF_CLOUD_UA_BUTTON,
 };
 
 /** @brief Sensor types supported by the nRF Cloud. */
@@ -82,25 +72,17 @@ enum nrf_cloud_sensor {
  */
 enum nrf_cloud_ua_button {
 	NRF_CLOUD_UA_BUTTON_INPUT_1 = 0x1, /**< Button Input 1. */
-	NRF_CLOUD_UA_BUTTON_INPUT_2,       /**< Button Input 2. */
-	NRF_CLOUD_UA_BUTTON_INPUT_3,       /**< Button Input 3. */
-	NRF_CLOUD_UA_BUTTON_INPUT_4,       /**< Button Input 4. */
+	NRF_CLOUD_UA_BUTTON_INPUT_2, /**< Button Input 2. */
+	NRF_CLOUD_UA_BUTTON_INPUT_3, /**< Button Input 3. */
+	NRF_CLOUD_UA_BUTTON_INPUT_4, /**< Button Input 4. */
 };
 
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
 struct nrf_cloud_data {
-        /** Length of the data. */
+	/** Length of the data. */
 	u32_t len;
-        /** Pointer to the data. */
+	/** Pointer to the data. */
 	const void *ptr;
-};
-
-/**@brief User association types that are supported by the device. */
-struct nrf_cloud_ua_list {
-	/** Size of the list. */
-	u8_t size;
-	/** Supported user association types. */
-	const enum nrf_cloud_ua *ptr;
 };
 
 /**@brief Sensors that are supported by the device. */
@@ -111,18 +93,8 @@ struct nrf_cloud_sensor_list {
 	const enum nrf_cloud_sensor *ptr;
 };
 
-/**@brief User association parameters. */
-struct nrf_cloud_ua_param {
-	/** The type of user association that is used. */
-	enum nrf_cloud_ua type;
-	/** The user association sequence that is used. */
-	struct nrf_cloud_data sequence;
-};
-
 /**@brief Connection parameters. */
 struct nrf_cloud_connect_param {
-	/** Supported user association types, must not be NULL. */
-	const struct nrf_cloud_ua_list *ua;
 	/** Supported sensor types. May be NULL. */
 	const struct nrf_cloud_sensor_list *sensor;
 };
@@ -151,13 +123,7 @@ struct nrf_cloud_evt {
 	enum nrf_cloud_evt_type type;
 	/** Any status associated with the event. */
 	u32_t status;
-	union {
-		/** Requested UA information. Accompanies
-		 *  @ref NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST event.
-		 */
-		struct nrf_cloud_ua_param ua_req;
-		struct nrf_cloud_data data;
-	} param;
+	struct nrf_cloud_data data;
 };
 
 /**
@@ -201,20 +167,6 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  *           Otherwise, a (negative) error code is returned.
  */
 int nrf_cloud_connect(const struct nrf_cloud_connect_param *param);
-
-/**
- * @brief Send the user association information.
- *
- * If this API succeeds, the user should expect the @ref
- * NRF_CLOUD_EVT_USER_ASSOCIATED event.
- * If @ref NRF_CLOUD_EVT_ERROR is received, retry using this API.
- *
- * @param[in] param	User association information.
- *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int nrf_cloud_user_associate(const struct nrf_cloud_ua_param *param);
 
 /**
  * @brief Attach a sensor to the cloud.
@@ -288,8 +240,7 @@ int nrf_cloud_disconnect(void);
  */
 void nrf_cloud_process(void);
 
-
-  /** @} */
+/** @} */
 
 #ifdef __cplusplus
 }
