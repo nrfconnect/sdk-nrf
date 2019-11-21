@@ -34,23 +34,25 @@
 #define SWITCH_1 BIT(2)
 #define SWITCH_2 BIT(3)
 
-#define LED_ON(x) (x)
-#define LED_BLINK(x) ((x) << 8)
-#define LED_GET_ON(x) ((x)&0xFF)
-#define LED_GET_BLINK(x) (((x) >> 8) & 0xFF)
+#define LED_ON(x)			(x)
+#define LED_BLINK(x)		((x) << 8)
+#define LED_GET_ON(x)		((x) & 0xFF)
+#define LED_GET_BLINK(x)	(((x) >> 8) & 0xFF)
 
 /* Interval in milliseconds after the device will retry cloud connection
  * if the event NRF_CLOUD_EVT_TRANSPORT_CONNECTED is not received.
  */
 #define RETRY_CONNECT_WAIT_MS 90000
 
-enum { LEDS_INITIALIZING = LED_ON(0),
-       LEDS_CONNECTING = LED_BLINK(DK_LED3_MSK),
-       LEDS_PATTERN_WAIT = LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
-       LEDS_PATTERN_ENTRY = LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
-       LEDS_PATTERN_DONE = LED_BLINK(DK_LED4_MSK),
-       LEDS_PAIRED = LED_ON(DK_LED4_MSK),
-       LEDS_ERROR = LED_ON(DK_ALL_LEDS_MSK) } display_state;
+enum {
+	LEDS_INITIALIZING     = LED_ON(0),
+	LEDS_CONNECTING       = LED_BLINK(DK_LED3_MSK),
+	LEDS_PATTERN_WAIT     = LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
+	LEDS_PATTERN_ENTRY    = LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
+	LEDS_PATTERN_DONE     = LED_BLINK(DK_LED4_MSK),
+	LEDS_PAIRED           = LED_ON(DK_LED4_MSK),
+	LEDS_ERROR            = LED_ON(DK_ALL_LEDS_MSK)
+} display_state;
 
 /* Variable to keep track of nRF cloud user association request. */
 static atomic_val_t association_requested;

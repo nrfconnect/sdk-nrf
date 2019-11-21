@@ -65,6 +65,16 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #define CLOUD_LED_OFF_STR "{\"led\":\"off\"}"
 #define CLOUD_LED_MSK UI_LED_1
 
+/* Interval in milliseconds after which the device will reboot
+ * if the disconnect event has not been handled.
+ */
+#define REBOOT_AFTER_DISCONNECT_WAIT_MS	K_SECONDS(15)
+
+/* Interval in milliseconds after which the device will
+ * disconnect and reconnect if association was not completed.
+ */
+#define CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS	K_MINUTES(5)
+
 struct rsrp_data {
 	u16_t value;
 	u16_t offset;
@@ -77,18 +87,7 @@ static struct rsrp_data rsrp = {
 };
 #endif /* CONFIG_MODEM_INFO */
 
-
 static struct cloud_backend *cloud_backend;
-
- /* Variables to keep track of nRF cloud user association. */
-#if defined(CONFIG_USE_UI_MODULE)
-static u8_t ua_pattern[6];
-#endif
-static int buttons_to_capture;
-static int buttons_captured;
-static atomic_t pattern_recording;
-static bool recently_associated;
-static bool association_with_pin;
 
 /* Sensor data */
 static struct gps_data gps_data;
@@ -108,6 +107,10 @@ static atomic_val_t send_data_enable;
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
 
+/* Variable to keep track of nRF cloud user association request. */
+static atomic_val_t association_requested;
+static atomic_val_t reconnect_to_cloud;
+
 /* Structures for work */
 static struct k_work connect_work;
 static struct k_work send_gps_data_work;
@@ -115,6 +118,7 @@ static struct k_work send_button_data_work;
 static struct k_delayed_work send_env_data_work;
 static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
+static struct k_delayed_work cycle_cloud_connection_work;
 static struct k_work device_status_work;
 #if CONFIG_MODEM_INFO
 static struct k_work rsrp_work;
@@ -138,6 +142,7 @@ static void sensors_init(void);
 static void work_init(void);
 static void sensor_data_send(struct cloud_channel_data *data);
 static void device_status_send(struct k_work *work);
+static void cycle_cloud_connection(struct k_work *work);
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
@@ -647,98 +652,52 @@ void sensors_start(void)
 /**@brief nRF Cloud specific callback for cloud association event. */
 static void on_user_pairing_req(const struct cloud_event *evt)
 {
-	if (evt->data.pair_info.type == CLOUD_PAIR_SEQUENCE) {
-		if (!atomic_get(&pattern_recording)) {
-			ui_led_set_pattern(UI_CLOUD_PAIRING);
-			atomic_set(&pattern_recording, 1);
-			buttons_captured = 0;
-			buttons_to_capture = *evt->data.pair_info.buf;
-
-			printk("Please enter the user association pattern ");
-			printk("using the buttons and switches\n");
-		}
-	} else if (evt->data.pair_info.type == CLOUD_PAIR_PIN) {
-		association_with_pin = true;
+	if (atomic_get(&association_requested) == 0) {
+		atomic_set(&association_requested, 1);
 		ui_led_set_pattern(UI_CLOUD_PAIRING);
-		printk("Waiting for cloud association with PIN\n");
+		printk("Add device to cloud account.\n");
+		printk("Waiting for cloud association...\n");
+
+		/* If the association is not done soon enough (< ~5 min?) */
+		/* a connection cycle is needed... TBD why. */
+		k_delayed_work_submit(&cycle_cloud_connection_work,
+				      CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS);
 	}
 }
 
-#if defined(CONFIG_USE_UI_MODULE)
-/**@brief Send user association information to nRF Cloud. */
-static void cloud_user_associate(void)
+static void cycle_cloud_connection(struct k_work *work)
 {
 	int err;
-	struct cloud_msg msg = {
-		.buf = ua_pattern,
-		.len = buttons_to_capture,
-		.endpoint = {
-			.type = CLOUD_EP_TOPIC_PAIR
-		}
-	};
+	s32_t reboot_wait_ms = REBOOT_AFTER_DISCONNECT_WAIT_MS;
 
-	atomic_set(&pattern_recording, 0);
+	printk("Disconnecting from cloud...\n");
 
-	err = cloud_send(cloud_backend, &msg);
-	if (err) {
-		printk("Could not send association message, error: %d\n", err);
-		cloud_error_handler(err);
+	err = cloud_disconnect(cloud_backend);
+	if (err == 0) {
+		atomic_set(&reconnect_to_cloud, 1);
+	} else {
+		reboot_wait_ms = K_SECONDS(5);
+		printk("Disconnect failed. Device will reboot in %d seconds\n",
+			(reboot_wait_ms/MSEC_PER_SEC));
 	}
+
+	/* Reboot fail-safe on disconnect */
+	k_delayed_work_submit(&cloud_reboot_work, reboot_wait_ms);
 }
-#endif
 
 /** @brief Handle procedures after successful association with nRF Cloud. */
 void on_pairing_done(void)
 {
-	if (association_with_pin || (buttons_captured > 0)) {
-		recently_associated = true;
+	if (atomic_get(&association_requested)) {
+		atomic_set(&association_requested, 0);
+		k_delayed_work_cancel(&cycle_cloud_connection_work);
 
-		printk("Successful user association.\n");
-		printk("The device will attempt to reconnect to ");
-		printk("nRF Cloud. It may reset in the process.\n");
-		printk("Manual reset may be required if connection ");
-		printk("to nRF Cloud is not established within ");
-		printk("20 - 30 seconds.\n");
+		/* After successful association, the device must */
+		/* reconnect to the cloud. */
+		printk("Device associated with cloud.\n");
+		printk("Reconnecting for cloud policy to take effect.\n");
+		cycle_cloud_connection(NULL);
 	}
-
-	if (!association_with_pin) {
-		return;
-	}
-
-	int err;
-
-	printk("Disconnecting from nRF cloud...\n");
-
-	err = cloud_disconnect(cloud_backend);
-	if (err == 0) {
-		printk("Reconnecting to cloud...\n");
-		err = cloud_connect(cloud_backend);
-		if (err == 0) {
-			return;
-		}
-		printk("Could not reconnect\n");
-	} else {
-		printk("Disconnection failed\n");
-	}
-
-	printk("Fallback to controlled reboot\n");
-	printk("Shutting down LTE link...\n");
-
-#if defined(CONFIG_BSD_LIBRARY)
-	err = lte_lc_power_off();
-	if (err) {
-		printk("Could not shut down link\n");
-	} else {
-		printk("LTE link disconnected\n");
-	}
-#endif
-
-#ifdef CONFIG_REBOOT
-	printk("Rebooting...\n");
-	LOG_PANIC();
-	sys_reboot(SYS_REBOOT_COLD);
-#endif
-	printk("**** Manual reboot required ***\n");
 }
 
 void cloud_event_handler(const struct cloud_backend *const backend,
@@ -767,6 +726,8 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_DISCONNECTED:
 		printk("CLOUD_EVT_DISCONNECTED\n");
 		ui_led_set_pattern(UI_LTE_DISCONNECTED);
+		/* Expect an error event (POLLNVAL) on the cloud socket poll */
+		/* Handle reconnect there if desired */
 		break;
 	case CLOUD_EVT_ERROR:
 		printk("CLOUD_EVT_ERROR\n");
@@ -810,41 +771,6 @@ static void app_connect(struct k_work *work)
 	}
 }
 
-#if defined(CONFIG_USE_UI_MODULE)
-/**@brief Function to keep track of user association input when using
- *	  buttons and switches to register the association pattern.
- *	  nRF Cloud specific.
- */
-static void pairing_button_register(struct ui_evt *evt)
-{
-	if (buttons_captured < buttons_to_capture) {
-		if (evt->button == UI_BUTTON_1 &&
-		    evt->type == UI_EVT_BUTTON_ACTIVE) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_3;
-			printk("Button 1\n");
-		} else if (evt->button == UI_BUTTON_2 &&
-		    evt->type == UI_EVT_BUTTON_ACTIVE) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_4;
-			printk("Button 2\n");
-		} else if (evt->button == UI_SWITCH_1) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_1;
-			printk("Switch 1\n");
-		} else if (evt->button == UI_SWITCH_2) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_2;
-			printk("Switch 2\n");
-		}
-	}
-
-	if (buttons_captured == buttons_to_capture) {
-		cloud_user_associate();
-	}
-}
-#endif
-
 static void long_press_handler(struct k_work *work)
 {
 	if (!atomic_get(&send_data_enable)) {
@@ -871,6 +797,8 @@ static void work_init(void)
 	k_delayed_work_init(&send_env_data_work, send_env_data_work_fn);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
+	k_delayed_work_init(&cycle_cloud_connection_work,
+			    cycle_cloud_connection);
 	k_work_init(&device_status_work, device_status_send);
 #if CONFIG_MODEM_INFO
 	k_work_init(&rsrp_work, modem_rsrp_data_send);
@@ -974,11 +902,6 @@ static void sensors_init(void)
 /**@brief User interface event handler. */
 static void ui_evt_handler(struct ui_evt evt)
 {
-	if (pattern_recording) {
-		pairing_button_register(&evt);
-		return;
-	}
-
 	if (IS_ENABLED(CONFIG_CLOUD_BUTTON) &&
 	   (evt.button == CONFIG_CLOUD_BUTTON_INPUT)) {
 		button_send(evt.type == UI_EVT_BUTTON_ACTIVE ? 1 : 0);
@@ -1090,6 +1013,7 @@ connect:
 		printk("cloud_connect failed: %d\n", ret);
 		cloud_error_handler(ret);
 	} else {
+		atomic_set(&reconnect_to_cloud, 0);
 		k_delayed_work_submit(&cloud_reboot_work,
 				      CLOUD_CONNACK_WAIT_DURATION);
 	}
@@ -1127,6 +1051,11 @@ connect:
 		}
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
+			if (atomic_get(&reconnect_to_cloud)) {
+				k_delayed_work_cancel(&cloud_reboot_work);
+				printk("Attempting reconnect...\n");
+				goto connect;
+			}
 			printk("Socket error: POLLNVAL\n");
 			printk("The cloud socket was unexpectedly closed.\n");
 			error_handler(ERROR_CLOUD, -EIO);

@@ -103,8 +103,10 @@ int nrf_cloud_disconnect(void)
 int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param)
 {
 	int err;
-	struct nct_cc_data sensor_data = { .opcode = NCT_CC_OPCODE_UPDATE_REQ,
-					   .id = param->tag };
+	struct nct_cc_data sensor_data = {
+		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.id = param->tag
+	};
 
 	if (NOT_VALID_STATE(STATE_DC_CONNECTED)) {
 		return -EACCES;
@@ -299,8 +301,9 @@ static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 static int init(const struct cloud_backend *const backend,
 		cloud_evt_handler_t handler)
 {
-	const struct nrf_cloud_init_param params = { .event_handler =
-							     event_handler };
+	const struct nrf_cloud_init_param params = {
+		.event_handler = event_handler
+	};
 
 	backend->config->handler = handler;
 	nrf_cloud_backend = (struct cloud_backend *)backend;
@@ -343,8 +346,10 @@ static int send(const struct cloud_backend *const backend,
 
 	switch (msg->endpoint.type) {
 	case CLOUD_EP_TOPIC_MSG: {
-		const struct nct_dc_data buf = { .data.ptr = msg->buf,
-						 .data.len = msg->len };
+		const struct nct_dc_data buf = {
+			.data.ptr = msg->buf,
+			.data.len = msg->len
+		};
 
 		if (msg->qos == CLOUD_QOS_AT_MOST_ONCE) {
 			err = nct_dc_stream(&buf);
@@ -406,15 +411,16 @@ static int user_data_set(const struct cloud_backend *const backend,
 	return 0;
 }
 
-static const struct cloud_api nrf_cloud_api = { .init = init,
-						.uninit = uninit,
-						.connect = connect,
-						.disconnect = disconnect,
-						.send = send,
-						.ping = ping,
-						.input = input,
-						.user_data_set =
-							user_data_set };
+static const struct cloud_api nrf_cloud_api = {
+	.init = init,
+	.uninit = uninit,
+	.connect = connect,
+	.disconnect = disconnect,
+	.send = send,
+	.ping = ping,
+	.input = input,
+	.user_data_set = user_data_set
+};
 
 CLOUD_BACKEND_DEFINE(NRF_CLOUD, nrf_cloud_api);
 

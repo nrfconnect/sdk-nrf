@@ -100,25 +100,51 @@ static struct nct {
 } nct;
 
 static const struct mqtt_topic nct_cc_rx_list[] = {
-	{ .topic = { .utf8 = accepted_topic, .size = NCT_ACCEPTED_TOPIC_LEN },
-	  .qos = MQTT_QOS_1_AT_LEAST_ONCE },
-	{ .topic = { .utf8 = rejected_topic, .size = NCT_REJECTED_TOPIC_LEN },
-	  .qos = MQTT_QOS_1_AT_LEAST_ONCE },
-	{ .topic = { .utf8 = update_delta_topic,
-		     .size = NCT_UPDATE_DELTA_TOPIC_LEN },
-	  .qos = MQTT_QOS_1_AT_LEAST_ONCE }
+	{
+		.topic = {
+			.utf8 = accepted_topic,
+			.size = NCT_ACCEPTED_TOPIC_LEN
+		},
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE
+	},
+	{
+		.topic = {
+			.utf8 = rejected_topic,
+			.size = NCT_REJECTED_TOPIC_LEN
+		},
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE
+	},
+	{
+		.topic = {
+			.utf8 = update_delta_topic,
+			.size = NCT_UPDATE_DELTA_TOPIC_LEN
+		},
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE
+	}
 };
 
 static const struct mqtt_topic nct_cc_tx_list[] = {
-	{ .topic = { .utf8 = shadow_get_topic, .size = NCT_SHADOW_GET_LEN },
-	  .qos = MQTT_QOS_1_AT_LEAST_ONCE },
-	{ .topic = { .utf8 = update_topic, .size = NCT_UPDATE_TOPIC_LEN },
-	  .qos = MQTT_QOS_1_AT_LEAST_ONCE }
+	{
+		.topic = {
+			.utf8 = shadow_get_topic,
+			.size = NCT_SHADOW_GET_LEN
+		},
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE
+	},
+	{
+		.topic = {
+			.utf8 = update_topic,
+			.size = NCT_UPDATE_TOPIC_LEN
+		},
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE
+	}
 };
 
-static u32_t const nct_cc_rx_opcode_map[] = { NCT_CC_OPCODE_UPDATE_REQ,
-					      NCT_CC_OPCODE_UPDATE_REJECT_RSP,
-					      NCT_CC_OPCODE_UPDATE_ACCEPT_RSP };
+static u32_t const nct_cc_rx_opcode_map[] = {
+	NCT_CC_OPCODE_UPDATE_REQ,
+	NCT_CC_OPCODE_UPDATE_REJECT_RSP,
+	NCT_CC_OPCODE_UPDATE_ACCEPT_RSP
+};
 
 /* Internal routine to reset data endpoint information. */
 static void dc_endpoint_reset(void)
@@ -335,7 +361,7 @@ static int nct_provision(void)
 
 		for (nrf_key_mgnt_cred_type_t type = 0; type < 5; type++) {
 			err = nrf_inbuilt_key_delete(sec_tag, type);
-			LOG_DBG("nrf_inbuilt_key_delete(%lu, %d) => result=%d",
+			LOG_DBG("nrf_inbuilt_key_delete(%lu, %d) => result = %d",
 				sec_tag, type, err);
 		}
 
@@ -556,7 +582,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		break;
 	}
 	case MQTT_EVT_SUBACK: {
-		LOG_DBG("MQTT_EVT_SUBACK: id=%d result=%d",
+		LOG_DBG("MQTT_EVT_SUBACK: id = %d result = %d",
 			_mqtt_evt->param.suback.message_id, _mqtt_evt->result);
 
 		if (_mqtt_evt->param.suback.message_id == NCT_CC_SUBSCRIBE_ID) {
@@ -579,7 +605,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		break;
 	}
 	case MQTT_EVT_PUBACK: {
-		LOG_DBG("MQTT_EVT_PUBACK: id=%d result=%d",
+		LOG_DBG("MQTT_EVT_PUBACK: id = %d result = %d",
 			_mqtt_evt->param.puback.message_id, _mqtt_evt->result);
 
 		evt.type = NCT_EVT_CC_TX_DATA_ACK;
@@ -588,7 +614,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		break;
 	}
 	case MQTT_EVT_DISCONNECT: {
-		LOG_DBG("MQTT_EVT_DISCONNECT: result=%d", _mqtt_evt->result);
+		LOG_DBG("MQTT_EVT_DISCONNECT: result = %d", _mqtt_evt->result);
 
 		evt.type = NCT_EVT_DISCONNECTED;
 		event_notify = true;
@@ -644,8 +670,10 @@ int nct_connect(void)
 	int err;
 	struct addrinfo *result;
 	struct addrinfo *addr;
-	struct addrinfo hints = { .ai_family = NRF_CLOUD_AF_FAMILY,
-				  .ai_socktype = SOCK_STREAM };
+	struct addrinfo hints = {
+		.ai_family = NRF_CLOUD_AF_FAMILY,
+		.ai_socktype = SOCK_STREAM
+	};
 
 	err = getaddrinfo(NRF_CLOUD_HOSTNAME, NULL, &hints, &result);
 	if (err) {
@@ -751,7 +779,7 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 
 	publish.message_id = cc_data->id ? cc_data->id : ++msg_id;
 
-	LOG_DBG("mqtt_publish: id=%d opcode=%d len=%d", publish.message_id,
+	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d", publish.message_id,
 		cc_data->opcode, cc_data->data.len);
 
 	int err = mqtt_publish(&nct.client, &publish);
@@ -822,8 +850,10 @@ int nct_dc_connect(void)
 	LOG_DBG("nct_dc_connect");
 
 	struct mqtt_topic subscribe_topic = {
-		.topic = { .utf8 = nct.dc_rx_endp.utf8,
-			   .size = nct.dc_rx_endp.size },
+		.topic = {
+			.utf8 = nct.dc_rx_endp.utf8,
+			.size = nct.dc_rx_endp.size
+		},
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE
 	};
 

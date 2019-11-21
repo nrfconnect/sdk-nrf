@@ -241,9 +241,7 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	if (compare(state_str, DUA_PIN_STR)) {
 		(*requested_state) = STATE_UA_PIN_WAIT;
 	} else {
-		LOG_ERR("Deprecated state. Delete device "
-			"from nrfCloud and "
-			"update device with JITP certificates.");
+		LOG_ERR("Deprecated state. Delete device from nrfCloud and update device with JITP certificates.");
 		cJSON_Delete(root_obj);
 		return -ENOTSUP;
 	}
