@@ -150,6 +150,10 @@ function(zephyr_add_external_image_from_source name sourcedir)
 
       # Add dependency for the benefit of make.
       add_dependencies(zephyr_interface ${spm_veneers_lib})
+
+      # TODO: Find out if the below line makes the above line
+      # redundant.
+      add_dependencies(zephyr_interface SPM_subimage)
     endif()
 
   set_property(
