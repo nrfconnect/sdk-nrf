@@ -59,19 +59,6 @@ enum cloud_endpoint {
 	CLOUD_EP_COUNT
 };
 
-/**@brief Cloud pairing type. */
-enum cloud_pair_type {
-	CLOUD_PAIR_SEQUENCE,
-	CLOUD_PAIR_PIN,
-};
-
-/**@brief Cloud pairing data. */
-struct cloud_pair_data {
-	enum cloud_pair_type type;
-	u8_t *buf;
-	size_t len;
-};
-
 /** @brief Forward declaration of cloud backend type. */
 struct cloud_backend;
 
@@ -93,7 +80,6 @@ struct cloud_event {
 	union {
 		struct cloud_msg msg;
 		int err;
-		struct cloud_pair_data pair_info;
 	} data;
 };
 
@@ -149,13 +135,11 @@ struct cloud_backend {
  * @param backend Pointer to cloud backend structure.
  * @param handler Handler to receive events from the backend.
  */
-static inline int cloud_init(
-	struct cloud_backend *const backend,
-	cloud_evt_handler_t handler)
+static inline int cloud_init(struct cloud_backend *const backend,
+			     cloud_evt_handler_t handler)
 {
-	if (backend == NULL
-	    || backend->api == NULL
-	    || backend->api->init == NULL) {
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->init == NULL) {
 		return -ENOTSUP;
 	}
 
@@ -173,9 +157,8 @@ static inline int cloud_init(
  */
 static inline int cloud_uninit(const struct cloud_backend *const backend)
 {
-	if (backend == NULL
-	    || backend->api == NULL
-	    || backend->api->uninit == NULL) {
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->uninit == NULL) {
 		return -ENOTSUP;
 	}
 
@@ -195,9 +178,8 @@ static inline int cloud_uninit(const struct cloud_backend *const backend)
  */
 static inline int cloud_connect(const struct cloud_backend *const backend)
 {
-	if (backend == NULL
-	    || backend->api == NULL
-	    || backend->api->connect == NULL) {
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->connect == NULL) {
 		return -ENOTSUP;
 	}
 
@@ -212,9 +194,8 @@ static inline int cloud_connect(const struct cloud_backend *const backend)
  */
 static inline int cloud_disconnect(const struct cloud_backend *const backend)
 {
-	if (backend == NULL
-	    || backend->api == NULL
-	    || backend->api->disconnect == NULL) {
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->disconnect == NULL) {
 		return -ENOTSUP;
 	}
 
@@ -231,9 +212,8 @@ static inline int cloud_disconnect(const struct cloud_backend *const backend)
 static inline int cloud_send(const struct cloud_backend *const backend,
 			     struct cloud_msg *msg)
 {
-	if (backend == NULL
-	    || backend->api == NULL
-	    || backend->api->send == NULL) {
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->send == NULL) {
 		return -ENOTSUP;
 	}
 
@@ -272,9 +252,8 @@ static inline int cloud_ping(const struct cloud_backend *const backend)
  */
 static inline int cloud_input(const struct cloud_backend *const backend)
 {
-	if (backend == NULL
-	    || backend->api == NULL
-	    || backend->api->input == NULL) {
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->input == NULL) {
 		return -ENOTSUP;
 	}
 
@@ -291,9 +270,8 @@ static inline int cloud_input(const struct cloud_backend *const backend)
 static inline int cloud_user_data_set(struct cloud_backend *const backend,
 				      void *user_data)
 {
-	if (backend == NULL
-	    || backend->api == NULL
-	    || backend->api->user_data_set == NULL) {
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->user_data_set == NULL) {
 		return -ENOTSUP;
 	}
 
@@ -314,19 +292,15 @@ static inline int cloud_user_data_set(struct cloud_backend *const backend,
  **/
 struct cloud_backend *cloud_get_binding(const char *name);
 
-#define CLOUD_BACKEND_DEFINE(_name, _api)			               \
-									       \
-	static struct cloud_backend_config UTIL_CAT(_name, _config) =	       \
-	{								       \
-		.name = STRINGIFY(_name)				       \
-	};								       \
-									       \
-	static const struct cloud_backend _name				       \
-	__attribute__ ((section(".cloud_backends"))) __attribute__((used)) =   \
-	{								       \
-		.api = &_api,						       \
-		.config = &UTIL_CAT(_name, _config)			       \
-	};
+#define CLOUD_BACKEND_DEFINE(_name, _api)                                      \
+                                                                               \
+	static struct cloud_backend_config UTIL_CAT(                           \
+		_name, _config) = { .name = STRINGIFY(_name) };                \
+                                                                               \
+	static const struct cloud_backend _name                                \
+		__attribute__((section(".cloud_backends"))) __attribute__(     \
+			(used)) = { .api = &_api,                              \
+				    .config = &UTIL_CAT(_name, _config) };
 
 /**
  * @}

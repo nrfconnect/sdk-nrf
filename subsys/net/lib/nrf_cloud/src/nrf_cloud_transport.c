@@ -100,51 +100,25 @@ static struct nct {
 } nct;
 
 static const struct mqtt_topic nct_cc_rx_list[] = {
-	{
-		.topic = {
-			.utf8 = accepted_topic,
-			.size = NCT_ACCEPTED_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	},
-	{
-		.topic = {
-			.utf8 = rejected_topic,
-			.size = NCT_REJECTED_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	},
-	{
-		.topic = {
-			.utf8 = update_delta_topic,
-			.size = NCT_UPDATE_DELTA_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	}
+	{ .topic = { .utf8 = accepted_topic, .size = NCT_ACCEPTED_TOPIC_LEN },
+	  .qos = MQTT_QOS_1_AT_LEAST_ONCE },
+	{ .topic = { .utf8 = rejected_topic, .size = NCT_REJECTED_TOPIC_LEN },
+	  .qos = MQTT_QOS_1_AT_LEAST_ONCE },
+	{ .topic = { .utf8 = update_delta_topic,
+		     .size = NCT_UPDATE_DELTA_TOPIC_LEN },
+	  .qos = MQTT_QOS_1_AT_LEAST_ONCE }
 };
 
 static const struct mqtt_topic nct_cc_tx_list[] = {
-	{
-		.topic = {
-			.utf8 = shadow_get_topic,
-			.size = NCT_SHADOW_GET_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	},
-	{
-		.topic = {
-			.utf8 = update_topic,
-			.size = NCT_UPDATE_TOPIC_LEN
-		},
-		.qos = MQTT_QOS_1_AT_LEAST_ONCE
-	}
+	{ .topic = { .utf8 = shadow_get_topic, .size = NCT_SHADOW_GET_LEN },
+	  .qos = MQTT_QOS_1_AT_LEAST_ONCE },
+	{ .topic = { .utf8 = update_topic, .size = NCT_UPDATE_TOPIC_LEN },
+	  .qos = MQTT_QOS_1_AT_LEAST_ONCE }
 };
 
-static u32_t const nct_cc_rx_opcode_map[] = {
-	NCT_CC_OPCODE_UPDATE_REQ,
-	NCT_CC_OPCODE_UPDATE_REJECT_RSP,
-	NCT_CC_OPCODE_UPDATE_ACCEPT_RSP
-};
+static u32_t const nct_cc_rx_opcode_map[] = { NCT_CC_OPCODE_UPDATE_REQ,
+					      NCT_CC_OPCODE_UPDATE_REJECT_RSP,
+					      NCT_CC_OPCODE_UPDATE_ACCEPT_RSP };
 
 /* Internal routine to reset data endpoint information. */
 static void dc_endpoint_reset(void)
@@ -213,8 +187,8 @@ static u32_t dc_send(const struct nct_dc_data *dc_data, u8_t qos)
 	return mqtt_publish(&nct.client, &publish);
 }
 
-static bool strings_compare(const char *s1, const char *s2,
-			    u32_t s1_len, u32_t s2_len)
+static bool strings_compare(const char *s1, const char *s2, u32_t s1_len,
+			    u32_t s2_len)
 {
 	return (strncmp(s1, s2, MIN(s1_len, s2_len))) ? false : true;
 }
@@ -239,10 +213,8 @@ static bool control_channel_topic_match(u32_t list_id,
 
 	for (u32_t index = 0; index < list_size; index++) {
 		if (strings_compare(
-			    topic->topic.utf8,
-			    topic_list[index].topic.utf8,
-			    topic->topic.size,
-			    topic_list[index].topic.size)) {
+			    topic->topic.utf8, topic_list[index].topic.utf8,
+			    topic->topic.size, topic_list[index].topic.size)) {
 			*opcode = nct_cc_rx_opcode_map[index];
 			return true;
 		}
@@ -276,7 +248,7 @@ static int nct_client_id_get(char *id)
 	ret = nrf_close(at_socket_fd);
 	__ASSERT_NO_MSG(ret == 0);
 #else
-	#error Missing NRF_CLOUD_CLIENT_ID
+#error Missing NRF_CLOUD_CLIENT_ID
 #endif /* defined(CONFIG_BSD_LIBRARY) */
 #else
 	memcpy(id, NRF_CLOUD_CLIENT_ID, NRF_CLOUD_CLIENT_ID_LEN + 1);
@@ -324,8 +296,8 @@ static int nct_topics_populate(void)
 	}
 	LOG_DBG("update_delta_topic: %s", log_strdup(update_delta_topic));
 
-	ret = snprintf(update_topic, sizeof(update_topic),
-		       NCT_UPDATE_TOPIC, client_id_buf);
+	ret = snprintf(update_topic, sizeof(update_topic), NCT_UPDATE_TOPIC,
+		       client_id_buf);
 	if (ret != NCT_UPDATE_TOPIC_LEN) {
 		return -ENOMEM;
 	}
@@ -344,7 +316,7 @@ static int nct_topics_populate(void)
 /* Provisions root CA certificate using nrf_inbuilt_key API */
 static int nct_provision(void)
 {
-	static sec_tag_t sec_tag_list[] = {CONFIG_NRF_CLOUD_SEC_TAG};
+	static sec_tag_t sec_tag_list[] = { CONFIG_NRF_CLOUD_SEC_TAG };
 
 	nct.tls_config.peer_verify = 2;
 	nct.tls_config.cipher_count = 0;
@@ -369,9 +341,9 @@ static int nct_provision(void)
 
 		/* Provision CA Certificate. */
 		err = nrf_inbuilt_key_write(CONFIG_NRF_CLOUD_SEC_TAG,
-					NRF_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-					NRF_CLOUD_CA_CERTIFICATE,
-					strlen(NRF_CLOUD_CA_CERTIFICATE));
+					    NRF_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+					    NRF_CLOUD_CA_CERTIFICATE,
+					    strlen(NRF_CLOUD_CA_CERTIFICATE));
 		if (err) {
 			LOG_ERR("NRF_CLOUD_CA_CERTIFICATE err: %d", err);
 			return err;
@@ -405,24 +377,23 @@ static int nct_provision(void)
 		int err;
 
 		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
-			TLS_CREDENTIAL_CA_CERTIFICATE,
-			NRF_CLOUD_CA_CERTIFICATE,
-			sizeof(NRF_CLOUD_CA_CERTIFICATE));
+					 TLS_CREDENTIAL_CA_CERTIFICATE,
+					 NRF_CLOUD_CA_CERTIFICATE,
+					 sizeof(NRF_CLOUD_CA_CERTIFICATE));
 		if (err < 0) {
-			LOG_ERR("Failed to register ca certificate: %d",
-				err);
+			LOG_ERR("Failed to register ca certificate: %d", err);
 			return err;
 		}
 		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
-			TLS_CREDENTIAL_PRIVATE_KEY,
-			NRF_CLOUD_CLIENT_PRIVATE_KEY,
-			sizeof(NRF_CLOUD_CLIENT_PRIVATE_KEY));
+					 TLS_CREDENTIAL_PRIVATE_KEY,
+					 NRF_CLOUD_CLIENT_PRIVATE_KEY,
+					 sizeof(NRF_CLOUD_CLIENT_PRIVATE_KEY));
 		if (err < 0) {
-			LOG_ERR("Failed to register private key: %d",
-				err);
+			LOG_ERR("Failed to register private key: %d", err);
 			return err;
 		}
-		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
+		err = tls_credential_add(
+			CONFIG_NRF_CLOUD_SEC_TAG,
 			TLS_CREDENTIAL_SERVER_CERTIFICATE,
 			NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE,
 			sizeof(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
@@ -431,7 +402,6 @@ static int nct_provision(void)
 				err);
 			return err;
 		}
-
 	}
 #endif /* defined(CONFIG_BSD_LIBRARY) */
 #endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
@@ -506,9 +476,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 				 const struct mqtt_evt *_mqtt_evt)
 {
 	int err;
-	struct nct_evt evt = {
-		.status = _mqtt_evt->result
-	};
+	struct nct_evt evt = { .status = _mqtt_evt->result };
 	struct nct_cc_data cc;
 	struct nct_dc_data dc;
 	bool event_notify = false;
@@ -557,9 +525,8 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		/* If the data arrives on one of the subscribed control channel
 		 * topic. Then we notify the same.
 		 */
-		if (control_channel_topic_match(
-			NCT_RX_LIST, &p->message.topic, &cc.opcode)) {
-
+		if (control_channel_topic_match(NCT_RX_LIST, &p->message.topic,
+						&cc.opcode)) {
 			cc.id = p->message_id;
 			cc.data.ptr = nct.payload_buf;
 			cc.data.len = p->message.payload.len;
@@ -590,8 +557,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 	case MQTT_EVT_SUBACK: {
 		LOG_DBG("MQTT_EVT_SUBACK: id=%d result=%d",
-			_mqtt_evt->param.suback.message_id,
-			_mqtt_evt->result);
+			_mqtt_evt->param.suback.message_id, _mqtt_evt->result);
 
 		if (_mqtt_evt->param.suback.message_id == NCT_CC_SUBSCRIBE_ID) {
 			evt.type = NCT_EVT_CC_CONNECTED;
@@ -614,10 +580,9 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 	case MQTT_EVT_PUBACK: {
 		LOG_DBG("MQTT_EVT_PUBACK: id=%d result=%d",
-			_mqtt_evt->param.puback.message_id,
-			_mqtt_evt->result);
+			_mqtt_evt->param.puback.message_id, _mqtt_evt->result);
 
-		evt.type = NCT_EVT_CC_TX_DATA_CNF;
+		evt.type = NCT_EVT_CC_TX_DATA_ACK;
 		evt.param.data_id = _mqtt_evt->param.puback.message_id;
 		event_notify = true;
 		break;
@@ -661,8 +626,7 @@ int nct_connect(void)
 {
 	int err;
 
-	struct sockaddr_in *broker =
-		((struct sockaddr_in *)&nct.broker);
+	struct sockaddr_in *broker = ((struct sockaddr_in *)&nct.broker);
 
 	inet_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR,
 		  &broker->sin_addr);
@@ -680,10 +644,8 @@ int nct_connect(void)
 	int err;
 	struct addrinfo *result;
 	struct addrinfo *addr;
-	struct addrinfo hints = {
-		.ai_family = NRF_CLOUD_AF_FAMILY,
-		.ai_socktype = SOCK_STREAM
-	};
+	struct addrinfo hints = { .ai_family = NRF_CLOUD_AF_FAMILY,
+				  .ai_socktype = SOCK_STREAM };
 
 	err = getaddrinfo(NRF_CLOUD_HOSTNAME, NULL, &hints, &result);
 	if (err) {
@@ -705,7 +667,7 @@ int nct_connect(void)
 
 			broker->sin_addr.s_addr =
 				((struct sockaddr_in *)addr->ai_addr)
-				->sin_addr.s_addr;
+					->sin_addr.s_addr;
 			broker->sin_family = AF_INET;
 			broker->sin_port = htons(NRF_CLOUD_PORT);
 
@@ -719,9 +681,9 @@ int nct_connect(void)
 				((struct sockaddr_in6 *)&nct.broker);
 
 			memcpy(broker->sin6_addr.s6_addr,
-				((struct sockaddr_in6 *)addr->ai_addr)
-				->sin6_addr.s6_addr,
-				sizeof(struct in6_addr));
+			       ((struct sockaddr_in6 *)addr->ai_addr)
+				       ->sin6_addr.s6_addr,
+			       sizeof(struct in6_addr));
 			broker->sin6_family = AF_INET6;
 			broker->sin6_port = htons(NRF_CLOUD_PORT);
 
@@ -789,9 +751,8 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 
 	publish.message_id = cc_data->id ? cc_data->id : ++msg_id;
 
-	LOG_DBG("mqtt_publish: id=%d opcode=%d len=%d",
-		publish.message_id, cc_data->opcode,
-		cc_data->data.len);
+	LOG_DBG("mqtt_publish: id=%d opcode=%d len=%d", publish.message_id,
+		cc_data->opcode, cc_data->data.len);
 
 	int err = mqtt_publish(&nct.client, &publish);
 
@@ -861,10 +822,8 @@ int nct_dc_connect(void)
 	LOG_DBG("nct_dc_connect");
 
 	struct mqtt_topic subscribe_topic = {
-		.topic = {
-			.utf8 = nct.dc_rx_endp.utf8,
-			.size = nct.dc_rx_endp.size
-		},
+		.topic = { .utf8 = nct.dc_rx_endp.utf8,
+			   .size = nct.dc_rx_endp.size },
 		.qos = MQTT_QOS_1_AT_LEAST_ONCE
 	};
 

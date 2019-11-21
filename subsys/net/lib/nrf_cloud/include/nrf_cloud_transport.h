@@ -18,9 +18,9 @@ enum nct_evt_type {
 	NCT_EVT_CC_CONNECTED,
 	NCT_EVT_DC_CONNECTED,
 	NCT_EVT_CC_RX_DATA,
-	NCT_EVT_CC_TX_DATA_CNF,
+	NCT_EVT_CC_TX_DATA_ACK,
 	NCT_EVT_DC_RX_DATA,
-	NCT_EVT_DC_TX_DATA_CNF,
+	NCT_EVT_DC_TX_DATA_ACK,
 	NCT_EVT_CC_DISCONNECTED,
 	NCT_EVT_DC_DISCONNECTED,
 	NCT_EVT_DISCONNECTED,
@@ -74,12 +74,12 @@ int nct_dc_connect(void);
 int nct_cc_send(const struct nct_cc_data *cc);
 
 /**@brief Sends data on the data channel. Reliable, should expect a @ref
- * NCT_EVT_DC_TX_DATA_CNF event.
+ * NCT_EVT_DC_TX_DATA_ACK event.
  */
 int nct_dc_send(const struct nct_dc_data *dc);
 
 /**@brief Stream data on the data channel. Unreliable, no @ref
- * NCT_EVT_DC_TX_DATA_CNF event is generated.
+ * NCT_EVT_DC_TX_DATA_ACK event is generated.
  */
 int nct_dc_stream(const struct nct_dc_data *dc);
 

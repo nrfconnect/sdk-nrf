@@ -93,47 +93,18 @@ int nrf_cloud_connect(const struct nrf_cloud_connect_param *param)
 
 int nrf_cloud_disconnect(void)
 {
-	if (NOT_VALID_STATE(STATE_DC_CONNECTED)) {
+	if (NOT_VALID_STATE(STATE_DC_CONNECTED) &&
+	    NOT_VALID_STATE(STATE_CC_CONNECTED)) {
 		return -EACCES;
 	}
 	return nct_disconnect();
 }
 
-int nrf_cloud_user_associate(const struct nrf_cloud_ua_param *param)
-{
-	int err;
-
-	if (param == NULL) {
-		return -EINVAL;
-	}
-
-	if (NOT_VALID_STATE(STATE_UA_INPUT_WAIT)) {
-		return -EACCES;
-	}
-
-	struct nct_cc_data ua_msg = {
-		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = CC_UA_DATA_ID
-	};
-
-	err = nrf_cloud_encode_ua(param, &ua_msg.data);
-	if (err) {
-		return err;
-	}
-
-	err = nct_cc_send(&ua_msg);
-	nrf_cloud_free((void *)ua_msg.data.ptr);
-
-	return err;
-}
-
 int nrf_cloud_shadow_update(const struct nrf_cloud_sensor_data *param)
 {
 	int err;
-	struct nct_cc_data sensor_data = {
-		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
-		.id = param->tag
-	};
+	struct nct_cc_data sensor_data = { .opcode = NCT_CC_OPCODE_UPDATE_REQ,
+					   .id = param->tag };
 
 	if (NOT_VALID_STATE(STATE_DC_CONNECTED)) {
 		return -EACCES;
@@ -262,16 +233,6 @@ static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 
 		evt.type = CLOUD_EVT_PAIR_REQUEST;
 
-		if (nrf_cloud_evt->param.ua_req.sequence.len > 0) {
-			evt.data.pair_info.type = CLOUD_PAIR_SEQUENCE;
-			evt.data.pair_info.buf =
-			      (u8_t *)&nrf_cloud_evt->param.ua_req.sequence.len;
-			evt.data.pair_info.len =
-			      sizeof(nrf_cloud_evt->param.ua_req.sequence.len);
-		} else {
-			evt.data.pair_info.type = CLOUD_PAIR_PIN;
-		}
-
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
@@ -317,11 +278,10 @@ static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
 
 		evt.type = CLOUD_EVT_DATA_RECEIVED;
-		evt.data.msg.buf = (char *)nrf_cloud_evt->param.data.ptr;
-		evt.data.msg.len = nrf_cloud_evt->param.data.len;
+		evt.data.msg.buf = (char *)nrf_cloud_evt->data.ptr;
+		evt.data.msg.len = nrf_cloud_evt->data.len;
 
-		cloud_notify_event(nrf_cloud_backend, &evt,
-				   config->user_data);
+		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_FOTA_DONE:
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE");
@@ -339,9 +299,8 @@ static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 static int init(const struct cloud_backend *const backend,
 		cloud_evt_handler_t handler)
 {
-	const struct nrf_cloud_init_param params = {
-		.event_handler = event_handler
-	};
+	const struct nrf_cloud_init_param params = { .event_handler =
+							     event_handler };
 
 	backend->config->handler = handler;
 	nrf_cloud_backend = (struct cloud_backend *)backend;
@@ -384,10 +343,8 @@ static int send(const struct cloud_backend *const backend,
 
 	switch (msg->endpoint.type) {
 	case CLOUD_EP_TOPIC_MSG: {
-		const struct nct_dc_data buf = {
-			.data.ptr = msg->buf,
-			.data.len = msg->len
-		};
+		const struct nct_dc_data buf = { .data.ptr = msg->buf,
+						 .data.len = msg->len };
 
 		if (msg->qos == CLOUD_QOS_AT_MOST_ONCE) {
 			err = nct_dc_stream(&buf);
@@ -396,22 +353,6 @@ static int send(const struct cloud_backend *const backend,
 		} else {
 			err = -EINVAL;
 			LOG_ERR("Unsupported QoS setting.");
-			return err;
-		}
-		break;
-	}
-	case CLOUD_EP_TOPIC_PAIR: {
-		const struct nrf_cloud_ua_param ua = {
-			.type = NRF_CLOUD_UA_BUTTON,
-			.sequence = {
-				.len = msg->len,
-				.ptr = msg->buf
-			}
-		};
-
-		err = nrf_cloud_user_associate(&ua);
-		if (err) {
-			LOG_ERR("nrf_cloud_user_associate failed: %d\n", err);
 			return err;
 		}
 		break;
@@ -465,16 +406,15 @@ static int user_data_set(const struct cloud_backend *const backend,
 	return 0;
 }
 
-static const struct cloud_api nrf_cloud_api = {
-	.init = init,
-	.uninit = uninit,
-	.connect = connect,
-	.disconnect = disconnect,
-	.send = send,
-	.ping = ping,
-	.input = input,
-	.user_data_set = user_data_set
-};
+static const struct cloud_api nrf_cloud_api = { .init = init,
+						.uninit = uninit,
+						.connect = connect,
+						.disconnect = disconnect,
+						.send = send,
+						.ping = ping,
+						.input = input,
+						.user_data_set =
+							user_data_set };
 
 CLOUD_BACKEND_DEFINE(NRF_CLOUD, nrf_cloud_api);
 

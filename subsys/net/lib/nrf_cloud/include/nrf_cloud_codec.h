@@ -17,11 +17,6 @@ extern "C" {
 /**@brief Initialize the codec used encoding the data to the cloud. */
 int nrf_codec_init(void);
 
-
-/**@brief Encode the user association data based on the indicated type. */
-int nrf_cloud_encode_ua(const struct nrf_cloud_ua_param *param,
-			struct nrf_cloud_data *output);
-
 /**@brief Encode the sensor data based on the indicated type. */
 int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *input,
 				 struct nrf_cloud_data *output);
