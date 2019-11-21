@@ -17,12 +17,19 @@
 #define TIMESLOT_REQUEST_DISTANCE_US (1000000)
 #define TIMESLOT_LENGTH_US           (200)
 
-#define MPSL_IRQ_LOW_PRIO            (4)
+#define MPSL_THREAD_PRIO             CONFIG_MPSL_SIGNAL_THREAD_PRIO
 #define STACKSIZE                    CONFIG_IDLE_STACK_SIZE
 #define THREAD_PRIORITY              K_LOWEST_APPLICATION_THREAD_PRIO
 
 static volatile int timeslot_counter;
 static bool request_in_cb = true;
+
+/* MPSL API calls that can be requested for the non-preemptible thread */
+enum mpsl_timeslot_call {
+	OPEN_SESSION,
+	MAKE_REQUEST,
+	CLOSE_SESSION,
+};
 
 /* Timeslot requests */
 static mpsl_timeslot_request_t timeslot_request_earliest = {
@@ -42,8 +49,11 @@ static mpsl_timeslot_request_t timeslot_request_normal = {
 
 static mpsl_timeslot_signal_return_param_t signal_callback_return_param;
 
-/* Message queue used for printing the signal type from timeslot callback */
+/* Message queue for printing the signal type from timeslot callback */
 K_MSGQ_DEFINE(callback_msgq, sizeof(u32_t), 10, 4);
+
+/* Message queue for requesting MPSL API calls to non-preemptible thread */
+K_MSGQ_DEFINE(mpsl_api_msgq, sizeof(enum mpsl_timeslot_call), 10, 4);
 
 static void error(void)
 {
@@ -103,6 +113,7 @@ static void mpsl_timeslot_demo(void)
 {
 	int err;
 	char input_char;
+	enum mpsl_timeslot_call api_call;
 
 	printk("-----------------------------------------------------\n");
 	printk("Press a key to open session and request timeslots:\n");
@@ -119,11 +130,14 @@ static void mpsl_timeslot_demo(void)
 		return;
 	}
 
-	err = mpsl_timeslot_session_open(mpsl_timeslot_callback);
+	api_call = OPEN_SESSION;
+	err = k_msgq_put(&mpsl_api_msgq, &api_call, K_FOREVER);
 	if (err) {
 		error();
 	}
-	err = mpsl_timeslot_request(&timeslot_request_earliest);
+
+	api_call = MAKE_REQUEST;
+	err = k_msgq_put(&mpsl_api_msgq, &api_call, K_FOREVER);
 	if (err) {
 		error();
 	}
@@ -131,9 +145,49 @@ static void mpsl_timeslot_demo(void)
 	printk("Press any key to close the session.\n");
 	console_getchar();
 
-	err = mpsl_timeslot_session_close();
+	api_call = CLOSE_SESSION;
+	err = k_msgq_put(&mpsl_api_msgq, &api_call, K_FOREVER);
 	if (err) {
 		error();
+	}
+}
+
+/* To ensure thread safe operation, call all MPSL APIs from a non-preemptible
+ * thread.
+ */
+static void mpsl_nonpreemptible_thread(void)
+{
+	int err;
+	enum mpsl_timeslot_call api_call = 0;
+
+	while (1) {
+		if (k_msgq_get(&mpsl_api_msgq, &api_call, K_FOREVER) == 0) {
+			switch (api_call) {
+			case OPEN_SESSION:
+				err = mpsl_timeslot_session_open(
+					mpsl_timeslot_callback);
+				if (err) {
+					error();
+				}
+				break;
+			case MAKE_REQUEST:
+				err = mpsl_timeslot_request(
+					&timeslot_request_earliest);
+				if (err) {
+					error();
+				}
+				break;
+			case CLOSE_SESSION:
+				err = mpsl_timeslot_session_close();
+				if (err) {
+					error();
+				}
+				break;
+			default:
+				error();
+				break;
+			}
+		}
 	}
 }
 
@@ -142,7 +196,7 @@ static void console_print_thread(void)
 	u32_t signal_type = 0;
 
 	while (1) {
-		if (k_msgq_get(&callback_msgq, &signal_type, 1) == 0) {
+		if (k_msgq_get(&callback_msgq, &signal_type, K_FOREVER) == 0) {
 			switch (signal_type) {
 			case MPSL_TIMESLOT_SIGNAL_START:
 				printk("Callback: Timeslot start\n");
@@ -155,11 +209,10 @@ static void console_print_thread(void)
 				break;
 			default:
 				printk("Callback: Other signal: %d\n",
-					signal_type);
+				       signal_type);
 				break;
 			}
 		}
-		k_sleep(10);
 	}
 }
 
@@ -182,3 +235,7 @@ void main(void)
 
 K_THREAD_DEFINE(console_print_thread_id, STACKSIZE, console_print_thread,
 		NULL, NULL, NULL, THREAD_PRIORITY, 0, K_NO_WAIT);
+
+K_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, STACKSIZE,
+		mpsl_nonpreemptible_thread, NULL, NULL, NULL,
+		K_PRIO_COOP(CONFIG_MPSL_SIGNAL_THREAD_PRIO), 0, K_NO_WAIT);
