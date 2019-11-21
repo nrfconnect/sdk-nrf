@@ -17,9 +17,7 @@ nRF5340 is a wireless ultra-low power multicore System on Chip (SoC) with two fu
 The |NCS| supports Bluetooth Low Energy communication on the nRF5340 SoC.
 
 See the `nRF5340 Product Specification`_ for more information about the nRF5340 SoC.
-nrf5340_dk_nrf5340 in the Zephyr repository gives an overview of the nRF5340 PDK support in Zephyr.
-
-.. :ref:`zephyr:nrf5340_dk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
+:ref:`zephyr:nrf5340_dk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
 
 Network core
 ============
@@ -70,9 +68,7 @@ nRF5340 samples consist of two separate images: one that runs on the network cor
 Network sample
 ==============
 
-.. For network communication, Zephyr provides the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample that implements a Bluetooth Low Energy controller.
-
-For network communication, Zephyr provides a sample that implements a Bluetooth Low Energy controller.
+For network communication, Zephyr provides the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample that implements a Bluetooth Low Energy controller.
 
 This sample must be programmed to the network core to run any Bluetooth Low Energy samples on nRF5340.
 
@@ -95,9 +91,7 @@ The |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`
 Most of these samples should run on the nRF5340 PDK, but not all have been thoroughly tested.
 Samples that use non-standard features of the Bluetooth Low Energy controller, like the :ref:`ble_llpm` sample, are not supported.
 
-.. Some samples require configuration adjustments to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample as described in the `Network sample`_ section.
-
-Some samples require configuration adjustments to the network sample as described in the `Network sample`_ section.
+Some samples require configuration adjustments to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample as described in the `Network sample`_ section.
 
 These samples must be programmed to the application core, in the secure domain.
 
