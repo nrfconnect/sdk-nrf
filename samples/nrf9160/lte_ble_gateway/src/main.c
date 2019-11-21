@@ -22,39 +22,38 @@
 #include "alarm.h"
 
 /* Interval in milliseconds between each time status LEDs are updated. */
-#define LEDS_UPDATE_INTERVAL	        500
+#define LEDS_UPDATE_INTERVAL 500
 
 /* Interval in microseconds between each time LEDs are updated when indicating
  * that an error has occurred.
  */
-#define LEDS_ERROR_UPDATE_INTERVAL      250000
+#define LEDS_ERROR_UPDATE_INTERVAL 250000
 
-#define BUTTON_1			BIT(0)
-#define BUTTON_2			BIT(1)
-#define SWITCH_1			BIT(2)
-#define SWITCH_2			BIT(3)
+#define BUTTON_1 BIT(0)
+#define BUTTON_2 BIT(1)
+#define SWITCH_1 BIT(2)
+#define SWITCH_2 BIT(3)
 
-#define LED_ON(x)			(x)
-#define LED_BLINK(x)			((x) << 8)
-#define LED_GET_ON(x)			((x) & 0xFF)
-#define LED_GET_BLINK(x)		(((x) >> 8) & 0xFF)
+#define LED_ON(x) (x)
+#define LED_BLINK(x) ((x) << 8)
+#define LED_GET_ON(x) ((x)&0xFF)
+#define LED_GET_BLINK(x) (((x) >> 8) & 0xFF)
 
-enum {
-	LEDS_INITIALIZING     = LED_ON(0),
-	LEDS_CONNECTING       = LED_BLINK(DK_LED3_MSK),
-	LEDS_PATTERN_WAIT     = LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
-	LEDS_PATTERN_ENTRY    = LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
-	LEDS_PATTERN_DONE     = LED_BLINK(DK_LED4_MSK),
-	LEDS_PAIRED           = LED_ON(DK_LED4_MSK),
-	LEDS_ERROR            = LED_ON(DK_ALL_LEDS_MSK)
-} display_state;
+/* Interval in milliseconds after the device will retry cloud connection
+ * if the event NRF_CLOUD_EVT_TRANSPORT_CONNECTED is not received.
+ */
+#define RETRY_CONNECT_WAIT_MS 90000
 
- /* Variables to keep track of nRF cloud user association. */
-static u8_t ua_pattern[10];
-static int buttons_to_capture;
-static int buttons_captured;
-static bool pattern_recording;
-static struct k_sem user_assoc_sem;
+enum { LEDS_INITIALIZING = LED_ON(0),
+       LEDS_CONNECTING = LED_BLINK(DK_LED3_MSK),
+       LEDS_PATTERN_WAIT = LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
+       LEDS_PATTERN_ENTRY = LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
+       LEDS_PATTERN_DONE = LED_BLINK(DK_LED4_MSK),
+       LEDS_PAIRED = LED_ON(DK_LED4_MSK),
+       LEDS_ERROR = LED_ON(DK_ALL_LEDS_MSK) } display_state;
+
+/* Variable to keep track of nRF cloud user association request. */
+static atomic_val_t association_requested;
 
 /* Sensor data */
 static struct gps_data gps_data;
@@ -68,6 +67,7 @@ static atomic_val_t send_data_enable;
 
 /* Structures for work */
 static struct k_delayed_work leds_update_work;
+static struct k_delayed_work retry_connect_work;
 static struct k_work connect_work;
 
 enum error_type {
@@ -171,8 +171,7 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 		       sizeof(gps_cloud_data.tag));
 
 		memcpy(&in_data.data[sizeof(gps_cloud_data.tag)],
-		gps_cloud_data.data.ptr,
-		       gps_cloud_data.data.len);
+		       gps_cloud_data.data.ptr, gps_cloud_data.data.len);
 
 		if (aggregator_put(in_data) != 0) {
 			printk("Failed to store GPS data.\n");
@@ -215,7 +214,7 @@ void sensor_data_send(struct nrf_cloud_sensor_data *data)
 {
 	int err;
 
-	if (pattern_recording || !atomic_get(&send_data_enable)) {
+	if (!atomic_get(&send_data_enable)) {
 		return;
 	}
 
@@ -231,24 +230,36 @@ void sensor_data_send(struct nrf_cloud_sensor_data *data)
 	}
 }
 
-/**@brief Callback for user association event received from nRF Cloud. */
-static void on_user_association_req(const struct nrf_cloud_evt *evt)
+static void on_cloud_evt_user_association_request(void)
 {
-	if (!pattern_recording) {
-		k_sem_init(&user_assoc_sem, 0, 1);
-		display_state = LEDS_PATTERN_WAIT;
-		pattern_recording = true;
-		buttons_captured = 0;
-		buttons_to_capture = evt->param.ua_req.sequence.len;
+	if (atomic_get(&association_requested) == 0) {
+		atomic_set(&association_requested, 1);
+		printk("Add device to cloud account.\n");
+		printk("Waiting for cloud association...\n");
+	}
+}
 
-		printk("Please enter the user association pattern");
+static void on_cloud_evt_user_associated(void)
+{
+	int err;
 
-		if (IS_ENABLED(CONFIG_CLOUD_UA_BUTTONS)) {
-			printk(" using the buttons and switches\n");
-		} else if (IS_ENABLED(CONFIG_CLOUD_UA_CONSOLE)) {
-			printk(" using the console\n");
+	if (atomic_get(&association_requested)) {
+		atomic_set(&association_requested, 0);
+
+		/* after successful association, the device must
+		 * reconnect to aws.
+		 */
+		printk("Device associated with cloud.\n");
+		printk("Reconnecting for settings to take effect.\n");
+		printk("Disconnecting from cloud...\n");
+
+		err = nrf_cloud_disconnect();
+
+		if (err == 0) {
+			return;
 		} else {
-			printk(". No valid assosiation pattern input found.\n");
+			printk("Disconnect failed, rebooting...\n");
+			nrf_cloud_error_handler(err);
 		}
 	}
 }
@@ -261,13 +272,15 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_CONNECTED\n");
+		k_delayed_work_cancel(&retry_connect_work);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST\n");
-		on_user_association_req(evt);
+		on_cloud_evt_user_association_request();
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATED\n");
+		on_cloud_evt_user_associated();
 		break;
 	case NRF_CLOUD_EVT_READY:
 		printk("NRF_CLOUD_EVT_READY\n");
@@ -339,27 +352,15 @@ static void cloud_connect(struct k_work *work)
 
 	ARG_UNUSED(work);
 
-	const enum nrf_cloud_ua supported_uas[] = {
-		NRF_CLOUD_UA_BUTTON
-	};
-
 	const enum nrf_cloud_sensor supported_sensors[] = {
-		NRF_CLOUD_SENSOR_GPS,
-		NRF_CLOUD_SENSOR_FLIP
-	};
-
-	const struct nrf_cloud_ua_list ua_list = {
-		.size = ARRAY_SIZE(supported_uas),
-		.ptr = supported_uas
+		NRF_CLOUD_SENSOR_GPS, NRF_CLOUD_SENSOR_FLIP
 	};
 
 	const struct nrf_cloud_sensor_list sensor_list = {
-		.size = ARRAY_SIZE(supported_sensors),
-		.ptr = supported_sensors
+		.size = ARRAY_SIZE(supported_sensors), .ptr = supported_sensors
 	};
 
 	const struct nrf_cloud_connect_param param = {
-		.ua = &ua_list,
 		.sensor = &sensor_list,
 	};
 
@@ -370,117 +371,24 @@ static void cloud_connect(struct k_work *work)
 		printk("nrf_cloud_connect failed: %d\n", err);
 		nrf_cloud_error_handler(err);
 	}
-}
 
-/**@brief Send user association information to nRF Cloud. */
-static void cloud_user_associate(void)
-{
-	int err;
-	const struct nrf_cloud_ua_param ua = {
-		.type = NRF_CLOUD_UA_BUTTON,
-		.sequence = {
-			.len = buttons_to_capture,
-			.ptr = ua_pattern
-		}
-	};
-
-	err = nrf_cloud_user_associate(&ua);
-
-	if (err) {
-		printk("nrf_cloud_user_associate failed: %d\n", err);
-		nrf_cloud_error_handler(err);
-	}
-}
-
-/**@brief Function to keep track of user association input when using
- * buttons and switches to register the association pattern.
- */
-static void pairing_button_register(u32_t button_state, u32_t has_changed)
-{
-	if (buttons_captured < buttons_to_capture) {
-		if (display_state == LEDS_PATTERN_WAIT)	{
-			display_state = LEDS_PATTERN_ENTRY;
-		}
-
-		if (button_state & has_changed & BUTTON_1) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_3;
-			printk("Button 1\n");
-		} else if (button_state & has_changed & BUTTON_2) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_4;
-			printk("Button 2\n");
-		} else if (has_changed & SWITCH_1) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_1;
-			printk("Switch 1\n");
-		} else if (has_changed & SWITCH_2) {
-			ua_pattern[buttons_captured++] =
-				NRF_CLOUD_UA_BUTTON_INPUT_2;
-			printk("Switch 2\n");
-		}
-	}
-
-	if (buttons_captured == buttons_to_capture) {
-		display_state = LEDS_PATTERN_DONE;
-		k_sem_give(&user_assoc_sem);
-	}
+	k_delayed_work_submit(&retry_connect_work, RETRY_CONNECT_WAIT_MS);
 }
 
 /**@brief Callback for button events from the DK buttons and LEDs library. */
 static void button_handler(u32_t buttons, u32_t has_changed)
 {
-	if (pattern_recording && IS_ENABLED(CONFIG_CLOUD_UA_BUTTONS)) {
-		pairing_button_register(buttons, has_changed);
-		return;
-	}
-}
-
-/**@brief Processing of user inputs to the application. */
-static void input_process(void)
-{
-	if (!pattern_recording) {
-		return;
-	}
-
-	if (k_sem_take(&user_assoc_sem, K_NO_WAIT) == 0) {
-		cloud_user_associate();
-		pattern_recording = false;
-		return;
-	}
-
-	if (!IS_ENABLED(CONFIG_CLOUD_UA_CONSOLE)) {
-		return;
-	}
-
-	u8_t c[2];
-
-	c[0] = console_getchar();
-	c[1] = console_getchar();
-
-	if (c[0] == 'b' && c[1] == '1') {
-		printk("Button 1\n");
-		ua_pattern[buttons_captured++] = NRF_CLOUD_UA_BUTTON_INPUT_3;
-	} else if (c[0] == 'b' && c[1] == '2') {
-		printk("Button 2\n");
-		ua_pattern[buttons_captured++] = NRF_CLOUD_UA_BUTTON_INPUT_4;
-	} else if (c[0] == 's' && c[1] == '1') {
-		printk("Switch 1\n");
-		ua_pattern[buttons_captured++] = NRF_CLOUD_UA_BUTTON_INPUT_1;
-	} else if (c[0] == 's' && c[1] == '2') {
-		printk("Switch 2\n");
-		ua_pattern[buttons_captured++] = NRF_CLOUD_UA_BUTTON_INPUT_2;
-	}
-
-	if (buttons_captured == buttons_to_capture) {
-		k_sem_give(&user_assoc_sem);
-	}
+	printk("button_handler: button 1: %u, button 2: %u "
+	       "switch 1: %u, switch 2: %u\n",
+	       (bool)(buttons & BUTTON_1), (bool)(buttons & BUTTON_2),
+	       (bool)(buttons & SWITCH_1), (bool)(buttons & SWITCH_2));
 }
 
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
 	k_delayed_work_init(&leds_update_work, leds_update);
+	k_delayed_work_init(&retry_connect_work, cloud_connect);
 	k_work_init(&connect_work, cloud_connect);
 	k_delayed_work_submit(&leds_update_work, LEDS_UPDATE_INTERVAL);
 }
@@ -581,7 +489,6 @@ void main(void)
 
 	while (true) {
 		nrf_cloud_process();
-		input_process();
 		send_aggregated_data();
 		k_sleep(K_MSEC(10));
 		k_cpu_idle();
