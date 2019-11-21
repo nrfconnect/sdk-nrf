@@ -48,30 +48,6 @@ config GPS_DEV_NAME
 
 endif
 
-choice
-	prompt "nRF Cloud user association"
-	default CLOUD_UA_BUTTONS
-	help
-		Select which method to use for nRF Cloud user association
-		input.
-
-config CLOUD_UA_BUTTONS
-	bool "Use buttons and switches"
-	help
-		Use buttons and switches on the development kit to provide
-		user association input.
-
-config CLOUD_UA_CONSOLE
-	bool "Use console input"
-	help
-		Use console to enter nRF Cloud user association input.
-		Allowed input is as follows:
-		'b1' = Button 1
-		'b2' = Button 2
-		's1' = Switch 1
-		's2' = Switch 2
-
-endchoice
 endmenu
 
 menu "Zephyr Kernel"
