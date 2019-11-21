@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Nordic MPSL"
+
+config MPSL_SIGNAL_THREAD_PRIO
+	# Hidden option to set the priority of the MPSL signal thread
+	int
+	default 8
+
+config MPSL_SIGNAL_STACK_SIZE
+	int "Size of the signal handler thread stack"
+	default 1024
+	help
+	  Size of the signal handler thread stack, used to process lower
+	  priority signals in MPSL.
+
+endmenu

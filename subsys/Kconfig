@@ -28,3 +28,5 @@ rsource "fw_info/Kconfig"
 rsource "debug/Kconfig"
 
 rsource "shell/Kconfig"
+
+rsource "mpsl/Kconfig"
