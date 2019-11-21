@@ -1112,18 +1112,21 @@ connect:
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
 			printk("Socket error: POLLNVAL\n");
+			printk("The cloud socket was unexpectedly closed.\n");
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
 
 		if ((fds[0].revents & POLLHUP) == POLLHUP) {
 			printk("Socket error: POLLHUP\n");
+			printk("Connection was closed by the cloud.\n");
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
 
 		if ((fds[0].revents & POLLERR) == POLLERR) {
 			printk("Socket error: POLLERR\n");
+			printk("Cloud connection was unexpectedly closed.\n");
 			error_handler(ERROR_CLOUD, -EIO);
 			return;
 		}
