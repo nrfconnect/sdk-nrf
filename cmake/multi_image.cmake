@@ -99,7 +99,6 @@ function(zephyr_add_external_image_from_source name sourcedir)
 
   # The variables inhereted from PARENT_SCOPE might be overwritten when additional Kconfig is loaded locally.
   # Therefore, safe guard the variables from parent scope that are needed.
-  set(APP_CONFIG_ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS ${CONFIG_ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS})
   import_kconfig(CONFIG_ ${${UPNAME}_PROJECT_BINARY_DIR}/.config)
 
   # Clear it, just in case it was defined in parent scope
@@ -143,7 +142,7 @@ function(zephyr_add_external_image_from_source name sourcedir)
                          )
     endforeach()
 
-    if (APP_CONFIG_ARM_FIRMWARE_USES_SECURE_ENTRY_FUNCS AND spm_veneers_lib)
+    if (CONFIG_${UPNAME}_CONTAINS_SECURE_ENTRIES AND spm_veneers_lib)
       # Link the entry veneers library file with the Non-Secure Firmware that needs it.
       zephyr_link_libraries(${spm_veneers_lib})
 
