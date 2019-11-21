@@ -117,8 +117,10 @@ function(zephyr_add_external_image_from_source name sourcedir)
   ExternalProject_Add(${UPNAME}_subimage
       SOURCE_DIR ${sourcedir}
       BINARY_DIR ${${UPNAME}_CMAKE_BINARY_DIR}
-      BUILD_BYPRODUCTS "${spm_veneers_lib}"
-                        ${${UPNAME}_PROJECT_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.hex
+      BUILD_BYPRODUCTS
+       # TODO: Remove this coupling
+      ${spm_veneers_lib}
+      ${${UPNAME}_PROJECT_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.hex
       # The CMake configure has been executed above due to cross
       # dependencies between the multiple CMake configure stages.
       CONFIGURE_COMMAND ""
