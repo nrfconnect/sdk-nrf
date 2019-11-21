@@ -570,7 +570,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		} else {
 			/* Try to match it with one of the data topics. */
 			dc.id = p->message_id;
-			dc.data.ptr = p->message.payload.data;
+			dc.data.ptr = nct.payload_buf;
 			dc.data.len = p->message.payload.len;
 
 			evt.type = NCT_EVT_DC_RX_DATA;
