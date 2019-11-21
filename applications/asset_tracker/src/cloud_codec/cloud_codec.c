@@ -251,12 +251,11 @@ static struct cloud_sensor_chan_cfg sensor_cfg[] = {
 static cloud_cmd_cb_t cloud_command_cb;
 struct cloud_command cmd_parsed;
 
-static int cloud_cmd_handle_sensor_set_chan_cfg(struct cloud_command const
-		      	  	  	  	  	  	  	  	  	*const cmd);
+static int cloud_cmd_handle_sensor_set_chan_cfg(struct cloud_command const *const cmd);
 
 static int cloud_set_chan_cfg_item(const enum cloud_channel channel,
-		      	  	  	  	  	   const enum sensor_chan_cfg_item_type type,
-								   const double value);
+				   const enum sensor_chan_cfg_item_type type,
+				   const double value);
 
 static int json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
@@ -504,7 +503,7 @@ int cloud_decode_init(cloud_cmd_cb_t cb)
 }
 
 int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
-				 struct cloud_msg *output)
+				  struct cloud_msg *output)
 {
 	__ASSERT_NO_MSG(sensor_data != NULL);
 	__ASSERT_NO_MSG(output != NULL);
@@ -631,7 +630,7 @@ static int sensor_chan_cfg_set_item(struct sensor_chan_cfg *const cfg,
 }
 
 static bool sensor_chan_cfg_is_send_allowed(const struct sensor_chan_cfg *const cfg,
-					  	  	  	  	  	    const double sensor_value)
+										    const double sensor_value)
 {
 	if ((cfg == NULL) ||
 	    (!cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE])) {
