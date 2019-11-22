@@ -6,3 +6,4 @@
 
 rsource "entropy/Kconfig"
 rsource "flash/Kconfig"
+rsource "clock_control/Kconfig"
