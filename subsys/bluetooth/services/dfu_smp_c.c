@@ -159,6 +159,8 @@ int bt_gatt_dfu_smp_c_command(struct bt_gatt_dfu_smp_c *dfu_smp_c,
 		dfu_smp_c->notification_params.notify =
 			bt_gatt_dfu_smp_c_notify;
 		dfu_smp_c->notification_params.value  = BT_GATT_CCC_NOTIFY;
+		atomic_set_bit(dfu_smp_c->notification_params.flags,
+			       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 		ret = bt_gatt_subscribe(dfu_smp_c->conn,
 					&dfu_smp_c->notification_params);

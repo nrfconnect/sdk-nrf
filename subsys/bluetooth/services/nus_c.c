@@ -177,6 +177,8 @@ int bt_gatt_nus_c_tx_notif_enable(struct bt_gatt_nus_c *nus_c)
 	nus_c->tx_notif_params.value = BT_GATT_CCC_NOTIFY;
 	nus_c->tx_notif_params.value_handle = nus_c->handles.tx;
 	nus_c->tx_notif_params.ccc_handle = nus_c->handles.tx_ccc;
+	atomic_set_bit(nus_c->tx_notif_params.flags,
+		       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
 	err = bt_gatt_subscribe(nus_c->conn, &nus_c->tx_notif_params);
 	if (err) {
