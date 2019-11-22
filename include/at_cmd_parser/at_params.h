@@ -60,8 +60,8 @@ union at_param_value {
 
 /** @brief A parameter is defined with a type, length and value. */
 struct at_param {
-	enum at_param_type   type;
-	size_t               size;
+	enum at_param_type type;
+	size_t size;
 	union at_param_value value;
 };
 
