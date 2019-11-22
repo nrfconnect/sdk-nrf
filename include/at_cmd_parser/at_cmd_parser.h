@@ -107,6 +107,28 @@ int at_parser_max_params_from_str(const char *at_params_str,
 int at_parser_params_from_str(const char *at_params_str, char **next_param_str,
 			      struct at_param_list *const list);
 
+enum at_cmd_type {
+	/** Unknown command, indicates that the actual command type could not
+	 *  be resolved.
+	 */
+	AT_CMD_TYPE_UNKNOWN,
+	/** AT set command. */
+	AT_CMD_TYPE_SET_COMMAND,
+	/** AT read command. */
+	AT_CMD_TYPE_READ_COMMAND,
+	/** AT test command. */
+	AT_CMD_TYPE_TEST_COMMAND
+};
+
+/**
+ * @brief Identify the AT command type.
+ *
+ * @param[in] cmd A pointer to the AT command string.
+ *
+ * @return Command type.
+ */
+enum at_cmd_type at_parser_cmd_type_get(const char *at_cmd);
+
 /** @} */
 
 #ifdef __cplusplus

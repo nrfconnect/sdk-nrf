@@ -133,6 +133,15 @@ static int at_parse_process_element(const char **str, int index,
 
 		at_params_string_put(list, index, start_ptr,
 				     tmpstr - start_ptr);
+
+		/* Skip read/test special characters. */
+		if ((*tmpstr == AT_CMD_SEPARATOR) &&
+		    (*(tmpstr + 1) == AT_CMD_READ_TEST_IDENTIFIER)) {
+			tmpstr += 2;
+		} else if (*tmpstr == AT_CMD_READ_TEST_IDENTIFIER) {
+			tmpstr++;
+		}
+
 	} else if (state == OPTIONAL) {
 		at_params_empty_put(list, index);
 
@@ -148,7 +157,6 @@ static int at_parse_process_element(const char **str, int index,
 				     tmpstr - start_ptr);
 
 		tmpstr++;
-
 	} else if (state == ARRAY) {
 		char *next;
 		size_t i = 0;
@@ -320,4 +328,30 @@ int at_parser_max_params_from_str(const char *at_params_str,
 	}
 
 	return err;
+}
+
+enum at_cmd_type at_parser_cmd_type_get(const char *at_cmd)
+{
+	enum at_cmd_type type;
+
+	if (!is_command(at_cmd)) {
+		return AT_CMD_TYPE_UNKNOWN;
+	}
+
+	at_cmd += sizeof("AT+") - 1;
+
+	while (is_valid_notification_char(*at_cmd)) {
+		at_cmd++;
+	}
+
+	if ((*at_cmd == AT_CMD_SEPARATOR) &&
+	    (*(at_cmd + 1) == AT_CMD_READ_TEST_IDENTIFIER)) {
+		type = AT_CMD_TYPE_TEST_COMMAND;
+	} else if (*at_cmd == AT_CMD_READ_TEST_IDENTIFIER) {
+		type = AT_CMD_TYPE_READ_COMMAND;
+	} else {
+		type = AT_CMD_TYPE_SET_COMMAND;
+	}
+
+	return type;
 }
