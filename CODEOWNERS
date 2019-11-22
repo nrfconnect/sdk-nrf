@@ -27,6 +27,7 @@ Kconfig*                                  @SebastianBoe
 /doc/**/conf.py                           @carlescufi
 # All subfolders
 /drivers/                                 @anangl
+/drivers/bt_ll_nrfxlib/                   @anangl @rugeGerritsen
 /dts/                                     @anangl
 /ext/                                     @carlescufi
 /include/debug/ppi_trace.h                @nordic-krch
@@ -44,7 +45,7 @@ Kconfig*                                  @SebastianBoe
 /lib/bsdlib/                              @rlubos
 /lib/modem_info/                          @rlubos
 /lib/pdn_management/                      @rlubos
-/lib/multithreading_lock/                 @joerchan
+/lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
@@ -62,12 +63,13 @@ Kconfig*                                  @SebastianBoe
 /scripts/hid_configurator/                @pdunaj
 /subsys/bluetooth/                        @joerchan @carlescufi
 /subsys/bluetooth/mesh/                   @trond-snekvik @joerchan
+/subsys/bluetooth/controller/             @joerchan @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/enhanced_shockburst/              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
-/subsys/mpsl/                             @joerchan
+/subsys/mpsl/                             @joerchan @rugeGerritsen
 /subsys/net/                              @rlubos
 /subsys/nfc/                              @grochu @anangl
 /subsys/partition_manager/                @hakonfam

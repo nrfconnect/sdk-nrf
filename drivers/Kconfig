@@ -19,7 +19,6 @@ rsource "sensor/Kconfig"
 rsource "st25r3911b/Kconfig"
 rsource "fprotect/Kconfig"
 rsource "flash_patch/Kconfig"
-rsource "clock_control/Kconfig"
 
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"
