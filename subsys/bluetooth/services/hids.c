@@ -114,23 +114,6 @@ int bt_gatt_hids_notify_disconnected(struct bt_gatt_hids *hids_obj,
 	return 0;
 }
 
-static bool hids_is_notification_enabled(struct bt_conn *conn,
-					 struct bt_gatt_ccc_cfg *ccd)
-{
-	const bt_addr_le_t *conn_addr = bt_conn_get_dst(conn);
-
-	for (size_t i = 0; i < BT_GATT_CCC_MAX; i++) {
-		bt_addr_le_t *ccd_addr = &ccd[i].peer;
-
-		if ((!memcmp(conn_addr, ccd_addr, sizeof(bt_addr_le_t))) &&
-		    (ccd[i].value == BT_GATT_CCC_NOTIFY)) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 static ssize_t hids_protocol_mode_write(struct bt_conn *conn,
 					struct bt_gatt_attr const *attr,
 					void const *buf, u16_t len,
@@ -1034,6 +1017,8 @@ static int inp_rep_notify_all(struct bt_gatt_hids *hids_obj,
 {
 	struct bt_gatt_hids_conn_data *conn_data;
 	u8_t *rep_data = NULL;
+	struct bt_gatt_attr *rep_attr =
+		&hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
 
 	const size_t contexts =
 	    bt_conn_ctx_count(hids_obj->conn_ctx);
@@ -1043,9 +1028,9 @@ static int inp_rep_notify_all(struct bt_gatt_hids *hids_obj,
 			bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
 
 		if (ctx) {
-			bool notification_enabled =
-			    hids_is_notification_enabled(ctx->conn,
-							 hids_inp_rep->ccc.cfg);
+			bool notification_enabled = bt_gatt_is_subscribed(
+				ctx->conn, rep_attr, BT_GATT_CCC_NOTIFY);
+
 			if (notification_enabled) {
 				conn_data = ctx->data;
 				rep_data = conn_data->inp_rep_ctx +
@@ -1063,7 +1048,7 @@ static int inp_rep_notify_all(struct bt_gatt_hids *hids_obj,
 	if (rep_data != NULL) {
 		struct bt_gatt_notify_params params = {0};
 
-		params.attr = &hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
+		params.attr = rep_attr;
 		params.data = rep;
 		params.len = hids_inp_rep->size;
 		params.func = cb;
@@ -1081,6 +1066,8 @@ int bt_gatt_hids_inp_rep_send(struct bt_gatt_hids *hids_obj,
 {
 	struct bt_gatt_hids_inp_rep *hids_inp_rep =
 	    &hids_obj->inp_rep_group.reports[rep_index];
+	struct bt_gatt_attr *rep_attr =
+	    &hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
 	u8_t *rep_data;
 
 	if (hids_inp_rep->size != len) {
@@ -1091,7 +1078,7 @@ int bt_gatt_hids_inp_rep_send(struct bt_gatt_hids *hids_obj,
 		return inp_rep_notify_all(hids_obj, hids_inp_rep, rep, len, cb);
 	}
 
-	if (!hids_is_notification_enabled(conn, hids_inp_rep->ccc.cfg)) {
+	if (!bt_gatt_is_subscribed(conn, rep_attr, BT_GATT_CCC_NOTIFY)) {
 		return -EACCES;
 	}
 
@@ -1128,6 +1115,7 @@ static int boot_mouse_inp_report_notify_all(
 {
 	struct bt_gatt_hids_conn_data *conn_data;
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
+	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	u8_t *rep_data = NULL;
 	u8_t rep_buff[BT_GATT_HIDS_BOOT_MOUSE_REP_LEN] = {0};
 
@@ -1141,9 +1129,8 @@ static int boot_mouse_inp_report_notify_all(
 			bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
 
 		if (ctx) {
-			bool notification_enabled =
-			    hids_is_notification_enabled(
-				ctx->conn, boot_mouse_inp_rep->ccc.cfg);
+			bool notification_enabled = bt_gatt_is_subscribed(
+				ctx->conn, rep_attr, BT_GATT_CCC_NOTIFY);
 
 			if (notification_enabled) {
 				conn_data = ctx->data;
@@ -1168,7 +1155,7 @@ static int boot_mouse_inp_report_notify_all(
 	if (rep_data != NULL) {
 		struct bt_gatt_notify_params params = {0};
 
-		params.attr = &hids_obj->gp.svc.attrs[rep_ind];
+		params.attr = rep_attr;
 		params.data = rep_buff;
 		params.len = sizeof(conn_data->hids_boot_mouse_inp_rep_ctx);
 		params.func = cb;
@@ -1188,6 +1175,7 @@ int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
 	u8_t rep_ind = hids_obj->boot_mouse_inp_rep.att_ind;
 	struct bt_gatt_hids_boot_mouse_inp_rep *boot_mouse_inp_rep =
 	    &hids_obj->boot_mouse_inp_rep;
+	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	u8_t *rep_data;
 
 	if (!conn) {
@@ -1196,7 +1184,7 @@ int bt_gatt_hids_boot_mouse_inp_rep_send(struct bt_gatt_hids *hids_obj,
 							x_delta, y_delta, cb);
 	}
 
-	if (!hids_is_notification_enabled(conn, boot_mouse_inp_rep->ccc.cfg)) {
+	if (!bt_gatt_is_subscribed(conn, rep_attr, BT_GATT_CCC_NOTIFY)) {
 		return -EACCES;
 	}
 
@@ -1245,6 +1233,7 @@ boot_kb_inp_notify_all(struct bt_gatt_hids *hids_obj, u8_t const *rep,
 {
 	struct bt_gatt_hids_conn_data *conn_data;
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
+	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	u8_t *rep_data = NULL;
 
 	const size_t contexts = bt_conn_ctx_count(hids_obj->conn_ctx);
@@ -1254,9 +1243,8 @@ boot_kb_inp_notify_all(struct bt_gatt_hids *hids_obj, u8_t const *rep,
 		    bt_conn_ctx_get_by_id(hids_obj->conn_ctx, i);
 
 		if (ctx) {
-			bool notification_enabled =
-			    hids_is_notification_enabled(
-				ctx->conn, boot_kb_inp_rep->ccc.cfg);
+			bool notification_enabled = bt_gatt_is_subscribed(
+				ctx->conn, rep_attr, BT_GATT_CCC_NOTIFY);
 
 			if (notification_enabled) {
 				conn_data = ctx->data;
@@ -1276,7 +1264,7 @@ boot_kb_inp_notify_all(struct bt_gatt_hids *hids_obj, u8_t const *rep,
 	if (rep_data != NULL) {
 		struct bt_gatt_notify_params params = {0};
 
-		params.attr = &hids_obj->gp.svc.attrs[rep_ind];
+		params.attr = rep_attr;
 		params.data = rep_data;
 		params.len = sizeof(conn_data->hids_boot_kb_inp_rep_ctx);
 		params.func = cb;
@@ -1294,6 +1282,7 @@ int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
 	u8_t rep_ind = hids_obj->boot_kb_inp_rep.att_ind;
 	struct bt_gatt_hids_boot_kb_inp_rep *boot_kb_input_report =
 	    &hids_obj->boot_kb_inp_rep;
+	struct bt_gatt_attr *rep_attr = &hids_obj->gp.svc.attrs[rep_ind];
 	u8_t *rep_data = NULL;
 
 	if (!conn) {
@@ -1301,7 +1290,7 @@ int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
 					      boot_kb_input_report, cb);
 	}
 
-	if (!hids_is_notification_enabled(conn, boot_kb_input_report->ccc.cfg)) {
+	if (!bt_gatt_is_subscribed(conn, rep_attr, BT_GATT_CCC_NOTIFY)) {
 		return -EACCES;
 	}
 
@@ -1325,7 +1314,7 @@ int bt_gatt_hids_boot_kb_inp_rep_send(struct bt_gatt_hids *hids_obj,
 
 	struct bt_gatt_notify_params params = {0};
 
-	params.attr = &hids_obj->gp.svc.attrs[rep_ind];
+	params.attr = rep_attr;
 	params.data = rep_data;
 	params.len = sizeof(conn_data->hids_boot_kb_inp_rep_ctx);
 	params.func = cb;
