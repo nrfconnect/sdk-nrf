@@ -61,7 +61,7 @@ const u8_t hid_report_desc[] = {
 	0x81, 0x06,         /* Input (Data, Variable, Relative) */
 
 	0xC0,             /* End Collection (Physical) */
-#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+#if (CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE && !CONFIG_DESKTOP_HID_KEYBOARD)
 	USER_CONFIG_FEATURE_REPORT(REPORT_ID_USER_CONFIG, REPORT_SIZE_USER_CONFIG),
 #endif
 	0xC0,           /* End Collection (Application) */
@@ -118,7 +118,7 @@ const u8_t hid_report_desc[] = {
 	0x75, 0x03,       /* Report Size (3) (padding) */
 	0x91, 0x01,       /* Output (Constant, Array, Absolute) */
 
-#if (CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE && !CONFIG_DESKTOP_HID_MOUSE)
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 	USER_CONFIG_FEATURE_REPORT(REPORT_ID_USER_CONFIG, REPORT_SIZE_USER_CONFIG),
 #endif
 	0xC0,           /* End Collection (Application) */
