@@ -57,8 +57,8 @@ union at_param_value {
 
 /** Parameter consisting of parameter type and value. */
 struct at_param {
-	enum at_param_type   type;
-	size_t               size;
+	enum at_param_type type;
+	size_t size;
 	union at_param_value value;
 };
 
@@ -282,7 +282,6 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
 int at_params_array_get(const struct at_param_list *list, size_t index,
 			u32_t *array, size_t *len);
 
-
 /**
  * @brief Get the number of valid parameters in the list.
  *
@@ -302,7 +301,6 @@ u32_t at_params_valid_count_get(const struct at_param_list *list);
  */
 enum at_param_type at_params_type_get(const struct at_param_list *list,
 				      size_t index);
-
 
 /** @} */
 

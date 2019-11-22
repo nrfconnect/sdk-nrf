@@ -19,14 +19,14 @@
 #include <stddef.h>
 #include <ctype.h>
 
-#define AT_PARAM_SEPARATOR              ','
-#define AT_RSP_SEPARATOR                ':'
-#define AT_CMD_SEPARATOR                '='
-#define AT_CMD_BUFFER_TERMINATOR        0
-#define AT_CMD_STRING_IDENTIFIER        '\"'
+#define AT_PARAM_SEPARATOR ','
+#define AT_RSP_SEPARATOR ':'
+#define AT_CMD_SEPARATOR '='
+#define AT_CMD_BUFFER_TERMINATOR 0
+#define AT_CMD_STRING_IDENTIFIER '\"'
 #define AT_STANDARD_NOTIFICATION_PREFIX '+'
-#define AT_PROP_NOTIFICATION_PREFX      '%'
-#define AT_CUSTOM_COMMAND_PREFX         '#'
+#define AT_PROP_NOTIFICATION_PREFX '%'
+#define AT_CUSTOM_COMMAND_PREFX '#'
 
 /**
  * @brief Check if character is a notification start character
@@ -130,8 +130,7 @@ static inline bool is_terminated(char chr)
  */
 static inline bool is_separator(char chr)
 {
-	if ((chr == AT_PARAM_SEPARATOR) ||
-	    (chr == AT_RSP_SEPARATOR) ||
+	if ((chr == AT_PARAM_SEPARATOR) || (chr == AT_RSP_SEPARATOR) ||
 	    (chr == AT_CMD_SEPARATOR)) {
 		return true;
 	}
@@ -151,8 +150,7 @@ static inline bool is_separator(char chr)
  */
 static inline bool is_lfcr(char chr)
 {
-	if ((chr == '\r') ||
-	    (chr == '\n')) {
+	if ((chr == '\r') || (chr == '\n')) {
 		return true;
 	}
 
@@ -229,9 +227,7 @@ static inline bool is_array_stop(char chr)
  */
 static inline bool is_number(char chr)
 {
-	if (isdigit(chr) ||
-	    (chr == '-') ||
-	    (chr == '+')) {
+	if (isdigit(chr) || (chr == '-') || (chr == '+')) {
 		return true;
 	}
 

@@ -66,7 +66,7 @@ extern "C" {
  */
 int at_parser_max_params_from_str(const char *at_params_str,
 				  char **next_param_str,
-				  struct at_param_list * const list,
+				  struct at_param_list *const list,
 				  size_t max_params_count);
 
 /**
@@ -104,9 +104,8 @@ int at_parser_max_params_from_str(const char *at_params_str,
  *                 number of parameters possible.
  * @retval -EINVAL One or more of the supplied parameters are invalid.
  */
-int at_parser_params_from_str(const char *at_params_str,
-			      char **next_param_str,
-			      struct at_param_list * const list);
+int at_parser_params_from_str(const char *at_params_str, char **next_param_str,
+			      struct at_param_list *const list);
 
 /** @} */
 
