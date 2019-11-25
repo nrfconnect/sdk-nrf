@@ -88,3 +88,14 @@ div.figure {
 .rst-content div.breathe-sectiondef {
   padding-left: 0 !important;
 }
+
+
+/* Fixing definition lists (changed in Sphinx > 1.7.5) */
+.rst-content dl:not(.docutils) dt {
+ color: #404040;
+ border-top: none;
+ background: none;
+ font-size: 100%;
+ margin-bottom: 12px;
+ padding: initial;
+}
