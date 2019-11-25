@@ -21,6 +21,7 @@
 # All Kconfig related files
 Kconfig*                                  @SebastianBoe
 # All doc related files
+*.rst                                     @ru-fu
 /doc/                                     @ru-fu
 /doc/CMakeLists.txt                       @carlescufi
 /doc/scripts/                             @carlescufi
@@ -33,11 +34,18 @@ Kconfig*                                  @SebastianBoe
 /include/debug/ppi_trace.h                @nordic-krch
 /include/                                 @anangl @rlubos @pizi-nordic
 /include/bluetooth/                       @joerchan
+/include/bluetooth/**/*.rst               @b-gent
 /include/bluetooth/mesh/                  @trond-snekvik @joerchan
+/include/debug/**/*.rst                   @b-gent
 /include/drivers/                         @anangl
+/include/drivers/**/*.rst                 @b-gent
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
+/include/nfc/**/*.rst                     @b-gent
 /include/shell/                           @nordic-krch
+/include/shell/**/*.rst                   @b-gent
+/include/event_manager.rst                @b-gent
+/include/profiler.rst                     @b-gent
 /lib/bin/                                 @rlubos @lemrey
 /lib/at_cmd_parser/                       @rlubos
 /lib/at_host/                             @rlubos
@@ -48,16 +56,22 @@ Kconfig*                                  @SebastianBoe
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
+/samples/bluetooth/**/README.rst          @b-gent
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bootloader/                      @hakonfam @ioannisg
 /subsys/debug/CMakeLists.txt              @nordic-krch
 /samples/debug/ppi_trace/                 @nordic-krch
+/samples/debug/**/README.rst              @b-gent
 /samples/esb/                             @lemrey
+/samples/event_manager/README.rst         @b-gent
 /samples/mpsl/                            @joerchan @rugeGerritsen
+/samples/mpsl/**/README.rst               @b-gent
 /samples/nfc/                             @grochu
+/samples/nfc/**/README.rst                @b-gent
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
 /samples/profiler/                        @pdunaj @pizi-nordic
+/samples/profiler/README.rst              @b-gent
 /samples/usb/usb_uart_bridge/             @joakimtoe @jtguggedal
 /samples/CMakeLists.txt                   @SebastianBoe
 /scripts/                                 @mbolivar @tejlmand
@@ -81,4 +95,3 @@ Kconfig*                                  @SebastianBoe
 /subsys/nonsecure/                        @ioannisg
 /tests/                                   @rakons
 /zephyr/                                  @carlescufi
-
