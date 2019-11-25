@@ -505,6 +505,42 @@ static int ble_enable(void)
 	return 0;
 }
 
+ISR_DIRECT_DECLARE(ble_controller_radio_isr_wrapper)
+{
+	ble_controller_RADIO_IRQHandler();
+
+	ISR_DIRECT_PM();
+
+	/* We may need to reschedule in case a radio timeslot callback
+	 * accesses zephyr primitives.
+	 */
+	return 1;
+}
+
+ISR_DIRECT_DECLARE(ble_controller_rtc0_isr_wrapper)
+{
+	ble_controller_RTC0_IRQHandler();
+
+	ISR_DIRECT_PM();
+
+	/* No need for rescheduling, because the interrupt handler
+	 * does not access zephyr primitives.
+	 */
+	return 0;
+}
+
+ISR_DIRECT_DECLARE(ble_controller_timer0_isr_wrapper)
+{
+	ble_controller_TIMER0_IRQHandler();
+
+	ISR_DIRECT_PM();
+
+	/* We may need to reschedule in case a radio timeslot callback
+	 * accesses zephyr primitives.
+	 */
+	return 1;
+}
+
 static int hci_driver_init(struct device *unused)
 {
 	ARG_UNUSED(unused);
@@ -520,11 +556,11 @@ static int hci_driver_init(struct device *unused)
 	}
 
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, BLE_CONTROLLER_IRQ_PRIO_HIGH,
-			   ble_controller_RADIO_IRQHandler, IRQ_ZERO_LATENCY);
+			   ble_controller_radio_isr_wrapper, IRQ_ZERO_LATENCY);
 	IRQ_DIRECT_CONNECT(RTC0_IRQn, BLE_CONTROLLER_IRQ_PRIO_HIGH,
-			   ble_controller_RTC0_IRQHandler, IRQ_ZERO_LATENCY);
+			   ble_controller_rtc0_isr_wrapper, IRQ_ZERO_LATENCY);
 	IRQ_DIRECT_CONNECT(TIMER0_IRQn, BLE_CONTROLLER_IRQ_PRIO_HIGH,
-			   ble_controller_TIMER0_IRQHandler, IRQ_ZERO_LATENCY);
+			   ble_controller_timer0_isr_wrapper, IRQ_ZERO_LATENCY);
 
 	IRQ_CONNECT(SWI5_IRQn, BLE_CONTROLLER_IRQ_PRIO_LOW,
 		    SIGNALLING_Handler, NULL, 0);
