@@ -20,6 +20,8 @@
 
 #include "ble_scan_def.h"
 
+#include "ble_controller_hci_vs.h"
+
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
@@ -466,20 +468,46 @@ static void scan_init(void)
 
 static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 {
-	struct bt_le_conn_param param = {
-		.latency = 99,
-		.timeout = 400
-	};
+	int err;
 
 	if (peer_llpm_support && IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
-		param.interval_min = 0x0D01;
-		param.interval_max = 0x0D01;
-	} else {
-		param.interval_min = 0x0006;
-		param.interval_max = 0x0006;
-	}
+		struct net_buf *buf;
 
-	int err = bt_conn_le_param_update(conn, &param);
+		hci_vs_cmd_conn_update_t *cmd_conn_update;
+
+		buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
+					sizeof(*cmd_conn_update));
+		if (!buf) {
+			printk("Could not allocate command buffer\n");
+			return;
+		}
+
+		u16_t conn_handle;
+
+		err = bt_hci_get_conn_handle(conn, &conn_handle);
+		if (err) {
+			printk("Failed obtaining conn_handle (err %d)\n", err);
+			return;
+		}
+
+		cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
+		cmd_conn_update->connection_handle   = conn_handle;
+		cmd_conn_update->conn_interval_us    = 1000;
+		cmd_conn_update->conn_latency        = 99;
+		cmd_conn_update->supervision_timeout = 400;
+
+		err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf,
+					   NULL);
+	} else {
+		struct bt_le_conn_param param = {
+			.interval_min = 0x0006,
+			.interval_max = 0x0006,
+			.latency = 99,
+			.timeout = 400,
+		};
+
+		err = bt_conn_le_param_update(conn, &param);
+	}
 
 	if (err) {
 		LOG_ERR("Cannot set conn params (err:%d)", err);
