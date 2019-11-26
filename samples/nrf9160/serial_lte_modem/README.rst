@@ -19,7 +19,7 @@ Requirements
 
 * The following development board:
 
-    * nRF9160 DK board (PCA10090)
+    * |nRF9160DK|
 
 * If the client is a PC:
 
@@ -27,8 +27,8 @@ Requirements
 
 * If the client is an nRF52 device:
 
-    * nRF52840 DK board (PCA10056)
-    * nRF52832 DK board (PCA10040)
+    * |nRF52840DK|
+    * |nRF52DK|
 
 .. terminal_config
 

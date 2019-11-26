@@ -23,7 +23,7 @@ Requirements
 
 * The following development board:
 
-  * nRF9160 DK board (PCA10090)
+  * |nRF9160DK|
 
 * A signed firmware image that is available for download from an HTTP server.
   This image is automatically generated when building the application.

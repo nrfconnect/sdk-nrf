@@ -51,8 +51,8 @@ Requirements
 
 * One of the following development boards:
 
-    * nRF9160 DK board (PCA10090)
-    * Thingy:91 (PCA20035)
+    * |nRF9160DK|
+    * |Thingy91|
 
 * .. include:: /includes/spm.txt
 

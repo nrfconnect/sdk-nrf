@@ -39,9 +39,9 @@ Requirements
 * One of the following development boards:
 
   * |nRF5340DK|
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
-  * nRF51 Development Kit board (PCA10028) (with the `NFC_OOB_PAIRING` option disabled)
+  * |nRF52840DK|
+  * |nRF52DK|
+  * |nRF51DK| (with the `NFC_OOB_PAIRING` option disabled)
 
 If the `NFC_OOB_PAIRING` feature is enabled:
 

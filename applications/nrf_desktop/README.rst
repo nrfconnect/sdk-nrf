@@ -28,7 +28,7 @@ Requirements
 
 The project contains configuration files for following boards:
 
-    * PCA10056 (nRF52840 DK) - a sample where the mouse is emulated using DK buttons
+    * |nRF52840DK| - a sample where the mouse is emulated using DK buttons
     * PCA20041 - nRF Desktop gaming mouse reference design
     * PCA20037 - nRF Desktop keyboard reference design
     * PCA20044 - nRF Desktop casual mouse reference design (nRF52832)

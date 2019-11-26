@@ -11,7 +11,7 @@ Requirements
 
 * One of the following development boards:
 
-  * Thingy:91 board (PCA20035)
+  * |Thingy91|
 
 * A USB host which can communicate with CDC ACM devices, like a Windows or Linux PC
 

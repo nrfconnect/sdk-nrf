@@ -29,9 +29,9 @@ Requirements
 
   * |nRF9160DK|
   * |nRF5340DK|
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
-  * nRF51 Development Kit board (PCA10028)
+  * |nRF52840DK|
+  * |nRF52DK|
+  * |nRF51DK|
 
 User interface
 **************

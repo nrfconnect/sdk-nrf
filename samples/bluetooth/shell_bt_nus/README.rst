@@ -18,8 +18,8 @@ Requirements
 * One of the following development boards:
 
   * |nRF5340DK|
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
+  * |nRF52840DK|
+  * |nRF52DK|
 
 * A second nRF52 Development Kit board (PCA10040) for connecting with bt_nus_shell.py.
   Alternatively, you can use :ref:`ble_console_readme` for connecting (Linux only).

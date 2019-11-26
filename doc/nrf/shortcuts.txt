@@ -14,3 +14,8 @@
 
 .. |nRF9160DK| replace:: nRF9160 DK board (PCA10090) - see :ref:`ug_nrf9160`
 .. |nRF5340DK| replace:: nRF5340 PDK board (PCA10095) - see :ref:`ug_nrf5340`
+.. |nRF52840DK| replace:: nRF52840 DK board (PCA10056)
+.. |nRF51DK| replace:: nRF51 DK board (PCA10028)
+.. |nRF52DK| replace:: nRF52 DK board (PCA10040)
+.. |nRF52840Dongle| replace:: nRF52840 Dongle (PCA10059)
+.. |Thingy91| replace:: Thingy:91 (PCA20035)

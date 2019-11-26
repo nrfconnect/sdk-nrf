@@ -22,7 +22,7 @@ Requirements
 
 * The following development board:
 
-  * nRF9160 DK board (PCA10090)
+  * |nRF9160DK|
 
 * .. include:: /includes/spm.txt
 
