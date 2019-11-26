@@ -1,4 +1,4 @@
-.. _bh1749:
+﻿.. _bh1749:
 
 BH1749: Ambient Light Sensor IC
 #####################################################
@@ -22,7 +22,7 @@ Requirements
 
 * The following development board:
 
-  * PCA20035
+  * |Thingy91|
 
 Building and Running
 ********************

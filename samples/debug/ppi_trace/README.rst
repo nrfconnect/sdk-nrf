@@ -27,9 +27,9 @@ Requirements
 
 * One of the following development boards:
 
-  * nRF9160 DK board (PCA10090)
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
+  * |nRF9160DK|
+  * |nRF52840DK|
+  * |nRF52DK|
 * Logic analyzer
 
 

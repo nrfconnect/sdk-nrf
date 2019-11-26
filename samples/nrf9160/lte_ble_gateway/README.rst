@@ -25,7 +25,7 @@ Requirements
 * A `Nordic Thingy:52`_
 * The following development board:
 
-  * nRF9160 DK board (PCA10090)
+  * |nRF9160DK|
 
 * :ref:`zephyr:bluetooth-hci-uart-sample` must be programmed to the nRF52 board controller on the board.
 * .. include:: /includes/spm.txt

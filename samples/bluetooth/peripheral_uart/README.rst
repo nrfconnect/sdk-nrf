@@ -21,8 +21,8 @@ Requirements
 * One of the following development boards:
 
   * |nRF5340DK|
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
+  * |nRF52840DK|
+  * |nRF52DK|
 
 * A phone or tablet running a compatible application. The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
 

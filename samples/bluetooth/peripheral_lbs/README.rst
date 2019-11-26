@@ -19,10 +19,10 @@ Requirements
 * One of the Nordic development boards:
 
   * |nRF5340DK|
-  * nRF52840 Dongle (PCA10059)
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
-  * nRF51 Development Kit board (PCA10028)
+  * |nRF52840Dongle|
+  * |nRF52840DK|
+  * |nRF52DK|
+  * |nRF51DK|
 
 * A phone or tablet running a compatible application, for example `nRF Connect for Mobile`_, `nRF Blinky`_, or `nRF Toolbox`_.
 

@@ -77,8 +77,8 @@ Requirements
 
 * Two of the following nRF52-series development kit boards:
 
-  * PCA10040
-  * PCA10056
+  * |nRF52DK|
+  * |nRF52840DK|
   * Other boards running BLE Controller variants that support LLPM (see :ref:`nrfxlib:ble_controller` Proprietary feature support)
 
   You can mix different boards.

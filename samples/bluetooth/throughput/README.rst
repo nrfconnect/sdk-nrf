@@ -74,9 +74,9 @@ Requirements
        CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
        CONFIG_BT_CTLR_DATA_LENGTH_MAX=251
 
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
-  * nRF51 Development Kit board (PCA10028) - limited support;
+  * |nRF52840DK|
+  * |nRF52DK|
+  * |nRF51DK| - limited support;
     some features, like an over-the-air data rate of 2 Ms/s, are not available on this board
 
   You can mix different boards.

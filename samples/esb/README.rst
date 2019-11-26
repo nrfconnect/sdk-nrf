@@ -31,9 +31,9 @@ Requirements
 
 * Two of the following development boards:
 
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
-  * nRF51 Development Kit board (PCA10028)
+  * |nRF52840DK|
+  * |nRF52DK|
+  * |nRF51DK|
 
   You can mix different boards.
 
