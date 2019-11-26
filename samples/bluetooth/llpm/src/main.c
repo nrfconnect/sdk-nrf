@@ -25,6 +25,7 @@
 #define INTERVAL_MIN    0x50     /* 80 units,  100 ms */
 #define INTERVAL_MAX    0x50     /* 80 units,  100 ms */
 #define INTERVAL_LLPM   0x0D01   /* Proprietary  1 ms */
+#define INTERVAL_LLPM_US 1000
 
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
@@ -238,14 +239,32 @@ static int enable_llpm_mode(void)
 static int enable_llpm_short_connection_interval(void)
 {
 	int err;
-	struct bt_le_conn_param conn_param = {
-		.interval_min = INTERVAL_LLPM,
-		.interval_max = INTERVAL_LLPM,
-		.latency = 0,
-		.timeout = 300
-	};
+	struct net_buf *buf;
 
-	err = bt_conn_le_param_update(default_conn, &conn_param);
+	hci_vs_cmd_conn_update_t *cmd_conn_update;
+
+	buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
+				sizeof(*cmd_conn_update));
+	if (!buf) {
+		printk("Could not allocate command buffer\n");
+		return -ENOMEM;
+	}
+
+	u16_t conn_handle;
+
+	err = bt_hci_get_conn_handle(default_conn, &conn_handle);
+	if (err) {
+		printk("Failed obtaining conn_handle (err %d)\n", err);
+		return err;
+	}
+
+	cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
+	cmd_conn_update->connection_handle   = conn_handle;
+	cmd_conn_update->conn_interval_us    = INTERVAL_LLPM_US;
+	cmd_conn_update->conn_latency        = 0;
+	cmd_conn_update->supervision_timeout = 300;
+
+	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf, NULL);
 	if (err) {
 		printk("Update connection parameters failed (err %d)\n", err);
 		return err;
