@@ -13,12 +13,14 @@
 #include <bsd_limits.h>
 #include <bsd_os.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <init.h>
 #include <net/socket_offload.h>
 #include <nrf_socket.h>
 #include <nrf_errno.h>
+#include <sockets_internal.h>
+#include <sys/fdtable.h>
 #include <zephyr.h>
-#include <fcntl.h>
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
@@ -27,6 +29,14 @@
 #endif
 
 #define PROTO_WILDCARD 0
+
+/* Increment by 1 to make sure we do not store the value of 0, which has
+ * a special meaning in the fdtable subsys.
+ */
+#define SD_TO_OBJ(sd) ((void *)(sd + 1))
+#define OBJ_TO_SD(obj) (((int)obj) - 1)
+
+static const struct socket_op_vtable nrf91_socket_fd_op_vtable;
 
 static void z_to_nrf_ipv4(const struct sockaddr *z_in,
 			  struct nrf_sockaddr_in *nrf_out)
@@ -391,8 +401,8 @@ static int nrf_to_z_dns_error_code(int nrf_error)
 	}
 }
 
-static int z_to_nrf_addrinfo_hints(const struct addrinfo *z_in,
-			      struct nrf_addrinfo *nrf_out)
+static int z_to_nrf_addrinfo_hints(const struct zsock_addrinfo *z_in,
+				   struct nrf_addrinfo *nrf_out)
 {
 	int family;
 
@@ -418,8 +428,8 @@ static int z_to_nrf_addrinfo_hints(const struct addrinfo *z_in,
 	return 0;
 }
 
-static int nrf_to_z_addrinfo(struct addrinfo *z_out,
-			      const struct nrf_addrinfo *nrf_in)
+static int nrf_to_z_addrinfo(struct zsock_addrinfo *z_out,
+			     const struct nrf_addrinfo *nrf_in)
 {
 	int family;
 
@@ -486,20 +496,21 @@ static int nrf91_socket_offload_socket(int family, int type, int proto)
 	return retval;
 }
 
-static int nrf91_socket_offload_close(int sd)
-{
-	return nrf_close(sd);
-}
-
-static int nrf91_socket_offload_accept(int sd, struct sockaddr *addr,
+static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 				       socklen_t *addrlen)
 {
-	int retval;
+	int fd = z_reserve_fd();
+	int sd = OBJ_TO_SD(obj);
+	int new_sd;
 	struct nrf_sockaddr *nrf_addr_ptr = NULL;
 	nrf_socklen_t *nrf_addrlen_ptr = NULL;
 	/* Use `struct nrf_sockaddr_in6` to fit both, IPv4 and IPv6 */
 	struct nrf_sockaddr_in6 nrf_addr;
 	nrf_socklen_t nrf_addrlen;
+
+	if (fd < 0) {
+		return -1;
+	}
 
 	if ((addr != NULL) && (addrlen != NULL)) {
 		nrf_addr_ptr = (struct nrf_sockaddr *)&nrf_addr;
@@ -516,8 +527,8 @@ static int nrf91_socket_offload_accept(int sd, struct sockaddr *addr,
 		}
 	}
 
-	retval = nrf_accept(sd, nrf_addr_ptr, nrf_addrlen_ptr);
-	if (retval < 0) {
+	new_sd = nrf_accept(sd, nrf_addr_ptr, nrf_addrlen_ptr);
+	if (new_sd < 0) {
 		/* nrf_accept sets errno appropriately */
 		return -1;
 	}
@@ -536,17 +547,20 @@ static int nrf91_socket_offload_accept(int sd, struct sockaddr *addr,
 		}
 	}
 
-	return retval;
+	z_finalize_fd(fd, SD_TO_OBJ(new_sd),
+		      (const struct fd_op_vtable *)&nrf91_socket_fd_op_vtable);
+
+	return fd;
 
 error:
-	retval = -1;
-	errno = ENOTSUP;
-	return retval;
+	z_free_fd(fd);
+	return -1;
 }
 
-static int nrf91_socket_offload_bind(int sd, const struct sockaddr *addr,
+static int nrf91_socket_offload_bind(void *obj, const struct sockaddr *addr,
 				     socklen_t addrlen)
 {
+	int sd = OBJ_TO_SD(obj);
 	int retval;
 
 	if (addr->sa_family == AF_INET) {
@@ -573,14 +587,17 @@ error:
 	return retval;
 }
 
-static int nrf91_socket_offload_listen(int sd, int backlog)
+static int nrf91_socket_offload_listen(void *obj, int backlog)
 {
+	int sd = OBJ_TO_SD(obj);
+
 	return nrf_listen(sd, backlog);
 }
 
-static int nrf91_socket_offload_connect(int sd, const struct sockaddr *addr,
+static int nrf91_socket_offload_connect(void *obj, const struct sockaddr *addr,
 					socklen_t addrlen)
 {
+	int sd = OBJ_TO_SD(obj);
 	int retval;
 
 	if (addr->sa_family == AF_INET) {
@@ -612,9 +629,10 @@ error:
 	return retval;
 }
 
-static int nrf91_socket_offload_setsockopt(int sd, int level, int optname,
+static int nrf91_socket_offload_setsockopt(void *obj, int level, int optname,
 					   const void *optval, socklen_t optlen)
 {
+	int sd = OBJ_TO_SD(obj);
 	int retval;
 	int nrf_level;
 	int nrf_optname;
@@ -645,9 +663,10 @@ error:
 	return retval;
 }
 
-static int nrf91_socket_offload_getsockopt(int sd, int level, int optname,
+static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 					   void *optval, socklen_t *optlen)
 {
+	int sd = OBJ_TO_SD(obj);
 	int retval;
 	int nrf_level;
 	int nrf_optname;
@@ -697,17 +716,11 @@ error:
 	return retval;
 }
 
-static ssize_t nrf91_socket_offload_recv(int sd, void *buf, size_t max_len,
-					 int flags)
-{
-	return nrf_recv(sd, buf, max_len, z_to_nrf_flags(flags));
-}
-
-static ssize_t nrf91_socket_offload_recvfrom(int sd, void *buf, short int len,
-					     short int flags,
-					     struct sockaddr *from,
+static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
+					     int flags, struct sockaddr *from,
 					     socklen_t *fromlen)
 {
+	int sd = OBJ_TO_SD(obj);
 	ssize_t retval;
 
 	if (from == NULL) {
@@ -734,20 +747,14 @@ static ssize_t nrf91_socket_offload_recvfrom(int sd, void *buf, short int len,
 	return retval;
 }
 
-static ssize_t nrf91_socket_offload_send(int sd, const void *buf, size_t len,
-					 int flags)
-{
-	if (IS_ENABLED(CONFIG_NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS)) {
-		len = MIN(len, CONFIG_NRF91_SOCKET_BLOCK_LIMIT);
-	}
-	return nrf_send(sd, buf, len, z_to_nrf_flags(flags));
-}
-
-static ssize_t nrf91_socket_offload_sendto(int sd, const void *buf, size_t len,
-					   int flags, const struct sockaddr *to,
+static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
+					   size_t len, int flags,
+					   const struct sockaddr *to,
 					   socklen_t tolen)
 {
+	int sd = OBJ_TO_SD(obj);
 	ssize_t retval;
+
 	if (IS_ENABLED(CONFIG_NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS)) {
 		len = MIN(len, CONFIG_NRF91_SOCKET_BLOCK_LIMIT);
 	}
@@ -772,6 +779,7 @@ static ssize_t nrf91_socket_offload_sendto(int sd, const void *buf, size_t len,
 	} else {
 		goto error;
 	}
+
 	return retval;
 
 error:
@@ -780,14 +788,42 @@ error:
 	return retval;
 }
 
+static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
+					    int flags)
+{
+	errno = -ENOTSUP;
+	return -1;
+}
+
 static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 					    int timeout)
 {
-	int retval;
-	struct nrf_pollfd tmp[BSD_MAX_SOCKET_COUNT] = {0};
+	int retval = 0;
+	struct nrf_pollfd tmp[BSD_MAX_SOCKET_COUNT] = { 0 };
+	void *obj;
 
 	for (int i = 0; i < nfds; i++) {
-		tmp[i].handle = fds[i].fd;
+		tmp[i].requested = 0;
+		fds[i].revents = 0;
+
+		if (fds[i].fd < 0) {
+			/* Per POSIX, negative fd's are just ignored */
+			tmp[i].handle = fds[i].fd;
+			continue;
+		} else {
+			obj = z_get_fd_obj(fds[i].fd,
+					   (const struct fd_op_vtable *)
+						     &nrf91_socket_fd_op_vtable,
+					   ENOTSUP);
+			if (obj != NULL) {
+				/* Offloaded socket found. */
+				tmp[i].handle = OBJ_TO_SD(obj);
+			} else {
+				/* Non-offloaded socket, return an error. */
+				fds[i].revents = POLLNVAL;
+				retval++;
+			}
+		}
 
 		/* Translate the API from native to nRF */
 		if (fds[i].events & POLLIN) {
@@ -798,12 +834,19 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 		}
 	}
 
+	if (retval > 0) {
+		return retval;
+	}
+
 	retval = nrf_poll((struct nrf_pollfd *)&tmp, nfds, timeout);
 
 	/* Translate the API from nRF to native */
 	/* No need to translate .requested, shall be untouched by poll() */
 	for (int i = 0; i < nfds; i++) {
-		fds[i].revents = 0;
+		if (fds[i].fd < 0) {
+			continue;
+		}
+
 		if (tmp[i].returned & NRF_POLLIN) {
 			fds[i].revents |= POLLIN;
 		}
@@ -824,12 +867,12 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 	return retval;
 }
 
-static void nrf91_socket_offload_freeaddrinfo(struct addrinfo *root)
+static void nrf91_socket_offload_freeaddrinfo(struct zsock_addrinfo *root)
 {
-	struct addrinfo *next = root;
+	struct zsock_addrinfo *next = root;
 
 	while (next != NULL) {
-		struct addrinfo *this = next;
+		struct zsock_addrinfo *this = next;
 
 		next = next->ai_next;
 		k_free(this->ai_addr);
@@ -839,8 +882,8 @@ static void nrf91_socket_offload_freeaddrinfo(struct addrinfo *root)
 
 static int nrf91_socket_offload_getaddrinfo(const char *node,
 					    const char *service,
-					    const struct addrinfo *hints,
-					    struct addrinfo **res)
+					    const struct zsock_addrinfo *hints,
+					    struct zsock_addrinfo **res)
 {
 	int error;
 	struct nrf_addrinfo nrf_hints;
@@ -877,12 +920,13 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	}
 
 	struct nrf_addrinfo *next_nrf_res = nrf_res;
-	struct addrinfo *latest_z_res = NULL;
+	struct zsock_addrinfo *latest_z_res = NULL;
 
 	*res = NULL;
 
 	while ((retval == 0) && (next_nrf_res != NULL)) {
-		struct addrinfo *next_z_res = k_malloc(sizeof(struct addrinfo));
+		struct zsock_addrinfo *next_z_res =
+					k_malloc(sizeof(struct zsock_addrinfo));
 
 		if (next_z_res == NULL) {
 			retval = DNS_EAI_MEMORY;
@@ -959,24 +1003,98 @@ error:
 	return retval;
 }
 
-static const struct socket_offload nrf91_socket_offload_ops = {
-	.socket = nrf91_socket_offload_socket,
-	.close = nrf91_socket_offload_close,
-	.accept = nrf91_socket_offload_accept,
+static int nrf91_socket_offload_ioctl(void *obj, unsigned int request,
+				      va_list args)
+{
+	int sd = OBJ_TO_SD(obj);
+
+	switch (request) {
+	/* Handle close specifically. */
+	case ZFD_IOCTL_CLOSE:
+		return nrf_close(sd);
+
+	case ZFD_IOCTL_POLL_PREPARE:
+		return -EXDEV;
+
+	case ZFD_IOCTL_POLL_UPDATE:
+		return -EOPNOTSUPP;
+
+	case ZFD_IOCTL_POLL_OFFLOAD: {
+		struct zsock_pollfd *fds;
+		int nfds;
+		int timeout;
+
+		fds = va_arg(args, struct zsock_pollfd *);
+		nfds = va_arg(args, int);
+		timeout = va_arg(args, int);
+
+		return nrf91_socket_offload_poll(fds, nfds, timeout);
+	}
+
+	/* Otherwise, just forward to offloaded fcntl()
+	 * In Zephyr, fcntl() is just an alias of ioctl().
+	 */
+	default:
+		return nrf91_socket_offload_fcntl(sd, request, args);
+	}
+}
+
+static ssize_t nrf91_socket_offload_read(void *obj, void *buffer, size_t count)
+{
+	return nrf91_socket_offload_recvfrom(obj, buffer, count, 0, NULL, 0);
+}
+
+static ssize_t nrf91_socket_offload_write(void *obj, const void *buffer,
+					  size_t count)
+{
+	return nrf91_socket_offload_sendto(obj, buffer, count, 0, NULL, 0);
+}
+
+static const struct socket_op_vtable nrf91_socket_fd_op_vtable = {
+	.fd_vtable = {
+		.read = nrf91_socket_offload_read,
+		.write = nrf91_socket_offload_write,
+		.ioctl = nrf91_socket_offload_ioctl,
+	},
 	.bind = nrf91_socket_offload_bind,
-	.listen = nrf91_socket_offload_listen,
 	.connect = nrf91_socket_offload_connect,
-	.setsockopt = nrf91_socket_offload_setsockopt,
-	.getsockopt = nrf91_socket_offload_getsockopt,
-	.recv = nrf91_socket_offload_recv,
-	.recvfrom = nrf91_socket_offload_recvfrom,
-	.send = nrf91_socket_offload_send,
+	.listen = nrf91_socket_offload_listen,
+	.accept = nrf91_socket_offload_accept,
 	.sendto = nrf91_socket_offload_sendto,
-	.poll = nrf91_socket_offload_poll,
-	.getaddrinfo = nrf91_socket_offload_getaddrinfo,
-	.freeaddrinfo = nrf91_socket_offload_freeaddrinfo,
-	.fcntl = nrf91_socket_offload_fcntl,
+	.sendmsg = nrf91_socket_offload_sendmsg,
+	.recvfrom = nrf91_socket_offload_recvfrom,
+	.getsockopt = nrf91_socket_offload_getsockopt,
+	.setsockopt = nrf91_socket_offload_setsockopt,
 };
+
+static bool nrf91_socket_is_supported(int family, int type, int proto)
+{
+	return true;
+}
+
+static int nrf91_socket_create(int family, int type, int proto)
+{
+	int fd = z_reserve_fd();
+	int sd;
+
+	if (fd < 0) {
+		return -1;
+	}
+
+	sd = nrf91_socket_offload_socket(family, type, proto);
+	if (sd < 0) {
+		z_free_fd(fd);
+		return -1;
+	}
+
+	z_finalize_fd(fd, SD_TO_OBJ(sd),
+		      (const struct fd_op_vtable *)&nrf91_socket_fd_op_vtable);
+
+	return fd;
+}
+
+NET_SOCKET_REGISTER(nrf91_socket, AF_UNSPEC, nrf91_socket_is_supported,
+		    nrf91_socket_create);
 
 /* Create a network interface for nRF91 */
 
@@ -986,6 +1104,11 @@ static int nrf91_bsdlib_socket_offload_init(struct device *arg)
 
 	return 0;
 }
+
+static const struct socket_dns_offload nrf91_socket_dns_offload_ops = {
+	.getaddrinfo = nrf91_socket_offload_getaddrinfo,
+	.freeaddrinfo = nrf91_socket_offload_freeaddrinfo,
+};
 
 static struct nrf91_socket_iface_data {
 	struct net_if *iface;
@@ -997,7 +1120,7 @@ static void nrf91_socket_iface_init(struct net_if *iface)
 
 	iface->if_dev->offloaded = true;
 
-	socket_offload_register(&nrf91_socket_offload_ops);
+	socket_offload_dns_register(&nrf91_socket_dns_offload_ops);
 }
 
 static struct net_if_api nrf91_if_api = {
