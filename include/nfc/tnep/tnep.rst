@@ -3,10 +3,10 @@
 Tag NDEF Exchange Protocol for NFC Tag Device
 #############################################
 
-The Tag NDEF Exchange Protocol (TNEP) is an application-level protocol for sending or retrieving application data units between a Reader/Writer and an NFC Tag Device.
-The data units take the form of NFC Data Exchange Format (NDEF) messages.
-The protocol operates between the NDEF application layer and the Tag Device.
-All NFC tag types are supported, from Type 2 Tag to Type 5 Tag.
+.. include:: poller.rst
+   :start-after: tnep_intro_start
+   :end-before: tnep_intro_end
+
 
 Initialization
 ==============
