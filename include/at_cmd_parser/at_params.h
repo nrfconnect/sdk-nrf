@@ -11,14 +11,17 @@
  * @defgroup at_params AT command/response parameters
  * @{
  *
- * A parameter list contains an array of parameters defined by a type
- * and a value. Those parameters could be arguments of an AT command, for
- * example. They can be numeric or string values.
+ * A parameter list contains an array of parameters defined by a type,
+ * a length and a value. Those parameters could be arguments of an AT
+ * command, AT response or event, for example.
+ * Several parameter types can be stored. They can be arrays or a single
+ * numeric or string values. Optional or empty parameters are supported.
  * The same list of parameters can be reused. Each parameter can be
- * updated or cleared. Once the parameter list is created, its size
- * cannot be changed. All parameters values are copied in the list.
- * Parameters should be cleared to free that memory. Getter and setter
- * methods are available to read parameter values.
+ * updated or cleared. A parameter type or value can be changed at any
+ * time. Once the parameter list is created, its size cannot be changed.
+ * All parameters values are copied in the list. Parameters should be
+ * cleared to free that memory. Getter and setter methods are available
+ * to read and write parameter values.
  */
 #ifndef AT_PARAMS_H__
 #define AT_PARAMS_H__
@@ -29,9 +32,9 @@
 extern "C" {
 #endif
 
-/** Parameter types. */
+/** @brief Parameter types that can be stored. */
 enum at_param_type {
-	/** Invalid parameter, typically a parameter that doesn't exist */
+	/** Invalid parameter, typically a parameter that does not exist. */
 	AT_PARAM_TYPE_INVALID,
 	/** Parameter of type short. */
 	AT_PARAM_TYPE_NUM_SHORT,
@@ -39,13 +42,13 @@ enum at_param_type {
 	AT_PARAM_TYPE_NUM_INT,
 	/** Parameter of type string. */
 	AT_PARAM_TYPE_STRING,
-	/** Parameter of type array */
+	/** Parameter of type array. */
 	AT_PARAM_TYPE_ARRAY,
 	/** Empty or optional parameter that should be skipped. */
 	AT_PARAM_TYPE_EMPTY,
 };
 
-/** Parameter value. */
+/** @brief Parameter value. */
 union at_param_value {
 	/** Integer value. */
 	u32_t int_val;
@@ -55,7 +58,7 @@ union at_param_value {
 	u32_t *array_val;
 };
 
-/** Parameter consisting of parameter type and value. */
+/** @brief A parameter is defined with a type, length and value. */
 struct at_param {
 	enum at_param_type   type;
 	size_t               size;
@@ -184,7 +187,7 @@ int at_params_array_put(const struct at_param_list *list, size_t index,
  * empty status.
  *
  * This will indicate that an empty parameter was found when parsing the
- * AT string
+ * AT string.
  *
  * @param[in] list    Parameter list.
  * @param[in] index   Index in the list where to put the parameter.
@@ -195,10 +198,9 @@ int at_params_array_put(const struct at_param_list *list, size_t index,
 int at_params_empty_put(const struct at_param_list *list, size_t index);
 
 /**
- * @brief Add a parameter in the list at the specified index and assign it a
  * @brief Get the size of a given parameter (in bytes).
  *
- * A missing parameter has a size of '0'.
+ * A size of '0' is returned for invalid and empty parameters.
  *
  * @param[in] list    Parameter list.
  * @param[in] index   Parameter index in the list.
@@ -282,7 +284,6 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
 int at_params_array_get(const struct at_param_list *list, size_t index,
 			u32_t *array, size_t *len);
 
-
 /**
  * @brief Get the number of valid parameters in the list.
  *
@@ -296,13 +297,12 @@ u32_t at_params_valid_count_get(const struct at_param_list *list);
  * @brief Get parameter type for parameter at index
  *
  * @param[in] list    Parameter list.
- * @param[in] index   Parameter index in the lis.
+ * @param[in] index   Parameter index in the list.
  *
  * @return Return parameter type of @ref at_param_type.
  */
 enum at_param_type at_params_type_get(const struct at_param_list *list,
 				      size_t index);
-
 
 /** @} */
 
