@@ -7,7 +7,7 @@
 config CLOCK_CONTROL_NRFXLIB
 	bool "Enable nrfxlib clock control driver, for use with BLE Controller or MPSL clock control."
 	default y
-	depends on BT_LL_NRFXLIB || MPSL
+	depends on MPSL
 	select CLOCK_CONTROL_NRF_FORCE_ALT
 	select MULTITHREADING_LOCK
 
@@ -35,45 +35,7 @@ config CLOCK_CONTROL_NRF_K32SRC_BLOCKING
 	  initially start running and automatically switch to crystal when
 	  ready.
 
-choice CLOCK_CONTROL_NRF_ACCURACY
-	prompt "32 KHz clock accuracy"
-	default CLOCK_CONTROL_NRF_K32SRC_500PPM if CLOCK_CONTROL_NRF_K32SRC_RC
-	default CLOCK_CONTROL_NRF_K32SRC_20PPM
-
-config CLOCK_CONTROL_NRF_K32SRC_500PPM
-	bool "251 ppm to 500 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_250PPM
-	bool "151 ppm to 250 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_150PPM
-	bool "101 ppm to 150 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_100PPM
-	bool "76 ppm to 100 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_75PPM
-	bool "51 ppm to 75 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_50PPM
-	bool "31 ppm to 50 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_30PPM
-	bool "21 ppm to 30 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_20PPM
-	bool "0 ppm to 20 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_10PPM
-	bool "6 ppm to 10 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_5PPM
-	bool "3 ppm to 5 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_2PPM
-	bool "2 ppm"
-
-config CLOCK_CONTROL_NRF_K32SRC_1PPM
-	bool "1 ppm"
-
-endchoice
+config CLOCK_CONTROL_NRF_ACCURACY
+	int "32 KHz clock accuracy"
+	default 250 if CLOCK_CONTROL_NRF_K32SRC_RC
+	default 20
