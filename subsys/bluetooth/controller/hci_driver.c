@@ -23,6 +23,12 @@
 #define BLE_CONTROLLER_IRQ_PRIO_LOW  4
 #define BLE_CONTROLLER_IRQ_PRIO_HIGH 0
 
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF52X)
+	#define BLE_CONTROLLER_PROCESS_IRQn SWI5_IRQn
+#elif IS_ENABLED(CONFIG_SOC_SERIES_NRF53X)
+	#define BLE_CONTROLLER_PROCESS_IRQn EGU0_IRQn
+#endif
+
 static K_SEM_DEFINE(sem_recv, 0, 1);
 static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 
@@ -415,7 +421,8 @@ static int ble_init(struct device *unused)
 
 	err = ble_controller_init(blectlr_assertion_handler,
 				  &clock_cfg,
-				  SWI5_IRQn);
+				  BLE_CONTROLLER_PROCESS_IRQn
+		);
 	return err;
 }
 
@@ -562,7 +569,7 @@ static int hci_driver_init(struct device *unused)
 	IRQ_DIRECT_CONNECT(TIMER0_IRQn, BLE_CONTROLLER_IRQ_PRIO_HIGH,
 			   ble_controller_timer0_isr_wrapper, IRQ_ZERO_LATENCY);
 
-	IRQ_CONNECT(SWI5_IRQn, BLE_CONTROLLER_IRQ_PRIO_LOW,
+	IRQ_CONNECT(BLE_CONTROLLER_PROCESS_IRQn, BLE_CONTROLLER_IRQ_PRIO_LOW,
 		    SIGNALLING_Handler, NULL, 0);
 
 
