@@ -202,7 +202,7 @@ static void test_params_string_parsing(void)
 	ret = at_parser_params_from_str(remainder, (char **)&remainder,
 					&test_list2);
 
-	zassert_true(ret = -EAGAIN, "Parser did not return -EAGAIN");
+	zassert_true(ret == -EAGAIN, "Parser did not return -EAGAIN");
 
 	tmpbuf_len = sizeof(tmpbuf);
 	zassert_equal(0, at_params_string_get(&test_list2, 0,
