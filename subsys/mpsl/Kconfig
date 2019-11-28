@@ -6,9 +6,9 @@
 
 menu "Nordic MPSL"
 
-config MPSL_SIGNAL_THREAD_PRIO
-	# Hidden option to set the priority of the MPSL signal thread
+config MPSL_THREAD_COOP_PRIO
 	int
+	default BLECTLR_PRIO if BT_LL_NRFXLIB
 	default 8
 
 config MPSL_SIGNAL_STACK_SIZE
@@ -17,5 +17,10 @@ config MPSL_SIGNAL_STACK_SIZE
 	help
 	  Size of the signal handler thread stack, used to process lower
 	  priority signals in MPSL.
+
+config CLOCK_CONTROL_NRF_ACCURACY
+	int "32 KHz clock accuracy"
+	default 250 if CLOCK_CONTROL_NRF_K32SRC_RC
+	default 20
 
 endmenu

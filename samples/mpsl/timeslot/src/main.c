@@ -17,8 +17,8 @@
 #define TIMESLOT_REQUEST_DISTANCE_US (1000000)
 #define TIMESLOT_LENGTH_US           (200)
 
-#define MPSL_THREAD_PRIO             CONFIG_MPSL_SIGNAL_THREAD_PRIO
-#define STACKSIZE                    CONFIG_IDLE_STACK_SIZE
+#define MPSL_THREAD_PRIO             CONFIG_MPSL_THREAD_COOP_PRIO
+#define STACKSIZE                    CONFIG_MAIN_STACK_SIZE
 #define THREAD_PRIORITY              K_LOWEST_APPLICATION_THREAD_PRIO
 
 static volatile int timeslot_counter;
@@ -238,4 +238,4 @@ K_THREAD_DEFINE(console_print_thread_id, STACKSIZE, console_print_thread,
 
 K_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, STACKSIZE,
 		mpsl_nonpreemptible_thread, NULL, NULL, NULL,
-		K_PRIO_COOP(CONFIG_MPSL_SIGNAL_THREAD_PRIO), 0, K_NO_WAIT);
+		K_PRIO_COOP(MPSL_THREAD_PRIO), 0, K_NO_WAIT);
