@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -7,7 +7,7 @@
 /**
  * @file multithreading_lock.h
  *
- * @brief APIs for ensuring BLE controller threadsafe operation.
+ * @brief APIs for ensuring MPSL and BLE controller threadsafe operation.
  */
 
 #ifndef MULTITHREADING_LOCK_H__

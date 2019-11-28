@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Nordic Semiconductor ASA
+# Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -77,13 +77,6 @@ config BLECTLR_RX_STACK_SIZE
 	help
 	  Size of the receiving thread stack, used to retrieve HCI events and
 	  data from the controller.
-
-config BLECTLR_SIGNAL_STACK_SIZE
-	int "Size of the signal handler thread stack"
-	default 1024
-	help
-	  Size of the signal handler thread stack, used to process lower
-	  priority signals in the controller.
 
 # The BLE controller library variants are defined in nrfxlib, here we redefine
 # the choice to 'import' them, so they appear in the same menu as the rest.

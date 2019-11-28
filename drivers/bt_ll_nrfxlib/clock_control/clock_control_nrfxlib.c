@@ -10,13 +10,8 @@
 #include <device.h>
 #include <kernel_includes.h>
 #include <clock_control.h>
-#ifdef CONFIG_BT_LL_NRFXLIB
-#include <ble_controller.h>
-#include <ble_controller_soc.h>
-#else /* CONFIG_MPSL */
 #include <mpsl.h>
 #include <mpsl_clock.h>
-#endif
 #include <multithreading_lock.h>
 #if IS_ENABLED(CONFIG_USB_NRFX)
 #include <hal/nrf_power.h>
@@ -46,23 +41,14 @@ static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 	if (errcode) {
 		return -EFAULT;
 	}
-
-#ifdef CONFIG_BT_LL_NRFXLIB
-	errcode = ble_controller_hf_clock_request(NULL);
-#else /* CONFIG_MPSL */
 	errcode = mpsl_clock_hfclk_request(NULL);
-#endif
 	MULTITHREADING_LOCK_RELEASE();
 	if (errcode) {
 		return -EFAULT;
 	}
 
 	if (blocking) {
-#ifdef CONFIG_BT_LL_NRFXLIB
-		bool is_running = false;
-#else /* CONFIG_MPSL */
 		u32_t is_running = 0;
-#endif
 
 		do {
 			if (!is_context_atomic()) {
@@ -73,12 +59,7 @@ static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 			if (errcode) {
 				return -EFAULT;
 			}
-
-#ifdef CONFIG_BT_LL_NRFXLIB
-			errcode = ble_controller_hf_clock_is_running(&is_running);
-#else /* CONFIG_MPSL */
 			errcode = mpsl_clock_hfclk_is_running(&is_running);
-#endif
 			MULTITHREADING_LOCK_RELEASE();
 			if (errcode) {
 				return -EFAULT;
@@ -113,12 +94,7 @@ static int hf_clock_stop(struct device *dev, clock_control_subsys_t sub_system)
 	if (errcode) {
 		return -EFAULT;
 	}
-
-#ifdef CONFIG_BT_LL_NRFXLIB
-	errcode = ble_controller_hf_clock_release();
-#else /* CONFIG_MPSL */
 	errcode = mpsl_clock_hfclk_release();
-#endif
 	MULTITHREADING_LOCK_RELEASE();
 	if (errcode) {
 		return -EFAULT;
@@ -146,7 +122,7 @@ static int lf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 	ARG_UNUSED(dev);
 	ARG_UNUSED(sub_system);
 
-	/* No-op. LFCLK is started by default by ble_controller_init(). */
+	/* No-op. LFCLK is started by default by mpsl_init(). */
 
 	return 0;
 }
@@ -176,6 +152,7 @@ static inline void power_event_cb(nrf_power_event_t event)
 
 void nrf_power_clock_isr(void)
 {
+	MPSL_IRQ_CLOCK_Handler();
 #if IS_ENABLED(CONFIG_USB_NRFX)
 	bool usb_detected, usb_pwr_rdy, usb_removed;
 
@@ -201,28 +178,13 @@ void nrf_power_clock_isr(void)
 		power_event_cb(NRF_POWER_EVENT_USBREMOVED);
 	}
 #endif
-
-#ifdef CONFIG_BT_LL_NRFXLIB
-	/* FIXME/NOTE: This handler is called _after_ the USB registers are
-	 * checked. The reason is that the BLE controller also checks these
-	 * registsers _and clears them_, but there is currently no event
-	 * propagated from the controller.
-	 */
-	ble_controller_POWER_CLOCK_IRQHandler();
-#else /* CONFIG_MPSL */
-	MPSL_IRQ_CLOCK_Handler();
-#endif
 }
 
 static int clock_control_init(struct device *dev)
 {
 	ARG_UNUSED(dev);
-	/* No-op. For BLE Controller, LFCLK is initialized
-	 * in subsys/bluetooth/controller/hci_driver.c by
-	 * ble_init() at PRE_KERNEL_1. ble_init() will call
-	 * ble_controller_init() that in turn will start the LFCLK.
-	 * For MPSL, LFCLK is initialized in subsys/mpsl/mpsl_init.c by
-	 * mpsl_lib_init() which calls mpsl_init() at PRE_KERNEL_1.
+	/* No-op. LFCLK is initialized by mpsl_init() at PRE_KERNEL_1,
+	 * see subsys/mpsl/mpsl_init.c.
 	 */
 
 	IRQ_CONNECT(DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0,
