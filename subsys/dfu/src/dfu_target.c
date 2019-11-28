@@ -10,19 +10,23 @@
 #include "dfu_target_mcuboot.h"
 #include "dfu_target_modem.h"
 
+#ifdef CONFIG_DFU_TARGET_MODEM
 const struct dfu_target dfu_target_modem = {
 	.init = dfu_target_modem_init,
 	.offset_get = dfu_target_modem_offset_get,
 	.write = dfu_target_modem_write,
 	.done = dfu_target_modem_done,
 };
+#endif
 
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
 const struct dfu_target dfu_target_mcuboot = {
 	.init  = dfu_target_mcuboot_init,
 	.offset_get = dfu_target_mcuboot_offset_get,
 	.write = dfu_target_mcuboot_write,
 	.done  = dfu_target_mcuboot_done,
 };
+#endif
 
 #define MIN_SIZE_IDENTIFY_BUF 32
 
