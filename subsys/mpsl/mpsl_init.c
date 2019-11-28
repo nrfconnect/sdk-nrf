@@ -9,14 +9,17 @@
 #include <kernel.h>
 #include <mpsl.h>
 
-#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF52X)
+	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
+#elif IS_ENABLED(CONFIG_SOC_SERIES_NRF53X)
+	#define MPSL_LOW_PRIO_IRQn EGU0_IRQn
+#endif
 #define MPSL_LOW_PRIO (4)
 
 static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 static struct k_thread signal_thread_data;
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_MPSL_SIGNAL_STACK_SIZE);
-
 
 static void mpsl_low_prio_irq_handler(void)
 {
@@ -77,8 +80,7 @@ static void m_assert_handler(const char *const file, const u32_t line)
 	k_oops();
 }
 
-
-static uint8_t m_config_clock_source_get(void)
+static u8_t m_config_clock_source_get(void)
 {
 #ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
 	return MPSL_CLOCK_LF_SRC_RC;
@@ -95,12 +97,11 @@ static uint8_t m_config_clock_source_get(void)
 static int mpsl_lib_init(struct device *dev)
 {
 	ARG_UNUSED(dev);
-
 	int err = 0;
-
-	mpsl_clock_lf_cfg_t clock_cfg;
+	mpsl_clock_lfclk_cfg_t clock_cfg;
 
 	clock_cfg.source = m_config_clock_source_get();
+	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
 
 #ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
 	clock_cfg.rc_ctiv = MPSL_RECOMMENDED_RC_CTIV;
@@ -132,12 +133,11 @@ static int mpsl_signal_thread_init(struct device *dev)
 	k_thread_create(&signal_thread_data, signal_thread_stack,
 			K_THREAD_STACK_SIZEOF(signal_thread_stack),
 			signal_thread, NULL, NULL, NULL,
-			K_PRIO_COOP(CONFIG_MPSL_SIGNAL_THREAD_PRIO),
+			K_PRIO_COOP(CONFIG_MPSL_THREAD_COOP_PRIO),
 			0, K_NO_WAIT);
 
 	IRQ_CONNECT(MPSL_LOW_PRIO_IRQn, MPSL_LOW_PRIO,
 		    mpsl_low_prio_irq_handler, NULL, 0);
-	irq_enable(MPSL_LOW_PRIO_IRQn);
 
 	return 0;
 }

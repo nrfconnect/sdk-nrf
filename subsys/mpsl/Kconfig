@@ -6,9 +6,10 @@
 
 menu "Nordic MPSL"
 
-config MPSL_SIGNAL_THREAD_PRIO
-	# Hidden option to set the priority of the MPSL signal thread
+config MPSL_THREAD_COOP_PRIO
+	# Hidden option for cooperative MPSL thread priority
 	int
+	default BLECTLR_PRIO if BT_LL_NRFXLIB
 	default 8
 
 config MPSL_SIGNAL_STACK_SIZE

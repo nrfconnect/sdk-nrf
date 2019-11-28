@@ -7,7 +7,7 @@
 /**
  * @file multithreading_lock.h
  *
- * @brief APIs for ensuring BLE controller threadsafe operation.
+ * @brief APIs for ensuring MPSL and BLE controller threadsafe operation.
  */
 
 #ifndef MULTITHREADING_LOCK_H__
