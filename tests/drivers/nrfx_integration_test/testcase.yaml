@@ -1,0 +1,11 @@
+tests:
+  nrfx_integration_test.build:
+    build_only: true
+    filter: CONFIG_HAS_NRFX
+    tags: drivers ci_build
+  nrfx_integration_test.build.softdevice:
+    build_only: true
+    filter: CONFIG_HAS_NRFX
+    tags: drivers ci_build
+    extra_configs:
+      - CONFIG_BT_LL_SOFTDEVICE=y
