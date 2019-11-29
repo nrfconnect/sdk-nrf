@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config NCS_SAMPLES_DEFAULTS
+	bool "Enable NCS sample default settings"
+	default n
+	imply LOG
+	imply LOG_MINIMAL
+	imply ASSERT
+	imply HW_STACK_PROTECTION
+	help
+	  Use the default configuration for NCS samples.
+
+
+if LOG
+
+# LOG_DEFAULT_LEVEL is declared in Zephyr and also here for a second time,
+# for set the valid default size value
+config LOG_DEFAULT_LEVEL
+	int "Default log level"
+	default 1 if NCS_SAMPLES_DEFAULTS
+	range 0 4
+	help
+	  Sets log level for modules which don't specify it explicitly. When
+	  set to 0 it means log will not be activated for those modules.
+	  Levels are:
+
+	  - 0 OFF, do not write by default
+	  - 1 ERROR, default to only write LOG_LEVEL_ERR
+	  - 2 WARNING, default to write LOG_LEVEL_WRN
+	  - 3 INFO, default to write LOG_LEVEL_INFO
+	  - 4 DEBUG, default to write LOG_LEVEL_DBG
+
+endif # LOG
