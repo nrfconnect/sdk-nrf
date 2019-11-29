@@ -346,12 +346,9 @@ static const struct bt_gatt_latency_c_cb latency_client_cb = {
 	.latency_response = latency_response_handler
 };
 
-static void bt_ready(int err)
+static void bt_ready(void)
 {
-	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
-		return;
-	}
+	int err;
 
 	printk("Bluetooth initialized\n");
 
@@ -429,11 +426,13 @@ void main(void)
 
 	console_init();
 
-	err = bt_enable(bt_ready);
+	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
+
+	bt_ready();
 
 	if (enable_qos_conn_evt_report()) {
 		printk("Enable LLPM QoS failed.\n");

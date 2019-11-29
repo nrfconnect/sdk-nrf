@@ -554,13 +554,8 @@ static void mouse_handler(struct k_work *work)
 }
 
 
-static void bt_ready(int err)
+static void bt_ready(void)
 {
-	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
-		return;
-	}
-
 	printk("Bluetooth initialized\n");
 
 	/* DIS initialized at system boot with SYS_INIT macro. */
@@ -791,11 +786,13 @@ void main(void)
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
 	}
 
-	err = bt_enable(bt_ready);
+	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
+
+	bt_ready();
 
 	configure_buttons();
 
