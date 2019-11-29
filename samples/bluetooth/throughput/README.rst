@@ -73,6 +73,7 @@ Requirements
 
        CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
        CONFIG_BT_CTLR_DATA_LENGTH_MAX=251
+       CONFIG_BT_RX_BUF_LEN=255
 
   * nRF52840 Development Kit board (PCA10056)
   * nRF52 Development Kit board (PCA10040)
