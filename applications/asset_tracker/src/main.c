@@ -143,6 +143,7 @@ static void work_init(void);
 static void sensor_data_send(struct cloud_channel_data *data);
 static void device_status_send(struct k_work *work);
 static void cycle_cloud_connection(struct k_work *work);
+static void set_gps_enable(const bool enable);
 
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
@@ -337,21 +338,26 @@ static void motion_handler(motion_data_t  motion_data)
 
 static void cloud_cmd_handler(struct cloud_command *cmd)
 {
-	/* Command handling goes here. */
-	if (cmd->recipient == CLOUD_RCPT_MODEM_INFO) {
+	if ((cmd->channel == CLOUD_CHANNEL_GPS) &&
+	    (cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
+	    (cmd->type == CLOUD_CMD_ENABLE)) {
+		set_gps_enable(cmd->data.sv.state == CLOUD_CMD_STATE_TRUE);
+	} else if ((cmd->channel == CLOUD_CHANNEL_RGB_LED) &&
+		   (cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
+		   (cmd->type == CLOUD_CMD_COLOR)) {
+		ui_led_set_color(((u32_t)cmd->data.sv.value >> 16) & 0xFF,
+				 ((u32_t)cmd->data.sv.value >> 8) & 0xFF,
+				 ((u32_t)cmd->data.sv.value) & 0xFF);
+	} else if ((cmd->channel == CLOUD_CHANNEL_DEVICE_INFO) &&
+		   (cmd->group == CLOUD_CMD_GROUP_GET) &&
+		   (cmd->type == CLOUD_CMD_EMPTY)) {
+		k_work_submit(&device_status_work);
+	} else if ((cmd->channel == CLOUD_CHANNEL_LTE_LINK_RSRP) &&
+		   (cmd->group == CLOUD_CMD_GROUP_GET) &&
+		   (cmd->type == CLOUD_CMD_EMPTY)) {
 #if CONFIG_MODEM_INFO
-		if (cmd->type == CLOUD_CMD_READ) {
-			device_status_send(NULL);
-		}
+		k_work_submit(&rsrp_work);
 #endif
-	} else if (cmd->recipient == CLOUD_RCPT_UI) {
-		if (cmd->type == CLOUD_CMD_LED_RED) {
-			ui_led_set_color(127, 0, 0);
-		} else if (cmd->type == CLOUD_CMD_LED_GREEN) {
-			ui_led_set_color(0, 127, 0);
-		} else if (cmd->type == CLOUD_CMD_LED_BLUE) {
-			ui_led_set_color(0, 0, 127);
-		}
 	}
 }
 
@@ -771,6 +777,23 @@ static void app_connect(struct k_work *work)
 	}
 }
 
+static void set_gps_enable(const bool enable)
+{
+	if (enable == gps_control_is_enabled()) {
+		return;
+	}
+
+	if (enable) {
+		printk("Starting GPS\n");
+		gps_control_enable();
+		gps_control_start(K_SECONDS(1));
+
+	} else {
+		printk("Stopping GPS\n");
+		gps_control_disable();
+	}
+}
+
 static void long_press_handler(struct k_work *work)
 {
 	if (!atomic_get(&send_data_enable)) {
@@ -778,14 +801,8 @@ static void long_press_handler(struct k_work *work)
 		return;
 	}
 
-	if (gps_control_is_enabled()) {
-		printk("Stopping GPS\n");
-		gps_control_disable();
-	} else {
-		printk("Starting GPS\n");
-		gps_control_enable();
-		gps_control_start(K_SECONDS(1));
-	}
+	/* Toggle GPS state */
+	set_gps_enable(!gps_control_is_enabled());
 }
 
 /**@brief Initializes and submits delayed work. */
