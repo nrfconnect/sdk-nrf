@@ -1,0 +1,5 @@
+spm:
+  size: 0xc000
+  placement:
+    before: app
+  inside: mcuboot_primary_app

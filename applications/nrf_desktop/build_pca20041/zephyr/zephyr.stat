@@ -1,0 +1,116 @@
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           ARM
+  Version:                           0x1
+  Entry point address:               0x2f819
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          2955920 (bytes into file)
+  Flags:                             0x5000200, Version5 EABI, soft-float ABI
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         4
+  Size of section headers:           40 (bytes)
+  Number of section headers:         74
+  Section header string table index: 73
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] text              PROGBITS        00000000 0000c0 000100 00 WAX  0   0  4
+  [ 2] _TEXT_SECTION_NAM PROGBITS        00000100 0001c0 041dd8 00  AX  0   0  4
+  [ 3] .ARM.exidx        ARM_EXIDX       00041ed8 041f98 000008 00  AL  2   0  4
+  [ 4] sw_isr_table      PROGBITS        00041ee0 041fa0 000180 00  WA  0   0  4
+  [ 5] devconfig         PROGBITS        00042060 042120 000208 00  WA  0   0  4
+  [ 6] _bt_channels_area PROGBITS        00042268 042328 000018 00   A  0   0  4
+  [ 7] _bt_services_area PROGBITS        00042280 042340 000028 00   A  0   0  4
+  [ 8] _settings_handler PROGBITS        000422a8 042368 000078 00   A  0   0  4
+  [ 9] rodata            PROGBITS        00042320 0423e0 002c4c 00   A  0   0 16
+  [10] event_subscribers PROGBITS        00044f6c 04502c 000004 00   A  0   0  4
+  [11] event_subscribers PROGBITS        00044f70 045030 000004 00   A  0   0  4
+  [12] event_infos       PROGBITS        00044f74 045034 000110 00   A  0   0  4
+  [13] event_types       PROGBITS        00045084 045144 0004b0 00   A  0   0  4
+  [14] event_subscribers PROGBITS        00045534 0455f4 000004 00   A  0   0  4
+  [15] event_subscribers PROGBITS        00045538 0455f8 000018 00   A  0   0  4
+  [16] event_subscribers PROGBITS        00045550 045610 000004 00   A  0   0  4
+  [17] event_subscribers PROGBITS        00045554 045614 000008 00   A  0   0  4
+  [18] event_subscribers PROGBITS        0004555c 04561c 000004 00   A  0   0  4
+  [19] event_subscribers PROGBITS        00045560 045620 000004 00   A  0   0  4
+  [20] event_subscribers PROGBITS        00045564 045624 000004 00   A  0   0  4
+  [21] event_subscribers PROGBITS        00045568 045628 000004 00   A  0   0  4
+  [22] event_subscribers PROGBITS        0004556c 04562c 000004 00   A  0   0  4
+  [23] event_subscribers PROGBITS        00045570 045630 000008 00   A  0   0  4
+  [24] event_subscribers PROGBITS        00045578 045638 00000c 00   A  0   0  4
+  [25] event_subscribers PROGBITS        00045584 045644 00000c 00   A  0   0  4
+  [26] event_subscribers PROGBITS        00045590 045650 000008 00   A  0   0  4
+  [27] event_subscribers PROGBITS        00045598 045658 000008 00   A  0   0  4
+  [28] event_subscribers PROGBITS        000455a0 045660 000004 00   A  0   0  4
+  [29] event_subscribers PROGBITS        000455a4 045664 000004 00   A  0   0  4
+  [30] event_subscribers PROGBITS        000455a8 045668 000004 00   A  0   0  4
+  [31] event_subscribers PROGBITS        000455ac 04566c 00000c 00   A  0   0  4
+  [32] event_subscribers PROGBITS        000455b8 045678 000010 00   A  0   0  4
+  [33] event_subscribers PROGBITS        000455c8 045688 000008 00   A  0   0  4
+  [34] event_subscribers PROGBITS        000455d0 045690 00000c 00   A  0   0  4
+  [35] event_subscribers PROGBITS        000455dc 04569c 000004 00   A  0   0  4
+  [36] event_subscribers PROGBITS        000455e0 0456a0 000004 00   A  0   0  4
+  [37] event_subscribers PROGBITS        000455e4 0456a4 000054 00   A  0   0  4
+  [38] event_subscribers PROGBITS        00045638 0456f8 000004 00   A  0   0  4
+  [39] event_subscribers PROGBITS        0004563c 0456fc 000014 00   A  0   0  4
+  [40] event_subscribers PROGBITS        00045650 045710 000014 00   A  0   0  4
+  [41] event_subscribers PROGBITS        00045664 045724 000004 00   A  0   0  4
+  [42] event_subscribers PROGBITS        00045668 045728 000004 00   A  0   0  4
+  [43] event_subscribers PROGBITS        0004566c 04572c 000028 00   A  0   0  4
+  [44] event_subscribers PROGBITS        00045694 045754 000004 00   A  0   0  4
+  [45] event_subscribers PROGBITS        00045698 045758 00000c 00   A  0   0  4
+  [46] event_subscribers PROGBITS        000456a4 045764 000004 00   A  0   0  4
+  [47] event_listeners   PROGBITS        000456a8 045768 0000b0 00   A  0   0  4
+  [48] .ramfunc          PROGBITS        20000000 047014 000000 00   W  0   0  1
+  [49] bss               NOBITS          20000000 047018 004801 00  WA  0   0  8
+  [50] noinit            NOBITS          20004808 047018 00389a 00  WA  0   0  8
+  [51] datas             PROGBITS        200080a8 045818 00138f 00  WA  0   0  8
+  [52] initlevel         PROGBITS        20009438 046ba8 00013c 00  WA  0   0  4
+  [53] _k_mem_slab_area  PROGBITS        20009574 046ce4 00001c 00  WA  0   0  4
+  [54] _k_mem_pool_area  PROGBITS        20009590 046d00 000054 00  WA  0   0  4
+  [55] _k_sem_area       PROGBITS        200095e4 046d54 000090 00  WA  0   0  4
+  [56] _k_mutex_area     PROGBITS        20009674 046de4 00008c 00  WA  0   0  4
+  [57] _k_queue_area     PROGBITS        20009700 046e70 000020 00  WA  0   0  4
+  [58] _net_buf_pool_are PROGBITS        20009720 046e90 0000c0 00  WA  0   0  4
+  [59] usb_descriptor    PROGBITS        200097e0 046f50 00009e 00  WA  0   0  1
+  [60] usb_data          PROGBITS        20009880 046ff0 000024 00  WA  0   0  4
+  [61] .comment          PROGBITS        00000000 047014 02f65e 00      0   0  1
+  [62] .debug_aranges    PROGBITS        00000000 076678 003960 00      0   0  8
+  [63] .debug_info       PROGBITS        00000000 079fd8 120e07 00      0   0  1
+  [64] .debug_abbrev     PROGBITS        00000000 19addf 024ee1 00      0   0  1
+  [65] .debug_line       PROGBITS        00000000 1bfcc0 03c273 00      0   0  1
+  [66] .debug_frame      PROGBITS        00000000 1fbf34 00abcc 00      0   0  4
+  [67] .debug_str        PROGBITS        00000000 206b00 021232 01  MS  0   0  1
+  [68] .debug_loc        PROGBITS        00000000 227d32 05dc59 00      0   0  1
+  [69] .debug_ranges     PROGBITS        00000000 285990 011790 00      0   0  8
+  [70] .ARM.attributes   ARM_ATTRIBUTES  00000000 297120 000033 00      0   0  1
+  [71] .symtab           SYMTAB          00000000 297154 01f0e0 10     72 5234  4
+  [72] .strtab           STRTAB          00000000 2b6234 01b0b6 00      0   0  1
+  [73] .shstrtab         STRTAB          00000000 2d12ea 0007a5 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  y (purecode), p (processor specific)
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  EXIDX          0x041f98 0x00041ed8 0x00041ed8 0x00008 0x00008 R   0x4
+  LOAD           0x0000c0 0x00000000 0x00000000 0x45758 0x45758 RWE 0x10
+  LOAD           0x045818 0x200080a8 0x0004575e 0x017fc 0x017fc RW  0x8
+  LOAD           0x047018 0x20000000 0x20000000 0x00000 0x080a2 RW  0x8
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .ARM.exidx 
+   01     text _TEXT_SECTION_NAME_2 .ARM.exidx sw_isr_table devconfig _bt_channels_area _bt_services_area _settings_handlers_area rodata event_subscribers_battery_level_event_prio1_ event_subscribers_battery_state_event_prio1_ event_infos event_types event_subscribers_ble_peer_event_prio0_ event_subscribers_ble_peer_event_prio1_ event_subscribers_ble_peer_event_prio2_ event_subscribers_ble_peer_operation_event_prio1_ event_subscribers_ble_peer_search_event_prio1_ event_subscribers_button_event_prio1_ event_subscribers_button_event_prio2_ event_subscribers_click_event_prio1_ event_subscribers_selector_event_prio1_ event_subscribers_hid_consumer_ctrl_event_prio1_ event_subscribers_hid_keyboard_event_prio1_ event_subscribers_hid_mouse_event_prio1_ event_subscribers_hid_report_sent_event_prio1_ event_subscribers_hid_report_subscription_event_prio1_ event_subscribers_led_event_prio0_ event_subscribers_led_event_prio1_ event_subscribers_led_ready_event_prio1_ event_subscribers_config_event_prio0_ event_subscribers_config_event_prio1_ event_subscribers_config_fetch_event_prio1_ event_subscribers_config_fetch_request_event_prio1_ event_subscribers_config_forwarded_event_prio1_ event_subscribers_module_state_event_prio0_ event_subscribers_module_state_event_prio1_ event_subscribers_motion_event_prio1_ event_subscribers_power_down_event_prio0_ event_subscribers_power_down_event_prio1_ event_subscribers_power_down_event_prio2_ event_subscribers_wake_up_event_prio0_ event_subscribers_wake_up_event_prio1_ event_subscribers_wheel_event_prio1_ event_subscribers_usb_state_event_prio1_ event_subscribers_hid_notification_event_prio1_ event_listeners 
+   02     datas initlevel _k_mem_slab_area _k_mem_pool_area _k_sem_area _k_mutex_area _k_queue_area _net_buf_pool_area usb_descriptor usb_data 
+   03     bss noinit 

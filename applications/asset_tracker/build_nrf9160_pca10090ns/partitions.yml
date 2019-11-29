@@ -1,0 +1,48 @@
+app: {address: 0x18200, size: 0x5ce00}
+mcuboot:
+  address: 0x0
+  placement:
+    before: [mcuboot_primary]
+  size: 0xc000
+mcuboot_pad:
+  address: 0xc000
+  placement:
+    align: {start: 0x1000}
+    before: [mcuboot_primary_app]
+  size: 0x200
+mcuboot_primary:
+  address: 0xc000
+  orig_span: &id001 [app, mcuboot_pad, spm]
+  sharers: 0x1
+  size: 0x69000
+  span: *id001
+mcuboot_primary_app:
+  address: 0xc200
+  orig_span: &id002 [app, spm]
+  size: 0x68e00
+  span: *id002
+mcuboot_scratch:
+  address: 0xde000
+  placement:
+    after: [app]
+    align: {start: 0x1000}
+  size: 0x1e000
+mcuboot_secondary:
+  address: 0x75000
+  placement:
+    after: [mcuboot_primary]
+    align: {start: 0x1000}
+  share_size: [mcuboot_primary]
+  size: 0x69000
+mcuboot_storage:
+  address: 0xfc000
+  placement:
+    after: [mcuboot_scratch]
+    align: {start: 0x1000}
+  size: 0x4000
+spm:
+  address: 0xc200
+  inside: [mcuboot_primary_app]
+  placement:
+    before: [app]
+  size: 0xc000

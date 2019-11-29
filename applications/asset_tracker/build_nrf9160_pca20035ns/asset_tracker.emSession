@@ -1,0 +1,47 @@
+<!DOCTYPE CrossStudio_Session_File>
+<session>
+ <Bookmarks/>
+ <Breakpoints groups="" active_group="Breakpoints"/>
+ <ExecutionProfileWindow/>
+ <FrameBufferWindow>
+  <FrameBufferWindow bufferHeight="-1" addressSpace="" addressText="" bufferWidth="-1"/>
+ </FrameBufferWindow>
+ <Memory1/>
+ <Memory2/>
+ <Memory3/>
+ <Memory4/>
+ <Project>
+  <ProjectSessionItem path="asset_tracker"/>
+  <ProjectSessionItem path="asset_tracker;zephyr/merged.hex"/>
+  <ProjectSessionItem path="asset_tracker;build"/>
+  <ProjectSessionItem path="asset_tracker;build;app/libapp.a"/>
+  <ProjectSessionItem path="asset_tracker;build;app/libapp.a;C_COMPILER__app"/>
+  <ProjectSessionItem path="asset_tracker;build;libspmsecureentries.a"/>
+ </Project>
+ <Register1/>
+ <Register2/>
+ <Register3/>
+ <Register4/>
+ <Threads>
+  <ThreadsWindow showLists=""/>
+ </Threads>
+ <TraceWindow>
+  <Trace enabled="Yes"/>
+ </TraceWindow>
+ <Watch1>
+  <Watches active="1" update="Never"/>
+ </Watch1>
+ <Watch2>
+  <Watches active="0" update="Never"/>
+ </Watch2>
+ <Watch3>
+  <Watches active="0" update="Never"/>
+ </Watch3>
+ <Watch4>
+  <Watches active="0" update="Never"/>
+ </Watch4>
+ <Files>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="884" useTextEdit="1" useBinaryEdit="0" left="0" path="../src/main.c" selected="1" top="883" codecName="Default"/>
+ </Files>
+ <ARMCrossStudioWindow activeProject="zephyr/merged.hex" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Common" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3199"/>
+</session>

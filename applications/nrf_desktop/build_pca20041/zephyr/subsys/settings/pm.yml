@@ -1,0 +1,3 @@
+settings_storage:
+  placement: {after: [nffs_storage, mcuboot_storage, app]}
+  size: 0x6000

@@ -1,0 +1,458 @@
+/dts-v1/;
+
+/ {
+	#address-cells = < 0x01 >;
+	#size-cells = < 0x01 >;
+	model = "Nordic PCA20041";
+	compatible = "nordic,nrf52840-qiaa", "nordic,nrf52840";
+
+	chosen {
+		zephyr,console = "/soc/uart@40002000";
+		zephyr,sram = "/soc/memory@20000000";
+		zephyr,flash = "/soc/flash-controller@4001e000/flash@0";
+		zephyr,code-partition = "/soc/flash-controller@4001e000/flash@0/partitions/partition@c000";
+	};
+
+	aliases {
+		i2c-0 = "/soc/i2c@40003000";
+		i2c-1 = "/soc/i2c@40004000";
+		spi-0 = "/soc/spi@40003000";
+		spi-1 = "/soc/spi@40004000";
+		spi-2 = "/soc/spi@40023000";
+		spi-3 = "/soc/spi@4002f000";
+		uart-0 = "/soc/uart@40002000";
+		uart-1 = "/soc/uart@40028000";
+		adc-0 = "/soc/adc@40007000";
+		gpio-0 = "/soc/gpio@50000000";
+		gpio-1 = "/soc/gpio@50000300";
+		gpiote-0 = "/soc/gpiote@40006000";
+		wdt-0 = "/soc/watchdog@40010000";
+		usbd-0 = "/soc/usbd@40027000";
+		cc310 = "/soc/crypto@5002a000";
+		arm-cryptocell-310 = "/soc/crypto@5002a000/crypto@5002b000";
+		pwm-0 = "/soc/pwm@4001c000";
+		pwm-1 = "/soc/pwm@40021000";
+		pwm-2 = "/soc/pwm@40022000";
+		pwm-3 = "/soc/pwm@4002d000";
+		qdec-0 = "/soc/qdec@40012000";
+		rtc-0 = "/soc/rtc@4000b000";
+		rtc-1 = "/soc/rtc@40011000";
+		rtc-2 = "/soc/rtc@40024000";
+		timer-0 = "/soc/timer@40008000";
+		timer-1 = "/soc/timer@40009000";
+		timer-2 = "/soc/timer@4000a000";
+		timer-3 = "/soc/timer@4001a000";
+		timer-4 = "/soc/timer@4001b000";
+	};
+
+	soc {
+		#address-cells = < 0x01 >;
+		#size-cells = < 0x01 >;
+		compatible = "nordic,nRF52840-QIAA", "nordic,nRF52840", "nordic,nRF52", "simple-bus";
+		interrupt-parent = < 0x01 >;
+		ranges;
+
+		nvic: interrupt-controller@e000e100 {
+			compatible = "arm,v7m-nvic";
+			reg = < 0xe000e100 0xc00 >;
+			interrupt-controller;
+			#interrupt-cells = < 0x02 >;
+			arm,num-irq-priority-bits = < 0x03 >;
+			phandle = < 0x01 >;
+		};
+
+		systick: timer@e000e010 {
+			compatible = "arm,armv7m-systick";
+			reg = < 0xe000e010 0x10 >;
+			status = "disabled";
+		};
+
+		flash-controller@4001e000 {
+			compatible = "nordic,nrf52-flash-controller";
+			reg = < 0x4001e000 0x1000 >;
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x01 >;
+			label = "NRF_FLASH_DRV_NAME";
+
+			flash0: flash@0 {
+				compatible = "soc-nv-flash";
+				label = "NRF_FLASH";
+				erase-block-size = < 0x1000 >;
+				write-block-size = < 0x04 >;
+				reg = < 0x00 0x100000 >;
+
+				partitions {
+					compatible = "fixed-partitions";
+					#address-cells = < 0x01 >;
+					#size-cells = < 0x01 >;
+
+					boot_partition: partition@0 {
+						label = "mcuboot";
+						reg = < 0x00 0xc000 >;
+					};
+
+					slot0_partition: partition@c000 {
+						label = "image-0";
+						reg = < 0xc000 0x69000 >;
+					};
+
+					slot1_partition: partition@75000 {
+						label = "image-1";
+						reg = < 0x75000 0x69000 >;
+					};
+
+					scratch_partition: partition@de000 {
+						label = "image-scratch";
+						reg = < 0xde000 0x1e000 >;
+					};
+
+					storage_partition: partition@fc000 {
+						label = "storage";
+						reg = < 0xfc000 0x4000 >;
+					};
+				};
+			};
+		};
+
+		sram0: memory@20000000 {
+			compatible = "mmio-sram";
+			reg = < 0x20000000 0x40000 >;
+		};
+
+		adc: adc@40007000 {
+			compatible = "nordic,nrf-saadc";
+			reg = < 0x40007000 0x1000 >;
+			interrupts = < 0x07 0x01 >;
+			status = "okay";
+			label = "ADC_0";
+			#io-channel-cells = < 0x01 >;
+		};
+
+		clock: clock@40000000 {
+			compatible = "nordic,nrf-clock";
+			reg = < 0x40000000 0x1000 >;
+			interrupts = < 0x00 0x01 >;
+			status = "okay";
+			label = "CLOCK";
+		};
+
+		uart0: uart@40002000 {
+			reg = < 0x40002000 0x1000 >;
+			interrupts = < 0x02 0x01 >;
+			status = "okay";
+			label = "UART_0";
+			compatible = "nordic,nrf-uart";
+			current-speed = < 0x1c200 >;
+			tx-pin = < 0x20 >;
+			rx-pin = < 0x21 >;
+		};
+
+		uart1: uart@40028000 {
+			compatible = "nordic,nrf-uarte";
+			reg = < 0x40028000 0x1000 >;
+			interrupts = < 0x28 0x01 >;
+			status = "disabled";
+			label = "UART_1";
+		};
+
+		gpiote: gpiote@40006000 {
+			compatible = "nordic,nrf-gpiote";
+			reg = < 0x40006000 0x1000 >;
+			interrupts = < 0x06 0x05 >;
+			status = "okay";
+			label = "GPIOTE_0";
+		};
+
+		gpio0: gpio@50000000 {
+			compatible = "nordic,nrf-gpio";
+			gpio-controller;
+			reg = < 0x50000000 0x200 0x50000500 0x300 >;
+			#gpio-cells = < 0x02 >;
+			label = "GPIO_0";
+			status = "okay";
+			phandle = < 0x02 >;
+		};
+
+		gpio1: gpio@50000300 {
+			compatible = "nordic,nrf-gpio";
+			gpio-controller;
+			reg = < 0x50000300 0x200 0x50000800 0x300 >;
+			#gpio-cells = < 0x02 >;
+			label = "GPIO_1";
+			status = "okay";
+		};
+
+		i2c0: i2c@40003000 {
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x00 >;
+			reg = < 0x40003000 0x1000 >;
+			clock-frequency = < 0x186a0 >;
+			interrupts = < 0x03 0x01 >;
+			status = "okay";
+			label = "I2C_0";
+			sda-pin = < 0x2d >;
+			scl-pin = < 0x2f >;
+		};
+
+		i2c1: i2c@40004000 {
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x00 >;
+			reg = < 0x40004000 0x1000 >;
+			clock-frequency = < 0x186a0 >;
+			interrupts = < 0x04 0x01 >;
+			status = "okay";
+			label = "I2C_1";
+			sda-pin = < 0x06 >;
+			scl-pin = < 0x08 >;
+		};
+
+		pwm0: pwm@4001c000 {
+			compatible = "nordic,nrf-pwm";
+			reg = < 0x4001c000 0x1000 >;
+			interrupts = < 0x1c 0x01 >;
+			status = "okay";
+			label = "PWM_0";
+			#pwm-cells = < 0x01 >;
+			ch0-pin = < 0x0b >;
+			ch1-pin = < 0x1a >;
+			ch2-pin = < 0x1b >;
+		};
+
+		pwm1: pwm@40021000 {
+			compatible = "nordic,nrf-pwm";
+			reg = < 0x40021000 0x1000 >;
+			interrupts = < 0x21 0x01 >;
+			status = "okay";
+			label = "PWM_1";
+			#pwm-cells = < 0x01 >;
+			ch0-pin = < 0x17 >;
+			ch1-pin = < 0x19 >;
+			ch2-pin = < 0x07 >;
+		};
+
+		pwm2: pwm@40022000 {
+			compatible = "nordic,nrf-pwm";
+			reg = < 0x40022000 0x1000 >;
+			interrupts = < 0x22 0x01 >;
+			status = "disabled";
+			label = "PWM_2";
+			#pwm-cells = < 0x01 >;
+		};
+
+		pwm3: pwm@4002d000 {
+			compatible = "nordic,nrf-pwm";
+			reg = < 0x4002d000 0x1000 >;
+			interrupts = < 0x2d 0x01 >;
+			status = "disabled";
+			label = "PWM_3";
+			#pwm-cells = < 0x01 >;
+		};
+
+		qdec: qdec@40012000 {
+			compatible = "nordic,nrf-qdec";
+			reg = < 0x40012000 0x1000 >;
+			interrupts = < 0x12 0x01 >;
+			status = "okay";
+			label = "QDEC";
+			a-pin = < 0x03 >;
+			b-pin = < 0x1c >;
+			enable-pin = < 0x1e >;
+			led-pin = < 0xffffffff >;
+			led-pre = < 0x00 >;
+			steps = < 0x18 >;
+		};
+
+		spi0: spi@40003000 {
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x00 >;
+			reg = < 0x40003000 0x1000 >;
+			interrupts = < 0x03 0x01 >;
+			status = "disabled";
+			label = "SPI_0";
+		};
+
+		spi1: spi@40004000 {
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x00 >;
+			reg = < 0x40004000 0x1000 >;
+			interrupts = < 0x04 0x01 >;
+			status = "okay";
+			label = "SPI_1";
+			compatible = "nordic,nrf-spim";
+			sck-pin = < 0x10 >;
+			mosi-pin = < 0x11 >;
+			miso-pin = < 0x0f >;
+			cs-gpios = < 0x02 0x0d 0x00 >;
+
+			pmw3360@0 {
+				compatible = "pixart,pmw3360";
+				reg = < 0x00 >;
+				irq-gpios = < 0x02 0x15 0x00 >;
+				spi-max-frequency = < 0x1e8480 >;
+				label = "PMW3360";
+			};
+		};
+
+		spi2: spi@40023000 {
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x00 >;
+			reg = < 0x40023000 0x1000 >;
+			interrupts = < 0x23 0x01 >;
+			status = "disabled";
+			label = "SPI_2";
+		};
+
+		spi3: spi@4002f000 {
+			compatible = "nordic,nrf-spim";
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x00 >;
+			reg = < 0x4002f000 0x1000 >;
+			interrupts = < 0x2f 0x01 >;
+			status = "disabled";
+			label = "SPI_3";
+		};
+
+		rtc0: rtc@4000b000 {
+			compatible = "nordic,nrf-rtc";
+			reg = < 0x4000b000 0x1000 >;
+			interrupts = < 0x0b 0x01 >;
+			status = "okay";
+			clock-frequency = < 0x8000 >;
+			prescaler = < 0x01 >;
+			label = "RTC_0";
+		};
+
+		rtc1: rtc@40011000 {
+			compatible = "nordic,nrf-rtc";
+			reg = < 0x40011000 0x1000 >;
+			interrupts = < 0x11 0x01 >;
+			status = "okay";
+			clock-frequency = < 0x8000 >;
+			prescaler = < 0x01 >;
+			label = "RTC_1";
+		};
+
+		rtc2: rtc@40024000 {
+			compatible = "nordic,nrf-rtc";
+			reg = < 0x40024000 0x1000 >;
+			interrupts = < 0x24 0x01 >;
+			status = "okay";
+			clock-frequency = < 0x8000 >;
+			prescaler = < 0x01 >;
+			label = "RTC_2";
+		};
+
+		timer0: timer@40008000 {
+			compatible = "nordic,nrf-timer";
+			status = "okay";
+			reg = < 0x40008000 0x1000 >;
+			interrupts = < 0x08 0x01 >;
+			prescaler = < 0x00 >;
+			label = "TIMER_0";
+		};
+
+		timer1: timer@40009000 {
+			compatible = "nordic,nrf-timer";
+			status = "okay";
+			reg = < 0x40009000 0x1000 >;
+			interrupts = < 0x09 0x01 >;
+			prescaler = < 0x00 >;
+			label = "TIMER_1";
+		};
+
+		timer2: timer@4000a000 {
+			compatible = "nordic,nrf-timer";
+			status = "okay";
+			reg = < 0x4000a000 0x1000 >;
+			interrupts = < 0x0a 0x01 >;
+			prescaler = < 0x00 >;
+			label = "TIMER_2";
+		};
+
+		timer3: timer@4001a000 {
+			compatible = "nordic,nrf-timer";
+			status = "okay";
+			reg = < 0x4001a000 0x1000 >;
+			interrupts = < 0x1a 0x01 >;
+			prescaler = < 0x00 >;
+			label = "TIMER_3";
+		};
+
+		timer4: timer@4001b000 {
+			compatible = "nordic,nrf-timer";
+			status = "okay";
+			reg = < 0x4001b000 0x1000 >;
+			interrupts = < 0x1b 0x01 >;
+			prescaler = < 0x00 >;
+			label = "TIMER_4";
+		};
+
+		temp: temp@4000c000 {
+			compatible = "nordic,nrf-temp";
+			reg = < 0x4000c000 0x1000 >;
+			interrupts = < 0x0c 0x01 >;
+			status = "okay";
+			label = "TEMP_0";
+		};
+
+		usbd: usbd@40027000 {
+			compatible = "nordic,nrf-usbd";
+			reg = < 0x40027000 0x1000 >;
+			interrupts = < 0x27 0x01 >;
+			num-bidir-endpoints = < 0x00 >;
+			num-in-endpoints = < 0x02 >;
+			num-out-endpoints = < 0x02 >;
+			num-isoin-endpoints = < 0x00 >;
+			num-isoout-endpoints = < 0x00 >;
+			status = "okay";
+			label = "USBD";
+		};
+
+		wdt: watchdog@40010000 {
+			compatible = "nordic,nrf-watchdog";
+			reg = < 0x40010000 0x1000 >;
+			interrupts = < 0x10 0x01 >;
+			status = "okay";
+			label = "WDT";
+		};
+
+		cryptocell: crypto@5002a000 {
+			compatible = "nordic,nrf-cc310";
+			reg = < 0x5002a000 0x1000 >;
+			label = "CRYPTOCELL";
+			status = "okay";
+			#address-cells = < 0x01 >;
+			#size-cells = < 0x01 >;
+
+			cryptocell310: crypto@5002b000 {
+				compatible = "arm,cryptocell-310";
+				reg = < 0x5002b000 0x1000 >;
+				interrupts = < 0x2a 0x01 >;
+				label = "CRYPTOCELL310";
+			};
+		};
+	};
+
+	sw_pwm: sw-pwm {
+		compatible = "nordic,nrf-sw-pwm";
+		status = "disabled";
+		label = "SW_PWM";
+		timer-instance = < 0x02 >;
+		channel-count = < 0x03 >;
+		clock-prescaler = < 0x00 >;
+		ppi-base = < 0x0e >;
+		gpiote-base = < 0x00 >;
+		#pwm-cells = < 0x01 >;
+	};
+
+	cpus {
+		#address-cells = < 0x01 >;
+		#size-cells = < 0x00 >;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-m4f";
+			reg = < 0x00 >;
+		};
+	};
+};

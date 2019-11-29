@@ -1,0 +1,6 @@
+app: {address: 0xc000, size: 0xf4000}
+spm:
+  address: 0x0
+  placement:
+    before: [app]
+  size: 0xc000

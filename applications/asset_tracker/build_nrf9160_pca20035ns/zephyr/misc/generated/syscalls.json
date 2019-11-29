@@ -1,0 +1,1514 @@
+[
+    [
+        [
+            "struct device *device_get_binding",
+            "const char *name"
+        ],
+        "device.h"
+    ],
+    [
+        [
+            "void k_object_access_grant",
+            "void *object, struct k_thread *thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_object_release",
+            "void *object"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void *k_object_alloc",
+            "enum k_objects otype"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "k_tid_t k_thread_create",
+            "struct k_thread *new_thread,\n\t\t\t\t  k_thread_stack_t *stack,\n\t\t\t\t  size_t stack_size,\n\t\t\t\t  k_thread_entry_t entry,\n\t\t\t\t  void *p1, void *p2, void *p3,\n\t\t\t\t  int prio, u32_t options, s32_t delay"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "s32_t k_sleep",
+            "s32_t ms"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "s32_t k_usleep",
+            "s32_t us"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_busy_wait",
+            "u32_t usec_to_wait"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_yield",
+            "void"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_wakeup",
+            "k_tid_t thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "k_tid_t k_current_get",
+            "void"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_thread_abort",
+            "k_tid_t thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_thread_start",
+            "k_tid_t thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_thread_priority_get",
+            "k_tid_t thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_thread_priority_set",
+            "k_tid_t thread, int prio"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_thread_deadline_set",
+            "k_tid_t thread, int deadline"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_thread_suspend",
+            "k_tid_t thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_thread_resume",
+            "k_tid_t thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_is_preempt_thread",
+            "void"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_thread_custom_data_set",
+            "void *value"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void *k_thread_custom_data_get",
+            "void"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_thread_name_set",
+            "k_tid_t thread_id, const char *value"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_thread_name_copy",
+            "k_tid_t thread_id, char *buf,\n\t\t\t\t size_t size"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_timer_start",
+            "struct k_timer *timer,\n\t\t\t     s32_t duration, s32_t period"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_timer_stop",
+            "struct k_timer *timer"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "u32_t k_timer_status_get",
+            "struct k_timer *timer"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "u32_t k_timer_status_sync",
+            "struct k_timer *timer"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "u32_t k_timer_remaining_get",
+            "struct k_timer *timer"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_timer_user_data_set",
+            "struct k_timer *timer, void *user_data"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void *k_timer_user_data_get",
+            "struct k_timer *timer"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "s64_t k_uptime_get",
+            "void"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_queue_init",
+            "struct k_queue *queue"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_queue_cancel_wait",
+            "struct k_queue *queue"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "s32_t k_queue_alloc_append",
+            "struct k_queue *queue, void *data"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "s32_t k_queue_alloc_prepend",
+            "struct k_queue *queue, void *data"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void *k_queue_get",
+            "struct k_queue *queue, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_queue_is_empty",
+            "struct k_queue *queue"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void *k_queue_peek_head",
+            "struct k_queue *queue"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void *k_queue_peek_tail",
+            "struct k_queue *queue"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_futex_wait",
+            "struct k_futex *futex, int expected, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_futex_wake",
+            "struct k_futex *futex, bool wake_all"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "s32_t k_stack_alloc_init",
+            "struct k_stack *stack,\n\t\t\t\t   u32_t num_entries"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_stack_push",
+            "struct k_stack *stack, stack_data_t data"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_stack_pop",
+            "struct k_stack *stack, stack_data_t *data, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_mutex_init",
+            "struct k_mutex *mutex"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_mutex_lock",
+            "struct k_mutex *mutex, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_mutex_unlock",
+            "struct k_mutex *mutex"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_sem_init",
+            "struct k_sem *sem, unsigned int initial_count,\n\t\t\t  unsigned int limit"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_sem_take",
+            "struct k_sem *sem, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_sem_give",
+            "struct k_sem *sem"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_sem_reset",
+            "struct k_sem *sem"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "unsigned int k_sem_count_get",
+            "struct k_sem *sem"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_msgq_alloc_init",
+            "struct k_msgq *q, size_t msg_size,\n\t\t\t\tu32_t max_msgs"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_msgq_put",
+            "struct k_msgq *q, void *data, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_msgq_get",
+            "struct k_msgq *q, void *data, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_msgq_peek",
+            "struct k_msgq *q, void *data"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_msgq_purge",
+            "struct k_msgq *q"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "u32_t k_msgq_num_free_get",
+            "struct k_msgq *q"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void  k_msgq_get_attrs",
+            "struct k_msgq *q, struct k_msgq_attrs *attrs"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "u32_t k_msgq_num_used_get",
+            "struct k_msgq *q"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_pipe_alloc_init",
+            "struct k_pipe *pipe, size_t size"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_pipe_put",
+            "struct k_pipe *pipe, void *data,\n\t\t\t size_t bytes_to_write, size_t *bytes_written,\n\t\t\t size_t min_xfer, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_pipe_get",
+            "struct k_pipe *pipe, void *data,\n\t\t\t size_t bytes_to_read, size_t *bytes_read,\n\t\t\t size_t min_xfer, s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_poll",
+            "struct k_poll_event *events, int num_events,\n\t\t     s32_t timeout"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_poll_signal_init",
+            "struct k_poll_signal *signal"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_poll_signal_reset",
+            "struct k_poll_signal *signal"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_poll_signal_check",
+            "struct k_poll_signal *signal,\n\t\t\t\t   unsigned int *signaled, int *result"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_poll_signal_raise",
+            "struct k_poll_signal *signal, int result"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "void k_str_out",
+            "char *c, size_t n"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int k_float_disable",
+            "struct k_thread *thread"
+        ],
+        "kernel.h"
+    ],
+    [
+        [
+            "int ptp_clock_get",
+            "struct device *dev, struct net_ptp_time *tm"
+        ],
+        "ptp_clock.h"
+    ],
+    [
+        [
+            "int z_clock_hw_cycles_per_sec_runtime_get",
+            "void"
+        ],
+        "sys_clock.h"
+    ],
+    [
+        [
+            "int adc_channel_setup",
+            "struct device *dev,\n\t\t\t\tconst struct adc_channel_cfg *channel_cfg"
+        ],
+        "adc.h"
+    ],
+    [
+        [
+            "int adc_read",
+            "struct device *dev,\n\t\t       const struct adc_sequence *sequence"
+        ],
+        "adc.h"
+    ],
+    [
+        [
+            "int adc_read_async",
+            "struct device *dev,\n\t\t\t     const struct adc_sequence *sequence,\n\t\t\t     struct k_poll_signal *async"
+        ],
+        "adc.h"
+    ],
+    [
+        [
+            "int can_send",
+            "struct device *dev, const struct zcan_frame *msg,\n\t\t       s32_t timeout, can_tx_callback_t callback_isr,\n\t\t       void *callback_arg"
+        ],
+        "can.h"
+    ],
+    [
+        [
+            "int can_attach_msgq",
+            "struct device *dev, struct k_msgq *msg_q,\n\t\t\t      const struct zcan_filter *filter"
+        ],
+        "can.h"
+    ],
+    [
+        [
+            "void can_detach",
+            "struct device *dev, int filter_id"
+        ],
+        "can.h"
+    ],
+    [
+        [
+            "int can_configure",
+            "struct device *dev, enum can_mode mode,\n\t\t\t    u32_t bitrate"
+        ],
+        "can.h"
+    ],
+    [
+        [
+            "int counter_start",
+            "struct device *dev"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "int counter_stop",
+            "struct device *dev"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "u32_t counter_read",
+            "struct device *dev"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "int counter_get_pending_int",
+            "struct device *dev"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "u32_t counter_get_top_value",
+            "struct device *dev"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "u32_t counter_get_max_relative_alarm",
+            "struct device *dev"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "int counter_set_guard_period",
+            "struct device *dev, u32_t ticks,\n\t\t\t\t\tu32_t flags"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "u32_t counter_get_guard_period",
+            "struct device *dev, u32_t flags"
+        ],
+        "counter.h"
+    ],
+    [
+        [
+            "int dma_start",
+            "struct device *dev, u32_t channel"
+        ],
+        "dma.h"
+    ],
+    [
+        [
+            "int dma_stop",
+            "struct device *dev, u32_t channel"
+        ],
+        "dma.h"
+    ],
+    [
+        [
+            "int entropy_get_entropy",
+            "struct device *dev,\n\t\t\t\t  u8_t *buffer,\n\t\t\t\t  u16_t length"
+        ],
+        "entropy.h"
+    ],
+    [
+        [
+            "int espi_config",
+            "struct device *dev, struct espi_cfg *cfg"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "bool espi_get_channel_status",
+            "struct device *dev,\n\t\t\t\t       enum espi_channel ch"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_read_request",
+            "struct device *dev,\n\t\t\t\tstruct espi_request_packet req"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_write_request",
+            "struct device *dev,\n\t\t\t\t struct espi_request_packet req"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_send_vwire",
+            "struct device *dev,\n\t\t\t      enum espi_vwire_signal signal,\n\t\t\t      u8_t level"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_receive_vwire",
+            "struct device *dev,\n\t\t\t\t enum espi_vwire_signal signal,\n\t\t\t\t u8_t *level"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_send_oob",
+            "struct device *dev, struct espi_oob_packet pckt"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_receive_oob",
+            "struct device *dev,\n\t\t\t       struct espi_oob_packet pckt"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_read_flash",
+            "struct device *dev,\n\t\t\t      struct espi_flash_packet pckt"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_write_flash",
+            "struct device *dev,\n\t\t\t       struct espi_flash_packet pckt"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int espi_flash_erase",
+            "struct device *dev,\n\t\t\t       struct espi_flash_packet pckt"
+        ],
+        "espi.h"
+    ],
+    [
+        [
+            "int flash_read",
+            "struct device *dev, off_t offset, void *data,\n\t\t\t size_t len"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "int flash_write",
+            "struct device *dev, off_t offset, const void *data,\n\t\t\t  size_t len"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "int flash_erase",
+            "struct device *dev, off_t offset, size_t size"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "int flash_write_protection_set",
+            "struct device *dev, bool enable"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "int flash_get_page_info_by_offs",
+            "struct device *dev, off_t offset,\n\t\t\t\t\t  struct flash_pages_info *info"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "int flash_get_page_info_by_idx",
+            "struct device *dev, u32_t page_index,\n\t\t\t\t\t struct flash_pages_info *info"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "size_t flash_get_page_count",
+            "struct device *dev"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "size_t flash_get_write_block_size",
+            "struct device *dev"
+        ],
+        "flash.h"
+    ],
+    [
+        [
+            "int gpio_config",
+            "struct device *port, int access_op, u32_t pin,\n\t\t\t  int flags"
+        ],
+        "gpio.h"
+    ],
+    [
+        [
+            "int gpio_write",
+            "struct device *port, int access_op, u32_t pin,\n\t\t\t u32_t value"
+        ],
+        "gpio.h"
+    ],
+    [
+        [
+            "int gpio_read",
+            "struct device *port, int access_op, u32_t pin,\n\t\t\tu32_t *value"
+        ],
+        "gpio.h"
+    ],
+    [
+        [
+            "int gpio_enable_callback",
+            "struct device *port, int access_op,\n\t\t\t\t   u32_t pin"
+        ],
+        "gpio.h"
+    ],
+    [
+        [
+            "int gpio_disable_callback",
+            "struct device *port, int access_op,\n\t\t\t\t    u32_t pin"
+        ],
+        "gpio.h"
+    ],
+    [
+        [
+            "int gpio_get_pending_int",
+            "struct device *dev"
+        ],
+        "gpio.h"
+    ],
+    [
+        [
+            "ssize_t hwinfo_get_device_id",
+            "u8_t *buffer, size_t length"
+        ],
+        "hwinfo.h"
+    ],
+    [
+        [
+            "int i2c_configure",
+            "struct device *dev, u32_t dev_config"
+        ],
+        "i2c.h"
+    ],
+    [
+        [
+            "int i2c_transfer",
+            "struct device *dev,\n\t\t\t   struct i2c_msg *msgs, u8_t num_msgs,\n\t\t\t   u16_t addr"
+        ],
+        "i2c.h"
+    ],
+    [
+        [
+            "int i2c_slave_register",
+            "struct device *dev,\n\t\t\t\t struct i2c_slave_config *cfg"
+        ],
+        "i2c.h"
+    ],
+    [
+        [
+            "int i2c_slave_unregister",
+            "struct device *dev,\n\t\t\t\t   struct i2c_slave_config *cfg"
+        ],
+        "i2c.h"
+    ],
+    [
+        [
+            "int i2c_slave_driver_register",
+            "struct device *dev"
+        ],
+        "i2c.h"
+    ],
+    [
+        [
+            "int i2c_slave_driver_unregister",
+            "struct device *dev"
+        ],
+        "i2c.h"
+    ],
+    [
+        [
+            "int i2s_configure",
+            "struct device *dev, enum i2s_dir dir,\n\t\t\t    struct i2s_config *cfg"
+        ],
+        "i2s.h"
+    ],
+    [
+        [
+            "int i2s_buf_read",
+            "struct device *dev, void *buf, size_t *size"
+        ],
+        "i2s.h"
+    ],
+    [
+        [
+            "int i2s_buf_write",
+            "struct device *dev, void *buf, size_t size"
+        ],
+        "i2s.h"
+    ],
+    [
+        [
+            "int i2s_trigger",
+            "struct device *dev, enum i2s_dir dir,\n\t\t\t  enum i2s_trigger_cmd cmd"
+        ],
+        "i2s.h"
+    ],
+    [
+        [
+            "int ipm_send",
+            "struct device *ipmdev, int wait, u32_t id,\n\t\t       const void *data, int size"
+        ],
+        "ipm.h"
+    ],
+    [
+        [
+            "int ipm_max_data_size_get",
+            "struct device *ipmdev"
+        ],
+        "ipm.h"
+    ],
+    [
+        [
+            "u32_t ipm_max_id_val_get",
+            "struct device *ipmdev"
+        ],
+        "ipm.h"
+    ],
+    [
+        [
+            "int ipm_set_enabled",
+            "struct device *ipmdev, int enable"
+        ],
+        "ipm.h"
+    ],
+    [
+        [
+            "int kscan_config",
+            "struct device *dev,\n\t\t\t     kscan_callback_t callback"
+        ],
+        "kscan.h"
+    ],
+    [
+        [
+            "int kscan_enable_callback",
+            "struct device *dev"
+        ],
+        "kscan.h"
+    ],
+    [
+        [
+            "int kscan_disable_callback",
+            "struct device *dev"
+        ],
+        "kscan.h"
+    ],
+    [
+        [
+            "int led_blink",
+            "struct device *dev, u32_t led,\n\t\t\t    u32_t delay_on, u32_t delay_off"
+        ],
+        "led.h"
+    ],
+    [
+        [
+            "int led_set_brightness",
+            "struct device *dev, u32_t led,\n\t\t\t\t     u8_t value"
+        ],
+        "led.h"
+    ],
+    [
+        [
+            "int led_on",
+            "struct device *dev, u32_t led"
+        ],
+        "led.h"
+    ],
+    [
+        [
+            "int led_off",
+            "struct device *dev, u32_t led"
+        ],
+        "led.h"
+    ],
+    [
+        [
+            "int ps2_config",
+            "struct device *dev, ps2_callback_t callback_isr"
+        ],
+        "ps2.h"
+    ],
+    [
+        [
+            "int ps2_write",
+            "struct device *dev, u8_t value"
+        ],
+        "ps2.h"
+    ],
+    [
+        [
+            "int ps2_read",
+            "struct device *dev,  u8_t *value"
+        ],
+        "ps2.h"
+    ],
+    [
+        [
+            "int ps2_enable_callback",
+            "struct device *dev"
+        ],
+        "ps2.h"
+    ],
+    [
+        [
+            "int ps2_disable_callback",
+            "struct device *dev"
+        ],
+        "ps2.h"
+    ],
+    [
+        [
+            "int pwm_pin_set_cycles",
+            "struct device *dev, u32_t pwm,\n\t\t\t\t u32_t period, u32_t pulse"
+        ],
+        "pwm.h"
+    ],
+    [
+        [
+            "int pwm_get_cycles_per_sec",
+            "struct device *dev, u32_t pwm,\n\t\t\t\t     u64_t *cycles"
+        ],
+        "pwm.h"
+    ],
+    [
+        [
+            "int sensor_attr_set",
+            "struct device *dev,\n\t\t\t      enum sensor_channel chan,\n\t\t\t      enum sensor_attribute attr,\n\t\t\t      const struct sensor_value *val"
+        ],
+        "sensor.h"
+    ],
+    [
+        [
+            "int sensor_sample_fetch",
+            "struct device *dev"
+        ],
+        "sensor.h"
+    ],
+    [
+        [
+            "int sensor_sample_fetch_chan",
+            "struct device *dev,\n\t\t\t\t       enum sensor_channel type"
+        ],
+        "sensor.h"
+    ],
+    [
+        [
+            "int sensor_channel_get",
+            "struct device *dev,\n\t\t\t\t enum sensor_channel chan,\n\t\t\t\t struct sensor_value *val"
+        ],
+        "sensor.h"
+    ],
+    [
+        [
+            "int spi_transceive",
+            "struct device *dev,\n\t\t\t     const struct spi_config *config,\n\t\t\t     const struct spi_buf_set *tx_bufs,\n\t\t\t     const struct spi_buf_set *rx_bufs"
+        ],
+        "spi.h"
+    ],
+    [
+        [
+            "int spi_release",
+            "struct device *dev,\n\t\t\t  const struct spi_config *config"
+        ],
+        "spi.h"
+    ],
+    [
+        [
+            "int uart_err_check",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_poll_in",
+            "struct device *dev, unsigned char *p_char"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void uart_poll_out",
+            "struct device *dev,\n\t\t\t\t      unsigned char out_char"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_configure",
+            "struct device *dev, const struct uart_config *cfg"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_config_get",
+            "struct device *dev, struct uart_config *cfg"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void uart_irq_tx_enable",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void uart_irq_tx_disable",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void uart_irq_rx_enable",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void uart_irq_rx_disable",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void uart_irq_err_enable",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void uart_irq_err_disable",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_irq_is_pending",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_irq_update",
+            "struct device *dev"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_line_ctrl_set",
+            "struct device *dev,\n\t\t\t\t u32_t ctrl, u32_t val"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_line_ctrl_get",
+            "struct device *dev, u32_t ctrl, u32_t *val"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "int uart_drv_cmd",
+            "struct device *dev, u32_t cmd, u32_t p"
+        ],
+        "uart.h"
+    ],
+    [
+        [
+            "void z_log_string_from_user",
+            "u32_t src_level_val, const char *str"
+        ],
+        "log_core.h"
+    ],
+    [
+        [
+            "void z_log_hexdump_from_user",
+            "u32_t src_level_val,\n\t\t\t\t       const char *metadata,\n\t\t\t\t       const u8_t *data, u32_t len"
+        ],
+        "log_core.h"
+    ],
+    [
+        [
+            "void log_panic",
+            "void"
+        ],
+        "log_ctrl.h"
+    ],
+    [
+        [
+            "bool log_process",
+            "bool bypass"
+        ],
+        "log_ctrl.h"
+    ],
+    [
+        [
+            "u32_t log_buffered_cnt",
+            "void"
+        ],
+        "log_ctrl.h"
+    ],
+    [
+        [
+            "u32_t log_filter_set",
+            "struct log_backend const *const backend,\n\t\t\t       u32_t domain_id,\n\t\t\t       u32_t src_id,\n\t\t\t       u32_t level"
+        ],
+        "log_ctrl.h"
+    ],
+    [
+        [
+            "struct device *net_eth_get_ptp_clock_by_index",
+            "int index"
+        ],
+        "ethernet.h"
+    ],
+    [
+        [
+            "int net_if_ipv6_addr_lookup_by_index",
+            "const struct in6_addr *addr"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "bool net_if_ipv6_addr_add_by_index",
+            "int index,\n\t\t\t\t\t     struct in6_addr *addr,\n\t\t\t\t\t     enum net_addr_type addr_type,\n\t\t\t\t\t     u32_t vlifetime"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "bool net_if_ipv6_addr_rm_by_index",
+            "int index,\n\t\t\t\t\t    const struct in6_addr *addr"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "int net_if_ipv4_addr_lookup_by_index",
+            "const struct in_addr *addr"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "bool net_if_ipv4_addr_add_by_index",
+            "int index,\n\t\t\t\t\t     struct in_addr *addr,\n\t\t\t\t\t     enum net_addr_type addr_type,\n\t\t\t\t\t     u32_t vlifetime"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "bool net_if_ipv4_addr_rm_by_index",
+            "int index,\n\t\t\t\t\t    const struct in_addr *addr"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "bool net_if_ipv4_set_netmask_by_index",
+            "int index,\n\t\t\t\t\t\tconst struct in_addr *netmask"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "bool net_if_ipv4_set_gw_by_index",
+            "int index, const struct in_addr *gw"
+        ],
+        "net_if.h"
+    ],
+    [
+        [
+            "int net_addr_pton",
+            "sa_family_t family, const char *src, void *dst"
+        ],
+        "net_ip.h"
+    ],
+    [
+        [
+            "char *net_addr_ntop",
+            "sa_family_t family, const void *src,\n\t\t\t      char *dst, size_t size"
+        ],
+        "net_ip.h"
+    ],
+    [
+        [
+            "int zsock_socket",
+            "int family, int type, int proto"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_close",
+            "int sock"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_shutdown",
+            "int sock, int how"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_bind",
+            "int sock, const struct sockaddr *addr,\n\t\t\t socklen_t addrlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_connect",
+            "int sock, const struct sockaddr *addr,\n\t\t\t    socklen_t addrlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_listen",
+            "int sock, int backlog"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_accept",
+            "int sock, struct sockaddr *addr, socklen_t *addrlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "ssize_t zsock_sendto",
+            "int sock, const void *buf, size_t len,\n\t\t\t       int flags, const struct sockaddr *dest_addr,\n\t\t\t       socklen_t addrlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "ssize_t zsock_sendmsg",
+            "int sock, const struct msghdr *msg,\n\t\t\t\tint flags"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "ssize_t zsock_recvfrom",
+            "int sock, void *buf, size_t max_len,\n\t\t\t\t int flags, struct sockaddr *src_addr,\n\t\t\t\t socklen_t *addrlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_fcntl",
+            "int sock, int cmd, int flags"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_poll",
+            "struct zsock_pollfd *fds, int nfds, int timeout"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_getsockopt",
+            "int sock, int level, int optname,\n\t\t\t       void *optval, socklen_t *optlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_setsockopt",
+            "int sock, int level, int optname,\n\t\t\t       const void *optval, socklen_t optlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_getsockname",
+            "int sock, struct sockaddr *addr,\n\t\t\t\tsocklen_t *addrlen"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_gethostname",
+            "char *buf, size_t len"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int zsock_inet_pton",
+            "sa_family_t family, const char *src, void *dst"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int z_zsock_getaddrinfo_internal",
+            "const char *host,\n\t\t\t\t\t   const char *service,\n\t\t\t\t\t   const struct zsock_addrinfo *hints,\n\t\t\t\t\t   struct zsock_addrinfo *res"
+        ],
+        "socket.h"
+    ],
+    [
+        [
+            "int atomic_cas",
+            "atomic_t *target, atomic_val_t old_value,\n\t\t\t atomic_val_t new_value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "atomic_val_t atomic_add",
+            "atomic_t *target, atomic_val_t value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "atomic_val_t atomic_sub",
+            "atomic_t *target, atomic_val_t value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "atomic_val_t atomic_set",
+            "atomic_t *target, atomic_val_t value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "atomic_val_t atomic_or",
+            "atomic_t *target, atomic_val_t value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "atomic_val_t atomic_xor",
+            "atomic_t *target, atomic_val_t value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "atomic_val_t atomic_and",
+            "atomic_t *target, atomic_val_t value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "atomic_val_t atomic_nand",
+            "atomic_t *target, atomic_val_t value"
+        ],
+        "atomic.h"
+    ],
+    [
+        [
+            "int *z_errno",
+            "void"
+        ],
+        "errno_private.h"
+    ],
+    [
+        [
+            "int z_zephyr_read_stdin",
+            "char *buf, int nbytes"
+        ],
+        "libc-hooks.h"
+    ],
+    [
+        [
+            "int z_zephyr_write_stdout",
+            "const void *buf, int nbytes"
+        ],
+        "libc-hooks.h"
+    ],
+    [
+        [
+            "int zephyr_fputc",
+            "int c, FILE * stream"
+        ],
+        "libc-hooks.h"
+    ],
+    [
+        [
+            "size_t zephyr_fwrite",
+            "const void *_MLIBC_RESTRICT ptr, size_t size,\n\t\t\t\tsize_t nitems, FILE *_MLIBC_RESTRICT stream"
+        ],
+        "libc-hooks.h"
+    ],
+    [
+        [
+            "int z_sys_mutex_kernel_lock",
+            "struct sys_mutex *mutex, s32_t timeout"
+        ],
+        "mutex.h"
+    ],
+    [
+        [
+            "int z_sys_mutex_kernel_unlock",
+            "struct sys_mutex *mutex"
+        ],
+        "mutex.h"
+    ]
+]

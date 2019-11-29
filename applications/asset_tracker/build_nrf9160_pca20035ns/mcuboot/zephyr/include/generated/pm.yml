@@ -1,0 +1,33 @@
+mcuboot:
+  size: 0xc000
+  placement:
+    before: [mcuboot_primary]
+mcuboot_primary_app:
+  # All images to be placed in MCUboot's slot 0 should be placed in this
+  # partition
+  span: [app]
+mcuboot_primary:
+  span: [mcuboot_pad, mcuboot_primary_app]
+mcuboot_secondary:
+  share_size: [mcuboot_primary]
+  placement:
+    align: {start: 4096}
+    after: mcuboot_primary
+mcuboot_scratch:
+  size: 0x1e000
+  placement:
+    after: app
+    align: {start: 4096}
+mcuboot_storage:
+  size: 0x4000
+  placement:
+    after: [mcuboot_scratch]
+    align: {start: 4096}
+# Padding placed before image to boot
+mcuboot_pad:
+    # MCUboot pad must be placed before the 'spm' partition if that is present.
+    # If 'spm' partition is not present, it must be placed before the 'app'.
+  size: 0x200
+  placement:
+    before: [mcuboot_primary_app]
+    align: {start: 4096}

@@ -1,0 +1,78 @@
+<!DOCTYPE CrossStudio_Session_File>
+<session>
+ <Bookmarks/>
+ <Breakpoints groups="Breakpoints" active_group="Breakpoints"/>
+ <ExecutionProfileWindow/>
+ <FrameBufferWindow>
+  <FrameBufferWindow bufferHeight="-1" addressSpace="" addressText="" bufferWidth="-1"/>
+ </FrameBufferWindow>
+ <Memory1>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" addressOrder="0" columnsText="" refreshPeriod="0" name="zephyr/merged.hex" radix="16" sizeText="" addressText=""/>
+ </Memory1>
+ <Memory2>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" addressOrder="0" columnsText="" refreshPeriod="0" name="zephyr/merged.hex" radix="16" sizeText="" addressText=""/>
+ </Memory2>
+ <Memory3>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" addressOrder="0" columnsText="" refreshPeriod="0" name="zephyr/merged.hex" radix="16" sizeText="" addressText=""/>
+ </Memory3>
+ <Memory4>
+  <MemoryWindow addressSpace="" dataSize="1" autoEvaluate="0" viewMode="0" addressOrder="0" columnsText="" refreshPeriod="0" name="zephyr/merged.hex" radix="16" sizeText="" addressText=""/>
+ </Memory4>
+ <Project>
+  <ProjectSessionItem path="asset_tracker"/>
+  <ProjectSessionItem path="asset_tracker;dts files"/>
+  <ProjectSessionItem path="asset_tracker;zephyr/merged.hex"/>
+  <ProjectSessionItem path="asset_tracker;build"/>
+  <ProjectSessionItem path="asset_tracker;build;app/libapp.a"/>
+  <ProjectSessionItem path="asset_tracker;build;app/libapp.a;C_COMPILER__app"/>
+  <ProjectSessionItem path="asset_tracker;build;libspmsecureentries.a"/>
+  <ProjectSessionItem path="asset_tracker;build;mcuboot/zephyr/libmcuboot_zephyr.a"/>
+  <ProjectSessionItem path="asset_tracker;build;mcuboot/zephyr/libmcuboot_zephyr.a;C_COMPILER__mcuboot_zephyr"/>
+  <ProjectSessionItem path="asset_tracker;build;spm/zephyr/kernel/libspm_kernel.a"/>
+  <ProjectSessionItem path="asset_tracker;build;spm/zephyr/kernel/libspm_kernel.a;C_COMPILER__spm_kernel"/>
+  <ProjectSessionItem path="asset_tracker;build;spm/zephyr/libspm_zephyr.a"/>
+  <ProjectSessionItem path="asset_tracker;build;spm/zephyr/libspm_zephyr.a;C_COMPILER__spm_zephyr"/>
+  <ProjectSessionItem path="asset_tracker;build;zephyr/modules/nrf/drivers/lte_link_control/lib..__nrf__drivers__lte_link_control.a"/>
+  <ProjectSessionItem path="asset_tracker;build;zephyr/modules/nrf/drivers/lte_link_control/lib..__nrf__drivers__lte_link_control.a;C_COMPILER__.2e.2e__nrf__drivers__lte_link_control"/>
+  <ProjectSessionItem path="asset_tracker;build;zephyr/modules/nrf/lib/bsdlib/lib..__nrf__lib__bsdlib.a"/>
+  <ProjectSessionItem path="asset_tracker;build;zephyr/modules/nrf/lib/bsdlib/lib..__nrf__lib__bsdlib.a;C_COMPILER__.2e.2e__nrf__lib__bsdlib"/>
+ </Project>
+ <Register1>
+  <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/msp_ns;CPU/psp_ns;CPU/msp_s;CPU/psp_s;CPU/msplim_s;CPU/psplim_s;CPU/msplim_ns;CPU/psplim_ns;CPU/cfbp_s;CPU/cfbp_ns;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="zephyr/merged.hex" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register1>
+ <Register2>
+  <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/msp_ns;CPU/psp_ns;CPU/msp_s;CPU/psp_s;CPU/msplim_s;CPU/psplim_s;CPU/msplim_ns;CPU/psplim_ns;CPU/cfbp_s;CPU/cfbp_ns;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="zephyr/merged.hex" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register2>
+ <Register3>
+  <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/msp_ns;CPU/psp_ns;CPU/msp_s;CPU/psp_s;CPU/msplim_s;CPU/psplim_s;CPU/msplim_ns;CPU/psplim_ns;CPU/cfbp_s;CPU/cfbp_ns;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="zephyr/merged.hex" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register3>
+ <Register4>
+  <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/msp_ns;CPU/psp_ns;CPU/msp_s;CPU/psp_s;CPU/msplim_s;CPU/psplim_s;CPU/msplim_ns;CPU/psplim_ns;CPU/cfbp_s;CPU/cfbp_ns;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="zephyr/merged.hex" decimalNodes="" octalNodes="" unsignedNodes=""/>
+ </Register4>
+ <Threads>
+  <ThreadsWindow showLists=""/>
+ </Threads>
+ <TraceWindow>
+  <Trace enabled="Yes"/>
+ </TraceWindow>
+ <Watch1>
+  <Watches active="1" update="Never"/>
+ </Watch1>
+ <Watch2>
+  <Watches active="0" update="Never"/>
+ </Watch2>
+ <Watch3>
+  <Watches active="0" update="Never"/>
+ </Watch3>
+ <Watch4>
+  <Watches active="0" update="Never"/>
+ </Watch4>
+ <Files>
+  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="1115" useTextEdit="1" useBinaryEdit="0" left="0" path="../src/main.c" selected="0" top="973" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="32" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../lib/bsdlib/bsdlib.c" selected="0" top="7" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="99" useTextEdit="1" useBinaryEdit="0" left="0" path="mcuboot/zephyr/misc/generated/configs.c" selected="0" top="77" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="32" y="195" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../drivers/lte_link_control/lte_lc.c" selected="1" top="179" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="479" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../zephyr/kernel/init.c" selected="0" top="453" codecName=""/>
+ </Files>
+ <ARMCrossStudioWindow activeProject="zephyr/merged.hex" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Common" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3711"/>
+</session>
