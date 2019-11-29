@@ -1,5 +1,6 @@
 
-nRF Connect SDK: fw-nrfconnect-nrf
+nRF Connect SDK: fw-nrfconnect-nrf 
+nRF9160 Sandbox
 ##################################
 
 This repository contains the Nordic-specific source code additions to open
