@@ -17,10 +17,11 @@ LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 
 #define THREAD_PRIORITY   K_PRIO_PREEMPT(CONFIG_AT_CMD_THREAD_PRIO)
 
-#define AT_CMD_OK_STR    "OK"
-#define AT_CMD_ERROR_STR "ERROR"
-#define AT_CMD_CMS_STR   "+CMS ERROR:"
-#define AT_CMD_CME_STR   "+CME ERROR:"
+#define AT_CMD_OK_STR    	"OK"
+#define AT_CMD_PROMPT_STR	">"
+#define AT_CMD_ERROR_STR	"ERROR"
+#define AT_CMD_CMS_STR   	"+CMS ERROR:"
+#define AT_CMD_CME_STR   	"+CME ERROR:"
 
 static K_THREAD_STACK_DEFINE(socket_thread_stack, \
 				CONFIG_AT_CMD_THREAD_STACK_SIZE);
@@ -49,7 +50,7 @@ struct callback_work_item {
 };
 
 K_MEM_SLAB_DEFINE(rsp_work_items, sizeof(struct callback_work_item),
-		  CONFIG_AT_CMD_RESPONSE_BUFFER_COUNT, 4);
+			CONFIG_AT_CMD_RESPONSE_BUFFER_COUNT, 4);
 
 static int open_socket(void)
 {
@@ -73,6 +74,13 @@ static int get_return_code(char *buf, struct return_state_object *ret)
 		tmpstr = strstr(buf, AT_CMD_OK_STR);
 		if (tmpstr) {
 			ret->state = AT_CMD_OK;
+			ret->code  = 0;
+			break;
+		}
+
+		tmpstr = strstr(buf, AT_CMD_PROMPT_STR);
+		if (tmpstr) {
+			ret->state = AT_CMD_PROMPT;
 			ret->code  = 0;
 			break;
 		}
@@ -143,13 +151,13 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 		item->callback = NULL;
 
 		bytes_read = recv(common_socket_fd, item->data,
-				  sizeof(item->data), 0);
+					sizeof(item->data), 0);
 		if (bytes_read < 0) {
 			LOG_ERR("AT socket recv failed with err %d",
 				bytes_read);
 
 			if ((close(common_socket_fd) == 0) &&
-			    (open_socket() == 0)) {
+					(open_socket() == 0)) {
 				LOG_INF("AT socket recovered");
 
 				ret.state = AT_CMD_ERROR;
@@ -162,7 +170,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			close(common_socket_fd);
 			return;
 		} else if (bytes_read == sizeof(item->data) ||
-			   item->data[bytes_read - 1] != '\0') {
+				 item->data[bytes_read - 1] != '\0') {
 
 			LOG_ERR("AT message to large for reception buffer or "
 				"missing termination character");
@@ -177,10 +185,10 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 
 		if (ret.state != AT_CMD_NOTIFICATION) {
 			if ((response_buf_len > 0) &&
-			    (response_buf != NULL)) {
+					(response_buf != NULL)) {
 				if (response_buf_len > payload_len) {
 					memcpy(response_buf, item->data,
-					       payload_len);
+								 payload_len);
 				} else {
 					LOG_ERR("Response buffer not large "
 						"enough");
@@ -217,7 +225,7 @@ next:
 
 		/* Notify back only if command was sent. */
 		if ((k_sem_count_get(&cmd_pending) == 0) &&
-		    (ret.state != AT_CMD_NOTIFICATION)) {
+				(ret.state != AT_CMD_NOTIFICATION)) {
 			current_cmd_handler = NULL;
 
 			k_msgq_put(&return_code_msq, &ret, K_FOREVER);
@@ -258,8 +266,8 @@ static inline int at_write(const char *const cmd, enum at_cmd_state *state)
 }
 
 int at_cmd_write_with_callback(const char *const cmd,
-			       at_cmd_handler_t  handler,
-			       enum at_cmd_state *state)
+						 at_cmd_handler_t  handler,
+						 enum at_cmd_state *state)
 {
 	k_sem_take(&cmd_pending, K_FOREVER);
 

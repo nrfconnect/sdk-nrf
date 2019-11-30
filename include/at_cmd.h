@@ -29,6 +29,7 @@ extern "C" {
  */
 enum at_cmd_state {
 	AT_CMD_OK,
+	AT_CMD_PROMPT,
 	AT_CMD_ERROR,
 	AT_CMD_ERROR_CMS,
 	AT_CMD_ERROR_CME,
