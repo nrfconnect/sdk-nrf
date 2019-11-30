@@ -14,6 +14,11 @@
 #include <net/download_client.h>
 #include <logging/log.h>
 
+#if ! __GNU_VISIBLE
+/* strcasestr exists in libc and can be linked, but __GNU_VISIBLE must be 1 to be available in string.h */
+char	*strcasestr (const char *, const char *);
+#endif
+
 LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 #define GET_TEMPLATE                                                           \
@@ -304,23 +309,36 @@ static int header_parse(struct download_client *client)
 
 	/* If file size is not known, read it from the header */
 	if (client->file_size == 0) {
-		p = strstr(client->buf, "Content-Range: bytes");
-		if (!p) {
+		if (NULL != (p = strcasestr(client->buf, "Content-Range: bytes"))) {
+			p = strstr(p, "/");
+			if (!p) {
+				/* Cannot continue */
+				LOG_ERR("Server did not send file size in response");
+				return -1;
+			}
+
+			client->file_size = atoi(p + 1);
+
+			LOG_DBG("File size = %d", client->file_size);
+		} else if (NULL != strcasestr(client->buf, "Accept-Range: bytes") &&
+			NULL != (p = strcasestr(client->buf, "Content-Length"))) {
+			p = strstr(p, ":");
+			if (!p) {
+				/* Cannot continue */
+				LOG_ERR("Server did not send file size in response");
+				return -1;
+			}
+
+			client->file_size = atoi(p + 1);
+
+			LOG_DBG("File size = %d", client->file_size);
+		} else {
 			/* Cannot continue */
 			LOG_ERR("Server did not send "
-				"\"Content-Range\" in response");
+				"\"Content-Range\" or \"Content-Length\" "
+				"in response");
 			return -1;
 		}
-		p = strstr(p, "/");
-		if (!p) {
-			/* Cannot continue */
-			LOG_ERR("Server did not send file size in response");
-			return -1;
-		}
-
-		client->file_size = atoi(p + 1);
-
-		LOG_DBG("File size = %d", client->file_size);
 	}
 
 	p = strstr(client->buf, "Connection: close");
