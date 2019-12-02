@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Nordic Semiconductor ASA
+# Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -17,11 +17,6 @@ config MPSL_SIGNAL_STACK_SIZE
 	help
 	  Size of the signal handler thread stack, used to process lower
 	  priority signals in MPSL.
-
-config CLOCK_CONTROL_NRF_ACCURACY
-	int "32 KHz clock accuracy"
-	default 250 if CLOCK_CONTROL_NRF_K32SRC_RC
-	default 20
 
 module=MPSL
 module-str=MPSL
