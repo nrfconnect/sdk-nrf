@@ -178,6 +178,25 @@ static int bt_mesh_ponoff_srv_init(struct bt_mesh_model *model)
 	srv->ponoff_model = model;
 	net_buf_simple_init(model->pub->msg, 0);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Model extensions:
+		 * To simplify the model extension tree, we're flipping the
+		 * relationship between the ponoff server and the ponoff setup
+		 * server. In the specification, the ponoff setup server extends
+		 * the ponoff server, which is the opposite of what we're doing
+		 * here. This makes no difference for the mesh stack, but it
+		 * makes it a lot easier to extend this model, as we won't have
+		 * to support multiple extenders.
+		 */
+		bt_mesh_model_extend(model, srv->onoff.model);
+		bt_mesh_model_extend(model, srv->dtt.model);
+		bt_mesh_model_extend(
+			model,
+			bt_mesh_model_find(
+				bt_mesh_model_elem(model),
+				BT_MESH_MODEL_ID_GEN_POWER_ONOFF_SETUP_SRV));
+	}
+
 	return 0;
 }
 

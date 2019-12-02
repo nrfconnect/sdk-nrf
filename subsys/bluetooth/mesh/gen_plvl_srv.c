@@ -527,6 +527,24 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *mod)
 	bt_mesh_plvl_srv_reset(mod);
 	net_buf_simple_init(mod->pub->msg, 0);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS)) {
+		/* Model extensions:
+		 * To simplify the model extension tree, we're flipping the
+		 * relationship between the plvl server and the plvl setup
+		 * server. In the specification, the plvl setup server extends
+		 * the plvl server, which is the opposite of what we're doing
+		 * here. This makes no difference for the mesh stack, but it
+		 * makes it a lot easier to extend this model, as we won't have
+		 * to support multiple extenders.
+		 */
+		bt_mesh_model_extend(mod, srv->ponoff.ponoff_model);
+		bt_mesh_model_extend(
+			mod,
+			bt_mesh_model_find(
+				bt_mesh_model_elem(mod),
+				BT_MESH_MODEL_ID_GEN_POWER_LEVEL_SETUP_SRV));
+	}
+
 	return 0;
 }
 
