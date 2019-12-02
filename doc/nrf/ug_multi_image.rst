@@ -72,6 +72,7 @@ To change the default configuration and configure how a child image is handled, 
 For example, to use a prebuilt HEX file of the :ref:`secure_partition_manager` instead of building it, select :option:`CONFIG_SPM_BUILD_STRATEGY_USE_HEX_FILE` instead of the default :option:`CONFIG_SPM_BUILD_STRATEGY_FROM_SOURCE`, and specify the HEX file in :option:`CONFIG_SPM_HEX_FILE`.
 To ignore an MCUboot child image, select :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` instead of :option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE`.
 
+.. _ug_multi_image_defining:
 
 Defining and enabling a child image
 ***********************************
