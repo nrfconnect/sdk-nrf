@@ -35,6 +35,7 @@ Kconfig*                                  @SebastianBoe
 /include/                                 @anangl @rlubos @pizi-nordic
 /include/bluetooth/                       @joerchan
 /include/bluetooth/**/*.rst               @b-gent
+/include/bluetooth/mesh/**/*.rst          @greg-fer
 /include/bluetooth/mesh/                  @trond-snekvik @joerchan
 /include/debug/**/*.rst                   @b-gent
 /include/drivers/                         @anangl
@@ -56,8 +57,9 @@ Kconfig*                                  @SebastianBoe
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
-/samples/bluetooth/**/README.rst          @b-gent
+/samples/bluetooth/**/*.rst               @b-gent
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
+/samples/bluetooth/mesh/**/*.rst          @b-gent
 /samples/bootloader/                      @hakonfam @ioannisg
 /subsys/debug/CMakeLists.txt              @nordic-krch
 /samples/debug/ppi_trace/                 @nordic-krch
@@ -65,7 +67,7 @@ Kconfig*                                  @SebastianBoe
 /samples/esb/                             @lemrey
 /samples/event_manager/README.rst         @b-gent
 /samples/mpsl/                            @joerchan @rugeGerritsen
-/samples/mpsl/**/README.rst               @b-gent
+/samples/mpsl/**/*.rst                    @b-gent
 /samples/nfc/                             @grochu
 /samples/nfc/**/README.rst                @b-gent
 /samples/nrf9160/                         @rlubos @lemrey
