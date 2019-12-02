@@ -183,7 +183,7 @@ static struct bt_mesh_elem elements[] = {
 };
 
 static const struct bt_mesh_comp comp = {
-	.cid = CONFIG_BT_CTLR_COMPANY_ID,
+	.cid = CONFIG_BT_COMPANY_ID,
 	.elem = elements,
 	.elem_count = ARRAY_SIZE(elements),
 };
