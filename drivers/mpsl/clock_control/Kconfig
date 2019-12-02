@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-config CLOCK_CONTROL_NRFXLIB
-	bool "Enable nrfxlib clock control driver, for use with BLE Controller or MPSL clock control."
+config CLOCK_CONTROL_MPSL
+	bool "Enable MPSL clock control driver, for use with MPSL and protocols using MPSL, like the BLE Controller."
 	default y
 	depends on MPSL
 	select CLOCK_CONTROL_NRF_FORCE_ALT

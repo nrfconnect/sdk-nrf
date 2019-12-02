@@ -4,5 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-rsource "entropy/Kconfig"
-rsource "flash/Kconfig"
+add_subdirectory_ifdef(CONFIG_CLOCK_CONTROL_MPSL clock_control)
