@@ -466,6 +466,14 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *mod)
 	srv->mod = mod;
 	net_buf_simple_init(mod->pub->msg, 0);
 
+	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS) &&
+	    mod->id != BT_MESH_MODEL_ID_GEN_USER_PROP_SRV) {
+		bt_mesh_model_extend(
+			mod,
+			bt_mesh_model_find(bt_mesh_model_elem(mod),
+					   BT_MESH_MODEL_ID_GEN_USER_PROP_SRV));
+	}
+
 	if (IS_MFR_SRV(mod)) {
 		/* Manufacturer properties aren't writable */
 		struct bt_mesh_prop *prop;
