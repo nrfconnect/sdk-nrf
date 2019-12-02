@@ -35,7 +35,7 @@ Kconfig*                                  @SebastianBoe
 /include/                                 @anangl @rlubos @pizi-nordic
 /include/bluetooth/                       @joerchan
 /include/bluetooth/**/*.rst               @b-gent
-/include/bluetooth/mesh/**/*.rst          @greg-fer
+/include/bluetooth/mesh/**/*.rst          @ru-fu
 /include/bluetooth/mesh/                  @trond-snekvik @joerchan
 /include/debug/**/*.rst                   @b-gent
 /include/drivers/                         @anangl
@@ -59,7 +59,7 @@ Kconfig*                                  @SebastianBoe
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/**/*.rst               @b-gent
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
-/samples/bluetooth/mesh/**/*.rst          @b-gent
+/samples/bluetooth/mesh/**/*.rst          @ru-fu
 /samples/bootloader/                      @hakonfam @ioannisg
 /subsys/debug/CMakeLists.txt              @nordic-krch
 /samples/debug/ppi_trace/                 @nordic-krch
