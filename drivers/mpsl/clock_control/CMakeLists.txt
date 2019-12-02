@@ -4,5 +4,5 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-rsource "entropy/Kconfig"
-rsource "flash/Kconfig"
+zephyr_library()
+zephyr_library_sources(clock_control_mpsl.c)

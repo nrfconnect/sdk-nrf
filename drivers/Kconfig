@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018-2019 Nordic Semiconductor ASA
+# Copyright (c) 2018-2020 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -14,6 +14,10 @@ rsource "gps/Kconfig"
 
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"
+endif
+
+if MPSL
+rsource "mpsl/Kconfig"
 endif
 
 endmenu
