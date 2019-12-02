@@ -44,6 +44,8 @@ The following image shows an abstract representation of the memory layout, assum
 For detailed information about the memory layout, see the partition configuration in the DTS overlay file for the board that you are using.
 This file is located in ``subsys\bootloader\dts``.
 
+.. _immutable_bootloader:
+
 Immutable bootloader
 ====================
 

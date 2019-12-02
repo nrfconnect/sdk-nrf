@@ -15,15 +15,18 @@ The Partition Manager is activated for all multi-image builds, no matter what bu
 Overview
 ********
 
-The Partition Manager script reads a set of Partition Manager configurations.
-Using this information, it deduces the start address and size of each partition.
+The Partition Manager script reads configuration files named :file:`pm.yml`, which define flash partitions.
+A partition's definition includes its name and constraints on its size and placement on flash.
+The Partition Manager allocates a start address and sometimes a size to each partition in a way that satisfies these constraints.
 
 There are different kinds of partitions:
 
 Image partitions
    An image partition is the flash area reserved for an image, to which the image binary is written.
 
-   In a multi-image build context, there is one *root image* and one or more *child images*.
+   When the Partition Manager is active, there is one *root image* and one or more *child images*.
+   The name of the root image is ``app``; it is always implicitly defined.
+   Child images are explicitly defined in :file:`pm.yml` files.
    The size of the root image partition is dynamic, while the sizes of all child image partitions are statically defined.
 
 Placeholder partitions
@@ -33,7 +36,7 @@ Placeholder partitions
 Container partitions
    A container partition does not reserve space, but is used to logically and/or physically group other partitions.
 
-The start addresses and sizes for image partitions are used in the preprocessing of the linker script for each image.
+The start addresses and sizes of image partitions are used in the preprocessing of the linker script for each image.
 
 .. _pm_configuration:
 
@@ -48,41 +51,41 @@ This file must be stored in the same folder as the main :file:`CMakeLists.txt` f
    If a root application defines a :file:`pm.yml` file, it is silently ignored.
 
 The Partition Manager configuration can be also provided by a subsystem.
+(Here, *subsystem* means a software component, like support for a file system.)
 Subsystem Partition Manager configurations cannot define image partitions.
 
-There are some limitations when multiple images include the same subsystem which defines a Partition Manager configuration.
-All partitions are global, and will only be included once, even if multiple configurations define them.
-When multiple configurations define the same partition, the configuration of that partition must be identical in all definitions.
-An exception is raised if the configuration differs.
-
-The listing below shows how to properly define the Partition Manager configuration for a subsystem.
-This must be placed in the :file:`CMakeLists.txt` that defines the subsystem.
+To add a Partition Manager configuration file for a subsystem, place the following line in its :file:`CMakeLists.txt` file (this is only required for subsystems, not applications):
 
 .. code-block:: cmake
 
   add_partition_manager_config(pm.yml)
+
+There are some limitations when multiple application images build the same subsystem code if it adds a Partition Manager configuration file in this way.
+In particular, partition definitions are global and must be identical across calls to ``add_partition_manager_config()``.
+If the same partition is defined twice with different configurations, the Partition Manager will fail.
 
 .. _pm_yaml_format:
 
 Configuration file format
 =========================
 
-The format of the :file:`pm.yml` file is as follows:
+A :file:`pm.yml` file contains partition definitions.
+Each partition is defined as follows:
 
 .. code-block:: yaml
 
    partition_name:
-      option_dict_name:
-         option_specific_values
+      partition_property:
+         property_value
 
 *partition_name* is the name of the partition (for example, ``mcuboot``).
-*option_dict_name* and *option_specific values* can be any of the following:
+The following partition properties and property values are available:
 
 placement: dict
-   This property specifies the placement of the partition relative to other partitions, to the end of flash, or to the root image partition ``app``.
+   This property specifies the placement of the partition relative to other partitions, to the start or end of flash, or to the root image ``app``.
 
    A partition with the placement property set is either an image partition or a placeholder partition.
-   If the partition name is the same as the image name (as defined in ``CMakeLists.txt``, see *Defining new child images* in :ref:`zephyr:application`), this partition is the image partition.
+   If the partition name is the same as the image name (as defined in a ``CMakeLists.txt``; see :ref:`ug_multi_image_defining` for details), this partition is the image partition.
    All other partitions are placeholder partitions.
    Each :file:`pm.yml` file must define exactly one image partition.
 
@@ -96,33 +99,68 @@ placement: dict
          Place the partition after the first existing partition in the list.
 
      Valid values in the lists are ``app``, ``start``, ``end``, or the name of any partition.
+     The value ``start`` refers to the start address of the flash device's memory.
+     The value ``end`` refers to its end address.
      It is not possible to place the partition after ``end`` or before ``start``.
 
       align: dict
          Ensure alignment of start or end of partition by specifying a dict with a ``start`` or ``end`` key respectively, where the value is the number of bytes to align to.
          If necessary, empty partitions are inserted in front of or behind the partition to ensure that the alignment is correct.
          Only one key can be specified.
-         Partitions which directly or indirectly (through spans) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
+         Partitions which directly or indirectly (through :ref:`spans <partition_manager_spans>`) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
 
+.. _partition_manager_spans:
 
-span: list OR dict: list
-   If the value type is a list, this property lists which partitions this partition should span across.
+span: list OR span: string
 
-   A string formatted value is interpreted as a single item list.
-   Partitions with this property are container partitions.
-   Therefore, this property cannot be used together with the ``placement`` property.
+   This property is used to define container partitions.
+   Its value may be a list or string.
 
-   Non-existing partitions are removed from the ``span`` list before processing, and partitions with empty ``span`` lists are removed altogether (unless filled via ``inside``).
+   Since this property is used to define container partitions, it cannot be used together with the ``placement`` property.
+
+   If the value is a list, its elements are the names of the partitions that should be placed in the container:
+
+   .. code-block:: yaml
+
+      # This partition spans, or contains, partition_1 through partition_n,
+      # in any order:
+      container_partition_name:
+        span: [partition_1, partition_2, ..., partition_n]
+
+   The list elements are interpreted as the set of potential partitions in the container, which the Partition Manager may place in flash in any order.
+   For example, ``partition_2`` could be placed before ``partition_1``.
+
+   If the value is a string, it is interpreted as a list with one item:
+
+   .. code-block:: yaml
+
+      # The following are equivalent:
+
+      container_partition_name:
+        span: foo
+
+      container_partition_name:
+        span: [foo]
+
+   Non-existent partitions are removed from the ``span`` list before processing, and partitions with empty ``span`` lists are removed altogether (unless filled by the :ref:`inside property <partition_manager_inside>`).
+
+   If the Partition Manager is forced to place a partition that is not declared in the ``span`` list between two partitions that are in the list, the configuration is unsatisfiable and therefore invalid.
+   See :ref:`Span property example 1 <partition_manager_span_ex1>` for an example of an invalid configuration.
 
    .. note::
       You can specify configurations with an ambiguous ordering (see the following examples).
-      However, different versions of the script might produce a different ordering for such configurations, and the Partition Manager might fail to find a solution even if one is theoretically possible.
+      Different versions of the Partition Manager script may produce different partition orders for such configurations, or fail to find a solution even if one is possible.
       The Partition Manager always detects unsatisfiable configurations (no false positives), but it might fail on some valid inputs (false negatives).
 
-   See the following examples of valid and invalid configurations:
+   Here are some examples of valid and invalid configurations.
+
+   .. _partition_manager_span_ex1:
 
    .. code-block:: yaml
-      :caption: Span example 1 (fixed order, cannot work)
+      :caption: Span property example 1 (invalid)
+
+      # The mcuboot and spm configurations result in this partition order:
+      # mcuboot, spm, app
 
       mcuboot:
          placement:
@@ -132,36 +170,21 @@ span: list OR dict: list
          placement:
             before: [app]
 
-      foo:
-         span: [mcuboot, app] # This will fail, because 'spm' will be placed between mcuboot and app.
+      # Therefore, the foo partition configuration is invalid, because spm
+      # must be placed between mcuboot and app, but is not in the span list:
 
-      # Order: mcuboot, spm, app
+      foo:
+         span: [mcuboot, app]
 
    .. code-block:: yaml
-      :caption: Span example 2 (ambiguous order)
+      :caption: Span property example 2 (valid)
 
-      mcuboot:
-         placement:
-
-      spm:
-         placement:
-            after: [mcuboot]
-
-      app:
-         placement:
-            after: [mcuboot]
-
-      foo:
-         span: [mcuboot, app] # The order of spm and app is ambiguous in this case, but since
-                              # this span exists, Partition Manager will try to increase the
-                              # likelihood that mcuboot and app are placed next to each other.
-
+      # These mcuboot, spm, and app configurations have two possible orders:
       # Order 1: mcuboot, spm, app
       # Order 2: mcuboot, app, spm
-      # The algorithm should coerce order 2 to make foo work.
-
-   .. code-block:: yaml
-      :caption: Span example 3 (ambiguous order, cannot work)
+      #
+      # In the absence of additional configuration, the Partition Manager may
+      # choose either order.
 
       mcuboot:
          placement:
@@ -173,6 +196,35 @@ span: list OR dict: list
       app:
          placement:
             after: [mcuboot]
+
+      # However, since the following span exists, the Partition Manager should
+      # choose order 2, since it's the only order that results in a valid
+      # configuration for the foo partition:
+
+      foo:
+         span: [mcuboot, app]
+
+
+   .. code-block:: yaml
+      :caption: Span property example 3 (invalid)
+
+      # These mcuboot, spm, and app configurations have two possible orders:
+      # Order 1: mcuboot, spm, app
+      # Order 2: mcuboot, app, spm
+
+      mcuboot:
+         placement:
+
+      spm:
+         placement:
+            after: [mcuboot]
+
+      app:
+         placement:
+            after: [mcuboot]
+
+      # However, the overall configuration is unsatisfiable:
+      # foo requires order 2, while bar requires order 1.
 
       foo:
          span: [mcuboot, app]
@@ -180,9 +232,7 @@ span: list OR dict: list
       bar:
          span: [mcuboot, spm]
 
-      # Order 1: mcuboot, spm, app
-      # Order 2: mcuboot, app, spm
-      # foo requires order 2, while bar requires order 1.
+.. _partition_manager_inside:
 
 inside: list
    This property is the inverse of ``span``.
@@ -215,7 +265,7 @@ share_size: list
    If none of the partitions in the ``share_size`` list exists, and the partition **does** define a ``size`` property, then the ``size`` property is used to set the size.
 
 All occurrences of a partition name can be replaced with a dict with the key ``one_of``, which is resolved to the first existing partition in the ``one_of`` value.
-An error is raised if no partition inside the ``one_if`` dict exists.
+An error is raised if no partition inside the ``one_of`` dict exists.
 
    .. code-block:: yaml
       :caption: Example use of a ``one_of`` dict
@@ -246,7 +296,7 @@ Configuration file preprocessing
 
 Each :file:`pm.yml` file is preprocessed to resolve symbols from Kconfig and DTS.
 
-The following example shows a typical :file:`pm.yml` file.
+The following example is taken from the :file:`pm.yml` file for the :ref:`immutable_bootloader` provided with the  |NCS|.
 It includes :file:`autoconf.h` (which is generated by Kconfig) and uses a Kconfig variable to configure the size of the ``b0`` partition.
 
 .. code-block:: yaml
@@ -284,7 +334,7 @@ Build system
 ************
 The build system finds the child images that have been enabled and their configurations.
 
-For each image, Partition Manager's CMake code infers the paths to the following files and folders from the name and from other global properties:
+For each image, the Partition Manager's CMake code infers the paths to the following files and folders from the name and from other global properties:
 
    * The :file:`pm.yml` file
    * The compiled HEX file
