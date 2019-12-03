@@ -25,6 +25,11 @@ def item_is_placed(d, item, after_or_before):
 
 
 def remove_irrelevant_requirements(reqs):
+    # Verify that no partitions define an empty 'placement'
+    for k, v in reqs.items():
+        if 'placement' in v.keys() and len(v['placement']) == 0:
+            raise RuntimeError("Found empty 'placement' property for partition '{}'".format(k))
+
     # Remove dependencies to partitions which are not present
     for k, v in reqs.items():
         for before_after in ['before', 'after']:
@@ -518,10 +523,12 @@ def expect_addr_size(td, name, expected_address, expected_size):
         assert td[name]['address'] == expected_address, \
             "Address of {} was {}, expected {}.\ntd:{}".format(name, td[name]['address'], expected_address, pformat(td))
 
+
 def expect_list(expected, actual):
     expected_list = list(sorted(expected))
     actual_list = list(sorted(actual))
     assert sorted(expected_list) == sorted(actual_list), "Expected list %s, was %s" % (str(expected_list), str(actual_list))
+
 
 def test():
     list_one = [1, 2, 3, 4]
@@ -566,6 +573,19 @@ def test():
     start, size = get_dynamic_area_start_and_size(test_config, 100)
     assert (start == 10)
     assert (size == 100 - 10)
+
+    # Verify that empty placement property throws error
+    td = {'spm': {'placement': {'before': ['app']}, 'size': 100, 'inside': ['mcuboot_slot0']},
+          'mcuboot': {'placement': {'before': ['spm', 'app']}, 'size': 200},
+          'mcuboot_slot0': {'span': ['app']},
+          'invalid': {'placement': {}},
+          'app': {}}
+    failed = False
+    try:
+        s, sub_partitions = resolve(td)
+    except RuntimeError:
+        failed = True
+    assert failed
 
     # Test a single partition with alignment where the address is smaller than the alignment value.
     td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},
@@ -613,7 +633,6 @@ def test():
     expect_addr_size(td, 'with_alignment', 10300, 100)
     expect_addr_size(td, 'EMPTY_1', 10400, 600)
     expect_addr_size(td, 'with_alignment_2', 11000, 100)
-
 
     '''
     FLASH (0x100000):
