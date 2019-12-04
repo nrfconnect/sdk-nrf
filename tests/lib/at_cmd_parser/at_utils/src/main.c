@@ -30,13 +30,15 @@ static void test_notification_detection(void)
 
 static void test_command_detection(void)
 {
+	zassert_true(is_command("AT"), "Command was not detected");
+	zassert_true(is_command("AT\r"), "Command was not detected");
+	zassert_true(is_command("AT\n"), "Command was not detected");
 	zassert_true(is_command("AT+"), "Command was not detected");
 	zassert_true(is_command("AT%"), "Command was not detected");
 	zassert_true(is_command("AT#"), "Command was not detected");
 	zassert_true(is_command("at+"), "Command was not detected");
 	zassert_true(is_command("at%"), "Command was not detected");
 	zassert_true(is_command("at#"), "Command was not detected");
-	zassert_false(is_command("AT"), "Should fail, command too short");
 	zassert_false(is_command("BT+"), "Should fail, invalid string");
 	zassert_false(is_command("AB+"), "Should fail, invalid string");
 	zassert_false(is_command("AT$"), "Should fail, invalid string");
