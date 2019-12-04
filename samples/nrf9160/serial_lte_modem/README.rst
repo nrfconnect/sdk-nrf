@@ -6,11 +6,13 @@ nRF9160: Serial LTE Modem
 The Serial LTE Modem (SLM) sample demostrates sending AT commands between a host and a client device.
 An nRF9160 DK is used as the host, while the client can be simulated using either a PC or an nRF52 DK.
 
-This sample is an enhancement to the at_client sample. It provides the following features:
+This sample is an enhancement to the :ref:`at_client_sample` sample.
+It provides the following features:
 
- * Support for TCP/IP proprietary AT commands.
- * Support for GPS proprietary AT commands.
- * Support for communication to external MCU over UART.
+ * Support for TCP/IP proprietary AT commands
+ * Support for UDP proprietary AT commands
+ * Support for GPS proprietary AT commands
+ * Support for communication to external MCU over UART
 
 All nRF91 modem AT commands are also supported.
 
@@ -97,6 +99,12 @@ The following proprietary TCP/IP AT commands are used in this sample:
 * AT#XTCPCONN?
 * AT#XTCPSEND=<data>
 * AT#XTCPRECV=<length>,<timeout>
+
+UDP AT commands
+***************
+
+The following proprietary UDP AT commands are used in this sample:
+
 * AT#XUDPSENDTO=<url>,<port>,<data>
 * AT#XUDPRECVFROM=<url>,<port>,<length>,<timeout>
 
