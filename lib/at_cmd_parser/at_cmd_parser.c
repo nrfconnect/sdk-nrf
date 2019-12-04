@@ -40,6 +40,17 @@ static inline void reset_state(void)
 	state = IDLE;
 }
 
+static inline void skip_command_prefix(const char **cmd)
+{
+	*cmd += sizeof("AT") - 1;
+
+	if (is_lfcr(**cmd) || is_terminated(**cmd)) {
+		return;
+	}
+
+	(*cmd)++;
+}
+
 static int at_parse_detect_type(const char **str, int index)
 {
 	const char *tmpstr = *str;
@@ -125,7 +136,7 @@ static int at_parse_process_element(const char **str, int index,
 	} else if (state == COMMAND) {
 		const char *start_ptr = tmpstr;
 
-		tmpstr += sizeof("AT+") - 1;
+		skip_command_prefix(&tmpstr);
 
 		while (is_valid_notification_char(*tmpstr)) {
 			tmpstr++;
@@ -338,7 +349,7 @@ enum at_cmd_type at_parser_cmd_type_get(const char *at_cmd)
 		return AT_CMD_TYPE_UNKNOWN;
 	}
 
-	at_cmd += sizeof("AT+") - 1;
+	skip_command_prefix(&at_cmd);
 
 	while (is_valid_notification_char(*at_cmd)) {
 		at_cmd++;
@@ -349,8 +360,11 @@ enum at_cmd_type at_parser_cmd_type_get(const char *at_cmd)
 		type = AT_CMD_TYPE_TEST_COMMAND;
 	} else if (*at_cmd == AT_CMD_READ_TEST_IDENTIFIER) {
 		type = AT_CMD_TYPE_READ_COMMAND;
-	} else {
+	} else if ((*at_cmd == AT_CMD_SEPARATOR) || is_lfcr(*at_cmd) ||
+		   is_terminated(*at_cmd)) {
 		type = AT_CMD_TYPE_SET_COMMAND;
+	} else {
+		type = AT_CMD_TYPE_UNKNOWN;
 	}
 
 	return type;

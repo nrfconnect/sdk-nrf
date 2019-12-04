@@ -622,6 +622,28 @@ static void test_at_cmd_set(void)
 	zassert_equal(0, at_params_short_get(&test_list2, 4, &tmpshrt),
 		      "Get short should not fail");
 	zassert_equal(4, tmpshrt, "Short should be 4");
+
+	static const char lone_at_cmd[] = "AT";
+
+	ret = at_parser_params_from_str(lone_at_cmd, NULL, &test_list2);
+	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	zassert_equal(at_parser_cmd_type_get(lone_at_cmd),
+		      AT_CMD_TYPE_SET_COMMAND, "Invalid AT command type");
+
+	ret = at_params_valid_count_get(&test_list2);
+	zassert_true(ret == 1,
+		     "at_params_valid_count_get returns wrong valid count");
+
+	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+		     "Param type at index 0 should be a string");
+
+	tmpbuf_len = sizeof(tmpbuf);
+	zassert_equal(0, at_params_string_get(&test_list2, 0,
+					      tmpbuf, &tmpbuf_len),
+		      "Get string should not fail");
+	zassert_equal(0, memcmp("AT", tmpbuf, tmpbuf_len),
+		      "The string in tmpbuf should equal to AT");
+
 }
 
 static void test_at_cmd_set_teardown(void)

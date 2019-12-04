@@ -51,33 +51,6 @@ static inline bool is_notification(char chr)
 }
 
 /**
- * @brief Check if a string is a beginning of an AT command
- *
- * This function will check if the character is a "AT+" or "AT%" which
- * identifies an AT command.
- *
- * @param[in] str String to examine
- *
- * @retval true  If the string is an AT command
- * @retval false Otherwise
- */
-static inline bool is_command(const char *str)
-{
-	if (strlen(str) < 3) {
-		return false;
-	}
-
-	if ((toupper(str[0]) == 'A') && (toupper(str[1]) == 'T') &&
-	    ((str[2] == AT_STANDARD_NOTIFICATION_PREFIX) ||
-	     (str[2] == AT_PROP_NOTIFICATION_PREFX) ||
-	     (str[2] == AT_CUSTOM_COMMAND_PREFX))) {
-		return true;
-	}
-
-	return false;
-}
-
-/**
  * @brief Verify that the character is a valid character
  *
  * Notification ID strings can only contain upper case letters 'A' through 'Z'
@@ -229,6 +202,39 @@ static inline bool is_array_stop(char chr)
 static inline bool is_number(char chr)
 {
 	if (isdigit(chr) || (chr == '-') || (chr == '+')) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * @brief Check if a string is a beginning of an AT command
+ *
+ * This function will check if the string is a valid AT command prefix.
+ *
+ * @param[in] str String to examine
+ *
+ * @retval true  If the string is an AT command
+ * @retval false Otherwise
+ */
+static inline bool is_command(const char *str)
+{
+	if (strlen(str) < 2) {
+		return false;
+	}
+
+	if ((toupper(str[0]) != 'A') || (toupper(str[1]) != 'T')) {
+		return false;
+	}
+
+	/* Third character has be one of the command special characters.
+	 * The special case is a lone "AT" command.
+	 */
+	if ((str[2] == AT_STANDARD_NOTIFICATION_PREFIX) ||
+	    (str[2] == AT_PROP_NOTIFICATION_PREFX) ||
+	    (str[2] == AT_CUSTOM_COMMAND_PREFX) ||
+	    is_lfcr(str[2]) || is_terminated(str[2])) {
 		return true;
 	}
 
