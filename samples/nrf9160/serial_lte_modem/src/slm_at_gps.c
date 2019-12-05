@@ -32,11 +32,11 @@ enum slm_gps_at_cmd_type {
 };
 
 /** forward declaration of cmd handlers **/
-static int handle_at_gpsrun(const char *at_cmd, size_t param_offset);
+static int handle_at_gpsrun(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_at_list[AT_GPS_MAX] = {
-	{AT_GPSRUN, "AT#XGPSRUN", "at#xgpsrun", handle_at_gpsrun},
+static slm_at_cmd_list_t m_gps_at_list[AT_GPS_MAX] = {
+	{AT_GPSRUN, "AT#XGPSRUN", handle_at_gpsrun},
 };
 
 static struct gps_client {
@@ -56,6 +56,7 @@ static char buf[64];
 static struct k_thread gps_thread;
 static k_tid_t gps_thread_id;
 static K_THREAD_STACK_DEFINE(gps_thread_stack, THREAD_STACK_SIZE);
+static u64_t ttft_start;
 
 /* global variable defined in different files */
 extern struct at_param_list m_param_list;
@@ -131,6 +132,10 @@ static void gps_thread_fn(void *arg1, void *arg2, void *arg3)
 			if (IS_FIX(gps_data.pvt.flags)) {
 				gps_pvt_notify();
 				if (!client.has_fix) {
+					u64_t now = k_uptime_get();
+					sprintf(buf, "#XGPSP: TTFF %d sec\r\n",
+						(int)(now - ttft_start)/1000);
+					client.callback(buf);
 					client.has_fix = true;
 				}
 			}
@@ -201,6 +206,7 @@ static int do_gps_start(void)
 
 	sprintf(buf, "#XGPSRUN: 1,%d\r\n", client.mask);
 	client.callback(buf);
+	ttft_start = k_uptime_get();
 	return 0;
 
 error:
@@ -241,21 +247,13 @@ static int do_gps_stop(void)
  *  AT#XGPSRUN?
  *  AT#XGPSRUN=? TEST command not supported
  */
-static int handle_at_gpsrun(const char *at_cmd, size_t param_offset)
+static int handle_at_gpsrun(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	char *at_param = (char *)at_cmd + param_offset;
 	u16_t op;
 
-	if (*(at_param) == '=') {
-		at_param++;
-		if (*(at_param) == '?') {
-			return err;
-		}
-		err = at_parser_params_from_str(at_cmd, NULL, &m_param_list);
-		if (err < 0) {
-			return err;
-		};
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
 		if (at_params_valid_count_get(&m_param_list) < 2) {
 			return -EINVAL;
 		}
@@ -282,8 +280,9 @@ static int handle_at_gpsrun(const char *at_cmd, size_t param_offset)
 			} else {
 				err = do_gps_stop();
 			}
-		}
-	} else if (*(at_param) == '?') {
+		} break;
+
+	case AT_CMD_TYPE_READ_COMMAND:
 		if (client.running) {
 			sprintf(buf, "#XGPSRUN: 1,%d\r\n", client.mask);
 		} else {
@@ -291,6 +290,10 @@ static int handle_at_gpsrun(const char *at_cmd, size_t param_offset)
 		}
 		client.callback(buf);
 		err = 0;
+		break;
+
+	default:
+		break;
 	}
 
 	return err;
@@ -298,22 +301,23 @@ static int handle_at_gpsrun(const char *at_cmd, size_t param_offset)
 
 /**@brief API to handle GPS AT commands
  */
-int slm_at_gps_parse(const u8_t *param, u8_t length)
+int slm_at_gps_parse(const char *at_cmd)
 {
 	int ret = -ENOTSUP;
-
-	ARG_UNUSED(length);
+	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_GPS_MAX; i++) {
-		u8_t cmd_len = strlen(m_at_list[i].string_upper);
+		u8_t cmd_len = strlen(m_gps_at_list[i].string);
 
-		if (strncmp(param, m_at_list[i].string_upper,
-			cmd_len) == 0) {
-			ret = m_at_list[i].handler(param, cmd_len);
-			break;
-		} else if (strncmp(param, m_at_list[i].string_lower,
-			cmd_len) == 0) {
-			ret = m_at_list[i].handler(param, cmd_len);
+		if (slm_at_cmd_cmp(at_cmd, m_gps_at_list[i].string, cmd_len)) {
+			ret = at_parser_params_from_str(at_cmd, NULL,
+						&m_param_list);
+			if (ret < 0) {
+				LOG_ERR("Failed to parse AT command %d", ret);
+				return -EINVAL;
+			}
+			type = at_parser_cmd_type_get(at_cmd);
+			ret = m_gps_at_list[i].handler(type);
 			break;
 		}
 	}

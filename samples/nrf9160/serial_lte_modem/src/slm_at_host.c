@@ -33,9 +33,8 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
 #define SLM_SYNC_STR "Ready\r\n"
 
-#define AT_CMD_SLMVER_U	"AT#XSLMVER"
-#define AT_CMD_SLMVER_L	"at#xslmver"
-#define SLM_VERSION	"#XSLMVER: 1.0\r\n"
+#define AT_CMD_SLMVER	"AT#XSLMVER"
+#define SLM_VERSION	"#XSLMVER: 1.1\r\n"
 
 #define AT_MAX_CMD_LEN		CONFIG_AT_CMD_RESPONSE_MAX_LEN
 
@@ -91,7 +90,7 @@ static void cmd_send(struct k_work *work)
 	static char buf[AT_MAX_CMD_LEN];
 	enum at_cmd_state state;
 	int err;
-	size_t size_slmver = sizeof(AT_CMD_SLMVER_U) - 1;
+	size_t size_slmver = sizeof(AT_CMD_SLMVER) - 1;
 
 	ARG_UNUSED(work);
 
@@ -100,15 +99,14 @@ static void cmd_send(struct k_work *work)
 
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
 
-	if (strncmp(at_buf, AT_CMD_SLMVER_U, size_slmver) == 0 ||
-		strncmp(at_buf, AT_CMD_SLMVER_L, size_slmver) == 0) {
+	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLMVER, size_slmver)) {
 		write_uart_string(SLM_VERSION, sizeof(SLM_VERSION));
 		write_uart_string(OK_STR, sizeof(OK_STR));
 		goto done;
 	}
 
 #if defined(CONFIG_SLM_TCPIP_AT_MODE)
-	err = slm_at_tcpip_parse(at_buf, at_buf_len);
+	err = slm_at_tcpip_parse(at_buf);
 	if (err == 0) {
 		write_uart_string(OK_STR, sizeof(OK_STR));
 		goto done;
@@ -119,7 +117,7 @@ static void cmd_send(struct k_work *work)
 #endif /** CONFIG_SLM_TCPIP_AT_MODE */
 
 #if defined(CONFIG_SLM_GPS_AT_MODE)
-	err = slm_at_gps_parse(at_buf, at_buf_len);
+	err = slm_at_gps_parse(at_buf);
 	if (err == 0) {
 		write_uart_string(OK_STR, sizeof(OK_STR));
 		goto done;

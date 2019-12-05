@@ -19,13 +19,12 @@
 /**
  * @brief TCP/IP AT command parser.
  *
- * @param at_cmd  AT command string.
- * @param param   Length of string.
+ * @param at_cmd AT command string.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_at_tcpip_parse(const u8_t *at_cmd, u8_t length);
+int slm_at_tcpip_parse(const char *at_cmd);
 
 /**
  * @brief Initialize TCP/IP AT command parser.

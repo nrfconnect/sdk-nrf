@@ -90,15 +90,15 @@ TCP/IP AT commands
 
 The following proprietary TCP/IP AT commands are used in this sample:
 
-* AT#XSOCKET=<op>,<type>
+* AT#XSOCKET=<op>[,<type>]
 * AT#XSOCKET?
-* AT#XBIND=<local_ip>,<local_port>
+* AT#XBIND=<port>
 * AT#XTCPCONN=<url>,<port>
 * AT#XTCPCONN?
 * AT#XTCPSEND=<data>
-* AT#XTCPRECV=<length>,<time>
+* AT#XTCPRECV=<length>,<timeout>
 * AT#XUDPSENDTO=<url>,<port>,<data>
-* AT#XUDPRECVFROM=<url>,<port>,<length>,<time>
+* AT#XUDPRECVFROM=<url>,<port>,<length>,<timeout>
 
 GPS AT Commands
 ***************
