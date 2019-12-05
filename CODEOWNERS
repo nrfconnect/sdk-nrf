@@ -1,5 +1,6 @@
 # CODEOWNERS for autoreview assigning in github
 
+# https://help.github.com/en/articles/about-code-owners#codeowners-syntax
 # Order is important; the last matching pattern takes the most
 # precedence.
 
@@ -21,7 +22,6 @@
 # All Kconfig related files
 Kconfig*                                  @SebastianBoe
 # All doc related files
-*.rst                                     @ru-fu
 /doc/                                     @ru-fu
 /doc/CMakeLists.txt                       @carlescufi
 /doc/scripts/                             @carlescufi
@@ -97,3 +97,5 @@ Kconfig*                                  @SebastianBoe
 /subsys/nonsecure/                        @ioannisg
 /tests/                                   @rakons
 /zephyr/                                  @carlescufi
+# Make sure docs always include tech writers
+*.rst                                     @ru-fu
