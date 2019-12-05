@@ -199,7 +199,7 @@ config SPM_NRF_DPPIC_NS
 
 config SPM_NRF_DPPIC_PERM_MASK
 	hex "Set DPPIC PERM mask for Non-secure"
-	default 0x0000FFFF
+	default 0x00000000
 	depends on SPM_NRF_DPPIC_NS
 	help
 	  The input mask is a mirror of the permission bits set in
