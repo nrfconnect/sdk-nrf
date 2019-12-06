@@ -6,6 +6,43 @@
 
 menu "Nordic BLE controller"
 
+# BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
+# for set the valid default size of the HCI Tx stack.
+config BT_HCI_TX_STACK_SIZE
+	# NOTE: This value is derived from other symbols and should only be
+	# changed if required by architecture
+	int
+	default 1536 if (BT_LL_NRFXLIB && BT_PERIPHERAL)
+	help
+	  Stack size needed for executing bt_send with specified driver.
+	  NOTE: This is an advanced setting and should not be changed unless
+	  absolutely necessary
+
+config BT_RX_STACK_SIZE
+	int
+	depends on BT_HCI_HOST || BT_RECV_IS_RX_THREAD
+	default 512 if BT_HCI_RAW
+	default 2048 if BT_MESH
+	default 2200 if BT_SETTINGS
+	default 1024
+	range 512 65536 if BT_HCI_RAW
+	range 1100 65536 if BT_MESH
+	range 1024 65536
+	help
+	  Size of the receiving thread stack. This is the context from
+	  which all event callbacks to the application occur. The
+	  default value is sufficient for basic operation, but if the
+	  application needs to do advanced things in its callbacks that
+	  require extra stack space, this value can be increased to
+	  accommodate for that.
+
+# SYSTEM_WORKQUEUE_STACK_SIZE is declared in Zephyr and also here for a second
+# time, because Central side Bluetooth sample needs a different workqueue size
+# when Nordic BLE controller is used.
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	int
+	default 2048 if (BT_LL_NRFXLIB && BT_CENTRAL)
+
 config BLECTRL_SLAVE_COUNT
 	int "Number of concurrent slave roles"
 	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
