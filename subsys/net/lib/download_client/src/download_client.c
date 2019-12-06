@@ -292,12 +292,15 @@ static char *my_strcasestr(const char *s, const char *find)
 {
 	char c, sc;
 	size_t len;
-	if ((c = *find++) != 0) {
+
+	c = *find++;
+	if (c != 0) {
 		c = (char)tolower((unsigned char)c);
 		len = strlen(find);
 		do {
 			do {
-				if ((sc = *s++) == 0)
+				sc = *s++;
+				if (sc == 0)
 					return (NULL);
 			} while ((char)tolower((unsigned char)sc) != c);
 		} while (my_strncasecmp(s, find, len) != 0);
@@ -336,26 +339,28 @@ static int header_parse(struct download_client *client)
 
 	/* If file size is not known, read it from the header */
 	if (client->file_size == 0) {
-		if (NULL !=
-		    (p = my_strcasestr(client->buf, "Content-Range: bytes"))) {
-			p = strstr(p, "/");
+		char *cr = my_strcasestr(client->buf, "Content-Range: bytes");
+		char *cl = my_strcasestr(client->buf, "Content-Length");
+
+		if (!cr) {
+			p = strstr(cr, "/");
 			if (!p) {
 				/* Cannot continue */
-				LOG_ERR("Server did not send file size in response");
+				LOG_ERR("Server did not send file size"
+					" in response");
 				return -1;
 			}
 
 			client->file_size = atoi(p + 1);
 
 			LOG_DBG("File size = %d", client->file_size);
-		} else if (NULL != my_strcasestr(client->buf,
-						 "Accept-Range: bytes") &&
-			   NULL != (p = my_strcasestr(client->buf,
-						      "Content-Length"))) {
-			p = strstr(p, ":");
+		} else if (!cl &&
+			   !my_strcasestr(client->buf, "Accept-Range: bytes")) {
+			p = strstr(cl, ":");
 			if (!p) {
 				/* Cannot continue */
-				LOG_ERR("Server did not send file size in response");
+				LOG_ERR("Server did not send file size"
+					" in response");
 				return -1;
 			}
 
