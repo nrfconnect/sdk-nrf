@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <toolchain/common.h>
@@ -13,11 +14,6 @@
 #include <net/tls_credentials.h>
 #include <net/download_client.h>
 #include <logging/log.h>
-
-#if ! __GNU_VISIBLE
-/* strcasestr exists in libc and can be linked, but __GNU_VISIBLE must be 1 to be available in string.h */
-char	*strcasestr (const char *, const char *);
-#endif
 
 LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
@@ -279,6 +275,37 @@ static int get_request_send(struct download_client *client)
 	return 0;
 }
 
+static int my_strncasecmp(const char *s1, const char *s2, size_t n)
+{
+	if (n != 0) {
+		do {
+			if (tolower(*s1) != tolower(*s2++))
+				return (tolower(*s1) - tolower(*--s2));
+			if (*s1++ == '\0')
+				break;
+		} while (--n != 0);
+	}
+	return (0);
+}
+
+static char *my_strcasestr(const char *s, const char *find)
+{
+	char c, sc;
+	size_t len;
+	if ((c = *find++) != 0) {
+		c = (char)tolower((unsigned char)c);
+		len = strlen(find);
+		do {
+			do {
+				if ((sc = *s++) == 0)
+					return (NULL);
+			} while ((char)tolower((unsigned char)sc) != c);
+		} while (my_strncasecmp(s, find, len) != 0);
+		s--;
+	}
+	return ((char *)s);
+}
+
 /* Returns:
  *  1 while the header is being received
  *  0 if the header has been fully received
@@ -309,7 +336,8 @@ static int header_parse(struct download_client *client)
 
 	/* If file size is not known, read it from the header */
 	if (client->file_size == 0) {
-		if (NULL != (p = strcasestr(client->buf, "Content-Range: bytes"))) {
+		if (NULL !=
+		    (p = my_strcasestr(client->buf, "Content-Range: bytes"))) {
 			p = strstr(p, "/");
 			if (!p) {
 				/* Cannot continue */
@@ -320,8 +348,10 @@ static int header_parse(struct download_client *client)
 			client->file_size = atoi(p + 1);
 
 			LOG_DBG("File size = %d", client->file_size);
-		} else if (NULL != strcasestr(client->buf, "Accept-Range: bytes") &&
-			NULL != (p = strcasestr(client->buf, "Content-Length"))) {
+		} else if (NULL != my_strcasestr(client->buf,
+						 "Accept-Range: bytes") &&
+			   NULL != (p = my_strcasestr(client->buf,
+						      "Content-Length"))) {
 			p = strstr(p, ":");
 			if (!p) {
 				/* Cannot continue */
