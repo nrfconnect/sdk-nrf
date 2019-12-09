@@ -19,6 +19,15 @@ config DFU_TARGET_MCUBOOT
 	help
 	  Enable support for updates that are performed by MCUboot.
 
+config DFU_TARGET_MCUBOOT_SAVE_PROGRESS
+	bool "Store write progress to flash (MCUboot)"
+	depends on DFU_TARGET_MCUBOOT
+	depends on SETTINGS
+	depends on !SETTINGS_NONE
+	help
+	  Enable this option to allow dfu_target_mcuboot to store the current
+	  write progress to flash. In case of power failure or device reset,
+	  the operation can then resume from the latest state.
 
 config DFU_TARGET_MODEM
 	bool "Modem update support"
