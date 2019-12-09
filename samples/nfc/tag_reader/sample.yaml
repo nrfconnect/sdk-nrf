@@ -1,6 +1,6 @@
 sample:
-  description: TBD
-  name: TBD
+  name: NFC Tag Reader
+  description: NFC Tag Reader sample
 tests:
   test_build:
     build_only: true

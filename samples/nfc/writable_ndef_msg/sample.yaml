@@ -1,6 +1,6 @@
 sample:
-  description: TBD
-  name: TBD
+  name: NFC Writable NDEF Message
+  description: NFC Writable NDEF Message sample
 tests:
   test_build:
     build_only: true
