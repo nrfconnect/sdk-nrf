@@ -1,6 +1,6 @@
 sample:
-  description: BLE throughput sample
   name: BLE throughput
+  description: Bluetooth Low Energy throughput sample
 tests:
   test_build:
     build_only: true

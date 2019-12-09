@@ -1,10 +1,10 @@
 sample:
-  description: TBD
-  name: HIDS mouse sample
+  name: BLE HIDS mouse sample
+  description: Bluetooth Low Energy Human Interface Device mouse sample
 tests:
   test:
     harness: bluetooth
-    platform_whitelist: qemu_cortex_m3 qemu_x86
+    platform_whitelist: nrf51_pca10028 nrf52_pca10040 nrf52840_pca10056
     tags: bluetooth
   test_build:
     build_only: true

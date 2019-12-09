@@ -1,6 +1,6 @@
 sample:
-  description: BLE UART service sample
   name: BLE UART service
+  description: Bluetooth Low Energy UART service sample
 tests:
   test_build:
     build_only: true
