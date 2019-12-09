@@ -169,6 +169,9 @@ class MusicLedStream():
                                    self.led_effects['SUBSTEP_CNT'])
             )
 
+            if step.substep_time < 0:
+                step.substep_time = 0
+
             self.led_effects['reminder'] = duration - \
                         (step.substep_count * step.substep_time / MS_PER_SEC)
 
