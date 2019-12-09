@@ -1,6 +1,6 @@
 sample:
-  description: TBD
-  name: TBD
+  name: NFC Records text
+  description: NFC Records text sample
 tests:
   test_build:
     build_only: true
