@@ -1,6 +1,6 @@
 sample:
-  description: BT NUS shell sample
   name: BT NUS shell
+  description: BT NUS shell sample
 tests:
   test_build:
     build_only: true

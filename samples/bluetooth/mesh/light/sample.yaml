@@ -1,6 +1,6 @@
 sample:
-  description: TBD
   name: Bluetooth Mesh Light
+  description: Bluetooth Mesh Light sample
 tests:
   test_build:
     build_only: true

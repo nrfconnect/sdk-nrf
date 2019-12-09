@@ -1,6 +1,6 @@
 sample:
-  description: BLE LLPM
-  name: BLE llpm
+  name: BLE LLPM
+  description: Buetooth Low Energy LLPM sample
 tests:
   test_build:
     build_only: true

@@ -1,6 +1,6 @@
 sample:
-  description: BLE Gatt client discovery manager sample
   name: BLE Gatt Discovery
+  description: Bluetooth Low Energy Gatt client discovery manager sample
 tests:
   test_build:
     build_only: true

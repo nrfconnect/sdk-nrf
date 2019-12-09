@@ -1,6 +1,6 @@
 sample:
-  description: BLE LED Button service sample
   name: BLE LED Button service
+  description: Bluetooth Low Energy LED Button service sample
 tests:
   test_build:
     build_only: true

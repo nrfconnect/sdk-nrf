@@ -1,6 +1,6 @@
 sample:
-  description: TBD
-  name: Central UART
+  name: BLE Central UART
+  description: Bluetooth Low Energy central UART sample
 tests:
   test_build:
     build_only: true
