@@ -268,10 +268,9 @@ static void bt_ready(int err)
 	p_cmd_enable = net_buf_add(buf, sizeof(*p_cmd_enable));
 	p_cmd_enable->enable = 1;
 
-	int hci_err = bt_hci_cmd_send(HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf);
-
-	if (hci_err) {
-		LOG_ERR("Error enabling LLPM (err:%" PRIu8 ")", hci_err);
+	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf, NULL);
+	if (err) {
+		LOG_ERR("Error enabling LLPM (err: %d)", err);
 	} else {
 		LOG_INF("LLPM enabled");
 	}
