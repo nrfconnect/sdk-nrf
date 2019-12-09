@@ -9,7 +9,6 @@
 #include "measurement_event.h"
 #include "control_event.h"
 #include "ack_event.h"
-#include "config_event.h"
 
 #define VALUE2_THRESH 15
 #define MODULE controller
