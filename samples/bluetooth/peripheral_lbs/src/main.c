@@ -38,8 +38,6 @@
 
 #define USER_BUTTON             DK_BTN1_MSK
 
-static K_SEM_DEFINE(ble_init_ok, 0, 1);
-
 static bool app_button_state;
 
 static const struct bt_data ad[] = {
@@ -169,12 +167,11 @@ static struct bt_gatt_lbs_cb lbs_callbacs = {
 	.button_cb = app_button_cb,
 };
 
-static void bt_ready(int err)
+static void bt_ready(void)
 {
-	if (err) {
-		printk("BLE init failed with error code %d\n", err);
-		return;
-	}
+	int err;
+
+	printk("Bluetooth initialized\n");
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
@@ -194,8 +191,6 @@ static void bt_ready(int err)
 	}
 
 	printk("Advertising successfully started\n");
-
-	k_sem_give(&ble_init_ok);
 }
 
 static void button_changed(u32_t button_state, u32_t has_changed)
@@ -218,16 +213,6 @@ static int init_button(void)
 	return err;
 }
 
-static void error(void)
-{
-	dk_set_leds_state(DK_ALL_LEDS_MSK, DK_NO_LEDS_MSK);
-
-	while (true) {
-		/* Spin for ever */
-		k_sleep(1000);
-	}
-}
-
 void main(void)
 {
 	int blink_status = 0;
@@ -236,33 +221,29 @@ void main(void)
 	printk("Starting Bluetooth Peripheral LBS example\n");
 
 	err = dk_leds_init();
-	if (!err) {
-		err = init_button();
-	}
-
-	if (!err) {
-		err = bt_enable(bt_ready);
-	}
-
-	if (!err) {
-		bt_conn_cb_register(&conn_callbacks);
-
-		if (IS_ENABLED(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)) {
-			bt_conn_auth_cb_register(&conn_auth_callbacks);
-		}
-
-		/* Bluetooth stack should be ready in less than 1 second */
-		err = k_sem_take(&ble_init_ok, K_MSEC(1000));
-
-		if (!err) {
-			printk("Bluetooth initialized\n");
-		} else {
-			printk("BLE initialization did not complete in time\n");
-		}
-	}
-
 	if (err) {
-		error();
+		printk("LEDs init failed (err %d)\n", err);
+		return;
+	}
+
+	err = init_button();
+	if (err) {
+		printk("Button init failed (err %d)\n", err);
+		return;
+	}
+
+	err = bt_enable(NULL);
+	if (err) {
+		printk("Bluetooth init failed (err %d)\n", err);
+		return;
+	}
+
+	bt_ready();
+
+	bt_conn_cb_register(&conn_callbacks);
+
+	if (IS_ENABLED(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)) {
+		bt_conn_auth_cb_register(&conn_auth_callbacks);
 	}
 
 	for (;;) {
