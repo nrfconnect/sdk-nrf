@@ -213,7 +213,7 @@ static int state_ua_pin_complete(void)
 
 static int drop_event_handler(const struct nct_evt *nct_evt)
 {
-	LOG_ERR("Dropping FSM transition %d, current state %d", nct_evt->type,
+	LOG_DBG("Dropping FSM transition %d, current state %d", nct_evt->type,
 		nfsm_get_current_state());
 	return 0;
 }
