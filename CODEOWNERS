@@ -49,6 +49,7 @@ Kconfig*                                  @SebastianBoe
 /include/profiler.rst                     @b-gent
 /lib/bin/                                 @rlubos @lemrey
 /lib/at_cmd_parser/                       @rlubos
+/lib/at_cmd/                              @rlubos
 /lib/at_host/                             @rlubos
 /lib/at_notif/                            @pkchan
 /lib/bsdlib/                              @rlubos

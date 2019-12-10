@@ -10,6 +10,7 @@ rsource "bin/Kconfig"
 
 rsource "bsdlib/Kconfig"
 
+rsource "at_cmd/Kconfig"
 rsource "at_notif/Kconfig"
 
 rsource "at_host/Kconfig"

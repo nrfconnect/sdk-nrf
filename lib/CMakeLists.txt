@@ -8,6 +8,7 @@ add_subdirectory(bin)
 
 add_subdirectory_ifdef(CONFIG_BSD_LIBRARY bsdlib)
 add_subdirectory_ifdef(CONFIG_DK_LIBRARY dk_buttons_and_leds)
+add_subdirectory_ifdef(CONFIG_AT_CMD at_cmd)
 add_subdirectory_ifdef(CONFIG_AT_NOTIF at_notif)
 add_subdirectory_ifdef(CONFIG_AT_HOST_LIBRARY at_host)
 add_subdirectory_ifdef(CONFIG_AT_CMD_PARSER at_cmd_parser)

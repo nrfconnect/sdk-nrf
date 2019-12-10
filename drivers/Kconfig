@@ -7,7 +7,6 @@
 menu "Device Drivers"
 
 rsource "adp536x/Kconfig"
-rsource "at_cmd/Kconfig"
 
 rsource "gps_sim/Kconfig"
 rsource "entropy/Kconfig"

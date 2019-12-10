@@ -45,7 +45,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/at_cmd.h`
-| Source file: :file:`drivers/at_cmd.c`
+| Source file: :file:`lib/at_cmd.c`
 
 .. doxygengroup:: at_cmd
    :project: nrf
