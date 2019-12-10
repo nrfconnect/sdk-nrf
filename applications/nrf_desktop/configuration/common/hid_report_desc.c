@@ -9,24 +9,20 @@
 #include "hid_report_desc.h"
 
 #define USER_CONFIG_FEATURE_REPORT(id, size)				\
-	0x05, 0x01,       /* Usage Page (Generic Desktop) */		\
-	0xA1, 0x01,       /* Collection (Application) */		\
 	0x85, id,							\
-	0x09, 0x05,       /* Usage (Vendor Defined) */			\
+	0x06, 0x00, 0xff, /* Usage Page (Vendor Defined 0xFF00) */	\
+	0x0A, 0x01, 0xff, /* Usage (0xFF01) */			\
 	0x15, 0x00,       /* Logical Minimum (0) */			\
 	0x25, 0xFF,       /* Logical Maximum (255) */			\
 	0x75, 0x08,       /* Report Size (8) */				\
 	0x95, size,       /* Report Count */				\
-	0xB1, 0x02,       /* Feature (Data, Variable, Absolute) */	\
-	0xC0              /* End Collection (Application) */
+	0xB1, 0x02	  /* Feature (Data, Variable, Absolute) */
 
 
 const u8_t hid_report_desc[] = {
 #if CONFIG_DESKTOP_HID_MOUSE
-	/* Usage page */
 	0x05, 0x01,     /* Usage Page (Generic Desktop) */
 	0x09, 0x02,     /* Usage (Mouse) */
-
 	0xA1, 0x01,     /* Collection (Application) */
 
 	/* Report: Mouse */
@@ -68,10 +64,8 @@ const u8_t hid_report_desc[] = {
 #endif
 
 #if CONFIG_DESKTOP_HID_KEYBOARD
-	/* Usage page - Keyboard */
 	0x05, 0x01,     /* Usage Page (Generic Desktop) */
 	0x09, 0x06,     /* Usage (Keyboard) */
-
 	0xA1, 0x01,     /* Collection (Application) */
 
 	/* Report: Keyboard Keys (input) */
@@ -121,7 +115,7 @@ const u8_t hid_report_desc[] = {
 #if (CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE && !CONFIG_DESKTOP_HID_MOUSE)
 	USER_CONFIG_FEATURE_REPORT(REPORT_ID_USER_CONFIG, REPORT_SIZE_USER_CONFIG),
 #endif
-	0xC0,           /* End Collection (Application) */
+	0xC0,		/* End Collection (Application) */
 #endif
 
 #if CONFIG_DESKTOP_HID_CONSUMER_CTRL
@@ -140,7 +134,7 @@ const u8_t hid_report_desc[] = {
 	0x95, CONSUMER_CTRL_REPORT_KEY_COUNT_MAX, /* Report Count */
 	0x81, 0x00,       /* Input (Data,Array,Absolute) */
 
-	0xC0            /* End Collection */
+	0xC0		/* End Collection */
 #endif
 };
 
