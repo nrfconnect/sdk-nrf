@@ -12,5 +12,4 @@ Here you can find documentation for these drivers, including API documentation.
    :caption: Drivers:
    :glob:
 
-   ../../include/drivers/*
    drivers/*

@@ -54,7 +54,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/st25r3911b_nfca.h`
-| Source files: :file:`drivers/st25r3911b/`
+| Source files: :file:`lib/st25r3911b/`
 
 .. doxygengroup:: st25r3911b_nfca
    :project: nrf

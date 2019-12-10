@@ -12,7 +12,7 @@
 #include <string.h>
 #include <zephyr.h>
 #include <misc/printk.h>
-#include <drivers/st25r3911b_nfca.h>
+#include <st25r3911b_nfca.h>
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/t2t/parser.h>
 #include <nfc/t4t/isodep.h>
