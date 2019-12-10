@@ -15,7 +15,6 @@ rsource "nrf9160_gps/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "st25r3911b/Kconfig"
-rsource "flash_patch/Kconfig"
 
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"

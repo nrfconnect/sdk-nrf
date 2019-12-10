@@ -7,24 +7,17 @@
 menu "Libraries"
 
 rsource "bin/Kconfig"
-
 rsource "bsdlib/Kconfig"
-
 rsource "at_cmd/Kconfig"
+rsource "flash_patch/Kconfig"
 rsource "lte_link_control/Kconfig"
 rsource "fprotect/Kconfig"
 rsource "at_notif/Kconfig"
-
 rsource "at_host/Kconfig"
-
 rsource "dk_buttons_and_leds/Kconfig"
-
 rsource "at_cmd_parser/Kconfig"
-
 rsource "modem_info/Kconfig"
-
 rsource "pdn_management/Kconfig"
-
 rsource "multithreading_lock/Kconfig"
 
 rsource "fatal_error/Kconfig"
