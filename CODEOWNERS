@@ -39,7 +39,6 @@ Kconfig*                                  @SebastianBoe
 /include/bluetooth/mesh/                  @trond-snekvik @joerchan
 /include/debug/**/*.rst                   @b-gent
 /include/drivers/                         @anangl
-/include/drivers/**/*.rst                 @b-gent
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
 /include/nfc/**/*.rst                     @b-gent
@@ -62,6 +61,7 @@ Kconfig*                                  @SebastianBoe
 /lib/pdn_management/                      @rlubos
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /lib/fatal_error/                         @ioannisg
+/lib/st25r3911b/                          @grochu
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/**/*.rst               @b-gent

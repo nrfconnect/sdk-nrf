@@ -10,7 +10,7 @@
 #include <misc/byteorder.h>
 #include <string.h>
 #include <logging/log.h>
-#include <drivers/st25r3911b_nfca.h>
+#include <st25r3911b_nfca.h>
 
 #include "st25r3911b_reg.h"
 #include "st25r3911b_common.h"

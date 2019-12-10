@@ -13,7 +13,6 @@ rsource "hw_cc310/Kconfig"
 rsource "nrf9160_gps/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
-rsource "st25r3911b/Kconfig"
 
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"
