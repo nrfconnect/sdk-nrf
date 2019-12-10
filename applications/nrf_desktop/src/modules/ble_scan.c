@@ -478,7 +478,7 @@ static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 		buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
 					sizeof(*cmd_conn_update));
 		if (!buf) {
-			printk("Could not allocate command buffer\n");
+			LOG_ERR("Could not allocate command buffer\n");
 			return;
 		}
 
@@ -486,7 +486,7 @@ static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 
 		err = bt_hci_get_conn_handle(conn, &conn_handle);
 		if (err) {
-			printk("Failed obtaining conn_handle (err %d)\n", err);
+			LOG_ERR("Failed obtaining conn_handle (err %d)\n", err);
 			return;
 		}
 
