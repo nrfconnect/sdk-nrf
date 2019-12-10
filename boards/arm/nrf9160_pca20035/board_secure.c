@@ -5,7 +5,7 @@
  */
 
 #include <init.h>
-#include <drivers/adp536x.h>
+#include <adp536x.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(board_secure, CONFIG_BOARD_LOG_LEVEL);

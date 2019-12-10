@@ -8,6 +8,7 @@ menu "Libraries"
 
 rsource "bin/Kconfig"
 rsource "bsdlib/Kconfig"
+rsource "adp536x/Kconfig"
 rsource "at_cmd/Kconfig"
 rsource "flash_patch/Kconfig"
 rsource "lte_link_control/Kconfig"
