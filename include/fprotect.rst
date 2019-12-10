@@ -17,8 +17,8 @@ The following example shows how to protect ``PM_B0_SIZE`` bytes of the flash are
 API documentation
 *****************
 
-| Header file: :file:`include/drivers/fprotect.h`
-| Source files: :file:`drivers/fprotect/`
+| Header file: :file:`include/fprotect.h`
+| Source files: :file:`lib/fprotect/`
 
 .. doxygengroup:: fprotect
    :project: nrf

@@ -14,7 +14,7 @@
 #include <bl_validation.h>
 #include <bl_crypto.h>
 #include <fw_info.h>
-#include <drivers/fprotect.h>
+#include <fprotect.h>
 #include <provision.h>
 #ifdef CONFIG_UART_NRFX
 #ifdef CONFIG_UART_0_NRF_UART
