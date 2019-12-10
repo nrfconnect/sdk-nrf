@@ -48,6 +48,7 @@ Kconfig*                                  @SebastianBoe
 /include/event_manager.rst                @b-gent
 /include/profiler.rst                     @b-gent
 /lib/bin/                                 @rlubos @lemrey
+/lib/adp536x/                             @jtguggedal
 /lib/at_cmd_parser/                       @rlubos
 /lib/at_cmd/                              @rlubos
 /lib/at_host/                             @rlubos
