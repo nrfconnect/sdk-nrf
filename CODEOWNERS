@@ -53,6 +53,7 @@ Kconfig*                                  @SebastianBoe
 /lib/at_host/                             @rlubos
 /lib/at_notif/                            @pkchan
 /lib/bsdlib/                              @rlubos
+/lib/fprotect/                            @hakonfam
 /lib/lte_link_control/                    @jtguggedal
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos

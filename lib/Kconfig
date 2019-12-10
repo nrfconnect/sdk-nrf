@@ -12,6 +12,7 @@ rsource "bsdlib/Kconfig"
 
 rsource "at_cmd/Kconfig"
 rsource "lte_link_control/Kconfig"
+rsource "fprotect/Kconfig"
 rsource "at_notif/Kconfig"
 
 rsource "at_host/Kconfig"
