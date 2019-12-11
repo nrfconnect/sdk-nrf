@@ -36,10 +36,11 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		u8_t request_value[2];
+
 		sys_put_le16(setup->wValue, request_value);
 
+		/* Request for feature report */
 		if (request_value[1] == 0x03) {
-			/* Request for feature report */
 			if (request_value[0] == REPORT_ID_USER_CONFIG) {
 				size_t length = *len;
 				u8_t *buffer = *data;
@@ -59,9 +60,7 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 			}
 		}
 	}
-
-	*len  = hid_report_desc_size;
-	*data = (u8_t *)hid_report_desc;
+	LOG_ERR("Unsupported get report");
 
 	return 0;
 }
@@ -69,16 +68,33 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		size_t length = *len;
-		u8_t *buffer = *data;
+		u8_t request_value[2];
+
+		sys_put_le16(setup->wValue, request_value);
 
 		/* Feature report set */
-		int err = config_channel_report_set(&cfg_chan, buffer, length,
-						    true, CONFIG_USB_DEVICE_PID);
-		if (err) {
-			LOG_WRN("Failed to process report set");
+		if (request_value[1] == 0x03) {
+			if (request_value[0] == REPORT_ID_USER_CONFIG) {
+				size_t length = *len;
+				u8_t *buffer = *data;
+
+				int err = config_channel_report_set(&cfg_chan,
+							buffer,
+							length,
+							true,
+							CONFIG_USB_DEVICE_PID);
+
+				if (err) {
+					LOG_WRN("Failed to process report set");
+				}
+				return err;
+			} else {
+				LOG_WRN("Unsupported report ID");
+				return -ENOTSUP;
+			}
 		}
 	}
+	LOG_ERR("Unsupported set report");
 
 	return 0;
 }
