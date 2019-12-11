@@ -18,6 +18,7 @@ Nordic Semiconductor provides a variety of model implementations from the `Mesh 
    :glob:
 
    ../../../include/bluetooth/mesh/gen_*
+   ../../../include/bluetooth/mesh/lightness.rst
 
 For more information about these and other models, see also `Mesh Model Overview`_.
 
@@ -60,6 +61,8 @@ These include transitions, common IDs and other types that are rarely actively u
 
 Each model can also contain its own common types, listed in the respective documentation pages.
 For the types common to all models, see the following section.
+
+The following types are common for all models:
 
 API documentation
 =================

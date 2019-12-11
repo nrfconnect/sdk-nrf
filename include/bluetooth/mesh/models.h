@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
@@ -34,6 +34,8 @@
 #include <bluetooth/mesh/gen_loc_cli.h>
 #include <bluetooth/mesh/gen_prop_srv.h>
 #include <bluetooth/mesh/gen_prop_cli.h>
+#include <bluetooth/mesh/lightness_srv.h>
+#include <bluetooth/mesh/lightness_cli.h>
 
 /** @brief Check whether the model publishes to a unicast address.
  *
