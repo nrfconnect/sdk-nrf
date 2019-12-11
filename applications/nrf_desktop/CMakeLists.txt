@@ -6,25 +6,21 @@
 
 cmake_minimum_required(VERSION 3.8.2)
 
-set(NRF_SUPPORTED_BOARDS
-  nrf52810_pca20045
-  nrf52840_pca20041
-  nrf52840_pca10056
-  nrf52840_pca10059
-  nrf52_pca20037
-  nrf52_pca20044
-  )
-
-set(NRF_SUPPORTED_BUILD_TYPES
-  ZDebug
-  ZDebugWithShell
-  ZDebugMCUBoot
-  ZRelease
-  ZReleaseMCUBoot
-  )
-
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE ZDebug)
+endif()
+
+if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
+  message(FATAL_ERROR
+          "Board ${BOARD} is not supported.\n"
+          "Please make sure board specific configuration files are added to "
+          "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}")
+endif()
+
+if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
+  message(FATAL_ERROR
+          "Configuration file for build type ${CMAKE_BUILD_TYPE} is missing.\n"
+          "Please add file ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
 endif()
 
 include(../../cmake/boilerplate.cmake)
