@@ -15,12 +15,15 @@ documentation.
    :glob:
 
    ../../../include/bluetooth/mesh/gen_*
+   ../../../include/bluetooth/mesh/lightness.rst
 
 Common model types
 ===================
 
 Models in the Bluetooth Mesh Model Specification share some common types, that
 are collected in a single header file.
+
+The following types are common for all models:
 
 API documentation
 ******************
