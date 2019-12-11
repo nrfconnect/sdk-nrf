@@ -39,6 +39,10 @@ For bootloader updates, the new firmware is placed in the non-active partition (
 When the complete transfer is done, call the :cpp:func:`dfu_target_done` function to mark the firmware as ready to be booted.
 On the next reboot, the device will run the new firmware.
 
+.. note::
+   To maintain the write progress in case the device reboots, enable the configuration options :option:`CONFIG_SETTINGS` and :option:`CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`.
+   The MCUboot target then uses the :ref:`zephyr:settings` subsystem in Zephyr to store the current progress used by the :cpp:func:`dfu_target_write` function across power failures and device resets.
+
 
 Modem firmware upgrades
 =======================
