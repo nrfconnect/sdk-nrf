@@ -25,7 +25,7 @@ config DFU_TARGET_MCUBOOT_SAVE_PROGRESS
 	depends on SETTINGS
 	depends on !SETTINGS_NONE
 	help
-	  Enable this option to allow dfu_target_mcuboot to store the current
+	  Enable this option to cause dfu_target_mcuboot to store the current
 	  write progress to flash. In case of power failure or device reset,
 	  the operation can then resume from the latest state.
 
