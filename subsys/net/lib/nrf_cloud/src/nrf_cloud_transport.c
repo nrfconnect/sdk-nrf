@@ -50,6 +50,15 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #define NCT_SHADOW_BASE_TOPIC AWS "%s/shadow"
 #define NCT_SHADOW_BASE_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 7)
 
+/*
+ * Note that this topic is intentionally not using the AWS Shadow get/accepted
+ * topic ("$aws/things/<deviceId>/shadow/get/accepted").
+ * Messages on the AWS topic contain the entire shadow, including metadata and
+ * they can become too large for the modem to handle.
+ * Messages on the topic below are published by nRF Connect for Cloud and
+ * contain only a part of the original message so it can be received by the
+ * device.
+ */
 #define NCT_ACCEPTED_TOPIC "%s/shadow/get/accepted"
 #define NCT_ACCEPTED_TOPIC_LEN (NRF_CLOUD_CLIENT_ID_LEN + 20)
 
