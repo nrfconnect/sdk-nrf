@@ -50,7 +50,7 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #define NCT_SHADOW_BASE_TOPIC AWS "%s/shadow"
 #define NCT_SHADOW_BASE_TOPIC_LEN (AWS_LEN + NRF_CLOUD_CLIENT_ID_LEN + 7)
 
-#define NCT_ACCEPTED_TOPIC "%s/shadow/get/accepted"
+#define NCT_ACCEPTED_TOPIC AWS "%s/shadow/get/accepted"
 #define NCT_ACCEPTED_TOPIC_LEN (NRF_CLOUD_CLIENT_ID_LEN + 20)
 
 #define NCT_REJECTED_TOPIC AWS "%s/shadow/get/rejected"
