@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Cloud Client Sample Settings"
+
+config CLOUD_BACKEND
+	string "String that selects the cloud backend to be used"
+	default "NRF_CLOUD"
+
+config CLOUD_MESSAGE
+	string "Custom message published periodically to cloud"
+	default "{\"state\":{\"reported\":{\"message\":\"Hello Internet of Things!\"}}}"
+
+config CLOUD_MESSAGE_PUBLICATION_INTERVAL
+	int "How often the custom message should be published to cloud, in seconds"
+	default 10
+
+choice
+	prompt "Cloud Publication Trigger"
+	default CLOUD_PUBLICATION_BUTTON_PRESS
+
+config CLOUD_PUBLICATION_BUTTON_PRESS
+	bool "Trigger publication to cloud upon a button press"
+
+config CLOUD_PUBLICATION_SEQUENTIAL
+	bool "Sequential publication to cloud set by the CONFIG_MESSAGE_PUBLICATION_INTERVAL option"
+
+endchoice
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
