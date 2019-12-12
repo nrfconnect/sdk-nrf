@@ -205,3 +205,7 @@
 .. _`west manifest file`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/west.yml
 
 .. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/tests/unity/example_test/CMakeLists.txt
+
+.. _`CoAP response codes`: https://tools.ietf.org/html/rfc7252#section-12.1.2
+
+.. _`RFC 7252 - The Constrained Application Protocol`: https://tools.ietf.org/html/rfc7252
