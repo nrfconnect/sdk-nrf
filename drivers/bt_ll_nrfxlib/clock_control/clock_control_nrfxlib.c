@@ -18,7 +18,7 @@
 #include <mpsl_clock.h>
 #endif
 #include <multithreading_lock.h>
-#if IS_ENABLED(CONFIG_USB_NRF52840)
+#if IS_ENABLED(CONFIG_USB_NRFX)
 #include <hal/nrf_power.h>
 #endif
 
@@ -165,7 +165,7 @@ static int lf_clock_get_rate(struct device *dev,
 	return 0;
 }
 
-#if IS_ENABLED(CONFIG_USB_NRF52840)
+#if IS_ENABLED(CONFIG_USB_NRFX)
 static inline void power_event_cb(nrf_power_event_t event)
 {
 	extern void usb_dc_nrfx_power_event_callback(nrf_power_event_t event);
@@ -176,7 +176,7 @@ static inline void power_event_cb(nrf_power_event_t event)
 
 void nrf_power_clock_isr(void)
 {
-#if IS_ENABLED(CONFIG_USB_NRF52840)
+#if IS_ENABLED(CONFIG_USB_NRFX)
 	bool usb_detected, usb_pwr_rdy, usb_removed;
 
 	usb_detected = nrf_power_event_check(NRF_POWER,
@@ -257,7 +257,7 @@ DEVICE_AND_API_INIT(lf_clock,
 		    clock_control_init, NULL, NULL, PRE_KERNEL_1,
 		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &lf_clock_control_api);
 
-#if IS_ENABLED(CONFIG_USB_NRF52840)
+#if IS_ENABLED(CONFIG_USB_NRFX)
 
 void nrf5_power_usb_power_int_enable(bool enable)
 {
