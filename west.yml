@@ -36,7 +36,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: 2c43bc81ea7b1de5332b806d99a718148375c981
+      revision: f2d732b7fa5d57f49d731271cdb60d6176793e31
     - name: nffs
       revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
       path: modules/fs/nffs
@@ -63,7 +63,7 @@ manifest:
     - name: ci-tools
       path: tools/ci-tools
       remote: zephyrproject
-      revision: 20aa511fbd302ba8429a9ab04ee96c201b547743
+      revision: c083680dd5e281218ddb47d0ceac5c5fd5619749
     - name: net-tools
       path: tools/net-tools
       remote: zephyrproject
@@ -97,7 +97,7 @@ manifest:
     - name: hal_nordic
       path: modules/hal/nordic
       remote: zephyrproject
-      revision: 080d1dff4a07b5798ab979fde40dde8da452b854
+      revision: 64f3473398f9fba11059dd0c7ae969e74f74f356
     - name: hal_st
       path: modules/hal/st
       remote: zephyrproject
