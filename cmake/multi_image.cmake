@@ -68,6 +68,7 @@ function(add_child_image_from_source name sourcedir)
   # image, should be passed on to all child images as well.
   list(APPEND
     SHARED_MULTI_IMAGE_VARIABLES
+    CMAKE_BUILD_TYPE
     BOARD_DIR
     ZEPHYR_MODULES
     ZEPHYR_EXTRA_MODULES
