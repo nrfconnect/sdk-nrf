@@ -25,6 +25,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include "usb_event.h"
 #include "config_event.h"
 
+#define REPORT_TYPE_INPUT	0x01
+#define REPORT_TYPE_OUTPUT	0x02
+#define REPORT_TYPE_FEATURE	0x03
+
 static enum usb_state state;
 static u8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
@@ -34,22 +38,22 @@ static struct config_channel_state cfg_chan;
 
 static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		u8_t request_value[2];
+	u8_t request_value[2];
 
-		sys_put_le16(setup->wValue, request_value);
+	sys_put_le16(setup->wValue, request_value);
 
-		/* Request for feature report */
-		if (request_value[1] == 0x03) {
+	switch (request_value[1]) {
+	case REPORT_TYPE_FEATURE:
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 			if (request_value[0] == REPORT_ID_USER_CONFIG) {
 				size_t length = *len;
 				u8_t *buffer = *data;
 
 				int err = config_channel_report_get(&cfg_chan,
-								    buffer,
-								    length,
-								    true,
-								    CONFIG_USB_DEVICE_PID);
+							buffer,
+							length,
+							true,
+							CONFIG_USB_DEVICE_PID);
 				if (err) {
 					LOG_WRN("Failed to process report get");
 				}
@@ -59,21 +63,34 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 				return -ENOTSUP;
 			}
 		}
+		break;
+
+	case REPORT_TYPE_INPUT:
+		break;
+
+	default:
+		/* Should not happen. */
+		__ASSERT_NO_MSG(false);
+		break;
 	}
-	LOG_ERR("Unsupported get report");
+
+	LOG_WRN("Unsupported get report");
+	LOG_WRN("bmRequestType: %02X bRequest: %02X wValue: %04X wIndex: %04X"
+		" wLength: %04X", setup->bmRequestType, setup->bRequest,
+		setup->wValue, setup->wIndex, setup->wLength);
 
 	return 0;
 }
 
 static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		u8_t request_value[2];
+	u8_t request_value[2];
 
-		sys_put_le16(setup->wValue, request_value);
+	sys_put_le16(setup->wValue, request_value);
 
-		/* Feature report set */
-		if (request_value[1] == 0x03) {
+	switch (request_value[1]) {
+	case REPORT_TYPE_FEATURE:
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 			if (request_value[0] == REPORT_ID_USER_CONFIG) {
 				size_t length = *len;
 				u8_t *buffer = *data;
@@ -93,8 +110,25 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 				return -ENOTSUP;
 			}
 		}
+		break;
+
+	case REPORT_TYPE_OUTPUT:
+		if (request_value[0] == REPORT_ID_KEYBOARD_LEDS) {
+			LOG_INF("No action on keyboard LEDs report");
+			return 0;
+		}
+		break;
+
+	default:
+		/* Should not happen. */
+		__ASSERT_NO_MSG(false);
+		break;
 	}
-	LOG_ERR("Unsupported set report");
+
+	LOG_WRN("Unsupported set report");
+	LOG_WRN("bmRequestType: %02X bRequest: %02X wValue: %04X wIndex: %04X"
+		" wLength: %04X", setup->bmRequestType, setup->bRequest,
+		setup->wValue, setup->wIndex, setup->wLength);
 
 	return 0;
 }
