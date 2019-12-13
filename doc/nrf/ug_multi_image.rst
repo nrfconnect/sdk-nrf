@@ -165,10 +165,10 @@ For example, to change the ``CONF_FILE`` variable for the MCUboot image and the 
 
    cmake -Dmcuboot_CONF_FILE=prj_a.conf -DCONF_FILE=app_prj.conf
 
-The command line that is used to create the child images can be extended by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
-This could for instance be used to get more debug information with the flag ``---trace-expand``.
+You can extend the CMake command that is used to create the child images by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
+For example, add ``--trace-expand`` to that variable to output more debug information.
 
-Similarly the CMake variable ``EXTRA_MULTI_IMAGE_BUILD_OPT`` can be used to modify the options used when ninja is invoked on the child images.
+Similarly, you can modify the options for building the child image by adding them to the CMake variable ``EXTRA_MULTI_IMAGE_BUILD_OPT``.
 
 Child image targets
 ===================
@@ -180,7 +180,7 @@ To disambiguate targets, the same prefix convention is used as for variables.
 This means that to run menuconfig, for example, you invoke the ``menuconfig`` target to configure the parent image and ``mcuboot_menuconfig`` to configure the MCUboot child image.
 
 You can also invoke any child target directly from its build directory.
-Child build directories are located at the top of the parent's build directory.
+Child build directories are located at the root of the parent's build directory.
 
 Memory placement
 ****************
