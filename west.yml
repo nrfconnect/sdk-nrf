@@ -29,8 +29,6 @@ manifest:
       url-base: https://github.com/ThrowTheSwitch
     - name: armmbed
       url-base: https://github.com/ARMmbed
-    - name: civetweb
-      url-base: https://github.com/civetweb
 
   # The list of external projects for the nRF Connect SDK.
   #
@@ -92,10 +90,6 @@ manifest:
     # manager patchset. Please report any issues.
     #
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/scripts/partition_manager/partition_manager.html
-    - name: civetweb
-      path: modules/lib/civetweb
-      remote: civetweb
-      revision: 99129c5efc907ea613c4b73ccff07581feb58a7a
     - name: fatfs
       path: modules/fs/fatfs
       remote: zephyrproject
