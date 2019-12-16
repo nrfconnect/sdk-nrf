@@ -187,6 +187,9 @@
 
 .. _`CMake documentation`: https://cmake.org/cmake/help/latest/
 
+.. _`VERBOSE`: https://cmake.org/cmake/help/latest/envvar/VERBOSE.html
+.. _`CMAKE_BUILD_PARALLEL_LEVEL`: https://cmake.org/cmake/help/latest/envvar/CMAKE_BUILD_PARALLEL_LEVEL.html
+
 .. _`AWS IoT Developer Guide`: https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html
 .. _`AWS IoT MQTT`: https://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html
 .. _`AWS IoT Developer Guide: Basic Policy Variables`: https://docs.aws.amazon.com/iot/latest/developerguide/basic-policy-variables.html

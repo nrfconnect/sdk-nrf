@@ -138,3 +138,18 @@ The documentation for each :ref:`configuration option <configuration_options>` a
 .. important::
    All changes to the :file:`.config` file are lost when you clean your build directory.
    You can save it to another location, but you must then manually copy it back to your build directory.
+
+.. _cmake_options:
+
+Providing CMake options
+***********************
+
+You can provide additional options for building your application to the CMake process, which can be useful, for example, to switch between different build scenarios.
+These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
+
+If you work with SES, this configuration takes place when you open an |NCS| project, and you must therefore provide the CMake options before you open the project.
+To specify CMake options, click :guilabel:`Tools` > :guilabel:`Options`, select the :guilabel:`nRF Connect` tab, and specify a value for :guilabel:`Additional CMake options`.
+
+If you work on the command line, pass the additional options to the ``west build`` command.
+The options must be added after a ``--`` at the end of the command.
+See :ref:`zephyr:west-building-cmake-args` for more information.

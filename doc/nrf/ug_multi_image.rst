@@ -168,8 +168,6 @@ For example, to change the ``CONF_FILE`` variable for the MCUboot image and the 
 You can extend the CMake command that is used to create the child images by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
 For example, add ``--trace-expand`` to that variable to output more debug information.
 
-Similarly, you can modify the options for building the child image by adding them to the CMake variable ``EXTRA_MULTI_IMAGE_BUILD_OPT``.
-
 Child image targets
 ===================
 
@@ -181,6 +179,54 @@ This means that to run menuconfig, for example, you invoke the ``menuconfig`` ta
 
 You can also invoke any child target directly from its build directory.
 Child build directories are located at the root of the parent's build directory.
+
+Controlling the build process
+=============================
+
+The child image is built using CMake's build command ``cmake --build``.
+This mechanism allows additional control of the build process through CMake.
+
+CMake options
+-------------
+
+The following CMake options are propagated from the CMake command of the parent image to the CMake command of the child image:
+
+* ``CMAKE_BUILD_TYPE``
+* ``CMAKE_VERBOSE_MAKEFILE``
+
+You can add other CMake options to a specific child image in the same way as you can set `image-specific variables <Image-specific variables>`_.
+For example, add ``-Dmcuboot_CMAKE_VERBOSE_MAKEFILE`` to the parent's CMake command to build the ``mcuboot`` child image with verbose output.
+
+To enable additional debug information for the multi-image build command, set the CMake option ``MULTI_IMAGE_DEBUG_MAKEFILE`` to the desired debug mode.
+For example, add ``-DMULTI_IMAGE_DEBUG_MAKEFILE=explain`` to log the reasons why a command was executed.
+
+See :ref:`cmake_options` for instructions on how to specify these CMake options for the build.
+
+CMake environment variables
+---------------------------
+
+Unlike CMake options, CMake environment variables allow you to control the build process without re-invoking CMake.
+
+You can use the CMake environment variables `VERBOSE`_ and `CMAKE_BUILD_PARALLEL_LEVEL`_ to control the verbosity and the number of parallel jobs for a build.
+
+When using |SES|, you must set these environment variables before starting SES, and they will apply only to the build of the child images.
+On the command line, you must set them before invoking ``west``, and they will apply to both the parent image and the child images.
+For example, to build with verbose output and one parallel job, use the following commands (where *board_name* is the name of the board for which you are building):
+
+* Linux/macOS:
+
+     .. parsed-literal::
+        :class: highlight
+
+        $ VERBOSE=True CMAKE_BUILD_PARALLEL_LEVEL=1 west build -b *board_name*
+
+* Windows:
+
+     .. parsed-literal::
+        :class: highlight
+
+        > set VERBOSE=True && set CMAKE_BUILD_PARALLEL_LEVEL=1 && west build -b *board_name*
+
 
 Memory placement
 ****************
