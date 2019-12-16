@@ -293,6 +293,7 @@ static void scan_fn(struct k_work *work)
 		}
 
 		any_pressed = any_pressed ||
+			      (prev_state[i] != 0) ||
 			      (settled_state[i] != 0) ||
 			      (cur_state[i] != 0);
 	}
