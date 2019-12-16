@@ -233,10 +233,12 @@ static int at_uart_init(char *uart_dev_name)
 		if (err) {
 			if (k_uptime_get_32() - start_time >
 			    CONFIG_AT_HOST_UART_INIT_TIMEOUT) {
+				LOG_ERR("UART check failed: %d. "
+					"UART initialization timed out.", err);
 				return -EIO;
 			}
 
-			LOG_ERR("UART check failed: %d. "
+			LOG_INF("UART check failed: %d. "
 				"Dropping buffer and retrying.", err);
 
 			while (uart_fifo_read(uart_dev, &dummy, 1)) {
