@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig RESET_ON_FATAL_ERROR
+	bool "Reset on fatal error"
+	default y if !DEBUG && !KERNEL_DEBUG
+	help
+	  Enable using the fatal error handler defined for Nordic DKs.
+	  When it is used, the system restarts after a fatal error.
+
+if RESET_ON_FATAL_ERROR
+
+module = FATAL_ERROR
+module-str = Fatal error
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # RESET_ON_FATAL_ERROR

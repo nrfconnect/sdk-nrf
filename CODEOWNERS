@@ -55,6 +55,7 @@ Kconfig*                                  @SebastianBoe
 /lib/modem_info/                          @rlubos
 /lib/pdn_management/                      @rlubos
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
+/lib/fatal_error/                         @ioannisg
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/**/*.rst               @b-gent

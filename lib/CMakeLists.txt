@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -14,3 +14,4 @@ add_subdirectory_ifdef(CONFIG_AT_CMD_PARSER at_cmd_parser)
 add_subdirectory_ifdef(CONFIG_MODEM_INFO modem_info)
 add_subdirectory_ifdef(CONFIG_PDN_MANAGEMENT pdn_management)
 add_subdirectory_ifdef(CONFIG_MULTITHREADING_LOCK multithreading_lock)
+add_subdirectory_ifdef(CONFIG_RESET_ON_FATAL_ERROR fatal_error)

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2018 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -23,5 +23,7 @@ rsource "modem_info/Kconfig"
 rsource "pdn_management/Kconfig"
 
 rsource "multithreading_lock/Kconfig"
+
+rsource "fatal_error/Kconfig"
 
 endmenu
