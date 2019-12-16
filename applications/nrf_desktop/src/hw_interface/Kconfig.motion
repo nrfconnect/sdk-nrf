@@ -13,11 +13,11 @@ choice
 config DESKTOP_MOTION_NONE
 	bool "Disable motion"
 
-config DESKTOP_MOTION_PMW3360_ENABLE
+config DESKTOP_MOTION_SENSOR_PMW3360_ENABLE
 	bool "Motion from optical sensor PMW3360"
 	select DESKTOP_MOTION_SENSOR_ENABLE
 
-config DESKTOP_MOTION_PAW3212_ENABLE
+config DESKTOP_MOTION_SENSOR_PAW3212_ENABLE
 	bool "Motion from optical sensor PAW3212"
 	select DESKTOP_MOTION_SENSOR_ENABLE
 
@@ -75,13 +75,22 @@ config DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
 	range 1 5
 	default 2
 
-config DESKTOP_MOTION_THREAD_STACK_SIZE
+config DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE
 	int "Motion module thread stack size"
 	depends on DESKTOP_MOTION_SENSOR_ENABLE
 	range 0 4096
 	default 512
 	help
 	  Stack size for motion sensor thread.
+
+config DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT
+	int "Empty sample count before fetching is stopped"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default 10
+	help
+	  Number of sensor readouts with no movement reported after which
+	  module will switch from actively fetching samples to waiting
+	  for an interrupt from the sensor.
 
 config DESKTOP_MOTION_SENSOR_CPI
 	int "Motion sensor default CPI"
