@@ -11,6 +11,13 @@
 
 LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 
+#define NFC_TIMER_IRQn		NRFX_CONCAT_3(TIMER,				  \
+					      NRFX_NFCT_CONFIG_TIMER_INSTANCE_ID, \
+					      _IRQn)
+#define nfc_timer_irq_handler	NRFX_CONCAT_3(nrfx_timer_,			  \
+					      NRFX_NFCT_CONFIG_TIMER_INSTANCE_ID, \
+					      _irq_handler)
+
 static struct device *clock;
 
 static void clock_handler(struct device *dev, void *user_data)
@@ -32,8 +39,8 @@ nrfx_err_t nfc_platform_setup(void)
 
 	IRQ_CONNECT(NFCT_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
 			   nrfx_nfct_irq_handler, NULL,  0);
-	IRQ_CONNECT(TIMER4_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
-			   nrfx_timer_4_irq_handler, NULL,  0);
+	IRQ_CONNECT(NFC_TIMER_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
+			   nfc_timer_irq_handler, NULL,  0);
 
 	LOG_DBG("NFC platform initialized");
 	return NRFX_SUCCESS;
