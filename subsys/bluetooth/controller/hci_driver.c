@@ -423,8 +423,14 @@ static int ble_init(struct device *unused)
 #else
 #error "Clock accuracy is not defined"
 #endif
+
+#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
 	clock_cfg.rc_ctiv = BLE_CONTROLLER_RECOMMENDED_RC_CTIV;
 	clock_cfg.rc_temp_ctiv = BLE_CONTROLLER_RECOMMENDED_RC_TEMP_CTIV;
+#else
+	clock_cfg.rc_ctiv = 0;
+	clock_cfg.rc_temp_ctiv = 0;
+#endif
 
 	err = ble_controller_init(blectlr_assertion_handler,
 				  &clock_cfg,
