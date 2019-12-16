@@ -29,8 +29,8 @@ Configuration
 
 The ``motion`` module selects the source of movement based on the following configuration options:
     * ``CONFIG_DESKTOP_MOTION_NONE`` - module is disabled.
-    * ``CONFIG_DESKTOP_MOTION_PMW3360_ENABLE`` - movement data is obtained from gaming grade ``PMW3360`` motion sensor.
-    * ``CONFIG_DESKTOP_MOTION_PAW3212_ENABLE`` - movement data is obtained from ``PAW3212`` motion sensor.
+    * ``CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE`` - movement data is obtained from gaming grade ``PMW3360`` motion sensor.
+    * ``CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`` - movement data is obtained from ``PAW3212`` motion sensor.
     * ``CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE`` - movement data is generated using buttons.
     * ``CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE`` - movement data is simulated (controlled from the Zephyr shell).
 
@@ -42,12 +42,12 @@ the build process.
 Motion sensors
 ==============
 
-Selecting either of the motion sensors (``CONFIG_DESKTOP_MOTION_PMW3360_ENABLE``
-or ``CONFIG_DESKTOP_MOTION_PAW3212_ENABLE``) adds the ``src/hw_interface/motion_sensor.c`` file
+Selecting either of the motion sensors (``CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE``
+or ``CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE``) adds the ``src/hw_interface/motion_sensor.c`` file
 to the compilation.
 
 The motion sensor is sampled from the context of a dedicated thread.
-The option ``CONFIG_DESKTOP_MOTION_THREAD_STACK_SIZE`` is used to set the
+The option ``CONFIG_DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE`` is used to set the
 thread's stack size.
 
 The motion sensor default sensitivity and power saving switching times can be set with the following options:
@@ -133,6 +133,6 @@ was transmitted to the host. This is done when the module receives the
 performed and the next ``motion_event`` sent.
 
 The module continues to sample data until disconnection or when there is no
-motion detected. The ``motion`` module assumes no motion when ``10`` consecutive
+motion detected. The ``motion`` module assumes no motion when ``CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT`` consecutive
 samples return zero on both axis. In such case, the module will switch back to
 ``STATE_IDLE`` and wait for the motion sensor trigger.
