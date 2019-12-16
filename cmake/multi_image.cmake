@@ -87,6 +87,7 @@ function(add_child_image_from_source name sourcedir)
   list(APPEND
     SHARED_MULTI_IMAGE_VARIABLES
     CMAKE_BUILD_TYPE
+    CMAKE_VERBOSE_MAKEFILE
     BOARD_DIR
     ZEPHYR_MODULES
     ZEPHYR_EXTRA_MODULES
@@ -181,14 +182,20 @@ function(add_child_image_from_source name sourcedir)
   # Increase the scope of this variable to make it more available
   set(${name}_KERNEL_HEX_NAME ${${name}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
 
+  if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
+    set(multi_image_build_args "-d" "${MULTI_IMAGE_DEBUG_MAKEFILE}")
+  endif()
+  if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Unix Makefiles")
+    set(multi_image_build_args "--debug=${MULTI_IMAGE_DEBUG_MAKEFILE}")
+  endif()
+
   include(ExternalProject)
   ExternalProject_Add(${name}_subimage
     SOURCE_DIR ${sourcedir}
     BINARY_DIR ${CMAKE_BINARY_DIR}/${name}
     BUILD_BYPRODUCTS ${${name}_BUILD_BYPRODUCTS} # Set by shared_vars.cmake
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND ${CMAKE_MAKE_PROGRAM}
-    ${EXTRA_MULTI_IMAGE_BUILD_OPT} # E.g. -v
+    BUILD_COMMAND ${CMAKE_COMMAND} --build . -- ${multi_image_build_args}
     INSTALL_COMMAND ""
     BUILD_ALWAYS True
     )
