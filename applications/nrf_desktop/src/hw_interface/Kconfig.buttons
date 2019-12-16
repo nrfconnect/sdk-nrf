@@ -21,7 +21,7 @@ endchoice
 config DESKTOP_BUTTONS_SCAN_INTERVAL
 	int "Buttons scan interval in ms"
 	depends on DESKTOP_BUTTONS_ENABLE
-	default 6
+	default 2
 	help
 	  Interval at which key matrix is scanned.
 
