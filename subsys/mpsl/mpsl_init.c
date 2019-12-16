@@ -101,8 +101,14 @@ static int mpsl_lib_init(struct device *dev)
 	mpsl_clock_lf_cfg_t clock_cfg;
 
 	clock_cfg.source = m_config_clock_source_get();
+
+#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
 	clock_cfg.rc_ctiv = MPSL_RECOMMENDED_RC_CTIV;
 	clock_cfg.rc_temp_ctiv = MPSL_RECOMMENDED_RC_TEMP_CTIV;
+#else
+	clock_cfg.rc_ctiv = 0;
+	clock_cfg.rc_temp_ctiv = 0;
+#endif
 
 	err = mpsl_init(&clock_cfg, MPSL_LOW_PRIO_IRQn, m_assert_handler);
 	if (err) {
