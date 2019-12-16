@@ -177,14 +177,6 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	EVENT_SUBMIT(event);
 }
 
-static struct bt_gatt_exchange_params exchange_params;
-
-static void exchange_func(struct bt_conn *conn, u8_t err,
-			  struct bt_gatt_exchange_params *params)
-{
-	LOG_INF("MTU exchange done");
-}
-
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err bt_err)
 {
@@ -192,41 +184,25 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 		__ASSERT_NO_MSG(active_conn[0] == conn);
 	}
 
-	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!bt_err && (level >= BT_SECURITY_L2)) {
 		LOG_INF("Security with %s level %u", log_strdup(addr), level);
+
+		struct ble_peer_event *event = new_ble_peer_event();
+
+		event->id = conn;
+		event->state = PEER_STATE_SECURED;
+
+		EVENT_SUBMIT(event);
 	} else {
 		LOG_WRN("Security with %s failed, level %u err %d",
 			log_strdup(addr), level, bt_err);
+
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 			disconnect_peer(conn);
-		}
-
-		return;
-	}
-
-	struct ble_peer_event *event = new_ble_peer_event();
-	event->id = conn;
-	event->state = PEER_STATE_SECURED;
-	EVENT_SUBMIT(event);
-
-	struct bt_conn_info info;
-
-	err = bt_conn_get_info(conn, &info);
-	if (err) {
-		LOG_WRN("Cannot get conn info");
-	} else {
-		if (IS_ENABLED(CONFIG_BT_CENTRAL) &&
-		    (info.role == BT_CONN_ROLE_MASTER)) {
-			exchange_params.func = exchange_func;
-			err = bt_gatt_exchange_mtu(conn, &exchange_params);
-			if (err) {
-				LOG_ERR("MTU exchange failed");
-			}
 		}
 	}
 }
@@ -250,17 +226,11 @@ static void le_param_updated(struct bt_conn *conn, u16_t interval,
 		interval, latency, timeout);
 }
 
-static void bt_ready(int err)
+static void enable_llpm(void)
 {
-	if (err) {
-		LOG_ERR("Bluetooth initialization failed (err %d)", err);
-		sys_reboot(SYS_REBOOT_WARM);
-	}
-
-	LOG_INF("Bluetooth initialized");
-
 #ifdef CONFIG_BT_LL_NRFXLIB
 	hci_vs_cmd_llpm_mode_set_t *p_cmd_enable;
+	int err;
 
 	struct net_buf *buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
 						sizeof(*p_cmd_enable));
@@ -275,6 +245,18 @@ static void bt_ready(int err)
 		LOG_INF("LLPM enabled");
 	}
 #endif
+}
+
+static void bt_ready(int err)
+{
+	if (err) {
+		LOG_ERR("Bluetooth initialization failed (err %d)", err);
+		sys_reboot(SYS_REBOOT_WARM);
+	}
+
+	LOG_INF("Bluetooth initialized");
+
+	enable_llpm();
 
 	module_set_state(MODULE_STATE_READY);
 }
