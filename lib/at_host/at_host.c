@@ -117,7 +117,6 @@ static void cmd_send(struct k_work *work)
 
 static void uart_rx_handler(u8_t character)
 {
-	static bool cr_state; /* Whether last character received was a <CR> */
 	static bool inside_quotes;
 	static size_t at_cmd_len;
 
@@ -132,35 +131,31 @@ static void uart_rx_handler(u8_t character)
 		return;
 	}
 
-	/*
-	 * Handle termination characters, if outside quotes.
-	 * The characters are never written to buffer unless inside quotes.
-	 */
+	/* Handle termination characters, if outside quotes. */
 	if (!inside_quotes) {
 		switch (character) {
 		case '\0':
 			if (term_mode == MODE_NULL_TERM) {
 				goto send;
 			}
+			LOG_WRN("Ignored null; would terminate string early.");
 			return;
 		case '\r':
 			if (term_mode == MODE_CR) {
 				goto send;
 			}
-			if (term_mode == MODE_CR_LF) {
-				cr_state = true;
-			}
-			return;
+			break;
 		case '\n':
 			if (term_mode == MODE_LF) {
 				goto send;
 			}
-			if (term_mode == MODE_CR_LF && cr_state) {
+			if (term_mode == MODE_CR_LF &&
+			    at_cmd_len > 0 &&
+			    at_buf[at_cmd_len - 1] == '\r') {
 				goto send;
 			}
-			return;
+			break;
 		}
-		cr_state = false;
 	}
 
 	/* Detect AT command buffer overflow, leaving space for null */
@@ -183,7 +178,6 @@ send:
 	at_buf[at_cmd_len] = '\0'; /* Terminate the command string */
 
 	/* Reset UART handler state */
-	cr_state = false;
 	inside_quotes = false;
 	at_cmd_len = 0;
 

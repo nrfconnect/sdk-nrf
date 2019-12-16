@@ -42,7 +42,7 @@ config AT_HOST_UART_INIT_TIMEOUT
 
 choice
 	prompt "Termination Mode"
-	default CR_TERMINATION
+	default LF_TERMINATION
 	depends on AT_HOST_LIBRARY
 	help
 		Sets the termination ending from the serial terminal
@@ -51,6 +51,9 @@ choice
 		-  CR Termination
 		-  LF Termination
 		-  CR+LF Termination
+
+		WARNING! Some AT commands (like AT+CMGS) use CR internally.
+		Selecting CR Termination will render those commands unavailable.
 	config NULL_TERMINATION
 		bool "NULL Termination"
 	config CR_TERMINATION
