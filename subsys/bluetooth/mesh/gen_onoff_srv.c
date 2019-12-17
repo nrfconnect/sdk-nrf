@@ -61,8 +61,14 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_onoff_set set;
 
-	set.on_off = net_buf_simple_pull_u8(buf);
+	u8_t on_off = net_buf_simple_pull_u8(buf);
 	u8_t tid = net_buf_simple_pull_u8(buf);
+
+	if (on_off > 1) {
+		return;
+	}
+
+	set.on_off = on_off;
 
 	if (tid_check_and_update(&srv->prev_transaction, tid, ctx) != 0) {
 		/* If this is the same transaction, we don't need to send it

@@ -89,7 +89,7 @@ static inline void bt_mesh_loc_local_encode(struct net_buf_simple *buf,
 	u8_t enc_precision = bt_mesh_loc_4bit_log2_encode(loc->precision_mm);
 
 	u16_t uncertainty = (loc->is_mobile) |
-			    ((enc_update_time & BIT_MASK(4U)) << 7U) |
+			    ((enc_update_time & BIT_MASK(4U)) << 8U) |
 			    ((enc_precision & BIT_MASK(4U)) << 12U);
 
 	net_buf_simple_add_le16(buf, uncertainty);

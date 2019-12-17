@@ -7,7 +7,7 @@ The Generic Property models allow remote access to the Device Properties of a
 mesh node. Read more about device properties in
 :ref:`bt_mesh_properties_readme`.
 
-There Generic Property models fall into two categories:
+The Generic Property models fall into two categories:
 
 - :ref:`bt_mesh_prop_srv_readme`
 - :ref:`bt_mesh_prop_cli_readme`
@@ -84,9 +84,10 @@ the type of server that owns them:
 Extended models
 ****************
 
-The Generic Admin Property Server and Generic Manufacturer Property Server both
-extend the Generic User Property Server. As a consequence, a single element can
-only hold one Generic Manufacturer or Generic Admin Property Server.
+The Generic Admin Property Server and Generic Manufacturer Property Server should both extend the Generic User Property Server.
+This is not handled automatically by the model implementation.
+For this reason, a Generic User Property Server must be instantiated in the same element in the device composition data as the Generic Admin or Generic Manufacturer Property server.
+This ensures compliance with the Bluetooth Mesh Model specification.
 
 Persistent storage
 *******************

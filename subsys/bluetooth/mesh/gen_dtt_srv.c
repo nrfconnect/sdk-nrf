@@ -6,7 +6,6 @@
 
 #include <string.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
-#include "common/log.h"
 #include "model_utils.h"
 
 static void encode_status(struct net_buf_simple *buf, u32_t transition_time)
@@ -45,14 +44,18 @@ static void set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	struct bt_mesh_dtt_srv *srv = model->user_data;
-	u32_t old_transition_time = srv->transition_time;
+	u32_t old_time = srv->transition_time;
+	u32_t new_time = model_transition_decode(net_buf_simple_pull_u8(buf));
 
-	srv->transition_time =
-		model_transition_decode(net_buf_simple_pull_u8(buf));
+	if (new_time == K_FOREVER) {
+		/* Invalid parameter */
+		return;
+	}
 
-	if (srv->update) {
-		srv->update(srv, ctx, old_transition_time,
-			    srv->transition_time);
+	srv->transition_time = new_time;
+
+	if (old_time != new_time && srv->update) {
+		srv->update(srv, ctx, old_time, srv->transition_time);
 	}
 
 	if (ack) {
@@ -105,8 +108,17 @@ static int bt_mesh_dtt_srv_settings_set(struct bt_mesh_model *model,
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 
-	return read_cb(cb_arg, &srv->transition_time,
-		       sizeof(srv->transition_time));
+	ssize_t bytes = read_cb(cb_arg, &srv->transition_time,
+				sizeof(srv->transition_time));
+	if (bytes < 0) {
+		return bytes;
+	}
+
+	if (bytes != 0 && bytes != sizeof(srv->transition_time)) {
+		return -EINVAL;
+	}
+
+	return 0;
 }
 #endif
 

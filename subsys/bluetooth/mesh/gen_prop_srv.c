@@ -79,7 +79,7 @@ static void set_user_access(const struct bt_mesh_prop_srv *srv,
 }
 
 static void pub_list_build(const struct bt_mesh_prop_srv *srv,
-			   struct net_buf_simple *buf)
+			   struct net_buf_simple *buf, u16_t start_prop)
 {
 	bt_mesh_model_msg_init(buf, op_get(BT_MESH_PROP_OP_PROPS_STATUS,
 					   srv_kind(srv->mod)));
@@ -88,7 +88,9 @@ static void pub_list_build(const struct bt_mesh_prop_srv *srv,
 
 	PROP_FOREACH(srv, prop)
 	{
-		net_buf_simple_add_le16(buf, prop->id);
+		if (prop->id >= start_prop) {
+			net_buf_simple_add_le16(buf, prop->id);
+		}
 	}
 }
 
@@ -105,7 +107,7 @@ static void handle_owner_properties_get(struct bt_mesh_model *mod,
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
-	pub_list_build(mod->user_data, &rsp);
+	pub_list_build(mod->user_data, &rsp, 0);
 	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
 }
 
@@ -119,6 +121,11 @@ static void handle_owner_property_get(struct bt_mesh_model *mod,
 
 	struct bt_mesh_prop_srv *srv = mod->user_data;
 	u16_t id = net_buf_simple_pull_le16(buf);
+
+	if (id == BT_MESH_PROP_ID_PROHIBITED) {
+		return;
+	}
+
 	const struct bt_mesh_prop *prop = prop_get(srv, id);
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROP_STATUS,
@@ -165,6 +172,12 @@ static void owner_property_set(struct bt_mesh_model *mod,
 	u16_t id = net_buf_simple_pull_le16(buf);
 	enum bt_mesh_prop_access user_access = net_buf_simple_pull_u8(buf);
 
+	if (id == BT_MESH_PROP_ID_PROHIBITED ||
+	    (IS_MFR_SRV(mod) && (user_access & BT_MESH_PROP_ACCESS_WRITE)) ||
+	    user_access > BT_MESH_PROP_ACCESS_READ_WRITE) {
+		return;
+	}
+
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROP_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS);
 
@@ -191,10 +204,6 @@ static void owner_property_set(struct bt_mesh_model *mod,
 	};
 
 	if (IS_MFR_SRV(mod)) {
-		if (!ack) {
-			return;
-		}
-
 		/* Since the manufacturer properties can't be set, we'll just
 		 * call the getter to fetch the response value.
 		 */
@@ -205,10 +214,18 @@ static void owner_property_set(struct bt_mesh_model *mod,
 		memcpy(value.value, net_buf_simple_pull_mem(buf, value.size),
 		       value.size);
 		srv->set(srv, ctx, &value);
+
+		if (value.meta.id == BT_MESH_PROP_ID_PROHIBITED) {
+			/* User callbacks wipe the id to indicate invalid
+			 * behavior
+			 */
+			return;
+		}
 	}
 
-	net_buf_simple_add(&rsp, value.size);
+	bt_mesh_prop_srv_pub(srv, NULL, &value);
 
+	net_buf_simple_add(&rsp, value.size);
 respond:
 	if (ack) {
 		bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
@@ -254,9 +271,26 @@ const struct bt_mesh_model_op _bt_mesh_prop_mfr_srv_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
+static void handle_client_properties_get(struct bt_mesh_model *mod,
+					 struct bt_mesh_msg_ctx *ctx,
+					 struct net_buf_simple *buf)
+{
+	if (buf->len != BT_MESH_PROP_MSG_LEN_CLIENT_PROPS_GET) {
+		return;
+	}
+
+	u16_t start_prop = net_buf_simple_pull_le16(buf);
+
+	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_CLIENT_PROPS_STATUS,
+				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
+
+	pub_list_build(mod->user_data, &rsp, start_prop);
+	bt_mesh_model_send(mod, ctx, &rsp, NULL, NULL);
+}
+
 const struct bt_mesh_model_op _bt_mesh_prop_client_srv_op[] = {
-	{ BT_MESH_PROP_OP_CLIENT_PROPS_GET, BT_MESH_PROP_MSG_LEN_PROPS_GET,
-	  handle_owner_properties_get },
+	{ BT_MESH_PROP_OP_CLIENT_PROPS_GET,
+	  BT_MESH_PROP_MSG_LEN_CLIENT_PROPS_GET, handle_client_properties_get },
 	BT_MESH_MODEL_OP_END,
 };
 
@@ -346,6 +380,10 @@ static void handle_user_property_get(struct bt_mesh_model *mod,
 
 	u16_t id = net_buf_simple_pull_le16(buf);
 
+	if (id == BT_MESH_PROP_ID_PROHIBITED) {
+		return;
+	}
+
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_USER_PROP_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS);
 
@@ -400,8 +438,13 @@ static void user_property_set(struct bt_mesh_model *mod,
 
 	net_buf_simple_add_le16(&rsp, id);
 
-	struct bt_mesh_prop_srv *srv;
-	struct bt_mesh_prop *prop = user_prop_get(mod, id, &srv);
+	if (id == BT_MESH_PROP_ID_PROHIBITED) {
+		return;
+	}
+
+	struct bt_mesh_prop_srv *user_srv = mod->user_data;
+	struct bt_mesh_prop_srv *owner_srv;
+	struct bt_mesh_prop *prop = user_prop_get(mod, id, &owner_srv);
 
 	if (!prop) {
 		/* If the prop doesn't exist, we should only send the ID as a
@@ -410,12 +453,12 @@ static void user_property_set(struct bt_mesh_model *mod,
 		goto respond;
 	}
 
-	net_buf_simple_add_u8(&rsp, prop->user_access);
-
 	if (!(prop->user_access & BT_MESH_PROP_ACCESS_WRITE) ||
-	    IS_MFR_SRV(srv->mod)) {
-		goto respond;
+	    IS_MFR_SRV(owner_srv->mod)) {
+		return;
 	}
+
+	net_buf_simple_add_u8(&rsp, prop->user_access);
 
 	struct bt_mesh_prop_val value = {
 		.meta = *prop,
@@ -426,9 +469,16 @@ static void user_property_set(struct bt_mesh_model *mod,
 	memcpy(value.value, net_buf_simple_pull_mem(buf, value.size),
 	       value.size);
 
-	srv->set(srv, ctx, &value);
+	owner_srv->set(owner_srv, ctx, &value);
+
+	if (value.meta.id == BT_MESH_PROP_ID_PROHIBITED) {
+		/* User callbacks wipe the id to indicate invalid behavior */
+		return;
+	}
 
 	net_buf_simple_add(&rsp, value.size);
+
+	bt_mesh_prop_srv_pub(user_srv, NULL, &value);
 
 respond:
 	if (ack) {
@@ -467,7 +517,8 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *mod)
 	net_buf_simple_init(mod->pub->msg, 0);
 
 	if (IS_ENABLED(CONFIG_BT_MESH_MODEL_EXTENSIONS) &&
-	    mod->id != BT_MESH_MODEL_ID_GEN_USER_PROP_SRV) {
+	    (mod->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV ||
+	     mod->id == BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV)) {
 		bt_mesh_model_extend(
 			mod,
 			bt_mesh_model_find(bt_mesh_model_elem(mod),
@@ -526,7 +577,7 @@ int _bt_mesh_prop_srv_update_handler(struct bt_mesh_model *mod)
 	case BT_MESH_PROP_SRV_STATE_NONE:
 		return 0;
 	case BT_MESH_PROP_SRV_STATE_LIST:
-		pub_list_build(srv, srv->pub.msg);
+		pub_list_build(srv, srv->pub.msg, 0);
 		return 0;
 	case BT_MESH_PROP_SRV_STATE_PROP:
 		bt_mesh_model_msg_init(srv->pub.msg,
@@ -561,7 +612,7 @@ int bt_mesh_prop_srv_pub_list(struct bt_mesh_prop_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_MFR_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
-	pub_list_build(srv, &msg);
+	pub_list_build(srv, &msg, 0);
 
 	return model_send(srv->mod, ctx, &msg);
 }

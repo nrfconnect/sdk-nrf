@@ -21,8 +21,8 @@
 enum bt_mesh_prop_op_type {
 	BT_MESH_PROP_OP_PROPS_GET,
 	BT_MESH_PROP_OP_PROPS_STATUS,
-	BT_MESH_PROP_OP_PROP_GET,
 	BT_MESH_PROP_OP_PROP_SET,
+	BT_MESH_PROP_OP_PROP_GET,
 	BT_MESH_PROP_OP_PROP_SET_UNACK,
 	BT_MESH_PROP_OP_PROP_STATUS,
 };
@@ -46,17 +46,24 @@ srv_kind(const struct bt_mesh_model *mod)
 static inline u32_t op_get(enum bt_mesh_prop_op_type op_type,
 			   enum bt_mesh_prop_srv_kind kind)
 {
-	u32_t offset = 0;
-
 	switch (kind) {
 	case BT_MESH_PROP_SRV_KIND_MFR:
-		offset = 0;
-		break;
 	case BT_MESH_PROP_SRV_KIND_ADMIN:
-		offset = 1;
-		break;
 	case BT_MESH_PROP_SRV_KIND_USER:
-		offset = 2;
+		switch (op_type) {
+		case BT_MESH_PROP_OP_PROPS_GET:
+			return BT_MESH_PROP_OP_MFR_PROPS_GET + 2 * kind;
+		case BT_MESH_PROP_OP_PROP_GET:
+			return BT_MESH_PROP_OP_MFR_PROP_GET + 2 * kind;
+		case BT_MESH_PROP_OP_PROPS_STATUS:
+			return BT_MESH_PROP_OP_MFR_PROPS_STATUS + 4 * kind;
+		case BT_MESH_PROP_OP_PROP_SET:
+			return BT_MESH_PROP_OP_MFR_PROP_SET + 4 * kind;
+		case BT_MESH_PROP_OP_PROP_SET_UNACK:
+			return BT_MESH_PROP_OP_MFR_PROP_SET_UNACK + 4 * kind;
+		case BT_MESH_PROP_OP_PROP_STATUS:
+			return BT_MESH_PROP_OP_MFR_PROP_STATUS + 4 * kind;
+		}
 		break;
 	case BT_MESH_PROP_SRV_KIND_CLIENT:
 		switch (op_type) {
@@ -68,17 +75,6 @@ static inline u32_t op_get(enum bt_mesh_prop_op_type op_type,
 			return 0;
 		}
 		break;
-	}
-
-	switch (op_type) {
-	case BT_MESH_PROP_OP_PROPS_GET:
-	case BT_MESH_PROP_OP_PROP_GET:
-		return BT_MESH_PROP_OP_MFR_PROPS_GET + op_type + 2 * offset;
-	case BT_MESH_PROP_OP_PROPS_STATUS:
-	case BT_MESH_PROP_OP_PROP_SET:
-	case BT_MESH_PROP_OP_PROP_SET_UNACK:
-	case BT_MESH_PROP_OP_PROP_STATUS:
-		return BT_MESH_PROP_OP_MFR_PROPS_STATUS + op_type + 4 * offset;
 	}
 	return 0;
 }

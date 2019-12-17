@@ -12,6 +12,7 @@
 static void encode_status(const struct bt_mesh_lvl_status *status,
 			  struct net_buf_simple *buf)
 {
+	bt_mesh_model_msg_init(buf, BT_MESH_LVL_OP_STATUS);
 	net_buf_simple_add_le16(buf, status->current);
 
 	if (status->remaining_time == 0) {
@@ -39,7 +40,6 @@ static void rsp_status(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 {
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LVL_OP_STATUS,
 				 BT_MESH_LVL_MSG_MAXLEN_STATUS);
-	bt_mesh_model_msg_init(&rsp, BT_MESH_LVL_OP_STATUS);
 	encode_status(status, &rsp);
 
 	bt_mesh_model_send(model, ctx, &rsp, NULL, 0);
@@ -135,6 +135,14 @@ static void move_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	transition_get(srv, &transition, buf);
 	move_set.transition = &transition;
 
+	/* If transition.time is 0, we shouldn't move. Align these two
+	 * parameters to simplify application logic for this case:
+	 */
+	if (move_set.transition->time == 0 || move_set.delta == 0) {
+		move_set.delta = 0;
+		transition.time = 0;
+	}
+
 	srv->handlers->move_set(srv, ctx, &move_set, &status);
 
 	if (ack) {
@@ -224,7 +232,6 @@ int _bt_mesh_lvl_srv_update_handler(struct bt_mesh_model *model)
 
 	srv->handlers->get(srv, NULL, &status);
 
-	bt_mesh_model_msg_init(model->pub->msg, BT_MESH_LVL_OP_STATUS);
 	encode_status(&status, model->pub->msg);
 	return 0;
 }
@@ -233,9 +240,12 @@ int bt_mesh_lvl_srv_pub(struct bt_mesh_lvl_srv *srv,
 			struct bt_mesh_msg_ctx *ctx,
 			const struct bt_mesh_lvl_status *status)
 {
+	if (!srv->pub.addr) {
+		return 0;
+	}
+
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_LVL_OP_STATUS,
 				 BT_MESH_LVL_MSG_MAXLEN_STATUS);
-	bt_mesh_model_msg_init(&msg, BT_MESH_LVL_OP_STATUS);
 	encode_status(status, &msg);
 
 	return model_send(srv->model, ctx, &msg);

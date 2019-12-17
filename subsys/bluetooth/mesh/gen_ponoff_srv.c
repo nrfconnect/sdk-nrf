@@ -61,7 +61,7 @@ static void send_rsp(struct bt_mesh_ponoff_srv *srv,
 static void handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		       struct net_buf_simple *buf)
 {
-	if (buf->len != BT_MESH_PONOFF_MSG_LEN_STATUS) {
+	if (buf->len != BT_MESH_PONOFF_MSG_LEN_GET) {
 		return;
 	}
 
@@ -72,7 +72,7 @@ static void set_on_power_up(struct bt_mesh_ponoff_srv *srv,
 			    struct bt_mesh_msg_ctx *ctx,
 			    enum bt_mesh_on_power_up new)
 {
-	if (new >= BT_MESH_ON_POWER_UP_INVALID || new == srv->on_power_up) {
+	if (new == srv->on_power_up) {
 		return;
 	}
 
@@ -105,6 +105,10 @@ static void handle_set_msg(struct bt_mesh_model *model,
 
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 	enum bt_mesh_on_power_up new = net_buf_simple_pull_u8(buf);
+
+	if (new >= BT_MESH_ON_POWER_UP_INVALID) {
+		return;
+	}
 
 	set_on_power_up(srv, ctx, new);
 
