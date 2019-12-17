@@ -38,6 +38,8 @@ enum cloud_channel {
 	CLOUD_CHANNEL_RGB_LED,
 	/** The BUZZER on the device. */
 	CLOUD_CHANNEL_BUZZER,
+	/** The environmental sensors channel. */
+	CLOUD_CHANNEL_ENVIRONMENT,
 	/** The TEMP sensor on the device. */
 	CLOUD_CHANNEL_TEMP,
 	/** The Humidity sensor on the device. */
@@ -71,6 +73,7 @@ enum cloud_channel {
 #define CLOUD_CHANNEL_STR_GPS "GPS"
 #define CLOUD_CHANNEL_STR_FLIP "FLIP"
 #define CLOUD_CHANNEL_STR_BUTTON "BUTTON"
+#define CLOUD_CHANNEL_STR_ENVIRONMENT "ENV"
 #define CLOUD_CHANNEL_STR_TEMP "TEMP"
 #define CLOUD_CHANNEL_STR_HUMID "HUMID"
 #define CLOUD_CHANNEL_STR_AIR_PRESS "AIR_PRESS"

@@ -11,6 +11,9 @@
 #include <spinlock.h>
 #include "env_sensors.h"
 
+#define ENV_INIT_DELAY_S (5) /* Polling delay upon initialization */
+#define MAX_INTERVAL_S   (INT_MAX/MSEC_PER_SEC)
+
 struct env_sensor {
 	env_sensor_data_t sensor;
 	enum sensor_channel channel;
@@ -54,6 +57,21 @@ static struct env_sensor *env_sensors[] = {
 };
 
 static struct k_delayed_work env_sensors_poller;
+static env_sensors_data_ready_cb data_ready_cb;
+static u32_t data_send_interval_s = CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL;
+static bool backoff_enabled;
+static bool initialized;
+
+static inline int submit_poll_work(const u32_t delay_s)
+{
+	return k_delayed_work_submit(&env_sensors_poller,
+				     K_SECONDS((u32_t)delay_s));
+}
+
+int env_sensors_poll(void)
+{
+	return initialized ? submit_poll_work(K_NO_WAIT) : -ENXIO;
+}
 
 static void env_sensors_poll_fn(struct k_work *work)
 {
@@ -61,6 +79,10 @@ static void env_sensors_poll_fn(struct k_work *work)
 	struct sensor_value data[num_sensors];
 
 	int err;
+
+	if (data_send_interval_s == 0) {
+		return;
+	}
 
 	if (IS_ENABLED(CONFIG_BME680)) {
 		err = sensor_sample_fetch_chan(env_sensors[0]->dev,
@@ -92,10 +114,16 @@ static void env_sensors_poll_fn(struct k_work *work)
 		}
 	}
 
-	 k_delayed_work_submit(&env_sensors_poller, K_SECONDS(10));
+	if (data_ready_cb) {
+		data_ready_cb();
+	}
+
+	submit_poll_work(backoff_enabled ?
+		CONFIG_ENVIRONMENT_DATA_BACKOFF_TIME : data_send_interval_s);
 }
+
 /**@brief Initialize environment sensors. */
-int env_sensors_init_and_start(void)
+int env_sensors_init_and_start(const env_sensors_data_ready_cb cb)
 {
 	for (int i = 0; i < ARRAY_SIZE(env_sensors); i++) {
 		env_sensors[i]->dev =
@@ -104,10 +132,14 @@ int env_sensors_init_and_start(void)
 			env_sensors[i]->dev_name);
 	}
 
-	k_delayed_work_init(&env_sensors_poller, env_sensors_poll_fn);
-	env_sensors_poll_fn(NULL);
+	data_ready_cb = cb;
 
-	return k_delayed_work_submit(&env_sensors_poller, K_SECONDS(10));
+	k_delayed_work_init(&env_sensors_poller, env_sensors_poll_fn);
+
+	initialized = true;
+
+	return (data_send_interval_s > 0) ?
+		submit_poll_work(ENV_INIT_DELAY_S) : 0;
 }
 
 int env_sensors_get_temperature(env_sensor_data_t *sensor_data)
@@ -151,4 +183,34 @@ int env_sensors_get_pressure(env_sensor_data_t *sensor_data)
 int env_sensors_get_air_quality(env_sensor_data_t *sensor_data)
 {
 	return -1;
+}
+
+void env_sensors_set_send_interval(const u32_t interval_s)
+{
+	if (interval_s == data_send_interval_s) {
+		return;
+	}
+
+	data_send_interval_s = MIN(interval_s, MAX_INTERVAL_S);
+
+	if (!initialized) {
+		return;
+	}
+
+	if (data_send_interval_s) {
+		/* restart work for new interval to take effect */
+		env_sensors_poll();
+	} else if (k_delayed_work_remaining_get(&env_sensors_poller) > 0) {
+		k_delayed_work_cancel(&env_sensors_poller);
+	}
+}
+
+u32_t env_sensors_get_send_interval(void)
+{
+	return data_send_interval_s;
+}
+
+void env_sensors_set_backoff_enable(const bool enable)
+{
+	backoff_enabled = enable;
 }

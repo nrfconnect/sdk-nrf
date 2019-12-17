@@ -49,6 +49,21 @@ int light_sensor_init_and_start(const light_sensor_data_ready_cb cb);
  */
 int light_sensor_get_data(struct light_sensor_data *const data);
 
+/**
+ * @brief Set light sensor's poll/send interval.
+ *
+ * @param interval_s Interval, in seconds. 0 to disable.
+ *
+ */
+void light_sensor_set_send_interval(const u32_t interval_s);
+
+/**
+ * @brief Get light sensor's poll/send interval.
+ *
+ * @return Interval, in seconds.
+ */
+u32_t light_sensor_get_send_interval(void);
+
 #ifdef __cplusplus
 }
 #endif
