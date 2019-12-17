@@ -11,12 +11,18 @@ part of its functionality.
    :maxdepth: 1
 
    bas.rst
+   ble_adv.rst
    ble_bond.rst
+   ble_discovery.rst
+   ble_latency.rst
+   ble_scan.rst
    ble_state.rst
    config_channel.rst
    fn_keys.rst
+   hid_forward.rst
    hid_state.rst
    hids.rst
    led_state.rst
+   power_manager.rst
    usb_state.rst
    watchdog.rst
