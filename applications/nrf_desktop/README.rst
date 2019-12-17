@@ -653,13 +653,19 @@ For more information about each application module and its configuration details
    doc/wheel.rst
    doc/leds.rst
    doc/bas.rst
+   doc/ble_adv.rst
    doc/ble_bond.rst
+   doc/ble_discovery.rst
+   doc/ble_latency.rst
+   doc/ble_scan.rst
    doc/ble_state.rst
    doc/config_channel.rst
    doc/fn_keys.rst
+   doc/hid_forward.rst
    doc/hid_state.rst
    doc/hids.rst
    doc/led_state.rst
+   doc/power_manager.rst
    doc/usb_state.rst
    doc/watchdog.rst
 
