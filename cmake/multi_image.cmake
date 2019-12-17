@@ -114,8 +114,15 @@ function(add_child_image_from_source name sourcedir)
     # '_'. We run the regex twice because it is believed that
     # list(FILTER is faster than doing a string(REGEX on each item.
     string(REGEX MATCH "^${name}_(.+)" unused_out_var ${var_name})
+
+    # When we try to pass a list on to the child image, like
+    # -DCONF_FILE=a.conf;b.conf, we will get into trouble because ; is
+    # a special character, so we escape it (mucho) to get the expected
+    # behaviour.
+    string(REPLACE \; \\\\\; val "${${var_name}}")
+
     list(APPEND image_cmake_args
-      -D${CMAKE_MATCH_1}=${${var_name}}
+      -D${CMAKE_MATCH_1}=${val}
       )
   endforeach()
 
