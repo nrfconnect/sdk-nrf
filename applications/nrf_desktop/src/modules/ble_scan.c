@@ -447,10 +447,17 @@ static void scan_init(void)
 		.window = BT_GAP_SCAN_FAST_WINDOW,
 	};
 
+	static const struct bt_le_conn_param cp = {
+		.interval_min = 6,
+		.interval_max = 6,
+		.latency = 0,
+		.timeout = 400,
+	};
+
 	static const struct bt_scan_init_param scan_init = {
 		.connect_if_match = true,
 		.scan_param = &sp,
-		.conn_param = NULL,
+		.conn_param = &cp,
 	};
 
 	bt_scan_init(&scan_init);
