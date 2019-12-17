@@ -38,16 +38,21 @@ struct bt_mesh_prop_srv;
 	{                                                                      \
 		.get = _get, .set = _set, .properties = _properties,           \
 		.property_count = _property_count,                             \
-		.pub = {                                                       \
-			.update = _bt_mesh_prop_srv_update_handler,            \
-			.msg = NET_BUF_SIMPLE(MAX(                             \
-				BT_MESH_MODEL_BUF_LEN(                         \
-					BT_MESH_PROP_OP_MFR_PROP_STATUS,       \
-					BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS),  \
-				BT_MESH_MODEL_BUF_LEN(                         \
-					BT_MESH_PROP_OP_MFR_PROPS_STATUS,      \
-					2 * _property_count))),                \
-		},                                                             \
+		.pub = { .update = _bt_mesh_prop_srv_update_handler,           \
+			 .msg = NET_BUF_SIMPLE(                                \
+				 BT_MESH_PROP_MSG_MAXLEN(_property_count)) },  \
+	}
+
+/** @def BT_MESH_PROP_SRV_USER_INIT
+ *
+ * @brief Initialization parameters for a @ref bt_mesh_prop_srv acting as a
+ * Generic User Property Server.
+ */
+#define BT_MESH_PROP_SRV_USER_INIT()                                           \
+	{                                                                      \
+		.pub = { .update = _bt_mesh_prop_srv_update_handler,           \
+			 .msg = NET_BUF_SIMPLE(BT_MESH_PROP_MSG_MAXLEN(        \
+				 CONFIG_BT_MESH_PROP_MAXCOUNT)) },             \
 	}
 
 /** @def BT_MESH_PROP_SRV_ADMIN_INIT
@@ -89,9 +94,12 @@ struct bt_mesh_prop_srv;
  *
  * @brief Generic User Property Server model composition data entry.
  */
-#define BT_MESH_MODEL_PROP_SRV_USER                                            \
-	BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_USER_PROP_SRV,                      \
-		      _bt_mesh_prop_user_srv_op, NULL, NULL)
+#define BT_MESH_MODEL_PROP_SRV_USER(_srv)                                      \
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_USER_PROP_SRV,                   \
+			 _bt_mesh_prop_user_srv_op, &(_srv)->pub,              \
+			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_prop_srv,      \
+						 _srv),                        \
+			 &_bt_mesh_prop_srv_cb)
 
 /** @def BT_MESH_MODEL_PROP_SRV_ADMIN
  *
@@ -101,12 +109,11 @@ struct bt_mesh_prop_srv;
  * Admin Property Server.
  */
 #define BT_MESH_MODEL_PROP_SRV_ADMIN(_srv)                                     \
-	BT_MESH_MODEL_PROP_SRV_USER,                                           \
-		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV,          \
-				 _bt_mesh_prop_admin_srv_op, &(_srv)->pub,     \
-				 BT_MESH_MODEL_USER_DATA(                      \
-					 struct bt_mesh_prop_srv, _srv),       \
-				 &_bt_mesh_prop_srv_cb)
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_ADMIN_PROP_SRV,                  \
+			 _bt_mesh_prop_admin_srv_op, &(_srv)->pub,             \
+			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_prop_srv,      \
+						 _srv),                        \
+			 &_bt_mesh_prop_srv_cb)
 
 /** @def BT_MESH_MODEL_PROP_SRV_MFR
  *
@@ -116,12 +123,11 @@ struct bt_mesh_prop_srv;
  * Manufacturer Property Server.
  */
 #define BT_MESH_MODEL_PROP_SRV_MFR(_srv)                                       \
-	BT_MESH_MODEL_PROP_SRV_USER,                                           \
-		BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV,   \
-				 _bt_mesh_prop_mfr_srv_op, &(_srv)->pub,       \
-				 BT_MESH_MODEL_USER_DATA(                      \
-					 struct bt_mesh_prop_srv, _srv),       \
-				 &_bt_mesh_prop_srv_cb)
+	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV,           \
+			 _bt_mesh_prop_mfr_srv_op, &(_srv)->pub,               \
+			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_prop_srv,      \
+						 _srv),                        \
+			 &_bt_mesh_prop_srv_cb)
 
 /** @def BT_MESH_MODEL_PROP_SRV_CLIENT
  *
@@ -166,9 +172,17 @@ struct bt_mesh_prop_srv {
 
 	/** @brief Set a property value.
 	 *
-	 * The handler may reject the value change by replacing the contents of
-	 * @p buf and @p size with the current property value and size. Note
-	 * that @p buf can only fit a value of size @c CONFIG_GEN_PROP_MAXSIZE.
+	 * The handler may reject the value change with two levels of severity:
+	 *
+	 * To indicate data format errors and permanently illegal values, change
+	 * the @c val::meta::id field to @ref BT_MESH_PROP_ID_PROHIBITED before
+	 * returning. This will cancel the response message sending, indicating
+	 * a protocol violation.
+	 *
+	 * To indicate that the new value is temporarily unable to change, but
+	 * not in violation of the protocol, replace the contents of @c buf and
+	 * @c size with the current property value and size. Note that @c buf
+	 * can only fit a value of size @c CONFIG_GEN_PROP_MAXSIZE.
 	 *
 	 * @note This handler is mandatory if the server is acting as an Admin
 	 * Property Server, and ignored if the server is acting as a

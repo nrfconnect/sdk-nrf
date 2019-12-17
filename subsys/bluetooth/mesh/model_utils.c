@@ -117,8 +117,8 @@ int model_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	net_buf_simple_reset(mod->pub->msg);
-	memcpy(net_buf_simple_add(mod->pub->msg, buf->len), buf->data,
-	       buf->len);
+	net_buf_simple_add_mem(mod->pub->msg, buf->data, buf->len);
+
 	return bt_mesh_model_publish(mod);
 }
 

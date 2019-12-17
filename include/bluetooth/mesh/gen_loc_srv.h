@@ -56,7 +56,11 @@ struct bt_mesh_loc_srv;
 			 _bt_mesh_loc_srv_op, &(_srv)->pub,                    \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_loc_srv,       \
 						 _srv),                        \
-			 &_bt_mesh_loc_srv_cb)
+			 &_bt_mesh_loc_srv_cb),                                \
+		BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_LOCATION_SETUPSRV,          \
+			      _bt_mesh_loc_setup_srv_op, NULL,                 \
+			      BT_MESH_MODEL_USER_DATA(struct bt_mesh_loc_srv,  \
+						      _srv))
 
 /** Location Server handler functions. */
 struct bt_mesh_loc_srv_handlers {
