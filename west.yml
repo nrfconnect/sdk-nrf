@@ -55,9 +55,9 @@ manifest:
       repo-path: fw-nrfconnect-mcuboot
       revision: 0b59f48e4dce86d0c8d4e09688feb362c7223ad3
     - name: mcumgr
+      repo-path: fw-nrfconnect-mcumgr
+      revision: f663988d35da559a37f263d369842dbce309d1fa
       path: modules/lib/mcumgr
-      revision: 84934959d2d1722a23b7e7e200191ae4a6f96168
-      remote: zephyrproject
     - name: tinycbor
       path: modules/lib/tinycbor
       revision: 0fc68fceacd1efc1ce809c5880c380f3d98b7b6e
