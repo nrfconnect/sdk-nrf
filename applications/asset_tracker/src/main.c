@@ -116,7 +116,6 @@ static atomic_val_t reconnect_to_cloud;
 static struct k_work connect_work;
 static struct k_work send_gps_data_work;
 static struct k_work send_button_data_work;
-static struct k_delayed_work send_env_data_work;
 static struct k_work send_modem_at_cmd_work;
 static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
@@ -243,11 +242,6 @@ static void send_gps_data_work_fn(struct k_work *work)
 	sensor_data_send(&gps_cloud_data);
 }
 
-static void send_env_data_work_fn(struct k_work *work)
-{
-	env_data_send();
-}
-
 static void send_button_data_work_fn(struct k_work *work)
 {
 	sensor_data_send(&button_cloud_data);
@@ -343,7 +337,7 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 
 	gps_control_stop(K_NO_WAIT);
 	k_work_submit(&send_gps_data_work);
-	k_delayed_work_submit(&send_env_data_work, K_NO_WAIT);
+	env_sensors_poll();
 }
 
 #if defined(CONFIG_USE_UI_MODULE)
@@ -466,6 +460,23 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 #if CONFIG_MODEM_INFO
 		k_work_submit(&rsrp_work);
 #endif
+	} else if ((cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
+			   (cmd->type == CLOUD_CMD_INTERVAL)) {
+		if (cmd->channel == CLOUD_CHANNEL_LIGHT_SENSOR) {
+#if defined(CONFIG_LIGHT_SENSOR)
+			light_sensor_set_send_interval(
+				(u32_t)cmd->data.sv.value);
+#endif
+		} else if (cmd->channel == CLOUD_CHANNEL_ENVIRONMENT) {
+			env_sensors_set_send_interval(
+				(u32_t)cmd->data.sv.value);
+		} else if (cmd->channel == CLOUD_CHANNEL_GPS) {
+			/* TODO: update GPS controller to handle send */
+			/* interval */
+		} else {
+			printk("Interval command not valid for channel %d\n",
+				cmd->channel);
+		}
 	}
 }
 
@@ -608,10 +619,11 @@ static void env_data_send(void)
 	}
 
 	if (gps_control_is_active()) {
-		k_delayed_work_submit(&send_env_data_work,
-			K_SECONDS(CONFIG_ENVIRONMENT_DATA_BACKOFF_TIME));
+		env_sensors_set_backoff_enable(true);
 		return;
 	}
+
+	env_sensors_set_backoff_enable(false);
 
 	if (env_sensors_get_temperature(&env_data) == 0) {
 		if (cloud_is_send_allowed(CLOUD_CHANNEL_TEMP, env_data.value) &&
@@ -659,9 +671,6 @@ static void env_data_send(void)
 			}
 		}
 	}
-
-	k_delayed_work_submit(&send_env_data_work,
-	K_SECONDS(CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL));
 
 	return;
 error:
@@ -920,7 +929,6 @@ static void work_init(void)
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_modem_at_cmd_work, send_modem_at_cmd_work_fn);
-	k_delayed_work_init(&send_env_data_work, send_env_data_work_fn);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
 	k_delayed_work_init(&cycle_cloud_connection_work,
@@ -996,7 +1004,7 @@ static void sensors_init(void)
 		printk("motion module init failed, error: %d\n", err);
 	}
 
-	err = env_sensors_init_and_start();
+	err = env_sensors_init_and_start(env_data_send);
 	if (err) {
 		printk("Environmental sensors init failed, error: %d\n", err);
 	}
@@ -1017,11 +1025,6 @@ static void sensors_init(void)
 	}
 
 	gps_control_init(gps_trigger_handler);
-
-	/* Send sensor data after initialization, as it may be a long time until
-	 * next time if the application is in power optimized mode.
-	 */
-	k_delayed_work_submit(&send_env_data_work, K_SECONDS(5));
 }
 
 #if defined(CONFIG_USE_UI_MODULE)
