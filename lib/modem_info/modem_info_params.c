@@ -144,7 +144,10 @@ int modem_info_params_get(struct modem_param_info *modem)
 		ret += modem_data_get(&modem->network.lte_mode);
 		ret += modem_data_get(&modem->network.nbiot_mode);
 		ret += modem_data_get(&modem->network.gps_mode);
-		ret += modem_data_get(&modem->network.date_time);
+
+		if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DATE_TIME)) {
+			ret += modem_data_get(&modem->network.date_time);
+		}
 
 		ret += mcc_mnc_parse(&modem->network.current_operator,
 				&modem->network.mcc,

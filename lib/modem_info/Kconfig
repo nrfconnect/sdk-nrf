@@ -33,6 +33,15 @@ config MODEM_INFO_ADD_NETWORK
 	  Add the network information to the returned
 	  device JSON object.
 
+config MODEM_INFO_ADD_DATE_TIME
+	bool "Read the real-time clock value from the modem"
+	depends on MODEM_INFO_ADD_NETWORK
+	default y
+	help
+	  Inlcude the real-time clock value read from the modem in the network
+	  information. Note, that if no time information is available in the
+	  network, the modem info readout might fail.
+
 config MODEM_INFO_ADD_SIM
 	bool "Read the SIM card information from the modem"
 	default y
