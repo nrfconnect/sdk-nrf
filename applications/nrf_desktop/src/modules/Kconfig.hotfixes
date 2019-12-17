@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Hotfix set"
+
+config DESKTOP_HFCLK_LOCK_ENABLE
+	bool "Keep HF clock enabled"
+	help
+	  Keeping the HF clock enabled is needed to reduce the latency before
+	  the first packet (in a row) is transmitted over the BLE.
+	  If disabled a startup delay of around 1.5 ms will be added to
+	  overall latency of the first packet.
+	  If enabled current consumption is increased.
+
+endmenu

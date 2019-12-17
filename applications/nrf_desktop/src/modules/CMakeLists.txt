@@ -64,3 +64,6 @@ target_sources_ifdef(CONFIG_BT_PERIPHERAL
 
 target_sources_ifdef(CONFIG_DESKTOP_HIDS_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hids.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_HFCLK_LOCK_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hfclk_lock.c)
