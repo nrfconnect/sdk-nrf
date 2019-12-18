@@ -14,7 +14,6 @@
 #include <misc/util.h>
 #include <misc/reboot.h>
 
-
 /* NVS-related defines */
 
 /* Multiple of FLASH_PAGE_SIZE */
@@ -32,6 +31,8 @@ static struct nvs_fs fs = {
 
 int lwm2m_os_init(void)
 {
+	srand(k_cycle_get_32());
+
 	/* Initialize storage */
 	return nvs_init(&fs, DT_FLASH_DEV_NAME);
 }
@@ -70,7 +71,11 @@ void lwm2m_os_sys_reset(void)
 
 uint32_t lwm2m_os_rand_get(void)
 {
-	return sys_rand32_get();
+	/* A very naive implementation, to minimize dependencies.
+	 * This suitable for liblwm2m_carrier, since it is only used
+	 * to randomize the initial CoAP message ID.
+	 */
+	return rand() + k_cycle_get_32();
 }
 
 /* Non volatile storage */
@@ -95,16 +100,52 @@ int lwm2m_os_storage_write(uint16_t id, const void *data, size_t len)
 struct lwm2m_work {
 	struct k_delayed_work work_item;
 	lwm2m_os_timer_handler_t handler;
+	int32_t remaining_timeout_ms;
 };
 
 static struct lwm2m_work lwm2m_works[LWM2M_OS_MAX_TIMER_COUNT];
+
+static int32_t get_timeout_value(int32_t timeout,
+				 struct lwm2m_work *lwm2m_work)
+{
+	/* Zephyr's timing subsystem uses positive integers so the
+	 * largest tick count that can be represented is 31 bit large.
+	 *
+	 * max_timeout_ms = (int max - 1 / ticks per sec) * 1000
+	 */
+	static const int32_t max_timeout_ms =
+		K_SECONDS((INT32_MAX - 1) / CONFIG_SYS_CLOCK_TICKS_PER_SEC);
+
+	/* Avoid requesting timeouts larger than max_timeout_ms,
+	 * or they will expire immediately.
+	 * See: https://github.com/zephyrproject-rtos/zephyr/issues/19075
+	 */
+	if (timeout > max_timeout_ms) {
+		lwm2m_work->remaining_timeout_ms = timeout - max_timeout_ms;
+		timeout = max_timeout_ms;
+	} else {
+		lwm2m_work->remaining_timeout_ms = 0;
+	}
+
+	return timeout;
+}
 
 static void work_handler(struct k_work *work)
 {
 	struct lwm2m_work *lwm2m_work =
 		CONTAINER_OF(work, struct lwm2m_work, work_item);
 
-	lwm2m_work->handler(lwm2m_work);
+	if (lwm2m_work->remaining_timeout_ms > 0) {
+		int32_t timeout = lwm2m_work->remaining_timeout_ms;
+
+		timeout = get_timeout_value(timeout, lwm2m_work);
+
+		/* FIXME: handle error return from k_delayed_work_submit(). */
+		(void)k_delayed_work_submit(&lwm2m_work->work_item,
+					    K_MSEC(timeout));
+	} else {
+		lwm2m_work->handler(lwm2m_work);
+	}
 }
 
 void *lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler)
@@ -150,24 +191,8 @@ int lwm2m_os_timer_start(void *timer, int32_t timeout)
 		return -EINVAL;
 	}
 
-	/* Zephyr's timing subsystem uses signed integers so the
-	 * largest tick count that can be represented is 31 bit large.
-	 *
-	 * max_timeout_sec = int max - 1 / ticks per sec
-	 */
-	const int max_timeout_sec =
-		(INT32_MAX - 1) / CONFIG_SYS_CLOCK_TICKS_PER_SEC;
+	timeout = get_timeout_value(timeout, work);
 
-	/* Avoid requesting timeouts larger than max_timeout_sec,
-	 * or they will expire immediately.
-	 * See: https://github.com/zephyrproject-rtos/zephyr/issues/19075
-	 *
-	 * `timeout` is expressed in milliseconds,
-	 * use K_SECONDS to specify the correct unit.
-	 */
-	timeout = MIN(K_SECONDS(max_timeout_sec), timeout);
-
-	/* FIXME: return an error if the timeout requested is too large. */
 	return k_delayed_work_submit(&work->work_item, K_MSEC(timeout));
 }
 
@@ -190,7 +215,8 @@ int32_t lwm2m_os_timer_remaining(void *timer)
 		return 0;
 	}
 
-	return k_delayed_work_remaining_get(&work->work_item);
+	return k_delayed_work_remaining_get(&work->work_item) +
+	       work->remaining_timeout_ms;
 }
 
 /* LWM2M logs. */
