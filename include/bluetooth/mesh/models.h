@@ -36,6 +36,9 @@
 #include <bluetooth/mesh/gen_prop_cli.h>
 #include <bluetooth/mesh/lightness_srv.h>
 #include <bluetooth/mesh/lightness_cli.h>
+#include <bluetooth/mesh/sensor_types.h>
+#include <bluetooth/mesh/sensor_srv.h>
+#include <bluetooth/mesh/sensor_cli.h>
 
 /** @brief Check whether the model publishes to a unicast address.
  *

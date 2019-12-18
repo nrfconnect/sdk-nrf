@@ -248,6 +248,23 @@
 #define BT_MESH_PROP_ID_TOT_LUMINOUS_ENERGY 0x0070
 /** Desired ambient temperature. */
 #define BT_MESH_PROP_ID_DESIRED_AMB_TEMP 0x0071
+/** Precise Total Device Energy Use. */
+#define BT_MESH_PROP_ID_PRECISE_TOT_DEV_ENERGY_USE 0x0072
+/** Power Factor. */
+#define BT_MESH_PROP_ID_POWER_FACTOR 0x0073
+/** Sensor Gain. */
+#define BT_MESH_PROP_ID_SENSOR_GAIN 0x0074
+/** Precise Present Ambient Temperature. */
+#define BT_MESH_PROP_ID_PRECISE_PRESENT_AMB_TEMP 0x0075
+/** Present Ambient Relative Humidity. */
+#define BT_MESH_PROP_ID_PRESENT_AMB_REL_HUMIDITY 0x0076
+/** Present Ambient Carbon Dioxide Concentration. */
+#define BT_MESH_PROP_ID_PRESENT_AMB_CO2_CONCENTRATION 0x0077
+/** Present Ambient Volatile Organic Compounds Concentration. */
+#define BT_MESH_PROP_ID_PRESENT_AMB_VOC_CONCENTRATION 0x0078
+/** Present Ambient Noise. */
+#define BT_MESH_PROP_ID_PRESENT_AMB_NOISE 0x0079
+
 /** @} */
 
 #endif /* BT_MESH_PROPERTIES_H__ */
