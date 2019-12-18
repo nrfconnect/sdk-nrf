@@ -192,4 +192,42 @@ endchoice
 endmenu
 endif
 
+
+menuconfig BT_MESH_SENSOR_SRV
+	bool "Sensor Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_SENSOR
+	help
+	  Enable Mesh Sensor Server model.
+
+if BT_MESH_SENSOR_SRV
+
+config BT_MESH_SENSOR_SRV_SENSORS_MAX
+	int "Max number of sensors per server"
+	default 4
+	range 1 189
+	help
+	  The upper boundary of a Sensor Server's sensor count.
+
+
+config BT_MESH_SENSOR_SRV_SETTINGS_MAX
+	int "Max setting parameters per sensor in a server"
+	default 8
+	range 0 189
+	help
+	  Max number of settings parameters each sensor in the
+	  server can have. Only affects the stack allocated response buffer
+	  for the Settings Get message.
+
+endif
+
+config BT_MESH_SENSOR_CLI
+	bool "Sensor Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_SENSOR
+	help
+	  Enable Mesh Sensor Client model.
+
+rsource "Kconfig.sensor"
+
 endmenu

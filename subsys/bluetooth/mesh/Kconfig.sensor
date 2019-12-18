@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config BT_MESH_SENSOR
+	bool
+
+menu "Bluetooth Mesh Sensors"
+	visible if BT_MESH_SENSOR
+
+config BT_MESH_SENSOR_LABELS
+	bool "Enable Sensor labels"
+	help
+	  Controls the availability of sensor labels for channels and units
+
+config BT_MESH_SENSOR_ALL_TYPES
+	bool "Force all sensor types to be known"
+	default y if BT_MESH_SENSOR_CLI
+	help
+	  Forces all sensor types to be included in the build. This is
+	  useful if the set of sensor types that will be used is unknown at
+	  compile time, but increases ROM usage by about 3.5kB (4kB if labels
+	  are enabled).
+
+config BT_MESH_SENSOR_CHANNELS_MAX
+	int "Max sensor channels"
+	default 5
+	help
+	  Max number of channels in a single sensor. Matches the largest known
+	  number by default.
+
+config BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX
+	int "Max sensor channel encoded length"
+	default 4
+	help
+	  Longest encoded representation of a single sensor channel.
+	  Matches the largest known size by default.
+
+endmenu
