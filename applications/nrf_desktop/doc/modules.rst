@@ -15,6 +15,7 @@ part of its functionality.
    ble_bond.rst
    ble_discovery.rst
    ble_latency.rst
+   ble_qos.rst
    ble_scan.rst
    ble_state.rst
    config_channel.rst

@@ -85,6 +85,7 @@ it to a different hardware platform, see the following pages.
     :maxdepth: 1
 
     doc/porting_guide.rst
+    doc/bluetooth_guide.rst
 
 
 Firmware architecture
