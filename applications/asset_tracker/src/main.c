@@ -33,6 +33,7 @@
 #include "ui.h"
 #include "gps_controller.h"
 #include "service_info.h"
+#include "at_cmd.h"
 
 #define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
 #define CLOUD_CONNACK_WAIT_DURATION	K_SECONDS(CONFIG_CLOUD_WAIT_DURATION)
@@ -116,10 +117,23 @@ static struct k_work connect_work;
 static struct k_work send_gps_data_work;
 static struct k_work send_button_data_work;
 static struct k_delayed_work send_env_data_work;
+static struct k_work send_modem_at_cmd_work;
 static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
 static struct k_delayed_work cycle_cloud_connection_work;
 static struct k_work device_status_work;
+
+#if defined(CONFIG_AT_CMD)
+#define MODEM_AT_CMD_BUFFER_LEN (CONFIG_AT_CMD_RESPONSE_MAX_LEN + 1)
+#else
+#define MODEM_AT_CMD_NOT_ENABLED_STR "Error: AT Command driver is not enabled"
+#define MODEM_AT_CMD_BUFFER_LEN (sizeof(MODEM_AT_CMD_NOT_ENABLED_STR))
+#endif
+#define MODEM_AT_CMD_RESP_TOO_BIG_STR "Error: AT Command response is too large to be sent"
+#define MODEM_AT_CMD_MAX_RESPONSE_LEN (2000)
+static char modem_at_cmd_buff[MODEM_AT_CMD_BUFFER_LEN];
+static K_SEM_DEFINE(modem_at_cmd_sem, 1, 1);
+
 #if CONFIG_MODEM_INFO
 static struct k_work rsrp_work;
 #endif /* CONFIG_MODEM_INFO */
@@ -239,6 +253,65 @@ static void send_button_data_work_fn(struct k_work *work)
 	sensor_data_send(&button_cloud_data);
 }
 
+static void send_modem_at_cmd_work_fn(struct k_work *work)
+{
+	enum at_cmd_state state;
+	int err;
+	struct cloud_channel_data modem_data = {
+		.type = CLOUD_CHANNEL_MODEM
+	};
+	struct cloud_msg msg = {
+		.qos = CLOUD_QOS_AT_MOST_ONCE,
+		.endpoint.type = CLOUD_EP_TOPIC_MSG
+	};
+	size_t len = strlen(modem_at_cmd_buff);
+
+	if (len == 0) {
+		err = -ENOBUFS;
+		state = AT_CMD_ERROR;
+	} else {
+#if defined(CONFIG_AT_CMD)
+		err = at_cmd_write(modem_at_cmd_buff, modem_at_cmd_buff,
+				sizeof(modem_at_cmd_buff), &state);
+#else
+		/* Proper error msg has already been copied to buffer */
+		err = 0;
+#endif
+	}
+
+	/* Get response length; same buffer was used for the response. */
+	len = strlen(modem_at_cmd_buff);
+
+	if (err) {
+		len = snprintf(modem_at_cmd_buff, sizeof(modem_at_cmd_buff),
+				"AT CMD error: %d, state %d", err, state);
+	} else if (len == 0) {
+		len = snprintf(modem_at_cmd_buff, sizeof(modem_at_cmd_buff),
+				"OK\r\n");
+	} else if (len > MODEM_AT_CMD_MAX_RESPONSE_LEN) {
+		len = snprintf(modem_at_cmd_buff, sizeof(modem_at_cmd_buff),
+				MODEM_AT_CMD_RESP_TOO_BIG_STR);
+	}
+
+	modem_data.data.buf = modem_at_cmd_buff;
+	modem_data.data.len = len;
+
+	err = cloud_encode_data(&modem_data, CLOUD_CMD_GROUP_COMMAND, &msg);
+	if (err) {
+		printk("[%s:%d] cloud_encode_data failed with error %d\n",
+			__func__, __LINE__, err);
+	} else {
+		err = cloud_send(cloud_backend, &msg);
+		cloud_release_data(&msg);
+		if (err) {
+			printk("[%s:%d] cloud_send failed with error %d\n",
+				__func__, __LINE__, err);
+		}
+	}
+
+	k_sem_give(&modem_at_cmd_sem);
+}
+
 /**@brief Callback for GPS trigger events */
 static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 {
@@ -336,12 +409,47 @@ static void motion_handler(motion_data_t  motion_data)
 	last_orientation_state = motion_data.orientation;
 }
 
+static void cloud_cmd_handle_modem_at_cmd(const char * const at_cmd)
+{
+	const size_t max_cmd_len = sizeof(modem_at_cmd_buff);
+
+	if (!at_cmd) {
+		return;
+	}
+
+	if (k_sem_take(&modem_at_cmd_sem, K_MSEC(20)) != 0) {
+		printk("[%s:%d] Modem AT cmd in progress.\n", __func__,
+		       __LINE__);
+		return;
+	}
+
+#if defined(CONFIG_AT_CMD)
+	if (strnlen(at_cmd, max_cmd_len) == max_cmd_len) {
+		printk("[%s:%d] AT cmd is too long, max length is %zu\n",
+		       __func__, __LINE__, max_cmd_len - 1);
+		/* Empty string will be handled as an error */
+		modem_at_cmd_buff[0] = '\0';
+	} else {
+		strcpy(modem_at_cmd_buff, at_cmd);
+	}
+#else
+	snprintf(modem_at_cmd_buff, sizeof(modem_at_cmd_buff),
+			MODEM_AT_CMD_NOT_ENABLED_STR);
+#endif
+
+	k_work_submit(&send_modem_at_cmd_work);
+}
+
 static void cloud_cmd_handler(struct cloud_command *cmd)
 {
 	if ((cmd->channel == CLOUD_CHANNEL_GPS) &&
 	    (cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
 	    (cmd->type == CLOUD_CMD_ENABLE)) {
 		set_gps_enable(cmd->data.sv.state == CLOUD_CMD_STATE_TRUE);
+	} else if ((cmd->channel == CLOUD_CHANNEL_MODEM) &&
+		   (cmd->group == CLOUD_CMD_GROUP_COMMAND) &&
+		   (cmd->type == CLOUD_CMD_DATA_STRING)) {
+		cloud_cmd_handle_modem_at_cmd(cmd->data.data_string);
 	} else if ((cmd->channel == CLOUD_CHANNEL_RGB_LED) &&
 		   (cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
 		   (cmd->type == CLOUD_CMD_COLOR)) {
@@ -623,7 +731,7 @@ static void sensor_data_send(struct cloud_channel_data *data)
 	}
 
 	if (data->type != CLOUD_CHANNEL_DEVICE_INFO) {
-		err = cloud_encode_data(data, &msg);
+		err = cloud_encode_data(data, CLOUD_CMD_GROUP_DATA, &msg);
 	} else {
 		err = cloud_encode_digital_twin_data(data, &msg);
 	}
@@ -811,6 +919,7 @@ static void work_init(void)
 	k_work_init(&connect_work, app_connect);
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
+	k_work_init(&send_modem_at_cmd_work, send_modem_at_cmd_work_fn);
 	k_delayed_work_init(&send_env_data_work, send_env_data_work_fn);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);

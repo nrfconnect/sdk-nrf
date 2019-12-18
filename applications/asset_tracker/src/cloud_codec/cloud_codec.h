@@ -62,6 +62,8 @@ enum cloud_channel {
 	CLOUD_CHANNEL_LIGHT_IR,
 	/** The assisted GPS channel. */
 	CLOUD_CHANNEL_ASSISTED_GPS,
+	/** The modem channel. */
+	CLOUD_CHANNEL_MODEM,
 
 	CLOUD_CHANNEL__TOTAL
 };
@@ -74,10 +76,7 @@ enum cloud_channel {
 #define CLOUD_CHANNEL_STR_AIR_PRESS "AIR_PRESS"
 #define CLOUD_CHANNEL_STR_AIR_QUAL "AIR_QUAL"
 #define CLOUD_CHANNEL_STR_LTE_LINK_RSRP "RSRP"
-/* The "device" is intended for the shadow, which expects its objects
- * to have lowercase keys.
- */
-#define CLOUD_CHANNEL_STR_DEVICE_INFO "device"
+#define CLOUD_CHANNEL_STR_DEVICE_INFO "DEVICE"
 #define CLOUD_CHANNEL_STR_LIGHT_SENSOR "LIGHT"
 #define CLOUD_CHANNEL_STR_LIGHT_RED "LIGHT_RED"
 #define CLOUD_CHANNEL_STR_LIGHT_GREEN "LIGHT_GREEN"
@@ -85,6 +84,7 @@ enum cloud_channel {
 #define CLOUD_CHANNEL_STR_LIGHT_IR "LIGHT_IR"
 #define CLOUD_CHANNEL_STR_ASSISTED_GPS "AGPS"
 #define CLOUD_CHANNEL_STR_RGB_LED "LED"
+#define CLOUD_CHANNEL_STR_MODEM "MODEM"
 
 struct cloud_data {
 	char *buf;
@@ -114,6 +114,7 @@ enum cloud_cmd_group {
 	CLOUD_CMD_GROUP_OK,
 	CLOUD_CMD_GROUP_CFG_SET,
 	CLOUD_CMD_GROUP_CFG_GET,
+	CLOUD_CMD_GROUP_COMMAND,
 
 	CLOUD_CMD_GROUP__TOTAL
 };
@@ -128,6 +129,7 @@ enum cloud_cmd_group {
 #define CLOUD_CMD_GROUP_STR_OK "OK"
 #define CLOUD_CMD_GROUP_STR_CFG_SET "CFG_SET"
 #define CLOUD_CMD_GROUP_STR_CFG_GET "CFG_GET"
+#define CLOUD_CMD_GROUP_STR_COMMAND "CMD"
 
 enum cloud_cmd_type {
 	CLOUD_CMD_EMPTY,
@@ -137,6 +139,7 @@ enum cloud_cmd_type {
 	CLOUD_CMD_INTERVAL,
 	CLOUD_CMD_COLOR,
 	CLOUD_CMD_MODEM_PARAM,
+	CLOUD_CMD_DATA_STRING,
 
 	CLOUD_CMD__TOTAL
 };
@@ -154,6 +157,8 @@ enum cloud_cmd_state {
 #define CLOUD_CMD_TYPE_STR_INTERVAL "interval"
 #define CLOUD_CMD_TYPE_STR_COLOR "color"
 #define CLOUD_CMD_TYPE_STR_MODEM_PARAM "modemParams"
+#define CLOUD_CMD_TYPE_STR_DATA_STRING "data_string"
+
 
 #define MODEM_PARAM_BLOB_KEY_STR "blob"
 #define MODEM_PARAM_CHECKSUM_KEY_STR "checksum"
@@ -177,6 +182,7 @@ struct cloud_command {
 	union {
 		struct cloud_command_state_value sv;
 		struct cloud_command_modem_params mp;
+		char *data_string;
 	} data;
 };
 
@@ -186,12 +192,13 @@ typedef void (*cloud_cmd_cb_t)(struct cloud_command *cmd);
  * @brief Encode cloud data.
  *
  * @param channel The cloud channel type.
+ * @param group The channel data's group.
  * @param output Pointer to the cloud data output.
  *
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */
 int cloud_encode_data(const struct cloud_channel_data *channel,
-		      struct cloud_msg *output);
+	const enum cloud_cmd_group group, struct cloud_msg *output);
 
 /**
  * @brief Decode cloud data.
