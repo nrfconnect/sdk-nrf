@@ -600,6 +600,7 @@ For more information about each application module and its configuration details
    doc/board.rst
    doc/buttons.rst
    doc/click_detector.rst
+   doc/dev_descr.rst
    doc/motion.rst
    doc/selector.rst
    doc/wheel.rst
