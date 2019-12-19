@@ -17,13 +17,6 @@ config DESKTOP_POWER_MANAGER_ENABLE
 
 if DESKTOP_POWER_MANAGER_ENABLE
 
-config DESKTOP_POWER_MANAGER_CONSTLAT
-	bool "Constant latency interrupts"
-	help
-	  When enabled SoC will use configuration for constant latency
-	  interrupts. This reduces interrupt propagation time but increases
-	  power consumption.
-
 config DESKTOP_POWER_MANAGER_STAY_ON
 	bool "Stay on while no connections"
 	help

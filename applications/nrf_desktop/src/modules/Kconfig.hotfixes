@@ -15,4 +15,18 @@ config DESKTOP_HFCLK_LOCK_ENABLE
 	  overall latency of the first packet.
 	  If enabled current consumption is increased.
 
+config DESKTOP_CONSTLAT_ENABLE
+	bool "Constant latency interrupts"
+	help
+	  When enabled SoC will use configuration for constant latency
+	  interrupts. This reduces interrupt propagation time but increases
+	  power consumption.
+
+config DESKTOP_CONSTLAT_DISABLE_ON_STANDBY
+	bool "Disable constant latency interrupts on standby"
+	depends on DESKTOP_CONSTLAT_ENABLE
+	help
+	  When enabled constant latency interrupts will be disabled when
+	  the devices switches to standby.
+
 endmenu
