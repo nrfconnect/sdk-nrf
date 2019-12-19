@@ -573,6 +573,46 @@ static void handle_config_forward_get(const struct config_forward_get_event *eve
 	}
 }
 
+static void disconnect_subscriber(struct hids_subscriber *subscriber)
+{
+	LOG_INF("HID device disconnected");
+
+	/* Release all pressed keys. */
+	u8_t empty_data[MAX(REPORT_SIZE_CONSUMER_CTRL,
+			MAX(REPORT_SIZE_MOUSE,
+				REPORT_SIZE_KEYBOARD_KEYS))] = {0};
+	struct bt_gatt_hids_c_rep_info *rep = NULL;
+
+	while (NULL != (rep = bt_gatt_hids_c_rep_next(&subscriber->hidc, rep))) {
+		if (bt_gatt_hids_c_rep_type(rep) ==
+				BT_GATT_HIDS_REPORT_TYPE_INPUT) {
+
+			switch (bt_gatt_hids_c_rep_id(rep)) {
+			case REPORT_ID_MOUSE:
+				process_mouse_report(empty_data);
+				break;
+
+			case REPORT_ID_KEYBOARD_KEYS:
+				process_keyboard_report(empty_data);
+				break;
+
+			case REPORT_ID_CONSUMER_CTRL:
+				process_consumer_ctrl_report(empty_data);
+				break;
+
+			default:
+				/* Unsupported report ID. */
+				__ASSERT_NO_MSG(false);
+				break;
+			}
+		}
+	}
+
+	bt_gatt_hids_c_release(&subscriber->hidc);
+	subscriber->pid = 0;
+	subscriber->timestamp = 0;
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
@@ -657,11 +697,7 @@ static bool event_handler(const struct event_header *eh)
 			for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 				if ((bt_gatt_hids_c_assign_check(&subscribers[i].hidc)) &&
 				    (bt_gatt_hids_c_conn(&subscribers[i].hidc) == event->id)) {
-					LOG_INF("HID device disconnected");
-					bt_gatt_hids_c_release(
-					  &subscribers[i].hidc);
-					subscribers[i].pid = 0;
-					subscribers[i].timestamp = 0;
+					disconnect_subscriber(&subscribers[i]);
 				}
 			}
 		}
