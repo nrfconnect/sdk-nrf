@@ -511,27 +511,6 @@ static void hid_init(void)
 	__ASSERT(err == 0, "HIDS initialization failed\n");
 }
 
-
-static void bt_ready(void)
-{
-	printk("Bluetooth initialized\n");
-
-	hid_init();
-
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		settings_load();
-	}
-
-#if CONFIG_NFC_OOB_PAIRING
-	k_work_init(&adv_work, delayed_advertising_start);
-	app_nfc_init();
-#else
-	advertising_start();
-#endif
-
-	k_work_init(&pairing_work, pairing_process);
-}
-
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -960,7 +939,22 @@ void main(void)
 		return;
 	}
 
-	bt_ready();
+	printk("Bluetooth initialized\n");
+
+	hid_init();
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
+
+#if CONFIG_NFC_OOB_PAIRING
+	k_work_init(&adv_work, delayed_advertising_start);
+	app_nfc_init();
+#else
+	advertising_start();
+#endif
+
+	k_work_init(&pairing_work, pairing_process);
 
 	for (;;) {
 		if (is_adv) {
