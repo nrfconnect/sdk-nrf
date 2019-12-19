@@ -553,25 +553,6 @@ static void mouse_handler(struct k_work *work)
 	}
 }
 
-
-static void bt_ready(void)
-{
-	printk("Bluetooth initialized\n");
-
-	/* DIS initialized at system boot with SYS_INIT macro. */
-	hid_init();
-
-	k_delayed_work_init(&hids_work, mouse_handler);
-	k_work_init(&pairing_work, pairing_process);
-
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		settings_load();
-	}
-
-	advertising_start();
-}
-
-
 #if defined(CONFIG_BT_GATT_HIDS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
@@ -792,7 +773,19 @@ void main(void)
 		return;
 	}
 
-	bt_ready();
+	printk("Bluetooth initialized\n");
+
+	/* DIS initialized at system boot with SYS_INIT macro. */
+	hid_init();
+
+	k_delayed_work_init(&hids_work, mouse_handler);
+	k_work_init(&pairing_work, pairing_process);
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
+
+	advertising_start();
 
 	configure_buttons();
 
