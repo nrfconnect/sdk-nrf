@@ -6,13 +6,11 @@
 
 menu "Device Drivers"
 
-
-rsource "gps_sim/Kconfig"
 rsource "entropy/Kconfig"
 rsource "hw_cc310/Kconfig"
-rsource "nrf9160_gps/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
+rsource "gps/Kconfig"
 
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"

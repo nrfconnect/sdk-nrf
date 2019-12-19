@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2018-2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "GPS Drivers"
+
+rsource "gps_sim/Kconfig"
+rsource "nrf9160_gps/Kconfig"
+
+endmenu

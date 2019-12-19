@@ -8,7 +8,7 @@
 #include <kernel_structs.h>
 #include <stdio.h>
 #include <string.h>
-#include <gps.h>
+#include <drivers/gps.h>
 #include <sensor.h>
 #include <console.h>
 #include <misc/reboot.h>

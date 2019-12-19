@@ -18,7 +18,7 @@
  * data.
  */
 #include <zephyr/types.h>
-#include <gps.h>
+#include <drivers/gps.h>
 
 /* In this sample the GPS data is 81 byte + a data sequence tag,
  * so 85 byte is used.

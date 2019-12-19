@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <string.h>
-#include <gps.h>
+#include <drivers/gps.h>
 #include <sensor.h>
 #include <console.h>
 #include <nrf_cloud.h>

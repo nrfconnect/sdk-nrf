@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <misc/util.h>
-#include <gps.h>
+#include <drivers/gps.h>
 #include <lte_lc.h>
 
 #include "ui.h"

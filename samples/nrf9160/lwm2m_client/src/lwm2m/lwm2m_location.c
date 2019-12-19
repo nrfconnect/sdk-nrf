@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <gps.h>
+#include <drivers/gps.h>
 #include <stdio.h>
 #include <net/lwm2m.h>
 
