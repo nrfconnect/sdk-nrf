@@ -277,25 +277,6 @@ static const struct bt_gatt_throughput_cb throughput_cb = {
 	.data_send = throughput_send
 };
 
-static void bt_ready(int err)
-{
-	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
-		return;
-	}
-
-	printk("Bluetooth initialized\n");
-
-	scan_init();
-	bt_gatt_throughput_init(&gatt_throughput, &throughput_cb);
-	if (err) {
-		printk("Throughput service initialization failed.\n");
-		return;
-	}
-
-	advertise_and_scan();
-}
-
 static void test_run(void)
 {
 	int err;
@@ -375,13 +356,24 @@ void main(void)
 
 	console_init();
 
-	err = bt_enable(bt_ready);
+	bt_conn_cb_register(&conn_callbacks);
+
+	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
 
-	bt_conn_cb_register(&conn_callbacks);
+	printk("Bluetooth initialized\n");
+
+	scan_init();
+	bt_gatt_throughput_init(&gatt_throughput, &throughput_cb);
+	if (err) {
+		printk("Throughput service initialization failed.\n");
+		return;
+	}
+
+	advertise_and_scan();
 
 	for (;;) {
 		if (test_ready) {
