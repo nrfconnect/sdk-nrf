@@ -346,34 +346,6 @@ static const struct bt_gatt_latency_c_cb latency_client_cb = {
 	.latency_response = latency_response_handler
 };
 
-static void bt_ready(void)
-{
-	int err;
-
-	printk("Bluetooth initialized\n");
-
-	scan_init();
-
-	err = bt_gatt_latency_init(&gatt_latency, NULL);
-	if (err) {
-		printk("Latency service initialization failed (err %d)\n", err);
-		return;
-	}
-
-	err = bt_gatt_latency_c_init(&gatt_latency_client, &latency_client_cb);
-	if (err) {
-		printk("Latency client initialization failed (err %d)\n", err);
-		return;
-	}
-
-	if (enable_llpm_mode()) {
-		printk("Enable LLPM mode failed.\n");
-		return;
-	}
-
-	advertise_and_scan();
-}
-
 static void test_run(void)
 {
 	int err;
@@ -426,20 +398,41 @@ void main(void)
 
 	console_init();
 
+	bt_conn_cb_register(&conn_callbacks);
+
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
 
-	bt_ready();
+	printk("Bluetooth initialized\n");
+
+	scan_init();
+
+	err = bt_gatt_latency_init(&gatt_latency, NULL);
+	if (err) {
+		printk("Latency service initialization failed (err %d)\n", err);
+		return;
+	}
+
+	err = bt_gatt_latency_c_init(&gatt_latency_client, &latency_client_cb);
+	if (err) {
+		printk("Latency client initialization failed (err %d)\n", err);
+		return;
+	}
+
+	if (enable_llpm_mode()) {
+		printk("Enable LLPM mode failed.\n");
+		return;
+	}
+
+	advertise_and_scan();
 
 	if (enable_qos_conn_evt_report()) {
 		printk("Enable LLPM QoS failed.\n");
 		return;
 	}
-
-	bt_conn_cb_register(&conn_callbacks);
 
 	for (;;) {
 		if (test_ready) {
