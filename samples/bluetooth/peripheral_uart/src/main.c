@@ -346,36 +346,6 @@ static struct bt_gatt_nus_cb nus_cb = {
 	.received_cb = bt_receive_cb,
 };
 
-static void bt_ready(int err)
-{
-	if (err) {
-		printk("BLE init failed with error code %d\n", err);
-		return;
-	}
-
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		settings_load();
-	}
-
-	err = bt_gatt_nus_init(&nus_cb);
-	if (err) {
-		printk("Failed to initialize UART service (err: %d)\n", err);
-		return;
-	}
-
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
-			      ARRAY_SIZE(sd));
-	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
-	}
-
-	/* Give two semaphores to signal both the led_blink_thread, and
-	 * and the ble_write_thread that ble initialized successfully
-	 */
-	k_sem_give(&ble_init_ok);
-	k_sem_give(&ble_init_ok);
-}
-
 void error(void)
 {
 	dk_set_leds_state(DK_ALL_LEDS_MSK, DK_NO_LEDS_MSK);
@@ -438,31 +408,40 @@ static void led_blink_thread(void)
 	printk("Starting Nordic UART service example\n");
 
 	err = init_uart();
-	if (!err) {
-		err = bt_enable(bt_ready);
+	if (err) {
+		error();
 	}
 
 	configure_gpio();
 
-	if (!err) {
-		bt_conn_cb_register(&conn_callbacks);
+	bt_conn_cb_register(&conn_callbacks);
 
-		if (IS_ENABLED(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)) {
-			bt_conn_auth_cb_register(&conn_auth_callbacks);
-		}
-
-		err = k_sem_take(&ble_init_ok, K_MSEC(1000));
-
-		if (!err) {
-			printk("Bluetooth initialized\n");
-		} else {
-			printk("BLE initialization \
-				did not complete in time\n");
-		}
+	if (IS_ENABLED(CONFIG_BT_GATT_NUS_SECURITY_ENABLED)) {
+		bt_conn_auth_cb_register(&conn_auth_callbacks);
 	}
 
+	err = bt_enable(NULL);
 	if (err) {
 		error();
+	}
+
+	printk("Bluetooth initialized\n");
+	k_sem_give(&ble_init_ok);
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
+
+	err = bt_gatt_nus_init(&nus_cb);
+	if (err) {
+		printk("Failed to initialize UART service (err: %d)\n", err);
+		return;
+	}
+
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
+			      ARRAY_SIZE(sd));
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
 	}
 
 	for (;;) {
