@@ -13,9 +13,15 @@ from collections import OrderedDict
 from pathlib import PurePath
 import re
 import textwrap
+import sys
 
-import editdistance
-import pygit2
+try:
+    import editdistance
+    import pygit2
+except ImportError:
+    sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
+             "Please install packages in nrf/scripts/requirements-extra.txt "
+             "with pip3.")
 from west import log
 
 __all__ = [
