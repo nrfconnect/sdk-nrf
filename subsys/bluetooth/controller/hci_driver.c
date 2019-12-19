@@ -500,6 +500,13 @@ static int ble_enable(void)
 		return -ENOMEM;
 	}
 
+	if (IS_ENABLED(CONFIG_BT_DATA_LEN_UPDATE)) {
+		err = ble_controller_support_dle();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
 		err = ble_controller_enable(host_signal,
