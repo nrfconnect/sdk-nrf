@@ -18,6 +18,7 @@ part of its functionality.
    ble_scan.rst
    ble_state.rst
    config_channel.rst
+   dev_descr.rst
    fn_keys.rst
    hid_forward.rst
    hid_state.rst
