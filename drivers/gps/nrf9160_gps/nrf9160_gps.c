@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <gpio.h>
-#include <gps.h>
+#include <drivers/gps.h>
 #include <init.h>
 #include <stdbool.h>
 #include <stdio.h>

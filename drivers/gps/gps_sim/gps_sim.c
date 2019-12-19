@@ -5,7 +5,7 @@
  */
 
 #include <gpio.h>
-#include <gps.h>
+#include <drivers/gps.h>
 #include <init.h>
 #include <stdio.h>
 #include <stdlib.h>
