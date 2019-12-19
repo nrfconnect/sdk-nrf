@@ -167,32 +167,6 @@ static struct bt_gatt_lbs_cb lbs_callbacs = {
 	.button_cb = app_button_cb,
 };
 
-static void bt_ready(void)
-{
-	int err;
-
-	printk("Bluetooth initialized\n");
-
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		settings_load();
-	}
-
-	err = bt_gatt_lbs_init(&lbs_callbacs);
-	if (err) {
-		printk("Failed to init LBS (err:%d)\n", err);
-		return;
-	}
-
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
-	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
-		return;
-	}
-
-	printk("Advertising successfully started\n");
-}
-
 static void button_changed(u32_t button_state, u32_t has_changed)
 {
 	if (has_changed & USER_BUTTON) {
@@ -232,19 +206,37 @@ void main(void)
 		return;
 	}
 
+	bt_conn_cb_register(&conn_callbacks);
+	if (IS_ENABLED(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)) {
+		bt_conn_auth_cb_register(&conn_auth_callbacks);
+	}
+
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
 
-	bt_ready();
+	printk("Bluetooth initialized\n");
 
-	bt_conn_cb_register(&conn_callbacks);
-
-	if (IS_ENABLED(CONFIG_BT_GATT_LBS_SECURITY_ENABLED)) {
-		bt_conn_auth_cb_register(&conn_auth_callbacks);
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
 	}
+
+	err = bt_gatt_lbs_init(&lbs_callbacs);
+	if (err) {
+		printk("Failed to init LBS (err:%d)\n", err);
+		return;
+	}
+
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
+			      sd, ARRAY_SIZE(sd));
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+
+	printk("Advertising successfully started\n");
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
