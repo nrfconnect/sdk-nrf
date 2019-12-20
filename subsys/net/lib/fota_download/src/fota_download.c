@@ -177,7 +177,7 @@ int fota_download_start(char *host, char *file)
 		return err;
 	}
 
-	bool s0_active = s0.firmware_version >= s1.firmware_version;
+	bool s0_active = s0.version >= s1.version;
 
 	err = dfu_ctx_mcuboot_set_b1_file(file, s0_active, &update);
 	if (err != 0) {

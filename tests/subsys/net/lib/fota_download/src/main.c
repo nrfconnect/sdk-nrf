@@ -84,9 +84,9 @@ int spm_firmware_info(u32_t fw_address, struct fw_info *info)
 	zassert_true(info != NULL, NULL);
 
 	if (fw_address == PM_S0_ADDRESS) {
-		info->firmware_version = s0_version;
+		info->version = s0_version;
 	} else if (fw_address == PM_S1_ADDRESS) {
-		info->firmware_version = s1_version;
+		info->version = s1_version;
 	} else {
 		zassert_true(false, "Unexpected address");
 	}
