@@ -390,9 +390,14 @@ Setting up the command line build environment
 
 If you want to build and program your application from the command line, you must set up your build environment by defining the required environment variables every time you open a new |bash|.
 
-To define the environment variables, navigate to the ``ncs`` folder and enter the following command: |envfile|
+To define the environment variables, navigate to the ``ncs`` folder and enter the following command: |envfile|.
+For more information on the various relevant environment variables, see :ref:`zephyr:env_vars_important`.
 
 If you need to define additional environment variables, create the file |rcfile| and add the variables there.
 This file is loaded automatically when you run the above command.
+
+You must also make sure that nrfjprog (part of the `nRF Command Line Tools`_) is installed and its path is added to the environment variables.
+The west command programs the board by using nrfjprog by default.
+For more information on nrfjprog, see `programming development boards using nrfjprog <Programming DK boards using nrfjprog_>`_.
 
 .. buildenv_cli_end
