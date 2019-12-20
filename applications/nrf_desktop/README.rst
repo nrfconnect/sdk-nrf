@@ -1,5 +1,11 @@
 .. _nrf_desktop:
 
+.. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
+   When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
+   If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
+
+.. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
+
 nRF Desktop
 ###########
 
@@ -17,7 +23,7 @@ The same channel is used to transmit DFU packets.
     The code is currently work-in-progress and as such is not fully functional, verified, or supported for product development.
 
 Firmware architecture
----------------------
+=====================
 
 The nRF Desktop application design aims at configurability and extensibility while being responsive.
 
@@ -38,7 +44,7 @@ Firmware modules:
     doc/modules.rst
 
 Integrating your own hardware
------------------------------
+=============================
 
 For detailed information about the application configuration and how to port it to a different hardware platform, see the following pages.
 
@@ -63,6 +69,171 @@ The project comes with configuration files for the following boards:
 
 The application was designed to allow easy porting to new hardware.
 Check :ref:`porting_guide` for more information.
+
+User interface
+**************
+
+The nRF Desktop devices provide user input to the host in the same way as other mice and keyboards, using the following connection options:
+
+    * :ref:`nrf_desktop_usb`
+    * :ref:`nrf_desktop_ble`
+
+
+.. _nrf_desktop_usb:
+
+Connection through USB
+======================
+
+The nRF Desktop devices use the USB HID class.
+No additional software or drivers are required.
+
+An example of the device that uses the connection through USB is the nRF Desktop dongle.
+It receives data from the peripherals connected through Bluetooth Low Energy and forwards the data to the host.
+
+Battery-powered devices with rechargeable batteries are charged through USB.
+
+The devices that are connected both wirelessly and through USB at the same time provide their input only through the USB connection.
+If the device is disconnected from USB, it automatically switches to sending the data wirelessly using Bluetooth Low Energy.
+
+
+.. _nrf_desktop_ble:
+
+Connection through BLE
+======================
+
+When turned on, the nRF Desktop peripherals are advertising until they go to the suspended state or connect through Bluetooth.
+The peripheral supports one wireless connection at a time, but it may be bonded with multiple peers.
+
+The nRF Desktop Bluetooth Central device scans for all bonded peripherals that are not connected.
+The scanning is interrupted when any device connected to the dongle through Bluetooth is in use.
+Continuing the scanning in such scenario would cause report rate drop.
+
+The scanning starts automatically when one of the bonded peers disconnects.
+It also takes place periodically when a known peer is not connected.
+
+The peripheral connection can be based on standard BLE connection parameters or on BLE with Low Latency Packet Mode (LLPM).
+LLPM is a proprietary Bluetooth extension from Nordic Semiconductor.
+It can be used only if it is supported by both connected devices (desktop mice do not support it).
+LLPM enables sending data with high report rate (up to 1000 reports per second), which is not supported by the standard BLE.
+
+
+BLE peer control
+----------------
+
+A connected BLE peer device can be controlled using predefined buttons or button combinations.
+There are several peer operations available.
+
+The application distinguishes between the following button press types:
+
+* Short -- Button pressed for less than 0.5 seconds.
+* Standard -- Button pressed for more than 0.5 seconds, but less than 5 seconds.
+* Long -- Button pressed for more than 5 seconds.
+* Double -- Button pressed twice in quick succession.
+
+The peer operation states provide visual feedback through LEDs (if the device has LEDs).
+Each of the states is represented by separate LED color and effect.
+The LED colors and effects are described in the :file:``led_state_def.h`` file located in the board-specific directory in the application configuration folder.
+
+Gaming mouse
+~~~~~~~~~~~~
+
+The following predefined hardware interface elements are assigned to peer control operations for the gaming mouse:
+
+Hardware switch:
+    * The switch is located next to the optical sensor.
+    * You can set the switch in the following positions:
+
+        * Top position: Select the dongle peer.
+        * Middle position: Select the BLE peers.
+        * Bottom position: Mouse turned off.
+
+      When the dongle peer is selected, the peer control is disabled until the switch is set to another position.
+
+Precision Aim button:
+    * The button is located on the left side of the mouse, in the thumb area.
+    * Short-press to initialize the peer selection.
+      During the peer selection:
+
+        1. Short-press to select the next peer.
+        #. Double-press to confirm the peer selection.
+           The peer is changed after the confirmation.
+
+    * Long-press to initialize the peer erase, then double-press to confirm the operation.
+      |nRF_Desktop_confirmation_effect|
+    * |nRF_Desktop_cancel_operation|
+
+Desktop mouse
+~~~~~~~~~~~~~
+
+The following predefined buttons are assigned to peer control operations for the desktop mouse:
+
+Scroll wheel button:
+    * Long-press to initialize and confirm the peer erase.
+      The scroll must be pressed before the mouse is powered up.
+
+        * |nRF_Desktop_confirmation_effect|
+
+    * |nRF_Desktop_cancel_operation|
+
+Keyboard
+~~~~~~~~
+
+The following predefined buttons or button combinations are assigned to peer control operations for the keyboard:
+
+Page Down key:
+    * The Page Down key must be pressed while keeping the Fn modifier key pressed.
+    * Short-press the Page Down key to initialize the peer selection.
+      During the peer selection:
+
+        1. Short-press to select the next peer.
+        #. Double-press to confirm the peer selection.
+           The peer is changed after the confirmation.
+
+    * Long-press to initialize the peer erase, then double-press to confirm the operation.
+
+        * |nRF_Desktop_confirmation_effect|
+
+    * |nRF_Desktop_cancel_operation|
+
+Dongle
+~~~~~~
+
+The following predefined buttons are assigned to peer control operations for the dongle:
+
+SW1 button:
+    * Long-press to initialize peer erase, then double-press to confirm the operation.
+      After the confirmation, all the Bluetooth bonds are removed.
+    * Short-press to start scanning for both bonded and not bonded Bluetooth peripherals.
+      The scan is interrupted if another peripheral connected to the dongle is in use.
+    * |nRF_Desktop_cancel_operation|
+
+
+Power Management
+================
+
+Reducing power consumption is important for every battery-powered device.
+
+The nRF Desktop peripherals are either suspended or powered off when they are not in use for a predefined amount of time:
+
+    * In the suspended state, the device maintains the active connection.
+    * In the powered off state, the CPU is switched to the off mode.
+    * In both cases, most of the functionalities are disabled.
+      For example, LEDs are turned off and advertising is stopped.
+
+The predefined amount of time can be specified in :option:`CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT`, and by default it is set to 120 seconds.
+Moving the mouse or pressing any button wakes up the device and turns on the disabled functionalities.
+
+.. note::
+    When the gaming mouse is powered from the USB, the power down timeout functionality is disabled.
+
+Configuration channel
+=====================
+
+The nRF Desktop devices support additional operations, like firmware upgrade or configuration change.
+The support is implemented through the :ref:`config_channel`.
+
+The host can use dedicated Python scripts to exchange the data with an nRF Desktop peripheral.
+For detailed information, see the :ref:`hid_configurator` documentation.
 
 Building and running
 ********************
@@ -127,7 +298,7 @@ For example, you can build the ``ZRelease`` firmware for the PCA20041 board by r
 The ``build_pca20041`` parameter specifies the output directory for the build files.
 
 Testing
--------
+=======
 
 The application may be built and tested in various configurations.
 The following procedure refers to the scenario where the gaming mouse (PCA20041) and the keyboard (PCA20037) are connected simultaneously to the dongle (PCA10059).
