@@ -66,10 +66,10 @@ int spm_request_random_number(u8_t *output, size_t len, size_t *olen);
  */
 int spm_request_read(void *destination, u32_t addr, size_t len);
 
-/** Search for the firmware_info structure in firmware image located at address.
+/** Search for the fw_info structure in firmware image located at address.
  *
- * @param[in]   firmware_address Address where firmware image is stored.
- * @param[out]  info		 Pointer to where found info is stored.
+ * @param[in]   fw_address  Address where firmware image is stored.
+ * @param[out]  info        Pointer to where found info is stored.
  *
  * @retval 0        If successful.
  * @retval -EINVAL  If info is NULL.
