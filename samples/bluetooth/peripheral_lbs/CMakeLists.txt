@@ -5,6 +5,7 @@
 #
 cmake_minimum_required(VERSION 3.8)
 
+include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(NONE)
 
