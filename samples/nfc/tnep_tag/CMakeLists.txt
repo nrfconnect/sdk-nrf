@@ -11,7 +11,7 @@ set(NRF_SUPPORTED_BOARDS
   nrf52840_pca10056
   )
 
-include(../../../cmake/boilerplate.cmake)
+include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(NONE)
 

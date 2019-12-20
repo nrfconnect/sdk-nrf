@@ -36,7 +36,7 @@ You must be aware of these additions when you start writing your own application
 
   * The |NCS| provides an additional :file:`boilerplate.cmake` that must be included before Zephyr's in the :file:`CMakeLists.txt` file of your application::
 
-      include(path/to/nrf/cmake/boilerplate.cmake)
+      include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
       include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 
     Since the |NCS| does not require or provide an environment variable equivalent to :makevar:`ZEPHYR_BASE`, you can either create your own or locate the full path in your own :file:`CMakeLists.txt`.
