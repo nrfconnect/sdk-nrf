@@ -62,7 +62,7 @@
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1227688711
-
+.. _`Programming DK boards using nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf5x_cltools/UG/cltools/nrf5x_nrfjprogexe.html
 
 
 .. ### Links to the Nordic website

@@ -7,10 +7,6 @@ The recommended way of building and programming an |NCS| sample is to use
 the Nordic Edition of the SEGGER Embedded Studio (SES) IDE.
 
 
-.. note::
-	If you prefer to build your applications from the command line,
-	see :ref:`zephyr:getting_started_run_sample`.
-
 .. _gs_programming_ses:
 
 Building with SES
@@ -61,11 +57,15 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
    The required steps differ depending on if you build a single application or a multi-image project (such as the nRF9160 samples, which include :ref:`SPM <secure_partition_manager>`).
 
+   .. imp_note_nrf91_start
+
    .. important::
       If you are working with an nRF9160 DK, make sure to select the correct controller before you program the application to your board.
 
       Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller, or in the **NRF52** position to program the board controller.
       See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
+
+   .. imp_note_nrf91_end
 
    To build and program an application:
 
@@ -88,3 +88,96 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 If you get an error that a tool or command cannot be found, first make sure that the tool is installed.
 If it is installed, verify that its location is correct in the PATH variable or, if applicable, in the SES settings.
+
+.. _gs_programming_cmd:
+
+Building on the command line
+****************************
+
+Complete the following steps to build |NCS| projects on the command line after completing the command-line build setup (see the instructions for :ref:`Windows<build_environment_cli_win>`, :ref:`Linux<build_environment_cli_linux>`, or :ref:`macOS<build_environment_cli_mac>`).
+
+1.    Open a terminal window.
+
+#.    Go to the specific sample or application directory.
+      For example, to build the :ref:`at_client_sample` sample, run the following command to navigate to the sample directory:
+
+      .. code-block:: console
+
+         cd nrf/samples/nRF9160/at_client
+
+
+#.    Build the sample or application using the west command.
+      The development board is specified by the parameter *board_name* in the west command as follows:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -b *board_name*
+
+      .. note::
+
+	     To build from a directory other than the sample or application directory, run the west build command with an additional parameter *directory_name*,  specifying the sample or application directory.
+
+      See `Board names <Board names_>`_ for more information on the development boards.
+      To reuse an existing build directory for building another sample or application for another board, pass ``-p=auto`` to ``west build``.
+
+      If you want to configure your application, run the following west command:
+
+      .. code-block:: console
+
+         west build -t menuconfig
+
+      See :ref:`configure_application` for additional information about configuring an application.
+
+      After running the ``west build`` command, the build files can be found in ``build/zephyr``.
+      For more information on the contents of the build directory, see the *Build Directory Contents* section in the Zephyr documentation on :ref:`zephyr:build_an_application`.
+
+      .. include:: gs_programming.rst
+         :start-after: .. imp_note_nrf91_start
+         :end-before: .. imp_note_nrf91_end
+
+#.    Connect the development board to your PC using a USB cable.
+#.    Power on the development board.
+#.    Program the sample or application to the board using the following command:
+
+      .. code-block:: console
+
+         west flash
+
+      To fully erase the board before programming the new sample or application, use the command:
+
+      .. code-block:: console
+
+         west flash --erase
+
+      The ``west flash`` command automatically resets the board and starts the sample or application.
+
+For more information on building and programming using the command line, see the Zephyr documentation on :ref:`zephyr:west-build-flash-debug`.
+
+.. _gs_programming_board_names:
+
+Board names
+***********
+
+You can find the board names for the different development boards in the :ref:`zephyr:boards` section in the Zephyr documentation.
+For your convenience, the following table lists the board names for Nordic Semiconductor's development kits.
+
+.. _table:
+
++--------------------------------------------------------+-------------------------------------------------------+
+| Development kits                                       | Board names                                           |
++========================================================+=======================================================+
+| :ref:`nRF51 DK board (PCA10028)<nrf51_pca10028>`       | nrf51_pca10028                                        |
++--------------------------------------------------------+-------------------------------------------------------+
+| :ref:`nRF52 DK board (PCA10040)<nrf52_pca10040>`       | nrf52_pca10040                                        |
++--------------------------------------------------------+-------------------------------------------------------+
+| :ref:`nRF52840 DK board (PCA10056)<nrf52840_pca10056>` | nrf52840_pca10056                                     |
++--------------------------------------------------------+-------------------------------------------------------+
+| :ref:`nRF5340 PDK board (PCA10095)<nrf5340_dk_nrf5340>`| nrf5340_dk_nrf5340_cpunet (for the network sample)    |
++                                                        +                                                       +
+|                                                        | nrf5340_dk_nrf5340_cpuapp (for the application sample)|
++--------------------------------------------------------+-------------------------------------------------------+
+| :ref:`nRF9160 DK board (PCA10090)<nrf9160_pca10090>`   | nrf9160_pca10090 (for the secure version)             |
++                                                        +                                                       +
+|                                                        | nrf9160_pca10090ns (for the non-secure version)       |
++--------------------------------------------------------+-------------------------------------------------------+
