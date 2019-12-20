@@ -212,7 +212,14 @@ BUILD_ASSERT_MSG(ARRAY_SIZE(allowed_offsets) == FW_INFO_OFFSET_COUNT,
 	#error FW_INFO_OFFSET not set to one of the allowed values.
 #endif
 
-/* Search for the firmware_info structure inside the firmware. */
+
+/** Search for the firmware_info structure inside the firmware.
+ *
+ * @param[in] firmware_address  The start of the image. The function will search
+ *                              at the allowed offsets from firmware_address.
+ *
+ * @return  A pointer to the fw_info struct if found. Otherwise NULL.
+ */
 static inline const struct fw_info *fw_info_find(u32_t firmware_address)
 {
 	const struct fw_info *finfo;
@@ -239,7 +246,7 @@ static inline bool fw_info_ext_api_check(
 }
 
 
-/**Expose EXT_APIs to another firmware
+/** Expose EXT_APIs to another firmware
  *
  * Populate the other firmware's @c ext_api_in with EXT_APIs from other images.
  *
@@ -250,7 +257,7 @@ static inline bool fw_info_ext_api_check(
  */
 void fw_info_ext_api_provide(const struct fw_info *fwinfo);
 
-/**Get a single EXT_API.
+/** Get a single EXT_API.
  *
  * @param[in]    id      Which EXT_API to get.
  * @param[in]    index   If there are multiple EXT_APIs available with the same
@@ -260,7 +267,7 @@ void fw_info_ext_api_provide(const struct fw_info *fwinfo);
  */
 const struct fw_info_ext_api *fw_info_ext_api_get(u32_t id, u32_t index);
 
-/**Find an EXT_API based on a version range.
+/** Find an EXT_API based on a version range.
  *
  * @param[in]  id           The ID of the EXT_API to find.
  * @param[in]  flags        The required flags of the EXT_API to find. The
