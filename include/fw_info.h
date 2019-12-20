@@ -55,13 +55,13 @@ struct __packed fw_info {
 	u32_t magic[MAGIC_LEN_WORDS];
 
 	/* Size of the firmware image code. */
-	u32_t firmware_size;
+	u32_t size;
 
 	/* Monotonically increasing version counter.*/
-	u32_t firmware_version;
+	u32_t version;
 
 	/* The address of the start (vector table) of the firmware. */
-	u32_t firmware_address;
+	u32_t address;
 
 	/* Where to place the getter for the EXT_API provided to this firmware.
 	 */
@@ -80,10 +80,10 @@ struct __packed fw_info {
 
 /* Static asserts to ensure compatibility */
 OFFSET_CHECK(struct fw_info, magic, 0);
-OFFSET_CHECK(struct fw_info, firmware_size, CONFIG_FW_INFO_MAGIC_LEN);
-OFFSET_CHECK(struct fw_info, firmware_version,
+OFFSET_CHECK(struct fw_info, size, CONFIG_FW_INFO_MAGIC_LEN);
+OFFSET_CHECK(struct fw_info, version,
 	(CONFIG_FW_INFO_MAGIC_LEN + 4));
-OFFSET_CHECK(struct fw_info, firmware_address,
+OFFSET_CHECK(struct fw_info, address,
 	(CONFIG_FW_INFO_MAGIC_LEN + 8));
 
 /** @endcond

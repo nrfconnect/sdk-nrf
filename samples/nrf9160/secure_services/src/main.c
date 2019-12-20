@@ -57,7 +57,7 @@ void main(void)
 		printk("Could find firmware info (err: %d)\n", ret);
 	}
 
-	printk("App FW version: %d\n", info_app.firmware_version);
+	printk("App FW version: %d\n", info_app.version);
 
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
 	const int num_bytes_to_read = PM_MCUBOOT_PAD_SIZE;

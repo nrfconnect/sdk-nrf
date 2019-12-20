@@ -46,12 +46,12 @@ extern u32_t _vector_table_pointer;
 
 static void boot_from(const struct fw_info *fw_info)
 {
-	u32_t *vector_table = (u32_t *)fw_info->firmware_address;
+	u32_t *vector_table = (u32_t *)fw_info->address;
 
 	printk("Attempting to boot from address 0x%x.\n\r",
-		fw_info->firmware_address);
+		fw_info->address);
 
-	if (!bl_validate_firmware_local(fw_info->firmware_address,
+	if (!bl_validate_firmware_local(fw_info->address,
 					fw_info)) {
 		printk("Failed to validate!\n\r");
 		return;
@@ -75,7 +75,7 @@ static void boot_from(const struct fw_info *fw_info)
 		nvic->ICPR[i] = 0xFFFFFFFF;
 	}
 
-	printk("Booting (0x%x).\r\n", fw_info->firmware_address);
+	printk("Booting (0x%x).\r\n", fw_info->address);
 
 	uninit_used_peripherals();
 
@@ -97,7 +97,7 @@ static void boot_from(const struct fw_info *fw_info)
 	__DSB(); /* Force Memory Write before continuing */
 	__ISB(); /* Flush and refill pipeline with updated permissions */
 
-	VTOR = fw_info->firmware_address;
+	VTOR = fw_info->address;
 
 	fw_info_ext_api_provide(fw_info);
 
@@ -124,8 +124,7 @@ void main(void)
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
-	if (!s1_info || (s0_info->firmware_version >=
-			 s1_info->firmware_version)) {
+	if (!s1_info || (s0_info->version >= s1_info->version)) {
 		boot_from(s0_info);
 		boot_from(s1_info);
 	} else {

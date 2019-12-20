@@ -43,9 +43,9 @@ int ext_api_getter(u32_t id, u32_t index, const struct fw_info_ext_api **out)
 __fw_info struct fw_info m_firmware_info =
 {
 	.magic = {FIRMWARE_INFO_MAGIC},
-	.firmware_size = (u32_t)&_flash_used,
-	.firmware_version = CONFIG_FW_INFO_FIRMWARE_VERSION,
-	.firmware_address = (u32_t)&_image_rom_start,
+	.size = (u32_t)&_flash_used,
+	.version = CONFIG_FW_INFO_FIRMWARE_VERSION,
+	.address = (u32_t)&_image_rom_start,
 	.ext_api_in = &ext_api_getter_in,
 	.ext_api_out = &ext_api_getter,
 };
