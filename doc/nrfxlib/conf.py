@@ -151,5 +151,5 @@ cpp_id_attributes = ['__syscall', '__syscall_inline', '__deprecated',
     '__DEPRECATED_MACRO', 'FUNC_NORETURN' ]
 
 def setup(app):
-   app.add_stylesheet("css/common.css")
-   app.add_stylesheet("css/nrfxlib.css")
+    app.add_stylesheet("css/common.css")
+    app.add_stylesheet("css/nrfxlib.css")
