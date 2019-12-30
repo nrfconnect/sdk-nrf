@@ -34,9 +34,6 @@ static int drop_event_handler(const struct nct_evt *nct_evt);
 static int connection_handler(const struct nct_evt *nct_evt);
 static int disconnection_handler(const struct nct_evt *nct_evt);
 static int cc_connection_handler(const struct nct_evt *nct_evt);
-static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt);
-static int initiate_cmd_handler(const struct nct_evt *nct_evt);
-static int initiate_cmd_in_dc_conn_handler(const struct nct_evt *nct_evt);
 static int cc_tx_ack_handler(const struct nct_evt *nct_evt);
 static int cc_tx_ack_in_state_requested_handler(const struct nct_evt *nct_evt);
 static int cc_disconnection_handler(const struct nct_evt *nct_evt);
@@ -44,6 +41,10 @@ static int dc_connection_handler(const struct nct_evt *nct_evt);
 static int dc_rx_data_handler(const struct nct_evt *nct_evt);
 static int dc_tx_ack_handler(const struct nct_evt *nct_evt);
 static int dc_disconnection_handler(const struct nct_evt *nct_evt);
+static int cc_rx_data_handler(const struct nct_evt *nct_evt);
+static int handle_pin_complete(const struct nct_evt *nct_evt);
+static int handle_device_config_update(const struct nct_evt *const evt,
+				       bool *const config_found);
 
 /* Drop all the events. */
 static const fsm_transition not_implemented_fsm_transition[NCT_EVT_TOTAL];
@@ -62,20 +63,20 @@ static const fsm_transition cc_connecting_fsm_transition[NCT_EVT_TOTAL] = {
 };
 
 static const fsm_transition cc_connected_fsm_transition[NCT_EVT_TOTAL] = {
-	[NCT_EVT_CC_RX_DATA] = initiate_n_complete_request_handler,
+	[NCT_EVT_CC_RX_DATA] = cc_rx_data_handler,
 	[NCT_EVT_CC_DISCONNECTED] = cc_disconnection_handler,
 	[NCT_EVT_DISCONNECTED] = disconnection_handler,
 };
 
 static const fsm_transition cloud_requested_fsm_transition[NCT_EVT_TOTAL] = {
-	[NCT_EVT_CC_RX_DATA] = initiate_n_complete_request_handler,
+	[NCT_EVT_CC_RX_DATA] = cc_rx_data_handler,
 	[NCT_EVT_CC_TX_DATA_ACK] = cc_tx_ack_in_state_requested_handler,
 	[NCT_EVT_CC_DISCONNECTED] = cc_disconnection_handler,
 	[NCT_EVT_DISCONNECTED] = disconnection_handler,
 };
 
 static const fsm_transition ua_complete_fsm_transition[NCT_EVT_TOTAL] = {
-	[NCT_EVT_CC_RX_DATA] = initiate_cmd_handler,
+	[NCT_EVT_CC_RX_DATA] = cc_rx_data_handler,
 	[NCT_EVT_CC_TX_DATA_ACK] = cc_tx_ack_handler,
 	[NCT_EVT_CC_DISCONNECTED] = cc_disconnection_handler,
 	[NCT_EVT_DISCONNECTED] = disconnection_handler,
@@ -83,14 +84,14 @@ static const fsm_transition ua_complete_fsm_transition[NCT_EVT_TOTAL] = {
 
 static const fsm_transition dc_connecting_fsm_transition[NCT_EVT_TOTAL] = {
 	[NCT_EVT_DC_CONNECTED] = dc_connection_handler,
-	[NCT_EVT_CC_RX_DATA] = initiate_cmd_in_dc_conn_handler,
+	[NCT_EVT_CC_RX_DATA] = cc_rx_data_handler,
 	[NCT_EVT_CC_TX_DATA_ACK] = cc_tx_ack_handler,
 	[NCT_EVT_CC_DISCONNECTED] = cc_disconnection_handler,
 	[NCT_EVT_DISCONNECTED] = disconnection_handler,
 };
 
 static const fsm_transition dc_connected_fsm_transition[NCT_EVT_TOTAL] = {
-	[NCT_EVT_CC_RX_DATA] = initiate_cmd_in_dc_conn_handler,
+	[NCT_EVT_CC_RX_DATA] = cc_rx_data_handler,
 	[NCT_EVT_CC_TX_DATA_ACK] = cc_tx_ack_handler,
 	[NCT_EVT_DC_RX_DATA] = dc_rx_data_handler,
 	[NCT_EVT_DC_TX_DATA_ACK] = dc_tx_ack_handler,
@@ -177,6 +178,53 @@ static int state_ua_pin_wait(void)
 	nfsm_set_current_state_and_notify(STATE_UA_PIN_WAIT, &evt);
 
 	return 0;
+}
+
+static int handle_device_config_update(const struct nct_evt *const evt,
+				       bool *const config_found)
+{
+	int err;
+	struct nct_cc_data msg = {
+		.opcode = NCT_CC_OPCODE_UPDATE_REQ,
+		.id = DEFAULT_REPORT_ID,
+	};
+
+	struct nrf_cloud_evt cloud_evt = {
+		.type = NRF_CLOUD_EVT_RX_DATA
+	};
+
+	if ((evt == NULL) || (config_found == NULL)) {
+		return -EINVAL;
+	}
+
+	if (evt->param.cc == NULL) {
+		return -ENOENT;
+	}
+
+	err = nrf_cloud_encode_config_response(&evt->param.cc->data, &msg.data,
+					       config_found);
+	if ((err) && (err != -ESRCH)) {
+		LOG_ERR("nrf_cloud_encode_config_response failed %d", err);
+		return err;
+	}
+
+	if (*config_found == false) {
+		return 0;
+	}
+
+	if (msg.data.ptr) {
+		err = nct_cc_send(&msg);
+		nrf_cloud_free((void *)msg.data.ptr);
+
+		if (err) {
+			LOG_ERR("nct_cc_send failed %d", err);
+		}
+	}
+
+	cloud_evt.data = evt->param.cc->data;
+	nfsm_set_current_state_and_notify(nfsm_get_current_state(), &cloud_evt);
+
+	return err;
 }
 
 static int state_ua_pin_complete(void)
@@ -294,95 +342,71 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 	return 0;
 }
 
-/**@brief  Handles incoming data on the control channel in the
- * STATE_CC_CONNECTED.
- *
- * @details This handler allows transition to one of the following states.
- *          a. STATE_UA_PIN_WAIT.
- *          c. STATE_UA_PIN_COMPLETE.
- */
-static int initiate_n_complete_request_handler(const struct nct_evt *nct_evt)
+static int handle_pin_complete(const struct nct_evt *nct_evt)
 {
 	int err;
-	enum nfsm_state expected_state;
 	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
+	struct nrf_cloud_data rx;
+	struct nrf_cloud_data tx;
+	struct nrf_cloud_data endpoint;
 
-	err = nrf_cloud_decode_requested_state(payload, &expected_state);
+	err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx, &endpoint);
 	if (err) {
-		LOG_ERR("nrf_cloud_decode_requested_state failed %d", err);
+		LOG_ERR("nrf_cloud_decode_data_endpoint failed %d", err);
 		return err;
 	}
 
-	/* Validate expected state and take appropriate action. */
-	switch (expected_state) {
-	case STATE_UA_PIN_WAIT: {
-		return state_ua_pin_wait();
-	}
-	case STATE_UA_PIN_COMPLETE: {
-		struct nrf_cloud_data rx;
-		struct nrf_cloud_data tx;
-		struct nrf_cloud_data m_endpoint;
+	/* Set the endpoint information. */
+	nct_dc_endpoint_set(&tx, &rx, &endpoint);
 
-		err = nrf_cloud_decode_data_endpoint(payload, &tx, &rx,
-						     &m_endpoint);
-		if (err) {
-			LOG_ERR("nrf_cloud_decode_data_endpoint failed %d",
+	return state_ua_pin_complete();
+}
+
+static int cc_rx_data_handler(const struct nct_evt *nct_evt)
+{
+	int err;
+	enum nfsm_state new_state;
+	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
+	bool config_found = false;
+	const enum nfsm_state current_state = nfsm_get_current_state();
+
+	handle_device_config_update(nct_evt, &config_found);
+
+	err = nrf_cloud_decode_requested_state(payload, &new_state);
+
+	if (err) {
+		if (!config_found) {
+			LOG_ERR("nrf_cloud_decode_requested_state Failed %d",
 				err);
 			return err;
 		}
 
-		/* Set the endpoint information. */
-		nct_dc_endpoint_set(&tx, &rx, &m_endpoint);
-
-		return state_ua_pin_complete();
-	}
-	default: {
-		/* Any other state is ignored. */
+		/* Config only, nothing else to do */
 		return 0;
 	}
-	}
-}
 
-static int initiate_cmd_handler(const struct nct_evt *nct_evt)
-{
-	int err;
-	enum nfsm_state expected_state;
-	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
-
-	err = nrf_cloud_decode_requested_state(payload, &expected_state);
-	if (err) {
-		LOG_ERR("nrf_cloud_decode_requested_state Failed %d", err);
-		return err;
-	}
-
-	/* Validate expected state and take appropriate action. */
-	if (expected_state == STATE_UA_PIN_WAIT) {
-		return state_ua_pin_wait();
-	}
-
-	/* Any other state is ignored. */
-	return 0;
-}
-
-static int initiate_cmd_in_dc_conn_handler(const struct nct_evt *nct_evt)
-{
-	int err;
-	enum nfsm_state expected_state;
-	const struct nrf_cloud_data *payload = &nct_evt->param.cc->data;
-
-	err = nrf_cloud_decode_requested_state(payload, &expected_state);
-	if (err) {
-		LOG_ERR("nrf_cloud_decode_requested_state Failed %d", err);
-		return err;
+	switch (current_state) {
+	case STATE_CC_CONNECTED:
+	case STATE_CLOUD_STATE_REQUESTED:
+	case STATE_UA_PIN_WAIT:
+	case STATE_UA_PIN_COMPLETE:
+		if (new_state == STATE_UA_PIN_COMPLETE) {
+			return handle_pin_complete(nct_evt);
+		} else if (new_state == STATE_UA_PIN_WAIT) {
+			return state_ua_pin_wait();
+		}
+		break;
+	case STATE_DC_CONNECTING:
+	case STATE_DC_CONNECTED:
+		if (new_state == STATE_UA_PIN_WAIT) {
+			(void)nct_dc_disconnect();
+			return state_ua_pin_wait();
+		}
+		break;
+	default:
+		break;
 	}
 
-	/* Validate expected state and take appropriate action. */
-	if (expected_state == STATE_UA_PIN_WAIT) {
-		(void)nct_dc_disconnect();
-		return state_ua_pin_wait();
-	}
-
-	/* Any other state is ignored. */
 	return 0;
 }
 

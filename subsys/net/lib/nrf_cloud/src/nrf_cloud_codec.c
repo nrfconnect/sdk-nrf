@@ -100,7 +100,8 @@ static void nrf_cloud_decode_desired_obj(cJSON *const root_obj,
 	cJSON *state_obj;
 
 	if ((root_obj != NULL) && (desired_obj != NULL)) {
-		/* On initial pairing there is no "desired" JSON key, */
+		/* On initial pairing, a shadow delta event is sent */
+		/* which does not include the "desired" JSON key, */
 		/* "state" is used instead */
 		state_obj = json_object_decode(root_obj, "state");
 		if (state_obj == NULL) {
@@ -231,7 +232,9 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	pairing_state_obj = json_object_decode(pairing_obj, "state");
 
 	if (!pairing_state_obj || pairing_state_obj->type != cJSON_String) {
-		LOG_DBG("No valid state found!");
+		if (cJSON_HasObjectItem(desired_obj, "config") == false) {
+			LOG_DBG("No valid state found!");
+		}
 		cJSON_Delete(root_obj);
 		return -ENOENT;
 	}
@@ -247,6 +250,88 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	}
 
 	cJSON_Delete(root_obj);
+
+	return 0;
+}
+
+int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
+				     struct nrf_cloud_data *const output,
+				     bool *const has_config)
+{
+	__ASSERT_NO_MSG(output != NULL);
+	__ASSERT_NO_MSG(input != NULL);
+
+	char *buffer = NULL;
+	cJSON *root_obj = NULL;
+	cJSON *desired_obj = NULL;
+	cJSON *null_obj = NULL;
+	cJSON *reported_obj = NULL;
+	cJSON *state_obj = NULL;
+	cJSON *config_obj = NULL;
+	cJSON *input_obj = input ? cJSON_Parse(input->ptr) : NULL;
+
+	if (input_obj == NULL) {
+		return -ESRCH; /* invalid input or no JSON parsed */
+	}
+
+	/* A delta update will have the config inside of state */
+	state_obj = cJSON_DetachItemFromObject(input_obj, "state");
+	config_obj = cJSON_DetachItemFromObject(
+		state_obj ? state_obj : input_obj, "config");
+	cJSON_Delete(input_obj);
+
+	if (has_config) {
+		*has_config = (config_obj != NULL);
+	}
+
+	/* If this is not a delta update, no response data is required */
+	if ((state_obj == NULL) || (config_obj == NULL)) {
+		cJSON_Delete(state_obj);
+		cJSON_Delete(config_obj);
+
+		output->ptr = NULL;
+		output->len = 0;
+		return 0;
+	}
+
+	/* Prepare JSON response for the delta */
+	root_obj = cJSON_CreateObject();
+	desired_obj = cJSON_CreateObject();
+	null_obj = cJSON_CreateNull();
+	reported_obj = cJSON_CreateObject();
+
+	if ((root_obj == NULL) || (desired_obj == NULL) || (null_obj == NULL) ||
+		(reported_obj == NULL)) {
+		cJSON_Delete(root_obj);
+		cJSON_Delete(desired_obj);
+		cJSON_Delete(null_obj);
+		cJSON_Delete(reported_obj);
+		cJSON_Delete(config_obj);
+		cJSON_Delete(state_obj);
+		return -ENOMEM;
+	}
+
+	/* Add delta config to reported */
+	(void)json_add_obj(reported_obj, "config", config_obj);
+	(void)json_add_obj(root_obj, "reported", reported_obj);
+
+	/* Add a null config to desired */
+	(void)json_add_obj(desired_obj, "config", null_obj);
+	(void)json_add_obj(root_obj, "desired", desired_obj);
+
+	/* Cleanup received state obj and re-use for the response */
+	cJSON_Delete(state_obj);
+	state_obj = cJSON_CreateObject();
+	(void)json_add_obj(state_obj, "state", root_obj);
+	buffer = cJSON_PrintUnformatted(state_obj);
+	cJSON_Delete(state_obj);
+
+	if (buffer == NULL) {
+		return -ENOMEM;
+	}
+
+	output->ptr = buffer;
+	output->len = strlen(buffer);
 
 	return 0;
 }
