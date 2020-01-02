@@ -475,8 +475,6 @@ def load_reqs(reqs, input_config):
                                            "val1: {} val2: {} ".format(f.name, key, loaded_reqs[key], reqs[key]))
                 reqs.update(loaded_reqs)
 
-    reqs['app'] = dict()
-
 
 def get_dynamic_area_start_and_size(static_config, flash_size):
     # Remove app from this dict to simplify the case where partitions before and after are removed.
@@ -493,33 +491,68 @@ def get_dynamic_area_start_and_size(static_config, flash_size):
     return start, end - start
 
 
-def get_pm_config(input_config, flash_start, flash_size, static_config):
-    to_resolve = dict()
-    start = flash_start
+def get_ram_config(pm_config, ram_start, ram_size, static_conf=None):
+    if static_conf:
+        # Verify that all statically defined ram has given address, and that they are packed at the end of flash
+        starts = {ram_start + ram_size} | {c['ram_address'] for c in static_conf.values() if 'ram_size' in c}
+        ends = {ram_start} | {c['ram_address'] + c['ram_size'] for c in static_conf.values() if 'ram_size' in c}
+        gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
+        if len(gaps) != 1 or gaps[0][0] != ram_start:
+            raise RuntimeError("Statically defined permanent RAM partitions are not packed at the end of RAM region")
 
-    load_reqs(to_resolve, input_config)
+    reserved = sum([config['ram_size'] for name, config in static_conf.items()
+                    if 'ram_size' in config.keys() and name != 'app']) if static_conf else 0
+
+    # Extract all  permanent RAM partitions
+    permanent_ram_partitions = [name for name, props in pm_config.items() if "ram_size" in props.keys()]
+
+    # Point to last address, place static RAM partitions at end of RAM.
+    address = ram_start + ram_size - reserved
+
+    for partition_name in permanent_ram_partitions:
+        address -= pm_config[partition_name]['ram_size']
+        pm_config[partition_name]['ram_address'] = address
+
+    if 'app' not in pm_config:
+        pm_config['app'] = dict()
+
+    # App and all of the rest of the image partitions use the remaining dynamic area.
+    # Note that some of these partitions are not image partitions, but setting these
+    # properties will not have any effect on those.
+    pm_config['app']['ram_address'] = ram_start
+    pm_config['app']['ram_size'] = address - ram_start
+
+    for partition_name in pm_config:
+        if partition_name not in permanent_ram_partitions:
+            pm_config[partition_name]['ram_address'] = pm_config['app']['ram_address']
+            pm_config[partition_name]['ram_size'] = pm_config['app']['ram_size']
+
+
+def get_pm_config(pm_config, flash_start, flash_size, static_config):
+
+    if 'app' not in pm_config:
+        pm_config['app'] = dict()
+
+    start = flash_start
     free_size = flash_size
 
     if static_config:
         start, free_size = get_dynamic_area_start_and_size(static_config, free_size)
-        to_resolve = {name: config for name, config in to_resolve.items()
-                      if name not in static_config.keys() or name == 'app'}
 
         # If nothing is unresolved (only app remaining), simply return the pre defined config with 'app'
-        if len(to_resolve) == 1:
-            to_resolve.update(static_config)
-            to_resolve['app']['address'] = start
-            to_resolve['app']['size'] = free_size
-            return to_resolve
+        if len(pm_config) == 1:
+            pm_config.update(static_config)
+            pm_config['app']['address'] = start
+            pm_config['app']['size'] = free_size
+            return
 
-    solution, sub_partitions = resolve(to_resolve)
-    set_addresses_and_align(to_resolve, sub_partitions, solution, free_size, start)
-    set_sub_partition_address_and_size(to_resolve, sub_partitions)
+    solution, sub_partitions = resolve(pm_config)
+    set_addresses_and_align(pm_config, sub_partitions, solution, free_size, start)
+    set_sub_partition_address_and_size(pm_config, sub_partitions)
 
     if static_config:
         # Merge the results, take the new 'app' as that has the correct size.
-        to_resolve.update({name: config for name, config in static_config.items() if name != 'app'})
-    return to_resolve
+        pm_config.update({name: config for name, config in static_config.items() if name != 'app'})
 
 
 def write_yaml_out_file(pm_config, out_path):
@@ -546,8 +579,14 @@ This file contains all addresses and sizes of all partitions.
     parser.add_argument("--input-files", required=True, type=str, nargs="+",
                         help="List of paths to input yaml files. ")
 
-    parser.add_argument("--flash-size", required=True, type=int,
-                        help="Flash size of chip in kB.")
+    parser.add_argument("--ram-size", required=True, type=lambda x: int(x, 0),
+                        help="RAM size of chip in bytes.")
+
+    parser.add_argument("--ram-start", type=lambda x: int(x, 0), default=0,
+                        help="Start address of RAM.")
+
+    parser.add_argument("--flash-size", required=True, type=lambda x: int(x, 0),
+                        help="Flash size of chip in bytes.")
 
     parser.add_argument("--flash-start", type=lambda x: int(x, 0), default=0,
                         help="Start address of flash.")
@@ -575,13 +614,30 @@ def replace_app_with_dynamic_partition(d, dynamic_partition_name):
 
 
 def main():
+    pm_config = dict()
+
     if len(sys.argv) > 1:
         static_config = None
         args = parse_args()
+
+        # Load all requirements in to 'pm_config'
+        load_reqs(pm_config, args.input_files)
+
         if args.static_config:
-            print("Partition Manager using static configuration at " + args.static_config.name)
             static_config = yaml.safe_load(args.static_config)
-        pm_config = get_pm_config(args.input_files, args.flash_start, args.flash_size * 1024, static_config)
+
+            # Delete all statically defined partitions from the pm_config dict.
+            # This is done since all partitions in pm_config will be resolved.
+            for statically_defined_image in static_config.keys():
+                if statically_defined_image in pm_config:
+                    del pm_config[statically_defined_image]
+
+        # Solve all RAM requirements
+        get_ram_config(pm_config, args.ram_start, args.ram_size, static_config)
+
+        # Solve all FLASH requirements
+        get_pm_config(pm_config, args.flash_start, args.flash_size, static_config)
+
         if args.dynamic_partition:
             pm_config[args.dynamic_partition.strip()] = pm_config['app']
             del pm_config['app']
@@ -650,6 +706,107 @@ def test():
     start, size = get_dynamic_area_start_and_size(test_config, 100)
     assert start == 10
     assert size == 100 - 10
+
+    # Verify that RAM configuration is correct
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'ram_size': 100},
+        'app': {}
+    }
+    get_ram_config(td, ram_size=1000, ram_start=2000)
+    assert td['a']['ram_address'] == 2000
+    assert td['a']['ram_size'] == 900
+    assert td['b']['ram_address'] == 2900
+    assert td['b']['ram_size'] == 100
+    assert td['app']['ram_address'] == 2000
+    assert td['app']['ram_size'] == 900
+
+    # Verify that RAM configuration is correct
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'ram_size': 100},
+        'c': {'ram_size': 200},
+        'd': {'ram_size': 300},
+        'app': {}
+    }
+    get_ram_config(td, ram_size=1000, ram_start=2000)
+    assert td['a']['ram_address'] == 2000
+    assert td['a']['ram_size'] == 400
+    assert td['app']['ram_address'] == 2000
+    assert td['app']['ram_size'] == 400
+    # Can not verify the placement, as this is random
+    assert td['b']['ram_size'] == 100
+    assert td['c']['ram_size'] == 200
+    assert td['d']['ram_size'] == 300
+
+    # Verify that RAM configuration with given static configuration is correct
+    # Re - use 'td' from above
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'ram_size': 100},
+        'c': {'ram_size': 200},
+        'd': {'ram_size': 300},
+        'app': {}
+    }
+    get_ram_config(td,
+                   ram_size=1000, ram_start=2000,
+                   static_conf={'s1': {'ram_size': 100,
+                                       'ram_address': (1000+2000)-100},
+                                's2': {'ram_size': 200,
+                                       'ram_address': (1000+2000)-100-200}})
+
+    assert td['a']['ram_address'] == 2000
+    assert td['a']['ram_size'] == 100  # Note, 300 less than previous test
+    assert td['app']['ram_address'] == 2000
+    assert td['app']['ram_size'] == 100
+    # Can not verify the placement, as this is random
+    assert td['b']['ram_size'] == 100
+    assert td['c']['ram_size'] == 200
+    assert td['d']['ram_size'] == 300
+
+    # Verify that RAM configuration with given static configuration fails if static RAM partitions are not
+    # packed at the end of flash, here there is a space between the two regions
+    failed = False
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'ram_size': 100},
+        'c': {'ram_size': 200},
+        'd': {'ram_size': 300},
+        'app': {}
+    }
+    try:
+        get_ram_config(td,
+                       ram_size=1000, ram_start=2000,
+                       static_conf={'s1': {'ram_size': 100,
+                                           'ram_address': (1000+2000)-100},
+                                    's2': {'ram_size': 200,
+                                           'ram_address': (1000+2000)-100-300}})  # Note 300 not 200
+    except RuntimeError:
+        failed = True
+
+    assert failed
+
+    # Verify that RAM configuration with given static configuration fails if static RAM partitions are not
+    # packed at the end of flash, here the partitions are packed, but does not go to the end of RAM
+    failed = False
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'ram_size': 100},
+        'c': {'ram_size': 200},
+        'd': {'ram_size': 300},
+        'app': {}
+    }
+    try:
+        get_ram_config(td,
+                       ram_size=1000, ram_start=2000,
+                       static_conf={'s1': {'ram_size': 100,
+                                           'ram_address': (1000+2000-50)-100},  # Note - 50
+                                    's2': {'ram_size': 200,
+                                           'ram_address': (1000+2000-50)-100-200}})  # Note - 50
+    except RuntimeError:
+        failed = True
+
+    assert failed
 
     # Verify that all 'one_of' dicts are replaced with the first entry which corresponds to an existing partition
     td = {
@@ -734,12 +891,13 @@ def test():
 
     # Verify that providing a static configuration with nothing unresolved gives a valid configuration with 'app'.
     static_config = {'spm': {'address': 0, 'placement': None, 'before': ['app'], 'size': 400}}
-    pm_config = get_pm_config([], flash_start=0, flash_size=1000, static_config=static_config)
-    assert 'app' in pm_config
-    assert pm_config['app']['address'] == 400
-    assert pm_config['app']['size'] == 600
-    assert 'spm' in pm_config
-    assert pm_config['spm']['address'] == 0
+    test_config = dict()
+    get_pm_config(test_config, flash_start=0, flash_size=1000, static_config=static_config)
+    assert 'app' in test_config
+    assert test_config['app']['address'] == 400
+    assert test_config['app']['size'] == 600
+    assert 'spm' in test_config
+    assert test_config['spm']['address'] == 0
 
     # Test a single partition with alignment where the address is smaller than the alignment value.
     td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},

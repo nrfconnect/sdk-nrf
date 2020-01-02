@@ -24,6 +24,7 @@ def get_header_guard_end(filename):
 DEST_HEADER = 1
 DEST_KCONFIG = 2
 
+
 def get_config_lines(pm_config, head, split, dest):
     config_lines = list()
 
@@ -33,8 +34,12 @@ def get_config_lines(pm_config, head, split, dest):
     def string_of_strings(mlist):
         return '"%s"' % " ".join(["%s" % elem for elem in mlist])
 
+    flash_partition_pm_config = {k: v for k, v in pm_config.items() if 'address' in v}
     partition_id = 0
-    for name, partition in sorted(pm_config.items(), key=lambda key_value_tuple: key_value_tuple[1]['address']):
+    for name, partition in sorted(flash_partition_pm_config.items(),
+                                  key=lambda key_value_tuple: key_value_tuple[1]['address']):
+        add_line("%s_RAM_ADDRESS" % name.upper(), "0x%x" % partition['ram_address'])
+        add_line("%s_RAM_SIZE" % name.upper(), "0x%x" % partition['ram_size'])
         add_line("%s_ADDRESS" % name.upper(), "0x%x" % partition['address'])
         add_line("%s_SIZE" % name.upper(), "0x%x" % partition['size'])
         add_line("%s_ID" % name.upper(), "%d" % partition_id)
@@ -50,15 +55,21 @@ def get_config_lines(pm_config, head, split, dest):
         partition_id += 1
     add_line("NUM", "%d" % partition_id)
 
-    def find_depth(key, depth = 0):
+    # Add configuration of pure RAM partitions, these does not have a partition ID
+    for name, partition in pm_config.items():
+        if 'address' not in partition:
+            add_line("%s_RAM_ADDRESS" % name.upper(), "0x%x" % partition['ram_address'])
+            add_line("%s_RAM_SIZE" % name.upper(), "0x%x" % partition['ram_size'])
+
+    def find_depth(key, depth=0):
         if 'span' in pm_config[key].keys():
             return find_depth(pm_config[key]['span'][0], depth + 1)
         return depth
 
-    all_by_size = list(pm_config.keys())
+    all_by_size = list(flash_partition_pm_config.keys())
 
     all_by_size = sorted(all_by_size, key=find_depth)
-    all_by_size = sorted(all_by_size, key=lambda key: pm_config[key]['size'])
+    all_by_size = sorted(all_by_size, key=lambda key: flash_partition_pm_config[key]['size'])
     add_line("ALL_BY_SIZE", string_of_strings(all_by_size))
 
     return config_lines
@@ -76,6 +87,8 @@ def write_pm_config(pm_config, name, out_path):
     image_config_lines = list.copy(config_lines)
     image_config_lines.append("#define PM_ADDRESS 0x%x" % pm_config[name]['address'])
     image_config_lines.append("#define PM_SIZE 0x%x" % pm_config[name]['size'])
+    image_config_lines.append("#define PM_RAM_ADDRESS 0x%x" % pm_config[name]['ram_address'])
+    image_config_lines.append("#define PM_RAM_SIZE 0x%x" % pm_config[name]['ram_size'])
     image_config_lines.insert(0, get_header_guard_start(pm_config_file))
     image_config_lines.append(get_header_guard_end(pm_config_file))
     write_config_lines_to_file(out_path, image_config_lines)

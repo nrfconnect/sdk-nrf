@@ -3,8 +3,8 @@
 Partition Manager
 #################
 
-The Partition Manager is a Python script that sets the start address and size of all image partitions in a multi-image build context.
-When creating an application that requires child images (for example, a bootloader), you can configure the Partition Manager to control where in memory each image should be placed.
+The Partition Manager is a Python script that sets the start address and size of all flash and RAM partitions in a multi-image build context.
+When creating an application that requires child images (for example, a bootloader), you can configure the Partition Manager to control where in memory each image should be placed, and how the RAM should be shared.
 
 See :ref:`ug_multi_image` for more information about multi-image builds.
 
@@ -15,11 +15,16 @@ The Partition Manager is activated for all multi-image builds, no matter what bu
 Overview
 ********
 
-The Partition Manager script reads configuration files named :file:`pm.yml`, which define flash partitions.
-A partition's definition includes its name and constraints on its size and placement on flash.
+The Partition Manager script reads configuration files named :file:`pm.yml`, which define flash and RAM partitions.
+A flash partition's definition includes its name and constraints on its size and placement on flash.
+A RAM partition's definition includes its name and constraints on its size.
 The Partition Manager allocates a start address and sometimes a size to each partition in a way that satisfies these constraints.
 
-There are different kinds of partitions:
+There are four different kinds of **flash partitions**, and three different kinds of
+**ram partitions**, as described below.
+
+Flash partition types
+=====================
 
 Image partitions
    An image partition is the flash area reserved for an image, to which the image binary is written.
@@ -37,6 +42,28 @@ Container partitions
    A container partition does not reserve space, but is used to logically and/or physically group other partitions.
 
 The start addresses and sizes of image partitions are used in the preprocessing of the linker script for each image.
+
+RAM partition types
+=====================
+
+Image RAM partition (IRP)
+   An IRP is the default RAM partition associated with an image.
+   An IRP uses all RAM which is not defined as permanent image RAM partitions, or placeholder RAM partitions.
+   An images IRP is only reserved while the image is running.
+   Hence, when an image boots the next in the bootloader chain, its IRP is no longer reserved, and will be used as the IRP for the next image.
+   All images has an IRP assigned to it by default.
+   The start address and size of an IRP is used in the preprocessing of the linker script for its corresponding image.
+   The alternative to IRP is Permanent Image RAM partitions (PIRP) described below.
+   Note that an image can only have one type of RAM partition (IRP or PIRP).
+
+Permanent Image RAM Partition (PIRP)
+   A PIRP reserves RAM for an image permanently.
+   This is typically used for images which will "live" after they have booted the next step in the boot chain.
+   The start address and size of a PIRP is used in the preprocessing of the linker script for its corresponding image.
+
+Permanent Placeholder RAM Partitions
+   Permanent Placeholder RAM Partitions are used for reserving RAM regions permanently which are not associated with any images.
+
 
 .. _pm_configuration:
 
@@ -263,6 +290,25 @@ share_size: list
 
    If none of the partitions in the ``share_size`` list exists, and the partition does not define a ``size`` property, then the partition is removed.
    If none of the partitions in the ``share_size`` list exists, and the partition **does** define a ``size`` property, then the ``size`` property is used to set the size.
+
+.. _partition_manager_ram_configuration:
+
+ram_size: int
+   Image partitions with this property will define a Static RAM Image Partition
+   Otherwise partitions with this property defines placeholder RAM partitions
+   See the listing below for examples of valid use.
+
+   .. code-block:: yaml
+      :caption: Example for the ram_size property
+
+      my_image_partition:
+         ram_size: 0x1000  # <- Image 'my_image_partition' will use this for RAM
+         placement:
+           before: app
+         size: 0x80000
+
+      retained_log:
+         ram_size: 0x2000 # <- 'retained_log' is defined as a placeholder RAM partition
 
 All occurrences of a partition name can be replaced with a dict with the key ``one_of``, which is resolved to the first existing partition in the ``one_of`` value.
 An error is raised if no partition inside the ``one_of`` dict exists.
