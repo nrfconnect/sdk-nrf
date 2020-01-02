@@ -89,8 +89,6 @@ OFFSET_CHECK(struct fw_info, address,
 /** @endcond
  */
 
-/* For declaring this firmware's firmware info. */
-#define __fw_info Z_GENERIC_SECTION(.firmware_info) __attribute__((used)) const
 
 /**
  * This struct is meant to serve as a header before a list of function pointers
@@ -122,7 +120,7 @@ struct __packed fw_info_ext_api {
 	BUILD_ASSERT_MSG(offsetof(type, header.member) == value, \
 		"ext_api " #type " has wrong offset for header." #member)
 
-#define __ext_api(type, name) \
+#define EXT_API(type, name) \
 	OFFSET_CHECK_EXT_API(type, magic, 0); \
 	OFFSET_CHECK_EXT_API(type, ext_api_id, CONFIG_FW_INFO_MAGIC_LEN); \
 	OFFSET_CHECK_EXT_API(type, ext_api_flags,\

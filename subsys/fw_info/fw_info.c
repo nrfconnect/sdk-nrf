@@ -39,8 +39,8 @@ int ext_api_getter(u32_t id, u32_t index, const struct fw_info_ext_api **out)
 	return id_found ? -EBADF : -ENOENT;
 }
 
-
-__fw_info struct fw_info m_firmware_info =
+Z_GENERIC_SECTION(.firmware_info) __attribute__((used))
+const struct fw_info m_firmware_info =
 {
 	.magic = {FIRMWARE_INFO_MAGIC},
 	.size = (u32_t)&_flash_used,

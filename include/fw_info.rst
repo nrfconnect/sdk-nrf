@@ -93,12 +93,12 @@ To create an EXT_API, complete the following steps:
    	   } ext_api;
       };
 
-#. Use the :c:macro:`__ext_api` macro to initialize the EXT_API struct in an arbitrary location.
-   :c:macro:`__ext_api` will automatically include the EXT_API in the list provided via :cpp:func:`fw_info_ext_api_provide`.
+#. Use the :c:macro:`EXT_API` macro to initialize the EXT_API struct in an arbitrary location.
+   :c:macro:`EXT_API` will automatically include the EXT_API in the list provided via :cpp:func:`fw_info_ext_api_provide`.
 
    .. code-block:: c
 
-      __ext_api(struct my_ext_api, my_ext_api) = {
+      EXT_API(struct my_ext_api, my_ext_api) = {
    	   .header = FW_INFO_EXT_API_INIT(MY_EXT_API_ID,
    				   CONFIG_MY_EXT_API_FLAGS,
    				   CONFIG_MY_EXT_API_VER,
