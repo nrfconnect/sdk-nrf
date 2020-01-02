@@ -32,9 +32,9 @@ struct fw_info_ext_api;
 /**@brief Function that returns an EXT_API.
  *
  * @param[in]    id      Which EXT_API to get.
- * @param[in]    index   If there are multiple EXT_APIs available with the same ID,
- *                       retrieve the different ones with this.
- * @param[out]   ext_api     Pointer to the ext_api with the given id and index.
+ * @param[in]    index   If there are multiple EXT_APIs available with the same
+ *                       ID, retrieve the different ones with this.
+ * @param[out]   ext_api Pointer to the ext_api with the given id and index.
  *
  * @retval 0        Success.
  * @retval -ENOENT  id not found.
@@ -94,9 +94,9 @@ OFFSET_CHECK(struct fw_info, firmware_address,
 
 /**
  * This struct is meant to serve as a header before a list of function pointers
- * (or something else) that constitute the actual EXT_API. How to use the EXT_API, such
- * as the signatures of all the functions in the list must be unambiguous for an
- * ID/version combination.
+ * (or something else) that constitute the actual EXT_API. How to use the
+ * EXT_API, such as the signatures of all the functions in the list must be
+ * unambiguous for an ID/version combination.
  */
 struct __packed fw_info_ext_api {
 	/* Magic value to verify that the struct has the correct format. */
@@ -125,10 +125,12 @@ struct __packed fw_info_ext_api {
 #define __ext_api(type, name) \
 	OFFSET_CHECK_EXT_API(type, magic, 0); \
 	OFFSET_CHECK_EXT_API(type, ext_api_id, CONFIG_FW_INFO_MAGIC_LEN); \
-	OFFSET_CHECK_EXT_API(type, ext_api_flags, (CONFIG_FW_INFO_MAGIC_LEN + 4)); \
+	OFFSET_CHECK_EXT_API(type, ext_api_flags,\
+				(CONFIG_FW_INFO_MAGIC_LEN + 4)); \
 	OFFSET_CHECK_EXT_API(type, ext_api_version,\
 				(CONFIG_FW_INFO_MAGIC_LEN + 8)); \
-	OFFSET_CHECK_EXT_API(type, ext_api_len, (CONFIG_FW_INFO_MAGIC_LEN + 12)); \
+	OFFSET_CHECK_EXT_API(type, ext_api_len,\
+				(CONFIG_FW_INFO_MAGIC_LEN + 12)); \
 	BUILD_ASSERT_MSG((sizeof(type) % 4) == 0, \
 			"ext_api " #type " is not word-aligned"); \
 	extern const type name; \
@@ -270,10 +272,13 @@ static inline const struct fw_info *fw_info_find(u32_t firmware_address)
 
 
 /* Check a fw_info_ext_api pointer. */
-static inline bool fw_info_ext_api_check(const struct fw_info_ext_api *ext_api_info)
+static inline bool fw_info_ext_api_check(
+				const struct fw_info_ext_api *ext_api_info)
 {
 	const u32_t ext_api_info_magic[] = {EXT_API_MAGIC};
-	return memeq(ext_api_info->magic, ext_api_info_magic, CONFIG_FW_INFO_MAGIC_LEN);
+
+	return memeq(ext_api_info->magic, ext_api_info_magic,
+		CONFIG_FW_INFO_MAGIC_LEN);
 }
 
 
@@ -291,8 +296,8 @@ void fw_info_ext_api_provide(const struct fw_info *fwinfo);
 /**Get a single EXT_API.
  *
  * @param[in]    id      Which EXT_API to get.
- * @param[in]    index   If there are multiple EXT_APIs available with the same ID,
- *                       retrieve the different ones with this.
+ * @param[in]    index   If there are multiple EXT_APIs available with the same
+ *                       ID, retrieve the different ones with this.
  *
  * @return The EXT_API, or NULL, if it wasn't found.
  */
@@ -301,10 +306,11 @@ const struct fw_info_ext_api *fw_info_ext_api_get(u32_t id, u32_t index);
 /**Find an EXT_API based on a version range.
  *
  * @param[in]  id           The ID of the EXT_API to find.
- * @param[in]  flags        The required flags of the EXT_API to find. The returned
- *                          EXT_API may have other flags set as well.
+ * @param[in]  flags        The required flags of the EXT_API to find. The
+ *                          returned EXT_API may have other flags set as well.
  * @param[in]  min_version  The minimum acceptable EXT_API version.
- * @param[in]  max_version  One more than the maximum acceptable EXT_API version.
+ * @param[in]  max_version  One more than the maximum acceptable EXT_API
+ *                          version.
  *
  * @return The EXT_API, or NULL if none was found.
  */

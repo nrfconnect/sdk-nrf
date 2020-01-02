@@ -27,6 +27,7 @@ int ext_api_getter(u32_t id, u32_t index, const struct fw_info_ext_api **out)
 
 	for (u32_t i = 0; i < (u32_t)&_ext_apis_size; i++) {
 		const struct fw_info_ext_api *ext_api = _ext_apis_start[i];
+
 		if (ext_api->ext_api_id == id) {
 			id_found = true;
 			if (index-- == 0) {
