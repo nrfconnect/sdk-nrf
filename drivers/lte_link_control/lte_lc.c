@@ -31,8 +31,9 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_CEREG_5				"AT+CEREG=5"
 #define AT_CEREG_READ				"AT+CEREG?"
 #define AT_CEREG_RESPONSE_PREFIX		"+CEREG"
-#define AT_CEREG_PARAMS_COUNT			10
+#define AT_CEREG_PARAMS_COUNT_MAX		10
 #define AT_CEREG_REG_STATUS_INDEX		1
+#define AT_CEREG_READ_REG_STATUS_INDEX		2
 #define AT_CEREG_ACTIVE_TIME_INDEX		8
 #define AT_CEREG_TAU_INDEX			9
 #define AT_CEREG_RESPONSE_MAX_LEN		80
@@ -51,7 +52,8 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 /* Forward declarations */
 static int parse_nw_reg_status(const char *at_response,
-			       enum lte_lc_nw_reg_status *status);
+			       enum lte_lc_nw_reg_status *status,
+			       size_t reg_status_index);
 static bool response_is_valid(const char *response, size_t response_len,
 			      const char *check);
 
@@ -147,7 +149,7 @@ void at_handler(void *context, char *response)
 		return;
 	}
 
-	err = parse_nw_reg_status(response, &status);
+	err = parse_nw_reg_status(response, &status, AT_CEREG_REG_STATUS_INDEX);
 	if (err) {
 		LOG_ERR("Could not get network registration status");
 		return;
@@ -384,7 +386,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 		return err;
 	}
 
-	err = at_params_list_init(&at_resp_list, AT_CEREG_PARAMS_COUNT);
+	err = at_params_list_init(&at_resp_list, AT_CEREG_PARAMS_COUNT_MAX);
 	if (err) {
 		LOG_ERR("Could not init AT params list, error: %d", err);
 		return err;
@@ -393,7 +395,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	err = at_parser_max_params_from_str(buf,
 					    NULL,
 					    &at_resp_list,
-					    AT_CEREG_PARAMS_COUNT);
+					    AT_CEREG_PARAMS_COUNT_MAX);
 	if (err) {
 		LOG_ERR("Could not parse AT+CEREG response, error: %d", err);
 		goto parse_psm_clean_exit;
@@ -524,7 +526,8 @@ static bool response_is_valid(const char *response, size_t response_len,
  * @return Zero on success or (negative) error code otherwise.
  */
 static int parse_nw_reg_status(const char *at_response,
-			       enum lte_lc_nw_reg_status *status)
+			       enum lte_lc_nw_reg_status *status,
+			       size_t reg_status_index)
 {
 	int err, reg_status;
 	struct at_param_list resp_list = {0};
@@ -535,7 +538,7 @@ static int parse_nw_reg_status(const char *at_response,
 		return -EINVAL;
 	}
 
-	err = at_params_list_init(&resp_list, AT_CEREG_PARAMS_COUNT);
+	err = at_params_list_init(&resp_list, AT_CEREG_PARAMS_COUNT_MAX);
 	if (err) {
 		LOG_ERR("Could not init AT params list, error: %d", err);
 		return err;
@@ -545,7 +548,7 @@ static int parse_nw_reg_status(const char *at_response,
 	err = at_parser_max_params_from_str(at_response,
 					    NULL,
 					    &resp_list,
-					    AT_CEREG_PARAMS_COUNT);
+					    AT_CEREG_PARAMS_COUNT_MAX);
 	if (err) {
 		LOG_ERR("Could not parse AT+CEREG response, error: %d", err);
 		goto clean_exit;
@@ -569,7 +572,7 @@ static int parse_nw_reg_status(const char *at_response,
 	}
 
 	/* Get the network registration status parameter from the response */
-	err = at_params_int_get(&resp_list, AT_CEREG_REG_STATUS_INDEX,
+	err = at_params_int_get(&resp_list, reg_status_index,
 				&reg_status);
 	if (err) {
 		LOG_ERR("Could not get registration status, error: %d", err);
@@ -623,7 +626,7 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 		return err;
 	}
 
-	err = parse_nw_reg_status(buf, status);
+	err = parse_nw_reg_status(buf, status, AT_CEREG_READ_REG_STATUS_INDEX);
 	if (err) {
 		LOG_ERR("Could not parse registration status, err: %d", err);
 		return err;
