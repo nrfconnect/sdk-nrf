@@ -5,6 +5,20 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+config $(EXT_API)_EXT_API_REQUIRED
+	bool "Use the $(EXT_API) EXT_API."
+	default n
+	help
+	  Include client code for this EXT_API. This also puts a request for
+	  this EXT_API into the firmware info.
+
+config $(EXT_API)_EXT_API_ENABLED
+	bool "Provide the $(EXT_API) EXT_API to other images."
+	default n
+	help
+	  Provide this EXT_API to other images.
+
+if ($(EXT_API)_EXT_API_ENABLED || $(EXT_API)_EXT_API_REQUIRED)
 config $(EXT_API)_EXT_API_FLAGS
 	int
 	default $(flags)
@@ -23,3 +37,4 @@ config $(EXT_API)_EXT_API_MAX_VER
 	default 255
 	help
 	  The maximum requested version for the $(EXT_API) EXT_API.
+endif

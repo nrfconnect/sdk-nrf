@@ -14,6 +14,9 @@ config MCUBOOT_BUILD_S1_VARIANT
 
 config SECURE_BOOT_CRYPTO_CLIENT
 	bool "Include Secure Bootloader crypto client API"
+	imply BL_ROT_VERIFY_EXT_API_REQUIRED
+	imply BL_SHA256_EXT_API_REQUIRED
+	imply BL_SECP256R1_EXT_API_REQUIRED
 	help
 	  Set this option to enable the crypto client API
 	  which gives access to the cryptographic functions
