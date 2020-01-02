@@ -155,48 +155,6 @@ struct __packed fw_info_ext_api {
 	typedef retval (*name ## _t) (__VA_ARGS__); \
 	retval name (__VA_ARGS__)
 
-
-/* All parameters must be word-aligned */
-static inline bool memeq_32(const void *expected, const void *actual, u32_t len)
-{
-	__ASSERT(!((u32_t)expected % 4)
-	      && !((u32_t)actual % 4)
-	      && !((u32_t)len % 4),
-		"A parameter is unaligned.");
-	const u32_t *expected_32 = (const u32_t *) expected;
-	const u32_t *actual_32   = (const u32_t *) actual;
-
-	for (u32_t i = 0; i < (len / sizeof(u32_t)); i++) {
-		if (expected_32[i] != actual_32[i]) {
-			return false;
-		}
-	}
-	return true;
-}
-
-static inline bool memeq_8(const void *expected, const void *actual, u32_t len)
-{
-	const u8_t *expected_8 = (const u8_t *) expected;
-	const u8_t *actual_8   = (const u8_t *) actual;
-
-	for (u32_t i = 0; i < len; i++) {
-		if (expected_8[i] != actual_8[i]) {
-			return false;
-		}
-	}
-	return true;
-}
-
-static inline bool memeq(const void *expected, const void *actual, u32_t len)
-{
-	if (((u32_t)expected % 4) || ((u32_t)actual % 4) || ((u32_t)len % 4)) {
-		/* Parameters are not word aligned. */
-		return memeq_8(expected, actual, len);
-	} else {
-		return memeq_32(expected, actual, len);
-	}
-}
-
 /* Check and provide a pointer to a firmware_info structure.
  *
  * @return pointer if valid, NULL if not.
@@ -207,7 +165,8 @@ static inline const struct fw_info *fw_info_check(u32_t fw_info_addr)
 	const u32_t fw_info_magic[] = {FIRMWARE_INFO_MAGIC};
 
 	finfo = (const struct fw_info *)(fw_info_addr);
-	if (memeq(finfo->magic, fw_info_magic, CONFIG_FW_INFO_MAGIC_LEN)) {
+	if (memcmp(finfo->magic, fw_info_magic, CONFIG_FW_INFO_MAGIC_LEN)
+		== 0) {
 		return finfo;
 	}
 	return NULL;
@@ -275,8 +234,8 @@ static inline bool fw_info_ext_api_check(
 {
 	const u32_t ext_api_info_magic[] = {EXT_API_MAGIC};
 
-	return memeq(ext_api_info->magic, ext_api_info_magic,
-		CONFIG_FW_INFO_MAGIC_LEN);
+	return memcmp(ext_api_info->magic, ext_api_info_magic,
+			CONFIG_FW_INFO_MAGIC_LEN) == 0;
 }
 
 

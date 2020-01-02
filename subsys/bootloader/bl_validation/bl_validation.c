@@ -66,8 +66,8 @@ static bool validation_info_check(const struct fw_validation_info *vinfo)
 {
 	const u32_t validation_info_magic[] = {VALIDATION_INFO_MAGIC};
 
-	if (memeq(vinfo->magic, validation_info_magic,
-						CONFIG_FW_INFO_MAGIC_LEN)) {
+	if (memcmp(vinfo->magic, validation_info_magic,
+					CONFIG_FW_INFO_MAGIC_LEN) == 0) {
 		return vinfo;
 	}
 	return NULL;
