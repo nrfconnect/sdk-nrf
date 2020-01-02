@@ -25,4 +25,6 @@ rsource "multithreading_lock/Kconfig"
 rsource "fatal_error/Kconfig"
 rsource "modem_key_mgmt/Kconfig"
 
+rsource "nrf9160_timestamp/Kconfig"
+
 endmenu
