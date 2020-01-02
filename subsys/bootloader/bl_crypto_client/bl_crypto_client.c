@@ -18,7 +18,7 @@ const struct fw_info_ext_api *get_bl_crypto_ext_api(enum ext_api_index ext_api)
 	static const struct fw_info_ext_api *bl_crypto_ext_apis[LAST] = {NULL};
 
 	if (!bl_crypto_ext_apis[ext_api]) {
-		switch(ext_api) {
+		switch (ext_api) {
 		case BL_ROT_VERIFY:
 			bl_crypto_ext_apis[ext_api] = fw_info_ext_api_find(
 					BL_ROT_VERIFY_EXT_API_ID,
@@ -44,7 +44,7 @@ const struct fw_info_ext_api *get_bl_crypto_ext_api(enum ext_api_index ext_api)
 			k_oops();
 		}
 	}
-	if (!bl_crypto_ext_apis[ext_api]){
+	if (!bl_crypto_ext_apis[ext_api]) {
 		k_oops();
 	}
 	return bl_crypto_ext_apis[ext_api];
@@ -52,30 +52,34 @@ const struct fw_info_ext_api *get_bl_crypto_ext_api(enum ext_api_index ext_api)
 
 const struct bl_rot_verify_ext_api *get_bl_rot_verify_ext_api(void)
 {
-	return (const struct bl_rot_verify_ext_api *)get_bl_crypto_ext_api(BL_ROT_VERIFY);
+	return (const struct bl_rot_verify_ext_api *)get_bl_crypto_ext_api(
+								BL_ROT_VERIFY);
 }
 
 const struct bl_sha256_ext_api *get_bl_sha256_ext_api(void)
 {
-	return (const struct bl_sha256_ext_api *)get_bl_crypto_ext_api(BL_SHA256);
+	return (const struct bl_sha256_ext_api *)get_bl_crypto_ext_api(
+								BL_SHA256);
 }
 
 const struct bl_secp256r1_ext_api *get_bl_secp256r1_ext_api(void)
 {
-	return (const struct bl_secp256r1_ext_api *)get_bl_crypto_ext_api(BL_SECP256R1);
+	return (const struct bl_secp256r1_ext_api *)get_bl_crypto_ext_api(
+								BL_SECP256R1);
 }
 
 int bl_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
 			 const u8_t *signature, const u8_t *firmware,
 			 const u32_t firmware_len)
 {
-	return get_bl_rot_verify_ext_api()->ext_api.bl_root_of_trust_verify(public_key,
-			public_key_hash, signature, firmware, firmware_len);
+	return get_bl_rot_verify_ext_api()->ext_api.bl_root_of_trust_verify(
+		public_key, public_key_hash, signature, firmware, firmware_len);
 }
 
 int bl_sha256_init(bl_sha256_ctx_t *ctx)
 {
-	if (sizeof(*ctx) < get_bl_sha256_ext_api()->ext_api.bl_sha256_ctx_size) {
+	if (sizeof(*ctx)
+		< get_bl_sha256_ext_api()->ext_api.bl_sha256_ctx_size) {
 		return -EFAULT;
 	}
 	return get_bl_sha256_ext_api()->ext_api.bl_sha256_init(ctx);
@@ -83,7 +87,8 @@ int bl_sha256_init(bl_sha256_ctx_t *ctx)
 
 int bl_sha256_update(bl_sha256_ctx_t *ctx, const u8_t *data, u32_t data_len)
 {
-	return get_bl_sha256_ext_api()->ext_api.bl_sha256_update(ctx, data, data_len);
+	return get_bl_sha256_ext_api()->ext_api.bl_sha256_update(ctx, data,
+								data_len);
 }
 
 int bl_sha256_finalize(bl_sha256_ctx_t *ctx, u8_t *output)
@@ -93,10 +98,13 @@ int bl_sha256_finalize(bl_sha256_ctx_t *ctx, u8_t *output)
 
 int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
 {
-	return get_bl_sha256_ext_api()->ext_api.bl_sha256_verify(data, data_len, expected);
+	return get_bl_sha256_ext_api()->ext_api.bl_sha256_verify(data, data_len,
+								expected);
 }
 
-int bl_secp256r1_validate(const u8_t *hash, u32_t hash_len, const u8_t *public_key, const u8_t *signature)
+int bl_secp256r1_validate(const u8_t *hash, u32_t hash_len,
+				const u8_t *public_key, const u8_t *signature)
 {
-	return get_bl_secp256r1_ext_api()->ext_api.bl_secp256r1_validate(hash, hash_len, public_key, signature);
+	return get_bl_secp256r1_ext_api()->ext_api.bl_secp256r1_validate(hash,
+					hash_len, public_key, signature);
 }
