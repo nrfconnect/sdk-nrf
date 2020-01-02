@@ -3,7 +3,7 @@
 MPSL timeslot
 #############
 
-This sample demonstrates how to use :ref:`nrfxlib:mpsl` and basic MPSL Timeslot functionality.
+This sample demonstrates how to use :ref:`nrfxlib:mpsl_readme` and basic MPSL Timeslot functionality.
 
 Overview
 ********
@@ -56,7 +56,7 @@ Dependencies
 
 This sample uses the following `nrfxlib`_ libraries:
 
-* :ref:`nrfxlib:mpsl`
+* :ref:`nrfxlib:mpsl_readme`
 
 In addition, it uses the following Zephyr libraries:
 
