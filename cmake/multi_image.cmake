@@ -53,6 +53,9 @@ function(add_child_image name sourcedir)
   if (CONFIG_${UPNAME}_BUILD_STRATEGY_USE_HEX_FILE)
     assert_exists(CONFIG_${UPNAME}_HEX_FILE)
     message("Using ${CONFIG_${UPNAME}_HEX_FILE} instead of building ${name}")
+
+    # Set property so that the hex file is merged in by partition manager.
+    set_property(GLOBAL PROPERTY ${name}_PM_HEX_FILE ${CONFIG_${UPNAME}_HEX_FILE})
   elseif (CONFIG_${UPNAME}_BUILD_STRATEGY_SKIP_BUILD)
     message("Skipping building of ${name}")
   else()
