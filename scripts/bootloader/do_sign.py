@@ -6,7 +6,6 @@
 
 
 import sys
-import os
 import argparse
 import hashlib
 from ecdsa import SigningKey

@@ -56,7 +56,8 @@ def get_config_lines(pm_config, head, split, dest):
         return depth
 
     all_by_size = list(pm_config.keys())
-    all_by_size = sorted(all_by_size, key=lambda key: find_depth(key))
+
+    all_by_size = sorted(all_by_size, key=find_depth)
     all_by_size = sorted(all_by_size, key=lambda key: pm_config[key]['size'])
     add_line("ALL_BY_SIZE", string_of_strings(all_by_size))
 
