@@ -283,15 +283,28 @@ def set_addresses_and_align(reqs, sub_partitions, solution, size, start=0):
     verify_layout(reqs, solution, size)
 
 
+def first_partition_has_been_aligned(first, solution):
+    return 'placement' in first and 'align' in first['placement'] and 'end' in first['placement']['align'] \
+           and solution[1] == 'EMPTY_0'
+
+
 def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions):
-    # Perform address assignment and alignment in two steps, first from start to app, and the from end to app.
-    for i in range(1, solution.index('app') + 1):
+    # Perform address assignment and alignment in two steps, first from start to app, then from end to app.
+    for i in range(0, solution.index('app') + 1):
         current = solution[i]
-        previous = solution[i - 1]
 
-        reqs[current]['address'] = reqs[previous]['address'] + reqs[previous]['size']
+        if i != 0:
+            previous = solution[i - 1]
+            reqs[current]['address'] = reqs[previous]['address'] + reqs[previous]['size']
 
-        if align_if_required(i, dynamic_partitions, True, reqs, solution):
+        # To avoid messing with vector table, don't store empty partition as the first.
+        insert_empty_partition_before = i != 0
+
+        # Special handling is needed when aligning the first partition
+        if i == 0 and first_partition_has_been_aligned(reqs[current], solution):
+            continue
+
+        if align_if_required(i, dynamic_partitions, insert_empty_partition_before, reqs, solution):
             _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions)
 
     for i in range(len(solution) - 1, solution.index('app'), -1):
@@ -332,7 +345,8 @@ def align_partition(current, reqs, move_up, dynamic_partitions):
             reqs[current]['address'] += required_offset
         else:
             empty_partition_address = reqs[current]['address'] + reqs[current]['size']
-            reqs[current]['address'] -= required_offset
+            if reqs[current]['address'] != 0:  # Special handling for the first partition as it cannot be moved down
+                reqs[current]['address'] -= required_offset
     elif not move_up:
         empty_partition_address, empty_partition_size = \
             align_dynamic_partition(dynamic_partitions, current, reqs, required_offset)
@@ -379,7 +393,11 @@ def get_required_offset(align, start, size, move_up):
     if move_up:
         return align['start'] - (start % align['start']) if align_start else align['end'] - (end % align['end'])
     else:
-        return start % align['start'] if align_start else end % align['end']
+        if align_start:
+            return start % align['start']
+        else:
+            # Special handling is needed if start is 0 since this partition can not be moved down
+            return end % align['end'] if start != 0 else align['end'] - (end % align['end'])
 
 
 def set_size_addr(entry, size, address):
@@ -590,6 +608,27 @@ def test():
     except RuntimeError:
         failed = True
     assert failed
+
+    # Verify that offset is correct when aligning partition not at address 0
+    offset = get_required_offset(align={'end': 800}, start=1400, size=100, move_up=False)
+    assert offset == 700
+
+    # Verify that offset is correct when aligning partition at address 0
+    offset = get_required_offset(align={'end': 800}, start=0, size=100, move_up=False)
+    assert offset == 700
+
+    # Verify that offset is correct when aligning partition at address 0
+    # and end of first partition is larger than the required alignment.
+    offset = get_required_offset(align={'end': 800}, start=0, size=1000, move_up=False)
+    assert offset == 600
+
+    # Verify that the first partition can be aligned, and that the inserted empty partition is placed behind it.
+    td = {'first': {'placement': {'before': 'app', 'align': {'end': 800}}, 'size': 100}, 'app': {}}
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'EMPTY_0', 100, 700)
+    expect_addr_size(td, 'app', 800, 200)
 
     # Verify that providing a static configuration with nothing unresolved gives a valid configuration with 'app'.
     static_config = {'spm': {'address': 0, 'placement': None, 'before': ['app'], 'size': 400}}
