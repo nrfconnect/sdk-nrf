@@ -5,11 +5,10 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 
-from subprocess import Popen, PIPE, STDOUT, check_output
+from subprocess import check_output
 import re
 import sys
 import argparse
-import ecdsa
 
 
 def get_ecdsa_signature(der, clength):
@@ -27,11 +26,13 @@ def get_ecdsa_signature(der, clength):
     # The following code parses the output of openssl asnparse which prints
     # the values in hex, together with human-readble metadata.
 
+    # Disable pylint error as 'input' keyword has specific handling in 'check_output'
+    # pylint: disable=unexpected-keyword-arg
     stdout = check_output(["openssl", "asn1parse", "-inform", "der"], input=der)
     sig = b"".join([bytes.fromhex(re.search(r"(?<=\:)([0-9A-F]+)", num)[0]).ljust(clength, b'\0') \
                     for num in re.findall(r"INTEGER *\:[0-9A-F]+", stdout.decode())])
 
-    assert(len(sig) == 2*clength)
+    assert len(sig) == 2*clength
     return sig
 
 
@@ -55,7 +56,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    assert(args.alg == "ecdsa")  # Only ecdsa is currently supported.
+    assert args.alg == "ecdsa"  # Only ecdsa is currently supported.
     if args.alg == "ecdsa":
         if args.contents == "signature":
             sys.stdout.buffer.write(get_ecdsa_signature(args.infile.read(), 32))

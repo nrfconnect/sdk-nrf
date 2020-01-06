@@ -39,9 +39,3 @@ if __name__ == "__main__":
         vk = sk.get_verifying_key()
         vk.to_pem()
         args.out.write(vk.to_pem())
-
-
-
-
-
-
