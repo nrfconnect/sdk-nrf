@@ -104,6 +104,10 @@ placement: dict
          Only one key can be specified.
          Partitions which directly or indirectly (through spans) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
 
+         If the value of the align dict is not interpreted as an integer type, the alignment requirement is discarded.
+         This can be used to have conditional alignment by using a Kconfig option preprocessor macro as the value for the align dict.
+         If the Kconfig value is not set, the macro will not be replaced by an integer, and the alignment requirement will be discarded.
+
 
 span: list OR dict: list
    If the value type is a list, this property lists which partitions this partition should span across.

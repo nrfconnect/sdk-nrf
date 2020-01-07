@@ -370,6 +370,11 @@ def get_required_offset(align, start, size, move_up):
     if len(align) != 1 or ('start' not in align and 'end' not in align):
         raise RuntimeError("Invalid alignment requirement {}".format(align))
 
+    # As Kconfig preprocessor options are used as values, we need to ignore any non-int value, as it indicates
+    # that there shall be no alignment.
+    if not isinstance(align['start' if 'start' in align else 'end'], int):
+        return 0
+
     end = start + size
     align_start = 'start' in align
 
