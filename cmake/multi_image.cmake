@@ -30,13 +30,17 @@ function(image_board_selection board_in board_out)
   # images defined.
   # TODO: Allow multiple non-secure images by using Kconfig to set the
   # secure/non-secure property rather than using a separate board definition.
-  if(${board_in} STREQUAL nrf9160_pca10090ns)
-    set(${board_out} nrf9160_pca10090 PARENT_SCOPE)
-    message("Changed board to secure nrf9160_pca10090 (NOT NS)")
+  set(nonsecure_boards_with_ns_suffix
+    nrf9160_pca10090ns
+    nrf9160_pca20035ns
+    )
+  if(${board_in} IN_LIST nonsecure_boards_with_ns_suffix)
+    string(LENGTH ${board_in} len)
+    math(EXPR len_without_suffix "${len} - 2")
+    string(SUBSTRING ${board_in} 0 ${len_without_suffix} board_in_without_suffix)
 
-  elseif(${board_in} STREQUAL nrf9160_pca20035ns)
-    set(${board_out} nrf9160_pca20035 PARENT_SCOPE)
-    message("Changed board to secure nrf9160_pca20035 (NOT NS)")
+    set(${board_out} ${board_in_without_suffix} PARENT_SCOPE)
+    message("Changed board to secure ${board_in_without_suffix} (NOT NS)")
 
   elseif(${board_in} STREQUAL actinius_icarus_ns)
     set(${board_out} actinius_icarus PARENT_SCOPE)
