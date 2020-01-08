@@ -67,6 +67,7 @@ config FW_INFO_HARDWARE_ID
 	range 0 255
 	default 51 if SOC_SERIES_NRF51X
 	default 52 if SOC_SERIES_NRF52X
+	default 53 if SOC_SERIES_NRF53X
 	default 91 if SOC_SERIES_NRF91X
 	help
 	  Used to ensure binary compatibility.
