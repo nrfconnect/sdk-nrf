@@ -10,3 +10,13 @@ config FPROTECT
 	help
 	  Use hardware peripherals (BPROT, ACL, or SPU) to write-protect
 	  regions of flash until next reset.
+
+if FPROTECT
+config FPROTECT_BLOCK_SIZE
+	int "Block size of fprotect"
+	default 32768 if SOC_NRF9160
+	default 16384 if SOC_NRF5340_CPUAPP
+	default $(dt_int_val,DT_SOC_NV_FLASH_1000000_ERASE_BLOCK_SIZE) if SOC_NRF5340_CPUNET
+	default $(dt_int_val,DT_SOC_NV_FLASH_0_ERASE_BLOCK_SIZE)
+endif
+
