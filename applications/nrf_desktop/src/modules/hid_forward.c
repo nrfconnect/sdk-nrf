@@ -480,6 +480,8 @@ static void handle_config_forward(const struct config_forward_event *event)
 	if (event->status == CONFIG_STATUS_FETCH) {
 		LOG_INF("Forwarding fetch request");
 		frame.status = CONFIG_STATUS_FETCH;
+	} else {
+		frame.status = CONFIG_STATUS_PENDING;
 	}
 
 	frame.recipient = event->recipient;
