@@ -40,6 +40,8 @@ int fprotect_area(u32_t start, size_t length)
 	u32_t block_end   = (start + length) / BPROT_REGIONS_SIZE;
 	u32_t block_mask[BPROT_CONFIGS_NUM] = {0};
 
+	BUILD_ASSERT(BPROT_REGIONS_SIZE == CONFIG_FPROTECT_BLOCK_SIZE);
+
 	if ((start % BPROT_REGIONS_SIZE) ||
 	    (length % BPROT_REGIONS_SIZE) ||
 	    (block_end > BPROT_REGIONS_NUM) ||

@@ -13,7 +13,7 @@ s0_pad:
   share_size: mcuboot_pad
   placement:
     after: b0
-    align: {start: DT_FLASH_ERASE_BLOCK_SIZE}
+    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 
 s0_image:
   # S0 spans over the image booted by B0
@@ -33,7 +33,9 @@ s1_pad:
 s1_image:
   # This partition will only exist if mcuboot exists.
   share_size: mcuboot
-  placement: {after: s1_pad}
+  placement:
+    after: s1_pad
+    align: {end: CONFIG_FPROTECT_BLOCK_SIZE}
 
 s1:
   # Partition which contains the whole S1 partition.
