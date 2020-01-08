@@ -3,8 +3,8 @@
 Partition Manager
 #################
 
-Partition Manager is a Python script that sets the start address and size of all image partitions in a multi-image build context.
-When creating an application that requires child images (for example, a bootloader), you can configure Partition Manager to control where in memory each image should be placed.
+The Partition Manager is a Python script that sets the start address and size of all image partitions in a multi-image build context.
+When creating an application that requires child images (for example, a bootloader), you can configure the Partition Manager to control where in memory each image should be placed.
 
 See :ref:`ug_multi_image` for more information about multi-image builds.
 
@@ -47,7 +47,7 @@ This file must be stored in the same folder as the main :file:`CMakeLists.txt` f
    The root application does not need to define a :file:`pm.yml` file, because its partition size and placement is implied by the size and placement of the child image partitions.
    If a root application defines a :file:`pm.yml` file, it is silently ignored.
 
-Partition Manager configuration can be also provided by a subsystem.
+The Partition Manager configuration can be also provided by a subsystem.
 Subsystem Partition Manager configurations cannot define image partitions.
 
 There are some limitations when multiple images include the same subsystem which defines a Partition Manager configuration.
@@ -291,12 +291,12 @@ Both kinds of files contain, among other information, the start address and size
 
 Usage
 =====
-The output that Partition Manager generates can be used in various areas of your code.
+The output that the Partition Manager generates can be used in various areas of your code.
 
 C code
 ------
-When Partition Manager is enabled, all source files are compiled with the define ``USE_PARTITION_MANAGER`` set to 1.
-If you use this define in your code, the preprocessor can choose what code to include depending on whether Partition Manager is being used.
+When the Partition Manager is enabled, all source files are compiled with the define ``USE_PARTITION_MANAGER`` set to 1.
+If you use this define in your code, the preprocessor can choose what code to include depending on whether the Partition Manager is being used.
 
 .. code-block:: C
 
@@ -308,7 +308,8 @@ If you use this define in your code, the preprocessor can choose what code to in
 
 HEX files
 ---------
-Partition Manager may implicitly or explicitly assign a HEX file to a partition.
+
+The Partition Manager may implicitly or explicitly assign a HEX file to a partition.
 
 Image partitions are implicitly assigned the compiled HEX file, i.e. the HEX file that is generated when building the corresponding image.
 Container partitions are implicitly assigned the result of merging the HEX files that are assigned to the underlying partitions.
@@ -335,7 +336,7 @@ See the following example, which assigns a cryptographically signed HEX file bui
    )
 
 
-As output, Partition Manager creates a HEX file called :file:`merged.hex`, which is programmed to the board when calling ``ninja flash``.
+As output, the Partition Manager creates a HEX file called :file:`merged.hex`, which is programmed to the board when calling ``ninja flash``.
 When creating :file:`merged.hex`, all assigned HEX files are included in the merge operation.
 If the HEX files overlap, the conflict is resolved as follows:
 
@@ -353,13 +354,13 @@ When using the Partition Manager, run ``ninja rom_report`` to see the addresses 
 
 CMake
 -----
-The CMake variables from Partition Manager are typically used through `generator expressions`_, because these variables are only made available late in the CMake configure stage.
+The CMake variables from the Partition Manager are typically used through `generator expressions`_, because these variables are only made available late in the CMake configure stage.
 To read a Partition Manager variable through a generator expression, the variable must be assigned as a target property.
-Partition Manager stores all variables as target properties on the ``partition_manager`` target,
+The Partition Manager stores all variables as target properties on the ``partition_manager`` target,
 which means they can be used in generator expressions in the following way.
 
 .. code-block:: none
-   :caption: Reading partition manager variables in generator expressions.
+   :caption: Reading Partition Manager variables in generator expressions
 
    --slot-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PARTITIONS_PRIMARY_SIZE>
 
@@ -367,15 +368,15 @@ which means they can be used in generator expressions in the following way.
 
 Static configuration
 ********************
-By default, Partition Manager dynamically places the partitions in memory.
+By default, the Partition Manager dynamically places the partitions in memory.
 However, if you have a deployed product that consists of multiple images, where only a subset of the included images can be upgraded through a firmware update mechanism, the upgradable images must be statically configured.
 For example, if a device includes a non-upgradable first-stage bootloader and an upgradable application, the application image to be upgraded must be linked to the same address as the one that is deployed.
 
-For this purpose, Partition Manager provides static configuration to define static partitions.
+For this purpose, the Partition Manager provides static configuration to define static partitions.
 The area used by the static partitions is called the *static area*.
 The static area comes in addition to the *dynamic area*, which consists of the ``app`` partition and all memory adjacent to the ``app`` partition that is not occupied by a static partition.
 Note that there is only one dynamic area.
-When Partition Manager is executed, it operates only on the dynamic area, assuming that all other memory is reserved.
+When the Partition Manager is executed, it operates only on the dynamic area, assuming that all other memory is reserved.
 
 Within the dynamic area, you can define new partitions or configure existing partitions even if you are using static partitions.
 The dynamic area is resized as required when updating the static configuration.
