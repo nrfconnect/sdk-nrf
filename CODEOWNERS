@@ -8,8 +8,11 @@
 /CODEOWNERS                               @carlescufi
 /LICENSE                                  @carlescufi
 /README.rst                               @ru-fu @carlescufi
-/Jenkinsfile                              @carlescufi
+/Jenkinsfile                              @thst-nordic
 /west.yml                                 @carlescufi @tejlmand
+
+# Github Actions
+/.github/                                 @thst-nordic
 
 # Applications
 /applications/asset_tracker/              @joakimtoe @jtguggedal @rlubos
