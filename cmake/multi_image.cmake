@@ -33,6 +33,7 @@ function(image_board_selection board_in board_out)
   set(nonsecure_boards_with_ns_suffix
     nrf9160_pca10090ns
     nrf9160_pca20035ns
+    nrf5340_dk_nrf5340_cpuappns
     )
   if(${board_in} IN_LIST nonsecure_boards_with_ns_suffix)
     string(LENGTH ${board_in} len)
