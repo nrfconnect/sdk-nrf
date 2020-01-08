@@ -790,3 +790,10 @@ int slm_at_tcpip_init(at_cmd_handler_t callback)
 	client.callback = callback;
 	return 0;
 }
+
+/**@brief API to uninitialize TCP/IP AT commands handler
+ */
+int slm_at_tcpip_uninit(void)
+{
+	return do_socket_close(0);
+}

@@ -35,6 +35,14 @@ int slm_at_tcpip_parse(const char *at_cmd);
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_at_tcpip_init(at_cmd_handler_t callback);
+
+/**
+ * @brief Uninitialize TCP/IP AT command parser.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int slm_at_tcpip_uninit(void);
 /** @} */
 
 #endif /* SLM_AT_TCPIP_ */

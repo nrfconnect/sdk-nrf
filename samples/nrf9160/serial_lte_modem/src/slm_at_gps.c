@@ -346,3 +346,16 @@ int slm_at_gps_init(at_cmd_handler_t callback)
 
 	return 0;
 }
+
+/**@brief API to uninitialize GPS AT commands handler
+ */
+int slm_at_gps_uninit(void)
+{
+	if (gps_thread_id != NULL) {
+		do_gps_stop();
+		k_thread_abort(gps_thread_id);
+		gps_thread_id = NULL;
+	}
+
+	return 0;
+}
