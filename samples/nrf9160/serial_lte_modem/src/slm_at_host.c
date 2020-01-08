@@ -35,6 +35,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
 #define AT_CMD_SLMVER	"AT#XSLMVER"
 #define SLM_VERSION	"#XSLMVER: 1.1\r\n"
+#define AT_CMD_SLEEP	"AT#XSLEEP"
 
 #define AT_MAX_CMD_LEN		CONFIG_AT_CMD_RESPONSE_MAX_LEN
 
@@ -61,6 +62,9 @@ static u8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
 static struct k_work cmd_send_work;
 static const char termination[3] = { '\0', '\r', '\n' };
+
+/* forward declaration */
+void slm_at_host_uninit(void);
 
 static inline void write_uart_string(char *str, size_t len)
 {
@@ -90,7 +94,7 @@ static void cmd_send(struct k_work *work)
 	static char buf[AT_MAX_CMD_LEN];
 	enum at_cmd_state state;
 	int err;
-	size_t size_slmver = sizeof(AT_CMD_SLMVER) - 1;
+	size_t size_cmd = sizeof(AT_CMD_SLMVER) - 1;
 
 	ARG_UNUSED(work);
 
@@ -99,11 +103,20 @@ static void cmd_send(struct k_work *work)
 
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
 
-	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLMVER, size_slmver)) {
+	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLMVER, size_cmd)) {
 		write_uart_string(SLM_VERSION, sizeof(SLM_VERSION));
 		write_uart_string(OK_STR, sizeof(OK_STR));
 		goto done;
 	}
+
+#if defined(CONFIG_SLM_GPIO_WAKEUP)
+	size_cmd = sizeof(AT_CMD_SLEEP) - 1;
+	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLEEP, size_cmd)) {
+		slm_at_host_uninit();
+		enter_sleep();
+		return;
+	}
+#endif
 
 #if defined(CONFIG_SLM_TCPIP_AT_MODE)
 	err = slm_at_tcpip_parse(at_buf);
@@ -345,4 +358,36 @@ int slm_at_host_init(void)
 #endif
 	LOG_DBG("at_host init done");
 	return err;
+}
+
+void slm_at_host_uninit(void)
+{
+	int err;
+
+#if defined(CONFIG_SLM_TCPIP_AT_MODE)
+	/* Uninitialize the TCPIP module */
+	err = slm_at_tcpip_uninit();
+	if (err) {
+		LOG_WRN("TCPIP could not be uninitialized: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_GPS_AT_MODE)
+	/* Uninitialize the GPS module */
+	err = slm_at_gps_uninit();
+	if (err) {
+		LOG_WRN("GPS could not be uninitialized: %d", err);
+	}
+#endif
+	err = at_notif_deregister_handler(NULL, response_handler);
+	if (err != 0) {
+		LOG_WRN("Can't deregister handler err=%d", err);
+	}
+#if defined(CONFIG_DEVICE_POWER_MANAGEMENT)
+	err = device_set_power_state(uart_dev, DEVICE_PM_OFF_STATE,
+				NULL, NULL);
+	if (err != 0) {
+		LOG_WRN("Can't power off uart err=%d", err);
+	}
+#endif
+	LOG_DBG("at_host uninit done");
 }

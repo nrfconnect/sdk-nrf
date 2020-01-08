@@ -9,6 +9,7 @@ An nRF9160 DK is used as the host, while the client can be simulated using eithe
 This sample is an enhancement to the :ref:`at_client_sample` sample.
 It provides the following features:
 
+ * Support for generic proprietary AT commands
  * Support for TCP/IP proprietary AT commands
  * Support for UDP proprietary AT commands
  * Support for GPS proprietary AT commands
@@ -53,7 +54,8 @@ Terminal serial configuration:
 External MCU configuration
 ==========================
 
-To work with external MCU (nRF52), you must set the configuration option ``CONFIG_SLM_CONNECT_UART_2``.
+To work with the external MCU (nRF52), you must set the configuration options ``CONFIG_SLM_GPIO_WAKEUP`` and ``CONFIG_SLM_CONNECT_UART_2``.
+
 The pin interconnection between nRF91 and nRF52 is presented in the following table:
 
 .. list-table::
@@ -69,7 +71,7 @@ The pin interconnection between nRF91 and nRF52 is presented in the following ta
    * - UART CTS P0.7
      - UART RTS P0.12
    * - UART RTS P0.5
-     - UART RTS P0.13
+     - UART CTS P0.13
    * - GPIO OUT P0.27
      - GPIO IN P0.31
 
@@ -86,6 +88,14 @@ UART configuration:
     * Operation mode: IRQ
 
 Note that the GPIO output level on nRF91 side should be 3 V.
+
+Generic commands
+****************
+
+The following proprietary generic AT commands are used in this sample:
+
+* AT#XSLMVER
+* AT#XSLEEP (only for external MCU configuration)
 
 TCP/IP AT commands
 ******************
@@ -105,6 +115,8 @@ UDP AT commands
 
 The following proprietary UDP AT commands are used in this sample:
 
+* AT#XSOCKET=<op>[,<type>]
+* AT#XSOCKET?
 * AT#XUDPSENDTO=<url>,<port>,<data>
 * AT#XUDPRECVFROM=<url>,<port>,<length>,<timeout>
 
@@ -112,7 +124,6 @@ GPS AT Commands
 ***************
 
 The following proprietary GPS AT commands are used in this sample:
-
 
 * AT#XGPSRUN=<op>[,<mask>]
 * AT#XGPSRUN?
@@ -154,8 +165,7 @@ This application uses the following |NCS| libraries and drivers:
     * ``nrf/drivers/at_cmd``
     * ``nrf/lib/bsd_lib``
     * ``nrf/lib/at_cmd_parser``
-    * nRF BSD Socket
-    * Zephyr BSD socket
+    * ``nrf/lib/at_notif``
 
 In addition, it uses the Secure Partition Manager sample:
 
