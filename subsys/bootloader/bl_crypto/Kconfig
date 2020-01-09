@@ -7,6 +7,7 @@
 menuconfig SECURE_BOOT_CRYPTO
 	bool
 	prompt "Secure Boot Crypto"
+	depends on FW_INFO
 
 if (SECURE_BOOT_CRYPTO)
 config SB_ECDSA_SECP256R1
@@ -99,9 +100,6 @@ config SB_PUBLIC_KEY_HASH_LEN
 	  The length to which public key hashes in the list of Root of Trust
 	  Public Keys are truncated.
 
-endif # SECURE_BOOT_CRYPTO
-
-if SECURE_BOOT_CRYPTO || SECURE_BOOT_CRYPTO_CLIENT
 EXT_API = BL_ROT_VERIFY
 flags = 2
 ver = 1
