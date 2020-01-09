@@ -55,7 +55,7 @@ if (CONFIG_SB_PRIVATE_KEY_PROVIDED)
   )
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/../cmake/fw_info_magic.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/bl_validation_magic.cmake)
 
 set(slots s0_image)
 
@@ -63,6 +63,11 @@ if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
   list(APPEND slots s1_image)
   set(s1_image_is_from_child_image mcuboot)
 endif ()
+
+if (NOT "${CONFIG_SB_VALIDATION_INFO_CRYPTO_ID}" EQUAL "1")
+  message(FATAL_ERROR
+    "This value of SB_VALIDATION_INFO_CRYPTO_ID is not supported")
+endif()
 
 foreach (slot ${slots})
   set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)

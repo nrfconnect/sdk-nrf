@@ -26,7 +26,7 @@ config SECURE_BOOT_CRYPTO_CLIENT
 config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
-	select SECURE_BOOT_VALIDATION
+	depends on FW_INFO
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
@@ -122,7 +122,7 @@ endif # SECURE_BOOT
 
 menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
-	select SECURE_BOOT_VALIDATION
+	depends on SECURE_BOOT_CRYPTO
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 	help
 	  This option is set by the first stage bootloader app to include all
