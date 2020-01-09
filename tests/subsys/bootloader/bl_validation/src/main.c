@@ -5,8 +5,7 @@
  */
 
 #include <ztest.h>
-
-#include "bl_validation.h"
+#include <bl_validation.h>
 
 
 void test_key_looping(void)
