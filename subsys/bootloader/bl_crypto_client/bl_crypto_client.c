@@ -5,7 +5,6 @@
  */
 
 #include <bl_crypto.h>
-#include "bl_crypto_internal.h"
 #include <fw_info.h>
 #include <kernel.h>
 
