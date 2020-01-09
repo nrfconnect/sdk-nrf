@@ -1,0 +1,7 @@
+/* DUMMY FILE ONLY TO BE USED FOR TESTING */
+#ifndef PM_CONFIG_H__
+#define PM_CONFIG_H__
+#define PM_B0_ADDRESS 0x0
+#define PM_B0_SIZE 0x8000
+#define PM_PROVISION_ADDRESS 0x7000
+#endif /* PM_CONFIG_H__ */
