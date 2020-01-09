@@ -5,6 +5,5 @@
 #
 
 add_subdirectory(provision)
-add_subdirectory(bl_validation)
 
 zephyr_include_directories(include)

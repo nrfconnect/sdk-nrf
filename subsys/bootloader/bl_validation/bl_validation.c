@@ -6,13 +6,37 @@
 
 #include <bl_validation.h>
 #include <zephyr/types.h>
+#include <fw_info.h>
+#include <kernel.h>
+
+
+#ifdef CONFIG_BL_VALIDATE_FW_EXT_API_REQUIRED
+bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address)
+{
+	const struct bl_validate_fw_ext_api *bl_validate_fw =
+		(const struct bl_validate_fw_ext_api *)
+		fw_info_ext_api_find(BL_VALIDATE_FW_EXT_API_ID,
+				CONFIG_BL_VALIDATE_FW_EXT_API_FLAGS,
+				CONFIG_BL_VALIDATE_FW_EXT_API_VER,
+				CONFIG_BL_VALIDATE_FW_EXT_API_MAX_VER);
+
+	if (bl_validate_fw == NULL) {
+		k_oops();
+		return false;
+	}
+
+	return bl_validate_fw->ext_api.bl_validate_firmware(fw_dst_address,
+							fw_src_address);
+}
+
+
+#else
 #include <errno.h>
 #include <sys/printk.h>
-#include <fw_info.h>
 #include <bl_crypto.h>
 #include <provision.h>
 
-#define PRINT(...) printk(__VA_ARGS__)
+#define PRINT(...) if (!external) printk(__VA_ARGS__)
 
 struct __packed fw_validation_info {
 	/* Magic value to verify that the struct has the correct type. */
@@ -91,7 +115,7 @@ validation_info_find(u32_t start_address, u32_t search_distance)
 
 
 static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
-		const struct fw_info *fwinfo)
+		const struct fw_info *fwinfo, bool external)
 {
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
@@ -101,7 +125,9 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 	int err;
 	const struct fw_validation_info *fw_val_info;
 	u32_t num_public_keys;
-	bl_root_of_trust_verify_t rot_verify = bl_root_of_trust_verify;
+	bl_root_of_trust_verify_t rot_verify = external ?
+					bl_root_of_trust_verify_external :
+					bl_root_of_trust_verify;
 
 	if (!fwinfo) {
 		PRINT("NULL parameter.\n\r");
@@ -179,8 +205,30 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 	return true;
 }
 
+
+bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address)
+{
+	return validate_firmware(fw_dst_address, fw_src_address,
+				fw_info_find(fw_src_address), true);
+}
+
+
 bool bl_validate_firmware_local(u32_t fw_address,
 				const struct fw_info *fwinfo)
 {
-	return validate_firmware(fw_address, fw_address, fwinfo);
+	return validate_firmware(fw_address, fw_address, fwinfo, false);
 }
+#endif
+
+
+#ifdef CONFIG_BL_VALIDATE_FW_EXT_API_ENABLED
+EXT_API(struct bl_validate_fw_ext_api, bl_validate_fw_ext_api) = {
+	.header = FW_INFO_EXT_API_INIT(BL_VALIDATE_FW_EXT_API_ID,
+				CONFIG_BL_VALIDATE_FW_EXT_API_FLAGS,
+				CONFIG_BL_VALIDATE_FW_EXT_API_VER,
+				sizeof(struct bl_validate_fw_ext_api)),
+	.ext_api = {
+		.bl_validate_firmware = bl_validate_firmware,
+	},
+};
+#endif

@@ -111,7 +111,7 @@ endif # SECURE_BOOT
 
 menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
-	depends on SECURE_BOOT_CRYPTO
+	depends on SECURE_BOOT_VALIDATION
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 	help
 	  This option is set by the first stage bootloader app to include all
@@ -153,10 +153,3 @@ config SB_BPROT_IN_DEBUG
 
 endif # SECURE_BOOT_DEBUG
 endif # IS_SECURE_BOOTLOADER
-
-if IS_SECURE_BOOTLOADER || SECURE_BOOT
-
-rsource "bl_validation/Kconfig"
-
-endif
-

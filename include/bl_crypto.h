@@ -77,6 +77,17 @@ EXT_API_FUNCTION(int, bl_root_of_trust_verify, const u8_t *public_key,
 					       const u32_t firmware_len);
 
 /**
+ * @brief Implementation of rot_verify that is safe to be called from EXT_API.
+ *
+ * See @ref bl_root_of_trust_verify for docs.
+ */
+int bl_root_of_trust_verify_external(const u8_t *public_key,
+				     const u8_t *public_key_hash,
+				     const u8_t *signature,
+				     const u8_t *firmware,
+				     const u32_t firmware_len);
+
+/**
  * @brief Initialize a sha256 operation context variable.
  *
  * @param[out]  ctx  Context to be initialized.
@@ -178,6 +189,7 @@ struct bl_secp256r1_ext_api {
 		bl_secp256r1_validate_t bl_secp256r1_validate;
 	} ext_api;
 };
+
 
 #endif
 
