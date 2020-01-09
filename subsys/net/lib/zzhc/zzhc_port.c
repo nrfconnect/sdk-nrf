@@ -9,7 +9,6 @@ LOG_MODULE_REGISTER(zzhc_port, CONFIG_ZZHC_LOG_LEVEL);
 
 #include <zephyr.h>
 #include <base64.h>
-#include <secure_services.h>
 #include <json.h>
 #include <at_cmd_parser/at_cmd_parser.h>
 #include "zzhc_internal.h"
@@ -39,13 +38,6 @@ static const struct json_obj_descr rsp_desc[] = {
 	JSON_OBJ_DESCR_PRIM_NAMED(struct rsp_obj, "resultDesc", res_desc,
 		JSON_TOK_STRING),
 };
-
-int zzhc_read_chip_rev(u32_t *i)
-{
-	u32_t ficr_addr = NRF_FICR_S_BASE + FICR_REV_OFFSET;
-
-	return spm_request_read(i, ficr_addr, sizeof(u32_t));
-}
 
 int zzhc_load_iccid(char *iccid_buf, int buf_len)
 {
