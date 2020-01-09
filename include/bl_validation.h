@@ -18,6 +18,20 @@
 #include <stdbool.h>
 #include <fw_info.h>
 
+/* EXT_API ID for the bl_validate_firmware EXT_API. */
+#define BL_VALIDATE_FW_EXT_API_ID 0x1101
+
+EXT_API_FUNCTION(bool, bl_validate_firmware, u32_t fw_dst_address,
+					u32_t fw_src_address);
+
+struct bl_validate_fw_ext_api {
+	struct fw_info_ext_api header;
+	struct {
+		bl_validate_firmware_t bl_validate_firmware;
+	} ext_api;
+};
+
+
 /** Function for validating firmware in place.
  *
  * @details This will run a series of checks on the fw_info contents, then

@@ -8,6 +8,7 @@ menuconfig SECURE_BOOT_CRYPTO
 	bool
 	prompt "Secure Boot Crypto"
 	depends on FW_INFO
+	select NRF_OBERON
 
 if (SECURE_BOOT_CRYPTO)
 config SB_ECDSA_SECP256R1
@@ -40,7 +41,6 @@ choice SB_CRYPTO_SIG
 
 	config SB_CRYPTO_OBERON_ECDSA_SECP256R1
 		bool "Software ECDSA secp256r1"
-		select NRF_OBERON
 		select SB_ECDSA_SECP256R1
 		help
 		  Software implementation of ECDSA with NIST curve secp256r1.
@@ -87,7 +87,6 @@ choice SB_CRYPTO_HASH
 
 	config SB_CRYPTO_OBERON_SHA256
 		bool "Software SHA256"
-		select NRF_OBERON
 		select SB_SHA256
 		help
 		  Software implementation of SHA256.
@@ -95,7 +94,6 @@ choice SB_CRYPTO_HASH
 	config SB_CRYPTO_CC310_SHA256
 		bool "Hardware SHA256" if HAS_HW_NRF_CC310
 		select NRF_CC310_BL
-		select NRF_OBERON
 		select SB_SHA256
 		help
 		  Hardware implementation of SHA256.
