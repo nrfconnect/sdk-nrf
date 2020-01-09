@@ -10,7 +10,7 @@
 #include <device.h>
 #include <spi.h>
 #include <gpio.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <sensor/pmw3360.h>
 
 #include <logging/log.h>

@@ -97,8 +97,8 @@ In addition, it uses the following Zephyr libraries:
 
 * ``include/zephyr/types.h``
 * ``lib/libc/minimal/include/errno.h``
-* ``include/misc/printk.h``
-* ``include/misc/byteorder.h``
+* ``include/sys/printk.h``
+* ``include/sys/byteorder.h``
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:bluetooth_api`:
 

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <zephyr/types.h>
 
 #include <bluetooth/bluetooth.h>

@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <string.h>
 #include <json.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <net/aws_jobs.h>
 
 #include "aws_fota_json.h"

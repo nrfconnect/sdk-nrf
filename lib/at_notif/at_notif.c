@@ -10,7 +10,7 @@
 #include <init.h>
 #include <at_cmd.h>
 #include <at_notif.h>
-#include <misc/slist.h>
+#include <sys/slist.h>
 
 LOG_MODULE_REGISTER(at_notif, CONFIG_AT_NOTIF_LOG_LEVEL);
 

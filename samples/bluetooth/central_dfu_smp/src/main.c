@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <errno.h>
 #include <zephyr.h>
-#include <misc/printk.h>
+#include <sys/printk.h>
 
 #include <cbor.h>
 #include <bluetooth/bluetooth.h>
@@ -19,7 +19,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 #include <bluetooth/gatt_dm.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <bluetooth/scan.h>
 #include <bluetooth/services/dfu_smp_c.h>
 #include <dk_buttons_and_leds.h>

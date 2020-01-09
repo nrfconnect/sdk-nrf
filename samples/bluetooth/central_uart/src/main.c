@@ -10,8 +10,8 @@
 
 #include <errno.h>
 #include <zephyr.h>
-#include <misc/byteorder.h>
-#include <misc/printk.h>
+#include <sys/byteorder.h>
+#include <sys/printk.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>

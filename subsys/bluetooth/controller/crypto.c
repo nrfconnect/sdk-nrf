@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <soc.h>

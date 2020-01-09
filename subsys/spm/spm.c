@@ -5,8 +5,8 @@
  */
 
 #include <zephyr.h>
-#include <misc/printk.h>
-#include <misc/util.h>
+#include <sys/printk.h>
+#include <sys/util.h>
 #include <linker/linker-defs.h>
 #include <device.h>
 #include <gpio.h>

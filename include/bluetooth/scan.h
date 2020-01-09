@@ -26,7 +26,7 @@
 #define BT_SCAN_H_
 
 #include <zephyr/types.h>
-#include <misc/slist.h>
+#include <sys/slist.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/conn.h>

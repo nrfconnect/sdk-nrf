@@ -9,7 +9,7 @@
 #include <irq.h>
 #include <kernel.h>
 #include <soc.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <stdbool.h>
 
 #include <ble_controller.h>

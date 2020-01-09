@@ -5,7 +5,7 @@
  */
 #include <stdbool.h>
 #include <errno.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <logging/log.h>
 #include <nfc/t2t/parser.h>
 

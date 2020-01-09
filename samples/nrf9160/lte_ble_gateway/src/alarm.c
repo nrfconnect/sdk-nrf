@@ -5,7 +5,7 @@
  */
 #include <string.h>
 #include <stdbool.h>
-#include <misc/printk.h>
+#include <sys/printk.h>
 #include <nrf_cloud.h>
 
 #include "alarm.h"

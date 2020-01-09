@@ -9,7 +9,7 @@
 #include <bluetooth/uuid.h>
 #include <kernel.h>
 #include <ztest.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 
 /* Settings of the discover mock */

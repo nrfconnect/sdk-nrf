@@ -10,7 +10,7 @@
 #include <device.h>
 #include <soc.h>
 #include <flash.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 #include <nrfx_nvmc.h>
 

@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <device.h>
 #include <i2c.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 #define ADP536X_I2C_ADDR				0x46
 

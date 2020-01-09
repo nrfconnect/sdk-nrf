@@ -6,8 +6,8 @@
 #include <zephyr.h>
 #include <errno.h>
 #include <cortex_m/tz.h>
-#include <misc/reboot.h>
-#include <misc/util.h>
+#include <power/reboot.h>
+#include <sys/util.h>
 #include <autoconf.h>
 #include <secure_services.h>
 #include <string.h>

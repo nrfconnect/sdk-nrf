@@ -18,7 +18,7 @@
 #else
 	#error Either NRF_BPROT or NRF_MPU must be available to use this file.
 #endif
-#include <misc/util.h>
+#include <sys/util.h>
 #include <errno.h>
 
  /* The number of CONFIG registers present in the chip. */

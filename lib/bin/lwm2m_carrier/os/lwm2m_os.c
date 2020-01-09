@@ -18,8 +18,8 @@
 #include <lte_lc.h>
 #include <net/bsdlib.h>
 #include <net/download_client.h>
-#include <misc/reboot.h>
-#include <misc/util.h>
+#include <power/reboot.h>
+#include <sys/util.h>
 #include <toolchain.h>
 #include <nvs/nvs.h>
 #include <logging/log.h>

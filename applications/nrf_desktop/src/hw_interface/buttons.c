@@ -10,7 +10,7 @@
 #include <soc.h>
 #include <device.h>
 #include <gpio.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 #include "key_id.h"
 #include "gpio_pins.h"

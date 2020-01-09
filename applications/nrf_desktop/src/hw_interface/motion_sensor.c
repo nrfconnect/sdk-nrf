@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <atomic.h>
 #include <spinlock.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 
 #include <device.h>
 #include <sensor.h>

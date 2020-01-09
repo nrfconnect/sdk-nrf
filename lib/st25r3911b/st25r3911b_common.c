@@ -5,7 +5,7 @@
  */
 
 #include <kernel.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <device.h>
 #include <soc.h>
 #include <gpio.h>

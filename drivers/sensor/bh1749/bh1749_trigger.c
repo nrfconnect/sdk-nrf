@@ -7,7 +7,7 @@
 #include <device.h>
 #include <gpio.h>
 #include <i2c.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <kernel.h>
 #include <sensor.h>
 #include "bh1749.h"

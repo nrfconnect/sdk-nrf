@@ -6,9 +6,9 @@
 
 #include <stdio.h>
 #include <kernel_structs.h>
-#include <misc/printk.h>
-#include <misc/util.h>
-#include <misc/byteorder.h>
+#include <sys/printk.h>
+#include <sys/util.h>
+#include <sys/byteorder.h>
 #include <zephyr.h>
 #include <SEGGER_RTT.h>
 #include <profiler.h>

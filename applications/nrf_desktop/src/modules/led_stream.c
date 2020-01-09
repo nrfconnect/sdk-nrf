@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 
 #define MODULE led_stream
 #include "module_state_event.h"

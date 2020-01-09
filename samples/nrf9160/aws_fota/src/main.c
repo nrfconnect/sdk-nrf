@@ -15,7 +15,7 @@
 #include <net/bsdlib.h>
 #include <net/aws_fota.h>
 #include <dfu/mcuboot.h>
-#include <misc/reboot.h>
+#include <power/reboot.h>
 
 #if defined(CONFIG_USE_NRF_CLOUD)
 #define NRF_CLOUD_SECURITY_TAG 16842753

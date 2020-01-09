@@ -5,11 +5,11 @@
  */
 
 #include <zephyr/types.h>
-#include <misc/slist.h>
+#include <sys/slist.h>
 
 #include <bluetooth/services/hids_c.h>
 #include <bluetooth/conn.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 
 #define MODULE hid_forward
 #include "module_state_event.h"

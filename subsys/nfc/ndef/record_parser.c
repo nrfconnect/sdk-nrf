@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <logging/log.h>
-#include <misc/util.h>
-#include <misc/byteorder.h>
+#include <sys/util.h>
+#include <sys/byteorder.h>
 #include <nfc/ndef/record_parser.h>
 
 LOG_MODULE_DECLARE(nfc_ndef_parser);

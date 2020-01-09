@@ -6,7 +6,7 @@
 
 #include <errno.h>
 #include <zephyr/types.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <toolchain.h>
 #include <nrf.h>
 #include <nrf_cc310_bl_init.h>

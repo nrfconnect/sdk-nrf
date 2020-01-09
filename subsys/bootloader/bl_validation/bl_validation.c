@@ -7,7 +7,7 @@
 #include <bl_validation.h>
 #include <zephyr/types.h>
 #include <errno.h>
-#include <misc/printk.h>
+#include <sys/printk.h>
 #include <fw_info.h>
 #include <bl_crypto.h>
 #include <provision.h>

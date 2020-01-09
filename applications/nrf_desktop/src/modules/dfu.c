@@ -7,7 +7,7 @@
 #include <inttypes.h>
 
 #include <zephyr/types.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <flash_map.h>
 #include <pm_config.h>
 #include <dfu/mcuboot.h>

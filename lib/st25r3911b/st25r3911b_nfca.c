@@ -6,8 +6,8 @@
 #include <kernel.h>
 #include <stdbool.h>
 #include <assert.h>
-#include <misc/util.h>
-#include <misc/byteorder.h>
+#include <sys/util.h>
+#include <sys/byteorder.h>
 #include <string.h>
 #include <logging/log.h>
 #include <st25r3911b_nfca.h>
