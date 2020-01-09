@@ -111,17 +111,6 @@ struct zzhc {
 /**@brief Free. */
 #define zzhc_free(ptr)                          k_free(ptr)
 
-/**@brief Read chip-revision from FICR.
- *
- * This function request reading of FICR register 0x00FF0134.
- *
- * @param i   Pointer to 4-byte integer buffer for storage of FICR value.
- *
- * @return 0 on success, non-zero on failure.
- *
- */
-int zzhc_read_chip_rev(u32_t *i);
-
 /**@brief Save ICCID to file.
  *
  * The function saves ICCID to non-volatile storage.

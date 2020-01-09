@@ -36,9 +36,6 @@ static char const status_cereg[7] = "+CEREG:";
 /**@brief %XSIM event prefix. */
 static char const status_xsim[6] = "%XSIM:";
 
-/**@brief Lookup table for chip revision. */
-static char const chip_rev[4] = "XA01";
-
 /**@brief Function to handle AT-command notifications. */
 static void at_notif_handler(void *context, char *response)
 {
@@ -86,16 +83,19 @@ static void at_notif_handler(void *context, char *response)
 	}
 }
 
-/**@brief Search and replace. */
-static void search_char_and_replace(char *data, char tok, char substitute)
+/**@brief Keep only allowed characters for MODEL. */
+static void keep_allowed_model_char(char *data)
 {
-	char *cptr = data;
-
-	while (cptr != NULL) {
-		cptr = strchr(cptr, tok);
-		if (cptr != NULL) {
-			*cptr++ = substitute;
+	for (char *cptr = data; *cptr != '\0'; cptr++) {
+		if ((*cptr >= 'A' && *cptr <= 'Z') ||
+			(*cptr >= 'a' && *cptr <= 'z') ||
+			(*cptr >= '0' && *cptr <= '9') ||
+			*cptr == '+' ||
+			*cptr == ' ') {
+			continue;
 		}
+
+		*cptr = ' ';
 	}
 }
 
@@ -105,7 +105,7 @@ static int build_json(struct zzhc *ctx, char *buff, int len)
 	char l_buff[JSON_MAX_LEN];
 	char duple[96];
 	char *cptr;
-	int i = 0, rc;
+	int i = 0;
 
 	l_buff[0] = 0;
 
@@ -131,22 +131,13 @@ static int build_json(struct zzhc *ctx, char *buff, int len)
 	if (zzhc_at_cmd_xfer("AT+CGMM", ctx->at_resp, AT_RESPONSE_LEN) != 0) {
 		return -EIO;
 	}
-	search_char_and_replace(ctx->at_resp, '-', '_');
 	cptr = strstr(ctx->at_resp, "\r\n");
 	if (cptr != NULL) {
 		*cptr = 0;
 	}
+	keep_allowed_model_char(ctx->at_resp);
 
-	rc = zzhc_read_chip_rev(&i);
-	if (rc != 0) {
-		return rc;
-	}
-
-	i = MIN(i, sizeof(chip_rev) - 1);
-	LOG_DBG("i = %d", i);
-
-	sprintf(duple, "\"MODEL\":\"%s-%s_B%cA\",", MANUFACTURER_CODE,
-		ctx->at_resp, chip_rev[i]);
+	sprintf(duple, "\"MODEL\":\"%s-%s\",", MANUFACTURER_CODE, ctx->at_resp);
 	strcat(l_buff, duple);
 
 	/* SWVER */
