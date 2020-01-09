@@ -1,0 +1,9 @@
+sample:
+  name: BLE UART service network core
+  description: Bluetooth Low Energy UART service network core sample
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf5340_dk_nrf5340_cpunet
+    tags: bluetooth ci_build

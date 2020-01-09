@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic UART BLE GATT service application core sample"
+
+config BT_GATT_NUS_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 1024
+	help
+	  Stack size used in each of the two threads
+
+config BT_GATT_NUS_UART_BUFFER_SIZE
+	int "UART payload buffer element size"
+	default 20
+	help
+	  Size of the payload buffer in each RX and TX FIFO element
+
+rsource "../common/Kconfig"
+
+endmenu

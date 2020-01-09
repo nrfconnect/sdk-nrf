@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic UART BLE GATT service application core sample"
+
+config BT_GATT_NUS_SECURITY_ENABLED
+	bool "Enable security"
+	default y
+	select BT_SMP
+	help
+	  "Enable BLE security for the UART service"
+
+rsource "../common/Kconfig"
+
+endmenu

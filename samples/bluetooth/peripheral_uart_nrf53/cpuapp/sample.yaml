@@ -1,0 +1,9 @@
+sample:
+  name: BLE UART service application core
+  description: Bluetooth Low Energy UART service application core sample
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf5340_dk_nrf5340_cpuapp nrf5340_dk_nrf5340_cpuappns
+    tags: bluetooth ci_build

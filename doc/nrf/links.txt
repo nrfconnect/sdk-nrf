@@ -160,6 +160,7 @@
 
 .. _`SSL Labs`: https://www.ssllabs.com/ssltest/
 
+.. _`OpenAMP`: https://github.com/OpenAMP/open-amp/
 
 .. ### Links to Bluetooth specs
 
