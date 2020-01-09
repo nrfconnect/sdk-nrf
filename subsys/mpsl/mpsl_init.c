@@ -7,7 +7,10 @@
 #include <init.h>
 #include <irq.h>
 #include <kernel.h>
+#include <logging/log.h>
 #include <mpsl.h>
+
+LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
 #if IS_ENABLED(CONFIG_SOC_SERIES_NRF52X)
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
@@ -77,6 +80,7 @@ ISR_DIRECT_DECLARE(mpsl_radio_isr_wrapper)
 
 static void m_assert_handler(const char *const file, const u32_t line)
 {
+	LOG_ERR("MPSL ASSERT: %s, %d", log_strdup(file), line);
 	k_oops();
 }
 

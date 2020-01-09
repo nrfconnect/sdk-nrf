@@ -23,4 +23,8 @@ config CLOCK_CONTROL_NRF_ACCURACY
 	default 250 if CLOCK_CONTROL_NRF_K32SRC_RC
 	default 20
 
+module=MPSL
+module-str=MPSL
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endmenu
