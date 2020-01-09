@@ -4,13 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig SECURE_BOOT_VALIDATION
-	bool
-	prompt "Secure Boot firmware validation"
-	select SECURE_BOOT_CRYPTO
-	select FW_INFO
-
-if SECURE_BOOT_VALIDATION
+menu "Secure Boot firmware validation"
 
 config SB_VALIDATION_INFO_MAGIC
 	hex "Magic word used for validation info structs (32 bits)."
@@ -29,8 +23,7 @@ config SB_VALIDATION_POINTER_MAGIC
 config SB_VALIDATION_INFO_CRYPTO_ID
 	int
 	range 0 255
-	default 1 if SB_ECDSA_SECP256R1 && SB_SHA256
-	default 2 if SB_RSA_PSS2048 && SB_SHA256
+	default 1 # if SB_ECDSA_SECP256R1 && SB_SHA256
 	help
 	  The algorithm used for signing the firmware (8 bits).
 	  Used to ensure compatibility.
@@ -44,8 +37,4 @@ config SB_VALIDATION_INFO_VERSION
 	  Used to ensure binary compatibility.
 	  For more info, see FW_INFO_MAGIC_COMMON.
 
-endif # SECURE_BOOT_VALIDATION
-
-if SECURE_BOOT_VALIDATION
-
-endif # SECURE_BOOT_VALIDATION
+endmenu
