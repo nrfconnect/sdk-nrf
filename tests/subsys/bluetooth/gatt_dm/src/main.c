@@ -6,7 +6,7 @@
 #include <ztest.h>
 #include <kernel.h>
 #include <stddef.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt_dm.h>
 #include "../mock/gatt_discover_mock.h"

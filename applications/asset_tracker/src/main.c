@@ -11,7 +11,7 @@
 #include <drivers/gps.h>
 #include <sensor.h>
 #include <console.h>
-#include <misc/reboot.h>
+#include <power/reboot.h>
 #include <logging/log_ctrl.h>
 #if defined(CONFIG_BSD_LIBRARY)
 #include <net/bsdlib.h>

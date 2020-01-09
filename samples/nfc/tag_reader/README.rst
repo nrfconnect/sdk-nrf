@@ -69,4 +69,4 @@ This sample uses the following |NCS| libraries:
 In addition, it uses the following Zephyr libraries:
 
 * ``include/zephyr/types.h``
-* ``include/misc/printk.h``
+* ``include/sys/printk.h``

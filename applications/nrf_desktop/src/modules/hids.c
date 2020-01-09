@@ -9,7 +9,7 @@
 
 #include <zephyr.h>
 #include <zephyr/types.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 
 #include <bluetooth/services/hids.h>
 

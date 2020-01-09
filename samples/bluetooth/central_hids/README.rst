@@ -166,10 +166,10 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/misc/byteorder.h``
+* ``include/sys/byteorder.h``
 * ``include/zephyr/types.h``
 * ``lib/libc/minimal/include/errno.h``
-* ``include/misc/printk.h``
+* ``include/sys/printk.h``
 * :ref:`zephyr:bluetooth_api`:
 
   * ``include/bluetooth/bluetooth.h``

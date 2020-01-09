@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <string.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <nfc/ndef/tnep_rec.h>
 
 #define NFC_NDEF_TNEP_STATUS_SIZE 1

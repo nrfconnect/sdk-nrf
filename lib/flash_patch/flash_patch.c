@@ -5,7 +5,7 @@
  */
 
 #include <nrf.h>
-#include <misc/reboot.h>
+#include <power/reboot.h>
 #include <init.h>
 
 #ifdef CONFIG_DISABLE_FLASH_PATCH

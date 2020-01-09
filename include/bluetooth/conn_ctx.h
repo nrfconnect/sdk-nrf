@@ -15,7 +15,7 @@
 #define BT_CONN_CTX_H_
 
 #include <zephyr.h>
-#include <misc/__assert.h>
+#include <sys/__assert.h>
 #include <bluetooth/conn.h>
 
 #ifdef __cplusplus

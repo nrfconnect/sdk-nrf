@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <string.h>
 #include <bluetooth/scan.h>
 

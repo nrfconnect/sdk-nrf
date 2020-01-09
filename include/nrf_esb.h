@@ -7,7 +7,7 @@
 #define __NRF_ESB_H
 
 #include <errno.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <nrf.h>
 #include <stdbool.h>
 #include <zephyr/types.h>

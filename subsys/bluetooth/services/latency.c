@@ -5,7 +5,7 @@
  */
 
 #include <string.h>
-#include <misc/printk.h>
+#include <sys/printk.h>
 #include <zephyr/types.h>
 #include <logging/log.h>
 

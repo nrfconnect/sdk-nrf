@@ -66,5 +66,5 @@ In addition, it uses the following Zephyr libraries:
   * :file:`include/kernel.h`
   * :file:`include/irq.h`
 
-* :file:`include/misc/printk.h`
+* :file:`include/sys/printk.h`
 * :file:`include/zephyr/types.h`

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <zephyr.h>
 #include <spinlock.h>
-#include <misc/slist.h>
+#include <sys/slist.h>
 #include <event_manager.h>
 #include <logging/log.h>
 

@@ -14,8 +14,8 @@
 #include <sys/types.h>
 
 #include <zephyr/types.h>
-#include <misc/slist.h>
-#include <misc/util.h>
+#include <sys/slist.h>
+#include <sys/util.h>
 
 #include "button_event.h"
 #include "motion_event.h"

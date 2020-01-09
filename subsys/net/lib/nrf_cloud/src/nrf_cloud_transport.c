@@ -12,7 +12,7 @@
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <logging/log.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 #if defined(CONFIG_BSD_LIBRARY)
 #include <nrf_socket.h>

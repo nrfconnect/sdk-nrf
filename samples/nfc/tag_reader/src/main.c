@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <zephyr.h>
-#include <misc/printk.h>
+#include <sys/printk.h>
 #include <st25r3911b_nfca.h>
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/t2t/parser.h>

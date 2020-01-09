@@ -5,7 +5,7 @@
  */
 #include <errno.h>
 #include <irq.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <nrf.h>
 #include <nrf_esb.h>
 #include <stddef.h>

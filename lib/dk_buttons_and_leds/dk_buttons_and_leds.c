@@ -8,7 +8,7 @@
 #include <soc.h>
 #include <device.h>
 #include <gpio.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <logging/log.h>
 #include <nrfx.h>
 #include <dk_buttons_and_leds.h>

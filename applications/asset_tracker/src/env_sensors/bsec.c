@@ -9,7 +9,7 @@
 #include <atomic.h>
 #include <spinlock.h>
 #include <settings/settings.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <i2c.h>
 #include "bsec_integration.h"
 #include "env_sensors.h"

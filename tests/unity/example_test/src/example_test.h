@@ -6,7 +6,7 @@
 #ifndef EXAMPLE_TEST_H_
 #define EXAMPLE_TEST_H_
 
-#include <misc/util.h>
+#include <sys/util.h>
 #include <stdbool.h>
 
 /* This header shows how to handle testing of compile time options in a single

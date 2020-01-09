@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <drivers/gps.h>
 #include <lte_lc.h>
 

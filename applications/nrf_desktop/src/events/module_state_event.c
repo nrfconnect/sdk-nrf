@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 #include "module_state_event.h"
 

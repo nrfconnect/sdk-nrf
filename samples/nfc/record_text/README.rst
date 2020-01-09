@@ -64,5 +64,5 @@ The sample uses the following Zephyr libraries:
 
 * ``include/zephyr.h``
 * ``include/device.h``
-* ``include/misc/reboot.h``
+* ``include/power/reboot.h``
 * :ref:`GPIO Interface <zephyr:api_peripherals>`

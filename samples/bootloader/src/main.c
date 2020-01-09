@@ -7,8 +7,8 @@
 #include <zephyr/types.h>
 #include <errno.h>
 #include <toolchain.h>
-#include <misc/util.h>
-#include <misc/printk.h>
+#include <sys/util.h>
+#include <sys/printk.h>
 #include <nrf.h>
 #include <pm_config.h>
 #include <bl_validation.h>

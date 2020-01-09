@@ -6,7 +6,7 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <stddef.h>
 #include <string.h>
 #include <zephyr.h>

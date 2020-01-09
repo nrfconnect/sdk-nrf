@@ -6,7 +6,7 @@
 
 #include <zephyr/types.h>
 #include <linker/sections.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <errno.h>
 #include <nrf_cc310_bl_hash_sha256.h>
 #include <generated_dts_board.h>

@@ -67,4 +67,4 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/misc/until.h``
+* ``include/sys/until.h``

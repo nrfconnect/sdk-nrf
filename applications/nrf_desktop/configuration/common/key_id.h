@@ -8,7 +8,7 @@
 #define _KEY_ID_H_
 
 #include <zephyr/types.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -192,8 +192,8 @@ When the `NFC_OOB_PAIRING` feature is enabled, it also uses the Type 2 Tag libra
 The sample uses the following Zephyr libraries:
 
 * ``include/zephyr/types.h``
-* ``include/misc/printk.h``
-* ``include/misc/byteorder.h``
+* ``include/sys/printk.h``
+* ``include/sys/byteorder.h``
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:settings`
 * :ref:`zephyr:bluetooth_api`:

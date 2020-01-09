@@ -5,8 +5,8 @@
  */
 
 #include <zephyr.h>
-#include <misc/printk.h>
-#include <misc/reboot.h>
+#include <sys/printk.h>
+#include <power/reboot.h>
 #include <secure_services.h>
 #include <kernel.h>
 #include <pm_config.h>

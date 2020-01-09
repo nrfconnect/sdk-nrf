@@ -6,7 +6,7 @@
 
 #include <sys/types.h>
 #include <kernel.h>
-#include <misc/util.h>
+#include <sys/util.h>
 #include <settings/settings.h>
 
 #define MODULE fn_keys

@@ -6,7 +6,7 @@
 
 #include <kernel.h>
 #include <console.h>
-#include <misc/printk.h>
+#include <sys/printk.h>
 #include <string.h>
 #include <zephyr/types.h>
 

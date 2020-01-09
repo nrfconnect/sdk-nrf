@@ -12,7 +12,7 @@
 #include <bluetooth/scan.h>
 
 #include <dk_buttons_and_leds.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 
 #include <nrf_cloud.h>
 #include "aggregator.h"

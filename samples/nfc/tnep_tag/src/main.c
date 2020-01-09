@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <zephyr.h>
-#include <misc/util.h>
+#include <sys/util.h>
 
 #include <dk_buttons_and_leds.h>
 
