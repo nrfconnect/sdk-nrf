@@ -39,7 +39,7 @@ static u8_t notify_process(struct bt_conn *conn,
 
 	bas_c = CONTAINER_OF(params, struct bt_gatt_bas_c, notify_params);
 	if (!data || !length) {
-		LOG_ERR("NULL notification received.");
+		LOG_INF("Notifications disabled.");
 		if (bas_c->notify_cb) {
 			bas_c->notify_cb(bas_c, BT_GATT_BAS_VAL_INVALID);
 		}
