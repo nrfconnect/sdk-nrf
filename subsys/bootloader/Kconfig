@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+menu "Bootloader"
+
 config MCUBOOT_BUILD_S1_VARIANT
 	# This can not depend on BOOTLOADER_MCUBOOT, or SECURE_BOOT as this
 	# option has to be set when building MCUBoot itself. Instead an error
@@ -31,7 +33,6 @@ config SB_PRIVATE_KEY_PROVIDED
 	  Hidden config specifying whether the build system has access to the
 	  private key used for signing, and will use it to perform signing and
 	  create the public key for the provision page.
-
 
 choice SB_SIGNING
 	prompt "Firmware signing method"
@@ -106,7 +107,6 @@ config SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
 	  first. This is meant to be used for testing looping through the
 	  public keys.
 
-
 endif # SECURE_BOOT
 
 menuconfig IS_SECURE_BOOTLOADER
@@ -153,3 +153,8 @@ config SB_BPROT_IN_DEBUG
 
 endif # SECURE_BOOT_DEBUG
 endif # IS_SECURE_BOOTLOADER
+
+rsource "bl_crypto/Kconfig"
+rsource "bl_validation/Kconfig"
+
+endmenu
