@@ -279,8 +279,10 @@ def set_addresses_and_align(reqs, sub_partitions, solution, size, start=0):
     dynamic_partitions += get_dependent_partitions(all_reqs, 'app')
     reqs['app']['size'] = app_size(reqs, size)
     reqs[solution[0]]['address'] = start
-    _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions)
-    verify_layout(reqs, solution, size)
+
+    if len(reqs) > 1:
+        _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions)
+        verify_layout(reqs, solution, size)
 
 
 def first_partition_has_been_aligned(first, solution):
