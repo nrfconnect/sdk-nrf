@@ -653,7 +653,7 @@ def test():
 
     # Verify that providing a static configuration with nothing unresolved gives a valid configuration with 'app'.
     static_config = {'spm': {'address': 0, 'placement': None, 'before': ['app'], 'size': 400}}
-    pm_config = get_pm_config([], 1000, static_config)
+    pm_config = get_pm_config([], flash_start=0, flash_size=1000, static_config=static_config)
     assert 'app' in pm_config
     assert pm_config['app']['address'] == 400
     assert pm_config['app']['size'] == 600
