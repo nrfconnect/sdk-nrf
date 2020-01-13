@@ -521,14 +521,26 @@ This file contains all addresses and sizes of all partitions.
     parser.add_argument("--output", required=True, type=str,
                         help="Path to output file.")
 
+    parser.add_argument("-d", "--dynamic-partition", required=False, type=str,
+                        help="Name of dynamic partition")
+
     parser.add_argument("-s", "--static-config", required=False, type=argparse.FileType(mode='r'),
                         help="Path static configuration.")
 
     return parser.parse_args()
 
 
+def replace_app_with_dynamic_partition(d, dynamic_partition_name):
+    for k, v in d.items():
+        if isinstance(v, dict):
+            replace_app_with_dynamic_partition(v, dynamic_partition_name)
+        elif isinstance(v, list) and "app" in v:
+            d[k] = [o if o != "app" else dynamic_partition_name for o in v]
+        elif isinstance(v, str) and v == "app":
+            v = dynamic_partition_name
+
+
 def main():
-    print("Running Partition Manager...")
     if len(sys.argv) > 1:
         static_config = None
         args = parse_args()
@@ -536,6 +548,10 @@ def main():
             print("Partition Manager using static configuration at " + args.static_config.name)
             static_config = yaml.safe_load(args.static_config)
         pm_config = get_pm_config(args.input_files, args.flash_start, args.flash_size * 1024, static_config)
+        if args.dynamic_partition:
+            pm_config[args.dynamic_partition.strip()] = pm_config['app']
+            del pm_config['app']
+            replace_app_with_dynamic_partition(pm_config, args.dynamic_partition.strip())
         write_yaml_out_file(pm_config, args.output)
     else:
         print("No input, running tests.")
