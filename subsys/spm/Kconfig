@@ -190,7 +190,7 @@ config SPM_NRF_PWM3_NS
 
 config SPM_NRF_REGULATORS_NS
 	bool "Regulators is Non-Secure"
-	default n
+	default y
 
 config SPM_NRF_WDT_NS
 	bool "WDT is Non-Secure"
