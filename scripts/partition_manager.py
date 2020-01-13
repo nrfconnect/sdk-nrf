@@ -259,17 +259,17 @@ def app_size(reqs, total_size):
     return size
 
 
-def verify_layout(reqs, solution, total_size):
+def verify_layout(reqs, solution, total_size, flash_start):
     # Verify no overlap, that all flash is assigned, and that the total amount of flash
     # assigned corresponds to the total size available.
-    expected_address = reqs[solution[0]]['size']
+    expected_address = flash_start + reqs[solution[0]]['size']
     for p in solution[1:]:
         actual_address = reqs[p]['address']
         if actual_address != expected_address:
             raise RuntimeError("Error when inspecting {}, invalid address {}".format(p, actual_address))
         expected_address += reqs[p]['size']
     last = reqs[solution[-1]]
-    assert last['address'] + last['size'] == total_size
+    assert last['address'] + last['size'] == flash_start + total_size
 
 
 def set_addresses_and_align(reqs, sub_partitions, solution, size, start=0):
@@ -282,7 +282,7 @@ def set_addresses_and_align(reqs, sub_partitions, solution, size, start=0):
 
     if len(reqs) > 1:
         _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynamic_partitions)
-        verify_layout(reqs, solution, size)
+        verify_layout(reqs, solution, size, start)
 
 
 def first_partition_has_been_aligned(first, solution):
@@ -313,7 +313,7 @@ def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynami
         current = solution[i]
 
         if i == len(solution) - 1:
-            reqs[current]['address'] = size - reqs[current]['size']
+            reqs[current]['address'] = (start + size) - reqs[current]['size']
         else:
             higher_partition = solution[i + 1]
             reqs[current]['address'] = reqs[higher_partition]['address'] - reqs[current]['size']
@@ -459,9 +459,9 @@ def get_dynamic_area_start_and_size(static_config, flash_size):
     return start, end - start
 
 
-def get_pm_config(input_config, flash_size, static_config):
+def get_pm_config(input_config, flash_start, flash_size, static_config):
     to_resolve = dict()
-    start = 0
+    start = flash_start
 
     load_reqs(to_resolve, input_config)
     free_size = flash_size
@@ -515,6 +515,9 @@ This file contains all addresses and sizes of all partitions.
     parser.add_argument("--flash-size", required=True, type=int,
                         help="Flash size of chip.")
 
+    parser.add_argument("--flash-start", type=lambda x: int(x, 0), default=0,
+                        help="Start address of flash.")
+
     parser.add_argument("--output", required=True, type=str,
                         help="Path to output file.")
 
@@ -532,7 +535,7 @@ def main():
         if args.static_config:
             print("Partition Manager using static configuration at " + args.static_config.name)
             static_config = yaml.safe_load(args.static_config)
-        pm_config = get_pm_config(args.input_files, args.flash_size, static_config)
+        pm_config = get_pm_config(args.input_files, args.flash_start, args.flash_size, static_config)
         write_yaml_out_file(pm_config, args.output)
     else:
         print("No input, running tests.")
