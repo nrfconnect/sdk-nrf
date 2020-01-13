@@ -513,7 +513,7 @@ This file contains all addresses and sizes of all partitions.
                         help="List of paths to input yaml files. ")
 
     parser.add_argument("--flash-size", required=True, type=int,
-                        help="Flash size of chip.")
+                        help="Flash size of chip in kB.")
 
     parser.add_argument("--flash-start", type=lambda x: int(x, 0), default=0,
                         help="Start address of flash.")
@@ -535,7 +535,7 @@ def main():
         if args.static_config:
             print("Partition Manager using static configuration at " + args.static_config.name)
             static_config = yaml.safe_load(args.static_config)
-        pm_config = get_pm_config(args.input_files, args.flash_start, args.flash_size, static_config)
+        pm_config = get_pm_config(args.input_files, args.flash_start, args.flash_size * 1024, static_config)
         write_yaml_out_file(pm_config, args.output)
     else:
         print("No input, running tests.")

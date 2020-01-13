@@ -43,13 +43,11 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
   # Add subsys defined pm.yml to the input_files
   list(APPEND input_files ${PM_SUBSYS_PREPROCESSED})
 
-  math(EXPR flash_size "${CONFIG_FLASH_SIZE} * 1024")
-
   set(pm_cmd
     ${PYTHON_EXECUTABLE}
     ${NRF_DIR}/scripts/partition_manager.py
     --input-files ${input_files}
-    --flash-size ${flash_size}
+    --flash-size ${CONFIG_FLASH_SIZE}
     --output ${CMAKE_BINARY_DIR}/partitions.yml
     ${static_configuration}
     )
