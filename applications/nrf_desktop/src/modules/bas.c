@@ -56,8 +56,12 @@ static bool event_handler(const struct event_header *eh)
 		battery = event->level;
 
 		if (active) {
-			bt_gatt_notify(NULL, &bas_svc.attrs[1], &battery,
-				       sizeof(battery));
+			int err = bt_gatt_notify(NULL, &bas_svc.attrs[1],
+						 &battery, sizeof(battery));
+
+			if (err) {
+				LOG_ERR("GATT notify failed (err=%d)", err);
+			}
 		}
 
 		return false;
