@@ -67,7 +67,8 @@ extensions = [
     'zephyr.application',
     'zephyr.html_redirects',
     'only.eager_only',
-    'zephyr.link-roles'
+    'zephyr.link-roles',
+    'sphinx_tabs.tabs'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
