@@ -4,20 +4,25 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-if(IMAGE_NAME)
-  set_property(
-    TARGET         zephyr_property_target
-    APPEND_STRING
-    PROPERTY       shared_vars
-    "set(${IMAGE_NAME}KERNEL_HEX_NAME ${KERNEL_HEX_NAME})\n"
-    )
+function(share content)
+  # Adds 'content' as a line in the 'shared_vars' property.
+  # This property is again written to a file which is imported as a cmake file
+  # by the parent image. In other words, this function can be used to share
+  # information (variables, lists etc) with the parent image.
+  #
+  # Example usage 'share("set(visible_in_parent \"I AM YOUR CHILD\")")'
 
   set_property(
     TARGET         zephyr_property_target
     APPEND_STRING
     PROPERTY       shared_vars
-    "list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME})\n"
+    "${content}\n"
     )
+endfunction()
+
+if(IMAGE_NAME)
+  share("set(${IMAGE_NAME}KERNEL_HEX_NAME ${KERNEL_HEX_NAME})")
+  share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME})")
 
   file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/shared_vars.cmake
     CONTENT $<TARGET_PROPERTY:zephyr_property_target,shared_vars>
