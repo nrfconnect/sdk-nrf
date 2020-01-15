@@ -5,6 +5,7 @@
  */
 
 #include <hal/nrf_acl.h>
+#include <hal/nrf_ficr.h>
 #include <errno.h>
 
 int fprotect_area(u32_t start, size_t length)
@@ -15,8 +16,8 @@ int fprotect_area(u32_t start, size_t length)
 		return -ENOSPC;
 	}
 
-	if (start  % NRF_FICR->CODEPAGESIZE != 0 ||
-	    length % NRF_FICR->CODEPAGESIZE != 0 ||
+	if (start  % nrf_ficr_codepagesize_get(NRF_FICR) != 0 ||
+	    length % nrf_ficr_codepagesize_get(NRF_FICR) != 0 ||
 	    length > NRF_ACL_REGION_SIZE_MAX ||
 	    length == 0) {
 		return -EINVAL;
