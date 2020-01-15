@@ -435,6 +435,8 @@ def load_reqs(reqs, input_config):
         if path.exists(ymlpath):
             with open(ymlpath, 'r') as f:
                 loaded_reqs = yaml.safe_load(f)
+                if loaded_reqs is None:
+                    continue
                 for key in loaded_reqs.keys():
                     if key in reqs.keys() and loaded_reqs[key] != reqs[key]:
                         raise RuntimeError("Conflicting configuration found for '{}' value for key '{}' differs."
