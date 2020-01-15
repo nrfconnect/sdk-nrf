@@ -77,6 +77,11 @@ endfunction()
 function(add_child_image_from_source name sourcedir)
   message("\n=== child image ${name} begin ===")
 
+  # Set ${name}_BOARD based on what BOARD is set to if not already set by parent
+  if (NOT ${name}_BOARD)
+    image_board_selection(${BOARD} ${name}_BOARD)
+  endif()
+
   # Construct a list of variables that, when present in the root
   # image, should be passed on to all child images as well.
   list(APPEND
@@ -106,9 +111,6 @@ function(add_child_image_from_source name sourcedir)
         )
     endif()
   endforeach()
-
-  # Set ${name}_BOARD based on what BOARD is set to.
-  image_board_selection(${BOARD} ${name}_BOARD)
 
   get_cmake_property(VARIABLES              VARIABLES)
   get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
