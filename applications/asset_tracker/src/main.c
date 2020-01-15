@@ -405,8 +405,6 @@ static void motion_handler(motion_data_t  motion_data)
 
 static void cloud_cmd_handle_modem_at_cmd(const char * const at_cmd)
 {
-	const size_t max_cmd_len = sizeof(modem_at_cmd_buff);
-
 	if (!at_cmd) {
 		return;
 	}
@@ -418,6 +416,8 @@ static void cloud_cmd_handle_modem_at_cmd(const char * const at_cmd)
 	}
 
 #if defined(CONFIG_AT_CMD)
+	const size_t max_cmd_len = sizeof(modem_at_cmd_buff);
+
 	if (strnlen(at_cmd, max_cmd_len) == max_cmd_len) {
 		printk("[%s:%d] AT cmd is too long, max length is %zu\n",
 		       __func__, __LINE__, max_cmd_len - 1);
