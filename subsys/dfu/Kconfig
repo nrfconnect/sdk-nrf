@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+menu "DFU"
+
 menuconfig DFU_TARGET
 	bool "Device Firmware Upgrade target API"
 
@@ -42,3 +44,5 @@ module-str=Device Firmware Upgrade
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # DFU_TARGET
+
+endmenu
