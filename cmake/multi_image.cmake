@@ -151,6 +151,16 @@ function(add_child_image_from_source name sourcedir)
     RESULT_VARIABLE ret
     )
 
+  if (IMAGE_NAME)
+    # Expose your childrens secrets to your parent
+    set_property(
+      TARGET         zephyr_property_target
+      APPEND_STRING
+      PROPERTY       shared_vars
+      "include(${CMAKE_BINARY_DIR}/${name}/shared_vars.cmake)\n"
+      )
+  endif()
+
   set_property(DIRECTORY APPEND PROPERTY
     CMAKE_CONFIGURE_DEPENDS
     ${CMAKE_BINARY_DIR}/${name}/zephyr/.config
