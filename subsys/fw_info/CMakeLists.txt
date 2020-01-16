@@ -10,6 +10,11 @@ if (CONFIG_FW_INFO OR CONFIG_IS_SECURE_BOOTLOADER)
   zephyr_library_sources(fw_info.c)
 endif ()
 
+zephyr_linker_sources_ifdef(CONFIG_FW_INFO
+  TEXT_START
+  SORT_KEY ${CONFIG_FW_INFO_OFFSET}
+  fw_info.ld)
+
 # The following creates variables with the magic numbers used for firmware
 # metadata as comma-separated lists of numbers.
 
