@@ -29,6 +29,8 @@ manifest:
       url-base: https://github.com/ThrowTheSwitch
     - name: armmbed
       url-base: https://github.com/ARMmbed
+    - name: civetweb
+      url-base: https://github.com/civetweb
 
   # The list of external projects for the nRF Connect SDK.
   #
@@ -36,9 +38,9 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: eb4e78d449a37114da70439366e9134e574d9144
+      revision: 3c75196149f876b4d40e490607d80591e60d467f
     - name: nffs
-      revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
+      revision: 00dd4fab1a00f2f6e995ef3f2e7c3814689f8885
       path: modules/fs/nffs
       remote: zephyrproject
     - name: segger
@@ -47,14 +49,15 @@ manifest:
       remote: zephyrproject
     - name: mbedtls
       path: modules/crypto/mbedtls
-      revision: 4f1e8f5a78dc08aa42a47cc1ad059cce558c26c3
+      revision: 3776c158fe138a72c97c187e4d31c81c37884be9
       remote: zephyrproject
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: 0b59f48e4dce86d0c8d4e09688feb362c7223ad3
+      revision: 2332c4cfd6aa32eadef3346b8616be9908309335
+      path: bootloader/mcuboot
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
-      revision: f663988d35da559a37f263d369842dbce309d1fa
+      revision: 706394b33ed21870b7a2e3df209bf769379f1cb7
       path: modules/lib/mcumgr
     - name: tinycbor
       path: modules/lib/tinycbor
@@ -63,7 +66,7 @@ manifest:
     - name: ci-tools
       path: tools/ci-tools
       remote: zephyrproject
-      revision: c083680dd5e281218ddb47d0ceac5c5fd5619749
+      revision: e6b2e622ff726b9c43b9966e0bb1659623566e59
     - name: net-tools
       path: tools/net-tools
       remote: zephyrproject
@@ -84,20 +87,22 @@ manifest:
       repo-path: mbedtls
       revision: mbedtls-2.16.3
       remote: armmbed
-
-    # The projects below are included for completeness, but they are
-    # not known to work properly with the NCS multi-image / partition
-    # manager patchset. Please report any issues.
-    #
-    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/scripts/partition_manager/partition_manager.html
+    - name: civetweb
+      path: modules/lib/civetweb
+      remote: civetweb
+      revision: 99129c5efc907ea613c4b73ccff07581feb58a7a
+    - name: edtt
+      path: tools/edtt
+      remote: zephyrproject
+      revision: dd4dd502ef2fbeced6ef7faaba562a7ddca45632
     - name: fatfs
       path: modules/fs/fatfs
       remote: zephyrproject
-      revision: df96914dd989907f3a5de4cb95b116c2f305820d
+      revision: 0c1288bb817c1976388e0f55e8483f671ae437ab
     - name: hal_nordic
       path: modules/hal/nordic
       remote: zephyrproject
-      revision: 64f3473398f9fba11059dd0c7ae969e74f74f356
+      revision: 8506c348b6da91a9f53bcbb181ecd82b752b9eed
     - name: hal_st
       path: modules/hal/st
       remote: zephyrproject
@@ -106,10 +111,18 @@ manifest:
       path: modules/hal/libmetal
       remote: zephyrproject
       revision: 45e630d6152824f807d3f919958605c4626cbdff
+    - name: loramac-node
+      path: modules/lib/loramac-node
+      remote: zephyrproject
+      revision: 29e516ec585b1a909af2b5f1c60d83e7d4d563e3
     - name: lvgl
       path: modules/lib/gui/lvgl
       remote: zephyrproject
-      revision: d4708d0a432e95f51bdc712591ba5295b751140c
+      revision: 74fc2e753a997bd71cefa34dd9c56dcb954b42e2
+    - name: nrf_hw_models
+      path: modules/bsim_hw_models/nrf_hw_models
+      remote: zephyrproject
+      revision: fec69703cb1ca06fcdab6d5fde01274f0fc5c759
     - name: open-amp
       path: modules/lib/open-amp
       remote: zephyrproject
@@ -117,7 +130,7 @@ manifest:
     - name: openthread
       path: modules/lib/openthread
       remote: zephyrproject
-      revision: 882e7074b5986027b85cb4f3ba1dc563a11ca013
+      revision: 05aaccc6e0db0fe17ac4beed2a2aacc9a9af167c
     - name: littlefs
       path: modules/fs/littlefs
       remote: zephyrproject
