@@ -17,16 +17,55 @@ import yaml
 
 import ncs_west_helpers as nwh
 
+def add_zephyr_rev_arg(parser):
+    parser.add_argument('-z', '--zephyr-rev',
+                        help='''upstream git ref to use for zephyr project;
+                        default is upstream/master''')
+
+def add_projects_arg(parser):
+    parser.add_argument('projects', metavar='PROJECT', nargs='*',
+                        help='''projects (by name or path) to operate on;
+                        defaults to all projects in the manifest which
+                        are shared with the upstream manifest''')
+
+def check_west_version():
+    min_ver = '0.6.99'
+    if (packaging.version.parse(west_ver) <
+            packaging.version.parse(min_ver)):
+        log.die('this command currently requires a pre-release west '
+                f'(your west version is {west_ver}, '
+                f'but must be at least {min_ver}')
+
+def likely_merged(np, zp, nsha, zsha):
+    analyzer = nwh.RepoAnalyzer(np, zp, nsha, zsha)
+    likely_merged = analyzer.likely_merged
+    if likely_merged:
+        # likely_merged is a map from downstream commits to
+        # lists of upstream commits that look similar.
+        log.msg('downstream patches which are likely merged upstream',
+                '(revert these if appropriate):', color=log.WRN_COLOR)
+        for dc, ucs in likely_merged.items():
+            log.inf(f'- {dc.oid} ({nwh.commit_shortlog(dc)})\n'
+                    '  Similar upstream commits:')
+            for uc in ucs:
+                log.inf(f'  {uc.oid} ({nwh.commit_shortlog(uc)})')
+    else:
+        log.inf('no downstream patches seem to have been merged upstream')
+
+def to_ncs_name(zp):
+    # convert zp, a west.manifest.Project in the zephyr manifest,
+    # to the equivalent Project name in the NCS manifest.
+    #
+    # TODO: does the fact that this is needed mean the west commit
+    #       which names the manifest project 'manifest' unconditionally
+    #       was wrong to do so?
+    if zp.name == 'manifest':
+        return 'zephyr'
+    else:
+        return zp.name
+
 class NcsWestCommand(WestCommand):
     # some common code that will be useful to multiple commands
-
-    def check_west_version(self):
-        min_ver = '0.6.99'
-        if (packaging.version.parse(west_ver) <
-                packaging.version.parse(min_ver)):
-            log.die('this command currently requires a pre-release west '
-                    f'(your west version is {west_ver}, '
-                    f'but must be at least {min_ver}')
 
     @staticmethod
     def checked_sha(project, revision):
@@ -40,17 +79,6 @@ class NcsWestCommand(WestCommand):
             return sha
         except subprocess.CalledProcessError:
             return None
-
-    def add_zephyr_rev_arg(self, parser):
-        parser.add_argument('-z', '--zephyr-rev',
-                            help='''upstream git ref to use for zephyr project;
-                            default is upstream/master''')
-
-    def add_projects_arg(self, parser):
-        parser.add_argument('projects', metavar='PROJECT', nargs='*',
-                            help='''projects (by name or path) to operate on;
-                            defaults to all projects in the manifest which
-                            are shared with the upstream manifest''')
 
     def setup_upstream_downstream(self, args):
         # set some instance state that will be useful for
@@ -76,6 +104,10 @@ class NcsWestCommand(WestCommand):
                 projects = self.manifest.get_projects(
                     args.projects, only_cloned=True)
             except ValueError as ve:
+                # West guarantees that get_projects()'s ValueError
+                # has exactly two values in args.
+                #
+                # pylint: disable=unbalanced-tuple-unpacking
                 unknown, uncloned = ve.args
                 if unknown:
                     log.die('unknown projects:', ', '.join(unknown))
@@ -99,6 +131,13 @@ class NcsWestCommand(WestCommand):
                            capture_stdout=True, check=True)
         z_west_yml = cp.stdout.decode('utf-8')
         try:
+            # The topdir kwarg was added in a pre-release west, which
+            # is required to use this file. The latest stable (0.6.3)
+            # doesn't have it, so pylint is failing with a false error
+            # report here. Turn it off for now; this can be removed
+            # when west 0.7 is out.
+            #
+            # pylint: disable=unexpected-keyword-arg
             return Manifest.from_data(source_data=yaml.safe_load(z_west_yml),
                                       topdir=self.topdir)
         except MalformedManifest:
@@ -139,7 +178,7 @@ class NcsLoot(NcsWestCommand):
     def do_add_parser(self, parser_adder):
         parser = parser_adder.add_parser(self.name, help=self.help,
                                          description=self.description)
-        self.add_zephyr_rev_arg(parser)
+        add_zephyr_rev_arg(parser)
         parser.add_argument('-s', '--sha', dest='sha_only',
                             action='store_true',
                             help='only print SHAs of OOT commits')
@@ -147,11 +186,11 @@ class NcsLoot(NcsWestCommand):
                             help='''restrict output to patches touching
                             this file; may be given multiple times. If used,
                             a single project must be given''')
-        self.add_projects_arg(parser)
+        add_projects_arg(parser)
         return parser
 
     def do_run(self, args, unknown_args):
-        self.check_west_version()
+        check_west_version()
         if args.files and len(args.projects) != 1:
             self.parser.error('--file used, so expected 1 project argument, '
                               f'but got: {len(args.projects)}')
@@ -241,11 +280,11 @@ class NcsCompare(NcsWestCommand):
     def do_add_parser(self, parser_adder):
         parser = parser_adder.add_parser(self.name, help=self.help,
                                          description=self.description)
-        self.add_zephyr_rev_arg(parser)
+        add_zephyr_rev_arg(parser)
         return parser
 
     def do_run(self, args, unknown_args):
-        self.check_west_version()
+        check_west_version()
         self.setup_upstream_downstream(args)
 
         log.inf('Comparing nrf/west.yml with zephyr/west.yml at revision '
@@ -258,8 +297,8 @@ class NcsCompare(NcsWestCommand):
         present_allowed = []
         missing_blacklisted = []
         missing_allowed = []
-        for zn, zp in self.z_pmap.items():
-            nn = self.to_ncs_name(zp)
+        for zp in self.z_pmap.values():
+            nn = to_ncs_name(zp)
             present = nn in self.ncs_pmap
             blacklisted = PurePath(zp.path) in _PROJECT_BLACKLIST
             if present:
@@ -311,7 +350,7 @@ class NcsCompare(NcsWestCommand):
                     'use "west -v ncs-compare" for more details.')
 
     def allowed_project(self, zp):
-        nn = self.to_ncs_name(zp)
+        nn = to_ncs_name(zp)
         np = self.ncs_pmap[nn]
         banner = f'{nn} ({zp.path}):'
 
@@ -367,42 +406,14 @@ class NcsCompare(NcsWestCommand):
                 if 'ahead by' in status:
                     status += ', ' + upstream_rev
                 log.inf(status)
-                self.likely_merged(np, zp, nsha, zsha)
+                likely_merged(np, zp, nsha, zsha)
         else:
             # Behind or diverged: always print.
             log.small_banner(banner)
             log.msg(status, color=log.WRN_COLOR)
             log.inf(upstream_rev)
             log.inf(downstream_rev)
-            self.likely_merged(np, zp, nsha, zsha)
-
-    def likely_merged(self, np, zp, nsha, zsha):
-        analyzer = nwh.RepoAnalyzer(np, zp, nsha, zsha)
-        likely_merged = analyzer.likely_merged
-        if likely_merged:
-            # likely_merged is a map from downstream commits to
-            # lists of upstream commits that look similar.
-            log.msg('downstream patches which are likely merged upstream',
-                    '(revert these if appropriate):', color=log.WRN_COLOR)
-            for dc, ucs in likely_merged.items():
-                log.inf(f'- {dc.oid} ({nwh.commit_shortlog(dc)})\n'
-                        '  Similar upstream commits:')
-                for uc in ucs:
-                    log.inf(f'  {uc.oid} ({nwh.commit_shortlog(uc)})')
-        else:
-            log.inf('no downstream patches seem to have been merged upstream')
-
-    def to_ncs_name(self, zp):
-        # convert zp, a west.manifest.Project in the zephyr manifest,
-        # to the equivalent Project name in the NCS manifest.
-        #
-        # TODO: does the fact that this is needed mean the west commit
-        #       which names the manifest project 'manifest' unconditionally
-        #       was wrong to do so?
-        if zp.name == 'manifest':
-            return 'zephyr'
-        else:
-            return zp.name
+            likely_merged(np, zp, nsha, zsha)
 
 def _name_and_path(project):
     # This is just a compatibility shim to keep things going until we
