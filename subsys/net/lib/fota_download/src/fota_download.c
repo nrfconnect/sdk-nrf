@@ -114,7 +114,9 @@ static int download_client_callback(const struct download_client_evt *event)
 			download_client_disconnect(&dlc);
 			LOG_ERR("Download client error");
 			err = dfu_target_done(false);
-			if (err != 0) {
+			if (err == -EACCES) {
+				LOG_DBG("No DFU target was initialized");
+			} else if (err != 0) {
 				LOG_ERR("Unable to deinitialze resources "
 					"used by dfu_target.");
 			}
