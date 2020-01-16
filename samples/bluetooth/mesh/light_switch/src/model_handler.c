@@ -96,7 +96,7 @@ static struct bt_mesh_cfg_srv cfg_srv = {
 	.beacon = BT_MESH_BEACON_ENABLED,
 	.frnd = IS_ENABLED(CONFIG_BT_MESH_FRIEND),
 	.gatt_proxy = IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY),
-	.default_ttl = BT_MESH_TTL_DEFAULT,
+	.default_ttl = 7,
 
 	/* 3 transmissions with 20ms interval */
 	.net_transmit = BT_MESH_TRANSMIT(2, 20),
