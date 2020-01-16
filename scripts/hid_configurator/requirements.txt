@@ -7,7 +7,6 @@ plyer
 kivy
 # pyhidapi
 hid>=1.0.3
-imgtool==1.4.0a1
 numpy
 wave
 pyaudio

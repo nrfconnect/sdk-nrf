@@ -7,12 +7,12 @@ tests:
     build_on_all: true
     platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52833_pca10100 nrf52840_pca10059 nrf52_pca20037 nrf52_pca20044 nrf52810_pca20045
     tags: bluetooth ci_build
-  test_zdebug_mcuboot:
+  test_zdebug_b0:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52840_pca10059
     tags: bluetooth ci_build
-    extra_args: "CMAKE_BUILD_TYPE=ZDebugMCUBoot"
+    extra_args: "CMAKE_BUILD_TYPE=ZDebugB0"
   test_zdebug_splitll:
     build_only: true
     build_on_all: true
@@ -25,12 +25,12 @@ tests:
     platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52833_pca10100 nrf52840_pca10059 nrf52_pca20037 nrf52_pca20044 nrf52810_pca20045
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZRelease"
-  test_zrelease_mcuboot:
+  test_zrelease_b0:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52840_pca10059 nrf52_pca20037
     tags: bluetooth ci_build
-    extra_args: "CMAKE_BUILD_TYPE=ZReleaseMCUBoot"
+    extra_args: "CMAKE_BUILD_TYPE=ZReleaseB0"
   test_zrelease_splitll:
     build_only: true
     build_on_all: true
