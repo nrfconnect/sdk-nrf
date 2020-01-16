@@ -6,7 +6,6 @@
 import struct
 import zlib
 import os
-import imgtool.image as img
 import time
 import logging
 
@@ -16,6 +15,11 @@ FLASH_PAGE_SIZE = 4096
 
 DFU_SYNC_RETRIES = 3
 DFU_SYNC_INTERVAL = 1
+
+UPDATE_IMAGE_MAGIC_COMMON = 0x281ee6de
+UPDATE_IMAGE_MAGIC_FWINFO = 0x8fcebb4c
+UPDATE_IMAGE_MAGIC_COMPATIBILITY = 0x00003402
+UPDATE_IMAGE_HEADER_OFFSETS = (0x0000, 0x0200, 0x0400, 0x0800, 0x1000)
 
 
 class FwInfo:
@@ -33,6 +37,9 @@ class FwInfo:
 
     def get_fw_version(self):
         return (self.ver_major, self.ver_minor, self.ver_rev, self.ver_build_nr)
+
+    def get_flash_area_id(self):
+        return self.flash_area_id
 
     def __str__(self):
         return ('Firmware info\n'
@@ -265,6 +272,34 @@ def is_dfu_operation_pending(dfu_info):
     return False
 
 
+def get_fwinfo_offset(dfu_image):
+    fwinfo_offset = None
+    img_file = None
+    try:
+        img_file = open(dfu_image, 'rb')
+        for offset in UPDATE_IMAGE_HEADER_OFFSETS:
+            img_file.seek(offset)
+            data_raw = img_file.read(4)
+            magic_common = struct.unpack('<I', data_raw)[0]
+            data_raw = img_file.read(4)
+            magic_fwinfo = struct.unpack('<I', data_raw)[0]
+            data_raw = img_file.read(4)
+            magic_compat = struct.unpack('<I', data_raw)[0]
+            if magic_common == UPDATE_IMAGE_MAGIC_COMMON and \
+               magic_compat == UPDATE_IMAGE_MAGIC_COMPATIBILITY and \
+               magic_fwinfo == UPDATE_IMAGE_MAGIC_FWINFO:
+                fwinfo_offset = offset
+                break
+    except FileNotFoundError:
+        print('Wrong file or file path')
+    except Exception:
+        print('Cannot process file')
+    finally:
+        if img_file is not None:
+            img_file.close()
+    return fwinfo_offset
+
+
 def is_dfu_image_correct(dfu_image):
     if not os.path.isfile(dfu_image):
         print('DFU image file does not exists')
@@ -276,22 +311,34 @@ def is_dfu_image_correct(dfu_image):
         print('DFU image is empty')
         return False
 
-    print('DFU image size: {} bytes'.format(img_length))
-
-    res, _ = img.Image.verify(dfu_image, None)
-
-    if res != img.VerifyResult.OK:
-        print('DFU image is invalid')
+    if get_fwinfo_offset(dfu_image) is None:
+        print('Invalid image format')
         return False
+
+    print('DFU image size: {} bytes'.format(img_length))
 
     return True
 
 
 def get_dfu_image_version(dfu_image):
-    res, ver = img.Image.verify(dfu_image, None)
-
-    if res != img.VerifyResult.OK:
-        print('Image in file is invalid')
+    fwinfo_offset = get_fwinfo_offset(dfu_image)
+    if fwinfo_offset is None:
         return None
 
-    return ver
+    version = None
+    img_file = None
+
+    try:
+        img_file = open(dfu_image, 'rb')
+        img_file.seek(fwinfo_offset + 0x14)
+        version_raw = img_file.read(4)
+        version = (0, 0, 0, struct.unpack('<I', version_raw)[0])
+    except FileNotFoundError:
+        print('Wrong file or file path')
+    except Exception:
+        print('Cannot process file')
+    finally:
+        if img_file is not None:
+            img_file.close()
+
+    return version

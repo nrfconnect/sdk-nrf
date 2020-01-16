@@ -5,6 +5,11 @@
 
 import argparse
 import logging
+import os
+import zipfile
+import tempfile
+
+from zipfile import ZipFile
 
 from devices import DEVICE, get_device_pid, get_device_vid
 from NrfHidDevice import NrfHidDevice
@@ -24,11 +29,10 @@ def progress_bar(permil):
 
 
 def perform_dfu(dev, args):
-    dfu_image = args.dfu_image
+    dfu_package = args.dfu_image
 
-    img_ver_file = get_dfu_image_version(dfu_image)
-    if img_ver_file is None:
-        print('Cannot read image version from file')
+    if not zipfile.is_zipfile(dfu_package):
+        print('Invalid DFU package format')
         return
 
     info = fwinfo(dev)
@@ -36,6 +40,29 @@ def perform_dfu(dev, args):
         print('Cannot get FW info from device')
         return
     img_ver_dev = info.get_fw_version()
+
+    flash_area_id = info.get_flash_area_id()
+    if flash_area_id not in (0, 1):
+        print('Invalid area id in FW info')
+        return
+    dfu_slot_id = 1 - flash_area_id
+
+    dfu_image_name = 'signed_by_b0_s{}_image.bin'.format(dfu_slot_id)
+
+    temp_dir = tempfile.TemporaryDirectory(dir='.')
+    dfu_path = temp_dir.name
+
+    with ZipFile(dfu_package, 'r') as zip_file:
+        zip_file.extract(dfu_image_name, dfu_path)
+
+    dfu_image = os.path.join(dfu_path, dfu_image_name)
+
+    print('DFU will use file {}'.format(dfu_image))
+
+    img_ver_file = get_dfu_image_version(dfu_image)
+    if img_ver_file is None:
+        print('Cannot read image version from file')
+        return
 
     print('Current FW version from device: ' +
           '.'.join([str(i) for i in img_ver_dev]))
@@ -60,6 +87,8 @@ def perform_dfu(dev, args):
 
     if success:
         success = fwreboot(dev)
+
+    temp_dir.cleanup()
 
     if success:
         print('DFU transfer completed')

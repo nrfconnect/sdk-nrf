@@ -10,7 +10,7 @@
 #include <sys/byteorder.h>
 #include <storage/flash_map.h>
 #include <pm_config.h>
-#include <dfu/mcuboot.h>
+#include <fw_info.h>
 
 #include "event_manager.h"
 #include "config_event.h"
@@ -62,6 +62,15 @@ const static char * const opt_descr[] = {
 	[DFU_OPT_REBOOT] = "reboot",
 	[DFU_OPT_FWINFO] = "fwinfo"
 };
+
+static u8_t dfu_slot_id(void)
+{
+	if ((u32_t)(uintptr_t)dfu_slot_id < PM_S1_IMAGE_ADDRESS) {
+		return PM_S1_IMAGE_ID;
+	}
+
+	return PM_S0_IMAGE_ID;
+}
 
 static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
 {
@@ -135,7 +144,7 @@ static void background_erase_handler(struct k_work *work)
 	}
 
 	if (!flash_area) {
-		err = flash_area_open(PM_MCUBOOT_SECONDARY_ID, &flash_area);
+		err = flash_area_open(dfu_slot_id(), &flash_area);
 		if (err) {
 			LOG_ERR("Cannot open flash area (%d)", err);
 			flash_area = NULL;
@@ -203,7 +212,6 @@ static void handle_dfu_data(const u8_t *data, const size_t size)
 
 	if (img_length == cur_offset) {
 		LOG_INF("DFU image written");
-		boot_request_upgrade(false);
 
 		goto dfu_finish;
 	} else {
@@ -291,7 +299,7 @@ static void handle_dfu_start(const u8_t *data, const size_t size)
 	}
 
 	__ASSERT_NO_MSG(flash_area == NULL);
-	int err = flash_area_open(PM_MCUBOOT_SECONDARY_ID, &flash_area);
+	int err = flash_area_open(dfu_slot_id(), &flash_area);
 
 	if (err) {
 		LOG_ERR("Cannot open flash area (%d)", err);
@@ -347,44 +355,55 @@ static void handle_reboot_request(u8_t *data, size_t *size)
 
 static void handle_image_info_request(u8_t *data, size_t *size)
 {
-	struct mcuboot_img_header header;
-	u8_t flash_area_id = PM_MCUBOOT_PRIMARY_ID;
-	int err = boot_read_bank_header(flash_area_id, &header,
-					sizeof(header));
+	const struct fw_info *info;
+	u8_t flash_area_id;
 
-	if (!err) {
+	if (dfu_slot_id() == PM_S1_IMAGE_ID) {
+		info = fw_info_find(PM_S0_IMAGE_ADDRESS);
+		flash_area_id = 0;
+	} else {
+		info = fw_info_find(PM_S1_IMAGE_ADDRESS);
+		flash_area_id = 1;
+	}
+
+	if (info) {
+		u32_t image_size = info->size;
+		u32_t build_num = info->version;
+		u8_t major = 0;
+		u8_t minor = 0;
+		u16_t revision = 0;
+
 		LOG_INF("Primary slot| image size:%" PRIu32
 			" major:%" PRIu8 " minor:%" PRIu8 " rev:0x%" PRIx16
-			" build:0x%" PRIx32, header.h.v1.image_size,
-			header.h.v1.sem_ver.major, header.h.v1.sem_ver.minor,
-			header.h.v1.sem_ver.revision, header.h.v1.sem_ver.build_num);
+			" build:0x%" PRIx32, image_size, major, minor,
+			revision, build_num);
 
 		size_t data_size = sizeof(flash_area_id) +
-				   sizeof(header.h.v1.image_size) +
-				   sizeof(header.h.v1.sem_ver.major) +
-				   sizeof(header.h.v1.sem_ver.minor) +
-				   sizeof(header.h.v1.sem_ver.revision) +
-				   sizeof(header.h.v1.sem_ver.build_num);
+				   sizeof(image_size) +
+				   sizeof(major) +
+				   sizeof(minor) +
+				   sizeof(revision) +
+				   sizeof(build_num);
 		size_t pos = 0;
 
 		*size = data_size;
 		data[pos] = flash_area_id;
 		pos += sizeof(flash_area_id);
 
-		sys_put_le32(header.h.v1.image_size, &data[pos]);
-		pos += sizeof(header.h.v1.image_size);
+		sys_put_le32(image_size, &data[pos]);
+		pos += sizeof(image_size);
 
-		data[pos] = header.h.v1.sem_ver.major;
-		pos += sizeof(header.h.v1.sem_ver.major);
+		data[pos] = major;
+		pos += sizeof(major);
 
-		data[pos] = header.h.v1.sem_ver.minor;
-		pos += sizeof(header.h.v1.sem_ver.minor);
+		data[pos] = minor;
+		pos += sizeof(minor);
 
-		sys_put_le16(header.h.v1.sem_ver.revision, &data[pos]);
-		pos += sizeof(header.h.v1.sem_ver.revision);
+		sys_put_le16(revision, &data[pos]);
+		pos += sizeof(revision);
 
-		sys_put_le32(header.h.v1.sem_ver.build_num, &data[pos]);
-		pos += sizeof(header.h.v1.sem_ver.build_num);
+		sys_put_le32(build_num, &data[pos]);
+		pos += sizeof(build_num);
 	} else {
 		LOG_ERR("Cannot obtain image information");
 	}
@@ -447,11 +466,6 @@ static bool event_handler(const struct event_header *eh)
 			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			int err = boot_write_img_confirmed();
-			if (err) {
-				LOG_ERR("Cannot confirm a running image");
-			}
-
 			k_delayed_work_init(&dfu_timeout, dfu_timeout_handler);
 			k_delayed_work_init(&reboot_request, reboot_request_handler);
 			k_delayed_work_init(&background_erase, background_erase_handler);
