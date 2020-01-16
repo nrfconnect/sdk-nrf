@@ -176,7 +176,7 @@ class NcsLoot(NcsWestCommand):
         # name: project name
         # project: the west.manifest.Project instance in the NCS manifest
         # z_project: the Project instance in the upstream manifest
-        msg = project.format('{name_and_path} outstanding downstream patches:')
+        msg = f'{_name_and_path(project)} outstanding downstream patches:'
 
         # Get the upstream revision of the project. The zephyr project
         # has to be treated as a special case.
@@ -276,7 +276,7 @@ class NcsCompare(NcsWestCommand):
 
         def print_lst(projects):
             for p in projects:
-                log.small_banner(p.format('{name_and_path}'))
+                log.small_banner(f'{_name_and_path(p)}')
 
         if missing_blacklisted and log.VERBOSE >= log.VERBOSE_NORMAL:
             log.banner('blacklisted zephyr projects',
@@ -295,9 +295,9 @@ class NcsCompare(NcsWestCommand):
         if missing_allowed:
             log.wrn('these should be blacklisted or added to nrf')
             for p in missing_allowed:
-                log.small_banner(p.format('{name_and_path}'))
-                log.inf(p.format('upstream revision: {revision}'))
-                log.inf(p.format('upstream URL: {url}'))
+                log.small_banner(f'{_name_and_path(p)}:')
+                log.inf(f'upstream revision: {p.revision}')
+                log.inf(f'upstream URL: {p.url}')
         else:
             log.inf('none (OK)')
 
@@ -314,7 +314,7 @@ class NcsCompare(NcsWestCommand):
     def allowed_project(self, zp):
         nn = self.to_ncs_name(zp)
         np = self.ncs_pmap[nn]
-        banner = zp.format('{ncs_name} ({path}):', ncs_name=nn)
+        banner = f'{nn} ({zp.path}):'
 
         if np.name == 'zephyr':
             nrev = self.manifest.get_projects(['zephyr'])[0].revision
@@ -407,6 +407,12 @@ class NcsCompare(NcsWestCommand):
             return 'zephyr'
         else:
             return zp.name
+
+def _name_and_path(project):
+    # This is just a compatibility shim to keep things going until we
+    # can rely on project.name_and_path's availability in west 0.7.
+
+    return f'{project.name} ({project.path})'
 
 _UPSTREAM = 'https://github.com/zephyrproject-rtos/zephyr'
 
