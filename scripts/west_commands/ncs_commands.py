@@ -435,4 +435,5 @@ _PROJECT_BLACKLIST = set(
      'modules/hal/silabs',
      'modules/hal/stm32',
      'modules/hal/ti',
-     'modules/hal/nxp'])
+     'modules/hal/nxp',
+     'modules/hal/xtensa'])
