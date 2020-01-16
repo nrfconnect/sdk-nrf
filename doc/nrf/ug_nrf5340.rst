@@ -153,3 +153,30 @@ Then navigate to the build folder of the application sample and enter the follow
     nrfjprog -f NRF53 --program zephyr/zephyr.hex
 
     nrfjprog --pinreset
+
+Getting logging output
+**********************
+
+When connected to the computer, the nRF5340 PDK emulates three virtual COM ports.
+In the default configuration, logging output of the application core sample is available on the third (last) COM port.
+The first two COM ports are silent.
+
+.. _logging_cpunet:
+
+Logging output on the network core
+==================================
+
+In the default configuration, you cannot access the logging output of the network core sample.
+
+To get logging output on the second COM port, you must connect certain pins on the nRF5340 PDK.
+The following table lists which pins must be shorted:
+
+.. list-table::
+   :header-rows: 1
+
+   * - 1st connection point
+     - 2nd connection point
+   * - 25
+     - RxD
+   * - 26
+     - TxD
