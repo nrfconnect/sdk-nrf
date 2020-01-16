@@ -16,6 +16,11 @@
 
 LOG_MODULE_REGISTER(aws_fota, CONFIG_AWS_FOTA_LOG_LEVEL);
 
+/* State variable to ensure that the AWS Fota library does not update the job
+ * execution document before the last update is accepted by AWS IoT.
+ */
+static bool accepted = true;
+
 /* Enum to keep the fota status */
 enum fota_status {
 	NONE = 0,
@@ -41,6 +46,9 @@ static enum fota_status fota_state = NONE;
  * incremented with each accepted update to the job execution.
  */
 static u32_t execution_version_number;
+
+/* Store file offset progress */
+static size_t stored_progress;
 
 /* Allocated strings for topics */
 static u8_t notify_next_topic[AWS_JOBS_TOPIC_MAX_LEN];
@@ -76,7 +84,8 @@ static int get_published_payload(struct mqtt_client *client, u8_t *write_buf,
 		return -EMSGSIZE;
 	}
 	while (buf < end) {
-		int ret = mqtt_read_publish_payload_blocking(client, buf, end - buf);
+		int ret = mqtt_read_publish_payload_blocking(client, buf,
+							     end - buf);
 
 		if (ret < 0) {
 			return ret;
@@ -89,6 +98,16 @@ static int get_published_payload(struct mqtt_client *client, u8_t *write_buf,
 }
 
 /**
+ * @brief Wait for a job update to be accepted.
+ */
+static inline void wait_for_update_accepted(void)
+{
+	while (!accepted) {
+		k_yield();
+	};
+}
+
+/**
  * @brief Update an AWS IoT Job Execution with a state and status details
  *
  * @param[in] client  Connected MQTT client instance
@@ -98,39 +117,48 @@ static int get_published_payload(struct mqtt_client *client, u8_t *write_buf,
  * @param[in] fota_status next_state  The next state the device's fota operation
  *				      is going to enter. Reported to the status
  *				      details of the Job Execution.
- * @param[in] version_number  The expected version number of the Job Execution.
+ * @param[in] progress How many bytes of the upgrade have been downloaded. Will
+ *		       be reported to AWS IoT through the status details field
+ *		       of the Job Execution.
  * @param[in] client_token  Client identifier which will be repeated in the
  *			    respone of the update.
  *
  * @return 0 If successful otherwise a negative error code is returned.
  */
-#define AWS_FOTA_STATUS_DETAILS_TEMPLATE "{\"nextState\":\"%s\"}"
-#define STATUS_DETAILS_MAX_LEN  (sizeof("{\"nextState\":\"\"}") \
-				+ (sizeof("download_firmware") + 2))
+#define AWS_FOTA_STATUS_DETAILS_TEMPLATE "{\"nextState\":\"%s\","\
+					 "\"progress\":%d}"
+#define STATUS_DETAILS_MAX_LEN 60
 
 static int update_job_execution(struct mqtt_client *const client,
 				const u8_t *job_id,
 				enum execution_status state,
 				enum fota_status next_state,
-				int version_number,
-				const char *client_token)
+				int progress,
+				const char *client_token
+				)
 {
+	/* Waiting for the previous call to this function to be accepted. */
+	wait_for_update_accepted();
+	accepted = false;
+	LOG_DBG("%s, state: %d, status: %d, version_number: %d", __func__,
+		state, next_state, execution_version_number);
 	char status_details[STATUS_DETAILS_MAX_LEN + 1];
-	int ret = snprintf(status_details,
-			   sizeof(status_details),
+	int ret = snprintf(status_details, sizeof(status_details),
 			   AWS_FOTA_STATUS_DETAILS_TEMPLATE,
-			   fota_status_strings[next_state]);
+			   fota_status_strings[next_state], progress);
 	__ASSERT(ret >= 0, "snprintf returned error %d\n", ret);
 	__ASSERT(ret < STATUS_DETAILS_MAX_LEN,
 		"Not enough space for status, need %d bytes\n", ret+1);
 
 	ret =  aws_jobs_update_job_execution(client, job_id, state,
-					     status_details, version_number,
+					     status_details,
+					     execution_version_number,
 					     client_token, update_topic);
 
 	if (ret < 0) {
 		LOG_ERR("aws_jobs_update_job_execution failed: %d", ret);
 	}
+
 
 	return ret;
 }
@@ -214,6 +242,7 @@ static int job_update_accepted(struct mqtt_client *const client,
 		return err;
 	}
 
+	accepted = true;
 	/* Update accepted, so the execution version number needs to be
 	 * incremented. This can also be parsed out from the response but it's
 	 * better if the device handles this state so we need to send less data.
@@ -222,7 +251,8 @@ static int job_update_accepted(struct mqtt_client *const client,
 	 */
 	execution_version_number++;
 
-	if (fota_state == DOWNLOAD_FIRMWARE) {
+	if (execution_state != AWS_JOBS_IN_PROGRESS
+	    && fota_state == DOWNLOAD_FIRMWARE) {
 		/*Job document is updated and we are ready to download
 		 * the firmware.
 		 */
@@ -240,14 +270,14 @@ static int job_update_accepted(struct mqtt_client *const client,
 		LOG_INF("Firmware download completed");
 		execution_state = AWS_JOBS_SUCCEEDED;
 		err = update_job_execution(client, job_id,
-				execution_state, fota_state,
-				execution_version_number, "");
+				execution_state, fota_state, stored_progress,
+				"");
 		if (err) {
 			LOG_ERR("Unable to update the job execution");
 			return err;
 		}
-	} else if (execution_state == AWS_JOBS_SUCCEEDED &&
-			fota_state == APPLY_UPDATE) {
+	} else if (execution_state == AWS_JOBS_SUCCEEDED
+		   && fota_state == APPLY_UPDATE) {
 		LOG_INF("Job document updated with SUCCEDED");
 		LOG_INF("Ready to reboot");
 		callback(AWS_FOTA_EVT_DONE);
@@ -269,12 +299,14 @@ static int job_update_rejected(struct mqtt_client *const client,
 			       u32_t payload_len)
 {
 	LOG_ERR("Job document update was rejected");
+	execution_version_number--;
 	int err = get_published_payload(client, payload_buf, payload_len);
 
 	if (err) {
 		LOG_ERR("Error %d when getting the payload", err);
 		return err;
 	}
+	LOG_ERR("%s", log_strdup(payload_buf));
 	callback(AWS_FOTA_EVT_ERROR);
 	return -EFAULT;
 }
@@ -292,7 +324,6 @@ static int job_update_rejected(struct mqtt_client *const client,
  *	     in the topic was successfully handled. Otherwise a negative error
  *	     code is returned.
  */
-
 static int aws_fota_on_publish_evt(struct mqtt_client *const client,
 				   const u8_t *topic,
 				   u32_t topic_len,
@@ -315,7 +346,6 @@ static int aws_fota_on_publish_evt(struct mqtt_client *const client,
 		LOG_INF("Checking for an available job");
 		return get_job_execution(client, payload_len);
 	} else if (doc_update_accepted) {
-		LOG_DBG("Job document update was accepted");
 		return job_update_accepted(client, payload_len);
 	} else if (doc_update_rejected) {
 		LOG_ERR("Job document update was rejected");
@@ -414,10 +444,10 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 
 		if ((fota_state == DOWNLOAD_FIRMWARE) &&
 		   (evt->param.suback.message_id == SUBSCRIBE_JOB_ID_UPDATE)) {
+			stored_progress = 0;
 			err = update_job_execution(client, job_id,
 						   AWS_JOBS_IN_PROGRESS,
-						   fota_state,
-						   execution_version_number,
+						   fota_state, stored_progress,
 						   "");
 			if (err) {
 				return err;
@@ -434,18 +464,19 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 	return 0;
 }
 
-static void http_fota_handler(enum fota_download_evt_id evt)
+
+static void http_fota_handler(const struct fota_download_evt *evt)
 {
 	__ASSERT_NO_MSG(c != NULL);
 
 	int err = 0;
 
-	switch (evt) {
+	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		LOG_INF("FOTA download completed evt received");
 		fota_state = APPLY_UPDATE;
 		err = update_job_execution(c, job_id, AWS_JOBS_IN_PROGRESS,
-				     fota_state, execution_version_number, "");
+					   fota_state, stored_progress, "");
 		if (err != 0) {
 			callback(AWS_FOTA_EVT_ERROR);
 		}
@@ -453,9 +484,17 @@ static void http_fota_handler(enum fota_download_evt_id evt)
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		LOG_ERR("FOTA download failed, report back");
 		(void) update_job_execution(c, job_id, AWS_JOBS_FAILED,
-				     fota_state, execution_version_number, "");
+					    fota_state, -1, "");
 		callback(AWS_FOTA_EVT_ERROR);
 		break;
+
+#ifdef CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT
+	case FOTA_DOWNLOAD_EVT_PROGRESS:
+		stored_progress = evt->offset;
+		err = update_job_execution(c, job_id, AWS_JOBS_IN_PROGRESS,
+					   fota_state, stored_progress, "");
+		break;
+#endif
 	}
 
 }
