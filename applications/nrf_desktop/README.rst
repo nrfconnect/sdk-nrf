@@ -1,11 +1,5 @@
 .. _nrf_desktop:
 
-.. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
-   When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
-   If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
-
-.. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
-
 nRF Desktop
 ###########
 
@@ -32,16 +26,70 @@ This means that parts of application functionality were separated into isolated 
 Application events are handled by the :ref:`event_manager`.
 Modules register themselves as listeners of events they need to react on.
 
+The following figure shows the nRF Desktop modules and their relation with other components and the :ref:`event_manager`.
+
+.. figure:: /images/nrf_desktop_arch.svg
+   :scale: 25 %
+   :alt: nRF Desktop high-level design (overview)
+
+   Application high-level design overview (click to enlarge)
+
+Module usage per hardware type
+------------------------------
+
+Since the application architecture is uniform and the code is shared, the set of modules in use depends on the selected device role.
+A different set of modules is enabled when the application is working as a mouse, a keyboard, or as a dongle.
+
+Gaming mouse module set
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The following figure shows the modules enabled when the application is working as a gaming mouse.
+
+.. figure:: /images/nrf_desktop_arch_gmouse.svg
+   :scale: 25 %
+   :alt: nRF Desktop high-level design (gaming mouse)
+
+   Application configured as a gaming mouse (click to enlarge)
+
+Desktop mouse module set
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following figure shows the modules enabled when the application is working as a desktop mouse.
+
+.. figure:: /images/nrf_desktop_arch_dmouse.svg
+   :scale: 25 %
+   :alt: nRF Desktop high-level design (desktop mouse)
+
+   Application configured as a desktop mouse (click to enlarge)
+
+Keyboard module set
+~~~~~~~~~~~~~~~~~~~
+
+The following figure shows the modules enabled when the application is working as a keyboard.
+
+.. figure:: /images/nrf_desktop_arch_kbd.svg
+   :scale: 25 %
+   :alt: nRF Desktop high-level design (keyboard)
+
+   Application configured as a keyboard (click to enlarge)
+
+Dongle module set
+~~~~~~~~~~~~~~~~~
+
+The following figure shows the modules enabled when the application is working as a dongle.
+
+.. figure:: /images/nrf_desktop_arch_dongle.svg
+   :scale: 25 %
+   :alt: nRF Desktop high-level design (dongle)
+
+   Application configured as a dongle (click to enlarge)
+
+Thread usage
+------------
+
 The application limits the number of threads used to the minimum and does not use user-space threads.
-Most of the application activity happens in the context of the system workqueue thread via scheduled work objects or the event manager callbacks (executed from the system workqueue thread).
+Most of the application activity happens in the context of the system workqueue thread, either through scheduled work objects or through the event manager callbacks (executed from the system workqueue thread).
 
-Firmware modules:
-
-.. toctree::
-    :maxdepth: 1
-
-    doc/hw_interface.rst
-    doc/modules.rst
 
 Integrating your own hardware
 =============================
@@ -220,7 +268,7 @@ The nRF Desktop peripherals are either suspended or powered off when they are no
     * In both cases, most of the functionalities are disabled.
       For example, LEDs are turned off and advertising is stopped.
 
-The predefined amount of time can be specified in :option:`CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT`, and by default it is set to 120 seconds.
+The predefined amount of time can be specified in ``CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT``, and by default it is set to 120 seconds.
 Moving the mouse or pressing any button wakes up the device and turns on the disabled functionalities.
 
 .. note::
@@ -233,7 +281,7 @@ The nRF Desktop devices support additional operations, like firmware upgrade or 
 The support is implemented through the :ref:`config_channel`.
 
 The host can use dedicated Python scripts to exchange the data with an nRF Desktop peripheral.
-For detailed information, see the :ref:`hid_configurator` documentation.
+For detailed information, see the ``hid_configurator`` documentation.
 
 Building and running
 ********************
@@ -249,7 +297,7 @@ When building the application, you can configure the project-specific build type
 .. _nrf_desktop_build_types:
 
 Build types
------------
+===========
 
 The build type enables you to select a set of configuration options without making changes to the ``.conf`` files.
 Selecting build type is optional.
@@ -274,7 +322,7 @@ For example, if the ``ZDebugWithShell`` build type is not supported on the selec
 See :ref:`porting_guide` for detailed information about the application configuration.
 
 Selecting build type in SES
-+++++++++++++++++++++++++++
+---------------------------
 
 To select the build type in SEGGER Embedded Studio:
 
@@ -286,7 +334,7 @@ To select the build type in SEGGER Embedded Studio:
 The changes will be applied after reloading.
 
 Selecting build type from command line
-++++++++++++++++++++++++++++++++++++++
+--------------------------------------
 
 To select the build type when building the application from command line, specify the build type by adding the ``-- -DCMAKE_BUILD_TYPE=selected_build_type`` to the ``west build`` command.
 For example, you can build the ``ZRelease`` firmware for the PCA20041 board by running the following command in the ``applications/nrf_desktop`` directory:
@@ -349,3 +397,9 @@ This application uses the following |NCS| libraries and drivers:
     * :ref:`gatt_dm_readme`
     * ``drivers/sensor/paw3212``
     * ``drivers/sensor/pmw3360``
+
+.. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
+   When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
+   If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
+
+.. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
