@@ -2,3 +2,9 @@
 
 Application porting guide
 #########################
+
+.. toctree::
+   :maxdepth: 1
+
+   hw_interface.rst
+   modules.rst
