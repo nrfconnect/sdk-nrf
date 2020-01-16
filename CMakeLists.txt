@@ -8,6 +8,7 @@
 set(NRF_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "NCS root directory")
 
 include(cmake/multi_image.cmake)
+include(cmake/reports.cmake)
 
 zephyr_include_directories(include)
 
