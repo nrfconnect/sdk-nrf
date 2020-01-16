@@ -174,6 +174,7 @@ int dfu_target_modem_write(const void *const buf, size_t len)
 
 	sent = send(fd, buf, len, 0);
 	if (sent > 0) {
+		offset += len;
 		return 0;
 	}
 
