@@ -17,7 +17,12 @@
 LOG_MODULE_REGISTER(at_host, CONFIG_AT_HOST_LOG_LEVEL);
 
 /* Stack definition for AT host workqueue */
+#ifdef CONFIG_SIZE_OPTIMIZATIONS
 #define AT_HOST_STACK_SIZE 512
+#else
+#define AT_HOST_STACK_SIZE 1024
+#endif
+
 K_THREAD_STACK_DEFINE(at_host_stack_area, AT_HOST_STACK_SIZE);
 
 #define CONFIG_UART_0_NAME      "UART_0"
