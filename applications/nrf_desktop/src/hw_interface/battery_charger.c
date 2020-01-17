@@ -9,7 +9,7 @@
 #include <soc.h>
 #include <device.h>
 #include <gpio.h>
-#include <atomic.h>
+#include <sys/atomic.h>
 #include <spinlock.h>
 
 #include "event_manager.h"

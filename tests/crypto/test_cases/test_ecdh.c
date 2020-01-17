@@ -8,7 +8,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stddef.h>
-#include <misc/byteorder.h>
+#include <sys/byteorder.h>
 #include <logging/log.h>
 
 #include "common_test.h"

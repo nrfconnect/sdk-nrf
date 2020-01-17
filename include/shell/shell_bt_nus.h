@@ -10,7 +10,7 @@
 #include <shell/shell.h>
 #include <bluetooth/conn.h>
 #include <bluetooth/services/nus.h>
-#include <ring_buffer.h>
+#include <sys/ring_buffer.h>
 
 /**
  * @file

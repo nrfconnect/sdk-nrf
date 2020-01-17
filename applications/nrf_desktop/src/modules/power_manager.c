@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <power.h>
+#include <power/power.h>
 
 #include <device.h>
 #include <gpio.h>

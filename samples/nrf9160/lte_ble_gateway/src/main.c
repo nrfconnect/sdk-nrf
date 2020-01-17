@@ -9,7 +9,7 @@
 #include <string.h>
 #include <drivers/gps.h>
 #include <sensor.h>
-#include <console.h>
+#include <console/console.h>
 #include <nrf_cloud.h>
 #include <dk_buttons_and_leds.h>
 #include <lte_lc.h>

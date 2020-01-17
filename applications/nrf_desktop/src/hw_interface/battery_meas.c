@@ -10,7 +10,7 @@
 #include <device.h>
 #include <adc.h>
 #include <gpio.h>
-#include <atomic.h>
+#include <sys/atomic.h>
 
 #include <hal/nrf_saadc.h>
 

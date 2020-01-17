@@ -10,7 +10,7 @@
 #include <string.h>
 #include <drivers/gps.h>
 #include <sensor.h>
-#include <console.h>
+#include <console/console.h>
 #include <power/reboot.h>
 #include <logging/log_ctrl.h>
 #if defined(CONFIG_BSD_LIBRARY)
