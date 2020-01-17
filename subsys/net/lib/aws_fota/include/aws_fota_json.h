@@ -56,7 +56,7 @@ extern "C" {
  *	     correctly decoded, otherwise a negative error code is returned
  *	     identicating reason of failure.
  **/
-int aws_fota_parse_DescribeJobExecution_rsp(char *job_document,
+int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 					    u32_t payload_len,
 					    char *job_id_buf,
 					    char *hostname_buf,
@@ -75,7 +75,7 @@ int aws_fota_parse_DescribeJobExecution_rsp(char *job_document,
  * @return 0 for an successful parsing or a negative error code identicating
  *	   reason of failure.
  */
-int aws_fota_parse_UpdateJobExecution_rsp(char *update_rsp_document,
+int aws_fota_parse_UpdateJobExecution_rsp(const char *update_rsp_document,
 					  size_t payload_len,
 					  char *status);
 
