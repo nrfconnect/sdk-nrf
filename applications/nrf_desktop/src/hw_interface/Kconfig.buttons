@@ -28,7 +28,7 @@ config DESKTOP_BUTTONS_SCAN_INTERVAL
 config DESKTOP_BUTTONS_DEBOUNCE_INTERVAL
 	int "Interval before first button scan in ms"
 	depends on DESKTOP_BUTTONS_ENABLE
-	default 1
+	default 2
 	help
 	  Interval before first scan. Introduced for debouncing reasons.
 
