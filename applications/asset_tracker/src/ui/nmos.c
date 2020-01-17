@@ -56,14 +56,14 @@ static int pwm_out(u32_t pin, u32_t period_us, u32_t duty_cycle_us)
 	 * disables the PWM, but not before the current period is finished.
 	 */
 	if (current_period_us != period_us) {
-		pwm_pin_set_usec(pwm_dev, pin, current_period_us, 0);
+		pwm_pin_set_usec(pwm_dev, pin, current_period_us, 0, 0);
 		k_sleep(MAX(K_MSEC(current_period_us / USEC_PER_MSEC),
 			    K_MSEC(1)));
 	}
 
 	current_period_us = period_us;
 
-	return pwm_pin_set_usec(pwm_dev, pin, period_us, duty_cycle_us);
+	return pwm_pin_set_usec(pwm_dev, pin, period_us, duty_cycle_us, 0);
 }
 
 #ifdef CONFIG_DEVICE_POWER_MANAGEMENT
@@ -196,6 +196,7 @@ int ui_nmos_init(void)
 		pwm_pin_set_usec(pwm_dev,
 				 nmos_pins[i].pin,
 				 DEFAULT_PERIOD_US,
+				 0,
 				 0);
 	}
 
