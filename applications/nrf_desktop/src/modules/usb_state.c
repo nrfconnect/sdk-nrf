@@ -453,7 +453,6 @@ static int usb_init(void)
 		.get_report   		= get_report,
 		.set_report   		= set_report,
 		.int_in_ready		= report_sent_cb,
-		.status_cb    		= device_status,
 		.protocol_change 	= protocol_change,
 	};
 
@@ -463,6 +462,13 @@ static int usb_init(void)
 	int err = usb_hid_init(usb_dev);
 	if (err) {
 		LOG_ERR("Cannot initialize HID class");
+		return err;
+	}
+
+	err = usb_enable(device_status);
+	if (err) {
+		LOG_ERR("Cannot enable USB");
+		return err;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
