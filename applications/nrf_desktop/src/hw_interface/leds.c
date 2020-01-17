@@ -40,7 +40,7 @@ static void pwm_out(struct led *led, struct led_color *color)
 	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
 		pwm_pin_set_usec(led->pwm_dev, led_pins[LED_ID(led)][i],
 				 CONFIG_DESKTOP_LED_BRIGHTNESS_MAX,
-				 color->c[i]);
+				 color->c[i], 0);
 	}
 }
 
