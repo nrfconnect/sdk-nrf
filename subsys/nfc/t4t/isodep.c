@@ -8,7 +8,7 @@
 #include <string.h>
 #include <kernel.h>
 #include <zephyr/types.h>
-#include <atomic.h>
+#include <sys/atomic.h>
 #include <nfc/t4t/isodep.h>
 #include <logging/log.h>
 

@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <json.h>
+#include <data/json.h>
 #include <net/fota_download.h>
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>

@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <atomic.h>
+#include <sys/atomic.h>
 #include <spinlock.h>
 #include <sys/byteorder.h>
 

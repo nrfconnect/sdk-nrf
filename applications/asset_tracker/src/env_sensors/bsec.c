@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <string.h>
-#include <atomic.h>
+#include <sys/atomic.h>
 #include <spinlock.h>
 #include <settings/settings.h>
 #include <sys/byteorder.h>

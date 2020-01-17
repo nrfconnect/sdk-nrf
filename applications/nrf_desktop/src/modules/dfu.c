@@ -8,7 +8,7 @@
 
 #include <zephyr/types.h>
 #include <sys/byteorder.h>
-#include <flash_map.h>
+#include <storage/flash_map.h>
 #include <pm_config.h>
 #include <dfu/mcuboot.h>
 

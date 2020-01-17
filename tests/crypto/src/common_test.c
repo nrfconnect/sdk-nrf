@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <misc/printk.h>
+#include <sys/printk.h>
 
 #include <sys/util.h>
 #include <sys_clock.h>

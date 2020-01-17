@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <string.h>
-#include <json.h>
+#include <data/json.h>
 #include <sys/util.h>
 #include <net/aws_jobs.h>
 

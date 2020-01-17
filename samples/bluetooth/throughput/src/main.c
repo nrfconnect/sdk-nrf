@@ -5,7 +5,7 @@
  */
 
 #include <kernel.h>
-#include <console.h>
+#include <console/console.h>
 #include <sys/printk.h>
 #include <string.h>
 #include <zephyr/types.h>
