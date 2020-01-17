@@ -17,7 +17,7 @@
 #include <soc.h>
 #include <device.h>
 #include <string.h>
-#include <nvs/nvs.h>
+#include <fs/nvs.h>
 #include <nfc/ndef/nfc_uri_msg.h>
 
 #include "ndef_file_m.h"

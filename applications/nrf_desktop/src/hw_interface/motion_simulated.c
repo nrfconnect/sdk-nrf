@@ -4,7 +4,7 @@
  */
 
 #include <zephyr.h>
-#include <atomic.h>
+#include <sys/atomic.h>
 
 #include "event_manager.h"
 #include "motion_event.h"

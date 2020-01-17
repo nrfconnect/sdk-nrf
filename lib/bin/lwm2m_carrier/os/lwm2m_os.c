@@ -21,7 +21,7 @@
 #include <power/reboot.h>
 #include <sys/util.h>
 #include <toolchain.h>
-#include <nvs/nvs.h>
+#include <fs/nvs.h>
 #include <logging/log.h>
 #include <errno.h>
 #include <nrf_errno.h>
