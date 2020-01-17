@@ -6,10 +6,8 @@
 menuconfig AWS_FOTA
 	bool "AWS Jobs FOTA library"
 	select AWS_JOBS
-	select FOTA_DOWNLOAD
-	select JSON_LIBRARY
-	#we need to imply a value for heap as this library requiers a heap
-	#for the JSON obj parse
+	depends on FOTA_DOWNLOAD
+	depends on CJSON_LIB
 
 if AWS_FOTA
 

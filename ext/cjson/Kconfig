@@ -8,6 +8,9 @@
 
 config  CJSON_LIB
 	bool "cJSON library"
+	# Since minimal libc lacks sscanf and strtod we need to use newlibc
+	# Allow external libc to allow native posix to be used for unit test
+	depends on NEWLIB_LIBC || EXTERNAL_LIBC
 	default n
 	help
 	  Enable the cJSON Library
