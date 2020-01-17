@@ -104,6 +104,10 @@ config SPM_NRF_CLOCK_NS
 	bool "Clock control is Non-Secure"
 	default y
 
+config SPM_NRF_RTC0_NS
+	bool "RTC0 is Non-Secure"
+	default y
+
 config SPM_NRF_RTC1_NS
 	bool "RTC1 is Non-Secure"
 	default y
