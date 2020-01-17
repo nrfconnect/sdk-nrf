@@ -1,0 +1,9 @@
+sample:
+  name: Radio Test
+  description: Radio Test sample
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52_pca10040 nrf52840_pca10056 nrf5340_dk_nrf5340_cpunet
+    tags: ci_build

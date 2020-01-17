@@ -86,6 +86,8 @@ Kconfig*                                  @SebastianBoe
 /samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/profiler/README.rst              @b-gent
+/samples/peripheral/radio_test/           @kapi-no
+/samples/peripheral/radio_test/README.rst @b-gent
 /samples/usb/usb_uart_bridge/             @joakimtoe @jtguggedal
 /samples/CMakeLists.txt                   @SebastianBoe
 /scripts/                                 @mbolivar @tejlmand

@@ -10,7 +10,12 @@
 .. |connect_terminal_specific| replace:: Connect to the board that runs this sample with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 
+.. |connect_terminal_both| replace:: Connect to both boards with a terminal emulator (for example, PuTTY).
+   See :ref:`putty` for the required settings.
+
 .. |GSA| replace:: Getting Started Assistant
+
+.. |nRF5340DKnoref| replace:: nRF5340 PDK board (PCA10095)
 
 .. |nRF9160DK| replace:: nRF9160 DK board (PCA10090) - see :ref:`ug_nrf9160`
 .. |nRF5340DK| replace:: nRF5340 PDK board (PCA10095) - see :ref:`ug_nrf5340`
