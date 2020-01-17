@@ -10,6 +10,9 @@
 #include <sensor.h>
 #include "motion.h"
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(motion, CONFIG_ASSET_TRACKER_LOG_LEVEL);
+
 motion_handler_t handler;
 static struct device *accel_dev;
 
@@ -35,7 +38,7 @@ static int accelerometer_poll(motion_acceleration_data_t *sensor_data)
 	}
 
 	if (err) {
-		printk("sensor_sample_fetch failed\n");
+		LOG_ERR("sensor_sample_fetch failed");
 		return err;
 	}
 
@@ -43,7 +46,7 @@ static int accelerometer_poll(motion_acceleration_data_t *sensor_data)
 			SENSOR_CHAN_ACCEL_X, &accel_data[0]);
 
 	if (err) {
-		printk("sensor_channel_get failed\n");
+		LOG_ERR("sensor_channel_get failed");
 		return err;
 	}
 
@@ -51,14 +54,14 @@ static int accelerometer_poll(motion_acceleration_data_t *sensor_data)
 			SENSOR_CHAN_ACCEL_Y, &accel_data[1]);
 
 	if (err) {
-		printk("sensor_channel_get failed\n");
+		LOG_ERR("sensor_channel_get failed");
 		return err;
 	}
 	err = sensor_channel_get(accel_dev,
 			SENSOR_CHAN_ACCEL_Z, &accel_data[2]);
 
 	if (err) {
-		printk("sensor_channel_get failed\n");
+		LOG_ERR("sensor_channel_get failed");
 		return err;
 	}
 
@@ -116,8 +119,8 @@ static int accelerometer_init(void)
 	accel_dev = device_get_binding(CONFIG_ACCEL_DEV_NAME);
 
 	if (accel_dev == NULL) {
-		printk("Could not get %s device\n",
-			CONFIG_ACCEL_DEV_NAME);
+		LOG_ERR("Could not get %s device",
+			log_strdup(CONFIG_ACCEL_DEV_NAME));
 		return -ENODEV;
 	}
 
@@ -131,7 +134,7 @@ static int accelerometer_init(void)
 				sensor_trigger_handler);
 
 		if (err) {
-			printk("Unable to set accelerometer trigger\n");
+			LOG_ERR("Unable to set accelerometer trigger");
 			return err;
 		}
 	}

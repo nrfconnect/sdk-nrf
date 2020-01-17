@@ -8,6 +8,9 @@
 #include <spinlock.h>
 #include "light_sensor.h"
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(light_sensor, CONFIG_ASSET_TRACKER_LOG_LEVEL);
+
 #define LS_INIT_DELAY_S (5) /* Polling delay upon initialization */
 #define MAX_INTERVAL_S	(INT_MAX/MSEC_PER_SEC)
 
@@ -101,8 +104,8 @@ void light_sensor_poll_fn(struct k_work *work)
 	int err = sensor_sample_fetch_chan(ls_dev, SENSOR_CHAN_ALL);
 
 	if (err) {
-		printk("Failed to fetch data from %s, error: %d\n", ls_dev_name,
-		       err);
+		LOG_ERR("Failed to fetch data from %s, error: %d",
+			log_strdup(ls_dev_name), err);
 	}
 
 	key = k_spin_lock(&ls_lock);
@@ -111,8 +114,9 @@ void light_sensor_poll_fn(struct k_work *work)
 		err = sensor_channel_get(ls_dev, ls_data[ch]->type,
 					 &ls_data[ch]->data);
 		if (err) {
-			printk("Failed to get data from %s, sensor ch: %d , error: %d\n",
-			       ls_dev_name, ls_data[ch]->type, err);
+			LOG_ERR("Failed to get data from %s, sensor ch: %d , error: %d",
+				log_strdup(ls_dev_name),
+				ls_data[ch]->type, err);
 		}
 	}
 

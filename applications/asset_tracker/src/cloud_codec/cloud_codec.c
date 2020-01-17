@@ -19,6 +19,9 @@
 
 #include "env_sensors.h"
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(cloud_codec, CONFIG_ASSET_TRACKER_LOG_LEVEL);
+
 #define CMD_GROUP_KEY_STR "messageType"
 #define CMD_CHAN_KEY_STR "appId"
 #define CMD_DATA_TYPE_KEY_STR "data"
@@ -595,19 +598,19 @@ static int cloud_search_cmd(cJSON *root_obj)
 
 		if (ret != 0) {
 			if (ret != -ENOENT) {
-				printk("[%s:%d] Unhandled cmd format for %s, %s, error %d\n",
-						__func__, __LINE__,
-						cmd_group_str[group->group],
-						channel_type_str[chan->channel],
-						ret);
+				LOG_ERR("[%s:%d] Unhandled cmd format for %s, %s, error %d",
+					__func__, __LINE__,
+					log_strdup(cmd_group_str[group->group]),
+					log_strdup(channel_type_str[chan->channel]),
+					ret);
 			}
 			continue;
 		}
 
-		printk("[%s:%d] Found cmd %s, %s, %s\n", __func__, __LINE__,
-				cmd_group_str[cmd_parsed.group],
-				channel_type_str[cmd_parsed.channel],
-				cmd_type_str[cmd_parsed.type]);
+		LOG_INF("[%s:%d] Found cmd %s, %s, %s\n", __func__, __LINE__,
+			log_strdup(cmd_group_str[cmd_parsed.group]),
+			log_strdup(channel_type_str[cmd_parsed.channel]),
+			log_strdup(cmd_type_str[cmd_parsed.type]));
 
 		/* Handle cfg commands */
 		(void)cloud_cmd_handle_sensor_set_chan_cfg(&cmd_parsed);
@@ -664,18 +667,18 @@ static int cloud_search_config(cJSON * const root_obj)
 
 			if (ret != 0) {
 				if (ret != -ENOENT) {
-					printk("[%s:%d] Unhandled cfg format for %s, error %d\n",
-					       __func__, __LINE__,
-					       channel_type_str[chan->channel],
-					       ret);
+					LOG_ERR("[%s:%d] Unhandled cfg format for %s, error %d",
+						__func__, __LINE__,
+						log_strdup(channel_type_str[chan->channel]),
+						ret);
 				}
 				continue;
 			}
 
-			printk("[%s:%d] Found cfg item %s, %s\n", __func__,
-			       __LINE__,
-			       channel_type_str[found_config_item.channel],
-			       cmd_type_str[found_config_item.type]);
+			LOG_INF("[%s:%d] Found cfg item %s, %s\n", __func__,
+				__LINE__,
+				log_strdup(channel_type_str[found_config_item.channel]),
+				log_strdup(cmd_type_str[found_config_item.type]));
 
 			/* Handle cfg commands */
 			(void)cloud_cmd_handle_sensor_set_chan_cfg(
@@ -703,7 +706,7 @@ int cloud_decode_command(char const *input)
 
 	root_obj = cJSON_Parse(input);
 	if (root_obj == NULL) {
-		printk("[%s:%d] Unable to parse input\n", __func__, __LINE__);
+		LOG_ERR("[%s:%d] Unable to parse input", __func__, __LINE__);
 		return -ENOENT;
 	}
 
