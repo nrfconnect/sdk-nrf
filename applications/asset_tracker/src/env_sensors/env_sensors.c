@@ -11,6 +11,9 @@
 #include <spinlock.h>
 #include "env_sensors.h"
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(env_sensors, CONFIG_ASSET_TRACKER_LOG_LEVEL);
+
 #define ENV_INIT_DELAY_S (5) /* Polling delay upon initialization */
 #define MAX_INTERVAL_S   (INT_MAX/MSEC_PER_SEC)
 
@@ -88,8 +91,8 @@ static void env_sensors_poll_fn(struct k_work *work)
 		err = sensor_sample_fetch_chan(env_sensors[0]->dev,
 					SENSOR_CHAN_ALL);
 		if (err) {
-			printk("Failed to fetch data from %s, error: %d\n",
-				env_sensors[0]->dev_name, err);
+			LOG_ERR("Failed to fetch data from %s, error: %d",
+				log_strdup(env_sensors[0]->dev_name), err);
 		}
 	}
 	for (int i = 0; i < num_sensors; i++) {
@@ -97,15 +100,15 @@ static void env_sensors_poll_fn(struct k_work *work)
 			err = sensor_sample_fetch_chan(env_sensors[i]->dev,
 				env_sensors[i]->channel);
 			if (err) {
-				printk("Failed to fetch data from %s, error: %d\n",
-					env_sensors[i]->dev_name, err);
+				LOG_ERR("Failed to fetch data from %s, error: %d",
+					log_strdup(env_sensors[i]->dev_name), err);
 			}
 		}
 		err = sensor_channel_get(env_sensors[i]->dev,
 			env_sensors[i]->channel, &data[i]);
 		if (err) {
-			printk("Failed to fetch data from %s, error: %d\n",
-				env_sensors[i]->dev_name, err);
+			LOG_ERR("Failed to fetch data from %s, error: %d",
+				log_strdup(env_sensors[i]->dev_name), err);
 		} else {
 			k_spinlock_key_t key = k_spin_lock(&(env_sensors[i]->lock));
 

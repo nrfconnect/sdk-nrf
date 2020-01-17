@@ -35,14 +35,14 @@ static int start(void)
 	int err;
 
 	if (IS_ENABLED(CONFIG_GPS_CONTROL_PSM_ENABLE_ON_START)) {
-		printk("Enabling PSM\n");
+		LOG_INF("Enabling PSM");
 
 		err = lte_lc_psm_req(true);
 		if (err) {
-			printk("PSM mode could not be enabled");
-			printk(" or was already enabled\n.");
+			LOG_ERR("PSM mode could not be enabled");
+			LOG_ERR(" or was already enabled.");
 		} else {
-			printk("PSM enabled\n");
+			LOG_INF("PSM enabled");
 		}
 
 		k_sleep(K_SECONDS(1));
@@ -50,17 +50,17 @@ static int start(void)
 
 	err = gps_start(gps_work.dev);
 	if (err) {
-		printk("Failed starting GPS!\n");
+		LOG_ERR("Failed starting GPS!");
 		return err;
 	}
 
 	atomic_set(&gps_is_active, 1);
 
-	printk("GPS started successfully.\nSearching for satellites ");
-	printk("to get position fix. This may take several minutes.\n");
-	printk("The device will attempt to get a fix for %d seconds, ",
+	LOG_INF("GPS started successfully. Searching for satellites ");
+	LOG_INF("to get position fix. This may take several minutes.");
+	LOG_INF("The device will attempt to get a fix for %d seconds, ",
 		CONFIG_GPS_CONTROL_FIX_TRY_TIME);
-	printk("before the GPS is stopped.\n");
+	LOG_INF("before the GPS is stopped.");
 
 	return 0;
 }
@@ -70,11 +70,11 @@ static int stop(void)
 	int err;
 
 	if (IS_ENABLED(CONFIG_GPS_CONTROL_PSM_DISABLE_ON_STOP)) {
-		printk("Disabling PSM\n");
+		LOG_INF("Disabling PSM");
 
 		err = lte_lc_psm_req(false);
 		if (err) {
-			printk("PSM mode could not be disabled\n");
+			LOG_ERR("PSM mode could not be disabled");
 		}
 	}
 
@@ -93,11 +93,11 @@ static void gps_work_handler(struct k_work *work)
 	if (gps_work.type == GPS_WORK_START) {
 		err = start();
 		if (err) {
-			printk("GPS could not be started, error: %d\n", err);
+			LOG_ERR("GPS could not be started, error: %d", err);
 			return;
 		}
 
-		printk("GPS operation started\n");
+		LOG_INF("GPS operation started");
 
 		atomic_set(&gps_is_active, 1);
 		ui_led_set_pattern(UI_LED_GPS_SEARCHING);
@@ -111,11 +111,11 @@ static void gps_work_handler(struct k_work *work)
 	} else if (gps_work.type == GPS_WORK_STOP) {
 		err = stop();
 		if (err) {
-			printk("GPS could not be stopped, error: %d\n", err);
+			LOG_ERR("GPS could not be stopped, error: %d", err);
 			return;
 		}
 
-		printk("GPS operation was stopped\n");
+		LOG_INF("GPS operation was stopped");
 
 		atomic_set(&gps_is_active, 0);
 
@@ -126,7 +126,7 @@ static void gps_work_handler(struct k_work *work)
 		gps_work.type = GPS_WORK_START;
 
 
-		printk("The device will try to get fix again in %d seconds\n",
+		LOG_INF("The device will try to get fix again in %d seconds",
 			CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL);
 
 		k_delayed_work_submit(&gps_work.work,
@@ -214,14 +214,15 @@ int gps_control_init(gps_trigger_handler_t handler)
 
 	gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);
 	if (gps_dev == NULL) {
-		printk("Could not get %s device\n", CONFIG_GPS_DEV_NAME);
+		LOG_ERR("Could not get %s device",
+			log_strdup(CONFIG_GPS_DEV_NAME));
 		return -ENODEV;
 	}
 
 
 	err = gps_trigger_set(gps_dev, &gps_trig, handler);
 	if (err) {
-		printk("Could not set trigger, error code: %d\n", err);
+		LOG_ERR("Could not set trigger, error code: %d", err);
 		return err;
 	}
 
@@ -230,7 +231,7 @@ int gps_control_init(gps_trigger_handler_t handler)
 
 	gps_work.dev = gps_dev;
 #endif
-	printk("GPS initialized\n");
+	LOG_INF("GPS initialized");
 
 	return 0;
 }

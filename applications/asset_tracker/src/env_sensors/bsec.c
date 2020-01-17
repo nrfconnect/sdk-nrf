@@ -17,6 +17,9 @@
 #define ENV_INIT_DELAY_S (5) /* Polling delay upon initialization */
 #define MAX_INTERVAL_S   (INT_MAX/MSEC_PER_SEC)
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(bsec, CONFIG_ASSET_TRACKER_LOG_LEVEL);
+
 /* @brief Sample rate for the BSEC library
  *
  * BSEC_SAMPLE_RATE_ULP = 0.0033333 Hz = 300 second interval
@@ -102,14 +105,14 @@ static int enable_settings(void)
 
 	err = settings_register(&my_conf);
 	if (err) {
-		printk("Cannot register settings handler");
+		LOG_ERR("Cannot register settings handler");
 		return err;
 	}
 
 	/* This module loads settings for all application modules */
 	err = settings_load();
 	if (err) {
-		printk("Cannot load settings");
+		LOG_ERR("Cannot load settings");
 		return err;
 	}
 
@@ -270,12 +273,12 @@ int env_sensors_init_and_start(const env_sensors_data_ready_cb cb)
 
 	i2c_master = device_get_binding("I2C_2");
 	if (!i2c_master) {
-		printk("cannot bind to BME680\n");
+		LOG_ERR("cannot bind to BME680");
 		return -EINVAL;
 	}
 	ret = enable_settings();
 	if (ret) {
-		printk("Cannot enable settings err: %d", ret);
+		LOG_ERR("Cannot enable settings err: %d", ret);
 		return ret;
 	}
 	bsec_ret = bsec_iot_init(BSEC_SAMPLE_RATE, 1.2f, bus_write,

@@ -324,3 +324,7 @@ endmenu
 menu "Zephyr Kernel"
 source "$ZEPHYR_BASE/Kconfig.zephyr"
 endmenu
+
+module = ASSET_TRACKER
+module-str = Asset Tracker
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
