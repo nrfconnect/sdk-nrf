@@ -104,6 +104,9 @@ LOG_MODULE_REGISTER(pmw3360, CONFIG_PMW3360_LOG_LEVEL);
 #define PMW3360_DX_POS				2
 #define PMW3360_DY_POS				4
 
+/* Rest_En position in Config2 register. */
+#define PMW3360_REST_EN_POS			5
+
 #define PMW3360_MAX_CPI				12000
 #define PMW3360_MIN_CPI				100
 
@@ -510,6 +513,64 @@ static int update_downshift_time(struct pmw3360_data *dev_data, u8_t reg_addr,
 	int err = reg_write(dev_data, reg_addr, value);
 	if (err) {
 		LOG_ERR("Failed to change downshift time");
+	}
+
+	return err;
+}
+
+static int update_sample_time(struct pmw3360_data *dev_data,
+			      u8_t reg_addr_lower,
+			      u8_t reg_addr_upper,
+			      u32_t sample_time)
+{
+	/* Set sample time for the Rest1-Rest3 modes.
+	 * Values above 0x09B0 will trigger internal watchdog reset.
+	 */
+	u32_t maxtime = 0x9B0;
+	u32_t mintime = 1;
+
+	if ((sample_time > maxtime) || (sample_time < mintime)) {
+		LOG_WRN("Sample time %u out of range", sample_time);
+		return -EINVAL;
+	}
+
+	LOG_INF("Set sample time to %u ms", sample_time);
+
+	/* The sample time is (reg_value + 1) ms. */
+	sample_time--;
+	u8_t buf[2];
+
+	sys_put_le16((u16_t)sample_time, buf);
+
+	int err = reg_write(dev_data, reg_addr_lower, buf[0]);
+
+	if (!err) {
+		err = reg_write(dev_data, reg_addr_upper, buf[1]);
+	} else {
+		LOG_ERR("Failed to change sample time");
+	}
+
+	return err;
+}
+
+static int toggle_rest_modes(struct pmw3360_data *dev_data, u8_t reg_addr,
+			     bool enable)
+{
+	u8_t value;
+	int err = reg_read(dev_data, reg_addr, &value);
+
+	if (err) {
+		LOG_ERR("Failed to read Config2 register");
+		return err;
+	}
+
+	WRITE_BIT(value, PMW3360_REST_EN_POS, enable);
+
+	LOG_INF("%sable rest modes", (enable) ? ("En") : ("Dis"));
+	err = reg_write(dev_data, reg_addr, value);
+
+	if (err) {
+		LOG_ERR("Failed to set rest mode");
 	}
 
 	return err;
@@ -948,6 +1009,12 @@ static int pmw3360_attr_set(struct device *dev, enum sensor_channel chan,
 		err = update_cpi(dev_data, PMW3360_SVALUE_TO_CPI(*val));
 		break;
 
+	case PMW3360_ATTR_REST_ENABLE:
+		err = toggle_rest_modes(dev_data,
+					PMW3360_REG_CONFIG2,
+					PMW3360_SVALUE_TO_BOOL(*val));
+		break;
+
 	case PMW3360_ATTR_RUN_DOWNSHIFT_TIME:
 		err = update_downshift_time(dev_data,
 					    PMW3360_REG_RUN_DOWNSHIFT,
@@ -964,6 +1031,27 @@ static int pmw3360_attr_set(struct device *dev, enum sensor_channel chan,
 		err = update_downshift_time(dev_data,
 					    PMW3360_REG_REST2_DOWNSHIFT,
 					    PMW3360_SVALUE_TO_TIME(*val));
+		break;
+
+	case PMW3360_ATTR_REST1_SAMPLE_TIME:
+		err = update_sample_time(dev_data,
+					 PMW3360_REG_REST1_RATE_LOWER,
+					 PMW3360_REG_REST1_RATE_UPPER,
+					 PMW3360_SVALUE_TO_TIME(*val));
+		break;
+
+	case PMW3360_ATTR_REST2_SAMPLE_TIME:
+		err = update_sample_time(dev_data,
+					 PMW3360_REG_REST2_RATE_LOWER,
+					 PMW3360_REG_REST2_RATE_UPPER,
+					 PMW3360_SVALUE_TO_TIME(*val));
+		break;
+
+	case PMW3360_ATTR_REST3_SAMPLE_TIME:
+		err = update_sample_time(dev_data,
+					 PMW3360_REG_REST3_RATE_LOWER,
+					 PMW3360_REG_REST3_RATE_UPPER,
+					 PMW3360_SVALUE_TO_TIME(*val));
 		break;
 
 	default:

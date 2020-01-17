@@ -14,16 +14,18 @@ extern "C" {
 
 enum pmw3360_attribute {
 	PMW3360_ATTR_CPI = SENSOR_ATTR_PRIV_START,
+	PMW3360_ATTR_REST_ENABLE,
 	PMW3360_ATTR_RUN_DOWNSHIFT_TIME,
 	PMW3360_ATTR_REST1_DOWNSHIFT_TIME,
 	PMW3360_ATTR_REST2_DOWNSHIFT_TIME,
+	PMW3360_ATTR_REST1_SAMPLE_TIME,
+	PMW3360_ATTR_REST2_SAMPLE_TIME,
+	PMW3360_ATTR_REST3_SAMPLE_TIME,
 };
 
 #define PMW3360_SVALUE_TO_CPI(svalue) ((u32_t)(svalue).val1)
-#define PMW3360_CPI_TO_SVALUE(cpi) ((struct sensor_value) {.val1 = cpi})
-
 #define PMW3360_SVALUE_TO_TIME(svalue) ((u32_t)(svalue).val1)
-#define PMW3360_TIME_TO_SVALUE(time) ((struct sensor_value) {.val1 = time})
+#define PMW3360_SVALUE_TO_BOOL(svalue) ((svalue).val1 != 0)
 
 #ifdef __cplusplus
 }
