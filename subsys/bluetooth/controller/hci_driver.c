@@ -158,18 +158,12 @@ static int hci_driver_send(struct net_buf *buf)
 	return err;
 }
 
-#ifndef bt_acl_flag_pb
-/* Temporary defines, missing from hci.h */
-#define bt_acl_flags_pb(h)		((h) >> 12 & BIT_MASK(2))
-#define bt_acl_flags_bc(h)		((h) >> 14 & BIT_MASK(2))
-#endif /* bt_acl_flag_pb */
-
 static void data_packet_process(u8_t *hci_buf)
 {
 	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_FOREVER);
 	struct bt_hci_acl_hdr *hdr = (void *)hci_buf;
 	u16_t hf, handle, len;
-	u8_t pb, bc;
+	u8_t flags, pb, bc;
 
 	if (!data_buf) {
 		BT_ERR("No data buffer available");
@@ -179,8 +173,9 @@ static void data_packet_process(u8_t *hci_buf)
 	len = sys_le16_to_cpu(hdr->len);
 	hf = sys_le16_to_cpu(hdr->handle);
 	handle = bt_acl_handle(hf);
-	pb = bt_acl_flags_pb(hf);
-	bc = bt_acl_flags_bc(hf);
+	flags = bt_acl_flags(hf);
+	pb = bt_acl_flags_pb(flags);
+	bc = bt_acl_flags_bc(flags);
 
 	BT_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
 	       pb, bc, len);
