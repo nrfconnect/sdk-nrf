@@ -19,6 +19,7 @@
 #include "power_event.h"
 #include "hid_event.h"
 #include "config_event.h"
+#include "usb_event.h"
 
 #define MODULE motion
 #include "module_state_event.h"
@@ -186,6 +187,20 @@ static bool set_option(enum motion_sensor_option option, u32_t value)
 	return false;
 }
 
+static void set_sampling_time_in_sleep3(bool connected)
+{
+	if (CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_DEFAULT ==
+	    CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_CONNECTED) {
+		return;
+	}
+
+	u32_t sampling_time = (connected) ?
+		(CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_CONNECTED) :
+		(CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_DEFAULT);
+
+	set_option(MOTION_SENSOR_OPTION_SLEEP3_SAMPLE_TIME, sampling_time);
+}
+
 static void set_default_configuration(void)
 {
 	BUILD_ASSERT_MSG((MOTION_SENSOR_OPTION_COUNT < 8 *
@@ -211,6 +226,23 @@ static void set_default_configuration(void)
 		set_option(MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT,
 			   CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS);
 	}
+
+	if (CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_SAMPLE_TIME_DEFAULT) {
+		set_option(MOTION_SENSOR_OPTION_SLEEP1_SAMPLE_TIME,
+		       CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_SAMPLE_TIME_DEFAULT);
+	}
+
+	if (CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_SAMPLE_TIME_DEFAULT) {
+		set_option(MOTION_SENSOR_OPTION_SLEEP2_SAMPLE_TIME,
+		       CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_SAMPLE_TIME_DEFAULT);
+	}
+
+	if (CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_DEFAULT) {
+		set_option(MOTION_SENSOR_OPTION_SLEEP3_SAMPLE_TIME,
+		       CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_DEFAULT);
+	}
+
+	set_option(MOTION_SENSOR_OPTION_SLEEP_ENABLE, true);
 }
 
 static int init(void)
@@ -222,8 +254,6 @@ static int init(void)
 		LOG_ERR("Cannot get motion sensor device");
 		return err;
 	}
-
-	set_default_configuration();
 
 	k_spinlock_key_t key = k_spin_lock(&state.lock);
 	bool is_connected = (state.peer_count != 0);
@@ -405,6 +435,24 @@ static void motion_thread_fn(void)
 	module_set_state(MODULE_STATE_ERROR);
 }
 
+static bool handle_usb_state_event(const struct usb_state_event *event)
+{
+	switch (event->state) {
+	case USB_STATE_POWERED:
+		set_option(MOTION_SENSOR_OPTION_SLEEP_ENABLE, false);
+		break;
+
+	case USB_STATE_DISCONNECTED:
+		set_option(MOTION_SENSOR_OPTION_SLEEP_ENABLE, true);
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
@@ -437,6 +485,8 @@ static bool event_handler(const struct event_header *eh)
 			}
 
 			bool is_connected = (state.peer_count != 0);
+
+			set_sampling_time_in_sleep3(is_connected);
 
 			k_spinlock_key_t key = k_spin_lock(&state.lock);
 			switch (state.state) {
@@ -483,6 +533,9 @@ static bool event_handler(const struct event_header *eh)
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			/* Start state machine thread */
 			__ASSERT_NO_MSG(state.state == STATE_DISABLED);
+
+			set_default_configuration();
+
 			k_thread_create(&thread, thread_stack,
 					THREAD_STACK_SIZE,
 					(k_thread_entry_t)motion_thread_fn,
@@ -562,6 +615,11 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB) &&
+	    is_usb_state_event(eh)) {
+		return handle_usb_state_event(cast_usb_state_event(eh));
+	}
+
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		if (is_config_event(eh)) {
 			const struct config_event *event = cast_config_event(eh);
@@ -609,5 +667,8 @@ EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
+#endif
+#if CONFIG_DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB
+EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
 EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

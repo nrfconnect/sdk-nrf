@@ -123,6 +123,36 @@ config DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS
 	  Time in milliseconds after last motion detection in which sensor
 	  enters a low power mode 3.
 
+config DESKTOP_MOTION_SENSOR_SLEEP1_SAMPLE_TIME_DEFAULT
+	int "Motion sensor default sleep1 sample time"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default 0
+
+config DESKTOP_MOTION_SENSOR_SLEEP2_SAMPLE_TIME_DEFAULT
+	int "Motion sensor default sleep2 sample time"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default 0
+
+config DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_DEFAULT
+	int "Motion sensor default sleep3 sample time"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default 0
+
+config DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_CONNECTED
+	int "Motion sensor sleep3 sample time when connected"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	default DESKTOP_MOTION_SENSOR_SLEEP3_SAMPLE_TIME_DEFAULT
+
+config DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB
+	bool "Disable low power modes if powered from USB"
+	depends on DESKTOP_MOTION_SENSOR_ENABLE
+	depends on DESKTOP_USB_ENABLE
+	depends on !DESKTOP_BATTERY_CHARGER_NONE
+	default y
+	help
+	  Low power modes reduce device power consumption, but increase
+	  response time.
+
 if !DESKTOP_MOTION_NONE
 module = DESKTOP_MOTION
 module-str = motion module
