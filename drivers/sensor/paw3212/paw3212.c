@@ -40,6 +40,7 @@ LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
 #define PAW3212_REG_MOTION		0x02
 #define PAW3212_REG_DELTA_X_LOW		0x03
 #define PAW3212_REG_DELTA_Y_LOW		0x04
+#define PAW3212_REG_OPERATION_MODE	0x05
 #define PAW3212_REG_CONFIGURATION	0x06
 #define PAW3212_REG_WRITE_PROTECT	0x09
 #define PAW3212_REG_DELTA_XY_HIGH	0x12
@@ -56,6 +57,10 @@ LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
 #define PAW3212_CPI_MAX			(0x3F * PAW3212_CPI_STEP)
 
 /* Sleep */
+#define PAW3212_SLP_ENH_POS		4u
+#define PAW3212_SLP2_ENH_POS		3u
+#define PAW3212_SLP3_ENH_POS		5u
+
 #define PAW3212_ETM_POS			0u
 #define PAW3212_ETM_SIZE		4u
 #define PAW3212_FREQ_POS		(PAW3212_ETM_POS + PAW3212_ETM_SIZE)
@@ -379,6 +384,146 @@ static int update_sleep_timeout(struct paw3212_data *dev_data, u8_t reg_addr,
 	err = reg_write(dev_data, reg_addr, regval);
 	if (err) {
 		LOG_ERR("Failed to change sleep time");
+		return err;
+	}
+
+	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, 0);
+	if (err) {
+		LOG_ERR("Cannot enable write protect");
+	}
+
+	return err;
+}
+
+static int update_sample_time(struct paw3212_data *dev_data, u8_t reg_addr,
+			      u32_t sample_time_ms)
+{
+	u32_t sample_time_step;
+	u32_t sample_time_min;
+	u32_t sample_time_max;
+
+	switch (reg_addr) {
+	case PAW3212_REG_SLEEP1:
+		sample_time_step = 4;
+		sample_time_min = 4;
+		sample_time_max = 64;
+		break;
+
+	case PAW3212_REG_SLEEP2:
+	case PAW3212_REG_SLEEP3:
+		sample_time_step = 64;
+		sample_time_min = 64;
+		sample_time_max = 1024;
+		break;
+
+	default:
+		LOG_ERR("Not supported");
+		return -ENOTSUP;
+	}
+
+	if ((sample_time_ms > sample_time_max) ||
+	    (sample_time_ms < sample_time_min))	{
+		LOG_WRN("Sample time %" PRIu32 " out of range", sample_time_ms);
+		return -EINVAL;
+	}
+
+	u8_t reg_freq = (sample_time_ms - sample_time_min) / sample_time_step;
+
+	LOG_INF("Set sleep%d sample time: %u (requested: %u, reg:0x%" PRIx8 ")",
+		reg_addr - PAW3212_REG_SLEEP1 + 1,
+		(reg_freq * sample_time_step) + sample_time_min,
+		sample_time_ms,
+		reg_freq);
+
+	__ASSERT_NO_MSG(reg_freq <= PAW3212_FREQ_MAX);
+
+	int err;
+
+	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, PAW3212_WPMAGIC);
+	if (err) {
+		LOG_ERR("Cannot disable write protect");
+		return err;
+	}
+
+	u8_t regval;
+
+	err = reg_read(dev_data, reg_addr, &regval);
+	if (err) {
+		LOG_ERR("Failed to read sleep register");
+		return err;
+	}
+
+	regval &= ~PAW3212_FREQ_MASK;
+	regval |= (reg_freq << PAW3212_FREQ_POS);
+
+	err = reg_write(dev_data, reg_addr, regval);
+	if (err) {
+		LOG_ERR("Failed to change sample time");
+		return err;
+	}
+
+	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, 0);
+	if (err) {
+		LOG_ERR("Cannot enable write protect");
+	}
+
+	return err;
+}
+
+static int toggle_sleep_modes(struct paw3212_data *dev_data, u8_t reg_addr1, u8_t reg_addr2,
+			      bool enable)
+{
+	int err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT,
+			    PAW3212_WPMAGIC);
+	if (err) {
+		LOG_ERR("Cannot disable write protect");
+		return err;
+	}
+
+	u8_t regval;
+
+	LOG_INF("%sable sleep", (enable) ? ("En") : ("Dis"));
+
+	/* Sleep 1 and Sleep 2 */
+	err = reg_read(dev_data, reg_addr1, &regval);
+	if (err) {
+		LOG_ERR("Failed to read operation mode register");
+		return err;
+	}
+
+	u8_t sleep_enable_mask = BIT(PAW3212_SLP_ENH_POS) |
+				 BIT(PAW3212_SLP2_ENH_POS);
+
+	if (enable) {
+		regval |= sleep_enable_mask;
+	} else {
+		regval &= ~sleep_enable_mask;
+	}
+
+	err = reg_write(dev_data, reg_addr1, regval);
+	if (err) {
+		LOG_ERR("Failed to %sable sleep", (enable) ? ("en") : ("dis"));
+		return err;
+	}
+
+	/* Sleep 3 */
+	err = reg_read(dev_data, reg_addr2, &regval);
+	if (err) {
+		LOG_ERR("Failed to read configuration register");
+		return err;
+	}
+
+	sleep_enable_mask = BIT(PAW3212_SLP3_ENH_POS);
+
+	if (enable) {
+		regval |= sleep_enable_mask;
+	} else {
+		regval &= ~sleep_enable_mask;
+	}
+
+	err = reg_write(dev_data, reg_addr2, regval);
+	if (err) {
+		LOG_ERR("Failed to %sable sleep", (enable) ? ("en") : ("dis"));
 		return err;
 	}
 
@@ -785,6 +930,13 @@ static int paw3212_attr_set(struct device *dev, enum sensor_channel chan,
 		err = update_cpi(dev_data, PAW3212_SVALUE_TO_CPI(*val));
 		break;
 
+	case PAW3212_ATTR_SLEEP_ENABLE:
+		err = toggle_sleep_modes(dev_data,
+					 PAW3212_REG_OPERATION_MODE,
+					 PAW3212_REG_CONFIGURATION,
+					 PAW3212_SVALUE_TO_BOOL(*val));
+		break;
+
 	case PAW3212_ATTR_SLEEP1_TIMEOUT:
 		err = update_sleep_timeout(dev_data,
 					   PAW3212_REG_SLEEP1,
@@ -801,6 +953,24 @@ static int paw3212_attr_set(struct device *dev, enum sensor_channel chan,
 		err = update_sleep_timeout(dev_data,
 					   PAW3212_REG_SLEEP3,
 					   PAW3212_SVALUE_TO_TIME(*val));
+		break;
+
+	case PAW3212_ATTR_SLEEP1_SAMPLE_TIME:
+		err = update_sample_time(dev_data,
+					 PAW3212_REG_SLEEP1,
+					 PAW3212_SVALUE_TO_TIME(*val));
+		break;
+
+	case PAW3212_ATTR_SLEEP2_SAMPLE_TIME:
+		err = update_sample_time(dev_data,
+					 PAW3212_REG_SLEEP2,
+					 PAW3212_SVALUE_TO_TIME(*val));
+		break;
+
+	case PAW3212_ATTR_SLEEP3_SAMPLE_TIME:
+		err = update_sample_time(dev_data,
+					 PAW3212_REG_SLEEP3,
+					 PAW3212_SVALUE_TO_TIME(*val));
 		break;
 
 	default:
