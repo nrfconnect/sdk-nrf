@@ -44,8 +44,6 @@ static int start(void)
 		} else {
 			printk("PSM enabled\n");
 		}
-
-		k_sleep(K_SECONDS(1));
 	}
 
 	err = gps_start(gps_work.dev);
