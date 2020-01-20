@@ -26,11 +26,15 @@
 
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
+static struct bt_conn *scan_conn;
 static struct bt_gatt_throughput gatt_throughput;
 static struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
 static struct bt_gatt_exchange_params exchange_params;
 static struct bt_le_conn_param *conn_param =
 	BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, 0, 400);
+static s32_t random_duration;
+struct k_delayed_work advertise_work;
+struct k_delayed_work scan_work;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -75,17 +79,39 @@ void scan_connecting_error(struct bt_scan_device_info *device_info)
 	printk("Connecting failed\n");
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
-		scan_connecting_error, NULL);
+void scan_connecting(struct bt_scan_device_info *device_info,
+		     struct bt_conn *conn)
+{
+	if (default_conn) {
+		printk("Connection exists, aborting connecting master");
+		bt_conn_disconnect(conn, BT_HCI_ERR_LOCALHOST_TERM_CONN);
+		return;
+	}
 
-static void exchange_func(struct bt_conn *conn, u8_t err,
+	/* Refresh timeout for creating connection. */
+	k_delayed_work_cancel(&scan_work);
+	k_delayed_work_submit(&scan_work, K_SECONDS(3));
+
+	scan_conn = bt_conn_ref(conn);
+}
+
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
+		scan_connecting_error, scan_connecting);
+
+static void exchange_func(struct bt_conn *conn, u8_t att_err,
 			  struct bt_gatt_exchange_params *params)
 {
 	struct bt_conn_info info = {0};
+	int err;
 
-	printk("MTU exchange %s\n", err == 0 ? "successful" : "failed");
+	printk("MTU exchange %s\n", att_err == 0 ? "successful" : "failed");
 
 	err = bt_conn_get_info(conn, &info);
+	if (err) {
+		printk("Failed to get connection info %d\n", err);
+		return;
+	}
+
 	if (info.role == BT_CONN_ROLE_MASTER) {
 		test_ready = true;
 	}
@@ -132,28 +158,53 @@ struct bt_gatt_dm_cb discovery_cb = {
 	.error_found       = discovery_error,
 };
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, u8_t hci_err)
 {
 	struct bt_conn_info info = {0};
+	int err;
 
-	if (err) {
-		printk("Connection failed (err %u)\n", err);
+	k_delayed_work_cancel(&scan_work);
+	k_delayed_work_cancel(&advertise_work);
+
+	if (hci_err) {
+		if (hci_err == BT_HCI_ERR_UNKNOWN_CONN_ID) {
+			/* Canceled creating connection */
+			return;
+		}
+
+		printk("Connection failed (err 0x%02x)\n", hci_err);
+		return;
+	}
+
+	if (default_conn) {
+		printk("Connection exists, disconnect second connection\n");
+		bt_conn_disconnect(conn, BT_HCI_ERR_LOCALHOST_TERM_CONN);
 		return;
 	}
 
 	default_conn = bt_conn_ref(conn);
+
+	if (scan_conn) {
+		if (scan_conn != conn) {
+			/* Cancel creating master connection. */
+			printk("Stop scanning for master connection\n");
+			bt_conn_disconnect(scan_conn,
+					   BT_HCI_ERR_LOCALHOST_TERM_CONN);
+		}
+
+		bt_conn_unref(scan_conn);
+		scan_conn = NULL;
+	}
+
 	err = bt_conn_get_info(default_conn, &info);
 	if (err) {
-		printk("Error %u while getting bt conn info\n", err);
+		printk("Failed to get connection info %d\n", err);
+		return;
 	}
 
 	printk("Connected as %s\n",
 	       info.role == BT_CONN_ROLE_MASTER ? "master" : "slave");
 	printk("Conn. interval is %u units\n", info.le.interval);
-
-	/* make sure we're not scanning or advertising */
-	bt_le_adv_stop();
-	bt_scan_stop();
 
 	if (info.role == BT_CONN_ROLE_MASTER) {
 		err = bt_gatt_dm_start(default_conn,
@@ -199,39 +250,94 @@ static void scan_init(void)
 	}
 }
 
-static void advertise_and_scan(void)
+static void scan_start(void)
 {
 	int err;
-
-	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
-			     ARRAY_SIZE(sd));
-	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
-		return;
-	}
-
-	printk("Advertising successfully started\n");
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
 		printk("Starting scanning failed (err %d)\n", err);
+		return;
 	}
 
-	printk("Scanning successfully started\n");
+	k_delayed_work_submit(&scan_work, random_duration);
 }
+
+static void adv_start(void)
+{
+	struct bt_le_adv_param *adv_param =
+		BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE |
+				BT_LE_ADV_OPT_ONE_TIME,
+				BT_GAP_ADV_FAST_INT_MIN_2,
+				BT_GAP_ADV_FAST_INT_MAX_2);
+	int err;
+
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd,
+			      ARRAY_SIZE(sd));
+	if (err) {
+		printk("Failed to start advertiser (%d)\n", err);
+		return;
+	}
+
+	k_delayed_work_submit(&advertise_work, random_duration);
+}
+
+static void scan_timeout(struct k_work *work)
+{
+	int err;
+
+	err = bt_scan_stop();
+	if (err) {
+		printk("Failed to stop scanner (%d)\n", err);
+	}
+
+	if (scan_conn) {
+		bt_conn_disconnect(scan_conn, BT_HCI_ERR_LOCALHOST_TERM_CONN);
+		bt_conn_unref(scan_conn);
+		scan_conn = NULL;
+	}
+
+	adv_start();
+}
+
+static void advertise_timeout(struct k_work *work)
+{
+	int err;
+
+	err = bt_le_adv_stop();
+	if (err) {
+		printk("Failed to stop advertiser (%d)\n", err);
+	}
+
+	scan_start();
+}
+
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
 {
-	printk("Disconnected (reason %u)\n", reason);
+	struct bt_conn_info info = {0};
+	int err;
+
+	printk("Disconnected (reason 0x%02x)\n", reason);
 
 	test_ready = false;
-
 	if (default_conn) {
 		bt_conn_unref(default_conn);
 		default_conn = NULL;
 	}
 
-	advertise_and_scan();
+	err = bt_conn_get_info(conn, &info);
+	if (err) {
+		printk("Failed to get connection info (%d)\n", err);
+		return;
+	}
+
+	/* Re-connect using same roles */
+	if (info.role == BT_CONN_ROLE_MASTER) {
+		scan_start();
+	} else {
+		adv_start();
+	}
 }
 
 static u8_t throughput_read(const struct bt_gatt_throughput_metrics *met)
@@ -367,13 +473,18 @@ void main(void)
 	printk("Bluetooth initialized\n");
 
 	scan_init();
-	bt_gatt_throughput_init(&gatt_throughput, &throughput_cb);
+
+	err = bt_gatt_throughput_init(&gatt_throughput, &throughput_cb);
 	if (err) {
 		printk("Throughput service initialization failed.\n");
 		return;
 	}
 
-	advertise_and_scan();
+	random_duration = K_MSEC((sys_rand32_get()  % 1000) + 100);
+	k_delayed_work_init(&scan_work, scan_timeout);
+	k_delayed_work_init(&advertise_work, advertise_timeout);
+
+	adv_start();
 
 	for (;;) {
 		if (test_ready) {
