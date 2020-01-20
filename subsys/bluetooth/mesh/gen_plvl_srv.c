@@ -568,7 +568,7 @@ static int bt_mesh_plvl_srv_settings_set(struct bt_mesh_model *mod,
 	return 0;
 }
 
-static int bt_mesh_plvl_srv_settings_commit(struct bt_mesh_model *mod)
+static int bt_mesh_plvl_srv_start(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_plvl_srv *srv = mod->user_data;
 	struct bt_mesh_plvl_status dummy = { 0 };
@@ -599,7 +599,7 @@ const struct bt_mesh_model_cb _bt_mesh_plvl_srv_cb = {
 	.reset = bt_mesh_plvl_srv_reset,
 #ifdef CONFIG_BT_SETTINGS
 	.settings_set = bt_mesh_plvl_srv_settings_set,
-	.settings_commit = bt_mesh_plvl_srv_settings_commit,
+	.start = bt_mesh_plvl_srv_start,
 #endif
 };
 
