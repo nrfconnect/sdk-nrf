@@ -87,9 +87,38 @@ The following figure shows the modules enabled when the application is working a
 Thread usage
 ------------
 
-The application limits the number of threads used to the minimum and does not use user-space threads.
-Most of the application activity happens in the context of the system workqueue thread, either through scheduled work objects or through the event manager callbacks (executed from the system workqueue thread).
+The application limits the number of threads that are used to minimum and does not use the user-space threads.
 
+The following threads are kept running in the application:
+
+    * System-related threads
+        * Idle thread
+        * System workqueue thread
+        * Logger thread (on debug build types)
+        * Shell thread (on build types with shell enabled)
+        * BLE-related threads (the exact number depends on the selected Link Layer)
+    * Application-related threads
+        * Motion sensor thread (running only on mouse)
+        * Settings loading thread (enabled by default only on keyboard)
+        * QoS data sampling thread (running only on dongle)
+
+Most of the application activity takes place in the context of the system workqueue thread, either through scheduled work objects or through the event manager callbacks (executed from the system workqueue thread).
+Because of this, the application does not need to handle resource protection.
+The only exception are places where the interaction with interrupts or multiple threads cannot be avoided.
+
+Memory allocation
+-----------------
+
+Most of the memory resources used by the application are allocated statically.
+
+The application uses dynamic allocation for creating the event manager events.
+For more information about events allocation, see :ref:`event_manager`.
+
+.. note::
+    When configuring HEAP, remember to set both :option:`CONFIG_HEAP_MEM_POOL_SIZE` and :option:`CONFIG_HEAP_MEM_POOL_MIN_SIZE` to match typical event size and the system needs.
+    Zephyr's heap allocator works by dividing larger blocks into four smaller blocks.
+    It is important to keep this in mind as this behavior impacts both the performance and the memory usage.
+    For more information, refer to Zephyr's documentation at :ref:`heap_v2` and :ref:`memory_pools_v2`.
 
 Integrating your own hardware
 =============================
@@ -173,10 +202,10 @@ There are several peer operations available.
 
 The application distinguishes between the following button press types:
 
-* Short -- Button pressed for less than 0.5 seconds.
-* Standard -- Button pressed for more than 0.5 seconds, but less than 5 seconds.
-* Long -- Button pressed for more than 5 seconds.
-* Double -- Button pressed twice in quick succession.
+    * Short -- Button pressed for less than 0.5 seconds.
+    * Standard -- Button pressed for more than 0.5 seconds, but less than 5 seconds.
+    * Long -- Button pressed for more than 5 seconds.
+    * Double -- Button pressed twice in quick succession.
 
 The peer operation states provide visual feedback through LEDs (if the device has LEDs).
 Each of the states is represented by separate LED color and effect.
@@ -187,7 +216,7 @@ Gaming mouse
 
 The following predefined hardware interface elements are assigned to peer control operations for the gaming mouse:
 
-Hardware switch:
+Hardware switch
     * The switch is located next to the optical sensor.
     * You can set the switch in the following positions:
 
@@ -197,7 +226,7 @@ Hardware switch:
 
       When the dongle peer is selected, the peer control is disabled until the switch is set to another position.
 
-Precision Aim button:
+Precision Aim button
     * The button is located on the left side of the mouse, in the thumb area.
     * Short-press to initialize the peer selection.
       During the peer selection:
@@ -215,7 +244,7 @@ Desktop mouse
 
 The following predefined buttons are assigned to peer control operations for the desktop mouse:
 
-Scroll wheel button:
+Scroll wheel button
     * Long-press to initialize and confirm the peer erase.
       The scroll must be pressed before the mouse is powered up.
 
@@ -228,7 +257,7 @@ Keyboard
 
 The following predefined buttons or button combinations are assigned to peer control operations for the keyboard:
 
-Page Down key:
+Page Down key
     * The Page Down key must be pressed while keeping the Fn modifier key pressed.
     * Short-press the Page Down key to initialize the peer selection.
       During the peer selection:
@@ -248,7 +277,7 @@ Dongle
 
 The following predefined buttons are assigned to peer control operations for the dongle:
 
-SW1 button:
+SW1 button
     * Long-press to initialize peer erase, then double-press to confirm the operation.
       After the confirmation, all the Bluetooth bonds are removed.
     * Short-press to start scanning for both bonded and not bonded Bluetooth peripherals.
