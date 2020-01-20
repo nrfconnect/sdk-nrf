@@ -63,6 +63,10 @@ static size_t at_buf_len;
 static struct k_work cmd_send_work;
 static const char termination[3] = { '\0', '\r', '\n' };
 
+/* global variable defined in different files */
+extern struct at_param_list m_param_list;
+extern void enter_sleep(u16_t mode);
+
 /* forward declaration */
 void slm_at_host_uninit(void);
 
@@ -87,6 +91,46 @@ static void response_handler(void *context, char *response)
 	}
 }
 
+static int handle_at_sleep(const char *at_cmd)
+{
+	int ret = -EINVAL;
+	enum at_cmd_type type;
+	u16_t shutdown_mode;
+
+	ret = at_parser_params_from_str(at_cmd, NULL, &m_param_list);
+	if (ret < 0) {
+		LOG_ERR("Failed to parse AT command %d", ret);
+		return -EINVAL;
+	}
+
+	type = at_parser_cmd_type_get(at_cmd);
+	if (type == AT_CMD_TYPE_SET_COMMAND) {
+		if (at_params_valid_count_get(&m_param_list) < 2) {
+			LOG_ERR("AT parameter error");
+			return -EINVAL;
+		}
+		ret = at_params_short_get(&m_param_list, 1, &shutdown_mode);
+		if (ret < 0) {
+			LOG_ERR("AT parameter error");
+			return -EINVAL;
+		}
+		switch (shutdown_mode) {
+		case SHUTDOWN_APP_MODEM:
+		case SHUTDOWN_APP_ONLY:
+			slm_at_host_uninit();
+			/* fall over */
+		case SHUTDOWN_MODEM_ONLY:
+			enter_sleep(shutdown_mode);
+			return 0;
+		default:
+			LOG_ERR("AT parameter error");
+			return -EINVAL;
+		}
+	}
+
+	return ret;
+}
+
 static void cmd_send(struct k_work *work)
 {
 	size_t chars;
@@ -109,14 +153,17 @@ static void cmd_send(struct k_work *work)
 		goto done;
 	}
 
-#if defined(CONFIG_SLM_GPIO_WAKEUP)
 	size_cmd = sizeof(AT_CMD_SLEEP) - 1;
 	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLEEP, size_cmd)) {
-		slm_at_host_uninit();
-		enter_sleep();
-		return;
+		err = handle_at_sleep(at_buf);
+		if (err == 0) {
+			write_uart_string(OK_STR, sizeof(OK_STR));
+			goto done;
+		} else {
+			write_uart_string(ERROR_STR, sizeof(ERROR_STR));
+			goto done;
+		}
 	}
-#endif
 
 #if defined(CONFIG_SLM_TCPIP_AT_MODE)
 	err = slm_at_tcpip_parse(at_buf);

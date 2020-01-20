@@ -95,7 +95,7 @@ Generic commands
 The following proprietary generic AT commands are used in this sample:
 
 * AT#XSLMVER
-* AT#XSLEEP (only for external MCU configuration)
+* AT#XSLEEP=<mode>
 
 TCP/IP AT commands
 ******************
