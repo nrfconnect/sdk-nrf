@@ -50,9 +50,14 @@ void start_execute(void)
 	}
 }
 
-#ifdef CONFIG_SLM_GPIO_WAKEUP
-void enter_sleep(void)
+void enter_sleep(u16_t mode)
 {
+	if (mode == SHUTDOWN_MODEM_ONLY) {
+		lte_lc_power_off();
+		return;
+	}
+
+#if defined(CONFIG_SLM_GPIO_WAKEUP)
 	/*
 	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before
 	 *  PIN_CNF[n].SENSE.
@@ -61,6 +66,7 @@ void enter_sleep(void)
 		NRF_GPIO_PIN_PULLUP);
 	nrf_gpio_cfg_sense_set(CONFIG_SLM_MODEM_WAKEUP_PIN,
 		NRF_GPIO_PIN_SENSE_LOW);
+#endif
 
 	/*
 	 * The LTE modem also needs to be stopped by issuing a command
@@ -71,11 +77,14 @@ void enter_sleep(void)
 	 * Refer to https://infocenter.nordicsemi.com/topic/ps_nrf9160/
 	 * pmu.html?cp=2_0_0_4_0_0_1#system_off_mode
 	 */
-	lte_lc_power_off();	/* Gracefully shutdown the modem.*/
-	bsd_shutdown();		/* Gracefully shutdown the BSD library*/
+	if (mode == SHUTDOWN_APP_MODEM) {
+		lte_lc_power_off();
+	}
+	bsd_shutdown();
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
 }
 
+#if defined(CONFIG_SLM_GPIO_WAKEUP)
 void main(void)
 {
 	u32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
@@ -86,7 +95,7 @@ void main(void)
 		start_execute();
 	} else {
 		LOG_INF("Sleep");
-		enter_sleep();
+		enter_sleep(SHUTDOWN_APP_MODEM);
 	}
 }
 #else

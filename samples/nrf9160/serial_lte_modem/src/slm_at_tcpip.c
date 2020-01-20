@@ -352,7 +352,7 @@ static int do_udp_sendto(const char *url, u16_t port, const char *data)
 	ret = do_udp_init(url, port);
 	if (ret < 0) {
 		return ret;
-	};
+	}
 
 	while (offset < datalen) {
 		ret = sendto(client.sock, data + offset,
@@ -387,7 +387,7 @@ static int do_udp_recvfrom(const char *url, u16_t port, u16_t length,
 	ret = do_udp_init(url, port);
 	if (ret < 0) {
 		return ret;
-	};
+	}
 
 	ret = setsockopt(client.sock, SOL_SOCKET, SO_RCVTIMEO,
 			&tmo, sizeof(struct timeval));
@@ -445,7 +445,7 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 		err = at_params_short_get(&m_param_list, 1, &op);
 		if (err < 0) {
 			return err;
-		};
+		}
 		if (op == 1) {
 			u16_t type;
 
@@ -455,7 +455,7 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 			err = at_params_short_get(&m_param_list, 2, &type);
 			if (err < 0) {
 				return err;
-			};
+			}
 			if (client.sock > 0) {
 				LOG_WRN("Socket is already opened");
 			} else {
@@ -510,7 +510,7 @@ static int handle_at_bind(enum at_cmd_type cmd_type)
 		err = at_params_short_get(&m_param_list, 1, &port);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = do_bind(port);
 		break;
 
@@ -546,12 +546,12 @@ static int handle_at_tcp_conn(enum at_cmd_type cmd_type)
 		err = at_params_string_get(&m_param_list, 1, url, &size);
 		if (err < 0) {
 			return err;
-		};
+		}
 		url[size] = '\0';
 		err = at_params_short_get(&m_param_list, 2, &port);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = do_tcp_connect(url, port);
 		break;
 
@@ -595,7 +595,7 @@ static int handle_at_tcp_send(enum at_cmd_type cmd_type)
 		err = at_params_string_get(&m_param_list, 1, data, &size);
 		if (err < 0) {
 			return err;
-		};
+		}
 		data[size] = '\0';
 		err = do_tcp_send(data);
 		break;
@@ -630,11 +630,11 @@ static int handle_at_tcp_recv(enum at_cmd_type cmd_type)
 		err = at_params_short_get(&m_param_list, 1, &length);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = at_params_short_get(&m_param_list, 2, &time);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = do_tcp_receive(length, time);
 		break;
 
@@ -675,17 +675,17 @@ static int handle_at_udp_sendto(enum at_cmd_type cmd_type)
 		err = at_params_string_get(&m_param_list, 1, url, &size);
 		if (err < 0) {
 			return err;
-		};
+		}
 		url[size] = '\0';
 		err = at_params_short_get(&m_param_list, 2, &port);
 		if (err < 0) {
 			return err;
-		};
+		}
 		size = NET_IPV4_MTU;
 		err = at_params_string_get(&m_param_list, 3, data, &size);
 		if (err < 0) {
 			return err;
-		};
+		}
 		data[size] = '\0';
 		err = do_udp_sendto(url, port, data);
 		break;
@@ -725,20 +725,20 @@ static int handle_at_udp_recvfrom(enum at_cmd_type cmd_type)
 		err = at_params_string_get(&m_param_list, 1, url, &size);
 		if (err < 0) {
 			return err;
-		};
+		}
 		url[size] = '\0';
 		err = at_params_short_get(&m_param_list, 2, &port);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = at_params_short_get(&m_param_list, 3, &length);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = at_params_short_get(&m_param_list, 4, &time);
 		if (err < 0) {
 			return err;
-		};
+		}
 		err = do_udp_recvfrom(url, port, length, time);
 		break;
 

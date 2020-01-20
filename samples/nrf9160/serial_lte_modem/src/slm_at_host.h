@@ -21,11 +21,20 @@
 /**@brief AT command handler type. */
 typedef int (*slm_at_handler_t) (enum at_cmd_type);
 
+/**@brief AT command list item type. */
 typedef struct slm_at_cmd_list {
 	u8_t type;
 	char *string;
 	slm_at_handler_t handler;
 } slm_at_cmd_list_t;
+
+/**@brief Shutdown modes. */
+enum shutdown_modes {
+	SHUTDOWN_MODE_INVALID,
+	SHUTDOWN_APP_MODEM,
+	SHUTDOWN_APP_ONLY,
+	SHUTDOWN_MODEM_ONLY
+};
 
 /**
  * @brief Initialize AT host for serial LTE modem

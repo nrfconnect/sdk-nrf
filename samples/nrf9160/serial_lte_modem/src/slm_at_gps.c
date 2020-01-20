@@ -260,14 +260,14 @@ static int handle_at_gpsrun(enum at_cmd_type cmd_type)
 		err = at_params_short_get(&m_param_list, 1, &op);
 		if (err < 0) {
 			return err;
-		};
+		}
 		if (op == 1) {
 			if (at_params_valid_count_get(&m_param_list) > 2) {
 				err = at_params_short_get(&m_param_list, 2,
 							&client.mask);
 				if (err < 0) {
 					return err;
-				};
+				}
 			}
 			if (client.running) {
 				LOG_WRN("GPS is running");
