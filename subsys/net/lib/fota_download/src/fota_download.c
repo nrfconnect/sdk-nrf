@@ -74,7 +74,7 @@ static int download_client_callback(const struct download_client_evt *event)
 				       event->fragment.len);
 		if (err != 0) {
 			LOG_ERR("dfu_target_write error %d", err);
-			err = download_client_disconnect(&dlc);
+			(void) download_client_disconnect(&dlc);
 			callback(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
 		}
