@@ -48,8 +48,8 @@ int aws_fota_init(struct mqtt_client *const client,
  * @param client Pointer to the mqtt_client instance.
  * @param evt          Pointer to the recived mqtt_evt.
  *
- * @retval 0 If successful but wants the application to handle the event.
- * @retval 1 If successful and the application can skip handling this event.
+ * @retval 0 If successful and the application can skip handling this event.
+ * @retval 1 If successful but wants the application to handle the event.
  * @return   A negative value on error.
  */
 int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,

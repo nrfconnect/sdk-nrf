@@ -357,7 +357,7 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 
 #if defined(CONFIG_AWS_FOTA)
 	err = aws_fota_mqtt_evt_handler(c, mqtt_evt);
-	if (err > 0) {
+	if (err == 0) {
 		/* Event handled by FOTA library so it can be skipped. */
 		return;
 	} else if (err < 0) {
