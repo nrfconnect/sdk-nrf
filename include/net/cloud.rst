@@ -1,4 +1,4 @@
-.. _cloud_api:
+.. _cloud_api_readme:
 
 Cloud API
 #########
@@ -11,10 +11,10 @@ Functionality
 Cloud API defines a set of functions that a cloud driver, also called a cloud backend, must implement.
 Some functions of cloud API are optional and can be omitted.
 
-To use the the API, you must provide an event handler during the initialization of the cloud backend.
+To use the API, you must provide an event handler during the initialization of the cloud backend.
 This handler will receive events when, for example, data is received from the cloud.
 
-After succesful initialization of the cloud backend, you can establish a connection to the cloud.
+After successful initialization of the cloud backend, you can establish a connection to the cloud.
 If the connection succeeds, the backend emits a "ready event", and you can start interacting with the cloud.
 
 .. _cloud_api_reference:
