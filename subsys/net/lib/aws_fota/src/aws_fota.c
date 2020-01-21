@@ -173,7 +173,7 @@ static int update_job_execution(struct mqtt_client *const client,
  * @param[in] payload_len  Length of the payload going to be read out from the
  *			   MQTT message.
  *
- * @return 1 If successful otherwise a negative error code is returned.
+ * @return 0 If successful otherwise a negative error code is returned.
  */
 static int get_job_execution(struct mqtt_client *const client,
 			     u32_t payload_len)
@@ -196,7 +196,7 @@ static int get_job_execution(struct mqtt_client *const client,
 	} else  if (err == 0) {
 		LOG_DBG("Got only one field: %s", log_strdup(payload_buf));
 		LOG_INF("No queued jobs for this device");
-		return 1;
+		return 0;
 	}
 
 	LOG_DBG("Job ID: %s", log_strdup(job_id));
@@ -220,7 +220,7 @@ static int get_job_execution(struct mqtt_client *const client,
 	 */
 	fota_state = DOWNLOAD_FIRMWARE;
 
-	return 1;
+	return 0;
 }
 
 /**
@@ -230,7 +230,7 @@ static int get_job_execution(struct mqtt_client *const client,
  * @param[in] payload_len  Length of the payload going to be read out from the
  *			   MQTT message.
  *
- * @return 1 If successful otherwise a negative error code is returned.
+ * @return 0 If successful otherwise a negative error code is returned.
  */
 static int job_update_accepted(struct mqtt_client *const client,
 			       u32_t payload_len)
@@ -282,7 +282,7 @@ static int job_update_accepted(struct mqtt_client *const client,
 		LOG_INF("Ready to reboot");
 		callback(AWS_FOTA_EVT_DONE);
 	}
-	return 1;
+	return 0;
 }
 
 /**
@@ -412,7 +412,7 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 				return err;
 			}
 		}
-		return 1;
+		return 0;
 
 	} break;
 
@@ -421,11 +421,11 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			LOG_ERR("MQTT PUBACK error %d", evt->result);
 			return 0;
 		}
-		return 0;
+		return 1;
 
 	case MQTT_EVT_SUBACK:
 		if (evt->result != 0) {
-			return 0;
+			return evt->result;
 		}
 		if (evt->param.suback.message_id == SUBSCRIBE_NOTIFY_NEXT) {
 			LOG_INF("subscribed to notify-next topic");
@@ -434,12 +434,12 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			if (err) {
 				return err;
 			}
-			return 1;
+			return 0;
 		}
 
 		if (evt->param.suback.message_id == SUBSCRIBE_GET) {
 			LOG_INF("subscribed to get topic");
-			return 1;
+			return 0;
 		}
 
 		if ((fota_state == DOWNLOAD_FIRMWARE) &&
@@ -452,16 +452,16 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			if (err) {
 				return err;
 			}
-			return 1;
+			return 0;
 		}
 
-		return 0;
+		return 1;
 
 	default:
 		/* Handling for default case */
-		return 0;
+		return 1;
 	}
-	return 0;
+	return 1;
 }
 
 
