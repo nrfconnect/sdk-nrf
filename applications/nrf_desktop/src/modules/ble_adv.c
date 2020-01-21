@@ -67,6 +67,8 @@ enum state {
 	STATE_ACTIVE_SLOW,
 	STATE_ACTIVE_FAST_DIRECT,
 	STATE_ACTIVE_SLOW_DIRECT,
+	STATE_DELAYED_ACTIVE_FAST,
+	STATE_DELAYED_ACTIVE_SLOW,
 	STATE_GRACE_PERIOD
 };
 
@@ -112,9 +114,8 @@ static int ble_adv_stop(void)
 	if (err) {
 		LOG_ERR("Cannot stop advertising (err %d)", err);
 	} else {
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
-			k_delayed_work_cancel(&adv_update);
-		}
+		k_delayed_work_cancel(&adv_update);
+
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
 		    IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE)) {
 			k_delayed_work_cancel(&sp_grace_period_to);
@@ -265,13 +266,13 @@ static int ble_adv_start(bool can_fast_adv)
 	}
 
 	if (direct) {
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
+		if (fast_adv) {
 			state = STATE_ACTIVE_FAST_DIRECT;
 		} else {
 			state = STATE_ACTIVE_SLOW_DIRECT;
 		}
 	} else {
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
+		if (fast_adv) {
 			k_delayed_work_submit(&adv_update,
 					      K_SECONDS(CONFIG_DESKTOP_BLE_FAST_ADV_TIMEOUT));
 			state = STATE_ACTIVE_FAST;
@@ -306,9 +307,7 @@ static int remove_swift_pair_section(void)
 		LOG_INF("Swift Pair section removed");
 		adv_swift_pair = false;
 
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
-			k_delayed_work_cancel(&adv_update);
-		}
+		k_delayed_work_cancel(&adv_update);
 
 		k_delayed_work_submit(&sp_grace_period_to,
 				      K_SECONDS(CONFIG_DESKTOP_BLE_SWIFT_PAIR_GRACE_PERIOD));
@@ -330,9 +329,23 @@ static int remove_swift_pair_section(void)
 
 static void ble_adv_update_fn(struct k_work *work)
 {
-	__ASSERT_NO_MSG(state == STATE_ACTIVE_FAST);
+	bool can_fast_adv = false;
 
-	int err = ble_adv_start(false);
+	switch (state) {
+	case STATE_DELAYED_ACTIVE_FAST:
+		can_fast_adv = true;
+		break;
+
+	case STATE_ACTIVE_FAST:
+	case STATE_DELAYED_ACTIVE_SLOW:
+		break;
+
+	default:
+		/* Should not happen. */
+		__ASSERT_NO_MSG(false);
+	}
+
+	int err = ble_adv_start(can_fast_adv);
 
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
@@ -392,9 +405,7 @@ static void init(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_FAST_ADV)) {
-		k_delayed_work_init(&adv_update, ble_adv_update_fn);
-	}
+	k_delayed_work_init(&adv_update, ble_adv_update_fn);
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR) &&
 	    IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_ENABLE)) {
@@ -490,7 +501,11 @@ static bool event_handler(const struct event_header *eh)
 
 		case PEER_STATE_CONN_FAILED:
 			if (state != STATE_OFF) {
-				err = ble_adv_start(can_fast_adv);
+				state = can_fast_adv ?
+					STATE_DELAYED_ACTIVE_FAST :
+					STATE_DELAYED_ACTIVE_SLOW;
+
+				k_delayed_work_submit(&adv_update, 0);
 			}
 			break;
 
@@ -594,6 +609,8 @@ static bool event_handler(const struct event_header *eh)
 				}
 				break;
 
+			case STATE_DELAYED_ACTIVE_FAST:
+			case STATE_DELAYED_ACTIVE_SLOW:
 			case STATE_ACTIVE_FAST_DIRECT:
 			case STATE_ACTIVE_SLOW_DIRECT:
 				err = ble_adv_stop();
@@ -652,6 +669,8 @@ static bool event_handler(const struct event_header *eh)
 			case STATE_ACTIVE_SLOW:
 			case STATE_ACTIVE_FAST_DIRECT:
 			case STATE_ACTIVE_SLOW_DIRECT:
+			case STATE_DELAYED_ACTIVE_FAST:
+			case STATE_DELAYED_ACTIVE_SLOW:
 			case STATE_DISABLED:
 				/* No action */
 				break;
