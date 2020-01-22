@@ -271,10 +271,13 @@ static int spm_config_peripheral(u8_t id, bool dma_present)
 			PERIPH_LOCK;
 	}
 
-	/* Even for non-present peripherals we force IRQs to be routed
-	 * to Non-Secure state.
-	 */
-	irq_target_state_set(id, 0);
+	/* Route IRQs for peripherals which has it */
+	if (id != NRFX_PERIPHERAL_ID_GET(NRF_P0)) {
+		/* Even for non-present peripherals we force IRQs to be routed
+		 * to Non-Secure state.
+		 */
+		irq_target_state_set(id, 0);
+	}
 	return 0;
 }
 
