@@ -34,7 +34,12 @@
 #define KEY_PASSKEY_ACCEPT DK_BTN1_MSK
 #define KEY_PASSKEY_REJECT DK_BTN2_MSK
 
-static struct device  *uart;
+#define NUS_WRITE_TIMEOUT 150
+
+static struct device *uart;
+static bool rx_disabled;
+
+K_SEM_DEFINE(nus_write_sem, 0, 1);
 
 struct uart_data_t {
 	void *fifo_reserved;
@@ -55,6 +60,13 @@ static void ble_data_sent(u8_t err, const u8_t *const data, u16_t len)
 	/* Retrieve buffer context. */
 	buf = CONTAINER_OF(data, struct uart_data_t, data);
 	k_free(buf);
+
+	if (rx_disabled) {
+		rx_disabled = false;
+		uart_irq_rx_enable(uart);
+	}
+
+	k_sem_give(&nus_write_sem);
 
 	if (err) {
 		printk("ATT error code: 0x%02X\n", err);
@@ -115,7 +127,14 @@ static void uart_cb(struct device *uart)
 			if (rx) {
 				rx->len = 0;
 			} else {
+				/* Disable UART interface, it will be
+				 * enable again after releasing the buffer.
+				 */
+				uart_irq_rx_disable(uart);
+				rx_disabled = true;
+
 				printk("Not able to allocate UART receive buffer\n");
+
 				return;
 			}
 		}
@@ -477,6 +496,11 @@ void main(void)
 		if (err) {
 			printk("Failed to send data over BLE connection"
 			       "(err %d)\n", err);
+		}
+
+		err = k_sem_take(&nus_write_sem, NUS_WRITE_TIMEOUT);
+		if (err) {
+			printk("NUS send timeout\n");
 		}
 	}
 }
