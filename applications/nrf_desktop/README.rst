@@ -3,7 +3,7 @@
 nRF Desktop
 ###########
 
-nRF52 Desktop is a reference design of a HID device that is connected to a host through BLE or USB, or both.
+The nRF Desktop is a reference design of a HID device that is connected to a host through BLE or USB, or both.
 Depending on the configuration, this application can function as a mouse, a gaming mouse, or a keyboard.
 
 Overview
@@ -15,6 +15,8 @@ The same channel is used to transmit DFU packets.
 
 .. note::
     The code is currently work-in-progress and as such is not fully functional, verified, or supported for product development.
+
+.. _nrf_desktop_architecture:
 
 Firmware architecture
 =====================
