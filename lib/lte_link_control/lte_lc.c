@@ -137,7 +137,7 @@ static const char cgauth[] = "AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
 static const char legacy_pco[] = "AT%XEPCO=0";
 #endif
 
-void at_handler(void *context, char *response)
+void at_handler(void *context, const char *response)
 {
 	ARG_UNUSED(context);
 
