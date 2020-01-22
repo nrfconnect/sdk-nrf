@@ -9,6 +9,7 @@
 
 .. _`Zephyr coding style`: http://docs.zephyrproject.org/contribute/contribute_guidelines.html
 
+.. _`Devicetree vs Kconfig`: http://docs.zephyrproject.org/latest/guides/dts/index.html#devicetree-vs-kconfig
 
 .. ### Links to MCUboot
 
