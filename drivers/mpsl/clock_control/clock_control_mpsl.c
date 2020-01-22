@@ -9,7 +9,8 @@
 #include <stdbool.h>
 #include <device.h>
 #include <kernel_includes.h>
-#include <clock_control.h>
+#include <drivers/clock_control.h>
+#include <drivers/clock_control/nrf_clock_control.h>
 #include <mpsl.h>
 #include <mpsl_clock.h>
 #include <multithreading_lock.h>
@@ -25,13 +26,9 @@ static bool is_context_atomic(void)
 	return arch_irq_unlocked(key) || k_is_in_isr();
 }
 
-static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
+static int hf_clock_start(void)
 {
 	int errcode;
-
-	ARG_UNUSED(dev);
-
-	bool blocking = POINTER_TO_UINT(sub_system);
 
 	if (!is_context_atomic()) {
 		errcode = MULTITHREADING_LOCK_ACQUIRE();
@@ -47,44 +44,12 @@ static int hf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
 		return -EFAULT;
 	}
 
-	if (blocking) {
-		u32_t is_running = 0;
-
-		do {
-			if (!is_context_atomic()) {
-				errcode = MULTITHREADING_LOCK_ACQUIRE();
-			} else {
-				errcode = MULTITHREADING_LOCK_ACQUIRE_NO_WAIT();
-			}
-			if (errcode) {
-				return -EFAULT;
-			}
-			errcode = mpsl_clock_hfclk_is_running(&is_running);
-			MULTITHREADING_LOCK_RELEASE();
-			if (errcode) {
-				return -EFAULT;
-			}
-
-			if (!is_running) {
-				if (!k_is_in_isr()) {
-					k_yield();
-				} else { /* in isr */
-					k_cpu_idle();
-				}
-
-			}
-		} while (!is_running);
-	}
-
 	return 0;
 }
 
-static int hf_clock_stop(struct device *dev, clock_control_subsys_t sub_system)
+static int hf_clock_stop(void)
 {
 	int errcode;
-
-	ARG_UNUSED(dev);
-	ARG_UNUSED(sub_system);
 
 	if (!is_context_atomic()) {
 		errcode = MULTITHREADING_LOCK_ACQUIRE();
@@ -103,42 +68,27 @@ static int hf_clock_stop(struct device *dev, clock_control_subsys_t sub_system)
 	return 0;
 }
 
-static int hf_clock_get_rate(struct device *dev,
-			     clock_control_subsys_t sub_system, u32_t *rate)
+static enum clock_control_status hf_get_status(void)
 {
-	ARG_UNUSED(dev);
-	ARG_UNUSED(sub_system);
+	int errcode;
+	u32_t is_running = 0;
 
-	if (rate == NULL) {
-		return -EINVAL;
+	if (!is_context_atomic()) {
+		errcode = MULTITHREADING_LOCK_ACQUIRE();
+	} else {
+		errcode = MULTITHREADING_LOCK_ACQUIRE_NO_WAIT();
+	}
+	if (errcode) {
+		return CLOCK_CONTROL_STATUS_UNKNOWN;
+	}
+	errcode = mpsl_clock_hfclk_is_running(&is_running);
+	MULTITHREADING_LOCK_RELEASE();
+	if (errcode) {
+		return CLOCK_CONTROL_STATUS_UNKNOWN;
 	}
 
-	*rate = MHZ(16);
-	return 0;
-}
-
-static int lf_clock_start(struct device *dev, clock_control_subsys_t sub_system)
-{
-	ARG_UNUSED(dev);
-	ARG_UNUSED(sub_system);
-
-	/* No-op. LFCLK is started by default by mpsl_init(). */
-
-	return 0;
-}
-
-static int lf_clock_get_rate(struct device *dev,
-			     clock_control_subsys_t sub_system, u32_t *rate)
-{
-	ARG_UNUSED(dev);
-	ARG_UNUSED(sub_system);
-
-	if (rate == NULL) {
-		return -EINVAL;
-	}
-
-	*rate = 32768;
-	return 0;
+	return (is_running ? CLOCK_CONTROL_STATUS_ON
+			   : CLOCK_CONTROL_STATUS_OFF);
 }
 
 #if IS_ENABLED(CONFIG_USB_NRFX)
@@ -180,6 +130,83 @@ void nrf_power_clock_isr(void)
 #endif
 }
 
+static int clock_start(struct device *dev, clock_control_subsys_t subsys)
+{
+	ARG_UNUSED(dev);
+
+	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
+
+	switch (type) {
+	case CLOCK_CONTROL_NRF_TYPE_HFCLK:
+		return hf_clock_start();
+	case CLOCK_CONTROL_NRF_TYPE_LFCLK:
+		/* No-op. LFCLK is started by default by mpsl_init(). */
+		return 0;
+	default:
+		return -EINVAL;
+	}
+}
+
+static int clock_stop(struct device *dev, clock_control_subsys_t subsys)
+{
+	ARG_UNUSED(dev);
+
+	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
+
+	switch (type) {
+	case CLOCK_CONTROL_NRF_TYPE_HFCLK:
+		return hf_clock_stop();
+	case CLOCK_CONTROL_NRF_TYPE_LFCLK:
+		/* Stopping of LFCLK is not supported. */
+		return -ENOTSUP;
+	default:
+		return -EINVAL;
+	}
+}
+
+static int clock_get_rate(struct device *dev, clock_control_subsys_t subsys,
+			  u32_t *rate)
+{
+	ARG_UNUSED(dev);
+
+	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
+
+	if (rate == NULL) {
+		return -EINVAL;
+	}
+
+	switch (type) {
+	case CLOCK_CONTROL_NRF_TYPE_HFCLK:
+		*rate = MHZ(16);
+	case CLOCK_CONTROL_NRF_TYPE_LFCLK:
+		*rate = 32768;
+	default:
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+static enum clock_control_status clock_get_status(struct device *dev,
+						  clock_control_subsys_t subsys)
+{
+	ARG_UNUSED(dev);
+
+	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
+
+	switch (type) {
+	case CLOCK_CONTROL_NRF_TYPE_HFCLK:
+		return hf_get_status();
+	case CLOCK_CONTROL_NRF_TYPE_LFCLK:
+		/* LFCLK is started by default by mpsl_init(),
+		 * and stopping of it is not supported.
+		 */
+		return CLOCK_CONTROL_STATUS_ON;
+	default:
+		return CLOCK_CONTROL_STATUS_UNKNOWN;
+	}
+}
+
 static int clock_control_init(struct device *dev)
 {
 	ARG_UNUSED(dev);
@@ -194,30 +221,17 @@ static int clock_control_init(struct device *dev)
 	return 0;
 }
 
-static const struct clock_control_driver_api hf_clock_control_api = {
-	.on = hf_clock_start,
-	.off = hf_clock_stop,
-	.get_rate = hf_clock_get_rate,
+static const struct clock_control_driver_api clock_control_api = {
+	.on = clock_start,
+	.off = clock_stop,
+	.get_rate = clock_get_rate,
+	.get_status = clock_get_status,
 };
 
-DEVICE_AND_API_INIT(hf_clock,
-		    DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_16M",
+DEVICE_AND_API_INIT(clock_nrf,
+		    DT_INST_0_NORDIC_NRF_CLOCK_LABEL,
 		    clock_control_init, NULL, NULL, PRE_KERNEL_1,
-		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &hf_clock_control_api);
-
-/* LFCLK doesn't have stop function to replicate the nRF5 Power Clock driver
- * behavior.
- */
-static const struct clock_control_driver_api lf_clock_control_api = {
-	.on = lf_clock_start,
-	.off = NULL,
-	.get_rate = lf_clock_get_rate,
-};
-
-DEVICE_AND_API_INIT(lf_clock,
-		    DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_32K",
-		    clock_control_init, NULL, NULL, PRE_KERNEL_1,
-		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &lf_clock_control_api);
+		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &clock_control_api);
 
 #if IS_ENABLED(CONFIG_USB_NRFX)
 
