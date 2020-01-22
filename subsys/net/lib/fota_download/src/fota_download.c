@@ -180,7 +180,7 @@ static void download_with_offset(struct k_work *unused)
 	}
 }
 
-int fota_download_start(char *host, char *file)
+int fota_download_start(const char *host, const char *file)
 {
 	int err = -1;
 
@@ -199,7 +199,7 @@ int fota_download_start(char *host, char *file)
 	 * (s0 or s1), and update file to point to correct candidate if
 	 * space separated file is given.
 	 */
-	char *update;
+	const char *update;
 	struct fw_info s0;
 	struct fw_info s1;
 
