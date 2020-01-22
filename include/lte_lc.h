@@ -14,6 +14,10 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* NOTE: enum lte_lc_nw_reg_status maps directly to the registration status
  *	 as returned by the AT command "AT+CEREG?".
  */
@@ -148,5 +152,9 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_ */
