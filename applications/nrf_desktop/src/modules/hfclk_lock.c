@@ -7,6 +7,7 @@
 #include <zephyr.h>
 #include <device.h>
 #include <drivers/clock_control.h>
+#include <drivers/clock_control/nrf_clock_control.h>
 
 #define MODULE hfclk_lock
 #include "module_state_event.h"
@@ -17,34 +18,34 @@
 LOG_MODULE_REGISTER(MODULE);
 
 
-static struct device *hfclk_dev;
+static struct device *clk_dev;
 
 
 static void hfclk_lock(void)
 {
-	if (hfclk_dev) {
+	if (clk_dev) {
 		return;
 	}
 
-	hfclk_dev = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_16M");
+	clk_dev = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL);
 
-	if (!hfclk_dev) {
+	if (!clk_dev) {
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
-		clock_control_on(hfclk_dev, NULL);
+		clock_control_on(clk_dev, CLOCK_CONTROL_NRF_SUBSYS_HF);
 		module_set_state(MODULE_STATE_READY);
 	}
 }
 
 static void hfclk_unlock(void)
 {
-	if (!hfclk_dev) {
+	if (!clk_dev) {
 		return;
 	}
 
-	clock_control_off(hfclk_dev, NULL);
+	clock_control_off(clk_dev, CLOCK_CONTROL_NRF_SUBSYS_HF);
 
-	hfclk_dev = NULL;
+	clk_dev = NULL;
 
 	module_set_state(MODULE_STATE_OFF);
 }

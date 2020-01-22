@@ -3,7 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
-#include <clock_control.h>
+#include <drivers/clock_control.h>
+#include <drivers/clock_control/nrf_clock_control.h>
 #include <gpio.h>
 #include <irq.h>
 #include <logging/log.h>
@@ -57,15 +58,15 @@ void esb_event_handler(struct nrf_esb_evt const *event)
 int clocks_start(void)
 {
 	int err;
-	struct device *hfclk;
+	struct device *clk;
 
-	hfclk = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_16M");
-	if (!hfclk) {
-		LOG_ERR("HF Clock device not found!");
+	clk = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL);
+	if (!clk) {
+		LOG_ERR("Clock device not found!");
 		return -EIO;
 	}
 
-	err = clock_control_on(hfclk, NULL);
+	err = clock_control_on(clk, CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (err && (err != -EINPROGRESS)) {
 		LOG_ERR("HF clock start fail: %d", err);
 		return err;
