@@ -159,6 +159,7 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   "*.rst:include:${NRF_RST_OUT}"
   "*.rst:lib:${NRF_RST_OUT}"
   "*.rst:scripts:${NRF_RST_OUT}"
+  "*.rst:tests:${NRF_RST_OUT}"
   "*.rst:applications:${NRF_RST_OUT}/doc/nrf"
   "*.rst:samples:${NRF_RST_OUT}/doc/nrf"
   "*.rst:boards:${NRF_RST_OUT}/doc/nrf"
@@ -168,6 +169,7 @@ set(NRF_EXTRACT_CONTENT_COMMAND
   "*.rst:include:${NRF_RST_OUT}/doc/nrf"
   "*.rst:lib:${NRF_RST_OUT}/doc/nrf"
   "*.rst:scripts:${NRF_RST_OUT}/doc/nrf"
+  "*.rst:tests:${NRF_RST_OUT}/doc/nrf"
 )
 
 add_custom_target(

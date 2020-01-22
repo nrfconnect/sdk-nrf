@@ -19,3 +19,4 @@ Samples showcase a single feature or library, while applications include a varie
 
    samples
    applications
+   tests

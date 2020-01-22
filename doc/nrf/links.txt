@@ -11,6 +11,9 @@
 
 .. _`Devicetree vs Kconfig`: http://docs.zephyrproject.org/latest/guides/dts/index.html#devicetree-vs-kconfig
 
+.. _`RTT Viewer`: https://docs.zephyrproject.org/latest/guides/tools/nordic_segger.html
+
+
 .. ### Links to MCUboot
 
 .. _`MCUboot`: https://mcuboot.com
@@ -273,6 +276,46 @@
 .. _`Zigbee Alliance`: https://www.zigbeealliance.org
 
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/zigbee-specification
+
+
+.. ### Links to crypto specs
+
+.. _`NIST - AES`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/block-ciphers#AES
+
+.. _`NIST SP 800-38A`: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38a.pdf
+
+.. _`NIST SP 800-38B`: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38b.pdf
+
+.. _`NIST - CCM`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/CAVP-TESTING-BLOCK-CIPHER-MODES#CCM
+
+.. _`The EAX Mode of Operation`: https://csrc.nist.gov/csrc/media/projects/block-cipher-techniques/documents/bcm/proposed-modes/eax/eax-spec.pdf
+
+.. _`NIST - GCM`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/CAVP-TESTING-BLOCK-CIPHER-MODES#GCMVS
+
+.. _`RFC 7539 - ChaCha20 and Poly1305 for IETF Protocols`: https://tools.ietf.org/html/rfc7539
+
+.. _`GEC 2: Test Vectors for SEC 1`: http://read.pudn.com/downloads168/doc/772358/TestVectorsforSEC%201-gec2.pdf
+
+.. _`NIST - ECDH`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Component-Testing#ECCCDH
+
+.. _`RFC 7027 - ECC Brainpool Curves for TLS`: https://tools.ietf.org/html/rfc7027
+
+.. _`RFC 7748 - Elliptic Curves for Security`: https://tools.ietf.org/html/rfc7748
+
+.. _`NIST - ECDSA`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Digital-Signatures#ecdsa2vs
+
+.. _`RFC 5639 - ECC Brainpool Standard Curves and Curve Generation`: https://tools.ietf.org/html/rfc5639
+
+.. _`RFC 8032 - Edwards-Curve Digital Signature Algorithm (EdDSA)`: https://tools.ietf.org/html/rfc8032
+
+.. _`NIST - SHA`: https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Secure-Hashing#shavs
+
+.. _`NIST - HMAC`: https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/message-authentication
+
+.. _`RFC 5869 - HMAC-based Extract-and-Expand Key Derivation Function (HKDF)`: https://tools.ietf.org/html/rfc5869
+
+.. _`J-PAKE: Password-Authenticated Key Exchange by Juggling`: https://tools.ietf.org/html/rfc8236#section-3
+
 
 .. ### Links to other documentation
 
