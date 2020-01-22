@@ -38,7 +38,8 @@ extern "C" {
  * @retval 0 If successful (note that this does not imply that a space
  *           separator was found) negative errno otherwise.
  */
-int dfu_ctx_mcuboot_set_b1_file(char *file, bool s0_active, char **update);
+int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
+				const char **update);
 
 /**
  * @brief See if data in buf indicates MCUBoot style upgrade.

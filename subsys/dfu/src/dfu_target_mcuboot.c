@@ -31,7 +31,7 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 static struct flash_img_context flash_img;
 
-int dfu_ctx_mcuboot_set_b1_file(char *file, bool s0_active, char **update)
+int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active, const char **update)
 {
 	if (file == NULL || update == NULL) {
 		return -EINVAL;
