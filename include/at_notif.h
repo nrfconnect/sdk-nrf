@@ -37,7 +37,7 @@ extern "C" {
  * @param response     Null terminated string containing the modem message
  *
  */
-typedef void (*at_notif_handler_t)(void *context, char *response);
+typedef void (*at_notif_handler_t)(void *context, const char *response);
 
 /**@brief Initialize AT command notification manager.
  *
