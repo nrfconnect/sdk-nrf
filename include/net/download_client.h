@@ -60,20 +60,23 @@ enum download_client_evt_id {
 	DOWNLOAD_CLIENT_EVT_DONE,
 };
 
+struct download_fragment {
+	const void *buf;
+	size_t len;
+};
+
 /**
  * @brief Download client event.
  */
 struct download_client_evt {
 	/** Event ID. */
 	enum download_client_evt_id id;
+
 	union {
 		/** Error cause. */
 		int error;
 		/** Fragment data. */
-		struct fragment {
-			const void *buf;
-			size_t len;
-		} fragment;
+		struct download_fragment fragment;
 	};
 };
 
