@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Initialize bsdlib.
  *
@@ -35,3 +39,7 @@ int bsdlib_get_init_ret(void);
  * @return int Zero on success, non-zero otherwise.
  */
 int bsdlib_shutdown(void);
+
+#ifdef __cplusplus
+}
+#endif
