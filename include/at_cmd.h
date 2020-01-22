@@ -49,7 +49,7 @@ enum at_cmd_state {
  * @param response     Null terminated string containing the modem message
  *
  */
-typedef void (*at_cmd_handler_t)(char *response);
+typedef void (*at_cmd_handler_t)(const char *response);
 
 /**@brief Initialize AT command driver.
  *
