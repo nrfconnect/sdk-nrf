@@ -100,7 +100,7 @@ static int remove_notif_handler(void *ctx, at_notif_handler_t handler)
 }
 
 /**@brief AT command notifications handler. */
-static void notif_dispatch(char *response)
+static void notif_dispatch(const char *response)
 {
 	struct notif_handler *curr, *tmp;
 
