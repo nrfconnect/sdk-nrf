@@ -461,7 +461,9 @@ Configuring static partitions
 Static partitions are defined through a YAML-formatted configuration file in the root application's source directory.
 This file is similar to the regular :file:`pm.yml` configuration files, except that it also defines the start address for all partitions.
 
-If the build system discovers a file named :file:`pm_static.yml` in an application's source directory, it automatically provides it to the Partition Manager script as static configuration.
+If the build system discovers a file named :file:`pm_static.yml`, it automatically provides it to the Partition Manager script as static configuration.
+The static configuration can be provided through a :file:`pm_static.yml` file in the application's source directory.
+Alternatively, define a ``PM_STATIC_YML_FILE`` variable that provides the path and file name for the static configuration in the application's :file:`CMakeLists.txt` file.
 
 The current partition configuration for a build can be found in :file:`${BUILD_DIR}/partitions.yml`.
 To apply the current configuration as a static configuration, copy this file to :file:`${APPLICATION_SOURCE_DIR}/pm_static.yml`.
