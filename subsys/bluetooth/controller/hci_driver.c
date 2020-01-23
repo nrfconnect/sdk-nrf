@@ -299,6 +299,12 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	}
 }
 
+void host_signal(void)
+{
+	/* Wake up the RX event/data thread */
+	k_sem_give(&sem_recv);
+}
+
 static int hci_driver_open(void)
 {
 	BT_DBG("Open");
@@ -314,52 +320,6 @@ static int hci_driver_open(void)
 	LOG_HEXDUMP_INF(build_revision, sizeof(build_revision),
 			"BLE controller build revision: ");
 
-	return 0;
-}
-
-static const struct bt_hci_driver drv = {
-	.name = "Controller",
-	.bus = BT_HCI_DRIVER_BUS_VIRTUAL,
-	.open = hci_driver_open,
-	.send = hci_driver_send,
-};
-
-void host_signal(void)
-{
-	/* Wake up the RX event/data thread */
-	k_sem_give(&sem_recv);
-}
-
-u8_t bt_read_static_addr(bt_addr_le_t *addr)
-{
-	if (((NRF_FICR->DEVICEADDR[0] != UINT32_MAX) ||
-	     ((NRF_FICR->DEVICEADDR[1] & UINT16_MAX) != UINT16_MAX)) &&
-	    (NRF_FICR->DEVICEADDRTYPE & 0x01)) {
-		sys_put_le32(NRF_FICR->DEVICEADDR[0], &addr->a.val[0]);
-		sys_put_le16(NRF_FICR->DEVICEADDR[1], &addr->a.val[4]);
-
-		/* The FICR value is a just a random number, with no knowledge
-		 * of the Bluetooth Specification requirements for random
-		 * static addresses.
-		 */
-		BT_ADDR_SET_STATIC(&addr->a);
-
-		addr->type = BT_ADDR_LE_RANDOM;
-		return 1;
-	}
-	return 0;
-}
-
-static int ble_init(struct device *unused)
-{
-	int err = 0;
-
-	err = ble_controller_init(blectlr_assertion_handler);
-	return err;
-}
-
-static int ble_enable(void)
-{
 	int err;
 	int required_memory;
 	ble_controller_cfg_t cfg;
@@ -439,22 +399,42 @@ static int ble_enable(void)
 	return 0;
 }
 
-static int hci_driver_init(struct device *unused)
+static const struct bt_hci_driver drv = {
+	.name = "Controller",
+	.bus = BT_HCI_DRIVER_BUS_VIRTUAL,
+	.open = hci_driver_open,
+	.send = hci_driver_send,
+};
+
+u8_t bt_read_static_addr(bt_addr_le_t *addr)
 {
-	ARG_UNUSED(unused);
+	if (((NRF_FICR->DEVICEADDR[0] != UINT32_MAX) ||
+	     ((NRF_FICR->DEVICEADDR[1] & UINT16_MAX) != UINT16_MAX)) &&
+	    (NRF_FICR->DEVICEADDRTYPE & 0x01)) {
+		sys_put_le32(NRF_FICR->DEVICEADDR[0], &addr->a.val[0]);
+		sys_put_le16(NRF_FICR->DEVICEADDR[1], &addr->a.val[4]);
 
-	bt_hci_driver_register(&drv);
+		/* The FICR value is a just a random number, with no knowledge
+		 * of the Bluetooth Specification requirements for random
+		 * static addresses.
+		 */
+		BT_ADDR_SET_STATIC(&addr->a);
 
-	int err = 0;
-
-	err = ble_enable();
-
-	if (err < 0) {
-		return err;
+		addr->type = BT_ADDR_LE_RANDOM;
+		return 1;
 	}
-
 	return 0;
 }
 
+static int hci_driver_init(struct device *unused)
+{
+	ARG_UNUSED(unused);
+	int err = 0;
+
+	bt_hci_driver_register(&drv);
+
+	err = ble_controller_init(blectlr_assertion_handler);
+	return err;
+}
+
 SYS_INIT(hci_driver_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
-SYS_INIT(ble_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
