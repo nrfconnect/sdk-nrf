@@ -34,7 +34,7 @@ def get_validation_data(signature_bytes, input_hex, public_key, magic_value):
     return validation_bytes
 
 
-def append_validation_data(signature, input_file, public_key, offset, output_file, magic_value):
+def append_validation_data(signature, input_file, public_key, offset, output_hex, output_bin, magic_value):
     ih = IntelHex(input_file)
     ih.start_addr = None  # OBJCOPY incorrectly inserts x86 specific records, remove the start_addr as it is wrong.
 
@@ -58,12 +58,15 @@ def append_validation_data(signature, input_file, public_key, offset, output_fil
     validation_data_hex.frombytes(validation_data, offset)
 
     ih.merge(validation_data_hex)
-    ih.write_hex_file(output_file)
+    ih.write_hex_file(output_hex)
+
+    if output_bin:
+        ih.tofile(output_bin.name, format='bin')
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Append validation metadata at specified offset.",
+        description="Append validation metadata at specified offset. Generate HEX and BIN file",
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument("-i", "--input", required=True, type=argparse.FileType('r', encoding='UTF-8'),
@@ -76,12 +79,14 @@ def parse_args():
                         help="Public key file (PEM).")
     parser.add_argument("-m", "--magic-value", required=True,
                         help="ASCII representation of magic value.")
-    parser.add_argument("-o", "--output", required=False, default=None, type=argparse.FileType('w'),
-                        help="Output file name. Default is to overwrite --input.")
+    parser.add_argument("-o", "--output-hex", required=False, default=None, type=argparse.FileType('w'),
+                        help=".hex output file name. Default is to overwrite --input.")
+    parser.add_argument("--output-bin", required=False, default=None, type=argparse.FileType('w'),
+                        help=".bin output file name.")
 
     args = parser.parse_args()
-    if args.output is None:
-        args.output = args.input
+    if args.output_hex is None:
+        args.output_hex = args.input
 
     return args
 
@@ -94,7 +99,8 @@ def main():
                            input_file=args.input,
                            public_key=ecdsa.VerifyingKey.from_pem(args.public_key.read()),
                            offset=args.offset,
-                           output_file=args.output,
+                           output_hex=args.output_hex,
+                           output_bin=args.output_bin,
                            magic_value=args.magic_value)
 
 

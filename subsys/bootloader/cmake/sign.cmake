@@ -71,6 +71,7 @@ endif()
 
 foreach (slot ${slots})
   set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)
+  set(signed_bin ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
   set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex)
   if(DEFINED ${slot}_is_from_child_image)
@@ -151,7 +152,8 @@ foreach (slot ${slots})
     ${PYTHON_EXECUTABLE}
     ${NRF_BOOTLOADER_SCRIPTS}/validation_data.py
     --input ${to_sign}
-    --output ${signed_hex}
+    --output-hex ${signed_hex}
+    --output-bin ${signed_bin}
     --offset ${CONFIG_FW_VALIDATION_METADATA_OFFSET}
     --signature ${signature_file}
     --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
