@@ -3,5 +3,8 @@
 #define PM_CONFIG_H__
 #define PM_B0_ADDRESS 0x0
 #define PM_B0_SIZE 0x8000
+#define PM_B0_IMAGE_ADDRESS 0x8000
+#define PM_B0_IMAGE_SIZE 0x1000
 #define PM_PROVISION_ADDRESS 0x7000
+#define PM_PROVISION_SIZE 0x1000
 #endif /* PM_CONFIG_H__ */
