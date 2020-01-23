@@ -27,6 +27,7 @@ static struct {
 	struct device *dev;
 } gps_work;
 
+static struct k_work_q *gps_work_q;
 static atomic_t gps_is_active;
 static atomic_t gps_is_enabled;
 
@@ -102,8 +103,8 @@ static void gps_work_handler(struct k_work *work)
 
 		gps_work.type = GPS_WORK_STOP;
 
-		k_delayed_work_submit(&gps_work.work,
-				K_SECONDS(CONFIG_GPS_CONTROL_FIX_TRY_TIME));
+		k_delayed_work_submit_to_queue(gps_work_q, &gps_work.work,
+					       K_SECONDS(CONFIG_GPS_CONTROL_FIX_TRY_TIME));
 
 		return;
 	} else if (gps_work.type == GPS_WORK_STOP) {
@@ -127,8 +128,8 @@ static void gps_work_handler(struct k_work *work)
 		LOG_INF("The device will try to get fix again in %d seconds",
 			CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL);
 
-		k_delayed_work_submit(&gps_work.work,
-			K_SECONDS(CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL));
+		k_delayed_work_submit_to_queue(gps_work_q, &gps_work.work,
+					       K_SECONDS(CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL));
 	}
 }
 #endif /* !defined(GPS_SIM) */
@@ -173,7 +174,7 @@ void gps_control_stop(u32_t delay_ms)
 #if !defined(CONFIG_GPS_SIM)
 	k_delayed_work_cancel(&gps_work.work);
 	gps_work.type = GPS_WORK_STOP;
-	k_delayed_work_submit(&gps_work.work, delay_ms);
+	k_delayed_work_submit_to_queue(gps_work_q, &gps_work.work, delay_ms);
 #endif
 }
 
@@ -182,7 +183,7 @@ void gps_control_start(u32_t delay_ms)
 #if !defined(CONFIG_GPS_SIM)
 	k_delayed_work_cancel(&gps_work.work);
 	gps_work.type = GPS_WORK_START;
-	k_delayed_work_submit(&gps_work.work, delay_ms);
+	k_delayed_work_submit_to_queue(gps_work_q, &gps_work.work, delay_ms);
 #endif
 }
 
@@ -194,11 +195,15 @@ void gps_control_on_trigger(void)
 }
 
 /** @brief Configures and starts the GPS device. */
-int gps_control_init(gps_trigger_handler_t handler)
+int gps_control_init(struct k_work_q *work_q, gps_trigger_handler_t handler)
 {
+	if ((work_q == NULL) || (handler == NULL)) {
+		return -EINVAL;
+	}
+
 	int err;
 	struct device *gps_dev;
-
+	gps_work_q = work_q;
 #ifdef CONFIG_GPS_SIM
 	struct gps_trigger gps_trig = {
 		.type = GPS_TRIG_DATA_READY

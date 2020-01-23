@@ -91,6 +91,10 @@ static struct rsrp_data rsrp = {
 };
 #endif /* CONFIG_MODEM_INFO */
 
+/* Stack definition for application workqueue */
+K_THREAD_STACK_DEFINE(application_stack_area,
+		      CONFIG_APPLICATION_WORKQUEUE_STACK_SIZE);
+static struct k_work_q application_work_q;
 static struct cloud_backend *cloud_backend;
 
 /* Sensor data */
@@ -339,7 +343,7 @@ static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
 	}
 
 	gps_control_stop(K_NO_WAIT);
-	k_work_submit(&send_gps_data_work);
+	k_work_submit_to_queue(&application_work_q, &send_gps_data_work);
 	env_sensors_poll();
 }
 
@@ -367,7 +371,7 @@ static void button_send(bool pressed)
 		button_cloud_data.tag = 0x1;
 	}
 
-	k_work_submit(&send_button_data_work);
+	k_work_submit_to_queue(&application_work_q, &send_button_data_work);
 }
 #endif
 
@@ -434,7 +438,7 @@ static void cloud_cmd_handle_modem_at_cmd(const char * const at_cmd)
 			MODEM_AT_CMD_NOT_ENABLED_STR);
 #endif
 
-	k_work_submit(&send_modem_at_cmd_work);
+	k_work_submit_to_queue(&application_work_q, &send_modem_at_cmd_work);
 }
 
 static void cloud_cmd_handler(struct cloud_command *cmd)
@@ -456,12 +460,13 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 	} else if ((cmd->channel == CLOUD_CHANNEL_DEVICE_INFO) &&
 		   (cmd->group == CLOUD_CMD_GROUP_GET) &&
 		   (cmd->type == CLOUD_CMD_EMPTY)) {
-		k_work_submit(&device_status_work);
+		k_work_submit_to_queue(&application_work_q,
+				       &device_status_work);
 	} else if ((cmd->channel == CLOUD_CHANNEL_LTE_LINK_RSRP) &&
 		   (cmd->group == CLOUD_CMD_GROUP_GET) &&
 		   (cmd->type == CLOUD_CMD_EMPTY)) {
 #if CONFIG_MODEM_INFO
-		k_work_submit(&rsrp_work);
+		k_work_submit_to_queue(&application_work_q, &rsrp_work);
 #endif
 	} else if ((cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
 			   (cmd->type == CLOUD_CMD_INTERVAL)) {
@@ -496,7 +501,7 @@ static void modem_rsrp_handler(char rsrp_value)
 		return;
 	}
 
-	k_work_submit(&rsrp_work);
+	k_work_submit_to_queue(&application_work_q, &rsrp_work);
 }
 
 /**@brief Publish RSRP data to the cloud. */
@@ -786,8 +791,9 @@ static void on_user_pairing_req(const struct cloud_event *evt)
 
 		/* If the association is not done soon enough (< ~5 min?) */
 		/* a connection cycle is needed... TBD why. */
-		k_delayed_work_submit(&cycle_cloud_connection_work,
-				      CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS);
+		k_delayed_work_submit_to_queue(&application_work_q,
+					       &cycle_cloud_connection_work,
+					       CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS);
 	}
 }
 
@@ -808,7 +814,8 @@ static void cycle_cloud_connection(struct k_work *work)
 	}
 
 	/* Reboot fail-safe on disconnect */
-	k_delayed_work_submit(&cloud_reboot_work, reboot_wait_ms);
+	k_delayed_work_submit_to_queue(&application_work_q, &cloud_reboot_work,
+				       reboot_wait_ms);
 }
 
 /** @brief Handle procedures after successful association with nRF Cloud. */
@@ -928,6 +935,9 @@ static void long_press_handler(struct k_work *work)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
+	k_work_q_start(&application_work_q, application_stack_area,
+		       K_THREAD_STACK_SIZEOF(application_stack_area),
+		       CONFIG_APPLICATION_WORKQUEUE_PRIORITY);
 	k_work_init(&connect_work, app_connect);
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
@@ -1021,13 +1031,13 @@ static void sensors_init(void)
 	modem_data_init();
 #endif /* CONFIG_MODEM_INFO */
 
-	k_work_submit(&device_status_work);
+	k_work_submit_to_queue(&application_work_q, &device_status_work);
 
 	if (IS_ENABLED(CONFIG_CLOUD_BUTTON)) {
 		button_sensor_init();
 	}
 
-	gps_control_init(gps_trigger_handler);
+	gps_control_init(&application_work_q, gps_trigger_handler);
 }
 
 #if defined(CONFIG_USE_UI_MODULE)
@@ -1047,7 +1057,8 @@ static void ui_evt_handler(struct ui_evt evt)
 	if (IS_ENABLED(CONFIG_GPS_CONTROL_ON_LONG_PRESS) &&
 	   (evt.button == UI_BUTTON_1)) {
 		if (evt.type == UI_EVT_BUTTON_ACTIVE) {
-			k_delayed_work_submit(&long_press_button_work,
+			k_delayed_work_submit_to_queue(&application_work_q,
+						       &long_press_button_work,
 			K_SECONDS(5));
 		} else {
 			k_delayed_work_cancel(&long_press_button_work);
@@ -1146,8 +1157,9 @@ connect:
 		cloud_error_handler(ret);
 	} else {
 		atomic_set(&reconnect_to_cloud, 0);
-		k_delayed_work_submit(&cloud_reboot_work,
-				      CLOUD_CONNACK_WAIT_DURATION);
+		k_delayed_work_submit_to_queue(&application_work_q,
+					       &cloud_reboot_work,
+					       CLOUD_CONNACK_WAIT_DURATION);
 	}
 
 	struct pollfd fds[] = {

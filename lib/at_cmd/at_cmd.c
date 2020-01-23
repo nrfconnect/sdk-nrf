@@ -136,8 +136,9 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 	LOG_DBG("AT socket thread started");
 
 	for (;;) {
+		LOG_DBG("Allocating memory slab for AT socket");
 		k_mem_slab_alloc(&rsp_work_items, (void **)&item, K_FOREVER);
-
+		LOG_DBG("Allocation done");
 		ret.code  = 0;
 		ret.state = AT_CMD_OK;
 		item->callback = NULL;
@@ -240,6 +241,7 @@ static inline int at_write(const char *const cmd, enum at_cmd_state *state)
 		ret.code  = -errno;
 		ret.state = AT_CMD_ERROR;
 	} else {
+		LOG_DBG("Awaiting response for %s", log_strdup(cmd));
 		k_msgq_get(&return_code_msq, &ret, K_FOREVER);
 		LOG_DBG("Bytes sent: %d", bytes_sent);
 
