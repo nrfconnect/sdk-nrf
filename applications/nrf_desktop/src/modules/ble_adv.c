@@ -157,7 +157,7 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 	struct bt_conn *conn = bt_conn_create_slave_le(addr, &adv_param);
 
 	if (conn == NULL) {
-		return -EFAULT;
+		return -ENOMEM;
 	}
 
 	bt_conn_unref(conn);
@@ -256,7 +256,7 @@ static int ble_adv_start(bool can_fast_adv)
 					       fast_adv, swift_pair);
 	}
 
-	if (err == -ECONNREFUSED) {
+	if (err == -ECONNREFUSED || (err == -ENOMEM)) {
 		LOG_WRN("Already connected, do not advertise");
 		err = 0;
 		goto error;
