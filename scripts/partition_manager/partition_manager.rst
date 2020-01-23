@@ -107,8 +107,7 @@ placement: dict
 
 span: list OR dict: list
    If the value type is a list, this property lists which partitions this partition should span across.
-   If the value type is a dict with key ``one_of``, the semantics are equivalent
-   to having a list with only the first existing partition in the ``one_of``-list.
+
    A string formatted value is interpreted as a single item list.
    Partitions with this property are container partitions.
    Therefore, this property cannot be used together with the ``placement`` property.
@@ -214,6 +213,30 @@ share_size: list
 
    If none of the partitions in the ``share_size`` list exists, and the partition does not define a ``size`` property, then the partition is removed.
    If none of the partitions in the ``share_size`` list exists, and the partition **does** define a ``size`` property, then the ``size`` property is used to set the size.
+
+All occurrences of a partition name can be replaced with a dict with the key ``one_of``, which is resolved to the first existing partition in the ``one_of`` value.
+An error is raised if no partition inside the ``one_if`` dict exists.
+
+   .. code-block:: yaml
+      :caption: Example use of a ``one_of`` dict
+
+      # Using 'one_of' in a list like this ...
+      some_span:
+         span: [something, {one_of: [does_not_exist_0, does_not_exist_1, exists1, exists2]}]
+
+      # ... is equivalent to:
+      some_span:
+         span: [something, exists1]
+
+      # Using 'one_of' as a dict value like this ...
+      some_partition:
+         placement:
+            before: {one_of: [does_not_exist_0, does_not_exist_1, exists1, exists2]}
+
+      # ... is equivalent to:
+      some_partition:
+         placement:
+            before: exists1
 
 
 .. _pm_yaml_preprocessing:

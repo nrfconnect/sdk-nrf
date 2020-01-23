@@ -24,11 +24,50 @@ def item_is_placed(d, item, after_or_before):
            d['placement'][after_or_before][0] == item
 
 
+def resolve_one_of(reqs, partitions):
+    def empty_one_of(one_of_list):
+        return RuntimeError("'one_of' dict did not evaluate to any partition. "
+                            "Available partitions {}, one_of {}".format(partitions, one_of_list))
+
+    for k, v in reqs.items():
+        if isinstance(v, dict):
+            if 'one_of' in v.keys():
+                if len(v.keys()) != 1:
+                    raise RuntimeError("'one_of' must be the only key in its dict")
+                # Now fetch the first existing partition. Note that the value must be a list even if there is only
+                # one entry.
+                reqs[k] = [partition for partition in v['one_of'] if partition in partitions][:1]
+                if len(reqs[k]) == 0:
+                    raise empty_one_of(v['one_of'])
+            else:
+                resolve_one_of(v, partitions)
+        # 'one_of' dicts can occur inside lists of partitions.
+        # dicts with 'one_of' key is the only dict supported inside lists
+        elif isinstance(v, list):
+            # Resolve all 'one-of' dicts inside the list
+            to_remove = list()
+            to_add = list()
+            for i in v:
+                if isinstance(i, dict):
+                    if 'one_of' not in i.keys():
+                        raise RuntimeError("Found illegal dict inside list. Only 'one_of' dicts are allowed")
+                    try:
+                        to_add.append([partition for partition in i['one_of'] if partition in partitions][0])
+                    except IndexError:
+                        raise empty_one_of(i['one_of'])
+                    to_remove.append(i)
+            if to_add:
+                reqs[k] = [i if i not in to_remove else to_add.pop(0) for i in v]
+
+
 def remove_irrelevant_requirements(reqs):
     # Verify that no partitions define an empty 'placement'
     for k, v in reqs.items():
         if 'placement' in v.keys() and len(v['placement']) == 0:
             raise RuntimeError("Found empty 'placement' property for partition '{}'".format(k))
+
+    # Exchange all occurrences of 'one_of' list, with the first existing partition in the 'one_of' list.
+    resolve_one_of(reqs, reqs.keys())
 
     # Remove dependencies to partitions which are not present
     for k, v in reqs.items():
@@ -38,14 +77,7 @@ def remove_irrelevant_requirements(reqs):
                 if not v['placement'][before_after]:
                     del v['placement'][before_after]
         if 'span' in v.keys():
-            if isinstance(v['span'], dict) and 'one_of' in v['span'].keys():
-                remove_item_not_in_list(v['span']['one_of'], reqs.keys())
-                tmp = v['span']['one_of'].copy()
-                del v['span']['one_of']
-                v['span'] = list()
-                v['span'].append(tmp[0])
-            else:
-                remove_item_not_in_list(v['span'], reqs.keys())
+            remove_item_not_in_list(v['span'], reqs.keys())
         if 'inside' in v.keys():
             remove_item_not_in_list(v['inside'], reqs.keys())
             if not v['inside']:
@@ -619,6 +651,53 @@ def test():
     assert start == 10
     assert size == 100 - 10
 
+    # Verify that all 'one_of' dicts are replaced with the first entry which corresponds to an existing partition
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'placement': {'after': {'one_of': ['x0', 'x1', 'a', 'x2']}}, 'size': 200},
+        'c': {'placement': {'after': 'b'}, 'share_size': {'one_of': ['x0', 'x1', 'b', 'a']}},
+        'd': {'placement': {'after': 'c'}, 'share_size': {'one_of': ['a', 'b']}},  # Should take first existing
+        # We can use  several 'one_of' - dicts inside lists
+        's': {'span': ['a', {'one_of': ['x0', 'b', 'd']}, {'one_of': ['x2', 'c', 'a']}]},
+        'app': {},
+        'e': {'placement': {'after': 'app'}, 'share_size': {'one_of': ['x0', 'app']}},  # app always exists
+    }
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'a', 0, 100)  # b is after a
+    expect_addr_size(td, 'b', 100, 200)  # b is after a
+    expect_addr_size(td, 'c', 300, 200)  # c shares size with b
+    expect_addr_size(td, 'd', 500, 100)  # d shares size with a
+    expect_addr_size(td, 's', 0, 500)  # s spans a, b and c
+    expect_addr_size(td, 'app', 600, 200)  # s spans a, b and c
+    expect_addr_size(td, 'e', 800, 200)  # s spans a, b and c
+
+    # Verify that an error is raised when no partition inside 'one_of' dicts exist as dict value
+    failed = False
+    td = {
+        'a': {'placement': {'after': {'one_of': ['x0', 'x1']}}, 'size': 100},
+        'app': {}
+    }
+    try:
+        resolve(td)
+    except RuntimeError:
+        failed = True
+    assert failed
+
+    # Verify that an error is raised when no partition inside 'one_of' dicts exist as list item
+    failed = False
+    td = {
+        'app': {},
+        'a': {'placement': {'after': 'app'}, 'size': 100},
+        's': {'span': ['a', {'one_of': ['x0', 'x1']}]},
+    }
+    try:
+        resolve(td)
+    except RuntimeError:
+        failed = True
+    assert failed
+
     # Verify that empty placement property throws error
     td = {'spm': {'placement': {'before': ['app']}, 'size': 100, 'inside': ['mcuboot_slot0']},
           'mcuboot': {'placement': {'before': ['spm', 'app']}, 'size': 200},
@@ -825,7 +904,7 @@ def test():
           'mcuboot': {'placement': {'before': ['app']}, 'size': 200},
           'mcuboot_pad': {'placement': {'after': ['mcuboot']}, 'inside': ['mcuboot_slot0'], 'size': 10},
           'app_partition': {'span': ['spm', 'app'], 'inside': ['mcuboot_slot0']},
-          'mcuboot_slot0': {'span': {'one_of': ['app', 'mcuboot', 'foo', 'mcuboot_pad']}},
+          'mcuboot_slot0': {'span': 'app'},
           'mcuboot_data': {'placement': {'after': ['mcuboot_slot0']}, 'size': 200},
           'mcuboot_slot1': {'share_size': ['mcuboot_slot0'], 'placement': {'after': ['mcuboot_data']}},
           'mcuboot_slot2': {'share_size': ['mcuboot_slot1'], 'placement': {'after': ['mcuboot_slot1']}},
