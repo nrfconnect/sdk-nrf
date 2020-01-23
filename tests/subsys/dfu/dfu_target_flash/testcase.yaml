@@ -1,0 +1,4 @@
+tests:
+  dfu_target_flash:
+    platform_whitelist: native_posix
+    tags: dfu mcuboot

@@ -22,6 +22,7 @@ extern "C" {
 
 #define DFU_TARGET_IMAGE_TYPE_MCUBOOT 1
 #define DFU_TARGET_IMAGE_TYPE_MODEM_DELTA 2
+#define DFU_TARGET_IMAGE_TYPE_FLASH 3
 
 /** @brief Functions which needs to be supported by all DFU targets.
  */

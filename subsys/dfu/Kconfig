@@ -11,6 +11,30 @@ menuconfig DFU_TARGET
 
 if (DFU_TARGET)
 
+config DFU_TARGET_FLASH
+	bool "Store DFU to flash device support"
+	default n
+	depends on FLASH
+	depends on FLASH_PAGE_LAYOUT
+	help
+	  Enable support for writing updates straight to flash device.
+	  Note: This feature only writes the downloaded data to a flash
+	  device, it does not perform the upgrade.
+
+if (DFU_TARGET_FLASH)
+
+config DFU_TARGET_FLASH_WRITE_BLOCK_SIZE
+	bool "Write"
+	default n
+	depends on FLASH
+	help
+	  Enable support for writing updates straight to flash device.
+	  Note: This feature only writes the downloaded data to a flash
+	  device, it does not perform the upgrade.
+
+
+endif # DFU_TARGET_FLASH
+
 config DFU_TARGET_MCUBOOT
 	bool "MCUBoot update support"
 	default y
