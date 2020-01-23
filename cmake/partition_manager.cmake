@@ -13,7 +13,11 @@ Also, the each image's hex file will be automatically associated with its partit
 get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
 get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 
-set(static_configuration_file ${APPLICATION_SOURCE_DIR}/pm_static.yml)
+if(EXISTS "${PM_STATIC_YML_FILE}" AND NOT IS_DIRECTORY "${PM_STATIC_YML_FILE}")
+  set(static_configuration_file ${PM_STATIC_YML_FILE})
+else()
+  set(static_configuration_file ${APPLICATION_SOURCE_DIR}/pm_static.yml)
+endif()
 
 if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
   # Partition manager is enabled because we have populated PM_IMAGES,
