@@ -8,6 +8,14 @@ menu "Asset tracker"
 
 rsource "src/ui/Kconfig"
 
+config APPLICATION_WORKQUEUE_STACK_SIZE
+	int "Application workqueue stack size"
+	default 2048
+
+config APPLICATION_WORKQUEUE_PRIORITY
+	int "Application workqueue priority"
+	default SYSTEM_WORKQUEUE_PRIORITY
+
 menu "GPS"
 
 choice

@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-int gps_control_init(gps_trigger_handler_t handler);
+int gps_control_init(struct k_work_q *work_q, gps_trigger_handler_t handler);
 
 void gps_control_on_trigger(void);
 
