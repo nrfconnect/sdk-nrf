@@ -81,10 +81,17 @@ struct download_client_evt {
  * @brief Download client configuration options.
  */
 struct download_client_cfg {
-	/** TLS security tag. If -1, TLS is disabled. */
+	/** IP port.
+	 *  Pass zero to use default, or non-zero to override.
+	 */
+	u16_t port;
+	/** TLS security tag.
+	 *  Pass -1 to disable TLS.
+	 */
 	int sec_tag;
 	/** Access point name identifying a packet data network.
-	 * Must be a null-terminated string or NULL to use the default APN.
+	 *  Pass a null-terminated string with the APN
+	 *  or NULL to use the default APN.
 	 */
 	const char *apn;
 };

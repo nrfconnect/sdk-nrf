@@ -132,13 +132,13 @@ static int resolve_and_connect(int family, const char *host,
 
 	/* Set up port and protocol */
 	if (cfg->sec_tag == -1) {
-		/* HTTP, port 80 */
 		proto = IPPROTO_TCP;
-		port = htons(80);
+		port = (cfg->port != 0) ? htons(cfg->port) :
+					  htons(80); /* HTTP, port 80 */
 	} else {
-		/* HTTPS, port 443 */
 		proto = IPPROTO_TLS_1_2;
-		port = htons(443);
+		port = (cfg->port != 0) ? htons(cfg->port) :
+					  htons(443); /* HTTPS, port 443 */
 	}
 
 	/* Lookup host */
