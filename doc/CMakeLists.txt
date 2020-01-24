@@ -30,7 +30,7 @@ get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
 set(ENV{NRF_BASE} ${NRF_BASE})
 
 if(NOT DEFINED ENV{MCUBOOT_BASE})
-  get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../mcuboot/ REALPATH)
+  get_filename_component(MCUBOOT_BASE ${CMAKE_CURRENT_LIST_DIR}/../../bootloader/mcuboot/ REALPATH)
   set(ENV{MCUBOOT_BASE} ${MCUBOOT_BASE})
 endif()
 
