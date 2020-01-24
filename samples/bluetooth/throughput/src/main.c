@@ -8,9 +8,11 @@
 #include <console.h>
 #include <sys/printk.h>
 #include <string.h>
+#include <stdlib.h>
 #include <zephyr/types.h>
 
 #include <bluetooth/bluetooth.h>
+#include <bluetooth/crypto.h>
 #include <bluetooth/conn.h>
 #include <bluetooth/gatt.h>
 #include <bluetooth/hci.h>
@@ -480,7 +482,11 @@ void main(void)
 		return;
 	}
 
-	random_duration = K_MSEC((sys_rand32_get()  % 1000) + 100);
+	bt_rand(&random_duration, sizeof(random_duration));
+	random_duration = K_MSEC(abs(random_duration)  % 1000) + 100;
+
+	printk("Advertise or scan with random duration %d\n", random_duration);
+
 	k_delayed_work_init(&scan_work, scan_timeout);
 	k_delayed_work_init(&advertise_work, advertise_timeout);
 
