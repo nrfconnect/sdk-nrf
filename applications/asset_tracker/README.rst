@@ -93,6 +93,8 @@ All LEDs (1-4):
 
 On the Thingy:91, the application state is indicated by a single RGB LED as follows:
 
+.. _thingy91_operating_states:
+
 .. list-table::
    :header-rows: 1
    :align: center

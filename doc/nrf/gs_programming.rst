@@ -7,14 +7,20 @@ The recommended way of building and programming an |NCS| sample is to use
 the Nordic Edition of the SEGGER Embedded Studio (SES) IDE.
 
 
+.. note::
+
+   See :ref:`precompiled_fw` and :ref:`building_pgming` for information about programming a Thingy:91.
+
 .. _gs_programming_ses:
 
 Building with SES
 *****************
 
+.. build_SES_projimport_open_start
+
 Complete the following steps to build |NCS| projects with SES after :ref:`installing SEGGER Embedded Studio <installing_ses_win>` and :ref:`completing the first time setup <build_environment_win>`:
 
-1. Run the file :file:`bin/emStudio`.
+1. Start SEGGER Embedded Studio by running :file:`bin/emStudio`.
 
 #. Select **File -> Open nRF Connect SDK Project**.
 
@@ -31,6 +37,8 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 	- **Build Directory** - the folder in which to run the build (automatically filled based on the board name, but you can specify a different directory)
 	- **Delete Existing CMakeCache.txt** - select this option to ensure that you are not building with an outdated build cache
 
+.. build_SES_projimport_open_end
+
    The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160_pca10090ns`` board target:
 
    .. figure:: images/ses_config.png
@@ -38,8 +46,12 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
       Opening the Asset Tracker project
 
-#. Click **OK** to import the project into SES. You can now work with the
+.. build_SES_projimport_start
+
+4. Click **OK** to import the project into SES. You can now work with the
    project in the IDE.
+
+.. build_SES_projimport_note_start
 
    .. note::
 
@@ -53,7 +65,9 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
       SES helps you to identify the source of the issue by providing a text output with detailed information about the error.
       Make sure to click :guilabel:`OK` on the error pop-up message and then inspect the text output in SES.
 
-#. Build and program your project.
+.. build_SES_projimport_note_end
+
+5. Build and program your project.
 
    The required steps differ depending on if you build a single application or a multi-image project (such as the nRF9160 samples, which include :ref:`SPM <secure_partition_manager>`).
 
@@ -81,7 +95,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 	   **Build and Debug** will build the application and program it when
 	   the build completes.
 
-7. To inspect the details of the code that was programmed and the memory usage, click **Debug -> Go**.
+#. To inspect the details of the code that was programmed and the memory usage, click **Debug -> Go**.
 
    .. note::
    	In a multi-image build, this allows you to debug the source code of your application only.
