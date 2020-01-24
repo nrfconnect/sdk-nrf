@@ -44,7 +44,10 @@
 
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
+
 .. _`LTE Link Monitor`: https://infocenter.nordicsemi.com/topic/ug_link_monitor/UG/link_monitor/lm_intro.html
+
+.. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
 
 .. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem.html
 
@@ -63,6 +66,13 @@
 
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1227688711
 .. _`Programming DK boards using nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf5x_cltools/UG/cltools/nrf5x_nrfjprogexe.html
+.. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
+
+.. _`Programming the nRF9160 SiP of Thingy:91 through USB`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/firmware_update/updating_appn_fw_9160_mcu.html
+
+.. _`Programming the nRF52840 SoC of Thingy:91 through USB`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/firmware_update/updatg_appln_fw_nrf52840_mcu.html
+
+.. _`Updating the Thingy:91 modem`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/firmware_update/updating_modem_fw.html
 
 
 .. ### Links to the Nordic website
@@ -81,6 +91,9 @@
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
 
+.. _`Thingy:91 product page`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
+
+.. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
 
 
 .. ### Links to Nordic software
