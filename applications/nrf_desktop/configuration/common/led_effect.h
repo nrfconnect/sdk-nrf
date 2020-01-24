@@ -120,6 +120,40 @@ struct led_effect {
 #define LED_EFFECT_LED_OFF() LED_EFFECT_LED_ON(LED_NOCOLOR())
 
 
+/** Create LED turned on for a brief period effect initializer.
+ *
+ * LED color remains constant for a defined time, then goes off.
+ *
+ * @param _color	Selected LED color.
+ * @param _on_time	Time LED will remain on in milliseconds.
+ * @param _off_time	Time in which LED will gradually switch to off
+ *			(in milliseconds).
+ */
+#define LED_EFFECT_LED_ON_GO_OFF(_color, _on_time, _off_delay)			\
+	{									\
+		.steps = ((const struct led_effect_step[]) {			\
+			{							\
+				.color = _color,				\
+				.substep_count = 1,				\
+				.substep_time = 0,				\
+			},							\
+			{							\
+				.color = _color,				\
+				.substep_count = 1,				\
+				.substep_time = (_on_time),			\
+			},							\
+			{							\
+				.color = LED_NOCOLOR(),				\
+				.substep_count = (_off_delay)/10,		\
+				.substep_time = 10,				\
+			},							\
+		}),								\
+		.step_count = 3,						\
+		.loop_forever = false,						\
+	}
+
+
+
 /** Create LED blinking effect initializer.
  *
  * LED color is periodically changed between the selected color and the LED
