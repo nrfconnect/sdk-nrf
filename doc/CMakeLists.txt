@@ -39,10 +39,16 @@ if(NOT DEFINED ENV{NRFXLIB_BASE})
   set(ENV{NRFXLIB_BASE} ${NRFXLIB_BASE})
 endif()
 
+if(NOT DEFINED ENV{NRFX_BASE})
+  get_filename_component(NRFX_BASE ${CMAKE_CURRENT_LIST_DIR}/../../modules/hal/nordic/nrfx REALPATH)
+  set(ENV{NRFX_BASE} ${NRFX_BASE})
+endif()
+
 message(STATUS "ZEPHYR_BASE: ${ZEPHYR_BASE}")
 message(STATUS "NRF_BASE: $ENV{NRF_BASE}")
 message(STATUS "MCUBOOT_BASE: $ENV{MCUBOOT_BASE}")
 message(STATUS "NRFXLIB_BASE: $ENV{NRFXLIB_BASE}")
+message(STATUS "NRFX_BASE: $ENV{NRFX_BASE}")
 
 #
 # Find programs we need (Python, Sphinx, and Doxygen)
@@ -66,6 +72,7 @@ set(ZEPHYR_BINARY_DIR ${CMAKE_BINARY_DIR}/zephyr)
 set(NRF_BINARY_DIR ${CMAKE_BINARY_DIR}/nrf)
 set(MCUBOOT_BINARY_DIR ${CMAKE_BINARY_DIR}/mcuboot)
 set(NRFXLIB_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfxlib)
+set(NRFX_BINARY_DIR ${CMAKE_BINARY_DIR}/nrfx)
 
 # Output directory for the shared Kconfig documentation
 set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/kconfig)
@@ -100,9 +107,10 @@ add_dependencies(zephyr html)
 # Add 'clean-zephyr', 'clean-nrf', etc., targets
 #
 
-foreach(target zephyr nrf mcuboot nrfxlib kconfig)
+foreach(target zephyr nrf mcuboot nrfxlib nrfx kconfig)
   set(TARGET_BINARY_DIR ${CMAKE_BINARY_DIR}/${target})
-  # Cleanup build output
+  # Cleanup build output. remove_directory silently ignores missing
+  # directories.
   add_custom_target(
     clean-${target}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/doctrees
@@ -269,7 +277,7 @@ add_custom_target(mcuboot)
 add_dependencies(mcuboot mcuboot-html)
 
 #
-# Add nrfxlib-related targets
+# Add nrfxlib-related targets (not to be confused with nrfx)
 #
 
 # Create an mbedtls configuration file with all settings on
@@ -343,6 +351,23 @@ add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy)
 
 add_custom_target(nrfxlib)
 add_dependencies(nrfxlib nrfxlib-html)
+
+#
+# Add nrfx-related targets (not to be confusd with nrfxlib)
+#
+
+set(NRFX_DOXY_LOG ${NRFX_BINARY_DIR}/doxy.log)
+
+add_custom_target(
+  nrfx-doxy
+  COMMAND ${CMAKE_COMMAND}
+    -DCOMMAND=${DOXYGEN_EXECUTABLE}
+    -DARGS=nrfx.doxyfile
+    -DOUTPUT_FILE=${NRFX_DOXY_LOG}
+    -DERROR_FILE=${NRFX_DOXY_LOG}
+    -DWORKING_DIRECTORY=${NRFX_BASE}/doc
+    -P ${ZEPHYR_BASE}/cmake/util/execute_process.cmake
+)
 
 #
 # Add targets for building the shared Kconfig documentation
