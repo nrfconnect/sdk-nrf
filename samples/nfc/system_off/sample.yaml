@@ -1,0 +1,9 @@
+sample:
+  name: NFC System Off
+  description: Wake up from system off by NFC field detect sample
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840_pca10056
+    tags: ci_build
