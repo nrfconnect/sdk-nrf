@@ -319,6 +319,14 @@ config LIGHT_SENSOR_DATA_SEND_INTERVAL
 
 endif # LIGHT_SENSOR
 
+config GPS_START_AFTER_CLOUD_EVT_READY
+	bool "Automatic start of GPS on CLOUD_EVT_READY event after reset"
+	default n
+	help
+	  Enabling this will make the GPS automatically start after a reset.
+	  Useful when operating as a GPS tracker outdoors for a longer period
+	  of time.
+
 config USE_AT_HOST
 	bool "Enable AT commands"
 	default y
