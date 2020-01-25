@@ -34,6 +34,7 @@
 #include "gps_controller.h"
 #include "service_info.h"
 #include "at_cmd.h"
+#include "watchdog.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(asset_tracker, CONFIG_ASSET_TRACKER_LOG_LEVEL);
@@ -935,9 +936,6 @@ static void long_press_handler(struct k_work *work)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
-	k_work_q_start(&application_work_q, application_stack_area,
-		       K_THREAD_STACK_SIZEOF(application_stack_area),
-		       CONFIG_APPLICATION_WORKQUEUE_PRIORITY);
 	k_work_init(&connect_work, app_connect);
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
@@ -1128,7 +1126,12 @@ void main(void)
 	int ret;
 
 	LOG_INF("Asset tracker started");
-
+	k_work_q_start(&application_work_q, application_stack_area,
+		       K_THREAD_STACK_SIZEOF(application_stack_area),
+		       CONFIG_APPLICATION_WORKQUEUE_PRIORITY);
+	if (IS_ENABLED(CONFIG_WATCHDOG)) {
+		watchdog_init_and_start(&application_work_q);
+	}
 	handle_bsdlib_init_ret();
 
 	cloud_backend = cloud_get_binding("NRF_CLOUD");
