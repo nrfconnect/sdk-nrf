@@ -1038,6 +1038,9 @@ static void sensors_init(void)
 	}
 
 	gps_control_init(&application_work_q, gps_trigger_handler);
+	if (IS_ENABLED(CONFIG_GPS_START_AFTER_CLOUD_EVT_READY)) {
+		set_gps_enable(true);
+	}
 }
 
 #if defined(CONFIG_USE_UI_MODULE)
