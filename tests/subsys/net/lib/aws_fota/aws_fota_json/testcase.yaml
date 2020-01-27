@@ -1,4 +1,5 @@
 tests:
   net.lib.fota.json:
+    skip: true # Build error (NCSDK-4271)
     platform_whitelist: native_posix
     tags: aws fota json
