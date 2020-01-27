@@ -93,7 +93,7 @@ The default configuration for a library is specified in its :file:`Kconfig` file
 Similarly, the default configuration for a board is specified in its :file:`*_defconfig` file (and its :file:`Kconfig.defconfig` file, see :ref:`zephyr:default_board_configuration` in the Zephyr documentation for more information).
 The configuration for your application, which might override some default options of the libraries or the board, is specified in a :file:`prj.conf` file in the application directory.
 
-For detailed information about configuration options, see :ref:`zephyr:application_kconfig` in the Zephyr documentation.
+For detailed information about configuration options, see :ref:`zephyr:application-kconfig` in the Zephyr documentation.
 
 
 Changing the configuration permanently
@@ -102,7 +102,7 @@ Changing the configuration permanently
 To configure your application and maintain the configuration when you clean the build directory, add your changes to the :file:`prj.conf` file in your application directory.
 In this file, you can specify different values for configuration options that are defined by a library or board, and you can add configuration options that are specific to your application.
 
-See :ref:`zephyr:application_set_conf` in the Zephyr documentation for information on how to edit the :file:`prj.conf` file.
+See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for information on how to edit the :file:`prj.conf` file.
 
 If you work with SES, the :file:`prj.conf` file is read when you open a project.
 This means that after you edit this file, you must re-open your project.
@@ -130,7 +130,7 @@ If your application contains more than one image (see :ref:`ug_multi_image`), yo
 To configure the parent image (the main application), select :guilabel:`menuconfig`.
 The other options allow you to configure the child images.
 
-See :ref:`zephyr:override_kernel_conf` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
+See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
 
 To locate a specific configuration option, use the filter (:guilabel:`Jump to` in menuconfig and guiconfig).
 The documentation for each :ref:`configuration option <configuration_options>` also lists the menu path where the option can be found.
