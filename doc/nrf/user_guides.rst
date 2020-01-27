@@ -14,7 +14,7 @@ They introduce you to important concepts and guide you through developing your a
    ug_nrf9160
    ug_nrf5340
    ug_thingy91
-   ug_bt_ll_nrfxlib
+   ug_ble_controller
    ug_esb
    ug_multi_image
    ug_bootloader

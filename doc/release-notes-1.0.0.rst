@@ -244,7 +244,7 @@ Documentation
 
 * Added or updated the following documentation:
 
-  * :ref:`ug_bt_ll_nrfxlib`
+  * nRF BLE Controller (experimental)
   * :ref:`ug_multi_image`
   * :ref:`partition_manager`
   * :ref:`nrf_desktop`
