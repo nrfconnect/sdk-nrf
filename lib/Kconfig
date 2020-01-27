@@ -28,4 +28,5 @@ rsource "sms/Kconfig"
 
 rsource "modem_key_mgmt/Kconfig"
 
+rsource "supl/Kconfig"
 endmenu
