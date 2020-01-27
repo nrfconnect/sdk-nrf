@@ -13,10 +13,12 @@ def TestExecutionList = [:]
 
 properties([
   pipelineTriggers([
-    parameterizedCron((JOB_NAME =~ /latest\/night\/.*\/master/).find() ? CI_STATE.CFG.CRON.NIGHTLY : ''),
-    parameterizedCron((JOB_NAME =~ /latest\/week\/.*\/master/).find() ? CI_STATE.CFG.CRON.WEEKLY : ''),
+    parameterizedCron( [
+        ((JOB_NAME =~ /latest\/night\/.*\/master/).find() ? CI_STATE.CFG.CRON.NIGHTLY : ''),
+        ((JOB_NAME =~ /latest\/week\/.*\/master/).find() ? CI_STATE.CFG.CRON.WEEKLY : '')
+    ].join('    \n') )
   ]),
-  ( JOB_NAME.contains('sub/') ? disableResume() : disableResume() ) // allowing ConcurrentBuilds at the moment  // disableConcurrentBuilds()
+  ( JOB_NAME.contains('sub/') ? disableResume() :  disableConcurrentBuilds() )
 ])
 
 pipeline {
@@ -25,7 +27,7 @@ pipeline {
        booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
        booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: true)
        booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
-       string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056')
+       string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056 nrf5340_dk_nrf5340_cpuapp')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: CI_STATE.CFG.INPUT_STATE_STR)
        choice(name: 'CRON', choices: ['COMMIT', 'NIGHTLY', 'WEEKLY'], description: 'Cron Test Phase')
   }
