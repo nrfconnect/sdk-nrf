@@ -17,6 +17,7 @@ rsource "Kconfig.pool"
 rsource "Kconfig.discovery"
 rsource "Kconfig.scan"
 rsource "Kconfig.link"
+rsource "Kconfig.enocean"
 rsource "mesh/Kconfig"
 
 rsource "services/Kconfig"

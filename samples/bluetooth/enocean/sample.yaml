@@ -1,0 +1,9 @@
+sample:
+  name: EnOcean
+  description: Sample demonstrating basic usage of the EnOcean library
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf51_pca10028 nrf52_pca10040 nrf52840_pca10056
+    tags: bluetooth ci_build
