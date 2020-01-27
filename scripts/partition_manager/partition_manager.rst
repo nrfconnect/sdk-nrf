@@ -369,6 +369,34 @@ If the HEX files overlap, the conflict is resolved as follows:
 
 This means that you can overwrite a partition's HEX file by wrapping that partition in another partition and assigning a HEX file to the new partition.
 
+It is possible to add any hex file to the :file:`merged.hex` file through the
+property ``PM_USER_DEFINED`` as shown below.
+
+
+.. code-block:: cmake
+
+  # Since provision partition is not defined in pm.yml, we need to add the hex
+  # file to the partition manager merge process manually.
+
+  set_property(
+    GLOBAL APPEND PROPERTY
+    PM_USER_DEFINED
+    provision
+    )
+
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_HEX_FILE
+    ${PROVISION_HEX} # This variable contains the path to the hex file.
+    )
+
+  # This is only needed if there is a target which generates the hex file
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_TARGET
+    provision_target
+    )
+
 ROM report
 ----------
 When using the Partition Manager, run ``ninja rom_report`` to see the addresses and sizes of flash partitions.

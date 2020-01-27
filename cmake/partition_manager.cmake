@@ -129,7 +129,17 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
     endif()
   endforeach()
 
-  set(PM_MERGED_SPAN ${implicitly_assigned} ${explicitly_assigned})
+  # Get partitions defined outside partition manger by the user.
+  get_property(PM_USER_DEFINED GLOBAL PROPERTY PM_USER_DEFINED)
+  foreach(part ${PM_USER_DEFINED})
+    get_property(${part}_PM_HEX_FILE GLOBAL PROPERTY ${part}_PM_HEX_FILE)
+    get_property(${part}_PM_TARGET GLOBAL PROPERTY ${part}_PM_TARGET)
+    set(${part}_PM_HEX_FILE ${${part}_PM_HEX_FILE})
+    set(${part}_PM_TARGET ${${part}_PM_TARGET})
+    list(APPEND user_assigned ${part})
+  endforeach()
+
+  set(PM_MERGED_SPAN ${implicitly_assigned} ${explicitly_assigned} ${user_assigned})
   set(merged_overlap TRUE) # Enable overlapping for the merged hex file.
 
   # Iterate over all container partitions, plus the "fake" merged paritition.
