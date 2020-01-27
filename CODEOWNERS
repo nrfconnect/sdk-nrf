@@ -66,6 +66,7 @@ Kconfig*                                  @SebastianBoe
 /lib/fatal_error/                         @ioannisg
 /lib/sms/                                 @metc
 /lib/st25r3911b/                          @grochu
+/lib/supl/                                @rlubos @evenl
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @joerchan @lemrey @carlescufi
 /samples/bluetooth/**/*.rst               @b-gent

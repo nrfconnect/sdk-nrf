@@ -82,6 +82,7 @@ Typically, the :file:`CMakeLists.txt` files include at least the :file:`main.c` 
    target_sources(app PRIVATE src/main.c)
    # NORDIC SDK APP END
 
+.. _configure_application:
 
 Configuring your application
 ****************************
