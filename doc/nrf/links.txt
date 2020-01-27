@@ -181,6 +181,12 @@
 .. _`A-GPS`: https://en.wikipedia.org/wiki/Assisted_GPS
 .. _`NMEA`: https://www.gpsworld.com/what-exactly-is-gps-nmea-data/
 
+.. _`EnOcean`: https://www.enocean.com
+.. _`Easyfit Single/Double Rocker Wall Switch for BLE - EWSSB/EWSDB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-wall-switch-for-ble-ewssb-ewsdb
+.. _`Easyfit Single/Double Rocker Pad for BLE - ESRPB/EDRPB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-pad-for-ble-esrpb-edrpb
+.. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb
+
+
 .. ### Links to Bluetooth specs
 
 .. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification
