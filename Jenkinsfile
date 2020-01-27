@@ -29,7 +29,7 @@ pipeline {
        booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
        string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056 nrf5340_dk_nrf5340_cpuapp')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: CI_STATE.CFG.INPUT_STATE_STR)
-       choice(name: 'CRON', choices: ['COMMIT', 'NIGHTLY', 'WEEKLY'], description: 'Cron Test Phase')
+       choice(      name: 'CRON', description: 'Cron Test Phase', choices: CI_STATE.CFG.CRON_CHOICES)
   }
   agent { label CI_STATE.CFG.AGENT_LABELS }
 
@@ -135,13 +135,17 @@ pipeline {
       def sanityCheckStages = PLATFORM_COMPILER_MAP.collectEntries {
           ["SanityCheck\n${it.c}\n${it.p}" : generateParallelStage(it.p, it.c, JOB_NAME, CI_STATE, SANITYCHECK_OPTIONS_COMMON)]
       }
+      def unitTestStages = PLATFORM_COMPILER_MAP.collectEntries {
+          ["UnitTests" : UnitTestStage(it.p, it.c, JOB_NAME, CI_STATE, SANITYCHECK_OPTIONS_COMMON)]
+      }
 
       if (CI_STATE.SELF.RUN_TESTS) {
           TestExecutionList['compliance'] = TestStages["compliance"]
       }
 
       if (CI_STATE.SELF.RUN_BUILD) {
-        TestExecutionList = TestExecutionList.plus(sanityCheckStages)
+        TestExecutionList = TestExecutionList.plus(unitTestStages)
+        // TestExecutionList = TestExecutionList.plus(sanityCheckStages)
       }
 
       println "TestExecutionList = $TestExecutionList"
@@ -191,6 +195,42 @@ pipeline {
     }
   }
 }
+
+
+def UnitTestStage(platform, compiler, JOB_NAME, CI_STATE, SANITYCHECK_OPTIONS_COMMON) {
+  return {
+    node (CI_STATE.CFG.AGENT_LABELS) {
+      stage('.'){
+        println "Using Node:$NODE_NAME"
+        docker.image("$CI_STATE.CFG.DOCKER_REG/$CI_STATE.CFG.IMAGE_TAG").inside {
+          dir('nrf') {
+            checkout scm
+            CI_STATE.SELF.REPORT_SHA = lib_Main.checkoutRepo(
+                  CI_STATE.SELF.GIT_URL, "NRF", CI_STATE.SELF, false)
+            lib_West.AddManifestUpdate("NRF", 'nrf',
+                  CI_STATE.SELF.GIT_URL, CI_STATE.SELF.GIT_REF, CI_STATE)
+          }
+          lib_West.InitUpdate('nrf')
+          lib_West.ApplyManifestUpdates(CI_STATE)
+          PLATFORM_ARGS = lib_Main.getPlatformArgs(platform)
+          SANITYCHECK_CMD = "./zephyr/scripts/sanitycheck --testcase-root nrf/tests -p native_posix --force-toolchain"
+          FULL_SANITYCHECK_CMD = """
+            export ZEPHYR_TOOLCHAIN_VARIANT='$compiler' && \
+            source zephyr/zephyr-env.sh && \
+            export && \
+            $SANITYCHECK_CMD || \
+            (sleep 10; $SANITYCHECK_CMD --only-failed --outdir=out-2nd-pass) || \
+            (sleep 10; $SANITYCHECK_CMD --only-failed --outdir=out-3rd-pass)
+          """
+          println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
+          sh FULL_SANITYCHECK_CMD
+        }
+        cleanWs()
+      }
+    }
+  }
+}
+
 
 
 def generateParallelStage(platform, compiler, JOB_NAME, CI_STATE, SANITYCHECK_OPTIONS_COMMON) {
