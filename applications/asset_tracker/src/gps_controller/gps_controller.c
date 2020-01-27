@@ -16,6 +16,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(gps_control, CONFIG_GPS_CONTROL_LOG_LEVEL);
 
+static struct k_work_q *gps_work_q;
+
 #if !defined(CONFIG_GPS_SIM)
 /* Structure to hold GPS work information */
 static struct {
@@ -27,7 +29,6 @@ static struct {
 	struct device *dev;
 } gps_work;
 
-static struct k_work_q *gps_work_q;
 static atomic_t gps_is_active;
 static atomic_t gps_is_enabled;
 
