@@ -41,8 +41,10 @@ s1:
   # Partition which contains the whole S1 partition.
   span: [s1_pad, s1_image]
 
+#ifndef CONFIG_SOC_NRF9160
 provision:
   size: CONFIG_PM_PARTITION_SIZE_PROVISION
   placement:
     after: b0_image
     align: {start: 0x1000}
+#endif

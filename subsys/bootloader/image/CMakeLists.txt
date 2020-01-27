@@ -59,15 +59,6 @@ if (s1_addr)
   set(s1_arg --s1-addr ${s1_addr})
 endif()
 
-if (CONFIG_SOC_NRF9160)
-  # Override PM_PROVISION_ADDRESS since Partition Manager cannot yet place
-  # partitions in OTP.
-  set(otp_start_addr "0xff8108")
-  set(provision_addr ${otp_start_addr})
-else ()
-  set(provision_addr "$<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>")
-endif()
-
 # Build and include hex file with provision data about the image to be booted.
 set(NRF_SCRIPTS            ${NRF_DIR}/scripts)
 set(NRF_BOOTLOADER_SCRIPTS ${NRF_SCRIPTS}/bootloader)
@@ -87,6 +78,33 @@ if (${CONFIG_SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
       -----------------------------------------------------------------")
 else()
   set(ALL_PUBLIC_KEY_FILES "${SIGNATURE_PUBLIC_KEY_FILE},${PUBLIC_KEY_FILES}")
+endif()
+
+if (CONFIG_SOC_NRF9160)
+  # Override PM_PROVISION_ADDRESS since Partition Manager cannot yet place
+  # partitions in OTP.
+  set(otp_start_addr "0xff8108")
+  set(provision_addr ${otp_start_addr})
+
+  # Since provision partition is not defined in pm.yml, we need to add the hex
+  # file to the partition manager merge process manually.
+  set_property(
+    GLOBAL APPEND PROPERTY
+    PM_USER_DEFINED
+    provision
+    )
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_HEX_FILE
+    ${PROVISION_HEX}
+    )
+  set_property(
+    GLOBAL PROPERTY
+    provision_PM_TARGET
+    provision_target
+    )
+else ()
+  set(provision_addr "$<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>")
 endif()
 
 add_custom_command(
