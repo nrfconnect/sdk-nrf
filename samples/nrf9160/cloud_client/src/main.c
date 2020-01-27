@@ -108,12 +108,14 @@ static void modem_configure(void)
 
 		printk("Connected to LTE network\n");
 
+#if defined(CONFIG_POWER_SAVING_MODE_ENABLE)
 		err = lte_lc_psm_req(true);
 		if (err) {
 			printk("lte_lc_psm_req, error: %d\n", err);
 		}
 
 		printk("PSM mode requested\n");
+#endif
 	}
 #endif
 }

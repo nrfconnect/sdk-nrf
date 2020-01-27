@@ -30,6 +30,9 @@ config CLOUD_PUBLICATION_SEQUENTIAL
 
 endchoice
 
+config POWER_SAVING_MODE_ENABLE
+	bool "Request PSM from cellular network"
+
 endmenu
 
 menu "Zephyr Kernel"
