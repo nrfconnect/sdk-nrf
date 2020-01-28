@@ -64,24 +64,32 @@ void bsd_recoverable_error_handler(uint32_t err)
 
 #endif /* defined(CONFIG_BSD_LIBRARY) */
 
-#if !defined(CONFIG_USE_NRF_CLOUD)
 /* Topic for updating shadow topic with version number */
 #define AWS "$aws/things/"
 #define UPDATE_DELTA_TOPIC AWS "%s/shadow/update"
 #define SHADOW_STATE_UPDATE \
-"{\"state\":{\"reported\":{\"nrfcloud__dfu_v1__app_v\":\"%s\"}}}"
+"{\"state\":{\"reported\":{\"device\":{\"serviceInfo\":{\"fota_v1\":[%s]},"\
+"\"deviceInfo\":{\"modemFirmware\":\"unknown\",\"appVersion\":\"%s\","\
+"\"appName\":\"aws_fota_sample\"}}}}}"
+#if defined(CONFIG_DFU_TARGET_MCUBOOT) && defined(CONFIG_DFU_TARGET_MODEM)
+#define SUPPORTED_FOTA "\"APP\", \"MODEM\""
+#elif defined(CONFIG_DFU_TARGET_MCUBOOT)
+#define SUPPORTED_FOTA "\"APP\""
+#elif defined(CONFIG_DFU_TARGET_MODEM)
+#define SUPPORTED_FOTA "\"MODEM\""
+#endif
 
-static int update_device_shadow_version(struct mqtt_client *const client)
+
+static int update_device_shadow_version(struct mqtt_client *const client,
+					const char *version_number)
 {
 	struct mqtt_publish_param param;
 	char update_delta_topic[strlen(AWS) + strlen("/shadow/update") +
 				CLIENT_ID_LEN + 1];
 	u8_t shadow_update_payload[CONFIG_DEVICE_SHADOW_PAYLOAD_SIZE];
 
-	int ret = snprintf(update_delta_topic,
-			   sizeof(update_delta_topic),
-			   UPDATE_DELTA_TOPIC,
-			   client->client_id.utf8);
+	int ret = snprintf(update_delta_topic, sizeof(update_delta_topic),
+			   UPDATE_DELTA_TOPIC, client->client_id.utf8);
 	u32_t update_delta_topic_len = ret;
 
 	if (ret >= sizeof(update_delta_topic)) {
@@ -91,9 +99,8 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 	}
 
 	ret = snprintf(shadow_update_payload,
-		       sizeof(shadow_update_payload),
-		       SHADOW_STATE_UPDATE,
-		       CONFIG_APP_VERSION);
+		       sizeof(shadow_update_payload), SHADOW_STATE_UPDATE,
+		       SUPPORTED_FOTA, version_number);
 	u32_t shadow_update_payload_len = ret;
 
 	if (ret >= sizeof(shadow_update_payload)) {
@@ -113,7 +120,6 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 
 	return mqtt_publish(client, &param);
 }
-#endif /* !defined(CONFIG_USE_NRF_CLOUD) */
 
 /**@brief Function to print strings without null-termination. */
 static void data_print(u8_t *prefix, u8_t *data, size_t len)
@@ -172,12 +178,10 @@ void mqtt_evt_handler(struct mqtt_client * const c,
 		}
 
 		printk("[%s:%d] MQTT client connected!\n", __func__, __LINE__);
-#if !defined(CONFIG_USE_NRF_CLOUD)
-		err = update_device_shadow_version(c);
+		err = update_device_shadow_version(c, CONFIG_APP_VERSION);
 		if (err) {
 			printk("Unable to update device shadow err: %d\n", err);
 		}
-#endif
 		break;
 
 	case MQTT_EVT_DISCONNECT:
