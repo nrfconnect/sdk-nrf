@@ -447,6 +447,14 @@ int modem_info_string_get(enum modem_info info, char *buf)
 			  CONFIG_MODEM_INFO_BUFFER_SIZE,
 			  NULL);
 
+	/* modem_info does not yet support array objects, so here we handle
+	 * the supported bands independently as a string
+	 */
+	if (info == MODEM_INFO_SUP_BAND) {
+		strcpy(buf, recv_buf + sizeof("%XCBAND: ") - 1);
+		return strlen(buf);
+	}
+
 	if (err != 0) {
 		return -EIO;
 	}
