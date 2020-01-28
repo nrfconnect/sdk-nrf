@@ -9,7 +9,10 @@
 
 #include <bluetooth/services/hids_c.h>
 #include <bluetooth/conn.h>
+#include <bluetooth/hci.h>
 #include <sys/byteorder.h>
+
+#include "ble_controller_hci_vs.h"
 
 #define MODULE hid_forward
 #include "module_state_event.h"
@@ -62,6 +65,40 @@ static sys_slist_t consumer_ctrl_event_list;
 
 static struct k_spinlock lock;
 
+
+static int nrfxlib_vs_conn_latency_update(struct bt_conn *conn, u16_t latency)
+{
+	struct net_buf *buf;
+	hci_vs_cmd_conn_update_t *cmd_conn_update;
+
+	buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
+				sizeof(*cmd_conn_update));
+	if (!buf) {
+		LOG_ERR("Could not allocate command buffer");
+		return -ENOBUFS;
+	}
+
+	u16_t conn_handle;
+
+	int err = bt_hci_get_conn_handle(conn, &conn_handle);
+
+	if (err) {
+		LOG_ERR("Failed obtaining conn_handle (err %d)", err);
+		return err;
+	}
+
+	cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
+
+	cmd_conn_update->connection_handle   = conn_handle;
+	cmd_conn_update->conn_interval_us    = 1000;
+	cmd_conn_update->conn_latency        = latency;
+	cmd_conn_update->supervision_timeout = 400;
+
+	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf, NULL);
+
+	return err;
+}
+
 static int change_connection_latency(struct hids_subscriber *subscriber, u16_t latency)
 {
 	__ASSERT_NO_MSG(subscriber != NULL);
@@ -93,9 +130,18 @@ static int change_connection_latency(struct hids_subscriber *subscriber, u16_t l
 
 	err = bt_conn_le_param_update(conn, &param);
 	if (err == -EALREADY) {
-		LOG_WRN("Slave latency already changed");
+		LOG_INF("Slave latency already changed");
 		err = 0;
-	} else if (err) {
+	} else if (err == -EINVAL) {
+		/* LLPM connection interval is not supported by
+		 * bt_conn_le_param_update function.
+		 */
+		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_LL_NRFXLIB));
+		LOG_INF("Use vendor specific HCI command");
+		err = nrfxlib_vs_conn_latency_update(conn, latency);
+	}
+
+	if (err) {
 		LOG_WRN("Cannot update parameters (%d)", err);
 	} else {
 		LOG_INF("BLE latency changed to: %"PRIu16, latency);

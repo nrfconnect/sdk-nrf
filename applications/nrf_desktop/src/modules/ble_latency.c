@@ -87,6 +87,8 @@ static void set_ble_latency(bool low_latency)
 		if (err == -EALREADY) {
 			LOG_INF("Conn parameters were already updated");
 		}
+	} else if (err == -EINVAL) {
+		LOG_INF("LLPM conn parameters - do not update");
 	} else {
 		LOG_WRN("Failed to update conn parameters (err %d)", err);
 	}
