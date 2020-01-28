@@ -491,8 +491,7 @@ int nct_mqtt_connect(void)
 	nct.client.transport.type = MQTT_TRANSPORT_NON_SECURE;
 #endif
 #if defined(CONFIG_AWS_FOTA)
-	int err = aws_fota_init(&nct.client, STRINGIFY(APP_VERSION),
-				aws_fota_cb_handler);
+	int err = aws_fota_init(&nct.client, aws_fota_cb_handler);
 	if (err != 0) {
 		LOG_ERR("ERROR: aws_fota_init %d", err);
 		return err;

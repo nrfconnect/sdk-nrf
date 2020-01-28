@@ -13,10 +13,6 @@ menuconfig AWS_FOTA
 
 if AWS_FOTA
 
-config AWS_FOTA_VERSION_STRING_MAX_LEN
-	int "Application version string max length"
-	default 10
-
 config AWS_FOTA_PAYLOAD_SIZE
 	int "MQTT payload reception buffer size for AWS IoT Jobs messages"
 	default 1350

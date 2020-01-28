@@ -512,7 +512,7 @@ void main(void)
 
 	client_init(&client, CONFIG_MQTT_BROKER_HOSTNAME);
 
-	err = aws_fota_init(&client, CONFIG_APP_VERSION, aws_fota_cb_handler);
+	err = aws_fota_init(&client, aws_fota_cb_handler);
 	if (err != 0) {
 		printk("ERROR: aws_fota_init %d\n", err);
 		return;
