@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: 924b7938af13d22feb5ee52b08ce807c788b5317
+      revision: 43f55fa7be2c86116af78e0a60486e5131b16ea1
     - name: segger
       revision: 6fcf61606d6012d2c44129edc033f59331e268bc
       path: modules/debug/segger
@@ -69,7 +69,7 @@ manifest:
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
-      revision: 587634674ac33f719aab1a9b990cab0e835d49ee
+      revision: 1e8b3eef2566a5670861c66a760e20742ead72d4
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
@@ -81,7 +81,7 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.16.3
+      revision: mbedtls-2.16.4
       remote: armmbed
     - name: civetweb
       path: modules/lib/civetweb
