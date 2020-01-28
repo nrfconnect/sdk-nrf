@@ -500,16 +500,11 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 }
 
 int aws_fota_init(struct mqtt_client *const client,
-		  const char *app_version,
 		  aws_fota_callback_t evt_handler)
 {
 	int err;
 
 	if (client == NULL || evt_handler == NULL) {
-		return -EINVAL;
-	}
-
-	if (strlen(app_version) >= CONFIG_AWS_FOTA_VERSION_STRING_MAX_LEN) {
 		return -EINVAL;
 	}
 

@@ -33,8 +33,6 @@ typedef void (*aws_fota_callback_t)(enum aws_fota_evt_id evt_id);
 /**@brief Initialize the AWS Firmware Over the Air library.
  *
  * @param client       Pointer to an initialized MQTT instance.
- * @param app_version  Current version number of the application as a \0
- *                     terminated ASCII string.
  * @param evt_handler  Callback function for events emitted by the aws_fota
  *                     library.
  *
@@ -43,7 +41,6 @@ typedef void (*aws_fota_callback_t)(enum aws_fota_evt_id evt_id);
  * @return         Negative value on error.
  */
 int aws_fota_init(struct mqtt_client *const client,
-		  const char *app_version,
 		  aws_fota_callback_t evt_handler);
 
 /**@brief AWS Firmware over the air mqtt event handler.

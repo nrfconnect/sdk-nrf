@@ -716,7 +716,7 @@ int aws_iot_init(const struct aws_iot_config *const config,
 	}
 
 #if defined(CONFIG_AWS_FOTA)
-	err = aws_fota_init(&client, "v0.0.0", aws_fota_cb_handler);
+	err = aws_fota_init(&client, aws_fota_cb_handler);
 	if (err) {
 		LOG_ERR("aws_fota_init, error: %d", err);
 		return err;
