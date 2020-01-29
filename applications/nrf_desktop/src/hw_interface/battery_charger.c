@@ -8,7 +8,7 @@
 
 #include <soc.h>
 #include <device.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <sys/atomic.h>
 #include <spinlock.h>
 

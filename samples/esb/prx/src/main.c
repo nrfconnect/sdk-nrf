@@ -5,7 +5,7 @@
  */
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <irq.h>
 #include <logging/log.h>
 #include <nrf.h>

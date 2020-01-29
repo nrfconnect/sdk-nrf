@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <drivers/gps.h>
-#include <sensor.h>
+#include <drivers/sensor.h>
 #include <console/console.h>
 #include <power/reboot.h>
 #include <logging/log_ctrl.h>

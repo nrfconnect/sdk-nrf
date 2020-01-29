@@ -17,7 +17,7 @@
 #include <string.h>
 
 #include <zephyr.h>
-#include <flash.h>
+#include <drivers/flash.h>
 #include <pm_config.h>
 #include <logging/log.h>
 #include <dfu/mcuboot.h>

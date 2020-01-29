@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <logging/log.h>
-#include <uart.h>
+#include <drivers/uart.h>
 #include <string.h>
 #include <init.h>
 #include <at_cmd.h>

@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <flash.h>
+#include <drivers/flash.h>
 #include <dfu/mcuboot.h>
 #include <dfu/flash_img.h>
 #include <logging/log_ctrl.h>

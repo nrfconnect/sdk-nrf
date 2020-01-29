@@ -10,7 +10,7 @@
 
 #include <zephyr/types.h>
 #include <zephyr.h>
-#include <uart.h>
+#include <drivers/uart.h>
 
 #include <device.h>
 #include <soc.h>

@@ -6,10 +6,10 @@
 
 #include <zephyr.h>
 #include <kernel.h>
-#include <sensor.h>
+#include <drivers/sensor.h>
 #include <device.h>
-#include <spi.h>
-#include <gpio.h>
+#include <drivers/spi.h>
+#include <drivers/gpio.h>
 #include <sys/byteorder.h>
 #include <sensor/pmw3360.h>
 

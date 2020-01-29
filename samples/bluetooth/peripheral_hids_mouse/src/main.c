@@ -11,7 +11,7 @@
 #include <sys/printk.h>
 #include <sys/byteorder.h>
 #include <zephyr.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <soc.h>
 #include <assert.h>
 

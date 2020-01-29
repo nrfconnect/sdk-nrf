@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 #include <zephyr.h>
-#include <gpio.h>
-#include <flash.h>
+#include <drivers/gpio.h>
+#include <drivers/flash.h>
 #include <bsd.h>
 #include <lte_lc.h>
 #include <at_cmd.h>

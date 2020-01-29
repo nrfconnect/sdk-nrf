@@ -5,7 +5,7 @@
  */
 
 #include <common_test.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <logging/log.h>
 #include <dk_buttons_and_leds.h>
 

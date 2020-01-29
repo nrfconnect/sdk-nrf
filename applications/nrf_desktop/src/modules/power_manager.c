@@ -8,7 +8,7 @@
 #include <power/power.h>
 
 #include <device.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <hal/nrf_power.h>
 
 #include <profiler.h>

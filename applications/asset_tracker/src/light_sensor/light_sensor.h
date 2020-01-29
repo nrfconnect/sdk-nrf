@@ -21,7 +21,7 @@ extern "C" {
  *
  */
 #include <zephyr.h>
-#include <sensor.h>
+#include <drivers/sensor.h>
 
 struct light_sensor_data {
 	/* light levels in lux */

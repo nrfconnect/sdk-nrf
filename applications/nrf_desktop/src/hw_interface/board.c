@@ -7,7 +7,7 @@
 #include <zephyr.h>
 
 #include <device.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 
 #include "port_state.h"
 #include "port_state_def.h"

@@ -10,8 +10,8 @@
 
 #include <soc.h>
 #include <device.h>
-#include <sensor.h>
-#include <gpio.h>
+#include <drivers/sensor.h>
+#include <drivers/gpio.h>
 
 #include "event_manager.h"
 #include "wheel_event.h"

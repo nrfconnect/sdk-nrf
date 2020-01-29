@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <pwm.h>
+#include <drivers/pwm.h>
 #include <string.h>
 
 #include "ui.h"

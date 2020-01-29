@@ -9,7 +9,7 @@
 #include <kernel.h>
 #include <soc.h>
 #include <device.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <sys/util.h>
 
 #include "key_id.h"

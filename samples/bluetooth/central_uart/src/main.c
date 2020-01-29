@@ -26,7 +26,7 @@
 
 #include <settings/settings.h>
 
-#include <uart.h>
+#include <drivers/uart.h>
 
 /* UART payload buffer element size. */
 #define UART_BUF_SIZE 20

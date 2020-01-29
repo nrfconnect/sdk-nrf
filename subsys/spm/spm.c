@@ -9,7 +9,7 @@
 #include <sys/util.h>
 #include <linker/linker-defs.h>
 #include <device.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include "spm_internal.h"
 
 #if !defined(CONFIG_ARM_SECURE_FIRMWARE)
