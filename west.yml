@@ -73,7 +73,7 @@ manifest:
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
-      revision: cc68186e8ea0acc4712c5865d7c06b7705bc3de7
+      revision: 3e381d09f1d305e230435f5b6e4c9ef928b6a697
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
