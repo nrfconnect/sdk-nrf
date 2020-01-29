@@ -10,7 +10,7 @@ if (CONFIG_FW_INFO)
 endif ()
 
 zephyr_linker_sources_ifdef(CONFIG_FW_INFO
-  TEXT_START
+  ROM_START
   SORT_KEY ${CONFIG_FW_INFO_OFFSET}
   fw_info.ld)
 
