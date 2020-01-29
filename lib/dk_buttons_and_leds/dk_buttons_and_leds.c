@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <soc.h>
 #include <device.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <sys/util.h>
 #include <logging/log.h>
 #include <nrfx.h>

@@ -9,7 +9,7 @@
 #include <zephyr.h>
 #include <device.h>
 #include <soc.h>
-#include <flash.h>
+#include <drivers/flash.h>
 #include <sys/util.h>
 
 #include <nrfx_nvmc.h>

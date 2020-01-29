@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <entropy.h>
+#include <drivers/entropy.h>
 #include <soc.h>
 #include <device.h>
 #include <irq.h>

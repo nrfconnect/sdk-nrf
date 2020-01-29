@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <bluetooth/hci_driver.h>
+#include <drivers/bluetooth/hci_driver.h>
 #include <bluetooth/hci_vs.h>
 #include <init.h>
 #include <irq.h>

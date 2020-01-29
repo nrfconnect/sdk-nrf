@@ -8,8 +8,8 @@
 
 #include <soc.h>
 #include <device.h>
-#include <adc.h>
-#include <gpio.h>
+#include <drivers/adc.h>
+#include <drivers/gpio.h>
 #include <sys/atomic.h>
 
 #include <hal/nrf_saadc.h>

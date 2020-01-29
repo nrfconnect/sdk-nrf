@@ -6,7 +6,7 @@
 #ifndef ZEPHYR_INCLUDE_PMW3360_H_
 #define ZEPHYR_INCLUDE_PMW3360_H_
 
-#include <sensor.h>
+#include <drivers/sensor.h>
 
 #ifdef __cplusplus
 extern "C" {

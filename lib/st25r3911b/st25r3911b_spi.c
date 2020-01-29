@@ -6,10 +6,10 @@
 
 #include <zephyr.h>
 
-#include <spi.h>
+#include <drivers/spi.h>
 #include <device.h>
 #include <soc.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <logging/log.h>
 
 #include "st25r3911b_spi.h"

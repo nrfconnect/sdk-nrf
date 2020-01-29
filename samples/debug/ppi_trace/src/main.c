@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <debug/ppi_trace.h>
-#include <counter.h>
+#include <drivers/counter.h>
 #include <hal/nrf_rtc.h>
 #include <hal/nrf_clock.h>
 #include <device.h>

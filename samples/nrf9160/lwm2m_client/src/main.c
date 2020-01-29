@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <ctype.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <stdio.h>
 #include <net/lwm2m.h>
 #include <net/bsdlib.h>

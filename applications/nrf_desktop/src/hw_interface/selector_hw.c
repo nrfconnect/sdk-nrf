@@ -7,7 +7,7 @@
 #include <zephyr.h>
 
 #include <device.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 
 #include "selector_hw_def.h"
 

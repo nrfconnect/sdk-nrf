@@ -13,7 +13,7 @@
 
 #include <ztest.h>
 #include <device.h>
-#include <flash.h>
+#include <drivers/flash.h>
 
 static u8_t write_data[] = "Hello world";
 static u32_t valid_write_addr = 0x1C000;

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <init.h>
-#include <sensor.h>
+#include <drivers/sensor.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <logging/log.h>

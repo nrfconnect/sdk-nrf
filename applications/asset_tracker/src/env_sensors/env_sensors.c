@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <string.h>
-#include <sensor.h>
+#include <drivers/sensor.h>
 #include <spinlock.h>
 #include "env_sensors.h"
 

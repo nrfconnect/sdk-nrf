@@ -8,7 +8,7 @@
 #include <sys/byteorder.h>
 #include <device.h>
 #include <soc.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <logging/log.h>
 
 #include "st25r3911b_reg.h"

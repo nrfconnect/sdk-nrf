@@ -6,8 +6,8 @@
 
 #include <zephyr.h>
 #include <sys/util.h>
-#include <gpio.h>
-#include <pwm.h>
+#include <drivers/gpio.h>
+#include <drivers/pwm.h>
 
 #include "ui.h"
 

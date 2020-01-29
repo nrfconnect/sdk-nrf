@@ -13,7 +13,7 @@
 
 #include <ztest.h>
 #include <device.h>
-#include <flash.h>
+#include <drivers/flash.h>
 
 
 static void test_flash_write_protected(void)

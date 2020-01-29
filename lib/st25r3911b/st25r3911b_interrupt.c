@@ -7,7 +7,7 @@
 #include <kernel.h>
 #include <device.h>
 #include <soc.h>
-#include <gpio.h>
+#include <drivers/gpio.h>
 #include <spinlock.h>
 #include <logging/log.h>
 

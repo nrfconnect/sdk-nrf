@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <device.h>
-#include <uart.h>
+#include <drivers/uart.h>
 #include <nrfx.h>
 #include <string.h>
 #include <hal/nrf_power.h>

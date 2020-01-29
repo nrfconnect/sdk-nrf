@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <uart.h>
+#include <drivers/uart.h>
 #include <string.h>
 
 #include <net/mqtt.h>

@@ -7,7 +7,7 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <uart.h>
+#include <drivers/uart.h>
 #include <string.h>
 #include <bsd.h>
 #include <lte_lc.h>
