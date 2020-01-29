@@ -67,6 +67,8 @@
 
 .. ### Links to the Nordic website
 
+.. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
+
 .. _`DevZone`: https://devzone.nordicsemi.com/
 
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/Download#infotabs
@@ -160,6 +162,10 @@
 
 .. _`SSL Labs`: https://www.ssllabs.com/ssltest/
 
+.. _`GNSS`: https://en.wikipedia.org/wiki/Satellite_navigation
+.. _`GPS`: https://en.wikipedia.org/wiki/Global_Positioning_System
+.. _`A-GPS`: https://en.wikipedia.org/wiki/Assisted_GPS
+.. _`NMEA`: https://www.gpsworld.com/what-exactly-is-gps-nmea-data/
 
 .. ### Links to Bluetooth specs
 
