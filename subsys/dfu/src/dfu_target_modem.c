@@ -83,6 +83,23 @@ static int delete_banked_modem_fw(void)
 	return 0;
 }
 
+#define MODULE "fota"
+#define FILE_MODEM_FW "mdm_fw"
+static int store_mdm_version(const u8_t version[36])
+{
+	if(IS_ENABLED(CONFIG_SETTINGS)){
+		char key[] = MODULE "/" FILE_MODEM_FW;
+		int err = settings_save_one(key, &version, sizeof(version));
+
+		if (err) {
+			LOG_ERR("Problem storing offset (err %d)", err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 /**@brief Initialize DFU socket. */
 static int modem_dfu_socket_init(void)
 {
@@ -101,11 +118,14 @@ static int modem_dfu_socket_init(void)
 	LOG_INF("Modem DFU Socket created");
 
 	len = sizeof(version);
-	err = getsockopt(fd, SOL_DFU, SO_DFU_FW_VERSION, &version,
-			    &len);
+	err = getsockopt(fd, SOL_DFU, SO_DFU_FW_VERSION, &version, &len);
 	if (err < 0) {
 		LOG_ERR("Firmware version request failed, errno %d", errno);
 		return -1;
+	}
+	err = store_mdm_version(version);
+	if (err) {
+		LOG_ERR("Unable to store mdm fw version");
 	}
 
 	snprintf(version_string, sizeof(version_string), "%.*s",

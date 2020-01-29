@@ -11,6 +11,8 @@
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
 #include <logging/log.h>
+#include <dfu/dfu_target.h>
+#include <settings/settings.h>
 
 #include "aws_fota_json.h"
 
@@ -26,12 +28,14 @@ enum fota_status {
 	NONE = 0,
 	DOWNLOAD_FIRMWARE,
 	APPLY_UPDATE,
+	PENDING_UPDATE,
 };
 
 /* Map of fota status to report back */
 static const char * const fota_status_strings[] = {
 	[DOWNLOAD_FIRMWARE] = "download_firmware",
 	[APPLY_UPDATE] = "apply_update",
+	[PENDING_UPDATE] = "pending_update",
 	[NONE] = "none",
 };
 
@@ -49,6 +53,7 @@ static u32_t execution_version_number;
 
 /* Store file offset progress */
 static size_t stored_progress;
+static bool pending_update;
 
 /* Allocated strings for topics */
 static u8_t notify_next_topic[AWS_JOBS_TOPIC_MAX_LEN];
@@ -61,6 +66,125 @@ static u8_t hostname[CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN];
 static u8_t file_path[CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN];
 static u8_t job_id[AWS_JOBS_JOB_ID_MAX_LEN];
 static aws_fota_callback_t callback;
+
+/* Settings subsystem */
+static int img_type;
+static u8_t previous_mdm_fw_version[36];
+
+#define MODULE "fota"
+#define FILE_PENDING_UPDATE "pending_update"
+#define FILE_JOB_ID "job_id"
+#define FILE_VERSION_NUMBER "version_number"
+#define FILE_PROGRESS "progress"
+#define FILE_IMG_TYPE "img_type"
+#define FILE_FW_VERSION "fw_version"
+#define FILE_MODEM_FW "mdm_fw"
+static int store_update_data(void)
+{
+	LOG_INF("Storing update data");
+	char key[] = MODULE "/" FILE_PENDING_UPDATE;
+
+	int err =  settings_save_one(key, &pending_update, sizeof(pending_update));
+
+	if (err) {
+		LOG_ERR("Problem storing offset (err %d)", err);
+		return err;
+	}
+
+	char key2[] = MODULE "/" FILE_JOB_ID; 
+	err = settings_save_one(key2, &job_id, sizeof(job_id));
+	if (err) {
+		LOG_ERR("Problem storing offset (err %d)", err);
+		return err;
+	}
+	
+	char key3[] = MODULE "/" FILE_VERSION_NUMBER; 
+	err = settings_save_one(key3, &execution_version_number, sizeof(execution_version_number));
+	if (err) {
+		LOG_ERR("Problem storing offset (err %d)", err);
+		return err;
+	}
+
+	char key4[] = MODULE "/" FILE_PROGRESS;
+	err = settings_save_one(key4, &stored_progress, sizeof(stored_progress));
+	if (err) {
+		LOG_ERR("Problem storing offset (err %d)", err);
+		return err;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Function used by settings_load() to restore the flash_img variable.
+ *	  See the Zephyr documentation of the settings subsystem for more
+ *	  information.
+ */
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	LOG_INF("Settings set key: %s", log_strdup(key));
+	if (!strcmp(key, FILE_PENDING_UPDATE)) {
+		ssize_t len = read_cb(cb_arg, &pending_update,
+				      sizeof(pending_update));
+		if (len != sizeof(pending_update)) {
+			LOG_ERR("Can't read flash_img from storage");
+			return len;
+		}
+	}
+
+	if (!strcmp(key, FILE_JOB_ID)) {
+		ssize_t len = read_cb(cb_arg, &job_id,
+				      sizeof(job_id));
+		if (len != sizeof(job_id)) {
+			LOG_ERR("Can't read job_id from storage");
+			return len;
+		}
+	}
+	
+	if (!strcmp(key, FILE_VERSION_NUMBER)) {
+		ssize_t len = read_cb(cb_arg, &execution_version_number,
+				      sizeof(execution_version_number));
+		if (len != sizeof(execution_version_number)) {
+			LOG_ERR("Can't read execution_version_number from storage");
+			return len;
+		}
+	}
+	
+	if (!strcmp(key, FILE_IMG_TYPE)) {
+		ssize_t len = read_cb(cb_arg, &img_type,
+				      sizeof(img_type));
+		if (len != sizeof(img_type)) {
+			LOG_ERR("Can't read execution_version_number from storage");
+			return len;
+		}
+	}
+	
+	if (!strcmp(key, FILE_IMG_TYPE)) {
+		ssize_t len = read_cb(cb_arg, &img_type,
+				      sizeof(img_type));
+		if (len != sizeof(img_type)) {
+			LOG_ERR("Can't read execution_version_number from storage");
+			return len;
+		}
+	}
+	
+	if (!strcmp(key, FILE_MODEM_FW)) {
+		ssize_t len = read_cb(cb_arg, &previous_mdm_fw_version,
+				      sizeof(previous_mdm_fw_version));
+		if (len != sizeof(previous_mdm_fw_version)) {
+			LOG_ERR("Can't read execution_version_number from storage");
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+static struct settings_handler sh = {
+	.name = MODULE,
+	.h_set = settings_set,
+};
 
 
 /**
@@ -158,7 +282,6 @@ static int update_job_execution(struct mqtt_client *const client,
 	if (ret < 0) {
 		LOG_ERR("aws_jobs_update_job_execution failed: %d", ret);
 	}
-
 
 	return ret;
 }
@@ -268,7 +391,8 @@ static int job_update_accepted(struct mqtt_client *const client,
 	} else if (execution_state == AWS_JOBS_IN_PROGRESS
 		   && fota_state == APPLY_UPDATE) {
 		LOG_INF("Firmware download completed");
-		execution_state = AWS_JOBS_SUCCEEDED;
+		execution_state = AWS_JOBS_IN_PROGRESS;
+		fota_state = PENDING_UPDATE;
 		err = update_job_execution(client, job_id,
 				execution_state, fota_state, stored_progress,
 				"");
@@ -276,14 +400,18 @@ static int job_update_accepted(struct mqtt_client *const client,
 			LOG_ERR("Unable to update the job execution");
 			return err;
 		}
-	} else if (execution_state == AWS_JOBS_SUCCEEDED
-		   && fota_state == APPLY_UPDATE) {
-		LOG_INF("Job document updated with SUCCEDED");
+
+	} else if (execution_state == AWS_JOBS_IN_PROGRESS
+		   && fota_state == PENDING_UPDATE) {
+		LOG_INF("Job document updated with IN_PROGRESS");
+		pending_update = true;
+		store_update_data();
 		LOG_INF("Ready to reboot");
 		callback(AWS_FOTA_EVT_DONE);
 	}
 	return 0;
 }
+
 
 /**
  * @brief Handling of a job document update when it is rejected.
@@ -356,6 +484,83 @@ static int on_publish_evt(struct mqtt_client *const client,
 
 	return 1;
 }
+#include <nrf_socket.h>
+#include <net/socket.h>
+
+int check_modem_fw_string()
+{
+	int err;
+	socklen_t len;
+	u8_t version[36];
+
+	int fd = socket(AF_LOCAL, SOCK_STREAM, NPROTO_DFU);
+	if (fd < 0) {
+		LOG_ERR("Failed to open Modem DFU socket.");
+		return fd;
+	}
+	len = sizeof(version);
+	err = getsockopt(fd, SOL_DFU, SO_DFU_FW_VERSION, &version, &len);
+	if (err < 0) {
+		LOG_ERR("Firmware version request failed, errno %d", errno);
+		return err;
+	}
+
+	err = close(fd);
+	if (err < 0) {
+		LOG_ERR("Failed to close modem DFU socket.");
+		return err;
+	}
+
+	if (strncmp(previous_mdm_fw_version, version, 36) == 0){
+		return -EFAULT;
+	} else {
+		return 0;
+	}
+}
+
+int check_mcuboot_fw_metadata()
+{
+}
+
+int check_update(struct mqtt_client *const client)
+{
+	int ret;
+	int success = 0;
+
+	if (!pending_update) {
+		return 0;
+	}
+
+	switch(img_type)
+	{
+		case DFU_TARGET_IMAGE_TYPE_MODEM_DELTA:
+			/* Does not really make sense since this situation would never occure */
+			/* We could just do success = true */
+			success = check_modem_fw_string();
+			break;
+		case DFU_TARGET_IMAGE_TYPE_MCUBOOT:
+			//success = check_mcuboot_fw_metadata();
+			break;
+		default:
+			return -EFAULT;
+	}
+	
+	if (success) {
+		update_job_execution(client, job_id, AWS_JOBS_FAILED, NONE,
+				     -1, ""); 	
+		ret = -EFAULT;
+	} else {
+		update_job_execution(client, job_id, AWS_JOBS_SUCCEEDED, NONE,
+				     stored_progress, "");
+		ret = 0;
+	}
+
+	pending_update = false;
+	store_update_data();
+	
+	return ret;
+
+}
 
 int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			      const struct mqtt_evt *evt)
@@ -369,6 +574,11 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			 * MQTT Event Handler
 			 */
 			return 1;
+		}
+
+		err = check_update(client);
+		if (err) {
+			LOG_ERR("Check update failed");
 		}
 
 		err = aws_jobs_subscribe_topic_notify_next(client,
@@ -513,6 +723,35 @@ int aws_fota_init(struct mqtt_client *const client,
 	if (client == NULL || evt_handler == NULL) {
 		return -EINVAL;
 	}
+		
+	/* settings_subsys_init is idempotent so this is safe to do. */
+	err = settings_subsys_init();
+	if (err) {
+		LOG_ERR("settings_subsys_init failed (err %d)", err);
+		return err;
+	}
+
+	err = settings_register(&sh);
+	if (err) {
+		LOG_ERR("Cannot register settings (err %d)", err);
+		return err;
+	}
+
+	err = settings_load();
+	if (err) {
+		LOG_ERR("Cannot load settings (err %d)", err);
+		return err;
+	}
+
+
+	LOG_INF("JOB_ID: %s", log_strdup(job_id));
+	LOG_INF("pending_update: %d", pending_update);
+	LOG_INF("version_number: %d", execution_version_number);
+	LOG_INF("img_type: %d", img_type);
+	char version_string[37];
+	snprintf(version_string, sizeof(version_string), "%.*s",
+		 sizeof(previous_mdm_fw_version), previous_mdm_fw_version);
+	LOG_INF("modem_fw: %d", version_string);
 
 	/* Store client to make it available in event handlers. */
 	c = client;

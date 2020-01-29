@@ -9,6 +9,7 @@
 #include <net/fota_download.h>
 #include <net/download_client.h>
 #include <dfu/dfu_target.h>
+#include <settings/settings.h>
 #include <pm_config.h>
 
 #ifdef PM_S1_ADDRESS
@@ -43,6 +44,23 @@ static void send_progress(int offset)
 	callback(&evt);
 }
 
+#define MODULE "fota"
+#define FILE_IMG_TYPE "img_type"
+static int store_img_type(int img_type)
+{
+	if(IS_ENABLED(CONFIG_SETTINGS)){
+		char key[] = MODULE "/" FILE_IMG_TYPE;
+		int err = settings_save_one(key, &img_type, sizeof(img_type));
+
+		if (err) {
+			LOG_ERR("Problem storing offset (err %d)", err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 static int download_client_callback(const struct download_client_evt *event)
 {
 	static bool first_fragment = true;
@@ -71,6 +89,10 @@ static int download_client_callback(const struct download_client_evt *event)
 			if ((err < 0) && (err != -EBUSY)) {
 				LOG_ERR("dfu_target_init error %d", err);
 				return err;
+			}
+			err = store_img_type(img_type);
+			if (err) {
+				LOG_ERR("Unable to store image type");
 			}
 
 			err = dfu_target_offset_get(&offset);
@@ -250,6 +272,17 @@ int fota_download_init(fota_download_callback_t client_callback)
 	callback = client_callback;
 
 	k_delayed_work_init(&dlc_with_offset_work, download_with_offset);
+	
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		int err;
+
+		/* settings_subsys_init is idempotent so this is safe to do. */
+		err = settings_subsys_init();
+		if (err) {
+			LOG_ERR("settings_subsys_init failed (err %d)", err);
+			return err;
+		}
+	}
 
 	int err = download_client_init(&dlc, download_client_callback);
 
