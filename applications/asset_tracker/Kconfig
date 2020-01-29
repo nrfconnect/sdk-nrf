@@ -159,7 +159,7 @@ config CLOUD_BUTTON
 	default y
 
 config CLOUD_BUTTON_INPUT
-	int "Enable button sensor"
+	int "Set button sensor button number"
 	range 1 4 if BOARD_NRF9160_PCA10090NS
 	range 1 1 if BOARD_NRF9160_PCA20035NS
 	default 1
@@ -170,31 +170,6 @@ config CLOUD_WAIT_DURATION
 	help
 	    How long the device should wait for a CONNACK
 	    event from the cloud.
-
-choice
-	prompt "nRF Cloud user association"
-	default CLOUD_UA_BUTTONS
-	help
-		Select which method to use for nRF Cloud user association
-		input.
-
-config CLOUD_UA_BUTTONS
-	bool "Use buttons and switches"
-	help
-		Use buttons and switches on the development kit to provide
-		user association input.
-
-config CLOUD_UA_CONSOLE
-	bool "Use console input"
-	help
-		Use console to enter nRF Cloud user association input.
-		Allowed input is as follows:
-		'b1' = Button 1
-		'b2' = Button 2
-		's1' = Switch 1
-		's2' = Switch 2
-
-endchoice
 
 config CLOUD_FOTA_APP
 	bool "Enable firmware over-the-air upgrades for application"
