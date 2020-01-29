@@ -235,7 +235,7 @@ class NcsLoot(NcsWestCommand):
                     f'(need revision {project.revision})')
             return
         try:
-            zsha = z_project.sha(z_project.revision)
+            zsha = z_project.sha(z_rev)
             z_project.git('cat-file -e ' + zsha)
         except subprocess.CalledProcessError:
             log.wrn("can't get loot; please fetch upstream URL "
