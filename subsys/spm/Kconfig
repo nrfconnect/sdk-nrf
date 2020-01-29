@@ -198,7 +198,7 @@ config SPM_NRF_REGULATORS_NS
 
 config SPM_NRF_WDT_NS
 	bool "WDT is Non-Secure"
-	default n
+	default y
 endmenu
 
 config SPM_NRF_DPPIC_NS
