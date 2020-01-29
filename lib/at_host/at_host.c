@@ -65,7 +65,7 @@ static struct k_work cmd_send_work;
 
 
 
-static inline void write_uart_string(char *str)
+static inline void write_uart_string(const char *str)
 {
 	/* Send characters until, but not including, null */
 	for (size_t i = 0; str[i]; i++) {
@@ -73,7 +73,7 @@ static inline void write_uart_string(char *str)
 	}
 }
 
-static void response_handler(void *context, char *response)
+static void response_handler(void *context, const char *response)
 {
 	ARG_UNUSED(context);
 
