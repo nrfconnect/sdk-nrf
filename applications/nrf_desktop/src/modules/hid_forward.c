@@ -550,6 +550,8 @@ static void handle_config_forward(const struct config_forward_event *event)
 		return;
 	}
 
+	notify_config_forwarded(CONFIG_STATUS_PENDING);
+
 	err = bt_gatt_hids_c_rep_write(recipient_hidc,
 				       config_rep,
 				       hidc_write_cb,
@@ -585,7 +587,7 @@ static void handle_config_forward_get(const struct config_forward_get_event *eve
 	}
 
 	if (forward_pending) {
-		LOG_DBG("GATT read already pending");
+		LOG_DBG("GATT operation already pending");
 		return;
 	}
 
