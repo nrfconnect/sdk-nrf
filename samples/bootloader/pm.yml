@@ -1,5 +1,5 @@
 #include <autoconf.h>
-#include <generated_dts_board_unfixed.h>
+#include <devicetree_unfixed.h>
 
 b0_image:
   size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
