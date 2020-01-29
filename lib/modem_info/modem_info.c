@@ -320,7 +320,7 @@ static const struct modem_info_data *const modem_data[] = {
 static rsrp_cb_t modem_info_rsrp_cb;
 static struct at_param_list m_param_list;
 
-static bool is_cesq_notification(char *buf, size_t len)
+static bool is_cesq_notification(const char *buf, size_t len)
 {
 	return strstr(buf, AT_CMD_CESQ_RESP) ? true : false;
 }
@@ -492,7 +492,7 @@ int modem_info_string_get(enum modem_info info, char *buf)
 	return len <= 0 ? -ENOTSUP : len;
 }
 
-static void modem_info_rsrp_subscribe_handler(void *context, char *response)
+static void modem_info_rsrp_subscribe_handler(void *context, const char *response)
 {
 	ARG_UNUSED(context);
 
