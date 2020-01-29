@@ -1,54 +1,123 @@
 .. _doc_styleguide:
 
-Documentation style guide
-#########################
+.. |sg| replace:: style guide
 
-NCS documentation is written in two formats:
+Documentation |sg|
+##################
+
+The |NCS| documentation is written in two formats:
 
 * doxygen for API documentation
 * RST for conceptual documentation
 
 
-RST style guide
-***************
+RST |sg|
+********
 
 See Zephyr's :ref:`zephyr:doc_guidelines` for a short introduction to RST and, most importantly, to the conventions used in Zephyr.
 More information about RST is available in the `reStructuredText Primer`_.
 
-The |NCS| documentation follows the Zephyr style guide, and adds a few more restrictive rules:
+The |NCS| documentation follows the Zephyr |sg|, and adds a few more restrictive rules that are described below.
 
-* Headings use sentence case, which means that the first word is capitalized, and the following words use normal capitalization.
-* Do not use consecutive headings without intervening text.
-* For readability reasons, start every sentence on a new line in the source files and do not add line breaks within the sentence.
-  In the output, consecutive lines without blank lines in between are combined into one paragraph.
+Titles and headings
+===================
 
-    .. note:: For the conceptual documentation written in RST, you can have more than 80 characters per line.
-              The requirement for 80 characters per line applies only to the code documentation written in doxygen.
+Keep titles and headings as short and to the point as possible.
 
-Hyperlinks
-==========
+Titles
+------
 
-All external links must be defined in the ``links.txt`` file.
-Do not define them directly in the RST file.
-The reason for this is to allow for validating all links in one central location and to make it easy to update breaking links.
+Mention the module name in the title and within the RST tag of the page, which is defined in the first line of the RST file.
+For example:
 
-Each link should be defined only once in ``links.txt``.
+.. code-block:: none
 
-If the link text that is defined in ``links.txt`` does not fit in the context where you use the link, you can override it by using the following syntax::
+    1 .. _lib_aws_fota:
+    2
+    3 AWS FOTA
+    4 ########
 
-   `new link text <original link text_>`_
+Do not repeat the section name in the titles of the subpages.
+For example, when adding a sample or library, do not mention *sample* or *library* in the title of the page.
 
-It is also possible to define more than one default link text for a link, which can be useful if you frequently need a different link text::
+.. simple_title_table:
 
-   .. _`Link text one`:
-   .. _`Link text two`: http://..
++-----------------------------+----------------------------------+
+| Correct title               | Incorrect title                  |
++=============================+==================================+
+| nRF9160: Secure Services    | nRF9160: Secure Services Sample  |
++-----------------------------+----------------------------------+
+| DK Button and LED           | DK Button and LED library        |
++-----------------------------+----------------------------------+
+
+Headings
+--------
+
+Headings use sentence case, which means that the first word is capitalized, and the following words use normal capitalization.
+The only exception are proper names, for example Bluetooth specification terminology (see last entry in the following table).
+
+.. sentence_case_table:
+
++-----------------------------------------------------+---------------------------------------------------+
+| Correct heading                                     | Incorrect heading                                 |
++=====================================================+===================================================+
+| CC file format                                      | CC File Format                                    |
++-----------------------------------------------------+---------------------------------------------------+
+| Sending shell commands                              | Sending Shell Commands                            |
++-----------------------------------------------------+---------------------------------------------------+
+| GATT Human Interface Device (HID) Service Client    | GATT Human Interface Device (HID) service client  |
++-----------------------------------------------------+---------------------------------------------------+
+
+Do not use consecutive headings without intervening text.
+
+RST file formatting
+===================
+
+For readability reasons, start every sentence on a new line in the source files and do not add line breaks within the sentence.
+In the output, consecutive lines without blank lines in between are combined into one paragraph.
+
+.. note:: For the conceptual documentation written in RST, you can have more than 80 characters per line.
+          The requirement for 80 characters per line applies only to the code documentation written in doxygen.
+
+The sentences must not end with a space.
+Trim trailing spaces before committing your changes.
+
+Each RST file must end with one blank line.
+
+Content highlighting
+====================
+
+Use the following highlighing rules in the RST conceptual documentation:
+
+.. content_highlighting_table:
+
++------------------------+------------------------+-----------------------------------------------------------------+
+| Markup                 | Example                | Usage criteria                                                  |
++========================+========================+=================================================================+
+| ``*emphasis*``         | *relaying*             | Emphasis or new terms.                                          |
++------------------------+------------------------+-----------------------------------------------------------------+
+| ````code````           | ``west update``        | Code within text.                                               |
++------------------------+------------------------+-----------------------------------------------------------------+
+| ``**PCB**``            | **SW3**                | PCB names.                                                      |
++------------------------+------------------------+-----------------------------------------------------------------+
+| ``:guilabel:`GUI```    | :guilabel:`Cancel`     | Clickable graphical user interface elements.                    |
++------------------------+------------------------+-----------------------------------------------------------------+
+| ``:file:`filename```   | :file:`conf.py`        | Filenames, file paths, directory names, and file extensions.    |
++------------------------+------------------------+-----------------------------------------------------------------+
+
+.. note:: Do not use the following markup for italics: ```..```.
+
+For readability reasons, do not use any code highlighting for titles of other pages or headings when they are mentioned in the text.
+For example, do not write "The ``bl_crypto`` library".
+Use the complete name of the library: "The bootloader crypto library", and always link to the page you mention.
+If the page you are linking to is mentioned several times in the text, place the link on the first occurrence and on every occurrence where linking to the page is useful.
 
 Diagrams
 ========
 
 You can include Message Sequence Chart (MSC) diagrams in RST by using the ``.. msc::`` directive and including the MSC content, for example:
 
-.. code-block:: python
+.. code-block:: none
 
     .. msc::
         hscale = "1.3";
@@ -76,23 +145,20 @@ This will generate the following output:
         Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
 
 
-Kconfig
+Linking
 =======
 
-Kconfig options can be linked to from RST by using the ``:option:`` domain::
-
-   :option:`CONFIG_DEBUG`
+You can use different linking and inclusion methods, depending on the content you want to link to.
 
 Breathe
-=======
+-------
 
 The Breathe Sphinx plugin provides a bridge between RST and doxygen.
 
 The doxygen documentation is not automatically included in RST.
 Therefore, every group must be explicitly added to an RST file.
 
-.. code-block:: python
-   :caption: Example of how to include a doxygen group
+.. code-block:: none
 
    .. doxygengroup:: bluetooth_gatt_throughput
       :project: nrf
@@ -109,8 +175,8 @@ To link directly to a doxygen reference from RST, use the following Breathe doma
 
 * Function: ``:cpp:func:``
 * Structure: ``:c:type:``
-* Enum (i.e. the list): ``:cpp:enum:``
-* Enumerator (i.e. an item): ``:cpp:enumerator:``
+* Enum (the list): ``:cpp:enum:``
+* Enumerator (an item): ``:cpp:enumerator:``
 * Macro: ``:c:macro:``
 * Structure member: ``:cpp:member:``
 
@@ -120,10 +186,103 @@ To link directly to a doxygen reference from RST, use the following Breathe doma
 
       :cpp:enumerator:`ENUM_VALUE <DOXYGEN_GROUP::ENUM_VALUE>`
 
-Doxygen style guide
-*******************
+Hyperlinks
+----------
 
-This style guide covers guidelines for the doxygen-based API documentation.
+All external links must be defined in the ``links.txt`` file.
+Do not define them directly in the RST file.
+The reason for this is to allow for validating all links in one central location and to make it easy to update breaking links.
+
+Each link should be defined only once in ``links.txt``.
+
+If the link text that is defined in ``links.txt`` does not fit in the context where you use the link, you can override it by using the following syntax::
+
+   `new link text <original link text_>`_
+
+It is also possible to define more than one default link text for a link, which can be useful if you frequently need a different link text::
+
+   .. _`Link text one`:
+   .. _`Link text two`: http://..
+
+
+Kconfig
+-------
+
+Kconfig options can be linked to from RST by using the ``:option:`` domain::
+
+   :option:`CONFIG_DEBUG`
+
+Replacements
+------------
+
+If you need to repeat some information, do not duplicate the text.
+Use the ``.. |tag| replace::`` command to reuse the text.
+Whenever you use the tag in an RST document, it will be replaced with the text specified after the colons.
+
+You can reuse the content with the same tag either on one page or on multiple pages:
+
+    * To reuse the text on one page, define the ``|tag|`` and the replacement text between the page tag and the page title.
+    * To reuse the text on multiple pages, define the ``|tag|`` and the replacement text in :file:`nrf/doc/nrf/shortcuts.txt`.
+
+For example, see the following code sample taken the source of this page:
+
+.. code-block:: none
+
+    1 .. _doc_styleguide:
+    2
+    3 .. |sg| replace:: style guide
+    4
+    5 Documentation |sg|
+    6 ##################
+    7
+    8 The |NCS| documentation is written in two formats:
+
+In this case, the ``|sg|`` tag is defined for local usage.
+This tag is not available on other pages.
+Additionally, the example is also using the ``|NCS|`` tag that is defined in :file:`shortcuts.txt` and can be used on all documentation pages in the |NCS| project.
+
+PCB names
+=========
+
+When referring to specific Printed Circuit Board elements, use capitalization.
+For example, Button 1, Switch 3, LED 1.
+
+If you are referring to a generic PCB element, do *not* use capitalization: *button*, *switch*, *LEDs*.
+
+If you want to provide the short name of a specific PCB element as printed on the board, write it in bold and follow the spelling and capitalization from the board: **Button 1**, **SW3**, **LED1**.
+
+.. note::
+   Use bold for button elements only when you are using the short names for other PCB elements in your document.
+
+
+Tables
+======
+
+Follow Zephyr's :ref:`zephyr:doc_guidelines` for tables.
+Do not add table titles to describe the table.
+Instead, make sure to introduce the table with a short sentence that describes the table contents.
+For example:
+
+.. code-block:: none
+
+    The following table lists something.
+
+    .. list-table::
+        :widths: 15 20 40
+        :header-rows: 1
+
+        * - Heading 1
+          - Heading 2
+          - Heading 3
+        * - body row 1, column 1
+          - body row 1, column 2
+          - body row 1, column 3
+
+
+Doxygen |sg|
+************
+
+This |sg| covers guidelines for the doxygen-based API documentation.
 
 General documentation guidelines
 ================================
@@ -147,7 +306,6 @@ File headers and groups
 #. **@details** is optional to be used within the defgroup.
 
 .. code-block:: c
-   :caption: File header and group documentation example
 
 	/**
 	 * @file
@@ -206,7 +364,6 @@ Functions
    * Start the brief with the "do sth" form.
 
     .. code-block:: none
-        :caption: Brief documentation examples
 
         /** @brief Request a read operation to be executed from Secure Firmware.
 
@@ -221,7 +378,6 @@ Functions
    * Make sure the parameter documentation within the function is consistently using the parameter type: ``[in]``, ``[out]``, or ``[in,out]``.
 
     .. code-block:: none
-        :caption: Parameter documentation example
 
         * @param[out] destination Pointer to destination array where the content is
         *                         to be copied.
@@ -237,7 +393,6 @@ Functions
    There is usually only one return value.
 
    .. code-block:: none
-      :caption: Return documentation example
 
       *  @return  Initializer that sets up the pipe, length, and byte array for
       *           content of the TX data.
@@ -246,7 +401,6 @@ Functions
    Describe the condition for each of the return values (for example, "If the function completes successfully", "If the connection cannot be established").
 
     .. code-block:: none
-       :caption: Retval documentation example
 
        *  @retval 0 If the operation was successful.
        *            Otherwise, a (negative) error code is returned.
@@ -257,7 +411,6 @@ Functions
    Use **@return** instead.
 
 .. code-block:: c
-   :caption: Complete function documentation example
 
     /** @brief Request a random number from the Secure Firmware.
      *
@@ -284,7 +437,6 @@ This is in accordance with the `Zephyr coding style`_.
 
 
 .. code-block:: c
-   :caption: Enum documentation example
 
         /** HID Service Protocol Mode events. */
         enum hids_pm_evt {
@@ -304,7 +456,6 @@ This is in accordance with the `Zephyr coding style`_.
 Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
 
 .. code-block:: c
-   :caption: Struct documentation example
 
 	/** @brief Event header structure.
 	 *
@@ -333,7 +484,6 @@ To link to functions, enums, or structs from within doxygen itself, use the
 ``@ref`` keyword.
 
 .. code-block:: none
-   :caption: Reference documentation example
 
     /** @brief Event header structure.
      *  Use this structure with the function @ref function_name and
@@ -351,7 +501,6 @@ The documentation block should precede the documented element.
 This is in accordance with the `Zephyr coding style`_.
 
 .. code-block:: c
-   :caption: Typedef documentation example
 
    /**
     * @brief Download client asynchronous event handler.
@@ -368,4 +517,3 @@ This is in accordance with the `Zephyr coding style`_.
     * @retval non-zero The download stops.
     */
     typedef int (*download_client_callback_t)(const struct download_client_evt *event);
-
