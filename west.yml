@@ -38,11 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: 3c75196149f876b4d40e490607d80591e60d467f
-    - name: nffs
-      revision: 00dd4fab1a00f2f6e995ef3f2e7c3814689f8885
-      path: modules/fs/nffs
-      remote: zephyrproject
+      revision: 0cf9c610428fe04cc8936b9dfc00e219685f97cd
     - name: segger
       revision: 6fcf61606d6012d2c44129edc033f59331e268bc
       path: modules/debug/segger
@@ -53,11 +49,11 @@ manifest:
       remote: zephyrproject
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: 2332c4cfd6aa32eadef3346b8616be9908309335
+      revision: d0c2fbefd26e830ddff08b3060d7f16af5eccd26
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
-      revision: 706394b33ed21870b7a2e3df209bf769379f1cb7
+      revision: 1afd6bbbfed0137b3156349f968634bbd8fc6fff
       path: modules/lib/mcumgr
     - name: tinycbor
       path: modules/lib/tinycbor
@@ -66,7 +62,7 @@ manifest:
     - name: ci-tools
       path: tools/ci-tools
       remote: zephyrproject
-      revision: e6b2e622ff726b9c43b9966e0bb1659623566e59
+      revision: e869d2524d1344d80063bf2898095faf9228f7b5
     - name: net-tools
       path: tools/net-tools
       remote: zephyrproject
@@ -98,11 +94,11 @@ manifest:
     - name: fatfs
       path: modules/fs/fatfs
       remote: zephyrproject
-      revision: 0c1288bb817c1976388e0f55e8483f671ae437ab
+      revision: 9ee6b9b9511151d0d64a74d532d39c6f2bbd4f16
     - name: hal_nordic
       path: modules/hal/nordic
       remote: zephyrproject
-      revision: 8506c348b6da91a9f53bcbb181ecd82b752b9eed
+      revision: 12d7647870888e4cb0e421f2b26884c2e76915ac
     - name: hal_st
       path: modules/hal/st
       remote: zephyrproject
@@ -130,7 +126,7 @@ manifest:
     - name: openthread
       path: modules/lib/openthread
       remote: zephyrproject
-      revision: 05aaccc6e0db0fe17ac4beed2a2aacc9a9af167c
+      revision: 3c6191eb4e8ca44b5f4eeaa696837bce14e83c69
     - name: littlefs
       path: modules/fs/littlefs
       remote: zephyrproject
@@ -139,6 +135,10 @@ manifest:
       path: modules/debug/mipi-sys-t
       remote: zephyrproject
       revision: baf51863f19f009b92e762115ba5572a5b996b92
+    - name: canopennode
+      path: modules/lib/canopennode
+      remote: zephyrproject
+      revision: 5c6b0566d56264efd4bf23ed58bc7cb8b32fe063
 
   self:
     path: nrf
