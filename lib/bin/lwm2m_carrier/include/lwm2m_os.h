@@ -54,7 +54,7 @@ struct lwm2m_os_at_param_list {
 /**
  * @brief AT Command handler.
  */
-typedef void (*lwm2m_os_at_cmd_handler_t)(void *ctx, char *response);
+typedef void (*lwm2m_os_at_cmd_handler_t)(void *ctx, const char *response);
 
 /**
  * @defgroup lwm2m_os_download_evt_id LwM2M OS download events
