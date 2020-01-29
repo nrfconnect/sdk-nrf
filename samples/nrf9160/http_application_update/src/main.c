@@ -101,9 +101,9 @@ static int dfu_button_init(void)
 }
 
 
-void fota_dl_handler(enum fota_download_evt_id evt_id)
+void fota_dl_handler(const struct fota_download_evt *evt)
 {
-	switch (evt_id) {
+	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		printk("Received error from fota_download\n");
 		/* Fallthrough */
