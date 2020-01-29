@@ -214,17 +214,14 @@ class NcsLoot(NcsWestCommand):
         # name: project name
         # project: the west.manifest.Project instance in the NCS manifest
         # z_project: the Project instance in the upstream manifest
-        msg = f'{_name_and_path(project)} outstanding downstream patches:'
+        log.banner(f'{_name_and_path(project)}')
 
         # Get the upstream revision of the project. The zephyr project
         # has to be treated as a special case.
         if name == 'zephyr':
             z_rev = self.zephyr_rev
-            msg += f' NOTE: {z_rev} *must* be up to date'
         else:
             z_rev = z_project.revision
-
-        log.banner(msg)
 
         try:
             nsha = project.sha(project.revision)
@@ -243,13 +240,17 @@ class NcsLoot(NcsWestCommand):
                     f'(need revision {z_project.revision})')
             return
 
+        log.inf(f'NCS commit: {nsha}\nupstream commit: {zsha}')
         try:
             analyzer = nwh.RepoAnalyzer(project, z_project,
                                         project.revision, z_rev)
         except nwh.InvalidRepositoryError as ire:
             log.die(str(ire))
         try:
-            for c in analyzer.downstream_outstanding:
+            loot = analyzer.downstream_outstanding
+            log.inf('OOT patches: ' +
+                    (f'{len(loot)} total ' if loot else 'none'))
+            for c in loot:
                 if args.files and not nwh.commit_affects_files(c, args.files):
                     log.dbg(f"skipping {c.oid}; it doesn't affect file filter",
                             level=log.VERBOSE_VERY)
