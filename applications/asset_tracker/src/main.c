@@ -142,7 +142,7 @@ static char modem_at_cmd_buff[MODEM_AT_CMD_BUFFER_LEN];
 static K_SEM_DEFINE(modem_at_cmd_sem, 1, 1);
 
 #if CONFIG_MODEM_INFO
-static struct k_work rsrp_work;
+static struct k_delayed_work rsrp_work;
 #endif /* CONFIG_MODEM_INFO */
 
 enum error_type {
@@ -467,7 +467,8 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 		   (cmd->group == CLOUD_CMD_GROUP_GET) &&
 		   (cmd->type == CLOUD_CMD_EMPTY)) {
 #if CONFIG_MODEM_INFO
-		k_work_submit_to_queue(&application_work_q, &rsrp_work);
+		k_delayed_work_submit_to_queue(&application_work_q, &rsrp_work,
+					       K_NO_WAIT);
 #endif
 	} else if ((cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
 			   (cmd->type == CLOUD_CMD_INTERVAL)) {
@@ -502,27 +503,37 @@ static void modem_rsrp_handler(char rsrp_value)
 		return;
 	}
 
-	k_work_submit_to_queue(&application_work_q, &rsrp_work);
+	/* Only send the RSRP if transmission is not already scheduled.
+	 * Checking CONFIG_HOLD_TIME_RSRP gives the compiler a shortcut.
+	 */
+	if (CONFIG_HOLD_TIME_RSRP == 0 ||
+	    k_delayed_work_remaining_get(&rsrp_work) == 0) {
+		k_delayed_work_submit_to_queue(&application_work_q, &rsrp_work,
+					       K_NO_WAIT);
+	}
 }
 
 /**@brief Publish RSRP data to the cloud. */
 static void modem_rsrp_data_send(struct k_work *work)
 {
 	char buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
-	static u32_t timestamp_prev;
+	static s32_t rsrp_prev; /* RSRP value last sent to cloud */
+	s32_t rsrp_current;
 	size_t len;
 
 	if (!atomic_get(&send_data_enable)) {
 		return;
 	}
 
-	if (k_uptime_get_32() - timestamp_prev <
-	    K_SECONDS(CONFIG_HOLD_TIME_RSRP)) {
+	/* The RSRP value is copied locally to avoid any race */
+	rsrp_current = rsrp.value - rsrp.offset;
+
+	if (rsrp_current == rsrp_prev) {
 		return;
 	}
 
 	len = snprintf(buf, CONFIG_MODEM_INFO_BUFFER_SIZE,
-			"%d", rsrp.value - rsrp.offset);
+		       "%d", rsrp_current);
 
 	signal_strength_cloud_data.data.buf = buf;
 	signal_strength_cloud_data.data.len = len;
@@ -533,7 +544,12 @@ static void modem_rsrp_data_send(struct k_work *work)
 	}
 
 	sensor_data_send(&signal_strength_cloud_data);
-	timestamp_prev = k_uptime_get_32();
+	rsrp_prev = rsrp_current;
+
+	if (CONFIG_HOLD_TIME_RSRP > 0) {
+		k_delayed_work_submit_to_queue(&application_work_q, &rsrp_work,
+					      K_SECONDS(CONFIG_HOLD_TIME_RSRP));
+	}
 }
 #endif /* CONFIG_MODEM_INFO */
 
@@ -577,6 +593,9 @@ static void device_status_send(struct k_work *work)
 #endif
 #if IS_ENABLED(CONFIG_LIGHT_SENSOR)
 		CLOUD_CHANNEL_STR_LIGHT_SENSOR,
+#endif
+#if IS_ENABLED(CONFIG_MODEM_INFO)
+		CLOUD_CHANNEL_STR_LTE_LINK_RSRP,
 #endif
 	};
 
@@ -946,7 +965,7 @@ static void work_init(void)
 			    cycle_cloud_connection);
 	k_work_init(&device_status_work, device_status_send);
 #if CONFIG_MODEM_INFO
-	k_work_init(&rsrp_work, modem_rsrp_data_send);
+	k_delayed_work_init(&rsrp_work, modem_rsrp_data_send);
 #endif /* CONFIG_MODEM_INFO */
 }
 
