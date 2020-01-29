@@ -79,7 +79,7 @@ static inline void write_uart_string(char *str, size_t len)
 	}
 }
 
-static void response_handler(void *context, char *response)
+static void response_handler(void *context, const char *response)
 {
 	int len = strlen(response) + 1;
 
@@ -334,7 +334,7 @@ static int at_uart_init(char *uart_dev_name)
 	return err;
 }
 
-static void slm_at_callback(char *str)
+static void slm_at_callback(const char *str)
 {
 	write_uart_string(str, strlen(str));
 }
