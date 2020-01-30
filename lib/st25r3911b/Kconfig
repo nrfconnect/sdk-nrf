@@ -19,6 +19,7 @@ config ST25R3911B_SPI_FREQ
 
 config ST25R3911B_SPI_PORT
 	int "ST25R3911 SPI port"
+	default 1 if SOC_SERIES_NRF53X
 	default 0
 	help
 	  Configure a SPI port for ST25R3911B
@@ -31,6 +32,7 @@ config ST25R3911B_IRQ_PORT
 
 config ST25R3911B_IRQ_PIN
 	int "ST25R3911B IRQ pin"
+	default 4 if SOC_SERIES_NRF53X
 	default 3
 	help
 	  Configure an IRQ pin for ST25R3911B
