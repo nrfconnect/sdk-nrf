@@ -17,7 +17,7 @@ config MCUBOOT_BUILD_S1_VARIANT
 config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
-	depends on FW_INFO
+	select FW_INFO
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
@@ -114,7 +114,7 @@ menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
 	depends on SECURE_BOOT_VALIDATION
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
-	depends on NRFX_NVMC
+	select NRFX_NVMC
 	help
 	  This option is set by the first stage bootloader app to include all
 	  files and set all the options required.
