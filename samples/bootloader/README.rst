@@ -69,6 +69,14 @@ By default, the bootloader sample will automatically generate and provision publ
 Alternatively, to facilitate the manufacturing process of a device with the bootloader sample, it is possible to decouple this process and program the sample HEX file and the HEX file containing the public key hashes separately.
 If you choose to do so, use the Python scripts in ``scripts\bootloader`` to create and provision the keys manually.
 
+   .. note::
+      On nRF9160, the provisioning data is held in the OTP region in UICR.
+      Because of this, you must erase the UICR before programming the bootloader.
+      On nRF9160, the UICR can only be erased by erasing the whole chip.
+      To do so on the command line, call ``west flash`` with the ``--erase`` option.
+      This will erase the whole chip before programming the new image.
+      In |SES|, choose :guilabel:`Target` > :guilabel:`Connect J-Link` and then :guilabel:`Target` > :guilabel:`Erase All` to erase the whole chip.
+
 
 Requirements
 ************
