@@ -243,4 +243,3 @@ void main(void)
 		k_sleep(RUN_LED_BLINK_INTERVAL);
 	}
 }
-
