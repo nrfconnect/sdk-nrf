@@ -19,6 +19,7 @@ Topics that are not relevant for the integration of MCUboot in the nRF Connect S
    index.md
    release-notes.md
    design.md
+   ecdsa.md
    encrypted_images.md
    imgtool.md
    readme-zephyr.md
