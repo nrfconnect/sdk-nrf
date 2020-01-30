@@ -1,0 +1,8 @@
+&spi1 {
+            compatible = "nordic,nrf-spim";
+            status = "okay";
+            sck-pin = <47>;
+            mosi-pin = <45>;
+            miso-pin = <46>;
+            cs-gpios = <&gpio1 12 0>;
+};
