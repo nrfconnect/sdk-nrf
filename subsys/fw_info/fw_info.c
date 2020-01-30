@@ -94,6 +94,7 @@ static const struct fw_info_ext_api_request *skip_ext_apis(
 					const struct fw_info * const fw_info)
 {
 	const struct fw_info_ext_api *ext_api = &fw_info->ext_apis[0];
+
 	for (u32_t j = 0; j < fw_info->ext_api_num; j++) {
 		ADVANCE_EXT_API(ext_api);
 	}
@@ -154,8 +155,8 @@ SYS_INIT(check_ext_api_requests, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
 /** Value to write to the "valid" member of fw_info to invalidate the image. */
 #define INVALID_VAL 0xFFFF0000
 
-BUILD_ASSERT_MSG((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL) \
-			!= CONFIG_FW_INFO_VALID_VAL, \
+BUILD_ASSERT_MSG((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL)
+			!= CONFIG_FW_INFO_VALID_VAL,
 		"CONFIG_FW_INFO_VALID_VAL has been configured such that the "
 		"image cannot be invalidated. Change the value so that writing "
 		"INVALID_VAL has an effect.");
