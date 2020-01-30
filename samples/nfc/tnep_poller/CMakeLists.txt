@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 3.8.2)
 set(NRF_SUPPORTED_BOARDS
   nrf52_pca10040
   nrf52840_pca10056
+  nrf5340_dk_nrf5340_cpuapp
   )
 
 include(../../../cmake/boilerplate.cmake)
