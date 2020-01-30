@@ -115,6 +115,7 @@ struct cloud_api {
 	int (*send)(const struct cloud_backend *const backend,
 		    const struct cloud_msg *const msg);
 	int (*ping)(const struct cloud_backend *const backend);
+	int (*keepalive_time_left)(const struct cloud_backend *const backend);
 	int (*input)(const struct cloud_backend *const backend);
 	int (*ep_subscriptions_add)(const struct cloud_backend *const backend,
 				    const struct cloud_endpoint *const list,
@@ -254,6 +255,26 @@ static inline int cloud_ping(const struct cloud_backend *const backend)
 	}
 
 	return 0;
+}
+
+/**
+ * @brief Helper function to determine when next keep alive message should be
+ *        sent. Can be used for instance as a source for `poll` timeout.
+ *
+ * @param backend Pointer to cloud backend.
+ *
+ * @return Time in milliseconds until next keep alive message is expected to
+ *         be sent.
+ */
+static inline int cloud_keepalive_time_left(const struct cloud_backend *const backend)
+{
+	if (backend == NULL || backend->api == NULL ||
+	    backend->api->keepalive_time_left == NULL) {
+		__ASSERT(0, "Missing cloud backend functionality");
+		return K_FOREVER;
+	}
+
+	return backend->api->keepalive_time_left(backend);
 }
 
 /**

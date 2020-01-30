@@ -915,6 +915,11 @@ void nct_process(void)
 	mqtt_live(&nct.client);
 }
 
+int nct_keepalive_time_left(void)
+{
+	return (int)mqtt_keepalive_time_left(&nct.client);
+}
+
 int nct_socket_get(void)
 {
 	return nct.client.transport.tls.sock;

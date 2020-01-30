@@ -396,6 +396,11 @@ static int ping(const struct cloud_backend *const backend)
 	return 0;
 }
 
+static int keepalive_time_left(const struct cloud_backend *const backend)
+{
+	return nct_keepalive_time_left();
+}
+
 static int input(const struct cloud_backend *const backend)
 {
 	nrf_cloud_process();
@@ -418,6 +423,7 @@ static const struct cloud_api nrf_cloud_api = {
 	.disconnect = disconnect,
 	.send = send,
 	.ping = ping,
+	.keepalive_time_left = keepalive_time_left,
 	.input = input,
 	.user_data_set = user_data_set
 };

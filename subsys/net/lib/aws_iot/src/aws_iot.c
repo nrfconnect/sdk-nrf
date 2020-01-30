@@ -583,6 +583,11 @@ int aws_iot_ping(void)
 	return mqtt_ping(&client);
 }
 
+int aws_iot_keepalive_time_left(void)
+{
+	return (int)mqtt_keepalive_time_left(&client);
+}
+
 int aws_iot_input(void)
 {
 	return mqtt_input(&client);
@@ -824,12 +829,18 @@ static int c_ping(const struct cloud_backend *const backend)
 	return aws_iot_ping();
 }
 
+static int c_keepalive_time_left(const struct cloud_backend *const backend)
+{
+	return aws_iot_keepalive_time_left();
+}
+
 static const struct cloud_api aws_iot_api = {
 	.init			= c_init,
 	.connect		= c_connect,
 	.disconnect		= c_disconnect,
 	.send			= c_send,
 	.ping			= c_ping,
+	.keepalive_time_left	= c_keepalive_time_left,
 	.input			= c_input,
 	.ep_subscriptions_add	= c_ep_subscriptions_add
 };
