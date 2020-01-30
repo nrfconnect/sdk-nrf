@@ -3,5 +3,5 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig CLOUD_API
+config CLOUD_API
 	bool "Cloud API"

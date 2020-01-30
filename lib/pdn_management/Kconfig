@@ -4,6 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig PDN_MANAGEMENT
+config PDN_MANAGEMENT
 	bool "PDN Management for nRF9160"
 	depends on BSD_LIBRARY
