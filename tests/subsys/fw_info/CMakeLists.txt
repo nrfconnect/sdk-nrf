@@ -8,8 +8,10 @@ cmake_minimum_required(VERSION 3.8.2)
 
 # Cannot choose via CONFIG_SOC_NRF9160 because this has to be run before
 # boilerplate.cmake.
-get_filename_component(provision_path provision.hex ABSOLUTE)
-#get_filename_component(provision_path provision_nrf9160.hex ABSOLUTE)
+set(provision_hex provision.hex)
+#set(provision_hex provision_nrf9160.hex)
+
+get_filename_component(provision_path ${provision_hex} ABSOLUTE)
 
 # Modified provision(_nrf9160).hex generated with command
 # nRF9160:
@@ -29,6 +31,14 @@ set_property(
   ${provision_path})
 
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+
+if ((DEFINED CONFIG_SOC_NRF9160 AND provision_hex STREQUAL "provision.hex")
+    OR (NOT DEFINED CONFIG_SOC_NRF9160
+        AND provision_hex STREQUAL "provision_nrf9160.hex"))
+  message(FATAL_ERROR
+    "Manually change the provision hex file inside this CMakeLists.txt file!"
+    )
+endif()
 
 project(NONE)
 
