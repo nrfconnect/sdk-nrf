@@ -111,6 +111,12 @@ void nct_dc_endpoint_get(struct nrf_cloud_data *tx_endpoint,
 /**@brief Needed for keep alive. */
 void nct_process(void);
 
+/**
+ * @brief Helper function to determine when next keep alive message should be
+ *        sent. Can be used for instance as a source for `poll` timeout.
+ */
+int nct_keepalive_time_left(void);
+
 /**@brief Input from the cloud module. */
 int nct_input(const struct nct_evt *evt);
 

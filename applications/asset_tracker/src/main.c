@@ -1195,15 +1195,8 @@ connect:
 	};
 
 	while (true) {
-		/* The timeout is set to (keepalive / 3), so that the worst case
-		 * time between two messages from device to broker is
-		 * ((4 / 3) * keepalive + connection overhead), which is within
-		 * MQTT specification of (1.5 * keepalive) before the broker
-		 * must close the connection.
-		 */
 		ret = poll(fds, ARRAY_SIZE(fds),
-			K_SECONDS(CONFIG_MQTT_KEEPALIVE / 3));
-
+			   cloud_keepalive_time_left(cloud_backend));
 		if (ret < 0) {
 			LOG_ERR("poll() returned an error: %d", ret);
 			error_handler(ERROR_CLOUD, ret);

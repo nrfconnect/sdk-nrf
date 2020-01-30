@@ -404,7 +404,7 @@ void main(void)
 	}
 
 	while (1) {
-		err = poll(&fds, 1, K_SECONDS(CONFIG_MQTT_KEEPALIVE));
+		err = poll(&fds, 1, mqtt_keepalive_time_left(&client));
 		if (err < 0) {
 			printk("ERROR: poll %d\n", errno);
 			break;
