@@ -18,8 +18,9 @@ Requirements
 ************
 One of the following boards:
 
-  * nRF52 Development Kit board (PCA10040)
-  * nRF52840 Development Kit board (PCA10056)
+  * |nRF5340DK|
+  * |nRF52840DK|
+  * |nRF52DK|
 
 * NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1)
 * NFC Type 4 Tag TNEP Device
