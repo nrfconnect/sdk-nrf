@@ -223,4 +223,3 @@ int dfu_target_modem_done(bool successful)
 
 	return 0;
 }
-
