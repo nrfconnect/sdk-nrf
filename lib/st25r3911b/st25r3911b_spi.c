@@ -34,13 +34,13 @@ static struct device *spi_dev;
 	_DO_SPI_PORT_NUM(_num)
 
 #define _DO_CS_PORT_NUM(_spi_port) \
-	DT_NORDIC_NRF_SPI_SPI_ ## _spi_port ## _CS_GPIOS_CONTROLLER
+	DT_ALIAS_SPI_ ## _spi_port ## _CS_GPIOS_CONTROLLER
 
 #define CS_PORT_NUM(_spi_port) \
 	_DO_CS_PORT_NUM(_spi_port)
 
 #define _DO_CS_PIN_NUM(_spi_port) \
-	DT_NORDIC_NRF_SPI_SPI_ ## _spi_port ## _CS_GPIOS_PIN
+	DT_ALIAS_SPI_ ## _spi_port ## _CS_GPIOS_PIN
 
 #define CS_PIN_NUM(_spi_port) \
 	_DO_CS_PIN_NUM(_spi_port)
@@ -80,7 +80,7 @@ static int cs_ctrl_gpio_config(void)
 	spi_cs.gpio_dev = device_get_binding(CS_PORT_NUM(CONFIG_ST25R3911B_SPI_PORT));
 	if (!spi_cs.gpio_dev) {
 		LOG_ERR("Cannot find %s!",
-			DT_INST_0_NORDIC_NRF_SPI_CS_GPIOS_CONTROLLER);
+			CS_PORT_NUM(CONFIG_ST25R3911B_SPI_PORT));
 
 		return -ENXIO;
 	}
