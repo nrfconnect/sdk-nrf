@@ -16,10 +16,6 @@
 #include <hal/nrf_regulators.h>
 #include "slm_at_host.h"
 
-#if defined(CONFIG_SLM_CONNECT_UART_0) && defined(CONFIG_SLM_GPIO_WAKEUP)
-#error CONFIG_SLM_GPIO_WAKEUP should not be defined when UART0 is used
-#endif
-
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 
 /* global variable used across different files */
@@ -50,13 +46,8 @@ void start_execute(void)
 	}
 }
 
-void enter_sleep(u16_t mode)
+void enter_sleep(void)
 {
-	if (mode == SHUTDOWN_MODEM_ONLY) {
-		lte_lc_power_off();
-		return;
-	}
-
 #if defined(CONFIG_SLM_GPIO_WAKEUP)
 	/*
 	 * Due to errata 4, Always configure PIN_CNF[n].INPUT before
@@ -77,9 +68,7 @@ void enter_sleep(u16_t mode)
 	 * Refer to https://infocenter.nordicsemi.com/topic/ps_nrf9160/
 	 * pmu.html?cp=2_0_0_4_0_0_1#system_off_mode
 	 */
-	if (mode == SHUTDOWN_APP_MODEM) {
 		lte_lc_power_off();
-	}
 	bsd_shutdown();
 	nrf_regulators_system_off(NRF_REGULATORS_NS);
 }
@@ -95,7 +84,7 @@ void main(void)
 		start_execute();
 	} else {
 		LOG_INF("Sleep");
-		enter_sleep(SHUTDOWN_APP_MODEM);
+		enter_sleep();
 	}
 }
 #else

@@ -28,14 +28,6 @@ typedef struct slm_at_cmd_list {
 	slm_at_handler_t handler;
 } slm_at_cmd_list_t;
 
-/**@brief Shutdown modes. */
-enum shutdown_modes {
-	SHUTDOWN_MODE_INVALID,
-	SHUTDOWN_APP_MODEM,
-	SHUTDOWN_APP_ONLY,
-	SHUTDOWN_MODEM_ONLY
-};
-
 /**
  * @brief Initialize AT host for serial LTE modem
  *
