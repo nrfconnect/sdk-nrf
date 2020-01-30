@@ -34,11 +34,11 @@ static void send_evt(enum fota_download_evt_id id)
 	callback(&evt);
 }
 
-static void send_progress(int offset)
+static void send_progress(int progress)
 {
 	const struct fota_download_evt evt = {
 		.id = FOTA_DOWNLOAD_EVT_PROGRESS,
-		.offset = offset
+		.progress = progress
 	};
 	callback(&evt);
 }
@@ -108,8 +108,16 @@ static int download_client_callback(const struct download_client_evt *event)
 				LOG_DBG("unable to get dfu target "
 						"offset err: %d", err);
 				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				return err;
 			}
-			send_progress(offset);
+
+			if (file_size == 0) {
+				LOG_DBG("invalid file size: %d", file_size);
+				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				return err;
+			}
+
+			send_progress((offset * 100) / file_size);
 			LOG_DBG("Progress: %d/%d%%", offset, file_size);
 		}
 	break;
