@@ -186,6 +186,41 @@ Curabitur nisl |sapien|, posuere auctor metus et, convallis varius turpis. Sed e
 
 .. |sapien| replace:: some Latin word
 
+Including text inside a nested list
+===================================
+
+List 1:
+
+#. Step A1
+
+Including the first three sub-list items of **2. Step A2** in the second list
+
+.. include_startingpoint
+
+2. Step A2
+
+   a. substepA1
+   #. substepA2
+   #. substepA3
+
+.. include_endpoint
+
+3. Step A3
+4. Step A4
+
+Another list which includes the steps from the previous list:
+
+#. Step B1
+
+.. include:: cheat_sheet.rst
+   :start-after: include_startingpoint
+   :end-before: include_endpoint
+..
+
+   d. substepB4
+   #. substepB5
+
+
 Linking between doc sets
 ************************
 
