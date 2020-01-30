@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig MODEM_KEY_MGMT
+config MODEM_KEY_MGMT
 	bool "nRF9160 modem key management library"
 	depends on AT_CMD_PARSER
 	depends on BSD_LIBRARY
