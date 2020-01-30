@@ -65,7 +65,7 @@ static const char termination[3] = { '\0', '\r', '\n' };
 
 /* global variable defined in different files */
 extern struct at_param_list m_param_list;
-extern void enter_sleep(u16_t mode);
+extern void enter_sleep(void);
 
 /* forward declaration */
 void slm_at_host_uninit(void);
@@ -95,7 +95,6 @@ static int handle_at_sleep(const char *at_cmd)
 {
 	int ret = -EINVAL;
 	enum at_cmd_type type;
-	u16_t shutdown_mode;
 
 	ret = at_parser_params_from_str(at_cmd, NULL, &m_param_list);
 	if (ret < 0) {
@@ -105,27 +104,9 @@ static int handle_at_sleep(const char *at_cmd)
 
 	type = at_parser_cmd_type_get(at_cmd);
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
-		if (at_params_valid_count_get(&m_param_list) < 2) {
-			LOG_ERR("AT parameter error");
-			return -EINVAL;
-		}
-		ret = at_params_short_get(&m_param_list, 1, &shutdown_mode);
-		if (ret < 0) {
-			LOG_ERR("AT parameter error");
-			return -EINVAL;
-		}
-		switch (shutdown_mode) {
-		case SHUTDOWN_APP_MODEM:
-		case SHUTDOWN_APP_ONLY:
-			slm_at_host_uninit();
-			/* fall over */
-		case SHUTDOWN_MODEM_ONLY:
-			enter_sleep(shutdown_mode);
-			return 0;
-		default:
-			LOG_ERR("AT parameter error");
-			return -EINVAL;
-		}
+		slm_at_host_uninit();
+		enter_sleep();
+		return 0; /* Cannot reach here */
 	}
 
 	return ret;
@@ -156,10 +137,7 @@ static void cmd_send(struct k_work *work)
 	size_cmd = sizeof(AT_CMD_SLEEP) - 1;
 	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLEEP, size_cmd)) {
 		err = handle_at_sleep(at_buf);
-		if (err == 0) {
-			write_uart_string(OK_STR, sizeof(OK_STR));
-			goto done;
-		} else {
+		if (err != 0) {
 			write_uart_string(ERROR_STR, sizeof(ERROR_STR));
 			goto done;
 		}

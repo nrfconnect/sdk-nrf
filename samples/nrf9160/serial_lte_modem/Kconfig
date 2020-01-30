@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 
 menu "Nordic Serial LTE Modem"
 
@@ -96,11 +96,12 @@ config SLM_GPIO_WAKEUP
 config SLM_MODEM_WAKEUP_PIN
 	int "GPIO for wakeup"
 	depends on SLM_GPIO_WAKEUP
-	default 31
+	default 6 if SLM_CONNECT_UART_0
+	default 31 if SLM_CONNECT_UART_1
+	default 31 if SLM_CONNECT_UART_2
 
 module = SLM
 module-str = serial modem
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endmenu
-
