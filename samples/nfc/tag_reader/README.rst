@@ -26,6 +26,7 @@ Requirements
 
 * One of the following development boards:
 
+  * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
 
