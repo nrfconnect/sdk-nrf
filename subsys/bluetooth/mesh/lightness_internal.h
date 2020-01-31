@@ -11,7 +11,7 @@
 #ifndef LIGHTNESS_INTERNAL_H__
 #define LIGHTNESS_INTERNAL_H__
 
-#include <bluetooth/mesh.h>
+#include <bluetooth/mesh/lightness.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,9 +24,11 @@ extern "C" {
 #endif /* CONFIG_BT_MESH_LIGHTNESS_LINEAR */
 
 /** The lightness server's value is > 0 */
-#define LIGHTNESS_SRV_FLAG_IS_ON BIT(0)
+#define LIGHTNESS_SRV_FLAG_IS_ON 0
 /** Flag for preventing startup behavior on the server */
-#define LIGHTNESS_SRV_FLAG_NO_START BIT(1)
+#define LIGHTNESS_SRV_FLAG_NO_START 1
+/** The Lightness server is being controlled by a Light Control Server */
+#define LIGHTNESS_SRV_FLAG_CONTROLLED 2
 
 enum light_repr {
 	ACTUAL,
@@ -107,6 +109,13 @@ static inline u16_t light_to_repr(u16_t light, enum light_repr repr)
 
 	return light;
 }
+
+struct bt_mesh_lightness_srv;
+
+void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
+			      struct bt_mesh_msg_ctx *ctx,
+			      struct bt_mesh_lightness_set *set,
+			      struct bt_mesh_lightness_status *status);
 
 #ifdef __cplusplus
 }

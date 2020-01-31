@@ -7,6 +7,10 @@
 #include "model_utils.h"
 #include "mesh/mesh.h"
 
+#define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
+#define LOG_MODULE_NAME bt_mesh_mod
+#include "common/log.h"
+
 /** Unknown encoded transition time value */
 #define TRANSITION_TIME_UNKNOWN (0x3F)
 
