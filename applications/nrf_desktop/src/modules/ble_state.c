@@ -13,6 +13,7 @@
 #include <bluetooth/hci.h>
 
 #include "ble_event.h"
+#include "passkey_event.h"
 
 #ifdef CONFIG_BT_LL_NRFXLIB
 #include "ble_controller_hci_vs.h"
@@ -32,6 +33,7 @@ struct bond_find_data {
 };
 
 static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
+static bool passkey_input;
 
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
@@ -57,6 +59,21 @@ static void disconnect_peer(struct bt_conn *conn)
 
 	if (err) {
 		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
+void send_passkey_req(bool active)
+{
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_BLE_ENABLE_PASSKEY));
+	__ASSERT_NO_MSG(!passkey_input || !active);
+
+	if (passkey_input != active) {
+		struct passkey_req_event *event = new_passkey_req_event();
+
+		event->active = active;
+		EVENT_SUBMIT(event);
+
+		passkey_input = active;
 	}
 }
 
@@ -175,6 +192,10 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	event->id = conn;
 	event->state = PEER_STATE_DISCONNECTED;
 	EVENT_SUBMIT(event);
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_ENABLE_PASSKEY)) {
+		send_passkey_req(false);
+	}
 }
 
 static struct bt_gatt_exchange_params exchange_params;
@@ -279,6 +300,18 @@ static void bt_ready(int err)
 	module_set_state(MODULE_STATE_READY);
 }
 
+void auth_passkey_entry(struct bt_conn *conn)
+{
+	send_passkey_req(true);
+	LOG_INF("Passkey input started");
+}
+
+void auth_cancel(struct bt_conn *conn)
+{
+	send_passkey_req(false);
+	LOG_INF("Authentication cancelled");
+}
+
 static int ble_state_init(void)
 {
 	BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
@@ -292,6 +325,15 @@ static int ble_state_init(void)
 		.le_param_updated = le_param_updated,
 	};
 	bt_conn_cb_register(&conn_callbacks);
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_ENABLE_PASSKEY)) {
+		static const struct bt_conn_auth_cb conn_auth_callbacks = {
+			.passkey_entry = auth_passkey_entry,
+			.cancel = auth_cancel,
+		};
+
+		bt_conn_auth_cb_register(&conn_auth_callbacks);
+	}
 
 	return bt_enable(bt_ready);
 }
@@ -333,6 +375,25 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_ENABLE_PASSKEY) &&
+	    is_passkey_input_event(eh)) {
+		const struct passkey_input_event *event =
+			cast_passkey_input_event(eh);
+
+		if (passkey_input) {
+			int err = bt_conn_auth_passkey_entry(active_conn[0],
+							     event->passkey);
+			if (err) {
+				LOG_ERR("Problem entering passkey (err %d)",
+					err);
+			}
+
+			passkey_input = false;
+		}
+
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -340,4 +401,7 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+#if CONFIG_DESKTOP_BLE_ENABLE_PASSKEY
+EVENT_SUBSCRIBE(MODULE, passkey_input_event);
+#endif /* CONFIG_DESKTOP_BLE_ENABLE_PASSKEY */
 EVENT_SUBSCRIBE_FINAL(MODULE, ble_peer_event);
