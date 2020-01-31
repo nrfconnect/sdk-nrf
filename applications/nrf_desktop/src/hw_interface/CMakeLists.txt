@@ -24,6 +24,9 @@ target_sources_ifdef(CONFIG_DESKTOP_BUTTONS_SIM_ENABLE app
 target_sources_ifdef(CONFIG_DESKTOP_CLICK_DETECTOR_ENABLE app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/click_detector.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_PASSKEY_BUTTONS app
+                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/passkey_buttons.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_SELECTOR_HW_ENABLE app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/selector_hw.c)
 
