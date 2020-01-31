@@ -16,6 +16,8 @@ target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/selector_event.c)
 
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_event.c)
 
+target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/passkey_event.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_LED_ENABLE app
 			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led_event.c)
 

@@ -46,6 +46,10 @@ config DESKTOP_INIT_LOG_SELECTOR_EVENT
 	bool "Selector event"
 	default y
 
+config DESKTOP_INIT_LOG_PASSKEY_EVENT
+	bool "Passkey event"
+	default y
+
 config DESKTOP_INIT_LOG_CONFIG_EVENT
 	bool "Config event"
 	default y
