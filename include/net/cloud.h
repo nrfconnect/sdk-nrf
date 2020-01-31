@@ -62,6 +62,26 @@ enum cloud_endpoint_type {
 	CLOUD_EP_PRIV_END = INT16_MAX
 };
 
+/**@brief Cloud connect results. */
+enum cloud_connect_result {
+	CLOUD_CONNECT_RES_SUCCESS = 0,
+
+	CLOUD_CONNECT_RES_ERR_NOT_INITD = -1,
+	CLOUD_CONNECT_RES_ERR_INVALID_PARAM = -2,
+	CLOUD_CONNECT_RES_ERR_NETWORK = -3,
+	CLOUD_CONNECT_RES_ERR_BACKEND = -4,
+	CLOUD_CONNECT_RES_ERR_MISC = -5,
+	CLOUD_CONNECT_RES_ERR_NO_MEM = -6,
+	/* Invalid private key */
+	CLOUD_CONNECT_RES_ERR_PRV_KEY = -7,
+	/* Invalid CA or client cert */
+	CLOUD_CONNECT_RES_ERR_CERT = -8,
+	/* Other cert issue */
+	CLOUD_CONNECT_RES_ERR_CERT_MISC = -9,
+	/* Timeout, SIM card may be out of data */
+	CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA = -10,
+};
+
 /** @brief Forward declaration of cloud backend type. */
 struct cloud_backend;
 
@@ -190,13 +210,13 @@ static inline int cloud_uninit(const struct cloud_backend *const backend)
  *
  * @param backend Pointer to a cloud backend structure.
  *
- * @return 0 or a negative error code indicating reason of failure.
+ * @return connect result defined by enum cloud_connect_result.
  */
 static inline int cloud_connect(const struct cloud_backend *const backend)
 {
 	if (backend == NULL || backend->api == NULL ||
 	    backend->api->connect == NULL) {
-		return -ENOTSUP;
+		return CLOUD_CONNECT_RES_ERR_INVALID_PARAM;
 	}
 
 	return backend->api->connect(backend);
