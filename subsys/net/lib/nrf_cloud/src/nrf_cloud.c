@@ -324,9 +324,30 @@ static int connect(const struct cloud_backend *const backend)
 
 	err = nrf_cloud_connect(NULL);
 
-	backend->config->socket = nct_socket_get();
-
-	return err;
+	switch (err) {
+	case 0:
+		backend->config->socket = nct_socket_get();
+		return CLOUD_CONNECT_RES_SUCCESS;
+	case -ECHILD:
+		return CLOUD_CONNECT_RES_ERR_NETWORK;
+	case -EACCES:
+		return CLOUD_CONNECT_RES_ERR_NOT_INITD;
+	case -ENOEXEC:
+		return CLOUD_CONNECT_RES_ERR_BACKEND;
+	case -EINVAL:
+		return CLOUD_CONNECT_RES_ERR_PRV_KEY;
+	case -EOPNOTSUPP:
+		return CLOUD_CONNECT_RES_ERR_CERT;
+	case -ECONNREFUSED:
+		return CLOUD_CONNECT_RES_ERR_CERT_MISC;
+	case -ETIMEDOUT:
+		return CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA;
+	case -ENOMEM:
+		return CLOUD_CONNECT_RES_ERR_NO_MEM;
+	default:
+		LOG_DBG("nrf_cloud_connect failed %d", err);
+		return CLOUD_CONNECT_RES_ERR_MISC;
+	}
 }
 
 static int disconnect(const struct cloud_backend *const backend)
