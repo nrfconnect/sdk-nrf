@@ -485,10 +485,6 @@ void main(void)
 	modem_configure();
 	cloud_connect(NULL);
 
-	if (IS_ENABLED(CONFIG_CLOUD_UA_CONSOLE)) {
-		console_init();
-	}
-
 	while (true) {
 		nrf_cloud_process();
 		send_aggregated_data();
