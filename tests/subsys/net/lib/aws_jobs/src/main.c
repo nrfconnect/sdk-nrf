@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <ztest.h>
 #include <aws_jobs.h>
-#include <net/mqtt_socket.h>
+#include <net/mqtt.h>
 
 int mqtt_subscribe(struct mqtt_client *client,
 		   const struct mqtt_subscription_list *param)
