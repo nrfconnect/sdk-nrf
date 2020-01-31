@@ -8,6 +8,13 @@ menu "BLE"
 
 comment "BLE State"
 
+config DESKTOP_BLE_ENABLE_PASSKEY
+	bool "Enable passkey based pairing"
+	depends on !DESKTOP_PASSKEY_NONE
+	depends on BT_PERIPHERAL
+	help
+	  Enable passkey based pairing for increased security.
+
 module = DESKTOP_BLE_STATE
 module-str = BLE state
 source "subsys/logging/Kconfig.template.log_config"
