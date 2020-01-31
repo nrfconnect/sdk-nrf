@@ -462,6 +462,10 @@ FORMAT(time_second_16)	    = SCALAR_FORMAT(2,
 					    (UNSIGNED | HAS_UNDEFINED),
 					    seconds,
 					    SCALAR(1, 0));
+FORMAT(time_millisecond_24) = SCALAR_FORMAT(3,
+					    (UNSIGNED | HAS_UNDEFINED),
+					    seconds,
+					    SCALAR(1e-3, 0));
 FORMAT(time_exp_8)	    = {
 	 .size = 1,
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
@@ -531,6 +535,10 @@ FORMAT(luminous_exposure)	= SCALAR_FORMAT(3,
 FORMAT(luminous_flux)		= SCALAR_FORMAT(2,
 						(UNSIGNED | HAS_UNDEFINED),
 						lumen,
+						SCALAR(1, 0));
+FORMAT(perceived_lightness)	= SCALAR_FORMAT(2,
+						UNSIGNED,
+						unitless,
 						SCALAR(1, 0));
 
 /*******************************************************************************

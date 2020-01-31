@@ -42,6 +42,8 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_noise;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_decihour_8;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_hour_24;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_second_16;
+extern const struct bt_mesh_sensor_format
+	bt_mesh_sensor_format_time_millisecond_24;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_exp_8;
 
 /* Electrical formats */
@@ -66,6 +68,8 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_luminous_energy;
 extern const struct bt_mesh_sensor_format
 	bt_mesh_sensor_format_luminous_exposure;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_luminous_flux;
+extern const struct bt_mesh_sensor_format
+	bt_mesh_sensor_format_perceived_lightness;
 
 /* Miscellaneous formats */
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_count_16;

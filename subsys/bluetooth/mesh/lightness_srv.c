@@ -164,10 +164,10 @@ static void handle_linear_get(struct bt_mesh_model *mod,
 	handle_light_get(mod, ctx, buf, LINEAR);
 }
 
-static void change_lvl(struct bt_mesh_lightness_srv *srv,
-		       struct bt_mesh_msg_ctx *ctx,
-		       struct bt_mesh_lightness_set *set,
-		       struct bt_mesh_lightness_status *status)
+void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
+			      struct bt_mesh_msg_ctx *ctx,
+			      struct bt_mesh_lightness_set *set,
+			      struct bt_mesh_lightness_status *status)
 {
 	if (!bt_mesh_is_provisioned()) {
 		/* Avoid picking up Power OnOff loaded onoff, we'll use our own.
@@ -234,7 +234,12 @@ static void lightness_set(struct bt_mesh_model *mod,
 	       set.transition->delay, set.transition->time);
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
-		change_lvl(srv, ctx, &set, &status);
+		/* According to the Mesh Model Specification section 6.2.3.1,
+		 * receiving a lightness set message should disable control.
+		 */
+		atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
+
+		lightness_srv_change_lvl(srv, ctx, &set, &status);
 	} else if (ack) {
 		srv->handlers->light_get(srv, NULL, &status);
 	}
@@ -504,7 +509,7 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_lightness_status status = { 0 };
 
 	if (lvl_set->new_transaction) {
-		change_lvl(srv, ctx, &set, &status);
+		lightness_srv_change_lvl(srv, ctx, &set, &status);
 	} else if (rsp) {
 		srv->handlers->light_get(srv, NULL, &status);
 	}
@@ -546,7 +551,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		.transition = delta_set->transition,
 	};
 
-	change_lvl(srv, ctx, &set, &status);
+	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	/* Override "last" value to be able to make corrective deltas when
 	 * new_transaction is false. Note that the "last" value in persistent
@@ -609,7 +614,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		}
 	}
 
-	change_lvl(srv, ctx, &set, &status);
+	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
 		rsp->current = LIGHT_TO_LVL(status.current);
@@ -647,7 +652,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 		set.lvl = 0;
 	}
 
-	change_lvl(srv, ctx, &set, &status);
+	lightness_srv_change_lvl(srv, ctx, &set, &status);
 
 	if (rsp) {
 		rsp->present_on_off = (status.current > 0);
@@ -775,7 +780,7 @@ static int bt_mesh_lightness_srv_start(struct bt_mesh_model *mod)
 	BT_DBG("Loading POnOff: %u -> %u [%u ms]", srv->ponoff.on_power_up,
 	       set.lvl, transition.time);
 
-	change_lvl(srv, NULL, &set, &dummy);
+	lightness_srv_change_lvl(srv, NULL, &set, &dummy);
 	return 0;
 }
 #endif

@@ -21,6 +21,11 @@
 extern "C" {
 #endif
 
+/** Minimum permitted Lightness level */
+#define BT_MESH_LIGHTNESS_MIN 0
+/** Maximum permitted Lightness level */
+#define BT_MESH_LIGHTNESS_MAX UINT16_MAX
+
 /** Lightness set message parameters. */
 struct bt_mesh_lightness_set {
 	/** Lightness level. */
