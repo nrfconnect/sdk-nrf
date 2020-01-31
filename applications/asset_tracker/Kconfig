@@ -208,6 +208,10 @@ config CLOUD_FOTA_MODEM
 	depends on DFU_TARGET_MODEM
 	default y
 
+config CLOUD_CONNECT_ERR_REBOOT_S
+	int "Seconds to wait before rebooting when a cloud connect error occurs"
+	default 300
+
 endmenu # Cloud
 
 menu "Environment sensors"

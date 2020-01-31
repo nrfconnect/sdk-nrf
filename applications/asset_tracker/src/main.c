@@ -121,7 +121,6 @@ static atomic_val_t association_requested;
 static atomic_val_t reconnect_to_cloud;
 
 /* Structures for work */
-static struct k_work connect_work;
 static struct k_work send_gps_data_work;
 static struct k_work send_button_data_work;
 static struct k_work send_modem_at_cmd_work;
@@ -153,7 +152,6 @@ enum error_type {
 };
 
 /* Forward declaration of functions */
-static void app_connect(struct k_work *work);
 static void motion_handler(motion_data_t  motion_data);
 static void env_data_send(void);
 #if CONFIG_LIGHT_SENSOR
@@ -166,6 +164,23 @@ static void device_status_send(struct k_work *work);
 static void cycle_cloud_connection(struct k_work *work);
 static void set_gps_enable(const bool enable);
 
+static void shutdown_modem(void)
+{
+#if defined(CONFIG_LTE_LINK_CONTROL)
+	/* Turn off and shutdown modem */
+	LOG_ERR("LTE link disconnect");
+	int err = lte_lc_power_off();
+
+	if (err) {
+		LOG_ERR("lte_lc_power_off failed: %d", err);
+	}
+#endif /* CONFIG_LTE_LINK_CONTROL */
+#if defined(CONFIG_BSD_LIBRARY)
+	LOG_ERR("Shutdown modem");
+	bsdlib_shutdown();
+#endif
+}
+
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
 {
@@ -174,18 +189,7 @@ void error_handler(enum error_type err_type, int err_code)
 			LOG_ERR("Reboot");
 			sys_reboot(0);
 		}
-#if defined(CONFIG_LTE_LINK_CONTROL)
-		/* Turn off and shutdown modem */
-		LOG_ERR("LTE link disconnect");
-		int err = lte_lc_power_off();
-		if (err) {
-			LOG_ERR("lte_lc_power_off failed: %d", err);
-		}
-#endif /* CONFIG_LTE_LINK_CONTROL */
-#if defined(CONFIG_BSD_LIBRARY)
-		LOG_ERR("Shutdown modem");
-		bsdlib_shutdown();
-#endif
+		shutdown_modem();
 	}
 
 #if !defined(CONFIG_DEBUG) && defined(CONFIG_REBOOT)
@@ -237,6 +241,75 @@ void k_sys_fatal_error_handler(unsigned int reason,
 void cloud_error_handler(int err)
 {
 	error_handler(ERROR_CLOUD, err);
+}
+
+void cloud_connect_error_handler(enum cloud_connect_result err)
+{
+	bool reboot = true;
+	char *backend_name = "invalid";
+
+	if (err == CLOUD_CONNECT_RES_SUCCESS) {
+		return;
+	}
+
+	LOG_ERR("Failed to connect to cloud, error %d", err);
+
+	switch (err) {
+	case CLOUD_CONNECT_RES_ERR_NOT_INITD: {
+		LOG_ERR("Cloud back-end has not been initialized");
+		/* no need to reboot, program error */
+		reboot = false;
+		break;
+	}
+	case CLOUD_CONNECT_RES_ERR_NETWORK: {
+		LOG_ERR("Network error, check cloud configuration");
+		break;
+	}
+	case CLOUD_CONNECT_RES_ERR_BACKEND: {
+		if (cloud_backend && cloud_backend->config &&
+		    cloud_backend->config->name) {
+			backend_name = cloud_backend->config->name;
+		}
+		LOG_ERR("An error occurred specific to the cloud back-end: %s",
+			backend_name);
+		break;
+	}
+	case CLOUD_CONNECT_RES_ERR_PRV_KEY: {
+		LOG_ERR("Ensure device has a valid private key");
+		break;
+	}
+	case CLOUD_CONNECT_RES_ERR_CERT: {
+		LOG_ERR("Ensure device has a valid CA and client certificate");
+		break;
+	}
+	case CLOUD_CONNECT_RES_ERR_CERT_MISC: {
+		LOG_ERR("A certificate/authorization error has occurred");
+		break;
+	}
+	case CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA: {
+		LOG_ERR("Connect timeout. SIM card may be out of data");
+		break;
+	}
+	case CLOUD_CONNECT_RES_ERR_MISC: {
+		break;
+	}
+	default: {
+		LOG_ERR("Unhandled connect error");
+		break;
+	}
+	}
+
+	if (reboot) {
+		LOG_ERR("Device will reboot in %d seconds",
+				CONFIG_CLOUD_CONNECT_ERR_REBOOT_S);
+		k_delayed_work_submit_to_queue(
+			&application_work_q, &cloud_reboot_work,
+			K_SECONDS(CONFIG_CLOUD_CONNECT_ERR_REBOOT_S));
+	}
+
+	ui_led_set_pattern(UI_LED_ERROR_CLOUD);
+	shutdown_modem();
+	k_thread_suspend(k_current_get());
 }
 
 /**@brief Recoverable BSD library error. */
@@ -913,20 +986,6 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	}
 }
 
-/**@brief Connect to nRF Cloud, */
-static void app_connect(struct k_work *work)
-{
-	int err;
-
-	ui_led_set_pattern(UI_CLOUD_CONNECTING);
-	err = cloud_connect(cloud_backend);
-
-	if (err) {
-		LOG_ERR("cloud_connect failed: %d", err);
-		cloud_error_handler(err);
-	}
-}
-
 static void set_gps_enable(const bool enable)
 {
 	if (enable == gps_control_is_enabled()) {
@@ -958,7 +1017,6 @@ static void long_press_handler(struct k_work *work)
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
-	k_work_init(&connect_work, app_connect);
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_modem_at_cmd_work, send_modem_at_cmd_work_fn);
@@ -1181,9 +1239,8 @@ void main(void)
 	modem_configure();
 connect:
 	ret = cloud_connect(cloud_backend);
-	if (ret) {
-		LOG_ERR("cloud_connect failed: %d", ret);
-		cloud_error_handler(ret);
+	if (ret != CLOUD_CONNECT_RES_SUCCESS) {
+		cloud_connect_error_handler(ret);
 	} else {
 		atomic_set(&reconnect_to_cloud, 0);
 		k_delayed_work_submit_to_queue(&application_work_q,
