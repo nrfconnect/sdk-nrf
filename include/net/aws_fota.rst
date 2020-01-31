@@ -26,7 +26,6 @@ Configuration
 Configure the following parameters when using this library:
 
 - :option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`
-- :option:`CONFIG_AWS_FOTA_VERSION_STRING_MAX_LEN`
 - :option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`
 - :option:`CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`
 
@@ -63,6 +62,11 @@ The implementation uses a job document similar to the following (where *bucket_n
    }
 
 The current implementation uses information from the ``host`` and ``path`` fields only.
+
+For upgrading MCUBoot see information found in :ref`lib_fota_download` library. The only change need for this to work with AWS FOTA is replacing the *file_name.bin* with *s0.bin s1.bin* where *s0* and *s1* are separated by a space.
+
+.. note::
+  It is important that you place the path of *s0* before *s1* in the job document and that they are separated by a space.
 
 
 Limitations

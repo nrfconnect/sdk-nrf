@@ -175,7 +175,9 @@ FOTA upgrades can be used to apply delta patches to the `LTE modem`_ firmware an
    Even though the Secure Partition Manager and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
    When we refer to the application in this section, we therefore mean the application including the Secure Partition Manager.
 
-A FOTA upgrade requires the following steps:
+AWS IoT
+=======
+A FOTA upgrade using AWS IoT requires the following steps:
 
 1. Make sure that your application supports FOTA upgrades.
       To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
@@ -211,6 +213,30 @@ A FOTA upgrade requires the following steps:
 
 The full FOTA procedure depends on where the binary files are hosted for download.
 See the :ref:`aws_fota_sample` sample for a full implementation using AWS.
+
+nRF Cloud
+=========
+1. Make sure that your application supports FOTA upgrades.
+      To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
+      This library deduces the type of upgrade by inspecting the header of the firmware and invokes the :ref:`lib_dfu_target` library to apply the firmware upgrade.
+      By default, the DFU target library supports all kinds of FOTA upgrades, but you can disable support for specific targets.
+
+      In addition, the following requirements apply:
+
+      * If you want to upgrade the application, :doc:`mcuboot:index` must be used as upgradable bootloader (:option:`CONFIG_BOOTLOADER_MCUBOOT`).
+      * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:option:`CONFIG_SECURE_BOOT`).
+      * If you want to upgrade the modem firmware, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
+#. Ensure that your device reports back/or have previously reported to nRF Cloud that it supports FOTA through the device shadow.
+     This can be done by using the :doc:`sample:asset_tracker` sample by having (:option:`AWS_FOTA`) enabled.
+#. Go to the device page of nRF Cloud and select your device. Your device should now display a Updates card on the page.
+#. Click the tree vertical dots on the card and select FOTA update. Then upload your firmware through the upload a file link and select it.
+#. Write a version number and select your uploaded firmware file then press start.
+#. Now a new item should be in the update card with the status QUEUED or IN PROGRESS. If the update was completed the status field will change to succeeded while if an error occurred the status field will change to failure.
+
+.. note::
+   After NCS 1.2 the format of the firmware files for nRF Cloud will change to use .zip files. Where you'll have to upload the generated .zip files to use with nRF Cloud
+
+
 
 .. _nrf9160_ug_drivs_libs_samples:
 
