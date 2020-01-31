@@ -70,7 +70,7 @@ extern void enter_sleep(u16_t mode);
 /* forward declaration */
 void slm_at_host_uninit(void);
 
-static inline void write_uart_string(char *str, size_t len)
+static inline void write_uart_string(const char *str, size_t len)
 {
 	LOG_HEXDUMP_DBG(str, len, "TX");
 
