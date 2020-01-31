@@ -411,7 +411,7 @@ void main(void)
 		}
 
 		err = mqtt_live(&client);
-		if (err != 0) {
+		if ((err != 0) && (err != -EAGAIN)) {
 			printk("ERROR: mqtt_live %d\n", err);
 			break;
 		}
