@@ -14,6 +14,7 @@ rsource "Kconfig.wheel"
 rsource "Kconfig.leds"
 rsource "Kconfig.battery_charger"
 rsource "Kconfig.battery_meas"
+rsource "Kconfig.passkey"
 
 module = DESKTOP_BOARD
 module-str = board module
