@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menuconfig SUPL_CLIENT_LIB
+config SUPL_CLIENT_LIB
 	bool "SUPL Client library"
 	help
 	  A library for accessing AGPS data using the SUPL protocol
