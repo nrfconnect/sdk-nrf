@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
-from pynrfjprog import API
+from pynrfjprog.LowLevel import API
 import time
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -52,7 +52,7 @@ class RttNordicProfilerHost:
 
     def rtt_get_device_family(snr):
         family = None
-        with API.API('UNKNOWN') as api:
+        with API('UNKNOWN') as api:
             if snr is not None:
                 api.connect_to_emu_with_snr(snr)
             else:
@@ -65,7 +65,7 @@ class RttNordicProfilerHost:
         snr = self.config['device_snr']
         device_family = RttNordicProfilerHost.rtt_get_device_family(snr)
         self.logger.info('Recognized device family: ' + device_family)
-        self.jlink = API.API(device_family)
+        self.jlink = API(device_family)
         self.jlink.open()
 
         if snr is not None:
