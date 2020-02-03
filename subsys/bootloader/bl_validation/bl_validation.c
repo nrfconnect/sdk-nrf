@@ -10,11 +10,23 @@
 #include <kernel.h>
 
 
+#ifndef CONFIG_BL_VALIDATE_FW_EXT_API_UNUSED
 #ifdef CONFIG_BL_VALIDATE_FW_EXT_API_REQUIRED
-EXT_API_REQ(BL_VALIDATE_FW, 1, struct bl_validate_fw_ext_api, bl_validate_fw);
+	#define BL_VALIDATE_FW_EXT_API_REQUIRED 1
+#else
+	#define BL_VALIDATE_FW_EXT_API_REQUIRED 0
+#endif
+
+EXT_API_REQ(BL_VALIDATE_FW, BL_VALIDATE_FW_EXT_API_REQUIRED,
+		struct bl_validate_fw_ext_api, bl_validate_fw);
 
 bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address)
 {
+#ifdef CONFIG_BL_VALIDATE_FW_EXT_API_OPTIONAL
+	if (!bl_validate_firmware_available()) {
+		return false;
+	}
+#endif
 	return bl_validate_fw->ext_api.bl_validate_firmware(fw_dst_address,
 							fw_src_address);
 }
@@ -227,6 +239,15 @@ bool bl_validate_firmware_local(u32_t fw_address,
 	return validate_firmware(fw_address, fw_address, fwinfo, false);
 }
 #endif
+
+bool bl_validate_firmware_available(void)
+{
+#ifdef CONFIG_BL_VALIDATE_FW_EXT_API_OPTIONAL
+	return (bl_validate_fw != NULL);
+#else
+	return true;
+#endif
+}
 
 
 #ifdef CONFIG_BL_VALIDATE_FW_EXT_API_ENABLED
