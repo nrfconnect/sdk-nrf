@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 RttNordicConfig = {
-    'device_family': 'NRF52',
     'device_snr' : None,
     'rtt_info_channel': 2,
     'rtt_data_channel': 1,
