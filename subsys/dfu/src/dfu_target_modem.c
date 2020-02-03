@@ -195,9 +195,17 @@ int dfu_target_modem_write(const void *const buf, size_t len)
 		} else {
 			return 0;
 		}
+	case DFU_AREA_NOT_BLANK:
+		delete_banked_modem_fw();
+		err = dfu_target_modem_write(buf, len);
+		if (err < 0) {
+			return -EINVAL;
+		} else {
+			return 0;
+		}
+	default:
+		return -EFAULT;
 	}
-
-	return -EFAULT;
 }
 
 int dfu_target_modem_done(bool successful)
