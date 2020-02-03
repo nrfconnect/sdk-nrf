@@ -50,22 +50,25 @@ class RttNordicProfilerHost:
 
         self.connect()
 
-    def rtt_get_device_family():
-        with API.API(API.DeviceFamily.UNKNOWN) as api:
-            api.connect_to_emu_without_snr()
-            return api.read_device_family()
+    def rtt_get_device_family(snr):
+        family = None
+        with API.API('UNKNOWN') as api:
+            if snr is not None:
+                api.connect_to_emu_with_snr(snr)
+            else:
+                api.connect_to_emu_without_snr()
+            family = api.read_device_family()
+            api.disconnect_from_emu()
+        return family
 
     def connect(self):
-        try:
-            self.jlink = API.API(self.config['device_family'])
-        except ValueError:
-            self.logger.warning('Unrecognized device family. Trying to recognize automatically')
-            self.config['device_family'] = rtt_nordic_profiler_host.rtt_get_device_family()
-            self.logger.info('Recognized device family: ' + self.config['device_family'])
-            self.jlink = API.API(self.config['device_family'])
-
+        snr = self.config['device_snr']
+        device_family = RttNordicProfilerHost.rtt_get_device_family(snr)
+        self.logger.info('Recognized device family: ' + device_family)
+        self.jlink = API.API(device_family)
         self.jlink.open()
-        if self.config['device_snr'] is not None:
+
+        if snr is not None:
             self.jlink.connect_to_emu_with_snr(self.config['device_snr'])
         else:
             self.jlink.connect_to_emu_without_snr()
@@ -73,6 +76,7 @@ class RttNordicProfilerHost:
         if self.config['reset_on_start']:
             self.jlink.sys_reset()
             self.jlink.go()
+
         self.jlink.rtt_start()
 
         TIMEOUT = 20
