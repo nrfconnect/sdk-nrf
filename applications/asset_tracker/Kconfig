@@ -342,7 +342,7 @@ config USE_AT_HOST
 endmenu
 
 menu "Zephyr Kernel"
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu
 
 module = ASSET_TRACKER
