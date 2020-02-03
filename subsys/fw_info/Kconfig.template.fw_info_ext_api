@@ -4,12 +4,40 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-config $(EXT_API)_EXT_API_REQUIRED
-	bool "Use the $(EXT_API) EXT_API."
-	default n
+choice
+	prompt "Request to use the $(EXT_API) EXT_API."
+	default $(EXT_API)_EXT_API_UNUSED
+
+config $(EXT_API)_EXT_API_UNUSED
+	bool "Don't request the $(EXT_API) EXT_API."
+	depends on !$(EXT_API)_EXT_API_ATLEAST_OPTIONAL && !$(EXT_API)_EXT_API_ATLEAST_REQUIRED
+
+config $(EXT_API)_EXT_API_OPTIONAL
+	bool "Request to use the $(EXT_API) EXT_API (optional)."
+	depends on !$(EXT_API)_EXT_API_ATLEAST_REQUIRED
 	help
 	  Include client code for this EXT_API. This also puts a request for
-	  this EXT_API into the firmware info.
+	  this EXT_API into the firmware info, marked as optional. The user must
+	  check that it is present before using it.
+
+config $(EXT_API)_EXT_API_REQUIRED
+	bool "Request to use the $(EXT_API) EXT_API (required)."
+	help
+	  Include client code for this EXT_API. This also puts a request for
+	  this EXT_API into the firmware info, marked as required.
+endchoice
+
+config $(EXT_API)_EXT_API_ATLEAST_OPTIONAL
+	bool
+	default n
+	help
+	  Can be selected to force at least OPTIONAL
+
+config $(EXT_API)_EXT_API_ATLEAST_REQUIRED
+	bool
+	default n
+	help
+	  Can be selected to force REQUIRED
 
 config $(EXT_API)_EXT_API_ENABLED
 	bool "Provide the $(EXT_API) EXT_API to other images."
@@ -17,7 +45,7 @@ config $(EXT_API)_EXT_API_ENABLED
 	help
 	  Provide this EXT_API to other images.
 
-if ($(EXT_API)_EXT_API_ENABLED || $(EXT_API)_EXT_API_REQUIRED)
+if ($(EXT_API)_EXT_API_ENABLED || !$(EXT_API)_EXT_API_UNUSED)
 config $(EXT_API)_EXT_API_ID
 	hex
 	default $(id)
