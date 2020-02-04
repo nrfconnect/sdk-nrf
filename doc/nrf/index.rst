@@ -13,6 +13,7 @@ The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is bui
 Documentation for different versions of the |NCS| is available at the following links:
 
 * `nRF Connect SDK latest documentation`_ (from the master branch)
+* `nRF Connect SDK v1.2.0 documentation`_
 * `nRF Connect SDK v1.1.0 documentation`_
 * `nRF Connect SDK v1.0.0 documentation`_
 * `nRF Connect SDK v0.4.0 documentation`_

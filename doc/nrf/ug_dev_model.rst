@@ -194,7 +194,7 @@ In order to obtain a fresh copy of the |NCS| at revision ``{revision}`` and plac
   west update
 
 Replace ``{revision}`` with any revision you wish to obtain.
-This can be ``master`` if you want the latest state, or any released version (e.g. ``v1.1.0``).
+This can be ``master`` if you want the latest state, or any released version (e.g. ``v1.2.0``).
 If you omit the ``--mr`` parameter, west defaults to ``master``.
 
 .. _dm-wf-update-ncs:
