@@ -22,7 +22,6 @@ static void profile_passkey_input_event(struct log_event_buf *buf,
 {
 	const struct passkey_input_event *event = cast_passkey_input_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->passkey);
 }
 
@@ -51,7 +50,6 @@ static void profile_passkey_req_event(struct log_event_buf *buf,
 {
 	const struct passkey_req_event *event = cast_passkey_req_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->active);
 }
 

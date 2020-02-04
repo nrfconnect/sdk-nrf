@@ -36,7 +36,6 @@ static void profile_battery_state_event(struct log_event_buf *buf,
 {
 	const struct battery_state_event *event = cast_battery_state_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->state);
 }
 
@@ -65,7 +64,6 @@ static void profile_battery_level_event(struct log_event_buf *buf,
 {
 	const struct battery_level_event *event = cast_battery_level_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->level);
 }
 
