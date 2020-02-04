@@ -63,7 +63,6 @@ static void profile_hid_mouse_event(struct log_event_buf *buf,
 {
 	const struct hid_mouse_event *event = cast_hid_mouse_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->button_bm);
 	profiler_log_encode_u32(buf, event->wheel);
@@ -98,7 +97,6 @@ static void profile_hid_ctrl_event(struct log_event_buf *buf,
 {
 	const struct hid_ctrl_event *event = cast_hid_ctrl_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->report_type);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->usage);
@@ -131,7 +129,6 @@ static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->connected);
 }
@@ -171,7 +168,6 @@ static void profile_hid_report_sent_event(struct log_event_buf *buf,
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->report_type);
 	profiler_log_encode_u32(buf, event->error);
@@ -205,7 +201,6 @@ static void profile_hid_report_subscription_event(struct log_event_buf *buf,
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->report_type);
 	profiler_log_encode_u32(buf, event->enabled);

@@ -24,7 +24,6 @@ static void profile_selector_event(struct log_event_buf *buf,
 {
 	const struct selector_event *event = cast_selector_event(eh);
 
-	ARG_UNUSED(event);
 	profiler_log_encode_u32(buf, event->selector_id);
 	profiler_log_encode_u32(buf, event->position);
 }
