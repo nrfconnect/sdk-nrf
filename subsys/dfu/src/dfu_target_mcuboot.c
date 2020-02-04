@@ -106,10 +106,37 @@ static int settings_set(const char *key, size_t len_rd,
 	return 0;
 }
 
+#define FILE_MCUBOOT_VERSION "mcuboot_version"
+int store_mcuboot_version(void)
+{
+	if(IS_ENABLED(CONFIG_SETTINGS)){
+		struct mcuboot_img_header header;
+		u8_t flash_area_id = PM_MCUBOOT_PRIMARY_ID;
+		int err = boot_read_bank_header(flash_area_id, &header,
+						sizeof(header));
+		if (err) {
+			LOG_ERR("Problem reading mcuboot version(err %d)", err);
+			return err;
+		}
+		struct mcuboot_img_sem_ver * sem_ver = (&header.h.v1.sem_ver);
+
+		char key[] = "fota" "/" FILE_MCUBOOT_VERSION;
+		err = settings_save_one(key, sem_ver,
+					sizeof(struct mcuboot_img_header));
+
+		if (err) {
+			LOG_ERR("Problem storing mcuboot version(err %d)", err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
 bool dfu_target_mcuboot_identify(const void *const buf)
 {
 	/* MCUBoot headers starts with 4 byte magic word */
-	return *((const u32_t *)buf) == MCUBOOT_HEADER_MAGIC;
+	return (*((const u32_t *)buf) == MCUBOOT_HEADER_MAGIC);
 }
 
 int dfu_target_mcuboot_init(size_t file_size)
@@ -145,12 +172,14 @@ int dfu_target_mcuboot_init(size_t file_size)
 			return err;
 		}
 
-		err = settings_load();
+		err = settings_load_subtree(MODULE);
 		if (err) {
 			LOG_ERR("Cannot load settings (err %d)", err);
 			return err;
 		}
 	}
+
+	store_mcuboot_version();
 
 	return 0;
 }

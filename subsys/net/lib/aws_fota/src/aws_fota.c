@@ -13,6 +13,10 @@
 #include <logging/log.h>
 #include <dfu/dfu_target.h>
 #include <settings/settings.h>
+#include <dfu/mcuboot.h>
+#include <nrf_socket.h>
+#include <net/socket.h>
+#include <pm_config.h>
 
 #include "aws_fota_json.h"
 
@@ -70,6 +74,7 @@ static aws_fota_callback_t callback;
 /* Settings subsystem */
 static int img_type;
 static u8_t previous_mdm_fw_version[36];
+static struct mcuboot_img_sem_ver previous_sem_ver;
 
 #define MODULE "fota"
 #define FILE_PENDING_UPDATE "pending_update"
@@ -79,6 +84,7 @@ static u8_t previous_mdm_fw_version[36];
 #define FILE_IMG_TYPE "img_type"
 #define FILE_FW_VERSION "fw_version"
 #define FILE_MODEM_FW "mdm_fw"
+#define FILE_MCUBOOT_VERSION "mcuboot_version"
 static int store_update_data(void)
 {
 	LOG_INF("Storing update data");
@@ -173,6 +179,15 @@ static int settings_set(const char *key, size_t len_rd,
 		ssize_t len = read_cb(cb_arg, &previous_mdm_fw_version,
 				      sizeof(previous_mdm_fw_version));
 		if (len != sizeof(previous_mdm_fw_version)) {
+			LOG_ERR("Can't read execution_version_number from storage");
+			return len;
+		}
+	}
+
+	if (!strcmp(key, FILE_MCUBOOT_VERSION)) {
+		ssize_t len = read_cb(cb_arg, &previous_sem_ver,
+				      sizeof(previous_sem_ver));
+		if (len != sizeof(previous_sem_ver)) {
 			LOG_ERR("Can't read execution_version_number from storage");
 			return len;
 		}
@@ -484,10 +499,8 @@ static int on_publish_evt(struct mqtt_client *const client,
 
 	return 1;
 }
-#include <nrf_socket.h>
-#include <net/socket.h>
 
-int check_modem_fw_string()
+int check_modem_fw_string(void)
 {
 	int err;
 	socklen_t len;
@@ -520,6 +533,35 @@ int check_modem_fw_string()
 
 int check_mcuboot_fw_metadata()
 {
+	int err;
+	struct mcuboot_img_header header;
+	u8_t flash_area_id = PM_MCUBOOT_PRIMARY_ID;
+	err = boot_read_bank_header(flash_area_id, &header,
+					sizeof(header));
+	if (!err) {
+		LOG_INF("Primary slot|" 
+			" major:%" PRIu8 " minor:%" PRIu8 " rev:0x%" PRIx16
+			" build:0x%" PRIx32,
+			header.h.v1.sem_ver.major, header.h.v1.sem_ver.minor,
+			header.h.v1.sem_ver.revision, header.h.v1.sem_ver.build_num);
+		LOG_INF("previous_sem_ver|" 
+			" major:%" PRIu8 " minor:%" PRIu8 " rev:0x%" PRIx16
+			" build:0x%" PRIx32, previous_sem_ver.major,
+			previous_sem_ver.minor, previous_sem_ver.revision,
+			previous_sem_ver.build_num);
+	}
+
+	if(previous_sem_ver.major < header.h.v1.sem_ver.major) {
+		return 0;
+	} else if (previous_sem_ver.minor < header.h.v1.sem_ver.minor) {
+		return 0;
+	} else if (previous_sem_ver.revision < header.h.v1.sem_ver.revision) {
+		return 0;
+	} else if (previous_sem_ver.build_num < header.h.v1.sem_ver.build_num) {
+		return 0;
+	} else {
+		return -EFAULT;
+	}
 }
 
 int check_update(struct mqtt_client *const client)
@@ -534,12 +576,10 @@ int check_update(struct mqtt_client *const client)
 	switch(img_type)
 	{
 		case DFU_TARGET_IMAGE_TYPE_MODEM_DELTA:
-			/* Does not really make sense since this situation would never occure */
-			/* We could just do success = true */
 			success = check_modem_fw_string();
 			break;
 		case DFU_TARGET_IMAGE_TYPE_MCUBOOT:
-			//success = check_mcuboot_fw_metadata();
+			success = check_mcuboot_fw_metadata();
 			break;
 		default:
 			return -EFAULT;
@@ -737,7 +777,7 @@ int aws_fota_init(struct mqtt_client *const client,
 		return err;
 	}
 
-	err = settings_load();
+	err = settings_load_subtree(MODULE);
 	if (err) {
 		LOG_ERR("Cannot load settings (err %d)", err);
 		return err;
@@ -751,7 +791,7 @@ int aws_fota_init(struct mqtt_client *const client,
 	char version_string[37];
 	snprintf(version_string, sizeof(version_string), "%.*s",
 		 sizeof(previous_mdm_fw_version), previous_mdm_fw_version);
-	LOG_INF("modem_fw: %d", version_string);
+	LOG_INF("modem_fw: %s", log_strdup(version_string));
 
 	/* Store client to make it available in event handlers. */
 	c = client;

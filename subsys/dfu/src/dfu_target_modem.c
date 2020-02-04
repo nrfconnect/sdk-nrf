@@ -4,6 +4,7 @@
 #include <net/socket.h>
 #include <nrf_socket.h>
 #include <logging/log.h>
+#include <settings/settings.h>
 
 LOG_MODULE_REGISTER(dfu_target_modem, CONFIG_DFU_TARGET_LOG_LEVEL);
 
@@ -85,11 +86,12 @@ static int delete_banked_modem_fw(void)
 
 #define MODULE "fota"
 #define FILE_MODEM_FW "mdm_fw"
-static int store_mdm_version(const u8_t version[36])
+#define UUID_LEN 36 
+static int store_mdm_version(const u8_t version[UUID_LEN])
 {
 	if(IS_ENABLED(CONFIG_SETTINGS)){
 		char key[] = MODULE "/" FILE_MODEM_FW;
-		int err = settings_save_one(key, &version, sizeof(version));
+		int err = settings_save_one(key, &version, UUID_LEN);
 
 		if (err) {
 			LOG_ERR("Problem storing offset (err %d)", err);
