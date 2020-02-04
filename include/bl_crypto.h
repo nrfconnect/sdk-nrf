@@ -7,8 +7,17 @@
 #ifndef BOOTLOADER_CRYPTO_H__
 #define BOOTLOADER_CRYPTO_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <zephyr/types.h>
 #include <fw_info.h>
+
+
+/** @defgroup bl_crypto Bootloader crypto functions
+ * @{
+ */
 
 /* Placeholder defines. Values should be updated, if no existing errors can be
  * used instead. */
@@ -196,6 +205,9 @@ typedef int (*bl_secp256r1_validate_t)(
 			  const u8_t *public_key);
 
 
+/**
+ * @brief Structure describing the BL_ROT_VERIFY EXT_API.
+ */
 struct bl_rot_verify_ext_api {
 	struct fw_info_ext_api header;
 	struct {
@@ -203,6 +215,9 @@ struct bl_rot_verify_ext_api {
 	} ext_api;
 };
 
+/**
+ * @brief Structure describing the BL_SHA256 EXT_API.
+ */
 struct bl_sha256_ext_api {
 	struct fw_info_ext_api header;
 	struct {
@@ -214,6 +229,9 @@ struct bl_sha256_ext_api {
 	} ext_api;
 };
 
+/**
+ * @brief Structure describing the BL_SECP256R1 EXT_API.
+ */
 struct bl_secp256r1_ext_api {
 	struct fw_info_ext_api header;
 	struct {
@@ -221,6 +239,10 @@ struct bl_secp256r1_ext_api {
 	} ext_api;
 };
 
+  /** @} */
 
+#ifdef __cplusplus
+}
 #endif
 
+#endif
