@@ -7,32 +7,22 @@
 #ifndef BL_VALIDATION_H__
 #define BL_VALIDATION_H__
 
-/*
- * The FW package will consist of (firmware | (padding) | validation_info),
- * where the firmware contains the firmware_info at a predefined location. The
- * padding is present if the validation_info needs alignment. The
- * validation_info is not directly referenced from the firmware_info since the
- * validation_info doesn't actually have to be placed after the firmware.
- */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdbool.h>
 #include <fw_info.h>
 
+/** @defgroup bl_validation Bootloader firmware validation
+ * @{
+ */
+
 /* EXT_API ID for the bl_validate_firmware EXT_API. */
 #define BL_VALIDATE_FW_EXT_API_ID 0x1101
 
-EXT_API_FUNCTION(bool, bl_validate_firmware, u32_t fw_dst_address,
-					u32_t fw_src_address);
 
-struct bl_validate_fw_ext_api {
-	struct fw_info_ext_api header;
-	struct {
-		bl_validate_firmware_t bl_validate_firmware;
-	} ext_api;
-};
-
-
-/** Function for validating firmware in place.
+/** Function for validating firmware.
  *
  * @details This will run a series of checks on the fw_info contents, then
  *          locate the validation info and check the signature of the image.
@@ -54,7 +44,30 @@ typedef
 bool (*bl_validate_firmware_t)(u32_t fw_dst_address, u32_t fw_src_address);
 
 
+/** Function for validating firmware in place.
+ *
+ * @note This function is only available to the bootloader.
+ *
+ * @details See @ref bl_validate_firmware for more details.
+ */
 bool bl_validate_firmware_local(u32_t fw_address,
 				const struct fw_info *fwinfo);
+
+
+/**
+ * @brief Structure describing the BL_VALIDATE_FW EXT_API.
+ */
+struct bl_validate_fw_ext_api {
+	struct fw_info_ext_api header;
+	struct {
+		bl_validate_firmware_t bl_validate_firmware;
+	} ext_api;
+};
+
+  /** @} */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* BL_VALIDATION_H__ */
