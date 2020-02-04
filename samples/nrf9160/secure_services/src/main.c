@@ -44,7 +44,8 @@ void main(void)
 		u8_t random_number[random_number_len];
 		size_t olen = random_number_len;
 
-		ret = spm_request_random_number(random_number, random_number_len, &olen);
+		ret = spm_request_random_number(random_number,
+						random_number_len, &olen);
 		if (ret != 0) {
 			printk("Could not get random number (err: %d)\n", ret);
 			continue;
