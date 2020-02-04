@@ -5,6 +5,22 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.8.1+build1
+*****************************
+
+Release for modem firmware version 1.1.0, with support for Verizon Wireless.
+
+Certification status
+====================
+
+The library is certified with Verizon Wireless.
+
+Changes
+=======
+
+* Fixed a memory leak.
+
+
 liblwm2m_carrier 0.8.1
 **********************
 
