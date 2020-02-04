@@ -160,7 +160,7 @@ To clone the repositories, complete the following steps:
         west init -m https\://github.com/NordicPlayground/fw-nrfconnect-nrf --mr *NCS_revision*
 
      .. note::
-        *NCS_revision* can be a branch (eg. ``master``), a tag (for example, ``v1.1.0``), or even a SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``). When not specified, it defaults to ``master``.
+        *NCS_revision* can be a branch (eg. ``master``), a tag (for example, ``v1.2.0``), or even a SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``). When not specified, it defaults to ``master``.
 
    This will clone the manifest repository `fw-nrfconnect-nrf`_ into :file:`nrf`.
 
@@ -189,10 +189,10 @@ To manage the ``nrf`` repository (the manifest repository), use Git.
 To make sure that you have the latest changes, run ``git fetch origin`` to :ref:`fetch the latest code <dm-wf-update-ncs>` from the `fw-nrfconnect-nrf`_ repository.
 Checking out a branch or tag in the ``nrf`` repository gives you a different version of the manifest file.
 Running ``west update`` will then update the project repositories to the state specified in this manifest file.
-For example, to switch to release v1.1.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
+For example, to switch to release v1.2.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
 
    git fetch origin
-   git checkout v1.1.0
+   git checkout v1.2.0
    west update
 
 To update to a particular revision (SHA), make sure that you have that particular revision locally before you check it out (by running ``git fetch origin``)::

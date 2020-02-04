@@ -19,10 +19,8 @@
 .. |ncs_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 .. _`fw-nrfconnect-nrf`: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 
-.. |ncs_zephyr_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
 .. _`fw-nrfconnect-zephyr`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
 
-.. |ncs_mcuboot_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
 .. _`fw-nrfconnect-mcuboot`: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/NordicPlayground/nrfxlib
@@ -33,6 +31,8 @@
 
 
 .. ### Links to Nordic documentation
+
+.. _`nRF Connect SDK v1.2.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/index.html
 
 .. _`nRF Connect SDK v1.1.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.1.0/nrf/index.html
 
@@ -165,7 +165,6 @@
 .. _`Battery Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245138
 
 
-
 .. ### Links to NFC specs
 
 .. _`Bluetooth Secure Simple Pairing Using NFC`: http://nfc-forum.org/our-work/specifications-and-application-documents/application-documents
@@ -193,10 +192,9 @@
 .. _`AWS IoT jobs`:
 .. _`AWS IoT Developer Guide: Jobs`: https://docs.aws.amazon.com/iot/latest/developerguide/iot-jobs.html
 
+.. _`AWS Simple Storage Service (S3)`: https://docs.aws.amazon.com/s3/index.html
 .. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
-
-.. _`AWS Simple Storage Service (S3)`: https://docs.aws.amazon.com/s3/index.html
 
 .. ### Links to specific files on GitHub
 
