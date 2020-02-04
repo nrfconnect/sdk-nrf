@@ -15,7 +15,7 @@
 #include "bl_crypto_cc310_common.h"
 
 #define MAX_CHUNK_LEN 0x8000 /* Must be 4 byte aligned. */
-#define CHUNK_LEN_STACK 0x1000
+#define CHUNK_LEN_STACK 0x200
 #define RAM_BUFFER_LEN_WORDS ((MAX_CHUNK_LEN) / 4)
 #define STACK_BUFFER_LEN_WORDS ((CHUNK_LEN_STACK) / 4)
 
