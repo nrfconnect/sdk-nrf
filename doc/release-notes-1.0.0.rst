@@ -65,9 +65,9 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - `nRF Connect for Desktop`_
    * - dtc (Linux only)
      - v1.4.6 or later
-     - :ref:`gs_installing_tools_linux`
+     - :ref:`gs_installing_tools`
    * - GCC
-     - See :ref:`Installing the toolchain<gs_installing_toolchain_win>`
+     - See :ref:`gs_installing_toolchain`
      - `GNU Arm Embedded Toolchain`_
 
 

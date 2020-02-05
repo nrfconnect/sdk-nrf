@@ -9,6 +9,8 @@ The application allows you to check which of the required tools are already inst
 It also guides you through installing the parts of the toolchain that you are missing.
 In addition, it will help you clone the |NCS| repositories and set up your first project in |SES|.
 
+See :ref:`gs_installing_os` for information on the supported operating systems and Zephyr features.
+
 .. _gs_assistant_installing-gsa:
 
 Installing the |GSA|

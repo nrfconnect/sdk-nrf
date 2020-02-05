@@ -1,4 +1,4 @@
-.. gs_installing_os:
+.. _gs_installing_os:
 
 Supported operating systems
 ###########################

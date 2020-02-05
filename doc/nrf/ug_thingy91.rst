@@ -242,7 +242,7 @@ Building and programming using SEGGER Embedded Studio
 Building and programming on the command line
 ============================================
 
-Complete the command line build setup (see the instructions for :ref:`Windows<build_environment_cli_win>`, :ref:`Linux<build_environment_cli_linux>`, and :ref:`macOS<build_environment_cli_mac>`) before you start building |NCS| projects on the command line.
+Complete the :ref:`command-line build setup <build_environment_cli>` before you start building |NCS| projects on the command line.
 
 To build and program the source code from the command line, complete the following steps:
 

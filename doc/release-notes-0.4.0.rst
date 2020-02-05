@@ -61,7 +61,7 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - `nRF5x Command Line Tools`_
    * - dtc (Linux only)
      - v1.4.6 or later
-     - :ref:`gs_installing_tools_linux`
+     - :ref:`gs_installing_tools`
 
 
 As IDE, we recommend to use |SES| (Nordic Edition), version 4.16 or later.

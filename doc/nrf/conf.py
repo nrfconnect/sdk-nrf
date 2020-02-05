@@ -72,7 +72,8 @@ NRFXLIB_OUTPUT = os.path.abspath(os.environ["NRFXLIB_OUTPUT"])
 extensions = ['sphinx.ext.intersphinx',
               'breathe',
               'sphinx.ext.ifconfig',
-              'sphinxcontrib.mscgen']
+              'sphinxcontrib.mscgen',
+              'sphinx_tabs.tabs']
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['../_templates']
