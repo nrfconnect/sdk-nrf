@@ -32,11 +32,6 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
 
 else()
 
-  if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
-    message(WARNING "kconfig option 'MCUBOOT_BUILD_S1_VARIANT' is set,
-but MCUboot is not being built.")
-  endif()
-
   if (CONFIG_SPM)
     set(image_to_boot spm_)
   endif()
