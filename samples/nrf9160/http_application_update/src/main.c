@@ -170,6 +170,7 @@ static int application_init(void)
 void main(void)
 {
 	int err;
+	printk("HTTP application update sample started\n");
 	printk("Initializing bsdlib\n");
 #if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)
 	err = bsdlib_init();
