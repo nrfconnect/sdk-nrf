@@ -1284,6 +1284,7 @@ static void scan_device_found(const bt_addr_le_t *addr, s8_t rssi, u8_t type,
 			      struct net_buf_simple *ad)
 {
 	struct bt_scan_control scan_control;
+	struct net_buf_simple_state state;
 
 	memset(&scan_control, 0, sizeof(scan_control));
 
@@ -1293,20 +1294,25 @@ static void scan_device_found(const bt_addr_le_t *addr, s8_t rssi, u8_t type,
 
 	/* Check id device is connectable. */
 	if (type == BT_LE_ADV_IND ||
-	    type == BT_LE_ADV_DIRECT_IND ||
-	    type == BT_LE_ADV_DIRECT_IND_LOW_DUTY) {
+	    type == BT_LE_ADV_DIRECT_IND) {
 		scan_control.connectable = true;
 	}
 
 	/* Check the address filter. */
 	check_addr(&scan_control, addr);
 
+	/* Save advertising buffer state to transfer it
+	 * data to application if futher processing is needed.
+	 */
+	net_buf_simple_save(ad, &state);
 	bt_data_parse(ad, adv_data_found, (void *)&scan_control);
+	net_buf_simple_restore(ad, &state);
 
 	scan_control.device_info.addr = addr;
 	scan_control.device_info.conn_param = &bt_scan.conn_param;
 	scan_control.device_info.adv_info.adv_type = type;
 	scan_control.device_info.adv_info.rssi = rssi;
+	scan_control.device_info.adv_data = ad;
 
 	/* In the multifilter mode, the number of the active filters must equal
 	 * the number of the filters matched to generate the notification.
