@@ -106,6 +106,26 @@ static void ble_qos_thread_fn(void);
 static struct device *cdc_dev;
 static u32_t cdc_dtr;
 
+
+static void send_uart_data(struct device *cdc_dev, const u8_t *str, int str_len)
+{
+#ifdef CONFIG_UART_INTERRUPT_DRIVEN
+	int sent = uart_fifo_fill(cdc_dev, str, str_len);
+
+	if (sent != str_len) {
+		LOG_WRN("Sent %d of %d bytes", sent, str_len);
+	}
+#else
+	/* uart_fifo_fill is not declared if CONFIG_UART_INTERRUPT_DRIVEN
+	 * is disabled. send_uart_data should not be called in that case.
+	 */
+	ARG_UNUSED(cdc_dev);
+	ARG_UNUSED(str);
+	ARG_UNUSED(str_len);
+	__ASSERT_NO_MSG(false);
+#endif /* CONFIG_UART_INTERRUPT_DRIVEN */
+}
+
 static void ble_chn_stats_print(bool update_channel_map)
 {
 	char str[64];
@@ -148,7 +168,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 			LOG_ERR("Encoding error");
 			return;
 		}
-		uart_fifo_fill(cdc_dev, str, str_len);
+		send_uart_data(cdc_dev, str, str_len);
 	}
 
 	/* Channel state information print format: */
@@ -159,7 +179,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 		LOG_ERR("Encoding error");
 		return;
 	}
-	uart_fifo_fill(cdc_dev, str, str_len);
+	send_uart_data(cdc_dev, str, str_len);
 
 	str_len = 0;
 	for (u8_t i = 0; i < CHMAP_BLE_CHANNEL_COUNT; i++) {
@@ -183,7 +203,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 		}
 
 		if (str_len >= ((sizeof(str) * 2) / 3)) {
-			uart_fifo_fill(cdc_dev, str, str_len);
+			send_uart_data(cdc_dev, str, str_len);
 			str_len = 0;
 		}
 	}
@@ -193,7 +213,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 		LOG_ERR("Encoding error");
 		return;
 	}
-	uart_fifo_fill(cdc_dev, str, str_len);
+	send_uart_data(cdc_dev, str, str_len);
 }
 
 static void hid_pkt_stats_print(u32_t ble_recv)
@@ -240,7 +260,7 @@ static void hid_pkt_stats_print(u32_t ble_recv)
 		LOG_ERR("Encoding error");
 		return;
 	}
-	uart_fifo_fill(cdc_dev, str, str_len);
+	send_uart_data(cdc_dev, str, str_len);
 }
 
 static bool is_my_config_id(u8_t config_id)
@@ -533,8 +553,7 @@ static bool event_handler(const struct event_header *eh)
 			cdc_notify_count++;
 
 			if (cdc_notify_count == 100) {
-				hid_pkt_stats_print(
-					hid_pkt_recv_count);
+				hid_pkt_stats_print(hid_pkt_recv_count);
 				cdc_notify_count = 0;
 			}
 
