@@ -204,6 +204,12 @@ static void process_mouse_report(const u8_t *data)
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
+	if (!atomic_get(&usb_ready)) {
+		/* Do not process report if USB is disconnected. */
+		k_spin_unlock(&lock, key);
+		return;
+	}
+
 	if (next_mouse_event) {
 		__ASSERT_NO_MSG(usb_busy);
 
@@ -241,6 +247,13 @@ static void process_keyboard_report(const u8_t *data)
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
+	if (!atomic_get(&usb_ready)) {
+		/* Do not process report if USB is disconnected. */
+		k_spin_unlock(&lock, key);
+		k_free(event);
+		return;
+	}
+
 	if (!usb_busy) {
 		EVENT_SUBMIT(event);
 		usb_busy = true;
@@ -266,6 +279,13 @@ static void process_consumer_ctrl_report(const u8_t *data)
 	event->usage = sys_get_le16(data);
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	if (!atomic_get(&usb_ready)) {
+		/* Do not process report if USB is disconnected. */
+		k_spin_unlock(&lock, key);
+		k_free(event);
+		return;
+	}
 
 	if (!usb_busy) {
 		EVENT_SUBMIT(event);
@@ -661,9 +681,58 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 	subscriber->timestamp = 0;
 }
 
+static void clear_state(void)
+{
+	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	atomic_set(&usb_ready, false);
+	usb_id = NULL;
+	usb_busy = false;
+
+	/* Clear all the reports. */
+	while (!sys_slist_is_empty(&keyboard_event_list)) {
+		sys_snode_t *kbd_event_node =
+			sys_slist_get(&keyboard_event_list);
+		struct keyboard_event_item *next_item_kbd;
+
+		next_item_kbd = CONTAINER_OF(kbd_event_node,
+					     struct keyboard_event_item,
+					     node);
+
+		k_spin_unlock(&lock, key);
+		k_free(next_item_kbd->evt);
+		k_free(next_item_kbd);
+		key = k_spin_lock(&lock);
+	}
+
+	while (!sys_slist_is_empty(&consumer_ctrl_event_list)) {
+		sys_snode_t *c_ctrl_event_node =
+			sys_slist_get(&consumer_ctrl_event_list);
+		struct consumer_ctrl_event_item *next_item_c_ctrl;
+
+		next_item_c_ctrl = CONTAINER_OF(c_ctrl_event_node,
+						struct consumer_ctrl_event_item,
+						node);
+
+		k_spin_unlock(&lock, key);
+		k_free(next_item_c_ctrl->evt);
+		k_free(next_item_c_ctrl);
+		key = k_spin_lock(&lock);
+	}
+
+	struct hid_mouse_event *mouse_evt = next_mouse_event;
+
+	next_mouse_event = NULL;
+	k_spin_unlock(&lock, key);
+
+	k_free(mouse_evt);
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
+		__ASSERT_NO_MSG(atomic_get(&usb_ready));
+
 		struct keyboard_event_item *next_item_kbd = NULL;
 		struct consumer_ctrl_event_item *next_item_c_ctrl = NULL;
 		k_spinlock_key_t key = k_spin_lock(&lock);
@@ -762,8 +831,7 @@ static bool event_handler(const struct event_header *eh)
 			usb_id = event->id;
 			break;
 		case USB_STATE_DISCONNECTED:
-			usb_id = NULL;
-			atomic_set(&usb_ready, false);
+			clear_state();
 			break;
 		default:
 			/* Ignore */
