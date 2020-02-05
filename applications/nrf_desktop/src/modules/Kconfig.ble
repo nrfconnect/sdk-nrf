@@ -267,6 +267,7 @@ config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
 	select USB_CDC_ACM
 	select SERIAL
 	select UART_LINE_CTRL
+	select UART_INTERRUPT_DRIVEN
 	help
 	  Enable to get real-time QoS information printouts via CDC ACM.
 
