@@ -4,12 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 from pynrfjprog.LowLevel import API
+from pynrfjprog.APIError import APIError
 import time
-import matplotlib.pyplot as plt
-from datetime import datetime
-import queue
 import sys
-import threading
 from enum import Enum
 from rtt_nordic_config import RttNordicConfig
 from events import Event, EventType, EventsData
@@ -50,6 +47,7 @@ class RttNordicProfilerHost:
 
         self.connect()
 
+    @staticmethod
     def rtt_get_device_family(snr):
         family = None
         with API('UNKNOWN') as api:
@@ -100,26 +98,28 @@ class RttNordicProfilerHost:
     def disconnect(self):
         self.stop_logging_events()
         # read remaining data to buffer
-        try:
-            buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
-                                      self.config['rtt_read_chunk_size'],
-                                      encoding=None)
+        while True:
+            try:
+                buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
+                                          self.config['rtt_read_chunk_size'],
+                                          encoding=None)
 
-        except:
-            self.logger.error("Problem with reading RTT data.")
+            except APIError:
+                self.logger.error("Problem with reading RTT data.")
+                buf = []
 
-        while len(buf) > 0:
-            self.bufs.append(buf)
-            self.bcnt += len(buf)
-            buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
-                                      self.config['rtt_read_chunk_size'],
-                                      encoding=None)
+            if len(buf) > 0:
+                self.bufs.append(buf)
+                self.bcnt += len(buf)
+            else:
+                break
+
         try:
             self.jlink.rtt_stop()
             self.jlink.disconnect_from_emu()
             self.jlink.close()
 
-        except:
+        except APIError:
             self.logger.error("JLink connection lost. Saving collected data.")
             return
 
@@ -132,7 +132,7 @@ class RttNordicProfilerHost:
             size = num_bytes - len(buf)
             if len(tbuf) <= size:
                 buf = buf + tbuf
-                del(self.bufs[0])
+                del self.bufs[0]
             else:
                 buf = buf + tbuf[0:size]
                 self.bufs[0] = tbuf[size:]
@@ -151,9 +151,10 @@ class RttNordicProfilerHost:
                 buf = self.jlink.rtt_read(self.config['rtt_data_channel'],
                                           self.config['rtt_read_chunk_size'],
                                           encoding=None)
-            except:
+            except APIError:
                 self.logger.error("Problem with reading RTT data.")
                 self.shutdown()
+                sys.exit()
 
             if len(buf) > 0:
                 self.bufs.append(buf)
@@ -189,7 +190,7 @@ class RttNordicProfilerHost:
                                       self.config['rtt_read_chunk_size'],
                                       encoding='utf-8')
 
-            except:
+            except APIError:
                 self.logger.error("Problem with reading RTT data.")
                 self.shutdown()
 
@@ -248,9 +249,9 @@ class RttNordicProfilerHost:
             self.timestamp_overflows += 1
             self.after_half = False
 
-        if timestamp_raw > 0.6 * self.config['timestamp_raw_max'] \
-        and timestamp_raw < 0.9 * self.config['timestamp_raw_max']:
-            self.after_half = True
+        if timestamp_raw > 0.6 * self.config['timestamp_raw_max']:
+            if timestamp_raw < 0.9 * self.config['timestamp_raw_max']:
+                self.after_half = True
 
         timestamp = self._calculate_timestamp_from_clock_ticks(timestamp_raw)
 
@@ -303,5 +304,5 @@ class RttNordicProfilerHost:
         command[0] = command_type.value
         try:
             self.jlink.rtt_write(self.config['rtt_command_channel'], command, None)
-        except:
+        except APIError:
             self.logger.error("Problem with writing RTT data.")
