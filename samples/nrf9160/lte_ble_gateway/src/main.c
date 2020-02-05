@@ -475,7 +475,7 @@ static void buttons_leds_init(void)
 
 void main(void)
 {
-	printk("Application started\n");
+	printk("LTE Sensor Gateway sample started\n");
 
 	buttons_leds_init();
 	ble_init();
