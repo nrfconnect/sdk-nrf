@@ -15,6 +15,7 @@ See the release notes for information about specific |NCS| releases.
 .. toctree::
    :maxdepth: 1
 
+   doc/release-notes-1.2.0
    doc/release-notes-1.1.0
    doc/release-notes-1.0.0
    doc/release-notes-0.4.0
