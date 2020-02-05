@@ -137,7 +137,7 @@ struct bt_filter_status {
  */
 struct bt_scan_adv_info {
 	/** BLE advertising type. According to
-	 * Bluetooth Specification 7.8.5
+	 *  Bluetooth Specification 7.8.5
 	 */
 	u8_t adv_type;
 
@@ -290,6 +290,13 @@ struct bt_scan_device_info {
 
 	/** Connection parameters for LE connection. */
 	const struct bt_le_conn_param *conn_param;
+
+	/** Received advertising data. If further
+	 *  data proccesing is needed, you should
+	 *  use @ref bt_data_parse to get specific
+	 *  advertising data type.
+	 */
+	struct net_buf_simple *adv_data;
 };
 
 /** @brief Initializing macro for scanning module.
