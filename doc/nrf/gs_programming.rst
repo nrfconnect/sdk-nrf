@@ -18,7 +18,7 @@ Building with SES
 
 .. build_SES_projimport_open_start
 
-Complete the following steps to build |NCS| projects with SES after :ref:`installing SEGGER Embedded Studio <installing_ses_win>` and :ref:`completing the first time setup <build_environment_win>`:
+Complete the following steps to build |NCS| projects with SES after :ref:`installing SEGGER Embedded Studio <installing_ses>` and :ref:`completing the first time setup <build_environment>`:
 
 1. Start SEGGER Embedded Studio by running :file:`bin/emStudio`.
 
@@ -108,7 +108,7 @@ If it is installed, verify that its location is correct in the PATH variable or,
 Building on the command line
 ****************************
 
-Complete the following steps to build |NCS| projects on the command line after completing the command-line build setup (see the instructions for :ref:`Windows<build_environment_cli_win>`, :ref:`Linux<build_environment_cli_linux>`, or :ref:`macOS<build_environment_cli_mac>`).
+Complete the following steps to build |NCS| projects on the command line after completing the :ref:`command-line build setup <build_environment_cli>`.
 
 1.    Open a terminal window.
 

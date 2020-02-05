@@ -27,7 +27,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.2.0**.
 Check the ``west.yml`` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`Getting the nRF Connect SDK code <cloning_the_repositories_win>` for more information.
+See :ref:`cloning_the_repositories` for more information.
 
 
 Supported modem firmware
@@ -78,9 +78,9 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - `nRF Connect for Desktop`_
    * - dtc (Linux only)
      - v1.4.6 or later
-     - :ref:`gs_installing_tools_linux`
+     - :ref:`gs_installing_tools`
    * - GCC
-     - See :ref:`Installing the toolchain<gs_installing_toolchain_win>`
+     - See :ref:`gs_installing_toolchain`
      - `GNU Arm Embedded Toolchain`_
 
 

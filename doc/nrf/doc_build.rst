@@ -15,7 +15,7 @@ Before you start
 ****************
 
 Before you can build the documentation, install the |NCS| as described in :ref:`gs_installing`.
-Make sure that you have installed the required :ref:`Python dependencies <additional_deps_win>`.
+Make sure that you have installed the required :ref:`Python dependencies <additional_deps>`.
 
 See the *Installing the documentation processors* section in the :ref:`zephyr:zephyr_doc` developer guide for information about installing the required tools to build the documentation and their supported versions.
 

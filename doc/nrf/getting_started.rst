@@ -15,6 +15,7 @@ After that, pick a sample that is related to the application you want to create 
 .. toctree::
    :maxdepth: 2
 
+   gs_ins_os
    gs_assistant
    gs_installing
    gs_programming
