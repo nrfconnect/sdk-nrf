@@ -117,6 +117,8 @@ static struct conn_mode {
 	bool in_boot_mode;
 } conn_mode[CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT];
 
+static struct k_work adv_work;
+
 static struct k_work pairing_work;
 struct pairing_data_mitm {
 	struct bt_conn *conn;
@@ -149,7 +151,6 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 	}
 }
 #endif
-
 
 static void advertising_continue(void)
 {
@@ -190,25 +191,20 @@ static void advertising_continue(void)
 	}
 }
 
-
 static void advertising_start(void)
 {
-	int err;
-
-	/* Clear the application start for advertising restart. */
-	err = bt_le_adv_stop();
-	if (err) {
-		printk("Failed to stop advertising (err %d)\n", err);
-	}
-
 #if CONFIG_BT_DIRECTED_ADVERTISING
 	k_msgq_purge(&bonds_queue);
 	bt_foreach_bond(BT_ID_DEFAULT, bond_find, NULL);
 #endif
 
-	advertising_continue();
+	k_work_submit(&adv_work);
 }
 
+static void advertising_process(struct k_work *work)
+{
+	advertising_continue();
+}
 
 static void pairing_process(struct k_work *work)
 {
@@ -266,7 +262,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	if (err) {
 		if (err == BT_HCI_ERR_ADV_TIMEOUT) {
 			printk("Direct advertising to %s timed out\n", addr);
-			advertising_continue();
+			k_work_submit(&adv_work);
 		} else {
 			printk("Failed to connect to %s (%u)\n", addr, err);
 		}
@@ -780,6 +776,7 @@ void main(void)
 
 	k_delayed_work_init(&hids_work, mouse_handler);
 	k_work_init(&pairing_work, pairing_process);
+	k_work_init(&adv_work, advertising_process);
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
