@@ -22,9 +22,11 @@ The network core is an Arm Cortex-M33 processor with a reduced feature set, desi
 This core is used for radio communication.
 With regards to the nRF5340 samples, this means that the network core runs the radio stack and real-time procedures.
 Currently, the following solutions are available for the network core:
-* Bluetooth Low Energy Controller - compatible with several BLE samples,
-* An application running only on network core, used for testing the Radio peripheral; requires any
-sample for application core - just to start the network MCU
+* Bluetooth Low Energy Controller - compatible with several BLE samples.
+  Both the BLE Controller from Zephyr and :ref:`nrfxlib:ble_controller` are supported.
+* the :ref:`radio_test` sample that runs only on the network core and is used for testing the Radio peripheral.
+  To start the network core, this sample requires any sample programmed on the application core.
+  For example, you can use :ref:`zephyr:hello_world` for this purpose.
 
 In general, this core should be used for real-time processing tasks involving low-level protocols and layers.
 
@@ -36,8 +38,9 @@ Application core
 The application core is a full-featured Arm Cortex-M33 processor including DSP instructions and FPU.
 
 Currently, the |NCS| provides the following solutions for the application core:
-* High-level radio stack (the host part of the Bluetooth Low Energy stack) and application logic,
-* Samples running only on the application core: e.g. NFC samples for nRF53
+* high-level radio stack (the host part of the Bluetooth Low Energy stack) and application logic,
+* samples running only on the application core.
+  For example, NFC samples with nRF53 support.
 
 In general, this core should be used for tasks that require high performance and application-level logic.
 
@@ -70,15 +73,15 @@ nRF5340 samples consist of two separate images: one that runs on the network cor
 Network samples
 ===============
 
-The nRF Connect SDK provides the following samples for the nRF53 network core:
+The |NCS| provides the following samples for the nRF53 network core:
 * :ref:`zephyr:bluetooth-hci-rpmsg-sample` - a Zephyr sample that implements a Bluetooth Low Energy controller.
-This sample must be programmed to the network core to run standard Bluetooth Low Energy samples on nRF5340.
+  This sample must be programmed to the network core to run standard Bluetooth Low Energy samples on nRF5340.
 
   You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.
   For example:
 
   * :option:`zephyr:CONFIG_BT_MAX_CONN` must be equal to the maximum number of connections supported by the application sample.
-  * If the application sample uses specific Bluetooth LE functionality, this functionality must be enabled in the network sample as well.
+  * If the application sample uses a specific Bluetooth LE functionality, this functionality must be enabled in the network sample as well.
     For example, you must modify the configuration of the network sample to make it compatible with the :ref:`ble_throughput` sample::
 
       CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
@@ -86,7 +89,7 @@ This sample must be programmed to the network core to run standard Bluetooth Low
 
     This configuration guarantees that the network sample can handle the Bluetooth LE DLE update procedure, which is used in the :ref:`ble_throughput` sample.
 
-* :ref:`radio_test` - an application used for testing available modes of the Radio peripheral
+* :ref:`radio_test` - an sample application used for testing available modes of the Radio peripheral.
 
 Application samples
 ===================
@@ -94,7 +97,7 @@ Application samples
 The |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`, in addition to the :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
 Most of these samples should run on the nRF5340 PDK, but not all have been thoroughly tested.
 Samples that use non-standard features of the Bluetooth Low Energy controller, like the :ref:`ble_llpm` sample, are not supported.
-Additionally, the |NCS| NFC samples are also available for nRF53 - they run only on the application core and don't require any firmware for the network core.
+Additionally, the |NCS| NFC samples are also available for nRF53 - they run only on the application core and do not require any firmware for the network core.
 
 Some samples require configuration adjustments to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample as described in the `Network samples`_ section.
 
@@ -104,18 +107,19 @@ These samples must be programmed to the application core, in the secure domain.
 Building and programming a sample
 *********************************
 
-Depending on the chosen sample, you must program just the application core (e.g. when using NFC samples) or both the network and the application cores.
+Depending on the sample, you must program only the application core (for example, when using NFC samples) or both the network and the application core.
 
 .. note::
-  On nRF53 the application core is responsible for starting the network core and connecting its GPIO pins. Therefore, to run any sample on nRF53,
-  the application core must be programmed (e.g. with the :ref:`zephyr:hello_world` sample) even if the firmware is supposed to run only on the network MCU.
-  For details see the code in: ``zephyr/boards/arm/nrf5340_dk_nrf5340/nrf5340_cpunet_reset.c``.
+   On nRF53, the application core is responsible for starting the network core and connecting its GPIO pins.
+   Therefore, to run any sample on nRF53, the application core must be programmed, even if the firmware is supposed to run only on the network core.
+   You can use the :ref:`zephyr:hello_world` sample for this purpose.
+   For details, see the code in :file:`zephyr/boards/arm/nrf5340_dk_nrf5340/nrf5340_cpunet_reset.c`.
 
 Build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
 Make sure to use ``nrf5340_dk_nrf5340_cpunet`` as board name when building the network sample, and ``nrf5340_dk_nrf5340_cpuapp`` when building the application sample.
 
 .. important::
-   When programming the samples from an old version of |SES|, you might get an error message stating that the target cannot be identified.
+   When programming the samples built with an older version of |SES|, you might get an error message stating that the target cannot be identified.
    In this case, you can either modify your |SES| installation and projects to add support for programming nRF5340, or program the generated HEX files from the command line instead.
 
    See the following sections for more information.
@@ -124,7 +128,7 @@ Make sure to use ``nrf5340_dk_nrf5340_cpunet`` as board name when building the n
 Adding support for programming nRF5340 in SES (versions earlier than v4.40a)
 ============================================================================
 
-The older versions of the Nordic Edition of |SES| (older than v4.40a) does not include SEGGER J-Link version v6.54c.
+The older versions of the Nordic Edition of |SES| (older than v4.40a) do not include SEGGER J-Link version v6.54c.
 However, this J-Link version is required to program nRF5340 devices.
 
 To add support for programming nRF5340 in |SES|, complete the following steps:
