@@ -80,6 +80,29 @@ Filter modes
 |             | Otherwise, the not found callback is called.                                    |
 +-------------+---------------------------------------------------------------------------------+
 
+Directed Advertising
+====================
+
+To support receiving Directed Advertising packets with the Scanning Module, enable one of the following options in Zephyr:
+
+* :option:`CONFIG_BT_PRIVACY` (scanning with changing addresses)
+* :option:`CONFIG_BT_SCAN_WITH_IDENTITY` (scanning with a local identity address)
+
+It is recommended to use the privacy option.
+When privacy is enabled directed advertising is only supported from bonded peers.
+Use scanning with identity only when scanning with privacy is not possible.
+
+When `Filters`_ are set, you can use the proprietary ``filter_no_match`` event to handle Directed Advertising.
+This event checks whether the Directed Advertising packets do not match any filters.
+In case of a positive verification, you can establish connection without the need to disable or reconfigure the existing filters.
+
+The following code sample demonstrates the ``filter_no_match`` event:
+
+.. literalinclude:: ../../samples/bluetooth/central_hids/src/main.c
+    :language: c
+    :start-after: include_startingpoint_scan_rst
+    :end-before: include_endpoint_scan_rst
+
 
 API documentation
 *****************
