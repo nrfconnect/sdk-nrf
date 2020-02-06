@@ -48,7 +48,8 @@ Requirements
 
 * .. include:: /includes/spm.txt
 
-* an LwM2M server IP address available on the internet
+* An LwM2M server URL address available on the internet.
+  For this sample, the URL address mentioned on the `Leshan Demo Server`_ page is used.
 
 Building and Running
 ********************
@@ -65,7 +66,7 @@ on the nRF9160-DK board using the default configuration :file:`prj.conf`.
 You will need to tell the sample what LwM2M server to use by editing the
 following line in the configuration you've chosen::
 
-    CONFIG_APP_LWM2M_SERVER="{IP address of LwM2M server}"
+    CONFIG_APP_LWM2M_SERVER="leshan.eclipseprojects.io"
 
 Build the sample:
 
