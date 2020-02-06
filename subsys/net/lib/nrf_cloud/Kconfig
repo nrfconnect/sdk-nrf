@@ -65,6 +65,22 @@ config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
 	default 10
 	help
 		0 disables progress report.
+menu "nRF Cloud A-GPS"
+
+config NRF_CLOUD_AGPS
+	bool "Enable nRF Cloud A-GPS"
+	depends on NRF9160_GPS
+
+if NRF_CLOUD_AGPS
+config NRF_CLOUD_AGPS_AUTO
+	bool "Automatically request A-GPS on bootup"
+
+module = NRF_CLOUD_AGPS
+module-str = nRF Cloud A-GPS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_CLOUD_AGPS"
+endmenu
 
 module=NRF_CLOUD
 module-dep=LOG

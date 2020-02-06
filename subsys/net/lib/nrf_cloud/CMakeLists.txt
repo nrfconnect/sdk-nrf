@@ -11,4 +11,8 @@ zephyr_library_sources(
 	src/nrf_cloud_transport.c
 	src/nrf_cloud_sanity.c
 )
+zephyr_library_sources_ifdef(
+	CONFIG_NRF_CLOUD_AGPS
+	src/nrf_cloud_agps.c
+	src/nrf_cloud_agps_utils.c)
 zephyr_include_directories(./include)
