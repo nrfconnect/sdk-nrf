@@ -32,6 +32,13 @@ typedef enum {
 	MOTION_ORIENTATION_ON_SIDE      /**< System is placed on its side. */
 } motion_orientation_state_t;
 
+/**@brief Activity states. */
+typedef enum {
+	MOTION_ACTIVITY_NOT_KNOWN,	/**< Initial state. */
+	MOTION_ACTIVITY_ACTIVE,		/**< Activity threshold exceeded. */
+	MOTION_ACTIVITY_INACTIVE,	/**< Inactivity threshold exceeded. */
+} motion_activity_state_t;
+
 typedef struct {
 	double x;			/**< X-axis acceleration [m/s^2]. */
 	double y;			/**< y-axis acceleration [m/s^2]. */

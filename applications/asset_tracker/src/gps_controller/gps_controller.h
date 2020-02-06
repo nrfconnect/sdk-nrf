@@ -34,6 +34,8 @@ void gps_control_enable(void);
 
 void gps_control_disable(void);
 
+s64_t gps_control_get_last_active_time(void);
+
 #ifdef __cplusplus
 }
 #endif
