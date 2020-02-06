@@ -97,7 +97,7 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 {
 	default_conn = bt_conn_ref(conn);
 }
-
+/** .. include_startingpoint_scan_rst */
 static void scan_filter_no_match(struct bt_scan_device_info *device_info,
 				 bool connectable)
 {
@@ -118,7 +118,7 @@ static void scan_filter_no_match(struct bt_scan_device_info *device_info,
 		}
 	}
 }
-
+/** .. include_endpoint_scan_rst */
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
 		scan_connecting_error, scan_connecting);
 
