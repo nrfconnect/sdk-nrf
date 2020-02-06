@@ -214,7 +214,7 @@ static int at_parse_process_element(const char **str, int index,
 	} else if (state == SMS_PDU) {
 		const char *start_ptr = tmpstr;
 
-		while (isxdigit(*tmpstr)) {
+		while (isxdigit((int)*tmpstr)) {
 			tmpstr++;
 		}
 
@@ -241,7 +241,7 @@ static int at_parse_param(const char **at_params_str,
 	reset_state();
 
 	while ((!is_terminated(*str)) && (index < max_params)) {
-		if (isspace(*str)) {
+		if (isspace((int)*str)) {
 			str++;
 		}
 
