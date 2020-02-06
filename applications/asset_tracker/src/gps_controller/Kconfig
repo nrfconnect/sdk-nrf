@@ -56,6 +56,14 @@ config GPS_CONTROL_FIX_CHECK_INTERVAL
 	  and landscape, PSM interval and activty time requested and granted
 	  by the network.
 
+config GPS_CONTROL_FIX_CHECK_OVERDUE
+	int "Longest allowed time in seconds between checks for position fix"
+	default 900
+	help
+	  The fix check interval gives the interval for how long it will go
+	  between each retry to achieve position fix, when GPS_START_ON_MOTION
+	  enabled, even if no motion is detected.
+
 config GPS_CONTROL_FIX_TRY_TIME
 	int "Time in seconds to try to get fix"
 	default 180
@@ -87,4 +95,3 @@ module-str = GPS controller
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endmenu
-

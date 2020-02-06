@@ -116,6 +116,11 @@ static atomic_val_t send_data_enable;
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
 
+#if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
+/* Current state of activity monitor */
+static motion_activity_state_t last_activity_state = MOTION_ACTIVITY_NOT_KNOWN;
+#endif
+
 /* Variable to keep track of nRF cloud user association request. */
 static atomic_val_t association_requested;
 static atomic_val_t reconnect_to_cloud;
@@ -449,39 +454,113 @@ static void button_send(bool pressed)
 }
 #endif
 
+#if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
+static bool motion_activity_is_active(void)
+{
+	return (last_activity_state == MOTION_ACTIVITY_ACTIVE);
+}
+
+static void motion_trigger_gps(motion_data_t  motion_data)
+{
+	if (!gps_control_is_enabled()) {
+		return;
+	}
+
+	if (motion_activity_is_active()) {
+		static s64_t next_active_time;
+		s64_t last_active_time =
+			gps_control_get_last_active_time() / 1000;
+		s64_t now = k_uptime_get() / 1000;
+		s64_t time_since_fix_attempt = now - last_active_time;
+		s64_t time_until_next_attempt = next_active_time - now;
+
+		LOG_DBG("Last at %lld s, now %lld s, next %lld s; "
+			"%lld secs since last, %lld secs until next",
+			last_active_time, now, next_active_time,
+			time_since_fix_attempt, time_until_next_attempt);
+
+		if (time_until_next_attempt >= 0) {
+			LOG_DBG("keeping original schedule.");
+			return;
+		}
+
+		time_since_fix_attempt = MAX(0, (MIN(time_since_fix_attempt,
+			CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL)));
+		s64_t time_to_start_next_fix = 1 +
+			CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL -
+			time_since_fix_attempt;
+
+		next_active_time = now + time_to_start_next_fix;
+
+		char buf[100];
+
+		/* due to a known design issue in Zephyr, we need to use
+		 * snprintf to output floats; see:
+		 * https://github.com/zephyrproject-rtos/zephyr/issues/18351
+		 * https://github.com/zephyrproject-rtos/zephyr/pull/18921
+		 */
+		snprintf(buf, sizeof(buf),
+			"Motion triggering GPS; accel, %.1f, %.1f, %.1f",
+			motion_data.acceleration.x,
+			motion_data.acceleration.y,
+			motion_data.acceleration.z);
+		LOG_INF("%s", log_strdup(buf));
+
+		LOG_INF("starting GPS in %lld seconds", time_to_start_next_fix);
+		gps_control_start((uint32_t)K_SECONDS(time_to_start_next_fix));
+	}
+}
+#endif
+
 /**@brief Callback from the motion module. Sends motion data to cloud. */
 static void motion_handler(motion_data_t  motion_data)
 {
 	static motion_orientation_state_t last_orientation_state =
 		MOTION_ORIENTATION_NOT_KNOWN;
 
-	if (motion_data.orientation == last_orientation_state) {
+#if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
+	/* toggle state since the accelerometer does not yet report
+	 * which state occurred
+	 */
+	last_activity_state = (last_activity_state != MOTION_ACTIVITY_ACTIVE) ?
+			      MOTION_ACTIVITY_ACTIVE : MOTION_ACTIVITY_INACTIVE;
+#endif
+
+	if (gps_control_is_active()) {
 		return;
 	}
 
-	if (!flip_mode_enabled || !atomic_get(&send_data_enable)
-		|| gps_control_is_active()) {
-		return;
-	}
+	if (motion_data.orientation != last_orientation_state) {
 
-	struct cloud_msg msg = {
-		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_TOPIC_MSG
-	};
+		if (flip_mode_enabled && atomic_get(&send_data_enable)) {
 
-	int err;
+			struct cloud_msg msg = {
+				.qos = CLOUD_QOS_AT_MOST_ONCE,
+				.endpoint.type = CLOUD_EP_TOPIC_MSG
+			};
 
-	if (cloud_encode_motion_data(&motion_data, &msg) == 0) {
-		err = cloud_send(cloud_backend, &msg);
-		cloud_release_data(&msg);
-		if (err) {
-			LOG_ERR("Transmisison of motion data failed: %d", err);
-			cloud_error_handler(err);
-			return;
+			int err = 0;
+
+			if (cloud_encode_motion_data(&motion_data, &msg) == 0) {
+				err = cloud_send(cloud_backend, &msg);
+				cloud_release_data(&msg);
+				if (err) {
+					LOG_ERR("Transmisison of "
+						"motion data failed: %d", err);
+					cloud_error_handler(err);
+				}
+			}
+
+			if (!err) {
+				last_orientation_state =
+					motion_data.orientation;
+			}
 		}
 	}
 
-	last_orientation_state = motion_data.orientation;
+#if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
+	motion_trigger_gps(motion_data);
+#endif
 }
 
 static void cloud_cmd_handle_modem_at_cmd(const char * const at_cmd)

@@ -57,7 +57,15 @@ config GPS_SIM_TRIGGER_TIMER_MSEC
 	default 120000 if POWER_OPTIMIZATION_ENABLE
 	default 2000
 
-endmenu	# GPS
+config GPS_START_ON_MOTION
+	bool "Motion triggered GPS update"
+	default n
+	help
+	  When accelerometer detects movement, and GPS is enabled, update GPS
+	  position, but if no movement, wait a longer delay between updates
+	  to conserve power.
+
+endmenu # GPS
 
 menu "Device and modem"
 
