@@ -457,7 +457,6 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 #if defined(CONFIG_AWS_IOT_STATIC_IPV4)
 static int broker_init(void)
 {
-	int err;
 	struct sockaddr_in *broker4 =
 		((struct sockaddr_in *)&broker);
 
@@ -468,7 +467,7 @@ static int broker_init(void)
 
 	LOG_DBG("IPv4 Address %s", log_strdup(CONFIG_AWS_IOT_STATIC_IPV4_ADDR));
 
-	return err;
+	return 0;
 }
 #else
 static int broker_init(void)
@@ -485,7 +484,7 @@ static int broker_init(void)
 			  NULL, &hints, &result);
 	if (err) {
 		LOG_ERR("getaddrinfo, error %d", err);
-		return err;
+		return -ECHILD;
 	}
 
 	addr = result;
@@ -769,13 +768,31 @@ static int c_connect(const struct cloud_backend *const backend)
 	int err;
 
 	err = aws_iot_connect(NULL);
-	if (err) {
-		return err;
+
+	switch (err) {
+	case 0:
+		backend->config->socket = client.transport.tls.sock;
+		return CLOUD_CONNECT_RES_SUCCESS;
+	case -ECHILD:
+		return CLOUD_CONNECT_RES_ERR_NETWORK;
+	case -EACCES:
+		return CLOUD_CONNECT_RES_ERR_NOT_INITD;
+	case -ENOEXEC:
+		return CLOUD_CONNECT_RES_ERR_BACKEND;
+	case -EINVAL:
+		return CLOUD_CONNECT_RES_ERR_PRV_KEY;
+	case -EOPNOTSUPP:
+		return CLOUD_CONNECT_RES_ERR_CERT;
+	case -ECONNREFUSED:
+		return CLOUD_CONNECT_RES_ERR_CERT_MISC;
+	case -ETIMEDOUT:
+		return CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA;
+	case -ENOMEM:
+		return CLOUD_CONNECT_RES_ERR_NO_MEM;
+	default:
+		LOG_DBG("aws_iot_connect failed %d", err);
+		return CLOUD_CONNECT_RES_ERR_MISC;
 	}
-
-	backend->config->socket = client.transport.tls.sock;
-
-	return err;
 }
 
 static int c_disconnect(const struct cloud_backend *const backend)
