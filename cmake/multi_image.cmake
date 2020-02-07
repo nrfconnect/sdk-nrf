@@ -22,7 +22,10 @@ endfunction()
 
 if(IMAGE_NAME)
   share("set(${IMAGE_NAME}KERNEL_HEX_NAME ${KERNEL_HEX_NAME})")
+  # Share the elf file, in order to support symbol loading for debuggers.
+  share("set(${IMAGE_NAME}KERNEL_ELF_NAME ${KERNEL_ELF_NAME})")
   share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME})")
+  share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME})")
 
   file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/shared_vars.cmake
     CONTENT $<TARGET_PROPERTY:zephyr_property_target,shared_vars>
@@ -181,6 +184,7 @@ function(add_child_image_from_source name sourcedir)
 
   # Increase the scope of this variable to make it more available
   set(${name}_KERNEL_HEX_NAME ${${name}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
+  set(${name}_KERNEL_ELF_NAME ${${name}_KERNEL_ELF_NAME} CACHE STRING "" FORCE)
 
   if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(multi_image_build_args "-d" "${MULTI_IMAGE_DEBUG_MAKEFILE}")
