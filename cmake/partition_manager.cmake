@@ -106,6 +106,7 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
   foreach(part ${PM_ALL_BY_SIZE})
     string(TOUPPER ${part} PART)
     get_property(${part}_PM_HEX_FILE GLOBAL PROPERTY ${part}_PM_HEX_FILE)
+    get_property(${part}_PM_ELF_FILE GLOBAL PROPERTY ${part}_PM_ELF_FILE)
 
     # Process container partitions (if it has a SPAN list it is a container partition).
     if(DEFINED PM_${PART}_SPAN)
@@ -120,6 +121,7 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
     else()
       if(${part} IN_LIST images)
         set(${part}_PM_HEX_FILE ${CMAKE_BINARY_DIR}/${part}/zephyr/${${part}_KERNEL_HEX_NAME})
+        set(${part}_PM_ELF_FILE ${CMAKE_BINARY_DIR}/${part}/zephyr/${${part}_KERNEL_ELF_NAME})
         set(${part}_PM_TARGET ${part}_subimage)
       elseif(${part} IN_LIST containers)
         set(${part}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${part}.hex)
@@ -141,6 +143,7 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
     foreach(part ${PM_${CONTAINER}_SPAN})
       string(TOUPPER ${part} PART)
       list(APPEND ${container}hex_files ${${part}_PM_HEX_FILE})
+      list(APPEND ${container}elf_files ${${part}_PM_ELF_FILE})
       list(APPEND ${container}targets ${${part}_PM_TARGET})
     endforeach()
 
@@ -161,6 +164,10 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
       DEPENDS
       ${${container}targets}
       ${${container}hex_files}
+      # SES will load symbols from all elf files listed as dependencies to ${PROJECT_BINARY_DIR}/merged.hex.
+      # Therefore we add ${${container}elf_files} as dependency to ensure they are loaded by SES even though
+      # it is unnecessary for building the application.
+      ${${container}elf_files}
       )
 
     # Wrapper target for the merge command.
