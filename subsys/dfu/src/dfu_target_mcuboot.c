@@ -21,6 +21,7 @@
 #include <pm_config.h>
 #include <logging/log.h>
 #include <dfu/mcuboot.h>
+#include <dfu/dfu_target.h>
 #include <dfu/flash_img.h>
 #include <settings/settings.h>
 
@@ -31,7 +32,8 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 static struct flash_img_context flash_img;
 
-int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active, const char **update)
+int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
+				const char **update)
 {
 	if (file == NULL || update == NULL) {
 		return -EINVAL;
@@ -112,8 +114,9 @@ bool dfu_target_mcuboot_identify(const void *const buf)
 	return *((const u32_t *)buf) == MCUBOOT_HEADER_MAGIC;
 }
 
-int dfu_target_mcuboot_init(size_t file_size)
+int dfu_target_mcuboot_init(size_t file_size, dfu_target_callback_t cb)
 {
+	ARG_UNUSED(cb);
 	int err = flash_img_init(&flash_img);
 
 	if (err != 0) {
@@ -122,7 +125,8 @@ int dfu_target_mcuboot_init(size_t file_size)
 	}
 
 	if (file_size > PM_MCUBOOT_SECONDARY_SIZE) {
-		LOG_ERR("Requested file too big to fit in flash");
+		LOG_ERR("Requested file too big to fit in flash %d > %d",
+			file_size, PM_MCUBOOT_SECONDARY_SIZE);
 		return -EFBIG;
 	}
 

@@ -486,6 +486,15 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 			callback(AWS_FOTA_EVT_ERROR);
 		}
 		break;
+
+	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
+		callback(AWS_FOTA_EVT_ERASE_PENDING);
+		break;
+
+	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
+		callback(AWS_FOTA_EVT_ERASE_DONE);
+		break;
+
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		LOG_ERR("FOTA download failed, report back");
 		fota_state = NONE;

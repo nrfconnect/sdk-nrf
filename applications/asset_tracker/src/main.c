@@ -902,6 +902,9 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		break;
 	case CLOUD_EVT_FOTA_DONE:
 		LOG_INF("CLOUD_EVT_FOTA_DONE");
+#if defined(CONFIG_LTE_LINK_CONTROL)
+		lte_lc_power_off();
+#endif
 		sys_reboot(SYS_REBOOT_COLD);
 		break;
 	default:

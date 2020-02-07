@@ -17,6 +17,9 @@
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
 
+BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
+			"This sample does not support auto init and connect");
+
 #if defined(CONFIG_USE_NRF_CLOUD)
 #define NRF_CLOUD_SECURITY_TAG 16842753
 #endif
@@ -434,34 +437,42 @@ static int fds_init(struct mqtt_client *c)
 	return 0;
 }
 
-/**@brief Configures modem to provide LTE link.
- *
- * Blocks until link is successfully established.
- */
-static void modem_configure(void)
+/**@brief Configures AT Command interface to the modem link. */
+static void at_configure(void)
 {
-#if defined(CONFIG_LTE_LINK_CONTROL)
-	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
-			"This sample does not support auto init and connect");
 	int err;
 
 	err = at_notif_init();
 	__ASSERT(err == 0, "AT Notify could not be initialized.");
 	err = at_cmd_init();
 	__ASSERT(err == 0, "AT CMD could not be established.");
-	printk("LTE Link Connecting ...\n");
-	err = lte_lc_init_and_connect();
-	__ASSERT(err == 0, "LTE link could not be established.");
-	printk("LTE Link Connected!\n");
-#endif
 }
 
 static void aws_fota_cb_handler(enum aws_fota_evt_id evt)
 {
+	int err;
+
 	switch (evt) {
 	case AWS_FOTA_EVT_DONE:
 		printk("AWS_FOTA_EVT_DONE, rebooting to apply update.\n");
 		do_reboot = true;
+		break;
+
+	case AWS_FOTA_EVT_ERASE_PENDING:
+		printk("AWS_FOTA_EVT_ERASE_PENDING, reboot or disconnect the "
+		       "LTE link\n");
+		err = lte_lc_offline();
+		if (err) {
+			printk("Error turning off the LTE link\n");
+		}
+		break;
+
+	case AWS_FOTA_EVT_ERASE_DONE:
+		printk("AWS_FOTA_EVT_ERASE_DONE, reconnecting the LTE link\n");
+		err = lte_lc_connect();
+		if (err) {
+			printk("Error reconnecting the LTE link\n");
+		}
 		break;
 
 	case AWS_FOTA_EVT_ERROR:
@@ -505,10 +516,14 @@ void main(void)
 	}
 	printk("Initialized bsdlib\n");
 
+	at_configure();
 #if defined(CONFIG_PROVISION_CERTIFICATES)
 	provision_certificates();
 #endif /* CONFIG_PROVISION_CERTIFICATES */
-	modem_configure();
+	printk("LTE Link Connecting ...\n");
+	err = lte_lc_init_and_connect();
+	__ASSERT(err == 0, "LTE link could not be established.");
+	printk("LTE Link Connected!\n");
 
 	client_init(&client, CONFIG_MQTT_BROKER_HOSTNAME);
 
