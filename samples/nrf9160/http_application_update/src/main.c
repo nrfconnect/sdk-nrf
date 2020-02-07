@@ -127,11 +127,15 @@ static void modem_configure(void)
 	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
 	int err;
-
+#if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)
+	/* Initialize AT only if bsdlib_init() is manually
+	 * called by the main application
+	 */
 	err = at_notif_init();
 	__ASSERT(err == 0, "AT Notify could not be initialized.");
 	err = at_cmd_init();
 	__ASSERT(err == 0, "AT CMD could not be established.");
+#endif
 	printk("LTE Link Connecting ...\n");
 	err = lte_lc_init_and_connect();
 	__ASSERT(err == 0, "LTE link could not be established.");
@@ -167,7 +171,14 @@ void main(void)
 {
 	int err;
 	printk("Initializing bsdlib\n");
+#if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)
 	err = bsdlib_init();
+#else
+	/* If bsdlib is initialized on post-kernel we should
+	 * fetch the returned error code instead of bsdlib_init
+	 */
+	err = bsdlib_get_init_ret();
+#endif
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
