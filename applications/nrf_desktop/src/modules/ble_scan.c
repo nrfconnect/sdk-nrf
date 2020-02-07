@@ -39,6 +39,7 @@ struct subscriber_data {
 struct subscribed_peer {
 	bt_addr_le_t addr;
 	enum peer_type peer_type;
+	bool llpm_support;
 };
 
 static struct subscribed_peer subscribed_peers[CONFIG_BT_MAX_PAIRED];
@@ -221,6 +222,52 @@ static int configure_filters(void)
 	return err;
 }
 
+static bool is_llpm_peer_connected(void)
+{
+	bool llpm_peer_connected = false;
+
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
+			break;
+		}
+
+		struct bt_conn *conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT,
+						&subscribed_peers[i].addr);
+
+		if (conn) {
+			bt_conn_unref(conn);
+			if (subscribed_peers[i].llpm_support) {
+				llpm_peer_connected = true;
+				break;
+			}
+		}
+	}
+
+	return llpm_peer_connected;
+}
+
+static void update_init_conn_params(bool llpm_peer_connected)
+{
+	struct bt_le_conn_param cp = {
+		.latency = 0,
+		.timeout = 400,
+	};
+
+	/* In case LLPM peer is already connected, the next peer has to be
+	 * connected with 10 ms connection interval instead of 7.5 ms.
+	 * Connecting with 7.5 ms may cause Bluetooth scheduling issues.
+	 */
+	if (llpm_peer_connected) {
+		cp.interval_min = 8;
+		cp.interval_max = 8;
+	} else {
+		cp.interval_min = 6;
+		cp.interval_max = 6;
+	}
+
+	bt_scan_update_init_conn_params(&cp);
+}
+
 static void scan_start(void)
 {
 	size_t conn_count = count_conn();
@@ -237,6 +284,14 @@ static void scan_start(void)
 	} else if (discovering_peer_conn) {
 		LOG_INF("Discovery in progress");
 		return;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+		if (scanning) {
+			scan_stop();
+		}
+
+		update_init_conn_params(is_llpm_peer_connected());
 	}
 
 	err = configure_filters();
@@ -359,6 +414,7 @@ static void reset_subscribers(void)
 	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
 		bt_addr_le_copy(&subscribed_peers[i].addr, BT_ADDR_LE_NONE);
 		subscribed_peers[i].peer_type = PEER_TYPE_COUNT;
+		subscribed_peers[i].llpm_support = false;
 	}
 }
 
@@ -650,6 +706,8 @@ static bool event_handler(const struct event_header *eh)
 					bt_conn_get_dst(discovering_peer_conn));
 				subscribed_peers[i].peer_type =
 					event->peer_type;
+				subscribed_peers[i].llpm_support =
+					event->peer_llpm_support;
 				store_subscribed_peers();
 				break;
 			}
