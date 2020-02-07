@@ -11,6 +11,7 @@
 #include <sys/util.h>
 #include <nrfx_nvmc.h>
 #include <linker/linker-defs.h>
+#include <devicetree.h>
 
 
 void test_key_looping(void)
@@ -35,10 +36,12 @@ void test_validation(void)
 
 	/* 0x1000 to account for validation info. */
 	u32_t copy_len = (u32_t)_flash_used + 1000;
-	u32_t new_addr = ROUND_UP(PM_ADDRESS + copy_len, 0x1000);
+
+	/* Round up to at least the next SPU region. */
+	u32_t new_addr = ROUND_UP(PM_ADDRESS + copy_len, 0x8000);
 
 	for (u32_t erase_addr = new_addr; erase_addr < (new_addr + copy_len);
-		erase_addr += 0x1000) {
+		erase_addr += DT_SOC_NV_FLASH_0_ERASE_BLOCK_SIZE) {
 		u32_t ret = nrfx_nvmc_page_erase(new_addr);
 
 		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");

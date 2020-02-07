@@ -6,10 +6,10 @@
 
 #include <ztest.h>
 
-#include "fw_info.h"
-#include "pm_config.h"
-#include "flash.h"
-#include "power/reboot.h"
+#include <fw_info.h>
+#include <pm_config.h>
+#include <drivers/flash.h>
+#include <power/reboot.h>
 
 #define S1_ADDRESS 0x20000
 #define S1_SIZE 0x8000
