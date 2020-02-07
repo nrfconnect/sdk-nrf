@@ -75,7 +75,7 @@ static const char status2[] = "+CEREG:1";
 static const char status3[] = "+CEREG: 5";
 static const char status4[] = "+CEREG:5";
 
-static void wait_for_lte(void *context, char *response)
+static void wait_for_lte(void *context, const char *response)
 {
 	if (!memcmp(status1, response, AT_CMD_SIZE(status1)) ||
 		!memcmp(status2, response, AT_CMD_SIZE(status2)) ||

@@ -7,6 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "lte_params.h"
 #include "utils.h"
