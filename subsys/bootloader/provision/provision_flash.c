@@ -25,7 +25,7 @@ typedef struct {
 } provision_flash_t;
 
 
-#if defined(CONFIG_SOC_NRF9160)
+#if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
 static const provision_flash_t *p_provision_data =
 	(provision_flash_t *)&(NRF_UICR_S->OTP[0]);
 

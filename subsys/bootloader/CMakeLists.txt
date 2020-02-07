@@ -17,11 +17,11 @@ if (NOT IMAGE_NAME)
   zephyr_include_directories(include/dummy_values/)
 endif()
 
-if (DEFINED CONFIG_SOC_NRF9160)
+if (DEFINED CONFIG_SOC_NRF9160 OR DEFINED CONFIG_SOC_NRF5340_CPUAPP)
   message(WARNING "
       --------------------------------------------------------
       --- WARNING: When using the immutable bootloader on  ---
-      --- nRF9160, the UICR must be erased when flashing.  ---
+      --- this SoC, the UICR must be erased when flashing. ---
       --- E.g. by calling 'west flash --erase'             ---
       --------------------------------------------------------")
 endif()
