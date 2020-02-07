@@ -463,7 +463,6 @@ static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 	case NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK:
 		element->time_and_tow =
 			(struct nrf_cloud_agps_system_time *)(buf + len);
-		// TODO: Check calculations below with actual cloud response
 		len += sizeof(struct nrf_cloud_agps_system_time) -
 			sizeof(element->time_and_tow->sv_tow) + 4;
 		break;
@@ -546,8 +545,6 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 
 			LOG_DBG("TOWs copied, bitmask: 0x%08x",
 				element.time_and_tow->sv_mask);
-		} else if (element.type == NRF_CLOUD_AGPS_EPHEMERIDES) {
-			element.ephemeris->toc = element.ephemeris->toe;
 		}
 
 		err = agps_send_to_modem(&element);
