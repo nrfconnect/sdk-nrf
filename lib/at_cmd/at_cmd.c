@@ -308,6 +308,14 @@ void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 
 static int at_cmd_driver_init(struct device *dev)
 {
+	static bool initialized;
+
+	if (initialized) {
+		return 0;
+	}
+
+	initialized = true;
+
 	int err;
 
 	ARG_UNUSED(dev);
