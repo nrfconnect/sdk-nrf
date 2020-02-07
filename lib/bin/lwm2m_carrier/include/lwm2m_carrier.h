@@ -9,6 +9,11 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /**@file lwm2m_carrier.h
  *
  * @defgroup lwm2m_carrier_event LWM2M carrier library events
@@ -444,5 +449,9 @@ int lwm2m_carrier_memory_total_set(uint32_t memory_total);
  */
 int lwm2m_carrier_memory_free_read(void);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LWM2M_CARRIER_H__ */
