@@ -22,9 +22,10 @@ The network core is an Arm Cortex-M33 processor with a reduced feature set, desi
 This core is used for radio communication.
 With regards to the nRF5340 samples, this means that the network core runs the radio stack and real-time procedures.
 Currently, the following solutions are available for the network core:
+
 * Bluetooth Low Energy Controller - compatible with several BLE samples.
   Both the BLE Controller from Zephyr and :ref:`nrfxlib:ble_controller` are supported.
-* the :ref:`radio_test` sample that runs only on the network core and is used for testing the Radio peripheral.
+* The :ref:`radio_test` sample that runs only on the network core and is used for testing the Radio peripheral.
   To start the network core, this sample requires any sample programmed on the application core.
   For example, you can use :ref:`zephyr:hello_world` for this purpose.
 
@@ -38,17 +39,21 @@ Application core
 The application core is a full-featured Arm Cortex-M33 processor including DSP instructions and FPU.
 
 Currently, the |NCS| provides the following solutions for the application core:
+
 * high-level radio stack (the host part of the Bluetooth Low Energy stack) and application logic,
-* samples running only on the application core.
-  For example, NFC samples with nRF53 support.
+* samples running only on the application core (for example, NFC samples with nRF53 support).
 
 In general, this core should be used for tasks that require high performance and application-level logic.
 
 The board name for the application core in Zephyr is ``nrf5340_dk_nrf5340_cpuapp``.
 
-.. note::
-   The M33 TrustZone divides the application core into secure (``nrf5340_dk_nrf5340_cpuapp``) and non-secure (``nrf5340_dk_nrf5340_cpuappns``) domains.
-   However, all nRF5340 samples currently run in the secure domain, so you should not use the ``nrf5340_dk_nrf5340_cpuappns`` board.
+The user application can run in the secure or non-secure domain.
+Therefore, it can be built for two different board targets:
+
+* ``nrf5340_dk_nrf5340_cpuapp`` for the secure domain,
+* ``nrf5340_dk_nrf5340_cpuappns`` for the non-secure domain.
+
+When built for the ``nrf5340_dk_nrf5340_cpuappns`` board, the :ref:`nrf9160_ug_secure_partition_manager` is automatically included in the build.
 
 Inter-core communication
 ========================
@@ -74,6 +79,7 @@ Network samples
 ===============
 
 The |NCS| provides the following samples for the nRF53 network core:
+
 * :ref:`zephyr:bluetooth-hci-rpmsg-sample` - a Zephyr sample that implements a Bluetooth Low Energy controller.
   This sample must be programmed to the network core to run standard Bluetooth Low Energy samples on nRF5340.
 
@@ -117,36 +123,6 @@ Depending on the sample, you must program only the application core (for example
 
 Build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
 Make sure to use ``nrf5340_dk_nrf5340_cpunet`` as board name when building the network sample, and ``nrf5340_dk_nrf5340_cpuapp`` when building the application sample.
-
-.. important::
-   When programming the samples built with an older version of |SES|, you might get an error message stating that the target cannot be identified.
-   In this case, you can either modify your |SES| installation and projects to add support for programming nRF5340, or program the generated HEX files from the command line instead.
-
-   See the following sections for more information.
-
-
-Adding support for programming nRF5340 in SES (versions earlier than v4.40a)
-============================================================================
-
-The older versions of the Nordic Edition of |SES| (older than v4.40a) do not include SEGGER J-Link version v6.54c.
-However, this J-Link version is required to program nRF5340 devices.
-
-To add support for programming nRF5340 in |SES|, complete the following steps:
-
-1. Download and install the latest `J-Link Software and Documentation Pack`_ (v6.54c or later).
-#. Copy the :file:`JLink_x64.dll` file from the J-Link installation directory into the ``bin`` folder of your |SES| (Nordic Edition) folder, replacing the existing file.
-   On Windows, this file is by default located in ``C:/Program Files (x86)/SEGGER/JLink/JLink_x64.dll``.
-   Note that the file might be named differently for other operating systems.
-#. Restart |SES|.
-#. Open an |NCS| project with the full path to ``boards/arm/nrf5340_dk_nrf5340`` in the Zephyr repository as board directory and either ``nrf5340_dk_nrf5340_cpunet`` or ``nrf5340_dk_nrf5340_cpuapp`` as board name.
-#. Right-click on the project in the Project Explorer and select **Options**.
-#. Navigate to **Debug** > **Debugger**.
-#. Double-click the value for **Target Device** and select **nRF9160** from the list.
-   nRF5340 is not included in the list yet, but selecting nRF9160 sets the required configuration.
-#. Double-click the value for **Target Device** again and enter **nRF5340** in the search field.
-   Click **OK** to use this value.
-
-You can now build and program the sample for nRF5340.
 
 
 Programming from the command line
