@@ -38,6 +38,22 @@ config DFU_TARGET_MODEM
 	help
 	  Enable support for updates to the modem firmware.
 
+if (DFU_TARGET_MODEM)
+
+config DFU_TARGET_MODEM_TIMEOUT
+	int "Erase pending timeout"
+	default 60
+	help
+	  Set the timeout in seconds for how long the code will wait when
+	  reading DFU_ERASE_PENDING from the modem. If the timeout is reached
+	  an DFU_TARGET_EVT_TIMEOUT is issued and a disconnect of the LTE link
+	  is recommended so that the modem has time to service the
+	  DFU_ERASE_PENDING request. It's also possible to reboot the device to
+	  achive the same desired behavior.
+
+
+endif # DFU_TARGET_MODEM
+
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade

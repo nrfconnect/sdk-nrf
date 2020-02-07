@@ -43,6 +43,20 @@ static void send_progress(int offset)
 	callback(&evt);
 }
 
+static void dfu_target_callback_handler(enum dfu_target_evt_id evt)
+{
+	switch (evt) {
+	case DFU_TARGET_EVT_TIMEOUT:
+		send_evt(FOTA_DOWNLOAD_EVT_ERASE_PENDING);
+		break;
+	case DFU_TARGET_EVT_ERASE_DONE:
+		send_evt(FOTA_DOWNLOAD_EVT_ERASE_DONE);
+		break;
+	default:
+		send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+	}
+}
+
 static int download_client_callback(const struct download_client_evt *event)
 {
 	static bool first_fragment = true;
@@ -67,7 +81,8 @@ static int download_client_callback(const struct download_client_evt *event)
 			first_fragment = false;
 			int img_type = dfu_target_img_type(event->fragment.buf,
 							event->fragment.len);
-			err = dfu_target_init(img_type, file_size);
+			err = dfu_target_init(img_type, file_size,
+					      dfu_target_callback_handler);
 			if ((err < 0) && (err != -EBUSY)) {
 				LOG_ERR("dfu_target_init error %d", err);
 				return err;

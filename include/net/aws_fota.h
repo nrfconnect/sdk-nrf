@@ -25,7 +25,11 @@ enum aws_fota_evt_id {
 	/** AWS FOTA complete and status reported to job document */
 	AWS_FOTA_EVT_DONE,
 	/** AWS FOTA error */
-	AWS_FOTA_EVT_ERROR
+	AWS_FOTA_EVT_ERROR,
+	/** AWS FOTA Erase pending*/
+	AWS_FOTA_EVT_ERASE_PENDING,
+	/** AWS FOTA Erase done*/
+	AWS_FOTA_EVT_ERASE_DONE
 };
 
 typedef void (*aws_fota_callback_t)(enum aws_fota_evt_id evt_id);

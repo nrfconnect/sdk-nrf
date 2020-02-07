@@ -23,10 +23,17 @@ extern "C" {
 #define DFU_TARGET_IMAGE_TYPE_MCUBOOT 1
 #define DFU_TARGET_IMAGE_TYPE_MODEM_DELTA 2
 
+enum dfu_target_evt_id {
+	DFU_TARGET_EVT_TIMEOUT,
+	DFU_TARGET_EVT_ERASE_DONE
+};
+
+typedef void (*dfu_target_callback_t)(enum dfu_target_evt_id evt_id);
+
 /** @brief Functions which needs to be supported by all DFU targets.
  */
 struct dfu_target {
-	int (*init)(size_t file_size);
+	int (*init)(size_t file_size, dfu_target_callback_t cb);
 	int (*offset_get)(size_t *offset);
 	int (*write)(const void *const buf, size_t len);
 	int (*done)(bool successful);
@@ -58,12 +65,14 @@ int dfu_target_img_type(const void *const buf, size_t len);
  *
  * @param[in] img_type Image type identifier.
  * @param[in] file_size Size of the current file being downloaded.
+ * @param[in] cb Callback function in case the DFU operation requires additional
+ *		 proceedures to be called.
  *
  * @return 0 for a supported image type or a negative error
  *	   code identicating reason of failure.
  *
  **/
-int dfu_target_init(int img_type, size_t file_size);
+int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb);
 
 /**
  * @brief Get offset of the firmware upgrade

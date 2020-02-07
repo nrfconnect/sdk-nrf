@@ -458,6 +458,15 @@ static void aws_fota_cb_handler(enum aws_fota_evt_id evt)
 		nct_apply_update();
 		break;
 
+	case AWS_FOTA_EVT_ERASE_PENDING:
+		LOG_DBG("AWS_FOTA_EVT_ERASE_PENDING rebooting");
+		nct_apply_update();
+		break;
+
+	case AWS_FOTA_EVT_ERASE_DONE:
+		LOG_DBG("AWS_FOTA_EVT_ERASE_DONE.\n");
+		break;
+
 	case AWS_FOTA_EVT_ERROR:
 		LOG_ERR("AWS_FOTA_EVT_ERROR");
 		break;
