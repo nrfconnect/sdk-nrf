@@ -45,4 +45,4 @@ provision:
   size: CONFIG_PM_PARTITION_SIZE_PROVISION
   placement:
     after: b0_image
-    align: {start: 0x1000}
+    align: {start: DT_FLASH_ERASE_BLOCK_SIZE}

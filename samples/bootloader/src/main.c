@@ -58,7 +58,7 @@ static void boot_from(const struct fw_info *fw_info)
 		return;
 	}
 
-#ifndef CONFIG_SOC_NRF9160
+#if !(defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP))
 	/* Protect provision page after firmware is validated so invalidation
 	 * of public keys can be written directly into the page. Note that for
 	 * nRF91, the provision page is kept in OTP which does not need or
