@@ -47,6 +47,13 @@ struct bl_validate_fw_ext_api {
  * @retval  true   if the image is valid
  * @retval  false  if the image is invalid
  */
+bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address);
+
+/* Typedef for use in EXT_API declaration */
+typedef
+bool (*bl_validate_firmware_t)(u32_t fw_dst_address, u32_t fw_src_address);
+
+
 bool bl_validate_firmware_local(u32_t fw_address,
 				const struct fw_info *fwinfo);
 

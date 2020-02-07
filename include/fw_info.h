@@ -120,14 +120,6 @@ static inline const struct fw_info_ext_api *fw_info_ext_api_check(
 }
 
 
-/* Shorthand for declaring function that will be exposed through an EXT_API.
- * This will define a function pointer type as well as declare the function.
- */
-#define EXT_API_FUNCTION(retval, name, ...) \
-	typedef retval(*name ## _t)(__VA_ARGS__); \
-	retval name(__VA_ARGS__)
-
-
 /**
  * A struct that is used to request an EXT_API.
  *

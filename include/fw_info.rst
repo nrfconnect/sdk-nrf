@@ -126,6 +126,8 @@ To create an EXT_API, complete the following steps:
 
    .. code-block:: c
 
+      typedef int (*my_ext_api_foo_t)(bool arg1, int *arg2);
+
       struct my_ext_api {
       	struct fw_info_ext_api header;
       	struct {
@@ -151,12 +153,6 @@ To create an EXT_API, complete the following steps:
       	}
       };
       #endif
-
-#. To include function pointers in your EXT_API, call the :c:macro:`EXT_API_FUNCTION` macro to forward-declare the function and create a typedef for the function pointer:
-
-   .. code-block:: c
-
-      EXT_API_FUNCTION(int, my_ext_api_foo, bool arg1, int *arg2);
 
 #. Enable the EXT_API in Kconfig:
 
