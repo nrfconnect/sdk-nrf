@@ -72,6 +72,7 @@ class PlotNordic():
             self.plot_config['event_processing_rect_height'],
             self.plot_config['event_submit_markersize'])
         self.processed_events = ProcessedEvents()
+        self.finish_event = None
         self.submitted_event_type = None
 
         self.temp_events = []
@@ -167,6 +168,8 @@ class PlotNordic():
         fig.canvas.mpl_connect('button_release_event',
                                self.button_release_event)
         fig.canvas.mpl_connect('resize_event', self.resize_event)
+        fig.canvas.mpl_connect('close_event', self.close_event)
+
         plt.tight_layout()
 
         return fig
@@ -388,11 +391,10 @@ class PlotNordic():
     def resize_event(self, event):
         plt.tight_layout()
 
-    def real_time_close_event(self, event):
-        self.finish_event.set()
-        sys.exit()
-
-    def plot_from_file_close_event(self, event):
+    def close_event(self, event):
+        if self.finish_event is not None:
+            self.finish_event.set()
+        plt.close('all')
         sys.exit()
 
     def animate_events_real_time(self, fig, selected_events_types, one_line):
@@ -407,6 +409,7 @@ class PlotNordic():
             event = self.queue.get()
             if event is None:
                 self.logger.info("Stopped collecting new events")
+                self.close_event(None)
 
             if self.processed_events.tracking_execution:
                 if event.type_id == self.processed_events.event_processing_start_id:
@@ -523,8 +526,6 @@ class PlotNordic():
         self.start_stop_button.on_clicked(self.on_click_start_stop)
         plt.sca(self.draw_state.ax)
 
-        fig.canvas.mpl_connect('close_event', self.real_time_close_event)
-
         ani = animation.FuncAnimation(
             fig,
             self.animate_events_real_time,
@@ -574,8 +575,6 @@ class PlotNordic():
         self.draw_state.timeline_max = max(x) + 1
         self.draw_state.timeline_width = max(x) - min(x) + 2
         self.draw_state.ax.set_xlim([min(x) - 1, max(x) + 1])
-
-        fig.canvas.mpl_connect('close_event', self.plot_from_file_close_event)
 
         plt.draw()
         plt.show()
