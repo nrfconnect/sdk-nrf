@@ -11,6 +11,7 @@ They introduce you to important concepts and guide you through developing your a
 
    ug_app_dev
    ug_dev_model
+   ug_contribution
    ug_nrf9160
    ug_nrf5340
    ug_thingy91

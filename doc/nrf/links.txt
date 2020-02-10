@@ -19,6 +19,10 @@
 .. |ncs_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 .. _`fw-nrfconnect-nrf`: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 
+.. _`fork button on the fw-nrfconnect-nrf repository page`: https://github.com/NordicPlayground/fw-nrfconnect-nrf#fork-destination-box
+
+.. _`Pull requests tab`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/pulls
+
 .. |ncs_zephyr_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
 .. _`fw-nrfconnect-zephyr`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
 
