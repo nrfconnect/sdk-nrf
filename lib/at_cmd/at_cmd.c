@@ -182,6 +182,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 				if (response_buf_len > payload_len) {
 					memcpy(response_buf, item->data,
 					       payload_len);
+					response_buf[payload_len] = '\0';
 				} else {
 					LOG_ERR("Response buffer not large "
 						"enough");
