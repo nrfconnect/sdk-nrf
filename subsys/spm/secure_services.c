@@ -76,6 +76,8 @@ int spm_request_read(void *destination, u32_t addr, size_t len)
 		 .size = FICR_PUBLIC_SIZE},
 		{.start = FICR_RESTRICTED_ADDR,
 		 .size = FICR_RESTRICTED_SIZE},
+		{.start = (u32_t)NRF_UICR,
+		 .size = sizeof(NRF_UICR_Type)},
 	};
 
 	if (destination == NULL || len <= 0) {
