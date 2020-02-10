@@ -10,15 +10,12 @@ import matplotlib.animation as animation
 from matplotlib.widgets import Button
 from enum import Enum
 
-import csv
 import numpy as np
 import sys
-from time import sleep
 import time
-import threading
 import logging
 
-from events import Event, EventType, EventsData, TrackedEvent
+from events import TrackedEvent
 from processed_events import ProcessedEvents
 from plot_nordic_config import PlotNordicConfig
 
@@ -134,8 +131,8 @@ class PlotNordic():
         ticks = []
         labels = []
         for j in selected_events_types:
-            if j != self.processed_events.event_processing_start_id \
-              and j != self.processed_events.event_processing_end_id:
+            if j not in (self.processed_events.event_processing_start_id,
+                         self.processed_events.event_processing_end_id):
                 if j > maximum:
                     maximum = j
                 if j < minimum:
@@ -167,7 +164,7 @@ class PlotNordic():
         fig.canvas.mpl_connect('button_press_event', self.button_press_event)
         fig.canvas.mpl_connect('button_release_event',
                                self.button_release_event)
-        fig.canvas.mpl_connect('resize_event', self.resize_event)
+        fig.canvas.mpl_connect('resize_event', PlotNordic.resize_event)
         fig.canvas.mpl_connect('close_event', self.close_event)
 
         plt.tight_layout()
@@ -186,7 +183,7 @@ class PlotNordic():
         return x_rel, y_rel
 
     def scroll_event(self, event):
-        x_rel, y_rel = self._get_relative_coords(event)
+        x_rel, _ = self._get_relative_coords(event)
 
         if event.button == 'up':
             if self.draw_state.paused:
@@ -218,9 +215,9 @@ class PlotNordic():
                 return None
             matching_processing = list(
                 filter(
-                    lambda x: x.proc_start_time < x_coord and x.proc_end_time > x_coord,
+                    lambda x: x.proc_start_time < x_coord < x.proc_end_time,
                     filtered_id))
-            if len(matching_processing):
+            if matching_processing:
                 return matching_processing[0]
             dists = list(map(lambda x: min([abs(x.submit.timestamp - x_coord),
                abs(x.proc_start_time - x_coord), abs(x.proc_end_time - x_coord)]), filtered_id))
@@ -232,6 +229,7 @@ class PlotNordic():
             dists = list(map(lambda x: abs(x.timestamp - x_coord), filtered_id))
             return filtered_id[np.argmin(dists)]
 
+    @staticmethod
     def _stringify_time(time_seconds):
         if time_seconds > 0.1:
             return '%.5f' % (time_seconds) + ' s'
@@ -336,11 +334,12 @@ class PlotNordic():
                         self.draw_state.l_line = None
                         self.draw_state.l_line_coord = None
 
-                    if x_rel >= 0 and x_rel <= 1 and y_rel >= 0 and y_rel <= 1:
-                        self.draw_state.l_line_coord = self.draw_state.timeline_max - \
-                            (1 - x_rel) * self.draw_state.timeline_width
-                        self.draw_state.l_line = plt.axvline(
-                            self.draw_state.l_line_coord)
+                    if 0 <= x_rel <= 1:
+                        if 0 <= y_rel <= 1:
+                            self.draw_state.l_line_coord = self.draw_state.timeline_max - \
+                                (1 - x_rel) * self.draw_state.timeline_width
+                            self.draw_state.l_line = plt.axvline(
+                                self.draw_state.l_line_coord)
                     plt.draw()
 
                 else:
@@ -361,11 +360,12 @@ class PlotNordic():
                         self.draw_state.r_line = None
                         self.draw_state.r_line_coord = None
 
-                    if x_rel >= 0 and x_rel <= 1 and y_rel >= 0 and y_rel <= 1:
-                        self.draw_state.r_line_coord = self.draw_state.timeline_max - \
-                            (1 - x_rel) * self.draw_state.timeline_width
-                        self.draw_state.r_line = plt.axvline(
-                            self.draw_state.r_line_coord, color='r')
+                    if 0 <= x_rel <= 1:
+                        if 0 <= y_rel <= 1:
+                            self.draw_state.r_line_coord = self.draw_state.timeline_max - \
+                                (1 - x_rel) * self.draw_state.timeline_width
+                            self.draw_state.r_line = plt.axvline(
+                                self.draw_state.r_line_coord, color='r')
                     plt.draw()
 
         if self.draw_state.r_line_coord is not None and self.draw_state.l_line_coord is not None:
@@ -388,7 +388,8 @@ class PlotNordic():
                 self.draw_state.duration_marker.remove()
                 self.draw_state.duration_marker = None
 
-    def resize_event(self, event):
+    @staticmethod
+    def resize_event(event):
         plt.tight_layout()
 
     def close_event(self, event):
@@ -399,12 +400,10 @@ class PlotNordic():
 
     def animate_events_real_time(self, fig, selected_events_types, one_line):
         rects = []
-        finished = False
         events = []
         xranges = []
         for i in range(0, len(selected_events_types)):
             xranges.append([])
-        yranges = []
         while not self.queue.empty():
             event = self.queue.get()
             if event is None:
@@ -422,7 +421,7 @@ class PlotNordic():
                             self.processed_events.submit_event = self.temp_events[i]
                             events.append(self.temp_events[i])
                             self.submitted_event_type = self.processed_events.submit_event.type_id
-                            del(self.temp_events[i])
+                            del self.temp_events[i]
                             break
 
                 elif event.type_id == self.processed_events.event_processing_end_id:
@@ -547,7 +546,7 @@ class PlotNordic():
                 self.processed_events.raw_data.registered_events_types.keys())
 
         self.processed_events.match_event_processing()
-        fig = self._prepare_plot(selected_events_types)
+        self._prepare_plot(selected_events_types)
 
         x = list(map(lambda x: x.submit.timestamp, self.processed_events.tracked_events))
         y = list(map(lambda x: x.submit.type_id, self.processed_events.tracked_events))
