@@ -9,6 +9,7 @@
 
 .. _`Zephyr coding style`: http://docs.zephyrproject.org/contribute/contribute_guidelines.html
 
+
 .. ### Links to MCUboot
 
 .. _`MCUboot`: https://mcuboot.com
@@ -27,7 +28,6 @@
 .. _`nrfxlib`: https://github.com/NordicPlayground/nrfxlib
 
 .. _`change log`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/wiki/Changelog
-
 
 
 .. ### Links to Nordic documentation
@@ -188,11 +188,14 @@
 
 .. _`Battery Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245138
 
+.. _`Mesh Model Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
+
+.. _`Mesh Model Overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
+
 
 .. ### Links to NFC specs
 
 .. _`Bluetooth Secure Simple Pairing Using NFC`: http://nfc-forum.org/our-work/specifications-and-application-documents/application-documents
-
 
 
 .. ### Links to other documentation
