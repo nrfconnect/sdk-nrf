@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: 870fc37297cdb5a6e48782fc35d85a12d1f74675
+      revision: ff214d637e8391d94ef2c83612978aebd9cf0c57
     - name: segger
       revision: 6fcf61606d6012d2c44129edc033f59331e268bc
       path: modules/debug/segger
