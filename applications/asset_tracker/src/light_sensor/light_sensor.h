@@ -38,7 +38,8 @@ typedef void (*light_sensor_data_ready_cb)(void);
  *
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */
-int light_sensor_init_and_start(const light_sensor_data_ready_cb cb);
+int light_sensor_init_and_start(struct k_work_q *work_q,
+				const light_sensor_data_ready_cb cb);
 
 /**
  * @brief Get latest sampled light data.

@@ -51,7 +51,8 @@ typedef void (*motion_handler_t)(motion_data_t  motion_data);
  *
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */
-int motion_init_and_start(motion_handler_t motion_handler);
+int motion_init_and_start(struct k_work_q *work_q,
+			  motion_handler_t motion_handler);
 
 /**
  * @brief Manually trigger the motion module to fetch data.

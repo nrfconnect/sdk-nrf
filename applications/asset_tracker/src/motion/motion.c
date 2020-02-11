@@ -15,6 +15,8 @@ LOG_MODULE_REGISTER(motion, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 
 motion_handler_t handler;
 static struct device *accel_dev;
+static struct k_work_q *motion_work_q;
+static struct k_delayed_work motion_work;
 
 #define FLIP_ACCELERATION_THRESHOLD	5.0
 
@@ -99,6 +101,12 @@ static void sensor_trigger_handler(struct device *dev,
 	ARG_UNUSED(dev);
 	ARG_UNUSED(trigger);
 
+	k_delayed_work_submit_to_queue(motion_work_q, &motion_work, K_NO_WAIT);
+}
+
+/**@brief Workqueue handler that runs the callback provided by application.*/
+static void motion_work_q_handler(struct k_work *work)
+{
 	motion_data_t motion_data;
 
 	if (accelerometer_poll(&motion_data.acceleration) == 0) {
@@ -142,15 +150,19 @@ static int accelerometer_init(void)
 }
 
 /**@brief Initialize motion module. */
-int motion_init_and_start(motion_handler_t motion_handler)
+int motion_init_and_start(struct k_work_q *work_q,
+			  motion_handler_t motion_handler)
 {
-	if (motion_handler == NULL) {
+	if ((work_q == NULL) || (motion_handler == NULL)) {
 		return -EINVAL;
 	}
 
 	int err;
 
+	motion_work_q = work_q;
 	handler = motion_handler;
+
+	k_delayed_work_init(&motion_work, motion_work_q_handler);
 	err = accelerometer_init();
 
 	if (err) {
