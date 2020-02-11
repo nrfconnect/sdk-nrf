@@ -109,6 +109,13 @@ int clocks_start(void)
 		return err;
 	}
 
+	/* Block until clock is started.
+	 */
+	while (clock_control_get_status(clk, CLOCK_CONTROL_NRF_SUBSYS_HF) !=
+		CLOCK_CONTROL_STATUS_ON) {
+
+	}
+
 	LOG_DBG("HF clock started");
 	return 0;
 }
