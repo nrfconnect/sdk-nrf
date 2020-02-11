@@ -43,6 +43,7 @@ static struct ls_ch_data *ls_data[LS_CH__END] = { [LS_CH_RED] = &ls_ch_red,
 						  [LS_CH_IR] = &ls_ch_ir };
 static light_sensor_data_ready_cb ls_cb;
 static struct k_delayed_work ls_poller;
+static struct k_work_q *ls_work_q;
 static u32_t data_send_interval_s = CONFIG_LIGHT_SENSOR_DATA_SEND_INTERVAL;
 static bool initialized;
 
@@ -50,13 +51,19 @@ static void light_sensor_poll_fn(struct k_work *work);
 
 static inline int submit_poll_work(const u32_t delay_s)
 {
-	return k_delayed_work_submit(&ls_poller, K_SECONDS((u32_t)delay_s));
+	return k_delayed_work_submit_to_queue(ls_work_q, &ls_poller,
+					      K_SECONDS((u32_t)delay_s));
 }
 
-int light_sensor_init_and_start(const light_sensor_data_ready_cb cb)
+int light_sensor_init_and_start(struct k_work_q *work_q,
+				const light_sensor_data_ready_cb cb)
 {
 	if (!IS_ENABLED(CONFIG_LIGHT_SENSOR)) {
 		return -ENXIO;
+	}
+
+	if ((work_q == NULL) || (cb == NULL)) {
+		return -EINVAL;
 	}
 
 	ls_dev = device_get_binding(ls_dev_name);
@@ -65,6 +72,7 @@ int light_sensor_init_and_start(const light_sensor_data_ready_cb cb)
 		return -ENODEV;
 	}
 
+	ls_work_q = work_q;
 	ls_cb = cb;
 
 	k_delayed_work_init(&ls_poller, light_sensor_poll_fn);

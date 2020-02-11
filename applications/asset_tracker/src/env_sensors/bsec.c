@@ -80,6 +80,8 @@ static u32_t data_send_interval_s = CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL;
 static bool backoff_enabled;
 static bool initialized;
 
+static struct k_work_q *env_sensors_work_q;
+
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
@@ -242,8 +244,9 @@ int env_sensors_get_air_quality(env_sensor_data_t *sensor_data)
 
 static inline int submit_poll_work(const u32_t delay_s)
 {
-	return k_delayed_work_submit(&env_sensors_poller,
-				     K_SECONDS((u32_t)delay_s));
+	return k_delayed_work_submit_to_queue(env_sensors_work_q,
+					      &env_sensors_poller,
+					      K_SECONDS((u32_t)delay_s));
 }
 
 int env_sensors_poll(void)
@@ -266,10 +269,15 @@ static void env_sensors_poll_fn(struct k_work *work)
 		CONFIG_ENVIRONMENT_DATA_BACKOFF_TIME : data_send_interval_s);
 }
 
-int env_sensors_init_and_start(const env_sensors_data_ready_cb cb)
+int env_sensors_init_and_start(struct k_work_q *work_q,
+			       const env_sensors_data_ready_cb cb)
 {
 	return_values_init bsec_ret;
 	int ret;
+
+	if ((work_q == NULL) || (cb == NULL)) {
+		return -EINVAL;
+	}
 
 	i2c_master = device_get_binding("I2C_2");
 	if (!i2c_master) {
@@ -297,6 +305,8 @@ int env_sensors_init_and_start(const env_sensors_data_ready_cb cb)
 			CONFIG_SYSTEM_WORKQUEUE_PRIORITY, 0, K_NO_WAIT);
 
 	data_ready_cb = cb;
+
+	env_sensors_work_q = work_q;
 
 	k_delayed_work_init(&env_sensors_poller, env_sensors_poll_fn);
 

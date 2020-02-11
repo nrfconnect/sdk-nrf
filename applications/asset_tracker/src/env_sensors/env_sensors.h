@@ -89,7 +89,8 @@ int env_sensors_get_air_quality(env_sensor_data_t *sensor_data);
  *
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */
-int env_sensors_init_and_start(const env_sensors_data_ready_cb cb);
+int env_sensors_init_and_start(struct k_work_q *work_q,
+			       const env_sensors_data_ready_cb cb);
 
 /**
  * @brief Set environmental sensor's poll/send interval.

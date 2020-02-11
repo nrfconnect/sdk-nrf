@@ -17,6 +17,8 @@ LOG_MODULE_REGISTER(env_sensors, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 #define ENV_INIT_DELAY_S (5) /* Polling delay upon initialization */
 #define MAX_INTERVAL_S   (INT_MAX/MSEC_PER_SEC)
 
+static struct k_work_q *env_sensors_work_q;
+
 struct env_sensor {
 	env_sensor_data_t sensor;
 	enum sensor_channel channel;
@@ -67,8 +69,9 @@ static bool initialized;
 
 static inline int submit_poll_work(const u32_t delay_s)
 {
-	return k_delayed_work_submit(&env_sensors_poller,
-				     K_SECONDS((u32_t)delay_s));
+	return k_delayed_work_submit_to_queue(env_sensors_work_q,
+					      &env_sensors_poller,
+					      K_SECONDS((u32_t)delay_s));
 }
 
 int env_sensors_poll(void)
@@ -126,14 +129,21 @@ static void env_sensors_poll_fn(struct k_work *work)
 }
 
 /**@brief Initialize environment sensors. */
-int env_sensors_init_and_start(const env_sensors_data_ready_cb cb)
+int env_sensors_init_and_start(struct k_work_q *work_q,
+			       const env_sensors_data_ready_cb cb)
 {
+	if ((work_q == NULL) || (cb == NULL)) {
+		return -EINVAL;
+	}
+
 	for (int i = 0; i < ARRAY_SIZE(env_sensors); i++) {
 		env_sensors[i]->dev =
 			device_get_binding(env_sensors[i]->dev_name);
 		__ASSERT(env_sensors[i]->dev, "Could not get device %s\n",
 			env_sensors[i]->dev_name);
 	}
+
+	env_sensors_work_q = work_q;
 
 	data_ready_cb = cb;
 

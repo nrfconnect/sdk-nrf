@@ -1029,17 +1029,18 @@ static void sensors_init(void)
 {
 	int err;
 
-	err = motion_init_and_start(motion_handler);
+	err = motion_init_and_start(&application_work_q, motion_handler);
 	if (err) {
 		LOG_ERR("motion module init failed, error: %d", err);
 	}
 
-	err = env_sensors_init_and_start(env_data_send);
+	err = env_sensors_init_and_start(&application_work_q, env_data_send);
 	if (err) {
 		LOG_ERR("Environmental sensors init failed, error: %d", err);
 	}
 #if CONFIG_LIGHT_SENSOR
-	err = light_sensor_init_and_start(light_sensor_data_send);
+	err = light_sensor_init_and_start(&application_work_q,
+					  light_sensor_data_send);
 	if (err) {
 		LOG_ERR("Light sensor init failed, error: %d", err);
 	}
