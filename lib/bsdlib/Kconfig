@@ -5,13 +5,17 @@
 
 menu "BSD Library for nrf91"
 
+config BSD_LIBRARY_ALLOW_SECURE
+	bool "Allow usage of BSD library in secure(Experimental)"
+	default n
+
 config BSD_LIBRARY
 	bool
 	prompt "Use BSD Socket library for IP/TLS/DTLS"
 	select FLOAT
 	select FP_SHARING
 	imply NET_SOCKETS_OFFLOAD
-	depends on TRUSTED_EXECUTION_NONSECURE
+	depends on TRUSTED_EXECUTION_NONSECURE || BSD_LIBRARY_ALLOW_SECURE
 	help
 	  Use Nordic BSD Socket library.
 
