@@ -1,57 +1,80 @@
 .. _sample:
 
-Sample template
-###############
-
+Template: Sample
+################
 
 .. note::
-   Sections with * are optional.
+   * Give the sample a concise name that corresponds to the folder name.
+     If the sample targets a specific protocol or device, add it in the title before the sample name (for example, "NFC:" or "nRF9160:").
+     Do not include the word "sample" in the title.
+   * Put the documentation inside the sample folder and use the file name :file:`README.rst`.
+   * Use the provided stock phrases and includes when possible.
+   * Sections with * are optional and can be left out.
+     All other sections are required for all samples.
+     Do not add new sections (unless in the sections that allow for further subsections) without discussion with the tech writer team.
 
-The XYZ sample application demonstrates how to blink LEDs in the rhythm of the music that is played.
-
-.. tip::
-   Explain what this example demonstrates in one, max two sentences (full sentences, not sentence fragments).
-   You can go into more detail in the next section.
-
-
-Overview
-********
-
-You can use this sample application as a starting point to implement a disco light.
-
-The sample applicaton uses the ``:ref:RST link`` library to control the LEDs. In addition, it uses the ``:ref:RST link`` sound sensor and hooks up to some internet service to download cool blinking sequences.
+The Sample sample demonstrates how to blink LEDs in the rhythm of the music that is played.
 
 .. tip::
-   Continue the explanation on what this example is about.
-   What does it show, and why should users try it out?
-   What is the practical use? How can users extend this example? What libraries are used?
-   When linking, link to the conceptual documentation of other modules - these will in turn link to or contain the API documentation.
+   Explain what this sample demonstrates in one, max two sentences (full sentences, not sentence fragments).
+   This introduction should give users a clear idea of what the sample can be used for.
 
-Some title*
-===========
-.. note::
-   Add subsections for technical details. Give them a suitable title (sentence style capitalization, thus only the first word capitalized).
-
-The sample application repeatedly calls function ABC, which ...
-
-.. tip::
-   Do not state what people can see and understand from looking at the code. Instead, clarify general concepts or explain parts of the implementation that might be unintuitive for some reason. If there's nothing important to point out, do not include any subsections.
+   Think about use cases:
+   "The XYZ sample shows how to use the XYZ library" is not a good introduction, because customers do not want to use the XYZ library, but they want to get a task done.
+   Instead, write something like "The XYZ sample shows how to do this awesome task. It uses the XYZ library".
 
 
 Requirements
 ************
 
-* One of the following development boards:
+.. note::
+   * Supported kits are listed in a table, which is included from the :file:`doc/nrf/includes/boardname_tables/sample_boardnames.txt` file.
+     Check if a suitable set already exists, and if not, add a new one.
+     Select the set in the ``:start-after:`` and ``:end-before:`` configuration.
+   * If only one kit is supported, replace the introduction text with "The sample supports the following development kit:".
+   * If several kits are required to test the sample, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
+   * Mention additional requirements after the table.
+   * If SPM is included in the sample, add ``.. include:: /includes/spm.txt`` to include the standard text that states this.
 
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
-  * nRF51 Development Kit board (PCA10028)
+The sample supports the following development kits:
 
-* A Shazam account
-* A disco ball
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set1_start
+   :end-before: set1_end
+
+The sample also requires ...
+
+.. include:: /includes/spm.txt
+
+
+Overview
+********
+
+You can use this sample as a starting point to implement a disco light.
+
+The sample uses the ``:ref:RST link`` library to control the LEDs.
+In addition, it uses the ``:ref:RST link`` sound sensor and hooks up to some Internet service to download cool blinking sequences.
 
 .. tip::
-   Unless the sample is meant to go upstream, require a Nordic board, not "any board with BLE". Be specific - "any Nordic board" will also mean nRF24 ... When listing the supported boards, give both the name (nRF52 Development Kit board) and the board number (PCA10040).
+   Continue the explanation on what this sample is about.
+   What does it show, and why should users try it out?
+   What is the practical use?
+   How can users extend this sample?
+   What libraries are used (link to them)?
+
+
+Some title*
+===========
+.. note::
+   Add subsections for technical details.
+   Give them a suitable title (sentence style capitalization, thus only the first word capitalized).
+   If there is nothing important to point out, do not include any subsections.
+
+
+The sample repeatedly calls function ABC, which ...
+
+.. tip::
+   Do not just list the functions that are called, but clarify general concepts or explain parts of the implementation that might be unintuitive for some reason.
 
 
 Wiring*
@@ -61,33 +84,131 @@ Connect PIN1 to PIN2, then cut the connection again.
 
 User interface*
 ***************
+.. note::
+   Add button and LED assignments here, plus other information related to the user interface (for example, supported commands).
 
 Button 1:
-   Start or stop the disco show.
+   Does something.
 
-.. tip::
-   Add Button and LED assignments here, plus other information related to the user interface.
+Button 2:
+   Toggles something.
+
+LED 1:
+   On when connected.
+
+LED 2:
+   Indicates something.
+
+
+Configuration*
+**************
+
+.. note::
+   Always include this section if your sample can be configured by the user.
+   Start with the stock phrase that is included with ``|config|``.
+
+|config|
+
+Setup*
+======
+
+.. note::
+   Add information about the initial setup here, for example, that the user must install or enable some library before they can compile this sample, or set up and select a specific backend.
+   Most samples do not need this section.
+
+Configuration options*
+======================
+
+.. note::
+   * You do not need to list all configuration options of the sample, but only the ones that are important for the sample and make sense for the user to know about.
+   * The syntax below allows sample configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:option:`SAMPLE_CONFIG```, which results in :option:`SAMPLE_CONFIG`).
+   * For each configuration option, list the symbol name and the string describing it.
+
+Check and configure the following configuration options for the sample:
+
+.. option:: SAMPLE_CONFIG - Sample configuration
+
+   The sample configuration defines ...
+
+.. option:: ANOTHER_CONFIG - Another configuration
+
+   This configuration option specifies ...
+
+
+Additional configuration*
+=========================
+
+.. note::
+   * Add this section to describe and link to any library configuration options that might be important to run this sample.
+     You can link to options with ``:option:`CONFIG_XXX```.
+   * You do not need to list all possible configuration options, but only the ones that are relevant.
+
+Check and configure the following library options that are used by the sample:
+
+* :option:`CONFIG_BT_DEVICE_NAME` - Defines the Bluetooth device name.
+* :option:`CONFIG_BT_GATT_LBS` - Enables the :ref:`lbs_readme`.
+
+Configuration files*
+====================
+
+.. note::
+   Add this section if the sample provides predefined configuration files.
+
+The sample provides predefined configuration files for typical use cases.
+You can find the configuration files in the :file:`XXX` directory.
+
+The following files are available:
+
+* :file:`filename.conf` - Specific scenario.
+  This configuration file ...
 
 Building and running
 ********************
+
+.. note::
+   * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_nrf9160.txt``.
+   * Remember that the main IDE for |NCS| is |SES|.
+     Therefore, build instructions for SES are required.
+     Build instructions for the command line are optional.
+   * If the sample uses a non-standard setup, point it out and link to more information, if possible.
+
 .. |sample path| replace:: :file:`samples/XXX`
 
 .. include:: /includes/build_and_run.txt
 
+Note that this sample enables the :ref:`XXX <nrfxlib:nrfxlib>` stack.
+See REF for more information.
+
+Some title*
+===========
+
+.. note::
+   If required, add subsections for additional build instructions.
+   Use these subsections sparingly and only if the content does not fit into other sections (mainly Configuration).
+   If the additional build instructions are valid for other samples as well, consider adding them to the :ref:`getting_started` section instead and linking to them.
+
+
 Testing
 =======
 
-After programming the sample to your board, test it by performing the following steps:
+|test_sample|
 
-#. Connect to the board with some tool.
-#. UART settings.
-#. Press a button on the board.
+#. |connect_kit|
+#. |connect_terminal|
+#. Press a button on the development kit.
 #. Look at the flashing lights.
 #. And so on ...
+
+.. note::
+   * Use the shortcuts provided in :file:`doc/nrf/shortcuts.txt` to keep the wording consistent.
+   * If there are different ways of testing, introduce them in this section (for example, "After programming the sample to your development kit, you can test it either by ...") and add subsections for the different scenarios.
 
 
 Sample output*
 ==============
+
+.. note::
+   Add the full output of the sample in this section, or include parts of the output in the testing steps in the previous section.
 
 The following output is logged on RTT::
 
@@ -98,24 +219,6 @@ Troubleshooting*
 ================
 
 If the LEDs do not start blinking, check if the music is loud enough.
-
-Dependencies*
-*************
-
-This sample uses the following |NCS| libraries:
-
-* :ref:`customservice_readme`
-
-In addition, it uses the following Zephyr libraries:
-
-* ``include/console.h``
-* :ref:`zephyr:kernel_api`:
-
-  * ``include/kernel.h``
-
-.. tip::
-   If possible, link to the respective library.
-   If there is no documentation for the library, include the path.
 
 
 Known issues and limitations*
@@ -130,4 +233,45 @@ References*
 * Disco ball datasheet
 
 .. tip::
-   Do not include links to documents that are common to all or many of our samples. For example, the Bluetooth Spec or the DK user guides are always important, but shouldn't be listed. Include specific links, like a chapter in the Bluetooth Spec if the sample demonstrates the respective feature, or a link to the hardware pictures in the DK user guide if there is a lot of wiring required, or specific information about the feature that is presented in the sample.
+   * Do not duplicate links that have been mentioned in other sections before.
+   * Do not include links to documents that are common to all or many of our samples.
+     For example, the Bluetooth Spec or the DK user guides are always important, but shouldn't be listed.
+   * Include specific links, like a chapter in the Bluetooth Spec if the sample demonstrates the respective feature, or a link to the hardware pictures in the DK user guide if there is a lot of wiring required, or specific information about the feature that is presented in the sample.
+
+Dependencies*
+*************
+
+.. note::
+   * List all relevant libraries.
+     Standard libraries (for example, types.h, errno.h, or printk.h) do not need to be listed.
+   * Delete the parts that are not relevant.
+   * Drivers can be listed under libraries, no need for a separate part.
+   * If possible, link to the respective library.
+     If there is no documentation for the library, include the path.
+
+This sample uses the following |NCS| libraries:
+
+* :ref:`customservice_readme`
+
+It uses the following `nrfxlib`_ libraries:
+
+* :ref:`nrfxlib:softdevice_controller`
+
+It uses the following Zephyr libraries:
+
+* ``include/console.h``
+* :ref:`zephyr:kernel_api`:
+
+  * ``include/kernel.h``
+
+In addition, it uses the following samples:
+
+* :ref:`secure_partition_manager`
+
+The sample also uses drivers from `nrfx`_.
+
+Internal modules*
+*****************
+
+.. note::
+   Include this section only for applications (not samples), and only if there are internal modules that must be documented.
