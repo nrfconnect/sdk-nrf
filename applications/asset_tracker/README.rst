@@ -155,6 +155,9 @@ For example, configure ``CONFIG_POWER_OPTIMIZATION_ENABLE`` to enable power opti
 In |SES|, select **Project** > **Configure nRF Connect SDK project** to browse and configure these options.
 Alternatively, use the command line tool ``menuconfig`` or configure the options directly in ``prj.conf``.
 
+This application supports the |NCS| :ref:`ug_bootloader`, but it is disabled by default.
+To enable the immutable bootloader, set ``CONFIG_SECURE_BOOT=y``.
+
 Testing
 =======
 
