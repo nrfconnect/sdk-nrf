@@ -11,6 +11,7 @@
 #include <string.h>
 #include <hal/nrf_power.h>
 #include <power/reboot.h>
+#include <usb/usb_device.h>
 
 /* Overriding weak function to set iSerial runtime. */
 u8_t *usb_update_sn_string_descriptor(void)
@@ -231,6 +232,12 @@ void main(void)
 		uart_0_sd);
 	uart_irq_callback_user_data_set(uart_1_dev, uart_interrupt_handler,
 		uart_1_sd);
+
+	ret = usb_enable(NULL);
+	if (ret != 0) {
+		printk("Failed to enable USB\n");
+		return;
+	}
 
 	uart_irq_rx_enable(usb_0_dev);
 	uart_irq_rx_enable(usb_1_dev);
