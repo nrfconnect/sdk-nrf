@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <nrfx_nvmc.h>
+#include <sys/printk.h>
 
 
 /* These symbols are defined in linker scripts. */
@@ -66,14 +67,30 @@ static bool ext_api_satisfies_req(const struct fw_info_ext_api * const ext_api,
 		&& ((ext_api->ext_api_flags & req_flags) == req_flags));
 }
 
+
+static const struct fw_info_ext_api_request *skip_ext_apis(
+					const struct fw_info * const fw_info)
+{
+	const struct fw_info_ext_api *ext_api = &fw_info->ext_apis[0];
+
+	for (u32_t j = 0; j < fw_info->ext_api_num; j++) {
+		ADVANCE_EXT_API(ext_api);
+	}
+	return (const struct fw_info_ext_api_request *)ext_api;
+}
+
+
+#ifdef CONFIG_EXT_API_PROVIDE_EXT_API_UNUSED
 static const struct fw_info_ext_api *find_ext_api(
-		const struct fw_info_ext_api_request *ext_api_req)
+		const struct fw_info_ext_api_request *ext_api_req,
+		const struct fw_info * const skip_fw_info)
 {
 	for (u32_t i = 0; i < (u32_t)_fw_info_images_size; i++) {
 		const struct fw_info *fw_info =
 				fw_info_find(_fw_info_images_start[i]);
 
-		if (!fw_info || (fw_info->valid != CONFIG_FW_INFO_VALID_VAL)) {
+		if (!fw_info || (fw_info->valid != CONFIG_FW_INFO_VALID_VAL)
+		    || (fw_info == skip_fw_info)) {
 			continue;
 		}
 		const struct fw_info_ext_api *ext_api = &fw_info->ext_apis[0];
@@ -90,26 +107,22 @@ static const struct fw_info_ext_api *find_ext_api(
 }
 
 
-static const struct fw_info_ext_api_request *skip_ext_apis(
-					const struct fw_info * const fw_info)
-{
-	const struct fw_info_ext_api *ext_api = &fw_info->ext_apis[0];
-
-	for (u32_t j = 0; j < fw_info->ext_api_num; j++) {
-		ADVANCE_EXT_API(ext_api);
-	}
-	return (const struct fw_info_ext_api_request *)ext_api;
-}
-
-
+/* This is the "proper" implementation of fw_info_ext_api_provide(). If
+ * CONFIG_EXT_API_PROVIDE_EXT_API_REQUIRED is defined, we want to call the
+ * EXT_API instead, which happens below, in the #else clause.
+ */
 bool fw_info_ext_api_provide(const struct fw_info *fw_info, bool provide)
 {
+	if (fw_info == NULL) {
+		return false;
+	}
+
 	const struct fw_info_ext_api_request *ext_api_req =
 				skip_ext_apis(fw_info);
 
 	for (u32_t i = 0; i < fw_info->ext_api_request_num; i++) {
 		const struct fw_info_ext_api *new_ext_api =
-				 find_ext_api(ext_api_req);
+				 find_ext_api(ext_api_req, fw_info);
 
 		if (provide) {
 			/* Provide ext_api, or NULL. */
@@ -124,6 +137,35 @@ bool fw_info_ext_api_provide(const struct fw_info *fw_info, bool provide)
 	return true;
 }
 
+#else
+#ifdef CONFIG_EXT_API_PROVIDE_EXT_API_REQUIRED
+#define EXT_API_PROVIDE_EXT_API_REQUIRED 1
+#else
+#define EXT_API_PROVIDE_EXT_API_REQUIRED 0
+#endif
+EXT_API_REQ(EXT_API_PROVIDE, EXT_API_PROVIDE_EXT_API_REQUIRED,
+		struct ext_api_provide_ext_api, ext_api_provide);
+
+bool fw_info_ext_api_provide(const struct fw_info *fw_info, bool provide)
+{
+	if (ext_api_provide == NULL) {
+		/* Can only happen if the EXT_API is optional. */
+		return false;
+	}
+
+	/* Calls into the EXT_API */
+	return ext_api_provide->ext_api.ext_api_provide(fw_info, provide);
+}
+#endif
+
+
+#ifdef CONFIG_EXT_API_PROVIDE_EXT_API_ENABLED
+EXT_API(EXT_API_PROVIDE, struct ext_api_provide_ext_api,
+				ext_api_provide_ext_api) = {
+		.ext_api_provide = fw_info_ext_api_provide,
+	}
+};
+#endif
 
 static int check_ext_api_requests(struct device *dev)
 {
@@ -139,9 +181,12 @@ static int check_ext_api_requests(struct device *dev)
 			/* EXT_API requirement met. */
 		} else if (ext_api_req->required) {
 			/* EXT_API hard requirement not met. */
+			printk("ERROR: Cannot fulfill EXT_API request.\r\n");
 			k_panic();
 		} else {
 			/* EXT_API soft requirement not met. */
+			printk("WARNING: Optional EXT_API request not "
+				"fulfilled.\r\n");
 			*ext_api_req->ext_api = NULL;
 		}
 		ADVANCE_EXT_API_REQ(ext_api_req);

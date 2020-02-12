@@ -29,19 +29,16 @@ endchoice
 
 config $(EXT_API)_EXT_API_ATLEAST_OPTIONAL
 	bool
-	default n
 	help
 	  Can be selected to force at least OPTIONAL
 
 config $(EXT_API)_EXT_API_ATLEAST_REQUIRED
 	bool
-	default n
 	help
 	  Can be selected to force REQUIRED
 
 config $(EXT_API)_EXT_API_ENABLED
 	bool "Provide the $(EXT_API) EXT_API to other images."
-	default n
 	help
 	  Provide this EXT_API to other images.
 

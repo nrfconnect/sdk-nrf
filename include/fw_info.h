@@ -376,6 +376,9 @@ static inline const struct fw_info *fw_info_find(u32_t firmware_address)
  */
 bool fw_info_ext_api_provide(const struct fw_info *fwinfo, bool provide);
 
+typedef bool (*fw_info_ext_api_provide_t)(const struct fw_info *fwinfo,
+					bool provide);
+
 /**Invalidate an image by manipulating its fw_info.
  *
  * @details Invalidation happens by setting the @c valid value to 0x0.
@@ -386,6 +389,15 @@ bool fw_info_ext_api_provide(const struct fw_info *fwinfo, bool provide);
  *                      This memory will be modified directly in flash.
  */
 void fw_info_invalidate(const struct fw_info *fw_info);
+
+
+
+/**
+ * @brief Structure describing the EXT_API_PROVIDE EXT_API.
+ */
+struct ext_api_provide_ext_api {
+	fw_info_ext_api_provide_t ext_api_provide;
+};
 
   /** @} */
 
