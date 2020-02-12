@@ -49,7 +49,7 @@ manifest:
       remote: zephyrproject
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: cf6f91908cd1418831364b26dbbec9081e8cd7d4
+      revision: e6af9c03444b4f19b49bfd722b931f2d036ea918
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
