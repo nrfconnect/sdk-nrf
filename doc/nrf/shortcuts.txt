@@ -23,4 +23,4 @@
 .. |nRF51DK| replace:: nRF51 DK board (PCA10028)
 .. |nRF52DK| replace:: nRF52 DK board (PCA10040)
 .. |nRF52840Dongle| replace:: nRF52840 Dongle (PCA10059)
-.. |Thingy91| replace:: Thingy:91 (PCA20035)
+.. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
