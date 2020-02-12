@@ -38,7 +38,7 @@ manifest:
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
       west-commands: scripts/west-commands.yml
-      revision: ff214d637e8391d94ef2c83612978aebd9cf0c57
+      revision: v2.1.99-ncs1-rc2
     - name: segger
       revision: 6fcf61606d6012d2c44129edc033f59331e268bc
       path: modules/debug/segger
@@ -49,11 +49,11 @@ manifest:
       remote: zephyrproject
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: v1.4.99-ncs2-rc1
+      revision: v1.4.99-ncs2-rc2
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
-      revision: v0.0.1-ncs1-rc1
+      revision: v0.0.1-ncs1-rc2
       path: modules/lib/mcumgr
     - name: tinycbor
       path: modules/lib/tinycbor
@@ -69,7 +69,7 @@ manifest:
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: nrfxlib
-      revision: 7d5e7624ec7fdb071ab8def3ae772e5ee5b65f21
+      revision: v1.2.0-rc2
     - name: cmock
       path: test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
