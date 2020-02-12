@@ -104,4 +104,13 @@ config FW_INFO_VALID_VAL
 	help
 	  The value fw_info::valid will have when valid.
 
+EXT_API = EXT_API_PROVIDE
+id = 0x1200
+flags = 0
+ver = 1
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+
+config EXT_API_PROVIDE_EXT_API_ATLEAST_OPTIONAL
+	default y if MCUBOOT
+
 endif # FW_INFO
