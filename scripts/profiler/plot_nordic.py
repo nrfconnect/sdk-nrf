@@ -525,7 +525,7 @@ class PlotNordic():
         self.start_stop_button.on_clicked(self.on_click_start_stop)
         plt.sca(self.draw_state.ax)
 
-        ani = animation.FuncAnimation(
+        self.ani = animation.FuncAnimation(
             fig,
             self.animate_events_real_time,
             fargs=[
