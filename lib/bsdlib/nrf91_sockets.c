@@ -478,24 +478,45 @@ static int nrf91_socket_offload_accept(int sd, struct sockaddr *addr,
 				       socklen_t *addrlen)
 {
 	int retval;
+	struct nrf_sockaddr *nrf_addr_ptr = NULL;
+	nrf_socklen_t *nrf_addrlen_ptr = NULL;
+	/* Use `struct nrf_sockaddr_in6` to fit both, IPv4 and IPv6 */
+	struct nrf_sockaddr_in6 nrf_addr;
+	nrf_socklen_t nrf_addrlen;
 
-	struct nrf_sockaddr nrf_addr;
-	nrf_socklen_t nrf_addrlen = sizeof(nrf_addr);
+	if ((addr != NULL) && (addrlen != NULL)) {
+		nrf_addr_ptr = (struct nrf_sockaddr *)&nrf_addr;
+		nrf_addrlen_ptr = &nrf_addrlen;
 
-	retval = nrf_accept(sd, &nrf_addr, &nrf_addrlen);
+		/* Workaround for the bsdlib issue, making `nrf_accept` to
+		 * expect `nrf_addrlen` to be exactly of
+		 * sizeof(struct nrf_sockaddr_in) size for IPv4
+		 */
+		if (*addrlen == sizeof(struct sockaddr_in)) {
+			nrf_addrlen = sizeof(struct nrf_sockaddr_in);
+		} else {
+			nrf_addrlen = sizeof(struct nrf_sockaddr_in6);
+		}
+	}
+
+	retval = nrf_accept(sd, nrf_addr_ptr, nrf_addrlen_ptr);
 	if (retval < 0) {
 		/* nrf_accept sets errno appropriately */
 		return -1;
 	}
 
-	if (nrf_addr.sa_family == NRF_AF_INET) {
-		*addrlen = sizeof(struct sockaddr_in);
-		nrf_to_z_ipv4(addr, (const struct nrf_sockaddr_in *)&nrf_addr);
-	} else if (nrf_addr.sa_family == NRF_AF_INET6) {
-		*addrlen = sizeof(struct sockaddr_in6);
-		nrf_to_z_ipv6(addr, (const struct nrf_sockaddr_in6 *)&nrf_addr);
-	} else {
-		goto error;
+	if ((addr != NULL) && (addrlen != NULL)) {
+		if (nrf_addr_ptr->sa_family == NRF_AF_INET) {
+			*addrlen = sizeof(struct sockaddr_in);
+			nrf_to_z_ipv4(
+			    addr, (const struct nrf_sockaddr_in *)&nrf_addr);
+		} else if (nrf_addr_ptr->sa_family == NRF_AF_INET6) {
+			*addrlen = sizeof(struct sockaddr_in6);
+			nrf_to_z_ipv6(
+			    addr, (const struct nrf_sockaddr_in6 *)&nrf_addr);
+		} else {
+			goto error;
+		}
 	}
 
 	return retval;
