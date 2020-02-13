@@ -45,7 +45,7 @@ enum state {
 #define SUBSCRIBER_COUNT 2
 #define ITEM_COUNT MAX(MAX(MOUSE_REPORT_BUTTON_COUNT_MAX,  \
 			   KEYBOARD_REPORT_KEY_COUNT_MAX), \
-		       CONSUMER_CTRL_REPORT_KEY_COUNT_MAX)
+		       CTRL_REPORT_KEY_COUNT_MAX)
 
 /**@brief HID state item. */
 struct item {
@@ -107,8 +107,10 @@ static struct hid_state state = {
 		MOUSE_REPORT_BUTTON_COUNT_MAX,
 	.report_data[IN_REPORT_KEYBOARD_KEYS].items.item_count_max =
 		KEYBOARD_REPORT_KEY_COUNT_MAX,
+	.report_data[IN_REPORT_SYSTEM_CTRL].items.item_count_max =
+		CTRL_REPORT_KEY_COUNT_MAX,
 	.report_data[IN_REPORT_CONSUMER_CTRL].items.item_count_max =
-		CONSUMER_CTRL_REPORT_KEY_COUNT_MAX,
+		CTRL_REPORT_KEY_COUNT_MAX,
 };
 
 
@@ -633,16 +635,26 @@ static void send_report_mouse(void)
 	}
 }
 
-static void send_report_consumer_ctrl(void)
+static void send_report_ctrl(enum in_report report_type)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL) ||
+	    IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+		if (report_type == IN_REPORT_SYSTEM_CTRL) {
+			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL));
+		} else if (report_type == IN_REPORT_CONSUMER_CTRL) {
+			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL));
+		} else {
+			/* Unsupported report type. */
+			__ASSERT_NO_MSG(false);
+		}
+
 		struct report_data *rd =
-			&state.report_data[IN_REPORT_CONSUMER_CTRL];
+			&state.report_data[report_type];
 		const size_t max = ARRAY_SIZE(rd->items.item);
 
-		struct hid_consumer_ctrl_event *event =
-			new_hid_consumer_ctrl_event();
+		struct hid_ctrl_event *event = new_hid_ctrl_event();
 
+		event->report_type = report_type;
 		event->subscriber = state.selected->id;
 
 		/* Only one item can fit in the consumer control report. */
@@ -651,7 +663,7 @@ static void send_report_consumer_ctrl(void)
 		EVENT_SUBMIT(event);
 
 		rd->items.update_needed = false;
-	}  else {
+	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
 	}
@@ -707,7 +719,8 @@ static void report_send(enum in_report tr, bool check_state,
 		unsigned int pipeline_depth;
 
 		if ((state.selected->is_usb) ||
-		    (tr == IN_REPORT_CONSUMER_CTRL))  {
+		    (tr == IN_REPORT_CONSUMER_CTRL) ||
+		    (tr == IN_REPORT_SYSTEM_CTRL))  {
 			pipeline_depth = 1;
 		} else {
 			pipeline_depth = 2;
@@ -725,8 +738,9 @@ static void report_send(enum in_report tr, bool check_state,
 				send_report_mouse();
 				break;
 
+			case IN_REPORT_SYSTEM_CTRL:
 			case IN_REPORT_CONSUMER_CTRL:
-				send_report_consumer_ctrl();
+				send_report_ctrl(tr);
 				break;
 
 			default:
