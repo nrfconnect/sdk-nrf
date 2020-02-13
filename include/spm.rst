@@ -36,6 +36,7 @@ SRAM (256 kB)
 
 Peripherals configured as Non-Secure
    * CLOCK
+   * DPPI
    * EGU1, EGU2
    * FPU
    * GPIO (and GPIO pins)
@@ -43,12 +44,14 @@ Peripherals configured as Non-Secure
    * IPC
    * NVMC, VMC
    * PWM0-3
-   * RTC1
+   * REGULATORS
+   * RTC0, RTC1
    * SAADC
    * SPIM3
    * TIMER0-2
    * TWIM2
    * UARTE0, UARTE1
+   * WDT
 
 .. _lib_spm_secure_services:
 
