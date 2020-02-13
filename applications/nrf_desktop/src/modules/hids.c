@@ -36,8 +36,13 @@ static size_t report_index[REPORT_ID_COUNT];
 BT_GATT_HIDS_DEF(hids_obj,
 		 REPORT_SIZE_MOUSE,
 		 REPORT_SIZE_KEYBOARD_KEYS,
-		 REPORT_SIZE_KEYBOARD_LEDS,
-		 REPORT_SIZE_CONSUMER_CTRL
+		 REPORT_SIZE_KEYBOARD_LEDS
+#if CONFIG_DESKTOP_HID_SYSTEM_CTRL
+		 , REPORT_SIZE_CTRL
+#endif
+#if CONFIG_DESKTOP_HID_CONSUMER_CTRL
+		 , REPORT_SIZE_CTRL
+#endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		 , REPORT_SIZE_USER_CONFIG
 #endif
@@ -162,6 +167,11 @@ static void boot_keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 	async_notif_handler(evt, IN_REPORT_KEYBOARD_KEYS, REPORT_MODE_BOOT);
 }
 
+static void system_ctrl_notif_handler(enum bt_gatt_hids_notif_evt evt)
+{
+	async_notif_handler(evt, IN_REPORT_SYSTEM_CTRL, REPORT_MODE_PROTOCOL);
+}
+
 static void consumer_ctrl_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
 	async_notif_handler(evt, IN_REPORT_CONSUMER_CTRL, REPORT_MODE_PROTOCOL);
@@ -245,9 +255,18 @@ static int module_init(void)
 		ir_pos++;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL)) {
+		input_report[ir_pos].id      = REPORT_ID_SYSTEM_CTRL;
+		input_report[ir_pos].size    = REPORT_SIZE_CTRL;
+		input_report[ir_pos].handler = system_ctrl_notif_handler;
+
+		report_index[input_report[ir_pos].id] = ir_pos;
+		ir_pos++;
+	}
+
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
 		input_report[ir_pos].id      = REPORT_ID_CONSUMER_CTRL;
-		input_report[ir_pos].size    = REPORT_SIZE_CONSUMER_CTRL;
+		input_report[ir_pos].size    = REPORT_SIZE_CTRL;
 		input_report[ir_pos].handler = consumer_ctrl_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
@@ -441,6 +460,22 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	}
 }
 
+static void system_ctrl_report_sent(const struct bt_conn *conn, bool error)
+{
+	struct hid_report_sent_event *event = new_hid_report_sent_event();
+
+	event->report_type = IN_REPORT_SYSTEM_CTRL;
+	event->subscriber  = conn;
+	event->error = error;
+	EVENT_SUBMIT(event);
+}
+
+static void system_ctrl_report_sent_cb(struct bt_conn *conn, void *user_data)
+{
+	ARG_UNUSED(user_data);
+	system_ctrl_report_sent(conn, false);
+}
+
 static void consumer_ctrl_report_sent(const struct bt_conn *conn, bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
@@ -457,33 +492,57 @@ static void consumer_ctrl_report_sent_cb(struct bt_conn *conn, void *user_data)
 	consumer_ctrl_report_sent(conn, false);
 }
 
-static void send_consumer_ctrl_report(const struct hid_consumer_ctrl_event *event)
+static void send_ctrl_report(const struct hid_ctrl_event *event)
 {
+	bt_gatt_complete_func_t sent_cb = NULL;
+	enum report_id report_id = REPORT_ID_COUNT;
+	void (*sent_fn)(const struct bt_conn*, bool) = NULL;
+	enum in_report report_type = event->report_type;
+
+	switch (report_type) {
+	case IN_REPORT_SYSTEM_CTRL:
+		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL));
+		report_id = REPORT_ID_SYSTEM_CTRL;
+		sent_cb = system_ctrl_report_sent_cb;
+		sent_fn = system_ctrl_report_sent;
+	break;
+
+	case IN_REPORT_CONSUMER_CTRL:
+		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL));
+		report_id = REPORT_ID_CONSUMER_CTRL;
+		sent_cb = consumer_ctrl_report_sent_cb;
+		sent_fn = consumer_ctrl_report_sent;
+	break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+	}
+
 	if (cur_conn != event->subscriber) {
 		/* It's not us */
 		return;
 	}
 	__ASSERT_NO_MSG(cur_conn);
 
-	if (!report_enabled[IN_REPORT_CONSUMER_CTRL][report_mode]) {
+	if (!report_enabled[report_type][report_mode]) {
 		/* Notification disabled */
 		return;
 	}
 
-	u8_t report[REPORT_SIZE_CONSUMER_CTRL];
+	u8_t report[REPORT_SIZE_CTRL];
 
 	BUILD_ASSERT_MSG(ARRAY_SIZE(report) == sizeof(event->usage),
 			 "Incorrect data size in event");
 
-	/* Set selected flags */
+	/* Set selected usage */
 	sys_put_le16(event->usage, report);
 	int err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
-					report_index[REPORT_ID_CONSUMER_CTRL],
+					report_index[report_id],
 					report, sizeof(report),
-					consumer_ctrl_report_sent_cb);
+					sent_cb);
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);
-		consumer_ctrl_report_sent(cur_conn, true);
+		(*sent_fn)(cur_conn, true);
 	}
 }
 
@@ -555,9 +614,10 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL) &&
-	    is_hid_consumer_ctrl_event(eh)) {
-		send_consumer_ctrl_report(cast_hid_consumer_ctrl_event(eh));
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL) ||
+	     IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) &&
+	    is_hid_ctrl_event(eh)) {
+		send_ctrl_report(cast_hid_ctrl_event(eh));
 
 		return false;
 	}
@@ -618,7 +678,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
-EVENT_SUBSCRIBE(MODULE, hid_consumer_ctrl_event);
+EVENT_SUBSCRIBE(MODULE, hid_ctrl_event);
 EVENT_SUBSCRIBE(MODULE, hid_notification_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
