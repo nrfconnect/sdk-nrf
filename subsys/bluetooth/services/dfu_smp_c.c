@@ -89,12 +89,12 @@ int bt_gatt_dfu_smp_c_init(struct bt_gatt_dfu_smp_c *dfu_smp_c,
 int bt_gatt_dfu_smp_c_handles_assign(struct bt_gatt_dm *dm,
 				     struct bt_gatt_dfu_smp_c *dfu_smp_c)
 {
-	const struct bt_gatt_attr *gatt_service_attr =
+	const struct bt_gatt_dm_attr *gatt_service_attr =
 			bt_gatt_dm_service_get(dm);
 	const struct bt_gatt_service_val *gatt_service =
 			bt_gatt_dm_attr_service_val(gatt_service_attr);
-	const struct bt_gatt_attr *gatt_chrc;
-	const struct bt_gatt_attr *gatt_desc;
+	const struct bt_gatt_dm_attr *gatt_chrc;
+	const struct bt_gatt_dm_attr *gatt_desc;
 
 	if (bt_uuid_cmp(gatt_service->uuid, DFU_SMP_UUID_SERVICE)) {
 		return -ENOTSUP;

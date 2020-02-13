@@ -21,11 +21,27 @@
 extern "C" {
 #endif
 
-/** @brief Discovery manager instance
+/** @brief Discovery Manager instance
  *
  * The instance of the manager used by most of the functions here.
  */
 struct bt_gatt_dm;
+
+/** @brief Discovery Manager GATT attribute
+ *
+ * This structure is used to hold GATT attribute information.
+ * The Discovery Manager attribute descriptor is a reduced version of
+ * @ref bt_gatt_attr. The new definition is used to save memory that is used
+ * by this module.
+ */
+struct bt_gatt_dm_attr {
+	/** Attribute UUID */
+	struct bt_uuid	*uuid;
+	/** Attribute handle */
+	u16_t		handle;
+	/** Attribute permissions */
+	u8_t		perm;
+};
 
 /** @brief Discovery callback structure.
  *
@@ -86,7 +102,7 @@ struct bt_gatt_dm_cb {
  *         or NULL when attribute UUID value is unexpected.
  */
 struct bt_gatt_service_val *bt_gatt_dm_attr_service_val(
-	const struct bt_gatt_attr *attr);
+	const struct bt_gatt_dm_attr *attr);
 
 /** @brief Access characteristic value saved with characteristic attribute
  *
@@ -103,14 +119,14 @@ struct bt_gatt_service_val *bt_gatt_dm_attr_service_val(
  *         or NULL when attribute UUID value is unexpected.
  */
 struct bt_gatt_chrc *bt_gatt_dm_attr_chrc_val(
-	const struct bt_gatt_attr *attr);
+	const struct bt_gatt_dm_attr *attr);
 
 /** @brief Get the connection object
  *
  * Function returns connection object that is used by given
  * discovery manager instance.
  *
- * @param[in] dm Discovery manager instance
+ * @param[in] dm Discovery Manager instance
  *
  * @return Connection object.
  */
@@ -136,7 +152,8 @@ size_t bt_gatt_dm_attr_cnt(const struct bt_gatt_dm *dm);
  *
  * @return The pointer service value structure.
  */
-const struct bt_gatt_attr *bt_gatt_dm_service_get(const struct bt_gatt_dm *dm);
+const struct bt_gatt_dm_attr *bt_gatt_dm_service_get(
+	const struct bt_gatt_dm *dm);
 
 /** @brief Get next characteristic
  *
@@ -151,9 +168,9 @@ const struct bt_gatt_attr *bt_gatt_dm_service_get(const struct bt_gatt_dm *dm);
  * @return The pointer for an attribute that describes the characteristic
  *         or NULL if no more characteristic is present.
  */
-const struct bt_gatt_attr *bt_gatt_dm_char_next(
+const struct bt_gatt_dm_attr *bt_gatt_dm_char_next(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *prev);
+	const struct bt_gatt_dm_attr *prev);
 
 /** @brief Get the characteristic by its UUID
  *
@@ -171,7 +188,7 @@ const struct bt_gatt_attr *bt_gatt_dm_char_next(
  *         Returns NULL if no such characteristic is present in the
  *         current service.
  */
-const struct bt_gatt_attr *bt_gatt_dm_char_by_uuid(
+const struct bt_gatt_dm_attr *bt_gatt_dm_char_by_uuid(
 	const struct bt_gatt_dm *dm,
 	const struct bt_uuid *uuid);
 
@@ -185,7 +202,7 @@ const struct bt_gatt_attr *bt_gatt_dm_char_by_uuid(
  * @return The pointer to the attribute or NULL if there is no
  *         attribute with such a pointer.
  */
-const struct bt_gatt_attr *bt_gatt_dm_attr_by_handle(
+const struct bt_gatt_dm_attr *bt_gatt_dm_attr_by_handle(
 	const struct bt_gatt_dm *dm, u16_t handle);
 
 /** @brief Get next attribute
@@ -200,9 +217,9 @@ const struct bt_gatt_attr *bt_gatt_dm_attr_by_handle(
  * @return Attribute next to the @c prev
  *         or the first attribute if NULL is given.
  */
-const struct bt_gatt_attr *bt_gatt_dm_attr_next(
+const struct bt_gatt_dm_attr *bt_gatt_dm_attr_next(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *prev);
+	const struct bt_gatt_dm_attr *prev);
 
 
 /** @brief Search the descriptor by UUID
@@ -216,9 +233,9 @@ const struct bt_gatt_attr *bt_gatt_dm_attr_next(
  *
  * @return Pointer to the attribute or NULL if the attribute cannot be found.
  */
-const struct bt_gatt_attr *bt_gatt_dm_desc_by_uuid(
+const struct bt_gatt_dm_attr *bt_gatt_dm_desc_by_uuid(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *attr_chrc,
+	const struct bt_gatt_dm_attr *attr_chrc,
 	const struct bt_uuid *uuid);
 
 /** @brief Get next descriptor
@@ -238,9 +255,9 @@ const struct bt_gatt_attr *bt_gatt_dm_desc_by_uuid(
  * @return The pointer to the descriptor attribute
  *         or NULL if there is no more descriptors in the characteristic.
  */
-const struct bt_gatt_attr *bt_gatt_dm_desc_next(
+const struct bt_gatt_dm_attr *bt_gatt_dm_desc_next(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *prev);
+	const struct bt_gatt_dm_attr *prev);
 
 /** @brief Start service discovery.
  *
