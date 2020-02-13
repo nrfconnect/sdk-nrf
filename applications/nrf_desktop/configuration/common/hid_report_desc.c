@@ -118,6 +118,24 @@ const u8_t hid_report_desc[] = {
 	0xC0,		/* End Collection (Application) */
 #endif
 
+#if CONFIG_DESKTOP_HID_SYSTEM_CTRL
+	0x05, 0x01,     /* Usage page (Generic Desktop) */
+	0x09, 0x80,     /* Usage (System Control) */
+
+	0xA1, 0x01,     /* Collection (Application) */
+
+	0x85, REPORT_ID_SYSTEM_CTRL,
+	0x15, 0x00,       /* Logical minimum (0) */
+	0x26, 0xFF, 0x03, /* Logical maximum (0x3FF) */
+	0x19, 0x00,       /* Usage minimum (0) */
+	0x2A, 0xFF, 0x03, /* Usage maximum (0x3FF) */
+	0x75, 0x10,       /* Report Size (16) */
+	0x95, CTRL_REPORT_KEY_COUNT_MAX, /* Report Count */
+	0x81, 0x00,       /* Input (Data,Array,Absolute) */
+
+	0xC0,		/* End Collection */
+#endif
+
 #if CONFIG_DESKTOP_HID_CONSUMER_CTRL
 	/* Usage page - Consumer Control */
 	0x05, USAGE_PAGE_CONSUMER_CTRL,
@@ -128,10 +146,10 @@ const u8_t hid_report_desc[] = {
 	0x85, REPORT_ID_CONSUMER_CTRL,
 	0x15, 0x00,       /* Logical minimum (0) */
 	0x26, 0xFF, 0x03, /* Logical maximum (0x3FF) */
-	0x19, 0x00,       /* Usage minumum (0) */
+	0x19, 0x00,       /* Usage minimum (0) */
 	0x2A, 0xFF, 0x03, /* Usage maximum (0x3FF) */
 	0x75, 0x10,       /* Report Size (16) */
-	0x95, CONSUMER_CTRL_REPORT_KEY_COUNT_MAX, /* Report Count */
+	0x95, CTRL_REPORT_KEY_COUNT_MAX, /* Report Count */
 	0x81, 0x00,       /* Input (Data,Array,Absolute) */
 
 	0xC0		/* End Collection */
