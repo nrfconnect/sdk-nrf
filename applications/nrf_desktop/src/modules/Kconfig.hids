@@ -9,18 +9,22 @@ menu "BLE HID Service"
 config DESKTOP_HID_MOUSE
 	bool "Mouse HID device"
 	help
-	  This option controls if target is visible as mouse HID device.
+	  This option controls if target supoport HID mouse reports.
 
 config DESKTOP_HID_KEYBOARD
 	bool "Keyboard HID device"
 	help
-	  This option controls if target is visible as keyboard HID device.
+	  This option controls if target supports HID keyboard reports.
+
+config DESKTOP_HID_SYSTEM_CTRL
+	bool "System control HID device"
+	help
+	  This option controls if target supports HID system control reports.
 
 config DESKTOP_HID_CONSUMER_CTRL
 	bool "Consumer control HID device"
 	help
-	  This option controls if target is visible as consumer control HID
-	  device.
+	  This option controls if target supports HID consumer control reports.
 
 config DESKTOP_HIDS_ENABLE
 	bool
@@ -31,7 +35,8 @@ config DESKTOP_HID_PERIPHERAL
 	bool
 	default y
 	depends on BT_PERIPHERAL
-	depends on (DESKTOP_HID_MOUSE || DESKTOP_HID_KEYBOARD || DESKTOP_HID_CONSUMER_CTRL)
+	depends on (DESKTOP_HID_MOUSE || DESKTOP_HID_KEYBOARD || \
+		    DESKTOP_HID_SYSTEM_CTRL || DESKTOP_HID_CONSUMER_CTRL)
 	select BT_GATT_HIDS
 	select DESKTOP_BAS_ENABLE
 	select DESKTOP_HIDS_ENABLE

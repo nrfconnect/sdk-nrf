@@ -19,7 +19,7 @@ extern "C" {
 #define REPORT_SIZE_MOUSE_BOOT		3 /* bytes */
 #define REPORT_SIZE_KEYBOARD_KEYS	8 /* bytes */
 #define REPORT_SIZE_KEYBOARD_LEDS	1 /* bytes */
-#define REPORT_SIZE_CONSUMER_CTRL	2 /* bytes */
+#define REPORT_SIZE_CTRL		2 /* bytes */
 #define REPORT_SIZE_USER_CONFIG		29 /* bytes */
 
 #define USAGE_PAGE_MOUSE_XY		0x01
@@ -42,11 +42,15 @@ extern "C" {
 #define KEYBOARD_REPORT_LAST_MODIFIER	0xE7 /* Keyboard Right GUI */
 #define KEYBOARD_REPORT_KEY_COUNT_MAX	6
 
-#define CONSUMER_CTRL_REPORT_KEY_COUNT_MAX	1
+#define CTRL_REPORT_KEY_COUNT_MAX	1
+
+#define REPORT_ID_TO_IN_REPORT(report_id) (report_id - 1)
+#define IN_REPORT_TO_REPORT_ID(in_report) (in_report + 1)
 
 #define IN_REPORT_LIST		\
 	X(MOUSE)		\
 	X(KEYBOARD_KEYS)	\
+	X(SYSTEM_CTRL)		\
 	X(CONSUMER_CTRL)
 
 #define OUT_REPORT_LIST		\
