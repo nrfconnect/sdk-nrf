@@ -130,7 +130,7 @@ static const struct hid_keymap hid_keymap[] = {
 	{ FN_KEY_ID(0x03, 0x03), 0x0192, IN_REPORT_CONSUMER_CTRL }, /* calculator */
 	{ FN_KEY_ID(0x03, 0x0A), 0x00CD, IN_REPORT_CONSUMER_CTRL }, /* play/pause */
 	{ FN_KEY_ID(0x05, 0x0A), 0x00B5, IN_REPORT_CONSUMER_CTRL }, /* next track */
-	{ FN_KEY_ID(0x06, 0x02), 0x0032, IN_REPORT_CONSUMER_CTRL }, /* sleep */
+	{ FN_KEY_ID(0x06, 0x02), 0x0082, IN_REPORT_SYSTEM_CTRL },   /* sleep */
 	{ FN_KEY_ID(0x06, 0x03), 0x0196, IN_REPORT_CONSUMER_CTRL }, /* internet */
 	{ FN_KEY_ID(0x06, 0x0A), 0x021F, IN_REPORT_CONSUMER_CTRL }, /* find */
 	{ FN_KEY_ID(0x06, 0x0C), 0x0046, IN_REPORT_KEYBOARD_KEYS }, /* prt scr */
