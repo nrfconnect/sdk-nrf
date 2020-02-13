@@ -58,8 +58,8 @@ config DESKTOP_INIT_LOG_HID_MOUSE_EVENT
 	bool "HID mouse event"
 	default y
 
-config DESKTOP_INIT_LOG_HID_CONSUMER_CTRL_EVENT
-	bool "HID consumer control event"
+config DESKTOP_INIT_LOG_HID_CTRL_EVENT
+	bool "HID system/consumer control event"
 	default y
 
 config DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT

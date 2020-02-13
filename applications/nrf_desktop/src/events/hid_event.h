@@ -26,6 +26,7 @@
 extern "C" {
 #endif
 
+
 /** @brief Keyboard report data event. */
 struct hid_keyboard_event {
 	struct event_header header; /**< Event header. */
@@ -52,15 +53,16 @@ struct hid_mouse_event {
 EVENT_TYPE_DECLARE(hid_mouse_event);
 
 
-/** @brief Consumer control report data event. */
-struct hid_consumer_ctrl_event {
+/** @brief System/consumer control report data event. */
+struct hid_ctrl_event {
 	struct event_header header; /**< Event header. */
 
+	enum in_report report_type; /**< Type of HID control (system/consumer). */
 	const void *subscriber; /**< Id of the report subscriber. */
 	u16_t usage;            /**< Usage of CC button pressed. */
 };
 
-EVENT_TYPE_DECLARE(hid_consumer_ctrl_event);
+EVENT_TYPE_DECLARE(hid_ctrl_event);
 
 
 /** @brief Report subscriber event. */
