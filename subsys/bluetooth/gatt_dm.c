@@ -13,19 +13,28 @@
 LOG_MODULE_REGISTER(bt_gatt_dm, CONFIG_BT_GATT_DM_LOG_LEVEL);
 
 /* Available sizes: 128, 512, 2048... */
-#define CHUNK_SIZE (128 - sizeof(struct k_mem_block_id))
+#define CHUNK_DATA_SIZE (128 - sizeof(struct k_mem_block_id) \
+		- sizeof(struct data_chunk_item *))
 
-#if __CORTEX_M == (0UL)
-#define UUID_ALIGN 4U
-#else
-#define UUID_ALIGN 1U
-#endif
+#define DATA_ALIGN 4U
+
+/* They are placed in data_chunk without padding, so they must be aligned */
+BUILD_ASSERT(sizeof(struct bt_gatt_service_val) % DATA_ALIGN == 0);
+BUILD_ASSERT(sizeof(struct bt_gatt_chrc) % DATA_ALIGN == 0);
 
 /* Flags for parsed attribute array state */
 enum {
 	STATE_ATTRS_LOCKED,
 	STATE_ATTRS_RELEASE_PENDING,
 	STATE_NUM
+};
+
+/* One item in linked list containing dynamically allocated user data chunks */
+struct data_chunk_item {
+	/* Required by the sys_slist */
+	sys_snode_t node;
+	/* User data storage */
+	u8_t data[CHUNK_DATA_SIZE];
 };
 
 /* The instance structure real declaration */
@@ -38,21 +47,16 @@ struct bt_gatt_dm {
 	/* The discovery parameters used */
 	struct bt_gatt_discover_params discover_params;
 	/* Currently parsed attributes */
-	struct bt_gatt_attr attrs[CONFIG_BT_GATT_DM_MAX_ATTRS];
+	struct bt_gatt_dm_attr attrs[CONFIG_BT_GATT_DM_MAX_ATTRS];
 	/* Currently accessed attribute */
 	size_t cur_attr_id;
 	/* Flags with the status of the attributes */
 	ATOMIC_DEFINE(state_flags, STATE_NUM);
 
-	/* user data chunks */
-	struct {
-		/* The pointers to the dynamically allocated memory */
-		u8_t *chunks[CONFIG_BT_GATT_DM_MAX_MEM_CHUNKS];
-		/* Currently processed index */
-		size_t cur_id;
-		/* The used length of the current chunk */
-		size_t cur_len;
-	} data_chunk;
+	/* Single-linked list of allocated chunks for user data */
+	sys_slist_t chunk_list;
+	/* The used length of the current chunk */
+	size_t cur_chunk_len;
 
 	/* The pointer to callback structure */
 	const struct bt_gatt_dm_cb *callback;
@@ -61,69 +65,101 @@ struct bt_gatt_dm {
 /* Currently only one instance is supported */
 static struct bt_gatt_dm bt_gatt_dm_inst;
 
-
-static void *user_data_store(struct bt_gatt_dm *dm,
-			     const void *user_data,
+/* Returns pointer to newly allocated space in a dm->data_chunk */
+static void *user_data_alloc(struct bt_gatt_dm *dm,
 			     size_t len)
 {
 	u8_t *user_data_loc;
-	size_t cur_chunk_id = dm->data_chunk.cur_id;
+	struct data_chunk_item *item;
 
-	__ASSERT_NO_MSG(len <= CHUNK_SIZE);
+	/* Round up len to 32 bits to make sure that return pointers are always
+	 * correctly aligned.
+	 */
+	len = (len + DATA_ALIGN - 1) & ~(DATA_ALIGN - 1);
 
-	if (!(dm->data_chunk.chunks[cur_chunk_id])) {
-		dm->data_chunk.chunks[cur_chunk_id] = k_malloc(CHUNK_SIZE);
-		dm->data_chunk.cur_len = 0;
+	__ASSERT_NO_MSG(len <= CHUNK_DATA_SIZE);
 
-		if (!(dm->data_chunk.chunks[cur_chunk_id])) {
-			return NULL;
-		}
-	}
+	if (sys_slist_is_empty(&dm->chunk_list) ||
+	    dm->cur_chunk_len + len > CHUNK_DATA_SIZE) {
 
-	size_t misalign = dm->data_chunk.cur_len % UUID_ALIGN;
-	if (misalign) {
-		dm->data_chunk.cur_len += UUID_ALIGN - misalign;
-	}
+		item = k_malloc(sizeof(struct data_chunk_item));
 
-	if (dm->data_chunk.cur_len + len > CHUNK_SIZE) {
-		cur_chunk_id++;
-		dm->data_chunk.cur_id = cur_chunk_id;
-		if ((dm->data_chunk.chunks[cur_chunk_id]) ||
-		    (cur_chunk_id >= ARRAY_SIZE(dm->data_chunk.chunks))) {
-			LOG_ERR("Not enough data chunks");
+		if (!item) {
 			return NULL;
 		}
 
-		return user_data_store(dm, user_data, len);
+		sys_slist_append(&dm->chunk_list, &item->node);
+		dm->cur_chunk_len = 0;
+
+	} else {
+
+		item = SYS_SLIST_PEEK_TAIL_CONTAINER(&dm->chunk_list, item,
+						     node);
+
 	}
 
-	user_data_loc =
-		&dm->data_chunk.chunks[cur_chunk_id][dm->data_chunk.cur_len];
-	memcpy(user_data_loc, user_data, len);
-	dm->data_chunk.cur_len += len;
+	user_data_loc = &item->data[dm->cur_chunk_len];
+	dm->cur_chunk_len += len;
 
 	return user_data_loc;
 }
 
 static void svc_attr_memory_release(struct bt_gatt_dm *dm)
 {
+	sys_snode_t *node;
+	struct data_chunk_item *item;
+
 	LOG_DBG("Attr memory release");
+
 	/* Clear attributes */
-	memset(dm->attrs, 0, sizeof(dm->attrs));
 	dm->cur_attr_id = 0;
+
 	/* Release dynamic memory data chunks */
-	for (size_t i = 0; i <= dm->data_chunk.cur_id; i++) {
-		k_free(dm->data_chunk.chunks[i]);
-		dm->data_chunk.chunks[i] = NULL;
+	while (!sys_slist_is_empty(&dm->chunk_list)) {
+		node = sys_slist_get_not_empty(&dm->chunk_list);
+		item = CONTAINER_OF(node, struct data_chunk_item, node);
+		k_free(item);
 	}
-	dm->data_chunk.cur_id = 0;
-	dm->data_chunk.cur_len = 0;
+
+	dm->cur_chunk_len = 0;
 }
 
-static struct bt_gatt_attr *attr_store(struct bt_gatt_dm *dm,
-				       const struct bt_gatt_attr *attr)
+/* Returns size of UUID structure with padding for memory alignment */
+static size_t get_uuid_size(const struct bt_uuid *uuid)
 {
-	struct bt_gatt_attr *cur_attr;
+	switch (uuid->type) {
+	case BT_UUID_TYPE_16:
+		return sizeof(struct bt_uuid_16);
+	case BT_UUID_TYPE_32:
+		return sizeof(struct bt_uuid_32);
+	case BT_UUID_TYPE_128:
+		return sizeof(struct bt_uuid_128);
+	default:
+		LOG_ERR("Unsupported UUID type.");
+		return 0;
+	}
+}
+
+/** @brief Stores attribute in bt_gatt_dm instance.
+ *
+ * This function stores attr at dm->attrs array. Its UUID is stored in
+ * dm->data_chunk. The Discovery Manager attribute does not contain
+ * a pointer to the context data. This data could be either
+ * bt_gatt_service_val or bt_gatt_chrc. It is assumed that attribute context
+ * data (if any) is always placed before its UUID data. For this purpose,
+ * an additional buffer is allocated by this function and used later.
+ *
+ * @param[in] dm             Discovery instance
+ * @param[in] attr           Service attribute
+ * @param[in] additional_len Additional buffer length
+ *
+ * @return Pointer to newly stored attribute.
+ */
+static struct bt_gatt_dm_attr *attr_store(struct bt_gatt_dm *dm,
+					  const struct bt_gatt_attr *attr,
+					  size_t additional_len)
+{
+	struct bt_gatt_dm_attr *cur_attr;
 
 	LOG_DBG("Attr store, pos: %zu, handle: %"PRIu16,
 		dm->cur_attr_id,
@@ -132,14 +168,43 @@ static struct bt_gatt_attr *attr_store(struct bt_gatt_dm *dm,
 		LOG_ERR("No space for new attribute.");
 		return NULL;
 	}
+
+	size_t uuid_size = get_uuid_size(attr->uuid);
+	u8_t *attr_data = user_data_alloc(dm, additional_len + uuid_size);
+
+	if (!attr_data) {
+		LOG_ERR("No space for attribute data.");
+		return NULL;
+	}
+
 	cur_attr = &dm->attrs[(dm->cur_attr_id)++];
-	memcpy(cur_attr, attr, sizeof(*attr));
+	cur_attr->handle = attr->handle;
+	cur_attr->perm = attr->perm;
+	cur_attr->uuid = (struct bt_uuid *)&attr_data[additional_len];
+
+	memcpy(cur_attr->uuid, attr->uuid, uuid_size);
 
 	return cur_attr;
 }
 
-static const struct bt_gatt_attr *attr_find_by_handle_c(
-	const struct bt_gatt_dm *dm,
+static struct bt_uuid *uuid_store(struct bt_gatt_dm *dm,
+				  const struct bt_uuid *uuid)
+{
+	if (!uuid) {
+		LOG_ERR("Uninitialized UUID.");
+		return NULL;
+	}
+
+	size_t size = get_uuid_size(uuid);
+	void *buffer = user_data_alloc(dm, size);
+
+	memcpy(buffer, uuid, size);
+
+	return (struct bt_uuid *)buffer;
+}
+
+static struct bt_gatt_dm_attr *attr_find_by_handle(
+	struct bt_gatt_dm *dm,
 	u16_t handle)
 {
 	if (!dm->cur_attr_id) {
@@ -151,7 +216,7 @@ static const struct bt_gatt_attr *attr_find_by_handle_c(
 
 	while (upper >= lower) {
 		size_t m = (lower + upper) / 2;
-		const struct bt_gatt_attr *cur_attr = &dm->attrs[m];
+		struct bt_gatt_dm_attr *cur_attr = &dm->attrs[m];
 
 		if (cur_attr->handle < handle) {
 			lower = m + 1;
@@ -164,68 +229,6 @@ static const struct bt_gatt_attr *attr_find_by_handle_c(
 
 	/* handle not found */
 	return NULL;
-}
-
-static struct bt_gatt_attr *attr_find_by_handle(struct bt_gatt_dm *dm,
-						u16_t handle)
-{
-	/* Ugly casting but avoids code duplication for non-const getter */
-	return (struct bt_gatt_attr *)attr_find_by_handle_c(dm, handle);
-}
-
-static struct bt_uuid *uuid_16_store(struct bt_gatt_dm *dm,
-				     const struct bt_uuid *uuid)
-{
-	struct bt_uuid_16 *uuid_16 = BT_UUID_16(uuid);
-
-	__ASSERT_NO_MSG(uuid->type == BT_UUID_TYPE_16);
-
-	uuid_16 = user_data_store(dm, uuid_16, sizeof(*uuid_16));
-	if (!uuid_16) {
-		LOG_ERR("Could not store ATT UUID.");
-
-		return NULL;
-	}
-
-	return &uuid_16->uuid;
-}
-
-static struct bt_uuid *uuid_128_store(struct bt_gatt_dm *dm,
-				      const struct bt_uuid *uuid)
-{
-	struct bt_uuid_128 *uuid_128 = BT_UUID_128(uuid);
-
-	__ASSERT_NO_MSG(uuid->type == BT_UUID_TYPE_128);
-
-	uuid_128 = user_data_store(dm, uuid_128, sizeof(*uuid_128));
-
-	if (!uuid_128) {
-		LOG_ERR("Could not store ATT UUID.");
-
-		return NULL;
-	}
-
-	return &uuid_128->uuid;
-}
-
-static struct bt_uuid *uuid_store(struct bt_gatt_dm *dm,
-				  const struct bt_uuid *uuid)
-{
-	if (!uuid) {
-		LOG_ERR("Uninitialized UUID.");
-
-		return NULL;
-	}
-
-	switch (uuid->type) {
-	case BT_UUID_TYPE_16:
-		return uuid_16_store(dm, uuid);
-	case BT_UUID_TYPE_128:
-		return uuid_128_store(dm, uuid);
-	default:
-		LOG_ERR("Unsupported UUID type.");
-		return NULL;
-	}
 }
 
 static void discovery_complete(struct bt_gatt_dm *dm)
@@ -270,26 +273,29 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 	}
 
 	struct bt_gatt_service_val *service_val = attr->user_data;
-	struct bt_gatt_attr *cur_attr = attr_store(dm, attr);
+	struct bt_gatt_dm_attr *cur_attr =
+		attr_store(dm, attr, sizeof(*service_val));
+
+	__ASSERT_NO_MSG(bt_uuid_cmp(attr->uuid, BT_UUID_GATT_PRIMARY) == 0 ||
+			bt_uuid_cmp(attr->uuid, BT_UUID_GATT_SECONDARY) == 0);
 
 	if (!cur_attr) {
 		LOG_ERR("Not enough memory for service attribute.");
 		discovery_complete_error(dm, -ENOMEM);
 		return BT_GATT_ITER_STOP;
 	}
+
 	LOG_DBG("Service detected, handles range: <%u, %u>",
-		attr->handle + 1,
+		cur_attr->handle + 1,
 		service_val->end_handle);
 
-	cur_attr->uuid = uuid_store(dm, attr->uuid);
-	service_val = user_data_store(dm, service_val, sizeof(*service_val));
-	if (service_val) {
-		service_val->uuid = uuid_store(dm, service_val->uuid);
-		cur_attr->user_data = service_val;
-	}
+	struct bt_gatt_service_val *cur_service_val =
+		bt_gatt_dm_attr_service_val(cur_attr);
+	memcpy(cur_service_val, service_val, sizeof(*cur_service_val));
 
-	if (!cur_attr->uuid || !service_val ||
-	    !service_val->uuid) {
+	cur_service_val->uuid = uuid_store(dm, cur_service_val->uuid);
+
+	if (!cur_service_val->uuid) {
 		LOG_ERR("Not enough memory for service attribute data.");
 		discovery_complete_error(dm, -ENOMEM);
 		return BT_GATT_ITER_STOP;
@@ -297,8 +303,8 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 
 	dm->discover_params.uuid         = NULL;
 	dm->discover_params.type         = BT_GATT_DISCOVER_ATTRIBUTE;
-	dm->discover_params.start_handle = attr->handle + 1;
-	dm->discover_params.end_handle   = service_val->end_handle;
+	dm->discover_params.start_handle = cur_attr->handle + 1;
+	dm->discover_params.end_handle   = cur_service_val->end_handle;
 	LOG_DBG("Starting descriptors discovery");
 	err = bt_gatt_discover(dm->conn, &(dm->discover_params));
 
@@ -315,6 +321,8 @@ static u8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 					 const struct bt_gatt_attr *attr,
 					 struct bt_gatt_discover_params *params)
 {
+	struct bt_gatt_dm_attr *cur_attr;
+
 	if (!attr) {
 		if (dm->cur_attr_id > 1) {
 			LOG_DBG("Starting characteristic discovery");
@@ -337,18 +345,15 @@ static u8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 		return BT_GATT_ITER_STOP;
 	}
 
-	struct bt_gatt_attr *cur_attr = attr_store(dm, attr);
+	if (bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC) == 0) {
+		cur_attr = attr_store(dm, attr, sizeof(struct bt_gatt_chrc));
+	} else {
+		cur_attr = attr_store(dm, attr, 0);
+	}
 
 	if (!cur_attr) {
 		LOG_ERR("Not enough memory for next attribute descriptor"
 			" at handle %u.",
-			attr->handle);
-		discovery_complete_error(dm, -ENOMEM);
-		return BT_GATT_ITER_STOP;
-	}
-	cur_attr->uuid = uuid_store(dm, attr->uuid);
-	if (!cur_attr->uuid) {
-		LOG_ERR("Not enough memory for UUID at handle %u.",
 			attr->handle);
 		discovery_complete_error(dm, -ENOMEM);
 		return BT_GATT_ITER_STOP;
@@ -362,14 +367,18 @@ static u8_t discovery_process_characteristic(
 		const struct bt_gatt_attr *attr,
 		struct bt_gatt_discover_params *params)
 {
+	struct bt_gatt_chrc *gatt_chrc;
+	struct bt_gatt_dm_attr *cur_attr;
+	struct bt_gatt_chrc *cur_gatt_chrc;
+
 	if (!attr) {
 		discovery_complete(dm);
 		return BT_GATT_ITER_STOP;
 	}
 
-	struct bt_gatt_attr *cur_attr = attr_find_by_handle(dm, attr->handle);
-	struct bt_gatt_chrc *gatt_chrc;
+	__ASSERT_NO_MSG(bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC) == 0);
 
+	cur_attr = attr_find_by_handle(dm, attr->handle);
 	if (!cur_attr) {
 		/* We should never be here is the server is working properly */
 		discovery_complete_error(dm, -ESRCH);
@@ -377,13 +386,10 @@ static u8_t discovery_process_characteristic(
 	}
 
 	gatt_chrc = attr->user_data;
-	gatt_chrc = user_data_store(dm, gatt_chrc, sizeof(*gatt_chrc));
-	if (gatt_chrc) {
-		gatt_chrc->uuid = uuid_store(dm, gatt_chrc->uuid);
-		cur_attr->user_data = gatt_chrc;
-	}
-
-	if (!gatt_chrc || !gatt_chrc->uuid) {
+	cur_gatt_chrc = bt_gatt_dm_attr_chrc_val(cur_attr);
+	memcpy(cur_gatt_chrc, gatt_chrc, sizeof(*cur_gatt_chrc));
+	cur_gatt_chrc->uuid = uuid_store(dm, cur_gatt_chrc->uuid);
+	if (!cur_gatt_chrc->uuid) {
 		discovery_complete_error(dm, -ENOMEM);
 		return BT_GATT_ITER_STOP;
 	}
@@ -429,20 +435,20 @@ static u8_t discovery_callback(struct bt_conn *conn,
 }
 
 struct bt_gatt_service_val *bt_gatt_dm_attr_service_val(
-	const struct bt_gatt_attr *attr)
+	const struct bt_gatt_dm_attr *attr)
 {
 	if ((!bt_uuid_cmp(BT_UUID_GATT_PRIMARY, attr->uuid)) ||
 	    (!bt_uuid_cmp(BT_UUID_GATT_SECONDARY, attr->uuid))) {
-		return attr->user_data;
+		return &((struct bt_gatt_service_val *)attr->uuid)[-1];
 	}
 	return NULL;
 }
 
 struct bt_gatt_chrc *bt_gatt_dm_attr_chrc_val(
-	const struct bt_gatt_attr *attr)
+	const struct bt_gatt_dm_attr *attr)
 {
 	if (!bt_uuid_cmp(BT_UUID_GATT_CHRC, attr->uuid)) {
-		return attr->user_data;
+		return &((struct bt_gatt_chrc *)attr->uuid)[-1];
 	}
 	return NULL;
 }
@@ -457,21 +463,22 @@ size_t bt_gatt_dm_attr_cnt(const struct bt_gatt_dm *dm)
 	return dm->cur_attr_id;
 }
 
-const struct bt_gatt_attr *bt_gatt_dm_service_get(const struct bt_gatt_dm *dm)
+const struct bt_gatt_dm_attr *bt_gatt_dm_service_get(
+	const struct bt_gatt_dm *dm)
 {
 	return &(dm->attrs[0]);
 }
 
-const struct bt_gatt_attr *bt_gatt_dm_char_next(
+const struct bt_gatt_dm_attr *bt_gatt_dm_char_next(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *prev)
+	const struct bt_gatt_dm_attr *prev)
 {
 	if (!prev) {
 		prev = dm->attrs;
 	}
 
 	if (dm->attrs <= prev) {
-		const struct bt_gatt_attr *const end =
+		const struct bt_gatt_dm_attr *const end =
 			&(dm->attrs[dm->cur_attr_id]);
 		while (++prev < end) {
 			if (!bt_uuid_cmp(BT_UUID_GATT_CHRC, prev->uuid)) {
@@ -483,11 +490,11 @@ const struct bt_gatt_attr *bt_gatt_dm_char_next(
 	return NULL;
 }
 
-const struct bt_gatt_attr *bt_gatt_dm_char_by_uuid(
+const struct bt_gatt_dm_attr *bt_gatt_dm_char_by_uuid(
 	const struct bt_gatt_dm *dm,
 	const struct bt_uuid *uuid)
 {
-	const struct bt_gatt_attr *curr = NULL;
+	const struct bt_gatt_dm_attr *curr = NULL;
 
 	while ((curr = bt_gatt_dm_char_next(dm, curr)) != NULL) {
 		struct bt_gatt_chrc *chrc = bt_gatt_dm_attr_chrc_val(curr);
@@ -497,61 +504,64 @@ const struct bt_gatt_attr *bt_gatt_dm_char_by_uuid(
 			return curr;
 		}
 	}
+
 	return NULL;
 }
 
-const struct bt_gatt_attr *bt_gatt_dm_attr_by_handle(
+const struct bt_gatt_dm_attr *bt_gatt_dm_attr_by_handle(
 	const struct bt_gatt_dm *dm,
 	u16_t handle)
 {
-	return attr_find_by_handle_c(dm, handle);
+	return attr_find_by_handle((struct bt_gatt_dm *)dm, handle);
 }
 
-const struct bt_gatt_attr *bt_gatt_dm_attr_next(
+const struct bt_gatt_dm_attr *bt_gatt_dm_attr_next(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *prev)
+	const struct bt_gatt_dm_attr *prev)
 {
 	if (!prev) {
 		prev = dm->attrs;
 	}
 
 	if (dm->attrs <= prev) {
-		const struct bt_gatt_attr *const end =
+		const struct bt_gatt_dm_attr *const end =
 			&(dm->attrs[dm->cur_attr_id]);
 		if (++prev < end) {
 			return prev;
 		}
 	}
+
 	return NULL;
 }
 
-const struct bt_gatt_attr *bt_gatt_dm_desc_by_uuid(
+const struct bt_gatt_dm_attr *bt_gatt_dm_desc_by_uuid(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *attr_chrc,
+	const struct bt_gatt_dm_attr *attr_chrc,
 	const struct bt_uuid *uuid)
 {
-	const struct bt_gatt_attr *curr = attr_chrc;
+	const struct bt_gatt_dm_attr *curr = attr_chrc;
 
 	while ((curr = bt_gatt_dm_desc_next(dm, curr)) != NULL) {
 		if (!bt_uuid_cmp(uuid, curr->uuid)) {
 			break;
 		}
 	}
+
 	return curr;
 }
 
-const struct bt_gatt_attr *bt_gatt_dm_desc_next(
+const struct bt_gatt_dm_attr *bt_gatt_dm_desc_next(
 	const struct bt_gatt_dm *dm,
-	const struct bt_gatt_attr *prev)
+	const struct bt_gatt_dm_attr *prev)
 {
-	const struct bt_gatt_attr *curr = bt_gatt_dm_attr_next(dm, prev);
+	const struct bt_gatt_dm_attr *curr = bt_gatt_dm_attr_next(dm, prev);
 
 	if (curr && !bt_uuid_cmp(BT_UUID_GATT_CHRC, curr->uuid)) {
 		curr = NULL;
 	}
+
 	return curr;
 }
-
 
 int bt_gatt_dm_start(struct bt_conn *conn,
 		     const struct bt_uuid *svc_uuid,
@@ -581,8 +591,8 @@ int bt_gatt_dm_start(struct bt_conn *conn,
 	dm->context = context;
 	dm->callback = cb;
 	dm->cur_attr_id = 0;
-	dm->data_chunk.cur_len = 0;
-	dm->data_chunk.cur_id = 0;
+	sys_slist_init(&dm->chunk_list);
+	dm->cur_chunk_len = 0;
 
 	dm->discover_params.uuid = svc_uuid ? uuid_store(dm, svc_uuid) : NULL;
 	dm->discover_params.func = discovery_callback;
@@ -676,7 +686,7 @@ static void chrc_attr_data_print(const struct bt_gatt_chrc *gatt_chrc)
 }
 
 static void attr_print(const struct bt_gatt_dm *dm,
-		       const struct bt_gatt_attr *attr)
+		       const struct bt_gatt_dm_attr *attr)
 {
 	char str[UUID_STR_LEN];
 
@@ -686,9 +696,9 @@ static void attr_print(const struct bt_gatt_dm *dm,
 
 	if ((bt_uuid_cmp(attr->uuid, BT_UUID_GATT_PRIMARY) == 0) ||
 	    (bt_uuid_cmp(attr->uuid, BT_UUID_GATT_SECONDARY) == 0)) {
-		svc_attr_data_print(attr->user_data);
+		svc_attr_data_print(bt_gatt_dm_attr_service_val(attr));
 	} else if (bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC) == 0) {
-		chrc_attr_data_print(attr->user_data);
+		chrc_attr_data_print(bt_gatt_dm_attr_chrc_val(attr));
 	} else if (bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CCC) == 0) {
 		printk("\tCCCD\n");
 	}
@@ -696,7 +706,7 @@ static void attr_print(const struct bt_gatt_dm *dm,
 
 void bt_gatt_dm_data_print(const struct bt_gatt_dm *dm)
 {
-	const struct bt_gatt_attr *attr = NULL;
+	const struct bt_gatt_dm_attr *attr = NULL;
 
 	while (NULL != (attr = bt_gatt_dm_attr_next(dm, attr))) {
 		attr_print(dm, attr);

@@ -122,7 +122,7 @@ void test_gatt_none_serv(void)
  * first one can be accessed */
 void test_gatt_DIS_simple_next_attr(void)
 {
-	const struct bt_gatt_attr *attr;
+	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_DIS);
 
 	zassert_not_null(dm, "Device Manager pointer not set");
@@ -147,7 +147,7 @@ void test_gatt_DIS_simple_next_attr(void)
 
 void test_gatt_DIS_attr_by_handle(void)
 {
-	const struct bt_gatt_attr *attr;
+	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_DIS);
 
 	zassert_not_null(dm, "Device Manager pointer not set");
@@ -168,7 +168,7 @@ void test_gatt_DIS_attr_by_handle(void)
 
 void test_gatt_HIDS_simple_next_attr(void)
 {
-	const struct bt_gatt_attr *attr;
+	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_HIDS);
 
 	zassert_not_null(dm, "Device Manager pointer not set");
@@ -188,7 +188,7 @@ void test_gatt_HIDS_simple_next_attr(void)
 
 void test_gatt_HIDS_attr_by_handle(void)
 {
-	const struct bt_gatt_attr *attr;
+	const struct bt_gatt_dm_attr *attr;
 	struct bt_gatt_dm *dm = run_dm(BT_UUID_HIDS);
 
 	zassert_not_null(dm, "Device Manager pointer not set");
@@ -210,9 +210,9 @@ void test_gatt_HIDS_attr_by_handle(void)
 void test_gatt_HIDS_next_chrc_access(void)
 {
 	struct bt_gatt_dm *dm;
-	const struct bt_gatt_attr *attr_serv;
-	const struct bt_gatt_attr *attr_chrc;
-	const struct bt_gatt_attr *attr_desc;
+	const struct bt_gatt_dm_attr *attr_serv;
+	const struct bt_gatt_dm_attr *attr_chrc;
+	const struct bt_gatt_dm_attr *attr_desc;
 	const struct bt_gatt_service_val *serv_val;
 	const struct bt_gatt_chrc        *chrc_val;
 
@@ -308,8 +308,8 @@ void test_gatt_HIDS_next_chrc_access(void)
 void test_gatt_HIDS_chrc_by_uuid(void)
 {
 	struct bt_gatt_dm *dm;
-	const struct bt_gatt_attr *attr_chrc;
-	const struct bt_gatt_attr *attr_desc;
+	const struct bt_gatt_dm_attr *attr_chrc;
+	const struct bt_gatt_dm_attr *attr_desc;
 
 	dm = run_dm(BT_UUID_HIDS);
 	zassert_not_null(dm, "Device Manager pointer not set");
@@ -347,7 +347,7 @@ void test_gatt_HIDS_chrc_by_uuid(void)
 void test_gatt_generic_serv(void)
 {
 	struct bt_gatt_dm *dm;
-	const struct bt_gatt_attr *attr_serv;
+	const struct bt_gatt_dm_attr *attr_serv;
 	const struct bt_gatt_service_val *serv_val;
 
 	dm = run_dm(NULL);

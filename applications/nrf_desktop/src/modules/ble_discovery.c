@@ -164,7 +164,7 @@ static void discovery_completed(struct bt_gatt_dm *dm, void *context)
 	__ASSERT_NO_MSG(dm != NULL);
 	__ASSERT_NO_MSG(discovering_peer_conn == bt_gatt_dm_conn_get(dm));
 	const struct bt_uuid *uuid = NULL;
-	const struct bt_gatt_attr *attr;
+	const struct bt_gatt_dm_attr *attr;
 	int err;
 
 	switch (state) {

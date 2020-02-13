@@ -109,11 +109,11 @@ static void rep_free(struct bt_gatt_hids_c_rep_info **repp)
 static int rep_new(struct bt_gatt_hids_c *hids_c,
 		   struct bt_gatt_hids_c_rep_info **repp,
 		   const struct bt_gatt_dm *dm,
-		   const struct bt_gatt_attr *rep_chrc)
+		   const struct bt_gatt_dm_attr *rep_chrc)
 {
 	struct bt_gatt_hids_c_rep_info *rep;
 	const struct bt_gatt_chrc *chrc_val;
-	const struct bt_gatt_attr *gatt_desc;
+	const struct bt_gatt_dm_attr *gatt_desc;
 
 	rep = rep_alloc();
 	if (!rep) {
@@ -222,8 +222,8 @@ static u16_t chrc_value_handle_by_uuid(struct bt_gatt_dm *dm,
 				       struct bt_gatt_hids_c *hids_c,
 				       const struct bt_uuid *uuid)
 {
-	const struct bt_gatt_attr *gatt_chrc;
-	const struct bt_gatt_attr *gatt_desc;
+	const struct bt_gatt_dm_attr *gatt_chrc;
+	const struct bt_gatt_dm_attr *gatt_desc;
 
 	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, uuid);
 	if (!gatt_chrc) {
@@ -590,11 +590,11 @@ static int post_discovery_start(struct bt_gatt_hids_c *hids_c)
 static int handles_assign_internal(struct bt_gatt_dm *dm,
 				   struct bt_gatt_hids_c *hids_c)
 {
-	const struct bt_gatt_attr *gatt_service_attr =
+	const struct bt_gatt_dm_attr *gatt_service_attr =
 			bt_gatt_dm_service_get(dm);
 	const struct bt_gatt_service_val *gatt_service =
 			bt_gatt_dm_attr_service_val(gatt_service_attr);
-	const struct bt_gatt_attr *gatt_chrc;
+	const struct bt_gatt_dm_attr *gatt_chrc;
 	u16_t handle;
 	bool boot_protocol_required;
 	int ret;
@@ -657,7 +657,7 @@ static int handles_assign_internal(struct bt_gatt_dm *dm,
 	}
 
 	/* Keyboard boot records */
-	const struct bt_gatt_attr *gatt_chrc_kbd; /* Used temporary */
+	const struct bt_gatt_dm_attr *gatt_chrc_kbd; /* Used temporary */
 
 	gatt_chrc = bt_gatt_dm_char_by_uuid(dm,
 			BT_UUID_HIDS_BOOT_KB_IN_REPORT);

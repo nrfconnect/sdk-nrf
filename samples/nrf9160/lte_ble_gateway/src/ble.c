@@ -70,8 +70,8 @@ static void discovery_completed(struct bt_gatt_dm *disc, void *ctx)
 		.value = BT_GATT_CCC_NOTIFY,
 	};
 
-	const struct bt_gatt_attr *chrc;
-	const struct bt_gatt_attr *desc;
+	const struct bt_gatt_dm_attr *chrc;
+	const struct bt_gatt_dm_attr *desc;
 
 	chrc = bt_gatt_dm_char_by_uuid(disc, BT_UUID_TOC);
 	if (!chrc) {

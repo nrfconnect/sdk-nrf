@@ -34,7 +34,7 @@ static void discover_all_completed(struct bt_gatt_dm *dm, void *ctx)
 {
 	char uuid_str[37];
 
-	const struct bt_gatt_attr *gatt_service_attr =
+	const struct bt_gatt_dm_attr *gatt_service_attr =
 			bt_gatt_dm_service_get(dm);
 	const struct bt_gatt_service_val *gatt_service =
 			bt_gatt_dm_attr_service_val(gatt_service_attr);

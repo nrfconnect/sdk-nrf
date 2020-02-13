@@ -17,12 +17,6 @@ config BT_GATT_DM_MAX_ATTRS
 	help
 	  Maximum number of attributes that can be present in the discovered service.
 
-config BT_GATT_DM_MAX_MEM_CHUNKS
-	int "Maximum number of allocated memory chunks containing GATT attribute data"
-	default 6
-	help
-	  Maximum number of allocated memory blocks containing GATT attribute data.
-
 config BT_GATT_DM_DATA_PRINT
 	bool "Enable functions for printing discovery related data"
 	depends on BT_DEBUG
