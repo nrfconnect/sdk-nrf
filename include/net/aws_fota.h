@@ -22,6 +22,8 @@ extern "C" {
 #endif
 
 enum aws_fota_evt_id {
+	/** AWS FOTA has started */
+	AWS_FOTA_EVT_START,
 	/** AWS FOTA complete and status reported to job document */
 	AWS_FOTA_EVT_DONE,
 	/** AWS FOTA error */
@@ -29,10 +31,24 @@ enum aws_fota_evt_id {
 	/** AWS FOTA Erase pending*/
 	AWS_FOTA_EVT_ERASE_PENDING,
 	/** AWS FOTA Erase done*/
-	AWS_FOTA_EVT_ERASE_DONE
+	AWS_FOTA_EVT_ERASE_DONE,
+	/** AWS FOTA download progress */
+	AWS_FOTA_EVT_DL_PROGRESS,
 };
 
-typedef void (*aws_fota_callback_t)(enum aws_fota_evt_id evt_id);
+#define AWS_FOTA_EVT_DL_COMPLETE_VAL 100
+struct aws_fota_event_dl {
+	int progress; /* Download progress percent, 0-100 */
+};
+
+struct aws_fota_event {
+	enum aws_fota_evt_id id;
+	union {
+		struct aws_fota_event_dl dl;
+	};
+};
+
+typedef void (*aws_fota_callback_t)(struct aws_fota_event *fota_evt);
 
 /**@brief Initialize the AWS Firmware Over the Air library.
  *
@@ -58,6 +74,16 @@ int aws_fota_init(struct mqtt_client *const client,
  */
 int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			      const struct mqtt_evt *evt);
+
+/**@brief Get the null-terminated job id string.
+ *
+ * @param job_id_buf Buffer to which the job id will be copied.
+ * @param buf_size   Size of the buffer.
+ *
+ * @return Length of the job id string (not counting the terminating
+ *         null character) or a negative value on error.
+ */
+int aws_fota_get_job_id(u8_t *const job_id_buf, size_t buf_size);
 
 #ifdef __cplusplus
 }
