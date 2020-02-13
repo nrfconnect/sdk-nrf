@@ -58,6 +58,14 @@ config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
 	int "Size of the buffer for MQTT PUBLISH payload."
 	default 2048
 
+config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
+	int "Percentage increment at which FOTA download progress is reported"
+	depends on FOTA_DOWNLOAD_PROGRESS_EVT
+	range 0 100
+	default 10
+	help
+		0 disables progress report.
+
 module=NRF_CLOUD
 module-dep=LOG
 module-str=Log level for nRF Cloud
