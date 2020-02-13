@@ -39,9 +39,9 @@ struct keyboard_event_item {
 	struct hid_keyboard_event *evt;
 };
 
-struct consumer_ctrl_event_item {
+struct ctrl_event_item {
 	sys_snode_t node;
-	struct hid_consumer_ctrl_event *evt;
+	struct hid_ctrl_event *evt;
 };
 
 struct hids_subscriber {
@@ -61,7 +61,7 @@ static void *channel_id;
 
 static struct hid_mouse_event *next_mouse_event;
 static sys_slist_t keyboard_event_list;
-static sys_slist_t consumer_ctrl_event_list;
+static sys_slist_t ctrl_event_list;
 
 static struct k_spinlock lock;
 
@@ -271,10 +271,11 @@ static void process_keyboard_report(const u8_t *data)
 	k_spin_unlock(&lock, key);
 }
 
-static void process_consumer_ctrl_report(const u8_t *data)
+static void process_ctrl_report(const u8_t *data, enum in_report report_type)
 {
-	struct hid_consumer_ctrl_event *event = new_hid_consumer_ctrl_event();
+	struct hid_ctrl_event *event = new_hid_ctrl_event();
 
+	event->report_type = report_type;
 	event->subscriber = usb_id;
 	event->usage = sys_get_le16(data);
 
@@ -291,8 +292,7 @@ static void process_consumer_ctrl_report(const u8_t *data)
 		EVENT_SUBMIT(event);
 		usb_busy = true;
 	} else {
-		struct consumer_ctrl_event_item *evt_item =
-			k_malloc(sizeof(*evt_item));
+		struct ctrl_event_item *evt_item = k_malloc(sizeof(*evt_item));
 
 		if (!evt_item) {
 			LOG_ERR("OOM error");
@@ -300,7 +300,7 @@ static void process_consumer_ctrl_report(const u8_t *data)
 		}
 
 		evt_item->evt = event;
-		sys_slist_append(&consumer_ctrl_event_list, &evt_item->node);
+		sys_slist_append(&ctrl_event_list, &evt_item->node);
 	}
 	k_spin_unlock(&lock, key);
 }
@@ -327,8 +327,10 @@ static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 		process_keyboard_report(data);
 		break;
 
+	case REPORT_ID_SYSTEM_CTRL:
 	case REPORT_ID_CONSUMER_CTRL:
-		process_consumer_ctrl_report(data);
+		process_ctrl_report(data,
+			REPORT_ID_TO_IN_REPORT(bt_gatt_hids_c_rep_id(rep)));
 		break;
 
 	default:
@@ -384,6 +386,7 @@ static void init(void)
 		bt_gatt_hids_c_init(&subscribers[i].hidc, &params);
 	}
 	sys_slist_init(&keyboard_event_list);
+	sys_slist_init(&ctrl_event_list);
 
 	k_delayed_work_init(&config_fwd_timeout, forward_config_timeout);
 }
@@ -648,9 +651,9 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 	LOG_INF("HID device disconnected");
 
 	/* Release all pressed keys. */
-	u8_t empty_data[MAX(REPORT_SIZE_CONSUMER_CTRL,
+	u8_t empty_data[MAX(REPORT_SIZE_CTRL,
 			MAX(REPORT_SIZE_MOUSE,
-				REPORT_SIZE_KEYBOARD_KEYS))] = {0};
+			    REPORT_SIZE_KEYBOARD_KEYS))] = {0};
 	struct bt_gatt_hids_c_rep_info *rep = NULL;
 
 	while (NULL != (rep = bt_gatt_hids_c_rep_next(&subscriber->hidc, rep))) {
@@ -666,8 +669,10 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 				process_keyboard_report(empty_data);
 				break;
 
+			case REPORT_ID_SYSTEM_CTRL:
 			case REPORT_ID_CONSUMER_CTRL:
-				process_consumer_ctrl_report(empty_data);
+				process_ctrl_report(empty_data,
+					REPORT_ID_TO_IN_REPORT(bt_gatt_hids_c_rep_id(rep)));
 				break;
 
 			default:
@@ -707,18 +712,18 @@ static void clear_state(void)
 		key = k_spin_lock(&lock);
 	}
 
-	while (!sys_slist_is_empty(&consumer_ctrl_event_list)) {
-		sys_snode_t *c_ctrl_event_node =
-			sys_slist_get(&consumer_ctrl_event_list);
-		struct consumer_ctrl_event_item *next_item_c_ctrl;
+	while (!sys_slist_is_empty(&ctrl_event_list)) {
+		sys_snode_t *ctrl_event_node =
+			sys_slist_get(&ctrl_event_list);
+		struct ctrl_event_item *next_item_ctrl;
 
-		next_item_c_ctrl = CONTAINER_OF(c_ctrl_event_node,
-						struct consumer_ctrl_event_item,
-						node);
+		next_item_ctrl = CONTAINER_OF(ctrl_event_node,
+					      struct ctrl_event_item,
+					      node);
 
 		k_spin_unlock(&lock, key);
-		k_free(next_item_c_ctrl->evt);
-		k_free(next_item_c_ctrl);
+		k_free(next_item_ctrl->evt);
+		k_free(next_item_ctrl);
 		key = k_spin_lock(&lock);
 	}
 
@@ -736,7 +741,7 @@ static bool event_handler(const struct event_header *eh)
 		__ASSERT_NO_MSG(atomic_get(&usb_ready));
 
 		struct keyboard_event_item *next_item_kbd = NULL;
-		struct consumer_ctrl_event_item *next_item_c_ctrl = NULL;
+		struct ctrl_event_item *next_item_ctrl = NULL;
 		k_spinlock_key_t key = k_spin_lock(&lock);
 
 		if (!sys_slist_is_empty(&keyboard_event_list)) {
@@ -748,15 +753,15 @@ static bool event_handler(const struct event_header *eh)
 						     node);
 
 			EVENT_SUBMIT(next_item_kbd->evt);
-		} else if (!sys_slist_is_empty(&consumer_ctrl_event_list)) {
-			sys_snode_t *c_ctrl_event_node =
-				sys_slist_get(&consumer_ctrl_event_list);
+		} else if (!sys_slist_is_empty(&ctrl_event_list)) {
+			sys_snode_t *ctrl_event_node =
+				sys_slist_get(&ctrl_event_list);
 
-			next_item_c_ctrl = CONTAINER_OF(c_ctrl_event_node,
-						struct consumer_ctrl_event_item,
+			next_item_ctrl = CONTAINER_OF(ctrl_event_node,
+						struct ctrl_event_item,
 						node);
 
-			EVENT_SUBMIT(next_item_c_ctrl->evt);
+			EVENT_SUBMIT(next_item_ctrl->evt);
 		} else if (next_mouse_event) {
 			EVENT_SUBMIT(next_mouse_event);
 			next_mouse_event = NULL;
@@ -765,7 +770,7 @@ static bool event_handler(const struct event_header *eh)
 		}
 		k_spin_unlock(&lock, key);
 		k_free(next_item_kbd);
-		k_free(next_item_c_ctrl);
+		k_free(next_item_ctrl);
 
 		return false;
 	}

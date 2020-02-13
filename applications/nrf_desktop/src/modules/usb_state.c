@@ -252,8 +252,11 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 	}
 }
 
-static void send_consumer_ctrl_report(const struct hid_consumer_ctrl_event *event)
+static void send_ctrl_report(const struct hid_ctrl_event *event)
 {
+	__ASSERT_NO_MSG((event->report_type == IN_REPORT_SYSTEM_CTRL) ||
+			(event->report_type == IN_REPORT_CONSUMER_CTRL));
+
 	if (&state != event->subscriber) {
 		/* It's not us */
 		return;
@@ -264,22 +267,22 @@ static void send_consumer_ctrl_report(const struct hid_consumer_ctrl_event *even
 		return;
 	}
 
-	u8_t buffer[REPORT_SIZE_CONSUMER_CTRL + sizeof(u8_t)];
+	u8_t buffer[REPORT_SIZE_CTRL + sizeof(u8_t)];
 
 	if (hid_protocol == HID_PROTOCOL_REPORT) {
 		__ASSERT(sizeof(buffer) == 3, "Invalid report size");
 		/* Encode report. */
-		buffer[0] = REPORT_ID_CONSUMER_CTRL;
+		buffer[0] = IN_REPORT_TO_REPORT_ID(event->report_type);
 		sys_put_le16(event->usage, &buffer[1]);
 	} else {
 		/* Do not send when in boot mode. */
-		sent_report_type = IN_REPORT_CONSUMER_CTRL;
+		sent_report_type = event->report_type;
 		report_sent(false);
 		return;
 	}
 
 	__ASSERT_NO_MSG(sent_report_type == IN_REPORT_COUNT);
-	sent_report_type = IN_REPORT_CONSUMER_CTRL;
+	sent_report_type = event->report_type;
 
 	int err = hid_int_ep_write(usb_dev, buffer, sizeof(buffer), NULL);
 
@@ -329,6 +332,17 @@ static void broadcast_subscription_change(void)
 		event_kbd->subscriber  = &state;
 
 		EVENT_SUBMIT(event_kbd);
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL)) {
+		struct hid_report_subscription_event *event_system_ctrl =
+			new_hid_report_subscription_event();
+
+		event_system_ctrl->report_type = IN_REPORT_SYSTEM_CTRL;
+		event_system_ctrl->enabled     = (state == USB_STATE_ACTIVE);
+		event_system_ctrl->subscriber  = &state;
+
+		EVENT_SUBMIT(event_system_ctrl);
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
@@ -494,9 +508,10 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL) &&
-	    is_hid_consumer_ctrl_event(eh)) {
-		send_consumer_ctrl_report(cast_hid_consumer_ctrl_event(eh));
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL) ||
+	     IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) &&
+	    is_hid_ctrl_event(eh)) {
+		send_ctrl_report(cast_hid_ctrl_event(eh));
 
 		return false;
 	}
@@ -553,7 +568,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
-EVENT_SUBSCRIBE(MODULE, hid_consumer_ctrl_event);
+EVENT_SUBSCRIBE(MODULE, hid_ctrl_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_forwarded_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_event);
