@@ -144,12 +144,24 @@ config SPM_NRF_GPIOTE1_NS
 	bool "GPIOTE1 IRQ available in Non-Secure domain"
 	default y
 
+config SPM_NRF_UARTE0_NS
+	bool "UARTE0 is Non-Secure"
+	default n
+
 config SPM_NRF_UARTE1_NS
 	bool "UARTE1 is Non-Secure"
 	default y
 
 config SPM_NRF_UARTE2_NS
 	bool "UARTE2 is Non-Secure"
+	default n
+
+config SPM_NRF_UARTE3_NS
+	bool "UARTE3 is Non-Secure"
+	default y
+
+config SPM_NRF_EGU0_NS
+	bool "EGU0 is Non-Secure"
 	default n
 
 config SPM_NRF_EGU1_NS
@@ -160,16 +172,52 @@ config SPM_NRF_EGU2_NS
 	bool "EGU2 is Non-Secure"
 	default y
 
+config SPM_NRF_EGU3_NS
+	bool "EGU3 is Non-Secure"
+	default y
+
+config SPM_NRF_EGU4_NS
+	bool "EGU4 is Non-Secure"
+	default y
+
+config SPM_NRF_EGU5_NS
+	bool "EGU4 is Non-Secure"
+	default y
+
 config SPM_NRF_FPU_NS
 	bool "FPU is Non-Secure"
 	default y
 
-config SPM_NRF_TWIM2_NS
-	bool "TWIM2 is Non-Secure"
+config SPM_NRF_TWI0_NS
+	bool "TWI0 is Non-Secure"
+	default n
+
+config SPM_NRF_TWI1_NS
+	bool "TWI1 is Non-Secure"
 	default y
 
-config SPM_NRF_SPIM3_NS
-	bool "SPIM3 is Non-Secure"
+config SPM_NRF_TWI2_NS
+	bool "TWI2 is Non-Secure"
+	default y
+
+config SPM_NRF_TWI3_NS
+	bool "TWI3 is Non-Secure"
+	default y
+
+config SPM_NRF_SPI0_NS
+	bool "SPI0 is Non-Secure"
+	default n
+
+config SPM_NRF_SPI1_NS
+	bool "SPI1 is Non-Secure"
+	default y
+
+config SPM_NRF_SPI2_NS
+	bool "SPI2 is Non-Secure"
+	default y
+
+config SPM_NRF_SPI3_NS
+	bool "SPI3 is Non-Secure"
 	default y
 
 config SPM_NRF_TIMER0_NS
@@ -211,6 +259,18 @@ config SPM_NRF_REGULATORS_NS
 config SPM_NRF_WDT_NS
 	bool "WDT is Non-Secure"
 	default y
+
+config SPM_NRF_PDM_NS
+	bool "PDM is Non-Secure"
+	default y
+
+config SPM_NRF_I2S_NS
+	bool "I2S is Non-Secure"
+	default y
+
+config SPM_NRF_KMU_NS
+	bool "KMU is Non-Secure"
+	default n
 endmenu
 
 config SPM_NRF_DPPIC_NS
