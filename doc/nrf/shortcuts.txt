@@ -2,7 +2,7 @@
 
 .. |SES| replace:: SEGGER Embedded Studio
 
-.. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, drivers, samples, and applications are currently not supported for product development.
+.. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, drivers, samples, and applications are currently not recommended for production.
 
 .. |connect_terminal| replace:: Connect to the board with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.

@@ -8,7 +8,7 @@ It offers a range of application samples and reference implementations, as well 
 The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is built for connected low power products.
 
 .. note::
-   The |NCS| contains references and code for Bluetooth Low Energy devices in the nRF52 Series, though product development on these devices is not currently supported with the |NCS|.
+   The |NCS| contains reference applications, sample source code, and libraries for developing low-power wireless applications with nRF52 and nRF53 Series devices, though support for these devices is incomplete and not recommended for production.
 
 Documentation for different versions of the |NCS| is available at the following links:
 
