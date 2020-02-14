@@ -196,6 +196,7 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 		}
 
 		if (bt_addr_le_cmp(bond_addr, BT_ADDR_LE_ANY)) {
+			adv_param.options |= BT_LE_ADV_OPT_FILTER_SCAN_REQ;
 			adv_param.options |= BT_LE_ADV_OPT_FILTER_CONN;
 			err = bt_le_whitelist_add(bond_addr);
 		}
