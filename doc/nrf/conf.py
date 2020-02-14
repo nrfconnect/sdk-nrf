@@ -88,7 +88,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'nRF Connect SDK'
-copyright = '2019, Nordic Semiconductor'
+copyright = '2019-2020, Nordic Semiconductor'
 author = 'Nordic Semiconductor'
 
 # The version info for the project you're documenting, acts as replacement for
