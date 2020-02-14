@@ -34,27 +34,20 @@ Building and running
 .. include:: /includes/build_and_run_nrf9160.txt
 
 
-Connecting to the nRF9160 DK board with LTE Link Monitor
-========================================================
-
-To connect to the nRF9160 DK board with LTE Link Monitor, perform the following steps:
-
-#. Launch the LTE Link Monitor after programming the AT Client sample onto the nRF9160 DK board.
-#. Make sure that **Automatic requests** is enabled in LTE Link Monitor.
-#. Connect the nRF9160 DK board to the PC with a USB cable.
-#. Power on the nRF9160 DK board.
-#. Click **Select Device** and select the particular board device entry from the drop-down list in the LTE Link Monitor.
-#. Observe that initially the command :command:`AT+CFUN?` is automatically sent to the modem, which returns a value 4, indicating that the modem is in the offline mode.
-#. Observe that the LTE Link Monitor terminal display also shows :command:`AT+CFUN=1` indicating that the modem has changed to the normal mode.
-#. Press the reset button on the nRF9160 DK to reboot the board and start the AT Client sample.
-
-
 Testing
 =======
 
 After programming the sample to your board, test the sample by performing the following steps:
 
-1. `Connect to the nRF9160 DK board with LTE Link Monitor <Connecting to the nRF9160 DK board with LTE Link Monitor_>`_.
+1. Press the reset button on the nRF9160 DK to reboot the board and start the AT Client sample.
+#. :ref:`Connect to the nRF9160 DK board with LTE Link Monitor<lte_connect>`.
+
+   .. note::
+
+      Make sure that **Automatic requests** is enabled in LTE Link Monitor.
+
+#. Observe that initially the command :command:`AT+CFUN?` is automatically sent to the modem, which returns a value 4, indicating that the modem is in the offline mode.
+#. Observe that the LTE Link Monitor terminal display also shows :command:`AT+CFUN=1` followed by ``OK`` indicating that the modem has changed to the normal mode.
 #. Run the following commands from the LTE Link Monitor terminal:
 
    a. Enter the command: :command:`AT+CFUN?`
@@ -93,7 +86,6 @@ After programming the sample to your board, test the sample by performing the fo
       If the device has been added to nRF Cloud, a CA certificate, a client certificate, and a private key with security tag 16842753 (which is the security tag for nRF Cloud credentials) are displayed.
 
 
-
 Sample output
 =============
 
@@ -123,10 +115,6 @@ In addition, it uses the following samples:
 
 From |NCS|
   * :ref:`secure_partition_manager`
-
-
-
-
 
 
 References
