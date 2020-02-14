@@ -60,7 +60,7 @@ master_doc = 'README'
 
 # General information about the project.
 project = 'nrfxlib'
-copyright = '2018, Nordic Semiconductor'
+copyright = '2019-2020, Nordic Semiconductor'
 author = 'Nordic Semiconductor'
 
 # The version info for the project you're documenting, acts as replacement for
