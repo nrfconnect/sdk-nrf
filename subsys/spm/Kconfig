@@ -140,6 +140,10 @@ config SPM_NRF_UARTE2_NS
 	bool "UARTE2 is Non-Secure"
 	default n
 
+config SPM_NRF_UARTE3_NS
+	bool "UARTE3 is Non-Secure"
+	default y
+
 config SPM_NRF_EGU1_NS
 	bool "EGU1 is Non-Secure"
 	default y

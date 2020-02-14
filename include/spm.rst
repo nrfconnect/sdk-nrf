@@ -50,7 +50,7 @@ Peripherals configured as Non-Secure
    * SPIM3
    * TIMER0-2
    * TWIM2
-   * UARTE0, UARTE1
+   * UARTE0, UARTE1, UARTE3
    * WDT
 
 .. _lib_spm_secure_services:

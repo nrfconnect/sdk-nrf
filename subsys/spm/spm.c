@@ -318,6 +318,9 @@ static void spm_config_peripherals(void)
 #ifdef NRF_UARTE2
 		PERIPH("NRF_UARTE2", NRF_UARTE2, CONFIG_SPM_NRF_UARTE2_NS),
 #endif
+#ifdef NRF_UARTE3
+		PERIPH("NRF_UARTE3", NRF_UARTE3, CONFIG_SPM_NRF_UARTE3_NS),
+#endif
 #ifdef NRF_TWIM2
 		PERIPH("NRF_TWIM2", NRF_TWIM2, CONFIG_SPM_NRF_TWIM2_NS),
 #endif
