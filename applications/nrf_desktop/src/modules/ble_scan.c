@@ -150,7 +150,7 @@ static int configure_address_filters(u8_t *filter_mode)
 	return err;
 }
 
-static int configure_short_name_filters(u8_t *filter_mode)
+static int configure_name_filters(u8_t *filter_mode)
 {
 	u8_t peers_mask = 0;
 	int err = 0;
@@ -160,27 +160,22 @@ static int configure_short_name_filters(u8_t *filter_mode)
 	}
 
 	/* Bluetooth scan filters are defined in separate header. */
-	for (size_t i = 0; i < ARRAY_SIZE(peer_type_short_name); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(peer_name); i++) {
 		if (!(BIT(i) & (~peers_mask))) {
 			continue;
 		}
 
-		const struct bt_scan_short_name filter = {
-			.name = peer_type_short_name[i],
-			.min_len = strlen(peer_type_short_name[i]),
-		};
-
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_SHORT_NAME,
-					 &filter);
+		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME,
+					 peer_name[i]);
 		if (err) {
 			LOG_ERR("Name filter cannot be added (err %d)", err);
 			break;
 		}
-		*filter_mode |= BT_SCAN_SHORT_NAME_FILTER;
+		*filter_mode |= BT_SCAN_NAME_FILTER;
 	}
 
 	if (!err) {
-		LOG_INF("Device type filters added");
+		LOG_INF("Device name filters added");
 	}
 
 	return err;
@@ -191,11 +186,9 @@ static int configure_filters(void)
 	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED == CONFIG_BT_MAX_CONN, "");
 	BUILD_ASSERT_MSG(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
 			 "Insufficient number of address filters");
-	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) <=
-			 CONFIG_BT_SCAN_SHORT_NAME_CNT,
-			 "Insufficient number of short name filers");
-	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_type_short_name) == PEER_TYPE_COUNT,
-			 "");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_name) <= CONFIG_BT_SCAN_NAME_CNT,
+			 "Insufficient number of name filers");
+	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_name) == PEER_TYPE_COUNT, "");
 	bt_scan_filter_remove_all();
 
 	u8_t filter_mode = 0;
@@ -210,7 +203,7 @@ static int configure_filters(void)
 
 	if (!err && use_name_filters &&
 	    (count_bond() < CONFIG_BT_MAX_PAIRED)) {
-		err = configure_short_name_filters(&filter_mode);
+		err = configure_name_filters(&filter_mode);
 	}
 
 	if (!err) {
