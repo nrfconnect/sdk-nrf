@@ -14,9 +14,9 @@ You must accept the license before you can download the library.
 Downloading and installing
 **************************
 
-You can download the SUPL client library from the `nRF9160 DK product page`_.
+You can download the SUPL client library from the `nRF9160 DK product page <SUPL client download_>`_.
 
-Download the nRF9160 SiP SUPL Client library zip file and extract it into the :file:`nrf/ext/lib/bin/supl/` folder.
+Download the nRF9160 SiP SUPL client library zip file and extract it into the :file:`nrf/ext/lib/bin/supl/` folder.
 Make sure to maintain the folder structure that is used in the zip file.
 
 Configuration
