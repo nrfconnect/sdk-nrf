@@ -8,6 +8,34 @@
 #include <zephyr/types.h>
 #include <fw_info.h>
 #include <kernel.h>
+#include <bl_storage.h>
+
+
+int set_monotonic_version(u16_t version, u16_t slot)
+{
+	__ASSERT(version <= 0x7FFF, "version too large.\r\n");
+	__ASSERT(slot <= 1, "Slot must be either 0 or 1.\r\n");
+	printk("Setting monotonic counter (version: %d, slot: %d)\r\n",
+		version, slot);
+	int err = set_monotonic_counter((version << 1) | !slot);
+
+	if (num_monotonic_counter_slots() == 0) {
+		printk("Monotonic version counter is disabled.\r\n");
+	} else if (err != 0) {
+		printk("set_monotonic_counter() error: %d\n\r", err);
+	}
+	return err;
+}
+
+u16_t get_monotonic_version(u16_t *slot_out)
+{
+	u16_t monotonic_version = get_monotonic_counter();
+
+	if (slot_out != NULL) {
+		*slot_out = !(monotonic_version & 1);
+	}
+	return monotonic_version >> 1;
+}
 
 
 #ifndef CONFIG_BL_VALIDATE_FW_EXT_API_UNUSED
@@ -37,7 +65,6 @@ bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address)
 #include <sys/printk.h>
 #include <toolchain.h>
 #include <bl_crypto.h>
-#include <bl_storage.h>
 
 #define PRINT(...) if (!external) printk(__VA_ARGS__)
 
@@ -230,6 +257,13 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 	if (fwinfo->valid != CONFIG_FW_INFO_VALID_VAL) {
 		PRINT("Firwmare has been invalidated: 0x%x.\n\r",
 			fwinfo->valid);
+		return false;
+	}
+
+	if (fwinfo->version < get_monotonic_version(NULL)) {
+		PRINT("Firmware version (%u) is smaller than monotonic counter "
+			"(%u).\n\r", fwinfo->version,
+			get_monotonic_version(NULL));
 		return false;
 	}
 

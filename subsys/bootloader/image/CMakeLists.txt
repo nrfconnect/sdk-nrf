@@ -45,6 +45,11 @@ else()
   assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")
 endif()
 
+if (DEFINED CONFIG_SB_MONOTONIC_COUNTER)
+  set(monotonic_counter_arg
+    --num-counter-slots-version ${CONFIG_SB_NUM_VER_COUNTER_SLOTS})
+endif()
+
 # Build and include hex file containing provisioned data for the bootloader.
 set(NRF_SCRIPTS            ${NRF_DIR}/scripts)
 set(NRF_BOOTLOADER_SCRIPTS ${NRF_SCRIPTS}/bootloader)
@@ -77,6 +82,8 @@ add_custom_command(
   --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
   --public-key-files ${ALL_PUBLIC_KEY_FILES}
   --output ${PROVISION_HEX}
+  ${monotonic_counter_arg}
+  --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
   DEPENDS
   ${PROVISION_KEY_DEPENDS}
   WORKING_DIRECTORY
