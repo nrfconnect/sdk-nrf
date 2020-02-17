@@ -166,7 +166,19 @@ The following table lists which pins must be shorted:
 
    * - 1st connection point
      - 2nd connection point
-   * - 25
+   * - P0.25
      - RxD
-   * - 26
+   * - P0.26
      - TxD
+
+If you use flow control, you must also connect the RTS and CTS line as described in the next table:
+
+.. list-table::
+   :header-rows: 1
+
+   * - 1st connection point
+     - 2nd connection point
+   * - P0.10
+     - RTS
+   * - P0.12
+     - CTS
