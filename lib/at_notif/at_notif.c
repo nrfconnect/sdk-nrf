@@ -122,6 +122,15 @@ static int module_init(struct device *dev)
 {
 	ARG_UNUSED(dev);
 
+	static bool initialized;
+
+	if (initialized) {
+		LOG_WRN("Already initialized. Nothing to do");
+		return 0;
+	}
+
+	initialized = true;
+
 	LOG_DBG("Initialization");
 	sys_slist_init(&handler_list);
 	at_cmd_set_notification_handler(notif_dispatch);
