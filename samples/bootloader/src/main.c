@@ -14,8 +14,15 @@
 #include <bl_validation.h>
 
 
-static void validate_and_boot(const struct fw_info *fw_info)
+static void validate_and_boot(const struct fw_info *fw_info, u16_t slot)
 {
+	printk("Attempting to boot slot %d.\r\n", slot);
+
+	if (fw_info == NULL) {
+		printk("No fw_info struct found.\r\n");
+		return;
+	}
+
 	printk("Attempting to boot from address 0x%x.\n\r",
 		fw_info->address);
 
@@ -26,8 +33,17 @@ static void validate_and_boot(const struct fw_info *fw_info)
 		return;
 	}
 
+	printk("Firmware version %d\r\n", fw_info->version);
+
+	if (fw_info->version > get_monotonic_version(NULL)) {
+		set_monotonic_version(fw_info->version, slot);
+	}
+
 	bl_boot(fw_info);
 }
+
+#define BOOT_SLOT_0 0
+#define BOOT_SLOT_1 1
 
 void main(void)
 {
@@ -43,12 +59,12 @@ void main(void)
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
-	if (!s1_info || (s0_info->version >= s1_info->version)) {
-		validate_and_boot(s0_info);
-		validate_and_boot(s1_info);
+	if (!s1_info || (s0_info->version > s1_info->version)) {
+		validate_and_boot(s0_info, BOOT_SLOT_0);
+		validate_and_boot(s1_info, BOOT_SLOT_1);
 	} else {
-		validate_and_boot(s1_info);
-		validate_and_boot(s0_info);
+		validate_and_boot(s1_info, BOOT_SLOT_1);
+		validate_and_boot(s0_info, BOOT_SLOT_0);
 	}
 
 	printk("No bootable image found. Aborting boot.\n\r");

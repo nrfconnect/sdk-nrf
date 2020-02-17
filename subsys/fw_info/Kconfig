@@ -22,7 +22,12 @@ config FW_INFO_OFFSET
 
 config FW_INFO_FIRMWARE_VERSION
 	int "Version number of the firmware."
+	range 0 32766 if SB_MONOTONIC_COUNTER
 	default 1
+	help
+	  When SB_MONOTONIC_COUNTER is enabled, the firmware version is limited
+	  to 15 bits since the monotonic counters are 16 bits and one bit is
+	  used to denote the slot the firwmare is in.
 
 config FW_INFO_MAGIC_COMMON
 	hex

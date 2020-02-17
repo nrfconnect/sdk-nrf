@@ -13,12 +13,27 @@ from ecdsa import VerifyingKey
 from hashlib import sha256
 
 
-def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output):
+def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
+                                num_counter_slots_version):
     # Add addresses
     provision_data = struct.pack('III', s0_address, s1_address, len(hashes))
     for mhash in hashes:
         provision_data += struct.pack('I', 0xFFFFFFFF) # Invalidation token
         provision_data += mhash
+
+    num_counters = 1 if num_counter_slots_version > 0 else 0
+    provision_data += struct.pack('H', 1) # Type "counter collection"
+    provision_data += struct.pack('H', num_counters)
+
+    if num_counters == 1:
+        if num_counter_slots_version % 2 == 1:
+            num_counter_slots_version += 1
+            print(f"Monotonic counter slots rounded up to {num_counter_slots_version}")
+        provision_data += struct.pack('H', 1) # counter description
+        provision_data += struct.pack('H', num_counter_slots_version)
+
+    assert (len(provision_data) + (2 * num_counter_slots_version)) <= max_size, """Provisioning data doesn't fit.
+Reduce the number of public keys or counter slots and try again."""
 
     ih = IntelHex()
     ih.frombytes(provision_data, offset=provision_address)
@@ -37,6 +52,10 @@ def parse_args():
                         help="Semicolon-separated list of public key .pem files.")
     parser.add_argument("-o", "--output", required=False, default="provision.hex",
                         help="Output file name.")
+    parser.add_argument("--max-size", required=False, type=lambda x: int(x, 0), default=0x1000,
+                        help="Maximum total size of the provision data, including the counter slots.")
+    parser.add_argument("--num-counter-slots-version", required=False, type=int, default=0,
+                        help="Number of monotonic counter slots for version number.")
     return parser.parse_args()
 
 
@@ -65,7 +84,9 @@ def main():
                                 s1_address=s1_address,
                                 hashes=hashes,
                                 provision_address=provision_address,
-                                output=args.output)
+                                output=args.output,
+                                max_size=args.max_size,
+                                num_counter_slots_version=args.num_counter_slots_version)
 
 
 if __name__ == "__main__":
