@@ -13,7 +13,7 @@ You can use the library to check if a specific security tag exists.
 
 To establish a connection, pass the security tag to the :ref:`nrfxlib:bsdlib` when creating a secure socket.
 
-.. See :ref:`nrfxlib:security_tags` for more information about how security tags are used in the BSD library.
+See :ref:`nrfxlib:security_tags` for more information about how security tags are used in the BSD library.
 
 .. important::
    Security credentials usually exceed the default AT command response length.
