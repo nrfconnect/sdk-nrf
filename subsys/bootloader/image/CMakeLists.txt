@@ -45,7 +45,7 @@ else()
   assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")
 endif()
 
-# Build and include hex file with provision data about the image to be booted.
+# Build and include hex file containing provisioned data for the bootloader.
 set(NRF_SCRIPTS            ${NRF_DIR}/scripts)
 set(NRF_BOOTLOADER_SCRIPTS ${NRF_SCRIPTS}/bootloader)
 set(PROVISION_HEX_NAME     provision.hex)
@@ -82,7 +82,7 @@ add_custom_command(
   WORKING_DIRECTORY
   ${PROJECT_BINARY_DIR}
   COMMENT
-  "Creating provision data for Bootloader, storing to ${PROVISION_HEX_NAME}"
+  "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
   USES_TERMINAL
   )
 
