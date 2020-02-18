@@ -66,6 +66,8 @@
 
 .. _`DevZone`: https://devzone.nordicsemi.com/
 
+.. _`Enabling and testing TLS in mqtt_simple`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/enabling-and-testing-tls-in-mqtt_5f00_simple
+
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF9160-DK/Download#infotabs
 
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160-SiP

@@ -65,3 +65,10 @@ In addition, it uses the following samples:
 
 From |NCS|
   * :ref:`secure_partition_manager`
+
+References
+**********
+
+See the following page for information about how to enable Transport Security Layer in the Simple MQTT sample:
+
+    * `Enabling and testing TLS in mqtt_simple`_
