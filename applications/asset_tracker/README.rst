@@ -21,18 +21,25 @@ The collected data includes the GPS position, accelerometer readings (the device
 
    * - Sensor data
      - nRF Cloud sensor type
+     - Data unit
    * - GPS coordinates
      - GPS
+     - NEMA Gxxx string
    * - Accelerometer data
      - FLIP
+     - String
    * - Temperature
      - TEMP
+     - Celsius
    * - Humidity
      - HUMID
+     - Percent
    * - Air pressure
      - AIR_PRESS
+     - Pascal
    * - Light sensor
      - LIGHT
+     - Lux
 
 On the nRF9160 DK, the application uses simulated sensor data by default, but it can be configured with Kconfig options to use real sensors to collect data.
 On the Thingy:91, onboard sensors are used by default.
