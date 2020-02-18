@@ -16,6 +16,7 @@
 #include <init.h>
 #include <net/socket_offload.h>
 #include <nrf_socket.h>
+#include <nrf_errno.h>
 #include <zephyr.h>
 #include <fcntl.h>
 
@@ -371,6 +372,22 @@ static int z_to_nrf_protocol(int proto)
 	/* fall through */
 	default:
 		return -EPROTONOSUPPORT;
+	}
+}
+
+static int nrf_to_z_dns_error_code(int nrf_error)
+{
+	switch (nrf_error) {
+	case NRF_ENOMEM:
+		return DNS_EAI_MEMORY;
+	case NRF_EAGAIN:
+		return DNS_EAI_AGAIN;
+	case NRF_EAFNOSUPPORT:
+		return DNS_EAI_NONAME;
+	case NRF_EINPROGRESS:
+		return DNS_EAI_INPROGRESS;
+	default:
+		return DNS_EAI_SYSTEM;
 	}
 }
 
@@ -826,6 +843,11 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 		nrf_hints_ptr = &nrf_hints;
 	}
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
+
+	if (retval != 0) {
+		error = nrf_to_z_dns_error_code(retval);
+		return error;
+	}
 
 	struct nrf_addrinfo *next_nrf_res = nrf_res;
 	struct addrinfo *latest_z_res = NULL;
