@@ -1,0 +1,10 @@
+identifier: nrf52833_pca10114
+name: nRF52833-PCA10114
+type: mcu
+arch: arm
+ram: 32
+flash: 256
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
