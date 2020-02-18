@@ -6,6 +6,8 @@
 
 cmake_minimum_required(VERSION 3.8.2)
 
+include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
+
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE ZDebug)
 endif()
@@ -23,14 +25,18 @@ if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_B
           "Please add file ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
 endif()
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
-
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
   set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
 endif()
 
 set(mcuboot_CONF_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/mcuboot_${CMAKE_BUILD_TYPE}.conf
+  )
+
+# Use static partition layout to ensure consistency between builds.
+# This is to ensure settings storage will be at the same location after the DFU.
+set(PM_STATIC_YML_FILE
+  ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_${CMAKE_BUILD_TYPE}.yml
   )
 
 # Define configuration files.
