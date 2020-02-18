@@ -29,7 +29,7 @@ config SB_PRIVATE_KEY_PROVIDED
 	help
 	  Hidden config specifying whether the build system has access to the
 	  private key used for signing, and will use it to perform signing and
-	  create the public key for the provision page.
+	  create the public key for the provisioning data.
 
 choice SB_SIGNING
 	prompt "Firmware signing method"
@@ -79,7 +79,7 @@ config SB_SIGNING_PUBLIC_KEY
 	  Path to a PEM file.
 	  When using a custom signing command, specify the corresponding public
 	  key here. This public key is checked during building, and added to
-	  the provision page as the first entry. See SB_PUBLIC_KEY_FILES.
+	  the provisioning data as the first entry. See SB_PUBLIC_KEY_FILES.
 
 config SB_PUBLIC_KEY_FILES
 	string "Public Key PEM files"
@@ -110,6 +110,7 @@ endif # SECURE_BOOT
 menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
 	depends on SECURE_BOOT_VALIDATION
+	depends on SECURE_BOOT_PURSE
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 	select NRFX_NVMC
 	help
@@ -167,5 +168,6 @@ endif # IS_SECURE_BOOTLOADER
 
 rsource "bl_crypto/Kconfig"
 rsource "bl_validation/Kconfig"
+rsource "bl_purse/Kconfig"
 
 endmenu

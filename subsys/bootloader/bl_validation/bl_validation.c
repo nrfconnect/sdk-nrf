@@ -37,7 +37,7 @@ bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address)
 #include <sys/printk.h>
 #include <toolchain.h>
 #include <bl_crypto.h>
-#include <provision.h>
+#include <bl_purse.h>
 
 #define PRINT(...) if (!external) printk(__VA_ARGS__)
 

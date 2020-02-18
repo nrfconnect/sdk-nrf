@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include "provision.h"
+#include "bl_purse.h"
 #include <string.h>
-#include <stdbool.h>
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
@@ -14,7 +13,7 @@
 #include <nrfx_nvmc.h>
 
 
-typedef struct {
+struct provision_flash {
 	u32_t s0_address;
 	u32_t s1_address;
 	u32_t num_public_keys;
@@ -22,16 +21,16 @@ typedef struct {
 		u32_t valid;
 		u8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
 	} key_data[1];
-} provision_flash_t;
+};
 
 
 #if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
-static const provision_flash_t *p_provision_data =
-	(provision_flash_t *)&(NRF_UICR_S->OTP[0]);
+static const struct provision_flash *p_provision_data =
+	(struct provision_flash *)&(NRF_UICR_S->OTP[0]);
 
 #elif defined(PM_PROVISION_ADDRESS)
-static const provision_flash_t *p_provision_data =
-	(provision_flash_t *)PM_PROVISION_ADDRESS;
+static const struct provision_flash *p_provision_data =
+	(struct provision_flash *)PM_PROVISION_ADDRESS;
 
 #else
 #error "Provision data location unknown."
@@ -81,7 +80,7 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 	 * time asserts to catch the issue as soon as possible.
 	 */
 	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
-	BUILD_ASSERT(offsetof(provision_flash_t, key_data) % 4 == 0);
+	BUILD_ASSERT(offsetof(struct provision_flash, key_data) % 4 == 0);
 	__ASSERT(((u32_t)p_key % 4 == 0), "Key address is not word aligned");
 
 	memcpy(p_buf, p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);

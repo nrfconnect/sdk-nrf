@@ -59,6 +59,9 @@ The bootloader sample defines four main areas:
 #. **S0** - One of two potential storage areas for the second stage bootloader.
 #. **S1** - One of two potential storage areas for the second stage bootloader.
 
+
+.. _bootloader_provisioning:
+
 Provisioning
 ============
 
@@ -70,13 +73,14 @@ Alternatively, to facilitate the manufacturing process of a device with the boot
 If you choose to do so, use the Python scripts in ``scripts\bootloader`` to create and provision the keys manually.
 
    .. note::
-      On nRF9160, the provisioning data is held in the OTP region in UICR.
+      On some chips, e.g. nRF9160 or nRF5340, the provisioning data is held in the OTP region in UICR.
       Because of this, you must erase the UICR before programming the bootloader.
       On nRF9160, the UICR can only be erased by erasing the whole chip.
       To do so on the command line, call ``west flash`` with the ``--erase`` option.
       This will erase the whole chip before programming the new image.
       In |SES|, choose :guilabel:`Target` > :guilabel:`Connect J-Link` and then :guilabel:`Target` > :guilabel:`Erase All` to erase the whole chip.
 
+The bootloader uses the :ref:`doc_bl_purse` library to access provisioning data.
 
 Requirements
 ************
@@ -159,8 +163,8 @@ This sample uses the following |NCS| libraries:
 * :ref:`partition_manager`
 * :ref:`doc_fw_info`
 * :ref:`fprotect_readme`
-* ``include/bl_validation.h``
-* ``include/bl_crypto.h``
-* ``subsys/bootloader/include/provision.h``
+* :ref:`doc_bl_crypto`
+* :ref:`doc_bl_validation`
+* :ref:`doc_bl_purse`
 
 The sample also uses drivers from nrfx.

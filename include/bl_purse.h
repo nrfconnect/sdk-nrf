@@ -4,14 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef PROVISION_H_
-#define PROVISION_H_
-
-/*
- * Copyright (c) 2018 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
- */
+#ifndef BL_PURSE_H_
+#define BL_PURSE_H_
 
 #include <zephyr/types.h>
 #include <string.h>
@@ -19,6 +13,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** @defgroup bl_purse Bootloader purse (protected data).
+ * @{
+ */
 
 /**
  * @brief Function for reading address of slot 0.
@@ -55,7 +53,6 @@ u32_t num_public_keys_read(void);
  */
 int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size);
 
-
 /**
  * @brief Function for invalidating a public key.
  *
@@ -65,8 +62,10 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size);
  */
 void invalidate_public_key(u32_t key_idx);
 
+  /** @} */
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* PROVISION_H_ */
+#endif /* BL_PURSE_H_ */

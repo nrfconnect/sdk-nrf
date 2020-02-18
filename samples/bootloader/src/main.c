@@ -15,7 +15,7 @@
 #include <bl_crypto.h>
 #include <fw_info.h>
 #include <fprotect.h>
-#include <provision.h>
+#include <bl_purse.h>
 #ifdef CONFIG_UART_NRFX
 #ifdef CONFIG_UART_0_NRF_UART
 #include <hal/nrf_uart.h>
@@ -59,15 +59,15 @@ static void boot_from(const struct fw_info *fw_info)
 	}
 
 #if !(defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP))
-	/* Protect provision page after firmware is validated so invalidation
+	/* Protect provisioning data after firmware is validated so invalidation
 	 * of public keys can be written directly into the page. Note that for
-	 * nRF91, the provision page is kept in OTP which does not need or
+	 * nRF91, the provisioning data is kept in OTP which does not need or
 	 * support protection.
 	 */
 	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
 
 	if (err) {
-		printk("Failed to protect B0 provision page.\n\r");
+		printk("Failed to protect B0 provisioning data.\n\r");
 		return;
 	}
 #endif

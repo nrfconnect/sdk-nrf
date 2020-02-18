@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-add_subdirectory(provision)
-
 zephyr_include_directories(include)
 
 if (NOT IMAGE_NAME)
