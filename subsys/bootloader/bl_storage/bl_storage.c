@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#include "provision.h"
+#include "bl_storage.h"
 #include <string.h>
-#include <stdbool.h>
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
@@ -14,7 +13,7 @@
 #include <nrfx_nvmc.h>
 
 
-typedef struct {
+struct bl_storage_data {
 	u32_t s0_address;
 	u32_t s1_address;
 	u32_t num_public_keys;
@@ -22,36 +21,25 @@ typedef struct {
 		u32_t valid;
 		u8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
 	} key_data[1];
-} provision_flash_t;
+};
 
-
-#if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
-static const provision_flash_t *p_provision_data =
-	(provision_flash_t *)&(NRF_UICR_S->OTP[0]);
-
-#elif defined(PM_PROVISION_ADDRESS)
-static const provision_flash_t *p_provision_data =
-	(provision_flash_t *)PM_PROVISION_ADDRESS;
-
-#else
-#error "Provision data location unknown."
-
-#endif
+static const struct bl_storage_data *p_bl_storage_data =
+	(struct bl_storage_data *)PM_PROVISION_ADDRESS;
 
 
 u32_t s0_address_read(void)
 {
-	return p_provision_data->s0_address;
+	return p_bl_storage_data->s0_address;
 }
 
 u32_t s1_address_read(void)
 {
-	return p_provision_data->s1_address;
+	return p_bl_storage_data->s1_address;
 }
 
 u32_t num_public_keys_read(void)
 {
-	return p_provision_data->num_public_keys;
+	return p_bl_storage_data->num_public_keys;
 }
 
 
@@ -62,7 +50,7 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 {
 	const u8_t *p_key;
 
-	if (p_provision_data->key_data[key_idx].valid == INVALID_VAL) {
+	if (p_bl_storage_data->key_data[key_idx].valid == INVALID_VAL) {
 		return -EINVAL;
 	}
 
@@ -74,14 +62,14 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 		return -EFAULT;
 	}
 
-	p_key = p_provision_data->key_data[key_idx].hash;
+	p_key = p_bl_storage_data->key_data[key_idx].hash;
 
-	/* Ensure word alignment, as provision data is stored in memory region
+	/* Ensure word alignment, since the data is stored in memory region
 	 * with word sized read limitation. Perform both build time and run
 	 * time asserts to catch the issue as soon as possible.
 	 */
 	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
-	BUILD_ASSERT(offsetof(provision_flash_t, key_data) % 4 == 0);
+	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
 	__ASSERT(((u32_t)p_key % 4 == 0), "Key address is not word aligned");
 
 	memcpy(p_buf, p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
@@ -92,7 +80,7 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 void invalidate_public_key(u32_t key_idx)
 {
 	const u32_t *invalidation_token =
-			&p_provision_data->key_data[key_idx].valid;
+			&p_bl_storage_data->key_data[key_idx].valid;
 
 	if (*invalidation_token != INVALID_VAL) {
 		/* Write if not already written. */

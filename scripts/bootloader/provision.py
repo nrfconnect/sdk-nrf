@@ -27,12 +27,12 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Generate provision hex file.",
+        description="Generate provisioning hex file.",
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--s0-addr", type=lambda x: int(x, 0), required=True, help="Address of image slot s0")
     parser.add_argument("--s1-addr", type=lambda x: int(x, 0), required=True, help="Address of image slot s1")
     parser.add_argument("--provision-addr", type=lambda x: int(x, 0),
-                        required=True, help="Set address of provision data")
+                        required=True, help="Address at which to place the provisioned data")
     parser.add_argument("--public-key-files", required=True,
                         help="Semicolon-separated list of public key .pem files.")
     parser.add_argument("-o", "--output", required=False, default="provision.hex",
