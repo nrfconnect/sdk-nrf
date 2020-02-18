@@ -12,7 +12,9 @@
 #include <bluetooth/hci.h>
 #include <sys/byteorder.h>
 
+#ifdef CONFIG_BT_LL_NRFXLIB
 #include "ble_controller_hci_vs.h"
+#endif /* CONFIG_BT_LL_NRFXLIB */
 
 #define MODULE hid_forward
 #include "module_state_event.h"
@@ -68,6 +70,7 @@ static struct k_spinlock lock;
 
 static int nrfxlib_vs_conn_latency_update(struct bt_conn *conn, u16_t latency)
 {
+#ifdef CONFIG_BT_LL_NRFXLIB
 	struct net_buf *buf;
 	hci_vs_cmd_conn_update_t *cmd_conn_update;
 
@@ -97,6 +100,9 @@ static int nrfxlib_vs_conn_latency_update(struct bt_conn *conn, u16_t latency)
 	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf, NULL);
 
 	return err;
+#else
+	return 0;
+#endif /* CONFIG_BT_LL_NRFXLIB */
 }
 
 static int change_connection_latency(struct hids_subscriber *subscriber, u16_t latency)
