@@ -26,7 +26,13 @@ cmake_minimum_required(VERSION 3.8.2)
 # Cannot choose via CONFIG_SOC_* because provision_PM_HEX_FILE must be set
 # before boilerplate.cmake is run.
 if (NOT DEFINED provision_hex)
-  set(provision_hex provision.hex)
+  if (BOARD MATCHES "nrf9160")
+    set(provision_hex provision_nrf9160.hex)
+  elseif (BOARD MATCHES "nrf5340")
+    set(provision_hex provision_nrf5340_cpuapp.hex)
+  else()
+    set(provision_hex provision.hex)
+  endif()
 endif()
 
 get_filename_component(provision_path ${provision_hex} ABSOLUTE)
