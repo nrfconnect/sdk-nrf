@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if BOARD_NRF52833_PCA10114
+
+config BOARD
+	default "nrf52833_pca10114"
+
+endif # BOARD_NRF52833_PCA10114
