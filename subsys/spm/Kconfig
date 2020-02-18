@@ -88,8 +88,8 @@ config SPM_SERVICE_FIND_FIRMWARE_INFO
 	  about image stored at a given address.
 
 config SPM_SERVICE_PREVALIDATE
-	bool "Prevalidate B1 upgrades"
-	default y
+	bool "Prevalidate B1 upgrades (Requires Immutable Bootloader)"
+	default n
 	select SECURE_BOOT_CRYPTO
 	select SECURE_BOOT_VALIDATION
 	select BL_VALIDATE_FW_EXT_API_ATLEAST_OPTIONAL
