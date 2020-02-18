@@ -20,7 +20,9 @@
 
 #include "ble_scan_def.h"
 
+#ifdef CONFIG_BT_LL_NRFXLIB
 #include "ble_controller_hci_vs.h"
+#endif /* CONFIG_BT_LL_NRFXLIB */
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
@@ -533,7 +535,8 @@ static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 {
 	int err;
 
-	if (peer_llpm_support && IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+#ifdef CONFIG_BT_LL_NRFXLIB
+	if (peer_llpm_support) {
 		struct net_buf *buf;
 
 		hci_vs_cmd_conn_update_t *cmd_conn_update;
@@ -561,7 +564,9 @@ static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 
 		err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf,
 					   NULL);
-	} else {
+	} else
+#endif /* CONFIG_BT_LL_NRFXLIB */
+	{
 		struct bt_le_conn_param param = {
 			.interval_min = 0x0006,
 			.interval_max = 0x0006,
@@ -570,6 +575,11 @@ static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 		};
 
 		err = bt_conn_le_param_update(conn, &param);
+
+		if (err == -EALREADY) {
+			/* Connection parameters are already set. */
+			err = 0;
+		}
 	}
 
 	if (err) {
