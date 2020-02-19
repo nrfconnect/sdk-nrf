@@ -1,0 +1,19 @@
+&usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+	num-bidir-endpoints = <0>;
+	num-in-endpoints = <4>;
+	num-out-endpoints = <2>;
+	num-isoin-endpoints = <0>;
+	num-isoout-endpoints = <0>;
+};
+&pwm0 {
+	status = "okay";
+	ch0-pin = <41>;
+	ch0-inverted;
+};
+&pwm1 {
+	status = "okay";
+	ch0-pin = <17>;
+	ch0-inverted;
+};
