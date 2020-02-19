@@ -7,7 +7,7 @@
 #include "gpio_pins.h"
 
 /* This configuration file is included only once from button module and holds
- * information about pins forming keyboard matric.
+ * information about pins forming keyboard matrix.
  */
 
 /* This structure enforces the header file is included only once in the build.
