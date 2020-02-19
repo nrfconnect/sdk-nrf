@@ -16,16 +16,12 @@
 
 LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
-#if defined(CONFIG_SLM_TCPIP_AT_MODE)
+#include "slm_at_host.h"
 #include "slm_at_tcpip.h"
-#endif
-
-#if defined(CONFIG_SLM_GPS_AT_MODE)
+#include "slm_at_icmp.h"
 #include "slm_at_gps.h"
-#endif
 
 #define SLM_UART_0_NAME      "UART_0"
-#define SLM_UART_1_NAME      "UART_1"
 #define SLM_UART_2_NAME      "UART_2"
 
 #define OK_STR    "OK\r\n"
@@ -33,9 +29,10 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
 #define SLM_SYNC_STR "Ready\r\n"
 
+#define SLM_VERSION	"#XSLMVER: 1.2\r\n"
 #define AT_CMD_SLMVER	"AT#XSLMVER"
-#define SLM_VERSION	"#XSLMVER: 1.1\r\n"
 #define AT_CMD_SLEEP	"AT#XSLEEP"
+#define AT_CMD_CLAC	"AT#XCLAC"
 
 #define AT_MAX_CMD_LEN		CONFIG_AT_CMD_RESPONSE_MAX_LEN
 
@@ -52,7 +49,6 @@ enum term_modes {
 /** @brief UARTs. */
 enum select_uart {
 	UART_0,
-	UART_1,
 	UART_2
 };
 
@@ -89,6 +85,19 @@ static void response_handler(void *context, const char *response)
 	if (len > 1) {
 		write_uart_string(response, len);
 	}
+}
+
+static void handle_at_clac(void)
+{
+	write_uart_string(AT_CMD_SLMVER, sizeof(AT_CMD_SLMVER) - 1);
+	write_uart_string("\r\n", 2);
+	write_uart_string(AT_CMD_SLEEP, sizeof(AT_CMD_SLEEP) - 1);
+	write_uart_string("\r\n", 2);
+	write_uart_string(AT_CMD_CLAC, sizeof(AT_CMD_CLAC) - 1);
+	write_uart_string("\r\n", 2);
+	slm_at_tcpip_clac();
+	slm_at_icmp_clac();
+	slm_at_gps_clac();
 }
 
 static int handle_at_sleep(const char *at_cmd)
@@ -129,8 +138,15 @@ static void cmd_send(struct k_work *work)
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
 
 	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLMVER, size_cmd)) {
-		write_uart_string(SLM_VERSION, sizeof(SLM_VERSION));
-		write_uart_string(OK_STR, sizeof(OK_STR));
+		write_uart_string(SLM_VERSION, sizeof(SLM_VERSION) - 1);
+		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	}
+
+	size_cmd = sizeof(AT_CMD_CLAC) - 1;
+	if (slm_at_cmd_cmp(at_buf, AT_CMD_CLAC, size_cmd)) {
+		handle_at_clac();
+		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	}
 
@@ -138,32 +154,38 @@ static void cmd_send(struct k_work *work)
 	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLEEP, size_cmd)) {
 		err = handle_at_sleep(at_buf);
 		if (err != 0) {
-			write_uart_string(ERROR_STR, sizeof(ERROR_STR));
+			write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
 			goto done;
+		} else {
+			return;
 		}
 	}
 
-#if defined(CONFIG_SLM_TCPIP_AT_MODE)
 	err = slm_at_tcpip_parse(at_buf);
 	if (err == 0) {
-		write_uart_string(OK_STR, sizeof(OK_STR));
+		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	} else if (err != -ENOTSUP) {
-		write_uart_string(ERROR_STR, sizeof(ERROR_STR));
+		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
-#endif /** CONFIG_SLM_TCPIP_AT_MODE */
 
-#if defined(CONFIG_SLM_GPS_AT_MODE)
+	err = slm_at_icmp_parse(at_buf);
+	if (err == 0) {
+		goto done;
+	} else if (err != -ENOTSUP) {
+		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+
 	err = slm_at_gps_parse(at_buf);
 	if (err == 0) {
-		write_uart_string(OK_STR, sizeof(OK_STR));
+		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	} else if (err != -ENOTSUP) {
-		write_uart_string(ERROR_STR, sizeof(ERROR_STR));
+		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
-#endif /** CONFIG_SLM_GPS_AT_MODE */
 
 	err = at_cmd_write(at_buf, buf, AT_MAX_CMD_LEN, &state);
 	if (err < 0) {
@@ -174,10 +196,10 @@ static void cmd_send(struct k_work *work)
 	switch (state) {
 	case AT_CMD_OK:
 		write_uart_string(buf, strlen(buf));
-		write_uart_string(OK_STR, sizeof(OK_STR));
+		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
 		break;
 	case AT_CMD_ERROR:
-		write_uart_string(ERROR_STR, sizeof(ERROR_STR));
+		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
 		break;
 	case AT_CMD_ERROR_CMS:
 		chars = sprintf(str, "+CMS: %d\r\n", err);
@@ -336,9 +358,6 @@ int slm_at_host_init(void)
 	case UART_0:
 		uart_dev_name = SLM_UART_0_NAME;
 		break;
-	case UART_1:
-		uart_dev_name = SLM_UART_1_NAME;
-		break;
 	case UART_2:
 		uart_dev_name = SLM_UART_2_NAME;
 		break;
@@ -365,22 +384,22 @@ int slm_at_host_init(void)
 
 	write_uart_string(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 
-#if defined(CONFIG_SLM_TCPIP_AT_MODE)
-	/* Initialize the TCPIP module */
 	err = slm_at_tcpip_init(slm_at_callback);
 	if (err) {
 		LOG_ERR("TCPIP could not be initialized: %d", err);
 		return -EFAULT;
 	}
-#endif
-#if defined(CONFIG_SLM_GPS_AT_MODE)
-	/* Initialize the GPS module */
+	err = slm_at_icmp_init(slm_at_callback);
+	if (err) {
+		LOG_ERR("ICMP could not be initialized: %d", err);
+		return -EFAULT;
+	}
 	err = slm_at_gps_init(slm_at_callback);
 	if (err) {
 		LOG_ERR("GPS could not be initialized: %d", err);
 		return -EFAULT;
 	}
-#endif
+
 	LOG_DBG("at_host init done");
 	return err;
 }
@@ -389,20 +408,18 @@ void slm_at_host_uninit(void)
 {
 	int err;
 
-#if defined(CONFIG_SLM_TCPIP_AT_MODE)
-	/* Uninitialize the TCPIP module */
 	err = slm_at_tcpip_uninit();
 	if (err) {
 		LOG_WRN("TCPIP could not be uninitialized: %d", err);
 	}
-#endif
-#if defined(CONFIG_SLM_GPS_AT_MODE)
-	/* Uninitialize the GPS module */
+	err = slm_at_icmp_uninit();
+	if (err) {
+		LOG_WRN("ICMP could not be uninitialized: %d", err);
+	}
 	err = slm_at_gps_uninit();
 	if (err) {
 		LOG_WRN("GPS could not be uninitialized: %d", err);
 	}
-#endif
 	err = at_notif_deregister_handler(NULL, response_handler);
 	if (err != 0) {
 		LOG_WRN("Can't deregister handler err=%d", err);

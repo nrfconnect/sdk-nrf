@@ -14,24 +14,11 @@ config SLM_AT_MODE
 	select AT_CMD
 	select AT_NOTIF
 	select AT_CMD_PARSER
+	select MODEM_INFO
 
 config SLM_AT_MAX_PARAM
 	int "Max number of parameters in AT command"
 	default 8
-
-#
-# TCP/IP
-#
-config SLM_TCPIP_AT_MODE
-	bool "Support TCP/IP by raw AT mode"
-	default y
-
-#
-# GPS
-#
-config SLM_GPS_AT_MODE
-	bool "Support GPS by raw AT mode"
-	default y
 
 #
 # Inter-Connect
@@ -42,12 +29,9 @@ choice
 	help
 		Sets the UART to use for interconnect
 		-  UART 0
-		-  UART 1
 		-  UART 2
 	config SLM_CONNECT_UART_0
 		bool "UART 0"
-	config SLM_CONNECT_UART_1
-		bool "UART 1"
 	config SLM_CONNECT_UART_2
 		bool "UART 2"
 endchoice
@@ -55,7 +39,6 @@ endchoice
 config SLM_CONNECT_UART
 	int
 	default 0 if SLM_CONNECT_UART_0
-	default 1 if SLM_CONNECT_UART_1
 	default 2 if SLM_CONNECT_UART_2
 
 choice
@@ -97,7 +80,6 @@ config SLM_MODEM_WAKEUP_PIN
 	int "GPIO for wakeup"
 	depends on SLM_GPIO_WAKEUP
 	default 6 if SLM_CONNECT_UART_0
-	default 31 if SLM_CONNECT_UART_1
 	default 31 if SLM_CONNECT_UART_2
 
 module = SLM

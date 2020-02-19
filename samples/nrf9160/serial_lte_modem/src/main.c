@@ -14,12 +14,14 @@
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
+#include <modem_info.h>
 #include "slm_at_host.h"
 
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 
 /* global variable used across different files */
 struct at_param_list m_param_list;
+struct modem_param_info modem_param;
 
 /**@brief Recoverable BSD library error. */
 void bsd_recoverable_error_handler(uint32_t err)
@@ -32,6 +34,15 @@ void start_execute(void)
 	int err;
 
 	LOG_INF("Serial LTE Modem");
+
+	err = modem_info_init();
+	if (err) {
+		LOG_ERR("Modem info could not be established: %d", err);
+		return;
+	}
+
+	modem_info_params_init(&modem_param);
+
 	err = slm_at_host_init();
 	if (err != 0) {
 		LOG_ERR("Failed to init at_host: %d", err);

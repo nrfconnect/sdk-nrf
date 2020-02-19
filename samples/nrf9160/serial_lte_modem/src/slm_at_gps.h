@@ -14,7 +14,7 @@
  */
 
 #include <zephyr/types.h>
-#include "slm_at_host.h"
+#include <at_cmd.h>
 
 /**
  * @brief GPS AT command parser.
@@ -25,6 +25,12 @@
  *           Otherwise, a (negative) error code is returned.
  */
 int slm_at_gps_parse(const char *at_cmd);
+
+/**
+ * @brief List GPS AT commands.
+ *
+ */
+void slm_at_gps_clac(void);
 
 /**
  * @brief Initialize GPS AT command parser.

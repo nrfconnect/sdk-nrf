@@ -8,6 +8,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <nrf_socket.h>
+#include "slm_at_host.h"
 #include "slm_at_gps.h"
 
 LOG_MODULE_REGISTER(gps, CONFIG_SLM_LOG_LEVEL);
@@ -323,6 +324,16 @@ int slm_at_gps_parse(const char *at_cmd)
 	}
 
 	return ret;
+}
+
+/**@brief API to list GPS AT commands
+ */
+void slm_at_gps_clac(void)
+{
+	for (int i = 0; i < AT_GPS_MAX; i++) {
+		client.callback(m_gps_at_list[i].string);
+		client.callback("\r\n");
+	}
 }
 
 /**@brief API to initialize GPS AT commands handler
