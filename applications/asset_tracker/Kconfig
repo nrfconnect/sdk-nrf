@@ -22,20 +22,20 @@ choice
 	prompt "GPS device"
 	default GPS_USE_SIM
 	help
-		Select from which device GPS data will be fetched.
+	  Select from which device GPS data will be fetched.
 
 config GPS_USE_SIM
 	bool "Use GPS simulator"
 	select GPS_SIM
 	select GPS_SIM_TRIGGER
 	help
-		Use simulated GPS data.
+	  Use simulated GPS data.
 
 config GPS_USE_EXTERNAL
 	bool "User provided GPS device"
 	help
-		Provide a GPS device that location data will be fetched from and
-		sent to nRF Cloud
+	  Provide a GPS device that location data will be fetched from and
+	  sent to nRF Cloud
 
 endchoice
 
@@ -45,8 +45,8 @@ config GPS_DEV_NAME
 	string "GPS device name"
 	default GPS_SIM_DEV_NAME if GPS_USE_SIM
 	help
-		GPS device from which location data will be fetched and sent
-		to nRF Cloud.
+	  GPS device from which location data will be fetched and sent
+	  to nRF Cloud.
 
 config GPS_TRIGGER
 	bool
@@ -80,8 +80,8 @@ config HOLD_TIME_RSRP
 	int "Minimum time [s] between RSRP subscription messages"
 	default 60
 	help
-		The minimum time in seconds where the modem
-		informer is allowed to submit RSRP data to the cloud.
+	  The minimum time in seconds where the modem
+	  informer is allowed to submit RSRP data to the cloud.
 
 endif
 
@@ -93,7 +93,7 @@ choice
 	prompt "Accelerometer device"
 	default ACCEL_USE_SIM
 	help
-		Select which device will provide accelerometer data.
+	  Select which device will provide accelerometer data.
 
 config ACCEL_USE_SIM
 	bool "Use simulated accelerometer data"
@@ -102,14 +102,14 @@ config ACCEL_USE_SIM
 	select SENSOR_SIM_TRIGGER
 	select SENSOR_SIM_STATIC_VALUES
 	help
-		Use sensor simulator to generate accelerometer data for
-		flip detection data sent to nRF Cloud.
+	  Use sensor simulator to generate accelerometer data for
+	  flip detection data sent to nRF Cloud.
 
 config ACCEL_USE_EXTERNAL
 	bool "User provided accelerometer device"
 	help
-		The user will provide an accelerometer device that will
-		be used for flip detection.
+	  The user will provide an accelerometer device that will
+	  be used for flip detection.
 
 endchoice
 
@@ -129,12 +129,12 @@ config FLIP_INPUT
 	default 3 if BOARD_NRF9160_PCA10090NS
 	default 1 if BOARD_NRF9160_PCA20035NS
 	help
-		Button or switch number to use for simulating
-		a board flip event.
-		1 - Button 1
-		2 - Button 2
-		3 - Switch 1
-		4 - Switch 2
+	  Button or switch number to use for simulating
+	  a board flip event.
+	  1 - Button 1
+	  2 - Button 2
+	  3 - Switch 1
+	  4 - Switch 2
 endif
 
 if ACCEL_USE_EXTERNAL
@@ -142,8 +142,8 @@ if ACCEL_USE_EXTERNAL
 config ACCEL_DEV_NAME
 	string "Accelerometer device name"
 	help
-		Device from which accelerometer data will be fetched and used
-		for orientation detection and sent to nRF Cloud.
+	  Device from which accelerometer data will be fetched and used
+	  for orientation detection and sent to nRF Cloud.
 
 endif
 
@@ -151,8 +151,8 @@ config ACCEL_INVERTED
 	bool "Accelerometer inverted"
 	default y if BOARD_NRF9160_PCA20035NS
 	help
-		Enable if the accelerometer is mounted with the top side facing
-		down when the board itself is in normal position.
+	  Enable if the accelerometer is mounted with the top side facing
+	  down when the board itself is in normal position.
 
 endmenu # Motion
 
@@ -176,8 +176,8 @@ config CLOUD_WAIT_DURATION
 	int "Cloud connection acknowledge wait duration"
 	default 30
 	help
-	    How long the device should wait for a CONNACK
-	    event from the cloud.
+	  How long the device should wait for a CONNACK
+	  event from the cloud.
 
 config CLOUD_FOTA_APP
 	bool "Enable firmware over-the-air upgrades for application"
@@ -231,21 +231,21 @@ choice
 	prompt "Temperature measurement device"
 	default TEMP_USE_SIM
 	help
-		Select which device will provide temperature data.
+	  Select which device will provide temperature data.
 
 config TEMP_USE_SIM
 	bool "Use simulated temperature data"
 	select SENSOR
 	select SENSOR_SIM
 	help
-		Use sensor simulator to generate temperature data to send to
-		nRF Cloud.
+	  Use sensor simulator to generate temperature data to send to
+	  nRF Cloud.
 
 config TEMP_USE_EXTERNAL
 	bool "User provided temperature device"
 	help
-		The user provides a temperature device that is
-		used for temperature measurement.
+	  The user provides a temperature device that is
+	  used for temperature measurement.
 
 endchoice
 
@@ -265,12 +265,12 @@ config TEMP_SIM_BUTTON
 	default 3 if BOARD_NRF9160_PCA10090NS
 	default 1 if BOARD_NRF9160_PCA20035NS
 	help
-		Button or switch number to use for triggering
-		a 'data ready' event.
-		1 - Button 1
-		2 - Button 2
-		3 - Switch 1
-		4 - Switch 2
+	  Button or switch number to use for triggering
+	  a 'data ready' event.
+	  1 - Button 1
+	  2 - Button 2
+	  3 - Switch 1
+	  4 - Switch 2
 endif
 
 if TEMP_USE_EXTERNAL
@@ -278,8 +278,8 @@ if TEMP_USE_EXTERNAL
 config TEMP_DEV_NAME
 	string "Temperature device name"
 	help
-		Device from which temperature data will be fetched and
-		sent to nRF Cloud.
+	  Device from which temperature data will be fetched and
+	  sent to nRF Cloud.
 
 endif
 
@@ -323,8 +323,8 @@ config USE_AT_HOST
 	default y
 	select AT_HOST_LIBRARY
 	help
-		Enable the AT host library so that AT commands can be sent to and
-		received from a serial terminal.
+	  Enable the AT host library so that AT commands can be sent to and
+	  received from a serial terminal.
 
 endmenu
 
