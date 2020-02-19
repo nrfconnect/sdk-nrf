@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <net/socket.h>
+#include "slm_at_host.h"
 #include "slm_at_tcpip.h"
 
 LOG_MODULE_REGISTER(tcpip, CONFIG_SLM_LOG_LEVEL);
@@ -112,7 +113,6 @@ static int parse_host_by_ipv4(const char *ip, u16_t port)
 		return -EINVAL;
 	}
 }
-
 
 static int parse_host_by_name(const char *name, u16_t port, int socktype)
 {
@@ -774,6 +774,16 @@ int slm_at_tcpip_parse(const char *at_cmd)
 	}
 
 	return ret;
+}
+
+/**@brief API to list TCP/IP AT commands
+ */
+void slm_at_tcpip_clac(void)
+{
+	for (int i = 0; i < AT_TCPIP_MAX; i++) {
+		client.callback(m_tcpip_at_list[i].string);
+		client.callback("\r\n");
+	}
 }
 
 /**@brief API to initialize TCP/IP AT commands handler

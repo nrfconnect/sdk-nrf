@@ -10,8 +10,10 @@ This sample is an enhancement to the :ref:`at_client_sample` sample.
 It provides the following features:
 
  * Support for generic proprietary AT commands
- * Support for TCP/IP proprietary AT commands
+ * Support for Socket proprietary AT commands
+ * Support for TCP proprietary AT commands
  * Support for UDP proprietary AT commands
+ * Support for ICMP proprietary AT commands
  * Support for GPS proprietary AT commands
  * Support for communication to external MCU over UART
 
@@ -96,15 +98,22 @@ The following proprietary generic AT commands are used in this sample:
 
 * AT#XSLMVER
 * AT#XSLEEP
+* AT#XCLAC
 
-TCP/IP AT commands
+Socket AT commands
 ******************
 
-The following proprietary TCP/IP AT commands are used in this sample:
+The following proprietary socket AT commands are used in this sample:
 
 * AT#XSOCKET=<op>[,<type>]
 * AT#XSOCKET?
 * AT#XBIND=<port>
+
+TCP AT commands
+***************
+
+The following proprietary TCP AT commands are used in this sample:
+
 * AT#XTCPCONN=<url>,<port>
 * AT#XTCPCONN?
 * AT#XTCPSEND=<data>
@@ -115,10 +124,15 @@ UDP AT commands
 
 The following proprietary UDP AT commands are used in this sample:
 
-* AT#XSOCKET=<op>[,<type>]
-* AT#XSOCKET?
 * AT#XUDPSENDTO=<url>,<port>,<data>
 * AT#XUDPRECVFROM=<url>,<port>,<length>,<timeout>
+
+ICMP AT commands
+****************
+
+The following proprietary ICMP AT commands are used in this sample:
+
+* AT#XPING=<addr>,<length>,<timeout>[,<count>[,<interval>]]
 
 GPS AT Commands
 ***************
