@@ -35,7 +35,7 @@ The ``nrf`` subfolder in that directory contains all .rst source files that are 
 Documentation for samples and libraries are provided in a ``README.rst`` or ``*.rst`` file in the same directory as the code.
 
 Building the documentation output requires building output for all documentation sets.
-Currently, there are four sets: nrf, nrfxlib, zephyr, and mcuboot.
+Currently, there are four sets: nrf, nrfxlib, zephyr, and mcuboot (covering the contents of :file:`bootloader/mcuboot`).
 Since there are links from the ncs documentation set into other documentation sets, the other documentation sets must be built first.
 
 Building documentation output

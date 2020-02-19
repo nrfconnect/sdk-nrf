@@ -168,16 +168,19 @@ To clone the repositories, complete the following steps:
 
       west update
 
-Your directory structure now looks like this::
+Your directory structure now looks similar to this::
 
    ncs
     |___ .west
-    |___ mcuboot
+    |___ bootloader
+    |___ modules
     |___ nrf
     |___ nrfxlib
     |___ zephyr
     |___ ...
 
+Note that there are additional folders, and that the structure might change.
+The full set of repositories and folders is defined in the manifest file.
 
 Updating the repositories
 =========================
@@ -220,7 +223,7 @@ All branches, remotes, and other configuration in your repositories will be main
 To update your repositories to be managed by west, make sure that they are structured and named in the following way::
 
    ncs
-    |___ mcuboot
+    |___ bootloader/mcuboot
     |___ nrf
     |___ nrfxlib
     |___ zephyr
@@ -261,7 +264,7 @@ To install those, open a |bash| in the ``ncs`` folder and enter the following co
 
    pip3 |install_user| -r zephyr/scripts/requirements.txt
    pip3 |install_user| -r nrf/scripts/requirements.txt
-   pip3 |install_user| -r mcuboot/scripts/requirements.txt
+   pip3 |install_user| -r bootloader/mcuboot/scripts/requirements.txt
 
 .. add_deps_end
 
