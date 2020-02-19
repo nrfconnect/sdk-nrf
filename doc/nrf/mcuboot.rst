@@ -7,6 +7,7 @@ MCUboot
 
 The |NCS| includes a fork of the MCUboot project.
 This fork is kept as close to the original repository as possible, but it might contain some additions that are specific to Nordic Semiconductor devices and applications.
+You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
 
 See the :doc:`documentation <mcuboot:index>` of Nordic Semiconductor's MCUboot fork for more information about MCUboot.
 

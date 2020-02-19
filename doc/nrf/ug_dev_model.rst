@@ -263,7 +263,7 @@ If you want to create a `GitHub fork`_ follow the steps below:
 #. Create a `GitHub fork`_ using the **Fork** button in the GitHub user interface.
 #. Add the newly created remote repository as a Git remote::
 
-     cd ncs/{folder}
+     cd ncs/{folder_path}
      # Rename the default remote from 'origin' to 'ncs', if required
      git remote rename origin ncs
      git remote add origin https://github.com/{username}/{repo}.git
@@ -291,7 +291,7 @@ If you want to create a `GitHub fork`_ follow the steps below:
 To create a regular fork, follow the exact same steps as above, but the actual repository must be created by you beforehand, instead of clicking **Fork** in GitHub.
 Also, since a GitHub fork automatically initializes the forked repository with the exact same contents as the original one, you must push the contents yourself::
 
-  cd ncs/{folder}
+  cd ncs/{folder_path}
   # Rename the default remote from 'origin' to 'ncs'
   git remote rename origin ncs
   git remote add origin https://github.com/{username}/{repo}.git
