@@ -16,10 +16,32 @@ The library stores the following data:
 * Image slot sizes
 * Hashes of public keys
 * Invalidation tokens used to revoke public keys
+* :ref:`Application versions <store_app_version>`
+
 
 See :ref:`bootloader_provisioning` for more information about the provisioned data and how the bootloader uses it.
 
 You can find tests for the library at :file:`tests/subsys/bootloader/bl_storage/`.
+
+.. _store_app_version:
+
+Storing version information
+***************************
+
+The bootloader storage can be used to keep track of the version of the application.
+When updating the application, the :ref:`doc_bl_validation` library checks if the new version is newer than the current version and only accepts the new image if it is.
+After updating, the application must then store the new version information in the bootloader storage.
+
+This functionality is implemented as a monotonic version counter that contains a series of 16-bit integer values.
+Each update to the counter is written to the next available slot.
+When reading the counter, the bootloader storage library iterates over each slot and returns the largest value.
+
+The number of available slots, thus the number of different version numbers that can be stored, is configurable through :option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`.
+
+The monotonic counter is enabled by default.
+You can disable it through :option:`CONFIG_SB_MONOTONIC_COUNTER`.
+If the counter is enabled, the :ref:`doc_bl_validation` library checks it against an image's version during :cpp:func:`bl_validate_firmware`.
+
 
 API documentation
 *****************
