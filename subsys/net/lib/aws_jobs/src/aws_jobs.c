@@ -217,7 +217,7 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 				  const u8_t *client_token, u8_t *topic_buf)
 {
 	/* The rest of the parameters are checked later */
-	if (status_details == NULL || client_token == NULL) {
+	if (client_token == NULL) {
 		return -EINVAL;
 	}
 
@@ -229,7 +229,8 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 
 	int ret = snprintf(update_job_payload, sizeof(update_job_payload),
 			   UPDATE_JOB_PAYLOAD, execution_status_strings[status],
-			   status_details, expected_version, client_token);
+			   (status_details ? (char *)status_details : "null"),
+			   expected_version, client_token);
 
 	if (ret >= CONFIG_UPDATE_JOB_PAYLOAD_LEN) {
 		LOG_ERR("Unable to fit formated string in provided buffer.");
@@ -278,4 +279,3 @@ bool aws_jobs_cmp(const char *sub, const char *pub, size_t pub_len,
 		return ret == 0;
 	}
 }
-
