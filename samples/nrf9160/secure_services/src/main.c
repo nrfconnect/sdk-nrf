@@ -27,6 +27,18 @@ void print_random_number(u8_t *num, size_t len)
 	print_hex_number(num, len);
 }
 
+static int read_ficr_word(u32_t *result, const volatile u32_t *addr)
+{
+	printk("Read FICR (address 0x%08x):\n", (u32_t)addr);
+	int ret = spm_request_read(result, (u32_t)addr, sizeof(u32_t));
+
+	if (ret != 0) {
+		printk("Could not read FICR (err: %d)\n", ret);
+	}
+	return ret;
+}
+
+
 void main(void)
 {
 	struct fw_info info_app;
@@ -87,15 +99,14 @@ void main(void)
 	}
 #endif
 
-	u32_t info_part = 0;
-	u32_t ficr_addr = (u32_t)&NRF_FICR_S->INFO.PART;
+	u32_t ficr_info = 0;
 
-	printk("\nRead FICR, offset 0x20C (address 0x%08x):\n", ficr_addr);
-	ret = spm_request_read(&info_part, ficr_addr, sizeof(u32_t));
-	if (ret != 0) {
-		printk("Could not read FICR (err: %d)\n", ret);
-	} else {
-		printk("FICR.INFO.PART (+0x20C) = 0x%08X\n", info_part);
+	if (read_ficr_word(&ficr_info, &NRF_FICR_S->INFO.PART) == 0) {
+		printk("FICR.INFO.PART = 0x%08X\n\n", ficr_info);
+	}
+
+	if (read_ficr_word(&ficr_info, &NRF_FICR_S->INFO.VARIANT) == 0) {
+		printk("FICR.INFO.VARIANT (+0x210) = 0x%08X\n\n", ficr_info);
 	}
 
 	printk("\nReboot in %d seconds.\n", sleep_time_s);
