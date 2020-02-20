@@ -191,6 +191,7 @@ int aws_jobs_unsubscribe_topic_update(struct mqtt_client *const client,
  * @param[in] status           The job execution status.
  * @param[in] status_details   JSON object in string format containing
  *                             additional information. Max 10 fields.
+ *                             Can be NULL.
  * @param[in] expected_version The expected job document version. Must be
  *                             incremented by 1 for every update.
  * @param[in] client_token     This can be an arbitrary value and will be
@@ -251,4 +252,3 @@ bool aws_jobs_cmp(const char *sub, const char *pub, size_t pub_len,
  */
 
 #endif /* AWS_JOBS_H__ */
-
