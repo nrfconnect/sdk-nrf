@@ -29,11 +29,13 @@
 #define NON_SECURE_APP_ADDRESS DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0
 #endif /* USE_PARTITION_MANAGER */
 
-#define FIRST_NONSECURE_ADDRESS (NON_SECURE_APP_ADDRESS)
-#define LAST_SECURE_REGION_INDEX \
-	((FIRST_NONSECURE_ADDRESS / FLASH_SECURE_ATTRIBUTION_REGION_SIZE) - 1)
+/* This reflects the configuration in DTS. */
+#define NON_SECURE_RAM_OFFSET 0x10000
 
-BUILD_ASSERT_MSG(LAST_SECURE_REGION_INDEX != -1, "SPM is too small.");
+#define NON_SECURE_FLASH_REGION_INDEX \
+	((NON_SECURE_APP_ADDRESS) / (FLASH_SECURE_ATTRIBUTION_REGION_SIZE))
+#define NON_SECURE_RAM_REGION_INDEX \
+	((NON_SECURE_RAM_OFFSET) / (RAM_SECURE_ATTRIBUTION_REGION_SIZE))
 
 /*
  *  * The security configuration for depends on where the non secure app
@@ -138,9 +140,35 @@ static void spm_config_nsc_flash(void)
 
 	PRINT("Non-secure callable region 0 placed in flash region %d with size %d.\n",
 		NRF_SPU->FLASHNSC[0].REGION, NRF_SPU->FLASHNSC[0].SIZE << 5);
-	PRINT("\n");
 }
 #endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
+
+
+static void config_regions(bool ram, size_t start, size_t end, u32_t perm)
+{
+	const size_t region_size = ram ? RAM_SECURE_ATTRIBUTION_REGION_SIZE
+					: FLASH_SECURE_ATTRIBUTION_REGION_SIZE;
+
+	for (size_t i = start; i < end; i++) {
+		if (ram) {
+			NRF_SPU->RAMREGION[i].PERM = perm;
+		} else {
+			NRF_SPU->FLASHREGION[i].PERM = perm;
+		}
+		PRINT("%02u 0x%05x 0x%05x \t", i,
+					region_size * i, region_size * (i + 1));
+		PRINT("%s", perm & (ram ? SRAM_SECURE : FLASH_SECURE)
+							? "Secure\t\t" :
+							  "Non-Secure\t");
+		PRINT("%c", perm & (ram ? SRAM_READ : FLASH_READ)  ? 'r' : '-');
+		PRINT("%c", perm & (ram ? SRAM_WRITE : FLASH_WRITE)
+								? 'w' : '-');
+		PRINT("%c", perm & (ram ? SRAM_EXEC : FLASH_EXEC)  ? 'x' : '-');
+		PRINT("%c", perm & (ram ? SRAM_LOCK : FLASH_LOCK)  ? 'l' : '-');
+		PRINT("\n");
+	}
+
+}
 
 
 static void spm_config_flash(void)
@@ -148,37 +176,23 @@ static void spm_config_flash(void)
 	/* Regions of flash up to and including SPM are configured as Secure.
 	 * The rest of flash is configured as Non-Secure.
 	 */
-	static const u32_t flash_perm[] = {
-		/* Configuration for Secure Regions */
-		[0 ... LAST_SECURE_REGION_INDEX] =
-			FLASH_READ | FLASH_WRITE | FLASH_EXEC |
-			FLASH_LOCK | FLASH_SECURE,
-		/* Configuration for Non Secure Regions */
-		[(LAST_SECURE_REGION_INDEX + 1) ... 31] =
-			FLASH_READ | FLASH_WRITE | FLASH_EXEC |
-			FLASH_LOCK | FLASH_NONSEC,
-	};
+	const u32_t secure_flash_perm = FLASH_READ | FLASH_WRITE | FLASH_EXEC
+			| FLASH_LOCK | FLASH_SECURE;
+	const u32_t nonsecure_flash_perm = FLASH_READ | FLASH_WRITE | FLASH_EXEC
+			| FLASH_LOCK | FLASH_NONSEC;
 
-	PRINT("Flash region\t\tDomain\t\tPermissions\n");
+	PRINT("Flash regions\t\tDomain\t\tPermissions\n");
 
-	/* Assign permissions */
-	for (size_t i = 0; i < ARRAY_SIZE(flash_perm); i++) {
-
-		NRF_SPU->FLASHREGION[i].PERM = flash_perm[i];
-
-		PRINT("%02u 0x%05x 0x%05x \t", i, 32 * KB(i), 32 * KB(i + 1));
-		PRINT("%s", flash_perm[i] & FLASH_SECURE ? "Secure\t\t" :
-							   "Non-Secure\t");
-
-		PRINT("%c", flash_perm[i] & FLASH_READ  ? 'r' : '-');
-		PRINT("%c", flash_perm[i] & FLASH_WRITE ? 'w' : '-');
-		PRINT("%c", flash_perm[i] & FLASH_EXEC  ? 'x' : '-');
-		PRINT("%c", flash_perm[i] & FLASH_LOCK  ? 'l' : '-');
-		PRINT("\n");
-	}
+	config_regions(false, 0, NON_SECURE_FLASH_REGION_INDEX,
+			secure_flash_perm);
+	config_regions(false, NON_SECURE_FLASH_REGION_INDEX,
+			NUM_FLASH_SECURE_ATTRIBUTION_REGIONS,
+			nonsecure_flash_perm);
+	PRINT("\n");
 
 #if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
 	spm_config_nsc_flash();
+	PRINT("\n");
 
 #if defined(CONFIG_SPM_SECURE_SERVICES)
 	int err = spm_secure_services_init();
@@ -188,8 +202,6 @@ static void spm_config_flash(void)
 	}
 #endif
 #endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
-
-	PRINT("\n");
 }
 
 static void spm_config_sram(void)
@@ -197,32 +209,21 @@ static void spm_config_sram(void)
 	/* Lower 64 kB of SRAM is allocated to the Secure firmware image.
 	 * The rest of SRAM is allocated to Non-Secure firmware image.
 	 */
-	static const u32_t sram_perm[] = {
-		/* Configuration for Regions 0 - 7 (0 - 64 kB) */
-		[0 ... 7] = SRAM_READ | SRAM_WRITE | SRAM_EXEC |
-			    SRAM_LOCK | SRAM_SECURE,
-		/* Configuration for Regions 8 - 31 (64 - 256 kB) */
-		[8 ... 31] = SRAM_READ | SRAM_WRITE | SRAM_EXEC |
-			     SRAM_LOCK | SRAM_NONSEC,
-	};
+
+	const u32_t secure_ram_perm = SRAM_READ | SRAM_WRITE | SRAM_EXEC
+		| SRAM_LOCK | SRAM_SECURE;
+	const u32_t nonsecure_ram_perm = SRAM_READ | SRAM_WRITE | SRAM_EXEC
+		| SRAM_LOCK | SRAM_NONSEC;
 
 	PRINT("SRAM region\t\tDomain\t\tPermissions\n");
 
-	/* Assign permissions */
-	for (size_t i = 0; i < ARRAY_SIZE(sram_perm); i++) {
-
-		NRF_SPU->RAMREGION[i].PERM = sram_perm[i];
-
-		PRINT("%02u 0x%05x 0x%05x\t", i, 8 * KB(i), 8 * KB(i + 1));
-		PRINT("%s", sram_perm[i] & SRAM_SECURE ? "Secure\t\t" :
-							 "Non-Secure\t");
-
-		PRINT("%c", sram_perm[i] & SRAM_READ  ? 'r' : '-');
-		PRINT("%c", sram_perm[i] & SRAM_WRITE ? 'w' : '-');
-		PRINT("%c", sram_perm[i] & SRAM_EXEC  ? 'x' : '-');
-		PRINT("%c", sram_perm[i] & SRAM_LOCK  ? 'l' : '-');
-		PRINT("\n");
-	}
+	/* Configuration for Secure RAM Regions (0 - 64 kB) */
+	config_regions(true, 0, NON_SECURE_RAM_REGION_INDEX,
+			secure_ram_perm);
+	/* Configuration for Non-Secure RAM Regions (64 kb - end) */
+	config_regions(true, NON_SECURE_RAM_REGION_INDEX,
+			NUM_RAM_SECURE_ATTRIBUTION_REGIONS,
+			nonsecure_ram_perm);
 	PRINT("\n");
 }
 
