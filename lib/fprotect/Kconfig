@@ -11,12 +11,19 @@ config FPROTECT
 	  Use hardware peripherals (BPROT, ACL, or SPU) to write-protect
 	  regions of flash until next reset.
 
-if FPROTECT
-config FPROTECT_BLOCK_SIZE
-	int "Block size of fprotect"
-	default 32768 if SOC_NRF9160
-	default 16384 if SOC_NRF5340_CPUAPP
-	default $(dt_int_val,DT_SOC_NV_FLASH_1000000_ERASE_BLOCK_SIZE) if SOC_NRF5340_CPUNET
-	default $(dt_int_val,DT_SOC_NV_FLASH_0_ERASE_BLOCK_SIZE)
+
+if !ARM
+config NRF_SPU_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
 endif
 
+if FPROTECT
+config FPROTECT_BLOCK_SIZE
+	hex "Block size of fprotect"
+	default NRF_SPU_FLASH_REGION_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
+	default $(dt_hex_val,DT_SOC_NV_FLASH_1000000_ERASE_BLOCK_SIZE) if SOC_NRF5340_CPUNET
+	default $(dt_hex_val,DT_SOC_NV_FLASH_0_ERASE_BLOCK_SIZE)
+endif
