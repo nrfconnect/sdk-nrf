@@ -130,8 +130,8 @@ menuconfig IS_SECURE_BOOTLOADER
 if IS_SECURE_BOOTLOADER
 
 config PM_PARTITION_SIZE_PROVISION
-	int
-	default 128 if SOC_NRF9160 || SOC_NRF5340_CPUAPP # Stored in OTP region
+	hex
+	default 0x80 if SOC_NRF9160 || SOC_NRF5340_CPUAPP # Stored in OTP region
 	default FPROTECT_BLOCK_SIZE
 	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP)
 	help
@@ -139,8 +139,8 @@ config PM_PARTITION_SIZE_PROVISION
 
 config PM_PARTITION_SIZE_B0_IMAGE
 	hex "Flash space reserved for B0_IMAGE"
-	default 0x8000 if SOC_NRF9160 || SOC_NRF5340_CPUAPP
-	default 0x7800 if SOC_NRF5340_CPUNET
+	default FPROTECT_BLOCK_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
+	default 0x3800 if SOC_NRF5340_CPUNET
 	default 0x7000
 	help
 	  Flash space set aside for the B0_IMAGE partition.
