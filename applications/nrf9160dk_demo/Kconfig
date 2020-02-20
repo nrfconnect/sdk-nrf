@@ -1,0 +1,122 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "nRF9160DK Demo"
+
+rsource "src/ui/Kconfig"
+
+config APPLICATION_WORKQUEUE_STACK_SIZE
+	int "Application workqueue stack size"
+	default 2048
+
+config APPLICATION_WORKQUEUE_PRIORITY
+	int "Application workqueue priority"
+	default SYSTEM_WORKQUEUE_PRIORITY
+
+menu "Device and modem"
+
+config POWER_OPTIMIZATION_ENABLE
+	bool "Enable power optimization"
+	default y
+	select LTE_EDRX_REQ
+
+if MODEM_INFO
+
+config HOLD_TIME_RSRP
+	int "Minimum time [s] between RSRP subscription messages"
+	default 60
+	help
+	  The minimum time in seconds where the modem
+	  informer is allowed to submit RSRP data to the cloud.
+
+endif
+
+endmenu # Device
+
+menu "Cloud"
+
+config MQTT_KEEPALIVE
+	int "Time after last transmission to send a ping to keep connection on"
+	default 1200
+	help
+	  This should be set to the expected time between messages sent from
+	  this device. Making it larger than the expected data period does not
+	  conserve bandwidth, as the ping is only sent if nothing else
+	  has been within the specified period. Shorter values can prevent hidden
+	  NAT timeouts at the carrier, but also will interrupt GPS fix attempts
+	  and slow down TTFF.
+
+config CLOUD_BUTTON
+	bool "Enable button sensor"
+	default y
+
+config CLOUD_BUTTON_INPUT
+	int "Set button sensor button number"
+	range 1 4 if BOARD_NRF9160_PCA10090NS
+	default 1
+
+config CLOUD_CONNECT_RETRY_DELAY
+	int "Cloud connection retry delay in seconds"
+	default 480
+	help
+	  Time to wait before trying to reconnect to the cloud if the
+	  previous attempt failed (in seconds).
+
+config CLOUD_CONNECT_COUNT_MAX
+	int "Maximum number of cloud connection attempts"
+	default 8
+	help
+	  Maximum number of unsuccessful cloud connection attempts.
+	  Device will wait for the value defined by CLOUD_CONNECT_RETRY_DELAY
+	  between attempts.
+
+config CLOUD_WAIT_DURATION
+	int "Cloud connection acknowledge wait duration"
+	default 30
+	help
+	  How long the device should wait for a CONNACK
+	  event from the cloud when connecting.  Device will reboot
+	  if an ack is not received within the duration.
+
+config CLOUD_FOTA_APP
+	bool "Enable firmware over-the-air upgrades for application"
+	depends on AWS_FOTA
+	depends on DFU_TARGET_MCUBOOT
+	default y
+
+config CLOUD_FOTA_MODEM
+	bool "Enable firmware over-the-air upgrades for modem"
+	depends on AWS_FOTA
+	depends on DFU_TARGET_MODEM
+	default y
+
+config CLOUD_CONNECT_ERR_REBOOT_S
+	int "Seconds to wait before rebooting when a cloud connect error occurs"
+	default 300
+
+endmenu # Cloud
+
+config NRF9160DK_DEMO_WATCHDOG_TIMEOUT_MSEC
+	int "Watchdog timeout in milliseconds"
+	default 10000
+
+config USE_AT_HOST
+	bool "Enable AT commands"
+	default y
+	select AT_HOST_LIBRARY
+	help
+		Enable the AT host library so that AT commands can be sent to and
+		received from a serial terminal.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = NRF9160DK_DEMO
+module-str = nRF9160DK Demo
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

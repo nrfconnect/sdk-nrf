@@ -20,6 +20,7 @@
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
 /applications/nrf_desktop/                @pdunaj
 /applications/serial_lte_modem/           @junqingzou @lats1980 @rlubos
+/applications/nrf9160dk_demo/             @plskeggs
 # Boards
 /boards/                                  @ioannisg @anangl
 # All cmake related files

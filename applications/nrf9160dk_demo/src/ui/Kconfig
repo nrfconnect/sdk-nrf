@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config USE_UI_MODULE
+	bool "Enable UI module"
+	default y
+	help
+		Enable the User Interface module for user interaction on
+		development kit hardware.
+
+module = UI
+module-str = User Interface
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
