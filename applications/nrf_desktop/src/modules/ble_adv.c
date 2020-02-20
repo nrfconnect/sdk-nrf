@@ -37,7 +37,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_ADV_LOG_LEVEL);
 #define PEER_IS_RPA_STORAGE_NAME "peer_is_rpa_"
 
 
-static const struct bt_data ad[] = {
+static const struct bt_data ad_unbonded[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
 #if CONFIG_DESKTOP_HIDS_ENABLE
@@ -56,6 +56,20 @@ static const struct bt_data ad[] = {
 			  0x00,		/* Microsoft Beacon Sub Scenario */
 			  0x80),	/* Reserved RSSI Byte */
 #endif
+};
+
+static const struct bt_data ad_bonded[] = {
+	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
+#if CONFIG_DESKTOP_HIDS_ENABLE
+			  0x12, 0x18,	/* HID Service */
+#endif
+#if CONFIG_DESKTOP_BAS_ENABLE
+			  0x0f, 0x18,	/* Battery Service */
+#endif
+	),
+
+	BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
 
@@ -171,7 +185,7 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 }
 
 static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
-				    bool fast_adv, bool swift_pair)
+				    bool fast_adv)
 {
 	struct bt_le_adv_param adv_param = {
 		.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
@@ -208,13 +222,17 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 	}
 
 	adv_param.id = cur_identity;
-	size_t ad_size = ARRAY_SIZE(ad);
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR)) {
-		adv_swift_pair = swift_pair;
-		if (!swift_pair) {
-			ad_size = ARRAY_SIZE(ad) - SWIFT_PAIR_SECTION_SIZE;
-		}
+	const struct bt_data *ad;
+	size_t ad_size;
+
+	if (bt_addr_le_cmp(bond_addr, BT_ADDR_LE_ANY)) {
+		ad = ad_bonded;
+		ad_size = ARRAY_SIZE(ad_bonded);
+	} else {
+		ad = ad_unbonded;
+		ad_size = ARRAY_SIZE(ad_unbonded);
+		adv_swift_pair = IS_ENABLED(CONFIG_DESKTOP_BLE_SWIFT_PAIR);
 	}
 
 	return bt_le_adv_start(&adv_param, ad, ad_size, sd, ARRAY_SIZE(sd));
@@ -238,15 +256,12 @@ static int ble_adv_start(bool can_fast_adv)
 	}
 
 	bool direct = false;
-	bool swift_pair = true;
 
 	if (bond_find_data.peer_id < bond_find_data.peer_count) {
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
 			/* Direct advertising only to peer without RPA. */
 			direct = (peer_is_rpa[cur_identity] != PEER_RPA_YES);
 		}
-
-		swift_pair = false;
 	}
 
 	if (direct) {
@@ -254,7 +269,7 @@ static int ble_adv_start(bool can_fast_adv)
 					     fast_adv);
 	} else {
 		err = ble_adv_start_undirected(&bond_find_data.peer_address,
-					       fast_adv, swift_pair);
+					       fast_adv);
 	}
 
 	if (err == -ECONNREFUSED || (err == -ENOMEM)) {
@@ -301,7 +316,9 @@ static void sp_grace_period_fn(struct k_work *work)
 
 static int remove_swift_pair_section(void)
 {
-	int err = bt_le_adv_update_data(ad, (ARRAY_SIZE(ad) - SWIFT_PAIR_SECTION_SIZE),
+	int err = bt_le_adv_update_data(ad_unbonded,
+					(ARRAY_SIZE(ad_unbonded) -
+					 SWIFT_PAIR_SECTION_SIZE),
 					sd, ARRAY_SIZE(sd));
 
 	if (!err) {
