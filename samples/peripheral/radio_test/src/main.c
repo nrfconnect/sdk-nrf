@@ -6,6 +6,7 @@
 
 #include <sys/printk.h>
 #include <drivers/clock_control.h>
+#include <drivers/clock_control/nrf_clock_control.h>
 
 static void clock_init(void)
 {
@@ -13,21 +14,21 @@ static void clock_init(void)
 	struct device *clock;
 	enum clock_control_status clock_status;
 
-	clock = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL "_16M");
+	clock = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL);
 	if (!clock) {
 		printk("Unable to find clock device binding\n");
 		return;
 	}
 
-	err = clock_control_on(clock, NULL);
+	err = clock_control_on(clock, CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (err) {
 		printk("Unable to turn on the clock: %d", err);
 	}
 
-	clock_status = clock_control_get_status(clock, NULL);
-	while (clock_status != CLOCK_CONTROL_STATUS_ON) {
-		clock_status = clock_control_get_status(clock, NULL);
-	}
+	do {
+		clock_status = clock_control_get_status(clock,
+			CLOCK_CONTROL_NRF_SUBSYS_HF);
+	} while (clock_status != CLOCK_CONTROL_STATUS_ON);
 
 	printk("Clock has started\n");
 }
