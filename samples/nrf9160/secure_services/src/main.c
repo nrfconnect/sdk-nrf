@@ -12,7 +12,8 @@
 #include <pm_config.h>
 #include <fw_info.h>
 
-void print_hex_number(u8_t *num, size_t len)
+#if defined(CONFIG_BOOTLOADER_MCUBOOT) || defined(CONFIG_SPM_SERVICE_RNG)
+static void print_hex_number(u8_t *num, size_t len)
 {
 	printk("0x");
 	for (int i = 0; i < len; i++) {
@@ -20,12 +21,17 @@ void print_hex_number(u8_t *num, size_t len)
 	}
 	printk("\n");
 }
+#endif
 
-void print_random_number(u8_t *num, size_t len)
+
+#if defined(CONFIG_SPM_SERVICE_RNG)
+static void print_random_number(u8_t *num, size_t len)
 {
 	printk("Random number len %d: ", len);
 	print_hex_number(num, len);
 }
+#endif
+
 
 static int read_ficr_word(u32_t *result, const volatile u32_t *addr)
 {
@@ -52,6 +58,7 @@ void main(void)
 		"or validate S0 if present, sleep, then reboot.\n\n",
 		random_number_count, random_number_len);
 
+#if defined(CONFIG_SPM_SERVICE_RNG)
 	for (int i = 0; i < random_number_count; i++) {
 		u8_t random_number[random_number_len];
 		size_t olen = random_number_len;
@@ -64,20 +71,24 @@ void main(void)
 		}
 		print_random_number(random_number, olen);
 	}
+	printk("\n");
+#else
+	printk("CONFIG_SPM_SERVICE_RNG is disabled.\n\n");
+#endif
 
 	ret = spm_firmware_info(PM_APP_ADDRESS, &info_app);
 	if (ret != 0) {
 		printk("Could find firmware info (err: %d)\n", ret);
 	}
 
-	printk("App FW version: %d\n", info_app.version);
+	printk("App FW version: %d\n\n", info_app.version);
 
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
 	const int num_bytes_to_read = PM_MCUBOOT_PAD_SIZE;
 	const int read_address = PM_MCUBOOT_PAD_ADDRESS;
 	u8_t buf[num_bytes_to_read];
 
-	printk("\nRead %d bytes from address 0x%x (MCUboot header for current "
+	printk("Read %d bytes from address 0x%x (MCUboot header for current "
 		"image):\n", num_bytes_to_read, read_address);
 	ret = spm_request_read(buf, read_address, num_bytes_to_read);
 	if (ret != 0) {
@@ -85,18 +96,23 @@ void main(void)
 	}
 
 	print_hex_number(buf, num_bytes_to_read);
+	printk("\n");
 #endif
 
-#if defined(PM_S0_ADDRESS)
+#if defined(PM_S0_ADDRESS) && defined(CONFIG_SPM_SERVICE_PREVALIDATE)
 	int valid = spm_prevalidate_b1_upgrade(PM_S0_ADDRESS, PM_S0_ADDRESS);
 
 	if (valid < 0 && valid != -ENOTSUP) {
 		printk("Unexpected error from spm_prevalidate_b1_upgrade: %d\n",
 			valid);
 	} else {
-		printk("\nS0 valid? %s\n",
+		printk("S0 valid? %s\n",
 			valid == 1 ? "True" : valid == 0 ? "False" : "Unknown");
 	}
+	printk("\n");
+#else
+	printk("CONFIG_SPM_SERVICE_PREVALIDATE is disabled or bootloader is "
+		"not present.\n\n");
 #endif
 
 	u32_t ficr_info = 0;
@@ -109,7 +125,7 @@ void main(void)
 		printk("FICR.INFO.VARIANT (+0x210) = 0x%08X\n\n", ficr_info);
 	}
 
-	printk("\nReboot in %d seconds.\n", sleep_time_s);
+	printk("Reboot in %d seconds.\n", sleep_time_s);
 	k_sleep(K_SECONDS(5));
 
 	sys_reboot(0); /* Argument is ignored. */
