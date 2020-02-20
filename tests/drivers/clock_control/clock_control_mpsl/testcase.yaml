@@ -1,0 +1,5 @@
+tests:
+  drivers.clock.clock_control_nrf5:
+    tags: drivers
+    platform_whitelist: nrf51_pca10028 nrf52_pca10040 nrf52840_pca10056
+                        nrf9160_pca10090
