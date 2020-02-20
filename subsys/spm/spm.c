@@ -154,19 +154,17 @@ static void config_regions(bool ram, size_t start, size_t end, u32_t perm)
 		} else {
 			NRF_SPU->FLASHREGION[i].PERM = perm;
 		}
-		PRINT("%02u 0x%05x 0x%05x \t", i,
-					region_size * i, region_size * (i + 1));
-		PRINT("%s", perm & (ram ? SRAM_SECURE : FLASH_SECURE)
-							? "Secure\t\t" :
-							  "Non-Secure\t");
-		PRINT("%c", perm & (ram ? SRAM_READ : FLASH_READ)  ? 'r' : '-');
-		PRINT("%c", perm & (ram ? SRAM_WRITE : FLASH_WRITE)
-								? 'w' : '-');
-		PRINT("%c", perm & (ram ? SRAM_EXEC : FLASH_EXEC)  ? 'x' : '-');
-		PRINT("%c", perm & (ram ? SRAM_LOCK : FLASH_LOCK)  ? 'l' : '-');
-		PRINT("\n");
 	}
 
+	PRINT("%02u %02u 0x%05x 0x%05x \t", start, end - 1,
+				region_size * start, region_size * end);
+	PRINT("%s", perm & (ram ? SRAM_SECURE : FLASH_SECURE) ? "Secure\t\t" :
+								"Non-Secure\t");
+	PRINT("%c", perm & (ram ? SRAM_READ : FLASH_READ)  ? 'r' : '-');
+	PRINT("%c", perm & (ram ? SRAM_WRITE : FLASH_WRITE) ? 'w' : '-');
+	PRINT("%c", perm & (ram ? SRAM_EXEC : FLASH_EXEC)  ? 'x' : '-');
+	PRINT("%c", perm & (ram ? SRAM_LOCK : FLASH_LOCK)  ? 'l' : '-');
+	PRINT("\n");
 }
 
 
