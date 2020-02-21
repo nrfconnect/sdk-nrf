@@ -5,7 +5,7 @@
  */
 
 #include <at_cmd_parser/at_cmd_parser.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <at_notif.h>
 #include <ctype.h>
 #include <device.h>

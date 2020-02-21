@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <bsd.h>
 #include <lte_lc.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <at_notif.h>
 #include <net/mqtt.h>
 #include <net/socket.h>

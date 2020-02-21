@@ -8,7 +8,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <init.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <at_notif.h>
 #include <sys/slist.h>
 
