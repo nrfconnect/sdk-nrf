@@ -73,14 +73,9 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endfunction()
 
   if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
-    # Inject this configuration from parent image to mcuboot.
-    set(conf_path "${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/build_s1.conf")
-    string(FIND ${mcuboot_OVERLAY_CONFIG} ${conf_path} out)
-    if (${out} EQUAL -1)
-      set(mcuboot_OVERLAY_CONFIG
-        "${mcuboot_OVERLAY_CONFIG} ${conf_path}"
-        CACHE STRING "" FORCE)
-    endif()
+    set(build_s1 TRUE)
+  else()
+    set(build_s1 FALSE)
   endif()
 
   add_child_image(mcuboot ${MCUBOOT_DIR}/boot/zephyr)
@@ -128,7 +123,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     mcuboot_sign_target
     )
 
-  if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
+  if (build_s1)
     # Secure Boot (B0) is enabled, and we have to build update candidates
     # for both S1 and S0.
 
