@@ -2,3 +2,4 @@ recommonmark==0.4.0
 sphinxcontrib-mscgen>=0.5
 ecdsa
 intelhex
+west>=0.7.2
