@@ -333,10 +333,10 @@ def create_set_report(recipient, event_id, event_data):
         value.
         Recipient is a device product ID. """
 
-    assert type(recipient) == int
-    assert type(event_id) == int
+    assert isinstance(recipient, int)
+    assert isinstance(event_id, int)
     if event_data:
-        assert type(event_data) == bytes
+        assert isinstance(event_data, bytes)
         event_data_len = len(event_data)
     else:
         event_data_len = 0
@@ -358,8 +358,8 @@ def create_fetch_report(recipient, event_id):
         a configuration value from a device.
         Recipient is a device product ID. """
 
-    assert type(recipient) == int
-    assert type(event_id) == int
+    assert isinstance(recipient, int)
+    assert isinstance(event_id, int)
 
     status = ConfigStatus.FETCH
     report = struct.pack('<BHBBB', REPORT_ID, recipient, event_id, status, 0)
@@ -383,19 +383,19 @@ def exchange_feature_report(dev, recipient, event_id, event_data, is_fetch,
 
     try:
         dev.send_feature_report(data)
-    except:
+    except Exception:
         if not is_fetch:
             return False
         else:
             return False, None
 
-    for retry in range(POLL_RETRY_COUNT):
+    for _ in range(POLL_RETRY_COUNT):
         time.sleep(poll_interval)
 
         try:
             response_raw = dev.get_feature_report(REPORT_ID, REPORT_SIZE)
             response = Response.parse_response(response_raw)
-        except:
+        except Exception:
             response = None
 
         if response is None:
@@ -475,7 +475,7 @@ def open_device(device_type):
             break
         except hid.HIDException:
             pass
-        except:
+        except Exception:
             logging.error('Unknown error: {}'.format(sys.exc_info()[0]))
 
     if dev is None:
@@ -634,7 +634,7 @@ def dfu_sync_wait(dev, recipient, is_active):
     else:
         dfu_state = 0x00
 
-    for i in range(DFU_SYNC_RETRIES):
+    for _ in range(DFU_SYNC_RETRIES):
         dfu_info = dfu_sync(dev, recipient)
 
         if dfu_info is not None:
@@ -677,7 +677,7 @@ def dfu_transfer(dev, recipient, dfu_image, progress_callback):
 
     try:
         offset, success = send_chunk(dev, img_csum, img_file, img_length, offset, recipient, success, progress_callback)
-    except:
+    except Exception:
         success = False
 
     img_file.close()
