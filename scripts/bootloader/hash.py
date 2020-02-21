@@ -18,7 +18,8 @@ def parse_args():
 
     parser.add_argument("--infile", "-i", "--in", "-in", required=True,
                         help="Hash the contents of the specified file. If a *.hex file is given, the contents will "
-                             "first be converted to binary. For all other file types, no conversion is done.")
+                             "first be converted to binary, with all non-specified area being set to 0xff. "
+                             "For all other file types, no conversion is done.")
     return parser.parse_args()
 
 
@@ -27,8 +28,7 @@ if __name__ == "__main__":
 
     if args.infile.endswith('.hex'):
         ih = IntelHex(args.infile)
-        if len(ih) - 1 != (ih.maxaddr() - ih.minaddr()):
-            raise RuntimeError("Non-contiguous hex file not supported.")
+        ih.padding = 0xff  # Allows hashing with empty regions
         to_hash = ih.tobinstr()
     else:
         to_hash = open(args.infile, 'rb').read()
