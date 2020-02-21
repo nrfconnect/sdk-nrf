@@ -27,7 +27,7 @@ Currently, the following solutions are available for the network core:
   Both the BLE Controller from Zephyr and :ref:`nrfxlib:ble_controller` are supported.
 * The :ref:`radio_test` sample that runs only on the network core and is used for testing the Radio peripheral.
   To start the network core, this sample requires any sample programmed on the application core.
-  For example, you can use :ref:`zephyr:hello_world` for this purpose.
+  For example, you can use :ref:`nrf5340_empty_app_core` for this purpose.
 
 In general, this core should be used for real-time processing tasks involving low-level protocols and layers.
 

@@ -1,0 +1,9 @@
+sample:
+  name: Empty firmware for application core
+  description: Minimal Zephyr configuration sample that only suspends CPU.
+tests:
+  samples.nrf5340.empty_app_core.build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf5340pdk_nrf5340_cpuapp
+    tags: ci_build

@@ -118,7 +118,7 @@ Building and running
 .. note::
    On the |nRF5340DKnoref|, the Radio Test sample is a standalone network sample that does not require any counterpart application sample.
    However, you must still program the application core to boot up the network core.
-   You can use any sample for this, for example :ref:`zephyr:hello_world`.
+   You can use any sample for this, for example :ref:`nrf5340_empty_app_core`.
 
 .. _radio_test_testing:
 

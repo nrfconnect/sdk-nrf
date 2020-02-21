@@ -61,6 +61,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/*/README
    ../../samples/debug/*/README
+   ../../samples/nrf5340/empty_app_core/README
    ../../samples/mpsl/*/README
    ../../samples/peripheral/*/README
    ../../samples/sensor/*/README
