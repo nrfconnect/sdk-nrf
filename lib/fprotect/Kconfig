@@ -20,10 +20,10 @@ config NRF_SPU_FLASH_REGION_SIZE
 	  Redefinition for the benefit of qemu_x86
 endif
 
-if FPROTECT
 config FPROTECT_BLOCK_SIZE
-	hex "Block size of fprotect"
+	hex
 	default NRF_SPU_FLASH_REGION_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
 	default $(dt_hex_val,DT_SOC_NV_FLASH_1000000_ERASE_BLOCK_SIZE) if SOC_NRF5340_CPUNET
 	default $(dt_hex_val,DT_SOC_NV_FLASH_0_ERASE_BLOCK_SIZE)
-endif
+	help
+	  Block size of fprotect
