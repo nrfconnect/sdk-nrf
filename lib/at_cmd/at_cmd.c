@@ -11,7 +11,7 @@
 #include <init.h>
 #include <bsd_limits.h>
 
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 
 LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 

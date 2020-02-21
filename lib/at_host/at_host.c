@@ -11,7 +11,7 @@
 #include <drivers/uart.h>
 #include <string.h>
 #include <init.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <at_notif.h>
 
 LOG_MODULE_REGISTER(at_host, CONFIG_AT_HOST_LOG_LEVEL);

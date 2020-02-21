@@ -9,6 +9,7 @@ Other libraries
 
    ../../include/at_cmd_parser/*
    ../../include/*
+   ../../include/modem/*
    ../../include/dfu/*
    ../../include/debug/*
    ../../include/shell/*

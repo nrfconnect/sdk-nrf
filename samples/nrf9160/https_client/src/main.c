@@ -11,7 +11,7 @@
 #include <net/bsdlib.h>
 #include <net/tls_credentials.h>
 #include <lte_lc.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <at_notif.h>
 #include <modem_key_mgmt.h>
 

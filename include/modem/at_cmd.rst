@@ -36,7 +36,7 @@ This callback is set by :cpp:type:`at_cmd_set_notification_handler`.
 API documentation
 *****************
 
-| Header file: :file:`include/at_cmd.h`
+| Header file: :file:`include/modem/at_cmd.h`
 | Source file: :file:`lib/at_cmd/at_cmd.c`
 
 .. doxygengroup:: at_cmd
