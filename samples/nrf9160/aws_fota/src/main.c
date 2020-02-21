@@ -13,6 +13,7 @@
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <net/bsdlib.h>
+#include <net/aws_jobs.h>
 #include <net/aws_fota.h>
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
@@ -38,6 +39,7 @@ BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 #define CLIENT_ID_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID) - 1)
 #endif
 static u8_t client_id_buf[CLIENT_ID_LEN+1];
+static u8_t current_job_id[AWS_JOBS_JOB_ID_MAX_LEN];
 
 /* Buffers for MQTT client. */
 static u8_t rx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
@@ -448,13 +450,32 @@ static void at_configure(void)
 	__ASSERT(err == 0, "AT CMD could not be established.");
 }
 
-static void aws_fota_cb_handler(enum aws_fota_evt_id evt)
+static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 {
 	int err;
 
-	switch (evt) {
+	if (fota_evt == NULL) {
+		return;
+	}
+
+	switch (fota_evt->id) {
+	case AWS_FOTA_EVT_START:
+		if (aws_fota_get_job_id(current_job_id,
+					sizeof(current_job_id)) <= 0) {
+			snprintf(current_job_id, sizeof(current_job_id), "N/A");
+		}
+		printk("AWS_FOTA_EVT_START, job id = %s\n", current_job_id);
+		break;
+
+	case AWS_FOTA_EVT_DL_PROGRESS:
+		/* CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT must be enabled */
+		/* to receive progress events */
+		printk("AWS_FOTA_EVT_DL_PROGRESS, %d%% downloaded\n",
+			fota_evt->dl.progress);
+		break;
+
 	case AWS_FOTA_EVT_DONE:
-		printk("AWS_FOTA_EVT_DONE, rebooting to apply update.\n");
+		printk("AWS_FOTA_EVT_DONE, rebooting to apply update\n");
 		do_reboot = true;
 		break;
 
