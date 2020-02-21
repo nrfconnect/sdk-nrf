@@ -67,7 +67,8 @@ def remove_irrelevant_requirements(reqs):
             raise RuntimeError("Found empty 'placement' property for partition '{}'".format(k))
 
     # Exchange all occurrences of 'one_of' list, with the first existing partition in the 'one_of' list.
-    resolve_one_of(reqs, reqs.keys())
+    # Extend the keys given as input with 'end' and 'start' as these are also valid references.
+    resolve_one_of(reqs, list(reqs.keys()) + ['end', 'start'])
 
     # Remove dependencies to partitions which are not present
     for k, v in reqs.items():
@@ -650,6 +651,19 @@ def test():
     start, size = get_dynamic_area_start_and_size(test_config, 100)
     assert start == 10
     assert size == 100 - 10
+
+    # Verify that all 'end' and 'start' are valid references in 'one_of' dicts
+    td = {
+        'a': {'placement': {'after': {'one_of': ['x0', 'x1', 'start']}}, 'size': 100},
+        'b': {'placement': {'before': {'one_of': ['x0', 'x1', 'end']}}, 'size': 200},
+        'app': {},
+    }
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
+    set_sub_partition_address_and_size(td, sub_partitions)
+    expect_addr_size(td, 'a', 0, 100)
+    expect_addr_size(td, 'app', 100, 700)
+    expect_addr_size(td, 'b', 800, 200)
 
     # Verify that all 'one_of' dicts are replaced with the first entry which corresponds to an existing partition
     td = {
