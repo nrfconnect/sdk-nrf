@@ -83,8 +83,8 @@ Repository structure
 In order to manage the combination of repositories and versions, the |NCS| uses :ref:`west <zephyr:west>`, the same tool that the Zephyr Project uses to manage its repository set.
 You can learn more about the reasons behind the introduction of west in :ref:`this section <zephyr:west-history>` of the Zephyr documentation.
 
-A :ref:`manifest repository <zephyr:west-manifests>`, `fw-nrfconnect-nrf`_, contains a file in its root folder, :file:`west.yml`, which lists all other repositories (west projects) included in the |NCS| and their corresponding revisions.
-The |NCS| repository structure is therefore in fact modeled in the shape of a star topology, with the `fw-nrfconnect-nrf`_ repository being the center of the star and all other repositories being west projects.
+A :ref:`manifest repository <zephyr:west-manifests>`, `fw-nrfconnect-nrf`_, contains a file in its root folder, :file:`west.yml`, which lists all other repositories (west projects) included in the |NCS|.
+The |NCS| repository structure has a star topology, with the `fw-nrfconnect-nrf`_ repository being the center of the star and all other repositories being west projects that are managed by :file:`west.yml`.
 This is equivalent to topology T2 in the :ref:`west documentation <zephyr:west-multi-repo>`.
 
 .. figure:: images/ncs-west-repos.png
@@ -127,7 +127,7 @@ OSS repositories downstream project history
 
 As described in :ref:`dm-repo-types`, the |NCS| contains OSS repositories, which are based on third-party, open-source Git repositories and may contain additional patches not present upstream.
 Examples include `fw-nrfconnect-zephyr`_ and `fw-nrfconnect-mcuboot`_, which have upstream open-source projects used as a basis for downstream repositories distributed with the |NCS|.
-This section describes how the history of these OSS repositories is maintained, and how they are upmerged with their upstreams.
+This section describes how the history of these OSS repositories is maintained, and how they are synchronized with their upstreams.
 
 The short logs for these downstream patches contain ``[nrf xyz]`` at the beginning, for different ``xyz`` strings.
 This makes their different purposes downstream clearer, and makes them easier to search for and see in ``git log``.
@@ -142,7 +142,7 @@ The current values of ``[nrf xyz]`` are:
 
 It is important to note that the **downstream project history is periodically rewritten**.
 This is important to prevent the number of downstream patches included in a specific NCS release from increasing forever.
-A repository's history is typically only rewritten once per every major |NCS| release.
+A repository's history is typically only rewritten once for every |NCS| release.
 
 To make incorporating new history into your own forks easier, a new point in the downstream |NCS| history is always created which has an empty ``git diff`` with the previous version.
 The empty diff means you can always use:
@@ -357,15 +357,74 @@ This workflow is particularly beneficial if your application is split among mult
 
 In order to implement this approach you first need to create a manifest repository of your own, which just means a repository that contains a :file:`west.yml` manifest file in its root.
 Next you must populate the manifest file with the list of repositories and their revisions.
-In general, the easiest thing to do is to take the :file:`west.yml` in `fw-nrfconnect-nrf`_ and copy its entries directly as a starting point.
+
+In general, the easiest thing to do is to import the :file:`west.yml` into `fw-nrfconnect-nrf`_, using west's manifest imports feature.
+This is demonstrated by the following code:
+
+.. code-block:: yaml
+
+   # Example application-specific west.yml, using manifest imports.
+   manifest:
+     remotes:
+       - name: ncs
+         url-base: https://github.com/NordicPlayground
+     projects:
+       - name: nrf
+         remote: ncs
+         revision: v1.2.0
+         import: true
+     self:
+       path: application
+
+Importing :file:`west.yml` also results in the addition of all the NCS projects, including those imported from Zephyr, into your workspace.
+
 Then, make the following changes:
 
-  * Add an entry for `fw-nrfconnect-nrf`_ or a forked version of it, if applicable.
-  * Point the entries of any |NCS| repositories that you have forked to your fork and fork revision.
-  * Add any entries for repositories that you need and that are not part of the |NCS|.
+  * Point the entries of any |NCS| repositories that you have forked to your fork and fork revision, by adding them to the ``projects`` list using a new remote.
+  * Add any entries for repositories that you need that are not part of the |NCS|.
 
-Once you have your new manifest repository, you can use it with west just like you would use `fw-nrfconnect-nrf`_ when :ref:`getting <dm-wf-get-ncs>` and later :ref:`updating <dm-wf-update-ncs>` the source code.
-You just need to replace ``fw-nrfconnect-nrf`` and ``nrf`` with whatever repository name and path you have chosen for your manifest repository.
+For example:
+
+.. code-block:: yaml
+
+   # Example your-application/west.yml, using manifest imports, with
+   # an NCS fork and a separate module
+   manifest:
+     remotes:
+       - name: ncs
+         url-base: https://github.com/NordicPlayground
+       - name: your-remote
+         url-base: https://github.com/your-name
+     projects:
+       - name: nrf
+         remote: ncs
+         revision: v1.2.0
+         import: true
+       # Example for how to override a repository in the NCS with your own:
+       - name: mcuboot
+         remote: your-remote
+         revision: your-mcuboot-fork-SHA-or-branch
+       # Example for how to add a repository not in NCS:
+       - name: your-custom-library
+         remote: your-remote
+         revision: your-library-SHA-or-branch
+     self:
+       path: application
+
+The ``name`` variable values starting with ``your-`` in the above code block are just examples and you can replace them as needed.
+The above example includes a fork of the ``mcuboot`` project, but you can fork any project in :file:`nrf/west.yml`.
+
+Once you have your new manifest repository hosted online, you can use it with west just like you use the `fw-nrfconnect-nrf`_  repository when :ref:`getting <dm-wf-get-ncs>` and later :ref:`updating <dm-wf-update-ncs>` the source code.
+You just need to replace ``fw-nrfconnect-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository as shown in the following code:
+
+.. code-block:: none
+
+   west init -m https://github.com/your-name/your-application your-ncs-fork
+   cd your-ncs-fork
+   west update
+
+After that, to modify the |NCS| version associated with your app, change the ``revision`` value in the manifest file to the `fw-nrfconnect-nrf`_ Git tag, SHA, or the branch you want to use, save the file, and run ``west update``.
+See :ref:`zephyr:west-multi-repo` for more details.
 
 .. _dm-glossary:
 
