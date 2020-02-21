@@ -8,8 +8,7 @@ menu "Bootloader"
 
 config MCUBOOT_BUILD_S1_VARIANT
 	bool
-	prompt "Build S1 variant of mcuboot" if !SECURE_BOOT
-	default y if SECURE_BOOT
+	prompt "Build S1 variant of mcuboot"
 
 config SECURE_BOOT
 	bool "Use Secure Bootloader"

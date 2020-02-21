@@ -27,9 +27,6 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
     ${CMAKE_CURRENT_SOURCE_DIR}/multi_image_mcuboot.conf
     )
 
-  # Partition S1 is only enabled when MCUBoot is enabled.
-  set(s1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>)
-
 else()
 
   if (CONFIG_SPM)
@@ -46,12 +43,6 @@ if (image_to_boot)
     )
 else()
   assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")
-endif()
-
-# Partition S0 will always contain the image to be booted by B0.
-set(s0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
-if (s1_addr)
-  set(s1_arg --s1-addr ${s1_addr})
 endif()
 
 if (DEFINED CONFIG_SOC_NRF9160)
@@ -95,8 +86,8 @@ add_custom_command(
   COMMAND
   ${PYTHON_EXECUTABLE}
   ${NRF_BOOTLOADER_SCRIPTS}/provision.py
-  --s0-addr ${s0_addr}
-  ${s1_arg}
+  --s0-addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>
+  --s1-addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>
   --provision-addr ${provision_addr}
   --public-key-files ${ALL_PUBLIC_KEY_FILES}
   --output ${PROVISION_HEX}
