@@ -20,7 +20,7 @@ from enum import IntEnum
 
 ConfigOption = collections.namedtuple('ConfigOption', 'range event_id help type')
 
-REPORT_ID = 5
+REPORT_ID = 6
 REPORT_SIZE = 30
 EVENT_DATA_LEN_MAX = REPORT_SIZE - 6
 
