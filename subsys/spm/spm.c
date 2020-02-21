@@ -10,6 +10,7 @@
 #include <linker/linker-defs.h>
 #include <device.h>
 #include <drivers/gpio.h>
+#include <hal/nrf_spu.h>
 #include "spm_internal.h"
 
 #if !defined(CONFIG_ARM_SECURE_FIRMWARE)
@@ -135,8 +136,8 @@ static void spm_config_nsc_flash(void)
 		"The Non-Secure Callable region is overflowed by %d byte(s).\n",
 		(u32_t)__sg_size - nsc_size);
 
-	NRF_SPU->FLASHNSC[0].REGION = FLASH_NSC_REGION_FROM_ADDR(__sg_start);
-	NRF_SPU->FLASHNSC[0].SIZE = FLASH_NSC_SIZE_REG(nsc_size);
+	nrf_spu_flashnsc_set(NRF_SPU, 0, FLASH_NSC_SIZE_REG(nsc_size),
+			FLASH_NSC_REGION_FROM_ADDR(__sg_start), false);
 
 	PRINT("Non-secure callable region 0 placed in flash region %d with size %d.\n",
 		NRF_SPU->FLASHNSC[0].REGION, NRF_SPU->FLASHNSC[0].SIZE << 5);
