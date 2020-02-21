@@ -12,7 +12,7 @@
 #include <lte_params.h>
 #include <utils.h>
 
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 
 #define AT_IMSI          "AT+CIMI"
 #define AT_XMONITOR      "AT\%XMONITOR"

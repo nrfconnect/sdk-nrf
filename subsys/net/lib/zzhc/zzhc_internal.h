@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <at_notif.h>
 #include <settings/settings.h>
 #include <lte_lc.h>

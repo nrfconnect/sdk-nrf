@@ -33,7 +33,7 @@
 #include "ui.h"
 #include "gps_controller.h"
 #include "service_info.h"
-#include "at_cmd.h"
+#include <modem/at_cmd.h>
 #include "watchdog.h"
 
 #include <logging/log.h>

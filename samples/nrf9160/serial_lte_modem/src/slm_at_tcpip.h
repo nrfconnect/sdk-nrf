@@ -14,7 +14,7 @@
  */
 
 #include <zephyr/types.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 
 /**
  * @brief TCP/IP AT command parser.

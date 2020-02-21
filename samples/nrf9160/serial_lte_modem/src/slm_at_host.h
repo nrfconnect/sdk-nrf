@@ -16,7 +16,7 @@
 #include <zephyr/types.h>
 #include <ctype.h>
 #include <at_cmd_parser/at_cmd_parser.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 
 /**@brief AT command handler type. */
 typedef int (*slm_at_handler_t) (enum at_cmd_type);

@@ -16,7 +16,7 @@
 #include <nrf_socket.h>
 #include <net/socket.h>
 #ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <at_cmd_parser/at_cmd_parser.h>
 #endif
 
