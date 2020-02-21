@@ -20,8 +20,7 @@ def remove_item_not_in_list(list_to_remove_from, list_to_check):
 
 def item_is_placed(d, item, after_or_before):
     assert after_or_before in ['after', 'before']
-    return after_or_before in d['placement'].keys() and \
-           d['placement'][after_or_before][0] == item
+    return after_or_before in d['placement'] and d['placement'][after_or_before][0] == item
 
 
 def resolve_one_of(reqs, partitions):
@@ -60,7 +59,35 @@ def resolve_one_of(reqs, partitions):
                 reqs[k] = [i if i not in to_remove else to_add.pop(0) for i in v]
 
 
+def remove_all_zero_sized_partitions(reqs, to_delete=None):
+    first = False
+    if to_delete is None:
+        to_delete = list()
+        first = True
+
+    for k, v in reqs.items():
+        if 'size' in v and v['size'] == 0:
+            to_delete.append(k)
+            remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete}, to_delete)
+        if 'share_size' in v.keys():
+            non_zero_partitions = [p for p in reqs if 'size' not in reqs[p] or reqs[p]['size'] != 0]
+            actual_partitions = v['share_size'] if not isinstance(v['share_size'], dict) else v['share_size']['one_of']
+            remove_item_not_in_list(actual_partitions, non_zero_partitions)
+            if not v['share_size'] or ('one_of' in v['share_size'] and len(v['share_size']['one_of']) == 0):
+                del v['share_size']
+                if 'size' not in v.keys():
+                    # The partition has no size, delete it, and rerun this function with the new reqs.
+                    to_delete.append(k)
+                    remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete}, to_delete)
+
+    if first and to_delete:
+        for k in list(set(to_delete)):
+            del reqs[k]
+
+
 def remove_irrelevant_requirements(reqs):
+    remove_all_zero_sized_partitions(reqs)
+
     # Verify that no partitions define an empty 'placement'
     for k, v in reqs.items():
         if 'placement' in v.keys() and len(v['placement']) == 0:
@@ -83,15 +110,6 @@ def remove_irrelevant_requirements(reqs):
             remove_item_not_in_list(v['inside'], reqs.keys())
             if not v['inside']:
                 del v['inside']
-        if 'share_size' in v.keys():
-            remove_item_not_in_list(v['share_size'], reqs.keys())
-            if not v['share_size']:
-                del v['share_size']
-                if 'size' not in v.keys():
-                    # The partition has no size, delete it, and rerun this function with the new reqs.
-                    del reqs[k]
-                    remove_irrelevant_requirements(reqs)
-                    return
 
 
 def get_images_which_need_resolving(reqs, sub_partitions):
@@ -686,6 +704,46 @@ def test():
     expect_addr_size(td, 's', 0, 500)  # s spans a, b and c
     expect_addr_size(td, 'app', 600, 200)  # s spans a, b and c
     expect_addr_size(td, 'e', 800, 200)  # s spans a, b and c
+
+    # Verify that all 'share_size' with value partition that has size 0 is compatible with 'one_of' dicts
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 0},
+        'b': {'placement': {'after': {'one_of': ['a', 'start']}},
+              'share_size': ['a']},
+        'c': {'placement': {'after': {'one_of': ['a', 'b', 'start']}},
+              'share_size': {'one_of': ['a', 'b']}},
+        'd': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'start']}},
+              'share_size': {'one_of': ['a', 'b', 'c']}},
+        # You get the point
+        'e': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'd', 'start']}}, 'size': 100}
+    }
+    remove_all_zero_sized_partitions(td)
+    assert 'a' not in td
+    assert 'b' not in td
+    assert 'c' not in td
+    assert 'd' not in td
+
+    # Verify that all 'share_size' with value partition that has size 0 is compatible withe 'one_of' dicts.
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 0},
+        'b': {'placement': {'after': {'one_of': ['a', 'start']}},
+              'share_size': ['a']},
+        'c': {'placement': {'after': {'one_of': ['a', 'b', 'start']}},
+              'share_size': {'one_of': ['a', 'b']}},
+        'd': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'start']}},
+              'share_size': {'one_of': ['a', 'b', 'c']}},
+        # You get the point
+        'e': {'placement': {'after': {'one_of': ['a', 'b', 'c', 'd', 'start']}}, 'size': 100},
+        'app': {}
+    }
+    # Perform the same test as above, but run it through the 'resolve' function this time.
+    s, sub_partitions = resolve(td)
+    set_addresses_and_align(td, sub_partitions, s, 1000)
+    assert 'a' not in td
+    assert 'b' not in td
+    assert 'c' not in td
+    assert 'd' not in td
+    expect_addr_size(td, 'e', 0, 100)
 
     # Verify that an error is raised when no partition inside 'one_of' dicts exist as dict value
     failed = False
