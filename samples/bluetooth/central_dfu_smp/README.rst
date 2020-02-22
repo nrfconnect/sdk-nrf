@@ -24,11 +24,9 @@ Requirements
 
 * One of the following development boards:
 
-  * |nRF9160DK|
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
 
 * A device running `MCUmgr`_ with `SMP over Bluetooth`_, for example, another board running the :ref:`smp_svr_sample`
 

@@ -33,7 +33,6 @@ Requirements
 
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
 
   You can mix different boards.
 

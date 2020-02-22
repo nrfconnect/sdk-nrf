@@ -55,9 +55,8 @@ Requirements
 
 * One of the following development boards:
 
-  * nRF52840 Development Kit board (PCA10056)
-  * nRF52 Development Kit board (PCA10040)
-  * nRF51 Development Kit board (PCA10028)
+  * |nRF52840DK|
+  * |nRF52DK|
 
 * The Nordic Semiconductor nRF Mesh app for Android or iOS.
 * The :ref:`bluetooth_mesh_light` sample application programmed on a separate device, and configured according to the Mesh Light sample's :ref:`bluetooth_mesh_light_testing` guide.

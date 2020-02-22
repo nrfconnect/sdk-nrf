@@ -22,7 +22,6 @@ Requirements
   * |nRF52840Dongle|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
 
 * A phone or tablet running a compatible application, for example `nRF Connect for Mobile`_, `nRF Blinky`_, or `nRF Toolbox`_.
 

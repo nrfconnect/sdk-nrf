@@ -34,7 +34,6 @@ Requirements
 
 * One of the following development boards:
 
- * |Thingy91|
  * |nRF9160DK|
 
 Building and running

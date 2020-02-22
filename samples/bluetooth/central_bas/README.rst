@@ -20,11 +20,9 @@ Requirements
 
 * One of the following development boards:
 
-  * |nRF9160DK|
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
 
 * A device running a BAS Server to connect with (for example, another board running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a Bluetooth Low Energy dongle and nRF Connect for Desktop)
 

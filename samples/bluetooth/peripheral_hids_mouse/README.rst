@@ -27,11 +27,9 @@ Requirements
 
 * One of the following development boards:
 
-  * |nRF9160DK|
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
 
 User interface
 **************

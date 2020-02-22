@@ -35,8 +35,6 @@ Requirements
   * |nRF9160DK|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK|
-
 
 Building and running
 ********************

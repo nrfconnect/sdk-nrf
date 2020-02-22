@@ -77,8 +77,6 @@ Requirements
 
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK| - limited support;
-    some features, like an over-the-air data rate of 2 Ms/s, are not available on this board
 
   You can mix different boards.
 * Connection to a computer with a serial terminal for each of the boards.

@@ -41,7 +41,6 @@ Requirements
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
-  * |nRF51DK| (with the `NFC_OOB_PAIRING` option disabled)
 
 If the `NFC_OOB_PAIRING` feature is enabled:
 
