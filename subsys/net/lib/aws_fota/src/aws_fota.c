@@ -504,13 +504,11 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		callback(AWS_FOTA_EVT_ERROR);
 		break;
 
-#ifdef CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
 		stored_progress = evt->offset;
 		err = update_job_execution(c, job_id, AWS_JOBS_IN_PROGRESS,
 					   fota_state, stored_progress, "");
 		break;
-#endif
 	}
 
 }
