@@ -17,7 +17,6 @@ config FOTA_SOCKET_RETRIES
 
 config FOTA_DOWNLOAD_PROGRESS_EVT
 	bool "Emit progress event upon receiving a download fragment"
-	default y
 
 module=FOTA_DOWNLOAD
 module-dep=LOG
