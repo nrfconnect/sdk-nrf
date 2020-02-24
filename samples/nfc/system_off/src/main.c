@@ -10,6 +10,9 @@
 
 #include <nrfx.h>
 #include <hal/nrf_power.h>
+#if !NRF_POWER_HAS_RESETREAS
+#include <hal/nrf_reset.h>
+#endif
 
 #include <nfc_t2t_lib.h>
 #include <nfc/ndef/nfc_ndef_msg.h>
@@ -152,22 +155,16 @@ static void system_off(struct k_work *work)
 }
 
 
-void main(void)
+/**
+ * @brief  Helper function for printing the reason of the last reset.
+ * Can be used to confirm that NCF field actually woke up the system.
+ */
+static void print_reset_reason(void)
 {
 	u32_t reas;
 
-	/* Configure LED-pins */
-	if (dk_leds_init() < 0) {
-		printk("Cannot init LEDs!\n");
-		return;
-	}
-	dk_set_led_on(SYSTEM_ON_LED);
+#if NRF_POWER_HAS_RESETREAS
 
-	/* Configure and start delayed work that enters system off */
-	k_delayed_work_init(&system_off_work, system_off);
-	k_delayed_work_submit(&system_off_work, K_SECONDS(SYSTEM_OFF_DELAY_S));
-
-	/* Show last reset reason */
 	reas = nrf_power_resetreas_get(NRF_POWER);
 	nrf_power_resetreas_clear(NRF_POWER, reas);
 	if (reas & NRF_POWER_RESETREAS_NFC_MASK) {
@@ -181,6 +178,42 @@ void main(void)
 	} else {
 		printk("Power-on-reset\n");
 	}
+
+#else
+
+	reas = nrf_reset_resetreas_get(NRF_RESET);
+	nrf_reset_resetreas_clear(NRF_RESET, reas);
+	if (reas & NRF_RESET_RESETREAS_NFC_MASK) {
+		printk("Wake up by NFC field detect\n");
+	} else if (reas & NRF_RESET_RESETREAS_RESETPIN_MASK) {
+		printk("Reset by pin-reset\n");
+	} else if (reas & NRF_RESET_RESETREAS_SREQ_MASK) {
+		printk("Reset by soft-reset\n");
+	} else if (reas) {
+		printk("Reset by a different source (0x%08X)\n", reas);
+	} else {
+		printk("Power-on-reset\n");
+	}
+
+#endif
+}
+
+
+void main(void)
+{
+	/* Configure LED-pins */
+	if (dk_leds_init() < 0) {
+		printk("Cannot init LEDs!\n");
+		return;
+	}
+	dk_set_led_on(SYSTEM_ON_LED);
+
+	/* Configure and start delayed work that enters system off */
+	k_delayed_work_init(&system_off_work, system_off);
+	k_delayed_work_submit(&system_off_work, K_SECONDS(SYSTEM_OFF_DELAY_S));
+
+	/* Show last reset reason */
+	print_reset_reason();
 
 	/* Start NFC */
 	if (start_nfc() < 0) {
