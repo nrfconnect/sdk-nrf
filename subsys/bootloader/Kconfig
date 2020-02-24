@@ -6,9 +6,21 @@
 
 menu "Bootloader"
 
-config MCUBOOT_BUILD_S1_VARIANT
-	bool
-	prompt "Build S1 variant of mcuboot"
+config BUILD_S1_VARIANT
+	# This can not depend on BOOTLOADER_MCUBOOT, or SECURE_BOOT as this
+	# option has to be set when building MCUBoot (or any other child image
+	# which will be stored in S0 and S1) itself.
+	bool "Build S1 variant of specified image"
+	help
+	  Build upgrade candidate of image for alternative slot S1.
+
+config S1_VARIANT_IMAGE_NAME
+	string
+	default "mcuboot" if MCUBOOT || BOOTLOADER_MCUBOOT
+	default "app" if !BOOTLOADER_MCUBOOT
+	depends on BUILD_S1_VARIANT
+	help
+	  Which image should be linked against S1.
 
 config SECURE_BOOT
 	bool "Use Secure Bootloader"

@@ -4,8 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-if (CONFIG_MCUBOOT AND CONFIG_MCUBOOT_BUILD_S1_VARIANT)
-# Create second MCUBoot executable for the second slot of the second stage
+if (CONFIG_BUILD_S1_VARIANT AND
+    ((${CONFIG_S1_VARIANT_IMAGE_NAME} STREQUAL "app" AND NOT IMAGE_NAME)
+    OR
+    ("${CONFIG_S1_VARIANT_IMAGE_NAME}_" STREQUAL "${IMAGE_NAME}")))
+# Create second executable for the second slot of the second stage
 # bootloader. This is done inside this file since it is non-trivial to add
 # executable targets outside the root CMakeLists.txt. The problem is that
 # most of the variables required for compiling/linking is only available
@@ -102,7 +105,12 @@ if (CONFIG_MCUBOOT AND CONFIG_MCUBOOT_BUILD_S1_VARIANT)
 
   set(${link_variant}hex_cmd "")
   set(${link_variant}hex_byprod "")
-  set(output ${PROJECT_BINARY_DIR}/../../zephyr/${exe}.hex)
+
+  if (IMAGE_NAME)
+    set(output ${PROJECT_BINARY_DIR}/../../zephyr/${exe}.hex)
+  else()
+    set(output ${PROJECT_BINARY_DIR}/${exe}.hex)
+  endif()
 
   # Rule to generate hex file of .elf
   bintools_objcopy(
@@ -127,6 +135,7 @@ if (CONFIG_MCUBOOT AND CONFIG_MCUBOOT_BUILD_S1_VARIANT)
     ${output}
     )
 
+  if (IMAGE_NAME)
   # Register in the parent image that this child image will have
   # ${link_variant}image.hex as a byproduct, this allows the parent image to know
   # where the hex file comes from and create custom commands that
@@ -137,4 +146,5 @@ if (CONFIG_MCUBOOT AND CONFIG_MCUBOOT_BUILD_S1_VARIANT)
     PROPERTY       shared_vars
     "list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${output})\n"
     )
+  endif()
 endif()

@@ -196,7 +196,7 @@ A FOTA upgrade requires the following steps:
       The build will create several binary files (see :ref:`mcuboot:mcuboot_ncs`).
       The :file:`app_update.bin` file is the file that should be uploaded to the server.
 
-      To create binary files for a bootloader upgrade, make sure that :option:`CONFIG_SECURE_BOOT` and :option:`CONFIG_MCUBOOT_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
+      To create binary files for a bootloader upgrade, make sure that :option:`CONFIG_SECURE_BOOT` and :option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
       The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
       See :ref:`upgradable_bootloader` for more information.
 
