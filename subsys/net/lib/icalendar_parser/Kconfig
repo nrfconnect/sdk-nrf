@@ -1,0 +1,90 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig  ICALENDAR_PARSER
+	bool "iCalendar parser"
+
+if ICALENDAR_PARSER
+
+config ICALENDAR_PARSER_MAX_TX_SIZE
+	int "size of HTTP request"
+	default 512
+
+config ICALENDAR_PARSER_MAX_RX_SIZE
+	int "size of HTTP response"
+	range 512 2048 if BSD_LIBRARY && ICALENDAR_PARSER_TLS
+	default 2048 if BSD_LIBRARY && ICALENDAR_PARSER_TLS
+	range 512 4096
+	default 4096
+	help
+	  Size of the data fragments reported to the application in each event.
+	  When using BSD library and TLS, the fragment can not exceed 2.3kB.
+	  When not using TLS, prefer a larger fragment size to reduce the
+	  bandwidth overhead due to the HTTP headers.
+
+config MAX_PROPERTY_SIZE
+	int "maximum size of iCalendar property"
+	default 1024
+
+config MAX_SUMMARY_PROPERTY_SIZE
+	int "maximum size of summart property"
+	range 32 MAX_PROPERTY_SIZE
+	default 64
+
+config MAX_LOCATION_PROPERTY_SIZE
+	int "maximum size of location property"
+	range 32 MAX_PROPERTY_SIZE
+	default 64
+
+config MAX_DESCRIPTION_PROPERTY_SIZE
+	int "maximum size of description property"
+	range 32 MAX_PROPERTY_SIZE
+	default 128
+
+config MAX_DTSTART_PROPERTY_SIZE
+	int "maximum size of dtstart property"
+	range 16 MAX_PROPERTY_SIZE
+	default 16
+
+config MAX_DTEND_PROPERTY_SIZE
+	int "maximum size of dtend property"
+	range 16 MAX_PROPERTY_SIZE
+	default 16
+
+config ICALENDAR_PARSER_STACK_SIZE
+	int "Thread stack size"
+	default 2048
+
+config ICALENDAR_PARSER_SOCK_TIMEOUT_MS
+	int "Receive timeout, in milliseconds"
+	default -1
+	range -1 30000
+	help
+	  Socket timeout for recv() calls, in milliseconds.
+	  Set to -1 disable.
+
+config ICALENDAR_PARSER_IPV6
+	bool "Prefer IPv6 connections"
+	help
+	  Prefer IPv6 protocol but fallback to
+	  IPv4 when the hostname can't be resolved.
+
+config ICALENDAR_PARSER_TLS
+	bool "Download iCalendar over HTTPS"
+
+module=ICALENDAR_PARSER
+module-dep=LOG
+module-str=iCalendar parser
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if ICALENDAR_PARSER_LOG_LEVEL_DBG
+
+config ICALENDAR_PARSER_LOG_HEADERS
+	bool "Log HTTP headers to Console [Debug]"
+
+endif
+
+endif

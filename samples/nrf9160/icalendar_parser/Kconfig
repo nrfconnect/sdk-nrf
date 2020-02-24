@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Internet Calendar Parser sample"
+
+config DOWNLOAD_HOST
+	string "Calendar host to connect"
+
+config DOWNLOAD_FILE
+	string "Calendar file to download"
+
+config DOWNLOAD_INTERVAL
+	int "The interval to download calendar from server in seconds"
+	default 60
+
+config ICALENDAR_SEC_TAG
+	int "Security tag to provision certificate"
+	default 1
+
+config NUM_OF_PARSED_COMPONENT
+	int "Maximum number of parsed calendar component"
+	default 100
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
