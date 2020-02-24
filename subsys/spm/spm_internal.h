@@ -10,59 +10,14 @@
 #include <zephyr.h>
 #include <nrfx.h>
 #include <sys/util.h>
-#include <sys/__assert.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
-/* Total RAM Size */
-#ifdef CONFIG_SOC_NRF9160
-#define TOTAL_RAM_SIZE (256*1024)
-#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
-#define TOTAL_RAM_SIZE (512*1024)
-#endif
-
-/* SPU RAM regions */
-#define RAM_SECURE_ATTRIBUTION_REGION_SIZE CONFIG_NRF_SPU_RAM_REGION_SIZE
-#define NUM_RAM_SECURE_ATTRIBUTION_REGIONS (TOTAL_RAM_SIZE \
-				/ RAM_SECURE_ATTRIBUTION_REGION_SIZE)
-
-/* SPU FLASH regions */
-#if (defined(CONFIG_SOC_NRF5340_CPUAPP) \
-	&& defined(CONFIG_NRF5340_CPUAPP_ERRATUM19))
-static inline u32_t spu_flash_region_size(void)
-{
-	if (NRF_FICR->INFO.PART == 0x5340) {
-		if (NRF_FICR->INFO.VARIANT == 0x41414142) {
-			return 32*1024;
-		}
-		return 16*1024;
-	}
-	__ASSERT(false, "Function should only be called on an nRF53 device.");
-	return 0;
-}
-
-static inline u32_t num_spu_flash_regions(void)
-{
-	if (NRF_FICR->INFO.PART == 0x5340) {
-		if (NRF_FICR->INFO.VARIANT == 0x41414142) {
-			return 32;
-		}
-		return 64;
-	}
-	__ASSERT(false, "Function should only be called on an nRF53 device.");
-	return 0;
-}
-#define FLASH_SECURE_ATTRIBUTION_REGION_SIZE spu_flash_region_size()
-#define NUM_FLASH_SECURE_ATTRIBUTION_REGIONS num_spu_flash_regions()
-#else
-
-#define FLASH_SECURE_ATTRIBUTION_REGION_SIZE CONFIG_NRF_SPU_FLASH_REGION_SIZE
-#define NUM_FLASH_SECURE_ATTRIBUTION_REGIONS (DT_SOC_NV_FLASH_0_SIZE \
-				/ FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
-#endif
+/* Size of secure attribution configurable flash region. */
+#define FLASH_SECURE_ATTRIBUTION_REGION_SIZE (32*1024)
 
 /* Minimum size of Non-Secure Callable regions. */
 #define FLASH_NSC_MIN_SIZE 32
