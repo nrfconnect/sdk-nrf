@@ -85,7 +85,7 @@ A new bootloader image is stored in the partition that is not currently used.
 When booting, the immutable bootloader checks the version information for the images in slot 0 and slot 1 and boots the one with the highest version.
 If this image is faulty and cannot be booted, the other partition will always hold a working image, and this one is booted instead.
 
-Set the option :option:`CONFIG_MCUBOOT_BUILD_S1_VARIANT` when building the upgradable bootloader to automatically generate pre-signed variants of the image for both slots.
+Set the option :option:`CONFIG_BUILD_S1_VARIANT` when building the upgradable bootloader to automatically generate pre-signed variants of the image for both slots.
 These signed variants can be used to perform an upgrade procedure through the :ref:`lib_fota_download` library.
 
 
