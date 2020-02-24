@@ -59,9 +59,13 @@ include(${CMAKE_CURRENT_LIST_DIR}/../cmake/bl_validation_magic.cmake)
 
 set(slots s0_image)
 
-if (CONFIG_MCUBOOT_BUILD_S1_VARIANT)
+if (CONFIG_BUILD_S1_VARIANT)
   list(APPEND slots s1_image)
-  set(s1_image_is_from_child_image mcuboot)
+
+  # Only add extra dependency if s1 image is not 'app'.
+  if (NOT CONFIG_S1_VARIANT_IMAGE_NAME STREQUAL "app")
+    set(s1_image_is_from_child_image ${CONFIG_S1_VARIANT_IMAGE_NAME})
+  endif ()
 endif ()
 
 if (NOT "${CONFIG_SB_VALIDATION_INFO_CRYPTO_ID}" EQUAL "1")
