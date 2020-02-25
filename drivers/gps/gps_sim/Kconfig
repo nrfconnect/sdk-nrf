@@ -1,4 +1,4 @@
-# Kconfig - GPS data simulator
+# GPS simulator
 #
 # Copyright (c) 2018 Nordic Semiconductor
 #
@@ -19,142 +19,83 @@ config GPS_SIM_DEV_NAME
 	string "GPS simulator device name"
 	default "GPS_SIM"
 	help
-		GPS simulator device name.
+	  GPS simulator device name.
+
+config GPS_SIM_STACK_SIZE
+	int "GPS simulator work queue stack size"
+	default 2048
+
+config GPS_SIM_WORKQUEUE_PRIORITY
+	int "GPS simulator work queue (preemptive) priority"
+	default 5
 
 config GPS_SIM_BASE_LATITUDE
 	int "Base latitude for GPS data"
 	default 6325280
 	help
-		Start-point latitude for simulated GPS data,
-		from which the generated data will continue.
-		Calculated by deg * 100000 + minutes * 1000,
-		for example 63 deg 25.280'N will be 6325280.
-		Positive values are North, while negative
-		values are South.
+	  Start-point latitude for simulated GPS data,
+	  from which the generated data will continue.
+	  Calculated by deg * 100000 + minutes * 1000,
+	  for example 63 deg 25.280'N will be 6325280.
+	  Positive values are North, while negative
+	  values are South.
 
 config GPS_SIM_BASE_LONGITUDE
 	int "Base longitude for GPS data"
 	default 1026201
 	help
-		Start-point longitude for simulated GPS data,
-		from which the generated data will continue.
-		Calculated by deg * 100000 + minutes * 1000,
-		for example 10 deg 26.201'E will be 1026201.
-		Positive values are East, while negative
-		values are West.
+	  Start-point longitude for simulated GPS data,
+	  from which the generated data will continue.
+	  Calculated by deg * 100000 + minutes * 1000,
+	  for example 10 deg 26.201'E will be 1026201.
+	  Positive values are East, while negative
+	  values are West.
 
 config GPS_SIM_BASE_TIMESTAMP
 	int "Base timestamp for GPS data"
 	default 134627
 	help
-		Timestamp at which the simulator will start counting.
-		Format is hour * 10000 + min * 100 + sec, which means that
-		13:46:27 becomes 134627.
+	  Timestamp at which the simulator will start counting.
+	  Format is hour * 10000 + min * 100 + sec, which means that
+	  13:46:27 becomes 134627.
 
 config GPS_SIM_ELLIPSOID
 	bool "Generate ellipsoid GPS path"
 	default y
 	help
-		GPS simulator will create a path that goes in an ellipsoid
-		shape.
+	  GPS simulator will create a path that goes in an ellipsoid
+	  shape.
 
 config GPS_SIM_PSEUDO_RANDOM
 	bool "Use pseudo-random values to generate GPS coordinates"
 	help
-		Enables pseudo-random GPS coordinate creation. Based on uptime
-		that's input to a sine function, which causes the otuput
-		to not be uniformally distributed, but sinusoidal.
+	  Enables pseudo-random GPS coordinate creation. Based on uptime
+	  that's input to a sine function, which causes the otuput
+	  to not be uniformally distributed, but sinusoidal.
 
 config GPS_SIM_DYNAMIC_VALUES
 	bool "GPS simulator dynamically creates data values"
 	default y
 	select REQUIRES_FULL_LIBC
-	select NEWLIB_LIBC_FLOAT_PRINTF
+	imply NEWLIB_LIBC_FLOAT_PRINTF
 	help
-		Enables dynamically created simulator otuput as opposed
-		to static values.
+	  Enables dynamically created simulator otuput as opposed
+	  to static values.
 
 config GPS_SIM_FIX_TIME
-	int "Time in milliseconds between position generations"
+	int "Time in milliseconds to get a position fix after search is started"
 	range 500 3600000
-	default GPS_SIM_TRIGGER_TIMER_MSEC if GPS_SIM_TRIGGER_USE_TIMER
 	default 1000
 	help
-		Time in milliseconds that the GPS simulator will return the same
-		position before generating new coordinates.
+	  Time in milliseconds that the GPS simulator will "search" before
+	  getting a position fix.
 
 config GPS_SIM_MAX_STEP
 	int "Maximum step size each iteration"
 	default 100
 	help
-		Sets the maximum step size that can be taken in latitude or longitude
-		for each simulation iteration. In units of 1/1000 degrees.
-
-config GPS_SIM_TRIGGER
-	bool "GPS simulator trigger"
-	help
-		Enable trigger. When enabled, it will emit 'data ready'
-		trigger event time either by button press or at specified
-		timer intervals.
-
-if GPS_SIM_TRIGGER
-
-choice
-	prompt "Trigger type"
-	depends on GPS_SIM_TRIGGER
-	default GPS_SIM_TRIGGER_USE_TIMER
-	help
-		Specify the type of trigger that will be used to emit the
-		'data ready' trigger event.
-
-config GPS_SIM_TRIGGER_USE_TIMER
-	bool "Use timer for trigger"
-	help
-		Use timer to trigger 'data ready' event.
-
-config GPS_SIM_TRIGGER_USE_BUTTON
-	bool "Use button 2 as trigger"
-	help
-		Use button 2 to trigger 'data ready' event.
-
-endchoice
-
-if GPS_SIM_TRIGGER_USE_BUTTON
-config GPS_SIM_GPIO_CONTROLLER
-	string "GPIO controller"
-	default "GPIO_0"
-	help
-		GPIO controller for GPS simulator trigger button.
-
-config GPS_SIM_GPIO_PIN
-	int "GPIO pin"
-	default 6
-	help
-		GPIO pin for trigger button.
-endif
-
-config GPS_SIM_TRIGGER_TIMER_MSEC
-	int "Time between triggers, in milliseconds"
-	depends on GPS_SIM_TRIGGER_USE_TIMER
-	default 1000
-	help
-		The time interval between each 'data ready' trigger event.
-
-config GPS_SIM_THREAD_PRIORITY
-	int "Thread priority"
-	depends on GPS_SIM_TRIGGER
-	default 10
-	help
-	  Priority of thread used by the driver to handle interrupts.
-
-config GPS_SIM_THREAD_STACK_SIZE
-	int "Trigger thread stack size"
-	depends on GPS_SIM_TRIGGER
-	default 1024
-	help
-	  Stack size of thread used by the driver to handle interrupts.
-
-endif #GPS_SIM_TRIGGER
+	  Sets the maximum step size that can be taken in latitude or longitude
+	  for each simulation iteration. In units of 1/1000 degrees.
 
 module = GPS_SIM
 module-str = GPS simulator
