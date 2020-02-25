@@ -20,8 +20,8 @@
 #include <zephyr/types.h>
 #include <drivers/gps.h>
 
-/* In this sample the GPS data is 81 byte + a data sequence tag,
- * so 85 byte is used.
+/* In this sample the GPS data is 83 byte + a data sequence tag,
+ * so 87 byte is used.
  */
 #define ENTRY_MAX_SIZE (GPS_NMEA_SENTENCE_MAX_LENGTH + 4)
 #define FIFO_MAX_ELEMENT_COUNT 12
