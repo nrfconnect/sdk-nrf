@@ -53,7 +53,7 @@ K_MEM_SLAB_DEFINE(rsp_work_items, sizeof(struct callback_work_item),
 
 static int open_socket(void)
 {
-	common_socket_fd = socket(AF_LTE, 0, NPROTO_AT);
+	common_socket_fd = socket(AF_LTE, SOCK_DGRAM, NPROTO_AT);
 
 	if (common_socket_fd == -1) {
 		return -errno;

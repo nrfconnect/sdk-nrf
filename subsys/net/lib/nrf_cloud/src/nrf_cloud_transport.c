@@ -272,7 +272,7 @@ static int nct_client_id_get(char *id)
 	char imei_buf[NRF_IMEI_LEN + 1];
 	int ret;
 
-	at_socket_fd = nrf_socket(NRF_AF_LTE, 0, NRF_PROTO_AT);
+	at_socket_fd = nrf_socket(NRF_AF_LTE, NRF_SOCK_DGRAM, NRF_PROTO_AT);
 	__ASSERT_NO_MSG(at_socket_fd >= 0);
 
 	bytes_written = nrf_write(at_socket_fd, "AT+CGSN", 7);
