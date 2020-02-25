@@ -98,6 +98,12 @@ The following are instructions specific to `Leshan Demo Server`_::
 
 - Start the Zephyr sample
 
+Queue Mode support
+******************
+
+To build the LwM2M Client sample with LwM2M Queue Mode support, build it with the ``-DOVERLAY_CONFIG=overlay-queue.conf`` option.
+See :ref:`cmake_options` for instructions on how to add this option.
+
 Connecting to the LwM2M Server
 ******************************
 
