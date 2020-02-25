@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-menu "Application sample"
+menu "LTE BLE gateway sample"
 
 choice
 	prompt "GPS device"
@@ -19,7 +19,7 @@ config GPS_USE_SIM
 	help
 		Use simulated GPS data.
 
-config GPS_USE_EXTERNAL
+config GPS_USE_NRF9160
 	bool "User provided GPS device"
 	help
 		Provide a GPS device that location data will be fetched from and
@@ -27,26 +27,21 @@ config GPS_USE_EXTERNAL
 
 endchoice
 
-if GPS_USE_SIM
-
 config GPS_DEV_NAME
 	string
-	default GPS_SIM_DEV_NAME
+	default GPS_SIM_DEV_NAME if GPS_USE_SIM
+	default "NRF9160_GPS" if GPS_USE_NRF9160
 
-config GPS_TRIGGER
-	bool
-	default GPS_SIM_TRIGGER
+config GPS_SEARCH_INTERVAL
+	int "Interval for starting GPS search"
+	default 240
 
-endif
-
-if GPS_USE_EXTERNAL
-config GPS_DEV_NAME
-	string "GPS device name"
+config GPS_SEARCH_TIMEOUT
+	int "Timeout for GPS search"
+	default 120
 	help
-		GPS device from which location data will be fetched and sent
-		to nRF Cloud.
-
-endif
+	  The GPS will stop acquiring GPS fix when it times out.
+	  It will restart the search at the start of the next search interval.
 
 endmenu
 
