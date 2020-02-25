@@ -25,149 +25,27 @@
 
 LOG_MODULE_REGISTER(gps_sim, CONFIG_GPS_SIM_LOG_LEVEL);
 
-struct gps_sim_data {
-#if defined(CONFIG_GPS_SIM_TRIGGER)
-	struct device *gpio;
-	const char *gpio_port;
-	u8_t gpio_pin;
-	struct gpio_callback gpio_cb;
-	struct k_sem gpio_sem;
-
-	gps_trigger_handler_t drdy_handler;
-	struct gps_trigger drdy_trigger;
-
-	K_THREAD_STACK_MEMBER(thread_stack, CONFIG_GPS_SIM_THREAD_STACK_SIZE);
-	struct k_thread thread;
-#endif /* CONFIG_GPS_SIM_TRIGGER */
+enum gps_sim_state {
+	GPS_SIM_UNINIT,
+	GPS_SIM_IDLE,
+	GPS_SIM_ACTIVE_SEARCH,
+	GPS_SIM_ACTIVE_TIMEOUT,
 };
 
-static struct gps_data gps_sample;
-static struct k_mutex trigger_mutex;
+struct gps_sim_data {
+	struct device *dev;
+	enum gps_sim_state state;
+	gps_event_handler_t handler;
+	struct gps_config cfg;
+	struct gps_nmea nmea_sample;
+	struct k_delayed_work start_work;
+	struct k_delayed_work stop_work;
+	struct k_delayed_work timeout_work;
+	struct k_delayed_work fix_work;
 
-/**
- * @brief Callback for GPIO when using button as trigger.
- *
- * @param dev Pointer to device structure.
- * @param cb Pointer to GPIO callback structure.
- * @param pins Pin mask for callback.
- */
-static void gps_sim_gpio_callback(struct device *dev, struct gpio_callback *cb,
-				  u32_t pins)
-{
-	ARG_UNUSED(pins);
-	struct gps_sim_data *drv_data =
-		CONTAINER_OF(cb, struct gps_sim_data, gpio_cb);
-
-	gpio_pin_disable_callback(dev, drv_data->gpio_pin);
-	k_sem_give(&drv_data->gpio_sem);
-}
-
-/**
- * @brief Function that runs in the GPS simulator thread when using trigger.
- *
- * @param dev_ptr Pointer to GPS simulator device.
- */
-static void gps_sim_thread(int dev_ptr)
-{
-	struct device *dev = INT_TO_POINTER(dev_ptr);
-	struct gps_sim_data *drv_data = dev->driver_data;
-
-	while (true) {
-		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_TIMER)) {
-			k_sleep(CONFIG_GPS_SIM_TRIGGER_TIMER_MSEC);
-		} else if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
-			k_sem_take(&drv_data->gpio_sem, K_FOREVER);
-		}
-
-		k_mutex_lock(&trigger_mutex, K_FOREVER);
-		if (drv_data->drdy_handler != NULL) {
-			drv_data->drdy_handler(dev, &drv_data->drdy_trigger);
-		}
-		k_mutex_unlock(&trigger_mutex);
-
-		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
-			gpio_pin_enable_callback(drv_data->gpio,
-						 drv_data->gpio_pin);
-		}
-	}
-}
-
-/**
- * @brief Initializing interrupt when simulator uses trigger
- *
- * @param dev Pointer to device instance.
- */
-static int gps_sim_init_thread(struct device *dev)
-{
-	struct gps_sim_data *drv_data = dev->driver_data;
-
-	k_mutex_init(&trigger_mutex);
-
-	if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
-		drv_data->gpio = device_get_binding(drv_data->gpio_port);
-		if (drv_data->gpio == NULL) {
-			LOG_ERR("Failed to get pointer to %s device",
-				drv_data->gpio_port);
-			return -EINVAL;
-		}
-
-		gpio_pin_configure(drv_data->gpio, drv_data->gpio_pin,
-				   GPIO_DIR_IN | GPIO_INT | GPIO_INT_EDGE |
-					   GPIO_INT_ACTIVE_LOW |
-					   GPIO_PUD_PULL_UP);
-
-		gpio_init_callback(&drv_data->gpio_cb, gps_sim_gpio_callback,
-				   BIT(drv_data->gpio_pin));
-
-		if (gpio_add_callback(drv_data->gpio, &drv_data->gpio_cb) < 0) {
-			LOG_ERR("Failed to set GPIO callback");
-			return -EIO;
-		}
-
-		k_sem_init(&drv_data->gpio_sem, 0, 1);
-	}
-
-	k_thread_create(&drv_data->thread, drv_data->thread_stack,
-			CONFIG_GPS_SIM_THREAD_STACK_SIZE,
-			(k_thread_entry_t)gps_sim_thread, dev, NULL, NULL,
-			K_PRIO_COOP(CONFIG_GPS_SIM_THREAD_PRIORITY), 0, 0);
-
-	return 0;
-}
-
-static int gps_sim_trigger_set(struct device *dev,
-			       const struct gps_trigger *trig,
-			       gps_trigger_handler_t handler)
-{
-	int ret = 0;
-	struct gps_sim_data *drv_data = dev->driver_data;
-
-	switch (trig->type) {
-	case GPS_TRIG_DATA_READY:
-		k_mutex_lock(&trigger_mutex, K_FOREVER);
-		drv_data->drdy_handler = handler;
-		drv_data->drdy_trigger = *trig;
-
-		if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER_USE_BUTTON)) {
-			if (handler) {
-				gpio_pin_enable_callback(drv_data->gpio,
-							 drv_data->gpio_pin);
-			} else {
-				gpio_pin_disable_callback(drv_data->gpio,
-							  drv_data->gpio_pin);
-			}
-		}
-
-		k_mutex_unlock(&trigger_mutex);
-		break;
-	default:
-		LOG_ERR("Unsupported GPS trigger");
-		ret = -ENOTSUP;
-		break;
-	}
-
-	return ret;
-}
+	K_THREAD_STACK_MEMBER(work_q_stack, CONFIG_GPS_SIM_STACK_SIZE);
+	struct k_work_q work_q;
+};
 
 /**
  * @brief Calculates NMEA sentence checksum
@@ -229,12 +107,12 @@ static double generate_pseudo_random(void)
 /**
  * @brief Function generatig GPS data
  *
- * @param gps_data Pointer to gpssim_nmea struct where the NMEA
+ * @param gps_nmea Pointer to gps_nmea struct where the NMEA
  * sentence will be stored.
  * @param max_variation The maximum value the latitude and longitude in the
  * generated sentence can vary for each iteration. In units of minutes.
  */
-static void generate_gps_data(struct gps_data *gps_data,
+static void generate_gps_data(struct gps_nmea *gps_data,
 			      double max_variation)
 {
 	static u8_t hour = BASE_GPS_SAMPLE_HOUR;
@@ -245,6 +123,8 @@ static void generate_gps_data(struct gps_data *gps_data,
 	double lng = BASE_GSP_SAMPLE_LNG;
 	char lat_heading = 'N';
 	char lng_heading = 'E';
+	u32_t uptime;
+	u8_t checksum;
 
 	if (IS_ENABLED(CONFIG_GPS_SIM_ELLIPSOID)) {
 		lat = generate_sine(BASE_GSP_SAMPLE_LAT, max_variation / 2.0);
@@ -261,7 +141,7 @@ static void generate_gps_data(struct gps_data *gps_data,
 		lng = BASE_GSP_SAMPLE_LNG + acc_lng;
 	}
 
-	u32_t uptime = k_uptime_get_32() / MSEC_PER_SEC;
+	uptime = k_uptime_get_32() / MSEC_PER_SEC;
 
 	second += (uptime - last_uptime);
 	last_uptime = uptime;
@@ -287,7 +167,7 @@ static void generate_gps_data(struct gps_data *gps_data,
 	}
 
 	/* Format the sentence, excluding the CRC. */
-	snprintf(gps_data->nmea.buf,
+	snprintf(gps_data->buf,
 		 GPS_NMEA_SENTENCE_MAX_LENGTH, GPS_NMEA_SENTENCE,
 		 hour, minute, second, lat, lat_heading, lng, lng_heading, 0);
 
@@ -299,86 +179,222 @@ static void generate_gps_data(struct gps_data *gps_data,
 	 * the NMEA sentence.
 	 */
 
-	u8_t checksum = nmea_checksum_get(gps_data->nmea.buf);
+	checksum = nmea_checksum_get(gps_data->buf);
 
-	gps_data->nmea.len =
-		snprintf(gps_data->nmea.buf, GPS_NMEA_SENTENCE_MAX_LENGTH,
+	gps_data->len =
+		snprintf(gps_data->buf, GPS_NMEA_SENTENCE_MAX_LENGTH,
 			 GPS_NMEA_SENTENCE, hour, minute, second, lat,
 			 lat_heading, lng, lng_heading, checksum);
 
-	LOG_DBG("%s (%d bytes)", gps_data->nmea.buf, gps_data->nmea.len);
+	LOG_DBG("%s (%d bytes)", log_strdup(gps_data->buf), gps_data->len);
 }
 
-static int gps_sim_init(struct device *dev)
+static void notify_event(struct device *dev, struct gps_event *evt)
 {
-	if (IS_ENABLED(CONFIG_GPS_SIM_TRIGGER)) {
-#ifdef CONFIG_GPS_SIM_TRIGGER_USE_BUTTON
-		struct gps_sim_data *drv_data = dev->driver_data;
+	struct gps_sim_data *drv_data = dev->driver_data;
 
-		drv_data->gpio_port = CONFIG_GPS_SIM_GPIO_CONTROLLER;
-		drv_data->gpio_pin = CONFIG_GPS_SIM_GPIO_PIN;
-#endif /* GPS_SIM_TRIGGER_USE_BUTTON */
-
-		/* Initialize random seed. */
-		srand(k_cycle_get_32());
-
-		if (gps_sim_init_thread(dev) < 0) {
-			LOG_ERR("Failed to initialize trigger interrupt");
-			return -EIO;
-		}
+	if (drv_data->handler) {
+		drv_data->handler(dev, evt);
 	}
+}
+
+static void start_work_fn(struct k_work *work)
+{
+	struct gps_sim_data *drv_data =
+		CONTAINER_OF(work, struct gps_sim_data, start_work);
+	struct gps_event evt = {
+		.type = GPS_EVT_SEARCH_STARTED,
+	};
+
+	notify_event(drv_data->dev, &evt);
+
+	LOG_INF("GPS is started");
+
+	switch (drv_data->cfg.nav_mode) {
+	case GPS_NAV_MODE_PERIODIC:
+		k_delayed_work_submit_to_queue(&drv_data->work_q,
+					&drv_data->start_work,
+					K_SECONDS(drv_data->cfg.interval));
+		/* Fall through */
+	case GPS_NAV_MODE_SINGLE_FIX:
+		k_delayed_work_submit_to_queue(&drv_data->work_q,
+					&drv_data->timeout_work,
+					K_SECONDS(drv_data->cfg.timeout));
+		break;
+	default:
+		break;
+	}
+
+	drv_data->state = GPS_SIM_ACTIVE_SEARCH;
+	k_delayed_work_submit_to_queue(&drv_data->work_q,
+				       &drv_data->fix_work,
+				       CONFIG_GPS_SIM_FIX_TIME);
+}
+
+static void stop_work_fn(struct k_work *work)
+{
+	struct gps_sim_data *drv_data =
+		CONTAINER_OF(work, struct gps_sim_data, stop_work);
+	struct gps_event evt = {
+		.type = GPS_EVT_SEARCH_STOPPED,
+	};
+
+	drv_data->state = GPS_SIM_IDLE;
+
+	LOG_INF("GPS is stopped");
+
+	notify_event(drv_data->dev, &evt);
+}
+
+static void timeout_work_fn(struct k_work *work)
+{
+	struct gps_sim_data *drv_data =
+		CONTAINER_OF(work, struct gps_sim_data, timeout_work);
+	struct gps_event evt = {
+		.type = GPS_EVT_SEARCH_TIMEOUT,
+	};
+
+	if (drv_data->state != GPS_SIM_ACTIVE_SEARCH) {
+		return;
+	}
+
+	drv_data->state = GPS_SIM_ACTIVE_TIMEOUT;
+
+	LOG_INF("GPS search timed out without getting a position fix");
+
+	notify_event(drv_data->dev, &evt);
+}
+
+static void fix_work_fn(struct k_work *work)
+{
+	struct gps_sim_data *drv_data =
+		CONTAINER_OF(work, struct gps_sim_data, fix_work);
+	struct gps_event evt = {
+		.type = GPS_EVT_NMEA_FIX,
+	};
+
+	if (drv_data->state != GPS_SIM_ACTIVE_SEARCH) {
+		return;
+	}
+
+	k_delayed_work_cancel(&drv_data->timeout_work);
+
+	generate_gps_data(&drv_data->nmea_sample,
+			  CONFIG_GPS_SIM_MAX_STEP / 1000.0);
+
+	evt.nmea.len = drv_data->nmea_sample.len;
+
+	memcpy(evt.nmea.buf, drv_data->nmea_sample.buf,
+	       drv_data->nmea_sample.len);
+	notify_event(drv_data->dev, &evt);
+
+	if (drv_data->cfg.nav_mode == GPS_NAV_MODE_CONTINUOUS) {
+		k_delayed_work_submit_to_queue(&drv_data->work_q,
+					       &drv_data->fix_work,
+					       CONFIG_GPS_SIM_FIX_TIME);
+	} else if (drv_data->cfg.nav_mode == GPS_NAV_MODE_SINGLE_FIX) {
+		drv_data->state = GPS_SIM_IDLE;
+		k_delayed_work_submit_to_queue(&drv_data->work_q,
+					       &drv_data->stop_work,
+					       K_NO_WAIT);
+	}
+}
+
+static int start(struct device *dev, struct gps_config *cfg)
+{
+	struct gps_sim_data *drv_data = dev->driver_data;
+
+	if ((dev == NULL) || (cfg == NULL)) {
+		return -EINVAL;
+	}
+
+	if (drv_data->state != GPS_SIM_IDLE) {
+		LOG_ERR("The GPS must be initialized and stopped first");
+		return -EALREADY;
+	}
+
+	if (cfg->timeout >= cfg->interval) {
+		LOG_ERR("The timeout must be less than the interval");
+		return -EINVAL;
+	}
+
+	memcpy(&drv_data->cfg, cfg, sizeof(struct gps_config));
+	k_delayed_work_submit_to_queue(&drv_data->work_q,
+				       &drv_data->start_work,
+				       K_NO_WAIT);
 
 	return 0;
 }
 
-/**
- * @brief Generates simulated GPS data for a channel.
- *
- * @param chan Channel to generate data for.
- */
-static int gps_sim_generate_data(enum gps_channel chan)
+static int stop(struct device *dev)
 {
-	switch (chan) {
-	case GPS_CHAN_NMEA:
-		generate_gps_data(&gps_sample,
-				  CONFIG_GPS_SIM_MAX_STEP / 1000.0);
-		break;
-	default:
-		return -ENOTSUP;
+	struct gps_sim_data *drv_data = dev->driver_data;
+
+	if (dev == NULL) {
+		return -EINVAL;
 	}
+
+	if (drv_data->state == GPS_SIM_IDLE) {
+		LOG_WRN("The GPS is already stopped");
+		return -EALREADY;
+	}
+
+	drv_data->state = GPS_SIM_IDLE;
+
+	k_delayed_work_cancel(&drv_data->timeout_work);
+	k_delayed_work_cancel(&drv_data->fix_work);
+	k_delayed_work_cancel(&drv_data->start_work);
+
+	k_delayed_work_submit_to_queue(&drv_data->work_q,
+				       &drv_data->stop_work,
+				       K_NO_WAIT);
 
 	return 0;
 }
 
-static int gps_sim_sample_fetch(struct device *dev)
+static int init(struct device *dev, gps_event_handler_t handler)
 {
-	return gps_sim_generate_data(GPS_CHAN_NMEA);
+	struct gps_sim_data *drv_data = dev->driver_data;
+
+	if (handler == NULL) {
+		LOG_ERR("Event handler must be provided");
+		return -EINVAL;
+	}
+
+	if (drv_data->state != GPS_SIM_UNINIT) {
+		LOG_ERR("The GPS simulator is already initialized");
+		return -EALREADY;
+	}
+
+	drv_data->handler = handler;
+	drv_data->state = GPS_SIM_IDLE;
+
+	return 0;
 }
 
-static int gps_sim_channel_get(struct device *dev, enum gps_channel chan,
-			       struct gps_data *sample)
+static int gps_sim_setup(struct device *dev)
 {
-	switch (chan) {
-	case GPS_CHAN_NMEA:
-		memcpy(sample->nmea.buf, gps_sample.nmea.buf,
-		       gps_sample.nmea.len);
-		sample->nmea.len = gps_sample.nmea.len;
-		break;
-	default:
-		return -ENOTSUP;
-	}
+	struct gps_sim_data *drv_data = dev->driver_data;
+
+	drv_data->dev = dev;
+	drv_data->state = GPS_SIM_UNINIT;
+
+	k_delayed_work_init(&drv_data->start_work, start_work_fn);
+	k_delayed_work_init(&drv_data->stop_work, stop_work_fn);
+	k_delayed_work_init(&drv_data->timeout_work, timeout_work_fn);
+	k_delayed_work_init(&drv_data->fix_work, fix_work_fn);
+	k_work_q_start(&drv_data->work_q, drv_data->work_q_stack,
+		       K_THREAD_STACK_SIZEOF(drv_data->work_q_stack),
+		       K_PRIO_PREEMPT(CONFIG_GPS_SIM_WORKQUEUE_PRIORITY));
 
 	return 0;
 }
 
 static struct gps_sim_data gps_sim_data;
-
 static const struct gps_driver_api gps_sim_api_funcs = {
-	.sample_fetch = gps_sim_sample_fetch,
-	.channel_get = gps_sim_channel_get,
-#if defined(CONFIG_GPS_SIM_TRIGGER)
-	.trigger_set = gps_sim_trigger_set
-#endif
+	.init = init,
+	.start = start,
+	.stop = stop,
 };
 
 /* TODO: Remove this when the GPS API has Kconfig that sets the priority */
@@ -388,6 +404,6 @@ static const struct gps_driver_api gps_sim_api_funcs = {
 #define GPS_INIT_PRIORITY 90
 #endif
 
-DEVICE_AND_API_INIT(gps_sim, CONFIG_GPS_SIM_DEV_NAME, gps_sim_init,
+DEVICE_AND_API_INIT(gps_sim, CONFIG_GPS_SIM_DEV_NAME, gps_sim_setup,
 		    &gps_sim_data, NULL, POST_KERNEL, GPS_INIT_PRIORITY,
 		    &gps_sim_api_funcs);
