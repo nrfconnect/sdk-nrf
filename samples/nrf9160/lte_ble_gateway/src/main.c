@@ -58,11 +58,11 @@ enum {
 static atomic_val_t association_requested;
 
 /* Sensor data */
-static struct gps_data gps_data;
+static struct gps_nmea gps_nmea_data;
 static struct nrf_cloud_sensor_data gps_cloud_data = {
 	.type = NRF_CLOUD_SENSOR_GPS,
 	.tag = 0x1,
-	.data.ptr = gps_data.nmea.buf,
+	.data.ptr = gps_nmea_data.buf,
 	.data.len = GPS_NMEA_SENTENCE_MAX_LENGTH,
 };
 static atomic_val_t send_data_enable;
@@ -145,39 +145,57 @@ void bsd_recoverable_error_handler(uint32_t err)
 	error_handler(ERROR_BSD_RECOVERABLE, (int)err);
 }
 
-/**@brief Callback for GPS trigger events */
-static void gps_trigger_handler(struct device *dev, struct gps_trigger *trigger)
+/**@brief Callback for GPS events */
+static void gps_handler(struct device *dev, struct gps_event *evt)
 {
-	ARG_UNUSED(trigger);
-
 	u32_t button_state, has_changed;
+	struct sensor_data in_data = {
+		.type = GPS_POSITION,
+		.length = evt->nmea.len,
+	};
+
+	ARG_UNUSED(dev);
+
+	switch (evt->type) {
+	case GPS_EVT_SEARCH_STARTED:
+		printk("GPS_EVT_SEARCH_STARTED\n");
+		return;
+	case GPS_EVT_SEARCH_STOPPED:
+		printk("GPS_EVT_SEARCH_STOPPED\n");
+		return;
+	case GPS_EVT_SEARCH_TIMEOUT:
+		printk("GPS_EVT_SEARCH_TIMEOUT\n");
+		return;
+	case GPS_EVT_PVT_FIX:
+		printk("GPS_EVT_PVT_FIX\n");
+		return;
+	case GPS_EVT_NMEA_FIX:
+		printk("GPS_EVT_NMEA_FIX\n");
+		break;
+	default:
+		return;
+	}
 
 	dk_read_buttons(&button_state, &has_changed);
 
-	if (!(button_state & SWITCH_2) && atomic_get(&send_data_enable)) {
-		gps_sample_fetch(dev);
-		gps_channel_get(dev, GPS_CHAN_NMEA, &gps_data);
+	if ((button_state & SWITCH_2) || !atomic_get(&send_data_enable)) {
+		return;
+	}
 
-		gps_cloud_data.tag++;
+	gps_cloud_data.tag++;
 
-		if (gps_cloud_data.tag == 0) {
-			gps_cloud_data.tag = 0x1;
-		}
+	if (gps_cloud_data.tag == 0) {
+		gps_cloud_data.tag = 0x1;
+	}
 
-		struct sensor_data in_data = {
-			.type = GPS_POSITION,
-			.length = gps_cloud_data.data.len,
-		};
+	memcpy(&in_data.data[0], &gps_cloud_data.tag,
+		sizeof(gps_cloud_data.tag));
 
-		memcpy(&in_data.data[0], &gps_cloud_data.tag,
-		       sizeof(gps_cloud_data.tag));
+	memcpy(&in_data.data[sizeof(gps_cloud_data.tag)],
+		evt->nmea.buf, evt->nmea.len);
 
-		memcpy(&in_data.data[sizeof(gps_cloud_data.tag)],
-		       gps_cloud_data.data.ptr, gps_cloud_data.data.len);
-
-		if (aggregator_put(in_data) != 0) {
-			printk("Failed to store GPS data.\n");
-		}
+	if (aggregator_put(in_data) != 0) {
+		printk("Failed to store GPS data.\n");
 	}
 }
 
@@ -412,42 +430,38 @@ static void modem_configure(void)
 	}
 }
 
-/**@brief Initializes GPS device and configures trigger if set.
- * Gets initial sample from GPS device.
- */
-static void gps_init(void)
+/**@brief Initializes the sensors that are used by the application. */
+static void sensors_init(void)
 {
 	int err;
 	struct device *gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);
-	struct gps_trigger gps_trig = {
-		.type = GPS_TRIG_DATA_READY,
+	struct gps_config gps_cfg = {
+		.nav_mode = GPS_NAV_MODE_PERIODIC,
+		.interval = CONFIG_GPS_SEARCH_INTERVAL,
+		.timeout = CONFIG_GPS_SEARCH_TIMEOUT,
 	};
 
 	if (gps_dev == NULL) {
 		printk("Could not get %s device\n", CONFIG_GPS_DEV_NAME);
 		return;
 	}
-	printk("GPS device found\n");
 
-	if (IS_ENABLED(CONFIG_GPS_TRIGGER)) {
-		err = gps_trigger_set(gps_dev, &gps_trig, gps_trigger_handler);
-		if (err) {
-			printk("Could not set trigger, error code: %d\n", err);
-			return;
-		}
+	err = gps_init(gps_dev, gps_handler);
+	if (err) {
+		printk("Could not initialize GPS, error: %d\n", err);
+		return;
 	}
 
-	err = gps_sample_fetch(gps_dev);
-	__ASSERT(err == 0, "GPS sample could not be fetched.");
+	printk("GPS initialized\n");
 
-	err = gps_channel_get(gps_dev, GPS_CHAN_NMEA, &gps_data);
-	__ASSERT(err == 0, "GPS sample could not be retrieved.");
-}
+	err = gps_start(gps_dev, &gps_cfg);
+	if (err) {
+		printk("Failed to start GPS, error: %d\n", err);
+		return;
+	}
 
-/**@brief Initializes the sensors that are used by the application. */
-static void sensors_init(void)
-{
-	gps_init();
+	printk("GPS started with interval %d seconds, and timeout %d seconds\n",
+	       CONFIG_GPS_SEARCH_INTERVAL, CONFIG_GPS_SEARCH_TIMEOUT);
 }
 
 /**@brief Initializes buttons and LEDs, using the DK buttons and LEDs
