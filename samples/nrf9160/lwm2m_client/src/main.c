@@ -274,6 +274,15 @@ void main(void)
 	LOG_INF("Connected to LTE network");
 	ui_led_set_pattern(UI_LTE_CONNECTED);
 
+#if defined(CONFIG_LWM2M_QUEUE_MODE_ENABLED)
+	ret = lte_lc_psm_req(true);
+	if (ret < 0) {
+		LOG_ERR("lte_lc_psm_req, error: %d", ret);
+	} else {
+		LOG_INF("PSM mode requested");
+	}
+#endif
+
 #if defined(CONFIG_LWM2M_CONN_MON_OBJ_SUPPORT)
 	ret = lwm2m_start_connmon();
 	if (ret < 0) {
