@@ -9,7 +9,7 @@
 #include <bsd.h>
 #include <lte_lc.h>
 #include <modem/at_cmd.h>
-#include <at_notif.h>
+#include <modem/at_notif.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <net/bsdlib.h>

@@ -15,7 +15,7 @@
 #include <modem/at_cmd.h>
 #include <at_cmd_parser/at_cmd_parser.h>
 #include <at_cmd_parser/at_params.h>
-#include <at_notif.h>
+#include <modem/at_notif.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
