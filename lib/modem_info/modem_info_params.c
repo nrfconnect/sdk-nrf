@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <string.h>
 #include <stdlib.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 #include <modem/at_params.h>
 #include <logging/log.h>
 

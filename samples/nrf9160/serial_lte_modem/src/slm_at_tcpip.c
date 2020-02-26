@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <net/socket.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 #include <net/tls_credentials.h>
 #include "slm_at_host.h"
 #include "slm_at_tcpip.h"

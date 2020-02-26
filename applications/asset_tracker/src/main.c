@@ -17,7 +17,7 @@
 #include <net/bsdlib.h>
 #include <bsd.h>
 #include <lte_lc.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 #endif /* CONFIG_BSD_LIBRARY */
 #include <net/cloud.h>
 #include <net/socket.h>

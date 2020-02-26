@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 #include <modem/at_params.h>
 #include <logging/log.h>
 
