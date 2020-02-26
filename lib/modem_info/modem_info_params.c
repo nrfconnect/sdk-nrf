@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <modem_info.h>
-#include <at_cmd_parser/at_params.h>
+#include <modem/at_params.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(modem_info_params);

@@ -12,7 +12,7 @@
 #include <zephyr/types.h>
 #include <kernel.h>
 
-#include <at_cmd_parser/at_params.h>
+#include <modem/at_params.h>
 
 /* Internal function. Parameter cannot be null. */
 static void at_param_init(struct at_param *param)
