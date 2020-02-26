@@ -12,7 +12,7 @@
 #include <string.h>
 #include <init.h>
 #include <modem/at_cmd.h>
-#include <at_notif.h>
+#include <modem/at_notif.h>
 
 LOG_MODULE_REGISTER(at_host, CONFIG_AT_HOST_LOG_LEVEL);
 
