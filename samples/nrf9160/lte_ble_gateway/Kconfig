@@ -46,5 +46,5 @@ config GPS_SEARCH_TIMEOUT
 endmenu
 
 menu "Zephyr Kernel"
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu
