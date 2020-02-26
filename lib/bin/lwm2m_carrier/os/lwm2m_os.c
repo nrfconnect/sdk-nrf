@@ -25,7 +25,7 @@
 #include <logging/log.h>
 #include <errno.h>
 #include <nrf_errno.h>
-#include <modem_key_mgmt.h>
+#include <modem/modem_key_mgmt.h>
 
 /* NVS-related defines */
 
