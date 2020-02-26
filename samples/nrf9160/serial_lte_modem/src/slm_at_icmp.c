@@ -9,7 +9,7 @@
 #include <string.h>
 #include <net/socket.h>
 #include <nrf_socket.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 #include "slm_at_host.h"
 #include "slm_at_icmp.h"
 

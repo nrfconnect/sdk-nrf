@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <net/lwm2m.h>
 
-#include <modem_info.h>
+#include <modem/modem_info.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_connmon, CONFIG_APP_LOG_LEVEL);
