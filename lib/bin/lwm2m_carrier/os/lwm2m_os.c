@@ -13,7 +13,7 @@
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <at_cmd_parser/at_cmd_parser.h>
-#include <at_cmd_parser/at_params.h>
+#include <modem/at_params.h>
 #include <bsd.h>
 #include <lte_lc.h>
 #include <net/bsdlib.h>

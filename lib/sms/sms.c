@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <modem/at_cmd.h>
 #include <at_cmd_parser/at_cmd_parser.h>
-#include <at_cmd_parser/at_params.h>
+#include <modem/at_params.h>
 #include <modem/at_notif.h>
 
 LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);

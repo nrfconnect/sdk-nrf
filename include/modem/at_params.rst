@@ -20,7 +20,7 @@ are available to read parameter values.
 API documentation
 *****************
 
-| Header file: :file:`include/at_params.h`
+| Header file: :file:`include/modem/at_params.h`
 | Source file: :file:`lib/at_cmd_parser/src/at_params.c`
 
 .. doxygengroup:: at_params
