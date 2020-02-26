@@ -10,7 +10,7 @@
 #include <ctype.h>
 #include <device.h>
 #include <errno.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 #include <net/socket.h>
 #include <stdio.h>
 #include <string.h>

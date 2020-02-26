@@ -33,7 +33,7 @@ Note, however, that signal strength data (RSRP) is only available by registering
 API documentation
 *****************
 
-| Header file: :file:`include/modem_info.h`
+| Header file: :file:`include/modem/modem_info.h`
 | Source files: :file:`lib/modem_info/`
 
 .. doxygengroup:: modem_info

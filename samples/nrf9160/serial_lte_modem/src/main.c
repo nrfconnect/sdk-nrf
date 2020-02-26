@@ -15,7 +15,7 @@
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 #include "slm_at_host.h"
 
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
