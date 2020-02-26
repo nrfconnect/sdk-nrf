@@ -16,11 +16,11 @@ config DOWNLOAD_INTERVAL
 	int "The interval to download calendar from server in seconds"
 	default 60
 
-config ICALENDAR_SEC_TAG
+config ICAL_SEC_TAG
 	int "Security tag to provision certificate"
 	default 1
 
-config NUM_OF_PARSED_COMPONENT
+config MAX_PARSED_COMPONENTS
 	int "Maximum number of parsed calendar component"
 	default 100
 

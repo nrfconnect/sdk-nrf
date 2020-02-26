@@ -15,7 +15,7 @@
 #include <logging/log.h>
 #include <nrf_socket.h>
 
-LOG_MODULE_REGISTER(icalendar_parser, CONFIG_ICALENDAR_PARSER_LOG_LEVEL);
+LOG_MODULE_REGISTER(icalendar_parser, CONFIG_ICAL_PARSER_LOG_LEVEL);
 
 #define GET_TEMPLATE		     \
 	"GET %s HTTP/1.1\r\n"	     \
@@ -25,12 +25,12 @@ LOG_MODULE_REGISTER(icalendar_parser, CONFIG_ICALENDAR_PARSER_LOG_LEVEL);
 	"Range: bytes=%u-%u\r\n"     \
 	"\r\n"
 
-BUILD_ASSERT_MSG(CONFIG_ICALENDAR_PARSER_MAX_RX_SIZE <=
-		 CONFIG_ICALENDAR_PARSER_MAX_RX_SIZE,
+BUILD_ASSERT_MSG(CONFIG_ICAL_PARSER_RX_SIZE <=
+		 CONFIG_ICAL_PARSER_RX_SIZE,
 		 "The response buffer must accommodate for a full fragment");
 
 #if defined(CONFIG_LOG) && !defined(CONFIG_LOG_IMMEDIATE)
-BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_ICALENDAR_PARSER_LOG_HEADERS) ?
+BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_ICAL_PARSER_LOG_HEADERS) ?
 		 CONFIG_LOG_BUFFER_SIZE >= 2048 : 1,
 		 "Please increase log buffer sizer");
 #endif
@@ -39,11 +39,11 @@ static int socket_timeout_set(int fd)
 {
 	int err;
 
-	if (CONFIG_ICALENDAR_PARSER_SOCK_TIMEOUT_MS == K_FOREVER) {
+	if (CONFIG_ICAL_PARSER_SOCK_TIMEOUT_MS == K_FOREVER) {
 		return 0;
 	}
 
-	const u32_t timeout_ms = CONFIG_ICALENDAR_PARSER_SOCK_TIMEOUT_MS;
+	const u32_t timeout_ms = CONFIG_ICAL_PARSER_SOCK_TIMEOUT_MS;
 
 	struct timeval timeo = {
 		.tv_sec = (timeout_ms / 1000),
@@ -97,7 +97,8 @@ static int socket_sectag_set(int fd, int sec_tag)
 
 	/* Disable TLE session cache */
 	sec_session_cache = 0;
-	err = nrf_setsockopt(fd, SOL_TLS, NRF_SO_SEC_SESSION_CACHE, &sec_session_cache, sizeof(sec_session_cache));
+	err = nrf_setsockopt(fd, SOL_TLS, NRF_SO_SEC_SESSION_CACHE,
+			     &sec_session_cache, sizeof(sec_session_cache));
 	if (err) {
 		LOG_ERR("Failed to disable TLE session cache, errno %d", errno);
 		return -1;
@@ -202,7 +203,7 @@ static int socket_send(const struct icalendar_parser *ical, size_t len)
 	size_t off = 0;
 
 	while (len) {
-		sent = send(ical->fd, ical->http_tx_buf + off, len, 0);
+		sent = send(ical->fd, ical->tx_buf + off, len, 0);
 		if (sent <= 0) {
 			return -EIO;
 		}
@@ -224,22 +225,23 @@ static int get_request_send(struct icalendar_parser *ical)
 	__ASSERT_NO_MSG(ical->host);
 	__ASSERT_NO_MSG(ical->file);
 
-	memset(ical->http_tx_buf, 0, sizeof(ical->http_tx_buf));
+	memset(ical->tx_buf, 0, sizeof(ical->tx_buf));
 
 	/* Offset of last byte in range (Content-Range) */
-	off = ical->progress + CONFIG_ICALENDAR_PARSER_MAX_RX_SIZE - 1 - ical->offset;
+	off = ical->progress + CONFIG_ICAL_PARSER_RX_SIZE
+	      - 1 - ical->offset;
 
-	len = snprintf(ical->http_tx_buf, CONFIG_ICALENDAR_PARSER_MAX_TX_SIZE,
+	len = snprintf(ical->tx_buf, CONFIG_ICAL_PARSER_TX_SIZE,
 		       GET_TEMPLATE, ical->file, ical->host,
 		       ical->progress, off);
 
-	if (len < 0 || len > CONFIG_ICALENDAR_PARSER_MAX_TX_SIZE) {
+	if (len < 0 || len > CONFIG_ICAL_PARSER_TX_SIZE) {
 		LOG_ERR("Cannot create GET request, buffer too small");
 		return -ENOMEM;
 	}
 
-	if (IS_ENABLED(CONFIG_ICALENDAR_PARSER_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(ical->http_tx_buf, len, "HTTP request");
+	if (IS_ENABLED(CONFIG_ICAL_PARSER_LOG_HEADERS)) {
+		LOG_HEXDUMP_DBG(ical->tx_buf, len, "HTTP request");
 	}
 
 	LOG_DBG("Sending HTTP request");
@@ -265,11 +267,14 @@ static size_t unfold_contentline(const char *p_buf, char *p_ical_prop_buf)
 			return 0;
 		}
 		single_line_len = p_eol - p_sol;
-		if ((total_line_len + single_line_len) <= CONFIG_MAX_PROPERTY_SIZE) {
-			memcpy(p_ical_prop_buf + total_line_len, p_sol, single_line_len);
+		if ((total_line_len + single_line_len)
+		    <= CONFIG_MAX_PROPERTY_SIZE) {
+			memcpy(p_ical_prop_buf +
+			       total_line_len, p_sol, single_line_len);
 			total_line_len += single_line_len;
 		} else {
-			LOG_DBG("Calendar property is too large. Try increase max property length in config.");
+			LOG_DBG("Property value overflow."
+				"Increase CONFIG_MAX_PROPERTY_SIZE.");
 			return 0;
 		}
 		if (!strncmp(p_eol, "\r\n ", strlen("\r\n "))) {
@@ -287,9 +292,13 @@ static size_t unfold_contentline(const char *p_buf, char *p_ical_prop_buf)
 	return unfold_size;
 }
 
-static bool parse_descriptive_props(const char *p_buf, const char *p_name,
-				    size_t name_size, char *p_value, size_t max_value_len)
+static bool parse_desc_props(const char *p_buf,
+			     const char *p_name,
+			     size_t name_size,
+			     char *p_value,
+			     size_t max_value_len)
 {
+	bool ret;
 	size_t unfold_size;
 	char ical_prop_buf[CONFIG_MAX_PROPERTY_SIZE];
 
@@ -297,33 +306,41 @@ static bool parse_descriptive_props(const char *p_buf, const char *p_name,
 	if (unfold_size > 0) {
 		if (ical_prop_buf[name_size] == ':') {
 			size_t value_len = unfold_size - name_size - 1;
+
 			if (value_len <= max_value_len) {
-				memcpy(p_value, ical_prop_buf + name_size + 1, value_len);
-				return true;
+				memcpy(p_value,
+				       ical_prop_buf + name_size + 1,
+				       value_len);
+				ret = true;
 			} else {
 				/* Property value overflow. */
 				LOG_ERR("%s value overflow.", p_name);
-				return false;
+				ret = false;
 			}
 		} else if (ical_prop_buf[name_size] == ';') {
 			/* Does not support property parameter. */
 			LOG_ERR("%s param not supported.", p_name);
-			return false;
+			ret = false;
 		} else {
 			/* Property wrong format - no parameter or value. */
 			LOG_ERR("%s wrong format.", p_name);
-			return false;
+			ret = false;
 		}
 	} else {
 		/* Property wrong format - no parameter or value. */
 		LOG_ERR("%s no value/param.", p_name);
-		return false;
+		ret = false;
 	}
+	return ret;
 }
 
-static bool parse_datetime_props(const char *p_buf, const char *p_name,
-				 size_t name_size, char *p_value, size_t max_value_len)
+static bool parse_datetime_props(const char *p_buf,
+				 const char *p_name,
+				 size_t name_size,
+				 char *p_value,
+				 size_t max_value_len)
 {
+	bool ret;
 	size_t unfold_size;
 	char ical_prop_buf[CONFIG_MAX_PROPERTY_SIZE];
 
@@ -332,43 +349,52 @@ static bool parse_datetime_props(const char *p_buf, const char *p_name,
 	if (unfold_size > 0) {
 		if (ical_prop_buf[name_size] == ':') {
 			size_t value_len = unfold_size - name_size - 1;
+
 			if (value_len <= max_value_len) {
-				memcpy(p_value, ical_prop_buf + name_size + 1, value_len);
-				return true;
+				memcpy(p_value,
+				       ical_prop_buf + name_size + 1,
+				       value_len);
+				ret = true;
 			} else {
 				/* Property value overflow. */
 				LOG_ERR("%s value overflow.", p_name);
-				return false;
+				ret = false;
 			}
 		} else if (ical_prop_buf[name_size] == ';') {
 			char *p_dtvalue;
+
 			p_dtvalue = strchr(ical_prop_buf, ':');
 			if (p_dtvalue) {
 				p_dtvalue = p_dtvalue + 1;
-				size_t value_len = unfold_size - (p_dtvalue - ical_prop_buf);
+				size_t value_len;
+
+				value_len = unfold_size -
+					    (p_dtvalue - ical_prop_buf);
 				if (value_len <= max_value_len) {
 					memcpy(p_value, p_dtvalue, value_len);
-					return true;
+					ret = true;
 				} else {
 					/* Property value overflow. */
 					LOG_ERR("%s value overflow.", p_name);
-					return false;
+					ret = false;
 				}
 			} else {
 				/* Property wrong format - no value. */
 				LOG_ERR("%s wrong format - no value.", p_name);
-				return false;
+				ret = false;
 			}
 		} else {
 			/* Property wrong format - no parameter or value. */
 			LOG_ERR("%s wrong format.", p_name);
-			return false;
+			ret = false;
 		}
 	} else {
 		/* Property wrong format - fail to unfold property. */
 		LOG_ERR("%s wrong format. Fail to unfold property", p_name);
-		return false;
+		ret = false;
 	}
+
+	return ret;
 }
 
 static size_t parse_calprops(const char *p_buf)
@@ -379,19 +405,26 @@ static size_t parse_calprops(const char *p_buf)
 	p_parsed = strstr(p_parsed, "BEGIN:VCALENDAR\r\n");
 	if (p_parsed) {
 		char *p_end;
+
 		p_parsed += strlen("BEGIN:VCALENDAR\r\n");
 		p_end = strstr(p_parsed, "\r\nBEGIN:");
 		if (p_end) {
 			p_end += strlen("\r\n");
 			while (p_parsed < p_end) {
 				memset(prop_value, 0, sizeof(prop_value));
-				if (!strncmp(p_parsed, "PRODID", strlen("PRODID"))) {
-					if (!parse_descriptive_props(p_parsed, "PRODID", 6, prop_value, sizeof(prop_value))) {
-						LOG_ERR("Wrong PRODID property");
+				if (!strncmp(p_parsed, "PRODID", 6)) {
+					if (!parse_desc_props(
+						    p_parsed, "PRODID", 6,
+						    prop_value,
+						    sizeof(prop_value))) {
+						LOG_ERR("Wrong PRODID");
 					}
-				} else if (!strncmp(p_parsed, "VERSION", strlen("VERSION"))) {
-					if (!parse_descriptive_props(p_parsed, "VERSION", 7, prop_value, sizeof(prop_value))) {
-						LOG_ERR("Wrong VERSION property");
+				} else if (!strncmp(p_parsed, "VERSION", 7)) {
+					if (!parse_desc_props(
+						    p_parsed, "VERSION", 7,
+						    prop_value,
+						    sizeof(prop_value))) {
+						LOG_ERR("Wrong VERSION");
 					}
 				}
 				p_parsed = strstr(p_parsed, "\r\n");
@@ -405,39 +438,62 @@ static size_t parse_calprops(const char *p_buf)
 	return (p_parsed - p_buf);
 }
 
-static size_t parse_eventprop(const char *p_buf, struct ical_component *p_ical_com)
+static size_t parse_eventprop(const char *p_buf,
+			      struct ical_component *p_ical_com)
 {
 	const char *p_parsed = p_buf;
 
 	if (!strncmp(p_buf, "BEGIN:VEVENT\r\n", strlen("BEGIN:VEVENT\r\n"))) {
 		char *p_com_end;
+
 		p_com_end = strstr(p_buf, "END:VEVENT\r\n");
 		if (p_com_end) {
 			p_com_end += strlen("END:VEVENT\r\n");
 			while (p_parsed < p_com_end) {
-				if (!strncasecmp(p_parsed, "SUMMARY", strlen("SUMMARY"))) {
-					if (!parse_descriptive_props(p_parsed, "SUMMARY", 7, p_ical_com->summary, CONFIG_MAX_SUMMARY_PROPERTY_SIZE)) {
-						LOG_ERR("Wrong SUMMARY property");
+				if (!strncasecmp(p_parsed,
+						 "SUMMARY", 7)) {
+					if (!parse_desc_props(
+						p_parsed, "SUMMARY", 7,
+						p_ical_com->summary,
+						CONFIG_SUMMARY_SIZE)) {
+						LOG_ERR("Wrong SUMMARY");
 					}
-				} else if (!strncasecmp(p_parsed, "LOCATION", strlen("LOCATION"))) {
-					if (!parse_descriptive_props(p_parsed, "LOCATION", 8, p_ical_com->location, CONFIG_MAX_LOCATION_PROPERTY_SIZE)) {
-						LOG_ERR("Wrong LOCATION property");
+				} else if (!strncasecmp(p_parsed,
+							"LOCATION", 8)) {
+					if (!parse_desc_props(
+						p_parsed, "LOCATION", 8,
+						p_ical_com->location,
+						CONFIG_LOCATION_SIZE)) {
+						LOG_ERR("Wrong LOCATION");
 					}
-				} else if (!strncasecmp(p_parsed, "DESCRIPTION", strlen("DESCRIPTION"))) {
-					if (!parse_descriptive_props(p_parsed, "DESCRIPTION", 11, p_ical_com->description, CONFIG_MAX_DESCRIPTION_PROPERTY_SIZE)) {
-						LOG_ERR("Wrong DESCRIPTION property");
+				} else if (!strncasecmp(p_parsed,
+							"DESCRIPTION", 11)) {
+					if (!parse_desc_props(
+						p_parsed, "DESCRIPTION", 11,
+						p_ical_com->description,
+						CONFIG_DESCRIPTION_SIZE)) {
+						LOG_ERR("Wrong DESCRIPTION");
 					}
-				} else if (!strncasecmp(p_parsed, "DTSTART", strlen("DTSTART"))) {
-					if (!parse_datetime_props(p_parsed, "DTSTART", 7, p_ical_com->dtstart, CONFIG_MAX_DTSTART_PROPERTY_SIZE)) {
-						LOG_ERR("Wrong DTSTART property");
+				} else if (!strncasecmp(p_parsed,
+							"DTSTART", 7)) {
+					if (!parse_datetime_props(
+						p_parsed, "DTSTART", 7,
+						p_ical_com->dtstart,
+						CONFIG_DTSTART_SIZE)) {
+						LOG_ERR("Wrong DTSTART");
 					}
-				} else if (!strncasecmp(p_parsed, "DTEND", strlen("DTEND"))) {
-					if (!parse_datetime_props(p_parsed, "DTEND", 5, p_ical_com->dtend, CONFIG_MAX_DTEND_PROPERTY_SIZE)) {
-						LOG_ERR("Wrong DTEND property");
+				} else if (!strncasecmp(p_parsed,
+							"DTEND", 5)) {
+					if (!parse_datetime_props(
+						p_parsed, "DTEND", 5,
+						p_ical_com->dtend,
+						CONFIG_DTEND_SIZE)) {
+						LOG_ERR("Wrong DTEND");
 					}
 				}
 
-				p_parsed = strstr(p_parsed, "\r\n") + strlen("\r\n");
+				/* Move parsed pointer to end of line break */
+				p_parsed = strstr(p_parsed, "\r\n") + 2;
 			}
 		}
 	}
@@ -445,7 +501,8 @@ static size_t parse_eventprop(const char *p_buf, struct ical_component *p_ical_c
 	return p_parsed - p_buf;
 }
 
-static size_t parse_todoprop(const char *p_buf, struct ical_component *p_ical_com)
+static size_t parse_todoprop(const char *p_buf,
+				struct ical_component *p_ical_com)
 {
 	const char *p_parsed = p_buf;
 	char *p_com_end;
@@ -458,7 +515,8 @@ static size_t parse_todoprop(const char *p_buf, struct ical_component *p_ical_co
 	return p_parsed - p_buf;
 }
 
-static size_t parse_jourprop(const char *p_buf, struct ical_component *p_ical_com)
+static size_t parse_jourprop(const char *p_buf,
+				struct ical_component *p_ical_com)
 {
 	const char *p_parsed = p_buf;
 	char *p_com_end;
@@ -497,7 +555,8 @@ static size_t parse_tzprop(const char *p_buf, struct ical_component *p_ical_com)
 	return p_parsed - p_buf;
 }
 
-static size_t parse_component(const char *p_buf, struct ical_component *p_ical_com)
+static size_t parse_component(const char *p_buf,
+			      struct ical_component *p_ical_com)
 {
 	char *p_com_begin;
 	size_t ret = 0;
@@ -509,31 +568,34 @@ static size_t parse_component(const char *p_buf, struct ical_component *p_ical_c
 	}
 
 	ret = p_com_begin - p_buf;
-	if (!strncmp(p_com_begin, "BEGIN:VEVENT\r\n", strlen("BEGIN:VEVENT\r\n"))) {
+	if (!strncmp(p_com_begin, "BEGIN:VEVENT\r\n", 14)) {
 		ret += parse_eventprop(p_com_begin, p_ical_com);
-	} else if (!strncmp(p_com_begin, "BEGIN:VTODO\r\n", strlen("BEGIN:VTODO\r\n"))) {
+	} else if (!strncmp(p_com_begin, "BEGIN:VTODO\r\n", 13)) {
 		ret += parse_todoprop(p_com_begin, p_ical_com);
-	} else if (!strncmp(p_com_begin, "BEGIN:VJOURNAL\r\n", strlen("BEGIN:VJOURNAL\r\n"))) {
+	} else if (!strncmp(p_com_begin, "BEGIN:VJOURNAL\r\n", 16)) {
 		ret += parse_jourprop(p_com_begin, p_ical_com);
-	} else if (!strncmp(p_com_begin, "BEGIN:VFREEBUSY\r\n", strlen("BEGIN:VFREEBUSY\r\n"))) {
+	} else if (!strncmp(p_com_begin, "BEGIN:VFREEBUSY\r\n", 17)) {
 		ret += parse_fbprop(p_com_begin, p_ical_com);
-	} else if (!strncmp(p_com_begin, "BEGIN:VTIMEZONE\r\n", strlen("BEGIN:VTIMEZONE\r\n"))) {
+	} else if (!strncmp(p_com_begin, "BEGIN:VTIMEZONE\r\n", 17)) {
 		ret += parse_tzprop(p_com_begin, p_ical_com);
 	}
 
 	return ret;
 }
 
-static size_t parse_icalbody(const char *p_buf, icalendar_parser_callback_t callback)
+static size_t parse_icalbody(const char *p_buf,
+				icalendar_parser_callback_t callback)
 {
 	size_t parsed_bytes = 0, parsed_offset = 0;
 
 	do {
 		struct ical_component ical_com;
+
 		memset(&ical_com, 0, sizeof(ical_com));
-		parsed_bytes = parse_component(p_buf + parsed_offset, &ical_com);
+		parsed_bytes = parse_component(p_buf + parsed_offset,
+					       &ical_com);
 		if (parsed_bytes > 0) {
-			const struct icalendar_parser_evt evt = {
+			const struct ical_parser_evt evt = {
 				.id = ICAL_PARSER_EVT_COMPONENT,
 			};
 			callback(&evt, &ical_com);
@@ -552,16 +614,17 @@ static size_t parse_icalstream(struct icalendar_parser *ical)
 	 * Reference: RFC 5545 3.4 iCalendar Object
 	 */
 	if (!ical->icalobject_begin) {
-		/* The body of the iCalendar object consists of a sequence of calendar
-		 * properties and one or more calendar components.
+		/* The body of the iCalendar object consists of
+		 * a sequence of calendar properties and
+		 * one or more calendar components.
 		 *
 		 * Reference: RFC 5545 3.6 Calendar Components
 		 */
-		parsed_offset += parse_calprops(ical->http_rx_buf);
+		parsed_offset += parse_calprops(ical->rx_buf);
 		if (parsed_offset > 0) {
 			LOG_DBG("Found a calendar stream");
 			ical->icalobject_begin = true;
-			const struct icalendar_parser_evt evt = {
+			const struct ical_parser_evt evt = {
 				.id = ICAL_PARSER_EVT_CALENDAR,
 			};
 			ical->callback(&evt, NULL);
@@ -570,16 +633,19 @@ static size_t parse_icalstream(struct icalendar_parser *ical)
 
 	/* If we got a calendar property, start parsing calendar body. */
 	if (ical->icalobject_begin) {
-		/* Parse recevied buffer either BEGIN and END of iCalendar object is matched, or
-		 * when HTTP RX buffer is full.
+		/* Parse recevied buffer either BEGIN and END
+		 * of iCalendar object is matched, or when
+		 * HTTP RX buffer is full.
 		 */
-		if (strstr(ical->http_rx_buf, "END:VCALENDAR\r\n") != NULL) {
+		if (strstr(ical->rx_buf, "END:VCALENDAR\r\n") != NULL) {
 			/* Receive pair of iCalendar object delimiter */
-			parsed_offset += parse_icalbody(ical->http_rx_buf, ical->callback);
+			parsed_offset += parse_icalbody(ical->rx_buf,
+							ical->callback);
 			ical->icalobject_end = true;
-		} else if (ical->offset == CONFIG_ICALENDAR_PARSER_MAX_RX_SIZE) {
+		} else if (ical->offset == CONFIG_ICAL_PARSER_RX_SIZE) {
 			/* HTTP RX buffer is full */
-			parsed_offset += parse_icalbody(ical->http_rx_buf, ical->callback);
+			parsed_offset += parse_icalbody(ical->rx_buf,
+							ical->callback);
 		}
 	}
 
@@ -596,7 +662,7 @@ static int header_parse(struct icalendar_parser *ical)
 	char *p;
 	size_t hdr;
 
-	p = strstr(ical->http_rx_buf, "\r\n\r\n");
+	p = strstr(ical->rx_buf, "\r\n\r\n");
 	if (!p) {
 		/* Awaiting full GET response */
 		LOG_DBG("Awaiting full header in response");
@@ -604,21 +670,21 @@ static int header_parse(struct icalendar_parser *ical)
 	}
 
 	/* Offset of the end of the HTTP header in the buffer */
-	hdr = p + strlen("\r\n\r\n") - ical->http_rx_buf;
+	hdr = p + strlen("\r\n\r\n") - ical->rx_buf;
 
-	__ASSERT(hdr < sizeof(ical->http_rx_buf), "Buffer overflow");
+	__ASSERT(hdr < sizeof(ical->rx_buf), "Buffer overflow");
 
 	LOG_DBG("GET header size: %u", hdr);
 
-	if (IS_ENABLED(CONFIG_ICALENDAR_PARSER_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(ical->http_rx_buf, hdr, "GET");
+	if (IS_ENABLED(CONFIG_ICAL_PARSER_LOG_HEADERS)) {
+		LOG_HEXDUMP_DBG(ical->rx_buf, hdr, "GET");
 	}
 
-	if (!strstr(ical->http_rx_buf, "Content-Type: text/calendar")) {
+	if (!strstr(ical->rx_buf, "Content-Type: text/calendar")) {
 		LOG_WRN("Content type is not text/calendar");
 	}
 
-	p = strstr(ical->http_rx_buf, "Connection: close");
+	p = strstr(ical->rx_buf, "Connection: close");
 	if (p) {
 		LOG_WRN("Peer closed connection, will attempt to re-connect");
 		ical->connection_close = true;
@@ -630,7 +696,7 @@ static int header_parse(struct icalendar_parser *ical)
 		 * then update the offset.
 		 */
 		LOG_DBG("Copying %u payload bytes", ical->offset - hdr);
-		memcpy(ical->http_rx_buf, ical->http_rx_buf + hdr, ical->offset - hdr);
+		memcpy(ical->rx_buf, ical->rx_buf + hdr, ical->offset - hdr);
 		ical->offset -= hdr;
 	} else {
 		/* Reset the offset.
@@ -647,7 +713,7 @@ static void error_evt_send(const struct icalendar_parser *ical, int error)
 	/* Error will be sent as negative. */
 	__ASSERT_NO_MSG(error > 0);
 
-	const struct icalendar_parser_evt evt = {
+	const struct ical_parser_evt evt = {
 		.id = ICAL_PARSER_EVT_ERROR,
 		.error = -error
 	};
@@ -666,11 +732,12 @@ restart_and_suspend:
 	k_thread_suspend(ical->tid);
 
 	while (true) {
-		__ASSERT(ical->offset < sizeof(ical->http_rx_buf), "Buffer overflow");
+		__ASSERT(ical->offset < sizeof(ical->rx_buf),
+				"Buffer overflow");
 
 		LOG_DBG("Receiving bytes.. ical offset:%d", ical->offset);
-		len = recv(ical->fd, ical->http_rx_buf + ical->offset,
-			   sizeof(ical->http_rx_buf) - ical->offset, 0);
+		len = recv(ical->fd, ical->rx_buf + ical->offset,
+			   sizeof(ical->rx_buf) - ical->offset, 0);
 
 		LOG_DBG("%d bytes received", len);
 		if (len == -1) {
@@ -699,10 +766,10 @@ restart_and_suspend:
 				LOG_WRN("Header parsing fail!");
 				error_evt_send(ical, ENOMSG);
 				break;
-			} else {
-				/* Correct header received. */
-				ical->has_header = true;
 			}
+
+			/* Correct header received. */
+			ical->has_header = true;
 		}
 
 		/* Accumulate overall file progress.
@@ -720,31 +787,40 @@ restart_and_suspend:
 
 		if (ical->progress > 0) {
 			size_t ret;
+
 			ret = parse_icalstream(ical);
 			if (ret > 0) {
 				if (ical->icalobject_end) {
-					/* Download complete. Report complete event. */
+					/* Download complete. */
 					LOG_DBG("Download complete");
-					const struct icalendar_parser_evt evt = {
+					const struct ical_parser_evt evt = {
 						.id = ICAL_PARSER_EVT_COMPLETE,
 					};
 					ical->callback(&evt, NULL);
 					/* Restart and suspend */
 					break;
-				} else {
-					/* Not finished yet. Copy unparsed buffer to the begining of buffer */
-					memcpy(ical->http_rx_buf, ical->http_rx_buf + ret,
-					       ical->offset - ret);
-					/* Clear rest of HTTP buffer */
-					memset(ical->http_rx_buf + (ical->offset - ret), 0, CONFIG_ICALENDAR_PARSER_MAX_RX_SIZE - (ical->offset - ret));
-					ical->offset = ical->offset - ret;
 				}
+				/* Not finished yet. Copy unparsed
+				 * buffer to the beginning of buffer
+				 */
+				size_t unparsed;
+
+				unparsed = ical->offset - ret;
+				memcpy(ical->rx_buf, ical->rx_buf + ret,
+				       unparsed);
+				/* Clear rest of HTTP buffer */
+				memset(ical->rx_buf + (ical->offset - ret), 0,
+					CONFIG_ICAL_PARSER_RX_SIZE - unparsed);
+				ical->offset = unparsed;
 			} else {
-				if (ical->offset < CONFIG_ICALENDAR_PARSER_MAX_RX_SIZE) {
-					LOG_DBG("Awaiting full fragment (%u)", ical->offset);
+				if (ical->offset <
+					CONFIG_ICAL_PARSER_RX_SIZE) {
+					LOG_DBG("Awaiting full fragment (%u)",
+						ical->offset);
 					continue;
 				} else {
-					LOG_ERR("Get full fragment (%u) but parse fail. Increase rx buffer or check calendar format", ical->offset);
+					LOG_ERR("Get full fragment (%u) "
+						"but parse fail", ical->offset);
 					error_evt_send(ical, ENOBUFS);
 					break;
 				}
@@ -803,7 +879,7 @@ int ical_parser_connect(struct icalendar_parser *ical, const char *host,
 		return -EINVAL;
 	}
 
-	if (!IS_ENABLED(CONFIG_ICALENDAR_PARSER_TLS)) {
+	if (!IS_ENABLED(CONFIG_ICAL_PARSER_TLS)) {
 		LOG_INF("HTTP Connection");
 		if (sec_tag != -1) {
 			return -EINVAL;
@@ -817,9 +893,9 @@ int ical_parser_connect(struct icalendar_parser *ical, const char *host,
 
 	if (ical->state == ICAL_PARSER_STATE_DOWNLOADING) {
 		return -EINVAL;
-	} else {
-		ical->state = ICAL_PARSER_STATE_DOWNLOADING;
 	}
+
+	ical->state = ICAL_PARSER_STATE_DOWNLOADING;
 
 	if (ical->fd != -1) {
 		/* Already connected */
@@ -827,7 +903,7 @@ int ical_parser_connect(struct icalendar_parser *ical, const char *host,
 	}
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
-	if (IS_ENABLED(CONFIG_ICALENDAR_PARSER_IPV6)) {
+	if (IS_ENABLED(CONFIG_ICAL_PARSER_IPV6)) {
 		ical->fd =
 			resolve_and_connect(AF_INET6, host, sec_tag);
 	}
@@ -883,9 +959,9 @@ int ical_parser_start(struct icalendar_parser *ical, const char *file)
 	if (ical == NULL || file == NULL || (ical->fd < 0)) {
 		ical->state = ICAL_PARSER_STATE_STOPPED;
 		return -EINVAL;
-	} else {
-		ical->state = ICAL_PARSER_STATE_DOWNLOADING;
 	}
+
+	ical->state = ICAL_PARSER_STATE_DOWNLOADING;
 	ical->file = file;
 
 	ical->offset = 0;
@@ -894,8 +970,8 @@ int ical_parser_start(struct icalendar_parser *ical, const char *file)
 	ical->icalobject_begin = false;
 	ical->icalobject_end = false;
 
-	memset(ical->http_rx_buf, 0, sizeof(ical->http_rx_buf));
-	memset(ical->http_tx_buf, 0, sizeof(ical->http_tx_buf));
+	memset(ical->rx_buf, 0, sizeof(ical->rx_buf));
+	memset(ical->tx_buf, 0, sizeof(ical->tx_buf));
 
 	LOG_INF("Downloading: %s [%u]", log_strdup(ical->file),
 		ical->progress);

@@ -31,7 +31,7 @@ static u32_t current_time;
 static u8_t timezone;
 
 /** List of pointers to the allocated memory for parsed calendar components */
-static struct ical_component *ical_component_list[CONFIG_NUM_OF_PARSED_COMPONENT];
+static struct ical_component *ical_coms[CONFIG_MAX_PARSED_COMPONENTS];
 /** Total number of parsed calendar components */
 static size_t component_cnt;
 
@@ -124,7 +124,8 @@ static void modem_configure(void)
 #endif
 }
 
-static int icalendar_parser_callback(const struct icalendar_parser_evt *event, struct ical_component *p_ical_component)
+static int icalendar_parser_callback(const struct ical_parser_evt *event,
+				     struct ical_component *p_com)
 {
 	int err = 0;
 
@@ -138,15 +139,15 @@ static int icalendar_parser_callback(const struct icalendar_parser_evt *event, s
 		printk("Got calendar event\n");
 		/* Free the buffer allocated before */
 		for (int i = 0; i < component_cnt; i++) {
-			k_free(ical_component_list[i]);
+			k_free(ical_coms[i]);
 		}
 		component_cnt = 0;
 		break;
 
 	case ICAL_PARSER_EVT_COMPONENT:
-		if (p_ical_component != NULL) {
-			if (component_cnt >= CONFIG_NUM_OF_PARSED_COMPONENT) {
-				printk("Fail to store new calendar component. Increase CONFIG_NUM_OF_PARSED_COMPONENT!\n");
+		if (p_com != NULL) {
+			if (component_cnt >= CONFIG_MAX_PARSED_COMPONENTS) {
+				printk("Fail to store new calendar component. Increase CONFIG_MAX_PARSED_COMPONENTS!\n");
 				break;
 			}
 			/* Compare current date-time and skip out-of-date event.
@@ -155,16 +156,24 @@ static int icalendar_parser_callback(const struct icalendar_parser_evt *event, s
 			 */
 			u32_t dtend_date;
 			u32_t dtend_time;
-			dtend_date = atoi(p_ical_component->dtend);
-			dtend_time = atoi(p_ical_component->dtend + strlen("YYYYMMDDT"));
+
+			dtend_date = atoi(p_com->dtend);
+			dtend_time = atoi(p_com->dtend + strlen("YYYYMMDDT"));
 			if ((dtend_date > current_date) ||
-			    ((dtend_date == current_date) && (dtend_time > current_time))) {
+			    ((dtend_date == current_date)
+			     && (dtend_time > current_time))) {
 				/* Allocate memory for new calendar component */
-				struct ical_component *p_new_component = k_malloc(sizeof(*p_new_component));
-				if (p_new_component) {
-					memset(p_new_component, 0, sizeof(struct ical_component));
-					memcpy(p_new_component, p_ical_component, sizeof(struct ical_component));
-					ical_component_list[component_cnt] = p_new_component;
+				struct ical_component *p_new_com;
+
+				p_new_com = k_malloc(sizeof(*p_new_com));
+				if (p_new_com) {
+					memset(p_new_com,
+					       0,
+					       sizeof(struct ical_component));
+					memcpy(p_new_com,
+					       p_com,
+					       sizeof(struct ical_component));
+					ical_coms[component_cnt] = p_new_com;
 				} else {
 					printk("Fail to allocate memory for parsed calendar component.\n");
 					break;
@@ -180,7 +189,8 @@ static int icalendar_parser_callback(const struct icalendar_parser_evt *event, s
 		printk("ICAL_PARSER_EVT_COMPLETE: %d event\n", component_cnt);
 		dk_set_led_on(DK_LED3);
 		ical_parser_disconnect(&ical);
-		k_delayed_work_submit(&ical_work, K_SECONDS(CONFIG_DOWNLOAD_INTERVAL));
+		k_delayed_work_submit(&ical_work,
+				      K_SECONDS(CONFIG_DOWNLOAD_INTERVAL));
 		break;
 
 	case ICAL_PARSER_EVT_ERROR: {
@@ -207,20 +217,20 @@ static void ical_work_handler(struct k_work *unused)
 
 	/* Verify the host and file. */
 	if (CONFIG_DOWNLOAD_HOST == NULL || CONFIG_DOWNLOAD_FILE == NULL) {
-		printk("Wrong download host or file \n");
+		printk("Wrong download host or file\n");
 		return;
 	}
 
 	/* Verify that a download is not already ongoing */
 	if (ical.state == ICAL_PARSER_STATE_DOWNLOADING) {
-		printk("There is ongoing calendar parsing task \n");
+		printk("There is ongoing calendar parsing task\n");
 		return;
 	}
 
-	if (!IS_ENABLED(CONFIG_ICALENDAR_PARSER_TLS)) {
+	if (!IS_ENABLED(CONFIG_ICAL_PARSER_TLS)) {
 		sec_tag = -1;
 	} else {
-		sec_tag = CONFIG_ICALENDAR_SEC_TAG;
+		sec_tag = CONFIG_ICAL_SEC_TAG;
 	}
 
 	dk_set_led_off(DK_LED2);
@@ -268,7 +278,7 @@ int cert_provision(void)
 	bool exists;
 	u8_t unused;
 
-	err = modem_key_mgmt_exists(CONFIG_ICALENDAR_SEC_TAG,
+	err = modem_key_mgmt_exists(CONFIG_ICAL_SEC_TAG,
 				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 				    &exists, &unused);
 	if (err) {
@@ -280,7 +290,7 @@ int cert_provision(void)
 		/* For the sake of simplicity we delete what is provisioned
 		 * with our security tag and reprovision our certificate.
 		 */
-		err = modem_key_mgmt_delete(CONFIG_ICALENDAR_SEC_TAG,
+		err = modem_key_mgmt_delete(CONFIG_ICAL_SEC_TAG,
 					    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
 		if (err) {
 			printk("Failed to delete existing certificate, err %d\n",
@@ -291,7 +301,7 @@ int cert_provision(void)
 	printk("Provisioning certificate\n");
 
 	/*  Provision certificate to the modem */
-	err = modem_key_mgmt_write(CONFIG_ICALENDAR_SEC_TAG,
+	err = modem_key_mgmt_write(CONFIG_ICAL_SEC_TAG,
 				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 				   cert, sizeof(cert) - 1);
 	if (err) {
@@ -305,7 +315,7 @@ int cert_provision(void)
 /**@brief Look up calendar components. Return true if there is ongoint event. */
 static bool calendar_lookup(u32_t given_date, u32_t given_time)
 {
-	struct ical_component *p_ical_component;
+	struct ical_component *p_com;
 	u32_t dtstart_date;
 	u32_t dtstart_time;
 	u32_t dtend_date;
@@ -313,18 +323,22 @@ static bool calendar_lookup(u32_t given_date, u32_t given_time)
 
 	/* Look up all calendar components */
 	for (int i = 0; i < component_cnt; i++) {
-		p_ical_component = ical_component_list[i];
-		if (p_ical_component) {
-			dtstart_date = atoi(p_ical_component->dtstart);
-			dtstart_time = atoi(p_ical_component->dtstart + strlen("YYYYMMDDT"));
-			dtend_date = atoi(p_ical_component->dtend);
-			dtend_time = atoi(p_ical_component->dtend + strlen("YYYYMMDDT"));
+		p_com = ical_coms[i];
+		if (p_com) {
+			dtstart_date = atoi(p_com->dtstart);
+			dtstart_time = atoi(p_com->dtstart
+					    + strlen("YYYYMMDDT"));
+			dtend_date = atoi(p_com->dtend);
+			dtend_time = atoi(p_com->dtend
+					  + strlen("YYYYMMDDT"));
 			/* Check date-time start of component */
 			if ((dtstart_date < given_date) ||
-			    ((dtstart_date == given_date) && (dtstart_time < given_time))) {
+			    ((dtstart_date == given_date)
+			     && (dtstart_time < given_time))) {
 				/* Check date-time end of component */
 				if ((dtend_date > given_date) ||
-				    ((dtend_date == given_date) && (dtend_time > given_time))) {
+				    ((dtend_date == given_date)
+				     && (dtend_time > given_time))) {
 					return true;
 				}
 			}

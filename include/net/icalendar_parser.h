@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef ICALENDAR_PARSER_H__
-#define ICALENDAR_PARSER_H__
+#ifndef ICAL_PARSER_H__
+#define ICAL_PARSER_H__
 
 #include <zephyr.h>
 #include <zephyr/types.h>
@@ -65,7 +65,7 @@ enum ical_component_type {
 /**
  * @brief iCalendar parser event.
  */
-struct icalendar_parser_evt {
+struct ical_parser_evt {
 	/** Event ID. */
 	enum ical_parser_evt_id id;
 	union {
@@ -79,15 +79,15 @@ struct icalendar_parser_evt {
  */
 struct ical_component {
 	/** SUMMARY property */
-	char summary[CONFIG_MAX_SUMMARY_PROPERTY_SIZE];
+	char summary[CONFIG_SUMMARY_SIZE];
 	/** LOCATION property buffer. */
-	char location[CONFIG_MAX_LOCATION_PROPERTY_SIZE];
+	char location[CONFIG_LOCATION_SIZE];
 	/** DESCRIPTION property buffer. */
-	char description[CONFIG_MAX_DESCRIPTION_PROPERTY_SIZE];
+	char description[CONFIG_DESCRIPTION_SIZE];
 	/** DTSTART property. */
-	char dtstart[CONFIG_MAX_DTSTART_PROPERTY_SIZE];
+	char dtstart[CONFIG_DTSTART_SIZE];
 	/** DTEND property buffer. */
-	char dtend[CONFIG_MAX_DTEND_PROPERTY_SIZE];
+	char dtend[CONFIG_DTEND_SIZE];
 };
 
 /**
@@ -105,7 +105,7 @@ struct ical_component {
  * @return Zero to continue the download, non-zero otherwise.
  */
 typedef int (*icalendar_parser_callback_t)(
-	const struct icalendar_parser_evt *event,
+	const struct ical_parser_evt *event,
 	struct ical_component *p_ical_component);
 
 /**
@@ -117,9 +117,9 @@ struct icalendar_parser {
 	/** HTTP socket. */
 	int fd;
 	/** Buffer for HTTP get request */
-	char http_tx_buf[CONFIG_ICALENDAR_PARSER_MAX_TX_SIZE];
+	char tx_buf[CONFIG_ICAL_PARSER_TX_SIZE];
 	/** Buffer for HTTP response */
-	char http_rx_buf[CONFIG_ICALENDAR_PARSER_MAX_RX_SIZE];
+	char rx_buf[CONFIG_ICAL_PARSER_RX_SIZE];
 	/** Offset of HTTP TX/RX buffer. */
 	size_t offset;
 	/** Download progress, number of bytes downloaded. */
@@ -155,7 +155,7 @@ struct icalendar_parser {
 	struct k_thread thread;
 	/** Internal thread stack. */
 	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_ICALENDAR_PARSER_STACK_SIZE);
+			      CONFIG_ICAL_PARSER_STACK_SIZE);
 
 	/** Event handler. */
 	icalendar_parser_callback_t callback;
@@ -207,6 +207,6 @@ int ical_parser_disconnect(struct icalendar_parser *client);
 }
 #endif
 
-#endif /* ICALENDAR_PARSER_H__ */
+#endif /* ICAL_PARSER_H__ */
 
 /**@} */
