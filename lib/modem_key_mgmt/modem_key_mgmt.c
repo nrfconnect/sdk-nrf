@@ -8,7 +8,7 @@
 #include <string.h>
 #include <zephyr.h>
 #include <modem/at_cmd.h>
-#include <at_cmd_parser/at_cmd_parser.h>
+#include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <bsd_limits.h>
 #include <modem_key_mgmt.h>

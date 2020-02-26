@@ -10,7 +10,7 @@
 #include <sms.h>
 #include <errno.h>
 #include <modem/at_cmd.h>
-#include <at_cmd_parser/at_cmd_parser.h>
+#include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <modem/at_notif.h>
 
