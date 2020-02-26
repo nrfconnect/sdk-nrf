@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #include CONFIG_NRF_CLOUD_CERTIFICATES_FILE
 #if defined(CONFIG_MODEM_KEY_MGMT)
-#include <modem_key_mgmt.h>
+#include <modem/modem_key_mgmt.h>
 #endif
 #endif /* defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) */
 

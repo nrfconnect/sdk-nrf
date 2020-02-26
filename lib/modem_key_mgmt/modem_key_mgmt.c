@@ -11,7 +11,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <bsd_limits.h>
-#include <modem_key_mgmt.h>
+#include <modem/modem_key_mgmt.h>
 
 #define MODEM_KEY_MGMT_OP_LS "AT%CMNG=1"
 #define MODEM_KEY_MGMT_OP_RD "AT%CMNG=2"
