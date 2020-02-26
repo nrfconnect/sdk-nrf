@@ -16,6 +16,7 @@
 
 # Applications
 /applications/asset_tracker/              @joakimtoe @jtguggedal @rlubos
+/applications/connectivity_bridge/        @jtguggedal @nordic-auko
 /applications/nrf_desktop/                @pdunaj
 # Boards
 /boards/                                  @ioannisg @anangl
