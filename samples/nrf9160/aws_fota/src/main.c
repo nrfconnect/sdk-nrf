@@ -28,7 +28,7 @@ BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 #if defined(CONFIG_PROVISION_CERTIFICATES)
 #include "certificates.h"
 #if defined(CONFIG_MODEM_KEY_MGMT)
-#include <modem_key_mgmt.h>
+#include <modem/modem_key_mgmt.h>
 #endif
 #endif
 

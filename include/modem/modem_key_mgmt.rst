@@ -22,7 +22,7 @@ See :ref:`nrfxlib:security_tags` for more information about how security tags ar
 API documentation
 *****************
 
-| Header file: :file:`include/modem_key_mgmt.h`
+| Header file: :file:`include/modem/modem_key_mgmt.h`
 | Source files: :file:`lib/modem_key_mgmt/`
 
 .. doxygengroup:: modem_key_mgmt

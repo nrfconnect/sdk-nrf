@@ -52,7 +52,7 @@ The following snippet illustrates how to provision a TLS certificate, associate 
 
 .. code::
 
-	#include <modem_key_mgmt.h>
+	#include <modem/modem_key_mgmt.h>
 	#include <net/download_client.h>
 
 	/* A TLS certificate, in PEM format.

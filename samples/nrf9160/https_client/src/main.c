@@ -13,7 +13,7 @@
 #include <lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
-#include <modem_key_mgmt.h>
+#include <modem/modem_key_mgmt.h>
 
 #define HTTPS_PORT 443
 
