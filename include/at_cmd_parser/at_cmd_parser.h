@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <zephyr/types.h>
 
-#include <at_cmd_parser/at_params.h>
+#include <modem/at_params.h>
 
 #ifdef __cplusplus
 extern "C" {
