@@ -34,13 +34,13 @@ Kconfig*                                  @SebastianBoe
 /drivers/bt_ll_nrfxlib/                   @anangl @rugeGerritsen
 /dts/                                     @anangl
 /ext/                                     @carlescufi
-/include/debug/ppi_trace.h                @nordic-krch
 /include/                                 @anangl @rlubos @pizi-nordic
 /include/bluetooth/                       @joerchan
 /include/bluetooth/**/*.rst               @b-gent
 /include/bluetooth/mesh/**/*.rst          @ru-fu
 /include/bluetooth/mesh/                  @trond-snekvik @joerchan
 /include/debug/**/*.rst                   @b-gent
+/include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
@@ -73,8 +73,7 @@ Kconfig*                                  @SebastianBoe
 /samples/bluetooth/mesh/                  @trond-snekvik @joerchan
 /samples/bluetooth/mesh/**/*.rst          @ru-fu
 /samples/bootloader/                      @hakonfam @ioannisg
-/subsys/debug/CMakeLists.txt              @nordic-krch
-/samples/debug/ppi_trace/                 @nordic-krch
+/samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/debug/**/README.rst              @b-gent
 /samples/esb/                             @lemrey
 /samples/event_manager/README.rst         @b-gent
@@ -96,6 +95,7 @@ Kconfig*                                  @SebastianBoe
 /subsys/bluetooth/mesh/                   @trond-snekvik @joerchan
 /subsys/bluetooth/controller/             @joerchan @rugeGerritsen
 /subsys/bootloader/                       @hakonfam @ioannisg
+/subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
@@ -105,7 +105,6 @@ Kconfig*                                  @SebastianBoe
 /subsys/nfc/                              @grochu @anangl
 /subsys/partition_manager/                @hakonfam
 /subsys/profiler/                         @pdunaj
-/subsys/debug/ppi_trace/                  @nordic-krch
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @ioannisg
 /subsys/nonsecure/                        @ioannisg
