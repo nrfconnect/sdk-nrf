@@ -3,7 +3,7 @@
 #include <string.h>
 #include <kernel.h>
 
-#include <at_cmd_parser/at_cmd_parser.h>
+#include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <../lib/at_cmd_parser/at_utils.h>
 

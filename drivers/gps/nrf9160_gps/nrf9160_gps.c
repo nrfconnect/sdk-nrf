@@ -17,7 +17,7 @@
 #include <net/socket.h>
 #ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 #include <modem/at_cmd.h>
-#include <at_cmd_parser/at_cmd_parser.h>
+#include <modem/at_cmd_parser.h>
 #endif
 
 LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);

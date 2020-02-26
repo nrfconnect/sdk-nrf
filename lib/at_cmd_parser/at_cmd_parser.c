@@ -12,7 +12,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 
-#include <at_cmd_parser/at_cmd_parser.h>
+#include <modem/at_cmd_parser.h>
 #include "at_utils.h"
 
 #define AT_CMD_MAX_ARRAY_SIZE 32
