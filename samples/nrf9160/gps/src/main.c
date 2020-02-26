@@ -9,7 +9,7 @@
 #include <net/socket.h>
 #include <stdio.h>
 #include <modem/at_cmd.h>
-#include <at_notif.h>
+#include <modem/at_notif.h>
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
 #include <supl_os_client.h>

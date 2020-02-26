@@ -11,7 +11,7 @@ Modules can de-register the callback function to stop receiving notifications.
 API documentation
 *****************
 
-| Header file: :file:`include/at_notif.h`
+| Header file: :file:`include/modem/at_notif.h`
 | Source file: :file:`lib/at_notif/at_notif.c`
 
 .. doxygengroup:: at_notif
