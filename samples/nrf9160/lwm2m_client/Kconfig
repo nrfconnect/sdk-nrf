@@ -21,7 +21,7 @@ config APP_HOLD_TIME_RSRP
 	  observers of the Connectivity Monitoring data.
 
 config APP_HOLD_TIME_GPS
-	int "Minimum time [s] between RSRP notification messages"
+	int "Minimum time [s] between location data notification messages"
 	default 60
 	help
 	  The minimum time in seconds that notifications can be sent to
@@ -193,5 +193,5 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 endmenu
 
 menu "Zephyr Kernel"
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu
