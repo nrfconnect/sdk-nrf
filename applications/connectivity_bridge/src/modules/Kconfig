@@ -1,0 +1,89 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+module = BRIDGE_UART
+module-str = UART device
+source "subsys/logging/Kconfig.template.log_config"
+
+config BRIDGE_CDC_ENABLE
+	bool "Enable USB CDC ACM"
+	depends on USB
+	select USB_CDC_ACM
+	help
+		This option enables USB CDC ACM
+		and exposes two COM ports, bridging the two UART interfaces.
+
+if BRIDGE_CDC_ENABLE
+
+module = BRIDGE_CDC
+module-str = USB CDC ACM device
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config BRIDGE_MSC_ENABLE
+	bool "Enable USB Mass Storage"
+	depends on BRIDGE_CDC_ENABLE
+	select USB_MASS_STORAGE
+	select FILE_SYSTEM
+	help
+		This option enables USB Mass Storage Device Class,
+		and exposes utility files via USB.
+
+if BRIDGE_MSC_ENABLE
+
+module = BRIDGE_MSC
+module-str = USB mass storage device
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config BRIDGE_BLE_ENABLE
+	bool "Enable BLE UART Service"
+	depends on BT_GATT_NUS
+	help
+	  This option enables BLE NUS Service.
+	  BLE advertisement will run continuously when not connected.
+	  NOTE: There is no encryption or authentication enabled for the BLE link.
+
+if BRIDGE_BLE_ENABLE
+
+module = BRIDGE_BLE
+module-str = BLE UART Service
+source "subsys/logging/Kconfig.template.log_config"
+
+config BRIDGE_BLE_ALWAYS_ON
+	bool "Enable BLE always active"
+	help
+	  This option sets BLE as always active.
+	  When not always active, it has to be enabled via config file change.
+
+endif
+
+if DEVICE_POWER_MANAGEMENT
+
+module = BRIDGE_POWER_MGMT
+module-str = Bridge power management
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config BRIDGE_BUF_SIZE
+	int "Transport interface buffer size"
+	default 2048
+	help
+	  Size of transmit/receive buffer for transfer between interfaces.
+
+config BRIDGE_UART_BUF_COUNT
+	int "UART buffer block count"
+	default 3
+	range 3 255
+	help
+	  Number of buffer blocks assigned for UART instances.
+	  This value is scaled with the number of interfaces.
+	  With the default instance count of 2, and for example 3 buffers,
+	  the total will be 6 buffers.
+	  Note that all buffers are shared between UART instances.
