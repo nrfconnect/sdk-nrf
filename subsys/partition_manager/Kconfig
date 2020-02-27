@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig PM_EXTERNAL_FLASH
+	bool "Support external flash in Partition Manager"
+
+if PM_EXTERNAL_FLASH
+
+config PM_EXTERNAL_FLASH_DEV_NAME
+	 string "Name of the external flash device"
+	help
+	  Must match the 'drv_name' argument used when initializing the
+	  driver for the external flash through the 'DEVICE...INIT'
+	  function call. The value is used when calling 'device_get_binding'.
+
+config PM_EXTERNAL_FLASH_SIZE
+	hex "External flash size (in bytes)"
+
+config PM_EXTERNAL_FLASH_BASE
+	hex "External flash base address"
+	default 0
+
+endif
