@@ -8,7 +8,7 @@ iCalendar parser
 The library detect the begin of calendar delimiter(BEGIN:VCALENDAR) and sends an event (:cpp:member:`ICAL_PARSER_EVT_CALENDAR`) to the application. Then the library parse calendar content fragment by fragment and sends parsed events (:cpp:member:`ICAL_PARSER_EVT_COMPONENT`) to the application when calendar components are parsed.
 When the end of calendar delimiter(END:VCALENDAR) is parsed, the library sends an event (:cpp:member:`ICAL_PARSER_EVT_COMPLETE`) to the application.
 
-If some error occur during calendar downloading and parsing, the library sends an event (:cpp:member:`ICAL_PARSER_EVT_ERROR`) and disconnet from the server.
+If some error occur during calendar downloading and parsing, the library sends an event (:cpp:member:`ICAL_PARSER_EVT_ERROR`) and disconnect from the server.
 
 Protocols
 *********
