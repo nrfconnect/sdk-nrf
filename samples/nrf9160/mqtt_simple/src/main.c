@@ -11,7 +11,7 @@
 
 #include <net/mqtt.h>
 #include <net/socket.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
 #endif

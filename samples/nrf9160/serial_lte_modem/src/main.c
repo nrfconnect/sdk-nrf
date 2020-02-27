@@ -11,7 +11,7 @@
 #include <drivers/gpio.h>
 #include <string.h>
 #include <bsd.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>

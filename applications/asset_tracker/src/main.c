@@ -16,7 +16,7 @@
 #if defined(CONFIG_BSD_LIBRARY)
 #include <net/bsdlib.h>
 #include <bsd.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #endif /* CONFIG_BSD_LIBRARY */
 #include <net/cloud.h>

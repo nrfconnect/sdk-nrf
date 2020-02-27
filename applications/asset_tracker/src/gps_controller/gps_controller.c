@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <sys/util.h>
 #include <drivers/gps.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 
 #include "ui.h"
 #include "gps_controller.h"

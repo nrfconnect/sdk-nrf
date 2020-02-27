@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <net/cloud.h>
 #include <net/socket.h>
 #include <dk_buttons_and_leds.h>
