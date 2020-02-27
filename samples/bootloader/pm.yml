@@ -45,6 +45,10 @@ s1:
 
 provision:
   size: CONFIG_PM_PARTITION_SIZE_PROVISION
+#if defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP)
+  region: otp
+#else
   placement:
     after: b0_image
     align: {start: DT_FLASH_ERASE_BLOCK_SIZE}
+#endif
