@@ -119,7 +119,7 @@ if IS_SECURE_BOOTLOADER
 
 config PM_PARTITION_SIZE_PROVISION
 	int
-	default 0 if SOC_NRF9160 || SOC_NRF5340_CPUAPP
+	default 128 if SOC_NRF9160 || SOC_NRF5340_CPUAPP # Stored in OTP region
 	default FPROTECT_BLOCK_SIZE
 	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP)
 	help

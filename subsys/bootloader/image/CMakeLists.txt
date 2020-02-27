@@ -45,20 +45,6 @@ else()
   assert(CONFIG_FW_INFO "CONFIG_FW_INFO must be set")
 endif()
 
-if (DEFINED CONFIG_SOC_NRF9160)
-  # Override PM_PROVISION_ADDRESS since Partition Manager cannot yet place
-  # partitions in OTP.
-  set(otp_start_addr "0xff8108")
-  set(provision_addr ${otp_start_addr})
-elseif (DEFINED CONFIG_SOC_NRF5340_CPUAPP)
-  # Override PM_PROVISION_ADDRESS since Partition Manager cannot yet place
-  # partitions in OTP.
-  set(otp_start_addr "0xff8100")
-  set(provision_addr ${otp_start_addr})
-else ()
-  set(provision_addr "$<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>")
-endif()
-
 # Build and include hex file with provision data about the image to be booted.
 set(NRF_SCRIPTS            ${NRF_DIR}/scripts)
 set(NRF_BOOTLOADER_SCRIPTS ${NRF_SCRIPTS}/bootloader)
@@ -88,7 +74,7 @@ add_custom_command(
   ${NRF_BOOTLOADER_SCRIPTS}/provision.py
   --s0-addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>
   --s1-addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>
-  --provision-addr ${provision_addr}
+  --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
   --public-key-files ${ALL_PUBLIC_KEY_FILES}
   --output ${PROVISION_HEX}
   DEPENDS

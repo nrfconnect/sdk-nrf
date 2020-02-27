@@ -59,8 +59,27 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
   # Add subsys defined pm.yml to the input_files
   list(APPEND input_files ${PM_SUBSYS_PREPROCESSED})
 
+
+  if (DEFINED CONFIG_SOC_NRF9160)
+    # See nRF9160 Product Specification, chapter "UICR"
+    set(otp_start_addr "0xff8108")
+    set(otp_size 756) # 189 * 4
+  elseif (DEFINED CONFIG_SOC_NRF5340_CPUAPP)
+    # See nRF5340 Product Specification, chapter Application Core -> ... "UICR"
+    set(otp_start_addr "0xff8100")
+    set(otp_size 764)  # 191 * 4
+  endif()
+
   math(EXPR flash_size "${CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
+  if (CONFIG_SOC_NRF9160 OR CONFIG_SOC_NRF5340_CPUAPP)
+    add_region(
+      otp
+      ${otp_size}
+      ${otp_start_addr}
+      start_to_end
+      )
+  endif()
   add_region_with_dev(
     flash_primary
     ${flash_size}
