@@ -62,6 +62,14 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
   math(EXPR ram_size "${CONFIG_SRAM_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
   math(EXPR flash_size "${CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
+  if (CONFIG_SOC_NRF9160)
+    add_region(
+      otp
+      756 # 189 * 4
+      0xff8108
+      start_to_end
+      )
+  endif()
 
   add_region_with_dev(
     flash_primary
