@@ -124,7 +124,7 @@ After programming the sample to the board, the application will:
 1. Automatically connect to cellurar network.
 #. Observe that LED 3 starts blinking when the sample downloads new content from calendar server.
 #. If there is no event in the future or is happening, LED3 will be ON.
-#. If there is event in the future but has not happend, LED2 will be ON.
+#. If there is event in the future but has not happened, LED2 will be ON.
 #. If there is event happening, LED1 will be ON.
 #. The sample will download new content from calendar server every minute. The interval can be configured at CONFIG_DOWNLOAD_INTERVAL.
 
