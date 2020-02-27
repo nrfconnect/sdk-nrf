@@ -36,7 +36,8 @@ static int settings_set(const char *key, size_t len_rd,
 	if (!strcmp(key, FN_LOCK_STORAGE_NAME)) {
 		ssize_t len = read_cb(cb_arg, &fn_lock_active,
 				      sizeof(fn_lock_active));
-		if (len != sizeof(fn_lock_active)) {
+
+		if ((len != sizeof(fn_lock_active)) || (len != len_rd)) {
 			LOG_ERR("Can't read fn_lock_active from storage");
 
 			return len;

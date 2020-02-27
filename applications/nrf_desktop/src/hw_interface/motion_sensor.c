@@ -8,6 +8,7 @@
 #include <sys/atomic.h>
 #include <spinlock.h>
 #include <sys/byteorder.h>
+#include <settings/settings.h>
 
 #include <device.h>
 #include <drivers/sensor.h>
@@ -33,6 +34,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 #define NODATA_LIMIT		CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT
 
+#define MAX_KEY_LEN 20
 
 enum state {
 	STATE_DISABLED,
@@ -63,6 +65,81 @@ static struct device *sensor_dev;
 
 static struct sensor_state state;
 
+static const char * const opt_names[] = {
+	[SENSOR_OPT_CPI] = "cpi",
+	[SENSOR_OPT_DOWNSHIFT_RUN] = "downshift",
+	[SENSOR_OPT_DOWNSHIFT_REST1] = "rest1",
+	[SENSOR_OPT_DOWNSHIFT_REST2] = "rest2"
+};
+
+
+static enum motion_sensor_option configid_2_option(u8_t config_id)
+{
+	switch (config_id) {
+	case SENSOR_OPT_CPI:
+		return MOTION_SENSOR_OPTION_CPI;
+
+	case SENSOR_OPT_DOWNSHIFT_RUN:
+		return MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT;
+
+	case SENSOR_OPT_DOWNSHIFT_REST1:
+		return MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT;
+
+	case SENSOR_OPT_DOWNSHIFT_REST2:
+		return MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT;
+
+	default:
+		LOG_WRN("Unsupported sensor option (%" PRIu8 ")", config_id);
+		return MOTION_SENSOR_OPTION_COUNT;
+	}
+}
+
+static bool set_option(enum motion_sensor_option option, u32_t value)
+{
+	if (motion_sensor_option_attr[option] != -ENOTSUP) {
+		k_spinlock_key_t key = k_spin_lock(&state.lock);
+		state.option[option] = value;
+		WRITE_BIT(state.option_mask, option, true);
+		k_spin_unlock(&state.lock, key);
+		k_sem_give(&sem);
+
+		return true;
+	}
+
+	LOG_INF("Sensor option %d is not supported", option);
+
+	return false;
+}
+
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(opt_names); i++) {
+		if (!strcmp(key, opt_names[i])) {
+			u32_t readout;
+
+			BUILD_ASSERT(sizeof(readout) ==
+				     sizeof(state.option[i]));
+
+			ssize_t len = read_cb(cb_arg, &readout,
+					      sizeof(readout));
+
+			if ((len != sizeof(readout)) || (len != len_rd)) {
+				LOG_ERR("Can't read option %s from storage",
+					opt_names[i]);
+				return len;
+			}
+
+			set_option(configid_2_option(i), readout);
+			break;
+		}
+	}
+
+	return 0;
+}
+
+SETTINGS_STATIC_HANDLER_DEFINE(motion_sensor, MODULE_NAME, NULL, settings_set,
+			       NULL, NULL);
 
 static void data_ready_handler(struct device *dev, struct sensor_trigger *trig);
 
@@ -169,22 +246,6 @@ static int motion_read(bool send_event)
 	EVENT_SUBMIT(event);
 
 	return err;
-}
-
-static bool set_option(enum motion_sensor_option option, u32_t value)
-{
-	if (motion_sensor_option_attr[option] != -ENOTSUP) {
-		k_spinlock_key_t key = k_spin_lock(&state.lock);
-		state.option[option] = value;
-		WRITE_BIT(state.option_mask, option, true);
-		k_spin_unlock(&state.lock, key);
-
-		return true;
-	}
-
-	LOG_INF("Sensor option %d is not supported", option);
-
-	return false;
 }
 
 static void set_sampling_time_in_sleep3(bool connected)
@@ -300,27 +361,6 @@ static bool is_my_config_id(u8_t config_id)
 	       (MOD_FIELD_GET(config_id) == SETUP_MODULE_SENSOR);
 }
 
-static enum motion_sensor_option configid_2_option(u8_t config_id)
-{
-	switch (OPT_FIELD_GET(config_id)) {
-	case SENSOR_OPT_CPI:
-		return MOTION_SENSOR_OPTION_CPI;
-
-	case SENSOR_OPT_DOWNSHIFT_RUN:
-		return MOTION_SENSOR_OPTION_SLEEP1_TIMEOUT;
-
-	case SENSOR_OPT_DOWNSHIFT_REST1:
-		return MOTION_SENSOR_OPTION_SLEEP2_TIMEOUT;
-
-	case SENSOR_OPT_DOWNSHIFT_REST2:
-		return MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT;
-
-	default:
-		LOG_WRN("Unsupported sensor option (%" PRIu8 ")", config_id);
-		return MOTION_SENSOR_OPTION_COUNT;
-	}
-}
-
 static void fetch_config(u8_t config_id, u8_t *data)
 {
 	enum motion_sensor_option option = configid_2_option(config_id);
@@ -336,6 +376,25 @@ static void fetch_config(u8_t config_id, u8_t *data)
 	return;
 }
 
+static void store_config(u8_t opt_id, const u8_t *data, size_t data_size)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		char key[MAX_KEY_LEN];
+
+		int err = snprintk(key, sizeof(key), MODULE_NAME "/%s",
+				   opt_names[opt_id]);
+
+		if ((err > 0) && (err < MAX_KEY_LEN)) {
+			err = settings_save_one(key, data, data_size);
+		}
+
+		if (err) {
+			LOG_ERR("Problem storing %s (err = %d)",
+				opt_names[opt_id], err);
+		}
+	}
+}
+
 static void update_config(const u8_t config_id, const u8_t *data, size_t size)
 {
 	enum motion_sensor_option option = configid_2_option(config_id);
@@ -347,7 +406,7 @@ static void update_config(const u8_t config_id, const u8_t *data, size_t size)
 		}
 
 		if (set_option(option, sys_get_le32(data))) {
-			k_sem_give(&sem);
+			store_config(config_id, data, size);
 		}
 	}
 }
@@ -625,7 +684,8 @@ static bool event_handler(const struct event_header *eh)
 			const struct config_event *event = cast_config_event(eh);
 
 			if (is_my_config_id(event->id)) {
-				update_config(event->id, event->dyndata.data,
+				update_config(OPT_FIELD_GET(event->id),
+					      event->dyndata.data,
 					      event->dyndata.size);
 			}
 
@@ -644,7 +704,7 @@ static bool event_handler(const struct event_header *eh)
 				fetch_event->id = event->id;
 				fetch_event->recipient = event->recipient;
 				fetch_event->channel_id = event->channel_id;
-				fetch_config(fetch_event->id,
+				fetch_config(OPT_FIELD_GET(fetch_event->id),
 					     fetch_event->dyndata.data);
 
 				EVENT_SUBMIT(fetch_event);
