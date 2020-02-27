@@ -3,11 +3,11 @@
 Installing the |NCS| manually
 #############################
 
-The recommended way to get started with the |NCS| is to run the Getting Started Assistant app in nRF Connect for Desktop.
-See the :ref:`gs_assistant` section for information about how to install the Getting Started Assistant.
+The recommended way to get started with the |NCS| is to use nRF Connect for Desktop.
+See the :ref:`gs_assistant` section for information about how to install the |NCS| through nRF Connect for Desktop.
 
 .. note::
-   If you use the Getting Started Assistant, you can skip this section of the documentation.
+   If you use nRF Connect for Desktop to install the |NCS|, you can skip this section of the documentation.
    If you prefer to install the toolchain manually, or if you run into problems during the installation process, see the following documentation for instructions.
 
 To manually install the |NCS|, you must install all required tools and clone the |NCS| repositories.

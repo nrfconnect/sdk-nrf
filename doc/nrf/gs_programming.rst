@@ -20,7 +20,10 @@ Building with SES
 
 Complete the following steps to build |NCS| projects with SES after :ref:`installing SEGGER Embedded Studio <installing_ses>` and :ref:`completing the first time setup <build_environment>`:
 
-1. Start SEGGER Embedded Studio by running :file:`bin/emStudio`.
+1. Start SEGGER Embedded Studio.
+
+   If you have installed the |NCS| using the :ref:`gs_app_tcm`, click :guilabel:`Open IDE` next to the version you installed to start SES.
+   If you have installed SES manually, run :file:`bin/emStudio`.
 
 #. Select **File -> Open nRF Connect SDK Project**.
 
@@ -111,6 +114,8 @@ Building on the command line
 Complete the following steps to build |NCS| projects on the command line after completing the :ref:`command-line build setup <build_environment_cli>`.
 
 1.    Open a terminal window.
+
+      If you have installed the |NCS| using the :ref:`gs_app_tcm`, click the down arrow next to the version you installed and select :guilabel:`Open bash`.
 
 #.    Go to the specific sample or application directory.
       For example, to build the :ref:`at_client_sample` sample, run the following command to navigate to the sample directory:
