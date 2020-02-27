@@ -174,11 +174,6 @@ static void handle_incoming_step(const struct config_event *event)
 
 static void handle_config_event(const struct config_event *event)
 {
-	if (!event->store_needed) {
-		/* Accept only events coming from transport. */
-		return;
-	}
-
 	if (GROUP_FIELD_GET(event->id) != EVENT_GROUP_LED_STREAM) {
 		/* Only LED STREAM events. */
 		return;

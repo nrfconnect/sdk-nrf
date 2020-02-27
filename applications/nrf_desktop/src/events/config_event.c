@@ -8,9 +8,6 @@
 
 #include "config_event.h"
 
-#include <logging/log.h>
-LOG_MODULE_REGISTER(config_event, CONFIG_DESKTOP_CONFIG_LOG_LEVEL);
-
 static int log_config_event(const struct event_header *eh, char *buf,
 			   size_t buf_len)
 {

@@ -792,7 +792,8 @@ static bool event_handler(const struct event_header *eh)
 		const struct module_state_event *event =
 			cast_module_state_event(eh);
 
-		if (check_state(event, MODULE_ID(config), MODULE_STATE_READY)) {
+		if (check_state(event, MODULE_ID(settings_load),
+				MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
 
 			if (!init()) {

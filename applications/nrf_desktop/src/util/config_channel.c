@@ -13,7 +13,7 @@
 #define MODULE config_channel
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_LOG_LEVEL);
 
 static int frame_size_check(const struct config_channel_frame *frame,
 			    const size_t length, bool usb)
@@ -284,7 +284,6 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
 			struct config_event *event = new_config_event(cfg_chan->frame.event_data_len);
 
 			memcpy(event->dyndata.data, &(buffer[pos]), cfg_chan->frame.event_data_len);
-			event->store_needed = true;
 			event->id = cfg_chan->frame.event_id;
 
 			cfg_chan->pending_config_event = event;

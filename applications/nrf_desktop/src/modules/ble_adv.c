@@ -130,7 +130,7 @@ static int settings_set(const char *key, size_t len_rd,
 		ssize_t len = read_cb(cb_arg, &peer_is_rpa[read_id],
 				  sizeof(peer_is_rpa[read_id]));
 
-		if (len != sizeof(peer_is_rpa[read_id])) {
+		if ((len != sizeof(peer_is_rpa[read_id])) || (len != len_rd)) {
 			LOG_ERR("Can't read peer_is_rpa%ld from storage",
 				read_id);
 			return len;
