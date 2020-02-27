@@ -987,4 +987,3 @@ int ical_parser_start(struct icalendar_parser *ical, const char *file)
 
 	return 0;
 }
-
