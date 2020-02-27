@@ -30,4 +30,3 @@ int pdn_init_and_connect(char *apn_name);
 void pdn_disconnect(int pdn_fd);
 
 #endif /* PDN_MANAGEMENT_H_ */
-
