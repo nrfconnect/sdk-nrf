@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor
+# Copyright (c) 2020 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -8,25 +8,33 @@ menu "Settings loading service"
 
 config DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
 	bool "Enable loading of setting by separate thead"
+	depends on SETTINGS
 	help
 	  The option enables loading of settings by separate
 	  thread in background instead of use of system
 	  work queue for that purpose.
 
-if DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
 config DESKTOP_SETTINGS_LOAD_THREAD_STACK_SIZE
 	int "Settings module thread stack size"
+	depends on DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
 	range 0 4096
 	default 1024
 	help
 	  Stack size for thread responsible for loading
 	  settings from flash memory.
-endif
 
 if !DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
 config DESKTOP_SETTINGS_LOAD_THREAD_STACK_SIZE
 	int
 	default 0
+endif
+
+if SETTINGS
+
+module = DESKTOP_SETTINGS_LOAD
+module-str = Settings load
+source "subsys/logging/Kconfig.template.log_config"
+
 endif
 
 endmenu

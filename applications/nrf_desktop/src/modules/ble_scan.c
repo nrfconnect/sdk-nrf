@@ -77,7 +77,8 @@ static int settings_set(const char *key, size_t len_rd,
 	if (!strcmp(key, SUBSCRIBED_PEERS_STORAGE_NAME)) {
 		ssize_t len = read_cb(cb_arg, &subscribed_peers,
 				      sizeof(subscribed_peers));
-		if (len != sizeof(subscribed_peers)) {
+
+		if ((len != sizeof(subscribed_peers)) || (len != len_rd)) {
 			LOG_ERR("Can't read subscribed_peers from storage");
 			module_set_state(MODULE_STATE_ERROR);
 			return len;

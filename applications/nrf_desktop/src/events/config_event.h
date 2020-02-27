@@ -100,7 +100,6 @@ struct config_event {
 	struct event_header header;
 
 	u8_t id;
-	bool store_needed;
 	struct event_dyndata dyndata;
 };
 

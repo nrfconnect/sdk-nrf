@@ -6,14 +6,8 @@
 
 menu "User configuration channel"
 
-config DESKTOP_CONFIG_ENABLE
-	bool "Enable configuration"
-	help
-	  Enables configuration storage.
-
 config DESKTOP_CONFIG_CHANNEL_ENABLE
 	bool "Enable user configuration channel"
-	depends on DESKTOP_CONFIG_ENABLE
 	help
 	  Enables user to change firmware parameters at runtime over the
 	  configuration channel.
@@ -23,9 +17,9 @@ config DESKTOP_CONFIG_CHANNEL_TIMEOUT
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
 	default 10
 
-if DESKTOP_CONFIG_ENABLE
+if DESKTOP_CONFIG_CHANNEL_ENABLE
 
-module = DESKTOP_CONFIG
+module = DESKTOP_CONFIG_CHANNEL
 module-str = Config channel
 source "subsys/logging/Kconfig.template.log_config"
 

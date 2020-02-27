@@ -11,6 +11,7 @@
 #include <device.h>
 #include <drivers/uart.h>
 #include <sys/byteorder.h>
+#include <settings/settings.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
@@ -57,6 +58,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_QOS_LOG_LEVEL);
 #endif
 
 #define THREAD_PRIORITY K_PRIO_PREEMPT(K_LOWEST_APPLICATION_THREAD_PRIO)
+
+#define MAX_KEY_LEN 20
 
 static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
 static struct k_thread thread;
@@ -106,6 +109,138 @@ static void ble_qos_thread_fn(void);
 static struct device *cdc_dev;
 static u32_t cdc_dtr;
 
+static const char * const opt_names[] = {
+	[QOS_OPT_BLACKLIST]	= "blacklist",
+	[QOS_OPT_CHMAP]		= "chmap",
+	[QOS_OPT_PARAM_BLE]	= "param_ble",
+	[QOS_OPT_PARAM_WIFI]	= "param_wifi",
+};
+
+
+static void update_blacklist(const u8_t *blacklist)
+{
+	atomic_set(&new_blacklist, sys_get_le16(blacklist));
+}
+
+static void update_parameters(const u8_t *qos_ble_params,
+			      const u8_t *qos_wifi_params)
+{
+	struct params_ble ble_params;
+	struct params_wifi wifi_params;
+	size_t pos;
+
+	k_mutex_lock(&data_access_mutex, K_FOREVER);
+
+	if (qos_ble_params != NULL) {
+		pos = 0;
+
+		filter_params.maintenance_sample_count =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(ble_params.sample_count_min);
+
+		filter_params.min_channel_count = qos_ble_params[pos];
+		pos += sizeof(ble_params.min_channel_count);
+
+		filter_params.ble_weight_crc_ok =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(ble_params.weight_crc_ok);
+
+		filter_params.ble_weight_crc_error =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(ble_params.weight_crc_error);
+
+		filter_params.ble_block_threshold =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(ble_params.ble_block_threshold);
+
+		filter_params.eval_max_count = qos_ble_params[pos];
+		pos += sizeof(ble_params.eval_max_count);
+
+		filter_params.eval_duration =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(ble_params.eval_duration);
+
+		filter_params.eval_keepout_duration =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(ble_params.eval_keepout_duration);
+
+		filter_params.eval_success_threshold =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(ble_params.eval_success_threshold);
+	}
+
+	if (qos_wifi_params != NULL) {
+		pos = 0;
+
+		filter_params.wifi_rating_inc =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(wifi_params.wifi_rating_inc);
+
+		filter_params.wifi_present_threshold =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(wifi_params.wifi_present_threshold);
+
+		filter_params.wifi_active_threshold =
+			sys_get_le16(&qos_ble_params[pos]);
+		pos += sizeof(wifi_params.wifi_active_threshold);
+	}
+
+	atomic_set(&params_updated, true);
+	k_mutex_unlock(&data_access_mutex);
+}
+
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	if (!strcmp(key, opt_names[QOS_OPT_BLACKLIST])) {
+		u8_t data[sizeof(struct params_blacklist)];
+
+		ssize_t len = read_cb(cb_arg, data, sizeof(data));
+
+		if ((len != sizeof(data)) || (len != len_rd)) {
+			LOG_ERR("Can't read option %s from storage",
+				opt_names[QOS_OPT_BLACKLIST]);
+			return len;
+		}
+
+		update_blacklist(data);
+
+	} else if (!strcmp(key, opt_names[QOS_OPT_CHMAP])) {
+		LOG_ERR("Chmap is not stored in settings");
+		__ASSERT_NO_MSG(false);
+
+	} else if (!strcmp(key, opt_names[QOS_OPT_PARAM_BLE])) {
+		u8_t data[sizeof(struct params_ble)];
+
+		ssize_t len = read_cb(cb_arg, data, sizeof(data));
+
+		if ((len != sizeof(data)) || (len != len_rd)) {
+			LOG_ERR("Can't read option %s from storage",
+				opt_names[QOS_OPT_PARAM_BLE]);
+			return len;
+		}
+
+		update_parameters(data, NULL);
+
+	} else if (!strcmp(key, opt_names[QOS_OPT_PARAM_WIFI])) {
+		u8_t data[sizeof(struct params_wifi)];
+
+		ssize_t len = read_cb(cb_arg, data, sizeof(data));
+
+		if ((len != sizeof(data)) || (len != len_rd)) {
+			LOG_ERR("Can't read option %s from storage",
+				opt_names[QOS_OPT_PARAM_WIFI]);
+			return len;
+		}
+
+		update_parameters(NULL, data);
+	}
+
+	return 0;
+}
+
+SETTINGS_STATIC_HANDLER_DEFINE(ble_qos, MODULE_NAME, NULL, settings_set, NULL,
+			       NULL);
 
 static void send_uart_data(struct device *cdc_dev, const u8_t *str, int str_len)
 {
@@ -369,78 +504,6 @@ static struct config_fetch_event *fetch_event_qos_blacklist(void)
 	return fetch_event;
 }
 
-static void update_parameters(
-	const u8_t *qos_ble_params,
-	const u8_t *qos_wifi_params)
-{
-	struct params_ble ble_params;
-	struct params_wifi wifi_params;
-	size_t pos;
-
-	k_mutex_lock(&data_access_mutex, K_FOREVER);
-
-	if (qos_ble_params != NULL) {
-		pos = 0;
-
-		filter_params.maintenance_sample_count =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(ble_params.sample_count_min);
-
-		filter_params.min_channel_count = qos_ble_params[pos];
-		pos += sizeof(ble_params.min_channel_count);
-
-		filter_params.ble_weight_crc_ok =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(ble_params.weight_crc_ok);
-
-		filter_params.ble_weight_crc_error =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(ble_params.weight_crc_error);
-
-		filter_params.ble_block_threshold =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(ble_params.ble_block_threshold);
-
-		filter_params.eval_max_count = qos_ble_params[pos];
-		pos += sizeof(ble_params.eval_max_count);
-
-		filter_params.eval_duration =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(ble_params.eval_duration);
-
-		filter_params.eval_keepout_duration =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(ble_params.eval_keepout_duration);
-
-		filter_params.eval_success_threshold =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(ble_params.eval_success_threshold);
-	}
-	if (qos_wifi_params != NULL) {
-		pos = 0;
-
-		filter_params.wifi_rating_inc =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(wifi_params.wifi_rating_inc);
-
-		filter_params.wifi_present_threshold =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(wifi_params.wifi_present_threshold);
-
-		filter_params.wifi_active_threshold =
-			sys_get_le16(&qos_ble_params[pos]);
-		pos += sizeof(wifi_params.wifi_active_threshold);
-	}
-
-	atomic_set(&params_updated, true);
-	k_mutex_unlock(&data_access_mutex);
-}
-
-static void update_blacklist(const u8_t *blacklist)
-{
-	atomic_set(&new_blacklist, sys_get_le16(blacklist));
-}
-
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
 	u8_t *subevent_code;
@@ -502,6 +565,25 @@ static void enable_qos_reporting(void)
 	}
 }
 
+static void store_config(u8_t opt_id, const u8_t *data, size_t data_size)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		char key[MAX_KEY_LEN];
+
+		int err = snprintk(key, sizeof(key), MODULE_NAME "/%s",
+				   opt_names[opt_id]);
+
+		if ((err > 0) && (err < MAX_KEY_LEN)) {
+			err = settings_save_one(key, data, data_size);
+		}
+
+		if (err) {
+			LOG_ERR("Problem storing %s (err = %d)",
+				opt_names[opt_id], err);
+		}
+	}
+}
+
 static void handle_config_event(const struct config_event *event)
 {
 	switch (OPT_FIELD_GET(event->id)) {
@@ -510,6 +592,8 @@ static void handle_config_event(const struct config_event *event)
 			LOG_WRN("Invalid size");
 		} else {
 			update_blacklist(event->dyndata.data);
+			store_config(QOS_OPT_BLACKLIST, event->dyndata.data,
+				     event->dyndata.size);
 		}
 		break;
 	case QOS_OPT_CHMAP:
@@ -523,6 +607,8 @@ static void handle_config_event(const struct config_event *event)
 			LOG_WRN("Invalid size");
 		} else {
 			update_parameters(event->dyndata.data, NULL);
+			store_config(QOS_OPT_PARAM_BLE, event->dyndata.data,
+				     event->dyndata.size);
 		}
 		break;
 	case QOS_OPT_PARAM_WIFI:
@@ -530,6 +616,8 @@ static void handle_config_event(const struct config_event *event)
 			LOG_WRN("Invalid size");
 		} else {
 			update_parameters(NULL, event->dyndata.data);
+			store_config(QOS_OPT_PARAM_WIFI, event->dyndata.data,
+				     event->dyndata.size);
 		}
 		break;
 	default:
