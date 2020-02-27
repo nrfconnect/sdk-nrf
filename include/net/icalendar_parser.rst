@@ -1,7 +1,7 @@
 .. _icalendar_parser_readme:
 
 iCalendar parser
-###############
+################
 
 `iCalendar`_ is data format for representing and exchanging calendaring and scheduling information. The iCalendar parser library can be used to parse a shared iCalendar at specified URL (HTTP or HTTPS) and returns paresd calendar events. It supports IPv4 and IPv6 protocols.
 

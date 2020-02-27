@@ -1,7 +1,7 @@
 .. _icalendar_parser:
 
 nRF9160: iCalendar Parser
-#####################
+#########################
 
 The iCalendar parser sample demonstrates how to utilize **iCalendar Parser** library to parse a shared `iCalendar`_ via HTTPS.
 
