@@ -54,6 +54,53 @@ static bool peers_only = !IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT);
 static bool scanning;
 
 
+static void verify_bond(const struct bt_bond_info *info, void *user_data)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
+		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, &info->addr)) {
+			return;
+		}
+	}
+
+	LOG_WRN("Peer data inconsistency. Removing unknown peer.");
+	int err = bt_unpair(BT_ID_DEFAULT, &info->addr);
+
+	if (err) {
+		LOG_ERR("Cannot unpair peer (err %d)", err);
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	if (!strcmp(key, SUBSCRIBED_PEERS_STORAGE_NAME)) {
+		ssize_t len = read_cb(cb_arg, &subscribed_peers,
+				      sizeof(subscribed_peers));
+		if (len != sizeof(subscribed_peers)) {
+			LOG_ERR("Can't read subscribed_peers from storage");
+			module_set_state(MODULE_STATE_ERROR);
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+static int verify_subscribed_peers(void)
+{
+	/* On commit we should verify data to prevent inconsistency.
+	 * Inconsistency could be caused e.g. by reset after secure,
+	 * but before storing peer type in ble_scan module.
+	 */
+	bt_foreach_bond(BT_ID_DEFAULT, verify_bond, NULL);
+
+	return 0;
+}
+
+SETTINGS_STATIC_HANDLER_DEFINE(ble_scan, MODULE_NAME, NULL, settings_set,
+			       verify_subscribed_peers, NULL);
+
 static void conn_cnt_foreach(struct bt_conn *conn, void *data)
 {
 	size_t *cur_cnt = data;
@@ -413,83 +460,12 @@ static void reset_subscribers(void)
 	}
 }
 
-static int settings_set(const char *key, size_t len_rd,
-			settings_read_cb read_cb, void *cb_arg)
-{
-	if (!strcmp(key, SUBSCRIBED_PEERS_STORAGE_NAME)) {
-		ssize_t len = read_cb(cb_arg, &subscribed_peers,
-				      sizeof(subscribed_peers));
-		if (len != sizeof(subscribed_peers)) {
-			LOG_ERR("Can't read subscribed_peers from storage");
-			module_set_state(MODULE_STATE_ERROR);
-			return len;
-		}
-	}
-
-	return 0;
-}
-
-static void verify_bond(const struct bt_bond_info *info, void *user_data)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, &info->addr)) {
-			return;
-		}
-	}
-
-	LOG_WRN("Peer data inconsistency. Removing unknown peer.");
-	int err = bt_unpair(BT_ID_DEFAULT, &info->addr);
-
-	if (err) {
-		LOG_ERR("Cannot unpair peer (err %d)", err);
-		module_set_state(MODULE_STATE_ERROR);
-	}
-}
-
-static int verify_subscribed_peers(void)
-{
-	/* On commit we should verify data to prevent inconsistency.
-	 * Inconsistency could be caused e.g. by reset after secure,
-	 * but before storing peer type in ble_scan module.
-	 */
-	bt_foreach_bond(BT_ID_DEFAULT, verify_bond, NULL);
-
-	return 0;
-}
-
-static int settings_init(void)
-{
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		static struct settings_handler sh = {
-			.name = MODULE_NAME,
-			.h_set = settings_set,
-			.h_commit = verify_subscribed_peers,
-		};
-
-		int err = settings_register(&sh);
-
-		if (err) {
-			LOG_ERR("Cannot register settings (err %d)", err);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
 		scan_connecting_error, scan_connecting);
 
 static void scan_init(void)
 {
 	reset_subscribers();
-
-	int err = settings_init();
-
-	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
-		return;
-	}
 
 	static const struct bt_le_scan_param sp = {
 		.type = BT_HCI_LE_SCAN_ACTIVE,
