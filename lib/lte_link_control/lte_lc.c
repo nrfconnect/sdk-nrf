@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <device.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>

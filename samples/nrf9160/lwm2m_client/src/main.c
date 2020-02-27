@@ -16,7 +16,7 @@
 LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 #include <modem/at_cmd.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #if defined(CONFIG_MODEM_KEY_MGMT)

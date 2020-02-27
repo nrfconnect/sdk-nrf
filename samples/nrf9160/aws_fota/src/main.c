@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <bsd.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <net/mqtt.h>

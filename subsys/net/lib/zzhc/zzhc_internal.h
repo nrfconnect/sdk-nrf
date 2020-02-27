@@ -25,7 +25,7 @@ extern "C" {
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <settings/settings.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 
 #define AT_RESPONSE_LEN   64        /** Length of AT-command response */
 #define HTTP_PKT_LEN      512       /** Length of HTTP request packet */
