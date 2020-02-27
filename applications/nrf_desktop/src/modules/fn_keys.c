@@ -29,6 +29,30 @@ static u16_t fn_key_pressed[CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE];
 static size_t fn_key_pressed_count;
 
 
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+
+	if (!strcmp(key, FN_LOCK_STORAGE_NAME)) {
+		ssize_t len = read_cb(cb_arg, &fn_lock_active,
+				      sizeof(fn_lock_active));
+		if (len != sizeof(fn_lock_active)) {
+			LOG_ERR("Can't read fn_lock_active from storage");
+
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+#ifdef CONFIG_DESKTOP_STORE_FN_LOCK
+SETTINGS_STATIC_HANDLER_DEFINE(fn_keys, MODULE_NAME, NULL, settings_set, NULL,
+			       NULL);
+
+#endif /* CONFIG_DESKTOP_STORE_FN_LOCK */
+
+
 static void validate_enabled_fn_keys(void)
 {
 	static bool done;
@@ -186,41 +210,12 @@ static bool button_event_handler(const struct button_event *event)
 	return false;
 }
 
-static int settings_set(const char *key, size_t len_rd,
-			settings_read_cb read_cb, void *cb_arg)
+static void silence_unused(void)
 {
-
-	if (!strcmp(key, FN_LOCK_STORAGE_NAME)) {
-		ssize_t len = read_cb(cb_arg, &fn_lock_active,
-				      sizeof(fn_lock_active));
-		if (len != sizeof(fn_lock_active)) {
-			LOG_ERR("Can't read fn_lock_active from storage");
-
-			return len;
-		}
+	/* These things will be opt-out by the compiler. */
+	if (!IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
+		ARG_UNUSED(settings_set);
 	}
-
-	return 0;
-}
-
-static int init_settings(void)
-{
-	if (IS_ENABLED(CONFIG_DESKTOP_STORE_FN_LOCK)) {
-		static struct settings_handler sh = {
-			.name = MODULE_NAME,
-			.h_set = settings_set,
-		};
-
-		int err = settings_register(&sh);
-
-		if (err) {
-			LOG_ERR("Cannot register settings handler(err:%d)",
-				err);
-			return err;
-		}
-	}
-
-	return 0;
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -234,10 +229,7 @@ static bool event_handler(const struct event_header *eh)
 			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			if (init_settings()) {
-				module_set_state(MODULE_STATE_ERROR);
-				return false;
-			}
+			silence_unused();
 			module_set_state(MODULE_STATE_READY);
 		}
 
