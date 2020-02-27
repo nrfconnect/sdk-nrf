@@ -10,7 +10,10 @@ from os import path
 import sys
 from pprint import pformat
 
-PERMITTED_STR_KEYS = ['size']
+PERMITTED_STR_KEYS = ['size', 'region']
+END_TO_START = 'end_to_start'
+START_TO_END = 'start_to_end'
+COMPLEX = 'complex'
 
 
 def remove_item_not_in_list(list_to_remove_from, list_to_check):
@@ -114,8 +117,8 @@ def remove_irrelevant_requirements(reqs):
 
 def get_images_which_need_resolving(reqs, sub_partitions):
     # Get candidates which have placement specs.
-    unsorted = {x for x in reqs.keys() if 'placement' in reqs[x].keys()
-                 and ('before' in reqs[x]['placement'].keys() or 'after' in reqs[x]['placement'].keys())}
+    unsorted = {x for x in reqs.keys() if 'placement' in reqs[x].keys() and ('before' in reqs[x]['placement'].keys()
+                                                                             or 'after' in reqs[x]['placement'].keys())}
 
     # Sort sub_partitions by whether they are inside other sub_partitions. Innermost first.
     sorted_subs = sorted(sub_partitions.values(), key=lambda x: len(x['span']))
@@ -170,21 +173,6 @@ def solve_first_last(reqs, unsolved, solution):
                 unsolved.remove(first_or_last[0])
 
 
-def extract_sub_partitions(reqs):
-    sub_partitions = dict()
-    keys_to_delete = list()
-
-    for key, value in reqs.items():
-        if 'span' in value.keys():
-            sub_partitions[key] = value
-            keys_to_delete.append(key)
-
-    for key in keys_to_delete:
-        del reqs[key]
-
-    return sub_partitions
-
-
 def solve_inside(reqs, sub_partitions):
     for key, value in reqs.items():
         if 'inside' in value.keys():
@@ -213,7 +201,7 @@ def clean_sub_partitions(reqs, sub_partitions):
         done = True
         for key, value in sub_partitions.items():
             assert len(value['span']) > 0, "partition {} is empty".format(key)
-            value['orig_span'] = value['span'].copy() # Take a "backup" of the span.
+            value['orig_span'] = value['span'].copy()  # Take a "backup" of the span.
             for part in (part for part in value['span'] if part in sub_partitions):
                 value['span'].extend(sub_partitions[part]['span'])
                 value['span'].remove(part)
@@ -237,7 +225,9 @@ def resolve(reqs):
     solution = list(['app'])
 
     remove_irrelevant_requirements(reqs)
-    sub_partitions = extract_sub_partitions(reqs)
+    sub_partitions = {k: v for k, v in reqs.items() if 'span' in v}
+    reqs = {k: v for k, v in reqs.items() if 'span' not in v}
+
     solve_inside(reqs, sub_partitions)
     clean_sub_partitions(reqs, sub_partitions)
 
@@ -481,7 +471,9 @@ def sizeof(reqs, req, total_size):
     return size
 
 
-def load_reqs(reqs, input_config):
+def load_reqs(input_config):
+    reqs = dict()
+
     for ymlpath in input_config:
         if path.exists(ymlpath):
             with open(ymlpath, 'r') as f:
@@ -494,7 +486,7 @@ def load_reqs(reqs, input_config):
                                            "val1: {} val2: {} ".format(f.name, key, loaded_reqs[key], reqs[key]))
                 reqs.update(loaded_reqs)
 
-    reqs['app'] = dict()
+    return reqs
 
 
 def get_dynamic_area_start_and_size(static_config, flash_size):
@@ -512,33 +504,93 @@ def get_dynamic_area_start_and_size(static_config, flash_size):
     return start, end - start
 
 
-def get_pm_config(input_config, flash_start, flash_size, static_config):
-    to_resolve = dict()
-    start = flash_start
+def get_region_config(pm_config, region_config, static_conf=None):
+    start = region_config['base_address']
+    size = region_config['size']
+    placement_strategy = region_config['placement_strategy']
+    region_name = region_config['name']
+    device = region_config['device']
 
-    load_reqs(to_resolve, input_config)
-    free_size = flash_size
+    if placement_strategy in [END_TO_START, START_TO_END]:
+        solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf)
+    else:
+        solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf)
 
-    if static_config:
-        start, free_size = get_dynamic_area_start_and_size(static_config, free_size)
-        to_resolve = {name: config for name, config in to_resolve.items()
-                      if name not in static_config.keys() or name == 'app'}
+
+def solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
+    reserved = 0
+    if static_conf:
+        verify_static_conf(size, start, placement_strategy, static_conf)
+        reserved = sum([config['size'] for name, config in static_conf.items()
+                        if 'region' in config.keys() and config['region'] == region_name and name != 'app'])
+
+    if placement_strategy == END_TO_START:
+        address = start + size - reserved
+    else:
+        address = start + reserved
+    for partition_name in pm_config:
+        if placement_strategy == END_TO_START:
+            address -= pm_config[partition_name]['size']
+
+        pm_config[partition_name]['address'] = address
+
+        if placement_strategy == START_TO_END:
+            address += pm_config[partition_name]['size']
+
+        if device:
+            pm_config[partition_name]['device'] = device
+
+    # Generate the region partition containing the non-reserved memory.
+    # But first, verify that the user hasn't created a partition with the name of the region.
+    if region_name in pm_config:
+        raise RuntimeError(f"Found partition named {region_name}, this is the name of a region, and is a reserved name")
+    pm_config[region_name] = dict()
+    pm_config[region_name]['region'] = region_name
+
+    if placement_strategy == END_TO_START:
+        pm_config[region_name]['address'] = start
+        pm_config[region_name]['size'] = address - start
+    else:
+        pm_config[region_name]['address'] = address
+        pm_config[region_name]['size'] = (start + size) - address
+
+
+def verify_static_conf(size, start, placement_strategy, static_conf):
+    # Verify that all statically defined partitions has given address,
+    # and that they are packed at the end/start of the region.
+    starts = {start + size} | {c['address'] for c in static_conf.values() if 'size' in c}
+    ends = {start} | {c['address'] + c['size'] for c in static_conf.values() if 'size' in c}
+    gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
+
+    if placement_strategy == START_TO_END:
+        start_end_correct = gaps[0][0] == start + size
+    else:
+        start_end_correct = gaps[0][0] == start
+
+    if len(gaps) != 1 or not start_end_correct:
+        raise RuntimeError("Statically defined partitions are not packed at the start/end of region")
+
+
+def solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
+    free_size = size
+
+    if static_conf:
+        start, free_size = get_dynamic_area_start_and_size(static_conf, free_size)
 
         # If nothing is unresolved (only app remaining), simply return the pre defined config with 'app'
-        if len(to_resolve) == 1:
-            to_resolve.update(static_config)
-            to_resolve['app']['address'] = start
-            to_resolve['app']['size'] = free_size
-            return to_resolve
+        if len(pm_config) == 1:
+            pm_config.update(static_conf)
+            pm_config['app']['address'] = start
+            pm_config['app']['size'] = free_size
+            return
 
-    solution, sub_partitions = resolve(to_resolve)
-    set_addresses_and_align(to_resolve, sub_partitions, solution, free_size, start)
-    set_sub_partition_address_and_size(to_resolve, sub_partitions)
+    solution, sub_partitions = resolve(pm_config)
+    set_addresses_and_align(pm_config, sub_partitions, solution, free_size, start)
+    set_sub_partition_address_and_size(pm_config, sub_partitions)
 
-    if static_config:
+    if static_conf:
         # Merge the results, take the new 'app' as that has the correct size.
-        to_resolve.update({name: config for name, config in static_config.items() if name != 'app'})
-    return to_resolve
+        pm_config.update({name: config for name, config in static_conf.items() if name != 'app'})
 
 
 def write_yaml_out_file(pm_config, out_path):
@@ -565,22 +617,39 @@ This file contains all addresses and sizes of all partitions.
     parser.add_argument("--input-files", required=True, type=str, nargs="+",
                         help="List of paths to input yaml files. ")
 
-    parser.add_argument("--flash-size", required=True, type=int,
-                        help="Flash size of chip in kB.")
+    parser.add_argument("--output-partitions", required=True, type=str,
+                        help="Path to output partition configuration file.")
 
-    parser.add_argument("--flash-start", type=lambda x: int(x, 0), default=0,
-                        help="Start address of flash.")
+    parser.add_argument("--output-regions", required=True, type=str,
+                        help="Path to output regions configuration file.")
 
-    parser.add_argument("--output", required=True, type=str,
-                        help="Path to output file.")
-
-    parser.add_argument("-d", "--dynamic-partition", required=False, type=str,
-                        help="Name of dynamic partition")
-
-    parser.add_argument("-s", "--static-config", required=False, type=argparse.FileType(mode='r'),
+    parser.add_argument("--static-config", required=False, type=argparse.FileType(mode='r'),
                         help="Path static configuration.")
 
-    return parser.parse_args()
+    parser.add_argument("--regions", required=False, type=str, nargs='*',
+                        help="Space separated list of regions. For each region specified here, one must specify"
+                             "--{region_name}-base-addr and --{region_name}-size. If the region is associated"
+                             "with a driver, the device name must be given in --{region_name}-device (e.g. an "
+                             "external flash driver. For regions with placement strategy 'complex' it is possible"
+                             "to specify the --{region_name}-dynamic-partition to set the name of the dynamic partition"
+                             "which occupies all non-used area.")
+
+    main_args, region_args = parser.parse_known_args()
+
+    # Create new instance to parse regions
+    parser = argparse.ArgumentParser()
+    for x in main_args.regions:
+        # Generate arguments for each region dynamically
+        parser.add_argument(f'--{x}-size', required=True, type=lambda z: int(z, 0))
+        parser.add_argument(f'--{x}-base-address', required=False, type=lambda z: int(z, 0), default=0)
+        parser.add_argument(f'--{x}-placement-strategy', required=False, type=str,
+                            choices=[START_TO_END, END_TO_START, COMPLEX], default=START_TO_END)
+        parser.add_argument(f'--{x}-device', required=False, type=str, default='')
+        parser.add_argument(f'--{x}-dynamic-partition', required=False, type=str, help="Name of dynamic partition")
+
+    ranges_configuration = parser.parse_args(region_args)
+
+    return main_args, ranges_configuration
 
 
 def replace_app_with_dynamic_partition(d, dynamic_partition_name):
@@ -593,22 +662,67 @@ def replace_app_with_dynamic_partition(d, dynamic_partition_name):
             v = dynamic_partition_name
 
 
+def set_flash_primary_region(pm_config):
+    for v in pm_config.values():
+        if 'region' not in v:
+            v['region'] = 'flash_primary'
+
+
+def fix_syntactic_sugar(pm_config):
+    set_flash_primary_region(pm_config)
+
+
+def get_region_config_from_args(args, ranges_configuration):
+    regions = {x: {k.replace(f'{x}_', ''): v
+                   for k, v in vars(ranges_configuration).items() if k.startswith(x)}
+               for x in [y.replace('-', '_') for y in args.regions]}  # Replace - with _ to match argparse namespace
+    return regions
+
+
+def solve_region(pm_config, region, region_config, static_config):
+    solution = dict()
+    region_config['name'] = region
+    partitions = {k: v for k, v in pm_config.items() if region in v['region']}
+    static_partitions = {k: v for k, v in static_config.items() if region in v['region']}
+
+    get_region_config(partitions, region_config, static_partitions)
+
+    solution.update(partitions)
+
+    if region_config['dynamic_partition']:
+        solution[region_config['dynamic_partition'].strip()] = solution['app']
+        del solution['app']
+        replace_app_with_dynamic_partition(solution, region_config['dynamic_partition'].strip())
+
+    return solution
+
+
+def load_static_configuration(args, pm_config):
+    static_config = yaml.safe_load(args.static_config)
+    fix_syntactic_sugar(static_config)
+
+    # Delete all statically defined partitions from the pm_config dict.
+    # This is done since all partitions in pm_config will be resolved.
+    for statically_defined_image in static_config:
+        if statically_defined_image in pm_config and statically_defined_image:
+            del pm_config[statically_defined_image]
+    return static_config
+
+
 def main():
-    if len(sys.argv) > 1:
-        static_config = None
-        args = parse_args()
-        if args.static_config:
-            print("Partition Manager using static configuration at " + args.static_config.name)
-            static_config = yaml.safe_load(args.static_config)
-        pm_config = get_pm_config(args.input_files, args.flash_start, args.flash_size * 1024, static_config)
-        if args.dynamic_partition:
-            pm_config[args.dynamic_partition.strip()] = pm_config['app']
-            del pm_config['app']
-            replace_app_with_dynamic_partition(pm_config, args.dynamic_partition.strip())
-        write_yaml_out_file(pm_config, args.output)
-    else:
-        print("No input, running tests.")
-        test()
+    args, ranges_configuration = parse_args()
+    pm_config = load_reqs(args.input_files)
+    static_config = load_static_configuration(args, pm_config) if args.static_config else dict()
+    pm_config['app'] = dict()
+    fix_syntactic_sugar(pm_config)
+
+    regions = get_region_config_from_args(args, ranges_configuration)
+
+    for region, region_config in regions.items():
+        solution = solve_region(pm_config, region, region_config, static_config)
+
+    write_yaml_out_file(solution, args.output_partitions)
+    write_yaml_out_file(regions, args.output_regions)
 
 
 def expect_addr_size(td, name, expected_address, expected_size):
@@ -682,6 +796,133 @@ def test():
     expect_addr_size(td, 'a', 0, 100)
     expect_addr_size(td, 'app', 100, 700)
     expect_addr_size(td, 'b', 800, 200)
+
+    # Verify that START_TO_END region configuration is correct
+    td = {'b': {'size': 100, 'region': 'extflash'}}
+    test_region = {'name': 'extflash',
+                   'size': 1000,
+                   'base_address': 2000,
+                   'placement_strategy': START_TO_END,
+                   'device': 'some-driver-device'}
+    get_region_config(td, test_region)
+    assert td['b']['size'] == 100
+    assert td['extflash']['address'] == 2100
+    assert td['extflash']['size'] == 900
+
+    # Verify that RAM configuration is correct
+    td = {'b': {'size': 100, 'region': 'ram'}}
+    test_region = {'name': 'ram',
+                   'size': 1000,
+                   'base_address': 2000,
+                   'placement_strategy': END_TO_START,
+                   'device': None}
+    get_region_config(td, test_region)
+    assert td['b']['size'] == 100
+    assert td['ram']['address'] == 2000
+    assert td['ram']['size'] == 900
+
+    # Verify that RAM configuration is correct
+    td = {
+        'b': {'size': 100, 'region': 'ram'},
+        'c': {'size': 200, 'region': 'ram'},
+        'd': {'size': 300, 'region': 'ram'}
+    }
+    test_region = {'name': 'ram',
+                   'size': 1000,
+                   'base_address': 2000,
+                   'placement_strategy': END_TO_START,
+                   'device': None}
+    get_region_config(td, test_region)
+    assert td['ram']['address'] == 2000
+    assert td['ram']['size'] == 400
+    # Can not verify the placement, as this is random
+    assert td['b']['size'] == 100
+    assert td['c']['size'] == 200
+    assert td['d']['size'] == 300
+
+    # Verify that RAM configuration with given static configuration is correct
+    test_region = {'name': 'ram',
+                   'size': 1000,
+                   'base_address': 2000,
+                   'placement_strategy': END_TO_START,
+                   'device': None}
+    td = {
+        'b': {'size': 100, 'region': 'ram'},
+        'c': {'size': 200, 'region': 'ram'},
+        'd': {'size': 300, 'region': 'ram'},
+    }
+    get_region_config(td,
+                      test_region,
+                      static_conf={'s1': {'size': 100,
+                                          'address': (1000+2000)-100,
+                                          'region': 'ram'},
+                                   's2': {'size': 200,
+                                          'address': (1000+2000)-100-200,
+                                          'region': 'ram'}})
+    assert td['ram']['address'] == 2000
+    assert td['ram']['size'] == 100
+    # Can not verify the placement, as this is random
+    assert td['b']['size'] == 100
+    assert td['c']['size'] == 200
+    assert td['d']['size'] == 300
+
+    # Verify that RAM configuration with given static configuration fails if static RAM partitions are not
+    # packed at the end of flash, here there is a space between the two regions
+    test_region = {'name': 'ram',
+                   'size': 1000,
+                   'base_address': 2000,
+                   'placement_strategy': END_TO_START,
+                   'device': None}
+    failed = False
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'size': 100, 'region': 'ram'},
+        'c': {'size': 200, 'region': 'ram'},
+        'd': {'size': 300, 'region': 'ram'},
+        'app': {}
+    }
+    try:
+        get_region_config(td,
+                          test_region,
+                          static_conf={'s1': {'size': 100,
+                                              'address': (1000+2000)-100,
+                                              'region': 'ram'},
+                                       's2': {'size': 200,
+                                              'address': (1000+2000)-100-300,
+                                              'region': 'ram'}})  # Note 300 not 200
+    except RuntimeError:
+        failed = True
+
+    assert failed
+
+    # Verify that RAM configuration with given static configuration fails if static RAM partitions are not
+    # packed at the end of flash, here the partitions are packed, but does not go to the end of RAM
+    failed = False
+    test_region = {'name': 'ram',
+                   'size': 1000,
+                   'base_address': 2000,
+                   'placement_strategy': END_TO_START,
+                   'device': None}
+    td = {
+        'a': {'placement': {'after': 'start'}, 'size': 100},
+        'b': {'size': 100, 'region': 'ram'},
+        'c': {'size': 200, 'region': 'ram'},
+        'd': {'size': 300, 'region': 'ram'},
+        'app': {}
+    }
+    try:
+        get_region_config(td,
+                          test_region,
+                          static_conf={'s1': {'size': 100,
+                                              'address': (1000+2000-50)-100,
+                                              'region': 'ram'},  # Note - 50
+                                       's2': {'size': 200,
+                                              'address': (1000+2000-50)-100-200,
+                                              'region': 'ram'}})  # Note - 50
+    except RuntimeError:
+        failed = True
+
+    assert failed
 
     # Verify that all 'one_of' dicts are replaced with the first entry which corresponds to an existing partition
     td = {
@@ -806,12 +1047,20 @@ def test():
 
     # Verify that providing a static configuration with nothing unresolved gives a valid configuration with 'app'.
     static_config = {'spm': {'address': 0, 'placement': None, 'before': ['app'], 'size': 400}}
-    pm_config = get_pm_config([], flash_start=0, flash_size=1000, static_config=static_config)
-    assert 'app' in pm_config
-    assert pm_config['app']['address'] == 400
-    assert pm_config['app']['size'] == 600
-    assert 'spm' in pm_config
-    assert pm_config['spm']['address'] == 0
+    test_config = {'app': dict()}
+    flash_region = {
+        'name': 'flash_primary',
+        'placement_strategy': COMPLEX,
+        'size': 1000,
+        'base_address': 0,
+        'device': 'nordic_flash_stuff'
+    }
+    get_region_config(test_config, flash_region, static_config)
+    assert 'app' in test_config
+    assert test_config['app']['address'] == 400
+    assert test_config['app']['size'] == 600
+    assert 'spm' in test_config
+    assert test_config['spm']['address'] == 0
 
     # Test a single partition with alignment where the address is smaller than the alignment value.
     td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},
@@ -1060,8 +1309,8 @@ def test():
     expect_addr_size(td, 'provision', 900, None)
 
     # Test #1 for removal of empty container partitions.
-    td = {'a': {'share_size': 'does_not_exist'}, # a should be removed
-          'b': {'span': 'a'}, # b through d should be removed because a is removed
+    td = {'a': {'share_size': 'does_not_exist'},  # a should be removed
+          'b': {'span': 'a'},  # b through d should be removed because a is removed
           'c': {'span': 'b'},
           'd': {'span': 'c'},
           'e': {'placement': {'before': ['end']}}}
@@ -1083,4 +1332,8 @@ def test():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        main()
+    else:
+        print("No input, running tests.")
+        test()
