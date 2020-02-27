@@ -10,7 +10,7 @@
 #include <net/socket.h>
 #include <net/bsdlib.h>
 #include <net/tls_credentials.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <modem/modem_key_mgmt.h>

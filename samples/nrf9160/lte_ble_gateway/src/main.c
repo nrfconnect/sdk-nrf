@@ -12,7 +12,7 @@
 #include <console/console.h>
 #include <nrf_cloud.h>
 #include <dk_buttons_and_leds.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <power/reboot.h>
 #include <net/bsdlib.h>
 

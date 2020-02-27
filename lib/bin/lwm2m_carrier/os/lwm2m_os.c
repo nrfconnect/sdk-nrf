@@ -15,7 +15,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <bsd.h>
-#include <lte_lc.h>
+#include <modem/lte_lc.h>
 #include <net/bsdlib.h>
 #include <net/download_client.h>
 #include <power/reboot.h>
