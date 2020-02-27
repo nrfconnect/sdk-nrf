@@ -27,5 +27,5 @@ config MAX_PARSED_COMPONENTS
 endmenu
 
 menu "Zephyr Kernel"
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu
