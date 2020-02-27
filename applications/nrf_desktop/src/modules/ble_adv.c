@@ -113,6 +113,38 @@ enum peer_rpa {
 static enum peer_rpa peer_is_rpa[CONFIG_BT_ID_MAX];
 
 
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	/* Assuming ID is written as one digit */
+	if (!strncmp(key, PEER_IS_RPA_STORAGE_NAME,
+	     sizeof(PEER_IS_RPA_STORAGE_NAME) - 1)) {
+		char *end;
+		long int read_id = strtol(key + strlen(key) - 1, &end, 10);
+
+		if ((*end != '\0') || (read_id < 0) || (read_id >= CONFIG_BT_ID_MAX)) {
+			LOG_ERR("Identity is not a valid number");
+			return -ENOTSUP;
+		}
+
+		ssize_t len = read_cb(cb_arg, &peer_is_rpa[read_id],
+				  sizeof(peer_is_rpa[read_id]));
+
+		if (len != sizeof(peer_is_rpa[read_id])) {
+			LOG_ERR("Can't read peer_is_rpa%ld from storage",
+				read_id);
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+#ifdef CONFIG_DESKTOP_BLE_DIRECT_ADV
+SETTINGS_STATIC_HANDLER_DEFINE(ble_adv, MODULE_NAME, NULL, settings_set, NULL,
+			       NULL);
+#endif /* CONFIG_DESKTOP_BLE_DIRECT_ADV */
+
 static void broadcast_adv_state(bool active)
 {
 	struct ble_peer_search_event *event = new_ble_peer_search_event();
@@ -370,57 +402,11 @@ static void ble_adv_update_fn(struct k_work *work)
 	}
 }
 
-static int settings_set(const char *key, size_t len_rd,
-			settings_read_cb read_cb, void *cb_arg)
-{
-	/* Assuming ID is written as one digit */
-	if (!strncmp(key, PEER_IS_RPA_STORAGE_NAME,
-	     sizeof(PEER_IS_RPA_STORAGE_NAME) - 1)) {
-		char *end;
-		long int read_id = strtol(key + strlen(key) - 1, &end, 10);
-
-		if ((*end != '\0') || (read_id < 0) || (read_id >= CONFIG_BT_ID_MAX)) {
-			LOG_ERR("Identity is not a valid number");
-			return -ENOTSUP;
-		}
-
-		ssize_t len = read_cb(cb_arg, &peer_is_rpa[read_id],
-				  sizeof(peer_is_rpa[read_id]));
-
-		if (len != sizeof(peer_is_rpa[read_id])) {
-			LOG_ERR("Can't read peer_is_rpa%ld from storage", read_id);
-			return len;
-		}
-	}
-
-	return 0;
-}
-
-static int init_settings(void)
-{
-	if (IS_ENABLED(CONFIG_SETTINGS) &&
-	    IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
-		static struct settings_handler sh = {
-			.name = MODULE_NAME,
-			.h_set = settings_set,
-		};
-
-		int err = settings_register(&sh);
-		if (err) {
-			LOG_ERR("Cannot register settings handler (err %d)",
-				err);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
 static void init(void)
 {
-	if (init_settings()) {
-		module_set_state(MODULE_STATE_ERROR);
-		return;
+	/* These things will be opt-out by the compiler. */
+	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_DIRECT_ADV)) {
+		ARG_UNUSED(settings_set);
 	}
 
 	k_delayed_work_init(&adv_update, ble_adv_update_fn);

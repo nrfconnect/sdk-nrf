@@ -111,6 +111,58 @@ static bool bt_stack_id_lut_valid;
 
 static struct k_delayed_work timeout;
 
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	ssize_t rc;
+
+	if (!strcmp(key, PEER_ID_STORAGE_NAME)) {
+		/* Ignore record when size is improper. */
+		if (len_rd != sizeof(cur_peer_id)) {
+			cur_peer_id_valid = false;
+			return 0;
+		}
+
+		rc = read_cb(cb_arg, &cur_peer_id, sizeof(cur_peer_id));
+
+		if (rc == sizeof(cur_peer_id)) {
+			cur_peer_id_valid = true;
+		} else {
+			cur_peer_id_valid = false;
+
+			if (rc < 0) {
+				LOG_ERR("Settings read-out error");
+				return rc;
+			}
+		}
+	} else if (!strcmp(key, BT_ID_LUT_STORAGE_NAME)) {
+		/* Ignore record when size is improper. */
+		if (len_rd != sizeof(bt_stack_id_lut)) {
+			bt_stack_id_lut_valid = false;
+			return 0;
+		}
+
+		rc = read_cb(cb_arg, &bt_stack_id_lut, sizeof(bt_stack_id_lut));
+
+		if (rc == sizeof(bt_stack_id_lut)) {
+			bt_stack_id_lut_valid = true;
+		} else {
+			bt_stack_id_lut_valid = false;
+
+			if (rc < 0) {
+				LOG_ERR("Settings read-out error");
+				return rc;
+			}
+		}
+	}
+
+	return 0;
+}
+
+#ifdef CONFIG_BT_PERIPHERAL
+SETTINGS_STATIC_HANDLER_DEFINE(ble_bond, MODULE_NAME, NULL, settings_set, NULL,
+			       NULL);
+#endif /* CONFIG_BT_PERIPHERAL */
 
 static u8_t get_bt_stack_peer_id(u8_t id)
 {
@@ -516,6 +568,9 @@ static void load_identities(void)
 static void silence_unused(void)
 {
 	/* These things will be opt-out by the compiler. */
+	if (!IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		ARG_UNUSED(settings_set);
+	};
 
 	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_SELECT)) {
 		ARG_UNUSED(tmp_peer_id);
@@ -538,74 +593,6 @@ static void silence_unused(void)
 		ARG_UNUSED(shell_show_peers);
 		ARG_UNUSED(shell_remove_peers);
 	}
-}
-
-static int settings_set(const char *key, size_t len_rd,
-			settings_read_cb read_cb, void *cb_arg)
-{
-	ssize_t rc;
-
-	if (!strcmp(key, PEER_ID_STORAGE_NAME)) {
-		/* Ignore record when size is improper. */
-		if (len_rd != sizeof(cur_peer_id)) {
-			cur_peer_id_valid = false;
-			return 0;
-		}
-
-		rc = read_cb(cb_arg, &cur_peer_id, sizeof(cur_peer_id));
-
-		if (rc == sizeof(cur_peer_id)) {
-			cur_peer_id_valid = true;
-		} else {
-			cur_peer_id_valid = false;
-
-			if (rc < 0) {
-				LOG_ERR("Settings read-out error");
-				return rc;
-			}
-		}
-	} else if (!strcmp(key, BT_ID_LUT_STORAGE_NAME)) {
-		/* Ignore record when size is improper. */
-		if (len_rd != sizeof(bt_stack_id_lut)) {
-			bt_stack_id_lut_valid = false;
-			return 0;
-		}
-
-		rc = read_cb(cb_arg, &bt_stack_id_lut, sizeof(bt_stack_id_lut));
-
-		if (rc == sizeof(bt_stack_id_lut)) {
-			bt_stack_id_lut_valid = true;
-		} else {
-			bt_stack_id_lut_valid = false;
-
-			if (rc < 0) {
-				LOG_ERR("Settings read-out error");
-				return rc;
-			}
-		}
-	}
-
-	return 0;
-}
-
-static int init_settings(void)
-{
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
-	    IS_ENABLED(CONFIG_SETTINGS)) {
-		static struct settings_handler sh = {
-			.name = MODULE_NAME,
-			.h_set = settings_set,
-		};
-
-		int err = settings_register(&sh);
-		if (err) {
-			LOG_ERR("Cannot register settings handler (err %d)",
-				err);
-			return err;
-		}
-	}
-
-	return 0;
 }
 
 static bool storage_data_is_valid(void)
@@ -804,13 +791,6 @@ static bool event_handler(const struct event_header *eh)
 	if (is_module_state_event(eh)) {
 		const struct module_state_event *event =
 			cast_module_state_event(eh);
-
-		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			/* Settings initialized before config module */
-			if (init_settings()) {
-				module_set_state(MODULE_STATE_ERROR);
-			}
-		}
 
 		if (check_state(event, MODULE_ID(config), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
