@@ -30,3 +30,5 @@ rsource "debug/Kconfig"
 rsource "shell/Kconfig"
 
 rsource "mpsl/Kconfig"
+
+rsource "partition_manager/Kconfig"
