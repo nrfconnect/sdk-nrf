@@ -7,7 +7,7 @@
 #include <logging/log.h>
 #include <zephyr.h>
 #include <stdio.h>
-#include <sms.h>
+#include <modem/sms.h>
 #include <errno.h>
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>

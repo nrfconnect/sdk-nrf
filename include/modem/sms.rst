@@ -38,7 +38,7 @@ If there already is an SMS client registered in the system (using AT commands, f
 API documentation
 *****************
 
-| Header file: :file:`include/sms.h`
+| Header file: :file:`include/modem/sms.h`
 | Source file: :file:`lib/sms/sms.c`
 
 .. doxygengroup:: sms
