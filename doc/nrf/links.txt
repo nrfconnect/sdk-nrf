@@ -75,6 +75,8 @@
 
 .. _`Updating the Thingy:91 modem`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/firmware_update/updating_modem_fw.html
 
+.. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
+
 
 .. ### Links to the Nordic website
 

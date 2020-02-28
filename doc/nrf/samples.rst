@@ -12,7 +12,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
 .. toctree::
    :maxdepth: 1
-   :caption: Bluetooth samples:
+   :caption: Bluetooth samples
    :glob:
 
    ../../samples/bluetooth/*/README
@@ -21,9 +21,11 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 .. note::
    |noBLE|
 
+.. _nfc_samples:
+
 .. toctree::
    :maxdepth: 1
-   :caption: NFC samples:
+   :caption: NFC samples
    :glob:
 
    ../../samples/nfc/*/README
@@ -32,14 +34,14 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
 .. toctree::
    :maxdepth: 1
-   :caption: nRF9160 samples:
+   :caption: nRF9160 samples
    :glob:
 
    ../../samples/nrf9160/*/README
 
 .. toctree::
    :maxdepth: 1
-   :caption: Other samples:
+   :caption: Other samples
    :glob:
 
    ../../samples/*/README
