@@ -5,8 +5,12 @@ Enhanced ShockBurst (ESB)
 
 This user guide describes what Enhanced ShockBurst (ESB) is and how to use it with an nRF5 Series device.
 
+.. esb_intro_start
+
 Enhanced ShockBurst (ESB) is a basic protocol supporting two-way data packet communication including packet buffering, packet acknowledgment, and automatic retransmission of lost packets.
 ESB provides radio communication with low power consumption, and the implementation is small in code size and easy to use.
+
+.. esb_intro_end
 
 The ESB protocol was embedded in hardware in the legacy nRF24L Series.
 The :ref:`esb_readme` module enables an nRF5 Series device to communicate with an nRF5 or nRF24L Series device using the ESB protocol.
