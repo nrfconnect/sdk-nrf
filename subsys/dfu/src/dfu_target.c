@@ -7,25 +7,22 @@
 #include <logging/log.h>
 #include <dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
-#include "dfu_target_mcuboot.h"
-#include "dfu_target_modem.h"
+
+#define DEF_DFU_TARGET(name) \
+static const struct dfu_target dfu_target_ ## name  = { \
+	.init = dfu_target_ ## name ## _init, \
+	.offset_get = dfu_target_## name ##_offset_get, \
+	.write = dfu_target_ ## name ## _write, \
+	.done = dfu_target_ ## name ## _done, \
+}
 
 #ifdef CONFIG_DFU_TARGET_MODEM
-const struct dfu_target dfu_target_modem = {
-	.init = dfu_target_modem_init,
-	.offset_get = dfu_target_modem_offset_get,
-	.write = dfu_target_modem_write,
-	.done = dfu_target_modem_done,
-};
+#include "dfu_target_modem.h"
+DEF_DFU_TARGET(modem);
 #endif
-
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
-const struct dfu_target dfu_target_mcuboot = {
-	.init  = dfu_target_mcuboot_init,
-	.offset_get = dfu_target_mcuboot_offset_get,
-	.write = dfu_target_mcuboot_write,
-	.done  = dfu_target_mcuboot_done,
-};
+#include "dfu_target_mcuboot.h"
+DEF_DFU_TARGET(mcuboot);
 #endif
 
 #define MIN_SIZE_IDENTIFY_BUF 32
@@ -36,16 +33,16 @@ static const struct dfu_target *current_target;
 
 int dfu_target_img_type(const void *const buf, size_t len)
 {
-	if (IS_ENABLED(CONFIG_DFU_TARGET_MCUBOOT) &&
-	    dfu_target_mcuboot_identify(buf)) {
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
+	if (dfu_target_mcuboot_identify(buf)) {
 		return DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 	}
-
-	if (IS_ENABLED(CONFIG_DFU_TARGET_MODEM) &&
-	    dfu_target_modem_identify(buf)) {
+#endif
+#ifdef CONFIG_DFU_TARGET_MODEM
+	if (dfu_target_modem_identify(buf)) {
 		return DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 	}
-
+#endif
 	if (len < MIN_SIZE_IDENTIFY_BUF) {
 		return -EAGAIN;
 	}
@@ -58,14 +55,16 @@ int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
 {
 	const struct dfu_target *new_target = NULL;
 
-	if (IS_ENABLED(CONFIG_DFU_TARGET_MCUBOOT) &&
-	    img_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+#ifdef CONFIG_DFU_TARGET_MCUBOOT
+	if (img_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
 		new_target = &dfu_target_mcuboot;
-	} else if (IS_ENABLED(CONFIG_DFU_TARGET_MODEM) &&
-		   img_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
+	}
+#endif
+#ifdef CONFIG_DFU_TARGET_MODEM
+	if (img_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
 		new_target = &dfu_target_modem;
 	}
-
+#endif
 	if (new_target == NULL) {
 		LOG_ERR("Unknown image type");
 		return -ENOTSUP;
