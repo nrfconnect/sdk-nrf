@@ -442,7 +442,7 @@ static void disconnect_subscriber(const void *subscriber_id)
 	}
 
 	if (s == NULL) {
-		LOG_WRN("Cannot disconnect subscriber");
+		LOG_WRN("Subscriber %p was not connected", subscriber_id);
 		return;
 	}
 
@@ -1038,7 +1038,7 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 static bool handle_usb_state_event(const struct usb_state_event *event)
 {
 	switch (event->state) {
-	case USB_STATE_POWERED:
+	case USB_STATE_ACTIVE:
 		if (!get_subscriber_by_type(true)) {
 			connect_subscriber(event->id, true);
 		}
