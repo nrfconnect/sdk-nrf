@@ -63,8 +63,14 @@ int nct_socket_get(void);
 /**@brief Initialization routine for the transport. */
 int nct_init(void);
 
-/**@brief Establishes the transport connection. */
-int nct_connect(void);
+/**
+ * @brief Establishes the transport connection.
+ *
+ * @param will optional last will and testament.
+ *
+ * @return result.
+ */
+int nct_connect(const struct cloud_cfg *const cfg);
 
 /**@brief Establishes the logical control channel on the transport connection.
  */

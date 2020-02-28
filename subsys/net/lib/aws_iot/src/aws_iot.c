@@ -745,7 +745,9 @@ static int broker_init(void)
 
 			inet_ntop(AF_INET, &broker4->sin_addr.s_addr, ipv4_addr,
 				  sizeof(ipv4_addr));
-			LOG_DBG("IPv4 Address found %s", log_strdup(ipv4_addr));
+			LOG_DBG("IPv4 Address found %s for host %s",
+				log_strdup(ipv4_addr),
+				log_strdup(CONFIG_AWS_IOT_BROKER_HOST_NAME));
 			break;
 		} else if ((addr->ai_addrlen == sizeof(struct sockaddr_in6)) &&
 			   (AWS_AF_FAMILY == AF_INET6)) {
@@ -939,27 +941,62 @@ int aws_iot_disconnect(void)
 int aws_iot_connect(struct aws_iot_config *const config)
 {
 	int err;
+	struct mqtt_topic will_topic;
+	struct mqtt_utf8 will_message;
 
 	if (IS_ENABLED(CONFIG_AWS_IOT_CONNECTION_POLL_THREAD)) {
-		err = connection_poll_start();
-	} else {
-		atomic_set(&disconnect_requested, 0);
-
-		err = client_broker_init(&client);
-		if (err) {
-			LOG_ERR("client_broker_init, error: %d", err);
-			return err;
-		}
-
-		err = mqtt_connect(&client);
-		if (err) {
-			LOG_ERR("mqtt_connect, error: %d", err);
-		}
-
-		err = connect_error_translate(err);
-
-		config->socket = client.transport.tls.sock;
+		return connection_poll_start();
 	}
+
+	atomic_set(&disconnect_requested, 0);
+
+	err = client_broker_init(&client);
+	if (err) {
+		LOG_ERR("client_broker_init, error: %d", err);
+		return err;
+	}
+
+	if (config && config->cfg) {
+		const struct cloud_msg *msg = &config->cfg->cfg.mqtt.epitath_msg;
+
+		if (msg->endpoint.type == CLOUD_EP_TOPIC_STATE) {
+			will_topic.topic.utf8 = update_topic;
+			will_topic.topic.size = strlen(update_topic);
+		} else if (msg->endpoint.type == CLOUD_EP_URI) {
+			will_topic.topic.utf8 = msg->endpoint.str;
+			will_topic.topic.size = msg->endpoint.len;
+		} else {
+			LOG_ERR("Unsupported will endpoint %d",
+				(int)msg->endpoint.type);
+			return -EINVAL;
+		}
+
+		will_topic.qos = msg->qos;
+		client.will_topic = &will_topic;
+		LOG_DBG("mqtt will topic set to %s, QoS=%u",
+			log_strdup(will_topic.topic.utf8), msg->qos);
+
+		will_message.utf8 = (uint8_t *)msg->buf;
+		will_message.size = msg->len;
+		client.will_message = &will_message;
+		LOG_DBG("mqtt will message set to %s",
+			log_strdup(msg->buf));
+
+		client.will_retain = config->cfg->cfg.mqtt.retain;
+	}
+
+	err = mqtt_connect(&client);
+	if (err) {
+		LOG_ERR("mqtt_connect, error: %d", err);
+		return err;
+	}
+	/* will sent with connect message; no need to keep around */
+	client.will_topic = NULL;
+	client.will_message = NULL;
+
+	err = connect_error_translate(err);
+
+	config->socket = client.transport.tls.sock;
 
 	return err;
 }
@@ -1172,10 +1209,12 @@ static int api_ep_subscriptions_add(const struct cloud_backend *const backend,
 	return aws_iot_subscription_topics_add(topic_list, list_count);
 }
 
-static int api_connect(const struct cloud_backend *const backend)
+static int api_connect(const struct cloud_backend *const backend,
+		     const struct cloud_cfg *const cfg)
 {
 	struct aws_iot_config config = {
-		.socket = backend->config->socket
+		.socket = backend->config->socket,
+		.cfg = cfg
 	};
 
 	return aws_iot_connect(&config);

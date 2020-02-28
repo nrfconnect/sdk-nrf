@@ -284,6 +284,13 @@ config CLOUD_CONNECT_ERR_REBOOT_S
 	int "Seconds to wait before rebooting when a cloud connect error occurs"
 	default 300
 
+config CLOUD_TEST_LWT
+	bool "Enable buttons to trigger closing the socket or disconnecting"
+	help
+	  Button 1 will close the socket; LWT will be sent by broker.
+	  Button 2 will disconnect the cloud; DISC_MESSAGE will be sent
+	  by device.
+
 endmenu # Cloud
 
 menu "Environment sensors"

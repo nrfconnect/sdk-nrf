@@ -553,7 +553,7 @@ static void cloud_connect_work_fn(struct k_work *work)
 	ui_led_set_pattern(UI_CLOUD_CONNECTING);
 
 	/* Attempt cloud connection */
-	ret = cloud_connect(cloud_backend);
+	ret = cloud_connect(cloud_backend, NULL);
 	if (ret != CLOUD_CONNECT_RES_SUCCESS) {
 		k_delayed_work_cancel(&cloud_reboot_work);
 		/* Will not return from this function.

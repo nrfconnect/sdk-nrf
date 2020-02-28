@@ -393,7 +393,7 @@ void main(void)
 		LOG_WRN("Continuing without button funcitonality");
 	}
 
-	err = cloud_connect(cloud_backend);
+	err = cloud_connect(cloud_backend, NULL);
 	if (err) {
 		LOG_ERR("Cloud connection failed, error: %d", err);
 		return;

@@ -36,6 +36,8 @@ static nrf_cloud_event_handler_t app_event_handler;
 
 static K_MUTEX_DEFINE(state_mutex);
 
+static struct nrf_cloud_connect_param connect_param;
+
 enum nfsm_state nfsm_get_current_state(void)
 {
 	return current_state;
@@ -89,13 +91,75 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 	return 0;
 }
 
+struct cloud_cfg *nrf_cloud_dup_cfg(const struct cloud_cfg *cfg)
+{
+	struct cloud_cfg *config;
+
+	/* duplicate the cloud_cfg structure */
+	config = k_malloc(sizeof(struct cloud_cfg));
+	if (!config) {
+		return NULL;
+	}
+	memcpy(config, cfg, sizeof(struct cloud_cfg));
+
+	size_t len = cfg->cfg.mqtt.epitath_msg.len;
+
+	/* if needed, duplicate the message buffer */
+	if (len) {
+		config->cfg.mqtt.epitath_msg.buf = k_malloc(len);
+		if (!config->cfg.mqtt.epitath_msg.buf) {
+			return NULL;
+		}
+		memcpy(config->cfg.mqtt.epitath_msg.buf,
+		       cfg->cfg.mqtt.epitath_msg.buf, len);
+	} else {
+		config->cfg.mqtt.epitath_msg.buf = NULL;
+	}
+
+	size_t ep_len = cfg->cfg.mqtt.epitath_msg.endpoint.len;
+
+	/* if needed, duplicate the endpoint string */
+	if (ep_len) {
+		config->cfg.mqtt.epitath_msg.endpoint.str =
+			k_malloc(ep_len);
+		if (!config->cfg.mqtt.epitath_msg.endpoint.str) {
+			return NULL;
+		}
+		memcpy(config->cfg.mqtt.epitath_msg.endpoint.str,
+			cfg->cfg.mqtt.epitath_msg.endpoint.str,
+			ep_len);
+	} else {
+		config->cfg.mqtt.epitath_msg.endpoint.str = NULL;
+	}
+
+	return config;
+}
+
+void nrf_cloud_free_cfg(struct cloud_cfg *cfg)
+{
+	if (!cfg) {
+		return;
+	}
+	if (cfg->cfg.mqtt.epitath_msg.endpoint.str) {
+		k_free(cfg->cfg.mqtt.epitath_msg.endpoint.str);
+		cfg->cfg.mqtt.epitath_msg.endpoint.str = NULL;
+		cfg->cfg.mqtt.epitath_msg.endpoint.len = 0;
+	}
+	if (cfg->cfg.mqtt.epitath_msg.buf) {
+		k_free(cfg->cfg.mqtt.epitath_msg.buf);
+		cfg->cfg.mqtt.epitath_msg.buf = NULL;
+		cfg->cfg.mqtt.epitath_msg.len = 0;
+	}
+	k_free(cfg);
+}
+
 int nrf_cloud_connect(const struct nrf_cloud_connect_param *param)
 {
 	if (NOT_VALID_STATE(STATE_INITIALIZED)) {
 		return -EACCES;
 	}
 	atomic_set(&disconnect_requested, 0);
-	return nct_connect();
+	return nct_connect(param ? param->cfg : NULL);
 }
 
 int nrf_cloud_disconnect(void)
@@ -394,14 +458,27 @@ static int start_connection_poll(const struct cloud_backend *const backend)
 	return CLOUD_CONNECT_RES_SUCCESS;
 }
 
-static int api_connect(const struct cloud_backend *const backend)
+static int api_connect(const struct cloud_backend *const backend,
+		       const struct cloud_cfg *const cfg)
 {
 	int err;
 
+	connect_param.sensor = NULL;
+
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD)) {
+		struct cloud_cfg *config = NULL;
+
+		if (cfg) {
+			config = nrf_cloud_dup_cfg(cfg);
+			if (!config) {
+				LOG_ERR("Error duplicating cloud_cfg struct!");
+			}
+		}
+		connect_param.cfg = config;
 		err = start_connection_poll(backend);
 	} else {
-		err = nrf_cloud_connect(NULL);
+		connect_param.cfg = cfg;
+		err = nrf_cloud_connect(&connect_param);
 		if (!err) {
 			atomic_set(&transport_disconnected, 0);
 			backend->config->socket = nct_socket_get();
@@ -515,7 +592,14 @@ start:
 	cloud_evt.type = CLOUD_EVT_CONNECTING;
 	cloud_notify_event(nrf_cloud_backend, &cloud_evt, NULL);
 
-	ret = nrf_cloud_connect(NULL);
+	if (connect_param.cfg) {
+		const struct cloud_cfg *cfg = connect_param.cfg;
+		const struct cloud_msg *msg = &cfg->cfg.mqtt.epitath_msg;
+
+		LOG_INF("connecting with will %s len %d",
+			log_strdup(msg->buf), msg->len);
+	}
+	ret = nrf_cloud_connect(&connect_param);
 	ret = translate_connect_error(ret);
 
 	if (ret != CLOUD_CONNECT_RES_SUCCESS) {
