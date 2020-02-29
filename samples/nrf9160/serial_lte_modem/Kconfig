@@ -32,14 +32,13 @@ choice
 		-  UART 2
 	config SLM_CONNECT_UART_0
 		bool "UART 0"
+	  select UART_0_NRF_HW_ASYNC
 	config SLM_CONNECT_UART_2
 		bool "UART 2"
+	  select UART_2_NRF_UARTE
+	  select UART_2_NRF_HW_ASYNC
+	  select UART_2_NRF_FLOW_CONTROL
 endchoice
-
-config SLM_CONNECT_UART
-	int
-	default 0 if SLM_CONNECT_UART_0
-	default 2 if SLM_CONNECT_UART_2
 
 choice
 	prompt "Termination Mode"
@@ -76,9 +75,8 @@ config SLM_GPIO_WAKEUP
 	help
 	  Enable GPIO wakeup on nRF9160 side
 
-config SLM_MODEM_WAKEUP_PIN
-	int "GPIO for wakeup"
-	depends on SLM_GPIO_WAKEUP
+config SLM_INTERFACE_PIN
+	int "Interface GPIO to wake up or exit idle"
 	default 6 if SLM_CONNECT_UART_0
 	default 31 if SLM_CONNECT_UART_2
 

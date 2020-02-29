@@ -97,7 +97,7 @@ Generic commands
 The following proprietary generic AT commands are used in this sample:
 
 * AT#XSLMVER
-* AT#XSLEEP
+* AT#XSLEEP[=<shutdown_mode>]
 * AT#XCLAC
 
 Socket AT commands
@@ -180,6 +180,7 @@ This application uses the following |NCS| libraries and drivers:
     * ``nrf/lib/bsd_lib``
     * ``nrf/lib/at_cmd_parser``
     * ``nrf/lib/at_notif``
+    * ``nrf/lib/modem_info``
 
 In addition, it uses the Secure Partition Manager sample:
 
