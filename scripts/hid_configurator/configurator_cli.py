@@ -164,7 +164,7 @@ def parse_arguments():
         device_config = DEVICE[device_name]['config']
 
         if device_config is not None:
-            assert type(device_config) == dict
+            assert isinstance(device_config, dict)
             parser_config = sp_commands.add_parser('config', help='Configuration option get/set')
 
             sp_config = parser_config.add_subparsers(dest='module')
@@ -172,9 +172,9 @@ def parse_arguments():
 
             for module_name in device_config:
                 module_config = device_config[module_name]
-                assert type(module_config) == dict
+                assert isinstance(module_config, dict)
                 module_opts = module_config['options']
-                assert type(module_opts) == dict
+                assert isinstance(module_opts, dict)
 
                 parser_config_module = sp_config.add_parser(module_name, help='{} module options'.format(module_name))
                 sp_config_module = parser_config_module.add_subparsers(dest='option')

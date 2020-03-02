@@ -11,7 +11,7 @@ from enum import IntEnum
 
 import logging
 
-from devices import get_device_pid, get_device_vid, get_device_type
+from devices import get_device_pid, get_device_vid
 
 REPORT_ID = 6
 REPORT_SIZE = 30
