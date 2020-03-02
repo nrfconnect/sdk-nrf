@@ -11,10 +11,10 @@ import wave
 import threading
 import queue
 
-from .led_stream import MS_PER_SEC
-from .led_stream import Step
-from .led_stream import validate_params
-from .led_stream import fetch_free_steps_buffer_info, led_send_single_step
+from modules.led_stream import MS_PER_SEC
+from modules.led_stream import Step
+from modules.led_stream import validate_params
+from modules.led_stream import fetch_free_steps_buffer_info, led_send_single_step
 
 
 class MusicLedStream():
@@ -67,7 +67,8 @@ class MusicLedStream():
 
     @staticmethod
     def peak_to_hue(peak):
-        assert peak >= 0 and peak <= 1
+        assert peak >= 0
+        assert peak <= 1
 
         G = 120
         B = 240
@@ -90,7 +91,7 @@ class MusicLedStream():
         while True:
             data = self.queue.get()
 
-            if data == None:
+            if data is None:
                 # LED stream ended
                 return
 
@@ -124,7 +125,7 @@ class MusicLedStream():
 
             if not success:
                 print("Device communication problem")
-                send_error_event.set()
+                self.send_error_event.set()
                 return
 
             self.led_effects['sent_cnt'] += 1
@@ -205,7 +206,6 @@ class MusicLedStream():
 
         except KeyboardInterrupt:
             print("Music LED stream interrupted by user")
-            pass
 
         self.stream_term()
 
