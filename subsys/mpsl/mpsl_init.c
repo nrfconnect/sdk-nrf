@@ -92,6 +92,10 @@ static u8_t m_config_clock_source_get(void)
 	return MPSL_CLOCK_LF_SRC_XTAL;
 #elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH
 	return MPSL_CLOCK_LF_SRC_SYNTH;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING
+	return MPSL_CLOCK_LF_SRC_EXT_LOW_SWING;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING
+	return MPSL_CLOCK_LF_SRC_EXT_FULL_SWING;
 #else
 	#error "Clock source is not supported or not defined"
 	return 0;

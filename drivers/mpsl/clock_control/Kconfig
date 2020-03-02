@@ -24,6 +24,14 @@ config CLOCK_CONTROL_NRF_K32SRC_XTAL
 config CLOCK_CONTROL_NRF_K32SRC_SYNTH
 	bool "Synthesized from HFCLK"
 
+config CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING
+	depends on SOC_SERIES_NRF52X
+	bool "External low swing"
+
+config CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING
+	depends on SOC_SERIES_NRF52X
+	bool "External full swing"
+
 endchoice
 
 config CLOCK_CONTROL_NRF_K32SRC_BLOCKING
