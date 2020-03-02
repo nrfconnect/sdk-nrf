@@ -10,7 +10,8 @@ from configurator_core import DEVICE
 from configurator_core import get_device_pid, open_device
 from configurator_core import change_config, fetch_config
 from modules.dfu import fwinfo, fwreboot, dfu_transfer, get_dfu_image_version
-from led_stream import send_continuous_led_stream, send_music_led_stream
+from modules.led_stream import send_continuous_led_stream
+from modules.music_led_stream import send_music_led_stream
 
 
 def progress_bar(permil):
