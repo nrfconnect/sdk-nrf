@@ -22,6 +22,7 @@ target_include_directories(app
   PRIVATE
   ${ZEPHYR_BASE}/../nrf/subsys/dfu/include
   . # To get 'pm_config.h'
+  ${ZEPHYR_BASE}/../nrf/include/dfu
   )
 
 target_compile_options(app
