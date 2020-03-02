@@ -7,6 +7,7 @@ import struct
 import zlib
 import os
 import imgtool.image as img
+import time
 import logging
 
 from configurator_core import GROUP_FIELD_POS, TYPE_FIELD_POS, EVENT_GROUP_DFU
