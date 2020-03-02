@@ -5,6 +5,10 @@ USB-UART bridge
 
 The USB-UART bridge acts as a serial adapter, exposing 2 UART pairs to a USB host as 2 CDC ACM devices.
 
+.. note::
+
+   This sample has been enhanced by the :ref:`connectivity_bridge` application, and is planned to be removed in the future.
+
 
 Requirements
 ************
