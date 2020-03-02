@@ -7,7 +7,6 @@ import sys
 import hid
 import struct
 import time
-import random
 import re
 
 import logging
@@ -45,8 +44,6 @@ QOS_OPT_PARAM_WIFI = 0x3
 
 BLE_BOND_PEER_ERASE = 0x0
 BLE_BOND_PEER_SEARCH = 0x1
-
-LED_STREAM_DATA = 0x0
 
 POLL_INTERVAL_DEFAULT = 0.02
 POLL_RETRY_COUNT = 200
@@ -514,56 +511,6 @@ def fetch_config(dev, recipient, config_name, device_options, module_id):
         return success, config_opts.type.from_bytes(fetched_data, byteorder='little')
     else:
         return success, ConfigParser(fetched_data, *format[opt_id]).config_get(config_name)
-
-
-class Step:
-    def __init__(self, r, g, b, substep_count, substep_time):
-        self.r = r
-        self.g = g
-        self.b = b
-        self.substep_count = substep_count
-        self.substep_time = substep_time
-
-    def generate_random_color(self):
-        self.r = random.randint(0, 255)
-        self.g = random.randint(0, 255)
-        self.b = random.randint(0, 255)
-
-
-def led_send_single_step(dev, recipient, step, led_id):
-    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) \
-               | (LED_STREAM_DATA << TYPE_FIELD_POS)
-
-    # Chosen data layout for struct is defined using format string.
-    event_data = struct.pack('<BBBHHB', step.r, step.g, step.b,
-                             step.substep_count, step.substep_time, led_id)
-
-    success = exchange_feature_report(dev, recipient, event_id,
-                                      event_data, False,
-                                      poll_interval=0.001)
-
-    return success
-
-
-def fetch_free_steps_buffer_info(dev, recipient, led_id):
-    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) \
-               | (led_id << MOD_FIELD_POS)
-
-    success, fetched_data = exchange_feature_report(dev, recipient,
-                                                    event_id, None, True,
-                                                    poll_interval=0.001)
-
-    if (not success) or (fetched_data is None):
-        return False, (None, None)
-
-    # Chosen data layout for struct is defined using format string.
-    fmt = '<B?'
-    assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
-
-    if len(fetched_data) != struct.calcsize(fmt):
-        return False, (None, None)
-
-    return success, struct.unpack(fmt, fetched_data)
 
 
 if __name__ == '__main__':
