@@ -10,9 +10,11 @@ import hid
 
 # configurator_core.py is in upper directory so we add it to path
 sys.path.append('..')
-from configurator_core import DEVICE
-from configurator_core import get_device_pid, get_device_vid, open_device, get_device_type, get_dfu_image_version
-from configurator_core import fwinfo, fwreboot, fetch_config, change_config, dfu_transfer
+from devices import DEVICE
+from devices import get_device_pid, get_device_vid, get_device_type
+from configurator_core import open_device
+from modules.dfu import get_dfu_image_version, fwinfo, fwreboot, dfu_transfer
+from modules.config import fetch_config, change_config
 
 
 class Device:
