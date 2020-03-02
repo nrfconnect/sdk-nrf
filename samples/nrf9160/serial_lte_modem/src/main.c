@@ -118,7 +118,7 @@ void start_execute(void)
 {
 	int err;
 
-	LOG_INF("Serial LTE Modem");
+	LOG_INF("The Serial LTE Modem sample started");
 
 	err = modem_info_init();
 	if (err) {
