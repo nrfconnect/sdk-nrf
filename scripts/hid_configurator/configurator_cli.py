@@ -8,8 +8,8 @@ import logging
 
 from configurator_core import DEVICE
 from configurator_core import get_device_pid, open_device
-from configurator_core import fwinfo, fwreboot, change_config, fetch_config
-from configurator_core import dfu_transfer, get_dfu_image_version
+from configurator_core import change_config, fetch_config
+from modules.dfu import fwinfo, fwreboot, dfu_transfer, get_dfu_image_version
 from led_stream import send_continuous_led_stream, send_music_led_stream
 
 
