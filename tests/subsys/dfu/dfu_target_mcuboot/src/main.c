@@ -7,6 +7,7 @@
 #include <zephyr/types.h>
 #include <stdbool.h>
 #include <ztest.h>
+#include <dfu_target.h>
 #include <dfu_target_mcuboot.h>
 
 /* Create buffer which we will fill with strings to test with.
@@ -22,7 +23,7 @@ char buf[1024];
 static void test_dfu_ctx_mcuboot_set_b1_file(void)
 {
 	int err;
-	char *update;
+	const char *update;
 	bool s0_active = true;
 
 	memcpy(buf, S0_S1, sizeof(S0_S1));
@@ -41,7 +42,7 @@ static void test_dfu_ctx_mcuboot_set_b1_file(void)
 static void test_dfu_ctx_mcuboot_set_b1_file__no_separator(void)
 {
 	int err;
-	char *update;
+	const char *update;
 	bool s0_active = true;
 
 	memcpy(buf, NO_SPACE, sizeof(NO_SPACE));
@@ -54,7 +55,7 @@ static void test_dfu_ctx_mcuboot_set_b1_file__no_separator(void)
 static void test_dfu_ctx_mcuboot_set_b1_file__null(void)
 {
 	int err;
-	char *update;
+	const char *update;
 	bool s0_active = true;
 
 	err = dfu_ctx_mcuboot_set_b1_file(NULL, s0_active, &update);
@@ -67,7 +68,7 @@ static void test_dfu_ctx_mcuboot_set_b1_file__null(void)
 static void test_dfu_ctx_mcuboot_set_b1_file__not_terminated(void)
 {
 	int err;
-	char *update;
+	const char *update;
 	bool s0_active = true;
 
 	/* Remove any null terminator */
@@ -81,7 +82,7 @@ static void test_dfu_ctx_mcuboot_set_b1_file__not_terminated(void)
 static void test_dfu_ctx_mcuboot_set_b1_file__empty(void)
 {
 	int err;
-	char *update;
+	const char *update;
 	bool s0_active = true;
 
 	err = dfu_ctx_mcuboot_set_b1_file("", s0_active, &update);
