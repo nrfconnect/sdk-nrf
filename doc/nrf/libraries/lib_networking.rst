@@ -8,4 +8,3 @@ Libraries for networking
    :glob:
 
    ../../include/net/*
-   ../../include/net/zzhc/*

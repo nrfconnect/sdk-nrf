@@ -84,4 +84,3 @@ Allowing for automatic registration to Lte-M or NB-IoT on boot
 To allow for automatic registration to Lte-M or NB-IoT network on boot, set the following options in ``prj.conf``:
    * ``CONFIG_LTE_LINK_CONTROL=y``
    * ``CONFIG_LTE_AUTO_INIT_AND_CONNECT=y``
-
