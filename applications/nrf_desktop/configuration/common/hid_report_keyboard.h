@@ -15,7 +15,7 @@ extern "C" {
  * Input bytes:
  *     8 bits - pressed modifier buttons bitmask
  *     8 bits - reserved
- * 6 x 8 bits - 6 slots for pressed
+ * 6 x 8 bits - 6 slots for pressed key ids
  *
  * Output bytes:
  *     8 bits - active LED indicators bitmask
@@ -24,7 +24,7 @@ extern "C" {
 #define REPORT_SIZE_KEYBOARD_LEDS	1 /* bytes */
 
 /* Report mask marks which bytes should are absolute and should be stored. */
-#define REPORT_MASK_KEYBOARD_KEYS	{0xFD}
+#define REPORT_MASK_KEYBOARD_KEYS	{} /* Store the whole report */
 
 
 #define KEYBOARD_REPORT_LAST_KEY	0x65 /* Keyboard Application */
