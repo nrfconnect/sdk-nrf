@@ -433,8 +433,7 @@ static void fetch_config(const u8_t opt_id, u8_t *data, size_t *size)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if ((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) && is_hid_mouse_event(eh)) ||
-	    (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) && is_hid_keyboard_event(eh))) {
+	if (is_hid_report_event(eh)) {
 		device_in_use = true;
 
 		return false;
@@ -469,8 +468,7 @@ static bool event_handler(const struct event_header *eh)
 }
 
 EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
-EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_event);
 EVENT_SUBSCRIBE(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);

@@ -91,7 +91,7 @@ static bool event_handler(const struct event_header *eh)
 		const struct hid_report_subscription_event *event =
 			cast_hid_report_subscription_event(eh);
 
-		if (event->report_type == IN_REPORT_MOUSE) {
+		if (event->report_id == REPORT_ID_MOUSE) {
 			static u8_t peer_count;
 
 			if (event->enabled) {
@@ -118,7 +118,7 @@ static bool event_handler(const struct event_header *eh)
 		const struct hid_report_sent_event *event =
 			cast_hid_report_sent_event(eh);
 
-		if ((event->report_type == IN_REPORT_MOUSE) &&
+		if ((event->report_id == REPORT_ID_MOUSE) &&
 				(atomic_get(&state) == STATE_FETCHING)) {
 			generate_motion_event();
 		}

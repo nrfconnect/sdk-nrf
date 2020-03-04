@@ -54,28 +54,20 @@ config DESKTOP_INIT_LOG_CONFIG_EVENT
 	bool "Config event"
 	default y
 
-config DESKTOP_INIT_LOG_HID_KEYBOARD_EVENT
-	bool "HID keyboard event"
-	default y
-
-config DESKTOP_INIT_LOG_HID_MOUSE_EVENT
-	bool "HID mouse event"
-	default y
-
-config DESKTOP_INIT_LOG_HID_CTRL_EVENT
-	bool "HID system/consumer control event"
-	default y
-
 config DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT
 	bool "HID report subscriber event"
 	default y
 
-config DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT
-	bool "HID report sent event"
-	default y
-
 config DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT
 	bool "HID report subscription event"
+	default y
+
+config DESKTOP_INIT_LOG_HID_REPORT_EVENT
+	bool "HID report event"
+	default y
+
+config DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT
+	bool "HID report sent event"
 	default y
 
 config DESKTOP_INIT_LOG_LED_EVENT

@@ -23,63 +23,22 @@
 extern "C" {
 #endif
 
-#define REPORT_ID_TO_IN_REPORT(report_id) (report_id - 1)
-#define IN_REPORT_TO_REPORT_ID(in_report) (in_report + 1)
-
-#define IN_REPORT_LIST		\
-	X(MOUSE)		\
-	X(KEYBOARD_KEYS)	\
-	X(SYSTEM_CTRL)		\
-	X(CONSUMER_CTRL)
-
-#define OUT_REPORT_LIST		\
-	X(KEYBOARD_LEDS)
-
-#define FEATURE_REPORT_LIST	\
-	X(USER_CONFIG)
-
-enum in_report {
-#define X(name) _CONCAT(IN_REPORT_, name),
-	IN_REPORT_LIST
-#undef X
-
-	IN_REPORT_COUNT
-};
-
-enum out_report {
-#define X(name) _CONCAT(OUT_REPORT_, name),
-	OUT_REPORT_LIST
-#undef X
-
-	OUT_REPORT_COUNT
-};
-
-enum feature_report {
-#define X(name) _CONCAT(FEATURE_REPORT_, name),
-	FEATURE_REPORT_LIST
-#undef X
-
-	FEATURE_REPORT_COUNT
-};
-
-
 enum report_id {
 	REPORT_ID_RESERVED,
 
-#define X(name) _CONCAT(REPORT_ID_, name),
-	IN_REPORT_LIST
-	OUT_REPORT_LIST
-	FEATURE_REPORT_LIST
-#undef X
+	REPORT_ID_MOUSE,
+	REPORT_ID_KEYBOARD_KEYS,
+	REPORT_ID_SYSTEM_CTRL,
+	REPORT_ID_CONSUMER_CTRL,
+
+	REPORT_ID_KEYBOARD_LEDS,
+
+	REPORT_ID_USER_CONFIG,
+
+	REPORT_ID_VENDOR_IN,
+	REPORT_ID_VENDOR_OUT,
 
 	REPORT_ID_COUNT
-};
-
-enum report_mode {
-	REPORT_MODE_PROTOCOL,
-	REPORT_MODE_BOOT,
-
-	REPORT_MODE_COUNT
 };
 
 
