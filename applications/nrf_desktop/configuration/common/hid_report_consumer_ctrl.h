@@ -11,9 +11,9 @@
 extern "C" {
 #endif
 
-#define REPORT_SIZE_CONSUMER_CTRL	1 /* bytes */
+#define REPORT_SIZE_CONSUMER_CTRL	2 /* bytes */
 
-#define REPORT_MASK_CONSUMER_CTRL	{0x01}
+#define REPORT_MASK_CONSUMER_CTRL	{} /* Store the whole report */
 
 #define CONSUMER_CTRL_REPORT_KEY_COUNT_MAX	1
 
@@ -34,4 +34,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _HID_REPORT_DESC_H_ */
+#endif /* _HID_REPORT_CONSUMER_CTRL_H_ */

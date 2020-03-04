@@ -11,9 +11,9 @@
 extern "C" {
 #endif
 
-#define REPORT_SIZE_SYSTEM_CTRL		1 /* bytes */
+#define REPORT_SIZE_SYSTEM_CTRL		2 /* bytes */
 
-#define REPORT_MASK_SYSTEM_CTRL		{0x01}
+#define REPORT_MASK_SYSTEM_CTRL		{} /* Store the whole report */
 
 #define SYSTEM_CTRL_REPORT_KEY_COUNT_MAX	1
 
@@ -34,4 +34,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _HID_REPORT_DESC_H_ */
+#endif /* _HID_REPORT_SYSTEM_CTRL_H_ */
