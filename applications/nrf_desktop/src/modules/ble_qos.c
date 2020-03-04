@@ -629,7 +629,7 @@ static void handle_config_event(const struct config_event *event)
 static bool event_handler(const struct event_header *eh)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE) &&
-	    IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
 		static s32_t hid_pkt_recv_count;
 		static u32_t cdc_notify_count;
 

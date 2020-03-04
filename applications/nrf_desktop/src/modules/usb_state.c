@@ -312,7 +312,7 @@ static void reset_pending_report(void)
 
 static void broadcast_subscription_change(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
 		struct hid_report_subscription_event *event_mouse =
 			new_hid_report_subscription_event();
 
@@ -323,7 +323,7 @@ static void broadcast_subscription_change(void)
 		EVENT_SUBMIT(event_mouse);
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
 		struct hid_report_subscription_event *event_kbd =
 			new_hid_report_subscription_event();
 
@@ -334,7 +334,7 @@ static void broadcast_subscription_change(void)
 		EVENT_SUBMIT(event_kbd);
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT)) {
 		struct hid_report_subscription_event *event_system_ctrl =
 			new_hid_report_subscription_event();
 
@@ -345,7 +345,7 @@ static void broadcast_subscription_change(void)
 		EVENT_SUBMIT(event_system_ctrl);
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
 		struct hid_report_subscription_event *event_consumer_ctrl =
 			new_hid_report_subscription_event();
 
@@ -494,22 +494,22 @@ static int usb_init(void)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) &&
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) &&
 	    is_hid_mouse_event(eh)) {
 		send_mouse_report(cast_hid_mouse_event(eh));
 
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) &&
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
 	    is_hid_keyboard_event(eh)) {
 		send_keyboard_report(cast_hid_keyboard_event(eh));
 
 		return false;
 	}
 
-	if ((IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL) ||
-	     IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) &&
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) ||
+	     IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPORT)) &&
 	    is_hid_ctrl_event(eh)) {
 		send_ctrl_report(cast_hid_ctrl_event(eh));
 

@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "HID"
+
+config DESKTOP_HID_REPORT_DESC
+	string "HID report descriptor"
+	default ""
+	help
+	  This option specifies a path to the HID report descriptor file.
+
+config DESKTOP_HID_MOUSE
+	bool "Device is a HID mouse"
+	select DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	help
+	  Enable reports needed by a mouse.
+
+config DESKTOP_HID_KEYBOARD
+	bool "Device is a HID keyboard"
+	select DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	select DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
+	select DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
+	help
+	  Enable reports needed by a keyboard.
+
+config DESKTOP_HID_DONGLE
+	bool "Device is a HID keyboard"
+	select DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	select DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	select DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
+	select DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
+	help
+	  Enable reports needed by a dongle.
+
+menu "HID Reports"
+
+config DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	bool "Mouse report support"
+	help
+	  This option controls if the device supports HID mouse report.
+	  Report is added to the report map. It does not need to be generated
+	  by the device.
+
+config DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	bool "Keyboard report support"
+	help
+	  This option controls if the device supports HID keyboard reports.
+	  Report is added to the report map. It does not need to be generated
+	  by the device.
+
+config DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
+	bool "System control report support"
+	help
+	  This option controls if the device supports HID system control report.
+	  Report is added to the report map. It does not need to be generated
+	  by the device.
+
+config DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
+	bool "Consumer control report support"
+	help
+	  This option controls if the device supports HID consumer control
+	  report.
+	  Report is added to the report map. It does not need to be generated
+	  by the device.
+
+endmenu
+
+endmenu

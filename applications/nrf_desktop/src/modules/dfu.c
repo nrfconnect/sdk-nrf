@@ -450,8 +450,8 @@ static void handle_config_fetch_request_event(const struct config_fetch_request_
 
 static bool event_handler(const struct event_header *eh)
 {
-	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
-	    (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) && is_hid_keyboard_event(eh))) {
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) && is_hid_mouse_event(eh)) ||
+	    (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) && is_hid_keyboard_event(eh))) {
 		device_in_use = true;
 
 		return false;
