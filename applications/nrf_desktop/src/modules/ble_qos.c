@@ -638,7 +638,7 @@ static bool event_handler(const struct event_header *eh)
 		/* Count number of HID packets received via BLE. */
 		/* Send stats printout via CDC every 100 packets. */
 
-		if (is_hid_mouse_event(eh)) {
+		if (is_hid_report_event(eh)) {
 			hid_pkt_recv_count++;
 			cdc_notify_count++;
 
@@ -797,7 +797,7 @@ static void ble_qos_thread_fn(void)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
-EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
+EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_event);

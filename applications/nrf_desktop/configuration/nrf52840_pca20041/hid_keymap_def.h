@@ -22,11 +22,11 @@ const struct {} hid_keymap_def_include_once;
  * http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
  */
 static const struct hid_keymap hid_keymap[] = {
-	{ KEY_ID(0, 0), 0x01, IN_REPORT_MOUSE }, /* Left Mouse Button */
-	{ KEY_ID(0, 1), 0x02, IN_REPORT_MOUSE }, /* Right Mouse Button */
-	{ KEY_ID(0, 2), 0x03, IN_REPORT_MOUSE }, /* Middle Mouse Button */
-	{ KEY_ID(0, 3), 0x04, IN_REPORT_MOUSE }, /* Additional Mouse Button */
-	{ KEY_ID(0, 4), 0x05, IN_REPORT_MOUSE }, /* Additional Mouse Button */
-	{ KEY_ID(0, 5), 0x06, IN_REPORT_MOUSE }, /* Additional Mouse Button */
-	{ KEY_ID(0, 6), 0x07, IN_REPORT_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 0), 0x01, REPORT_ID_MOUSE }, /* Left Mouse Button */
+	{ KEY_ID(0, 1), 0x02, REPORT_ID_MOUSE }, /* Right Mouse Button */
+	{ KEY_ID(0, 2), 0x03, REPORT_ID_MOUSE }, /* Middle Mouse Button */
+	{ KEY_ID(0, 3), 0x04, REPORT_ID_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 4), 0x05, REPORT_ID_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 5), 0x06, REPORT_ID_MOUSE }, /* Additional Mouse Button */
+	{ KEY_ID(0, 6), 0x07, REPORT_ID_MOUSE }, /* Additional Mouse Button */
 };
