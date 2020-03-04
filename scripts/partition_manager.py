@@ -432,17 +432,21 @@ def get_required_offset(align, start, size, move_up):
     end = start + size
     align_start = 'start' in align
 
-    if (align_start and start % align['start'] == 0) or (not align_start and end % align['end'] == 0):
-        return 0
+    try:
+        if (align_start and start % align['start'] == 0) or (not align_start and end % align['end'] == 0):
+            return 0
 
-    if move_up:
-        return align['start'] - (start % align['start']) if align_start else align['end'] - (end % align['end'])
-    else:
-        if align_start:
-            return start % align['start']
+        if move_up:
+            return align['start'] - (start % align['start']) if align_start else align['end'] - (end % align['end'])
         else:
-            # Special handling is needed if start is 0 since this partition can not be moved down
-            return end % align['end'] if start != 0 else align['end'] - (end % align['end'])
+            if align_start:
+                return start % align['start']
+            else:
+                # Special handling is needed if start is 0 since this partition can not be moved down
+                return end % align['end'] if start != 0 else align['end'] - (end % align['end'])
+    except TypeError as err:
+        keyword = 'start' if align_start else 'end'
+        raise TypeError(f"elements in align: {{{keyword}:{align[keyword]}}} is not type of \'int\'") from err
 
 
 def set_size_addr(entry, size, address):
@@ -1041,6 +1045,17 @@ def test():
     offset = get_required_offset(align={'end': 800}, start=0, size=1000, move_up=False)
     assert offset == 600
 
+    for l in [
+            lambda : get_required_offset(align={'end': ["CONFIG_VAR"]}, start=0, size=1000, move_up=False),
+            lambda : get_required_offset(align={'start': ["CONFIG_VAR"]}, start=0, size=1000, move_up=False),
+            lambda : get_required_offset(align={'start': [[2]]},start=0, size=1000, move_up=False)
+            ]:
+        failed = False
+        try:
+            l()
+        except TypeError:
+            failed = True
+        assert failed, "Should have received a TypeError."
     # Verify that the first partition can be aligned, and that the inserted empty partition is placed behind it.
     td = {'first': {'placement': {'before': 'app', 'align': {'end': 800}}, 'size': 100}, 'app': {}}
     s, sub_partitions = resolve(td)
