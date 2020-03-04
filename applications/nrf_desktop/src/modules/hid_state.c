@@ -548,7 +548,7 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 
 static void send_report_keyboard(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
 		struct report_data *rd = &state.report_data[IN_REPORT_KEYBOARD_KEYS];
 
 		const size_t max = ARRAY_SIZE(rd->items.item);
@@ -596,7 +596,7 @@ static void send_report_keyboard(void)
 
 static void send_report_mouse(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
 		struct report_data *rd = &state.report_data[IN_REPORT_MOUSE];
 
 		struct hid_mouse_event *event = new_hid_mouse_event();
@@ -637,12 +637,12 @@ static void send_report_mouse(void)
 
 static void send_report_ctrl(enum in_report report_type)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL) ||
-	    IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) ||
+	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
 		if (report_type == IN_REPORT_SYSTEM_CTRL) {
-			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL));
+			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT));
 		} else if (report_type == IN_REPORT_CONSUMER_CTRL) {
-			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL));
+			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT));
 		} else {
 			/* Unsupported report type. */
 			__ASSERT_NO_MSG(false);

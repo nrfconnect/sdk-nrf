@@ -562,10 +562,10 @@ static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
-	    (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) && is_hid_keyboard_event(eh)) ||
-	    ((IS_ENABLED(CONFIG_DESKTOP_HID_CONSUMER_CTRL) ||
-	      IS_ENABLED(CONFIG_DESKTOP_HID_SYSTEM_CTRL)) && is_hid_ctrl_event(eh))) {
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) && is_hid_mouse_event(eh)) ||
+	    (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) && is_hid_keyboard_event(eh)) ||
+	    ((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT) ||
+	      IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT)) && is_hid_ctrl_event(eh))) {
 		/* Do not scan when devices are in use. */
 		scan_counter = 0;
 

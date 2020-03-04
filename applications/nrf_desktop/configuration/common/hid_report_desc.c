@@ -20,7 +20,7 @@
 
 
 const u8_t hid_report_desc[] = {
-#if CONFIG_DESKTOP_HID_MOUSE
+#if CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT
 	0x05, 0x01,     /* Usage Page (Generic Desktop) */
 	0x09, 0x02,     /* Usage (Mouse) */
 	0xA1, 0x01,     /* Collection (Application) */
@@ -63,7 +63,7 @@ const u8_t hid_report_desc[] = {
 	0xC0,           /* End Collection (Application) */
 #endif
 
-#if CONFIG_DESKTOP_HID_KEYBOARD
+#if CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
 	0x05, 0x01,     /* Usage Page (Generic Desktop) */
 	0x09, 0x06,     /* Usage (Keyboard) */
 	0xA1, 0x01,     /* Collection (Application) */
@@ -112,13 +112,13 @@ const u8_t hid_report_desc[] = {
 	0x75, 0x03,       /* Report Size (3) (padding) */
 	0x91, 0x01,       /* Output (Constant, Array, Absolute) */
 
-#if (CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE && !CONFIG_DESKTOP_HID_MOUSE)
+#if (CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE && !CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)
 	USER_CONFIG_FEATURE_REPORT(REPORT_ID_USER_CONFIG, REPORT_SIZE_USER_CONFIG),
 #endif
 	0xC0,		/* End Collection (Application) */
 #endif
 
-#if CONFIG_DESKTOP_HID_SYSTEM_CTRL
+#if CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
 	0x05, 0x01,     /* Usage page (Generic Desktop) */
 	0x09, 0x80,     /* Usage (System Control) */
 
@@ -136,7 +136,7 @@ const u8_t hid_report_desc[] = {
 	0xC0,		/* End Collection */
 #endif
 
-#if CONFIG_DESKTOP_HID_CONSUMER_CTRL
+#if CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
 	/* Usage page - Consumer Control */
 	0x05, USAGE_PAGE_CONSUMER_CTRL,
 	0x09, 0x01,     /* Usage (Consumer Control) */
