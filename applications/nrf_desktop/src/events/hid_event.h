@@ -27,42 +27,15 @@ extern "C" {
 #endif
 
 
-/** @brief Keyboard report data event. */
-struct hid_keyboard_event {
+/** @brief HID report event. */
+struct hid_report_event {
 	struct event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
-	u8_t modifier_bm; /**< Bitmask indicating pressed modifier keys. */
-	u8_t keys[6];     /**< Array of pressed keys' usage values. */
+	struct event_dyndata dyndata; /**< Report data. The first byte is a report id. */
 };
 
-EVENT_TYPE_DECLARE(hid_keyboard_event);
-
-
-/** @brief Mouse report data event. */
-struct hid_mouse_event {
-	struct event_header header; /**< Event header. */
-
-	const void *subscriber; /**< Id of the report subscriber. */
-	u8_t  button_bm;  /**< Bitmask indicating pressed mouse buttons. */
-	s16_t wheel;      /**< Change of wheel (scroll). */
-	s16_t dx;         /**< Position change in x axis. */
-	s16_t dy;         /**< Position change in y axis. */
-};
-
-EVENT_TYPE_DECLARE(hid_mouse_event);
-
-
-/** @brief System/consumer control report data event. */
-struct hid_ctrl_event {
-	struct event_header header; /**< Event header. */
-
-	enum in_report report_type; /**< Type of HID control (system/consumer). */
-	const void *subscriber; /**< Id of the report subscriber. */
-	u16_t usage;            /**< Usage of CC button pressed. */
-};
-
-EVENT_TYPE_DECLARE(hid_ctrl_event);
+EVENT_TYPE_DYNDATA_DECLARE(hid_report_event);
 
 
 /** @brief Report subscriber event. */
@@ -70,7 +43,7 @@ struct hid_report_subscriber_event {
 	struct event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
-	bool connected;   /**< True if subscriber is connected to the system. */
+	bool connected; /**< True if subscriber is connected to the system. */
 };
 
 EVENT_TYPE_DECLARE(hid_report_subscriber_event);
@@ -80,9 +53,9 @@ EVENT_TYPE_DECLARE(hid_report_subscriber_event);
 struct hid_report_sent_event {
 	struct event_header header; /**< Event header. */
 
-	const void *subscriber;     /**< Id of the report subscriber. */
-	enum in_report report_type; /**< Type of the report. */
-	bool error;                 /**< If true error occured on send. */
+	const void *subscriber; /**< Id of the report subscriber. */
+	u8_t report_id; /**< Report id. */
+	bool error; /**< If true error occured on send. */
 };
 
 EVENT_TYPE_DECLARE(hid_report_sent_event);
@@ -92,9 +65,9 @@ EVENT_TYPE_DECLARE(hid_report_sent_event);
 struct hid_report_subscription_event {
 	struct event_header header; /**< Event header. */
 
-	const void *subscriber;     /**< Id of the report subscriber. */
-	enum in_report report_type; /**< Type of the report. */
-	bool enabled;               /**< True if notification are enabled. */
+	const void *subscriber; /**< Id of the report subscriber. */
+	u8_t report_id; /**< Report id. */
+	bool enabled; /**< True if notification are enabled. */
 };
 
 EVENT_TYPE_DECLARE(hid_report_subscription_event);

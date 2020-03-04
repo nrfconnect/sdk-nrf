@@ -15,8 +15,8 @@ static int log_hid_notification_event(const struct event_header *eh, char *buf,
 		cast_hid_notification_event(eh);
 
 	return snprintf(buf, buf_len,
-			"report:0x%x mode:0x%x event:0x%x",
-			event->report_type, event->report_mode, event->event);
+			"report_id 0x%x %sabled",
+			event->report_id, (event->enabled)?"en":"dis");
 }
 
 EVENT_TYPE_DEFINE(hid_notification_event,

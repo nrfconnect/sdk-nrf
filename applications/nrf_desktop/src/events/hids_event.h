@@ -31,9 +31,8 @@ extern "C" {
 struct hid_notification_event {
 	struct event_header header; /**< Event header. */
 
-	enum in_report report_type; /**< Type of the report. */
-	enum report_mode report_mode;
-	enum bt_gatt_hids_notif_evt event;
+	u8_t report_id; /**< HID report id. */
+	bool enabled; /**< True if report is enabled. */
 };
 
 EVENT_TYPE_DECLARE(hid_notification_event);
