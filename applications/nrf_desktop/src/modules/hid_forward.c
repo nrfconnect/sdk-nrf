@@ -657,9 +657,10 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 	LOG_INF("HID device disconnected");
 
 	/* Release all pressed keys. */
-	u8_t empty_data[MAX(REPORT_SIZE_CTRL,
-			MAX(REPORT_SIZE_MOUSE,
-			    REPORT_SIZE_KEYBOARD_KEYS))] = {0};
+	u8_t empty_data[MAX(MAX(REPORT_SIZE_SYSTEM_CTRL,
+				REPORT_SIZE_CONSUMER_CTRL),
+			    MAX(REPORT_SIZE_MOUSE,
+				REPORT_SIZE_KEYBOARD_KEYS))] = {0};
 	struct bt_gatt_hids_c_rep_info *rep = NULL;
 
 	while (NULL != (rep = bt_gatt_hids_c_rep_next(&subscriber->hidc, rep))) {

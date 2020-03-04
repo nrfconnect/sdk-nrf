@@ -254,8 +254,22 @@ static void send_keyboard_report(const struct hid_keyboard_event *event)
 
 static void send_ctrl_report(const struct hid_ctrl_event *event)
 {
-	__ASSERT_NO_MSG((event->report_type == IN_REPORT_SYSTEM_CTRL) ||
-			(event->report_type == IN_REPORT_CONSUMER_CTRL));
+	u8_t report_id = 0;
+	size_t report_size = 0;
+
+	switch (event->report_type) {
+	case IN_REPORT_SYSTEM_CTRL:
+		report_id = REPORT_ID_SYSTEM_CTRL;
+		report_size = REPORT_SIZE_SYSTEM_CTRL;
+		break;
+	case IN_REPORT_CONSUMER_CTRL:
+		report_id = REPORT_ID_CONSUMER_CTRL;
+		report_size = REPORT_SIZE_CONSUMER_CTRL;
+		break;
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
 
 	if (&state != event->subscriber) {
 		/* It's not us */
@@ -267,12 +281,12 @@ static void send_ctrl_report(const struct hid_ctrl_event *event)
 		return;
 	}
 
-	u8_t buffer[REPORT_SIZE_CTRL + sizeof(u8_t)];
+	u8_t buffer[report_size + sizeof(u8_t)];
 
 	if (hid_protocol == HID_PROTOCOL_REPORT) {
 		__ASSERT(sizeof(buffer) == 3, "Invalid report size");
 		/* Encode report. */
-		buffer[0] = IN_REPORT_TO_REPORT_ID(event->report_type);
+		buffer[0] = report_id;
 		sys_put_le16(event->usage, &buffer[1]);
 	} else {
 		/* Do not send when in boot mode. */

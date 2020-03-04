@@ -38,10 +38,10 @@ BT_GATT_HIDS_DEF(hids_obj,
 		 REPORT_SIZE_KEYBOARD_KEYS,
 		 REPORT_SIZE_KEYBOARD_LEDS
 #if CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
-		 , REPORT_SIZE_CTRL
+		 , REPORT_SIZE_SYSTEM_CTRL
 #endif
 #if CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
-		 , REPORT_SIZE_CTRL
+		 , REPORT_SIZE_CONSUMER_CTRL
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		 , REPORT_SIZE_USER_CONFIG
@@ -257,7 +257,7 @@ static int module_init(void)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT)) {
 		input_report[ir_pos].id      = REPORT_ID_SYSTEM_CTRL;
-		input_report[ir_pos].size    = REPORT_SIZE_CTRL;
+		input_report[ir_pos].size    = REPORT_SIZE_SYSTEM_CTRL;
 		input_report[ir_pos].handler = system_ctrl_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
@@ -266,7 +266,7 @@ static int module_init(void)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
 		input_report[ir_pos].id      = REPORT_ID_CONSUMER_CTRL;
-		input_report[ir_pos].size    = REPORT_SIZE_CTRL;
+		input_report[ir_pos].size    = REPORT_SIZE_CONSUMER_CTRL;
 		input_report[ir_pos].handler = consumer_ctrl_notif_handler;
 
 		report_index[input_report[ir_pos].id] = ir_pos;
@@ -496,6 +496,7 @@ static void send_ctrl_report(const struct hid_ctrl_event *event)
 {
 	bt_gatt_complete_func_t sent_cb = NULL;
 	enum report_id report_id = REPORT_ID_COUNT;
+	size_t report_size = 0;
 	void (*sent_fn)(const struct bt_conn*, bool) = NULL;
 	enum in_report report_type = event->report_type;
 
@@ -503,6 +504,7 @@ static void send_ctrl_report(const struct hid_ctrl_event *event)
 	case IN_REPORT_SYSTEM_CTRL:
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT));
 		report_id = REPORT_ID_SYSTEM_CTRL;
+		report_id = REPORT_SIZE_SYSTEM_CTRL;
 		sent_cb = system_ctrl_report_sent_cb;
 		sent_fn = system_ctrl_report_sent;
 	break;
@@ -510,6 +512,7 @@ static void send_ctrl_report(const struct hid_ctrl_event *event)
 	case IN_REPORT_CONSUMER_CTRL:
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT));
 		report_id = REPORT_ID_CONSUMER_CTRL;
+		report_size = REPORT_SIZE_CONSUMER_CTRL;
 		sent_cb = consumer_ctrl_report_sent_cb;
 		sent_fn = consumer_ctrl_report_sent;
 	break;
@@ -529,10 +532,10 @@ static void send_ctrl_report(const struct hid_ctrl_event *event)
 		return;
 	}
 
-	u8_t report[REPORT_SIZE_CTRL];
+	u8_t report[report_size];
 
-	BUILD_ASSERT_MSG(ARRAY_SIZE(report) == sizeof(event->usage),
-			 "Incorrect data size in event");
+	__ASSERT(report_size == sizeof(event->usage),
+		 "Incorrect data size in event");
 
 	/* Set selected usage */
 	sys_put_le16(event->usage, report);
