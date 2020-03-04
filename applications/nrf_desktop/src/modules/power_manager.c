@@ -125,8 +125,8 @@ static void error(struct k_work *work)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if ((IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE) && is_hid_mouse_event(eh)) ||
-	    (IS_ENABLED(CONFIG_DESKTOP_HID_KEYBOARD) && is_hid_keyboard_event(eh))) {
+	if ((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) && is_hid_mouse_event(eh)) ||
+	    (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) && is_hid_keyboard_event(eh))) {
 		/* Device is connected and sends reports to host. */
 		power_down_counter_reset();
 
