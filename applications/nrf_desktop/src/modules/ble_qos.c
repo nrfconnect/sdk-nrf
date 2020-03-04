@@ -173,15 +173,15 @@ static void update_parameters(const u8_t *qos_ble_params,
 		pos = 0;
 
 		filter_params.wifi_rating_inc =
-			sys_get_le16(&qos_ble_params[pos]);
+			sys_get_le16(&qos_wifi_params[pos]);
 		pos += sizeof(wifi_params.wifi_rating_inc);
 
 		filter_params.wifi_present_threshold =
-			sys_get_le16(&qos_ble_params[pos]);
+			sys_get_le16(&qos_wifi_params[pos]);
 		pos += sizeof(wifi_params.wifi_present_threshold);
 
 		filter_params.wifi_active_threshold =
-			sys_get_le16(&qos_ble_params[pos]);
+			sys_get_le16(&qos_wifi_params[pos]);
 		pos += sizeof(wifi_params.wifi_active_threshold);
 	}
 

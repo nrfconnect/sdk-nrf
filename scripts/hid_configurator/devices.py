@@ -72,7 +72,7 @@ QOS_OPTIONS_FORMAT = {
     QOS_OPT_BLACKLIST: ('<H', ['wifi_blacklist'], lambda x: str([i for i in range(0,16) if x & (1 << i) != 0])[1:-1], lambda x: sum(map(lambda y: (1 << int(y)), re.findall(r'([\d]+)', x)))),
     QOS_OPT_CHMAP: ('<5s', ['channel_map'], lambda x: '0x{:02X}{:02X}{:02X}{:02X}{:02X}'.format(x[4],x[3],x[2],x[1],x[0]), None),
     QOS_OPT_PARAM_BLE: ('<HBhhHBHHH', ['sample_count_min', 'min_channel_count', 'weight_crc_ok', 'weight_crc_error', 'ble_block_threshold', 'eval_max_count', 'eval_duration', 'eval_keepout_duration', 'eval_success_threshold'], None, None),
-    QOS_OPT_PARAM_WIFI: ('<HHH', ['wifi_rating_inc', 'wifi_present_threshold', 'wifi_active_threshold'], None, None),
+    QOS_OPT_PARAM_WIFI: ('<hhh', ['wifi_rating_inc', 'wifi_present_threshold', 'wifi_active_threshold'], None, None),
 }
 
 PCA20041_CONFIG = {
