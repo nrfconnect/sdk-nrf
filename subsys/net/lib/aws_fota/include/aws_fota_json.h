@@ -46,6 +46,8 @@ extern "C" {
  * @param[in] payload_len  The length of the provided string.
  * @param[out] job_id_buf  Output buffer for the "jobId" field from the
  *			   JobExecution data type.
+ * @param[out] schema_buf  Output buffer for the "protocol" field from the Job
+ *			     Document
  * @param[out] hostname_buf  Output buffer for the "host" field from the Job
  *			     Document
  * @param[out] file_path_buf  Output buffer for the "file" field from the Job
@@ -59,6 +61,7 @@ extern "C" {
 int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 					    u32_t payload_len,
 					    char *job_id_buf,
+					    char *schema_buf,
 					    char *hostname_buf,
 					    char *file_path_buf,
 					    int *version_number);

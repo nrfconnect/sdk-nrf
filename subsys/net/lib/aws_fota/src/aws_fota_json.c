@@ -59,12 +59,14 @@ cleanup:
 int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 					   u32_t payload_len,
 					   char *job_id_buf,
+					   char *schema_buf,
 					   char *hostname_buf,
 					   char *file_path_buf,
 					   int *execution_version_number)
 {
 	if (job_document == NULL
 	    || job_id_buf == NULL
+	    || schema_buf == NULL
 	    || hostname_buf == NULL
 	    || file_path_buf == NULL
 	    || execution_version_number == NULL) {
@@ -115,13 +117,38 @@ int aws_fota_parse_DescribeJobExecution_rsp(const char *job_document,
 
 	cJSON *hostname = cJSON_GetObjectItemCaseSensitive(location, "host");
 	cJSON *path = cJSON_GetObjectItemCaseSensitive(location, "path");
+	cJSON *protocol = cJSON_GetObjectItemCaseSensitive(location, "protocol");
 
+#if defined(CONFIG_HTTP_PARSER_URL)
+	cJSON *url = cJSON_GetObjectItemCaseSensitive(location, "url");
+
+	if (cJSON_GetStringValue(url) != NULL) {
+		struct http_parser_url u;
+		http_parser_url_init(&u);
+		http_parser_parse_url(url->valuestring, strlen(url->valuestring), false, &u);
+		/* TODO: Check len vs max len */
+		strncpy_nullterm(schema_buf, url->valuestring
+				 + u.field_data[UF_SCHEMA].off,
+				 u.field_data[UF_SCHEMA].len + 1);
+		strncpy_nullterm(hostname_buf, url->valuestring
+				 + u.field_data[UF_HOST].off,
+				 u.field_data[UF_HOST].len + 1);
+		strncpy_nullterm(file_path_buf, url->valuestring
+				 + u.field_data[UF_PATH].off + 1,
+				 u.field_data[UF_PATH].len
+				 + u.field_data[UF_QUERY].len + 1);
+	} else
+#endif
+	/* This is kept for backwards compatibility with previous format */
 	if ((cJSON_GetStringValue(hostname) != NULL)
-	   && (cJSON_GetStringValue(path) != NULL)) {
+	   && (cJSON_GetStringValue(path) != NULL)
+	   && (cJSON_GetStringValue(protocol) != NULL)) {
+		strncpy_nullterm(schema_buf, protocol->valuestring, 8);
 		strncpy_nullterm(hostname_buf, hostname->valuestring,
 				CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN);
 		strncpy_nullterm(file_path_buf, path->valuestring,
 				CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN);
+
 	} else {
 		ret = -ENODATA;
 		goto cleanup;
