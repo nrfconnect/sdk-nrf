@@ -203,12 +203,12 @@ static void download_with_offset(struct k_work *unused)
 	}
 }
 
-int fota_download_start(const char *host, const char *file)
+int fota_download_start(const char *host, const char *file, int sec_tag)
 {
 	int err = -1;
 
 	struct download_client_cfg config = {
-		.sec_tag = -1, /* HTTP */
+		.sec_tag = sec_tag,
 	};
 
 	if (host == NULL || file == NULL || callback == NULL) {

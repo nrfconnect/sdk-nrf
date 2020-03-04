@@ -27,13 +27,14 @@ void bsd_recoverable_error_handler(uint32_t err)
 	printk("bsdlib recoverable error: %u\n", err);
 }
 
+#define NO_TLS -1
 /**@brief Start transfer of the file. */
 static void app_dfu_transfer_start(struct k_work *unused)
 {
 	int retval;
 
 	retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
-				     CONFIG_DOWNLOAD_FILE);
+				     CONFIG_DOWNLOAD_FILE, NO_TLS);
 	if (retval != 0) {
 		/* Re-enable button callback */
 		gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
