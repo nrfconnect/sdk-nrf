@@ -77,7 +77,8 @@ static int store_flash_img_context(void)
 {
 	if (IS_ENABLED(CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS)) {
 		char key[] = MODULE "/" FILE_FLASH_IMG;
-		int err = settings_save_one(key, &flash_img, sizeof(flash_img));
+		int err = settings_save_one(key, &flash_img.bytes_written,
+					    sizeof(flash_img.bytes_written));
 
 		if (err) {
 			LOG_ERR("Problem storing offset (err %d)", err);
@@ -97,9 +98,9 @@ static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
 	if (!strcmp(key, FILE_FLASH_IMG)) {
-		ssize_t len = read_cb(cb_arg, &flash_img,
-				      sizeof(flash_img));
-		if (len != sizeof(flash_img)) {
+		ssize_t len = read_cb(cb_arg, &flash_img.bytes_written,
+				      sizeof(flash_img.bytes_written));
+		if (len != sizeof(flash_img.bytes_written)) {
 			LOG_ERR("Can't read flash_img from storage");
 			return len;
 		}
