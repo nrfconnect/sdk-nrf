@@ -1,10 +1,10 @@
-.. _lib_others:
+.. _lib_dfu:
 
-Other libraries
+DFU libraries
 ###############
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
-   ../../include/*
+   ../../include/dfu/*

@@ -1,10 +1,10 @@
-.. _lib_others:
+.. _lib_debug:
 
-Other libraries
+Debug libraries
 ###############
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
-   ../../include/*
+   ../../include/debug/*

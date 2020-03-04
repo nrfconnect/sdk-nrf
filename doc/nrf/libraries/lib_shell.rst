@@ -1,10 +1,10 @@
-.. _lib_others:
+.. _lib_shell:
 
-Other libraries
+Shell libraries
 ###############
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
-   ../../include/*
+   ../../include/shell/*
