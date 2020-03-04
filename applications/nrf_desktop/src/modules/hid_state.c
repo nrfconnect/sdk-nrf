@@ -43,9 +43,10 @@ enum state {
 };
 
 #define SUBSCRIBER_COUNT 2
-#define ITEM_COUNT MAX(MAX(MOUSE_REPORT_BUTTON_COUNT_MAX,  \
-			   KEYBOARD_REPORT_KEY_COUNT_MAX), \
-		       CTRL_REPORT_KEY_COUNT_MAX)
+#define ITEM_COUNT MAX(MAX(MOUSE_REPORT_BUTTON_COUNT_MAX,	\
+			   KEYBOARD_REPORT_KEY_COUNT_MAX),	\
+		       MAX(SYSTEM_CTRL_REPORT_KEY_COUNT_MAX,	\
+			   CONSUMER_CTRL_REPORT_KEY_COUNT_MAX))
 
 /**@brief HID state item. */
 struct item {
@@ -108,9 +109,9 @@ static struct hid_state state = {
 	.report_data[IN_REPORT_KEYBOARD_KEYS].items.item_count_max =
 		KEYBOARD_REPORT_KEY_COUNT_MAX,
 	.report_data[IN_REPORT_SYSTEM_CTRL].items.item_count_max =
-		CTRL_REPORT_KEY_COUNT_MAX,
+		SYSTEM_CTRL_REPORT_KEY_COUNT_MAX,
 	.report_data[IN_REPORT_CONSUMER_CTRL].items.item_count_max =
-		CTRL_REPORT_KEY_COUNT_MAX,
+		CONSUMER_CTRL_REPORT_KEY_COUNT_MAX,
 };
 
 
