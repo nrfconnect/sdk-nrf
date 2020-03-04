@@ -42,7 +42,9 @@ enum state {
 	STATE_CONNECTED_BUSY	/**< Connected, report is generated. */
 };
 
-#define SUBSCRIBER_COUNT 2
+#define SUBSCRIBER_COUNT (IS_ENABLED(CONFIG_DESKTOP_HIDS_ENABLE) + \
+			  IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE))
+
 #define ITEM_COUNT MAX(MAX(MOUSE_REPORT_BUTTON_COUNT_MAX,	\
 			   KEYBOARD_REPORT_KEY_COUNT_MAX),	\
 		       MAX(SYSTEM_CTRL_REPORT_KEY_COUNT_MAX,	\
@@ -448,18 +450,18 @@ static void disconnect_subscriber(const void *subscriber_id)
 	}
 
 	if (s == state.selected) {
-		enum in_report tr = IN_REPORT_MOUSE;
-		struct report_state *rs = &s->state[tr];
+		for (enum in_report tr = 0; tr < IN_REPORT_COUNT; tr++) {
+			struct report_state *rs = &s->state[tr];
 
-		if (rs->state != STATE_DISCONNECTED) {
-			/* Clear state if notification was not
-			 * disabled before disconnection.
-			 */
-			struct report_data *rd = &state.report_data[tr];
+			if (rs->state != STATE_DISCONNECTED) {
+				/* Clear state if notification was not
+				 * disabled before disconnection.
+				 */
+				struct report_data *rd = &state.report_data[tr];
 
-			LOG_INF("Clear mouse report data");
-			clear_items(&rd->items);
-			eventq_reset(&rd->eventq);
+				clear_items(&rd->items);
+				eventq_reset(&rd->eventq);
+			}
 		}
 	}
 
@@ -549,125 +551,124 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 
 static void send_report_keyboard(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
-		struct report_data *rd = &state.report_data[IN_REPORT_KEYBOARD_KEYS];
-
-		const size_t max = ARRAY_SIZE(rd->items.item);
-
-		struct hid_keyboard_event *event = new_hid_keyboard_event();
-
-		event->subscriber = state.selected->id;
-		event->modifier_bm = 0;
-
-		size_t cnt = 0;
-		for (size_t i = 0;
-		     (i < max) && (cnt < ARRAY_SIZE(event->keys));
-		     i++) {
-			struct item item = rd->items.item[max - i - 1];
-
-			if (item.usage_id) {
-				__ASSERT_NO_MSG(item.value > 0);
-				if (item.usage_id <= KEYBOARD_REPORT_LAST_KEY) {
-					event->keys[cnt] = item.usage_id;
-					cnt++;
-				} else if ((item.usage_id >= KEYBOARD_REPORT_FIRST_MODIFIER) &&
-					   (item.usage_id <= KEYBOARD_REPORT_LAST_MODIFIER)) {
-					event->modifier_bm |= BIT(item.usage_id - KEYBOARD_REPORT_FIRST_MODIFIER);
-				} else {
-					LOG_WRN("Undefined usage 0x%x", item.usage_id);
-				}
-			} else {
-				break;
-			}
-		}
-
-		/* Fill the rest of report with zeros. */
-		for (; cnt < ARRAY_SIZE(event->keys); cnt++) {
-			event->keys[cnt] = 0;
-		}
-
-		EVENT_SUBMIT(event);
-
-		rd->items.update_needed = false;
-	} else {
+	if (!IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
+		return;
 	}
+
+	struct report_data *rd = &state.report_data[IN_REPORT_KEYBOARD_KEYS];
+
+	const size_t max = ARRAY_SIZE(rd->items.item);
+
+	struct hid_keyboard_event *event = new_hid_keyboard_event();
+
+	event->subscriber = state.selected->id;
+	event->modifier_bm = 0;
+
+	size_t cnt = 0;
+	for (size_t i = 0;
+	     (i < max) && (cnt < ARRAY_SIZE(event->keys));
+	     i++) {
+		struct item item = rd->items.item[max - i - 1];
+
+		if (item.usage_id) {
+			__ASSERT_NO_MSG(item.value > 0);
+			if (item.usage_id <= KEYBOARD_REPORT_LAST_KEY) {
+				event->keys[cnt] = item.usage_id;
+				cnt++;
+			} else if ((item.usage_id >= KEYBOARD_REPORT_FIRST_MODIFIER) &&
+				   (item.usage_id <= KEYBOARD_REPORT_LAST_MODIFIER)) {
+				event->modifier_bm |= BIT(item.usage_id - KEYBOARD_REPORT_FIRST_MODIFIER);
+			} else {
+				LOG_WRN("Undefined usage 0x%x", item.usage_id);
+			}
+		} else {
+			break;
+		}
+	}
+
+	/* Fill the rest of report with zeros. */
+	for (; cnt < ARRAY_SIZE(event->keys); cnt++) {
+		event->keys[cnt] = 0;
+	}
+
+	EVENT_SUBMIT(event);
+
+	rd->items.update_needed = false;
 }
 
 static void send_report_mouse(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
-		struct report_data *rd = &state.report_data[IN_REPORT_MOUSE];
-
-		struct hid_mouse_event *event = new_hid_mouse_event();
-
-		event->subscriber = state.selected->id;
-
-		event->dx        = state.last_dx;
-		event->dy        = -state.last_dy;
-		event->wheel     = state.wheel_acc / 2;
-		event->button_bm = 0;
-
-		state.last_dx   = 0;
-		state.last_dy   = 0;
-		state.wheel_acc -= event->wheel * 2;
-
-		/* Traverse pressed keys and build mouse buttons report */
-		for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
-			struct item item = rd->items.item[i];
-
-			if (item.usage_id) {
-				__ASSERT_NO_MSG(item.usage_id <= 8);
-				__ASSERT_NO_MSG(item.value > 0);
-
-				u8_t mask = 1 << (item.usage_id - 1);
-
-				event->button_bm |= mask;
-			}
-		}
-
-		EVENT_SUBMIT(event);
-
-		rd->items.update_needed = false;
-	} else {
+	if (!IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
+		return;
 	}
+
+	struct report_data *rd = &state.report_data[IN_REPORT_MOUSE];
+
+	struct hid_mouse_event *event = new_hid_mouse_event();
+
+	event->subscriber = state.selected->id;
+
+	event->dx        = state.last_dx;
+	event->dy        = -state.last_dy;
+	event->wheel     = state.wheel_acc / 2;
+	event->button_bm = 0;
+
+	state.last_dx   = 0;
+	state.last_dy   = 0;
+	state.wheel_acc -= event->wheel * 2;
+
+	/* Traverse pressed keys and build mouse buttons report */
+	for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
+		struct item item = rd->items.item[i];
+
+		if (item.usage_id) {
+			__ASSERT_NO_MSG(item.usage_id <= 8);
+			__ASSERT_NO_MSG(item.value > 0);
+
+			u8_t mask = 1 << (item.usage_id - 1);
+
+			event->button_bm |= mask;
+		}
+	}
+
+	EVENT_SUBMIT(event);
+
+	rd->items.update_needed = false;
 }
 
 static void send_report_ctrl(enum in_report report_type)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) ||
-	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
-		if (report_type == IN_REPORT_SYSTEM_CTRL) {
-			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT));
-		} else if (report_type == IN_REPORT_CONSUMER_CTRL) {
-			__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT));
-		} else {
-			/* Unsupported report type. */
-			__ASSERT_NO_MSG(false);
-		}
-
-		struct report_data *rd =
-			&state.report_data[report_type];
-		const size_t max = ARRAY_SIZE(rd->items.item);
-
-		struct hid_ctrl_event *event = new_hid_ctrl_event();
-
-		event->report_type = report_type;
-		event->subscriber = state.selected->id;
-
-		/* Only one item can fit in the consumer control report. */
-		event->usage = rd->items.item[max - 1].usage_id;
-
-		EVENT_SUBMIT(event);
-
-		rd->items.update_needed = false;
+	if ((report_type == IN_REPORT_SYSTEM_CTRL) &&
+	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT)) {
+		/* System control */
+	} else if ((report_type == IN_REPORT_CONSUMER_CTRL) &&
+		   IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
+		/* Consumer control */
 	} else {
 		/* Not supported. */
 		__ASSERT_NO_MSG(false);
+		return;
 	}
+
+	struct report_data *rd =
+		&state.report_data[report_type];
+	const size_t max = ARRAY_SIZE(rd->items.item);
+
+	struct hid_ctrl_event *event = new_hid_ctrl_event();
+
+	event->report_type = report_type;
+	event->subscriber = state.selected->id;
+
+	/* Only one item can fit in the consumer control report. */
+	event->usage = rd->items.item[max - 1].usage_id;
+
+	EVENT_SUBMIT(event);
+
+	rd->items.update_needed = false;
 }
 
 static bool update_report(enum in_report tr)
