@@ -22,6 +22,9 @@
 #include <net/cloud.h>
 #include <net/socket.h>
 #include <net/nrf_cloud.h>
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+#include <net/nrf_cloud_agps.h>
+#endif
 
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 #include <dfu/mcuboot.h>
@@ -134,6 +137,7 @@ static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
 static struct k_delayed_work cycle_cloud_connection_work;
 static struct k_work device_status_work;
+static struct k_work send_agps_request_work;
 
 #if defined(CONFIG_AT_CMD)
 #define MODEM_AT_CMD_BUFFER_LEN (CONFIG_AT_CMD_RESPONSE_MAX_LEN + 1)
@@ -256,6 +260,35 @@ void k_sys_fatal_error_handler(unsigned int reason,
 void cloud_error_handler(int err)
 {
 	error_handler(ERROR_CLOUD, err);
+}
+
+static void send_agps_request(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	int err;
+	static s64_t last_request_timestamp;
+
+
+	if ((last_request_timestamp != 0) &&
+	    (k_uptime_get() - last_request_timestamp < K_HOURS(1))) {
+		LOG_WRN("A-GPS request was sent less than 1 hour ago");
+		return;
+	}
+
+	LOG_INF("Sending A-GPS request");
+
+	err = nrf_cloud_agps_request_all();
+	if (err) {
+		LOG_ERR("A-GPS request failed, error: %d", err);
+		return;
+	}
+
+	last_request_timestamp = k_uptime_get();
+
+	LOG_INF("A-GPS request sent");
+#endif /* defined(CONFIG_NRF_CLOUD_AGPS) */
 }
 
 void cloud_connect_error_handler(enum cloud_connect_result err)
@@ -461,6 +494,8 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 		break;
 	case GPS_EVT_AGPS_DATA_NEEDED:
 		LOG_INF("GPS_EVT_AGPS_DATA_NEEDED");
+		k_work_submit_to_queue(&application_work_q,
+				       &send_agps_request_work);
 		break;
 	case GPS_EVT_ERROR:
 		LOG_INF("GPS_EVT_ERROR\n");
@@ -557,6 +592,8 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 
 		LOG_INF("starting GPS in %lld seconds", time_to_start_next_fix);
 		gps_control_start((uint32_t)K_SECONDS(time_to_start_next_fix));
+		k_work_submit_to_queue(&application_work_q,
+				       &send_agps_request_work);
 	}
 }
 #endif
@@ -1003,7 +1040,7 @@ void sensors_start(void)
 	sensors_init();
 
 	if (IS_ENABLED(CONFIG_GPS_START_AFTER_CLOUD_EVT_READY)) {
-		gps_control_start(K_NO_WAIT);
+		set_gps_enable(true);
 	}
 }
 
@@ -1080,7 +1117,6 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		/* Mark image as good to avoid rolling back after update */
 		boot_write_img_confirmed();
 #endif
-
 		sensors_start();
 		break;
 	}
@@ -1105,6 +1141,20 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 			/* Cloud decoder has handled the data */
 			return;
 		}
+
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+		/* The decoder didn't handle the data, check if it's A-GPS data
+		 */
+		err = nrf_cloud_agps_process(evt->data.msg.buf,
+					     evt->data.msg.len,
+					     NULL);
+		if (err) {
+			LOG_WRN("Data was not valid A-GPS data, err: %d", err);
+			break;
+		}
+
+		LOG_INF("A-GPS data processed");
+#endif /* defined(CONFIG_GPS_USE_AGPS) */
 		break;
 	}
 	case CLOUD_EVT_PAIR_REQUEST:
@@ -1136,6 +1186,8 @@ static void set_gps_enable(const bool enable)
 
 	if (enable) {
 		LOG_INF("Starting GPS");
+		k_work_submit_to_queue(&application_work_q,
+				       &send_agps_request_work);
 		gps_control_start(K_NO_WAIT);
 	} else {
 		LOG_INF("Stopping GPS");
@@ -1161,6 +1213,7 @@ static void work_init(void)
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_modem_at_cmd_work, send_modem_at_cmd_work_fn);
+	k_work_init(&send_agps_request_work, send_agps_request);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
 	k_delayed_work_init(&cycle_cloud_connection_work,
