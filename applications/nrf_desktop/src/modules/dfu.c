@@ -45,6 +45,23 @@ static u32_t img_length;
 static bool device_in_use;
 static bool is_flash_area_clean;
 
+enum dfu_opt {
+	DFU_OPT_START,
+	DFU_OPT_DATA,
+	DFU_OPT_SYNC,
+	DFU_OPT_REBOOT,
+	DFU_OPT_FWINFO,
+
+	DFU_OPT_COUNT
+};
+
+const static char * const opt_descr[] = {
+	[DFU_OPT_START] = "start",
+	[DFU_OPT_DATA] = "data",
+	[DFU_OPT_SYNC] = "sync",
+	[DFU_OPT_REBOOT] = "reboot",
+	[DFU_OPT_FWINFO] = "fwinfo"
+};
 
 static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
 {
@@ -153,10 +170,8 @@ static void background_erase_handler(struct k_work *work)
 	}
 }
 
-static void handle_dfu_data(const struct config_event *event)
+static void handle_dfu_data(const u8_t *data, const size_t size)
 {
-	const u8_t *data = event->dyndata.data;
-	size_t size = event->dyndata.size;
 	int err;
 
 	if (!is_flash_area_clean) {
@@ -203,11 +218,8 @@ dfu_finish:
 	k_delayed_work_cancel(&dfu_timeout);
 }
 
-static void handle_dfu_start(const struct config_event *event)
+static void handle_dfu_start(const u8_t *data, const size_t size)
 {
-	const u8_t *data = event->dyndata.data;
-	size_t size = event->dyndata.size;
-
 	u32_t length;
 	u32_t csum;
 	u32_t offset;
@@ -297,7 +309,7 @@ static void handle_dfu_start(const struct config_event *event)
 	}
 }
 
-static void handle_dfu_sync(const struct config_fetch_request_event *event)
+static void handle_dfu_sync(u8_t *data, size_t *size)
 {
 	LOG_INF("DFU sync requested");
 
@@ -306,46 +318,34 @@ static void handle_dfu_sync(const struct config_fetch_request_event *event)
 	size_t data_size = sizeof(dfu_active) + sizeof(img_length) +
 			   sizeof(img_csum) + sizeof(cur_offset);
 
-	struct config_fetch_event *fetch_event =
-		new_config_fetch_event(data_size);
-	fetch_event->id = event->id;
-	fetch_event->recipient = event->recipient;
-	fetch_event->channel_id = event->channel_id;
+	*size = data_size;
 
 	size_t pos = 0;
 
-	fetch_event->dyndata.data[pos] = dfu_active;
+	data[pos] = dfu_active;
 	pos += sizeof(dfu_active);
 
-	sys_put_le32(img_length, &fetch_event->dyndata.data[pos]);
+	sys_put_le32(img_length, &data[pos]);
 	pos += sizeof(img_length);
 
-	sys_put_le32(img_csum, &fetch_event->dyndata.data[pos]);
+	sys_put_le32(img_csum, &data[pos]);
 	pos += sizeof(img_csum);
 
-	sys_put_le32(cur_offset, &fetch_event->dyndata.data[pos]);
+	sys_put_le32(cur_offset, &data[pos]);
 	pos += sizeof(cur_offset);
-
-	EVENT_SUBMIT(fetch_event);
 }
 
-static void handle_reboot_request(const struct config_fetch_request_event *event)
+static void handle_reboot_request(u8_t *data, size_t *size)
 {
 	LOG_INF("System reboot requested");
 
-	struct config_fetch_event *fetch_event =
-		new_config_fetch_event(0);
-
-	fetch_event->id = event->id;
-	fetch_event->recipient = event->recipient;
-	fetch_event->channel_id = event->channel_id;
-
-	EVENT_SUBMIT(fetch_event);
+	*size = sizeof(bool);
+	data[0] = true;
 
 	k_delayed_work_submit(&reboot_request, REBOOT_REQUEST_TIMEOUT);
 }
 
-static void handle_image_info_request(const struct config_fetch_request_event *event)
+static void handle_image_info_request(u8_t *data, size_t *size)
 {
 	struct mcuboot_img_header header;
 	u8_t flash_area_id = PM_MCUBOOT_PRIMARY_ID;
@@ -365,53 +365,41 @@ static void handle_image_info_request(const struct config_fetch_request_event *e
 				   sizeof(header.h.v1.sem_ver.minor) +
 				   sizeof(header.h.v1.sem_ver.revision) +
 				   sizeof(header.h.v1.sem_ver.build_num);
-		struct config_fetch_event *fetch_event =
-			new_config_fetch_event(data_size);
-
-		fetch_event->id = event->id;
-		fetch_event->recipient = event->recipient;
-		fetch_event->channel_id = event->channel_id;
-
 		size_t pos = 0;
 
-		fetch_event->dyndata.data[pos] = flash_area_id;
+		*size = data_size;
+		data[pos] = flash_area_id;
 		pos += sizeof(flash_area_id);
 
-		sys_put_le32(header.h.v1.image_size, &fetch_event->dyndata.data[pos]);
+		sys_put_le32(header.h.v1.image_size, &data[pos]);
 		pos += sizeof(header.h.v1.image_size);
 
-		fetch_event->dyndata.data[pos] = header.h.v1.sem_ver.major;
+		data[pos] = header.h.v1.sem_ver.major;
 		pos += sizeof(header.h.v1.sem_ver.major);
 
-		fetch_event->dyndata.data[pos] = header.h.v1.sem_ver.minor;
+		data[pos] = header.h.v1.sem_ver.minor;
 		pos += sizeof(header.h.v1.sem_ver.minor);
 
-		sys_put_le16(header.h.v1.sem_ver.revision, &fetch_event->dyndata.data[pos]);
+		sys_put_le16(header.h.v1.sem_ver.revision, &data[pos]);
 		pos += sizeof(header.h.v1.sem_ver.revision);
 
-		sys_put_le32(header.h.v1.sem_ver.build_num, &fetch_event->dyndata.data[pos]);
+		sys_put_le32(header.h.v1.sem_ver.build_num, &data[pos]);
 		pos += sizeof(header.h.v1.sem_ver.build_num);
-
-		EVENT_SUBMIT(fetch_event);
 	} else {
 		LOG_ERR("Cannot obtain image information");
 	}
 }
 
-static void handle_config_event(const struct config_event *event)
+static void update_config(const u8_t opt_id, const u8_t *data,
+			  const size_t size)
 {
-	if (GROUP_FIELD_GET(event->id) != EVENT_GROUP_DFU) {
-		/* Only DFU events. */
-		return;
-	}
-
-	switch (TYPE_FIELD_GET(event->id)) {
-	case DFU_DATA:
-		handle_dfu_data(event);
+	switch (opt_id) {
+	case DFU_OPT_DATA:
+		handle_dfu_data(data, size);
 		break;
 
-	case DFU_START:
-		handle_dfu_start(event);
+	case DFU_OPT_START:
+		handle_dfu_start(data, size);
 		break;
 
 	default:
@@ -421,24 +409,19 @@ static void handle_config_event(const struct config_event *event)
 	}
 }
 
-static void handle_config_fetch_request_event(const struct config_fetch_request_event *event)
+static void fetch_config(const u8_t opt_id, u8_t *data, size_t *size)
 {
-	if (GROUP_FIELD_GET(event->id) != EVENT_GROUP_DFU) {
-		/* Only DFU events. */
-		return;
-	}
-
-	switch (TYPE_FIELD_GET(event->id)) {
-	case DFU_REBOOT:
-		handle_reboot_request(event);
+	switch (opt_id) {
+	case DFU_OPT_REBOOT:
+		handle_reboot_request(data, size);
 		break;
 
-	case DFU_IMGINFO:
-		handle_image_info_request(event);
+	case DFU_OPT_FWINFO:
+		handle_image_info_request(data, size);
 		break;
 
-	case DFU_SYNC:
-		handle_dfu_sync(event);
+	case DFU_OPT_SYNC:
+		handle_dfu_sync(data, size);
 		break;
 
 	default:
@@ -457,17 +440,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_config_event(eh)) {
-		handle_config_event(cast_config_event(eh));
-
-		return false;
-	}
-
-	if (is_config_fetch_request_event(eh)) {
-		handle_config_fetch_request_event(
-				cast_config_fetch_request_event(eh));
-		return false;
-	}
+	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
+				  fetch_config, false);
 
 	if (is_module_state_event(eh)) {
 		const struct module_state_event *event =
@@ -497,6 +471,6 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, hid_mouse_event);
 EVENT_SUBSCRIBE(MODULE, hid_keyboard_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+EVENT_SUBSCRIBE(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
