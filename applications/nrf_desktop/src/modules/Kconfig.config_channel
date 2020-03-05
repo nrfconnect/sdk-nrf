@@ -23,6 +23,10 @@ module = DESKTOP_CONFIG_CHANNEL
 module-str = Config channel
 source "subsys/logging/Kconfig.template.log_config"
 
+module = DESKTOP_INFO
+module-str = Info
+source "subsys/logging/Kconfig.template.log_config"
+
 endif
 
 config DESKTOP_CONFIG_CHANNEL_DFU_ENABLE

@@ -16,9 +16,6 @@
 
 #include "config_event.h"
 
-/** Maximum length of fetched data. */
-#define CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE 16
-
 /** @brief Configuration channel data frame.
  */
 struct config_channel_frame {

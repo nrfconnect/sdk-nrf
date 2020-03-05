@@ -21,77 +21,35 @@ extern "C" {
 #endif
 
 
-/* Config event ID macros */
-#define GROUP_FIELD_POS		6
-#define GROUP_FIELD_SIZE	2
-#define GROUP_FIELD_MASK	BIT_MASK(GROUP_FIELD_SIZE)
-#define GROUP_FIELD_SET(group)	((group & GROUP_FIELD_MASK) << GROUP_FIELD_POS)
-#define GROUP_FIELD_GET(event_id) ((event_id >> GROUP_FIELD_POS) & GROUP_FIELD_MASK)
-
-#define TYPE_FIELD_POS		0
-#define TYPE_FIELD_SIZE		6
-#define TYPE_FIELD_MASK		BIT_MASK(TYPE_FIELD_SIZE)
-#define TYPE_FIELD_SET(type)	((type & TYPE_FIELD_MASK) << TYPE_FIELD_POS)
-#define TYPE_FIELD_GET(event_id) ((event_id >> TYPE_FIELD_POS) & TYPE_FIELD_MASK)
-
-#define CONFIG_EVENT_ID(group, type) ((u8_t)(GROUP_FIELD_SET(group) | \
-					     TYPE_FIELD_SET(type)))
-
-#define EVENT_GROUP_SETUP	0x1
-#define EVENT_GROUP_DFU		0x2
-#define EVENT_GROUP_LED_STREAM	0x3
-
+/* Maximum length of fetched data. */
+#define CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE 16
 
 /* Config event, setup group macros */
 
-#define MOD_FIELD_POS		3
-#define MOD_FIELD_SIZE		3
+#define MOD_FIELD_POS		4
+#define MOD_FIELD_SIZE		4
 #define MOD_FIELD_MASK		BIT_MASK(MOD_FIELD_SIZE)
 #define MOD_FIELD_SET(module)	((module & MOD_FIELD_MASK) << MOD_FIELD_POS)
 #define MOD_FIELD_GET(event_id) ((event_id >> MOD_FIELD_POS) & MOD_FIELD_MASK)
 
 #define OPT_FIELD_POS		0
-#define OPT_FIELD_SIZE		3
+#define OPT_FIELD_SIZE		4
 #define OPT_FIELD_MASK		BIT_MASK(OPT_FIELD_SIZE)
 #define OPT_FIELD_SET(option)	((option & OPT_FIELD_MASK) << OPT_FIELD_POS)
 #define OPT_FIELD_GET(event_id) ((event_id >> OPT_FIELD_POS) & OPT_FIELD_MASK)
 
-#define SETUP_EVENT_ID(module, option) CONFIG_EVENT_ID(EVENT_GROUP_SETUP, \
-						       MOD_FIELD_SET(module) | OPT_FIELD_SET(option))
+#define OPT_ID_GET(opt_field)	(opt_field - 1)
 
-#define SETUP_MODULE_SENSOR	0x1
-#define SETUP_MODULE_QOS	0x2
-#define SETUP_MODULE_BLE_BOND	0x3
+/* Common module option macros */
+#define MODULE_BROADCAST		BIT_MASK(MOD_FIELD_SIZE)
+#define BROADCAST_OPT_MAX_MOD_ID	0x0
+#define MODULE_OPT_MODULE_DESCR		0x0
 
+/* Character used to inform about end of module description. */
+#define MODULE_DESCR_END_CHAR '\n'
 
-/* Config event, setup group, sensor module macros */
-#define SENSOR_OPT_CPI			0x0
-#define SENSOR_OPT_DOWNSHIFT_RUN	0x1
-#define SENSOR_OPT_DOWNSHIFT_REST1	0x2
-#define SENSOR_OPT_DOWNSHIFT_REST2	0x3
-#define SENSOR_OPT_COUNT 4
-
-/* Config event, setup group, qos module macros */
-#define QOS_OPT_BLACKLIST	0x0
-#define QOS_OPT_CHMAP		0x1
-#define QOS_OPT_PARAM_BLE	0x2
-#define QOS_OPT_PARAM_WIFI	0x3
-#define QOS_OPT_COUNT		4
-
-/* Config event, setup group, ble_bond module macros */
-#define BLE_BOND_PEER_ERASE	0x0
-#define BLE_BOND_PEER_SEARCH	0x1
-#define BLE_BOND_COUNT		2
-
-/* Config event, DFU group macros */
-#define DFU_START	0x0
-#define DFU_DATA	0x1
-#define DFU_SYNC	0x2
-#define DFU_REBOOT	0x3
-#define DFU_IMGINFO	0x4
-
-/* Config event, led stream group macros */
-#define LED_STREAM_DATA 0x0
+/* Description of the option representing module type. */
+#define OPT_DESCR_MODULE_TYPE "module_type"
 
 /** @brief Configuration channel event.
  * Used to change firmware parameters at runtime.
@@ -181,6 +139,93 @@ struct config_forwarded_event {
 };
 
 EVENT_TYPE_DECLARE(config_forwarded_event);
+
+#define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn, last)	\
+	BUILD_ASSERT(ARRAY_SIZE(opt_descr) > 0);						\
+	BUILD_ASSERT(ARRAY_SIZE(opt_descr) <= OPT_FIELD_MASK);					\
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {					\
+		static u8_t config_module_id = MODULE_BROADCAST;				\
+		static u8_t cur_opt_descr;							\
+												\
+		if (is_config_event(eh)) {							\
+			struct config_event *event = cast_config_event(eh);			\
+												\
+			if ((MOD_FIELD_GET(event->id) == MODULE_BROADCAST) &&			\
+			    (OPT_FIELD_GET(event->id) == BROADCAST_OPT_MAX_MOD_ID)) {		\
+				config_module_id = event->dyndata.data[0];			\
+				__ASSERT(config_module_id < MODULE_BROADCAST,			\
+					 "You can use up to 15 configuration modules");		\
+				event->dyndata.data[0]++;					\
+			} else if (MOD_FIELD_GET(event->id) == config_module_id) {		\
+				__ASSERT_NO_MSG(config_set_fn != NULL); 			\
+				(*config_set_fn)(OPT_ID_GET(OPT_FIELD_GET(event->id)),		\
+						 event->dyndata.data,				\
+						 event->dyndata.size);				\
+			}									\
+												\
+			return false;								\
+		}										\
+												\
+		if (is_config_fetch_request_event(eh)) {					\
+			const struct config_fetch_request_event *event =			\
+				cast_config_fetch_request_event(eh);				\
+			u8_t data_buf[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];			\
+			size_t data_size = 0;							\
+												\
+			memset(data_buf, 0, sizeof(data_buf));					\
+												\
+			if ((MOD_FIELD_GET(event->id) == MODULE_BROADCAST) &&			\
+			    (OPT_FIELD_GET(event->id) == BROADCAST_OPT_MAX_MOD_ID)) {		\
+				cur_opt_descr = 0;						\
+				if (last) {							\
+					data_buf[0] = config_module_id;				\
+					data_size = (sizeof(config_module_id));			\
+				}								\
+			} else if (MOD_FIELD_GET(event->id) == config_module_id) {		\
+				if (OPT_FIELD_GET(event->id) == MODULE_OPT_MODULE_DESCR) {	\
+					if (cur_opt_descr < ARRAY_SIZE(opt_descr) + 1) {	\
+						const char *data_ptr;				\
+												\
+						if (cur_opt_descr == 0) {			\
+							data_ptr = mod_name;			\
+						} else {					\
+							data_ptr = opt_descr[cur_opt_descr - 1];\
+						}						\
+						data_size = strlen(data_ptr);			\
+						__ASSERT_NO_MSG(data_size <			\
+							CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);	\
+						strcpy(data_buf, data_ptr);			\
+						cur_opt_descr++;				\
+					} else {						\
+						data_size = sizeof(u8_t);			\
+						data_buf[0] = MODULE_DESCR_END_CHAR;		\
+						cur_opt_descr = 0;				\
+					}							\
+				} else {							\
+					__ASSERT_NO_MSG(config_fetch_fn != NULL);		\
+					(*config_fetch_fn)(OPT_ID_GET(OPT_FIELD_GET(event->id)),\
+							   data_buf,				\
+							   &data_size);				\
+				}								\
+			}									\
+												\
+			if (!data_size) {							\
+				return false;							\
+			}									\
+												\
+			struct config_fetch_event *fetch_event =				\
+			  new_config_fetch_event(data_size);					\
+												\
+			memcpy(fetch_event->dyndata.data, data_buf, data_size);			\
+			fetch_event->id = event->id;						\
+			fetch_event->recipient = event->recipient;				\
+			fetch_event->channel_id = event->channel_id;				\
+												\
+			EVENT_SUBMIT(fetch_event);						\
+												\
+			return false;								\
+		}										\
+	}
 
 #ifdef __cplusplus
 }

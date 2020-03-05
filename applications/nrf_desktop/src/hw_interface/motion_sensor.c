@@ -56,6 +56,15 @@ struct sensor_state {
 	u32_t option_mask;
 };
 
+enum sensor_opt {
+	SENSOR_OPT_TYPE,
+	SENSOR_OPT_CPI,
+	SENSOR_OPT_DOWNSHIFT_RUN,
+	SENSOR_OPT_DOWNSHIFT_REST1,
+	SENSOR_OPT_DOWNSHIFT_REST2,
+
+	SENSOR_OPT_COUNT
+};
 
 static K_SEM_DEFINE(sem, 1, 1);
 static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
@@ -65,7 +74,8 @@ static struct device *sensor_dev;
 
 static struct sensor_state state;
 
-static const char * const opt_names[] = {
+static const char * const opt_descr[] = {
+	[SENSOR_OPT_TYPE] = OPT_DESCR_MODULE_TYPE,
 	[SENSOR_OPT_CPI] = "cpi",
 	[SENSOR_OPT_DOWNSHIFT_RUN] = "downshift",
 	[SENSOR_OPT_DOWNSHIFT_REST1] = "rest1",
@@ -73,9 +83,9 @@ static const char * const opt_names[] = {
 };
 
 
-static enum motion_sensor_option configid_2_option(u8_t config_id)
+static enum motion_sensor_option config_opt_id_2_option(u8_t config_opt_id)
 {
-	switch (config_id) {
+	switch (config_opt_id) {
 	case SENSOR_OPT_CPI:
 		return MOTION_SENSOR_OPTION_CPI;
 
@@ -89,7 +99,8 @@ static enum motion_sensor_option configid_2_option(u8_t config_id)
 		return MOTION_SENSOR_OPTION_SLEEP3_TIMEOUT;
 
 	default:
-		LOG_WRN("Unsupported sensor option (%" PRIu8 ")", config_id);
+		LOG_WRN("Unsupported sensor option (%" PRIu8 ")",
+			config_opt_id);
 		return MOTION_SENSOR_OPTION_COUNT;
 	}
 }
@@ -114,8 +125,10 @@ static bool set_option(enum motion_sensor_option option, u32_t value)
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(opt_names); i++) {
-		if (!strcmp(key, opt_names[i])) {
+	BUILD_ASSERT(SENSOR_OPT_TYPE == 0);
+
+	for (size_t i = (SENSOR_OPT_TYPE + 1); i < ARRAY_SIZE(opt_descr); i++) {
+		if (!strcmp(key, opt_descr[i])) {
 			u32_t readout;
 
 			BUILD_ASSERT(sizeof(readout) ==
@@ -126,11 +139,11 @@ static int settings_set(const char *key, size_t len_rd,
 
 			if ((len != sizeof(readout)) || (len != len_rd)) {
 				LOG_ERR("Can't read option %s from storage",
-					opt_names[i]);
+					opt_descr[i]);
 				return len;
 			}
 
-			set_option(configid_2_option(i), readout);
+			set_option(config_opt_id_2_option(i), readout);
 			break;
 		}
 	}
@@ -355,25 +368,25 @@ static int init(void)
 	return err;
 }
 
-static bool is_my_config_id(u8_t config_id)
+static void fetch_config(const u8_t opt_id, u8_t *data, size_t *size)
 {
-	return (GROUP_FIELD_GET(config_id) == EVENT_GROUP_SETUP) &&
-	       (MOD_FIELD_GET(config_id) == SETUP_MODULE_SENSOR);
-}
-
-static void fetch_config(u8_t config_id, u8_t *data)
-{
-	enum motion_sensor_option option = configid_2_option(config_id);
-
-	if (option < MOTION_SENSOR_OPTION_COUNT) {
-		k_spinlock_key_t key = k_spin_lock(&state.lock);
-		sys_put_le32(state.option[option], data);
-		k_spin_unlock(&state.lock, key);
+	if (opt_id == SENSOR_OPT_TYPE) {
+		*size = strlen(CONFIG_DESKTOP_MOTION_SENSOR_TYPE);
+		__ASSERT_NO_MSG((*size != 0) &&
+				(*size < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
+		strcpy(data, CONFIG_DESKTOP_MOTION_SENSOR_TYPE);
 	} else {
-		sys_put_le32(0, data);
-	}
+		enum motion_sensor_option option = config_opt_id_2_option(opt_id);
 
-	return;
+		if (option < MOTION_SENSOR_OPTION_COUNT) {
+			k_spinlock_key_t key = k_spin_lock(&state.lock);
+			sys_put_le32(state.option[option], data);
+			k_spin_unlock(&state.lock, key);
+			*size = sizeof(state.option[option]);
+		} else {
+			LOG_WRN("Unsupported fetch opt_id: %" PRIu8, opt_id);
+		}
+	}
 }
 
 static void store_config(u8_t opt_id, const u8_t *data, size_t data_size)
@@ -382,7 +395,7 @@ static void store_config(u8_t opt_id, const u8_t *data, size_t data_size)
 		char key[MAX_KEY_LEN];
 
 		int err = snprintk(key, sizeof(key), MODULE_NAME "/%s",
-				   opt_names[opt_id]);
+				   opt_descr[opt_id]);
 
 		if ((err > 0) && (err < MAX_KEY_LEN)) {
 			err = settings_save_one(key, data, data_size);
@@ -390,14 +403,15 @@ static void store_config(u8_t opt_id, const u8_t *data, size_t data_size)
 
 		if (err) {
 			LOG_ERR("Problem storing %s (err = %d)",
-				opt_names[opt_id], err);
+				opt_descr[opt_id], err);
 		}
 	}
 }
 
-static void update_config(const u8_t config_id, const u8_t *data, size_t size)
+static void update_config(const u8_t opt_id, const u8_t *data,
+			  const size_t size)
 {
-	enum motion_sensor_option option = configid_2_option(config_id);
+	enum motion_sensor_option option = config_opt_id_2_option(opt_id);
 
 	if (option < MOTION_SENSOR_OPTION_COUNT) {
 		if (size != sizeof(state.option[option])) {
@@ -406,8 +420,10 @@ static void update_config(const u8_t config_id, const u8_t *data, size_t size)
 		}
 
 		if (set_option(option, sys_get_le32(data))) {
-			store_config(config_id, data, size);
+			store_config(opt_id, data, size);
 		}
+	} else {
+		LOG_WRN("Unsupported set opt_id: %" PRIu8, opt_id);
 	}
 }
 
@@ -679,40 +695,8 @@ static bool event_handler(const struct event_header *eh)
 		return handle_usb_state_event(cast_usb_state_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		if (is_config_event(eh)) {
-			const struct config_event *event = cast_config_event(eh);
-
-			if (is_my_config_id(event->id)) {
-				update_config(OPT_FIELD_GET(event->id),
-					      event->dyndata.data,
-					      event->dyndata.size);
-			}
-
-			return false;
-		}
-
-		if (is_config_fetch_request_event(eh)) {
-			const struct config_fetch_request_event *event =
-				cast_config_fetch_request_event(eh);
-
-			if (is_my_config_id(event->id)) {
-				size_t data_size = sizeof(u32_t);
-				struct config_fetch_event *fetch_event =
-					new_config_fetch_event(data_size);
-
-				fetch_event->id = event->id;
-				fetch_event->recipient = event->recipient;
-				fetch_event->channel_id = event->channel_id;
-				fetch_config(OPT_FIELD_GET(fetch_event->id),
-					     fetch_event->dyndata.data);
-
-				EVENT_SUBMIT(fetch_event);
-			}
-
-			return false;
-		}
-	}
+	GEN_CONFIG_EVENT_HANDLERS("sensor", opt_descr, update_config,
+				  fetch_config, false);
 
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
@@ -725,7 +709,7 @@ EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+EVENT_SUBSCRIBE(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 #endif
 #if CONFIG_DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB

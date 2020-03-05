@@ -37,13 +37,25 @@ struct led {
 static struct led leds[CONFIG_DESKTOP_LED_COUNT];
 static bool initialized;
 
+enum led_stream_opt {
+	LED_STREAM_OPT_SET_LED_EFFECT,
+	LED_STREAM_OPT_GET_LEDS_STATE,
+
+	LED_STREAM_OPT_COUNT,
+};
+
+const static char * const opt_descr[] = {
+	[LED_STREAM_OPT_SET_LED_EFFECT] = "set_led_effect",
+	[LED_STREAM_OPT_GET_LEDS_STATE] = "get_leds_state",
+};
+
 
 static size_t next_index(size_t index)
 {
 	return (index + 1) % STEPS_QUEUE_ARRAY_SIZE;
 }
 
-static bool queue_data(const struct event_dyndata *dyndata, struct led *led)
+static bool queue_data(const u8_t *data, const size_t size, struct led *led)
 {
 	static const size_t min_len = CONFIG_DESKTOP_LED_COLOR_COUNT * sizeof(led->steps_queue[led->rx_idx].color.c[0])
 			 + sizeof(led->steps_queue[led->rx_idx].substep_count)
@@ -52,8 +64,8 @@ static bool queue_data(const struct event_dyndata *dyndata, struct led *led)
 
 	BUILD_ASSERT_MSG(min_len <= LED_STREAM_DATA_SIZE, "");
 
-	if (dyndata->size != LED_STREAM_DATA_SIZE) {
-		LOG_WRN("Invalid stream data size (%zu)", dyndata->size);
+	if (size != LED_STREAM_DATA_SIZE) {
+		LOG_WRN("Invalid stream data size (%zu)", size);
 		return false;
 	}
 
@@ -62,14 +74,14 @@ static bool queue_data(const struct event_dyndata *dyndata, struct led *led)
 	size_t pos = 0;
 
 	/* Fill only leds available in the system */
-	memcpy(led->steps_queue[led->rx_idx].color.c, &dyndata->data[pos],
+	memcpy(led->steps_queue[led->rx_idx].color.c, &data[pos],
 	       CONFIG_DESKTOP_LED_COLOR_COUNT);
 	pos += INCOMING_LED_COLOR_COUNT;
 
-	led->steps_queue[led->rx_idx].substep_count = sys_get_le16(&dyndata->data[pos]);
+	led->steps_queue[led->rx_idx].substep_count = sys_get_le16(&data[pos]);
 	pos += sizeof(led->steps_queue[led->rx_idx].substep_count);
 
-	led->steps_queue[led->rx_idx].substep_time = sys_get_le16(&dyndata->data[pos]);
+	led->steps_queue[led->rx_idx].substep_time = sys_get_le16(&data[pos]);
 
 	if (led->steps_queue[led->rx_idx].substep_count == 0) {
 		LOG_WRN("Dropped led_effect with substep count equal 0");
@@ -107,7 +119,7 @@ static bool is_queue_empty(struct led *led)
 	return led->rx_idx == led->tx_idx;
 }
 
-static bool store_data(const struct event_dyndata *data, struct led *led)
+static bool store_data(const u8_t *data, const size_t size, struct led *led)
 {
 	size_t free_places = count_free_places(led);
 
@@ -115,7 +127,7 @@ static bool store_data(const struct event_dyndata *data, struct led *led)
 		LOG_DBG("Insert data on position %" PRIu8
 			", free places %zu", led->rx_idx, free_places);
 
-		if (!queue_data(data, led)) {
+		if (!queue_data(data, size, led)) {
 			return false;
 		}
 	} else {
@@ -143,23 +155,23 @@ static void send_data_from_queue(struct led *led)
 	}
 }
 
-static void handle_incoming_step(const struct config_event *event)
+static void handle_incoming_step(const u8_t *data, const size_t size)
 {
 	if (!initialized) {
 		LOG_WRN("Not initialized");
 		return;
 	}
 
-	size_t led_id = event->dyndata.data[LED_ID_POS];
+	size_t led_id = data[LED_ID_POS];
 
 	if (led_id >= ARRAY_SIZE(leds)) {
-		LOG_WRN("Wrong LED ID, effect ignored");
+		LOG_WRN("Wrong LED ID: %zu, effect ignored", led_id);
 		return;
 	}
 
 	struct led *led = &leds[led_id];
 
-	if (!store_data(&event->dyndata, led)) {
+	if (!store_data(data, size, led)) {
 		return;
 	}
 
@@ -172,79 +184,61 @@ static void handle_incoming_step(const struct config_event *event)
 	}
 }
 
-static void handle_config_event(const struct config_event *event)
+static void config_set(const u8_t opt_id, const u8_t *data, const size_t size)
 {
-	if (GROUP_FIELD_GET(event->id) != EVENT_GROUP_LED_STREAM) {
-		/* Only LED STREAM events. */
-		return;
-	}
-
-	switch (TYPE_FIELD_GET(event->id)) {
-	case LED_STREAM_DATA:
-		handle_incoming_step(event);
+	switch (opt_id) {
+	case LED_STREAM_OPT_SET_LED_EFFECT:
+		handle_incoming_step(data, size);
 		break;
 
 	default:
-		LOG_WRN("Unknown LED STREAM config event");
+		LOG_WRN("Unknown config set: %" PRIu8, opt_id);
 		break;
 	}
 }
 
-static void handle_config_fetch_request_event(
-	const struct config_fetch_request_event *event)
+static void fetch_leds_state(u8_t *data, size_t *size)
 {
-	if (GROUP_FIELD_GET(event->id) != EVENT_GROUP_LED_STREAM) {
-		/* Only LED STREAM events. */
-		return;
-	}
+	u8_t free_places;
 
-	LOG_DBG("Handle config fetch request event");
-
-	size_t led_id = MOD_FIELD_GET(event->id);
-
-	if (led_id >= ARRAY_SIZE(leds)) {
-		LOG_WRN("Wrong LED id");
-		return;
-	}
-
-	struct led *led = &leds[led_id];
-
-	u8_t free_places = count_free_places(led);
-	u8_t is_ready = initialized;
-
-	LOG_DBG("Free places left: %" PRIu8 " for led: %zu",
-		free_places, led_id);
-
-	static const size_t size = sizeof(free_places) + sizeof(is_ready);
-
-	BUILD_ASSERT_MSG(size == FETCH_CONFIG_SIZE, "");
-
-	struct config_fetch_event *fetch_event = new_config_fetch_event(size);
-
-	fetch_event->id = event->id;
-	fetch_event->recipient = event->recipient;
-	fetch_event->channel_id = event->channel_id;
+	BUILD_ASSERT(sizeof(initialized) + ARRAY_SIZE(leds) * sizeof(free_places) <=
+		     CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
 
 	size_t pos = 0;
 
-	fetch_event->dyndata.data[pos] = free_places;
-	pos += sizeof(free_places);
-	fetch_event->dyndata.data[pos] = is_ready;
+	data[pos] = initialized;
+	pos += sizeof(initialized);
 
-	EVENT_SUBMIT(fetch_event);
+	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
+		free_places = count_free_places(&leds[i]);
+
+		LOG_DBG("Free places left: %" PRIu8 " for led: %zu",
+			free_places, i);
+
+		data[pos] = free_places;
+		pos += sizeof(free_places);
+	}
+
+	*size = pos;
+}
+
+static void config_get(const u8_t opt_id, u8_t *data, size_t *size)
+{
+	switch (opt_id) {
+	case LED_STREAM_OPT_GET_LEDS_STATE:
+		fetch_leds_state(data, size);
+		break;
+
+	default:
+		LOG_WRN("Unknown config get: %" PRIu8, opt_id);
+		break;
+	}
 }
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (is_config_event(eh)) {
-		handle_config_event(cast_config_event(eh));
-		return false;
-	}
-
-	if (is_config_fetch_request_event(eh)) {
-		handle_config_fetch_request_event(cast_config_fetch_request_event(eh));
-		return false;
-	}
+	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
+				  config_get, false);
 
 	if (is_led_event(eh)) {
 		const struct led_event *event = cast_led_event(eh);

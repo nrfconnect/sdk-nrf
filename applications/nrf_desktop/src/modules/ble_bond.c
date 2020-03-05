@@ -82,6 +82,19 @@ static const struct state_switch state_switch[] = {
 #endif /* CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START */
 };
 
+enum ble_bond_opt {
+	BLE_BOND_OPT_PEER_ERASE,
+	BLE_BOND_OPT_PEER_SEARCH,
+
+	BLE_BOND_OPT_COUNT
+};
+
+const static char * const opt_descr[] = {
+	[BLE_BOND_OPT_PEER_ERASE] = "peer_erase",
+#ifdef CONFIG_BT_CENTRAL
+	[BLE_BOND_OPT_PEER_SEARCH] = "peer_search",
+#endif /* CONFIG_BT_CENTRAL */
+};
 
 static enum state state;
 static u8_t cur_peer_id;
@@ -747,30 +760,27 @@ static void selector_event_handler(const struct selector_event *event)
 	}
 }
 
-static bool is_my_config_id(u8_t config_id)
+static void config_set(const u8_t opt_id, const u8_t *data, const size_t size)
 {
-	return (GROUP_FIELD_GET(config_id) == EVENT_GROUP_SETUP) &&
-	       (MOD_FIELD_GET(config_id) == SETUP_MODULE_BLE_BOND);
-}
-
-static void config_event_handler(const struct config_event *event)
-{
-	if (!is_my_config_id(event->id)) {
-		return;
-	}
+	ARG_UNUSED(data);
+	ARG_UNUSED(size);
 
 	if (state != STATE_IDLE) {
 		LOG_WRN(MODULE_NAME " is busy");
 		return;
 	}
 
-	switch (OPT_FIELD_GET(event->id)) {
-	case BLE_BOND_PEER_SEARCH:
-		LOG_INF("Remote scan request");
-		scan_request();
+	switch (opt_id) {
+	case BLE_BOND_OPT_PEER_SEARCH:
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			LOG_INF("Remote scan request");
+			scan_request();
+		} else {
+			LOG_WRN("Peer search not supported");
+		}
 		break;
 
-	case BLE_BOND_PEER_ERASE:
+	case BLE_BOND_OPT_PEER_ERASE:
 		LOG_INF("Remote peer erase request");
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 			erase_adv_confirm();
@@ -781,9 +791,14 @@ static void config_event_handler(const struct config_event *event)
 		break;
 
 	default:
-		LOG_WRN("Unsupported config event 0x%" PRIx8, event->id);
+		LOG_WRN("Unsupported config event opt id 0x%" PRIx8, opt_id);
 		break;
 	};
+}
+
+static void config_fetch(const u8_t opt_id, u8_t *data, size_t *size)
+{
+	LOG_WRN("Config fetch is not supported");
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -861,11 +876,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-	    is_config_event(eh)) {
-		config_event_handler(cast_config_event(eh));
-		return false;
-	}
+	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
+				  config_fetch, false);
 
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
@@ -876,7 +888,8 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+EVENT_SUBSCRIBE(MODULE, config_event);
+EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 #endif
 #if CONFIG_DESKTOP_BLE_PEER_CONTROL
 EVENT_SUBSCRIBE(MODULE, click_event);
