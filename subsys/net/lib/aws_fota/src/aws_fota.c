@@ -318,7 +318,13 @@ static int on_publish_evt(struct mqtt_client *const client,
 	bool doc_update_rejected =
 		aws_jobs_cmp(update_topic, topic, topic_len, "rejected");
 
-	LOG_DBG("Received topic: %s", log_strdup(topic));
+#if defined(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
+	char debug_log[topic_len + 1];
+
+	memcpy(debug_log, topic, topic_len);
+	debug_log[topic_len] = '\0';
+	LOG_DBG("Received topic: %s", log_strdup(debug_log));
+#endif
 
 	if (is_notify_next_topic || is_get_next_topic || is_get_accepted) {
 		LOG_INF("Checking for an available job");
@@ -329,8 +335,10 @@ static int on_publish_evt(struct mqtt_client *const client,
 		LOG_ERR("Job document update was rejected");
 		return job_update_rejected(client, payload_len);
 	}
-	LOG_INF("received an unhandled MQTT publish event on topic: %s",
-		log_strdup(topic));
+#if defined(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
+	LOG_DBG("received an unhandled MQTT publish event on topic: %s",
+		log_strdup(debug_log));
+#endif
 
 	return 1;
 }
