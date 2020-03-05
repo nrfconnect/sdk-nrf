@@ -10,7 +10,7 @@ rsource "src/ui/Kconfig"
 
 config APPLICATION_WORKQUEUE_STACK_SIZE
 	int "Application workqueue stack size"
-	default 2048
+	default 4096
 
 config APPLICATION_WORKQUEUE_PRIORITY
 	int "Application workqueue priority"
