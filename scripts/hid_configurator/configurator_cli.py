@@ -6,8 +6,9 @@
 import argparse
 import logging
 
-from configurator_core import open_device
-from devices import DEVICE, get_device_pid
+from devices import DEVICE, get_device_pid, get_device_vid
+from NrfHidDevice import NrfHidDevice
+
 from modules.config import change_config, fetch_config
 from modules.dfu import fwinfo, fwreboot, dfu_transfer, get_dfu_image_version
 from modules.led_stream import send_continuous_led_stream
@@ -24,14 +25,13 @@ def progress_bar(permil):
 
 def perform_dfu(dev, args):
     dfu_image = args.dfu_image
-    recipient = get_device_pid(args.device_type)
 
     img_ver_file = get_dfu_image_version(dfu_image)
     if img_ver_file is None:
         print('Cannot read image version from file')
         return
 
-    info = fwinfo(dev, recipient)
+    info = fwinfo(dev)
     if info is None:
         print('Cannot get FW info from device')
         return
@@ -56,10 +56,10 @@ def perform_dfu(dev, args):
             print('Improper user input. Operation terminated.')
             return
 
-    success = dfu_transfer(dev, recipient, dfu_image, progress_bar)
+    success = dfu_transfer(dev, dfu_image, progress_bar)
 
     if success:
-        success = fwreboot(dev, recipient)
+        success = fwreboot(dev)
 
     if success:
         print('DFU transfer completed')
@@ -68,44 +68,46 @@ def perform_dfu(dev, args):
 
 
 def perform_config(dev, args):
-    module_config = DEVICE[args.device_type]['config'][args.module]
-    module_id = module_config['id']
-    device_options = module_config['options']
+    module_name = args.module
+    option_name = args.option
 
-    config_name = args.option
-    value_type = device_options[config_name].type
-    recipient = get_device_pid(args.device_type)
+    module_config = DEVICE[args.device_type]['config'][module_name]
+    option_config = module_config['options'][option_name]
+
+    value_type = option_config.type
 
     if value_type is not None and args.value is None:
-        success, val = fetch_config(dev, recipient, config_name, device_options, module_id)
+        success, val = fetch_config(dev, module_name, option_name, option_config)
+
         if success:
-            print('Fetched {}: {}'.format(config_name, val))
+            print('Fetched {}/{}: {}'.format(module_name, option_name, val))
         else:
-            print('Failed to fetch {}'.format(config_name))
+            print('Failed to fetch {}/{}'.format(module_name, option_name))
     else:
         if value_type is None:
-            config_value = None
+            value = None
         else:
             try:
-                config_value = value_type(args.value)
+                value = value_type(args.value)
             except ValueError:
-                print('Invalid type for {}. Expected {}'.format(config_name, value_type))
+                print('Invalid type for {}/{}. Expected {}'.format(module_name,
+                                                                   option_name,
+                                                                   value_type))
                 return
-        success = change_config(dev, recipient, config_name, config_value, device_options, module_id)
+
+        success = change_config(dev, module_name, option_name, value, option_config)
 
         if success:
             if value_type is None:
-                print('{} set')
+                print('{}/{} set'.format(module_name, option_name))
             else:
-                print('{} set to {}'.format(config_name, config_value))
+                print('{}/{} set to {}'.format(module_name, option_name, value))
         else:
-            print('Failed to set {}'.format(config_name))
+            print('Failed to set {}/{}'.format(module_name, option_name))
 
 
 def perform_fwinfo(dev, args):
-    recipient = get_device_pid(args.device_type)
-
-    info = fwinfo(dev, recipient)
+    info = fwinfo(dev)
 
     if info:
         print(info)
@@ -114,25 +116,21 @@ def perform_fwinfo(dev, args):
 
 
 def perform_fwreboot(dev, args):
-    recipient = get_device_pid(args.device_type)
+    success, rebooted = fwreboot(dev)
 
-    success = fwreboot(dev, recipient)
-
-    if success:
+    if success and rebooted:
         print('Firmware rebooted')
     else:
         print('FW reboot request failed')
 
 
 def perform_led_stream(dev, args):
-    recipient = get_device_pid(args.device_type)
-
     if args.file is not None:
-        send_music_led_stream(dev, recipient, DEVICE[args.device_type],
-                              args.led_id, args.freq, args.file)
+        send_music_led_stream(dev, DEVICE[args.device_type], args.led_id,
+                              args.freq, args.file)
     else:
-        send_continuous_led_stream(dev, recipient, DEVICE[args.device_type],
-                                   args.led_id, args.freq)
+        send_continuous_led_stream(dev, DEVICE[args.device_type], args.led_id,
+                                   args.freq)
 
 
 def parse_arguments():
@@ -200,11 +198,18 @@ def configurator():
 
     args = parse_arguments()
 
-    dev = open_device(args.device_type)
-    if not dev:
+    dev = NrfHidDevice(args.device_type,
+                       get_device_vid(args.device_type),
+                       get_device_pid(args.device_type),
+                       get_device_pid('dongle'))
+
+    if not dev.initialized():
+        print('Cannot find selected device')
         return
 
     configurator.ALLOWED_COMMANDS[args.command](dev, args)
+
+    dev.close_device()
 
 configurator.ALLOWED_COMMANDS = {
     'dfu' : perform_dfu,
