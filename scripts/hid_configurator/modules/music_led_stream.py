@@ -18,11 +18,12 @@ from modules.led_stream import fetch_free_steps_buffer_info, led_send_single_ste
 
 
 class MusicLedStream():
-    def __init__(self, dev, recipient, DEVICE_CONFIG, led_id, freq, filename):
+    def __init__(self, dev, DEVICE_CONFIG, led_id, freq, filename):
         if not validate_params(DEVICE_CONFIG, freq, led_id):
             raise ValueError("Invalid music LED stream parameters")
 
-        success, (free, ready) = fetch_free_steps_buffer_info(dev, recipient, led_id)
+        success, (ready, free) = fetch_free_steps_buffer_info(dev, led_id,
+                                    DEVICE_CONFIG['stream_led_cnt'])
         if not success:
             raise Exception("Device communication problem occurred")
 
@@ -37,7 +38,7 @@ class MusicLedStream():
         self.dev_params = {
             'max_free' : free,
             'dev' : dev,
-            'recipient' : recipient,
+            'stream_led_cnt' : DEVICE_CONFIG['stream_led_cnt'],
             'led_id' : led_id,
         }
 
@@ -118,9 +119,7 @@ class MusicLedStream():
             self.led_effects['reminder'] = duration - \
                         (step.substep_count * step.substep_time / MS_PER_SEC)
 
-            success = led_send_single_step(self.dev_params['dev'],
-                                           self.dev_params['recipient'],
-                                           step,
+            success = led_send_single_step(self.dev_params['dev'], step,
                                            self.dev_params['led_id'])
 
             if not success:
@@ -130,9 +129,9 @@ class MusicLedStream():
 
             self.led_effects['sent_cnt'] += 1
 
-            success, (free, ready) = fetch_free_steps_buffer_info(self.dev_params['dev'],
-                                                    self.dev_params['recipient'],
-                                                    self.dev_params['led_id'])
+            success, (ready, free) = fetch_free_steps_buffer_info(self.dev_params['dev'],
+                                                    self.dev_params['led_id'],
+                                                    self.dev_params['stream_led_cnt'])
 
             if not success or not ready:
                 self.send_error_event.set()
@@ -210,9 +209,9 @@ class MusicLedStream():
         self.stream_term()
 
 
-def send_music_led_stream(dev, recipient, DEVICE_CONFIG, led_id, freq, filename):
+def send_music_led_stream(dev, DEVICE_CONFIG, led_id, freq, filename):
     try:
-        mls = MusicLedStream(dev, recipient, DEVICE_CONFIG, led_id, freq, filename)
+        mls = MusicLedStream(dev, DEVICE_CONFIG, led_id, freq, filename)
         mls.stream_start()
     except Exception as e:
         print(e)

@@ -10,16 +10,7 @@ import imgtool.image as img
 import time
 import logging
 
-from configurator_core import GROUP_FIELD_POS, TYPE_FIELD_POS, EVENT_GROUP_DFU
-from configurator_core import EVENT_DATA_LEN_MAX
-
-from configurator_core import exchange_feature_report
-
-DFU_START = 0x0
-DFU_DATA = 0x1
-DFU_SYNC = 0x2
-DFU_REBOOT = 0x3
-DFU_IMGINFO = 0x4
+from NrfHidDevice import EVENT_DATA_LEN_MAX
 
 FLASH_PAGE_SIZE = 4096
 
@@ -52,10 +43,8 @@ class FwInfo:
                                                  self.ver_rev, self.ver_build_nr)
 
 
-def fwinfo(dev, recipient):
-    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_IMGINFO << TYPE_FIELD_POS)
-
-    success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
+def fwinfo(dev):
+    success, fetched_data = dev.config_get('dfu', 'fwinfo')
 
     if success and fetched_data:
         fw_info = FwInfo(fetched_data)
@@ -64,24 +53,28 @@ def fwinfo(dev, recipient):
         return None
 
 
-def fwreboot(dev, recipient):
-    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_REBOOT << TYPE_FIELD_POS)
-    success, _ = exchange_feature_report(dev, recipient, event_id, None, True)
+def fwreboot(dev):
+    success, fetched_data = dev.config_get('dfu', 'reboot')
 
-    if success:
+    if (not success) or (fetched_data is None):
+        return False, False
+
+    fmt = '<?'
+    assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
+    rebooted = struct.unpack(fmt, fetched_data)
+
+    if success and rebooted:
         logging.debug('Firmware rebooted')
     else:
         logging.debug('FW reboot request failed')
 
-    return success
+    return success, rebooted
 
 
-def dfu_sync(dev, recipient):
-    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_SYNC << TYPE_FIELD_POS)
+def dfu_sync(dev):
+    success, fetched_data = dev.config_get('dfu', 'sync')
 
-    success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
-
-    if not success:
+    if (not success) or (fetched_data is None):
         return None
 
     fmt = '<BIII'
@@ -93,15 +86,13 @@ def dfu_sync(dev, recipient):
     return struct.unpack(fmt, fetched_data)
 
 
-def dfu_start(dev, recipient, img_length, img_csum, offset):
+def dfu_start(dev, img_length, img_csum, offset):
     # Start DFU operation at selected offset.
     # It can happen that device will reject this request - this will be
     # verified by dfu sync at data exchange.
-    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_START << TYPE_FIELD_POS)
-
     event_data = struct.pack('<III', img_length, img_csum, offset)
 
-    success = exchange_feature_report(dev, recipient, event_id, event_data, False)
+    success = dev.config_set('dfu', 'start', event_data)
 
     if success:
         logging.debug('DFU started')
@@ -131,14 +122,14 @@ def file_crc(dfu_image):
     return crc32
 
 
-def dfu_sync_wait(dev, recipient, is_active):
+def dfu_sync_wait(dev, is_active):
     if is_active:
         dfu_state = 0x01
     else:
         dfu_state = 0x00
 
     for _ in range(DFU_SYNC_RETRIES):
-        dfu_info = dfu_sync(dev, recipient)
+        dfu_info = dfu_sync(dev)
 
         if dfu_info is not None:
             if dfu_info[0] != dfu_state:
@@ -152,9 +143,9 @@ def dfu_sync_wait(dev, recipient, is_active):
     return dfu_info
 
 
-def dfu_transfer(dev, recipient, dfu_image, progress_callback):
+def dfu_transfer(dev, dfu_image, progress_callback):
     img_length = os.stat(dfu_image).st_size
-    dfu_info = dfu_sync_wait(dev, recipient, False)
+    dfu_info = dfu_sync_wait(dev, False)
 
     if not is_dfu_image_correct(dfu_image):
         return False
@@ -169,7 +160,7 @@ def dfu_transfer(dev, recipient, dfu_image, progress_callback):
 
     offset = get_dfu_operation_offset(dfu_image, dfu_info, img_csum)
 
-    success = dfu_start(dev, recipient, img_length, img_csum, offset)
+    success = dfu_start(dev, img_length, img_csum, offset)
 
     if not success:
         print('Cannot start DFU operation')
@@ -179,7 +170,7 @@ def dfu_transfer(dev, recipient, dfu_image, progress_callback):
     img_file.seek(offset)
 
     try:
-        offset, success = send_chunk(dev, img_csum, img_file, img_length, offset, recipient, success, progress_callback)
+        offset, success = send_chunk(dev, img_csum, img_file, img_length, offset, success, progress_callback)
     except Exception:
         success = False
 
@@ -190,7 +181,7 @@ def dfu_transfer(dev, recipient, dfu_image, progress_callback):
         print('DFU transfer completed')
         success = False
 
-        dfu_info = dfu_sync_wait(dev, recipient, False)
+        dfu_info = dfu_sync_wait(dev, False)
 
         if dfu_info is None:
             print('Lost communication with the device')
@@ -201,18 +192,17 @@ def dfu_transfer(dev, recipient, dfu_image, progress_callback):
                 print('Device holds incorrect image offset')
             else:
                 success = True
+
     return success
 
 
-def send_chunk(dev, img_csum, img_file, img_length, offset, recipient, success, progress_callback):
-    event_id = (EVENT_GROUP_DFU << GROUP_FIELD_POS) | (DFU_DATA << TYPE_FIELD_POS)
-
+def send_chunk(dev, img_csum, img_file, img_length, offset, success, progress_callback):
     while offset < img_length:
         if offset % FLASH_PAGE_SIZE == 0:
             # Sync DFU state at regular intervals to ensure everything
             # is all right.
             success = False
-            dfu_info = dfu_sync(dev, recipient)
+            dfu_info = dfu_sync(dev)
 
             if dfu_info is None:
                 print('Lost communication with the device')
@@ -234,7 +224,7 @@ def send_chunk(dev, img_csum, img_file, img_length, offset, recipient, success, 
 
         progress_callback(int(offset / img_length * 1000))
 
-        success = exchange_feature_report(dev, recipient, event_id, chunk_data, False)
+        success = dev.config_set('dfu', 'data', chunk_data)
 
         if not success:
             print('Lost communication with the device')
