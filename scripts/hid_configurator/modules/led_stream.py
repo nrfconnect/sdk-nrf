@@ -6,11 +6,7 @@
 import struct
 import random
 
-from configurator_core import TYPE_FIELD_POS, GROUP_FIELD_POS, MOD_FIELD_POS
-from configurator_core import EVENT_GROUP_LED_STREAM
-from configurator_core import EVENT_DATA_LEN_MAX
-
-from configurator_core import exchange_feature_report
+from NrfHidDevice import EVENT_DATA_LEN_MAX
 
 LED_STREAM_DATA = 0x0
 MS_PER_SEC = 1000
@@ -47,43 +43,40 @@ def validate_params(DEVICE_CONFIG, freq, led_id):
     return valid_params
 
 
-def led_send_single_step(dev, recipient, step, led_id):
-    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) \
-               | (LED_STREAM_DATA << TYPE_FIELD_POS)
-
+def led_send_single_step(dev, step, led_id):
     # Chosen data layout for struct is defined using format string.
     event_data = struct.pack('<BBBHHB', step.r, step.g, step.b,
                              step.substep_count, step.substep_time, led_id)
 
-    success = exchange_feature_report(dev, recipient, event_id,
-                                      event_data, False,
-                                      poll_interval=0.001)
+    success = dev.config_set('led_stream', 'set_led_effect', event_data,
+                             poll_interval=0.001)
 
     return success
 
 
-def fetch_free_steps_buffer_info(dev, recipient, led_id):
-    event_id = (EVENT_GROUP_LED_STREAM << GROUP_FIELD_POS) \
-               | (led_id << MOD_FIELD_POS)
-
-    success, fetched_data = exchange_feature_report(dev, recipient,
-                                                    event_id, None, True,
-                                                    poll_interval=0.001)
+def fetch_free_steps_buffer_info(dev, led_id, led_cnt):
+    success, fetched_data = dev.config_get('led_stream', 'get_leds_state',
+                                           poll_interval=0.001)
 
     if (not success) or (fetched_data is None):
         return False, (None, None)
 
     # Chosen data layout for struct is defined using format string.
-    fmt = '<B?'
+    fmt_initialized = '?'
+    fmt_single_led = 'B'
+    fmt = '<' + fmt_initialized + fmt_single_led * led_cnt
+
     assert struct.calcsize(fmt) <= EVENT_DATA_LEN_MAX
 
     if len(fetched_data) != struct.calcsize(fmt):
         return False, (None, None)
 
-    return success, struct.unpack(fmt, fetched_data)
+    data_unpacked = struct.unpack(fmt, fetched_data)
+
+    return success, (data_unpacked[0], data_unpacked[led_id + 1])
 
 
-def send_continuous_led_stream(dev, recipient, DEVICE_CONFIG, led_id, freq, substep_cnt = 10):
+def send_continuous_led_stream(dev, DEVICE_CONFIG, led_id, freq, substep_cnt = 10):
     if not validate_params(DEVICE_CONFIG, freq, led_id):
         return
 
@@ -99,7 +92,8 @@ def send_continuous_led_stream(dev, recipient, DEVICE_CONFIG, led_id, freq, subs
 
         print('LED stream started, press Ctrl+C to interrupt')
         while True:
-            success, (free, ready) = fetch_free_steps_buffer_info(dev, recipient, led_id)
+            success, (ready, free) = fetch_free_steps_buffer_info(dev, led_id,
+                                        DEVICE_CONFIG['stream_led_cnt'])
 
             if not success:
                 break
@@ -112,7 +106,7 @@ def send_continuous_led_stream(dev, recipient, DEVICE_CONFIG, led_id, freq, subs
                 # Send steps with random color and predefined duration
                 step.generate_random_color()
 
-                success = led_send_single_step(dev, recipient, step, led_id)
+                success = led_send_single_step(dev, step, led_id)
 
                 if not success:
                     break
@@ -120,5 +114,7 @@ def send_continuous_led_stream(dev, recipient, DEVICE_CONFIG, led_id, freq, subs
                 free -= 1
     except Exception as e:
         print(e)
+    except KeyboardInterrupt as e:
+        pass
 
     print('LED stream ended')

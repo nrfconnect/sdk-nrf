@@ -7,10 +7,8 @@ import struct
 import collections
 import logging
 
-from configurator_core import GROUP_FIELD_POS, EVENT_GROUP_SETUP, MOD_FIELD_POS, OPT_FIELD_POS
-from configurator_core import EVENT_DATA_LEN_MAX
-from configurator_core import exchange_feature_report
-from devices import DEVICE, get_device_type
+from NrfHidDevice import EVENT_DATA_LEN_MAX
+from devices import DEVICE
 
 
 class ConfigParser:
@@ -58,51 +56,50 @@ def check_range(value, value_range):
     return value_range[0] <= value <= value_range[1]
 
 
-def get_option_format(device_type, module_id):
+def get_option_format(device_type, module_name, option_name_on_device):
     try:
         # Search through nested dicts and see if 'format' key exists for the config option
-        format = [
-            DEVICE[device_type]['config'][config]['format'] for config in DEVICE[device_type]['config'].keys()
-                if DEVICE[device_type]['config'][config]['id'] == module_id
-        ][0]
+        format = DEVICE[device_type]['config'][module_name]['format'][option_name_on_device]
     except KeyError:
         format = None
 
     return format
 
-def change_config(dev, recipient, config_name, config_value, device_options, module_id):
-    config_opts = device_options[config_name]
-    opt_id = config_opts.event_id
-    event_id = (EVENT_GROUP_SETUP << GROUP_FIELD_POS) | (module_id << MOD_FIELD_POS) | (opt_id << OPT_FIELD_POS)
-    value_range = config_opts.range
-    logging.debug('Send request to update {}: {}'.format(config_name, config_value))
+def change_config(dev, module_name, option_name, value, option_descr):
+    value_range = option_descr.range
+    logging.debug('Send request to update {}/{}: {}'.format(module_name,
+                                                            option_name,
+                                                            value))
 
-    dev_name = get_device_type(recipient)
-    format = get_option_format(dev_name, module_id)
+    option_name_on_device = option_descr.option_name
+    format = get_option_format(dev.name, module_name, option_name_on_device)
 
     if format is not None:
         # Read out first, then modify and write back (even if there is only one member in struct, to simplify code)
-        success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
+        success, fetched_data = dev.config_get(module_name, option_name_on_device)
         if not success:
             return success
 
         try:
-            config = ConfigParser(fetched_data, *format[opt_id])
-            config.config_update(config_name, config_value)
+            config = ConfigParser(fetched_data, *format)
+            config.config_update(option_name, value)
             event_data = config.serialize()
         except (ValueError, KeyError):
-            print('Failed. Invalid value for {}'.format(config_name))
+            print('Failed. Invalid value for {}/{}'.format(module_name, option_name))
             return False
     else:
-        if config_value is not None:
-            if not check_range(config_value, value_range):
-                print('Failed. Config value for {} must be in range {}'.format(config_name, value_range))
+        if value is not None:
+            if not check_range(value, value_range):
+                print('Failed. Config value for {}/{} must be in range {}'.format(module_name,
+                                                                                  option_name,
+                                                                                  value_range))
                 return False
-            event_data = struct.pack('<I', config_value)
+
+            event_data = struct.pack('<I', value)
         else:
             event_data = None
 
-    success = exchange_feature_report(dev, recipient, event_id, event_data, False)
+    success = dev.config_set(module_name, option_name_on_device, event_data)
 
     if success:
         logging.debug('Config changed')
@@ -112,21 +109,19 @@ def change_config(dev, recipient, config_name, config_value, device_options, mod
     return success
 
 
-def fetch_config(dev, recipient, config_name, device_options, module_id):
-    config_opts = device_options[config_name]
-    opt_id = config_opts.event_id
-    event_id = (EVENT_GROUP_SETUP << GROUP_FIELD_POS) | (module_id << MOD_FIELD_POS) | (opt_id << OPT_FIELD_POS)
-    logging.debug('Fetch the current value of {} from the firmware'.format(config_name))
+def fetch_config(dev, module_name, option_name, option_descr):
+    logging.debug('Fetch the current value of {}/{} from the firmware'.format(module_name,
+                                                                              option_name))
 
-    success, fetched_data = exchange_feature_report(dev, recipient, event_id, None, True)
+    option_name_on_device = option_descr.option_name
+    success, fetched_data = dev.config_get(module_name, option_name_on_device)
 
     if not success or not fetched_data:
         return success, None
 
-    dev_name = get_device_type(recipient)
-    format = get_option_format(dev_name, module_id)
+    format = get_option_format(dev.name, module_name, option_name_on_device)
 
     if format is None:
-        return success, config_opts.type.from_bytes(fetched_data, byteorder='little')
+        return success, option_descr.type.from_bytes(fetched_data, byteorder='little')
     else:
-        return success, ConfigParser(fetched_data, *format[opt_id]).config_get(config_name)
+        return success, ConfigParser(fetched_data, *format).config_get(option_name)
