@@ -56,6 +56,42 @@ enum lte_lc_func_mode {
 	LTE_LC_FUNC_MODE_OFFLINE_UICC_ON	= 44,
 };
 
+enum lte_lc_evt_type {
+	LTE_LC_EVT_NW_REG_STATUS,
+	LTE_LC_EVT_PSM_UPDATE,
+	LTE_LC_EVT_EDRX_UPDATE,
+	LTE_LC_EVT_RRC_CONNECTED,
+	LTE_LC_EVT_RRC_IDLE,
+};
+
+struct lte_lc_psm_cfg {
+	int tau;
+	int active_time;
+};
+
+struct lte_lc_edrx_cfg {
+	float edrx;	/* eDRX interval value [s] */
+	float ptw;	/* Paging time window [s] */
+};
+
+struct lte_lc_evt {
+	enum lte_lc_evt_type type;
+	union {
+		enum lte_lc_nw_reg_status nw_reg_status;
+		struct lte_lc_psm_cfg psm_cfg;
+		struct lte_lc_edrx_cfg edrx_cfg;
+	};
+};
+
+typedef void(*lte_lc_evt_handler_t)(const struct lte_lc_evt *const evt);
+
+/** @brief Register event handler for LTE events.
+ *
+ *  @param handler Event handler. Handler is de-registered if parameter is
+ *		   NULL.
+ */
+void lte_lc_register_handler(lte_lc_evt_handler_t handler);
+
 /** @brief Function for initializing
  * the modem.  NOTE: a follow-up call to lte_lc_connect()
  * must be made.
