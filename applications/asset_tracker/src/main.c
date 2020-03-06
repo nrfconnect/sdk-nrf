@@ -26,6 +26,10 @@
 #include <net/nrf_cloud_agps.h>
 #endif
 
+#if defined(CONFIG_LWM2M_CARRIER)
+#include <lwm2m_carrier.h>
+#endif
+
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 #include <dfu/mcuboot.h>
 #endif
@@ -113,8 +117,10 @@ static struct cloud_channel_data button_cloud_data;
 static struct modem_param_info modem_param;
 static struct cloud_channel_data signal_strength_cloud_data;
 #endif /* CONFIG_MODEM_INFO */
-static atomic_val_t send_data_enable;
+
 static s64_t gps_last_active_time;
+static atomic_t carrier_requested_disconnect;
+static atomic_t cloud_connect_attempts;
 
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
@@ -124,9 +130,16 @@ static bool flip_mode_enabled = true;
 static motion_activity_state_t last_activity_state = MOTION_ACTIVITY_NOT_KNOWN;
 #endif
 
-/* Variable to keep track of nRF cloud user association request. */
-static atomic_val_t association_requested;
-static atomic_val_t reconnect_to_cloud;
+/* Variable to keep track of nRF cloud association state. */
+enum cloud_association_state {
+	CLOUD_ASSOCIATION_STATE_INIT,
+	CLOUD_ASSOCIATION_STATE_REQUESTED,
+	CLOUD_ASSOCIATION_STATE_PAIRED,
+	CLOUD_ASSOCIATION_STATE_RECONNECT,
+	CLOUD_ASSOCIATION_STATE_READY,
+};
+static atomic_val_t cloud_association =
+	ATOMIC_INIT(CLOUD_ASSOCIATION_STATE_INIT);
 
 /* Structures for work */
 static struct k_work send_gps_data_work;
@@ -149,6 +162,13 @@ static struct k_work send_agps_request_work;
 #define MODEM_AT_CMD_MAX_RESPONSE_LEN (2000)
 static char modem_at_cmd_buff[MODEM_AT_CMD_BUFFER_LEN];
 static K_SEM_DEFINE(modem_at_cmd_sem, 1, 1);
+static K_SEM_DEFINE(cloud_disconnected, 0, 1);
+#if defined(CONFIG_LWM2M_CARRIER)
+static void app_disconnect(void);
+static K_SEM_DEFINE(bsdlib_initialized, 0, 1);
+static K_SEM_DEFINE(lte_connected, 0, 1);
+static K_SEM_DEFINE(cloud_ready_to_connect, 0, 1);
+#endif
 
 #if CONFIG_MODEM_INFO
 static struct k_delayed_work rsrp_work;
@@ -173,6 +193,7 @@ static void sensor_data_send(struct cloud_channel_data *data);
 static void device_status_send(struct k_work *work);
 static void cycle_cloud_connection(struct k_work *work);
 static void set_gps_enable(const bool enable);
+static bool data_send_enabled(void);
 
 static void shutdown_modem(void)
 {
@@ -191,24 +212,101 @@ static void shutdown_modem(void)
 #endif
 }
 
+#if defined(CONFIG_LWM2M_CARRIER)
+int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
+{
+	switch (event->type) {
+	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
+		LOG_INF("LWM2M_CARRIER_EVENT_BSDLIB_INIT");
+		k_sem_give(&bsdlib_initialized);
+		break;
+	case LWM2M_CARRIER_EVENT_CONNECTING:
+		LOG_INF("LWM2M_CARRIER_EVENT_CONNECTING\n");
+		break;
+	case LWM2M_CARRIER_EVENT_CONNECTED:
+		LOG_INF("LWM2M_CARRIER_EVENT_CONNECTED");
+		k_sem_give(&lte_connected);
+		break;
+	case LWM2M_CARRIER_EVENT_DISCONNECTING:
+		LOG_INF("LWM2M_CARRIER_EVENT_DISCONNECTING");
+		break;
+	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
+		LOG_INF("LWM2M_CARRIER_EVENT_BOOTSTRAPPED");
+		break;
+	case LWM2M_CARRIER_EVENT_DISCONNECTED:
+		LOG_INF("LWM2M_CARRIER_EVENT_DISCONNECTED");
+		break;
+	case LWM2M_CARRIER_EVENT_READY:
+		LOG_INF("LWM2M_CARRIER_EVENT_READY");
+		k_sem_give(&cloud_ready_to_connect);
+		break;
+	case LWM2M_CARRIER_EVENT_FOTA_START:
+		LOG_INF("LWM2M_CARRIER_EVENT_FOTA_START");
+		/* Due to limitations in the number of secure sockets,
+		 * the cloud socket has to be closed when the carrier
+		 * library initiates firmware upgrade download.
+		 */
+		atomic_set(&carrier_requested_disconnect, 1);
+		app_disconnect();
+		break;
+	case LWM2M_CARRIER_EVENT_REBOOT:
+		LOG_INF("LWM2M_CARRIER_EVENT_REBOOT");
+		break;
+	case LWM2M_CARRIER_EVENT_ERROR:
+		LOG_INF("LWM2M_CARRIER_EVENT_ERROR: code %d, value %d",
+			((lwm2m_carrier_event_error_t *)event->data)->code,
+			((lwm2m_carrier_event_error_t *)event->data)->value);
+		break;
+	}
+
+	return 0;
+}
+
+/**@brief Disconnects from cloud. First it tries using the cloud backend's
+ *        disconnect() implementation. If that fails, it falls back to close the
+ *        socket directly, using close().
+ */
+static void app_disconnect(void)
+{
+	int err;
+
+	atomic_set(&cloud_association, CLOUD_ASSOCIATION_STATE_INIT);
+	LOG_INF("Disconnecting from cloud.");
+
+	err = cloud_disconnect(cloud_backend);
+	if (err == 0) {
+		/* Ensure that the socket is indeed closed before returning. */
+		if (k_sem_take(&cloud_disconnected, K_MINUTES(1)) == 0) {
+			LOG_INF("Disconnected from cloud.");
+			return;
+		}
+	} else if (err == -ENOTCONN) {
+		LOG_INF("Cloud connection was not established.");
+		return;
+	} else {
+		LOG_ERR("Could not disconnect from cloud, err: %d", err);
+	}
+
+	LOG_INF("Closing the cloud socket directly.");
+
+	err = close(cloud_backend->config->socket);
+	if (err) {
+		LOG_ERR("Failed to close socket, error: %d", err);
+		return;
+	}
+
+	LOG_INF("Socket was closed successfully.");
+	return;
+}
+#endif /* defined(CONFIG_LWM2M_CARRIER) */
+
 /**@brief nRF Cloud error handler. */
 void error_handler(enum error_type err_type, int err_code)
 {
+	atomic_set(&cloud_association, CLOUD_ASSOCIATION_STATE_INIT);
+
 	if (err_type == ERROR_CLOUD) {
-#if defined(CONFIG_LTE_LINK_CONTROL)
-		/* Turn off and shutdown modem */
-		LOG_ERR("LTE link disconnect");
-
-		int err = lte_lc_power_off();
-
-		if (err) {
-			LOG_ERR("lte_lc_power_off failed: %d", err);
-		}
-#endif /* CONFIG_LTE_LINK_CONTROL */
-#if defined(CONFIG_BSD_LIBRARY)
-		LOG_ERR("Shutdown modem");
-		bsdlib_shutdown();
-#endif
+		shutdown_modem();
 	}
 
 #if !defined(CONFIG_DEBUG) && defined(CONFIG_REBOOT)
@@ -514,7 +612,7 @@ static void button_send(bool pressed)
 {
 	static char data[] = "1";
 
-	if (!atomic_get(&send_data_enable)) {
+	if (!data_send_enabled()) {
 		return;
 	}
 
@@ -615,14 +713,14 @@ static void motion_handler(motion_data_t  motion_data)
 			      MOTION_ACTIVITY_ACTIVE : MOTION_ACTIVITY_INACTIVE;
 #endif
 
-	if (!flip_mode_enabled || !atomic_get(&send_data_enable) ||
+	if (!flip_mode_enabled || !data_send_enabled() ||
 	    gps_control_is_active()) {
 		return;
 	}
 
 	if (motion_data.orientation != last_orientation_state) {
 
-		if (flip_mode_enabled && atomic_get(&send_data_enable)) {
+		if (flip_mode_enabled && data_send_enabled()) {
 
 			struct cloud_msg msg = {
 				.qos = CLOUD_QOS_AT_MOST_ONCE,
@@ -653,7 +751,7 @@ static void motion_handler(motion_data_t  motion_data)
 #endif
 }
 
-static void cloud_cmd_handle_modem_at_cmd(const char * const at_cmd)
+static void cloud_cmd_handle_modem_at_cmd(const char *const at_cmd)
 {
 	if (!at_cmd) {
 		return;
@@ -764,7 +862,7 @@ static void modem_rsrp_data_send(struct k_work *work)
 	s32_t rsrp_current;
 	size_t len;
 
-	if (!atomic_get(&send_data_enable)) {
+	if (!data_send_enabled()) {
 		return;
 	}
 
@@ -802,7 +900,7 @@ static void device_status_send(struct k_work *work)
 	struct modem_param_info *modem_ptr = NULL;
 	int ret;
 
-	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
+	if (!data_send_enabled() || gps_control_is_active()) {
 		return;
 	}
 
@@ -916,7 +1014,7 @@ static void env_data_send(void)
 		.endpoint.type = CLOUD_EP_TOPIC_MSG
 	};
 
-	if (!atomic_get(&send_data_enable)) {
+	if (!data_send_enabled()) {
 		return;
 	}
 
@@ -988,7 +1086,7 @@ void light_sensor_data_send(void)
 	struct cloud_msg msg = { .qos = CLOUD_QOS_AT_MOST_ONCE,
 				 .endpoint.type = CLOUD_EP_TOPIC_MSG };
 
-	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
+	if (!data_send_enabled() || gps_control_is_active()) {
 		return;
 	}
 
@@ -1033,7 +1131,7 @@ static void sensor_data_send(struct cloud_channel_data *data)
 			.endpoint.type = CLOUD_EP_TOPIC_MSG
 		};
 
-	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
+	if (!data_send_enabled() || gps_control_is_active()) {
 		return;
 	}
 
@@ -1056,41 +1154,51 @@ static void cloud_reboot_handler(struct k_work *work)
 	error_handler(ERROR_CLOUD, -ETIMEDOUT);
 }
 
+static bool data_send_enabled(void)
+{
+	return (atomic_get(&cloud_association) ==
+		   CLOUD_ASSOCIATION_STATE_READY);
+}
+
 /**@brief Callback for sensor attached event from nRF Cloud. */
 void sensors_start(void)
 {
+	static bool started;
 	bool start_gps = IS_ENABLED(CONFIG_GPS_START_AFTER_CLOUD_EVT_READY);
 
-	atomic_set(&send_data_enable, 1);
-	sensors_init();
+	if (!started) {
+		sensors_init();
 
-	/* Value from cloud has precedence */
-	switch (cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS)) {
-	case CLOUD_CMD_STATE_FALSE:
-		start_gps = false;
-		break;
-	case CLOUD_CMD_STATE_TRUE:
-		start_gps = true;
-		break;
-	case CLOUD_CMD_STATE_UNDEFINED:
-	default:
-		break;
+		/* Value from cloud has precedence */
+		switch (cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS)) {
+		case CLOUD_CMD_STATE_FALSE:
+			start_gps = false;
+			break;
+		case CLOUD_CMD_STATE_TRUE:
+			start_gps = true;
+			break;
+		case CLOUD_CMD_STATE_UNDEFINED:
+		default:
+			break;
+		}
+		set_gps_enable(start_gps);
 	}
-
-	set_gps_enable(start_gps);
 }
 
 /**@brief nRF Cloud specific callback for cloud association event. */
 static void on_user_pairing_req(const struct cloud_event *evt)
 {
-	if (atomic_get(&association_requested) == 0) {
-		atomic_set(&association_requested, 1);
+	if (atomic_get(&cloud_association) !=
+		CLOUD_ASSOCIATION_STATE_REQUESTED) {
+		atomic_set(&cloud_association,
+				   CLOUD_ASSOCIATION_STATE_REQUESTED);
 		ui_led_set_pattern(UI_CLOUD_PAIRING);
 		LOG_INF("Add device to cloud account.");
 		LOG_INF("Waiting for cloud association...");
 
-		/* If the association is not done soon enough (< ~5 min?) */
-		/* a connection cycle is needed... TBD why. */
+		/* If the association is not done soon enough (< ~5 min?)
+		 * a connection cycle is needed... TBD why.
+		 */
 		k_delayed_work_submit_to_queue(&application_work_q,
 					       &cycle_cloud_connection_work,
 					       CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS);
@@ -1099,18 +1207,14 @@ static void on_user_pairing_req(const struct cloud_event *evt)
 
 static void cycle_cloud_connection(struct k_work *work)
 {
-	int err;
 	s32_t reboot_wait_ms = REBOOT_AFTER_DISCONNECT_WAIT_MS;
 
 	LOG_INF("Disconnecting from cloud...");
 
-	err = cloud_disconnect(cloud_backend);
-	if (err == 0) {
-		atomic_set(&reconnect_to_cloud, 1);
-	} else {
+	if (cloud_disconnect(cloud_backend) != 0) {
 		reboot_wait_ms = K_SECONDS(5);
 		LOG_INF("Disconnect failed. Device will reboot in %d seconds",
-			(reboot_wait_ms/MSEC_PER_SEC));
+			(reboot_wait_ms / MSEC_PER_SEC));
 	}
 
 	/* Reboot fail-safe on disconnect */
@@ -1121,15 +1225,20 @@ static void cycle_cloud_connection(struct k_work *work)
 /** @brief Handle procedures after successful association with nRF Cloud. */
 void on_pairing_done(void)
 {
-	if (atomic_get(&association_requested)) {
-		atomic_set(&association_requested, 0);
+	if (atomic_get(&cloud_association) ==
+			CLOUD_ASSOCIATION_STATE_REQUESTED) {
 		k_delayed_work_cancel(&cycle_cloud_connection_work);
 
-		/* After successful association, the device must */
-		/* reconnect to the cloud. */
+		/* After successful association, the device must
+		 * reconnect to the cloud.
+		 */
 		LOG_INF("Device associated with cloud.");
 		LOG_INF("Reconnecting for cloud policy to take effect.");
+		atomic_set(&cloud_association,
+				   CLOUD_ASSOCIATION_STATE_RECONNECT);
 		cycle_cloud_connection(NULL);
+	} else {
+		atomic_set(&cloud_association, CLOUD_ASSOCIATION_STATE_PAIRED);
 	}
 }
 
@@ -1143,6 +1252,8 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	case CLOUD_EVT_CONNECTED:
 		LOG_INF("CLOUD_EVT_CONNECTED");
 		k_delayed_work_cancel(&cloud_reboot_work);
+		k_sem_take(&cloud_disconnected, K_NO_WAIT);
+		atomic_set(&cloud_connect_attempts, 0);
 		ui_led_set_pattern(UI_CLOUD_CONNECTED);
 #if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
 		LOG_INF("Persistent Sessions = %u",
@@ -1157,14 +1268,17 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		/* Mark image as good to avoid rolling back after update */
 		boot_write_img_confirmed();
 #endif
+		atomic_set(&cloud_association, CLOUD_ASSOCIATION_STATE_READY);
 		sensors_start();
 		break;
 	}
 	case CLOUD_EVT_DISCONNECTED:
 		LOG_INF("CLOUD_EVT_DISCONNECTED");
 		ui_led_set_pattern(UI_LTE_DISCONNECTED);
-		/* Expect an error event (POLLNVAL) on the cloud socket poll */
-		/* Handle reconnect there if desired */
+		k_sem_give(&cloud_disconnected);
+		/* Expect an error event (POLLNVAL) on the cloud socket poll;
+		 * handle reconnect there if desired.
+		 */
 		break;
 	case CLOUD_EVT_ERROR:
 		LOG_INF("CLOUD_EVT_ERROR");
@@ -1226,7 +1340,7 @@ static void set_gps_enable(const bool enable)
 	/* Exit early if the link is not ready or if the cloud
 	 * state is defined and the local state is not changing.
 	 */
-	if (!atomic_get(&send_data_enable) ||
+	if (!data_send_enabled() ||
 		((cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS) !=
 		CLOUD_CMD_STATE_UNDEFINED) && !changing)) {
 		return;
@@ -1260,7 +1374,7 @@ static void long_press_handler(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
-	if (!atomic_get(&send_data_enable)) {
+	if (!data_send_enabled()) {
 		LOG_INF("Link not ready, long press disregarded");
 		return;
 	}
@@ -1289,30 +1403,37 @@ static void work_init(void)
 /**@brief Configures modem to provide LTE link. Blocks until link is
  * successfully established.
  */
-static void modem_configure(void)
+static int modem_configure(void)
 {
 #if defined(CONFIG_BSD_LIBRARY)
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-		/* Do nothing, modem is already turned on
-		 * and connected.
-		 */
-	} else {
-		int err;
-
-		LOG_INF("Connecting to LTE network. ");
-		LOG_INF("This may take several minutes.");
-		ui_led_set_pattern(UI_LTE_CONNECTING);
-
-		err = lte_lc_init_and_connect();
-		if (err) {
-			LOG_ERR("LTE link could not be established.");
-			error_handler(ERROR_LTE_LC, err);
-		}
-
-		LOG_INF("Connected to LTE network");
-		ui_led_set_pattern(UI_LTE_CONNECTED);
+		/* Do nothing, modem is already turned on */
+		/* and connected */
+		goto connected;
 	}
-#endif
+
+	ui_led_set_pattern(UI_LTE_CONNECTING);
+	LOG_INF("Connecting to LTE network.");
+	LOG_INF("This may take several minutes.");
+
+#if defined(CONFIG_LWM2M_CARRIER)
+	/* Wait for the LWM2M carrier library to configure the */
+	/* modem and set up the LTE connection. */
+	k_sem_take(&lte_connected, K_FOREVER);
+#else /* defined(CONFIG_LWM2M_CARRIER) */
+	int err = lte_lc_init_and_connect();
+	if (err) {
+		LOG_ERR("LTE link could not be established.");
+		return err;
+	}
+#endif /* defined(CONFIG_LWM2M_CARRIER) */
+
+connected:
+	LOG_INF("Connected to LTE network.");
+	ui_led_set_pattern(UI_LTE_CONNECTED);
+
+#endif /* defined(CONFIG_BSD_LIBRARY) */
+	return 0;
 }
 
 static void button_sensor_init(void)
@@ -1388,8 +1509,8 @@ static void ui_evt_handler(struct ui_evt evt)
 		button_send(evt.type == UI_EVT_BUTTON_ACTIVE ? 1 : 0);
 	}
 
-	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (evt.button == FLIP_INPUT)
-	   && atomic_get(&send_data_enable)) {
+	if (IS_ENABLED(CONFIG_ACCEL_USE_SIM) && (evt.button == FLIP_INPUT) &&
+	    data_send_enabled()) {
 		motion_simulate_trigger();
 	}
 
@@ -1459,59 +1580,73 @@ void handle_bsdlib_init_ret(void)
 	#endif /* CONFIG_BSD_LIBRARY */
 }
 
-void main(void)
+static void cloud_connection_handler(void)
 {
 	int ret;
+	struct pollfd fds[1];
+	bool reconnecting = false;
+	s32_t reconnect_delay_s = CONFIG_CLOUD_CONNECT_RETRY_DELAY;
 
-	LOG_INF("Asset tracker started");
-	k_work_q_start(&application_work_q, application_stack_area,
-		       K_THREAD_STACK_SIZEOF(application_stack_area),
-		       CONFIG_APPLICATION_WORKQUEUE_PRIORITY);
-	if (IS_ENABLED(CONFIG_WATCHDOG)) {
-		watchdog_init_and_start(&application_work_q);
-	}
-
-	handle_bsdlib_init_ret();
-
-	cloud_backend = cloud_get_binding("NRF_CLOUD");
-	__ASSERT(cloud_backend != NULL, "nRF Cloud backend not found");
-
-	ret = cloud_init(cloud_backend, cloud_event_handler);
-	if (ret) {
-		LOG_ERR("Cloud backend could not be initialized, error: %d",
-			ret);
-		cloud_error_handler(ret);
-	}
-
-#if defined(CONFIG_USE_UI_MODULE)
-	ui_init(ui_evt_handler);
-#endif
-
-	ret = cloud_decode_init(cloud_cmd_handler);
-	if (ret) {
-		LOG_ERR("Cloud command decoder could not be initialized, error: %d", ret);
-		cloud_error_handler(ret);
-	}
-
-	work_init();
-	modem_configure();
 connect:
+	/* Ensure no data can be sent to cloud before connection is established.
+	 */
+	atomic_set(&cloud_association, CLOUD_ASSOCIATION_STATE_INIT);
+
+	if (atomic_get(&carrier_requested_disconnect)) {
+		/* A disconnect was requested to free up the TLS socket
+		 * used by the cloud.  If enabled, the carrier library
+		 * (CONFIG_LWM2M_CARRIER) will perform FOTA updates in
+		 * the background and reboot the device when complete.
+		 */
+		return;
+	}
+
+	atomic_inc(&cloud_connect_attempts);
+
+	/* Check if max cloud connect retry count is exceeded. */
+	if (atomic_get(&cloud_connect_attempts) >
+			CONFIG_CLOUD_CONNECT_COUNT_MAX) {
+		LOG_ERR("The max cloud connection attempt count exceeded.");
+		cloud_error_handler(-ETIMEDOUT);
+	}
+
+	if (reconnecting) {
+		reconnecting = false;
+		LOG_INF("Attempting reconnect in %d seconds...",
+			   reconnect_delay_s);
+		k_delayed_work_cancel(&cloud_reboot_work);
+		k_sleep(K_SECONDS(reconnect_delay_s));
+		reconnect_delay_s = CONFIG_CLOUD_CONNECT_RETRY_DELAY;
+	}
+
+	LOG_INF("Connecting to cloud, attempt %d of %d",
+	       atomic_get(&cloud_connect_attempts),
+		   CONFIG_CLOUD_CONNECT_COUNT_MAX);
+	k_delayed_work_submit_to_queue(&application_work_q,
+			&cloud_reboot_work,
+			K_SECONDS(reconnect_delay_s));
+
+	/* Attempt cloud connection. */
+	ui_led_set_pattern(UI_CLOUD_CONNECTING);
 	ret = cloud_connect(cloud_backend);
 	if (ret != CLOUD_CONNECT_RES_SUCCESS) {
+		k_delayed_work_cancel(&cloud_reboot_work);
+		/* Will not return from this function.
+		 * If the connect fails here, it is likely
+		 * that user intervention is required.
+		 */
 		cloud_connect_error_handler(ret);
 	} else {
-		atomic_set(&reconnect_to_cloud, 0);
+		LOG_INF("Cloud connection request sent.");
+		LOG_INF("Connection response timeout is set to %d seconds.",
+		       CLOUD_CONNACK_WAIT_DURATION / MSEC_PER_SEC);
 		k_delayed_work_submit_to_queue(&application_work_q,
 					       &cloud_reboot_work,
 					       CLOUD_CONNACK_WAIT_DURATION);
 	}
 
-	struct pollfd fds[] = {
-		{
-			.fd = cloud_backend->config->socket,
-			.events = POLLIN
-		}
-	};
+	fds[0].fd = cloud_backend->config->socket;
+	fds[0].events = POLLIN;
 
 	while (true) {
 		ret = poll(fds, ARRAY_SIZE(fds),
@@ -1534,22 +1669,38 @@ connect:
 		}
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
-			if (atomic_get(&reconnect_to_cloud)) {
-				k_delayed_work_cancel(&cloud_reboot_work);
-				LOG_INF("Attempting reconnect...");
+			if ((atomic_get(&cloud_association) ==
+					CLOUD_ASSOCIATION_STATE_RECONNECT) ||
+				(atomic_get(&carrier_requested_disconnect))) {
+				reconnecting = true;
+				reconnect_delay_s = 10;
 				goto connect;
 			}
 			LOG_ERR("Socket error: POLLNVAL");
 			LOG_ERR("The cloud socket was unexpectedly closed.");
 			error_handler(ERROR_CLOUD, -EIO);
-			return;
 		}
 
 		if ((fds[0].revents & POLLHUP) == POLLHUP) {
+			if ((atomic_get(&cloud_connect_attempts) == 1) &&
+			    (atomic_get(&cloud_association) ==
+			     CLOUD_ASSOCIATION_STATE_INIT)) {
+				LOG_INF("Disconnected by the cloud.");
+				LOG_INF("This can occur during provisioning or when the device has invalid certificates.");
+#if defined(CONFIG_LWM2M_CARRIER)
+				/* Reconnect does not work with LWM2M */
+				LOG_INF("Rebooting...");
+				k_sleep(K_SECONDS(10));
+				error_handler(ERROR_CLOUD, -EIO);
+				return;
+#endif
+				reconnect_delay_s = 10;
+				reconnecting = true;
+				goto connect;
+			}
 			LOG_ERR("Socket error: POLLHUP");
 			LOG_ERR("Connection was closed by the cloud.");
 			error_handler(ERROR_CLOUD, -EIO);
-			return;
 		}
 
 		if ((fds[0].revents & POLLERR) == POLLERR) {
@@ -1562,4 +1713,66 @@ connect:
 
 	cloud_disconnect(cloud_backend);
 	goto connect;
+}
+
+void main(void)
+{
+	int ret;
+
+	LOG_INF("Asset tracker started");
+	k_work_q_start(&application_work_q, application_stack_area,
+		       K_THREAD_STACK_SIZEOF(application_stack_area),
+		       CONFIG_APPLICATION_WORKQUEUE_PRIORITY);
+	if (IS_ENABLED(CONFIG_WATCHDOG)) {
+		watchdog_init_and_start(&application_work_q);
+	}
+
+	cloud_backend = cloud_get_binding("NRF_CLOUD");
+	__ASSERT(cloud_backend != NULL, "nRF Cloud backend not found");
+
+#if defined(CONFIG_LWM2M_CARRIER)
+	k_sem_take(&bsdlib_initialized, K_FOREVER);
+#else
+	handle_bsdlib_init_ret();
+#endif
+
+	ret = cloud_init(cloud_backend, cloud_event_handler);
+	if (ret) {
+		LOG_ERR("Cloud backend could not be initialized, error: %d",
+			ret);
+		cloud_error_handler(ret);
+	}
+
+#if defined(CONFIG_USE_UI_MODULE)
+	ui_init(ui_evt_handler);
+#endif
+
+	ret = cloud_decode_init(cloud_cmd_handler);
+	if (ret) {
+		LOG_ERR("Cloud command decoder could not be initialized, error: %d",
+			ret);
+		cloud_error_handler(ret);
+	}
+
+	work_init();
+
+lte_connect:
+		ret = modem_configure();
+		if (ret) {
+			LOG_WRN("Failed to establish LTE connection.");
+			LOG_WRN("Will retry in %d seconds.",
+					CONFIG_CLOUD_CONNECT_RETRY_DELAY);
+			k_sleep(K_SECONDS(CONFIG_CLOUD_CONNECT_RETRY_DELAY));
+			goto lte_connect;
+		}
+
+#if defined(CONFIG_LWM2M_CARRIER)
+	LOG_INF("Waiting for LWM2M carrier to complete initialization...");
+	k_sem_take(&cloud_ready_to_connect, K_FOREVER);
+#endif
+
+	/* Handle connection to the cloud.
+	 * Function returns only on error or pending reboot.
+	 */
+	cloud_connection_handler();
 }
