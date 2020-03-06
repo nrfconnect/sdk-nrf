@@ -245,12 +245,28 @@ config CLOUD_BUTTON_INPUT
 	range 1 1 if BOARD_NRF9160_PCA20035NS
 	default 1
 
+config CLOUD_CONNECT_RETRY_DELAY
+	int "Cloud connection retry delay in seconds"
+	default 480
+	help
+	  Time to wait before trying to reconnect to the cloud if the
+	  previous attempt failed (in seconds).
+
+config CLOUD_CONNECT_COUNT_MAX
+	int "Maximum number of cloud connection attempts"
+	default 8
+	help
+	  Maximum number of unsuccessful cloud connection attempts.
+	  Device will wait for the value defined by CLOUD_CONNECT_RETRY_DELAY
+	  between attempts.
+
 config CLOUD_WAIT_DURATION
 	int "Cloud connection acknowledge wait duration"
 	default 30
 	help
 	  How long the device should wait for a CONNACK
-	  event from the cloud.
+	  event from the cloud when connecting.  Device will reboot
+	  if an ack is not received within the duration.
 
 config CLOUD_FOTA_APP
 	bool "Enable firmware over-the-air upgrades for application"
