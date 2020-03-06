@@ -57,6 +57,8 @@ static int parse_nw_reg_status(const char *at_response,
 static bool response_is_valid(const char *response, size_t response_len,
 			      const char *check);
 
+static lte_lc_evt_handler_t evt_handler;
+
 /* Lookup table for T3324 timer used for PSM active time. Unit is seconds.
  * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
  */
@@ -151,6 +153,27 @@ static const char cgauth[] = "AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
 static const char legacy_pco[] = "AT%XEPCO=0";
 #endif
 
+void lte_lc_register_handler(lte_lc_evt_handler_t handler)
+{
+	if (handler == NULL) {
+		evt_handler = NULL;
+
+		LOG_INF("Previously registered handler (%p) deregistered",
+			handler);
+
+		return;
+	}
+
+	if (evt_handler) {
+		LOG_WRN("Replacing previously registered handler (%p) with %p",
+			evt_handler, handler);
+	}
+
+	evt_handler = handler;
+
+	return;
+}
+
 void at_handler(void *context, const char *response)
 {
 	ARG_UNUSED(context);
@@ -173,10 +196,35 @@ void at_handler(void *context, const char *response)
 	    (status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 		k_sem_give(&link);
 	}
+
+	if (evt_handler) {
+		struct lte_lc_evt evt = {
+			.type = LTE_LC_EVT_NW_REG_STATUS,
+			.nw_reg_status = status,
+		};
+
+		evt_handler(&evt);
+	}
 }
 
 static int w_lte_lc_init(void)
 {
+	int err;
+
+	if (is_initialized) {
+		return -EALREADY;
+	}
+
+	err = at_notif_register_handler(NULL, at_handler);
+	if (err) {
+		LOG_ERR("Can't register AT handler, error: %d", err);
+		return err;
+	}
+
+	if (at_cmd_write(nw_mode_preferred, NULL, 0, NULL) != 0) {
+		return -EIO;
+	}
+
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM) && \
     (defined(CONFIG_BOARD_NRF9160_PCA20035NS) || \
      defined(CONFIG_BOARD_NRF9160_PCA10090NS))
@@ -189,10 +237,6 @@ static int w_lte_lc_init(void)
 		}
 	}
 #endif
-
-	if (at_cmd_write(nw_mode_preferred, NULL, 0, NULL) != 0) {
-		return -EIO;
-	}
 
 #if defined(CONFIG_LTE_EDRX_REQ)
 	/* Request configured eDRX settings to save power */
@@ -261,12 +305,6 @@ static int w_lte_lc_connect(void)
 
 	k_sem_init(&link, 0, 1);
 
-	rc = at_notif_register_handler(NULL, at_handler);
-	if (rc != 0) {
-		LOG_ERR("Can't register handler rc=%d", rc);
-		return rc;
-	}
-
 	do {
 		retry = false;
 
@@ -274,12 +312,12 @@ static int w_lte_lc_connect(void)
 
 		if (at_cmd_write(current_network_mode, NULL, 0, NULL) != 0) {
 			err = -EIO;
-			goto exit;
+			return err;
 		}
 
 		if (at_cmd_write(normal, NULL, 0, NULL) != 0) {
 			err = -EIO;
-			goto exit;
+			return err;
 		}
 
 		err = k_sem_take(&link, K_SECONDS(CONFIG_LTE_NETWORK_TIMEOUT));
@@ -293,7 +331,7 @@ static int w_lte_lc_connect(void)
 
 				if (at_cmd_write(offline, NULL, 0, NULL) != 0) {
 					err = -EIO;
-					goto exit;
+					return err;
 				}
 
 				LOG_INF("Using fallback network mode");
@@ -302,12 +340,6 @@ static int w_lte_lc_connect(void)
 			}
 		}
 	} while (retry);
-
-exit:
-	rc = at_notif_deregister_handler(NULL, at_handler);
-	if (rc != 0) {
-		LOG_ERR("Can't de-register handler rc=%d", rc);
-	}
 
 	return err;
 }
