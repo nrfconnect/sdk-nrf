@@ -314,8 +314,6 @@ static int at_cmd_driver_init(struct device *dev)
 		return 0;
 	}
 
-	initialized = true;
-
 	int err;
 
 	ARG_UNUSED(dev);
@@ -334,6 +332,7 @@ static int at_cmd_driver_init(struct device *dev)
 			NULL, NULL, NULL,
 			THREAD_PRIORITY, 0, K_NO_WAIT);
 
+	initialized = true;
 	LOG_DBG("Common AT socket processing thread created");
 
 	return 0;
