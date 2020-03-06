@@ -1,4 +1,3 @@
-# Kconfig - nRF9160 GPS driver
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
@@ -26,9 +25,10 @@ config NRF9160_GPS_FIX_CHECK_INTERVAL
 
 config NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 	bool "The GPS driver will handle modem configuration directly"
+	depends on !LWM2M_CARRIER
+	depends on AT_CMD
+	depends on AT_CMD_PARSER
 	default y
-	select AT_CMD
-	select AT_CMD_PARSER
 	help
 	  Disabling this will cause the GPS driver to do no modem
 	  configuration.  This is useful if you need to remove the
