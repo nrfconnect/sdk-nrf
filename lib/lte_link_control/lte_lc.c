@@ -49,11 +49,18 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 /* Parameter values for AT+CEDRXS command. */
 #define AT_CEDRXS_ACTT_WB			4
 #define AT_CEDRXS_ACTT_NB			5
+#define AT_CSCON_RESPONSE_PREFIX		"+CSCON"
+#define AT_CSCON_PARAMS_COUNT_MAX		4
+#define AT_CSCON_RRC_MODE_INDEX			1
+#define AT_CSCON_READ_RRC_MODE_INDEX		2
 
 /* Forward declarations */
 static int parse_nw_reg_status(const char *at_response,
 			       enum lte_lc_nw_reg_status *status,
 			       size_t reg_status_index);
+static int parse_rrc_mode(const char *at_response,
+			  enum lte_lc_rrc_mode *mode,
+			  size_t mode_index);
 static bool response_is_valid(const char *response, size_t response_len,
 			      const char *check);
 
@@ -104,28 +111,41 @@ static const char power_off[] = "AT+CFUN=0";
 static const char normal[] = "AT+CFUN=1";
 /* Set the modem to Offline mode */
 static const char offline[] = "AT+CFUN=4";
+/* Enable CSCON (RRC mode) notifications */
+static const char cscon[] = "AT+CSCON=1";
 
-#if defined(CONFIG_LTE_NETWORK_MODE_NBIOT)
-/* Preferred network mode: Narrowband-IoT */
-static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=0,1,0,0";
-/* Fallback network mode: LTE-M */
-static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=1,0,0,0";
-#elif defined(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)
-/* Preferred network mode: Narrowband-IoT and GPS */
-static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=0,1,1,0";
-/* Fallback network mode: LTE-M and GPS*/
-static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=1,0,1,0";
-#elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M)
-/* Preferred network mode: LTE-M */
-static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,0,0";
-/* Fallback network mode: Narrowband-IoT */
-static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,0,0";
-#elif defined(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)
-/* Preferred network mode: LTE-M and GPS*/
-static const char nw_mode_preferred[] = "AT%XSYSTEMMODE=1,0,1,0";
-/* Fallback network mode: Narrowband-IoT and GPS */
-static const char nw_mode_fallback[] = "AT%XSYSTEMMODE=0,1,1,0";
+static const enum lte_lc_system_mode sys_mode_preferred =
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)	?
+		LTE_LC_SYSTEM_MODE_LTEM			:
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)	?
+		LTE_LC_SYSTEM_MODE_NBIOT		:
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)	?
+		LTE_LC_SYSTEM_MODE_LTEM_GPS		:
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)	?
+		LTE_LC_SYSTEM_MODE_NBIOT_GPS		:
+	LTE_LC_SYSTEM_MODE_NONE;
+
+static const enum lte_lc_system_mode sys_mode_fallback =
+#if IS_ENABLED(CONFIG_LTE_LC_USE_FALLBACK)
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)	?
+		LTE_LC_SYSTEM_MODE_NBIOT		:
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)	?
+		LTE_LC_SYSTEM_MODE_LTEM			:
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)	?
+		LTE_LC_SYSTEM_MODE_NBIOT_GPS		:
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)	?
+		LTE_LC_SYSTEM_MODE_LTEM_GPS		:
 #endif
+	LTE_LC_SYSTEM_MODE_NONE;
+
+/* Parameters to be passed when using AT%XSYSTEMMMODE=<params> */
+static const char *system_mode_params[] = {
+	[LTE_LC_SYSTEM_MODE_LTEM]	= "1,0,0,0",
+	[LTE_LC_SYSTEM_MODE_NBIOT]	= "0,1,0,0",
+	[LTE_LC_SYSTEM_MODE_GPS]	= "0,0,1,0",
+	[LTE_LC_SYSTEM_MODE_LTEM_GPS]	= "1,0,1,0",
+	[LTE_LC_SYSTEM_MODE_NBIOT_GPS]	= "0,1,1,0",
+};
 
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM)
 #if defined(CONFIG_BOARD_NRF9160_PCA20035NS)
@@ -153,56 +173,98 @@ static const char cgauth[] = "AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
 static const char legacy_pco[] = "AT%XEPCO=0";
 #endif
 
-void lte_lc_register_handler(lte_lc_evt_handler_t handler)
+enum lte_lc_notif_type {
+	LTE_LC_NOTIF_CEREG,
+	LTE_LC_NOTIF_CSCON,
+
+	LTE_LC_NOTIF_COUNT,
+};
+
+static const char *relevant_at_notifs[] = {
+	[LTE_LC_NOTIF_CEREG] = "+CEREG",
+	[LTE_LC_NOTIF_CSCON] = "+CSCON",
+};
+
+BUILD_ASSERT(ARRAY_SIZE(relevant_at_notifs) == LTE_LC_NOTIF_COUNT);
+
+static bool is_relevant_notif(const char *notif, enum lte_lc_notif_type *type)
 {
-	if (handler == NULL) {
-		evt_handler = NULL;
+	for (size_t i = 0; i < ARRAY_SIZE(relevant_at_notifs); i++) {
+		if (strncmp(relevant_at_notifs[i], notif,
+			    strlen(relevant_at_notifs[i])) == 0) {
+			/* The notification type matches the array index */
+			*type = i;
 
-		LOG_INF("Previously registered handler (%p) deregistered",
-			handler);
-
-		return;
+			return true;
+		}
 	}
 
-	if (evt_handler) {
-		LOG_WRN("Replacing previously registered handler (%p) with %p",
-			evt_handler, handler);
-	}
-
-	evt_handler = handler;
-
-	return;
+	return false;
 }
 
-void at_handler(void *context, const char *response)
+static void at_handler(void *context, const char *response)
 {
 	ARG_UNUSED(context);
 
 	int err;
-	enum lte_lc_nw_reg_status status;
+	bool notify = false;
+	enum lte_lc_notif_type notif_type;
+	struct lte_lc_evt evt;
 
 	if (response == NULL) {
 		LOG_ERR("Response buffer is NULL-pointer");
 		return;
 	}
 
-	err = parse_nw_reg_status(response, &status, AT_CEREG_REG_STATUS_INDEX);
-	if (err) {
-		LOG_ERR("Could not get network registration status");
+	/* Only proceed with parsing if notification is relevant */
+	if(!is_relevant_notif(response, &notif_type)) {
 		return;
 	}
 
-	if ((status == LTE_LC_NW_REG_REGISTERED_HOME) ||
-	    (status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-		k_sem_give(&link);
+	switch (notif_type) {
+	case LTE_LC_NOTIF_CEREG:
+		LOG_DBG("+CEREG notification");
+
+		err = parse_nw_reg_status(response,
+					  &evt.nw_reg_status,
+					  AT_CEREG_REG_STATUS_INDEX);
+		if (err) {
+			LOG_ERR("Can't parse network registration, error: %d",
+				err);
+			return;
+		}
+
+		evt.type = LTE_LC_EVT_NW_REG_STATUS;
+		notify = true;
+
+		if ((evt.nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+		    (evt.nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			k_sem_give(&link);
+		}
+
+		break;
+	case LTE_LC_NOTIF_CSCON: {
+		LOG_DBG("+CSCON notification");
+
+		err = parse_rrc_mode(response,
+				     &evt.rrc_mode,
+				     AT_CSCON_RRC_MODE_INDEX);
+		if (err) {
+			LOG_ERR("Can't parse signalling mode, error: %d", err);
+			return;
+		}
+
+		evt.type = LTE_LC_EVT_RRC_UPDATE;
+		notify = true;
+
+		break;
+	}
+	default:
+		LOG_ERR("Unrecognized notification type: %d", notif_type);
+		break;
 	}
 
-	if (evt_handler) {
-		struct lte_lc_evt evt = {
-			.type = LTE_LC_EVT_NW_REG_STATUS,
-			.nw_reg_status = status,
-		};
-
+	if (evt_handler && notify) {
 		evt_handler(&evt);
 	}
 }
@@ -221,8 +283,10 @@ static int w_lte_lc_init(void)
 		return err;
 	}
 
-	if (at_cmd_write(nw_mode_preferred, NULL, 0, NULL) != 0) {
-		return -EIO;
+	err = lte_lc_system_mode_set(sys_mode_preferred);
+	if (err) {
+		LOG_ERR("Could not set system mode, error: %d", err);
+		return err;
 	}
 
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM) && \
@@ -294,13 +358,20 @@ static int w_lte_lc_init(void)
 	LOG_INF("PDN Auth: %s", log_strdup(cgauth));
 #endif
 
+	/* Listen for RRC connection mode notifications */
+	err = at_cmd_write(cscon, NULL, 0, NULL);
+	if (err) {
+		LOG_ERR("%s failed, error: %d", log_strdup(cscon), err);
+		return err;
+	}
+
 	return 0;
 }
 
 static int w_lte_lc_connect(void)
 {
-	int err, rc;
-	const char *current_network_mode = nw_mode_preferred;
+	int err;
+	enum lte_lc_system_mode current_network_mode = sys_mode_preferred;
 	bool retry;
 
 	k_sem_init(&link, 0, 1);
@@ -308,15 +379,13 @@ static int w_lte_lc_connect(void)
 	do {
 		retry = false;
 
-		LOG_DBG("Network mode: %s", log_strdup(current_network_mode));
-
-		if (at_cmd_write(current_network_mode, NULL, 0, NULL) != 0) {
-			err = -EIO;
+		err = lte_lc_system_mode_set(current_network_mode);
+		if (err) {
 			return err;
 		}
 
-		if (at_cmd_write(normal, NULL, 0, NULL) != 0) {
-			err = -EIO;
+		err = lte_lc_normal();
+		if (err) {
 			return err;
 		}
 
@@ -325,12 +394,12 @@ static int w_lte_lc_connect(void)
 			LOG_INF("Network connection attempt timed out");
 
 			if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) &&
-			    (current_network_mode == nw_mode_preferred)) {
-				current_network_mode = nw_mode_fallback;
+			    (current_network_mode == sys_mode_preferred)) {
+				current_network_mode = sys_mode_fallback;
 				retry = true;
 
-				if (at_cmd_write(offline, NULL, 0, NULL) != 0) {
-					err = -EIO;
+				err = lte_lc_offline();
+				if (err) {
 					return err;
 				}
 
@@ -360,6 +429,27 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 int lte_lc_init(void)
 {
 	return w_lte_lc_init();
+}
+
+void lte_lc_register_handler(lte_lc_evt_handler_t handler)
+{
+	if (handler == NULL) {
+		evt_handler = NULL;
+
+		LOG_INF("Previously registered handler (%p) deregistered",
+			handler);
+
+		return;
+	}
+
+	if (evt_handler) {
+		LOG_WRN("Replacing previously registered handler (%p) with %p",
+			evt_handler, handler);
+	}
+
+	evt_handler = handler;
+
+	return;
 }
 
 /* lte lc Connect wrapper */
@@ -662,6 +752,59 @@ clean_exit:
 	return err;
 }
 
+/**@brief Parses an AT command response, and returns the current RRC mode.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param mode Pointer to where the RRC mode is stored.
+ * @param mode_index Parameter index for mode.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+static int parse_rrc_mode(const char *at_response,
+			  enum lte_lc_rrc_mode *mode,
+			  size_t mode_index)
+{
+	int err, temp_mode;
+	struct at_param_list resp_list = {0};
+
+	err = at_params_list_init(&resp_list, AT_CSCON_PARAMS_COUNT_MAX);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	/* Parse CSCON response and populate AT parameter list */
+	err = at_parser_params_from_str(at_response,
+					NULL,
+					&resp_list);
+	if (err) {
+		LOG_ERR("Could not parse +CSCON response, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Get the RRC mode from the response */
+	err = at_params_int_get(&resp_list, mode_index, &temp_mode);
+	if (err) {
+		LOG_ERR("Could not get signalling mode, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Check if the parsed value maps to a valid registration status */
+	if (temp_mode == 0) {
+		*mode = LTE_LC_RRC_MODE_IDLE;
+	} else if (temp_mode == 1) {
+		*mode = LTE_LC_RRC_MODE_CONNECTED;
+	} else {
+		LOG_ERR("Invalid signalling mode: %d", temp_mode);
+		err = -EINVAL;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+
+	return err;
+}
+
 int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 {
 	int err;
@@ -696,50 +839,38 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 
 int lte_lc_system_mode_set(enum lte_lc_system_mode mode)
 {
-	int len, err = 0;
-	u8_t mode_params[4] = {0};
-	char cmd[sizeof(AT_XSYSTEMMODE_PROTO)];
+	int err, len;
+	char cmd[50];
 
 	switch (mode) {
 	case LTE_LC_SYSTEM_MODE_NONE:
 		LOG_DBG("No system mode set");
-		goto exit;
+		return 0;
 	case LTE_LC_SYSTEM_MODE_LTEM:
-		mode_params[AT_XSYSTEMMODE_LTEM_INDEX] = 1;
-		break;
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
-		mode_params[AT_XSYSTEMMODE_LTEM_INDEX] = 1;
-		mode_params[AT_XSYSTEMMODE_GPS_INDEX] = 1;
-		break;
 	case LTE_LC_SYSTEM_MODE_NBIOT:
-		mode_params[AT_XSYSTEMMODE_NBIOT_INDEX] = 1;
-		break;
 	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
-		mode_params[AT_XSYSTEMMODE_NBIOT_INDEX] = 1;
-		mode_params[AT_XSYSTEMMODE_GPS_INDEX] = 1;
-		break;
 	case LTE_LC_SYSTEM_MODE_GPS:
-		mode_params[AT_XSYSTEMMODE_GPS_INDEX] = 1;
 		break;
 	default:
 		LOG_ERR("Invalid system mode requested");
-		err = -EINVAL;
-		goto exit;
+		return -EINVAL;
 	}
 
-	/* System mode array is populated, proceed to compile the AT command */
-	len = snprintf(cmd, sizeof(AT_XSYSTEMMODE_PROTO), AT_XSYSTEMMODE_PROTO,
-		       mode_params[0], mode_params[1], mode_params[2],
-		       mode_params[3]);
+	len = snprintk(cmd, sizeof(cmd), "AT%%XSYSTEMMODE=%s",
+		       system_mode_params[mode]);
+	if (len < 0) {
+		LOG_ERR("Could not construct system mode command");
+		return - EFAULT;
+	}
 
-	LOG_DBG("Sending command: %s", log_strdup(cmd));
+	LOG_DBG("Sending AT command to set system mode: %s", log_strdup(cmd));
 
 	err = at_cmd_write(cmd, NULL, 0, NULL);
 	if (err) {
-		LOG_ERR("Could not send AT command, err: %d", err);
+		LOG_ERR("Could not send AT command, error: %d", err);
 	}
 
-exit:
 	return err;
 }
 

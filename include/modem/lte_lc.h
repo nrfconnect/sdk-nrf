@@ -60,8 +60,12 @@ enum lte_lc_evt_type {
 	LTE_LC_EVT_NW_REG_STATUS,
 	LTE_LC_EVT_PSM_UPDATE,
 	LTE_LC_EVT_EDRX_UPDATE,
-	LTE_LC_EVT_RRC_CONNECTED,
-	LTE_LC_EVT_RRC_IDLE,
+	LTE_LC_EVT_RRC_UPDATE,
+};
+
+enum lte_lc_rrc_mode {
+	LTE_LC_RRC_MODE_IDLE,
+	LTE_LC_RRC_MODE_CONNECTED,
 };
 
 struct lte_lc_psm_cfg {
@@ -78,6 +82,7 @@ struct lte_lc_evt {
 	enum lte_lc_evt_type type;
 	union {
 		enum lte_lc_nw_reg_status nw_reg_status;
+		enum lte_lc_rrc_mode rrc_mode;
 		struct lte_lc_psm_cfg psm_cfg;
 		struct lte_lc_edrx_cfg edrx_cfg;
 	};
