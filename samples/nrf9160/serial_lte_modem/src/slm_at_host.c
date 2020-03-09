@@ -24,10 +24,10 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define SLM_UART_0_NAME      "UART_0"
 #define SLM_UART_2_NAME      "UART_2"
 
-#define OK_STR    "OK\r\n"
-#define ERROR_STR "ERROR\r\n"
-
-#define SLM_SYNC_STR "Ready\r\n"
+#define OK_STR		"OK\r\n"
+#define ERROR_STR	"ERROR\r\n"
+#define FATAL_STR	"FATAL ERROR\r\n"
+#define SLM_SYNC_STR	"Ready\r\n"
 
 #define SLM_VERSION	"#XSLMVER: 1.2\r\n"
 #define AT_CMD_SLMVER	"AT#XSLMVER"
@@ -85,6 +85,7 @@ static void write_uart_string(const char *str, size_t len)
 	uart_tx_buf = k_malloc(len);
 	if (uart_tx_buf == NULL) {
 		LOG_WRN("No ram buffer");
+		k_sem_give(&tx_done);
 		return;
 	}
 
@@ -276,11 +277,13 @@ static void cmd_send(struct k_work *work)
 	}
 
 done:
+	k_sleep(100); /* allow time for TX DMA */
+	buf_num = 1U;
 	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, K_FOREVER);
 	if (err) {
-		LOG_WRN("UART RX failed: %d", err);
+		LOG_ERR("UART RX failed: %d", err);
+		write_uart_string(FATAL_STR, sizeof(FATAL_STR) - 1);
 	}
-	buf_num = 1U;
 }
 
 static void uart_rx_handler(u8_t character)
@@ -452,12 +455,12 @@ int slm_at_host_init(void)
 	/* Power on UART module */
 	device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE,
 				NULL, NULL);
+	buf_num = 1U;
 	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, K_FOREVER);
 	if (err) {
 		LOG_ERR("Cannot enable rx: %d", err);
 		return -EFAULT;
 	}
-	buf_num = 1U;
 
 	err = at_notif_register_handler(NULL, response_handler);
 	if (err) {
