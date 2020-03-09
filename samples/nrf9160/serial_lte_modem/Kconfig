@@ -16,6 +16,11 @@ config SLM_AT_MODE
 	select AT_CMD_PARSER
 	select MODEM_INFO
 
+config SLM_TEST_MODE
+	bool "SLM test mode"
+	help
+	  Enable test logic in source
+
 config SLM_AT_MAX_PARAM
 	int "Max number of parameters in AT command"
 	default 8
