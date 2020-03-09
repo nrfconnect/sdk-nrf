@@ -42,13 +42,18 @@ enum lte_lc_system_mode {
 };
 
 /* NOTE: enum lte_lc_func_mode maps directly to the functional mode
- *	 as returned by the AT command "AT+CFUN?".
+ *	 as returned by the AT command "AT+CFUN?" as specified in
+ *	 "nRF91 AT Commands - Command Reference Guide v1.1"
  */
 enum lte_lc_func_mode {
 	LTE_LC_FUNC_MODE_POWER_OFF		= 0,
 	LTE_LC_FUNC_MODE_NORMAL			= 1,
 	LTE_LC_FUNC_MODE_OFFLINE		= 4,
-	LTE_LC_FUNC_MODE_OFFLINE_UICC_ON	= 44
+	LTE_LC_FUNC_MODE_DEACTIVATE_LTE		= 20,
+	LTE_LC_FUNC_MODE_ACTIVATE_LTE		= 21,
+	LTE_LC_FUNC_MODE_DEACTIVATE_GNSS	= 30,
+	LTE_LC_FUNC_MODE_ACTIVATE_GNSS		= 31,
+	LTE_LC_FUNC_MODE_OFFLINE_UICC_ON	= 44,
 };
 
 /** @brief Function for initializing
