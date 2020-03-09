@@ -791,8 +791,67 @@ error:
 static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 					    int flags)
 {
-	errno = -ENOTSUP;
-	return -1;
+	ssize_t len = 0;
+	ssize_t ret;
+	int i;
+	static K_MUTEX_DEFINE(sendmsg_lock);
+	static u8_t buf[CONFIG_BSD_LIBRARY_SENDMSG_BUF_SIZE];
+
+	if (msg == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	/* Try to reduce number of `sendto` calls - copy data if they fit into
+	 * a single buffer
+	 */
+
+	for (i = 0; i < msg->msg_iovlen; i++) {
+		len += msg->msg_iov[i].iov_len;
+	}
+
+	if (len <= sizeof(buf)) {
+		/* Protect `buf` access with a mutex. */
+		k_mutex_lock(&sendmsg_lock, K_FOREVER);
+		len = 0;
+
+		for (i = 0; i < msg->msg_iovlen; i++) {
+			memcpy(buf + len, msg->msg_iov[i].iov_base,
+			       msg->msg_iov[i].iov_len);
+			len += msg->msg_iov[i].iov_len;
+		}
+
+		ret = nrf91_socket_offload_sendto(obj, buf, len,
+						  flags, msg->msg_name,
+						  msg->msg_namelen);
+
+		k_mutex_unlock(&sendmsg_lock);
+		return ret;
+	}
+
+	/* If the data won't fit into intermediate buffer, send the buffers
+	 * separately
+	 */
+
+	len = 0;
+
+	for (i = 0; i < msg->msg_iovlen; i++) {
+		if (msg->msg_iov[i].iov_len == 0) {
+			continue;
+		}
+
+		ret = nrf91_socket_offload_sendto(obj, msg->msg_iov[i].iov_base,
+						  msg->msg_iov[i].iov_len,
+						  flags, msg->msg_name,
+						  msg->msg_namelen);
+		if (ret < 0) {
+			return ret;
+		}
+
+		len += ret;
+	}
+
+	return len;
 }
 
 static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,

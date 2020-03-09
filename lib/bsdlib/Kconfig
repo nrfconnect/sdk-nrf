@@ -50,6 +50,16 @@ config NRF91_SOCKET_BLOCK_LIMIT
 	  send() or sendto() calls. This may not work for certain kinds
 	  of sockets or certain flag parameter values.
 
+config BSD_LIBRARY_SENDMSG_BUF_SIZE
+	int "Size of the sendmsg intermediate buffer"
+	default 128
+	help
+	  Size of an intermediate buffer used by `sendmsg` to repack data and
+	  therefore limit the number of `sendto` calls. The buffer is created
+	  in a static memory, so it does not impact stack/heap usage. In case
+	  the repacked message would not fit into the buffer, `sendmsg` sends
+	  each message part separately.
+
 endif # BSD_LIBRARY
 
 endmenu
