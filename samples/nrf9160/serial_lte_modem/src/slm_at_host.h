@@ -41,18 +41,33 @@ int slm_at_host_init(void);
  *
  * @param cmd Command string received from UART
  * @param slm_cmd Propreiatry command supported by SLM
- * @param length Length of string to compare
+ * @param slm_cmd_length Length of string to compare
  *
  * @retval true If two commands match, false if not.
  */
 static inline bool slm_at_cmd_cmp(const char *cmd,
 				const char *slm_cmd,
-				u8_t length)
+				u8_t slm_cmd_length)
 {
-	for (int i = 0; i < length; i++) {
+	int i;
+
+	if (strlen(cmd) < slm_cmd_length) {
+		return false;
+	}
+
+	for (i = 0; i < slm_cmd_length; i++) {
 		if (toupper(*(cmd + i)) != *(slm_cmd + i)) {
 			return false;
 		}
+	}
+#if defined(CONFIG_SLM_CR_LF_TERMINATION)
+	if (strlen(cmd) > (slm_cmd_length + 2)) {
+#else
+	if (strlen(cmd) > (slm_cmd_length + 1)) {
+#endif
+		char ch = *(cmd + i);
+		/* With parameter, SET TEST, "="; READ, "?" */
+		return ((ch == '=') || (ch == '?'));
 	}
 
 	return true;

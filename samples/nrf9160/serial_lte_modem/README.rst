@@ -10,9 +10,7 @@ This sample is an enhancement to the :ref:`at_client_sample` sample.
 It provides the following features:
 
  * Support for generic proprietary AT commands
- * Support for Socket proprietary AT commands
- * Support for TCP proprietary AT commands
- * Support for UDP proprietary AT commands
+ * Support for BSD Socket proprietary AT commands
  * Support for ICMP proprietary AT commands
  * Support for GPS proprietary AT commands
  * Support for communication to external MCU over UART
@@ -100,32 +98,22 @@ The following proprietary generic AT commands are used in this sample:
 * AT#XSLEEP[=<shutdown_mode>]
 * AT#XCLAC
 
-Socket AT commands
-******************
+BSD Socket AT commands
+**********************
 
-The following proprietary socket AT commands are used in this sample:
+The following proprietary BSD socket AT commands are used in this sample:
 
-* AT#XSOCKET=<op>[,<type>]
-* AT#XSOCKET?
+* AT#XSOCKET=<op>[,<type>,<role>[,<sec_tag>]]
+* AT#XSOCKETOPT=<op>,<name>[,<value>]
 * AT#XBIND=<port>
-
-TCP AT commands
-***************
-
-The following proprietary TCP AT commands are used in this sample:
-
-* AT#XTCPCONN=<url>,<port>
-* AT#XTCPCONN?
-* AT#XTCPSEND=<data>
-* AT#XTCPRECV=<length>,<timeout>
-
-UDP AT commands
-***************
-
-The following proprietary UDP AT commands are used in this sample:
-
-* AT#XUDPSENDTO=<url>,<port>,<data>
-* AT#XUDPRECVFROM=<url>,<port>,<length>,<timeout>
+* AT#XLISTEN
+* AT#XACCEPT
+* AT#XCONNECT=<url>,<port>
+* AT#XSEND=<data>
+* AT#XRECV[=<length>]
+* AT#XSENDTO=<url>,<port>,<data>
+* AT#XRECVFROM=<url>,<port>[,<length>]
+* AT#XGETADDRINFO=<url>
 
 ICMP AT commands
 ****************
