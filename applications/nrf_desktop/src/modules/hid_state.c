@@ -778,6 +778,10 @@ static void report_issued(const void *subscriber_id, enum in_report tr,
 
 	struct report_state *rs = &subscriber->state[tr];
 
+	if (rs->state == STATE_DISCONNECTED) {
+		return;
+	}
+
 	__ASSERT_NO_MSG(rs->cnt > 0);
 	rs->cnt--;
 
@@ -862,6 +866,7 @@ static void disconnect(const void *subscriber_id, enum in_report tr)
 	}
 
 	subscriber->state[tr].state = STATE_DISCONNECTED;
+	subscriber->state[tr].cnt = 0;
 
 	struct report_data *rd = &state.report_data[tr];
 
