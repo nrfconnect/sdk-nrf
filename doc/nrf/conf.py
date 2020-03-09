@@ -66,6 +66,11 @@ NRFXLIB_OUTPUT = os.path.abspath(os.environ["NRFXLIB_OUTPUT"])
 #
 # needs_sphinx = '1.0'
 
+# Add the Zephyr 'extensions' directory to sys.path, to enable finding
+# Sphinx extensions within.
+sys.path.insert(0, os.path.join(ZEPHYR_BASE, 'doc', 'extensions'))
+
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -73,7 +78,8 @@ extensions = ['sphinx.ext.intersphinx',
               'breathe',
               'sphinx.ext.ifconfig',
               'sphinxcontrib.mscgen',
-              'sphinx_tabs.tabs']
+              'sphinx_tabs.tabs',
+              'zephyr.html_redirects']
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['../_templates']
@@ -184,6 +190,20 @@ breathe_default_project = "nrf"
 cpp_id_attributes = ['__syscall', '__syscall_inline', '__deprecated',
     '__may_alias', '__used', '__unused', '__weak',
     '__DEPRECATED_MACRO', 'FUNC_NORETURN' ]
+
+
+# Custom added feature to allow redirecting old URLs (caused by
+# reorganizing doc directories)
+#
+# list of tuples (old_url, new_url) for pages to redirect
+#
+# URLs must be relative to document root (with NO leading slash),
+# and without the html extension)
+html_redirect_pages = [
+        ('gs_ins_windows', 'gs_installing'),
+        ('gs_ins_linux', 'gs_installing'),
+        ('gs_ins_mac', 'gs_installing')
+                      ]
 
 rst_epilog = """
 .. include:: /links.txt
