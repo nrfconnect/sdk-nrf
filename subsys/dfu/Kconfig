@@ -11,6 +11,13 @@ menuconfig DFU_TARGET
 
 if (DFU_TARGET)
 
+config DFU_TARGET_ALWAYS_RESTART
+	bool "Always start writing from the start"
+	help
+	  Ensures that the download always start from offset 0 and does not try
+	  to resume from where it last stopped writing. This means it will erase
+	  anything previously written by dfu target.
+
 config DFU_TARGET_MCUBOOT
 	bool "MCUBoot update support"
 	default y

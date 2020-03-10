@@ -161,7 +161,11 @@ int dfu_target_mcuboot_init(size_t file_size, dfu_target_callback_t cb)
 
 int dfu_target_mcuboot_offset_get(size_t *out)
 {
+#ifndef CONFIG_DFU_TARGET_ALWAYS_RESTART
 	*out = flash_img_bytes_written(&flash_img);
+#else
+	*out = 0;
+#endif
 	return 0;
 }
 

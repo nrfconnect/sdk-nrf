@@ -7,7 +7,6 @@
 #include <dfu/dfu_target.h>
 
 LOG_MODULE_REGISTER(dfu_target_modem, CONFIG_DFU_TARGET_LOG_LEVEL);
-
 #define DIRTY_IMAGE 0x280000
 #define MODEM_MAGIC 0x7544656d
 
@@ -171,6 +170,9 @@ int dfu_target_modem_init(size_t file_size, dfu_target_callback_t cb)
 	if (offset == DIRTY_IMAGE) {
 		delete_banked_modem_fw();
 	} else if (offset != 0) {
+#ifdef CONFIG_DFU_TARGET_ALWAYS_RESTART
+		offset = 0;
+#endif
 		LOG_INF("Setting offset to 0x%x", offset);
 		len = sizeof(offset);
 		err = setsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, len);
