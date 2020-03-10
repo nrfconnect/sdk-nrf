@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Serialization"
+
+if RP_SERIALIZATION
+
+config RP_OS_RSP_WAIT_TIME
+	int "Remote procedure response wait time"
+	default 5000
+	help
+	  Remote procedure wait for response maximum time in miliseconds
+
+choice
+	prompt "RPMSG device role"
+	default RPMSG_REMOTE
+
+config RPMSG_REMOTE
+	bool "Remote"
+
+config RPMSG_MASTER
+	bool "Master"
+
+endchoice
+
+config RP_TRANS_PRMSG_RX_STACK_SIZE
+	int "Stack size of the rpmsg receive thread"
+	default 512
+	help
+	  Stack size for the thread that is responsible for receiving incoming
+	  messages from rpmsg.
+
+config RP_TRANS_PRMSG_RX_PRIORITY
+	int "Priority of the rpmsg receive thread"
+	default 7
+	help
+	  Priority of the thread that is responsible for receiving incoming
+	  messages from rpmsg.
+
+module = RP_SER
+module-str = RP_SER
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # RP_SERIALIZATION
+
+endmenu
