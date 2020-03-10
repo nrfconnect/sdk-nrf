@@ -198,7 +198,7 @@ static void aws_iot_notify_event(const struct aws_iot_evt *evt)
 #endif
 
 #if defined(CONFIG_AWS_FOTA)
-static void aws_fota_cb_handler(enum aws_fota_evt_id evt)
+static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 {
 #if defined(CONFIG_CLOUD_API)
 	struct cloud_backend_config *config = aws_iot_backend->config;
@@ -207,7 +207,22 @@ static void aws_fota_cb_handler(enum aws_fota_evt_id evt)
 	struct aws_iot_evt aws_iot_evt = { 0 };
 #endif
 
-	switch (evt) {
+	if (fota_evt == NULL) {
+		return;
+	}
+
+	switch (fota_evt->id) {
+	case AWS_FOTA_EVT_START:
+		LOG_DBG("AWS_FOTA_EVT_START");
+#if defined(CONFIG_CLOUD_API)
+		cloud_evt.type = CLOUD_EVT_FOTA_START;
+		cloud_notify_event(aws_iot_backend, &cloud_evt,
+				   config->user_data);
+#else
+		aws_iot_evt.type = AWS_IOT_EVT_FOTA_START;
+		aws_iot_notify_event(&aws_iot_evt);
+#endif
+		break;
 	case AWS_FOTA_EVT_DONE:
 		LOG_DBG("AWS_FOTA_EVT_DONE");
 #if defined(CONFIG_CLOUD_API)
@@ -219,8 +234,36 @@ static void aws_fota_cb_handler(enum aws_fota_evt_id evt)
 		aws_iot_notify_event(&aws_iot_evt);
 #endif
 		break;
+	case AWS_FOTA_EVT_ERASE_PENDING:
+		LOG_DBG("AWS_FOTA_EVT_ERASE_PENDING");
+#if defined(CONFIG_CLOUD_API)
+		cloud_evt.type = CLOUD_EVT_FOTA_ERASE_PENDING;
+		cloud_notify_event(aws_iot_backend, &cloud_evt,
+				   config->user_data);
+#else
+		aws_iot_evt.type = AWS_IOT_EVT_FOTA_ERASE_PENDING;
+		aws_iot_notify_event(&aws_iot_evt);
+#endif
+		break;
+	case AWS_FOTA_EVT_ERASE_DONE:
+		LOG_DBG("AWS_FOTA_EVT_ERASE_DONE");
+#if defined(CONFIG_CLOUD_API)
+		cloud_evt.type = CLOUD_EVT_FOTA_ERASE_DONE;
+		cloud_notify_event(aws_iot_backend, &cloud_evt,
+				   config->user_data);
+#else
+		aws_iot_evt.type = AWS_IOT_EVT_FOTA_ERASE_DONE;
+		aws_iot_notify_event(&aws_iot_evt);
+#endif
+		break;
 	case AWS_FOTA_EVT_ERROR:
 		LOG_ERR("AWS_FOTA_EVT_ERROR");
+		break;
+	case AWS_FOTA_EVT_DL_PROGRESS:
+		LOG_DBG("AWS_FOTA_EVT_DL_PROGRESS");
+		break;
+	default:
+		LOG_ERR("Unknown FOTA event");
 		break;
 	}
 }
