@@ -524,6 +524,7 @@ static void handle_config_forward(const struct config_forward_event *event)
 
 	if (!subscriber) {
 		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
+		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
 		return;
 	}
 
@@ -551,6 +552,7 @@ static void handle_config_forward(const struct config_forward_event *event)
 
 	if (event->dyndata.size > UCHAR_MAX) {
 		LOG_WRN("Event data too big");
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
 		return;
 	}
 
@@ -581,6 +583,7 @@ static void handle_config_forward(const struct config_forward_event *event)
 
 	if (pos < 0) {
 		LOG_WRN("Could not set report");
+		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
 		return;
 	}
 
@@ -606,6 +609,7 @@ static void handle_config_forward_get(const struct config_forward_get_event *eve
 
 	if (!subscriber) {
 		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
+		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
 		return;
 	}
 
