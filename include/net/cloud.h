@@ -375,6 +375,22 @@ static inline int cloud_user_data_set(struct cloud_backend *const backend,
 }
 
 /**
+ * @brief Calls the user-provided event handler with event data.
+ *
+ * @param backend	Pointer to cloud backend.
+ * @param evt		Pointer to event data.
+ * @param user_data	Pointer to user-defined data.
+ */
+static inline void cloud_notify_event(struct cloud_backend *backend,
+				      struct cloud_event *evt,
+				      void *user_data)
+{
+	if (backend->config->handler) {
+		backend->config->handler(backend, evt, user_data);
+	}
+}
+
+/**
  * @brief Get binding (pointer) to cloud backend if a registered backend
  *	      matches the provided name.
  *
