@@ -2,7 +2,6 @@
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <net/cloud.h>
-#include <net/cloud_backend.h>
 #include <stdio.h>
 
 #if defined(CONFIG_AWS_FOTA)
