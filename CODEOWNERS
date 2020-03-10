@@ -61,7 +61,7 @@ Kconfig*                                  @SebastianBoe
 /lib/lte_link_control/                    @jtguggedal
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
-/lib/pdn_management/                      @rlubos
+/lib/pdn/                                 @peho-nordic @rlubos
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
 /lib/fatal_error/                         @ioannisg
 /lib/sms/                                 @metc
