@@ -10,7 +10,7 @@
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
-#include <net/bsdlib.h>
+#include <modem/bsdlib.h>
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
 

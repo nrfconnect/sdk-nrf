@@ -12,7 +12,7 @@
 #include <modem/at_notif.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
-#include <net/bsdlib.h>
+#include <modem/bsdlib.h>
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
 #include <dfu/mcuboot.h>

@@ -14,7 +14,7 @@
 #include <dk_buttons_and_leds.h>
 #include <modem/lte_lc.h>
 #include <power/reboot.h>
-#include <net/bsdlib.h>
+#include <modem/bsdlib.h>
 
 #include "aggregator.h"
 #include "ble.h"

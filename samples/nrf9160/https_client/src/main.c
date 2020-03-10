@@ -8,7 +8,7 @@
 #include <zephyr.h>
 #include <stdlib.h>
 #include <net/socket.h>
-#include <net/bsdlib.h>
+#include <modem/bsdlib.h>
 #include <net/tls_credentials.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
