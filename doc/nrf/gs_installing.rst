@@ -32,13 +32,12 @@ The installation process is different depending on your operating system.
       The recommended way for installing the required tools on Windows is to use Chocolatey, a package manager for Windows.
       Chocolatey installs the tools so that you can use them from a Windows command prompt.
 
-      To install the required tools, follow Zephyr's Getting Started Guide.
-      Note that there are several ways to install the tools.
-      We recommend installing according to :ref:`zephyr:windows_install_native`.
+      To install the required tools, follow the :ref:`install-required-tools` section for Windows in Zephyr's :ref:`zephyr:getting_started`.
 
    .. group-tab:: Linux
 
-      To install the required tools on Linux, follow the :ref:`zephyr:linux_requirements` section of Zephyr's Getting Started Guide.
+      To install the required tools on Linux, follow the :ref:`install-required-tools` section for Linux in Zephyr's :ref:`zephyr:getting_started`.
+      Additional information is available in the :ref:`zephyr:linux_requirements` section.
 
       In addition, make sure that you have dtc v1.4.6 or later installed.
       Depending on the Linux distribution that you use, you might need to install it manually because the current official package version might be older than v1.4.6.
@@ -53,7 +52,7 @@ The installation process is different depending on your operating system.
 
    .. group-tab:: macOS
 
-      To install the required tools, follow the :ref:`zephyr:mac_requirements` section of Zephyr's Getting Started Guide.
+      To install the required tools, follow the :ref:`install-required-tools` section for macOS in Zephyr's :ref:`zephyr:getting_started`.
 
       Install Homebrew and install the required tools using the ``brew`` command line tool.
 
