@@ -46,9 +46,17 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_XSYSTEMMODE_GPS_INDEX		2
 #define AT_XSYSTEMMODE_PARAMS_COUNT		5
 #define AT_XSYSTEMMODE_RESPONSE_MAX_LEN		30
-/* Parameter values for AT+CEDRXS command. */
+/* CEDRXS command parameters */
+#define AT_CEDRXS_MODE_INDEX
 #define AT_CEDRXS_ACTT_WB			4
 #define AT_CEDRXS_ACTT_NB			5
+/* CEDRXP notification parameters */
+#define AT_CEDRXP_PARAMS_COUNT_MAX		5
+#define AT_CEDRXP_ACTT_INDEX			1
+#define AT_CEDRXP_REQ_EDRX_INDEX		2
+#define AT_CEDRXP_NW_EDRX_INDEX			3
+#define AT_CEDRXP_NW_PTW_INDEX			4
+/* CSCON command parameters */
 #define AT_CSCON_RESPONSE_PREFIX		"+CSCON"
 #define AT_CSCON_PARAMS_COUNT_MAX		4
 #define AT_CSCON_RRC_MODE_INDEX			1
@@ -61,6 +69,8 @@ static int parse_nw_reg_status(const char *at_response,
 static int parse_rrc_mode(const char *at_response,
 			  enum lte_lc_rrc_mode *mode,
 			  size_t mode_index);
+static int parse_edrx(const char *at_response,
+		      struct lte_lc_edrx_cfg *cfg);
 static bool response_is_valid(const char *response, size_t response_len,
 			      const char *check);
 
@@ -72,10 +82,9 @@ static lte_lc_evt_handler_t evt_handler;
 static const u32_t t3324_lookup[8] = {2, 60, 600, 60, 60, 60, 60, 0};
 
 /* Lookup table for T3412 timer used for periodic TAU. Unit is seconds.
- * Ref: GPRS Timer 3 IE in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
+ * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
  */
-static const u32_t t3412_lookup[8] = {600, 3600, 36000, 2, 30, 60,
-				      1152000, 0};
+static const u32_t t3412_lookup[8] = {600, 3600, 36000, 2, 30, 60, 1152000, 0};
 
 #if defined(CONFIG_BSD_LIBRARY_TRACE_ENABLED)
 /* Enable modem trace */
@@ -176,6 +185,7 @@ static const char legacy_pco[] = "AT%XEPCO=0";
 enum lte_lc_notif_type {
 	LTE_LC_NOTIF_CEREG,
 	LTE_LC_NOTIF_CSCON,
+	LTE_LC_NOTIF_CEDRXP,
 
 	LTE_LC_NOTIF_COUNT,
 };
@@ -183,6 +193,7 @@ enum lte_lc_notif_type {
 static const char *relevant_at_notifs[] = {
 	[LTE_LC_NOTIF_CEREG] = "+CEREG",
 	[LTE_LC_NOTIF_CSCON] = "+CSCON",
+	[LTE_LC_NOTIF_CEDRXP] = "+CEDRXP",
 };
 
 BUILD_ASSERT(ARRAY_SIZE(relevant_at_notifs) == LTE_LC_NOTIF_COUNT);
@@ -243,7 +254,7 @@ static void at_handler(void *context, const char *response)
 		}
 
 		break;
-	case LTE_LC_NOTIF_CSCON: {
+	case LTE_LC_NOTIF_CSCON:
 		LOG_DBG("+CSCON notification");
 
 		err = parse_rrc_mode(response,
@@ -258,7 +269,19 @@ static void at_handler(void *context, const char *response)
 		notify = true;
 
 		break;
-	}
+	case LTE_LC_NOTIF_CEDRXP:
+		LOG_DBG("+CEDRXP notification");
+
+		err = parse_edrx(response, &evt.edrx_cfg);
+		if (err) {
+			LOG_ERR("Can't parse eDRX, error: %d", err);
+			return;
+		}
+
+		evt.type = LTE_LC_EVT_EDRX_UPDATE;
+		notify = true;
+
+		break;
 	default:
 		LOG_ERR("Unrecognized notification type: %d", notif_type);
 		break;
@@ -631,7 +654,7 @@ int lte_lc_edrx_req(bool enable)
 	}
 
 	snprintf(edrx_req, sizeof(edrx_req),
-		 "AT+CEDRXS=1,%d,\""CONFIG_LTE_EDRX_REQ_VALUE"\"", actt);
+		 "AT+CEDRXS=2,%d,\""CONFIG_LTE_EDRX_REQ_VALUE"\"", actt);
 
 	err = at_cmd_write(enable ? edrx_req : edrx_disable, NULL, 0, NULL);
 	if (err) {
@@ -798,6 +821,200 @@ static int parse_rrc_mode(const char *at_response,
 		LOG_ERR("Invalid signalling mode: %d", temp_mode);
 		err = -EINVAL;
 	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+
+	return err;
+}
+
+/* Confirm valid system mode and set Paging Time Window multiplier.
+ * Multiplier is 1.28 s for LTE-M, and 2.56 s for NB-IoT, derived from
+ * Figure 10.5.5.32/3GPP TS 24.008.
+ */
+static int get_ptw_multiplier(float *ptw_multiplier)
+{
+	int err;
+	enum lte_lc_system_mode sys_mode;
+
+	err = lte_lc_system_mode_get(&sys_mode);
+	if (err) {
+		LOG_ERR("Failed to get system mode, error: %d", err);
+		return err;
+	}
+
+	switch (sys_mode) {
+	case LTE_LC_SYSTEM_MODE_LTEM: /* Fall through */
+	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
+		*ptw_multiplier = 1.28;
+		break;
+	case LTE_LC_SYSTEM_MODE_NBIOT: /* Fall through */
+	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
+		*ptw_multiplier = 2.56;
+		break;
+	case LTE_LC_SYSTEM_MODE_GPS: /* Fall through */
+	case LTE_LC_SYSTEM_MODE_NONE: /* Fall through */
+	default:
+		LOG_ERR("No LTE connection available in this system mode");
+		return -ENOTCONN;
+	}
+
+	return 0;
+}
+
+static int get_edrx_value(u8_t idx, float *edrx_value)
+{
+	int err;
+	enum lte_lc_system_mode sys_mode;
+	u16_t multiplier = 0;
+
+	/* Lookup table to eDRX multiplier values, based on T_eDRX values found
+	 * in Table 10.5.5.32/3GPP TS 24.008. The actual value is
+	 * (multiplier * 10.24 s), except for the first entry which is handled
+	 * as a special case per note 3 in the specification.
+	 */
+	static const u16_t edrx_lookup_ltem[16] = {
+		0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 32, 64, 128, 256, 256, 256
+	};
+	static const u16_t edrx_lookup_nbiot[16] = {
+		2, 2, 2, 4, 2, 8, 2, 2, 2, 16, 32, 64, 128, 256, 512, 1024
+	};
+
+	if (edrx_value == NULL) {
+		return -EINVAL;
+	}
+
+	err = lte_lc_system_mode_get(&sys_mode);
+	if (err) {
+		LOG_ERR("Failed to get system mode, error: %d", err);
+		return err;
+	}
+
+	switch (sys_mode) {
+	case LTE_LC_SYSTEM_MODE_LTEM: /* Fall through */
+	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
+		multiplier = edrx_lookup_ltem[idx];
+		break;
+	case LTE_LC_SYSTEM_MODE_NBIOT: /* Fall through */
+	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
+		multiplier = edrx_lookup_nbiot[idx];
+		break;
+	case LTE_LC_SYSTEM_MODE_GPS: /* Fall through */
+	case LTE_LC_SYSTEM_MODE_NONE: /* Fall through */
+	default:
+		LOG_ERR("No LTE connection available in this system mode");
+		return -ENOTCONN;
+	}
+
+	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
+
+	return err;
+}
+
+/**@brief Parses an AT command response, and returns the current eDRX settings.
+ *
+ * @note It's assumed that the network only reports valid eDRX values when
+ *	 in each mode (LTE-M and NB1). There's no sanity-check of these values.
+ *
+ * @param at_response Pointer to buffer with AT response.
+ * @param cfg Pointer to where the eDRX configuration is stored.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+static int parse_edrx(const char *at_response,
+		      struct lte_lc_edrx_cfg *cfg)
+{
+	int err;
+	u8_t idx;
+	struct at_param_list resp_list = {0};
+	char tmp_buf[5];
+	size_t len = sizeof(tmp_buf) - 1;
+	float ptw_multiplier;
+
+	if ((at_response == NULL) || (cfg == NULL)) {
+		return -EINVAL;
+	}
+
+	/* Confirm valid system mode and set Paging Time Window multiplier.
+	 * Multiplier is 1.28 s for LTE-M, and 2.56 s for NB-IoT, derived from
+	 * figure 10.5.5.32/3GPP TS 24.008.
+	 */
+	err = get_ptw_multiplier(&ptw_multiplier);
+	if (err) {
+		return err;
+	}
+
+	err = at_params_list_init(&resp_list, AT_CEDRXP_PARAMS_COUNT_MAX);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	/* Parse CEDRXP response and populate AT parameter list */
+	err = at_parser_params_from_str(at_response,
+					NULL,
+					&resp_list);
+	if (err) {
+		LOG_ERR("Could not parse +CEDRXP response, error: %d", err);
+		goto clean_exit;
+	}
+
+	err = at_params_string_get(&resp_list, AT_CEDRXP_NW_EDRX_INDEX,
+				   tmp_buf, &len);
+	if (err) {
+		LOG_ERR("Failed to get eDRX configuration, error: %d", err);
+		goto clean_exit;
+	}
+
+	tmp_buf[len] = '\0';
+
+	/* The eDRX value is a multiple of 10.24 seconds, except for the
+	 * special case of idx == 0 for LTE-M, where the value is 5.12 seconds.
+	 * The variable idx is used to map to the entry of index idx in
+	 * Figure 10.5.5.32/3GPP TS 24.008, table for eDRX in S1 mode, and
+	 * note 4 and 5 are taken into account.
+	 */
+	idx = strtoul(tmp_buf, NULL, 2);
+
+	err = get_edrx_value(idx, &cfg->edrx);
+	if (err) {
+		LOG_ERR("Failed to get eDRX value, error; %d", err);
+		goto clean_exit;
+	}
+
+	len = sizeof(tmp_buf) - 1;
+
+	err = at_params_string_get(&resp_list, AT_CEDRXP_NW_PTW_INDEX,
+				   tmp_buf, &len);
+	if (err) {
+		LOG_ERR("Failed to get PTW configuration, error: %d", err);
+		goto clean_exit;
+	}
+
+	tmp_buf[len] = '\0';
+
+	/* Value can be a maximum of 15, as there are 16 entries in the table
+	 * for paging time window (both for LTE-M and NB1).
+	 */
+	idx = strtoul(tmp_buf, NULL, 2);
+	if (idx > 15) {
+		LOG_ERR("Invalid PTW lookup index: %d", idx);
+		err = -EINVAL;
+		goto clean_exit;
+	}
+
+	/* The Paging Time Window is different for LTE-M and NB-IoT:
+	 *	- LTE-M: (idx + 1) * 1.28 s
+	 *	- NB-IoT (idx + 1) * 2.56 s
+	 */
+	idx += 1;
+	cfg->ptw = idx * ptw_multiplier;
+
+	LOG_DBG("eDRX value: %d.%02d, PTW: %d.%02d",
+		(int)cfg->edrx,
+		(int)(100 * (cfg->edrx - (int)cfg->edrx)),
+		(int)cfg->ptw,
+		(int)(100 * (cfg->ptw - (int)cfg->ptw)));
 
 clean_exit:
 	at_params_list_free(&resp_list);
