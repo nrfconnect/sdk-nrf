@@ -7,7 +7,7 @@
 #ifndef NRF_CLOUD_FSM_H__
 #define NRF_CLOUD_FSM_H__
 
-#include <nrf_cloud.h>
+#include <net/nrf_cloud.h>
 #include "nrf_cloud_transport.h"
 
 #ifdef __cplusplus

@@ -14,7 +14,7 @@
 #include <dk_buttons_and_leds.h>
 #include <sys/byteorder.h>
 
-#include <nrf_cloud.h>
+#include <net/nrf_cloud.h>
 #include "aggregator.h"
 
 /* Thinghy advertisement UUID */

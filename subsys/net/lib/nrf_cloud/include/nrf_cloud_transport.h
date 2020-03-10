@@ -7,7 +7,7 @@
 #ifndef NRF_CLOUD_TRANSPORT_H__
 #define NRF_CLOUD_TRANSPORT_H__
 
-#include <nrf_cloud.h>
+#include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
 extern "C" {

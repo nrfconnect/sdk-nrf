@@ -5,7 +5,7 @@
  */
 
 #include <net/cloud.h>
-#include <nrf_cloud.h>
+#include <net/nrf_cloud.h>
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_transport.h"
