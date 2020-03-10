@@ -9,7 +9,7 @@
 
 #include <stdbool.h>
 
-#include <nrf_cloud.h>
+#include <net/nrf_cloud.h>
 #include "nrf_cloud_fsm.h"
 
 #ifdef __cplusplus

@@ -138,7 +138,7 @@ When a user disassociates a device, the library disallows any further sensor dat
 API documentation
 *****************
 
-| Header file: :file:`include/nrf_cloud.h`
+| Header file: :file:`include/net/nrf_cloud.h`
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/`
 
 .. doxygengroup:: nrf_cloud

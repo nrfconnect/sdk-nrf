@@ -21,7 +21,7 @@
 #endif /* CONFIG_BSD_LIBRARY */
 #include <net/cloud.h>
 #include <net/socket.h>
-#include <nrf_cloud.h>
+#include <net/nrf_cloud.h>
 
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 #include <dfu/mcuboot.h>
