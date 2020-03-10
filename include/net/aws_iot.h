@@ -43,8 +43,14 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_DISCONNECTED,
 	/** Data received from AWS message broker. */
 	AWS_IOT_EVT_DATA_RECEIVED,
+	/** FOTA update start. */
+	AWS_IOT_EVT_FOTA_START,
 	/** FOTA update done, request to reboot. */
-	AWS_IOT_EVT_FOTA_DONE
+	AWS_IOT_EVT_FOTA_DONE,
+	/** FOTA erase pending. */
+	AWS_IOT_EVT_FOTA_ERASE_PENDING,
+	/** FOTA erase done. */
+	AWS_IOT_EVT_FOTA_ERASE_DONE,
 };
 
 /** @brief Struct with data received from AWS IoT broker. */
