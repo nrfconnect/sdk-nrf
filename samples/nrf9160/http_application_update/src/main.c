@@ -103,6 +103,7 @@ static int dfu_button_init(void)
 
 void fota_dl_handler(const struct fota_download_evt *evt)
 {
+	int err;
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		printk("Received error from fota_download\n");
@@ -110,6 +111,22 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		/* Re-enable button callback */
 		gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
+		break;
+	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
+		printk("FOTA_DOWNLOAD_EVT_ERASE_PENDING modem firmware erase is"
+		       " pending, reboot or disconnect the LTE link\n");
+		err = lte_lc_offline();
+		if (err != 0) {
+			printk("Failed to disconnect\n");
+		}
+		break;
+	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
+		printk("FOTA_DOWNLOAD_EVT_ERASE_DONE, reconnecting the LTE"
+		       " link\n");
+		err = lte_lc_connect();
+		if (err != 0) {
+			printk("Failed to reconnect\n");
+		}
 		break;
 
 	default:
