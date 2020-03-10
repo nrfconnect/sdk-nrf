@@ -16,7 +16,7 @@
 #include <modem/at_params.h>
 #include <bsd.h>
 #include <modem/lte_lc.h>
-#include <net/bsdlib.h>
+#include <modem/bsdlib.h>
 #include <net/download_client.h>
 #include <power/reboot.h>
 #include <sys/util.h>

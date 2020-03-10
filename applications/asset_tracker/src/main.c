@@ -14,7 +14,7 @@
 #include <power/reboot.h>
 #include <logging/log_ctrl.h>
 #if defined(CONFIG_BSD_LIBRARY)
-#include <net/bsdlib.h>
+#include <modem/bsdlib.h>
 #include <bsd.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
