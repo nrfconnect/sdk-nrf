@@ -16,6 +16,7 @@
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
 #include <dfu/mcuboot.h>
+#include <dfu/dfu_target.h>
 #include <power/reboot.h>
 
 BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
@@ -440,20 +441,70 @@ static int fds_init(struct mqtt_client *c)
 }
 
 /**@brief Configures AT Command interface to the modem link. */
-static void at_configure(void)
+static void at_interface_init(void)
 {
 	int err;
-
 	err = at_notif_init();
 	__ASSERT(err == 0, "AT Notify could not be initialized.");
 	err = at_cmd_init();
 	__ASSERT(err == 0, "AT CMD could not be established.");
 }
 
-static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
+static void lte_init_and_connect(void)
+{
+#ifdef CONFIG_LTE_LINK_CONTROL
+	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
+			"This sample does not support auto init and connect");
+	printk("LTE Link Connecting ...\n");
+	int err = lte_lc_init_and_connect();
+
+	__ASSERT(err == 0, "LTE link could not be established.");
+	printk("LTE Link Connected!\n");
+#endif
+}
+
+/**@brief Callback handler for DFU target events
+ *
+ * Turns the modem into offline mode to handle the current pending erase request
+ * so that the modem will have time to service the erase request.
+ */
+static void dfu_target_callback_handler(enum dfu_target_evt_id evt)
 {
 	int err;
+	enum lte_lc_func_mode mode;
 
+	err = lte_lc_func_mode_get(&mode);
+	if (err < 0) {
+		__ASSERT(err == 0, "Unable to get LTE mode");
+	}
+
+	switch (evt) {
+	case DFU_TARGET_EVT_TIMEOUT:
+		printk("Modem firmware bank erase pending\n");
+		if (mode == LTE_LC_FUNC_MODE_POWER_OFF) {
+			break;
+		} else if (mode == LTE_LC_FUNC_MODE_NORMAL) {
+			printk("Erase are not handeled putting the modem in"
+			       " offline mode\n");
+			err = lte_lc_offline();
+			__ASSERT(err == 0, "Unable to enter offline mode");
+		}
+		break;
+	case DFU_TARGET_EVT_ERASE_DONE:
+		printk("Modem firmware bank erase done\n");
+		if (mode == LTE_LC_FUNC_MODE_OFFLINE) {
+			printk("Turning on normal mode\n");
+			err = lte_lc_normal();
+			__ASSERT(err == 0, "Unable to enter normal mode");
+		}
+		break;
+	default:
+		__ASSERT(false, "Unexpected dfu event\n");
+	}
+}
+
+static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
+{
 	if (fota_evt == NULL) {
 		return;
 	}
@@ -480,20 +531,11 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 		break;
 
 	case AWS_FOTA_EVT_ERASE_PENDING:
-		printk("AWS_FOTA_EVT_ERASE_PENDING, reboot or disconnect the "
-		       "LTE link\n");
-		err = lte_lc_offline();
-		if (err) {
-			printk("Error turning off the LTE link\n");
-		}
+		dfu_target_callback_handler(DFU_TARGET_EVT_TIMEOUT);
 		break;
 
 	case AWS_FOTA_EVT_ERASE_DONE:
-		printk("AWS_FOTA_EVT_ERASE_DONE, reconnecting the LTE link\n");
-		err = lte_lc_connect();
-		if (err) {
-			printk("Error reconnecting the LTE link\n");
-		}
+		dfu_target_callback_handler(DFU_TARGET_EVT_ERASE_DONE);
 		break;
 
 	case AWS_FOTA_EVT_ERROR:
@@ -537,14 +579,14 @@ void main(void)
 	}
 	printk("Initialized bsdlib\n");
 
-	at_configure();
-#if defined(CONFIG_PROVISION_CERTIFICATES)
+	at_interface_init();
+#ifdef CONFIG_PROVISION_CERTIFICATES
 	provision_certificates();
 #endif /* CONFIG_PROVISION_CERTIFICATES */
-	printk("LTE Link Connecting ...\n");
-	err = lte_lc_init_and_connect();
-	__ASSERT(err == 0, "LTE link could not be established.");
-	printk("LTE Link Connected!\n");
+#ifdef CONFIG_DFU_TARGET_MODEM
+	dfu_target_modem_delete_banked_fw(false, dfu_target_callback_handler);
+#endif
+	lte_init_and_connect();
 
 	client_init(&client, CONFIG_MQTT_BROKER_HOSTNAME);
 
