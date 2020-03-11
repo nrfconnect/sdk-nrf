@@ -274,6 +274,16 @@
 .. _`Ephemeris`: https://en.wikipedia.org/wiki/Ephemeris
 .. _`Almanac`: https://en.wikipedia.org/wiki/GPS_signals#Almanac
 
+.. _`SUPL context model`: http://www.openmobilealliance.org/release/SUPL/V1_0-20060127-C/OMA-AD-SUPL-V1_0-20060127-C.pdf#page=16
+
+.. _`LTE Positioning Protocol (LPP)`:  https://www.etsi.org/deliver/etsi_ts/136300_136399/136355/11.01.00_60/ts_136355v110100p.pdf#page=12
+
+.. _`SET-initiated SUPL collaboration`: http://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=128
+
+.. _`SET-Initiated Non-Roaming Successful Case (Proxy mode)`: http://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=129
+
+.. _`Secure Location Protocol (SLP)` : https://en.wikipedia.org/wiki/Service_Location_Protocol
+
 .. ### Links to specific files on GitHub
 
 .. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
