@@ -34,7 +34,7 @@ bool dfu_target_modem_identify(const void *const buf);
  * @param[in] callback Callback function for signaling if the modem is not able
  *		       to service the erase request.
  *
- * @retval 0 If successful, negative errno otherwise.
+ * @retval 0 If successful, negative value otherwise.
  */
 int dfu_target_modem_init(size_t file_size, dfu_target_callback_t callback);
 

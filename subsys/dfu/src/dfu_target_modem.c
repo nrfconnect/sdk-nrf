@@ -17,8 +17,8 @@ struct modem_delta_header {
 	u32_t magic;
 };
 
-static int  fd;
-static int  offset;
+static int  fd_dfu;
+static size_t offset;
 static dfu_target_callback_t callback;
 
 static int get_modem_error(void)
@@ -28,7 +28,7 @@ static int get_modem_error(void)
 	socklen_t len;
 
 	len = sizeof(err);
-	rc = getsockopt(fd, SOL_DFU, SO_DFU_ERROR, &err, &len);
+	rc = getsockopt(fd_dfu, SOL_DFU, SO_DFU_ERROR, &err, &len);
 	if (rc) {
 		LOG_ERR("Unable to fetch modem error, errno %d", errno);
 	}
@@ -42,7 +42,7 @@ static int apply_modem_upgrade(void)
 
 	LOG_INF("Scheduling modem firmware upgrade at next boot");
 
-	err = setsockopt(fd, SOL_DFU, SO_DFU_APPLY, NULL, 0);
+	err = setsockopt(fd_dfu, SOL_DFU, SO_DFU_APPLY, NULL, 0);
 	if (err < 0) {
 		if (errno == ENOEXEC) {
 			LOG_ERR("SO_DFU_APPLY failed, modem error %d",
@@ -53,6 +53,42 @@ static int apply_modem_upgrade(void)
 	}
 	return 0;
 }
+
+static int open_modem_dfu_socket(void)
+{
+	fd_dfu = socket(AF_LOCAL, SOCK_STREAM, NPROTO_DFU);
+	if (fd_dfu < 0) {
+		LOG_ERR("Failed to close modem DFU socket.");
+	}
+	return fd_dfu;
+}
+
+static int close_modem_dfu_socket(void)
+{
+	int err = close(fd_dfu);
+
+	if (err < 0) {
+		LOG_ERR("Failed to close modem DFU socket.");
+	}
+	return err;
+}
+
+static int get_modem_offset(u32_t *modem_offset)
+{
+	int err;
+	socklen_t len = sizeof(int);
+
+	err = getsockopt(fd_dfu, SOL_DFU, SO_DFU_OFFSET, modem_offset, &len);
+	if (err < 0) {
+		if (errno == ENOEXEC) {
+			LOG_ERR("Modem error: %d", get_modem_error());
+		} else {
+			LOG_ERR("getsockopt(OFFSET) errno: %d", errno);
+		}
+	}
+	return err;
+}
+
 #define SLEEP_TIME 1
 static int delete_banked_modem_fw(void)
 {
@@ -61,13 +97,13 @@ static int delete_banked_modem_fw(void)
 	int timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
 
 	LOG_INF("Deleting firmware image, this can take several minutes");
-	err = setsockopt(fd, SOL_DFU, SO_DFU_BACKUP_DELETE, NULL, 0);
+	err = setsockopt(fd_dfu, SOL_DFU, SO_DFU_BACKUP_DELETE, NULL, 0);
 	if (err < 0) {
 		LOG_ERR("Failed to delete backup, errno %d", errno);
 		return -EFAULT;
 	}
 	while (true) {
-		err = getsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
+		err = getsockopt(fd_dfu, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
 		if (err < 0) {
 			if (timeout < 0) {
 				callback(DFU_TARGET_EVT_TIMEOUT);
@@ -91,6 +127,30 @@ static int delete_banked_modem_fw(void)
 	return 0;
 }
 
+int dfu_target_modem_delete_banked_fw(bool force, dfu_target_callback_t cb)
+{
+	int err;
+	size_t bank_offset;
+
+	callback = cb;
+	err = open_modem_dfu_socket();
+	if (err < 0) {
+		return err;
+	}
+
+	get_modem_offset(&bank_offset);
+
+	if (bank_offset == DIRTY_IMAGE || force) {
+		err = delete_banked_modem_fw();
+		if (err < 0) {
+			LOG_ERR("Unable to delete modem firmware bank");
+			return err;
+		}
+	}
+
+	return close_modem_dfu_socket();
+}
+
 /**@brief Initialize DFU socket. */
 static int modem_dfu_socket_init(void)
 {
@@ -100,16 +160,15 @@ static int modem_dfu_socket_init(void)
 	char version_string[37];
 
 	/* Create a socket for firmware upgrade*/
-	fd = socket(AF_LOCAL, SOCK_STREAM, NPROTO_DFU);
-	if (fd < 0) {
-		LOG_ERR("Failed to open Modem DFU socket.");
-		return fd;
+	err = open_modem_dfu_socket();
+	if (err < 0) {
+		return err;
 	}
 
 	LOG_INF("Modem DFU Socket created");
 
 	len = sizeof(version);
-	err = getsockopt(fd, SOL_DFU, SO_DFU_FW_VERSION, &version,
+	err = getsockopt(fd_dfu, SOL_DFU, SO_DFU_FW_VERSION, &version,
 			    &len);
 	if (err < 0) {
 		LOG_ERR("Firmware version request failed, errno %d", errno);
@@ -143,7 +202,8 @@ int dfu_target_modem_init(size_t file_size, dfu_target_callback_t cb)
 		return err;
 	}
 
-	err = getsockopt(fd, SOL_DFU, SO_DFU_RESOURCES, &scratch_space, &len);
+	err = getsockopt(fd_dfu, SOL_DFU, SO_DFU_RESOURCES, &scratch_space,
+			 &len);
 	if (err < 0) {
 		if (errno == ENOEXEC) {
 			LOG_ERR("Modem error: %d", get_modem_error());
@@ -158,14 +218,9 @@ int dfu_target_modem_init(size_t file_size, dfu_target_callback_t cb)
 		return -EFBIG;
 	}
 
-	/* Check offset, store to local variable */
-	err = getsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
+	err = get_modem_offset(&offset);
 	if (err < 0) {
-		if (errno == ENOEXEC) {
-			LOG_ERR("Modem error: %d", get_modem_error());
-		} else {
-			LOG_ERR("getsockopt(OFFSET) errno: %d", errno);
-		}
+		return err;
 	}
 
 	if (offset == DIRTY_IMAGE) {
@@ -173,9 +228,9 @@ int dfu_target_modem_init(size_t file_size, dfu_target_callback_t cb)
 	} else if (offset != 0) {
 		LOG_INF("Setting offset to 0x%x", offset);
 		len = sizeof(offset);
-		err = setsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, len);
+		err = setsockopt(fd_dfu, SOL_DFU, SO_DFU_OFFSET, &offset, len);
 		if (err != 0) {
-			LOG_INF("Error while setting offset: %d", offset);
+			LOG_ERR("Error while setting offset: %d", offset);
 		}
 	}
 
@@ -190,11 +245,11 @@ int dfu_target_modem_offset_get(size_t *out)
 
 int dfu_target_modem_write(const void *const buf, size_t len)
 {
-	int err = 0;
-	int sent = 0;
-	int modem_error = 0;
+	int err;
+	int sent;
+	int modem_error;
 
-	sent = send(fd, buf, len, 0);
+	sent = send(fd_dfu, buf, len, 0);
 	if (sent > 0) {
 		offset += len;
 		return 0;
@@ -245,7 +300,7 @@ int dfu_target_modem_done(bool successful)
 	}
 
 
-	err = close(fd);
+	err = close_modem_dfu_socket();
 	if (err < 0) {
 		LOG_ERR("Failed to close modem DFU socket.");
 		return err;

@@ -39,6 +39,21 @@ struct dfu_target {
 	int (*done)(bool successful);
 };
 
+#ifdef CONFIG_DFU_TARGET_MODEM
+/**
+ * @brief Delete firmware which is banked in the modem.
+ *
+ * @param[in] force Ensures that the bank is deleted even if valid firmware is
+ *		    stored in the bank. If not set it will only delete the
+ *		    bank if dirty.
+ * @param[in] callback Callback function for signaling if the modem is not able
+ *		       to service the erase request.
+ *
+ * @retval 0 If successful, negative value otherwise.
+ */
+int dfu_target_modem_delete_banked_fw(bool force, dfu_target_callback_t cb);
+#endif
+
 /**
  * @brief Find the image type for the buffer of bytes recived. Used to determine
  *	  what dfu target to initialize.
