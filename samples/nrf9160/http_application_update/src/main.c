@@ -13,6 +13,7 @@
 #include <net/bsdlib.h>
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
+#include <dfu/dfu_target.h>
 
 #define LED_PORT	DT_ALIAS_LED0_GPIOS_CONTROLLER
 
@@ -100,7 +101,47 @@ static int dfu_button_init(void)
 	return 0;
 }
 
+/**@brief Callback handler for DFU target events
+ *
+ * Turns the modem into offline mode to handle the current pending erase request
+ * so that the modem will have time to service the erase request.
+ */
+static void dfu_target_callback_handler(enum dfu_target_evt_id evt)
+{
+	int err;
+	enum lte_lc_func_mode mode;
 
+	err = lte_lc_func_mode_get(&mode);
+	if (err < 0) {
+		__ASSERT(err == 0, "Unable to get LTE mode");
+	}
+
+	switch (evt) {
+	case DFU_TARGET_EVT_TIMEOUT:
+		printk("Modem firmware bank erase pending\n");
+		if (mode == LTE_LC_FUNC_MODE_POWER_OFF) {
+			break;
+		} else if (mode == LTE_LC_FUNC_MODE_NORMAL) {
+			printk("Erase are not handeled putting the modem in"
+			       " offline mode\n");
+			err = lte_lc_offline();
+			__ASSERT(err == 0, "Unable to enter offline mode");
+		}
+		break;
+	case DFU_TARGET_EVT_ERASE_DONE:
+		printk("Modem firmware bank erase done\n");
+		if (mode == LTE_LC_FUNC_MODE_OFFLINE) {
+			printk("Turning on normal mode\n");
+			err = lte_lc_normal();
+			__ASSERT(err == 0, "Unable to enter normal mode");
+		}
+		break;
+	default:
+		__ASSERT(false, "Unexpected dfu event\n");
+	}
+}
+
+/**@brief Callback handler for FOTA Download events  */
 void fota_dl_handler(const struct fota_download_evt *evt)
 {
 	switch (evt->id) {
@@ -110,6 +151,12 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		/* Re-enable button callback */
 		gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
+		break;
+	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
+		dfu_target_callback_handler(DFU_TARGET_EVT_TIMEOUT);
+		break;
+	case FOTA_DOWNLOAD_EVT_ERASE_DONE:
+		dfu_target_callback_handler(DFU_TARGET_EVT_ERASE_DONE);
 		break;
 
 	default:
@@ -121,23 +168,26 @@ void fota_dl_handler(const struct fota_download_evt *evt)
  *
  * Blocks until link is successfully established.
  */
-static void modem_configure(void)
+static void at_interface_init(void)
 {
-#if defined(CONFIG_LTE_LINK_CONTROL)
-	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
-			"This sample does not support auto init and connect");
-	int err;
-#if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)
+#ifndef CONFIG_BSD_LIBRARY_SYS_INIT
 	/* Initialize AT only if bsdlib_init() is manually
 	 * called by the main application
 	 */
-	err = at_notif_init();
+	int err = at_notif_init();
 	__ASSERT(err == 0, "AT Notify could not be initialized.");
 	err = at_cmd_init();
 	__ASSERT(err == 0, "AT CMD could not be established.");
 #endif
+}
+
+static void lte_init_and_connect(void)
+{
+#ifdef CONFIG_LTE_LINK_CONTROL
+	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
+			"This sample does not support auto init and connect");
 	printk("LTE Link Connecting ...\n");
-	err = lte_lc_init_and_connect();
+	int err = lte_lc_init_and_connect();
 	__ASSERT(err == 0, "LTE link could not be established.");
 	printk("LTE Link Connected!\n");
 #endif
@@ -204,8 +254,11 @@ void main(void)
 		break;
 	}
 	printk("Initialized bsdlib\n");
-
-	modem_configure();
+	at_interface_init();
+#ifdef CONFIG_DFU_TARGET_MODEM
+	dfu_target_modem_delete_banked_fw(false, dfu_target_callback_handler);
+#endif
+	lte_init_and_connect();
 
 	boot_write_img_confirmed();
 
