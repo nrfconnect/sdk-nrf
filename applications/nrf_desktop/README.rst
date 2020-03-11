@@ -593,10 +593,27 @@ This application uses its own set of internal modules.
 For more information about each application module and its configuration details, see the following pages:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   doc/hw_interface.rst
-   doc/modules.rst
+   doc/battery_charger.rst
+   doc/battery_meas.rst
+   doc/board.rst
+   doc/buttons.rst
+   doc/click_detector.rst
+   doc/motion.rst
+   doc/selector.rst
+   doc/wheel.rst
+   doc/leds.rst
+   doc/bas.rst
+   doc/ble_bond.rst
+   doc/ble_state.rst
+   doc/config_channel.rst
+   doc/fn_keys.rst
+   doc/hid_state.rst
+   doc/hids.rst
+   doc/led_state.rst
+   doc/usb_state.rst
+   doc/watchdog.rst
 
 
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
