@@ -276,10 +276,15 @@ To use the nRF Desktop project with your custom board:
           The PWM peripheral must be configured in DTS files, and the ``_def`` file of the LEDs module must be configured to indicate which PWM channel is assigned to each LED color.
 	  Ensure that PWM channels are correctly configured in DTS and PWM driver is enabled in Kconfig file.
 
-#. Review Bluetooth options in Kconfig.
-   Refer to the Bluetooth configuration page for the list of available options.
-   Ensure that the Bluetooth role is configured appropriately.
-   For mouse, it should be configured as peripheral.
+#. Review Bluetooth options in Kconfig:
+
+    * Ensure that the Bluetooth role is configured appropriately.
+      For mouse, it should be configured as peripheral.
+    * Update the configuration related to peer control.
+      You can also disable the peer control using the ``CONFIG_DESKTOP_BLE_PEER_CONTROL`` option.
+      Peer control details are described in the :ref:`nrf_desktop_ble_bond` module documentation.
+
+   Refer to the :ref:`nrf_desktop_bluetooth_guide` and :ref:`zephyr:bluetooth` for more detailed information about the Bluetooth configuration.
 #. Edit Kconfig to disable options that you do not use.
    Some options have dependencies that might not be needed when these options are disabled.
    For example, when the LEDs module is disabled, the PWM driver is not needed.
@@ -330,6 +335,127 @@ The project uses the static configuration of partitions.
 Add the ``pm_static_${CMAKE_BUILD_TYPE}.yml`` partition manager configuration file to the project's board configuration directory to use this configuration.
 
 For more information about how to configure the flash memory layout using the partition manager, see :ref:`partition_manager`.
+
+.. _nrf_desktop_bluetooth_guide:
+
+Bluetooth in nRF Desktop
+========================
+
+The nRF Desktop devices use the Zephyr Bluetooth API (:ref:`zephyr:bluetooth`) to handle the Bluetooth LE connections.
+
+The Zephyr Bluetooth API is used only by the application modules that handle Bluetooth LE connections.
+The information about peer and connection state is propagated to other application modules using :ref:`event_manager` events.
+
+There are two types of nRF Desktop devices:
+
+* Peripheral devices (mouse or keyboard)
+
+  * Support only the Bluetooth peripheral role (:option:`CONFIG_BT_PERIPHERAL`).
+  * Handle only one Bluetooth LE connection at a time.
+  * Use more than one Bluetooth local identity.
+
+* Central devices (dongle)
+
+  * Support only the Bluetooth central role (:option:`CONFIG_BT_CENTRAL`).
+  * Handle multiple Bluetooth LE connections simultaneously.
+  * Use only one Bluetooth local identity (the default one).
+
+Both central and peripheral devices have dedicated configuration options and use dedicated modules.
+There is no nRF Desktop device that supports both central and peripheral roles.
+
+Common configuration and application modules
+--------------------------------------------
+
+Some Bluetooth-related :ref:`configuration options <nrf_desktop_bluetooth_guide_configuration>` and application modules are common for every nRF Desktop device.
+
+.. _nrf_desktop_bluetooth_guide_configuration:
+
+Configuration
+~~~~~~~~~~~~~
+
+This section describes the most important Bluetooth Kconfig options common for all nRF Desktop devices.
+For detailed information about every option, see the Kconfig help.
+
+* :option:`CONFIG_BT_MAX_PAIRED`
+
+  * nRF Desktop central - The maximum number of paired devices is equal to the maximum number of simultaneously connected peers.
+  * nRF Desktop peripheral - The maximum number of paired devices is equal to the number of peers plus one, where the one additional paired device slot is used for erase advertising.
+
+* :option:`CONFIG_BT_ID_MAX`
+
+  * nRF Desktop central - The device uses only one Bluetooth local identity, that is the default one.
+  * nRF Desktop peripheral - The number of Bluetooth local identities must be equal to the number of peers plus by two.
+
+    * One additional local identity is used for erase advertising.
+    * The other additional local identity is the default local identity, which is unused, because it cannot be reset after removing the bond.
+      Without the identity reset, the previously bonded central could still try to reconnect after being removed from Bluetooth bonds on the peripheral side.
+
+* :option:`CONFIG_BT_MAX_CONN`
+
+  * nRF Desktop central - The option must be set to the maximum number of simultaneously connected devices.
+  * nRF Desktop peripheral - The default value (one) is used.
+
+.. note::
+   After changing the number of Bluetooth peers for the nRF Desktop peripheral device, you must update the LED effects used to represent the Bluetooth connection state.
+   For details, see :ref:`nrf_desktop_led_state`.
+
+The nRF Desktop devices use one of the following Link Layers:
+
+* :option:`CONFIG_BT_LL_NRFXLIB` that supports the Low Latency Packet Mode (LLPM).
+* :option:`CONFIG_BT_LL_SW_SPLIT` that does not support the LLPM and has a lower memory usage, so it can be used by memory-limited devices.
+
+
+Application modules
+~~~~~~~~~~~~~~~~~~~
+
+Every nRF Desktop device that enables Bluetooth must handle connections and manage bonds.
+These features are implemented by the following modules:
+
+* :ref:`nrf_desktop_ble_state` - Enables Bluetooth and LLPM (if supported), and handles Zephyr connection callbacks.
+* :ref:`nrf_desktop_ble_bond` - Manages Bluetooth bonds and local identities.
+
+|enable_modules|
+
+.. note::
+   The nRF Destkop devices enable :option:`CONFIG_BT_SETTINGS`.
+   When this option is enabled, the application is responsible for calling the :cpp:func:`settings_load` function - this is handled by the :ref:`nrf_desktop_settings_loader`.
+
+Bluetooth Peripheral
+--------------------
+
+The nRF Desktop peripheral devices must include additional configuration options and additional application modules to comply with the HID over GATT specification.
+
+The HID over GATT profile specification requires Bluetooth peripherals to define the following GATT Services:
+
+* HID Service - Handled in the :ref:`nrf_desktop_hids`.
+* Battery Service - Handled in the :ref:`nrf_desktop_bas`.
+* Device Information Service - Implemented in Zephyr and enabled with :option:`CONFIG_BT_GATT_DIS`.
+  Can be configured using Kconfig options with the ``CONFIG_BT_GATT_DIS`` prefix.
+
+The nRF Desktop peripherals must also define a dedicated GATT Service, which is used to inform whether the device supports the LLPM Bluetooth extension.
+The GATT Service is implemented by the :ref:`nrf_desktop_dev_descr`.
+
+Apart from the GATT Services, an nRF Desktop peripheral device must enable and configure the following application modules:
+
+* :ref:`nrf_desktop_ble_adv` - Controls the Bluetooth advertising.
+* :ref:`nrf_desktop_ble_latency` - Keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is being used, in order to ensure quick transfer of configuration data.
+
+Bluetooth Central
+-----------------
+
+The nRF Desktop central must implement Bluetooth scanning and handle the GATT operations.
+Both these features are implemented by the following application modules:
+
+* :ref:`nrf_desktop_ble_scan` - Controls the Bluetooth scanning.
+* :ref:`nrf_desktop_ble_discovery` - Handles discovering and reading the GATT Characteristics from the connected peripheral.
+* :ref:`nrf_desktop_hid_forward` - Subscribes for HID reports from the Bluetooth peripherals (HID over GATT) and forwards the data using application events.
+
+|enable_modules|
+
+Optionally, you can also enable the following module:
+
+* :ref:`nrf_desktop_ble_qos` - Helps achieve better connection quality and higher report rate.
+  The module can be used only with the nrfxlib Link Layer.
 
 Requirements
 ************
@@ -687,3 +813,5 @@ For more information about each application module and its configuration details
 .. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
 
 .. |preconfigured_build_types| replace:: The preconfigured build types configure the device with or without the bootloader and in debug or release mode.
+.. |enable_modules| replace:: You need to enable all these modules to enable both features.
+   For information about how to enable the modules, see their respective documentation pages.
