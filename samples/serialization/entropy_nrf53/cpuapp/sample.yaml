@@ -1,0 +1,8 @@
+sample:
+  name: Entropy remote application core
+  description: Entropy driver application core sample
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf5340_dk_nrf5340_cpuapp

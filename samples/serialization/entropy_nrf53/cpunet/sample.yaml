@@ -1,0 +1,8 @@
+sample:
+  name: Entropy remote network core
+  description: Entropy remote network core sample
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf5340_dk_nrf5340_cpunet
