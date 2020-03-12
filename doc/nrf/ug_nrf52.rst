@@ -45,6 +45,14 @@ Refer to the PCA number for building projects for these boards and find a link t
      - PCA10040
      - :ref:`nrf52810_pca10040<zephyr:nrf52810_pca10040>`
 
+nRF Desktop
+===========
+
+The nRF Desktop application is a complete project that integrates Bluetooth Low Energy, see the :ref:`nrf_desktop` application.
+It can be built for the nRF Desktop reference hardware or an nRF52840 DK.
+
+The nRF Desktop is a reference design of a HID device that is connected to a host through Bluetooth Low Energy or USB, or both.
+This application supports configurations for simple mouse, gaming mouse, keyboard, and USB dongle.
 
 Secure bootloader chain
 =======================
@@ -131,6 +139,50 @@ The nRF52 Series devices support running another protocol in parallel with the n
 The :ref:`Multi-Protocol Service Layer (MPSL) <nrfxlib:mpsl>` library provides services for multi-protocol applications.
 
 
+.. |note| replace:: There is currently no support for upgrading the bootloader (:doc:`mcuboot:index`) on nRF52 Series devices.
+
+.. fota_upgrades_start
+
+FOTA upgrades
+*************
+
+|fota_upgrades_def|
+FOTA upgrades can be used to replace the application.
+
+.. note::
+   |note|
+
+To perform a FOTA upgrade, complete the following steps:
+
+1. Make sure that your application supports FOTA upgrades.
+      To download and apply FOTA upgrades, the following requirements apply:
+
+      * You must enable the mcumgr module, which handles the transport protocol over Bluetooth Low Energy.
+        To enable this module in your application, complete the following steps:
+
+        a. Enable :option:`CONFIG_MCUMGR_CMD_OS_MGMT`, :option:`CONFIG_MCUMGR_CMD_IMG_MGMT`, and :option:`CONFIG_MCUMGR_SMP_BT`.
+        #. Call ``os_mgmt_register_group()`` and ``img_mgmt_register_group()`` in your application.
+        #. Call ``smp_bt_register()`` in your application to initialize the mcumgr Bluetooth Low Energy transport.
+
+        See the code of the :ref:`zephyr:smp_svr_sample` for an implementation example.
+        After completing these steps, your application should advertise the SMP Service with UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84.
+
+      * |fota_upgrades_req_mcuboot|
+
+#. Create a binary file that contains the new image.
+      |fota_upgrades_building|
+      The :file:`app_update.bin` file is the file that must be downloaded to the device.
+
+#. Download the new image to a device.
+      Use `nRF Connect for Mobile`_ or `nRF Toolbox`_ to upgrade your device with the new firmware.
+
+      To do so, make sure that you can access the :file:`app_update.bin` file from your phone or tablet.
+      Then connect to the device with the mobile app and initiate the DFU process to transfer :file:`app_update.bin` to the device.
+
+      .. note::
+         There is currently no support for the FOTA process in nRF Connect for Desktop.
+
+.. fota_upgrades_end
 
 Building and programming a sample
 *********************************

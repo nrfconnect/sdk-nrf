@@ -167,15 +167,14 @@ For more detailed information, see the `system mode section in the AT Commands r
 FOTA upgrades
 *************
 
-You can upgrade the firmware of the nRF9160 over the air, thus without a wired connection.
-Such an upgrade is called a FOTA (firmware over-the-air) upgrade.
+|fota_upgrades_def|
 FOTA upgrades can be used to apply delta patches to the `LTE modem`_ firmware and to replace the upgradable bootloader or the application.
 
 .. note::
    Even though the Secure Partition Manager and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
    When we refer to the application in this section, we therefore mean the application including the Secure Partition Manager.
 
-A FOTA upgrade requires the following steps:
+To perform a FOTA upgrade, complete the following steps:
 
 1. Make sure that your application supports FOTA upgrades.
       To download and apply FOTA upgrades, your application must use the :ref:`lib_fota_download` library.
@@ -184,7 +183,7 @@ A FOTA upgrade requires the following steps:
 
       In addition, the following requirements apply:
 
-      * If you want to upgrade the application, :doc:`mcuboot:index` must be used as upgradable bootloader (:option:`CONFIG_BOOTLOADER_MCUBOOT`).
+      * |fota_upgrades_req_mcuboot|
       * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:option:`CONFIG_SECURE_BOOT`).
       * If you want to upgrade the modem firmware, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
 
@@ -192,8 +191,7 @@ A FOTA upgrade requires the following steps:
       This step does not apply for upgrades of the modem firmware.
       You can download delta patches for the modem firmware from the `nRF9160 product website (compatible downloads)`_.
 
-      To create a binary file for an application upgrade, make sure that :option:`CONFIG_BOOTLOADER_MCUBOOT` is enabled and build the application as usual.
-      The build will create several binary files (see :ref:`mcuboot:mcuboot_ncs`).
+      |fota_upgrades_building|
       The :file:`app_update.bin` file is the file that should be uploaded to the server.
 
       To create binary files for a bootloader upgrade, make sure that :option:`CONFIG_SECURE_BOOT` and :option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
