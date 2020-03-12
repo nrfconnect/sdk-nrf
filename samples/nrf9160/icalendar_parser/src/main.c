@@ -423,7 +423,7 @@ static void modem_configure(void)
 }
 
 static int icalendar_parser_callback(const struct ical_parser_evt *event,
-				     struct ical_component *p_com)
+				     struct ical_component *ical_com)
 {
 	int err = 0;
 
@@ -434,7 +434,7 @@ static int icalendar_parser_callback(const struct ical_parser_evt *event,
 	switch (event->id) {
 
 	case ICAL_PARSER_EVT_COMPONENT:
-		if (p_com != NULL) {
+		if (ical_com != NULL) {
 			if (component_cnt >= CONFIG_MAX_PARSED_COMPONENTS) {
 				printk("Fail to store new calendar component. Increase CONFIG_MAX_PARSED_COMPONENTS!\n");
 				break;
@@ -446,23 +446,24 @@ static int icalendar_parser_callback(const struct ical_parser_evt *event,
 			u32_t dtend_date;
 			u32_t dtend_time;
 
-			dtend_date = atoi(p_com->dtend);
-			dtend_time = atoi(p_com->dtend + strlen("YYYYMMDDT"));
+			dtend_date = atoi(ical_com->dtend);
+			dtend_time = atoi(ical_com->dtend
+					+ strlen("YYYYMMDDT"));
 			if ((dtend_date > current_date) ||
 			    ((dtend_date == current_date)
 			     && (dtend_time > current_time))) {
 				/* Allocate memory for new calendar component */
-				struct ical_component *p_new_com;
+				struct ical_component *new_com;
 
-				p_new_com = k_malloc(sizeof(*p_new_com));
-				if (p_new_com) {
-					memset(p_new_com,
+				new_com = k_malloc(sizeof(*new_com));
+				if (new_com) {
+					memset(new_com,
 					       0,
 					       sizeof(struct ical_component));
-					memcpy(p_new_com,
-					       p_com,
+					memcpy(new_com,
+					       ical_com,
 					       sizeof(struct ical_component));
-					ical_coms[component_cnt] = p_new_com;
+					ical_coms[component_cnt] = new_com;
 				} else {
 					printk("Fail to allocate memory for parsed calendar component.\n");
 					break;
@@ -579,7 +580,7 @@ int cert_provision(void)
 /**@brief Look up calendar components. Return true if there is ongoint event. */
 static bool calendar_lookup(u32_t given_date, u32_t given_time)
 {
-	struct ical_component *p_com;
+	struct ical_component *ical_com;
 	u32_t dtstart_date;
 	u32_t dtstart_time;
 	u32_t dtend_date;
@@ -587,13 +588,13 @@ static bool calendar_lookup(u32_t given_date, u32_t given_time)
 
 	/* Look up all calendar components */
 	for (int i = 0; i < component_cnt; i++) {
-		p_com = ical_coms[i];
-		if (p_com) {
-			dtstart_date = atoi(p_com->dtstart);
-			dtstart_time = atoi(p_com->dtstart
+		ical_com = ical_coms[i];
+		if (ical_com) {
+			dtstart_date = atoi(ical_com->dtstart);
+			dtstart_time = atoi(ical_com->dtstart
 					    + strlen("YYYYMMDDT"));
-			dtend_date = atoi(p_com->dtend);
-			dtend_time = atoi(p_com->dtend
+			dtend_date = atoi(ical_com->dtend);
+			dtend_time = atoi(ical_com->dtend
 					  + strlen("YYYYMMDDT"));
 			/* Check date-time start of component */
 			if ((dtstart_date < given_date) ||
