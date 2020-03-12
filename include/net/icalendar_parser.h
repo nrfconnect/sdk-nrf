@@ -81,14 +81,14 @@ struct ical_component {
  * parsed component, download completion, or errors.
  *
  *
- * @param[out]  event	The event.
- * @param[out] parsed iCalendar component.
+ * @param[in] event  The iCalendar event.
+ * @param[in] parsed iCalendar component.
  *
  * @return Zero to continue the download, non-zero otherwise.
  */
 typedef int (*icalendar_parser_callback_t)(
 	const struct ical_parser_evt *event,
-	struct ical_component *p_ical_component);
+	struct ical_component *ical_component);
 
 /**
  * @brief iCalendar parser instance.
@@ -107,18 +107,18 @@ struct icalendar_parser {
 /**
  * @brief Initialize iCalendar parser.
  *
- * @param[in] ical iCalendar parser instance.
+ * @param[in,out] ical iCalendar parser instance.
  * @param[in] callback Callback for sending calendar parsing event.
  *
  * @return 0 If successful, or an error code on failure.
  */
-int ical_parser_init(struct icalendar_parser *const ical,
+int ical_parser_init(struct icalendar_parser *ical,
 		     icalendar_parser_callback_t callback);
 
 /**
  * @brief Parse the iCalendar data stream. Return the parsed bytes.
  *
- * @param[in] ical iCalendar parser instance.
+ * @param[in,out] ical iCalendar parser instance.
  * @param[in] data Input data to be parsed.
  * @param[in] len  Length of input data stream.
  *

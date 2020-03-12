@@ -405,7 +405,7 @@ size_t ical_parser_parse(struct icalendar_parser *ical,
 	return parsed_offset;
 }
 
-int ical_parser_init(struct icalendar_parser *const ical,
+int ical_parser_init(struct icalendar_parser *ical,
 		     icalendar_parser_callback_t callback)
 {
 	if (ical == NULL || callback == NULL) {
