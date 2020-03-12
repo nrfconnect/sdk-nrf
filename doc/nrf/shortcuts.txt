@@ -24,3 +24,11 @@
 .. |nRF52DK| replace:: nRF52 DK board (PCA10040)
 .. |nRF52840Dongle| replace:: nRF52840 Dongle (PCA10059)
 .. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
+
+.. |fota_upgrades_def| replace:: You can upgrade the firmware of the device over the air, thus without a wired connection.
+   Such an upgrade is called a FOTA (firmware over-the-air) upgrade.
+
+.. |fota_upgrades_req_mcuboot| replace:: To upgrade the application, you must use :doc:`mcuboot:index` as the upgradable bootloader (:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
+
+.. |fota_upgrades_building| replace:: To create a binary file for an application upgrade, make sure that :option:`CONFIG_BOOTLOADER_MCUBOOT` is enabled and build the application as usual.
+   The build will create several binary files (see :ref:`mcuboot:mcuboot_ncs`).
