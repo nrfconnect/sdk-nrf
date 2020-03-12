@@ -301,6 +301,9 @@ void bsd_os_errno_set(int err_code)
 	case NRF_EINPROGRESS:
 		errno = EINPROGRESS;
 		break;
+	case NRF_EALREADY:
+		errno = EALREADY;
+		break;
 	case NRF_ECANCELED:
 		errno = ECANCELED;
 		break;
