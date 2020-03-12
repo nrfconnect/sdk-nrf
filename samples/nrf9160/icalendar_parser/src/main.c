@@ -5,6 +5,9 @@
 #include <dk_buttons_and_leds.h>
 #include <lte_lc.h>
 #include <modem_key_mgmt.h>
+#include <net/socket.h>
+#include <net/http_client.h>
+#include <net/tls_credentials.h>
 #include <net/icalendar_parser.h>
 #include <modem_info.h>
 
@@ -20,6 +23,13 @@
 #define ICAL_DATETIME_PERIOD                    1000
 /* Interval to check current calendar event and set LED */
 #define ICAL_EVENT_LED_PERIOD                   1000
+
+/** HTTP socket. */
+static int fd = -1;
+
+/* Receiving buffer for HTTP client */
+#define MAX_RECV_BUF_LEN 1024
+static u8_t http_recv_buf[MAX_RECV_BUF_LEN];
 
 static struct icalendar_parser ical;
 static struct k_delayed_work ical_work;
@@ -79,6 +89,294 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 	}
 }
 
+static int socket_sectag_set(int fd, int sec_tag)
+{
+	int err;
+	int verify;
+	sec_tag_t sec_tag_list[] = { sec_tag };
+	nrf_sec_session_cache_t sec_session_cache;
+
+	enum {
+		NONE            = 0,
+		OPTIONAL        = 1,
+		REQUIRED        = 2,
+	};
+
+	verify = REQUIRED;
+
+	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	if (err) {
+		printk("Failed to setup peer verification, errno %d\n", errno);
+		return -1;
+	}
+
+	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+			 sizeof(sec_tag_t) * ARRAY_SIZE(sec_tag_list));
+	if (err) {
+		printk("Failed to set socket security tag, errno %d\n", errno);
+		return -1;
+	}
+
+	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	if (err) {
+		printk("Failed to setup peer verification, errno %d\n", errno);
+		return -1;
+	}
+
+	/* Disable TLE session cache */
+	sec_session_cache = 0;
+	err = nrf_setsockopt(fd, SOL_TLS, NRF_SO_SEC_SESSION_CACHE,
+			     &sec_session_cache, sizeof(sec_session_cache));
+	if (err) {
+		printk("Failed to disable TLS cache, errno %d\n", errno);
+		return -1;
+	}
+
+	return 0;
+}
+
+static int resolve_and_connect(int family, const char *host, int sec_tag)
+{
+	int fd;
+	int err;
+	int proto;
+	u16_t port;
+	struct addrinfo *addr;
+	struct addrinfo *info;
+
+	__ASSERT_NO_MSG(host);
+
+	/* Set up port and protocol */
+	if (sec_tag == -1) {
+		/* HTTP, port 80 */
+		proto = IPPROTO_TCP;
+		port = htons(80);
+	} else {
+		/* HTTPS, port 443 */
+		proto = IPPROTO_TLS_1_2;
+		port = htons(443);
+	}
+
+	/* Lookup host */
+	struct addrinfo hints = {
+		.ai_family = family,
+		.ai_socktype = SOCK_STREAM,
+		.ai_protocol = proto,
+	};
+
+	err = getaddrinfo(host, NULL, &hints, &info);
+	if (err) {
+		printk("Failed to resolve hostname %s on %s\n",
+			log_strdup(host),
+			family == AF_INET ? "IPv4" : "IPv6");
+		return -1;
+	}
+
+	printk("Attempting to connect over %s\n",
+		family == AF_INET ? log_strdup("IPv4") : log_strdup("IPv6"));
+
+	fd = socket(family, SOCK_STREAM, proto);
+	if (fd < 0) {
+		printk("Failed to create socket, errno %d\n", errno);
+		goto cleanup;
+	}
+
+	if (proto == IPPROTO_TLS_1_2) {
+		printk("Setting up TLS credentials\n");
+		err = socket_sectag_set(fd, sec_tag);
+		if (err) {
+			goto cleanup;
+		}
+	}
+
+	/* Not connected */
+	err = -1;
+
+	for (addr = info; addr != NULL; addr = addr->ai_next) {
+		struct sockaddr *const sa = addr->ai_addr;
+
+		switch (sa->sa_family) {
+		case AF_INET6:
+			((struct sockaddr_in6 *)sa)->sin6_port = port;
+			break;
+		case AF_INET:
+			((struct sockaddr_in *)sa)->sin_port = port;
+			break;
+		}
+
+		err = connect(fd, sa, addr->ai_addrlen);
+		if (err) {
+			/* Try next address */
+			printk("Unable to connect, errno %d\n", errno);
+		} else {
+			/* Connected */
+			break;
+		}
+	}
+
+cleanup:
+	freeaddrinfo(info);
+
+	if (err) {
+		/* Unable to connect, close socket */
+		close(fd);
+		fd = -1;
+	}
+
+	return fd;
+}
+
+static int socket_timeout_set(int fd)
+{
+	int err;
+
+	const u32_t timeout_ms = K_FOREVER;
+
+	struct timeval timeo = {
+		.tv_sec = (timeout_ms / 1000),
+		.tv_usec = (timeout_ms % 1000) * 1000,
+	};
+
+	printk("Configuring socket timeout (%ld s)", timeo.tv_sec);
+
+	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
+	if (err) {
+		printk("Failed to set socket timeout, errno %d\n", errno);
+		return -errno;
+	}
+
+	return 0;
+}
+
+int server_connect(const char *host, int sec_tag)
+{
+	int err;
+
+	if (host == NULL) {
+		return -EINVAL;
+	}
+
+	if (!IS_ENABLED(CONFIG_ICAL_PARSER_TLS)) {
+		printk("HTTP Connection\n");
+		if (sec_tag != -1) {
+			return -EINVAL;
+		}
+	} else {
+		printk("HTTPS Connection\n");
+		if (sec_tag == -1) {
+			return -EINVAL;
+		}
+	}
+
+	if (fd != -1) {
+		/* Already connected */
+		return 0;
+	}
+
+	/* Attempt IPv6 connection if configured, fallback to IPv4 */
+	if (IS_ENABLED(CONFIG_ICAL_PARSER_IPV6)) {
+		fd = resolve_and_connect(AF_INET6, host, sec_tag);
+	}
+	if (fd < 0) {
+		fd = resolve_and_connect(AF_INET, host, sec_tag);
+	}
+
+	if (fd < 0) {
+		printk("Fail to resolve and connect\n");
+		return -EINVAL;
+	}
+
+	printk("Connected to %s\n", log_strdup(host));
+
+	/* Set socket timeout, if configured */
+	err = socket_timeout_set(fd);
+	if (err) {
+		return err;
+	}
+
+	return 0;
+}
+
+int server_disconnect(void)
+{
+	int err;
+
+	if (fd < 0) {
+		return -EINVAL;
+	}
+
+	err = close(fd);
+	if (err) {
+		printk("Failed to close socket, errno %d\n", errno);
+		return -errno;
+	}
+
+	fd = -1;
+
+	return 0;
+}
+
+static void response_cb(struct http_response *rsp,
+			enum http_final_call final_data,
+			void *user_data)
+{
+	int err;
+	size_t ret = 0;
+	static size_t data_received;
+
+	data_received += rsp->data_len;
+	if (final_data == HTTP_DATA_MORE) {
+		printk("Partial data received (%zd bytes)\n", rsp->data_len);
+		if (data_received == MAX_RECV_BUF_LEN) {
+			ret = ical_parser_parse(&ical, rsp->recv_buf,
+						MAX_RECV_BUF_LEN);
+			printk("%d bytes parsed\n", ret);
+			data_received = 0;
+		}
+	} else if (final_data == HTTP_DATA_FINAL) {
+		printk("All the data received (%zd bytes)\n", rsp->data_len);
+		ret = ical_parser_parse(&ical, rsp->recv_buf,
+					data_received + rsp->data_len);
+		data_received = 0;
+		printk("Total %d pended event\n", component_cnt);
+		err = server_disconnect();
+		if (err != 0) {
+			printk("server_disconnect fail. err:%d\n", err);
+		}
+		dk_set_led_on(DK_LED3);
+		k_delayed_work_submit(&ical_work,
+				      K_SECONDS(CONFIG_DOWNLOAD_INTERVAL));
+	}
+}
+
+int download_start(void)
+{
+	int ret;
+	struct http_request req;
+
+	if (fd == -1) {
+		/* Already connected */
+		return -EINVAL;
+	}
+
+	memset(&req, 0, sizeof(req));
+
+	req.method = HTTP_GET;
+	req.url = CONFIG_DOWNLOAD_FILE;
+	req.host = CONFIG_DOWNLOAD_HOST;
+	req.protocol = "HTTP/1.1";
+	req.response = response_cb;
+	req.recv_buf = http_recv_buf;
+	req.recv_buf_len = sizeof(http_recv_buf);
+
+	ret = http_client_req(fd, &req, K_SECONDS(3), "");
+	if (ret) {
+		return 0;
+	} else {
+		return -EINVAL;
+	}
+}
+
 /**@brief Initializes buttons and LEDs, using the DK buttons and LEDs
  * library.
  */
@@ -135,15 +433,6 @@ static int icalendar_parser_callback(const struct ical_parser_evt *event,
 
 	switch (event->id) {
 
-	case ICAL_PARSER_EVT_CALENDAR:
-		printk("Got calendar event\n");
-		/* Free the buffer allocated before */
-		for (int i = 0; i < component_cnt; i++) {
-			k_free(ical_coms[i]);
-		}
-		component_cnt = 0;
-		break;
-
 	case ICAL_PARSER_EVT_COMPONENT:
 		if (p_com != NULL) {
 			if (component_cnt >= CONFIG_MAX_PARSED_COMPONENTS) {
@@ -185,23 +474,6 @@ static int icalendar_parser_callback(const struct ical_parser_evt *event,
 		}
 		break;
 
-	case ICAL_PARSER_EVT_COMPLETE:
-		printk("ICAL_PARSER_EVT_COMPLETE: %d event\n", component_cnt);
-		dk_set_led_on(DK_LED3);
-		ical_parser_disconnect(&ical);
-		k_delayed_work_submit(&ical_work,
-				      K_SECONDS(CONFIG_DOWNLOAD_INTERVAL));
-		break;
-
-	case ICAL_PARSER_EVT_ERROR: {
-		component_cnt = 0;
-		ical_parser_disconnect(&ical);
-		printk("ICAL_PARSER_EVT_ERROR err number: %d.\n", event->error);
-		err = event->error;
-		printk("Reconnect after 3 seconds\n");
-		k_delayed_work_submit(&ical_work, K_SECONDS(3));
-		break;
-	}
 	default:
 		break;
 	}
@@ -221,12 +493,6 @@ static void ical_work_handler(struct k_work *unused)
 		return;
 	}
 
-	/* Verify that a download is not already ongoing */
-	if (ical.state == ICAL_PARSER_STATE_DOWNLOADING) {
-		printk("There is ongoing calendar parsing task\n");
-		return;
-	}
-
 	if (!IS_ENABLED(CONFIG_ICAL_PARSER_TLS)) {
 		sec_tag = -1;
 	} else {
@@ -236,39 +502,37 @@ static void ical_work_handler(struct k_work *unused)
 	dk_set_led_off(DK_LED2);
 
 	/* Connect to server if it is not connected yet. */
-	if (ical.fd == -1) {
-		err = ical_parser_connect(&ical, CONFIG_DOWNLOAD_HOST, sec_tag);
+	if (fd == -1) {
+		err = server_connect(CONFIG_DOWNLOAD_HOST, sec_tag);
 		if (err != 0) {
 			printk("ical_parser_connect fail. Reconnect after 3 seconds\n");
 			k_delayed_work_submit(&ical_work, K_SECONDS(3));
 			return;
 		}
+	} else {
+		printk("Already connected.\n");
+		return;
 	}
 
-	/* Start download and parse thread. */
-	err = ical_parser_start(&ical, CONFIG_DOWNLOAD_FILE);
-	if (err != 0) {
-		printk("ical_parser_start fail. Reconnect after 3 seconds\n");
-		ical_parser_disconnect(&ical);
-		k_delayed_work_submit(&ical_work, K_SECONDS(3));
-	}
-}
-
-/**@brief Initialize iCalendar parser and downloading thread */
-static int calendar_init(void)
-{
-	int err;
-
+	/* Initialize iCalendar parser */
 	err = ical_parser_init(&ical, icalendar_parser_callback);
 	if (err != 0) {
 		printk("ical_parser_init error, err %d\n", err);
-		return err;
+		return;
 	}
 
-	k_delayed_work_init(&ical_work, ical_work_handler);
-	k_delayed_work_submit(&ical_work, 1000);
+	/* Free the buffer allocated for old parsed calendar events */
+	for (int i = 0; i < component_cnt; i++) {
+		k_free(ical_coms[i]);
+	}
+	component_cnt = 0;
 
-	return 0;
+	/* Start download */
+	err = download_start();
+	if (err != 0) {
+		printk("http download fail. Restart after 3 seconds\n");
+		k_delayed_work_submit(&ical_work, K_SECONDS(3));
+	}
 }
 
 /* Provision certificate to modem */
@@ -355,7 +619,7 @@ static void leds_update(void)
 
 	led_on = !led_on;
 
-	if (ical.state == ICAL_PARSER_STATE_DOWNLOADING) {
+	if (fd != -1) {
 		/* Blink LED3 while downloading new calendar */
 		if (led_on) {
 			dk_set_led_off(DK_LED3);
@@ -405,13 +669,10 @@ void main(void)
 		return;
 	}
 
-	err = calendar_init();
-	if (err != 0) {
-		return;
-	}
-
 	k_delayed_work_init(&datetime_update_work, datetime_work_handler);
 	k_delayed_work_submit(&datetime_update_work, ICAL_DATETIME_PERIOD);
+	k_delayed_work_init(&ical_work, ical_work_handler);
+	k_delayed_work_submit(&ical_work, 1000);
 
 	while (1) {
 		leds_update();

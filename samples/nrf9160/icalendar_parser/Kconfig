@@ -16,6 +16,15 @@ config DOWNLOAD_INTERVAL
 	int "The interval to download calendar from server in seconds"
 	default 60
 
+config ICAL_PARSER_IPV6
+	bool "Prefer IPv6 connections"
+	help
+	  Prefer IPv6 protocol but fallback to
+	  IPv4 when the hostname can't be resolved.
+
+config ICAL_PARSER_TLS
+	bool "Download iCalendar over HTTPS"
+
 config ICAL_SEC_TAG
 	int "Security tag to provision certificate"
 	default 1

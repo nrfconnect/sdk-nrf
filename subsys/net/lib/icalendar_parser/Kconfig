@@ -9,21 +9,11 @@ menuconfig  ICAL_PARSER
 
 if ICAL_PARSER
 
-config ICAL_PARSER_TX_SIZE
-	int "size of HTTP request"
-	default 512
-
-config ICAL_PARSER_RX_SIZE
-	int "size of HTTP response"
-	range 512 2048 if BSD_LIBRARY && ICAL_PARSER_TLS
-	default 2048 if BSD_LIBRARY && ICAL_PARSER_TLS
-	range 512 4096
-	default 4096
+config ICAL_PARSER_BUFFER_SIZE
+	int "buffer size for unparsed data"
+	default 2048
 	help
-	  Size of the data fragments reported to the application in each event.
-	  When using BSD library and TLS, the fragment can not exceed 2.3kB.
-	  When not using TLS, prefer a larger fragment size to reduce the
-	  bandwidth overhead due to the HTTP headers.
+	  Size for internal buffer to store unparsed data.
 
 config MAX_PROPERTY_SIZE
 	int "maximum size of iCalendar property"
@@ -53,27 +43,6 @@ config DTEND_SIZE
 	int "maximum size of dtend property"
 	range 16 MAX_PROPERTY_SIZE
 	default 16
-
-config ICAL_PARSER_STACK_SIZE
-	int "Thread stack size"
-	default 2048
-
-config ICAL_PARSER_SOCK_TIMEOUT_MS
-	int "Receive timeout, in milliseconds"
-	default -1
-	range -1 30000
-	help
-	  Socket timeout for recv() calls, in milliseconds.
-	  Set to -1 disable.
-
-config ICAL_PARSER_IPV6
-	bool "Prefer IPv6 connections"
-	help
-	  Prefer IPv6 protocol but fallback to
-	  IPv4 when the hostname can't be resolved.
-
-config ICAL_PARSER_TLS
-	bool "Download iCalendar over HTTPS"
 
 module=ICAL_PARSER
 module-dep=LOG

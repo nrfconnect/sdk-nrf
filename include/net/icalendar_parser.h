@@ -26,24 +26,8 @@ extern "C" {
  * @brief iCalendar parser event IDs.
  */
 enum ical_parser_evt_id {
-	/** Start to parse a iCalendar. */
-	ICAL_PARSER_EVT_CALENDAR,
 	/** Calendar component parsed. */
 	ICAL_PARSER_EVT_COMPONENT,
-	/** Calendar downloaded. */
-	ICAL_PARSER_EVT_COMPLETE,
-	/** An error has occurred during download. */
-	ICAL_PARSER_EVT_ERROR,
-};
-
-/**
- * @brief iCalendar parser state.
- */
-enum ical_parser_state {
-	/** Stopped state */
-	ICAL_PARSER_STATE_STOPPED,
-	/** Downloading state. */
-	ICAL_PARSER_STATE_DOWNLOADING,
 };
 
 /**
@@ -96,8 +80,6 @@ struct ical_component {
  * Through this callback, the application receives events, such as
  * parsed component, download completion, or errors.
  *
- * If the callback returns a non-zero value, the download stops.
- * To resume the download, use @ref icalendar_parser_start().
  *
  * @param[out]  event	The event.
  * @param[out] parsed iCalendar component.
@@ -112,96 +94,38 @@ typedef int (*icalendar_parser_callback_t)(
  * @brief iCalendar parser instance.
  */
 struct icalendar_parser {
-	/** Calendar state */
-	enum ical_parser_state state;
-	/** HTTP socket. */
-	int fd;
-	/** Buffer for HTTP get request */
-	char tx_buf[CONFIG_ICAL_PARSER_TX_SIZE];
-	/** Buffer for HTTP response */
-	char rx_buf[CONFIG_ICAL_PARSER_RX_SIZE];
-	/** Offset of HTTP TX/RX buffer. */
+	/** Internal Buffer for parsing incoming data stream */
+	char buf[CONFIG_ICAL_PARSER_BUFFER_SIZE + 1];
+	/** Offset of unparsed data in buf. */
 	size_t offset;
-	/** Download progress, number of bytes downloaded. */
-	size_t progress;
-
-	/** Whether the HTTP header for
-	 * the current fragment has been processed.
-	 */
-	bool has_header;
-	/** The server has closed the connection. */
-	bool connection_close;
-
-	/** Server hosting the file, null-terminated. */
-	const char *host;
-	/** File name, null-terminated. */
-	const char *file;
-	/** Credential to be referred. */
-	int sec_tag;
 	/** begin of iCalendar object delimiter pair */
 	bool icalobject_begin;
-	/** end of iCalendar object delimiter pair */
-	bool icalobject_end;
-	/** Time zone */
-	int timezone;
-	/** Current date */
-	unsigned long current_date;
-	/** Current time */
-	unsigned long current_time;
-
-	/** Internal thread ID. */
-	k_tid_t tid;
-	/** Internal download thread. */
-	struct k_thread thread;
-	/** Internal thread stack. */
-	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_ICAL_PARSER_STACK_SIZE);
-
 	/** Event handler. */
 	icalendar_parser_callback_t callback;
 };
 
 /**
- * @brief Initialize the iCalendar parser.
+ * @brief Initialize iCalendar parser.
  *
- * @param[in] ical	iCalendar instance.
- * @param[in] callback	Callback function.
+ * @param[in] ical iCalendar parser instance.
+ * @param[in] callback Callback for sending calendar parsing event.
  *
- * @retval int Zero on success, otherwise a negative error code.
+ * @return 0 If successful, or an error code on failure.
  */
-int ical_parser_init(struct icalendar_parser *ical,
+int ical_parser_init(struct icalendar_parser *const ical,
 		     icalendar_parser_callback_t callback);
 
 /**
- * @brief Establish a connection to the calendar server.
+ * @brief Parse the iCalendar data stream. Return the parsed bytes.
  *
- * @param[in] ical		Calendar instance.
- * @param[in] host		Calendar server to connect to, null-terminated.
- * @param[in] sec_tag	Credential to be referred.
+ * @param[in] ical iCalendar parser instance.
+ * @param[in] data Input data to be parsed.
+ * @param[in] len  Length of input data stream.
  *
- * @retval int Zero on success, a negative error code otherwise.
+ * @retval size_t  Parsed bytes.
  */
-int ical_parser_connect(struct icalendar_parser *ical, const char *host,
-			int sec_tag);
-
-/**
- * @brief Start to get calendar fragment and parse.
- *
- * @param[in] ical		Calendar instance.
- * @param[in] file		File to download, null-terminated.
- *
- * @retval int Zero on success, a negative error code otherwise.
- */
-int ical_parser_start(struct icalendar_parser *ical, const char *file);
-
-/**
- * @brief Disconnect from the server.
- *
- * @param[in] client	Calendar instance.
- *
- * @return Zero on success, a negative error code otherwise.
- */
-int ical_parser_disconnect(struct icalendar_parser *client);
+size_t ical_parser_parse(struct icalendar_parser *ical,
+			const char *data, size_t len);
 
 #ifdef __cplusplus
 }
