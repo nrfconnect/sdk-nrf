@@ -10,7 +10,7 @@
 #include <device.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <at_cmd.h>
+#include <modem/at_cmd.h>
 #include <time.h>
 #include <errno.h>
 #include <string.h>
