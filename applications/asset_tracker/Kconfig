@@ -225,8 +225,15 @@ endmenu # Motion
 menu "Cloud"
 
 config MQTT_KEEPALIVE
-	int
+	int "Time after last transmission to send a ping to keep connection on"
 	default 1200
+	help
+	  This should be set to the expected time between messages sent from
+	  this device. Making it larger than the expected data period does not
+	  conserve bandwidth, as the ping is only sent if nothing else
+	  has been within the specified period. Shorter values can prevent hidden
+	  NAT timeouts at the carrier, but also will interrupt GPS fix attempts
+	  and slow down TTFF.
 
 config CLOUD_BUTTON
 	bool "Enable button sensor"

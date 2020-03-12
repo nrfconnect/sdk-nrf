@@ -1438,7 +1438,9 @@ connect:
 			continue;
 		}
 
-		if (ret == 0) {
+		if ((ret == 0) &&
+		    (cloud_keepalive_time_left(cloud_backend) == 0)) {
+			LOG_DBG("cloud_ping()!");
 			cloud_ping(cloud_backend);
 			continue;
 		}
