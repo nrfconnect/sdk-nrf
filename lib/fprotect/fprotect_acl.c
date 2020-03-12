@@ -7,12 +7,13 @@
 #include <hal/nrf_acl.h>
 #include <hal/nrf_ficr.h>
 #include <errno.h>
+#include <sys/__assert.h>
 
 int fprotect_area(u32_t start, size_t length)
 {
 	static u32_t region_idx;
 
-	assert(nrf_ficr_codepagesize_get(NRF_FICR) ==
+	__ASSERT_NO_MSG(nrf_ficr_codepagesize_get(NRF_FICR) ==
 			CONFIG_FPROTECT_BLOCK_SIZE);
 
 	if (region_idx >= ACL_REGIONS_COUNT) {
