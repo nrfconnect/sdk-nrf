@@ -31,7 +31,7 @@ config ICAL_SEC_TAG
 
 config MAX_PARSED_COMPONENTS
 	int "Maximum number of parsed calendar component"
-	default 100
+	default 10
 
 endmenu
 
