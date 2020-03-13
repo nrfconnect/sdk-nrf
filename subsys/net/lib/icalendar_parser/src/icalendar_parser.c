@@ -63,34 +63,35 @@ static bool parse_desc_props(const char *buf,
 	char ical_prop_buf[CONFIG_MAX_PROPERTY_SIZE];
 
 	unfold_size = unfold_contentline(buf, ical_prop_buf);
-	if (unfold_size > 0) {
-		if (ical_prop_buf[name_size] == ':') {
-			size_t value_len = unfold_size - name_size - 1;
-
-			if (value_len <= max_value_len) {
-				memcpy(value,
-				       ical_prop_buf + name_size + 1,
-				       value_len);
-				ret = true;
-			} else {
-				/* Property value overflow. */
-				LOG_ERR("%s value overflow.", name);
-				ret = false;
-			}
-		} else if (ical_prop_buf[name_size] == ';') {
-			/* Does not support property parameter. */
-			LOG_ERR("%s param not supported.", name);
-			ret = false;
-		} else {
-			/* Property wrong format - no parameter or value. */
-			LOG_ERR("%s wrong format.", name);
-			ret = false;
-		}
-	} else {
+	if (unfold_size <= 0) {
 		/* Property wrong format - no parameter or value. */
 		LOG_ERR("%s no value/param.", name);
+		return false;
+	}
+
+	if (ical_prop_buf[name_size] == ':') {
+		size_t value_len = unfold_size - name_size - 1;
+
+		if (value_len <= max_value_len) {
+			memcpy(value,
+				ical_prop_buf + name_size + 1,
+				value_len);
+			ret = true;
+		} else {
+			/* Property value overflow. */
+			LOG_ERR("%s value overflow.", name);
+			ret = false;
+		}
+	} else if (ical_prop_buf[name_size] == ';') {
+		/* Does not support property parameter. */
+		LOG_ERR("%s param not supported.", name);
+		ret = false;
+	} else {
+		/* Property wrong format - no parameter or value. */
+		LOG_ERR("%s wrong format.", name);
 		ret = false;
 	}
+
 	return ret;
 }
 
@@ -105,51 +106,51 @@ static bool parse_datetime_props(const char *buf,
 	char ical_prop_buf[CONFIG_MAX_PROPERTY_SIZE];
 
 	unfold_size = unfold_contentline(buf, ical_prop_buf);
-	if (unfold_size > 0) {
-		if (ical_prop_buf[name_size] == ':') {
-			size_t value_len = unfold_size - name_size - 1;
+	if (unfold_size <= 0) {
+		/* Property wrong format - fail to unfold property. */
+		LOG_ERR("%s wrong format. Fail to unfold property", name);
+		return false;
+	}
 
+	if (ical_prop_buf[name_size] == ':') {
+		size_t value_len = unfold_size - name_size - 1;
+
+		if (value_len <= max_value_len) {
+			memcpy(value,
+				ical_prop_buf + name_size + 1,
+				value_len);
+			ret = true;
+		} else {
+			/* Property value overflow. */
+			LOG_ERR("%s value overflow.", name);
+			ret = false;
+		}
+	} else if (ical_prop_buf[name_size] == ';') {
+		char *dtvalue;
+
+		dtvalue = strchr(ical_prop_buf, ':');
+		if (dtvalue) {
+			dtvalue = dtvalue + 1;
+			size_t value_len;
+
+			value_len = unfold_size -
+					(dtvalue - ical_prop_buf);
 			if (value_len <= max_value_len) {
-				memcpy(value,
-				       ical_prop_buf + name_size + 1,
-				       value_len);
+				memcpy(value, dtvalue, value_len);
 				ret = true;
 			} else {
 				/* Property value overflow. */
 				LOG_ERR("%s value overflow.", name);
 				ret = false;
 			}
-		} else if (ical_prop_buf[name_size] == ';') {
-			char *dtvalue;
-
-			dtvalue = strchr(ical_prop_buf, ':');
-			if (dtvalue) {
-				dtvalue = dtvalue + 1;
-				size_t value_len;
-
-				value_len = unfold_size -
-					    (dtvalue - ical_prop_buf);
-				if (value_len <= max_value_len) {
-					memcpy(value, dtvalue, value_len);
-					ret = true;
-				} else {
-					/* Property value overflow. */
-					LOG_ERR("%s value overflow.", name);
-					ret = false;
-				}
-			} else {
-				/* Property wrong format - no value. */
-				LOG_ERR("%s wrong format - no value.", name);
-				ret = false;
-			}
 		} else {
-			/* Property wrong format - no parameter or value. */
-			LOG_ERR("%s wrong format.", name);
+			/* Property wrong format - no value. */
+			LOG_ERR("%s wrong format - no value.", name);
 			ret = false;
 		}
 	} else {
-		/* Property wrong format - fail to unfold property. */
-		LOG_ERR("%s wrong format. Fail to unfold property", name);
+		/* Property wrong format - no parameter or value. */
+		LOG_ERR("%s wrong format.", name);
 		ret = false;
 	}
 
@@ -163,37 +164,32 @@ static size_t parse_calprops(const char *buf)
 	char prop_value[CONFIG_MAX_PROPERTY_SIZE];
 
 	parsed = strstr(parsed, "BEGIN:VCALENDAR\r\n");
-	if (parsed) {
-
-		parsed += strlen("BEGIN:VCALENDAR\r\n");
-		end = strstr(parsed, "\r\nBEGIN:");
-		if (end) {
-			end += strlen("\r\n");
-			while (parsed < end) {
-				memset(prop_value, 0, sizeof(prop_value));
-				if (!strncmp(parsed, "PRODID", 6)) {
-					if (!parse_desc_props(
-						    parsed, "PRODID", 6,
-						    prop_value,
-						    sizeof(prop_value))) {
-						LOG_ERR("Wrong PRODID");
-					}
-				} else if (!strncmp(parsed, "VERSION", 7)) {
-					if (!parse_desc_props(
-						    parsed, "VERSION", 7,
-						    prop_value,
-						    sizeof(prop_value))) {
-						LOG_ERR("Wrong VERSION");
-					}
-				}
-				parsed = strstr(parsed, "\r\n");
-				parsed += strlen("\r\n");
-			}
-		} else {
-			return 0;
-		}
-	} else {
+	if (parsed == NULL) {
 		return 0;
+	}
+	parsed += strlen("BEGIN:VCALENDAR\r\n");
+
+	end = strstr(parsed, "\r\nBEGIN:");
+	if (end == NULL) {
+		return 0;
+	}
+	end += strlen("\r\n");
+
+	while (parsed < end) {
+		memset(prop_value, 0, sizeof(prop_value));
+		if (!strncmp(parsed, "PRODID", 6)) {
+			if (!parse_desc_props(parsed, "PRODID", 6,
+					prop_value, sizeof(prop_value))) {
+				LOG_ERR("Wrong PRODID");
+			}
+		} else if (!strncmp(parsed, "VERSION", 7)) {
+			if (!parse_desc_props(parsed, "VERSION", 7,
+					prop_value, sizeof(prop_value))) {
+				LOG_ERR("Wrong VERSION");
+			}
+		}
+		parsed = strstr(parsed, "\r\n");
+		parsed += strlen("\r\n");
 	}
 
 	return (parsed - buf);
@@ -203,60 +199,59 @@ static size_t parse_eventprop(const char *buf,
 			      struct ical_component *ical_com)
 {
 	const char *parsed = buf;
+	char *com_end;
 
-	if (!strncmp(buf, "BEGIN:VEVENT\r\n", strlen("BEGIN:VEVENT\r\n"))) {
-		char *com_end;
+	if (strncmp(buf, "BEGIN:VEVENT\r\n", strlen("BEGIN:VEVENT\r\n"))) {
+		return 0;
+	}
 
-		com_end = strstr(buf, "END:VEVENT\r\n");
-		if (com_end) {
-			com_end += strlen("END:VEVENT\r\n");
-			while (parsed < com_end) {
-				if (!strncasecmp(parsed,
-						 "SUMMARY", 7)) {
-					if (!parse_desc_props(
-						parsed, "SUMMARY", 7,
-						ical_com->summary,
-						CONFIG_SUMMARY_SIZE)) {
-						LOG_ERR("Wrong SUMMARY");
-					}
-				} else if (!strncasecmp(parsed,
-							"LOCATION", 8)) {
-					if (!parse_desc_props(
-						parsed, "LOCATION", 8,
-						ical_com->location,
-						CONFIG_LOCATION_SIZE)) {
-						LOG_ERR("Wrong LOCATION");
-					}
-				} else if (!strncasecmp(parsed,
-							"DESCRIPTION", 11)) {
-					if (!parse_desc_props(
-						parsed, "DESCRIPTION", 11,
-						ical_com->description,
-						CONFIG_DESCRIPTION_SIZE)) {
-						LOG_ERR("Wrong DESCRIPTION");
-					}
-				} else if (!strncasecmp(parsed,
-							"DTSTART", 7)) {
-					if (!parse_datetime_props(
-						parsed, "DTSTART", 7,
-						ical_com->dtstart,
-						CONFIG_DTSTART_SIZE)) {
-						LOG_ERR("Wrong DTSTART");
-					}
-				} else if (!strncasecmp(parsed,
-							"DTEND", 5)) {
-					if (!parse_datetime_props(
-						parsed, "DTEND", 5,
-						ical_com->dtend,
-						CONFIG_DTEND_SIZE)) {
-						LOG_ERR("Wrong DTEND");
-					}
-				}
+	com_end = strstr(buf, "END:VEVENT\r\n");
+	if (com_end == NULL) {
+		return 0;
+	}
 
-				/* Move parsed pointer to end of line break */
-				parsed = strstr(parsed, "\r\n") + 2;
+	com_end += strlen("END:VEVENT\r\n");
+	while (parsed < com_end) {
+		if (!strncasecmp(parsed, "SUMMARY", 7)) {
+			if (!parse_desc_props(
+				parsed, "SUMMARY", 7,
+				ical_com->summary,
+				CONFIG_SUMMARY_SIZE)) {
+				LOG_ERR("Wrong SUMMARY");
+			}
+		} else if (!strncasecmp(parsed, "LOCATION", 8)) {
+			if (!parse_desc_props(
+				parsed, "LOCATION", 8,
+				ical_com->location,
+				CONFIG_LOCATION_SIZE)) {
+				LOG_ERR("Wrong LOCATION");
+			}
+		} else if (!strncasecmp(parsed, "DESCRIPTION", 11)) {
+			if (!parse_desc_props(
+				parsed, "DESCRIPTION", 11,
+				ical_com->description,
+				CONFIG_DESCRIPTION_SIZE)) {
+				LOG_ERR("Wrong DESCRIPTION");
+			}
+		} else if (!strncasecmp(parsed, "DTSTART", 7)) {
+			if (!parse_datetime_props(
+				parsed, "DTSTART", 7,
+				ical_com->dtstart,
+				CONFIG_DTSTART_SIZE)) {
+				LOG_ERR("Wrong DTSTART");
+			}
+		} else if (!strncasecmp(parsed,
+					"DTEND", 5)) {
+			if (!parse_datetime_props(
+				parsed, "DTEND", 5,
+				ical_com->dtend,
+				CONFIG_DTEND_SIZE)) {
+				LOG_ERR("Wrong DTEND");
 			}
 		}
+
+		/* Move parsed pointer to end of line break */
+		parsed = strstr(parsed, "\r\n") + 2;
 	}
 
 	return parsed - buf;
