@@ -599,8 +599,10 @@ For more information about each application module and its configuration details
    doc/battery_meas.rst
    doc/board.rst
    doc/buttons.rst
+   doc/buttons_sim.rst
    doc/click_detector.rst
    doc/motion.rst
+   doc/passkey.rst
    doc/selector.rst
    doc/wheel.rst
    doc/leds.rst
