@@ -63,15 +63,15 @@ struct ical_parser_evt {
  */
 struct ical_component {
 	/** SUMMARY property */
-	char summary[CONFIG_SUMMARY_SIZE];
+	char summary[CONFIG_ICAL_PARSER_SUMMARY_SIZE];
 	/** LOCATION property buffer. */
-	char location[CONFIG_LOCATION_SIZE];
+	char location[CONFIG_ICAL_PARSER_LOCATION_SIZE];
 	/** DESCRIPTION property buffer. */
-	char description[CONFIG_DESCRIPTION_SIZE];
+	char description[CONFIG_ICAL_PARSER_DESCRIPTION_SIZE];
 	/** DTSTART property. */
-	char dtstart[CONFIG_DTSTART_SIZE];
+	char dtstart[CONFIG_ICAL_PARSER_DTSTART_SIZE];
 	/** DTEND property buffer. */
-	char dtend[CONFIG_DTEND_SIZE];
+	char dtend[CONFIG_ICAL_PARSER_DTEND_SIZE];
 };
 
 /**

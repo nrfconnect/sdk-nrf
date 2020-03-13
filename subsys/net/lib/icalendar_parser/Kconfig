@@ -15,33 +15,33 @@ config ICAL_PARSER_BUFFER_SIZE
 	help
 	  Size for internal buffer to store unparsed data.
 
-config MAX_PROPERTY_SIZE
+config ICAL_PARSER_MAX_PROPERTY_SIZE
 	int "maximum size of iCalendar property"
 	default 1024
 
-config SUMMARY_SIZE
+config ICAL_PARSER_SUMMARY_SIZE
 	int "maximum size of summart property"
-	range 32 MAX_PROPERTY_SIZE
+	range 32 ICAL_PARSER_MAX_PROPERTY_SIZE
 	default 64
 
-config LOCATION_SIZE
+config ICAL_PARSER_LOCATION_SIZE
 	int "maximum size of location property"
-	range 32 MAX_PROPERTY_SIZE
+	range 32 ICAL_PARSER_MAX_PROPERTY_SIZE
 	default 64
 
-config DESCRIPTION_SIZE
+config ICAL_PARSER_DESCRIPTION_SIZE
 	int "maximum size of description property"
-	range 32 MAX_PROPERTY_SIZE
+	range 32 ICAL_PARSER_MAX_PROPERTY_SIZE
 	default 128
 
-config DTSTART_SIZE
+config ICAL_PARSER_DTSTART_SIZE
 	int "maximum size of dtstart property"
-	range 16 MAX_PROPERTY_SIZE
+	range 16 ICAL_PARSER_MAX_PROPERTY_SIZE
 	default 16
 
-config DTEND_SIZE
+config ICAL_PARSER_DTEND_SIZE
 	int "maximum size of dtend property"
-	range 16 MAX_PROPERTY_SIZE
+	range 16 ICAL_PARSER_MAX_PROPERTY_SIZE
 	default 16
 
 module=ICAL_PARSER

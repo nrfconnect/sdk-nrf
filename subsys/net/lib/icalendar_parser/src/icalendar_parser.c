@@ -28,13 +28,13 @@ static size_t unfold_contentline(const char *buf, char *prop_buf)
 		}
 		single_line_len = eol - sol;
 		if ((total_line_len + single_line_len)
-		    <= CONFIG_MAX_PROPERTY_SIZE) {
+		    <= CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE) {
 			memcpy(prop_buf +
 			       total_line_len, sol, single_line_len);
 			total_line_len += single_line_len;
 		} else {
 			LOG_DBG("Property value overflow."
-				"Increase CONFIG_MAX_PROPERTY_SIZE.");
+				"Increase CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE.");
 			return 0;
 		}
 		if (!strncmp(eol, "\r\n ", strlen("\r\n "))) {
@@ -60,7 +60,7 @@ static bool parse_desc_props(const char *buf,
 {
 	bool ret;
 	size_t unfold_size;
-	char ical_prop_buf[CONFIG_MAX_PROPERTY_SIZE];
+	char ical_prop_buf[CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE];
 
 	unfold_size = unfold_contentline(buf, ical_prop_buf);
 	if (unfold_size <= 0) {
@@ -103,7 +103,7 @@ static bool parse_datetime_props(const char *buf,
 {
 	bool ret;
 	size_t unfold_size;
-	char ical_prop_buf[CONFIG_MAX_PROPERTY_SIZE];
+	char ical_prop_buf[CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE];
 
 	unfold_size = unfold_contentline(buf, ical_prop_buf);
 	if (unfold_size <= 0) {
@@ -161,7 +161,7 @@ static size_t parse_calprops(const char *buf)
 {
 	const char *parsed = buf;
 	char *end = NULL;
-	char prop_value[CONFIG_MAX_PROPERTY_SIZE];
+	char prop_value[CONFIG_ICAL_PARSER_MAX_PROPERTY_SIZE];
 
 	parsed = strstr(parsed, "BEGIN:VCALENDAR\r\n");
 	if (parsed == NULL) {
@@ -216,28 +216,28 @@ static size_t parse_eventprop(const char *buf,
 			if (!parse_desc_props(
 				parsed, "SUMMARY", 7,
 				ical_com->summary,
-				CONFIG_SUMMARY_SIZE)) {
+				CONFIG_ICAL_PARSER_SUMMARY_SIZE)) {
 				LOG_ERR("Wrong SUMMARY");
 			}
 		} else if (!strncasecmp(parsed, "LOCATION", 8)) {
 			if (!parse_desc_props(
 				parsed, "LOCATION", 8,
 				ical_com->location,
-				CONFIG_LOCATION_SIZE)) {
+				CONFIG_ICAL_PARSER_LOCATION_SIZE)) {
 				LOG_ERR("Wrong LOCATION");
 			}
 		} else if (!strncasecmp(parsed, "DESCRIPTION", 11)) {
 			if (!parse_desc_props(
 				parsed, "DESCRIPTION", 11,
 				ical_com->description,
-				CONFIG_DESCRIPTION_SIZE)) {
+				CONFIG_ICAL_PARSER_DESCRIPTION_SIZE)) {
 				LOG_ERR("Wrong DESCRIPTION");
 			}
 		} else if (!strncasecmp(parsed, "DTSTART", 7)) {
 			if (!parse_datetime_props(
 				parsed, "DTSTART", 7,
 				ical_com->dtstart,
-				CONFIG_DTSTART_SIZE)) {
+				CONFIG_ICAL_PARSER_DTSTART_SIZE)) {
 				LOG_ERR("Wrong DTSTART");
 			}
 		} else if (!strncasecmp(parsed,
@@ -245,7 +245,7 @@ static size_t parse_eventprop(const char *buf,
 			if (!parse_datetime_props(
 				parsed, "DTEND", 5,
 				ical_com->dtend,
-				CONFIG_DTEND_SIZE)) {
+				CONFIG_ICAL_PARSER_DTEND_SIZE)) {
 				LOG_ERR("Wrong DTEND");
 			}
 		}
