@@ -11,10 +11,10 @@
 #include <net/icalendar_parser.h>
 #include <modem_info.h>
 
-#define UI_BUTTON_1                     1
-#define UI_BUTTON_2                     2
-#define UI_SWITCH_1                     4
-#define UI_SWITCH_2                     8
+#define UI_BUTTON_1                     DK_BTN1_MSK
+#define UI_BUTTON_2                     DK_BTN2_MSK
+#define UI_SWITCH_1                     DK_BTN3_MSK
+#define UI_SWITCH_2                     DK_BTN4_MSK
 
 /* Interval to blink calendar state LED */
 #define ICAL_STATE_LED_ON_PERIOD                500
