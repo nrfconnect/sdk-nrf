@@ -222,17 +222,27 @@ int cloud_decode_command(char const *input);
 int cloud_decode_init(cloud_cmd_cb_t cb);
 
 /**
- * @brief Encode data to be transmitted to the digital twin,
- *	  from sensor data structure to a cloud data structure
- *	  containing a JSON string.
+ * @brief Encode device status data to be transmitted to the
+ *        digital twin.
  *
- * @param sensor Pointer to sensor data.
+ * @param modem_param Pointer to optional modem parameter data.
+ * @param ui Pointer to array of cloud data channel name
+ *           strings.
+ * @param ui_count Size of the ui array.
+ * @param fota Pointer to array of FOTA services.
+ * @param fota_count Size of the fota array.
+ * @param fota_version Version of the FOTA service.
  * @param output Pointer to encoded data structure.
  *
- * @return 0 if the operation was successful, otherwise a (negative) error code.
+ * @return 0 if the operation was successful, otherwise a
+ *         (negative) error code.
  */
-int cloud_encode_digital_twin_data(const struct cloud_channel_data *channel,
-				   struct cloud_msg *output);
+int cloud_encode_device_status_data(
+	void *modem_param,
+	const char *const ui[], const u32_t ui_count,
+	const char *const fota[], const u32_t fota_count,
+	const u16_t fota_version,
+	struct cloud_msg *output);
 
 /**
  * @brief Releases memory used by cloud data structure.

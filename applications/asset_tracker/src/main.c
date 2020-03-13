@@ -100,12 +100,11 @@ static struct cloud_backend *cloud_backend;
 
 /* Sensor data */
 static struct gps_nmea gps_data;
-static struct cloud_channel_data gps_cloud_data;
-static struct cloud_channel_data button_cloud_data;
-static struct cloud_channel_data device_cloud_data = {
-	.type = CLOUD_CHANNEL_DEVICE_INFO,
+static struct cloud_channel_data gps_cloud_data = {
+	.type = CLOUD_CHANNEL_GPS,
 	.tag = 0x1
 };
+static struct cloud_channel_data button_cloud_data;
 
 #if CONFIG_MODEM_INFO
 static struct modem_param_info modem_param;
@@ -759,29 +758,19 @@ static void modem_rsrp_data_send(struct k_work *work)
 /**@brief Poll device info and send data to the cloud. */
 static void device_status_send(struct k_work *work)
 {
-	if (!atomic_get(&send_data_enable)) {
+	struct modem_param_info *modem_ptr = NULL;
+	int ret;
+
+	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
 		return;
 	}
-
-	cJSON *root_obj = cJSON_CreateObject();
-
-	if (root_obj == NULL) {
-		LOG_ERR("Unable to allocate JSON object");
-		return;
-	}
-
-	size_t item_cnt = 0;
 
 #ifdef CONFIG_MODEM_INFO
-	int ret = modem_info_params_get(&modem_param);
-
+	ret = modem_info_params_get(&modem_param);
 	if (ret < 0) {
 		LOG_ERR("Unable to obtain modem parameters: %d", ret);
 	} else {
-		ret = modem_info_json_object_encode(&modem_param, root_obj);
-		if (ret > 0) {
-			item_cnt = (size_t)ret;
-		}
+		modem_ptr = &modem_param;
 	}
 #endif /* CONFIG_MODEM_INFO */
 
@@ -811,28 +800,27 @@ static void device_status_send(struct k_work *work)
 #endif
 	};
 
-	if (service_info_json_object_encode(ui, ARRAY_SIZE(ui),
-					    fota, ARRAY_SIZE(fota),
-					    SERVICE_INFO_FOTA_VER_CURRENT,
-					    root_obj) == 0) {
-		++item_cnt;
+	struct cloud_msg msg = {
+		.qos = CLOUD_QOS_AT_MOST_ONCE,
+		.endpoint.type = CLOUD_EP_TOPIC_STATE
+	};
+
+	ret = cloud_encode_device_status_data(modem_ptr,
+					      ui, ARRAY_SIZE(ui),
+					      fota, ARRAY_SIZE(fota),
+					      SERVICE_INFO_FOTA_VER_CURRENT,
+					      &msg);
+	if (ret) {
+		LOG_ERR("Unable to encode cloud data: %d", ret);
+	} else {
+		/* Transmits the data to the cloud. */
+		ret = cloud_send(cloud_backend, &msg);
+		cloud_release_data(&msg);
+		if (ret) {
+			LOG_ERR("sensor_data_send failed: %d", ret);
+			cloud_error_handler(ret);
+		}
 	}
-
-	if (item_cnt == 0) {
-		cJSON_Delete(root_obj);
-		return;
-	}
-
-	device_cloud_data.data.buf = (char *)root_obj;
-	device_cloud_data.data.len = item_cnt;
-	device_cloud_data.tag += 1;
-
-	if (device_cloud_data.tag == 0) {
-		device_cloud_data.tag = 0x1;
-	}
-
-	/* Transmits the data to the cloud. Frees the JSON object. */
-	sensor_data_send(&device_cloud_data);
 }
 
 /**@brief Get environment data from sensors and send to cloud. */
@@ -962,31 +950,20 @@ static void sensor_data_send(struct cloud_channel_data *data)
 			.endpoint.type = CLOUD_EP_TOPIC_MSG
 		};
 
-	if (data->type == CLOUD_CHANNEL_DEVICE_INFO) {
-		msg.endpoint.type = CLOUD_EP_TOPIC_STATE;
-	}
-
 	if (!atomic_get(&send_data_enable) || gps_control_is_active()) {
 		return;
 	}
 
-	if (data->type != CLOUD_CHANNEL_DEVICE_INFO) {
-		err = cloud_encode_data(data, CLOUD_CMD_GROUP_DATA, &msg);
-	} else {
-		err = cloud_encode_digital_twin_data(data, &msg);
-	}
-
+	err = cloud_encode_data(data, CLOUD_CMD_GROUP_DATA, &msg);
 	if (err) {
 		LOG_ERR("Unable to encode cloud data: %d", err);
-	}
-
-	err = cloud_send(cloud_backend, &msg);
-
-	cloud_release_data(&msg);
-
-	if (err) {
-		LOG_ERR("sensor_data_send failed: %d", err);
-		cloud_error_handler(err);
+	} else {
+		err = cloud_send(cloud_backend, &msg);
+		cloud_release_data(&msg);
+		if (err) {
+			LOG_ERR("%s failed: %d", __func__, err);
+			cloud_error_handler(err);
+		}
 	}
 }
 
