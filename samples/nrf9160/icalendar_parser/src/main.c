@@ -24,8 +24,8 @@
 /* Interval to check current calendar event and set LED */
 #define ICAL_EVENT_LED_PERIOD                   1000
 
-/** HTTP socket. */
-static int fd = -1;
+/* Downloading indicator */
+static bool downloading;
 
 /* Receiving buffer for HTTP client */
 #define MAX_RECV_BUF_LEN 1024
@@ -94,7 +94,6 @@ static int socket_sectag_set(int fd, int sec_tag)
 	int err;
 	int verify;
 	sec_tag_t sec_tag_list[] = { sec_tag };
-	nrf_sec_session_cache_t sec_session_cache;
 
 	enum {
 		NONE            = 0,
@@ -120,15 +119,6 @@ static int socket_sectag_set(int fd, int sec_tag)
 	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
 		printk("Failed to setup peer verification, errno %d\n", errno);
-		return -1;
-	}
-
-	/* Disable TLE session cache */
-	sec_session_cache = 0;
-	err = nrf_setsockopt(fd, SOL_TLS, NRF_SO_SEC_SESSION_CACHE,
-			     &sec_session_cache, sizeof(sec_session_cache));
-	if (err) {
-		printk("Failed to disable TLS cache, errno %d\n", errno);
 		return -1;
 	}
 
@@ -250,6 +240,7 @@ static int socket_timeout_set(int fd)
 
 int server_connect(const char *host, int sec_tag)
 {
+	int fd = -1;
 	int err;
 
 	if (host == NULL) {
@@ -266,11 +257,6 @@ int server_connect(const char *host, int sec_tag)
 		if (sec_tag == -1) {
 			return -EINVAL;
 		}
-	}
-
-	if (fd != -1) {
-		/* Already connected */
-		return 0;
 	}
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
@@ -294,33 +280,13 @@ int server_connect(const char *host, int sec_tag)
 		return err;
 	}
 
-	return 0;
-}
-
-int server_disconnect(void)
-{
-	int err;
-
-	if (fd < 0) {
-		return -EINVAL;
-	}
-
-	err = close(fd);
-	if (err) {
-		printk("Failed to close socket, errno %d\n", errno);
-		return -errno;
-	}
-
-	fd = -1;
-
-	return 0;
+	return fd;
 }
 
 static void response_cb(struct http_response *rsp,
 			enum http_final_call final_data,
 			void *user_data)
 {
-	int err;
 	size_t ret = 0;
 	static size_t data_received;
 
@@ -339,23 +305,20 @@ static void response_cb(struct http_response *rsp,
 					data_received + rsp->data_len);
 		data_received = 0;
 		printk("Total %d pended event\n", component_cnt);
-		err = server_disconnect();
-		if (err != 0) {
-			printk("server_disconnect fail. err:%d\n", err);
-		}
+		downloading = false;
 		dk_set_led_on(DK_LED3);
 		k_delayed_work_submit(&ical_work,
 				      K_SECONDS(CONFIG_DOWNLOAD_INTERVAL));
 	}
 }
 
-int download_start(void)
+int download_start(int fd)
 {
 	int ret;
 	struct http_request req;
 
 	if (fd == -1) {
-		/* Already connected */
+		/* Not connected */
 		return -EINVAL;
 	}
 
@@ -486,6 +449,8 @@ static int icalendar_parser_callback(const struct ical_parser_evt *event,
 /**@brief Start downloading and parsing the iCalendar from calendar host */
 static void ical_work_handler(struct k_work *unused)
 {
+	/** HTTP socket. */
+	static int fd = -1;
 	int err, sec_tag;
 
 	/* Verify the host and file. */
@@ -502,19 +467,6 @@ static void ical_work_handler(struct k_work *unused)
 
 	dk_set_led_off(DK_LED2);
 
-	/* Connect to server if it is not connected yet. */
-	if (fd == -1) {
-		err = server_connect(CONFIG_DOWNLOAD_HOST, sec_tag);
-		if (err != 0) {
-			printk("ical_parser_connect fail. Reconnect after 3 seconds\n");
-			k_delayed_work_submit(&ical_work, K_SECONDS(3));
-			return;
-		}
-	} else {
-		printk("Already connected.\n");
-		return;
-	}
-
 	/* Initialize iCalendar parser */
 	err = ical_parser_init(&ical, icalendar_parser_callback);
 	if (err != 0) {
@@ -528,11 +480,23 @@ static void ical_work_handler(struct k_work *unused)
 	}
 	component_cnt = 0;
 
+	/* Connect to server if it is not connected yet. */
+	if (fd < 0) {
+		fd = server_connect(CONFIG_DOWNLOAD_HOST, sec_tag);
+		if (fd < 0) {
+			printk("ical_parser_connect fail. Reconnect after 3 seconds\n");
+			k_delayed_work_submit(&ical_work, K_SECONDS(3));
+			return;
+		}
+	}
+
+	downloading = true;
 	/* Start download */
-	err = download_start();
+	err = download_start(fd);
 	if (err != 0) {
 		printk("http download fail. Restart after 3 seconds\n");
 		k_delayed_work_submit(&ical_work, K_SECONDS(3));
+		downloading = false;
 	}
 }
 
@@ -620,7 +584,7 @@ static void leds_update(void)
 
 	led_on = !led_on;
 
-	if (fd != -1) {
+	if (downloading) {
 		/* Blink LED3 while downloading new calendar */
 		if (led_on) {
 			dk_set_led_off(DK_LED3);
