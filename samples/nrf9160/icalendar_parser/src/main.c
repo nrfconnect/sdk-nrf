@@ -590,7 +590,7 @@ static void leds_update(void)
 			k_sleep(ICAL_STATE_LED_OFF_PERIOD);
 		} else {
 			dk_set_led_on(DK_LED3);
-			k_sleep(ICAL_STATE_LED_OFF_PERIOD);
+			k_sleep(ICAL_STATE_LED_ON_PERIOD);
 		}
 	} else {
 		/* Update LED1/LED2 according to parsed calendar components. */
