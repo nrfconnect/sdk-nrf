@@ -3,12 +3,9 @@
 iCalendar parser
 ################
 
-`iCalendar`_ is data format for representing and exchanging calendaring and scheduling information. The iCalendar parser library can be used to parse a shared iCalendar at specified URL (HTTP or HTTPS) and returns paresd calendar events. It supports IPv4 and IPv6 protocols.
+`iCalendar`_ is data format for representing and exchanging calendaring and scheduling information. The iCalendar parser library parses data steam containg iCalendar format calendaring information  and returns paresd calendar events.
 
-The library detect the begin of calendar delimiter(BEGIN:VCALENDAR) and sends an event (:cpp:member:`ICAL_PARSER_EVT_CALENDAR`) to the application. Then the library parse calendar content fragment by fragment and sends parsed events (:cpp:member:`ICAL_PARSER_EVT_COMPONENT`) to the application when calendar components are parsed.
-When the end of calendar delimiter(END:VCALENDAR) is parsed, the library sends an event (:cpp:member:`ICAL_PARSER_EVT_COMPLETE`) to the application.
-
-If some error occur during calendar downloading and parsing, the library sends an event (:cpp:member:`ICAL_PARSER_EVT_ERROR`) and disconnect from the server.
+The library first detects the begin of calendar delimiter(BEGIN:VCALENDAR) and parses following calendar content fragment by fragment and sends parsed events (:cpp:member:`ICAL_PARSER_EVT_COMPONENT`) to the application when calendar components are parsed.
 
 Protocols
 *********

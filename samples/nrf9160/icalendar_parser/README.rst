@@ -3,7 +3,7 @@
 nRF9160: iCalendar Parser
 #########################
 
-The iCalendar parser sample demonstrates how to utilize **iCalendar Parser** library to parse a shared `iCalendar`_ via HTTPS.
+The iCalendar parser sample demonstrates how to utilize **iCalendar Parser** library to parse a shared `iCalendar`_ via HTTP/HTTPS.
 
 Overview
 ********
@@ -24,15 +24,8 @@ Obtaining a certificate
 =======================
 
 The sample connects to ``calendar.google.com``, which requires an X.509 certificate.
-This certificate is provided in the :file:`samples/nrf9160/icalendar_parser/cert` folder.
-
-To connect to other servers, you might need to provision a different certificate.
-You can download a certificate for a given server using your web browser.
-Alternatively, you can obtain it from a dedicated website like `SSL Labs`_.
-
-Certificates come in different formats.
-To provision the certificate to the nRF9160 DK/Thingy:91, it must be in PEM format.
-The PEM format looks like this::
+This certificate should be put into the :file:`samples/nrf9160/icalendar_parser/cert/certificates`.
+As an example, the certificate for calendar.google.com in PEM format is list below:
 
    "-----BEGIN CERTIFICATE-----\n"
    "MIIDujCCAqKgAwIBAgILBAAAAAABD4Ym5g0wDQYJKoZIhvcNAQEFBQAwTDEgMB4G\n"
@@ -57,6 +50,14 @@ The PEM format looks like this::
    "TBj0/VLZjmmx6BEP3ojY+x1J96relc8geMJgEtslQIxq/H5COEBkEveegeGTLg==\n"
    "-----END CERTIFICATE-----\n"
 
+Please note the above certificate will expire after Dec 15 08:00:00 2021 GMT.
+
+To connect to other servers, you might need to provision a different certificate.
+You can download a certificate for a given server using your web browser.
+Alternatively, you can obtain it from a dedicated website like `SSL Labs`_.
+
+Certificates come in different formats.
+To provision the certificate to the nRF9160 DK/Thingy:91, it must be in PEM format.
 Note the ``\n`` at the end of each line.
 
 See the comprehensive `tutorial on SSL.com`_ for instructions on how to convert between different certificate formats and encodings.
