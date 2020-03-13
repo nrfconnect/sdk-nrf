@@ -47,7 +47,7 @@ static size_t component_cnt;
 
 /* Certificate for calendar host */
 static const char cert[] = {
-	#include "../cert/GlobalSign-Root-CA-R2"
+	#include "../cert/certificates"
 };
 
 /**@brief Read current time from modem */
