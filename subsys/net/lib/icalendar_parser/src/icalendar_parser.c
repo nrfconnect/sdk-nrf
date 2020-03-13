@@ -104,7 +104,6 @@ static bool parse_datetime_props(const char *buf,
 	size_t unfold_size;
 	char ical_prop_buf[CONFIG_MAX_PROPERTY_SIZE];
 
-	memset(ical_prop_buf, 0, sizeof(ical_prop_buf));
 	unfold_size = unfold_contentline(buf, ical_prop_buf);
 	if (unfold_size > 0) {
 		if (ical_prop_buf[name_size] == ':') {
