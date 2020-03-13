@@ -395,7 +395,6 @@ static int icalendar_parser_callback(const struct ical_parser_evt *event,
 	}
 
 	switch (event->id) {
-
 	case ICAL_PARSER_EVT_COMPONENT:
 		if (ical_com != NULL) {
 			if (component_cnt >= CONFIG_MAX_PARSED_COMPONENTS) {
