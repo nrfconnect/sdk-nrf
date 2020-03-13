@@ -56,6 +56,8 @@ The installation process is different depending on your operating system.
 
       Install Homebrew and install the required tools using the ``brew`` command line tool.
 
+      Also see :ref:`zephyr:mac-setup-alts` for additional information.
+
 .. _gs_installing_toolchain:
 
 Installing the toolchain
@@ -65,7 +67,9 @@ To be able to cross-compile your applications for Arm targets, you must install 
 
 .. important::
    Make sure to install the version that is mentioned above.
-   Other versions might not work with this version of the nRF Connect SDK.
+   Other versions might not work with this version of the |NCS|.
+
+   Note that other versions of the |NCS| might require a different toolchain version.
 
 To set up the toolchain, complete the following steps:
 
