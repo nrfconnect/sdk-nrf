@@ -346,7 +346,8 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Pairing completed: %s, bonded: %d", log_strdup(addr), bonded);
+	LOG_INF("Pairing completed: %s, bonded: %d", log_strdup(addr),
+		bonded);
 }
 
 
