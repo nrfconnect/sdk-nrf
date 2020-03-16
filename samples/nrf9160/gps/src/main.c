@@ -17,10 +17,14 @@
 #include "supl_support.h"
 #endif
 
-#define AT_XSYSTEMMODE    "AT\%XSYSTEMMODE=1,0,1,0"
-#define AT_ACTIVATE_GPS   "AT+CFUN=31"
-#define AT_ACTIVATE_LTE   "AT+CFUN=21"
-#define AT_DEACTIVATE_LTE "AT+CFUN=20"
+#define AT_XSYSTEMMODE      "AT\%XSYSTEMMODE=1,0,1,0"
+#define AT_ACTIVATE_GPS     "AT+CFUN=31"
+#define AT_ACTIVATE_LTE     "AT+CFUN=21"
+#define AT_DEACTIVATE_LTE   "AT+CFUN=20"
+
+#define GNSS_INIT_AND_START 1
+#define GNSS_STOP           2
+#define GNSS_RESTART        3
 
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
@@ -113,7 +117,7 @@ static int activate_lte(bool activate)
 }
 #endif
 
-static int init_app(void)
+static int gnss_ctrl(uint32_t ctrl)
 {
 	int retval;
 
@@ -126,65 +130,89 @@ static int init_app(void)
 					       NRF_GNSS_NMEA_GGA_MASK |
 					       NRF_GNSS_NMEA_RMC_MASK;
 
+	if (ctrl == GNSS_INIT_AND_START) {
+		gnss_fd = nrf_socket(NRF_AF_LOCAL,
+				     NRF_SOCK_DGRAM,
+				     NRF_PROTO_GNSS);
+
+		if (gnss_fd >= 0) {
+			printk("GPS Socket created\n");
+		} else {
+			printk("Could not init socket (err: %d)\n", gnss_fd);
+			return -1;
+		}
+
+		retval = nrf_setsockopt(gnss_fd,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_FIX_RETRY,
+					&fix_retry,
+					sizeof(fix_retry));
+		if (retval != 0) {
+			printk("Failed to set fix retry value\n");
+			return -1;
+		}
+
+		retval = nrf_setsockopt(gnss_fd,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_FIX_INTERVAL,
+					&fix_interval,
+					sizeof(fix_interval));
+		if (retval != 0) {
+			printk("Failed to set fix interval value\n");
+			return -1;
+		}
+
+		retval = nrf_setsockopt(gnss_fd,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_NMEA_MASK,
+					&nmea_mask,
+					sizeof(nmea_mask));
+		if (retval != 0) {
+			printk("Failed to set nmea mask\n");
+			return -1;
+		}
+	}
+
+	if ((ctrl == GNSS_INIT_AND_START) ||
+	    (ctrl == GNSS_RESTART)) {
+		retval = nrf_setsockopt(gnss_fd,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_START,
+					&delete_mask,
+					sizeof(delete_mask));
+		if (retval != 0) {
+			printk("Failed to start GPS\n");
+			return -1;
+		}
+	}
+
+	if (ctrl == GNSS_STOP) {
+		retval = nrf_setsockopt(gnss_fd,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_STOP,
+					&delete_mask,
+					sizeof(delete_mask));
+		if (retval != 0) {
+			printk("Failed to stop GPS\n");
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+static int init_app(void)
+{
+	int retval;
+
 	if (setup_modem() != 0) {
 		printk("Failed to initialize modem\n");
 		return -1;
 	}
 
-	gnss_fd = nrf_socket(NRF_AF_LOCAL, NRF_SOCK_DGRAM, NRF_PROTO_GNSS);
+	retval = gnss_ctrl(GNSS_INIT_AND_START);
 
-	if (gnss_fd >= 0) {
-		printk("Socket created\n");
-	} else {
-		printk("Could not init socket (err: %d)\n", gnss_fd);
-		return -1;
-	}
-
-	retval = nrf_setsockopt(gnss_fd,
-				NRF_SOL_GNSS,
-				NRF_SO_GNSS_FIX_RETRY,
-				&fix_retry,
-				sizeof(fix_retry));
-
-	if (retval != 0) {
-		printk("Failed to set fix retry value\n");
-		return -1;
-	}
-
-	retval = nrf_setsockopt(gnss_fd,
-				NRF_SOL_GNSS,
-				NRF_SO_GNSS_FIX_INTERVAL,
-				&fix_interval,
-				sizeof(fix_interval));
-
-	if (retval != 0) {
-		printk("Failed to set fix interval value\n");
-		return -1;
-	}
-
-	retval = nrf_setsockopt(gnss_fd,
-				NRF_SOL_GNSS,
-				NRF_SO_GNSS_NMEA_MASK,
-				&nmea_mask,
-				sizeof(nmea_mask));
-
-	if (retval != 0) {
-		printk("Failed to set nmea mask\n");
-		return -1;
-	}
-
-	retval = nrf_setsockopt(gnss_fd,
-				NRF_SOL_GNSS,
-				NRF_SO_GNSS_START,
-				&delete_mask,
-				sizeof(delete_mask));
-
-	if (retval != 0) {
-		printk("Failed to start GPS\n");
-		return -1;
-	}
-
-	return 0;
+	return retval;
 }
 
 static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
@@ -290,6 +318,7 @@ int process_gps_data(nrf_gnss_data_frame_t *gps_data)
 			printk("\033[2J");
 			printk("New AGPS data requested, contacting SUPL server, flags %d\n",
 			       gps_data->agps.data_flags);
+			gnss_ctrl(GNSS_STOP);
 			activate_lte(true);
 			printk("Established LTE link\n");
 			if (open_supl_socket() == 0) {
@@ -299,6 +328,7 @@ int process_gps_data(nrf_gnss_data_frame_t *gps_data)
 				close_supl_socket();
 			}
 			activate_lte(false);
+			gnss_ctrl(GNSS_RESTART);
 			k_sleep(K_MSEC(2000));
 #endif
 			break;
