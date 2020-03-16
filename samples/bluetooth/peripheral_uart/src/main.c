@@ -28,23 +28,23 @@
 
 #include <stdio.h>
 
-#define STACKSIZE               CONFIG_BT_GATT_NUS_THREAD_STACK_SIZE
-#define PRIORITY                7
+#define STACKSIZE CONFIG_BT_GATT_NUS_THREAD_STACK_SIZE
+#define PRIORITY 7
 
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN	        (sizeof(DEVICE_NAME) - 1)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN	(sizeof(DEVICE_NAME) - 1)
 
-#define RUN_STATUS_LED          DK_LED1
-#define RUN_LED_BLINK_INTERVAL  1000
+#define RUN_STATUS_LED DK_LED1
+#define RUN_LED_BLINK_INTERVAL 1000
 
-#define CON_STATUS_LED          DK_LED2
+#define CON_STATUS_LED DK_LED2
 
 #define KEY_PASSKEY_ACCEPT DK_BTN1_MSK
 #define KEY_PASSKEY_REJECT DK_BTN2_MSK
 
-#define UART_BUF_SIZE           CONFIG_BT_GATT_NUS_UART_BUFFER_SIZE
+#define UART_BUF_SIZE CONFIG_BT_GATT_NUS_UART_BUFFER_SIZE
 
-static K_SEM_DEFINE(ble_init_ok, 0, 2);
+static K_SEM_DEFINE(ble_init_ok, 0, 1);
 
 static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
@@ -53,9 +53,9 @@ static struct device *uart;
 static bool rx_disabled;
 
 struct uart_data_t {
-	void  *fifo_reserved;
-	u8_t    data[UART_BUF_SIZE];
-	u16_t   len;
+	void *fifo_reserved;
+	u8_t data[UART_BUF_SIZE];
+	u16_t len;
 };
 
 static K_FIFO_DEFINE(fifo_uart_tx_data);
@@ -108,7 +108,10 @@ static void uart_cb(struct device *uart)
 			   (rx->data[rx->len - 1] == '\n') ||
 			   (rx->data[rx->len - 1] == '\r')) {
 				k_fifo_put(&fifo_uart_rx_data, rx);
-				rx = NULL;
+#include <logging/log.h>
+
+#define LOG_MODULE_NAME peripheral_uart
+LOG_MODULE_REGISTER(LOG_MODULE_NAME);				rx = NULL;
 			}
 		}
 	}
@@ -146,7 +149,7 @@ static void uart_cb(struct device *uart)
 
 static int init_uart(void)
 {
-	uart = device_get_binding("UART_0");
+	uart = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 	if (!uart) {
 		return -ENXIO;
 	}
@@ -193,7 +196,10 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 		dk_set_led_off(CON_STATUS_LED);
 	}
 }
+#include <logging/log.h>
 
+#define LOG_MODULE_NAME peripheral_uart
+LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #ifdef CONFIG_BT_GATT_NUS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
@@ -399,19 +405,19 @@ static void configure_gpio(void)
 	}
 }
 
-static void led_blink_thread(void)
+void main(void)
 {
-	int    blink_status       = 0;
-	int    err                = 0;
+	int blink_status = 0;
+	int err = 0;
 
 	printk("Starting Nordic UART service example\n");
+
+	configure_gpio();
 
 	err = init_uart();
 	if (err) {
 		error();
 	}
-
-	configure_gpio();
 
 	bt_conn_cb_register(&conn_callbacks);
 
@@ -425,6 +431,7 @@ static void led_blink_thread(void)
 	}
 
 	printk("Bluetooth initialized\n");
+
 	k_sem_give(&ble_init_ok);
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
@@ -451,7 +458,7 @@ static void led_blink_thread(void)
 
 void ble_write_thread(void)
 {
-	/* Don't go any further until BLE is initailized */
+	/* Don't go any further until BLE is initialized */
 	k_sem_take(&ble_init_ok, K_FOREVER);
 
 	for (;;) {
@@ -471,9 +478,6 @@ void ble_write_thread(void)
 		}
 	}
 }
-
-K_THREAD_DEFINE(led_blink_thread_id, STACKSIZE, led_blink_thread, NULL, NULL,
-		NULL, PRIORITY, 0, 0);
 
 K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
 		NULL, PRIORITY, 0, 0);
