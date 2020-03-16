@@ -24,7 +24,7 @@ The collected data includes the GPS position, accelerometer readings (the device
      - Data unit
    * - GPS coordinates
      - GPS
-     - NEMA Gxxx string
+     - NMEA Gxxx string
    * - Accelerometer data
      - FLIP
      - String
@@ -51,8 +51,41 @@ This information is available in nRF Cloud under the section **Cellular Link Mon
 The `LTE Link Monitor`_ application, implemented as part of `nRF Connect for Desktop`_  can be used to send AT commands to the device and receive the responses.
 You can also send AT commands from the **Terminal** card on nRF Cloud when the device is connected.
 
-By default, the asset tracker supports firmware updates through :ref:`lib_aws_fota`.
+By default, the Asset Tracker supports firmware updates through :ref:`lib_aws_fota`.
 
+.. _power_opt:
+
+Power optimization
+==================
+
+The Asset Tracker can run in three power modes that are configured in the Kconfig file of the application.
+Currently the dynamic switching between eDRX and PSM during run-time is only supported on the nRF9160 DK.
+However, both nRF9160 DK and Thingy:91 support build-time configuration for enabling eDRX, PSM or both.
+
+.. note::
+   Not all cellular network providers support these modes, and the granted parameters can vary between networks.
+   Network operators can also limit the availability of power saving features for roaming users.
+   SIM card subscription also affects the availability of the cellular IoT power saving features.
+
+
+Demo mode
+	This is the default setting.
+	In this mode, the device maintains a continuous cellular link and can receive data at all times.
+	To enable this mode, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=n``.
+
+Request eDRX mode
+	In this mode, the device requests the eDRX feature from the cellular network to save power.
+	The device maintains a continuous cellular link.
+	The device is reachable only at the configured eDRX intervals or when the device sends data.
+	To enable this mode on an nRF9160 DK during run-time, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then set Switch 2 to the N.C. position.
+	On Thingy:91 and nRF9160 DK, the ``CONFIG_LTE_EDRX_REQ`` option is used to enable eDRX during build-time.
+
+Request Power Saving Mode (PSM)
+	In this mode, the device requests the PSM feature from the cellular network to save power.
+	The device maintains a continuous cellular link.
+	The device is reachable only at the configured PSM intervals or when the device sends data.
+	To enable this mode on an nRF9160 DK during run-time, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then set Switch 2 to the GND position.
+	On Thingy:91 and nRF9160 DK, the ``CONFIG_GPS_CONTROL_PSM_ENABLE_ON_START`` option is used to enable PSM during build-time.
 
 Requirements
 ************
@@ -124,32 +157,6 @@ On the Thingy:91, the application state is indicated by a single RGB LED as foll
    * - Red
      - Error
 
-.. _power_opt:
-
-Power optimization
-******************
-
-The Asset Tracker can run in three power modes that are configured in the Kconfig file of the application.
-These settings are currently only supported on the nRF9160 DK.
-
-.. note::
-   Not all cellular network providers support these modes, and the granted parameters can vary between networks.
-
-Demo mode
-	This is the default setting.
-	In this mode, the device maintains a continuous cellular link.
-	To enable this mode, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=n``.
-
-Request eDRX mode
-	In this mode, the device requests the eDRX feature from the cellular network to save power.
-	To enable this mode, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then
-	set Switch 2 to the N.C. position.
-
-Request Power Saving Mode (PSM)
-	In this mode, the device requests the PSM feature from the cellular network to save power.
-	To enable this mode, set ``CONFIG_POWER_OPTIMIZATION_ENABLE=y`` and then
-	set Switch 2 to the GND position.
-
 .. _lwm2m_carrier_support:
 
 Using the LwM2M carrier library
@@ -164,7 +171,6 @@ In |SES|, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connec
 See :ref:`cmake_options` for more information.
 
 Alternatively, you can manually set the configuration options to match the contents of the overlay config file.
-
 
 Building and running
 ********************

@@ -162,6 +162,31 @@ If the modem is shut down gracefully before the next boot (by using ``AT+CFUN=0`
 
 For more detailed information, see the `system mode section in the AT Commands reference document`_.
 
+.. |An nRF9160-based device| replace:: An nRF9160 DK
+.. |an nRF9160-based device| replace:: an nRF9160 DK
+
+.. nrf9160_gps_lte_start
+
+Concurrent GPS and LTE
+======================
+
+|An nRF9160-based device| supports GPS in LTE-M and NB-IoT.
+Concurrent operation of GPS with optional power saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported and recommended.
+
+The following figure shows how the data transfer occurs in |an nRF9160-based device| with power saving in place.
+
+.. figure:: /images/power_consumption.png
+   :alt: Power consumption
+
+See `Energy efficiency`_ for more information.
+
+Asset Tracker enables the concurrent working of GPS and LTE in eDRX and PSM modes when the device is in `RRC idle mode`_.
+The time between the transition of a device from RRC connected mode (data transfer mode) to RRC idle mode is dependent on the network.
+Typically the time ranges between 5 seconds to 70 seconds after the last data transfer on LTE.
+Sensor and GPS data is sent to the cloud only during the data transfer phase.
+
+.. nrf9160_gps_lte_end
+
 .. _nrf9160_ug_fota:
 
 FOTA upgrades
