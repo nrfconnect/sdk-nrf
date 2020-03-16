@@ -10,15 +10,19 @@
 #include <logging/log.h>
 #include <net/socket.h>
 
-#define SUPL_SERVER      "supl.google.com"
-#define SUPL_SERVER_PORT 7276
+#define SUPL_SERVER        "supl.google.com"
+#define SUPL_SERVER_PORT   7276
+
+/* Number of getaddrinfo attempts */
+#define GAI_ATTEMPT_COUNT  3
 
 static int supl_fd;
 
 int open_supl_socket(void)
 {
-	int err;
+	int err = -1;
 	int proto;
+	int gai_cnt = 0;
 	u16_t port;
 	struct addrinfo *addr;
 	struct addrinfo *info;
@@ -36,13 +40,26 @@ int open_supl_socket(void)
 		.ai_canonname = NULL,
 	};
 
-	err = getaddrinfo(SUPL_SERVER, NULL, &hints, &info);
-	if (err) {
-		printk("Failed to resolve hostname %s on IPv4, errno: %d)\n",
-			SUPL_SERVER, errno);
-		return -1;
-	}
+	/* Try getaddrinfo many times, sleep a bit between retries */
+	do {
+		err = getaddrinfo(SUPL_SERVER, NULL, &hints, &info);
+		gai_cnt++;
 
+		if (err) {
+			if (gai_cnt < GAI_ATTEMPT_COUNT) {
+				/* Sleep between retries */
+				k_sleep(K_MSEC(1000) * gai_cnt);
+			} else {
+				/* Return if no success after many retries */
+				printk("Failed to resolve hostname %s on IPv4, errno: %d)\n",
+					SUPL_SERVER, errno);
+
+				return -1;
+			}
+		}
+	} while (err);
+
+	/* Create socket */
 	supl_fd = socket(AF_INET, SOCK_STREAM, proto);
 	if (supl_fd < 0) {
 		printk("Failed to create socket, errno %d\n", errno);
