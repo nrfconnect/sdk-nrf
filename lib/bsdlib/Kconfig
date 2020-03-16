@@ -32,6 +32,24 @@ config BSD_LIBRARY_TRACE_ENABLED
 	# This enable UARTE1 peripheral and includes nrfx UARTE driver.
 	select NRFX_UARTE1
 
+config NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS
+	bool "Split large blocks passed to send() or sendto()"
+	default n
+	help
+	  Workaround a limitation in the nRF91 modem firmware's bsdlib
+	  implementation regarding return value for send() or sendto()
+	  calls larger than the module can handle. It should send the data
+	  up to the maximum, and return that as the return value. Instead,
+	  it returns error 22.
+
+config NRF91_SOCKET_BLOCK_LIMIT
+	int "Maximum size the modem can send"
+	default 2048
+	help
+	  Blocks larger than this value will be split into two or more
+	  send() or sendto() calls. This may not work for certain kinds
+	  of sockets or certain flag parameter values.
+
 endif # BSD_LIBRARY
 
 endmenu

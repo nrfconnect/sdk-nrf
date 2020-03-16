@@ -737,6 +737,9 @@ static ssize_t nrf91_socket_offload_recvfrom(int sd, void *buf, short int len,
 static ssize_t nrf91_socket_offload_send(int sd, const void *buf, size_t len,
 					 int flags)
 {
+	if (IS_ENABLED(CONFIG_NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS)) {
+		len = MIN(len, CONFIG_NRF91_SOCKET_BLOCK_LIMIT);
+	}
 	return nrf_send(sd, buf, len, z_to_nrf_flags(flags));
 }
 
@@ -745,6 +748,9 @@ static ssize_t nrf91_socket_offload_sendto(int sd, const void *buf, size_t len,
 					   socklen_t tolen)
 {
 	ssize_t retval;
+	if (IS_ENABLED(CONFIG_NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS)) {
+		len = MIN(len, CONFIG_NRF91_SOCKET_BLOCK_LIMIT);
+	}
 
 	if (to == NULL) {
 		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags), NULL,
