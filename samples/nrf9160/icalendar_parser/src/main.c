@@ -3,13 +3,13 @@
 #include <string.h>
 #include <zephyr.h>
 #include <dk_buttons_and_leds.h>
-#include <lte_lc.h>
-#include <modem_key_mgmt.h>
+#include <modem/lte_lc.h>
+#include <modem/modem_key_mgmt.h>
 #include <net/socket.h>
 #include <net/http_client.h>
 #include <net/tls_credentials.h>
 #include <net/icalendar_parser.h>
-#include <modem_info.h>
+#include <modem/modem_info.h>
 
 #define UI_BUTTON_1                     DK_BTN1_MSK
 #define UI_BUTTON_2                     DK_BTN2_MSK
