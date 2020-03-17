@@ -15,6 +15,18 @@ On Nordic Semiconductor's development kits, the UART 1 peripheral is typically g
 
 Any data sent from the Bluetooth LE unit is sent out of the UART 1 peripheral's TX pin.
 
+
+.. _peripheral_uart_debug:
+
+Debugging
+*********
+
+In this sample, the UART console is used to send and read data over the NUS service.
+Debug messages are not displayed in this UART console.
+Instead, they are printed by the RTT logger.
+
+If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
+
 Requirements
 ************
 
@@ -58,12 +70,13 @@ After programming the sample to your board, test it by performing the following 
 
 1. Connect the board to the computer using a USB cable. The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal|
+#. Optionally, connect the RTT console to display debug messages. See :ref:`peripheral_uart_debug`.
 #. Reset the board.
 #. Observe that LED 1 is blinking and that the device is advertising with the device name that is configured in :option:`CONFIG_BT_DEVICE_NAME`.
 #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 #. Connect to the device using nRF Connect for Mobile.
    Observe that LED 2 is on.
-#. Optionally, pair/bond with the device with MITM protection.
+#. Optionally, pair/bond with the device with MITM protection. This requires :ref:`RTT connection <testing_rtt_connect>`.
    To confirm pairing/bonding, press Button 1 on the device and accept the passkey value on the smartphone.
 #. In the app, observe that the services are shown in the connected device.
 #. Select the UART RX characteristic value in nRF Connect.
