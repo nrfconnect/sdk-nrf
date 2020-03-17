@@ -389,6 +389,29 @@ static void clear_items(struct items *items)
 	items->update_needed = false;
 }
 
+static struct report_state *get_report_state(struct subscriber *subscriber,
+					     u8_t report_id)
+{
+	__ASSERT_NO_MSG(subscriber);
+
+	size_t pos = report_index[report_id];
+
+	if (pos < INPUT_REPORT_COUNT) {
+		return &subscriber->state[pos];
+	}
+
+	return NULL;
+}
+
+static struct report_data *get_report_data(u8_t report_id)
+{
+	size_t pos = report_index[report_id];
+
+	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
+
+	return &state.report_data[pos];
+}
+
 static struct subscriber *get_subscriber(const void *subscriber_id)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
@@ -449,19 +472,13 @@ static void disconnect_subscriber(const void *subscriber_id)
 
 	if (s == state.selected) {
 		for (u8_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
-			size_t pos = report_index[r_id];
+			struct report_state *rs = get_report_state(s, r_id);
 
-			if (pos == INPUT_REPORT_COUNT) {
-				continue;
-			}
-
-			struct report_state *rs = &s->state[pos];
-
-			if (rs->state != STATE_DISCONNECTED) {
+			if (rs && (rs->state != STATE_DISCONNECTED)) {
 				/* Clear state if notification was not
 				 * disabled before disconnection.
 				 */
-				struct report_data *rd = &state.report_data[pos];
+				struct report_data *rd = get_report_data(r_id);
 
 				clear_items(&rd->items);
 				eventq_reset(&rd->eventq);
@@ -716,10 +733,7 @@ static void send_report_ctrl(u8_t report_id, struct report_data *rd)
 
 static bool update_report(u8_t report_id)
 {
-	size_t pos = report_index[report_id];
-	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
-
-	struct report_data *rd = &state.report_data[pos];
+	struct report_data *rd = get_report_data(report_id);
 	bool update_needed = false;
 
 	while (!update_needed && !eventq_is_empty(&rd->eventq)) {
@@ -760,10 +774,8 @@ static void report_send(u8_t report_id, bool check_state, bool send_always)
 		return;
 	}
 
-	size_t pos = report_index[report_id];
-	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
-
-	struct report_state *rs = &state.selected->state[pos];
+	struct report_state *rs = get_report_state(state.selected, report_id);
+	__ASSERT_NO_MSG(rs);
 
 	if (!check_state || (rs->state != STATE_DISCONNECTED)) {
 		unsigned int pipeline_depth;
@@ -782,18 +794,18 @@ static void report_send(u8_t report_id, bool check_state, bool send_always)
 			switch (report_id) {
 			case REPORT_ID_KEYBOARD_KEYS:
 				send_report_keyboard(report_id,
-						     &state.report_data[pos]);
+						     get_report_data(report_id));
 				break;
 
 			case REPORT_ID_MOUSE:
 				send_report_mouse(report_id,
-						  &state.report_data[pos]);
+						  get_report_data(report_id));
 				break;
 
 			case REPORT_ID_SYSTEM_CTRL:
 			case REPORT_ID_CONSUMER_CTRL:
 				send_report_ctrl(report_id,
-						 &state.report_data[pos]);
+						 get_report_data(report_id));
 				break;
 
 			default:
@@ -826,10 +838,8 @@ static void report_issued(const void *subscriber_id, u8_t report_id, bool error)
 		return;
 	}
 
-	size_t pos = report_index[report_id];
-	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
-
-	struct report_state *rs = &subscriber->state[pos];
+	struct report_state *rs = get_report_state(subscriber, report_id);
+	__ASSERT_NO_MSG(rs);
 
 	if (rs->state == STATE_DISCONNECTED) {
 		return;
@@ -846,9 +856,9 @@ static void report_issued(const void *subscriber_id, u8_t report_id, bool error)
 		return;
 	}
 
-	struct report_data *rd = &state.report_data[pos];
-
 	if (error) {
+		struct report_data *rd = get_report_data(report_id);
+
 		/* To maintain the sanity of HID state, clear
 		 * all recorded events and items.
 		 */
@@ -882,10 +892,10 @@ static void connect(const void *subscriber_id, u8_t report_id)
 		return;
 	}
 
-	size_t pos = report_index[report_id];
-	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
+	struct report_state *rs = get_report_state(subscriber, report_id);
+	__ASSERT_NO_MSG(rs);
 
-	subscriber->state[pos].state = STATE_CONNECTED_IDLE;
+	rs->state = STATE_CONNECTED_IDLE;
 
 	if (state.selected == subscriber) {
 		switch (report_id) {
@@ -902,7 +912,7 @@ static void connect(const void *subscriber_id, u8_t report_id)
 			break;
 		}
 
-		struct report_data *rd = &state.report_data[pos];
+		struct report_data *rd = get_report_data(report_id);
 
 		if (!eventq_is_empty(&rd->eventq)) {
 			/* Remove all stale events from the queue. */
@@ -922,13 +932,13 @@ static void disconnect(const void *subscriber_id, u8_t report_id)
 		return;
 	}
 
-	size_t pos = report_index[report_id];
-	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
+	struct report_state *rs = get_report_state(subscriber, report_id);
+	__ASSERT_NO_MSG(rs);
 
-	subscriber->state[pos].state = STATE_DISCONNECTED;
-	subscriber->state[pos].cnt = 0;
+	rs->state = STATE_DISCONNECTED;
+	rs->cnt = 0;
 
-	struct report_data *rd = &state.report_data[pos];
+	struct report_data *rd = get_report_data(report_id);
 
 	LOG_INF("Clear report data (0x%x)", report_id);
 	clear_items(&rd->items);
@@ -989,12 +999,15 @@ static void update_key(const struct hid_keymap *map, s16_t value)
 {
 	u8_t report_id = map->report_id;
 
-	size_t pos = report_index[report_id];
-	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
+	struct report_data *rd = get_report_data(report_id);
 
-	struct report_data *rd = &state.report_data[pos];
-	bool connected = state.selected &&
-		(state.selected->state[pos].state != STATE_DISCONNECTED);
+	bool connected = false;
+
+	if (state.selected) {
+		struct report_state *rs = get_report_state(state.selected, report_id);
+
+		connected = (rs->state != STATE_DISCONNECTED);
+	}
 
 	if (!connected || !eventq_is_empty(&rd->eventq)) {
 		/* Report cannot be sent yet - enqueue this HID event. */
