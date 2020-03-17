@@ -706,7 +706,10 @@ static void send_report_ctrl(u8_t report_id, struct report_data *rd)
 	__ASSERT_NO_MSG(report_size == sizeof(report_id) +
 				       sizeof(rd->items.item[0].usage_id));
 	event->dyndata.data[0] = report_id;
-	sys_put_le16(rd->items.item[0].usage_id,
+
+	const size_t idx = ARRAY_SIZE(rd->items.item) - 1;
+
+	sys_put_le16(rd->items.item[idx].usage_id,
 		     &event->dyndata.data[sizeof(report_id)]);
 
 	EVENT_SUBMIT(event);
