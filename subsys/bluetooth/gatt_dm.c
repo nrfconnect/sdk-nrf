@@ -301,6 +301,11 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 		return BT_GATT_ITER_STOP;
 	}
 
+	if (cur_attr->handle == cur_service_val->end_handle) {
+		/* No characteristics to discover, go to next service. */
+		return BT_GATT_ITER_CONTINUE;
+	}
+
 	dm->discover_params.uuid         = NULL;
 	dm->discover_params.type         = BT_GATT_DISCOVER_ATTRIBUTE;
 	dm->discover_params.start_handle = cur_attr->handle + 1;
