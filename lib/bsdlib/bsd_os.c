@@ -334,6 +334,16 @@ void bsd_os_errno_set(int err_code)
 	}
 }
 
+s64_t bsd_os_uptime_get(void)
+{
+    return k_uptime_get();
+}
+
+s64_t bsd_os_uptime_delta(s64_t *reftime)
+{
+    return k_uptime_delta(reftime);
+}
+
 void bsd_os_application_irq_set(void)
 {
 	NVIC_SetPendingIRQ(BSD_APPLICATION_IRQ);
