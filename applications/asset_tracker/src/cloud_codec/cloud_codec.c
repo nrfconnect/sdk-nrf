@@ -340,6 +340,120 @@ int cloud_encode_data(const struct cloud_channel_data *channel,
 	return 0;
 }
 
+int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
+				  struct cloud_msg *output)
+{
+	__ASSERT_NO_MSG(sensor_data != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
+	char buf[6];
+	u8_t len;
+	struct cloud_channel_data cloud_sensor;
+
+	switch (sensor_data->type) {
+	case ENV_SENSOR_TEMPERATURE:
+		cloud_sensor.type = CLOUD_CHANNEL_TEMP;
+		break;
+
+	case ENV_SENSOR_HUMIDITY:
+		cloud_sensor.type = CLOUD_CHANNEL_HUMID;
+		break;
+
+	case ENV_SENSOR_AIR_PRESSURE:
+		cloud_sensor.type = CLOUD_CHANNEL_AIR_PRESS;
+		break;
+
+	case ENV_SENSOR_AIR_QUALITY:
+		cloud_sensor.type = CLOUD_CHANNEL_AIR_QUAL;
+		break;
+
+	default:
+		return -1;
+	}
+
+	len = snprintf(buf, sizeof(buf), "%.1f",
+		sensor_data->value);
+	cloud_sensor.data.buf = buf;
+	cloud_sensor.data.len = len;
+
+	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
+}
+
+int cloud_encode_motion_data(const motion_data_t *motion_data,
+				  struct cloud_msg *output)
+{
+	__ASSERT_NO_MSG(motion_data != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
+	struct cloud_channel_data cloud_sensor;
+
+	cloud_sensor.type = CLOUD_CHANNEL_FLIP;
+
+	switch (motion_data->orientation) {
+	case MOTION_ORIENTATION_NORMAL:
+		cloud_sensor.data.buf = "NORMAL";
+		break;
+	case MOTION_ORIENTATION_UPSIDE_DOWN:
+		cloud_sensor.data.buf = "UPSIDE_DOWN";
+		break;
+	default:
+		return -1;
+	}
+
+	cloud_sensor.data.len = sizeof(cloud_sensor.data.buf) - 1;
+
+	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
+
+}
+
+#if CONFIG_LIGHT_SENSOR
+/* 4 32-bit ints, 3 spaces, NULL */
+#define LIGHT_SENSOR_DATA_STRING_MAX_LEN ((4 * 11) + 3 + 1)
+#define LIGHT_SENSOR_DATA_NO_UPDATE (-1)
+int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
+				   struct cloud_msg *output)
+{
+	char buf[LIGHT_SENSOR_DATA_STRING_MAX_LEN];
+	u8_t len;
+	struct cloud_channel_data cloud_sensor;
+	struct light_sensor_data send = { .red = LIGHT_SENSOR_DATA_NO_UPDATE,
+					  .green = LIGHT_SENSOR_DATA_NO_UPDATE,
+					  .blue = LIGHT_SENSOR_DATA_NO_UPDATE,
+					  .ir = LIGHT_SENSOR_DATA_NO_UPDATE };
+
+	if ((sensor_data == NULL) || (output == NULL)) {
+		return -EINVAL;
+	}
+
+	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_RED, sensor_data->red)) {
+		send.red = sensor_data->red;
+	}
+
+	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_GREEN,
+				  sensor_data->green)) {
+		send.green = sensor_data->green;
+	}
+
+	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_BLUE,
+				  sensor_data->blue)) {
+		send.blue = sensor_data->blue;
+	}
+
+	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_IR, sensor_data->ir)) {
+		send.ir = sensor_data->ir;
+	}
+
+	len = snprintf(buf, sizeof(buf), "%d %d %d %d", send.red, send.green,
+		       send.blue, send.ir);
+
+	cloud_sensor.data.buf = buf;
+	cloud_sensor.data.len = len;
+	cloud_sensor.type = CLOUD_CHANNEL_LIGHT_SENSOR;
+
+	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
+}
+#endif /* CONFIG_LIGHT_SENSOR */
+
 int cloud_encode_device_status_data(
 	void *modem_param,
 	const char *const ui[], const u32_t ui_count,
@@ -757,120 +871,6 @@ int cloud_decode_init(cloud_cmd_cb_t cb)
 
 	return 0;
 }
-
-int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
-				  struct cloud_msg *output)
-{
-	__ASSERT_NO_MSG(sensor_data != NULL);
-	__ASSERT_NO_MSG(output != NULL);
-
-	char buf[6];
-	u8_t len;
-	struct cloud_channel_data cloud_sensor;
-
-	switch (sensor_data->type) {
-	case ENV_SENSOR_TEMPERATURE:
-		cloud_sensor.type = CLOUD_CHANNEL_TEMP;
-		break;
-
-	case ENV_SENSOR_HUMIDITY:
-		cloud_sensor.type = CLOUD_CHANNEL_HUMID;
-		break;
-
-	case ENV_SENSOR_AIR_PRESSURE:
-		cloud_sensor.type = CLOUD_CHANNEL_AIR_PRESS;
-		break;
-
-	case ENV_SENSOR_AIR_QUALITY:
-		cloud_sensor.type = CLOUD_CHANNEL_AIR_QUAL;
-		break;
-
-	default:
-		return -1;
-	}
-
-	len = snprintf(buf, sizeof(buf), "%.1f",
-		sensor_data->value);
-	cloud_sensor.data.buf = buf;
-	cloud_sensor.data.len = len;
-
-	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
-}
-
-int cloud_encode_motion_data(const motion_data_t *motion_data,
-				  struct cloud_msg *output)
-{
-	__ASSERT_NO_MSG(motion_data != NULL);
-	__ASSERT_NO_MSG(output != NULL);
-
-	struct cloud_channel_data cloud_sensor;
-
-	cloud_sensor.type = CLOUD_CHANNEL_FLIP;
-
-	switch (motion_data->orientation) {
-	case MOTION_ORIENTATION_NORMAL:
-		cloud_sensor.data.buf = "NORMAL";
-		break;
-	case MOTION_ORIENTATION_UPSIDE_DOWN:
-		cloud_sensor.data.buf = "UPSIDE_DOWN";
-		break;
-	default:
-		return -1;
-	}
-
-	cloud_sensor.data.len = sizeof(cloud_sensor.data.buf) - 1;
-
-	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
-
-}
-
-#if CONFIG_LIGHT_SENSOR
-/* 4 32-bit ints, 3 spaces, NULL */
-#define LIGHT_SENSOR_DATA_STRING_MAX_LEN ((4 * 11) + 3 + 1)
-#define LIGHT_SENSOR_DATA_NO_UPDATE (-1)
-int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
-				   struct cloud_msg *output)
-{
-	char buf[LIGHT_SENSOR_DATA_STRING_MAX_LEN];
-	u8_t len;
-	struct cloud_channel_data cloud_sensor;
-	struct light_sensor_data send = { .red = LIGHT_SENSOR_DATA_NO_UPDATE,
-					  .green = LIGHT_SENSOR_DATA_NO_UPDATE,
-					  .blue = LIGHT_SENSOR_DATA_NO_UPDATE,
-					  .ir = LIGHT_SENSOR_DATA_NO_UPDATE };
-
-	if ((sensor_data == NULL) || (output == NULL)) {
-		return -EINVAL;
-	}
-
-	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_RED, sensor_data->red)) {
-		send.red = sensor_data->red;
-	}
-
-	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_GREEN,
-				  sensor_data->green)) {
-		send.green = sensor_data->green;
-	}
-
-	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_BLUE,
-				  sensor_data->blue)) {
-		send.blue = sensor_data->blue;
-	}
-
-	if (cloud_is_send_allowed(CLOUD_CHANNEL_LIGHT_IR, sensor_data->ir)) {
-		send.ir = sensor_data->ir;
-	}
-
-	len = snprintf(buf, sizeof(buf), "%d %d %d %d", send.red, send.green,
-		       send.blue, send.ir);
-
-	cloud_sensor.data.buf = buf;
-	cloud_sensor.data.len = len;
-	cloud_sensor.type = CLOUD_CHANNEL_LIGHT_SENSOR;
-
-	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
-}
-#endif /* CONFIG_LIGHT_SENSOR */
 
 static int sensor_chan_cfg_set_item(struct sensor_chan_cfg *const cfg,
 				  const enum sensor_chan_cfg_item_type type,
