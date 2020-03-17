@@ -17,6 +17,7 @@ LOG_MODULE_REGISTER(icmp, CONFIG_SLM_LOG_LEVEL);
 
 #define INVALID_SOCKET		-1
 #define ICMP_MAX_URL		128
+#define ICMP_MAX_LEN		512
 
 #define MY_STACK_SIZE		KB(1)
 #define MY_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
@@ -308,6 +309,11 @@ static int ping_test_handler(const char *url, int length, int waittime,
 	struct addrinfo *res;
 	int addr_len;
 
+	if (length > ICMP_MAX_LEN) {
+		LOG_ERR("Payload size exceeds limit");
+		return -1;
+	}
+
 	st = modem_info_params_get(&modem_param);
 	if (st < 0) {
 		LOG_ERR("Unable to obtain modem parameters (%d)", st);
@@ -333,6 +339,7 @@ static int ping_test_handler(const char *url, int length, int waittime,
 	st = getaddrinfo(url, NULL, NULL, &res);
 	if (st != 0) {
 		LOG_ERR("getaddrinfo(dest) error: %d", st);
+		m_callback("Cannot resolve remote host\r\n");
 		freeaddrinfo(ping_argv.src);
 		return -st;
 	}
