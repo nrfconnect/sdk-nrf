@@ -3,84 +3,66 @@
 Configuration channel
 #####################
 
-The configuration channel for :ref:`nrf_desktop` application is a way for the end user to control the parameters of a HID device from the computer.
+Use the configuration channel to exchange data between your host computer and nRF Desktop's HID device.
 
-Overview
-********
+For example, among the types of data that you can send through the configuration channel are the following:
 
-An end user of the mouse and keyboard may need a way to configure their HID devices.
-For example, a user might want to change the sensitivity of the mouse.
-The configuration channel provides a possibility to set firmware parameters from a computer.
-Parameter values can also be fetched from a device to a host computer.
+* Device configuration parameters, for example mouse sensor CPI.
+* Firmware updates.
+* LED effect display data, after it has been generated on the computer.
 
-For instructions on how to install and use the configuration channel on a host computer, see :ref:`config_channel_script`.
+For instructions on how to install and use the configuration channel on a host computer, see the :ref:`config_channel_script`.
 
 Behavior
 ********
 
-Information between a host and a connected embedded device is transported in HID feature reports.
-The cross-platform `HIDAPI library`_ is used for exchanging the reports with the connected device, supporting both Bluetooth Low Energy and USB.
+The HID feature reports are used for transporting information between the host and the connected embedded device.
+The cross-platform `HIDAPI library`_ is used for exchanging the reports.
+The library supports both Bluetooth Low Energy and USB.
 
 The host computer can set configuration values of the embedded device.
-The host can also request fetching a value, for example, to display it to the user.
+It can also request fetching a value, for example in order to display it to the user.
 
-Setting a configuration value:
+Setting a configuration value
+    .. msc::
+       hscale = "1.3";
+       Host,Device;
+       Host>>Device      [label="set report: set value 1600"];
+       Host<<Device      [label="get report: SUCCESS"];
 
-.. msc::
-   hscale = "1.3";
-   Host,Device;
-   Host>>Device      [label="set report: set value 1600"];
-   Host<<Device      [label="get report: SUCCESS"];
+    All exchanges, both setting and getting a report, are initiated by host.
+    Therefore, during a fetch operation, the host polls the device until the data is available.
 
-All exchanges, both setting and getting a report, are initiated by host.
-Therefore, during a fetch operation, the host polls the device until the data is available.
+Fetching a configuration value
+    .. msc::
+       hscale = "1.3";
+       Host,Device;
+       Host>>Device      [label="set report: request value fetch"];
+       Host<<Device      [label="get report: PENDING"];
+       Host<<Device      [label="get report: value 1600, SUCCESS"];
 
-Fetching a configuration value:
+    Data from host can be forwarded through a USB dongle to the connected device.
+    The device must act as a BLE peripheral in such case.
 
-.. msc::
-   hscale = "1.3";
-   Host,Device;
-   Host>>Device      [label="set report: request value fetch"];
-   Host<<Device      [label="get report: PENDING"];
-   Host<<Device      [label="get report: value 1600, SUCCESS"];
+Setting a configuration value of a device, forwarded by the dongle to a paired device
+    .. msc::
+       hscale = "1.3";
+       Host,Dongle,Device;
+       Host>>Dongle      [label="set report: set value 1600"];
+       Dongle>>Device    [label="set report: set value 1600"];
+       Host<<Dongle      [label="get report: PENDING"];
+       Dongle<<Device    [label="get report: SUCCESS"];
+       Host<<Dongle      [label="get report: SUCCESS"];
 
-
-Data from host can be forwarded through a USB dongle to the connected device.
-The device must act as a BLE peripheral in such case.
-
-Setting a configuration value of a device, forwarded by dongle to a paired device:
-
-.. msc::
-   hscale = "1.3";
-   Host,Dongle,Device;
-   Host>>Dongle      [label="set report: set value 1600"];
-   Dongle>>Device    [label="set report: set value 1600"];
-   Host<<Dongle      [label="get report: PENDING"];
-   Dongle<<Device    [label="get report: SUCCESS"];
-   Host<<Dongle      [label="get report: SUCCESS"];
-
-
-Supported transports
-====================
-
-* USB HID
-* Bluetooth Low Energy, using HID service
-
-
-Supported topologies
-====================
-
-The configuration channel can be used in one of these topologies:
-
-* PCA20041 mouse connected over USB to a host computer
-* PCA20041 mouse connected over BLE to a host computer
-* PCA10059 dongle connected over USB to a host computer
-* PCA20041 mouse connected to a PCA10059 dongle over BLE; dongle attached to a computer over USB
+.. note::
+   The functionality can be implemented as a sequence of set and get reports.
+   An example of the functionality is the firmware update.
+   Detailed description is available in the :ref:`config_channel_script` documentation.
 
 Data format
 ===========
 
-The data is exchanged in HID feature reports. Each request has the following format:
+The following table shows the format of requests used to exchange data in the HID feature reports.
 
 .. _table:
 
@@ -92,37 +74,196 @@ The data is exchanged in HID feature reports. Each request has the following for
 | Report ID | Recipient | Event ID | Status | Data length | Data    |
 +-----------+-----------+----------+--------+-------------+---------+
 
-* Report ID - HID report ID of the feature report used for transmitting data.
-* Recipient - product ID of the device to which the request is addressed. Needed to route requests in a multi-device setup.
-* Event ID - identifier of the value that should be set or fetched.
-* Status - used to exchange status of the request, also used by sender to ask for fetch.
-* Data length - indicates how many bytes of data the request holds.
-* Data - arbitrary length data connected to the request.
+Each feature report contains the following components:
 
-Event ID contains information about the type of request, the module to which it is addressed, and the requested option.
+* Report ID - HID report identifier of the feature report used for transmitting data.
+* Recipient - Product identifier of the device to which the request is addressed.
+  Needed to route requests in a multi-device setup.
+* Event ID - Identifier of the value that should be set or fetched; consists of a module ID and an option ID.
+* Status - Value used to exchange status of the request; also used by sender to ask for fetch.
+* Data length - Value that indicates how many bytes of data the request holds.
+* Data - Arbitrary length data connected to the request.
 
-.. tip::
+.. note::
    Bluetooth Low Energy HID Service removes the leading report ID byte, resulting in firmware obtaining a data frame 1 byte shorter.
 
-   USB HID class transmits the whole report, including the report ID byte.
+   The USB HID class transmits the whole report, including the report ID byte.
+
 
 Handling configuration channel in firmware
 ==========================================
 
-To enable the configuration channel in nRF52 Desktop firmware, set :c:macro:`CONFIG_DESKTOP_CONFIG_CHANNEL` to :c:macro:`y`.
+To enable the configuration channel in the nRF Desktop firmware, set the ``CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`` Kconfig option.
+This option also enables the mandatory :ref:`info`.
 
-When the device is connected over USB, requests are handled by :file:`usb_state.c` in functions :cpp:func:`report_get()` and :cpp:func:`report_set()`.
+Make sure you also configure the following configuration channel elements:
 
-If the device is paired using Bluetooth Low Energy, requests are handled in :file:`hids.c` in :cpp:func:`feature_report_handler()`.
-Argument :c:data:`write` indicates if this is a GATT write (set report) or a GATT read (get report).
+* `Transport configuration`_
+* `Listener configuration`_
 
-Forwarding requests through a dongle to a connected peripheral is handled in :file:`hid_forward.c`.
-The dongle, which is a BLE Central, uses the HID Client module to find the feature report of the paired device and access it to forward the configuration request.
+Transport configuration
+-----------------------
+
+The HID configurator uses the HID feature reports to exchange the data.
+
+Depending on the connection method:
+
+* If the device is connected over USB, requests are handled by the :ref:`usb_state` in the functions :cpp:func:`get_report` and :cpp:func:`set_report`.
+* If the device is connected over Bluetooth Low Energy, requests are handled in :ref:`hids` in :cpp:func:`feature_report_handler`.
+  The argument :c:data:`write` indicates whether the report is a GATT write (set report) or a GATT read (get report).
+
+  Forwarding requests through a dongle to a connected peripheral is handled in :ref:`hid_forward`.
+  The dongle, which is a Bluetooth LE central, uses the HID Client module to find the feature report of the paired device and access it in order to forward the configuration request.
+  The report forwarding is based on the peripheral device PID.
+
+Listener configuration
+----------------------
+
+The listener can provide a set of options that are accessible through the configuration channel.
+For example, depending on listener, it can provide the CPI option from :ref:`motion` or the option for searching for new peer from :ref`ble_bond`.
+The host computer can use report set or report get for these options to access the option value.
+
+On the firmware side, the configuration channel listener and its options are referenced with numbers, respectively module ID and option IDs.
+
+On the host side, these IDs are translated to strings based on the registered listener and option names.
+Details are described in the :ref:`config_channel_script`.
+
+To register an application module as a configuration channel listener, complete the following steps:
+
+1. Make sure that the application module is an :ref:`event_manager` listener.
+#. Include the :file:`config_event.h` header.
+#. Subscribe for the ``config_event`` and ``config_fetch_request_event`` using the :c:macro:`EVENT_SUBSCRIBE` macro:
+
+    .. code-block:: c
+
+        EVENT_LISTENER(MODULE, event_handler);
+        #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+        EVENT_SUBSCRIBE(MODULE, config_event);
+        EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
+        #endif
+
+   The module should subscribe only if the configuration channel is enabled.
+#. Call :c:macro:`GEN_CONFIG_EVENT_HANDLERS` in the :ref:`event_manager` event handler function registered by the application module:
+
+    .. code-block:: c
+
+        static bool event_handler(const struct event_header *eh)
+        {
+            /* Functions used to handle other events. */
+            ...
+
+            GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr,
+                          config_set, config_get, false);
+
+            /* Functions used to handle other events. */
+            ...
+        }
+
+   You must provide the following arguments to the macro:
+
+   * Module name - string representing the module name (``STRINGIFY(MODULE)``).
+   * Array with the names of the module's options (``opt_descr``):
+
+    .. code-block:: c
+
+        /* Creating enum to denote the module options is recommended,
+         * because it makes code more readable.
+         */
+        enum test_module_opt {
+            TEST_MODULE_OPT_FILTER_PARAM,
+            TEST_MODULE_OPT_PARAM_BLE,
+            TEST_MODULE_OPT_PARAM_WIFI,
+
+            TEST_MODULE_OPT_COUNT
+        };
+
+        static const char * const opt_descr[] = {
+            [TEST_MODULE_OPT_FILTER_PARAM] = "filter_param",
+            [TEST_MODULE_OPT_PARAM_BLE] = "param_ble",
+            [TEST_MODULE_OPT_PARAM_WIFI] = "param_wifi"
+        };
+
+   * Set report handler (:cpp:func:`config_set`):
+
+    .. code-block:: c
+
+        static void config_set(const u8_t opt_id, const u8_t *data,
+                       const size_t size)
+        {
+            switch (opt_id) {
+            case TEST_MODULE_OPT_FILTER_PARAM:
+                /* Handle the data received under the "data" pointer.
+                 * Number of received bytes is described as "size".
+                 */
+                if (size != sizeof(struct filter_parameters)) {
+                    LOG_WRN("Invalid size");
+                } else {
+                    update_filter_params(data);
+                }
+            break;
+
+            case TEST_MODULE_OPT_PARAM_BLE:
+                /* Handle the data. */
+                ....
+            break;
+
+            /* Handlers for other option IDs. */
+            ....
+
+            default:
+                /* The option is not supported by the module. */
+                LOG_WRN("Unknown opt %" PRIu8, opt_id);
+                break;
+            }
+        }
+
+   * Get report handler (:cpp:func:`config_get`):
+
+    .. code-block:: c
+
+        static void config_get(const u8_t opt_id, u8_t *data, size_t *size)
+        {
+            switch (opt_id) {
+            case TEST_MODULE_OPT_FILTER_PARAM:
+                /* Fill the buffer under the "data" pointer with
+                 * requested data. Number of written bytes must be
+                 * reflected by the value under the "size" pointer.
+                 */
+                memcpy(data, filter_param, sizeof(filter_param));
+                *size = sizeof(filter_param);
+                break;
+
+            case TEST_MODULE_OPT_PARAM_BLE:
+                /* Handle the request. */
+                ....
+                break;
+
+            /* Handlers for other option IDs. */
+            ....
+
+            default:
+                /* The option is not supported by the module. */
+                LOG_WRN("Unknown opt: %" PRIu8, opt_id);
+                break;
+            }
+        }
+
+   * Boolean indicating if the module is the final subscriber for the configuration channel events.
+     It should be set to ``false`` for every subscriber, except for :ref:`info`.
+
+For an example of module that uses the configuration channel, see the following files:
+
+* :file:`src/modules/ble_qos.c`
+* :file:`src/modules/led_stream.c`
+* :file:`src/modules/dfu.c`
+* :file:`src/hw_interface/motion_sensor.c`
 
 Dependencies
 ************
 
-Dependencies for the host software are described in :ref:`config_channel_script`.
+The configuration channel uses the :ref:`event_manager` events to propagate the configuration data.
+
+Dependencies for the host software are described in the :ref:`config_channel_script`.
 
 API documentation
 *****************
