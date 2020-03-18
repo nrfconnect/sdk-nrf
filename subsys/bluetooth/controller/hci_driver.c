@@ -26,6 +26,7 @@ static K_SEM_DEFINE(sem_recv, 0, 1);
 static struct k_thread recv_thread_data;
 static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
 
+#if defined(CONFIG_BT_CONN)
 /* It should not be possible to set CONFIG_BLECTRL_SLAVE_COUNT larger than
  * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
  * verify that assumption.
@@ -33,6 +34,12 @@ static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
 BUILD_ASSERT(CONFIG_BLECTRL_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
 
 #define BLECTRL_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BLECTRL_SLAVE_COUNT)
+
+#else
+
+#define BLECTRL_MASTER_COUNT 0
+
+#endif /* CONFIG_BT_CONN */
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
 			 (BLECTRL_MASTER_COUNT > 0));
