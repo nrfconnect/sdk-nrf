@@ -44,6 +44,13 @@ extern "C" {
 #define MOUSE_REPORT_XY_MAX_BOOT	(0x7f)
 #define MOUSE_REPORT_BUTTON_COUNT_MAX	8
 
+enum {
+	MOUSE_REPORT_AXIS_X,
+	MOUSE_REPORT_AXIS_Y,
+	MOUSE_REPORT_AXIS_WHEEL,
+	MOUSE_REPORT_AXIS_COUNT
+};
+
 
 #define REPORT_MAP_MOUSE(report_id)					\
 									\
