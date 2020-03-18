@@ -149,13 +149,14 @@ int modem_info_rsrp_register(rsrp_cb_t cb);
  * short, it is still returned as a string.
  *
  * @param info The requested information type.
- * @param buf  The string where to store the information.
+ * @param buf  The buffer to store the null-terminated string.
+ * @param buf_size The size of the buffer.
  *
  * @return Length of received data if the operation was successful.
  *         Otherwise, a (negative) error code is returned.
  */
-int modem_info_string_get(enum modem_info info, char *buf);
-
+int modem_info_string_get(enum modem_info info, char *buf,
+			  const size_t buf_size);
 /** @brief Request the current modem status of any predefined
  *         information value as a short.
  *
