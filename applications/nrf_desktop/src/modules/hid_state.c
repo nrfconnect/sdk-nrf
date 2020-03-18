@@ -56,25 +56,27 @@ enum state {
 		       MAX(SYSTEM_CTRL_REPORT_KEY_COUNT_MAX,	\
 			   CONSUMER_CTRL_REPORT_KEY_COUNT_MAX))
 
+#define AXIS_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) * MOUSE_REPORT_AXIS_COUNT)
+
+
 /**@brief HID state item. */
 struct item {
-	u16_t usage_id;		/**< HID usage ID. */
-	s16_t value;		/**< HID value. */
+	u16_t usage_id; /**< HID usage ID. */
+	s16_t value; /**< HID value. */
 };
 
 /**@brief Structure keeping state for a single target HID report. */
 struct items {
-	u8_t item_count_max;
-	u8_t item_count;
-	struct item item[ITEM_COUNT];
-	bool update_needed;
+	u8_t item_count_max; /**< Maximal numer of items in this set. */
+	u8_t item_count; /**< Current number of items in this set. */
+	struct item item[ITEM_COUNT]; /**< Items set. Browse from the end. */
 };
 
 /**@brief Enqueued HID state item. */
 struct item_event {
-	sys_snode_t node;	/**< Event queue linked list node. */
-	struct item item;	/**< HID state item which has been enqueued. */
-	u32_t timestamp;	/**< HID event timestamp. */
+	sys_snode_t node; /**< Event queue linked list node. */
+	struct item item; /**< HID state item which has been enqueued. */
+	u32_t timestamp; /**< HID event timestamp. */
 };
 
 /**@brief Event queue. */
@@ -83,10 +85,17 @@ struct eventq {
 	size_t len;
 };
 
-/**@brief Report state. */
+/**@brief Axis data. */
+struct axis_data {
+	s16_t axis[AXIS_COUNT]; /**< Array of axes. */
+	u8_t axis_count; /**< Number of axes in this array. */
+};
+
 struct report_data {
 	struct items items;
 	struct eventq eventq;
+	struct axis_data axes;
+	bool update_needed;
 };
 
 struct report_state {
@@ -105,9 +114,6 @@ struct hid_state {
 	struct report_data report_data[INPUT_REPORT_COUNT];
 	struct subscriber subscriber[SUBSCRIBER_COUNT];
 	struct subscriber *selected;
-	s32_t wheel_acc;
-	s16_t last_dx;
-	s16_t last_dy;
 };
 
 
@@ -386,7 +392,22 @@ static void clear_items(struct items *items)
 {
 	memset(items->item, 0, sizeof(items->item));
 	items->item_count = 0;
-	items->update_needed = false;
+}
+
+static void clear_axes(struct axis_data *axes)
+{
+	memset(axes, 0, sizeof(*axes));
+}
+
+static void clear_report_data(struct report_data *rd)
+{
+	LOG_INF("Clear report data (%p)", rd);
+
+	clear_axes(&rd->axes);
+	clear_items(&rd->items);
+	eventq_reset(&rd->eventq);
+
+	rd->update_needed = false;
 }
 
 static struct report_state *get_report_state(struct subscriber *subscriber,
@@ -480,8 +501,7 @@ static void disconnect_subscriber(const void *subscriber_id)
 				 */
 				struct report_data *rd = get_report_data(r_id);
 
-				clear_items(&rd->items);
-				eventq_reset(&rd->eventq);
+				clear_report_data(rd);
 			}
 		}
 	}
@@ -565,8 +585,6 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 		sort_by_usage_id(items->item, ARRAY_SIZE(items->item));
 	}
 
-	items->update_needed = items->update_needed || update_needed;
-
 	return update_needed;
 }
 
@@ -631,7 +649,7 @@ static void send_report_keyboard(u8_t report_id, struct report_data *rd)
 
 	EVENT_SUBMIT(event);
 
-	rd->items.update_needed = false;
+	rd->update_needed = false;
 }
 
 static void send_report_mouse(u8_t report_id, struct report_data *rd)
@@ -645,17 +663,17 @@ static void send_report_mouse(u8_t report_id, struct report_data *rd)
 	}
 
 	/* X/Y axis */
-	s16_t dx = MAX(MIN(state.last_dx, MOUSE_REPORT_XY_MAX),
+	s16_t dx = MAX(MIN(rd->axes.axis[MOUSE_REPORT_AXIS_X], MOUSE_REPORT_XY_MAX),
 		       MOUSE_REPORT_XY_MIN);
-	s16_t dy = MAX(MIN(-state.last_dy, MOUSE_REPORT_XY_MAX),
+	s16_t dy = MAX(MIN(-rd->axes.axis[MOUSE_REPORT_AXIS_Y], MOUSE_REPORT_XY_MAX),
 		       MOUSE_REPORT_XY_MIN);
-	state.last_dx -= dx;
-	state.last_dy += dy;
+	rd->axes.axis[MOUSE_REPORT_AXIS_X] -= dx;
+	rd->axes.axis[MOUSE_REPORT_AXIS_Y] += dy;
 
 	/* Wheel */
-	s16_t wheel = MAX(MIN(state.wheel_acc / 2, MOUSE_REPORT_WHEEL_MAX),
+	s16_t wheel = MAX(MIN(rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL] / 2, MOUSE_REPORT_WHEEL_MAX),
 			  MOUSE_REPORT_WHEEL_MIN);
-	state.wheel_acc -= wheel * 2;
+	rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL] -= wheel * 2;
 
 	/* Traverse pressed keys and build mouse buttons bitmask */
 	u8_t button_bm = 0;
@@ -696,7 +714,15 @@ static void send_report_mouse(u8_t report_id, struct report_data *rd)
 
 	EVENT_SUBMIT(event);
 
-	rd->items.update_needed = false;
+	if ((rd->axes.axis[MOUSE_REPORT_AXIS_X] != 0) ||
+	    (rd->axes.axis[MOUSE_REPORT_AXIS_Y] != 0) ||
+	    (rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL]  < -1) ||
+	    (rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL]  > 1)) {
+		/* If there is some axis data to send, request report update. */
+		rd->update_needed = true;
+	} else {
+		rd->update_needed = false;
+	}
 }
 
 static void send_report_ctrl(u8_t report_id, struct report_data *rd)
@@ -731,7 +757,7 @@ static void send_report_ctrl(u8_t report_id, struct report_data *rd)
 
 	EVENT_SUBMIT(event);
 
-	rd->items.update_needed = false;
+	rd->update_needed = false;
 }
 
 static bool update_report(u8_t report_id)
@@ -749,21 +775,15 @@ static bool update_report(u8_t report_id)
 					      event->item.usage_id,
 					      event->item.value);
 
+		rd->update_needed = rd->update_needed || update_needed;
+
+
 		k_free(event);
 
 		/* If no item was changed, try next event. */
 	}
 
-	if (report_id == REPORT_ID_MOUSE) {
-		if ((state.last_dx != 0) ||
-		    (state.last_dy != 0) ||
-		    (state.wheel_acc < -1) ||
-		    (state.wheel_acc > 1)) {
-			update_needed = true;
-		}
-	}
-
-	if (rd->items.update_needed) {
+	if (rd->update_needed) {
 		update_needed = true;
 	}
 
@@ -866,13 +886,8 @@ static void report_issued(const void *subscriber_id, u8_t report_id, bool error)
 		 * all recorded events and items.
 		 */
 		LOG_ERR("Error while sending report");
-		clear_items(&rd->items);
-		eventq_reset(&rd->eventq);
-		if (report_id == REPORT_ID_MOUSE) {
-			state.last_dx = 0;
-			state.last_dy = 0;
-			state.wheel_acc = 0;
-		}
+
+		clear_report_data(rd);
 
 		if (rs->cnt == 0) {
 			rs->state = STATE_CONNECTED_IDLE;
@@ -901,26 +916,14 @@ static void connect(const void *subscriber_id, u8_t report_id)
 	rs->state = STATE_CONNECTED_IDLE;
 
 	if (state.selected == subscriber) {
-		switch (report_id) {
-		case REPORT_ID_MOUSE:
-			state.last_dx   = 0;
-			state.last_dy   = 0;
-			state.wheel_acc = 0;
-			break;
-		case REPORT_ID_KEYBOARD_KEYS:
-		case REPORT_ID_SYSTEM_CTRL:
-		case REPORT_ID_CONSUMER_CTRL:
-			break;
-		default:
-			break;
-		}
-
 		struct report_data *rd = get_report_data(report_id);
 
 		if (!eventq_is_empty(&rd->eventq)) {
 			/* Remove all stale events from the queue. */
 			eventq_cleanup(&rd->eventq, K_MSEC(k_uptime_get()));
 		}
+
+		clear_axes(&rd->axes);
 
 		report_send(report_id, false, true);
 	}
@@ -943,9 +946,7 @@ static void disconnect(const void *subscriber_id, u8_t report_id)
 
 	struct report_data *rd = get_report_data(report_id);
 
-	LOG_INF("Clear report data (0x%x)", report_id);
-	clear_items(&rd->items);
-	eventq_reset(&rd->eventq);
+	clear_report_data(rd);
 }
 
 /**@brief Enqueue event that updates a given usage. */
@@ -989,8 +990,7 @@ static void enqueue(struct report_data *rd, u16_t usage_id, s16_t value,
 			 * all recorded events and items.
 			 */
 			LOG_WRN("Queue is full, all events are dropped!");
-			clear_items(&rd->items);
-			eventq_reset(&rd->eventq);
+			clear_report_data(rd);
 		}
 	}
 
@@ -1018,6 +1018,7 @@ static void update_key(const struct hid_keymap *map, s16_t value)
 	} else {
 		/* Update state and issue report generation event. */
 		if (key_value_set(&rd->items, map->usage_id, value)) {
+			rd->update_needed = true;
 			report_send(report_id, false, true);
 		}
 	}
@@ -1049,6 +1050,7 @@ static void init(void)
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
 		report_index[REPORT_ID_MOUSE] = id;
 		state.report_data[id].items.item_count_max = MOUSE_REPORT_BUTTON_COUNT_MAX;
+		state.report_data[id].axes.axis_count = MOUSE_REPORT_AXIS_COUNT;
 		id++;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
@@ -1070,9 +1072,14 @@ static void init(void)
 
 static bool handle_motion_event(const struct motion_event *event)
 {
-	/* Do not accumulate mouse motion data */
-	state.last_dx = event->dx;
-	state.last_dy = event->dy;
+	if (!IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
+		return false;
+	}
+
+	struct report_data *rd = get_report_data(REPORT_ID_MOUSE);
+
+	rd->axes.axis[MOUSE_REPORT_AXIS_X] += event->dx;
+	rd->axes.axis[MOUSE_REPORT_AXIS_Y] += event->dy;
 
 	report_send(REPORT_ID_MOUSE, true, true);
 
@@ -1081,7 +1088,13 @@ static bool handle_motion_event(const struct motion_event *event)
 
 static bool handle_wheel_event(const struct wheel_event *event)
 {
-	state.wheel_acc += event->wheel;
+	if (!IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
+		return false;
+	}
+
+	struct report_data *rd = get_report_data(REPORT_ID_MOUSE);
+
+	rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL] += event->wheel;
 
 	report_send(REPORT_ID_MOUSE, true, true);
 
