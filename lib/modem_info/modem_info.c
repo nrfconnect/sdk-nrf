@@ -71,6 +71,10 @@ LOG_MODULE_REGISTER(modem_info);
 #define IP_ADDR_SEPARATOR ", "
 #define IP_ADDR_SEPARATOR_LEN (sizeof(IP_ADDR_SEPARATOR)-1)
 
+#define AT_CMD_RSP_DELIM "\r\n"
+#define IP_ADDR_SEPARATOR ", "
+#define IP_ADDR_SEPARATOR_LEN (sizeof(IP_ADDR_SEPARATOR)-1)
+
 #define RSRP_NOTIFY_PARAM_INDEX	1
 #define RSRP_NOTIFY_PARAM_COUNT	5
 
@@ -553,6 +557,38 @@ parse:
 		   (buf[len - 1] == ICCID_PAD_CHAR)) {
 			buf[len - 1] = '\0';
 			--len;
+		}
+	}
+
+	if ((info == MODEM_INFO_IP_ADDRESS) && (ip_cnt > 0)) {
+		/* for now get only IPv4 address, discard IPv6
+		 * which are separated by a space
+		 */
+		char *ip_v6_str = strstr(&buf[out_buf_len], " ");
+
+		if (ip_v6_str) {
+			/* discard IPv6 info and adjust length */
+			*ip_v6_str = 0;
+			len = strlen(&buf[out_buf_len]);
+		}
+		out_buf_len += len;
+		/* if there are more addresses, add a separator */
+		if (ip_cnt > 1) {
+			err = snprintf(&buf[out_buf_len],
+					buf_size - out_buf_len,
+					IP_ADDR_SEPARATOR);
+			if ((err <= 0) || (err > (buf_size - out_buf_len))) {
+				return -EMSGSIZE;
+			}
+			out_buf_len += IP_ADDR_SEPARATOR_LEN;
+			/* advance (after null) to next IP string */
+			cmd_rsp_idx = ip_str_len + 1;
+		}
+
+		if (--ip_cnt) {
+			goto parse;
+		} else {
+			len = out_buf_len;
 		}
 	}
 
