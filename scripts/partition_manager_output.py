@@ -64,7 +64,7 @@ def get_config_lines(pm_config, regions_config, head, split, dest):
             return find_depth(pm_config[key]['span'][0], depth + 1)
         return depth
 
-    flash_partition_pm_config = {k: v for k, v in pm_config.items() if partition_has_device(v)}
+    flash_partition_pm_config = {k: v for k, v in pm_config.items()}
     all_by_size = list(flash_partition_pm_config.keys())
     all_by_size = sorted(all_by_size, key=find_depth)
     all_by_size = sorted(all_by_size, key=lambda key: flash_partition_pm_config[key]['size'])

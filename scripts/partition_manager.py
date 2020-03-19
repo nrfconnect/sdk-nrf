@@ -718,8 +718,9 @@ def main():
 
     regions = get_region_config_from_args(args, ranges_configuration)
 
+    solution = dict()
     for region, region_config in regions.items():
-        solution = solve_region(pm_config, region, region_config, static_config)
+        solution.update(solve_region(pm_config, region, region_config, static_config))
 
     write_yaml_out_file(solution, args.output_partitions)
     write_yaml_out_file(regions, args.output_regions)
