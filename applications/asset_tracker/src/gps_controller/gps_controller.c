@@ -79,7 +79,7 @@ static void stop(struct k_work *work)
 		return;
 	}
 
-#ifdef CONFIG_GPS_CONTROL_PSM_ENABLE_ON_START
+#ifdef CONFIG_GPS_CONTROL_PSM_DISABLE_ON_STOP
 	LOG_INF("Disabling PSM");
 
 	err = lte_lc_psm_req(false);
@@ -87,7 +87,7 @@ static void stop(struct k_work *work)
 		LOG_ERR("PSM mode could not be disabled, error: %d",
 			err);
 	}
-#endif /* CONFIG_GPS_CONTROL_PSM_ENABLE_ON_START */
+#endif /* CONFIG_GPS_CONTROL_PSM_DISABLE_ON_STOP */
 
 	err = gps_stop(gps_dev);
 	if (err) {
