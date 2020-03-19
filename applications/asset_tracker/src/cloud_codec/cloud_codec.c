@@ -867,6 +867,8 @@ int cloud_decode_command(char const *input)
 
 int cloud_decode_init(cloud_cmd_cb_t cb)
 {
+	cJSON_Init();
+
 	cloud_command_cb = cb;
 
 	return 0;
