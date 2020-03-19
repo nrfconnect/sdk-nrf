@@ -625,7 +625,7 @@ static int stop_gps(struct device *dev, bool is_timeout)
 				NULL,
 				0);
 	if (retval != 0) {
-		LOG_ERR("Failed to stop GPS after timeout");
+		LOG_ERR("Failed to stop GPS");
 		return -EIO;
 	}
 
@@ -634,13 +634,31 @@ static int stop_gps(struct device *dev, bool is_timeout)
 
 static int stop(struct device *dev)
 {
+	int err = 0;
 	struct gps_drv_data *drv_data = dev->driver_data;
-
-	atomic_set(&drv_data->is_active, 0);
 	k_delayed_work_cancel(&drv_data->timeout_work);
 	k_delayed_work_cancel(&drv_data->start_work);
 
-	return stop_gps(dev, false);
+	if (atomic_get(&drv_data->is_active) == 0) {
+		/* The GPS is already stopped, attempting to stop it again would
+		 * result in an error. Instead, notify that it's stopped.
+		 */
+		goto notify;
+	}
+
+	err = stop_gps(dev, false);
+	if (err) {
+		return err;
+	}
+
+notify:
+	/* Offloading event dispatching to workqueue, as also other events
+	 * in this driver are sent from context different than the calling
+	 * context.
+	 */
+	k_delayed_work_submit(&drv_data->stop_work, K_NO_WAIT);
+
+	return 0;
 }
 
 static void start_work_fn(struct k_work *work)
@@ -665,7 +683,6 @@ static void stop_work_fn(struct k_work *work)
 		.type = GPS_EVT_SEARCH_STOPPED
 	};
 
-	stop_gps(dev, false);
 	notify_event(dev, &evt);
 }
 
