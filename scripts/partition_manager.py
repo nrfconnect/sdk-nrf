@@ -85,6 +85,7 @@ def remove_all_zero_sized_partitions(reqs, to_delete=None):
 
     if first and to_delete:
         for k in list(set(to_delete)):
+            print (f"Dropping partition '{k}' since its size is 0.")
             del reqs[k]
 
 
@@ -193,6 +194,7 @@ def clean_sub_partitions(reqs, sub_partitions):
                     new_deletion = True
 
     for key in keys_to_delete:
+        print (f"Dropping partition '{key}' since it is empty.")
         del sub_partitions[key]
 
     # "Flatten" by changing all span lists to contain the innermost partitions.
@@ -705,6 +707,7 @@ def load_static_configuration(args, pm_config):
     # This is done since all partitions in pm_config will be resolved.
     for statically_defined_image in static_config:
         if statically_defined_image in pm_config and statically_defined_image:
+            print (f"Dropping partition '{statically_defined_image}' since it is statically defined.")
             del pm_config[statically_defined_image]
     return static_config
 
