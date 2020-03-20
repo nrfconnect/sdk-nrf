@@ -15,7 +15,7 @@
 /.github/                                 @thst-nordic
 
 # Applications
-/applications/asset_tracker/              @joakimtoe @jtguggedal @rlubos
+/applications/asset_tracker/              @jhn-nordic @jtguggedal @rlubos
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
 /applications/nrf_desktop/                @pdunaj
 # Boards
@@ -89,7 +89,7 @@ Kconfig*                                  @SebastianBoe
 /samples/profiler/README.rst              @b-gent
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/radio_test/README.rst @b-gent
-/samples/usb/usb_uart_bridge/             @joakimtoe @jtguggedal
+/samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
 /samples/CMakeLists.txt                   @SebastianBoe
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
