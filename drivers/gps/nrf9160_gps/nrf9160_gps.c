@@ -609,6 +609,7 @@ static int setup(struct device *dev)
 static int stop_gps(struct device *dev, bool is_timeout)
 {
 	struct gps_drv_data *drv_data = dev->driver_data;
+	nrf_gnss_delete_mask_t delete_mask = 0;
 	int retval;
 
 	if (is_timeout) {
@@ -622,8 +623,8 @@ static int stop_gps(struct device *dev, bool is_timeout)
 	retval = nrf_setsockopt(drv_data->socket,
 				NRF_SOL_GNSS,
 				NRF_SO_GNSS_STOP,
-				NULL,
-				0);
+				&delete_mask,
+				sizeof(nrf_gnss_delete_mask_t));
 	if (retval != 0) {
 		LOG_ERR("Failed to stop GPS");
 		return -EIO;
