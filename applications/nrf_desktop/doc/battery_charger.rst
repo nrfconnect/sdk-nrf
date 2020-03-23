@@ -42,7 +42,7 @@ Implementation details
 As required by the USB specification, in order to reduce power consumption, the module disables the battery charging when the USB is suspended. In addition, it also disables charging when the USB is disconnected.
 The module enables charging when the USB is powered or active.
 
-.. warning:
+.. warning::
   Make sure hardware configuration enables charging by default (for example, when the pin to enable charging is not configured).
   Otherwise, it will be impossible to enable charging when the battery is empty.
 
