@@ -11,10 +11,12 @@
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>
 #include <modem/bsdlib.h>
+#include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
 
 #define LED_PORT	DT_ALIAS_LED0_GPIOS_CONTROLLER
+#define TLS_SEC_TAG 42
 
 static struct		device *gpiob;
 static struct		gpio_callback gpio_cb;
@@ -27,13 +29,65 @@ void bsd_recoverable_error_handler(uint32_t err)
 	printk("bsdlib recoverable error: %u\n", err);
 }
 
+int cert_provision(void)
+{
+	static const char cert[] = {
+		#include "../cert/BaltimoreCyberTrustRoot"
+	};
+	BUILD_ASSERT_MSG(sizeof(cert) < KB(4), "Certificate too large");
+	int err;
+	bool exists;
+	u8_t unused;
+
+	err = modem_key_mgmt_exists(TLS_SEC_TAG,
+				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+				    &exists, &unused);
+	if (err) {
+		printk("Failed to check for certificates err %d\n", err);
+		return err;
+	}
+
+	if (exists) {
+		/* For the sake of simplicity we delete what is provisioned
+		 * with our security tag and reprovision our certificate.
+		 */
+		err = modem_key_mgmt_delete(TLS_SEC_TAG,
+					    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
+		if (err) {
+			printk("Failed to delete existing certificate, err %d\n",
+			       err);
+		}
+	}
+
+	printk("Provisioning certificate\n");
+
+	/*  Provision certificate to the modem */
+	err = modem_key_mgmt_write(TLS_SEC_TAG,
+				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+				   cert, sizeof(cert) - 1);
+	if (err) {
+		printk("Failed to provision certificate, err %d\n", err);
+		return err;
+	}
+
+	return 0;
+}
+
 /**@brief Start transfer of the file. */
 static void app_dfu_transfer_start(struct k_work *unused)
 {
 	int retval;
+	int sec_tag;
+
+#ifndef CONFIG_USE_HTTPS
+	sec_tag = -1;
+#else
+	sec_tag = TLS_SEC_TAG;
+#endif
 
 	retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
-				     CONFIG_DOWNLOAD_FILE);
+				     CONFIG_DOWNLOAD_FILE,
+				     sec_tag);
 	if (retval != 0) {
 		/* Re-enable button callback */
 		gpio_pin_enable_callback(gpiob, DT_ALIAS_SW0_GPIOS_PIN);
@@ -41,6 +95,7 @@ static void app_dfu_transfer_start(struct k_work *unused)
 		printk("fota_download_start() failed, err %d\n",
 			retval);
 	}
+
 }
 
 /**@brief Turn on LED0 and LED1 if CONFIG_APPLICATION_VERSION
@@ -135,6 +190,10 @@ static void modem_configure(void)
 	__ASSERT(err == 0, "AT Notify could not be initialized.");
 	err = at_cmd_init();
 	__ASSERT(err == 0, "AT CMD could not be established.");
+#if defined(CONFIG_USE_HTTPS)
+	err = cert_provision();
+	__ASSERT(err == 0, "Could not provision root CA to %d", TLS_SEC_TAG);
+#endif
 #endif
 	printk("LTE Link Connecting ...\n");
 	err = lte_lc_init_and_connect();
@@ -170,6 +229,7 @@ static int application_init(void)
 void main(void)
 {
 	int err;
+
 	printk("HTTP application update sample started\n");
 	printk("Initializing bsdlib\n");
 #if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)
