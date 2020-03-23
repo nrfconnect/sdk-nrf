@@ -10,19 +10,22 @@ Controlled LEDs
 
 The module controls LEDs defined by enumerators in :cpp:enum:`led_id`:
 
-* :cpp:enumerator:`LED_ID_SYSTEM_STATE` - shows system state. The system can be in one of the following states:
+* :cpp:enumerator:`LED_ID_SYSTEM_STATE` - shows system state.
+  The system can be in one of the following states:
 
-  * :cpp:enumerator:`LED_SYSTEM_STATE_IDLE` - the device is not being charged,
-  * :cpp:enumerator:`LED_SYSTEM_STATE_CHARGING` - the device is being charged,
-  * :cpp:enumerator:`LED_SYSTEM_STATE_ERROR` - fatal application error occurred (a module reported error state or battery state error was reported).
+  * :cpp:enumerator:`LED_SYSTEM_STATE_IDLE` - The device is not being charged.
+  * :cpp:enumerator:`LED_SYSTEM_STATE_CHARGING` - The device is being charged.
+  * :cpp:enumerator:`LED_SYSTEM_STATE_ERROR` - Fatal application error occurred (a module reported error state or battery state error was reported).
 
-* :cpp:enumerator:`LED_ID_PEER_STATE` - shows Bluetooth peer state. The Bluetooth peer can be in one of the following states:
+* :cpp:enumerator:`LED_ID_PEER_STATE` - shows Bluetooth peer state.
+  The Bluetooth peer can be in one of the following states:
 
-  * :cpp:enumerator:`LED_PEER_STATE_DISCONNECTED` - the Bluetooth peer is disconnected,
-  * :cpp:enumerator:`LED_PEER_STATE_CONNECTED` - the Bluetooth peer is connected,
-  * :cpp:enumerator:`LED_PEER_STATE_CONFIRM_SELECT` - the Bluetooth peer is being selected (the device is waiting for confirmation),
-  * :cpp:enumerator:`LED_PEER_STATE_CONFIRM_ERASE` - the device is waiting for user confirmation to erase peers (for Bluetooth central) or start erase advertising (for Bluetooth peripheral),
-  * :cpp:enumerator:`LED_PEER_STATE_ERASE_ADV` - the device is advertising for peer erase.
+  * :cpp:enumerator:`LED_PEER_STATE_DISCONNECTED` - The Bluetooth peer is disconnected.
+  * :cpp:enumerator:`LED_PEER_STATE_CONNECTED` - The Bluetooth peer is connected.
+  * :cpp:enumerator:`LED_PEER_STATE_PEER_SEARCH` - The device is looking for a peer, either by scanning or advertising.
+  * :cpp:enumerator:`LED_PEER_STATE_CONFIRM_SELECT` - The Bluetooth peer is being selected (the device is waiting for confirmation).
+  * :cpp:enumerator:`LED_PEER_STATE_CONFIRM_ERASE` - The device is waiting for user confirmation to erase peers (for Bluetooth central) or start erase advertising (for Bluetooth peripheral).
+  * :cpp:enumerator:`LED_PEER_STATE_ERASE_ADV` - The device is advertising for peer erase.
 
 For the complete description of peer management, see :ref:`nrf_desktop_ble_bond`.
 
