@@ -666,6 +666,7 @@ For more information about each application module and its configuration details
    doc/hids.rst
    doc/led_state.rst
    doc/power_manager.rst
+   doc/settings_loader.rst
    doc/usb_state.rst
    doc/watchdog.rst
 
