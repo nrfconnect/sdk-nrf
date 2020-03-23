@@ -79,6 +79,11 @@ Passkey enabled
    The callbacks can be used to achieve higher security levels.
    The passkey input is handled in the :ref:`nrf_desktop_passkey` module.
 
+    .. warning::
+       By default, the Zephyr Bluetooth peripheral demands the security level 3 in case the passkey authentication is enabled.
+       If the nRF Desktop dongle is unable to achieve the security level 3, it will be unable to connect with the peripheral.
+       Disable the :option:`CONFIG_BT_SMP_ENFORCE_MITM` option to allow the dongle to connect without the authentication.
+
 Nrfxlib Link Layer
    If Nordic proprietary BLE Link Layer is selected (:option:`CONFIG_BT_LL_NRFXLIB`), the module sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
    The ``ble_state`` module also sets the TX power for connections, because Zephyr Kconfig options related to selecting the default TX power are not used by this Link Layer.
