@@ -22,6 +22,7 @@ static atomic_t gps_is_active;
 static struct k_work_q *app_work_q;
 static struct k_delayed_work start_work;
 static struct k_delayed_work stop_work;
+static int gps_reporting_interval_seconds;
 
 static void start(struct k_work *work)
 {
@@ -32,7 +33,7 @@ static void start(struct k_work *work)
 		.power_mode = GPS_POWER_MODE_DISABLED,
 		.timeout = CONFIG_GPS_CONTROL_FIX_TRY_TIME,
 		.interval = CONFIG_GPS_CONTROL_FIX_TRY_TIME +
-			CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL,
+			gps_reporting_interval_seconds
 	};
 
 	if (gps_dev == NULL) {
@@ -66,7 +67,13 @@ static void start(struct k_work *work)
 	LOG_INF("The device will attempt to get a fix for %d seconds, ",
 		CONFIG_GPS_CONTROL_FIX_TRY_TIME);
 	LOG_INF("before the GPS is stopped. It's restarted every %d seconds",
+		gps_reporting_interval_seconds);
+#if !defined(CONFIG_GPS_SIM)
+#if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
+	LOG_INF("or as soon as %d seconds later when movement occurs.",
 		CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL);
+#endif
+#endif
 }
 
 static void stop(struct k_work *work)
@@ -125,6 +132,11 @@ void gps_control_stop(u32_t delay_ms)
 	k_delayed_work_submit_to_queue(app_work_q, &stop_work, delay_ms);
 }
 
+int gps_control_get_gps_reporting_interval(void)
+{
+	return gps_reporting_interval_seconds;
+}
+
 /** @brief Configures and starts the GPS device. */
 int gps_control_init(struct k_work_q *work_q, gps_event_handler_t handler)
 {
@@ -156,6 +168,15 @@ int gps_control_init(struct k_work_q *work_q, gps_event_handler_t handler)
 
 	k_delayed_work_init(&start_work, start);
 	k_delayed_work_init(&stop_work, stop);
+
+#if !defined(CONFIG_GPS_SIM)
+	gps_reporting_interval_seconds =
+		IS_ENABLED(CONFIG_GPS_START_ON_MOTION) ?
+		CONFIG_GPS_CONTROL_FIX_CHECK_OVERDUE :
+		CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL;
+#else
+	gps_reporting_interval_seconds = CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL;
+#endif
 
 	LOG_INF("GPS initialized");
 
