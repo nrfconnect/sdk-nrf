@@ -17,7 +17,14 @@ Nordic Semiconductor provides a variety of model implementations from the `Mesh 
    :caption: Model implementations:
    :glob:
 
-   ../../../include/bluetooth/mesh/gen_*
+   ../../../include/bluetooth/mesh/gen_onoff.rst
+   ../../../include/bluetooth/mesh/gen_lvl.rst
+   ../../../include/bluetooth/mesh/gen_dtt.rst
+   ../../../include/bluetooth/mesh/gen_ponoff.rst
+   ../../../include/bluetooth/mesh/gen_plvl.rst
+   ../../../include/bluetooth/mesh/gen_battery.rst
+   ../../../include/bluetooth/mesh/gen_loc.rst
+   ../../../include/bluetooth/mesh/gen_prop.rst
    ../../../include/bluetooth/mesh/lightness.rst
    ../../../include/bluetooth/mesh/sensor_models.rst
 
