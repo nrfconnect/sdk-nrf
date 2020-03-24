@@ -28,6 +28,15 @@ typedef struct slm_at_cmd_list {
 	slm_at_handler_t handler;
 } slm_at_cmd_list_t;
 
+/**@brief Arbitrary data type over AT channel. */
+enum slm_data_type_t {
+	DATATYPE_HEXADECIMAL,
+	DATATYPE_PLAINTEXT,
+	DATATYPE_JSON,
+	DATATYPE_HTML,
+	DATATYPE_OMATLV
+};
+
 /**
  * @brief Initialize AT host for serial LTE modem
  *
@@ -36,42 +45,6 @@ typedef struct slm_at_cmd_list {
  */
 int slm_at_host_init(void);
 
-/**
- * @brief Compare name of AT command ignoring case
- *
- * @param cmd Command string received from UART
- * @param slm_cmd Propreiatry command supported by SLM
- * @param slm_cmd_length Length of string to compare
- *
- * @retval true If two commands match, false if not.
- */
-static inline bool slm_at_cmd_cmp(const char *cmd,
-				const char *slm_cmd,
-				u8_t slm_cmd_length)
-{
-	int i;
-
-	if (strlen(cmd) < slm_cmd_length) {
-		return false;
-	}
-
-	for (i = 0; i < slm_cmd_length; i++) {
-		if (toupper(*(cmd + i)) != *(slm_cmd + i)) {
-			return false;
-		}
-	}
-#if defined(CONFIG_SLM_CR_LF_TERMINATION)
-	if (strlen(cmd) > (slm_cmd_length + 2)) {
-#else
-	if (strlen(cmd) > (slm_cmd_length + 1)) {
-#endif
-		char ch = *(cmd + i);
-		/* With parameter, SET TEST, "="; READ, "?" */
-		return ((ch == '=') || (ch == '?'));
-	}
-
-	return true;
-}
 /** @} */
 
 #endif /* SLM_AT_HOST_ */
