@@ -436,26 +436,24 @@ static void send_modem_at_cmd_work_fn(struct k_work *work)
 
 static void gps_handler(struct device *dev, struct gps_event *evt)
 {
+	gps_last_active_time = k_uptime_get();
+
 	switch (evt->type) {
 	case GPS_EVT_SEARCH_STARTED:
-		gps_last_active_time = k_uptime_get();
-
 		LOG_INF("GPS_EVT_SEARCH_STARTED");
 		gps_control_set_active(true);
 		ui_led_set_pattern(UI_LED_GPS_SEARCHING);
 		break;
 	case GPS_EVT_SEARCH_STOPPED:
-		gps_last_active_time = k_uptime_get();
-
 		LOG_INF("GPS_EVT_SEARCH_STOPPED");
 		gps_control_set_active(false);
 		ui_led_set_pattern(UI_CLOUD_CONNECTED);
 		break;
 	case GPS_EVT_SEARCH_TIMEOUT:
-		gps_last_active_time = k_uptime_get();
-
 		LOG_INF("GPS_EVT_SEARCH_TIMEOUT");
 		gps_control_set_active(false);
+		LOG_INF("GPS will be attempted again in %d seconds",
+			gps_control_get_gps_reporting_interval());
 		break;
 	case GPS_EVT_PVT:
 		/* Don't spam logs */
@@ -481,6 +479,9 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 
 		ui_led_set_pattern(UI_LED_GPS_FIX);
 		gps_control_set_active(false);
+		LOG_INF("GPS will be started in %d seconds",
+			gps_control_get_gps_reporting_interval());
+
 		k_work_submit_to_queue(&application_work_q,
 				       &send_gps_data_work);
 		env_sensors_poll();
@@ -550,7 +551,7 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 		return;
 	}
 
-	if (motion_activity_is_active() && !gps_control_is_enabled()) {
+	if (motion_activity_is_active() && gps_control_is_enabled()) {
 		static s64_t next_active_time;
 		s64_t last_active_time = gps_last_active_time / 1000;
 		s64_t now = k_uptime_get() / 1000;

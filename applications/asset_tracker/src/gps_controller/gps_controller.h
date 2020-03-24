@@ -30,6 +30,8 @@ bool gps_control_is_enabled(void);
 
 bool gps_control_is_active(void);
 
+int gps_control_get_gps_reporting_interval(void);
+
 bool gps_control_set_active(bool active);
 
 #ifdef __cplusplus
