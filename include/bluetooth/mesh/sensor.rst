@@ -75,7 +75,8 @@ Each sensor type is assigned its own Device Property ID, as specified in the Blu
 Like the Device Properties, the Sensor types are connected to a Bluetooth GATT Characteristic, which describes the unit, range, resolution and encoding scheme of the sensor type.
 
 .. note::
-   The Bluetooth Mesh specification only allows sensor types that have a Device Property ID in the Bluetooth Mesh Device Properties Specification. It's not possible to represent vendor specific sensor values.
+   The Bluetooth Mesh specification only allows sensor types that have a Device Property ID in the Bluetooth Mesh Device Properties Specification.
+   It's not possible to represent vendor specific sensor values.
 
 The sensor types may either be used as the data types of the sensor output values, or as configuration parameters for the sensors.
 
@@ -100,11 +101,14 @@ The name and unit are only available if :option:`CONFIG_BT_MESH_SENSOR_LABELS` o
 Both the channel name and unit is also listed in the documentation for each sensor type.
 
 Most sensor values are reported as scalars with some scaling factor applied to
-them during encoding. This scaling factor and the encoded data type determines
-the resolution and range of the sensor data in a specific channel. For instance,
+them during encoding.
+This scaling factor and the encoded data type determines
+the resolution and range of the sensor data in a specific channel.
+For instance,
 if a sensor channel measuring electric current has a resolution of 0.5 Ampere,
 this is the highest resolution value other mesh devices will be able to read out
-from the sensor. Before encoding, the sensor values are rounded to their nearest
+from the sensor.
+Before encoding, the sensor values are rounded to their nearest
 available representation, so the following sensor value would be read as 7.5
 Ampere:
 
@@ -234,7 +238,8 @@ A sensor's Descriptor contains parameters that may aid other mesh nodes in inter
 * Measurement period
 * Update interval
 
-The sensor descriptor is constant throughout the sensor's lifetime. If the sensor has a descriptor, a pointer to it should be passed to :cpp:member:`bt_mesh_sensor::descriptor` on init.
+The sensor descriptor is constant throughout the sensor's lifetime.
+If the sensor has a descriptor, a pointer to it should be passed to :cpp:member:`bt_mesh_sensor::descriptor` on init.
 
 See :cpp:type:`bt_mesh_sensor_descriptor` for details.
 
@@ -257,8 +262,10 @@ Each sensor channel will be encoded internally according to the sensor type.
 The sensor data in the callback typically comes from a sensor using the :ref:`Zephyr sensor API <zephyr:sensor>`.
 The Zephyr sensor API records samples in two steps:
 
-1. Tell the sensor to take a sample by calling :cpp:func:`sensor_sample_fetch`.
-2. Read the recorded sample data with :cpp:func:`sensor_channel_get`.
+1.
+Tell the sensor to take a sample by calling :cpp:func:`sensor_sample_fetch`.
+2.
+Read the recorded sample data with :cpp:func:`sensor_channel_get`.
 
 The first step may be done at any time.
 Typically, the sensor fetching is triggered by a timer, an external event or a sensor trigger, but it may be called in the ``get`` callback itself.
@@ -267,7 +274,8 @@ The method of sampling may be communicated to other mesh nodes through the senso
 
 The read step would typically be done in the callback, to pass the sensor data to the mesh.
 
-If the Sensor Server is configured to do periodic publishing, the ``get`` callback will be called for every publication interval. Publication may also be forced by calling :cpp:func:`bt_mesh_sensor_srv_sample`, which will trigger the ``get`` callback and publish only if the sensor value has changed.
+If the Sensor Server is configured to do periodic publishing, the ``get`` callback will be called for every publication interval.
+Publication may also be forced by calling :cpp:func:`bt_mesh_sensor_srv_sample`, which will trigger the ``get`` callback and publish only if the sensor value has changed.
 
 Sensor series
 *************
@@ -277,7 +285,8 @@ The sensor series :cpp:member:`bt_mesh_sensor_series::get` callback must be impl
 Only some sensor types support series access, see the sensor type's documentation.
 The format of the column may be queried with :cpp:func:`bt_mesh_sensor_column_format_get`.
 
-The ``get`` callback gets called with a direct pointer to one of the columns in the column list, and is expected to fill the ``value`` parameter with sensor data for the specified column. If a Sensor Client requests a series of columns, the callback may be called repeatedly, requesting data from each column.
+The ``get`` callback gets called with a direct pointer to one of the columns in the column list, and is expected to fill the ``value`` parameter with sensor data for the specified column.
+If a Sensor Client requests a series of columns, the callback may be called repeatedly, requesting data from each column.
 
 Example: Average ambient temperature in a period of day as a sensor series:
 
@@ -322,10 +331,13 @@ Example: Average ambient temperature in a period of day as a sensor series:
 Sensor settings
 ***************
 
-The list of settings a sensor supports should be set on init. The list should be constant throughout the sensor's lifetime, and may be declared ``const``.
+The list of settings a sensor supports should be set on init.
+The list should be constant throughout the sensor's lifetime, and may be declared ``const``.
 Each entry in the list has a type and two access callbacks, and the list should only contain unique entry types.
 
-The :cpp:member:`bt_mesh_sensor_setting::get` callback is mandatory, while the :cpp:member:`bt_mesh_sensor_setting::set` is optional, allowing for read-only entries. The value of the settings may change at runtime, even outside the ``set`` callback. New values may be rejected by returning a negative error code from the ``set`` callback.
+The :cpp:member:`bt_mesh_sensor_setting::get` callback is mandatory, while the :cpp:member:`bt_mesh_sensor_setting::set` is optional, allowing for read-only entries.
+The value of the settings may change at runtime, even outside the ``set`` callback.
+New values may be rejected by returning a negative error code from the ``set`` callback.
 
 .. _bt_mesh_sensor_api:
 
