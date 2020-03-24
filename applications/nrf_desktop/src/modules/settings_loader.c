@@ -9,13 +9,13 @@
 
 #include "event_manager.h"
 
-#define MODULE settings_load
+#define MODULE settings_loader
 #include "module_state_event.h"
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_SETTINGS_LOAD_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_SETTINGS_LOADER_LOG_LEVEL);
 
-#define THREAD_STACK_SIZE	CONFIG_DESKTOP_SETTINGS_LOAD_THREAD_STACK_SIZE
+#define THREAD_STACK_SIZE	CONFIG_DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE
 #define THREAD_PRIORITY		K_PRIO_PREEMPT(K_LOWEST_APPLICATION_THREAD_PRIO)
 static struct k_thread thread;
 static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
@@ -48,7 +48,7 @@ static void start_loading_thread(void)
 
 static void load_settings(void)
 {
-	if (IS_ENABLED(CONFIG_DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_SETTINGS_LOADER_USE_THREAD)) {
 		start_loading_thread();
 	} else {
 		int err = settings_load();
