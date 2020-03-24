@@ -39,6 +39,7 @@ pipeline {
                                       --board-root zephyr/boards \
                                       --testcase-root nrf/samples \
                                       --testcase-root nrf/applications \
+                                      --testcase-root nrf/tests \
                                       --inline-logs --disable-unrecognized-section-test \
                                       --tag ci_build \
                                       --retry-failed 7 \
