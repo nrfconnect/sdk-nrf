@@ -114,6 +114,7 @@ The following proprietary BSD socket AT commands are used in this sample:
 * AT#XSENDTO=<url>,<port>,<data>
 * AT#XRECVFROM=<url>,<port>[,<length>]
 * AT#XGETADDRINFO=<url>
+* AT#XDATATYPE=<type>
 
 ICMP AT commands
 ****************
@@ -127,8 +128,7 @@ GPS AT Commands
 
 The following proprietary GPS AT commands are used in this sample:
 
-* AT#XGPSRUN=<op>[,<mask>]
-* AT#XGPSRUN?
+* AT#XGPS=<op>[,<mask>]
 
 Building and Running
 ********************

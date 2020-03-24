@@ -20,13 +20,19 @@
 
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 
+#define MY_STACK_SIZE		KB(1)
+#define MY_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
+static K_THREAD_STACK_DEFINE(my_stack_area, MY_STACK_SIZE);
+
 static struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 static struct k_work exit_idle_work;
 
 /* global variable used across different files */
-struct at_param_list m_param_list;
+struct at_param_list at_param_list;
 struct modem_param_info modem_param;
+char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
+struct k_work_q slm_work_q;
 
 /**@brief Recoverable BSD library error. */
 void bsd_recoverable_error_handler(uint32_t err)
@@ -54,7 +60,7 @@ static void exit_idle(struct k_work *work)
 static void gpio_callback(struct device *dev,
 		     struct gpio_callback *gpio_cb, u32_t pins)
 {
-	k_work_submit(&exit_idle_work);
+	k_work_submit_to_queue(&slm_work_q, &exit_idle_work);
 }
 
 void enter_idle(void)
@@ -129,7 +135,7 @@ void start_execute(void)
 	modem_info_params_init(&modem_param);
 
 	/* Initialize AT Parser */
-	err = at_params_list_init(&m_param_list, CONFIG_SLM_AT_MAX_PARAM);
+	err = at_params_list_init(&at_param_list, CONFIG_SLM_AT_MAX_PARAM);
 	if (err) {
 		LOG_ERR("Failed to init AT Parser: %d", err);
 		return;
@@ -141,6 +147,8 @@ void start_execute(void)
 		return;
 	}
 
+	k_work_q_start(&slm_work_q, my_stack_area,
+		K_THREAD_STACK_SIZEOF(my_stack_area), MY_PRIORITY);
 	k_work_init(&exit_idle_work, exit_idle);
 }
 

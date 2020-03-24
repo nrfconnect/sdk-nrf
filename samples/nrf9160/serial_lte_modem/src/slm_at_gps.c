@@ -8,6 +8,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <nrf_socket.h>
+#include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gps.h"
 
@@ -26,30 +27,16 @@ enum slm_gps_mode {
 	GPS_MODE_AGPS
 };
 
-/**@brief List of supported AT commands. */
-enum slm_gps_at_cmd_type {
-	AT_GPSRUN,
-	AT_GPS_MAX
-};
-
-/** forward declaration of cmd handlers **/
-static int handle_at_gpsrun(enum at_cmd_type cmd_type);
-
-/**@brief SLM AT Command list type. */
-static slm_at_cmd_list_t m_gps_at_list[AT_GPS_MAX] = {
-	{AT_GPSRUN, "AT#XGPSRUN", handle_at_gpsrun},
-};
+#define AT_GPS	"AT#XGPS"
 
 static struct gps_client {
 	int sock; /* Socket descriptor. */
 	u16_t mask; /* NMEA mask */
 	bool running; /* GPS running status */
 	bool has_fix; /* At least one fix is got */
-	at_cmd_handler_t callback;
 } client;
 
 static nrf_gnss_data_frame_t gps_data;
-static char buf[64];
 
 #define THREAD_STACK_SIZE	KB(1)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
@@ -59,8 +46,12 @@ static k_tid_t gps_thread_id;
 static K_THREAD_STACK_DEFINE(gps_thread_stack, THREAD_STACK_SIZE);
 static u64_t ttft_start;
 
+/* global functions defined in different files */
+void rsp_send(const u8_t *str, size_t len);
+
 /* global variable defined in different files */
-extern struct at_param_list m_param_list;
+extern struct at_param_list at_param_list;
+extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 static void gps_satellite_stats(void)
 {
@@ -88,27 +79,27 @@ static void gps_satellite_stats(void)
 	}
 
 	if (last_tracked != tracked) {
-		sprintf(buf, "#XGPSS: tracking %d using %d unhealthy %d\r\n",
+		sprintf(rsp_buf, "#XGPSS: trackg %d use %d unhealthy %d\r\n",
 			tracked, in_fix, unhealthy);
-		client.callback(buf);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		last_tracked = tracked;
 	}
 }
 
 static void gps_pvt_notify(void)
 {
-	sprintf(buf, "#XGPSP: long %f lat %f\r\n",
+	sprintf(rsp_buf, "#XGPSP: long %f lat %f\r\n",
 		gps_data.pvt.longitude,
 		gps_data.pvt.latitude);
-	client.callback(buf);
-	sprintf(buf, "#XGPSP: %04u-%02u-%02u %02u:%02u:%02u\r\n",
+	rsp_send(rsp_buf, strlen(rsp_buf));
+	sprintf(rsp_buf, "#XGPSP: %04u-%02u-%02u %02u:%02u:%02u\r\n",
 		gps_data.pvt.datetime.year,
 		gps_data.pvt.datetime.month,
 		gps_data.pvt.datetime.day,
 		gps_data.pvt.datetime.hour,
 		gps_data.pvt.datetime.minute,
 		gps_data.pvt.datetime.seconds);
-	client.callback(buf);
+	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
 static void gps_thread_fn(void *arg1, void *arg2, void *arg3)
@@ -121,8 +112,8 @@ static void gps_thread_fn(void *arg1, void *arg2, void *arg3)
 		if (nrf_recv(client.sock, &gps_data, sizeof(gps_data), 0)
 			<= 0) {
 			LOG_ERR("GPS nrf_recv(): %d", -errno);
-			sprintf(buf, "#XGPSRUN: %d\r\n", -errno);
-			client.callback(buf);
+			sprintf(rsp_buf, "#XGPSRUN: %d\r\n", -errno);
+			rsp_send(rsp_buf, strlen(rsp_buf));
 			nrf_close(client.sock);
 			client.running = false;
 			break;
@@ -134,17 +125,18 @@ static void gps_thread_fn(void *arg1, void *arg2, void *arg3)
 				gps_pvt_notify();
 				if (!client.has_fix) {
 					u64_t now = k_uptime_get();
-					sprintf(buf, "#XGPSP: TTFF %d sec\r\n",
+
+					sprintf(rsp_buf, "#XGPSP: TTFF %ds\r\n",
 						(int)(now - ttft_start)/1000);
-					client.callback(buf);
+					rsp_send(rsp_buf, strlen(rsp_buf));
 					client.has_fix = true;
 				}
 			}
 			break;
 		case NRF_GNSS_NMEA_DATA_ID:
 			if (client.has_fix) {
-				client.callback("#XGPSN: ");
-				client.callback(gps_data.nmea);
+				rsp_send(gps_data.nmea,
+					strlen(gps_data.nmea));
 			}
 			break;
 		default:
@@ -205,15 +197,15 @@ static int do_gps_start(void)
 	client.running = true;
 	LOG_DBG("GPS started");
 
-	sprintf(buf, "#XGPSRUN: 1,%d\r\n", client.mask);
-	client.callback(buf);
+	sprintf(rsp_buf, "#XGPS: 1,%d\r\n", client.mask);
+	rsp_send(rsp_buf, strlen(rsp_buf));
 	ttft_start = k_uptime_get();
 	return 0;
 
 error:
 	LOG_ERR("GPS start failed: %d", ret);
-	sprintf(buf, "#XGPSRUN: %d\r\n", ret);
-	client.callback(buf);
+	sprintf(rsp_buf, "#XGPS: %d\r\n", ret);
+	rsp_send(rsp_buf, strlen(rsp_buf));
 	client.running = false;
 
 	return -errno;
@@ -234,7 +226,8 @@ static int do_gps_stop(void)
 			k_thread_suspend(gps_thread_id);
 			nrf_close(client.sock);
 			client.running = false;
-			client.callback("#XGPSRUN: 0\r\n");
+			sprintf(rsp_buf, "#XGPS: 0\r\n");
+			rsp_send(rsp_buf, strlen(rsp_buf));
 			LOG_DBG("GPS stopped");
 		}
 
@@ -255,16 +248,16 @@ static int handle_at_gpsrun(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&m_param_list) < 2) {
+		if (at_params_valid_count_get(&at_param_list) < 2) {
 			return -EINVAL;
 		}
-		err = at_params_short_get(&m_param_list, 1, &op);
+		err = at_params_short_get(&at_param_list, 1, &op);
 		if (err < 0) {
 			return err;
 		}
 		if (op == 1) {
-			if (at_params_valid_count_get(&m_param_list) > 2) {
-				err = at_params_short_get(&m_param_list, 2,
+			if (at_params_valid_count_get(&at_param_list) > 2) {
+				err = at_params_short_get(&at_param_list, 2,
 							&client.mask);
 				if (err < 0) {
 					return err;
@@ -285,11 +278,11 @@ static int handle_at_gpsrun(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (client.running) {
-			sprintf(buf, "#XGPSRUN: 1,%d\r\n", client.mask);
+			sprintf(rsp_buf, "#XGPS: 1,%d\r\n", client.mask);
 		} else {
-			sprintf(buf, "#XGPSRUN: 0\r\n");
+			sprintf(rsp_buf, "#XGPS: 0\r\n");
 		}
-		client.callback(buf);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -305,22 +298,14 @@ static int handle_at_gpsrun(enum at_cmd_type cmd_type)
 int slm_at_gps_parse(const char *at_cmd)
 {
 	int ret = -ENOTSUP;
-	enum at_cmd_type type;
 
-	for (int i = 0; i < AT_GPS_MAX; i++) {
-		u8_t cmd_len = strlen(m_gps_at_list[i].string);
-
-		if (slm_at_cmd_cmp(at_cmd, m_gps_at_list[i].string, cmd_len)) {
-			ret = at_parser_params_from_str(at_cmd, NULL,
-						&m_param_list);
-			if (ret < 0) {
-				LOG_ERR("Failed to parse AT command %d", ret);
-				return -EINVAL;
-			}
-			type = at_parser_cmd_type_get(at_cmd);
-			ret = m_gps_at_list[i].handler(type);
-			break;
+	if (slm_util_cmd_casecmp(at_cmd, AT_GPS)) {
+		ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
+		if (ret < 0) {
+			LOG_ERR("Failed to parse AT command %d", ret);
+			return -EINVAL;
 		}
+		ret = handle_at_gpsrun(at_parser_cmd_type_get(at_cmd));
 	}
 
 	return ret;
@@ -330,20 +315,14 @@ int slm_at_gps_parse(const char *at_cmd)
  */
 void slm_at_gps_clac(void)
 {
-	for (int i = 0; i < AT_GPS_MAX; i++) {
-		client.callback(m_gps_at_list[i].string);
-		client.callback("\r\n");
-	}
+	sprintf(rsp_buf, "%s\r\n", AT_GPS);
+	rsp_send(rsp_buf, strlen(rsp_buf));
 }
 
 /**@brief API to initialize GPS AT commands handler
  */
-int slm_at_gps_init(at_cmd_handler_t callback)
+int slm_at_gps_init(void)
 {
-	if (callback == NULL) {
-		LOG_ERR("No callback");
-		return -EINVAL;
-	}
 	client.sock = INVALID_SOCKET;
 	client.mask =  NRF_GNSS_NMEA_GSV_MASK |
 		       NRF_GNSS_NMEA_GSA_MASK |
@@ -352,7 +331,6 @@ int slm_at_gps_init(at_cmd_handler_t callback)
 		       NRF_GNSS_NMEA_RMC_MASK;
 	client.running = false;
 	client.has_fix = false;
-	client.callback = callback;
 	gps_thread_id = NULL;
 
 	return 0;

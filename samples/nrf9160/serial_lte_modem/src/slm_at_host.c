@@ -16,13 +16,14 @@
 
 LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 
+#include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_tcpip.h"
 #include "slm_at_icmp.h"
 #include "slm_at_gps.h"
 
-#define SLM_UART_0_NAME      "UART_0"
-#define SLM_UART_2_NAME      "UART_2"
+#define SLM_UART_0_NAME	"UART_0"
+#define SLM_UART_2_NAME	"UART_2"
 
 #define OK_STR		"OK\r\n"
 #define ERROR_STR	"ERROR\r\n"
@@ -71,12 +72,12 @@ void enter_idle(void);
 void enter_sleep(void);
 
 /* global variable defined in different files */
-extern struct at_param_list m_param_list;
+extern struct at_param_list at_param_list;
 
 /* forward declaration */
 void slm_at_host_uninit(void);
 
-static void write_uart_string(const char *str, size_t len)
+void rsp_send(const u8_t *str, size_t len)
 {
 	int ret;
 
@@ -108,18 +109,18 @@ static void response_handler(void *context, const char *response)
 
 	/* Forward the data over UART */
 	if (len > 1) {
-		write_uart_string(response, len);
+		rsp_send(response, len);
 	}
 }
 
 static void handle_at_clac(void)
 {
-	write_uart_string(AT_CMD_SLMVER, sizeof(AT_CMD_SLMVER) - 1);
-	write_uart_string("\r\n", 2);
-	write_uart_string(AT_CMD_SLEEP, sizeof(AT_CMD_SLEEP) - 1);
-	write_uart_string("\r\n", 2);
-	write_uart_string(AT_CMD_CLAC, sizeof(AT_CMD_CLAC) - 1);
-	write_uart_string("\r\n", 2);
+	rsp_send(AT_CMD_SLMVER, sizeof(AT_CMD_SLMVER) - 1);
+	rsp_send("\r\n", 2);
+	rsp_send(AT_CMD_SLEEP, sizeof(AT_CMD_SLEEP) - 1);
+	rsp_send("\r\n", 2);
+	rsp_send(AT_CMD_CLAC, sizeof(AT_CMD_CLAC) - 1);
+	rsp_send("\r\n", 2);
 	slm_at_tcpip_clac();
 	slm_at_icmp_clac();
 	slm_at_gps_clac();
@@ -131,7 +132,7 @@ static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
 	enum at_cmd_type type;
 	u16_t shutdown_mode;
 
-	ret = at_parser_params_from_str(at_cmd, NULL, &m_param_list);
+	ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
 	if (ret < 0) {
 		LOG_ERR("Failed to parse AT command %d", ret);
 		return -EINVAL;
@@ -140,8 +141,8 @@ static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
 	type = at_parser_cmd_type_get(at_cmd);
 	if (type == AT_CMD_TYPE_SET_COMMAND) {
 		shutdown_mode = SHUTDOWN_MODE_IDLE;
-		if (at_params_valid_count_get(&m_param_list) > 1) {
-			ret = at_params_short_get(&m_param_list, 1,
+		if (at_params_valid_count_get(&at_param_list) > 1) {
+			ret = at_params_short_get(&at_param_list, 1,
 					&shutdown_mode);
 			if (ret < 0) {
 				LOG_ERR("AT parameter error");
@@ -168,7 +169,7 @@ static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
 
 		sprintf(buf, "#XSLEEP: (%d, %d)\r\n", SHUTDOWN_MODE_IDLE,
 			SHUTDOWN_MODE_SLEEP);
-		write_uart_string(buf, strlen(buf));
+		rsp_send(buf, strlen(buf));
 		ret = 0;
 	}
 
@@ -182,7 +183,6 @@ static void cmd_send(struct k_work *work)
 	static char buf[AT_MAX_CMD_LEN];
 	enum at_cmd_state state;
 	int err;
-	size_t size_cmd = sizeof(AT_CMD_SLMVER) - 1;
 
 	ARG_UNUSED(work);
 
@@ -191,31 +191,29 @@ static void cmd_send(struct k_work *work)
 
 	LOG_HEXDUMP_DBG(at_buf, at_buf_len, "RX");
 
-	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLMVER, size_cmd)) {
-		write_uart_string(SLM_VERSION, sizeof(SLM_VERSION) - 1);
-		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
+	if (slm_util_cmd_casecmp(at_buf, AT_CMD_SLMVER)) {
+		rsp_send(SLM_VERSION, sizeof(SLM_VERSION) - 1);
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	}
 
-	size_cmd = sizeof(AT_CMD_CLAC) - 1;
-	if (slm_at_cmd_cmp(at_buf, AT_CMD_CLAC, size_cmd)) {
+	if (slm_util_cmd_casecmp(at_buf, AT_CMD_CLAC)) {
 		handle_at_clac();
-		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	}
 
-	size_cmd = sizeof(AT_CMD_SLEEP) - 1;
-	if (slm_at_cmd_cmp(at_buf, AT_CMD_SLEEP, size_cmd)) {
+	if (slm_util_cmd_casecmp(at_buf, AT_CMD_SLEEP)) {
 		enum shutdown_modes mode = SHUTDOWN_MODE_INVALID;
 
 		err = handle_at_sleep(at_buf, &mode);
 		if (err) {
-			write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
+			rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 			goto done;
 		} else {
 			if (mode == SHUTDOWN_MODE_INVALID) {
 				/*Test command*/
-				write_uart_string(OK_STR, sizeof(OK_STR) - 1);
+				rsp_send(OK_STR, sizeof(OK_STR) - 1);
 				goto done;
 			} else {
 				/*Entered IDLE*/
@@ -226,10 +224,10 @@ static void cmd_send(struct k_work *work)
 
 	err = slm_at_tcpip_parse(at_buf);
 	if (err == 0) {
-		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	} else if (err != -ENOTSUP) {
-		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
 
@@ -237,16 +235,16 @@ static void cmd_send(struct k_work *work)
 	if (err == 0) {
 		goto done;
 	} else if (err != -ENOTSUP) {
-		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
 
 	err = slm_at_gps_parse(at_buf);
 	if (err == 0) {
-		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
 	} else if (err != -ENOTSUP) {
-		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
 
@@ -258,19 +256,19 @@ static void cmd_send(struct k_work *work)
 
 	switch (state) {
 	case AT_CMD_OK:
-		write_uart_string(buf, strlen(buf));
-		write_uart_string(OK_STR, sizeof(OK_STR) - 1);
+		rsp_send(buf, strlen(buf));
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		break;
 	case AT_CMD_ERROR:
-		write_uart_string(ERROR_STR, sizeof(ERROR_STR) - 1);
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		break;
 	case AT_CMD_ERROR_CMS:
 		chars = sprintf(str, "+CMS: %d\r\n", err);
-		write_uart_string(str, ++chars);
+		rsp_send(str, ++chars);
 		break;
 	case AT_CMD_ERROR_CME:
 		chars = sprintf(str, "+CME: %d\r\n", err);
-		write_uart_string(str, ++chars);
+		rsp_send(str, ++chars);
 		break;
 	default:
 		break;
@@ -282,7 +280,7 @@ done:
 	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, K_FOREVER);
 	if (err) {
 		LOG_ERR("UART RX failed: %d", err);
-		write_uart_string(FATAL_STR, sizeof(FATAL_STR) - 1);
+		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
 	}
 }
 
@@ -400,11 +398,6 @@ static void uart_callback(struct uart_event *evt, void *user_data)
 	}
 }
 
-static void slm_at_callback(const char *str)
-{
-	write_uart_string(str, strlen(str));
-}
-
 int slm_at_host_init(void)
 {
 	char *uart_dev_name;
@@ -468,17 +461,17 @@ int slm_at_host_init(void)
 		return err;
 	}
 
-	err = slm_at_tcpip_init(slm_at_callback);
+	err = slm_at_tcpip_init();
 	if (err) {
 		LOG_ERR("TCPIP could not be initialized: %d", err);
 		return -EFAULT;
 	}
-	err = slm_at_icmp_init(slm_at_callback);
+	err = slm_at_icmp_init();
 	if (err) {
 		LOG_ERR("ICMP could not be initialized: %d", err);
 		return -EFAULT;
 	}
-	err = slm_at_gps_init(slm_at_callback);
+	err = slm_at_gps_init();
 	if (err) {
 		LOG_ERR("GPS could not be initialized: %d", err);
 		return -EFAULT;
@@ -486,7 +479,7 @@ int slm_at_host_init(void)
 
 	k_work_init(&cmd_send_work, cmd_send);
 	k_sem_give(&tx_done);
-	write_uart_string(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
 
 	LOG_DBG("at_host init done");
 	return err;
