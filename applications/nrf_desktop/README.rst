@@ -664,6 +664,7 @@ For more information about each application module and its configuration details
    doc/hid_forward.rst
    doc/hid_state.rst
    doc/hids.rst
+   doc/info.rst
    doc/led_state.rst
    doc/power_manager.rst
    doc/settings_loader.rst
