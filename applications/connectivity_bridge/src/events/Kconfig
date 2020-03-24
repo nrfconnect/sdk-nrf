@@ -22,8 +22,16 @@ config BRIDGE_LOG_CDC_DATA_EVENT
 	bool "CDC data event"
 	default y
 
+config BRIDGE_LOG_CDC_CTRL_EVENT
+	bool "CDC control event"
+	default y
+
 config BRIDGE_LOG_BLE_DATA_EVENT
 	bool "BLE data event"
+	default y
+
+config BRIDGE_LOG_BLE_CTRL_EVENT
+	bool "BLE control event"
 	default y
 
 config BRIDGE_LOG_PEER_CONN_EVENT

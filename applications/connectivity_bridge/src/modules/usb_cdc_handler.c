@@ -12,6 +12,7 @@
 #include "module_state_event.h"
 #include "peer_conn_event.h"
 #include "cdc_data_event.h"
+#include "cdc_ctrl_event.h"
 #include "uart_data_event.h"
 
 #include <logging/log.h>
@@ -35,12 +36,36 @@ K_MEM_SLAB_DEFINE(cdc_rx_slab, USB_CDC_RX_BLOCK_SIZE, USB_CDC_RX_BLOCK_COUNT, US
 
 static struct device *devices[CDC_DEVICE_COUNT];
 static u32_t cdc_ready[CDC_DEVICE_COUNT];
-
+static bool initialized;
+static bool force_active;
 static u8_t overflow_buf[64];
 
 static void cdc_dtr_timer_handler(struct k_timer *timer)
 {
 	k_work_submit(&cdc_dtr_work);
+}
+
+static void send_conn_state_event(unsigned int dev_idx, bool ready)
+{
+	u32_t baudrate;
+	int err;
+
+	err = uart_line_ctrl_get(devices[dev_idx],
+				UART_LINE_CTRL_BAUD_RATE,
+				&baudrate);
+	if (err) {
+		LOG_WRN("uart_line_ctrl_get(BAUD_RATE): %d", err);
+		return;
+	}
+
+	struct peer_conn_event *event = new_peer_conn_event();
+
+	event->peer_id = PEER_ID_USB;
+	event->dev_idx = dev_idx;
+	event->baudrate = baudrate;
+	event->conn_state =
+		ready ? PEER_STATE_CONNECTED : PEER_STATE_DISCONNECTED;
+	EVENT_SUBMIT(event);
 }
 
 static void poll_dtr(void)
@@ -58,26 +83,8 @@ static void poll_dtr(void)
 		}
 
 		if (cdc_val != cdc_ready[i]) {
-			u32_t baudrate;
-
-			err = uart_line_ctrl_get(devices[i],
-						UART_LINE_CTRL_BAUD_RATE,
-						&baudrate);
-			if (err) {
-				LOG_WRN("uart_line_ctrl_get(BAUD_RATE): %d", err);
-				continue;
-			}
-
-			struct peer_conn_event *event = new_peer_conn_event();
-
-			event->peer_id = PEER_ID_USB;
-			event->dev_idx = i;
-			event->baudrate = baudrate;
-			event->conn_state =
-				cdc_val == 0 ? PEER_STATE_DISCONNECTED : PEER_STATE_CONNECTED;
-			EVENT_SUBMIT(event);
-
 			cdc_ready[i] = cdc_val;
+			send_conn_state_event(i, cdc_val != 0);
 		}
 	}
 }
@@ -241,13 +248,20 @@ static bool event_handler(const struct event_header *eh)
 					continue;
 				}
 
-				cdc_ready[i] = 0;
 				devices[i] = device_get_binding(dev_name);
 				if (devices[i]) {
 					enable_rx_irq(i);
 					LOG_DBG("%s available", log_strdup(dev_name));
 				} else {
 					LOG_ERR("%s not available", log_strdup(dev_name));
+					continue;
+				}
+
+				if (force_active) {
+					cdc_ready[i] = true;
+					send_conn_state_event(i, CDC_CTRL_ENABLE);
+				} else {
+					cdc_ready[i] = 0;
 				}
 			}
 
@@ -257,6 +271,32 @@ static bool event_handler(const struct event_header *eh)
 				&cdc_dtr_timer,
 				K_MSEC(USB_CDC_DTR_POLL_MS),
 				K_MSEC(USB_CDC_DTR_POLL_MS));
+
+			initialized = true;
+		}
+
+		return false;
+	}
+
+	if (is_cdc_ctrl_event(eh)) {
+		const struct cdc_ctrl_event *event =
+			cast_cdc_ctrl_event(eh);
+
+		if (!initialized) {
+			force_active = event->cmd == CDC_CTRL_ENABLE;
+
+			return false;
+		}
+
+		for (int i = 0; i < CDC_DEVICE_COUNT; ++i) {
+			if ((cdc_ready[i] && event->cmd == CDC_CTRL_ENABLE) ||
+				(cdc_ready[i] == 0 && event->cmd == CDC_CTRL_DISABLE)) {
+				/* Nothing to do */
+				continue;
+			}
+
+			cdc_ready[i] = event->cmd == CDC_CTRL_ENABLE;
+			send_conn_state_event(i, event->cmd == CDC_CTRL_ENABLE);
 		}
 
 		return false;
@@ -271,4 +311,5 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, uart_data_event);
+EVENT_SUBSCRIBE(MODULE, cdc_ctrl_event);
 EVENT_SUBSCRIBE_FINAL(MODULE, cdc_data_event);

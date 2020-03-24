@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef _BLE_CTRL_EVENT_H_
-#define _BLE_CTRL_EVENT_H_
+#ifndef _CDC_CTRL_EVENT_H_
+#define _CDC_CTRL_EVENT_H_
 
 /**
- * @brief BLE Control Event
- * @defgroup ble_ctrl_event BLE Control Event
+ * @brief CDC Control Event
+ * @defgroup cdc_ctrl_event CDC Control Event
  * @{
  */
 
@@ -22,19 +22,19 @@
 extern "C" {
 #endif
 
-enum ble_ctrl_cmd {
-	BLE_CTRL_ENABLE,
-	BLE_CTRL_DISABLE
+enum cdc_ctrl_cmd {
+	CDC_CTRL_ENABLE,
+	CDC_CTRL_DISABLE
 };
 
-/** BLE control event. */
-struct ble_ctrl_event {
+/** CDC control event. */
+struct cdc_ctrl_event {
 	struct event_header header;
 
-	enum ble_ctrl_cmd cmd;
+	enum cdc_ctrl_cmd cmd;
 };
 
-EVENT_TYPE_DECLARE(ble_ctrl_event);
+EVENT_TYPE_DECLARE(cdc_ctrl_event);
 
 #ifdef __cplusplus
 }
@@ -44,4 +44,4 @@ EVENT_TYPE_DECLARE(ble_ctrl_event);
  * @}
  */
 
-#endif /* _BLE_CTRL_EVENT_H_ */
+#endif /* _CDC_CTRL_EVENT_H_ */
