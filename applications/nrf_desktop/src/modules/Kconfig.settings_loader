@@ -6,7 +6,7 @@
 
 menu "Settings loading service"
 
-config DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
+config DESKTOP_SETTINGS_LOADER_USE_THREAD
 	bool "Enable loading of setting by separate thead"
 	depends on SETTINGS
 	help
@@ -14,25 +14,25 @@ config DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
 	  thread in background instead of use of system
 	  work queue for that purpose.
 
-config DESKTOP_SETTINGS_LOAD_THREAD_STACK_SIZE
+config DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE
 	int "Settings module thread stack size"
-	depends on DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
+	depends on DESKTOP_SETTINGS_LOADER_USE_THREAD
 	range 0 4096
 	default 1024
 	help
 	  Stack size for thread responsible for loading
 	  settings from flash memory.
 
-if !DESKTOP_SETTINGS_LOAD_BY_THREAD_ENABLE
-config DESKTOP_SETTINGS_LOAD_THREAD_STACK_SIZE
+if !DESKTOP_SETTINGS_LOADER_USE_THREAD
+config DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE
 	int
 	default 0
 endif
 
 if SETTINGS
 
-module = DESKTOP_SETTINGS_LOAD
-module-str = Settings load
+module = DESKTOP_SETTINGS_LOADER
+module-str = Settings loader
 source "subsys/logging/Kconfig.template.log_config"
 
 endif
