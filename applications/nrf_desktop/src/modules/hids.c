@@ -63,6 +63,7 @@ static bool secured;
 static bool protocol_boot;
 
 static struct config_channel_state cfg_chan;
+static struct k_delayed_work notify_secured;
 
 static void broadcast_subscription_change(u8_t report_id, bool enabled)
 {
@@ -443,6 +444,21 @@ static void send_hid_report(const struct hid_report_event *event)
 	}
 }
 
+static void notify_secured_fn(struct k_work *work)
+{
+	int err = bt_gatt_hids_notify_connected(&hids_obj, cur_conn);
+
+	if (!err) {
+		for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
+			bool enabled = report_enabled[r_id];
+			broadcast_subscription_change(r_id, enabled);
+		}
+	} else {
+		LOG_ERR("Failed to notify the HID service about the"
+			" connection");
+	}
+}
+
 static void notify_hids(const struct ble_peer_event *event)
 {
 	int err = 0;
@@ -467,20 +483,20 @@ static void notify_hids(const struct ble_peer_event *event)
 
 		cur_conn = NULL;
 		secured = false;
+		if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
+			k_delayed_work_cancel(&notify_secured);
+		}
 		break;
 
 	case PEER_STATE_SECURED:
 		__ASSERT_NO_MSG(cur_conn == event->id);
 		secured = true;
-		err = bt_gatt_hids_notify_connected(&hids_obj, event->id);
-		if (!err) {
-			for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
-				bool enabled = report_enabled[r_id];
-				broadcast_subscription_change(r_id, enabled);
-			}
+
+		if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
+			k_delayed_work_submit(&notify_secured,
+				CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY);
 		} else {
-			LOG_ERR("Failed to notify the HID service about the "
-				"connection");
+			notify_secured_fn(NULL);
 		}
 
 		break;
@@ -523,6 +539,11 @@ static bool event_handler(const struct event_header *eh)
 
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
+
+			if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
+				k_delayed_work_init(&notify_secured,
+						    notify_secured_fn);
+			}
 
 			if (module_init()) {
 				LOG_ERR("Service init failed");
