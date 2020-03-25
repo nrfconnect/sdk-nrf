@@ -52,6 +52,21 @@ config SB_VALIDATION_METADATA_OFFSET
 
 if SECURE_BOOT_VALIDATION
 
+config SB_VALIDATE_FW_SIGNATURE
+	bool
+	default y if !SOC_NRF5340_CPUNET
+	depends on IS_SECURE_BOOTLOADER
+	help
+	  Signature validation.
+
+config SB_VALIDATE_FW_HASH
+	bool
+	default y
+	depends on SOC_NRF5340_CPUNET && IS_SECURE_BOOTLOADER
+	help
+	  Hash validation (not secure). Only meant for nRF5340 network core
+	  since the app core will do the signature validation.
+
 EXT_API = BL_VALIDATE_FW
 id = 0x1101
 flags = 3
