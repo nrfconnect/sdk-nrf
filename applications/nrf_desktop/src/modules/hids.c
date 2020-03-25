@@ -50,7 +50,7 @@ BT_GATT_HIDS_DEF(hids_obj,
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		 REPORT_SIZE_USER_CONFIG,
 #endif
-		 0 /* Appease macro with dummy zero */
+		 0 /* Appease macro with a dummy zero */
 );
 
 
@@ -60,11 +60,17 @@ static bool subscribed[REPORT_ID_COUNT];
 
 static struct bt_conn *cur_conn;
 static bool secured;
+static bool protocol_boot;
 
 static struct config_channel_state cfg_chan;
 
 static void broadcast_subscription_change(u8_t report_id, bool enabled)
 {
+	bool boot = (report_id == REPORT_ID_BOOT_MOUSE) ||
+		    (report_id == REPORT_ID_BOOT_KEYBOARD);
+
+	enabled = enabled && (protocol_boot == boot);
+
 	if (enabled == subscribed[report_id]) {
 		/* No change in subscription. */
 		return;
@@ -95,14 +101,21 @@ static void pm_evt_handler(enum bt_gatt_hids_pm_evt evt, struct bt_conn *conn)
 	switch (evt) {
 	case BT_GATT_HIDS_PM_EVT_BOOT_MODE_ENTERED:
 		LOG_INF("Boot mode");
+		protocol_boot = true;
 		break;
 
 	case BT_GATT_HIDS_PM_EVT_REPORT_MODE_ENTERED:
 		LOG_INF("Report mode");
+		protocol_boot = false;
 		break;
 
 	default:
 		break;
+	}
+
+	for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
+		bool enabled = report_enabled[r_id];
+		broadcast_subscription_change(r_id, enabled);
 	}
 }
 
@@ -144,14 +157,26 @@ static void hid_report_sent(const struct bt_conn *conn, u8_t report_id, bool err
 	EVENT_SUBMIT(event);
 }
 
+static void boot_mouse_report_sent_cb(struct bt_conn *conn, void *user_data)
+{
+	ARG_UNUSED(user_data);
+	hid_report_sent(conn, REPORT_ID_BOOT_MOUSE, false);
+}
 static void boot_mouse_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	LOG_ERR("Not supported");
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE));
+	async_notif_handler(REPORT_ID_BOOT_MOUSE, evt);
 }
 
+static void boot_keyboard_report_sent_cb(struct bt_conn *conn, void *user_data)
+{
+	ARG_UNUSED(user_data);
+	hid_report_sent(conn, REPORT_ID_BOOT_KEYBOARD, false);
+}
 static void boot_keyboard_notif_handler(enum bt_gatt_hids_notif_evt evt)
 {
-	LOG_ERR("Not supported");
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD));
+	async_notif_handler(REPORT_ID_BOOT_KEYBOARD, evt);
 }
 
 static void mouse_report_sent_cb(struct bt_conn *conn, void *user_data)
@@ -337,14 +362,14 @@ static int module_init(void)
 	hids_init_param.outp_rep_group_init.cnt = or_pos;
 
 	/* Boot protocol setup */
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_MOUSE)) {
-		hids_init_param.is_mouse = false;
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE)) {
+		hids_init_param.is_mouse = true;
 		hids_init_param.boot_mouse_notif_handler =
 			boot_mouse_notif_handler;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
-		hids_init_param.is_kb = false;
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD)) {
+		hids_init_param.is_kb = true;
 		hids_init_param.boot_kb_notif_handler =
 			boot_keyboard_notif_handler;
 	}
@@ -365,6 +390,8 @@ static void send_hid_report(const struct hid_report_event *event)
 		[REPORT_ID_KEYBOARD_KEYS] = keyboard_keys_report_sent_cb,
 		[REPORT_ID_SYSTEM_CTRL]   = system_ctrl_report_sent_cb,
 		[REPORT_ID_CONSUMER_CTRL] = consumer_ctrl_report_sent_cb,
+		[REPORT_ID_BOOT_MOUSE] = boot_mouse_report_sent_cb,
+		[REPORT_ID_BOOT_KEYBOARD] = boot_keyboard_report_sent_cb,
 	};
 
 	if (cur_conn != event->subscriber) {
@@ -380,8 +407,10 @@ static void send_hid_report(const struct hid_report_event *event)
 	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(report_index));
 	__ASSERT_NO_MSG(report_sent_cb[report_id]);
 
-	if (!report_enabled[report_id]) {
+	if (!subscribed[report_id]) {
 		/* Notification disabled */
+		LOG_WRN("Notification disabled");
+		hid_report_sent(cur_conn, report_id, true);
 		return;
 	}
 
@@ -389,10 +418,24 @@ static void send_hid_report(const struct hid_report_event *event)
 	size_t size = event->dyndata.size - sizeof(report_id);
 	int err;
 
-	err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
-					report_index[report_id],
-					buffer, size,
-					report_sent_cb[report_id]);
+	switch (report_id) {
+	case REPORT_ID_BOOT_MOUSE:
+		err = bt_gatt_hids_boot_mouse_inp_rep_send(&hids_obj, cur_conn,
+							   &buffer[0], buffer[1],
+							   buffer[2], report_sent_cb[report_id]);
+		break;
+	case REPORT_ID_BOOT_KEYBOARD:
+		err = bt_gatt_hids_boot_kb_inp_rep_send(&hids_obj, cur_conn,
+							buffer, size,
+							report_sent_cb[report_id]);
+		break;
+	default:
+		err = bt_gatt_hids_inp_rep_send(&hids_obj, cur_conn,
+						report_index[report_id],
+						buffer, size,
+						report_sent_cb[report_id]);
+		break;
+	}
 
 	if (err) {
 		LOG_ERR("Cannot send report (%d)", err);

@@ -46,10 +46,17 @@ enum state {
 #define SUBSCRIBER_COUNT (IS_ENABLED(CONFIG_DESKTOP_HIDS_ENABLE) + \
 			  IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE))
 
-#define INPUT_REPORT_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) +	\
-			    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) +	\
-			    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) +	\
-			    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT))
+#define INPUT_REPORT_DATA_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) +		\
+				 IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) +	\
+				 IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) +	\
+				 IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT))
+
+#define INPUT_REPORT_STATE_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) +		\
+				  IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) +	\
+				  IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) +	\
+				  IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT) +	\
+				  IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) +		\
+				  IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD))
 
 #define ITEM_COUNT MAX(MAX(MOUSE_REPORT_BUTTON_COUNT_MAX,	\
 			   KEYBOARD_REPORT_KEY_COUNT_MAX),	\
@@ -110,18 +117,19 @@ struct report_state {
 struct subscriber {
 	const void *id;
 	bool is_usb;
-	struct report_state state[INPUT_REPORT_COUNT];
+	struct report_state state[INPUT_REPORT_STATE_COUNT];
 };
 
 /**@brief HID state structure. */
 struct hid_state {
-	struct report_data report_data[INPUT_REPORT_COUNT];
+	struct report_data report_data[INPUT_REPORT_DATA_COUNT];
 	struct subscriber subscriber[SUBSCRIBER_COUNT];
 	struct subscriber *selected;
 };
 
 
-static u8_t report_index[REPORT_ID_COUNT];
+static u8_t report_data_index[REPORT_ID_COUNT];
+static u8_t report_state_index[REPORT_ID_COUNT];
 static struct hid_state state;
 
 
@@ -422,9 +430,9 @@ static struct report_state *get_report_state(struct subscriber *subscriber,
 {
 	__ASSERT_NO_MSG(subscriber);
 
-	size_t pos = report_index[report_id];
+	size_t pos = report_state_index[report_id];
 
-	if (pos < INPUT_REPORT_COUNT) {
+	if (pos < ARRAY_SIZE(subscriber->state)) {
 		return &subscriber->state[pos];
 	}
 
@@ -433,9 +441,9 @@ static struct report_state *get_report_state(struct subscriber *subscriber,
 
 static struct report_data *get_report_data(u8_t report_id)
 {
-	size_t pos = report_index[report_id];
+	size_t pos = report_data_index[report_id];
 
-	__ASSERT_NO_MSG(pos < INPUT_REPORT_COUNT);
+	__ASSERT_NO_MSG(pos < ARRAY_SIZE(state.report_data));
 
 	return &state.report_data[pos];
 }
@@ -474,13 +482,11 @@ static void connect_subscriber(const void *subscriber_id, bool is_usb)
 			if (state.selected && is_usb) {
 				/* If USB is connected force disconnect report
 				 * data from the connected report states. */
-				for (u8_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
-					if (report_index[r_id] != INPUT_REPORT_COUNT) {
-						struct report_data *rd = get_report_data(r_id);
+				for (size_t j = 0; j < ARRAY_SIZE(state.report_data); j++) {
+					struct report_data *rd = &state.report_data[j];
 
-						rd->linked_rs = NULL;
-						clear_report_data(rd);
-					}
+					rd->linked_rs = NULL;
+					clear_report_data(rd);
 				}
 				state.selected = NULL;
 			}
@@ -634,7 +640,11 @@ static bool key_value_set(struct items *items, u16_t usage_id, s16_t value)
 
 static void send_report_keyboard(u8_t report_id, struct report_data *rd)
 {
-	__ASSERT_NO_MSG(report_id == REPORT_ID_KEYBOARD_KEYS);
+	__ASSERT_NO_MSG((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
+			 (report_id == REPORT_ID_KEYBOARD_KEYS)) ||
+			(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
+			 (report_id == REPORT_ID_BOOT_KEYBOARD)));
+	/* Both normal and boot protocol reports use the same formatting. */
 
 	if (!IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
 		/* Not supported. */
@@ -769,6 +779,62 @@ static void send_report_mouse(u8_t report_id, struct report_data *rd)
 	}
 }
 
+static void send_report_boot_mouse(u8_t report_id, struct report_data *rd)
+{
+	__ASSERT_NO_MSG(report_id == REPORT_ID_BOOT_MOUSE);
+
+	if (!IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE)) {
+		/* Not supported. */
+		__ASSERT_NO_MSG(false);
+		return;
+	}
+
+	/* X/Y axis */
+	s8_t dx = MAX(MIN(rd->axes.axis[MOUSE_REPORT_AXIS_X], INT8_MAX), INT8_MIN);
+	s8_t dy = MAX(MIN(-rd->axes.axis[MOUSE_REPORT_AXIS_Y], INT8_MAX), INT8_MIN);
+
+	rd->axes.axis[MOUSE_REPORT_AXIS_X] -= dx;
+	rd->axes.axis[MOUSE_REPORT_AXIS_Y] += dy;
+	rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL] = 0;
+
+	/* Traverse pressed keys and build mouse buttons bitmask */
+	u8_t button_bm = 0;
+	for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
+		struct item item = rd->items.item[i];
+
+		if (item.usage_id) {
+			__ASSERT_NO_MSG(item.usage_id <= 8);
+			__ASSERT_NO_MSG(item.value > 0);
+
+			u8_t mask = 1 << (item.usage_id - 1);
+
+			button_bm |= mask;
+		}
+	}
+
+
+	size_t report_size = sizeof(report_id) + sizeof(dx) + sizeof(dy) +
+			     sizeof(button_bm);
+	struct hid_report_event *event = new_hid_report_event(report_size);
+
+	event->subscriber = state.selected->id;
+
+	event->dyndata.data[0] = report_id;
+	event->dyndata.data[1] = button_bm;
+	event->dyndata.data[2] = dx;
+	event->dyndata.data[3] = dy;
+
+	EVENT_SUBMIT(event);
+
+	if ((rd->axes.axis[MOUSE_REPORT_AXIS_X] != 0) ||
+	    (rd->axes.axis[MOUSE_REPORT_AXIS_Y] != 0)) {
+		/* If there is some axis data to send, request report update. */
+		rd->update_needed = true;
+	} else {
+		rd->update_needed = false;
+	}
+}
+
 static void send_report_ctrl(u8_t report_id, struct report_data *rd)
 {
 	size_t report_size = sizeof(report_id);
@@ -872,6 +938,14 @@ static void report_send(struct report_data *rd, bool check_state, bool send_alwa
 				send_report_ctrl(rs->report_id, rd);
 				break;
 
+			case REPORT_ID_BOOT_KEYBOARD:
+				send_report_keyboard(rs->report_id, rd);
+				break;
+
+			case REPORT_ID_BOOT_MOUSE:
+				send_report_boot_mouse(rs->report_id, rd);
+				break;
+
 			default:
 				/* Unhandled HID report type. */
 				__ASSERT_NO_MSG(false);
@@ -961,13 +1035,28 @@ static void connect(const void *subscriber_id, u8_t report_id)
 	rs->report_id = report_id;
 
 	/* Connect with apriopriete report data. */
-	struct report_data *rd = get_report_data(report_id);
+	u8_t report_data_id = report_id;
+	switch (report_id) {
+	case REPORT_ID_BOOT_MOUSE:
+		report_data_id = REPORT_ID_MOUSE;
+		break;
+	case REPORT_ID_BOOT_KEYBOARD:
+		report_data_id = REPORT_ID_KEYBOARD_KEYS;
+		break;
+	default:
+		/* Use the same report id. */
+		break;
+	}
+
+	struct report_data *rd = get_report_data(report_data_id);
 
 	rs->linked_rd = rd;
 
 	if (state.selected == subscriber) {
 		/* Route report data to report state. */
-		__ASSERT_NO_MSG(!rd->linked_rs);
+		if (rd->linked_rs) {
+			LOG_WRN("Force report data unlink");
+		}
 		rd->linked_rs = rs;
 
 		if (!eventq_is_empty(&rd->eventq)) {
@@ -1099,33 +1188,66 @@ static void init(void)
 	}
 
 	/* Mark unused report IDs. */
-	for (size_t i = 0; i < ARRAY_SIZE(report_index); i++) {
-		report_index[i] = INPUT_REPORT_COUNT;
+	for (size_t i = 0; i < ARRAY_SIZE(report_data_index); i++) {
+		report_data_index[i] = INPUT_REPORT_DATA_COUNT;
+	}
+	for (size_t i = 0; i < ARRAY_SIZE(report_state_index); i++) {
+		report_state_index[i] = INPUT_REPORT_STATE_COUNT;
 	}
 
-	size_t id = 0;
+	size_t data_id = 0;
+	size_t state_id = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
-		report_index[REPORT_ID_MOUSE] = id;
-		state.report_data[id].items.item_count_max = MOUSE_REPORT_BUTTON_COUNT_MAX;
-		state.report_data[id].axes.axis_count = MOUSE_REPORT_AXIS_COUNT;
-		id++;
+		report_data_index[REPORT_ID_MOUSE] = data_id;
+		report_state_index[REPORT_ID_MOUSE] = state_id;
+
+		state.report_data[data_id].items.item_count_max = MOUSE_REPORT_BUTTON_COUNT_MAX;
+		state.report_data[data_id].axes.axis_count = MOUSE_REPORT_AXIS_COUNT;
+
+		data_id++;
+		state_id++;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
-		report_index[REPORT_ID_KEYBOARD_KEYS] = id;
-		state.report_data[id].items.item_count_max = KEYBOARD_REPORT_KEY_COUNT_MAX;
-		id++;
+		report_data_index[REPORT_ID_KEYBOARD_KEYS] = data_id;
+		report_state_index[REPORT_ID_KEYBOARD_KEYS] = state_id;
+
+		state.report_data[data_id].items.item_count_max = KEYBOARD_REPORT_KEY_COUNT_MAX;
+
+		data_id++;
+		state_id++;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT)) {
-		report_index[REPORT_ID_SYSTEM_CTRL] = id;
-		state.report_data[id].items.item_count_max = SYSTEM_CTRL_REPORT_KEY_COUNT_MAX;
-		id++;
+		report_data_index[REPORT_ID_SYSTEM_CTRL] = data_id;
+		report_state_index[REPORT_ID_SYSTEM_CTRL] = state_id;
+
+		state.report_data[data_id].items.item_count_max = SYSTEM_CTRL_REPORT_KEY_COUNT_MAX;
+
+		data_id++;
+		state_id++;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
-		report_index[REPORT_ID_CONSUMER_CTRL] = id;
-		state.report_data[id].items.item_count_max = CONSUMER_CTRL_REPORT_KEY_COUNT_MAX;
-		id++;
+		report_data_index[REPORT_ID_CONSUMER_CTRL] = data_id;
+		report_state_index[REPORT_ID_CONSUMER_CTRL] = state_id;
+
+		state.report_data[data_id].items.item_count_max = CONSUMER_CTRL_REPORT_KEY_COUNT_MAX;
+
+		data_id++;
+		state_id++;
 	}
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE)) {
+		report_state_index[REPORT_ID_BOOT_MOUSE] = state_id;
+
+		state_id++;
+	}
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD)) {
+		report_state_index[REPORT_ID_BOOT_KEYBOARD] = state_id;
+
+		state_id++;
+	}
+
+	__ASSERT_NO_MSG(data_id == INPUT_REPORT_DATA_COUNT);
+	__ASSERT_NO_MSG(state_id == INPUT_REPORT_STATE_COUNT);
 }
 
 static bool handle_motion_event(const struct motion_event *event)
