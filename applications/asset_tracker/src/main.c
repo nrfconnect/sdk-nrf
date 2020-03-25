@@ -488,9 +488,11 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 		break;
 	case GPS_EVT_OPERATION_BLOCKED:
 		LOG_INF("GPS_EVT_OPERATION_BLOCKED");
+		ui_led_set_pattern(UI_LED_GPS_BLOCKED);
 		break;
 	case GPS_EVT_OPERATION_UNBLOCKED:
 		LOG_INF("GPS_EVT_OPERATION_UNBLOCKED");
+		ui_led_set_pattern(UI_LED_GPS_SEARCHING);
 		break;
 	case GPS_EVT_AGPS_DATA_NEEDED:
 		LOG_INF("GPS_EVT_AGPS_DATA_NEEDED");
