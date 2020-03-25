@@ -21,10 +21,10 @@
 # Boards
 /boards/                                  @ioannisg @anangl
 # All cmake related files
-/cmake/                                   @SebastianBoe
-/CMakeLists.txt                           @SebastianBoe
+/cmake/                                   @tejlmand
+/CMakeLists.txt                           @tejlmand
 # All Kconfig related files
-Kconfig*                                  @SebastianBoe
+Kconfig*                                  @tejlmand
 # All doc related files
 /doc/                                     @ru-fu
 /doc/CMakeLists.txt                       @carlescufi
@@ -90,7 +90,7 @@ Kconfig*                                  @SebastianBoe
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/radio_test/README.rst @b-gent
 /samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
-/samples/CMakeLists.txt                   @SebastianBoe
+/samples/CMakeLists.txt                   @tejlmand
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
 /subsys/bluetooth/                        @joerchan @carlescufi
