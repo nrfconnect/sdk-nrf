@@ -23,6 +23,17 @@ config DESKTOP_HID_PERIPHERAL
 
 if DESKTOP_HIDS_ENABLE
 
+config DESKTOP_HIDS_FIRST_REPORT_DELAY
+	int "First HID report delay [ms]"
+	default 0
+	range 0 2000
+	help
+	  If set to non-zero, the peripheral will delay sending first HID
+	  report after the connection security was established. This is done to
+	  ensure that central will be ready to receive the data. nRF Desktop
+	  centrals reenable the subscriptions on every reconnection. HID report
+	  is dropped if received before the subscription was reenabled.
+
 module = DESKTOP_HIDS
 module-str = HID over GATT service
 source "subsys/logging/Kconfig.template.log_config"
