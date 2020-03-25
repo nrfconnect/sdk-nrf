@@ -30,6 +30,11 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #define REPORT_TYPE_OUTPUT	0x02
 #define REPORT_TYPE_FEATURE	0x03
 
+
+#ifndef CONFIG_USB_HID_PROTOCOL_CODE
+#define CONFIG_USB_HID_PROTOCOL_CODE -1
+#endif
+
 static enum usb_state state;
 static u8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
@@ -164,15 +169,31 @@ static void send_hid_report(const struct hid_report_event *event)
 		return;
 	}
 
-	if (hid_protocol != HID_PROTOCOL_REPORT) {
-		/* Not supported */
-		return;
-	}
+	const u8_t *report_buffer = event->dyndata.data;
+	size_t report_size = event->dyndata.size;
 
+	__ASSERT_NO_MSG(report_size > 0);
 	__ASSERT_NO_MSG(sent_report_id == REPORT_ID_COUNT);
-	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
-	sent_report_id = event->dyndata.data[0];
+	if (hid_protocol != HID_PROTOCOL_REPORT) {
+		if ((IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) &&
+		     (report_buffer[0] == REPORT_ID_BOOT_MOUSE)) ||
+		    (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
+		     (report_buffer[0] == REPORT_ID_BOOT_KEYBOARD))) {
+			sent_report_id = event->dyndata.data[0];
+			/* For boot protocol omit the first byte. */
+			report_buffer++;
+			report_size--;
+			__ASSERT_NO_MSG(report_size > 0);
+		} else {
+			/* Boot protocol is not supported or this is not a
+			 * boot report.
+			 */
+			return;
+		}
+	} else {
+		sent_report_id = event->dyndata.data[0];
+	}
 
 	int err = hid_int_ep_write(usb_dev, event->dyndata.data,
 				   event->dyndata.size, NULL);
@@ -208,7 +229,8 @@ static void broadcast_subscription_change(void)
 			new_hid_report_subscription_event();
 
 		event->report_id  = REPORT_ID_MOUSE;
-		event->enabled    = (state == USB_STATE_ACTIVE);
+		event->enabled    = (state == USB_STATE_ACTIVE) &&
+				    (hid_protocol == HID_PROTOCOL_REPORT);
 		event->subscriber = &state;
 
 		EVENT_SUBMIT(event);
@@ -218,7 +240,8 @@ static void broadcast_subscription_change(void)
 			new_hid_report_subscription_event();
 
 		event->report_id  = REPORT_ID_KEYBOARD_KEYS;
-		event->enabled    = (state == USB_STATE_ACTIVE);
+		event->enabled    = (state == USB_STATE_ACTIVE) &&
+				    (hid_protocol == HID_PROTOCOL_REPORT);
 		event->subscriber = &state;
 
 		EVENT_SUBMIT(event);
@@ -228,7 +251,8 @@ static void broadcast_subscription_change(void)
 			new_hid_report_subscription_event();
 
 		event->report_id  = REPORT_ID_SYSTEM_CTRL;
-		event->enabled    = (state == USB_STATE_ACTIVE);
+		event->enabled    = (state == USB_STATE_ACTIVE) &&
+				    (hid_protocol == HID_PROTOCOL_REPORT);
 		event->subscriber = &state;
 
 		EVENT_SUBMIT(event);
@@ -238,13 +262,39 @@ static void broadcast_subscription_change(void)
 			new_hid_report_subscription_event();
 
 		event->report_id  = REPORT_ID_CONSUMER_CTRL;
-		event->enabled    = (state == USB_STATE_ACTIVE);
+		event->enabled    = (state == USB_STATE_ACTIVE) &&
+				    (hid_protocol == HID_PROTOCOL_REPORT);
+		event->subscriber = &state;
+
+		EVENT_SUBMIT(event);
+	}
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE)) {
+		struct hid_report_subscription_event *event =
+			new_hid_report_subscription_event();
+
+		event->report_id  = REPORT_ID_BOOT_MOUSE;
+		event->enabled    = (state == USB_STATE_ACTIVE) &&
+				    (hid_protocol == HID_PROTOCOL_BOOT);
+		event->subscriber = &state;
+
+		EVENT_SUBMIT(event);
+	}
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD)) {
+		struct hid_report_subscription_event *event =
+			new_hid_report_subscription_event();
+
+		event->report_id  = REPORT_ID_BOOT_KEYBOARD;
+		event->enabled    = (state == USB_STATE_ACTIVE) &&
+				    (hid_protocol == HID_PROTOCOL_BOOT);
 		event->subscriber = &state;
 
 		EVENT_SUBMIT(event);
 	}
 
 	LOG_INF("USB HID %sabled", (state == USB_STATE_ACTIVE) ? ("en"):("dis"));
+	if (state == USB_STATE_ACTIVE) {
+		LOG_INF("%s_PROTOCOL active", hid_protocol ? "REPORT" : "BOOT");
+	}
 }
 
 static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
@@ -328,6 +378,7 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		broadcast_usb_state();
 
 		if (new_state == USB_STATE_ACTIVE) {
+			hid_protocol = HID_PROTOCOL_REPORT;
 			broadcast_subscription_change();
 		}
 
@@ -340,8 +391,33 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 
 static void protocol_change(u8_t protocol)
 {
+	BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_DISABLED) ==
+			 !IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL),
+			 "Boot protocol setup inconsistency");
+	BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) ==
+			 (IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL) && (CONFIG_USB_HID_PROTOCOL_CODE == 1)),
+			 "Boot protocol code does not reflect selected interface");
+	BUILD_ASSERT_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) ==
+			 (IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL) && (CONFIG_USB_HID_PROTOCOL_CODE == 2)),
+			 "Boot protocol code does not reflect selected interface");
+
+	if ((protocol != HID_PROTOCOL_BOOT) &&
+	    (protocol != HID_PROTOCOL_REPORT)) {
+		__ASSERT_NO_MSG(false);
+		return;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_DISABLED) &&
+	    (protocol == HID_PROTOCOL_BOOT)) {
+		LOG_WRN("BOOT protocol is not supported");
+		return;
+	}
+
 	hid_protocol = protocol;
-	LOG_INF("%s_PROTOCOL selected", protocol ? "REPORT" : "BOOT");
+
+	if (state == USB_STATE_ACTIVE) {
+		broadcast_subscription_change();
+	}
 }
 
 static int usb_init(void)

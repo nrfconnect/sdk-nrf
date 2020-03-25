@@ -68,4 +68,29 @@ config DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
 
 endmenu
 
+
+choice
+	prompt "Select boot protocol interface"
+	default DESKTOP_HID_BOOT_INTERFACE_DISABLED
+
+config DESKTOP_HID_BOOT_INTERFACE_DISABLED
+	bool "Boot interface disabled"
+	help
+	  Device will not provide any boot interface.
+
+config DESKTOP_HID_BOOT_INTERFACE_MOUSE
+	bool "Boot interface mouse"
+	depends on DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	help
+	  Device will use the mouse boot report.
+
+config DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
+	bool "Boot interface keyboard"
+	depends on DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	help
+	  Device will use the keyboard boot report.
+
+endchoice
+
+
 endmenu
