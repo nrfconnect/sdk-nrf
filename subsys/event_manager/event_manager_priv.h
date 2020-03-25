@@ -89,12 +89,13 @@ extern "C" {
 #define _EVENT_ALLOCATOR_FN(ename)					\
 	static inline struct ename *_CONCAT(new_, ename)(void)		\
 	{								\
-		struct ename *event = k_malloc(sizeof(*event));	\
+		struct ename *event = k_malloc(sizeof(*event));		\
 		BUILD_ASSERT_MSG(offsetof(struct ename, header) == 0,	\
 				 "");					\
-		if (unlikely(!event)) {				\
+		if (unlikely(!event)) {					\
 			printk("Event Manager OOM error\n");		\
 			LOG_PANIC();					\
+			__ASSERT_NO_MSG(false);				\
 			sys_reboot(SYS_REBOOT_WARM);			\
 			return NULL;					\
 		}							\
@@ -116,9 +117,10 @@ extern "C" {
 				 sizeof(*event), "");			\
 		BUILD_ASSERT_MSG(offsetof(struct ename, header) == 0,	\
 				 "");					\
-		if (unlikely(!event)) {				\
+		if (unlikely(!event)) {					\
 			printk("Event Manager OOM error\n");		\
 			LOG_PANIC();					\
+			__ASSERT_NO_MSG(false);				\
 			sys_reboot(SYS_REBOOT_WARM);			\
 			return NULL;					\
 		}							\
