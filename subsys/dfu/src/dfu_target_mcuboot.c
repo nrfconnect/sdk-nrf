@@ -126,7 +126,7 @@ int dfu_target_mcuboot_init(size_t file_size, dfu_target_callback_t cb)
 	}
 
 	if (file_size > PM_MCUBOOT_SECONDARY_SIZE) {
-		LOG_ERR("Requested file too big to fit in flash %d > %d",
+		LOG_ERR("Requested file too big to fit in flash %zu > 0x%x",
 			file_size, PM_MCUBOOT_SECONDARY_SIZE);
 		return -EFBIG;
 	}
