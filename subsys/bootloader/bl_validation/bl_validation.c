@@ -112,69 +112,27 @@ validation_info_find(u32_t start_address, u32_t search_distance)
 }
 
 
-static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
-		const struct fw_info *fwinfo, bool external)
+#ifdef CONFIG_SB_VALIDATE_FW_SIGNATURE
+static bool validate_signature(u32_t fw_src_address,
+				const struct fw_info *fwinfo,
+				const struct fw_validation_info *fw_val_info,
+				bool external)
 {
+	int retval = bl_crypto_init();
+
+	if (retval) {
+		PRINT("bl_crypto_init() returned %d.\n\r", retval);
+		return false;
+	}
+
+	u32_t num_public_keys = num_public_keys_read();
+	bl_root_of_trust_verify_t rot_verify = external ?
+					bl_root_of_trust_verify_external :
+					bl_root_of_trust_verify;
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
 	 */
 	__aligned(4) u8_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
-	int retval = -EFAULT;
-	int err;
-	const struct fw_validation_info *fw_val_info;
-	u32_t num_public_keys;
-	bl_root_of_trust_verify_t rot_verify = external ?
-					bl_root_of_trust_verify_external :
-					bl_root_of_trust_verify;
-
-	if (!fwinfo) {
-		PRINT("NULL parameter.\n\r");
-		return false;
-	}
-
-	if (!fw_info_check((u32_t)fwinfo)) {
-		PRINT("Invalid firmware info format.\n\r");
-		return false;
-	}
-
-	if (fwinfo->valid != CONFIG_FW_INFO_VALID_VAL) {
-		PRINT("Firwmare has been invalidated: 0x%x.\n\r",
-			fwinfo->valid);
-		return false;
-	}
-
-	if (!(((u32_t)fwinfo >= fw_src_address)
-		&& (((u32_t)fwinfo + fwinfo->total_size)
-			< (fw_src_address + fwinfo->size)))) {
-		PRINT("Firmware info is not within signed region.\n\r");
-		return false;
-	}
-
-	if (fw_dst_address != fwinfo->address) {
-		PRINT("The firmware doesn't belong at destination addr.\n\r");
-		return false;
-	}
-
-	fw_val_info = validation_info_find(
-		fw_src_address + fwinfo->size, 4);
-
-	if (!fw_val_info) {
-		PRINT("Could not find valid firmware validation info.\n\r");
-		return false;
-	}
-
-	if (fw_val_info->address != fwinfo->address) {
-		PRINT("Validation info doesn't belong to this firmware.\n\r");
-		return false;
-	}
-
-	err = bl_crypto_init();
-	if (err) {
-		PRINT("bl_crypto_init() returned %d.\n\r", err);
-		return false;
-	}
-
-	num_public_keys = num_public_keys_read();
 
 	for (u32_t key_data_idx = 0; key_data_idx < num_public_keys;
 			key_data_idx++) {
@@ -220,9 +178,95 @@ static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
 		return false;
 	}
 
-	PRINT("Signature verified.\n\r");
+	PRINT("Firmware signature verified.\n\r");
 
 	return true;
+}
+
+
+#elif defined(CONFIG_SB_VALIDATE_FW_HASH)
+static bool validate_hash(u32_t fw_src_address, const struct fw_info *fwinfo,
+			const struct fw_validation_info *fw_val_info,
+			bool external)
+{
+	int retval = bl_crypto_init();
+
+	if (retval) {
+		PRINT("bl_crypto_init() returned %d.\n\r", retval);
+		return false;
+	}
+
+	retval = bl_sha256_verify((u8_t *)fw_src_address, fwinfo->size,
+			fw_val_info->hash);
+
+	if (retval != 0) {
+		PRINT("Firmware validation failed with error %d.\n\r",
+			    retval);
+		return false;
+	}
+
+	PRINT("Firmware hash verified.\n\r");
+
+	return true;
+}
+#endif
+
+
+static bool validate_firmware(u32_t fw_dst_address, u32_t fw_src_address,
+		const struct fw_info *fwinfo, bool external)
+{
+	const struct fw_validation_info *fw_val_info;
+
+	if (!fwinfo) {
+		PRINT("NULL parameter.\n\r");
+		return false;
+	}
+
+	if (!fw_info_check((u32_t)fwinfo)) {
+		PRINT("Invalid firmware info format.\n\r");
+		return false;
+	}
+
+	if (fwinfo->valid != CONFIG_FW_INFO_VALID_VAL) {
+		PRINT("Firwmare has been invalidated: 0x%x.\n\r",
+			fwinfo->valid);
+		return false;
+	}
+
+	if (!(((u32_t)fwinfo >= fw_src_address)
+		&& (((u32_t)fwinfo + fwinfo->total_size)
+			< (fw_src_address + fwinfo->size)))) {
+		PRINT("Firmware info is not within signed region.\n\r");
+		return false;
+	}
+
+	if (fw_dst_address != fwinfo->address) {
+		PRINT("The firmware doesn't belong at destination addr.\n\r");
+		return false;
+	}
+
+	fw_val_info = validation_info_find(
+		fw_src_address + fwinfo->size, 4);
+
+	if (!fw_val_info) {
+		PRINT("Could not find valid firmware validation info.\n\r");
+		return false;
+	}
+
+	if (fw_val_info->address != fwinfo->address) {
+		PRINT("Validation info doesn't belong to this firmware.\n\r");
+		return false;
+	}
+
+#ifdef CONFIG_SB_VALIDATE_FW_SIGNATURE
+	return validate_signature(fw_src_address, fwinfo, fw_val_info,
+				external);
+#elif defined(CONFIG_SB_VALIDATE_FW_HASH)
+	return validate_hash(fw_src_address, fwinfo, fw_val_info,
+				external);
+#else
+	#error "Validation not specified."
+#endif
 }
 
 
