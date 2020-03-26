@@ -8,10 +8,10 @@ import argparse
 import yaml
 import platform
 import sys
+from os import path
+
 
 def print_region(region, size, pm_config):
-    print("Partition Manager report")
-
     # Prepare colors (color code taken from size_report)
     bcolors_ansi = {
         "HEADER"    : '\033[95m',
@@ -30,7 +30,7 @@ def print_region(region, size, pm_config):
         bcolors = bcolors_ansi
 
     # Print header
-    print(bcolors["OKBLUE"] + "%s (0x%x):" % (region, size) + bcolors["ENDC"])
+    print(bcolors["OKBLUE"] + "%s (0x%x - %dkB):" % (region, size, size/1024) + bcolors["ENDC"])
 
     # Sort partitions three times:
     #  1. On whether they are a container (has a 'span'), containers first.
@@ -62,8 +62,11 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Parse given Partition Manager output YAML file and print a pretty report',
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("-i", "--input", required=True, type=str,
-                        help="Path to the YAML file from Partition Manager")
+    # This argument has nargs set to '*' even though it is required. This is because of the logic associated with the
+    # '--quiet' argument, which makes the script quit immediately. Hence we verify that this is set after 'quiet' is
+    # checked.
+    parser.add_argument("-i", "--input", required=True, type=str, nargs="*",
+                        help="Path to the domain specific YAML files from Partition Manager")
     parser.add_argument("-q", "--quiet", required=False, action='store_true',
                         help="Don't print anything")
 
@@ -77,11 +80,18 @@ def main():
 
     if args.quiet:
         sys.exit(0)
-    with open(args.input, 'r') as f:
-        pm_config = yaml.safe_load(f)
-    min_address = min((part['address'] for part in pm_config.values() if 'address' in part))
-    max_address = max((part['address'] + part['size'] for part in pm_config.values() if 'address' in part))
-    print_region('FLASH', max_address - min_address, pm_config)
+
+    if not args.input:
+        raise RuntimeError("No input files provided")
+
+    for i in args.input:
+        fn = path.basename(i)
+        domain_name = fn[fn.index("partitions_") + len("partitions_"):fn.index(".yml")]
+        with open(i, 'r') as f:
+            pm_config_primary = {k: v for k, v in yaml.safe_load(f).items() if v['region'] == 'flash_primary'}
+        min_address = min((part['address'] for part in pm_config_primary.values() if 'address' in part))
+        max_address = max((part['address'] + part['size'] for part in pm_config_primary.values() if 'address' in part))
+        print_region(domain_name, max_address - min_address, pm_config_primary)
 
 
 if __name__ == "__main__":
