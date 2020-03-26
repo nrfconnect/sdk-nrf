@@ -1,0 +1,17 @@
+# NRF AES ECB configuration options
+
+# Copyright (c) 2020 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+
+menuconfig CRYPTO_NRF_ECB
+	bool "nRF AES electronic codebook mode encryption"
+	depends on HAS_HW_NRF_ECB
+	help
+	  Enable nRF HAL-based AES ECB encryption driver
+
+config CRYPTO_NRF_ECB_DEV_NAME
+	string "nRF AES ECB device name"
+	default "CRYPTO_NRF_ECB"
+	depends on CRYPTO_NRF_ECB
+	help
+	  Device name for nRF AES ECB
