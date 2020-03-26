@@ -4,7 +4,7 @@ nRF Desktop
 ###########
 
 The nRF Desktop is a reference design of a HID device that is connected to a host through BLE or USB, or both.
-Depending on the configuration, this application can function as a mouse, a gaming mouse, or a keyboard.
+Depending on the configuration, this application can function as a mouse, a gaming mouse, a keyboard, or a connection dongle.
 
 .. note::
     The code is currently work-in-progress and as such is not fully functional, verified, or supported for product development.
@@ -111,9 +111,9 @@ The following threads are kept running in the application:
         * Shell thread (on build types with shell enabled)
         * BLE-related threads (the exact number depends on the selected Link Layer)
     * Application-related threads
-        * Motion sensor thread (running only on mouse)
-        * Settings loading thread (enabled by default only on keyboard)
-        * QoS data sampling thread (running only on dongle)
+        * Motion sensor thread (running only on a mouse)
+        * Settings loading thread (enabled by default only on a keyboard)
+        * QoS data sampling thread (running only on a dongle)
 
 Most of the application activity takes place in the context of the system workqueue thread, either through scheduled work objects or through the event manager callbacks (executed from the system workqueue thread).
 Because of this, the application does not need to handle resource protection.
@@ -205,7 +205,7 @@ Desktop mouse (nrf52_pca20044 and nrf52810_pca20045)
 
 Sample mouse or keyboard (nrf52840_pca10056)
       * The configuration uses the nRF52840 Development Kit.
-      * The build types allow to build the application both as mouse and as keyboard.
+      * The build types allow to build the application both as mouse or as keyboard.
       * Inputs are simulated based on the hardware button presses.
       * The configuration with bootloader is available.
 
@@ -334,12 +334,14 @@ Requirements
 
 The project comes with configuration files for the following boards:
 
-    * |nRF52840DK| - a sample where the mouse is emulated using DK buttons
-    * PCA20041 - nRF Desktop gaming mouse reference design
-    * PCA20037 - nRF Desktop keyboard reference design
-    * PCA20044 - nRF Desktop casual mouse reference design (nRF52832)
-    * PCA20045 - nRF Desktop casual mouse reference design (nRF52810)
-    * PCA10059 - nRF Desktop dongle reference design
+    * nRF52840 DK (PCA10056) - the application is configured to work as a gaming mouse (motion emulated using DK buttons)
+    * nRF52840 Gaming Mouse (PCA20041) - the application is configured to work as a gaming mouse
+    * nRF52832 Desktop Keyboard (PCA20037) - the application is configured to work as a keyboard
+    * nRF52832 Desktop Mouse (PCA20044) - the application is configured to work as a casual desktop mouse
+    * nRF52810 Desktop Mouse (PCA20045) - the application is configured to work as a casual desktop mouse
+    * nRF52840 USB Dongle (PCA10059) - the application is configured to work as a HID dongle
+    * nRF52833 USB Dongle (PCA10111) - the application is configured to work as a HID dongle
+    * nRF52833 DK (PCA10100) - the application is configured to work as a HID dongle
 
 The application was designed to allow easy porting to new hardware.
 Check :ref:`nrf_desktop_porting_guide` for more information.
