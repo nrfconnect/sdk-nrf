@@ -33,7 +33,7 @@ if(IMAGE_NAME)
 endif(IMAGE_NAME)
 
 function(add_child_image)
-  set(oneValueArgs NAME SOURCE_DIR)
+  set(oneValueArgs NAME SOURCE_DIR DOMAIN)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
 
   if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
@@ -58,22 +58,40 @@ endfunction()
 
 # See 'add_child_image'
 function(add_child_image_from_source)
-  set(oneValueArgs NAME SOURCE_DIR)
+  set(oneValueArgs NAME SOURCE_DIR DOMAIN)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
 
   if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
     message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
   endif()
 
-  # Set ${ACI_NAME}_BOARD based on what BOARD is set to if not already set by parent
-  # It is assumed that only the root app will be built as non-secure.
-  # This is not a valid assumption as there might be multiple non-secure
-  # images defined.
-  # TODO: Allow multiple non-secure images by using Kconfig to set the
-  # secure/non-secure property rather than using a separate board definition.
-  get_board_without_ns_suffix(${BOARD} ${ACI_NAME}_BOARD)
 
-  message("\n=== child image ${ACI_NAME} begin ===")
+  # Add the new partition manager domain if needed.
+  # The domain corresponds to the BOARD without the 'ns' suffix.
+  if (ACI_DOMAIN)
+    if (${ACI_NAME}_BOARD)
+      message(FATAL_ERROR
+        "Parent image cannot set BOARD of the child image when DOMAIN is set")
+    endif()
+    set(${ACI_NAME}_BOARD ${ACI_DOMAIN})
+    set(${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION ${ACI_NAME} CACHE STRING "" FORCE)
+  elseif (NOT ${ACI_NAME}_BOARD)
+    # Set ${ACI_NAME}_BOARD based on what BOARD is set to if not already set by parent
+    # It is assumed that only the root app will be built as non-secure.
+    # This is not a valid assumption as there might be multiple non-secure
+    # images defined.
+    # TODO: Allow multiple non-secure images by using Kconfig to set the
+    # secure/non-secure property rather than using a separate board definition.
+    get_board_without_ns_suffix(${BOARD} ${ACI_NAME}_BOARD)
+  endif()
+
+  if (NOT (${${ACI_NAME}_BOARD} IN_LIST PM_DOMAINS))
+    list(APPEND PM_DOMAINS ${${ACI_NAME}_BOARD})
+    share("list(APPEND PM_DOMAINS $${${ACI_NAME}_BOARD})")
+  endif()
+
+
+  message("\n=== child image ${ACI_NAME} - ${${ACI_NAME}_BOARD} begin ===")
   # Construct a list of variables that, when present in the root
   # image, should be passed on to all child images as well.
   list(APPEND
@@ -86,6 +104,8 @@ function(add_child_image_from_source)
     ZEPHYR_TOOLCHAIN_VARIANT
     GNUARMEMB_TOOLCHAIN_PATH
     EXTRA_KCONFIG_TARGETS
+    PM_DOMAINS
+    ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
     )
 
   foreach(kconfig_target ${EXTRA_KCONFIG_TARGETS})
@@ -169,6 +189,7 @@ function(add_child_image_from_source)
   # Increase the scope of this variable to make it more available
   set(${ACI_NAME}_KERNEL_HEX_NAME ${${ACI_NAME}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
   set(${ACI_NAME}_KERNEL_ELF_NAME ${${ACI_NAME}_KERNEL_ELF_NAME} CACHE STRING "" FORCE)
+  set(PM_DOMAINS ${PM_DOMAINS} CACHE STRING "" FORCE)
 
   if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(multi_image_build_args "-d" "${MULTI_IMAGE_DEBUG_MAKEFILE}")
@@ -200,5 +221,26 @@ function(add_child_image_from_source)
       USES_TERMINAL
       )
   endforeach()
+
+  if (NOT "${ACI_NAME}" STREQUAL "${${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION}")
+    set_property(
+      GLOBAL APPEND PROPERTY
+      PM_IMAGES
+      "${ACI_NAME}"
+      )
+  endif()
+
+  if (${ACI_DOMAIN})
+    add_custom_target(${ACI_NAME}_flash
+                      COMMAND
+                      ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/${ACI_NAME}
+                      --target flash
+    )
+
+    set_property(TARGET zephyr_property_target
+                 APPEND PROPERTY FLASH_DEPENDENCIES
+                 ${ACI_NAME}_flash
+  )
+  endif()
 
 endfunction()

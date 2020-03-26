@@ -60,9 +60,9 @@ To add a Partition Manager configuration file for a subsystem, place the followi
 
   add_partition_manager_config(pm.yml)
 
-There are some limitations when multiple application images build the same subsystem code if it adds a Partition Manager configuration file in this way.
-In particular, partition definitions are global and must be identical across calls to ``add_partition_manager_config()``.
-If the same partition is defined twice with different configurations, the Partition Manager will fail.
+There are some limitations when multiple application images within the same domain build the same subsystem code if it adds a Partition Manager configuration file in this way.
+In particular, partition definitions are global per domain, and must be identical across calls to ``add_partition_manager_config()``.
+If the same partition is defined twice with different configurations within a domain, the Partition Manager will fail.
 
 .. _pm_yaml_format:
 
