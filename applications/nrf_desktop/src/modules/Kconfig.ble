@@ -121,15 +121,9 @@ config DESKTOP_BLE_SHORT_NAME
 	default ""
 	depends on DESKTOP_BLE_ADVERTISING_ENABLE
 
-config DESKTOP_BLE_DIRECT_ADV_AVAILABLE
-	bool
-	default y if BT_PERIPHERAL
-	default y if BT_CENTRAL && BT_SCAN_WITH_IDENTITY
-
 config DESKTOP_BLE_DIRECT_ADV
 	bool "Advertise to bonded peer directly"
 	depends on DESKTOP_BLE_ADVERTISING_ENABLE
-	depends on DESKTOP_BLE_DIRECT_ADV_AVAILABLE
 	help
 	  Device will use direct advertising if bonded.
 
@@ -139,6 +133,15 @@ config DESKTOP_BLE_FAST_ADV
 	help
 	  Device will initially advertise with shorter interval.
 
+config DESKTOP_BLE_FAST_ADV_TIMEOUT
+	int "Time of initial fast advertising [s]"
+	default 30
+	depends on DESKTOP_BLE_FAST_ADV
+	help
+	  Device will initially advertise with shorter interval to enable
+	  quicker discovery by hosts. After this time it will shift to normal
+	  cadence advertising.
+
 config DESKTOP_BLE_SWIFT_PAIR
 	bool "Enable Swift Pair feature"
 	depends on DESKTOP_BLE_ADVERTISING_ENABLE
@@ -146,17 +149,8 @@ config DESKTOP_BLE_SWIFT_PAIR
 	help
 	  Enable quick pairing with Microsoft Swift Pair.
 
-config DESKTOP_BLE_FAST_ADV_TIMEOUT
-	int "Time of initial fastest advertising"
-	default 30
-	depends on DESKTOP_BLE_FAST_ADV
-	help
-	  Device will initially advertise with shorter interval to enable
-	  quickest discovery by Swift Pair hosts. After this time it will shift
-	  to normal cadence advertising.
-
 config DESKTOP_BLE_SWIFT_PAIR_GRACE_PERIOD
-	int "No Swift Pair timegap before suspend"
+	int "No Swift Pair time gap before suspend [s]"
 	default 30
 	depends on DESKTOP_POWER_MANAGER_ENABLE
 	depends on DESKTOP_BLE_SWIFT_PAIR
