@@ -1,4 +1,5 @@
 recommonmark==0.4.0
 sphinxcontrib-mscgen>=0.5
+imagesize>=1.2.0
 ecdsa
 intelhex
