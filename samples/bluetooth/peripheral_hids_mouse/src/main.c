@@ -164,6 +164,7 @@ static void advertising_continue(void)
 		struct bt_conn *conn;
 
 		adv_param = *BT_LE_ADV_CONN_DIR;
+		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 		conn = bt_conn_create_slave_le(&addr, &adv_param);
 		if (!conn) {
 			printk("Directed advertising failed to start\n");
