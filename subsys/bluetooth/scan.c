@@ -596,35 +596,13 @@ static bool find_uuid(const u8_t *data,
 	}
 
 	for (size_t i = 0; i < data_len; i += uuid_len) {
-		struct bt_uuid *uuid;
-		u16_t uuid_16;
-		u32_t uuid_32;
-		struct bt_uuid_128 uuid_128 = {
-			.uuid.type = BT_UUID_TYPE_128,
-		};
+		struct bt_uuid_128 uuid;
 
-
-		switch (uuid_type) {
-		case BT_UUID_TYPE_16:
-			memcpy(&uuid_16, &data[i], uuid_len);
-			uuid = BT_UUID_DECLARE_16(sys_le16_to_cpu(uuid_16));
-			break;
-
-		case BT_UUID_TYPE_32:
-			memcpy(&uuid_32, &data[i], uuid_len);
-			uuid = BT_UUID_DECLARE_32(sys_le32_to_cpu(uuid_32));
-			break;
-
-		case BT_UUID_TYPE_128:
-			memcpy(uuid_128.val, &data[i], uuid_len);
-			uuid = (struct bt_uuid *)&uuid_128;
-			break;
-
-		default:
+		if (!bt_uuid_create(&uuid.uuid, &data[i], uuid_len)) {
 			return false;
 		}
 
-		if (bt_uuid_cmp(uuid, target_uuid->uuid) == 0) {
+		if (bt_uuid_cmp(&uuid.uuid, target_uuid->uuid) == 0) {
 			return true;
 		}
 	}
