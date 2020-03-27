@@ -446,16 +446,11 @@ static void send_hid_report(const struct hid_report_event *event)
 
 static void notify_secured_fn(struct k_work *work)
 {
-	int err = bt_gatt_hids_notify_connected(&hids_obj, cur_conn);
+	secured = true;
 
-	if (!err) {
-		for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
-			bool enabled = report_enabled[r_id];
-			broadcast_subscription_change(r_id, enabled);
-		}
-	} else {
-		LOG_ERR("Failed to notify the HID service about the"
-			" connection");
+	for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
+		bool enabled = report_enabled[r_id];
+		broadcast_subscription_change(r_id, enabled);
 	}
 }
 
@@ -467,6 +462,12 @@ static void notify_hids(const struct ble_peer_event *event)
 	case PEER_STATE_CONNECTED:
 		__ASSERT_NO_MSG(cur_conn == NULL);
 		cur_conn = event->id;
+		err = bt_gatt_hids_notify_connected(&hids_obj, event->id);
+
+		if (err) {
+			LOG_ERR("Failed to notify the HID Service about the"
+				" connection");
+		}
 		break;
 
 	case PEER_STATE_DISCONNECTED:
@@ -474,7 +475,7 @@ static void notify_hids(const struct ble_peer_event *event)
 		err = bt_gatt_hids_notify_disconnected(&hids_obj, event->id);
 
 		if (err) {
-			LOG_WRN("Connection was not secured");
+			LOG_ERR("Connection context was not allocated");
 		}
 
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
@@ -490,7 +491,6 @@ static void notify_hids(const struct ble_peer_event *event)
 
 	case PEER_STATE_SECURED:
 		__ASSERT_NO_MSG(cur_conn == event->id);
-		secured = true;
 
 		if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
 			k_delayed_work_submit(&notify_secured,
