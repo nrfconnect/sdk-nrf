@@ -848,14 +848,16 @@ def replace_app_with_dynamic_partition(d, dynamic_partition_name):
             v = dynamic_partition_name
 
 
-def set_flash_primary_region(pm_config):
-    for v in pm_config.values():
-        if 'region' not in v:
-            v['region'] = 'flash_primary'
-
-
 def fix_syntactic_sugar(pm_config):
-    set_flash_primary_region(pm_config)
+    for k, v in pm_config.items():
+        if 'region' not in v:
+            # Set SRAM primary region
+            if k.endswith('_sram'):
+                v['region'] = 'sram_primary'
+
+            # Set FLASH primary region
+            else:
+                v['region'] = 'flash_primary'
 
 
 def get_region_config_from_args(args, ranges_configuration):
@@ -1017,66 +1019,66 @@ def test():
     assert td['extflash']['address'] == 2100
     assert td['extflash']['size'] == 900
 
-    # Verify that RAM configuration is correct
-    td = {'b': {'size': 100, 'region': 'ram'}}
-    test_region = {'name': 'ram',
+    # Verify that SRAM configuration is correct
+    td = {'b': {'size': 100, 'region': 'sram'}}
+    test_region = {'name': 'sram',
                    'size': 1000,
                    'base_address': 2000,
                    'placement_strategy': END_TO_START,
                    'device': None}
     get_region_config(td, test_region)
     assert td['b']['size'] == 100
-    assert td['ram']['address'] == 2000
-    assert td['ram']['size'] == 900
+    assert td['sram']['address'] == 2000
+    assert td['sram']['size'] == 900
 
-    # Verify that RAM configuration is correct
+    # Verify that sram configuration is correct
     td = {
-        'b': {'size': 100, 'region': 'ram'},
-        'c': {'size': 200, 'region': 'ram'},
-        'd': {'size': 300, 'region': 'ram'}
+        'b': {'size': 100, 'region': 'sram'},
+        'c': {'size': 200, 'region': 'sram'},
+        'd': {'size': 300, 'region': 'sram'}
     }
-    test_region = {'name': 'ram',
+    test_region = {'name': 'sram',
                    'size': 1000,
                    'base_address': 2000,
                    'placement_strategy': END_TO_START,
                    'device': None}
     get_region_config(td, test_region)
-    assert td['ram']['address'] == 2000
-    assert td['ram']['size'] == 400
+    assert td['sram']['address'] == 2000
+    assert td['sram']['size'] == 400
     # Can not verify the placement, as this is random
     assert td['b']['size'] == 100
     assert td['c']['size'] == 200
     assert td['d']['size'] == 300
 
-    # Verify that RAM configuration with given static configuration is correct
-    test_region = {'name': 'ram',
+    # Verify that SRAM configuration with given static configuration is correct
+    test_region = {'name': 'sram',
                    'size': 1000,
                    'base_address': 2000,
                    'placement_strategy': END_TO_START,
                    'device': None}
     td = {
-        'b': {'size': 100, 'region': 'ram'},
-        'c': {'size': 200, 'region': 'ram'},
-        'd': {'size': 300, 'region': 'ram'},
+        'b': {'size': 100, 'region': 'sram'},
+        'c': {'size': 200, 'region': 'sram'},
+        'd': {'size': 300, 'region': 'sram'},
     }
     get_region_config(td,
                       test_region,
                       static_conf={'s1': {'size': 100,
                                           'address': (1000+2000)-100,
-                                          'region': 'ram'},
+                                          'region': 'sram'},
                                    's2': {'size': 200,
                                           'address': (1000+2000)-100-200,
-                                          'region': 'ram'}})
-    assert td['ram']['address'] == 2000
-    assert td['ram']['size'] == 100
+                                          'region': 'sram'}})
+    assert td['sram']['address'] == 2000
+    assert td['sram']['size'] == 100
     # Can not verify the placement, as this is random
     assert td['b']['size'] == 100
     assert td['c']['size'] == 200
     assert td['d']['size'] == 300
 
-    # Verify that RAM configuration with given static configuration fails if static RAM partitions are not
+    # Verify that SRAM configuration with given static configuration fails if static SRAM partitions are not
     # packed at the end of flash, here there is a space between the two regions
-    test_region = {'name': 'ram',
+    test_region = {'name': 'sram',
                    'size': 1000,
                    'base_address': 2000,
                    'placement_strategy': END_TO_START,
@@ -1084,9 +1086,9 @@ def test():
     failed = False
     td = {
         'a': {'placement': {'after': 'start'}, 'size': 100},
-        'b': {'size': 100, 'region': 'ram'},
-        'c': {'size': 200, 'region': 'ram'},
-        'd': {'size': 300, 'region': 'ram'},
+        'b': {'size': 100, 'region': 'sram'},
+        'c': {'size': 200, 'region': 'sram'},
+        'd': {'size': 300, 'region': 'sram'},
         'app': {}
     }
     try:
@@ -1094,28 +1096,28 @@ def test():
                           test_region,
                           static_conf={'s1': {'size': 100,
                                               'address': (1000+2000)-100,
-                                              'region': 'ram'},
+                                              'region': 'sram'},
                                        's2': {'size': 200,
                                               'address': (1000+2000)-100-300,
-                                              'region': 'ram'}})  # Note 300 not 200
+                                              'region': 'sram'}})  # Note 300 not 200
     except PartitionError:
         failed = True
 
     assert failed
 
-    # Verify that RAM configuration with given static configuration fails if static RAM partitions are not
-    # packed at the end of flash, here the partitions are packed, but does not go to the end of RAM
+    # Verify that SRAM configuration with given static configuration fails if static SRAM partitions are not
+    # packed at the end of flash, here the partitions are packed, but does not go to the end of SRAM
     failed = False
-    test_region = {'name': 'ram',
+    test_region = {'name': 'sram',
                    'size': 1000,
                    'base_address': 2000,
                    'placement_strategy': END_TO_START,
                    'device': None}
     td = {
         'a': {'placement': {'after': 'start'}, 'size': 100},
-        'b': {'size': 100, 'region': 'ram'},
-        'c': {'size': 200, 'region': 'ram'},
-        'd': {'size': 300, 'region': 'ram'},
+        'b': {'size': 100, 'region': 'sram'},
+        'c': {'size': 200, 'region': 'sram'},
+        'd': {'size': 300, 'region': 'sram'},
         'app': {}
     }
     try:
@@ -1123,10 +1125,10 @@ def test():
                           test_region,
                           static_conf={'s1': {'size': 100,
                                               'address': (1000+2000-50)-100,
-                                              'region': 'ram'},  # Note - 50
+                                              'region': 'sram'},  # Note - 50
                                        's2': {'size': 200,
                                               'address': (1000+2000-50)-100-200,
-                                              'region': 'ram'}})  # Note - 50
+                                              'region': 'sram'}})  # Note - 50
     except PartitionError:
         failed = True
 

@@ -104,7 +104,14 @@ def write_gpm_config(gpm_config, regions_config, name, out_path):
     image_config_lines.append("#define PM_ADDRESS 0x{:x}".format(gpm_config[domain][image]['address']))
     image_config_lines.append("#define PM_SIZE 0x{:x}".format(gpm_config[domain][image]['size']))
 
-    image_config_lines.insert(0, "#include <autoconf.h>")
+    image_sram_partition = f'{image}_sram'
+    image_has_custom_sram = image_sram_partition in gpm_config[domain]
+    if image_has_custom_sram:
+        image_config_lines.append("#define PM_SRAM_ADDRESS 0x%x" % gpm_config[domain][image_sram_partition]['address'])
+        image_config_lines.append("#define PM_SRAM_SIZE 0x%x" % gpm_config[domain][image_sram_partition]['size'])
+    else:
+        image_config_lines.append("#define PM_SRAM_ADDRESS 0x%x" % gpm_config[domain]['sram_primary']['address'])
+        image_config_lines.append("#define PM_SRAM_SIZE 0x%x" % gpm_config[domain]['sram_primary']['size'])
     image_config_lines.insert(0, get_header_guard_start(pm_config_file))
 
     image_config_lines.append(get_header_guard_end(pm_config_file))
