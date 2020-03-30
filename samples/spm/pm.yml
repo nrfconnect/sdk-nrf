@@ -5,3 +5,13 @@ spm:
   placement:
     before: app
   inside: mcuboot_primary_app
+
+spm_sram:
+  size: CONFIG_PM_PARTITION_SIZE_SPM_SRAM
+  placement: {after: start}
+  inside: sram_secure
+
+# Create a span for the RAM to be configured as SECURE by the spm.
+sram_secure:
+  span: []
+  region: sram_primary

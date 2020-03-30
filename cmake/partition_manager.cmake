@@ -141,6 +141,14 @@ elseif (DEFINED CONFIG_SOC_NRF5340_CPUAPP)
   set(otp_size 764)  # 191 * 4
 endif()
 
+add_region(
+  NAME sram_primary
+  SIZE ${CONFIG_PM_SRAM_SIZE}
+  BASE ${CONFIG_PM_SRAM_BASE}
+  PLACEMENT complex
+  DYNAMIC_PARTITION sram_primary
+  )
+
 math(EXPR flash_size "${CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
 if (CONFIG_SOC_NRF9160 OR CONFIG_SOC_NRF5340_CPUAPP)

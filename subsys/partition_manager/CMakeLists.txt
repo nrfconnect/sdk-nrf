@@ -43,6 +43,10 @@ if (CONFIG_NVS AND NOT CONFIG_SETTINGS_NVS)
   ncs_add_partition_manager_config(pm.yml.nvs)
 endif()
 
+if (CONFIG_BSD_LIBRARY)
+  ncs_add_partition_manager_config(pm.yml.bsdlib)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager

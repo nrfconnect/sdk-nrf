@@ -27,13 +27,13 @@
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
 #define NON_SECURE_APP_ADDRESS PM_APP_ADDRESS
+#define NON_SECURE_RAM_OFFSET PM_SRAM_SECURE_SIZE
 #else
 #include <storage/flash_map.h>
 #define NON_SECURE_APP_ADDRESS FLASH_AREA_ID(image_0_nonsecure)
-#endif /* USE_PARTITION_MANAGER */
-
 /* This reflects the configuration in DTS. */
 #define NON_SECURE_RAM_OFFSET 0x10000
+#endif /* USE_PARTITION_MANAGER */
 
 #define NON_SECURE_FLASH_REGION_INDEX \
 	((NON_SECURE_APP_ADDRESS) / (FLASH_SECURE_ATTRIBUTION_REGION_SIZE))
@@ -61,23 +61,11 @@
  *        |      Flash          |
  *  0 kB  |---------------------|
  *
- *  * The security configuration for SRAM is applied:
+ *  * The SRAM configuration is given by the partition manager.
+ *  * To see the current configuration, run the 'pm_report' target.
+ *  * E.g. 'ninja pm_report, in your build folder. All partitions
+ *  * within the 'secure_ram' span is configured as secure by the SPM.
  *
- *                SRAM
- * 256 kB |---------------------|
- *        |                     |
- *        |                     |
- *        |                     |
- *        |     Non-Secure      |
- *        |    SRAM (image)     |
- *        |                     |
- * 128 kB |.................... |
- *        |     Non-Secure      |
- *        |  SRAM (BSD Library) |
- *  64 kB |---------------------|
- *        |      Secure         |
- *        |       SRAM          |
- *  0 kB  |---------------------|
  */
 
 extern irq_target_state_t irq_target_state_set(unsigned int irq,

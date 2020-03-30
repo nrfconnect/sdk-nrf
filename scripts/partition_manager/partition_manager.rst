@@ -3,8 +3,8 @@
 Partition Manager
 #################
 
-The Partition Manager is a Python script that sets the start address and size of all image partitions in a multi-image build context.
-When creating an application that requires child images (for example, a bootloader), you can configure the Partition Manager to control where in memory each image should be placed.
+The Partition Manager is a Python script that sets the start address and size of all flash and RAM partitions in a multi-image build context.
+When creating an application that requires child images (for example, a bootloader), you can configure the Partition Manager to control where in memory each image should be placed, and how the RAM should be shared.
 
 See :ref:`ug_multi_image` for more information about multi-image builds.
 
@@ -15,11 +15,15 @@ The Partition Manager is activated for all multi-image builds, no matter what bu
 Overview
 ********
 
-The Partition Manager script reads configuration files named :file:`pm.yml`, which define flash partitions.
-A partition's definition includes its name and constraints on its size and placement on flash.
+The Partition Manager script reads configuration files named :file:`pm.yml`, which define flash and RAM partitions.
+A flash partition's definition includes its name and constraints on its size and placement in flash.
+A RAM partition's definition includes its name and constraints on its size.
 The Partition Manager allocates a start address and sometimes a size to each partition in a way that satisfies these constraints.
 
-There are different kinds of partitions:
+There are different kinds of **flash partitions** and **RAM partitions**, as described below.
+
+Flash partition types
+=====================
 
 Image partitions
    An image partition is the flash area reserved for an image, to which the image binary is written.
@@ -37,6 +41,26 @@ Container partitions
    A container partition does not reserve space, but is used to logically and/or physically group other partitions.
 
 The start addresses and sizes of image partitions are used in the preprocessing of the linker script for each image.
+
+RAM partition types
+=====================
+
+Default image RAM partition
+   The default image RAM partition consists of all RAM that is not defined as a permanent image RAM partition or placeholder RAM partition.
+   It is the default RAM partition associated with an image and is set as the RAM region when linking the image.
+   If an image must reserve its RAM area permanently (i.e. at the same time as other images are running), it must use a permanent image RAM partition, described below.
+
+.. _pm_permanent_image_ram_partition:
+
+Permanent image RAM partitions
+   A permanent image RAM partition reserves RAM for an image permanently.
+   It is typically used for images that will remain active after they have booted the next step in the boot chain.
+   If an image has configured a permanent image RAM partition, it is set as the RAM region when linking the image instead of the default image RAM partition.
+
+.. _pm_permanent_placeholder_ram_partition:
+
+Permanent placeholder RAM partitions
+   A permanent placeholder RAM partition is used to permanently reserve RAM regions that are not associated with an image.
 
 .. _pm_configuration:
 
@@ -85,6 +109,7 @@ Each partition is defined as follows:
          property_value
 
 *partition_name* is the name of the partition (for example, ``mcuboot``).
+
 The following partition properties and property values are available:
 
 placement: dict
@@ -272,6 +297,30 @@ share_size: list
 region: string
    Specify the region where a partition should be placed.
    See :ref:`pm_regions`.
+
+.. _partition_manager_ram_configuration:
+
+RAM partition configuration
+   RAM partitions are partitions located in the ``sram_primary`` region.
+   A RAM partition is specified by having the partition name end with ``_sram``.
+   If a partition name consists of an image name and the ending ``_sram``, it is used as a permanent image RAM partition for the image.
+
+   .. code-block:: yaml
+      :caption: RAM partitions configuration
+
+      # This ...
+      some_permament_sram_block_used_for_logging:
+         size: 0x1000
+         region: sram_primary
+
+      # ... is equivalent to
+      some_permament_sram_block_used_for_logging_sram:
+         size: 0x1000
+
+      # Specify permanent image RAM partition for MCUboot.
+      # This will be used by the MCUboot linker script.
+      mcuboot_sram:
+          size: 0xa000
 
 All occurrences of a partition name can be replaced with a dict with the key ``one_of``, which is resolved to the first existing partition in the ``one_of`` value.
 An error is raised if no partition inside the ``one_of`` dict exists.

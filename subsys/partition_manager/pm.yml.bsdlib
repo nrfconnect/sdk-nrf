@@ -1,0 +1,6 @@
+#include <autoconf.h>
+
+bsdlib_sram:
+  placement: {after: [spm_sram, start]}
+  size: CONFIG_PM_PARTITION_SIZE_BSDLIB_SRAM
+  region: sram_primary

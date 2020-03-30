@@ -57,6 +57,16 @@ endif
 
 endmenu # Zephyr samples configurations
 
+menu "NCS subsystem configurations"
+
+if BSD_LIBRARY
+partition=BSDLIB_SRAM
+partition-size=0x10000
+rsource "Kconfig.template.partition_size"
+endif
+
+endmenu # NCS subsystem configurations
+
 config PM_SINGLE_IMAGE
 	bool "Use the Partition Manager for single image builds"
 	help
@@ -91,5 +101,16 @@ config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	help
 	  Promptless helper config used to indicate that one or more
 	  image is not built from source.
+
+# Helper configs needed since 'SRAM_SIZE/BASE' use the chosen node.
+config PM_SRAM_BASE
+	hex
+	default $(dt_node_reg_addr_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
+	default $(dt_node_reg_addr_hex,/soc/memory@20000000)
+
+config PM_SRAM_SIZE
+	hex
+	default $(dt_node_reg_size_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
+	default $(dt_node_reg_size_hex,/soc/memory@20000000)
 
 endmenu # Partition Manager
