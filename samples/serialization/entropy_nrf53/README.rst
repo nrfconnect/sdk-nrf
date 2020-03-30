@@ -1,33 +1,38 @@
 .. _serialization_entropy_nrf53:
 
-Serialization: Entropy nRF5340
-##################################
+nRF5340: Serialization Entropy
+##############################
 
-The Entropy sample demonstrates how to use the Entropy driver on a dual core device.
-It uses the Entropy driver on the Network Core which has the possibility to generate random number and using the
-Remote Procedure Serialization library sending it to the Application core.
-The application core uses the serialized function call to control the Entropy driver on the Network core like
-:cpp:func:`entropy_remote_init` for initializing the entropy and :cpp:func:`entropy_remote_get` for getting entropy data.
+The Serialization Entropy sample demonstrates how to use the entropy driver in a dual core device such as nRF5340 PDK.
 
+The sample makes use of the entropy driver on the network core of an nRF5340 PDK that generates random data and the :ref:`serialization` that sends the generated data to the application core.
 
 Overview
 ********
 
-When sample started, it displays the generated entropy data on the Application core terminal with one second interval.
-The Entropy data is generated on the Network core using RNG peripheral.
-The Remote Procedure Serialization uses `TinyCBOR`_ data format and transmit it using default RPMsg (part of `OpenAMP`_) transport layer.
+
+When the sample starts, it displays the generated entropy data in the terminal at an interval of one second.
+
+The entropy data is generated on the network core using the Random Number Genrator (RNG) peripheral.
+The :ref:`serialization` uses the `TinyCBOR`_ data format and transmits the data using the default `RPMsg Messaging Protocol`_ (part of `OpenAMP`_) in the transport layer.
+
+The application core uses serialized function calls such as :cpp:func:`entropy_remote_init` and :cpp:func:`entropy_remote_get` to control the entropy driver on the network core.
+The :cpp:func:`entropy_remote_init` is used for initializing the entropy and :cpp:func:`entropy_remote_get` is used for obtaining the entropy data.
+
 
 Network core
 ============
 
-The Network core runs the Entropy drivers which uses the RNG periphery. When Network core received the Remote function call, it
-look for function decoders in decoders table and call it after that the Network core encode function response data and sends it back.
+The network core runs the entropy drivers, which uses the RNG peripheral.
+When the network core receives the :cpp:func:`entropy_remote_get` remote function call, the following actions are performed:
+
+   * The network core searches for function decoders in the decoders table and calls it.
+   * The network core encodes the response data for the function call and sends the data back to the application core. 
 
 Application core
 ================
 
-The application core runs a simple application, where the Entropy drivers functions and asynchronous events are replaced by virtual implementation using Remote Procedure Serialization library.
-For the needs of the Entropy driver, this application uses only :cpp:func:`entropy_remote_init` to initialize the Network core  Entropy driver and :cpp:func:`entropy_remote_get` to gets entropy data.
+The application core runs a simple application that replaces the entropy driver functions and asynchronous events with the virtual implementation using the :ref:`serialization`.
 
 Requirements
 ************
@@ -48,18 +53,42 @@ Building and running
 Testing
 =======
 
-This sample consists of two sample applications, one for the network core, and one for the application core:
+This sample consists of the following sample applications, one each for the application core and the network core:
 
    * Application core sample: :file:`entropy_nrf53/cpuapp`
    * Network core sample: :file:`entropy_nrf53/cpunet`
 
-Both of these sample applications must be built and flashed before testing.
+Both of these sample applications must be built and flashed to the dual core device before testing.
 For details on building samples for a dual core device, see :ref:`ug_nrf5340_building`.
 
 After programming the sample to your board, test it by performing the following steps:
 
-1. Connect the board to the computer using a USB cable.
-   The board is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. Connect the dual core development kit to the computer using a USB cable.
+   The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal|
-#. Reset the board.
-#. Entropy data should be printed periodically on the terminal.
+#. Reset the development kit.
+#. Observe that the entropy data is displayed periodically in the terminal.
+
+
+Sample output
+=============
+
+The following output is logged on the terminal:
+
+.. code-block:: console
+
+   Entropy sample started[APP Core].                                              
+    0x43  0xd1  0xd6  0x52  0x6d  0x22  0x46  0x58  0x8f  0x15                
+    0xcf  0xe1  0x1a  0xb5  0xa6  0xdb  0xe5  0xf7  0x7e  0x37   
+
+Dependencies
+************
+
+
+This sample uses the following libraries:
+
+From nrfxlib
+  * :ref:`nrfxlib:rp_ser`
+
+From Zephyr
+  * :ref:`entropy_interface`
