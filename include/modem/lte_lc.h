@@ -104,28 +104,48 @@ typedef void(*lte_lc_evt_handler_t)(const struct lte_lc_evt *const evt);
  */
 void lte_lc_register_handler(lte_lc_evt_handler_t handler);
 
-/** @brief Function for initializing
- * the modem.  NOTE: a follow-up call to lte_lc_connect()
- * must be made.
+/** @brief Function for initializing the modem.
+ *
+ * @note a follow-up call to lte_lc_connect() must be made to establish an LTE
+ *	 connection.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_init(void);
 
 /** @brief Function to make a connection with the modem.
- * NOTE: prior to calling this function a call to lte_lc_init()
- * must be made.
+ * @note prior to calling this function a call to @ref lte_lc_init
+ *	 must be made.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_connect(void);
 
-/** @brief Function for initializing
- * and make a connection with the modem
+/** @brief Function for initializing and make a connection with the modem
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_init_and_connect(void);
+
+/**@brief Connect to LTE network. Non-blocking.
+ *
+ * @note @ref lte_lc_init must be called before this function.
+ *
+ * @param handler Event handler for receiving LTE events.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_connect_async(lte_lc_evt_handler_t handler);
+
+/**@brief Initializes the LTE module, configures the modem and connects to LTE
+ *	  network. Non-blocking.
+ *
+ * @param handler Event handler for receiving LTE events.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+
+int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
 /** @brief Function for sending the modem to offline mode
  *

@@ -84,6 +84,7 @@ static int parse_psm_cfg(struct at_param_list *at_params,
 			 struct lte_lc_psm_cfg *psm_cfg);
 
 static lte_lc_evt_handler_t evt_handler;
+static bool is_initialized;
 
 #if defined(CONFIG_BSD_LIBRARY_TRACE_ENABLED)
 /* Enable modem trace */
@@ -578,14 +579,21 @@ static int w_lte_lc_init(void)
 		return err;
 	}
 
+	is_initialized = true;
+
 	return 0;
 }
 
-static int w_lte_lc_connect(void)
+static int w_lte_lc_connect(bool blocking)
 {
 	int err;
 	enum lte_lc_system_mode current_network_mode = sys_mode_preferred;
 	bool retry;
+
+	if (!is_initialized) {
+		LOG_ERR("The LTE link controller is not initialized");
+		return -EPERM;
+	}
 
 	k_sem_init(&link, 0, 1);
 
@@ -598,7 +606,7 @@ static int w_lte_lc_connect(void)
 		}
 
 		err = lte_lc_normal();
-		if (err) {
+		if (err || !blocking) {
 			return err;
 		}
 
@@ -635,7 +643,7 @@ static int w_lte_lc_init_and_connect(struct device *unused)
 		return ret;
 	}
 
-	return w_lte_lc_connect();
+	return w_lte_lc_connect(true);
 }
 
 /* lte lc Init wrapper */
@@ -668,7 +676,7 @@ void lte_lc_register_handler(lte_lc_evt_handler_t handler)
 /* lte lc Connect wrapper */
 int lte_lc_connect(void)
 {
-	return w_lte_lc_connect();
+	return w_lte_lc_connect(true);
 }
 
 /* lte lc Init and connect wrapper */
@@ -679,6 +687,30 @@ int lte_lc_init_and_connect(void)
 	int err = w_lte_lc_init_and_connect(x);
 
 	return err;
+}
+
+int lte_lc_connect_async(lte_lc_evt_handler_t handler)
+{
+	if (handler) {
+		evt_handler = handler;
+	} else if (evt_handler == NULL) {
+		LOG_ERR("No handler registered");
+		return -EINVAL;
+	}
+
+	return w_lte_lc_connect(false);
+}
+
+int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler)
+{
+	int err;
+
+	err = w_lte_lc_init();
+	if (err) {
+		return err;
+	}
+
+	return lte_lc_connect_async(handler);
 }
 
 int lte_lc_offline(void)
