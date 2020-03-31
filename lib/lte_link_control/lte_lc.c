@@ -34,8 +34,14 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_CEREG_PARAMS_COUNT_MAX		10
 #define AT_CEREG_REG_STATUS_INDEX		1
 #define AT_CEREG_READ_REG_STATUS_INDEX		2
-#define AT_CEREG_ACTIVE_TIME_INDEX		8
-#define AT_CEREG_TAU_INDEX			9
+#define AT_CEREG_TAC_INDEX			2
+#define AT_CEREG_READ_TAC_INDEX			3
+#define AT_CEREG_CELL_ID_INDEX			3
+#define AT_CEREG_READ_CELL_ID_INDEX		4
+#define AT_CEREG_ACTIVE_TIME_INDEX		7
+#define AT_CEREG_READ_ACTIVE_TIME_INDEX		8
+#define AT_CEREG_TAU_INDEX			8
+#define AT_CEREG_READ_TAU_INDEX			9
 #define AT_CEREG_RESPONSE_MAX_LEN		80
 #define AT_XSYSTEMMODE_READ			"AT%XSYSTEMMODE?"
 #define AT_XSYSTEMMODE_RESPONSE_PREFIX		"%XSYSTEMMODE"
@@ -73,18 +79,11 @@ static int parse_edrx(const char *at_response,
 		      struct lte_lc_edrx_cfg *cfg);
 static bool response_is_valid(const char *response, size_t response_len,
 			      const char *check);
+static int parse_psm_cfg(struct at_param_list *at_params,
+			 bool is_notif,
+			 struct lte_lc_psm_cfg *psm_cfg);
 
 static lte_lc_evt_handler_t evt_handler;
-
-/* Lookup table for T3324 timer used for PSM active time. Unit is seconds.
- * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
- */
-static const u32_t t3324_lookup[8] = {2, 60, 600, 60, 60, 60, 60, 0};
-
-/* Lookup table for T3412 timer used for periodic TAU. Unit is seconds.
- * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
- */
-static const u32_t t3412_lookup[8] = {600, 3600, 36000, 2, 30, 60, 1152000, 0};
 
 #if defined(CONFIG_BSD_LIBRARY_TRACE_ENABLED)
 /* Enable modem trace */
@@ -148,7 +147,7 @@ static const enum lte_lc_system_mode sys_mode_fallback =
 	LTE_LC_SYSTEM_MODE_NONE;
 
 /* Parameters to be passed when using AT%XSYSTEMMMODE=<params> */
-static const char *system_mode_params[] = {
+static const char *const system_mode_params[] = {
 	[LTE_LC_SYSTEM_MODE_LTEM]	= "1,0,0,0",
 	[LTE_LC_SYSTEM_MODE_NBIOT]	= "0,1,0,0",
 	[LTE_LC_SYSTEM_MODE_GPS]	= "0,0,1,0",
@@ -190,19 +189,19 @@ enum lte_lc_notif_type {
 	LTE_LC_NOTIF_COUNT,
 };
 
-static const char *relevant_at_notifs[] = {
+static const char *const at_notifs[] = {
 	[LTE_LC_NOTIF_CEREG] = "+CEREG",
 	[LTE_LC_NOTIF_CSCON] = "+CSCON",
 	[LTE_LC_NOTIF_CEDRXP] = "+CEDRXP",
 };
 
-BUILD_ASSERT(ARRAY_SIZE(relevant_at_notifs) == LTE_LC_NOTIF_COUNT);
+BUILD_ASSERT(ARRAY_SIZE(at_notifs) == LTE_LC_NOTIF_COUNT);
 
 static bool is_relevant_notif(const char *notif, enum lte_lc_notif_type *type)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(relevant_at_notifs); i++) {
-		if (strncmp(relevant_at_notifs[i], notif,
-			    strlen(relevant_at_notifs[i])) == 0) {
+	for (size_t i = 0; i < ARRAY_SIZE(at_notifs); i++) {
+		if (strncmp(at_notifs[i], notif,
+			    strlen(at_notifs[i])) == 0) {
 			/* The notification type matches the array index */
 			*type = i;
 
@@ -211,6 +210,81 @@ static bool is_relevant_notif(const char *notif, enum lte_lc_notif_type *type)
 	}
 
 	return false;
+}
+
+static int parse_cereg(const char *notification,
+		       enum lte_lc_nw_reg_status *reg_status,
+		       struct lte_lc_cell *cell,
+		       struct lte_lc_psm_cfg *psm_cfg)
+{
+	int err, status;
+	struct at_param_list resp_list;
+	char str_buf[10];
+	size_t len = sizeof(str_buf) - 1;
+
+	err = at_params_list_init(&resp_list, AT_CEREG_PARAMS_COUNT_MAX);
+	if (err) {
+		LOG_ERR("Could not init AT params list, error: %d", err);
+		return err;
+	}
+
+	/* Parse CEREG response and populate AT parameter list */
+	err = at_parser_params_from_str(notification,
+					NULL,
+					&resp_list);
+	if (err) {
+		LOG_ERR("Could not parse AT+CEREG response, error: %d", err);
+		goto clean_exit;
+	}
+
+	/* Parse network registration status */
+	err = at_params_int_get(&resp_list,
+				AT_CEREG_REG_STATUS_INDEX,
+				&status);
+	if (err) {
+		LOG_ERR("Could not get registration status, error: %d", err);
+		goto clean_exit;
+	}
+
+	*reg_status = status;
+
+	/* Parse tracking area code */
+	err = at_params_string_get(&resp_list,
+				   AT_CEREG_TAC_INDEX,
+				   str_buf, &len);
+	if (err) {
+		LOG_ERR("Could not get tracking area code, error: %d", err);
+		goto clean_exit;
+	}
+
+	str_buf[len] = '\0';
+	cell->tac = strtoul(str_buf, NULL, 16);
+
+	/* Parse cell ID */
+	len = sizeof(str_buf) - 1;
+
+	err = at_params_string_get(&resp_list,
+				   AT_CEREG_CELL_ID_INDEX,
+				   str_buf, &len);
+	if (err) {
+		LOG_ERR("Could not get cell ID, error: %d", err);
+		goto clean_exit;
+	}
+
+	str_buf[len] = '\0';
+	cell->id = strtoul(str_buf, NULL, 16);
+
+	/* Parse PSM configuration */
+	err = parse_psm_cfg(&resp_list, true, psm_cfg);
+	if (err) {
+		LOG_ERR("Failed to parse PSM configuration, error: %d", err);
+		goto clean_exit;
+	}
+
+clean_exit:
+	at_params_list_free(&resp_list);
+
+	return err;
 }
 
 static void at_handler(void *context, const char *response)
@@ -228,32 +302,69 @@ static void at_handler(void *context, const char *response)
 	}
 
 	/* Only proceed with parsing if notification is relevant */
-	if(!is_relevant_notif(response, &notif_type)) {
+	if (!is_relevant_notif(response, &notif_type)) {
 		return;
 	}
 
 	switch (notif_type) {
-	case LTE_LC_NOTIF_CEREG:
-		LOG_DBG("+CEREG notification");
+	case LTE_LC_NOTIF_CEREG: {
+		static enum lte_lc_nw_reg_status prev_reg_status;
+		static struct lte_lc_cell prev_cell;
+		static struct lte_lc_psm_cfg prev_psm_cfg;
+		enum lte_lc_nw_reg_status reg_status = 0;
+		struct lte_lc_cell cell;
+		struct lte_lc_psm_cfg psm_cfg;
 
-		err = parse_nw_reg_status(response,
-					  &evt.nw_reg_status,
-					  AT_CEREG_REG_STATUS_INDEX);
+		LOG_DBG("+CEREG notification: %s", log_strdup(response));
+
+		err = parse_cereg(response, &reg_status, &cell, &psm_cfg);
 		if (err) {
-			LOG_ERR("Can't parse network registration, error: %d",
-				err);
+			LOG_ERR("Failed to parse notification (error %d): %s",
+				err, log_strdup(response));
 			return;
 		}
 
-		evt.type = LTE_LC_EVT_NW_REG_STATUS;
-		notify = true;
-
-		if ((evt.nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
-		    (evt.nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		if ((reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+		    (reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 			k_sem_give(&link);
 		}
 
+		if (!evt_handler) {
+			return;
+		}
+
+		/* Network registration status event */
+		if (reg_status != prev_reg_status) {
+			prev_reg_status = reg_status;
+			evt.type = LTE_LC_EVT_NW_REG_STATUS;
+			evt.nw_reg_status = reg_status;
+
+			evt_handler(&evt);
+		}
+
+		/* Cell update event */
+		if (memcmp(&cell, &prev_cell, sizeof(struct lte_lc_cell))) {
+			evt.type = LTE_LC_EVT_CELL_UPDATE;
+
+			memcpy(&prev_cell, &cell, sizeof(struct lte_lc_cell));
+			memcpy(&evt.cell, &cell, sizeof(struct lte_lc_cell));
+			evt_handler(&evt);
+		}
+
+		/* PSM configuration update event */
+		if (memcmp(&psm_cfg, &prev_psm_cfg,
+			   sizeof(struct lte_lc_psm_cfg))) {
+			evt.type = LTE_LC_EVT_PSM_UPDATE;
+
+			memcpy(&prev_psm_cfg, &psm_cfg,
+			       sizeof(struct lte_lc_psm_cfg));
+			memcpy(&evt.psm_cfg, &psm_cfg,
+			       sizeof(struct lte_lc_psm_cfg));
+			evt_handler(&evt);
+		}
+
 		break;
+	}
 	case LTE_LC_NOTIF_CSCON:
 		LOG_DBG("+CSCON notification");
 
@@ -290,6 +401,85 @@ static void at_handler(void *context, const char *response)
 	if (evt_handler && notify) {
 		evt_handler(&evt);
 	}
+}
+
+static int parse_psm_cfg(struct at_param_list *at_params,
+			 bool is_notif,
+			 struct lte_lc_psm_cfg *psm_cfg)
+{
+	int err;
+	size_t tau_idx = is_notif ? AT_CEREG_TAU_INDEX :
+				    AT_CEREG_READ_TAU_INDEX;
+	size_t active_time_idx = is_notif ? AT_CEREG_ACTIVE_TIME_INDEX :
+					    AT_CEREG_READ_ACTIVE_TIME_INDEX;
+	char timer_str[9] = {0};
+	char unit_str[4] = {0};
+	size_t timer_str_len = sizeof(timer_str) - 1;
+	size_t unit_str_len = sizeof(unit_str) - 1;
+	size_t lut_idx;
+	u32_t timer_unit, timer_value;
+
+	/* Lookup table for T3324 timer used for PSM active time in seconds.
+	 * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
+	 */
+	static const u32_t t3324_lookup[8] = {2, 60, 600, 60, 60, 60, 60, 0};
+
+	/* Lookup table for T3412 timer used for periodic TAU. Unit is seconds.
+	 * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
+	 */
+	static const u32_t t3412_lookup[8] = {600, 3600, 36000, 2, 30, 60,
+					      1152000, 0};
+
+	/* Parse periodic TAU string */
+	err = at_params_string_get(at_params,
+				   tau_idx,
+				   timer_str,
+				   &timer_str_len);
+	if (err) {
+		LOG_ERR("Could not get TAU, error: %d", err);
+		return err;
+	}
+
+	memcpy(unit_str, timer_str, unit_str_len);
+
+	lut_idx = strtoul(unit_str, NULL, 2);
+	if (lut_idx > (ARRAY_SIZE(t3412_lookup) - 1)) {
+		LOG_ERR("Unable to parse periodic TAU string");
+		err = -EINVAL;
+		return err;
+	}
+
+	timer_unit = t3412_lookup[lut_idx];
+	timer_value = strtoul(timer_str + unit_str_len, NULL, 2);
+	psm_cfg->tau = timer_unit ? timer_unit * timer_value : -1;
+
+	/* Parse active time string */
+	err = at_params_string_get(at_params,
+				   active_time_idx,
+				   timer_str,
+				   &timer_str_len);
+	if (err) {
+		LOG_ERR("Could not get TAU, error: %d", err);
+		return err;
+	}
+
+	memcpy(unit_str, timer_str, unit_str_len);
+
+	lut_idx = strtoul(unit_str, NULL, 2);
+	if (lut_idx > (ARRAY_SIZE(t3324_lookup) - 1)) {
+		LOG_ERR("Unable to parse active time string");
+		err = -EINVAL;
+		return err;
+	}
+
+	timer_unit = t3324_lookup[lut_idx];
+	timer_value = strtoul(timer_str + unit_str_len, NULL, 2);
+	psm_cfg->active_time = timer_unit ? timer_unit * timer_value : -1;
+
+	LOG_DBG("TAU: %d sec, active time: %d sec\n",
+		psm_cfg->tau, psm_cfg->active_time);
+
+	return 0;
 }
 
 static int w_lte_lc_init(void)
@@ -533,12 +723,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	int err;
 	struct at_param_list at_resp_list = {0};
 	char buf[AT_CEREG_RESPONSE_MAX_LEN] = {0};
-	char timer_str[9] = {0};
-	char unit_str[4] = {0};
-	size_t timer_str_len = sizeof(timer_str) - 1;
-	size_t unit_str_len = sizeof(unit_str) - 1;
-	size_t index;
-	u32_t timer_unit, timer_value;
+	struct lte_lc_psm_cfg psm_cfg;
 
 	if ((tau == NULL) || (active_time == NULL)) {
 		return -EINVAL;
@@ -573,51 +758,14 @@ int lte_lc_psm_get(int *tau, int *active_time)
 		goto parse_psm_clean_exit;
 	}
 
-	/* Parse periodic TAU string */
-	err = at_params_string_get(&at_resp_list,
-				   AT_CEREG_TAU_INDEX,
-				   timer_str,
-				   &timer_str_len);
+	err = parse_psm_cfg(&at_resp_list, false, &psm_cfg);
 	if (err) {
-		LOG_ERR("Could not get TAU, error: %d", err);
+		LOG_ERR("Could not obtain PSM configuration");
 		goto parse_psm_clean_exit;
 	}
 
-	memcpy(unit_str, timer_str, unit_str_len);
-
-	index = strtoul(unit_str, NULL, 2);
-	if (index > (ARRAY_SIZE(t3412_lookup) - 1)) {
-		LOG_ERR("Unable to parse periodic TAU string");
-		err = -EINVAL;
-		goto parse_psm_clean_exit;
-	}
-
-	timer_unit = t3412_lookup[index];
-	timer_value = strtoul(timer_str + unit_str_len, NULL, 2);
-	*tau = timer_unit ? timer_unit * timer_value : -1;
-
-	/* Parse active time string */
-	err = at_params_string_get(&at_resp_list,
-				   AT_CEREG_ACTIVE_TIME_INDEX,
-				   timer_str,
-				   &timer_str_len);
-	if (err) {
-		LOG_ERR("Could not get TAU, error: %d", err);
-		goto parse_psm_clean_exit;
-	}
-
-	memcpy(unit_str, timer_str, unit_str_len);
-
-	index = strtoul(unit_str, NULL, 2);
-	if (index > (ARRAY_SIZE(t3324_lookup) - 1)) {
-		LOG_ERR("Unable to parse active time string");
-		err = -EINVAL;
-		goto parse_psm_clean_exit;
-	}
-
-	timer_unit = t3324_lookup[index];
-	timer_value = strtoul(timer_str + unit_str_len, NULL, 2);
-	*active_time = timer_unit ? timer_unit * timer_value : -1;
+	*tau = psm_cfg.tau;
+	*active_time = psm_cfg.active_time;
 
 	LOG_DBG("TAU: %d sec, active time: %d sec\n", *tau, *active_time);
 
@@ -880,7 +1028,7 @@ static int get_edrx_value(u8_t idx, float *edrx_value)
 		2, 2, 2, 4, 2, 8, 2, 2, 2, 16, 32, 64, 128, 256, 512, 1024
 	};
 
-	if (edrx_value == NULL) {
+	if ((edrx_value == NULL) || (idx > ARRAY_SIZE(edrx_lookup_ltem) - 1)) {
 		return -EINVAL;
 	}
 
@@ -1078,7 +1226,7 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode)
 		       system_mode_params[mode]);
 	if (len < 0) {
 		LOG_ERR("Could not construct system mode command");
-		return - EFAULT;
+		return -EFAULT;
 	}
 
 	LOG_DBG("Sending AT command to set system mode: %s", log_strdup(cmd));

@@ -61,6 +61,7 @@ enum lte_lc_evt_type {
 	LTE_LC_EVT_PSM_UPDATE,
 	LTE_LC_EVT_EDRX_UPDATE,
 	LTE_LC_EVT_RRC_UPDATE,
+	LTE_LC_EVT_CELL_UPDATE,
 };
 
 enum lte_lc_rrc_mode {
@@ -69,13 +70,18 @@ enum lte_lc_rrc_mode {
 };
 
 struct lte_lc_psm_cfg {
-	int tau;
-	int active_time;
+	int tau;		/* Periodic Tracking Area Update interval */
+	int active_time;	/* Active-time (time from RRC idle to PSM) */
 };
 
 struct lte_lc_edrx_cfg {
 	float edrx;	/* eDRX interval value [s] */
 	float ptw;	/* Paging time window [s] */
+};
+
+struct lte_lc_cell {
+	u32_t id;	/* E-UTRAN cell ID */
+	u32_t tac;	/* Tracking Area Code */
 };
 
 struct lte_lc_evt {
@@ -85,6 +91,7 @@ struct lte_lc_evt {
 		enum lte_lc_rrc_mode rrc_mode;
 		struct lte_lc_psm_cfg psm_cfg;
 		struct lte_lc_edrx_cfg edrx_cfg;
+		struct lte_lc_cell cell;
 	};
 };
 
