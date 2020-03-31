@@ -30,7 +30,7 @@ choice
 config PROFILER_SYSVIEW
 	bool "SysView profiler"
 	select USE_SEGGER_RTT
-	select SEGGER_SYSTEMVIEW
+	depends on SEGGER_SYSTEMVIEW
 
 config PROFILER_NORDIC
 	bool "Nordic profiler"
