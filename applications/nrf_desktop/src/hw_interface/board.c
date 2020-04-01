@@ -36,11 +36,11 @@ static int port_setup(const char *name,
 	for (size_t i = 0; i < cnt; i++) {
 		err = gpio_pin_configure(gpio_dev,
 					 pin_state[i].pin,
-					 GPIO_DIR_OUT);
+					 GPIO_OUTPUT);
 		if (!err) {
-			err = gpio_pin_write(gpio_dev,
-					     pin_state[i].pin,
-					     pin_state[i].val);
+			err = gpio_pin_set_raw(gpio_dev,
+					       pin_state[i].pin,
+					       pin_state[i].val);
 		} else {
 			LOG_ERR("Cannot configure pin %u on %s",
 				    pin_state[i].pin, name);

@@ -103,9 +103,20 @@ static int wakeup_int_ctrl_nolock(bool enable)
 	 */
 	for (size_t i = 0; (i < ARRAY_SIZE(qdec_pin)) && !err; i++) {
 		if (enable) {
-			err = gpio_pin_enable_callback(gpio_dev, qdec_pin[i]);
+			int val = gpio_pin_get_raw(gpio_dev, qdec_pin[i]);
+
+			if (val < 0) {
+				LOG_ERR("Cannot read pin %zu", i);
+				err = val;
+				continue;
+			}
+
+			err = gpio_pin_interrupt_configure(gpio_dev,
+				qdec_pin[i],
+				val ? GPIO_INT_LEVEL_LOW : GPIO_INT_LEVEL_HIGH);
 		} else {
-			err = gpio_pin_disable_callback(gpio_dev, qdec_pin[i]);
+			err = gpio_pin_interrupt_configure(gpio_dev, qdec_pin[i],
+							   GPIO_INT_DISABLE);
 		}
 
 		if (err) {
@@ -154,33 +165,24 @@ static void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb,
 
 static int setup_wakeup(void)
 {
-	int err = gpio_pin_configure(gpio_dev, DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN,
-				     GPIO_DIR_OUT);
+	int err = gpio_pin_configure(gpio_dev,
+				     DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN,
+				     GPIO_OUTPUT);
 	if (err) {
 		LOG_ERR("Cannot configure enable pin");
 		return err;
 	}
 
-	err = gpio_pin_write(gpio_dev, DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN, 0);
+	err = gpio_pin_set_raw(gpio_dev,
+			       DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN, 0);
 	if (err) {
 		LOG_ERR("Failed to set enable pin");
 		return err;
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(qdec_pin); i++) {
+		err = gpio_pin_configure(gpio_dev, qdec_pin[i], GPIO_INPUT);
 
-		u32_t val;
-
-		err = gpio_pin_read(gpio_dev, qdec_pin[i], &val);
-		if (err) {
-			LOG_ERR("Cannot read pin %zu", i);
-			return err;
-		}
-
-		int flags = GPIO_DIR_IN | GPIO_INT | GPIO_INT_LEVEL;
-		flags |= (val) ? GPIO_INT_ACTIVE_LOW : GPIO_INT_ACTIVE_HIGH;
-
-		err = gpio_pin_configure(gpio_dev, qdec_pin[i], flags);
 		if (err) {
 			LOG_ERR("Cannot configure pin %zu", i);
 			return err;

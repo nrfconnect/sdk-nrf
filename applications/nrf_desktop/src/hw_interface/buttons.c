@@ -60,14 +60,14 @@ static int set_cols(u32_t mask)
 			}
 
 			err = gpio_pin_configure(gpio_devs[col[i].port],
-						 col[i].pin, GPIO_DIR_OUT);
+						 col[i].pin, GPIO_OUTPUT);
 			if (!err) {
-				err = gpio_pin_write(gpio_devs[col[i].port],
-						     col[i].pin, val);
+				err = gpio_pin_set_raw(gpio_devs[col[i].port],
+						       col[i].pin, val);
 			}
 		} else {
 			err = gpio_pin_configure(gpio_devs[col[i].port],
-						 col[i].pin, GPIO_DIR_IN);
+						 col[i].pin, GPIO_INPUT);
 		}
 
 		if (err) {
@@ -82,9 +82,9 @@ static int set_cols(u32_t mask)
 static int get_rows(u32_t *mask)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
-		u32_t val;
+		int val = gpio_pin_get_raw(gpio_devs[row[i].port], row[i].pin);
 
-		if (gpio_pin_read(gpio_devs[row[i].port], row[i].pin, &val)) {
+		if (val < 0) {
 			LOG_ERR("Cannot get pin");
 			return -EFAULT;
 		}
@@ -99,15 +99,11 @@ static int get_rows(u32_t *mask)
 	return 0;
 }
 
-static int set_trig_mode(int trig_mode)
+static int set_trig_mode(void)
 {
-	__ASSERT_NO_MSG((trig_mode == GPIO_INT_EDGE) ||
-			(trig_mode == GPIO_INT_LEVEL));
-
-	int flags = (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED) ?
-		(GPIO_PUD_PULL_UP | GPIO_INT_ACTIVE_LOW) :
-		(GPIO_PUD_PULL_DOWN | GPIO_INT_ACTIVE_HIGH));
-	flags |= (GPIO_DIR_IN | GPIO_INT | trig_mode);
+	gpio_flags_t flags = (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED) ?
+			      (GPIO_PULL_UP) : (GPIO_PULL_DOWN));
+	flags |= GPIO_INPUT;
 
 	int err = 0;
 
@@ -139,11 +135,20 @@ static int callback_ctrl(bool enable)
 
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
 		if (enable) {
-			err = gpio_pin_enable_callback(gpio_devs[row[i].port],
-						       row[i].pin);
+			/* Level interrupt is needed to leave deep sleep mode.
+			 * Edge interrupt gives only 7 channels. It is not
+			 * suitable for larger matrix/number of GPIO buttons.
+			 */
+			gpio_flags_t flag_irq = (IS_ENABLED(CONFIG_DESKTOP_BUTTONS_POLARITY_INVERSED) ?
+						(GPIO_INT_LEVEL_LOW) : (GPIO_INT_LEVEL_HIGH));
+
+			err = gpio_pin_interrupt_configure(gpio_devs[row[i].port],
+							   row[i].pin,
+							   flag_irq);
 		} else {
-			err = gpio_pin_disable_callback(gpio_devs[row[i].port],
-							row[i].pin);
+			err = gpio_pin_interrupt_configure(gpio_devs[row[i].port],
+							   row[i].pin,
+							   GPIO_INT_DISABLE);
 		}
 	}
 	if (!enable) {
@@ -368,7 +373,8 @@ static void button_pressed_isr(struct device *gpio_dev,
 	 */
 	for (u32_t pin = 0; (pins != 0) && !err; pins >>= 1, pin++) {
 		if ((pins & 1) != 0) {
-			err = gpio_pin_disable_callback(gpio_dev, pin);
+			err = gpio_pin_interrupt_configure(gpio_dev, pin,
+							   GPIO_INT_DISABLE);
 		}
 	}
 
@@ -431,7 +437,7 @@ static void init_fn(void)
 		__ASSERT_NO_MSG(gpio_devs[col[i].port] != NULL);
 
 		int err = gpio_pin_configure(gpio_devs[col[i].port],
-					     col[i].pin, GPIO_DIR_IN);
+					     col[i].pin, GPIO_INPUT);
 
 		if (err) {
 			LOG_ERR("Cannot configure cols");
@@ -439,11 +445,7 @@ static void init_fn(void)
 		}
 	}
 
-	/* Level interrupt is needed to leave deep sleep mode.
-	 * Edge interrupt gives only 7 channels so is not suitable
-	 * for larger matrix or number of GPIO buttons.
-	 */
-	int err = set_trig_mode(GPIO_INT_LEVEL);
+	int err = set_trig_mode();
 	if (err) {
 		LOG_ERR("Cannot set interrupt mode");
 		goto error;
@@ -454,8 +456,9 @@ static void init_fn(void)
 		/* Module starts in scanning mode and will switch to
 		 * callback mode if no button is pressed.
 		 */
-		err = gpio_pin_disable_callback(gpio_devs[row[i].port],
-						row[i].pin);
+		err = gpio_pin_interrupt_configure(gpio_devs[row[i].port],
+						   row[i].pin,
+						   GPIO_INT_DISABLE);
 		if (err) {
 			LOG_ERR("Cannot configure rows");
 			goto error;
