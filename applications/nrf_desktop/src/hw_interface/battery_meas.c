@@ -103,9 +103,9 @@ static int init_adc(void)
 static int battery_monitor_start(void)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN)) {
-		int err = gpio_pin_write(gpio_dev,
-					 CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
-					 1);
+		int err = gpio_pin_set_raw(gpio_dev,
+					   CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
+					   1);
 		if (err) {
 			 LOG_ERR("Cannot enable battery monitor circuit");
 			 return err;
@@ -126,9 +126,9 @@ static void battery_monitor_stop(void)
 	int err = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN)) {
-		err = gpio_pin_write(gpio_dev,
-				     CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
-				     0);
+		err = gpio_pin_set_raw(gpio_dev,
+				       CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
+				       0);
 		if (err) {
 			LOG_ERR("Cannot disable battery monitor circuit");
 			module_set_state(MODULE_STATE_ERROR);
@@ -238,7 +238,7 @@ static int init_fn(void)
 		/* Enable battery monitoring */
 		err = gpio_pin_configure(gpio_dev,
 					 CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN,
-					 GPIO_DIR_OUT);
+					 GPIO_OUTPUT);
 	}
 
 	if (!err) {

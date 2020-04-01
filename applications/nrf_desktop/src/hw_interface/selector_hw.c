@@ -57,16 +57,17 @@ static void selector_event_send(const struct selector *selector)
 
 static int read_state(struct selector *selector)
 {
-	u32_t value = 0;
 	const struct gpio_pin *sel_pins = selector->config->pins;
-	int err;
+	int value;
+
+	if (selector->config->pins_size == 0) {
+		return 0;
+	}
 
 	for (size_t i = 0; i < selector->config->pins_size; i++) {
-		err = gpio_pin_read(gpio_dev[sel_pins[i].port],
-				    sel_pins[i].pin,
-				    &value);
-
-		if (err) {
+		value = gpio_pin_get_raw(gpio_dev[sel_pins[i].port],
+					 sel_pins[i].pin);
+		if (value < 0) {
 			LOG_ERR("Cannot read value from port:%" PRIu8
 				" pin: %" PRIu8, sel_pins[i].port,
 				sel_pins[i].pin);
@@ -79,7 +80,7 @@ static int read_state(struct selector *selector)
 		}
 	}
 
-	if (!err) {
+	if (value >= 0) {
 		if (value) {
 			selector_event_send(selector);
 		} else {
@@ -89,7 +90,7 @@ static int read_state(struct selector *selector)
 		}
 	}
 
-	return err;
+	return (value < 0) ? value : 0;
 }
 
 static int enable_interrupts_lock(struct selector *selector)
@@ -104,8 +105,9 @@ static int enable_interrupts_lock(struct selector *selector)
 			continue;
 		}
 
-		err = gpio_pin_enable_callback(gpio_dev[sel_pins[i].port],
-					       sel_pins[i].pin);
+		err = gpio_pin_interrupt_configure(gpio_dev[sel_pins[i].port],
+						   sel_pins[i].pin,
+						   GPIO_INT_LEVEL_HIGH);
 		if (err) {
 			LOG_ERR("Cannot enable callback (err %d)", err);
 			break;
@@ -123,8 +125,9 @@ static int disable_interrupts_nolock(struct selector *selector)
 	int err;
 
 	for (size_t i = 0; i < selector->config->pins_size; i++) {
-		err = gpio_pin_disable_callback(gpio_dev[sel_pins[i].port],
-						sel_pins[i].pin);
+		err = gpio_pin_interrupt_configure(gpio_dev[sel_pins[i].port],
+						   sel_pins[i].pin,
+						   GPIO_INT_DISABLE);
 
 		if (err) {
 			LOG_ERR("Cannot disable callback (err %d)", err);
@@ -207,13 +210,10 @@ static int configure_pins(struct selector *selector, bool enabled)
 {
 	const struct gpio_pin *sel_pins = selector->config->pins;
 	int err = 0;
-	int flags;
+	gpio_flags_t flags = GPIO_INPUT;
 
 	if (enabled) {
-		flags = GPIO_DIR_IN | GPIO_PUD_PULL_DOWN |
-			GPIO_INT | GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH;
-	} else {
-		flags = GPIO_DIR_IN;
+		flags |= GPIO_PULL_DOWN;
 	}
 
 	for (size_t i = 0; (i < selector->config->pins_size) && !err; i++) {
