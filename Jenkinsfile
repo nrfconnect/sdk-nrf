@@ -7,19 +7,10 @@
 //
 
 @Library("CI_LIB") _
-
 HashMap CI_STATE = lib_State.getConfig(JOB_NAME)
-def TestExecutionList = [:]
+properties(lib_State.getTriggers())
 
-properties([
-  pipelineTriggers([
-    parameterizedCron( [
-        ((JOB_NAME =~ /latest\/night\/.*\/master/).find() ? CI_STATE.CFG.CRON.NIGHTLY : ''),
-        ((JOB_NAME =~ /latest\/week\/.*\/master/).find() ? CI_STATE.CFG.CRON.WEEKLY : '')
-    ].join('    \n') )
-  ]),
-  ( JOB_NAME.contains('sub/') ? disableResume() :  disableConcurrentBuilds() )
-])
+def TestExecutionList = [:]
 
 pipeline {
 
