@@ -298,7 +298,7 @@ static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
 		 * Therefore, LFCLK is always handled in case STATUS_ON.
 		 */
 		if ((data != NULL) && (data->cb != NULL)) {
-			data->cb(dev, data->user_data);
+			data->cb(dev, subsys, data->user_data);
 		}
 
 		break;
@@ -408,7 +408,8 @@ static void hf_clock_started_callback(void)
 		struct clock_control_async_data *clock_async_data = NULL;
 
 		SYS_SLIST_FOR_EACH_CONTAINER(list, clock_async_data, node) {
-			clock_async_data->cb(dev, clock_async_data->user_data);
+			clock_async_data->cb(dev, CLOCK_CONTROL_NRF_SUBSYS_HF,
+					     clock_async_data->user_data);
 		}
 	}
 
