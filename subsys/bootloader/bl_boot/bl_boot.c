@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <soc.h>
 #include <sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>
