@@ -182,15 +182,15 @@ DEVICE_DECLARE(pmw3360);
 
 static int spi_cs_ctrl(struct pmw3360_data *dev_data, bool enable)
 {
-	u32_t val = (enable) ? (0) : (1);
+	int val = (enable) ? (0) : (1);
 	int err;
 
 	if (!enable) {
 		k_busy_wait(T_NCS_SCLK);
 	}
 
-	err = gpio_pin_write(dev_data->cs_gpio_dev, PMW3360_CS_GPIO_PIN,
-			     val);
+	err = gpio_pin_set_raw(dev_data->cs_gpio_dev, PMW3360_CS_GPIO_PIN, val);
+
 	if (err) {
 		LOG_ERR("SPI CS ctrl failed");
 	}
@@ -682,8 +682,9 @@ static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
 {
 	int err;
 
-	err = gpio_pin_disable_callback(pmw3360_data.irq_gpio_dev,
-					PMW3360_IRQ_GPIO_PIN);
+	err = gpio_pin_interrupt_configure(pmw3360_data.irq_gpio_dev,
+					   PMW3360_IRQ_GPIO_PIN,
+					   GPIO_INT_DISABLE);
 	if (unlikely(err)) {
 		LOG_ERR("Cannot disable IRQ");
 		k_panic();
@@ -714,8 +715,9 @@ static void trigger_handler(struct k_work *work)
 
 	key = k_spin_lock(&pmw3360_data.lock);
 	if (pmw3360_data.data_ready_handler) {
-		err = gpio_pin_enable_callback(pmw3360_data.irq_gpio_dev,
-					       PMW3360_IRQ_GPIO_PIN);
+		err = gpio_pin_interrupt_configure(pmw3360_data.irq_gpio_dev,
+						   PMW3360_IRQ_GPIO_PIN,
+						   GPIO_INT_LEVEL_LOW);
 	}
 	k_spin_unlock(&pmw3360_data.lock, key);
 
@@ -795,7 +797,7 @@ static int pmw3360_init_cs(struct pmw3360_data *dev_data)
 	}
 
 	err = gpio_pin_configure(dev_data->cs_gpio_dev, PMW3360_CS_GPIO_PIN,
-				 GPIO_DIR_OUT);
+				 GPIO_OUTPUT);
 	if (!err) {
 		err = spi_cs_ctrl(dev_data, false);
 	} else {
@@ -818,8 +820,7 @@ static int pmw3360_init_irq(struct pmw3360_data *dev_data)
 
 	err = gpio_pin_configure(dev_data->irq_gpio_dev,
 				 PMW3360_IRQ_GPIO_PIN,
-				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
-				 GPIO_INT_LEVEL | GPIO_INT_ACTIVE_LOW);
+				 GPIO_INPUT | GPIO_PULL_UP);
 	if (err) {
 		LOG_ERR("Cannot configure IRQ GPIO");
 		return err;
@@ -970,11 +971,13 @@ static int pmw3360_trigger_set(struct device *dev,
 	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
 
 	if (handler) {
-		err = gpio_pin_enable_callback(dev_data->irq_gpio_dev,
-					       PMW3360_IRQ_GPIO_PIN);
+		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
+						   PMW3360_IRQ_GPIO_PIN,
+						   GPIO_INT_LEVEL_LOW);
 	} else {
-		err = gpio_pin_disable_callback(dev_data->irq_gpio_dev,
-						PMW3360_IRQ_GPIO_PIN);
+		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
+						   PMW3360_IRQ_GPIO_PIN,
+						   GPIO_INT_DISABLE);
 	}
 
 	if (!err) {
