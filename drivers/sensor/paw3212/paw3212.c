@@ -170,15 +170,15 @@ static s16_t expand_s12(s16_t x)
 
 static int spi_cs_ctrl(struct paw3212_data *dev_data, bool enable)
 {
-	u32_t val = (enable) ? (0) : (1);
+	int val = (enable) ? (0) : (1);
 	int err;
 
 	if (!enable) {
 		k_busy_wait(T_NCS_SCLK);
 	}
 
-	err = gpio_pin_write(dev_data->cs_gpio_dev, PAW3212_CS_GPIO_PIN,
-			     val);
+	err = gpio_pin_set_raw(dev_data->cs_gpio_dev, PAW3212_CS_GPIO_PIN, val);
+
 	if (err) {
 		LOG_ERR("SPI CS ctrl failed");
 	}
@@ -540,8 +540,9 @@ static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
 {
 	int err;
 
-	err = gpio_pin_disable_callback(paw3212_data.irq_gpio_dev,
-					PAW3212_IRQ_GPIO_PIN);
+	err = gpio_pin_interrupt_configure(paw3212_data.irq_gpio_dev,
+					   PAW3212_IRQ_GPIO_PIN,
+					   GPIO_INT_DISABLE);
 	if (unlikely(err)) {
 		LOG_ERR("Cannot disable IRQ");
 		k_panic();
@@ -572,8 +573,9 @@ static void trigger_handler(struct k_work *work)
 
 	key = k_spin_lock(&paw3212_data.lock);
 	if (paw3212_data.data_ready_handler) {
-		err = gpio_pin_enable_callback(paw3212_data.irq_gpio_dev,
-					       PAW3212_IRQ_GPIO_PIN);
+		err = gpio_pin_interrupt_configure(paw3212_data.irq_gpio_dev,
+						   PAW3212_IRQ_GPIO_PIN,
+						   GPIO_INT_LEVEL_LOW);
 	}
 	k_spin_unlock(&paw3212_data.lock, key);
 
@@ -679,7 +681,7 @@ static int paw3212_init_cs(struct paw3212_data *dev_data)
 
 	err = gpio_pin_configure(dev_data->cs_gpio_dev,
 				 PAW3212_CS_GPIO_PIN,
-				 GPIO_DIR_OUT);
+				 GPIO_OUTPUT);
 	if (!err) {
 		err = spi_cs_ctrl(dev_data, false);
 	} else {
@@ -702,8 +704,7 @@ static int paw3212_init_irq(struct paw3212_data *dev_data)
 
 	err = gpio_pin_configure(dev_data->irq_gpio_dev,
 				 PAW3212_IRQ_GPIO_PIN,
-				 GPIO_DIR_IN | GPIO_INT | GPIO_PUD_PULL_UP |
-				 GPIO_INT_LEVEL | GPIO_INT_ACTIVE_LOW);
+				 GPIO_INPUT | GPIO_PULL_UP);
 	if (err) {
 		LOG_ERR("Cannot configure IRQ GPIO");
 		return err;
@@ -713,6 +714,7 @@ static int paw3212_init_irq(struct paw3212_data *dev_data)
 			   BIT(PAW3212_IRQ_GPIO_PIN));
 
 	err = gpio_add_callback(dev_data->irq_gpio_dev, &dev_data->irq_gpio_cb);
+
 	if (err) {
 		LOG_ERR("Cannot add IRQ GPIO callback");
 	}
@@ -891,11 +893,13 @@ static int paw3212_trigger_set(struct device *dev,
 	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
 
 	if (handler) {
-		err = gpio_pin_enable_callback(dev_data->irq_gpio_dev,
-					       PAW3212_IRQ_GPIO_PIN);
+		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
+						   PAW3212_IRQ_GPIO_PIN,
+						   GPIO_INT_LEVEL_LOW);
 	} else {
-		err = gpio_pin_disable_callback(dev_data->irq_gpio_dev,
-						PAW3212_IRQ_GPIO_PIN);
+		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
+						   PAW3212_IRQ_GPIO_PIN,
+						   GPIO_INT_DISABLE);
 	}
 
 	if (!err) {
