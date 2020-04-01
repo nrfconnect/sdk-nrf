@@ -21,7 +21,8 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 
 static struct device *clock;
 
-static void clock_handler(struct device *dev, void *user_data)
+static void clock_handler(struct device *dev, clock_control_subsys_t subsys,
+			  void *user_data)
 {
 	/* Activate NFCT only when HFXO is running */
 	nrfx_nfct_state_force(NRFX_NFCT_STATE_ACTIVATED);
