@@ -61,7 +61,7 @@ static void sensor_sim_gpio_callback(struct device *dev,
 	struct sensor_sim_data *drv_data =
 		CONTAINER_OF(cb, struct sensor_sim_data, gpio_cb);
 
-	gpio_pin_disable_callback(dev, drv_data->gpio_pin);
+	gpio_pin_interrupt_configure(dev, drv_data->gpio_pin, GPIO_INT_DISABLE);
 	k_sem_give(&drv_data->gpio_sem);
 }
 #endif /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
@@ -88,7 +88,8 @@ static void sensor_sim_thread(int dev_ptr)
 		}
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-		gpio_pin_enable_callback(drv_data->gpio, drv_data->gpio_pin);
+		gpio_pin_interrupt_configure(drv_data->gpio, drv_data->gpio_pin,
+					     GPIO_INT_EDGE_FALLING);
 #endif
 	}
 }
@@ -111,9 +112,7 @@ static int sensor_sim_init_thread(struct device *dev)
 	}
 
 	gpio_pin_configure(drv_data->gpio, drv_data->gpio_pin,
-			   GPIO_DIR_IN | GPIO_INT | GPIO_INT_EDGE |
-			   GPIO_INT_ACTIVE_LOW | GPIO_INT_DEBOUNCE |
-			   GPIO_PUD_PULL_UP);
+			   GPIO_INPUT | GPIO_PULL_UP | GPIO_INT_DEBOUNCE);
 
 	gpio_init_callback(&drv_data->gpio_cb,
 			   sensor_sim_gpio_callback,
@@ -146,7 +145,8 @@ static int sensor_sim_trigger_set(struct device *dev,
 	struct sensor_sim_data *drv_data = dev->driver_data;
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	gpio_pin_disable_callback(drv_data->gpio, drv_data->gpio_pin);
+	gpio_pin_interrupt_configure(drv_data->gpio, drv_data->gpio_pin,
+				     GPIO_INT_DISABLE);
 #endif
 
 	switch (trig->type) {
@@ -161,7 +161,8 @@ static int sensor_sim_trigger_set(struct device *dev,
 	}
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	gpio_pin_enable_callback(drv_data->gpio, drv_data->gpio_pin);
+	gpio_pin_interrupt_configure(drv_data->gpio, drv_data->gpio_pin,
+				     GPIO_INT_EDGE_FALLING);
 #endif
 	return ret;
 }
