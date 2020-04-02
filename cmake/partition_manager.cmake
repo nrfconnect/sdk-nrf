@@ -241,8 +241,16 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
   if(TARGET flash)
     add_dependencies(flash merged_hex)
   endif()
-  set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${PROJECT_BINARY_DIR}/merged.hex"
-    CACHE STRING "Path to merged image in Intel Hex format" FORCE)
+  get_target_property(runners_content runner_yml_props_target yaml_contents)
+
+  string(REGEX REPLACE "--hex-file=[^\n]*"
+    "--hex-file=${PROJECT_BINARY_DIR}/merged.hex" new  ${runners_content})
+
+  set_property(
+    TARGET         runner_yml_props_target
+    PROPERTY       yaml_contents
+    ${new}
+    )
 endif()
 
 if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
