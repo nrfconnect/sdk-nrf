@@ -203,6 +203,7 @@ class NcsLoot(NcsWestCommand):
         # name: project name
         # project: the west.manifest.Project instance in the NCS manifest
         # z_project: the Project instance in the upstream manifest
+        # args: parsed arguments from argparse
         name_path = _name_and_path(project)
 
         # Get the upstream revision of the project. The zephyr project
@@ -212,13 +213,16 @@ class NcsLoot(NcsWestCommand):
         else:
             z_rev = z_project.revision
 
+        n_rev = 'refs/heads/manifest-rev'
+
         try:
-            nsha = project.sha(project.revision)
+            nsha = project.sha(n_rev)
             project.git('cat-file -e ' + nsha)
         except subprocess.CalledProcessError:
             log.wrn(f"{name_path}: can't get loot; please run "
-                    f'"west update" (need revision {project.revision})')
+                    f'"west update" (no "{n_rev}" ref)')
             return
+
         try:
             zsha = z_project.sha(z_rev)
             z_project.git('cat-file -e ' + zsha)
@@ -228,8 +232,7 @@ class NcsLoot(NcsWestCommand):
             return
 
         try:
-            analyzer = nwh.RepoAnalyzer(project, z_project,
-                                        project.revision, z_rev)
+            analyzer = nwh.RepoAnalyzer(project, z_project, n_rev, z_rev)
         except nwh.InvalidRepositoryError as ire:
             log.die(f"{name_path}: {str(ire)}")
 
@@ -244,7 +247,7 @@ class NcsLoot(NcsWestCommand):
             return
 
         log.banner(name_path)
-        log.inf(f'NCS commit: {nsha}, upstream commit: {zsha}')
+        log.inf(f'NCS commit (manifest-rev): {nsha}, upstream commit: {zsha}')
         log.inf('OOT patches: ' +
                 (f'{len(loot)} total' if loot else 'none') +
                 (', output limited by --file' if args.files else ''))
