@@ -243,22 +243,16 @@ static const char *const cmd_type_str[] = {
 BUILD_ASSERT(ARRAY_SIZE(cmd_type_str) == CLOUD_CMD__TOTAL);
 
 static struct cloud_sensor_chan_cfg sensor_cfg[] = {
-	{ .chan = CLOUD_CHANNEL_TEMP,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } },
-	{ .chan = CLOUD_CHANNEL_HUMID,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } },
-	{ .chan = CLOUD_CHANNEL_AIR_PRESS,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } },
-	{ .chan = CLOUD_CHANNEL_AIR_QUAL,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } },
-	{ .chan = CLOUD_CHANNEL_LIGHT_RED,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } },
-	{ .chan = CLOUD_CHANNEL_LIGHT_GREEN,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } },
-	{ .chan = CLOUD_CHANNEL_LIGHT_BLUE,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } },
-	{ .chan = CLOUD_CHANNEL_LIGHT_IR,
-	  .cfg = { .value = { [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = true } } }
+	{ .chan = CLOUD_CHANNEL_GPS },
+	{ .chan = CLOUD_CHANNEL_ENVIRONMENT },
+	{ .chan = CLOUD_CHANNEL_TEMP },
+	{ .chan = CLOUD_CHANNEL_HUMID },
+	{ .chan = CLOUD_CHANNEL_AIR_PRESS },
+	{ .chan = CLOUD_CHANNEL_AIR_QUAL },
+	{ .chan = CLOUD_CHANNEL_LIGHT_RED },
+	{ .chan = CLOUD_CHANNEL_LIGHT_GREEN },
+	{ .chan = CLOUD_CHANNEL_LIGHT_BLUE },
+	{ .chan = CLOUD_CHANNEL_LIGHT_IR }
 };
 
 static int cloud_cmd_handle_sensor_set_chan_cfg(struct cloud_command const *const cmd);
@@ -284,6 +278,18 @@ static int json_add_str(cJSON *parent, const char *str, const char *item)
 	}
 
 	return json_add_obj(parent, str, json_str);
+}
+
+static int json_add_bool(cJSON *parent, const char *str, const bool value)
+{
+	cJSON *json_bool;
+
+	json_bool = cJSON_CreateBool(value);
+	if (json_bool == NULL) {
+		return -ENOMEM;
+	}
+
+	return json_add_obj(parent, str, json_bool);
 }
 
 static cJSON *json_object_decode(cJSON *obj, const char *str)
@@ -453,6 +459,73 @@ int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
 	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
 }
 #endif /* CONFIG_LIGHT_SENSOR */
+
+int cloud_encode_config_data(struct cloud_msg *output)
+{
+	__ASSERT_NO_MSG(output != NULL);
+
+	cJSON *chan_obj = cJSON_CreateObject();
+	cJSON *state_obj = cJSON_CreateObject();
+	cJSON *reported_obj = cJSON_CreateObject();
+	cJSON *config_obj = cJSON_CreateObject();
+	cJSON *root_obj = cJSON_CreateObject();
+	int ret = 0;
+	char *buffer;
+
+	if (chan_obj == NULL || state_obj == NULL ||
+	    reported_obj == NULL || config_obj == NULL ||
+		root_obj == NULL) {
+		ret = -ENOMEM;
+		goto cleanup;
+	}
+
+	/* Currently, the only value that can be changed from
+	 * the device is GPS enable, so it is the only
+	 * one that needs to be sent.
+	 */
+	enum cloud_cmd_state gps_state =
+		cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS);
+
+	if (gps_state != CLOUD_CMD_STATE_UNDEFINED) {
+		ret = json_add_bool(chan_obj, cmd_type_str[CLOUD_CMD_ENABLE],
+				gps_state == CLOUD_CMD_STATE_TRUE);
+		if (ret != 0) {
+			ret = -ENOMEM;
+			goto cleanup;
+		}
+	}
+
+	/* No items in chan_obj is not an error, there
+	 * is just nothing to report
+	 */
+	if (cJSON_GetArraySize(chan_obj) == 0) {
+		goto cleanup;
+	}
+
+	cJSON_AddItemToObject(config_obj, channel_type_str[CLOUD_CHANNEL_GPS],
+			      chan_obj);
+	cJSON_AddItemToObject(reported_obj, "config", config_obj);
+	cJSON_AddItemToObject(state_obj, "reported", reported_obj);
+	cJSON_AddItemToObject(root_obj, "state", state_obj);
+
+	buffer = cJSON_PrintUnformatted(root_obj);
+	cJSON_Delete(root_obj);
+	output->buf = buffer;
+	output->len = strlen(buffer);
+
+	return 0;
+
+cleanup:
+	output->buf = NULL;
+	output->len = 0;
+	cJSON_Delete(chan_obj);
+	cJSON_Delete(state_obj);
+	cJSON_Delete(reported_obj);
+	cJSON_Delete(config_obj);
+	cJSON_Delete(root_obj);
+
+	return ret;
+}
 
 int cloud_encode_device_status_data(
 	void *modem_param,
@@ -868,9 +941,19 @@ int cloud_decode_command(char const *input)
 int cloud_decode_init(cloud_cmd_cb_t cb)
 {
 	cJSON_Init();
-
 	cloud_command_cb = cb;
-
+	for (int i = 0; i < ARRAY_SIZE(sensor_cfg); ++i) {
+		/* Enable values should be undefined by default */
+		sensor_cfg[i].cfg.value
+			[SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] =
+			CLOUD_CMD_STATE_UNDEFINED;
+		sensor_cfg[i].cfg.value
+			[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE] =
+			CLOUD_CMD_STATE_UNDEFINED;
+		sensor_cfg[i].cfg.value
+			[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_HIGH_ENABLE] =
+			CLOUD_CMD_STATE_UNDEFINED;
+	}
 	return 0;
 }
 
@@ -892,10 +975,12 @@ static bool sensor_chan_cfg_is_send_allowed(const struct sensor_chan_cfg *const 
 										    const double sensor_value)
 {
 	if ((cfg == NULL) ||
-	    (!cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE])) {
+	    (cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] ==
+		 CLOUD_CMD_STATE_FALSE)) {
 		return false;
 	}
 
+	/* By default, an undefined enable state will allow data to be sent */
 	if (((cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE]) &&
 	     (sensor_value <
 	      cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_VALUE]))) {
@@ -926,6 +1011,31 @@ static int cloud_set_chan_cfg_item(const enum cloud_channel channel,
 	return -ENOTSUP;
 }
 
+enum cloud_cmd_state cloud_get_channel_enable_state(
+			  const enum cloud_channel channel)
+{
+	for (int i = 0; i < ARRAY_SIZE(sensor_cfg); ++i) {
+		if (sensor_cfg[i].chan == channel) {
+			return sensor_cfg[i].cfg.value
+				   [SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE];
+		}
+	}
+
+	return CLOUD_CMD_STATE_UNDEFINED;
+}
+
+void cloud_set_channel_enable_state(
+			  const enum cloud_channel channel,
+			  const enum cloud_cmd_state state)
+{
+	for (int i = 0; i < ARRAY_SIZE(sensor_cfg); ++i) {
+		if (sensor_cfg[i].chan == channel) {
+			sensor_cfg[i].cfg.value
+				[SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] = state;
+		}
+	}
+}
+
 bool cloud_is_send_allowed(const enum cloud_channel channel, const double value)
 {
 	for (int i = 0; i < ARRAY_SIZE(sensor_cfg); ++i) {
@@ -951,7 +1061,7 @@ static int cloud_cmd_handle_sensor_set_chan_cfg(struct cloud_command const *cons
 		err = cloud_set_chan_cfg_item(
 			cmd->channel,
 			SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE,
-			(cmd->data.sv.state == CLOUD_CMD_STATE_TRUE));
+			cmd->data.sv.state);
 		break;
 	case CLOUD_CMD_THRESHOLD_HIGH:
 		if (cmd->data.sv.state == CLOUD_CMD_STATE_UNDEFINED) {
@@ -968,7 +1078,7 @@ static int cloud_cmd_handle_sensor_set_chan_cfg(struct cloud_command const *cons
 			err = cloud_set_chan_cfg_item(
 				cmd->channel,
 				SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_HIGH_ENABLE,
-				(cmd->data.sv.state == CLOUD_CMD_STATE_TRUE));
+				cmd->data.sv.state);
 		}
 		break;
 	case CLOUD_CMD_THRESHOLD_LOW:
@@ -980,13 +1090,13 @@ static int cloud_cmd_handle_sensor_set_chan_cfg(struct cloud_command const *cons
 			cloud_set_chan_cfg_item(
 				cmd->channel,
 				SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE,
-				true);
+				CLOUD_CMD_STATE_TRUE);
 
 		} else {
 			err = cloud_set_chan_cfg_item(
 				cmd->channel,
 				SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE,
-				(cmd->data.sv.state == CLOUD_CMD_STATE_TRUE));
+				cmd->data.sv.state);
 		}
 		break;
 	default:
