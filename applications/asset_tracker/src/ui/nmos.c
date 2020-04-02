@@ -130,12 +130,12 @@ static int configure_gpio(u32_t pin)
 {
 	int err;
 
-	err = gpio_pin_configure(gpio_dev, pin, GPIO_DIR_OUT);
+	err = gpio_pin_configure(gpio_dev, pin, GPIO_OUTPUT);
 	if (err) {
 		return err;
 	}
 
-	err = gpio_pin_write(gpio_dev, pin, 0);
+	err = gpio_pin_set_raw(gpio_dev, pin, 0);
 	if (err) {
 		return err;
 	}
@@ -244,7 +244,7 @@ int ui_nmos_write(size_t nmos_idx, u8_t value)
 
 	value = (value == 0) ? 0 : 1;
 
-	err = gpio_pin_write(gpio_dev, nmos_pins[nmos_idx].pin, value);
+	err = gpio_pin_set_raw(gpio_dev, nmos_pins[nmos_idx].pin, value);
 	if (err) {
 		LOG_ERR("Setting GPIO state failed, error: %d", err);
 		return err;
