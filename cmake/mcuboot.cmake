@@ -6,7 +6,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     set(generate_zip_script
       ${ZEPHYR_BASE}/../nrf/scripts/bootloader/generate_zip.py)
     add_custom_command(
-      TARGET ${deps}
       COMMAND
       ${PYTHON_EXECUTABLE}
       ${generate_zip_script}
@@ -16,15 +15,14 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       "board=${CONFIG_BOARD}"
       "soc=${CONFIG_SOC}"
       DEPENDS
-      ${generate_zip_script}
-      BYPRODUCTS ${zip_out}
+      ${deps}
+      OUTPUT ${zip_out}
       )
 
     add_custom_target(
       genzip_${deps}
       ALL
       DEPENDS
-      ${deps}
       ${zip_out}
       )
   endfunction()
