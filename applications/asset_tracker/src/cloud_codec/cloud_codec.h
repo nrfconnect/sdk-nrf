@@ -245,6 +245,17 @@ int cloud_encode_device_status_data(
 	struct cloud_msg *output);
 
 /**
+ * @brief Encode device config data to be transmitted to the
+ *        shadow/digital twin.
+ *
+ * @param output Pointer to encoded data structure.
+ *
+ * @return 0 if the operation was successful, otherwise a
+ *         (negative) error code.
+ */
+int cloud_encode_config_data(struct cloud_msg *output);
+
+/**
  * @brief Releases memory used by cloud data structure.
  *
  * @param data Pointer to cloud data to be released.
@@ -270,13 +281,34 @@ int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
 /**
  * @brief Checks if data could be sent to the cloud based on config.
  *
- * @param channel The cloud channel type..
+ * @param channel The cloud channel type.
  * @param value Current data value for channel.
  *
  * @return true If the data should be sent to the cloud.
  */
 bool cloud_is_send_allowed(const enum cloud_channel channel,
 			   const double value);
+
+/**
+ * @brief Gets the enable state of the specified cloud channel.
+ *
+ * @param channel The cloud channel type.
+ *
+ * @return cloud_cmd_state The enable state.
+ */
+enum cloud_cmd_state cloud_get_channel_enable_state(
+				  const enum cloud_channel channel);
+
+/**
+ * @brief Sets the enable state of the specified cloud channel.
+ *
+ * @param channel The cloud channel type.
+ * @param state   The desired enable state.
+ */
+void cloud_set_channel_enable_state(
+				  const enum cloud_channel channel,
+				  const enum cloud_cmd_state state);
+
 /**
  * @}
  */

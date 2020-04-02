@@ -135,6 +135,7 @@ static struct k_work send_modem_at_cmd_work;
 static struct k_delayed_work long_press_button_work;
 static struct k_delayed_work cloud_reboot_work;
 static struct k_delayed_work cycle_cloud_connection_work;
+static struct k_delayed_work device_config_work;
 static struct k_work device_status_work;
 static struct k_work send_agps_request_work;
 
@@ -863,6 +864,48 @@ static void device_status_send(struct k_work *work)
 	}
 }
 
+/**@brief Send device config to the cloud. */
+static void device_config_send(struct k_work *work)
+{
+	int ret;
+	struct cloud_msg msg = {
+		.qos = CLOUD_QOS_AT_MOST_ONCE,
+		.endpoint.type = CLOUD_EP_TOPIC_STATE
+	};
+	enum cloud_cmd_state gps_cfg_state =
+		cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS);
+
+	if (gps_cfg_state == CLOUD_CMD_STATE_UNDEFINED) {
+		return;
+	}
+
+	if (gps_control_is_active() && gps_cfg_state == CLOUD_CMD_STATE_FALSE) {
+		/* GPS hasn't been stopped yet, reschedule this work */
+		k_delayed_work_submit_to_queue(&application_work_q,
+			&device_config_work, K_SECONDS(5));
+		return;
+	}
+
+	ret = cloud_encode_config_data(&msg);
+	if (ret) {
+		LOG_ERR("Unable to encode cloud data: %d", ret);
+	} else if (msg.len && msg.buf) {
+		ret = cloud_send(cloud_backend, &msg);
+		cloud_release_data(&msg);
+
+		if (ret) {
+			LOG_ERR("%s failed: %d", __func__, ret);
+			cloud_error_handler(ret);
+		}
+	}
+
+	if (gps_cfg_state == CLOUD_CMD_STATE_TRUE) {
+		k_work_submit_to_queue(&application_work_q,
+						&send_agps_request_work);
+		gps_control_start(K_NO_WAIT);
+	}
+}
+
 /**@brief Get environment data from sensors and send to cloud. */
 static void env_data_send(void)
 {
@@ -1016,12 +1059,25 @@ static void cloud_reboot_handler(struct k_work *work)
 /**@brief Callback for sensor attached event from nRF Cloud. */
 void sensors_start(void)
 {
+	bool start_gps = IS_ENABLED(CONFIG_GPS_START_AFTER_CLOUD_EVT_READY);
+
 	atomic_set(&send_data_enable, 1);
 	sensors_init();
 
-	if (IS_ENABLED(CONFIG_GPS_START_AFTER_CLOUD_EVT_READY)) {
-		set_gps_enable(true);
+	/* Value from cloud has precedence */
+	switch (cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS)) {
+	case CLOUD_CMD_STATE_FALSE:
+		start_gps = false;
+		break;
+	case CLOUD_CMD_STATE_TRUE:
+		start_gps = true;
+		break;
+	case CLOUD_CMD_STATE_UNDEFINED:
+	default:
+		break;
 	}
+
+	set_gps_enable(start_gps);
 }
 
 /**@brief nRF Cloud specific callback for cloud association event. */
@@ -1160,19 +1216,39 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 
 static void set_gps_enable(const bool enable)
 {
-	if (enable == gps_control_is_enabled()) {
+	s32_t delay_ms = K_NO_WAIT;
+	bool changing = (enable != gps_control_is_enabled());
+
+	/* Exit early if the cloud state is defined and the
+	 * local state is not changing
+	 */
+	if ((cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS) !=
+		CLOUD_CMD_STATE_UNDEFINED) && !changing) {
 		return;
 	}
 
-	if (enable) {
-		LOG_INF("Starting GPS");
-		k_work_submit_to_queue(&application_work_q,
-				       &send_agps_request_work);
-		gps_control_start(K_NO_WAIT);
-	} else {
-		LOG_INF("Stopping GPS");
-		gps_control_stop(K_NO_WAIT);
+	cloud_set_channel_enable_state(CLOUD_CHANNEL_GPS,
+		enable ? CLOUD_CMD_STATE_TRUE : CLOUD_CMD_STATE_FALSE);
+
+	if (changing) {
+		if (enable) {
+			LOG_INF("Starting GPS");
+			/* GPS will be started from the device config work
+			 * handler AFTER the config has been sent to the cloud
+			 */
+		} else {
+			LOG_INF("Stopping GPS");
+			gps_control_stop(K_NO_WAIT);
+			/* Allow time for the gps to be stopped before
+			 * attemping to send the config update
+			 */
+			delay_ms = K_SECONDS(5);
+		}
 	}
+
+	/* Update config state in cloud */
+	k_delayed_work_submit_to_queue(&application_work_q,
+			&device_config_work, delay_ms);
 }
 
 static void long_press_handler(struct k_work *work)
@@ -1198,6 +1274,7 @@ static void work_init(void)
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
 	k_delayed_work_init(&cycle_cloud_connection_work,
 			    cycle_cloud_connection);
+	k_delayed_work_init(&device_config_work, device_config_send);
 	k_work_init(&device_status_work, device_status_send);
 #if CONFIG_MODEM_INFO
 	k_delayed_work_init(&rsrp_work, modem_rsrp_data_send);
