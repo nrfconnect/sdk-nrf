@@ -45,11 +45,11 @@ static void exit_idle(struct k_work *work)
 	int err;
 
 	LOG_INF("Exit Idle");
-	gpio_pin_disable_callback(gpio_dev, CONFIG_SLM_INTERFACE_PIN);
+	gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
+				     GPIO_INT_DISABLE);
 	gpio_remove_callback(gpio_dev, &gpio_cb);
 	/* Do the same as nrf_gpio_cfg_default() */
-	gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
-			GPIO_DIR_IN | GPIO_PUD_NORMAL);
+	gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN, GPIO_INPUT);
 	/* Restart SLM services */
 	err = slm_at_host_init();
 	if (err) {
@@ -73,9 +73,7 @@ void enter_idle(void)
 		return;
 	}
 	err = gpio_pin_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
-				GPIO_DIR_IN | GPIO_INT | GPIO_INT_LEVEL |
-				GPIO_INT_ACTIVE_LOW | GPIO_PUD_PULL_UP |
-				GPIO_INT_DEBOUNCE);
+				GPIO_INPUT | GPIO_PULL_UP);
 	if (err) {
 		LOG_ERR("GPIO_0 config error: %d", err);
 		return;
@@ -87,7 +85,8 @@ void enter_idle(void)
 		LOG_ERR("GPIO_0 add callback error: %d", err);
 		return;
 	}
-	err = gpio_pin_enable_callback(gpio_dev, CONFIG_SLM_INTERFACE_PIN);
+	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_SLM_INTERFACE_PIN,
+					   GPIO_INT_LEVEL_LOW);
 	if (err) {
 		LOG_ERR("GPIO_0 enable callback error: %d", err);
 	}
