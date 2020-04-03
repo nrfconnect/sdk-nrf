@@ -22,7 +22,8 @@ static void bh1749_gpio_callback(struct device *dev, struct gpio_callback *cb,
 	struct bh1749_data *drv_data =
 		CONTAINER_OF(cb, struct bh1749_data, gpio_cb);
 
-	gpio_pin_disable_callback(dev, DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN);
+	gpio_pin_interrupt_configure(dev, DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN,
+				     GPIO_INT_DISABLE);
 
 	k_work_submit(&drv_data->work);
 }
@@ -98,8 +99,8 @@ int bh1749_trigger_set(struct device *dev,
 	struct bh1749_data *data = dev->driver_data;
 	u8_t interrupt_source = 0;
 
-	gpio_pin_disable_callback(data->gpio,
-		DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN);
+	gpio_pin_interrupt_configure(data->gpio,
+		DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN, GPIO_INT_DISABLE);
 
 	switch (trig->type) {
 	case SENSOR_TRIG_THRESHOLD:
@@ -149,8 +150,8 @@ int bh1749_trigger_set(struct device *dev,
 
 	data->trg_handler = handler;
 	data->trigger = *trig;
-	gpio_pin_enable_callback(data->gpio,
-		DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN);
+	gpio_pin_interrupt_configure(data->gpio,
+		DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN, GPIO_INT_LEVEL_LOW);
 
 	return 0;
 }
@@ -172,8 +173,7 @@ int bh1749_gpio_interrupt_init(struct device *dev)
 
 	if (gpio_pin_configure(drv_data->gpio,
 			DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN,
-			(GPIO_DIR_IN | GPIO_INT | GPIO_INT_LEVEL |
-			GPIO_INT_ACTIVE_LOW | GPIO_PUD_PULL_UP))) {
+			(GPIO_INPUT | GPIO_PULL_UP))) {
 		LOG_DBG("Failed to configure interrupt GPIO");
 		return -EIO;
 	}
