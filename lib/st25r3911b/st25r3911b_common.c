@@ -537,13 +537,13 @@ int st25r3911b_technology_led_set(u32_t led, bool on)
 	}
 
 	err = gpio_pin_configure(gpio_dev, led,
-				 GPIO_DIR_OUT |
-				 GPIO_PUD_PULL_UP);
+				 GPIO_OUTPUT |
+				 GPIO_PULL_UP);
 	if (err) {
 		return err;
 	}
 
-	return gpio_pin_write(gpio_dev, led, on);
+	return gpio_pin_set_raw(gpio_dev, led, on);
 }
 
 int st25r3911b_fifo_reload_lvl_get(u8_t *tx_lvl, u8_t *rx_lvl)

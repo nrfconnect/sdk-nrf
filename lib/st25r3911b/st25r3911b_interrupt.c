@@ -52,8 +52,7 @@ static int gpio_init(void)
 
 	/* Configure IRQ pin */
 	err = gpio_pin_configure(gpio_dev, CONFIG_ST25R3911B_IRQ_PIN,
-				 GPIO_DIR_IN | GPIO_INT |
-				 GPIO_INT_EDGE | GPIO_INT_ACTIVE_HIGH);
+				 GPIO_INPUT);
 	if (err) {
 		return err;
 	}
@@ -66,14 +65,16 @@ static int gpio_init(void)
 		return err;
 	};
 
-	return gpio_pin_enable_callback(gpio_dev, CONFIG_ST25R3911B_IRQ_PIN);
+	return gpio_pin_interrupt_configure(gpio_dev,
+					    CONFIG_ST25R3911B_IRQ_PIN,
+					    GPIO_INT_EDGE_RISING);
 }
 
 u32_t st25r3911b_irq_read(void)
 {
 	u8_t data[IRQ_REG_CNT] = {0};
 	u32_t status = 0;
-	u32_t pin = 0;
+	int value = 0;
 	u8_t cnt = 0;
 	int err;
 
@@ -94,7 +95,8 @@ u32_t st25r3911b_irq_read(void)
 		status |= ((u32_t)data[1] << 8);
 		status |= ((u32_t)data[2] << 16);
 
-		gpio_pin_read(gpio_dev, CONFIG_ST25R3911B_IRQ_PIN, &pin);
+		value = gpio_pin_get_raw(gpio_dev, CONFIG_ST25R3911B_IRQ_PIN);
+		value = (value < 0) ? 0 : value;
 
 		/* Limiting the number of interrupt reads,
 		 * Protection against infinite loop.
@@ -103,7 +105,7 @@ u32_t st25r3911b_irq_read(void)
 			break;
 		}
 
-	} while (pin);
+	} while (value);
 
 	LOG_DBG("Read interrupt, status: %u", status);
 
