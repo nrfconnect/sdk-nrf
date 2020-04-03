@@ -88,8 +88,9 @@ static int bh1749_sample_fetch(struct device *dev, enum sensor_channel chan)
 			return -EIO;
 		}
 
-		if (gpio_pin_enable_callback(data->gpio,
-					     DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN)) {
+		if (gpio_pin_interrupt_configure(data->gpio,
+					DT_INST_0_ROHM_BH1749_INT_GPIOS_PIN,
+					GPIO_INT_LEVEL_LOW)) {
 			LOG_ERR("Could not enable pin callback");
 			return -EIO;
 		}
