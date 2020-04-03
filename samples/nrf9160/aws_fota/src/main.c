@@ -33,12 +33,13 @@ BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 #endif
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID)
-#define IMEI_LEN 15
-#define CLIENT_ID_LEN (IMEI_LEN + 4)
+/* Define the length of the IMEI AT COMMAND response buffer */
+#define IMEI_LEN 19
+#define CLIENT_ID_LEN (IMEI_LEN + sizeof("nrf-"))
 #else
-#define CLIENT_ID_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID) - 1)
+#define CLIENT_ID_LEN sizeof(CONFIG_CLOUD_CLIENT_ID)
 #endif
-static u8_t client_id_buf[CLIENT_ID_LEN+1];
+static u8_t client_id_buf[CLIENT_ID_LEN];
 static u8_t current_job_id[AWS_JOBS_JOB_ID_MAX_LEN];
 
 /* Buffers for MQTT client. */
@@ -75,7 +76,7 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 {
 	struct mqtt_publish_param param;
 	char update_delta_topic[strlen(AWS) + strlen("/shadow/update") +
-				CLIENT_ID_LEN + 1];
+				sizeof(client_id_buf)];
 	u8_t shadow_update_payload[CONFIG_DEVICE_SHADOW_PAYLOAD_SIZE];
 
 	int ret = snprintf(update_delta_topic,
@@ -363,21 +364,22 @@ static int provision_certificates(void)
 }
 #endif
 
-static int client_id_get(char *id_buf)
+static int client_id_get(char *id_buf, size_t len)
 {
 #if !defined(CONFIG_CLOUD_CLIENT_ID)
 	enum at_cmd_state at_state;
-	char imei_buf[IMEI_LEN + 5];
-	int err = at_cmd_write("AT+CGSN", imei_buf, (IMEI_LEN + 5), &at_state);
+	char imei_buf[IMEI_LEN];
+	int err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf),
+				&at_state);
 
 	if (err) {
 		printk("Error when trying to do at_cmd_write: %d, at_state: %d",
 			err, at_state);
 	}
 
-	snprintf(id_buf, CLIENT_ID_LEN + 1, "nrf-%s", imei_buf);
+	snprintf(id_buf, len, "nrf-%s", imei_buf);
 #else
-	memcpy(id_buf, CONFIG_CLOUD_CLIENT_ID, CLIENT_ID_LEN + 1);
+	memcpy(id_buf, CONFIG_CLOUD_CLIENT_ID, len);
 #endif /* !defined(NRF_CLOUD_CLIENT_ID) */
 	return 0;
 }
@@ -387,7 +389,7 @@ static int client_init(struct mqtt_client *client, char *hostname)
 {
 	mqtt_client_init(client);
 	broker_init(hostname);
-	int ret = client_id_get(client_id_buf);
+	int ret = client_id_get(client_id_buf, sizeof(client_id_buf));
 
 	printk("client_id: %s\n", client_id_buf);
 	if (ret != 0) {
