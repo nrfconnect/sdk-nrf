@@ -220,6 +220,63 @@ Another list which includes the steps from the previous list:
    d. substepB4
    #. substepB5
 
+Including code snippets in RST
+******************************
+
+To include a code snippet from a code file in an .rst file, you need to edit both.
+
+Defining snippet in code file
+=============================
+
+Use RST tags in the comments to enclose the code you want to become a snippet.
+
+Use the following tag formatting::
+
+* Starting tag: /** .. include_startingpoint_<name of file where the snippet goes>_rst_<number of snippet within the .c file> */
+* Ending tag: /** .. include_endpoint_<name of file where the snippet goes>_rst_<number of snippet within the .c file> */
+
+For example::
+
+    /** .. include_startingpoint_scan_rst_1 */
+        static void scan_filter_no_match(struct bt_scan_device_info *device_info,
+                     bool connectable)
+    {
+        struct bt_conn *conn;
+        char addr[BT_ADDR_LE_STR_LEN];
+        if (device_info->adv_info.adv_type == BT_LE_ADV_DIRECT_IND) {
+            bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
+            printk("Direct advertising received from %s\n", addr);
+            bt_scan_stop();
+
+            conn = bt_conn_create_le(device_info->addr,
+                         device_info->conn_param);
+
+            if (conn) {
+                default_conn = bt_conn_ref(conn);
+                bt_conn_unref(conn);
+            }
+        }
+    }
+    /** .. include_endpoint_scan_rst_1 */
+
+
+Including snippet in .rst
+=========================
+
+To include the snippet you defined in a code file into an .rst file, use the following RST syntax::
+
+    .. literalinclude:: <path to the code file with the snippet>
+        :language: <coding language, for example 'c', 'python', 'ruby'>
+        :start-after: <opening tag of the snippet>
+        :end-before: <closing tag of the snippet>
+
+For example::
+
+    .. literalinclude:: ../../samples/bluetooth/central_hids/src/main.c
+        :language: c
+        :start-after: include_startingpoint_scan_rst_1
+        :end-before: include_endpoint_scan_rst_1
+
 
 Linking between doc sets
 ************************
