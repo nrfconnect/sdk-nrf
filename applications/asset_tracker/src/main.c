@@ -1144,6 +1144,10 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 		LOG_INF("CLOUD_EVT_CONNECTED");
 		k_delayed_work_cancel(&cloud_reboot_work);
 		ui_led_set_pattern(UI_CLOUD_CONNECTED);
+#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
+		LOG_INF("Persistent Sessions = %u",
+			evt->data.persistent_session);
+#endif
 		break;
 	case CLOUD_EVT_READY: {
 		LOG_INF("CLOUD_EVT_READY");
