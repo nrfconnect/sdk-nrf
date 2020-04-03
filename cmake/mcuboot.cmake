@@ -2,30 +2,8 @@
 set(MCUBOOT_DIR ${ZEPHYR_BASE}/../bootloader/mcuboot)
 
 if(CONFIG_BOOTLOADER_MCUBOOT)
-  function(generate_dfu_zip zip_out bin_file_list deps)
-    set(generate_zip_script
-      ${ZEPHYR_BASE}/../nrf/scripts/bootloader/generate_zip.py)
-    add_custom_command(
-      COMMAND
-      ${PYTHON_EXECUTABLE}
-      ${generate_zip_script}
-      --bin-files ${bin_file_list}
-      --output ${zip_out}
-      ${ARGN}
-      "board=${CONFIG_BOARD}"
-      "soc=${CONFIG_SOC}"
-      DEPENDS
-      ${deps}
-      OUTPUT ${zip_out}
-      )
 
-    add_custom_target(
-      genzip_${deps}
-      ALL
-      DEPENDS
-      ${zip_out}
-      )
-  endfunction()
+  include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
 
   function(sign to_sign_hex output_prefix offset sign_depends signed_hex_out)
     set(op ${output_prefix})
@@ -154,10 +132,15 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     )
 
   generate_dfu_zip(
+    OUTPUT
     ${PROJECT_BINARY_DIR}/dfu_application.zip
+    BIN_FILES
     ${PROJECT_BINARY_DIR}/app_update.bin
+    DEPENDENCIES
     mcuboot_sign_target
-    "type=application"
+    TYPE
+    application
+    SCRIPT_PARAMS
     "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
     "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
     )
@@ -214,17 +197,23 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     endforeach()
 
     # Generate zip file with both update candidates
-    set(s0_bin_path
-      ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_s0_image_update.bin)
-    get_filename_component(s0_name ${s0_bin_path} NAME)
-    set(s1_bin_path
-      ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_s1_image_update.bin)
-    get_filename_component(s1_name ${s1_bin_path} NAME)
+    set(s0_name signed_by_mcuboot_and_b0_s0_image_update.bin)
+    set(s0_bin_path ${PROJECT_BINARY_DIR}/${s0_name})
+    set(s1_name signed_by_mcuboot_and_b0_s1_image_update.bin)
+    set(s1_bin_path ${PROJECT_BINARY_DIR}/${s1_name})
+
     generate_dfu_zip(
+      OUTPUT
       ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
-      "${s0_bin_path};${s1_bin_path}"
-      "signed_s0_target;signed_s1_target"
-      "type=mcuboot"
+      BIN_FILES
+      ${s0_bin_path}
+      ${s1_bin_path}
+      DEPENDENCIES
+      signed_s0_target
+      signed_s1_target
+      TYPE
+      mcuboot
+      SCRIPT_PARAMS
       "${s0_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
       "${s1_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>"
       "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
