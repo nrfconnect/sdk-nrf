@@ -142,7 +142,7 @@ static int auth(const struct bt_enocean_device *dev, u32_t seq,
 	return 0;
 }
 
-static int handle_switch_commissioning(const struct bt_le_adv_info *info,
+static int handle_switch_commissioning(const struct bt_le_scan_recv_info *info,
 				       struct net_buf_simple *buf,
 				       bool has_short_name)
 {
@@ -156,7 +156,7 @@ static int handle_switch_commissioning(const struct bt_le_adv_info *info,
 	return bt_enocean_commission(info->addr, key, seq);
 }
 
-static void handle_switch_data(const struct bt_le_adv_info *info,
+static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 			       struct net_buf_simple *buf, const u8_t *payload)
 {
 	if (!cb->button) {
@@ -262,7 +262,7 @@ static void data_entry_pull(struct net_buf_simple *buf,
 	}
 }
 
-static void handle_sensor_data(const struct bt_le_adv_info *info,
+static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 			       struct net_buf_simple *buf, const u8_t *payload,
 			       u8_t tot_len)
 {
@@ -366,7 +366,7 @@ static void handle_sensor_data(const struct bt_le_adv_info *info,
 	cb->sensor(dev, &data, opt_data, opt_data_len);
 }
 
-static void adv_recv(const struct bt_le_adv_info *info,
+static void adv_recv(const struct bt_le_scan_recv_info *info,
 		     struct net_buf_simple *buf)
 {
 	if (info->adv_type != BT_LE_ADV_NONCONN_IND || !info->addr ||
