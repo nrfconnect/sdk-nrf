@@ -36,7 +36,7 @@ static int leds_init(void)
 			     DT_ALIAS_LED2_GPIOS_PIN, DT_ALIAS_LED3_GPIOS_PIN};
 
 	for (size_t i = 0; i < ARRAY_SIZE(pins); i++) {
-		int err = gpio_pin_configure(led_port, pins[i], GPIO_DIR_OUT);
+		int err = gpio_pin_configure(led_port, pins[i], GPIO_OUTPUT);
 
 		if (err) {
 			LOG_ERR("Unable to configure LED%u, err %d.", i, err);
@@ -56,11 +56,11 @@ static void leds_update(u8_t value)
 	bool led3_status = !(value % 8 > 3);
 
 	if (led_port != NULL) {
-		gpio_write(led_port, GPIO_ACCESS_BY_PORT, 0,
-			   led0_status << DT_ALIAS_LED0_GPIOS_PIN |
-			   led1_status << DT_ALIAS_LED1_GPIOS_PIN |
-			   led2_status << DT_ALIAS_LED2_GPIOS_PIN |
-			   led3_status << DT_ALIAS_LED3_GPIOS_PIN);
+		gpio_port_set_masked_raw(led_port, 0,
+			led0_status << DT_ALIAS_LED0_GPIOS_PIN |
+			led1_status << DT_ALIAS_LED1_GPIOS_PIN |
+			led2_status << DT_ALIAS_LED2_GPIOS_PIN |
+			led3_status << DT_ALIAS_LED3_GPIOS_PIN);
 	}
 }
 
