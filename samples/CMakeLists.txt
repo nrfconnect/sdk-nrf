@@ -27,3 +27,19 @@ if (CONFIG_SECURE_BOOT)
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/bootloader
     )
 endif ()
+
+# Special handling for the nRF53 when using RPMSG HCI.
+# Automatically include the hci_rpmsg sample as child image, and change
+# the board to be the network core.
+if (CONFIG_BT_RPMSG_NRF53)
+  if ((BOARD STREQUAL nrf5340_dk_nrf5340_cpuappns) OR
+      (BOARD STREQUAL nrf5340_dk_nrf5340_cpuapp))
+    add_child_image(
+      NAME hci_rpmsg
+      SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
+      DOMAIN nrf5340_dk_nrf5340_cpunet)
+  else()
+    message(FATAL_ERROR
+      "Board ${BOARD} not supported for including hci_rpmsg as child image")
+  endif()
+endif()
