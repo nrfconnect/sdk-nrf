@@ -1,4 +1,3 @@
-
 #
 # Copyright (c) 2020 Nordic Semiconductor ASA
 #
@@ -6,8 +5,8 @@
 #
 
 function(generate_dfu_zip)
-  set(oneValueArgs OUTPUT TYPE)
-  set(multiValueArgs DEPENDENCIES BIN_FILES SCRIPT_PARAMS)
+  set(oneValueArgs OUTPUT TYPE TARGET)
+  set(multiValueArgs BIN_FILES SCRIPT_PARAMS)
   cmake_parse_arguments(GENZIP "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (NOT(
@@ -21,6 +20,8 @@ function(generate_dfu_zip)
   endif()
 
   add_custom_command(
+    TARGET ${GENZIP_TARGET}
+    POST_BUILD
     COMMAND
     ${PYTHON_EXECUTABLE}
     ${NRF_DIR}/scripts/bootloader/generate_zip.py
@@ -30,18 +31,6 @@ function(generate_dfu_zip)
     "type=${GENZIP_TYPE}"
     "board=${CONFIG_BOARD}"
     "soc=${CONFIG_SOC}"
-    DEPENDS
-    ${GENZIP_DEPENDENCIES}
-    OUTPUT ${GENZIP_OUTPUT}
     )
 
-  list(GET GENZIP_DEPENDENCIES 0 first_dep)
-  string(RANDOM rnd)
-
-  add_custom_target(
-    genzip_${first_dep}_${rnd}
-    ALL
-    DEPENDS
-    ${GENZIP_OUTPUT}
-    )
 endfunction()

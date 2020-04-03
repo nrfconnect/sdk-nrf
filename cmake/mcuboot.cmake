@@ -132,14 +132,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     )
 
   generate_dfu_zip(
-    OUTPUT
-    ${PROJECT_BINARY_DIR}/dfu_application.zip
-    BIN_FILES
-    ${PROJECT_BINARY_DIR}/app_update.bin
-    DEPENDENCIES
-    mcuboot_sign_target
-    TYPE
-    application
+    TARGET mcuboot_sign_target
+    OUTPUT ${PROJECT_BINARY_DIR}/dfu_application.zip
+    BIN_FILES ${PROJECT_BINARY_DIR}/app_update.bin
+    TYPE application
     SCRIPT_PARAMS
     "load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
     "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
@@ -202,17 +198,18 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     set(s1_name signed_by_mcuboot_and_b0_s1_image_update.bin)
     set(s1_bin_path ${PROJECT_BINARY_DIR}/${s1_name})
 
-    generate_dfu_zip(
-      OUTPUT
-      ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
-      BIN_FILES
-      ${s0_bin_path}
-      ${s1_bin_path}
-      DEPENDENCIES
-      signed_s0_target
+    # Create dependency to ensure explicit build order. This is needed to have
+    # a single target represent the state when both s0 and s1 imags are built.
+    add_dependencies(
       signed_s1_target
-      TYPE
-      mcuboot
+      signed_s0_target
+      )
+
+    generate_dfu_zip(
+      TARGET signed_s1_target
+      OUTPUT ${PROJECT_BINARY_DIR}/dfu_mcuboot.zip
+      BIN_FILES ${s0_bin_path} ${s1_bin_path}
+      TYPE mcuboot
       SCRIPT_PARAMS
       "${s0_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
       "${s1_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>"
