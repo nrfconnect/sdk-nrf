@@ -642,6 +642,7 @@ For more information about each application module and its configuration details
 .. toctree::
    :maxdepth: 1
 
+   doc/main.rst
    doc/battery_charger.rst
    doc/battery_meas.rst
    doc/board.rst
