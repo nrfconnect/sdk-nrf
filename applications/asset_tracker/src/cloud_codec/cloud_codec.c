@@ -852,7 +852,7 @@ int cloud_decode_command(char const *input)
 
 	root_obj = cJSON_Parse(input);
 	if (root_obj == NULL) {
-		LOG_ERR("[%s:%d] Unable to parse input", __func__, __LINE__);
+		LOG_DBG("[%s:%d] Unable to parse input", __func__, __LINE__);
 		return -ENOENT;
 	}
 
