@@ -162,10 +162,9 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 				"thread killed", errno);
 			close(common_socket_fd);
 			return;
-		} else if (bytes_read == sizeof(item->data) ||
-			   item->data[bytes_read - 1] != '\0') {
+		} else if (item->data[bytes_read - 1] != '\0') {
 
-			LOG_ERR("AT message to large for reception buffer or "
+			LOG_ERR("AT message too large for reception buffer or "
 				"missing termination character");
 
 			ret.code  = -ENOBUFS;
