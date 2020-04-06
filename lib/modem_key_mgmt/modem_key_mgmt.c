@@ -191,15 +191,15 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 	int written;
 	enum at_cmd_state state;
 
-	written = snprintf(scratch_buf, sizeof(scratch_buf),
-			   "%s,%u,%u\r\n", MODEM_KEY_MGMT_OP_RM,
-			   (u32_t)sec_tag, (u8_t)cred_type);
+	written = snprintf(scratch_buf, sizeof(scratch_buf), "%s,%d,%d",
+			   MODEM_KEY_MGMT_OP_RM, sec_tag, cred_type);
 
-	if ((written < 0) || (written >= sizeof(scratch_buf))) {
+	if (written < 0 || written >= sizeof(scratch_buf)) {
 		return -ENOBUFS;
 	}
 
 	err = write_at_cmd_with_cme_enabled(scratch_buf, NULL, 0, &state);
+
 	return translate_error(err, state);
 }
 
