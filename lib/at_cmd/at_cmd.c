@@ -180,7 +180,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 		if (ret.state != AT_CMD_NOTIFICATION) {
 			if ((response_buf_len > 0) &&
 			    (response_buf != NULL)) {
-				if (response_buf_len > payload_len) {
+				if (response_buf_len >= payload_len) {
 					memcpy(response_buf, item->data,
 					       payload_len);
 				} else {
