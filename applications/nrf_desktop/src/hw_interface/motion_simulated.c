@@ -54,6 +54,15 @@ static atomic_t state;
 static atomic_t connected;
 
 
+static void set_default_state(void)
+{
+	if (IS_ENABLED(CONFIG_SHELL)) {
+		atomic_set(&state, STATE_IDLE);
+	} else {
+		atomic_set(&state, STATE_FETCHING);
+	}
+}
+
 static void motion_event_send(s16_t dx, s16_t dy)
 {
 	struct motion_event *event = new_motion_event();
@@ -130,7 +139,7 @@ static bool event_handler(const struct event_header *eh)
 		struct module_state_event *event = cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			atomic_set(&state, STATE_IDLE);
+			set_default_state();
 			LOG_INF("Simulated motion: ready");
 		}
 
@@ -144,7 +153,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_wake_up_event(eh)) {
-		atomic_set(&state, STATE_IDLE);
+		set_default_state();
 
 		return false;
 	}
@@ -162,6 +171,7 @@ EVENT_SUBSCRIBE(MODULE, wake_up_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 
+#if CONFIG_SHELL
 
 static int start_motion(const struct shell *shell, size_t argc, char **argv)
 {
@@ -197,3 +207,5 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_motion_sim,
 
 SHELL_CMD_REGISTER(motion_sim, &sub_motion_sim,
 		   "Simulated motion commands", NULL);
+
+#endif /* CONFIG_SHELL */
