@@ -172,7 +172,8 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			goto next;
 		}
 
-		LOG_DBG("at_cmd_rx: %s", log_strdup(item->data));
+		LOG_DBG("at_cmd_rx %d bytes, %s",
+			bytes_read, log_strdup(item->data));
 
 		payload_len = get_return_code(item->data, &ret);
 
