@@ -12,6 +12,7 @@
 #include <modem/at_params.h>
 #include <bsd_limits.h>
 #include <modem/modem_key_mgmt.h>
+#include <logging/log.h>
 
 #define MODEM_KEY_MGMT_OP_LS "AT%CMNG=1"
 #define MODEM_KEY_MGMT_OP_RD "AT%CMNG=2"
@@ -20,6 +21,8 @@
 
 #define AT_CMNG_PARAMS_COUNT 5
 #define AT_CMNG_CONTENT_INDEX 4
+
+LOG_MODULE_REGISTER(modem_key_mgmt, CONFIG_MODEM_KEY_MGMT_LOG_LEVEL);
 
 static char scratch_buf[4096];
 static char at_cmee_strings[2][10] = {"AT+CMEE=0", "AT+CMEE=1"};

@@ -4,7 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-config MODEM_KEY_MGMT
+menuconfig MODEM_KEY_MGMT
 	bool "nRF9160 modem key management library"
 	depends on AT_CMD_PARSER
 	depends on BSD_LIBRARY
+
+if MODEM_KEY_MGMT
+
+module = MODEM_KEY_MGMT
+module-dep = LOG
+module-str = Modem key management
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # MODEM_KEY_MGMT
