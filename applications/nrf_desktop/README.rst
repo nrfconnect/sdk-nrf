@@ -662,6 +662,7 @@ For more information about each application module and its configuration details
    doc/ble_bond.rst
    doc/ble_discovery.rst
    doc/ble_latency.rst
+   doc/ble_qos.rst
    doc/ble_scan.rst
    doc/ble_state.rst
    doc/config_channel.rst
