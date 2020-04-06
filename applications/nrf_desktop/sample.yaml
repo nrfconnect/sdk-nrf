@@ -1,6 +1,6 @@
 sample:
-  description: nRF52 Desktop
-  name: BLE HID device reference design
+  name: nRF52 Desktop
+  description: BLE HID device reference design
 tests:
   test:
     build_only: true
