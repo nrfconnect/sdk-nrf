@@ -216,30 +216,32 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 {
 	int err;
 	int written;
+	char cmd[32];
 	enum at_cmd_state state;
 
-	if ((exists == NULL) || (perm_flags == NULL)) {
+	if (exists == NULL || perm_flags == NULL) {
 		return -EINVAL;
 	}
 
-	written = snprintf(scratch_buf, sizeof(scratch_buf),
-			   "%s,%u,%u\r\n", MODEM_KEY_MGMT_OP_LS,
-			   (u32_t)sec_tag, (u8_t)cred_type);
+	written = snprintf(cmd, sizeof(cmd), "%s,%d,%d",
+			   MODEM_KEY_MGMT_OP_LS, sec_tag, cred_type);
 
-	if ((written < 0) || (written >= sizeof(scratch_buf))) {
+	if (written < 0 || written >= sizeof(cmd)) {
 		return -ENOBUFS;
 	}
 
-	err = write_at_cmd_with_cme_enabled(scratch_buf, scratch_buf,
+	err = write_at_cmd_with_cme_enabled(cmd, scratch_buf,
 					    sizeof(scratch_buf), &state);
-	if (err == 0) {
-		if (strlen(scratch_buf) > 0) {
-			*exists = true;
-			*perm_flags = 0;
-		} else {
-			*exists = false;
-		}
+	if (err) {
+		return translate_error(err, state);
 	}
 
-	return translate_error(err, state);
+	if (strlen(scratch_buf) > 0) {
+		*exists = true;
+		*perm_flags = 0;
+	} else {
+		*exists = false;
+	}
+
+	return 0;
 }
