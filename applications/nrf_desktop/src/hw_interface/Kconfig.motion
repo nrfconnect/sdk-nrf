@@ -26,7 +26,6 @@ config DESKTOP_MOTION_BUTTONS_ENABLE
 
 config DESKTOP_MOTION_SIMULATED_ENABLE
 	bool "Simulated motion"
-	depends on SHELL
 
 endchoice
 
