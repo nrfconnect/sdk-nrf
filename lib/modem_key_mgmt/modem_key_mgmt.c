@@ -25,30 +25,30 @@
 LOG_MODULE_REGISTER(modem_key_mgmt, CONFIG_MODEM_KEY_MGMT_LOG_LEVEL);
 
 static char scratch_buf[4096];
-static char at_cmee_strings[2][10] = {"AT+CMEE=0", "AT+CMEE=1"};
 
-static int cmee_active(void)
+static int cmee_is_active(void)
 {
 	int err;
-	char response[sizeof("+CMEE: X\r\n") + 1];
-
-	memset(response, 0, sizeof(response));
+	char response[sizeof("+CMEE: X\r\n")];
 
 	err = at_cmd_write("AT+CMEE?", response, sizeof(response), NULL);
-	if (err == 0) {
-		if (strchr(&response[6], '1')) {
-			return 1;
-		} else {
-			return 0;
-		}
+	if (err) {
+		return err;
 	}
 
-	return -EIO;
+#define CMEE_STATUS 7
+
+	return (response[CMEE_STATUS] == '1');
 }
 
-static int cmee_set(bool enable)
+static int cmee_enable(void)
 {
-	return at_cmd_write(at_cmee_strings[(int)enable], NULL, 0, NULL);
+	return at_cmd_write("AT+CMEE=1", NULL, 0, NULL);
+}
+
+static int cmee_disable(void)
+{
+	return at_cmd_write("AT+CMEE=0", NULL, 0, NULL);
 }
 
 static int translate_error(int err, enum at_cmd_state state)
@@ -83,23 +83,25 @@ static int write_at_cmd_with_cme_enabled(char *cmd, char *buf, size_t buf_len,
 					 enum at_cmd_state *state)
 {
 	int err;
-	int cmee_was_active = cmee_active();
+	int cmee_was_active = cmee_is_active();
 
 	if (cmee_was_active < 0) {
 		return -EFAULT;
 	}
 
 	if (!cmee_was_active) {
-		if (cmee_set(true)) {
-			return -EIO;
+		err = cmee_enable();
+		if (err) {
+			return err;
 		}
 	}
 
 	err = at_cmd_write(cmd, buf, buf_len, state);
 
 	if (!cmee_was_active) {
-		if (cmee_set(false)) {
-			return -EIO;
+		err = cmee_disable();
+		if (err) {
+			return err;
 		}
 	}
 
@@ -108,32 +110,31 @@ static int write_at_cmd_with_cme_enabled(char *cmd, char *buf, size_t buf_len,
 
 int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 			 enum modem_key_mgnt_cred_type cred_type,
-			 const void *buf, u16_t len)
+			 const void *buf, size_t len)
 {
 	int err;
 	int written;
 	enum at_cmd_state state;
 
-	if ((buf == NULL) || (len == 0)) {
+	if (buf == NULL || len == 0) {
 		return -EINVAL;
 	}
 
-	written = snprintf(scratch_buf, sizeof(scratch_buf),
-			   "%s,%u,%u,\"", MODEM_KEY_MGMT_OP_WR,
-			   (u32_t)sec_tag, (u8_t)cred_type);
+	written = snprintf(scratch_buf, sizeof(scratch_buf), "%s,%d,%d,\"",
+			   MODEM_KEY_MGMT_OP_WR, sec_tag, cred_type);
 
-	if ((written < 0) || (written >= sizeof(scratch_buf))) {
+	if (written < 0 || written >= sizeof(scratch_buf)) {
 		return -ENOBUFS;
 	}
 
-	if ((written + len + sizeof("\"\r\n")) > sizeof(scratch_buf)) {
+	if (written + len + sizeof("\"") > sizeof(scratch_buf)) {
 		return -ENOBUFS;
 	}
 
 	memcpy(&scratch_buf[written], buf, len);
 	written += len;
 
-	memcpy(&scratch_buf[written], "\"\r\n", sizeof("\"\r\n"));
+	memcpy(&scratch_buf[written], "\"", sizeof("\""));
 
 	err = write_at_cmd_with_cme_enabled(scratch_buf, NULL, 0, &state);
 
