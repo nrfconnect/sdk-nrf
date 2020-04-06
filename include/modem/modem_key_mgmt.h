@@ -49,7 +49,7 @@ enum modem_key_mgnt_cred_type {
  */
 int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 			 enum modem_key_mgnt_cred_type cred_type,
-			 const void *buf, u16_t len);
+			 const void *buf, size_t len);
 
 /**@brief Read a credential from persistent storage.
  *
