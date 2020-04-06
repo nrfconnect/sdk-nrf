@@ -171,6 +171,35 @@ endmenu #menu "Zigbee Log configuration"
 
 menu "ZBOSS osif configuration"
 
+menuconfig ZIGBEE_HAVE_SERIAL
+	bool "Enable UART serial interface for ZBOSS CLI"
+	select SERIAL
+	select UART_ASYNC_API
+
+if ZIGBEE_HAVE_SERIAL
+
+config ZIGBEE_UART_DEVICE_NAME
+	string "Zigbee UART device name"
+	default "UART_1"
+
+config ZIGBEE_UART_TX_TIMEOUT
+	int "Timeout value for starting asynchronous transmission, in milliseconds"
+	default 10
+
+config ZIGBEE_UART_RX_TIMEOUT
+	int "Timeout value for starting asynchronous reception, in milliseconds"
+	default 10
+
+config ZIGBEE_UART_PARTIAL_RX_TIMEOUT
+	int "Timeout value between the last received byte and the RX event if only a part of RX buffer was received, in milliseconds"
+	default 10
+
+config ZIGBEE_UART_TX_BUF_LEN
+	int "Size of the synchronous transmit buffer"
+	default 128
+
+endif #ZIGBEE_HAVE_SERIAL
+
 config RADIO_STATISTICS
 	bool "Collect radio statistics"
 	default n
