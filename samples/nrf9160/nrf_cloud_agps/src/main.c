@@ -337,7 +337,7 @@ static int modem_configure(void)
 
 		LOG_INF("Connected to LTE network");
 
-#if defined(CONFIG_POWER_SAVING_MODE_ENABLE)
+#if defined(CONFIG_LTE_POWER_SAVING_MODE)
 		err = lte_lc_psm_req(true);
 		if (err) {
 			LOG_ERR("PSM request failed, error: %d", err);
