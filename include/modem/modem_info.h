@@ -11,6 +11,8 @@
 #include <cJSON.h>
 #endif
 
+#include <modem/at_params.h>
+
 /**
  * @file modem_info.h
  *
