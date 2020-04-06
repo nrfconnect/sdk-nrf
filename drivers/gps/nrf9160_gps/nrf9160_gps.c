@@ -217,7 +217,7 @@ wait:
 		nrf_gnss_data_frame_t raw_gps_data = {0};
 		struct gps_event evt = {0};
 
-		len = recv(drv_data->socket, &raw_gps_data,
+		len = nrf_recv(drv_data->socket, &raw_gps_data,
 			   sizeof(nrf_gnss_data_frame_t), 0);
 		if (len <= 0) {
 			/* Is the GPS stopped, causing this error? */
