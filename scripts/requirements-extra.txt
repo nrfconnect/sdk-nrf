@@ -1,2 +1,0 @@
-pygit2>=0.26.0
-editdistance>=0.5.0
