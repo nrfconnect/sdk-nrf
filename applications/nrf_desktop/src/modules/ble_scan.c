@@ -211,7 +211,8 @@ static int configure_name_filters(u8_t *filter_mode)
 
 	/* Bluetooth scan filters are defined in separate header. */
 	for (size_t i = 0; i < ARRAY_SIZE(peer_name); i++) {
-		if (!(BIT(i) & (~peers_mask))) {
+		if ((BIT(i) & peers_mask) ||
+		    (peer_name[i] == NULL)) {
 			continue;
 		}
 
