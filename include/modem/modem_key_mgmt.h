@@ -71,6 +71,25 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 			enum modem_key_mgnt_cred_type cred_type,
 			void *buf, size_t *len);
 
+/**
+ * @brief Compare a credential with a credential in persistent storage.
+ *
+ * @param[in] sec_tag		The security tag of the credential.
+ * @param[in] cred_type		The credential type.
+ * @param[in] buf		Buffer to compare the credential to.
+ * @param[in] len		Length of the buffer.
+
+ * @retval 0		If the credentials match.
+ * @retval 1		If the credentials do not match.
+ * @retval -ENOBUFS	Internal buffer is too small.
+ * @retval -ENOENT	No credential associated with the given
+ *			@p sec_tag and @p cred_type.
+ * @retval -EPERM	Insufficient permissions.
+ */
+int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
+		       enum modem_key_mgnt_cred_type cred_type,
+		       const void *buf, size_t len);
+
 /**@brief Delete a credential from persistent storage.
  *
  * @note If used when the LTE link is active, the function will return
