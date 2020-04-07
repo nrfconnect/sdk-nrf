@@ -16,14 +16,11 @@ Module Events
 |                |             | ``watchdog`` |                 |                  |
 +----------------+-------------+--------------+-----------------+------------------+
 
-External dependencies
-*********************
+Configuration
+*************
 
 The module uses the Zephyr :ref:`zephyr:watchdog_interface` driver.
 For this reason, set the :option:`CONFIG_WATCHDOG` option.
-
-Configuration
-*************
 
 The module is enabled by the ``CONFIG_DESKTOP_WATCHDOG_ENABLE`` option.
 
