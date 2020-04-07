@@ -193,6 +193,47 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 	return err;
 }
 
+int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
+		       enum modem_key_mgnt_cred_type cred_type,
+		       const void *buf, size_t len)
+{
+	int err;
+	size_t size;
+	struct at_param_list cmng;
+
+	if (buf == NULL) {
+		return -EINVAL;
+	}
+
+	err = key_fetch(sec_tag, cred_type);
+	if (err) {
+		return err;
+	}
+
+	at_params_list_init(&cmng, AT_CMNG_PARAMS_COUNT);
+	at_parser_params_from_str(scratch_buf, NULL, &cmng);
+
+	/* Compare the size first, it's cheap */
+	at_params_size_get(&cmng, AT_CMNG_CONTENT_INDEX, &size);
+	if (size != len) {
+		LOG_DBG("Credential length %d bytes (expected %d)", size, len);
+		at_params_list_free(&cmng);
+		return 1;
+	}
+
+	size = sizeof(scratch_buf);
+	at_params_string_get(&cmng, AT_CMNG_CONTENT_INDEX, scratch_buf, &size);
+
+	at_params_list_free(&cmng);
+
+	if (memcmp(scratch_buf, buf, len)) {
+		LOG_DBG("Credential data mismatch");
+		return 1;
+	}
+
+	return 0;
+}
+
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgnt_cred_type cred_type)
 {
