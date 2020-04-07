@@ -108,6 +108,32 @@ static int write_at_cmd_with_cme_enabled(char *cmd, char *buf, size_t buf_len,
 	return err;
 }
 
+/* Read the given credential into the static buffer */
+static int key_fetch(nrf_sec_tag_t tag,
+		     enum modem_key_mgnt_cred_type cred_type)
+{
+	int err;
+	int written;
+	char cmd[32];
+	enum at_cmd_state state;
+
+	written = snprintf(cmd, sizeof(cmd), "%s,%d,%d",
+			   MODEM_KEY_MGMT_OP_RD, tag, cred_type);
+
+	if (written < 0 || written >= sizeof(cmd)) {
+		return -ENOBUFS;
+	}
+
+	LOG_DBG("Sending: %s", log_strdup(cmd));
+	err = write_at_cmd_with_cme_enabled(cmd, scratch_buf,
+					    sizeof(scratch_buf), &state);
+	if (err) {
+		return translate_error(err, state);
+	}
+
+	return 0;
+}
+
 int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 			 enum modem_key_mgnt_cred_type cred_type,
 			 const void *buf, size_t len)
@@ -142,47 +168,29 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 }
 
 int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
-			enum modem_key_mgnt_cred_type cred_type, void *buf,
-			u16_t *len)
+			enum modem_key_mgnt_cred_type cred_type,
+			void *buf, size_t *len)
 {
 	int err;
-	int written;
-	enum at_cmd_state state;
+	struct at_param_list cmng_list;
 
-	if ((buf == NULL) || (len == NULL) || (*len == 0)) {
+	if (buf == NULL || len == NULL) {
 		return -EINVAL;
 	}
 
-	written = snprintf(scratch_buf, sizeof(scratch_buf),
-			   "%s,%u,%u\r\n", MODEM_KEY_MGMT_OP_RD,
-			   (u32_t)sec_tag, (u8_t)cred_type);
-
-	if ((written < 0) || (written >= sizeof(scratch_buf))) {
-		return -ENOBUFS;
+	err = key_fetch(sec_tag, cred_type);
+	if (err) {
+		return err;
 	}
 
-	err = write_at_cmd_with_cme_enabled(scratch_buf, scratch_buf,
-					    sizeof(scratch_buf), &state);
-	if (err == 0) {
-		size_t size;
-		struct at_param_list cmng_list;
+	/* Must be freed */
+	at_params_list_init(&cmng_list, AT_CMNG_PARAMS_COUNT);
+	at_parser_params_from_str(scratch_buf, NULL, &cmng_list);
 
-		at_params_list_init(&cmng_list, AT_CMNG_PARAMS_COUNT);
-		at_parser_params_from_str(scratch_buf, NULL, &cmng_list);
-		at_params_size_get(&cmng_list, AT_CMNG_CONTENT_INDEX, &size);
+	err = at_params_string_get(&cmng_list, AT_CMNG_CONTENT_INDEX, buf, len);
+	at_params_list_free(&cmng_list);
 
-		if (size < *len) {
-			at_params_list_free(&cmng_list);
-			return -ENOMEM;
-		}
-
-		at_params_string_get(&cmng_list, AT_CMNG_CONTENT_INDEX, buf,
-				     &size);
-		*len = size;
-		at_params_list_free(&cmng_list);
-	}
-
-	return translate_error(err, state);
+	return err;
 }
 
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
