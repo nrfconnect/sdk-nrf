@@ -70,6 +70,8 @@ menu "nRF Cloud A-GPS"
 config NRF_CLOUD_AGPS
 	bool "Enable nRF Cloud A-GPS"
 	depends on NRF9160_GPS
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_NETWORK
 
 if NRF_CLOUD_AGPS
 config NRF_CLOUD_AGPS_AUTO
