@@ -68,8 +68,8 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
  * @retval -EIO		Internal error.
  */
 int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
-			enum modem_key_mgnt_cred_type cred_type, void *buf,
-			u16_t *len);
+			enum modem_key_mgnt_cred_type cred_type,
+			void *buf, size_t *len);
 
 /**@brief Delete a credential from persistent storage.
  *
