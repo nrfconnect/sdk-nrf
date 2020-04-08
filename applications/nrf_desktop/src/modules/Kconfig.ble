@@ -256,7 +256,7 @@ config DESKTOP_BLE_QOS_INTERVAL
 
 config DESKTOP_BLE_QOS_STACK_SIZE
 	int "Base stack size for QoS thread"
-	default 240
+	default 512
 	depends on DESKTOP_BLE_QOS_ENABLE
 	help
 	  Configure base stack size for QoS processing thread.
