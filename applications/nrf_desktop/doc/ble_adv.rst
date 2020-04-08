@@ -1,4 +1,4 @@
-.. _ble_adv:
+.. _nrf_desktop_ble_adv:
 
 BLE advertising module
 ######################

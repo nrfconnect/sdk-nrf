@@ -1,4 +1,4 @@
-.. _ble_state:
+.. _nrf_desktop_ble_state:
 
 BLE state module
 ################
@@ -18,29 +18,29 @@ Module Events
 +================+=========================+===============+=======================+=======================+
 | ``ble_state``  | ``ble_peer_event``      | ``ble_state`` |                       |                       |
 +----------------+-------------------------+               |                       |                       |
-| :ref:`passkey` | ``passkey_input_event`` |               |                       |                       |
+| ``passkey``    | ``passkey_input_event`` |               |                       |                       |
 +----------------+-------------------------+               +-----------------------+-----------------------+
-|                |                         |               | ``passkey_req_event`` | :ref:`passkey`        |
+|                |                         |               | ``passkey_req_event`` | ``passkey``           |
 |                |                         |               +-----------------------+-----------------------+
-|                |                         |               | ``ble_peer_event``    | :ref:`hids`           |
+|                |                         |               | ``ble_peer_event``    | ``hids``              |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`led_state`      |
+|                |                         |               |                       | ``led_state``         |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`ble_scan`       |
+|                |                         |               |                       | ``ble_scan``          |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`ble_latency`    |
+|                |                         |               |                       | ``ble_latency``       |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`ble_bond`       |
+|                |                         |               |                       | ``ble_bond``          |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`ble_adv`        |
+|                |                         |               |                       | ``ble_adv``           |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`power_manager`  |
+|                |                         |               |                       | ``power_manager``     |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`ble_discovery`  |
+|                |                         |               |                       | ``ble_discovery``     |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`hid_state`      |
+|                |                         |               |                       | ``hid_state``         |
 |                |                         |               |                       +-----------------------+
-|                |                         |               |                       | :ref:`hid_forward`    |
+|                |                         |               |                       | ``hid_forward``       |
 |                |                         |               |                       +-----------------------+
 |                |                         |               |                       | ``ble_state``         |
 +----------------+-------------------------+---------------+-----------------------+-----------------------+
@@ -51,7 +51,7 @@ Configuration
 The module requires the basic Bluetooth configuration, as described in the Bluetooth guide.
 
 You can use the option ``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`` to enable pairing based on passkey for increased security.
-Make sure to enable and configure the :ref:`passkey` module if you decide to use this option.
+Make sure to enable and configure the :ref:`nrf_desktop_passkey` module if you decide to use this option.
 
 Implementation details
 **********************
@@ -77,7 +77,7 @@ If the connection security level 2 is not established, the peripheral device dis
 Passkey enabled
    If you set the ``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`` option, the ``ble_state`` module registers the set of authenticated pairing callbacks (:c:type:`struct bt_conn_auth_cb`).
    The callbacks can be used to achieve higher security levels.
-   The passkey input is handled in the :ref:`passkey` module.
+   The passkey input is handled in the :ref:`nrf_desktop_passkey` module.
 
 Nrfxlib Link Layer
    If Nordic proprietary BLE Link Layer is selected (:option:`CONFIG_BT_LL_NRFXLIB`), the module sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.

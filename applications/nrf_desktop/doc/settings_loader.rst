@@ -1,4 +1,4 @@
-.. _settings_loader:
+.. _nrf_desktop_settings_loader:
 
 Settings loader module
 ######################
@@ -33,6 +33,6 @@ The stack size for the background thread is defined as ``CONFIG_DESKTOP_SETTINGS
 
 .. tip::
    Using separate thread is recommended for nRF Desktop keyboards.
-   The :ref:`buttons` module uses the system workqueue to scan the keyboard matrix.
+   The :ref:`nrf_desktop_buttons` module uses the system workqueue to scan the keyboard matrix.
    Loading the settings in the system workqueue context could block the workqueue and result in missing key presses on system reboot.
    For this reason, ``CONFIG_DESKTOP_SETTINGS_LOADER_USE_THREAD`` is enabled for keyboard reference design (``nrf52_pca20037`` board).

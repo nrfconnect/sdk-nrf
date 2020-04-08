@@ -1,4 +1,4 @@
-.. _hids:
+.. _nrf_desktop_hids:
 
 HID service module
 ##################

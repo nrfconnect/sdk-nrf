@@ -1,4 +1,4 @@
-.. _led_state:
+.. _nrf_desktop_led_state:
 
 LED state module
 ################
@@ -24,7 +24,7 @@ The module controls LEDs defined by enumerators in :cpp:enum:`led_id`:
   * :cpp:enumerator:`LED_PEER_STATE_CONFIRM_ERASE` - the device is waiting for user confirmation to erase peers (for Bluetooth central) or start erase advertising (for Bluetooth peripheral),
   * :cpp:enumerator:`LED_PEER_STATE_ERASE_ADV` - the device is advertising for peer erase.
 
-For the complete description of peer management, see :ref:`ble_bond`.
+For the complete description of peer management, see :ref:`nrf_desktop_ble_bond`.
 
 Module Events
 *************
@@ -32,25 +32,25 @@ Module Events
 +------------------------+------------------------------+---------------+----------------+-------------+
 | Source Module          | Input Event                  | This Module   | Output Event   | Sink Module |
 +========================+==============================+===============+================+=============+
-| :ref:`ble_bond`        | ``ble_peer_operation_event`` | ``led_state`` | ``led_event``  | :ref:`leds` |
+| ``ble_bond``           | ``ble_peer_operation_event`` | ``led_state`` | ``led_event``  | ``leds``    |
 +------------------------+------------------------------+               |                |             |
-| :ref:`ble_state`       | ``ble_peer_event``           |               |                |             |
+| ``ble_state``          | ``ble_peer_event``           |               |                |             |
 +------------------------+------------------------------+               |                |             |
-| :ref:`battery_charger` | ``battery_state_event``      |               |                |             |
+| ``battery_charger``    | ``battery_state_event``      |               |                |             |
 +------------------------+------------------------------+---------------+----------------+-------------+
 
 Configuration
 *************
 
 The module is enabled when you set the ``CONFIG_DESKTOP_LED_ENABLE`` option.
-You must also configure :ref:`leds`, which is used as sink module for ``led_state``.
+You must also configure :ref:`nrf_desktop_leds`, which is used as sink module for ``led_state``.
 
 For every board that has this option enabled, you must define the module configuration.
 Do this in the ``led_state_def.h`` file located in the board-specific directory in the application configuration folder.
 
 The configuration consists of the following elements:
 
-* ``led_map`` - maps the :cpp:enum:`led_id` values to IDs used by :ref:`leds`. If no physical LED is assigned to a :cpp:enum:`led_id` value, assign :c:macro:`LED_UNAVAILABLE` as ID used by :ref:`leds`.
+* ``led_map`` - maps the :cpp:enum:`led_id` values to IDs used by :ref:`nrf_desktop_leds`. If no physical LED is assigned to a :cpp:enum:`led_id` value, assign :c:macro:`LED_UNAVAILABLE` as ID used by :ref:`nrf_desktop_leds`.
 * ``led_system_state_effect`` - defines the LED effects used to show the system states. The effect must be defined for every system state.
 * ``led_peer_state_effect`` - defines the LED effects used to show the Bluetooth peer states. The effect must be defined for every state of every peer.
 

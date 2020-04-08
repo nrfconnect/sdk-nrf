@@ -1,4 +1,4 @@
-.. _dev_descr:
+.. _nrf_desktop_dev_descr:
 
 Device description module
 #########################

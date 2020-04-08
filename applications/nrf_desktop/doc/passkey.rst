@@ -1,4 +1,4 @@
-.. _passkey:
+.. _nrf_desktop_passkey:
 
 Passkey module
 ##############
@@ -12,15 +12,15 @@ Module Events
 +--------------------+-----------------------+-------------+-------------------------+------------------+
 | Source Module      | Input Event           | This Module | Output Event            | Sink Module      |
 +====================+=======================+=============+=========================+==================+
-| :ref:`buttons`     | ``button_event``      | ``passkey`` |                         |                  |
+| ``buttons``        | ``button_event``      | ``passkey`` |                         |                  |
 +--------------------+                       |             |                         |                  |
-| :ref:`fn_keys`     |                       |             |                         |                  |
+| ``fn_keys``        |                       |             |                         |                  |
 +--------------------+                       |             |                         |                  |
-| :ref:`buttons_sim` |                       |             |                         |                  |
+| ``buttons_sim``    |                       |             |                         |                  |
 +--------------------+-----------------------+             |                         |                  |
-| :ref:`ble_state`   | ``passkey_req_event`` |             |                         |                  |
+| ``ble_state``      | ``passkey_req_event`` |             |                         |                  |
 +--------------------+-----------------------+             +-------------------------+------------------+
-|                    |                       |             | ``passkey_input_event`` | :ref:`ble_state` |
+|                    |                       |             | ``passkey_input_event`` | ``ble_state``    |
 +--------------------+-----------------------+-------------+-------------------------+------------------+
 
 
@@ -31,7 +31,7 @@ The passkey input handling is based on ``button_event``.
 
 To configure the ``passkey`` module, complete the following steps:
 
-1. Enable and configure the :ref:`buttons` module.
+1. Enable and configure the :ref:`nrf_desktop_buttons` module.
 #. Enable the ``passkey`` module by using the ``CONFIG_DESKTOP_PASSKEY_BUTTONS`` Kconfig option.
 #. Define the maximum number of digits in the passkey by using ``CONFIG_DESKTOP_PASSKEY_MAX_LEN`` option.
 #. Define the IDs of the keys used by the ``passkey`` module in the :file:`passkey_buttons_def.h` file located in the board-specific directory in the :file:`configuration` folder.

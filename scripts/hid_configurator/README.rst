@@ -1,9 +1,9 @@
-.. _config_channel_script:
+.. _nrf_desktop_config_channel_script:
 
 HID configurator
 ################
 
-This Python application is an example of using the :ref:`config_channel` for communication between a computer and firmware.
+This Python application is an example of using the :ref:`nrf_desktop_config_channel` for communication between a computer and firmware.
 It controls the :ref:`nrf_desktop` firmware parameters at runtime.
 
 Overview
@@ -21,7 +21,7 @@ The script can be used to:
 		* downshift time from "Rest1" to "Rest2" mode
 		* downshift time from "Rest2" to "Rest3" mode
 
-For details of the architecture of the firmware module, see :ref:`config_channel`.
+For details of the architecture of the firmware module, see :ref:`nrf_desktop_config_channel`.
 
 Usage
 *****
@@ -96,4 +96,3 @@ Configuration channel uses the cross-platform HIDAPI library to communicate with
 
 * `HIDAPI library`_
 * `pyhidapi Python wrapper`_
-

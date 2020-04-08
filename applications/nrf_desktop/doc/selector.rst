@@ -1,4 +1,4 @@
-.. _selector:
+.. _nrf_desktop_selector:
 
 Selector module
 ###############
@@ -12,7 +12,7 @@ Module Events
 +----------------+-------------+-----------------+--------------------+------------------+
 | Source Module  | Input Event | This Module     | Output Event       | Sink Module      |
 +================+=============+=================+====================+==================+
-|                |             | ``selector``    | ``selector_event`` | :ref:`ble_bond`  |
+|                |             | ``selector``    | ``selector_event`` | ``ble_bond``     |
 +----------------+-------------+-----------------+--------------------+------------------+
 
 Configuration

@@ -1,4 +1,4 @@
-.. _board:
+.. _nrf_desktop_board:
 
 Board module
 ############

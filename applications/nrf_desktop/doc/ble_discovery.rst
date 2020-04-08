@@ -1,4 +1,4 @@
-.. _ble_discovery:
+.. _nrf_desktop_ble_discovery:
 
 BLE discovery module
 ####################

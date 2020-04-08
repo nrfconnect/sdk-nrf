@@ -1,4 +1,4 @@
-.. _hid_forward:
+.. _nrf_desktop_hid_forward:
 
 HID forward module
 ##################

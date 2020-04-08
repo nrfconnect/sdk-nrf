@@ -1,4 +1,4 @@
-.. _config_channel:
+.. _nrf_desktop_config_channel:
 
 Configuration channel
 #####################
@@ -11,7 +11,7 @@ For example, among the types of data that you can send through the configuration
 * Firmware updates.
 * LED effect display data, after it has been generated on the computer.
 
-For instructions on how to install and use the configuration channel on a host computer, see the :ref:`config_channel_script`.
+For instructions on how to install and use the configuration channel on a host computer, see the :ref:`nrf_desktop_config_channel_script`.
 
 Behavior
 ********
@@ -57,14 +57,14 @@ Setting a configuration value of a device, forwarded by the dongle to a paired d
 .. note::
    The functionality can be implemented as a sequence of set and get reports.
    An example of the functionality is the firmware update.
-   Detailed description is available in the :ref:`config_channel_script` documentation.
+   Detailed description is available in the :ref:`nrf_desktop_config_channel_script` documentation.
 
 Data format
 ===========
 
 The following table shows the format of requests used to exchange data in the HID feature reports.
 
-.. _table:
+.. _nrf_desktop_table:
 
 +-------------------------------------------------------------------+
 | Feature report                                                    |
@@ -94,7 +94,7 @@ Handling configuration channel in firmware
 ==========================================
 
 To enable the configuration channel in the nRF Desktop firmware, set the ``CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`` Kconfig option.
-This option also enables the mandatory :ref:`info`.
+This option also enables the mandatory :ref:`nrf_desktop_info`.
 
 Make sure you also configure the following configuration channel elements:
 
@@ -108,11 +108,11 @@ The HID configurator uses the HID feature reports to exchange the data.
 
 Depending on the connection method:
 
-* If the device is connected over USB, requests are handled by the :ref:`usb_state` in the functions :cpp:func:`get_report` and :cpp:func:`set_report`.
-* If the device is connected over Bluetooth Low Energy, requests are handled in :ref:`hids` in :cpp:func:`feature_report_handler`.
+* If the device is connected over USB, requests are handled by the :ref:`nrf_desktop_usb_state` in the functions :cpp:func:`get_report` and :cpp:func:`set_report`.
+* If the device is connected over Bluetooth Low Energy, requests are handled in :ref:`nrf_desktop_hids` in :cpp:func:`feature_report_handler`.
   The argument :c:data:`write` indicates whether the report is a GATT write (set report) or a GATT read (get report).
 
-  Forwarding requests through a dongle to a connected peripheral is handled in :ref:`hid_forward`.
+  Forwarding requests through a dongle to a connected peripheral is handled in :ref:`nrf_desktop_hid_forward`.
   The dongle, which is a Bluetooth LE central, uses the HID Client module to find the feature report of the paired device and access it in order to forward the configuration request.
   The report forwarding is based on the peripheral device PID.
 
@@ -120,13 +120,13 @@ Listener configuration
 ----------------------
 
 The listener can provide a set of options that are accessible through the configuration channel.
-For example, depending on listener, it can provide the CPI option from :ref:`motion` or the option for searching for new peer from :ref`ble_bond`.
+For example, depending on listener, it can provide the CPI option from :ref:`nrf_desktop_motion` or the option for searching for new peer from :ref`ble_bond`.
 The host computer can use report set or report get for these options to access the option value.
 
 On the firmware side, the configuration channel listener and its options are referenced with numbers, respectively module ID and option IDs.
 
 On the host side, these IDs are translated to strings based on the registered listener and option names.
-Details are described in the :ref:`config_channel_script`.
+Details are described in the :ref:`nrf_desktop_config_channel_script`.
 
 To register an application module as a configuration channel listener, complete the following steps:
 
@@ -249,7 +249,7 @@ To register an application module as a configuration channel listener, complete 
         }
 
    * Boolean indicating if the module is the final subscriber for the configuration channel events.
-     It should be set to ``false`` for every subscriber, except for :ref:`info`.
+     It should be set to ``false`` for every subscriber, except for :ref:`nrf_desktop_info`.
 
 For an example of module that uses the configuration channel, see the following files:
 
@@ -263,7 +263,7 @@ Dependencies
 
 The configuration channel uses the :ref:`event_manager` events to propagate the configuration data.
 
-Dependencies for the host software are described in the :ref:`config_channel_script`.
+Dependencies for the host software are described in the :ref:`nrf_desktop_config_channel_script`.
 
 API documentation
 *****************

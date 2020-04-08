@@ -1,4 +1,4 @@
-.. _watchdog:
+.. _nrf_desktop_watchdog:
 
 Watchdog module
 ###############

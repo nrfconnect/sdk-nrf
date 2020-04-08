@@ -1,4 +1,4 @@
-.. _ble_scan:
+.. _nrf_desktop_ble_scan:
 
 BLE scanning module
 ###################

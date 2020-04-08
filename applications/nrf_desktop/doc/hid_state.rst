@@ -1,4 +1,4 @@
-.. _hid_state:
+.. _nrf_desktop_hid_state:
 
 HID state module
 ################

@@ -1,4 +1,4 @@
-.. _leds:
+.. _nrf_desktop_leds:
 
 leds module
 ###########
@@ -29,7 +29,7 @@ Module Events
 +------------------+---------------+-------------+------------------+-------------+
 | Source Module    | Input Event   | This Module | Output Event     | Sink Module |
 +==================+===============+=============+==================+=============+
-| :ref:`led_state` | ``led_event`` | ``leds``    |                  |             |
+| ``led_state``    | ``led_event`` | ``leds``    |                  |             |
 +------------------+---------------+-------------+------------------+-------------+
 
 Configuration
