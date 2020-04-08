@@ -1,4 +1,4 @@
-.. _buttons_sim:
+.. _nrf_desktop_buttons_sim:
 
 Button simulator module
 ########################
@@ -13,23 +13,23 @@ Module Events
 +------------------+------------------+----------------+------------------+--------------------------------------+
 | Source Module    | Input Event      | This Module    | Output Event     | Sink Module                          |
 +==================+==================+================+==================+======================================+
-| :ref:`buttons`   | ``button_event`` | ``butons_sim`` |                  |                                      |
+| ``buttons``      | ``button_event`` | ``butons_sim`` |                  |                                      |
 +------------------+                  |                |                  |                                      |
-| :ref:`fn_keys`   |                  |                |                  |                                      |
+| ``fn_keys``      |                  |                |                  |                                      |
 +------------------+                  |                |                  |                                      |
 | ``buttons_sim``  |                  |                |                  |                                      |
 +------------------+------------------+                +------------------+--------------------------------------+
-|                  |                  |                | ``button_event`` | :ref:`fn_keys`                       |
+|                  |                  |                | ``button_event`` | ``fn_keys``                          |
 |                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | :ref:`motion` (``motion_buttons``)   |
+|                  |                  |                |                  | ``motion``    (``motion_buttons``)   |
 |                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | :ref:`click_detector`                |
+|                  |                  |                |                  | ``click_detector``                   |
 |                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | :ref:`passkey` (``passkey_buttons``) |
+|                  |                  |                |                  | ``passkey``    (``passkey_buttons``) |
 |                  |                  |                |                  +--------------------------------------+
 |                  |                  |                |                  | ``buttons_sim``                      |
 |                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | :ref:`hid_state`                     |
+|                  |                  |                |                  | ``hid_state``                        |
 +------------------+------------------+----------------+------------------+--------------------------------------+
 
 Configuration
@@ -37,7 +37,7 @@ Configuration
 
 To configure the ``buttons_sim`` module:
 
-1. Enable and configure the :ref:`buttons` module. ``button_event`` is used to trigger the simulated button sequence.
+1. Enable and configure the :ref:`nrf_desktop_buttons` module. ``button_event`` is used to trigger the simulated button sequence.
 #. Enable the ``buttons_sim``  module by setting the ``CONFIG_DESKTOP_BUTTONS_SIM_ENABLE`` Kconfig option.
 #. Define the output key ID sequence in the :file:`buttons_sim_def.h` file located in the board-specific directory in the :file:`configuration` folder. The mapping from the defined key ID to the HID report ID and usage ID is defined in :file:`hid_keymap_def.h` (this might be different for different boards).
 #. Define the interval between subsequent simulated button presses - ``CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL``. One second is used by default.

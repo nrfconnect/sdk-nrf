@@ -1,4 +1,4 @@
-.. _ble_bond:
+.. _nrf_desktop_ble_bond:
 
 BLE bond module
 ###############

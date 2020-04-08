@@ -1,4 +1,4 @@
-.. _click_detector:
+.. _nrf_desktop_click_detector:
 
 Click detector module
 #####################
@@ -23,14 +23,14 @@ Module Events
 +----------------+------------------+--------------------+------------------+------------------+
 | Source Module  | Input Event      | This Module        | Output Event     | Sink Module      |
 +================+==================+====================+==================+==================+
-| :ref:`buttons` | ``button_event`` | ``click_detector`` | ``click_event``  | :ref:`ble_bond`  |
+| ``buttons``    | ``button_event`` | ``click_detector`` | ``click_event``  | ``ble_bond``     |
 +----------------+------------------+--------------------+------------------+------------------+
 
 Configuration
 *************
 
 Module detects click types based on ``button_event``.
-Make sure you define the :ref:`buttons` hardware interface.
+Make sure you define the :ref:`nrf_desktop_buttons` hardware interface.
 
 Set ``CONFIG_DESKTOP_CLICK_DETECTOR_ENABLE`` and define the module configuration.
 The configuration (array of :c:type:`struct click_detector_config`) is written in the ``click_detector_def.h`` file located in the board-specific directory in the application configuration folder.

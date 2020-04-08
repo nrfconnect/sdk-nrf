@@ -1,4 +1,4 @@
-.. _power_manager:
+.. _nrf_desktop_power_manager:
 
 Power manager module
 ####################

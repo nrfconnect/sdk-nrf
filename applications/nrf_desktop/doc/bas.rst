@@ -1,4 +1,4 @@
-.. _bas:
+.. _nrf_desktop_bas:
 
 GATT Battery Service
 ####################
@@ -11,7 +11,7 @@ Module Events
 +---------------------+-------------------------+-------------+---------------+------------------+
 | Source Module       | Input Event             | This Module | Output Event  | Sink Module      |
 +=====================+=========================+=============+===============+==================+
-| :ref:`battery_meas` | ``battery_level_event`` | ``bas``     |               |                  |
+| ``battery_meas``    | ``battery_level_event`` | ``bas``     |               |                  |
 +---------------------+-------------------------+-------------+---------------+------------------+
 
 Configuration

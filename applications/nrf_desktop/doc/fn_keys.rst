@@ -1,4 +1,4 @@
-.. _fn_keys:
+.. _nrf_desktop_fn_keys:
 
 Fn keys module
 ##############
@@ -11,17 +11,17 @@ Module Events
 +----------------+------------------+--------------+------------------+------------------------------------+
 | Source Module  | Input Event      | This Module  | Output Event     | Sink Module                        |
 +================+==================+==============+==================+====================================+
-| :ref:`buttons` | ``button_event`` | ``fn_keys``  | ``button_event`` | :ref:`click_detector`              |
+| ``buttons``    | ``button_event`` | ``fn_keys``  | ``button_event`` | ``click_detector``                 |
 |                |                  |              |                  +------------------------------------+
-|                |                  |              |                  | :ref:`motion` (``motion_buttons``) |
+|                |                  |              |                  | ``motion``    (``motion_buttons``) |
 |                |                  |              |                  +------------------------------------+
-|                |                  |              |                  | :ref:`hid_state`                   |
+|                |                  |              |                  | ``hid_state``                      |
 +----------------+------------------+--------------+------------------+------------------------------------+
 
 Configuration
 *************
 
-The module uses ``button_event`` sent by :ref:`buttons`.
+The module uses ``button_event`` sent by :ref:`nrf_desktop_buttons`.
 Make sure mentioned hardware interface is defined.
 
 The module is enabled with ``CONFIG_DESKTOP_FN_KEYS_ENABLE`` option.

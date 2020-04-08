@@ -1,4 +1,4 @@
-.. _battery_charger:
+.. _nrf_desktop_battery_charger:
 
 Battery charger module
 ######################
@@ -11,9 +11,9 @@ Module Events
 +------------------+---------------------+---------------------+-------------------------+------------------+
 | Source Module    | Input Event         | This Module         | Output Event            | Sink Module      |
 +==================+=====================+=====================+=========================+==================+
-|                  |                     | ``battery_charger`` | ``battery_state_event`` | :ref:`led_state` |
+|                  |                     | ``battery_charger`` | ``battery_state_event`` | ``led_state``    |
 +------------------+---------------------+                     +-------------------------+------------------+
-| :ref:`usb_state` | ``usb_state_event`` |                     |                         |                  |
+| ``usb_state```   | ``usb_state_event`` |                     |                         |                  |
 +------------------+---------------------+---------------------+-------------------------+------------------+
 
 Configuration

@@ -1,4 +1,4 @@
-.. _wheel:
+.. _nrf_desktop_wheel:
 
 wheel module
 ############
@@ -12,7 +12,7 @@ Module Events
 +----------------+-------------+--------------+-----------------+------------------+
 | Source Module  | Input Event | This Module  | Output Event    | Sink Module      |
 +================+=============+==============+=================+==================+
-|                |             | :ref:`wheel` | ``wheel_event`` | :ref:`hid_state` |
+|                |             | ``wheel``    | ``wheel_event`` | ``hid_state``    |
 +----------------+-------------+--------------+-----------------+------------------+
 
 Configuration

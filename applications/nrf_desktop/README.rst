@@ -249,11 +249,11 @@ To use the nRF Desktop project with your custom board:
    In such case, the overlay file can be left empty.
 #. In Kconfig, ensure that the following modules that are specific for gaming mouse are enabled:
 
-    * :ref:`motion`
-    * :ref:`wheel`
-    * :ref:`buttons`
-    * :ref:`battery_meas`
-    * :ref:`leds`
+    * :ref:`nrf_desktop_motion`
+    * :ref:`nrf_desktop_wheel`
+    * :ref:`nrf_desktop_buttons`
+    * :ref:`nrf_desktop_battery_meas`
+    * :ref:`nrf_desktop_leds`
 
 #. For each module enabled, change its ``_def`` file to match your hardware:
 
@@ -355,7 +355,7 @@ The nRF Desktop devices provide user input to the host in the same way as other 
     * :ref:`nrf_desktop_ble`
 
 The nRF Desktop devices support additional operations, like firmware upgrade or configuration change.
-The support is implemented through the :ref:`config_channel`.
+The support is implemented through the :ref:`nrf_desktop_config_channel`.
 The host can use dedicated Python scripts to exchange the data with an nRF Desktop peripheral.
 For detailed information, see the ``hid_configurator`` documentation.
 

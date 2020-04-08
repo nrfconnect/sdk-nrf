@@ -1,4 +1,4 @@
-.. _battery_meas:
+.. _nrf_desktop_battery_meas:
 
 Battery measurement
 ###################
@@ -11,7 +11,7 @@ Module Events
 +----------------+-------------+------------------+-------------------------+------------------+
 | Source Module  | Input Event | This Module      | Output Event            | Sink Module      |
 +================+=============+==================+=========================+==================+
-|                |             | ``battery_meas`` | ``battery_level_event`` | :ref:`bas`       |
+|                |             | ``battery_meas`` | ``battery_level_event`` | ``bas``          |
 +----------------+-------------+------------------+-------------------------+------------------+
 
 Configuration

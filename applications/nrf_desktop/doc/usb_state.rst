@@ -1,4 +1,4 @@
-.. _usb_state:
+.. _nrf_desktop_usb_state:
 
 USB state module
 ################
