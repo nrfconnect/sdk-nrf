@@ -284,6 +284,8 @@ To use the nRF Desktop project with your custom board:
    Some options have dependencies that might not be needed when these options are disabled.
    For example, when the LEDs module is disabled, the PWM driver is not needed.
 
+.. _nrf_desktop_flash_memory_layout:
+
 Flash memory layout
 ===================
 
@@ -674,6 +676,7 @@ For more information about each application module and its configuration details
    doc/settings_loader.rst
    doc/usb_state.rst
    doc/watchdog.rst
+   doc/dfu.rst
 
 
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
