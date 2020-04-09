@@ -29,7 +29,7 @@ target_sources_ifdef(CONFIG_SETTINGS
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/info.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_BLE_SCANNING_ENABLE
+target_sources_ifdef(CONFIG_DESKTOP_HID_FORWARD_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_forward.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_ENABLE
