@@ -1,8 +1,6 @@
 ecdsa
-editdistance>=0.5.0
 imagesize>=1.2.0
 intelhex
-pygit2>=0.26.0
 recommonmark==0.4.0
 sphinxcontrib-mscgen
 west>=0.7.2
