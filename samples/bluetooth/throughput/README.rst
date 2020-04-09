@@ -98,8 +98,9 @@ After programming the sample to both boards, test it by performing the following
 1. Connect to both boards with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 #. Reset both boards.
+#. In one of the terminal emulators, type "s" to start the application on the connected board in the slave (peer) role.
+#. In the other terminal emulator, type "m" to start the application in the master (tester) role.
 #. Observe that the boards establish a connection.
-   When they are connected, one of them serves as *tester* and the other one as *peer*.
    The tester outputs the following information::
 
        Ready, press any key to start
@@ -124,8 +125,8 @@ For the tester::
    [bt] [INF] bt_dev_show_info: HCI: version 5.0 (0x09) revision 0x0000, manufacturer 0x05f1
    [bt] [INF] bt_dev_show_info: LMP: version 5.0 (0x09) subver 0xffff
    Bluetooth initialized
-   Advertising successfully started
-   Scanning successfully started
+   Choose device role - type s (slave role) or m (master role):
+   Master role. Starting scanning
    Found a peer device c5:6f:8a:38:95:27 (random)
    Connected as master
    Conn. interval is 320 units
@@ -177,8 +178,8 @@ For the peer::
    [bt] [INF] hci_vs_init: HW Variant: nRr (0x00) Version 1.12 Build 99
    [bt] [INF] bt_dev_show_info: Identity: c5:6f:8a:38:95:27 (random)
    [bt] [INF] bt_devized
-   Advertising successfully started
-   Scanning successfully started
+   Choose device role - type s (slave role) or m (master role):
+   Slave role. Starting advertising
    Found a peer device c5:ca:14:98:3b:90 (random)
    Connected as slave
    Conn. interval is 320 units
