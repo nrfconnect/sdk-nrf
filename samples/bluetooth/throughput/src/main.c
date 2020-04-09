@@ -28,15 +28,11 @@
 
 static volatile bool test_ready;
 static struct bt_conn *default_conn;
-static struct bt_conn *scan_conn;
 static struct bt_gatt_throughput gatt_throughput;
 static struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
 static struct bt_gatt_exchange_params exchange_params;
 static struct bt_le_conn_param *conn_param =
 	BT_LE_CONN_PARAM(INTERVAL_MIN, INTERVAL_MAX, 0, 400);
-static s32_t random_duration;
-struct k_delayed_work advertise_work;
-struct k_delayed_work scan_work;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -81,24 +77,8 @@ void scan_connecting_error(struct bt_scan_device_info *device_info)
 	printk("Connecting failed\n");
 }
 
-void scan_connecting(struct bt_scan_device_info *device_info,
-		     struct bt_conn *conn)
-{
-	if (default_conn) {
-		printk("Connection exists, aborting connecting master");
-		bt_conn_disconnect(conn, BT_HCI_ERR_LOCALHOST_TERM_CONN);
-		return;
-	}
-
-	/* Refresh timeout for creating connection. */
-	k_delayed_work_cancel(&scan_work);
-	k_delayed_work_submit(&scan_work, K_SECONDS(3));
-
-	scan_conn = bt_conn_ref(conn);
-}
-
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
-		scan_connecting_error, scan_connecting);
+		scan_connecting_error, NULL);
 
 static void exchange_func(struct bt_conn *conn, u8_t att_err,
 			  struct bt_gatt_exchange_params *params)
@@ -165,9 +145,6 @@ static void connected(struct bt_conn *conn, u8_t hci_err)
 	struct bt_conn_info info = {0};
 	int err;
 
-	k_delayed_work_cancel(&scan_work);
-	k_delayed_work_cancel(&advertise_work);
-
 	if (hci_err) {
 		if (hci_err == BT_HCI_ERR_UNKNOWN_CONN_ID) {
 			/* Canceled creating connection */
@@ -185,18 +162,6 @@ static void connected(struct bt_conn *conn, u8_t hci_err)
 	}
 
 	default_conn = bt_conn_ref(conn);
-
-	if (scan_conn) {
-		if (scan_conn != conn) {
-			/* Cancel creating master connection. */
-			printk("Stop scanning for master connection\n");
-			bt_conn_disconnect(scan_conn,
-					   BT_HCI_ERR_LOCALHOST_TERM_CONN);
-		}
-
-		bt_conn_unref(scan_conn);
-		scan_conn = NULL;
-	}
 
 	err = bt_conn_get_info(default_conn, &info);
 	if (err) {
@@ -261,8 +226,6 @@ static void scan_start(void)
 		printk("Starting scanning failed (err %d)\n", err);
 		return;
 	}
-
-	k_delayed_work_submit(&scan_work, random_duration);
 }
 
 static void adv_start(void)
@@ -280,40 +243,7 @@ static void adv_start(void)
 		printk("Failed to start advertiser (%d)\n", err);
 		return;
 	}
-
-	k_delayed_work_submit(&advertise_work, random_duration);
 }
-
-static void scan_timeout(struct k_work *work)
-{
-	int err;
-
-	err = bt_scan_stop();
-	if (err) {
-		printk("Failed to stop scanner (%d)\n", err);
-	}
-
-	if (scan_conn) {
-		bt_conn_disconnect(scan_conn, BT_HCI_ERR_LOCALHOST_TERM_CONN);
-		bt_conn_unref(scan_conn);
-		scan_conn = NULL;
-	}
-
-	adv_start();
-}
-
-static void advertise_timeout(struct k_work *work)
-{
-	int err;
-
-	err = bt_le_adv_stop();
-	if (err) {
-		printk("Failed to stop advertiser (%d)\n", err);
-	}
-
-	scan_start();
-}
-
 
 static void disconnected(struct bt_conn *conn, u8_t reason)
 {
@@ -450,6 +380,30 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 	return false;
 }
 
+static void device_role_select(void)
+{
+	char role;
+
+	while (true) {
+		printk("Choose device role - type s (slave role) or m (master role): ");
+
+		role = console_getchar();
+		printk("\n");
+
+		if (role == 's') {
+			printk("Slave role. Starting advertising\n");
+			adv_start();
+			break;
+		} else if (role == 'm') {
+			printk("Master role. Starting scanning\n");
+			scan_start();
+			break;
+		}
+
+		printk("Invalid role\n");
+	}
+}
+
 void main(void)
 {
 	int err;
@@ -482,15 +436,7 @@ void main(void)
 		return;
 	}
 
-	bt_rand(&random_duration, sizeof(random_duration));
-	random_duration = K_MSEC(abs(random_duration)  % 1000) + 100;
-
-	printk("Advertise or scan with random duration %d\n", random_duration);
-
-	k_delayed_work_init(&scan_work, scan_timeout);
-	k_delayed_work_init(&advertise_work, advertise_timeout);
-
-	adv_start();
+	device_role_select();
 
 	for (;;) {
 		if (test_ready) {
