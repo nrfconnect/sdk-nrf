@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "BLE HID Client"
+
+config DESKTOP_HID_FORWARD_ENABLE
+	bool
+	depends on BT_CENTRAL
+	default y
+	help
+	  This option enables HID over GATT Client.
+
+if DESKTOP_HID_FORWARD_ENABLE
+
+module = DESKTOP_HID_FORWARD
+module-str = HID over GATT client
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu
