@@ -51,6 +51,7 @@ struct nct_evt {
 		struct nct_cc_data *cc;
 		struct nct_dc_data *dc;
 		u32_t data_id;
+		u8_t flag;
 	} param;
 	enum nct_evt_type type;
 };

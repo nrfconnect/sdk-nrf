@@ -226,7 +226,7 @@ static void event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
 
 		evt.type = CLOUD_EVT_CONNECTED;
-
+		evt.data.persistent_session = (nrf_cloud_evt->status != 0);
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:

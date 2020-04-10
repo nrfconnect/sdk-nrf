@@ -417,7 +417,9 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 	case MQTT_EVT_CONNACK:
 		LOG_DBG("MQTT client connected!");
 
-		topic_subscribe();
+		if (!mqtt_evt->param.connack.session_present_flag) {
+			topic_subscribe();
+		}
 
 #if defined(CONFIG_CLOUD_API)
 		cloud_evt.type = CLOUD_EVT_CONNECTED;

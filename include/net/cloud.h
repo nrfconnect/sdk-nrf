@@ -109,6 +109,7 @@ struct cloud_event {
 	union {
 		struct cloud_msg msg;
 		int err;
+		bool persistent_session;
 	} data;
 };
 
