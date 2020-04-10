@@ -42,7 +42,7 @@ LOG_MODULE_REGISTER(nfc_t4t_isodep, CONFIG_NFC_T4T_ISODEP_LOG_LEVEL);
 #define T4T_RATS_CMD 0xE0
 #define T4T_RATS_DID_MASK 0x0F
 #define T4T_RATS_FSDI_MASK 0xF0
-#define T4T_RATS_FSDI BIT(3)
+#define T4T_RATS_FSDI_OFFSET 4
 #define T4T_RATS_CMD_LEN 0x02
 
 #define T4T_FWT_ACTIVATION 71680
@@ -313,6 +313,11 @@ static void isodep_chunk_send(void)
 		t4t_isodep.chaining = false;
 	}
 
+	/* Restore last frame type in case nfc_t4t_isodep_transmit() was called
+	 * as it clears the transmission status.
+	 */
+	t4t_isodep.err_status.last_frame = ISODEP_FRAME_I;
+
 	memcpy(&tx_data[index], &data[t4t_isodep.transmitted_len], data_len);
 
 	index += data_len;
@@ -462,14 +467,14 @@ static int isodep_r_frame_handle(const uint8_t *data, size_t len)
 	/* Check if ACK or NAK */
 	if (r_block & R_BLOCK_NAK)  {
 		LOG_DBG("R-frame NAK received.");
-		return -NFC_T4T_ISODEP_SEMATIC_ERROR;
+		return -NFC_T4T_ISODEP_SEMANTIC_ERROR;
 	}
 
 	LOG_DBG("R-frame ACK received.");
 
 	/* Check if Reader/Writer is in chaining state. */
 	if (!t4t_isodep.chaining) {
-		return -NFC_T4T_ISODEP_SEMATIC_ERROR;
+		return -NFC_T4T_ISODEP_SEMANTIC_ERROR;
 	}
 
 	/* ACK Received. Check if current block number is equal to receieved. */
@@ -482,7 +487,7 @@ static int isodep_r_frame_handle(const uint8_t *data, size_t len)
 		/* Retransmit last data block */
 		if (t4t_isodep.retransmit_cnt > ISODEP_MAX_RETRANSMIT_CNT) {
 			/* If to much retransmission, return error. */
-			return -NFC_T4T_ISODEP_SEMATIC_ERROR;
+			return -NFC_T4T_ISODEP_SEMANTIC_ERROR;
 		}
 
 		fdt = t4t_isodep.tag.fwt + T4T_FWT_DELTA + NFCA_T4T_FWT_T_FC;
@@ -728,7 +733,7 @@ int nfc_t4t_isodep_rats_send(enum nfc_t4t_isodep_fsd fsd, uint8_t did)
 	param = did & T4T_RATS_DID_MASK;
 
 	/* Set FSDI field. */
-	param |= (fsd << T4T_RATS_FSDI) & T4T_RATS_FSDI_MASK;
+	param |= (fsd << T4T_RATS_FSDI_OFFSET) & T4T_RATS_FSDI_MASK;
 
 	t4t_isodep.tx_data.data[0] = T4T_RATS_CMD;
 	t4t_isodep.tx_data.data[1] = param;
@@ -825,7 +830,7 @@ int nfc_t4t_isodep_data_received(const uint8_t *data, size_t data_len,
 			err = isodep_i_frame_handle(data, data_len);
 		}
 	} else {
-		err = -NFC_T4T_ISODEP_SEMATIC_ERROR;
+		err = -NFC_T4T_ISODEP_SEMANTIC_ERROR;
 	}
 
 	if (err) {
