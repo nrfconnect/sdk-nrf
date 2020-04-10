@@ -117,8 +117,11 @@ static const fsm_transition *state_event_handlers[] = {
 };
 BUILD_ASSERT(ARRAY_SIZE(state_event_handlers) == STATE_TOTAL);
 
+static bool persistent_session;
+
 int nfsm_init(void)
 {
+	persistent_session = false;
 	return 0;
 }
 
@@ -281,15 +284,25 @@ static int connection_handler(const struct nct_evt *nct_evt)
 	}
 
 	evt.type = NRF_CLOUD_EVT_TRANSPORT_CONNECTED;
+	evt.status = nct_evt->param.flag;
 	nfsm_set_current_state_and_notify(STATE_CONNECTED, &evt);
 
 	/* Connect the control channel now. */
-	err = nct_cc_connect();
-	if (err) {
-		return err;
+	persistent_session = nct_evt->param.flag;
+	if (!persistent_session) {
+		err = nct_cc_connect();
+		if (err) {
+			return err;
+		}
+		nfsm_set_current_state_and_notify(STATE_CC_CONNECTING, NULL);
+	} else {
+		struct nct_evt nevt = { .type = NCT_EVT_CC_CONNECTED,
+					.status = 0 };
+
+		LOG_DBG("Previous session valid; skipping nct_cc_connect()");
+		nfsm_handle_incoming_event(&nevt, STATE_CC_CONNECTING);
 	}
 
-	nfsm_set_current_state_and_notify(STATE_CC_CONNECTING, NULL);
 
 	return 0;
 }
@@ -421,12 +434,22 @@ static int cc_tx_ack_handler(const struct nct_evt *nct_evt)
 	}
 
 	if (nct_evt->param.data_id == PAIRING_STATUS_REPORT_ID) {
-		err = nct_dc_connect();
-		if (err) {
-			return err;
-		}
+		if (!persistent_session) {
+			err = nct_dc_connect();
+			if (err) {
+				return err;
+			}
 
-		nfsm_set_current_state_and_notify(STATE_DC_CONNECTING, NULL);
+			nfsm_set_current_state_and_notify(STATE_DC_CONNECTING,
+							  NULL);
+		} else {
+			struct nct_evt nevt = { .type = NCT_EVT_DC_CONNECTED,
+						.status = 0 };
+
+			LOG_DBG("Previous session valid;"
+				" skipping nct_dc_connect()");
+			nfsm_handle_incoming_event(&nevt, STATE_DC_CONNECTING);
+		}
 	}
 
 	return 0;

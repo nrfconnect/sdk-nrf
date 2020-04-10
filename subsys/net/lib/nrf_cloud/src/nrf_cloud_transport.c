@@ -609,6 +609,10 @@ int nct_mqtt_connect(void)
 	nct.client.protocol_version = MQTT_VERSION_3_1_1;
 	nct.client.password = NULL;
 	nct.client.user_name = NULL;
+#if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
+	nct.client.clean_session = 0U;
+	LOG_DBG("mqtt_connect requesting persistent session");
+#endif
 #if defined(CONFIG_MQTT_LIB_TLS)
 	nct.client.transport.type = MQTT_TRANSPORT_SECURE;
 	nct.client.rx_buf = nct.rx_buf;
@@ -673,9 +677,12 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 
 	switch (_mqtt_evt->type) {
 	case MQTT_EVT_CONNACK: {
+		const struct mqtt_connack_param *p = &_mqtt_evt->param.connack;
+
 		LOG_DBG("MQTT_EVT_CONNACK");
 
 		evt.type = NCT_EVT_CONNECTED;
+		evt.param.flag = (p->session_present_flag != 0);
 		event_notify = true;
 		break;
 	}
