@@ -131,6 +131,17 @@ static int reg_topic(struct mqtt_client *const client, u8_t *topic_buf,
 	return mqtt_unsubscribe(client, &subscription_list);
 }
 
+
+int aws_jobs_create_topic_notify_next(struct mqtt_client *const client,
+					 u8_t *topic_buf)
+{
+	struct mqtt_topic topic;
+
+	return construct_topic(client->client_id.utf8, "",
+			       &TOPIC_NOTIFY_NEXT_CONF, topic_buf, &topic,
+			       false);
+}
+
 int aws_jobs_subscribe_topic_notify_next(struct mqtt_client *const client,
 					 u8_t *topic_buf)
 {
@@ -143,6 +154,15 @@ int aws_jobs_unsubscribe_topic_notify_next(struct mqtt_client *const client,
 	return reg_topic(client, topic_buf, &TOPIC_NOTIFY_NEXT_CONF, "", false);
 }
 
+int aws_jobs_create_topic_notify(struct mqtt_client *const client,
+				 u8_t *topic_buf)
+{
+	struct mqtt_topic topic;
+
+	return construct_topic(client->client_id.utf8, "",
+			       &TOPIC_NOTIFY_CONF, topic_buf, &topic, false);
+}
+
 int aws_jobs_subscribe_topic_notify(struct mqtt_client *const client,
 				    u8_t *topic_buf)
 {
@@ -153,6 +173,15 @@ int aws_jobs_unsubscribe_topic_notify(struct mqtt_client *const client,
 				      u8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_NOTIFY_CONF, "", false);
+}
+
+int aws_jobs_create_topic_get(struct mqtt_client *const client,
+				 const u8_t *job_id, u8_t *topic_buf)
+{
+	struct mqtt_topic topic;
+
+	return construct_topic(client->client_id.utf8, job_id,
+			       &TOPIC_GET_CONF, topic_buf, &topic, false);
 }
 
 int aws_jobs_subscribe_topic_get(struct mqtt_client *const client,

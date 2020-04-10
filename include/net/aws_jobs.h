@@ -60,6 +60,21 @@ enum execution_status {
 		AWS_JOBS_TOPIC_STATIC_LEN + AWS_JOBS_JOB_ID_MAX_LEN)
 
 /**
+ * @brief Construct the notify-next topic for receiving AWS IoT
+ *        jobs.
+ *
+ * @param[in]  client Connected MQTT client instance.
+ * @param[out] topic_buf Buffer to store the topic in.
+ *
+ * @retval 0       If successful.
+ * @retval -EINVAL If the provided input parameter is not valid.
+ * @retval -ENOMEM If cannot fit in the buffer, which is assumed
+ *                 to be AWS_JOBS_TOPIC_MAX_LEN in size.
+ */
+int aws_jobs_create_topic_notify_next(struct mqtt_client *const client,
+					 u8_t *topic_buf);
+
+/**
  * @brief Construct the notify-next topic and subscribe to it for receiving
  *        AWS IoT jobs.
  *
@@ -67,7 +82,7 @@ enum execution_status {
  * @param[out] topic_buf Buffer to store the topic in.
  *
  * @retval 0       If successful, otherwise the return code of
- *                 mqtt_unsubscribe or snprintf.
+ *                 mqtt_subscribe or snprintf.
  *
  * @retval -EINVAL If the provided input parameter is not valid.
  */
@@ -88,6 +103,20 @@ int aws_jobs_subscribe_topic_notify_next(struct mqtt_client *const client,
  */
 int aws_jobs_unsubscribe_topic_notify_next(struct mqtt_client *const client,
 					   u8_t *topic_buf);
+
+/**
+ * @brief Construct the notify topic for receiving AWS IoT jobs.
+ *
+ * @param[in]  client Connected MQTT client instance.
+ * @param[out] topic_buf Buffer to store the topic in.
+ *
+ * @retval 0       If successful.
+ * @retval -EINVAL If the provided input parameter is not valid.
+ * @retval -ENOMEM If cannot fit in the buffer, which is assumed
+ *                 to be AWS_JOBS_TOPIC_MAX_LEN in size.
+ */
+int aws_jobs_create_topic_notify(struct mqtt_client *const client,
+				 u8_t *topic_buf);
 
 /**
  * @brief Construct the notify topic and subscribe to it for receiving
@@ -117,6 +146,21 @@ int aws_jobs_subscribe_topic_notify(struct mqtt_client *const client,
  */
 int aws_jobs_unsubscribe_topic_notify(struct mqtt_client *const client,
 				      u8_t *topic_buf);
+
+/**
+ * @brief Construct the get topic for a job ID.
+ *
+ * @param[in]  client Connected MQTT client instance.
+ * @param[in]  job_id Job ID of the currently accepted job.
+ * @param[out] topic_buf Buffer to store the topic in.
+ *
+ * @retval 0       If successful.
+ * @retval -EINVAL If the provided input parameter is not valid.
+ * @retval -ENOMEM If cannot fit in the buffer, which is assumed
+ *                 to be AWS_JOBS_TOPIC_MAX_LEN in size.
+ */
+int aws_jobs_create_topic_get(struct mqtt_client *const client,
+			      const u8_t *job_id, u8_t *topic_buf);
 
 /**
  * @brief Construct the get topic for a job ID and subscribe to it for both

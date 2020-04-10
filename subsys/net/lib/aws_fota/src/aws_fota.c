@@ -157,6 +157,15 @@ static int get_job_execution(struct mqtt_client *const client,
 		LOG_ERR("Error when getting the payload: %d", err);
 		return err;
 	}
+
+#if IS_ENABLED(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
+	char job_doc[payload_len + 1];
+
+	memcpy(job_doc, payload_buf, payload_len);
+	job_doc[payload_len] = '\0';
+	LOG_DBG("Job doc: %s", log_strdup(job_doc));
+#endif
+
 	/* Check if message received is a job. */
 	err = aws_fota_parse_DescribeJobExecution_rsp(payload_buf, payload_len,
 						      job_id, hostname,
@@ -167,7 +176,7 @@ static int get_job_execution(struct mqtt_client *const client,
 		LOG_ERR("Error when parsing the json: %d", err);
 		return err;
 	} else if (err == 0) {
-		LOG_DBG("Got only one field: %s", log_strdup(payload_buf));
+		LOG_DBG("Got only one field");
 		LOG_INF("No queued jobs for this device");
 		return 0;
 	}
@@ -186,6 +195,7 @@ static int get_job_execution(struct mqtt_client *const client,
 				"%d", err);
 		return err;
 	}
+	LOG_INF("Subscribed to FOTA update topic %s", log_strdup(update_topic));
 
 	/* Set fota_state to DOWNLOAD_FIRMWARE, when we are subscribed
 	 * to job_id topics we will try to publish and if accepted we
@@ -362,17 +372,49 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
 			return 1;
 		}
 
-		err = aws_jobs_subscribe_topic_notify_next(client,
-							   notify_next_topic);
-		if (err) {
-			LOG_ERR("Unable to subscribe to notify-next topic");
-			return err;
-		}
+		if (!evt->param.connack.session_present_flag) {
+			err = aws_jobs_subscribe_topic_notify_next(client,
+							     notify_next_topic);
+			if (err) {
+				LOG_ERR("Unable to subscribe to"
+					" notify-next topic");
+				return err;
+			}
 
-		err = aws_jobs_subscribe_topic_get(client, "$next", get_topic);
-		if (err) {
-			LOG_ERR("Unable to subscribe to jobs/$next/get");
-			return err;
+			err = aws_jobs_subscribe_topic_get(client, "$next",
+							   get_topic);
+			if (err) {
+				LOG_ERR("Unable to subscribe to"
+					" jobs/$next/get");
+				return err;
+			}
+		} else {
+			LOG_DBG("Previous session valid;"
+				" skipping FOTA subscriptions");
+			err = aws_jobs_create_topic_notify_next(client,
+							     notify_next_topic);
+			if (err) {
+				LOG_ERR("Error when creating topic: %d", err);
+				return err;
+			}
+			LOG_INF("Created notify_next_topic %s",
+				log_strdup(notify_next_topic));
+
+			err = aws_jobs_create_topic_get(client, "$next",
+							get_topic);
+			if (err) {
+				LOG_ERR("Error when creating topic: %d", err);
+				return err;
+			}
+			LOG_INF("Created get_topic %s", log_strdup(get_topic));
+
+			LOG_INF("previously subscribed to notify-next topic");
+			err = aws_jobs_get_job_execution(client, "$next",
+							 get_topic);
+			if (err) {
+				LOG_ERR("Error when publishing: %d", err);
+				return err;
+			}
 		}
 
 		/* This expects that the application's mqtt handler will handle
