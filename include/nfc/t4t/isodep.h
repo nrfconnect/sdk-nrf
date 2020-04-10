@@ -26,7 +26,7 @@ extern "C" {
 #define NFC_T4T_ISODEP_SYNTAX_ERROR 1
 
 /** Correct frame was received when it is not expected. */
-#define NFC_T4T_ISODEP_SEMATIC_ERROR 2
+#define NFC_T4T_ISODEP_SEMANTIC_ERROR 2
 
 /** Unrecoverable transmission error. */
 #define NFC_T4T_ISODEP_TRANSMISSION_ERROR 3
