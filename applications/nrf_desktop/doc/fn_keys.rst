@@ -8,15 +8,11 @@ The ``fn_keys`` module applies Fn key modifier to activate special functions ass
 Module Events
 *************
 
-+----------------+------------------+--------------+------------------+------------------------------------+
-| Source Module  | Input Event      | This Module  | Output Event     | Sink Module                        |
-+================+==================+==============+==================+====================================+
-| ``buttons``    | ``button_event`` | ``fn_keys``  | ``button_event`` | ``click_detector``                 |
-|                |                  |              |                  +------------------------------------+
-|                |                  |              |                  | ``motion``    (``motion_buttons``) |
-|                |                  |              |                  +------------------------------------+
-|                |                  |              |                  | ``hid_state``                      |
-+----------------+------------------+--------------+------------------+------------------------------------+
+.. include:: event_propagation.rst
+    :start-after: table_fn_keys_start
+    :end-before: table_fn_keys_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

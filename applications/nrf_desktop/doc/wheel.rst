@@ -9,11 +9,11 @@ the mouse wheel.
 Module Events
 *************
 
-+----------------+-------------+--------------+-----------------+------------------+
-| Source Module  | Input Event | This Module  | Output Event    | Sink Module      |
-+================+=============+==============+=================+==================+
-|                |             | ``wheel``    | ``wheel_event`` | ``hid_state``    |
-+----------------+-------------+--------------+-----------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_wheel_start
+    :end-before: table_wheel_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

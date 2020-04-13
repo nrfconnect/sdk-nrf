@@ -11,19 +11,11 @@ Use the BLE latency module to:
 Module Events
 *************
 
-+--------------------+----------------------------------+-----------------+--------------+-------------+
-| Source Module      | Input Event                      | This Module     | Output Event | Sink Module |
-+====================+==================================+=================+==============+=============+
-| ``ble_state``      | ``ble_peer_event``               | ``ble_latency`` |              |             |
-+--------------------+----------------------------------+                 |              |             |
-| ``hids``           |  ``config_event``                |                 |              |             |
-+--------------------+                                  |                 |              |             |
-| ``usb_state``      |                                  |                 |              |             |
-+--------------------+----------------------------------+                 |              |             |
-| ``hids``           |  ``config_fetch_request_event``  |                 |              |             |
-+--------------------+                                  |                 |              |             |
-| ``usb_state``      |                                  |                 |              |             |
-+--------------------+----------------------------------+-----------------+--------------+-------------+
+.. include:: event_propagation.rst
+    :start-after: table_ble_latency_start
+    :end-before: table_ble_latency_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

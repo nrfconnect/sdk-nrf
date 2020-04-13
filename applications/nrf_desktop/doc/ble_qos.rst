@@ -9,25 +9,11 @@ The module can be used only by nRF Desktop central with the nrfxlib's Link Layer
 Module Events
 *************
 
-+-----------------------------------------------+--------------------------------+-------------+------------------------+---------------------------------------------+
-| Source Module                                 | Input Event                    | This Module | Output Event           | Sink Module                                 |
-+===============================================+================================+=============+========================+=============================================+
-| :ref:`nrf_desktop_hid_state`                  | ``hid_report_event``           | ``ble_qos`` |                        |                                             |
-+-----------------------------------------------+                                |             |                        |                                             |
-| :ref:`nrf_desktop_hid_forward`                |                                |             |                        |                                             |
-+-----------------------------------------------+--------------------------------+             |                        |                                             |
-| :ref:`nrf_desktop_hids`                       | ``config_event``               |             |                        |                                             |
-+-----------------------------------------------+                                |             |                        |                                             |
-| :ref:`nrf_desktop_usb_state`                  |                                |             |                        |                                             |
-+-----------------------------------------------+--------------------------------+             |                        |                                             |
-| :ref:`nrf_desktop_hids`                       | ``config_fetch_request_event`` |             |                        |                                             |
-+-----------------------------------------------+                                |             |                        |                                             |
-| :ref:`nrf_desktop_usb_state`                  |                                |             |                        |                                             |
-+-----------------------------------------------+--------------------------------+             +------------------------+---------------------------------------------+
-|                                               |                                |             | ``config_fetch_event`` | :ref:`nrf_desktop_hids`                     |
-|                                               |                                |             |                        +---------------------------------------------+
-|                                               |                                |             |                        | :ref:`nrf_desktop_usb_state`                |
-+-----------------------------------------------+--------------------------------+-------------+------------------------+---------------------------------------------+
+.. include:: event_propagation.rst
+    :start-after: table_ble_qos_start
+    :end-before: table_ble_qos_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

@@ -9,20 +9,11 @@ It is also responsible for transmitting data over the USB on the application's d
 Module Events
 *************
 
-+--------------------+----------------------------+-------------+-----------------------------------+------------------+
-| Source Module      | Input Event                | This Module | Output Event                      | Sink Module      |
-+====================+============================+=============+===================================+==================+
-+                    + ``module_state_event``     +             + ``module_state_event``            +                  +
-+--------------------+----------------------------+             +-----------------------------------+------------------+
-+ ``hid_state``      + ``hid_report_event``       +             + ``hid_report_sent``               + ``hid_state``    +
-+--------------------+----------------------------+             +-----------------------------------+                  +
-+                    + ``config_event``           +             + ``hid_report_subscription_event`` +                  +
-+--------------------+----------------------------+             +-----------------------------------+------------------+
-+                    + ``config_fetch_event``     +             + ``usb_state_event``               +                  +
-+--------------------+----------------------------+             +-----------------------------------+------------------+
-+                    + ``config_forwarder_event`` +             +                                   +                  +
-+--------------------+----------------------------+-------------+-----------------------------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_usb_state_start
+    :end-before: table_usb_state_end
 
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

@@ -9,21 +9,11 @@ The module is the final subscriber for the :ref:`nrf_desktop_config_channel` eve
 Module Events
 *************
 
-+------------------+--------------------------------+---------------+------------------------+------------------+
-| Source Module    | Input Event                    | This Module   | Output Event           | Sink Module      |
-+==================+================================+===============+========================+==================+
-| ``hids``         | ``config_event``               |  ``info``     |                        |                  |
-+------------------+                                |               |                        |                  |
-| ``usb_state``    |                                |               |                        |                  |
-+------------------+--------------------------------+               |                        |                  |
-| ``hids``         | ``config_fetch_request_event`` |               |                        |                  |
-+------------------+                                |               |                        |                  |
-| ``usb_state``    |                                |               |                        |                  |
-+------------------+--------------------------------+               +------------------------+------------------+
-|                  |                                |               | ``config_fetch_event`` | ``hids``         |
-|                  |                                |               |                        +------------------+
-|                  |                                |               |                        | ``usb_state``    |
-+------------------+--------------------------------+---------------+------------------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_info_start
+    :end-before: table_info_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

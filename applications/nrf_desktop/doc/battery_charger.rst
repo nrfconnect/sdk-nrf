@@ -8,13 +8,11 @@ The ``battery_charger`` module is responsible for battery charging control.
 Module Events
 *************
 
-+------------------+---------------------+---------------------+-------------------------+------------------+
-| Source Module    | Input Event         | This Module         | Output Event            | Sink Module      |
-+==================+=====================+=====================+=========================+==================+
-|                  |                     | ``battery_charger`` | ``battery_state_event`` | ``led_state``    |
-+------------------+---------------------+                     +-------------------------+------------------+
-| ``usb_state```   | ``usb_state_event`` |                     |                         |                  |
-+------------------+---------------------+---------------------+-------------------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_battery_charger_start
+    :end-before: table_battery_charger_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************
