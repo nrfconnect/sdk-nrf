@@ -8,18 +8,23 @@ define_property(GLOBAL PROPERTY PM_IMAGES
   BRIEF_DOCS "A list of all images that should be processed by the Partition Manager."
   FULL_DOCS "A list of all images that should be processed by the Partition Manager.
 Each image's directory will be searched for a pm.yml, and will receive a pm_config.h header file with the result.
-Also, the each image's hex file will be automatically associated with its partition.")
+Also, each image's hex file will be automatically associated with its partition.")
 
-macro(add_region name size base placement_strategy)
-  list(APPEND regions ${name})
-  list(APPEND region_arguments "--${name}-size;${size}")
-  list(APPEND region_arguments "--${name}-base-address;${base}")
-  list(APPEND region_arguments "--${name}-placement-strategy;${placement_strategy}")
-endmacro()
-
-macro(add_region_with_dev name size base placement_strategy device)
-  add_region(${name} ${size} ${base} ${placement_strategy})
-  list(APPEND region_arguments "--${name}-device;${device}")
+macro(add_region)
+  set(oneValueArgs NAME SIZE BASE PLACEMENT DEVICE DYNAMIC_PARTITION)
+  cmake_parse_arguments(REGION "" "${oneValueArgs}" "" ${ARGN})
+  list(APPEND regions ${REGION_NAME})
+  list(APPEND region_arguments "--${REGION_NAME}-size;${REGION_SIZE}")
+  list(APPEND region_arguments "--${REGION_NAME}-base-address;${REGION_BASE}")
+  list(APPEND region_arguments
+    "--${REGION_NAME}-placement-strategy;${REGION_PLACEMENT}")
+  if (REGION_DEVICE)
+    list(APPEND region_arguments "--${REGION_NAME}-device;${REGION_DEVICE}")
+  endif()
+  if (REGION_DYNAMIC_PARTITION)
+    list(APPEND region_arguments
+      "--${REGION_NAME}-dynamic-partition;${REGION_DYNAMIC_PARTITION}")
+  endif()
 endmacro()
 
 get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
@@ -74,27 +79,27 @@ if(PM_IMAGES OR (EXISTS ${static_configuration_file}))
 
   if (CONFIG_SOC_NRF9160 OR CONFIG_SOC_NRF5340_CPUAPP)
     add_region(
-      otp
-      ${otp_size}
-      ${otp_start_addr}
-      start_to_end
+      NAME otp
+      SIZE ${otp_size}
+      BASE ${otp_start_addr}
+      PLACEMENT start_to_end
       )
   endif()
-  add_region_with_dev(
-    flash_primary
-    ${flash_size}
-    ${CONFIG_FLASH_BASE_ADDRESS}
-    complex
-    NRF_FLASH_DRV_NAME
+  add_region(
+    NAME flash_primary
+    SIZE ${flash_size}
+    BASE ${CONFIG_FLASH_BASE_ADDRESS}
+    PLACEMENT complex
+    DEVICE NRF_FLASH_DRV_NAME
     )
 
   if (CONFIG_PM_EXTERNAL_FLASH)
-    add_region_with_dev(
-      external_flash
-      ${CONFIG_PM_EXTERNAL_FLASH_SIZE}
-      ${CONFIG_PM_EXTERNAL_FLASH_BASE}
-      start_to_end
-      ${CONFIG_PM_EXTERNAL_FLASH_DEV_NAME}
+    add_region(
+      NAME external_flash
+      SIZE ${CONFIG_PM_EXTERNAL_FLASH_SIZE}
+      BASE ${CONFIG_PM_EXTERNAL_FLASH_BASE}
+      PLACEMENT start_to_end
+      DEVICE ${CONFIG_PM_EXTERNAL_FLASH_DEV_NAME}
       )
   endif()
 
