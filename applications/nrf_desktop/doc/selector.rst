@@ -9,11 +9,11 @@ The module has one implementation, which uses hardware selectors (``selector_hw.
 Module Events
 *************
 
-+----------------+-------------+-----------------+--------------------+------------------+
-| Source Module  | Input Event | This Module     | Output Event       | Sink Module      |
-+================+=============+=================+====================+==================+
-|                |             | ``selector``    | ``selector_event`` | ``ble_bond``     |
-+----------------+-------------+-----------------+--------------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_selector_start
+    :end-before: table_selector_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

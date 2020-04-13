@@ -8,11 +8,11 @@ Use the ``bas`` module to enable and define the GATT Battery Service, and notify
 Module Events
 *************
 
-+---------------------+-------------------------+-------------+---------------+------------------+
-| Source Module       | Input Event             | This Module | Output Event  | Sink Module      |
-+=====================+=========================+=============+===============+==================+
-| ``battery_meas``    | ``battery_level_event`` | ``bas``     |               |                  |
-+---------------------+-------------------------+-------------+---------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_bas_start
+    :end-before: table_bas_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

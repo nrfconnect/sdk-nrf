@@ -12,9 +12,9 @@ Module Events
 
 .. include:: event_propagation.rst
     :start-after: table_hfclk_lock_start
-    :end-after: table_hfclk_lock_end
+    :end-before: table_hfclk_lock_end
 
-Refer to the :ref:`nrf_desktop_architecture` for basic information about the event-based communication in the nRF Desktop application.
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

@@ -13,37 +13,11 @@ Use the BLE state module to:
 Module Events
 *************
 
-+----------------+-------------------------+---------------+-----------------------+-----------------------+
-| Source Module  | Input Event             | This Module   | Output Event          | Sink Module           |
-+================+=========================+===============+=======================+=======================+
-| ``ble_state``  | ``ble_peer_event``      | ``ble_state`` |                       |                       |
-+----------------+-------------------------+               |                       |                       |
-| ``passkey``    | ``passkey_input_event`` |               |                       |                       |
-+----------------+-------------------------+               +-----------------------+-----------------------+
-|                |                         |               | ``passkey_req_event`` | ``passkey``           |
-|                |                         |               +-----------------------+-----------------------+
-|                |                         |               | ``ble_peer_event``    | ``hids``              |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``led_state``         |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``ble_scan``          |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``ble_latency``       |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``ble_bond``          |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``ble_adv``           |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``power_manager``     |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``ble_discovery``     |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``hid_state``         |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``hid_forward``       |
-|                |                         |               |                       +-----------------------+
-|                |                         |               |                       | ``ble_state``         |
-+----------------+-------------------------+---------------+-----------------------+-----------------------+
+.. include:: event_propagation.rst
+    :start-after: table_ble_state_start
+    :end-before: table_ble_state_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

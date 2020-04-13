@@ -8,11 +8,11 @@ Use the Settings loader module to trigger loading the data from non-volatile mem
 Module Events
 *************
 
-+----------------+-------------+---------------------+-----------------+------------------+
-| Source Module  | Input Event | This Module         | Output Event    | Sink Module      |
-+================+=============+=====================+=================+==================+
-|                |             | ``settings_loader`` |                 |                  |
-+----------------+-------------+---------------------+-----------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_settings_loader_start
+    :end-before: table_settings_loader_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

@@ -9,20 +9,11 @@ The input handling is based on button presses.
 Module Events
 *************
 
-+--------------------+-----------------------+-------------+-------------------------+------------------+
-| Source Module      | Input Event           | This Module | Output Event            | Sink Module      |
-+====================+=======================+=============+=========================+==================+
-| ``buttons``        | ``button_event``      | ``passkey`` |                         |                  |
-+--------------------+                       |             |                         |                  |
-| ``fn_keys``        |                       |             |                         |                  |
-+--------------------+                       |             |                         |                  |
-| ``buttons_sim``    |                       |             |                         |                  |
-+--------------------+-----------------------+             |                         |                  |
-| ``ble_state``      | ``passkey_req_event`` |             |                         |                  |
-+--------------------+-----------------------+             +-------------------------+------------------+
-|                    |                       |             | ``passkey_input_event`` | ``ble_state``    |
-+--------------------+-----------------------+-------------+-------------------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_passkey_start
+    :end-before: table_passkey_end
 
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

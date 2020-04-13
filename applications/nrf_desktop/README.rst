@@ -27,6 +27,43 @@ The application architecture is modular and event-driven.
 This means that parts of application functionality were separated into isolated modules that communicate with each other using application events.
 Application events are handled by the :ref:`event_manager`.
 Modules register themselves as listeners of events they need to react on.
+The application event can be submitted by multiple modules and it can have multiple listeners.
+
+The event-based communication for each application module is presented as a table that is included on the :ref:`each module's documentation page <nrf_desktop_app_internal_modules>`.
+
++---------------------------------------+-------------+------------------------------------+--------------+-----------------------------------------+
+| Source Module                         | Input Event | This Module                        | Output Event | Sink Module                             |
++=======================================+=============+====================================+==============+=========================================+
+| The module that submits ``eventA``.   | ``eventA``  | The module described by the table. |              |                                         |
++---------------------------------------+             |                                    |              |                                         |
+| Other module that submits ``eventA``. |             |                                    |              |                                         |
++---------------------------------------+-------------+                                    +--------------+-----------------------------------------+
+| The module that submits ``eventB``.   | ``eventB``  |                                    |              |                                         |
++---------------------------------------+-------------+                                    +--------------+-----------------------------------------+
+|                                       |             |                                    | ``eventC``   | The module that reacts on ``eventC``.   |
++---------------------------------------+-------------+------------------------------------+--------------+-----------------------------------------+
+
+The table contains the following columns:
+
+Source Module
+   The module that submits a given application event.
+
+Input Event
+   An application event that is received by the module described by the table.
+
+This Module
+   The module described by the table.
+   This is the module that is the target of the Input Events and the source of Output Events directed to the Sink Modules.
+
+Output Event
+   An application event that is submitted by the module described by the table.
+
+Sink Module
+   The module that reacts on the application event.
+
+.. note::
+   Some application modules may have multiple implementations (for example, :ref:`nrf_desktop_motion`).
+   In such case, the table presents the :ref:`event_manager` events received and submitted by all the implementations of a given application module.
 
 The following figure shows the nRF Desktop modules and their relation with other components and the :ref:`event_manager`.
 
@@ -1141,6 +1178,9 @@ This application uses the following |NCS| libraries and drivers:
     * ``drivers/sensor/paw3212``
     * ``drivers/sensor/pmw3360``
 
+
+.. _nrf_desktop_app_internal_modules:
+
 Application internal modules
 ****************************
 
@@ -1187,6 +1227,16 @@ For more information about each application module and its configuration details
    doc/constlat.rst
    doc/hfclk_lock.rst
 
+Source and sink modules
+=======================
+
+The following page includes lists of source and sink modules for events that have many listeners or sources.
+These were gathered on a single page to simplify the event propagation tables.
+
+.. toctree::
+   :maxdepth: 1
+
+   doc/event_rel_modules.rst
 
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
    When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.

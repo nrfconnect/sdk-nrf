@@ -8,16 +8,11 @@ Use the Bluetooth LE advertising module to control the Bluetooth LE advertising 
 Module Events
 *************
 
-+------------------------------+------------------------------+-------------+---------------------------+------------------------------+
-| Source Module                | Input Event                  | This Module | Output Event              | Sink Module                  |
-+==============================+==============================+=============+===========================+==============================+
-| :ref:`nrf_desktop_ble_state` | ``ble_peer_event``           | ``ble_adv`` |                           |                              |
-+------------------------------+------------------------------+             |                           |                              |
-| :ref:`nrf_desktop_ble_bond`  | ``ble_peer_operation_event`` |             |                           |                              |
-+------------------------------+------------------------------+             +---------------------------+------------------------------+
-|                              |                              |             | ``ble_peer_search_event`` | :ref:`nrf_desktop_led_state` |
-+------------------------------+------------------------------+-------------+---------------------------+------------------------------+
+.. include:: event_propagation.rst
+    :start-after: table_ble_adv_start
+    :end-before: table_ble_adv_end
 
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

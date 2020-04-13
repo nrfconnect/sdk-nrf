@@ -9,19 +9,11 @@ The module is mandatory for the nRF Desktop central.
 Module Events
 *************
 
-+------------------------------+----------------------------------+-------------------+----------------------------------+--------------------------------+
-| Source Module                | Input Event                      | This Module       | Output Event                     | Sink Module                    |
-+==============================+==================================+===================+==================================+================================+
-| :ref:`nrf_desktop_ble_state` | ``ble_peer_event``               | ``ble_discovery`` |                                  |                                |
-+------------------------------+----------------------------------+                   |                                  |                                |
-| ``ble_discovery``            | ``ble_discovery_complete_event`` |                   |                                  |                                |
-+------------------------------+----------------------------------+                   +----------------------------------+--------------------------------+
-|                              |                                  |                   | ``ble_discovery_complete_event`` | :ref:`nrf_desktop_hid_forward` |
-|                              |                                  |                   |                                  +--------------------------------+
-|                              |                                  |                   |                                  | :ref:`nrf_desktop_ble_scan`    |
-|                              |                                  |                   |                                  +--------------------------------+
-|                              |                                  |                   |                                  | ``ble_discovery``              |
-+------------------------------+----------------------------------+-------------------+----------------------------------+--------------------------------+
+.. include:: event_propagation.rst
+    :start-after: table_ble_discovery_start
+    :end-before: table_ble_discovery_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

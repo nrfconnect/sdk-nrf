@@ -32,15 +32,11 @@ For the complete description of peer management, see :ref:`nrf_desktop_ble_bond`
 Module Events
 *************
 
-+------------------------+------------------------------+---------------+----------------+-------------+
-| Source Module          | Input Event                  | This Module   | Output Event   | Sink Module |
-+========================+==============================+===============+================+=============+
-| ``ble_bond``           | ``ble_peer_operation_event`` | ``led_state`` | ``led_event``  | ``leds``    |
-+------------------------+------------------------------+               |                |             |
-| ``ble_state``          | ``ble_peer_event``           |               |                |             |
-+------------------------+------------------------------+               |                |             |
-| ``battery_charger``    | ``battery_state_event``      |               |                |             |
-+------------------------+------------------------------+---------------+----------------+-------------+
+.. include:: event_propagation.rst
+    :start-after: table_led_state_start
+    :end-before: table_led_state_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

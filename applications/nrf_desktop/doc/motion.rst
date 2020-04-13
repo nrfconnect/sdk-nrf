@@ -10,19 +10,11 @@ GPIO pins or simulated.
 Module Events
 *************
 
-+------------------+-----------------------------------+---------------+------------------+------------------+
-| Source Module    | Input Event                       | This Module   | Output Event     | Sink Module      |
-+==================+===================================+===============+==================+==================+
-|                  |                                   | ``motion``    | ``motion_event`` | ``hid_state``    |
-+------------------+-----------------------------------+               +------------------+------------------+
-| ``hids``         | ``hid_report_sent_event``         |               |                  |                  |
-+------------------+                                   +               +                  +                  +
-| ``usb_state``    |                                   |               |                  |                  |
-+------------------+-----------------------------------+               +------------------+------------------+
-| ``hids``         | ``hid_report_subscription_event`` |               |                  |                  |
-+------------------+                                   +               +                  +                  +
-| ``usb_state``    |                                   |               |                  |                  |
-+------------------+-----------------------------------+---------------+------------------+------------------+
+.. include:: event_propagation.rst
+    :start-after: table_motion_start
+    :end-before: table_motion_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

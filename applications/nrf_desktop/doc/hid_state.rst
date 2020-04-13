@@ -14,7 +14,11 @@ It is responsible for the following operations:
 Module Events
 *************
 
-<TO DO>
+.. include:: event_propagation.rst
+    :start-after: table_hid_state_start
+    :end-before: table_hid_state_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

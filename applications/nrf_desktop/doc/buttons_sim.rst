@@ -10,27 +10,11 @@ Generating keys can be started and stopped by pressing the predefined button.
 Module Events
 *************
 
-+------------------+------------------+----------------+------------------+--------------------------------------+
-| Source Module    | Input Event      | This Module    | Output Event     | Sink Module                          |
-+==================+==================+================+==================+======================================+
-| ``buttons``      | ``button_event`` | ``butons_sim`` |                  |                                      |
-+------------------+                  |                |                  |                                      |
-| ``fn_keys``      |                  |                |                  |                                      |
-+------------------+                  |                |                  |                                      |
-| ``buttons_sim``  |                  |                |                  |                                      |
-+------------------+------------------+                +------------------+--------------------------------------+
-|                  |                  |                | ``button_event`` | ``fn_keys``                          |
-|                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | ``motion``    (``motion_buttons``)   |
-|                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | ``click_detector``                   |
-|                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | ``passkey``    (``passkey_buttons``) |
-|                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | ``buttons_sim``                      |
-|                  |                  |                |                  +--------------------------------------+
-|                  |                  |                |                  | ``hid_state``                        |
-+------------------+------------------+----------------+------------------+--------------------------------------+
+.. include:: event_propagation.rst
+    :start-after: table_buttons_sim_start
+    :end-before: table_buttons_sim_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

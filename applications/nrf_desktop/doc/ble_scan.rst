@@ -16,21 +16,11 @@ This module can only be used by an nRF Desktop central.
 Module Events
 *************
 
-+-----------------------------------------------+----------------------------------+--------------+---------------------------+---------------------------------------------+
-| Source Module                                 | Input Event                      | This Module  | Output Event              | Sink Module                                 |
-+===============================================+==================================+==============+===========================+=============================================+
-| :ref:`nrf_desktop_ble_discovery`              | ``ble_discovery_complete_event`` | ``ble_scan`` |                           |                                             |
-+-----------------------------------------------+----------------------------------+              |                           |                                             |
-| :ref:`nrf_desktop_hid_state`                  | ``hid_report_event``             |              |                           |                                             |
-+-----------------------------------------------+                                  |              |                           |                                             |
-| :ref:`nrf_desktop_hid_forward`                |                                  |              |                           |                                             |
-+-----------------------------------------------+----------------------------------+              |                           |                                             |
-| :ref:`nrf_desktop_ble_bond`                   | ``ble_peer_operation_event``     |              |                           |                                             |
-+-----------------------------------------------+----------------------------------+              |                           |                                             |
-| :ref:`nrf_desktop_ble_state`                  | ``ble_peer_event``               |              |                           |                                             |
-+-----------------------------------------------+----------------------------------+              +---------------------------+---------------------------------------------+
-|                                               |                                  |              | ``ble_peer_search_event`` | :ref:`nrf_desktop_led_state`                |
-+-----------------------------------------------+----------------------------------+--------------+---------------------------+---------------------------------------------+
+.. include:: event_propagation.rst
+    :start-after: table_ble_scan_start
+    :end-before: table_ble_scan_end
+
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************

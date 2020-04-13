@@ -9,16 +9,11 @@ The source of events are changes to GPIO pins.
 Module Events
 *************
 
-+----------------+-------------+----------------+------------------+-------------------------+
-| Source Module  | Input Event | This Module    | Output Event     | Sink Module             |
-+================+=============+================+==================+=========================+
-|                |             | ``buttons``    | ``button_event`` | ``hid_state``           |
-+                +             +                +                  +-------------------------+
-|                |             |                |                  | ``fn_keys``             |
-+                +             +                +                  +-------------------------+
-|                |             |                |                  | ``click_detector``      |
-+----------------+-------------+----------------+------------------+-------------------------+
+.. include:: event_propagation.rst
+    :start-after: table_buttons_start
+    :end-before: table_buttons_end
 
+See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 
 Configuration
 *************
