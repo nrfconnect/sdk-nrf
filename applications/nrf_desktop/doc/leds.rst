@@ -49,7 +49,7 @@ You can use the following additional configuration options:
 * number of color channels per diode (``CONFIG_DESKTOP_LED_COLOR_COUNT``),
 * maximum value of LED brightness (``CONFIG_DESKTOP_LED_BRIGHTNESS_MAX``).
 
-Symbols from :ref:`zephyr:device-tree` are used to define the mapping of the PWM channels to pin numbers.
+Symbols from :ref:`zephyr:devicetree` are used to define the mapping of the PWM channels to pin numbers.
 By default, the symbols are defined in the board configuration, but you can redefine them in the ``dts.overlay`` file.
 The configuration for the board is written in the ``leds_def.h`` file.
 Both files are located in the board-specific directory in the application configuration folder.

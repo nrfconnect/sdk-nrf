@@ -153,7 +153,7 @@ Configuration sources
 
 The nRF Desktop project uses the following files as sources of its configuration:
 
-    * DTS files -- reflect the hardware configuration (see :ref:`device-tree`).
+    * DTS files -- reflect the hardware configuration (see :ref:`devicetree`).
     * ``_def`` files -- contain configuration arrays for the application modules and are specific to the nRF Desktop project.
     * Kconfig files -- reflect the software configuration (see :ref:`kconfig_tips_and_tricks`).
 
