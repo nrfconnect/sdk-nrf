@@ -66,8 +66,8 @@ LOG_MODULE_REGISTER(modem_info);
 #define MODEM_IMEI_DATA_NAME	"imei"
 #define DATE_TIME_DATA_NAME	"dateTime"
 
-#define RSRP_PARAM_INDEX	1
-#define RSRP_PARAM_COUNT	5
+#define RSRP_PARAM_INDEX	6
+#define RSRP_PARAM_COUNT	7
 #define RSRP_OFFSET_VAL		141
 
 #define BAND_PARAM_INDEX	1 /* Index of desired parameter */
