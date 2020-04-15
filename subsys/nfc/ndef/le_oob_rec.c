@@ -13,13 +13,6 @@
 
 #define LE_ROLE_PAYLOAD_SIZE 1UL
 
-/* Record Payload Type for Bluetooth Carrier Configuration LE record */
-const u8_t nfc_ndef_le_oob_rec_type_field[] = {
-	'a', 'p', 'p', 'l', 'i', 'c', 'a', 't', 'i', 'o', 'n', '/', 'v', 'n',
-	'd', '.', 'b', 'l', 'u', 'e', 't', 'o', 'o', 't', 'h', '.', 'l', 'e',
-	'.', 'o', 'o', 'b'
-};
-
 static int bt_data_encode(struct bt_data *ad, u8_t **buff, size_t *size)
 {
 	const size_t ad_len = ad->data_len + AD_LEN_FIELD_SIZE
