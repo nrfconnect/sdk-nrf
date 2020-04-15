@@ -6,7 +6,7 @@
 #include <logging/log.h>
 #include "msg_parser_local.h"
 
-LOG_MODULE_REGISTER(nfc_ndef_parser);
+LOG_MODULE_REGISTER(nfc_ndef_parser, CONFIG_NFC_NDEF_PARSER_LOG_LEVEL);
 
 int nfc_ndef_msg_parse(const u8_t *result_buf,
 		       u32_t *result_buf_len,
@@ -43,4 +43,3 @@ void nfc_ndef_msg_printout(const struct nfc_ndef_msg_desc *msg_desc)
 		nfc_ndef_record_printout(i, msg_desc->record[i]);
 	}
 }
-

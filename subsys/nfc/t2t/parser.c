@@ -9,7 +9,7 @@
 #include <logging/log.h>
 #include <nfc/t2t/parser.h>
 
-LOG_MODULE_REGISTER(nfc_t2t_parser);
+LOG_MODULE_REGISTER(nfc_t2t_parser, CONFIG_NFC_T2T_PARSER_LOG_LEVEL);
 
 /* Gets least significant nibble (a 4-bit value) from a byte. */
 #define LSN_GET(val) (val & 0x0F)
@@ -645,4 +645,3 @@ void nfc_t2t_printout(const struct nfc_t2t *t2t)
 		}
 	}
 }
-

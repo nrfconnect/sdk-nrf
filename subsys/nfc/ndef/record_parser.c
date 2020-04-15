@@ -11,7 +11,7 @@
 #include <sys/byteorder.h>
 #include <nfc/ndef/record_parser.h>
 
-LOG_MODULE_DECLARE(nfc_ndef_parser);
+LOG_MODULE_DECLARE(nfc_ndef_parser, CONFIG_NFC_NDEF_PARSER_LOG_LEVEL);
 
 /* Sum of sizes of fields: TNF-flags, Type Length,
  * Payload Length in short NDEF record.
@@ -154,4 +154,3 @@ void nfc_ndef_record_printout(u32_t num,
 		}
 	}
 }
-

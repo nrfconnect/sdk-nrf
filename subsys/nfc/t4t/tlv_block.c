@@ -10,7 +10,7 @@
 #include <nfc/t4t/tlv_block.h>
 #include <errno.h>
 
-LOG_MODULE_DECLARE(nfc_t4t_cc_file);
+LOG_MODULE_DECLARE(nfc_t4t_cc_file, CONFIG_NFC_T4T_CC_FILE_LOG_LEVEL);
 
 /* Length of a type field. */
 #define TLV_TYPE_FIELD_LEN 1U
