@@ -1219,11 +1219,12 @@ static void set_gps_enable(const bool enable)
 	s32_t delay_ms = K_NO_WAIT;
 	bool changing = (enable != gps_control_is_enabled());
 
-	/* Exit early if the cloud state is defined and the
-	 * local state is not changing
+	/* Exit early if the link is not ready or if the cloud
+	 * state is defined and the local state is not changing.
 	 */
-	if ((cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS) !=
-		CLOUD_CMD_STATE_UNDEFINED) && !changing) {
+	if (!atomic_get(&send_data_enable) ||
+		((cloud_get_channel_enable_state(CLOUD_CHANNEL_GPS) !=
+		CLOUD_CMD_STATE_UNDEFINED) && !changing)) {
 		return;
 	}
 
