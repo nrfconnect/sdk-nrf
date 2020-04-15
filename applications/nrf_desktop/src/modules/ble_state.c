@@ -54,13 +54,11 @@ static void disconnect_peer(struct bt_conn *conn)
 {
 	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 
-	if (err == -ENOTCONN) {
-		err = 0;
-	}
-	LOG_WRN("Device %s", err ? "failed to disconnect" : "disconnected");
-
-	if (err) {
+	if (err && (err != -ENOTCONN)) {
+		LOG_ERR("Failed to disconnect peer (err=%d)", err);
 		module_set_state(MODULE_STATE_ERROR);
+	} else {
+		LOG_INF("Peer disconnected");
 	}
 }
 
@@ -424,6 +422,7 @@ static bool event_handler(const struct event_header *eh)
 			/* Connection object is no longer in use. */
 			bt_conn_unref(event->id);
 			break;
+
 		default:
 			/* Ignore. */
 			break;

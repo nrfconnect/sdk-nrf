@@ -838,10 +838,16 @@ static bool event_handler(const struct event_header *eh)
 
 			if (bt_info.id != get_bt_stack_peer_id(cur_peer_id)) {
 				LOG_INF("Connection for old id - ignored");
-				bt_conn_disconnect(event->id,
-					BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+				int err = bt_conn_disconnect(event->id,
+					      BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 
-				 return false;
+				if (err && (err != -ENOTCONN)) {
+					LOG_ERR("Cannot disconnect peer (err=%d)",
+						err);
+					module_set_state(MODULE_STATE_ERROR);
+				}
+
+				return false;
 			}
 
 			LOG_INF("Erased peer");

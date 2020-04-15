@@ -454,6 +454,29 @@ static void update_peer_is_rpa(enum peer_rpa new_peer_rpa)
 	}
 }
 
+static void disconnect_peer(struct bt_conn *conn)
+{
+	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+
+	if (!err) {
+		/* Submit event to let other application modules prepare for
+		 * the disconnection.
+		 */
+		struct ble_peer_event *event = new_ble_peer_event();
+
+		event->id = conn;
+		event->state = PEER_STATE_DISCONNECTING;
+		EVENT_SUBMIT(event);
+
+		LOG_INF("Peer disconnecting");
+	} else if (err == -ENOTCONN) {
+		LOG_INF("Peer already disconnected");
+	} else {
+		LOG_ERR("Failed to disconnect peer (err=%d)", err);
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_module_state_event(eh)) {
@@ -557,8 +580,7 @@ static bool event_handler(const struct event_header *eh)
 				conn = bt_conn_lookup_addr_le(cur_identity,
 						&bond_find_data.peer_address);
 				if (conn) {
-					bt_conn_disconnect(conn,
-					    BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+					disconnect_peer(conn);
 					bt_conn_unref(conn);
 				}
 			}

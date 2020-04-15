@@ -1324,6 +1324,7 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 		connect_subscriber(event->id, false);
 		break;
 
+	case PEER_STATE_DISCONNECTING:
 	case PEER_STATE_DISCONNECTED:
 		disconnect_subscriber(event->id);
 		break;

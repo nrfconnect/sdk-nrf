@@ -204,6 +204,7 @@ static bool event_handler(const struct event_header *eh)
 
 		case PEER_STATE_SECURED:
 		case PEER_STATE_CONN_FAILED:
+		case PEER_STATE_DISCONNECTING:
 			/* No action */
 			break;
 

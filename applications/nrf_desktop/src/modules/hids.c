@@ -501,6 +501,7 @@ static void notify_hids(const struct ble_peer_event *event)
 
 		break;
 
+	case PEER_STATE_DISCONNECTING:
 	case PEER_STATE_CONN_FAILED:
 		/* No action */
 		break;
