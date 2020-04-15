@@ -15,6 +15,11 @@ config NFC_NDEF_PARSER
 	help
 	  Enable NFC Data Exchange Format parser libraries
 
+config NFC_NDEF_PAYLOAD_TYPE_COMMON
+	bool "Standard NDEF Record Type definitions"
+	help
+	  Enable NFC Data Exchange Format Record Type definitions
+
 if NFC_NDEF
 
 config NFC_NDEF_MSG
@@ -27,6 +32,7 @@ config NFC_NDEF_RECORD
 
 config NFC_NDEF_LE_OOB_REC
 	bool
+	select NFC_NDEF_PAYLOAD_TYPE_COMMON
 	prompt "NDEF LE OOB record generator library"
 	depends on BT_HCI_HOST
 

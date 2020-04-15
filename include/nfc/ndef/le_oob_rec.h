@@ -19,17 +19,12 @@
 #include <stddef.h>
 #include <zephyr/types.h>
 #include <nfc/ndef/nfc_ndef_record.h>
+#include <nfc/ndef/payload_type_common.h>
 #include <bluetooth/bluetooth.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * @brief External reference to the type field of the Bluetooth LE Carrier
- * Configuration NDEF Record, defined in the file @c le_oob_rec.c.
- */
-extern const u8_t nfc_ndef_le_oob_rec_type_field[32];
 
 /**
  * @brief LE role options.
