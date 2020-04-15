@@ -147,7 +147,13 @@ static int resolve_and_connect(int family, const char *host,
 		.ai_socktype = SOCK_STREAM,
 		.ai_protocol = proto,
 		/* Either a valid, NULL-terminated access point name or NULL. */
-		.ai_canonname = (char *)cfg->apn
+		.ai_next =  cfg->apn ?
+			&(struct addrinfo) {
+				.ai_family    = AF_LTE,
+				.ai_socktype  = SOCK_MGMT,
+				.ai_protocol  = NPROTO_PDN,
+				.ai_canonname = (char *)cfg->apn
+			} : NULL,
 	};
 
 	err = getaddrinfo(host, NULL, &hints, &info);
