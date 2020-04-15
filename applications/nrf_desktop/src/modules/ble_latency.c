@@ -46,11 +46,14 @@ static void security_timeout_fn(struct k_work *w)
 	int err = bt_conn_disconnect(active_conn,
 				     BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 
-	if (err == -ENOTCONN) {
-		err = 0;
+	LOG_WRN("Security establishment failed");
+
+	if (err && (err != -ENOTCONN)) {
+		LOG_ERR("Cannot disconnect peer (err=%d)", err);
+		module_set_state(MODULE_STATE_ERROR);
+	} else {
+		LOG_INF("Peer disconnected");
 	}
-	LOG_WRN("Security establishment failed - device %s",
-		err ? "failed to disconnect" : "disconnected");
 }
 
 static void set_ble_latency(bool low_latency)

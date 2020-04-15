@@ -27,6 +27,7 @@ extern "C" {
 /** @brief Peer connection state list. */
 #define PEER_STATE_LIST		\
 	X(DISCONNECTED)		\
+	X(DISCONNECTING)	\
 	X(CONNECTED)		\
 	X(SECURED)		\
 	X(CONN_FAILED)
