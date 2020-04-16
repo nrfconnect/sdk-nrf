@@ -70,6 +70,11 @@ static void modem_data_update(struct k_work *work)
 /**@brief Callback handler for LTE RSRP data. */
 static void modem_signal_handler(char rsrp_value)
 {
+	/* Only send a value from a valid range (0 - 97). */
+	if (rsrp_value > 97) {
+		return;
+	}
+
 	modem_rsrp = (s8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
 	LOG_DBG("rsrp:%d", modem_rsrp);
 	k_work_submit(&modem_signal_work);
