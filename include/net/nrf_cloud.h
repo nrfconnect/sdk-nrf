@@ -67,16 +67,6 @@ enum nrf_cloud_sensor {
 	NRF_CLOUD_DEVICE_INFO,
 };
 
-/** @brief User input sequence values for user association type
- * @ref NRF_CLOUD_UA_BUTTON.
- */
-enum nrf_cloud_ua_button {
-	NRF_CLOUD_UA_BUTTON_INPUT_1 = 0x1, /**< Button Input 1. */
-	NRF_CLOUD_UA_BUTTON_INPUT_2, /**< Button Input 2. */
-	NRF_CLOUD_UA_BUTTON_INPUT_3, /**< Button Input 3. */
-	NRF_CLOUD_UA_BUTTON_INPUT_4, /**< Button Input 4. */
-};
-
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
 struct nrf_cloud_data {
 	/** Length of the data. */
