@@ -49,6 +49,7 @@ In addition to the sensor data, the application retrieves information from the L
 This information is available in nRF Cloud under the section **Cellular Link Monitor**.
 
 The `LTE Link Monitor`_ application, implemented as part of `nRF Connect for Desktop`_  can be used to send AT commands to the device and receive the responses.
+You can also send AT commands from the **Terminal** card on nRF Cloud when the device is connected.
 
 By default, the asset tracker supports firmware updates through :ref:`lib_aws_fota`.
 
@@ -83,11 +84,11 @@ Switch 2 (only on nRF9160 DK):
 On the nRF9160 DK, the application state is indicated by the LEDs.
 
 LED 3 and LED 4:
-    * LED 3 blinking: Connecting - The device is resolving DNS and connecting to the nRF Cloud.
-    * LED 3 and LED 4 blinking: Pairing started - The MQTT connection has been established and the pairing procedure towards the nRF Cloud has been initiated.
-    * LED 3 ON and LED 4 blinking: Pattern entry - The user has started entering the pairing pattern.
-    * LED 4 blinking: Pattern sent - Pattern has been entered and sent to the nRF Cloud for verification.
-    * LED 4 ON: Connected - The device is ready for sensor data transfer.
+    * LED 3 blinking: The device is connecting to the LTE network.
+    * LED 3 ON: The device is connected to the LTE network.
+    * LED 4 blinking: The device is connecting to nRF Cloud.
+    * LED 3 and LED 4 blinking: The MQTT connection has been established and the user association procedure with nRF Cloud has been initiated.
+    * LED 4 ON: The device is connected and ready for sensor data transfer.
 
     .. figure:: /images/nrf_cloud_led_states.svg
        :alt: Application state indicated by LEDs
@@ -199,14 +200,13 @@ After programming the application and all prerequisites to your board, test the 
 #. Observe in the terminal window that the connection to the nRF Cloud is established. This may take several minutes.
 #. Open a web browser and navigate to https://nrfcloud.com/.
    Follow the instructions to set up your account and add an LTE device.
-#. The first time you start the application, pair the device to your account:
+#. The first time you start the application, add the device to your account:
 
    a. Observe that the LED(s) indicate that the device is waiting for user association.
-   #. Follow the instructions on `nRF Cloud`_ to pair your device.
-   #. If the pairing is successful, the board and your nRF Cloud account are paired, and the device reboots.
+   #. Follow the instructions on `nRF Cloud`_ to add your device.
+   #. If association is successful, the device reconnects to nRF Cloud.
       If the LED(s) indicate an error, check the details of the error in the terminal window.
-      The device must be power-cycled to restart the pairing procedure.
-   #. After reboot, the board connects to the nRF Cloud.
+      The device must be power-cycled to restart the association procedure.
 #. Observe that the LED(s) indicate that the connection is established.
 #. Observe that the device count on your nRF Cloud dashboard is incremented by one.
 #. Select the device from your device list on nRF Cloud, and observe that sensor data and modem information is received from the board.
