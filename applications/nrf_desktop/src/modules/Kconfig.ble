@@ -77,7 +77,7 @@ config DESKTOP_BLE_PEER_ERASE_ON_START
 	bool "Enable peer erase (on system start)"
 	depends on BT_PERIPHERAL
 	help
-	  Hold dedicated button during system start to erase peer.
+	  Hold dedicated button during system start to start erase advertising.
 endif
 
 if !DESKTOP_BLE_PEER_CONTROL
@@ -90,18 +90,41 @@ endif
 
 config DESKTOP_BLE_DONGLE_PEER_ENABLE
 	bool "Enable dongle peer"
+	depends on BT_PERIPHERAL
 	help
 	  Enable additional peer to connect with dongle.
+
+if DESKTOP_BLE_DONGLE_PEER_ENABLE
 
 config DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID
 	int "Dongle peer selector ID"
 	range 0 255
 	default 0
+	help
+	  ID of the hardware selector used to select the dongle peer.
 
 config DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS
 	int "Dongle peer selector position"
 	range 0 255
 	default 0
+	help
+	  If the selector is set to this position, the dongle peer is selected.
+	  If the selector is set to any other position, other Bluetooth LE
+	  peers are selected.
+
+endif
+
+if !DESKTOP_BLE_DONGLE_PEER_ENABLE
+
+config DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID
+	int
+	default 0
+
+config DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS
+	int
+	default 0
+
+endif
 
 module = DESKTOP_BLE_BOND
 module-str = BLE bonds
