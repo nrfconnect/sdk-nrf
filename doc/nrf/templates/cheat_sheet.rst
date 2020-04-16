@@ -263,19 +263,25 @@ For example::
 Including snippet in .rst
 =========================
 
-To include the snippet you defined in a code file into an .rst file, use the following RST syntax::
+To include the snippet you defined in a code file into an .rst file, use the following RST syntax:
 
-    .. literalinclude:: <path to the code file with the snippet>
-        :language: <coding language, for example 'c', 'python', 'ruby'>
-        :start-after: <opening tag of the snippet>
-        :end-before: <closing tag of the snippet>
+.. parsed-literal::
+   :class: highlight
 
-For example::
+   .\. literalinclude:: <path to the code file with the snippet>
+      :language: <coding language, for example 'c', 'python', 'ruby'>
+      :start-after: <opening tag of the snippet>
+      :end-before: <closing tag of the snippet>
 
-    .. literalinclude:: ../../samples/bluetooth/central_hids/src/main.c
-        :language: c
-        :start-after: include_startingpoint_scan_rst_1
-        :end-before: include_endpoint_scan_rst_1
+For example:
+
+.. parsed-literal::
+   :class: highlight
+
+   .\. literalinclude:: ../../samples/bluetooth/central_hids/src/main.c
+       :language: c
+       :start-after: include_startingpoint_scan_rst_1
+       :end-before: include_endpoint_scan_rst_1
 
 
 Linking between doc sets
