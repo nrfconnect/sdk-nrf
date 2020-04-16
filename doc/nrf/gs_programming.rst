@@ -42,7 +42,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 .. build_SES_projimport_open_end
 
-   The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160dk_nrf9160ns`` board target:
+   The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160dk_nrf9160ns`` build target:
 
    .. figure:: images/ses_config.png
       :alt: Opening the Asset Tracker project
@@ -178,25 +178,31 @@ For more information on building and programming using the command line, see the
 Board names
 ***********
 
-You can find the board names for the different development boards in the :ref:`zephyr:boards` section in the Zephyr documentation.
-For your convenience, the following table lists the board names for Nordic Semiconductor's development kits.
+You can find the board names for the different hardware platforms in the :ref:`zephyr:boards` section in the Zephyr documentation.
+For your convenience, the following table lists some of the boards and build targets for Nordic Semiconductor's hardware platforms.
 
 .. _table:
 
-+--------------------------------------------------------+-------------------------------------------------------+
-| Development kits                                       | Board names                                           |
-+========================================================+=======================================================+
-| :ref:`nRF51 DK board (PCA10028)<nrf51dk_nrf51422>`       | nrf51dk_nrf51422                                        |
-+--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF52 DK board (PCA10040)<nrf52dk_nrf52832>`       | nrf52dk_nrf52832                                        |
-+--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF52840 DK board (PCA10056)<nrf52840dk_nrf52840>` | nrf52840dk_nrf52840                                     |
-+--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF5340 PDK board (PCA10095)<nrf5340pdk_nrf5340>`| nrf5340pdk_nrf5340_cpunet (for the network sample)    |
-+                                                        +                                                       +
-|                                                        | nrf5340pdk_nrf5340_cpuapp (for the application sample)|
-+--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF9160 DK board (PCA10090)<nrf9160dk_nrf9160>`   | nrf9160dk_nrf9160 (for the secure version)             |
-+                                                        +                                                       +
-|                                                        | nrf9160dk_nrf9160ns (for the non-secure version)       |
-+--------------------------------------------------------+-------------------------------------------------------+
++-------------------+------------+----------------------------------------------------------+---------------------------------------+
+| Hardware platform | PCA number | Board name                                               | Build target                          |
++===================+============+==========================================================+=======================================+
+| nRF51 DK          | PCA10028   | :ref:`nrf51dk_nrf51422 <zephyr:nrf51dk_nrf51422>`        | ``nrf51dk_nrf51422``                  |
++-------------------+------------+----------------------------------------------------------+---------------------------------------+
+| nRF52 DK          | PCA10040   | :ref:`nrf52dk_nrf52832 <zephyr:nrf52dk_nrf52832>`        | ``nrf51dk_nrf51422``                  |
++-------------------+------------+----------------------------------------------------------+---------------------------------------+
+| nRF52833 DK       | PCA10100   | :ref:`nrf52833dk_nrf52833 <zephyr:nrf52833dk_nrf52833>`  | ``nrf52833dk_nrf52833``               |
++-------------------+------------+----------------------------------------------------------+---------------------------------------+
+| nRF52840 DK       | PCA10056   | :ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`  | ``nrf52840dk_nrf52840``               |
++-------------------+------------+----------------------------------------------------------+---------------------------------------+
+| nRF5340 PDK       | PCA10095   | :ref:`nrf5340pdk_nrf5340 <zephyr:nrf5340pdk_nrf5340>`    | ``nrf5340pdk_nrf5340_cpunet``         |
+|                   |            |                                                          |                                       |
+|                   |            |                                                          | ``nrf5340pdk_nrf5340_cpunetns``       |
+|                   |            |                                                          |                                       |
+|                   |            |                                                          | ``nrf5340pdk_nrf5340_cpuapp``         |
++-------------------+------------+----------------------------------------------------------+---------------------------------------+
+| nRF9160 DK        | PCA10090   | :ref:`nrf9160dk_nrf9160 <zephyr:nrf9160dk_nrf9160>`      | ``nrf9160dk_nrf9160``                 |
+|                   |            |                                                          |                                       |
+|                   |            |                                                          | ``nrf9160dk_nrf9160ns``               |
+|                   |            +----------------------------------------------------------+---------------------------------------+
+|                   |            | :ref:`nrf9160dk_nrf52840 <zephyr:nrf9160dk_nrf52840>`    | ``nrf9160dk_nrf52840``                |
++-------------------+------------+----------------------------------------------------------+---------------------------------------+

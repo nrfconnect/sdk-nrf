@@ -56,14 +56,14 @@ The first port is connected to the main controller (nRF9160) on the board, while
 Before you program the sample application onto the main controller, you must program the :ref:`zephyr:bluetooth-hci-uart-sample` sample onto the board controller:
 
 1. Put the **SW5** switch (marked debug/prog) in the **NRF52** position to program the board controller.
-#. Build the :ref:`zephyr:bluetooth-hci-uart-sample` sample for the nrf9160dk_nrf52840 board and program it.
+#. Build the :ref:`zephyr:bluetooth-hci-uart-sample` sample for the nrf9160dk_nrf52840 build target and program it.
 #. Verify that the sample was programmed successfully by connecting to the second serial port with a terminal emulator (for example, PuTTY) and checking the output.
    See :ref:`putty` for the required settings.
 
 After programming the board controller, you must program the LTE Sensor Gateway sample (which includes the :ref:`secure_partition_manager` sample) to the main controller:
 
 1. Put the **SW5** switch (marked debug/prog) in the **NRF91** position to program the main controller.
-#. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160ns board and program it.
+#. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160ns build target and program it.
 #. Verify that the sample was programmed successfully by connecting to the first serial port with a terminal emulator (for example, PuTTY) and checking the output.
    See :ref:`putty` for the required settings.
 

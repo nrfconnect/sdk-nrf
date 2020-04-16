@@ -35,12 +35,12 @@ Requirements for the application firmware
   For more details, see the `nrf9160dk_nrf9160_partition_conf.dts`_ file in the nrf9160dk_nrf9160 board definition.
   Note that if you build your application firmware with the |NCS|, this requirement is automatically fulfilled.
 
-* The application firmware must be built as a non-secure firmware for the nrf9160dk_nrf9160ns board.
+* The application firmware must be built as a non-secure firmware for the nrf9160dk_nrf9160ns build target.
 
 Automatic building of SPM
 =========================
 
-The sample is automatically built by the non-secure applications when the nrf9160dk_nrf9160ns board is used.
+The sample is automatically built by the non-secure applications when the nrf9160dk_nrf9160ns build target is used.
 However, it is not a part of the non-secure application.
 
 Instead of programming SPM and the non-secure application at the same time, you might want to program them individually.
