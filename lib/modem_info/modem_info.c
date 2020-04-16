@@ -66,8 +66,12 @@ LOG_MODULE_REGISTER(modem_info);
 #define MODEM_IMEI_DATA_NAME	"imei"
 #define DATE_TIME_DATA_NAME	"dateTime"
 
+#define RSRP_NOTIFY_PARAM_INDEX	1
+#define RSRP_NOTIFY_PARAM_COUNT	5
+
 #define RSRP_PARAM_INDEX	6
 #define RSRP_PARAM_COUNT	7
+
 #define RSRP_OFFSET_VAL		141
 
 #define BAND_PARAM_INDEX	1 /* Index of desired parameter */
@@ -503,7 +507,15 @@ static void modem_info_rsrp_subscribe_handler(void *context, const char *respons
 		return;
 	}
 
-	err = modem_info_parse(modem_data[MODEM_INFO_RSRP],
+	const struct modem_info_data rsrp_data = {
+		.cmd			= AT_CMD_CESQ,
+		.data_name		= RSRP_DATA_NAME,
+		.param_index	= RSRP_NOTIFY_PARAM_INDEX,
+		.param_count	= RSRP_NOTIFY_PARAM_COUNT,
+		.data_type		= AT_PARAM_TYPE_NUM_SHORT,
+	};
+
+	err = modem_info_parse(&rsrp_data,
 			       response);
 	if (err != 0) {
 		LOG_ERR("modem_info_parse failed to parse "
