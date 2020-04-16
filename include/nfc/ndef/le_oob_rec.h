@@ -49,19 +49,34 @@ enum nfc_ndef_le_oob_rec_le_role {
 };
 
 /**
+ * @brief Macro for including Appearance BLE AD Type to the
+ *        @ref nfc_ndef_le_oob_rec_payload_desc descriptor.
+ */
+#define NFC_NDEF_LE_OOB_REC_APPEARANCE(value) ((u16_t []) {value})
+
+/**
+ * @brief Macro for including Flags BLE AD Type to the
+ *        @ref nfc_ndef_le_oob_rec_payload_desc descriptor.
+ */
+#define NFC_NDEF_LE_OOB_REC_FLAGS(value) ((u8_t []) {value})
+
+/**
+ * @brief Macro for including LE Role BLE AD Type to the
+ *        @ref nfc_ndef_le_oob_rec_payload_desc descriptor.
+ */
+#define NFC_NDEF_LE_OOB_REC_LE_ROLE(value) \
+	((enum nfc_ndef_le_oob_rec_le_role []) {value})
+
+/**
  * @brief LE OOB record payload descriptor.
  */
 struct nfc_ndef_le_oob_rec_payload_desc {
-	struct bt_le_oob *oob_data;
-	enum nfc_ndef_le_oob_rec_le_role le_role;
-	u8_t flags;
-	struct {
-		bool tk_value;
-		bool le_sc_data;
-		bool appearance;
-		bool flags;
-		bool local_name;
-	} include;
+	bt_addr_le_t *addr;
+	enum nfc_ndef_le_oob_rec_le_role *le_role;
+	struct bt_le_oob_sc_data *le_sc_data;
+	u16_t *appearance;
+	u8_t *flags;
+	const char *local_name;
 };
 
 /**
