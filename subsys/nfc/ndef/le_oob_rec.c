@@ -91,28 +91,27 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 	int err;
 	size_t rem_size = *len;
 
-	if (!payload_desc || !payload_desc->oob_data) {
+	if (!payload_desc || !payload_desc->addr || !payload_desc->le_role) {
 		return -EINVAL;
 	}
 
-	err = ble_device_addr_encode(&payload_desc->oob_data->addr, &buff,
-				     &rem_size);
+	err = ble_device_addr_encode(payload_desc->addr, &buff, &rem_size);
 	if (err) {
 		return err;
 	}
 
-	err = le_role_encode(payload_desc->le_role, &buff, &rem_size);
+	err = le_role_encode(*payload_desc->le_role, &buff, &rem_size);
 	if (err) {
 		return err;
 	}
 
-	if (payload_desc->include.le_sc_data) {
+	if (payload_desc->le_sc_data) {
 		struct bt_data le_sc_ad;
 
 		le_sc_ad.type = BT_DATA_LE_SC_CONFIRM_VALUE;
 		le_sc_ad.data_len =
-			sizeof(payload_desc->oob_data->le_sc_data.c);
-		le_sc_ad.data = payload_desc->oob_data->le_sc_data.c;
+			sizeof(payload_desc->le_sc_data->c);
+		le_sc_ad.data = payload_desc->le_sc_data->c;
 
 		err = bt_data_encode(&le_sc_ad, &buff, &rem_size);
 		if (err) {
@@ -121,8 +120,8 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 
 		le_sc_ad.type = BT_DATA_LE_SC_RANDOM_VALUE;
 		le_sc_ad.data_len =
-			sizeof(payload_desc->oob_data->le_sc_data.r);
-		le_sc_ad.data = payload_desc->oob_data->le_sc_data.r;
+			sizeof(payload_desc->le_sc_data->r);
+		le_sc_ad.data = payload_desc->le_sc_data->r;
 
 		err = bt_data_encode(&le_sc_ad, &buff, &rem_size);
 		if (err) {
@@ -130,12 +129,11 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 		}
 	}
 
-	if (payload_desc->include.appearance) {
-		const u16_t appearance = CONFIG_BT_DEVICE_APPEARANCE;
+	if (payload_desc->appearance) {
 		struct bt_data appearance_ad = {
 			.type = BT_DATA_GAP_APPEARANCE,
-			.data_len = sizeof(appearance),
-			.data = (const u8_t *) &appearance,
+			.data_len = sizeof(*payload_desc->appearance),
+			.data = (const u8_t *) payload_desc->appearance,
 		};
 
 		err = bt_data_encode(&appearance_ad, &buff, &rem_size);
@@ -144,14 +142,14 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 		}
 	}
 
-	if (payload_desc->include.flags) {
+	if (payload_desc->flags) {
 		struct bt_data flags_ad = {
 			.type = BT_DATA_FLAGS,
-			.data_len = sizeof(payload_desc->flags),
-			.data = &payload_desc->flags,
+			.data_len = sizeof(*payload_desc->flags),
+			.data = payload_desc->flags,
 		};
 
-		if ((payload_desc->flags & BT_LE_AD_NO_BREDR) == 0) {
+		if ((*payload_desc->flags & BT_LE_AD_NO_BREDR) == 0) {
 			return -EINVAL;
 		}
 
@@ -161,11 +159,11 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 		}
 	}
 
-	if (payload_desc->include.local_name) {
+	if (payload_desc->local_name) {
 		struct bt_data local_name = {
 			.type = BT_DATA_NAME_COMPLETE,
-			.data_len = strlen(bt_get_name()),
-			.data = bt_get_name(),
+			.data_len = strlen(payload_desc->local_name),
+			.data = payload_desc->local_name,
 		};
 
 		err = bt_data_encode(&local_name, &buff, &rem_size);
