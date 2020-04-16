@@ -28,8 +28,8 @@ You must define ``CONFIG_DESKTOP_WATCHDOG_TIMEOUT``.
 After this amount of time (in ms), the device will be restarted if the watchdog timer was not reset.
 
 .. note::
-  The module is used only in the release configurations (``ZRelease``, ``ZReleaseMCUBoot``).
-  For the debug configurations (``ZDebug``, ``ZDebugWithShell``, ``ZDebugMCUBoot``), enabling watchdog timer can cause losing logs, for example when the logger is in the panic mode.
+  The module is used only in the release configurations (``ZRelease``, ``ZReleaseB0``).
+  For the debug configurations (``ZDebug``, ``ZDebugWithShell``, ``ZDebugB0``), enabling watchdog timer can cause losing logs, for example when the logger is in the panic mode.
 
 Implementation details
 **********************

@@ -26,6 +26,9 @@ Module Events
 Configuration
 *************
 
+To perform the firmware upgrade, the bootloader must be enabled.
+More on how to enabled the bootloader can be found at :ref:`nrf_desktop_bootloader`.
+
 The DFU module is selected using ``CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE``.
 Because it uses the :ref:`nrf_desktop_config_channel` for the transmission of the update image, it requires the transport option ``CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`` to be selected.
 

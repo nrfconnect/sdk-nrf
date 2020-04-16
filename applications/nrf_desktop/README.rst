@@ -457,6 +457,87 @@ Optionally, you can also enable the following module:
 * :ref:`nrf_desktop_ble_qos` - Helps achieve better connection quality and higher report rate.
   The module can be used only with the nrfxlib Link Layer.
 
+.. _nrf_desktop_bootloader:
+
+Bootloader and DFU
+==================
+
+The nRF Desktop application uses Secure Bootloader, referred in this documentation as the B0.
+
+The B0 is a small, simple and secure bootloader that allows the application to boot directly from one of the application slots, thus increasing the speed of the direct firmware upgrade (DFU) process.
+More information about the B0 can be found at :ref:`bootloader`.
+
+Enabling the bootloader
+    To enable the B0 bootloader, select the :option:`CONFIG_SECURE_BOOT` Kconfig option.
+    If this option is not selected, the application will be built without the bootloader, and the DFU will not be available.
+
+Required options
+    The B0 bootloader requires the following options enabled:
+
+    * :option:`CONFIG_SB_SIGNING_KEY_FILE` - required for providing the signature used for image signing and verification.
+    * :option:`CONFIG_FW_INFO` - required for the application versioning information.
+    * :option:`CONFIG_FW_INFO_FIRMWARE_VERSION` -  enable this option to set the version of the application after you enabled :option:`CONFIG_FW_INFO`.
+    * :option:`CONFIG_BUILD_S1_VARIANT` - required for the build system to be able to construct the application binaries for both application's slots in flash memory.
+
+.. note::
+    The nRF Desktop application does not support MCUBoot as a second stage bootloader.
+
+    However, the MCUBoot can be enabled instead of the B0.
+    Although the nRF Desktop application does not use MCUBoot for background DFU, it can be a preferred choice for devices where the USB serial recovery is to be used instead (for example, due to flash memory size limitations).
+
+Device Firmware Upgrade
+-----------------------
+
+The nRF Desktop application uses the background image transfer for the DFU process.
+The firmware update process has the following stages:
+
+* `Update image generation`_
+* `Update image transfer`_
+* `Update image verification and swap`_
+
+At the end of these three stages, the nRF Desktop application will be rebooted with the new firmware package installed.
+
+Update image generation
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The update image is automatically generated if the bootloader is enabled.
+By default, the build process will construct an image for the first slot (slot 0 or S0).
+To ensure that application is built for both slots, select the :option:`CONFIG_BUILD_S1_VARIANT` Kconfig option.
+
+After the build process completes, both images can be found in the build directory, in the `zephyr` subdirectory:
+
+* :file:`signed_by_b0_s0_image.bin` is meant to be flashed at slot 0.
+* :file:`signed_by_b0_s1_image.bin` is meant to be flashed at slot 1.
+
+For the DFU process, use :file:`dfu_application.zip`.
+This package contains both images along with additional metadata.
+It allows the update tool to select the right image depending on the image that is currently running on the device.
+
+Update image transfer
+~~~~~~~~~~~~~~~~~~~~~
+
+The update image is transmitted in the background through the :ref:`nrf_desktop_config_channel`.
+The configuration channel data is transmitted either through USB or Bluetooth, using HID feature reports.
+This allows the device to be used normally during the whole process (that is, the device does not need to enter any special state in which it becomes non-responsive to the user).
+
+Depending on the side on which the process is handled:
+
+* On the application side, the process is handled by :ref:`nrf_desktop_dfu`.
+  See the module documentation for how to enable and configure it.
+* On the host side, the process is handled by the :ref:`nrf_desktop_config_channel_script`.
+  See the tool documentation for more information about how to execute the DFU process on the host.
+
+Update image verification and swap
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once the update image transfer is completed, the DFU process will continue after the device reboot.
+If ``hid_configurator`` is used, the reboot is performed right after the image transfer completes.
+
+After the reboot, the bootloader locates the update image on the update partition of the device.
+The image verification process ensures the integrity of the image and checks if its signature is valid.
+If verification is successful, the bootloader boots the new version of the application.
+Otherwise, the old version is used.
+
 Requirements
 ************
 
@@ -671,8 +752,8 @@ The project supports the following build types:
     * ``ZRelease`` -- Release version of the application with no debugging features.
     * ``ZDebug`` -- Debug version of the application; the same as the ``ZRelease`` build type, but with debug options enabled.
     * ``ZDebugWithShell`` -- ``ZDebug`` build type with the shell enabled.
-    * ``ZReleaseMCUBoot`` -- ``ZRelease`` build type with the support for MCUBoot enabled.
-    * ``ZDebugMCUBoot`` -- ``ZDebug`` build type with the support for MCUBoot enabled.
+    * ``ZReleaseB0`` -- ``ZRelease`` build type with the support for the bootloader enabled.
+    * ``ZDebugB0`` -- ``ZDebug`` build type with the support for the bootloader enabled.
 
 Not every board mentioned in `Requirements`_ supports every build type.
 If the given build type is not supported on the selected board, an error message will appear when building.
