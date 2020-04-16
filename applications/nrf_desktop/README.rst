@@ -203,7 +203,7 @@ Desktop mouse (nrf52_pca20044 and nrf52810_pca20045)
       * There is no configuration with bootloader available.
 
 
-Sample mouse or keyboard (nrf52840_pca10056)
+Sample mouse or keyboard (nrf52840dk_nrf52840)
       * The configuration uses the nRF52840 Development Kit.
       * The build types allow to build the application both as mouse or as keyboard.
       * Inputs are simulated based on the hardware button presses.
@@ -215,7 +215,7 @@ Keyboard (nrf52_pca20037)
       * Bluetooth is configured to use Nordic's proprietary link layer.
       * |preconfigured_build_types|
 
-Dongle (nrf52840_pca10059)
+Dongle (nrf52840dongle_nrf52840)
       * This configuration uses Nordic's nRF52840 dongle defined in Zephyr.
       * Since the board is generic, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as both mouse and keyboard.

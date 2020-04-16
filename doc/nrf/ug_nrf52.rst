@@ -16,12 +16,8 @@ See `nRF52 Series`_ for the technical documentation on the nRF52 Series chips an
 Supported boards
 ================
 
-All supported boards have a PCA number, which is used to uniquely identify each board.
-The build system uses a combination of device part code and PCA number to identify a build target in the format ``nrf52xxx_pcaxxxxx``.
-For example, for the :ref:`nRF52840 Development Kit (PCA10056) <zephyr:nrf52840_pca10056>`, use ``nrf52840_pca10056`` as target when building.
-
 Devices in the nRF52 Series are supported by these boards in the Zephyr open source project and in |NCS|.
-Refer to the PCA number for building projects for these boards and find a link to their descriptions.
+
 
 .. list-table::
    :header-rows: 1
@@ -29,21 +25,21 @@ Refer to the PCA number for building projects for these boards and find a link t
    * - DK
      - PCA number
      - Build target
-   * - nRF52840 DK
+   * - :ref:`zephyr:nrf52840dk_nrf52840`
      - PCA10056
-     - :ref:`nrf52840_pca10056<zephyr:nrf52840_pca10056>`
-   * - nRF52840 DK (emulating the nRF52811)
+     - ``nrf52840dk_nrf52840``
+   * - :ref:`zephyr:nrf52840dk_nrf52811`
      - PCA10056
-     - :ref:`nrf52811_pca10056<zephyr:nrf52811_pca10056>`
-   * - nRF52833 DK
+     - ``nrf52840dk_nrf52811``
+   * - :ref:`zephyr:nrf52833dk_nrf52833`
      - PCA10100
-     - :ref:`nrf52833_pca10100<zephyr:nrf52833_pca10100>`
-   * - nRF52 DK
+     - ``nrf52833dk_nrf52833``
+   * - :ref:`zephyr:nrf52dk_nrf52832`
      - PCA10040
-     - :ref:`nrf52_pca10040<zephyr:nrf52_pca10040>`
-   * - nRF52 DK (emulating the nRF52810)
+     - ``nrf52dk_nrf52832``
+   * - :ref:`zephyr:nrf52dk_nrf52810`
      - PCA10040
-     - :ref:`nrf52810_pca10040<zephyr:nrf52810_pca10040>`
+     - ``nrf52dk_nrf52810``
 
 nRF Desktop
 ===========
