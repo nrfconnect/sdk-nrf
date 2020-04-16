@@ -32,12 +32,12 @@ The M33 TrustZone divides the application MCU into secure and non-secure domains
 When the MCU boots, it always starts executing from the secure area.
 The secure bootloader chain starts the :ref:`nrf9160_ug_secure_partition_manager`, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
 
-In Zephyr, :ref:`nrf9160dk_nrf9160` is divided into two different boards:
+In Zephyr, :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build targets:
 
 * ``nrf9160dk_nrf9160`` for firmware in the secure domain
 * ``nrf9160dk_nrf9160ns`` for firmware in the non-secure domain
 
-Make sure to select the suitable board name when building your application.
+Make sure to select the suitable build target when building your application.
 
 
 Secure bootloader chain
@@ -58,7 +58,7 @@ All nRF9160 samples require the :ref:`secure_partition_manager` sample.
 It provides a reference implementation of a Secure Partition Manager firmware.
 This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
 
-The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` board.
+The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
 To disable the automatic inclusion of the Secure Partition Manager sample, set the option :option:`CONFIG_SPM` to "n" in the project configuration.
 
 
@@ -66,7 +66,7 @@ Application
 -----------
 
 The user application runs in the non-secure domain.
-Therefore, it must be built for the ``nrf9160dk_nrf9160ns`` board.
+Therefore, it must be built for the ``nrf9160dk_nrf9160ns`` build target.
 
 The application image might require other images to be present.
 Depending on the configuration, all these images can be built at the same time in a :ref:`multi-image build <ug_multi_image>`.

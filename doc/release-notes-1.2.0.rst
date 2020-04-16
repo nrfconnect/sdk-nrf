@@ -215,7 +215,7 @@ The application core (nrf5340_dk_nrf5340_cpuapp) can run Bluetooth LE samples fr
   * :ref:`radio_test` - runs on the network core and demonstrates how to configure the radio in a specific mode and then test its performance.
     This sample was ported from the nRF5 SDK.
 
-* Added support for the :ref:`nRF5340 PDK board (PCA10095)<nrf5340_dk_nrf5340>` with board targets nrf5340_dk_nrf5340_cpunet and nrf5340_dk_nrf5340_cpuapp.
+* Added support for the nRF5340 PDK board (PCA10095) with board targets nrf5340_dk_nrf5340_cpunet and nrf5340_dk_nrf5340_cpuapp.
 * Updated nrfx to support nRF5340.
 * Added NFC support.
 
