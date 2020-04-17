@@ -158,12 +158,18 @@ static void leds_update(u8_t value)
 	bool led2_status = !(value % 8 > 2 && value % 8 <= 6);
 	bool led3_status = !(value % 8 > 3);
 
+	gpio_port_pins_t mask = 1 << DT_ALIAS_LED0_GPIOS_PIN |
+				1 << DT_ALIAS_LED1_GPIOS_PIN |
+				1 << DT_ALIAS_LED2_GPIOS_PIN |
+				1 << DT_ALIAS_LED3_GPIOS_PIN;
+
+	gpio_port_value_t val = led0_status << DT_ALIAS_LED0_GPIOS_PIN |
+				led1_status << DT_ALIAS_LED1_GPIOS_PIN |
+				led2_status << DT_ALIAS_LED2_GPIOS_PIN |
+				led3_status << DT_ALIAS_LED3_GPIOS_PIN;
+
 	if (led_port != NULL) {
-		(void)gpio_port_set_masked_raw(led_port, 0,
-			led0_status << DT_ALIAS_LED0_GPIOS_PIN |
-			led1_status << DT_ALIAS_LED1_GPIOS_PIN |
-			led2_status << DT_ALIAS_LED2_GPIOS_PIN |
-			led3_status << DT_ALIAS_LED3_GPIOS_PIN);
+		(void)gpio_port_set_masked_raw(led_port, mask, val);
 	}
 }
 
