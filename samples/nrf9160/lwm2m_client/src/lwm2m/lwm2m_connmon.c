@@ -52,6 +52,7 @@ static void modem_data_update(struct k_work *work)
 		sizeof(modem_param.network.current_operator.value_string),
 		LWM2M_RES_DATA_FLAG_RO);
 
+	lwm2m_engine_set_u32("4/0/8", (u32_t)modem_param.network.cellid_dec);
 	lwm2m_engine_set_u16("4/0/9", modem_param.network.mnc.value);
 	lwm2m_engine_set_u16("4/0/10", modem_param.network.mcc.value);
 
