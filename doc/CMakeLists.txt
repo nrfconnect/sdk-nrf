@@ -314,6 +314,7 @@ set(NRFXLIB_EXTRACT_CONTENT_COMMAND
   ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/extract_content.py
   --ignore ${CMAKE_CURRENT_BINARY_DIR}
   "*.rst:.:${NRFXLIB_RST_OUT}"
+  "*:doc:${NRFXLIB_RST_OUT}"
   "*.rst:include:${NRFXLIB_RST_OUT}/kconfig"
 )
 

@@ -169,6 +169,12 @@ cpp_id_attributes = ['__syscall', '__syscall_inline', '__deprecated',
     '__may_alias', '__used', '__unused', '__weak',
     '__DEPRECATED_MACRO', 'FUNC_NORETURN' ]
 
+rst_epilog = """
+.. include:: /doc/links.txt
+.. include:: /doc/shortcuts.txt
+"""
+
+
 def setup(app):
     app.add_stylesheet("css/common.css")
     app.add_stylesheet("css/nrfxlib.css")
