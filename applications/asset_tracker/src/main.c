@@ -1414,7 +1414,6 @@ void connection_evt_handler(const struct cloud_event *const evt)
 		k_delayed_work_cancel(&cloud_reboot_work);
 		k_sem_take(&cloud_disconnected, K_NO_WAIT);
 		atomic_set(&cloud_connect_attempts, 0);
-		ui_led_set_pattern(UI_CLOUD_CONNECTED);
 #if defined(CONFIG_CLOUD_PERSISTENT_SESSIONS)
 		LOG_INF("Persistent Sessions = %u",
 			evt->data.persistent_session);
