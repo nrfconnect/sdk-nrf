@@ -133,6 +133,50 @@ For more information about events allocation, see :ref:`event_manager`.
     It is important to keep this in mind as this behavior impacts both the performance and the memory usage.
     For more information, refer to Zephyr's documentation at :ref:`heap_v2` and :ref:`memory_pools_v2`.
 
+Forwarding the HID mouse data
+=============================
+
+The nRF Desktop mouse sends HID input reports to host after the host connects and subscribes for the HID reports.
+
+The :ref:`nrf_desktop_wheel` and :ref:`nrf_desktop_buttons` provide the data to the :ref:`nrf_desktop_hid_state` when the mouse wheel is used or a button is pressed.
+These inputs are not synchronized with the HID report transmission to the host.
+
+The :ref:`nrf_desktop_motion` sensor sampling is synchronized with sending the HID mouse input reports to the host.
+
+When mouse is constantly in use, the motion module is kept in the fetching state.
+In this state, the nRF Desktop mouse forwards the data from the motion sensor to the host in the following way:
+
+1. USB state (or Bluetooth HIDS) sends a HID mouse report to the host and submits ``hid_report_sent_event``.
+#. The ``hid_report_sent_event`` triggers sampling the motion sensor.
+   A dedicated thread is used to fetch the sample from the sensor.
+#. After the sample is fetched, the thread forwards it to the :ref:`nrf_desktop_hid_state` as ``motion_event``.
+#. The |hid_state| updates the HID report data, generates new HID input report, and submits it as ``hid_report_event``.
+#. The HID report data is forwarded to the host either by the :ref:`nrf_desktop_usb_state` or by the :ref:`nrf_desktop_hids`.
+#. When the HID input report is sent to the host, the ``hid_report_sent_event`` is submitted.
+#. The motion sensor sample is triggered and the sequence repeats.
+
+If the device is connected through Bluetooth, the :ref:`nrf_desktop_hid_state` uses a pipeline that consists of two HID reports.
+The pipeline is created when the first ``motion_event`` is received.
+The |hid_state| submits two ``hid_report_event`` events.
+When the first one is sent to the host, the motion sensor sample is triggered.
+
+For the Bluetooth connections, submitting ``hid_report_sent_event`` is delayed by one Bluetooth connection interval.
+Because of that, the :ref:`nrf_desktop_hids` requires pipeline of two HID reports to make sure that data will be sent on every connection event.
+This is necessary to achieve high report rate when the device is connected through Bluetooth.
+
+When there is no motion data for the predefined number of samples, the :ref:`nrf_desktop_motion` goes to the idle state.
+This is done to reduce the power consumption.
+When motion is detected, the module switches back to the fetching state.
+
+The following diagram shows the data exchange between the application modules.
+To simplify, the diagram shows only data related to HID input reports that are sent after the host is connected and the HID subscriptions are enabled.
+
+.. figure:: /images/nrf_desktop_motion_sensing.svg
+   :scale: 50 %
+   :alt: nRF Desktop mouse HID data sensing and transmission
+
+   nRF Desktop mouse HID data sensing and transmission
+
 .. _nrf_desktop_porting_guide:
 
 Integrating your own hardware
@@ -894,5 +938,8 @@ For more information about each application module and its configuration details
 .. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
 
 .. |preconfigured_build_types| replace:: The preconfigured build types configure the device with or without the bootloader and in debug or release mode.
+
 .. |enable_modules| replace:: You need to enable all these modules to enable both features.
    For information about how to enable the modules, see their respective documentation pages.
+
+.. |hid_state| replace:: HID state module
