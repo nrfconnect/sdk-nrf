@@ -124,3 +124,22 @@ int slm_util_atoh(const char *ascii, u16_t ascii_len,
 
 	return (ascii_len / 2);
 }
+
+/**@brief Check whether a string has valid IPv4 address or not
+ */
+bool check_for_ipv4(const char *address, u8_t length)
+{
+	int index;
+
+	for (index = 0; index < length; index++) {
+		char ch = *(address + index);
+
+		if ((ch == '.') || (ch >= '0' && ch <= '9')) {
+			continue;
+		} else {
+			return false;
+		}
+	}
+
+	return true;
+}

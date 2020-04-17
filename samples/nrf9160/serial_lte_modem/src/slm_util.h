@@ -17,6 +17,13 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+#define INVALID_SOCKET	-1
+#define INVALID_PORT	-1
+#define INVALID_SEC_TAG	-1
+#define INVALID_ROLE	-1
+
+#define TCPIP_MAX_URL	128
+
 /**
  * @brief Compare string ignoring case
  *
@@ -74,6 +81,16 @@ int slm_util_htoa(const u8_t *hex, u16_t hex_len,
  */
 int slm_util_atoh(const char *ascii, u16_t ascii_len,
 		u8_t *hex, u16_t hex_len);
+
+
+/**@brief Check whether a string has valid IPv4 address or not
+ *
+ * @param address URL text string
+ * @param length size of URL string
+ *
+ * @return true if text string is IPv4 address, false otherwise
+ */
+bool check_for_ipv4(const char *address, u8_t length);
 
 /** @} */
 

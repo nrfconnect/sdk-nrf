@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+config SLM_TCP_PROXY
+	bool "Stateful connection-oriented TCP client/server"
+
+config SLM_TCP_POLL_TIME
+	int "Poll timeout in seconds for TCP connection"
+	default 10
+
+config SLM_TCP_CONN_TIME
+	int "Connection timeout in seconds for TCP server"
+	default 60
+
+config SLM_UDP_PROXY
+	bool "Stateful connection-oriented UDP client/server"
