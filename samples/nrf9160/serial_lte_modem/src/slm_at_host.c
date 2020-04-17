@@ -21,6 +21,12 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #include "slm_at_tcpip.h"
 #include "slm_at_icmp.h"
 #include "slm_at_gps.h"
+#if defined(CONFIG_SLM_TCP_PROXY)
+#include "slm_at_tcp_proxy.h"
+#endif
+#if defined(CONFIG_SLM_UDP_PROXY)
+#include "slm_at_udp_proxy.h"
+#endif
 
 #define SLM_UART_0_NAME	"UART_0"
 #define SLM_UART_2_NAME	"UART_2"
@@ -103,12 +109,12 @@ void rsp_send(const u8_t *str, size_t len)
 
 static void response_handler(void *context, const char *response)
 {
-	int len = strlen(response) + 1;
+	int len = strlen(response);
 
 	ARG_UNUSED(context);
 
 	/* Forward the data over UART */
-	if (len > 1) {
+	if (len > 0) {
 		rsp_send(response, len);
 	}
 }
@@ -122,6 +128,12 @@ static void handle_at_clac(void)
 	rsp_send(AT_CMD_CLAC, sizeof(AT_CMD_CLAC) - 1);
 	rsp_send("\r\n", 2);
 	slm_at_tcpip_clac();
+#if defined(CONFIG_SLM_TCP_PROXY)
+	slm_at_tcp_proxy_clac();
+#endif
+#if defined(CONFIG_SLM_UDP_PROXY)
+	slm_at_udp_proxy_clac();
+#endif
 	slm_at_icmp_clac();
 	slm_at_gps_clac();
 }
@@ -230,6 +242,27 @@ static void cmd_send(struct k_work *work)
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
+#if defined(CONFIG_SLM_TCP_PROXY)
+	err = slm_at_tcp_proxy_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOTSUP) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+#endif
+
+#if defined(CONFIG_SLM_UDP_PROXY)
+	err = slm_at_udp_proxy_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOTSUP) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+#endif
 
 	err = slm_at_icmp_parse(at_buf);
 	if (err == 0) {
@@ -388,7 +421,7 @@ static void uart_callback(struct uart_event *evt, void *user_data)
 	case UART_RX_BUF_RELEASED:
 		break;
 	case UART_RX_STOPPED:
-		LOG_WRN("RX_STOPPED");
+		LOG_WRN("RX_STOPPED (%d)", evt->data.rx_stop.reason);
 		break;
 	case UART_RX_DISABLED:
 		LOG_DBG("RX_DISABLED");
@@ -466,6 +499,20 @@ int slm_at_host_init(void)
 		LOG_ERR("TCPIP could not be initialized: %d", err);
 		return -EFAULT;
 	}
+#if defined(CONFIG_SLM_TCP_PROXY)
+	err = slm_at_tcp_proxy_init();
+	if (err) {
+		LOG_ERR("TCP Server could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
+#if defined(CONFIG_SLM_UDP_PROXY)
+	err = slm_at_udp_proxy_init();
+	if (err) {
+		LOG_ERR("UDP Server could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
 	err = slm_at_icmp_init();
 	if (err) {
 		LOG_ERR("ICMP could not be initialized: %d", err);
@@ -493,6 +540,18 @@ void slm_at_host_uninit(void)
 	if (err) {
 		LOG_WRN("TCPIP could not be uninitialized: %d", err);
 	}
+#if defined(CONFIG_SLM_TCP_PROXY)
+	err = slm_at_tcp_proxy_uninit();
+	if (err) {
+		LOG_WRN("TCP Server could not be uninitialized: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_UDP_PROXY)
+	err = slm_at_udp_proxy_uninit();
+	if (err) {
+		LOG_WRN("UDP Server could not be uninitialized: %d", err);
+	}
+#endif
 	err = slm_at_icmp_uninit();
 	if (err) {
 		LOG_WRN("ICMP could not be uninitialized: %d", err);
