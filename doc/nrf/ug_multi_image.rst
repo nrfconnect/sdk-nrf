@@ -119,6 +119,12 @@ The three options are:
 * Merge the specified HEX file of the child image with the parent image - *IMAGENAME*\_BUILD_STRATEGY_USE_HEX_FILE, and *IMAGENAME*\_HEX_FILE to specify the HEX file
 * Ignore the child image when building and build only the parent image - *IMAGENAME*\_BUILD_STRATEGY_SKIP_BUILD
 
+
+.. note::
+
+   Child images that are built with the build strategy *IMAGENAME*\ _BUILD_STRATEGY_SKIP_BUILD or *IMAGENAME*\ _BUILD_STRATEGY_USE_HEX_FILE must define a :ref:`static partition <ug_pm_static_providing>`.
+
+
 You must add these four configuration options to the Kconfig file for your child image, replacing *IMAGENAME* with the (uppercase) name of your child image (as specified in ``add_child_image``).
 
 The following example shows the configuration options for MCUboot:
