@@ -117,7 +117,7 @@ int slm_util_atoh(const char *ascii, u16_t ascii_len,
 	}
 
 	hex_str[2] = '\0';
-	for (int i = 0; i < ascii_len; i++) {
+	for (int i = 0; (i * 2) < ascii_len; i++) {
 		strncpy(&hex_str[0], ascii + (i * 2), 2);
 		*(hex + i) = (u8_t)strtoul(hex_str, NULL, 16);
 	}

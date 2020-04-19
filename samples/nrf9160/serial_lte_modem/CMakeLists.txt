@@ -26,6 +26,7 @@ target_sources(app PRIVATE src/slm_at_host.c)
 target_sources(app PRIVATE src/slm_at_tcpip.c)
 target_sources(app PRIVATE src/slm_at_icmp.c)
 target_sources(app PRIVATE src/slm_at_gps.c)
+target_sources(app PRIVATE src/slm_at_mqtt.c)
 
 add_subdirectory(src/tcpip_proxy)
 

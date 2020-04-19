@@ -13,6 +13,7 @@ It provides the following features:
  * Support for BSD Socket proprietary AT commands
  * Support for ICMP proprietary AT commands
  * Support for GPS proprietary AT commands
+ * Support for MQTT Client proprietary AT commands
  * Support for communication to external MCU over UART
 
 All nRF91 modem AT commands are also supported.
@@ -145,6 +146,25 @@ If the configuration option ``CONFIG_SUPL_CLIENT_LIB`` is defined, SUPL A-GPS is
 Default SUPL server is as below:
 CONFIG_SLM_SUPL_SERVER="supl.google.com"
 CONFIG_SLM_SUPL_PORT=7276
+
+MQTT AT Commands
+****************
+
+The following proprietary MQTT AT commands are used in this sample:
+
+* AT#XMQTTCON=<op>[,<cid>,<url>,<port>[,<sec_tag>]]
+* AT#XMQTTPUB=<topic>,<datatype>,<msg>,<qos>,<retain>
+* AT#XMQTTSUB=<topic>,<qos>
+* AT#XMQTTUNSUB=<topic>
+
+The following unsolicited notification indicates that an MQTT event occurred:
+
+* #XMQTTEVT=<type>,<result>
+
+The following unsolicited notification indicates that a publish message was
+received and reports the topic and the message:
+
+* #XMQTTMSG=<datatype>,<topic_length>,<message_length><CR><LF><topic><CR><LF><message>
 
 Building and Running
 ********************
