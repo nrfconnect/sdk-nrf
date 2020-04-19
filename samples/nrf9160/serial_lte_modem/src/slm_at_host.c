@@ -27,6 +27,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #if defined(CONFIG_SLM_UDP_PROXY)
 #include "slm_at_udp_proxy.h"
 #endif
+#include "slm_at_mqtt.h"
 
 #define SLM_UART_0_NAME	"UART_0"
 #define SLM_UART_2_NAME	"UART_2"
@@ -136,6 +137,7 @@ static void handle_at_clac(void)
 #endif
 	slm_at_icmp_clac();
 	slm_at_gps_clac();
+	slm_at_mqtt_clac();
 }
 
 static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
@@ -273,6 +275,15 @@ static void cmd_send(struct k_work *work)
 	}
 
 	err = slm_at_gps_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOTSUP) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+
+	err = slm_at_mqtt_parse(at_buf);
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
@@ -521,6 +532,11 @@ int slm_at_host_init(void)
 	err = slm_at_gps_init();
 	if (err) {
 		LOG_ERR("GPS could not be initialized: %d", err);
+		return -EFAULT;
+	}
+	err = slm_at_mqtt_init();
+	if (err) {
+		LOG_ERR("MQTT could not be initialized: %d", err);
 		return -EFAULT;
 	}
 

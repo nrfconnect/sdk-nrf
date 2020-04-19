@@ -15,6 +15,8 @@ config SLM_AT_MODE
 	select AT_NOTIF
 	select AT_CMD_PARSER
 	select MODEM_INFO
+	select MQTT_LIB
+	select MQTT_LIB_TLS
 
 config SLM_AT_MAX_PARAM
 	int "Max number of parameters in AT command"
