@@ -45,13 +45,13 @@
 #define RETRY_CONNECT_WAIT_MS 90000
 
 enum {
-	LEDS_INITIALIZING     = LED_ON(0),
-	LEDS_CONNECTING       = LED_BLINK(DK_LED3_MSK),
-	LEDS_PATTERN_WAIT     = LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
-	LEDS_PATTERN_ENTRY    = LED_ON(DK_LED3_MSK) | LED_BLINK(DK_LED4_MSK),
-	LEDS_PATTERN_DONE     = LED_BLINK(DK_LED4_MSK),
-	LEDS_PAIRED           = LED_ON(DK_LED4_MSK),
-	LEDS_ERROR            = LED_ON(DK_ALL_LEDS_MSK)
+	LEDS_INITIALIZING       = LED_ON(0),
+	LEDS_LTE_CONNECTING     = LED_BLINK(DK_LED3_MSK),
+	LEDS_LTE_CONNECTED      = LED_ON(DK_LED3_MSK),
+	LEDS_CLOUD_CONNECTING   = LED_BLINK(DK_LED4_MSK),
+	LEDS_CLOUD_PAIRING_WAIT = LED_BLINK(DK_LED3_MSK | DK_LED4_MSK),
+	LEDS_CLOUD_CONNECTED    = LED_ON(DK_LED4_MSK),
+	LEDS_ERROR              = LED_ON(DK_ALL_LEDS_MSK)
 } display_state;
 
 /* Variable to keep track of nRF cloud user association request. */
@@ -296,6 +296,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST\n");
+		display_state = LEDS_CLOUD_PAIRING_WAIT;
 		on_cloud_evt_user_association_request();
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
@@ -304,7 +305,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		break;
 	case NRF_CLOUD_EVT_READY:
 		printk("NRF_CLOUD_EVT_READY\n");
-		display_state = LEDS_PAIRED;
+		display_state = LEDS_CLOUD_CONNECTED;
 		struct nrf_cloud_sa_param param = {
 			.sensor_type = NRF_CLOUD_SENSOR_FLIP,
 		};
@@ -384,7 +385,6 @@ static void cloud_connect(struct k_work *work)
 		.sensor = &sensor_list,
 	};
 
-	display_state = LEDS_CONNECTING;
 	err = nrf_cloud_connect(&param);
 
 	if (err) {
@@ -392,6 +392,7 @@ static void cloud_connect(struct k_work *work)
 		nrf_cloud_error_handler(err);
 	}
 
+	display_state = LEDS_CLOUD_CONNECTING;
 	k_delayed_work_submit(&retry_connect_work, RETRY_CONNECT_WAIT_MS);
 }
 
@@ -418,15 +419,17 @@ static void work_init(void)
  */
 static void modem_configure(void)
 {
+	display_state = LEDS_LTE_CONNECTING;
+
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on and connected. */
 	} else {
 		int err;
 
 		printk("Establishing LTE link (this may take some time) ...\n");
-		display_state = LEDS_CONNECTING;
 		err = lte_lc_init_and_connect();
 		__ASSERT(err == 0, "LTE link could not be established.");
+		display_state = LEDS_LTE_CONNECTED;
 	}
 }
 
