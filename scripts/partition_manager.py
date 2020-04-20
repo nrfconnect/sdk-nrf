@@ -529,6 +529,7 @@ def solve_simple_region(pm_config, start, size, placement_strategy, region_name,
         verify_static_conf(size, start, placement_strategy, static_conf)
         reserved = sum([config['size'] for name, config in static_conf.items()
                         if 'region' in config.keys() and config['region'] == region_name and name != 'app'])
+        pm_config.update(static_conf)
 
     if placement_strategy == END_TO_START:
         address = start + size - reserved
@@ -546,19 +547,21 @@ def solve_simple_region(pm_config, start, size, placement_strategy, region_name,
         if device:
             pm_config[partition_name]['device'] = device
 
-    # Generate the region partition containing the non-reserved memory.
-    # But first, verify that the user hasn't created a partition with the name of the region.
-    if region_name in pm_config:
-        raise RuntimeError(f"Found partition named {region_name}, this is the name of a region, and is a reserved name")
-    pm_config[region_name] = dict()
-    pm_config[region_name]['region'] = region_name
+    if not static_conf or (region_name not in static_conf):
+        # Generate the region partition containing the non-reserved memory.
+        # But first, verify that the user hasn't created a partition with the name of the region.
+        if region_name in pm_config:
+            raise RuntimeError(f"Found partition named {region_name}, "
+                               f"this is the name of a region, and is a reserved name")
+        pm_config[region_name] = dict()
+        pm_config[region_name]['region'] = region_name
 
-    if placement_strategy == END_TO_START:
-        pm_config[region_name]['address'] = start
-        pm_config[region_name]['size'] = address - start
-    else:
-        pm_config[region_name]['address'] = address
-        pm_config[region_name]['size'] = (start + size) - address
+        if placement_strategy == END_TO_START:
+            pm_config[region_name]['address'] = start
+            pm_config[region_name]['size'] = address - start
+        else:
+            pm_config[region_name]['address'] = address
+            pm_config[region_name]['size'] = (start + size) - address
 
 
 def verify_static_conf(size, start, placement_strategy, static_conf):
