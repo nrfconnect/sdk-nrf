@@ -974,27 +974,34 @@ static int sensor_chan_cfg_set_item(struct sensor_chan_cfg *const cfg,
 static bool sensor_chan_cfg_is_send_allowed(const struct sensor_chan_cfg *const cfg,
 										    const double sensor_value)
 {
+	/* By default, an undefined send enable state will
+	 * allow data to be sent
+	 */
 	if ((cfg == NULL) ||
 	    (cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_SEND_ENABLE] ==
 		 CLOUD_CMD_STATE_FALSE)) {
 		return false;
 	}
 
-	/* By default, an undefined enable state will allow data to be sent */
-	if (((cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE]) &&
+	if (((cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE] ==
+		CLOUD_CMD_STATE_TRUE) &&
 	     (sensor_value <
 	      cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_VALUE]))) {
 		return true;
 	}
 
-	if (((cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_HIGH_ENABLE]) &&
+	if (((cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_HIGH_ENABLE] ==
+		CLOUD_CMD_STATE_TRUE) &&
 	     (sensor_value >
 	      cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_HIGH_VALUE]))) {
 		return true;
 	}
 
-	return (!cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE] &&
-		!cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_HIGH_ENABLE]);
+	/* Send data if both thresholds are not enabled */
+	return ((cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_LOW_ENABLE]
+			!= CLOUD_CMD_STATE_TRUE) &&
+			cfg->value[SENSOR_CHAN_CFG_ITEM_TYPE_THRESH_HIGH_ENABLE]
+			!= CLOUD_CMD_STATE_TRUE);
 }
 
 static int cloud_set_chan_cfg_item(const enum cloud_channel channel,
