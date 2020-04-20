@@ -41,6 +41,7 @@ pipeline {
                                       --testcase-root nrf/applications \
                                       --inline-logs --disable-unrecognized-section-test \
                                       --tag ci_build \
+                                      --retry-failed 7 \
                                    '''
   }
 
@@ -140,7 +141,7 @@ pipeline {
 
     }}}
 
-    stage('Exectuion') { steps { script {
+    stage('Execution') { steps { script {
       parallel TestExecutionList
     }}}
 
@@ -205,10 +206,9 @@ def generateParallelStage(platform, compiler, JOB_NAME, CI_STATE, SANITYCHECK_OP
           FULL_SANITYCHECK_CMD = """
             export ZEPHYR_TOOLCHAIN_VARIANT='$compiler' && \
             source zephyr/zephyr-env.sh && \
+            pip install --user -r nrf/scripts/requirements-ci.txt && \
             export && \
-            $SANITYCHECK_CMD || \
-            (sleep 10; $SANITYCHECK_CMD --only-failed --outdir=out-2nd-pass) || \
-            (sleep 10; $SANITYCHECK_CMD --only-failed --outdir=out-3rd-pass)
+            $SANITYCHECK_CMD
           """
           println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
           sh FULL_SANITYCHECK_CMD
