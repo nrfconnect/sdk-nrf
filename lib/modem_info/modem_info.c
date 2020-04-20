@@ -65,6 +65,7 @@ LOG_MODULE_REGISTER(modem_info);
 #define IMSI_DATA_NAME		"imsi"
 #define MODEM_IMEI_DATA_NAME	"imei"
 #define DATE_TIME_DATA_NAME	"dateTime"
+#define APN_DATA_NAME		"apn"
 
 #define RSRP_NOTIFY_PARAM_INDEX	1
 #define RSRP_NOTIFY_PARAM_COUNT	5
@@ -122,6 +123,9 @@ LOG_MODULE_REGISTER(modem_info);
 
 #define DATE_TIME_PARAM_INDEX	1
 #define DATE_TIME_PARAM_COUNT	2
+
+#define APN_PARAM_INDEX		3
+#define APN_PARAM_COUNT		7
 
 struct modem_info_data {
 	const char *cmd;
@@ -299,6 +303,14 @@ static const struct modem_info_data date_time_data = {
 	.data_type	= AT_PARAM_TYPE_STRING,
 };
 
+static const struct modem_info_data apn_data = {
+	.cmd		= AT_CMD_PDP_CONTEXT,
+	.data_name	= APN_DATA_NAME,
+	.param_index	= APN_PARAM_INDEX,
+	.param_count	= APN_PARAM_COUNT,
+	.data_type	= AT_PARAM_TYPE_STRING,
+};
+
 static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_RSRP]	= &rsrp_data,
 	[MODEM_INFO_CUR_BAND]	= &band_data,
@@ -321,6 +333,7 @@ static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_IMSI]	= &imsi_data,
 	[MODEM_INFO_IMEI]	= &imei_data,
 	[MODEM_INFO_DATE_TIME]	= &date_time_data,
+	[MODEM_INFO_APN]	= &apn_data,
 };
 
 static rsrp_cb_t modem_info_rsrp_cb;

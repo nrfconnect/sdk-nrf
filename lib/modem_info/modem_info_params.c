@@ -32,6 +32,7 @@ int modem_info_params_init(struct modem_param_info *modem)
 	modem->network.nbiot_mode.type		= MODEM_INFO_NBIOT_MODE;
 	modem->network.gps_mode.type		= MODEM_INFO_GPS_MODE;
 	modem->network.date_time.type		= MODEM_INFO_DATE_TIME;
+	modem->network.apn.type			= MODEM_INFO_APN;
 
 	modem->sim.uicc.type			= MODEM_INFO_UICC;
 	modem->sim.iccid.type			= MODEM_INFO_ICCID;
@@ -144,6 +145,7 @@ int modem_info_params_get(struct modem_param_info *modem)
 		ret += modem_data_get(&modem->network.lte_mode);
 		ret += modem_data_get(&modem->network.nbiot_mode);
 		ret += modem_data_get(&modem->network.gps_mode);
+		ret += modem_data_get(&modem->network.apn);
 
 		if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DATE_TIME)) {
 			ret += modem_data_get(&modem->network.date_time);

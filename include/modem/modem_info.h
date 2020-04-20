@@ -59,6 +59,7 @@ enum modem_info {
 	MODEM_INFO_IMSI,	/**< Mobile subscriber identity. */
 	MODEM_INFO_IMEI,	/**< Modem serial number. */
 	MODEM_INFO_DATE_TIME,	/**< Mobile network time and date */
+	MODEM_INFO_APN,		/**< Access point name. */
 	MODEM_INFO_COUNT,	/**< Number of legal elements in the enum. */
 };
 
@@ -85,6 +86,7 @@ struct network_param {
 	struct lte_param nbiot_mode; /**< NB-IoT support mode. */
 	struct lte_param gps_mode; /**< GPS support mode. */
 	struct lte_param date_time; /**< Mobile network time and date */
+	struct lte_param apn; /**< Access point name (string). */
 
 	double cellid_dec; /**< Cell ID of the device (in decimal format). */
 	char network_mode[MODEM_INFO_NETWORK_MODE_MAX_SIZE];
