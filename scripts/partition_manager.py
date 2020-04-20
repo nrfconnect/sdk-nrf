@@ -568,6 +568,10 @@ def verify_static_conf(size, start, placement_strategy, static_conf):
     ends = {start} | {c['address'] + c['size'] for c in static_conf.values() if 'size' in c}
     gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
 
+    # The whole region is filled, which is valid.
+    if len(gaps) == 0:
+        return
+
     if placement_strategy == START_TO_END:
         start_end_correct = gaps[0][0] == start + size
     else:
