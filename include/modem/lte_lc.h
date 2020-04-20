@@ -12,6 +12,16 @@
 #ifndef ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 #define ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 
+/**
+ * @file lte_lc.h
+ *
+ * @defgroup lte_lc LTE Link Controller
+ *
+ * @{
+ *
+ * @brief Public APIs for the LTE Link Controller.
+ */
+
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -104,24 +114,28 @@ typedef void(*lte_lc_evt_handler_t)(const struct lte_lc_evt *const evt);
  */
 void lte_lc_register_handler(lte_lc_evt_handler_t handler);
 
-/** @brief Function for initializing the modem.
+/**@brief Initializes the module and configures the modem.
  *
- * @note a follow-up call to lte_lc_connect() must be made to establish an LTE
- *	 connection.
+ * @note a follow-up call to lte_lc_connect() or lte_lc_connect_async() must be
+ * 	 made to establish an LTE connection.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_init(void);
 
 /** @brief Function to make a connection with the modem.
- * @note prior to calling this function a call to @ref lte_lc_init
- *	 must be made.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @note prior to calling this function a call to @ref lte_lc_init
+ *	 must be made, otherwise -EPERM is returned.
+ *
+ * @return Zero on success, -EPERM if the module has not been initialized,
+ *	   otherwise a (negative) error code.
  */
 int lte_lc_connect(void);
 
-/** @brief Function for initializing and make a connection with the modem
+/**@brief Initializes the LTE module, configures the modem and connects to LTE
+ *	  network. The function blocks until connection is established, or
+ *	  the connection attempt times out.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -129,22 +143,25 @@ int lte_lc_init_and_connect(void);
 
 /**@brief Connect to LTE network. Non-blocking.
  *
- * @note @ref lte_lc_init must be called before this function.
+ * @note The module must be initialized before this function is called.
  *
- * @param handler Event handler for receiving LTE events.
+ * @param handler Event handler for receiving LTE events. The parameter can be
+ *		  NULL if an event handler is already registered.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @return Zero on success, -EINVAL if no handler is provided and not already
+ *	   registered, otherwise a (negative) error code.
  */
 int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 
 /**@brief Initializes the LTE module, configures the modem and connects to LTE
  *	  network. Non-blocking.
  *
- * @param handler Event handler for receiving LTE events.
+ * @param handler Event handler for receiving LTE events. The parameter can be
+ *		  NULL if an event handler is already registered.
  *
- * @return Zero on success or (negative) error code otherwise.
+ * @return Zero on success, -EINVAL if no handler is provided and not already
+ *	   registered, otherwise a (negative) error code.
  */
-
 int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
 
 /** @brief Function for sending the modem to offline mode
@@ -225,6 +242,8 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode);
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
+
+/** @} */
 
 #ifdef __cplusplus
 }
