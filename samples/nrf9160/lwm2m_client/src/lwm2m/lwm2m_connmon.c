@@ -48,8 +48,8 @@ static void modem_data_update(struct k_work *work)
 	/* APN */
 	lwm2m_engine_create_res_inst("4/0/7/0");
 	lwm2m_engine_set_res_data("4/0/7/0",
-		modem_param.network.current_operator.value_string,
-		sizeof(modem_param.network.current_operator.value_string),
+		modem_param.network.apn.value_string,
+		strlen(modem_param.network.apn.value_string),
 		LWM2M_RES_DATA_FLAG_RO);
 
 	lwm2m_engine_set_u32("4/0/8", (u32_t)modem_param.network.cellid_dec);
