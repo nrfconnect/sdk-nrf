@@ -224,6 +224,10 @@ void main(void)
 
 	/* Setup LwM2M */
 	(void)memset(&client, 0x0, sizeof(client));
+
+	/* Workaround for improperly initialized socket fd in lwm2m engine. */
+	client.sock_fd = -1;
+
 	ret = lwm2m_setup();
 	if (ret < 0) {
 		LOG_ERR("Cannot setup LWM2M fields (%d)", ret);
