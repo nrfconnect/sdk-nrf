@@ -85,8 +85,9 @@ static void modem_signal_update(struct k_work *work)
 {
 	static u32_t timestamp_prev;
 
-	if (k_uptime_get_32() - timestamp_prev <
-	    K_SECONDS(CONFIG_APP_HOLD_TIME_RSRP)) {
+	if ((timestamp_prev != 0) &&
+	    (k_uptime_get_32() - timestamp_prev <
+	     CONFIG_APP_HOLD_TIME_RSRP * MSEC_PER_SEC)) {
 		return;
 	}
 
