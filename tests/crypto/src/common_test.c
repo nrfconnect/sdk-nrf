@@ -89,12 +89,6 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 
 	mbedtls_hmac_drbg_init(&drbg_ctx);
 
-    #if defined(CONFIG_MBEDTLS_ECDSA_DETERMINISTIC)
-
-	return mbedtls_hmac_drbg_seed(&drbg_ctx, p_seed, len);
-
-	#else
-
 	struct device *p_device = device_get_binding(CONFIG_ENTROPY_NAME);
 
 	if (!p_device)
@@ -104,9 +98,6 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 		mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
 
 	return mbedtls_hmac_drbg_seed(&drbg_ctx, p_info, entropy_func, p_device, p_seed, len);
-
-	#endif
-
 }
 #endif
 
@@ -127,12 +118,14 @@ uint32_t get_vector_count(const test_case_t *tc)
 	       test_vector_sizes[tc->vector_type];
 }
 
-void start_time_measurement(void)
+/* Weak definition, user overridable */
+__weak void start_time_measurement(void)
 {
 	;
 }
 
-void stop_time_measurement(void)
+/* Weak definition, user overridable */
+__weak void stop_time_measurement(void)
 {
 	;
 }
