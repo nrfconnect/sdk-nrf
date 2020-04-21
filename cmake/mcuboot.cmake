@@ -86,7 +86,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     endif()
   endif()
 
-  add_child_image(mcuboot ${MCUBOOT_DIR}/boot/zephyr)
+  add_child_image(
+    NAME mcuboot
+    SOURCE_DIR ${MCUBOOT_DIR}/boot/zephyr
+    )
 
   set(merged_hex_file
     ${PROJECT_BINARY_DIR}/mcuboot_primary_app.hex)
