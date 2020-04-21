@@ -44,12 +44,11 @@ void test_main(void)
 {
 	LOG_INF("Crypto test app started.");
 
-	if (init_leds() != 0) {
+	if (init_leds() != 0)
 		LOG_ERR("Bad leds init!");
-	}
-	if (init_ctr_drbg(NULL, 0) != 0) {
+
+	if (init_drbg(NULL, 0) != 0)
 		LOG_ERR("Bad ctr drbg init!");
-	}
 
 	run_suites(__start_test_case_aead_ccm_data,
 		   ITEM_COUNT(test_case_aead_ccm_data, test_case_t));

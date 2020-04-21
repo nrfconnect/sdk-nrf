@@ -136,7 +136,7 @@ void exec_test_case_ecdsa_sign(void)
 	start_time_measurement();
 	err_code = mbedtls_ecdsa_sign(&ctx_sign.grp, &r, &s, &ctx_sign.d,
 				      m_ecdsa_input_buf, hash_len,
-				      mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+				      drbg_random, &drbg_ctx);
 
 	stop_time_measurement();
 
@@ -246,7 +246,7 @@ void exec_test_case_ecdsa_random(void)
 	/* Create a ECDSA key pair */
 	err_code = mbedtls_ecdsa_genkey(&ctx_sign,
 					p_test_vector_random->curve_type,
-					mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+					drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Verify keys. */
@@ -267,7 +267,7 @@ void exec_test_case_ecdsa_random(void)
 
 	err_code = mbedtls_ecdsa_sign(&ctx_sign.grp, &r, &s, &ctx_sign.d,
 				      m_ecdsa_input_buf, hash_len,
-				      mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+				      drbg_random, &drbg_ctx);
 
 	/* Prepare verification context. */
 	mbedtls_ecdsa_context ctx_verify;

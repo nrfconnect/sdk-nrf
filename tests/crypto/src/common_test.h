@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <toolchain/common.h>
 #include <sys/util.h>
+#include <drivers/entropy.h>
 
 #if defined(CONFIG_ZTEST)
 #include <ztest.h>
@@ -29,16 +30,10 @@
 #include <nrf_cc310_platform_mutex.h>
 #endif /* CONFIG_NRF_CC310_PLATFORM) */
 
-#if defined(CONFIG_MBEDTLS_CTR_DRBG_ENABLED)
-#include <mbedtls/ctr_drbg.h>
+/* Points to either CTR or HMAC drbg random depending on what's compiled in */
+extern int (*drbg_random)(void *, unsigned char *, size_t);
 
-/* This context will be populated by the below initialization function.
- * If the initialization is successful it can be used in subsequent calls to
- * mbedtls drbg APIs.
- */
-extern mbedtls_ctr_drbg_context ctr_drbg_ctx;
-
-/**@brief Function for initializing counter mode deterministic random byte generator.
+/**@brief Function for initializing deterministic random byte generator.
  *
  * @details Should only be called once.
  *
@@ -47,7 +42,23 @@ extern mbedtls_ctr_drbg_context ctr_drbg_ctx;
  *
  * @return								0 on success, else an error code.
  */
-int init_ctr_drbg(const unsigned char *p_optional_seed, size_t len);
+int init_drbg(const unsigned char *p_optional_seed, size_t len);
+
+#if defined(CONFIG_MBEDTLS_CTR_DRBG_C)
+
+#include <mbedtls/ctr_drbg.h>
+
+/* This context will be populated by init_drbg.
+ * If the initialization is successful it can be used in subsequent calls to
+ * mbedtls drbg APIs.
+ */
+extern mbedtls_ctr_drbg_context drbg_ctx;
+
+#elif defined(CONFIG_MBEDTLS_HMAC_DRBG_C)
+
+#include <mbedtls/hmac_drbg.h>
+extern mbedtls_hmac_drbg_context drbg_ctx;
+
 #endif
 
 #if defined(CONFIG_ENTROPY_GENERATOR)

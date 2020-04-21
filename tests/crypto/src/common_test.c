@@ -44,10 +44,11 @@ static int entropy_func(void *ctx, unsigned char *buf, size_t len)
 	return entropy_get_entropy(ctx, buf, len);
 }
 
-#if defined(CONFIG_MBEDTLS_CTR_DRBG_ENABLED)
-mbedtls_ctr_drbg_context ctr_drbg_ctx;
+#if defined(CONFIG_MBEDTLS_CTR_DRBG_C)
+mbedtls_ctr_drbg_context drbg_ctx;
+int (*drbg_random)(void *, unsigned char *, size_t) = &mbedtls_ctr_drbg_random;
 
-int init_ctr_drbg(const unsigned char *p_optional_seed, size_t len)
+int init_drbg(const unsigned char *p_optional_seed, size_t len)
 {
 	static const unsigned char ncs_seed[] = "ncs_drbg_seed";
 
@@ -65,9 +66,47 @@ int init_ctr_drbg(const unsigned char *p_optional_seed, size_t len)
 		return -ENODEV;
 	}
 
-	mbedtls_ctr_drbg_init(&ctr_drbg_ctx);
-	return mbedtls_ctr_drbg_seed(&ctr_drbg_ctx, entropy_func, p_device,
+	mbedtls_ctr_drbg_init(&drbg_ctx);
+	return mbedtls_ctr_drbg_seed(&drbg_ctx, entropy_func, p_device,
 				     p_seed, len);
+}
+#elif defined(CONFIG_MBEDTLS_HMAC_DRBG_C)
+mbedtls_hmac_drbg_context drbg_ctx;
+int (*drbg_random)(void *, unsigned char *, size_t) = &mbedtls_hmac_drbg_random;
+
+int init_drbg(const unsigned char *p_optional_seed, size_t len)
+{
+	static const unsigned char ncs_seed[] = "ncs_drbg_seed";
+
+	const unsigned char *p_seed;
+
+	if (p_optional_seed == NULL) {
+		p_seed = ncs_seed;
+		len = sizeof(ncs_seed);
+	} else {
+		p_seed = p_optional_seed;
+	}
+
+	mbedtls_hmac_drbg_init(&drbg_ctx);
+
+    #if defined(CONFIG_MBEDTLS_ECDSA_DETERMINISTIC)
+
+	return mbedtls_hmac_drbg_seed(&drbg_ctx, p_seed, len);
+
+	#else
+
+	struct device *p_device = device_get_binding(CONFIG_ENTROPY_NAME);
+
+	if (!p_device)
+		return -ENODEV;
+
+	const mbedtls_md_info_t *p_info =
+		mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
+
+	return mbedtls_hmac_drbg_seed(&drbg_ctx, p_info, entropy_func, p_device, p_seed, len);
+
+	#endif
+
 }
 #endif
 

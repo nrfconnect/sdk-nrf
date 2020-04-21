@@ -244,12 +244,12 @@ void exec_test_case_ecjpake_given(void)
 	/* Derive secrets. */
 	err_code = mbedtls_ecjpake_derive_secret(
 		&ctx_client, m_secret_cli, sizeof(m_secret_cli), &len_ss_cli,
-		mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+		drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code = mbedtls_ecjpake_derive_secret(
 		&ctx_server, m_secret_srv, sizeof(m_secret_srv), &len_ss_srv,
-		mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+		drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	TEST_VECTOR_ASSERT_EQUAL(secret_len, len_ss_cli);
@@ -283,8 +283,8 @@ void exec_test_case_ecjpake_random(void)
 	/* Round one. */
 	err_code = mbedtls_ecjpake_write_round_one(&ctx_client, m_msg_cli_1,
 						   sizeof(m_msg_cli_1), &len,
-						   mbedtls_ctr_drbg_random,
-						   &ctr_drbg_ctx);
+						   drbg_random,
+						   &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code =
@@ -293,8 +293,8 @@ void exec_test_case_ecjpake_random(void)
 
 	err_code = mbedtls_ecjpake_write_round_one(&ctx_server, m_msg_srv_1,
 						   sizeof(m_msg_srv_1), &len,
-						   mbedtls_ctr_drbg_random,
-						   &ctr_drbg_ctx);
+						   drbg_random,
+						   &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code =
@@ -304,8 +304,8 @@ void exec_test_case_ecjpake_random(void)
 	/* Round two. */
 	err_code = mbedtls_ecjpake_write_round_two(&ctx_server, m_msg_srv_2,
 						   sizeof(m_msg_srv_2), &len,
-						   mbedtls_ctr_drbg_random,
-						   &ctr_drbg_ctx);
+						   drbg_random,
+						   &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code =
@@ -314,8 +314,8 @@ void exec_test_case_ecjpake_random(void)
 
 	err_code = mbedtls_ecjpake_write_round_two(&ctx_client, m_msg_cli_2,
 						   sizeof(m_msg_cli_2), &len,
-						   mbedtls_ctr_drbg_random,
-						   &ctr_drbg_ctx);
+						   drbg_random,
+						   &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code =
@@ -325,12 +325,12 @@ void exec_test_case_ecjpake_random(void)
 	/* Derive secrets. */
 	err_code = mbedtls_ecjpake_derive_secret(
 		&ctx_client, m_secret_cli, sizeof(m_secret_cli), &len_ss_cli,
-		mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+		drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	err_code = mbedtls_ecjpake_derive_secret(
 		&ctx_server, m_secret_srv, sizeof(m_secret_srv), &len_ss_srv,
-		mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+		drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	TEST_VECTOR_ASSERT_EQUAL(len_ss_cli, len_ss_srv);
