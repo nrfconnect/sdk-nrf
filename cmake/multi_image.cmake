@@ -32,52 +32,48 @@ if(IMAGE_NAME)
     )
 endif(IMAGE_NAME)
 
-function(image_board_selection board_in board_out)
+function(add_child_image)
+  set(oneValueArgs NAME SOURCE_DIR)
+  cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
+
+  if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
+    message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
+  endif()
+
+  string(TOUPPER ${ACI_NAME} UPNAME)
+
+  if (CONFIG_${UPNAME}_BUILD_STRATEGY_USE_HEX_FILE)
+    assert_exists(CONFIG_${UPNAME}_HEX_FILE)
+    message("Using ${CONFIG_${UPNAME}_HEX_FILE} instead of building ${ACI_NAME}")
+
+    # Set property so that the hex file is merged in by partition manager.
+    set_property(GLOBAL PROPERTY ${ACI_NAME}_PM_HEX_FILE ${CONFIG_${UPNAME}_HEX_FILE})
+  elseif (CONFIG_${UPNAME}_BUILD_STRATEGY_SKIP_BUILD)
+    message("Skipping building of ${ACI_NAME}")
+  else()
+    # Build normally
+    add_child_image_from_source(${ARGN})
+  endif()
+endfunction()
+
+# See 'add_child_image'
+function(add_child_image_from_source)
+  set(oneValueArgs NAME SOURCE_DIR)
+  cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
+
+  if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
+    message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
+  endif()
+
+  # Set ${ACI_NAME}_BOARD based on what BOARD is set to if not already set by parent
   # It is assumed that only the root app will be built as non-secure.
   # This is not a valid assumption as there might be multiple non-secure
   # images defined.
   # TODO: Allow multiple non-secure images by using Kconfig to set the
   # secure/non-secure property rather than using a separate board definition.
-  string(REGEX REPLACE "(_?ns)$" "" board_in_without_suffix ${board_in})
-  if(NOT ${board_in} STREQUAL ${board_in_without_suffix})
-    if (NOT CONFIG_ARM_NONSECURE_FIRMWARE)
-      message(FATAL_ERROR "${board_in} is not a valid name for a board without "
-      "'CONFIG_ARM_NONSECURE_FIRMWARE' set. This because the 'ns'/'_ns' ending "
-      "indicates that the board is the non-secure variant in a TrustZone "
-      "enabled system.")
-    endif()
-    set(${board_out} ${board_in_without_suffix} PARENT_SCOPE)
-    message("Changed board to secure ${board_in_without_suffix} (NOT NS)")
-  else()
-    set(${board_out} ${board_in} PARENT_SCOPE)
-  endif()
-endfunction()
+  get_board_without_ns_suffix(${BOARD} ${ACI_NAME}_BOARD)
 
-function(add_child_image name sourcedir)
-  string(TOUPPER ${name} UPNAME)
-
-  if (CONFIG_${UPNAME}_BUILD_STRATEGY_USE_HEX_FILE)
-    assert_exists(CONFIG_${UPNAME}_HEX_FILE)
-    message("Using ${CONFIG_${UPNAME}_HEX_FILE} instead of building ${name}")
-
-    # Set property so that the hex file is merged in by partition manager.
-    set_property(GLOBAL PROPERTY ${name}_PM_HEX_FILE ${CONFIG_${UPNAME}_HEX_FILE})
-  elseif (CONFIG_${UPNAME}_BUILD_STRATEGY_SKIP_BUILD)
-    message("Skipping building of ${name}")
-  else()
-    # Build normally
-    add_child_image_from_source(${name} ${sourcedir})
-  endif()
-endfunction()
-
-function(add_child_image_from_source name sourcedir)
-  message("\n=== child image ${name} begin ===")
-
-  # Set ${name}_BOARD based on what BOARD is set to if not already set by parent
-  if (NOT ${name}_BOARD)
-    image_board_selection(${BOARD} ${name}_BOARD)
-  endif()
-
+  message("\n=== child image ${ACI_NAME} begin ===")
   # Construct a list of variables that, when present in the root
   # image, should be passed on to all child images as well.
   list(APPEND
@@ -112,7 +108,7 @@ function(add_child_image_from_source name sourcedir)
   get_cmake_property(VARIABLES              VARIABLES)
   get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
 
-  set(regex "^${name}_.+")
+  set(regex "^${ACI_NAME}_.+")
 
   list(FILTER VARIABLES        INCLUDE REGEX ${regex})
   list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
@@ -125,7 +121,7 @@ function(add_child_image_from_source name sourcedir)
     # above, we only re-run the regex to extract the part after
     # '_'. We run the regex twice because it is believed that
     # list(FILTER is faster than doing a string(REGEX on each item.
-    string(REGEX MATCH "^${name}_(.+)" unused_out_var ${var_name})
+    string(REGEX MATCH "^${ACI_NAME}_(.+)" unused_out_var ${var_name})
 
     # When we try to pass a list on to the child image, like
     # -DCONF_FILE=a.conf;b.conf, we will get into trouble because ; is
@@ -138,46 +134,41 @@ function(add_child_image_from_source name sourcedir)
       )
   endforeach()
 
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${name})
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME})
   execute_process(
     COMMAND ${CMAKE_COMMAND}
     -G${CMAKE_GENERATOR}
     ${EXTRA_MULTI_IMAGE_CMAKE_ARGS} # E.g. --trace-expand
-    -DIMAGE_NAME=${name}_
+    -DIMAGE_NAME=${ACI_NAME}_
     ${image_cmake_args}
-    ${sourcedir}
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${name}
+    ${ACI_SOURCE_DIR}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME}
     RESULT_VARIABLE ret
     )
 
   if (IMAGE_NAME)
     # Expose your childrens secrets to your parent
-    set_property(
-      TARGET         zephyr_property_target
-      APPEND_STRING
-      PROPERTY       shared_vars
-      "include(${CMAKE_BINARY_DIR}/${name}/shared_vars.cmake)\n"
-      )
+    share("include(${CMAKE_BINARY_DIR}/${ACI_NAME}/shared_vars.cmake)")
   endif()
 
   set_property(DIRECTORY APPEND PROPERTY
     CMAKE_CONFIGURE_DEPENDS
-    ${CMAKE_BINARY_DIR}/${name}/zephyr/.config
+    ${CMAKE_BINARY_DIR}/${ACI_NAME}/zephyr/.config
     )
 
   if(NOT ${ret} EQUAL "0")
-    message(FATAL_ERROR "CMake generation for ${name} failed, aborting. Command: ${ret}")
+    message(FATAL_ERROR "CMake generation for ${ACI_NAME} failed, aborting. Command: ${ret}")
   endif()
 
-  message("=== child image ${name} end ===\n")
+  message("=== child image ${ACI_NAME} - ${${ACI_NAME}_BOARD} end ===\n")
 
   # Include some variables from the child image into the parent image
   # namespace
-  include(${CMAKE_BINARY_DIR}/${name}/shared_vars.cmake)
+  include(${CMAKE_BINARY_DIR}/${ACI_NAME}/shared_vars.cmake)
 
   # Increase the scope of this variable to make it more available
-  set(${name}_KERNEL_HEX_NAME ${${name}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
-  set(${name}_KERNEL_ELF_NAME ${${name}_KERNEL_ELF_NAME} CACHE STRING "" FORCE)
+  set(${ACI_NAME}_KERNEL_HEX_NAME ${${ACI_NAME}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
+  set(${ACI_NAME}_KERNEL_ELF_NAME ${${ACI_NAME}_KERNEL_ELF_NAME} CACHE STRING "" FORCE)
 
   if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(multi_image_build_args "-d" "${MULTI_IMAGE_DEBUG_MAKEFILE}")
@@ -187,10 +178,10 @@ function(add_child_image_from_source name sourcedir)
   endif()
 
   include(ExternalProject)
-  ExternalProject_Add(${name}_subimage
-    SOURCE_DIR ${sourcedir}
-    BINARY_DIR ${CMAKE_BINARY_DIR}/${name}
-    BUILD_BYPRODUCTS ${${name}_BUILD_BYPRODUCTS} # Set by shared_vars.cmake
+  ExternalProject_Add(${ACI_NAME}_subimage
+    SOURCE_DIR ${ACI_SOURCE_DIR}
+    BINARY_DIR ${CMAKE_BINARY_DIR}/${ACI_NAME}
+    BUILD_BYPRODUCTS ${${ACI_NAME}_BUILD_BYPRODUCTS} # Set by shared_vars.cmake
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${CMAKE_COMMAND} --build . -- ${multi_image_build_args}
     INSTALL_COMMAND ""
@@ -202,16 +193,12 @@ function(add_child_image_from_source name sourcedir)
       guiconfig
       ${EXTRA_KCONFIG_TARGETS}
       )
-    add_custom_target(${name}_${kconfig_target}
+
+    add_custom_target(${ACI_NAME}_${kconfig_target}
       ${CMAKE_MAKE_PROGRAM} ${kconfig_target}
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${name}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME}
       USES_TERMINAL
       )
   endforeach()
 
-  set_property(
-    GLOBAL APPEND PROPERTY
-    PM_IMAGES
-    "${name}"
-    )
 endfunction()
