@@ -495,10 +495,11 @@ def load_reqs(input_config):
     return reqs
 
 
-def get_dynamic_area_start_and_size(static_config, flash_size):
+def get_dynamic_area_start_and_size(static_config, flash_size, dynamic_partition='app'):
     # Remove app from this dict to simplify the case where partitions before and after are removed.
     proper_partitions = [config for name, config in static_config.items()
-                         if 'span' not in config.keys() and name != 'app']
+                         if 'span' not in config.keys() and
+                         name != dynamic_partition]
 
     starts = {flash_size} | {config['address'] for config in proper_partitions}
     ends = {0} | {config['address'] + config['size'] for config in proper_partitions}
@@ -516,11 +517,15 @@ def get_region_config(pm_config, region_config, static_conf=None):
     placement_strategy = region_config['placement_strategy']
     region_name = region_config['name']
     device = region_config['device']
+    dynamic_partition = region_config['dynamic_partition'] \
+        if ('dynamic_partition' in region_config and region_config['dynamic_partition'] is not None)\
+        else 'app'
 
     if placement_strategy in [END_TO_START, START_TO_END]:
         solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf)
     else:
-        solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf)
+        solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf,
+                             dynamic_partition)
 
 
 def solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
@@ -584,11 +589,12 @@ def verify_static_conf(size, start, placement_strategy, static_conf):
         raise RuntimeError("Statically defined partitions are not packed at the start/end of region")
 
 
-def solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf):
+def solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf,
+                         dynamic_partition):
     free_size = size
 
     if static_conf:
-        start, free_size = get_dynamic_area_start_and_size(static_conf, free_size)
+        start, free_size = get_dynamic_area_start_and_size(static_conf, free_size, dynamic_partition)
 
         # If nothing is unresolved (only app remaining), simply return the pre defined config with 'app'
         if len(pm_config) == 1:
