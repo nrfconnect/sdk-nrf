@@ -15,7 +15,7 @@
 #include <sys/byteorder.h>
 #include <st25r3911b_nfca.h>
 #include <nfc/ndef/msg_parser.h>
-#include <nfc/ndef/nfc_text_rec.h>
+#include <nfc/ndef/text_rec.h>
 #include <nfc/t4t/isodep.h>
 #include <nfc/t4t/hl_procedure.h>
 #include <nfc/tnep/poller.h>

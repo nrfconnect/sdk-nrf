@@ -18,7 +18,7 @@
 #include <device.h>
 #include <string.h>
 #include <fs/nvs.h>
-#include <nfc/ndef/nfc_uri_msg.h>
+#include <nfc/ndef/uri_msg.h>
 
 #include "ndef_file_m.h"
 
@@ -60,7 +60,7 @@ int ndef_file_update(u8_t const *buff, u32_t size)
 int ndef_file_default_message(u8_t *buff, u32_t *size)
 {
 	/* Encode URI message into buffer. */
-	return nfc_uri_msg_encode(NFC_URI_HTTP_WWW,
+	return nfc_ndef_uri_msg_encode(NFC_URI_HTTP_WWW,
 				  m_url,
 				  sizeof(m_url),
 				  buff,

@@ -15,7 +15,7 @@
  */
 
 #include <stddef.h>
-#include <nfc/ndef/nfc_ndef_msg.h>
+#include <nfc/ndef/msg.h>
 #include <nfc/ndef/tnep_rec.h>
 
 /** TNEP Version.

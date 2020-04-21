@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <string.h>
-#include <nfc/ndef/nfc_text_rec.h>
+#include <nfc/ndef/text_rec.h>
 
 /** Size of the status. */
 #define TEXT_REC_STATUS_SIZE          1
@@ -15,19 +15,19 @@
 /** Reserved position. */
 #define TEXT_REC_RESERVED_POS         6
 
-const u8_t nfc_text_rec_type_field[] = {'T'};
+const u8_t nfc_ndef_text_rec_type_field[] = {'T'};
 
 /* Function for calculating payload size. */
 static u32_t nfc_text_rec_payload_size_get(
-	    struct nfc_text_rec_payload_desc const *nfc_rec_text_payload_desc)
+	    struct nfc_ndef_text_rec_payload const *nfc_rec_text_payload_desc)
 {
 	return (TEXT_REC_STATUS_SIZE +
 		nfc_rec_text_payload_desc->lang_code_len +
 		nfc_rec_text_payload_desc->data_len);
 }
 
-int nfc_text_rec_payload_constructor(
-		struct nfc_text_rec_payload_desc *nfc_rec_text_payload_desc,
+int nfc_ndef_text_rec_payload_encode(
+		struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc,
 		u8_t *buff,
 		u32_t *len)
 {

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef _NFC_URI_MSG_H__
-#define _NFC_URI_MSG_H__
+#ifndef NFC_NDEF_URI_MSG_H_
+#define NFC_NDEF_URI_MSG_H_
 
 /**@file
  *
@@ -17,8 +17,8 @@
  *
  */
 
-#include <nfc/ndef/nfc_ndef_msg.h>
-#include <nfc/ndef/nfc_uri_rec.h>
+#include <nfc/ndef/msg.h>
+#include <nfc/ndef/uri_rec.h>
 #include <zephyr/types.h>
 
 #ifdef __cplusplus
@@ -45,11 +45,11 @@ extern "C" {
  * @retval Other Other codes might be returned depending on the function
  * @ref nfc_ndef_msg_encode.
  */
-int nfc_uri_msg_encode(enum nfc_uri_id uri_id_code,
-		       u8_t const *const uri_data,
-		       u8_t uri_data_len,
-		       u8_t *buf,
-		       u32_t *len);
+int nfc_ndef_uri_msg_encode(enum nfc_ndef_uri_rec_id uri_id_code,
+			    u8_t const *const uri_data,
+			    u8_t uri_data_len,
+			    u8_t *buf,
+			    u32_t *len);
 
 /**
  * @}
@@ -59,4 +59,4 @@ int nfc_uri_msg_encode(enum nfc_uri_id uri_id_code,
 }
 #endif
 
-#endif /* _NFC_URI_MSG_H__ */
+#endif /* NFC_NDEF_URI_MSG_H */

@@ -6,9 +6,9 @@
 
 #include <string.h>
 #include <errno.h>
-#include <nfc/ndef/nfc_uri_rec.h>
+#include <nfc/ndef/uri_rec.h>
 
-const u8_t ndef_uri_record_type = 'U'; /**< URI Record type. */
+const u8_t nfc_ndef_uri_rec_type = 'U'; /**< URI Record type. */
 
 /**
  * @brief Function for constructing the payload for a URI record.
@@ -27,9 +27,9 @@ const u8_t ndef_uri_record_type = 'U'; /**< URI Record type. */
  * @return -ENOMEM If the predicted payload size is bigger than the provided
  * buffer space.
  */
-int nfc_uri_payload_constructor(struct uri_payload_desc *input,
-				u8_t *buff,
-				u32_t *len)
+int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input,
+				    u8_t *buff,
+				    u32_t *len)
 {
 	if (buff) {
 		/* Verify if there is enough available memory */

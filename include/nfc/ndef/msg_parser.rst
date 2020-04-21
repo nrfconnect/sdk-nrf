@@ -50,4 +50,3 @@ NFC NDEF record parser API
 .. doxygengroup:: nfc_ndef_record_parser
    :project: nrf
    :members:
-

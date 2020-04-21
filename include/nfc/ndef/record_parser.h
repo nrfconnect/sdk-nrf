@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 #include <zephyr/types.h>
-#include <nfc/ndef/nfc_ndef_record.h>
+#include <nfc/ndef/record.h>
 
 #ifdef __cplusplus
 extern "C" {

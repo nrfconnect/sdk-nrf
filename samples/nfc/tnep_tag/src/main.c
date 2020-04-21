@@ -12,8 +12,8 @@
 
 #include <nfc_t4t_lib.h>
 #include <nfc/tnep/tag.h>
-#include <nfc/ndef/nfc_ndef_msg.h>
-#include <nfc/ndef/nfc_text_rec.h>
+#include <nfc/ndef/msg.h>
+#include <nfc/ndef/text_rec.h>
 #include <logging/log.h>
 
 

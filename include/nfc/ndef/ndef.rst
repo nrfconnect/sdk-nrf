@@ -158,6 +158,6 @@ Currently, the following messages and records are supported:
    :maxdepth: 1
 
    le_oob_rec
-   nfc_text
-   nfc_uri
-   nfc_ndef
+   text_rec
+   uri_msg
+   msg

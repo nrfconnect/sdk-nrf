@@ -17,7 +17,7 @@
 #include <stdint.h>
 #include <zephyr/types.h>
 #include <nfc/ndef/record_parser.h>
-#include <nfc/ndef/nfc_ndef_msg.h>
+#include <nfc/ndef/msg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -101,5 +101,3 @@ void nfc_ndef_msg_printout(const struct nfc_ndef_msg_desc *msg_desc);
 #endif
 
 #endif /* NFC_NDEF_MSG_PARSER_H_ */
-
-
