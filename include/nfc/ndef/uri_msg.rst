@@ -7,7 +7,7 @@ URI messages contain exactly one URI record, which in turn contains an address t
 In the most typical use case, the URI record contains a web address like "http\://www.nordicsemi.com" that the polling device opens in a web browser.
 
 URI records consist of a URI field (the actual address) and a URI identifier that specifies the protocol of the URI and is prepended to the URI.
-See :cpp:enum:`nfc_uri_id` for the available protocols.
+See :cpp:enum:`nfc_ndef_uri_rec_id` for the available protocols.
 
 The :ref:`nfc_uri_record` module provides functions for creating the record, and the :ref:`nfc_uri_msg` module provides functions for creating and encoding the message.
 
@@ -29,7 +29,7 @@ As parameters, provide the URI identifier code (:cpp:member:`NFC_URI_HTTP_WWW` i
 
    int err;
 
-   err = nfc_uri_msg_encode( NFC_URI_HTTP_WWW,
+   err = nfc_ndef_uri_msg_encode( NFC_URI_HTTP_WWW,
                                    m_url,
                                    sizeof(m_url),
                                    m_ndef_msg_buf,
@@ -49,8 +49,8 @@ API documentation
 URI messages
 ============
 
-| Header file: :file:`include/nfc_uri_msg.h`
-| Source file: :file:`subsys/nfc/ndef/nfc_uri_msg.c`
+| Header file: :file:`include/nfc/ndef/uri_msg.h`
+| Source file: :file:`subsys/nfc/ndef/uri_msg.c`
 
 .. doxygengroup:: nfc_uri_msg
    :project: nrf
@@ -61,8 +61,8 @@ URI messages
 URI records
 ===========
 
-| Header file: :file:`include/nfc_uri_rec.h`
-| Source file: :file:`subsys/nfc/ndef/nfc_uri_rec.c`
+| Header file: :file:`include/nfc/ndef/uri_rec.h`
+| Source file: :file:`subsys/nfc/ndef/uri_rec.c`
 
 .. doxygengroup:: nfc_uri_rec
    :project: nrf

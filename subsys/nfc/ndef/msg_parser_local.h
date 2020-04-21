@@ -14,7 +14,7 @@
 
 #include <stdint.h>
 #include <zephyr/types.h>
-#include <nfc/ndef/nfc_ndef_msg.h>
+#include <nfc/ndef/msg.h>
 #include <nfc/ndef/record_parser.h>
 
 #ifdef __cplusplus

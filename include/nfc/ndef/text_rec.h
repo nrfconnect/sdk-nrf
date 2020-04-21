@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef _NFC_TEXT_REC_H__
-#define _NFC_TEXT_REC_H__
+#ifndef NFC_NDEF_TEXT_REC_H_
+#define NFC_NDEF_TEXT_REC_H_
 
 /**@file
  *
@@ -18,7 +18,7 @@
  */
 
 #include <zephyr/types.h>
-#include <nfc/ndef/nfc_ndef_record.h>
+#include <nfc/ndef/record.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,7 +29,7 @@ extern "C" {
  *
  * Values to specify the type of UTF for an NFC NDEF Text record.
  */
-enum nfc_text_rec_utf_type {
+enum nfc_ndef_text_rec_utf {
 	/** Unicode Transformation Format 8. */
 	UTF_8  = 0,
 	/** Unicode Transformation Format 16. */
@@ -39,9 +39,9 @@ enum nfc_text_rec_utf_type {
 /**
  * @brief Text record payload descriptor.
  */
-struct nfc_text_rec_payload_desc {
+struct nfc_ndef_text_rec_payload {
 	/** Type of the Unicode Transformation Format. */
-	enum nfc_text_rec_utf_type utf;
+	enum nfc_ndef_text_rec_utf utf;
 	/** Pointer to the IANA language code. */
 	u8_t const *lang_code;
 	/** Length of the IANA language code. */
@@ -64,24 +64,24 @@ struct nfc_text_rec_payload_desc {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_text_rec_payload_constructor(
-		struct nfc_text_rec_payload_desc *nfc_rec_text_payload_desc,
+int nfc_ndef_text_rec_payload_encode(
+		struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc,
 		u8_t *buff,
 		u32_t *len);
 
 /**
  * @brief External reference to the type field of the Text record, defined in
- * the file @c nfc_text_rec.c. It is used in the
+ * the file @c text_rec.c. It is used in the
  * @ref NFC_NDEF_TEXT_RECORD_DESC_DEF macro.
  */
-extern const u8_t nfc_text_rec_type_field[];
+extern const u8_t nfc_ndef_text_rec_type_field[];
 
 /**
  * @brief Size of the type field of the Text record, defined in the file
- * @c nfc_text_rec.c. It is used in the @ref NFC_NDEF_TEXT_RECORD_DESC_DEF
+ * @c text_rec.c. It is used in the @ref NFC_NDEF_TEXT_RECORD_DESC_DEF
  * macro.
  */
-#define NFC_TEXT_REC_TYPE_LENGTH 1
+#define NFC_NDEF_TEXT_REC_TYPE_LENGTH 1
 
 /**
  *@brief Macro for creating and initializing an NFC NDEF record descriptor for
@@ -89,7 +89,7 @@ extern const u8_t nfc_text_rec_type_field[];
  *
  * This macro creates and initializes an instance of type
  * @ref nfc_ndef_record_desc and an instance of type
- * @ref nfc_text_rec_payload_desc, which together constitute an instance of
+ * @ref nfc_ndef_text_rec_payload, which together constitute an instance of
  * a Text record.
  *
  * Use the macro @ref NFC_NDEF_TEXT_RECORD_DESC to access the NDEF Text record
@@ -108,7 +108,7 @@ extern const u8_t nfc_text_rec_type_field[];
 				      lang_code_len_arg,		      \
 				      data_arg,				      \
 				      data_len_arg)			      \
-	struct nfc_text_rec_payload_desc name##_nfc_text_rec_payload_desc =   \
+	struct nfc_ndef_text_rec_payload name##_nfc_ndef_text_rec_payload =   \
 	{								      \
 		.utf = utf_arg,						      \
 		.lang_code = lang_code_arg,				      \
@@ -120,10 +120,10 @@ extern const u8_t nfc_text_rec_type_field[];
 					 TNF_WELL_KNOWN,		      \
 					 0,				      \
 					 0,				      \
-					 nfc_text_rec_type_field,	      \
-					 NFC_TEXT_REC_TYPE_LENGTH,	      \
-					 nfc_text_rec_payload_constructor,    \
-					 &(name##_nfc_text_rec_payload_desc))
+					 nfc_ndef_text_rec_type_field,	      \
+					 NFC_NDEF_TEXT_REC_TYPE_LENGTH,	      \
+					 nfc_ndef_text_rec_payload_encode,    \
+					 &(name##_nfc_ndef_text_rec_payload))
 
 /**
  * @brief Macro for accessing the NFC NDEF Text record descriptor
@@ -137,4 +137,4 @@ extern const u8_t nfc_text_rec_type_field[];
 }
 #endif
 
-#endif /* _NFC_TEXT_REC_H__ */
+#endif /* NFC_NDEF_TEXT_REC_H_ */

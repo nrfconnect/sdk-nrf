@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <kernel.h>
 #include <nfc/tnep/tag.h>
-#include <nfc/ndef/nfc_ndef_msg.h>
+#include <nfc/ndef/msg.h>
 #include <nfc/ndef/msg_parser.h>
 #include <logging/log.h>
 

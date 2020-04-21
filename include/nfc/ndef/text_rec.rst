@@ -70,8 +70,8 @@ API documentation
 
 .. _nfc_text_record:
 
-| Header file: :file:`include/nfc_text_rec.h`
-| Source file: :file:`subsys/nfc/ndef/nfc_text_rec.c`
+| Header file: :file:`include/nfc/ndef/text_rec.h`
+| Source file: :file:`subsys/nfc/ndef/text_rec.c`
 
 .. doxygengroup:: nfc_text_rec
    :project: nrf

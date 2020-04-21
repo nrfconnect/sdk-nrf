@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef _NFC_URI_REC_H__
-#define _NFC_URI_REC_H__
+#ifndef NFC_NDEF_URI_REC_H_
+#define NFC_NDEF_URI_REC_H_
 
 /**@file
  *
@@ -18,18 +18,18 @@
  */
 #include <stddef.h>
 #include <zephyr/types.h>
-#include <nfc/ndef/nfc_ndef_record.h>
+#include <nfc/ndef/record.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * @enum nfc_uri_id
+ * @enum nfc_ndef_uri_rec_id
  * @brief URI identifier codes according to "URI Record Type Definition"
  * (denotation "NFCForum-TS-RTD_URI_1.0" published on 2006-07-24) chapter 3.2.2.
  */
-enum nfc_uri_id {
+enum nfc_ndef_uri_rec_id {
 	NFC_URI_NONE          = 0x00,	/**< No prepending is done. */
 	NFC_URI_HTTP_WWW      = 0x01,	/**< "http://www." */
 	NFC_URI_HTTPS_WWW     = 0x02,	/**< "https://www." */
@@ -74,9 +74,9 @@ enum nfc_uri_id {
 /**
  * @brief Type of description of the payload of a URI record.
  */
-struct uri_payload_desc {
+struct nfc_ndef_uri_rec_payload {
 	/** URI identifier code. */
-	enum nfc_uri_id uri_id_code;
+	enum nfc_ndef_uri_rec_id uri_id_code;
 	/** Pointer to a URI string. */
 	u8_t const *uri_data;
 	/** Length of the URI string. */
@@ -85,10 +85,10 @@ struct uri_payload_desc {
 
 /**
  * @brief External reference to the type field of the URI record, defined in the
- * file @c nfc_uri_rec.c. It is used in the @ref NFC_NDEF_URI_RECORD_DESC_DEF
+ * file @c uri_rec.c. It is used in the @ref NFC_NDEF_URI_RECORD_DESC_DEF
  * macro.
  */
-extern const u8_t ndef_uri_record_type;
+extern const u8_t nfc_ndef_uri_rec_type;
 
 /**
  * @brief Construct the payload for a URI record.
@@ -106,9 +106,9 @@ extern const u8_t ndef_uri_record_type;
  * @retval -ENOMEM If the predicted payload size is bigger than the provided
  * buffer space.
  */
-int nfc_uri_payload_constructor(struct uri_payload_desc *input,
-				u8_t *buff,
-				u32_t *len);
+int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input,
+				    u8_t *buff,
+				    u32_t *len);
 
 /** @brief Macro for generating a description of a URI record.
  *
@@ -116,8 +116,8 @@ int nfc_uri_payload_constructor(struct uri_payload_desc *input,
  * URI record.
  *
  * @note The record descriptor is declared as automatic variable, which implies
- * that the NDEF message encoding (see @ref nfc_uri_msg_encode) must be done
- * in the same variable scope.
+ * that the NDEF message encoding (see @ref nfc_ndef_uri_msg_encode) must be
+ * done in the same variable scope.
  *
  * @param name Name for accessing record descriptor.
  * @param uri_id_code_arg URI identifier code that defines the protocol field
@@ -130,7 +130,7 @@ int nfc_uri_payload_constructor(struct uri_payload_desc *input,
 				     uri_id_code_arg,			       \
 				     uri_data_arg,			       \
 				     uri_data_len_arg)			       \
-	struct uri_payload_desc name##_ndef_uri_record_payload_desc =	       \
+	struct nfc_ndef_uri_rec_payload name##_ndef_uri_record_payload_desc =  \
 	{								       \
 		.uri_id_code = (uri_id_code_arg),			       \
 		.uri_data = (uri_data_arg),				       \
@@ -141,9 +141,9 @@ int nfc_uri_payload_constructor(struct uri_payload_desc *input,
 					 TNF_WELL_KNOWN,		       \
 					 NULL,				       \
 					 0,				       \
-					 &ndef_uri_record_type,		       \
-					 sizeof(ndef_uri_record_type),	       \
-					 nfc_uri_payload_constructor,	       \
+					 &nfc_ndef_uri_rec_type,	       \
+					 sizeof(nfc_ndef_uri_rec_type),	       \
+					 nfc_ndef_uri_rec_payload_encode,      \
 					 &name##_ndef_uri_record_payload_desc) \
 
 /**
@@ -158,4 +158,4 @@ int nfc_uri_payload_constructor(struct uri_payload_desc *input,
 }
 #endif
 
-#endif /* _NFC_URI_REC_H__ */
+#endif /* NFC_NDEF_URI_REC_H_ */

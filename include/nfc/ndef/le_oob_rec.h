@@ -18,7 +18,7 @@
  */
 #include <stddef.h>
 #include <zephyr/types.h>
-#include <nfc/ndef/nfc_ndef_record.h>
+#include <nfc/ndef/record.h>
 #include <nfc/ndef/payload_type_common.h>
 #include <bluetooth/bluetooth.h>
 

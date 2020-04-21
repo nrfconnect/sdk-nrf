@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef _NFC_NDEF_RECORD_H__
-#define _NFC_NDEF_RECORD_H__
+#ifndef NFC_NDEF_RECORD_H_
+#define NFC_NDEF_RECORD_H_
 
 #include <zephyr/types.h>
 
@@ -291,4 +291,4 @@ int nfc_ndef_bin_payload_memcopy(
 }
 #endif
 
-#endif /* _NFC_NDEF_RECORD_H__ */
+#endif /* NFC_NDEF_RECORD_H_ */

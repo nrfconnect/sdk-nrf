@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
-#ifndef _NFC_NDEF_MSG_H__
-#define _NFC_NDEF_MSG_H__
+#ifndef NFC_NDEF_MSG_H_
+#define NFC_NDEF_MSG_H_
 
 #include <zephyr/types.h>
-#include <nfc/ndef/nfc_ndef_record.h>
+#include <nfc/ndef/record.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -172,4 +172,4 @@ int nfc_ndef_msg_record_add(struct nfc_ndef_msg_desc *msg,
 }
 #endif
 
-#endif /* _NFC_NDEF_MSG_H__*/
+#endif /* NFC_NDEF_MSG_H_*/
