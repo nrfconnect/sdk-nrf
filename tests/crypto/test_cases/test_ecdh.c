@@ -116,23 +116,23 @@ void exec_test_case_ecdh_random(void)
 	err_code_initiator =
 		mbedtls_ecdh_gen_public(&initiator_ctx.grp, &initiator_ctx.d,
 					&initiator_ctx.Q,
-					mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+					drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code_initiator);
 
 	err_code_responder =
 		mbedtls_ecdh_gen_public(&responder_ctx.grp, &responder_ctx.d,
 					&responder_ctx.Q,
-					mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+					drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code_responder);
 
 	start_time_measurement();
 
 	err_code_initiator = mbedtls_ecdh_compute_shared(
 		&initiator_ctx.grp, &initiator_ctx.z, &responder_ctx.Q,
-		&initiator_ctx.d, mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+		&initiator_ctx.d, drbg_random, &drbg_ctx);
 	err_code_responder = mbedtls_ecdh_compute_shared(
 		&responder_ctx.grp, &responder_ctx.z, &initiator_ctx.Q,
-		&responder_ctx.d, mbedtls_ctr_drbg_random, &ctr_drbg_ctx);
+		&responder_ctx.d, drbg_random, &drbg_ctx);
 
 	stop_time_measurement();
 
