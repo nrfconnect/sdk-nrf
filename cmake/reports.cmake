@@ -11,10 +11,10 @@ set(pm_depends
   "$<$<TARGET_EXISTS:partition_manager>:$<TARGET_PROPERTY:partition_manager,PM_DEPENDS>>")
 
 # The script executed by this command will exit immediately if the
-# '--quiet' argument is proveded. This way, it is valid to pass empty
+# '--quiet' argument is provided. This way, it is valid to pass empty
 # values for the other arguments. We need this hack since the partition
 # manager target is created at the end of the configure stage, so we can
-# not know at whis point whether or not it exist.
+# not know at which point whether or not it exist.
 add_custom_target(
   partition_manager_report
   COMMAND
@@ -24,6 +24,7 @@ add_custom_target(
   "$<$<NOT:$<TARGET_EXISTS:partition_manager>>:--quiet>"
   DEPENDS
   ${pm_depends}
+  COMMAND_EXPAND_LISTS
   )
 
 set_property(TARGET zephyr_property_target
