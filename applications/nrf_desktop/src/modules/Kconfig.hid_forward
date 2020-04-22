@@ -13,6 +13,34 @@ config DESKTOP_HID_FORWARD_ENABLE
 	help
 	  This option enables HID over GATT Client.
 
+config DESKTOP_HID_FORWARD_LOW_LATENCY_TIMEOUT
+	int "Low connection latency timeout [s]"
+	range 2 3600
+	default 5
+	depends on DESKTOP_HID_FORWARD_ENABLE
+	help
+	  This option specifies the peripheral inactivity period after which
+	  the connection latency for the peripheral will be increased.
+	  A peripheral is considered active when it exchanges data through the
+	  configuration channel or right after connection is established.
+	  The connection latency is increased to reduce power consumption of
+	  the peripheral.
+
+	  If the DESKTOP_HID_FORWARD_LOW_LATENCY_ON_HID_INPUT option
+	  is enabled, a LLPM peripheral is considered active also when it
+	  provides HID input reports. This does not affect non-LLPM peripherals.
+
+config DESKTOP_HID_FORWARD_LOW_LATENCY_ON_HID_INPUT
+	bool "Keep the LLPM connection latency low also on user input"
+	depends on DESKTOP_HID_FORWARD_ENABLE
+	depends on BT_LL_NRFXLIB
+	help
+	  When this option is selected, the connection latency is kept low
+	  for the LLPM peripheral also when it provides HID input reports. This
+	  speeds up sending first HID report after not sending a report for some
+	  connection intervals. Enabling this option increases the power
+	  consumption of the connected LLPM peripherals.
+
 if DESKTOP_HID_FORWARD_ENABLE
 
 module = DESKTOP_HID_FORWARD

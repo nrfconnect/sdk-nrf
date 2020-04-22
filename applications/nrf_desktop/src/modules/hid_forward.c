@@ -30,13 +30,23 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
-#define LATENCY_LOW		0
-#define LATENCY_DEFAULT		99
+#define CONN_INTERVAL_LLPM_US		1000   /* 1 ms */
+#define CONN_INTERVAL_BLE		0x0006 /* 7.5 ms */
+#define CONN_LATENCY_LOW		0
+#define CONN_LATENCY_DEFAULT		99
+#define CONN_SUPERVISION_TIMEOUT	400
 
-#define FORWARD_TIMEOUT		K_SECONDS(5)
-#define FORWARD_WORK_DELAY	K_SECONDS(1)
+#define LOW_LATENCY_TIMEOUT            K_SECONDS(CONFIG_DESKTOP_HID_FORWARD_LOW_LATENCY_TIMEOUT)
+#define CONN_PARAMS_ERROR_TIMEOUT      K_MSEC(5)
 
 #define MAX_ENQUEUED_ITEMS	5
+#define INVALID_SUB_IDX		UCHAR_MAX
+
+enum {
+	CONN_LOW_LATENCY_ENABLED	= BIT(0),
+	CONN_LOW_LATENCY_REQUIRED	= BIT(1),
+	CONN_PARAMS_ERROR		= BIT(2)
+};
 
 struct enqueued_event_item {
 	sys_snode_t node;
@@ -46,10 +56,10 @@ struct enqueued_event_item {
 struct hids_subscriber {
 	struct bt_gatt_hids_c hidc;
 	u16_t pid;
-	u32_t timestamp;
+	u8_t conn_state;
+	bool llpm_support;
+	struct k_delayed_work timeout;
 };
-
-static struct k_delayed_work config_fwd_timeout;
 
 static struct hids_subscriber subscribers[CONFIG_BT_MAX_CONN];
 static const void *usb_id;
@@ -60,128 +70,150 @@ static void *channel_id;
 
 static sys_slist_t enqueued_event_list;
 static size_t enqueued_event_count;
+static u8_t rep_id_2_sub_idx[REPORT_ID_COUNT];
 
 static struct k_spinlock lock;
 
 
-static int nrfxlib_vs_conn_latency_update(struct bt_conn *conn, u16_t latency)
+static u8_t find_subscriber_idx_hidc(struct bt_gatt_hids_c *hidc)
 {
+	BUILD_ASSERT(ARRAY_SIZE(subscribers) < UCHAR_MAX);
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		if (&subscribers[i].hidc == hidc) {
+			return (u8_t)i;
+		}
+	}
+	return INVALID_SUB_IDX;
+}
+
+static struct hids_subscriber *find_subscriber_pid(u16_t pid)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		if (subscribers[i].pid == pid) {
+			return &subscribers[i];
+		}
+	}
+	return NULL;
+}
+
+static int set_conn_params(struct bt_conn *conn, u16_t conn_latency,
+			   bool peer_llpm_support)
+{
+	int err;
+
 #ifdef CONFIG_BT_LL_NRFXLIB
-	struct net_buf *buf;
-	hci_vs_cmd_conn_update_t *cmd_conn_update;
+	if (peer_llpm_support) {
+		struct net_buf *buf;
 
-	buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
-				sizeof(*cmd_conn_update));
-	if (!buf) {
-		LOG_ERR("Could not allocate command buffer");
-		return -ENOBUFS;
-	}
+		hci_vs_cmd_conn_update_t *cmd_conn_update;
 
-	u16_t conn_handle;
+		buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
+					sizeof(*cmd_conn_update));
+		if (!buf) {
+			LOG_ERR("Could not allocate command buffer");
+			return -ENOBUFS;
+		}
 
-	int err = bt_hci_get_conn_handle(conn, &conn_handle);
+		u16_t conn_handle;
 
-	if (err) {
-		LOG_ERR("Failed obtaining conn_handle (err %d)", err);
-		return err;
-	}
+		err = bt_hci_get_conn_handle(conn, &conn_handle);
+		if (err) {
+			LOG_ERR("Failed obtaining conn_handle (err:%d)", err);
+			return err;
+		}
 
-	cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
+		cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
+		cmd_conn_update->connection_handle   = conn_handle;
+		cmd_conn_update->conn_interval_us    = CONN_INTERVAL_LLPM_US;
+		cmd_conn_update->conn_latency        = conn_latency;
+		cmd_conn_update->supervision_timeout = CONN_SUPERVISION_TIMEOUT;
 
-	cmd_conn_update->connection_handle   = conn_handle;
-	cmd_conn_update->conn_interval_us    = 1000;
-	cmd_conn_update->conn_latency        = latency;
-	cmd_conn_update->supervision_timeout = 400;
-
-	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf, NULL);
-
-	return err;
-#else
-	return 0;
+		err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf,
+					   NULL);
+	} else
 #endif /* CONFIG_BT_LL_NRFXLIB */
-}
+	{
+		struct bt_le_conn_param param = {
+			.interval_min = CONN_INTERVAL_BLE,
+			.interval_max = CONN_INTERVAL_BLE,
+			.latency = conn_latency,
+			.timeout = CONN_SUPERVISION_TIMEOUT,
+		};
 
-static int change_connection_latency(struct hids_subscriber *subscriber, u16_t latency)
-{
-	__ASSERT_NO_MSG(subscriber != NULL);
+		err = bt_conn_le_param_update(conn, &param);
 
-	struct bt_conn *conn = bt_gatt_hids_c_conn(&subscriber->hidc);
-
-	if (!conn) {
-		LOG_WRN("There is no connection for a HIDS subscriber: %"
-			PRIx16, subscriber->pid);
-		return -ENXIO;
-	}
-
-	struct bt_conn_info info;
-	int err = bt_conn_get_info(conn, &info);
-
-	if (err) {
-		LOG_WRN("Cannot get conn info (%d)", err);
-		return err;
-	}
-
-	__ASSERT_NO_MSG(info.role == BT_CONN_ROLE_MASTER);
-
-	const struct bt_le_conn_param param = {
-		.interval_min = info.le.interval,
-		.interval_max = info.le.interval,
-		.latency = latency,
-		.timeout = info.le.timeout
-	};
-
-	err = bt_conn_le_param_update(conn, &param);
-	if (err == -EALREADY) {
-		LOG_INF("Slave latency already changed");
-		err = 0;
-	} else if (err == -EINVAL) {
-		/* LLPM connection interval is not supported by
-		 * bt_conn_le_param_update function.
-		 */
-		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_LL_NRFXLIB));
-		LOG_INF("Use vendor specific HCI command");
-		err = nrfxlib_vs_conn_latency_update(conn, latency);
-	}
-
-	if (err) {
-		LOG_WRN("Cannot update parameters (%d)", err);
-	} else {
-		LOG_INF("BLE latency changed to: %"PRIu16, latency);
-	}
-
-	return err;
-}
-
-static void forward_config_timeout(struct k_work *work_desc)
-{
-	__ASSERT_NO_MSG(work_desc != NULL);
-
-	u32_t cur_time = k_uptime_get_32();
-	bool forward_is_pending = false;
-	int err = 0;
-
-	for (size_t idx = 0; idx < ARRAY_SIZE(subscribers); idx++) {
-		if ((subscribers[idx].timestamp != 0) &&
-		    (bt_gatt_hids_c_assign_check(&subscribers[idx].hidc))) {
-			if ((cur_time - subscribers[idx].timestamp) > FORWARD_TIMEOUT) {
-				LOG_WRN("Configuration forward timed out");
-
-				err = change_connection_latency(&subscribers[idx], LATENCY_DEFAULT);
-				if (err) {
-					LOG_WRN("Can't set latency to default");
-					continue;
-				}
-
-				subscribers[idx].timestamp = 0;
-			} else {
-				forward_is_pending = true;
-			}
+		if (err == -EALREADY) {
+			/* Connection parameters are already set. */
+			err = 0;
 		}
 	}
 
-	if (forward_is_pending) {
-		k_delayed_work_submit(&config_fwd_timeout, FORWARD_WORK_DELAY);
+	return err;
+}
+
+static int update_subscriber_conn_params(struct hids_subscriber *sub)
+{
+	__ASSERT_NO_MSG(sub != NULL);
+	struct bt_conn *conn = bt_gatt_hids_c_conn(&sub->hidc);
+
+	__ASSERT_NO_MSG(conn);
+	u16_t latency = (sub->conn_state & CONN_LOW_LATENCY_REQUIRED) ?
+			CONN_LATENCY_LOW : CONN_LATENCY_DEFAULT;
+	int err = set_conn_params(conn, latency, sub->llpm_support);
+
+	if (err) {
+		LOG_WRN("Cannot update suscriber %" PRIx16 " conn parameters"
+			"(err:%d)", sub->pid, err);
+		sub->conn_state |= CONN_PARAMS_ERROR;
+		/* Retry to update the connection parameters after an error. */
+		k_delayed_work_submit(&sub->timeout, CONN_PARAMS_ERROR_TIMEOUT);
+	} else {
+		LOG_INF("Conn parms for %"PRIx16 " set: %s, latency: %"PRIu16,
+			sub->pid, sub->llpm_support ? "LLPM" : "BLE", latency);
+		sub->conn_state &= ~CONN_PARAMS_ERROR;
+
+		if (latency == CONN_LATENCY_LOW) {
+			sub->conn_state |= CONN_LOW_LATENCY_ENABLED;
+			sub->conn_state &= ~CONN_LOW_LATENCY_REQUIRED;
+			k_delayed_work_submit(&sub->timeout,
+					      LOW_LATENCY_TIMEOUT);
+		} else {
+			sub->conn_state &= ~CONN_LOW_LATENCY_ENABLED;
+			k_delayed_work_cancel(&sub->timeout);
+		}
 	}
+
+	return err;
+}
+
+static void peripheral_timeout_fn(struct k_work *work_desc)
+{
+	__ASSERT_NO_MSG(work_desc != NULL);
+
+	struct hids_subscriber *sub = CONTAINER_OF(work_desc,
+						   struct hids_subscriber,
+						   timeout);
+
+	if (!(sub->conn_state & CONN_PARAMS_ERROR) &&
+	    (sub->conn_state & CONN_LOW_LATENCY_REQUIRED)) {
+		__ASSERT_NO_MSG(sub->conn_state & CONN_LOW_LATENCY_ENABLED);
+		sub->conn_state &= ~CONN_LOW_LATENCY_REQUIRED;
+		k_delayed_work_submit(&sub->timeout, LOW_LATENCY_TIMEOUT);
+	} else {
+		update_subscriber_conn_params(sub);
+	}
+}
+
+static int switch_to_low_latency(struct hids_subscriber *sub)
+{
+	int err = 0;
+
+	sub->conn_state |= CONN_LOW_LATENCY_REQUIRED;
+	if (unlikely(!(sub->conn_state & CONN_LOW_LATENCY_ENABLED))) {
+		err = update_subscriber_conn_params(sub);
+	}
+
+	return err;
 }
 
 static void enqueue_hid_event(struct hid_report_event *event)
@@ -263,10 +295,12 @@ static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 static void hidc_ready(struct bt_gatt_hids_c *hids_c)
 {
 	struct bt_gatt_hids_c_rep_info *rep = NULL;
+	u8_t sub_idx = find_subscriber_idx_hidc(hids_c);
 
 	while (NULL != (rep = bt_gatt_hids_c_rep_next(hids_c, rep))) {
 		if (bt_gatt_hids_c_rep_type(rep) ==
 		    BT_GATT_HIDS_REPORT_TYPE_INPUT) {
+
 			int err = bt_gatt_hids_c_rep_subscribe(hids_c,
 							       rep,
 							       hidc_read);
@@ -275,8 +309,18 @@ static void hidc_ready(struct bt_gatt_hids_c *hids_c)
 				LOG_ERR("Cannot subscribe to report (err:%d)",
 					err);
 			} else {
-				LOG_INF("Subscriber to rep id:%d",
-					bt_gatt_hids_c_rep_id(rep));
+				u8_t report_id = bt_gatt_hids_c_rep_id(rep);
+
+				LOG_INF("Subscriber to rep id:%d", report_id);
+				if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_LOW_LATENCY_ON_HID_INPUT)) {
+					/* Application assumes that only one
+					 * subscriber provides HID input report
+					 * with given ID.
+					 */
+					__ASSERT_NO_MSG(rep_id_2_sub_idx[report_id] ==
+							INVALID_SUB_IDX);
+					rep_id_2_sub_idx[report_id] = sub_idx;
+				}
 			}
 		}
 	}
@@ -294,6 +338,13 @@ static void hidc_prep_error(struct bt_gatt_hids_c *hids_c, int err)
 	}
 }
 
+static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
+{
+	LOG_INF("Reject connection parameter update request");
+
+	return false;
+}
+
 static void init(void)
 {
 	static const struct bt_gatt_hids_c_init_params params = {
@@ -304,28 +355,47 @@ static void init(void)
 
 	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 		bt_gatt_hids_c_init(&subscribers[i].hidc, &params);
+		k_delayed_work_init(&subscribers[i].timeout,
+				    peripheral_timeout_fn);
 	}
 	sys_slist_init(&enqueued_event_list);
 
-	k_delayed_work_init(&config_fwd_timeout, forward_config_timeout);
+	static struct bt_conn_cb conn_callbacks = {
+		.le_param_req = le_param_req,
+	};
+
+	bt_conn_cb_register(&conn_callbacks);
+
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_LOW_LATENCY_ON_HID_INPUT)) {
+		for (size_t i = 0; i < ARRAY_SIZE(rep_id_2_sub_idx); i++) {
+			rep_id_2_sub_idx[i] = INVALID_SUB_IDX;
+		}
+	}
 }
 
-static int register_subscriber(struct bt_gatt_dm *dm, u16_t pid)
+static int register_subscriber(struct bt_gatt_dm *dm, u16_t pid,
+			       bool peer_llpm_support)
 {
-	size_t i;
-	for (i = 0; i < ARRAY_SIZE(subscribers); i++) {
+	struct hids_subscriber *new_sub = NULL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 		if (!bt_gatt_hids_c_assign_check(&subscribers[i].hidc)) {
+			new_sub = &subscribers[i];
 			break;
 		}
 	}
-	__ASSERT_NO_MSG(i < ARRAY_SIZE(subscribers));
+	__ASSERT_NO_MSG(new_sub != NULL);
 
-	subscribers[i].pid = pid;
-	int err = bt_gatt_hids_c_handles_assign(dm, &subscribers[i].hidc);
+	new_sub->pid = pid;
+	new_sub->llpm_support = peer_llpm_support;
+	int err = bt_gatt_hids_c_handles_assign(dm, &new_sub->hidc);
 
 	if (err) {
 		LOG_ERR("Cannot assign handles (err:%d)", err);
 	}
+
+	new_sub->conn_state |= CONN_LOW_LATENCY_REQUIRED;
+	update_subscriber_conn_params(new_sub);
 
 	return err;
 }
@@ -392,43 +462,9 @@ static u8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 	return 0;
 }
 
-static struct hids_subscriber *find_subscriber_hidc(u16_t pid)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
-		if (subscribers[i].pid == pid) {
-			return &subscribers[i];
-		}
-	}
-	return NULL;
-}
-
-static int switch_to_low_latency(struct hids_subscriber *subscriber)
-{
-	int err = 0;
-
-	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
-		if (subscriber->timestamp == 0) {
-			LOG_INF("DFU next forward");
-			err = change_connection_latency(subscriber, LATENCY_LOW);
-			if (err) {
-				LOG_WRN("Error while change of connection parameters");
-				return err;
-			}
-		}
-		subscriber->timestamp = k_uptime_get_32();
-
-		if (!k_delayed_work_remaining_get(&config_fwd_timeout)) {
-			k_delayed_work_submit(&config_fwd_timeout,
-					      FORWARD_WORK_DELAY);
-		}
-	}
-
-	return err;
-}
-
 static void handle_config_forward(const struct config_forward_event *event)
 {
-	struct hids_subscriber *subscriber = find_subscriber_hidc(event->recipient);
+	struct hids_subscriber *subscriber = find_subscriber_pid(event->recipient);
 
 	if (!subscriber) {
 		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
@@ -513,7 +549,7 @@ static void handle_config_forward(const struct config_forward_event *event)
 static void handle_config_forward_get(const struct config_forward_get_event *event)
 {
 	struct hids_subscriber *subscriber =
-		find_subscriber_hidc(event->recipient);
+		find_subscriber_pid(event->recipient);
 
 	if (!subscriber) {
 		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
@@ -589,12 +625,17 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 			memset(empty_data, 0, sizeof(empty_data));
 
 			forward_hid_report(report_id, empty_data, size);
+			if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_LOW_LATENCY_ON_HID_INPUT)) {
+				rep_id_2_sub_idx[report_id] = INVALID_SUB_IDX;
+			}
 		}
 	}
 
 	bt_gatt_hids_c_release(&subscriber->hidc);
 	subscriber->pid = 0;
-	subscriber->timestamp = 0;
+	subscriber->conn_state = 0;
+	subscriber->llpm_support = false;
+	k_delayed_work_cancel(&subscriber->timeout);
 }
 
 static void clear_state(void)
@@ -651,6 +692,17 @@ static bool event_handler(const struct event_header *eh)
 
 		k_free(item);
 
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_LOW_LATENCY_ON_HID_INPUT)) {
+			const struct hid_report_sent_event *event =
+				cast_hid_report_sent_event(eh);
+			u8_t sub_idx = rep_id_2_sub_idx[event->report_id];
+
+			if (sub_idx != INVALID_SUB_IDX &&
+			    subscribers[sub_idx].llpm_support) {
+				switch_to_low_latency(&subscribers[sub_idx]);
+			}
+		}
+
 		return false;
 	}
 
@@ -676,7 +728,8 @@ static bool event_handler(const struct event_header *eh)
 		const struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(eh);
 
-		register_subscriber(event->dm, event->pid);
+		register_subscriber(event->dm, event->pid,
+				    event->peer_llpm_support);
 
 		return false;
 	}
