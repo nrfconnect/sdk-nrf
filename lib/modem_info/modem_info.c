@@ -106,6 +106,8 @@ LOG_MODULE_REGISTER(modem_info);
 
 #define ICCID_PARAM_INDEX	3
 #define ICCID_PARAM_COUNT	4
+#define ICCID_LEN		20
+#define ICCID_PAD_CHAR		'F'
 
 #define LTE_MODE_PARAM_INDEX	1
 #define NBIOT_MODE_PARAM_INDEX	2
@@ -491,6 +493,13 @@ int modem_info_string_get(enum modem_info info, char *buf)
 
 	if (info == MODEM_INFO_ICCID) {
 		flip_iccid_string(buf);
+
+		/* Remove padding char from 19 digit (18+1) ICCIDs */
+		if ((len == ICCID_LEN) &&
+		   (buf[len - 1] == ICCID_PAD_CHAR)) {
+			buf[len - 1] = '\0';
+			--len;
+		}
 	}
 
 	return len <= 0 ? -ENOTSUP : len;
