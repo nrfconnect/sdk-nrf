@@ -41,6 +41,7 @@ function(test_runner_generate test_file_path)
   add_custom_command(
     COMMAND ${RUBY_EXECUTABLE}
     ${CMOCK_DIR}/vendor/unity/auto/generate_test_runner.rb
+    --main_name=unity_main
     ${test_file_path} ${output_file}
     DEPENDS ${test_file_path}
     OUTPUT ${output_file}
