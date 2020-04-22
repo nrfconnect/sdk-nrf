@@ -23,7 +23,7 @@ endif
 config FPROTECT_BLOCK_SIZE
 	hex
 	default NRF_SPU_FLASH_REGION_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
-	default $(dt_hex_val,DT_SOC_NV_FLASH_1000000_ERASE_BLOCK_SIZE) if SOC_NRF5340_CPUNET
-	default $(dt_hex_val,DT_SOC_NV_FLASH_0_ERASE_BLOCK_SIZE)
+	default $(dt_node_int_prop_hex,/flash-controller@41080000/flash@1000000,erase-block-size) if SOC_NRF5340_CPUNET
+	default $(dt_node_int_prop_hex,/soc/flash-controller@4001e000/flash@0,erase-block-size) if SOC_SERIES_NRF52X || SOC_SERIES_NRF51X
 	help
 	  Block size of fprotect
