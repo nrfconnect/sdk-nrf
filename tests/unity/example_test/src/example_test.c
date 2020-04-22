@@ -37,3 +37,14 @@ void test_uut_init_with_param_check(void)
 	err = uut_init(NULL);
 	TEST_ASSERT_EQUAL(-1, err);
 }
+
+/* It is required to be added to each test. That is because unity is using
+ * different main signature (returns int) and zephyr expects main which does
+ * not return value.
+ */
+extern int unity_main(void);
+
+void main(void)
+{
+	(void)unity_main();
+}
