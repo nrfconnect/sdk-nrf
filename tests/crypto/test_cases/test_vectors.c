@@ -23,8 +23,7 @@
  *  cmake -GNinja -DBOARD=nrf52840_pca10056 -DREDUCED_TEST_SUITE=1 ..
  */
 
-#if defined(CONFIG_MBEDTLS_AES_C)
-#if defined(CONFIG_MBEDTLS_CCM_C)
+#if defined(MBEDTLS_CCM_C)
 
 /* AES CCM - Custom test vector 1 - Invalid behavior test for AES plaintext and AD. */
 ITEM_REGISTER(test_vector_aead_ccm_data,
@@ -84,7 +83,64 @@ ITEM_REGISTER(test_vector_aead_ccm_simple_data,
 	.p_mac = "27e8d12cfdf926e0"
 };
 
-#endif
+/* AES CCM STAR - Custom Test vector. */
+ITEM_REGISTER(test_vector_aead_ccm_simple_data,
+	      test_vector_aead_t test_vector_aes_ccm_star_128_inv_c7) = {
+	.mode = MBEDTLS_MODE_CCM,
+	.id = MBEDTLS_CIPHER_ID_AES,
+	.ccm_star = true,
+	.expected_err_code = MBEDTLS_ERR_CCM_AUTH_FAILED,
+	.crypt_expected_result = EXPECTED_TO_FAIL,
+	.mac_expected_result = EXPECTED_TO_PASS,
+	.direction = MBEDTLS_DECRYPT,
+	.p_test_vector_name = TV_NAME("CCM STAR 128 Decrypt Invalid ciphertext"),
+	.p_plaintext = "34cb14f841ef56495779d46b21978724",
+	.p_ciphertext = "a6b87289284ed8779e98a5bf55d16f00",
+	.p_key = "d1fa7145ecd7a327ca3a8b58cd1147e6",
+	.p_ad = "04ebed593e86388a",
+	.p_nonce = "01f04f8873ea675d98a43a4e06",
+	.p_mac = "a3fd8b8dae862dc5"
+};
+
+/* AES CCM STAR - Custom Test vector. */
+ITEM_REGISTER(test_vector_aead_ccm_simple_data,
+	      test_vector_aead_t test_vector_aes_ccm_star_128_inv_c5) = {
+	.mode = MBEDTLS_MODE_CCM,
+	.id = MBEDTLS_CIPHER_ID_AES,
+	.ccm_star = true,
+	.expected_err_code = MBEDTLS_ERR_CCM_AUTH_FAILED,
+	.crypt_expected_result = EXPECTED_TO_FAIL,
+	.mac_expected_result = EXPECTED_TO_FAIL,
+	.direction = MBEDTLS_DECRYPT,
+	.p_test_vector_name =
+		TV_NAME("CCM STAR 128 Decrypt with invalid AES key"),
+	.p_plaintext = "34cb14f841ef56495779d46b21978724",
+	.p_ciphertext = "96b87289284ed8779e98a5bf55d16f00",
+	.p_key = "e1fa7145ecd7a327ca3a8b58cd1147e6",
+	.p_ad = "04ebed593e86388a",
+	.p_nonce = "01f04f8873ea675d98a43a4e06",
+	.p_mac = "a3fd8b8dae862dc5"
+};
+
+/* AES CCM STAR - Custom Test vector. */
+ITEM_REGISTER(test_vector_aead_ccm_simple_data,
+	      test_vector_aead_t test_vector_aes_ccm_star_128_inv_c6) = {
+	.mode = MBEDTLS_MODE_CCM,
+	.id = MBEDTLS_CIPHER_ID_AES,
+	.ccm_star = true,
+	.expected_err_code = MBEDTLS_ERR_CCM_AUTH_FAILED,
+	.crypt_expected_result = EXPECTED_TO_FAIL,
+	.mac_expected_result = EXPECTED_TO_FAIL,
+	.direction = MBEDTLS_DECRYPT,
+	.p_test_vector_name = TV_NAME("CCM STAR 128 Decrypt Invalid MAC"),
+	.p_plaintext = "34cb14f841ef56495779d46b21978724",
+	.p_ciphertext = "96b87289284ed8779e98a5bf55d16f00",
+	.p_key = "d1fa7145ecd7a327ca3a8b58cd1147e6",
+	.p_ad = "04ebed593e86388a",
+	.p_nonce = "01f04f8873ea675d98a43a4e06",
+	.p_mac = "b3fd8b8dae862dc5"
+};
+
 #endif
 
 #if defined(CONFIG_MBEDTLS_CHACHAPOLY_C)

@@ -47,8 +47,8 @@ zephyr_sources_ifdef(CONFIG_MBEDTLS_SHA256_C        test_vectors_hmac.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_SHA256_C        test_vectors_sha_256.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_SHA512_C        test_vectors_sha_512.c)
 
-# This is set differently based on backend (hw_sw sets first, hw or sw isolated sets the second)
-if(CONFIG_MBEDTLS_CIPHER_AES_256_CCM_C OR CONFIG_MBEDTLS_CCM_C)
+# This is set differently based on backend
+if(CONFIG_CC310_MBEDTLS_CCM_C OR CONFIG_VANILLA_MBEDTLS_CCM_C OR CONFIG_MBEDTLS_CCM_C)
 zephyr_sources(                                     test_vectors_aead_ccm.c)
 endif()
 
