@@ -15,7 +15,7 @@
 #include "selector_event.h"
 #include "power_event.h"
 
-#define MODULE selector_hw
+#define MODULE selector
 #include "module_state_event.h"
 
 #include <logging/log.h>
