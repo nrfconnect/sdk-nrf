@@ -46,7 +46,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: fw-nrfconnect-zephyr
-      revision: 13dc96f83bab742cab9e08c2a3cd71aa8e75e9ad
+      revision: 479376885055ead099592d0bc0c0d939971d904a
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -62,6 +62,7 @@ manifest:
         name-whitelist:
           - canopennode
           - ci-tools
+          - cmsis
           - civetweb
           - edtt
           - fatfs
@@ -79,6 +80,7 @@ manifest:
           - openthread
           - segger
           - tinycbor
+          - tinycrypt
 
     # NCS repositories.
     #
@@ -86,11 +88,11 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: 8a6e16ec79845f9c821e8ec2048193f213f47096
+      revision: 93fd46e9ea4217f5f011ce39e9ddddf1053c1cd1
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
-      revision: v0.0.1-ncs1
+      revision: 4d589cc0fe4783d49f9f0cc62a0bfdb2ad3da8df
       path: modules/lib/mcumgr
     - name: nrfxlib
       path: nrfxlib
