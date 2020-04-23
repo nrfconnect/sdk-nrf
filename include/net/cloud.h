@@ -28,6 +28,7 @@ enum cloud_state {
 
 /**@brief Cloud events that can be notified asynchronously by the backend. */
 enum cloud_event_type {
+	CLOUD_EVT_CONNECTING,
 	CLOUD_EVT_CONNECTED,
 	CLOUD_EVT_DISCONNECTED,
 	CLOUD_EVT_READY,
@@ -41,6 +42,14 @@ enum cloud_event_type {
 	CLOUD_EVT_FOTA_ERASE_PENDING,
 	CLOUD_EVT_FOTA_ERASE_DONE,
 	CLOUD_EVT_COUNT
+};
+
+enum cloud_disconnect_reason {
+	CLOUD_DISCONNECT_USER_REQUEST,
+	CLOUD_DISCONNECT_CLOSED_BY_REMOTE,
+	CLOUD_DISCONNECT_INVALID_REQUEST,
+	CLOUD_DISCONNECT_MISC,
+	CLOUD_DISCONNECT_COUNT
 };
 
 /**@brief Quality of Service for message sent by a cloud backend. */
@@ -83,6 +92,7 @@ enum cloud_connect_result {
 	CLOUD_CONNECT_RES_ERR_CERT_MISC = -9,
 	/* Timeout, SIM card may be out of data */
 	CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA = -10,
+	CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED = -11,
 };
 
 /** @brief Forward declaration of cloud backend type. */
