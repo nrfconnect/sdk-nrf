@@ -9,12 +9,12 @@ function(preprocess_pm_yml in_file out_file)
     COMMAND ${CMAKE_C_COMPILER}
     -x assembler-with-cpp
     -nostdinc
-    -I${PROJECT_BINARY_DIR}/include/generated
+    -I${ZEPHYR_BINARY_DIR}/include/generated
     ${NOSYSDEF_CFLAG}
     -P
     -E ${in_file}
     -o ${out_file}
-    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    WORKING_DIRECTORY ${ZEPHYR_BINARY_DIR}
     RESULT_VARIABLE ret
     )
   if(NOT "${ret}" STREQUAL "0")
@@ -43,7 +43,7 @@ if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND IMAGE_NAME)
 
   preprocess_pm_yml(
     ${CMAKE_SOURCE_DIR}/pm.yml
-    ${PROJECT_BINARY_DIR}/include/generated/pm.yml
+    ${ZEPHYR_BINARY_DIR}/include/generated/pm.yml
     )
 endif()
 

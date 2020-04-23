@@ -22,6 +22,7 @@ endfunction()
 
 if(IMAGE_NAME)
   share("set(${IMAGE_NAME}KERNEL_HEX_NAME ${KERNEL_HEX_NAME})")
+  share("set(${IMAGE_NAME}ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})")
   # Share the elf file, in order to support symbol loading for debuggers.
   share("set(${IMAGE_NAME}KERNEL_ELF_NAME ${KERNEL_ELF_NAME})")
   share("list(APPEND ${IMAGE_NAME}BUILD_BYPRODUCTS ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME})")
@@ -87,7 +88,7 @@ function(add_child_image_from_source)
 
   if (NOT (${${ACI_NAME}_BOARD} IN_LIST PM_DOMAINS))
     list(APPEND PM_DOMAINS ${${ACI_NAME}_BOARD})
-    share("list(APPEND PM_DOMAINS $${${ACI_NAME}_BOARD})")
+    share("list(APPEND PM_DOMAINS ${${ACI_NAME}_BOARD})")
   endif()
 
 
@@ -230,11 +231,13 @@ function(add_child_image_from_source)
       )
   endif()
 
-  if (${ACI_DOMAIN})
+  if (ACI_DOMAIN)
     add_custom_target(${ACI_NAME}_flash
                       COMMAND
                       ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/${ACI_NAME}
                       --target flash
+                      DEPENDS
+                      ${ACI_NAME}_subimage
     )
 
     set_property(TARGET zephyr_property_target
