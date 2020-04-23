@@ -1,5 +1,5 @@
 #include <autoconf.h>
-#include <devicetree_unfixed.h>
+#include <devicetree_legacy_unfixed.h>
 
 b0_image:
   size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
