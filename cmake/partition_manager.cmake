@@ -101,19 +101,24 @@ set_property(GLOBAL PROPERTY
   )
 
 # Prepare the input_files, header_files, and images lists
-set(generated_path zephyr/include/generated)
+set(generated_path include/generated)
 foreach (image ${PM_IMAGES})
+  set(shared_vars_file ${CMAKE_BINARY_DIR}/${image}/shared_vars.cmake)
+  if (NOT (EXISTS ${shared_vars_file}))
+    message(FATAL_ERROR "Could not find shared vars file: ${shared_vars_file}")
+  endif()
+  include(${shared_vars_file})
   list(APPEND prefixed_images ${domain}:${image})
   list(APPEND images ${image})
-  list(APPEND input_files ${CMAKE_BINARY_DIR}/${image}/${generated_path}/pm.yml)
-  list(APPEND header_files ${CMAKE_BINARY_DIR}/${image}/${generated_path}/pm_config.h)
+  list(APPEND input_files  ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm.yml)
+  list(APPEND header_files ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
 endforeach()
 
 # Explicitly add the dynamic partition image
 list(APPEND prefixed_images "${domain}:${dynamic_partition}")
 list(APPEND images ${dynamic_partition})
-list(APPEND input_files ${CMAKE_BINARY_DIR}/${generated_path}/pm.yml)
-list(APPEND header_files ${CMAKE_BINARY_DIR}/${generated_path}/pm_config.h)
+list(APPEND input_files ${ZEPHYR_BINARY_DIR}/${generated_path}/pm.yml)
+list(APPEND header_files ${ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
 
 # Add subsys defined pm.yml to the input_files
 get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
@@ -157,9 +162,9 @@ if (CONFIG_PM_EXTERNAL_FLASH)
     )
 endif()
 
-set(pm_out_partition_files ${CMAKE_BINARY_DIR}/partitions_${domain}.yml)
-set(pm_out_region_files ${CMAKE_BINARY_DIR}/regions_${domain}.yml)
-set(pm_out_dotconf_files ${CMAKE_BINARY_DIR}/pm_${domain}.config)
+set(pm_out_partition_files ${ZEPHYR_BINARY_DIR}/../partitions_${domain}.yml)
+set(pm_out_region_files ${ZEPHYR_BINARY_DIR}/../regions_${domain}.yml)
+set(pm_out_dotconf_files ${ZEPHYR_BINARY_DIR}/../pm_${domain}.config)
 
 set(pm_cmd
   ${PYTHON_EXECUTABLE}
@@ -239,8 +244,8 @@ foreach(part ${PM_ALL_BY_SIZE})
     list(APPEND explicitly_assigned ${part})
   else()
     if(${part} IN_LIST images)
-      set(${part}_PM_HEX_FILE ${CMAKE_BINARY_DIR}/${part}/zephyr/${${part}_KERNEL_HEX_NAME})
-      set(${part}_PM_ELF_FILE ${CMAKE_BINARY_DIR}/${part}/zephyr/${${part}_KERNEL_ELF_NAME})
+      set(${part}_PM_HEX_FILE ${${part}_ZEPHYR_BINARY_DIR}/${${part}_KERNEL_HEX_NAME})
+      set(${part}_PM_ELF_FILE ${${part}_ZEPHYR_BINARY_DIR}/${${part}_KERNEL_ELF_NAME})
       set(${part}_PM_TARGET ${part}_subimage)
     elseif(${part} IN_LIST containers)
       set(${part}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${part}.hex)
@@ -345,10 +350,8 @@ if (is_dynamic_partition_in_domain)
 else()
   # This is the root image, generate the global pm_config.h
   # First, include the shared_vars.cmake file for all child images.
-  message("And pm_domains are ${PM_DOMAINS}")
   list(REMOVE_DUPLICATES PM_DOMAINS)
   foreach (d ${PM_DOMAINS})
-    message("Loading from ${d}")
     # Don't include shared vars from own domain.
     if (NOT ${domain} STREQUAL ${d})
       set(shared_vars_file
@@ -358,7 +361,6 @@ else()
         message(FATAL_ERROR "Could not find shared vars file: ${shared_vars_file}")
       endif()
       include(${shared_vars_file})
-      message("Included ${shared_vars_file}")
       list(APPEND header_files ${${d}_PM_DOMAIN_HEADER_FILES})
       list(APPEND prefixed_images ${${d}_PM_DOMAIN_IMAGES})
       list(APPEND pm_out_partition_files ${${d}_PM_DOMAIN_PARTITIONS})
@@ -373,8 +375,6 @@ else()
 
   # Now all partition manager configuration from all images and domains are
   # available. Generate the global pm_config.h, and provide it to all images.
-  print(header_files)
-  print(pm_out_partition_files)
   set(pm_global_output_cmd
     ${PYTHON_EXECUTABLE}
     ${NRF_DIR}/scripts/partition_manager_output.py
