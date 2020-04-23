@@ -52,6 +52,11 @@ config NFC_NDEF_URI_REC
 	bool
 	prompt "NDEF URI record generator library"
 
+config NFC_NDEF_CH_REC
+	bool "NDEF Connection Handover records generator library"
+	help
+	  Enable NDEF Connection Handover records generator library
+
 config NFC_NDEF_MSG_WITH_NLEN
 	bool
 	prompt "Encode NDEF message with additional NLEN field"
