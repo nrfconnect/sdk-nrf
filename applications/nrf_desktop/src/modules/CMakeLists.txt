@@ -47,9 +47,6 @@ target_sources_ifdef(CONFIG_DESKTOP_LED_STREAM_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_POWER_MANAGER_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/power_manager.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_SHELL_ENABLE
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/shell.c)
-
 target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu.c)
 
