@@ -1184,6 +1184,8 @@ For more information about each application module and its configuration details
    doc/usb_state.rst
    doc/watchdog.rst
    doc/dfu.rst
+   doc/constlat.rst
+   doc/hfclk_lock.rst
 
 
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
