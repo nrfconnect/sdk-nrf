@@ -84,6 +84,10 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 endif # NRF_CLOUD_AGPS"
 endmenu
 
+config NRF_CLOUD_CONNECTION_POLL_THREAD
+	bool "Poll cloud connection in a separate thread"
+	depends on CLOUD_API
+
 module=NRF_CLOUD
 module-dep=LOG
 module-str=Log level for nRF Cloud
