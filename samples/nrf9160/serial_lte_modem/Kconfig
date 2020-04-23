@@ -80,6 +80,17 @@ config SLM_INTERFACE_PIN
 	default 6 if SLM_CONNECT_UART_0
 	default 31 if SLM_CONNECT_UART_2
 
+#
+# A-GPS
+#
+config SLM_SUPL_SERVER
+	string "SUPL server"
+	default "supl.google.com"
+
+config SLM_SUPL_PORT
+	int "SUPL server port"
+	default 7276
+
 rsource "src/tcpip_proxy/Kconfig"
 
 module = SLM
