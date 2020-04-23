@@ -191,7 +191,7 @@ static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
 static void cmd_send(struct k_work *work)
 {
 	size_t chars;
-	char str[15];
+	char str[24];
 	static char buf[AT_MAX_CMD_LEN];
 	enum at_cmd_state state;
 	int err;

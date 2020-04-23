@@ -141,6 +141,11 @@ The following proprietary GPS AT commands are used in this sample:
 
 * AT#XGPS=<op>[,<mask>]
 
+If the configuration option ``CONFIG_SUPL_CLIENT_LIB`` is defined, SUPL A-GPS is enabled.
+Default SUPL server is as below:
+CONFIG_SLM_SUPL_SERVER="supl.google.com"
+CONFIG_SLM_SUPL_PORT=7276
+
 Building and Running
 ********************
 
