@@ -20,10 +20,13 @@ config NRF_SPU_FLASH_REGION_SIZE
 	  Redefinition for the benefit of qemu_x86
 endif
 
+# Workaround for not being able to have commas in macro arguments
+DT_ZEPHYR_FLASH := zephyr,flash
+DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
+
 config FPROTECT_BLOCK_SIZE
 	hex
 	default NRF_SPU_FLASH_REGION_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
-	default $(dt_node_int_prop_hex,/flash-controller@41080000/flash@1000000,erase-block-size) if SOC_NRF5340_CPUNET
-	default $(dt_node_int_prop_hex,/soc/flash-controller@4001e000/flash@0,erase-block-size) if SOC_SERIES_NRF52X || SOC_SERIES_NRF51X
+	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 	help
 	  Block size of fprotect
