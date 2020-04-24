@@ -133,10 +133,11 @@ int supl_logger(int level, const char *fmt, ...)
 	return ret;
 }
 
-ssize_t supl_read(void *p_buff, size_t nbytes, void *user_data)
+ssize_t supl_read(void *buff, size_t nbytes, void *user_data)
 {
+	ssize_t rc = recv(supl_fd, buff, nbytes, 0);
+
 	ARG_UNUSED(user_data);
-	ssize_t rc = recv(supl_fd, p_buff, nbytes, 0);
 
 	if (rc < 0 && (errno == ETIMEDOUT)) {
 		return 0;
