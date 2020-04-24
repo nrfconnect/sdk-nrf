@@ -105,7 +105,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     sign
     --key ${MCUBOOT_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE}
     --header-size $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PAD_SIZE>
-    --align       ${CONFIG_DT_FLASH_WRITE_BLOCK_SIZE}
+    --align       ${CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE}
     --version     ${CONFIG_MCUBOOT_IMAGE_VERSION}
     --slot-size   $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
     --pad-header
