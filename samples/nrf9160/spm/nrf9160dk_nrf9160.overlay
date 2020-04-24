@@ -1,8 +1,4 @@
-/* Needed to get NRF_UARTE2 and NRF_PWMn defined. */
-&uart2 {
-	status = "okay";
-};
-
+/* Needed to get NRF_PWMn defined. */
 &pwm1 {
 	status = "okay";
 };
