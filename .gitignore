@@ -20,6 +20,7 @@ tags
 .xxproject
 .envrc
 .vscode
+sanity-out*
 
 doc/_build
 doc/nrf/_doxygen/
