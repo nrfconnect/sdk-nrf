@@ -18,7 +18,7 @@ pipeline {
        booleanParam(name: 'RUN_DOWNSTREAM', description: 'if false skip downstream jobs', defaultValue: true)
        booleanParam(name: 'RUN_TESTS', description: 'if false skip testing', defaultValue: true)
        booleanParam(name: 'RUN_BUILD', description: 'if false skip building', defaultValue: true)
-       string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160_pca10090 nrf52_pca10040 nrf52840_pca10056 nrf5340_dk_nrf5340_cpuapp')
+       string(name: 'PLATFORMS', description: 'Default Platforms to test', defaultValue: 'nrf9160dk_nrf9160 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp')
        string(name: 'jsonstr_CI_STATE', description: 'Default State if no upstream job', defaultValue: CI_STATE.CFG.INPUT_STATE_STR)
        choice(name: 'CRON', choices: ['COMMIT', 'NIGHTLY', 'WEEKLY'], description: 'Cron Test Phase')
   }

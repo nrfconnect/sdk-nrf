@@ -5,35 +5,35 @@ tests:
   test:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52833_pca10100 nrf52840_pca10059 nrf52_pca20037 nrf52_pca20044 nrf52810_pca20045
+    platform_whitelist: nrf52840_pca20041 nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf52840dongle_nrf52840 nrf52_pca20037 nrf52_pca20044 nrf52810_pca20045
     tags: bluetooth ci_build
   test_zdebug_b0:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52840_pca10059
+    platform_whitelist: nrf52840_pca20041 nrf52840dk_nrf52840 nrf52840dongle_nrf52840
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZDebugB0"
   test_zdebug_splitll:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf52840_pca20041 nrf52840_pca10059 nrf52_pca20037
+    platform_whitelist: nrf52840_pca20041 nrf52840dongle_nrf52840 nrf52_pca20037
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZDebugSplitLL"
   test_zrelease:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52833_pca10100 nrf52840_pca10059 nrf52_pca20037 nrf52_pca20044 nrf52810_pca20045
+    platform_whitelist: nrf52840_pca20041 nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf52840dongle_nrf52840 nrf52_pca20037 nrf52_pca20044 nrf52810_pca20045
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZRelease"
   test_zrelease_b0:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf52840_pca20041 nrf52840_pca10056 nrf52840_pca10059 nrf52_pca20037
+    platform_whitelist: nrf52840_pca20041 nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52_pca20037
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZReleaseB0"
   test_zrelease_splitll:
     build_only: true
     build_on_all: true
-    platform_whitelist: nrf52840_pca20041 nrf52840_pca10059 nrf52_pca20037
+    platform_whitelist: nrf52840_pca20041 nrf52840dongle_nrf52840 nrf52_pca20037
     tags: bluetooth ci_build
     extra_args: "CMAKE_BUILD_TYPE=ZReleaseSplitLL"

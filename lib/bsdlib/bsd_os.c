@@ -410,7 +410,7 @@ void read_task_create(void)
 void trace_uart_init(void)
 {
 #ifdef CONFIG_BSD_LIBRARY_TRACE_ENABLED
-	/* UART pins are defined in "nrf9160_pca10090.dts". */
+	/* UART pins are defined in "nrf9160dk_nrf9160.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
 		.pseltxd = DT_NORDIC_NRF_UARTE_UART_1_TX_PIN,

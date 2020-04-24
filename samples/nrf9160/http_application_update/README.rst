@@ -38,7 +38,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a non-secure firmware image for the nrf9160_pca10090ns board.
+The sample is built as a non-secure firmware image for the nrf9160dk_nrf9160ns board.
 Because of this, it automatically includes the :ref:`secure_partition_manager`.
 The sample also uses MCUboot, which is automatically built and merged into the final HEX file when building the sample.
 

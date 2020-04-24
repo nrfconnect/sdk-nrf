@@ -31,7 +31,7 @@ nRF9160 SPU configuration
    The code in the secure domain can configure the System Protection Unit (SPU) to allow non-secure access to the CPU resources that are required by the application, and then jump to the code in the non-secure domain.
    Therefore, the nRF9160 samples (the parent image) require the :ref:`secure_partition_manager` (the child image) to be programmed in addition to the actual application.
 
-   See :ref:`zephyr:nrf9160_pca10090` and :ref:`ug_nrf9160` for more information.
+   See :ref:`zephyr:nrf9160dk_nrf9160` and :ref:`ug_nrf9160` for more information.
 
 MCUboot bootloader
    The MCUboot bootloader establishes a root of trust by verifying the next step in the boot sequence.

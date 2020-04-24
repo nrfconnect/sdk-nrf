@@ -42,7 +42,7 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 .. build_SES_projimport_open_end
 
-   The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160_pca10090ns`` board target:
+   The following figure shows an example configuration for the Asset Tracker application built for the ``nrf9160dk_nrf9160ns`` board target:
 
    .. figure:: images/ses_config.png
       :alt: Opening the Asset Tracker project
@@ -186,17 +186,17 @@ For your convenience, the following table lists the board names for Nordic Semic
 +--------------------------------------------------------+-------------------------------------------------------+
 | Development kits                                       | Board names                                           |
 +========================================================+=======================================================+
-| :ref:`nRF51 DK board (PCA10028)<nrf51_pca10028>`       | nrf51_pca10028                                        |
+| :ref:`nRF51 DK board (PCA10028)<nrf51dk_nrf51422>`       | nrf51dk_nrf51422                                        |
 +--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF52 DK board (PCA10040)<nrf52_pca10040>`       | nrf52_pca10040                                        |
+| :ref:`nRF52 DK board (PCA10040)<nrf52dk_nrf52832>`       | nrf52dk_nrf52832                                        |
 +--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF52840 DK board (PCA10056)<nrf52840_pca10056>` | nrf52840_pca10056                                     |
+| :ref:`nRF52840 DK board (PCA10056)<nrf52840dk_nrf52840>` | nrf52840dk_nrf52840                                     |
 +--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF5340 PDK board (PCA10095)<nrf5340_dk_nrf5340>`| nrf5340_dk_nrf5340_cpunet (for the network sample)    |
+| :ref:`nRF5340 PDK board (PCA10095)<nrf5340pdk_nrf5340>`| nrf5340pdk_nrf5340_cpunet (for the network sample)    |
 +                                                        +                                                       +
-|                                                        | nrf5340_dk_nrf5340_cpuapp (for the application sample)|
+|                                                        | nrf5340pdk_nrf5340_cpuapp (for the application sample)|
 +--------------------------------------------------------+-------------------------------------------------------+
-| :ref:`nRF9160 DK board (PCA10090)<nrf9160_pca10090>`   | nrf9160_pca10090 (for the secure version)             |
+| :ref:`nRF9160 DK board (PCA10090)<nrf9160dk_nrf9160>`   | nrf9160dk_nrf9160 (for the secure version)             |
 +                                                        +                                                       +
-|                                                        | nrf9160_pca10090ns (for the non-secure version)       |
+|                                                        | nrf9160dk_nrf9160ns (for the non-secure version)       |
 +--------------------------------------------------------+-------------------------------------------------------+

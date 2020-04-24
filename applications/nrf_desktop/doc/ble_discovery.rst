@@ -44,7 +44,7 @@ Complete the following steps to configure the module:
             * Product ID (PID)
             * Peer type (:cpp:enum:`PEER_TYPE_MOUSE` or :cpp:enum:`PEER_TYPE_KEYBOARD`)
 
-   For an example of the module configuration, see :file:`configuration/nrf52840_pca10059/ble_discovery_def.h`.
+   For an example of the module configuration, see :file:`configuration/nrf52840dongle_nrf52840/ble_discovery_def.h`.
 
    .. note::
         The module configuration example uses ``0x1915`` as Nordic Semiconductor's VID.

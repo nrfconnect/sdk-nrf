@@ -29,7 +29,7 @@
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
 
-#ifdef CONFIG_BOARD_NRF9160_PCA10090NS
+#ifdef CONFIG_BOARD_NRF9160DK_NRF9160NS
 #define AT_MAGPIO      "AT\%XMAGPIO=1,0,0,1,1,1574,1577"
 #define AT_COEX0       "AT\%XCOEX0=1,1,1570,1580"
 #endif
@@ -37,7 +37,7 @@
 static const char     update_indicator[] = {'\\', '|', '/', '-'};
 static const char     at_commands[][31]  = {
 				AT_XSYSTEMMODE,
-#ifdef CONFIG_BOARD_NRF9160_PCA10090NS
+#ifdef CONFIG_BOARD_NRF9160DK_NRF9160NS
 				AT_MAGPIO,
 				AT_COEX0,
 #endif

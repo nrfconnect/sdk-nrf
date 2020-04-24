@@ -12,7 +12,7 @@ nRF5340 is a wireless ultra-low power multicore System on Chip (SoC) with two fu
 The |NCS| supports Bluetooth Low Energy communication on the nRF5340 SoC.
 
 See the `nRF5340 Product Specification`_ for more information about the nRF5340 SoC.
-:ref:`zephyr:nrf5340_dk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
+:ref:`zephyr:nrf5340pdk_nrf5340` gives an overview of the nRF5340 PDK support in Zephyr.
 
 Network core
 ============
@@ -31,7 +31,7 @@ Currently, the following solutions are available for the network core:
 
 In general, this core should be used for real-time processing tasks involving low-level protocols and layers.
 
-The board name for the network core in Zephyr is ``nrf5340_dk_nrf5340_cpunet``.
+The board name for the network core in Zephyr is ``nrf5340pdk_nrf5340_cpunet``.
 
 Application core
 ================
@@ -45,15 +45,15 @@ Currently, the |NCS| provides the following solutions for the application core:
 
 In general, this core should be used for tasks that require high performance and application-level logic.
 
-The board name for the application core in Zephyr is ``nrf5340_dk_nrf5340_cpuapp``.
+The board name for the application core in Zephyr is ``nrf5340pdk_nrf5340_cpuapp``.
 
 The user application can run in the secure or non-secure domain.
 Therefore, it can be built for two different board targets:
 
-* ``nrf5340_dk_nrf5340_cpuapp`` for the secure domain,
-* ``nrf5340_dk_nrf5340_cpuappns`` for the non-secure domain.
+* ``nrf5340pdk_nrf5340_cpuapp`` for the secure domain,
+* ``nrf5340pdk_nrf5340_cpuappns`` for the non-secure domain.
 
-When built for the ``nrf5340_dk_nrf5340_cpuappns`` board, the :ref:`nrf9160_ug_secure_partition_manager` is automatically included in the build.
+When built for the ``nrf5340pdk_nrf5340_cpuappns`` board, the :ref:`nrf9160_ug_secure_partition_manager` is automatically included in the build.
 
 Inter-core communication
 ========================
@@ -127,10 +127,10 @@ Depending on the sample, you must program only the application core (for example
    On nRF53, the application core is responsible for starting the network core and connecting its GPIO pins.
    Therefore, to run any sample on nRF53, the application core must be programmed, even if the firmware is supposed to run only on the network core.
    You can use the :ref:`zephyr:hello_world` sample for this purpose.
-   For details, see the code in :file:`zephyr/boards/arm/nrf5340_dk_nrf5340/nrf5340_cpunet_reset.c`.
+   For details, see the code in :file:`zephyr/boards/arm/nrf5340pdk_nrf5340/nrf5340_cpunet_reset.c`.
 
 Build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
-Make sure to use ``nrf5340_dk_nrf5340_cpunet`` as board name when building the network sample, and ``nrf5340_dk_nrf5340_cpuapp`` when building the application sample.
+Make sure to use ``nrf5340pdk_nrf5340_cpunet`` as board name when building the network sample, and ``nrf5340pdk_nrf5340_cpuapp`` when building the application sample.
 
 
 Programming from the command line
