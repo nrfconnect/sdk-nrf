@@ -62,7 +62,24 @@ static const struct entropy_driver_api entropy_cc310_rng_api = {
 	.get_entropy = entropy_cc310_rng_get_entropy
 };
 
-DEVICE_AND_API_INIT(entropy_cc310_rng, CONFIG_ENTROPY_NAME,
+#if DT_HAS_NODE(DT_NODELABEL(cryptocell))
+#define DEVICE_NAME DT_LABEL(DT_NODELABEL(cryptocell))
+#elif DT_HAS_NODE(DT_NODELABEL(cryptocell_sw))
+#define DEVICE_NAME DT_LABEL(DT_NODELABEL(cryptocell_sw))
+#else
+/*
+ * TODO is there a better way to handle this?
+ *
+ * The problem is that when this driver is configured for use by
+ * non-secure applications, calling through SPM leaves our application
+ * devicetree without an actual cryptocell node, so we fall back on
+ * cryptocell_sw. This works, but it's a bit hacky and requires an out
+ * of tree zephyr patch.
+ */
+#error "No cryptocell or cryptocell_sw node labels in the devicetree"
+#endif
+
+DEVICE_AND_API_INIT(entropy_cc310_rng, DEVICE_NAME,
 		    &entropy_cc310_rng_init,
 		    NULL,
 		    NULL,
