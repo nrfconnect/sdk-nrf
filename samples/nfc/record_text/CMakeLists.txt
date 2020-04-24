@@ -7,9 +7,9 @@
 cmake_minimum_required(VERSION 3.8.2)
 
 set(NRF_SUPPORTED_BOARDS
-  nrf52_pca10040
-  nrf52840_pca10056
-  nrf5340_dk_nrf5340_cpuapp
+  nrf52dk_nrf52832
+  nrf52840dk_nrf52840
+  nrf5340pdk_nrf5340_cpuapp
   )
 
 include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)

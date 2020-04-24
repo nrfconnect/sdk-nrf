@@ -3,7 +3,7 @@
 if [ "$1" == "--help" ] || [ "$1" == "" ]; then
 	echo "Test fprotect driver."
 	echo "Usage: $0 <board>"
-	echo "  e.g. $0 nrf9160_pca10090"
+	echo "  e.g. $0 nrf9160dk_nrf9160"
 	echo ""
 	echo "Will print SUCCESS or FAIL before exiting when running the test."
 	echo "Will return an error code unless SUCCESS."

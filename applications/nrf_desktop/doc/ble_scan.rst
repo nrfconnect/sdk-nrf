@@ -55,7 +55,7 @@ Complete the following steps to enable the |ble_scan|:
    The nRF Desktop central connects and bonds with only one peripheral of a given type.
 #. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration folder.
    You must define a Bluetooth name filter for every peripheral type the nRF Desktop central connects to.
-   For an example, see :file:`configuration/nrf52840_pca10059/ble_scan_def.h`.
+   For an example, see :file:`configuration/nrf52840dongle_nrf52840/ble_scan_def.h`.
 
    .. note::
       The Bluetooth device name for given peripheral is defined as the :option:`CONFIG_BT_DEVICE_NAME` Kconfig option in the peripheral's configuration.

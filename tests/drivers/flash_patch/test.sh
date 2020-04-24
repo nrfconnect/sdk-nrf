@@ -3,7 +3,7 @@
 if [ "$1" == "--help" ] || [ "$1" == "" ]; then
 	echo "Test CONFIG_DISABLE_FLASH_PATCH."
 	echo "Usage: $0 <board>"
-	echo "  e.g. $0 nrf52840_pca10056"
+	echo "  e.g. $0 nrf52840dk_nrf52840"
 	echo ""
 	echo "Will print SUCCESS or FAIL before exiting when running the test."
 	echo "Will return an error code unless SUCCESS."

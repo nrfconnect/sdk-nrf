@@ -32,15 +32,15 @@ Requirements for the application firmware
 =========================================
 
 * The application firmware must be located in the slot_ns flash partition.
-  For more details, see the `nrf9160_pca10090_partition_conf.dts`_ file in the nrf9160_pca10090 board definition.
+  For more details, see the `nrf9160dk_nrf9160_partition_conf.dts`_ file in the nrf9160dk_nrf9160 board definition.
   Note that if you build your application firmware with the |NCS|, this requirement is automatically fulfilled.
 
-* The application firmware must be built as a non-secure firmware for the nrf9160_pca10090ns board.
+* The application firmware must be built as a non-secure firmware for the nrf9160dk_nrf9160ns board.
 
 Automatic building of SPM
 =========================
 
-The sample is automatically built by the non-secure applications when the nrf9160_pca10090ns board is used.
+The sample is automatically built by the non-secure applications when the nrf9160dk_nrf9160ns board is used.
 However, it is not a part of the non-secure application.
 
 Instead of programming SPM and the non-secure application at the same time, you might want to program them individually.
@@ -63,7 +63,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a secure firmware image for the nrf9160_pca10090 board.
+The sample is built as a secure firmware image for the nrf9160dk_nrf9160 board.
 See `Automatic building of SPM`_ if you want to program it independently from the non-secure application firmware.
 
 

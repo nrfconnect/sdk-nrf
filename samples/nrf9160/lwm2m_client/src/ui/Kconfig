@@ -60,7 +60,7 @@ endif # UI_BUZZER
 
 config UI_BUTTON
 	bool "Enable buttons"
-	default y if BOARD_NRF9160_PCA10090NS
+	default y if BOARD_NRF9160DK_NRF9160NS
 
 endmenu
 

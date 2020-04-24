@@ -32,12 +32,12 @@ endif ()
 # Automatically include the hci_rpmsg sample as child image, and change
 # the board to be the network core.
 if (CONFIG_BT_RPMSG_NRF53)
-  if ((BOARD STREQUAL nrf5340_dk_nrf5340_cpuappns) OR
-      (BOARD STREQUAL nrf5340_dk_nrf5340_cpuapp))
+  if ((BOARD STREQUAL nrf5340pdk_nrf5340_cpuappns) OR
+      (BOARD STREQUAL nrf5340pdk_nrf5340_cpuapp))
     add_child_image(
       NAME hci_rpmsg
       SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
-      DOMAIN nrf5340_dk_nrf5340_cpunet)
+      DOMAIN nrf5340pdk_nrf5340_cpunet)
   else()
     message(FATAL_ERROR
       "Board ${BOARD} not supported for including hci_rpmsg as child image")
