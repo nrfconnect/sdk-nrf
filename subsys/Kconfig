@@ -33,4 +33,6 @@ rsource "mpsl/Kconfig"
 
 rsource "partition_manager/Kconfig"
 
+rsource "nrf_rpc/Kconfig"
+
 rsource "zigbee/Kconfig"

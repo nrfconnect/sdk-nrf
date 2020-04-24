@@ -361,6 +361,8 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
+.. _`RPMsg Messaging Protocol`: https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
+
 .. _`generator expressions`: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html
 
 .. _`CMake documentation`: https://cmake.org/cmake/help/latest/
@@ -409,6 +411,8 @@
 .. _`RFC959 File Transfer Protocol (FTP)`: https://tools.ietf.org/html/rfc959
 
 .. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
+
+.. _`Remote Procedure Calls (RPC)`: https://en.wikipedia.org/wiki/Remote_procedure_call
 
 .. _`Content-Range requests (IETF RFC 7233)`: https://tools.ietf.org/html/rfc7233
 

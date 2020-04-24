@@ -129,6 +129,7 @@ These samples run only on the application core and do not require any firmware f
 When programming any of these samples to the application core, configure :option:`CONFIG_BOARD_ENABLE_CPUNET` to select whether the network core should be enabled.
 When radio protocols (Bluetooth LE, IEEE 802.15.4) are used, this option is enabled by default.
 
+.. _ug_nrf5340_building:
 
 Building and programming a sample
 *********************************
