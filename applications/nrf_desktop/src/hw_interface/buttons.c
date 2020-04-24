@@ -362,13 +362,18 @@ static void button_pressed_isr(struct device *gpio_dev,
 		err = -EFAULT;
 	}
 
+	/* This is a workaround. Zephyr will set any pin triggering interrupt
+	 * at the moment. Not only our pins.
+	 */
+	pins = pins & cb->pin_mask;
+
 	/* Disable all interrupts synchronously requires holding a spinlock.
 	 * The problem is that GPIO callback disable code takes time. If lock
 	 * is kept during this operation BLE stack can fail in some cases.
 	 * Instead we disable callbacks associated with the pins. This is to
-	 * make sure CPU is avialable for threads. The remaining callbacks are
+	 * make sure CPU is available for threads. The remaining callbacks are
 	 * disabled in the workqueue thread context. Work code also cancels
-	 * itselfs to prevent double execution when interrupt for another
+	 * itself to prevent double execution when interrupt for another
 	 * pin was triggered in-between.
 	 */
 	for (u32_t pin = 0; (pins != 0) && !err; pins >>= 1, pin++) {
