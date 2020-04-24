@@ -1189,6 +1189,7 @@ static struct net_if_api nrf91_if_api = {
 /* TODO Get the actual MTU for the nRF91 LTE link. */
 NET_DEVICE_OFFLOAD_INIT(nrf91_socket, "nrf91_socket",
 			nrf91_bsdlib_socket_offload_init,
+			device_pm_control_nop,
 			&nrf91_socket_iface_data, NULL,
 			0, &nrf91_if_api, 1280);
 
