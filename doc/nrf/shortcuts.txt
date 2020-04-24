@@ -2,6 +2,8 @@
 
 .. |SES| replace:: SEGGER Embedded Studio
 
+.. |BLE| replace:: Bluetooth LE
+
 .. |noBLE| replace:: Bluetooth Low Energy device implementations including libraries, drivers, samples, and applications are currently not recommended for production.
 
 .. |connect_terminal| replace:: Connect to the board with a terminal emulator (for example, PuTTY).
@@ -39,3 +41,7 @@
 
 .. |enable_thread_before_testing| replace:: Make sure to enable the OpenThread stack before building and testing this sample.
    See :ref:`ug_thread` for more information.
+
+.. |zigbee_version| replace:: Zigbee 3.0
+.. |enable_zigbee_before_testing| replace:: Make sure to enable the Zigbee stack before building and testing this sample.
+   See :ref:`ug_zigbee` for more information.
