@@ -179,9 +179,9 @@ static void init(void)
 {
 	__ASSERT_NO_MSG(state == STATE_DISABLED);
 
-	BUILD_ASSERT_MSG(CONFIG_DESKTOP_PASSKEY_MAX_LEN != 0,
+	BUILD_ASSERT(CONFIG_DESKTOP_PASSKEY_MAX_LEN != 0,
 			 "Passkey length not set in Kconfig");
-	BUILD_ASSERT_MSG(sizeof(confirm_keys) > 0,
+	BUILD_ASSERT(sizeof(confirm_keys) > 0,
 			 "No confirm key defined");
 
 	state = STATE_IDLE;

@@ -37,7 +37,7 @@ static const char cert[] = {
 	#include "../cert/GlobalSign-Root-CA-R2"
 };
 
-BUILD_ASSERT_MSG(sizeof(cert) < KB(4), "Certificate too large");
+BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 
 
 /* Initialize AT communications */

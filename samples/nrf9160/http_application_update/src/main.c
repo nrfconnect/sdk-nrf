@@ -34,7 +34,7 @@ int cert_provision(void)
 	static const char cert[] = {
 		#include "../cert/BaltimoreCyberTrustRoot"
 	};
-	BUILD_ASSERT_MSG(sizeof(cert) < KB(4), "Certificate too large");
+	BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 	int err;
 	bool exists;
 	u8_t unused;
@@ -182,7 +182,7 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 static void modem_configure(void)
 {
 #if defined(CONFIG_LTE_LINK_CONTROL)
-	BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
+	BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
 	int err;
 #if !defined(CONFIG_BSD_LIBRARY_SYS_INIT)

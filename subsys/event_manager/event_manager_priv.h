@@ -90,7 +90,7 @@ extern "C" {
 	static inline struct ename *_CONCAT(new_, ename)(void)		\
 	{								\
 		struct ename *event = k_malloc(sizeof(*event));		\
-		BUILD_ASSERT_MSG(offsetof(struct ename, header) == 0,	\
+		BUILD_ASSERT(offsetof(struct ename, header) == 0,	\
 				 "");					\
 		if (unlikely(!event)) {					\
 			printk("Event Manager OOM error\n");		\
@@ -112,10 +112,10 @@ extern "C" {
 	static inline struct ename *_CONCAT(new_, ename)(size_t size)	\
 	{								\
 		struct ename *event = k_malloc(sizeof(*event) + size);	\
-		BUILD_ASSERT_MSG((offsetof(struct ename, dyndata) +	\
+		BUILD_ASSERT((offsetof(struct ename, dyndata) +	\
 				  sizeof(event->dyndata.size)) ==	\
 				 sizeof(*event), "");			\
-		BUILD_ASSERT_MSG(offsetof(struct ename, header) == 0,	\
+		BUILD_ASSERT(offsetof(struct ename, header) == 0,	\
 				 "");					\
 		if (unlikely(!event)) {					\
 			printk("Event Manager OOM error\n");		\

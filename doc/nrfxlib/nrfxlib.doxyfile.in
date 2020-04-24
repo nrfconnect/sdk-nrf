@@ -1962,7 +1962,7 @@ PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@NRFXLIB_BINARY_DIR@/mbedtls_dox
                          "NET_MGMT_DEFINE_REQUEST_HANDLER(x)=" \
                          "DEVICE_DEFINE()=" \
                          "DEVICE_AND_API_INIT()=" \
-                         "BUILD_ASSERT_MSG()=" \
+                         "BUILD_ASSERT()=" \
                          "BUILD_ASSERT()=" \
                          "__deprecated=" \
                          "__PACKED_STRUCT=struct" \

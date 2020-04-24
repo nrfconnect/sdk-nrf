@@ -62,7 +62,7 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 {
 	__ASSERT_NO_MSG(dm != NULL);
 	__ASSERT_NO_MSG(bt_gatt_dm_conn_get(dm) == discovering_peer_conn);
-	BUILD_ASSERT_MSG(PEER_TYPE_COUNT <= __CHAR_BIT__, "");
+	BUILD_ASSERT(PEER_TYPE_COUNT <= __CHAR_BIT__, "");
 	LOG_INF("HIDS discovery procedure succeeded");
 
 	bt_gatt_dm_data_print(dm);
@@ -259,7 +259,7 @@ static bool verify_peer(void)
 
 static void next_discovery_step_fn(struct k_work *w)
 {
-	BUILD_ASSERT_MSG((DISCOVERY_STATE_HIDS + 1) == DISCOVERY_STATE_COUNT,
+	BUILD_ASSERT((DISCOVERY_STATE_HIDS + 1) == DISCOVERY_STATE_COUNT,
 		"HIDs must be discovered last - after device is verified");
 
 	state++;

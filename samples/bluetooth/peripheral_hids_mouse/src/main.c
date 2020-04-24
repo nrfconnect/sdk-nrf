@@ -525,7 +525,7 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 			sys_put_le16(y, y_buff);
 
 			/* Encode report. */
-			BUILD_ASSERT_MSG(sizeof(buffer) == 3,
+			BUILD_ASSERT(sizeof(buffer) == 3,
 					 "Only 2 axis, 12-bit each, are supported");
 
 			buffer[0] = x_buff[0];

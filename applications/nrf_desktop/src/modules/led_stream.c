@@ -62,7 +62,7 @@ static bool queue_data(const u8_t *data, const size_t size, struct led *led)
 			 + sizeof(led->steps_queue[led->rx_idx].substep_time)
 			 + sizeof(u8_t); /* LED ID */
 
-	BUILD_ASSERT_MSG(min_len <= LED_STREAM_DATA_SIZE, "");
+	BUILD_ASSERT(min_len <= LED_STREAM_DATA_SIZE, "");
 
 	if (size != LED_STREAM_DATA_SIZE) {
 		LOG_WRN("Invalid stream data size (%zu)", size);

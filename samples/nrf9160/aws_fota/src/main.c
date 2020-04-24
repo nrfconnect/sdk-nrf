@@ -18,7 +18,7 @@
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
 
-BUILD_ASSERT_MSG(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
+BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
 
 #if defined(CONFIG_USE_NRF_CLOUD)

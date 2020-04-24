@@ -23,17 +23,17 @@ LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 	"Range: bytes=%u-%u\r\n"                                               \
 	"\r\n"
 
-BUILD_ASSERT_MSG(CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE <=
+BUILD_ASSERT(CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE <=
 		 CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
 		 "The response buffer must accommodate for a full non-TLS fragment");
 
-BUILD_ASSERT_MSG(CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE <=
+BUILD_ASSERT(CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE <=
 		 CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
 		 "The response buffer must accommodate for a full TLS fragment");
 
 #if defined(CONFIG_LOG) && !defined(CONFIG_LOG_IMMEDIATE)\
 			&& defined(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)
-BUILD_ASSERT_MSG(CONFIG_LOG_BUFFER_SIZE >= 2048,
+BUILD_ASSERT(CONFIG_LOG_BUFFER_SIZE >= 2048,
 		 "Please increase log buffer sizer");
 #endif
 

@@ -277,7 +277,7 @@ static void set_sampling_time_in_sleep3(bool connected)
 
 static void set_default_configuration(void)
 {
-	BUILD_ASSERT_MSG((MOTION_SENSOR_OPTION_COUNT < 8 *
+	BUILD_ASSERT((MOTION_SENSOR_OPTION_COUNT < 8 *
 			  sizeof(state.option_mask)),
 			 "");
 
@@ -432,7 +432,7 @@ static void write_config(void)
 	u32_t option[MOTION_SENSOR_OPTION_COUNT];
 	u32_t mask;
 
-	BUILD_ASSERT_MSG(sizeof(option) == sizeof(state.option), "");
+	BUILD_ASSERT(sizeof(option) == sizeof(state.option), "");
 
 	k_spinlock_key_t key = k_spin_lock(&state.lock);
 	mask = state.option_mask;

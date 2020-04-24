@@ -234,9 +234,9 @@ static void handle_dfu_start(const u8_t *data, const size_t size)
 
 	size_t data_size = sizeof(length) + sizeof(csum) + sizeof(offset);
 
-	BUILD_ASSERT_MSG(sizeof(length) == sizeof(img_length), "");
-	BUILD_ASSERT_MSG(sizeof(csum) == sizeof(img_csum), "");
-	BUILD_ASSERT_MSG(sizeof(offset) == sizeof(cur_offset), "");
+	BUILD_ASSERT(sizeof(length) == sizeof(img_length), "");
+	BUILD_ASSERT(sizeof(csum) == sizeof(img_csum), "");
+	BUILD_ASSERT(sizeof(offset) == sizeof(cur_offset), "");
 
 	if (size < data_size) {
 		LOG_WRN("Invalid DFU start header");

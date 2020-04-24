@@ -32,7 +32,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #error "Missing CONFIG_LTE_LINK_CONTROL"
 #endif
 
-BUILD_ASSERT_MSG(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
+BUILD_ASSERT(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
 		 "CONFIG_APP_LWM2M_SERVER must be set in prj.conf");
 
 #define APP_BANNER "Run LWM2M client"

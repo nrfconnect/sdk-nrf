@@ -33,7 +33,7 @@
 #define CRYS_HASH_LAST_BLOCK_ALREADY_PROCESSED_ERROR \
 	(CRYS_HASH_MODULE_ERROR_BASE + 0xCUL)
 
-BUILD_ASSERT_MSG(SHA256_CTX_SIZE >= sizeof(nrf_cc310_bl_hash_context_sha256_t), \
+BUILD_ASSERT(SHA256_CTX_SIZE >= sizeof(nrf_cc310_bl_hash_context_sha256_t), \
 		"nrf_cc310_bl_hash_context_sha256_t can no longer fit inside " \
 		"bl_sha256_ctx_t.");
 
