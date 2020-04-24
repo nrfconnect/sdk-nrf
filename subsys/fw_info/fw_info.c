@@ -200,7 +200,7 @@ SYS_INIT(check_ext_api_requests, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
 /** Value to write to the "valid" member of fw_info to invalidate the image. */
 #define INVALID_VAL 0xFFFF0000
 
-BUILD_ASSERT_MSG((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL)
+BUILD_ASSERT((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL)
 			!= CONFIG_FW_INFO_VALID_VAL,
 		"CONFIG_FW_INFO_VALID_VAL has been configured such that the "
 		"image cannot be invalidated. Change the value so that writing "

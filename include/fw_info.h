@@ -65,7 +65,7 @@ struct __packed fw_info_ext_api {
  *  Remove from doc building.
  */
 #define OFFSET_CHECK(type, member, value) \
-		BUILD_ASSERT_MSG(offsetof(type, member) == value, \
+		BUILD_ASSERT(offsetof(type, member) == value, \
 				#member " has wrong offset")
 
 /* Static asserts to ensure compatibility */
@@ -84,7 +84,7 @@ OFFSET_CHECK(struct fw_info_ext_api, ext_api_version, 24);
 #define EXT_API(ext_api_name, type, name) \
 	Z_GENERIC_SECTION(.ext_apis) \
 	const u8_t _CONCAT(name, _ext_api_counter) = 0xFF; \
-	BUILD_ASSERT_MSG((sizeof(type) % 4) == 0, \
+	BUILD_ASSERT((sizeof(type) % 4) == 0, \
 			"Size of EXT_API " #type " is not word-aligned"); \
 	struct __packed _CONCAT(name, _t) \
 	{ \
@@ -263,7 +263,7 @@ OFFSET_CHECK(struct fw_info, reserved, 36);
 OFFSET_CHECK(struct fw_info, ext_api_num, 52);
 OFFSET_CHECK(struct fw_info, ext_api_request_num, 56);
 OFFSET_CHECK(struct fw_info, ext_apis, 60);
-BUILD_ASSERT_MSG(sizeof(struct fw_info) == offsetof(struct fw_info, ext_apis),
+BUILD_ASSERT(sizeof(struct fw_info) == offsetof(struct fw_info, ext_apis),
 	"Size of fw_info must assume ext_apis is empty.");
 /** @endcond
  */
@@ -322,7 +322,7 @@ static const u32_t fw_info_allowed_offsets[] = {
 /** @cond
  *  Remove from doc building.
  */
-BUILD_ASSERT_MSG(ARRAY_SIZE(fw_info_allowed_offsets) == FW_INFO_OFFSET_COUNT,
+BUILD_ASSERT(ARRAY_SIZE(fw_info_allowed_offsets) == FW_INFO_OFFSET_COUNT,
 		"Mismatch in the number of allowed offsets.");
 /** @endcond
  */

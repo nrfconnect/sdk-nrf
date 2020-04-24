@@ -23,7 +23,7 @@ static int log_battery_state_event(const struct event_header *eh, char *buf,
 {
 	const struct battery_state_event *event = cast_battery_state_event(eh);
 
-	BUILD_ASSERT_MSG(ARRAY_SIZE(state_name) == BATTERY_STATE_COUNT,
+	BUILD_ASSERT(ARRAY_SIZE(state_name) == BATTERY_STATE_COUNT,
 			 "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->state < BATTERY_STATE_COUNT);

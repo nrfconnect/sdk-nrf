@@ -1961,7 +1961,7 @@ PREDEFINED             = "CONFIG_SYS_CLOCK_EXISTS=y" \
                          "NET_MGMT_DEFINE_REQUEST_HANDLER(x)=" \
                          "DEVICE_DEFINE()=" \
                          "DEVICE_AND_API_INIT()=" \
-                         "BUILD_ASSERT_MSG()=" \
+                         "BUILD_ASSERT()=" \
                          "BUILD_ASSERT()=" \
                          "__deprecated=" \
                          "__packed=" \

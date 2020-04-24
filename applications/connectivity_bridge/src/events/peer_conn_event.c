@@ -20,7 +20,7 @@ static int log_peer_conn_event(const struct event_header *eh, char *buf,
 {
 	const struct peer_conn_event *event = cast_peer_conn_event(eh);
 
-	BUILD_ASSERT_MSG(ARRAY_SIZE(peer_name) == PEER_ID_COUNT,
+	BUILD_ASSERT(ARRAY_SIZE(peer_name) == PEER_ID_COUNT,
 			 "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->peer_id < PEER_ID_COUNT);

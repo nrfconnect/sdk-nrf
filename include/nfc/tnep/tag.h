@@ -110,9 +110,9 @@ struct nfc_tnep_tag_service {
 				 _message_cb,                               \
 				 _error_cb)                                 \
 									    \
-	BUILD_ASSERT_MSG(_t_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                  \
+	BUILD_ASSERT(_t_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                  \
 			 "The Waiting time has to be equal or smaller than 63");                 \
-	BUILD_ASSERT_MSG(_n_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                  \
+	BUILD_ASSERT(_n_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                  \
 			 "The Waiting time extension count has to be equal or smaller then 15"); \
 												 \
 	NFC_TNEP_SERIVCE_PARAM_RECORD_DESC_DEF(_name, NFC_TNEP_VERSION,	\

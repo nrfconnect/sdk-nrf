@@ -16,7 +16,7 @@ static int display_registered_events(const struct shell *shell, size_t argc,
 				char **argv)
 {
 	/* Check if flags for enabling/disabling custom event fit on u32_t */
-	BUILD_ASSERT_MSG(CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS <=
+	BUILD_ASSERT(CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS <=
 			 sizeof(profiler_enabled_events) * 8,
 			 "Max 32 profiler events may be used");
 	shell_fprintf(shell, SHELL_NORMAL, "EVENTS REGISTERED IN PROFILER:\n");

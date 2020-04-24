@@ -13,7 +13,7 @@
 #include <bl_crypto.h>
 
 
-BUILD_ASSERT_MSG(SHA256_CTX_SIZE >= sizeof(ocrypto_sha256_ctx), \
+BUILD_ASSERT(SHA256_CTX_SIZE >= sizeof(ocrypto_sha256_ctx), \
 		"ocrypto_sha256_ctx can no longer fit inside bl_sha256_ctx_t.");
 
 int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external)

@@ -655,7 +655,7 @@ static void send_report_keyboard(u8_t report_id, struct report_data *rd)
 	/* Keyboard report should contain keys plus one byte for modifier
 	 * and one reserved byte.
 	 */
-	BUILD_ASSERT_MSG(REPORT_SIZE_KEYBOARD_KEYS == KEYBOARD_REPORT_KEY_COUNT_MAX + 2,
+	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_KEYS == KEYBOARD_REPORT_KEY_COUNT_MAX + 2,
 			 "Incorrect keyboard report size");
 
 	/* Encode report. */
@@ -746,7 +746,7 @@ static void send_report_mouse(u8_t report_id, struct report_data *rd)
 
 
 	/* Encode report. */
-	BUILD_ASSERT_MSG(REPORT_SIZE_MOUSE == 5, "Invalid report size");
+	BUILD_ASSERT(REPORT_SIZE_MOUSE == 5, "Invalid report size");
 
 	struct hid_report_event *event = new_hid_report_event(sizeof(report_id) + REPORT_SIZE_MOUSE);
 

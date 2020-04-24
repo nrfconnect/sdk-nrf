@@ -74,7 +74,7 @@ static void motion_event_send(s16_t dx, s16_t dy)
 
 static void generate_motion_event(void)
 {
-	BUILD_ASSERT_MSG((edge_time & (edge_time - 1)) == 0,
+	BUILD_ASSERT((edge_time & (edge_time - 1)) == 0,
 			 "Edge time must be power of 2");
 
 	u32_t t = k_uptime_get_32();
