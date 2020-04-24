@@ -23,7 +23,7 @@ bool slm_util_casecmp(const char *str1, const char *str2)
 	}
 
 	for (int i = 0; i < str2_len; i++) {
-		if (toupper(*(str1 + i)) != toupper(*(str2 + i))) {
+		if (toupper((int)*(str1 + i)) != toupper((int)*(str2 + i))) {
 			return false;
 		}
 	}
@@ -45,7 +45,7 @@ bool slm_util_cmd_casecmp(const char *cmd, const char *slm_cmd)
 	}
 
 	for (i = 0; i < slm_cmd_len; i++) {
-		if (toupper(*(cmd + i)) != toupper(*(slm_cmd + i))) {
+		if (toupper((int)*(cmd + i)) != toupper((int)*(slm_cmd + i))) {
 			return false;
 		}
 	}
