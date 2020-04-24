@@ -1,0 +1,9 @@
+sample:
+  name: BLE NFC Pairing reference
+  description: BLE NFC Pairing reference sample
+tests:
+  samples.bluetooth.nfc_pairing:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840_pca10056 nrf52_pca10040 nrf5340_dk_nrf5340_cpuapp
+    tags: bluetooth ci_build
