@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "nRF RPC (Remote Procedure Call) library"
+
+if NRF_RPC
+
+config NRF_RPC_THREAD_STACK_SIZE
+	int "Stack size of thread from thread pool"
+	default 1024
+	help
+	  Stack size for each thread in local thread pool.
+
+config NRF_RPC_THREAD_PRIORITY
+	int "Priority of thread from thread pool"
+	default 2
+	help
+	  Thread priority of each thread in local thread pool.
+
+choice
+	prompt "RPMSG device role"
+	default RPMSG_REMOTE
+
+config RPMSG_REMOTE
+	bool "Remote"
+	help
+	  Selects RPMsg role as "Remote". The other side must be configured as
+	  "Master".
+
+config RPMSG_MASTER
+	bool "Master"
+	help
+	  Selects RPMsg role as "Master". The other side must be configured as
+	  "Remote".
+
+endchoice
+
+config NRF_RPC_TR_PRMSG_RX_STACK_SIZE
+	int "Stack size of the rpmsg receive thread"
+	default 1536
+	help
+	  Stack size for the thread that is responsible for receiving incoming
+	  messages from rpmsg.
+
+config NRF_RPC_TR_PRMSG_RX_PRIORITY
+	int "Priority of the rpmsg receive thread"
+	default -1
+	help
+	  Priority of the thread that is responsible for receiving incoming
+	  messages from rpmsg.
+
+module = NRF_RPC
+module-str = NRF_RPC_
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+module = NRF_RPC_TR
+module-str = NRF_RPC_TR
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+module = NRF_RPC_OS
+module-str = NRF_RPC_OS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if NRF_RPC_CBOR
+
+module = NRF_RPC_CBOR
+module-str = NRF_RPC_CBOR
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_RPC_CBOR
+
+endif # NRF_RPC
+
+endmenu
