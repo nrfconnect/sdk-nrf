@@ -1,0 +1,4 @@
+tests:
+  zigbee.osif.timer:
+    platform_whitelist: nrf52840dk_nrf52840
+    tags: zigbee_osif

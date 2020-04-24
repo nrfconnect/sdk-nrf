@@ -1,0 +1,187 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig ZIGBEE
+	bool "Enable Zigbee stack"
+	select FLOAT
+	select APP_LINK_WITH_ZBOSS
+	imply COUNTER
+	imply COUNTER_TIMER3
+	imply NRF_802154_RADIO_DRIVER
+	imply ENTROPY_GENERATOR
+	imply POLL
+	imply FLASH
+	imply FLASH_PAGE_LAYOUT
+	imply FLASH_MAP
+	imply MPU_ALLOW_FLASH_WRITE
+	depends on SOC_NRF52840 && !SETTINGS
+
+if ZIGBEE
+
+choice ZIGBEE_CHANNEL_SELECTION_MODE
+	prompt "Zigbee channel selection mode"
+	default ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE
+
+config ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE
+	bool "Single channel"
+	help
+	  "Zigbee uses exactly one channel specified by its number"
+
+config ZIGBEE_CHANNEL_SELECTION_MODE_MULTI
+	bool "Group of channels"
+	help
+	  "Zigbee uses a group of channels specified by bitwise mask"
+
+endchoice # "Zigbee channel selection mode"
+
+config ZIGBEE_CHANNEL
+	int "802.15.4 channel used by Zigbee <11-26>"
+	range 11 26
+	default 16
+	depends on ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE
+	help
+	  802.15.4 channel used by Zigbee. Defaults to 16.
+
+config ZIGBEE_CHANNEL_MASK
+	hex "Mask of 802.15.4 channels used by Zigbee"
+	range 0x800 0x7FFF800
+	default 0x7FFF800
+	depends on ZIGBEE_CHANNEL_SELECTION_MODE_MULTI
+	help
+	  Bitwise "OR" mask of channels used by Zigbee.
+	  The default setting enables all channels.
+
+	  Available channels:
+	   - bits 31..27: UNUSED, should be cleared
+	   - bits 26..11: bit n enables its corresponding channel
+	   - bits 10..0: UNUSED, should be cleared
+
+choice
+	prompt "Select Zigbee device role"
+
+config ZIGBEE_ROLE_END_DEVICE
+	bool "End Device role"
+
+config ZIGBEE_ROLE_ROUTER
+	bool "Router role"
+
+config ZIGBEE_ROLE_COORDINATOR
+	bool "Coordinator role"
+
+endchoice
+
+config ZBOSS_DEFAULT_THREAD_PRIORITY
+	int "Set default ZBOSS thread prority"
+	default 3
+
+config ZBOSS_DEFAULT_THREAD_STACK_SIZE
+	int "Stack size of ZBOSS Zephyr task"
+	default 2048
+	help
+	  Stack size of ZBOSS Zephyr task. This is the task zboss_main_loop_iteration is called from.
+
+config ZIGBEE_APP_CB_QUEUE_LENGTH
+	int "Length of the application callback and alarm queue"
+	default 10
+	help
+	  This queue is used to pass application callbacks and alarms from other
+	  threads/ISR to the ZBOSS main loop context.
+	  Elements from this queue are flushed right after ZBOSS context awakes,
+	  before the actual callback execution.
+
+config ZIGBEE_VENDOR_OUI
+	hex "A value that represents MAC Address Block Large"
+	default 0xf4ce36
+	help
+	  A value that represents MAC Address Block Large (MA-L, formerly called Organizationally Unique Identifier, or OUI), a part of the device's EUI-64 address.
+	  By default, use Nordic Semiconductor's MA-L block (f4-ce-36), assigned by the IEEE Registration Authority.
+
+menu "Zigbee Log configuration"
+
+config ZBOSS_ERROR_PRINT_TO_LOG
+	bool "Log ZBOSS errors"
+	default y
+	select ZIGBEE_ERROR_TO_STRING_ENABLED
+	help
+	  Log ZBOSS errors.
+
+config ZIGBEE_ERROR_TO_STRING_ENABLED
+	bool "Include functions for mapping ZBOSS errors to string"
+	default y
+	help
+	  Include functions for mapping ZBOSS errors to string.
+
+config ZIGBEE_CLI_LOG_ENABLED
+	bool "Include functions for CLI logging"
+	default y
+	help
+	  Include functions for CLI logging.
+
+config ZBOSS_TRACE_MASK
+	hex "Trace mask of ZBOSS stack logs"
+	default 0x0000
+	range 0x0000 0x0B5C
+	help
+	  Selectively enable Zigbee binary trace logs.
+	  The mask value should be a bitwise OR of values assigned to selected modules.
+
+	  Available modules are:
+
+	  - 0x4000 Zigbee Green Power
+	  - 0x0800 Application
+	  - 0x0200 Zigbee Light Link
+	  - 0x0100 Zigbee Cluster Library
+	  - 0x0080 Security
+	  - 0x0040 Zigbee Device Object
+	  - 0x0010 Application Support layer
+	  - 0x0008 Network layer
+	  - 0x0004 MAC layer
+	  - 0x0002 Memory management
+	  - 0x0001 Common
+
+	  For example, in order to enable traces related to OTA DFU, one should set this option to 0x4100.
+
+	  Note: For general debugging purposes, please use 0x0C48.
+
+# Configure ZBOSS_TRACE_LOG_LEVEL
+module = ZBOSS_TRACE
+module-str = ZBOSS trace
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+# Configure ZIGBEE_CLI_LOG_LEVEL
+module = ZIGBEE_CLI
+module-str = Zigbee CLI
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+# Configure ZBOSS_OSIF_LOG_LEVEL
+module = ZBOSS_OSIF
+module-str = ZBOSS osif layer
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+# Configure ZIGBEE_HELPERS_LOG_LEVEL
+module = ZIGBEE_HELPERS
+module-str = Zigbee helper routines
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu #menu "Zigbee Log configuration"
+
+menu "ZBOSS osif configuration"
+
+config RADIO_STATISTICS
+	bool "Collect radio statistics"
+	default n
+	help
+	  This option enables the radio statistics.
+
+endmenu #menu "ZBOSS osif configuration"
+
+config APP_LINK_WITH_ZIGBEE
+	bool
+	default y
+	help
+	  Link application with Zigbee subsystem
+
+endif #ZIGBEE

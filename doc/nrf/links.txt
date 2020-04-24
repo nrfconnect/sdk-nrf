@@ -240,6 +240,12 @@
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
 
 
+.. ### Links to Zigbee
+
+.. _`Zigbee Alliance`: https://www.zigbeealliance.org
+
+.. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/zigbee-specification
+
 .. ### Links to other documentation
 
 .. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives

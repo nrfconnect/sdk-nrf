@@ -1,0 +1,4 @@
+tests:
+  zigbee.zboss_api.callback_api:
+    platform_whitelist: nrf52840dk_nrf52840
+    tags: zboss_api_callback
