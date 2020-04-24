@@ -1,0 +1,9 @@
+sample:
+  name: Zigbee Light control
+  description: Zigbee Light control - coordinator sample
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840dk_nrf52840
+    tags: ci_build
