@@ -13,8 +13,6 @@
 #include <zephyr.h>
 #include <drivers/entropy.h>
 
-#if CONFIG_ENTROPY_CC310
-
 #if defined(CONFIG_SPM)
 #include "secure_services.h"
 #else
@@ -70,5 +68,3 @@ DEVICE_AND_API_INIT(entropy_cc310_rng, CONFIG_ENTROPY_NAME,
 		    NULL,
 		    POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE,
 		    &entropy_cc310_rng_api);
-
-#endif /* CONFIG_ENTROPY_CC310 */
