@@ -116,8 +116,8 @@ static bool update_delete_key(struct input_buf *input,
 				delete_press_times[i] = k_uptime_get();
 
 			} else {
-				u32_t hold_time =
-				    k_uptime_delta_32(&delete_press_times[i]);
+				s64_t hold_time =
+				    k_uptime_delta(&delete_press_times[i]);
 
 				if (hold_time > CLEAR_INPUT_ON_HOLD_TIMEOUT) {
 					clear_elems(input);

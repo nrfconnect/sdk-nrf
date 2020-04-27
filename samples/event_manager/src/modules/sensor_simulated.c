@@ -46,7 +46,7 @@ static void sensor_simulated_thread_fn(void)
 {
 	while (true) {
 		measure();
-		k_sleep(SENSOR_SIMULATED_THREAD_SLEEP);
+		k_sleep(K_MSEC(SENSOR_SIMULATED_THREAD_SLEEP));
 	}
 }
 

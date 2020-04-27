@@ -151,7 +151,7 @@ static void buttons_scan_fn(struct k_work *work)
 
 	if (button_scan != 0) {
 		int err = k_delayed_work_submit(&buttons_scan,
-		  CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL);
+		  K_MSEC(CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL));
 
 		if (err) {
 			LOG_ERR("Cannot add work to workqueue");
@@ -218,7 +218,7 @@ static void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
 	switch (state) {
 	case STATE_WAITING:
 		state = STATE_SCANNING;
-		k_delayed_work_submit(&buttons_scan, 1);
+		k_delayed_work_submit(&buttons_scan, K_MSEC(1));
 		break;
 
 	case STATE_SCANNING:
@@ -290,7 +290,7 @@ int dk_buttons_init(button_handler_t button_handler)
 
 	state = STATE_SCANNING;
 
-	err = k_delayed_work_submit(&buttons_scan, 0);
+	err = k_delayed_work_submit(&buttons_scan, K_NO_WAIT);
 	if (err) {
 		LOG_ERR("Cannot add work to workqueue");
 		return err;
