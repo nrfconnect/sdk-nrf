@@ -19,6 +19,8 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 					      NRFX_NFCT_CONFIG_TIMER_INSTANCE_ID, \
 					      _irq_handler)
 
+#define DT_DRV_COMPAT nordic_nrf_clock
+
 static struct device *clock;
 
 static void clock_handler(struct device *dev, clock_control_subsys_t subsys,
@@ -36,7 +38,7 @@ static struct clock_control_async_data clock_ctrl = {
 
 nrfx_err_t nfc_platform_setup(void)
 {
-	clock = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL);
+	clock = device_get_binding(DT_INST_LABEL(0));
 	__ASSERT_NO_MSG(clock);
 
 	IRQ_CONNECT(NFCT_IRQn, CONFIG_NFCT_IRQ_PRIORITY,

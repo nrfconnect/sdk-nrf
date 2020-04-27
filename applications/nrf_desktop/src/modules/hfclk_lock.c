@@ -17,6 +17,7 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE);
 
+#define DT_DRV_COMPAT nordic_nrf_clock
 
 static struct device *clk_dev;
 
@@ -27,7 +28,7 @@ static void hfclk_lock(void)
 		return;
 	}
 
-	clk_dev = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL);
+	clk_dev = device_get_binding(DT_INST_LABEL(0));
 
 	if (!clk_dev) {
 		module_set_state(MODULE_STATE_ERROR);
