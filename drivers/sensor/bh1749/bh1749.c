@@ -218,7 +218,7 @@ static void bh1749_async_init(struct k_work *work)
 			LOG_INF("BH1749 initialized");
 		} else {
 			k_delayed_work_submit(&bh1749_init_work,
-					      async_init_delay[data->async_init_step]);
+					      K_MSEC(async_init_delay[data->async_init_step]));
 		}
 	}
 }
@@ -291,7 +291,8 @@ static int bh1749_init(struct device *dev)
 		return -EINVAL;
 	}
 	k_delayed_work_init(&bh1749_init_work, bh1749_async_init);
-	return k_delayed_work_submit(&bh1749_init_work, async_init_delay[data->async_init_step]);
+	return k_delayed_work_submit(&bh1749_init_work,
+				     K_MSEC(async_init_delay[data->async_init_step]));
 };
 
 static const struct sensor_driver_api bh1749_driver_api = {

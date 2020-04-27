@@ -319,7 +319,7 @@ static void test_run(void)
 {
 	int err;
 	u64_t stamp;
-	u32_t delta;
+	s64_t delta;
 	u32_t data = 0;
 	u32_t prog = 0;
 
@@ -361,10 +361,10 @@ static void test_run(void)
 		prog++;
 	}
 
-	delta = k_uptime_delta_32(&stamp);
+	delta = k_uptime_delta(&stamp);
 
 	printk("\nDone\n");
-	printk("[local] sent %u bytes (%u KB) in %u ms at %llu kbps\n",
+	printk("[local] sent %u bytes (%u KB) in %lld ms at %llu kbps\n",
 	       data, data / 1024, delta, ((u64_t)data * 8 / delta));
 
 	/* read back char from peer */
