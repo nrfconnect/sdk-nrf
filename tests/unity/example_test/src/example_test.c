@@ -10,6 +10,8 @@
 
 bool runtime_CONFIG_UUT_PARAM_CHECK;
 
+#define TEST_FOO_ADDR FOO_ADDR
+
 void setUp(void)
 {
 	runtime_CONFIG_UUT_PARAM_CHECK = false;
