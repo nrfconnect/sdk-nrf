@@ -210,7 +210,8 @@ static void adv_start(void)
 		BT_LE_ADV_PARAM(
 			BT_LE_ADV_OPT_CONNECTABLE,
 			BT_GAP_ADV_SLOW_INT_MIN,
-			BT_GAP_ADV_SLOW_INT_MAX),
+			BT_GAP_ADV_SLOW_INT_MAX,
+			NULL),
 		ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("bt_le_adv_start: %d", err);

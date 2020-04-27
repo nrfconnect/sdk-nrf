@@ -234,7 +234,8 @@ static void adv_start(void)
 		BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE |
 				BT_LE_ADV_OPT_ONE_TIME,
 				BT_GAP_ADV_FAST_INT_MIN_2,
-				BT_GAP_ADV_FAST_INT_MAX_2);
+				BT_GAP_ADV_FAST_INT_MAX_2,
+				NULL);
 	int err;
 
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd,

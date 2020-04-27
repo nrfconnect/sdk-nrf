@@ -75,18 +75,20 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 static void scan_filter_no_match(struct bt_scan_device_info *device_info,
 				 bool connectable)
 {
+	int err;
 	struct bt_conn *conn;
 	char addr[BT_ADDR_LE_STR_LEN];
 
-	if (device_info->adv_info.adv_type == BT_LE_ADV_DIRECT_IND) {
+	if (device_info->adv_info.adv_type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
 		bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
 		printk("Direct advertising received from %s\n", addr);
 		bt_scan_stop();
 
-		conn = bt_conn_create_le(device_info->addr,
-					 device_info->conn_param);
+		err = bt_conn_le_create(device_info->addr,
+					BT_CONN_LE_CREATE_CONN,
+					device_info->conn_param, &conn);
 
-		if (conn) {
+		if (!err) {
 			default_conn = bt_conn_ref(conn);
 			bt_conn_unref(conn);
 		}

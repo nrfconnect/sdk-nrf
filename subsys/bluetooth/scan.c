@@ -286,6 +286,8 @@ static void notify_connecting_error(struct bt_scan_device_info *device_info)
 static void scan_connect_with_target(struct bt_scan_control *control,
 				     const bt_addr_le_t *addr)
 {
+	int err;
+
 	/* Return if the automatic connection is disabled. */
 	if (!bt_scan.connect_if_match) {
 		return;
@@ -295,20 +297,21 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 	bt_scan_stop();
 
 	/* Establish connection. */
-	struct bt_conn *conn = bt_conn_create_le(addr, &bt_scan.conn_param);
+	struct bt_conn *conn;
+
+	err = bt_conn_le_create(addr,
+			       BT_CONN_LE_CREATE_CONN,
+			       &bt_scan.conn_param, &conn);
 
 	LOG_DBG("Connecting");
 
-	if (!conn) {
+	if (err) {
 		/* If an error occurred, send an event to
 		 * the all intrested.
 		 */
 		notify_connecting_error(&control->device_info);
 	} else {
 		notify_connecting(&control->device_info, conn);
-	}
-
-	if (conn) {
 		bt_conn_unref(conn);
 	}
 }
@@ -1271,8 +1274,8 @@ static void scan_device_found(const bt_addr_le_t *addr, s8_t rssi, u8_t type,
 	check_enabled_filters(&scan_control);
 
 	/* Check id device is connectable. */
-	if (type == BT_LE_ADV_IND ||
-	    type == BT_LE_ADV_DIRECT_IND) {
+	if (type == BT_GAP_ADV_TYPE_ADV_IND ||
+	    type ==  BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
 		scan_control.connectable = true;
 	}
 
