@@ -27,6 +27,7 @@ target_include_directories(app PRIVATE ./src/uut)
 # add test file
 target_sources(app PRIVATE src/example_test.c)
 target_include_directories(app PRIVATE .)
+target_include_directories(app PRIVATE src/foo)
 
 # Preinclude file to the module under test to redefine IS_ENABLED() macro
 # which is used in the module.
