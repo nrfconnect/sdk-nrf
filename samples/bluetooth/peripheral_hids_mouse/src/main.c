@@ -161,16 +161,16 @@ static void advertising_continue(void)
 
 	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT)) {
 		char addr_buf[BT_ADDR_LE_STR_LEN];
-		struct bt_conn *conn;
 
-		adv_param = *BT_LE_ADV_CONN_DIR;
+		adv_param = *BT_LE_ADV_CONN_DIR(&addr);
 		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
-		conn = bt_conn_create_slave_le(&addr, &adv_param);
-		if (!conn) {
+
+		int err = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
+
+		if (err) {
 			printk("Directed advertising failed to start\n");
 			return;
 		}
-		bt_conn_unref(conn);
 
 		bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
 		printk("Direct advertising to %s started\n", addr_buf);

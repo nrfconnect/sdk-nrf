@@ -369,7 +369,7 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 static void adv_recv(const struct bt_le_scan_recv_info *info,
 		     struct net_buf_simple *buf)
 {
-	if (info->adv_type != BT_LE_ADV_NONCONN_IND || !info->addr ||
+	if (info->adv_type != BT_GAP_ADV_TYPE_ADV_NONCONN_IND || !info->addr ||
 	    info->addr->type != BT_ADDR_LE_RANDOM) {
 		return;
 	}
