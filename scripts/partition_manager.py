@@ -540,7 +540,10 @@ def solve_simple_region(pm_config, start, size, placement_strategy, region_name,
         address = start + size - reserved
     else:
         address = start + reserved
-    for partition_name in pm_config:
+
+    # Static partitions are now added to the pm_config dict. These partitions
+    # already have their 'address' set, so skip these partitions in this loop.
+    for partition_name in [k for k in pm_config if 'address' not in pm_config[k]]:
         if placement_strategy == END_TO_START:
             address -= pm_config[partition_name]['size']
 
