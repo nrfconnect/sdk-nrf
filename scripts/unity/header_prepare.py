@@ -13,19 +13,26 @@ def header_prepare(in_file, out_file, out_wrap_file):
         content = f_in.read()
 
     # remove comments
-    comments_pattern = re.compile(
-        r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+    c_comments_pattern = re.compile(
+        r'/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/',
         re.DOTALL | re.MULTILINE
     )
-    content = comments_pattern.sub(r"", content)
+
+    content = c_comments_pattern.sub(r"", content)
+
+    cpp_comments_pattern = re.compile(
+        r'(?!.*\".*)\/\/.*$',
+        re.MULTILINE
+    )
+
+    content = cpp_comments_pattern.sub(r"", content)
 
     # change static inline functions to normal function declaration
     static_inline_pattern = re.compile(
         r'(?:__deprecated\s+)?(?:static\s+inline\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
         r'((?:\w+[*\s]+)+\w+?\(.*?\))\n\{.+?\n\}',
         re.M | re.S)
-    (content, static_inline_cnt) = static_inline_pattern.subn(r"\1;",
-                                                              content)
+    content = static_inline_pattern.sub(r"\1;", content)
 
     # remove syscall include
     syscall_pattern = re.compile(r"#include <syscalls/\w+?.h>", re.M | re.S)
@@ -50,7 +57,7 @@ def header_prepare(in_file, out_file, out_wrap_file):
     # mock generation.
     func_pattern = re.compile(
         r"^\s*((?:\w+[*\s]+)+)(\w+?\(.*?\);)", re.M | re.S)
-    (content2, m2) = func_pattern.subn(r"\n\1__wrap_\2", content)
+    content2 = func_pattern.sub(r"\n\1__wrap_\2", content)
 
     with open(out_wrap_file, 'w') as f_wrap:
         f_wrap.write(content2)
