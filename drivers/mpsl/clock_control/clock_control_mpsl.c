@@ -18,6 +18,8 @@
 #include <hal/nrf_power.h>
 #endif
 
+#define DT_DRV_COMPAT nordic_nrf_clock
+
 /* MPSL clock control structure */
 struct mpsl_clock_control_data {
 	sys_slist_t async_on_list;
@@ -337,8 +339,7 @@ static int clock_control_init(struct device *dev)
 	 * see subsys/mpsl/mpsl_init.c.
 	 */
 
-	IRQ_CONNECT(DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0,
-		    DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0_PRIORITY,
+	IRQ_CONNECT(DT_INST_IRQN(0), DT_INST_IRQ(0, priority),
 		    nrf_power_clock_isr, 0, 0);
 
 	sys_slist_init(&(mpsl_control_data->async_on_list));
@@ -357,7 +358,7 @@ static const struct clock_control_driver_api clock_control_api = {
 static struct mpsl_clock_control_data clock_control_data;
 
 DEVICE_AND_API_INIT(clock_nrf,
-		    DT_INST_0_NORDIC_NRF_CLOCK_LABEL,
+		    DT_INST_LABEL(0),
 		    clock_control_init, &clock_control_data, NULL, PRE_KERNEL_1,
 		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &clock_control_api);
 
@@ -374,7 +375,7 @@ void nrf5_power_usb_power_int_enable(bool enable)
 
 	if (enable) {
 		nrf_power_int_enable(NRF_POWER, mask);
-		irq_enable(DT_INST_0_NORDIC_NRF_CLOCK_IRQ_0);
+		irq_enable(DT_INST_IRQN(0));
 	} else {
 		nrf_power_int_disable(NRF_POWER, mask);
 	}

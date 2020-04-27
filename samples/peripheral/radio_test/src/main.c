@@ -8,13 +8,15 @@
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
 
+#define DT_DRV_COMPAT nordic_nrf_clock
+
 static void clock_init(void)
 {
 	int err;
 	struct device *clock;
 	enum clock_control_status clock_status;
 
-	clock = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL);
+	clock = device_get_binding(DT_INST_LABEL(0));
 	if (!clock) {
 		printk("Unable to find clock device binding\n");
 		return;

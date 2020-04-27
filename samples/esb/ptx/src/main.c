@@ -18,6 +18,8 @@ LOG_MODULE_REGISTER(esb_ptx);
 #define LED_ON 0
 #define LED_OFF 1
 
+#define DT_DRV_COMPAT nordic_nrf_clock
+
 static bool ready = true;
 static struct device *led_port;
 static struct esb_payload rx_payload;
@@ -60,7 +62,7 @@ int clocks_start(void)
 	int err;
 	struct device *clk;
 
-	clk = device_get_binding(DT_INST_0_NORDIC_NRF_CLOCK_LABEL);
+	clk = device_get_binding(DT_INST_LABEL(0));
 	if (!clk) {
 		LOG_ERR("Clock device not found!");
 		return -EIO;
