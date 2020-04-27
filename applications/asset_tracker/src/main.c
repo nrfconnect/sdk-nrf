@@ -1182,6 +1182,7 @@ void sensors_start(void)
 			break;
 		}
 		set_gps_enable(start_gps);
+		started = true;
 	}
 }
 
