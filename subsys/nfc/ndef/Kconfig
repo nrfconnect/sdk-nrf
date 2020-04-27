@@ -52,6 +52,12 @@ config NFC_NDEF_URI_REC
 	bool
 	prompt "NDEF URI record generator library"
 
+config NFC_NDEF_CH_MSG
+	bool "NDEF pairing Connection Handover message generator library"
+	select NFC_NDEF_CH_REC
+	help
+	  Enable NDEF Connection Handover message generator library
+
 config NFC_NDEF_CH_REC
 	bool "NDEF Connection Handover records generator library"
 	help
@@ -69,6 +75,23 @@ config NDEF_FILE_SIZE
 		Set maximal NDEF file size
 
 endif # NFC_NDEF
+
+if NFC_NDEF_CH_MSG
+
+config NFC_NDEF_CH_MAJOR_VERSION
+	int "Connection Handover major version"
+	default 1
+	help
+	  The major version of the Connection Handover specification.
+
+
+config NFC_NDEF_CH_MINOR_VERSION
+	int "Connection Handover minor version"
+	default 5
+	help
+	  The minor version of the Connection Handover specification.
+
+endif # NFC_NDEF_PAIR_MSG
 
 if NFC_NDEF_PARSER
 
