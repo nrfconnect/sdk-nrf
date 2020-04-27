@@ -116,16 +116,19 @@ In this method, the Thingy:91 is connected directly to your PC through USB.
 This method makes use of the :doc:`mcuboot:index` feature and the inbuilt serial recovery mode of Thingy:91.
 You can program either the nRF9160 SiP or the nRF52840 SoC component on the Thingy:91.
 
-For the detailed procedures for programming a Thingy:91 using nRF Connect Programmer, see the following documentation:
+Alternatively, you can use an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33 to program applications on a Thingy:91.
 
-* `Programming the nRF9160 SiP of Thingy:91 through USB`_
-* `Programming the nRF52840 SoC of Thingy:91 through USB`_
+See `Programming applications on Nordic Thingy:91`_ for the detailed procedures to program a Thingy:91 using nRF Connect Programmer.
 
 Updating the modem firmware
 ===========================
 
-You can update the modem firmware of Thingy:91 by using an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33.
-See `Updating the Thingy:91 modem`_ for the detailed steps to update the modem firmware.
+You can update the modem firmware of Thingy:91 using any of the following methods:
+
+* Using USB (MCUboot)
+* Using an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33
+
+See `Programming the Thingy:91 modem`_ for the detailed steps to update the modem firmware.
 
 .. _building_pgming:
 

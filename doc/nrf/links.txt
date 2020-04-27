@@ -50,7 +50,7 @@
 
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
 
-.. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem.html
+.. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem_nrf9160dk.html
 
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
 
@@ -69,11 +69,10 @@
 .. _`Programming DK boards using nrfjprog`: https://infocenter.nordicsemi.com/topic/ug_nrf5x_cltools/UG/cltools/nrf5x_nrfjprogexe.html
 .. _`Nordic Thingy:91 User Guide`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/intro/frontpage.html
 
-.. _`Programming the nRF9160 SiP of Thingy:91 through USB`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/firmware_update/updating_appn_fw_9160_mcu.html
+.. _`Programming applications on Nordic Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_programming_appln_thingy91.html
 
-.. _`Programming the nRF52840 SoC of Thingy:91 through USB`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/firmware_update/updatg_appln_fw_nrf52840_mcu.html
 
-.. _`Updating the Thingy:91 modem`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/firmware_update/updating_modem_fw.html
+.. _`Programming the Thingy:91 modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem_thingy91_intro.html
 
 .. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
 
