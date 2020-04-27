@@ -12,7 +12,7 @@
 #include <zephyr.h>
 #include <sys/printk.h>
 
-#include <cbor.h>
+#include <tinycbor/cbor.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/conn.h>
