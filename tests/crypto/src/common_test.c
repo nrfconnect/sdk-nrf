@@ -44,7 +44,7 @@ static int entropy_func(void *ctx, unsigned char *buf, size_t len)
 	return entropy_get_entropy(ctx, buf, len);
 }
 
-#if defined(CONFIG_MBEDTLS_CTR_DRBG_C)
+#if defined(MBEDTLS_CTR_DRBG_C)
 mbedtls_ctr_drbg_context drbg_ctx;
 int (*drbg_random)(void *, unsigned char *, size_t) = &mbedtls_ctr_drbg_random;
 
@@ -70,7 +70,7 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 	return mbedtls_ctr_drbg_seed(&drbg_ctx, entropy_func, p_device,
 				     p_seed, len);
 }
-#elif defined(CONFIG_MBEDTLS_HMAC_DRBG_C)
+#elif defined(MBEDTLS_HMAC_DRBG_C)
 mbedtls_hmac_drbg_context drbg_ctx;
 int (*drbg_random)(void *, unsigned char *, size_t) = &mbedtls_hmac_drbg_random;
 

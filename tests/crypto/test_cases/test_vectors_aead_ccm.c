@@ -1985,7 +1985,7 @@ ITEM_REGISTER(test_vector_aead_ccm_simple_data,
 	.p_mac = "a3fd8b8dae862dc5"
 };
 
-#if defined(CONFIG_MBEDTLS_CIPHER_AES_256_CCM_C)
+#if defined(MBEDTLS_CIPHER_AES_256_CCM_C)
 
 /* AES CCM - Custom test vector 1 - Invalid behavior test for AES plaintext and AD. */
 ITEM_REGISTER(test_vector_aead_ccm_data,

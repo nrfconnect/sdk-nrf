@@ -707,7 +707,7 @@ ITEM_REGISTER(test_vector_aes_ecb_monte_carlo_data,
 };
 #endif /* CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE */
 
-#if defined(CONFIG_MBEDTLS_CIPHER_AES_256_ECB_C)
+#if defined(MBEDTLS_CIPHER_AES_256_ECB_C)
 
 /* AES ECB - Functional test using test vector NIST CAVS 11.1 ECB KeySbox 192 - Count 0 */
 ITEM_REGISTER(test_vector_aes_ecb_func_data,

@@ -78,7 +78,7 @@ ITEM_REGISTER(test_vector_aes_cbc_mac_data,
 	.p_iv = "00000000000000000000000000000000"
 };
 
-#if defined(CONFIG_MBEDTLS_CIPHER_AES_256_CBC_C)
+#if defined(MBEDTLS_CIPHER_AES_256_CBC_C)
 
 /* AES CBC MAC - Custom test vector */
 ITEM_REGISTER(test_vector_aes_cbc_mac_data,

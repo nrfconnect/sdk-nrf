@@ -74,7 +74,7 @@ ITEM_REGISTER(test_vector_aes_ecb_mac_data,
 	.p_key = "2b7e151628aed2a6abf7158809cf4f3c"
 };
 
-#if defined(CONFIG_MBEDTLS_AES_256_CMAC_C)
+#if defined(MBEDTLS_AES_256_CMAC_C)
 /* AES CMAC - NIST SP 800-38B, CMAC-AES192, Example #1 */
 ITEM_REGISTER(test_vector_aes_ecb_mac_data,
 	      test_vector_aes_t test_vector_aes_cmac_192_1) = {

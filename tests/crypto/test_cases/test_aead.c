@@ -193,7 +193,7 @@ void aead_chachapoly_setup_simple(void)
 	unhexify_aead();
 }
 
-#if defined(CONFIG_CC310_MBEDTLS_CCM_C) || defined(CONFIG_VANILLA_MBEDTLS_CCM_C) || defined(CONFIG_MBEDTLS_CCM_C)
+#if defined(MBEDTLS_CCM_C)
 void exec_test_case_aead_ccm_star_simple(void)
 {
 	int err_code = -1;
@@ -334,7 +334,7 @@ void exec_test_case_aead(void)
 {
 	int err_code = -1;
 
-#if defined(CONFIG_CC310_MBEDTLS_CCM_C) || defined(CONFIG_VANILLA_MBEDTLS_CCM_C) || defined(CONFIG_MBEDTLS_CCM_C)
+#if defined(MBEDTLS_CCM_C)
 	if (p_test_vector->mode == MBEDTLS_MODE_CCM &&
 	    p_test_vector->ccm_star) {
 		exec_test_case_aead_ccm_star();
@@ -438,7 +438,7 @@ void exec_test_case_aead_simple(void)
 {
 	int err_code = -1;
 
-#if defined(CONFIG_CC310_MBEDTLS_CCM_C) || defined(CONFIG_VANILLA_MBEDTLS_CCM_C) || defined(CONFIG_MBEDTLS_CCM_C)
+#if defined(MBEDTLS_CCM_C)
 	if (p_test_vector->mode == MBEDTLS_MODE_CCM &&
 	    p_test_vector->ccm_star) {
 		exec_test_case_aead_ccm_star_simple();

@@ -710,7 +710,7 @@ ITEM_REGISTER(test_vector_aes_cbc_monte_carlo_data,
 };
 #endif /* CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE */
 
-#if defined(CONFIG_MBEDTLS_CIPHER_AES_256_CBC_C)
+#if defined(MBEDTLS_CIPHER_AES_256_CBC_C)
 /* AES CBC - Functional test using test vector NIST CAVS 11.1 CBC KeySbox 192 - Count 0 */
 ITEM_REGISTER(test_vector_aes_cbc_func_data,
 	      test_vector_aes_t test_vector_aes_cbc_192_functional) = {

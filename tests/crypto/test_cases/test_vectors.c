@@ -143,7 +143,7 @@ ITEM_REGISTER(test_vector_aead_ccm_simple_data,
 
 #endif
 
-#if defined(CONFIG_MBEDTLS_CHACHAPOLY_C)
+#if defined(MBEDTLS_CHACHAPOLY_C)
 /* Multiple used ChaCha Poly test vectors. */
 const char chachapoly_plain_114[] = {
 	"4c616469657320616e642047656e746c656d656e206f662074686520636c617373206f6620"
@@ -242,8 +242,8 @@ ITEM_REGISTER(test_vector_aead_chachapoly_simple_data,
 };
 #endif
 
-#if defined(CONFIG_MBEDTLS_AES_C)
-#if defined(CONFIG_MBEDTLS_GCM_C)
+#if defined(MBEDTLS_AES_C)
+#if defined(MBEDTLS_GCM_C)
 /* AES GCM - NIST CAVS 14.0 Decrypt with keysize 256 - Count 0 */
 ITEM_REGISTER(test_vector_aead_gcm_simple_data,
 	      test_vector_aead_t test_vector_aes_aead_gcm_256_decrypt15) = {
@@ -324,8 +324,8 @@ ITEM_REGISTER(test_vector_aead_gcm_simple_data,
 #endif
 #endif
 
-#if defined(CONFIG_MBEDTLS_AES_C)
-#if defined(CONFIG_MBEDTLS_CIPHER_MODE_CTR)
+#if defined(MBEDTLS_AES_C)
+#if defined(MBEDTLS_CIPHER_MODE_CTR)
 const char ctr_long_plain[] = {
 	"d8571a7c14be149a0e94fc6c0d8ec2fa0d55510787762e41726d33f96d45f909194fe52571"
 	"b7dd556a6016f8063cf1bd1601b4cac12814adf097d20c01ebc74e6ff786895ac85aca48cf"
@@ -405,8 +405,8 @@ ITEM_REGISTER(test_vector_aes_ctr_data,
 #endif
 #endif
 
-#if defined(CONFIG_MBEDTLS_AES_C)
-#if defined(CONFIG_MBEDTLS_CIPHER_MODE_CBC)
+#if defined(MBEDTLS_AES_C)
+#if defined(MBEDTLS_CIPHER_MODE_CBC)
 /* AES CBC - Functional test using test vector NIST CAVS 11.1 CBC KeySbox 128 - Count 0 */
 ITEM_REGISTER(test_vector_aes_cbc_func_data,
 	      test_vector_aes_t test_vector_aes_cbc_128_functional) = {
@@ -454,7 +454,7 @@ ITEM_REGISTER(test_vector_aes_cbc_data,
 #endif
 #endif
 
-#if defined(CONFIG_MBEDTLS_AES_C)
+#if defined(MBEDTLS_AES_C)
 /* AES ECB - Functional test using test vector NIST CAVS 11.1 ECB KeySbox 128 - Count 0 */
 ITEM_REGISTER(test_vector_aes_ecb_func_data,
 	      test_vector_aes_t test_vector_aes_ecb_128_functional) = {
@@ -498,7 +498,7 @@ ITEM_REGISTER(test_vector_aes_ecb_data,
 };
 #endif
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
 /* ECDH - SECP256R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
 	      test_vector_ecdh_t test_vector_ecdh_secp256r1_random) = {
@@ -549,7 +549,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_simple,
 };
 #endif
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
 /* ECDSA random - NIST P-256, SHA-256 - first test case */
 ITEM_REGISTER(test_vector_ecdsa_random_data,
 	      test_vector_ecdsa_random_t
@@ -561,7 +561,7 @@ ITEM_REGISTER(test_vector_ecdsa_random_data,
 };
 #endif /* MBEDTLS_ECP_DP_SECP256R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
 /* ECDSA sign - NIST CAVS 11.2 P-256, SHA-256 - first test case */
 ITEM_REGISTER(
 	test_vector_ecdsa_sign_data,
@@ -608,8 +608,8 @@ ITEM_REGISTER(
 };
 #endif
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP192R1_ENABLED)
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_ECP_DP_SECP192R1_ENABLED)
+#if defined(MBEDTLS_SHA256_C)
 /* ECDSA verify - NIST CAVS 11.0 P-192, SHA-256 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
 	      test_vector_ecdsa_verify_t
@@ -657,7 +657,7 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 #endif
 #endif
 
-#if defined(CONFIG_MBEDTLS_ECJPAKE_C)
+#if defined(MBEDTLS_ECJPAKE_C)
 /*
  * Test data as used by ARMmbed: https://github.com/ARMmbed/mbed-crypto/blob/master/library/ecjpake.c
  */
@@ -751,7 +751,7 @@ ITEM_REGISTER(test_vector_ecjpake_given_data,
 };
 #endif /* MBEDTLS_ECJPAKE_C */
 
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_SHA256_C)
 const char hkdf_ikm_len_22[] = {
 	"0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b"
 };
@@ -858,7 +858,7 @@ ITEM_REGISTER(test_vector_hkdf_data,
 };
 #endif
 
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_SHA256_C)
 /* HMAC - NIST CAVS 11.0 */
 ITEM_REGISTER(test_vector_hmac_data,
 	      test_vector_hmac_t test_vector_hmac256_inv_message) = {
@@ -914,7 +914,7 @@ ITEM_REGISTER(test_vector_hmac_data,
 };
 #endif
 
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_SHA256_C)
 const char flash_data_sha_256[4096] = { "1234567890" };
 
 /* SHA256 - Based on NIST CAVS 11.0 */
@@ -956,7 +956,7 @@ ITEM_REGISTER(test_vector_hash_256_data,
 };
 #endif
 
-#if defined(CONFIG_MBEDTLS_SHA512_C)
+#if defined(MBEDTLS_SHA512_C)
 const char flash_data_sha_512[4096] = { "1234567890" };
 
 /* SHA512 - Based on NIST CAVS 11.0 */

@@ -8,23 +8,16 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stddef.h>
-#include "common_test.h"
 
-#if defined(CONFIG_MBEDTLS)
-#if !defined(CONFIG_MBEDTLS_CFG_FILE)
-#include "mbedtls/config.h"
-#else
-#include CONFIG_MBEDTLS_CFG_FILE
-#endif /* CONFIG_MBEDTLS_CFG_FILE */
-#endif /* CONFIG_MBEDTLS */
 #include <mbedtls/ecp.h>
+#include "common_test.h"
 
 /**@brief ECDSA test vectors can be found on NIST web pages.
  *
  * https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Component-Testing
  */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP224R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP224R1_ENABLED)
 /* ECDSA sign - NIST CAVS 11.2 P-224, SHA-256 - first test case */
 ITEM_REGISTER(
 	test_vector_ecdsa_sign_data,
@@ -181,7 +174,7 @@ ITEM_REGISTER(test_vector_ecdsa_sign_data,
 };
 #endif /* MBEDTLS_ECP_DP_SECP224R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
 
 /* ECDSA sign - NIST CAVS 11.2 P-256, SHA-256 - first test case */
 ITEM_REGISTER(
@@ -339,7 +332,7 @@ ITEM_REGISTER(test_vector_ecdsa_sign_data,
 };
 #endif /* MBEDTLS_ECP_DP_SECP256R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP384R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP384R1_ENABLED)
 
 /* ECDSA sign - NIST CAVS 11.2 P-384, SHA-256 */
 ITEM_REGISTER(
@@ -528,7 +521,7 @@ ITEM_REGISTER(test_vector_ecdsa_sign_data,
 
 #endif /* MBEDTLS_ECP_DP_SECP384R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP521R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP521R1_ENABLED)
 
 /* ECDSA sign - NIST CAVS 11.2 P-521, SHA-256 */
 ITEM_REGISTER(

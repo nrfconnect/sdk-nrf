@@ -272,7 +272,7 @@ ITEM_REGISTER(test_vector_hmac_data,
 		"9b09ffa71b942fcb27635fbcd5b0e944bfdc63644f0713938a7f51535c3a35e2"
 };
 
-#if defined(CONFIG_MBEDTLS_SHA512_C)
+#if defined(MBEDTLS_SHA512_C)
 
 /* HMAC - NIST CAVS 11.0 */
 ITEM_REGISTER(test_vector_hmac_data,

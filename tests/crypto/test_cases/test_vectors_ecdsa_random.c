@@ -16,7 +16,7 @@
  *
  * https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Component-Testing
  */
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
 /* ECDSA random - NIST P-256, SHA-256 - first test case */
 ITEM_REGISTER(test_vector_ecdsa_random_data,
 	      test_vector_ecdsa_random_t
