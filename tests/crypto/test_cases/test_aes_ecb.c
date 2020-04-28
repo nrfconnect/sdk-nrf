@@ -271,6 +271,7 @@ void exec_test_case_aes_ecb(void)
 	/* Encrypt or decrypt input. */
 	start_time_measurement();
 	err_code = cipher_crypt_ecb(&ctx, input_len);
+	stop_time_measurement();
 
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
 
@@ -383,6 +384,7 @@ void exec_test_case_aes_ecb_monte_carlo(void)
 		err_code = monte_carlo_ecb(p_test_vector, &ctx, key_len, iv_len,
 					   input_len, output_len);
 	} while ((err_code == p_test_vector->expected_err_code) && (++k < 100));
+	stop_time_measurement();
 
 	LOG_HEXDUMP_DBG(m_aes_output_buf, output_len, "m_aes_output_buf final");
 	LOG_HEXDUMP_DBG(m_aes_expected_output_buf, output_len,
@@ -393,7 +395,6 @@ void exec_test_case_aes_ecb_monte_carlo(void)
 				  output_len, p_test_vector->expected_result,
 				  "Incorrect generated AES ciphertext");
 
-	stop_time_measurement();
 
 	/* Un-initialize resources. */
 	mbedtls_cipher_free(&ctx);

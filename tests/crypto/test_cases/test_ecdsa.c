@@ -237,7 +237,6 @@ void exec_test_case_ecdsa_random(void)
 {
 	int err_code = -1;
 
-	start_time_measurement();
 
 	/* Prepare signer context. */
 	mbedtls_ecdsa_context ctx_sign;
@@ -265,9 +264,11 @@ void exec_test_case_ecdsa_random(void)
 	mbedtls_mpi_init(&r);
 	mbedtls_mpi_init(&s);
 
+	start_time_measurement();
 	err_code = mbedtls_ecdsa_sign(&ctx_sign.grp, &r, &s, &ctx_sign.d,
 				      m_ecdsa_input_buf, hash_len,
 				      drbg_random, &drbg_ctx);
+	stop_time_measurement();
 
 	/* Prepare verification context. */
 	mbedtls_ecdsa_context ctx_verify;
@@ -297,7 +298,6 @@ void exec_test_case_ecdsa_random(void)
 	/* Verify failure. */
 	TEST_VECTOR_ASSERT_NOT_EQUAL(0, err_code);
 
-	stop_time_measurement();
 
 	/* Free resources. */
 	mbedtls_mpi_free(&r);
