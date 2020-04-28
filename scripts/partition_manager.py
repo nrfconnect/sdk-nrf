@@ -527,6 +527,18 @@ def get_region_config(pm_config, region_config, static_conf=None):
     if placement_strategy in [END_TO_START, START_TO_END]:
         solve_simple_region(pm_config, start, size, placement_strategy, region_name, device, static_conf)
     else:
+        if dp != 'app':
+            # All configurations use 'app' to denote the dynamic partition. Replace all occurences of 'app' in the given
+            # configuration to facilitate working with it.
+            replace_app_with_dynamic_partition(pm_config, dp)
+
+            # Create a span over the dynamic partition so that 'app' can be used as a reference for the dynamic
+            # partition in build system and code.
+            pm_config['app'] = {'span': [dp], 'region': region_config['name']}
+
+        pm_config[dp] = dict()
+        pm_config[dp]['region'] = region_config['name']
+
         solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp)
 
 
@@ -713,11 +725,6 @@ def solve_region(pm_config, region, region_config, static_config):
 
     solution.update(partitions)
 
-    if region_config['dynamic_partition']:
-        solution[region_config['dynamic_partition'].strip()] = solution['app']
-        del solution['app']
-        replace_app_with_dynamic_partition(solution, region_config['dynamic_partition'].strip())
-
     return solution
 
 
@@ -738,7 +745,6 @@ def main():
     args, ranges_configuration = parse_args()
     pm_config = load_reqs(args.input_files)
     static_config = load_static_configuration(args, pm_config) if args.static_config else dict()
-    pm_config['app'] = dict()
     fix_syntactic_sugar(pm_config)
 
     regions = get_region_config_from_args(args, ranges_configuration)
@@ -822,6 +828,17 @@ def test():
     expect_addr_size(td, 'a', 0, 100)
     expect_addr_size(td, 'app', 100, 700)
     expect_addr_size(td, 'b', 800, 200)
+
+    # Verify that 'app' spans the dynamic partition when a dynamic partition is set
+    td = {'a': {'size': 100, 'region': 'flash', 'placement': {'after': 'start'}}}
+    test_region = {'name': 'flash',
+                   'size': 1000,
+                   'base_address': 0,
+                   'placement_strategy': COMPLEX,
+                   'device': 'some-driver-device',
+                   'dynamic_partition': 'the_dynamic_partition'}
+    get_region_config(td, test_region)
+    assert td['app']['span'][0] == 'the_dynamic_partition'
 
     # Verify that START_TO_END region configuration is correct
     td = {'b': {'size': 100, 'region': 'extflash'}}
