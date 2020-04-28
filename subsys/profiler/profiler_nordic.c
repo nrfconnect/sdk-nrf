@@ -154,7 +154,7 @@ int profiler_init(void)
 			K_THREAD_STACK_SIZEOF(profiler_nordic_stack),
 			(k_thread_entry_t) profiler_nordic_thread_fn,
 			NULL, NULL, NULL,
-			CONFIG_PROFILER_NORDIC_THREAD_PRIORITY, 0, 0);
+			CONFIG_PROFILER_NORDIC_THREAD_PRIORITY, 0, K_NO_WAIT);
 	return 0;
 }
 
