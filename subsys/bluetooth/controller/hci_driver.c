@@ -424,6 +424,20 @@ static int hci_driver_open(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_2M)) {
+		err = ble_controller_support_le_2m_phy();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)) {
+		err = ble_controller_support_le_coded_phy();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
 		err = ble_controller_enable(host_signal,
