@@ -132,7 +132,7 @@ static int sensor_sim_init_thread(struct device *dev)
 			(k_thread_entry_t)sensor_sim_thread, dev,
 			NULL, NULL,
 			K_PRIO_COOP(CONFIG_SENSOR_SIM_THREAD_PRIORITY),
-			0, 0);
+			0, K_NO_WAIT);
 
 	return 0;
 }

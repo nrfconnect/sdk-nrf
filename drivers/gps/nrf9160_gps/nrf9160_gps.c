@@ -346,7 +346,7 @@ static int init_thread(struct device *dev)
 			K_THREAD_STACK_SIZEOF(drv_data->thread_stack),
 			(k_thread_entry_t)gps_thread, dev, NULL, NULL,
 			K_PRIO_PREEMPT(CONFIG_NRF9160_GPS_THREAD_PRIORITY),
-			0, 0);
+			0, K_NO_WAIT);
 
 	return 0;
 }
