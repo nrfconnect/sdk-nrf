@@ -77,13 +77,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
   if (CONFIG_BUILD_S1_VARIANT AND ("${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "mcuboot"))
     # Inject this configuration from parent image to mcuboot.
-    set(conf_path "${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/build_s1.conf")
-    string(FIND ${mcuboot_OVERLAY_CONFIG} ${conf_path} out)
-    if (${out} EQUAL -1)
-      set(mcuboot_OVERLAY_CONFIG
-        "${mcuboot_OVERLAY_CONFIG} ${conf_path}"
-        CACHE STRING "" FORCE)
-    endif()
+    add_overlay_config(
+      mcuboot
+      ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/build_s1.conf
+      )
   endif()
 
   add_child_image(
