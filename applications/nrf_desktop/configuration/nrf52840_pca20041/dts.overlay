@@ -7,3 +7,7 @@
 	num-isoin-endpoints = <0>;
 	num-isoout-endpoints = <0>;
 };
+&spi1 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+};
