@@ -19,3 +19,17 @@ function(get_board_without_ns_suffix board_in board_out)
     set(${board_out} ${board_in} PARENT_SCOPE)
   endif()
 endfunction()
+
+# Add a kconfig overlay file to a child image.
+# This can be used by a parent image to set kconfig values in its child images.
+# This must be invoked before 'add_child_image(image)'
+function(add_overlay_config image overlay_file)
+  set(old_conf ${${image}_OVERLAY_CONFIG})
+  string(FIND "${old_conf}" "${overlay_file}" found)
+  if (${found} EQUAL -1)
+    set(${image}_OVERLAY_CONFIG
+      "${old_conf} ${overlay_file}"
+      CACHE INTERNAL "")
+  endif()
+endfunction()
+
