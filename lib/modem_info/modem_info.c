@@ -371,7 +371,11 @@ static int modem_info_parse(const struct modem_info_data *modem_data,
 	err = at_parser_max_params_from_str(buf, NULL, &m_param_list,
 					    modem_data->param_count);
 
-	if (err != 0) {
+	if (err == -EAGAIN) {
+		LOG_DBG("More items exist to parse for: %s",
+			modem_data->data_name);
+		err = 0;
+	} else if (err != 0) {
 		return err;
 	}
 
