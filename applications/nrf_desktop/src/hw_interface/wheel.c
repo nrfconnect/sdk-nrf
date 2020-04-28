@@ -288,7 +288,7 @@ static int init(void)
 		return -ENXIO;
 	}
 
-	gpio_dev = device_get_binding(DT_GPIO_P0_DEV_NAME);
+	gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
 	if (!gpio_dev) {
 		LOG_ERR("Cannot get GPIO device");
 		return -ENXIO;
