@@ -788,7 +788,7 @@ void main(void)
 	configure_buttons();
 
 	while (1) {
-		k_sleep(MSEC_PER_SEC);
+		k_sleep(K_SECONDS(1));
 		/* Battery level simulation */
 		bas_notify();
 	}

@@ -47,7 +47,7 @@ static int pwm_out(u32_t frequency, u8_t intensity)
 	if (prev_period) {
 		pwm_pin_set_usec(pwm_dev, CONFIG_UI_BUZZER_PIN,
 				 prev_period, 0, 0);
-		k_sleep(MAX(K_MSEC(prev_period / USEC_PER_MSEC), K_MSEC(1)));
+		k_sleep(K_MSEC(MAX((prev_period / USEC_PER_MSEC), 1)));
 	}
 
 	prev_period = period;

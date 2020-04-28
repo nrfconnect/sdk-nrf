@@ -60,7 +60,7 @@ static void error(void)
 	printk("ERROR!\n");
 	while (true) {
 		/* Spin for ever */
-		k_sleep(1000);
+		k_sleep(K_MSEC(1000));
 	}
 }
 
@@ -229,7 +229,7 @@ void main(void)
 
 	while (1) {
 		mpsl_timeslot_demo();
-		k_sleep(1000);
+		k_sleep(K_MSEC(1000));
 	}
 }
 

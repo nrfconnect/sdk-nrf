@@ -285,7 +285,7 @@ void ping_task(struct k_work *item)
 			count++;
 			sum += ping_t;
 		}
-		k_sleep(ping_argv.interval);
+		k_sleep(K_MSEC(ping_argv.interval));
 	}
 
 	if (count > 1) {

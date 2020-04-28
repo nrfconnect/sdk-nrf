@@ -381,7 +381,7 @@ static void test_run(void)
 			printk("Latency failed (err %d)\n", err);
 		}
 
-		k_sleep(200); /* sleep 200 ms*/
+		k_sleep(K_MSEC(200)); /* sleep 200 ms*/
 	}
 }
 

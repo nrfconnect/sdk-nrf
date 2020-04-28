@@ -63,10 +63,10 @@ void main(void)
 		}
 
 		profile_no_data_event();
-		k_sleep(10);
+		k_sleep(K_MSEC(10));
 		profile_data_event(val1, val2);
 		printk("Events sent\n");
-		k_sleep(500);
+		k_sleep(K_MSEC(500));
 	}
 
 }

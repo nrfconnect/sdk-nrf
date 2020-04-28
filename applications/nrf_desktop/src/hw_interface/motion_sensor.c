@@ -357,7 +357,7 @@ static int init(void)
 	do {
 		err = enable_trigger();
 		if (err == -EBUSY) {
-			k_sleep(1);
+			k_sleep(K_MSEC(1));
 		}
 	} while (err == -EBUSY);
 

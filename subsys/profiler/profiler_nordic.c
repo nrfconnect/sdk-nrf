@@ -112,7 +112,7 @@ static void profiler_nordic_thread_fn(void)
 				break;
 			}
 		}
-		k_sleep(500);
+		k_sleep(K_MSEC(500));
 	}
 	k_sem_give(&profiler_sem);
 }

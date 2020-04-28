@@ -337,7 +337,7 @@ static void nfc_timeout(bool tag_sleep)
 	}
 
 	/* Sleep will block processing loop. Accepted as it is short. */
-	k_sleep(ALL_REQ_DELAY);
+	k_sleep(K_MSEC(ALL_REQ_DELAY));
 
 	nfc_tag_detect(true);
 }

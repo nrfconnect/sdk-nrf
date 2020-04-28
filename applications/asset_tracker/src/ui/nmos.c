@@ -57,8 +57,7 @@ static int pwm_out(u32_t pin, u32_t period_us, u32_t duty_cycle_us)
 	 */
 	if (current_period_us != period_us) {
 		pwm_pin_set_usec(pwm_dev, pin, current_period_us, 0, 0);
-		k_sleep(MAX(K_MSEC(current_period_us / USEC_PER_MSEC),
-			    K_MSEC(1)));
+		k_sleep(K_MSEC(MAX((current_period_us / USEC_PER_MSEC), 1)));
 	}
 
 	current_period_us = period_us;

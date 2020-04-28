@@ -963,7 +963,7 @@ void main(void)
 		} else {
 			dk_set_led_off(ADV_STATUS_LED);
 		}
-		k_sleep(ADV_LED_BLINK_INTERVAL);
+		k_sleep(K_MSEC(ADV_LED_BLINK_INTERVAL));
 		/* Battery level simulation */
 		bas_notify();
 	}

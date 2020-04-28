@@ -512,7 +512,7 @@ int st25r3911b_field_on(u8_t collision_threshold, u8_t peer_threshold,
 			/* Wait specific Guard Time when listener
 			 * is exposedto an Unmodulated Carrier.
 			 */
-			k_sleep(delay);
+			k_sleep(K_MSEC(delay));
 
 			return 0;
 		}

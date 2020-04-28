@@ -168,7 +168,7 @@ void power_thread(void)
 		if (!nrf_power_usbregstatus_vbusdet_get(NRF_POWER)) {
 			nrf_power_system_off(NRF_POWER);
 		}
-		k_sleep(100);
+		k_sleep(K_MSEC(100));
 	}
 }
 

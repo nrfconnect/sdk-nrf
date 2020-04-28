@@ -120,7 +120,7 @@ static void process(struct device *dev)
 			return;
 		}
 		printk("BH1749 IR: %d\n", temp_val.val1);
-		k_sleep(2000);
+		k_sleep(K_MSEC(2000));
 	}
 }
 
@@ -130,7 +130,7 @@ void main(void)
 
 	if (IS_ENABLED(CONFIG_LOG_BACKEND_RTT)) {
 		/* Give RTT log time to be flushed before executing tests */
-		k_sleep(500);
+		k_sleep(K_MSEC(500));
 	}
 	dev = device_get_binding("BH1749");
 	if (dev == NULL) {

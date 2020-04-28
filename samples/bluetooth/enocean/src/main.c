@@ -41,7 +41,7 @@ static void enocean_sensor(struct bt_enocean_device *device,
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	dk_set_leds_state(DK_LED1_MSK | DK_LED2_MSK, 0);
-	k_sleep(50);
+	k_sleep(K_MSEC(50));
 	dk_set_leds_state(0, DK_LED1_MSK | DK_LED2_MSK);
 
 	bt_addr_le_to_str(&device->addr, addr, sizeof(addr));
@@ -79,9 +79,9 @@ static void enocean_commissioned(struct bt_enocean_device *device)
 
 	for (int i = 0; i < 4; ++i) {
 		dk_set_leds_state(DK_LED1_MSK | DK_LED2_MSK, 0);
-		k_sleep(100);
+		k_sleep(K_MSEC(100));
 		dk_set_leds_state(0, DK_LED1_MSK | DK_LED2_MSK);
-		k_sleep(100);
+		k_sleep(K_MSEC(100));
 	}
 }
 

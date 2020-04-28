@@ -74,12 +74,12 @@ void test_cpu_load(void)
 	load = cpu_load_get();
 	zassert_equal(load, FULL_LOAD, "Unexpected load:%d", load);
 
-	k_sleep(10);
+	k_sleep(K_MSEC(10));
 	load = cpu_load_get();
 	zassert_true(load < FULL_LOAD, "Unexpected load:%d", load);
 
 	cpu_load_reset();
-	k_sleep(10);
+	k_sleep(K_MSEC(10));
 	load = cpu_load_get();
 	zassert_true(load < SMALL_LOAD, "Unexpected load:%d", load);
 }
