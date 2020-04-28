@@ -530,14 +530,9 @@ static int do_recv(u16_t length)
 		LOG_WRN("recv() return 0");
 	}
 	if (slm_util_hex_check(data, ret)) {
-		char *data_hex = k_malloc(ret * 2);
+		char data_hex[ret * 2];
 		int size = ret * 2;
 
-		if (data_hex == NULL) {
-			sprintf(rsp_buf, "#XRECV: out of memory\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-			return -ENOMEM;
-		}
 		ret = slm_util_htoa(data, ret, data_hex, size);
 		if (ret > 0) {
 			rsp_send(data_hex, ret);
@@ -545,8 +540,9 @@ static int do_recv(u16_t length)
 				DATATYPE_HEXADECIMAL, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			ret = 0;
+		} else {
+			LOG_ERR("hex convert error: %d", ret);
 		}
-		k_free(data_hex);
 	} else {
 		rsp_send(data, ret);
 		sprintf(rsp_buf, "\r\n#XRECV: %d, %d\r\n",
@@ -646,14 +642,9 @@ static int do_recvfrom(const char *url, u16_t port, u16_t length)
 	 * value is 0. Treat as normal case
 	 */
 	if (slm_util_hex_check(data, ret)) {
-		char *data_hex = k_malloc(ret * 2);
+		char data_hex[ret * 2];
 		int size = ret * 2;
 
-		if (data_hex == NULL) {
-			sprintf(rsp_buf, "#XRECVFROM: out of memory\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-			return -ENOMEM;
-		}
 		ret = slm_util_htoa(data, ret, data_hex, size);
 		if (ret > 0) {
 			rsp_send(data_hex, ret);
@@ -661,8 +652,9 @@ static int do_recvfrom(const char *url, u16_t port, u16_t length)
 				DATATYPE_HEXADECIMAL, ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 			ret = 0;
+		} else {
+			LOG_ERR("hex convert error: %d", ret);
 		}
-		k_free(data_hex);
 	} else {
 		rsp_send(data, ret);
 		sprintf(rsp_buf, "\r\n#XRECVFROM: %d, %d\r\n",
@@ -1019,13 +1011,12 @@ static int handle_at_send(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (datatype == DATATYPE_HEXADECIMAL) {
-			u8_t *data_hex = k_malloc(size / 2);
+			u8_t data_hex[size / 2];
 
 			err = slm_util_atoh(data, size, data_hex, size / 2);
 			if (err > 0) {
 				err = do_send(data_hex, err);
 			}
-			k_free(data_hex);
 		} else {
 			err = do_send(data, size);
 		}
@@ -1120,13 +1111,12 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (datatype == DATATYPE_HEXADECIMAL) {
-			u8_t *data_hex = k_malloc(size / 2);
+			u8_t data_hex[size / 2];
 
 			err = slm_util_atoh(data, size, data_hex, size / 2);
 			if (err > 0) {
 				err = do_sendto(url, port, data_hex, err);
 			}
-			k_free(data_hex);
 		} else {
 			err = do_sendto(url, port, data, size);
 		}

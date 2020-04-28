@@ -18,6 +18,7 @@ LOG_MODULE_REGISTER(tcp_proxy, CONFIG_SLM_LOG_LEVEL);
 
 #define THREAD_STACK_SIZE	(KB(1) + NET_IPV4_MTU)
 #define THREAD_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
+#define DATA_HEX_MAX_SIZE	(2 * NET_IPV4_MTU)
 
 /**@brief Proxy operations. */
 enum slm_tcp_proxy_operation {
@@ -53,6 +54,7 @@ static slm_at_cmd_list_t m_tcp_proxy_at_list[AT_TCP_PROXY_MAX] = {
 	{AT_TCP_SEND, "AT#XTCPSEND", handle_at_tcp_send},
 };
 
+static u8_t data_hex[DATA_HEX_MAX_SIZE];
 static struct k_thread tcp_thread;
 static K_THREAD_STACK_DEFINE(tcp_thread_stack, THREAD_STACK_SIZE);
 static k_tid_t tcp_thread_id;
@@ -414,14 +416,8 @@ thread_entry:
 				continue;
 			}
 			if (slm_util_hex_check(data, ret)) {
-				char *data_hex = k_malloc(ret * 2);
-				int size = ret * 2;
-
-				if (data_hex == NULL) {
-					LOG_WRN("No memory");
-					continue;
-				}
-				ret = slm_util_htoa(data, ret, data_hex, size);
+				ret = slm_util_htoa(data, ret, data_hex,
+					DATA_HEX_MAX_SIZE);
 				if (ret > 0) {
 					sprintf(rsp_buf,
 						"#XTCPRECV: %d, %d\r\n",
@@ -429,8 +425,9 @@ thread_entry:
 					rsp_send(rsp_buf, strlen(rsp_buf));
 					rsp_send(data_hex, ret);
 					rsp_send("\r\n", 2);
+				} else {
+					LOG_ERR("hex convert error: %d", ret);
 				}
-				k_free(data_hex);
 			} else {
 				sprintf(rsp_buf, "#XTCPRECV: %d, %d\r\n",
 					DATATYPE_PLAINTEXT, ret);
@@ -591,13 +588,12 @@ static int handle_at_tcp_send(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (datatype == DATATYPE_HEXADECIMAL) {
-			u8_t *data_hex = k_malloc(size / 2);
+			u8_t data_hex[size / 2];
 
 			err = slm_util_atoh(data, size, data_hex, size / 2);
 			if (err > 0) {
 				err = do_tcp_send(data_hex, err);
 			}
-			k_free(data_hex);
 		} else {
 			err = do_tcp_send(data, size);
 		}
