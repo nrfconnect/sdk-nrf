@@ -44,7 +44,7 @@ extern int (*drbg_random)(void *, unsigned char *, size_t);
  */
 int init_drbg(const unsigned char *p_optional_seed, size_t len);
 
-#if defined(CONFIG_MBEDTLS_CTR_DRBG_C)
+#if defined(MBEDTLS_CTR_DRBG_C)
 
 #include <mbedtls/ctr_drbg.h>
 
@@ -54,7 +54,7 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len);
  */
 extern mbedtls_ctr_drbg_context drbg_ctx;
 
-#elif defined(CONFIG_MBEDTLS_HMAC_DRBG_C)
+#elif defined(MBEDTLS_HMAC_DRBG_C)
 
 #include <mbedtls/hmac_drbg.h>
 extern mbedtls_hmac_drbg_context drbg_ctx;

@@ -18,7 +18,7 @@
  * http://read.pudn.com/downloads168/doc/772358/TestVectorsforSEC%201-gec2.pdf
  * https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Component-Testing
  */
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP160R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP160R1_ENABLED)
 
 /* ECDH - SECP160R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -47,7 +47,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_full,
 
 #endif /* MBEDTLS_ECP_DP_SECP160R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP160R2_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP160R2_ENABLED)
 
 /* ECDH - SECP160R2 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -60,7 +60,7 @@ ITEM_REGISTER(test_vector_ecdh_data_random,
 
 #endif /* MBEDTLS_ECP_DP_SECP160R2_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP192R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP192R1_ENABLED)
 
 /* ECDH - SECP192R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -184,7 +184,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_simple,
 };
 #endif /* MBEDTLS_ECP_DP_SECP192R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP224R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP224R1_ENABLED)
 
 /* ECDH - SECP224R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -332,7 +332,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_simple,
 };
 #endif /* MBEDTLS_ECP_DP_SECP224R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
 
 /* ECDH - SECP256R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -503,7 +503,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_simple,
 };
 #endif /* MBEDTLS_ECP_DP_SECP256R1 */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP384R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP384R1_ENABLED)
 
 /* ECDH - SECP384R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -713,7 +713,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_simple,
 };
 #endif /* MBEDTLS_ECP_DP_SECP384R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP521R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP521R1_ENABLED)
 
 /* ECDH - SECP521R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -923,7 +923,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_simple,
 };
 #endif /* MBEDTLS_ECP_DP_SECP521R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_CURVE25519_ENABLED)
+#if defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)
 
 /* NOTE: mbedtls expects a different endianness on the private keys than the one provided by RFC 7748. */
 /* Instead of making a special case in the source, the keys are swapped here. */
@@ -1052,7 +1052,7 @@ ITEM_REGISTER(
 };
 
 #endif /* MBEDTLS_ECP_DP_CURVE25519_ENABLED */
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP160K1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP160K1_ENABLED)
 
 /* ECDH - SECP160K1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -1065,7 +1065,7 @@ ITEM_REGISTER(test_vector_ecdh_data_random,
 
 #endif /* MBEDTLS_ECP_DP_SECP160K1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP192K1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP192K1_ENABLED)
 
 /* ECDH - SECP192K1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -1077,7 +1077,7 @@ ITEM_REGISTER(test_vector_ecdh_data_random,
 };
 #endif /* MBEDTLS_ECP_DP_SECP192K1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP224K1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP224K1_ENABLED)
 
 /* ECDH - SECP224K1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -1089,7 +1089,7 @@ ITEM_REGISTER(test_vector_ecdh_data_random,
 };
 #endif /* MBEDTLS_ECP_DP_SECP224K1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256K1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_SECP256K1_ENABLED)
 
 /* ECDH - SECP256K1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -1102,7 +1102,7 @@ ITEM_REGISTER(test_vector_ecdh_data_random,
 #endif /* MBEDTLS_ECP_DP_SECP256K1_ENABLED */
 
 #if !defined(CONFIG_CRYPTO_LONG_RUNNING_VECTORS_DISABLE)
-#if defined(CONFIG_MBEDTLS_ECP_DP_BP256R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_BP256R1_ENABLED)
 
 /* ECDH - BP256R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -1138,7 +1138,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_full,
 
 #endif /* MBEDTLS_ECP_DP_BP256R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_BP384R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_BP384R1_ENABLED)
 
 /* ECDH - BP384R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,
@@ -1181,7 +1181,7 @@ ITEM_REGISTER(test_vector_ecdh_data_deterministic_full,
 
 #endif /* MBEDTLS_ECP_DP_BP384R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_BP512R1_ENABLED)
+#if defined(MBEDTLS_ECP_DP_BP512R1_ENABLED)
 
 /* ECDH - BP512R1 - Random test vectors */
 ITEM_REGISTER(test_vector_ecdh_data_random,

@@ -17,8 +17,8 @@
  * https://csrc.nist.gov/Projects/Cryptographic-Algorithm-Validation-Program/Component-Testing
  */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP192R1_ENABLED)
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_ECP_DP_SECP192R1_ENABLED)
+#if defined(MBEDTLS_SHA256_C)
 /* ECDSA verify - NIST CAVS 11.0 P-192, SHA-256 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
 	      test_vector_ecdsa_verify_t
@@ -125,7 +125,7 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 };
 
 #endif /* MBEDTLS_SHA256_C */
-#if defined(CONFIG_MBEDTLS_SHA512_C)
+#if defined(MBEDTLS_SHA512_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-192, SHA-512 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -242,8 +242,8 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 #endif /* MBEDTLS_SHA512_C */
 #endif /* MBEDTLS_ECP_DP_SECP192R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP224R1_ENABLED)
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_ECP_DP_SECP224R1_ENABLED)
+#if defined(MBEDTLS_SHA256_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-224, SHA-256 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -351,7 +351,7 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 };
 
 #endif /* MBEDTLS_SHA256_C */
-#if defined(CONFIG_MBEDTLS_SHA512_C)
+#if defined(MBEDTLS_SHA512_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-224, SHA-512 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -468,8 +468,8 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 #endif /* MBEDTLS_SHA512_C */
 #endif /* MBEDTLS_ECP_DP_SECP224R1_ENABLED) */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP256R1_ENABLED)
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)
+#if defined(MBEDTLS_SHA256_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-256, SHA-256 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -577,7 +577,7 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 };
 
 #endif /* MBEDTLS_SHA256_C */
-#if defined(CONFIG_MBEDTLS_SHA512_C)
+#if defined(MBEDTLS_SHA512_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-256, SHA-512 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -694,8 +694,8 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 #endif /* MBEDTLS_SHA512_C */
 #endif /* MBEDTLS_ECP_DP_SECP256R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP384R1_ENABLED)
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_ECP_DP_SECP384R1_ENABLED)
+#if defined(MBEDTLS_SHA256_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-384, SHA-256 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -831,7 +831,7 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 };
 
 #endif /* MBEDTLS_SHA256_C */
-#if defined(CONFIG_MBEDTLS_SHA512_C)
+#if defined(MBEDTLS_SHA512_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-384, SHA-512 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -976,8 +976,8 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 #endif /* MBEDTLS_SHA512_C */
 #endif /* MBEDTLS_ECP_DP_SECP384R1_ENABLED */
 
-#if defined(CONFIG_MBEDTLS_ECP_DP_SECP521R1_ENABLED)
-#if defined(CONFIG_MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_ECP_DP_SECP521R1_ENABLED)
+#if defined(MBEDTLS_SHA256_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-521, SHA-256 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
@@ -1113,7 +1113,7 @@ ITEM_REGISTER(test_vector_ecdsa_verify_data,
 };
 
 #endif /* MBEDTLS_SHA256_C */
-#if defined(CONFIG_MBEDTLS_SHA512_C)
+#if defined(MBEDTLS_SHA512_C)
 
 /* ECDSA verify - NIST CAVS 11.0 P-521, SHA-512 */
 ITEM_REGISTER(test_vector_ecdsa_verify_data,
