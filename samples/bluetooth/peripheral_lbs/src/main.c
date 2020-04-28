@@ -240,6 +240,6 @@ void main(void)
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
-		k_sleep(RUN_LED_BLINK_INTERVAL);
+		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 	}
 }

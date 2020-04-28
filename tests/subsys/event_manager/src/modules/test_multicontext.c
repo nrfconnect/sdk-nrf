@@ -25,7 +25,7 @@ static void send_event(int a, bool sleep)
 	 */
 	ev->val1 = a;
 	if (sleep) {
-		k_sleep(5);
+		k_sleep(K_MSEC(5));
 	}
 	ev->val2 = a;
 

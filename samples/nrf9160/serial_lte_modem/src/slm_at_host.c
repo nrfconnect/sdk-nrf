@@ -308,7 +308,7 @@ static void cmd_send(struct k_work *work)
 	}
 
 done:
-	k_sleep(100); /* allow time for TX DMA */
+	k_sleep(K_MSEC(100)); /* allow time for TX DMA */
 	buf_num = 1U;
 	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, K_FOREVER);
 	if (err) {
@@ -567,7 +567,7 @@ void slm_at_host_uninit(void)
 
 	/* Power off UART module */
 	uart_rx_disable(uart_dev);
-	k_sleep(100);
+	k_sleep(K_MSEC(100));
 	err = device_set_power_state(uart_dev, DEVICE_PM_OFF_STATE,
 				NULL, NULL);
 	if (err) {

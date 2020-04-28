@@ -744,7 +744,7 @@ static void ble_qos_thread_fn(void)
 		bool update_channel_map;
 		int err;
 
-		k_sleep(CONFIG_DESKTOP_BLE_QOS_INTERVAL);
+		k_sleep(K_MSEC(CONFIG_DESKTOP_BLE_QOS_INTERVAL));
 
 		/* Check and apply new parameters received via config channel */
 		if (atomic_get(&params_updated)) {

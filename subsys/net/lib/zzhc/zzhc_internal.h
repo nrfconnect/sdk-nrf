@@ -87,7 +87,7 @@ struct zzhc {
 #define zzhc_sem_post(sem)                      k_sem_give(sem)
 
 /**@brief Sleep (seconds). */
-#define zzhc_sleep(t)                           k_sleep(t * 1000)
+#define zzhc_sleep(t)                           k_sleep(K_SECONDS(t))
 
 /**
  * @brief Get pointer to the current thread.

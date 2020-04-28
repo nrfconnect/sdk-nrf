@@ -210,6 +210,6 @@ void main(void)
 			}
 			tx_payload.data[1]++;
 		}
-		k_sleep(100);
+		k_sleep(K_MSEC(100));
 	}
 }

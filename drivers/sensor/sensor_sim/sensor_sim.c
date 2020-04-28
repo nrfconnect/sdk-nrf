@@ -78,7 +78,7 @@ static void sensor_sim_thread(int dev_ptr)
 
 	while (true) {
 		if (IS_ENABLED(CONFIG_SENSOR_SIM_TRIGGER_USE_TIMER)) {
-			k_sleep(CONFIG_SENSOR_SIM_TRIGGER_TIMER_MSEC);
+			k_sleep(K_MSEC(CONFIG_SENSOR_SIM_TRIGGER_TIMER_MSEC));
 		} else if (IS_ENABLED(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)) {
 			k_sem_take(&drv_data->gpio_sem, K_FOREVER);
 		}
@@ -243,10 +243,10 @@ static int generate_accel_data(enum sensor_channel chan)
 		case SENSOR_CHAN_ACCEL_XYZ:
 			accel_samples[0] = generate_sine(base_accel_samples[0],
 								max_variation);
-			k_sleep(1);
+			k_sleep(K_MSEC(1));
 			accel_samples[1] = generate_sine(base_accel_samples[1],
 								max_variation);
-			k_sleep(1);
+			k_sleep(K_MSEC(1));
 			accel_samples[2] = generate_sine(base_accel_samples[2],
 								max_variation);
 			break;

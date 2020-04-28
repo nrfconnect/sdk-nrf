@@ -243,7 +243,7 @@ static int at_uart_init(char *uart_dev_name)
 			while (uart_fifo_read(uart_dev, &dummy, 1)) {
 				/* Do nothing with the data */
 			}
-			k_sleep(10);
+			k_sleep(K_MSEC(10));
 		}
 	} while (err);
 
