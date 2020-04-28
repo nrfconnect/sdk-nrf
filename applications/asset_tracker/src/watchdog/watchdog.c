@@ -112,7 +112,7 @@ static int watchdog_enable(struct wdt_data_storage *data)
 
 	int err = -ENXIO;
 
-	data->wdt_drv = device_get_binding(DT_WDT_0_NAME);
+	data->wdt_drv = device_get_binding(DT_LABEL(DT_NODELABEL(wdt)));
 	if (data->wdt_drv == NULL) {
 		LOG_ERR("Cannot bind watchdog driver");
 		return err;
