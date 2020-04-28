@@ -11,6 +11,10 @@
 #include <net/socket.h>
 #include <dk_buttons_and_leds.h>
 
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(cloud_client, CONFIG_CLOUD_CLIENT_LOG_LEVEL);
+
 static struct cloud_backend *cloud_backend;
 static struct k_delayed_work cloud_update_work;
 static K_SEM_DEFINE(lte_connected, 0, 1);
@@ -19,7 +23,7 @@ static void cloud_update_work_fn(struct k_work *work)
 {
 	int err;
 
-	printk("Publishing message: %s\n", CONFIG_CLOUD_MESSAGE);
+	LOG_INF("Publishing message: %s", log_strdup(CONFIG_CLOUD_MESSAGE));
 
 	struct cloud_msg msg = {
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
@@ -30,7 +34,7 @@ static void cloud_update_work_fn(struct k_work *work)
 
 	err = cloud_send(cloud_backend, &msg);
 	if (err) {
-		printk("cloud_send failed, error: %d\n", err);
+		LOG_ERR("cloud_send failed, error: %d", err);
 	}
 
 #if defined(CONFIG_CLOUD_PUBLICATION_SEQUENTIAL)
@@ -49,38 +53,40 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 
 	switch (evt->type) {
 	case CLOUD_EVT_CONNECTED:
-		printk("CLOUD_EVT_CONNECTED\n");
+		LOG_INF("CLOUD_EVT_CONNECTED");
 		break;
 	case CLOUD_EVT_READY:
-		printk("CLOUD_EVT_READY\n");
+		LOG_INF("CLOUD_EVT_READY");
 #if defined(CONFIG_CLOUD_PUBLICATION_SEQUENTIAL)
 		k_delayed_work_submit(&cloud_update_work, K_NO_WAIT);
 #endif
 		break;
 	case CLOUD_EVT_DISCONNECTED:
-		printk("CLOUD_EVT_DISCONNECTED\n");
+		LOG_INF("CLOUD_EVT_DISCONNECTED");
 		break;
 	case CLOUD_EVT_ERROR:
-		printk("CLOUD_EVT_ERROR\n");
+		LOG_INF("CLOUD_EVT_ERROR");
 		break;
 	case CLOUD_EVT_DATA_SENT:
-		printk("CLOUD_EVT_DATA_SENT\n");
+		LOG_INF("CLOUD_EVT_DATA_SENT");
 		break;
 	case CLOUD_EVT_DATA_RECEIVED:
-		printk("CLOUD_EVT_DATA_RECEIVED\n");
-		printk("Data received from cloud: %s\n", evt->data.msg.buf);
+		LOG_INF("CLOUD_EVT_DATA_RECEIVED");
+		LOG_INF("Data received from cloud: %s",
+			log_strdup(evt->data.msg.buf))
+	;
 		break;
 	case CLOUD_EVT_PAIR_REQUEST:
-		printk("CLOUD_EVT_PAIR_REQUEST\n");
+		LOG_INF("CLOUD_EVT_PAIR_REQUEST");
 		break;
 	case CLOUD_EVT_PAIR_DONE:
-		printk("CLOUD_EVT_PAIR_DONE\n");
+		LOG_INF("CLOUD_EVT_PAIR_DONE");
 		break;
 	case CLOUD_EVT_FOTA_DONE:
-		printk("CLOUD_EVT_FOTA_DONE\n");
+		LOG_INF("CLOUD_EVT_FOTA_DONE");
 		break;
 	default:
-		printk("Unknown cloud event type: %d\n", evt->type);
+		LOG_INF("Unknown cloud event type: %d", evt->type);
 		break;
 	}
 }
@@ -99,26 +105,34 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			break;
 		}
 
-		printk("Network registration status: %s\n",
+		LOG_INF("Network registration status: %s",
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
 		k_sem_give(&lte_connected);
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
-		printk("PSM parameter update: \n\tTAU: %d\n\tActive time: %d\n",
+		LOG_DBG("PSM parameter update: TAU: %d, Active time: %d",
 			evt->psm_cfg.tau, evt->psm_cfg.active_time);
 		break;
-	case LTE_LC_EVT_EDRX_UPDATE:
-		printf("eDRX parameter update: \n\teDRX: %f\n\tPTW: %f\n",
-		       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
+	case LTE_LC_EVT_EDRX_UPDATE: {
+		char log_buf[60];
+		ssize_t len;
+
+		len = snprintf(log_buf, sizeof(log_buf),
+			       "eDRX parameter update: eDRX: %f, PTW: %f",
+			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
+		if (len > 0) {
+			LOG_DBG("%s", log_strdup(log_buf));
+		}
 		break;
+	}
 	case LTE_LC_EVT_RRC_UPDATE:
-		printk("RRC mode: %s\n",
+		LOG_DBG("RRC mode: %s",
 			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
 			"Connected" : "Idle");
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:
-		printk("LTE cell changed: \n\tCell ID: %d\n\tTracking area: %d\n",
+		LOG_DBG("LTE cell changed: Cell ID: %d, Tracking area: %d",
 			evt->cell.id, evt->cell.tac);
 		break;
 	default:
@@ -143,25 +157,22 @@ static void modem_configure(void)
 		 */
 		err = lte_lc_psm_req(true);
 		if (err) {
-			printk("Failed to set PSM parameters, error: %d\n",
-			       err);
+			LOG_ERR("Failed to set PSM parameters, error: %d",
+				err);
 		}
 
-		printk("PSM mode requested\n");
+		LOG_INF("PSM mode requested");
 #endif
 		err = lte_lc_init_and_connect_async(lte_handler);
 		if (err) {
-			printk("Modem could not be configured, error: %d\n",
-			       err);
+			LOG_ERR("Modem could not be configured, error: %d",
+				err);
 			return;
 		}
 
 		/* Check LTE events of type LTE_LC_EVT_NW_REG_STATUS in
 		 * lte_handler() to determine when the LTE link is up.
 		 */
-
-		printk("Connecting to LTE network. ");
-		printk("This may take several minutes.\n");
 	}
 #endif
 }
@@ -179,7 +190,7 @@ void main(void)
 {
 	int err;
 
-	printk("Cloud client has started\n");
+	LOG_INF("Cloud client has started");
 
 	cloud_backend = cloud_get_binding(CONFIG_CLOUD_BACKEND);
 	__ASSERT(cloud_backend != NULL, "%s backend not found",
@@ -187,7 +198,7 @@ void main(void)
 
 	err = cloud_init(cloud_backend, cloud_event_handler);
 	if (err) {
-		printk("Cloud backend could not be initialized, error: %d\n",
+		LOG_ERR("Cloud backend could not be initialized, error: %d",
 			err);
 	}
 
@@ -197,18 +208,19 @@ void main(void)
 #if defined(CONFIG_CLOUD_PUBLICATION_BUTTON_PRESS)
 	err = dk_buttons_init(button_handler);
 	if (err) {
-		printk("dk_buttons_init, error: %d\n", err);
+		LOG_ERR("dk_buttons_init, error: %d", err);
 	}
 #endif
-	printk("Waiting for LTE connection...\n");
+	LOG_INF("Connecting to LTE network, this may take several minutes...");
+
 	k_sem_take(&lte_connected, K_FOREVER);
 
-	printk("Connected to LTE network\n");
-	printk("Connecting to cloud\n");
+	LOG_INF("Connected to LTE network");
+	LOG_INF("Connecting to cloud");
 
 	err = cloud_connect(cloud_backend);
 	if (err) {
-		printk("cloud_connect, error: %d\n", err);
+		LOG_ERR("Failed to connect to cloud, error: %d", err);
 	}
 
 	struct pollfd fds[] = {
@@ -222,7 +234,7 @@ void main(void)
 		err = poll(fds, ARRAY_SIZE(fds),
 			   cloud_keepalive_time_left(cloud_backend));
 		if (err < 0) {
-			printk("poll() returned an error: %d\n", err);
+			LOG_ERR("poll() returned an error: %d", err);
 			continue;
 		}
 
@@ -236,20 +248,20 @@ void main(void)
 		}
 
 		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
-			printk("Socket error: POLLNVAL\n");
-			printk("The cloud socket was unexpectedly closed.\n");
+			LOG_ERR("Socket error: POLLNVAL");
+			LOG_INF("The cloud socket was unexpectedly closed");
 			return;
 		}
 
 		if ((fds[0].revents & POLLHUP) == POLLHUP) {
-			printk("Socket error: POLLHUP\n");
-			printk("Connection was closed by the cloud.\n");
+			LOG_ERR("Socket error: POLLHUP");
+			LOG_INF("Connection was closed by the cloud");
 			return;
 		}
 
 		if ((fds[0].revents & POLLERR) == POLLERR) {
-			printk("Socket error: POLLERR\n");
-			printk("Cloud connection was unexpectedly closed.\n");
+			LOG_ERR("Socket error: POLLERR");
+			LOG_INF("Cloud connection was unexpectedly closed");
 			return;
 		}
 	}
