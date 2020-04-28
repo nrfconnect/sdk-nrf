@@ -219,6 +219,7 @@ void exec_test_case_ecjpake_given(void)
 				     priv_key_srv_2_len);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
+	start_time_measurement();
 	/* Round one. */
 	err_code = mbedtls_ecjpake_read_round_one(&ctx_server, m_msg_cli_1,
 						  msg_cli_1_len);
@@ -251,6 +252,7 @@ void exec_test_case_ecjpake_given(void)
 		&ctx_server, m_secret_srv, sizeof(m_secret_srv), &len_ss_srv,
 		drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	stop_time_measurement();
 
 	TEST_VECTOR_ASSERT_EQUAL(secret_len, len_ss_cli);
 	TEST_VECTOR_ASSERT_EQUAL(secret_len, len_ss_srv);
@@ -280,6 +282,7 @@ void exec_test_case_ecjpake_random(void)
 	ecjpake_ctx_init(&ctx_client, MBEDTLS_ECJPAKE_CLIENT);
 	ecjpake_ctx_init(&ctx_server, MBEDTLS_ECJPAKE_SERVER);
 
+	start_time_measurement();
 	/* Round one. */
 	err_code = mbedtls_ecjpake_write_round_one(&ctx_client, m_msg_cli_1,
 						   sizeof(m_msg_cli_1), &len,
@@ -332,6 +335,7 @@ void exec_test_case_ecjpake_random(void)
 		&ctx_server, m_secret_srv, sizeof(m_secret_srv), &len_ss_srv,
 		drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	stop_time_measurement();
 
 	TEST_VECTOR_ASSERT_EQUAL(len_ss_cli, len_ss_srv);
 
