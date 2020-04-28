@@ -5,6 +5,7 @@
 
 menuconfig AWS_JOBS
 	bool "AWS Jobs library"
+	depends on ENTROPY_DEVICE_RANDOM_GENERATOR
 
 if AWS_JOBS
 
