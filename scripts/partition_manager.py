@@ -402,6 +402,7 @@ def align_partition(current, reqs, move_up, dynamic_partitions):
     e = 'EMPTY_{}'.format(len([x for x in reqs.keys() if 'EMPTY' in x]))
     reqs[e] = {'address': empty_partition_address,
                'size': empty_partition_size,
+               'region': reqs[dynamic_partitions[0]]['region'],
                'placement': {'before' if move_up else 'after': [current]}}
 
     if current not in dynamic_partitions:
@@ -1075,7 +1076,7 @@ def test():
         assert failed, "Should have received a TypeError."
     # Verify that the first partition can be aligned, and that the inserted empty partition is placed behind it.
     td = {'first': {'placement': {'before': 'app', 'align': {'end': 800}}, 'size': 100},
-          'app': {}}
+          'app': {'region': 'flash_primary',}}
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
@@ -1102,7 +1103,7 @@ def test():
     # Test a single partition with alignment where the address is smaller than the alignment value.
     td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},
           'with_alignment': {'placement': {'before': 'app', 'align': {'start': 200}}, 'size': 100},
-          'app': {}}
+          'app': {'region': 'flash_primary',}}
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
@@ -1112,7 +1113,7 @@ def test():
     # Test alignment after 'app'
     td = {'without_alignment': {'placement': {'after': 'app'}, 'size': 100},
           'with_alignment': {'placement': {'after': 'without_alignment', 'align': {'start': 400}}, 'size': 100},
-          'app': {}}
+          'app': {'region': 'flash_primary',}}
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 1000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
@@ -1124,7 +1125,7 @@ def test():
     td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 100},
           'with_alignment': {'placement': {'before': 'with_alignment_2', 'align': {'end': 400}}, 'size': 100},
           'with_alignment_2': {'placement': {'before': 'app', 'align': {'start': 1000}}, 'size': 100},
-          'app': {}}
+          'app': {'region': 'flash_primary'}}
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 10000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
@@ -1137,7 +1138,7 @@ def test():
     td = {'without_alignment': {'placement': {'before': 'with_alignment'}, 'size': 10000},
           'with_alignment': {'placement': {'before': 'with_alignment_2', 'align': {'end': 400}}, 'size': 100},
           'with_alignment_2': {'placement': {'before': 'app', 'align': {'start': 1000}}, 'size': 100},
-          'app': {}}
+          'app': {'region': 'flash_primary'}}
     s, sub_partitions = resolve(td, 'app')
     set_addresses_and_align(td, sub_partitions, s, 10000, 'app')
     set_sub_partition_address_and_size(td, sub_partitions)
@@ -1182,7 +1183,7 @@ def test():
           'mcuboot_primary': {'span': ['mcuboot_pad', 'mcuboot_primary_app']},
           'mcuboot_pad': {'placement': {'before': 'mcuboot_primary_app', 'align': {'start': 0x1000}}, 'size': 0x200},
           'mcuboot_primary_app': {'span': ['app']},
-          'app': {},
+          'app': {'region': 'flash_primary'},
           'mcuboot_secondary': {'placement': {'after': 'mcuboot_primary', 'align': {'start': 0x1000}}, 'share_size': 'mcuboot_primary'},
           'mcuboot_scratch': {'placement': {'after': 'app', 'align': {'start': 0x1000}}, 'size': 0x1e000},
           'mcuboot_storage': {'placement': {'after': 'mcuboot_scratch', 'align': {'start': 0x1000}}, 'size': 0x4000},
