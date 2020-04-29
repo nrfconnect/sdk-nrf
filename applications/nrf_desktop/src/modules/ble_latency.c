@@ -20,6 +20,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 	K_SECONDS(CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S)
 #define LOW_LATENCY_CHECK_PERIOD_MS	5000
 #define DEFAULT_LATENCY			CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY
+#define REG_CONN_INTERVAL_LLPM_MASK	0x0d00
+#define REG_CONN_INTERVAL_BLE_DEFAULT	0x0006
 
 static struct bt_conn *active_conn;
 static struct k_delayed_work security_timeout;
@@ -69,9 +71,14 @@ static void set_ble_latency(bool low_latency)
 
 	__ASSERT_NO_MSG(info.role == BT_CONN_ROLE_SLAVE);
 
+	/* Request with connection interval set to a LLPM value is rejected
+	 * by Zephyr Bluetooth API.
+	 */
+	u16_t interval = (info.le.interval & REG_CONN_INTERVAL_LLPM_MASK) ?
+			  REG_CONN_INTERVAL_BLE_DEFAULT : info.le.interval;
 	const struct bt_le_conn_param param = {
-		.interval_min = info.le.interval,
-		.interval_max = info.le.interval,
+		.interval_min = interval,
+		.interval_max = interval,
 		.latency = (low_latency) ? (0) : (DEFAULT_LATENCY),
 		.timeout = info.le.timeout
 	};
@@ -90,8 +97,6 @@ static void set_ble_latency(bool low_latency)
 		if (err == -EALREADY) {
 			LOG_INF("Conn parameters were already updated");
 		}
-	} else if (err == -EINVAL) {
-		LOG_INF("LLPM conn parameters - do not update");
 	} else {
 		LOG_WRN("Failed to update conn parameters (err %d)", err);
 	}
@@ -109,10 +114,14 @@ static void low_latency_check_fn(struct k_work *w)
 	}
 }
 
-static void le_param_updated(struct bt_conn *conn, u16_t interval,
-			     u16_t latency, u16_t timeout)
+static void conn_params_updated(const struct ble_peer_conn_params_event *event)
 {
-	if (latency == 0) {
+	if (!event->updated) {
+		/* Ignore the connection parameters update request. */
+		return;
+	}
+
+	if (event->latency == 0) {
 		latency_state |= LOW_LATENCY_ENABLED;
 		k_delayed_work_submit(&low_latency_check,
 				      LOW_LATENCY_CHECK_PERIOD_MS);
@@ -124,12 +133,6 @@ static void le_param_updated(struct bt_conn *conn, u16_t interval,
 
 static void init(void)
 {
-	static struct bt_conn_cb conn_callbacks = {
-		.le_param_updated = le_param_updated,
-	};
-
-	bt_conn_cb_register(&conn_callbacks);
-
 	k_delayed_work_init(&security_timeout, security_timeout_fn);
 	k_delayed_work_init(&low_latency_check, low_latency_check_fn);
 }
@@ -198,6 +201,12 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_ble_peer_conn_params_event(eh)) {
+		conn_params_updated(cast_ble_peer_conn_params_event(eh));
+
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -206,6 +215,7 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
