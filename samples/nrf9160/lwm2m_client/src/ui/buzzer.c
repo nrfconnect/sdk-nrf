@@ -12,6 +12,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(buzzer, CONFIG_UI_LOG_LEVEL);
 
+#define BUZZER_PWM_NODE			DT_ALIAS(buzzer_pwm)
+#define BUZZER_PWM_PIN			DT_PROP(BUZZER_PWM_NODE, ch0_pin)
 #define BUZZER_MIN_FREQUENCY		CONFIG_UI_BUZZER_MIN_FREQUENCY
 #define BUZZER_MAX_FREQUENCY		CONFIG_UI_BUZZER_MAX_FREQUENCY
 #define BUZZER_MIN_INTENSITY		0
@@ -45,14 +47,14 @@ static int pwm_out(u32_t frequency, u8_t intensity)
 	 * disables the PWM, but not before the current period is finished.
 	 */
 	if (prev_period) {
-		pwm_pin_set_usec(pwm_dev, CONFIG_UI_BUZZER_PIN,
+		pwm_pin_set_usec(pwm_dev, BUZZER_PWM_PIN,
 				 prev_period, 0, 0);
 		k_sleep(K_MSEC(MAX((prev_period / USEC_PER_MSEC), 1)));
 	}
 
 	prev_period = period;
 
-	return pwm_pin_set_usec(pwm_dev, CONFIG_UI_BUZZER_PIN,
+	return pwm_pin_set_usec(pwm_dev, BUZZER_PWM_PIN,
 				period, duty_cycle, 0);
 }
 
@@ -93,7 +95,7 @@ static int buzzer_enable(void)
 
 int ui_buzzer_init(void)
 {
-	const char *dev_name = CONFIG_UI_BUZZER_PWM_DEV_NAME;
+	const char *dev_name = DT_LABEL(BUZZER_PWM_NODE);
 	int err = 0;
 
 	pwm_dev = device_get_binding(dev_name);

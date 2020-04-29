@@ -8,45 +8,33 @@ menu "User Interface"
 
 config UI_LED_USE_PWM
 	bool "Use PWM to control LEDs"
-	default y if BOARD_NRF9160_PCA20035NS
+	default y
+	depends on $(dt_alias_enabled,rgb-pwm)
 	select PWM if BOARD_NRF9160_PCA20035NS
 	select PWM_0 if BOARD_NRF9160_PCA20035NS
-
-if UI_LED_USE_PWM
-
-config UI_LED_PWM_DEV_NAME
-	string "PWM device name for RGB LED"
-	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_0_LABEL)" if BOARD_NRF9160_PCA20035NS
-
-config UI_LED_RED_PIN
-	int "Red LED pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH0_PIN)
-
-config UI_LED_GREEN_PIN
-	int "Green LED pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH1_PIN)
-
-config UI_LED_BLUE_PIN
-	int "Blue LED pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_0_CH2_PIN)
-
-endif # UI_LED_USE_PWM
+	help
+		If enabled, LEDs will be controlled with PWM. In order
+		to enable this option, the devicetree must have an
+		"rgb-pwm" property in /aliases, which must point to an
+		enabled PWM node with compatible "nordic,nrf-pwm". The
+		red, green, and blue LEDs must be connected to
+		channels 0, 1, and 2 of this PWM, respectively.
 
 config UI_BUZZER
 	bool "Enable buzzer"
-	default y if BOARD_NRF9160_PCA20035NS
+	default y
+	depends on $(dt_alias_enabled,buzzer-pwm)
 	select PWM if BOARD_NRF9160_PCA20035NS
 	select PWM_1 if BOARD_NRF9160_PCA20035NS
+	help
+		If enabled, a buzzer will be controllable with PWM. In
+		order to enable this option, the devicetree must have
+		a "buzzer-pwm" property in /aliases, which must point
+		to an enabled PWM node with compatible
+		"nordic,nrf-pwm". The buzzer must be connected to
+		channel 0 of this PWM.
 
 if UI_BUZZER
-
-config UI_BUZZER_PWM_DEV_NAME
-	string "PWM device name for buzzer"
-	default "$(dt_str_val,DT_NORDIC_NRF_PWM_PWM_1_LABEL)" if BOARD_NRF9160_PCA20035NS
-
-config UI_BUZZER_PIN
-	int "Buzzer pin number"
-	default $(dt_int_val,DT_NORDIC_NRF_PWM_PWM_1_CH0_PIN)
 
 config UI_BUZZER_MIN_FREQUENCY
 	int "Minimum buzzer frequency"
