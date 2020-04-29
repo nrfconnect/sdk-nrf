@@ -257,7 +257,7 @@ The following code example shows how to define the event profiling information s
 Shell integration
 *****************
 
-The Event Manager is integrated with Zephyr's :ref:`zephyr:shell_label` module.
+The Event Manager is integrated with Zephyr's :ref:`zephyr:shell_api` module.
 When the shell is turned on, an additional subcommand set (:command:`event_manager`) is added.
 
 This subcommand set contains the following commands:

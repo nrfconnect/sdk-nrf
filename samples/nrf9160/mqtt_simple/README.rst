@@ -59,7 +59,7 @@ From nrfxlib
   * :ref:`nrfxlib:bsdlib`
 
 From Zephyr
-  * :ref:`MQTT <zephyr:networking_reference>`
+  * :ref:`MQTT <zephyr:networking_api>`
 
 In addition, it uses the following samples:
 

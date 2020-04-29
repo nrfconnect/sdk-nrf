@@ -106,7 +106,7 @@ The module provides the following configuration options:
 Implementation details
 **********************
 
-The QoS module uses Zephyr's :ref:`zephyr:settings` subsystem to store the configuration in non-volatile memory.
+The QoS module uses Zephyr's :ref:`zephyr:settings_api` subsystem to store the configuration in non-volatile memory.
 The channel map is not stored.
 
 Bluetoooth LE controller intreraction

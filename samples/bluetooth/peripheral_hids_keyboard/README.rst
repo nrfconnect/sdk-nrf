@@ -195,7 +195,7 @@ The sample uses the following Zephyr libraries:
 * ``include/sys/printk.h``
 * ``include/sys/byteorder.h``
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
-* :ref:`zephyr:settings`
+* :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:
 
   * ``include/bluetooth/bluetooth.h``

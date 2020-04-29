@@ -15,7 +15,7 @@ The library supports different types of commissioning for both wall switches and
 The library supports replay protection based on sequence numbers.
 Only new, authenticated packets from commissioned devices will go through to the event callbacks.
 
-If the :option:`CONFIG_BT_SETTINGS` subsystem is enabled, the device information of all commissioned devices are stored persistently using the :ref:`zephyr:settings` subsystem, including the sequence number information.
+If the :option:`CONFIG_BT_SETTINGS` subsystem is enabled, the device information of all commissioned devices are stored persistently using the :ref:`zephyr:settings_api` subsystem, including the sequence number information.
 
 For a demonstration of the library features, see the :ref:`enocean_sample` sample.
 

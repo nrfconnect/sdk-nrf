@@ -18,7 +18,7 @@ Module Events
 Configuration
 *************
 
-The module implemented in ``selector_hw.c`` uses the Zephyr :ref:`zephyr:gpio` driver to check the state of hardware selectors.
+The module implemented in ``selector_hw.c`` uses the Zephyr :ref:`zephyr:gpio_api` driver to check the state of hardware selectors.
 For this reason, you should set :option:`CONFIG_GPIO` option.
 
 Set ``CONFIG_DESKTOP_SELECTOR_HW_ENABLE`` option to enable the module.

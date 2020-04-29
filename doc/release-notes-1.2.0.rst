@@ -131,7 +131,7 @@ Updated samples and applications
   * Implemented support for receiving modem AT commands from the cloud and returning the modem's response.
   * Added functionality to configure the interval at which sensor data is sent to the cloud.
     This makes it possible to change the poll/send interval for environmental and light sensors from the terminal card in nRF Cloud.
-  * Replaced ``printk`` calls with calls to the :ref:`zephyr:logger` subsystem.
+  * Replaced ``printk`` calls with calls to the :ref:`zephyr:logging_api` subsystem.
   * Added a separate workqueue for the application, instead of using the system workqueue.
 
 * :ref:`gps_with_supl_support_sample`:
@@ -263,7 +263,7 @@ Updated libraries
 
 * :ref:`lib_dfu_target`:
 
-  * Added the configuration option :option:`CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`, which uses Zephyr's :ref:`zephyr:settings` subsystem.
+  * Added the configuration option :option:`CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`, which uses Zephyr's :ref:`zephyr:settings_api` subsystem.
     When this option is enabled, the write progress of an MCUboot style upgrade is stored, so that the progress is retained when the device reboots.
   * Fixed a bug where :cpp:func:`dfu_target_done` logged the error message ``unable to deinitialize dfu resource`` when no target was initialized.
 

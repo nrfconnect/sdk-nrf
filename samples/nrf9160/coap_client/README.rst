@@ -87,7 +87,7 @@ From nrfxlib
   * :ref:`nrfxlib:bsdlib`
 
 From Zephyr
-  * :ref:`CoAP <zephyr:networking_reference>`
+  * :ref:`CoAP <zephyr:networking_api>`
 
 In addition, it uses the following samples:
 

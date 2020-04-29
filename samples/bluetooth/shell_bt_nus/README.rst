@@ -62,4 +62,4 @@ In addition, it uses the following Zephyr libraries:
   * ``include/bluetooth/uuid.h``
   * ``include/bluetooth/gatt.h``
   * ``samples/bluetooth/gatt/bas.h``
-* :ref:`zephyr:logger`
+* :ref:`zephyr:logging_api`

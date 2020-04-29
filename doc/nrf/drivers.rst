@@ -4,7 +4,7 @@ Drivers
 #######
 
 Nordic Semiconductor provides a variety of drivers that are used in our sample applications.
-Drivers are libraries that follow Zephyr's :ref:`zephyr:device_drivers`.
+Drivers are libraries that follow Zephyr's :ref:`zephyr:device_model_api`.
 
 Additional drivers are provided in `nrfx`_.
 

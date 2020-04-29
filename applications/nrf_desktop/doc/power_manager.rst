@@ -52,7 +52,7 @@ Configuration
 
 You can enable the power manager module by selecting the ``CONFIG_DESKTOP_POWER_MANAGER_ENABLE`` option in the configuration.
 
-This module uses Zephyr's :ref:`zephyr:power_management` subsystem.
+This module uses Zephyr's :ref:`zephyr:power_management_api` subsystem.
 It depends on :option:`CONFIG_HAS_SYS_POWER_STATE_DEEP_SLEEP_1` being enabled and selects :option:`CONFIG_DEVICE_POWER_MANAGEMENT` and :option:`CONFIG_SYS_POWER_DEEP_SLEEP_STATES`.
 
 Timeout configuration options

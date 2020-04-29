@@ -61,7 +61,7 @@ This sample uses the following `nrfxlib`_ libraries:
 In addition, it uses the following Zephyr libraries:
 
 * :file:`include/console.h`
-* :ref:`zephyr:kernel`:
+* :ref:`zephyr:kernel_api`:
 
   * :file:`include/kernel.h`
   * :file:`include/irq.h`

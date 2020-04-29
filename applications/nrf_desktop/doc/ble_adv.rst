@@ -60,7 +60,7 @@ Power down
 Implementation details
 **********************
 
-The BLE advertising module uses the :ref:`zephyr:settings` to store the information if the peer for the given local identity uses the Resolvable Private Address (RPA).
+The BLE advertising module uses the :ref:`zephyr:settings_api` to store the information if the peer for the given local identity uses the Resolvable Private Address (RPA).
 
 Avoiding connection requests from unbonded centrals when bonded
     If the Bluetooth local identity currently in use already has a bond and the device uses indirect advertising, the advertising device will not set the General Discoverable flag.

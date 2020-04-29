@@ -110,9 +110,9 @@ From nrfxlib
   * :ref:`nrfxlib:bsdlib`
 
 From Zephyr
-  * :ref:`zephyr:flash_interface`
-  * :ref:`zephyr:logger`
-  * :ref:`zephyr:gpio`
+  * :ref:`zephyr:flash_api_interface`
+  * :ref:`zephyr:logging_api`
+  * :ref:`zephyr:gpio_api`
 
 From MCUboot
   * `MCUboot`_

@@ -19,7 +19,7 @@ Module Events
 Configuration
 *************
 
-The module implemented in ``battery_charger.c`` uses the Zephyr :ref:`zephyr:gpio` driver to control and monitor battery charging. For this reason, you should set :option:`CONFIG_GPIO` option.
+The module implemented in ``battery_charger.c`` uses the Zephyr :ref:`zephyr:gpio_api` driver to control and monitor battery charging. For this reason, you should set :option:`CONFIG_GPIO` option.
 
 By default, the module is disabled and the ``CONFIG_DESKTOP_BATTERY_CHARGER_NONE`` option is selected.
 Set the option ``CONFIG_DESKTOP_BATTERY_CHARGER_DISCRETE`` to enable the module.

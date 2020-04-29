@@ -82,7 +82,7 @@ In addition, it uses the following Zephyr libraries:
 
 * ``include/zephyr/types.h``
 * ``boards/arm/nrf*/board.h``
-* :ref:`zephyr:kernel`:
+* :ref:`zephyr:kernel_api`:
 
   * ``include/kernel.h``
 
@@ -91,7 +91,7 @@ In addition, it uses the following Zephyr libraries:
    * ``include/uart.h``
    * ``include/usb.h``
 
-* :ref:`zephyr:usb_device_stack`
+* :ref:`zephyr:usb_api`
 
 * :ref:`zephyr:bluetooth_api`:
 

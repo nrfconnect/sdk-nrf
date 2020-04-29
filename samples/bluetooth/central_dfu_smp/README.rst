@@ -88,7 +88,7 @@ It uses the following Zephyr libraries:
 
 * ``include/zephyr/types.h``
 * ``boards/arm/nrf*/board.h``
-* :ref:`zephyr:kernel`:
+* :ref:`zephyr:kernel_api`:
 
   * ``include/kernel.h``
 
