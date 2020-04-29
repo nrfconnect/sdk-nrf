@@ -80,4 +80,4 @@ This sample uses the following |NCS| subsystems:
 
 In addition, it uses the following Zephyr subsystems:
 
-* :ref:`zephyr:logger`
+* :ref:`zephyr:logging_api`

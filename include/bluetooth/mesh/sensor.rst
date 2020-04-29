@@ -80,7 +80,7 @@ Like the Device Properties, the Sensor types are connected to a Bluetooth GATT C
 
 The sensor types may either be used as the data types of the sensor output values, or as configuration parameters for the sensors.
 
-The Bluetooth Mesh Sensor type API is built to mirror and integrate well with the Zephyr :ref:`zephyr:sensor` API.
+The Bluetooth Mesh Sensor type API is built to mirror and integrate well with the Zephyr :ref:`zephyr:sensor_api` API.
 Some concepts in the Bluetooth Mesh Specification are changed slightly to fit better with the Zephyr Sensor API, with focus on making integration as simple as possible.
 
 .. _bt_mesh_sensor_types_channels:
@@ -259,7 +259,7 @@ Sensor data
 Sensor data is accessed through the :cpp:member:`bt_mesh_sensor::get` callback, which is expected to fill the ``rsp`` parameter with the most recent sensor data and return a status code.
 Each sensor channel will be encoded internally according to the sensor type.
 
-The sensor data in the callback typically comes from a sensor using the :ref:`Zephyr sensor API <zephyr:sensor>`.
+The sensor data in the callback typically comes from a sensor using the :ref:`Zephyr sensor API <zephyr:sensor_api>`.
 The Zephyr sensor API records samples in two steps:
 
 1.

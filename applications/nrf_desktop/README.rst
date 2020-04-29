@@ -390,7 +390,7 @@ Since the nRF Desktop project uses the partition manager when the bootloader is 
 
 Since the nRF Desktop project depends on the DTS layout only when bootloader is not used, only the settings partition is relevant and other partitions are ignored.
 
-For more information about how to configure the flash memory layout in the DTS files, see :ref:`flash_partitions`.
+For more information about how to configure the flash memory layout in the DTS files, see :ref:`legacy_flash_partitions`.
 
 Memory layout in partition manager
 ----------------------------------

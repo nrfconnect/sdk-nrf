@@ -14,7 +14,7 @@ Overview
 ********
 
 You can run the tests by connecting to the board through the serial port and sending shell commands.
-Zephyr's :ref:`zephyr:shell_label` module is used to handle the commands.
+Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
 At any time during the tests, you can dynamically set the radio parameters, such as output power, bit rate, and channel.
 In sweep mode, you can set the time for which the radio scans each channel from 1 millisecond to 99 milliseconds, in steps of 1 millisecond.
 The sample also allows you to send a data pattern to another board.
@@ -176,14 +176,14 @@ This sample uses the following nrfx dependencies:
 
 In addition, it uses the following Zephyr libraries:
 
-* :ref:`zephyr:device_drivers`:
+* :ref:`zephyr:device_model_api`:
 
    * ``drivers/clock_control.h``
 
-* :ref:`zephyr:kernel`:
+* :ref:`zephyr:kernel_api`:
 
   * ``include/init.h``
 
-* :ref:`zephyr:shell_label`:
+* :ref:`zephyr:shell_api`:
 
   * ``include/shell/shell.h``

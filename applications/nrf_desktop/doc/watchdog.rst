@@ -19,7 +19,7 @@ Module Events
 Configuration
 *************
 
-The module uses the Zephyr :ref:`zephyr:watchdog_interface` driver.
+The module uses the Zephyr :ref:`zephyr:watchdog_api` driver.
 For this reason, set the :option:`CONFIG_WATCHDOG` option.
 
 The module is enabled by the ``CONFIG_DESKTOP_WATCHDOG_ENABLE`` option.

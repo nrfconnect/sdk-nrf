@@ -103,7 +103,7 @@ The |ble_scan| module stores the following information for every bonded peer:
 * Peripheral type (mouse or keyboard).
 * Information about Low Latency Packet Mode (LLPM) support.
 
-The module uses Zephyr's :ref:`zephyr:settings` subsystem to store the information in the non-volatile memory.
+The module uses Zephyr's :ref:`zephyr:settings_api` subsystem to store the information in the non-volatile memory.
 This information is required to filter out unbonded devices, because the nRF Desktop central connects and bonds with only one mouse and one keyboard.
 
 Bluetooth connection inverval

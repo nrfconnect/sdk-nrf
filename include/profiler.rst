@@ -142,7 +142,7 @@ When two lines are present, the application measures the time between them and d
 Shell integration
 *****************
 
-The Profiler is integrated with Zephyr's :ref:`zephyr:shell_label` module.
+The Profiler is integrated with Zephyr's :ref:`zephyr:shell_api` module.
 When the shell is turned on, an additional subcommand set (:command:`profiler`) is added.
 
 This subcommand set contains the following commands:

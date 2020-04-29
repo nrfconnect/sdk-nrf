@@ -17,7 +17,7 @@ Module Events
 Configuration
 *************
 
-The module uses the Zephyr :ref:`zephyr:adc_interface` driver to measure voltage.
+The module uses the Zephyr :ref:`zephyr:adc_api` driver to measure voltage.
 For this reason, set the following options:
 
 * :option:`CONFIG_ADC` - the module implementation uses Zephyr ADC driver.
@@ -48,7 +48,7 @@ Remember to also define the following battery parameters (otherwise, the default
 If a pin is used to enable the battery measurement, enable the ``CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN`` option.
 The number of the pin used for this purpose must be defined as ``CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN``.
 The implementation uses the ``GPIO0`` port.
-Because the Zephyr :ref:`zephyr:gpio` driver is used to control this pin, also set the :option:`CONFIG_GPIO` option.
+Because the Zephyr :ref:`zephyr:gpio_api` driver is used to control this pin, also set the :option:`CONFIG_GPIO` option.
 
 Implementation details
 **********************

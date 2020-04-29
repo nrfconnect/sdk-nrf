@@ -74,8 +74,8 @@ This sample uses the following |NCS| libraries:
 In addition, it uses the following Zephyr libraries:
 
 * ``include/zephyr/types.h``
-* :ref:`zephyr:logger`
-* :ref:`zephyr:kernel`:
+* :ref:`zephyr:logging_api`
+* :ref:`zephyr:kernel_api`:
 
   * ``include/kernel.h``
   * ``include/irq.h``

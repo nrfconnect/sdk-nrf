@@ -17,10 +17,10 @@ Module Events
 Configuration
 *************
 
-The Settings loader module is enabled for every nRF Desktop device with :ref:`zephyr:settings` enabled.
-The :ref:`zephyr:settings` subsystem is enabled with the :option:`CONFIG_SETTINGS` Kconfig option.
+The Settings loader module is enabled for every nRF Desktop device with :ref:`zephyr:settings_api` enabled.
+The :ref:`zephyr:settings_api` subsystem is enabled with the :option:`CONFIG_SETTINGS` Kconfig option.
 
-The Zephyr Bluetooth stack does not load the :ref:`zephyr:settings` data on its own.
+The Zephyr Bluetooth stack does not load the :ref:`zephyr:settings_api` data on its own.
 Zephyr assumes that the application will call :cpp:func:`settings_load` after completing all necessary initialization.
 This function is called on the ``settings_loader`` module initialization.
 Make sure that all settings handlers are registered and :cpp:func:`bt_enable` is called before the ``settings_loader`` module is initialized.

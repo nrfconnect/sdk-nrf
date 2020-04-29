@@ -208,7 +208,7 @@ The options can be used only if the module is in :cpp:enum:`STATE_IDLE`.
 Shell integration
 *****************
 
-The module is integrated with Zephyr's :ref:`zephyr:shell_label` module.
+The module is integrated with Zephyr's :ref:`zephyr:shell_api` module.
 When the shell is turned on, an additional subcommand set (:command:`peers`) is added.
 
 This subcommand set contains the following commands:
@@ -221,7 +221,7 @@ This subcommand set contains the following commands:
 Implementation details
 **********************
 
-The module uses Zephyr's :ref:`zephyr:settings` subsystem to store the following data in the non-volatile memory:
+The module uses Zephyr's :ref:`zephyr:settings_api` subsystem to store the following data in the non-volatile memory:
 
 * Currently selected peer (application local identity)
 * Mapping between the application local identities and the Bluetooth local identities

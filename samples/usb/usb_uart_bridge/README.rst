@@ -42,4 +42,4 @@ Dependencies
 
 This sample uses the following Zephyr subsystems:
 
-* :ref:`zephyr:usb_device_stack`
+* :ref:`zephyr:usb_api`
