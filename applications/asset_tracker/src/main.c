@@ -1426,12 +1426,12 @@ void connection_evt_handler(const struct cloud_event *const evt)
 		ui_led_set_pattern(UI_LTE_CONNECTED);
 
 		switch (evt->data.err) {
-		case CLOUD_DISCONNECT_CLOSED_BY_REMOTE:
+		case CLOUD_DISCONNECT_INVALID_REQUEST:
+			LOG_INF("Cloud connection closed.");
 			if ((atomic_get(&cloud_connect_attempts) == 1) &&
 			    (atomic_get(&cloud_association) ==
 			     CLOUD_ASSOCIATION_STATE_INIT)) {
-				LOG_INF("Disconnected by the cloud.");
-				LOG_INF("This can occur during provisioning or when the device has invalid certificates.");
+				LOG_INF("This can occur during initial nRF Cloud provisioning.");
 #if defined(CONFIG_LWM2M_CARRIER)
 #if !defined(CONFIG_DEBUG) && defined(CONFIG_REBOOT)
 				/* Reconnect does not work with carrier library */
@@ -1442,6 +1442,8 @@ void connection_evt_handler(const struct cloud_event *const evt)
 				break;
 #endif
 				connect_wait_s = 10;
+			} else {
+				LOG_INF("This can occur if the device has the wrong nRF Cloud certificates.");
 			}
 			break;
 		case CLOUD_DISCONNECT_USER_REQUEST:
@@ -1453,8 +1455,10 @@ void connection_evt_handler(const struct cloud_event *const evt)
 				connect_wait_s = 10;
 			}
 			break;
+		case CLOUD_DISCONNECT_CLOSED_BY_REMOTE:
+			LOG_INF("Disconnected by the cloud.");
+			break;
 		case CLOUD_DISCONNECT_MISC:
-		case CLOUD_DISCONNECT_INVALID_REQUEST:
 		default:
 			break;
 		}
