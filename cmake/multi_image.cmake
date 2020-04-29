@@ -208,6 +208,7 @@ function(add_child_image_from_source)
     BUILD_COMMAND ${CMAKE_COMMAND} --build . -- ${multi_image_build_args}
     INSTALL_COMMAND ""
     BUILD_ALWAYS True
+    USES_TERMINAL_BUILD True
     )
 
   foreach(kconfig_target
