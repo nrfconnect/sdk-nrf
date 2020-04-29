@@ -203,7 +203,8 @@ static void on_svc_delayed_operation(void)
 
 	err = k_delayed_work_submit(&tnep.tnep_work,
 				    time_spent > tnep.wait_time ?
-				    K_NO_WAIT : (tnep.wait_time - time_spent));
+				    K_NO_WAIT :
+				    K_MSEC(tnep.wait_time - time_spent));
 	if (err && tnep.cb->error) {
 		tnep.cb->error(err);
 	}

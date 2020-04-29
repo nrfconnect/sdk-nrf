@@ -722,7 +722,7 @@ static int irq_process(void)
 		/* Workaround. In some cases RXE irq is not triggered, so
 		 * after this time transmission finish is checked.
 		 */
-		k_delayed_work_submit(&timeout_work, RXS_TIMEOUT);
+		k_delayed_work_submit(&timeout_work, K_MSEC(RXS_TIMEOUT));
 	}
 
 	rx_error_check(irq);
