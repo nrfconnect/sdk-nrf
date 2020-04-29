@@ -309,21 +309,37 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
-	LOG_INF("Conn parameters request:"
-		"\n\tinterval (0x%04x, 0x%04x)\n\tsl %d\n\ttimeout %d",
-		param->interval_min, param->interval_max,
-		param->latency, param->timeout);
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_CENTRAL));
 
-	/* Accept the request */
-	return true;
+	struct ble_peer_conn_params_event *event =
+		new_ble_peer_conn_params_event();
+
+	event->id = conn;
+	event->interval_min = param->interval_min;
+	event->interval_max = param->interval_max;
+	event->latency = param->latency;
+	event->timeout = param->timeout;
+	event->updated = false;
+
+	EVENT_SUBMIT(event);
+
+	return false;
 }
 
 static void le_param_updated(struct bt_conn *conn, u16_t interval,
 			     u16_t latency, u16_t timeout)
 {
-	LOG_INF("Conn parameters updated:"
-		"\n\tinterval 0x%04x\n\tlat %d\n\ttimeout %d\n",
-		interval, latency, timeout);
+	struct ble_peer_conn_params_event *event =
+		new_ble_peer_conn_params_event();
+
+	event->id = conn;
+	event->interval_min = interval;
+	event->interval_max = interval;
+	event->latency = latency;
+	event->timeout = timeout;
+	event->updated = true;
+
+	EVENT_SUBMIT(event);
 }
 
 static void bt_ready(int err)
