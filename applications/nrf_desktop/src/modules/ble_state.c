@@ -62,7 +62,7 @@ static void disconnect_peer(struct bt_conn *conn)
 	}
 }
 
-void send_passkey_req(bool active)
+static void send_passkey_req(bool active)
 {
 	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_BLE_ENABLE_PASSKEY));
 	__ASSERT_NO_MSG(!passkey_input || !active);
@@ -355,13 +355,13 @@ static void bt_ready(int err)
 	module_set_state(MODULE_STATE_READY);
 }
 
-void auth_passkey_entry(struct bt_conn *conn)
+static void auth_passkey_entry(struct bt_conn *conn)
 {
 	send_passkey_req(true);
 	LOG_INF("Passkey input started");
 }
 
-void auth_cancel(struct bt_conn *conn)
+static void auth_cancel(struct bt_conn *conn)
 {
 	send_passkey_req(false);
 	LOG_INF("Authentication cancelled");
