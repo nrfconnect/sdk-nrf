@@ -106,9 +106,11 @@ config FLIP_INPUT
 	int "Button or switch number to simulate flip"
 	range 1 4 if BOARD_NRF9160DK_NRF9160NS
 	default 3 if BOARD_NRF9160DK_NRF9160NS
+	default 0
 	help
 		Button or switch number to use for simulating
 		a board flip event.
+		0 - not set
 		1 - Button 1
 		2 - Button 2
 		3 - Switch 1
