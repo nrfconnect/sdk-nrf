@@ -1,0 +1,7 @@
+docutils; platform_system == "Windows"
+pygments; platform_system == "Windows"
+pypiwin32; platform_system == "Windows"
+kivy_deps.sdl2==0.1.22; platform_system == "Windows"
+kivy_deps.glew==0.1.12; platform_system == "Windows"
+plyer
+kivy
