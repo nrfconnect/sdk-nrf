@@ -13,6 +13,8 @@
 #include <sys/printk.h>
 
 #include <tinycbor/cbor.h>
+#include <tinycbor/cbor_buf_reader.h>
+#include <tinycbor/cbor_buf_writer.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/conn.h>
@@ -242,19 +244,6 @@ static const struct bt_gatt_dfu_smp_c_init_params init_params = {
 	.error_cb = dfu_smp_c_on_error
 };
 
-static CborError cbor_stream(void *token, const char *fmt, ...)
-{
-	va_list ap;
-
-	(void)token;
-	va_start(ap, fmt);
-	vprintk(fmt, ap);
-	va_end(ap);
-
-	return CborNoError;
-}
-
-
 static void smp_echo_rsp_proc(struct bt_gatt_dfu_smp_c *dfu_smp_c)
 {
 	u8_t *p_outdata = (u8_t *)(&smp_rsp_buff);
@@ -297,21 +286,20 @@ static void smp_echo_rsp_proc(struct bt_gatt_dfu_smp_c *dfu_smp_c)
 		CborError cbor_error;
 		CborParser parser;
 		CborValue value;
+		struct cbor_buf_reader reader;
 
-		cbor_error = cbor_parser_init(smp_rsp_buff.payload,
-					      payload_len,
-					      0,
-					      &parser,
-					      &value);
+		cbor_buf_reader_init(&reader, smp_rsp_buff.payload, payload_len);
+
+		cbor_error = cbor_parser_init(&reader.r, 0, &parser, &value);
+
 		if (cbor_error != CborNoError) {
 			printk("CBOR parser initialization failed (err: %d)\n",
 			       cbor_error);
 			return;
 		}
-		cbor_error =
-			cbor_value_to_pretty_stream(cbor_stream, NULL,
-						    &value,
-						    CborPrettyDefaultFlags);
+
+		cbor_error = cbor_value_to_pretty_advance(stdout, &value);
+
 		printk("\n");
 		if (cbor_error != CborNoError) {
 			printk("Cannot print received CBOR stream (err: %d)\n",
@@ -328,14 +316,16 @@ static int send_smp_echo(struct bt_gatt_dfu_smp_c *dfu_smp_c,
 	static struct smp_buffer smp_cmd;
 	CborEncoder cbor, cbor_map;
 	size_t payload_len;
+	struct cbor_buf_writer writer;
 
-	cbor_encoder_init(&cbor, smp_cmd.payload, sizeof(smp_cmd.payload), 0);
+	cbor_buf_writer_init(&writer, smp_cmd.payload, sizeof(smp_cmd.payload));
+	cbor_encoder_init(&cbor, &writer.enc, 0);
 	cbor_encoder_create_map(&cbor, &cbor_map, 1);
 	cbor_encode_text_stringz(&cbor_map, "d");
 	cbor_encode_text_stringz(&cbor_map, string);
 	cbor_encoder_close_container(&cbor, &cbor_map);
 
-	payload_len = cbor_encoder_get_buffer_size(&cbor, smp_cmd.payload);
+	payload_len = (size_t)(writer.ptr - smp_cmd.payload);
 
 	smp_cmd.header.op = 2; /* Write */
 	smp_cmd.header.flags = 0;
