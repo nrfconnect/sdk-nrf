@@ -20,11 +20,8 @@ LOG_MODULE_DECLARE(st25r3911b);
 #define IRQ_REG_CNT 3
 #define IRQ_REG_READ_MAX_CNT 5
 
-#define _DO_IRQ_GPIO_PORT(_num) \
-	DT_GPIO_P ## _num ## _DEV_NAME
-
-#define IRQ_GPIO_PORT(_num) \
-	_DO_IRQ_GPIO_PORT(_num)
+#define _DO_IRQ_GPIO_PORT(_num) DT_LABEL(DT_NODELABEL(gpio##_num))
+#define IRQ_GPIO_PORT(_num) _DO_IRQ_GPIO_PORT(_num)
 
 static struct gpio_callback gpio_cb;
 static struct device *gpio_dev;
@@ -44,7 +41,8 @@ static int gpio_init(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(IRQ_GPIO_PORT(CONFIG_ST25R3911B_IRQ_PORT));
+	gpio_dev = device_get_binding(
+		IRQ_GPIO_PORT(CONFIG_ST25R3911B_IRQ_PORT));
 	if (!gpio_dev) {
 		LOG_ERR("GPIO device binding error.");
 		return -ENXIO;
