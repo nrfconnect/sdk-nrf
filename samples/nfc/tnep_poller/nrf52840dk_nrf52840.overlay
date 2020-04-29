@@ -1,4 +1,5 @@
 &spi0 {
+	compatible = "nordic,nrf-spi";
 	status = "okay";
 	sck-pin = <47>;
 	mosi-pin = <45>;
