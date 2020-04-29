@@ -244,7 +244,7 @@ static void t2t_data_read_complete(u8_t *data)
 
 	st25r3911b_nfca_tag_sleep();
 
-	k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
+	k_delayed_work_submit(&transmit_work, K_MSEC(TRANSMIT_DELAY));
 }
 
 static int t2t_on_data_read(const u8_t *data, size_t data_len,
@@ -499,7 +499,7 @@ static void t4t_isodep_deselected(void)
 {
 	st25r3911b_nfca_tag_sleep();
 
-	k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
+	k_delayed_work_submit(&transmit_work, K_MSEC(TRANSMIT_DELAY));
 }
 
 static const struct nfc_t4t_isodep_cb t4t_isodep_cb = {
@@ -554,7 +554,7 @@ static void t4t_hl_selected(enum nfc_t4t_hl_procedure_select type)
 	if (err) {
 		st25r3911b_nfca_tag_sleep();
 
-		k_delayed_work_submit(&transmit_work, TRANSMIT_DELAY);
+		k_delayed_work_submit(&transmit_work, K_MSEC(TRANSMIT_DELAY));
 	}
 }
 
