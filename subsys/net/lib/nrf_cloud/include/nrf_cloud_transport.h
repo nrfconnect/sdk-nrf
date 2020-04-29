@@ -46,7 +46,7 @@ struct nct_cc_data {
 };
 
 struct nct_evt {
-	u32_t status;
+	s32_t status;
 	union {
 		struct nct_cc_data *cc;
 		struct nct_dc_data *dc;
