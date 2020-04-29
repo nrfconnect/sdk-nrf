@@ -94,6 +94,19 @@ struct ble_peer_operation_event {
 };
 EVENT_TYPE_DECLARE(ble_peer_operation_event);
 
+/** @brief BLE connection parameters event. */
+struct ble_peer_conn_params_event {
+	struct event_header header;
+
+	void *id;
+	u16_t interval_min;
+	u16_t interval_max;
+	u16_t latency;
+	u16_t timeout;
+	bool updated;
+};
+EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
+
 /** @brief BLE peer search event. */
 struct ble_peer_search_event {
 	struct event_header header;

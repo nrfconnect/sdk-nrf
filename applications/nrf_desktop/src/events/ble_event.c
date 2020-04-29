@@ -121,6 +121,24 @@ EVENT_TYPE_DEFINE(ble_peer_operation_event,
 		  log_ble_peer_operation_event,
 		  &ble_peer_operation_event_info);
 
+static int log_ble_peer_conn_params_event(const struct event_header *eh,
+					  char *buf, size_t buf_len)
+{
+	const struct ble_peer_conn_params_event *event =
+		cast_ble_peer_conn_params_event(eh);
+
+	return snprintf(buf, buf_len, "peer=%p min=%"PRIx16 " max=%"PRIx16
+			" lat=%"PRIu16 " timeout=%" PRIu16 " (%s)",
+			event->id, event->interval_min,	event->interval_max,
+			event->latency, event->timeout,
+			(event->updated ? "updated" : "required"));
+}
+
+EVENT_TYPE_DEFINE(ble_peer_conn_params_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENT),
+		  log_ble_peer_conn_params_event,
+		  NULL);
+
 EVENT_TYPE_DEFINE(ble_discovery_complete_event,
 		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT),
 		  NULL,
