@@ -279,7 +279,9 @@ static int connection_handler(const struct nct_evt *nct_evt)
 	 */
 	if (nct_evt->status != 0) {
 		evt.type = NRF_CLOUD_EVT_ERROR;
-		nfsm_set_current_state_and_notify(STATE_CONNECTED, &evt);
+		evt.status = nct_evt->status;
+		nfsm_set_current_state_and_notify(nfsm_get_current_state(),
+						  &evt);
 		return 0;
 	}
 

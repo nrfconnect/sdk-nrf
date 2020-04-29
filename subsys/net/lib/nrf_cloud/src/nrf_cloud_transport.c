@@ -687,7 +687,7 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	case MQTT_EVT_CONNACK: {
 		const struct mqtt_connack_param *p = &_mqtt_evt->param.connack;
 
-		LOG_DBG("MQTT_EVT_CONNACK");
+		LOG_DBG("MQTT_EVT_CONNACK: result %d", _mqtt_evt->result);
 
 		evt.type = NCT_EVT_CONNECTED;
 		evt.param.flag = (p->session_present_flag != 0);
