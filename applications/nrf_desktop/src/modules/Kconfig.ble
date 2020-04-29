@@ -242,7 +242,7 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
-comment "BLE Latency"
+comment "BLE connection parameters"
 
 if BT_PERIPHERAL
 
@@ -255,6 +255,14 @@ config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 
 module = DESKTOP_BLE_LATENCY
 module-str = BLE latency
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+if BT_CENTRAL
+
+module = DESKTOP_BLE_CONN_PARAMS
+module-str = BLE connection parameters
 source "subsys/logging/Kconfig.template.log_config"
 
 endif

@@ -9,7 +9,6 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
 #include <settings/settings.h>
-#include <bluetooth/gatt_dm.h>
 
 #include <string.h>
 
@@ -19,10 +18,6 @@
 #include "ble_event.h"
 
 #include "ble_scan_def.h"
-
-#ifdef CONFIG_BT_LL_NRFXLIB
-#include "ble_controller_hci_vs.h"
-#endif /* CONFIG_BT_LL_NRFXLIB */
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
@@ -419,23 +414,6 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 	bt_conn_ref(discovering_peer_conn);
 }
 
-extern bool bt_le_conn_params_valid(const struct bt_le_conn_param *param);
-
-static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
-{
-	LOG_INF("Connection parameter update request");
-
-	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
-		LOG_INF("Keep LLPM params");
-		return false;
-	}
-
-	param->interval_min = 6;
-	param->interval_max = 6;
-
-	return true;
-}
-
 static int store_subscribed_peers(void)
 {
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
@@ -490,75 +468,10 @@ static void scan_init(void)
 	};
 
 	bt_scan_init(&scan_init);
-
 	bt_scan_cb_register(&scan_cb);
 
-	static struct bt_conn_cb conn_callbacks = {
-		.le_param_req = le_param_req,
-	};
-
-	bt_conn_cb_register(&conn_callbacks);
 	k_delayed_work_init(&scan_start_trigger, scan_start_trigger_fn);
 	k_delayed_work_init(&scan_stop_trigger, scan_stop_trigger_fn);
-}
-
-static void set_conn_params(struct bt_conn *conn, bool peer_llpm_support)
-{
-	int err;
-
-#ifdef CONFIG_BT_LL_NRFXLIB
-	if (peer_llpm_support) {
-		struct net_buf *buf;
-
-		hci_vs_cmd_conn_update_t *cmd_conn_update;
-
-		buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
-					sizeof(*cmd_conn_update));
-		if (!buf) {
-			LOG_ERR("Could not allocate command buffer");
-			return;
-		}
-
-		u16_t conn_handle;
-
-		err = bt_hci_get_conn_handle(conn, &conn_handle);
-		if (err) {
-			LOG_ERR("Failed obtaining conn_handle (err %d)", err);
-			return;
-		}
-
-		cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
-		cmd_conn_update->connection_handle   = conn_handle;
-		cmd_conn_update->conn_interval_us    = 1000;
-		cmd_conn_update->conn_latency        = 99;
-		cmd_conn_update->supervision_timeout = 400;
-
-		err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf,
-					   NULL);
-	} else
-#endif /* CONFIG_BT_LL_NRFXLIB */
-	{
-		struct bt_le_conn_param param = {
-			.interval_min = 0x0006,
-			.interval_max = 0x0006,
-			.latency = 99,
-			.timeout = 400,
-		};
-
-		err = bt_conn_le_param_update(conn, &param);
-
-		if (err == -EALREADY) {
-			/* Connection parameters are already set. */
-			err = 0;
-		}
-	}
-
-	if (err) {
-		LOG_ERR("Cannot set conn params (err:%d)", err);
-	} else {
-		LOG_INF("%s conn params set",
-			peer_llpm_support ? "LLPM" : "BLE");
-	}
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -702,9 +615,6 @@ static bool event_handler(const struct event_header *eh)
 		k_delayed_work_submit(&scan_start_trigger,
 				      SCAN_TRIG_TIMEOUT_MS);
 		scan_counter = SCAN_TRIG_TIMEOUT_MS;
-
-		set_conn_params(bt_gatt_dm_conn_get(event->dm),
-				event->peer_llpm_support);
 
 		return false;
 	}
