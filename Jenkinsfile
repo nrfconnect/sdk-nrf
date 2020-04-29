@@ -143,6 +143,7 @@ pipeline {
 
     stage('Execution') { steps { script {
       parallel TestExecutionList
+      lib_Status.set("${currentBuild.currentResult}",  'NRF', CI_STATE)
     }}}
 
     stage('Trigger Downstream Jobs') {
@@ -159,29 +160,16 @@ pipeline {
   }
   post {
     // This is the order that the methods are run. {always->success/abort/failure/unstable->cleanup}
-    always {
-      echo "always"
-    }
-    success {
-      echo "success"
-      script { lib_Status.set("SUCCESS", 'NRF', CI_STATE) }
-    }
-    aborted {
-      echo "aborted"
-      script { lib_Status.set("ABORTED", 'NRF', CI_STATE) }
-    }
-    unstable {
-      echo "unstable"
-      script { lib_Status.set("FAILURE", 'NRF', CI_STATE) }
-    }
-    failure {
-      echo "failure"
-      script { lib_Status.set("FAILURE", 'NRF', CI_STATE) }
-    }
-    cleanup {
-        echo "cleanup"
-        cleanWs()
-    }
+    always {   script { echo "always"; lib_Status.set( "${currentBuild.currentResult}" , 'FULL_CI', CI_STATE) } }
+
+    /* uncomment if logic is needed
+    success  { }
+    aborted  { }
+    unstable { }
+    failure  { }
+    */
+
+    cleanup  { script { echo "cleanup"; cleanWs disableDeferredWipeout: true, deleteDirs: true } }
   }
 }
 
