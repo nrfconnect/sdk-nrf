@@ -16,14 +16,15 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
 
+#define DT_DRV_COMPAT pixart_paw3212
 
-#define PAW3212_SPI_DEV_NAME DT_INST_0_PIXART_PAW3212_BUS_NAME
+#define PAW3212_SPI_DEV_NAME DT_BUS_LABEL(DT_DRV_INST(0))
 
-#define PAW3212_IRQ_GPIO_DEV_NAME DT_INST_0_PIXART_PAW3212_IRQ_GPIOS_CONTROLLER
-#define PAW3212_IRQ_GPIO_PIN      DT_INST_0_PIXART_PAW3212_IRQ_GPIOS_PIN
+#define PAW3212_IRQ_GPIO_DEV_NAME DT_INST_GPIO_LABEL(0, irq_gpios)
+#define PAW3212_IRQ_GPIO_PIN      DT_INST_GPIO_PIN(0, irq_gpios)
 
-#define PAW3212_CS_GPIO_DEV_NAME DT_INST_0_PIXART_PAW3212_CS_GPIOS_CONTROLLER
-#define PAW3212_CS_GPIO_PIN      DT_INST_0_PIXART_PAW3212_CS_GPIOS_PIN
+#define PAW3212_CS_GPIO_DEV_NAME DT_INST_SPI_DEV_CS_GPIOS_LABEL(0)
+#define PAW3212_CS_GPIO_PIN      DT_INST_SPI_DEV_CS_GPIOS_PIN(0)
 
 
 /* Timings defined by spec */
@@ -128,8 +129,8 @@ struct paw3212_data {
 static const struct spi_config spi_cfg = {
 	.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB |
 		     SPI_MODE_CPOL | SPI_MODE_CPHA,
-	.frequency = DT_INST_0_PIXART_PAW3212_SPI_MAX_FREQUENCY,
-	.slave = DT_INST_0_PIXART_PAW3212_BASE_ADDRESS,
+	.frequency = DT_PROP(DT_DRV_INST(0), spi_max_frequency),
+	.slave = DT_REG_ADDR(DT_DRV_INST(0)),
 };
 
 static const s32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
@@ -992,6 +993,6 @@ static const struct sensor_driver_api paw3212_driver_api = {
 	.attr_set     = paw3212_attr_set,
 };
 
-DEVICE_AND_API_INIT(paw3212, DT_INST_0_PIXART_PAW3212_LABEL, paw3212_init,
+DEVICE_AND_API_INIT(paw3212, DT_INST_LABEL(0), paw3212_init,
 		    NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
 		    &paw3212_driver_api);
