@@ -46,7 +46,7 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    :caption: Thread samples
    :glob:
 
-      ../../samples/openthread/*/README
+   ../../samples/openthread/*/README
 
 .. toctree::
    :maxdepth: 1
