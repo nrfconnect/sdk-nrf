@@ -16,15 +16,15 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(pmw3360, CONFIG_PMW3360_LOG_LEVEL);
 
+#define DT_DRV_COMPAT pixart_pmw3360
 
-#define PMW3360_SPI_DEV_NAME DT_INST_0_PIXART_PMW3360_BUS_NAME
+#define PMW3360_SPI_DEV_NAME DT_BUS_LABEL(DT_DRV_INST(0))
 
-#define PMW3360_IRQ_GPIO_DEV_NAME DT_INST_0_PIXART_PMW3360_IRQ_GPIOS_CONTROLLER
-#define PMW3360_IRQ_GPIO_PIN      DT_INST_0_PIXART_PMW3360_IRQ_GPIOS_PIN
+#define PMW3360_IRQ_GPIO_DEV_NAME DT_INST_GPIO_LABEL(0, irq_gpios)
+#define PMW3360_IRQ_GPIO_PIN      DT_INST_GPIO_PIN(0, irq_gpios)
 
-#define PMW3360_CS_GPIO_DEV_NAME DT_INST_0_PIXART_PMW3360_CS_GPIOS_CONTROLLER
-#define PMW3360_CS_GPIO_PIN      DT_INST_0_PIXART_PMW3360_CS_GPIOS_PIN
-
+#define PMW3360_CS_GPIO_DEV_NAME DT_INST_SPI_DEV_CS_GPIOS_LABEL(0)
+#define PMW3360_CS_GPIO_PIN      DT_INST_SPI_DEV_CS_GPIOS_PIN(0)
 
 /* Timings defined by spec */
 #define T_NCS_SCLK	1			/* 120 ns */
@@ -148,8 +148,8 @@ struct pmw3360_data {
 static const struct spi_config spi_cfg = {
 	.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB |
 		     SPI_MODE_CPOL | SPI_MODE_CPHA,
-	.frequency = DT_INST_0_PIXART_PMW3360_SPI_MAX_FREQUENCY,
-	.slave = DT_INST_0_PIXART_PMW3360_BASE_ADDRESS,
+	.frequency = DT_PROP(DT_DRV_INST(0), spi_max_frequency),
+	.slave = DT_REG_ADDR(DT_DRV_INST(0)),
 };
 
 static const s32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
@@ -1072,6 +1072,6 @@ static const struct sensor_driver_api pmw3360_driver_api = {
 	.attr_set     = pmw3360_attr_set,
 };
 
-DEVICE_AND_API_INIT(pmw3360, DT_INST_0_PIXART_PMW3360_LABEL, pmw3360_init,
+DEVICE_AND_API_INIT(pmw3360, DT_INST_LABEL(0), pmw3360_init,
 		    NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
 		    &pmw3360_driver_api);
