@@ -110,7 +110,7 @@ From nrfxlib
   * :ref:`nrfxlib:bsdlib`
 
 From Zephyr
-  * :ref:`zephyr:flash_api_interface`
+  * :ref:`zephyr:flash_api`
   * :ref:`zephyr:logging_api`
   * :ref:`zephyr:gpio_api`
 

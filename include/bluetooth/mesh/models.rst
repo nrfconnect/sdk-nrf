@@ -48,7 +48,7 @@ Typically, the Setup Server instance provides write access to configuration para
 
 Both server and client models can be extended, but because client models do not have states, there is generally no reason to extend them.
 None of the specification client models extend other models.
-All server models store changes to their configuration persistently using the :ref:`settings` subsystem.
+All server models store changes to their configuration persistently using the :ref:`zephyr:settings_api` subsystem.
 
 .. _bt_mesh_models_configuration:
 
