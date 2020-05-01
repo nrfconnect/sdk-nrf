@@ -234,8 +234,8 @@ void main(void)
 }
 
 K_THREAD_DEFINE(console_print_thread_id, STACKSIZE, console_print_thread,
-		NULL, NULL, NULL, THREAD_PRIORITY, 0, K_NO_WAIT);
+		NULL, NULL, NULL, THREAD_PRIORITY, 0, 0);
 
 K_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, STACKSIZE,
 		mpsl_nonpreemptible_thread, NULL, NULL, NULL,
-		K_PRIO_COOP(MPSL_THREAD_PRIO), 0, K_NO_WAIT);
+		K_PRIO_COOP(MPSL_THREAD_PRIO), 0, 0);

@@ -627,4 +627,4 @@ zzhc_init_cleanup:
 
 K_THREAD_DEFINE(zzhc_thread, STACK_SIZE,
 		zzhc_init, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, K_NO_WAIT);
+		THREAD_PRIORITY, 0, 0);
