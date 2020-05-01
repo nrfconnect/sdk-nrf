@@ -473,7 +473,7 @@ void ble_write_thread(void)
 }
 
 K_THREAD_DEFINE(led_blink_thread_id, STACKSIZE, led_blink_thread, NULL, NULL,
-		NULL, PRIORITY, 0, K_NO_WAIT);
+		NULL, PRIORITY, 0, 0);
 
 K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
-		NULL, PRIORITY, 0, K_NO_WAIT);
+		NULL, PRIORITY, 0, 0);

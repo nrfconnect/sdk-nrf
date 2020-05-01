@@ -246,7 +246,7 @@ static void new_date_time_get(void)
 
 K_THREAD_DEFINE(time_thread, CONFIG_DATE_TIME_THREAD_SIZE,
 		new_date_time_get, NULL, NULL, NULL,
-		K_HIGHEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+		K_HIGHEST_APPLICATION_THREAD_PRIO, 0, 0);
 
 static void date_time_handler(struct k_work *work)
 {

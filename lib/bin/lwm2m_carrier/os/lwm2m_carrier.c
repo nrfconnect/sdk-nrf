@@ -47,4 +47,4 @@ void lwm2m_carrier_thread_run(void)
 
 K_THREAD_DEFINE(lwm2m_carrier_thread, LWM2M_CARRIER_THREAD_STACK_SIZE,
 		lwm2m_carrier_thread_run, NULL, NULL, NULL,
-		LWLM2_CARRIER_THREAD_PRIORITY, 0, K_NO_WAIT);
+		LWLM2_CARRIER_THREAD_PRIORITY, 0, 0);
