@@ -59,7 +59,7 @@ void main(void)
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
-	if (!s1_info || (s0_info->version > s1_info->version)) {
+	if (!s1_info || (s0_info->version >= s1_info->version)) {
 		validate_and_boot(s0_info, BOOT_SLOT_0);
 		validate_and_boot(s1_info, BOOT_SLOT_1);
 	} else {
