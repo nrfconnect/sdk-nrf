@@ -17,7 +17,14 @@ from NrfHidDevice import NrfHidDevice
 from modules.config import change_config, fetch_config
 from modules.dfu import fwinfo, fwreboot, dfu_transfer, get_dfu_image_version
 from modules.led_stream import send_continuous_led_stream
-from modules.music_led_stream import send_music_led_stream
+try:
+    from modules.music_led_stream import send_music_led_stream
+except ImportError as e:
+    print()
+    print('Exception when importing music LED stream functionality:')
+    print(e)
+    print('Music LED stream functionality cannot be used')
+    print()
 
 
 def progress_bar(permil):
@@ -155,8 +162,11 @@ def perform_fwreboot(dev, args):
 
 def perform_led_stream(dev, args):
     if args.file is not None:
-        send_music_led_stream(dev, DEVICE[args.device_type], args.led_id,
-                              args.freq, args.file)
+        try:
+            send_music_led_stream(dev, DEVICE[args.device_type], args.led_id,
+                                  args.freq, args.file)
+        except NameError:
+            print('Music LED stream functionality is not available')
     else:
         send_continuous_led_stream(dev, DEVICE[args.device_type], args.led_id,
                                    args.freq)
