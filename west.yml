@@ -96,7 +96,7 @@ manifest:
       path: modules/lib/mcumgr
     - name: nrfxlib
       path: nrfxlib
-      revision: 778dc285adbaad5096c5aa3687cca7454e4da88a
+      revision: 588bf3474c4b60de5aa51604bf88bd86262b5e4c
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
