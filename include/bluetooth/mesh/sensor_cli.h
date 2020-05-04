@@ -310,7 +310,7 @@ int bt_mesh_sensor_cli_list_get(struct bt_mesh_sensor_cli *cli,
  */
 int bt_mesh_sensor_cli_desc_get(struct bt_mesh_sensor_cli *cli,
 				struct bt_mesh_msg_ctx *ctx,
-				struct bt_mesh_sensor_type *sensor,
+				const struct bt_mesh_sensor_type *sensor,
 				struct bt_mesh_sensor_descriptor *rsp);
 
 /** @brief Get the cadence state.
@@ -336,7 +336,7 @@ int bt_mesh_sensor_cli_desc_get(struct bt_mesh_sensor_cli *cli,
  */
 int bt_mesh_sensor_cli_cadence_get(struct bt_mesh_sensor_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
-				   struct bt_mesh_sensor_type *sensor,
+				   const struct bt_mesh_sensor_type *sensor,
 				   struct bt_mesh_sensor_cadence_status *rsp);
 
 /** @brief Set the cadence state for the given sensor.
@@ -365,7 +365,7 @@ int bt_mesh_sensor_cli_cadence_get(struct bt_mesh_sensor_cli *cli,
  */
 int bt_mesh_sensor_cli_cadence_set(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_cadence_status *cadence,
 	struct bt_mesh_sensor_cadence_status *rsp);
 
@@ -387,7 +387,7 @@ int bt_mesh_sensor_cli_cadence_set(
  */
 int bt_mesh_sensor_cli_cadence_set_unack(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_cadence_status *cadence);
 
 /** @brief Get the list of settings for the given sensor.
@@ -452,7 +452,7 @@ int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
  */
 int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
-				   struct bt_mesh_sensor_type *sensor,
+				   const struct bt_mesh_sensor_type *sensor,
 				   const struct bt_mesh_sensor_type *setting,
 				   struct bt_mesh_sensor_setting_status *rsp);
 
@@ -483,7 +483,7 @@ int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
  */
 int bt_mesh_sensor_cli_setting_set(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_type *setting,
 	const struct sensor_value *value,
 	struct bt_mesh_sensor_setting_status *rsp);
@@ -505,7 +505,7 @@ int bt_mesh_sensor_cli_setting_set(
  */
 int bt_mesh_sensor_cli_setting_set_unack(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_type *setting,
 	const struct sensor_value *value);
 
@@ -531,7 +531,7 @@ int bt_mesh_sensor_cli_setting_set_unack(
  */
 int bt_mesh_sensor_cli_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	struct sensor_value *rsp);
 
 /** @brief Read a single sensor series data entry.
@@ -561,7 +561,7 @@ int bt_mesh_sensor_cli_get(
  */
 int bt_mesh_sensor_cli_series_entry_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_column *column,
 	struct bt_mesh_sensor_series_entry *rsp);
 
@@ -609,7 +609,7 @@ int bt_mesh_sensor_cli_series_entry_get(
  */
 int bt_mesh_sensor_cli_series_entries_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_column *range,
 	struct bt_mesh_sensor_series_entry *rsp, uint32_t *count);
 

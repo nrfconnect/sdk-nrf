@@ -134,7 +134,7 @@ static void handle_status(struct bt_mesh_model *mod,
 
 	is_rsp = model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_STATUS, ctx);
 
-	while (buf->len > 3) {
+	while (buf->len) {
 		const struct bt_mesh_sensor_type *type;
 		uint8_t length;
 		uint16_t id;
@@ -541,7 +541,7 @@ int bt_mesh_sensor_cli_list_get(struct bt_mesh_sensor_cli *cli,
 
 int bt_mesh_sensor_cli_desc_get(struct bt_mesh_sensor_cli *cli,
 				struct bt_mesh_msg_ctx *ctx,
-				struct bt_mesh_sensor_type *sensor,
+				const struct bt_mesh_sensor_type *sensor,
 				struct bt_mesh_sensor_descriptor *rsp)
 {
 	int err;
@@ -578,7 +578,7 @@ int bt_mesh_sensor_cli_desc_get(struct bt_mesh_sensor_cli *cli,
 
 int bt_mesh_sensor_cli_cadence_get(struct bt_mesh_sensor_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
-				   struct bt_mesh_sensor_type *sensor,
+				   const struct bt_mesh_sensor_type *sensor,
 				   struct bt_mesh_sensor_cadence_status *rsp)
 {
 	if (sensor->channel_count != 1) {
@@ -615,7 +615,7 @@ int bt_mesh_sensor_cli_cadence_get(struct bt_mesh_sensor_cli *cli,
 
 int bt_mesh_sensor_cli_cadence_set(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_cadence_status *cadence,
 	struct bt_mesh_sensor_cadence_status *rsp)
 {
@@ -660,7 +660,7 @@ int bt_mesh_sensor_cli_cadence_set(
 
 int bt_mesh_sensor_cli_cadence_set_unack(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_cadence_status *cadence)
 {
 	if (sensor->channel_count != 1) {
@@ -717,7 +717,7 @@ int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 
 int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
-				   struct bt_mesh_sensor_type *sensor,
+				   const struct bt_mesh_sensor_type *sensor,
 				   const struct bt_mesh_sensor_type *setting,
 				   struct bt_mesh_sensor_setting_status *rsp)
 {
@@ -751,7 +751,7 @@ int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
 
 int bt_mesh_sensor_cli_setting_set(struct bt_mesh_sensor_cli *cli,
 				   struct bt_mesh_msg_ctx *ctx,
-				   struct bt_mesh_sensor_type *sensor,
+				   const struct bt_mesh_sensor_type *sensor,
 				   const struct bt_mesh_sensor_type *setting,
 				   const struct sensor_value *value,
 				   struct bt_mesh_sensor_setting_status *rsp)
@@ -794,7 +794,7 @@ int bt_mesh_sensor_cli_setting_set(struct bt_mesh_sensor_cli *cli,
 
 int bt_mesh_sensor_cli_setting_set_unack(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_type *setting,
 	const struct sensor_value *value)
 {
@@ -816,7 +816,7 @@ int bt_mesh_sensor_cli_setting_set_unack(
 
 int bt_mesh_sensor_cli_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	struct sensor_value *rsp)
 {
 	int err;
@@ -834,7 +834,7 @@ int bt_mesh_sensor_cli_get(
 		return err;
 	}
 
-	if (!rsp_data.value) {
+	if (rsp && !rsp_data.value) {
 		return -ENODEV;
 	}
 
@@ -843,7 +843,7 @@ int bt_mesh_sensor_cli_get(
 
 int bt_mesh_sensor_cli_series_entry_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_column *column,
 	struct bt_mesh_sensor_series_entry *rsp)
 {
@@ -881,11 +881,10 @@ int bt_mesh_sensor_cli_series_entry_get(
 
 int bt_mesh_sensor_cli_series_entries_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
-	struct bt_mesh_sensor_type *sensor,
+	const struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_column *range,
 	struct bt_mesh_sensor_series_entry *rsp, uint32_t *count)
 {
-	const struct bt_mesh_sensor_format *col_format;
 	int err;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_SENSOR_OP_SERIES_GET,
@@ -894,16 +893,20 @@ int bt_mesh_sensor_cli_series_entries_get(
 
 	net_buf_simple_add_le16(&msg, sensor->id);
 
-	col_format = bt_mesh_sensor_column_format_get(sensor);
+	if (range) {
+		const struct bt_mesh_sensor_format *col_format;
 
-	err = sensor_ch_encode(&msg, col_format, &range->start);
-	if (err) {
-		return err;
-	}
+		col_format = bt_mesh_sensor_column_format_get(sensor);
 
-	err = sensor_ch_encode(&msg, col_format, &range->end);
-	if (err) {
-		return err;
+		err = sensor_ch_encode(&msg, col_format, &range->start);
+		if (err) {
+			return err;
+		}
+
+		err = sensor_ch_encode(&msg, col_format, &range->end);
+		if (err) {
+			return err;
+		}
 	}
 
 	struct series_data_rsp rsp_data = {
