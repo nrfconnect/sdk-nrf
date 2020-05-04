@@ -35,6 +35,10 @@ config POWER_SAVING_MODE_ENABLE
 
 endmenu
 
+module = CLOUD_CLIENT
+module-str = Cloud client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 menu "Zephyr Kernel"
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu
