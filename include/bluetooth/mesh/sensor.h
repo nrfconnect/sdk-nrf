@@ -462,7 +462,7 @@ bt_mesh_sensor_column_format_get(const struct bt_mesh_sensor_type *type);
 static inline int bt_mesh_sensor_ch_to_str(const struct sensor_value *ch,
 					   char *str, size_t len)
 {
-	return snprintk(str, sizeof(str), "%s%u.%06u",
+	return snprintk(str, len, "%s%u.%06u",
 			((ch->val1 < 0 || ch->val2 < 0) ? "-" : ""),
 			abs(ch->val1), abs(ch->val2));
 }

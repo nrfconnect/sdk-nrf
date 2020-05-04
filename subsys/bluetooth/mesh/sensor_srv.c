@@ -118,7 +118,7 @@ static int buf_status_add(struct bt_mesh_sensor *sensor,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 	int err;
 
 	err = value_get(sensor, ctx, value);
@@ -864,7 +864,7 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 		return;
 	}
 
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 
 	err = value_get(s, NULL, value);
 	if (err) {
@@ -957,7 +957,7 @@ int bt_mesh_sensor_srv_pub(struct bt_mesh_sensor_srv *srv,
 int bt_mesh_sensor_srv_sample(struct bt_mesh_sensor_srv *srv,
 			      struct bt_mesh_sensor *sensor)
 {
-	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 	int err;
 
 	err = value_get(sensor, NULL, value);

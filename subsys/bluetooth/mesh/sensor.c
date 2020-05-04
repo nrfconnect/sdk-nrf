@@ -100,8 +100,17 @@ void sensor_status_id_decode(struct net_buf_simple *buf, uint8_t *len, uint16_t 
 	uint8_t first = net_buf_simple_pull_u8(buf);
 
 	if (first & BIT(0)) { /* long format */
+		if (buf->len < 2) {
+			*len = 0;
+			*id = BT_MESH_PROP_ID_PROHIBITED;
+			return;
+		}
+
 		*len = (first >> 1) + 1;
 		*id = net_buf_simple_pull_le16(buf);
+	} else if (buf->len < 1) {
+		*len = 0;
+		*id = BT_MESH_PROP_ID_PROHIBITED;
 	} else {
 		*len = ((first >> 1) & BIT_MASK(4)) + 1;
 		*id = (first >> 5) | (net_buf_simple_pull_u8(buf) << 3);
