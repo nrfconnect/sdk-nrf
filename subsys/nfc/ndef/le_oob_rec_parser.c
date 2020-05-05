@@ -71,6 +71,22 @@ static int le_role_decode(const u8_t *payload_buf, u32_t payload_len,
 	return 0;
 }
 
+static int tk_value_decode(const u8_t *payload_buf, u32_t payload_len,
+			   u8_t *tk_value)
+{
+	if (!tk_value) {
+		return -ENOMEM;
+	}
+
+	if (payload_len != NFC_NDEF_LE_OOB_REC_TK_LEN) {
+		return -EINVAL;
+	}
+
+	memcpy(tk_value, payload_buf, NFC_NDEF_LE_OOB_REC_TK_LEN);
+
+	return 0;
+}
+
 static int le_sc_confirm_value_decode(const u8_t *payload_buf,
 				      u32_t payload_len,
 				      struct bt_le_oob_sc_data *le_sc_data)
@@ -197,6 +213,13 @@ static int nfc_ndef_le_oob_rec_payload_parse(const u8_t *payload_buf,
 					sizeof(*le_oob_rec_desc->le_role));
 			err = le_role_decode(ad_data, ad_data_len,
 				le_oob_rec_desc->le_role);
+			break;
+
+		case BT_DATA_SM_TK_VALUE:
+			le_oob_rec_desc->tk_value = memory_allocate(&mem_alloc,
+								    NFC_NDEF_LE_OOB_REC_TK_LEN);
+			err = tk_value_decode(ad_data, ad_data_len,
+					      le_oob_rec_desc->tk_value);
 			break;
 
 		/* Optional fields */
@@ -359,6 +382,12 @@ void nfc_ndef_le_oob_rec_printout(
 
 	if (le_oob_rec_desc->flags) {
 		LOG_INF("\tFlags:\t\t0x%02X", *le_oob_rec_desc->flags);
+	}
+
+	if (le_oob_rec_desc->tk_value) {
+		LOG_HEXDUMP_INF(le_oob_rec_desc->tk_value,
+				NFC_NDEF_LE_OOB_REC_TK_LEN,
+				"\tTK Value:");
 	}
 
 	if (le_oob_rec_desc->le_sc_data) {
