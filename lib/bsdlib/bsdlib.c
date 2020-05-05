@@ -28,8 +28,13 @@ static int _bsdlib_init(struct device *unused)
 	IRQ_DIRECT_CONNECT(BSD_NETWORK_IRQ, BSD_NETWORK_IRQ_PRIORITY,
 			   ipc_proxy_irq_handler, 0);
 
-	init_ret = bsd_init();
+	const bsd_init_params_t init_params = {
+		.trace_on = true,
+		.bsd_memory_address = BSD_RESERVED_MEMORY_ADDRESS,
+		.bsd_memory_size = BSD_RESERVED_MEMORY_SIZE
+	};
 
+	init_ret = bsd_init(&init_params);
 	if (IS_ENABLED(CONFIG_BSD_LIBRARY_SYS_INIT)) {
 		/* bsd_init() returns values from a different namespace
 		 * than Zephyr's. Make sure to return something in Zephyr's
