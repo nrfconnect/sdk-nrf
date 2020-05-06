@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config BOARD_NRF52840GMOUSE_NRF52840
+	bool "NRF52840 GMOUSE NRF52840"
+	depends on SOC_NRF52840_QIAA

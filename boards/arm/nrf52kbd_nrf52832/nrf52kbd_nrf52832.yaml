@@ -1,0 +1,9 @@
+identifier: nrf52kbd_nrf52832
+name: nRF52-Kbd-NRF52832
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - ble
