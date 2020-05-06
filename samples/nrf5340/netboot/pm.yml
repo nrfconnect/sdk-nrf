@@ -1,0 +1,16 @@
+#include <autoconf.h>
+#include <devicetree_legacy_unfixed.h>
+
+b0n_image:
+  size: 0x10000
+  placement:
+    after: start
+
+b0n:
+  span: [b0n_image, provision]
+
+provision:
+  size: 0x800 # This can be hard coded as this sample only runs on 5340 net core
+  placement:
+    after: b0n_image
+    align: {start: DT_FLASH_ERASE_BLOCK_SIZE}

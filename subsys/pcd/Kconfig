@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Peripheral CPU DFU (PCD)"
+
+menuconfig PCD
+	bool "Peripheral CPU DFU Support"
+	select FLASH_PAGE_LAYOUT
+	select STREAM_FLASH
+	select STREAM_FLASH_ERASE
+
+if (PCD)
+
+config PCD_BUF_SIZE
+	int
+	default 512
+	help
+	  Must be <= the page size of the flash device.
+
+module=PCD
+module-dep=LOG
+module-str=Peripheral Core DFU
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # PCD
+
+endmenu

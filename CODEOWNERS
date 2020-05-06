@@ -102,6 +102,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/                              @rlubos
 /subsys/nfc/                              @grochu @anangl
 /subsys/partition_manager/                @hakonfam
+/subsys/pcd/                              @hakonfam
 /subsys/profiler/                         @pdunaj
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @ioannisg

@@ -1,0 +1,4 @@
+tests:
+  dfu.pcd:
+    platform_whitelist: nrf5340_dk_nrf5340_cpuapp nrf5340_dk_nrf5340_cpuappns nrf5340_dk_nrf5340_cpunet
+    tags: dfu pcd

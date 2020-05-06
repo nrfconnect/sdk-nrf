@@ -181,6 +181,31 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
     )
 
+  # TODO if network core is added as child image, remove hard coded board prefix to PM_APP_HEX
+  if (CONFIG_BT_RPMSG_NRF53 AND ((BOARD STREQUAL nrf5340pdk_nrf5340_cpuappns) OR
+    (BOARD STREQUAL nrf5340pdk_nrf5340_cpuapp)))
+    # The bootloader on the network core is enabled. The validation of this
+    # bootloader is performed by MCUBoot on the application core. Hence we
+    # need a target for creating the signed binary of the network core
+    # application.
+
+    include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
+
+    sign(${nrf5340pdk_nrf5340_cpunet_PM_APP_HEX}
+      ${PROJECT_BINARY_DIR}/net_core_app
+      $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
+      hci_rpmsg_subimage
+      net_core_app_signed_hex
+      )
+
+    add_custom_target(
+      net_core_app_sign_target
+      ALL
+      DEPENDS ${net_core_app_signed_hex}
+      )
+
+  endif()
+
   if (CONFIG_BUILD_S1_VARIANT AND ("${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "mcuboot"))
     # Secure Boot (B0) is enabled, and we have to build update candidates
     # for both S1 and S0.
