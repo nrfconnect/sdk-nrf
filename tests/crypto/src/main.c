@@ -42,7 +42,7 @@ void run_suites(test_case_t *test_cases, u32_t test_case_count)
 
 void test_main(void)
 {
-	LOG_INF("Crypto test app started.");
+	LOG_INF("Crypto test app started. Test report directed to UART (115200)");
 
 	if (init_leds() != 0)
 		LOG_ERR("Bad leds init!");
