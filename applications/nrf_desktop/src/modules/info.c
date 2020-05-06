@@ -12,7 +12,7 @@
 #define MODULE info
 #include "module_state_event.h"
 
-#define BOARD_PREFIX "pca"
+#define BOARD_NAME_SEPARATOR '_'
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_INFO_LOG_LEVEL);
@@ -32,13 +32,16 @@ static void fetch_config(const u8_t opt_id, u8_t *data, size_t *size)
 	switch (opt_id) {
 	case INFO_OPT_BOARD_NAME:
 	{
-		const char *name_ptr = strstr(CONFIG_BOARD, BOARD_PREFIX);
-		size_t name_len = strlen(name_ptr);
+		const char *start_ptr = CONFIG_BOARD;
+		const char *end_ptr = strchr(start_ptr, BOARD_NAME_SEPARATOR);
+
+		__ASSERT_NO_MSG(end_ptr != NULL);
+		size_t name_len = end_ptr - start_ptr;
 
 		__ASSERT_NO_MSG((name_len > 0) &&
 			(name_len < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
 
-		strcpy(data, name_ptr);
+		strncpy(data, start_ptr, name_len);
 		*size = name_len;
 		break;
 	}
