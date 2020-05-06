@@ -4,3 +4,4 @@ intelhex
 recommonmark==0.4.0
 sphinxcontrib-mscgen
 west>=0.7.2
+pylint
