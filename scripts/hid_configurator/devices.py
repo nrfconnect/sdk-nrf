@@ -57,7 +57,7 @@ QOS_OPTIONS_FORMAT = {
     'param_wifi' : ('<hhh', ['wifi_rating_inc', 'wifi_present_threshold', 'wifi_active_threshold'], None, None),
 }
 
-PCA20041_CONFIG = {
+GMOUSE_NRF52840_CONFIG = {
     'sensor' : {
         'options' : PMW3360_OPTIONS
     },
@@ -67,7 +67,7 @@ PCA20041_CONFIG = {
     }
 }
 
-PCA20044_CONFIG = {
+DMOUSE_NRF52832_CONFIG = {
     'sensor' : {
         'options' : PAW3212_OPTIONS
     },
@@ -77,7 +77,7 @@ PCA20044_CONFIG = {
     }
 }
 
-PCA20045_CONFIG = {
+DMOUSE_NRF52810_CONFIG = {
     'sensor' : {
         'options' : PAW3212_OPTIONS
     },
@@ -87,13 +87,13 @@ PCA20045_CONFIG = {
     }
 }
 
-PCA20037_CONFIG = {
+KBD_NRF52832_CONFIG = {
     'ble_bond' : {
         'options' : BLE_BOND_OPTIONS_DEVICE
     }
 }
 
-PCA10059_CONFIG = {
+DONGLE_NRF52840_CONFIG = {
     'qos' : {
         'options' : QOS_OPTIONS,
         'format' : QOS_OPTIONS_FORMAT
@@ -108,31 +108,31 @@ DEVICE = {
     'desktop_mouse_nrf52832' : {
         'vid' : 0x1915,
         'pid' : 0x52DA,
-        'config' : PCA20044_CONFIG,
+        'config' : DMOUSE_NRF52832_CONFIG,
         'stream_led_cnt' : 0,
     },
     'desktop_mouse_nrf52810' : {
         'vid' : 0x1915,
         'pid' : 0x52DB,
-        'config' : PCA20045_CONFIG,
+        'config' : DMOUSE_NRF52810_CONFIG,
         'stream_led_cnt' : 0,
     },
     'gaming_mouse' : {
         'vid' : 0x1915,
         'pid' : 0x52DE,
-        'config' : PCA20041_CONFIG,
+        'config' : GMOUSE_NRF52840_CONFIG,
         'stream_led_cnt' : 2,
     },
     'keyboard' : {
         'vid' : 0x1915,
         'pid' : 0x52DD,
-        'config' : PCA20037_CONFIG,
+        'config' : KBD_NRF52832_CONFIG,
         'stream_led_cnt' : 0,
     },
     'dongle' : {
         'vid' : 0x1915,
         'pid' : 0x52DC,
-        'config' : PCA10059_CONFIG,
+        'config' : DONGLE_NRF52840_CONFIG,
         'stream_led_cnt' : 0,
     }
 }
