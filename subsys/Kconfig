@@ -32,3 +32,5 @@ rsource "shell/Kconfig"
 rsource "mpsl/Kconfig"
 
 rsource "partition_manager/Kconfig"
+
+rsource "ieee802154/Kconfig"
