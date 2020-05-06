@@ -13,6 +13,8 @@ rsource "dfu/Kconfig"
 
 rsource "esb/Kconfig"
 
+rsource "pcd/Kconfig"
+
 rsource "net/Kconfig"
 
 rsource "nfc/Kconfig"
