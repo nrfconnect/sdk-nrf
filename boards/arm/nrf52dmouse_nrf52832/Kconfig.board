@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config BOARD_NRF52DMOUSE_NRF52832
+	bool "NRF52 DMOUSE NRF52832"
+	depends on SOC_NRF52832_QFAA
