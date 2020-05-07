@@ -15,6 +15,7 @@
 
 #include <ble_controller.h>
 #include <ble_controller_hci.h>
+#include <ble_controller_hci_vs.h>
 #include "multithreading_lock.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
@@ -192,22 +193,43 @@ static void data_packet_process(u8_t *hci_buf)
 	bt_recv(data_buf);
 }
 
-static void event_packet_process(u8_t *hci_buf)
+static bool event_packet_is_discardable(const u8_t *hci_buf)
 {
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
+
+	switch (hdr->evt) {
+	case BT_HCI_EVT_LE_META_EVENT: {
+		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
+
+		switch (me->subevent) {
+		case BT_HCI_EVT_LE_ADVERTISING_REPORT:
+		case BT_HCI_EVT_LE_EXT_ADVERTISING_REPORT:
+			return true;
+		default:
+			return false;
+		}
+	}
+	case BT_HCI_EVT_VENDOR:
+	{
+		u8_t subevent = hci_buf[2];
+
+		switch (subevent) {
+		case HCI_VS_SUBEVENT_CODE_QOS_CONN_EVENT_REPORT:
+			return true;
+		default:
+			return false;
+		}
+	}
+	default:
+		return false;
+	}
+}
+
+static void event_packet_process(u8_t *hci_buf)
+{
+	bool discardable = event_packet_is_discardable(hci_buf);
+	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
 	struct net_buf *evt_buf;
-
-	if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE ||
-	    hdr->evt == BT_HCI_EVT_CMD_STATUS) {
-		evt_buf = bt_buf_get_cmd_complete(K_FOREVER);
-	} else {
-		evt_buf = bt_buf_get_rx(BT_BUF_EVT, K_FOREVER);
-	}
-
-	if (!evt_buf) {
-		BT_ERR("No event buffer available");
-		return;
-	}
 
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
 		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
@@ -230,6 +252,19 @@ static void event_packet_process(u8_t *hci_buf)
 		       opcode, cs->status);
 	} else {
 		BT_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
+	}
+
+	evt_buf = bt_buf_get_evt(hdr->evt, discardable,
+				 discardable ? K_NO_WAIT : K_FOREVER);
+
+	if (!evt_buf) {
+		if (discardable) {
+			BT_DBG("Discarding event");
+			return;
+		}
+
+		BT_ERR("No event buffer available");
+		return;
 	}
 
 	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
