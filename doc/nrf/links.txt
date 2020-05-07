@@ -223,6 +223,11 @@
 .. _`AWS S3 Developer Guide: Using Bucket Policies and User Policies`: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
 
+.. _`Verizon's Thingspace`: https://thingspace.verizon.com
+.. _`AT&T's IoT Platform`: https://iotplatform.att.com
+.. _`Pre-Shared Key (PSK)`: https://en.wikipedia.org/wiki/Pre-shared_key
+.. _`Mbed TLS`: https://en.wikipedia.org/wiki/Mbed_TLS
+
 .. ### Links to specific files on GitHub
 
 .. _`nrf9160_pca10090_partition_conf.dts`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/boards/arm/nrf9160_pca10090/nrf9160_pca10090_partition_conf.dts
