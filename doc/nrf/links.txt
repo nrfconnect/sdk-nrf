@@ -317,6 +317,11 @@
 
 .. _`Secure Location Protocol (SLP)` : https://en.wikipedia.org/wiki/Service_Location_Protocol
 
+.. _`Verizon's Thingspace`: https://thingspace.verizon.com
+.. _`AT&T's IoT Platform`: https://iotplatform.att.com
+.. _`Pre-Shared Key (PSK)`: https://en.wikipedia.org/wiki/Pre-shared_key
+.. _`Mbed TLS`: https://en.wikipedia.org/wiki/Mbed_TLS
+
 .. ### Links to specific files on GitHub
 
 .. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/master/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
