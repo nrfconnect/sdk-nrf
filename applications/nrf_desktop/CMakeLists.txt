@@ -25,6 +25,9 @@ if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_B
           "Please add file ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
 endif()
 
+# Define configuration files.
+set(CONF_FILE "configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
+
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
   set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/dts.overlay")
 endif()
@@ -41,9 +44,6 @@ set(b0_CONF_FILE
 set(PM_STATIC_YML_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_${CMAKE_BUILD_TYPE}.yml
   )
-
-# Define configuration files.
-set(CONF_FILE "configuration/${BOARD}/app_${CMAKE_BUILD_TYPE}.conf")
 
 ################################################################################
 
