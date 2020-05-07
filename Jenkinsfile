@@ -72,7 +72,7 @@ pipeline {
                   def BUILD_TYPE = lib_Main.getBuildType(CI_STATE.SELF)
                   if (BUILD_TYPE == "PR") {
                     COMMIT_RANGE = "$CI_STATE.SELF.MERGE_BASE..$CI_STATE.SELF.REPORT_SHA"
-                    COMPLIANCE_ARGS = "$COMPLIANCE_ARGS -p $CHANGE_ID -S $CI_STATE.SELF.REPORT_SHA -g"
+                    COMPLIANCE_ARGS = "$COMPLIANCE_ARGS $CI_STATE.SELF.CUSTOM_COMPLIANCE_ARGS -p $CHANGE_ID -S $CI_STATE.SELF.REPORT_SHA -g"
                     println "Building a PR [$CHANGE_ID]: $COMMIT_RANGE"
                   }
                   else if (BUILD_TYPE == "TAG") {
