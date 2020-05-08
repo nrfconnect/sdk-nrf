@@ -120,6 +120,16 @@ The Git tags follow the `Semantic Versioning 2.0.0`_ format and they correspond 
 
 Where X, Y, and Z are the major, minor, and patch version respectively and, optionally, a release candidate postfix ``-rcN`` is attached if the tag identifies a candidate instead of the actual release.
 
+The Git tags follow the `Semantic Versioning 2.0.0`_ format as follows::
+
+  vX.Y.Z(-rcN|-devN)
+
+X, Y, and Z are the major, minor, and patch version, respectively.
+Tags without a suffix correspond to official releases tested and signed by Nordic Semiconductor engineers.
+A release candidate suffix ``-rcN`` is attached if the tag identifies a candidate instead of the actual release.
+In between releases, there might be development tags.
+These are identified by a ``-devN`` suffix.
+
 .. _dm-oss-downstreams:
 
 OSS repositories downstream project history
