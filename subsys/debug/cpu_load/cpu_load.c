@@ -111,13 +111,13 @@ static void cpu_load_log_fn(struct k_work *item)
 
 	cpu_load_reset();
 	LOG_INF("Load:%d,%03d%%", percent, fraction);
-	k_delayed_work_submit(&cpu_load_log, CPU_LOAD_LOG_INTERVAL);
+	k_delayed_work_submit(&cpu_load_log, K_MSEC(CPU_LOAD_LOG_INTERVAL));
 }
 
 static int cpu_load_log_init(void)
 {
 	k_delayed_work_init(&cpu_load_log, cpu_load_log_fn);
-	return k_delayed_work_submit(&cpu_load_log, CPU_LOAD_LOG_INTERVAL);
+	return k_delayed_work_submit(&cpu_load_log, K_MSEC(CPU_LOAD_LOG_INTERVAL));
 }
 
 static void timer_handler(nrf_timer_event_t event_type, void *context)
