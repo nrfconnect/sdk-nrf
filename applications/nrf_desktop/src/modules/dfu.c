@@ -15,6 +15,7 @@
 #include "event_manager.h"
 #include "config_event.h"
 #include "hid_event.h"
+#include "ble_event.h"
 
 #define MODULE dfu
 #include "module_state_event.h"
@@ -461,6 +462,12 @@ static bool event_handler(const struct event_header *eh)
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
 				  fetch_config, false);
 
+	if (is_ble_peer_event(eh)) {
+		device_in_use = true;
+
+		return false;
+	}
+
 	if (is_module_state_event(eh)) {
 		const struct module_state_event *event =
 			cast_module_state_event(eh);
@@ -486,3 +493,4 @@ EVENT_SUBSCRIBE(MODULE, hid_report_event);
 EVENT_SUBSCRIBE(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+EVENT_SUBSCRIBE(MODULE, ble_peer_event);
