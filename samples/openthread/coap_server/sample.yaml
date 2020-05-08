@@ -1,0 +1,7 @@
+sample:
+  description: Test CoAP communication in Thread network
+  name: Openthread CoAP Server
+tests:
+  sample.net.openthread.coap_server:
+    tags: net openthread coap
+    platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833
