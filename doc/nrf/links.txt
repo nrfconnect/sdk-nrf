@@ -212,6 +212,25 @@
 .. _`Bluetooth Secure Simple Pairing Using NFC`: http://nfc-forum.org/our-work/specifications-and-application-documents/application-documents
 
 
+.. ### Links to OpenThread
+
+.. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
+
+.. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/master/src/cli/README.md
+
+.. _`OpenThread.io`: https://openthread.io
+
+.. _`Thread Group`: https://www.threadgroup.org
+
+.. _`Creative Commons 3.0 Attribution License`: https://creativecommons.org/licenses/by/3.0/
+
+.. _`shared by Google`: https://developers.google.com/readme/policies/
+
+.. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
+
+.. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
+
+
 .. ### Links to other documentation
 
 .. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
