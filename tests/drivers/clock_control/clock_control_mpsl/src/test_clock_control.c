@@ -216,7 +216,9 @@ static bool async_capable(const char *dev_name, clock_control_subsys_t subsys)
 /*
  * Test checks that callbacks are called after clock is started.
  */
-static void clock_on_callback(struct device *dev, void *user_data)
+static void clock_on_callback(struct device *dev,
+			      clock_control_subsys_t subsys,
+			      void *user_data)
 {
 	bool *executed = (bool *)user_data;
 
@@ -291,7 +293,9 @@ static void test_async_on_off(void)
 /*
  * Test callback used to count the number of executed async_on requests.
  */
-static void clock_on_counting_callback(struct device *dev, void *user_data)
+static void clock_on_counting_callback(struct device *dev,
+				       clock_control_subsys_t subsys,
+				       void *user_data)
 {
 	int *count = (int *)user_data;
 

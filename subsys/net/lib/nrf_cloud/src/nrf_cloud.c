@@ -590,7 +590,7 @@ reset:
 #ifdef CONFIG_BOARD_QEMU_X86
 #define POLL_THREAD_STACK_SIZE 4096
 #else
-#define POLL_THREAD_STACK_SIZE 2048
+#define POLL_THREAD_STACK_SIZE 2560
 #endif
 K_THREAD_DEFINE(connection_poll_thread, POLL_THREAD_STACK_SIZE,
 		nrf_cloud_run, NULL, NULL, NULL,
