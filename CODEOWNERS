@@ -91,6 +91,8 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/README.rst @b-gent
 /samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
 /samples/CMakeLists.txt                   @tejlmand
+/samples/openthread/                      @MarekPorwisz @lmaciejonczyk
+/samples/openthread/**/README.rst         @greg-fer
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
 /subsys/bluetooth/                        @joerchan @carlescufi
