@@ -126,6 +126,13 @@
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
 
 
+.. ### Links to Nordic mobile applications
+
+.. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
+.. _`nRF Mesh mobile app for iOS`: https://itunes.apple.com/us/app/nrf-mesh/id1380726771?mt=8
+.. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
+
+
 .. ### Links to other websites and software
 
 .. _`Git`: https://git-scm.com/
