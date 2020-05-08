@@ -182,9 +182,21 @@ int lte_lc_power_off(void);
  */
 int lte_lc_normal(void);
 
-/** @brief Function for requesting modem to go to or disable
- * power saving mode (PSM) with default settings defined in kconfig.
+/** @brief Function for setting modem PSM parameters:
+ * requested periodic TAU (RPTAU) and requested active time (RAT)
+ * to be used when psm mode is subsequently enabled using `lte_lc_psm_req`.
  * For reference see 3GPP 27.007 Ch. 7.38.
+ *
+ * @param rptau Requested periodic TAU.
+ * @param rat Requested active time
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_psm_param_set(const char *rptau, const char *rat);
+
+/** @brief Function for requesting modem to enable or disable
+ * power saving mode (PSM) using default Kconfig value or as set using
+ * `lte_lc_psm_param_set`.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -203,8 +215,19 @@ int lte_lc_psm_req(bool enable);
  */
 int lte_lc_psm_get(int *tau, int *active_time);
 
-/** @brief Function for requesting modem to use eDRX or disable
- * use of values defined in kconfig.
+/** @brief Function for setting modem eDRX value to be used when
+ * eDRX is subsequently enabled using `lte_lc_edrx_req`.
+ * For reference see 3GPP 27.007 Ch. 7.40.
+ *
+ * @param edrx eDRX value
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_edrx_param_set(const char *edrx);
+
+/** @brief Function for requesting modem to enable or disable
+ * use of eDRX using values set by `lte_lc_edrx_param_set`. The
+ * default values are defined in kconfig.
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
  * @return Zero on success or (negative) error code otherwise.
