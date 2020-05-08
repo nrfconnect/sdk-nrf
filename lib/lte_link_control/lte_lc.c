@@ -108,10 +108,12 @@ static const char unlock_plmn[] = "AT+COPS=0";
 #endif
 /* Request eDRX to be disabled */
 static const char edrx_disable[] = "AT+CEDRXS=3";
-/* Request modem to go to power saving mode */
-static const char psm_req[] = "AT+CPSMS=1,,,\""CONFIG_LTE_PSM_REQ_RPTAU
-			      "\",\""CONFIG_LTE_PSM_REQ_RAT"\"";
-
+/* Default eDRX setting */
+static char edrx_param[5] = CONFIG_LTE_EDRX_REQ_VALUE;
+/* Default PSM RAT setting */
+static char psm_param_rat[9] = CONFIG_LTE_PSM_REQ_RAT;
+/* Default PSM RPATU setting */
+static char psm_param_rptau[9] = CONFIG_LTE_PSM_REQ_RPTAU;
 /* Request PSM to be disabled */
 static const char psm_disable[] = "AT+CPSMS=";
 /* Set the modem to power off mode */
@@ -755,10 +757,35 @@ int lte_lc_normal(void)
 	return 0;
 }
 
+int lte_lc_psm_param_set(const char *rptau, const char *rat)
+{
+	if (rptau == NULL || strlen(rptau) != 8 ||
+		rat == NULL || strlen(rat) != 8) {
+		return -EINVAL;
+	}
+
+	memcpy(psm_param_rptau, rptau, sizeof(psm_param_rptau));
+	memcpy(psm_param_rat, rat, sizeof(psm_param_rat));
+	return 0;
+}
+
 int lte_lc_psm_req(bool enable)
 {
-	if (at_cmd_write(enable ? psm_req : psm_disable,
-			 NULL, 0, NULL) != 0) {
+	int err;
+
+	if (enable) {
+		char psm_req[40];
+
+		snprintf(psm_req, sizeof(psm_req),
+			"AT+CPSMS=1,,,\"%s\",\"%s\"",
+			psm_param_rptau, psm_param_rat);
+
+		err = at_cmd_write(psm_req, NULL, 0, NULL);
+	} else {
+		err = at_cmd_write(psm_disable, NULL, 0, NULL);
+	}
+
+	if (err != 0) {
 		return -EIO;
 	}
 
@@ -822,9 +849,19 @@ parse_psm_clean_exit:
 	return err;
 }
 
+int lte_lc_edrx_param_set(const char *edrx)
+{
+	if (edrx == NULL || strlen(edrx) != 4) {
+		return -EINVAL;
+	}
+
+	memcpy(edrx_param, edrx, sizeof(edrx_param));
+
+	return 0;
+}
+
 int lte_lc_edrx_req(bool enable)
 {
-	char edrx_req[25];
 	int err, actt;
 	enum lte_lc_system_mode mode;
 
@@ -848,15 +885,17 @@ int lte_lc_edrx_req(bool enable)
 		return -EOPNOTSUPP;
 	}
 
-	snprintf(edrx_req, sizeof(edrx_req),
-		 "AT+CEDRXS=2,%d,\""CONFIG_LTE_EDRX_REQ_VALUE"\"", actt);
+	if (enable) {
+		char edrx_req[25];
 
-	err = at_cmd_write(enable ? edrx_req : edrx_disable, NULL, 0, NULL);
-	if (err) {
-		return err;
+		snprintf(edrx_req, sizeof(edrx_req),
+			 "AT+CEDRXS=2,%d,\"%s\"", actt, edrx_param);
+		err = at_cmd_write(edrx_req, NULL, 0, NULL);
+	} else {
+		err = at_cmd_write(edrx_disable, NULL, 0, NULL);
 	}
 
-	return 0;
+	return err;
 }
 
 /**@brief Helper function to check if a response is what was expected
