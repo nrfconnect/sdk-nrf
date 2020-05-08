@@ -43,14 +43,15 @@ static struct k_work next_discovery_step;
 #define PID_POS_IN_PNP_ID	(VID_POS_IN_PNP_ID + sizeof(u16_t))
 #define MIN_LEN_DIS_PNP_ID	(PID_POS_IN_PNP_ID + sizeof(u16_t))
 
-static void peer_unpair(void)
+
+static void peer_disconnect(struct bt_conn *conn)
 {
 	__ASSERT_NO_MSG(discovering_peer_conn != NULL);
-	int err = bt_unpair(BT_ID_DEFAULT,
-			    bt_conn_get_dst(discovering_peer_conn));
+	__ASSERT_NO_MSG(discovering_peer_conn == conn);
+	int err = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 
-	if (err) {
-		LOG_ERR("Error while unpairing peer (err:%d)", err);
+	if (err && (err != -ENOTCONN)) {
+		LOG_ERR("Cannot disconnect peer (err:%d)", err);
 		module_set_state(MODULE_STATE_ERROR);
 	}
 	bt_conn_unref(discovering_peer_conn);
@@ -87,6 +88,7 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 
 	/* Nothing was found. */
 	LOG_ERR("Unrecognized peer");
+	peer_disconnect(bt_gatt_dm_conn_get(dm));
 	k_free(event);
 	int err = bt_gatt_dm_data_release(dm);
 
@@ -94,22 +96,18 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 		LOG_ERR("Discovery data release failed (err:%d)", err);
 		module_set_state(MODULE_STATE_ERROR);
 	}
-
-	peer_unpair();
 }
 
 static void service_not_found(struct bt_conn *conn, void *context)
 {
 	LOG_ERR("Service not found");
-	__ASSERT_NO_MSG(discovering_peer_conn == conn);
-	peer_unpair();
+	peer_disconnect(conn);
 }
 
 static void discovery_error(struct bt_conn *conn, int err, void *context)
 {
 	LOG_ERR("Error discovering peer (err:%d)", err);
-	__ASSERT_NO_MSG(discovering_peer_conn == conn);
-	peer_unpair();
+	peer_disconnect(conn);
 }
 
 static void read_dev_descr(const u8_t *ptr, u16_t len)
@@ -135,7 +133,7 @@ static u8_t read_attr(struct bt_conn *conn, u8_t err,
 {
 	if (err) {
 		LOG_ERR("Problem reading GATT (err:%" PRIu8 ")", err);
-		peer_unpair();
+		peer_disconnect(conn);
 		return BT_GATT_ITER_STOP;
 	}
 
@@ -190,7 +188,7 @@ static void discovery_completed(struct bt_gatt_dm *dm, void *context)
 		if (err) {
 			goto error;
 		}
-		peer_unpair();
+		peer_disconnect(bt_gatt_dm_conn_get(dm));
 		return;
 	}
 
@@ -205,7 +203,7 @@ static void discovery_completed(struct bt_gatt_dm *dm, void *context)
 	err = bt_gatt_read(bt_gatt_dm_conn_get(dm), &rp);
 	if (err) {
 		LOG_ERR("GATT read problem (err:%d)", err);
-		peer_unpair();
+		peer_disconnect(bt_gatt_dm_conn_get(dm));
 	}
 
 	err = bt_gatt_dm_data_release(dm);
@@ -243,7 +241,7 @@ static void start_discovery(struct bt_conn *conn,
 	__ASSERT_NO_MSG(err != -EINVAL);
 	if (err) {
 		LOG_ERR("Cannot start discovery (err:%d)", err);
-		peer_unpair();
+		peer_disconnect(conn);
 	}
 }
 
@@ -275,7 +273,7 @@ static void next_discovery_step_fn(struct k_work *w)
 
 	case DISCOVERY_STATE_HIDS:
 		if (!verify_peer()) {
-			peer_unpair();
+			peer_disconnect(discovering_peer_conn);
 		} else {
 			start_discovery(discovering_peer_conn, BT_UUID_HIDS, true);
 		}
