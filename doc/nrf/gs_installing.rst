@@ -238,6 +238,7 @@ To clone the repositories, complete the following steps:
 
    * To work with a specific release, the revision is the corresponding tag (for example, ``v1.2.0``).
      You can find the tag in the :ref:`release_notes` of the release.
+   * To work with a development tag, the revision is the corresponding tag (for example, ``v1.2.99-dev1``)
    * To work with a branch, the revision is the branch name (for example, ``master`` to work with the latest state of development).
    * To work with a specific state, the revision is the SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``).
 
@@ -266,7 +267,7 @@ To clone the repositories, complete the following steps:
       .. west-error-end
 
       Initializing west with a specific revision of the manifest file does not lock your repositories to this version.
-      Checking out a different branch or tag in the repositories changes the version of the |NCS| that you work with.
+      Checking out a different branch or tag in the `sdk-nrf`_ repository and running ``west update``  changes the version of the |NCS| that you work with.
 
    This will clone the manifest repository `sdk-nrf`_ into :file:`nrf`.
 
