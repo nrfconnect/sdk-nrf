@@ -9,12 +9,12 @@ function(preprocess_pm_yml in_file out_file)
     COMMAND ${CMAKE_C_COMPILER}
     -x assembler-with-cpp
     -nostdinc
-    -I${ZEPHYR_BINARY_DIR}/include/generated
+    -I${PROJECT_BINARY_DIR}/include/generated
     ${NOSYSDEF_CFLAG}
     -P
     -E ${in_file}
     -o ${out_file}
-    WORKING_DIRECTORY ${ZEPHYR_BINARY_DIR}
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     RESULT_VARIABLE ret
     )
   if(NOT "${ret}" STREQUAL "0")
@@ -26,7 +26,7 @@ endfunction()
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager
-  $<OR:$<BOOL:${IMAGE_NAME}>,$<TARGET_EXISTS:partition_manager>>
+  0
   )
 zephyr_compile_definitions(
   USE_PARTITION_MANAGER=${using_partition_manager}
@@ -43,7 +43,7 @@ if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND IMAGE_NAME)
 
   preprocess_pm_yml(
     ${CMAKE_SOURCE_DIR}/pm.yml
-    ${ZEPHYR_BINARY_DIR}/include/generated/pm.yml
+    ${PROJECT_BINARY_DIR}/include/generated/pm.yml
     )
 endif()
 
