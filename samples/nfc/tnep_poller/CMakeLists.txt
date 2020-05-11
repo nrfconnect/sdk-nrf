@@ -15,7 +15,7 @@ set(NRF_SUPPORTED_BOARDS
 
 include(../../../cmake/boilerplate.cmake)
 
-include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
 FILE(GLOB app_sources src/*.c)

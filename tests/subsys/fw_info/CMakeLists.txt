@@ -42,7 +42,7 @@ set_property(
   provision_PM_HEX_FILE
   ${provision_path})
 
-include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 if (NOT ((DEFINED CONFIG_SOC_NRF9160
               AND provision_hex STREQUAL "provision_nrf9160.hex")

@@ -18,7 +18,7 @@ set(spm_CONF_FILE
   )
 
 include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
-include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(lte-ble-gateway)
 
 # NORDIC SDK APP START
