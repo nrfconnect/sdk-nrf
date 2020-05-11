@@ -575,8 +575,23 @@ static int w_lte_lc_init(void)
 	/* Listen for RRC connection mode notifications */
 	err = at_cmd_write(cscon, NULL, 0, NULL);
 	if (err) {
-		LOG_ERR("%s failed, error: %d", log_strdup(cscon), err);
-		return err;
+		char buf[50];
+
+		/* AT+CSCON is supported from modem firmware v1.1.0, and will
+		 * not work for older versions. If the command fails, RRC
+		 * mode change notifications will not be received. This is not
+		 * considered a critical error, and the error code is therefore
+		 * not returned, while informative log messageas are printed.
+		 */
+		LOG_WRN("%s failed (%d), RRC notifications are not enabled",
+			cscon, err);
+		LOG_WRN("%s is supported in nRF9160 modem >= v1.1.0", cscon);
+
+		err = at_cmd_write("AT+CGMR", buf, sizeof(buf), NULL);
+		if (err == 0) {
+			LOG_WRN("Current modem firmware version: %s",
+				log_strdup(buf));
+		}
 	}
 
 	is_initialized = true;
