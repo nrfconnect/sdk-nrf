@@ -8,9 +8,8 @@
 #include <nordic/nrf52840_qiaa.dtsi>
 
 / {
-	model = "Nordic PCA20035";
-	compatible = "nordic,pca20035", "nordic,nrf52840-qiaa",
-		     "nordic,nrf52840";
+	model = "Nordic Thingy91 NRF52840";
+	compatible = "nordic,thingy91-nrf52840";
 
 	chosen {
 		zephyr,console = &uart0;

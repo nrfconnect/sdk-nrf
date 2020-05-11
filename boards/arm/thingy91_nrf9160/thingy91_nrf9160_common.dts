@@ -5,9 +5,8 @@
  */
 
 / {
-	model = "Nordic PCA20035";
-	compatible = "nordic,pca20035", "nordic,nrf9160-sica",
-		     "nordic,nrf9160";
+	model = "Nordic Thingy91 nRF9160";
+	compatible = "nordic,thingy91-nrf9160";
 
 	chosen {
 		zephyr,console = &uart0;
@@ -234,4 +233,4 @@
 };
 
 /* Include partition configuration file */
-#include "nrf9160_pca20035_partition_conf.dts"
+#include "thingy91_nrf9160_partition_conf.dts"

@@ -81,7 +81,7 @@ static int power_mgmt_init(void)
 	return 0;
 }
 
-static int pca20035_board_init(struct device *dev)
+static int thingy91_board_init(struct device *dev)
 {
 	int err;
 
@@ -94,4 +94,4 @@ static int pca20035_board_init(struct device *dev)
 	return 0;
 }
 
-SYS_INIT(pca20035_board_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(thingy91_board_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

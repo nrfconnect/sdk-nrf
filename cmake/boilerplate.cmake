@@ -7,6 +7,8 @@
 # Point to NCS root directory.
 set(NRF_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 
+include(${NRF_DIR}/boards/deprecated.cmake)
+
 if(NOT BOARD)
         set(BOARD $ENV{BOARD})
 endif()

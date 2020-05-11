@@ -1,13 +1,13 @@
-# Kconfig - nRF52840 PCA20035 board configuration
+# nRF52840 THINGY91 board configuration
 #
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
-if BOARD_NRF52840_PCA20035
+if BOARD_THINGY91_NRF52840
 
 config BOARD
-	default "nrf52840_pca20035"
+	default "thingy91_nrf52840"
 
 if USB
 
@@ -19,4 +19,4 @@ config USB_DEVICE_STACK
 
 endif # USB
 
-endif # BOARD_NRF52840_PCA20035
+endif # BOARD_THINGY91_NRF52840

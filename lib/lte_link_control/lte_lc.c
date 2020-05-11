@@ -159,7 +159,7 @@ static const char *const system_mode_params[] = {
 };
 
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM)
-#if defined(CONFIG_BOARD_NRF9160_PCA20035NS)
+#if defined(CONFIG_BOARD_THINGY91_NRF9160NS)
 	const char *const lwm2m_ant_cfg[] = {
 			"AT%XMAGPIO=1,1,1,7,1,746,803,2,698,748,"
 			"2,1710,2200,3,824,894,4,880,960,5,791,849,"
@@ -506,8 +506,8 @@ static int w_lte_lc_init(void)
 	}
 
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM) && \
-    (defined(CONFIG_BOARD_NRF9160_PCA20035NS) || \
-     defined(CONFIG_BOARD_NRF9160_PCA10090NS))
+	(defined(CONFIG_BOARD_THINGY91_NRF9160NS) || \
+	 defined(CONFIG_BOARD_NRF9160_PCA10090NS))
 	/* Configuring MAGPIO/COEX, so that the correct antenna
 	 * matching network is used for each LTE band and GPS.
 	 */
