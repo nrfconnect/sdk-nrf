@@ -253,6 +253,16 @@ config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 	  After this time peripheral device disconnects if security is not
 	  established.
 
+config DESKTOP_BLE_LOW_LATENCY_LOCK
+	bool "Keep the slave latency low for LLPM connections"
+	depends on BT_LL_NRFXLIB
+	help
+	  When this option is selected, the slave latency is kept low
+	  for the LLPM connection unless device is in low power mode. This
+	  speeds up sending the first HID report after not sending a report for
+	  some connection intervals. Enabling this option increases the power
+	  consumption of the device.
+
 module = DESKTOP_BLE_LATENCY
 module-str = BLE latency
 source "subsys/logging/Kconfig.template.log_config"
