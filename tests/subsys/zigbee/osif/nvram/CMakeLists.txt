@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.13.1)
 add_compile_definitions(zb_nvram_erase_finished=zb_nvram_erase_finished_stub)
 
 include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
-find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(zigbee_osif_nvram_test)
 
