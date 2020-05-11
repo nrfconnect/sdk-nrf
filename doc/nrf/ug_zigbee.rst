@@ -42,7 +42,7 @@ This library is available in `nrfxlib`_.
 
 The OSIF subsystem acts as the linking layer between the ZBOSS stack and |NCS|.
 It implements a series of functions used by ZBOSS and is included in the |NCS|'s Zigbee subsystem.
-The files that handle the OSIF integration are located in :file:`subsys\zigbee\osif`.
+The files that handle the OSIF integration are located in :file:`subsys/zigbee/osif`.
 
 Configuration
 *************

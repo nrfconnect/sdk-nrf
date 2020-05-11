@@ -5,7 +5,7 @@ Zigbee: Network coordinator
 
 This Zigbee network coordinator sample establishes the Zigbee network and commissions Zigbee devices that want to join the network.
 
-You can use this sample together with the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` and Zigbee light switch to set up a basic Zigbee network.
+You can use this sample together with the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` and the :ref:`Zigbee light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.
 
 Overview
 ********
@@ -24,7 +24,7 @@ Requirements
 * One or both of the following samples:
 
   * The :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` sample programmed on one or more separate devices.
-  * The Zigbee light switch sample programmed on one or more separate devices.
+  * The :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample programmed on one or more separate devices.
 
 You can mix different development kits.
 
@@ -59,21 +59,21 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Turn on the development kit that runs the coordinator sample.
-   When LED 3 turns on, the development kit has become the coordinator of the Zigbee network and the network is established.
+   When **LED 3** turns on, this development kit has become the coordinator of the Zigbee network and the network is established.
 #. Turn on the other development kits that you programmed.
 
-   * When LED 3 turns on the development kit that runs the light bulb sample, it has become a Router inside the network.
-   * When LED 3 turns on the development kit that runs the light switch sample, it has become an End Device, connected directly to the Coordinator.
+   * When **LED 3** turns on the development kit that runs the light bulb sample, it has become a Router inside the network.
+   * When **LED 3** turns on the development kit that runs the light switch sample, it has become an End Device, connected directly to the Coordinator.
 
    .. tip::
-       If LED 3 on the development kits does not turn on, press Button 1 on the coordinator to reopen the network.
+       If **LED 3** on the development kits does not turn on, press **Button 1** on the coordinator to reopen the network.
 
 #. Optionally, if you are testing with both the light bulb and the light switch samples, complete the following additional steps:
 
-   #. Wait until LED 4 on the development kit that runs the light switch sample turns on.
+   #. Wait until **LED 4** on the development kit that runs the light switch sample turns on.
       This LED indicates that the switch found a light bulb to control.
    #. Use buttons on the development kit that runs the light switch sample to control the light bulb, as described in the light switch sample's user interface section.
-      The result of using the buttons is reflected on the light bulb's LED 4.
+      The result of using the buttons is reflected on the light bulb's **LED 4**.
 
 Dependencies
 ************
@@ -82,9 +82,9 @@ This sample uses the following |NCS| libraries:
 
 * Zigbee subsystem:
 
-  * ``zb_nrf_platform.h``
-  * ``zigbee_helpers.h``
-  * ``zb_error_handler.h``
+  * :file:`zb_nrf_platform.h`
+  * :file:`zigbee_helpers.h`
+  * :file:`zb_error_handler.h`
 
 * :ref:`dk_buttons_and_leds_readme`
 
@@ -94,6 +94,6 @@ This sample uses the following `nrfxlib`_ libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr.h``
-* ``include/device.h``
+* :file:`include/zephyr.h`
+* :file:`include/device.h`
 * :ref:`zephyr:logging_api`

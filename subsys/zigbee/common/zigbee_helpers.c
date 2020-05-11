@@ -59,7 +59,7 @@ static volatile bool  is_rejoin_start_scheduled;
 /* Forward declarations. */
 static void rejoin_the_network(zb_uint8_t param);
 static void start_network_rejoin(void);
-static void stop_network_rejoin(bool was_scheduled);
+static void stop_network_rejoin(zb_uint8_t was_scheduled);
 
 /**@brief Function to set the Erase persistent storage
  *        depending on the erase pin
@@ -279,7 +279,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 			/* Device has joined the network so stop the network
 			 * rejoin procedure.
 			 */
-			stop_network_rejoin(false);
+			stop_network_rejoin(ZB_FALSE);
 			LOG_INF("Joined network successfully on reboot signal (Extended PAN ID: %s, PAN ID: 0x%04hx)",
 				ieee_addr_buf,
 				ZB_PIBCACHE_PAN_ID());
@@ -327,7 +327,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 			 * rejoin procedure.
 			 */
 			if (role != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-				stop_network_rejoin(false);
+				stop_network_rejoin(ZB_FALSE);
 			}
 		} else {
 			if (role != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
@@ -744,7 +744,7 @@ static void start_network_rejoin(void)
  * @param[in] was_scheduled   Zigbee flag to indicate if the function
  *                            was scheduled or called directly.
  */
-static void stop_network_rejoin(bool was_scheduled)
+static void stop_network_rejoin(zb_uint8_t was_scheduled)
 {
 	/* For Router and End Device:
 	 *   Try to stop scheduled network steering. Stop rejoin procedure

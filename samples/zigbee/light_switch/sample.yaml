@@ -1,0 +1,9 @@
+sample:
+  name: Zigbee Light switch
+  description: Zigbee dimmable light switch based on ZBOSS stack
+tests:
+  test_build:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840dk_nrf52840
+    tags: ci_build
