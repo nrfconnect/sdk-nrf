@@ -1,5 +1,5 @@
-identifier: nrf9160_pca20035
-name: nRF9160-PCA20035
+identifier: thingy91_nrf9160
+name: Thingy91-NRF9160
 type: mcu
 arch: arm
 toolchain:

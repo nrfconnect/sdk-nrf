@@ -151,14 +151,18 @@ The build targets of interest for Thingy:91 in |NCS| are as follows:
 +---------------+--------------------------------------------------+
 |Component      |  Build target                                    |
 +===============+==================================================+
-|nRF9160 SiP    |``nrf9160_pca20035`` for the secure version       |
+|nRF9160 SiP    |``thingy91_nrf9160`` for the secure version       |
 |               |                                                  |
-|               |``nrf9160_pca20035ns`` for the non-secure version |
+|               |``thingy91_nrf9160ns`` for the non-secure version |
 +---------------+--------------------------------------------------+
-|nRF52840 SoC   |``nrf52840_pca20035``                             |
+|nRF52840 SoC   |``thingy91_nrf52840``                             |
 +---------------+--------------------------------------------------+
 
-You should use the build target ``nrf9160_pca20035`` or ``nrf9160_pca20035ns`` when building the application code for the nRF9160 SiP and the build target ``nrf52840_pca20035`` when building the application code for the onboard nRF52840 SoC.
+You should use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
+
+.. note::
+
+   In |NCS| releases before v1.3.0, these build targets were named ``nrf9160_pca20035``, ``nrf9160_pca20035ns``, and ``nrf52840_pca20035``.
 
 .. note::
 
@@ -205,7 +209,7 @@ Building and programming using SEGGER Embedded Studio
 .. figure:: images/ses_thingy_configuration.png
    :alt: Opening the Asset tracker application
 
-   Opening the Asset tracker application for the nrf9160_pca20035ns build target
+   Opening the Asset tracker application for the thingy91_nrf9160ns build target
 
 .. note::
 
@@ -277,7 +281,7 @@ To build and program the source code from the command line, complete the followi
 
 	  west build -b *board_name* -d *destination_directory_name*
 
-   The parameter *board_name* should be ``nrf9160_pca20035`` or ``nrf9160_pca20035ns`` if building for the nRF9160 SiP component and ``nrf52840_pca20035`` if building for the nRF52840 SoC component.
+   The parameter *board_name* should be ``thingy91_nrf9160`` or ``thingy91_nrf9160ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component.
 
    .. note::
 

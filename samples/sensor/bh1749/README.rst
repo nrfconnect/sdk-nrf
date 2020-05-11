@@ -30,7 +30,7 @@ Building and Running
 This project outputs sensor data to the console. It requires a BH1749
 sensor. It should work with any platform featuring a I2C peripheral interface.
 It does not work on QEMU.
-In this example below the PCA20035 board is used.
+The example below uses the Thingy:91.
 
 
 .. |sample path| replace:: :file:`samples/sensor/bh1749`
@@ -55,4 +55,3 @@ Sample Output
     BH1749 IR: 81
 
     (continues when trigger level reached)
-

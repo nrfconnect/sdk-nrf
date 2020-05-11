@@ -1,4 +1,4 @@
-# Kconfig - nRF91 PCA20035 board configuration
+# Thingy:91 nRF9160 board configuration
 #
 # Copyright (c) 2019 Nordic Semiconductor ASA
 #
@@ -6,12 +6,12 @@
 
 if SOC_NRF9160_SICA
 
-config BOARD_NRF9160_PCA20035
-	bool "nRF9160 PCA20035"
+config BOARD_THINGY91_NRF9160
+	bool "nRF9160 THINGY91"
 	depends on !TRUSTED_EXECUTION_NONSECURE
 
-config BOARD_NRF9160_PCA20035NS
-	bool "nRF9160 PCA20035 non-secure"
+config BOARD_THINGY91_NRF9160NS
+	bool "nRF9160 THINGY91 non-secure"
 	depends on TRUSTED_EXECUTION_NONSECURE
 
 endif # SOC_NRF9160_SICA

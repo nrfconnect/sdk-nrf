@@ -14,9 +14,9 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE);
 
-#define USB_SERIALNUMBER_TEMPLATE "PCA20035_%04X%08X"
+#define USB_SERIALNUMBER_TEMPLATE "THINGY91_%04X%08X"
 
-static u8_t usb_serial_str[] = "PCA20035_12PLACEHLDRS";
+static u8_t usb_serial_str[] = "THINGY91_12PLACEHLDRS";
 
 /* Overriding weak function to set iSerialNumber at runtime. */
 u8_t *usb_update_sn_string_descriptor(void)

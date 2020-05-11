@@ -1,5 +1,5 @@
-identifier: nrf9160_pca20035ns
-name: nRF9160-PCA20035-Non-Secure
+identifier: thingy91_nrf9160ns
+name: THINGY91-nRF9160-Non-Secure
 type: mcu
 arch: arm
 toolchain:

@@ -1,5 +1,5 @@
-identifier: nrf52840_pca20035
-name: nRF52840-PCA20035
+identifier: thingy91_nrf52840
+name: Thingy91-NRF52840
 type: mcu
 arch: arm
 toolchain:

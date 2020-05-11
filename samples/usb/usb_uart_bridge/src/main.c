@@ -16,7 +16,7 @@
 /* Overriding weak function to set iSerial runtime. */
 u8_t *usb_update_sn_string_descriptor(void)
 {
-	static u8_t buf[] = "PCA20035_12PLACEHLDRS";
+	static u8_t buf[] = "THINGY91_12PLACEHLDRS";
 
 	snprintk(&buf[9], 13, "%04X%08X",
 		(uint32_t)(NRF_FICR->DEVICEADDR[1] & 0x0000FFFF)|0x0000C000,

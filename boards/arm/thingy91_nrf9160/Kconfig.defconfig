@@ -1,13 +1,13 @@
-# Kconfig - nRF91 PCA20035 board configuration
+# Thingy:91 nRF9160 board configuration
 #
 # Copyright (c) 2018 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
-if BOARD_NRF9160_PCA20035 || BOARD_NRF9160_PCA20035NS
+if BOARD_THINGY91_NRF9160 || BOARD_THINGY91_NRF9160NS
 
 config BOARD
-	default "nrf9160_pca20035"
+	default "thingy91_nrf9160"
 
 if ADC
 
@@ -47,14 +47,14 @@ endif # SPI
 # Apply this configuration below by setting the Kconfig symbols used by
 # the linker according to the information extracted from DT partitions.
 
-if BOARD_NRF9160_PCA20035 && TRUSTED_EXECUTION_SECURE
+if BOARD_THINGY91_NRF9160 && TRUSTED_EXECUTION_SECURE
 
 config FLASH_LOAD_SIZE
 	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
 
-endif # BOARD_NRF9160_PCA20035 && TRUSTED_EXECUTION_SECURE
+endif # BOARD_THINGY91_NRF9160 && TRUSTED_EXECUTION_SECURE
 
-if BOARD_NRF9160_PCA20035NS
+if BOARD_THINGY91_NRF9160NS
 
 config FLASH_LOAD_OFFSET
 	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
@@ -62,6 +62,6 @@ config FLASH_LOAD_OFFSET
 config FLASH_LOAD_SIZE
 	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
 
-endif # BOARD_NRF9160_PCA20035NS
+endif # BOARD_THINGY91_NRF9160NS
 
-endif # BOARD_NRF9160_PCA20035 || BOARD_NRF9160_PCA20035NS
+endif # BOARD_THINGY91_NRF9160 || BOARD_THINGY91_NRF9160NS

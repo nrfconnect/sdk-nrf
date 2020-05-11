@@ -88,7 +88,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: a99cdb54a641288c323d4a5e7e31d9e0b4ba2c1c
+      revision: 19dce6e3034ac546dba03d523cbd0f7784f5e0e2
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr

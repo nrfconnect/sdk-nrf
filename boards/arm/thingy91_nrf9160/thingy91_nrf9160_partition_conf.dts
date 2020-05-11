@@ -5,7 +5,7 @@
  */
 
 /*
- * Default Flash planning for nRF9160_pca20035.
+ * Default Flash planning for thingy91_nrf9160.
  *
  * Zephyr build for nRF9160 with ARM TrustZone-M support,
  * implies building Secure and Non-Secure Zephyr images.

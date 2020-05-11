@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(board_nonsecure, CONFIG_BOARD_LOG_LEVEL);
 #define AT_CMD_COEX0		"AT%XCOEX0=1,1,1570,1580"
 #define AT_CMD_TRACE		"AT%XMODEMTRACE=0"
 
-static int pca20035_magpio_configure(void)
+static int thingy91_magpio_configure(void)
 {
 #if defined(CONFIG_BSD_LIBRARY) && defined(CONFIG_NET_SOCKETS_OFFLOAD)
 	int at_socket_fd;
@@ -87,17 +87,17 @@ static int pca20035_magpio_configure(void)
 	return 0;
 }
 
-static int pca20035_board_init(struct device *dev)
+static int thingy91_board_init(struct device *dev)
 {
 	int err;
 
-	err = pca20035_magpio_configure();
+	err = thingy91_magpio_configure();
 	if (err) {
-		LOG_ERR("pca20035_magpio_configure failed with error: %d", err);
+		LOG_ERR("thingy91_magpio_configure failed with error: %d", err);
 		return err;
 	}
 
 	return 0;
 }
 
-SYS_INIT(pca20035_board_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(thingy91_board_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
