@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 3.13.1)
 project(nrf-connect-sdk-doc LANGUAGES)
 
 set(NO_BOILERPLATE TRUE)
-find_package(Zephyr HINTS $ENV{ZEPHYR_BASE} ..)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} ..)
 
 #
 # Set various *_BASE variables pointing to the nrf/, zephyr/, etc.,

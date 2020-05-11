@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.8.2)
 
 include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake NO_POLICY_SCOPE)
 
-include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_cloud_agps)
 
 # NORDIC SDK APP START

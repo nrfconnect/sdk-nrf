@@ -14,7 +14,7 @@ set(PM_STATIC_YML_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml
   )
 
-include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(asset_tracker)
 zephyr_compile_definitions(PROJECT_NAME=${PROJECT_NAME})
 zephyr_compile_definitions(_POSIX_C_SOURCE=200809L)
