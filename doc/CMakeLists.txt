@@ -17,14 +17,15 @@
 cmake_minimum_required(VERSION 3.13.1)
 project(nrf-connect-sdk-doc LANGUAGES)
 
+set(NO_BOILERPLATE TRUE)
+find_package(Zephyr HINTS $ENV{ZEPHYR_BASE} ..)
+
 #
 # Set various *_BASE variables pointing to the nrf/, zephyr/, etc.,
 # directories. Derive them automatically if they're not set in the environment,
 # by assuming that e.g. nrfxlib can be found at ../../nrfxlib/. Also add them
 # to the environment if they're not there.
 #
-
-set(ZEPHYR_BASE $ENV{ZEPHYR_BASE})
 
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}../ DIRECTORY)
 set(ENV{NRF_BASE} ${NRF_BASE})
@@ -184,6 +185,7 @@ endif()
 
 set(NRF_SPHINX_BUILD_HTML_COMMAND
   ${CMAKE_COMMAND} -E env
+  ZEPHYR_BASE=${ZEPHYR_BASE}
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
   ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
   NRF_BASE=${NRF_BASE}
