@@ -85,14 +85,14 @@ Kconfig*                                  @tejlmand
 /samples/nfc/**/README.rst                @b-gent
 /samples/nrf9160/                         @rlubos @lemrey
 /samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
+/samples/openthread/                      @MarekPorwisz @lmaciejonczyk
+/samples/openthread/**/README.rst         @greg-fer
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/profiler/README.rst              @b-gent
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/radio_test/README.rst @b-gent
 /samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
 /samples/CMakeLists.txt                   @tejlmand
-/samples/openthread/                      @MarekPorwisz @lmaciejonczyk
-/samples/openthread/**/README.rst         @greg-fer
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
 /subsys/bluetooth/                        @joerchan @carlescufi
