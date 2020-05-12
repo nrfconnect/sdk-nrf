@@ -1,3 +1,4 @@
+DNM:  touching file to test PR security
 
 nRF Connect SDK: fw-nrfconnect-nrf
 ##################################
