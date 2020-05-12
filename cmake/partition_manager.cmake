@@ -56,6 +56,7 @@ if("${IMAGE_NAME}" STREQUAL "${${domain}_PM_DOMAIN_DYNAMIC_PARTITION}_")
 endif()
 
 get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
+get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 
 # This file is executed once per domain.
 #
@@ -65,12 +66,14 @@ get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
 # - It's the root image, and a static configuration has been provided
 # - It's the root image, and PM_IMAGES is populated.
 # - It's the root image, and other domains exist.
+# - A subsys has defined a partition.
 # Otherwise, return here
 if (NOT (
   (IMAGE_NAME AND is_dynamic_partition_in_domain) OR
   (NOT IMAGE_NAME AND static_configuration) OR
   (NOT IMAGE_NAME AND PM_IMAGES) OR
-  (NOT IMAGE_NAME AND PM_DOMAINS)
+  (NOT IMAGE_NAME AND PM_DOMAINS) OR
+  (PM_SUBSYS_PREPROCESSED)
   ))
   return()
 endif()
@@ -121,7 +124,6 @@ list(APPEND input_files ${ZEPHYR_BINARY_DIR}/${generated_path}/pm.yml)
 list(APPEND header_files ${ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
 
 # Add subsys defined pm.yml to the input_files
-get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 list(APPEND input_files ${PM_SUBSYS_PREPROCESSED})
 
 if (DEFINED CONFIG_SOC_NRF9160)
@@ -350,7 +352,11 @@ if (is_dynamic_partition_in_domain)
 else()
   # This is the root image, generate the global pm_config.h
   # First, include the shared_vars.cmake file for all child images.
-  list(REMOVE_DUPLICATES PM_DOMAINS)
+  if (PM_DOMAINS)
+    # We ensure the existence of PM_DOMAINS to support older cmake versions.
+    # When version >= 3.17 is required this check can be removed.
+    list(REMOVE_DUPLICATES PM_DOMAINS)
+  endif()
   foreach (d ${PM_DOMAINS})
     # Don't include shared vars from own domain.
     if (NOT ${domain} STREQUAL ${d})
