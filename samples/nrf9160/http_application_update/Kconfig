@@ -9,6 +9,10 @@ menu "HTTP application update sample"
 config DOWNLOAD_HOST
 	string "Download host name"
 
+config DOWNLOAD_PORT
+	int "Download host port number. Set to 0 to use default HTTP/HTTPS port."
+	default 0
+
 config DOWNLOAD_FILE
 	string "The file to download"
 
