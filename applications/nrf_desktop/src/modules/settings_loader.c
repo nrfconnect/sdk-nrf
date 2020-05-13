@@ -83,6 +83,9 @@ static bool module_event_handler(const struct module_state_event *event)
 #if CONFIG_DESKTOP_BLE_SCANNING_ENABLE
 		MODULE_ID(ble_scan),
 #endif
+#if CONFIG_DESKTOP_FAILSAFE_ENABLE
+		MODULE_ID(failsafe),
+#endif
 	};
 
 	static u32_t req_state;

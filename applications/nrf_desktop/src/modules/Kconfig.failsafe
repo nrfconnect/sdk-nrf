@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Failsafe erase"
+
+config DESKTOP_FAILSAFE_ENABLE
+	bool "Enable failsafe"
+	depends on WATCHDOG
+	depends on !RESET_ON_FATAL_ERROR
+	help
+	  When a device is rebooted by watchdog or due to the CPU lockup,
+	  the settings partition will be erased.
+	  This is to prevent the broken settings from permanently rendering
+	  the device unusable.
+
+if DESKTOP_FAILSAFE_ENABLE
+
+module = DESKTOP_FAILSAFE
+module-str = failsafe
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu
