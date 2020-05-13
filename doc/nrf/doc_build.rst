@@ -43,13 +43,12 @@ Building documentation output
 
 Complete the following steps to build the documentation output:
 
-1. Create the build folder ``ncs/nrf/doc/_build``.
+1. Open a shell and enter the doc folder ``ncs/nrf/doc``.
 
    * On Windows:
 
-     a. Navigate to ``ncs/nrf/doc``.
-     #. Right-click to create a folder and name it ``_build``.
-     #. Hold shift and right-click on the new folder.
+     a. Navigate to ``ncs/nrf``.
+     #. Hold shift and right-click on the ``doc`` folder.
         Select **Open command window here**.
 
    * On Linux or macOS:
@@ -62,30 +61,17 @@ Complete the following steps to build the documentation output:
 
            cd ~/ncs/nrf/doc
 
-     #. Create a folder named ``_build`` and enter it:
-
-        .. code-block:: console
-
-           mkdir -p _build && cd _build
-
-#. Load the environment setting for Zephyr builds.
-
-   * On Windows:
-
-        .. code-block:: console
-
-           ..\..\..\zephyr\zephyr-env.cmd
-   * On Linux or macOS:
-
-        .. code-block:: console
-
-           source ../../../zephyr/zephyr-env.sh
-
 #. Generate the Ninja build files:
 
         .. code-block:: console
 
-           cmake -GNinja ..
+           cmake -GNinja -B_build .
+
+#. Enter the generated build folder:
+
+        .. code-block:: console
+
+           cd _build
 
 #. Run ninja to build the Kconfig documentation:
 
