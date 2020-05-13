@@ -1,33 +1,32 @@
 .. _nfc_t4t_hl_procedure_readme:
 
-NFC T4T High Level Procedure
-############################
+Type 4 Tag procedures
+#####################
 
-The NDEF High Level procedure module provides functions to perform the NDEF detection procedure,
-which is used to retrieve the NDEF message from the data of a tag.
+This module provides functions to perform the NDEF detection procedure, which is used to retrieve the NDEF message from the data of a tag.
 
-1. NDEF Tag Application select procedure.
-#. Capability Container (CC) select procedure.
-#. Capability Container read procedure.
-#. NDEF select procedure.
-#. NDEF read procedure or NDEF update procedure.
+The full NDEF detection procedure consists of the following procedures:
+
+1. NDEF tag application select.
+#. Capability container (CC) select.
+#. Capability container read.
+#. NDEF select.
+#. NDEF read or NDEF update.
 
 After a successful NDEF detection procedure, you can also write data to the NDEF file.
-To do it, you need to perform an NDEF update procedure.
+To do this, you must perform an NDEF update procedure.
 
 This module uses three other modules:
-   * :ref:`nfc_t4t_apdu_readme` is used to generated APDU commands.
-   * :ref: `nfc_t4t_cc_file_readme` is used to analyzed APDU responses payload and store it within the structure that represents Type 4 Tag content.
-   * :ref: `nfc_t4t_isodep_readme` is used to transfer data over ISO-DEP Protocols
+
+* :ref:`nfc_t4t_apdu_readme` for generating APDU commands
+* :ref:`nfc_t4t_cc_file_readme` for analyzing APDU responses payload and storing it within the structure that represents the Type 4 Tag content
+* :ref:`nfc_t4t_isodep_readme` for transferring data over ISO-DEP protocols
 
 API documentation
 *****************
 
 | Header file: :file:`include/nfc/t4t/hl_procedure.h`
 | Source file: :file:`subsys/nfc/t4t/hl_procedure.c`
-
-NFC Type 4 Tag HL Procedure API
--------------------------------
 
 .. doxygengroup:: nfc_t4t_hl_procedure
    :project: nrf

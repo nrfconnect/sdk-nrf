@@ -1,15 +1,15 @@
 .. _record_text:
 
-NFC: Text Record
+NFC: Text record
 ################
 
-The NFC Text Record sample shows how to use the NFC tag to expose a Text record to NFC polling devices.
-It uses the :ref:`nfc`.
+The NFC Text record sample shows how to use the NFC tag to expose a text record to NFC polling devices.
+It uses the :ref:`lib_nfc_ndef`.
 
 Overview
 ********
 
-When the sample starts, it initializes the NFC tag and generates an NDEF message with three Text records that contain the text "Hello World!" in three languages.
+When the sample starts, it initializes the NFC tag and generates an NDEF message with three text records that contain the text "Hello World!" in three languages.
 Then it sets up the NFC library to use the generated message and sense the external NFC field.
 
 The only events handled by the application are the NFC events.

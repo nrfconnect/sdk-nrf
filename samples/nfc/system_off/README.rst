@@ -4,7 +4,7 @@ NFC: System OFF
 ###############
 
 The NFC System OFF sample shows how to make the NFC Tag device wake up from the System OFF mode when it detects the NFC field.
-The sample uses the :ref:`nfc`.
+The sample uses the :ref:`lib_nfc_ndef`.
 
 Overview
 ********
