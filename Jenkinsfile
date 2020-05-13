@@ -6,7 +6,7 @@
 // express written agreement with Nordic Semiconductor ASA.
 //
 
-@Library("CI_LIB") _
+@Library("CI_LIB@v1.2-branch") _
 
 HashMap CI_STATE = lib_State.getConfig(JOB_NAME)
 def TestExecutionList = [:]
