@@ -16,7 +16,7 @@ if DESKTOP_WATCHDOG_ENABLE
 
 config DESKTOP_WATCHDOG_TIMEOUT
 	int "Watchdog timeout value [ms]"
-	default 500
+	default 1500
 	range 500 120000
 	help
 	  Timeout of watchdog timer. After the time elapse a device will be restarted.
