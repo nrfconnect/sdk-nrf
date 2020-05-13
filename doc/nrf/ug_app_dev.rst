@@ -32,23 +32,13 @@ See the following links for information about the different building blocks ment
 ===============
 
 The |NCS| adds some functionality on top of the Zephyr build and configuration system.
+Those additions are automatically included into the Zephyr build system using a :ref:`cmake_build_config_package`.
+
 You must be aware of these additions when you start writing your own applications based on this SDK.
 
-  * The |NCS| provides an additional :file:`boilerplate.cmake` that must be included before Zephyr's in the :file:`CMakeLists.txt` file of your application::
+  * The |NCS| provides an additional :file:`boilerplate.cmake` that is automatically included when using the Zephyr CMake package in the :file:`CMakeLists.txt` file of your application::
 
-      include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
-      include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
-
-    Since the |NCS| does not require or provide an environment variable equivalent to :makevar:`ZEPHYR_BASE`, you can either create your own or locate the full path in your own :file:`CMakeLists.txt`.
-    In order to obtain the path to the :file:`nrf` folder, you can use west::
-
-      execute_process(COMMAND west list -f {abspath} nrf OUTPUT_VARIABLE NRF_BASE
-                      RESULT_VARIABLE west_list_err OUTPUT_STRIP_TRAILING_WHITESPACE)
-      if (west_list_err)
-        message(FATAL_ERROR "cannot find nrf directory with west")
-      endif()
-
-      include(${NRF_BASE}/cmake/boilerplate.cmake)
+      find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
   * The |NCS| allows you to :ref:`create custom build type files <gs_modifying_build_types>` instead of using a single :file:`prj.conf` file.
   * The |NCS| build system extends Zephyr's with support for multi-image builds.
