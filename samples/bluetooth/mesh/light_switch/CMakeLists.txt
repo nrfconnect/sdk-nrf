@@ -5,7 +5,6 @@
 #
 cmake_minimum_required(VERSION 3.8.2)
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(mesh_light_switch)
 

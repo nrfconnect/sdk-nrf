@@ -12,7 +12,6 @@ set(NRF_SUPPORTED_BOARDS
 	nrf52840dk_nrf52840
 )
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 
