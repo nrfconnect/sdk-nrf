@@ -6,7 +6,6 @@
 
 cmake_minimum_required(VERSION 3.8.2)
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE ZDebug)
