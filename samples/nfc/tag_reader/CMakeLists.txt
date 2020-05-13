@@ -13,7 +13,6 @@ set(NRF_SUPPORTED_BOARDS
   nrf5340pdk_nrf5340_cpuapp
   )
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(NONE)
 

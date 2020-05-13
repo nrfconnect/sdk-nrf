@@ -10,7 +10,6 @@ set(NRF_SUPPORTED_BOARDS
 	nrf52833dk_nrf52833
 )
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE}
 
 project(openthread_cli)

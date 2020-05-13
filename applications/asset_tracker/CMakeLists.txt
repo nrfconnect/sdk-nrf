@@ -8,7 +8,6 @@ cmake_minimum_required(VERSION 3.8.2)
 
 set(spm_CONF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/spm.conf)
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
 
 set(PM_STATIC_YML_FILE
   ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml

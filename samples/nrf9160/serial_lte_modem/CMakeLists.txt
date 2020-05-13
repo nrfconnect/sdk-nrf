@@ -16,7 +16,7 @@ set(spm_CONF_FILE
   prj.conf
   ${CMAKE_CURRENT_LIST_DIR}/child_secure_partition_manager.conf
   )
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(serial_lte_modem)
 
