@@ -1,10 +1,10 @@
 .. _nfc_t2t_parser_readme:
 
-NFC: Type 2 Tag parser
-######################
+Type 2 Tag parser
+#################
 
-In addition to programming the NFC tag that is part of an nRF52 Series IC, you can also use other nRF Connect SDK functions to read the content of another NFC tag.
-Note that an nRF52 Series IC does not provide the hardware that is required for a polling device.
+The nRF Connect SDK provides functionality to read the content of an NFC tag.
+Note that an nRF5 Series IC does not provide the hardware that is required for a polling device.
 If you want to create a polling device, you can use an ST25R3911B NFC shield together with an nRF5 Development Kit.
 
 Using the :ref:`st25r3911b_nfc_readme`, you can read raw data from a Type 2 Tag, such as:
@@ -46,12 +46,17 @@ API documentation
 NFC Type 2 Tag parser
 ---------------------
 
+| Header file: :file:`include/nfc/t2t/t2t_parser.h`
+| Source file: :file:`subsys/nfc/t2t/parser.c`
+
 .. doxygengroup:: nfc_t2t_parser
    :project: nrf
    :members:
 
 Type 2 Tag TLV blocks
 ---------------------
+
+| Header file: :file:`include/nfc/t2t/tlv_block.h`
 
 .. doxygengroup:: nfc_t2t_tlv_block
    :project: nrf

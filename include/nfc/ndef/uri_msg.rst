@@ -1,7 +1,7 @@
 .. _nfc_uri:
 
-URI messages
-############
+URI messages and records
+########################
 
 URI messages contain exactly one URI record, which in turn contains an address that an NFC polling device can open.
 In the most typical use case, the URI record contains a web address like "http\://www.nordicsemi.com" that the polling device opens in a web browser.

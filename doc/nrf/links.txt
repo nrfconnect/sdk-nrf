@@ -203,6 +203,7 @@
 .. _`Easyfit Single/Double Rocker Pad for BLE - ESRPB/EDRPB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-single-double-rocker-pad-for-ble-esrpb-edrpb
 .. _`Easyfit Motion Detector with Illumination Sensor - EMDCB`: https://www.enocean.com/en/products/enocean_modules_24ghz_ble/easyfit-motion-detector-with-illumination-sensor-emdcb
 
+.. _`ISO/IEC 7816-4`: https://www.iso.org/standard/54550.html
 
 .. ### Links to Bluetooth specs
 
@@ -220,6 +221,8 @@
 .. ### Links to NFC specs
 
 .. _`Bluetooth Secure Simple Pairing Using NFC`: http://nfc-forum.org/our-work/specifications-and-application-documents/application-documents
+
+.. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
 
 
 .. ### Links to OpenThread

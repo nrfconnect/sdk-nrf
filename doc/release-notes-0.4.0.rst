@@ -180,7 +180,7 @@ Documentation
 
   * :ref:`bt_conn_ctx_readme`
   * :ref:`dk_buttons_and_leds_readme`
-  * :ref:`nfc`
+  * :ref:`lib_nfc_ndef`
   * :ref:`event_manager` and :ref:`profiler`
   * :ref:`at_cmd_parser_readme`, :ref:`at_params_readme`, and :ref:`modem_info_readme`
   * :ref:`lib_download_client`

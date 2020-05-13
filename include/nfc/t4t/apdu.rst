@@ -1,14 +1,16 @@
 .. _nfc_t4t_apdu_readme:
 
-NFC T4T APDU reader and writer
-##############################
+APDU reader and writer
+######################
 
-Application protocol data units (APDUs) are special communication units that are used when exchanging data with a Type 4 Tag platform.
-Command APDUs (C-APDUs) are the commands sent from the NFC reader, while response APDUs (R-APDUs) are the responses to a specific command received by NFC reader from the tag.
+Application protocol data units (APDUs) are special communication units that are defined in `ISO/IEC 7816-4`_.
+The subset of these commands that is used to interact with a Type 4 Tag is implemented in this library.
+
+Command APDUs (C-APDUs) are the commands sent from the polling device, while response APDUs (R-APDUs) are the responses to a specific command received by the polling device from the tag.
 
 The APDU reader/writer module provides functions to encode a C-APDU according to its descriptor and to decode a raw R-APDU data into the appropriate descriptor.
 
-This library can be used with :ref:`st25r3911b_nfc_readme` to exchange NFC Type 4 Tag data.
+This library can be used with the :ref:`st25r3911b_nfc_readme` library to exchange NFC Type 4 Tag data.
 
 APDU types
 **********
@@ -60,22 +62,19 @@ API documentation
 | Header file: :file:`include/nfc/t4t/apdu.h`
 | Source file: :file:`subsys/nfc/t4t/apdu.c`
 
-APDU reader and writer
-======================
-
 .. doxygengroup:: nfc_t4t_apdu
    :project: nrf
    :members:
 
 Parameters for selecting instruction code in C-APDU
----------------------------------------------------
+===================================================
 
 .. doxygengroup:: nfc_t4t_apdu_select
    :project: nrf
    :members:
 
 Status codes contained in R-APDU
---------------------------------
+================================
 
 .. doxygengroup:: nfc_t4t_apdu_status
    :project: nrf

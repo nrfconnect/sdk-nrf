@@ -1,16 +1,16 @@
 .. _nfc_ndef:
 
-Custom messages
-###############
+Messages and records
+####################
 
 Use the :ref:`nfc_ndef_msg` and :ref:`nfc_ndef_record` modules to create standardized messages and records that are not covered by other modules, or to create your own custom messages.
 
-To generate a custom NDEF message, start by creating the records that make up the message.
+To generate an NDEF message, start by creating the records that make up the message.
 Next, generate an empty message of the required length and add the records to the message.
 Finally, encode and create the message.
 
 By default, NDEF messages are encoded for the Type 2 Tag platform.
-See :ref:`nfc_ndef_format_dox` for a description of the format.
+See :ref:`ug_nfc_ndef_format` for a description of the format.
 You can choose to encode the message for the Type 4 Tag platform by setting :option:`CONFIG_NFC_NDEF_MSG_WITH_NLEN` to ``y``.
 In this case, an additional field is added in front of an NDEF message.
 
@@ -21,7 +21,7 @@ These records themselves are full messages that contain information about altern
 .. _nfc_ndef_record_gen:
 
 Creating a record descriptor
-============================
+****************************
 
 You can provide the payload of the record in binary format or in a different format that is then converted into binary format.
 The content of the record is defined in a record descriptor.
@@ -62,7 +62,7 @@ The following code example shows how to generate a record descriptor:
 .. _nfc_ndef_msg_gen:
 
 Creating a message
-==================
+******************
 
 A message consists of one or more records.
 Accordingly, a message descriptor (that holds the content of the message) contains an array of pointers to record descriptors.
@@ -126,7 +126,7 @@ The following code example shows how to create two messages:
 .. _nfc_ndef_msg_rec:
 
 Encapsulating a message
-=======================
+***********************
 
 To encapsulate a message in a record so that it can be added to another message, use the :c:macro:`NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF` macro to create the record descriptor.
 This record descriptor uses :cpp:func:`nfc_ndef_msg_encode` as payload constructor.
@@ -159,8 +159,8 @@ API documentation
 
 .. _nfc_ndef_msg:
 
-Custom NDEF messages
-====================
+NDEF messages
+=============
 
 | Header file: :file:`include/nfc/ndef/msg.h`
 | Source file: :file:`subsys/nfc/ndef/msg.c`
@@ -171,8 +171,8 @@ Custom NDEF messages
 
 .. _nfc_ndef_record:
 
-Custom NDEF records
-===================
+NDEF records
+============
 
 | Header file: :file:`include/nfc/ndef/record.h`
 | Source file: :file:`subsys/nfc/ndef/record.c`

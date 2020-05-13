@@ -15,6 +15,7 @@ They introduce you to important concepts and guide you through developing your a
    ug_nrf5340
    ug_nrf52
    ug_thingy91
+   ug_nfc
    ug_thread
    ug_zigbee
    ug_ble_controller

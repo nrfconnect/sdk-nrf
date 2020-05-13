@@ -1,10 +1,10 @@
 .. _writable_ndef_msg:
 
-NFC: Writable NDEF Message
+NFC: Writable NDEF message
 ##########################
 
-The Writable NDEF Message sample shows how to use the NFC tag to expose an NDEF message, which can be overwritten with any other NDEF message by an NFC device.
-It uses the :ref:`nfc`.
+The Writable NDEF message sample shows how to use the NFC tag to expose an NDEF message, which can be overwritten with any other NDEF message by an NFC device.
+It uses the :ref:`lib_nfc_ndef`.
 
 Overview
 ********
