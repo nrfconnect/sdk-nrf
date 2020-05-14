@@ -65,7 +65,7 @@ extern "C" {
  *        the link context size for BLE HIDS instance.
  */
 #define _BT_GATT_HIDS_CONN_CTX_SIZE_CALC(...)		   \
-	(MACRO_MAP(_BLE_GATT_HIDS_REPORT_ADD, __VA_ARGS__) \
+	(FOR_EACH(_BLE_GATT_HIDS_REPORT_ADD, __VA_ARGS__) \
 	sizeof(struct bt_gatt_hids_conn_data))
 
 /**@brief Helping macro for @ref _BT_GATT_HIDS_CONN_CTX_SIZE_CALC,
