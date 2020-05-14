@@ -43,13 +43,6 @@ config LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
 	help
 	  Use a custom bootstrap URI.
 
-	  Enabling this option requires that a file "bootstrap_psk.h" is
-	  made available in an include folder.
-
-	  This file must define the LWM2M bootstrap pre-shared key e.g.:
-
-	  static const char bootstrap_psk[] = {'m', 'y', 'k', 'e', 'y'};
-
 if LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
 
 config LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI
@@ -59,6 +52,18 @@ config LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI
 	  URI of the custom bootstrap server.
 
 endif # LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
+
+config LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
+	bool "Use custom bootstrap PSK"
+	help
+	  Use a custom bootstrap PSK.
+
+	  Enabling this option requires that a file "bootstrap_psk.h" is
+	  made available in an include folder.
+
+	  This file must define the LWM2M bootstrap pre-shared-key e.g.:
+
+	  static const char bootstrap_psk[] = { 0xd6, 0x16, ... };
 
 module=LWM2M_CARRIER
 module-dep=LOG
