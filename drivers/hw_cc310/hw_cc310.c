@@ -11,6 +11,7 @@
 
 #include <zephyr.h>
 #include <irq.h>
+#include <device.h>
 
 #include <nrf_cc310_platform.h>
 
