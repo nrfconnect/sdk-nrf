@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config AGPS
+	bool "A-GPS library"
+	help
+	  A library to simplify switching between A-GPS data sources.
+
+if AGPS
+
+choice
+	bool "A-GPS data source"
+	default AGPS_SRC_NRF_CLOUD
+
+config AGPS_SRC_NRF_CLOUD
+	bool "Use nRF Cloud as data source"
+	depends on NRF_CLOUD
+	imply NRF_CLOUD_AGPS
+	help
+	  To use nRF Cloud as A-GPS data source, a connection to nRF Cloud must
+	  already be established.
+	  When a request for A-GPS data is sent to nRF Cloud, the response will
+	  be received on the same socket as all other nRF Cloud communication,
+	  and the data will have to be processed further in the application.
+
+config AGPS_SRC_SUPL
+	bool "Use SUPL as data source"
+	depends on BSD_LIBRARY
+	imply SUPL_CLIENT_LIB
+	help
+	  Note that a request for A-GPS data using SUPL service will block until
+	  the data is received from the SUPL server, processed and written to
+	  the GPS module.
+
+endchoice
+
+if AGPS_SRC_SUPL
+
+config AGPS_SUPL_HOST_NAME
+	string "SUPL host name"
+	default "supl.google.com"
+
+config AGPS_SUPL_PORT
+	int "SUPL port"
+	default 7276
+
+endif # AGPS_SRC_SUPL
+
+endif # AGPS
+
+module = AGPS
+module-str = A-GPS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

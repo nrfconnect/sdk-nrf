@@ -54,6 +54,7 @@ Kconfig*                                  @tejlmand
 /lib/at_cmd/                              @rlubos
 /lib/at_host/                             @rlubos
 /lib/at_notif/                            @pkchan
+/lib/agps/                                @jtguggedal @simensrostad
 /lib/bsdlib/                              @rlubos
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam

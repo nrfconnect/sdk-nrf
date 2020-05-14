@@ -6,6 +6,7 @@
 
 menu "Libraries"
 
+rsource "agps/Kconfig"
 rsource "bin/Kconfig"
 rsource "bsdlib/Kconfig"
 rsource "adp536x/Kconfig"

@@ -22,6 +22,7 @@ extern "C" {
 
 #define GPS_NMEA_SENTENCE_MAX_LENGTH	83
 #define GPS_PVT_MAX_SV_COUNT		12
+#define GPS_SOCKET_NOT_PROVIDED		0
 
 struct gps_nmea {
 	char buf[GPS_NMEA_SENTENCE_MAX_LENGTH];
@@ -366,6 +367,29 @@ static inline int gps_deinit(struct device *dev)
 
 	return api->deinit(dev);
 }
+
+/**
+ * @brief Function to request A-GPS data.
+ *
+ * @param request Assistance data to request from A-GPS service.
+ * @param socket GPS socket to which assistance data will be written
+ *               when it's received from the selected A-GPS service.
+ *               If zero the GPS driver will be used to write the data instead
+ *               of directly to the provided socket.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int gps_agps_request(struct gps_agps_request request, int socket);
+
+/**
+ * @brief Processes A-GPS data.
+ *
+ * @param buf Pointer to A-GPS data.
+ * @param len Buffer size of data to be processed.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int gps_process_agps_data(const uint8_t *buf, size_t len);
 
 #ifdef __cplusplus
 }

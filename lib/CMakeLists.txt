@@ -6,6 +6,7 @@
 
 add_subdirectory(bin)
 
+add_subdirectory_ifdef(CONFIG_AGPS agps)
 add_subdirectory_ifdef(CONFIG_BSD_LIBRARY bsdlib)
 add_subdirectory_ifdef(CONFIG_DK_LIBRARY dk_buttons_and_leds)
 add_subdirectory_ifdef(CONFIG_AT_CMD at_cmd)
