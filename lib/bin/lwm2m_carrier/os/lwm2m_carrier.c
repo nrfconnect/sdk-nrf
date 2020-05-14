@@ -8,7 +8,7 @@
 #include <zephyr.h>
 #include <lwm2m_carrier.h>
 
-#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
+#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
 #include <bootstrap_psk.h>
 #endif
 
@@ -30,6 +30,8 @@ void lwm2m_carrier_thread_run(void)
 
 #ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
 	config.bootstrap_uri = CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI;
+#endif
+#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
 	config.psk = (char *)bootstrap_psk;
 	config.psk_length = sizeof(bootstrap_psk);
 #endif
