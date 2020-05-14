@@ -38,9 +38,9 @@ Configuration
 The module uses the Zephyr :ref:`zephyr:pwm_api` driver for setting the LED color (that is, brightness of the diodes).
 To use the module, set the following configuration options:
 - :option:`CONFIG_PWM`
-- :option:`CONFIG_PWM_0`
 
-In :option:`CONFIG_PWM_0`, 0 corresponds to the PWM port number. Make sure to configure all PWM ports used by application.
+The PWM ports needed by the application are enabled in the :file:`dts.overlay` file by setting the status to "okay".
+Make sure to configure all PWM ports that are used by the application.
 
 The module is enabled using ``CONFIG_DESKTOP_LED_ENABLE``.
 
