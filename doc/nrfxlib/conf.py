@@ -204,6 +204,6 @@ rst_epilog = """
 
 
 def setup(app):
-    app.add_stylesheet("css/common.css")
-    app.add_stylesheet("css/nrfxlib.css")
+    app.add_css_file("css/common.css")
+    app.add_css_file("css/nrfxlib.css")
     app.add_js_file("js/ncs.js")
