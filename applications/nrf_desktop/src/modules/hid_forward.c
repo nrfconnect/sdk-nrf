@@ -510,9 +510,13 @@ static bool event_handler(const struct event_header *eh)
 			cast_hid_report_subscription_event(eh);
 
 		if (event->subscriber == usb_id) {
-			k_spinlock_key_t key = k_spin_lock(&lock);
-			usb_ready = event->enabled;
-			k_spin_unlock(&lock, key);
+			if (event->enabled) {
+				k_spinlock_key_t key = k_spin_lock(&lock);
+				usb_ready = true;
+				k_spin_unlock(&lock, key);
+			} else {
+				clear_state();
+			}
 		}
 
 		return false;
@@ -539,7 +543,7 @@ static bool event_handler(const struct event_header *eh)
 			cast_usb_state_event(eh);
 
 		switch (event->state) {
-		case USB_STATE_POWERED:
+		case USB_STATE_ACTIVE:
 			usb_id = event->id;
 			break;
 		case USB_STATE_DISCONNECTED:
