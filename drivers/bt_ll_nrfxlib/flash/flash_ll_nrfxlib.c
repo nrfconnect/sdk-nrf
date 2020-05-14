@@ -17,6 +17,8 @@
 #include "ble_controller_soc.h"
 #include "multithreading_lock.h"
 
+#define SOC_NV_FLASH_NODE DT_INST(0, soc_nv_flash)
+
 /* NOTE: The driver supports unligned writes, but some file systems (like FCB)
  * may use the driver sub-optimally as a result. Word aligned writes are faster
  * and require less overhead. This value can be changed to 4 to minimize this
@@ -254,6 +256,8 @@ static int btctlr_flash_read(struct device *dev,
 		return 0;
 	}
 
+	offset += DT_REG_ADDR(SOC_NV_FLASH_NODE);
+
 	/* Don't read flash while another flash operation is ongoing. */
 	err = k_mutex_lock(&flash_state.lock, K_FOREVER);
 	__ASSERT_NO_MSG(err == 0);
@@ -273,6 +277,8 @@ static int btctlr_flash_write(struct device *dev,
 	if (!is_addr_valid(offset, len)) {
 		return -EINVAL;
 	}
+
+	offset += DT_REG_ADDR(SOC_NV_FLASH_NODE);
 
 	err = k_mutex_lock(&flash_state.lock, K_FOREVER);
 	__ASSERT_NO_MSG(err == 0);
@@ -307,6 +313,8 @@ static int btctlr_flash_erase(struct device *dev, off_t offset, size_t len)
 	if (page_count == 0) {
 		return 0;
 	}
+
+	offset += DT_REG_ADDR(SOC_NV_FLASH_NODE);
 
 	err = k_mutex_lock(&flash_state.lock, K_FOREVER);
 	__ASSERT_NO_MSG(err == 0);
