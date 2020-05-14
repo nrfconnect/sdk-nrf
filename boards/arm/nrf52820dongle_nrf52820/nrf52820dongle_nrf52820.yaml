@@ -1,5 +1,5 @@
-identifier: nrf52833donglev2_nrf52833
-name: nRF52833-Donglev2-NRF52833
+identifier: nrf52820dongle_nrf52820
+name: nRF52820-Dongle-NRF52820
 type: mcu
 arch: arm
 ram: 32

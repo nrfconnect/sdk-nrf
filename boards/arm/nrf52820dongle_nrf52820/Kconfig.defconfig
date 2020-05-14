@@ -4,12 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-if BOARD_NRF52833DONGLEV2_NRF52833
+if BOARD_NRF52820DONGLE_NRF52820
 
 config BOARD
-	default "nrf52833donglev2_nrf52833"
+	default "nrf52820dongle_nrf52820"
 
 config BT_CTLR
 	default BT
 
-endif # BOARD_NRF52833DONGLEV2_NRF52833
+endif # BOARD_NRF52820DONGLE_NRF52820
