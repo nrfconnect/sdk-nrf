@@ -102,7 +102,7 @@ Kconfig*                                  @tejlmand
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/fw_info/                          @hakonfam
-/subsys/ieee802154                        @rlubos
+/subsys/ieee802154/                       @rlubos
 /subsys/mpsl/                             @joerchan @rugeGerritsen
 /subsys/net/                              @rlubos
 /subsys/nfc/                              @grochu @anangl
