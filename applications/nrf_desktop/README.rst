@@ -228,38 +228,38 @@ Depending on what board you use, you need to select a respective configuration f
       .. figure:: /images/nrf_desktop_gaming_mouse_top_no_captions.svg
          :alt: nRF Desktop gaming mouse (top view)
 
-      * nRF52840 Gaming Mouse (PCA20041)
+      * nRF52840 Gaming Mouse (nrf52840gmouse_nrf52840)
 
    .. tab:: Desktop mouse
 
       .. figure:: /images/nrf_desktop_desktop_mouse_side_no_captions.svg
          :alt: nRF Desktop desktop mouse (side view)
 
-      * nRF52832 Desktop Mouse (PCA20044)
-      * nRF52810 Desktop Mouse (PCA20045)
+      * nRF52832 Desktop Mouse (nrf52dmouse_nrf52832)
+      * nRF52810 Desktop Mouse (nrf52810dmouse_nrf52810)
 
    .. tab:: Keyboard
 
       .. figure:: /images/nrf_desktop_keyboard_top_no_captions.svg
          :alt: nRF Desktop keyboard (top view)
 
-      * nRF52832 Desktop Keyboard (PCA20037)
+      * nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
 
    .. tab:: HID dongle
 
       .. figure:: /images/nrf_desktop_dongle_no_captions.svg
          :alt: nRF Desktop dongle (top view)
 
-      * nRF52840 USB Dongle (PCA10059)
-      * nRF52833 USB Dongle (PCA10111)
+      * nRF52840 USB Dongle (nrf52840dongle_nrf52840)
+      * nRF52833 USB Dongle (nrf52833dongle_nrf52833)
 
    .. tab:: DK
 
       .. figure:: /images/nrf_desktop_nrf52840_dk_no_captions.svg
          :alt: DK
 
-      * nRF52840 DK (PCA10056) - the application is configured to work as a gaming mouse (motion emulated using DK buttons)
-      * nRF52833 DK (PCA10100) - the application is configured to work as a HID dongle
+      * nRF52840 DK (nrf52840dk_nrf52840) - the application is configured to work as a gaming mouse (motion emulated using DK buttons)
+      * nRF52833 DK (nrf52833dk_nrf52833) - the application is configured to work as a HID dongle
 
 ..
 
@@ -723,7 +723,7 @@ Testing
 =======
 
 The application can be built and tested in various configurations.
-The following procedure refers to the scenario where the gaming mouse (PCA20041) and the keyboard (PCA20037) are connected simultaneously to the dongle (PCA10059).
+The following procedure refers to the scenario where the gaming mouse (nRF52840 Gaming Mouse) and the keyboard (nRF52832 Desktop Keyboard) are connected simultaneously to the dongle (nRF52840 USB Dongle).
 
 After building the application with or without :ref:`specifying the build types <nrf_desktop_selecting_build_types>`, test the nRF Desktop application by performing the following steps:
 
@@ -813,8 +813,8 @@ nRF Desktop board configuration files
 
 The nRF Desktop project comes with configuration files for the following boards:
 
-Gaming mouse (nrf52840_pca20041)
-      * The board is defined in ``nrf/boards/arm/nrf52840_pca20041`` for the project-specific hardware.
+nRF52840 Gaming Mouse (nrf52840gmouse_nrf52840)
+      * The board is defined in ``nrf/boards/arm/nrf52840gmouse_nrf52840`` for the project-specific hardware.
       * To achieve gaming-grade performance:
 
         * The application is configured to act as a gaming mouse, with both Bluetooth LE and USB transports enabled.
@@ -822,8 +822,8 @@ Gaming mouse (nrf52840_pca20041)
 
       * |preconfigured_build_types|
 
-Desktop mouse (nrf52_pca20044 and nrf52810_pca20045)
-      * Both boards are meant for the project-specific hardware and are defined in ``nrf/boards/arm/nrf52_pca20044`` and ``nrf/boards/arm/nrf52810_pca20045``, respectively.
+nRF52832 Desktop Mouse (nrf52dmouse_nrf52832) and nRF52810 Desktop Mouse (nrf52810dmouse_nrf52810)
+      * Both boards are meant for the project-specific hardware and are defined in ``nrf/boards/arm/nrf52dmouse_nrf52832`` and ``nrf/boards/arm/nrf52810dmouse_nrf52810``, respectively.
       * The application is configured to act as a mouse.
       * Only the Bluetooth Low Energy transport is enabled.
         Bluetooth uses Zephyr's software link layer.
@@ -835,13 +835,13 @@ Sample mouse or keyboard (nrf52840dk_nrf52840)
       * Inputs are simulated based on the hardware button presses.
       * The configuration with bootloader is available.
 
-Keyboard (nrf52_pca20037)
-      * The board used is defined in ``nrf/boards/arm/nrf52_pca20037`` for the project-specific hardware.
+nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
+      * The board used is defined in ``nrf/boards/arm/nrf52kbd_nrf52832`` for the project-specific hardware.
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic's proprietary link layer.
       * |preconfigured_build_types|
 
-Dongle (nrf52840dongle_nrf52840)
+nRF52840 USB Dongle (nrf52840dongle_nrf52840)
       * This configuration uses Nordic's nRF52840 dongle defined in Zephyr.
       * Since the board is generic, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as both mouse and keyboard.
@@ -863,13 +863,13 @@ Moreover, keep the default ``ZDebug`` build type that the application is built w
 To use the nRF Desktop project with your custom board:
 
 1. Define the board by copying the nRF Desktop board files that are the closest match for your hardware.
-   For example, for gaming mouse use ``nrf/boards/arm/nrf52840_pca20041``.
+   For example, for gaming mouse use ``nrf/boards/arm/nrf52840gmouse_nrf52840``.
 #. Edit the DTS files to make sure they match the hardware configuration.
    Pay attention to pins that are used and to the bus configuration for optical sensor.
 #. Edit the board's Kconfig files to make sure they match the required system configuration.
    For example, disable the drivers that will not be used by your device.
 #. Copy the project files for the device that is the closest match for your hardware.
-   For example, for gaming mouse these are located at ``applications/nrf_desktop/configure/nrf52840_pca20041``.
+   For example, for gaming mouse these are located at ``applications/nrf_desktop/configure/nrf52840gmouse_nrf52840``.
 #. Optionally, depending on the board, edit the DTS overlay file.
    This step is not required if you have created a new board and its DTS files fully describe your hardware.
    In such case, the overlay file can be left empty.
@@ -884,7 +884,7 @@ To use the nRF Desktop project with your custom board:
 #. For each module enabled, change its ``_def`` file to match your hardware:
 
    Motion module
-     * The ``nrf52840_pca20041`` uses the PMW3360 optical motion sensor.
+     * The ``nrf52840gmouse_nrf52840`` uses the PMW3360 optical motion sensor.
        The sensor is configured in DTS, and the sensor type is selected in the application configuration.
        To add a new sensor, expand the application configuration.
    Wheel module

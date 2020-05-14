@@ -47,7 +47,7 @@ Sending the first HID report to the connected Bluetooth peer is delayed by this 
 .. note::
    The nRF Desktop centrals perform the GATT service discovery and reenable the HID notifications on every reconnection.
    A HID report that is received before the subscription is reenabled will be dropped before it reaches the application.
-   The ``CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY`` is used for keyboard reference design (``nrf52_pca20037``) to make sure that the input will not be lost on reconnection with the nRF Desktop dongle.
+   The ``CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY`` is used for keyboard reference design (nRF52832 Desktop Keyboard) to make sure that the input will not be lost on reconnection with the nRF Desktop dongle.
 
 Implementation details
 **********************
