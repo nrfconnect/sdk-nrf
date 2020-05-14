@@ -369,7 +369,7 @@ zb_uint8_t zb_trans_get_next_packet(zb_bufid_t buf)
 	/* Put timestamp (usec) into the packet tail */
 	*ZB_BUF_GET_PARAM(buf, zb_time_t) = rx_frame->time;
 	/* Additional buffer status for Data Request command */
-	zb_buf_set_status(buf, rx_frame->pending_bit ? 0 : ZB_MACLL_NO_DATA);
+	zb_macll_set_received_data_status(buf, rx_frame->pending_bit);
 
 	nrf_802154_buffer_free_raw(rx_frame->data);
 	rx_frame->data = NULL;
