@@ -28,7 +28,7 @@ extern "C" {
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
-int nrf_cloud_agps_request(enum gps_agps_type *types, size_t type_count);
+int nrf_cloud_agps_request(const struct gps_agps_request request);
 
 /**@brief Requests all available A-GPS data from nRF Cloud.
  *
