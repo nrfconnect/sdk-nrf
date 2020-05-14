@@ -1,3 +1,16 @@
+/ {
+	chosen {
+		/*
+		 * In some default configurations within the nRF Connect SDK,
+		 * e.g. on nRF52840 and nRF9160, the chosen zephyr,entropy node
+		 * is &cryptocell. This devicetree overlay ensures that default
+		 * is overridden wherever it is set, as this application uses
+		 * the RNG node for entropy exclusively.
+		 */
+		zephyr,entropy = &rng;
+	};
+};
+
 &usbd {
 	compatible = "nordic,nrf-usbd";
 	status = "okay";
@@ -7,6 +20,7 @@
 	num-isoin-endpoints = <0>;
 	num-isoout-endpoints = <0>;
 };
+
 &spi1 {
 	compatible = "nordic,nrf-spim";
 	status = "okay";
