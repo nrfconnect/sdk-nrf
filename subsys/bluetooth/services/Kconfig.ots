@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config BT_GATT_OTS
+	bool "Object Transfer Service"
+	select BT_NRF_SERVICES
+	select BT_L2CAP_DYNAMIC_CHANNEL
+	select BT_GATT_DYNAMIC_DB
+	select BT_SMP
+	help
+	  Enable Object Transfer Service.
+
+if BT_GATT_OTS
+
+config BT_GATT_OTS_MAX_INST_CNT
+	int "Maximum number of available OTS instances"
+	default 1
+
+config BT_GATT_OTS_MAX_OBJ_CNT
+	int "Maximum number of objects that server can store"
+	default 5
+
+config BT_GATT_OTS_SECONDARY_SVC
+	bool "Register OTS as Secondary Service"
+
+config BT_GATT_OTS_OACP_READ_SUPPORT
+	bool "Support OACP Read Operation"
+	default y
+
+config BT_GATT_OTS_OLCP_GO_TO_SUPPORT
+	bool "Support OLCP Go To Operation"
+	default y
+
+config BT_GATT_OTS_L2CAP_CHAN_RX_MTU
+	int "Size of RX MTU for Object Transfer Channel"
+	default BT_L2CAP_RX_MTU if BT_HCI_ACL_FLOW_CONTROL
+	default 23
+	range 23 BT_L2CAP_RX_MTU if BT_HCI_ACL_FLOW_CONTROL
+	range 23 BT_RX_BUF_LEN
+
+module = BT_GATT_OTS
+module-str = OTS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATT_OTS
