@@ -24,8 +24,7 @@ extern "C" {
 
 /**@brief Requests specified A-GPS data from nRF Cloud.
  *
- * @param types Array of assistance data types to request.
- * @param type_count Number of types to request.
+ * @param request Structure containing specified A-GPS data to be requested.
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
