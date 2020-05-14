@@ -451,4 +451,7 @@ _PROJECT_BLACKLIST = set(
      'modules/hal/ti',
      'modules/hal/nxp',
      'modules/hal/xtensa',
-     'modules/hal/altera'])
+     'modules/hal/altera',
+     'modules/hal/infineon',
+     'modules/tee/tfm',
+     ])
