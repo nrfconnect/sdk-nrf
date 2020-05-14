@@ -13,6 +13,10 @@
 
 #include <modem/at_params.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @file modem_info.h
  *
@@ -234,5 +238,9 @@ int modem_info_json_object_encode(struct modem_param_info *modem,
 int modem_info_params_get(struct modem_param_info *modem_param);
 
 /** @} */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ZEPHYR_INCLUDE_MODEM_INFO_H_ */
