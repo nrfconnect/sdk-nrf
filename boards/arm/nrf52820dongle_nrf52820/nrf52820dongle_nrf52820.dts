@@ -5,13 +5,11 @@
  */
 
 /dts-v1/;
-#include <nordic/nrf52833_qiaa.dtsi>
+#include <nordic/nrf52820_qdaa.dtsi>
 
 / {
-	model = "Nordic nRF52833 Donglev2 NRF52833";
-	compatible = "nordic,nrf52833-donglev2-nrf52833",
-		     "nordic,nrf52833-qiaa",
-		     "nordic,nrf52833";
+	model = "Nordic nRF52820 Dongle NRF52820";
+	compatible = "nordic,nrf52820-dongle-nrf52820";
 
 	chosen {
 		zephyr,console = &uart0;
@@ -70,10 +68,6 @@
 	status = "okay";
 };
 
-&gpio1 {
-	status = "okay";
-};
-
 &uart0 {
 	compatible = "nordic,nrf-uart";
 	status = "okay";
@@ -84,13 +78,7 @@
 	cts-pin = <8>;
 };
 
-&sram0 {
-	reg = <0x20000000 DT_SIZE_K(32)>;
-};
-
 &flash0 {
-	reg = <0x00000000 DT_SIZE_K(256)>;
-
 	/*
 	 * For more information, see:
 	 * http://docs.zephyrproject.org/latest/guides/dts/index.html#flash-partitions
@@ -102,11 +90,15 @@
 
 		boot_partition: partition@0 {
 			label = "mcuboot";
-			reg = <0x000000000 0x6000>;
+			reg = <0x000000000 0xd000>;
 		};
-		slot0_partition: partition@6000 {
+		slot0_partition: partition@d000 {
 			label = "image-0";
-			reg = <0x00006000 0x38000>;
+			reg = <0x0000d000 0x30000>;
+		};
+		slot1_partition: partition@3d000 {
+			label = "image-1";
+			reg = <0x0003d000 0x1000>;
 		};
 		storage_partition: partition@3e000 {
 			label = "storage";
