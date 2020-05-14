@@ -165,7 +165,8 @@ static u8_t periodic_read_process(struct bt_conn *conn, u8_t err,
 	if (atomic_test_bit(&bas_c->periodic_read.process,
 			    BAS_PERIODIC_READ_PROC_BIT)) {
 		k_delayed_work_submit(&bas_c->periodic_read.read_work,
-				      atomic_get(&bas_c->periodic_read.interval));
+				      K_MSEC(atomic_get(
+					&bas_c->periodic_read.interval)));
 	}
 
 	return BT_GATT_ITER_STOP;
@@ -406,7 +407,7 @@ int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
 	if (!atomic_test_and_set_bit(&bas_c->periodic_read.process,
 				     BAS_PERIODIC_READ_PROC_BIT)) {
 		k_delayed_work_submit(&bas_c->periodic_read.read_work,
-				      interval);
+				      K_MSEC(interval));
 	}
 
 	return 0;
