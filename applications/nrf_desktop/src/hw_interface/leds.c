@@ -128,17 +128,17 @@ static void led_update(struct led *led)
 static int leds_init(void)
 {
 	const char *dev_name[] = {
-#if CONFIG_PWM_0
-		DT_NORDIC_NRF_PWM_PWM_0_LABEL,
+#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm0), okay)
+		DT_LABEL(DT_NODELABEL(pwm0)),
 #endif
-#if CONFIG_PWM_1
-		DT_NORDIC_NRF_PWM_PWM_1_LABEL,
+#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm1), okay)
+		DT_LABEL(DT_NODELABEL(pwm1)),
 #endif
-#if CONFIG_PWM_2
-		DT_NORDIC_NRF_PWM_PWM_2_LABEL,
+#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm2), okay)
+		DT_LABEL(DT_NODELABEL(pwm2)),
 #endif
-#if CONFIG_PWM_3
-		DT_NORDIC_NRF_PWM_PWM_3_LABEL,
+#if defined(CONFIG_PWM) && DT_NODE_HAS_STATUS(DT_NODELABEL(pwm3), okay)
+		DT_LABEL(DT_NODELABEL(pwm3)),
 #endif
 	};
 
