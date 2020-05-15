@@ -174,11 +174,12 @@ static const char *const system_mode_params[] = {
 
 static struct k_sem link;
 
-#if defined(CONFIG_LTE_PDP_CMD) && defined(CONFIG_LTE_PDP_CONTEXT)
-static const char cgdcont[] = "AT+CGDCONT="CONFIG_LTE_PDP_CONTEXT;
+#if defined(CONFIG_LTE_PDP_CMD)
+static char cgdcont[144] = "AT+CGDCONT="CONFIG_LTE_PDP_CONTEXT;
 #endif
-#if defined(CONFIG_LTE_PDN_AUTH_CMD) && defined(CONFIG_LTE_PDN_AUTH)
-static const char cgauth[] = "AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
+#if defined(CONFIG_LTE_PDN_AUTH_CMD)
+static char cgauth[19 + CONFIG_LTE_PDN_AUTH_LEN] =
+				"AT+CGAUTH="CONFIG_LTE_PDN_AUTH;
 #endif
 #if defined(CONFIG_LTE_LEGACY_PCO_MODE)
 static const char legacy_pco[] = "AT%XEPCO=0";
@@ -896,6 +897,46 @@ int lte_lc_edrx_req(bool enable)
 	}
 
 	return err;
+}
+
+int lte_lc_pdp_context_set(enum lte_lc_pdp_type type, const char *apn,
+			   bool ip4_addr_alloc, bool nslpi, bool secure_pco)
+{
+#if defined(CONFIG_LTE_PDP_CMD)
+	static const char * const pdp_type_lut[] = {
+		"IP", "IPV6", "IPV4V6"
+	};
+
+	if (apn == NULL || type > LTE_LC_PDP_TYPE_IPV4V6) {
+		return -EINVAL;
+	}
+
+	snprintf(cgdcont, sizeof(cgdcont),
+		"AT+CGDCONT=0,\"%s\",\"%s\",0,0,0,%d,0,0,0,%d,%d",
+		pdp_type_lut[type], apn, ip4_addr_alloc, nslpi, secure_pco);
+
+	return 0;
+#else
+	return -ENOTSUP;
+#endif
+}
+
+int lte_lc_pdn_auth_set(enum lte_lc_pdn_auth_type auth_prot,
+			const char *username, const char *password)
+{
+#if defined(CONFIG_LTE_PDN_AUTH_CMD)
+	if (username == NULL || password == NULL ||
+	    auth_prot > LTE_LC_PDN_AUTH_TYPE_CHAP) {
+		return -EINVAL;
+	}
+
+	snprintf(cgauth, sizeof(cgauth), "AT+CGAUTH=0,%d,\"%s\",\"%s\"",
+		 auth_prot, username, password);
+
+	return 0;
+#else
+	return -ENOTSUP;
+#endif
 }
 
 /**@brief Helper function to check if a response is what was expected
