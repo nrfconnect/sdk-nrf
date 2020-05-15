@@ -27,6 +27,7 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BUTTONS_LOG_LEVEL);
 
 #define SCAN_INTERVAL CONFIG_DESKTOP_BUTTONS_SCAN_INTERVAL
+#define DEBOUNCE_INTERVAL CONFIG_DESKTOP_BUTTONS_DEBOUNCE_INTERVAL
 
 /* For directly connected GPIO, scan rows once. */
 #define COLUMNS MAX(ARRAY_SIZE(col), 1)
@@ -305,7 +306,7 @@ static void scan_fn(struct k_work *work)
 
 	if (any_pressed) {
 		/* Schedule next scan */
-		k_delayed_work_submit(&matrix_scan, SCAN_INTERVAL);
+		k_delayed_work_submit(&matrix_scan, K_MSEC(SCAN_INTERVAL));
 	} else {
 		/* If no button is pressed module can switch to callbacks */
 
@@ -387,7 +388,7 @@ static void button_pressed_isr(struct device *gpio_dev,
 		LOG_ERR("Cannot disable callbacks");
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
-		k_delayed_work_submit(&button_pressed, 0);
+		k_delayed_work_submit(&button_pressed, K_NO_WAIT);
 	}
 }
 
@@ -409,8 +410,7 @@ static void button_pressed_fn(struct k_work *work)
 
 	case STATE_ACTIVE:
 		state = STATE_SCANNING;
-		k_delayed_work_submit(&matrix_scan,
-				      CONFIG_DESKTOP_BUTTONS_DEBOUNCE_INTERVAL);
+		k_delayed_work_submit(&matrix_scan, K_MSEC(DEBOUNCE_INTERVAL));
 		break;
 
 	case STATE_SCANNING:

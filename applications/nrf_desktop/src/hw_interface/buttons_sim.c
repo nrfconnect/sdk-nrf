@@ -40,7 +40,7 @@ static void start_generating_keys(void)
 	} else {
 		LOG_INF("Start generating key presses");
 		cur_key_idx = 0;
-		k_delayed_work_submit(&generate_keys, 0);
+		k_delayed_work_submit(&generate_keys, K_NO_WAIT);
 		state = STATE_ACTIVE;
 	}
 }

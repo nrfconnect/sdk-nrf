@@ -26,8 +26,10 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_POWER_MANAGER_LOG_LEVEL);
 
 
-#define POWER_DOWN_ERROR_TIMEOUT K_SECONDS(CONFIG_DESKTOP_POWER_MANAGER_ERROR_TIMEOUT)
-#define POWER_DOWN_TIMEOUT_MS	 K_SECONDS(CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT)
+#define POWER_DOWN_ERROR_TIMEOUT \
+	K_SECONDS(CONFIG_DESKTOP_POWER_MANAGER_ERROR_TIMEOUT)
+#define POWER_DOWN_TIMEOUT_MS \
+	(CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT * MSEC_PER_SEC)
 #define POWER_DOWN_CHECK_MS	 1000
 
 enum power_state {
@@ -67,7 +69,7 @@ static void power_down(struct k_work *work)
 		EVENT_SUBMIT(event);
 	} else {
 		k_delayed_work_submit(&power_down_trigger,
-				      POWER_DOWN_CHECK_MS);
+				      K_MSEC(POWER_DOWN_CHECK_MS));
 	}
 }
 
@@ -182,7 +184,7 @@ static bool event_handler(const struct event_header *eh)
 		if (!usb_connected) {
 			power_down_counter_reset();
 			k_delayed_work_submit(&power_down_trigger,
-					      POWER_DOWN_CHECK_MS);
+					      K_MSEC(POWER_DOWN_CHECK_MS));
 		}
 
 		return false;
@@ -250,7 +252,7 @@ static bool event_handler(const struct event_header *eh)
 			usb_connected = false;
 			power_down_counter_reset();
 			k_delayed_work_submit(&power_down_trigger,
-					      POWER_DOWN_CHECK_MS);
+					      K_MSEC(POWER_DOWN_CHECK_MS));
 			break;
 
 		default:
@@ -294,7 +296,7 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_init(&error_trigger, error);
 			k_delayed_work_init(&power_down_trigger, power_down);
 			k_delayed_work_submit(&power_down_trigger,
-					      POWER_DOWN_CHECK_MS);
+					      K_MSEC(POWER_DOWN_CHECK_MS));
 		} else if (event->state == MODULE_STATE_ERROR) {
 			power_state = POWER_STATE_ERROR;
 			k_delayed_work_cancel(&power_down_trigger);

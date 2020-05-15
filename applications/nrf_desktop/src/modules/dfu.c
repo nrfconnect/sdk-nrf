@@ -168,7 +168,7 @@ static void background_erase_handler(struct k_work *work)
 	erase_offset += FLASH_PAGE_SIZE;
 
 	if (erase_offset < flash_area->fa_size) {
-		k_delayed_work_submit(&background_erase, 0);
+		k_delayed_work_submit(&background_erase, K_NO_WAIT);
 	} else {
 		LOG_INF("Secondary image slot is clean");
 
@@ -286,7 +286,7 @@ static void handle_dfu_start(const u8_t *data, const size_t size)
 		}
 	} else {
 		if (cur_offset != 0) {
-			k_delayed_work_submit(&background_erase, 0);
+			k_delayed_work_submit(&background_erase, K_NO_WAIT);
 			is_flash_area_clean = false;
 			cur_offset = 0;
 			img_length = 0;
@@ -477,7 +477,7 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_init(&reboot_request, reboot_request_handler);
 			k_delayed_work_init(&background_erase, background_erase_handler);
 
-			k_delayed_work_submit(&background_erase, 0);
+			k_delayed_work_submit(&background_erase, K_NO_WAIT);
 		}
 		return false;
 	}
