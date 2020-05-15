@@ -22,34 +22,45 @@ LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 #define AT_CMD_CMS_STR   "+CMS ERROR:"
 #define AT_CMD_CME_STR   "+CME ERROR:"
 
-static K_THREAD_STACK_DEFINE(socket_thread_stack, \
-				CONFIG_AT_CMD_THREAD_STACK_SIZE);
+/* Flags describing an AT command request */
+enum at_cmd_flags {
+	AT_CMD_BUF_CMD = 1 << 0,	/* Command is buffered by at_cmd */
+	AT_CMD_SYNC = 1 << 1,		/* Command is synchronous */
+};
 
-static K_SEM_DEFINE(cmd_pending, 1, 1);
+/* Metadata for a queued AT command */
+struct cmd_item  {
+	char *cmd;			/* Pointer to 0-terminated command */
+	char *resp;			/* Pointer to response buffer */
+	at_cmd_handler_t callback;	/* Callback to execute on result */
+	size_t resp_size;		/* Size of response buffer */
+	enum at_cmd_flags flags;	/* Flags describing the request */
+};
 
-static int              common_socket_fd;
-static char             *response_buf;
-static u32_t            response_buf_len;
+/* Metadata for an AT response */
+struct resp_item  {
+	int code;			/* Return code of AT command */
+	enum at_cmd_state state;	/* State of AT command */
+};
 
-static struct k_thread  socket_thread;
+static K_THREAD_STACK_DEFINE(socket_thread_stack,
+			     CONFIG_AT_CMD_THREAD_STACK_SIZE);
+
+static int common_socket_fd;
+static k_tid_t socket_tid;
+static struct k_thread socket_thread;
 static at_cmd_handler_t notification_handler;
-static at_cmd_handler_t current_cmd_handler;
 
-struct return_state_object {
-	int               code;
-	enum at_cmd_state state;
-};
+/* Structure holding current command. current_cmd.cmd=NULL signifies no cmd. */
+static struct cmd_item current_cmd;
+K_MUTEX_DEFINE(current_cmd_mutex);
 
-K_MSGQ_DEFINE(return_code_msq, sizeof(struct return_state_object), 1, 4);
+/* Queue for queued command metadata */
+K_MSGQ_DEFINE(commands, sizeof(struct cmd_item), CONFIG_AT_CMD_QUEUE_LEN, 4);
 
-struct callback_work_item {
-	struct k_work    work;
-	char             data[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
-	at_cmd_handler_t callback;
-};
-
-K_MEM_SLAB_DEFINE(rsp_work_items, sizeof(struct callback_work_item),
-		  CONFIG_AT_CMD_RESPONSE_BUFFER_COUNT, 4);
+/* Message queue to return the result in the case of a synchronous call */
+K_MSGQ_DEFINE(response_sync, sizeof(struct resp_item), 1, 4);
+K_MUTEX_DEFINE(response_sync_get);
 
 static int open_socket(void)
 {
@@ -62,7 +73,7 @@ static int open_socket(void)
 	return 0;
 }
 
-static int get_return_code(char *buf, struct return_state_object *ret)
+static int get_return_code(char *buf, struct resp_item *ret)
 {
 	char *tmpstr = NULL;
 	int new_len  = 0;
@@ -109,25 +120,82 @@ static int get_return_code(char *buf, struct return_state_object *ret)
 	return new_len;
 }
 
-static void callback_worker(struct k_work *item)
+static inline int at_write(const char *const cmd)
 {
-	struct callback_work_item *data =
-		CONTAINER_OF(item, struct callback_work_item, work);
+	int bytes_sent;
+	int bytes_to_send = strlen(cmd);
 
-	if (data != NULL) {
-		data->callback(data->data);
+	LOG_DBG("Sending command %s", log_strdup(cmd));
+
+	bytes_sent = send(common_socket_fd, cmd, bytes_to_send, 0);
+
+	if (bytes_sent == -1) {
+		LOG_ERR("Failed to send AT command (err:%d)", errno);
+		return -errno;
 	}
 
-	k_mem_slab_free(&rsp_work_items, (void **)&data);
+	if (bytes_sent != bytes_to_send) {
+		LOG_WRN("Bytes sent (%d) was not the same as expected (%d)",
+			bytes_sent, bytes_to_send);
+	}
+
+	return 0;
 }
 
+/* Clear the current command safely */
+static void complete_cmd(void)
+{
+	k_mutex_lock(&current_cmd_mutex, K_FOREVER);
+	current_cmd.cmd = NULL;
+	k_mutex_unlock(&current_cmd_mutex);
+}
+
+/*
+ * Atomically load a new command if appropriate, then write it to the socket.
+ * The operations are repeated until the queue is empty or a command is pending
+ * a response. This function is called both from the socket thread and calling
+ * context.
+ */
+static void load_cmd_and_write(void)
+{
+	int ret;
+	struct resp_item resp;
+
+	k_mutex_lock(&current_cmd_mutex, K_FOREVER);
+	do {
+		ret = 0;
+
+		/* Do not load a new command if already loaded or none queued */
+		if (current_cmd.cmd != NULL ||
+		    k_msgq_get(&commands, &current_cmd, K_NO_WAIT) != 0) {
+			break;
+		}
+
+		ret = at_write(current_cmd.cmd);
+
+		if (current_cmd.flags & AT_CMD_BUF_CMD) {
+			k_free(current_cmd.cmd);
+		}
+
+		/* If write failed, make an error response and complete cmd */
+		if (ret != 0) {
+			resp.state = AT_CMD_ERROR_WRITE;
+			resp.code = ret;
+			if (current_cmd.flags & AT_CMD_SYNC) {
+				k_msgq_put(&response_sync, &resp, K_FOREVER);
+			}
+			complete_cmd();
+		}
+	} while (ret != 0);
+	k_mutex_unlock(&current_cmd_mutex);
+}
 
 static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 {
-	int                        bytes_read;
-	int                        payload_len;
-	struct return_state_object ret;
-	struct callback_work_item *item;
+	static int bytes_read;
+	static size_t payload_len;
+	static struct resp_item ret;
+	static char buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 	ARG_UNUSED(arg1);
 	ARG_UNUSED(arg2);
@@ -136,15 +204,17 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 	LOG_DBG("AT socket thread started");
 
 	for (;;) {
-		LOG_DBG("Allocating memory slab for AT socket");
-		k_mem_slab_alloc(&rsp_work_items, (void **)&item, K_FOREVER);
-		LOG_DBG("Allocation done");
+		LOG_DBG("Writing any pending command");
+		load_cmd_and_write();
+
+		LOG_DBG("Listening on socket");
+		bytes_read = recv(common_socket_fd, buf, sizeof(buf), 0);
+
+		/* Initialize the response */
 		ret.code  = 0;
 		ret.state = AT_CMD_OK;
-		item->callback = NULL;
 
-		bytes_read = recv(common_socket_fd, item->data,
-				  sizeof(item->data), 0);
+		/* Handle possible socket-level errors */
 		if (bytes_read < 0) {
 			LOG_ERR("AT socket recv failed with err %d",
 				bytes_read);
@@ -152,8 +222,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 			if ((close(common_socket_fd) == 0) &&
 			    (open_socket() == 0)) {
 				LOG_INF("AT socket recovered");
-
-				ret.state = AT_CMD_ERROR;
+				ret.state = AT_CMD_ERROR_READ;
 				ret.code  = -errno;
 				goto next;
 			}
@@ -162,116 +231,86 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 				"thread killed", errno);
 			close(common_socket_fd);
 			return;
-		} else if (item->data[bytes_read - 1] != '\0') {
-
+		} else if (bytes_read == 0) {
+			LOG_ERR("AT message empty");
+			ret.state = AT_CMD_ERROR_READ;
+			ret.code  = -EBADMSG;
+			goto next;
+		} else if (buf[bytes_read - 1] != '\0') {
 			LOG_ERR("AT message too large for reception buffer or "
 				"missing termination character");
-
+			ret.state = AT_CMD_ERROR_READ;
 			ret.code  = -ENOBUFS;
 			goto next;
 		}
 
-		LOG_DBG("at_cmd_rx %d bytes, %s",
-			bytes_read, log_strdup(item->data));
+		LOG_DBG("at_cmd_rx %d bytes, %s", bytes_read, log_strdup(buf));
 
-		payload_len = get_return_code(item->data, &ret);
+		payload_len = get_return_code(buf, &ret);
 
-		if (ret.state != AT_CMD_NOTIFICATION) {
-			if ((response_buf_len > 0) &&
-			    (response_buf != NULL)) {
-				if (response_buf_len >= payload_len) {
-					memcpy(response_buf, item->data,
-					       payload_len);
-				} else {
-					LOG_ERR("Response buffer not large "
-						"enough");
-
-					ret.code  = -EMSGSIZE;
-				}
-
-				response_buf_len = 0;
-				response_buf     = NULL;
-
+		/* Verify the buffer size if provided, and copy the message */
+		if (current_cmd.cmd != NULL &&
+		    current_cmd.resp != NULL &&
+		    ret.state != AT_CMD_NOTIFICATION) {
+			if (current_cmd.resp_size < payload_len) {
+				LOG_ERR("Response buffer not large enough");
+				ret.code  = -EMSGSIZE;
 				goto next;
 			}
+			memcpy(current_cmd.resp, buf, payload_len);
 		}
 
-		if (payload_len == 0) {
-			goto next;
+		/* Call the relevant callback, if any */
+		if (ret.state == AT_CMD_NOTIFICATION &&
+		    notification_handler != NULL) {
+			notification_handler(buf);
+		} else if (current_cmd.callback != NULL) {
+			current_cmd.callback(buf);
 		}
 
-		if (ret.state == AT_CMD_NOTIFICATION) {
-			item->callback = notification_handler;
-		} else {
-			item->callback = current_cmd_handler;
-		}
 next:
-		/* If no callback was set, free the item.
-		 * Otherwise, work queue callback will free it.
-		 */
-		if (item->callback == NULL) {
-			k_mem_slab_free(&rsp_work_items, (void **)&item);
-		} else {
-			k_work_init(&item->work, callback_worker);
-			k_work_submit(&item->work);
+		/* Dispatch response for sync call */
+		if (current_cmd.cmd != NULL &&
+		    current_cmd.flags & AT_CMD_SYNC &&
+		    ret.state != AT_CMD_NOTIFICATION) {
+			LOG_DBG("Enqueueing response for sync call");
+			k_msgq_put(&response_sync, &ret, K_FOREVER);
 		}
 
-		/* Notify back only if command was sent. */
-		if ((k_sem_count_get(&cmd_pending) == 0) &&
-		    (ret.state != AT_CMD_NOTIFICATION)) {
-			current_cmd_handler = NULL;
-
-			k_msgq_put(&return_code_msq, &ret, K_FOREVER);
+		/* We have now handled a command if it was not a notification */
+		if (ret.state != AT_CMD_NOTIFICATION) {
+			complete_cmd();
 		}
 	}
-}
-
-static inline int at_write(const char *const cmd, enum at_cmd_state *state)
-{
-	int bytes_sent;
-	int bytes_to_send = strlen(cmd);
-	struct return_state_object ret;
-
-	LOG_DBG("Sending command %s", log_strdup(cmd));
-
-	bytes_sent = send(common_socket_fd, cmd, bytes_to_send, 0);
-
-	if (bytes_sent == -1) {
-		LOG_ERR("Failed to send AT command (err:%d)", errno);
-		ret.code  = -errno;
-		ret.state = AT_CMD_ERROR;
-	} else {
-		LOG_DBG("Awaiting response for %s", log_strdup(cmd));
-		k_msgq_get(&return_code_msq, &ret, K_FOREVER);
-		LOG_DBG("Bytes sent: %d", bytes_sent);
-
-		if (bytes_sent != bytes_to_send) {
-			LOG_ERR("Bytes sent (%d) was not the "
-				"same as expected (%d)",
-				bytes_sent, bytes_to_send);
-		}
-	}
-
-	if (state) {
-		*state = ret.state;
-	}
-
-	return ret.code;
 }
 
 int at_cmd_write_with_callback(const char *const cmd,
-			       at_cmd_handler_t  handler,
-			       enum at_cmd_state *state)
+			       at_cmd_handler_t  handler)
 {
-	k_sem_take(&cmd_pending, K_FOREVER);
+	struct cmd_item command;
+	int ret;
 
-	current_cmd_handler = handler;
+	if (cmd == NULL) {
+		return -EINVAL;
+	}
 
-	int return_code = at_write(cmd, state);
+	command.cmd = k_malloc(strlen(cmd) + 1);
+	if (command.cmd == NULL) {
+		return -ENOMEM;
+	}
+	strcpy(command.cmd, cmd);
 
-	k_sem_give(&cmd_pending);
+	command.resp = NULL;
+	command.callback = handler;
+	command.flags = AT_CMD_BUF_CMD;
 
-	return return_code;
+	ret = k_msgq_put(&commands, &command, K_FOREVER);
+	if (ret) {
+		return ret;
+	}
+
+	load_cmd_and_write();
+	return 0;
 }
 
 int at_cmd_write(const char *const cmd,
@@ -279,16 +318,47 @@ int at_cmd_write(const char *const cmd,
 		 size_t buf_len,
 		 enum at_cmd_state *state)
 {
-	k_sem_take(&cmd_pending, K_FOREVER);
+	struct cmd_item command;
+	struct resp_item ret;
 
-	response_buf     = buf;
-	response_buf_len = buf_len;
+	__ASSERT(k_current_get() != socket_tid,
+		 "at_cmd deadlock: socket thread blocking self\n");
 
-	int return_code = at_write(cmd, state);
+	if (cmd == NULL) {
+		LOG_ERR("cmd is NULL");
+		*state = AT_CMD_ERROR_QUEUE;
+		return -EINVAL;
+	}
 
-	k_sem_give(&cmd_pending);
+	/* This cast is safe; we do not free cmd without AT_CMD_BUF_CMD */
+	command.cmd = (char *)cmd;
+	command.resp = buf;
+	command.resp_size = buf_len;
+	command.callback = NULL;
+	command.flags = AT_CMD_SYNC;
 
-	return return_code;
+	/* Ensure we get our own AT response, not an old one */
+	k_mutex_lock(&response_sync_get, K_FOREVER);
+
+	/* We borrow the return code field from the currently unused response */
+	ret.code = k_msgq_put(&commands, &command, K_FOREVER);
+	if (ret.code) {
+		LOG_ERR("Could not enqueue cmd, error %d", ret.code);
+		*state = AT_CMD_ERROR_QUEUE;
+		return ret.code;
+	}
+
+	load_cmd_and_write();
+
+	LOG_DBG("Awaiting response for %s", log_strdup(cmd));
+	k_msgq_get(&response_sync, &ret, K_FOREVER);
+	k_mutex_unlock(&response_sync_get);
+
+	if (state) {
+		*state = ret.state;
+	}
+
+	return ret.code;
 }
 
 void at_cmd_set_notification_handler(at_cmd_handler_t handler)
@@ -298,12 +368,7 @@ void at_cmd_set_notification_handler(at_cmd_handler_t handler)
 		LOG_WRN("Forgetting prior notification handler %p",
 			notification_handler);
 	}
-
-	k_sem_take(&cmd_pending, K_FOREVER);
-
 	notification_handler = handler;
-
-	k_sem_give(&cmd_pending);
 }
 
 static int at_cmd_driver_init(struct device *dev)
@@ -326,11 +391,12 @@ static int at_cmd_driver_init(struct device *dev)
 
 	LOG_DBG("Common AT socket created");
 
-	k_thread_create(&socket_thread, socket_thread_stack,
-			K_THREAD_STACK_SIZEOF(socket_thread_stack),
-			socket_thread_fn,
-			NULL, NULL, NULL,
-			THREAD_PRIORITY, 0, K_NO_WAIT);
+	socket_tid = k_thread_create(&socket_thread, socket_thread_stack,
+				     K_THREAD_STACK_SIZEOF(socket_thread_stack),
+				     socket_thread_fn,
+				     NULL, NULL, NULL,
+				     THREAD_PRIORITY, 0, K_NO_WAIT);
+	k_thread_name_set(socket_tid, "at_cmd_socket_thread");
 
 	initialized = true;
 	LOG_DBG("Common AT socket processing thread created");

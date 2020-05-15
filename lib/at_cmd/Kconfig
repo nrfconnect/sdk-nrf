@@ -34,13 +34,13 @@ config AT_CMD_THREAD_STACK_SIZE
 	int "AT thread stack size"
 	default 1024
 
+config AT_CMD_QUEUE_LEN
+	int "Maximum number of queued AT commands"
+	default 16
+
 config AT_CMD_RESPONSE_MAX_LEN
 	int "Maximum AT command response length"
 	default 2700
-
-config AT_CMD_RESPONSE_BUFFER_COUNT
-	int "Number of buffers provided by AT command driver."
-	default 2
 
 module = AT_CMD
 module-str = AT command driver
