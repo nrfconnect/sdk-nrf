@@ -4,8 +4,28 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
 from events import EventsData, Event, EventType
-import matplotlib.pyplot as plt
 import argparse
+import numpy as np
+
+
+def sync_peripheral_ts(ts_peripheral, sync_ts_peripheral, sync_ts_central):
+    MSE_THRESH = 1e-9
+    # Predict using linear regression only if the Mean Squared Error is low.
+    # In general, using Crystal Oscillator results in lower MSE and using
+    # RC oscillator results in higher MSE.
+    model = np.polyfit(sync_ts_peripheral, sync_ts_central, 1)
+    predictor = np.poly1d(model)
+
+    new_sync_ts_peripheral = predictor(sync_ts_peripheral)
+    mse = np.square(np.subtract(sync_ts_central, new_sync_ts_peripheral)).mean()
+
+    if mse < MSE_THRESH:
+        print('Use linear regression')
+        return predictor(ts_peripheral)
+    else:
+        print('Use piecewise linear interpolation')
+        return np.interp(ts_peripheral, sync_ts_peripheral, sync_ts_central,
+                         left=-1, right=-1)
 
 
 def main():
@@ -40,45 +60,64 @@ def main():
     sync_central = list(filter(lambda x: x.type_id == sync_evt_central,
                               evt_central.events))
 
-    if len(sync_central) < 2 or len(sync_peripheral) < 2:
-        print("Not enough synchronization events (require at least two)")
-        return
+    ts_peripheral = list(map(lambda x: x.timestamp, evt_peripheral.events))
+    sync_ts_peripheral = list(map(lambda x: x.timestamp, sync_peripheral))
+    sync_ts_central = list(map(lambda x: x.timestamp, sync_central))
 
-    diff_start = sync_peripheral[0].timestamp - sync_central[0].timestamp
-    diff_end = sync_peripheral[-1].timestamp - sync_central[-1].timestamp
-    diff_time = sync_central[-1].timestamp - sync_central[0].timestamp
-    time_start = sync_central[0].timestamp
+    sync_diffs_central = np.subtract(sync_ts_central[1:], sync_ts_central[:-1])
+    sync_diffs_peripheral = np.subtract(sync_ts_peripheral[1:], sync_ts_peripheral[:-1])
 
-    # Using linear approximation of clock drift between peripheral and central
-    # t_central = t_peripheral + (diff_time * a) + b
+    rounded_diffs_central = list(map(lambda x: round(x, 1), sync_diffs_central))
+    rounded_diffs_peripheral = list(map(lambda x: round(x, 1), sync_diffs_peripheral))
 
-    b = diff_start
-    a = (diff_end - diff_start) / diff_time
+    shift_c = rounded_diffs_central.index(rounded_diffs_peripheral[0])
+    shift_p = rounded_diffs_peripheral.index(rounded_diffs_central[0])
 
-    B_DIFF_THRESH = 0.1
-    if abs(diff_end - diff_start) > B_DIFF_THRESH:
-        print("Clock drift difference between beginnning and end is high.")
-        print("This could be caused by measurements missmatch or very long" \
-              " measurement time.")
+    if shift_c < shift_p:
+        sync_ts_central = sync_ts_central[shift_c:]
+    elif shift_p < shift_c:
+        sync_ts_peripheral = sync_ts_peripheral[shift_p:]
 
-    # Reindexing, renaming and compensating time differences for central events
-    max_peripheral_id = max([int(i)
-                            for i in evt_peripheral.registered_events_types])
+    if len(sync_ts_central) < len(sync_ts_peripheral):
+        sync_ts_peripheral = sync_ts_peripheral[:len(sync_ts_central)]
+    elif len(sync_ts_peripheral) < len(sync_ts_central):
+        sync_ts_central = sync_ts_central[:len(sync_ts_peripheral)]
 
-    evt_central.events = list(map(lambda x:
-                            Event(x.type_id + max_peripheral_id + 1,
-                            x.timestamp + a * (x.timestamp - time_start) + b,
-                            x.data),
-                            evt_central.events))
+    new_ts_peripheral = sync_peripheral_ts(ts_peripheral,
+                                           sync_ts_peripheral,
+                                           sync_ts_central)
+    assert len(new_ts_peripheral) == len(ts_peripheral)
 
-    evt_central.registered_events_types = {k + max_peripheral_id + 1 :
-                EventType(v.name + "_central", v.data_types, v.data_descriptions)
+    # Reindexing, renaming and compensating time differences for peripheral events
+    max_central_id = max([int(i) for i in evt_central.registered_events_types])
+
+    assert len(new_ts_peripheral) == len(evt_peripheral.events)
+    evt_peripheral.events = list(map(lambda x, y:
+                                 Event(x.type_id + max_central_id + 1,
+                                       y,
+                                       x.data),
+                                 evt_peripheral.events, new_ts_peripheral))
+
+    evt_peripheral.registered_events_types = {k + max_central_id + 1 :
+                EventType(v.name + "_peripheral", v.data_types, v.data_descriptions)
+                for k, v in evt_peripheral.registered_events_types.items()}
+
+    evt_central.registered_events_types = {
+                k : EventType(v.name + "_central",
+                              v.data_types, v.data_descriptions)
                 for k, v in evt_central.registered_events_types.items()}
 
-    evt_peripheral.registered_events_types = {
-                k : EventType(v.name + "_peripheral",
-                              v.data_types, v.data_descriptions)
-                for k, v in evt_peripheral.registered_events_types.items()}
+    # Filter out events that are out of synchronization period
+    TIME_DIFF = 0.5
+    start_time = sync_ts_central[0] - TIME_DIFF
+    end_time = sync_ts_central[-1] + TIME_DIFF
+    evt_peripheral.events = list(filter(lambda x:
+        x.timestamp >= start_time and x.timestamp <= end_time,
+        evt_peripheral.events))
+
+    evt_central.events = list(filter(lambda x:
+        x.timestamp >= start_time and x.timestamp <= end_time,
+        evt_central.events))
 
     all_registered_events_types = evt_peripheral.registered_events_types.copy()
     all_registered_events_types.update(evt_central.registered_events_types)
@@ -89,6 +128,7 @@ def main():
     result_events.write_data_to_files(args.result_dataset + ".csv",
                                       args.result_dataset + ".json")
 
+    print('Profiler data merged successfully')
 
 if __name__ == "__main__":
     main()
