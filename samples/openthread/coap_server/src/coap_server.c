@@ -23,7 +23,7 @@ static struct k_timer provisioning_timer;
 
 static void on_light_request(u8_t command)
 {
-	static u8_t val = 1;
+	static u8_t val;
 
 	switch (command) {
 	case THREAD_COAP_UTILS_LIGHT_CMD_ON:
