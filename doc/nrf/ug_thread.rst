@@ -191,6 +191,8 @@ These options enable dumping 802.15.4 or IPv6 frames (or both) in the debug log 
 
 You can disable writing to log with the :option:`CONFIG_OPENTHREAD_L2_LOG_LEVEL_OFF` option.
 
+.. _thread_ug_device_type:
+
 Switching device type
 ---------------------
 
