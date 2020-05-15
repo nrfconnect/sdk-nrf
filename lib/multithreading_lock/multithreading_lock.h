@@ -46,7 +46,7 @@ extern "C" {
  * @retval - ::EBUSY      Returned without waiting.
  * @retval - ::EAGAIN     Waiting period timed out.
  */
-int multithreading_lock_acquire(int timeout);
+int multithreading_lock_acquire(k_timeout_t timeout);
 
 /** @brief Unlock the lock.
  *
