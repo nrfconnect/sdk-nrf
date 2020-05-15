@@ -183,7 +183,7 @@ int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
 	}
 
 	if (*timeout < 0) {
-		*timeout = K_FOREVER;
+		*timeout = SYS_FOREVER_MS;
 	}
 
 	sleeping_thread_init(&thread);
@@ -192,16 +192,16 @@ int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
 		return 0;
 	}
 
-	(void)k_sem_take(&thread.sem, *timeout);
+	(void)k_sem_take(&thread.sem, SYS_TIMEOUT_MS(*timeout));
 
 	sleeping_thread_remove(&thread);
 
-	if (*timeout == K_FOREVER) {
+	if (*timeout == SYS_FOREVER_MS) {
 		return 0;
 	}
 
 	/* Calculate how much time is left until timeout. */
-	remaining = *timeout - (k_uptime_get() - start);
+	remaining = *timeout - k_uptime_delta(&start);
 	*timeout = remaining > 0 ? remaining : 0;
 
 	if (*timeout == 0) {
