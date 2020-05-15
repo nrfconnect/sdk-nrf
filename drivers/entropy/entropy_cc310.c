@@ -62,9 +62,9 @@ static const struct entropy_driver_api entropy_cc310_rng_api = {
 	.get_entropy = entropy_cc310_rng_get_entropy
 };
 
-#if DT_HAS_NODE(DT_NODELABEL(cryptocell))
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(cryptocell), okay)
 #define DEVICE_NAME DT_LABEL(DT_NODELABEL(cryptocell))
-#elif DT_HAS_NODE(DT_NODELABEL(cryptocell_sw))
+#elif DT_NODE_HAS_STATUS(DT_NODELABEL(cryptocell_sw), okay)
 #define DEVICE_NAME DT_LABEL(DT_NODELABEL(cryptocell_sw))
 #else
 /*
