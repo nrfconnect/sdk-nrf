@@ -11,6 +11,7 @@ rsource "hw_cc310/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "gps/Kconfig"
+rsource "serial/Kconfig"
 
 if BT_LL_SOFTDEVICE
 rsource "bt_ll_softdevice/Kconfig"
