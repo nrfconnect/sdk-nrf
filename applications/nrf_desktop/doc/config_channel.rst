@@ -18,7 +18,7 @@ Behavior
 
 The HID feature reports are used for transporting information between the host and the connected embedded device.
 The cross-platform `HIDAPI library`_ is used for exchanging the reports.
-The library supports both Bluetooth Low Energy and USB.
+The library supports both Bluetooth LE and USB.
 
 The host computer can set configuration values of the embedded device.
 It can also request fetching a value, for example in order to display it to the user.
@@ -30,7 +30,7 @@ Setting a configuration value
        Host>>Device      [label="set report: set value 1600"];
        Host<<Device      [label="get report: SUCCESS"];
 
-    All exchanges, both setting and getting a report, are initiated by host.
+    All exchanges, both setting and getting a report, are initiated by the host.
     Therefore, during a fetch operation, the host polls the device until the data is available.
 
 Fetching a configuration value
@@ -41,8 +41,8 @@ Fetching a configuration value
        Host<<Device      [label="get report: PENDING"];
        Host<<Device      [label="get report: value 1600, SUCCESS"];
 
-    Data from host can be forwarded through a USB dongle to the connected device.
-    The device must act as a BLE peripheral in such case.
+    Data from the host can be forwarded through a USB dongle to the connected device.
+    The device must act as a Bluetooth LE peripheral in such case.
 
 Setting a configuration value of a device, forwarded by the dongle to a paired device
     .. msc::
@@ -53,11 +53,6 @@ Setting a configuration value of a device, forwarded by the dongle to a paired d
        Host<<Dongle      [label="get report: PENDING"];
        Dongle<<Device    [label="get report: SUCCESS"];
        Host<<Dongle      [label="get report: SUCCESS"];
-
-.. note::
-   The functionality can be implemented as a sequence of set and get reports.
-   An example of the functionality is the firmware update.
-   Detailed description is available in the :ref:`nrf_desktop_config_channel_script` documentation.
 
 Data format
 ===========
@@ -85,7 +80,7 @@ Each feature report contains the following components:
 * Data - Arbitrary length data connected to the request.
 
 .. note::
-   Bluetooth Low Energy HID Service removes the leading report ID byte, resulting in firmware obtaining a data frame 1 byte shorter.
+   Bluetooth LE HID Service removes the leading report ID byte, resulting in firmware obtaining a data frame 1 byte shorter.
 
    The USB HID class transmits the whole report, including the report ID byte.
 
@@ -108,8 +103,8 @@ The HID configurator uses the HID feature reports to exchange the data.
 
 Depending on the connection method:
 
-* If the device is connected over USB, requests are handled by the :ref:`nrf_desktop_usb_state` in the functions :cpp:func:`get_report` and :cpp:func:`set_report`.
-* If the device is connected over Bluetooth Low Energy, requests are handled in :ref:`nrf_desktop_hids` in :cpp:func:`feature_report_handler`.
+* If the device is connected through USB, requests are handled by the :ref:`nrf_desktop_usb_state` in the functions :cpp:func:`get_report` and :cpp:func:`set_report`.
+* If the device is connected over Bluetooth LE, requests are handled in :ref:`nrf_desktop_hids` in :cpp:func:`feature_report_handler`.
   The argument :c:data:`write` indicates whether the report is a GATT write (set report) or a GATT read (get report).
 
   Forwarding requests through a dongle to a connected peripheral is handled in :ref:`nrf_desktop_hid_forward`.
@@ -134,124 +129,124 @@ To register an application module as a configuration channel listener, complete 
 #. Include the :file:`config_event.h` header.
 #. Subscribe for the ``config_event`` and ``config_fetch_request_event`` using the :c:macro:`EVENT_SUBSCRIBE` macro:
 
-    .. code-block:: c
+   .. code-block:: c
 
-        EVENT_LISTENER(MODULE, event_handler);
-        #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-        EVENT_SUBSCRIBE(MODULE, config_event);
-        EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
-        #endif
+       EVENT_LISTENER(MODULE, event_handler);
+       #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+       EVENT_SUBSCRIBE(MODULE, config_event);
+       EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
+       #endif
 
    The module should subscribe only if the configuration channel is enabled.
 #. Call :c:macro:`GEN_CONFIG_EVENT_HANDLERS` in the :ref:`event_manager` event handler function registered by the application module:
 
-    .. code-block:: c
+   .. code-block:: c
 
-        static bool event_handler(const struct event_header *eh)
-        {
-            /* Functions used to handle other events. */
-            ...
+       static bool event_handler(const struct event_header *eh)
+       {
+           /* Functions used to handle other events. */
+           ...
 
-            GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr,
-                          config_set, config_get, false);
+           GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr,
+                         config_set, config_get, false);
 
-            /* Functions used to handle other events. */
-            ...
-        }
+           /* Functions used to handle other events. */
+           ...
+       }
 
    You must provide the following arguments to the macro:
 
-   * Module name - string representing the module name (``STRINGIFY(MODULE)``).
+   * Module name - String representing the module name (``STRINGIFY(MODULE)``).
    * Array with the names of the module's options (``opt_descr``):
 
-    .. code-block:: c
+   .. code-block:: c
 
-        /* Creating enum to denote the module options is recommended,
-         * because it makes code more readable.
-         */
-        enum test_module_opt {
-            TEST_MODULE_OPT_FILTER_PARAM,
-            TEST_MODULE_OPT_PARAM_BLE,
-            TEST_MODULE_OPT_PARAM_WIFI,
+       /* Creating enum to denote the module options is recommended,
+        * because it makes code more readable.
+        */
+       enum test_module_opt {
+           TEST_MODULE_OPT_FILTER_PARAM,
+           TEST_MODULE_OPT_PARAM_BLE,
+           TEST_MODULE_OPT_PARAM_WIFI,
 
-            TEST_MODULE_OPT_COUNT
-        };
+           TEST_MODULE_OPT_COUNT
+       };
 
-        static const char * const opt_descr[] = {
-            [TEST_MODULE_OPT_FILTER_PARAM] = "filter_param",
-            [TEST_MODULE_OPT_PARAM_BLE] = "param_ble",
-            [TEST_MODULE_OPT_PARAM_WIFI] = "param_wifi"
-        };
+       static const char * const opt_descr[] = {
+           [TEST_MODULE_OPT_FILTER_PARAM] = "filter_param",
+           [TEST_MODULE_OPT_PARAM_BLE] = "param_ble",
+           [TEST_MODULE_OPT_PARAM_WIFI] = "param_wifi"
+       };
 
    * Set report handler (:cpp:func:`config_set`):
 
-    .. code-block:: c
+   .. code-block:: c
 
-        static void config_set(const u8_t opt_id, const u8_t *data,
-                       const size_t size)
-        {
-            switch (opt_id) {
-            case TEST_MODULE_OPT_FILTER_PARAM:
-                /* Handle the data received under the "data" pointer.
-                 * Number of received bytes is described as "size".
-                 */
-                if (size != sizeof(struct filter_parameters)) {
-                    LOG_WRN("Invalid size");
-                } else {
-                    update_filter_params(data);
-                }
-            break;
+       static void config_set(const u8_t opt_id, const u8_t *data,
+                      const size_t size)
+       {
+           switch (opt_id) {
+           case TEST_MODULE_OPT_FILTER_PARAM:
+               /* Handle the data received under the "data" pointer.
+                * Number of received bytes is described as "size".
+                */
+               if (size != sizeof(struct filter_parameters)) {
+                   LOG_WRN("Invalid size");
+               } else {
+                   update_filter_params(data);
+               }
+           break;
 
-            case TEST_MODULE_OPT_PARAM_BLE:
-                /* Handle the data. */
-                ....
-            break;
+           case TEST_MODULE_OPT_PARAM_BLE:
+               /* Handle the data. */
+               ....
+           break;
 
-            /* Handlers for other option IDs. */
-            ....
+           /* Handlers for other option IDs. */
+           ....
 
-            default:
-                /* The option is not supported by the module. */
-                LOG_WRN("Unknown opt %" PRIu8, opt_id);
-                break;
-            }
-        }
+           default:
+               /* The option is not supported by the module. */
+               LOG_WRN("Unknown opt %" PRIu8, opt_id);
+               break;
+           }
+       }
 
    * Get report handler (:cpp:func:`config_get`):
 
-    .. code-block:: c
+   .. code-block:: c
 
-        static void config_get(const u8_t opt_id, u8_t *data, size_t *size)
-        {
-            switch (opt_id) {
-            case TEST_MODULE_OPT_FILTER_PARAM:
-                /* Fill the buffer under the "data" pointer with
-                 * requested data. Number of written bytes must be
-                 * reflected by the value under the "size" pointer.
-                 */
-                memcpy(data, filter_param, sizeof(filter_param));
-                *size = sizeof(filter_param);
-                break;
+       static void config_get(const u8_t opt_id, u8_t *data, size_t *size)
+       {
+           switch (opt_id) {
+           case TEST_MODULE_OPT_FILTER_PARAM:
+               /* Fill the buffer under the "data" pointer with
+                * requested data. Number of written bytes must be
+                * reflected by the value under the "size" pointer.
+                */
+               memcpy(data, filter_param, sizeof(filter_param));
+               *size = sizeof(filter_param);
+               break;
 
-            case TEST_MODULE_OPT_PARAM_BLE:
-                /* Handle the request. */
-                ....
-                break;
+           case TEST_MODULE_OPT_PARAM_BLE:
+               /* Handle the request. */
+               ....
+               break;
 
-            /* Handlers for other option IDs. */
-            ....
+           /* Handlers for other option IDs. */
+           ....
 
-            default:
-                /* The option is not supported by the module. */
-                LOG_WRN("Unknown opt: %" PRIu8, opt_id);
-                break;
-            }
-        }
+           default:
+               /* The option is not supported by the module. */
+               LOG_WRN("Unknown opt: %" PRIu8, opt_id);
+               break;
+           }
+       }
 
    * Boolean indicating if the module is the final subscriber for the configuration channel events.
      It should be set to ``false`` for every subscriber, except for :ref:`nrf_desktop_info`.
 
-For an example of module that uses the configuration channel, see the following files:
+For an example of a module that uses the configuration channel, see the following files:
 
 * :file:`src/modules/ble_qos.c`
 * :file:`src/modules/led_stream.c`

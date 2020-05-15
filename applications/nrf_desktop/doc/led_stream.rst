@@ -6,14 +6,15 @@ LED stream module
 Use the |led_stream| to receive the LED effect sequence and display it using LEDs.
 The LED effect sequence is generated on the host computer and sent through the :ref:`nrf_desktop_config_channel`.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_led_stream_start
     :end-before: table_led_stream_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
@@ -70,12 +71,16 @@ When the sequence is active, the host computer keeps sending new effects that ar
 The sequence ends when there are no more effects available in the queue.
 
 Synchronization of displayed effects
-   The host computer can get information about the current number of queued LED effects by fetching a :ref:`nrf_desktop_config_channel` value.
-   This information is used to synchronize the displayed LED effects to the music.
+====================================
+
+The host computer can get information about the current number of queued LED effects by fetching a :ref:`nrf_desktop_config_channel` value.
+This information is used to synchronize the displayed LED effects to the music.
 
 LED state interaction
-   The :ref:`nrf_desktop_led_state` uses LEDs to display both the state of the system and the state of the connected Bluetooth peer.
-   The |led_stream| takes control over the selected LED only when the sequence is displayed.
-   After the sequence ends, the LED effect selected by the LED state module is restored.
+=====================
+
+The :ref:`nrf_desktop_led_state` uses LEDs to display both the state of the system and the state of the connected Bluetooth peer.
+The |led_stream| takes control over the selected LED only when the sequence is displayed.
+After the sequence ends, the LED effect selected by the LED state module is restored.
 
 .. |led_stream| replace:: LED stream module

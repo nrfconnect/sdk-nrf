@@ -3,38 +3,39 @@
 Bluetooth LE discovery module
 #############################
 
-Use the Bluetooth LE discovery module to discover GATT Services and read GATT Attribute Values from an nRF Desktop peripheral.
+Use the |ble_discovery| to discover GATT Services and read GATT Attribute Values from an nRF Desktop peripheral.
 The module is mandatory for the nRF Desktop central.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_ble_discovery_start
     :end-before: table_ble_discovery_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
 
 Complete the following steps to configure the module:
 
-1. Complete the basic Bluetooth configuration, as described in the Bluetooth guide.
+1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 #. Set the :option:`CONFIG_BT_GATT_CLIENT` Kconfig option to enable support for the GATT Client role.
 #. Set the :option:`CONFIG_BT_GATT_DM` Kconfig option to enable the :ref:`gatt_dm_readme`.
    The :ref:`gatt_dm_readme` is used by the ``ble_discovery`` application module.
-#. Define the module configuration in the ``ble_discovery_def.h`` file, located in the board-specific directory in the application configuration folder.
+#. Define the module configuration in the :file:`ble_discovery_def.h` file, located in the board-specific directory in the application configuration directory.
    You must define the following parameters for every nRF Desktop peripheral that connects with the given nRF Desktop central:
 
-      * Parameters common for all the peripherals:
+   * Parameters common for all the peripherals:
 
-            * Vendor ID (VID)
+     * Vendor ID (VID)
 
-      * Parameters defined separately for every peripheral:
+   * Parameters defined separately for every peripheral:
 
-            * Product ID (PID)
-            * Peer type (:cpp:enum:`PEER_TYPE_MOUSE` or :cpp:enum:`PEER_TYPE_KEYBOARD`)
+     * Product ID (PID)
+     * Peer type (:cpp:enum:`PEER_TYPE_MOUSE` or :cpp:enum:`PEER_TYPE_KEYBOARD`)
 
    For an example of the module configuration, see :file:`configuration/nrf52840dongle_nrf52840/ble_discovery_def.h`.
 
@@ -49,27 +50,35 @@ Complete the following steps to configure the module:
 Implementation details
 **********************
 
+The |ble_discovery| implementation is tasked with peripheral discovery and verification.
+
 Peripheral discovery
-   The module starts the peripheral device discovery when it receives ``ble_peer_event`` with :cpp:member:`state` set to :cpp:enum:`PEER_STATE_SECURED`.
+====================
 
-   The peripheral discovery consists of the following steps:
+The module starts the peripheral device discovery when it receives ``ble_peer_event`` with :cpp:member:`state` set to :cpp:enum:`PEER_STATE_SECURED`.
 
-   * Reading device description.
-      The central checks if the connected peripheral supports the LLPM (Low Latency Packet Mode).
-      The device description is a GATT Service that is specific for nRF Desktop peripherals and is implemented by :ref:`nrf_desktop_dev_descr`.
-   * Reading DIS (Device Information Service).
-      The central reads VID and PID of the connected peripheral.
-   * HIDS (Human Interface Device Service) discovery.
-      The central discovers HIDS and forwards the information to other application modules using ``ble_discovery_complete`` event.
-      The :ref:`nrf_desktop_hid_forward` uses the event to register a new subsriber.
+The peripheral discovery consists of the following steps:
+
+a. Reading device description.
+   The central checks if the connected peripheral supports the LLPM (Low Latency Packet Mode).
+   The device description is a GATT Service that is specific for nRF Desktop peripherals and is implemented by :ref:`nrf_desktop_dev_descr`.
+#. Reading DIS (Device Information Service).
+   The central reads VID and PID of the connected peripheral.
+#. HIDS (Human Interface Device Service) discovery.
+   The central discovers HIDS and forwards the information to other application modules using ``ble_discovery_complete`` event.
+   The :ref:`nrf_desktop_hid_forward` uses the event to register a new subscriber.
 
 .. note::
    Only one peripheral can be discovered at a time.
    The nRF Desktop central will not scan for new peripherals if a peripheral discovery is in progress.
 
 Peripheral verification
-   If the connected peripheral does not provide one of the required GATT Characteristics, the central unpairs the peripheral and disconnects.
-   The same actions are taken if the peripheral's VID and PID value combination is unknown to the central.
+=======================
 
-   The nRF Desktop central works only with predefined subset of peripherals.
-   The mentioned peripherals must be described in the :file:`ble_discovery_def.h` file.
+If the connected peripheral does not provide one of the required GATT Characteristics, the central disconnects.
+The same actions are taken if the peripheral's VID and PID value combination is unknown to the central.
+
+The nRF Desktop central works only with predefined subset of peripherals.
+The mentioned peripherals must be described in the :file:`ble_discovery_def.h` file.
+
+.. |ble_discovery| replace:: Bluetooth LE discovery module

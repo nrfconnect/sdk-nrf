@@ -1,18 +1,19 @@
 .. _nrf_desktop_fn_keys:
 
-Fn keys module
-##############
+Function key module
+####################
 
-The ``fn_keys`` module applies Fn key modifier to activate special functions assigned to dual-purpose keys.
+The Function key module applies the Fn key modifier to activate special functions assigned to dual-purpose keys.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_fn_keys_start
     :end-before: table_fn_keys_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
@@ -26,10 +27,11 @@ You must configure the following options:
 
 * ``CONFIG_DESKTOP_FN_KEYS_SWITCH`` - Fn key button.
 * ``CONFIG_DESKTOP_FN_KEYS_LOCK`` - Fn lock button.
-* ``CONFIG_DESKTOP_STORE_FN_LOCK`` - option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
-* ``CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE`` - maximum number of dual-purpose keys pressed at the same time (8 by default). The module remembers the pressed keys to send proper key releases.
+* ``CONFIG_DESKTOP_STORE_FN_LOCK`` - Option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
+* ``CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE`` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
+  The module remembers the pressed keys to send proper key releases.
 
-In the file ``fn_keys_def.h``, define all the dual-purpose keys.
+In the file :file:`fn_keys_def.h``, define all the dual-purpose keys.
 The ``fn_keys`` array must be sorted by key ID (the module uses binary search).
 
 Implementation details

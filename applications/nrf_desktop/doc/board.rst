@@ -3,38 +3,39 @@
 Board module
 ############
 
-The ``board`` module is used to ensure the proper state of GPIO pins that are not configured by other modules in the application.
-Ensuring the proper state is done by setting the state of the mentioned pins on the system start and wakeup, and when the system enters the low-power mode.
+The board module is used to ensure the proper state of GPIO pins that are not configured by other modules in the application.
+Ensuring the proper state is done by setting the state of the mentioned pins on the system start and wake-up, and when the system enters the low-power mode.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_board_start
     :end-before: table_board_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
 
-The module uses the Zephyr :ref:`zephyr:gpio_api` driver to set the pin state.
-For this reason, you should set :option:`CONFIG_GPIO` option.
+The module uses Zephyr's :ref:`zephyr:gpio_api` driver to set the pin state.
+For this reason, set the :option:`CONFIG_GPIO` option.
 
-For every configuration, you must define the ``port_state_def.h`` file in the board-specific directory in the application configuration folder.
+For every configuration, you must define the :file:`port_state_def.h` file in the board-specific directory in the application configuration directory.
 
-The ``port_state_def.h`` file defines the states set to the GPIO ports by the following arrays:
+The :file:`port_state_def.h` file defines the states set to the GPIO ports by the following arrays:
 
-* ``port_state_on`` - state set on the system start and wakeup.
-* ``port_state_off`` - state set when the system enters the low-power mode.
+* ``port_state_on`` - State set on the system start and wake-up.
+* ``port_state_off`` - State set when the system enters the low-power mode.
 
 Every :c:type:`struct port_state` refers to a single GPIO port and contains the following information:
 
 * :cpp:member:`name` - GPIO device name (obtained from :ref:`devicetree <zephyr:dt-guide>`, for example with ``DT_LABEL(DT_NODELABEL(gpio0))``).
-* :cpp:member:`ps` - pointer to the array of :c:type:`struct pin_state`.
-* :cpp:member:`ps_count` - size of the `ps` array.
+* :cpp:member:`ps` - Pointer to the array of :c:type:`struct pin_state`.
+* :cpp:member:`ps_count` - Size of the `ps` array.
 
 Every :c:type:`struct pin state` defines the state of a single GPIO pin:
 
-* :cpp:member:`pin` - pin number.
-* :cpp:member:`val` - value set for the pin.
+* :cpp:member:`pin` - Pin number.
+* :cpp:member:`val` - Value set for the pin.

@@ -1,20 +1,21 @@
 .. _nrf_desktop_hfclk_lock:
 
-High frequency clock lock hotfix
-################################
+High frequency clock lock hotfix module
+#######################################
 
 Use the high frequency clock lock hotfix module to keep the high frequency clock enabled.
 This reduces the latency before the first packet in a row is transmitted over Bluetooth, but it also increases the power consumption.
 If this module is disabled, a start-up delay of around 1.5 ms will be added to the overall latency of the first packet.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_hfclk_lock_start
     :end-before: table_hfclk_lock_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************

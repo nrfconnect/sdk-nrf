@@ -1,18 +1,19 @@
 .. _nrf_desktop_dfu:
 
-DFU module
-##########
+Device Firmware Upgrade module
+##############################
 
 The DFU module is used for obtaining the update image from a transport and storing it in the appropriate partition on the flash memory.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_dfu_start
     :end-before: table_dfu_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
@@ -119,7 +120,7 @@ Partition preparation
 The DFU module must prepare the partition before the update image can be stored.
 This operation is done in the background.
 
-To ensure that the memory erase will not interfere with the device usability, the memory pages are erased only if there are no HID reports transmitted.
+To ensure that the memory erase will not interfere with the device usability, the memory pages are erased only if there are no HID reports transmitted and the Bluetooth connection state does not change (for example, memory is not erased right after the Bluetooth connection is established).
 
 .. warning::
     The DFU process cannot be started before the entire partition used for storing the update image is erased.

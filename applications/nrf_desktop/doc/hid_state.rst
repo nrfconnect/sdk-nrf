@@ -6,19 +6,20 @@ HID state module
 The |hid_state| is required for generating reports from input data.
 It is responsible for the following operations:
 
-    * Aggregating data from user input sources.
-    * Tracking state of the HID report subscriptions.
-    * Forming the HID reports.
-    * Transmitting the HID reports to the right subscriber.
+* Aggregating data from user input sources.
+* Tracking state of the HID report subscriptions.
+* Forming the HID reports.
+* Transmitting the HID reports to the right subscriber.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_hid_state_start
     :end-before: table_hid_state_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
@@ -27,14 +28,17 @@ The |hid_state| module is enabled by selecting ``CONFIG_DESKTOP_HID_STATE_ENABLE
 This module is optional and turned off by default.
 
 Report expiration
-    With the ``CONFIG_DESKTOP_HID_REPORT_EXPIRATION`` configuration option, you can set the amount of time after which a key will be considered expired.
-    The higher the value, the longer the period after which the nRF Desktop application will recall pressed keys when the connection is established.
+=================
+
+With the ``CONFIG_DESKTOP_HID_REPORT_EXPIRATION`` configuration option, you can set the amount of time after which a key will be considered expired.
+The higher the value, the longer the period after which the nRF Desktop application will recall pressed keys when the connection is established.
 
 Queue event size
-    With the ``CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`` configuration option, you can set the number of elements on the queue where the keys are stored before the connection is established.
-    When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
-    If there is no space in the queue, the oldest element is released.
-    For more information, see the `Implementation details`_ section.
+================
+
+With the ``CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`` configuration option, you can set the number of elements on the queue where the keys are stored before the connection is established.
+When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
+If there is no space in the queue, the oldest element is released.
 
 Implementation details
 **********************
@@ -47,11 +51,11 @@ This can be associated with:
 
 For the routing mechanism to work, the module performs the following activities:
 
-    * `Linking input data with the right HID report`_
-    * `Storing input data before the connection`_
-    * `Tracking state of transports`_
-    * `Tracking state of HID report notifications`_
-    * `Forming HID reports`_
+* `Linking input data with the right HID report`_
+* `Storing input data before the connection`_
+* `Tracking state of transports`_
+* `Tracking state of HID report notifications`_
+* `Forming HID reports`_
 
 These activities are described in the following sections.
 
@@ -60,8 +64,8 @@ Linking input data with the right HID report
 
 Out of all available input data types, the following types are collected by the |hid_state|:
 
-    * `Relative value data`_ (axes)
-    * `Absolute value data`_ (buttons)
+* `Relative value data`_ (axes)
+* `Absolute value data`_ (buttons)
 
 Both types are stored in the :c:type:`struct report_data` structure.
 
@@ -102,7 +106,7 @@ See the following section for more information about storing data before the con
 Storing input data before the connection
 ========================================
 
-Storing approach before the connection depends on the data type:
+The storing approach before the connection depends on the data type:
 
 * The relative value data is not stored outside of the connection period.
 * The absolute value data is stored before the connection.
@@ -143,10 +147,10 @@ Tracking state of transports
 
 The |hid_state| refers collectively to all transports as _subscribers_.
 
-The module tracks the state of the connected BLE peers and the state of USB by listening to ``ble_peer_event`` and ``usb_state_event``, respectively.
+The module tracks the state of the connected Bluetooth LE peers and the state of USB by listening to ``ble_peer_event`` and ``usb_state_event``, respectively.
 When the connection to the host is indicated by any of these events, the |hid_state| will create a subscriber associated with the transport.
 
-The subscriber that is associated with USB has priority over any BLE peer subscriber.
+The subscriber that is associated with USB has priority over any Bluetooth LE peer subscriber.
 As a result, when the device connects to the host through USB, all HID reports will be routed to USB.
 
 Tracking state of HID report notifications
