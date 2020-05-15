@@ -93,7 +93,8 @@ static void app_dfu_transfer_start(struct k_work *unused)
 				     apn);
 	if (retval != 0) {
 		/* Re-enable button callback */
-		gpio_pin_interrupt_configure(gpiob, DT_ALIAS_SW0_GPIOS_PIN,
+		gpio_pin_interrupt_configure(gpiob,
+					     DT_GPIO_PIN(DT_ALIAS(sw0), gpios),
 					     GPIO_INT_EDGE_TO_ACTIVE);
 
 		printk("fota_download_start() failed, err %d\n",
@@ -129,7 +130,7 @@ void dfu_button_pressed(struct device *gpiob, struct gpio_callback *cb,
 			u32_t pins)
 {
 	k_work_submit(&fota_work);
-	gpio_pin_interrupt_configure(gpiob, DT_ALIAS_SW0_GPIOS_PIN,
+	gpio_pin_interrupt_configure(gpiob, DT_GPIO_PIN(DT_ALIAS(sw0), gpios),
 				     GPIO_INT_DISABLE);
 }
 
@@ -142,15 +143,17 @@ static int dfu_button_init(void)
 		printk("Nordic nRF GPIO driver was not found!\n");
 		return 1;
 	}
-	err = gpio_pin_configure(gpiob, DT_ALIAS_SW0_GPIOS_PIN,
+	err = gpio_pin_configure(gpiob, DT_GPIO_PIN(DT_ALIAS(sw0), gpios),
 				 GPIO_INPUT | DT_ALIAS_SW0_GPIOS_FLAGS);
 	if (err == 0) {
 		gpio_init_callback(&gpio_cb, dfu_button_pressed,
-			BIT(DT_ALIAS_SW0_GPIOS_PIN));
+			BIT(DT_GPIO_PIN(DT_ALIAS(sw0), gpios)));
 		err = gpio_add_callback(gpiob, &gpio_cb);
 	}
 	if (err == 0) {
-		err = gpio_pin_interrupt_configure(gpiob, DT_ALIAS_SW0_GPIOS_PIN,
+		err = gpio_pin_interrupt_configure(gpiob,
+						   DT_GPIO_PIN(DT_ALIAS(sw0),
+							       gpios),
 						   GPIO_INT_EDGE_TO_ACTIVE);
 	}
 	if (err != 0) {
@@ -169,7 +172,8 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 		/* Fallthrough */
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		/* Re-enable button callback */
-		gpio_pin_interrupt_configure(gpiob, DT_ALIAS_SW0_GPIOS_PIN,
+		gpio_pin_interrupt_configure(gpiob,
+					     DT_GPIO_PIN(DT_ALIAS(sw0), gpios),
 					     GPIO_INT_EDGE_TO_ACTIVE);
 		break;
 
