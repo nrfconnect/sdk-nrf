@@ -15,7 +15,7 @@
 #include <net/fota_download.h>
 #include <dfu/mcuboot.h>
 
-#define LED_PORT	DT_ALIAS_LED0_GPIOS_CONTROLLER
+#define LED_PORT	DT_GPIO_LABEL(DT_ALIAS(led0), gpios)
 #define TLS_SEC_TAG 42
 
 static struct		device *gpiob;
@@ -116,12 +116,14 @@ static int led_app_version(void)
 		return 1;
 	}
 
-	gpio_pin_configure(dev, DT_ALIAS_LED0_GPIOS_PIN, GPIO_OUTPUT_ACTIVE |
-			   DT_ALIAS_LED0_GPIOS_FLAGS);
+	gpio_pin_configure(dev, DT_GPIO_PIN(DT_ALIAS(led0), gpios),
+			   GPIO_OUTPUT_ACTIVE |
+			   DT_GPIO_FLAGS(DT_ALIAS(led0), gpios));
 
 #if CONFIG_APPLICATION_VERSION == 2
-	gpio_pin_configure(dev, DT_ALIAS_LED1_GPIOS_PIN, GPIO_OUTPUT_ACTIVE |
-			   DT_ALIAS_LED1_GPIOS_FLAGS);
+	gpio_pin_configure(dev, DT_GPIO_PIN(DT_ALIAS(led1), gpios),
+			   GPIO_OUTPUT_ACTIVE |
+			   DT_GPIO_FLAGS(DT_ALIAS(led1), gpios));
 #endif
 	return 0;
 }
@@ -138,13 +140,14 @@ static int dfu_button_init(void)
 {
 	int err;
 
-	gpiob = device_get_binding(DT_ALIAS_SW0_GPIOS_CONTROLLER);
+	gpiob = device_get_binding(DT_GPIO_LABEL(DT_ALIAS(sw0), gpios));
 	if (gpiob == 0) {
 		printk("Nordic nRF GPIO driver was not found!\n");
 		return 1;
 	}
 	err = gpio_pin_configure(gpiob, DT_GPIO_PIN(DT_ALIAS(sw0), gpios),
-				 GPIO_INPUT | DT_ALIAS_SW0_GPIOS_FLAGS);
+				 GPIO_INPUT |
+				 DT_GPIO_FLAGS(DT_ALIAS(sw0), gpios));
 	if (err == 0) {
 		gpio_init_callback(&gpio_cb, dfu_button_pressed,
 			BIT(DT_GPIO_PIN(DT_ALIAS(sw0), gpios)));
