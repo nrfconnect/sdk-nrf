@@ -494,7 +494,7 @@ static void notify_hids(const struct ble_peer_event *event)
 
 		if (CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY > 0) {
 			k_delayed_work_submit(&notify_secured,
-				CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY);
+				K_MSEC(CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY));
 		} else {
 			notify_secured_fn(NULL);
 		}

@@ -534,7 +534,7 @@ static bool event_handler(const struct event_header *eh)
 			/* ble_state keeps reference to connection object.
 			 * Cannot create new connection now.
 			 */
-			k_delayed_work_submit(&scan_start_trigger, 0);
+			k_delayed_work_submit(&scan_start_trigger, K_NO_WAIT);
 			scan_counter = SCAN_TRIG_TIMEOUT_MS;
 			break;
 		default:
