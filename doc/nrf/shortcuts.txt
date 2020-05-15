@@ -34,7 +34,7 @@
 .. |fota_upgrades_building| replace:: To create a binary file for an application upgrade, make sure that :option:`CONFIG_BOOTLOADER_MCUBOOT` is enabled and build the application as usual.
    The build will create several binary files (see :ref:`mcuboot:mcuboot_ncs`).
 
-.. |Google_CCLicense| replace:: Portions of this page are reproduced from work created and shared by Google, and used according to terms described in the Creative Commons 3.0 Attribution License.*
+.. |Google_CCLicense| replace:: *Portions of this page are reproduced from work created and shared by Google, and used according to terms described in the Creative Commons 3.0 Attribution License.*
    *Thread is a registered trademark of the Thread Group, Inc.*
 
 .. |enable_thread_before_testing| replace:: Make sure to enable the OpenThread stack before building and testing this sample.
