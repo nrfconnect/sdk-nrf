@@ -1,0 +1,20 @@
+/* SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic */
+
+&uart1 {
+	rx-pin = <44>;
+	tx-pin = <45>;
+	/delete-property/ rts-pin;
+	/delete-property/ cts-pin;
+
+	lpuart: nrf-sw-lpuart {
+		compatible = "nordic,nrf-sw-lpuart";
+		status = "okay";
+		label = "LPUART";
+		req-pin = <46>;
+		rdy-pin = <47>;
+	};
+};
+
+&uart0 {
+	status = "disabled";
+};
