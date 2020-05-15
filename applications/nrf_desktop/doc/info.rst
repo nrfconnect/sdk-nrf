@@ -6,14 +6,15 @@ Info module
 The Info module is required by the :ref:`nrf_desktop_config_channel`.
 The module is the final subscriber for the :ref:`nrf_desktop_config_channel` events and provides the board name through the :ref:`nrf_desktop_config_channel`.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_info_start
     :end-before: table_info_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************

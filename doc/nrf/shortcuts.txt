@@ -43,3 +43,5 @@
 .. |zigbee_version| replace:: Zigbee 3.0
 .. |enable_zigbee_before_testing| replace:: Make sure to enable the Zigbee stack before building and testing this sample.
    See :ref:`ug_zigbee` for more information.
+
+.. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.

@@ -13,25 +13,26 @@ Use the |ble_scan| to:
 
 This module can only be used by an nRF Desktop central.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_ble_scan_start
     :end-before: table_ble_scan_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
 
 Complete the following steps to enable the |ble_scan|:
 
-1. Configure Bluetooth, as described in the nRF Desktop Bluetooth guide.
+1. Configure Bluetooth, as described in :ref:`nrf_desktop_bluetooth_guide`.
 #. Enable the following configuration options:
 
-   * :option:`CONFIG_BT_SCAN`,
-   * :option:`CONFIG_BT_SCAN_FILTER_ENABLE`.
+   * :option:`CONFIG_BT_SCAN`
+   * :option:`CONFIG_BT_SCAN_FILTER_ENABLE`
 
    These options are used by the |NCS|'s :ref:`nrf_bt_scan_readme`.
 #. Configure the number of scan filters based on the Bluetooth address (:option:`CONFIG_BT_SCAN_ADDRESS_CNT`).
@@ -43,7 +44,7 @@ Complete the following steps to enable the |ble_scan|:
    The value must be equal to the number of peripheral types the nRF Desktop central connects to.
    The peripheral type may be either a mouse or a keyboard.
    The nRF Desktop central connects and bonds with only one peripheral of a given type.
-#. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration folder.
+#. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration directory.
    You must define a Bluetooth name filter for every peripheral type the nRF Desktop central connects to.
    For an example, see :file:`configuration/nrf52840dongle_nrf52840/ble_scan_def.h`.
 
@@ -60,29 +61,33 @@ The request is submitted by :ref:`nrf_desktop_ble_bond` as ``ble_peer_operation_
 The central always looks for new bonds also after the bond erase (on ``ble_peer_operation_event`` with :cpp:member:`op` set to :cpp:enum:`PEER_OPERATION_ERASED`).
 If ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST`` is enabled, you can also set the ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT`` option to make the central scan for new peers after every boot.
 
-Two scanning scenarios are possible:
+The following scanning scenarios are possible:
 
 * If no peripheral is connected, the central scans for the peripheral devices without interruption.
 * If a peripheral is connected, the scanning is triggered periodically.
   If none of the connected peripherals is in use for at least ``CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S``, the scanning is started.
 
 Scanning not started
-    The scanning will not start if one of the following conditions occurs:
+====================
 
-    * There are no more free Bluetooth connections.
-    * The :ref:`nrf_desktop_ble_discovery` is in the process of discovering a peer.
-    * The central is going to scan only for bonded peers and all the bonded peers are already connected.
+The scanning will not start if one of the following conditions occurs:
 
-    The number of Bluetooth connections is defined as the :option:`CONFIG_BT_MAX_CONN` Kconfig option.
+* There are no more free Bluetooth connections.
+* The :ref:`nrf_desktop_ble_discovery` is in the process of discovering a peer.
+* The central is going to scan only for bonded peers and all the bonded peers are already connected.
+
+The number of Bluetooth connections is defined as the :option:`CONFIG_BT_MAX_CONN` Kconfig option.
 
 Scanning interrupted
-    The scanning is interrupted if one of the following conditions occurs:
+====================
 
-    * A connected peripheral is in use.
-      Scanning in this situation will have a negative impact on user experience.
-    * The maximum scan duration specified by ``CONFIG_DESKTOP_BLE_SCAN_DURATION_S`` times out.
+The scanning is interrupted if one of the following conditions occurs:
 
-    The scanning continues even if there is no connected Bluetooth peer.
+* A connected peripheral is in use.
+  Scanning in this situation will have a negative impact on user experience.
+* The maximum scan duration specified by ``CONFIG_DESKTOP_BLE_SCAN_DURATION_S`` times out.
+
+The scanning continues even if there is no connected Bluetooth peer.
 
 Implementation details
 **********************
@@ -96,28 +101,21 @@ The |ble_scan| module stores the following information for every bonded peer:
 The module uses Zephyr's :ref:`zephyr:settings_api` subsystem to store the information in the non-volatile memory.
 This information is required to filter out unbonded devices, because the nRF Desktop central connects and bonds with only one mouse and one keyboard.
 
-Bluetooth connection inverval
-   After the scan filter match, the following happens:
+Bluetooth connection interval
+=============================
 
-   1. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatically establishes the Bluetooth connection with the peripheral.
-      The initial Bluetooth connection interval is set by default to 7.5 ms, that is to the shortest connection interval allowed by the Bluetooth specification.
-   #. The connection is secured.
-   #. The peer discovery is started.
-   #. After the :ref:`nrf_desktop_ble_discovery` completes the peer discovery, the |ble_scan| module receives the ``ble_discovery_complete_event``:
+After the scan filter match, the following happens:
 
-     * If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to 1 ms.
-     * If neither the central or the connected peripheral support LLPM, or only one of them supports it, the interval is set to 7.5 ms.
+a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatically establishes the Bluetooth connection with the peripheral.
+   The initial Bluetooth connection interval is set by default to 7.5 ms, that is to the shortest connection interval allowed by the Bluetooth specification.
+#. The connection is secured.
+#. The peer discovery is started.
+#. After the :ref:`nrf_desktop_ble_discovery` completes the peer discovery, the :ref:`nrf_desktop_ble_conn_params` receives the ``ble_discovery_complete_event`` and updates the Bluetooth connection interval.
 
-   .. note::
-      If a Bluetooth peer is aready connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
-      This is required to avoid Bluetooth scheduling issues.
+.. note::
+   If a Bluetooth peer is aready connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
+   This is required to avoid Bluetooth scheduling issues.
 
-   At this point, the scanning can be restarted.
-
-Connection parameter update request
-   The module handles Zephyr's Bluetooth LE connection parameter update request:
-
-   * If the nrfxlib's Link Layer is selected (:option:`CONFIG_BT_LL_NRFXLIB`), the module rejects the requests.
-   * If :option:`CONFIG_BT_LL_NRFXLIB` is not selected, the module sets the maximum and the minimum connection intervals to 7.5 ms, and then accepts the request.
+At this point, the scanning can be restarted.
 
 .. |ble_scan| replace:: Bluetooth LE scanning module

@@ -1,18 +1,19 @@
 .. _nrf_desktop_bas:
 
-GATT Battery Service
-####################
+GATT Battery Service module
+###########################
 
-Use the ``bas`` module to enable and define the GATT Battery Service, and notify the subscribers about the battery level changes.
+Use this ``bas`` module to enable and define the GATT Battery Service, and notify the subscribers about the battery level changes.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_bas_start
     :end-before: table_bas_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************

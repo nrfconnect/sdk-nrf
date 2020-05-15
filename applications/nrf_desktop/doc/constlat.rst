@@ -1,19 +1,20 @@
 .. _nrf_desktop_constlat:
 
-Constant latency hotfix
-#######################
+Constant latency hotfix module
+##############################
 
-Enable the constant latency hotfix module to use device configuration with constant latency interrupts.
-This reduces interrupt propagation time, but increases the power consumption.
+Enable the constant latency hotfix module to use a device configuration with constant latency interrupts.
+This reduces the interrupt propagation time, but increases the power consumption.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_constlat_start
     :end-before: table_constlat_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************

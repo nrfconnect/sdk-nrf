@@ -6,14 +6,15 @@ Power manager module
 Use the power manager module to reduce the energy consumption of battery-powered devices.
 The module achieves this by switching to low power modes when the device is not used for a longer period of time.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_power_manager_start
     :end-before: table_power_manager_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Configuration
 *************
@@ -23,21 +24,25 @@ You can enable the power manager module by selecting the ``CONFIG_DESKTOP_POWER_
 This module uses Zephyr's :ref:`zephyr:power_management_api` subsystem.
 It depends on :option:`CONFIG_HAS_SYS_POWER_STATE_DEEP_SLEEP_1` being enabled and selects :option:`CONFIG_DEVICE_POWER_MANAGEMENT` and :option:`CONFIG_SYS_POWER_DEEP_SLEEP_STATES`.
 
-Timeout configuration options
-    With the ``CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT`` configuration option, you can set the amount of time after which the application will go to the low power mode.
-    By default, the timeout is set to 120 seconds.
+Time-out configuration options
+==============================
 
-    The ``CONFIG_DESKTOP_POWER_MANAGER_ERROR_TIMEOUT`` sets the amount of time after which the device is turned off upon an internal error.
+With the ``CONFIG_DESKTOP_POWER_MANAGER_TIMEOUT`` configuration option, you can set the amount of time after which the application will go to the low power mode.
+By default, the time-out is set to 120 seconds.
+
+The ``CONFIG_DESKTOP_POWER_MANAGER_ERROR_TIMEOUT`` sets the amount of time after which the device is turned off upon an internal error.
 
 Optional boolean for keeping the system on
-    The ``CONFIG_DESKTOP_POWER_MANAGER_STAY_ON`` lets the system stay on also when there are no active connections.
+==========================================
+
+The ``CONFIG_DESKTOP_POWER_MANAGER_STAY_ON`` lets the system stay on also when there are no active connections.
 
 For more information about configuration options, check the help in the configuration tool.
 
 Implementation details
 **********************
 
-The power manager is started when the :ref:`nrf_desktop_main` module is ready (which is reported using ``module_state_event``).
+The power manager is started when the :ref:`nrf_desktop_main` is ready (which is reported using ``module_state_event``).
 
 When started, it can do the following operations:
 
@@ -50,10 +55,10 @@ Power states
 
 The application can be in the following power states:
 
- * `Idle`_
- * `Suspended`_
- * `Off`_
- * `Error`_
+* `Idle`_
+* `Suspended`_
+* `Off`_
+* `Error`_
 
 The power manager takes control of the overall operating system power state.
 See the following section for more details about how the application states converts to the system power state.
@@ -73,7 +78,7 @@ On timeout, the power manager module sets the application to either the suspende
 Suspended
 ---------
 
-Upon power-down timeout, the power manager will switch the application to the suspended state if one of the following conditions is met:
+Upon power-down time-out, the power manager will switch the application to the suspended state if one of the following conditions is met:
 
 * The device is connected to a remote peer.
 * The option ``CONFIG_DESKTOP_POWER_MANAGER_STAY_ON`` is selected.
@@ -87,7 +92,7 @@ The established connection is maintained.
 Off
 ---
 
-Upon power-down timeout, the power manager will switch the application to the deep sleep mode if the following conditions are met:
+Upon power-down time-out, the power manager will switch the application to the deep sleep mode if the following conditions are met:
 
 * The device is disconnected.
 * The option ``CONFIG_DESKTOP_POWER_MANAGER_STAY_ON`` is disabled.
@@ -110,13 +115,13 @@ During this period, the error condition can be reported to the user by other mod
 Switching to low power
 ======================
 
-When the power manager detects that the application is about to enter the low power state (either suspended or off), it sends the ``power_down_event``.
+When the power manager detects that the application is about to enter the low power state (either suspended or off), it sends a ``power_down_event``.
 Other application modules react to this event by changing their configuration to low power, for example by turning off LEDs.
 
 It is possible that some modules will not be ready to switch to the lower power state.
-In such case, the module that is not yet ready should consume ``power_down_event`` and change its internal state, so that it enters the low power state when ready.
+In such case, the module that is not yet ready should consume the ``power_down_event`` and change its internal state, so that it enters the low power state when ready.
 
-After entering the low power state, each module must report this by sending ``module_state_event``.
+After entering the low power state, each module must report this by sending a ``module_state_event``.
 The power manager will continue with the low power state change when it gets a notification that the module switched to the low power.
 
 Only after all modules confirmed that they have entered the low power state (by not consuming the ``power_down_event``), the power manager will set the required application's state.
@@ -140,7 +145,7 @@ Wake-up from suspended state
 Any module can trigger the application to switch from the suspended state back to the idle state by submitting a ``wake_up_event``.
 This is normally done on some external event, for example upon interaction from the user of the device.
 
-``wake_up_event`` is received by the application modules and it switches them back to the normal operation.
+The ``wake_up_event`` is received by the application modules and it switches them back to the normal operation.
 The power manager will set the application to the idle state.
 It will also restart its power down counter if the device is not connected through USB.
 

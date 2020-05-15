@@ -6,18 +6,19 @@ Bluetooth LE bond module
 Use the |ble_bond| to manage the Bluetooth peers and bonds.
 The module controls the following operations:
 
-* Switching between peers (only for nRF Desktop peripheral)
-* Triggering scanning for new peers (only for nRF Desktop central)
-* Erasing the Bluetooth bonds
+* Switching between peers (only for nRF Desktop peripheral).
+* Triggering scanning for new peers (only for nRF Desktop central).
+* Erasing the Bluetooth bonds.
 
-Module Events
+Module events
 *************
 
 .. include:: event_propagation.rst
     :start-after: table_ble_bond_start
     :end-before: table_ble_bond_end
 
-See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. note::
+    |nrf_desktop_module_event_note|
 
 Local identities
 ****************
@@ -26,7 +27,7 @@ The nRF Desktop device uses the following types of local identities:
 
 * Application local identity - Used by the application modules.
   The currently selected application local identity and its state are presented to the user by the :ref:`nrf_desktop_led_state`.
-* Bluetooth local identity - Used by the :ref:`zephyr:bluetooth` API.
+* Bluetooth local identity - Used by Zephyr's :ref:`zephyr:bluetooth` API.
   Every Bluetooth local identity uses its own Bluetooth address and Identity Resolving Key (IRK).
   From the remote device's perspective, every Bluetooth local identity of a given peripheral is observed as a separate Bluetooth device.
 
@@ -36,27 +37,27 @@ Both IDs related to the given Bluetooth peer operation are propagated in ``ble_p
 The identity usage depends on the device type:
 
 * nRF Desktop central
-   The nRF Desktop central uses only one application local identity and only one Bluetooth local identity (the default ones).
+  The nRF Desktop central uses only one application local identity and only one Bluetooth local identity (the default ones).
 * nRF Desktop peripheral
-   The nRF Desktop peripheral uses multiple local identities.
+  The nRF Desktop peripheral uses multiple local identities.
 
-   Every application local identity is associated with exactly one Bluetooth local identity.
-   The |ble_bond| stores the mapping from the application local identities to the Bluetooth local identities in the ``bt_stack_id_lut`` array.
-   The mapping changes only after a successful erase advertising.
+  Every application local identity is associated with exactly one Bluetooth local identity.
+  The |ble_bond| stores the mapping from the application local identities to the Bluetooth local identities in the ``bt_stack_id_lut`` array.
+  The mapping changes only after a successful erase advertising.
 
-   Only one Bluetooth peer can be bonded with a given local identity.
+  Only one Bluetooth peer can be bonded with a given local identity.
 
-   Also, only one of the application local identities is selected at a time.
-   When the device changes the selected Bluetooth peer, it actually switches its own local identity.
-   The old peer is disconnected by the application, Bluetooth advertising is started, and the new peer connects.
+  Also, only one of the application local identities is selected at a time.
+  When the device changes the selected Bluetooth peer, it actually switches its own local identity.
+  The old peer is disconnected by the application, Bluetooth advertising is started, and the new peer connects.
 
 Module states
 *************
 
 The |ble_bond| is implemented as a state machine.
 Every transition is triggered by an :ref:`event_manager` event with a predefined value.
-Some transitions can be also triggered by internal timeout.
-For exmple transition from :cpp:enum:`STATE_ERASE_PEER` to :cpp:enum:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event`` or internal timeout.
+Some transitions can be also triggered by internal time-out.
+For example, the transition from :cpp:enum:`STATE_ERASE_PEER` to :cpp:enum:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event``, or an internal time-out.
 
 The following diagram shows states and transitions between these states after the module is initialized:
 
@@ -71,9 +72,9 @@ In this state, all the peer operations triggered by ``click_event`` are disabled
 
 When the transition occurs:
 
-* The ``ble_peer_operation_event`` with the defined :cpp:member:`op` is submitted.
-  For example, when the user confirms the erase advertising, the ``ble_peer_operation_event`` is submitted with :cpp:member:`op` set to :cpp:enum:`PEER_OPERATION_ERASE_ADV`.
-* The currently selected application local identity is updated (if anything changed).
+a. The ``ble_peer_operation_event`` with the defined :cpp:member:`op` is submitted.
+   For example, when the user confirms the erase advertising, the ``ble_peer_operation_event`` is submitted with :cpp:member:`op` set to :cpp:enum:`PEER_OPERATION_ERASE_ADV`.
+#. The currently selected application local identity is updated (if anything changed).
 
 Peer erasing
 ============
@@ -93,13 +94,13 @@ The peripheral resets the identity and starts advertising using it.
 If a new peer successfully connects, establishes security, and bonds, the current application local identity switches to using the Bluetooth local identity that was used during the erase advertising.
 The new peer is associated with the currently used application local identity.
 
-After a timeout or on user request, the erase advertising is stopped.
+After a time-out or on user request, the erase advertising is stopped.
 The application local identity still uses the Bluetooth local identity that was associated with it before the erase advertising.
 
 Configuration
 *************
 
-The module requires the basic Bluetooth configuration, as described in the Bluetooth guide.
+The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 The module is enabled for every nRF Desktop device.
 
 You can control the connected peers using the following methods:
@@ -144,7 +145,6 @@ The dongle is the nRF Desktop central.
 If the dongle peer is enabled, the nRF Desktop peripheral uses one of the local identities for the Bluetooth connection with the dongle.
 This local identity is meant to be paired with the dongle during the production process.
 
-
 The dongle peer is selected using the :ref:`nrf_desktop_selector`.
 You must also define the following parameters of the selector used to switch between dongle peer and other Bluetooth LE peers:
 
@@ -177,7 +177,6 @@ The module provides the following :ref:`nrf_desktop_config_channel` options:
 * ``peer_erase`` - Erase peer for the current local identity.
   The nRF Desktop central erases all the peers.
   The nRF Desktop peripheral starts erase advertising.
-
 * ``peer_search`` - Request scanning for new peripherals.
   The option is available only for the nRF Desktop central.
 
