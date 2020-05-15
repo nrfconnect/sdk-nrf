@@ -530,7 +530,7 @@ static bool event_handler(const struct event_header *eh)
 					STATE_DELAYED_ACTIVE_FAST :
 					STATE_DELAYED_ACTIVE_SLOW;
 
-				k_delayed_work_submit(&adv_update, 0);
+				k_delayed_work_submit(&adv_update, K_NO_WAIT);
 			}
 			break;
 

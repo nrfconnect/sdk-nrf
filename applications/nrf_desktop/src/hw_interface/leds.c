@@ -97,7 +97,7 @@ static void work_handler(struct k_work *work)
 		s32_t next_delay =
 			led->effect->steps[led->effect_step].substep_time;
 
-		k_delayed_work_submit(&led->work, next_delay);
+		k_delayed_work_submit(&led->work, K_MSEC(next_delay));
 	}
 }
 
@@ -119,7 +119,7 @@ static void led_update(struct led *led)
 		s32_t next_delay =
 			led->effect->steps[led->effect_step].substep_time;
 
-		k_delayed_work_submit(&led->work, next_delay);
+		k_delayed_work_submit(&led->work, K_MSEC(next_delay));
 	} else {
 		LOG_WRN("LED effect with no effect");
 	}

@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 #define BT_ID_LUT_STORAGE_NAME		"bt_lut"
 
 #define ON_START_CLICK(CLICK)		(CLICK + CLICK_COUNT)
-#define ON_START_CLICK_UPTIME_MAX	K_SECONDS(6)
+#define ON_START_CLICK_UPTIME_MAX	(6 * MSEC_PER_SEC)
 
 
 enum state {
@@ -507,7 +507,7 @@ static void handle_click(enum click click)
 				state = state_switch[i].next_state;
 
 				if (state != STATE_IDLE) {
-					s32_t work_delay;
+					k_timeout_t work_delay;
 
 					if (state == STATE_ERASE_ADV) {
 						work_delay = ERASE_ADV_TIMEOUT;
