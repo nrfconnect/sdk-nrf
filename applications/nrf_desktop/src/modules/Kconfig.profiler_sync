@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Profiler sync"
+
+config DESKTOP_PROFILER_SYNC_GPIO_ENABLE
+	bool "Enable profiler sync based on GPIO"
+	depends on GPIO
+	depends on DESKTOP_EVENT_MANAGER_PROFILER_ENABLED
+	depends on !DESKTOP_EVENT_MANAGER_TRACE_EVENT_EXECUTION
+	help
+	  This option can be used to synchronize timestamps for profiler events
+	  on two devices.
+
+	  When this option is enabled nRF Desktop devices generate profiler
+	  event (sync_event) that is used for synchronization. Central generates
+	  square wave using GPIO, peripheral reacts on the edges. Make sure that
+	  selected pins of the central and the peripheral are connected
+	  together.
+
+if DESKTOP_PROFILER_SYNC_GPIO_ENABLE
+
+choice
+	prompt "Select device role"
+	default DESKTOP_PROFILER_SYNC_PERIPHERAL
+
+config DESKTOP_PROFILER_SYNC_CENTRAL
+	bool "Central"
+
+config DESKTOP_PROFILER_SYNC_PERIPHERAL
+	bool "Peripheral"
+
+endchoice
+
+config DESKTOP_PROFILER_SYNC_GPIO_PORT
+	int "Sync GPIO port"
+	range 0 1
+	default 0
+
+config DESKTOP_PROFILER_SYNC_GPIO_PIN
+	int "Sync GPIO pin"
+	range 0 31
+	default 0
+
+module = DESKTOP_PROFILER_SYNC
+module-str = profiler_sync
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu
