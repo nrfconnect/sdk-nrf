@@ -862,12 +862,12 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 	void *obj;
 
 	for (int i = 0; i < nfds; i++) {
-		tmp[i].requested = 0;
+		tmp[i].events = 0;
 		fds[i].revents = 0;
 
 		if (fds[i].fd < 0) {
 			/* Per POSIX, negative fd's are just ignored */
-			tmp[i].handle = fds[i].fd;
+			tmp[i].fd = fds[i].fd;
 			continue;
 		} else {
 			obj = z_get_fd_obj(fds[i].fd,
@@ -876,7 +876,7 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 					   ENOTSUP);
 			if (obj != NULL) {
 				/* Offloaded socket found. */
-				tmp[i].handle = OBJ_TO_SD(obj);
+				tmp[i].fd = OBJ_TO_SD(obj);
 			} else {
 				/* Non-offloaded socket, return an error. */
 				fds[i].revents = POLLNVAL;
@@ -886,10 +886,10 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 
 		/* Translate the API from native to nRF */
 		if (fds[i].events & POLLIN) {
-			tmp[i].requested |= NRF_POLLIN;
+			tmp[i].events |= NRF_POLLIN;
 		}
 		if (fds[i].events & POLLOUT) {
-			tmp[i].requested |= NRF_POLLOUT;
+			tmp[i].events |= NRF_POLLOUT;
 		}
 	}
 
@@ -899,26 +899,26 @@ static inline int nrf91_socket_offload_poll(struct pollfd *fds, int nfds,
 
 	retval = nrf_poll((struct nrf_pollfd *)&tmp, nfds, timeout);
 
-	/* Translate the API from nRF to native */
-	/* No need to translate .requested, shall be untouched by poll() */
+	/* Translate the API from nRF to native. */
+	/* No need to translate .events, shall be untouched by poll() */
 	for (int i = 0; i < nfds; i++) {
 		if (fds[i].fd < 0) {
 			continue;
 		}
 
-		if (tmp[i].returned & NRF_POLLIN) {
+		if (tmp[i].revents & NRF_POLLIN) {
 			fds[i].revents |= POLLIN;
 		}
-		if (tmp[i].returned & NRF_POLLOUT) {
+		if (tmp[i].revents & NRF_POLLOUT) {
 			fds[i].revents |= POLLOUT;
 		}
-		if (tmp[i].returned & NRF_POLLERR) {
+		if (tmp[i].revents & NRF_POLLERR) {
 			fds[i].revents |= POLLERR;
 		}
-		if (tmp[i].returned & NRF_POLLNVAL) {
+		if (tmp[i].revents & NRF_POLLNVAL) {
 			fds[i].revents |= POLLNVAL;
 		}
-		if (tmp[i].returned & NRF_POLLHUP) {
+		if (tmp[i].revents & NRF_POLLHUP) {
 			fds[i].revents |= POLLHUP;
 		}
 	}

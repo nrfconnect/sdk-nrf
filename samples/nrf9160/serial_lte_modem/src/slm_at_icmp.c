@@ -204,8 +204,8 @@ static u32_t send_ping_wait_reply(void)
 		goto close_end;
 	}
 
-	fds[0].handle = fd;
-	fds[0].requested = NRF_POLLIN;
+	fds[0].fd = fd;
+	fds[0].events = NRF_POLLIN;
 	ret = nrf_poll(fds, 1, ping_argv.waitms);
 	if (ret <= 0) {
 		LOG_ERR("nrf_poll() failed: (%d) (%d)", -errno, ret);
