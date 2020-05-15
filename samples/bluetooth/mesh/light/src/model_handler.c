@@ -42,7 +42,7 @@ static void led_transition_start(struct led_ctx *led)
 	 * state is "on":
 	 */
 	dk_set_led(led_idx, true);
-	k_delayed_work_submit(&led->work, led->remaining);
+	k_delayed_work_submit(&led->work, K_MSEC(led->remaining));
 	led->remaining = 0;
 }
 
@@ -70,7 +70,8 @@ static void led_set(struct bt_mesh_onoff_srv *srv, struct bt_mesh_msg_ctx *ctx,
 	led->remaining = set->transition->time;
 
 	if (set->transition->delay > 0) {
-		k_delayed_work_submit(&led->work, set->transition->delay);
+		k_delayed_work_submit(&led->work,
+				      K_MSEC(set->transition->delay));
 	} else if (set->transition->time > 0) {
 		led_transition_start(led);
 	} else {
