@@ -351,6 +351,9 @@ static void spm_config_peripherals(void)
 #ifdef NRF_WDT
 		PERIPH("NRF_WDT", NRF_WDT, CONFIG_SPM_NRF_WDT_NS),
 #endif
+#ifdef NRF_I2S
+		PERIPH("NRF_I2S", NRF_I2S, CONFIG_SPM_NRF_I2S_NS),
+#endif
 		/* There is no DTS node for the peripherals below,
 		 * so address them using nrfx macros directly.
 		 */
