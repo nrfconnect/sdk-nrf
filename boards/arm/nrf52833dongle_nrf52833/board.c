@@ -6,6 +6,7 @@
 
 #include <init.h>
 #include <hal/nrf_power.h>
+#include <hal/nrf_nvmc.h>
 
 static int board_nrf52833dongle_nrf52833_init(struct device *dev)
 {
@@ -21,8 +22,8 @@ static int board_nrf52833dongle_nrf52833_init(struct device *dev)
 	    ((NRF_UICR->REGOUT0 & UICR_REGOUT0_VOUT_Msk) ==
 	     (UICR_REGOUT0_VOUT_DEFAULT << UICR_REGOUT0_VOUT_Pos))) {
 
-		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Wen << NVMC_CONFIG_WEN_Pos;
-		while (NRF_NVMC->READY == NVMC_READY_READY_Busy) {
+		nrf_nvmc_mode_set(NRF_NVMC, NRF_NVMC_MODE_WRITE);
+		while (!nrf_nvmc_ready_check(NRF_NVMC)) {
 			;
 		}
 
@@ -30,8 +31,8 @@ static int board_nrf52833dongle_nrf52833_init(struct device *dev)
 		    (NRF_UICR->REGOUT0 & ~((uint32_t)UICR_REGOUT0_VOUT_Msk)) |
 		    (UICR_REGOUT0_VOUT_3V0 << UICR_REGOUT0_VOUT_Pos);
 
-		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren << NVMC_CONFIG_WEN_Pos;
-		while (NRF_NVMC->READY == NVMC_READY_READY_Busy) {
+		nrf_nvmc_mode_set(NRF_NVMC, NRF_NVMC_MODE_READONLY);
+		while (!nrf_nvmc_ready_check(NRF_NVMC)) {
 			;
 		}
 
