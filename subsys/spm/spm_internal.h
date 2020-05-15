@@ -11,6 +11,7 @@
 #include <nrfx.h>
 #include <sys/util.h>
 #include <sys/__assert.h>
+#include <storage/flash_map.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +61,7 @@ static inline u32_t num_spu_flash_regions(void)
 #else
 
 #define FLASH_SECURE_ATTRIBUTION_REGION_SIZE CONFIG_NRF_SPU_FLASH_REGION_SIZE
-#define NUM_FLASH_SECURE_ATTRIBUTION_REGIONS (DT_SOC_NV_FLASH_0_SIZE \
+#define NUM_FLASH_SECURE_ATTRIBUTION_REGIONS (FLASH_AREA_SIZE(storage) \
 				/ FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
 #endif
 
