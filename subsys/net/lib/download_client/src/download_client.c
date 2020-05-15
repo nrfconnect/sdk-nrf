@@ -41,7 +41,7 @@ static int socket_timeout_set(int fd)
 {
 	int err;
 
-	if (CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS == K_FOREVER) {
+	if (CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS == SYS_FOREVER_MS) {
 		return 0;
 	}
 
