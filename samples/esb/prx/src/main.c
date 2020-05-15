@@ -27,15 +27,17 @@ static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
 
 static int leds_init(void)
 {
-	led_port = device_get_binding(DT_ALIAS_LED0_GPIOS_CONTROLLER);
+	led_port = device_get_binding(DT_GPIO_LABEL(DT_ALIAS(led0), gpios));
 	if (!led_port) {
 		LOG_ERR("Could not bind to LED port %s",
-			DT_ALIAS_LED0_GPIOS_CONTROLLER);
+			DT_GPIO_LABEL(DT_ALIAS(led0), gpios));
 		return -EIO;
 	}
 
-	const u8_t pins[] = {DT_ALIAS_LED0_GPIOS_PIN, DT_ALIAS_LED1_GPIOS_PIN,
-			     DT_ALIAS_LED2_GPIOS_PIN, DT_ALIAS_LED3_GPIOS_PIN};
+	const u8_t pins[] = {DT_GPIO_PIN(DT_ALIAS(led0), gpios),
+			     DT_GPIO_PIN(DT_ALIAS(led1), gpios),
+			     DT_GPIO_PIN(DT_ALIAS(led2), gpios),
+			     DT_GPIO_PIN(DT_ALIAS(led3), gpios)};
 
 	for (size_t i = 0; i < ARRAY_SIZE(pins); i++) {
 		int err = gpio_pin_configure(led_port, pins[i], GPIO_OUTPUT);
@@ -57,15 +59,17 @@ static void leds_update(u8_t value)
 	bool led2_status = !(value % 8 > 2 && value % 8 <= 6);
 	bool led3_status = !(value % 8 > 3);
 
-	gpio_port_pins_t mask = 1 << DT_ALIAS_LED0_GPIOS_PIN |
-				1 << DT_ALIAS_LED1_GPIOS_PIN |
-				1 << DT_ALIAS_LED2_GPIOS_PIN |
-				1 << DT_ALIAS_LED3_GPIOS_PIN;
+	gpio_port_pins_t mask =
+		1 << DT_GPIO_PIN(DT_ALIAS(led0), gpios) |
+		1 << DT_GPIO_PIN(DT_ALIAS(led1), gpios) |
+		1 << DT_GPIO_PIN(DT_ALIAS(led2), gpios) |
+		1 << DT_GPIO_PIN(DT_ALIAS(led3), gpios);
 
-	gpio_port_value_t val = led0_status << DT_ALIAS_LED0_GPIOS_PIN |
-				led1_status << DT_ALIAS_LED1_GPIOS_PIN |
-				led2_status << DT_ALIAS_LED2_GPIOS_PIN |
-				led3_status << DT_ALIAS_LED3_GPIOS_PIN;
+	gpio_port_value_t val =
+		led0_status << DT_GPIO_PIN(DT_ALIAS(led0), gpios) |
+		led1_status << DT_GPIO_PIN(DT_ALIAS(led1), gpios) |
+		led2_status << DT_GPIO_PIN(DT_ALIAS(led2), gpios) |
+		led3_status << DT_GPIO_PIN(DT_ALIAS(led3), gpios);
 
 	if (led_port != NULL) {
 		gpio_port_set_masked_raw(led_port, mask, val);
