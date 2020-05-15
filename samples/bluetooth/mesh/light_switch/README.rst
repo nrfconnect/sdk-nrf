@@ -43,21 +43,9 @@ The models are used for the following purposes:
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` to detect button presses on the board.
 
-The model handler calls :cpp:func:`bt_mesh_onoff_cli_set` to turn the LEDs of a Mesh Light device on or off.
-As a response buffer is passed to the function, it blocks until the model receives a response from the target device.
-If the function returns successfully, the response buffer will contain the response from the Mesh Light device.
-In this sample, the contents of the response will be ignored, as all incoming OnOff status messages are handled in the status callback.
-
-.. note::
-    The response structure is mandatory, because the Generic OnOff Client model will not request a response from the Server if ``NULL`` is passed in the response parameter.
-
-The button handling is deferred to its own button handling thread to avoid blocking the system workqueue.
-This thread is a loop that performs the following tasks:
-
-* Waits for a semaphore signalled by the button handler callback.
-* Triggers calls to the appropriate Generic OnOff Client model.
-
-As the call to :cpp:func:`bt_mesh_onoff_cli_set` blocks until it receives a response, the caller might be blocked for seconds, which would severely impact other activities on the device.
+If the model is configured to publish to a unicast address, the model handler calls :cpp:func:`bt_mesh_onoff_cli_set` to turn the LEDs of a Mesh Light device on or off.
+The response from the target device updates the corresponding LED on the Mesh Light Switch device.
+If the model is configured to publish to a group address, it calls :cpp:func:`bt_mesh_onoff_cli_set_unack` instead, to avoid getting responses from multiple devices at once.
 
 Requirements
 ************
