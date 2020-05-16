@@ -4,6 +4,25 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+menu "Partition Manager"
+
+menu "Zephyr subsystem configurations"
+
+if FILE_SYSTEM_LITTLEFS
+partition=LITTLEFS
+partition-size=0x6000
+rsource "Kconfig.template.partition_size"
+endif
+
+
+if SETTINGS
+partition=SETTINGS_STORAGE
+partition-size=0x2000
+rsource "Kconfig.template.partition_size"
+endif
+
+endmenu
+
 menuconfig PM_EXTERNAL_FLASH
 	bool "Support external flash in Partition Manager"
 
@@ -24,3 +43,5 @@ config PM_EXTERNAL_FLASH_BASE
 	default 0
 
 endif
+
+endmenu # Partition Manager

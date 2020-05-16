@@ -1,0 +1,5 @@
+#include <autoconf.h>
+
+settings_storage:
+  placement: {after: [mcuboot_storage, app]}
+  size: CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE
