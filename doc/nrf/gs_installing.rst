@@ -222,6 +222,9 @@ Therefore, remember to regularly check for updates:
 Cloning the repositories
 ========================
 
+.. tip::
+   If you cloned the |NCS| repositories before they were moved to the nrfconnect GitHub organization and want to update them, follow the instructions in :ref:`repo_move`.
+
 To clone the repositories, complete the following steps:
 
 1. Create a folder named ``ncs``.
@@ -312,6 +315,75 @@ To switch to the latest state of development, enter the following commands::
 .. note::
    Run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
    This will bring the project repositories to the matching revision defined by the manifest file.
+
+.. _repo_move:
+
+Pointing the repositories to the right remotes after they were moved
+********************************************************************
+
+Before |NCS| version 1.3.0, the Git repositories were moved from the NordicPlayground GitHub organization to the nrfconnect organization.
+
+They were also renamed, replacing the ``fw-nrfconnect-`` prefix with ``sdk-``.
+
+If you cloned the repositories before the move, your local repositories and forks of the |NCS| repositories are automatically be redirected to the new ones.
+However, you should point them directly to their new locations as described in this section.
+
+The full list of repositories with their old and new URLs can be found in the following table:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Old URL
+     - New URL
+
+   * - https://github.com/NordicPlayground/fw-nrfconnect-nrf
+     - https://github.com/nrfconnect/sdk-nrf
+
+   * - https://github.com/NordicPlayground/fw-nrfconnect-zephyr
+     - https://github.com/nrfconnect/sdk-zephyr
+
+   * - https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
+     - https://github.com/nrfconnect/sdk-mcuboot
+
+   * - https://github.com/NordicPlayground/fw-nrfconnect-mcumgr
+     - https://github.com/nrfconnect/sdk-mcumgr
+
+   * - https://github.com/NordicPlayground/fw-nrfconnect-hal_nordic
+     - https://github.com/nrfconnect/sdk-hal_nordic
+
+   * - https://github.com/NordicPlayground/nrfxlib
+     - https://github.com/nrfconnect/sdk-nrfxlib
+
+
+Before you cahnge the remotes, rename any personal forks that you have of the
+|NCS| repositories to their new names.
+
+To do so, visit your personal fork in a browser and edit the name there.
+
+For example, to rename the fw-nrfconnect-nrf repository, access your fork on GitHub (for example, ``https://github.com/<username>/fw-nrfconnect-nrf``), switch to the :guilabel:`Settings` tab, and change the name in the :guilabel:`Repository name` field to ``sdk-nrf``.
+
+Then rename the actual remotes.
+
+To do so, go to your local copy of each of the repositories listed in the table above and enter the following command:
+
+    .. parsed-literal::
+       :class: highlight
+
+       git remote set-url *remote_name* *new_url*
+
+Replace *remote_name* with the name of your remote (for example, ``origin`` for your fork or ``ncs`` for the upstream repository) and *new_url* with the URL of your fork or the new URL from the table above.  If you are unsure about the remotes that are configured in your local repository, enter ``git remote -v``.
+
+For example, to point your existing fw-nrfconnect-nrf clone to its new URL, enter the following command::
+
+    cd ncs/nrf
+    git remote set-url origin https://github.com/nrfconnect/sdk-nrf
+
+Similarly, to point your existing fw-nrfconnect-zephyr clone to the new URL, enter the following command::
+
+    cd ncs/zephyr
+    git remote set-url ncs https://github.com/nrfconnect/sdk-zephyr
+
+Additional information about remotes and how to handle them can be found in :ref:`dm-user-workflow`.
 
 .. _additional_deps:
 
