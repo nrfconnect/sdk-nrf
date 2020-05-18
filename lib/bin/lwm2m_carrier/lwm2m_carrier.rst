@@ -231,6 +231,8 @@ See the following table for the certification status of the library and the rela
 | LwM2M carrier   | Modem version | |NCS| release | Certification |
 | library version |               |               |               |
 +=================+===============+===============+===============+
+| 0.8.2           | 1.1.2         | 1.2.1         | Verizon       |
++-----------------+---------------+---------------+---------------+
 | 0.8.1+build1    | 1.1.0         | 1.2.0         | Verizon       |
 +-----------------+---------------+---------------+---------------+
 | 0.8.0           | 1.1.0         | 1.1.0         |               |
