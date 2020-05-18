@@ -21,7 +21,7 @@ manifest:
     # nRF Connect SDK GitHub organization.
     # NCS repositories are hosted here.
     - name: ncs
-      url-base: https://github.com/NordicPlayground
+      url-base: https://github.com/nrfconnect
     # Third-party repository sources:
     - name: zephyrproject
       url-base: https://github.com/zephyrproject-rtos
@@ -45,7 +45,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
-      repo-path: fw-nrfconnect-zephyr
+      repo-path: sdk-zephyr
       revision: 9bab3a84b6427662a1d3df45db365d23f2eeaa3a
       import:
         # In addition to the zephyr repository itself, NCS also
@@ -87,14 +87,15 @@ manifest:
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
     - name: mcuboot
-      repo-path: fw-nrfconnect-mcuboot
+      repo-path: sdk-mcuboot
       revision: 19dce6e3034ac546dba03d523cbd0f7784f5e0e2
       path: bootloader/mcuboot
     - name: mcumgr
-      repo-path: fw-nrfconnect-mcumgr
+      repo-path: sdk-mcumgr
       revision: 4d589cc0fe4783d49f9f0cc62a0bfdb2ad3da8df
       path: modules/lib/mcumgr
     - name: nrfxlib
+      repo-path: sdk-nrfxlib
       path: nrfxlib
       revision: 3eed8cbd8f6b0fa38aaa6b7d5d0e33bd7408f0d1
     # Other third-party repositories.
