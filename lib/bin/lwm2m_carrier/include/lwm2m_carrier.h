@@ -21,7 +21,7 @@
 #define LWM2M_CARRIER_EVENT_DISCONNECTED  5  /**< Disconnected from the LTE network. */
 #define LWM2M_CARRIER_EVENT_BOOTSTRAPPED  6  /**< LWM2M carrier bootstrapped. */
 #define LWM2M_CARRIER_EVENT_READY         7  /**< LWM2M carrier registered. */
-#define LWM2M_CARRIER_EVENT_DEFERRED      8  /**< LWM2M carrier operation is deferred for 24 hours. */
+#define LWM2M_CARRIER_EVENT_DEFERRED      8  /**< LWM2M carrier operation is deferred. */
 #define LWM2M_CARRIER_EVENT_FOTA_START    9  /**< Modem update started. */
 #define LWM2M_CARRIER_EVENT_REBOOT        10 /**< Application will reboot. */
 #define LWM2M_CARRIER_EVENT_ERROR         20 /**< An error occurred. */
@@ -37,12 +37,39 @@ typedef struct {
 } lwm2m_carrier_event_t;
 
 /**
+ * @brief LWM2M carrier library event deferred reason.
+ */
+#define LWM2M_CARRIER_DEFERRED_NO_REASON           0 /**< No reason given. */
+#define LWM2M_CARRIER_DEFERRED_PDN_ACTIVATE        1 /**< Failed to activate PDN. */
+#define LWM2M_CARRIER_DEFERRED_BOOTSTRAP_NO_ROUTE  2 /**< No route to bootstrap server. */
+#define LWM2M_CARRIER_DEFERRED_BOOTSTRAP_CONNECT   3 /**< Failed to connect to bootstrap server. */
+#define LWM2M_CARRIER_DEFERRED_BOOTSTRAP_SEQUENCE  4 /**< Bootstrap sequence not completed. */
+#define LWM2M_CARRIER_DEFERRED_SERVER_NO_ROUTE     5 /**< No route to server. */
+#define LWM2M_CARRIER_DEFERRED_SERVER_CONNECT      6 /**< Failed to connect to server. */
+#define LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION 7 /**< Server registration sequence not completed. */
+
+/*
+ * @brief LwM2M carrier library deferred event structure.
+ */
+typedef struct {
+	/** Deferred event reason. */
+	uint32_t reason;
+	/** Time before operation is resumed (seconds). */
+	int32_t timeout;
+} lwm2m_carrier_event_deferred_t;
+
+/**
  * @brief LWM2M carrier library event error codes.
  */
 #define LWM2M_CARRIER_ERROR_NO_ERROR        0 /**< No error. */
 #define LWM2M_CARRIER_ERROR_CONNECT_FAIL    1 /**< Failed to connect to the LTE network. */
 #define LWM2M_CARRIER_ERROR_DISCONNECT_FAIL 2 /**< Failed to disconnect from the LTE network. */
 #define LWM2M_CARRIER_ERROR_BOOTSTRAP       3 /**< LWM2M carrier bootstrap failed. */
+#define LWM2M_CARRIER_ERROR_FOTA_PKG        4 /**< Update package rejected. */
+#define LWM2M_CARRIER_ERROR_FOTA_PROTO      5 /**< Protocol error. */
+#define LWM2M_CARRIER_ERROR_FOTA_CONN       6 /**< Connection error. */
+#define LWM2M_CARRIER_ERROR_FOTA_CONN_LOST  7 /**< Connection lost. */
+#define LWM2M_CARRIER_ERROR_FOTA_FAIL       8 /**< Update failed. */
 
 /**
  * @brief LWM2M carrier library error event structure.
