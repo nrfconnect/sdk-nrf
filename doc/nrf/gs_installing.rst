@@ -222,9 +222,6 @@ Therefore, remember to regularly check for updates:
 Cloning the repositories
 ========================
 
-.. tip::
-   If you already cloned the |NCS| repositories in Git and want to continue using these clones instead of creating new ones, see `Updating your existing clones to use west`_.
-
 To clone the repositories, complete the following steps:
 
 1. Create a folder named ``ncs``.
@@ -315,39 +312,6 @@ To switch to the latest state of development, enter the following commands::
 .. note::
    Run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
    This will bring the project repositories to the matching revision defined by the manifest file.
-
-Updating your existing clones to use west
-=========================================
-
-If you already cloned the |NCS| repositories in Git and want to continue using these clones instead of creating new ones, you can initialize west to use your clones.
-All branches, remotes, and other configuration in your repositories will be maintained.
-
-To update your repositories to be managed by west, make sure that they are structured and named in the following way::
-
-   ncs
-    |___ bootloader/mcuboot
-    |___ nrf
-    |___ nrfxlib
-    |___ zephyr
-    |___ ...
-
-Then complete the following steps:
-
-1. In the ``ncs`` folder, open a command prompt or terminal window (depending on your operating system).
-#. Do a ``git pull`` or rebase your branch so that you are on the latest fw-nrfconnect-nrf master.
-#. Navigate one folder level up to the ``ncs`` folder::
-
-      cd ..
-
-#. Initialize west with the manifest folder from the current branch of your ``nrf`` repository::
-
-      west init -l nrf
-
-   This will create the required ``.west`` folder that is linked to the manifest repository (``nrf``).
-#. Enter the following command to clone or update the project repositories::
-
-      west update
-
 
 .. _additional_deps:
 
