@@ -2,7 +2,7 @@ sample:
   description: Test OpenThread Command Line Interface.
   name: OpenThread CLI sample
 tests:
-  samples.openthread.ot_cli:
+  samples.openthread.cli:
     build_only: true
     build_on_all: true
     tags: openthread cli

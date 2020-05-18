@@ -37,7 +37,7 @@ See `OpenThread CLI Reference`_ for the list of available serial commands.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/openthread/ot_cli`
+.. |sample path| replace:: :file:`samples/openthread/cli`
 
 |enable_thread_before_testing|
 
