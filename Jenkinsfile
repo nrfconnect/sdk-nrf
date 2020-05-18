@@ -32,7 +32,7 @@ pipeline {
   environment {
       GH_TOKEN = credentials('nordicbuilder-compliance-token') // This token is used to by check_compliance to comment on PRs and use checks
       GH_USERNAME = "NordicBuilder"
-      COMPLIANCE_ARGS = "-r NordicPlayground/fw-nrfconnect-nrf"
+      COMPLIANCE_ARGS = "-r nrfconnect/sdk-nrf"
       ARCH = "-a arm"
       SANITYCHECK_OPTIONS_COMMON = '''--ninja \
                                       --board-root nrf/boards \
