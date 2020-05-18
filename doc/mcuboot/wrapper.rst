@@ -8,7 +8,7 @@ This documentation is based on the official `MCUboot <https://mcuboot.com>`_ doc
 The documentation includes documentation files from the upstream `MCUboot repository <https://github.com/JuulLabs-OSS/mcuboot>`_.
 Topics that are not relevant for the integration of MCUboot in the nRF Connect SDK are excluded from the navigation.
 
-:ref:`mcuboot_ncs` contains information that is relevant for nRF Connect SDK's `fork of MCUboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_ but not for the upstream MCUboot repository.
+:ref:`mcuboot_ncs` contains information that is relevant for nRF Connect SDK's `fork of MCUboot <https://github.com/nrfconnect/sdk-mcuboot>`_ but not for the upstream MCUboot repository.
 
 
 .. toctree::

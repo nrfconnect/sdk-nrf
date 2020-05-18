@@ -5,7 +5,7 @@ Using MCUboot in nRF Connect SDK
 
 See :doc:`readme-zephyr` for general information on how to integrate MCUboot with Zephyr.
 
-nRF Connect SDK's `fork of MCUboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_ provides additional functionality that is available when MCUboot is included.
+nRF Connect SDK's `fork of MCUboot <https://github.com/nrfconnect/sdk-mcuboot>`_ provides additional functionality that is available when MCUboot is included.
 This functionality is implemented in the files in the ``zephyr`` subfolder.
 
 To include MCUboot in your nRF Connect SDK application, enable :option:`CONFIG_BOOTLOADER_MCUBOOT`.
