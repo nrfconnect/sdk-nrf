@@ -17,6 +17,3 @@ Bluetooth libraries and services
    :glob:
 
    ../../include/bluetooth/services/*
-
-.. note::
-   |noBLE|
