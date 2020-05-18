@@ -550,7 +550,7 @@ DFU and FOTA
 * When using the mcuboot target in :ref:`lib_dfu_target`, the write/downloaded offset is not retained when the device is reset.
 * In the :ref:`aws_fota_sample` and :ref:`http_application_update_sample` samples, the download is stopped if the socket connection times out before the modem can delete the modem firmware.
   As a workaround, call :cpp:func:`fota_download_start` again with the same arguments.
-  A fix for this issue is available in commit `38625ba7 <https://github.com/NordicPlayground/fw-nrfconnect-nrf/commit/38625ba775adda3cdc7dbf516eeb3943c7403227>`_.
+  A fix for this issue is available in commit `38625ba7 <https://github.com/nrfconnect/sdk-nrf/commit/38625ba775adda3cdc7dbf516eeb3943c7403227>`_.
 * If the last fragment of a :ref:`lib_fota_download` is received but is corrupted, or if the last write is unsuccessful, the library emits an error event as expected.
   However, it also emits an apply/request update event, even though the downloaded data is invalid.
 

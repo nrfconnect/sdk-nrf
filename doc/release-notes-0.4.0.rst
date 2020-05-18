@@ -82,7 +82,7 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
-* Deprecated the ``nrf91`` branch in fw-nrfconnect-zephyr in favor of master, which now supports the nRF9160 IC
+* Deprecated the ``nrf91`` branch in sdk-zephyr in favor of master, which now supports the nRF9160 IC
 * Split the previous ``nrf9160_pca10090`` board into two boards, one for the secure (``nrf9160_pca10090``) and one for the non-secure (``nrf9160_pca10090ns``) image (both reside in the same board folder)
 * Added the following samples:
 
@@ -96,8 +96,8 @@ nRF9160
 
   * Updated the :ref:`nrfxlib:bsdlib` (in nrfxlib) library to version 0.3.0 (see the :ref:`nrfxlib:bsdlib_changelog` for details)
   * Added support for GNSS supporting GPS as a socket (in nrfxlib)
-  * Implemented :cpp:func:`bsd_os_timedwait` (in ``lib/bsdlib/bsd_os.c`` in fw-nrfconnect-nrf), allowing a proper poll operation and blocking sockets
-  * Minor fixes to the nRF91 sockets offloading layer (in ``lib/bsdlib/nrf91_sockets.c`` in fw-nrfconnect-nrf)
+  * Implemented :cpp:func:`bsd_os_timedwait` (in ``lib/bsdlib/bsd_os.c`` in sdk-nrf), allowing a proper poll operation and blocking sockets
+  * Minor fixes to the nRF91 sockets offloading layer (in ``lib/bsdlib/nrf91_sockets.c`` in sdk-nrf)
 
 
 Common libraries

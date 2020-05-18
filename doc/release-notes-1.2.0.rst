@@ -369,7 +369,7 @@ NFC
 
 * Updated the NFC samples to enable stack protection, assertions, and logging by default.
 * Extended the :ref:`nfc_tag_reader` sample with parsing and printing of the Type 4 Tag content.
-* Moved the NFC Platform implementation to the fw-nrfconnect-nrf repository.
+* Moved the NFC Platform implementation to the sdk-nrf repository.
   See :ref:`nrfxlib:nfc_integration_notes`.
 
 Multi-Protocol Service Layer (MPSL)

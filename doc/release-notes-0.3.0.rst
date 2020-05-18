@@ -34,13 +34,13 @@ Repositories
 
    * - Component
      - Tag
-   * - `fw-nrfconnect-nrf <https://github.com/NordicPlayground/fw-nrfconnect-nrf>`_
+   * - `sdk-nrf <https://github.com/nrfconnect/sdk-nrf>`_
      - v0.3.0
-   * - `nrfxlib <https://github.com/NordicPlayground/nrfxlib>`_
+   * - `nrfxlib <https://github.com/nrfconnect/nrfxlib>`_
      - v0.3.0
-   * - `fw-nrfconnect-zephyr <https://github.com/NordicPlayground/fw-nrfconnect-zephyr>`_
+   * - `sdk-zephyr <https://github.com/nrfconnect/sdk-zephyr>`_
      - v1.13.99-ncs2
-   * - `fw-nrfconnect-mcuboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_
+   * - `sdk-mcuboot <https://github.com/nrfconnect/sdk-mcuboot>`_
      - v1.2.99-ncs2
 
 Supported boards
@@ -226,9 +226,9 @@ Bluetooth Low Energy
 --------------------
 
 * :ref:`peripheral_lbs` does not report the Button 1 state correctly.
-  This issue will be fixed with `pull request #312 <https://github.com/NordicPlayground/fw-nrfconnect-nrf/pull/312>`_.
+  This issue will be fixed with `pull request #312 <https://github.com/nrfconnect/sdk-nrf/pull/312>`_.
 * :ref:`peripheral_uart` cannot handle the corner case that a user attempts to send a string of more than 211 bytes.
-  This issue will be fixed with `pull request #313 <https://github.com/NordicPlayground/fw-nrfconnect-nrf/pull/313>`_.
+  This issue will be fixed with `pull request #313 <https://github.com/nrfconnect/sdk-nrf/pull/313>`_.
 * The central samples (:ref:`central_uart`, :ref:`bluetooth_central_hids`) do not support any pairing methods with MITM protection.
 * The peripheral samples (:ref:`peripheral_uart`, :ref:`peripheral_lbs`, :ref:`peripheral_hids_mouse`) have reconnection issues after performing bonding (LE Secure Connection pairing enable) with nRF Connect for Desktop.
   These issues result in disconnection.
