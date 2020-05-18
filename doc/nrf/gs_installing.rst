@@ -145,19 +145,19 @@ Getting the |NCS| code
 The |NCS| consists of a set of Git repositories.
 
 Every |NCS| release consists of a combination of these repositories at different revisions.
-The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, `fw-nrfconnect-nrf`_.
+The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, `sdk-nrf`_.
 
 .. note::
-   The latest state of development is on the master branch of the `fw-nrfconnect-nrf`_ repository.
-   To ensure a usable state, the `fw-nrfconnect-nrf`_ repository defines the compatible states of the other repositories.
+   The latest state of development is on the master branch of the `sdk-nrf`_ repository.
+   To ensure a usable state, the `sdk-nrf`_ repository defines the compatible states of the other repositories.
    However, this state is not necessarily tested.
    For a higher degree of quality assurance, check out a tagged release.
 
    Therefore, unless you are familiar with the development process, you should always work with a specific release of the |NCS|.
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`zephyr:west`.
-The main repository, `fw-nrfconnect-nrf`_, contains a `west manifest file`_, :file:`west.yml`, that determines the revision of all other repositories.
-This means that fw-nrfconnect-nrf acts as the :ref:`manifest repository <zephyr:west-multi-repo>`, while the other repositories are project repositories.
+The main repository, `sdk-nrf`_, contains a `west manifest file`_, :file:`west.yml`, that determines the revision of all other repositories.
+This means that sdk-nrf acts as the :ref:`manifest repository <zephyr:west-multi-repo>`, while the other repositories are project repositories.
 
 You can find additional information about the repository and development model in the :ref:`development model section <dev-model>`.
 
@@ -235,7 +235,7 @@ To clone the repositories, complete the following steps:
      .. parsed-literal::
         :class: highlight
 
-        west init -m https\://github.com/NordicPlayground/fw-nrfconnect-nrf --mr *NCS_version*
+        west init -m https\://github.com/nrfconnect/sdk-nrf --mr *NCS_version*
 
      .. note::
         * West was introduced after |NCS| v0.3.0.
@@ -248,19 +248,19 @@ To clone the repositories, complete the following steps:
      .. parsed-literal::
         :class: highlight
 
-        west init -m https\://github.com/NordicPlayground/fw-nrfconnect-nrf
+        west init -m https\://github.com/nrfconnect/sdk-nrf
 
    * More generally, to check out an arbitrary revision, enter the following command, replacing *NCS_revision* with the revision that you want to check out:
 
      .. parsed-literal::
         :class: highlight
 
-        west init -m https\://github.com/NordicPlayground/fw-nrfconnect-nrf --mr *NCS_revision*
+        west init -m https\://github.com/nrfconnect/sdk-nrf --mr *NCS_revision*
 
      .. note::
         *NCS_revision* can be a branch (for example, ``master``), a tag (for example, ``v1.2.0``), or even a SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``). When not specified, it defaults to ``master``.
 
-   This will clone the manifest repository `fw-nrfconnect-nrf`_ into :file:`nrf`.
+   This will clone the manifest repository `sdk-nrf`_ into :file:`nrf`.
 
 #. Enter the following command to clone the project repositories::
 
@@ -288,7 +288,7 @@ If you work with a specific release of the |NCS|, you do not need to update your
 However, you might want to switch to a newer release or check out the latest state of development.
 
 To manage the ``nrf`` repository (the manifest repository), use Git.
-To make sure that you have the latest changes, run ``git fetch origin`` to :ref:`fetch the latest code <dm-wf-update-ncs>` from the `fw-nrfconnect-nrf`_ repository.
+To make sure that you have the latest changes, run ``git fetch origin`` to :ref:`fetch the latest code <dm-wf-update-ncs>` from the `sdk-nrf`_ repository.
 Checking out a branch or tag in the ``nrf`` repository gives you a different version of the manifest file.
 Running ``west update`` will then update the project repositories to the state specified in this manifest file.
 For example, to switch to release v1.2.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::

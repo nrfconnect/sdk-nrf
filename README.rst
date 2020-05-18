@@ -1,5 +1,4 @@
-
-nRF Connect SDK: fw-nrfconnect-nrf
+nRF Connect SDK: sdk-nrf
 ##################################
 
 This repository contains the Nordic-specific source code additions to open
@@ -8,10 +7,10 @@ It must be combined with nrfxlib and the repositories that use the same
 naming convention to build the provided samples and to use the additional
 subsystems and libraries.
 
-The following repositories must be combined with fw-nrfconnect-nrf:
+The following repositories must be combined with sdk-nrf:
 
-* fw-nrfconnect-zephyr
-* fw-nrfconnect-mcuboot
+* sdk-zephyr
+* sdk-mcuboot
 * nrfxlib
 
 Documentation

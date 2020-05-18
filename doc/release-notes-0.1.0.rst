@@ -23,13 +23,13 @@ Repositories
 
    * - Component
      - Tag
-   * - `fw-nrfconnect-nrf <https://github.com/NordicPlayground/fw-nrfconnect-nrf>`_
+   * - `sdk-nrf <https://github.com/nrfconnect/sdk-nrf>`_
      - v0.1.0
-   * - `nrfxlib <https://github.com/NordicPlayground/nrfxlib>`_
+   * - `nrfxlib <https://github.com/nrfconnect/nrfxlib>`_
      - v0.1.0
-   * - `fw-nrfconnect-zephyr <https://github.com/NordicPlayground/fw-nrfconnect-zephyr>`_
+   * - `sdk-zephyr <https://github.com/nrfconnect/sdk-zephyr>`_
      - v1.13.99-ncs1
-   * - `fw-nrfconnect-mcuboot <https://github.com/NordicPlayground/fw-nrfconnect-mcuboot>`_
+   * - `sdk-mcuboot <https://github.com/nrfconnect/sdk-mcuboot>`_
      - v1.2.99-ncs1
 
 

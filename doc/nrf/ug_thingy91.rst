@@ -265,7 +265,7 @@ To build and program the source code from the command line, complete the followi
 #. Go to the specific sample or application directory.
    For example, the folder path is ``ncs/nrf/applications/asset_tracker`` when building the source code for the :ref:`asset_tracker` application on the nRF9160 SiP component and ``ncs/nrf/samples/usb/usb_uart_bridge`` when building the source code for the :ref:`usb_uart_bridge_sample` sample on the nRF52840 SoC component.
 
-#. Make sure that you have the required version of the |NCS| repository by pulling the |NCS| repository, `fw-nrfconnect-nrf`_ on GitHub using the procedures described in :ref:`dm-wf-get-ncs` and :ref:`dm-wf-update-ncs`.
+#. Make sure that you have the required version of the |NCS| repository by pulling the |NCS| repository, `sdk-nrf`_ on GitHub using the procedures described in :ref:`dm-wf-get-ncs` and :ref:`dm-wf-update-ncs`.
 
 #. To get the rest of the dependencies, run the ``west update`` command as follows:
 
