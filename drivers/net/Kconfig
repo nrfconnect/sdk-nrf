@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-# Kconfig - Ethernet over RTT driver configuration options
+# Ethernet over RTT driver configuration options
 
 if HAS_SEGGER_RTT
 
