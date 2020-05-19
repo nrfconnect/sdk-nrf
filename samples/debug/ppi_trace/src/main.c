@@ -16,14 +16,13 @@ LOG_MODULE_REGISTER(app);
 
 #define ALARM_PERIOD_US 50000
 
-#define RTC COND_CODE_1(CONFIG_USE_RTC2, (NRF_RTC2), (NRF_RTC0))
-
-#define RTC_LABEL \
-	COND_CODE_1( \
-		CONFIG_USE_RTC2, \
-		(DT_NORDIC_NRF_RTC_RTC_2_LABEL), \
-		(DT_NORDIC_NRF_RTC_RTC_0_LABEL) \
-	)
+#if IS_ENABLED(CONFIG_USE_RTC2)
+#define RTC       NRF_RTC2
+#define RTC_LABEL DT_LABEL(DT_NODELABEL(rtc2))
+#else
+#define RTC       NRF_RTC0
+#define RTC_LABEL DT_LABEL(DT_NODELABEL(rtc0))
+#endif
 
 static void alarm_callback(struct device *dev, u8_t chan_id, u32_t ticks,
 			   void *user_data);
