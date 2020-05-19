@@ -2,7 +2,7 @@ sample:
   name: BLE Gatt Discovery
   description: Bluetooth Low Energy Gatt client discovery manager sample
 tests:
-  test_build:
+  samples.bluetooth.peripheral_gatt_dm:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52dk_nrf52810 nrf5340pdk_nrf5340_cpuapp

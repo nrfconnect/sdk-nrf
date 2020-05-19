@@ -2,7 +2,7 @@ sample:
   name: EnOcean
   description: Sample demonstrating basic usage of the EnOcean library
 tests:
-  test_build:
+  samples.bluetooth.enocean:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840

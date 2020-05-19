@@ -1,7 +1,7 @@
 sample:
   name: nrf LwM2M Sample
 tests:
-  test_build:
+  samples.nrf9160.lwm2m_client:
     build_only: true
     build_on_all: true
     extra_args: OVERLAY_CONFIG=overlay-ci.conf
