@@ -27,7 +27,8 @@
 #include <pm_config.h>
 #define NON_SECURE_APP_ADDRESS PM_APP_ADDRESS
 #else
-#define NON_SECURE_APP_ADDRESS DT_FLASH_AREA_IMAGE_0_NONSECURE_OFFSET_0
+#include <storage/flash_map.h>
+#define NON_SECURE_APP_ADDRESS FLASH_AREA_ID(image_0_nonsecure)
 #endif /* USE_PARTITION_MANAGER */
 
 /* This reflects the configuration in DTS. */
