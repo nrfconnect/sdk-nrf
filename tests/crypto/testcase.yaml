@@ -1,15 +1,15 @@
 tests:
-  test_sw:
+  crypto.sw:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-backend-sw.conf
     platform_whitelist: nrf52840dk_nrf52840
     tags: crypto ci_build
-  test_hw:
+  crypto.hw:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-backend-hw.conf
     platform_whitelist: nrf52840dk_nrf52840
     tags: crypto ci_build
-  test_sw_hw:
+  crypto.sw_hw:
     build_only: true
     extra_args: OVERLAY_CONFIG=overlay-backend-hw-sw.conf
     platform_whitelist: nrf52840dk_nrf52840
