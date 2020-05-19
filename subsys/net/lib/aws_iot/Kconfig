@@ -30,14 +30,14 @@ config AWS_IOT_PORT
 
 config AWS_IOT_MQTT_RX_TX_BUFFER_LEN
 	int "Buffer sizes for the MQTT library."
-	default 256
+	default 1000
 	help
 	  Specifies maximum message size can be transmitted/received through
 	  MQTT (exluding MQTT PUBLISH payload).
 
 config AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN
 	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)."
-	default 256
+	default 1000
 
 config AWS_IOT_IPV6
 	bool "Configure AWS IoT library to use IPv6 addressing. Otherwise IPv4 is used."
