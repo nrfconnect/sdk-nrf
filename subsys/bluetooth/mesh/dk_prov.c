@@ -46,7 +46,7 @@ static int output_number(bt_mesh_output_action_t action, u32_t number)
 		oob_toggles = number * 2;
 		oob_toggle_count = 0;
 		k_delayed_work_init(&oob_work, oob_blink_toggle);
-		k_delayed_work_submit(&oob_work, 0);
+		k_delayed_work_submit(&oob_work, K_NO_WAIT);
 		return 0;
 	}
 
