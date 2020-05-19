@@ -137,6 +137,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case TLS_DTLS_ROLE:
 			*nrf_out_optname = NRF_SO_SEC_ROLE;
 			break;
+		case TLS_SESSION_CACHE:
+			*nrf_out_optname = NRF_SO_SEC_SESSION_CACHE;
+			break;
 		default:
 			retval = -1;
 			break;
@@ -650,6 +653,8 @@ static int nrf91_socket_offload_setsockopt(void *obj, int level, int optname,
 		nrf_rcvtimeo.tv_usec = ((struct timeval *)optval)->tv_usec;
 		nrf_optval = &nrf_rcvtimeo;
 		nrf_optlen = sizeof(struct nrf_timeval);
+	} else if ((level == SOL_TLS) && (optname == TLS_SESSION_CACHE)) {
+		nrf_optlen = sizeof(nrf_sec_session_cache_t);
 	}
 
 	retval = nrf_setsockopt(sd, nrf_level, nrf_optname, nrf_optval,
