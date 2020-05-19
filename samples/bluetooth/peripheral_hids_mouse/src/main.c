@@ -721,7 +721,7 @@ void button_changed(u32_t button_state, u32_t has_changed)
 			return;
 		}
 		if (k_msgq_num_used_get(&hids_queue) == 1) {
-			k_delayed_work_submit(&hids_work, 0);
+			k_delayed_work_submit(&hids_work, K_NO_WAIT);
 		}
 	}
 }
