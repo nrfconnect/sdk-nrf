@@ -2,7 +2,7 @@ sample:
   name: Zigbee Light control
   description: Zigbee Light control - light bulb sample
 tests:
-  test_build:
+  zigbee.light_bulb:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833

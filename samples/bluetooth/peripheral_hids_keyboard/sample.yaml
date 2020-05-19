@@ -2,11 +2,11 @@ sample:
   name: BLE HIDS keyboard sample
   description: Bluetooth Low Energy Human Interface Device keyboard sample
 tests:
-  test:
+  samples.bluetooth.peripheral_hids_keyboard:
     harness: bluetooth
     platform_whitelist: nrf52dk_nrf52832 nrf52840dk_nrf52840
     tags: bluetooth
-  test_build:
+  samples.bluetooth.peripheral_hids_keyboard.build:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp

@@ -2,7 +2,7 @@ sample:
   name: BLE LED Button service
   description: Bluetooth Low Energy LED Button service sample
 tests:
-  test_build:
+  samples.bluetooth.peripheral_lbs:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52dk_nrf52810 nrf5340pdk_nrf5340_cpuapp

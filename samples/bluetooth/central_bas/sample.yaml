@@ -2,11 +2,11 @@ sample:
   name: BLE Central BAS
   description: Bluetooth Low Energy central battery service sample
 tests:
-  test:
+  samples.bluetooth.central_bas:
     platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840
     harness: bluetooth
     tags: bluetooth
-  test_build:
+  samples.bluetooth.central_bas.build:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp
