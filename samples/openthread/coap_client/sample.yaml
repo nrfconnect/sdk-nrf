@@ -2,6 +2,6 @@ sample:
   description: Test CoAP communication in Thread network
   name: Openthread CoAP Client
 tests:
-  sample.openthread.coap_client:
+  samples.openthread.coap_client:
     tags: net openthread coap
     platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833

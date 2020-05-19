@@ -2,7 +2,7 @@ sample:
   name: BLE LLPM
   description: Buetooth Low Energy LLPM sample
 tests:
-  test_build:
+  samples.bluetooth.llpm:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp

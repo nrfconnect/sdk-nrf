@@ -2,7 +2,7 @@ sample:
   name: BT NUS shell
   description: BT NUS shell sample
 tests:
-  test_build:
+  samples.bluetooth.shell_bt_nus:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp

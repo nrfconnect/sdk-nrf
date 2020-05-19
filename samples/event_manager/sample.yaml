@@ -2,7 +2,7 @@ sample:
   description: Sample showing Event Manager usage
   name: Event Manager sample
 tests:
-  test_build:
+  samples.event_manager:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf52dk_nrf52832 nrf52840dk_nrf52840

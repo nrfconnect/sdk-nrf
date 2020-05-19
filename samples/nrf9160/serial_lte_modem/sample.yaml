@@ -1,7 +1,7 @@
 sample:
   name: serial lte modem sample
 tests:
-  test_build:
+  samples.nrf9160.serial_lte_modem:
     build_only: true
     build_on_all: true
     platform_whitelist: nrf9160dk_nrf9160ns
