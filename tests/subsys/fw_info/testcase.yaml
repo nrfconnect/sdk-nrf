@@ -1,3 +1,3 @@
 tests:
-  fw_info:
+  fw_info.core:
     platform_whitelist: nrf9160dk_nrf9160 nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf51dk_nrf51422
