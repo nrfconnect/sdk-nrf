@@ -8,9 +8,9 @@
 menuconfig NRF9160_GPS
 	bool "nRF9160 GPS driver [experimental]"
 	depends on BSD_LIBRARY
-	# FP_SHARING needs to be enabled if FLOAT is enabled, as other contexts
+	# FPU_SHARING needs to be enabled if FPU is enabled, as other contexts
 	# might also use the FPU.
-	select FP_SHARING if FLOAT
+	select FPU_SHARING if FPU
 	help
 	  Enable nRF9160 GPS driver.
 

@@ -8,8 +8,8 @@ menu "BSD Library for nrf91"
 config BSD_LIBRARY
 	bool
 	prompt "Use BSD Socket library for IP/TLS/DTLS"
-	select FLOAT
-	select FP_SHARING
+	select FPU
+	select FPU_SHARING
 	imply NET_SOCKETS_OFFLOAD
 	depends on TRUSTED_EXECUTION_NONSECURE
 	help
