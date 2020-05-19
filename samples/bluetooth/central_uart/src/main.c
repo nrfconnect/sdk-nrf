@@ -34,7 +34,7 @@
 #define KEY_PASSKEY_ACCEPT DK_BTN1_MSK
 #define KEY_PASSKEY_REJECT DK_BTN2_MSK
 
-#define NUS_WRITE_TIMEOUT 150
+#define NUS_WRITE_TIMEOUT K_MSEC(150)
 
 static struct device *uart;
 static bool rx_disabled;
@@ -336,7 +336,7 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 
 static int uart_init(void)
 {
-	uart = device_get_binding(DT_UART_0_NAME);
+	uart = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 	if (!uart) {
 		printk("UART binding failed\n");
 		return -ENXIO;

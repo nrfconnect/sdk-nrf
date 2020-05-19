@@ -6,7 +6,7 @@
 
 menuconfig ZIGBEE
 	bool "Enable Zigbee stack"
-	imply FLOAT
+	imply FPU
 	select APP_LINK_WITH_ZBOSS
 	imply COUNTER
 	imply COUNTER_TIMER3

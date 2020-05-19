@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-if(CONFIG_FLOAT)
+if(CONFIG_FPU)
   if(CONFIG_FP_HARDABI)
     set(float_dir hard-float)
   elseif(CONFIG_FP_SOFTABI)

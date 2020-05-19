@@ -7,9 +7,9 @@
 
 menuconfig SENSOR_SIM
 	bool "Sensor simulator"
-	# FP_SHARING needs to be enabled if FLOAT is enabled, as other contexts
+	# FPU_SHARING needs to be enabled if FPU is enabled, as other contexts
 	# might also use the FPU.
-	select FP_SHARING if FLOAT
+	select FPU_SHARING if FPU
 	help
 	  Enable sensor simulator.
 
