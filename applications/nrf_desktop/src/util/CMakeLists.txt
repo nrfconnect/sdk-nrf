@@ -7,7 +7,7 @@ target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE app
 			PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/config_channel.c)
 
 if(CONFIG_DESKTOP_BLE_QOS_ENABLE)
-  if(CONFIG_FLOAT)
+  if(CONFIG_FPU)
     if(CONFIG_FP_HARDABI)
       set(float_dir hard-float)
     elseif(CONFIG_FP_SOFTABI)

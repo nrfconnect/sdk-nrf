@@ -52,7 +52,7 @@ config SPM_SERVICE_RNG
 	bool "Request random numbers"
 	default y
 	select NORDIC_SECURITY_BACKEND
-	select FLOAT
+	select FPU
 
 # NORDIC_SECURITY_BACKEND is not supported on 53 yet
 	depends on ! SOC_NRF5340_CPUAPP

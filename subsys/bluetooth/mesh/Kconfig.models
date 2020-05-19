@@ -204,7 +204,7 @@ if BT_MESH_LIGHT_CTRL_SRV
 
 menuconfig BT_MESH_LIGHT_CTRL_SRV_REG
 	bool "Lightness Regulator"
-	depends on FLOAT
+	depends on FPU
 	default y
 	help
 	  Enable the Lightness PI Regulator for controlling the lightness level
