@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-# Kconfig - cJSON Library for Zephyr
+# cJSON Library for Zephyr
 
 config  CJSON_LIB
 	bool "cJSON library"

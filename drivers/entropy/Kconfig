@@ -1,4 +1,4 @@
-# Kconfig - Arm CC310 entropy driver for nRF52840 and nRF9160
+# Arm CC310 entropy driver for nRF52840 and nRF9160
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
