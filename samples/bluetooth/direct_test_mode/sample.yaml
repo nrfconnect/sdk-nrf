@@ -1,0 +1,9 @@
+sample:
+  name: Bluetooth LE Direct Test Mode
+  description: Bluetooth Low Energy Direct Test Mode sample
+tests:
+  samples.bluetooth.direct_test_mode:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf5340pdk_nrf5340_cpunet
+    tags: bluetooth ci_build
