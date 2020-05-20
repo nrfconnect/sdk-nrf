@@ -36,8 +36,8 @@ enum state {
 };
 
 static const u32_t qdec_pin[] = {
-	DT_NORDIC_NRF_QDEC_QDEC_0_A_PIN,
-	DT_NORDIC_NRF_QDEC_QDEC_0_B_PIN
+	DT_PROP(DT_NODELABEL(qdec), a_pin),
+	DT_PROP(DT_NODELABEL(qdec), b_pin)
 };
 
 static const struct sensor_trigger qdec_trig = {
@@ -167,7 +167,7 @@ static void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb,
 static int setup_wakeup(void)
 {
 	int err = gpio_pin_configure(gpio_dev,
-				     DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN,
+				     DT_PROP(DT_NODELABEL(qdec), enable_pin),
 				     GPIO_OUTPUT);
 	if (err) {
 		LOG_ERR("Cannot configure enable pin");
@@ -175,7 +175,7 @@ static int setup_wakeup(void)
 	}
 
 	err = gpio_pin_set_raw(gpio_dev,
-			       DT_NORDIC_NRF_QDEC_QDEC_0_ENABLE_PIN, 0);
+			       DT_PROP(DT_NODELABEL(qdec), enable_pin), 0);
 	if (err) {
 		LOG_ERR("Failed to set enable pin");
 		return err;
@@ -284,7 +284,7 @@ static int init(void)
 		k_delayed_work_init(&idle_timeout, idle_timeout_fn);
 	}
 
-	qdec_dev = device_get_binding(DT_NORDIC_NRF_QDEC_QDEC_0_LABEL);
+	qdec_dev = device_get_binding(DT_LABEL(DT_NODELABEL(qdec)));
 	if (!qdec_dev) {
 		LOG_ERR("Cannot get QDEC device");
 		return -ENXIO;

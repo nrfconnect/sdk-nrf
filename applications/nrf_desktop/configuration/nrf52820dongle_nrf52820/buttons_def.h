@@ -18,5 +18,5 @@ const struct {} buttons_def_include_once;
 static const struct gpio_pin col[] = {};
 
 static const struct gpio_pin row[] = {
-	{ .port = 0, .pin = DT_ALIAS_SW0_GPIOS_PIN },
+	{ .port = 0, .pin = DT_GPIO_PIN(DT_ALIAS(sw0), gpios) },
 };
