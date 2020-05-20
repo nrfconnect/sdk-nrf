@@ -53,7 +53,7 @@ static void activate_provisioning(struct k_work *item)
 	ot_coap_activate_provisioning();
 
 	k_timer_start(&led_timer, K_MSEC(100), K_MSEC(100));
-	k_timer_start(&provisioning_timer, K_SECONDS(5), 0);
+	k_timer_start(&provisioning_timer, K_SECONDS(5), K_NO_WAIT);
 
 	LOG_INF("Provisioning activated");
 }
