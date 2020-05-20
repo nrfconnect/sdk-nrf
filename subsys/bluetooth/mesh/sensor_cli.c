@@ -9,6 +9,8 @@
 #include <bluetooth/mesh/properties.h>
 #include "model_utils.h"
 #include "sensor.h"
+#include "mesh/net.h"
+#include "mesh/transport.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_MESH_DEBUG_MODEL)
 #define LOG_MODULE_NAME bt_mesh_sensor_cli
@@ -395,7 +397,7 @@ static void handle_settings_status(struct bt_mesh_model *mod,
 	}
 
 	/* The list may be unaligned: */
-	u16_t ids[(CONFIG_BT_MESH_RX_SDU_MAX -
+	u16_t ids[(BT_MESH_RX_SDU_MAX -
 		   BT_MESH_MODEL_OP_LEN(BT_MESH_SENSOR_OP_SETTINGS_STATUS) -
 		   2) /
 		  sizeof(u16_t)];
