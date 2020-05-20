@@ -105,6 +105,7 @@
 
 .. _`nRF Connect for Cloud Certificate Update`: https://devzone.nordicsemi.com/nordic/cellular-iot-guides/b/getting-started-cellular/posts/nrf-cloud-certificate-update
 
+.. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
 
 .. ### Links to Nordic software
 
@@ -234,6 +235,9 @@
 
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
 
+.. ### Links to radio driver specs
+
+.. _`802.15.2-2003 specification`: https://standards.ieee.org/standard/802_15_2-2003.html
 
 .. ### Links to OpenThread
 

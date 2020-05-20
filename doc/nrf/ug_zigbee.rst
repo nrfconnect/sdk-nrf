@@ -48,8 +48,8 @@ The files that handle the OSIF integration are located in :file:`subsys/zigbee/o
 
 .. _zigbee_ug_configuration:
 
-Configuration
-*************
+Mandatory configuration
+***********************
 
 To use the Zigbee protocol, set the :option:`CONFIG_ZIGBEE` Kconfig option.
 Setting this option enables all the peripherals required for the correct operation of the Zigbee protocol and allows you to use them.
@@ -98,8 +98,8 @@ The sleep current of MCU can be lowered to about 1.8 uA by completing the follow
 #. Enable Zephyr's tickless kernel by setting :option:`CONFIG_TICKLESS_KERNEL` to ``y``.
 #. For current measurements for |nRF52840DK| or |nRF52833DK|, set **SW6** to ``nRF ONLY`` position to get the desired results.
 
-Additional options
-==================
+Optional configuration
+**********************
 
 After enabling the Zigbee protocol and defining the Zigbee device role, you can enable additional options in Kconfig and modify `Stack configuration options`_.
 
@@ -118,7 +118,7 @@ You can enable the following additional configuration options:
 * :option:`CONFIG_ZIGBEE_CLI_LOG_ENABLED` - Enables logging of the incoming ZCL frames, and it is enabled by default.
 
 Stack configuration options
----------------------------
+===========================
 
 Zigbee is initialized after Zephyr's kernel start.
 The ZBOSS stack works on a separate Zephyr thread that is created and started with :cpp:func:`zigbee_enable`.
@@ -130,13 +130,13 @@ The ZBOSS thread can be configured using the following options:
 * :option:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE` - Defines the size of the thread stack; set to 2048 by default.
 
 Custom logging per module
--------------------------
+=========================
 
 Logging is handled with the :option:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging_api` API.
 
 Stack logs
-~~~~~~~~~~
+----------
 
 The stack logs are independent from Zephyr's :ref:`zephyr:logging_api` API.
 To customize them, use the following options:
@@ -147,7 +147,7 @@ To customize them, use the following options:
 The stack logs are provided in a binary (hex dump) format.
 
 Zephyr's logger options
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Zephyr's :ref:`zephyr:logging_api` starts with the default ``ERR`` logging level (only errors reported).
 This level is used by default by the application.
@@ -170,6 +170,15 @@ For each of the modules, you can set the following logging options:
 
 For example, setting :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF` will enable logging of informational messages, errors, and warnings for the ZBOSS Trace module.
 
+.. _zigbee_ug_radio_options:
+
+Radio antenna options
+=====================
+
+.. include:: ug_thread.rst
+    :start-after: ug_thread_radio_start
+    :end-before: ug_thread_radio_end
+
 .. _zigbee_ug_available:
 
 Available drivers, libraries, and samples
@@ -187,6 +196,5 @@ When working with Zigbee in |NCS|, you can use the following tools during Zigbee
 * `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
 
 Using Zigbee tools is optional.
-
 
 .. |zboss_lib| replace:: The |NCS|'s Zigbee protocol uses the ZBOSS library, a third-party precompiled Zigbee stack.

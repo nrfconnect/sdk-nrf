@@ -25,6 +25,7 @@
 .. |nRF52DK| replace:: nRF52 DK board (PCA10040)
 .. |nRF52840Dongle| replace:: nRF52840 Dongle (PCA10059)
 .. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
+.. |nRF21540DK| replace:: nRF21540 DK board (PCA10112)
 
 .. |fota_upgrades_def| replace:: You can upgrade the firmware of the device over the air, thus without a wired connection.
    Such an upgrade is called a FOTA (firmware over-the-air) upgrade.
