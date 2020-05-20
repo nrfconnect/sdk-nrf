@@ -11,6 +11,10 @@
 	status = "okay";
 	ch0-pin = <41>;
 	ch0-inverted;
+	/delete-property/ ch1-pin;
+	/delete-property/ ch1-inverted;
+	/delete-property/ ch2-pin;
+	/delete-property/ ch2-inverted;
 };
 &pwm1 {
 	status = "okay";
