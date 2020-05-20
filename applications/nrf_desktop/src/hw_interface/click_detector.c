@@ -18,10 +18,10 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CLICK_DETECTOR_LOG_LEVEL);
 
-#define CLICK_CHECK_PERIOD	K_MSEC(100)
+#define CLICK_CHECK_PERIOD	100 /* ms */
 
-#define SHORT_CLICK_MAX		K_MSEC(500)
-#define LONG_CLICK_MIN		K_MSEC(5000)
+#define SHORT_CLICK_MAX		500 /* ms */
+#define LONG_CLICK_MIN		5000 /*ms */
 
 #define TIMER_INACTIVE		-1
 
@@ -117,7 +117,7 @@ static void click_check_fn(struct k_work *work)
 	}
 
 	if (any_processed) {
-		k_delayed_work_submit(&click_check, CLICK_CHECK_PERIOD);
+		k_delayed_work_submit(&click_check, K_MSEC(CLICK_CHECK_PERIOD));
 	}
 }
 
@@ -149,13 +149,14 @@ static void process_key(struct key_state *key, u16_t key_id, bool pressed)
 			key->click_short_timeout = TIMER_INACTIVE;
 		} else {
 			key->click_short_timeout = SHORT_CLICK_MAX;
-			k_delayed_work_submit(&click_check, CLICK_CHECK_PERIOD);
+			k_delayed_work_submit(&click_check,
+					      K_MSEC(CLICK_CHECK_PERIOD));
 		}
 
 		key->pressed_time = TIMER_INACTIVE;
 	} else if (pressed) {
 		key->pressed_time = 0;
-		k_delayed_work_submit(&click_check, CLICK_CHECK_PERIOD);
+		k_delayed_work_submit(&click_check, K_MSEC(CLICK_CHECK_PERIOD));
 	}
 }
 

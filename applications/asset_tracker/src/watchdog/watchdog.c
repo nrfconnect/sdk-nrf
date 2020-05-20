@@ -11,7 +11,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(watchdog, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 
-#define WDT_FEED_WORKER_DELAY_MS ((CONFIG_ASSET_TRACKER_WATCHDOG_TIMEOUT_MSEC)/2)
+#define WDT_FEED_WORKER_DELAY_MS \
+	((CONFIG_ASSET_TRACKER_WATCHDOG_TIMEOUT_MSEC)/2)
 
 struct wdt_data_storage {
 	struct device *wdt_drv;

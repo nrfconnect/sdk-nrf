@@ -91,7 +91,8 @@ static void cs_change(struct device *gpio_dev, struct gpio_callback *cb,
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 	if (cso_counter == 0) {
-		k_delayed_work_submit(&error_check, ERROR_CHECK_TIMEOUT_MS);
+		k_delayed_work_submit(&error_check,
+				      K_MSEC(ERROR_CHECK_TIMEOUT_MS));
 	}
 	cso_counter++;
 	k_spin_unlock(&lock, key);
@@ -139,7 +140,8 @@ static int start_battery_state_check(void)
 	if (!err) {
 		/* Lock is not needed as interrupt is disabled */
 		cso_counter = 1;
-		k_delayed_work_submit(&error_check, ERROR_CHECK_TIMEOUT_MS);
+		k_delayed_work_submit(&error_check,
+				      K_MSEC(ERROR_CHECK_TIMEOUT_MS));
 
 		err = gpio_pin_interrupt_configure(gpio_dev,
 					CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN,
