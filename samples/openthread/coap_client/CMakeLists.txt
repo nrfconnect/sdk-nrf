@@ -17,4 +17,4 @@ project(openthread_coap_client)
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
 
-target_include_directories(app PUBLIC ../coap_interface)
+target_include_directories(app PRIVATE ../coap_server/interface)
