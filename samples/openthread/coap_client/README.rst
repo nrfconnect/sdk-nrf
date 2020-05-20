@@ -133,10 +133,17 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`dk_buttons_and_leds_readme`
+* :ref:`coap_utils_readme`
 
 In addition, it uses the following Zephyr libraries:
 
-* :ref:`CoAP <zephyr:coap_sock_interface>`
+* :ref:`zephyr:coap_sock_interface`
+
+  * ``include/net/coap.h``
+
+* :ref:`zephyr:logging_api`:
+
+  * ``include/logging/log.h``
 
 * :ref:`zephyr:kernel_api`:
 
