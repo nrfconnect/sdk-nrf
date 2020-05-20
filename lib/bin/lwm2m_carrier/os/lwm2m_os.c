@@ -26,15 +26,17 @@
 #include <errno.h>
 #include <nrf_errno.h>
 #include <modem/modem_key_mgmt.h>
+#include <storage/flash_map.h>
 
 /* NVS-related defines */
 
 /* Multiple of FLASH_PAGE_SIZE */
-#define NVS_SECTOR_SIZE DT_FLASH_ERASE_BLOCK_SIZE
+#define NVS_SECTOR_SIZE DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)
 /* At least 2 sectors */
 #define NVS_SECTOR_COUNT 3
 /* Start address of the filesystem in flash */
-#define NVS_STORAGE_OFFSET DT_FLASH_AREA_STORAGE_OFFSET
+#define NVS_STORAGE_OFFSET \
+	DT_REG_ADDR(DT_NODE_BY_FIXED_PARTITION_LABEL(storage))
 
 static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
@@ -45,7 +47,7 @@ static struct nvs_fs fs = {
 int lwm2m_os_init(void)
 {
 	/* Initialize storage */
-	return nvs_init(&fs, DT_FLASH_DEV_NAME);
+	return nvs_init(&fs, DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL);
 }
 
 /* Memory management. */
@@ -135,7 +137,7 @@ static int32_t get_timeout_value(int32_t timeout,
 	 * max_timeout_ms = (int max - 1 / ticks per sec) * 1000
 	 */
 	static const int32_t max_timeout_ms =
-		K_SECONDS((INT32_MAX - 1) / CONFIG_SYS_CLOCK_TICKS_PER_SEC);
+		(INT32_MAX - 1) / CONFIG_SYS_CLOCK_TICKS_PER_SEC * MSEC_PER_SEC;
 
 	/* Avoid requesting timeouts larger than max_timeout_ms,
 	 * or they will expire immediately.
