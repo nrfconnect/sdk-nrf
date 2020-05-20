@@ -16,10 +16,6 @@
 
 /** Delay field step factor in milliseconds */
 #define DELAY_TIME_STEP_MS (5)
-/** Maximum encoded value of the delay field */
-#define DELAY_TIME_STEP_MAX (0xFF)
-/** Maximum permisible delay time in milliseconds */
-#define DELAY_TIME_MAX_MS (DELAY_TIME_STEP_MAX * DELAY_TIME_STEP_FACTOR_MS)
 
 #define MOD_ACKD_TIMEOUT_BASE 200
 #define MOD_ACKD_TIMEOUT_PER_HOP 50
@@ -44,10 +40,10 @@ int tid_check_and_update(struct bt_mesh_tid_ctx *prev_transaction, u8_t tid,
 }
 
 static const u32_t model_transition_res[] = {
-	K_MSEC(100),
-	K_SECONDS(1),
-	K_SECONDS(10),
-	K_MINUTES(10),
+	100,
+	1 * MSEC_PER_SEC,
+	10 * MSEC_PER_SEC,
+	60 * 10 * MSEC_PER_SEC,
 };
 
 s32_t model_transition_decode(u8_t encoded_transition)
@@ -56,7 +52,7 @@ s32_t model_transition_decode(u8_t encoded_transition)
 	u8_t res = (encoded_transition >> 6);
 
 	return (steps == TRANSITION_TIME_UNKNOWN) ?
-		       K_FOREVER :
+		       SYS_FOREVER_MS :
 		       (model_transition_res[res] * steps);
 }
 
@@ -65,7 +61,7 @@ u8_t model_transition_encode(s32_t transition_time)
 	if (transition_time == 0) {
 		return 0;
 	}
-	if (transition_time == K_FOREVER) {
+	if (transition_time == SYS_FOREVER_MS) {
 		return TRANSITION_TIME_UNKNOWN;
 	}
 
@@ -78,10 +74,10 @@ u8_t model_transition_encode(s32_t transition_time)
 	 * ((0x3e * res[i]) + (((0x3e * res[i]) / res[i+1]) + 1) * res[i+1])/2.
 	 */
 	const s32_t limits[] = {
-		K_MSEC(6600),
-		K_SECONDS(66),
-		K_SECONDS(910),
-		K_MINUTES(620),
+		6600,
+		66 * MSEC_PER_SEC,
+		910 * MSEC_PER_SEC,
+		60 * 620 * MSEC_PER_SEC,
 	};
 
 	for (u8_t i = 0; i < ARRAY_SIZE(model_transition_res); ++i) {

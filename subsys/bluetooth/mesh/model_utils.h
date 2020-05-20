@@ -95,7 +95,7 @@ static inline bool model_ack_match(const struct bt_mesh_model_ack_ctx *ack_ctx,
 static inline int model_ack_wait(struct bt_mesh_model_ack_ctx *ack,
 				 s32_t timeout)
 {
-	int status = k_sem_take(&ack->sem, timeout);
+	int status = k_sem_take(&ack->sem, K_MSEC(timeout));
 
 	ack->op = 0;
 	return status;
