@@ -20,15 +20,16 @@ static struct button_handler button_handler;
 
 static void oob_blink_toggle(struct k_work *work)
 {
+	struct k_delayed_work *delayed_work =
+		CONTAINER_OF(work, struct k_delayed_work, work);
+
 	dk_set_leds(((oob_toggle_count++) & 0x01) ? DK_NO_LEDS_MSK :
 						    DK_ALL_LEDS_MSK);
 	if (oob_toggle_count == oob_toggles) {
 		oob_toggle_count = 0;
-		k_delayed_work_submit(
-			CONTAINER_OF(work, struct k_delayed_work, work), 3000);
+		k_delayed_work_submit(delayed_work, K_SECONDS(3));
 	} else {
-		k_delayed_work_submit(
-			CONTAINER_OF(work, struct k_delayed_work, work), 250);
+		k_delayed_work_submit(delayed_work, K_MSEC(250));
 	}
 }
 
@@ -82,7 +83,7 @@ static void oob_button_handler(u32_t button_state, u32_t has_changed)
 	dk_set_leds_state(BIT(led) & DK_ALL_LEDS_MSK,
 			  BIT(led - 4) & DK_ALL_LEDS_MSK);
 
-	k_delayed_work_submit(&oob_work, 3000);
+	k_delayed_work_submit(&oob_work, K_SECONDS(3));
 }
 
 static int input(bt_mesh_input_action_t act, u8_t size)

@@ -49,13 +49,13 @@ struct setup_srv_storage_data {
 
 static void restart_timer(struct bt_mesh_light_ctrl_srv *srv, u32_t delay)
 {
-	k_delayed_work_submit(&srv->timer, delay);
+	k_delayed_work_submit(&srv->timer, K_MSEC(delay));
 }
 
 static void reg_start(struct bt_mesh_light_ctrl_srv *srv)
 {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	k_delayed_work_submit(&srv->reg.timer, REG_INT);
+	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
 #endif
 }
 
@@ -113,7 +113,7 @@ static int delayed_change(struct bt_mesh_light_ctrl_srv *srv, bool value,
 	atomic_clear_bit(&srv->flags, FLAG_OFF_PENDING);
 	atomic_clear_bit(&srv->flags, FLAG_OCC_PENDING);
 
-	k_delayed_work_submit(&srv->action_delay, delay);
+	k_delayed_work_submit(&srv->action_delay, K_MSEC(delay));
 
 	return 0;
 }
@@ -123,7 +123,7 @@ static void delayed_occupancy(struct bt_mesh_light_ctrl_srv *srv,
 {
 	int err;
 
-	s32_t ms_since_motion = K_SECONDS(time_since_motion->val1);
+	s32_t ms_since_motion = time_since_motion->val1 * MSEC_PER_SEC;
 
 	if (ms_since_motion > srv->cfg.occupancy_delay) {
 		return;
@@ -508,7 +508,7 @@ static void reg_step(struct k_work *work)
 		light_set(srv, light_to_repr(lvl, LINEAR), REG_INT);
 	}
 
-	k_delayed_work_submit(&srv->reg.timer, REG_INT);
+	k_delayed_work_submit(&srv->reg.timer, K_MSEC(REG_INT));
 }
 #endif
 
