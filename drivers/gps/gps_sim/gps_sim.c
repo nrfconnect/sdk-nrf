@@ -77,7 +77,7 @@ static u8_t nmea_checksum_get(const u8_t *gps_data)
  */
 static double generate_sine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32() / K_MSEC(CONFIG_GPS_SIM_FIX_TIME);
+	u32_t time = k_uptime_get_32() / CONFIG_GPS_SIM_FIX_TIME;
 
 	return offset + amplitude * sin(time % UINT16_MAX);
 }
@@ -91,7 +91,7 @@ static double generate_sine(double offset, double amplitude)
  */
 static double generate_cosine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32() / K_MSEC(CONFIG_GPS_SIM_FIX_TIME);
+	u32_t time = k_uptime_get_32() / CONFIG_GPS_SIM_FIX_TIME;
 
 	return offset + amplitude * cos(time % UINT16_MAX);
 }
@@ -228,7 +228,7 @@ static void start_work_fn(struct k_work *work)
 	drv_data->state = GPS_SIM_ACTIVE_SEARCH;
 	k_delayed_work_submit_to_queue(&drv_data->work_q,
 				       &drv_data->fix_work,
-				       CONFIG_GPS_SIM_FIX_TIME);
+				       K_MSEC(CONFIG_GPS_SIM_FIX_TIME));
 }
 
 static void stop_work_fn(struct k_work *work)
@@ -291,7 +291,7 @@ static void fix_work_fn(struct k_work *work)
 	if (drv_data->cfg.nav_mode == GPS_NAV_MODE_CONTINUOUS) {
 		k_delayed_work_submit_to_queue(&drv_data->work_q,
 					       &drv_data->fix_work,
-					       CONFIG_GPS_SIM_FIX_TIME);
+					       K_MSEC(CONFIG_GPS_SIM_FIX_TIME));
 	} else if (drv_data->cfg.nav_mode == GPS_NAV_MODE_SINGLE_FIX) {
 		drv_data->state = GPS_SIM_IDLE;
 		k_delayed_work_submit_to_queue(&drv_data->work_q,
