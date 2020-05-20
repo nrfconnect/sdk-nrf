@@ -41,30 +41,6 @@ static otCoapResource light_resource = {
 	.mNext = NULL,
 };
 
-static struct otInstance *openthread_get_default_instance(void)
-{
-	struct otInstance *instance = NULL;
-	struct net_if *iface;
-	struct openthread_context *ot_context;
-
-	iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
-	if (!iface) {
-		LOG_ERR("There is no net interface for OpenThread");
-		goto end;
-	}
-
-	ot_context = net_if_l2_data(iface);
-	if (!ot_context) {
-		LOG_ERR("There is no Openthread context in net interface data");
-		goto end;
-	}
-
-	instance = ot_context->instance;
-
-end:
-	return instance;
-}
-
 static otError provisioning_response_send(otMessage *request_message,
 					  const otMessageInfo *message_info)
 {
