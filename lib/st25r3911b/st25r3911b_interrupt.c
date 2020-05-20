@@ -14,14 +14,15 @@
 #include "st25r3911b_reg.h"
 #include "st25r3911b_spi.h"
 #include "st25r3911b_interrupt.h"
+#include "st25r3911b_dt.h"
 
 LOG_MODULE_DECLARE(st25r3911b);
 
 #define IRQ_REG_CNT 3
 #define IRQ_REG_READ_MAX_CNT 5
 
-#define _DO_IRQ_GPIO_PORT(_num) DT_LABEL(DT_NODELABEL(gpio##_num))
-#define IRQ_GPIO_PORT(_num) _DO_IRQ_GPIO_PORT(_num)
+#define IRQ_PORT DT_GPIO_LABEL(ST25R3911B_NODE, irq_gpios)
+#define IRQ_PIN DT_GPIO_PIN(ST25R3911B_NODE, irq_gpios)
 
 static struct gpio_callback gpio_cb;
 static struct device *gpio_dev;
@@ -41,22 +42,21 @@ static int gpio_init(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(
-		IRQ_GPIO_PORT(CONFIG_ST25R3911B_IRQ_PORT));
+	LOG_DBG("Setting up interrupts on %s pin %d", IRQ_PORT, IRQ_PIN);
+
+	gpio_dev = device_get_binding(IRQ_PORT);
 	if (!gpio_dev) {
-		LOG_ERR("GPIO device binding error.");
+		LOG_ERR("GPIO device binding error: can't find %s.", IRQ_PORT);
 		return -ENXIO;
 	}
 
 	/* Configure IRQ pin */
-	err = gpio_pin_configure(gpio_dev, CONFIG_ST25R3911B_IRQ_PIN,
-				 GPIO_INPUT);
+	err = gpio_pin_configure(gpio_dev, IRQ_PIN, GPIO_INPUT);
 	if (err) {
 		return err;
 	}
 
-	gpio_init_callback(&gpio_cb, irq_pin_cb,
-			   BIT(CONFIG_ST25R3911B_IRQ_PIN));
+	gpio_init_callback(&gpio_cb, irq_pin_cb, BIT(IRQ_PIN));
 
 	err = gpio_add_callback(gpio_dev, &gpio_cb);
 	if (err) {
@@ -64,7 +64,7 @@ static int gpio_init(void)
 	};
 
 	return gpio_pin_interrupt_configure(gpio_dev,
-					    CONFIG_ST25R3911B_IRQ_PIN,
+					    IRQ_PIN,
 					    GPIO_INT_EDGE_RISING);
 }
 
@@ -93,7 +93,7 @@ u32_t st25r3911b_irq_read(void)
 		status |= ((u32_t)data[1] << 8);
 		status |= ((u32_t)data[2] << 16);
 
-		value = gpio_pin_get_raw(gpio_dev, CONFIG_ST25R3911B_IRQ_PIN);
+		value = gpio_pin_get_raw(gpio_dev, IRQ_PIN);
 		value = (value < 0) ? 0 : value;
 
 		/* Limiting the number of interrupt reads,
