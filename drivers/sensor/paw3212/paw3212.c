@@ -664,7 +664,7 @@ static void paw3212_async_init(struct k_work *work)
 			LOG_INF("PAW3212 initialized");
 		} else {
 			k_delayed_work_submit(&dev_data->init_work,
-					      async_init_delay[dev_data->async_init_step]);
+					      K_MSEC(async_init_delay[dev_data->async_init_step]));
 		}
 	}
 }
@@ -764,7 +764,7 @@ static int paw3212_init(struct device *dev)
 	k_delayed_work_init(&dev_data->init_work, paw3212_async_init);
 
 	k_delayed_work_submit(&dev_data->init_work,
-			      async_init_delay[dev_data->async_init_step]);
+			      K_MSEC(async_init_delay[dev_data->async_init_step]));
 
 	return err;
 }
