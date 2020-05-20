@@ -48,7 +48,6 @@ static const struct bt_data ad_unbonded[] = {
 #endif
 	),
 
-	BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, DEVICE_NAME_LEN),
 #if CONFIG_DESKTOP_BLE_SWIFT_PAIR
 	BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA,
 			  0x06, 0x00,	/* Microsoft Vendor ID */
@@ -68,8 +67,6 @@ static const struct bt_data ad_bonded[] = {
 			  0x0f, 0x18,	/* Battery Service */
 #endif
 	),
-
-	BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
 
