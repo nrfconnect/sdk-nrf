@@ -154,7 +154,8 @@ static int publish_get_payload(struct mqtt_client *c, size_t length)
 
 			printk("mqtt_read_publish_payload: EAGAIN\n");
 
-			err = poll(&fds, 1, K_SECONDS(CONFIG_MQTT_KEEPALIVE));
+			err = poll(&fds, 1,
+				   CONFIG_MQTT_KEEPALIVE * MSEC_PER_SEC);
 			if (err > 0 && (fds.revents & POLLIN) == POLLIN) {
 				continue;
 			} else {
