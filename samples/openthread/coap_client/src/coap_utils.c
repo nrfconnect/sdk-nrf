@@ -1,13 +1,12 @@
+/*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
 #include <zephyr.h>
-#include <errno.h>
 #include <logging/log.h>
 #include <net/coap.h>
-#include <net/net_ip.h>
-#include <net/net_mgmt.h>
 #include <net/socket.h>
-#include <net/udp.h>
-#include <sys/byteorder.h>
-#include <sys/printk.h>
 
 #include "coap_utils.h"
 
@@ -61,6 +60,8 @@ static void coap_receive(void)
 	int ret;
 
 	while (1) {
+		fds.revents = 0;
+
 		if (poll(&fds, nfds, -1) < 0) {
 			LOG_ERR("Error in poll:%d", errno);
 			errno = 0;
@@ -70,20 +71,17 @@ static void coap_receive(void)
 
 		if (fds.revents & POLLERR) {
 			LOG_ERR("Error in poll.. waiting a moment.");
-			fds.revents = 0;
 			k_sleep(K_MSEC(COAP_POOL_SLEEP));
 			continue;
 		}
 
 		if (fds.revents & POLLHUP) {
 			LOG_ERR("Error in poll: POLLHUP");
-			fds.revents = 0;
 			continue;
 		}
 
 		if (fds.revents & POLLNVAL) {
 			LOG_ERR("Error in poll: POLLNVAL - fd not open");
-			fds.revents = 0;
 
 			coap_close_socket(fds.fd);
 			fds.fd = coap_open_socket();
@@ -95,11 +93,8 @@ static void coap_receive(void)
 
 		if (!(fds.revents & POLLIN)) {
 			LOG_ERR("Unknown poll error");
-			fds.revents = 0;
 			continue;
 		}
-
-		fds.revents = 0;
 
 		len = recvfrom(fds.fd, buf, sizeof(buf) - 1, 0, &from_addr,
 			       &from_addr_len);
