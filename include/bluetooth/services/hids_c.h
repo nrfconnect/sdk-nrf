@@ -444,7 +444,7 @@ int bt_gatt_hids_c_rep_unsubscribe(struct bt_gatt_hids_c *hids_c,
 int bt_gatt_hids_c_map_read(struct bt_gatt_hids_c *hids_c,
 			    bt_gatt_hids_c_map_cb func,
 			    size_t offset,
-			    s32_t timeout);
+			    k_timeout_t timeout);
 
 /**
  * @brief Read the current protocol mode from the server.
@@ -468,7 +468,8 @@ int bt_gatt_hids_c_map_read(struct bt_gatt_hids_c *hids_c,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int bt_gatt_hids_c_pm_update(struct bt_gatt_hids_c *hids_c, s32_t timeout);
+int bt_gatt_hids_c_pm_update(struct bt_gatt_hids_c *hids_c,
+	k_timeout_t timeout);
 
 /**
  * @brief Get the current protocol mode.

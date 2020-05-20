@@ -1089,7 +1089,7 @@ static u8_t map_read_process(struct bt_conn *conn, u8_t err,
 int bt_gatt_hids_c_map_read(struct bt_gatt_hids_c *hids_c,
 			    bt_gatt_hids_c_map_cb func,
 			    size_t offset,
-			    s32_t timeout)
+			    k_timeout_t timeout)
 {
 	int err;
 
@@ -1156,7 +1156,7 @@ static u8_t pm_update_process(struct bt_conn *conn, u8_t err,
 	return BT_GATT_ITER_STOP;
 }
 
-int bt_gatt_hids_c_pm_update(struct bt_gatt_hids_c *hids_c, s32_t timeout)
+int bt_gatt_hids_c_pm_update(struct bt_gatt_hids_c *hids_c, k_timeout_t timeout)
 {
 	int err;
 
