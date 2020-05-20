@@ -25,6 +25,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 #define NRF_CLOUD_SECURITY_TAG 16842753
 #endif
 
+#define MQTT_KEEPALIVE (CONFIG_MQTT_KEEPALIVE * MSEC_PER_SEC)
+
 #if defined(CONFIG_PROVISION_CERTIFICATES)
 #include "certificates.h"
 #if defined(CONFIG_MODEM_KEY_MGMT)
@@ -574,7 +576,7 @@ void main(void)
 	boot_write_img_confirmed();
 
 	while (1) {
-		err = poll(&fds, 1, K_SECONDS(CONFIG_MQTT_KEEPALIVE));
+		err = poll(&fds, 1, MQTT_KEEPALIVE);
 		if (err < 0) {
 			printk("ERROR: poll %d\n", errno);
 			break;
