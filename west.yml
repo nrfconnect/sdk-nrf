@@ -88,7 +88,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: dc9464d003cb8fc6cc11aaf713f700928c9fc398
+      revision: pull/99/head
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: sdk-mcumgr
