@@ -47,7 +47,7 @@ static void set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	u32_t old_time = srv->transition_time;
 	u32_t new_time = model_transition_decode(net_buf_simple_pull_u8(buf));
 
-	if (new_time == K_FOREVER) {
+	if (new_time == SYS_FOREVER_MS) {
 		/* Invalid parameter */
 		return;
 	}
