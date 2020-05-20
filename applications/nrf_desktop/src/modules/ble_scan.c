@@ -22,9 +22,11 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
-#define SCAN_TRIG_CHECK_MS    K_SECONDS(1)
-#define SCAN_TRIG_TIMEOUT_MS  K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S)
-#define SCAN_DURATION_MS      K_SECONDS(CONFIG_DESKTOP_BLE_SCAN_DURATION_S)
+#define SCAN_TRIG_CHECK_MS    (1 * MSEC_PER_SEC)
+#define SCAN_TRIG_TIMEOUT_MS \
+	(CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S * MSEC_PER_SEC)
+#define SCAN_DURATION_MS \
+	(CONFIG_DESKTOP_BLE_SCAN_DURATION_S * MSEC_PER_SEC)
 
 #define SUBSCRIBED_PEERS_STORAGE_NAME "subscribers"
 
@@ -155,7 +157,8 @@ static void scan_stop(void)
 
 	if (count_conn() < CONFIG_BT_MAX_CONN) {
 		scan_counter = 0;
-		k_delayed_work_submit(&scan_start_trigger, SCAN_TRIG_CHECK_MS);
+		k_delayed_work_submit(&scan_start_trigger,
+				      K_MSEC(SCAN_TRIG_CHECK_MS));
 	}
 }
 
@@ -352,7 +355,7 @@ static void scan_start(void)
 	scanning = true;
 	broadcast_scan_state(scanning);
 
-	k_delayed_work_submit(&scan_stop_trigger, SCAN_DURATION_MS);
+	k_delayed_work_submit(&scan_stop_trigger, K_MSEC(SCAN_DURATION_MS));
 	k_delayed_work_cancel(&scan_start_trigger);
 
 	return;
@@ -371,7 +374,8 @@ static void scan_start_trigger_fn(struct k_work *w)
 		scan_counter = 0;
 		scan_start();
 	} else {
-		k_delayed_work_submit(&scan_start_trigger, SCAN_TRIG_CHECK_MS);
+		k_delayed_work_submit(&scan_start_trigger,
+				      K_MSEC(SCAN_TRIG_CHECK_MS));
 	}
 }
 
@@ -613,7 +617,7 @@ static bool event_handler(const struct event_header *eh)
 		 * establishing security - using delayed work as workaround.
 		 */
 		k_delayed_work_submit(&scan_start_trigger,
-				      SCAN_TRIG_TIMEOUT_MS);
+				      K_MSEC(SCAN_TRIG_TIMEOUT_MS));
 		scan_counter = SCAN_TRIG_TIMEOUT_MS;
 
 		return false;

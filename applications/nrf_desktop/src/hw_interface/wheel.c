@@ -24,7 +24,8 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_WHEEL_LOG_LEVEL);
 
 
-#define SENSOR_IDLE_TIMEOUT K_SECONDS(CONFIG_DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT)
+#define SENSOR_IDLE_TIMEOUT \
+	(CONFIG_DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT * MSEC_PER_SEC) /* ms */
 
 
 enum state {
@@ -214,7 +215,7 @@ static int enable_qdec(enum state next_state)
 		if (SENSOR_IDLE_TIMEOUT > 0) {
 			qdec_triggered = false;
 			k_delayed_work_submit(&idle_timeout,
-					      SENSOR_IDLE_TIMEOUT);
+					      K_MSEC(SENSOR_IDLE_TIMEOUT));
 		}
 	}
 
@@ -268,7 +269,8 @@ static void idle_timeout_fn(struct k_work *work)
 		}
 	} else {
 		qdec_triggered = false;
-		k_delayed_work_submit(&idle_timeout, SENSOR_IDLE_TIMEOUT);
+		k_delayed_work_submit(&idle_timeout,
+				      K_MSEC(SENSOR_IDLE_TIMEOUT));
 	}
 
 	k_spin_unlock(&lock, key);

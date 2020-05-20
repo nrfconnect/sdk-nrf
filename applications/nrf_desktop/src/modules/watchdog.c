@@ -34,7 +34,8 @@ static void watchdog_feed_worker(struct k_work *work_desc)
 		LOG_ERR("Cannot feed watchdog. Error code: %d", err);
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
-		k_delayed_work_submit(&data->work, WDT_FEED_WORKER_DELAY_MS);
+		k_delayed_work_submit(&data->work,
+				      K_MSEC(WDT_FEED_WORKER_DELAY_MS));
 	}
 }
 
