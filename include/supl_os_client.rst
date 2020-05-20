@@ -61,7 +61,7 @@ The following image shows the steps in the SUPL client connection session.
    SET=>SLP      [label="SUPL START (session-id, lid, SET capabilities)"];
    SET<=SLP      [label="SUPL RESPONSE (session-id, posmethod)"];
    SET=>SLP      [label="SUPL POS INIT (session-id, lid, SET capabilities)"];
-   SET..SLP [linecolor="#00a9ce", textcolor="#00a9ce", label="\nloop 1..N times"];
+   SET..SLP [linecolor="#00a9ce", textcolor="#00a9ce", label="loop 1..N times"];
    SET<=SLP      [label="SUPL POS (session-id, LPP)"];
    ...;
    SET..SLP [linecolor="#00a9ce"];
