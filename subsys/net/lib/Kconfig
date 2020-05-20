@@ -15,5 +15,6 @@ rsource "cloud/Kconfig"
 rsource "zzhc/Kconfig"
 rsource "icalendar_parser/Kconfig"
 rsource "ftp_client/Kconfig"
+rsource "coap_utils/Kconfig"
 
 endmenu
