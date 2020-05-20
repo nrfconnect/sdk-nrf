@@ -22,7 +22,7 @@
 #include "alarm.h"
 
 /* Interval in milliseconds between each time status LEDs are updated. */
-#define LEDS_UPDATE_INTERVAL 500
+#define LEDS_UPDATE_INTERVAL K_MSEC(500)
 
 /* Interval in microseconds between each time LEDs are updated when indicating
  * that an error has occurred.
@@ -42,7 +42,7 @@
 /* Interval in milliseconds after the device will retry cloud connection
  * if the event NRF_CLOUD_EVT_TRANSPORT_CONNECTED is not received.
  */
-#define RETRY_CONNECT_WAIT_MS 90000
+#define RETRY_CONNECT_WAIT K_MSEC(90000)
 
 enum {
 	LEDS_INITIALIZING       = LED_ON(0),
@@ -393,7 +393,7 @@ static void cloud_connect(struct k_work *work)
 	}
 
 	display_state = LEDS_CLOUD_CONNECTING;
-	k_delayed_work_submit(&retry_connect_work, RETRY_CONNECT_WAIT_MS);
+	k_delayed_work_submit(&retry_connect_work, RETRY_CONNECT_WAIT);
 }
 
 /**@brief Callback for button events from the DK buttons and LEDs library. */
