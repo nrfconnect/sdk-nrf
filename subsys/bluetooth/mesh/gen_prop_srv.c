@@ -8,6 +8,8 @@
 #include <string.h>
 #include "gen_prop_internal.h"
 #include "model_utils.h"
+#include "mesh/net.h"
+#include "mesh/transport.h"
 
 #define PROP_FOREACH(_srv, _prop)                                              \
 	for (_prop = &(_srv)->properties[0];                                   \
@@ -17,13 +19,13 @@
 	((_mod)->id == BT_MESH_MODEL_ID_GEN_MANUFACTURER_PROP_SRV)
 
 BUILD_ASSERT(BT_MESH_MODEL_BUF_LEN(BT_MESH_PROP_OP_MFR_PROP_STATUS,
-				       BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS) <=
-			 CONFIG_BT_MESH_RX_SDU_MAX,
-		 "The property list must fit inside an application SDU.");
+				   BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS) <=
+		     BT_MESH_RX_SDU_MAX,
+	     "The property list must fit inside an application SDU.");
 BUILD_ASSERT(BT_MESH_MODEL_BUF_LEN(BT_MESH_PROP_OP_MFR_PROPS_STATUS,
-				       BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS) <=
-			 (CONFIG_BT_MESH_TX_SEG_MAX * 12),
-		 "The property value must fit inside an application SDU.");
+				   BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS) <=
+		     BT_MESH_TX_SDU_MAX,
+	     "The property value must fit inside an application SDU.");
 
 static struct bt_mesh_prop *prop_get(const struct bt_mesh_prop_srv *srv,
 				     u16_t id)
