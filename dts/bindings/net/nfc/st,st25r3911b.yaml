@@ -1,0 +1,14 @@
+# Copyright (c) 2020 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+    STMicroelectronics ST25R3911B NFC Initiator / HF Reader
+
+compatible: "st,st25r3911b"
+
+include: spi-device.yaml
+
+properties:
+    irq-gpios:
+      type: phandle-array
+      required: true
