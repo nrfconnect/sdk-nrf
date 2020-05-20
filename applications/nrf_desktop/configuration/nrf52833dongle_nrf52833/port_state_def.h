@@ -19,8 +19,8 @@ const struct {} port_state_def_include_once;
 
 
 static const struct pin_state port0_on[] = {
-	{DT_GPIO_LEDS_LED1_RED_GPIOS_PIN, 1},
-	{DT_GPIO_LEDS_LED1_GREEN_GPIOS_PIN, 1},
+	{DT_GPIO_PIN(DT_ALIAS(led1), gpios), 1},
+	{DT_GPIO_PIN(DT_ALIAS(led2), gpios), 1}
 };
 
 static const struct pin_state port1_on[] = {
