@@ -5,4 +5,12 @@
 	mosi-pin = <45>;
 	miso-pin = <46>;
 	cs-gpios = <&gpio1 12 0>;
+
+	st25r3911b@0 {
+		label = "ST25R3911B";
+		compatible = "st,st25r3911b";
+		reg = <0>;
+		spi-max-frequency = <4000000>;
+		irq-gpios = <&gpio1 4 0>;
+	};
 };
