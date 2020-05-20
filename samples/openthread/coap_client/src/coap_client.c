@@ -12,7 +12,7 @@
 
 #include <coap_server_client_interface.h>
 
-#include "coap_utils.h"
+#include <coap_utils.h>
 
 LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
 

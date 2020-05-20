@@ -6,9 +6,8 @@
 #include <zephyr.h>
 #include <logging/log.h>
 #include <net/coap.h>
+#include <net/coap_utils.h>
 #include <net/socket.h>
-
-#include "coap_utils.h"
 
 LOG_MODULE_REGISTER(coap_utils, CONFIG_COAP_UTILS_LOG_LEVEL);
 
@@ -20,21 +19,22 @@ LOG_MODULE_REGISTER(coap_utils, CONFIG_COAP_UTILS_LOG_LEVEL);
 #define COAP_OPEN_SOCKET_SLEEP 200
 #define COAP_RECEIVE_STACK_SIZE 500
 
-static K_THREAD_STACK_DEFINE(receive_stack_area, COAP_RECEIVE_STACK_SIZE);
-static struct k_thread receive_thread_data;
-
 const static int nfds = 1;
 static struct pollfd fds;
 static struct coap_reply replies[COAP_MAX_REPLIES];
+static int proto_family;
+
+static K_THREAD_STACK_DEFINE(receive_stack_area, COAP_RECEIVE_STACK_SIZE);
+static struct k_thread receive_thread_data;
 
 static int coap_open_socket(void)
 {
 	int sock;
 
 	while (1) {
-		sock = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+		sock = socket(proto_family, SOCK_DGRAM, IPPROTO_UDP);
 		if (sock < 0) {
-			LOG_ERR("Failed to create UDP socket %d", errno);
+			LOG_ERR("Failed to create socket %d", errno);
 			k_sleep(K_MSEC(COAP_OPEN_SOCKET_SLEEP));
 			continue;
 		}
@@ -169,11 +169,11 @@ end:
 	return ret;
 }
 
-static int coap_send_message(const struct sockaddr_in6 *addr6,
+static int coap_send_message(const struct sockaddr *addr,
 			     struct coap_packet *request)
 {
-	return sendto(fds.fd, request->data, request->offset, 0,
-		      (const struct sockaddr *)addr6, sizeof(*addr6));
+	return sendto(fds.fd, request->data, request->offset, 0, addr,
+		      sizeof(*addr));
 }
 
 static void coap_set_response_callback(struct coap_packet *request,
@@ -188,8 +188,10 @@ static void coap_set_response_callback(struct coap_packet *request,
 	reply->reply = reply_cb;
 }
 
-void coap_init(void)
+void coap_init(int ip_family)
 {
+	proto_family = ip_family;
+
 	fds.events = POLLIN;
 	fds.revents = 0;
 	fds.fd = coap_open_socket();
@@ -205,7 +207,7 @@ void coap_init(void)
 	LOG_DBG("CoAP socket receive thread started");
 }
 
-int coap_send_request(enum coap_method method, const struct sockaddr_in6 *addr6,
+int coap_send_request(enum coap_method method, const struct sockaddr *addr,
 		      const char *const *uri_path_options, u8_t *payload,
 		      u16_t payload_size, coap_reply_t reply_cb)
 {
@@ -223,7 +225,7 @@ int coap_send_request(enum coap_method method, const struct sockaddr_in6 *addr6,
 		coap_set_response_callback(&request, reply_cb);
 	}
 
-	ret = coap_send_message(addr6, &request);
+	ret = coap_send_message(addr, &request);
 	if (ret < 0) {
 		LOG_ERR("Transmission failed: %d", errno);
 		goto end;
