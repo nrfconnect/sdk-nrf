@@ -7,15 +7,17 @@
 #include <sys/util.h>
 #include "gen_prop_internal.h"
 #include "model_utils.h"
+#include "mesh/net.h"
+#include "mesh/transport.h"
 
 BUILD_ASSERT(BT_MESH_MODEL_BUF_LEN(BT_MESH_PROP_OP_MFR_PROP_STATUS,
-				       BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS) <=
-			 CONFIG_BT_MESH_RX_SDU_MAX,
-		 "The property list must fit inside an application SDU.");
+				   BT_MESH_PROP_MSG_MAXLEN_PROP_STATUS) <=
+		     BT_MESH_RX_SDU_MAX,
+	     "The property list must fit inside an application SDU.");
 BUILD_ASSERT(BT_MESH_MODEL_BUF_LEN(BT_MESH_PROP_OP_MFR_PROPS_STATUS,
-				       BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS) <=
-			 (CONFIG_BT_MESH_TX_SEG_MAX * 12),
-		 "The property value must fit inside an application SDU.");
+				   BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS) <=
+		     BT_MESH_TX_SDU_MAX,
+	     "The property value must fit inside an application SDU.");
 
 struct prop_list_ctx {
 	struct bt_mesh_prop_list *list;
