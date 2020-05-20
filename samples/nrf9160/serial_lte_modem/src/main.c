@@ -67,7 +67,7 @@ void enter_idle(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(DT_NORDIC_NRF_GPIO_GPIO_0_LABEL);
+	gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
 	if (gpio_dev == NULL) {
 		LOG_ERR("GPIO_0 bind error");
 		return;

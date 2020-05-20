@@ -832,4 +832,4 @@ int slm_at_mqtt_uninit(void)
 
 K_THREAD_DEFINE(mqtt_thread, K_THREAD_STACK_SIZEOF(mqtt_thread_stack),
 		mqtt_thread_fn, NULL, NULL, NULL,
-		THREAD_PRIORITY, 0, K_NO_WAIT);
+		THREAD_PRIORITY, 0, 0);

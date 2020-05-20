@@ -101,7 +101,7 @@ void rsp_send(const u8_t *str, size_t len)
 	LOG_HEXDUMP_DBG(str, len, "TX");
 
 	memcpy(uart_tx_buf, str, len);
-	ret = uart_tx(uart_dev, uart_tx_buf, len, K_FOREVER);
+	ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_MS);
 	if (ret) {
 		LOG_WRN("uart_tx failed: %d", ret);
 		k_free(uart_tx_buf);
@@ -332,7 +332,7 @@ static void cmd_send(struct k_work *work)
 done:
 	k_sleep(K_MSEC(100)); /* allow time for TX DMA */
 	buf_num = 1U;
-	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, K_FOREVER);
+	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, SYS_FOREVER_MS);
 	if (err) {
 		LOG_ERR("UART RX failed: %d", err);
 		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
@@ -487,7 +487,7 @@ int slm_at_host_init(void)
 	do {
 		err = uart_err_check(uart_dev);
 		if (err) {
-			if (k_uptime_get_32() - start_time > K_MSEC(500)) {
+			if (k_uptime_get_32() - start_time > 500) {
 				LOG_ERR("UART check failed: %d. "
 					"UART initialization timed out.", err);
 				return -EIO;
@@ -504,7 +504,7 @@ int slm_at_host_init(void)
 	device_set_power_state(uart_dev, DEVICE_PM_ACTIVE_STATE,
 				NULL, NULL);
 	buf_num = 1U;
-	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, K_FOREVER);
+	err = uart_rx_enable(uart_dev, &uart_rx_buf[0], 1, SYS_FOREVER_MS);
 	if (err) {
 		LOG_ERR("Cannot enable rx: %d", err);
 		return -EFAULT;
