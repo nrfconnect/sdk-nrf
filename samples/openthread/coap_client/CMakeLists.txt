@@ -10,8 +10,7 @@ set(NRF_SUPPORTED_BOARDS
 	nrf52833dk_nrf52833
 )
 
-include($ENV{ZEPHYR_BASE}/../nrf/cmake/boilerplate.cmake)
-include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(openthread_coap_client)
 
