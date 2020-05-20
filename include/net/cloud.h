@@ -305,7 +305,7 @@ static inline int cloud_keepalive_time_left(const struct cloud_backend *const ba
 	if (backend == NULL || backend->api == NULL ||
 	    backend->api->keepalive_time_left == NULL) {
 		__ASSERT(0, "Missing cloud backend functionality");
-		return K_FOREVER;
+		return SYS_FOREVER_MS;
 	}
 
 	return backend->api->keepalive_time_left(backend);
