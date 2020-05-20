@@ -87,6 +87,8 @@
 
 .. _`nRF9160 compatibility matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf9160/COMP/nrf9160/nrf9160_operator_certifications.html
 
+.. _`nAN34`: https://infocenter.nordicsemi.com/pdf/nan_34.pdf
+
 .. ### Links to the Nordic website
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
@@ -235,6 +237,8 @@
 
 .. _`Battery Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245138
 
+.. _`Bluetooth Low Energy RF PHY Test Specification`: https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=225827
+
 .. ### Links to Bluetooth Mesh
 
 .. _`Mesh Model Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
@@ -248,7 +252,6 @@
 .. _`Bluetooth Mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
 
 .. _`Bluetooth Mesh Study Guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
-
 
 .. ### Links to NFC specs
 
