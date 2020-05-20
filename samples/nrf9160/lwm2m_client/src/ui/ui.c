@@ -44,10 +44,10 @@ static void leds_update(struct k_work *work)
 	if (work) {
 		if (led_on) {
 			k_delayed_work_submit(&leds_update_work,
-						UI_LED_ON_PERIOD_NORMAL);
+					      K_MSEC(UI_LED_ON_PERIOD_NORMAL));
 		} else {
 			k_delayed_work_submit(&leds_update_work,
-						UI_LED_OFF_PERIOD_NORMAL);
+					      K_MSEC(UI_LED_OFF_PERIOD_NORMAL));
 		}
 	}
 }

@@ -37,7 +37,7 @@ static void gps_event_handler(struct device *dev, struct gps_event *evt)
 	}
 
 	if (k_uptime_get_32() - timestamp_prev <
-	    K_SECONDS(CONFIG_APP_HOLD_TIME_GPS)) {
+	    CONFIG_APP_HOLD_TIME_GPS * MSEC_PER_SEC) {
 		return;
 	}
 
