@@ -9,8 +9,7 @@
 
 / {
 	model = "Nordic nRF52 DMouse NRF52832";
-	compatible = "nordic,nrf52-dmouse-nrf52832", "nordic,nrf52832-qfaa",
-		     "nordic,nrf52832";
+	compatible = "nordic,nrf52-dmouse-nrf52832";
 
 	chosen {
 		zephyr,console = &uart0;
