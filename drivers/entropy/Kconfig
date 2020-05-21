@@ -11,7 +11,6 @@ config ENTROPY_CC310
 	depends on ENTROPY_GENERATOR
 	depends on !BT_LLL_VENDOR_NORDIC
 	select ENTROPY_HAS_DRIVER
-	select ENTROPY_NRF_FORCE_ALT
 	default y
 	help
 	  This option enables the Arm CC310 RNG devices in nRF52840 and nRF9160
