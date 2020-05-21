@@ -852,6 +852,7 @@ int nct_connect(void)
 		/* IPv4 Address. */
 		if ((addr->ai_addrlen == sizeof(struct sockaddr_in)) &&
 		    (NRF_CLOUD_AF_FAMILY == AF_INET)) {
+			char addr_str[INET_ADDRSTRLEN];
 			struct sockaddr_in *broker =
 				((struct sockaddr_in *)&nct.broker);
 
@@ -861,7 +862,13 @@ int nct_connect(void)
 			broker->sin_family = AF_INET;
 			broker->sin_port = htons(NRF_CLOUD_PORT);
 
-			LOG_DBG("IPv4 Address 0x%08x", broker->sin_addr.s_addr);
+			inet_ntop(AF_INET,
+				 &broker->sin_addr.s_addr,
+				 addr_str,
+				 sizeof(addr_str));
+
+			LOG_DBG("IPv4 address: %s", log_strdup(addr_str));
+
 			err = nct_mqtt_connect();
 			break;
 		} else if ((addr->ai_addrlen == sizeof(struct sockaddr_in6)) &&
