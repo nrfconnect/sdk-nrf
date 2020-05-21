@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <soc.h>
 #include <ble_controller_soc.h>
-#include <random/rand32.h>
+#include <drivers/entropy.h>
 
 #include "nrf_errno.h"
 #include "multithreading_lock.h"
@@ -23,28 +23,17 @@
 
 int bt_rand(void *buf, size_t len)
 {
-	if (buf == NULL) {
-		return -NRF_EINVAL;
-	}
+	static struct device *dev;
 
-	u8_t *buf8 = buf;
-	size_t bytes_left = len;
+	if (unlikely(!dev)) {
+		dev = device_get_binding(DT_LABEL(DT_NODELABEL(rng)));
 
-	while (bytes_left) {
-		u32_t v = sys_rand32_get();
-
-		if (bytes_left >= sizeof(v)) {
-			memcpy(buf8, &v, sizeof(v));
-
-			buf8 += sizeof(v);
-			bytes_left -= sizeof(v);
-		} else {
-			memcpy(buf8, &v, bytes_left);
-			break;
+		if (!dev) {
+			return -ENODEV;
 		}
 	}
 
-	return 0;
+	return entropy_get_entropy(dev, (u8_t *)buf, len);
 }
 
 int bt_encrypt_le(const u8_t key[BT_ECB_BLOCK_SIZE],
