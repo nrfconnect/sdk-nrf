@@ -75,6 +75,14 @@ struct nrf_cloud_data {
 	const void *ptr;
 };
 
+/**@brief MQTT topic. */
+struct nrf_cloud_topic {
+	/** Length of the topic. */
+	u32_t len;
+	/** Pointer to the topic. */
+	const void *ptr;
+};
+
 /**@brief Sensors that are supported by the device. */
 struct nrf_cloud_sensor_list {
 	/** Size of the list. */
@@ -113,7 +121,10 @@ struct nrf_cloud_evt {
 	enum nrf_cloud_evt_type type;
 	/** Any status associated with the event. */
 	u32_t status;
+	/** Received data. */
 	struct nrf_cloud_data data;
+	/** Topic on which data was received. */
+	struct nrf_cloud_topic topic;
 };
 
 /**

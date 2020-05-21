@@ -719,6 +719,8 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			cc.id = p->message_id;
 			cc.data.ptr = nct.payload_buf;
 			cc.data.len = p->message.payload.len;
+			cc.topic.len = p->message.topic.topic.size;
+			cc.topic.ptr = p->message.topic.topic.utf8;
 
 			evt.type = NCT_EVT_CC_RX_DATA;
 			evt.param.cc = &cc;
@@ -728,6 +730,8 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			dc.id = p->message_id;
 			dc.data.ptr = nct.payload_buf;
 			dc.data.len = p->message.payload.len;
+			dc.topic.len = p->message.topic.topic.size;
+			dc.topic.ptr = p->message.topic.topic.utf8;
 
 			evt.type = NCT_EVT_DC_RX_DATA;
 			evt.param.dc = &dc;

@@ -36,11 +36,13 @@ enum nct_cc_opcode {
 
 struct nct_dc_data {
 	struct nrf_cloud_data data;
+	struct nrf_cloud_topic topic;
 	u32_t id;
 };
 
 struct nct_cc_data {
 	struct nrf_cloud_data data;
+	struct nrf_cloud_topic topic;
 	u32_t id;
 	enum nct_cc_opcode opcode;
 };

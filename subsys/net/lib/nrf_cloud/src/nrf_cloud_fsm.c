@@ -225,6 +225,8 @@ static int handle_device_config_update(const struct nct_evt *const evt,
 	}
 
 	cloud_evt.data = evt->param.cc->data;
+	cloud_evt.topic = evt->param.cc->topic;
+
 	nfsm_set_current_state_and_notify(nfsm_get_current_state(), &cloud_evt);
 
 	return err;
@@ -488,6 +490,7 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 	struct nrf_cloud_evt cloud_evt = {
 		.type = NRF_CLOUD_EVT_RX_DATA,
 		.data = nct_evt->param.dc->data,
+		.topic = nct_evt->param.dc->topic,
 	};
 
 	/* All data is forwared to the app */
