@@ -184,19 +184,17 @@ static int tnep_tx_initial_msg_set(void)
 
 	tnep_tx_msg_clear();
 
-	for (size_t i = 0; i < tnep.svc_cnt; i++) {
-		err = tnep_tx_msg_add_rec(tnep.svc[i].ndef_record);
-		if (err) {
-			return err;
+	if (tnep.records && tnep.records_cnt) {
+		for (size_t i = 0; i < tnep.records_cnt; i++) {
+			err = tnep_tx_msg_add_rec(&tnep.records[i]);
+			if (err) {
+				return err;
+			}
 		}
 	}
 
-	if (!tnep.records) {
-		return tnep_tx_msg_encode();
-	}
-
-	for (size_t i = 0; i < tnep.records_cnt; i++) {
-		err = tnep_tx_msg_add_rec(&tnep.records[i]);
+	for (size_t i = 0; i < tnep.svc_cnt; i++) {
+		err = tnep_tx_msg_add_rec(tnep.svc[i].ndef_record);
 		if (err) {
 			return err;
 		}
