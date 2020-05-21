@@ -14,5 +14,6 @@ rsource "aws_fota/Kconfig"
 rsource "cloud/Kconfig"
 rsource "zzhc/Kconfig"
 rsource "icalendar_parser/Kconfig"
+rsource "ftp_client/Kconfig"
 
 endmenu

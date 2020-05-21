@@ -297,3 +297,5 @@
 .. _`RFC 7252 - The Constrained Application Protocol`: https://tools.ietf.org/html/rfc7252
 
 .. _`tutorial on SSL.com`: https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
+
+.. _`RFC959 File Transfer Protocol (FTP)`: https://tools.ietf.org/html/rfc959
