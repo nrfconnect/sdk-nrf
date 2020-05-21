@@ -57,6 +57,9 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
 
             if partition_has_device(partition):
                 add_line("%s_ID" % name.upper(), "%d" % partition_id)
+                # Used to support lowercase access. See flash_map.h.
+                add_line("%s_ID" % name.lower(), "PM_%s_ID" % name.upper())
+
                 if current_domain is None or domain == current_domain:
                     add_line("%d_LABEL" % partition_id, "%s" % name.upper())
                 else:
