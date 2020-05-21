@@ -28,7 +28,8 @@ extern "C" {
  *         topic that will be published to.
  */
 enum aws_iot_topic_type {
-	AWS_IOT_SHADOW_TOPIC_GET = 0x1,
+	AWS_IOT_SHADOW_TOPIC_UNKNOWN = 0x0,
+	AWS_IOT_SHADOW_TOPIC_GET,
 	AWS_IOT_SHADOW_TOPIC_UPDATE,
 	AWS_IOT_SHADOW_TOPIC_DELETE
 };
@@ -53,16 +54,6 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_FOTA_ERASE_DONE,
 };
 
-/** @brief Struct with data received from AWS IoT broker. */
-struct aws_iot_evt {
-	/** Type of event. */
-	enum aws_iot_evt_type type;
-	/** Pointer to data received from the AWS IoT broker. */
-	char *ptr;
-	/** Length of data. */
-	size_t len;
-};
-
 /** @brief AWS IoT topic data. */
 struct aws_iot_topic_data {
 	/** Type of shadow topic that will be published to. */
@@ -71,6 +62,18 @@ struct aws_iot_topic_data {
 	char *str;
 	/** Length of application specific topic. */
 	size_t len;
+};
+
+/** @brief Struct with data received from AWS IoT broker. */
+struct aws_iot_evt {
+	/** Type of event. */
+	enum aws_iot_evt_type type;
+	/** Pointer to data received from the AWS IoT broker. */
+	char *ptr;
+	/** Length of data. */
+	size_t len;
+	/** Topic the data was received on. **/
+	struct aws_iot_topic_data topic;
 };
 
 /** @brief Structure used to declare a list of application specific topics

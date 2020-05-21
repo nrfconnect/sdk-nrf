@@ -472,6 +472,9 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		cloud_evt.type = CLOUD_EVT_DATA_RECEIVED;
 		cloud_evt.data.msg.buf = payload_buf;
 		cloud_evt.data.msg.len = p->message.payload.len;
+		cloud_evt.data.msg.endpoint.type = CLOUD_EP_TOPIC_MSG;
+		cloud_evt.data.msg.endpoint.str = p->message.topic.topic.utf8;
+		cloud_evt.data.msg.endpoint.len = p->message.topic.topic.size;
 
 		cloud_notify_event(aws_iot_backend, &cloud_evt,
 				   config->user_data);
@@ -479,6 +482,9 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		aws_iot_evt.type = AWS_IOT_EVT_DATA_RECEIVED;
 		aws_iot_evt.ptr = payload_buf;
 		aws_iot_evt.len = p->message.payload.len;
+		aws_iot_evt.topic.type = AWS_IOT_SHADOW_TOPIC_UNKNOWN;
+		aws_iot_evt.topic.str = p->message.topic.topic.utf8;
+		aws_iot_evt.topic.len = p->message.topic.topic.size;
 		aws_iot_notify_event(&aws_iot_evt);
 #endif
 
