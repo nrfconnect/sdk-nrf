@@ -8,10 +8,6 @@
 #include <hal/nrf_power.h>
 #include <storage/flash_map.h>
 
-#if USE_PARTITION_MANAGER
-#include <pm_config.h>
-#endif
-
 #define MODULE failsafe
 #include "module_state_event.h"
 
@@ -32,18 +28,10 @@ static bool failsafe_check(void)
 
 static void failsafe_erase(void)
 {
-#if USE_PARTITION_MANAGER
-	#define FLASH_AREA_STORAGE_ID       PM_SETTINGS_STORAGE_ID
-	#define FLASH_AREA_STORAGE_SIZE     PM_SETTINGS_STORAGE_SIZE
-#else
-	#define FLASH_AREA_STORAGE_ID       DT_FLASH_AREA_STORAGE_ID
-	#define FLASH_AREA_STORAGE_SIZE     DT_FLASH_AREA_STORAGE_SIZE
-#endif
-
 	const struct flash_area *flash_area;
-	int err = flash_area_open(FLASH_AREA_STORAGE_ID, &flash_area);
+	int err = flash_area_open(FLASH_AREA_ID(storage), &flash_area);
 	if (!err) {
-		err = flash_area_erase(flash_area, 0, FLASH_AREA_STORAGE_SIZE);
+		err = flash_area_erase(flash_area, 0, FLASH_AREA_SIZE(storage));
 		flash_area_close(flash_area);
 	}
 
