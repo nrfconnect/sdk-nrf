@@ -14,10 +14,6 @@
 #include <nfc/tnep/tag.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/ndef/text_rec.h>
-#include <logging/log.h>
-
-
-LOG_MODULE_REGISTER(dupa);
 
 #define NDEF_TNEP_MSG_SIZE 1024
 
