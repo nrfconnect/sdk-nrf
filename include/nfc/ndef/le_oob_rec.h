@@ -117,18 +117,19 @@ int nfc_ndef_le_oob_rec_payload_constructor(
  * @param payload_desc Pointer to the description of the payload. This data is
  *                     used to create the record payload.
  */
-#define NFC_NDEF_LE_OOB_RECORD_DESC_DEF(name,                                 \
-					payload_id,                           \
-					payload_desc)                         \
-	u8_t name##_nfc_ndef_le_oob_rec_id     = (payload_id);                \
-	u8_t name##_nfc_ndef_le_oob_rec_id_len = ((payload_id) != 0) ? 1 : 0; \
-	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,                                \
-		TNF_MEDIA_TYPE,						      \
-		&name##_nfc_ndef_le_oob_rec_id,				      \
-		name##_nfc_ndef_le_oob_rec_id_len,			      \
-		(nfc_ndef_le_oob_rec_type_field),			      \
-		sizeof(nfc_ndef_le_oob_rec_type_field),			      \
-		nfc_ndef_le_oob_rec_payload_constructor,		      \
+#define NFC_NDEF_LE_OOB_RECORD_DESC_DEF(name,                        \
+					payload_id,                  \
+					payload_desc)                \
+	const u8_t name##_nfc_ndef_le_oob_rec_id     = (payload_id); \
+	const u8_t name##_nfc_ndef_le_oob_rec_id_len =		     \
+				((payload_id) != 0) ? 1 : 0;	     \
+	NFC_NDEF_GENERIC_RECORD_DESC_DEF(name,                       \
+		TNF_MEDIA_TYPE,					     \
+		&name##_nfc_ndef_le_oob_rec_id,			     \
+		name##_nfc_ndef_le_oob_rec_id_len,		     \
+		(nfc_ndef_le_oob_rec_type_field),		     \
+		sizeof(nfc_ndef_le_oob_rec_type_field),		     \
+		nfc_ndef_le_oob_rec_payload_constructor,	     \
 		(payload_desc))
 
 /**
