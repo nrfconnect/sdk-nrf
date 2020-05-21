@@ -92,6 +92,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/radio_test/README.rst @b-gent
 /samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
+/samples/zigbee/                          @maciekfabia @mariuszpos
 /samples/CMakeLists.txt                   @tejlmand
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
@@ -112,7 +113,9 @@ Kconfig*                                  @tejlmand
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @ioannisg
 /subsys/nonsecure/                        @ioannisg
+/subsys/zigbee/                           @maciekfabia @mariuszpos
 /tests/                                   @rakons
+/tests/subsys/zigbee/                     @rakons @maciekfabia @mariuszpos
 /zephyr/                                  @carlescufi
 # Make sure docs always include tech writers
 *.rst                                     @ru-fu
