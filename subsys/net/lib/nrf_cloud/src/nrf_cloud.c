@@ -305,6 +305,10 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		evt.type = CLOUD_EVT_DATA_RECEIVED;
 		evt.data.msg.buf = (char *)nrf_cloud_evt->data.ptr;
 		evt.data.msg.len = nrf_cloud_evt->data.len;
+		evt.data.msg.endpoint.type = CLOUD_EP_TOPIC_MSG;
+		evt.data.msg.endpoint.str =
+			(char *)nrf_cloud_evt->topic.ptr;
+		evt.data.msg.endpoint.len = nrf_cloud_evt->topic.len;
 
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
 		break;
