@@ -19,6 +19,7 @@
 #include <string.h>
 #include <fs/nvs.h>
 #include <nfc/ndef/uri_msg.h>
+#include <storage/flash_map.h>
 
 #include "ndef_file_m.h"
 
@@ -28,10 +29,12 @@ static const u8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". */
 	{'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'};
 
  /* Flash block size in bytes */
-#define NVS_SECTOR_SIZE    (DT_FLASH_WRITE_BLOCK_SIZE * 1024)
-#define NVS_SECTOR_COUNT   2
+#define NVS_SECTOR_SIZE  (DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size))
+#define NVS_SECTOR_COUNT 2
  /* Start address of the filesystem in flash */
-#define NVS_STORAGE_OFFSET DT_FLASH_AREA_STORAGE_OFFSET_0
+#define NVS_STORAGE_OFFSET \
+	DT_REG_ADDR(DT_NODE_BY_FIXED_PARTITION_LABEL(storage))
+
 
 static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
@@ -43,7 +46,7 @@ int ndef_file_setup(void)
 {
 	int err;
 
-	err = nvs_init(&fs, DT_FLASH_DEV_NAME);
+	err = nvs_init(&fs, DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL);
 	if (err < 0) {
 		printk("Cannot initialize NVS!\n");
 	}
