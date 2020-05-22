@@ -75,25 +75,29 @@ end:
 	return instance;
 }
 
-static bool poll_period_response_set(void)
+static bool is_mtd_in_med_mode(otInstance *instance)
+{
+	return otThreadGetLinkMode(instance).mRxOnWhenIdle;
+}
+
+static void poll_period_response_set(void)
 {
 	otError error;
+
 	otInstance *instance = openthread_get_default_instance();
 
-	if (otThreadGetLinkMode(instance).mRxOnWhenIdle) {
-		return false;
+	if (is_mtd_in_med_mode(instance)) {
+		return;
 	}
 
 	if (!poll_period) {
 		poll_period = otLinkGetPollPeriod(instance);
 
 		error = otLinkSetPollPeriod(instance, RESPONSE_POLL_PERIOD);
-		__ASSERT_NO_MSG(error == OT_ERROR_NONE);
+		__ASSERT(error == OT_ERROR_NONE, "Failed to set pool period");
 
 		LOG_INF("Poll Period: %dms set", RESPONSE_POLL_PERIOD);
 	}
-
-	return true;
 }
 
 static void poll_period_restore(void)
@@ -101,7 +105,7 @@ static void poll_period_restore(void)
 	otError error;
 	otInstance *instance = openthread_get_default_instance();
 
-	if (otThreadGetLinkMode(instance).mRxOnWhenIdle) {
+	if (is_mtd_in_med_mode(instance)) {
 		return;
 	}
 
@@ -191,10 +195,7 @@ static void send_provisioning_request(struct k_work *item)
 
 	if (IS_ENABLED(CONFIG_OPENTHREAD_MTD_SED)) {
 		/* decrease the polling period for higher responsiveness */
-		if (false == poll_period_response_set()) {
-			LOG_WRN("Failed to set response poll period");
-			return;
-		}
+		poll_period_response_set();
 	}
 
 	LOG_INF("Send 'provisioning' request");
