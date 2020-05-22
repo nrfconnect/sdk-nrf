@@ -132,14 +132,14 @@ Configuring this process is optional, because the Thread :ref:`openthread_sample
 If you want to manually enable the Thread network Commissioner role on a device, set the following Kconfig options to the provided values:
 
 * :option:`CONFIG_OPENTHREAD_COMMISSIONER` to ``y``.
-* :option:`CONFIG_MBEDTLS_HEAP_SIZE` to ``8192``.
+* :option:`CONFIG_MBEDTLS_HEAP_SIZE` to ``10240``.
 
 To enable the Thread network Joiner role on a device, set the following Kconfig options to the provided values:
 
 * :option:`CONFIG_OPENTHREAD_JOINER` to ``y``.
-* :option:`CONFIG_MBEDTLS_HEAP_SIZE` to ``8192``.
+* :option:`CONFIG_MBEDTLS_HEAP_SIZE` to ``10240``.
 
-The MBEDTLS heap size needs to be increased for both Commissioner and Joiner, because the joining process is memory-consuming and requires at least 8 KB of RAM.
+The MBEDTLS heap size needs to be increased for both Commissioner and Joiner, because the joining process is memory-consuming and requires at least 10 KB of RAM.
 
 You can also configure how the commissioning process is to be started:
 
