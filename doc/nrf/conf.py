@@ -74,12 +74,15 @@ KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
 # Sphinx extensions within.
 sys.path.insert(0, os.path.join(ZEPHYR_BASE, 'doc', 'extensions'))
 
+# Let Sphinx find our extensions.
+sys.path.append(os.path.join(NRF_BASE, 'scripts', 'sphinx_extensions'))
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.intersphinx',
               'breathe',
+              'interbreathe',
               'sphinx.ext.ifconfig',
               'sphinxcontrib.mscgen',
               'sphinx_tabs.tabs',
