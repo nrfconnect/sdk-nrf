@@ -12,6 +12,10 @@ rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "gps/Kconfig"
 
+if NRF_802154_SL
+rsource "nrf_802154_sl/Kconfig"
+endif
+
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"
 endif
