@@ -66,7 +66,6 @@ manifest:
           - civetweb
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st
           - libmetal
           - littlefs
@@ -97,7 +96,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 761bcbfc6223e232687af93ffe53a653bd0e02ea
+      revision: 25b9cf5b65c9bafbe8e885b6ad155bb56e2df460
+    - name: hal_nordic
+      repo-path: sdk-hal_nordic
+      path: modules/hal/nordic
+      revision: 31f8c7d243ba3651ed435bf30222addd238b9350
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
