@@ -13,7 +13,7 @@ OpenThread CLI is integrated into the system shell accessible over serial connec
 To indicate a Thread command, the ``ot`` keyword needs to precede the command.
 
 The amount of commands you can test depends on the application configuration.
-For example, because commissioning is disabled by default, the commissioning commands are not available.
+This sample has Commisioner, Joiner, and Border Router roles enabled by default.
 
 If used alone, the sample allows you to test the network status.
 It is recomended to use at least two development kits running the same sample to be able to test communication.
@@ -42,7 +42,6 @@ Building and running
 |enable_thread_before_testing|
 
 .. include:: /includes/build_and_run.txt
-
 
 Testing
 =======
