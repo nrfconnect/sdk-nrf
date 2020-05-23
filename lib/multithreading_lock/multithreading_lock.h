@@ -40,13 +40,13 @@ extern "C" {
  * This API call will be blocked for the time specified by @p timeout and then
  * return error code.
  *
- * @param[in] timeout     Timeout value (in milliseconds) for the locking API.
+ * @param[in] timeout     Timeout value for the locking API.
  *
  * @retval 0              Success
  * @retval - ::EBUSY      Returned without waiting.
  * @retval - ::EAGAIN     Waiting period timed out.
  */
-int multithreading_lock_acquire(int timeout);
+int multithreading_lock_acquire(k_timeout_t timeout);
 
 /** @brief Unlock the lock.
  *
