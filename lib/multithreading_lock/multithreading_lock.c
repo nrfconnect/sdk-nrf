@@ -8,11 +8,9 @@
 
 static K_SEM_DEFINE(mpsl_lock, 1, 1);
 
-int multithreading_lock_acquire(int32_t timeout)
+int multithreading_lock_acquire(k_timeout_t timeout)
 {
-	return k_sem_take(&mpsl_lock,
-			  ((timeout == K_FOREVER || timeout == K_NO_WAIT) ?
-			   timeout : K_MSEC(timeout)));
+	return k_sem_take(&mpsl_lock, timeout);
 }
 
 void multithreading_lock_release(void)
