@@ -107,9 +107,9 @@ Complete the following steps to build the documentation output:
 The documentation output is written to ``_build\html``. Double-click the ``index.html`` file to display the documentation in your browser.
 
 .. tip::
-   If you modify or add RST files, you only need to rerun the steps that build the respective documentation: step 4 (if you modified the Zephyr documentation), step 5 (if you modified the nrfxlib documentation), step 6 (if you modified the MCUboot documentation), or step 7 (if you modified the |NCS| documentation).
+   If you modify or add RST files, you only need to rerun the steps that build the respective documentation: step 4 (if you did changes to Kconfig), step 5 (if you modified the Zephyr documentation), step 6 (if you modified the nrfxlib documentation), step 7 (if you modified the MCUboot documentation), or step 8 (if you modified the |NCS| documentation).
 
-   If you open up a new command prompt, you must repeat step 2.
+
 
 Caching and cleaning
 ********************
