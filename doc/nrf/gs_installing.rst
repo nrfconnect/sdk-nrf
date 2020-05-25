@@ -166,7 +166,7 @@ See the :ref:`west documentation <zephyr:west>` for detailed information about t
 Installing west
 ===============
 
-Install the bootstrapper for west by entering the following command:
+Install west by entering the following command:
 
 .. tabs::
 
@@ -192,7 +192,10 @@ Install the bootstrapper for west by entering the following command:
          pip3 install west
 
 You only need to do this once.
-Like any other Python package, the west bootstrapper is updated regularly.
+
+.. _west_update:
+
+Like any other Python package, the west tool is updated regularly.
 Therefore, remember to regularly check for updates:
 
 .. tabs::
@@ -230,38 +233,40 @@ To clone the repositories, complete the following steps:
 1. Create a folder named ``ncs``.
    This folder will hold all |NCS| repositories.
 #. Open a command window in the ``ncs`` folder.
-#. Initialize west with the revision of the |NCS| that you want to check out:
+#. Determine what revision of the |NCS| you want to work with.
+   The recommended way is to work with a specific release.
 
-   * To check out a specific release, go to the :ref:`release_notes` of that release and find the corresponding tag.
-     Then enter the following command, replacing *NCS_version* with the tag:
+   * To work with a specific release, the revision is the corresponding tag (for example, ``v1.2.0``).
+     You can find the tag in the :ref:`release_notes` of the release.
+   * To work with a branch, the revision is the branch name (for example, ``master`` to work with the latest state of development).
+   * To work with a specific state, the revision is the SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``).
 
-     .. parsed-literal::
-        :class: highlight
+#. Initialize west with the revision of the |NCS| that you want to check out, replacing *NCS_revision* with the revision:
 
-        west init -m https\://github.com/nrfconnect/sdk-nrf --mr *NCS_version*
+   .. parsed-literal::
+      :class: highlight
 
-     .. note::
-        * West was introduced after |NCS| v0.3.0.
-          Therefore, you cannot use it to check out v0.1.0 or v0.3.0.
+      west init -m https\://github.com/nrfconnect/sdk-nrf --mr *NCS_revision*
 
-        * Initializing west with a specific revision of the manifest file does not lock your repositories to this version.
-          Checking out a different branch or tag in the repositories changes the version of the |NCS| that you work with.
-   * To check out the latest state of development, enter the following command:
+   For example, to check out the v1.2.0 release, enter the following command::
 
-     .. parsed-literal::
-        :class: highlight
+     west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.2.0
 
-        west init -m https\://github.com/nrfconnect/sdk-nrf
+   To check out the latest state of development, enter the following command::
 
-   * More generally, to check out an arbitrary revision, enter the following command, replacing *NCS_revision* with the revision that you want to check out:
+     west init -m https://github.com/nrfconnect/sdk-nrf --mr master
 
-     .. parsed-literal::
-        :class: highlight
+   .. west-error-start
 
-        west init -m https\://github.com/nrfconnect/sdk-nrf --mr *NCS_revision*
+   .. note::
 
-     .. note::
-        *NCS_revision* can be a branch (for example, ``master``), a tag (for example, ``v1.2.0``), or even a SHA (for example, ``224bee9055d986fe2677149b8cbda0ff10650a6e``). When not specified, it defaults to ``master``.
+      If you get an error message when running west, :ref:`update west <west_update>` to the latest version.
+      See :ref:`zephyr:west-troubleshooting` if you need more information.
+
+      .. west-error-end
+
+      Initializing west with a specific revision of the manifest file does not lock your repositories to this version.
+      Checking out a different branch or tag in the repositories changes the version of the |NCS| that you work with.
 
    This will clone the manifest repository `sdk-nrf`_ into :file:`nrf`.
 
@@ -294,6 +299,11 @@ To manage the ``nrf`` repository (the manifest repository), use Git.
 To make sure that you have the latest changes, run ``git fetch origin`` to :ref:`fetch the latest code <dm-wf-update-ncs>` from the `sdk-nrf`_ repository.
 Checking out a branch or tag in the ``nrf`` repository gives you a different version of the manifest file.
 Running ``west update`` will then update the project repositories to the state specified in this manifest file.
+
+.. include:: gs_installing.rst
+   :start-after: west-error-start
+   :end-before: west-error-end
+
 For example, to switch to release v1.2.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
 
    git fetch origin
@@ -319,7 +329,7 @@ To switch to the latest state of development, enter the following commands::
 .. _repo_move:
 
 Pointing the repositories to the right remotes after they were moved
-********************************************************************
+====================================================================
 
 Before |NCS| version 1.3.0, the Git repositories were moved from the NordicPlayground GitHub organization to the nrfconnect organization.
 They were also renamed, replacing the ``fw-nrfconnect-`` prefix with ``sdk-``.
