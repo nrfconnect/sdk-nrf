@@ -380,7 +380,8 @@ add_custom_target(
     KCONFIG_DOC_MODE=1
       ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/doc/scripts/genrest.py ${KCONFIG_RST_OUT}
         --separate-all-index
-        --modules Zephyr,zephyr,${ZEPHYR_BASE}
+        --modules BuildDir,builddir,${CMAKE_BINARY_DIR}
+                  Zephyr,zephyr,${ZEPHYR_BASE}
                   nRF,nrf,${NRF_BASE}
                   nrfxlib,nrfxlib,${NRFXLIB_BASE}
 
