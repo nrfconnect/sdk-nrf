@@ -127,6 +127,7 @@
 
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
 
+.. _`nRF Thread Topology Monitor`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/thread_topology_monitor.html
 
 .. ### Links to Nordic mobile applications
 
@@ -238,7 +239,6 @@
 .. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
-
 
 .. ### Links to Zigbee
 
