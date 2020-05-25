@@ -22,7 +22,6 @@ zephyr_library_sources(osif/zb_nrf_timer.c)
 zephyr_library_sources(osif/zb_nrf_transceiver.c)
 zephyr_library_sources(osif/zb_nrf_crypto.c)
 zephyr_library_sources(osif/zb_nrf_pwr_mgmt.c)
-zephyr_library_sources(osif/nrf_ecb_driver.c)
 zephyr_library_sources(common/zigbee_helpers.c)
 zephyr_library_sources(common/zigbee_logger_eprxzcl.c)
 

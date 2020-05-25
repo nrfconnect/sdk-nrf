@@ -7,15 +7,20 @@
 #include <sys/__assert.h>
 #include <random/rand32.h>
 #include <logging/log.h>
-#include <zboss_api.h>
+#include <crypto/cipher.h>
 #include "zb_nrf_crypto.h"
-#include "nrf_ecb_driver.h"
+#include <zboss_api.h>
+
+#define ECB_AES_KEY_SIZE   16
+#define ECB_AES_BLOCK_SIZE 16
 
 #if !defined(CONFIG_ENTROPY_HAS_DRIVER)
 #error Entropy driver required for secure random number support
 #endif
 
 LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
+
+static struct device *dev;
 
 void zb_osif_rng_init(void)
 {
@@ -33,18 +38,45 @@ zb_uint32_t zb_random_seed(void)
 
 void zb_osif_aes_init(void)
 {
-	nrf_ecb_driver_init();
+	dev = device_get_binding(CONFIG_CRYPTO_NRF_ECB_DRV_NAME);
+	__ASSERT(dev, "Crypto driver not found");
 }
 
 void zb_osif_aes128_hw_encrypt(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 {
-	int err_code;
+	int err;
 
 	if (!(c && msg && key)) {
-		LOG_ERR("NULL argument passed");
+		__ASSERT(false, "NULL argument passed");
 		return;
 	}
-	nrf_ecb_driver_set_key(key);
-	err_code = nrf_ecb_driver_crypt(c, msg);
-	__ASSERT_NO_MSG(err_code == 0);
+
+	__ASSERT(dev, "encryption call too early");
+
+	struct cipher_ctx ctx = {
+		.keylen = ECB_AES_KEY_SIZE,
+		.key.bit_stream = key,
+		.flags = CAP_RAW_KEY | CAP_SEPARATE_IO_BUFS | CAP_SYNC_OPS,
+	};
+	struct cipher_pkt encryption = {
+		.in_buf = msg,
+		.in_len = ECB_AES_BLOCK_SIZE,
+		.out_buf_max = ECB_AES_BLOCK_SIZE,
+		.out_buf = c,
+	};
+
+	err = cipher_begin_session(dev, &ctx, CRYPTO_CIPHER_ALGO_AES,
+				   CRYPTO_CIPHER_MODE_ECB,
+				   CRYPTO_CIPHER_OP_ENCRYPT);
+	__ASSERT(!err, "Session init failed");
+
+	if (err) {
+		goto out;
+	}
+
+	err = cipher_block_op(&ctx, &encryption);
+	__ASSERT(!err, "Encryption failed");
+
+out:
+	cipher_free_session(dev, &ctx);
 }
