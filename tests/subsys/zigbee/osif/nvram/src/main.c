@@ -5,7 +5,7 @@
  */
 
 #include <ztest.h>
-
+#include <pm_config.h>
 #include <zboss_api.h>
 #include <zb_errors.h>
 #include <zb_osif.h>
@@ -13,8 +13,7 @@
 #define PAGE_SIZE 0x400         /* Size for testing purpose */
 #define VIRTUAL_PAGE_COUNT 2    /* ZBOSS uses two virtual pages */
 
-#define ZBOSS_NVRAM_PAGE_SIZE \
-	(DT_FLASH_AREA_ZBOSS_NVRAM_SIZE / VIRTUAL_PAGE_COUNT)
+#define ZBOSS_NVRAM_PAGE_SIZE (PM_ZBOSS_NVRAM_SIZE / VIRTUAL_PAGE_COUNT)
 
 #define PHYSICAL_PAGE_SIZE 0x1000 /* For nvram in nrf5 products */
 
@@ -24,10 +23,14 @@ BUILD_ASSERT((ZBOSS_NVRAM_PAGE_SIZE % PHYSICAL_PAGE_SIZE) == 0,
 static char zb_nvram_buf[PAGE_SIZE];
 
 /* Stub for ZBOSS callout */
-zb_void_t zb_nvram_erase_finished(zb_uint8_t page)
+zb_void_t zb_nvram_erase_finished_stub(zb_uint8_t page)
 {
 }
 
+/* Stub for ZBOSS signal handler */
+void zboss_signal_handler(zb_bufid_t bufid)
+{
+}
 
 static void test_zb_nvram_memory_size(void)
 {
@@ -97,8 +100,6 @@ static void test_zb_nvram_write(void)
 
 void test_main(void)
 {
-	zb_osif_nvram_init("nvram");
-
 	ztest_test_suite(osif_test,
 			 ztest_unit_test(test_zb_nvram_memory_size),
 			 ztest_unit_test(test_zb_nvram_erase),
