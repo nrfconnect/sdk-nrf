@@ -598,7 +598,7 @@ reset:
 #endif
 K_THREAD_DEFINE(connection_poll_thread, POLL_THREAD_STACK_SIZE,
 		nrf_cloud_run, NULL, NULL, NULL,
-		K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 #endif
 
 static const struct cloud_api nrf_cloud_api = {
