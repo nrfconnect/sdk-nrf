@@ -416,7 +416,7 @@ static void poll_work_handler(struct k_work *work)
 {
 	struct eth_rtt_context *context = &context_data;
 	bool active = false;
-	s32_t period = K_MSEC(CONFIG_ETH_POLL_PERIOD_MS);
+	k_timeout_t period = K_MSEC(CONFIG_ETH_POLL_PERIOD_MS);
 	unsigned num;
 
 	do {
@@ -497,7 +497,7 @@ static void eth_iface_init(struct net_if *iface)
 	LOG_INF("Initialized '%s': "
 		"MAC addr %02X:%02X:%02X:%02X:%02X:%02X, "
 		"MTU %d, RTT channel %d, RAM consumed %d",
-		iface->if_dev->dev->config->name, context->mac_addr[0],
+		iface->if_dev->dev->name, context->mac_addr[0],
 		context->mac_addr[1], context->mac_addr[2],
 		context->mac_addr[3], context->mac_addr[4],
 		context->mac_addr[5], CONFIG_ETH_RTT_MTU,
