@@ -215,7 +215,15 @@
 
 .. _`Mesh Model Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
 
+.. _`Bluetooth Mesh Profile Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
+
 .. _`Mesh Model Overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
+
+.. _`Bluetooth Mesh Glossary`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-glossary/
+
+.. _`Bluetooth Mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
+
+.. _`Bluetooth Mesh Study Guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
 
 
 .. ### Links to NFC specs
