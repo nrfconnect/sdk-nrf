@@ -12,7 +12,7 @@
 #include <zb_types.h>
 
 #define ALARM_CHANNEL_ID  0
-#define TIMER_INSTANCE    DT_NORDIC_NRF_TIMER_TIMER_3_LABEL
+#define TIMER_INSTANCE    DT_LABEL(DT_NODELABEL(timer3))
 
 typedef struct {
 	struct device *device;
