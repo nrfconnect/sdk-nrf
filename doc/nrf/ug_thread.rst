@@ -215,7 +215,16 @@ Available drivers, libraries, and samples
 
 See :ref:`openthread_samples` for the list of available Thread samples.
 
-Copyright disclaimer
-********************
+Available Thread tools
+**********************
 
-|Google_CCLicense|
+When working with Thread in |NCS|, you can use the following tools during Thread application development:
+
+* `nRF Thread Topology Monitor`_ - This desktop application helps to visualize the current network topology.
+
+Using Thread tools is optional.
+
+----
+
+Copyright disclaimer
+    |Google_CCLicense|
