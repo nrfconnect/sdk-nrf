@@ -45,8 +45,9 @@ enum uart_device_idx {
 
 BUILD_ASSERT(UART_DEVICE_COUNT > 0);
 
+/* List of UART device names. "UART_0", "UART_1", etc. */
 static const char *device_names[UART_DEVICE_COUNT] = {
-#define X(_DEV_IDX) CONCAT(CONCAT(DT_UART_, _DEV_IDX), _NAME),
+#define X(_DEV_IDX) STRINGIFY(CONCAT(UART_, _DEV_IDX)),
 	UART_DEVICE_LIST
 #undef X
 };
