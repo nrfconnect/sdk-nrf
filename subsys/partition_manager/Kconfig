@@ -21,6 +21,16 @@ partition-size=0x2000
 rsource "Kconfig.template.partition_size"
 endif
 
+if ZIGBEE
+partition=ZBOSS_NVRAM
+partition-size=0x8000
+rsource "Kconfig.template.partition_size"
+
+partition=ZBOSS_PRODUCT_CONFIG
+partition-size=0x1000
+rsource "Kconfig.template.partition_size"
+endif
+
 endmenu
 
 menuconfig PM_EXTERNAL_FLASH

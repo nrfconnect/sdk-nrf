@@ -1,0 +1,10 @@
+#include <autoconf.h>
+#include <devicetree_legacy_unfixed.h>
+
+zboss_nvram:
+  placement: {after: [app], align: {start: DT_FLASH_ERASE_BLOCK_SIZE}}
+  size: CONFIG_PM_PARTITION_SIZE_ZBOSS_NVRAM
+
+zboss_product_config:
+  placement: {after: [zboss_nvram]}
+  size: CONFIG_PM_PARTITION_SIZE_ZBOSS_PRODUCT_CONFIG
