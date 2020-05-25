@@ -46,8 +46,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(asset_tracker, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 
-#define CALIBRATION_PRESS_DURATION 	K_SECONDS(5)
-#define CLOUD_CONNACK_WAIT_DURATION	K_SECONDS(CONFIG_CLOUD_WAIT_DURATION)
+#define CALIBRATION_PRESS_DURATION  K_SECONDS(5)
+#define CLOUD_CONNACK_WAIT_DURATION (CONFIG_CLOUD_WAIT_DURATION * MSEC_PER_SEC)
 
 #ifdef CONFIG_ACCEL_USE_SIM
 #define FLIP_INPUT			CONFIG_FLIP_INPUT
@@ -80,12 +80,12 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 /* Interval in milliseconds after which the device will reboot
  * if the disconnect event has not been handled.
  */
-#define REBOOT_AFTER_DISCONNECT_WAIT_MS	K_SECONDS(15)
+#define REBOOT_AFTER_DISCONNECT_WAIT_MS     (15 * MSEC_PER_SEC)
 
 /* Interval in milliseconds after which the device will
  * disconnect and reconnect if association was not completed.
  */
-#define CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS	K_MINUTES(5)
+#define CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS K_MINUTES(5)
 
 struct rsrp_data {
 	u16_t value;
@@ -370,9 +370,11 @@ static void send_agps_request(struct k_work *work)
 	int err;
 	static s64_t last_request_timestamp;
 
+/* Request A-GPS data no more often than every hour (time in milliseconds). */
+#define AGPS_UPDATE_PERIOD (60 * 60 * 1000)
 
 	if ((last_request_timestamp != 0) &&
-	    (k_uptime_get() - last_request_timestamp < K_HOURS(1))) {
+	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
 		LOG_WRN("A-GPS request was sent less than 1 hour ago");
 		return;
 	}
@@ -529,7 +531,7 @@ static void cloud_connect_work_fn(struct k_work *work)
 
 	k_delayed_work_submit_to_queue(&application_work_q,
 			&cloud_reboot_work,
-			CLOUD_CONNACK_WAIT_DURATION);
+			K_MSEC(CLOUD_CONNACK_WAIT_DURATION));
 
 	ui_led_set_pattern(UI_CLOUD_CONNECTING);
 
@@ -547,8 +549,8 @@ static void cloud_connect_work_fn(struct k_work *work)
 		LOG_INF("Connection response timeout is set to %d seconds.",
 		       CLOUD_CONNACK_WAIT_DURATION / MSEC_PER_SEC);
 		k_delayed_work_submit_to_queue(&application_work_q,
-					       &cloud_reboot_work,
-					       CLOUD_CONNACK_WAIT_DURATION);
+					&cloud_reboot_work,
+					K_MSEC(CLOUD_CONNACK_WAIT_DURATION));
 	}
 }
 
@@ -770,7 +772,7 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 		LOG_INF("%s", log_strdup(buf));
 
 		LOG_INF("starting GPS in %lld seconds", time_to_start_next_fix);
-		gps_control_start((uint32_t)K_SECONDS(time_to_start_next_fix));
+		gps_control_start(time_to_start_next_fix * MSEC_PER_SEC);
 		k_work_submit_to_queue(&application_work_q,
 				       &send_agps_request_work);
 	}
@@ -1078,7 +1080,7 @@ static void device_config_send(struct k_work *work)
 	if (gps_cfg_state == CLOUD_CMD_STATE_TRUE) {
 		k_work_submit_to_queue(&application_work_q,
 						&send_agps_request_work);
-		gps_control_start(K_NO_WAIT);
+		gps_control_start(0);
 	}
 }
 
@@ -1291,14 +1293,14 @@ static void cycle_cloud_connection(struct k_work *work)
 	LOG_INF("Disconnecting from cloud...");
 
 	if (cloud_disconnect(cloud_backend) != 0) {
-		reboot_wait_ms = K_SECONDS(5);
+		reboot_wait_ms = 5 * MSEC_PER_SEC;
 		LOG_INF("Disconnect failed. Device will reboot in %d seconds",
 			(reboot_wait_ms / MSEC_PER_SEC));
 	}
 
 	/* Reboot fail-safe on disconnect */
 	k_delayed_work_submit_to_queue(&application_work_q, &cloud_reboot_work,
-				       reboot_wait_ms);
+				       K_MSEC(reboot_wait_ms));
 }
 
 /** @brief Handle procedures after successful association with nRF Cloud. */
@@ -1468,7 +1470,7 @@ void connection_evt_handler(const struct cloud_event *const evt)
 
 static void set_gps_enable(const bool enable)
 {
-	s32_t delay_ms = K_NO_WAIT;
+	s32_t delay_ms = 0;
 	bool changing = (enable != gps_control_is_enabled());
 
 	/* Exit early if the link is not ready or if the cloud
@@ -1491,17 +1493,17 @@ static void set_gps_enable(const bool enable)
 			 */
 		} else {
 			LOG_INF("Stopping GPS");
-			gps_control_stop(K_NO_WAIT);
+			gps_control_stop(0);
 			/* Allow time for the gps to be stopped before
 			 * attemping to send the config update
 			 */
-			delay_ms = K_SECONDS(5);
+			delay_ms = 5 * MSEC_PER_SEC;
 		}
 	}
 
 	/* Update config state in cloud */
 	k_delayed_work_submit_to_queue(&application_work_q,
-			&device_config_work, delay_ms);
+			&device_config_work, K_MSEC(delay_ms));
 }
 
 static void long_press_handler(struct k_work *work)

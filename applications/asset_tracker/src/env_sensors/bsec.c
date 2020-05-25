@@ -251,7 +251,7 @@ static inline int submit_poll_work(const u32_t delay_s)
 
 int env_sensors_poll(void)
 {
-	return initialized ? submit_poll_work(K_NO_WAIT) : -ENXIO;
+	return initialized ? submit_poll_work(0) : -ENXIO;
 }
 
 static void env_sensors_poll_fn(struct k_work *work)
@@ -302,7 +302,7 @@ int env_sensors_init_and_start(struct k_work_q *work_q,
 
 	k_thread_create(&thread, thread_stack, STACKSIZE,
 			(k_thread_entry_t)bsec_thread, NULL, NULL, NULL,
-			CONFIG_SYSTEM_WORKQUEUE_PRIORITY, 0, K_NO_WAIT);
+			CONFIG_SYSTEM_WORKQUEUE_PRIORITY, 0, 0);
 
 	data_ready_cb = cb;
 
