@@ -76,7 +76,7 @@ static inline int submit_poll_work(const u32_t delay_s)
 
 int env_sensors_poll(void)
 {
-	return initialized ? submit_poll_work(K_NO_WAIT) : -ENXIO;
+	return initialized ? submit_poll_work(0) : -ENXIO;
 }
 
 static void env_sensors_poll_fn(struct k_work *work)
