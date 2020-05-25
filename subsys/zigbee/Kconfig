@@ -6,7 +6,7 @@
 
 menuconfig ZIGBEE
 	bool "Enable Zigbee stack"
-	select FLOAT
+	imply FLOAT
 	select APP_LINK_WITH_ZBOSS
 	imply COUNTER
 	imply COUNTER_TIMER3
@@ -17,7 +17,7 @@ menuconfig ZIGBEE
 	imply FLASH_PAGE_LAYOUT
 	imply FLASH_MAP
 	imply MPU_ALLOW_FLASH_WRITE
-	depends on SOC_NRF52840
+	depends on (SOC_NRF52840 || SOC_NRF52833)
 
 if ZIGBEE
 
