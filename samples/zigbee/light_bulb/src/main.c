@@ -76,17 +76,23 @@
 /* Button used to enter the Bulb into the Identify mode. */
 #define IDENTIFY_MODE_BUTTON            DK_BTN4_MSK
 
-/* Use onboard led4 to act as a light bulb. */
-#if defined(DT_PWM_LEDS_PWM_LED_3_PWMS_CONTROLLER) \
-	&& defined(DT_PWM_LEDS_PWM_LED_3_PWMS_CHANNEL)
+/* Use onboard led4 to act as a light bulb.
+ * The app.overlay file has this at node label "pwm_led3" in /pwmleds.
+ */
+#define PWM_DK_LED4_NODE                DT_NODELABEL(pwm_led3)
+
+/* Nordic PWM nodes don't have flags cells in their specifiers, so
+ * this is just future-proofing.
+ */
+#define FLAGS_OR_ZERO(node) \
+	COND_CODE_1(DT_PHA_HAS_CELL(node, pwms, flags), \
+		    (DT_PWMS_FLAGS(node)), (0))
+
+#if DT_NODE_HAS_STATUS(PWM_DK_LED4_NODE, okay)
 /* Get the defines from overlay file. */
-#define PWM_DK_LED4_DRIVER              DT_PWM_LEDS_PWM_LED_3_PWMS_CONTROLLER
-#define PWM_DK_LED4_CHANNEL             DT_PWM_LEDS_PWM_LED_3_PWMS_CHANNEL
-#ifdef DT_ALIAS_PWM_LED3_PWMS_FLAGS
-#define PWM_DK_LED4_FLAGS               DT_ALIAS_PWM_LED3_PWMS_FLAGS
-#else
-#define PWM_DK_LED4_FLAGS               0
-#endif
+#define PWM_DK_LED4_DRIVER              DT_PWMS_LABEL(PWM_DK_LED4_NODE)
+#define PWM_DK_LED4_CHANNEL             DT_PWMS_CHANNEL(PWM_DK_LED4_NODE)
+#define PWM_DK_LED4_FLAGS               FLAGS_OR_ZERO(PWM_DK_LED4_NODE)
 #else
 #error "Choose supported PWM driver"
 #endif
