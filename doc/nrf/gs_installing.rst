@@ -322,7 +322,6 @@ Pointing the repositories to the right remotes after they were moved
 ********************************************************************
 
 Before |NCS| version 1.3.0, the Git repositories were moved from the NordicPlayground GitHub organization to the nrfconnect organization.
-
 They were also renamed, replacing the ``fw-nrfconnect-`` prefix with ``sdk-``.
 
 If you cloned the repositories before the move, your local repositories and forks of the |NCS| repositories are automatically be redirected to the new ones.
@@ -355,15 +354,13 @@ The full list of repositories with their old and new URLs can be found in the fo
      - https://github.com/nrfconnect/sdk-nrfxlib
 
 
-Before you cahnge the remotes, rename any personal forks that you have of the
+Before you change the remotes, rename any personal forks that you have of the
 |NCS| repositories to their new names.
 
 To do so, visit your personal fork in a browser and edit the name there.
-
 For example, to rename the fw-nrfconnect-nrf repository, access your fork on GitHub (for example, ``https://github.com/<username>/fw-nrfconnect-nrf``), switch to the :guilabel:`Settings` tab, and change the name in the :guilabel:`Repository name` field to ``sdk-nrf``.
 
 Then rename the actual remotes.
-
 To do so, go to your local copy of each of the repositories listed in the table above and enter the following command:
 
     .. parsed-literal::
