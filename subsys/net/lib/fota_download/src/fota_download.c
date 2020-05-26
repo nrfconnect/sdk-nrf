@@ -204,13 +204,14 @@ static void download_with_offset(struct k_work *unused)
 }
 
 int fota_download_start(const char *host, const char *file, int sec_tag,
-			u16_t port)
+			u16_t port, const char *apn)
 {
 	int err = -1;
 
 	struct download_client_cfg config = {
-		.sec_tag = sec_tag,
 		.port = port,
+		.sec_tag = sec_tag,
+		.apn = apn,
 	};
 
 	if (host == NULL || file == NULL || callback == NULL) {
