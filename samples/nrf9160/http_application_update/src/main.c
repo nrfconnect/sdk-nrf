@@ -78,6 +78,7 @@ static void app_dfu_transfer_start(struct k_work *unused)
 {
 	int retval;
 	int sec_tag;
+	char *apn = NULL;
 
 #ifndef CONFIG_USE_HTTPS
 	sec_tag = -1;
@@ -88,7 +89,8 @@ static void app_dfu_transfer_start(struct k_work *unused)
 	retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
 				     CONFIG_DOWNLOAD_FILE,
 				     sec_tag,
-				     CONFIG_DOWNLOAD_PORT);
+				     CONFIG_DOWNLOAD_PORT,
+				     apn);
 	if (retval != 0) {
 		/* Re-enable button callback */
 		gpio_pin_interrupt_configure(gpiob, DT_ALIAS_SW0_GPIOS_PIN,
