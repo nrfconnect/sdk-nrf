@@ -9,9 +9,7 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(test);
 
-#if DT_HAS_NODE(DT_INST(0, nordic_nrf_clock))
 #include <drivers/clock_control/nrf_clock_control.h>
-#endif
 
 struct device_subsys_data {
 	clock_control_subsys_t subsys;
@@ -25,7 +23,6 @@ struct device_data {
 };
 
 static const struct device_data devices[] = {
-#if DT_HAS_NODE(DT_INST(0, nordic_nrf_clock))
 	{
 		.name = DT_LABEL(DT_INST(0, nordic_nrf_clock)),
 		.subsys_data =  (const struct device_subsys_data[]){
@@ -43,7 +40,6 @@ static const struct device_data devices[] = {
 		},
 		.subsys_cnt = CLOCK_CONTROL_NRF_TYPE_COUNT
 	}
-#endif
 };
 
 
