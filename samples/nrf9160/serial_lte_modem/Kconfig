@@ -17,6 +17,7 @@ config SLM_AT_MODE
 	select MODEM_INFO
 	select MQTT_LIB
 	select MQTT_LIB_TLS
+	select FTP_CLIENT
 
 config SLM_AT_MAX_PARAM
 	int "Max number of parameters in AT command"
@@ -92,6 +93,25 @@ config SLM_SUPL_SERVER
 config SLM_SUPL_PORT
 	int "SUPL server port"
 	default 7276
+
+#
+# FTP
+#
+config SLM_FTP_SERVER_PORT
+	int "FTP service port on remote host"
+	default 21
+
+config SLM_FTP_USER_ANONYMOUS
+	string "FTP client login user Anonymous"
+	default "anonymous"
+	help
+	  Define the user name for anonymous login.
+
+config SLM_FTP_PASSWORD_ANONYMOUS
+	string "FTP client login password for user Anonymous"
+	default "anonymous@example.com"
+	help
+	  Define the password for anonymous login.
 
 rsource "src/tcpip_proxy/Kconfig"
 

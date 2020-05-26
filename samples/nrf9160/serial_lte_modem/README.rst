@@ -11,9 +11,11 @@ It provides the following features:
 
  * Support for generic proprietary AT commands
  * Support for BSD Socket proprietary AT commands
+ * Support for TCP/UDP proxy proprietary AT commands (optional)
  * Support for ICMP proprietary AT commands
  * Support for GPS proprietary AT commands
- * Support for MQTT Client proprietary AT commands
+ * Support for MQTT client proprietary AT commands
+ * Support for FTP client proprietary AT commands
  * Support for communication to external MCU over UART
 
 All nRF91 modem AT commands are also supported.
@@ -166,6 +168,30 @@ received and reports the topic and the message:
 
 * #XMQTTMSG=<datatype>,<topic_length>,<message_length><CR><LF><topic><CR><LF><message>
 
+FTP AT Commands
+***************
+
+The following proprietary FTP AT commands are used in this sample:
+
+* AT#XFTP=<cmd>[,<param1>[<param2]..]]
+
+More detailed usage for different operation commands:
+
+* AT#XFTP="open",<username>,<password>,<hostname>[,<port>[,<sec_tag>]]
+* AT#XFTP="status"
+* AT#XFTP="ascii"
+* AT#XFTP="binary"
+* AT#XFTP="close"
+* AT#XFTP="pwd"
+* AT#XFTP="cd",<folder>
+* AT#XFTP="ls"[,<options>[,<folder or file>]]
+* AT#XFTP="mkdir",<folder>
+* AT#XFTP="rmdir",<folder>
+* AT#XFTP="rename",<filename_old>,<filename_new>
+* AT#XFTP="delete",<file>
+* AT#XFTP="get",<file>
+* AT#XFTP="put",<file>[<datatype>,<data>]
+
 Building and Running
 ********************
 
@@ -205,6 +231,7 @@ This application uses the following |NCS| libraries and drivers:
     * ``nrf/lib/at_cmd_parser``
     * ``nrf/lib/at_notif``
     * ``nrf/lib/modem_info``
+    * ``nrf/subsys/net/lib/ftp_client``
 
 In addition, it uses the Secure Partition Manager sample:
 

@@ -21,6 +21,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #include "slm_at_tcpip.h"
 #include "slm_at_icmp.h"
 #include "slm_at_gps.h"
+#include "slm_at_ftp.h"
 #if defined(CONFIG_SLM_TCP_PROXY)
 #include "slm_at_tcp_proxy.h"
 #endif
@@ -138,6 +139,7 @@ static void handle_at_clac(void)
 	slm_at_icmp_clac();
 	slm_at_gps_clac();
 	slm_at_mqtt_clac();
+	slm_at_ftp_clac();
 }
 
 static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
@@ -284,6 +286,15 @@ static void cmd_send(struct k_work *work)
 	}
 
 	err = slm_at_mqtt_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOTSUP) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+
+	err = slm_at_ftp_parse(at_buf);
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
@@ -540,6 +551,12 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 
+	err = slm_at_ftp_init();
+	if (err) {
+		LOG_ERR("FTP could not be initialized: %d", err);
+		return -EFAULT;
+	}
+
 	k_work_init(&cmd_send_work, cmd_send);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
@@ -575,6 +592,14 @@ void slm_at_host_uninit(void)
 	err = slm_at_gps_uninit();
 	if (err) {
 		LOG_WRN("GPS could not be uninitialized: %d", err);
+	}
+	err = slm_at_mqtt_uninit();
+	if (err) {
+		LOG_WRN("MQTT could not be uninitialized: %d", err);
+	}
+	err = slm_at_ftp_uninit();
+	if (err) {
+		LOG_WRN("FTP could not be uninitialized: %d", err);
 	}
 	err = at_notif_deregister_handler(NULL, response_handler);
 	if (err) {
