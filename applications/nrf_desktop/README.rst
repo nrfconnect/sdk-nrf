@@ -819,6 +819,8 @@ The nRF Desktop application uses the following files as configuration sources:
 You must modify these configuration sources when `Adding a new board`_.
 For information about differences between DTS and Kconfig, see :ref:`zephyr:dt_vs_kconfig`.
 
+.. _nrf_desktop_board_configuration:
+
 Board configuration
 ===================
 
@@ -954,6 +956,130 @@ To use the nRF Desktop application with your custom board:
 #. Edit Kconfig to disable options that you do not use.
    Some options have dependencies that might not be needed when these options are disabled.
    For example, when the LEDs module is disabled, the PWM driver is not needed.
+
+.. _porting_guide_adding_sensor:
+
+Adding a new motion sensor
+==========================
+
+This procedure describes how to add a new motion sensor into the project.
+You can use it as a reference for adding other hardware components.
+
+The nRF Desktop application comes with a :ref:`nrf_desktop_motion` that is able to read data from a motion sensor.
+While |NCS| provides support for two motion sensor drivers (PMW3360 and PAW3212), you can add support for a different sensor, based on your development needs.
+
+Complete the following steps to add a new motion sensor:
+
+.. contents::
+    :local:
+    :depth: 1
+
+1. Add a new sensor driver
+--------------------------
+
+First, create a new motion sensor driver that will provide code for communication with the sensor.
+Use the two existing |NCS| sensor drivers as an example.
+
+The communication between the application and the sensor is done through a sensor driver API (see :ref:`sensor_api`).
+For motion module to work correctly, the driver must support a trigger (see ``sensor_trigger_set``) on a new data (see ``SENSOR_TRIG_DATA_READY`` trigger type).
+
+When motion data is ready, the driver calls a registered callback.
+The application starts a process of retrieving a motion data sample.
+The motion module calls ``sensor_sample_fetch`` and then ``sensor_channel_get`` on two sensor channels, ``SENSOR_CHAN_POS_DX`` and ``SENSOR_CHAN_POS_DY``.
+The driver must support these two channels.
+
+2. Create a DTS binding
+-----------------------
+
+Zephyr recommends to use DTS for hardware configuration (see :ref:`zephyr:dt_vs_kconfig`).
+For the new motion sensor configuration to be recognized by DTS, define a dedicated DTS binding.
+See :ref:`dt-bindings` for more information, and refer to :file:`dts/bindings/sensor` for binding examples.
+
+3. Configure sensor through DTS
+-------------------------------
+
+Once binding is defined, it is possible to set the sensor configuration.
+This is done by editing the DTS file that describes the board.
+For more information, see :ref:`devicetree-intro`.
+
+As an example, take a look at the PMW3360 sensor that already exists in |NCS|.
+The following code excerpt is taken from :file:`boards/arm/nrf52840gmouse_nrf52840/nrf52840gmouse_nrf52840.dts`.
+
+.. code-block:: none
+
+   &spi1 {
+   	compatible = "nordic,nrf-spim";
+   	status = "okay";
+   	sck-pin = <16>;
+   	mosi-pin = <17>;
+   	miso-pin = <15>;
+   	cs-gpios = <&gpio0 13 0>;
+
+   	pmw3360@0 {
+   		compatible = "pixart,pmw3360";
+   		reg = <0>;
+   		irq-gpios = <&gpio0 21 0>;
+   		spi-max-frequency = <2000000>;
+   		label = "PMW3360";
+   	};
+   };
+
+The communication with PMW3360 is done through the SPI, which makes the sensor a subnode of the SPI bus node.
+SPI pins are defined as part of the bus configuration, as these are common among all devices connected to this bus.
+In this case, the PMW3360 sensor is the only device on this bus and so there is only one pin specified for selecting chip.
+
+When the sensor's node is mentioned, you can read ``@0`` in ``pmw3360@0``.
+For SPI devices, ``@0`` refers to the position of the chip select pin in the ``cs-gpios`` array for a corresponding device.
+
+Note the string ``compatible = "pixart,pmw3360"`` in the subnode configuration.
+This string indicates which DTS binding the node will use.
+The binding should match with the DTS binding created earlier for the sensor.
+
+The following options are inherited from the ``spi-device`` binding and are common to all SPI devices:
+
+* ``reg`` - The slave ID number the device has on a bus.
+* ``label`` - Used to generate a name of the device (for example, it will be added to generated macros).
+* ``spi-max-frequency`` - Used for setting the bus clock frequency.
+
+  .. note::
+      To achieve the full speed, data must be propagated through the application and reach |BLE| a few hundred microseconds before the subsequent connection event.
+      If you aim for the lowest latency through the LLPM (a 1-ms interval), the sensor data readout should take no more then 250 us.
+      The bus and the sensor configuration must ensure that communication speed is fast enough.
+
+The remaining option ``irq-gpios`` is specific to ``pixart,pmw3360`` binding.
+It refers to the PIN to which the motion sensor IRQ line is connected.
+
+If a different kind of bus is used for the new sensor, the DTS layout will be different.
+
+4. Include sensor in the application
+------------------------------------
+
+Once the new sensor is supported by |NCS| and board configuration is updated, you can include it in the nRF Desktop application.
+
+The nRF Desktop application selects a sensor using the configuration options defined in :file:`src/hw_interface/Kconfig.motion`.
+Add the new sensor as a new choice option.
+
+The :ref:`nrf_desktop_motion` of the nRF Desktop application has access to several sensor attributes.
+These attributes are used to modify the sensor behavior in runtime.
+Since the names of the attributes differ for each sensor, the :ref:`nrf_desktop_motion` uses a generic abstraction of them.
+You can translate the new sensor-specific attributes to a generic abstraction by modifying :file:`configuration/common/motion_sensor.h` .
+
+.. tip::
+    If an attribute is not supported by the sensor, it does not have to be defined.
+    In such case, set the attribute to ``-ENOTSUP``.
+
+5. Select the new sensor
+------------------------
+
+After all the previous steps are done, the new sensor can be used by the application.
+Edit the application configuration files for your board to enable it.
+See :ref:`nrf_desktop_board_configuration` for details.
+
+At this point, you can start using the new sensor by completing the following steps:
+
+1. Enable all dependencies required by the driver (for example, bus driver).
+#. Enable the new sensor driver.
+#. Select the new sensor driver in the application configuration options.
 
 .. _nrf_desktop_flash_memory_layout:
 
