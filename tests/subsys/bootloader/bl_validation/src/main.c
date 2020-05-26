@@ -41,7 +41,7 @@ void test_validation(void)
 	u32_t new_addr = ROUND_UP(PM_ADDRESS + copy_len, 0x8000);
 
 	for (u32_t erase_addr = new_addr; erase_addr < (new_addr + copy_len);
-		erase_addr += DT_SOC_NV_FLASH_0_ERASE_BLOCK_SIZE) {
+	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
 		u32_t ret = nrfx_nvmc_page_erase(new_addr);
 
 		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
