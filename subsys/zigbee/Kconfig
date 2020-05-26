@@ -7,7 +7,7 @@
 menuconfig ZIGBEE
 	bool "Enable Zigbee stack"
 	select FLOAT
-	select APP_LINK_WITH_ZBOSS
+	imply APP_LINK_WITH_ZBOSS if APP_LINK_WITH_ZIGBEE
 	imply COUNTER
 	imply COUNTER_TIMER3
 	imply NRF_802154_RADIO_DRIVER
@@ -179,9 +179,15 @@ config RADIO_STATISTICS
 endmenu #menu "ZBOSS osif configuration"
 
 config APP_LINK_WITH_ZIGBEE
-	bool
+	bool "Link application with Zigbee subsystem"
 	default y
 	help
-	  Link application with Zigbee subsystem
+	  This option enables compilation and linkage of Zigbee subsystem.
+	  It consists of ZBOSS OSIF implementation and helper functions.
+
+	  It was introduced in order to:
+	   - Compile ZBOSS stack with backward incompatible API.
+	   - Write unit tests that uses Zigbee's Kconfig options and generate
+	     ZBOSS library mocks.
 
 endif #ZIGBEE

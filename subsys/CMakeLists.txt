@@ -22,7 +22,7 @@ add_subdirectory_ifdef(CONFIG_DFU_TARGET		dfu)
 add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
 add_subdirectory_ifdef(CONFIG_MPSL mpsl)
-add_subdirectory_ifdef(CONFIG_ZIGBEE zigbee)
+add_subdirectory_ifdef(CONFIG_APP_LINK_WITH_ZIGBEE zigbee)
 
 if (CONFIG_NFC_T2T_NRFXLIB OR
     CONFIG_NFC_T4T_NRFXLIB OR
