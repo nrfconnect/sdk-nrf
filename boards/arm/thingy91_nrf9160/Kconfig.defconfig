@@ -12,6 +12,7 @@ config BOARD
 if ADC
 
 config ADC_0
+	bool
 	default y
 
 endif # ADC
@@ -19,6 +20,7 @@ endif # ADC
 if I2C
 
 config I2C_2
+	bool
 	default y
 
 endif # I2C
@@ -26,6 +28,7 @@ endif # I2C
 if PWM
 
 config PWM_0
+	bool
 	default y
 
 endif # PWM
@@ -33,6 +36,7 @@ endif # PWM
 if SPI
 
 config SPI_3
+	bool
 	default y
 
 endif # SPI
