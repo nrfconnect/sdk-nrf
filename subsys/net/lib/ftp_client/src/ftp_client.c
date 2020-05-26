@@ -303,7 +303,7 @@ K_WORK_DEFINE(keepalive_work, keepalive_handler);
 
 static void keepalive_timeout(struct k_timer *dummy)
 {
-	k_work_submit_to_queue(ftp_work_q, &keepalive_work);
+	k_work_submit_to_queue(&ftp_work_q, &keepalive_work);
 }
 
 K_TIMER_DEFINE(keepalive_timer, keepalive_timeout, NULL);
@@ -534,7 +534,7 @@ int ftp_list(const char *options, const char *target)
 	ret = do_ftp_send_ctrl(list_cmd, strlen(list_cmd));
 
 	/* Set up data connection */
-	k_work_submit_to_queue(ftp_work_q, &data_task_param.work);
+	k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
 
 	if (ret == 0) {
 		do {
@@ -651,7 +651,7 @@ int ftp_get(const char *file)
 	}
 
 	/* Set up data connection */
-	k_work_submit_to_queue(ftp_work_q, &data_task_param.work);
+	k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
 	k_sem_take(&rx_done, K_FOREVER);
 	client.ctrl_callback("\r\n", 2);
 
@@ -697,7 +697,7 @@ int ftp_put(const char *file, const u8_t *data, u16_t length)
 
 	/* Now send data */
 	if (data && length) {
-		k_work_submit_to_queue(ftp_work_q, &data_task_param.work);
+		k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
 		k_sem_take(&tx_done, K_FOREVER);
 	}
 
