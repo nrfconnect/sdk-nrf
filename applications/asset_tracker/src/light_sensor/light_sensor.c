@@ -151,7 +151,7 @@ void light_sensor_set_send_interval(const u32_t interval_s)
 
 	if (data_send_interval_s) {
 		/* restart work for new interval to take effect */
-		submit_poll_work(K_NO_WAIT);
+		submit_poll_work(0);
 	} else if (k_delayed_work_remaining_get(&ls_poller) > 0) {
 		k_delayed_work_cancel(&ls_poller);
 	}
