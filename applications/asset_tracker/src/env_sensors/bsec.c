@@ -302,7 +302,7 @@ int env_sensors_init_and_start(struct k_work_q *work_q,
 
 	k_thread_create(&thread, thread_stack, STACKSIZE,
 			(k_thread_entry_t)bsec_thread, NULL, NULL, NULL,
-			CONFIG_SYSTEM_WORKQUEUE_PRIORITY, 0, 0);
+			CONFIG_SYSTEM_WORKQUEUE_PRIORITY, 0, K_NO_WAIT);
 
 	data_ready_cb = cb;
 
