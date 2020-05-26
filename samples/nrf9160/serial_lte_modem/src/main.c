@@ -20,9 +20,9 @@
 
 LOG_MODULE_REGISTER(app, CONFIG_SLM_LOG_LEVEL);
 
-#define MY_STACK_SIZE		KB(2)
-#define MY_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
-static K_THREAD_STACK_DEFINE(my_stack_area, MY_STACK_SIZE);
+#define SLM_WQ_STACK_SIZE	KB(2)
+#define SLM_WQ_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
+static K_THREAD_STACK_DEFINE(slm_wq_stack_area, SLM_WQ_STACK_SIZE);
 
 static struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
@@ -146,8 +146,8 @@ void start_execute(void)
 		return;
 	}
 
-	k_work_q_start(&slm_work_q, my_stack_area,
-		K_THREAD_STACK_SIZEOF(my_stack_area), MY_PRIORITY);
+	k_work_q_start(&slm_work_q, slm_wq_stack_area,
+		K_THREAD_STACK_SIZEOF(slm_wq_stack_area), SLM_WQ_PRIORITY);
 	k_work_init(&exit_idle_work, exit_idle);
 }
 
