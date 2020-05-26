@@ -193,11 +193,18 @@ int dfu_target_modem_write(const void *const buf, size_t len)
 	int err = 0;
 	int sent = 0;
 	int modem_error = 0;
+	int send_result = 0;
 
-	sent = send(fd, buf, len, 0);
-	if (sent > 0) {
-		offset += len;
-		return 0;
+	while (send_result >= 0) {
+		send_result = send(fd, (((u8_t *)buf) + sent),
+				   (len - sent), 0);
+		if (send_result > 0) {
+			sent += send_result;
+			if (sent >= len) {
+				offset += len;
+				return 0;
+			}
+		}
 	}
 
 	if (errno != ENOEXEC) {
