@@ -15,6 +15,8 @@
 #include <device.h>
 #include <drivers/flash.h>
 
+#define SOC_NV_FLASH_CONTROLLER_NODE DT_NODELABEL(flash_controller)
+#define FLASH_DEV_NAME DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE)
 
 static void test_flash_write_protected(void)
 {
@@ -23,7 +25,7 @@ static void test_flash_write_protected(void)
 	int err;
 
 	(void)memset(wd, 0xa5, sizeof(wd));
-	struct device *flash_dev = device_get_binding(DT_FLASH_DEV_NAME);
+	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	(void) flash_write_protection_set(flash_dev, false);
 	printk("NOTE: A BUS FAULT (BFAR addr 0x%x) immediately after this message"
 		" means the test passed!\n", invalid_write_addr);
