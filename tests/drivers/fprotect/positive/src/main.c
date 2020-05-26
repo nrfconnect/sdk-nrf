@@ -18,10 +18,13 @@
 static u8_t write_data[] = "Hello world";
 static u32_t valid_write_addr = 0x1C000;
 
+#define SOC_NV_FLASH_CONTROLLER_NODE DT_NODELABEL(flash_controller)
+#define FLASH_DEV_NAME DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE)
+
 static void test_flash_write(void)
 {
 	int retval = 0;
-	struct device *flash_dev = device_get_binding(DT_FLASH_DEV_NAME);
+	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	(void) flash_write_protection_set(flash_dev, false);
 	retval = flash_write(flash_dev, valid_write_addr, write_data, ARRAY_SIZE(write_data));
 	zassert_true(retval == 0, "flash_write failed");
@@ -31,7 +34,7 @@ static void test_flash_read(void)
 {
 	int retval = 0;
 	u8_t read_data[strlen(write_data)+1];
-	struct device *flash_dev = device_get_binding(DT_FLASH_DEV_NAME);
+	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	retval = flash_read(flash_dev, valid_write_addr, read_data, ARRAY_SIZE(read_data));
 	zassert_true(retval == 0, "flash_read failed");
 	for (size_t i = 0; i < ARRAY_SIZE(read_data); i++) {
@@ -55,7 +58,7 @@ static void test_flash_read_protected(void)
 {
 	int retval;
 	u8_t rd[256];
-	struct device *flash_dev = device_get_binding(DT_FLASH_DEV_NAME);
+	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	retval = flash_read(flash_dev, 0, rd, sizeof(rd));
 	zassert_true(retval == 0, "flash read to protected area failed");
 }
