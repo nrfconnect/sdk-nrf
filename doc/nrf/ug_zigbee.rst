@@ -17,7 +17,7 @@ In combination with |NCS| and the integrated Zephyr RTOS, Zigbee allows for easy
 
 For more information about Zigbee, visit the `Zigbee Alliance`_ page and read `Zigbee Specification`_.
 
-.. _zigbee_ug_supported features:
+.. _zigbee_ug_supported_features:
 
 Supported features
 ******************
@@ -27,12 +27,14 @@ It includes all mandatory features of the |zigbee_version| specification and pro
 The stack comes with the following features:
 
 * Complete implementation of the Zigbee core specification and Zigbee Pro feature set.
-* Support for all device roles: coordinator, router, and end device.
-* Zigbee Cluster Library (a specification for end devices).
+* Support for all device roles: Coordinator, Router, and End Device.
+* Zigbee Cluster Library.
 * Base Device Behavior.
 * Devices, described in former Zigbee Home Automation and Light Link profiles.
-* Zigbee Green Power.
+* Zigbee Green Power Proxy Basic.
 * Experimental support for ``ZB_ZCL_WWAH``.
+
+.. _zigbee_ug_libs:
 
 Required libraries and drivers
 ******************************
@@ -44,6 +46,8 @@ The OSIF subsystem acts as the linking layer between the ZBOSS stack and |NCS|.
 It implements a series of functions used by ZBOSS and is included in the |NCS|'s Zigbee subsystem.
 The files that handle the OSIF integration are located in :file:`subsys/zigbee/osif`.
 
+.. _zigbee_ug_configuration:
+
 Configuration
 *************
 
@@ -53,11 +57,11 @@ Setting this option enables all the peripherals required for the correct operati
 After that, you have to define the Zigbee device role for the Zigbee application or sample by setting one of the following Kconfig options:
 
 * Router role: :option:`CONFIG_ZIGBEE_ROLE_ROUTER`
-* End device role: :option:`CONFIG_ZIGBEE_ROLE_END_DEVICE`
+* End Device role: :option:`CONFIG_ZIGBEE_ROLE_END_DEVICE`
 * Coordinator role: :option:`CONFIG_ZIGBEE_ROLE_COORDINATOR`
 
 Setting any of these options enables the respective ZBOSS role library.
-This is needed because end devices use different libraries than routers and coordinators.
+This is needed because End Devices use different libraries than Routers and Coordinators.
 
 For instructions about how to set Kconfig options, see :ref:`configure_application`.
 
@@ -104,8 +108,10 @@ Stack logs
 The stack logs are independent from Zephyr's :ref:`zephyr:logging_api` API.
 To customize them, use the following options:
 
-* :option:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` - Allows ZBOSS to log its errors; enabled by default.
+* :option:`CONFIG_ZBOSS_ERROR_PRINT_TO_LOG` - Allows the application to log ZBOSS error names; enabled by default.
 * :option:`CONFIG_ZBOSS_TRACE_MASK` - Sets the modules from which ZBOSS will log the debug messages with :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`; no module is set by default.
+
+The stack logs are provided in a binary (hex dump) format.
 
 Zephyr's logger options
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -131,11 +137,23 @@ For each of the modules, you can set the following logging options:
 
 For example, setting :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF` will enable logging of informational messages, errors, and warnings for the ZBOSS Trace module.
 
+.. _zigbee_ug_available:
+
 Available drivers, libraries, and samples
 *****************************************
 
 See :ref:`zigbee_samples` for the list of available Zigbee samples.
 
+.. _zigbee_ug_tools:
+
+Available Zigbee tools
+**********************
+
+When working with Zigbee in |NCS|, you can use the following tools during Zigbee application development:
+
+* `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
+
+Using Zigbee tools is optional.
 
 
 .. |zboss_lib| replace:: The |NCS|'s Zigbee protocol uses the ZBOSS library, a third-party precompiled Zigbee stack.

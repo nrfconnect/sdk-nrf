@@ -198,7 +198,7 @@ Switching device type
 
 An OpenThread device can be configured to run as Full Thread Device (FTD) or Minimal Thread Device (MTD).
 Both device types serve different roles in the Thread network.
-An FTD can be both router and end device, while an MTD can only be an end device.
+An FTD can be both Router and End Device, while an MTD can only be an End Device.
 
 You can configure the device type using the following Kconfig options:
 
@@ -221,6 +221,7 @@ Available Thread tools
 When working with Thread in |NCS|, you can use the following tools during Thread application development:
 
 * `nRF Thread Topology Monitor`_ - This desktop application helps to visualize the current network topology.
+* `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
 
 Using Thread tools is optional.
 
