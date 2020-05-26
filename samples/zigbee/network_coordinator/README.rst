@@ -59,14 +59,14 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Turn on the development kit that runs the coordinator sample.
-   When **LED 3** turns on, this development kit has become the coordinator of the Zigbee network and the network is established.
+   When **LED 3** turns on, this development kit has become the Coordinator of the Zigbee network and the network is established.
 #. Turn on the other development kits that you programmed.
 
    * When **LED 3** turns on the development kit that runs the light bulb sample, it has become a Router inside the network.
    * When **LED 3** turns on the development kit that runs the light switch sample, it has become an End Device, connected directly to the Coordinator.
 
    .. tip::
-       If **LED 3** on the development kits does not turn on, press **Button 1** on the coordinator to reopen the network.
+       If **LED 3** on the development kits does not turn on, press **Button 1** on the Coordinator to reopen the network.
 
 #. Optionally, if you are testing with both the light bulb and the light switch samples, complete the following additional steps:
 
@@ -74,6 +74,8 @@ After programming the sample to your development kit, test it by performing the 
       This LED indicates that the switch found a light bulb to control.
    #. Use buttons on the development kit that runs the light switch sample to control the light bulb, as described in the light switch sample's user interface section.
       The result of using the buttons is reflected on the light bulb's **LED 4**.
+
+You can now use buttons on the light switch to control the light bulb, as described in the :ref:`zigbee_light_switch_user_interface` section of the light switch sample page.
 
 Dependencies
 ************
@@ -90,7 +92,7 @@ This sample uses the following |NCS| libraries:
 
 This sample uses the following `nrfxlib`_ libraries:
 
-* ZBOSS Zigbee Stack
+* ZBOSS Zigbee stack
 
 In addition, it uses the following Zephyr libraries:
 

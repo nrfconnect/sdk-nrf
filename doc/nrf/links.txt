@@ -129,6 +129,8 @@
 
 .. _`nRF Thread Topology Monitor`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/thread_topology_monitor.html
 
+.. _`nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/nrf802154_sniffer.html
+
 .. ### Links to Nordic mobile applications
 
 .. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
