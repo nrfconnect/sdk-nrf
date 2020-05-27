@@ -413,8 +413,8 @@ void trace_uart_init(void)
 	/* UART pins are defined in "nrf9160dk_nrf9160.dts". */
 	const nrfx_uarte_config_t config = {
 		/* Use UARTE1 pins routed on VCOM2. */
-		.pseltxd = DT_NORDIC_NRF_UARTE_UART_1_TX_PIN,
-		.pselrxd = DT_NORDIC_NRF_UARTE_UART_1_RX_PIN,
+		.pseltxd = DT_PROP(DT_NODELABEL(uart1), tx_pin),
+		.pselrxd = DT_PROP(DT_NODELABEL(uart1), rx_pin),
 		.pselcts = NRF_UARTE_PSEL_DISCONNECTED,
 		.pselrts = NRF_UARTE_PSEL_DISCONNECTED,
 
