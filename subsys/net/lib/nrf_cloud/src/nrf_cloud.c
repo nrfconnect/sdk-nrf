@@ -227,6 +227,8 @@ void nrf_cloud_process(void)
 static struct cloud_backend *nrf_cloud_backend;
 static K_SEM_DEFINE(connection_poll_sem, 0, 1);
 static atomic_t connection_poll_active;
+/* Flag to indicate if a transport disconnect event has been received. */
+static atomic_t transport_disconnected;
 
 static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 {
@@ -288,6 +290,7 @@ static void api_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 			evt.data.err = CLOUD_DISCONNECT_USER_REQUEST;
 		}
 
+		atomic_set(&transport_disconnected, 1);
 		evt.type = CLOUD_EVT_DISCONNECTED;
 
 		cloud_notify_event(nrf_cloud_backend, &evt, config->user_data);
@@ -400,6 +403,7 @@ static int api_connect(const struct cloud_backend *const backend)
 	} else {
 		err = nrf_cloud_connect(NULL);
 		if (!err) {
+			atomic_set(&transport_disconnected, 0);
 			backend->config->socket = nct_socket_get();
 		}
 	}
@@ -528,6 +532,7 @@ start:
 
 	/* Only disconnect events will occur below */
 	cloud_evt.type = CLOUD_EVT_DISCONNECTED;
+	atomic_set(&transport_disconnected, 0);
 
 	while (true) {
 		ret = poll(fds, ARRAY_SIZE(fds), POLL_TIMEOUT_MS);
@@ -581,8 +586,11 @@ start:
 		}
 	}
 
-	cloud_notify_event(nrf_cloud_backend, &cloud_evt, NULL);
-	nrf_cloud_disconnect();
+	/* Send the event if the transport has not already been disconnected */
+	if (atomic_get(&transport_disconnected) == 0) {
+		cloud_notify_event(nrf_cloud_backend, &cloud_evt, NULL);
+		nrf_cloud_disconnect();
+	}
 
 reset:
 	atomic_set(&connection_poll_active, 0);
