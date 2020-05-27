@@ -3,10 +3,10 @@
 nRF9160: Serial LTE Modem
 #########################
 
-The Serial LTE Modem (SLM) sample demostrates sending AT commands between a host and a client device.
+The Serial LTE Modem (SLM) application demostrates sending AT commands between a host and a client device.
 An nRF9160 DK is used as the host, while the client can be simulated using either a PC or an nRF52 DK.
 
-This sample is an enhancement to the :ref:`at_client_sample` sample.
+This application is an enhancement to the :ref:`at_client_sample` sample.
 It provides the following features:
 
  * Support for generic proprietary AT commands
@@ -95,7 +95,7 @@ Note that the GPIO output level on nRF91 side should be 3 V.
 Generic commands
 ****************
 
-The following proprietary generic AT commands are used in this sample:
+The following proprietary generic AT commands are used in this application:
 
 * AT#XSLMVER
 * AT#XSLEEP[=<shutdown_mode>]
@@ -104,7 +104,7 @@ The following proprietary generic AT commands are used in this sample:
 BSD Socket AT commands
 **********************
 
-The following proprietary BSD socket AT commands are used in this sample:
+The following proprietary BSD socket AT commands are used in this application:
 
 * AT#XSOCKET=<op>[,<type>,<role>[,<sec_tag>]]
 * AT#XSOCKETOPT=<op>,<name>[,<value>]
@@ -133,14 +133,14 @@ If the configuration option ``CONFIG_SLM_UDP_PROXY`` is defined, the following A
 ICMP AT commands
 ****************
 
-The following proprietary ICMP AT commands are used in this sample:
+The following proprietary ICMP AT commands are used in this application:
 
 * AT#XPING=<addr>,<length>,<timeout>[,<count>[,<interval>]]
 
 GPS AT Commands
 ***************
 
-The following proprietary GPS AT commands are used in this sample:
+The following proprietary GPS AT commands are used in this application:
 
 * AT#XGPS=<op>[,<mask>]
 
@@ -152,7 +152,7 @@ CONFIG_SLM_SUPL_PORT=7276
 MQTT AT Commands
 ****************
 
-The following proprietary MQTT AT commands are used in this sample:
+The following proprietary MQTT AT commands are used in this application:
 
 * AT#XMQTTCON=<op>[,<cid>,<url>,<port>[,<sec_tag>]]
 * AT#XMQTTPUB=<topic>,<datatype>,<msg>,<qos>,<retain>
@@ -171,7 +171,7 @@ received and reports the topic and the message:
 FTP AT Commands
 ***************
 
-The following proprietary FTP AT commands are used in this sample:
+The following proprietary FTP AT commands are used in this application:
 
 * AT#XFTP=<cmd>[,<param1>[<param2]..]]
 
@@ -195,11 +195,11 @@ More detailed usage for different operation commands:
 Building and Running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/serial_lte_modem`
+.. |sample path| replace:: :file:`applications/nrf9160/serial_lte_modem`
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
-The following configuration files are located in the :file:`samples/nrf9160/serial_lte_modem` directory:
+The following configuration files are located in the :file:`applications/nrf9160/serial_lte_modem` directory:
 
 - :file:`prj.conf`
   This is the standard default configuration file.
@@ -209,10 +209,10 @@ The following configuration files are located in the :file:`samples/nrf9160/seri
 Testing
 =======
 
-To test the sample with a PC client, open a terminal window and start sending AT commands to the nRF9160 DK.
+To test the application with a PC client, open a terminal window and start sending AT commands to the nRF9160 DK.
 See `Terminal connection`_ section for the serial connection configuration details.
 
-When testing the sample with an nRF52 client, the DKs go through the following start-up sequence:
+When testing the application with an nRF52 client, the DKs go through the following start-up sequence:
 
     1. nRF91 starts up and enters sleep state.
     #. nRF52 starts up and starts a periodical timer to toggle the GPIO interface.
