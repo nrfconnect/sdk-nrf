@@ -36,6 +36,18 @@ This can be done per platform, while retaining the ability to default to a stand
 
    OpenThread architecture
 
+.. _thread_ug_zephyr_integration:
+
+Integration with Zephyr
+=======================
+
+To understand how exactly OpenThread L2 is integrated with the Zephyr RTOS, read the following page:
+
+.. toctree::
+   :maxdepth: 1
+
+   ug_thread_ot_integration.rst
+
 .. _thread_ug_supported features:
 
 Supported features
