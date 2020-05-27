@@ -15,3 +15,7 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 module = COAP_CLIENT_UTILS
 module-str = CoAP client utilities
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+module = BLE_UTILS
+module-str = Bluetooth connection utilities
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
