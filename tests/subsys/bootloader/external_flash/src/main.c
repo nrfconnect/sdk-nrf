@@ -14,10 +14,9 @@
 struct k_work upgrade;
 
 void upgrade_work(struct k_work *item){
-
-	printk("requesting upgrade\n");
+	printk("Trying to request upgrade\n");
 	int err = boot_request_upgrade(BOOT_UPGRADE_TEST);
-	printk("upgrade requested:%d\n", err);
+	printk("upgrade requested: %d \n", err);
 	if (err != 0) {
 		__ASSERT(true, "reguest upgrade failed %d", err);
 	}

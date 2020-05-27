@@ -58,6 +58,10 @@ static inline u32_t num_spu_flash_regions(void)
 #define FLASH_SECURE_ATTRIBUTION_REGION_SIZE spu_flash_region_size()
 #define NUM_FLASH_SECURE_ATTRIBUTION_REGIONS num_spu_flash_regions()
 #else
+#define SOC_NV_FLASH_NODE DT_INST(0, soc_nv_flash)
+#define SOC_NV_FLASH_SIZE DT_REG_SIZE(SOC_NV_FLASH_NODE)
+
+ 
 
 #define SOC_NV_FLASH_NODE DT_INST(0, soc_nv_flash)
 #define SOC_NV_FLASH_SIZE DT_REG_SIZE(SOC_NV_FLASH_NODE)
