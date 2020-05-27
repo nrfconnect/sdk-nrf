@@ -303,7 +303,7 @@ zb_bool_t zb_trans_set_pending_bit(zb_uint8_t *addr, zb_bool_t value,
 				   zb_bool_t extended)
 {
 	LOG_DBG("Function: %s, value: %d", __func__, value);
-	if (value) {
+	if (!value) {
 		return (zb_bool_t)nrf_802154_pending_bit_for_addr_set(
 			(const u8_t *)addr, (bool)extended);
 	} else {
