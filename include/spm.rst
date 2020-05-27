@@ -37,7 +37,7 @@ SRAM (256 kB)
 Peripherals configured as Non-Secure
    * CLOCK
    * DPPI
-   * EGU1-5
+   * EGU1, EGU2
    * FPU
    * GPIO (and GPIO pins)
    * GPIOTE1
@@ -47,13 +47,11 @@ Peripherals configured as Non-Secure
    * REGULATORS
    * RTC0, RTC1
    * SAADC
-   * SPI1-3
+   * SPIM3
    * TIMER0-2
-   * TWI1-3
-   * UARTE1, UARTE3
+   * TWIM2
+   * UARTE0, UARTE1
    * WDT
-
-If you want to configure UARTE0, TWI0, EGU0, or SPI0 as Non-Secure, you must ensure that they are not used by the :ref:`secure_partition_manager` sample that uses the library instance to set up the SPU.
 
 .. _lib_spm_secure_services:
 
