@@ -38,6 +38,11 @@ menuconfig LWM2M_CARRIER
 
 if LWM2M_CARRIER
 
+config LWM2M_CARRIER_CERTIFICATION_MODE
+	bool "Connect to certification servers"
+	help
+	  Connect to certification servers instead of production servers.
+
 config LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
 	bool "Use custom bootstrap URI"
 	help
@@ -58,12 +63,15 @@ config LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
 	help
 	  Use a custom bootstrap PSK.
 
-	  Enabling this option requires that a file "bootstrap_psk.h" is
-	  made available in an include folder.
+if LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
 
-	  This file must define the LWM2M bootstrap pre-shared-key e.g.:
+config LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK
+	string "LwM2M carrier custom bootstrap PSK"
+	default ""
+	help
+	  PSK of the custom bootstrap server.
 
-	  static const char bootstrap_psk[] = { 0xd6, 0x16, ... };
+endif # LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
 
 module=LWM2M_CARRIER
 module-dep=LOG

@@ -8,10 +8,6 @@
 #include <zephyr.h>
 #include <lwm2m_carrier.h>
 
-#ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
-#include <bootstrap_psk.h>
-#endif
-
 #define LWM2M_CARRIER_THREAD_STACK_SIZE 8192
 #define LWLM2_CARRIER_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
 
@@ -28,12 +24,14 @@ void lwm2m_carrier_thread_run(void)
 {
 	int err;
 
+#ifdef CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE
+	config.certification_mode = CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE;
+#endif
 #ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI
 	config.bootstrap_uri = CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI;
 #endif
 #ifdef CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK
-	config.psk = (char *)bootstrap_psk;
-	config.psk_length = sizeof(bootstrap_psk);
+	config.psk = CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK;
 #endif
 
 	err = lwm2m_carrier_init(&config);

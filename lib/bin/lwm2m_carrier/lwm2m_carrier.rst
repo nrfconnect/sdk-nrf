@@ -30,8 +30,11 @@ You can enable the module using the :option:`CONFIG_LWM2M_CARRIER` Kconfig optio
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 A bootstrap server provides the application with the configuration needed to connect to the device management servers.
-During self-testing of the certification process, you can provide the initialization parameter :cpp:type:`lwm2m_carrier_config_t` to specify the `Pre-Shared Key (PSK)`_, and the URI of the bootstrap server.
-This can be done by using the :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI`, :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI`, and :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK` Kconfig options.
+During self-testing of the certification process, you can provide the initialization parameter :cpp:type:`lwm2m_carrier_config_t` to overwrite the carrier default settings as described below:
+
+ * Specify the URI of the bootstrap server by using the :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` and :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI` Kconfig options.
+ * Specify the `Pre-Shared Key (PSK)`_ by using the :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK` and :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK` Kconfig options.
+ * Specify whether to connect to certification servers or production servers by using the :option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` Kconfig option.
 
 A PSK *Identity* is automatically generated and handled by the LwM2M carrier library.
 It is used for the bootstrap server transactions.
@@ -231,6 +234,8 @@ See the following table for the certification status of the library and the rela
 | LwM2M carrier   | Modem version | |NCS| release | Certification |
 | library version |               |               |               |
 +=================+===============+===============+===============+
+| 0.9.0           | 1.2.1         | 1.3.0         |               |
++-----------------+---------------+---------------+---------------+
 | 0.8.1+build1    | 1.1.0         | 1.2.0         | Verizon       |
 +-----------------+---------------+---------------+---------------+
 | 0.8.0           | 1.1.0         | 1.1.0         |               |

@@ -5,6 +5,41 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.9.0
+**********************
+
+Snapshot release for modem firmware version 1.2.0 and the |NCS| 1.3.0.
+
+This release is intended to let users begin integration towards the AT&T and Verizon device management platforms.
+It can be used for development and testing only.
+It is not ready for certification.
+
+Certification status
+====================
+
+The library is not certified with any carrier.
+
+Changes
+=======
+
+* Added new APIs to create and access portfolio object instances.
+  A new portfolio object instance can be created using ``lwm2m_carrier_portfolio_instance_create()``.
+  ``lwm2m_carrier_identity_read()`` and ``lwm2m_carrier_identity_write()`` are used to read and write to the corresponding Identity resource fields of a given portfolio object instance.
+* Expanded API with "certification_mode" variable that chooses between certification or live servers upon the initialization of the LwM2M carrier library.
+* Expanded API with "apn" variable to set a custom APN upon the initialization of the LwM2M carrier library.
+* PSK Key is now set independently of custom URI.
+
+  * Added the LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK and LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK Kconfig options.
+
+* PSK format has been modified to be more user-friendly.
+
+  * Previous format: Byte array. For example, ``static const char bootstrap_psk[] = {0x01, 0x02, 0xab, 0xcd, 0xef};``.
+  * Current format: A null-terminated string that must be composed of hexadecimal numbers. For example "0102abcdef".
+
+* Added lwm2m_carrier_event_deferred_t to retrieve the event reason and timeout.
+* Added FOTA errors to LWM2M_CARRIER_EVENT_ERROR event.
+
+
 liblwm2m_carrier 0.8.1+build1
 *****************************
 
