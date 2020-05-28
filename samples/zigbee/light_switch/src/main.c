@@ -48,6 +48,8 @@
 #define BUTTON_OFF                 DK_BTN2_MSK
 /* Dim step size - increases/decreses current level (range 0x000 - 0xfe). */
 #define DIMM_STEP                  15
+/* Button ID used to enable sleepy behavior. */
+#define BUTTON_SLEEPY              DK_BTN3_MSK
 
 /* Transition time for a single step operation in 0.1 sec units.
  * 0xFFFF - immediate change.
@@ -454,6 +456,16 @@ void main(void)
 
 	/* Register dimmer switch device context (endpoints). */
 	ZB_AF_REGISTER_DEVICE_CTX(&dimmer_switch_ctx);
+
+	/* If "sleepy button" is defined, check its state during Zigbee
+	 * initialization and enable sleepy behavior at device if defined button
+	 * is pressed.
+	 */
+#if defined BUTTON_SLEEPY
+	if (dk_get_buttons() & BUTTON_SLEEPY) {
+		zigbee_configure_sleepy_behavior(true);
+	}
+#endif
 
 	/* Start Zigbee default thread */
 	zigbee_enable();
