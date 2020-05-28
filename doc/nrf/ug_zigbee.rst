@@ -65,6 +65,39 @@ This is needed because End Devices use different libraries than Routers and Coor
 
 For instructions about how to set Kconfig options, see :ref:`configure_application`.
 
+.. _zigbee_ug_sed:
+
+Sleepy End Device behavior
+==========================
+
+The Sleepy End Device (SED) behavior is a Zigbee stack feature that enables the sleepy behavior for the end device.
+
+By default, the end device regularly polls its parent for data.
+When the SED behavior is enabled and no frames are available for reception after the last poll, the SED disables its radio until the next scheduled poll.
+The Zigbee stack's own scheduler informs the application about periods of time when nothing is scheduled for any of the device roles.
+This allows the stack to enter the sleep state during these periods, which also powers off some peripherals for the SED.
+
+When the Zigbee stack thread goes to sleep, the Zigbee thread can enter the suspend state for the same amount of time as the stack's sleep.
+The thread will be automatically resumed after the sleep period is over or on an event.
+
+In the Zigbee samples in |NCS|, the sleepy behavior can be triggered by pressing a predefined button when the device is booting.
+This action results in calling the ZBOSS API that activates this feature.
+See the :ref:`light switch sample <zigbee_light_switch_sample>` for a demonstration.
+
+.. note::
+    This feature does not require enabling any additional options in Kconfig.
+
+Power saving during sleep
+-------------------------
+
+With the sleepy behavior enabled, the unused part of RAM memory is powered off, which allows to lower the power consumption even more.
+The sleep current of MCU can be lowered to about 1.8 uA by completing the following steps:
+
+1. Turn off logger by setting :option:`CONFIG_LOG` to ``n``.
+#. Turn off UART by setting :option:`CONFIG_SERIAL` to ``n``.
+#. Enable Zephyr's tickless kernel by setting :option:`CONFIG_TICKLESS_KERNEL` to ``y``.
+#. For current measurements for |nRF52840DK| or |nRF52833DK|, set **SW6** to ``nRF ONLY`` position to get the desired results.
+
 Additional options
 ==================
 
