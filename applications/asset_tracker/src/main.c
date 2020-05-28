@@ -151,7 +151,7 @@ static struct k_delayed_work cycle_cloud_connection_work;
 static struct k_delayed_work device_config_work;
 static struct k_delayed_work cloud_connect_work;
 static struct k_work device_status_work;
-static struct k_work send_agps_request_work;
+static struct k_delayed_work send_agps_request_work;
 
 #if defined(CONFIG_AT_CMD)
 #define MODEM_AT_CMD_BUFFER_LEN (CONFIG_AT_CMD_RESPONSE_MAX_LEN + 1)
@@ -675,8 +675,12 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 		break;
 	case GPS_EVT_AGPS_DATA_NEEDED:
 		LOG_INF("GPS_EVT_AGPS_DATA_NEEDED");
-		k_work_submit_to_queue(&application_work_q,
-				       &send_agps_request_work);
+		/* Send A-GPS request with short delay to avoid LTE network-
+		 * dependent corner-case where the request would not be sent.
+		 */
+		k_delayed_work_submit_to_queue(&application_work_q,
+					       &send_agps_request_work,
+					       K_SECONDS(1));
 		break;
 	case GPS_EVT_ERROR:
 		LOG_INF("GPS_EVT_ERROR\n");
@@ -773,8 +777,6 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 
 		LOG_INF("starting GPS in %lld seconds", time_to_start_next_fix);
 		gps_control_start(time_to_start_next_fix * MSEC_PER_SEC);
-		k_work_submit_to_queue(&application_work_q,
-				       &send_agps_request_work);
 	}
 }
 #endif
@@ -1078,8 +1080,6 @@ static void device_config_send(struct k_work *work)
 	}
 
 	if (gps_cfg_state == CLOUD_CMD_STATE_TRUE) {
-		k_work_submit_to_queue(&application_work_q,
-						&send_agps_request_work);
 		gps_control_start(0);
 	}
 }
@@ -1524,7 +1524,7 @@ static void work_init(void)
 	k_work_init(&send_gps_data_work, send_gps_data_work_fn);
 	k_work_init(&send_button_data_work, send_button_data_work_fn);
 	k_work_init(&send_modem_at_cmd_work, send_modem_at_cmd_work_fn);
-	k_work_init(&send_agps_request_work, send_agps_request);
+	k_delayed_work_init(&send_agps_request_work, send_agps_request);
 	k_delayed_work_init(&long_press_button_work, long_press_handler);
 	k_delayed_work_init(&cloud_reboot_work, cloud_reboot_handler);
 	k_delayed_work_init(&cycle_cloud_connection_work,
