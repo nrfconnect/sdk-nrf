@@ -36,7 +36,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID)
 /* Define the length of the IMEI AT COMMAND response buffer */
-#define IMEI_LEN 19
+#define CGSN_RESP_LEN 19
+#define IMEI_LEN 15
 #define CLIENT_ID_LEN (IMEI_LEN + sizeof("nrf-"))
 #else
 #define CLIENT_ID_LEN sizeof(CONFIG_CLOUD_CLIENT_ID)
@@ -370,7 +371,7 @@ static int client_id_get(char *id_buf, size_t len)
 {
 #if !defined(CONFIG_CLOUD_CLIENT_ID)
 	enum at_cmd_state at_state;
-	char imei_buf[IMEI_LEN];
+	char imei_buf[CGSN_RESP_LEN];
 	int err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf),
 				&at_state);
 
@@ -379,7 +380,7 @@ static int client_id_get(char *id_buf, size_t len)
 			err, at_state);
 	}
 
-	snprintf(id_buf, len, "nrf-%s", imei_buf);
+	snprintf(id_buf, len, "nrf-%.*s", IMEI_LEN, imei_buf);
 #else
 	memcpy(id_buf, CONFIG_CLOUD_CLIENT_ID, len);
 #endif /* !defined(NRF_CLOUD_CLIENT_ID) */
