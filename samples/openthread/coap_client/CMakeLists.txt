@@ -14,7 +14,10 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(openthread_coap_client)
 
-FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
+
+target_sources(app PRIVATE src/coap_client.c
+			   src/coap_client_utils.c)
+
+target_sources_ifdef(CONFIG_BT app PRIVATE src/ble_utils.c)
 
 target_include_directories(app PRIVATE ../coap_server/interface)
