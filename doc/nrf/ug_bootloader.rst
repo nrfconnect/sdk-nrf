@@ -92,7 +92,94 @@ These signed variants can be used to perform an upgrade procedure through the :r
 Adding a bootloader chain to your application
 *********************************************
 
-See :ref:`bootloader_build_and_run` in the documentation of the :ref:`bootloader` sample for instructions on how to add an immutable bootloader as first stage of the secure bootloader chain.
+The |NCS| includes a sample implementation of an immutable bootloader.
+Additionally, the |NCS| comes with a slightly modified version of :doc:`mcuboot:index`.
 
-See :doc:`mcuboot:index` for information on how to implement an upgradable bootlader.
+Both bootloaders can easily be included in your application using :ref:`ug_multi_image`.
+
+Adding the immutable bootloader
+===============================
+
+To add the immutable bootloader to your application, set :option:`CONFIG_SECURE_BOOT` and add your private key file under :option:`CONFIG_SB_SIGNING_PUBLIC_KEY`.
+|how_to_configure|
+
+See the documentation of the :ref:`bootloader` sample for more information.
+The :ref:`bootloader_build_and_run` section has detailed instructions for adding the immutable bootloader as first stage of the secure bootloader chain.
+
+Adding MCUboot as an upgradable bootloader
+==========================================
+
+To add MCUboot as upgradable bootloader to your application, set :option:`CONFIG_BOOTLOADER_MCUBOOT`.
+|how_to_configure|
+
+To make MCUboot upgradable, you must also add the immutable bootloader.
+
+.. note::
+   It is possible to include this bootloader without the immutable bootloader.
+   In this case, MCUboot will act as an immutable bootloader.
+
+
+See :doc:`mcuboot:index` for information about the default implementation of MCUboot.
 :ref:`mcuboot:mcuboot_ncs` gives details on the integration of MCUboot in |NCS|.
+
+You can configure MCUboot by setting configuration options for the ``mcuboot`` child image.
+
+Flash partitions used by MCUboot
+--------------------------------
+
+MCUboot requires two image slots: one that contains the application to be booted (the *primary slot*), and one where a new application can be stored before it is activated (the *secondary slot*).
+See the *Image Slots* section in the :doc:`MCUboot documentation <mcuboot:design>` for more information.
+
+The |NCS| variant of MCUboot uses the :ref:`partition_manager` to configure the flash partitions for these image slots.
+
+In the default configuration, the Partition Manager dynamically sets up the partitions as required.
+If you want to control where in memory the flash partitions are placed, you can define static partitions for your application.
+See :ref:`ug_pm_static` for more information.
+
+It is possible to use external flash as the storage partition for the secondary slot.
+This requires a driver for the external flash that supports:
+
+* Single-byte read and write
+* Writing data from internal flash to external flash
+
+See :ref:`pm_external_flash` for general information about how to set up partitions in external flash in the Partition Manager.
+To configure MCUboot to use external flash for the secondary slot, update the :file:`ncs/bootloader/mcuboot/boot/zephyr/pm.yml` file to contain the following definition for ``mcuboot_secondary``::
+
+   mcuboot_secondary:
+       region: external_flash
+       size: CONFIG_PM_EXTERNAL_FLASH_SIZE
+
+The following example shows how to configure an application for the nRF52840 DK.
+The nRF52840 DK comes with external flash that can be used for the secondary slot and that can be accessed using the QSPI NOR flash driver.
+
+1. Append the following configuration to the :file:`ncs/bootloader/mcuboot/boot/zephyr/prj.conf` file::
+
+      CONFIG_NORDIC_QSPI_NOR=y
+      CONFIG_NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE=4096
+      CONFIG_NORDIC_QSPI_NOR_FLASH_ALLOW_STACK_USAGE_FOR_DATA_IN_FLASH=y
+      CONFIG_MULTITHREADING=y
+      CONFIG_BOOT_MAX_IMG_SECTORS=256
+      CONFIG_PM_EXTERNAL_FLASH=y
+      CONFIG_PM_EXTERNAL_FLASH_DEV_NAME="MX25R64"
+      CONFIG_PM_EXTERNAL_FLASH_SIZE=0xf4000
+      CONFIG_PM_EXTERNAL_FLASH_BASE=0
+
+   These options enable the QSPI NOR flash driver, multi-threading (which is required by the flash driver), and the external flash of the nRF52840 DK.
+#. Update the :file:`ncs/bootloader/mcuboot/boot/zephyr/pm.yml` file (as described above)::
+
+      mcuboot_secondary:
+          region: external_flash
+          size: CONFIG_PM_EXTERNAL_FLASH_SIZE
+
+#. Add the following configuration to the :file:`prj.conf` file in your application directory::
+
+      CONFIG_NORDIC_QSPI_NOR=y
+      CONFIG_NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE=4096
+      CONFIG_NORDIC_QSPI_NOR_FLASH_ALLOW_STACK_USAGE_FOR_DATA_IN_FLASH=y
+      CONFIG_PM_EXTERNAL_FLASH=y
+      CONFIG_PM_EXTERNAL_FLASH_DEV_NAME="MX25R64"
+      CONFIG_PM_EXTERNAL_FLASH_SIZE=0xf4000
+      CONFIG_PM_EXTERNAL_FLASH_BASE=0
+
+   These options enable the QSPI NOR flash driver and the external flash of the nRF52840 DK.
+   Multi-threading is enabled by default, so you do not need to enable it again.
