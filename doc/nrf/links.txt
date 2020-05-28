@@ -194,6 +194,8 @@
 
 .. _`OpenAMP`: https://github.com/OpenAMP/open-amp/
 
+.. _`RPMsg`: https://github.com/OpenAMP/open-amp/wiki/RPMsg-Messaging-Protocol
+
 .. _`SSL Labs`: https://www.ssllabs.com/ssltest/
 
 .. _`GNSS`: https://en.wikipedia.org/wiki/Satellite_navigation
