@@ -7,14 +7,19 @@
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
 
-#include "ble_utils.h"
 #include "coap_client_utils.h"
+
+#if CONFIG_BT
+#include "ble_utils.h"
+#endif
 
 LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
 
 #define OT_CONNECTION_LED DK_LED1
 #define BLE_CONNECTION_LED DK_LED2
 #define MTD_SED_LED DK_LED3
+
+#if CONFIG_BT
 
 #define COMMAND_REQUEST_UNICAST 'u'
 #define COMMAND_REQUEST_MULTICAST 'm'
@@ -61,6 +66,8 @@ static void on_ble_disconnect(struct k_work *item)
 
 	dk_set_led_off(BLE_CONNECTION_LED);
 }
+
+#endif /* CONFIG_BT */
 
 static void on_ot_connect(struct k_work *item)
 {
@@ -120,14 +127,15 @@ void main(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT)) {
-		ret = ble_utils_init(&on_nus_received, NULL, on_ble_connect,
-				     on_ble_disconnect);
-		if (ret) {
-			LOG_ERR("Cannot init BLE utilities");
-			return;
-		}
+#if CONFIG_BT
+	ret = ble_utils_init(&on_nus_received, NULL, on_ble_connect,
+			     on_ble_disconnect);
+	if (ret) {
+		LOG_ERR("Cannot init BLE utilities");
+		return;
 	}
+
+#endif /* CONFIG_BT */
 
 	coap_client_utils_init(on_ot_connect, on_ot_disconnect,
 			       on_mtd_mode_toggle);
