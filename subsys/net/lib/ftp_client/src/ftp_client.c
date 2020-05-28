@@ -421,7 +421,7 @@ int ftp_login(const char *username, const char *password)
 	/* Start keep alive timer */
 	if (keepalive_time > 0) {
 		k_timer_start(&keepalive_timer, K_SECONDS(1),
-			keepalive_time * MSEC_PER_SEC);
+			K_SECONDS(keepalive_time));
 	}
 
 	return ret;
