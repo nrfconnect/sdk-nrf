@@ -839,4 +839,16 @@ void user_input_indicate(void)
 		}
 	}
 }
+
+/* Function to enable sleepy behavior for End Device. */
+void zigbee_configure_sleepy_behavior(bool enable)
+{
+	if (enable) {
+		zb_set_rx_on_when_idle(ZB_FALSE);
+		LOG_INF("Enabled sleepy end device behavior.");
+	} else {
+		zb_set_rx_on_when_idle(ZB_TRUE);
+		LOG_INF("Disabling sleepy end device behavior.");
+	}
+}
 #endif

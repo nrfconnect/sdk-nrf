@@ -15,6 +15,13 @@ The light switch sample demonstrates the Zigbee End Device role and implements t
 Once the light switch is successfully commissioned, it sends a broadcast message to find devices with the implemented Level Control and On/Off clusters.
 The light switch remembers the device network address from the first response, at which point it can be controlled with the development kit buttons.
 
+Sleepy End Device behavior
+==========================
+
+The light switch supports the :ref:`zigbee_ug_sed` that enables the sleepy behavior for the end device, for a significant conservation of energy.
+
+The sleepy behavior can be enabled by pressing **Button 3** while the light switch sample is booting.
+
 Requirements
 ************
 
@@ -52,6 +59,11 @@ Button 2:
 .. note::
     If the brightness level is decreased to the minimum, the effect of turning on the light bulb might not be noticeable.
 
+Button 3:
+    When pressed while resetting the board, enables the :ref:`zigbee_ug_sed`.
+
+Button 4:
+    When pressed, toggles the Finding & Binding mode on the local endpoint on or off.
 
 Building and running
 ********************
