@@ -69,9 +69,10 @@ Key loading the same way mbedtls ECJPAKE test code does it.
 Private keys are loaded raw, public keys are then generated via
 ec multiplication.
 */
+#if !defined(MBEDTLS_ECJPAKE_ALT)
 static int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
-			     const unsigned char *xm1, size_t len1,
-			     const unsigned char *xm2, size_t len2)
+					const unsigned char *xm1, size_t len1,
+					const unsigned char *xm2, size_t len2)
 {
 	int err_code;
 
@@ -91,6 +92,11 @@ static int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
 
 	return err_code;
 }
+#else
+extern int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
+					const unsigned char *xm1, size_t len1,
+					const unsigned char *xm2, size_t len2);
+#endif
 
 void ecjpake_clear_buffers(void)
 {
