@@ -5,14 +5,19 @@ tests:
     extra_args: OVERLAY_CONFIG=overlay-backend-sw.conf
     platform_whitelist: nrf52840dk_nrf52840 nrf9160dk_nrf9160
     tags: crypto ci_build
-  crypto.hw:
     timeout: 600
+  crypto.hw:
     extra_args: OVERLAY_CONFIG=overlay-backend-hw.conf
     platform_whitelist: nrf52840dk_nrf52840 nrf9160dk_nrf9160
     tags: crypto ci_build
-  crypto.sw_hw:
     timeout: 100
+  crypto.sw_hw:
     extra_args: OVERLAY_CONFIG=overlay-backend-hw-sw.conf
+    platform_whitelist: nrf52840dk_nrf52840 nrf9160dk_nrf9160
+    tags: crypto ci_build
+    timeout: 200
+  crypto.oberon:
+    extra_args: OVERLAY_CONFIG=overlay-backend-oberon.conf
     platform_whitelist: nrf52840dk_nrf52840 nrf9160dk_nrf9160
     tags: crypto ci_build
     timeout: 200
