@@ -16,13 +16,16 @@ config DESKTOP_MOTION_NONE
 config DESKTOP_MOTION_SENSOR_PMW3360_ENABLE
 	bool "Motion from optical sensor PMW3360"
 	select DESKTOP_MOTION_SENSOR_ENABLE
+	depends on PMW3360
 
 config DESKTOP_MOTION_SENSOR_PAW3212_ENABLE
 	bool "Motion from optical sensor PAW3212"
 	select DESKTOP_MOTION_SENSOR_ENABLE
+	depends on PAW3212
 
 config DESKTOP_MOTION_BUTTONS_ENABLE
 	bool "Motion from buttons"
+	depends on !DESKTOP_BUTTONS_NONE
 
 config DESKTOP_MOTION_SIMULATED_ENABLE
 	bool "Simulated motion"
