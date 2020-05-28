@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "AWS IoT Sample Settings"
+
+config APP_VERSION
+	string "Application version"
+	default "v1.0.0"
+
+config UPDATE_INTERVAL
+	int "Interval in seconds that the device will publish timestamps"
+	default 60
+
+config DEVICE_SHADOW_PAYLOAD_SIZE
+	int "Buffer size for AWS IoT shadow application version updates"
+	default 255
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu

@@ -77,7 +77,7 @@ Polling on MQTT socket
 
 After a successful return of :cpp:func:`aws_iot_connect` function, the MQTT socket must be polled on, in addition to the periodic calls to :cpp:func:`aws_iot_ping` (to keep the connection to the AWS IoT broker alive) and :cpp:func:`aws_iot_input` (to get the data from the AWS IoT broker).
 
-The code section below demonstrates how socket polling can be done in the main application after the :cpp:func:`aws_iot_init` function has been called.
+The code section below demonstrates how socket polling can be done in the main application after the :cpp:func:`aws_iot_init` function has been called. Connection polling can also be enabled in the AWS IoT backend by setting the configurable option :option:`CONFIG_AWS_IOT_CONNECTION_POLL_THREAD`. Note that if this option is enabled, there is no need to include the following section of code in main.
 
    .. code-block:: c
 
@@ -143,6 +143,7 @@ To subscribe to *AWS shadow topics*, set the following options:
 - :option:`CONFIG_AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE`
 - :option:`CONFIG_AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE`
 - :option:`CONFIG_AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE`
+- :option:`CONFIG_AWS_IOT_CONNECTION_POLL_THREAD`
 
 To subscribe to non AWS specific topics, specify the number of additional topics that needs to be subscribed to, by setting the following option:
 

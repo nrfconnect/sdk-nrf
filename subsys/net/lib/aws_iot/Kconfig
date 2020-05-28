@@ -78,6 +78,9 @@ config AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE
 config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
 	bool "Subscribe to delete rejected shadow topic, $aws/things/<thing-name>/shadow/delete/rejected"
 
+config AWS_IOT_CONNECTION_POLL_THREAD
+	bool "Enable polling on mqtt socket in aws iot backend"
+
 module=AWS_IOT
 module-dep=LOG
 module-str=AWS IoT
