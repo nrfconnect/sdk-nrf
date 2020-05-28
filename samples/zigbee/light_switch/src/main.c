@@ -459,11 +459,13 @@ void main(void)
 
 	/* If "sleepy button" is defined, check its state during Zigbee
 	 * initialization and enable sleepy behavior at device if defined button
-	 * is pressed.
+	 * is pressed. Additionally, power off unused sections of RAM to lower
+	 * device power consumption.
 	 */
 #if defined BUTTON_SLEEPY
 	if (dk_get_buttons() & BUTTON_SLEEPY) {
 		zigbee_configure_sleepy_behavior(true);
+		zigbee_power_down_unused_ram();
 	}
 #endif
 
