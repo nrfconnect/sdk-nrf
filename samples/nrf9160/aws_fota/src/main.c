@@ -59,6 +59,9 @@ static struct pollfd fds;
 /* Set to true when application should teardown and reboot */
 static bool do_reboot;
 
+/* Set to true when application should reconnect the LTE link*/
+static bool link_offline;
+
 #if defined(CONFIG_BSD_LIBRARY)
 /**@brief Recoverable BSD library error. */
 void bsd_recoverable_error_handler(uint32_t err)
@@ -490,14 +493,23 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 		err = lte_lc_offline();
 		if (err) {
 			printk("Error turning off the LTE link\n");
+			break;
 		}
+		link_offline = true;
 		break;
 
 	case AWS_FOTA_EVT_ERASE_DONE:
-		printk("AWS_FOTA_EVT_ERASE_DONE, reconnecting the LTE link\n");
-		err = lte_lc_connect();
-		if (err) {
-			printk("Error reconnecting the LTE link\n");
+		printk("AWS_FOTA_EVT_ERASE_DONE\n");
+
+		if (link_offline) {
+			printk("Reconnecting the LTE link\n");
+
+			err = lte_lc_connect();
+			if (err) {
+				printk("Error reconnecting the LTE link\n");
+				break;
+			}
+			link_offline = false;
 		}
 		break;
 
