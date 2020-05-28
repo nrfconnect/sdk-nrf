@@ -384,6 +384,8 @@ For example, see the following definitions for default regions:
     NRF_FLASH_DRV_NAME           # Device name
     )
 
+.. _pm_external_flash:
+
 External flash
 ==============
 
