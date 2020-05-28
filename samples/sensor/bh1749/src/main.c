@@ -137,6 +137,6 @@ void main(void)
 		printk("Failed to get device binding\n");
 		return;
 	}
-	printk("device is %p, name is %s\n", dev, dev->config->name);
+	printk("device is %p, name is %s\n", dev, dev->name);
 	process(dev);
 }
