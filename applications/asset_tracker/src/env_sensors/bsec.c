@@ -143,6 +143,11 @@ static s64_t get_timestamp_us(void)
 	return k_uptime_get()*1000;
 }
 
+static void delay_ms(u32_t period)
+{
+	k_sleep(K_MSEC(period));
+}
+
 static void output_ready(s64_t timestamp, float iaq, u8_t iaq_accuracy,
 			float temperature, float humidity, float pressure,
 			float raw_temperature, float raw_humidity, float gas,
@@ -290,7 +295,7 @@ int env_sensors_init_and_start(struct k_work_q *work_q,
 		return ret;
 	}
 	bsec_ret = bsec_iot_init(BSEC_SAMPLE_RATE, 1.2f, bus_write,
-				bus_read, (void *)k_sleep, state_load,
+				bus_read, delay_ms, state_load,
 				config_load);
 	if (bsec_ret.bme680_status) {
 		/* Could not initialize BME680 */
