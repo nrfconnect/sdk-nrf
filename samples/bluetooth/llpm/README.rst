@@ -115,7 +115,7 @@ After programming the sample to both boards, test it by performing the following
 #. Observe the terminal connected to the slave. The latency measurements are printed in the terminal.
    The latency is expected to be shorter than the default connection interval::
 
-       Transmission Latency: 80917 (us)
+       Transmission Latency: 80917 (us), CRC errors 0
 
 #. Press a key in the terminal that is connected to the master.
 #. Observe the connection gets updated to LLPM connection interval (1 ms) on both sides::
@@ -125,13 +125,13 @@ After programming the sample to both boards, test it by performing the following
 #. Observe the terminal connected to the slave.
    The measured latency on the slave becomes approximate 1 ms::
 
-       Transmission Latency: 1098 (us)
+       Transmission Latency: 1098 (us), CRC errors 0
 
 #. Press a key in the terminal that is connected to the master.
 #. Observe the terminal connected to the master.
    The measured latency on the master remains approximate 1 ms::
 
-       Transmission Latency: 1235 (us)
+       Transmission Latency: 1235 (us), CRC errors 0
 
 .. msc::
    hscale = "1.3";
@@ -179,40 +179,34 @@ The result should look similar to the following output.
    Filters matched. Address: f9:3c:9c:d1:f6:07 (random) connectable: 1
    Connected as master
    Conn. interval is 80 units (1.25 ms/unit)
-   QoS conn event reports: channel index 0x1f, CRC errors 0x00
    Service discovery completed
    Press any key to set LLPM short connection interval (1 ms)
-   QoS conn event reports: channel index 0x07, CRC errors 0x00
    Press any key to start measuring transmission latency
    Connection interval updated: LLPM (1 ms)
-   Transmission Latency: 1235 (us)
-   Transmission Latency: 1007 (us)
-   QoS conn event reports: channel index 0x22, CRC errors 0x00
-   Transmission Latency: 1434 (us)
-   Transmission Latency: 1312 (us)
-   Transmission Latency: 1220 (us)
-   Transmission Latency: 991 (us)
-   Transmission Latency: 1419 (us)
-   QoS conn event reports: channel index 0x1a, CRC errors 0x00
-   Transmission Latency: 1281 (us)
-   Transmission Latency: 1052 (us)
-   Transmission Latency: 991 (us)
-   Transmission Latency: 1403 (us)
-   Transmission Latency: 1296 (us)
-   Transmission Latency: 1052 (us)
-   Transmission Latency: 976 (us)
-   Transmission Latency: 1358 (us)
-   Transmission Latency: 1281 (us)
-   Transmission Latency: 1052 (us)
-   Transmission Latency: 976 (us)
-   QoS conn event reports: channel index 0x1d, CRC errors 0x00
-   Transmission Latency: 1358 (us)
-   Transmission Latency: 1281 (us)
-   Transmission Latency: 1052 (us)
-   Transmission Latency: 976 (us)
-   Transmission Latency: 1358 (us)
-   QoS conn event reports: channel index 0x10, CRC errors 0x00
-   Transmission Latency: 1281 (us)
+   Transmission Latency: 1235 (us), CRC errors 0
+   Transmission Latency: 1007 (us), CRC errors 0
+   Transmission Latency: 1434 (us), CRC errors 0
+   Transmission Latency: 1312 (us), CRC errors 0
+   Transmission Latency: 1220 (us), CRC errors 0
+   Transmission Latency: 991 (us), CRC errors 0
+   Transmission Latency: 1419 (us), CRC errors 0
+   Transmission Latency: 1281 (us), CRC errors 0
+   Transmission Latency: 1052 (us), CRC errors 0
+   Transmission Latency: 991 (us), CRC errors 0
+   Transmission Latency: 1403 (us), CRC errors 0
+   Transmission Latency: 1296 (us), CRC errors 0
+   Transmission Latency: 1052 (us), CRC errors 0
+   Transmission Latency: 976 (us), CRC errors 0
+   Transmission Latency: 1358 (us), CRC errors 0
+   Transmission Latency: 1281 (us), CRC errors 0
+   Transmission Latency: 1052 (us), CRC errors 0
+   Transmission Latency: 976 (us), CRC errors 0
+   Transmission Latency: 1358 (us), CRC errors 0
+   Transmission Latency: 1281 (us), CRC errors 0
+   Transmission Latency: 1052 (us), CRC errors 0
+   Transmission Latency: 976 (us), CRC errors 0
+   Transmission Latency: 1358 (us), CRC errors 0
+   Transmission Latency: 1281 (us), CRC errors 0
 
 - For the slave::
 
@@ -232,35 +226,32 @@ The result should look similar to the following output.
    Filter not match. Address: 5c:f2:70:c2:3f:9f (random) connectable: 1
    Connected as slave
    Conn. interval is 80 units (1.25 ms/unit)
-   QoS conn event reports: channel index 0x1f, CRC errors 0x00
    Service discovery completed
    Press any key to start measuring transmission latency
-   QoS conn event reports: channel index 0x07, CRC errors 0x00
-   Transmission Latency: 80917 (us)
-   Transmission Latency: 80841 (us)
-   Transmission Latency: 80749 (us)
-   Transmission Latency: 80673 (us)
-   Transmission Latency: 80596 (us)
-   Transmission Latency: 80505 (us)
-   Transmission Latency: 80429 (us)
-   Transmission Latency: 80337 (us)
-   Transmission Latency: 80261 (us)
-   Transmission Latency: 80184 (us)
-   Transmission Latency: 80093 (us)
-   Transmission Latency: 80017 (us)
-   Transmission Latency: 79940 (us)
-   Transmission Latency: 79849 (us)
+   Transmission Latency: 80917 (us), CRC errors 0
+   Transmission Latency: 80841 (us), CRC errors 0
+   Transmission Latency: 80749 (us), CRC errors 0
+   Transmission Latency: 80673 (us), CRC errors 0
+   Transmission Latency: 80596 (us), CRC errors 0
+   Transmission Latency: 80505 (us), CRC errors 0
+   Transmission Latency: 80429 (us), CRC errors 0
+   Transmission Latency: 80337 (us), CRC errors 0
+   Transmission Latency: 80261 (us), CRC errors 0
+   Transmission Latency: 80184 (us), CRC errors 0
+   Transmission Latency: 80093 (us), CRC errors 0
+   Transmission Latency: 80017 (us), CRC errors 0
+   Transmission Latency: 79940 (us), CRC errors 0
+   Transmission Latency: 79849 (us), CRC errors 0
    Connection interval updated: LLPM (1 ms)
-   Transmission Latency: 81604 (us)
-   Transmission Latency: 30181 (us)
-   Transmission Latency: 1098 (us)
-   QoS conn event reports: channel index 0x22, CRC errors 0x00
-   Transmission Latency: 1129 (us)
-   Transmission Latency: 1037 (us)
-   Transmission Latency: 930 (us)
-   Transmission Latency: 1312 (us)
-   Transmission Latency: 1083 (us)
-   Transmission Latency: 1007 (us)
+   Transmission Latency: 81604 (us), CRC errors 0
+   Transmission Latency: 30181 (us), CRC errors 0
+   Transmission Latency: 1098 (us), CRC errors 0
+   Transmission Latency: 1129 (us), CRC errors 0
+   Transmission Latency: 1037 (us), CRC errors 0
+   Transmission Latency: 930 (us), CRC errors 0
+   Transmission Latency: 1312 (us), CRC errors 0
+   Transmission Latency: 1083 (us), CRC errors 0
+   Transmission Latency: 1007 (us), CRC errors 0
 
 
 Dependencies
