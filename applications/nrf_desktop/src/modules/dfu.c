@@ -15,6 +15,7 @@
 #include "config_event.h"
 #include "hid_event.h"
 #include "ble_event.h"
+#include "dfu_lock.h"
 
 #define MODULE dfu
 #include "module_state_event.h"
@@ -129,6 +130,7 @@ static void dfu_timeout_handler(struct k_work *work)
 	LOG_WRN("DFU timed out");
 
 	if (flash_area) {
+		dfu_unlock(MODULE_ID(MODULE));
 		flash_area_close(flash_area);
 		flash_area = NULL;
 	}
@@ -193,6 +195,7 @@ static void background_erase_handler(struct k_work *work)
 	} else {
 		LOG_INF("Secondary image slot is clean");
 
+		dfu_unlock(MODULE_ID(MODULE));
 		is_flash_area_clean = true;
 		erase_offset = 0;
 
@@ -280,6 +283,11 @@ static void handle_dfu_start(const u8_t *data, const size_t size)
 		return;
 	}
 
+	if (!dfu_lock(MODULE_ID(MODULE))) {
+		LOG_WRN("DFU already started by another module");
+		return;
+	}
+
 	size_t pos = 0;
 
 	length = sys_get_le32(&data[pos]);
@@ -306,6 +314,8 @@ static void handle_dfu_start(const u8_t *data, const size_t size)
 				length, img_length,
 				csum, img_csum,
 				offset, cur_offset);
+
+			dfu_unlock(MODULE_ID(MODULE));
 			return;
 		} else {
 			LOG_INF("Restart DFU");
@@ -332,12 +342,14 @@ static void handle_dfu_start(const u8_t *data, const size_t size)
 		LOG_ERR("Cannot open flash area (%d)", err);
 
 		flash_area = NULL;
+		dfu_unlock(MODULE_ID(MODULE));
 	} else if (flash_area->fa_size < img_length) {
 		LOG_WRN("Insufficient space for DFU (%zu < %" PRIu32 ")",
 			flash_area->fa_size, img_length);
 
 		flash_area_close(flash_area);
 		flash_area = NULL;
+		dfu_unlock(MODULE_ID(MODULE));
 	} else {
 		LOG_INF("DFU started");
 		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
@@ -569,7 +581,13 @@ static bool event_handler(const struct event_header *eh)
 			k_delayed_work_init(&reboot_request, reboot_request_handler);
 			k_delayed_work_init(&background_erase, background_erase_handler);
 
-			k_delayed_work_submit(&background_erase, K_NO_WAIT);
+			if (!dfu_lock(MODULE_ID(MODULE))) {
+				/* Should not happen. */
+				__ASSERT_NO_MSG(false);
+			} else {
+				k_delayed_work_submit(&background_erase,
+						      K_NO_WAIT);
+			}
 		}
 		return false;
 	}
