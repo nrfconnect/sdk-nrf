@@ -52,19 +52,22 @@ static struct {
 
 static volatile bool acked_with_pending_bit;
 
-
+#if !CONFIG_MPSL
 static void nrf5_radio_irq(void *arg)
 {
 	ARG_UNUSED(arg);
 
 	nrf_802154_radio_irq_handler();
 }
+#endif
 
 static void nrf5_irq_config(void)
 {
+#if !CONFIG_MPSL
 	IRQ_CONNECT(RADIO_IRQn, NRF_802154_IRQ_PRIORITY, nrf5_radio_irq, NULL,
 		    0);
 	irq_enable(RADIO_IRQn);
+#endif
 }
 
 /* Initializes the transceiver. */
