@@ -268,16 +268,10 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 	 * space separated file is given.
 	 */
 	const char *update;
-	struct fw_info s0;
-	struct fw_info s1;
-
+	bool s0_active;
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
-	err = spm_firmware_info(PM_S0_ADDRESS, &s0);
-	if (err != 0) {
-		return err;
-	}
 
-	err = spm_firmware_info(PM_S1_ADDRESS, &s1);
+	err = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
 	if (err != 0) {
 		return err;
 	}
@@ -296,8 +290,6 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 	}
 	memcpy(&s1, tmp_info, sizeof(s1));
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
-
-	bool s0_active = s0.version >= s1.version;
 
 	err = dfu_ctx_mcuboot_set_b1_file(file, s0_active, &update);
 	if (err != 0) {

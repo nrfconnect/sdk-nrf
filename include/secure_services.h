@@ -86,6 +86,17 @@ int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
  */
 int spm_request_read(void *destination, uint32_t addr, size_t len);
 
+/** Check if S0 is the active B1 slot.
+ *
+ * @param[in]   s0_address Address of s0 slot.
+ * @param[in]   s1_address Address of s1 slot.
+ * @param[out]  s0_active  Set to 'true' if s0 is active slot, 'false' otherwise
+ *
+ * @retval 0        If successful.
+ * @retval -EINVAL  If info for both slots are NULL.
+ */
+int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
+
 /** Search for the fw_info structure in firmware image located at address.
  *
  * @param[in]   fw_address  Address where firmware image is stored.

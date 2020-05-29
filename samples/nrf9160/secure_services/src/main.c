@@ -130,6 +130,18 @@ void main(void)
 		printk("FICR.INFO.VARIANT (+0x210) = 0x%08X\n\n", ficr_info);
 	}
 
+#ifdef PM_S1_ADDRESS
+	bool s0_active;
+
+	ret = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
+	if (ret != 0) {
+		printk("Unexpected failure from spm_s0_active: %d\n", ret);
+	}
+
+	printk("S0 active? %s\n", s0_active ? "True" : "False");
+
+#endif /*  PM_S1_ADDRESS */
+
 	printk("Reboot in %d seconds.\n", sleep_time_s);
 	k_sleep(K_SECONDS(5));
 
