@@ -13,7 +13,7 @@ OpenThread CLI is integrated into the system shell accessible over serial connec
 To indicate a Thread command, the ``ot`` keyword needs to precede the command.
 
 The amount of commands you can test depends on the application configuration.
-This sample has Commisioner, Joiner, and Border Router roles enabled by default.
+This sample has Commissioner, Joiner, and Border Router roles enabled by default.
 
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample to be able to test communication.
@@ -54,7 +54,7 @@ Requirements
   * |nRF52840DK|
   * |nRF52833DK|
 
-* Optionally, one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for testing communication.
+* Optionally, one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for testing communication and :ref:`thread_ot_commissioning_configuring_on-mesh`.
 
 User interface
 **************

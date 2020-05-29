@@ -22,31 +22,16 @@ Among others, OpenThread has the following main advantages:
 * Support for system-on-chip (SoC), network co-processor (NCP) and radio co-processor (RCP) designs.
 * Official Thread certification.
 
-More information about Thread can be found at `OpenThread.io`_ and `Thread Group`_.
-
-Stack architecture
-==================
-
-OpenThread's portable nature makes no assumptions about platform features.
-OpenThread provides the hooks to use enhanced radio and crypto features, reducing system requirements, such as memory, code, and compute cycles.
-This can be done per platform, while retaining the ability to default to a standard configuration.
-
-.. figure:: images/ot-arch_2x.png
-   :alt: OpenThread architecture
-
-   OpenThread architecture
-
-.. _thread_ug_zephyr_integration:
-
-Integration with Zephyr
-=======================
-
-To understand how exactly OpenThread L2 is integrated with the Zephyr RTOS, read the following page:
+For more information about some aspects of Thread, see the following pages:
 
 .. toctree::
    :maxdepth: 1
 
+   ug_thread_stack_architecture.rst
    ug_thread_ot_integration.rst
+   ug_thread_commissioning.rst
+
+You can also find more at `OpenThread.io`_ and `Thread Group`_ pages.
 
 .. _thread_ug_supported features:
 

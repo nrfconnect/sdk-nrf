@@ -1,6 +1,6 @@
 .. _openthread_integration:
 
-OpenThread Integration
+OpenThread integration
 ######################
 
 This page explains how the OpenThread stack is integrated with Zephyr and |NCS|.
@@ -74,7 +74,7 @@ The responsibilities of the OpenThread shim layer are as follows:
 
 The nRF IEEE 802.15.4 radio driver is located in the following directories:
 
-* nRF IEEE 802.15.4 radio driver shim layer: :file:`zephyr/drivers/ieee802154/{ieee802154_nrf5.c/ieee802154_nrf5.h}`
+* nRF IEEE 802.15.4 radio driver shim layer: :file:`zephyr/drivers/ieee802154/ (:file:`ieee802154_nrf5.c` and :file:`ieee802154_nrf5.h`)
 * nRF IEEE 802.15.4 radio driver: :file:`modules/hal/nordic/drivers/nrf_radio_802154`
 
 Radio driver's RX and TX connections
