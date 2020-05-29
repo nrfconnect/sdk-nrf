@@ -120,7 +120,7 @@ static int cipher_update_iterative(mbedtls_cipher_context_t *p_ctx,
 	return _cipher_update_iterative_full_blocks(p_ctx, input_len);
 }
 
-__attribute__((noinline)) static void unhexify_aes(void)
+__attribute__((noinline)) void unhexify_aes_cbc_mac(void)
 {
 	bool encrypt = (p_test_vector->direction == MBEDTLS_ENCRYPT);
 
@@ -160,7 +160,7 @@ static void aes_setup_cbc_mac(void)
 	p_test_vector =
 		ITEM_GET(test_vector_aes_cbc_mac_data, test_vector_aes_t, i++);
 
-	unhexify_aes();
+	unhexify_aes_cbc_mac();
 }
 
 /**@brief Function for the AES MAC test execution.
@@ -195,7 +195,7 @@ void exec_test_case_aes_cbc_mac(void)
 
 	/* Redo all but now in iterations. */
 	aes_cbc_mac_clear_buffers();
-	unhexify_aes();
+	unhexify_aes_cbc_mac();
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);

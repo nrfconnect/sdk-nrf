@@ -109,7 +109,7 @@ static int cipher_crypt(mbedtls_cipher_context_t *p_ctx, size_t iv_len,
 				    m_aes_output_buf, &crypt_len);
 }
 
-__attribute__((noinline)) static void unhexify_aes(void)
+__attribute__((noinline)) void unhexify_aes_ctr(void)
 {
 	bool encrypt = p_test_vector->direction == MBEDTLS_ENCRYPT;
 
@@ -149,7 +149,7 @@ static void aes_ctr_setup_functional(void)
 	p_test_vector =
 		ITEM_GET(test_vector_aes_ctr_func_data, test_vector_aes_t, i++);
 
-	unhexify_aes();
+	unhexify_aes_ctr();
 }
 
 static void aes_ctr_setup(void)
@@ -160,7 +160,7 @@ static void aes_ctr_setup(void)
 	p_test_vector =
 		ITEM_GET(test_vector_aes_ctr_data, test_vector_aes_t, i++);
 
-	unhexify_aes();
+	unhexify_aes_ctr();
 }
 
 /**@brief Function for the AES functional test execution.
@@ -200,7 +200,7 @@ void exec_test_case_aes_ctr_functional(void)
 
 	/* Reset buffers and fetch test vectors. */
 	aes_ctr_clear_buffers();
-	unhexify_aes();
+	unhexify_aes_ctr();
 
 	err_code = cipher_init(&ctx, key_len, p_test_vector->mode);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);

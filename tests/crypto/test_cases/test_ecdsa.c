@@ -34,7 +34,7 @@ static test_vector_ecdsa_random_t *p_test_vector_random;
 
 static size_t hash_len;
 
-__attribute__((noinline)) static void unhexify_ecdsa_verify(void)
+__attribute__((noinline)) void unhexify_ecdsa_verify(void)
 {
 	hash_len = hex2bin(p_test_vector_verify->p_input,
 			   strlen(p_test_vector_verify->p_input),
@@ -42,7 +42,7 @@ __attribute__((noinline)) static void unhexify_ecdsa_verify(void)
 			   strlen(p_test_vector_verify->p_input));
 }
 
-__attribute__((noinline)) static void unhexify_ecdsa_sign(void)
+__attribute__((noinline)) void unhexify_ecdsa_sign(void)
 {
 	hash_len =
 		hex2bin(p_test_vector_sign->p_input,
@@ -50,7 +50,7 @@ __attribute__((noinline)) static void unhexify_ecdsa_sign(void)
 			strlen(p_test_vector_sign->p_input));
 }
 
-__attribute__((noinline)) static void unhexify_ecdsa_random(void)
+__attribute__((noinline)) void unhexify_ecdsa_random(void)
 {
 	hash_len = hex2bin(p_test_vector_random->p_input,
 			   strlen(p_test_vector_random->p_input),
