@@ -48,7 +48,7 @@ void sha_256_clear_buffers(void)
 	       sizeof(m_sha_expected_output_buf));
 }
 
-__attribute__((noinline)) static void unhexify_sha(void)
+__attribute__((noinline)) void unhexify_sha_256(void)
 {
 	/* Fetch and unhexify test vectors. */
 	in_len = hex2bin(p_test_vector->p_input, strlen(p_test_vector->p_input),
@@ -60,7 +60,7 @@ __attribute__((noinline)) static void unhexify_sha(void)
 	out_len = expected_out_len;
 }
 
-__attribute__((noinline)) static void unhexify_sha_long(void)
+__attribute__((noinline)) void unhexify_sha_256_long(void)
 {
 	/* Fetch and unhexify test vectors. */
 	in_len = p_test_vector->chunk_length;
@@ -77,7 +77,7 @@ void sha_256_setup(void)
 	sha_256_clear_buffers();
 	p_test_vector = ITEM_GET(test_vector_hash_256_data, test_vector_hash_t,
 				 sha_vector_n);
-	unhexify_sha();
+	unhexify_sha_256();
 }
 
 void sha_256_teardown(void)
@@ -90,7 +90,7 @@ void sha_256_long_setup(void)
 	sha_256_clear_buffers();
 	p_test_vector = ITEM_GET(test_vector_hash_256_long_data,
 				 test_vector_hash_t, sha_long_vector_n);
-	unhexify_sha_long();
+	unhexify_sha_256_long();
 }
 
 void sha_256_long_teardown(void)

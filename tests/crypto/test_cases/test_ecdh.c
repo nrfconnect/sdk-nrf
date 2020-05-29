@@ -55,7 +55,7 @@ void ecdh_clear_buffers(void)
 	memset(m_ecdh_expected_ss_buf, 0x00, sizeof(m_ecdh_expected_ss_buf));
 }
 
-__attribute__((noinline)) static void unhexify_ecdh(void)
+__attribute__((noinline)) void unhexify_ecdh(void)
 {
 	expected_ss_len =
 		hex2bin(p_test_vector->p_expected_shared_secret,
