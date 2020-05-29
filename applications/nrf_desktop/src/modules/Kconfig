@@ -5,6 +5,7 @@
 #
 
 rsource "Kconfig.hid"
+rsource "Kconfig.smp"
 rsource "Kconfig.power_manager"
 rsource "Kconfig.hid_state"
 rsource "Kconfig.led_state"

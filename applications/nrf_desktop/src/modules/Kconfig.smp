@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "BLE SMP Service"
+
+config DESKTOP_SMP_ENABLE
+	bool "SMP via BLE"
+	depends on MCUMGR_CMD_IMG_MGMT
+	depends on MCUMGR_SMP_BT
+	depends on DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  This option enables SMP service allowing DFU via BLE.
+
+if DESKTOP_SMP_ENABLE
+
+module = DESKTOP_SMP
+module-str = SMP service
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu
