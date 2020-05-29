@@ -5,6 +5,7 @@
 # precedence.
 
 # Root folder
+/VERSION                                  @carlescufi @tejlmand
 /CODEOWNERS                               @carlescufi
 /LICENSE                                  @carlescufi
 /README.rst                               @ru-fu @carlescufi
