@@ -44,6 +44,11 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
+static struct {
+	u32_t latency;
+	u32_t crc_errors;
+} llpm_latency;
+
 void scan_filter_match(struct bt_scan_device_info *device_info,
 		       struct bt_scan_filter_match *filter_match,
 		       bool connectable)
@@ -284,11 +289,7 @@ static bool on_vs_evt(struct net_buf_simple *buf)
 	}
 
 	evt = (void *)buf->data;
-	if ((evt->event_counter & 0x3FF) == 0) {
-		printk("QoS conn event reports: "
-		       "channel index 0x%02x, CRC errors 0x%02x\n",
-		       evt->channel_index, evt->crc_error_count);
-	}
+	llpm_latency.crc_errors += evt->crc_error_count;
 
 	return true;
 }
@@ -336,9 +337,8 @@ static void latency_response_handler(const void *buf, u16_t len)
 		/* compute how long the time spent */
 		latency_time = *((u32_t *)buf);
 		u32_t cycles_spent = k_cycle_get_32() - latency_time;
-		u32_t us_spent = (u32_t)k_cyc_to_ns_floor64(cycles_spent) / 2000;
-
-		printk("Transmission Latency: %u (us)\n", us_spent);
+		llpm_latency.latency =
+			(u32_t)k_cyc_to_ns_floor64(cycles_spent) / 2000;
 	}
 }
 
@@ -381,7 +381,16 @@ static void test_run(void)
 			printk("Latency failed (err %d)\n", err);
 		}
 
-		k_sleep(K_MSEC(200)); /* sleep 200 ms*/
+		k_sleep(K_MSEC(200)); /* wait for latency response */
+
+		if (llpm_latency.latency) {
+			printk("Transmission Latency: %u (us), CRC errors %u\n",
+			       llpm_latency.latency, llpm_latency.crc_errors);
+		} else {
+			printk("Did not receive a latency response\n");
+		}
+
+		memset(&llpm_latency, 0, sizeof(llpm_latency));
 	}
 }
 
