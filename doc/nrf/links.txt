@@ -241,7 +241,7 @@
 
 .. _`802.15.2-2003 specification`: https://standards.ieee.org/standard/802_15_2-2003.html
 
-.. ### Links to OpenThread
+.. ### Links to Thread and OpenThread
 
 .. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
 
@@ -251,6 +251,8 @@
 
 .. _`Thread Group`: https://www.threadgroup.org
 
+.. _`Thread protocol specification`: https://www.threadgroup.org/ThreadSpec
+
 .. _`Creative Commons 3.0 Attribution License`: https://creativecommons.org/licenses/by/3.0/
 
 .. _`shared by Google`: https://developers.google.com/readme/policies/
@@ -258,6 +260,12 @@
 .. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
+
+.. _`Thread Group's Commissioning White Paper`: https://www.threadgroup.org/Portals/0/documents/support/CommissioningWhitePaper_658_2.pdf
+
+.. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_COMMISSIONER.md
+
+.. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_JOINER.md
 
 .. ### Links to Zigbee
 
