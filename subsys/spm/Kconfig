@@ -108,6 +108,10 @@ config SPM_SERVICE_FIND_FIRMWARE_INFO
 	  marked as secure. This service allows it to request firmware info
 	  about image stored at a given address.
 
+config SPM_SERVICE_S0_ACTIVE
+	bool "Enable secure service to check if S0 is active B1 slot"
+	default y
+
 config SPM_SERVICE_PREVALIDATE
 	bool "Prevalidate B1 upgrades (Requires Immutable Bootloader)"
 	default n

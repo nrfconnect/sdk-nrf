@@ -125,6 +125,34 @@ int spm_request_random_number_nse(uint8_t *output, size_t len, size_t *olen)
 }
 #endif /* CONFIG_SPM_SERVICE_RNG */
 
+#ifdef CONFIG_SPM_SERVICE_S0_ACTIVE
+__TZ_NONSECURE_ENTRY_FUNC
+int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active)
+{
+	const struct fw_info *s0;
+	const struct fw_info *s1;
+	bool s0_valid;
+	bool s1_valid;
+
+	s0 = fw_info_find(s0_address);
+	s1 = fw_info_find(s1_address);
+
+	s0_valid = (s0 != NULL) && (s0->valid == CONFIG_FW_INFO_VALID_VAL);
+	s1_valid = (s1 != NULL) && (s1->valid == CONFIG_FW_INFO_VALID_VAL);
+
+	if (!s1_valid && !s0_valid) {
+		return -EINVAL;
+	} else if (!s1_valid) {
+		*s0_active = true;
+	} else if (!s0_valid) {
+		*s0_active = false;
+	} else {
+		*s0_active = s0->version >= s1->version;
+	}
+
+	return 0;
+}
+#endif /* CONFIG_SPM_SERVICE_S0_ACTIVE */
 
 #ifdef CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
 __TZ_NONSECURE_ENTRY_FUNC
