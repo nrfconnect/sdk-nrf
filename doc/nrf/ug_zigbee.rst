@@ -34,6 +34,8 @@ The stack comes with the following features:
 * Zigbee Green Power Proxy Basic.
 * Experimental support for ``ZB_ZCL_WWAH``.
 
+See :ref:`nrfxlib:zboss` for more information.
+
 .. _zigbee_ug_libs:
 
 Required libraries and drivers

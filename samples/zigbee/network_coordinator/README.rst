@@ -118,7 +118,7 @@ This sample uses the following |NCS| libraries:
 
 This sample uses the following `nrfxlib`_ libraries:
 
-* ZBOSS Zigbee stack
+* :ref:`nrfxlib:zboss`
 
 In addition, it uses the following Zephyr libraries:
 
