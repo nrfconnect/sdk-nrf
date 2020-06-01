@@ -8,35 +8,22 @@ If Secure User-Plane Location (SUPL) support is enabled, it also shows how to im
 See :ref:`supl_client` for information on enabling SUPL support for the sample.
 
 The sample first creates a `GNSS`_ socket.
-See :ref:`nrfxlib:bsdlib` and :ref:`nrfxlib:bsdlib_extensions` for more information about GNSS sockets.
 Then it reads the GPS data from the socket and parses the received frames to interpret the frame contents.
+See :ref:`nrfxlib:gnss_extension` for more information.
 
 Overview
 ********
 
-This sample operates in three different modes.
-Each of these modes depends on the state of the GPS module.
+This sample operates in two different modes.
 
-Mode 1
-======
+In the default mode, the sample displays information from both PVT (Position, Velocity, and Time) and `NMEA`_ strings.
+The sample can also be configured to run in NMEA-only mode, where only the NMEA strings are displayed in the console.
+The NMEA-only mode can be used to visualize the data from the GPS using a third-party tool.
 
-This is the startup mode in which the sample waits for the GPS module to acquire a fix on the current position.
-Information about the progress is displayed on a console.
-
-Mode 2
-======
-
-The sample switches to the second mode when the GPS module has acquired at least one fix.
-In this mode, the sample also displays information about the last good fix received from the GPS module.
-The displayed information includes both PVT (Position, Velocity, and Time) and `NMEA`_ strings.
-
-Mode 3
-======
-
-The sample operates in this mode only if SUPL client support is enabled.
-When the sample receives an A-GPS notification from the GPS module, the sample switches from the current mode to the third mode and starts downloading the A-GPS data requested by the GPS module.
-The sample then displays the information on the screen about the download process.
-Finally, the sample switches back to the previous mode when the download is completed.
+SUPL support can be enabled for both the default mode (PVT and NMEA) and the NMEA-only mode.
+When the SUPL support is enabled, the sample receives an A-GPS data request notification from the GPS module, and it starts downloading the A-GPS data requested by the GPS module.
+The sample then displays the information in the terminal about the download process.
+Finally, after the download completes, the sample switches back to the previous display mode.
 
 Requirements
 ************
@@ -68,46 +55,76 @@ Testing
 
 After programming the sample and all the prerequisites to the board, you can test the sample by performing the following steps:
 
-1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset
-   your nRF9160 DK.
+1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset your nRF9160 DK.
 2. Open a terminal emulator.
 #. Test the sample by performing the following steps:
 
-   If SUPL client library support is not enabled:
+   If the default mode is enabled:
 
    a. Observe that the following information is displayed in the terminal emulator:
 
           .. code-block:: console
 
                 Tracking: 0 Using: 0 Unhealthy: 0
-                Seconds since last fix 0
+                ---------------------------------
+                Seconds since last fix: 1
+                Searching [-]
 
-                Scanning [/]
+                NMEA strings:
+
+                $GPGGA,000000.00,,,,,0,,99.99,,M,0,,*37
+                $GPGLL,,,,,000000.00,V,A*45
+                $GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99,1*2D
+                $GPGSV,1,1,0,,,,,,,,,,,,,,,,,1*54
+                $GPRMC,000000.00,V,,,,,,,060180,,,N,V*08
+                ---------------------------------
 
    #. Observe that the numbers associated with the displayed parameters **Tracking** and **Using** change.
-   #. Observe that the sample displays the following information upon acquiring the first GPS lock:
+   #. Observe that the sample displays the following information upon acquiring the GPS lock:
 
           .. code-block:: console
 
-		        Tracking: 7 Using: 7 Unhealthy: 0
-		        Seconds since last fix 0
-		        ---------------------------------
-		        Longitude:  10.437814
-		        Latitude:   63.421546
-		        Altitude:   163.747833
-		        Speed:      0.023171
-		        Heading:    0.000000
-		        Date:       30-01-2020
-		        Time (UTC): 09:42:38
+                Tracking: 7 Using: 5 Unhealthy: 0
+                ---------------------------------
+                Longitude:  23.771611
+                Latitude:   61.491275
+                Altitude:   116.274658
+                Speed:      0.039595
+                Heading:    0.000000
+                Date:       03-06-2020
+                Time (UTC): 05:48:24
 
-		        NMEA strings:
-		        $GPGGA,094238.25,6325.29275,N,01026.26884,E,1,08,1.49,163.75,M,0,,*2E
-		        $GPGLL,6325.29275,N,01026.26884,E,094238.25,A,A*66
-		        $GPGSA,A,3,05,07,08,09,16,21,27,30,,,,,2.60,1.49,2.12,1*17
-		        $GPGSV,2,1,8,7,60,093,44,9,14,106,39,21,17,339,41,16,07,016,22,1*5B
-		        $GPGSV,2,2,8,27,15,041,20,8,07,071,24,30,62,176,29,5,57,239,34,1*51
-		        $GPRMC,094238.25,A,6325.29275,N,01026.26884,E,0.05,0.00,300120,,,A,V*2E
+                NMEA strings:
 
+                $GPGGA,054824.58,6128.77008,N,02351.48387,E,1,07,2.05,116.27,M,0,,*22
+                $GPGLL,6129.28608,N,02346.17887,E,054824.58,A,A*6B
+                $GPGSA,A,3,10,12,17,24,28,,,,,,,,3.05,2.05,2.25,1*13
+                $GPGSV,2,1,7,17,50,083,41,24,68,250,38,10,14,294,46,28,23,071,38,1*56
+                $GPGSV,2,2,7,12,29,240,36,19,00,000,32,1,00,000,33,1*50
+                $GPRMC,054824.58,A,6129.28608,N,02346.17887,E,0.08,0.00,030620,,,A,V*29
+                ---------------------------------
+
+   If NMEA-only mode is enabled:
+
+   a. Observe that the following information is displayed in the terminal emulator:
+
+          .. code-block:: console
+
+                $GPGGA,000000.00,,,,,0,,99.99,,M,0,,*37
+                $GPGLL,,,,,000000.00,V,A*45
+                $GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99,1*2D
+                $GPGSV,1,1,0,,,,,,,,,,,,,,,,,1*54
+                $GPRMC,000000.00,V,,,,,,,060180,,,N,V*08
+                $GPGGA,000001.00,,,,,0,02,99.99,,M,0,,*34
+                $GPGLL,,,,,000001.00,V,A*44
+                $GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99,1*2D
+                $GPGSV,1,1,2,17,,,24,1,,,28,1*6D
+                $GPRMC,000001.00,V,,,,,,,060180,,,N,V*09
+                $GPGGA,000002.00,,,,,0,02,99.99,,M,0,,*37
+                $GPGLL,,,,,000002.00,V,A*47
+                $GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99,1*2D
+                $GPGSV,1,1,2,17,,,24,1,,,28,1*6D
+                $GPRMC,000002.00,V,,,,,,,060180,,,N,V*0A
 
    If SUPL client library support is enabled:
 

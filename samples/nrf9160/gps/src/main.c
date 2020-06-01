@@ -34,24 +34,23 @@
 #define AT_COEX0       "AT\%XCOEX0=1,1,1570,1580"
 #endif
 
-static const char     update_indicator[] = {'\\', '|', '/', '-'};
-static const char     at_commands[][31]  = {
-				AT_XSYSTEMMODE,
+static const char            update_indicator[] = {'\\', '|', '/', '-'};
+static const char            at_commands[][31]  = {
+					AT_XSYSTEMMODE,
 #ifdef CONFIG_BOARD_NRF9160DK_NRF9160NS
-				AT_MAGPIO,
-				AT_COEX0,
+					AT_MAGPIO,
+					AT_COEX0,
 #endif
-				AT_ACTIVATE_GPS
-			};
+					AT_ACTIVATE_GPS
+				};
 
-static int            gnss_fd;
-static char           nmea_strings[10][NRF_GNSS_NMEA_MAX_LEN];
-static u32_t          nmea_string_cnt;
+static int                   gnss_fd;
+static char                  nmea_strings[10][NRF_GNSS_NMEA_MAX_LEN];
+static u32_t                 nmea_string_cnt;
 
-static bool           got_first_fix;
-static bool           update_terminal;
-static u64_t          fix_timestamp;
-nrf_gnss_data_frame_t last_fix;
+static bool                  got_fix;
+static u64_t                 fix_timestamp;
+static nrf_gnss_data_frame_t last_pvt;
 
 K_SEM_DEFINE(lte_ready, 0, 1);
 
@@ -240,15 +239,22 @@ static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 		}
 	}
 
-	printk("Tracking: %d Using: %d Unhealthy: %d", tracked,
-						       in_fix,
-						       unhealthy);
-
-	printk("\nSeconds since last fix %lld\n",
-			(k_uptime_get() - fix_timestamp) / 1000);
+	printk("Tracking: %d Using: %d Unhealthy: %d\n", tracked,
+							 in_fix,
+							 unhealthy);
 }
 
-static void print_pvt_data(nrf_gnss_data_frame_t *pvt_data)
+static void print_gnss_stats(nrf_gnss_data_frame_t *pvt_data)
+{
+	if (pvt_data->pvt.flags & NRF_GNSS_PVT_FLAG_DEADLINE_MISSED) {
+		printk("GNSS notification deadline missed\n");
+	}
+	if (pvt_data->pvt.flags & NRF_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
+		printk("GNSS operation blocked by insufficient time windows\n");
+	}
+}
+
+static void print_fix_data(nrf_gnss_data_frame_t *pvt_data)
 {
 	printf("Longitude:  %f\n", pvt_data->pvt.longitude);
 	printf("Latitude:   %f\n", pvt_data->pvt.latitude);
@@ -265,10 +271,8 @@ static void print_pvt_data(nrf_gnss_data_frame_t *pvt_data)
 
 static void print_nmea_data(void)
 {
-	printk("NMEA strings:\n");
-
 	for (int i = 0; i < nmea_string_cnt; ++i) {
-		printk("%s\n", nmea_strings[i]);
+		printk("%s", nmea_strings[i]);
 	}
 }
 
@@ -285,22 +289,18 @@ int process_gps_data(nrf_gnss_data_frame_t *gps_data)
 
 		switch (gps_data->data_id) {
 		case NRF_GNSS_PVT_DATA_ID:
+			memcpy(&last_pvt,
+			       gps_data,
+			       sizeof(nrf_gnss_data_frame_t));
+			nmea_string_cnt = 0;
+			got_fix = false;
 
 			if ((gps_data->pvt.flags &
 				NRF_GNSS_PVT_FLAG_FIX_VALID_BIT)
 				== NRF_GNSS_PVT_FLAG_FIX_VALID_BIT) {
 
-				if (!got_first_fix) {
-					got_first_fix = true;
-				}
-
+				got_fix = true;
 				fix_timestamp = k_uptime_get();
-				memcpy(&last_fix,
-				       gps_data,
-				       sizeof(nrf_gnss_data_frame_t));
-
-				nmea_string_cnt = 0;
-				update_terminal = true;
 			}
 			break;
 
@@ -383,7 +383,7 @@ int main(void)
 	};
 #endif
 
-	printk("Staring GPS application\n");
+	printk("Starting GPS application\n");
 
 	if (init_app() != 0) {
 		return -1;
@@ -407,29 +407,29 @@ int main(void)
 			 */
 		} while (process_gps_data(&gps_data) > 0);
 
-		if (!got_first_fix) {
-			cnt++;
+		if (IS_ENABLED(CONFIG_GPS_SAMPLE_NMEA_ONLY)) {
+			print_nmea_data();
+			nmea_string_cnt = 0;
+		} else {
 			printk("\033[1;1H");
 			printk("\033[2J");
-			print_satellite_stats(&gps_data);
-			printk("\nScanning [%c] ",
-					update_indicator[cnt%4]);
-		}
-
-		if (((k_uptime_get() - fix_timestamp) >= 1) &&
-		     (got_first_fix)) {
-			printk("\033[1;1H");
-			printk("\033[2J");
-
-			print_satellite_stats(&gps_data);
-
+			print_satellite_stats(&last_pvt);
+			print_gnss_stats(&last_pvt);
 			printk("---------------------------------\n");
-			print_pvt_data(&last_fix);
-			printk("\n");
+
+			if (!got_fix) {
+				printk("Seconds since last fix: %lld\n",
+				       (k_uptime_get() - fix_timestamp) / 1000);
+				cnt++;
+				printk("Searching [%c]\n",
+				       update_indicator[cnt%4]);
+			} else {
+				print_fix_data(&last_pvt);
+			}
+
+			printk("\nNMEA strings:\n\n");
 			print_nmea_data();
 			printk("---------------------------------");
-
-			update_terminal = false;
 		}
 
 		k_sleep(K_MSEC(500));
