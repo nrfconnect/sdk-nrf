@@ -17,8 +17,8 @@ LOG_MODULE_REGISTER(board_nonsecure, CONFIG_BOARD_LOG_LEVEL);
 #define AT_CMD_LEN(cmd)		(sizeof (cmd) - 1)
 #define AT_CMD_MAGPIO		"AT%XMAGPIO=1,1,1,7,1,746,803,2,698,748," \
 				"2,1710,2200,3,824,894,4,880,960,5,791,849," \
-				"7,1574,1577"
-#define AT_CMD_COEX0		"AT%XCOEX0=1,1,1570,1580"
+				"7,1565,1586"
+#define AT_CMD_COEX0		"AT%XCOEX0=1,1,1565,1586"
 #define AT_CMD_TRACE		"AT%XMODEMTRACE=0"
 
 static int thingy91_magpio_configure(void)

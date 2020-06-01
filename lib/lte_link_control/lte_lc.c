@@ -163,12 +163,12 @@ static const char *const system_mode_params[] = {
 	const char *const lwm2m_ant_cfg[] = {
 			"AT%XMAGPIO=1,1,1,7,1,746,803,2,698,748,"
 			"2,1710,2200,3,824,894,4,880,960,5,791,849,"
-			"7,1574,1577",
-			"AT%XCOEX0=1,1,1570,1580"};
+			"7,1565,1586",
+			"AT%XCOEX0=1,1,1565,1586"};
 #elif defined(CONFIG_BOARD_NRF9160_PCA10090NS)
 	const char *const lwm2m_ant_cfg[] = {
-			"AT\%XMAGPIO=1,0,0,1,1,1574,1577",
-			"AT\%XCOEX0=1,1,1570,1580"};
+			"AT\%XMAGPIO=1,0,0,1,1,1565,1586",
+			"AT\%XCOEX0=1,1,1565,1586"};
 #endif
 #endif
 
