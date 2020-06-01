@@ -32,9 +32,7 @@ static const uint8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". 
 #define NVS_SECTOR_SIZE  (DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size))
 #define NVS_SECTOR_COUNT 2
  /* Start address of the filesystem in flash */
-#define NVS_STORAGE_OFFSET \
-	DT_REG_ADDR(DT_NODE_BY_FIXED_PARTITION_LABEL(storage))
-
+#define NVS_STORAGE_OFFSET FLASH_AREA_OFFSET(storage)
 
 static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
