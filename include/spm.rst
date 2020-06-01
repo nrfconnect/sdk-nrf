@@ -42,6 +42,7 @@ Peripherals configured as Non-Secure
    * GPIO (and GPIO pins)
    * GPIOTE1
    * IPC
+   * NFCT
    * NVMC, VMC
    * PWM0-3
    * REGULATORS

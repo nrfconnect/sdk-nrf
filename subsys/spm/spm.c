@@ -310,6 +310,9 @@ static void spm_config_peripherals(void)
 #ifdef NRF_RTC1
 		PERIPH("NRF_RTC1", NRF_RTC1, CONFIG_SPM_NRF_RTC1_NS),
 #endif
+#ifdef NRF_NFCT
+		PERIPH("NRF_NFCT", NRF_NFCT, CONFIG_SPM_NRF_NFCT_NS),
+#endif
 #ifdef NRF_NVMC
 		PERIPH("NRF_NVMC", NRF_NVMC, CONFIG_SPM_NRF_NVMC_NS),
 #endif
