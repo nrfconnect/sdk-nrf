@@ -101,7 +101,7 @@ void generate_keys_fn(struct k_work *w)
 {
 	if (generate_button_event()) {
 		k_delayed_work_submit(&generate_keys,
-				      CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL);
+				K_MSEC(CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL));
 	} else {
 		state = STATE_IDLE;
 	}
