@@ -10,7 +10,7 @@ set(NRF_SUPPORTED_BOARDS
 	nrf52833dk_nrf52833
 )
 
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE}
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(openthread_cli)
 
