@@ -20,4 +20,4 @@ target_sources(app PRIVATE src/coap_client.c
 
 target_sources_ifdef(CONFIG_BT app PRIVATE src/ble_utils.c)
 
-target_include_directories(app PUBLIC ../coap_interface)
+target_include_directories(app PUBLIC ../coap_server/interface)
