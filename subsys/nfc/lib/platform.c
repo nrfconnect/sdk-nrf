@@ -8,6 +8,10 @@
 #include <nrfx_nfct.h>
 #include <nrfx_timer.h>
 
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#include <secure_services.h>
+#endif
+
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
@@ -20,6 +24,13 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 					      _irq_handler)
 
 #define DT_DRV_COMPAT nordic_nrf_clock
+
+/* Number of NFC Tag Header registers in the FICR register space. */
+#define NFC_TAGHEADER_REGISTERS_NUM	3
+/* Default values of NFC Tag Header registers when they are not available
+ * in the FICR space.
+ */
+#define NFC_TAGHEADER_DEFAULT_VAL	{0x5F, 0x00, 0x00}
 
 static struct device *clock;
 
@@ -47,6 +58,101 @@ nrfx_err_t nfc_platform_setup(void)
 			   nfc_timer_irq_handler, NULL,  0);
 
 	LOG_DBG("NFC platform initialized");
+	return NRFX_SUCCESS;
+}
+
+
+static nrfx_err_t nfc_platform_tagheader_get(uint8_t index,
+					     uint32_t *tag_header)
+{
+	const uint32_t tag_header_addresses[] = {
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+		(uint32_t) &NRF_FICR_S->NFC.TAGHEADER0,
+		(uint32_t) &NRF_FICR_S->NFC.TAGHEADER1,
+		(uint32_t) &NRF_FICR_S->NFC.TAGHEADER2
+#else
+		(uint32_t) &NRF_FICR->NFC.TAGHEADER0,
+		(uint32_t) &NRF_FICR->NFC.TAGHEADER1,
+		(uint32_t) &NRF_FICR->NFC.TAGHEADER2
+#endif
+	};
+
+	if (index >= ARRAY_SIZE(tag_header_addresses)) {
+		LOG_ERR("Tag Header index out of bounds");
+		return NRFX_ERROR_INVALID_ADDR;
+	}
+
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+	int err;
+
+	err = spm_request_read(tag_header, tag_header_addresses[index],
+			       sizeof(uint32_t));
+	if (err != 0) {
+		LOG_ERR("Could not read NFC Tag Header FICR (err: %d)", err);
+		return NRFX_ERROR_INVALID_ADDR;
+	}
+#else
+	*tag_header = *((uint32_t *) tag_header_addresses[index]);
+#endif
+
+	return NRFX_SUCCESS;
+}
+
+
+nrfx_err_t nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
+						 uint32_t        buf_len)
+{
+	if (!buf) {
+		return NRFX_ERROR_INVALID_PARAM;
+	}
+
+	if ((buf_len != NRFX_NFCT_NFCID1_SINGLE_SIZE) &&
+	    (buf_len != NRFX_NFCT_NFCID1_DOUBLE_SIZE) &&
+	    (buf_len != NRFX_NFCT_NFCID1_TRIPLE_SIZE)) {
+		return NRFX_ERROR_INVALID_LENGTH;
+	}
+
+#if defined(FICR_NFC_TAGHEADER0_MFGID_Msk)
+	nrfx_err_t err;
+	uint32_t nfc_tag_header[NFC_TAGHEADER_REGISTERS_NUM];
+
+	for (int i = 0; i < ARRAY_SIZE(nfc_tag_header); i++) {
+		err = nfc_platform_tagheader_get(i, &nfc_tag_header[i]);
+		if (err != NRFX_SUCCESS) {
+			return err;
+		}
+	}
+#else
+	const uint32_t nfc_tag_header[NFC_TAGHEADER_REGISTERS_NUM] =
+		NFC_TAGHEADER_DEFAULT_VAL;
+#endif
+
+	buf[0] = (uint8_t) (nfc_tag_header[0] >> 0);
+	buf[1] = (uint8_t) (nfc_tag_header[0] >> 8);
+	buf[2] = (uint8_t) (nfc_tag_header[0] >> 16);
+	buf[3] = (uint8_t) (nfc_tag_header[1] >> 0);
+
+	if (buf_len != NRFX_NFCT_NFCID1_SINGLE_SIZE) {
+		buf[4] = (uint8_t) (nfc_tag_header[1] >> 8);
+		buf[5] = (uint8_t) (nfc_tag_header[1] >> 16);
+		buf[6] = (uint8_t) (nfc_tag_header[1] >> 24);
+
+		if (buf_len == NRFX_NFCT_NFCID1_TRIPLE_SIZE) {
+			buf[7] = (uint8_t) (nfc_tag_header[2] >> 0);
+			buf[8] = (uint8_t) (nfc_tag_header[2] >> 8);
+			buf[9] = (uint8_t) (nfc_tag_header[2] >> 16);
+		}
+		/* Begin: Bugfix for FTPAN-181. */
+		/* Workaround for wrong value in NFCID1. Value 0x88 cannot be
+		 * used as byte 3 of a double-size NFCID1, according to the
+		 * NFC Forum Digital Protocol specification.
+		 */
+		else if (buf[3] == 0x88) {
+			buf[3] |= 0x11;
+		}
+		/* End: Bugfix for FTPAN-181 */
+	}
+
 	return NRFX_SUCCESS;
 }
 
