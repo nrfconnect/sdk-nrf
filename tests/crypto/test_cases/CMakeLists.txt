@@ -35,7 +35,6 @@ zephyr_sources_ifdef(CONFIG_MBEDTLS_GCM_C           test_vectors_aead_gcm.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_CIPHER_MODE_CBC test_vectors_aes_cbc_mac.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_CIPHER_MODE_CBC test_vectors_aes_cbc.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_CIPHER_MODE_CTR test_vectors_aes_ctr.c)
-zephyr_sources_ifdef(CONFIG_MBEDTLS_CMAC_C          test_vectors_aes_ecb_mac.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_AES_C           test_vectors_aes_ecb.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_ECDH_C          test_vectors_ecdh.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_ECDSA_C         test_vectors_ecdsa_random.c)
@@ -46,6 +45,10 @@ zephyr_sources_ifdef(CONFIG_MBEDTLS_SHA256_C        test_vectors_hkdf.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_SHA256_C        test_vectors_hmac.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_SHA256_C        test_vectors_sha_256.c)
 zephyr_sources_ifdef(CONFIG_MBEDTLS_SHA512_C        test_vectors_sha_512.c)
+
+if(CONFIG_MBEDTLS_CMAC_C OR CONFIG_MBEDTLS_CMAC_ALT)
+zephyr_sources(                                     test_vectors_aes_ecb_mac.c)
+endif()
 
 # This is set differently based on backend
 if(CONFIG_CC310_MBEDTLS_CCM_C OR CONFIG_VANILLA_MBEDTLS_CCM_C OR CONFIG_MBEDTLS_CCM_C)
