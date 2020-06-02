@@ -5,9 +5,9 @@ AT command parser
 
 The AT command parser is a library which parses any of the following:
 
-- A string response returned after issuing an AT command
-- An unsolicited event
-- A notification
+* A string response returned after issuing an AT command
+* An unsolicited event
+* A notification
 
 After parsing the response, notification, or event, the AT command parser extracts the parameters from the string and saves them in a structured list.
 

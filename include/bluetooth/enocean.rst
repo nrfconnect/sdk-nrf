@@ -9,8 +9,8 @@ NFC-based configuration is not supported.
 
 The library supports different types of commissioning for both wall switches and sensors:
 
-    * Radio-based commissioning.
-    * Manually inputting data from other commissioning methods, such as NFC or QR codes.
+* Radio-based commissioning.
+* Manually inputting data from other commissioning methods, such as NFC or QR codes.
 
 The library supports replay protection based on sequence numbers.
 Only new, authenticated packets from commissioned devices will go through to the event callbacks.

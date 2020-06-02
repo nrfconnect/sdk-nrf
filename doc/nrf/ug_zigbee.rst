@@ -107,13 +107,13 @@ You can enable the following additional configuration options:
 
 * One of the following alternative options for selecting the channel on which the Zigbee device can operate:
 
-    * :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE` - Single mode is enabled by default.
-      The default channel is set to 16.
-      To set a different channel, edit the :option:`CONFIG_ZIGBEE_CHANNEL` option to the desired value.
-    * :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` - In this mode, you get all the channels enabled by default.
-      To configure a custom set of channels in the range from 11 to 26, edit the :option:`CONFIG_ZIGBEE_CHANNEL_MASK` option.
-      For example, you can set channels 13, 16, and 21.
-      You must have at least one channel enabled with this option.
+  * :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE` - Single mode is enabled by default.
+    The default channel is set to 16.
+    To set a different channel, edit the :option:`CONFIG_ZIGBEE_CHANNEL` option to the desired value.
+  * :option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` - In this mode, you get all the channels enabled by default.
+    To configure a custom set of channels in the range from 11 to 26, edit the :option:`CONFIG_ZIGBEE_CHANNEL_MASK` option.
+    For example, you can set channels 13, 16, and 21.
+    You must have at least one channel enabled with this option.
 * :option:`CONFIG_ZIGBEE_VENDOR_OUI` - Represents MAC Address Block Large, and by default it is set to Nordic Semiconductor's MA-L block (f4-ce-36).
 * :option:`CONFIG_ZIGBEE_CLI_LOG_ENABLED` - Enables logging of the incoming ZCL frames, and it is enabled by default.
 

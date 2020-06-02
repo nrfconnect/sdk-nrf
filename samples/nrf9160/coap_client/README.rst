@@ -70,9 +70,9 @@ The sample displays the data in the following format:
 Instead of displaying every single CoAP frame content, the sample displays only the essential data.
 For the above sample output, the information displayed on the terminal conveys the following:
 
-   * ``code:0x45`` -  CoAP response code (2.05 - Content), which is constant across responses
-   * ``token 0x9772`` - CoAP token, which is unique per request/response pair
-   * ``payload: 15:39:40`` - the actual message payload (current time in UTC format) from the resource that is queried in this sample
+* ``code:0x45`` -  CoAP response code (2.05 - Content), which is constant across responses
+* ``token 0x9772`` - CoAP token, which is unique per request/response pair
+* ``payload: 15:39:40`` - the actual message payload (current time in UTC format) from the resource that is queried in this sample
 
 
 Dependencies

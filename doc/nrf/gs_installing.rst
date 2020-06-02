@@ -458,17 +458,17 @@ To install |SES| Nordic Edition, complete the following steps:
 
        .. group-tab:: Windows
 
-            * `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
-            * `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
+          * `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
+          * `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
 
        .. group-tab:: Linux
 
-            * `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
-            * `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
+          * `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
+          * `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
 
        .. group-tab:: macOS
 
-            * `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
+          * `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
 
 #. Extract the downloaded package in the directory of your choice.
 #. Register and activate a free license.

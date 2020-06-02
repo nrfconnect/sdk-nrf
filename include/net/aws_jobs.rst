@@ -9,9 +9,9 @@ You can use the library to report the status of AWS IoT jobs and to subscribe to
 
 The module also contains the following elements:
 
-- String templates that can be used for generating MQTT topics
-- Defines for lengths of topics, status, and job IDs
-- Defines for subscribe message IDs
+* String templates that can be used for generating MQTT topics
+* Defines for lengths of topics, status, and job IDs
+* Defines for subscribe message IDs
 
 This library assumes that all strings can be formatted in UTF-8.
 
@@ -20,7 +20,7 @@ Configuration
 
 Configure the following parameters when using this library:
 
-- :option:`CONFIG_UPDATE_JOB_PAYLOAD_LEN`
+* :option:`CONFIG_UPDATE_JOB_PAYLOAD_LEN`
 
 
 API documentation

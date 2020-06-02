@@ -9,11 +9,11 @@ If you want to create a polling device, you can use an ST25R3911B NFC shield tog
 
 Using the :ref:`st25r3911b_nfc_readme`, you can read raw data from a Type 2 Tag, such as:
 
-  * Number of TLV structures in the tag
-  * Type 2 Tag internal bytes
-  * Type 2 Tag lock bytes
-  * Type 2 Tag capability container
-  * Array of pointer to the TLV structures of the tag
+* Number of TLV structures in the tag
+* Type 2 Tag internal bytes
+* Type 2 Tag lock bytes
+* Type 2 Tag capability container
+* Array of pointer to the TLV structures of the tag
 
 See the :ref:`nfc_tag_reader` sample for more information on how to do this.
 

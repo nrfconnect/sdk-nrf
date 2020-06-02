@@ -34,8 +34,9 @@ Lists
 
 #. text
 
-   - bullet
-   - bullet
+   * bullet
+   * bullet
+
 #. text
 #. text
 

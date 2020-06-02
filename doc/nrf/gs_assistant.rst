@@ -103,8 +103,8 @@ Verification options
 
 Next to each step, you can use one or both of the following buttons:
 
-- :guilabel:`Mark done` -- marks a step as completed.
-- :guilabel:`Verify` -- checks if the installation is correct.
+* :guilabel:`Mark done` -- marks a step as completed.
+* :guilabel:`Verify` -- checks if the installation is correct.
 
 The verification process is reflected in the vertical progress bar animation.
 Once the verification is successful, the vertical progress bar changes color to green and the Log section is updated.

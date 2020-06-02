@@ -34,11 +34,11 @@ Complete the following steps to build |NCS| projects with SES after :ref:`instal
 
 #. To import a project into SES, you must specify the following information:
 
-	- **CMakeLists.txt** - the location of the :file:`CMakeLists.txt` project file of the sample that you want to work with
-	- **Board Directory** - the location of the board description of the board for which to build the project
-	- **Board Name** - the board name (select from the list that is populated based on the board directory)
-	- **Build Directory** - the folder in which to run the build (automatically filled based on the board name, but you can specify a different directory)
-	- **Delete Existing CMakeCache.txt** - select this option to ensure that you are not building with an outdated build cache
+   * **CMakeLists.txt** - the location of the :file:`CMakeLists.txt` project file of the sample that you want to work with
+   *  **Board Directory** - the location of the board description of the board for which to build the project
+   *  **Board Name** - the board name (select from the list that is populated based on the board directory)
+   * **Build Directory** - the folder in which to run the build (automatically filled based on the board name, but you can specify a different directory)
+   * **Delete Existing CMakeCache.txt** - select this option to ensure that you are not building with an outdated build cache
 
 .. build_SES_projimport_open_end
 

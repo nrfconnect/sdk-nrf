@@ -23,12 +23,13 @@ States
 The Default Transition Time can either be 0, a positive number of milliseconds, or ``K_FOREVER`` if the transition is undefined.
 On the air, the transition time is encoded into a single byte, and loses some of its granularity:
 
-- Step count: 6 bits (0-0x3e)
-- Step resolution: 2 bits
-  - Step 0: 100 millisecond resolution
-  - Step 1: 1 second resolution
-  - Step 2: 10 second resolution
-  - Step 3: 10 minutes resolution
+* Step count: 6 bits (0-0x3e)
+* Step resolution: 2 bits
+
+  * Step 0: 100 millisecond resolution
+  * Step 1: 1 second resolution
+  * Step 2: 10 second resolution
+  * Step 3: 10 minutes resolution
 
 The state is encoded with the highest resolution available, and rounded to the nearest representation.
 Values lower than 100 milliseconds, but higher than 0 are encoded as 100 milliseconds.

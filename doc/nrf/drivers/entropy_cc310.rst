@@ -10,9 +10,9 @@ When used on nRF52840, the entropy_cc310 driver gathers entropy by using the CC3
 
 When used on nRF9160, the driver behavior depends on whether it is used in a secure or non-secure application:
 
-  * When used :ref:`in a secure application <ug_nrf9160>`, or when the :ref:`lib_spm` is not used, the entropy_cc310 driver gathers entropy by using the CC310 hardware through the :ref:`nrf_cc310_platform_readme`.
+* When used :ref:`in a secure application <ug_nrf9160>`, or when the :ref:`lib_spm` is not used, the entropy_cc310 driver gathers entropy by using the CC310 hardware through the :ref:`nrf_cc310_platform_readme`.
 
-  * When used :ref:`in a non-secure application <ug_nrf9160>`, the driver gathers entropy through the :ref:`lib_secure_services` library.
+* When used :ref:`in a non-secure application <ug_nrf9160>`, the driver gathers entropy through the :ref:`lib_secure_services` library.
 
 API documentation
 *****************

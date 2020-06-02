@@ -25,9 +25,9 @@ Configuration
 
 Configure the following parameters when using this library:
 
-- :option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`
-- :option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`
-- :option:`CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`
+* :option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`
+* :option:`CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`
+* :option:`CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`
 
 
 Implementation

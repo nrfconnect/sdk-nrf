@@ -12,8 +12,8 @@ Overview
 The Cloud Client sample demonstrates how the generic :ref:`cloud_api_readme` can be used to interface with multiple cloud backends.
 The current version of the sample supports the following libraries as cloud backends:
 
- -  :ref:`lib_nrf_cloud`
- -  :ref:`lib_aws_iot`
+*  :ref:`lib_nrf_cloud`
+*  :ref:`lib_aws_iot`
 
 To swap between the supported libraries, change the option :option:`CONFIG_CLOUD_BACKEND` to match the configuration string of a compatible cloud backend.
 The identifying string for the different cloud backends are listed in the following table:
@@ -135,12 +135,12 @@ Dependencies
 
 This sample uses the following |NCS| libraries and drivers:
 
-    * :ref:`lib_nrf_cloud`
-    * :ref:`lib_aws_iot`
-    * :ref:`dk_buttons_and_leds_readme`
-    * :ref:`cloud_api_readme`
-    * ``lib/bsd_lib``
-    * ``lib/lte_link_control``
+* :ref:`lib_nrf_cloud`
+* :ref:`lib_aws_iot`
+* :ref:`dk_buttons_and_leds_readme`
+* :ref:`cloud_api_readme`
+* ``lib/bsd_lib``
+* ``lib/lte_link_control``
 
 In addition, it uses the Secure Partition Manager sample:
 
