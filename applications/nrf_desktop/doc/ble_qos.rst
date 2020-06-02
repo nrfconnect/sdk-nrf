@@ -102,7 +102,7 @@ Bluetoooth LE controller interaction
 ====================================
 
 The module uses CRC information from the Bluetoooth LE controller to adjust the channel map.
-The CRC information is received through the vendor-specific Bluetooth HCI event (:cpp:enum:`HCI_VS_SUBEVENT_CODE_QOS_CONN_EVENT_REPORT`).
+The CRC information is received through the vendor-specific Bluetooth HCI event (:cpp:enum:`HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT`).
 
 Additional thread
 =================
