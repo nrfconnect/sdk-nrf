@@ -1,0 +1,9 @@
+sample:
+  name: Bluetooth Mesh Light LC
+  description: Bluetooth Mesh Light LC sample
+tests:
+  samples.bluetooth.mesh.light_lc:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52dk_nrf52832 nrf52840dk_nrf52840
+    tags: bluetooth ci_build

@@ -32,6 +32,8 @@ enum flags {
 	FLAG_TRANSITION,
 	FLAG_STORE_CFG,
 	FLAG_STORE_STATE,
+	FLAG_CTRL_SRV_MANUALLY_ENABLED,
+	FLAG_STARTED,
 };
 
 enum stored_flags {
@@ -425,7 +427,7 @@ static void prolong(struct bt_mesh_light_ctrl_srv *srv)
 static void ctrl_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
 	atomic_set_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_CONTROLLED);
-
+	BT_DBG("Light Control Enabled\n");
 	transition_start(srv, LIGHT_CTRL_STATE_STANDBY, 0);
 	reg_start(srv);
 }
@@ -606,7 +608,7 @@ static void store_timeout(struct k_work *work)
 				  atomic_test_bit(&srv->flags, FLAG_OCC_MODE));
 
 		err = bt_mesh_model_data_store(srv->model, false, &data,
-					 sizeof(data));
+					       sizeof(data));
 		if (err) {
 			BT_ERR("Failed storing state: %d", err);
 		}
@@ -1113,7 +1115,7 @@ static int prop_set(struct net_buf_simple *buf,
 }
 
 static void prop_tx(struct bt_mesh_light_ctrl_srv *srv,
-		     struct bt_mesh_msg_ctx *ctx, u16_t id)
+		    struct bt_mesh_msg_ctx *ctx, u16_t id)
 {
 	int err;
 
@@ -1303,6 +1305,8 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 {
 	struct bt_mesh_light_ctrl_srv *srv = mod->user_data;
 
+	atomic_set_bit(&srv->flags, FLAG_STARTED);
+
 	if (srv->lightness->lightness_model->elem_idx == mod->elem_idx) {
 		BT_ERR("Lightness: Invalid element index");
 		return -EINVAL;
@@ -1310,7 +1314,13 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 
 	switch (srv->lightness->ponoff.on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
-		ctrl_disable(srv);
+		if (atomic_test_bit(&srv->flags,
+				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
+			ctrl_enable(srv);
+		} else {
+			ctrl_disable(srv);
+		}
+
 		/* PTS Corner case: If the device restarts while in the On state
 		 * (with OnPowerUp != RESTORE), we'll end up here with lights
 		 * off. If OnPowerUp is then changed to RESTORE, and the device
@@ -1320,13 +1330,18 @@ static int light_ctrl_srv_start(struct bt_mesh_model *mod)
 		store(srv, FLAG_STORE_STATE);
 		break;
 	case BT_MESH_ON_POWER_UP_ON:
-		ctrl_disable(srv);
+		if (atomic_test_bit(&srv->flags,
+				    FLAG_CTRL_SRV_MANUALLY_ENABLED)) {
+			ctrl_enable(srv);
+		} else {
+			light_set(srv,
+				  (srv->lightness->default_light ?
+					   srv->lightness->default_light :
+					   srv->lightness->last),
+				  srv->lightness->ponoff.dtt.transition_time);
+			ctrl_disable(srv);
+		}
 		store(srv, FLAG_STORE_STATE);
-		light_set(srv,
-			  (srv->lightness->default_light ?
-				   srv->lightness->default_light :
-				   srv->lightness->last),
-			  srv->lightness->ponoff.dtt.transition_time);
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
 		if (is_enabled(srv)) {
@@ -1419,22 +1434,25 @@ int bt_mesh_light_ctrl_srv_off(struct bt_mesh_light_ctrl_srv *srv)
 
 int bt_mesh_light_ctrl_srv_enable(struct bt_mesh_light_ctrl_srv *srv)
 {
+	atomic_set_bit(&srv->flags, FLAG_CTRL_SRV_MANUALLY_ENABLED);
 	if (is_enabled(srv)) {
 		return -EALREADY;
 	}
 
-	ctrl_enable(srv);
-	store(srv, FLAG_STORE_STATE);
+	if (atomic_test_bit(&srv->flags, FLAG_STARTED)) {
+		ctrl_enable(srv);
+		store(srv, FLAG_STORE_STATE);
+	}
 
 	return 0;
 }
 
 int bt_mesh_light_ctrl_srv_disable(struct bt_mesh_light_ctrl_srv *srv)
 {
+	atomic_clear_bit(&srv->flags, FLAG_CTRL_SRV_MANUALLY_ENABLED);
 	if (!is_enabled(srv)) {
 		return -EALREADY;
 	}
-
 	ctrl_disable(srv);
 	store(srv, FLAG_STORE_STATE);
 
