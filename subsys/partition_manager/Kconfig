@@ -33,6 +33,12 @@ endif
 
 endmenu
 
+config PM_SINGLE_IMAGE
+	bool "Use the Partition Manager for single image builds"
+	help
+	  Use the Partition Manager feature to partition the device even if
+	  only a single image is included in the build.
+
 menuconfig PM_EXTERNAL_FLASH
 	bool "Support external flash in Partition Manager"
 
