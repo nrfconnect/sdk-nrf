@@ -439,7 +439,11 @@ static void send_hid_report(const struct hid_report_event *event)
 	}
 
 	if (err) {
-		LOG_ERR("Cannot send report (%d)", err);
+		if (err == -ENOTCONN) {
+			LOG_WRN("Device disconnected");
+		} else {
+			LOG_ERR("Cannot send report (%d)", err);
+		}
 		hid_report_sent(cur_conn, report_id, true);
 	}
 }
