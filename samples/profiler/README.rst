@@ -41,7 +41,8 @@ Testing
 =======
 
 After programming the sample to your board, you can test it by running the script ``real_time_plot.py`` (located under :file:`scripts/profiler`).
-As arguments, pass the csv and json file names that should be used to store the data (for example, run ``real_time_plot.py data.csv data.json``).
+As an argument, pass the name that should be used to store the data.
+For example, run ``real_time_plot.py test_name`` to generate a :file:`test_name.csv` and a :file:`test_name.json` file.
 
 The script opens a GUI window that displays events as points on timelines.
 See the Profiler documentation for more information.
