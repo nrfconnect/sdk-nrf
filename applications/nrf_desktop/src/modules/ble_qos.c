@@ -408,14 +408,14 @@ static void hid_pkt_stats_print(u32_t ble_recv)
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
 	u8_t *subevent_code;
-	hci_vs_evt_qos_conn_event_report_t *evt;
+	hci_vs_subevent_qos_conn_event_report_t *evt;
 
 	subevent_code = net_buf_simple_pull_mem(
 		buf,
 		sizeof(*subevent_code));
 
 	switch (*subevent_code) {
-	case HCI_VS_SUBEVENT_CODE_QOS_CONN_EVENT_REPORT:
+	case HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT:
 		if (atomic_get(&processing)) {
 			/* Cheaper to skip this update */
 			/* instead of using locks */

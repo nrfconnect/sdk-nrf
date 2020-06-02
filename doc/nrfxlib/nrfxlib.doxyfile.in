@@ -1966,6 +1966,7 @@ PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@NRFXLIB_BINARY_DIR@/mbedtls_dox
                          "BUILD_ASSERT()=" \
                          "__deprecated=" \
                          "__PACKED_STRUCT=struct" \
+                         "__PACKED_UNION=union" \
                          "__packed=" \
                          "__aligned(x)=" \
                          "__printf_like(x, y)=" \

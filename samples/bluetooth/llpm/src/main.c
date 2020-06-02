@@ -281,10 +281,10 @@ static int enable_llpm_short_connection_interval(void)
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
 	u8_t code;
-	hci_vs_evt_qos_conn_event_report_t *evt;
+	hci_vs_subevent_qos_conn_event_report_t *evt;
 
 	code = net_buf_simple_pull_u8(buf);
-	if (code != HCI_VS_SUBEVENT_CODE_QOS_CONN_EVENT_REPORT) {
+	if (code != HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT) {
 		return false;
 	}
 

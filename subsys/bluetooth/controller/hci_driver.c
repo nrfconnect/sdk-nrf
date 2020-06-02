@@ -214,7 +214,7 @@ static bool event_packet_is_discardable(const u8_t *hci_buf)
 		u8_t subevent = hci_buf[2];
 
 		switch (subevent) {
-		case HCI_VS_SUBEVENT_CODE_QOS_CONN_EVENT_REPORT:
+		case HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT:
 			return true;
 		default:
 			return false;
