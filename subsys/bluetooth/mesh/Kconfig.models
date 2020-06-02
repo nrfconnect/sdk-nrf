@@ -405,7 +405,7 @@ config BT_MESH_LIGHT_CTRL_SRV_LVL_ON
 config BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG
 	int "Default light level in the Prolong state"
 	range 0 65535
-	default 32768
+	default 10000
 	help
 	  Default target light level for the controlled Lightness Server in the
 	  Prolong state. May be reconfigured at runtime by other models in the
