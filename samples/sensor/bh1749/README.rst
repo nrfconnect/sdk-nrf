@@ -15,7 +15,7 @@ of threshold trigging.
 References
 **********
 
- - BH1749NUC-E: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
+* BH1749NUC-E: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
 
 Requirements
 ************

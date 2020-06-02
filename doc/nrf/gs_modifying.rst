@@ -69,10 +69,10 @@ Therefore, they must be surrounded by ``# NORDIC SDK APP START`` and ``# NORDIC 
 
 The following CMake commands can be managed by SES, if they target the ``app`` library:
 
-    - ``target_sources``
-    - ``target_compile_definitions``
-    - ``target_include_directories``
-    - ``target_compile_options``
+* ``target_sources``
+* ``target_compile_definitions``
+* ``target_include_directories``
+* ``target_compile_options``
 
 The :file:`CMakeLists.txt` files for the sample applications in the |NCS| are tagged as required.
 Therefore, if you always use SES to maintain them, you do not need to worry about tagging.

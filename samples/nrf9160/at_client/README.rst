@@ -44,10 +44,10 @@ After programming the sample to your board, test the sample by performing the fo
 
    .. note::
 
-      Make sure that **Automatic requests** is enabled in LTE Link Monitor.
+      Make sure that **Automatic requests** is enabled in LTE Link Monitor.
 
-#. Observe that initially the command :command:`AT+CFUN?` is automatically sent to the modem, which returns a value 4, indicating that the modem is in the offline mode.
-#. Observe that the LTE Link Monitor terminal display also shows :command:`AT+CFUN=1` followed by ``OK`` indicating that the modem has changed to the normal mode.
+#. Observe that initially the command :command:`AT+CFUN?` is automatically sent to the modem, which returns a value 4, indicating that the modem is in the offline mode.
+#. Observe that the LTE Link Monitor terminal display also shows :command:`AT+CFUN=1` followed by ``OK`` indicating that the modem has changed to the normal mode.
 #. Run the following commands from the LTE Link Monitor terminal:
 
    a. Enter the command: :command:`AT+CFUN?`
@@ -105,8 +105,9 @@ This sample uses the following libraries:
 
 From |NCS|
   * ``lib/at_host`` which includes:
-      * :ref:`at_cmd_readme`
-      * :ref:`at_notif_readme`
+
+    * :ref:`at_cmd_readme`
+    * :ref:`at_notif_readme`
 
 From nrfxlib
   * :ref:`nrfxlib:bsdlib`

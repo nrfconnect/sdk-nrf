@@ -21,10 +21,11 @@ Configuration
 *************
 
 The module allows you to configure the following options in Kconfig:
-    - Enabling or disabling the shell commands for controlling the library.
-    - Toggling the periodic load measurement logging.
-    - Enabling the alignment of the clock sources for more accurate measurement.
-    - Choosing the TIMER instance for the load measurement.
+
+* Enabling or disabling the shell commands for controlling the library.
+* Toggling the periodic load measurement logging.
+* Enabling the alignment of the clock sources for more accurate measurement.
+* Choosing the TIMER instance for the load measurement.
 
 
 Usage
@@ -40,8 +41,9 @@ Enabling the module
 
 Getting the results
     After the initialization, you can get the CPU load value by calling the :cpp:func:`cpu_load_get` function.
-        - If called for the first time, the function will provide the load value since the start of the measurement period.
-        - If called after a reset, the function will provide the load value since the last reset.
+
+    * If called for the first time, the function will provide the load value since the start of the measurement period.
+    * If called after a reset, the function will provide the load value since the last reset.
 
     You can also get the CPU load value by using the ``cpu_load get`` or the ``cpu_load`` command, if you enabled the shell commands.
 

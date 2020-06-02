@@ -46,11 +46,11 @@ This includes:
 
 * All Thread networking layers:
 
-    * IPv6
-    * 6LoWPAN
-    * IEEE 802.15.4 with MAC security
-    * Mesh Link Establishment
-    * Mesh Routing
+  * IPv6
+  * 6LoWPAN
+  * IEEE 802.15.4 with MAC security
+  * Mesh Link Establishment
+  * Mesh Routing
 
 * All device roles
 * Border Router support
@@ -79,18 +79,18 @@ To use the Thread protocol in |NCS|, set the following Kconfig options:
 * :option:`CONFIG_ENTROPY_GENERATOR` - Required by both OpenThread and radio driver.
 * Options related to the Settings subsystem in the ``storage_partition`` partition of the internal flash:
 
-    * :option:`CONFIG_SETTINGS`
-    * :option:`CONFIG_FLASH`
-    * :option:`CONFIG_FLASH_PAGE_LAYOUT`
-    * :option:`CONFIG_FLASH_MAP`
-    * :option:`CONFIG_MPU_ALLOW_FLASH_WRITE`
-    * :option:`CONFIG_NVS`
+  * :option:`CONFIG_SETTINGS`
+  * :option:`CONFIG_FLASH`
+  * :option:`CONFIG_FLASH_PAGE_LAYOUT`
+  * :option:`CONFIG_FLASH_MAP`
+  * :option:`CONFIG_MPU_ALLOW_FLASH_WRITE`
+  * :option:`CONFIG_NVS`
 
 * General setting options related to network configuration:
 
-    * :option:`CONFIG_NETWORKING`
-    * :option:`CONFIG_NET_UDP`
-    * :option:`CONFIG_NET_SOCKETS`
+  * :option:`CONFIG_NETWORKING`
+  * :option:`CONFIG_NET_UDP`
+  * :option:`CONFIG_NET_SOCKETS`
 
 IPv6 mandatory configuration
 ============================

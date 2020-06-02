@@ -42,11 +42,11 @@ States
 
     The Light state power up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
-    - :cpp:enumerator:`BT_MESH_ON_POWER_UP_OFF <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_OFF>`:
+    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_OFF <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_OFF>`:
       The Light state is set to ``0`` on power up.
-    - :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>`:
+    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>`:
       The Light state is set to Default Light on power up, or to the last known non-zero Light state if the Default Light is not set.
-    - :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>`:
+    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>`:
       The Light state is set to the last known Light level (zero or non-zero).
 
     The user is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_lightness_srv_handlers` handler structure.
@@ -78,8 +78,8 @@ Extended models
 
 The Light Lightness Server extends the following models:
 
-- :ref:`bt_mesh_lvl_srv_readme`
-- :ref:`bt_mesh_ponoff_srv_readme`
+* :ref:`bt_mesh_lvl_srv_readme`
+* :ref:`bt_mesh_ponoff_srv_readme`
 
 As the states of both extended models are bound to states in the Light Lightness Server, the states of the extended models are not exposed directly to the application.
 
@@ -88,9 +88,9 @@ Persistent storage
 
 The Light Lightness Server stores the following information:
 
-    * Any changes to the Default Light and Light Range states.
-    * The last known non-zero Light level.
-    * Whether the light is on or off.
+* Any changes to the Default Light and Light Range states.
+* The last known non-zero Light level.
+* Whether the light is on or off.
 
 This information is used to reestablish the correct Light level when the device powers up.
 

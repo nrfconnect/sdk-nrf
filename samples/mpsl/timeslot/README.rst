@@ -43,9 +43,9 @@ After programming the sample to your board, test it by performing the following 
 #. Follow the instructions in the terminal to open a session and start requesting timeslots.
    The terminal then prints the signal type for each timeslot callback:
 
-   - If you press 'a', the timeslot callback requests a new timeslot.
+   * If you press 'a', the timeslot callback requests a new timeslot.
      Observe that ``Timeslot start`` is printed until the session is closed.
-   - If you press 'b', the timeslot callback ends the timeslot.
+   * If you press 'b', the timeslot callback ends the timeslot.
      Observe that only one ``Timeslot start`` is printed, followed by a ``Session idle``.
 
 #. Press any key to close the session.

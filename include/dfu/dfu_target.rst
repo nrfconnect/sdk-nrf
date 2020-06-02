@@ -60,8 +60,8 @@ Configuration
 
 You can disable support for specific DFU targets with the following parameters:
 
-- :option:`CONFIG_DFU_TARGET_MCUBOOT`
-- :option:`CONFIG_DFU_TARGET_MODEM`
+* :option:`CONFIG_DFU_TARGET_MCUBOOT`
+* :option:`CONFIG_DFU_TARGET_MODEM`
 
 By default, all DFU targets are enabled, but you can only select the targets that are supported by your device and application.
 
