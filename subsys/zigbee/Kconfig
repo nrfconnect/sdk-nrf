@@ -8,6 +8,7 @@ menuconfig ZIGBEE
 	bool "Enable Zigbee stack"
 	imply FPU
 	select APP_LINK_WITH_ZBOSS
+	select PM_SINGLE_IMAGE
 	imply COUNTER
 	imply COUNTER_TIMER3
 	imply NRF_802154_RADIO_DRIVER

@@ -66,14 +66,14 @@ get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 # - It's the root image, and a static configuration has been provided
 # - It's the root image, and PM_IMAGES is populated.
 # - It's the root image, and other domains exist.
-# - A subsys has defined a partition.
+# - A subsys has defined a partition and CONFIG_PM_SINGLE_IMAGE is set.
 # Otherwise, return here
 if (NOT (
   (IMAGE_NAME AND is_dynamic_partition_in_domain) OR
   (NOT IMAGE_NAME AND static_configuration) OR
   (NOT IMAGE_NAME AND PM_IMAGES) OR
   (NOT IMAGE_NAME AND PM_DOMAINS) OR
-  (PM_SUBSYS_PREPROCESSED)
+  (PM_SUBSYS_PREPROCESSED AND CONFIG_PM_SINGLE_IMAGE)
   ))
   return()
 endif()
