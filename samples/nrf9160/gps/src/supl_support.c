@@ -48,7 +48,7 @@ int open_supl_socket(void)
 		if (err) {
 			if (gai_cnt < GAI_ATTEMPT_COUNT) {
 				/* Sleep between retries */
-				k_sleep(K_MSEC(1000) * gai_cnt);
+				k_sleep(K_MSEC(1000 * gai_cnt));
 			} else {
 				/* Return if no success after many retries */
 				printk("Failed to resolve hostname %s on IPv4, errno: %d)\n",
