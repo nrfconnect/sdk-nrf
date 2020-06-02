@@ -429,30 +429,38 @@ void stop_time_measurement(void);
 
 /**@brief Macro(s) for decorating test vector names with file and line information.
  */
+#ifndef TV_NAME
 #define TV_NAME(name) name " -- [" __FILE__ ":" STRINGIFY(__LINE__) "]"
+#endif
 
 /**@brief   Macro for obtaining the address of the beginning of a section.
  *
  * param[in]    section_name    Name of the section.
  * @hideinitializer
  */
+#ifndef SECTION_START_ADDR
 #define SECTION_START_ADDR(section_name) (&UTIL_CAT(__start_, section_name))
+#endif
 
 /**@brief    Macro for obtaining the address of the end of a section.
  *
  * @param[in]   section_name    Name of the section.
  * @hideinitializer
  */
+#ifndef SECTION_END_ADDR
 #define SECTION_END_ADDR(section_name) (&UTIL_CAT(__stop_, section_name))
+#endif
 
 /**@brief   Macro for retrieving the length of a given section, in bytes.
  *
  * @param[in]   section_name    Name of the section.
  * @hideinitializer
  */
+#ifndef SECTION_LENGTH
 #define SECTION_LENGTH(section_name)                                           \
 	((size_t)SECTION_END_ADDR(section_name) -                              \
 	 (size_t)SECTION_START_ADDR(section_name))
+#endif
 
 /**@brief   Macro for declaring a variable and registering it in a section.
  *
@@ -466,8 +474,10 @@ void stop_time_measurement(void);
  * @param[in]   section_var     Variable to register in the given section.
  * @hideinitializer
  */
+#ifndef ITEM_REGISTER
 #define ITEM_REGISTER(section_name, section_var)                               \
 	Z_GENERIC_SECTION(section_name) __attribute__((used)) section_var
+#endif
 
 /**@brief   Macro for retrieving a variable from a section.
  *
@@ -482,8 +492,10 @@ void stop_time_measurement(void);
  * @param[in]   i               Index of the variable in section.
  * @hideinitializer
  */
+#ifndef ITEM_GET
 #define ITEM_GET(section_name, data_type, i)                                   \
 	((data_type *)SECTION_START_ADDR(section_name) + (i))
+#endif
 
 /**@brief   Macro for getting the number of variables in a section.
  *
@@ -491,8 +503,10 @@ void stop_time_measurement(void);
  * @param[in]   data_type       Data type of the variables in the section.
  * @hideinitializer
  */
+#ifndef ITEM_COUNT
 #define ITEM_COUNT(section_name, data_type)                                    \
 	(SECTION_LENGTH(section_name) / sizeof(data_type))
+#endif
 
 /**@brief Macro for comparing two data buffers.
  *
