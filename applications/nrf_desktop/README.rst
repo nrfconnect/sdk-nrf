@@ -906,6 +906,7 @@ To use the nRF Desktop application with your custom board:
 
    * Pins that are used.
    * Bus configuration for optical sensor.
+   * `Changing interrupt priority`_.
 
 #. Edit the reference design's Kconfig files to make sure they match the required system configuration.
    For example, disable the drivers that will not be used by your device.
@@ -1080,6 +1081,49 @@ At this point, you can start using the new sensor by completing the following st
 1. Enable all dependencies required by the driver (for example, bus driver).
 #. Enable the new sensor driver.
 #. Select the new sensor driver in the application configuration options.
+
+Changing interrupt priority
+---------------------------
+
+You can edit the DTS files to change the priority of the peripheral's interrupt.
+This can be useful when :ref:`adding a new custom board <porting_guide_adding_board>` or whenever you need to change the interrupt priority.
+
+The ``interrupts`` property is an array, where meaning of each element is defined by the specification of the interrupt controller.
+These specification files are located at :file:`zephyr/dts/bindings/interrupt-controller/` DTS binding file directory.
+
+For example, for nRF52840 the file is :file:`arm,v7m-nvic.yaml`.
+This file defines ``interrupts`` property in the ``interrupt-cells`` list.
+In case of nRF52840, it contains two elements: ``irq`` and ``priority``.
+The default values for these elements for the given peripheral can be found in the :file:`dtsi` file specific for the device.
+In case of nRF52840, this is :file:`zephyr/dts/arm/nordic/nrf52840.dtsi`, which has the following ``interrupts`` property for nRF52840:
+
+.. code-block::
+
+   spi1: spi@40004000 {
+           /*
+            * This spi node can be SPI, SPIM, or SPIS,
+            * for the user to pick:
+            * compatible = "nordic,nrf-spi" or
+            *              "nordic,nrf-spim" or
+            *              "nordic,nrf-spis".
+            */
+           #address-cells = <1>;
+           #size-cells = <0>;
+           reg = <0x40004000 0x1000>;
+           interrupts = <4 1>;
+           status = "disabled";
+           label = "SPI_1";
+   };
+
+To change the priority of the peripheral's interrupt, override the ``interrupts`` property of the peripheral node by including the following code snippet in the :file:`dts.overlay` or directly in the board DTS:
+
+.. code-block:: none
+
+   &spi1 {
+       interrupts = <4 2>;
+   };
+
+This code snippet will change the **SPI1** interrupt priority from default ``1`` to ``2``.
 
 .. _nrf_desktop_flash_memory_layout:
 
