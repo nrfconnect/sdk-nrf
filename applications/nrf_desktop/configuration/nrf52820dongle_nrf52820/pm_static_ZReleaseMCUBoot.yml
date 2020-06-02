@@ -6,7 +6,7 @@ mcuboot_pad:
   size: 0x200
 app:
   address: 0xd200
-  size: 0x6fe00
+  size: 0x2fe00
 mcuboot_primary:
   orig_span: &id001
   - mcuboot_pad
