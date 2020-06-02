@@ -46,6 +46,11 @@ if (CONFIG_ZIGBEE)
   add_partition_manager_config(pm.yml.zboss)
 endif()
 
+if (CONFIG_BOARD_HAS_NRF5_BOOTLOADER AND (NOT CONFIG_BOOTLOADER_MCUBOOT))
+  # The nRF5 Bootloader is flashed on the device, make room for the MBR.
+  add_partition_manager_config(pm.yml.nrf5_sdk_mbr)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager
