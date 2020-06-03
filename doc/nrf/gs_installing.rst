@@ -351,9 +351,6 @@ The full list of repositories with their old and new URLs can be found in the fo
    * - https://github.com/NordicPlayground/fw-nrfconnect-mcumgr
      - https://github.com/nrfconnect/sdk-mcumgr
 
-   * - https://github.com/NordicPlayground/fw-nrfconnect-hal_nordic
-     - https://github.com/nrfconnect/sdk-hal_nordic
-
    * - https://github.com/NordicPlayground/nrfxlib
      - https://github.com/nrfconnect/sdk-nrfxlib
 
