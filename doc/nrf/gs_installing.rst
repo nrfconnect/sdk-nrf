@@ -39,13 +39,6 @@ The installation process is different depending on your operating system.
       To install the required tools on Linux, follow the :ref:`install-required-tools` section for Linux in Zephyr's :ref:`zephyr:getting_started`.
       Additional information is available in the :ref:`zephyr:linux_requirements` section.
 
-      In addition, make sure that you have dtc v1.4.6 or later installed.
-      Depending on the Linux distribution that you use, you might need to install it manually because the current official package version might be older than v1.4.6.
-      If you use Ubuntu, install v1.4.7 from Cosmic by entering the following commands::
-
-         wget http://mirrors.kernel.org/ubuntu/pool/main/d/device-tree-compiler/device-tree-compiler_1.4.7-1_amd64.deb
-         sudo dpkg -i device-tree-compiler_1.4.7-1_amd64.deb
-
       .. note::
          You do not need to install the Zephyr SDK.
          We recommend to install the compiler toolchain separately, as detailed in `Installing the toolchain`_.
