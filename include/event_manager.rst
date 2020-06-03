@@ -227,8 +227,6 @@ The following code examples shows a profiling function for the event type ``samp
 	{
 		struct sample_event *event = cast_sample_event(eh);
 
-		/* ARG_UNUSED to suppress warning when profiling is disabled. */
-		ARG_UNUSED(event);
 		profiler_log_encode_u32(buf, event->value1);
 		profiler_log_encode_u32(buf, event->value2);
 		profiler_log_encode_u32(buf, event->value3);
