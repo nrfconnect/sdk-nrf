@@ -68,6 +68,75 @@ static size_t nonce_len;
 static size_t input_len;
 static size_t output_len;
 
+void aead_clear_buffers(void);
+void unhexify_aead(void);
+
+static void aead_ccm_setup(void)
+{
+	aead_clear_buffers();
+
+	static int i;
+	p_test_vector =
+		ITEM_GET(test_vector_aead_ccm_data, test_vector_aead_t, i++);
+
+	unhexify_aead();
+}
+
+static void aead_gcm_setup(void)
+{
+	aead_clear_buffers();
+
+	static int i;
+	p_test_vector =
+		ITEM_GET(test_vector_aead_gcm_data, test_vector_aead_t, i++);
+
+	unhexify_aead();
+}
+
+static void aead_chachapoly_setup(void)
+{
+	aead_clear_buffers();
+
+	static int i;
+	p_test_vector = ITEM_GET(test_vector_aead_chachapoly_data,
+				 test_vector_aead_t, i++);
+
+	unhexify_aead();
+}
+
+static void aead_ccm_setup_simple(void)
+{
+	aead_clear_buffers();
+
+	static int i;
+	p_test_vector = ITEM_GET(test_vector_aead_ccm_simple_data,
+				 test_vector_aead_t, i++);
+
+	unhexify_aead();
+}
+
+static void aead_gcm_setup_simple(void)
+{
+	aead_clear_buffers();
+
+	static int i;
+	p_test_vector = ITEM_GET(test_vector_aead_gcm_simple_data,
+				 test_vector_aead_t, i++);
+
+	unhexify_aead();
+}
+
+static void aead_chachapoly_setup_simple(void)
+{
+	aead_clear_buffers();
+
+	static int i;
+	p_test_vector = ITEM_GET(test_vector_aead_chachapoly_simple_data,
+				 test_vector_aead_t, i++);
+
+	unhexify_aead();
+}
+
 void aead_clear_buffers(void)
 {
 	memset(m_aead_input_buf, 0xFF, sizeof(m_aead_input_buf));
@@ -125,72 +194,6 @@ __attribute__((noinline)) void unhexify_aead(void)
 				  m_aead_output_mac_buf,
 				  strlen(p_test_vector->p_mac));
 	}
-}
-
-void aead_ccm_setup(void)
-{
-	aead_clear_buffers();
-
-	static int i;
-	p_test_vector =
-		ITEM_GET(test_vector_aead_ccm_data, test_vector_aead_t, i++);
-
-	unhexify_aead();
-}
-
-void aead_gcm_setup(void)
-{
-	aead_clear_buffers();
-
-	static int i;
-	p_test_vector =
-		ITEM_GET(test_vector_aead_gcm_data, test_vector_aead_t, i++);
-
-	unhexify_aead();
-}
-
-void aead_chachapoly_setup(void)
-{
-	aead_clear_buffers();
-
-	static int i;
-	p_test_vector = ITEM_GET(test_vector_aead_chachapoly_data,
-				 test_vector_aead_t, i++);
-
-	unhexify_aead();
-}
-
-void aead_ccm_setup_simple(void)
-{
-	aead_clear_buffers();
-
-	static int i;
-	p_test_vector = ITEM_GET(test_vector_aead_ccm_simple_data,
-				 test_vector_aead_t, i++);
-
-	unhexify_aead();
-}
-
-void aead_gcm_setup_simple(void)
-{
-	aead_clear_buffers();
-
-	static int i;
-	p_test_vector = ITEM_GET(test_vector_aead_gcm_simple_data,
-				 test_vector_aead_t, i++);
-
-	unhexify_aead();
-}
-
-void aead_chachapoly_setup_simple(void)
-{
-	aead_clear_buffers();
-
-	static int i;
-	p_test_vector = ITEM_GET(test_vector_aead_chachapoly_simple_data,
-				 test_vector_aead_t, i++);
-
-	unhexify_aead();
 }
 
 #if defined(MBEDTLS_CCM_C)

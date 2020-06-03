@@ -40,6 +40,56 @@ static uint8_t m_ecdh_expected_ss_buf[ECDH_BUF_SIZE];
 static test_vector_ecdh_t *p_test_vector;
 static size_t expected_ss_len;
 
+void ecdh_clear_buffers(void);
+void unhexify_ecdh(void);
+
+static int curve25519_ctx_fixup(mbedtls_ecdh_context *ctx)
+{
+	/* Set certain bits to predefined values */
+	int err_code = mbedtls_mpi_set_bit(&ctx->d, 0, 0);
+
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	err_code |= mbedtls_mpi_set_bit(&ctx->d, 1, 0);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	err_code |= mbedtls_mpi_set_bit(&ctx->d, 2, 0);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	err_code |= mbedtls_mpi_set_bit(&ctx->d, 254, 1);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+	err_code |= mbedtls_mpi_set_bit(&ctx->d, 255, 0);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+
+	mbedtls_mpi_lset(&ctx->Q.Z, 1);
+
+	return err_code;
+}
+
+static void ecdh_setup_random(void)
+{
+	ecdh_clear_buffers();
+	static int i;
+	p_test_vector =
+		ITEM_GET(test_vector_ecdh_data_random, test_vector_ecdh_t, i++);
+	unhexify_ecdh();
+}
+
+static void ecdh_setup_deterministic_simple(void)
+{
+	ecdh_clear_buffers();
+	static int i;
+	p_test_vector = ITEM_GET(test_vector_ecdh_data_deterministic_simple,
+				 test_vector_ecdh_t, i++);
+	unhexify_ecdh();
+}
+
+static void ecdh_setup_deterministic_full(void)
+{
+	ecdh_clear_buffers();
+	static int i;
+	p_test_vector = ITEM_GET(test_vector_ecdh_data_deterministic_full,
+				 test_vector_ecdh_t, i++);
+	unhexify_ecdh();
+}
+
 void ecdh_clear_buffers(void)
 {
 	memset(m_ecdh_initiater_priv_key_buf, 0x00,
@@ -62,33 +112,6 @@ __attribute__((noinline)) void unhexify_ecdh(void)
 			strlen(p_test_vector->p_expected_shared_secret),
 			m_ecdh_expected_ss_buf,
 			strlen(p_test_vector->p_expected_shared_secret));
-}
-
-void ecdh_setup_random(void)
-{
-	ecdh_clear_buffers();
-	static int i;
-	p_test_vector =
-		ITEM_GET(test_vector_ecdh_data_random, test_vector_ecdh_t, i++);
-	unhexify_ecdh();
-}
-
-void ecdh_setup_deterministic_simple(void)
-{
-	ecdh_clear_buffers();
-	static int i;
-	p_test_vector = ITEM_GET(test_vector_ecdh_data_deterministic_simple,
-				 test_vector_ecdh_t, i++);
-	unhexify_ecdh();
-}
-
-void ecdh_setup_deterministic_full(void)
-{
-	ecdh_clear_buffers();
-	static int i;
-	p_test_vector = ITEM_GET(test_vector_ecdh_data_deterministic_full,
-				 test_vector_ecdh_t, i++);
-	unhexify_ecdh();
 }
 
 /**@brief Function for executing ECDH for initiator and repsonder by
@@ -151,26 +174,6 @@ void exec_test_case_ecdh_random(void)
 
 	mbedtls_ecdh_free(&initiator_ctx);
 	mbedtls_ecdh_free(&responder_ctx);
-}
-
-static int curve25519_ctx_fixup(mbedtls_ecdh_context *ctx)
-{
-	/* Set certain bits to predefined values */
-	int err_code = mbedtls_mpi_set_bit(&ctx->d, 0, 0);
-
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-	err_code |= mbedtls_mpi_set_bit(&ctx->d, 1, 0);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-	err_code |= mbedtls_mpi_set_bit(&ctx->d, 2, 0);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-	err_code |= mbedtls_mpi_set_bit(&ctx->d, 254, 1);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-	err_code |= mbedtls_mpi_set_bit(&ctx->d, 255, 0);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-
-	mbedtls_mpi_lset(&ctx->Q.Z, 1);
-
-	return err_code;
 }
 
 /**@brief Function for executing deterministic ECDH for initiator and responder.

@@ -39,6 +39,27 @@ static size_t in_len;
 static size_t expected_hmac_len;
 static size_t hmac_len;
 
+void hmac_clear_buffers(void);
+void unhexify_hmac(void);
+
+static void hmac_setup(void)
+{
+	hmac_clear_buffers();
+	p_test_vector = ITEM_GET(test_vector_hmac_data, test_vector_hmac_t,
+				 hmac_vector_n);
+	unhexify_hmac();
+}
+
+static void hmac_teardown(void)
+{
+	hmac_vector_n++;
+}
+
+static void hmac_combined_teardown(void)
+{
+	hmac_combined_vector_n++;
+}
+
 void hmac_clear_buffers(void)
 {
 	memset(m_hmac_key_buf, 0x00, sizeof(m_hmac_key_buf));
@@ -61,24 +82,6 @@ __attribute__((noinline)) void unhexify_hmac(void)
 				    strlen(p_test_vector->p_expected_output));
 
 	hmac_len = expected_hmac_len;
-}
-
-void hmac_setup(void)
-{
-	hmac_clear_buffers();
-	p_test_vector = ITEM_GET(test_vector_hmac_data, test_vector_hmac_t,
-				 hmac_vector_n);
-	unhexify_hmac();
-}
-
-void hmac_teardown(void)
-{
-	hmac_vector_n++;
-}
-
-void hmac_combined_teardown(void)
-{
-	hmac_combined_vector_n++;
 }
 
 /**@brief Function for the test execution.

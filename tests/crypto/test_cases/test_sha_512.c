@@ -40,6 +40,36 @@ static size_t in_len;
 static size_t out_len;
 static size_t expected_out_len;
 
+void sha_512_clear_buffers(void);
+void unhexify_sha_512(void);
+void unhexify_sha_512_long(void);
+
+static void sha_512_setup(void)
+{
+	sha_512_clear_buffers();
+	p_test_vector = ITEM_GET(test_vector_hash_512_data, test_vector_hash_t,
+				 sha_vector_n);
+	unhexify_sha_512();
+}
+
+static void sha_512_teardown(void)
+{
+	sha_vector_n++;
+}
+
+static void sha_512_long_setup(void)
+{
+	sha_512_clear_buffers();
+	p_test_vector = ITEM_GET(test_vector_hash_512_long_data,
+				 test_vector_hash_t, sha_long_vector_n);
+	unhexify_sha_512_long();
+}
+
+static void sha_512_long_teardown(void)
+{
+	sha_long_vector_n++;
+}
+
 void sha_512_clear_buffers(void)
 {
 	memset(m_sha_input_buf, 0x00, sizeof(m_sha_input_buf));
@@ -70,32 +100,6 @@ __attribute__((noinline)) void unhexify_sha_512_long(void)
 				   strlen(p_test_vector->p_expected_output));
 	out_len = expected_out_len;
 	memcpy(m_sha_input_buf, p_test_vector->p_input, in_len);
-}
-
-__attribute__((noinline)) static void sha_512_setup(void)
-{
-	sha_512_clear_buffers();
-	p_test_vector = ITEM_GET(test_vector_hash_512_data, test_vector_hash_t,
-				 sha_vector_n);
-	unhexify_sha_512();
-}
-
-static void sha_512_teardown(void)
-{
-	sha_vector_n++;
-}
-
-__attribute__((noinline)) static void sha_512_long_setup(void)
-{
-	sha_512_clear_buffers();
-	p_test_vector = ITEM_GET(test_vector_hash_512_long_data,
-				 test_vector_hash_t, sha_long_vector_n);
-	unhexify_sha_512_long();
-}
-
-static void sha_512_long_teardown(void)
-{
-	sha_long_vector_n++;
 }
 
 /**@brief Function encapsulating sha512 execution steps.
