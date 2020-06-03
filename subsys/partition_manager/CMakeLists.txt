@@ -46,6 +46,10 @@ if (CONFIG_ZIGBEE)
   add_partition_manager_config(pm.yml.zboss)
 endif()
 
+if (CONFIG_NVS AND NOT CONFIG_SETTINGS_NVS)
+  add_partition_manager_config(pm.yml.nvs)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager
