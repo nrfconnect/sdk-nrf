@@ -18,6 +18,8 @@
 #define storage settings_storage
 #elif CONFIG_FILE_SYSTEM_LITTLEFS
 #define storage littlefs_storage
+#elif CONFIG_NVS
+#define storage nvs_storage
 #endif
 
 #if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS) && CONFIG_FILE_SYSTEM_LITTLEFS

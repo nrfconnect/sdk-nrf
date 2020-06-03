@@ -21,6 +21,12 @@ partition-size=0x2000
 rsource "Kconfig.template.partition_size"
 endif
 
+if NVS && !SETTINGS_NVS
+partition=NVS_STORAGE
+partition-size=0x6000
+rsource "Kconfig.template.partition_size"
+endif
+
 if ZIGBEE
 partition=ZBOSS_NVRAM
 partition-size=0x8000
