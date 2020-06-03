@@ -64,39 +64,8 @@ static size_t msg_srv_2_len;
 
 static test_vector_ecjpake_t *p_test_vector;
 
-/*
-Key loading the same way mbedtls ECJPAKE test code does it.
-Private keys are loaded raw, public keys are then generated via
-ec multiplication.
-*/
-#if !defined(MBEDTLS_ECJPAKE_ALT)
-static int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
-					const unsigned char *xm1, size_t len1,
-					const unsigned char *xm2, size_t len2)
-{
-	int err_code;
-
-	err_code = mbedtls_mpi_read_binary(&ctx->xm1, xm1, len1);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-
-	err_code = mbedtls_mpi_read_binary(&ctx->xm2, xm2, len2);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-
-	mbedtls_ecp_mul(&ctx->grp, &ctx->Xm1, &ctx->xm1, &ctx->grp.G, NULL,
-			NULL);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-
-	mbedtls_ecp_mul(&ctx->grp, &ctx->Xm2, &ctx->xm2, &ctx->grp.G, NULL,
-			NULL);
-	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-
-	return err_code;
-}
-#else
-extern int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
-					const unsigned char *xm1, size_t len1,
-					const unsigned char *xm2, size_t len2);
-#endif
+void ecjpake_clear_buffers(void);
+void unhexify_ecjpake(void);
 
 void ecjpake_clear_buffers(void)
 {
@@ -169,7 +138,41 @@ __attribute__((noinline)) void unhexify_ecjpake(void)
 			strlen(p_test_vector->p_round_message_server_2));
 }
 
-void ecjpake_given_setup(void)
+/*
+ * Key loading the same way mbedtls ECJPAKE test code does it.
+ * Private keys are loaded raw, public keys are then generated via
+ * EC multiplication.
+ */
+#if !defined(MBEDTLS_ECJPAKE_ALT)
+static int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
+					const unsigned char *xm1, size_t len1,
+					const unsigned char *xm2, size_t len2)
+{
+	int err_code;
+
+	err_code = mbedtls_mpi_read_binary(&ctx->xm1, xm1, len1);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+
+	err_code = mbedtls_mpi_read_binary(&ctx->xm2, xm2, len2);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+
+	mbedtls_ecp_mul(&ctx->grp, &ctx->Xm1, &ctx->xm1, &ctx->grp.G, NULL,
+			NULL);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+
+	mbedtls_ecp_mul(&ctx->grp, &ctx->Xm2, &ctx->xm2, &ctx->grp.G, NULL,
+			NULL);
+	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
+
+	return err_code;
+}
+#else
+extern int ecjpake_test_load(mbedtls_ecjpake_context *ctx,
+					const unsigned char *xm1, size_t len1,
+					const unsigned char *xm2, size_t len2);
+#endif
+
+static void ecjpake_given_setup(void)
 {
 	static int i;
 
@@ -179,7 +182,7 @@ void ecjpake_given_setup(void)
 	unhexify_ecjpake();
 }
 
-void ecjpake_random_setup(void)
+static void ecjpake_random_setup(void)
 {
 	static int i;
 
@@ -189,7 +192,8 @@ void ecjpake_random_setup(void)
 	unhexify_ecjpake();
 }
 
-void ecjpake_ctx_init(mbedtls_ecjpake_context *ctx, mbedtls_ecjpake_role role)
+static void ecjpake_ctx_init(mbedtls_ecjpake_context *ctx,
+				 mbedtls_ecjpake_role role)
 {
 	int err_code;
 

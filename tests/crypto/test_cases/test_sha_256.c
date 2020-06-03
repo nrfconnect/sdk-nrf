@@ -40,12 +40,42 @@ static size_t in_len;
 static size_t out_len;
 static size_t expected_out_len;
 
+void sha_256_clear_buffers(void);
+void unhexify_sha_256(void);
+void unhexify_sha_256_long(void);
+
 void sha_256_clear_buffers(void)
 {
 	memset(m_sha_input_buf, 0x00, sizeof(m_sha_input_buf));
 	memset(m_sha_output_buf, 0x00, sizeof(m_sha_output_buf));
 	memset(m_sha_expected_output_buf, 0x00,
 	       sizeof(m_sha_expected_output_buf));
+}
+
+static void sha_256_setup(void)
+{
+	sha_256_clear_buffers();
+	p_test_vector = ITEM_GET(test_vector_hash_256_data, test_vector_hash_t,
+				 sha_vector_n);
+	unhexify_sha_256();
+}
+
+static void sha_256_teardown(void)
+{
+	sha_vector_n++;
+}
+
+static void sha_256_long_setup(void)
+{
+	sha_256_clear_buffers();
+	p_test_vector = ITEM_GET(test_vector_hash_256_long_data,
+				 test_vector_hash_t, sha_long_vector_n);
+	unhexify_sha_256_long();
+}
+
+static void sha_256_long_teardown(void)
+{
+	sha_long_vector_n++;
 }
 
 __attribute__((noinline)) void unhexify_sha_256(void)
@@ -70,32 +100,6 @@ __attribute__((noinline)) void unhexify_sha_256_long(void)
 				   strlen(p_test_vector->p_expected_output));
 	out_len = expected_out_len;
 	memcpy(m_sha_input_buf, p_test_vector->p_input, in_len);
-}
-
-void sha_256_setup(void)
-{
-	sha_256_clear_buffers();
-	p_test_vector = ITEM_GET(test_vector_hash_256_data, test_vector_hash_t,
-				 sha_vector_n);
-	unhexify_sha_256();
-}
-
-void sha_256_teardown(void)
-{
-	sha_vector_n++;
-}
-
-void sha_256_long_setup(void)
-{
-	sha_256_clear_buffers();
-	p_test_vector = ITEM_GET(test_vector_hash_256_long_data,
-				 test_vector_hash_t, sha_long_vector_n);
-	unhexify_sha_256_long();
-}
-
-void sha_256_long_teardown(void)
-{
-	sha_long_vector_n++;
 }
 
 /**@brief Function encapsulating sha256 execution steps.

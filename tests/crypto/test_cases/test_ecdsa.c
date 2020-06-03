@@ -34,6 +34,43 @@ static test_vector_ecdsa_random_t *p_test_vector_random;
 
 static size_t hash_len;
 
+void ecdsa_clear_buffers(void);
+void unhexify_ecdsa_verify(void);
+void unhexify_ecdsa_sign(void);
+void unhexify_ecdsa_random(void);
+
+/**@brief Function for running the test setup.
+ */
+static void ecdsa_setup_verify(void)
+{
+	static int i;
+
+	ecdsa_clear_buffers();
+	p_test_vector_verify = ITEM_GET(test_vector_ecdsa_verify_data,
+					test_vector_ecdsa_verify_t, i++);
+	unhexify_ecdsa_verify();
+}
+
+static void ecdsa_setup_sign(void)
+{
+	static int i;
+
+	ecdsa_clear_buffers();
+	p_test_vector_sign = ITEM_GET(test_vector_ecdsa_sign_data,
+				      test_vector_ecdsa_sign_t, i++);
+	unhexify_ecdsa_sign();
+}
+
+static void ecdsa_setup_random(void)
+{
+	static int i;
+
+	ecdsa_clear_buffers();
+	p_test_vector_random = ITEM_GET(test_vector_ecdsa_random_data,
+					test_vector_ecdsa_random_t, i++);
+	unhexify_ecdsa_random();
+}
+
 __attribute__((noinline)) void unhexify_ecdsa_verify(void)
 {
 	hash_len = hex2bin(p_test_vector_verify->p_input,
@@ -61,35 +98,6 @@ __attribute__((noinline)) void unhexify_ecdsa_random(void)
 void ecdsa_clear_buffers(void)
 {
 	memset(m_ecdsa_input_buf, 0x00, sizeof(m_ecdsa_input_buf));
-}
-
-/**@brief Function for running the test setup.
- */
-void ecdsa_setup_verify(void)
-{
-	ecdsa_clear_buffers();
-	static int i;
-	p_test_vector_verify = ITEM_GET(test_vector_ecdsa_verify_data,
-					test_vector_ecdsa_verify_t, i++);
-	unhexify_ecdsa_verify();
-}
-
-void ecdsa_setup_sign(void)
-{
-	ecdsa_clear_buffers();
-	static int i;
-	p_test_vector_sign = ITEM_GET(test_vector_ecdsa_sign_data,
-				      test_vector_ecdsa_sign_t, i++);
-	unhexify_ecdsa_sign();
-}
-
-void ecdsa_setup_random(void)
-{
-	ecdsa_clear_buffers();
-	static int i;
-	p_test_vector_random = ITEM_GET(test_vector_ecdsa_random_data,
-					test_vector_ecdsa_random_t, i++);
-	unhexify_ecdsa_random();
 }
 
 /**@brief Function for the ECDSA sign test execution.

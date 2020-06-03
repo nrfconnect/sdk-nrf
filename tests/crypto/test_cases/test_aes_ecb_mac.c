@@ -44,16 +44,8 @@ static size_t key_len;
 static size_t iv_len;
 static size_t ad_len;
 
-void aes_ecb_mac_clear_buffers(void)
-{
-	memset(m_aes_input_buf, 0xFF, sizeof(m_aes_input_buf));
-	memset(m_aes_output_buf, 0xFF, sizeof(m_aes_output_buf));
-	memset(m_aes_expected_output_buf, 0xFF,
-	       sizeof(m_aes_expected_output_buf));
-	memset(m_aes_key_buf, 0x00, sizeof(m_aes_key_buf));
-	memset(m_aes_iv_buf, 0xFF, sizeof(m_aes_iv_buf));
-	memset(m_aes_temp_buf, 0x00, sizeof(m_aes_temp_buf));
-}
+void aes_ecb_mac_clear_buffers(void);
+void unhexify_aes_ecb_mac(void);
 
 static int cipher_init(mbedtls_cipher_context_t *p_ctx, size_t key_len_bytes,
 		       mbedtls_cipher_mode_t mode)
@@ -97,6 +89,29 @@ static int cipher_update_iterative(mbedtls_cipher_context_t *p_ctx,
 	return err_code;
 }
 
+static void aes_setup_ecb_mac(void)
+{
+	static int i;
+
+	aes_ecb_mac_clear_buffers();
+
+	p_test_vector =
+		ITEM_GET(test_vector_aes_ecb_mac_data, test_vector_aes_t, i++);
+
+	unhexify_aes_ecb_mac();
+}
+
+void aes_ecb_mac_clear_buffers(void)
+{
+	memset(m_aes_input_buf, 0xFF, sizeof(m_aes_input_buf));
+	memset(m_aes_output_buf, 0xFF, sizeof(m_aes_output_buf));
+	memset(m_aes_expected_output_buf, 0xFF,
+	       sizeof(m_aes_expected_output_buf));
+	memset(m_aes_key_buf, 0x00, sizeof(m_aes_key_buf));
+	memset(m_aes_iv_buf, 0xFF, sizeof(m_aes_iv_buf));
+	memset(m_aes_temp_buf, 0x00, sizeof(m_aes_temp_buf));
+}
+
 __attribute__((noinline)) void unhexify_aes_ecb_mac(void)
 {
 	bool encrypt = p_test_vector->direction == MBEDTLS_ENCRYPT;
@@ -127,17 +142,6 @@ __attribute__((noinline)) void unhexify_aes_ecb_mac(void)
 				     m_aes_expected_output_buf,
 				     strlen(p_test_vector->p_plaintext));
 	}
-}
-
-static void aes_setup_ecb_mac(void)
-{
-	aes_ecb_mac_clear_buffers();
-
-	static int i;
-	p_test_vector =
-		ITEM_GET(test_vector_aes_ecb_mac_data, test_vector_aes_t, i++);
-
-	unhexify_aes_ecb_mac();
 }
 
 /**@brief Function for the AES MAC test execution.

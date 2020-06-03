@@ -56,17 +56,8 @@ static size_t key_len;
 static size_t iv_len;
 static size_t ad_len;
 
-void aes_ecb_clear_buffers(void)
-{
-	memset(m_aes_input_buf, 0xFF, sizeof(m_aes_input_buf));
-	memset(m_aes_output_buf, 0xFF, sizeof(m_aes_output_buf));
-	memset(m_aes_expected_output_buf, 0xFF,
-	       sizeof(m_aes_expected_output_buf));
-	memset(m_prev_aes_output_buf, 0x00, sizeof(m_prev_aes_output_buf));
-	memset(m_aes_key_buf, 0x00, sizeof(m_aes_key_buf));
-	memset(m_aes_iv_buf, 0xFF, sizeof(m_aes_iv_buf));
-	memset(m_aes_temp_buf, 0x00, sizeof(m_aes_temp_buf));
-}
+void aes_ecb_clear_buffers(void);
+void unhexify_aes_ecb(void);
 
 static int cipher_init(mbedtls_cipher_context_t *p_ctx, size_t key_len_bytes,
 		       mbedtls_cipher_mode_t mode)
@@ -112,39 +103,6 @@ static int cipher_crypt_ecb(mbedtls_cipher_context_t *p_ctx, size_t input_len)
 	return err_code;
 }
 
-__attribute__((noinline)) void unhexify_aes_ecb(void)
-{
-	bool encrypt =
-		(p_test_vector->direction == MBEDTLS_ENCRYPT) && g_encrypt;
-
-	key_len = hex2bin(p_test_vector->p_key, strlen(p_test_vector->p_key),
-			  m_aes_key_buf, strlen(p_test_vector->p_key));
-	iv_len = hex2bin(p_test_vector->p_iv, strlen(p_test_vector->p_iv),
-			 m_aes_iv_buf, strlen(p_test_vector->p_iv));
-	ad_len = hex2bin(p_test_vector->p_ad, strlen(p_test_vector->p_ad),
-			 m_aes_temp_buf, strlen(p_test_vector->p_ad));
-
-	if (encrypt) {
-		input_len = hex2bin(p_test_vector->p_plaintext,
-				    strlen(p_test_vector->p_plaintext),
-				    m_aes_input_buf,
-				    strlen(p_test_vector->p_plaintext));
-		output_len = hex2bin(p_test_vector->p_ciphertext,
-				     strlen(p_test_vector->p_ciphertext),
-				     m_aes_expected_output_buf,
-				     strlen(p_test_vector->p_ciphertext));
-	} else {
-		input_len = hex2bin(p_test_vector->p_ciphertext,
-				    strlen(p_test_vector->p_ciphertext),
-				    m_aes_input_buf,
-				    strlen(p_test_vector->p_ciphertext));
-		output_len = hex2bin(p_test_vector->p_plaintext,
-				     strlen(p_test_vector->p_plaintext),
-				     m_aes_expected_output_buf,
-				     strlen(p_test_vector->p_plaintext));
-	}
-}
-
 static void aes_setup_functional(void)
 {
 	aes_ecb_clear_buffers();
@@ -179,6 +137,51 @@ static void aes_setup_monte_carlo(void)
 
 	LOG_DBG("key len: %d", key_len);
 	LOG_DBG("input len: %d", input_len);
+}
+
+void aes_ecb_clear_buffers(void)
+{
+	memset(m_aes_input_buf, 0xFF, sizeof(m_aes_input_buf));
+	memset(m_aes_output_buf, 0xFF, sizeof(m_aes_output_buf));
+	memset(m_aes_expected_output_buf, 0xFF,
+	       sizeof(m_aes_expected_output_buf));
+	memset(m_prev_aes_output_buf, 0x00, sizeof(m_prev_aes_output_buf));
+	memset(m_aes_key_buf, 0x00, sizeof(m_aes_key_buf));
+	memset(m_aes_iv_buf, 0xFF, sizeof(m_aes_iv_buf));
+	memset(m_aes_temp_buf, 0x00, sizeof(m_aes_temp_buf));
+}
+
+__attribute__((noinline)) void unhexify_aes_ecb(void)
+{
+	bool encrypt =
+		(p_test_vector->direction == MBEDTLS_ENCRYPT) && g_encrypt;
+
+	key_len = hex2bin(p_test_vector->p_key, strlen(p_test_vector->p_key),
+			  m_aes_key_buf, strlen(p_test_vector->p_key));
+	iv_len = hex2bin(p_test_vector->p_iv, strlen(p_test_vector->p_iv),
+			 m_aes_iv_buf, strlen(p_test_vector->p_iv));
+	ad_len = hex2bin(p_test_vector->p_ad, strlen(p_test_vector->p_ad),
+			 m_aes_temp_buf, strlen(p_test_vector->p_ad));
+
+	if (encrypt) {
+		input_len = hex2bin(p_test_vector->p_plaintext,
+				    strlen(p_test_vector->p_plaintext),
+				    m_aes_input_buf,
+				    strlen(p_test_vector->p_plaintext));
+		output_len = hex2bin(p_test_vector->p_ciphertext,
+				     strlen(p_test_vector->p_ciphertext),
+				     m_aes_expected_output_buf,
+				     strlen(p_test_vector->p_ciphertext));
+	} else {
+		input_len = hex2bin(p_test_vector->p_ciphertext,
+				    strlen(p_test_vector->p_ciphertext),
+				    m_aes_input_buf,
+				    strlen(p_test_vector->p_ciphertext));
+		output_len = hex2bin(p_test_vector->p_plaintext,
+				     strlen(p_test_vector->p_plaintext),
+				     m_aes_expected_output_buf,
+				     strlen(p_test_vector->p_plaintext));
+	}
 }
 
 /**@brief Function for the AES functional test execution.
