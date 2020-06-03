@@ -33,8 +33,8 @@ struct bt_mesh_lightness_cli;
 #define BT_MESH_LIGHTNESS_CLI_INIT(_handlers)                                  \
 	{                                                                      \
 		.pub = { .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_LIGHTNESS_OP_LEVEL_SET,               \
-				 BT_MESH_LIGHTNESS_MSG_MAXLEN_LEVEL_SET)) },   \
+				 BT_MESH_LIGHTNESS_OP_SET,               \
+				 BT_MESH_LIGHTNESS_MSG_MAXLEN_SET)) },   \
 		.handlers = _handlers,                                         \
 	}
 

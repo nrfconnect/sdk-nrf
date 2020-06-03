@@ -41,12 +41,10 @@ struct bt_mesh_light_ctrl_srv;
 			&_bt_mesh_light_ctrl_srv_onoff),                       \
 		.lightness = _lightness_srv,                                   \
 		.pub = { .update = _bt_mesh_light_ctrl_srv_update,             \
-			 .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(          \
-				 BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,     \
-				 3)) },                                        \
-		.setup_pub.msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(         \
-			BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,                     \
-			2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX)),  \
+			 .msg = NET_BUF_SIMPLE(                                \
+				 BT_MESH_LIGHT_CTRL_SRV_BUF_MAXLEN) },         \
+		.setup_pub.msg = NET_BUF_SIMPLE(                               \
+			BT_MESH_LIGHT_CTRL_SETUP_SRV_BUF_MAXLEN),              \
 		BT_MESH_LIGHT_CTRL_SRV_REG_INIT                                \
 	}
 

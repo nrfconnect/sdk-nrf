@@ -203,6 +203,19 @@ enum bt_mesh_light_ctrl_prop {
 #define BT_MESH_LIGHT_CTRL_OP_PROP_SET_UNACK BT_MESH_MODEL_OP_1(0x63)
 #define BT_MESH_LIGHT_CTRL_OP_PROP_STATUS BT_MESH_MODEL_OP_1(0x64)
 
+#define BT_MESH_LIGHT_CTRL_CLI_BUF_MAXLEN                                      \
+	(BT_MESH_MODEL_BUF_LEN(                                                \
+		BT_MESH_LIGHT_CTRL_OP_PROP_SET,                                \
+		2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX))
+
+#define BT_MESH_LIGHT_CTRL_SRV_BUF_MAXLEN                                      \
+	(BT_MESH_MODEL_BUF_LEN(BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS, 3))
+
+#define BT_MESH_LIGHT_CTRL_SETUP_SRV_BUF_MAXLEN                                \
+	(BT_MESH_MODEL_BUF_LEN(                                                \
+		BT_MESH_LIGHT_CTRL_OP_PROP_STATUS,                             \
+		2 + CONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX))
+
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 #define BT_MESH_LIGHT_CTRL_SRV_REG_INIT .reg = {                               \
 	.cfg = {                                                               \
@@ -225,12 +238,11 @@ enum bt_mesh_light_ctrl_prop {
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_OCCUPANCY_DELAY,         \
 		.fade_on =                                                     \
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_ON,            \
-		.on =                                                          \
-			K_SECONDS(CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_ON),      \
+		.on = (MSEC_PER_SEC * CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_ON),  \
 		.fade_prolong =                                                \
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_PROLONG,       \
-		.prolong =                                                     \
-			K_SECONDS(CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_PROLONG), \
+		.prolong = (MSEC_PER_SEC *                                     \
+			    CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_PROLONG),       \
 		.fade_standby_auto =                                           \
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_STANDBY_AUTO,  \
 		.fade_standby_manual =                                         \

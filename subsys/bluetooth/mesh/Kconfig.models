@@ -424,6 +424,7 @@ endif
 config BT_MESH_LIGHT_CTRL_CLI
 	bool "Light LC Client"
 	select BT_MESH_NRF_MODELS
+	select BT_MESH_SENSOR
 	help
 	  Enable Mesh Light Lightness Control Client model.
 

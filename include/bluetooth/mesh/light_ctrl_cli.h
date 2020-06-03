@@ -33,12 +33,11 @@ struct bt_mesh_light_ctrl_cli;
  *
  *  @sa bt_mesh_light_ctrl_cli_handlers
  */
-#define BT_MESH_LIGHT_CTRL_CLI_INIT(_handlers)                                \
-	{                                                                     \
-		.pub = { .msg = NET_BUF_SIMPLE(BT_MESH_MODEL_BUF_LEN(         \
-				 BT_MESH_LIGHT_CTRL_OP_LEVEL_SET,             \
-				 BT_MESH_LIGHT_CTRL_MSG_MAXLEN_LEVEL_SET)) }, \
-		.handlers = _handlers,                                        \
+#define BT_MESH_LIGHT_CTRL_CLI_INIT(_handlers)                                 \
+	{                                                                      \
+		.pub = { .msg = NET_BUF_SIMPLE(                                \
+				 BT_MESH_LIGHT_CTRL_CLI_BUF_MAXLEN) },         \
+		.handlers = _handlers,                                         \
 	}
 
 /** @def BT_MESH_MODEL_LIGHT_CTRL_CLI
