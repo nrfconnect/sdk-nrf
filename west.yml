@@ -96,7 +96,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 360bfac91dae344afde45da8a2580bb269f9f1a1
+      revision: 06c75f63d2dbd32b099fd01b9d1f1f112762a228
     - name: hal_nordic
       repo-path: sdk-hal_nordic
       path: modules/hal/nordic
