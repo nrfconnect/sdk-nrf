@@ -14,10 +14,10 @@
 
 #include <platform/gpiote/nrf_802154_gpiote.h>
 
-#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 
+#include <sys/__assert.h>
 #include <device.h>
 #include <toolchain.h>
 #include <drivers/gpio.h>
@@ -52,7 +52,7 @@ void nrf_802154_gpiote_init(void)
 		nrf_802154_wifi_coex_cfg_3wire_get(&cfg);
 
 		pin_number = cfg.grant_cfg.gpio_pin;
-		assert(pin_number != COEX_GPIO_PIN_INVALID);
+		__ASSERT_NO_MSG(pin_number != COEX_GPIO_PIN_INVALID);
 
 		bool use_port_1 = (pin_number > P0_PIN_NUM);
 
@@ -63,27 +63,38 @@ void nrf_802154_gpiote_init(void)
 						GPIO_PULL_UP :
 						GPIO_PULL_DOWN;
 
-		dev = device_get_binding(use_port_1 ? "GPIO_1" : "GPIO_0");
-		assert(dev != NULL);
+		dev = device_get_binding(use_port_1 ?
+						DT_LABEL(DT_NODELABEL(gpio1)) :
+						DT_LABEL(DT_NODELABEL(gpio0)));
+		__ASSERT_NO_MSG(dev != NULL);
 
-		gpio_pin_configure(dev, pin_number,
-				   GPIO_INPUT | GPIO_INT_ENABLE | GPIO_INT_EDGE |
-					   GPIO_INT_EDGE_BOTH | pull_up_down);
+		gpio_pin_configure(dev, pin_number, GPIO_INPUT | pull_up_down);
 
 		gpio_init_callback(&grant_cb, gpiote_irq_handler, BIT(pin_number));
 		gpio_add_callback(dev, &grant_cb);
-		gpio_enable_callback(dev, pin_number);
+
+		gpio_pin_interrupt_configure(dev, pin_number, GPIO_INT_EDGE_BOTH);
 		break;
 	}
 
 	default:
-		assert(false);
+		__ASSERT_NO_MSG(false);
 	}
 }
 
 void nrf_802154_gpiote_deinit(void)
 {
-	gpio_disable_callback(dev, pin_number);
-	gpio_remove_callback(dev, &grant_cb);
-	pin_number = COEX_GPIO_PIN_INVALID;
+	switch (nrf_802154_wifi_coex_interface_type_id_get()) {
+	case NRF_802154_WIFI_COEX_IF_NONE:
+		break;
+
+	case NRF_802154_WIFI_COEX_IF_3WIRE:
+		gpio_pin_interrupt_configure(dev, pin_number, GPIO_INT_DISABLE);
+		gpio_remove_callback(dev, &grant_cb);
+		pin_number = COEX_GPIO_PIN_INVALID;
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+	}
 }

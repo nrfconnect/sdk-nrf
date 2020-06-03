@@ -6,8 +6,8 @@
 
 /**
  * @file
- *   This file contains system-agnostic implementation of the nRF 802.15.4 GPIOTE
- *   critical section abstraction.
+ *   This file contains system-agnostic implementation of the nRF 802.15.4
+ *   GPIOTE critical section abstraction.
  */
 
 #include <platform/gpiote/nrf_802154_gpiote.h>
@@ -15,10 +15,13 @@
 #include <hal/nrf_gpio.h>
 #include <nrf_802154_sl_utils.h>
 #include <platform/irq/nrf_802154_irq.h>
+#include <sys/__assert.h>
 
-/* Whether the GPIOTE interrupt was turned on before entering the first critical section. */
+/* Whether the GPIOTE interrupt was turned on before entering the first
+ * critical section. */
 static volatile bool gpiote_irq_enabled;
-/* Counter of how many times GPIOTE interrupt was disabled while entering critical section. */
+/* Counter of how many times GPIOTE interrupt was disabled while entering
+ * critical section. */
 static volatile uint32_t gpiote_irq_disabled_cnt;
 
 void nrf_802154_gpiote_critical_section_enter(void)
@@ -48,6 +51,7 @@ void nrf_802154_gpiote_critical_section_exit(void)
 	nrf_802154_sl_mcu_critical_enter(mcu_cs);
 
 	cnt = gpiote_irq_disabled_cnt;
+	__ASSERT_NO_MSG(cnt != 0U);
 	cnt--;
 
 	if (cnt == 0U) {
