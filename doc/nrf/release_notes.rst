@@ -5,6 +5,8 @@
 
 See the release notes for information about specific |NCS| releases.
 
+Important issues that are discovered after a release is tagged are listed in the `Known issues`_ wiki page.
+
 .. important::
    The |NCS| follows `Semantic Versioning 2.0.0`_.
    A "99" in the version number of this documentation indicates continuous updates on the master branch since the previous major and minor release.
