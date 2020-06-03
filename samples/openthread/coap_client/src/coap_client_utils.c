@@ -253,6 +253,8 @@ void coap_client_utils_init(ot_connection_cb_t on_connect,
 	}
 
 	coap_init(AF_INET6);
+
+	on_thread_state_changed(OT_CHANGED_THREAD_ROLE, instance);
 }
 
 void coap_client_toggle_one_light(void)
