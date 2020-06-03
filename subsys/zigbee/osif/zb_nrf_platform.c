@@ -212,10 +212,12 @@ static int zigbee_init(struct device *unused)
 	/* Initialise work queue for processing app callback and alarms. */
 	k_work_init(&zb_app_cb_work, zb_app_cb_process_schedule);
 
+#if ZB_TRACE_LEVEL
 	/* Set Zigbee stack logging level and traffic dump subsystem. */
 	ZB_SET_TRACE_LEVEL(CONFIG_ZBOSS_TRACE_LOG_LEVEL);
 	ZB_SET_TRACE_MASK(CONFIG_ZBOSS_TRACE_MASK);
 	ZB_SET_TRAF_DUMP_OFF();
+#endif /* ZB_TRACE_LEVEL */
 
 	/* Initialize Zigbee stack. */
 	ZB_INIT("zigbee_thread");
@@ -450,6 +452,11 @@ void zb_osif_enable_all_inter(void)
 	k_mutex_unlock(&zigbee_mutex);
 }
 
+zb_bool_t zb_osif_is_inside_isr(void)
+{
+	return (zb_bool_t)(__get_IPSR() != 0);
+}
+
 void zb_osif_disable_all_inter(void)
 {
 	__ASSERT(zb_osif_is_inside_isr() == 0,
@@ -460,11 +467,6 @@ void zb_osif_disable_all_inter(void)
 void zb_osif_busy_loop_delay(zb_uint32_t count)
 {
 	k_busy_wait(count);
-}
-
-zb_bool_t zb_osif_is_inside_isr(void)
-{
-	return (zb_bool_t)(__get_IPSR() != 0);
 }
 
 __weak zb_uint32_t zb_get_utc_time(void)
