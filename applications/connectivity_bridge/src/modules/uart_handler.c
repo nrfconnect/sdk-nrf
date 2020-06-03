@@ -82,11 +82,6 @@ static bool framing_error_msg_sent[UART_DEVICE_COUNT];
 static char framing_error_msg[] =
 	"[UART FRAMING ERROR! CHECK BAUDRATE!]";
 
-#if CONFIG_BT_LL_NRFXLIB
-/* Required by nrfx_ppi, which is used by nrfx_uart */
-const u32_t z_bt_ctlr_used_nrf_ppi_channels;
-#endif
-
 static void enable_uart_rx(u8_t dev_idx);
 static void disable_uart_rx(u8_t dev_idx);
 static void set_uart_power_state(u8_t dev_idx, bool active);
