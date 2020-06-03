@@ -153,8 +153,6 @@
 
 .. _`GitHub duplicate`: https://help.github.com/en/articles/duplicating-a-repository
 
-.. _`Semantic Versioning 2.0.0`: https://semver.org/
-
 .. _`nRF Cloud`: https://nrfcloud.com/
 
 .. _`openSSL`: https://www.openssl.org/

@@ -114,13 +114,14 @@ As discussed above, the revision of the manifest repository, `sdk-nrf`_, uniquel
 The ``master`` branch of the `sdk-nrf`_ repository always contains the latest development state of the |NCS|.
 Since all development is done openly, you can use it if you are not particularly concerned about stability and want to track the latest changes that are being merged continuously into the different repositories.
 
-The Git tags follow the `Semantic Versioning 2.0.0`_ format and they correspond to official releases tested and signed by the Nordic engineers. The format is as follows::
+The Git tags correspond to official releases tested and signed by the Nordic engineers.
+The format is as follows::
 
   vX.Y.Z(-rcN)
 
 Where X, Y, and Z are the major, minor, and patch version respectively and, optionally, a release candidate postfix ``-rcN`` is attached if the tag identifies a candidate instead of the actual release.
 
-The Git tags follow the `Semantic Versioning 2.0.0`_ format as follows::
+The Git tags are composed as follows::
 
   vX.Y.Z(-rcN|-devN)
 
