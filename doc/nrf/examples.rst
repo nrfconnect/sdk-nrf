@@ -1,6 +1,6 @@
 .. _examples:
 
-Samples and applications
+Applications and samples
 ########################
 
 The `Zephyr Project`_ contains a variety of application samples and demos.
@@ -17,6 +17,6 @@ Samples showcase a single feature or library, while applications include a varie
 .. toctree::
    :maxdepth: 2
 
-   samples
    applications
+   samples
    tests
