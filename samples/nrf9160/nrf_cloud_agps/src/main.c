@@ -109,23 +109,23 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 
 	switch (evt->type) {
 	case CLOUD_EVT_CONNECTED:
-		LOG_DBG("CLOUD_EVT_CONNECTED");
+		LOG_INF("CLOUD_EVT_CONNECTED");
 		break;
 	case CLOUD_EVT_READY:
-		LOG_DBG("CLOUD_EVT_READY");
+		LOG_INF("CLOUD_EVT_READY");
 		on_ready_evt();
 		break;
 	case CLOUD_EVT_DISCONNECTED:
-		LOG_DBG("CLOUD_EVT_DISCONNECTED");
+		LOG_INF("CLOUD_EVT_DISCONNECTED");
 		break;
 	case CLOUD_EVT_ERROR:
-		LOG_DBG("CLOUD_EVT_ERROR");
+		LOG_INF("CLOUD_EVT_ERROR");
 		break;
 	case CLOUD_EVT_DATA_SENT:
-		LOG_DBG("CLOUD_EVT_DATA_SENT");
+		LOG_INF("CLOUD_EVT_DATA_SENT");
 		break;
 	case CLOUD_EVT_DATA_RECEIVED:
-		LOG_DBG("CLOUD_EVT_DATA_RECEIVED");
+		LOG_INF("CLOUD_EVT_DATA_RECEIVED");
 
 		/* Convenience functionality for remote testing.
 		 * The device is reset if it receives "{"reboot":true}"
@@ -146,16 +146,16 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 		process_agps_data(evt->data.msg.buf, evt->data.msg.len);
 		break;
 	case CLOUD_EVT_PAIR_REQUEST:
-		LOG_DBG("CLOUD_EVT_PAIR_REQUEST");
+		LOG_INF("CLOUD_EVT_PAIR_REQUEST");
 		break;
 	case CLOUD_EVT_PAIR_DONE:
-		LOG_DBG("CLOUD_EVT_PAIR_DONE");
+		LOG_INF("CLOUD_EVT_PAIR_DONE");
 		break;
 	case CLOUD_EVT_FOTA_DONE:
-		LOG_DBG("CLOUD_EVT_FOTA_DONE");
+		LOG_INF("CLOUD_EVT_FOTA_DONE");
 		break;
 	default:
-		LOG_DBG("Unknown cloud event type: %d", evt->type);
+		LOG_INF("Unknown cloud event type: %d", evt->type);
 		break;
 	}
 }
