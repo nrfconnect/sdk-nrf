@@ -47,6 +47,15 @@ config NRF_CLOUD_PORT
 config NRF_CLOUD_IPV6
 	bool "Configure nRF Cloud library to use IPv6 addressing. Otherwise IPv4 is used."
 
+config NRF_CLOUD_NONBLOCKING_SEND
+	bool "Send data using non-blocking socket"
+	help
+	  When using a blocking socket, the application can in certain situations
+	  fail and hang indefinitely if a watchdog timer is not used.
+	  Using a non-blocking socket for data transfers can help avoid getting
+	  into such a situation, at the cost of failing in situations where
+	  a short period of blocking would have sent the data.
+
 config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
 	int "Size of the buffer for MQTT library."
 	default 256

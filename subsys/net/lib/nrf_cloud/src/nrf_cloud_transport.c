@@ -9,6 +9,7 @@
 
 #include <zephyr.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <net/cloud.h>
@@ -645,6 +646,18 @@ int nct_mqtt_connect(void)
 	if (err != 0) {
 		LOG_DBG("mqtt_connect failed %d", err);
 	}
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_NONBLOCKING_SEND)) {
+		err = fcntl(nct_socket_get(), F_SETFL, O_NONBLOCK);
+		if (err == -1) {
+			LOG_ERR("Failed to set socket as non-blocking, err: %d",
+				errno);
+			LOG_WRN("Continuing with blocking socket");
+		} else {
+			LOG_INF("Using non-blocking socket");
+		}
+	}
+
 	return err;
 }
 
