@@ -328,15 +328,6 @@ static int modem_configure(void)
 	} else {
 		LOG_INF("Connecting to LTE network. This may take minutes.");
 
-		err = lte_lc_init_and_connect();
-		if (err) {
-			LOG_ERR("LTE link could not be established, error: %d",
-				err);
-			return err;
-		}
-
-		LOG_INF("Connected to LTE network");
-
 #if defined(CONFIG_LTE_POWER_SAVING_MODE)
 		err = lte_lc_psm_req(true);
 		if (err) {
@@ -346,6 +337,15 @@ static int modem_configure(void)
 
 		LOG_INF("PSM mode requested");
 #endif
+
+		err = lte_lc_init_and_connect();
+		if (err) {
+			LOG_ERR("LTE link could not be established, error: %d",
+				err);
+			return err;
+		}
+
+		LOG_INF("Connected to LTE network");
 	}
 
 	return err;
