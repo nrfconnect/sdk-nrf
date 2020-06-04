@@ -8,7 +8,7 @@ All notable changes to this project are documented in this file.
 liblwm2m_carrier 0.9.0
 **********************
 
-Snapshot release for modem firmware version 1.2.0 and the |NCS| 1.3.0.
+Snapshot release for the upcoming modem firmware version 1.2.1 and the |NCS| 1.3.0.
 
 This release is intended to let users begin integration towards the AT&T and Verizon device management platforms.
 It can be used for development and testing only.
