@@ -17,12 +17,13 @@ Next, the service is deselected.
 Requirements
 ************
 
-One of the following boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF52833DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set3_start
+   :end-before: set3_end
+
+The sample has the following additional requirements:
 
 * NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1)
 * NFC Type 4 Tag TNEP device

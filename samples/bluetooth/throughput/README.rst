@@ -54,6 +54,7 @@ Changing connection parameter values
 You can experiment with different connection parameter values by reconfiguring the values using menuconfig and then compiling and programming the sample again to at least one of the boards.
 
 .. note::
+
    In a *Bluetooth* Low Energy connection, the different devices negotiate the connection parameters that are used.
    If the configuration parameters for the devices differ, they agree on the lowest common denominator.
 
@@ -65,23 +66,25 @@ You can experiment with different connection parameter values by reconfiguring t
 Requirements
 ************
 
-* Two of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|; if you use this development kit, add the following options to the configuration of the network sample:
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set3_start
+   :end-before: set3_end
 
-    .. code-block:: none
+You can use any two of the development kits listed above and mix different development kits.
+
+.. note::
+
+  If you use nRF5340 PDK, add the following options to the configuration of the network sample:
+
+  .. code-block:: none
 
        CONFIG_BT_CTLR_TX_BUFFER_SIZE=251
        CONFIG_BT_CTLR_DATA_LENGTH_MAX=251
        CONFIG_BT_RX_BUF_LEN=255
 
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK| - limited support;
-    some features, like an over-the-air data rate of 2 Ms/s, are not available on this board
-
-  You can mix different boards.
-* Connection to a computer with a serial terminal for each of the boards.
+The sample also requires a connection to a computer with a serial terminal for each of the development kits.
 
 Building and running
 ********************

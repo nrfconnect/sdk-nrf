@@ -36,16 +36,13 @@ When the connection is lost, advertising does not restart automatically.
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK| (with the `NFC_OOB_PAIRING` option disabled)
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set21_start
+   :end-before: set21_end
 
-If the `NFC_OOB_PAIRING` feature is enabled:
-
-* Smartphone/tablet with Android v8.0.0 or newer
+If the `NFC_OOB_PAIRING` feature is enabled, the sample requires a smartphone/tablet with Android v8.0.0 or newer.
 
 User interface
 **************

@@ -47,8 +47,8 @@ Requirements
 The sample supports the following development kits:
 
 .. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set1_start
-   :end-before: set1_end
+   :start-after: set3_start
+   :end-before: set3_end
 
 The sample also requires a smartphone or tablet with the NFC feature.
 

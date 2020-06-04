@@ -15,11 +15,13 @@ This is to demonstrate the :cpp:func:`spm_request_system_reboot` and :cpp:func:`
 Requirements
 ************
 
-The following development board:
+The sample supports the following development kit:
 
-* |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 Building and running
 ********************

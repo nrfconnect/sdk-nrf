@@ -22,15 +22,13 @@ The response is decoded and displayed using the `TinyCBOR`_ library (which is pa
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF9160DK|
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set20_start
+   :end-before: set20_end
 
-* A device running `MCUmgr`_ with `SMP over Bluetooth`_, for example, another board running the :ref:`smp_svr_sample`
+The sample also requires a device running `MCUmgr`_ with `SMP over Bluetooth`_, for example, another board running the :ref:`smp_svr_sample`.
 
 
 User interface

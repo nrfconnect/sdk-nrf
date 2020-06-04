@@ -15,14 +15,14 @@ See :ref:`shell_bt_nus_host_tools` for more information about the host tools tha
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set21_start
+   :end-before: set21_end
 
-* A second nRF52 Development Kit board (PCA10040) for connecting with bt_nus_shell.py.
-  Alternatively, you can use :ref:`ble_console_readme` for connecting (Linux only).
+The sample also requires a secondary nRF52 DK (PCA10040) for connecting with bt_nus_shell.py.
+Alternatively, you can use :ref:`ble_console_readme` for connecting (Linux only).
 
 
 Building and running

@@ -16,15 +16,13 @@ Alternatively, you can use this sample to control the color of RGB LED on the nR
 Requirements
 ************
 
-* One of the Nordic development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840Dongle|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set23_start
+   :end-before: set23_end
 
-* A phone or tablet running a compatible application, for example `nRF Connect for Mobile`_, `nRF Blinky`_, or `nRF Toolbox`_.
+The sample also requires a phone or tablet running a compatible application, for example `nRF Connect for Mobile`_, `nRF Blinky`_, or `nRF Toolbox`_.
 
 User interface
 **************

@@ -8,11 +8,13 @@ The LwM2M carrier sample demonstrates how to run the :ref:`liblwm2m_carrier_read
 Requirements
 ************
 
-* The following development board:
+The sample supports the following development kit:
 
-  * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 Building and running
 ********************

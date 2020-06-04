@@ -30,15 +30,16 @@ If you want to view the debug messages, follow the procedure in :ref:`testing_rt
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set21_start
+   :end-before: set21_end
 
-* A phone or tablet running a compatible application. The `Testing`_ instructions refer to nRF Connect for Mobile, but similar applications (for example, nRF Toolbox) can be used as well.
+The sample also requires a phone or tablet running a compatible application.
+The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but similar applications (for example, `nRF Toolbox`_) can be used as well.
 
-  You can also test the application with the :ref:`central_uart` sample. See the documentation for that sample for detailed instructions.
+You can also test the application with the :ref:`central_uart` sample. See the documentation for that sample for detailed instructions.
 
 User interface
 **************

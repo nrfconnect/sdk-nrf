@@ -29,14 +29,13 @@ When the connection is lost due to a time-out, the library automatically trigger
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF52833DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set3_start
+   :end-before: set3_end
 
-* NFC polling device (for example, a smartphone or a tablet with NFC support)
+The sample also requires an NFC polling device (for example, a smartphone or a tablet with NFC support).
 
 User interface
 **************

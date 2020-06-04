@@ -13,13 +13,13 @@ When connected to another device, the sample discovers the services of the conne
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set22_start
+   :end-before: set22_end
 
-* A device to connect to the peripheral, for example, a phone or a tablet with `nRF Connect for Mobile`_ or `nRF Toolbox`_
+The sample also requires a device to connect to the peripheral, for example, a phone or a tablet with `nRF Connect for Mobile`_ or `nRF Toolbox`_.
 
 Building and Running
 ********************

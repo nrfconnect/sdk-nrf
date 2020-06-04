@@ -55,8 +55,8 @@ Requirements
 The sample supports the following development kits:
 
 .. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set1_start
-   :end-before: set1_end
+   :start-after: set3_start
+   :end-before: set3_end
 
 .. note::
    If you use nRF5340 PDK, add the following options to the configuration of the network sample:

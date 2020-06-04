@@ -28,11 +28,15 @@ Finally, after the download completes, the sample switches back to the previous 
 Requirements
 ************
 
-* The following development board:
+The sample supports the following development kit:
 
-  * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* Optional: SUPL Client library (for details on download, see :ref:`supl_client`)
+The sample can be optionally used with the SUPL Client library (for details on download, see :ref:`supl_client`).
+
+.. include:: /includes/spm.txt
 
 Building and running
 ********************

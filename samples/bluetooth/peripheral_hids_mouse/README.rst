@@ -25,13 +25,11 @@ If all bonding information is used and there is still no connection, then the re
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF9160DK|
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set21_start
+   :end-before: set21_end
 
 User interface
 **************

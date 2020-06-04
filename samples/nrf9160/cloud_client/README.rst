@@ -49,6 +49,7 @@ Each cloud backend has specific setup steps that must be executed before it can 
    No extra steps are required to use the Cloud client sample with nRF Cloud.
 
 
+
 Configurations
 **************
 
