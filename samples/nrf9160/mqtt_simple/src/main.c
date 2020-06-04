@@ -330,7 +330,11 @@ static void client_init(struct mqtt_client *client)
 	client->tx_buf_size = sizeof(tx_buffer);
 
 	/* MQTT transport configuration */
+#if defined(CONFIG_MQTT_LIB_TLS)
+	client->transport.type = MQTT_TRANSPORT_SECURE;
+#else
 	client->transport.type = MQTT_TRANSPORT_NON_SECURE;
+#endif
 }
 
 /**@brief Initialize the file descriptor structure used by poll.
