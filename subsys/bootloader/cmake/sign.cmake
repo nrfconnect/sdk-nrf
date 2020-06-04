@@ -77,7 +77,7 @@ foreach (slot ${slots})
   set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)
   set(signed_bin ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
-  set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex)
+  set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex ${SIGN_KEY_FILE_DEPENDS})
   if(DEFINED ${slot}_is_from_child_image)
     list(APPEND sign_depends ${${slot}_is_from_child_image}_subimage)
   else()
