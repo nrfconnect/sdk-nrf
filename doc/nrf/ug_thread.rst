@@ -58,10 +58,10 @@ Required modules
 Thread requires the following Zephyr's modules to properly operate in |NCS|:
 
 * :ref:`zephyr:ieee802154_interface` radio driver - This library is automatically enabled when working with OpenThread on Nordic Semiconductor's Development Kits.
+  Its advanced features are implemented through :ref:`nrfxlib:nrf_802154_sl` in `nrfxlib`_.
 
   .. note::
-        You can enable the FEM support in your samples.
-        For details, see :ref:`thread_ug_radio_options`.
+        You can enable different :ref:`radio antenna options <thread_ug_radio_options>` for samples.
 
 * :ref:`zephyr:settings_api` subsystem - This is required to allow Thread to store settings in the non-volatile memory.
 
@@ -224,7 +224,7 @@ Radio antenna options
 
 .. ug_thread_radio_start
 
-The IEEE 802.15.4 radio driver module in |NCS| allows you to enable the following IEEE 802.15.4 antenna options:
+The :ref:`nrfxlib:nrf_802154_sl` in `nrfxlib`_ allows you to enable the following IEEE 802.15.4 antenna options in |NCS|:
 
 .. contents::
     :local:
@@ -240,41 +240,12 @@ The radios of the device can use different modulation types, protocols, and over
 To address this issue, a device that uses the 802.15.4 radio driver can cooperate with an external Packet Traffic Arbiter (PTA).
 The PTA allows only one radio to transmit its packet at a time.
 
-For details on the PTA and coexistence mechanisms, see the `802.15.2-2003 specification`_.
-
-Each party that would like to transmit a frame makes a request for access to RF medium to the PTA, before it transmits a frame.
-The PTA arbitrates between requests and grants access to the medium to the one of the requesting parties.
-When a party actively receives a frame transmitted from elsewhere, it also requests access to the medium to increase the chance of proper reception, not interrupted by other parties that possibly cannot even detect the incoming signal.
-
-.. figure:: images/three_wire_iface.svg
-   :alt: 3-pin coexistence interface
-
-   3-pin coexistence interface
-
-The coexistence interface connects a 802.15.4 device with the PTA and consists of three lines: REQUEST, PRIORITY, and GRANT.
-
-* REQUEST pin - This is the output of the 802.15.4 device and the input of the PTA.
-  When this pin is active, the 802.15.4 device makes a request to the PTA for radio medium access.
-  The active state of the pin is fixed to logic high.
-  When the coexistence interface is disabled, this pin is driven low.
-  Type of the output and the pin number to be used is configurable at compile time.
-* PRIORITY pin - This is the output of the 802.15.4 device and the input of the PTA.
-  The 802.15.4 device uses this pin to inform the PTA about the operation that it is performing.
-  This pin is driven low for transmit operations.
-  For receive operations, and when there is no 802.15.4 radio activity, this pin is driven high.
-  When the coexistence interface is disabled, this pin is driven high.
-  Type of the output and the pin number to be used is configurable at compile time.
-* GRANT pin - This is the input of the 802.15.4 device and the output of the PTA.
-  This pin is activated by the PTA when it grants access to the radio medium to the 802.15.4 device.
-  The active state of the pin is fixed to low.
-  The pin number to be used is configurable at compile time.
-
-For more details about Wi-Fi coexistence, read the radio driver documentation.
+For more information, read the `Wi-Fi coexistence documentation`_.
 
 Configuring Wi-Fi Coex support
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Wi-Fi coexistence feature can be enabled using ``CONFIG_IEEE802154_NRF5_WIFI_COEX`` KConfig option.
+The Wi-Fi coexistence feature in |NCS| can be enabled using the ``CONFIG_IEEE802154_NRF5_WIFI_COEX`` KConfig option.
 
 By default, the Wi-Fi coexistence receive trigger is set to the energy detection mode.
 In this mode, the radio driver makes a request to the PTA for radio medium access on the earliest sign of a frame being received over-the-air that is possible to detect by the device.
@@ -300,25 +271,15 @@ To select a different behavior, use the following options:
 PA/LNA module (FEM support)
 ---------------------------
 
-The PA/LNA module is part of |NCS|'s radio driver library.
 The PA/LNA module increases the range of communication by providing APIs that act as interface for several types of external front-end modules (FEMs).
 Inside the radio driver library, a three-pin FEM model support is included.
 
-The FEMs are controlled by the enable signals that turn on a Power Amplifier (PA) or a Low Noise Amplifier (LNA).
-The third signal disables the FEM during the radio inactivity, in order to save energy.
-
-When the FEM is enabled, the radio driver toggles the three GPIO pins, based on the radio operation.
-The configuration structure allows to choose the pin polarity, and time differences between the pin toggle and the intended radio operation.
-
-.. figure:: images/pa-lna-block-dia.svg
-   :alt: Interfacing PA/LNA with nRF52
-
-   Interfacing PA/LNA with nRF52
+For more information, read the `PA/LNA module documentation`_.
 
 Configuring FEM support
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To enable the FEM support, set the ``CONFIG_IEEE802154_NRF5_FEM_PRESENT`` Kconfig option.
+To enable the FEM support in |NCS|, set the ``CONFIG_IEEE802154_NRF5_FEM_PRESENT`` Kconfig option.
 
 Configuring PA
     The PA feature can be turned on or off by setting the ``CONFIG_IEEE802154_NRF5_FEM_PA_PIN_CTRL_ENABLE`` Kconfig option.
@@ -379,39 +340,12 @@ Antenna diversity
 The antenna diversity module allows the 802.15.4 radio device to select the appropriate antenna for transmission or reception, when the device is equipped with two antennas.
 This can help improve the radio communication parameters in difficult radio environments.
 
-Radio ANT pin is connected to those two antennas through FEM (Front End Module), which provides single pin to act as a binary switch, so that the antenna may be selected freely.
-
-.. figure:: images/ant_diversity_interface.svg
-   :alt: Multiple antenna setup for antenna diversity module
-
-   Multiple antenna setup for antenna diversity module
-
-There is a number of approaches that can be then used to switch the antenna to minimize the effect of phenomena that negatively impact radio communication.
-In case of reception, the approach implemented by this module is based on RSSI measurements during the preamble of a received frame.
-
-Moreover, an interface is provided for manual antenna selection, if other criteria for selecting the antenna are required.
-
-Interface
-    The antenna diversity module interfaces with FEM, which controls the antennas through a single pin used for antenna selection.
-    The ANT pin of the chip should be connected to the RF interface of FEM.
-    Such simple interface allows even for simple analog switch to act as FEM for antenna diversity.
-    If FEM provides any other pins (for example, for enabling chip, configuration, or other operations), they are not handled by antenna diversity module.
-
-Modes
-    Antenna diversity module supports all radio operations, although different approach is used for reception-related (RX) operations than for transmission-related (TX) operations.
-    This difference stems from the nature of the operations - the best antenna for RX operations can be determined on operation-to-operation basis, for example by measuring the RSSI.
-
-    On the other hand, TX operations usually require knowing before which antenna is better for a given recipient (for example, based on previous operations), which is out of scope of radio driver and should be handled by a higher level module.
-
-    For these reasons, the interface of antenna diversity is split into two parts, responsible for TX and RX operations, respectively.
-    Each of them can be individually disabled or enabled, and the antenna manually selected.
-    Additionally, RX operations support automatic mode, where optimal antenna is selected for each individual operation.
+For more information, read the `antenna diversity documentation`_.
 
 Configuring antenna diversity
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The antenna diversity module is enabled by default for TX operations.
-
+In |NCS|, the antenna diversity TX operations must be controlled manually by the application.
 The antenna diversity RX operations can be configured into one of the following modes:
 
 * ``CONFIG_IEEE802154_NRF5_ANT_DIVERSITY_MODE_DISABLED`` - RX operations are disabled (default).

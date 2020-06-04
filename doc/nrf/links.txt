@@ -13,7 +13,6 @@
 
 .. _`RTT Viewer`: https://docs.zephyrproject.org/latest/guides/tools/nordic_segger.html
 
-
 .. ### Links to MCUboot
 
 .. _`MCUboot`: https://mcuboot.com
@@ -80,6 +79,9 @@
 
 .. _`nRF52 Series`: https://infocenter.nordicsemi.com/topic/struct_nrf52/struct/nrf52.html
 
+.. _`Wi-Fi coexistence documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/rd_coex.html
+.. _`PA/LNA module documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/rd_fem.html
+.. _`antenna diversity documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/ant_diversity.html
 
 .. ### Links to the Nordic website
 
