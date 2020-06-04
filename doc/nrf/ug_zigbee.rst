@@ -22,7 +22,7 @@ For more information about Zigbee, visit the `Zigbee Alliance`_ page and read `Z
 Supported features
 ******************
 
-|zboss_lib|
+The |NCS|'s Zigbee protocol uses the ZBOSS library, a third-party precompiled Zigbee stack.
 It includes all mandatory features of the |zigbee_version| specification and provides an Application Programming Interface to access different services.
 The stack comes with the following features:
 
@@ -41,12 +41,16 @@ See :ref:`nrfxlib:zboss` for more information.
 Required libraries and drivers
 ******************************
 
-|zboss_lib|
-This library is available in `nrfxlib`_.
+Zigbee requires the following modules to properly operate in |NCS|:
 
-The OSIF subsystem acts as the linking layer between the ZBOSS stack and |NCS|.
-It implements a series of functions used by ZBOSS and is included in the |NCS|'s Zigbee subsystem.
-The files that handle the OSIF integration are located in :file:`subsys/zigbee/osif`.
+* :ref:`nrfxlib:zboss` available in nrfxlib, with the OSIF subsystem acting as the linking layer between the ZBOSS stack and |NCS|.
+  OSIF implements a series of functions used by ZBOSS and is included in the |NCS|'s Zigbee subsystem.
+  The files that handle the OSIF integration are located in :file:`nrf/subsys/zigbee/osif`.
+* :ref:`zephyr:ieee802154_interface` radio driver - This library is automatically enabled when working with Zigbee on Nordic Semiconductor's Development Kits.
+  Its advanced features are implemented through :ref:`nrfxlib:nrf_802154_sl` in `nrfxlib`_.
+
+  .. note::
+        You can enable different :ref:`radio antenna options <zigbee_ug_radio_options>` for samples.
 
 .. _zigbee_ug_configuration:
 
@@ -198,5 +202,3 @@ When working with Zigbee in |NCS|, you can use the following tools during Zigbee
 * `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
 
 Using Zigbee tools is optional.
-
-.. |zboss_lib| replace:: The |NCS|'s Zigbee protocol uses the ZBOSS library, a third-party precompiled Zigbee stack.
