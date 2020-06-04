@@ -103,6 +103,7 @@ Kconfig*                                  @tejlmand
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
 /share/zephyrbuild-package/               @tejlmand
+/share/ncs-package/                       @tejlmand
 /subsys/bluetooth/                        @joerchan @carlescufi
 /subsys/bluetooth/mesh/                   @trond-snekvik @joerchan
 /subsys/bluetooth/controller/             @joerchan @rugeGerritsen
