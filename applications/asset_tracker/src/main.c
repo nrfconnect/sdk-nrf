@@ -124,6 +124,9 @@ static atomic_t cloud_connect_attempts;
 
 /* Flag used for flip detection */
 static bool flip_mode_enabled = true;
+static motion_data_t last_motion_data = {
+	.orientation = MOTION_ORIENTATION_NOT_KNOWN,
+};
 
 #if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
 /* Current state of activity monitor */
@@ -152,6 +155,7 @@ static struct k_delayed_work device_config_work;
 static struct k_delayed_work cloud_connect_work;
 static struct k_work device_status_work;
 static struct k_delayed_work send_agps_request_work;
+static struct k_work motion_data_send_work;
 
 #if defined(CONFIG_AT_CMD)
 #define MODEM_AT_CMD_BUFFER_LEN (CONFIG_AT_CMD_RESPONSE_MAX_LEN + 1)
@@ -784,8 +788,6 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 /**@brief Callback from the motion module. Sends motion data to cloud. */
 static void motion_handler(motion_data_t  motion_data)
 {
-	static motion_orientation_state_t last_orientation_state =
-		MOTION_ORIENTATION_NOT_KNOWN;
 
 #if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
 	/* toggle state since the accelerometer does not yet report
@@ -795,42 +797,41 @@ static void motion_handler(motion_data_t  motion_data)
 			      MOTION_ACTIVITY_ACTIVE : MOTION_ACTIVITY_INACTIVE;
 #endif
 
-	if (!flip_mode_enabled || !data_send_enabled() ||
-	    gps_control_is_active()) {
-		return;
-	}
-
-	if (motion_data.orientation != last_orientation_state) {
-
-		if (flip_mode_enabled && data_send_enabled()) {
-
-			struct cloud_msg msg = {
-				.qos = CLOUD_QOS_AT_MOST_ONCE,
-				.endpoint.type = CLOUD_EP_TOPIC_MSG
-			};
-
-			int err = 0;
-
-			if (cloud_encode_motion_data(&motion_data, &msg) == 0) {
-				err = cloud_send(cloud_backend, &msg);
-				cloud_release_data(&msg);
-				if (err) {
-					LOG_ERR("Transmisison of "
-						"motion data failed: %d", err);
-					cloud_error_handler(err);
-				}
-			}
-
-			if (!err) {
-				last_orientation_state =
-					motion_data.orientation;
-			}
-		}
+	if (motion_data.orientation != last_motion_data.orientation) {
+		last_motion_data = motion_data;
+		k_work_submit_to_queue(&application_work_q,
+				       &motion_data_send_work);
 	}
 
 #if IS_ENABLED(CONFIG_GPS_START_ON_MOTION)
 	motion_trigger_gps(motion_data);
 #endif
+}
+
+static void motion_data_send(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	if (!flip_mode_enabled || !data_send_enabled() ||
+	    gps_control_is_active()) {
+		return;
+	}
+
+	struct cloud_msg msg = {
+		.qos = CLOUD_QOS_AT_MOST_ONCE,
+		.endpoint.type = CLOUD_EP_TOPIC_MSG
+	};
+
+	int err = 0;
+
+	if (cloud_encode_motion_data(&last_motion_data, &msg) == 0) {
+		err = cloud_send(cloud_backend, &msg);
+		cloud_release_data(&msg);
+		if (err) {
+			LOG_ERR("Transmisison of motion data failed: %d", err);
+			cloud_error_handler(err);
+		}
+	}
 }
 
 static void cloud_cmd_handle_modem_at_cmd(const char *const at_cmd)
@@ -880,18 +881,6 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 		ui_led_set_color(((u32_t)cmd->data.sv.value >> 16) & 0xFF,
 				 ((u32_t)cmd->data.sv.value >> 8) & 0xFF,
 				 ((u32_t)cmd->data.sv.value) & 0xFF);
-	} else if ((cmd->channel == CLOUD_CHANNEL_DEVICE_INFO) &&
-		   (cmd->group == CLOUD_CMD_GROUP_GET) &&
-		   (cmd->type == CLOUD_CMD_EMPTY)) {
-		k_work_submit_to_queue(&application_work_q,
-				       &device_status_work);
-	} else if ((cmd->channel == CLOUD_CHANNEL_LTE_LINK_RSRP) &&
-		   (cmd->group == CLOUD_CMD_GROUP_GET) &&
-		   (cmd->type == CLOUD_CMD_EMPTY)) {
-#if CONFIG_MODEM_INFO
-		k_delayed_work_submit_to_queue(&application_work_q, &rsrp_work,
-					       K_NO_WAIT);
-#endif
 	} else if ((cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
 			   (cmd->type == CLOUD_CMD_INTERVAL)) {
 		if (cmd->channel == CLOUD_CHANNEL_LIGHT_SENSOR) {
@@ -908,6 +897,27 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 		} else {
 			LOG_ERR("Interval command not valid for channel %d",
 				cmd->channel);
+		}
+	} else if ((cmd->group == CLOUD_CMD_GROUP_GET) &&
+		   (cmd->type == CLOUD_CMD_EMPTY)) {
+		if (cmd->channel == CLOUD_CHANNEL_FLIP) {
+			k_work_submit_to_queue(&application_work_q,
+					       &motion_data_send_work);
+		} else if (cmd->channel == CLOUD_CHANNEL_DEVICE_INFO) {
+			k_work_submit_to_queue(&application_work_q,
+					       &device_status_work);
+		} else if (cmd->channel == CLOUD_CHANNEL_LTE_LINK_RSRP) {
+#if CONFIG_MODEM_INFO
+			k_delayed_work_submit_to_queue(&application_work_q,
+						       &rsrp_work,
+						       K_NO_WAIT);
+#endif
+		} else if (cmd->channel == CLOUD_CHANNEL_ENVIRONMENT) {
+			env_sensors_poll();
+		} else if (cmd->channel == CLOUD_CHANNEL_LIGHT_SENSOR) {
+#if IS_ENABLED(CONFIG_LIGHT_SENSOR)
+			light_sensor_poll();
+#endif
 		}
 	}
 }
@@ -1532,6 +1542,7 @@ static void work_init(void)
 	k_delayed_work_init(&device_config_work, device_config_send);
 	k_delayed_work_init(&cloud_connect_work, cloud_connect_work_fn);
 	k_work_init(&device_status_work, device_status_send);
+	k_work_init(&motion_data_send_work, motion_data_send);
 #if CONFIG_MODEM_INFO
 	k_delayed_work_init(&rsrp_work, modem_rsrp_data_send);
 #endif /* CONFIG_MODEM_INFO */

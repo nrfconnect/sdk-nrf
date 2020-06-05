@@ -55,6 +55,11 @@ static inline int submit_poll_work(const u32_t delay_s)
 					      K_SECONDS((u32_t)delay_s));
 }
 
+int light_sensor_poll(void)
+{
+	return initialized ? submit_poll_work(0) : -ENXIO;
+}
+
 int light_sensor_init_and_start(struct k_work_q *work_q,
 				const light_sensor_data_ready_cb cb)
 {
