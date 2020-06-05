@@ -645,6 +645,7 @@ int nct_mqtt_connect(void)
 	err = mqtt_connect(&nct.client);
 	if (err != 0) {
 		LOG_DBG("mqtt_connect failed %d", err);
+		return err;
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_NONBLOCKING_SEND)) {
@@ -653,6 +654,7 @@ int nct_mqtt_connect(void)
 			LOG_ERR("Failed to set socket as non-blocking, err: %d",
 				errno);
 			LOG_WRN("Continuing with blocking socket");
+			err = 0;
 		} else {
 			LOG_INF("Using non-blocking socket");
 		}
