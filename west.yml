@@ -96,11 +96,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 8d856d2a6a8efab29c4ef9825f6b91fa2523d4c9
+      revision: de4594dfa69ef314f27e546bd0dc35a2cba0333b
     - name: hal_nordic
       repo-path: sdk-hal_nordic
       path: modules/hal/nordic
-      revision: ef6c7c3e82fee6e9e58c5295a4de7201b4b99b3c
+      revision: 8f013ea950f41bf69b18bf688bfb0dd80a3fdc44
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
