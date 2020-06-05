@@ -48,13 +48,18 @@ extern "C" {
 /** FC in 4096/fc. */
 #define NFC_1FC_IN_4096FC 4096
 
-/** ST25R3911B NFCF LED pin. */
-#define ST25R3911B_NFCF_LED 4
-/** ST25R3911B NFCB LED pin. */
-#define ST25R3911B_NFCB_LED 28
-/** ST25R3911B NFCA LED pin. */
-#define ST25R3911B_NFCA_LED 29
+/** ST25R3911B on shield the NFC technology indication LEDs.
+ */
+enum st25r3911b_leds {
+	/** ST25R3911B NFCA LED ID. */
+	ST25R3911B_NFCA_LED,
 
+	/** ST25R3911B NFCB LED ID. */
+	ST25R3911B_NFCB_LED,
+
+	/** ST25R3911B NFCF LED ID. */
+	ST25R3911B_NFCF_LED
+};
 
 /** Conversion fc to 64/fc. The timer register can be set
  *  using the following formula: <tt>register value * 64fc</tt>
@@ -192,7 +197,7 @@ int st25r3911b_fifo_reload_lvl_get(u8_t *tx_lvl, u8_t *rx_lvl);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_technology_led_set(u32_t led, bool on);
+int st25r3911b_technology_led_set(enum st25r3911b_leds led, bool on);
 
 #ifdef __cplusplus
 }
