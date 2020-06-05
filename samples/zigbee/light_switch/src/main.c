@@ -127,7 +127,7 @@ static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t on_off);
  */
 static void button_handler(u32_t button_state, u32_t has_changed)
 {
-	zb_bool_t on_off;
+	zb_uint16_t cmd_id;
 	zb_ret_t zb_err_code;
 
 	/* Inform default signal handler about user input at the device. */
@@ -141,11 +141,11 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 	switch (has_changed) {
 	case BUTTON_ON:
 		LOG_DBG("ON - button changed");
-		on_off = ZB_TRUE;
+		cmd_id = ZB_ZCL_CMD_ON_OFF_ON_ID;
 		break;
 	case BUTTON_OFF:
 		LOG_DBG("OFF - button changed");
-		on_off = ZB_FALSE;
+		cmd_id = ZB_ZCL_CMD_ON_OFF_OFF_ID;
 		break;
 	default:
 		LOG_DBG("Unhandled button");
@@ -157,7 +157,7 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 	case BUTTON_OFF:
 		LOG_DBG("Button pressed");
 		atomic_set(&device_ctx.button.in_progress, ZB_TRUE);
-		zb_err_code = zigbee_schedule_alarm(light_switch_button_handler,
+		zb_err_code = ZB_SCHEDULE_APP_ALARM(light_switch_button_handler,
 						    button_state,
 						    BUTTON_LONG_POLL_TMO);
 		if (zb_err_code == RET_OVERFLOW) {
@@ -178,7 +178,7 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 		    == ZB_FALSE) {
 			/* Allocate output buffer and send on/off command. */
 			zb_err_code = zb_buf_get_out_delayed_ext(
-					   light_switch_send_on_off, on_off, 0);
+				light_switch_send_on_off, cmd_id, 0);
 			ZB_ERROR_CHECK(zb_err_code);
 		}
 	}
@@ -204,14 +204,11 @@ static void configure_gpio(void)
  *
  * @param[in]   bufid    Non-zero reference to Zigbee stack buffer that will be
  *                       used to construct on/off request.
- * @param[in]   on_off   Requested state of the light bulb.
+ * @param[in]   cmd_id   ZCL command id.
  */
-static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t on_off)
+static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t cmd_id)
 {
-	u8_t cmd_id = on_off ? ZB_ZCL_CMD_ON_OFF_ON_ID
-			     : ZB_ZCL_CMD_ON_OFF_OFF_ID;
-
-	LOG_INF("Send ON/OFF command: %d", on_off);
+	LOG_INF("Send ON/OFF command: %d", cmd_id);
 
 	ZB_ZCL_ON_OFF_SEND_REQ(bufid,
 			       device_ctx.bulb_params.short_addr,
@@ -228,15 +225,11 @@ static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t on_off)
  *
  * @param[in]   bufid        Non-zero reference to Zigbee stack buffer that
  *                           will be used to construct step request.
- * @param[in]   is_step_up   Boolean parameter selecting direction
- *                           of step change.
+ * @param[in]   cmd_id       ZCL command id.
  */
-static void light_switch_send_step(zb_bufid_t bufid, zb_uint16_t is_step_up)
+static void light_switch_send_step(zb_bufid_t bufid, zb_uint16_t cmd_id)
 {
-	u8_t step_dir = is_step_up ? ZB_ZCL_LEVEL_CONTROL_STEP_MODE_UP :
-				     ZB_ZCL_LEVEL_CONTROL_STEP_MODE_DOWN;
-
-	LOG_INF("Send step level command: %d", is_step_up);
+	LOG_INF("Send step level command: %d", cmd_id);
 
 	ZB_ZCL_LEVEL_CONTROL_SEND_STEP_REQ(bufid,
 					   device_ctx.bulb_params.short_addr,
@@ -246,7 +239,7 @@ static void light_switch_send_step(zb_bufid_t bufid, zb_uint16_t is_step_up)
 					   ZB_AF_HA_PROFILE_ID,
 					   ZB_ZCL_DISABLE_DEFAULT_RESPONSE,
 					   NULL,
-					   step_dir,
+					   cmd_id,
 					   DIMM_STEP,
 					   DIMM_TRANSACTION_TIME);
 }
@@ -286,7 +279,7 @@ static void find_light_bulb_cb(zb_bufid_t bufid)
 			device_ctx.bulb_params.endpoint);
 
 		zb_ret_t zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
-				   find_light_bulb_timeout, ZB_ALARM_ANY_PARAM);
+			find_light_bulb_timeout, ZB_ALARM_ANY_PARAM);
 		ZB_ERROR_CHECK(zb_err_code);
 
 		dk_set_led_on(BULB_FOUND_LED);
@@ -341,10 +334,10 @@ static void find_light_bulb_timeout(zb_bufid_t bufid)
 	if (bufid) {
 		LOG_INF("Bulb not found, try again");
 
-		zb_err_code = zigbee_schedule_alarm(find_light_bulb, bufid,
+		zb_err_code = ZB_SCHEDULE_APP_ALARM(find_light_bulb, bufid,
 						    MATCH_DESC_REQ_START_DELAY);
 		ZB_ERROR_CHECK(zb_err_code);
-		zb_err_code = zigbee_schedule_alarm(find_light_bulb_timeout, 0,
+		zb_err_code = ZB_SCHEDULE_APP_ALARM(find_light_bulb_timeout, 0,
 						    MATCH_DESC_REQ_TIMEOUT);
 		ZB_ERROR_CHECK(zb_err_code);
 	} else {
@@ -360,19 +353,25 @@ static void find_light_bulb_timeout(zb_bufid_t bufid)
 static void light_switch_button_handler(zb_uint8_t button)
 {
 	zb_ret_t zb_err_code;
-	zb_bool_t on_off;
+	zb_uint16_t cmd_id;
 
 	if (dk_get_buttons() & button) {
 		atomic_set(&device_ctx.button.long_poll, ZB_TRUE);
-		on_off = (button == BUTTON_ON) ? ZB_TRUE : ZB_FALSE;
+		if (button == BUTTON_ON) {
+			cmd_id = ZB_ZCL_LEVEL_CONTROL_STEP_MODE_UP;
+		} else {
+			cmd_id = ZB_ZCL_LEVEL_CONTROL_STEP_MODE_DOWN;
+		}
 
 		/* Allocate output buffer and send step command. */
 		zb_err_code = zb_buf_get_out_delayed_ext(light_switch_send_step,
-							 on_off, 0);
+							 cmd_id,
+							 0);
 		ZB_ERROR_CHECK(zb_err_code);
 
-		zb_err_code = zigbee_schedule_alarm(light_switch_button_handler,
-						  button, BUTTON_LONG_POLL_TMO);
+		zb_err_code = ZB_SCHEDULE_APP_ALARM(light_switch_button_handler,
+						    button,
+						    BUTTON_LONG_POLL_TMO);
 		if (zb_err_code == RET_OVERFLOW) {
 			LOG_WRN("Can't schedule another alarm, queue is full.");
 			atomic_set(&device_ctx.button.in_progress, ZB_FALSE);
@@ -401,20 +400,20 @@ void zboss_signal_handler(zb_bufid_t bufid)
 
 	switch (sig) {
 	case ZB_BDB_SIGNAL_DEVICE_REBOOT:
-		/* fall-through */
+	/* fall-through */
 	case ZB_BDB_SIGNAL_STEERING:
 		/* Call default signal handler. */
 		ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
 		if (status == RET_OK) {
 			/* Check the light device address */
 			if (device_ctx.bulb_params.short_addr == 0xFFFF) {
-				zb_err_code = zigbee_schedule_alarm(
-						    find_light_bulb, bufid,
-						    MATCH_DESC_REQ_START_DELAY);
+				zb_err_code = ZB_SCHEDULE_APP_ALARM(
+					find_light_bulb, bufid,
+					MATCH_DESC_REQ_START_DELAY);
 				ZB_ERROR_CHECK(zb_err_code);
-				zb_err_code = zigbee_schedule_alarm(
-						find_light_bulb_timeout, 0,
-						MATCH_DESC_REQ_TIMEOUT);
+				zb_err_code = ZB_SCHEDULE_APP_ALARM(
+					find_light_bulb_timeout, 0,
+					MATCH_DESC_REQ_TIMEOUT);
 				ZB_ERROR_CHECK(zb_err_code);
 				/* Do not free buffer - it will be reused by
 				 * find_light_bulb callback.
