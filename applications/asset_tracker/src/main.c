@@ -1222,8 +1222,8 @@ static void sensor_data_send(struct cloud_channel_data *data)
 		err = cloud_send(cloud_backend, &msg);
 		cloud_release_data(&msg);
 		if (err) {
-			LOG_ERR("%s failed: %d", __func__, err);
-			cloud_error_handler(err);
+			LOG_ERR("%s failed, data was not sent: %d", __func__,
+			err);
 		}
 	}
 }
