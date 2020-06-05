@@ -283,6 +283,11 @@ Your directory structure now looks similar to this::
 Note that there are additional folders, and that the structure might change.
 The full set of repositories and folders is defined in the manifest file.
 
+#. Export a :ref:`zephyr:Zephyr CMake package <cmake_pkg>`. This allows CMake to automatically load boilerplate code required for building nRF Connect SDK r applications::
+
+      west zephyr-export
+
+
 Updating the repositories
 =========================
 
