@@ -15,6 +15,7 @@
 #include "st25r3911b_spi.h"
 #include "st25r3911b_interrupt.h"
 #include "st25r3911b_common.h"
+#include "st25r3911b_dt.h"
 
 LOG_MODULE_DECLARE(st25r3911b);
 
@@ -43,6 +44,16 @@ LOG_MODULE_DECLARE(st25r3911b);
 
 #define FIFO_TX_WATER_16_EMPTY (ST25R3911B_MAX_FIFO_LEN - FIFO_TX_WATER_LVL_16)
 #define FIFO_TX_WATER_32_EMPTY (ST25R3911B_MAX_FIFO_LEN - FIFO_TX_WATER_LVL_32)
+
+#define NFCA_LED_PORT DT_GPIO_LABEL(ST25R3911B_NODE, led_nfca_gpios)
+#define NFCA_LED_PIN DT_GPIO_PIN(ST25R3911B_NODE, led_nfca_gpios)
+
+#define NFCB_LED_PORT DT_GPIO_LABEL(ST25R3911B_NODE, led_nfcb_gpios)
+#define NFCB_LED_PIN DT_GPIO_PIN(ST25R3911B_NODE, led_nfcb_gpios)
+
+#define NFCF_LED_PORT DT_GPIO_LABEL(ST25R3911B_NODE, led_nfcf_gpios)
+#define NFCF_LED_PIN DT_GPIO_PIN(ST25R3911B_NODE, led_nfcf_gpios)
+
 
 static struct device *gpio_dev;
 
@@ -526,24 +537,55 @@ int st25r3911b_field_on(u8_t collision_threshold, u8_t peer_threshold,
 	return -EACCES;
 }
 
-int st25r3911b_technology_led_set(u32_t led, bool on)
+int st25r3911b_technology_led_set(enum st25r3911b_leds led, bool on)
 {
 	int err;
+	gpio_pin_t pin;
+	const char *port;
 
-	gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
+	switch (led) {
+#if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfca_gpios)
+	case ST25R3911B_NFCA_LED:
+		pin = NFCA_LED_PIN;
+		port = NFCA_LED_PORT;
+
+		break;
+#endif /* DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfca_gpios) */
+
+#if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcb_gpios)
+	case ST25R3911B_NFCB_LED:
+		pin = NFCB_LED_PIN;
+		port = NFCB_LED_PORT;
+
+		break;
+#endif /* DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcb_gpios) */
+
+#if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcf_gpios)
+	case ST25R3911B_NFCF_LED:
+		pin = NFCF_LED_PIN;
+		port = NFCF_LED_PORT;
+
+		break;
+#endif /* DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcf_gpios) */
+
+	default:
+		return -ENOTSUP;
+	}
+
+	gpio_dev = device_get_binding(port);
 	if (!gpio_dev) {
 		LOG_ERR("GPIO device binding error.");
 		return -ENXIO;
 	}
 
-	err = gpio_pin_configure(gpio_dev, led,
+	err = gpio_pin_configure(gpio_dev, pin,
 				 GPIO_OUTPUT |
 				 GPIO_PULL_UP);
 	if (err) {
 		return err;
 	}
 
-	return gpio_pin_set_raw(gpio_dev, led, on);
+	return gpio_pin_set_raw(gpio_dev, pin, on);
 }
 
 int st25r3911b_fifo_reload_lvl_get(u8_t *tx_lvl, u8_t *rx_lvl)

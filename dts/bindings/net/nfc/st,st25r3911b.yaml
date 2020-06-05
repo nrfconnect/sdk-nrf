@@ -12,3 +12,15 @@ properties:
     irq-gpios:
       type: phandle-array
       required: true
+
+    led-nfca-gpios:
+      type: phandle-array
+      required: false
+
+    led-nfcb-gpios:
+      type: phandle-array
+      required: false
+
+    led-nfcf-gpios:
+      type: phandle-array
+      required: false

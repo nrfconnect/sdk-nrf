@@ -12,5 +12,6 @@
 		reg = <0>;
 		spi-max-frequency = <4000000>;
 		irq-gpios = <&gpio0 4 0>;
+		led-nfca-gpios = <&gpio0 7 0>;
 	};
 };
