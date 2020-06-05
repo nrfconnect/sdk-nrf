@@ -99,6 +99,7 @@ Testing with another board
    If Button 1 was pressed::
 
       Caps lock send (val: 0x2)
+      Caps lock sent
 
    If Button 3 was pressed::
 
