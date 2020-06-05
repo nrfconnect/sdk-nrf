@@ -113,7 +113,7 @@ manifest:
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.16.4
+      revision: mbedtls-2.16.6
       remote: armmbed
 
   # West-related configuration for the nrf repository.
