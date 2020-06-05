@@ -123,3 +123,17 @@ int dfu_target_done(bool successful)
 
 	return 0;
 }
+
+int dfu_target_reset(void)
+{
+	if (current_target != NULL) {
+		int err = current_target->done(false);
+
+		if (err != 0) {
+			LOG_ERR("Unable to clean up dfu_target");
+			return err;
+		}
+	}
+	current_target = NULL;
+	return 0;
+}

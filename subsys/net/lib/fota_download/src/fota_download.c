@@ -85,6 +85,13 @@ static int download_client_callback(const struct download_client_evt *event)
 					      dfu_target_callback_handler);
 			if ((err < 0) && (err != -EBUSY)) {
 				LOG_ERR("dfu_target_init error %d", err);
+				send_evt(FOTA_DOWNLOAD_EVT_ERROR);
+				int res = dfu_target_reset();
+
+				if (res != 0) {
+					LOG_ERR("Unable to reset DFU target");
+				}
+				first_fragment = true;
 				return err;
 			}
 
