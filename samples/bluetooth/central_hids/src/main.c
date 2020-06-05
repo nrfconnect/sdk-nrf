@@ -422,6 +422,12 @@ static void button_bootmode(void)
 	}
 }
 
+static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
+			  struct bt_gatt_hids_c_rep_info *rep,
+			  u8_t err)
+{
+	printk("Caps lock sent\n");
+}
 
 static void button_capslock(void)
 {
@@ -444,6 +450,7 @@ static void button_capslock(void)
 	data = capslock_state ? 0x02 : 0;
 	err = bt_gatt_hids_c_rep_write_wo_rsp(&hids_c,
 					      hids_c.rep_boot.kbd_out,
+					      hidc_write_cb,
 					      &data, sizeof(data));
 	if (err) {
 		printk("Keyboard data write error (err: %d)\n", err);
