@@ -152,12 +152,17 @@ class MusicLedStream():
             in_buf_speaker = self.led_effects['sent_cnt'] - cur_step_speaker - 1
             in_buf_dev = self.dev_params['max_free'] - free
 
-            DURATION_INCREMENT_CONST_FACTOR = 0.1
-            DURATION_INCREMENT_VARIABLE_FACTOR = 0.8
+            # LED effect on device is synchronized with music played by speaker.
+            # Ensure that device will always have buffered LED effect.
+            if in_buf_speaker < 1:
+                in_buf_speaker = 1
+
+            DURATION_INCREMENT_CONST_FACTOR = 0.01
+            DURATION_INCREMENT_VARIABLE_FACTOR = 0.1
 
             if in_buf_speaker != 0:
                 duration_inc_variable = (in_buf_speaker - in_buf_dev) / \
-                            in_buf_speaker * DURATION_INCREMENT_VARIABLE_FACTOR
+                            abs(in_buf_speaker) * DURATION_INCREMENT_VARIABLE_FACTOR
             else:
                 duration_inc_variable = 0
 
@@ -172,7 +177,6 @@ class MusicLedStream():
     def music_callback(self, in_data, frame_count, time_info, status):
         if status == pyaudio.paOutputUnderflow:
             print("Underflow occurred. Please lower the stream frequency.")
-            return (None, pyaudio.paAbort)
 
         if self.send_error_event.is_set():
             return (None, pyaudio.paAbort)
@@ -197,9 +201,9 @@ class MusicLedStream():
         try:
             print("Music LED stream started. Press Ctrl+C to interrupt.")
             threading.Thread(target=self.send_led_effects).start()
-            self.led_effects['start_time'] = time.time()
 
             self.stream.start_stream()
+            self.led_effects['start_time'] = time.time()
             while self.stream.is_active():
                 time.sleep(0.1)
 
