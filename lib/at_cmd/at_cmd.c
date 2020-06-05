@@ -12,6 +12,7 @@
 #include <bsd_limits.h>
 
 #include <modem/at_cmd.h>
+#include <modem/bsdlib.h>
 
 LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 
@@ -50,6 +51,8 @@ static int common_socket_fd;
 static k_tid_t socket_tid;
 static struct k_thread socket_thread;
 static at_cmd_handler_t notification_handler;
+static atomic_t shutdown_mode;
+
 
 /* Structure holding current command. current_cmd.cmd=NULL signifies no cmd. */
 static struct cmd_item current_cmd;
@@ -222,9 +225,28 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 		ret.state = AT_CMD_OK;
 
 		/* Handle possible socket-level errors */
+
 		if (bytes_read < 0) {
-			LOG_ERR("AT socket recv failed with err %d",
-				bytes_read);
+			if (errno == EHOSTDOWN) {
+				LOG_DBG("AT host is going down, sleeping");
+				atomic_set(&shutdown_mode, 1);
+				close(common_socket_fd);
+				bsdlib_shutdown_wait();
+				LOG_DBG("AT host available, "
+					"starting the thread again");
+				atomic_clear(&shutdown_mode);
+				if (open_socket() != 0) {
+					LOG_ERR("Failed to open AT socket "
+						"after bsdlib init, "
+						"err: %d", errno);
+				}
+
+
+				continue;
+			} else {
+				LOG_ERR("AT socket recv failed with err %d",
+					bytes_read);
+			}
 
 			if ((close(common_socket_fd) == 0) &&
 			    (open_socket() == 0)) {
@@ -297,6 +319,10 @@ int at_cmd_write_with_callback(const char *const cmd,
 	struct cmd_item command;
 	int ret;
 
+	if (atomic_get(&shutdown_mode) == 1) {
+		return -EHOSTDOWN;
+	}
+
 	if (cmd == NULL) {
 		return -EINVAL;
 	}
@@ -327,6 +353,10 @@ int at_cmd_write(const char *const cmd,
 {
 	struct cmd_item command;
 	struct resp_item ret;
+
+	if (atomic_get(&shutdown_mode) == 1) {
+		return -EHOSTDOWN;
+	}
 
 	__ASSERT(k_current_get() != socket_tid,
 		 "at_cmd deadlock: socket thread blocking self\n");

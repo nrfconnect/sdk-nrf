@@ -54,7 +54,7 @@ enum at_cmd_state {
  */
 typedef void (*at_cmd_handler_t)(const char *response);
 
-/**@brief Initialize AT command driver.
+/**@brief Initialize or recover the AT command driver.
  *
  * @return Zero on success, non-zero otherwise.
  */
@@ -82,9 +82,10 @@ int at_cmd_init(void);
  *
  * @retval -ENOBUFS is returned if AT_CMD_RESPONSE_MAX_LEN is not large enough
  *         to hold the data returned from the modem.
- * @retval ENOEXEC is returned if the modem returned ERROR.
+ * @retval -ENOEXEC is returned if the modem returned ERROR.
  * @retval -ENOMEM is returned if allocation of callback worker failed.
  * @retval -EIO is returned if the function failed to send the command.
+ * @retval -EHOSTDOWN is returned if bsdlib is shutdown.
  */
 int at_cmd_write_with_callback(const char *const cmd,
 					  at_cmd_handler_t  handler);
@@ -120,9 +121,10 @@ int at_cmd_write_with_callback(const char *const cmd,
  *
  * @retval -ENOBUFS is returned if AT_CMD_RESPONSE_MAX_LEN is not large enough
  *         to hold the data returned from the modem.
- * @retval ENOEXEC is returned if the modem returned ERROR.
+ * @retval -ENOEXEC is returned if the modem returned ERROR.
  * @retval -EMSGSIZE is returned if the supplied buffer is to small or NULL.
  * @retval -EIO is returned if the function failed to send the command.
+ * @retval -EHOSTDOWN is returned if bsdlib is shutdown.
  *
  */
 int at_cmd_write(const char *const cmd,

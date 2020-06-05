@@ -13,6 +13,7 @@
 #include <net/tls_credentials.h>
 #include <net/download_client.h>
 #include <logging/log.h>
+#include <modem/bsdlib.h>
 
 LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
@@ -160,7 +161,7 @@ static int resolve_and_connect(int family, const char *host,
 	if (err) {
 		LOG_WRN("Failed to resolve hostname %s on %s", log_strdup(host),
 			family == AF_INET ? "IPv4" : "IPv6");
-		return -1;
+		return err;
 	}
 
 	LOG_INF("Attempting to connect over %s",
@@ -457,7 +458,15 @@ restart_and_suspend:
 				/* Restart and suspend */
 				break;
 			}
-			reconnect(dl);
+
+			rc = reconnect(dl);
+			if (rc == -ENETUNREACH) {
+				LOG_WRN("Network is down, "
+					"suspending thread");
+				error_evt_send(dl, ENETUNREACH);
+				break;
+			}
+
 			goto send_again;
 		}
 
@@ -540,12 +549,22 @@ send_again:
 
 		rc = get_request_send(dl);
 		if (rc) {
+			if (errno == EHOSTDOWN) {
+				continue;
+			}
+
 			rc = error_evt_send(dl, ECONNRESET);
 			if (rc) {
 				/* Restart and suspend */
 				break;
 			}
-			reconnect(dl);
+			rc = reconnect(dl);
+			if (rc == ENETUNREACH) {
+				LOG_WRN("Network is down, "
+					"suspending download thread");
+				error_evt_send(dl, ENETUNREACH);
+				break;
+			}
 			goto send_again;
 		}
 	}
@@ -615,6 +634,10 @@ int download_client_connect(struct download_client *client, const char *host,
 	}
 
 	if (client->fd < 0) {
+		if ((client->fd == DNS_EAI_SYSTEM) && (errno == ENETUNREACH)) {
+			return -ENETUNREACH;
+		}
+
 		return -EINVAL;
 	}
 

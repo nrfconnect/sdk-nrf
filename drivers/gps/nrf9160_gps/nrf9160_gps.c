@@ -20,6 +20,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/lte_lc.h>
 #endif
+#include <modem/bsdlib.h>
 
 LOG_MODULE_REGISTER(nrf9160_gps, CONFIG_NRF9160_GPS_LOG_LEVEL);
 
@@ -47,6 +48,7 @@ struct gps_drv_data {
 	struct gps_config current_cfg;
 	atomic_t is_init;
 	atomic_t is_active;
+	atomic_t is_shutdown;
 	int socket;
 	K_THREAD_STACK_MEMBER(thread_stack,
 			      CONFIG_NRF9160_GPS_THREAD_STACK_SIZE);
@@ -198,6 +200,22 @@ static void on_fix(struct device *dev)
 	}
 }
 
+static int open_socket(struct gps_drv_data *drv_data)
+{
+	drv_data->socket = nrf_socket(NRF_AF_LOCAL, NRF_SOCK_DGRAM,
+				      NRF_PROTO_GNSS);
+
+	if (drv_data->socket >= 0) {
+		LOG_DBG("GPS socket created, fd: %d", drv_data->socket);
+	} else {
+		LOG_ERR("Could not initialize socket, error: %d)",
+			errno);
+		return -EIO;
+	}
+
+	return 0;
+}
+
 static void gps_thread(int dev_ptr)
 {
 	struct device *dev = INT_TO_POINTER(dev_ptr);
@@ -226,7 +244,28 @@ wait:
 				goto wait;
 			}
 
-			LOG_ERR("recv() returned error: %d", len);
+			if (errno == EHOSTDOWN) {
+				LOG_DBG("GPS host is going down, sleeping");
+				k_delayed_work_cancel(&drv_data->timeout_work);
+				k_delayed_work_cancel(&drv_data->start_work);
+				atomic_clear(&drv_data->is_active);
+				atomic_set(&drv_data->is_shutdown, 1);
+				nrf_close(drv_data->socket);
+
+				bsdlib_shutdown_wait();
+				if (open_socket(drv_data) != 0) {
+					LOG_ERR("Failed to open socket after "
+						"shutdown sleep, killing thread");
+					return;
+				}
+
+				atomic_clear(&drv_data->is_shutdown);
+				LOG_DBG("GPS host available, going back to "
+					"initialized state");
+				goto wait;
+			} else {
+				LOG_ERR("recv() returned error: %d", len);
+			}
 
 			continue;
 		}
@@ -479,9 +518,18 @@ static int start(struct device *dev, struct gps_config *cfg)
 	struct gps_drv_data *drv_data = dev->driver_data;
 	struct nrf9160_gps_config gps_cfg = { 0 };
 
+	if (atomic_get(&drv_data->is_shutdown) == 1) {
+		return -EHOSTDOWN;
+	}
+
 	if (atomic_get(&drv_data->is_active)) {
 		LOG_WRN("GPS is already active");
 		return -EALREADY;
+	}
+
+	if (atomic_get(&drv_data->is_init) != 1) {
+		LOG_WRN("GPS must be initialized first");
+		return -ENODEV;
 	}
 
 	err = parse_cfg(cfg, &gps_cfg);
@@ -502,12 +550,26 @@ static int start(struct device *dev, struct gps_config *cfg)
 		return -EIO;
 	}
 #endif
+
+set_configuration:
 	retval = nrf_setsockopt(drv_data->socket,
 				NRF_SOL_GNSS,
 				NRF_SO_GNSS_FIX_RETRY,
 				&gps_cfg.retry,
 				sizeof(gps_cfg.retry));
-	if (retval != 0) {
+
+	if ((retval == -1) && ((errno == EFAULT) || (errno == EBADF))) {
+		LOG_WRN("Failed to set fix retry value, "
+			"will try to re-init GPS service");
+
+		nrf_close(drv_data->socket);
+		if (open_socket(drv_data) != 0) {
+			LOG_ERR("Failed to re-init GPS service");
+			return -EIO;
+		}
+
+		goto set_configuration;
+	} else if (retval != 0) {
 		LOG_ERR("Failed to set fix retry value: %d", gps_cfg.retry);
 		return -EIO;
 	}
@@ -676,6 +738,11 @@ static int stop(struct device *dev)
 {
 	int err = 0;
 	struct gps_drv_data *drv_data = dev->driver_data;
+
+	if (atomic_get(&drv_data->is_shutdown) == 1) {
+		return -EHOSTDOWN;
+	}
+
 	k_delayed_work_cancel(&drv_data->timeout_work);
 	k_delayed_work_cancel(&drv_data->start_work);
 
@@ -772,7 +839,7 @@ static int init(struct device *dev, gps_event_handler_t handler)
 	struct gps_drv_data *drv_data = dev->driver_data;
 	int err;
 
-	if (drv_data->is_init) {
+	if (atomic_get(&drv_data->is_init)) {
 		LOG_WRN("GPS is already initialized");
 
 		return -EALREADY;
@@ -786,15 +853,10 @@ static int init(struct device *dev, gps_event_handler_t handler)
 	drv_data->handler = handler;
 
 	if (drv_data->socket < 0) {
-		drv_data->socket = nrf_socket(NRF_AF_LOCAL, NRF_SOCK_DGRAM,
-					  NRF_PROTO_GNSS);
+		int ret = open_socket(drv_data);
 
-		if (drv_data->socket >= 0) {
-			LOG_DBG("GPS socket created, fd: %d", drv_data->socket);
-		} else {
-			LOG_ERR("Could not initialize socket, error: %d)",
-				drv_data->socket);
-			return -EIO;
+		if (ret != 0) {
+			return ret;
 		}
 	}
 
@@ -810,7 +872,7 @@ static int init(struct device *dev, gps_event_handler_t handler)
 		return err;
 	}
 
-	drv_data->is_init = true;
+	atomic_set(&drv_data->is_init, 1);
 
 	return 0;
 }
