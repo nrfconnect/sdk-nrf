@@ -5,7 +5,7 @@ Multi-image builds
 
 In many cases, the firmware that is programmed to a device consists of not only one application, but several separate images, where one of the images (the *parent image*) requires one or more other images (the *child images*) to be present.
 The child image then *chain-loads* (or *boots*) the parent image, which in turn might be a child image to another parent image and boot that one.
-The most common use case for builds consisting of multiple images is an application that requires a bootloader to be present.
+The most common use cases for builds consisting of multiple images are applications that require a bootloader to be present, or applications for multi-core CPUs.
 
 
 When to use multiple images
@@ -23,6 +23,7 @@ Using multiple images has the following advantages:
   This partitioning is often useful for bootloaders.
 * Since there is a symbol table for each image, the same symbol names can exist multiple times in the final firmware.
   This is useful for bootloader images, which might required their own copy of a library that the application uses, but in a different version or configuration.
+* In multi-core builds, the build configuration of a child image in a separate core can be made known to the parent image.
 
 In the |NCS|, multiple images are required in the following scenarios:
 
@@ -46,11 +47,6 @@ nRF5340 support
    nRF5340 contains two separate processors: a network core and an application core.
    When programming applications to the nRF5340 PDK, they must be divided into at least two images, one for each core.
    See :ref:`ug_nrf5340` for more information.
-
-   .. important::
-      Currently, the two images must be built and programmed separately.
-      Multi-image builds are not yet supported for nRF5340.
-
 
 Default configuration
 *********************
@@ -108,6 +104,17 @@ See the following example code:
 In this code, ``add_child_image`` registers the child image with the given name and file path and executes the build scripts of the child image.
 Note that both the child image's application build scripts and the core build scripts are executed.
 The core build scripts might use a different configuration and possibly different DeviceTree settings.
+
+If a child image is to be executed on a different core, you must specify the name space for the child image as *domain* when adding the child image.
+For example:
+
+.. code-block:: cmake
+
+   add_child_image(
+      NAME hci_rpmsg
+      SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
+      DOMAIN nrf5340pdk_nrf5340_cpunet)
+
 
 Adding configuration options
 ============================
