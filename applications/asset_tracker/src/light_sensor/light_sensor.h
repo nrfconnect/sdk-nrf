@@ -65,6 +65,13 @@ void light_sensor_set_send_interval(const u32_t interval_s);
  */
 u32_t light_sensor_get_send_interval(void);
 
+/**
+ * @brief Perform an immediate poll of the light sensor.
+ *
+ * @return 0 if the operation was successful, otherwise a (negative) error code.
+ */
+int light_sensor_poll(void);
+
 #ifdef __cplusplus
 }
 #endif
