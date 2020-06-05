@@ -23,6 +23,14 @@ extern "C" {
 int bsdlib_init(void);
 
 /**
+ * @brief Makes a thread sleep until next time bsdlib_init() is called.
+ *
+ * When bsdlib_shutdown() is called a thread can call this function to be
+ * woken up next time bsdlib_init() is called.
+ */
+void bsdlib_shutdown_wait(void);
+
+/**
  * @brief Get the last return value of bsdlib_init.
  *
  * This function can be used to access the last return value of

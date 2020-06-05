@@ -418,6 +418,8 @@ static int nrf_to_z_dns_error_code(int nrf_error)
 		return DNS_EAI_NONAME;
 	case NRF_EINPROGRESS:
 		return DNS_EAI_INPROGRESS;
+	case NRF_ENETUNREACH:
+		errno = ENETUNREACH;
 	default:
 		return DNS_EAI_SYSTEM;
 	}
