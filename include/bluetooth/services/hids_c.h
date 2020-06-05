@@ -380,6 +380,7 @@ int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
  *
  * @param hids_c HIDS client object.
  * @param rep    Report object.
+ * @param func   Function to be called when operation is completed.
  * @param data   Data to be sent.
  * @param length Data size.
  *
@@ -388,6 +389,7 @@ int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
  */
 int bt_gatt_hids_c_rep_write_wo_rsp(struct bt_gatt_hids_c *hids_c,
 				    struct bt_gatt_hids_c_rep_info *rep,
+				    bt_gatt_hids_c_write_cb func,
 				    const void *data, u8_t length);
 
 /**
