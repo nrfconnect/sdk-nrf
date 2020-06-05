@@ -382,13 +382,15 @@ int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
  * @param rep    Report object.
  * @param data   Data to be sent.
  * @param length Data size.
+ * @param func   Function to be called when operation is completed.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_gatt_hids_c_rep_write_wo_rsp(struct bt_gatt_hids_c *hids_c,
 				    struct bt_gatt_hids_c_rep_info *rep,
-				    const void *data, u8_t length);
+				    const void *data, u8_t length,
+				    bt_gatt_hids_c_write_cb func);
 
 /**
  * @brief Subscribe to report notifications.
