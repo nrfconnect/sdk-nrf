@@ -50,7 +50,7 @@ Each cloud backend has specific setup steps that must be executed before it can 
 Configurations
 **************
 
-The configurations used in the sample are listed below. They are located in ``cloud_client/src/prj.conf``.
+The configurations used in the sample are listed below. They can be added to ``cloud_client/prj.conf``.
 
 
 .. option:: CONFIG_CLOUD_BACKEND
