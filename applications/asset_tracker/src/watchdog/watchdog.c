@@ -37,7 +37,7 @@ static void secondary_feed_worker(struct k_work *work_desc)
 		LOG_ERR("Cannot feed watchdog. Error code: %d", err);
 	} else {
 		k_delayed_work_submit(&wdt_data.system_workqueue_work,
-				      WDT_FEED_WORKER_DELAY_MS);
+				      K_MSEC(WDT_FEED_WORKER_DELAY_MS));
 	}
 }
 
@@ -96,7 +96,7 @@ static int watchdog_feed_enable(struct wdt_data_storage *data)
 	}
 
 	err = k_delayed_work_submit(&data->system_workqueue_work,
-				    WDT_FEED_WORKER_DELAY_MS);
+				    K_MSEC(WDT_FEED_WORKER_DELAY_MS));
 	if (err) {
 		LOG_ERR("Cannot start watchdog feed worker!"
 				" Error code: %d", err);
