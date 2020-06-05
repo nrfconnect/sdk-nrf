@@ -107,6 +107,15 @@ int dfu_target_write(const void *const buf, size_t len);
  **/
 int dfu_target_done(bool successful);
 
+/**
+ * @brief Deinitialize the resources that were needed for the current DFU
+ *	  target if any and resets the current dfu target.
+ *
+ * @return 0 for an successful deinitialization and reset or a negative error
+ *	   code identicating reason of failure.
+ **/
+int dfu_target_reset(void);
+
 #ifdef __cplusplus
 }
 #endif
