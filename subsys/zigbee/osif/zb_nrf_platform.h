@@ -93,6 +93,7 @@ zb_ret_t zigbee_schedule_callback2(zb_callback_t func, zb_uint8_t param,
  */
 zb_ret_t zigbee_schedule_alarm(zb_callback_t func, zb_uint8_t param,
 			       zb_time_t run_after);
+
 /**@brief Cancel previously scheduler alarm.
  *
  * This API cancels alarms scheduled via zigbee_schedule_alarm() API
@@ -109,5 +110,83 @@ zb_ret_t zigbee_schedule_alarm(zb_callback_t func, zb_uint8_t param,
  * @return RET_OK or RET_OVERFLOW
  */
 zb_ret_t zigbee_schedule_alarm_cancel(zb_callback_t func, zb_uint8_t param);
+
+/**@brief Allocate OUT buffer, call a callback when the buffer is available.
+ *
+ * Use default buffer size _func(alloc single standard buffer).
+ * If buffer is available, schedules callback for execution immediately.
+ * If no buffers are available now, schedule callback later,
+ * when buffer will be available.
+ *
+ * This API is thread- and ISR- safe.
+ * It performs all necessary actions:
+ *  - Forwards request from ISR to thread context
+ *  - Schedules the callback in ZBOSS scheduler queue
+ *  - Wakes up the Zigbee task.
+ *
+ * @param func - function to execute.
+ * @return RET_OK or RET_OVERFLOW
+ */
+zb_ret_t zigbee_get_out_buf_delayed(zb_callback_t func);
+
+/**@brief Allocate IN buffer, call a callback when the buffer is available.
+ *
+ * Use default buffer size _func(alloc single standard buffer).
+ * If buffer is available, schedules callback for execution immediately.
+ * If no buffers are available now, schedule callback later,
+ * when buffer will be available.
+ *
+ * This API is thread- and ISR- safe.
+ * It performs all necessary actions:
+ *  - Forwards request from ISR to thread context
+ *  - Schedules the callback in ZBOSS scheduler queue
+ *  - Wakes up the Zigbee task.
+ *
+ * @param func - function to execute.
+ * @return RET_OK or RET_OVERFLOW
+ */
+zb_ret_t zigbee_get_in_buf_delayed(zb_callback_t func);
+
+/**@brief Allocate OUT buffer, call a callback when the buffer is available.
+ *
+ * If buffer is available, schedules callback for execution immediately.
+ * If no buffers are available now, schedule callback later,
+ * when buffer will be available.
+ *
+ * This API is thread- and ISR- safe.
+ * It performs all necessary actions:
+ *  - Forwards request from ISR to thread context
+ *  - Schedules the callback in ZBOSS scheduler queue
+ *  - Wakes up the Zigbee task.
+ *
+ * @param func     function to execute.
+ * @param param    second parameter to pass to the function
+ * @param max_size required maximum buffer payload size (in bytes).
+ *                 It can be bigger or smaller than the default buffer size.
+ *                 Depending on the specific value, the buffer pool may decide
+ *                 to use a fraction of buffer or long buffers.
+ *                 Special value 0 means "single default buffer".
+ * @return RET_OK or RET_OVERFLOW
+ */
+zb_ret_t zigbee_get_out_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
+					zb_uint16_t max_size);
+
+/**@brief Allocate IN buffer, call a callback when the buffer is available.
+ *
+ * If buffer is available, schedules callback for execution immediately.
+ * If no buffers are available now, schedule callback later,
+ * when buffer will be available.
+ *
+ * @param func     function to execute.
+ * @param param    second parameter to pass to the function
+ * @param max_size required maximum buffer payload size (in bytes).
+ *                 It can be bigger or smaller than the default buffer size.
+ *                 Depending on the specific value, the buffer pool may decide
+ *                 to use a fraction of buffer or long buffers.
+ *                 Special value 0 means "single default buffer".
+ * @return RET_OK or error code.
+ */
+zb_ret_t zigbee_get_in_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
+				   zb_uint16_t max_size);
 
 #endif /* ZB_NRF_PLATFORM_H__ */
