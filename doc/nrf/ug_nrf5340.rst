@@ -139,7 +139,18 @@ Depending on the sample, you must program only the application core (for example
    You can use the :ref:`nrf5340_empty_app_core` sample for this purpose.
    For details, see the code in :file:`zephyr/boards/arm/nrf5340pdk_nrf5340/nrf5340_cpunet_reset.c`.
 
-Build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
+To program only the application core, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340pdk_nrf5340_cpuapp`` or ``nrf5340pdk_nrf5340_cpuappns`` as build target.
+
+When programming both the application core and the network core, you can choose whether you want to build and program both images separately or combined as a :ref:`multi-image build <ug_multi_image>`.
+
+In a multi-image build, the image for the application core is the parent image, and the image for the network core is treated as a child image in a separate domain.
+For this to work, the network core image must be explicitly added as a child image to one of the application core images.
+See :ref:`ug_multi_image_defining` for details.
+
+The network sample :ref:`zephyr:bluetooth-hci-rpmsg-sample` is automatically added to all Bluetooth Low Energy samples in the |NCS|.
+When :option:`CONFIG_BT_RPMSG_NRF53` is set to ``y`` (the default), the build system automatically includes the sample as a child image in the ``nrf5340_pdk_nrf5340_cpunet`` core.
+
+If the image in the network core is not added to the application core build, you can build and program both samples separately by following the instructions in :ref:`gs_programming_ses`.
 Make sure to use ``nrf5340pdk_nrf5340_cpunet`` as build target when building the network sample, and ``nrf5340pdk_nrf5340_cpuapp`` or ``nrf5340pdk_nrf5340_cpuappns`` when building the application sample.
 
 
