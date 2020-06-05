@@ -329,11 +329,11 @@ static void handle_config_forward(const struct config_forward_event *event)
 
 	notify_config_forwarded(CONFIG_STATUS_PENDING);
 
-	int err = bt_gatt_hids_c_rep_write(recipient_hidc,
-					   config_rep,
-					   hidc_write_cb,
-					   report,
-					   sizeof(report));
+	int err = bt_gatt_hids_c_rep_write_wo_rsp(recipient_hidc,
+						  config_rep,
+						  hidc_write_cb,
+						  report,
+						  sizeof(report));
 	if (err) {
 		LOG_ERR("Writing report failed, err:%d", err);
 		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
