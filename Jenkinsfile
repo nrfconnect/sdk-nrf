@@ -6,6 +6,7 @@
 // express written agreement with Nordic Semiconductor ASA.
 //
 
+
 @Library("CI_LIB") _
 HashMap CI_STATE = lib_State.getConfig(JOB_NAME)
 properties(lib_State.getTriggers())
