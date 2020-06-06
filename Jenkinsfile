@@ -93,6 +93,7 @@ pipeline {
                   try {
                     sh """ \
                       (source ../zephyr/zephyr-env.sh && \
+                      export && \
                       pip install --user -r ../tools/ci-tools/requirements.txt && \
                       pip install --user pylint && \
                       ../tools/ci-tools/scripts/check_compliance.py $COMPLIANCE_ARGS --commits $COMMIT_RANGE) \
@@ -196,12 +197,19 @@ def generateParallelStage(platform, compiler, JOB_NAME, CI_STATE, SANITYCHECK_OP
           FULL_SANITYCHECK_CMD = """
             export ZEPHYR_TOOLCHAIN_VARIANT='$compiler' && \
             source zephyr/zephyr-env.sh && \
-            pip install --user -r nrf/scripts/requirements-ci.txt && \
             export && \
+            pip install --user -r nrf/scripts/requirements-ci.txt && \
             $SANITYCHECK_CMD
           """
           println "FULL_SANITYCHECK_CMD = " + FULL_SANITYCHECK_CMD
           sh FULL_SANITYCHECK_CMD
+          dir('sanity-out') {
+            JUNIT_PLATFORM_FILE = "sanitycheck-${platform}.xml"
+            sh "mv sanitycheck.xml $JUNIT_PLATFORM_FILE"
+            junit JUNIT_PLATFORM_FILE
+            archiveArtifacts artifacts: JUNIT_PLATFORM_FILE
+            lib_Main.storeArtifacts("sanitycheck-${platform}", JUNIT_PLATFORM_FILE, 'NRF', CI_STATE)
+          }
         }
         cleanWs()
       }
