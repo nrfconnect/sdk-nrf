@@ -34,10 +34,41 @@ enum aws_iot_topic_type {
 	AWS_IOT_SHADOW_TOPIC_DELETE
 };
 
+/**@ AWS broker disconnect results. */
+enum aws_disconnect_result {
+	AWS_IOT_DISCONNECT_USER_REQUEST,
+	AWS_IOT_DISCONNECT_CLOSED_BY_REMOTE,
+	AWS_IOT_DISCONNECT_INVALID_REQUEST,
+	AWS_IOT_DISCONNECT_MISC,
+	AWS_IOT_DISCONNECT_COUNT
+};
+
+/**@brief AWS broker connect results. */
+enum aws_connect_result {
+	AWS_IOT_CONNECT_RES_SUCCESS = 0,
+	AWS_IOT_CONNECT_RES_ERR_NOT_INITD = -1,
+	AWS_IOT_CONNECT_RES_ERR_INVALID_PARAM = -2,
+	AWS_IOT_CONNECT_RES_ERR_NETWORK = -3,
+	AWS_IOT_CONNECT_RES_ERR_BACKEND = -4,
+	AWS_IOT_CONNECT_RES_ERR_MISC = -5,
+	AWS_IOT_CONNECT_RES_ERR_NO_MEM = -6,
+	/* Invalid private key */
+	AWS_IOT_CONNECT_RES_ERR_PRV_KEY = -7,
+	/* Invalid CA or client cert */
+	AWS_IOT_CONNECT_RES_ERR_CERT = -8,
+	/* Other cert issue */
+	AWS_IOT_CONNECT_RES_ERR_CERT_MISC = -9,
+	/* Timeout, SIM card may be out of data */
+	AWS_IOT_CONNECT_RES_ERR_TIMEOUT_NO_DATA = -10,
+	AWS_IOT_CONNECT_RES_ERR_ALREADY_CONNECTED = -11,
+};
+
 /** @brief AWS IoT notification event types, used to signal the application. */
 enum aws_iot_evt_type {
+	/** Connecting to AWS IoT broker. */
+	AWS_IOT_EVT_CONNECTING = 0x1,
 	/** Connected to AWS IoT broker. */
-	AWS_IOT_EVT_CONNECTED = 0x1,
+	AWS_IOT_EVT_CONNECTED,
 	/** AWS IoT broker ready. */
 	AWS_IOT_EVT_READY,
 	/** Disconnected to AWS IoT broker. */
@@ -64,18 +95,6 @@ struct aws_iot_topic_data {
 	size_t len;
 };
 
-/** @brief Struct with data received from AWS IoT broker. */
-struct aws_iot_evt {
-	/** Type of event. */
-	enum aws_iot_evt_type type;
-	/** Pointer to data received from the AWS IoT broker. */
-	char *ptr;
-	/** Length of data. */
-	size_t len;
-	/** Topic the data was received on. **/
-	struct aws_iot_topic_data topic;
-};
-
 /** @brief Structure used to declare a list of application specific topics
  *         passed in by the application.
  */
@@ -87,15 +106,26 @@ struct aws_iot_app_topic_data {
 };
 
 /** @brief AWS IoT transmission data. */
-struct aws_iot_tx_data {
-	/** Topic that the message will be sent to. */
+struct aws_iot_data {
+	/** Topic data is sent/received on. */
 	struct aws_iot_topic_data topic;
-	/** Pointer to message to be sent to AWS IoT broker. */
-	char *str;
-	/** Length of message. */
+	/** Pointer to data sent/received from the AWS IoT broker. */
+	char *ptr;
+	/** Length of data. */
 	size_t len;
 	/** Quality of Service of the message. */
 	enum mqtt_qos qos;
+};
+
+/** @brief Struct with data received from AWS IoT broker. */
+struct aws_iot_evt {
+	/** Type of event. */
+	enum aws_iot_evt_type type;
+	union {
+		struct aws_iot_data msg;
+		int err;
+		bool persistent_session;
+	} data;
 };
 
 /** @brief AWS IoT library asynchronous event handler.
@@ -161,7 +191,7 @@ int aws_iot_disconnect(void);
  *  @return 0 If successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int aws_iot_send(const struct aws_iot_tx_data *const tx_data);
+int aws_iot_send(const struct aws_iot_data *const tx_data);
 
 /** @brief Get data from AWS IoT broker
  *

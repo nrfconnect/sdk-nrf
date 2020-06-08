@@ -13,6 +13,8 @@ The library supports the following technologies:
    For more information regarding AWS FOTA, see the documentation on :ref:`lib_aws_fota` library and :ref:`aws_fota_sample` sample.
    This library and the :ref:`lib_aws_fota` library share common steps related to `AWS IoT console`_ management.
 
+.. _set_up_conn_to_iot:
+
 Setting up a connection to AWS IoT
 **********************************
 
@@ -28,8 +30,11 @@ For more information on creating a thing in AWS IoT and generating the certifica
 .. note::
    The default name used for the *thing* by the AWS IoT library  is ``my-thing``.
 
+.. _flash_certi_device:
+
 Flashing the certificates to the on-board modem of the nRF9160 based board
-**************************************************************************
+==========================================================================
+
 1. `Download nRF Connect for Desktop`_
 #. Update the modem firmware on the on-board modem of the nRF9160 based board to the latest version by following the steps in `Updating the nRF9160 DK cellular modem`_.
 #. Build and program the  :ref:`at_client_sample` sample to the nRF9160 based board as explained in :ref:`gs_programming`.
@@ -41,8 +46,9 @@ Flashing the certificates to the on-board modem of the nRF9160 based board
 .. note::
    The default security tag *16842753* is reserved for the :ref:`lib_nrf_cloud`.
 
+
 Configuring library options
-***************************
+===========================
 To configure the library options, complete the following steps:
 
 1. In the `AWS IoT console`_, navigate to **IoT core** -> **Manage** -> **things** and click on the entry for the *thing*, created during the steps of :ref:`creating_a_thing_in_AWS_IoT`.
@@ -78,6 +84,8 @@ Polling on MQTT socket
 After a successful return of :cpp:func:`aws_iot_connect` function, the MQTT socket must be polled on, in addition to the periodic calls to :cpp:func:`aws_iot_ping` (to keep the connection to the AWS IoT broker alive) and :cpp:func:`aws_iot_input` (to get the data from the AWS IoT broker).
 
 The code section below demonstrates how socket polling can be done in the main application after the :cpp:func:`aws_iot_init` function has been called.
+Connection polling can also be enabled in the AWS IoT backend by setting the configurable option :option:`CONFIG_AWS_IOT_CONNECTION_POLL_THREAD`.
+Note that if this option is enabled, you need not include the following section of code in :file:`main.c`
 
    .. code-block:: c
 
