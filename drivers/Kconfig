@@ -11,11 +11,6 @@ rsource "hw_cc310/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "gps/Kconfig"
-rsource "ieee802154/Kconfig"
-
-if NRF_802154_SL
-rsource "nrf_802154_sl/Kconfig"
-endif
 
 if BT_LL_NRFXLIB
 rsource "bt_ll_nrfxlib/Kconfig"

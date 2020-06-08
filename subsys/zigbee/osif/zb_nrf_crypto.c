@@ -7,13 +7,9 @@
 #include <sys/__assert.h>
 #include <random/rand32.h>
 #include <logging/log.h>
-#include <zboss_api.h>
-#if CONFIG_CRYPTO_NRF_ECB
 #include <crypto/cipher.h>
-#elif CONFIG_BT_CTLR
-#include <bluetooth/crypto.h>
-#endif
 #include "zb_nrf_crypto.h"
+#include <zboss_api.h>
 
 #define ECB_AES_KEY_SIZE   16
 #define ECB_AES_BLOCK_SIZE 16
@@ -24,12 +20,36 @@
 
 LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 
-#if CONFIG_CRYPTO_NRF_ECB
 static struct device *dev;
 
-static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
+void zb_osif_rng_init(void)
+{
+}
+
+zb_uint32_t zb_random_seed(void)
+{
+	zb_uint32_t rnd_val = 0;
+	int err_code;
+
+	err_code = sys_csrand_get(&rnd_val, sizeof(rnd_val));
+	__ASSERT_NO_MSG(err_code == 0);
+	return rnd_val;
+}
+
+void zb_osif_aes_init(void)
+{
+	dev = device_get_binding(CONFIG_CRYPTO_NRF_ECB_DRV_NAME);
+	__ASSERT(dev, "Crypto driver not found");
+}
+
+void zb_osif_aes128_hw_encrypt(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 {
 	int err;
+
+	if (!(c && msg && key)) {
+		__ASSERT(false, "NULL argument passed");
+		return;
+	}
 
 	__ASSERT(dev, "encryption call too early");
 
@@ -59,45 +79,4 @@ static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 
 out:
 	cipher_free_session(dev, &ctx);
-}
-#elif CONFIG_BT_CTLR
-static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
-{
-	int err;
-
-	err = bt_encrypt_be(key, msg, c);
-	__ASSERT(!err, "Encryption failed");
-}
-#endif
-
-void zb_osif_rng_init(void)
-{
-}
-
-zb_uint32_t zb_random_seed(void)
-{
-	zb_uint32_t rnd_val = 0;
-	int err_code;
-
-	err_code = sys_csrand_get(&rnd_val, sizeof(rnd_val));
-	__ASSERT_NO_MSG(err_code == 0);
-	return rnd_val;
-}
-
-void zb_osif_aes_init(void)
-{
-#if CONFIG_CRYPTO_NRF_ECB
-	dev = device_get_binding(CONFIG_CRYPTO_NRF_ECB_DRV_NAME);
-	__ASSERT(dev, "Crypto driver not found");
-#endif
-}
-
-void zb_osif_aes128_hw_encrypt(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
-{
-	if (!(c && msg && key)) {
-		__ASSERT(false, "NULL argument passed");
-		return;
-	}
-
-	encrypt_aes(key, msg, c);
 }

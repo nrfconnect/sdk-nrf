@@ -18,34 +18,6 @@ This sample has Commissioner, Joiner, and Border Router roles enabled by default
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample to be able to test communication.
 
-.. _ot_cli_sample_radio:
-
-Additional radio features for CLI sample
-========================================
-
-The Thread CLI sample supports additional radio features:
-
-* Power Amplifier and Low Noise Amplifier Front-End Module (PA/LNA FEM).
-* Antenna diversity FEM feature.
-* Packet Traffic Arbiter (PTA) for systems with multiple radio modules.
-
-For more details about each of those features refer to :ref:`ug_thread`.
-
-.. _ot_cli_sample_radio_enabling:
-
-Enabling additional radio features
-----------------------------------
-
-To enable additional radio features for the CLI sample, modify :makevar:`CONF_FILE` by applying proper configuration files before `Building and running`_ the sample.
-
-Three configuration overlay files are provided in the sample, one for each feature:
-
-* :file:`overlay-ant_div.conf` - Enables support for the antenna diversity FEM feature in automated RX mode.
-* :file:`overlay-pa_lna.conf` - Enables support for PA/LNA FEM feature.
-* :file:`overlay-wifi_coex.conf` - Enables support for PTA for systems with multiple radio modules.
-
-For more information about using configuration overlay files, see :ref:`important-build-vars` in the Zephyr documentation.
-
 Requirements
 ************
 

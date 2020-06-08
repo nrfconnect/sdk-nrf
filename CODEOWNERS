@@ -35,8 +35,6 @@ Kconfig*                                  @tejlmand
 # All subfolders
 /drivers/                                 @anangl
 /drivers/bt_ll_nrfxlib/                   @anangl @rugeGerritsen
-/drivers/ieee802154/                      @rlubos @hubertmis
-/drivers/nrf_802154_sl/                   @hubertmis
 /dts/                                     @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos @pizi-nordic
