@@ -77,6 +77,7 @@ Requirements
 
 * Two of the following nRF52-series development kit boards:
 
+  * |nRF5340DK|
   * |nRF52DK|
   * |nRF52840DK|
   * Other boards running BLE Controller variants that support LLPM (see :ref:`nrfxlib:ble_controller` Proprietary feature support)
