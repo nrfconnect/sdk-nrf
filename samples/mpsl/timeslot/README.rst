@@ -24,8 +24,9 @@ Requirements
 
 * One of the nRF52 development boards. The sample has been tested on:
 
-  * nRF52 Development Kit (PCA10040)
-  * nRF52840 Development Kit (PCA10056)
+  * |nRF5340DK|
+  * |nRF52DK|
+  * |nRF52840DK|
 
 Building and Running
 ********************
