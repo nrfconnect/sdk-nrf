@@ -163,7 +163,7 @@ static int time_NTP_server_get(void)
 
 	for (int i = 0; i < ARRAY_SIZE(servers); i++) {
 		err =  sntp_time_request(&servers[i],
-			K_SECONDS(CONFIG_DATE_TIME_NTP_QUERY_TIME_SECONDS),
+			MSEC_PER_SEC * CONFIG_DATE_TIME_NTP_QUERY_TIME_SECONDS,
 			&sntp_time);
 		if (err) {
 			LOG_DBG("Not getting time from NTP server %s, error %d",
