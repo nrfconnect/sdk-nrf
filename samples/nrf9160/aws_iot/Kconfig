@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "AWS IoT Sample Settings"
+
+config APP_VERSION
+	string "Application version"
+	default "v1.0.0"
+
+config PUBLICATION_INTERVAL_SECONDS
+	int "Interval in seconds that the sample will publish data"
+	default 60
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
