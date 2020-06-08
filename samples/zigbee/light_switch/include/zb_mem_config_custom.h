@@ -23,9 +23,8 @@
 #define ZB_CONFIG_APPLICATION_SIMPLE
 
 /**
- * The below section is for advanced users.
- * Before modifying any values, please make sure you fully understand the
- * impact, for example by reading zb_mem_config_common.h
+ * Now common logic derives numerical parameters from the defined
+ * configuration.
  */
 #include "zb_mem_config_common.h"
 

@@ -20,22 +20,9 @@
 #include <zb_nrf_platform.h>
 #include "zb_mem_config_custom.h"
 
-#if CONFIG_NUS_CMD
-#include "nus_cmd.h"
 
-/* LED which indicates that Central is connected */
-#define NUS_STATUS_LED            DK_LED1
-/* UART command that will turn on found light bulb(s). */
-#define COMMAND_ON                "n"
-/**< UART command that will turn off found light bulb(s). */
-#define COMMAND_OFF               "f"
-/**< UART command that will turn toggle found light bulb(s). */
-#define COMMAND_TOGGLE            "t"
-/**< UART command that will increase brightness of found light bulb(s). */
-#define COMMAND_INCREASE          "i"
-/**< UART command that will decrease brightness of found light bulb(s). */
-#define COMMAND_DECREASE          "d"
-#endif
+#define RUN_STATUS_LED             DK_LED1
+#define RUN_LED_BLINK_INTERVAL     K_MSEC(1000)
 
 /* Source endpoint used to control light bulb. */
 #define LIGHT_SWITCH_ENDPOINT      1
@@ -191,7 +178,7 @@ static void button_handler(u32_t button_state, u32_t has_changed)
 		    == ZB_FALSE) {
 			/* Allocate output buffer and send on/off command. */
 			zb_err_code = zb_buf_get_out_delayed_ext(
-				light_switch_send_on_off, on_off, 0);
+					   light_switch_send_on_off, on_off, 0);
 			ZB_ERROR_CHECK(zb_err_code);
 		}
 	}
@@ -219,9 +206,12 @@ static void configure_gpio(void)
  *                       used to construct on/off request.
  * @param[in]   on_off   Requested state of the light bulb.
  */
-static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t cmd_id)
+static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t on_off)
 {
-	LOG_INF("Send ON/OFF command: %d", cmd_id);
+	u8_t cmd_id = on_off ? ZB_ZCL_CMD_ON_OFF_ON_ID
+			     : ZB_ZCL_CMD_ON_OFF_OFF_ID;
+
+	LOG_INF("Send ON/OFF command: %d", on_off);
 
 	ZB_ZCL_ON_OFF_SEND_REQ(bufid,
 			       device_ctx.bulb_params.short_addr,
@@ -238,11 +228,15 @@ static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t cmd_id)
  *
  * @param[in]   bufid        Non-zero reference to Zigbee stack buffer that
  *                           will be used to construct step request.
- * @param[in]   cmd_id       ZCL command id.
+ * @param[in]   is_step_up   Boolean parameter selecting direction
+ *                           of step change.
  */
-static void light_switch_send_step(zb_bufid_t bufid, zb_uint16_t cmd_id)
+static void light_switch_send_step(zb_bufid_t bufid, zb_uint16_t is_step_up)
 {
-	LOG_INF("Send step level command: %d", cmd_id);
+	u8_t step_dir = is_step_up ? ZB_ZCL_LEVEL_CONTROL_STEP_MODE_UP :
+				     ZB_ZCL_LEVEL_CONTROL_STEP_MODE_DOWN;
+
+	LOG_INF("Send step level command: %d", is_step_up);
 
 	ZB_ZCL_LEVEL_CONTROL_SEND_STEP_REQ(bufid,
 					   device_ctx.bulb_params.short_addr,
@@ -252,7 +246,7 @@ static void light_switch_send_step(zb_bufid_t bufid, zb_uint16_t cmd_id)
 					   ZB_AF_HA_PROFILE_ID,
 					   ZB_ZCL_DISABLE_DEFAULT_RESPONSE,
 					   NULL,
-					   cmd_id,
+					   step_dir,
 					   DIMM_STEP,
 					   DIMM_TRANSACTION_TIME);
 }
@@ -292,7 +286,7 @@ static void find_light_bulb_cb(zb_bufid_t bufid)
 			device_ctx.bulb_params.endpoint);
 
 		zb_ret_t zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
-			find_light_bulb_timeout, ZB_ALARM_ANY_PARAM);
+				   find_light_bulb_timeout, ZB_ALARM_ANY_PARAM);
 		ZB_ERROR_CHECK(zb_err_code);
 
 		dk_set_led_on(BULB_FOUND_LED);
@@ -366,25 +360,19 @@ static void find_light_bulb_timeout(zb_bufid_t bufid)
 static void light_switch_button_handler(zb_uint8_t button)
 {
 	zb_ret_t zb_err_code;
-	zb_uint16_t cmd_id;
+	zb_bool_t on_off;
 
 	if (dk_get_buttons() & button) {
 		atomic_set(&device_ctx.button.long_poll, ZB_TRUE);
-		if (button == BUTTON_ON) {
-			cmd_id = ZB_ZCL_LEVEL_CONTROL_STEP_MODE_UP;
-		} else {
-			cmd_id = ZB_ZCL_LEVEL_CONTROL_STEP_MODE_DOWN;
-		}
+		on_off = (button == BUTTON_ON) ? ZB_TRUE : ZB_FALSE;
 
 		/* Allocate output buffer and send step command. */
 		zb_err_code = zb_buf_get_out_delayed_ext(light_switch_send_step,
-							 cmd_id,
-							 0);
+							 on_off, 0);
 		ZB_ERROR_CHECK(zb_err_code);
 
 		zb_err_code = zigbee_schedule_alarm(light_switch_button_handler,
-						    button,
-						    BUTTON_LONG_POLL_TMO);
+						  button, BUTTON_LONG_POLL_TMO);
 		if (zb_err_code == RET_OVERFLOW) {
 			LOG_WRN("Can't schedule another alarm, queue is full.");
 			atomic_set(&device_ctx.button.in_progress, ZB_FALSE);
@@ -413,7 +401,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 
 	switch (sig) {
 	case ZB_BDB_SIGNAL_DEVICE_REBOOT:
-	/* fall-through */
+		/* fall-through */
 	case ZB_BDB_SIGNAL_STEERING:
 		/* Call default signal handler. */
 		ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
@@ -421,12 +409,12 @@ void zboss_signal_handler(zb_bufid_t bufid)
 			/* Check the light device address */
 			if (device_ctx.bulb_params.short_addr == 0xFFFF) {
 				zb_err_code = zigbee_schedule_alarm(
-					find_light_bulb, bufid,
-					MATCH_DESC_REQ_START_DELAY);
+						    find_light_bulb, bufid,
+						    MATCH_DESC_REQ_START_DELAY);
 				ZB_ERROR_CHECK(zb_err_code);
 				zb_err_code = zigbee_schedule_alarm(
-					find_light_bulb_timeout, 0,
-					MATCH_DESC_REQ_TIMEOUT);
+						find_light_bulb_timeout, 0,
+						MATCH_DESC_REQ_TIMEOUT);
 				ZB_ERROR_CHECK(zb_err_code);
 				/* Do not free buffer - it will be reused by
 				 * find_light_bulb callback.
@@ -446,74 +434,17 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	}
 }
 
-#if CONFIG_NUS_CMD
-
-static void turn_on_cmd(struct k_work *item)
-{
-	ARG_UNUSED(item);
-	zb_buf_get_out_delayed_ext(light_switch_send_on_off,
-				   ZB_ZCL_CMD_ON_OFF_ON_ID, 0);
-}
-
-static void turn_off_cmd(struct k_work *item)
-{
-	ARG_UNUSED(item);
-	zb_buf_get_out_delayed_ext(light_switch_send_on_off,
-				   ZB_ZCL_CMD_ON_OFF_OFF_ID, 0);
-}
-
-static void toggle_cmd(struct k_work *item)
-{
-	ARG_UNUSED(item);
-	zb_buf_get_out_delayed_ext(light_switch_send_on_off,
-				   ZB_ZCL_CMD_ON_OFF_TOGGLE_ID, 0);
-}
-
-static void increase_cmd(struct k_work *item)
-{
-	ARG_UNUSED(item);
-	zb_buf_get_out_delayed_ext(light_switch_send_step,
-				   ZB_ZCL_LEVEL_CONTROL_STEP_MODE_UP, 0);
-}
-
-static void decrease_cmd(struct k_work *item)
-{
-	ARG_UNUSED(item);
-	zb_buf_get_out_delayed_ext(light_switch_send_step,
-				   ZB_ZCL_LEVEL_CONTROL_STEP_MODE_DOWN, 0);
-}
-
-static void on_nus_connect(struct k_work *item)
-{
-	ARG_UNUSED(item);
-	dk_set_led_on(NUS_STATUS_LED);
-}
-
-static void on_nus_disconnect(struct k_work *item)
-{
-	ARG_UNUSED(item);
-	dk_set_led_off(NUS_STATUS_LED);
-}
-
-static struct nus_entry commands[] = {
-	NUS_COMMAND(COMMAND_ON, turn_on_cmd),
-	NUS_COMMAND(COMMAND_OFF, turn_off_cmd),
-	NUS_COMMAND(COMMAND_TOGGLE, toggle_cmd),
-	NUS_COMMAND(COMMAND_INCREASE, increase_cmd),
-	NUS_COMMAND(COMMAND_DECREASE, decrease_cmd),
-	NUS_COMMAND(NULL, NULL),
-};
-
-#endif
-
 void main(void)
 {
+	int blink_status = 0;
+
 	LOG_INF("Starting ZBOSS Light Switch example");
 
 	/* Initialize. */
 	configure_gpio();
 
 	zigbee_erase_persistent_storage(ERASE_PERSISTENT_CONFIG);
+
 	zb_set_ed_timeout(ED_AGING_TIMEOUT_64MIN);
 	zb_set_keepalive_timeout(ZB_MILLISECONDS_TO_BEACON_INTERVAL(3000));
 
@@ -541,14 +472,10 @@ void main(void)
 	/* Start Zigbee default thread */
 	zigbee_enable();
 
-#if CONFIG_NUS_CMD
-	/* Initalize NUS command service */
-	nus_cmd_init(on_nus_connect, on_nus_disconnect, commands);
-#endif
-
 	LOG_INF("ZBOSS Light Switch example started");
 
 	while (1) {
-		k_sleep(K_FOREVER);
+		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
+		k_sleep(RUN_LED_BLINK_INTERVAL);
 	}
 }

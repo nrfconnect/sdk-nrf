@@ -11,11 +11,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project("Light Switch")
 
 # NORDIC SDK APP START
-target_sources(
-  app PRIVATE src/main.c
-)
-target_sources_ifdef(CONFIG_NUS_CMD
-  app PRIVATE src/nus_cmd.c
+target_sources(app PRIVATE
+  src/main.c
 )
 target_include_directories(app PRIVATE include)
 # NORDIC SDK APP END

@@ -47,10 +47,6 @@ Zigbee requires the following modules to properly operate in |NCS|:
   OSIF implements a series of functions used by ZBOSS and is included in the |NCS|'s Zigbee subsystem.
   The files that handle the OSIF integration are located in :file:`nrf/subsys/zigbee/osif`.
 * :ref:`zephyr:ieee802154_interface` radio driver - This library is automatically enabled when working with Zigbee on Nordic Semiconductor's Development Kits.
-  Its advanced features are implemented through :ref:`nrfxlib:nrf_802154_sl` in `nrfxlib`_.
-
-  .. note::
-        You can enable different :ref:`radio antenna options <zigbee_ug_radio_options>` for samples.
 
 .. _zigbee_ug_configuration:
 
@@ -175,15 +171,6 @@ For each of the modules, you can set the following logging options:
 * ``LOG_LEVEL_DBG`` - Enables logging for debug messages, informational messages, errors, and warnings.
 
 For example, setting :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF` will enable logging of informational messages, errors, and warnings for the ZBOSS Trace module.
-
-.. _zigbee_ug_radio_options:
-
-Radio antenna options
-=====================
-
-.. include:: ug_thread.rst
-    :start-after: ug_thread_radio_start
-    :end-before: ug_thread_radio_end
 
 .. _zigbee_ug_available:
 
