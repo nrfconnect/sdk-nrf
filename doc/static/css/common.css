@@ -83,6 +83,8 @@ div.figure {
 .rst-content dl.group > dt, .rst-content dl.group > dd > p,
 /* hide the #include line for every class (aka struct) and union */
 .rst-content dl.class > dd > em, .rst-content dl.union > dd > em,
+/* hide <ul> inside description blocks */
+.rst-content dl.group > dd > ul,
 /* hide "Public Members"/"Defines"/etc heading for structs */
 .rst-content dl.class p.breathe-sectiondef-title {
    display:none !important;
