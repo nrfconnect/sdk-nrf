@@ -118,6 +118,11 @@ static int download_client_callback(const struct download_client_evt *event)
 				       event->fragment.len);
 		if (err != 0) {
 			LOG_ERR("dfu_target_write error %d", err);
+			int res = dfu_target_done(false);
+
+			if (res != 0) {
+				LOG_ERR("Unable to free DFU target resources");
+			}
 			(void) download_client_disconnect(&dlc);
 			send_evt(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
