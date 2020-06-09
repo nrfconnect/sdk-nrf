@@ -46,11 +46,13 @@ It can be turned on at runtime by setting the appropriate option in the :file:`C
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following nRF9160-based device:
 
-  * |Thingy91|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set10_start
+   :end-before: set10_end
 
-* A USB host which can communicate with CDC ACM devices, such as a Windows or Linux PC
+The sample also requires a USB host which can communicate with CDC ACM devices, such as a Windows or Linux PC.
 
 
 Building and running
