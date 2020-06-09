@@ -21,15 +21,12 @@ extern "C" {
 
 /** Function for validating firmware.
  *
- * @details This will run a series of checks on the fw_info contents, then
- *          locate the validation info and check the signature of the image.
+ * @details This will run a series of checks on the @p fw_src_address contents,
+ *          then locate the validation info and check the signature of the
+ *          image.
  *
- * @note If this function returns false, the fw_info struct can be invalidated
- *       by modifying its 'valid' field, causing any subsequent call to this
- *       function to quickly return false.
- *
- * @param[in] fw_address  Address the firmware is currently at.
- * @param[in] fwinfo      Firmware info structure belonging to the image.
+ * @param[in] fw_dst_address  Address where the firmware will be written.
+ * @param[in] fw_src_address  Address of the firmware to be validated.
  *
  * @retval  true   if the image is valid
  * @retval  false  if the image is invalid

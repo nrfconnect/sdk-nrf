@@ -106,7 +106,7 @@ extern "C" {
  *
  *  @param _gp GATT service object with dynamic attribute allocation.
  *  @param _ccc CCC descriptor configuration.
- *  @param _cb CCC descriptor callback.
+ *  @param _ccc_changed CCC value changed callback.
  *  @param _perm CCC descriptor permissions.
  */
 #define BT_GATT_POOL_CCC(_gp, _ccc, _ccc_changed, _perm)                       \
@@ -147,10 +147,9 @@ int bt_gatt_pool_svc_alloc(struct bt_gatt_pool *gp,
 
 /** @brief Take a characteristic descriptor from the pool.
  *
- *  @param gp   GATT service object with dynamic attribute allocation.
- *  @param _chrc_uuid Characteristic UUID.
- *  @param _char_props Properties of the characteristic.
- *  @param _attr Characteristic value attribute.
+ *  @param gp    GATT service object with dynamic attribute allocation.
+ *  @param props Properties of the characteristic.
+ *  @param attr  Characteristic value attribute.
  *
  *  @return 0 or a negative error code.
  */

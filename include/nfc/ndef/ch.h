@@ -185,7 +185,7 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  *                           Connection Handover specification.
  * @param[in] _minor_version Minor version number of the supported
  *                           Connection Handover specification.
- * @param[in] _max_record Maximum number of local records.
+ * @param[in] _max_records Maximum number of local records.
  */
 #define NFC_NDEF_CH_RECORD_DESC_DEF(_name,			         \
 				    _rec_type_field,		         \
@@ -224,7 +224,7 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  *                           Connection Handover specification.
  * @param[in] _minor_version Minor version number of the supported
  *                           Connection Handover specification.
- * @param[in] _max_record Maximum number of local records
+ * @param[in] _max_records Maximum number of local records
  *                      struct  (ac records plus optional err record).
  */
 #define NFC_NDEF_CH_HS_RECORD_DESC_DEF(_name,			   \
@@ -254,7 +254,7 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  *                           Connection Handover specification.
  * @param[in] _minor_version Minor version number of the supported
  *                           Connection Handover specification.
- * @param[in] _max_record Maximum number of local records
+ * @param[in] _max_records Maximum number of local records
  *                        (cr record plus ac records).
  */
 #define NFC_NDEF_CH_HR_RECORD_DESC_DEF(_name,			   \
@@ -284,7 +284,7 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  *                           Connection Handover specification.
  * @param[in] _minor_version Minor version number of the supported
  *                           Connection Handover specification.
- * @param[in] _max_record Maximum number of local records
+ * @param[in] _max_records Maximum number of local records
  *                        (ac records).
  */
 #define NFC_NDEF_CH_HM_RECORD_DESC_DEF(_name,                      \
@@ -312,7 +312,7 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  *                           Connection Handover specification.
  * @param[in] _minor_version Minor version number of the supported
  *                           Connection Handover specification.
- * @param[in] _max_record Maximum number of local records (ac records).
+ * @param[in] _max_records Maximum number of local records (ac records).
  */
 #define NFC_NDEF_CH_HI_RECORD_DESC_DEF(_name,			   \
 				       _major_version,		   \
@@ -386,13 +386,9 @@ int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
  * NDEF Connection Handover record descriptor instance.
  *
  * @param[in] _name Name of the created record descriptor instance.
- * @param[in] _rec_type_field The NFC Forum Well Known Type
- *                            Handover Connection record type.
- * @param[in] _major_version Major version number of the supported
- *                           Connection Handover specification.
- * @param[in] _minor_version Minor version number of the supported
- *                           Connection Handover specification.
- * @param[in] _max_record Maximum number of local records.
+ * @param[in] _payload_id ID of the payload.
+ * @param[in] _payload_id_length Length of the payload.
+ * @param[in] _payload_desc Description of the payload.
  */
 #define NFC_NDEF_CH_HC_RECORD_DESC_DEF(_name,				    \
 				       _payload_id,			    \

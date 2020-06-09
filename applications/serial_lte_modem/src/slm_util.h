@@ -47,8 +47,8 @@ bool slm_util_cmd_casecmp(const char *cmd, const char *slm_cmd);
 /**
  * @brief Detect hexdecimal data type
  *
- * @param hex[in] Hex arrary to be encoded
- * @param hex_len[in] Length of hex array
+ * @param[in] hex Hex arrary to be encoded
+ * @param[in] hex_len Length of hex array
  *
  * @return true if the input is hexdecimal array, otherwise false
  */
@@ -57,10 +57,10 @@ bool slm_util_hex_check(const u8_t *hex, u16_t hex_len);
 /**
  * @brief Encode hex array to hexdecimal string (ASCII text)
  *
- * @param hex[in] Hex arrary to be encoded
- * @param hex_len[in] Length of hex array
- * @param ascii[out] encoded hexdecimal string
- * @param ascii_len[in] reserved buffer size
+ * @param[in]  hex Hex arrary to be encoded
+ * @param[in]  hex_len Length of hex array
+ * @param[out] ascii encoded hexdecimal string
+ * @param[in]  ascii_len reserved buffer size
  *
  * @return actual size of ascii string if the operation was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -71,10 +71,10 @@ int slm_util_htoa(const u8_t *hex, u16_t hex_len,
 /**
  * @brief Decode hexdecimal string (ASCII text) to hex array
  *
- * @param ascii[in] encoded hexdecimal string
- * @param ascii_len[in] size of hexdecimal string
- * @param hex[out] decoded hex arrary
- * @param hex_len[in] reserved size of hex array
+ * @param[in]  ascii encoded hexdecimal string
+ * @param[in]  ascii_len size of hexdecimal string
+ * @param[out] hex decoded hex arrary
+ * @param[in]  hex_len reserved size of hex array
  *
  * @return actual size of hex array if the operation was successful.
  *           Otherwise, a (negative) error code is returned.

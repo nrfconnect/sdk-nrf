@@ -221,8 +221,8 @@ typedef void (*ftp_client_callback_t)(const u8_t *msg, u16_t len);
 
 /**@brief Initialize the FTP client library.
  *
- * @param callback ctrl_callback for FTP command result.
- * @param callback data_callback for FTP received data.
+ * @param ctrl_callback Callback for FTP command result.
+ * @param data_callback Callback for FTP received data.
  *
  * @retval 0 If successfully initialized.
  *           Otherwise, a negative value is returned.

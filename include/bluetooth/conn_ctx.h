@@ -148,7 +148,6 @@ void *bt_conn_ctx_get(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn);
  * @ref bt_conn_ctx_release to ensure proper operation.
  *
  * @param ctx_lib	Bluetooth connection context library instance.
- * @param conn		Bluetooth connection.
  * @param id		Connection context index.
  *
  * @return Pointer to the @ref bt_conn_ctx struct if the operation
