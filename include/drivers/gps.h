@@ -176,7 +176,7 @@ struct gps_event {
 };
 
 /**
- * @typedef gps_evt_handler_t
+ * @typedef gps_event_handler_t
  * @brief Callback API on GPS event
  *
  * @param dev Pointer to GPS device
@@ -202,7 +202,7 @@ typedef int (*gps_start_t)(struct device *dev, struct gps_config *cfg);
 typedef int (*gps_stop_t)(struct device *dev);
 
 /**
- * @typedef gps_write_t
+ * @typedef gps_agps_write_t
  * @brief Callback API for writing to A-GPS data to GPS module.
  *
  * See gps_write() for argument description
@@ -290,6 +290,7 @@ static inline int gps_stop(struct device *dev)
  * @param dev Pointer to GPS device
  * @param type A-GPS data type
  * @param data Pointer to A-GPS data
+ * @param data_len Length of @p data
  *
  * @return Zero on success or (negative) error code otherwise.
  */

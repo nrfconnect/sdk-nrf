@@ -29,7 +29,7 @@ int hexstr2hex(const char *in,
  *        String shall be '\0' terminated.
  *        Newline characters are not included in the count.
  *        Example: "+CEREG: 1" -> 9
- *                 "+CEREG: 1\r\n" -> 9
+ *                 "+CEREG: 1\\r\\n" -> 9
  *
  * @param[in]   buf       String buffer
  * @param[in]   buf_len   Input buffer length

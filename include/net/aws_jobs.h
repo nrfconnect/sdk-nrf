@@ -240,6 +240,7 @@ int aws_jobs_unsubscribe_topic_update(struct mqtt_client *const client,
  *                             incremented by 1 for every update.
  * @param[in] client_token     This can be an arbitrary value and will be
  *                             reflected in the response to the update.
+ * @param[out] topic_buf       Buffer to store the topic in.
  *
  * @retval 0       If the update is published successfully, otherwise return
  *                 mqtt_publish error code or the error code of snprintf.

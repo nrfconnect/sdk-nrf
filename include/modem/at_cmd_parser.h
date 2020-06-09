@@ -8,7 +8,6 @@
  * @file at_cmd_parser.h
  *
  * @defgroup at_cmd_parser AT command parser
- * @ingroup at_cmd_parser
  * @{
  * @brief Basic parser for AT commands.
  */
@@ -42,7 +41,7 @@ extern "C" {
  * @param at_params_str    AT parameters as a null-terminated string. Can be
  *                         numeric or string parameters.
  *
- * @next_param_str         In the case a string contains multiple notifications,
+ * @param next_param_str   In the case a string contains multiple notifications,
  *                         the parser will stop parsing when it is done parsing
  *                         the first notification, and return the remainder of
  *                         the string in this pointer. The return code will be
@@ -57,7 +56,7 @@ extern "C" {
  *
  * @retval 0 If the operation was successful.
  * @retval -EAGAIN New notification detected in string re-run the parser
- *                 with the string pointed to by next_param_str.
+ *                 with the string pointed to by @p next_param_str.
  * @retval -E2BIG  The at_param_list supplied cannot hold all detected
  *                 parameters in string. The list will contain the maximum
  *                 number of parameters possible.
@@ -82,23 +81,23 @@ int at_parser_max_params_from_str(const char *at_params_str,
  * If an error is returned by the parser, the content of @p list should be
  * ignored.
  *
- * @param at_params_str AT parameters as a null-terminated string. Can be
- *                      numeric or string parameters.
+ * @param at_params_str  AT parameters as a null-terminated string. Can be
+ *                       numeric or string parameters.
  *
- * @next_param_str      In the case a string contains multiple notifications,
- *                      the parser will stop parsing when it is done parsing
- *                      the first notification, and return the remainder of
- *                      the string in this pointer. The return code will be
- *                      EAGAIN. If multinotification is not used, this
- *                      pointer can be set to NULL.
+ * @param next_param_str In the case a string contains multiple notifications,
+ *                       the parser will stop parsing when it is done parsing
+ *                       the first notification, and return the remainder of
+ *                       the string in this pointer. The return code will be
+ *                       EAGAIN. If multinotification is not used, this
+ *                       pointer can be set to NULL.
  *
- * @param list          Pointer to an initialized list where parameters
- *                      are stored. Must not be NULL.
+ * @param list           Pointer to an initialized list where parameters
+ *                       are stored. Must not be NULL.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  * @retval -EAGAIN New notification detected in string re-run the parser
- *                 with the string pointed to by next_param_str.
+ *                 with the string pointed to by @p next_param_str.
  * @retval -E2BIG  The at_param_list supplied cannot hold all detected
  *                 parameters in string. The list will contain the maximum
  *                 number of parameters possible.

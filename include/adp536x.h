@@ -193,4 +193,6 @@ int adp536x_oc_chg_current_set(u8_t value);
  */
 int adp536x_buck_discharge_set(bool enable);
 
+/** @} */
+
 #endif /* ADP536X_H_ */

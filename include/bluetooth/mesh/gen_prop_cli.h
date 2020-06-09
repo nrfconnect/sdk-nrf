@@ -160,7 +160,7 @@ int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
 
 /** @brief Set a property value in a User Property Server.
  *
- * @copydetails bt_mesH_prop_cli_user_prop_set_unack
+ * @copydetails bt_mesh_prop_cli_user_prop_set_unack
  *
  * This call is blocking if the @p rsp buffer is non-NULL. Otherwise, this
  * function will return, and the response will be passed to the

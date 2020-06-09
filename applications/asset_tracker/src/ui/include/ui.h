@@ -223,6 +223,7 @@ int ui_nmos_write(size_t nmos_idx, u8_t value);
 /**
  * @brief Control NMOS with PWM signal.
  *
+ * @param nmos_idx	NMOS to control.
  * @param period	PWM signal period in microseconds.
  * @param pulse	PWM signal Pulse in microseconds.
  *

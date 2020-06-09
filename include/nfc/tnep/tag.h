@@ -98,9 +98,9 @@ struct nfc_tnep_tag_service {
  * @param[in] _deselect_cb Callback function, called by protocol library when
  *                         service is deselected by the Reader/Writer.
  * @param[in] _message_cb Callback function, called by protocol library when
- *                         new message is received from the Reader/Writer.
- * @parami[in] _error_cb Callback function, called by protocol library when
- *                       an internal error occurred.
+ *                        new message is received from the Reader/Writer.
+ * @param[in] _error_cb Callback function, called by protocol library when
+ *                      an internal error occurred.
  */
 #define NFC_TNEP_TAG_SERVICE_DEF(_name, _uri, _uri_length,                  \
 				 _mode, _t_wait, _n_wait,                   \
@@ -228,7 +228,7 @@ void nfc_tnep_tag_rx_msg_indicate(const u8_t *rx_buffer, size_t len);
  * selection to set service application data and use it also
  * during service data exchange with the NFC Polling Device.
  * To indicate that application has no more data use
- * @nfc_tnep_tag_tx_msg_no_app_data.
+ * nfc_tnep_tag_tx_msg_no_app_data().
  *
  * @param[in] record Pointer to application data records.
  * @param[in] cnt Records count.

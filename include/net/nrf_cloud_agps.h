@@ -9,7 +9,6 @@
 
 /** @file nrf_cloud_agps.h
  * @brief Module to provide nRF Cloud A-GPS support to nRF9160 SiP.
- * @{
  */
 
 #include <zephyr.h>
@@ -50,10 +49,10 @@ int nrf_cloud_agps_request_all(void);
  */
 int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket);
 
+/** @} */
+
 #ifdef __cplusplus
 }
 #endif
-
-/** @} */
 
 #endif /* NRF_CLOUD_AGPS_H_ */
