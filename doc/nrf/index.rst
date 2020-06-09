@@ -36,3 +36,5 @@ Documentation for different versions of the |NCS| is available at the following 
    scripts
 
 ..   cheat_sheet
+
+..   sample_boardnames.txt

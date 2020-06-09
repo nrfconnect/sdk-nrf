@@ -214,6 +214,8 @@
 
 .. _`ISO/IEC 7816-4`: https://www.iso.org/standard/54550.html
 
+.. _`BH1749NUC-E`: https://www.rohm.com/datasheet/BH1749NUC/bh1749nuc-e
+
 .. ### Links to Bluetooth specs
 
 .. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification

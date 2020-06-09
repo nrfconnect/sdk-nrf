@@ -90,12 +90,13 @@ Request Power Saving Mode (PSM)
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-    * |nRF9160DK|
-    * |Thingy91|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set6_start
+   :end-before: set6_end
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 .. _asset_tracker_user_interface:
 

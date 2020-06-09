@@ -32,10 +32,11 @@ The identification strings for the different cloud backends are listed in the fo
 Requirements
 ************
 
-* One of the following development kits:
+The sample supports the following development kits:
 
- * |Thingy91|
- * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set6_start
+   :end-before: set6_end
 
 Setup
 *****
@@ -46,6 +47,7 @@ Each cloud backend has specific setup steps that must be executed before it can 
 .. note::
    The nRF9160 DK and Thingy:91 come pre-flashed with the certificates required for a connection to `nRF Cloud`_.
    No extra steps are required to use the Cloud client sample with nRF Cloud.
+
 
 Configurations
 **************

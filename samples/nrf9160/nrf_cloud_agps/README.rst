@@ -47,13 +47,15 @@ You can enable or disable these features by setting the following configuration 
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF9160DK|
-  * |Thingy91|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set6_start
+   :end-before: set6_end
 
-* An nRF Cloud account
+The sample also requires an nRF Cloud account.
 
+.. include:: /includes/spm.txt
 
 User interface
 **************
