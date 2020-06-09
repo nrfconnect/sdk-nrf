@@ -22,17 +22,19 @@ LOG_MODULE_REGISTER(coap_utils, CONFIG_COAP_UTILS_LOG_LEVEL);
 const static int nfds = 1;
 static struct pollfd fds;
 static struct coap_reply replies[COAP_MAX_REPLIES];
-static int proto_family;
+const struct sockaddr *socket_addr;
 
 static K_THREAD_STACK_DEFINE(receive_stack_area, COAP_RECEIVE_STACK_SIZE);
 static struct k_thread receive_thread_data;
+
+static bool is_active;
 
 static int coap_open_socket(void)
 {
 	int sock;
 
 	while (1) {
-		sock = socket(proto_family, SOCK_DGRAM, IPPROTO_UDP);
+		sock = socket(socket_addr->sa_family, SOCK_DGRAM, IPPROTO_UDP);
 		if (sock < 0) {
 			LOG_ERR("Failed to create socket %d", errno);
 			k_sleep(K_MSEC(COAP_OPEN_SOCKET_SLEEP));
@@ -49,6 +51,43 @@ static void coap_close_socket(int socket)
 	(void)close(socket);
 }
 
+static void coap_bind_socket(int socket, const struct sockaddr *addr)
+{
+	char addr_str[INET6_ADDRSTRLEN];
+	socklen_t socklen;
+	size_t addr_str_size;
+	const void *addr_src;
+
+	__ASSERT(addr != NULL, "Pointer is null");
+
+	switch (addr->sa_family) {
+	case AF_INET: {
+		socklen = sizeof(struct sockaddr_in);
+		addr_str_size = INET_ADDRSTRLEN;
+		addr_src = net_sin(addr)->sin_addr.s4_addr;
+
+	} break;
+
+	case AF_INET6: {
+		socklen = sizeof(struct sockaddr_in6);
+		addr_str_size = INET6_ADDRSTRLEN;
+		addr_src = net_sin6(addr)->sin6_addr.s6_addr;
+	} break;
+
+	default:
+		__ASSERT(false, "Invalid socket address family");
+		return;
+	}
+
+	if (bind(socket, addr, socklen)) {
+		LOG_ERR("Bind failed %d", errno);
+	} else {
+		inet_ntop(addr->sa_family, addr_src, addr_str, addr_str_size);
+		LOG_INF("Binded: socket: %d : address: %s", socket,
+			log_strdup(addr_str));
+	}
+}
+
 static void coap_receive(void)
 {
 	static u8_t buf[MAX_COAP_MSG_LEN + 1];
@@ -59,7 +98,7 @@ static void coap_receive(void)
 	int len;
 	int ret;
 
-	while (1) {
+	while (is_active) {
 		fds.revents = 0;
 
 		if (poll(&fds, nfds, -1) < 0) {
@@ -87,6 +126,8 @@ static void coap_receive(void)
 			fds.fd = coap_open_socket();
 
 			LOG_INF("Socket has been re-open");
+
+			coap_bind_socket(fds.fd, socket_addr);
 
 			continue;
 		}
@@ -188,13 +229,17 @@ static void coap_set_response_callback(struct coap_packet *request,
 	reply->reply = reply_cb;
 }
 
-void coap_init(int ip_family)
+void coap_start(const struct sockaddr *addr)
 {
-	proto_family = ip_family;
+	socket_addr = addr;
 
 	fds.events = POLLIN;
 	fds.revents = 0;
 	fds.fd = coap_open_socket();
+
+	coap_bind_socket(fds.fd, socket_addr);
+
+	is_active = true;
 
 	/* start sock receive thread */
 	k_thread_create(&receive_thread_data, receive_stack_area,
@@ -205,6 +250,11 @@ void coap_init(int ip_family)
 			K_NO_WAIT);
 	k_thread_name_set(&receive_thread_data, "CoAP-sock-recv");
 	LOG_DBG("CoAP socket receive thread started");
+}
+
+void coap_stop(void)
+{
+	is_active = false;
 }
 
 int coap_send_request(enum coap_method method, const struct sockaddr *addr,

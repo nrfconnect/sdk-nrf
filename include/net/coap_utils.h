@@ -15,11 +15,15 @@
 #include <net/coap.h>
 #include <net/net_ip.h>
 
-/** @brief Open socket and start the receiving thread.
+/** @brief Open socket, bind it with the addr and start the receiving thread.
  *
- * @param[in] ip_family network ip protocol family (AF_INET or AF_INET6)
+ * @param[in] addr pointer to socket address struct for CoAP connection.
  */
-void coap_init(int ip_family);
+void coap_start(const struct sockaddr *addr);
+
+/** @brief Close socket and end receiving thread.
+ */
+void coap_stop(void);
 
 /** @brief Send CoAP non-confirmable request.
  *
