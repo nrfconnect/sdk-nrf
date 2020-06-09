@@ -17,7 +17,11 @@ LOG_MODULE_REGISTER(coap_utils, CONFIG_COAP_UTILS_LOG_LEVEL);
 #define COAP_MAX_REPLIES 1
 #define COAP_POOL_SLEEP 500
 #define COAP_OPEN_SOCKET_SLEEP 200
+#if defined(CONFIG_BSD_LIBRARY)
+#define COAP_RECEIVE_STACK_SIZE 1000
+#else
 #define COAP_RECEIVE_STACK_SIZE 500
+#endif
 
 const static int nfds = 1;
 static struct pollfd fds;
