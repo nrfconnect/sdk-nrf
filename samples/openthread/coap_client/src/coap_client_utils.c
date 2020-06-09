@@ -19,12 +19,16 @@ LOG_MODULE_REGISTER(coap_client_utils, CONFIG_COAP_CLIENT_UTILS_LOG_LEVEL);
 
 static u32_t poll_period;
 
+static bool is_connected;
+
 static struct k_work unicast_light_work;
 static struct k_work multicast_light_work;
 static struct k_work toggle_MTD_SED_work;
 static struct k_work provisioning_work;
 static struct k_work on_connect_work;
 static struct k_work on_disconnect_work;
+static struct k_work starting_coap_work;
+static struct k_work stopping_coap_work;
 
 mtd_mode_toggle_cb_t on_mtd_mode_toggle;
 
@@ -49,6 +53,15 @@ static struct sockaddr_in6 unique_local_addr = {
 	.sin6_port = htons(COAP_PORT),
 	.sin6_addr.s6_addr = {0, },
 	.sin6_scope_id = 0U
+};
+
+/* OT ML-EID coap_client address is used as source address in communication */
+/* with coap_server */
+static struct sockaddr_in6 coap_client_addr = {
+		.sin6_family = AF_INET6,
+		.sin6_port = htons(COAP_PORT),
+		.sin6_addr.s6_addr = {0, },
+		.sin6_scope_id = 0U,
 };
 
 static bool is_mtd_in_med_mode(otInstance *instance)
@@ -180,6 +193,34 @@ static void send_provisioning_request(struct k_work *item)
 			  provisioning_option, NULL, 0u, on_provisioning_reply);
 }
 
+static void start_coap(struct k_work *item)
+{
+	const otIp6Address *mesh_local_eid;
+
+	ARG_UNUSED(item);
+
+	if (is_connected == false) {
+		mesh_local_eid = otThreadGetMeshLocalEid(
+			openthread_get_default_instance());
+
+		memcpy(coap_client_addr.sin6_addr.s6_addr, mesh_local_eid,
+		       sizeof(otIp6Address));
+
+		coap_start((const struct sockaddr *)&coap_client_addr);
+
+		is_connected = true;
+	}
+}
+
+static void stop_coap(struct k_work *item)
+{
+	ARG_UNUSED(item);
+
+	is_connected = false;
+
+	coap_stop();
+}
+
 static void toggle_minimal_sleepy_end_device(struct k_work *item)
 {
 	otError error;
@@ -208,12 +249,14 @@ static void on_thread_state_changed(u32_t flags, void *p_context)
 		case OT_DEVICE_ROLE_CHILD:
 		case OT_DEVICE_ROLE_ROUTER:
 		case OT_DEVICE_ROLE_LEADER:
+			k_work_submit(&starting_coap_work);
 			k_work_submit(&on_connect_work);
 			break;
 
 		case OT_DEVICE_ROLE_DISABLED:
 		case OT_DEVICE_ROLE_DETACHED:
 		default:
+			k_work_submit(&stopping_coap_work);
 			k_work_submit(&on_disconnect_work);
 			break;
 		}
@@ -221,6 +264,15 @@ static void on_thread_state_changed(u32_t flags, void *p_context)
 
 	LOG_INF("State changed! Flags: 0x%08x Current role: %d", flags,
 		otThreadGetDeviceRole(p_context));
+}
+
+static void submit_work_if_connected(struct k_work *work)
+{
+	if (is_connected) {
+		k_work_submit(work);
+	} else {
+		LOG_INF("Connection is broken");
+	}
 }
 
 void coap_client_utils_init(ot_connection_cb_t on_connect,
@@ -234,6 +286,8 @@ void coap_client_utils_init(ot_connection_cb_t on_connect,
 
 	k_work_init(&on_connect_work, on_connect);
 	k_work_init(&on_disconnect_work, on_disconnect);
+	k_work_init(&starting_coap_work, start_coap);
+	k_work_init(&stopping_coap_work, stop_coap);
 
 	instance = openthread_get_default_instance();
 	err = otSetStateChangedCallback(instance, on_thread_state_changed,
@@ -251,25 +305,21 @@ void coap_client_utils_init(ot_connection_cb_t on_connect,
 		k_work_init(&toggle_MTD_SED_work,
 			    toggle_minimal_sleepy_end_device);
 	}
-
-	coap_init(AF_INET6);
-
-	on_thread_state_changed(OT_CHANGED_THREAD_ROLE, instance);
 }
 
 void coap_client_toggle_one_light(void)
 {
-	k_work_submit(&unicast_light_work);
+	submit_work_if_connected(&unicast_light_work);
 }
 
 void coap_client_toggle_mesh_lights(void)
 {
-	k_work_submit(&multicast_light_work);
+	submit_work_if_connected(&multicast_light_work);
 }
 
 void coap_client_send_provisioning_request(void)
 {
-	k_work_submit(&provisioning_work);
+	submit_work_if_connected(&provisioning_work);
 }
 
 void coap_client_toggle_minimal_sleepy_end_device(void)
