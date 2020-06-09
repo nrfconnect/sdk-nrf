@@ -10,7 +10,6 @@
 #include <sys/byteorder.h>
 #include <storage/flash_map.h>
 #include <pm_config.h>
-#include <fw_info.h>
 
 #include "event_manager.h"
 #include "config_event.h"
@@ -33,6 +32,22 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 #define DFU_TIMEOUT			K_SECONDS(2)
 #define REBOOT_REQUEST_TIMEOUT		K_MSEC(250)
 #define BACKGROUND_FLASH_ERASE_TIMEOUT	K_SECONDS(15)
+
+#if CONFIG_SECURE_BOOT
+ #include <fw_info.h>
+ #define IMAGE0_ID		PM_S0_IMAGE_ID
+ #define IMAGE0_ADDRESS		PM_S0_IMAGE_ADDRESS
+ #define IMAGE1_ID		PM_S1_IMAGE_ID
+ #define IMAGE1_ADDRESS		PM_S1_IMAGE_ADDRESS
+#elif CONFIG_BOOTLOADER_MCUBOOT
+ #include <dfu/mcuboot.h>
+ #define IMAGE0_ID		PM_MCUBOOT_PRIMARY_ID
+ #define IMAGE0_ADDRESS		PM_MCUBOOT_PRIMARY_ADDRESS
+ #define IMAGE1_ID		PM_MCUBOOT_SECONDARY_ID
+ #define IMAGE1_ADDRESS		PM_MCUBOOT_SECONDARY_ADDRESS
+#else
+ #error Bootloader not supported.
+#endif
 
 static struct k_delayed_work dfu_timeout;
 static struct k_delayed_work reboot_request;
@@ -66,11 +81,12 @@ const static char * const opt_descr[] = {
 
 static u8_t dfu_slot_id(void)
 {
-	if ((u32_t)(uintptr_t)dfu_slot_id < PM_S1_IMAGE_ADDRESS) {
-		return PM_S1_IMAGE_ID;
+	BUILD_ASSERT(IMAGE0_ADDRESS < IMAGE1_ADDRESS);
+	if ((u32_t)(uintptr_t)dfu_slot_id < IMAGE1_ADDRESS) {
+		return IMAGE1_ID;
 	}
 
-	return PM_S0_IMAGE_ID;
+	return IMAGE0_ID;
 }
 
 static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
@@ -213,7 +229,9 @@ static void handle_dfu_data(const u8_t *data, const size_t size)
 
 	if (img_length == cur_offset) {
 		LOG_INF("DFU image written");
-
+#ifdef CONFIG_BOOTLOADER_MCUBOOT
+		boot_request_upgrade(false);
+#endif
 		goto dfu_finish;
 	} else {
 		k_delayed_work_submit(&dfu_timeout, DFU_TIMEOUT);
@@ -354,16 +372,17 @@ static void handle_reboot_request(u8_t *data, size_t *size)
 	k_delayed_work_submit(&reboot_request, REBOOT_REQUEST_TIMEOUT);
 }
 
+#if CONFIG_SECURE_BOOT
 static void handle_image_info_request(u8_t *data, size_t *size)
 {
 	const struct fw_info *info;
 	u8_t flash_area_id;
 
-	if (dfu_slot_id() == PM_S1_IMAGE_ID) {
-		info = fw_info_find(PM_S0_IMAGE_ADDRESS);
+	if (dfu_slot_id() == IMAGE1_ID) {
+		info = fw_info_find(IMAGE0_ADDRESS);
 		flash_area_id = 0;
 	} else {
-		info = fw_info_find(PM_S1_IMAGE_ADDRESS);
+		info = fw_info_find(IMAGE1_ADDRESS);
 		flash_area_id = 1;
 	}
 
@@ -388,6 +407,7 @@ static void handle_image_info_request(u8_t *data, size_t *size)
 		size_t pos = 0;
 
 		*size = data_size;
+
 		data[pos] = flash_area_id;
 		pos += sizeof(flash_area_id);
 
@@ -409,6 +429,63 @@ static void handle_image_info_request(u8_t *data, size_t *size)
 		LOG_ERR("Cannot obtain image information");
 	}
 }
+#elif CONFIG_BOOTLOADER_MCUBOOT
+static void handle_image_info_request(u8_t *data, size_t *size)
+{
+	struct mcuboot_img_header header;
+	u8_t flash_area_id;
+	u8_t bank_header_area_id;
+
+	if (dfu_slot_id() == IMAGE1_ID) {
+		flash_area_id = 0;
+		bank_header_area_id = IMAGE0_ID;
+	} else {
+		flash_area_id = 1;
+		bank_header_area_id = IMAGE1_ID;
+	}
+
+	int err = boot_read_bank_header(bank_header_area_id, &header,
+					sizeof(header));
+
+	if (!err) {
+		LOG_INF("Primary slot| image size:%" PRIu32
+			" major:%" PRIu8 " minor:%" PRIu8 " rev:0x%" PRIx16
+			" build:0x%" PRIx32, header.h.v1.image_size,
+			header.h.v1.sem_ver.major, header.h.v1.sem_ver.minor,
+			header.h.v1.sem_ver.revision, header.h.v1.sem_ver.build_num);
+
+		size_t data_size = sizeof(flash_area_id) +
+				   sizeof(header.h.v1.image_size) +
+				   sizeof(header.h.v1.sem_ver.major) +
+				   sizeof(header.h.v1.sem_ver.minor) +
+				   sizeof(header.h.v1.sem_ver.revision) +
+				   sizeof(header.h.v1.sem_ver.build_num);
+		size_t pos = 0;
+
+		*size = data_size;
+
+		data[pos] = flash_area_id;
+		pos += sizeof(flash_area_id);
+
+		sys_put_le32(header.h.v1.image_size, &data[pos]);
+		pos += sizeof(header.h.v1.image_size);
+
+		data[pos] = header.h.v1.sem_ver.major;
+		pos += sizeof(header.h.v1.sem_ver.major);
+
+		data[pos] = header.h.v1.sem_ver.minor;
+		pos += sizeof(header.h.v1.sem_ver.minor);
+
+		sys_put_le16(header.h.v1.sem_ver.revision, &data[pos]);
+		pos += sizeof(header.h.v1.sem_ver.revision);
+
+		sys_put_le32(header.h.v1.sem_ver.build_num, &data[pos]);
+		pos += sizeof(header.h.v1.sem_ver.build_num);
+	} else {
+		LOG_ERR("Cannot obtain image information");
+	}
+}
+#endif
 
 static void update_config(const u8_t opt_id, const u8_t *data,
 			  const size_t size)
@@ -473,6 +550,13 @@ static bool event_handler(const struct event_header *eh)
 			cast_module_state_event(eh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+#if CONFIG_BOOTLOADER_MCUBOOT
+			int err = boot_write_img_confirmed();
+
+			if (err) {
+				LOG_ERR("Cannot confirm a running image");
+			}
+#endif
 			k_delayed_work_init(&dfu_timeout, dfu_timeout_handler);
 			k_delayed_work_init(&reboot_request, reboot_request_handler);
 			k_delayed_work_init(&background_erase, background_erase_handler);
