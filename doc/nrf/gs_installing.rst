@@ -229,7 +229,7 @@ To clone the repositories, complete the following steps:
 #. Determine what revision of the |NCS| you want to work with.
    The recommended way is to work with a specific release.
 
-   * To work with a specific release, the revision is the corresponding tag (for example, ``v1.2.0``).
+   * To work with a specific release, the revision is the corresponding tag (for example, ``v1.3.0``).
      You can find the tag in the :ref:`release_notes` of the release.
    * To work with a development tag, the revision is the corresponding tag (for example, ``v1.2.99-dev1``)
    * To work with a branch, the revision is the branch name (for example, ``master`` to work with the latest state of development).
@@ -242,9 +242,9 @@ To clone the repositories, complete the following steps:
 
       west init -m https\://github.com/nrfconnect/sdk-nrf --mr *NCS_revision*
 
-   For example, to check out the v1.2.0 release, enter the following command::
+   For example, to check out the v1.3.0 release, enter the following command::
 
-     west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.2.0
+     west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.3.0
 
    To check out the latest state of development, enter the following command::
 
@@ -306,10 +306,10 @@ Running ``west update`` will then update the project repositories to the state s
    :start-after: west-error-start
    :end-before: west-error-end
 
-For example, to switch to release v1.2.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
+For example, to switch to release v1.3.0 of the |NCS|, enter the following commands in the ``ncs/nrf`` directory::
 
    git fetch origin
-   git checkout v1.2.0
+   git checkout v1.3.0
    west update
 
 To update to a particular revision (SHA), make sure that you have that particular revision locally before you check it out (by running ``git fetch origin``)::
