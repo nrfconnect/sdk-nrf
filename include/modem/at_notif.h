@@ -24,7 +24,7 @@ extern "C" {
 #include <zephyr/types.h>
 
 /**
- * @typedefs at_notif_handler_t
+ * @typedef at_notif_handler_t
  *
  * Because this driver let multiple threads share the same socket, it must make
  * sure that the correct thread gets the correct data returned from the AT

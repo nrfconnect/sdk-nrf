@@ -58,4 +58,6 @@ EVENT_TYPE_DECLARE(battery_level_event);
 }
 #endif
 
+/** @} */
+
 #endif /* _BATTERY_EVENT_H_ */

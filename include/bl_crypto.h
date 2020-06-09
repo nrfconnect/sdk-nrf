@@ -155,7 +155,7 @@ typedef int (*bl_sha256_finalize_t)(bl_sha256_ctx_t *ctx, u8_t *output);
  *
  * @param[in]  data      The data to hash.
  * @param[in]  data_len  The length of @p data.
- * @param[in]  expected  The expected digest over @data.
+ * @param[in]  expected  The expected digest over @p data.
  *
  * @retval 0          If the procedure succeeded and the resulting digest is
  *                    identical to @p expected.
@@ -180,7 +180,7 @@ typedef int (*bl_sha256_verify_t)(const u8_t *data, u32_t data_len,
  *
  * @retval 0         The operation succeeded and the signature is valid for the
  *                   hash.
- * @retval -EINVAL   A parameter was NULL, or the @hash_len was not 32 bytes.
+ * @retval -EINVAL   A parameter was NULL, or the @p hash_len was not 32 bytes.
  * @retval -ESIGINV  The signature validation failed.
  */
 int bl_secp256r1_validate(const u8_t *hash,

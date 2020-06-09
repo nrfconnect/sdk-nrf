@@ -91,6 +91,7 @@ void config_channel_init(struct config_channel_state *cfg_chan);
  *                 when handling the get request.
  * @param length   Length of the data to be filled.
  * @param usb @c true if the operation occurs for USB, @c false for Bluetooth.
+ * @param local_product_id Product ID (USB PID) of the targeted device.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error
  *	     code is returned.

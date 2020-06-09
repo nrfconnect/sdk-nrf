@@ -32,4 +32,6 @@ EVENT_TYPE_DECLARE(cpu_load_event);
 }
 #endif
 
+/** @} */
+
 #endif /* _CPU_LOAD_EVENT_H_ */

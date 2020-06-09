@@ -58,4 +58,6 @@ void date_time_update(void);
 }
 #endif
 
+/** @} */
+
 #endif /* DATE_TIME_H__ */

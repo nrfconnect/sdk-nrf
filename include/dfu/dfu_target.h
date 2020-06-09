@@ -120,4 +120,6 @@ int dfu_target_reset(void);
 }
 #endif
 
+/** @} */
+
 #endif /* DFU_TARGET_H__ */

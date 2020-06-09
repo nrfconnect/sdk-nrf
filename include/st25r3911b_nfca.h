@@ -228,6 +228,8 @@ int st25r3911b_nfca_anticollision_start(void);
  *
  *  @param[in] tx TX data buffer.
  *  @param[in,out] rx RX data buffer.
+ *  @param[in] fdt Maximum frame delay time (according to NFC Forum Digital 2.0
+ *                 6.10.1).
  *  @param[in] auto_crc If set, the CRC is generated automatically by the
  *                      NFC Reader. Otherwise, the CRC must be added
  *                      manually to the TX buffer.
