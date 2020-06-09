@@ -178,7 +178,7 @@ int modem_info_short_get(enum modem_info info, u16_t *buf);
 /** @brief Request the name of a modem information data type.
  *
  * @param info The requested information type.
- * @param buf  The string where to store the name.
+ * @param name The string where to store the name.
  *
  * @return Length of received data if the operation was successful.
  *         Otherwise, a (negative) error code is returned.

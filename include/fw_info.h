@@ -367,7 +367,7 @@ static inline const struct fw_info *fw_info_find(u32_t firmware_address)
  * @note This is should be called immediately before booting the other firmware
  *       since it will likely corrupt the memory of the running firmware.
  *
- * @param[in]  fw_info  Pointer to the other firmware's information structure.
+ * @param[in]  fwinfo   Pointer to the other firmware's information structure.
  * @param[in]  provide  If true, populate ext_api_in.
  *                      If false, only check whether requirements can be
  *                      satisfied.

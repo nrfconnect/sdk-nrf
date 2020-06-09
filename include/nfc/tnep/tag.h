@@ -159,9 +159,9 @@ int nfc_tnep_tag_tx_msg_buffer_register(u8_t *tx_buff,
  * @brief Start communication using TNEP.
  *
  * @param[out] events TNEP Tag Events.
- * @param[in] cnt Event count. This library needs 2 events.
- * @param[in,out] Pointer to NDEF message structure. It is used to
- *                create TNEP NDEF message.
+ * @param[in] event_cnt Event count. This library needs 2 events.
+ * @param[in,out] msg Pointer to NDEF message structure. It is used to
+ *                    create TNEP NDEF message.
  * @param[in] payload_set Function for setting NDEF data for NFC TNEP
  *                        Tag Device. This library use it internally
  *                        to set raw NDEF message to the Tag NDEF file.

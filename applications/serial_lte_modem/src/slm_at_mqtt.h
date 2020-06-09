@@ -35,8 +35,6 @@ void slm_at_mqtt_clac(void);
 /**
  * @brief Initialize MQTT AT command parser.
  *
- * @param callback Callback function to send AT response
- *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */

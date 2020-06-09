@@ -187,7 +187,6 @@ struct bt_mesh_light_ctrl_srv {
  *  Prolong state, it's moved back into the On state.
  *
  *  @param[in] srv        Light Lightness Control Server instance.
- *  @param[in] transition Transition time or NULL.
  *
  *  @retval 0      The Light Lightness Control Server was successfully turned
  *                 on.
@@ -204,7 +203,6 @@ int bt_mesh_light_ctrl_srv_on(struct bt_mesh_light_ctrl_srv *srv);
  *  @ref CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL.
  *
  *  @param[in] srv        Light Lightness Control Server instance.
- *  @param[in] transition Transition time or NULL.
  *
  *  @retval 0      The Light Lightness Control Server was successfully turned
  *                 off.

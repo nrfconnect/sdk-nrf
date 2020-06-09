@@ -408,8 +408,8 @@ struct bt_mesh_sensor {
  *        true from this function. Single-channel sensors that haven't been
  *        assigned a threshold will return true if the value is different.
  *
- *  @param[in] threshold Threshold parameters.
- *  @param[in] curr      Sensor value.
+ *  @param[in] sensor    The sensor instance.
+ *  @param[in] value     Sensor value.
  *
  *  @return true if the difference between the measurements exceeds the delta
  *          threshold, false otherwise.

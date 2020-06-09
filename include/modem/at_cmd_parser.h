@@ -123,7 +123,7 @@ enum at_cmd_type {
 /**
  * @brief Identify the AT command type.
  *
- * @param[in] cmd A pointer to the AT command string.
+ * @param[in] at_cmd A pointer to the AT command string.
  *
  * @return Command type.
  */

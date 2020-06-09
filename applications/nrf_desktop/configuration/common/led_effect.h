@@ -124,10 +124,10 @@ struct led_effect {
  *
  * LED color remains constant for a defined time, then goes off.
  *
- * @param _color	Selected LED color.
- * @param _on_time	Time LED will remain on in milliseconds.
- * @param _off_time	Time in which LED will gradually switch to off
- *			(in milliseconds).
+ * @param _color      Selected LED color.
+ * @param _on_time    Time LED will remain on in milliseconds.
+ * @param _off_delay  Time in which LED will gradually switch to off
+ *                    (in milliseconds).
  */
 #define LED_EFFECT_LED_ON_GO_OFF(_color, _on_time, _off_delay)			\
 	{									\

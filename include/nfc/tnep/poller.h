@@ -258,8 +258,8 @@ int nfc_tnep_poller_svc_read(const struct nfc_tnep_buf *svc_buf);
  * This operation is asynchronous.
  *
  * @param[in] msg Pointer to the NDEF Message which will be written.
- * @param[in] resp_data Pointer to received data buffer. Buffer must be stored
- *                      until the update procedure is finished.
+ * @param[in] resp_buf Pointer to received data buffer. Buffer must be stored
+ *                     until the update procedure is finished.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
@@ -273,7 +273,7 @@ int nfc_tnep_poller_svc_write(const struct nfc_ndef_msg_desc *msg,
  * Device read new NDEF message from NFC TNEP Tag Device.
  *
  * @param[in] data NDEF Read raw data.
- * @param[in] Read data length.
+ * @param[in] len Read data length.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.

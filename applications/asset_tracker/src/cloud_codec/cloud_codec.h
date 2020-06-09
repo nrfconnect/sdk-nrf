@@ -206,7 +206,7 @@ int cloud_encode_data(const struct cloud_channel_data *channel,
 /**
  * @brief Decode cloud data.
  *
- * @param output Pointer to the cloud data input.
+ * @param input Pointer to the cloud data input.
  *
  * @return 0 if the operation was successful, otherwise a (negative) error code.
  */

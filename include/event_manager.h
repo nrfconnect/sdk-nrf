@@ -210,7 +210,7 @@ extern const struct event_type __stop_event_types[];
  * @param ename Name of the event.
  * @param types Types of values to profile (represented as @ref profiler_arg).
  * @param labels Labels of values to profile.
- * @param log_arg_func Function used to profile event data.
+ * @param profile_func Function used to profile event data.
  */
 #define EVENT_INFO_DEFINE(ename, types, labels, profile_func) \
 	_EVENT_INFO_DEFINE(ename, ENCODE(types), ENCODE(labels), profile_func)
