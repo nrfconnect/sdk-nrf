@@ -1,4 +1,4 @@
-# Arm CC310 hw driver for nRF52840 and nRF9160
+# Arm CC3xx hw driver for nRF52840 and nRF9160
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
@@ -10,33 +10,33 @@
 config MCUBOOT
 	bool
 
-config HW_CC310_FORCE_ALT
+config HW_CC3XX_FORCE_ALT
 	bool
 	depends on SOC_COMPATIBLE_NRF
 	help
 	  This option can be enabled to force an alternative implementation of
-	  the Arm CC310 hardware driver.
+	  the Arm CC3xx hardware driver.
 
-if !HW_CC310_FORCE_ALT
+if !HW_CC3XX_FORCE_ALT
 
-menuconfig HW_CC310
-	bool "Arm CC310 hw driver for Nordic devices"
-	depends on SOC_NRF52840 || (SOC_NRF9160 && !SPM) || (SOC_NRF9160 && TRUSTED_EXECUTION_SECURE)
-	select NRF_CC310_PLATFORM
-	default n if MCUBOOT
-	default y if SOC_NRF52840 || (SOC_NRF9160 && !SPM) || (SOC_NRF9160 && TRUSTED_EXECUTION_SECURE)
+menuconfig HW_CC3XX
+	bool "Arm CC3xx hw driver for Nordic devices"
+	depends on SOC_NRF52840 || (SOC_NRF9160 && !SPM) || (SOC_NRF9160 && TRUSTED_EXECUTION_SECURE) || \
+			  (SOC_NRF5340_CPUAPP && !SPM) || (SOC_NRF5340_CPUAPP && TRUSTED_EXECUTION_SECURE)
+	select NRF_CC3XX_PLATFORM
+	default y
 	help
-	  This option enables the Arm CC310 hw devices in nRF52840 and nRF9160 devices.
+	  This option enables the Arm CC3xx hw devices in nRF52840, nRF53, and nRF9160 devices.
 
-if HW_CC310
+if HW_CC3XX
 
-config HW_CC310_NAME
+config HW_CC3XX_NAME
 	string "Entropy Device Name"
-	default "HW_CC310_0"
+	default "HW_CC3XX_0"
 	help
-	  Specify the device name to be used for the HW_CC310 driver.
+	  Specify the device name to be used for the HW_CC3XX driver.
 
 
-endif # HW_CC310
+endif # HW_CC3XX
 
-endif # !HW_CC310_FORCE_ALT
+endif # !HW_CC3XX_FORCE_ALT
