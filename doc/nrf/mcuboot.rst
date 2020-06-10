@@ -11,5 +11,5 @@ You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| so
 
 See the :doc:`documentation <mcuboot:index>` of Nordic Semiconductor's MCUboot fork for more information about MCUboot.
 
-As with :ref:`zephyr`, the downstream |NCS| MCUboot repository history is periodically rewritten to clean up intermediate work, merges of upstream, etc.
+As with :ref:`zephyr_rtos`, the downstream |NCS| MCUboot repository history is periodically rewritten to clean up intermediate work, merges of upstream, etc.
 See :ref:`dm-oss-downstreams` for more details.

@@ -91,7 +91,7 @@ See :ref:`zephyr:bluetooth` for documentation on the Bluetooth Host and open sou
 For documentation about the nRF Bluetooth LE Controller and information on what variants of the controller support which chips, see :ref:`nrfxlib:ble_controller`.
 
 The |NCS| contains a variety of :ref:`ble_samples` that target nRF52 Series devices.
-In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included from the Zephyr project.
+In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included from Zephyr.
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
 
