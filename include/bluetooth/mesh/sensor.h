@@ -49,13 +49,13 @@ enum bt_mesh_sensor_sampling {
 	BT_MESH_SENSOR_SAMPLING_MINIMUM,
 	/** The presented value is the accumulated moving average value of the
 	 *  samples. The updating frequency of the moving average should be
-	 *  indicated in @ref bt_mesh_descriptor::update_interval. The total
-	 *  measurement period should be indicated in @ref
+	 *  indicated in @em bt_mesh_descriptor::update_interval. The total
+	 *  measurement period should be indicated in @em
 	 *  bt_mesh_descriptor::period.
 	 */
 	BT_MESH_SENSOR_SAMPLING_ACCUMULATED,
 	/** The presented value is a count of events in a specific measurement
-	 *  period. @ref bt_mesh_descriptor::period should denote the
+	 *  period. @em bt_mesh_descriptor::period should denote the
 	 *  measurement period, or left to 0 to indicate that the sample is a
 	 *  lifetime value.
 	 */
@@ -420,7 +420,7 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 /** @brief Get the sensor type associated with the given Device Property ID.
  *
  *  Only known sensor types from @ref bt_mesh_sensor_types will be available.
- *  Sensor types can be made known to the sensor module by enabling @ref
+ *  Sensor types can be made known to the sensor module by enabling @em
  *  CONFIG_BT_MESH_SENSOR_ALL_TYPES or by referencing them in the application.
  *
  *  @param[in] id A Device Property ID.

@@ -252,7 +252,7 @@ struct bt_mesh_sensor_cli_handlers {
  *
  *  This call is blocking if the @c sensors buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::sensor callback as a list of sensor
+ *  bt_mesh_sensor_cli_handlers::sensor callback as a list of sensor
  *  descriptors.
  *
  *  If a @c sensors array is provided and the client received a response, the
@@ -291,7 +291,7 @@ int bt_mesh_sensor_cli_list_get(struct bt_mesh_sensor_cli *cli,
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::sensor callback.
+ *  bt_mesh_sensor_cli_handlers::sensor callback.
  *
  *  @param[in]  cli    Sensor client instance.
  *  @param[in]  ctx    Message context parameters, or NULL to use the configured
@@ -317,7 +317,7 @@ int bt_mesh_sensor_cli_desc_get(struct bt_mesh_sensor_cli *cli,
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::cadence callback.
+ *  bt_mesh_sensor_cli_handlers::cadence callback.
  *
  *  @param[in]  cli    Sensor client instance.
  *  @param[in]  ctx    Message context parameters, or NULL to use the configured
@@ -343,7 +343,7 @@ int bt_mesh_sensor_cli_cadence_get(struct bt_mesh_sensor_cli *cli,
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::cadence callback.
+ *  bt_mesh_sensor_cli_handlers::cadence callback.
  *
  *  @note Only single-channel sensors support cadence.
  *
@@ -394,7 +394,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::settings callback.
+ *  bt_mesh_sensor_cli_handlers::settings callback.
  *
  *  If an @c ids array is provided and the client received a response, the array
  *  will be filled with as many of the response ids as it can fit, even if the
@@ -432,7 +432,7 @@ int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::setting callback.
+ *  bt_mesh_sensor_cli_handlers::setting_status callback.
  *
  *  @param[in]  cli     Sensor client instance.
  *  @param[in]  ctx     Message context parameters, or NULL to use the
@@ -460,7 +460,7 @@ int bt_mesh_sensor_cli_setting_get(struct bt_mesh_sensor_cli *cli,
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::setting callback.
+ *  bt_mesh_sensor_cli_handlers::setting_status callback.
  *
  *  @param[in]  cli     Sensor client instance.
  *  @param[in]  ctx     Message context parameters, or NULL to use the
@@ -513,7 +513,7 @@ int bt_mesh_sensor_cli_setting_set_unack(
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::data callback.
+ *  bt_mesh_sensor_cli_handlers::data callback.
  *
  *  @param[in]  cli    Sensor client instance.
  *  @param[in]  ctx    Message context parameters, or NULL to use the configured
@@ -538,7 +538,7 @@ int bt_mesh_sensor_cli_get(
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::series_entries callback as a list of
+ *  bt_mesh_sensor_cli_handlers::series_entry callback as a list of
  *  sensor descriptors.
  *
  *  @param[in]  cli    Sensor client instance.
@@ -579,7 +579,7 @@ int bt_mesh_sensor_cli_series_entry_get(
  *
  *  This call is blocking if the @c rsp buffer is non-NULL. Otherwise, this
  *  function will return, and the response will be passed to the
- *  @ref bt_mesh_sensor_cli_handlers::series_entries callback as a list of
+ *  bt_mesh_sensor_cli_handlers::series_entry callback as a list of
  *  sensor descriptors.
  *
  *  @param[in]     cli    Sensor client instance.

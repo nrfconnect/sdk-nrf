@@ -31,7 +31,7 @@ struct bt_gatt_dm;
  *
  * This structure is used to hold GATT attribute information.
  * The Discovery Manager attribute descriptor is a reduced version of
- * @ref bt_gatt_attr. The new definition is used to save memory that is used
+ * @em bt_gatt_attr. The new definition is used to save memory that is used
  * by this module.
  */
 struct bt_gatt_dm_attr {
@@ -58,7 +58,7 @@ struct bt_gatt_dm_cb {
 	 *
 	 * @param[in,out] dm Discovery Manager instance
 	 * @param[in,out] context The value passed to
-	 *                @ref gatt_db_discovery_start
+	 *                @em gatt_db_discovery_start()
 	 */
 	void (*completed)(struct bt_gatt_dm *dm,
 			  void *context);
@@ -69,7 +69,7 @@ struct bt_gatt_dm_cb {
 	 *
 	 * @param[in,out] conn Connection object.
 	 * @param[in,out] context The value passed to
-	 *                @ref gatt_db_discovery_start
+	 *                @em gatt_db_discovery_start()
 	 */
 	void (*service_not_found)(struct bt_conn *conn,
 				  void *context);
@@ -81,7 +81,7 @@ struct bt_gatt_dm_cb {
 	 * @param[in,out] conn Connection object.
 	 * @param[in]     err The error code.
 	 * @param[in,out] context The value passed to
-	 *                @ref gatt_db_discovery_start
+	 *                @em gatt_db_discovery_start()
 	 */
 	void (*error_found)(struct bt_conn *conn,
 			    int err,
@@ -183,7 +183,7 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_char_next(
  * @param[in] uuid The UUID of the characteristic
  *
  * @return The characteristic attribute
- *         (the one with UUID set to @ref BT_UUID_GATT_CHRC)
+ *         (the one with UUID set to @em BT_UUID_GATT_CHRC)
  *         with the selected UUID inside the characteristic value.
  *         Returns NULL if no such characteristic is present in the
  *         current service.

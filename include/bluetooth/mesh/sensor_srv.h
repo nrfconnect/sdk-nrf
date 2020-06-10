@@ -29,8 +29,8 @@ struct bt_mesh_sensor_srv;
  *        sensor type. Duplicate sensors will be ignored.
  *
  *  @param[in] _sensors Array of pointers to sensors owned by this server.
- *  @param[in] _count Number of sensors in the array. Can at most be @ref
- *                    CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX.
+ *  @param[in] _count Number of sensors in the array. Can at most be
+ *                    @em CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX.
  */
 #define BT_MESH_SENSOR_SRV_INIT(_sensors, _count)                              \
 	{                                                                      \

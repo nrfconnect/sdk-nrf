@@ -98,19 +98,19 @@ int at_cmd_write_with_callback(const char *const cmd,
  *
  * @param cmd Pointer to null terminated AT command string
  * @param buf Buffer to put the response in. NULL pointer is allowed, see
- *            behaviour explanation for @ref buf_len equals 0.
+ *            behaviour explanation for @p buf_len equals 0.
  * @param buf_len Length of response buffer. 0 length is allowed and will send
  *                the command, process the return code from the modem, but
  *                any returned data will be dropped.
- * @param state   Pointer to @ref enum at_cmd_state variable that can hold
+ * @param state   Pointer to enum @em at_cmd_state variable that can hold
  *                the error state returned by the modem. If the return state
  *                is a CMS or CME errors will the error code be returned in the
  *                the function return code as a positive value. NULL pointer is
  *                allowed.
  *
- * @note It is allowed to use the same buffer for both, @ref cmd and @ref buf
- *       parameters in order to save RAM. The function will not modify @ref buf
- *       contents until the entire @ref cmd is sent.
+ * @note It is allowed to use the same buffer for both, @p cmd and @p buf
+ *       parameters in order to save RAM. The function will not modify @p buf
+ *       contents until the entire @p cmd is sent.
  *
  * @retval 0 If command execution was successful (same as OK returned from
  *           modem). Error codes returned from the driver or by the socket are

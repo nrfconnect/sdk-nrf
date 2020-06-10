@@ -22,7 +22,7 @@ extern "C" {
 
 /** @brief Initialize the provisioning handler.
  *
- * @return The provisioning properties to pass to @ref bt_mesh_init.
+ * @return The provisioning properties to pass to @em bt_mesh_init().
  */
 const struct bt_mesh_prov *bt_mesh_dk_prov_init(void);
 

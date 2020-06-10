@@ -53,7 +53,7 @@ struct nfc_tnep_tag_service_cb {
  *
  * This structure contains all information about user service.
  * It contains service parameters, service parameters record
- * and services callbacks. It is used by @ref tnep_init function.
+ * and services callbacks. It is used by @em tnep_init() function.
  */
 struct nfc_tnep_tag_service {
 	/** Services parameters. */
@@ -202,7 +202,7 @@ int nfc_tnep_tag_initial_msg_create(const struct nfc_tnep_tag_service *svc,
  * This function must be called periodically from
  * thread to process the TNEP Tag Device.
  *
- * @note This function cannot be called before @ref nfc_tnep_init.
+ * @note This function cannot be called before @em nfc_tnep_init().
  */
 void nfc_tnep_tag_process(void);
 

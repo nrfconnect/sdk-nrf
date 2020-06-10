@@ -124,9 +124,8 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
  *        a TENP Status Record.
  *
  * This macro creates and initializes an instance of type
- * @ref nfc_ndef_record_desc and an instance of type
- * @ref nfc_tnep_status, which together constitute an instance of
- * a TNEP status record.
+ * nfc_ndef_record_desc and an instance of type nfc_ndef_tnep_rec_status,
+ * which together constitute an instance of a TNEP status record.
  *
  * Use the macro @ref NFC_NDEF_TNEP_RECORD_DESC to access the NDEF TENP record
  * descriptor instance. Use name to access a TNEP Status description.
@@ -151,9 +150,8 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
  *	 a TNEP Service Select Record.
  *
  * This macro creates and initializes an instance of type
- * @ref nfc_ndef_record_desc and an instance of type
- * @ref nfc_tnep_service_select, which together constitute an instance of
- * a TNEP service select record.
+ * nfc_ndef_record_desc and an instance of type nfc_ndef_tnep_rec_svc_select,
+ * which together constitute an instance of a TNEP service select record.
  *
  * Use the macro @ref NFC_NDEF_TNEP_RECORD_DESC to access the NDEF TNEP record
  * descriptor instance. Use name to access a TNEP Service Select description.
@@ -180,9 +178,8 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
  *	 a TNEP Service Parameter Record.
  *
  * This macro creates and initializes an instance of type
- * @ref nfc_ndef_record_desc and an instance of type
- * @ref nfc_tnep_service_parameters, which together constitute an instance of
- * a TNEP service parameter record.
+ * nfc_ndef_record_desc and an instance of type nfc_ndef_tnep_rec_svc_param,
+ * which together constitute an instance of a TNEP service parameter record.
  *
  * Use the macro @ref NFC_NDEF_TNEP_RECORD_DESC to access the
  * NDEF TNEP record descriptor instance. Use name to access a

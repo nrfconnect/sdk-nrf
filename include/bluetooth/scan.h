@@ -293,7 +293,7 @@ struct bt_scan_device_info {
 
 	/** Received advertising data. If further
 	 *  data proccesing is needed, you should
-	 *  use @ref bt_data_parse to get specific
+	 *  use @em bt_data_parse() to get specific
 	 *  advertising data type.
 	 */
 	struct net_buf_simple *adv_data;
@@ -445,7 +445,7 @@ void bt_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param);
  * @param[in] mode Filter mode: @ref BT_SCAN_FILTER_MODE.
  * @param[in] match_all If this flag is set, all types of enabled filters
  *                      must be matched before generating
- *                      @ref BT_SCAN_EVT_FILTER_MATCH to the main
+ *                      @em BT_SCAN_EVT_FILTER_MATCH to the main
  *                      application. Otherwise, it is enough to
  *                      match one filter to trigger the filter match event.
  *

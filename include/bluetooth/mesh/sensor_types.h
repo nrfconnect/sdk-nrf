@@ -24,7 +24,7 @@ extern "C" {
  *
  *  @brief Force the given sensor type to be included in the build.
  *
- *  If @ref CONFIG_BT_MESH_SENSOR_FORCE_ALL is disabled, only referenced sensor
+ *  If @em CONFIG_BT_MESH_SENSOR_FORCE_ALL is disabled, only referenced sensor
  *  types will be included in the build, and the node will be unable to
  *  interpret the rest. Use this macro inside a function to force the type to be
  *  included in the build:
