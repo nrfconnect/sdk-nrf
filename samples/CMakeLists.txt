@@ -28,18 +28,12 @@ if (CONFIG_SECURE_BOOT)
     )
 endif ()
 
-# Special handling for the nRF53 when using RPMSG HCI.
-# Automatically include the hci_rpmsg sample as child image, and change
-# the board to be the network core.
 if (CONFIG_BT_RPMSG_NRF53)
-  if ((BOARD STREQUAL nrf5340pdk_nrf5340_cpuappns) OR
-      (BOARD STREQUAL nrf5340pdk_nrf5340_cpuapp))
+  if (CONFIG_SOC_NRF5340_CPUAPP)
+    message("Adding 'hci_rpmsg' sample as child image since CONFIG_BT_RPMSG_NRF53 is set to 'y'")
     add_child_image(
       NAME hci_rpmsg
       SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
       DOMAIN nrf5340pdk_nrf5340_cpunet)
-  else()
-    message(FATAL_ERROR
-      "Board ${BOARD} not supported for including hci_rpmsg as child image")
   endif()
 endif()
