@@ -137,7 +137,7 @@ static const enum lte_lc_system_mode sys_mode_preferred =
 	LTE_LC_SYSTEM_MODE_NONE;
 
 static const enum lte_lc_system_mode sys_mode_fallback =
-#if IS_ENABLED(CONFIG_LTE_LC_USE_FALLBACK)
+#if IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK)
 	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)	?
 		LTE_LC_SYSTEM_MODE_NBIOT		:
 	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)	?
