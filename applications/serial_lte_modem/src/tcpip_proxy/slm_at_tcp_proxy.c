@@ -377,7 +377,7 @@ thread_entry:
 		proxy.sock_peer = ret;
 		/* Start a one-shot timer to close the connection */
 		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
-			0);
+			      K_NO_WAIT);
 	}
 
 	if (proxy.role == AT_TCP_ROLE_SERVER) {
