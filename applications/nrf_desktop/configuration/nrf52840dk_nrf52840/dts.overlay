@@ -22,3 +22,7 @@
 	ch0-pin = <14>;
 	ch0-inverted;
 };
+
+&qspi {
+	status = "okay";
+};
