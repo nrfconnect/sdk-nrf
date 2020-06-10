@@ -18,7 +18,7 @@ config OPENTHREAD_NRF_SECURITY
 	depends on !OPENTHREAD_MBEDTLS
 	depends on OPENTHREAD_SOURCES
 	select NORDIC_SECURITY_BACKEND
-	select OBERON_BACKEND if !CC310_BACKEND
+	select OBERON_BACKEND if !CC3XX_BACKEND
 	select MBEDTLS_TLS_LIBRARY
 	select MBEDTLS_AES_C
 	select MBEDTLS_ECJPAKE_C
@@ -31,12 +31,12 @@ config OPENTHREAD_NRF_SECURITY
 	  if available as well as fast oberon backend for software encryption.
 
 config OPENTHREAD_MBEDTLS_LIB_NAME
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc310 mbedcrypto_oberon mbedcrypto_vanilla" if CC310_BACKEND && OBERON_BACKEND && MBEDTLS_VANILLA_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc310 mbedcrypto_oberon" if CC310_BACKEND && OBERON_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc310 mbedcrypto_vanilla" if CC310_BACKEND && MBEDTLS_VANILLA_BACKEND
+	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx mbedcrypto_oberon mbedcrypto_vanilla" if CC3XX_BACKEND && OBERON_BACKEND && MBEDTLS_VANILLA_BACKEND
+	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx mbedcrypto_oberon" if CC3XX_BACKEND && OBERON_BACKEND
+	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx mbedcrypto_vanilla" if CC3XX_BACKEND && MBEDTLS_VANILLA_BACKEND
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon mbedcrypto_vanilla" if OBERON_BACKEND && MBEDTLS_VANILLA_BACKEND
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_vanilla" if MBEDTLS_VANILLA_BACKEND
-	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc310 " if CC310_BACKEND
+	default "mbedtls_common mbedcrypto_shared mbedcrypto_cc3xx " if CC3XX_BACKEND
 	default "mbedtls_common mbedcrypto_shared mbedcrypto_oberon" if OBERON_BACKEND
 	default "mbedtls_common" if OPENTHREAD_NRF_SECURITY
 
