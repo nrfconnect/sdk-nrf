@@ -1,6 +1,6 @@
 .. ### Links to Zephyr
 
-.. _`Zephyr Project`: https://zephyrproject.org/
+.. _`Zephyr`: https://zephyrproject.org/
 
 .. _`Zephyr Project documentation`: http://docs.zephyrproject.org/
 

@@ -13,7 +13,7 @@ The |NCS| contains two implementations of a Bluetooth LE Controller:
 * `Zephyr Bluetooth LE Controller`_
 
 The nRF Bluetooth LE Controller is implemented by Nordic Semiconductor.
-The Zephyr Bluetooth LE Controller is an open source Link Layer developed in the `Zephyr Project`_, to which Nordic Semiconductor is a contributor.
+The Zephyr Bluetooth LE Controller is an open source Link Layer developed in `Zephyr`_, to which Nordic Semiconductor is a contributor.
 
 Both Link Layers integrate with the Zephyr Bluetooth LE Host, which completes the full Bluetooth LE protocol stack solution in the |NCS|.
 It is possible to select either Bluetooth LE Controller for application development.
@@ -38,7 +38,7 @@ See the :ref:`nRF Bluetooth LE Controller documentation <nrfxlib:ble_controller>
 Zephyr Bluetooth LE Controller
 ******************************
 
-The `Zephyr Project`_ has a full, open source, :ref:`Bluetooth Low Energy stack <zephyr:bluetooth-arch>`, which includes the Zephyr Bluetooth LE Controller.
+`Zephyr`_ has a full, open source, :ref:`Bluetooth Low Energy stack <zephyr:bluetooth-arch>`, which includes the Zephyr Bluetooth LE Controller.
 This Bluetooth LE Controller is designed with an upper and lower implementation to make it possible to support multiple hardware platforms.
 It is developed by the Zephyr community and provided as open source.
 
