@@ -17,11 +17,13 @@
 #if defined(CONFIG_SPM)
 #include "secure_services.h"
 #else
-#include "nrf_cc310_platform_entropy.h"
+#include "nrf_cc3xx_platform_entropy.h"
 #endif
 
-static int entropy_cc310_rng_get_entropy(const struct device *dev, uint8_t *buffer,
-					 uint16_t length)
+static int entropy_cc3xx_rng_get_entropy(
+	const struct device *dev,
+	uint8_t *buffer,
+	uint16_t length)
 {
 	int res = -EINVAL;
 	size_t olen;
@@ -58,10 +60,11 @@ static int entropy_cc310_rng_get_entropy(const struct device *dev, uint8_t *buff
 	}
 
 #else
-	/** This is a call from a secure app, in which case entropy is gathered
-	 *  using CC310 HW using the nrf_cc310_platform library.
+	/** This is a call from a secure app, in which case entropy is
+	 *  gathered using CC3xx HW using the
+	 *  nrf_cc310_platform/nrf_cc312_platform library.
 	 */
-	res = nrf_cc310_platform_entropy_get(buffer, length, &olen);
+	res = nrf_cc3xx_platform_entropy_get(buffer, length, &olen);
 	if (olen != length) {
 		return -EINVAL;
 	}
@@ -70,7 +73,7 @@ static int entropy_cc310_rng_get_entropy(const struct device *dev, uint8_t *buff
 	return res;
 }
 
-static int entropy_cc310_rng_init(const struct device *dev)
+static int entropy_cc3xx_rng_init(const struct device *dev)
 {
 	/* No initialization is required */
 	(void)dev;
@@ -78,8 +81,8 @@ static int entropy_cc310_rng_init(const struct device *dev)
 	return 0;
 }
 
-static const struct entropy_driver_api entropy_cc310_rng_api = {
-	.get_entropy = entropy_cc310_rng_get_entropy
+static const struct entropy_driver_api entropy_cc3xx_rng_api = {
+	.get_entropy = entropy_cc3xx_rng_get_entropy
 };
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(cryptocell), okay)
@@ -99,9 +102,9 @@ static const struct entropy_driver_api entropy_cc310_rng_api = {
 #error "No cryptocell or cryptocell_sw node labels in the devicetree"
 #endif
 
-DEVICE_AND_API_INIT(entropy_cc310_rng, DEVICE_NAME,
-		    &entropy_cc310_rng_init,
+DEVICE_AND_API_INIT(entropy_cc3xx_rng, DEVICE_NAME,
+		    &entropy_cc3xx_rng_init,
 		    NULL,
 		    NULL,
 		    POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE,
-		    &entropy_cc310_rng_api);
+		    &entropy_cc3xx_rng_api);

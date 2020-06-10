@@ -1,15 +1,15 @@
-# Arm CC310 entropy driver for nRF52840 and nRF9160
+# Arm CC3xx entropy driver for nRF52840 and nRF9160
 #
 # Copyright (c) 2019 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 
-config ENTROPY_CC310
-	bool "Arm CC310 RNG driver for Nordic devices"
-	depends on HW_CC310 || (SOC_NRF9160 && SPM)
+config ENTROPY_CC3XX
+	bool "Arm CC3XX RNG driver for Nordic devices"
+	depends on HW_CC3XX || (SOC_NRF9160 && SPM) || (SOC_NRF5340_CPUAPP && SPM)
 	depends on ENTROPY_GENERATOR
 	select ENTROPY_HAS_DRIVER
 	default y
 	help
-	  This option enables the Arm CC310 RNG devices in nRF52840 and nRF9160
-	  devices. This is dependent on CC310 being enabled in nrf_security.
+	  This option enables the Arm CC3xx RNG devices in nRF52840, nRF5340, and nRF9160
+	  devices. This is dependent on CC3xx being enabled in nrf_security.
