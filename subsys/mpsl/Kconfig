@@ -18,6 +18,12 @@ config MPSL_SIGNAL_STACK_SIZE
 	  Size of the signal handler thread stack, used to process lower
 	  priority signals in MPSL.
 
+config MPSL_TIMESLOT_SESSION_COUNT
+	int "Number of timeslot sessions"
+	default 0
+	help
+	  Maximum number of timeslot sessions.
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

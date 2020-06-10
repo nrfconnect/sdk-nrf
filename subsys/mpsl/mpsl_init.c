@@ -9,6 +9,7 @@
 #include <kernel.h>
 #include <logging/log.h>
 #include <mpsl.h>
+#include <mpsl_timeslot.h>
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
@@ -23,6 +24,13 @@ static K_SEM_DEFINE(sem_signal, 0, UINT_MAX);
 static struct k_thread signal_thread_data;
 static K_THREAD_STACK_DEFINE(signal_thread_stack,
 			     CONFIG_MPSL_SIGNAL_STACK_SIZE);
+
+#if CONFIG_MPSL_TIMESLOT_SESSION_COUNT > 0
+#define TIMESLOT_MEM_SIZE \
+	((MPSL_TIMESLOT_CONTEXT_SIZE) * \
+	(CONFIG_MPSL_TIMESLOT_SESSION_COUNT))
+static uint8_t __aligned(4) timeslot_context[TIMESLOT_MEM_SIZE];
+#endif
 
 static void mpsl_low_prio_irq_handler(void)
 {
@@ -123,6 +131,14 @@ static int mpsl_lib_init(struct device *dev)
 	if (err) {
 		return err;
 	}
+
+#if CONFIG_MPSL_TIMESLOT_SESSION_COUNT > 0
+	err = mpsl_timeslot_session_count_set((void *) timeslot_context,
+			CONFIG_MPSL_TIMESLOT_SESSION_COUNT);
+	if (err) {
+		return err;
+	}
+#endif
 
 	IRQ_DIRECT_CONNECT(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_timer0_isr_wrapper, IRQ_ZERO_LATENCY);
