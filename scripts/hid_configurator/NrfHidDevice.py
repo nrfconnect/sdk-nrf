@@ -90,12 +90,13 @@ class Response(object):
         return Response(rcpt, event_id, status, event_data)
 
 class NrfHidDevice():
-    def __init__(self, board_name, vid, pid, dongle_pid):
-        self.name = board_name
+    def __init__(self, name, vid, pid, dongle_pid):
+        self.name = name
         self.vid = vid
         self.pid = pid
         self.dev_ptr = None
         self.dev_config = None
+        self.board_name = None
 
         direct_devs = NrfHidDevice._open_devices(vid, pid)
         dongle_devs = []
@@ -117,6 +118,7 @@ class NrfHidDevice():
                 if config is not None:
                     self.dev_config = config
                     self.dev_ptr = d
+                    self.board_name = board_name
                     print("Device board name is {}".format(board_name))
                 else:
                     d.close()
@@ -392,6 +394,9 @@ class NrfHidDevice():
             return False
         else:
             return True
+
+    def get_board_name(self):
+        return self.board_name
 
     def get_device_config(self):
         if not self.initialized():
