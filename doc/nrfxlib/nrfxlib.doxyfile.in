@@ -1946,7 +1946,7 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = "MBEDTLS_CONFIG_FILE=\"@NRFXLIB_BINARY_DIR@/mbedtls_doxygen_config.h\"" \
                          "CONFIG_MBEDTLS_VANILLA_BACKEND=y" \
-                         "CONFIG_CC310_BACKEND=y" \
+                         "CONFIG_CC3XX_BACKEND=y" \
                          "CONFIG_SYS_CLOCK_EXISTS=y" \
                          "CONFIG_THREAD_MONITOR=y" \
                          "CONFIG_THREAD_CUSTOM_DATA=y" \
