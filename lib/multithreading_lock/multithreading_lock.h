@@ -43,8 +43,8 @@ extern "C" {
  * @param[in] timeout     Timeout value for the locking API.
  *
  * @retval 0              Success
- * @retval - ::EBUSY      Returned without waiting.
- * @retval - ::EAGAIN     Waiting period timed out.
+ * @retval - @em EBUSY    Returned without waiting.
+ * @retval - @em EAGAIN   Waiting period timed out.
  */
 int multithreading_lock_acquire(k_timeout_t timeout);
 

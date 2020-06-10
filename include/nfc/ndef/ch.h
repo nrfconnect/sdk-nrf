@@ -406,7 +406,7 @@ int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
 
 /**
  * @brief Macro for accessing the NFC NDEF Handover Carrier record descriptor
- * instance that was created with @ref NFC_NDEF_CH_HC_GENERIC_RECORD_DESC_DEF.
+ * instance that was created with @em NFC_NDEF_CH_HC_GENERIC_RECORD_DESC_DEF.
  */
 #define NFC_NDEF_CH_HC_RECORD_DESC(_name) NFC_NDEF_GENERIC_RECORD_DESC(_name)
 
@@ -472,7 +472,7 @@ int nfc_ndef_ch_ac_rec_payload_encode(const struct nfc_ndef_ch_ac_rec *nfc_rec_a
 
 /**
  * @brief Macro for accessing the NFC NDEF Alternative Carrier record descriptor
- * instance that was created with @ref NFC_NDEF_AC_RECORD_DESC_DEF.
+ * instance that was created with @em NFC_NDEF_AC_RECORD_DESC_DEF.
  */
 #define NFC_NDEF_CH_AC_RECORD_DESC(_name) NFC_NDEF_GENERIC_RECORD_DESC(_name)
 

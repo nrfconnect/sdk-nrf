@@ -181,8 +181,7 @@ int st25r3911b_nfca_init(struct k_poll_event *events, u8_t cnt,
 /** @brief Switch on the NFC Reader field.
  *
  *  @details If the field is switched on successfully,
- *           the @ref nfca_cb.field_on callback is
- *           called.
+ *           the @em nfca_cb.field_on() callback is called.
  *
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
@@ -192,8 +191,7 @@ int st25r3911b_nfca_field_on(void);
 /** @brief Switch off the NFC Reader field.
  *
  *  @details If the field is switched off successfully,
- *           the @ref nfca_cb.field_off callback is
- *           called.
+ *           the @em nfca_cb.field_off() callback is called.
  *
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
@@ -203,7 +201,7 @@ int st25r3911b_nfca_field_off(void);
 /** @brief Detect tag by sending a detection command.
  *
  *  @details The command is sent according to NFC Forum Digital 2.0
- *           6.6. After success, the @ref nfca_cb.tag_detected
+ *           6.6. After success, the @em nfca_cb.tag_detected()
  *           callback is called.
  *
  *  @param cmd Command.
@@ -217,8 +215,7 @@ int st25r3911b_nfca_tag_detect(enum st25r3911b_nfca_detect_cmd cmd);
  *
  *  @details The collision resolution procedure is described in
  *           NFC Forum Activity 2.0 9.4.4. After this
- *           procedure, @ref nfca_cb.anticollision_completed
- *           is called.
+ *           procedure, @em nfca_cb.anticollision_completed() is called.
  *
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.

@@ -33,7 +33,7 @@ struct bt_gatt_hids_c_rep_info;
  * This function is called when new data related to the given report object
  * appears.
  * The data size can be obtained from the report object from the
- * @ref bt_gatt_hids_c_rep_info::size field.
+ * @em bt_gatt_hids_c_rep_info::size field.
  *
  * @param hids_c HIDS client object.
  * @param rep    Report object.

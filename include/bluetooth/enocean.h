@@ -174,7 +174,7 @@ int bt_enocean_commission(const bt_addr_le_t *addr, const u8_t key[16],
  *
  *  Removes the EnOcean device's security information, freeing up space for new
  *  devices. May be used directly in the
- *  @ref bt_enocean_callbacks::commissioning callback to reject a device before
+ *  @em bt_enocean_callbacks::commissioning callback to reject a device before
  *  it gets commissioned.
  *
  *  @param dev Device to forget.

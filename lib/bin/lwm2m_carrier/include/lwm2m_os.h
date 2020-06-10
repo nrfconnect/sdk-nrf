@@ -192,7 +192,7 @@ void lwm2m_os_log(int level, const char *fmt, ...);
  *
  * @return 0  on success
  * @return -1 on error
- * @return an error from @ref bsd_modem_dfu in case of modem DFU
+ * @return an error from @em bsd_modem_dfu in case of modem DFU
  */
 int lwm2m_os_bsdlib_init(void);
 

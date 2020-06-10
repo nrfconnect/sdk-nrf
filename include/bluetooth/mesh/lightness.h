@@ -45,7 +45,7 @@ struct bt_mesh_lightness_status {
 	/** Target Lightness level. */
 	u16_t target;
 	/**
-	 * Time remaining of the ongoing transition, or @ref K_FOREVER.
+	 * Time remaining of the ongoing transition, or @em K_FOREVER.
 	 * If there's no ongoing transition, @c remaining_time is 0.
 	 */
 	s32_t remaining_time;
