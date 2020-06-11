@@ -258,12 +258,12 @@ foreach(part ${PM_ALL_BY_SIZE})
 endforeach()
 
 string(TOUPPER ${domain} DOMAIN)
-set(PM_MERGED_${DOMAIN}_SPAN ${implicitly_assigned} ${explicitly_assigned})
-set(merged_${domain}_overlap TRUE) # Enable overlapping for the merged hex file.
+set(PM_MERGED_SPAN ${implicitly_assigned} ${explicitly_assigned})
+set(merged_overlap TRUE) # Enable overlapping for the merged hex file.
 
 # Iterate over all container partitions, plus the "fake" merged paritition.
 # The loop will create a hex file for each iteration.
-foreach(container ${containers} merged_${domain})
+foreach(container ${containers} merged)
   string(TOUPPER ${container} CONTAINER)
 
   # Prepare the list of hex files and list of dependencies for the merge command.
@@ -310,7 +310,7 @@ endforeach()
 get_target_property(runners_content runner_yml_props_target yaml_contents)
 
 string(REGEX REPLACE "--hex-file=[^\n]*"
-  "--hex-file=${PROJECT_BINARY_DIR}/merged_${domain}.hex" new  ${runners_content})
+  "--hex-file=${PROJECT_BINARY_DIR}/merged.hex" new  ${runners_content})
 
 set_property(
   TARGET         runner_yml_props_target
@@ -376,8 +376,8 @@ else()
   endforeach()
 
   # Explicitly add the root image domain hex file to the list
-  list(APPEND domain_hex_files ${PROJECT_BINARY_DIR}/merged_${domain}.hex)
-  list(APPEND global_hex_depends merged_${domain}_hex)
+  list(APPEND domain_hex_files ${PROJECT_BINARY_DIR}/merged.hex)
+  list(APPEND global_hex_depends merged_hex)
 
   # Now all partition manager configuration from all images and domains are
   # available. Generate the global pm_config.h, and provide it to all images.
@@ -407,33 +407,43 @@ else()
     ${pm_out_partition_files}
     )
 
-  set_property(
-    TARGET partition_manager
-    PROPERTY PM_DEPENDS
-    ${global_hex_depends}
-    )
-  # For convenience, generate global hex file containing all domains' hex files.
-  set(final_merged ${PROJECT_BINARY_DIR}/merged.hex)
+  list(LENGTH global_hex_depends NO_OF_HEX_FILES)
+  if(${NO_OF_HEX_FILES} GREATER 1)
+    set_property(
+      TARGET partition_manager
+      PROPERTY PM_DEPENDS
+      ${global_hex_depends}
+      )
+    # For convenience, generate global hex file containing all domains' hex files.
+    set(final_merged ${PROJECT_BINARY_DIR}/merged_domains.hex)
 
-  # Add command to merge files.
-  add_custom_command(
-    OUTPUT ${final_merged}
-    COMMAND
-    ${PYTHON_EXECUTABLE}
-    ${ZEPHYR_BASE}/scripts/mergehex.py
-    -o ${final_merged}
-    ${domain_hex_files}
-    DEPENDS
-    ${global_hex_depends}
-    )
+    # Add command to merge files.
+    add_custom_command(
+      OUTPUT ${final_merged}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_BASE}/scripts/mergehex.py
+      -o ${final_merged}
+      ${domain_hex_files}
+      DEPENDS
+      ${global_hex_depends}
+      )
 
-  # Wrapper target for the merge command.
-  add_custom_target(merged_hex ALL DEPENDS ${final_merged})
-  # Add merged.hex as the representative hex file for flashing this app.
-  if(TARGET flash)
-    add_dependencies(flash merged_hex)
+    # Wrapper target for the merge command.
+    add_custom_target(merged_domain_hex ALL DEPENDS ${final_merged})
+    # Add merged_domain.hex as the representative hex file for flashing this app.
+    if(TARGET flash)
+      add_dependencies(flash merged_domain_hex)
+    endif()
+    set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${final_merged}"
+      CACHE STRING "Path to merged image in Intel Hex format" FORCE)
+  else()
+    # Add merged.hex as the representative hex file for flashing this app.
+    if(TARGET flash)
+      add_dependencies(flash merged_hex)
+    endif()
+    set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX ${PROJECT_BINARY_DIR}/merged.hex
+        CACHE STRING "Path to merged image in Intel Hex format" FORCE)
   endif()
-  set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${final_merged}"
-    CACHE STRING "Path to merged image in Intel Hex format" FORCE)
 
 endif()
