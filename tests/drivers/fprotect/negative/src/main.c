@@ -27,8 +27,8 @@ static void test_flash_write_protected(void)
 	(void)memset(wd, 0xa5, sizeof(wd));
 	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	(void) flash_write_protection_set(flash_dev, false);
-	printk("NOTE: A BUS FAULT (BFAR addr 0x%x) immediately after this message"
-		" means the test passed!\n", invalid_write_addr);
+	printk("NOTE: A BUS FAULT immediately after this message"
+		" means the test passed!\n");
 	err = flash_write(flash_dev, invalid_write_addr, wd, sizeof(wd));
 	zassert_equal(0, err, "flash_write failed with err code %d\r\n", err);
 	zassert_unreachable("Should have BUS FAULTed before coming here.");
