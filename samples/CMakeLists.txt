@@ -34,6 +34,14 @@ endif ()
 if (CONFIG_BT_RPMSG_NRF53)
   if ((BOARD STREQUAL nrf5340pdk_nrf5340_cpuappns) OR
       (BOARD STREQUAL nrf5340pdk_nrf5340_cpuapp))
+
+    if (CONFIG_BT_LL_NRFXLIB_DEFAULT)
+      add_overlay_config(
+        hci_rpmsg
+        ${NRF_DIR}/subsys/bluetooth/controller/bt_ll_nrfxlib_hci_rpmsg.conf
+        )
+    endif()
+
     add_child_image(
       NAME hci_rpmsg
       SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
