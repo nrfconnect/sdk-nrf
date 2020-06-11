@@ -11,7 +11,7 @@
 #include <drivers/flash.h>
 #include <power/reboot.h>
 
-#define S1_ADDRESS 0x20000
+#define S1_ADDRESS PM_S1_ADDRESS
 #define S1_SIZE 0x8000
 
 
