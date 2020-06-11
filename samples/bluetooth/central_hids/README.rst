@@ -149,7 +149,7 @@ Testing with nRF Connect for Desktop
       Subscribe in report id: 1
       Subscribe in boot keyboard report
 
-#. Explore the first record inside **Human Interface Device** (the one with six values).
+#. Explore the first report inside **Human Interface Device** (the one with eight values).
    Change any of the values and note that the board logs the change.
 #. Press Button 2 on the board and observe that the **Protocol Mode** value changes from ``01`` to ``00``.
 #. Press Button 1 and Button 3 one after another and observe that the **Boot Keyboard Output Report** value toggles between ``00`` and ``02``.
