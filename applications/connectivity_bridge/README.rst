@@ -46,11 +46,11 @@ It can be turned on at runtime by setting the appropriate option in the :file:`C
 Requirements
 ************
 
-The sample supports the following nRF9160-based device:
+The sample supports the following nRF52840-based device:
 
 .. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set10_start
-   :end-before: set10_end
+   :start-after: set17_start
+   :end-before: set17_end
 
 The sample also requires a USB host which can communicate with CDC ACM devices, such as a Windows or Linux PC.
 
