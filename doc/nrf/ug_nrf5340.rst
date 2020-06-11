@@ -117,7 +117,6 @@ Application samples
 
 The |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`, in addition to the :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
 Most of these samples should run on the nRF5340 PDK, but not all have been thoroughly tested.
-Samples that use non-standard features of the Bluetooth Low Energy Controller, like the :ref:`ble_llpm` sample, are not supported.
 
 Some Bluetooth LE samples require configuration adjustments to the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample as described in the `Network samples`_ section.
 
