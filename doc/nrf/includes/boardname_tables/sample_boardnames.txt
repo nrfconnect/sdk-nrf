@@ -138,7 +138,7 @@ Set used by samples (Immutable bootloader, Event Manager, Profiler, PPI Trace)
 
 .. set9_end
 
-Set used by samples (BH1749: Ambient Light Sensor IC, USB-UART bridge, Connectivity bridge)
+Set used by samples (BH1749: Ambient Light Sensor IC)
 
 .. set10_start
 
@@ -239,3 +239,15 @@ Set used by Tests (Crypto)
 +--------------------------------+-----------+------------------------------------------------+--------------------------------+
 
 .. set16_end
+
+Set used by samples (USB-UART bridge, Connectivity bridge)
+
+.. set17_start
+
++--------------------------------+-----------+------------------+---------------------------+
+|Hardware platforms              |PCA        |Board name        |Build target               |
++================================+===========+==================+===========================+
+|:ref:`Thingy:91 <ug_thingy91>`  |PCA20035   |thingy91_nrf52840 |``thingy91_nrf52840``      |
++--------------------------------+-----------+------------------+---------------------------+
+
+.. set17_end
