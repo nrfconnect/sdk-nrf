@@ -29,13 +29,13 @@ If packets are successfully received from the Transmitter, the LED pattern will 
 Requirements
 ************
 
-* Two of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set2_start
+   :end-before: set2_end
 
-  You can mix different boards.
+You can use any two of the development kits listed above and mix different development kits.
 
 User interface
 ***************
