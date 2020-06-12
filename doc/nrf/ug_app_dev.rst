@@ -1,6 +1,6 @@
 .. _ncs-app-dev:
 
-Application Development
+Application development
 #######################
 
 This user guide provides fundamental information on developing a new application based on the |NCS|.

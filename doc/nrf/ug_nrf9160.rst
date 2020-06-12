@@ -165,6 +165,8 @@ For more detailed information, see the `system mode section in the AT Commands r
 .. |An nRF9160-based device| replace:: An nRF9160 DK
 .. |an nRF9160-based device| replace:: an nRF9160 DK
 
+.. _nrf9160_gps_lte:
+
 .. nrf9160_gps_lte_start
 
 Concurrent GPS and LTE

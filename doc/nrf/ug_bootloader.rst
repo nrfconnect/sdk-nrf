@@ -88,6 +88,7 @@ If this image is faulty and cannot be booted, the other partition will always ho
 Set the option :option:`CONFIG_BUILD_S1_VARIANT` when building the upgradable bootloader to automatically generate pre-signed variants of the image for both slots.
 These signed variants can be used to perform an upgrade procedure through the :ref:`lib_fota_download` library.
 
+.. _ug_bootloader_adding:
 
 Adding a bootloader chain to your application
 *********************************************
@@ -123,6 +124,8 @@ See :doc:`mcuboot:index` for information about the default implementation of MCU
 :ref:`mcuboot:mcuboot_ncs` gives details on the integration of MCUboot in |NCS|.
 
 You can configure MCUboot by setting configuration options for the ``mcuboot`` child image.
+
+.. _ug_bootloader_flash:
 
 Flash partitions used by MCUboot
 --------------------------------

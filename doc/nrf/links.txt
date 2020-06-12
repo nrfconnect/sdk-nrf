@@ -85,6 +85,8 @@
 .. _`PA/LNA module documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/rd_fem.html
 .. _`antenna diversity documentation`: https://infocenter.nordicsemi.com/topic/15.4_radio_driver_v2.0.0-1.prealpha/ant_diversity.html
 
+.. _`anomaly 19`: https://infocenter.nordicsemi.com/topic/errata_nRF5340_EngA/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
+
 .. ### Links to the Nordic website
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
@@ -135,6 +137,8 @@
 .. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
 
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
+
+.. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#220---2020-04-28
 
 .. _`nRF Thread Topology Monitor`: https://infocenter.nordicsemi.com/topic/sdk_tz_v4.1.0/thread_topology_monitor.html
 
@@ -369,6 +373,14 @@
 .. _`Pre-Shared Key (PSK)`: https://en.wikipedia.org/wiki/Pre-shared_key
 .. _`Mbed TLS`: https://en.wikipedia.org/wiki/Mbed_TLS
 
+.. _`CoAP response codes`: https://tools.ietf.org/html/rfc7252#section-12.1.2
+
+.. _`RFC 7252 - The Constrained Application Protocol`: https://tools.ietf.org/html/rfc7252
+
+.. _`tutorial on SSL.com`: https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
+
+.. _`RFC959 File Transfer Protocol (FTP)`: https://tools.ietf.org/html/rfc959
+
 .. ### Links to specific files on GitHub
 
 .. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/master/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
@@ -377,10 +389,4 @@
 
 .. _`tests/unity/example_test/CMakeLists.txt`: https://github.com/nrfconnect/sdk-nrf/blob/master/tests/unity/example_test/CMakeLists.txt
 
-.. _`CoAP response codes`: https://tools.ietf.org/html/rfc7252#section-12.1.2
-
-.. _`RFC 7252 - The Constrained Application Protocol`: https://tools.ietf.org/html/rfc7252
-
-.. _`tutorial on SSL.com`: https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
-
-.. _`RFC959 File Transfer Protocol (FTP)`: https://tools.ietf.org/html/rfc959
+.. _`nRF52820 CMakeLists.txt`: https://github.com/zephyrproject-rtos/zephyr/blob/master/boards/arm/nrf52833dk_nrf52820/CMakeLists.txt
