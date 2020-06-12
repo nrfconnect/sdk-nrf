@@ -14,6 +14,13 @@ config NCS_SAMPLES_DEFAULTS
 	help
 	  Use the default configuration for NCS samples.
 
+config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
+	bool "Enable empty_app_core as a child image"
+	default n
+	depends on SOC_NRF5340_CPUNET
+	help
+	  Add the empty_app_core as a child image for the given sample.
+	  Used by samples that only require SOC_NRF5340_CPUNET.
 
 if LOG
 
