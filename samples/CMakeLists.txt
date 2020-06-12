@@ -51,3 +51,10 @@ if (CONFIG_BT_RPMSG_NRF53)
       "Board ${BOARD} not supported for including hci_rpmsg as child image")
   endif()
 endif()
+
+if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
+  add_child_image(
+    NAME empty_app_core
+    SOURCE_DIR ${NRF_DIR}/samples/nrf5340/empty_app_core
+    DOMAIN nrf5340pdk_nrf5340_cpuapp)
+endif()
