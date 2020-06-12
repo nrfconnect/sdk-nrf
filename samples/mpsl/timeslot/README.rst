@@ -22,11 +22,14 @@ The timeslot session is closed when any key is pressed in the terminal.
 Requirements
 ************
 
-* One of the nRF52 development boards. The sample has been tested on:
+One of the following development boards:
 
-  * |nRF5340DK|
   * |nRF52DK|
   * |nRF52840DK|
+  * |nRF5340DK|
+
+    .. note::
+       For the nRF5340DK this sample is only supported on the network core (nrf5340pdk_nrf5340_cpunet), and the :ref:`nrf5340_empty_app_core` sample must be flashed on the application core.
 
 Building and Running
 ********************
