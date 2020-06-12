@@ -1,7 +1,7 @@
 .. _secure_services:
 
-nRF9160: Secure Services Sample
-###############################
+nRF9160: Secure Services
+########################
 
 The Secure Services sample shows how to use the secure services provided by :ref:`secure_partition_manager`.
 This firmware needs :ref:`secure_partition_manager` to also be present on the chip.

@@ -1,7 +1,7 @@
 .. _lib_date_time:
 
-Date-Time Library
-#################
+Date-Time
+#########
 
 The date-time library maintains the current date-time information in UTC format.
 The option :option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` determines the frequency with which the library updates the date-time information.
