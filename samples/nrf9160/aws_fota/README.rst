@@ -104,13 +104,15 @@ Use LTE Link Monitor to write the certificates to the board:
 Requirements
 ************
 
-* The following development board:
+The sample supports the following development kit:
 
-  * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* An `AWS account`_ with access to Simple Storage Service (S3) and the IoT Core service
+The sample requires an `AWS account`_ with access to Simple Storage Service (S3) and the IoT Core service.
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 
 Building and running
