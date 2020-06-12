@@ -1,7 +1,7 @@
 .. _ot_cli_sample:
 
-Thread: CLI sample
-##################
+Thread: CLI
+###########
 
 The Thread CLI sample demonstrates the usage of OpenThread Command Line Interface inside the Zephyr shell.
 
