@@ -52,9 +52,11 @@ The security attribution configuration for the flash will change when SPM is not
 Requirements
 ************
 
-The following development board:
+The sample supports the following development kit:
 
-* |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set7_start
+   :end-before: set7_end
 
 Building and running
 ********************

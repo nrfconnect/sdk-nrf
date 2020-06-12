@@ -122,7 +122,7 @@ Set used by Thread and Zigbee samples and application (nRF Desktop - DK)
 
 .. set8_end
 
-Set used by samples (Immutable bootloader, Event Manager, Profiler, PPI Trace)
+Set used by samples (Event Manager, Profiler, PPI Trace)
 
 .. set9_start
 
@@ -220,7 +220,7 @@ Set used by nRF53 samples (Empty firmware for application core)
 
 .. set15_end
 
-Set used by Tests (Crypto)
+Set used by Tests (Crypto) and samples (Immutable bootloader)
 
 .. set16_start
 

@@ -85,12 +85,11 @@ The bootloader uses the :ref:`doc_bl_storage` library to access provisioned data
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF9160DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set16_start
+   :end-before: set16_end
 
 .. _bootloader_build_and_run:
 
