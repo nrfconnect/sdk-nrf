@@ -75,11 +75,11 @@ By default, the following values are used to demonstrates the interaction of the
 Requirements
 ************
 
-* Two of the following nRF52-series development kit boards:
+* Two of the following development boards:
 
-  * |nRF5340DK|
-  * |nRF52DK|
   * |nRF52840DK|
+  * |nRF52DK|
+  * |nRF5340DK|
   * Other boards running BLE Controller variants that support LLPM (see :ref:`nrfxlib:ble_controller` Proprietary feature support)
 
   You can mix different boards.
