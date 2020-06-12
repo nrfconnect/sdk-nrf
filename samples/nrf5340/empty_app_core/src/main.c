@@ -53,25 +53,12 @@ static int network_gpio_allow(struct device *dev)
 {
 	ARG_UNUSED(dev);
 
-	/* Enable LED pins on Network core */
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(led0), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(led1), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(led2), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(led3), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
+	/* Allow Network MCU to use all GPIOs */
+	for (u32_t i = 0; i < ARRAY_SIZE(NRF_P0_S->PIN_CNF); i++) {
+		NRF_P0_S->PIN_CNF[i] = (GPIO_PIN_CNF_MCUSEL_NetworkMCU <<
+					GPIO_PIN_CNF_MCUSEL_Pos);
+	}
 
-	/* Enable Buttons pins on Network core */
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(sw0), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(sw1), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(sw2), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
-	NRF_P0->PIN_CNF[DT_GPIO_PIN(DT_ALIAS(sw3), gpios)] =
-		GPIO_PIN_CNF_MCUSEL_NetworkMCU << GPIO_PIN_CNF_MCUSEL_Pos;
 
 	return 0;
 }
