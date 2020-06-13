@@ -787,7 +787,7 @@ static int handle_at_socketopt(enum at_cmd_type cmd_type)
 			if (at_params_valid_count_get(&at_param_list) < 4) {
 				return -EINVAL;
 			}
-			err = at_params_int_get(&at_param_list, 2, &value);
+			err = at_params_int_get(&at_param_list, 3, &value);
 			if (err) {
 				return err;
 			}
