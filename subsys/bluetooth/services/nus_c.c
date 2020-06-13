@@ -88,6 +88,10 @@ int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const u8_t *data,
 {
 	int err;
 
+	if (!nus_c->conn) {
+		return -ENOTCONN;
+	}
+
 	if (atomic_test_and_set_bit(&nus_c->state, NUS_C_RX_WRITE_PENDING)) {
 		return -EALREADY;
 	}
