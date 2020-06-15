@@ -40,19 +40,20 @@ def item_is_placed(d, item, after_or_before):
 
 def resolve_one_of(reqs, partitions):
     def empty_one_of(one_of_list):
-        return RuntimeError("'one_of' dict did not evaluate to any partition. "
-                            "Available partitions {}, one_of {}".format(partitions, one_of_list))
+        return "'one_of' dict did not evaluate to any partition." \
+               f" Available partitions {partitions}, one_of {one_of_list}"
 
     for k, v in reqs.items():
         if isinstance(v, dict):
             if 'one_of' in v.keys():
                 if len(v.keys()) != 1:
-                    raise RuntimeError("'one_of' must be the only key in its dict")
+                    raise PartitionError(
+                        "'one_of' must be the only key in its dict")
                 # Now fetch the first existing partition. Note that the value must be a list even if there is only
                 # one entry.
                 reqs[k] = [partition for partition in v['one_of'] if partition in partitions][:1]
                 if len(reqs[k]) == 0:
-                    raise empty_one_of(v['one_of'])
+                    raise PartitionError(empty_one_of(v['one_of']))
             else:
                 resolve_one_of(v, partitions)
         # 'one_of' dicts can occur inside lists of partitions.
@@ -64,11 +65,13 @@ def resolve_one_of(reqs, partitions):
             for i in v:
                 if isinstance(i, dict):
                     if 'one_of' not in i.keys():
-                        raise RuntimeError("Found illegal dict inside list. Only 'one_of' dicts are allowed")
+                        raise PartitionError(
+                            "Found illegal dict inside list. Only 'one_of' "
+                            "dicts are allowed")
                     try:
                         to_add.append([partition for partition in i['one_of'] if partition in partitions][0])
                     except IndexError:
-                        raise empty_one_of(i['one_of'])
+                        raise PartitionError(empty_one_of(i['one_of']))
                     to_remove.append(i)
             if to_add:
                 reqs[k] = [i if i not in to_remove else to_add.pop(0) for i in v]
@@ -107,7 +110,8 @@ def remove_irrelevant_requirements(reqs, dp):
     # Verify that no partitions define an empty 'placement'
     for k, v in reqs.items():
         if 'placement' in v.keys() and len(v['placement']) == 0:
-            raise RuntimeError("Found empty 'placement' property for partition '{}'".format(k))
+            raise PartitionError(
+                f"Found empty 'placement' property for partition '{k}'")
 
     # Exchange all occurrences of 'one_of' list, with the first existing partition in the 'one_of' list.
     # Extend the keys given as input with 'end' and 'start' as these are also valid references.
@@ -214,7 +218,8 @@ def clean_sub_partitions(reqs, sub_partitions):
     while not done:
         done = True
         for key, value in sub_partitions.items():
-            assert len(value['span']) > 0, "partition {} is empty".format(key)
+            if len(value['span']) == 0:
+                raise PartitionError(f"partition {key} is empty")
             value['orig_span'] = value['span'].copy()  # Take a "backup" of the span.
             for part in (part for part in value['span'] if part in sub_partitions):
                 value['span'].extend(sub_partitions[part]['span'])
@@ -254,11 +259,16 @@ def resolve(reqs, dp):
     # Validate partition spanning.
     for sub in sub_partitions:
         indices = [solution.index(part) for part in sub_partitions[sub]['span']]
-        assert ((not indices) or (max(indices) - min(indices) + 1 == len(indices))), \
-            "partition {} ({}) does not span over consecutive parts." \
-            " Solution: {}".format(sub, str(sub_partitions[sub]['span']), str(solution))
+        if not ((not indices)
+                or (max(indices) - min(indices) + 1 == len(indices))):
+            raise PartitionError(f"partition {sub}"
+                                 f" ({str(sub_partitions[sub]['span'])})"
+                                 f" does not span over consecutive "
+                                 f"parts. Solution: {str(solution)}")
         for part in sub_partitions[sub]['span']:
-            assert (part in solution), "Some or all parts of partition {} have not been placed.".format(part)
+            if part not in solution:
+                raise PartitionError(f"Some or all parts of partition {part}"
+                                     f" have not been placed.")
 
     return solution, sub_partitions
 
@@ -322,10 +332,14 @@ def verify_layout(reqs, solution, total_size, flash_start):
     for p in solution[1:]:
         actual_address = reqs[p]['address']
         if actual_address != expected_address:
-            raise RuntimeError("Error when inspecting {}, invalid address {}".format(p, actual_address))
+            raise PartitionError(f"Error when inspecting {p},"
+                                 f" invalid address {actual_address}")
+
         expected_address += reqs[p]['size']
     last = reqs[solution[-1]]
-    assert last['address'] + last['size'] == flash_start + total_size
+    if not last['address'] + last['size'] == flash_start + total_size:
+        raise PartitionError("End of last partition is after last valid"
+                             " address")
 
 
 def set_addresses_and_align(reqs, sub_partitions, solution, size, dp, start=0):
@@ -419,7 +433,8 @@ def align_partition(current, reqs, move_up, dynamic_partitions, dp, solution):
                                             required_offset, align_end,
                                             solution)
     else:
-        raise RuntimeError("Invalid combination, can not have dynamic partition in front of app with alignment")
+        raise PartitionError("Invalid combination, can not have dynamic"
+                             " partition in front of app with alignment")
 
     e = 'EMPTY_{}'.format(len([x for x in reqs.keys() if 'EMPTY' in x]))
     reqs[e] = {'address': empty_partition_address,
@@ -469,7 +484,7 @@ def get_empty_part_to_move_dyn_part(dynamic_partitions, current, reqs,
     # partition
     num_dyn_part_in_front = solution.index(current) - solution.index(first_dyn)
 
-    if not (num_bytes_to_move_dyn_part > 0):
+    if not num_bytes_to_move_dyn_part > 0:
         raise PartitionError("Invalid move size specified, must be > 0.")
 
     if move_end:
@@ -481,11 +496,11 @@ def get_empty_part_to_move_dyn_part(dynamic_partitions, current, reqs,
     reduction_each_dynamic_part = \
         num_bytes_to_move_dyn_part // num_dyn_part_in_front
 
-    if not (reduction_each_dynamic_part % 4 == 0):
+    if not reduction_each_dynamic_part % 4 == 0:
         raise PartitionError(f"The current configuration gives {first_dyn}"
                              f" a non-word-aligned size" + ALIGNMENT_ERROR)
 
-    if not (reduction_each_dynamic_part < reqs[first_dyn]['size']):
+    if not reduction_each_dynamic_part < reqs[first_dyn]['size']:
         raise PartitionError(
             f"The current configuration is invalid because it requires "
             f"{first_dyn}'s size to be less than 0." + ALIGNMENT_ERROR)
@@ -504,7 +519,7 @@ def get_empty_part_to_move_dyn_part(dynamic_partitions, current, reqs,
 
 def get_required_offset(align, start, size, move_up):
     if len(align) != 1 or ('start' not in align and 'end' not in align):
-        raise RuntimeError("Invalid alignment requirement {}".format(align))
+        raise PartitionError(f"Invalid alignment requirement {align}")
 
     end = start + size
     align_start = 'start' in align
@@ -535,7 +550,8 @@ def set_sub_partition_address_and_size(reqs, sub_partitions):
     for sp_name, sp_value in sub_partitions.items():
         size = sum([reqs[part]['size'] for part in sp_value['span']])
         if size == 0:
-            raise RuntimeError("No compatible parent partition found for {}".format(sp_name))
+            raise PartitionError(
+                f"No compatible parent partition found for {sp_name}")
         address = min([reqs[part]['address'] for part in sp_value['span']])
 
         reqs[sp_name] = sp_value
@@ -565,8 +581,10 @@ def load_reqs(input_config):
                     continue
                 for key in loaded_reqs.keys():
                     if key in reqs.keys() and loaded_reqs[key] != reqs[key]:
-                        raise RuntimeError("Conflicting configuration found for '{}' value for key '{}' differs."
-                                           "val1: {} val2: {} ".format(f.name, key, loaded_reqs[key], reqs[key]))
+                        raise PartitionError(
+                            f"Conflicting configuration found for '{f.name}'"
+                            f" value for key '{key}' differs. val1: "
+                            f"{loaded_reqs[key]} val2: {reqs[key]} ")
                 reqs.update(loaded_reqs)
 
     return reqs
@@ -582,7 +600,8 @@ def get_dynamic_area_start_and_size(static_config, flash_size, dp):
     ends = {0} | {config['address'] + config['size'] for config in proper_partitions}
     gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
 
-    assert len(gaps) == 1, "Incorrect amount of gaps found"
+    if len(gaps) != 1:
+        raise PartitionError("Incorrect amount of gaps found")
 
     start, end = gaps[0]
     return start, end - start
@@ -648,8 +667,10 @@ def solve_simple_region(pm_config, start, size, placement_strategy, region_name,
         # Generate the region partition containing the non-reserved memory.
         # But first, verify that the user hasn't created a partition with the name of the region.
         if region_name in pm_config:
-            raise RuntimeError(f"Found partition named {region_name}, "
-                               f"this is the name of a region, and is a reserved name")
+            raise PartitionError(
+                f"Found partition named {region_name}, this is the name of a"
+                f" region, and is a reserved name")
+
         pm_config[region_name] = dict()
         pm_config[region_name]['region'] = region_name
 
@@ -678,7 +699,8 @@ def verify_static_conf(size, start, placement_strategy, static_conf):
         start_end_correct = gaps[0][0] == start
 
     if len(gaps) != 1 or not start_end_correct:
-        raise RuntimeError("Statically defined partitions are not packed at the start/end of region")
+        raise PartitionError("Statically defined partitions are not packed at"
+                             " the start/end of region")
 
 
 def solve_complex_region(pm_config, start, size, placement_strategy, region_name, device, static_conf, dp):
@@ -811,7 +833,8 @@ def load_static_configuration(args, pm_config):
     # This is done since all partitions in pm_config will be resolved.
     for statically_defined_image in static_config:
         if statically_defined_image in pm_config and statically_defined_image:
-            print (f"Dropping partition '{statically_defined_image}' since it is statically defined.")
+            print(f"Dropping partition '{statically_defined_image}' "
+                  f"since it is statically defined.")
             del pm_config[statically_defined_image]
     return static_config
 
@@ -1022,7 +1045,7 @@ def test():
                                        's2': {'size': 200,
                                               'address': (1000+2000)-100-300,
                                               'region': 'ram'}})  # Note 300 not 200
-    except RuntimeError:
+    except PartitionError:
         failed = True
 
     assert failed
@@ -1051,7 +1074,7 @@ def test():
                                        's2': {'size': 200,
                                               'address': (1000+2000-50)-100-200,
                                               'region': 'ram'}})  # Note - 50
-    except RuntimeError:
+    except PartitionError:
         failed = True
 
     assert failed
@@ -1126,7 +1149,7 @@ def test():
     }
     try:
         resolve(td, 'app')
-    except RuntimeError:
+    except PartitionError:
         failed = True
     assert failed
 
@@ -1139,7 +1162,7 @@ def test():
     }
     try:
         resolve(td, 'app')
-    except RuntimeError:
+    except PartitionError:
         failed = True
     assert failed
 
@@ -1152,7 +1175,7 @@ def test():
     failed = False
     try:
         s, sub_partitions = resolve(td, 'app')
-    except RuntimeError:
+    except PartitionError:
         failed = True
     assert failed
 
