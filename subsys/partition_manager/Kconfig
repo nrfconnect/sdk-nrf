@@ -45,7 +45,15 @@ partition-size=0x1000
 rsource "Kconfig.template.partition_size"
 endif
 
-endmenu
+endmenu # Zephyr subsystem configurations
+
+
+menu "Zephyr samples configurations"
+
+module=HCI_RPMSG
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy_domain"
+
+endmenu # Zephyr samples configurations
 
 config PM_SINGLE_IMAGE
 	bool "Use the Partition Manager for single image builds"
