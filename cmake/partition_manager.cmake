@@ -57,6 +57,7 @@ endif()
 
 get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
 get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
+get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 
 # This file is executed once per domain.
 #
