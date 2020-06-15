@@ -1,0 +1,9 @@
+python=3.6
+cmake=3.13.1
+ninja=1.8.2
+gperf=3.1
+dtc=1.4.6
+gnuarmemb=9-2019-q4-major
+gnuarmemb-short=9-2019q4
+ses=4.52
+west=0.7.0
