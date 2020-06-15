@@ -21,6 +21,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 
 #define CONFIRM_TIMEOUT			K_SECONDS(10)
 #define ERASE_ADV_TIMEOUT		K_SECONDS(30)
+#define ERASE_ADV_NEW_CONN_TIMEOUT_MS	5000
+#define ERASE_ADV_NEW_CONN_TIMEOUT	K_MSEC(ERASE_ADV_NEW_CONN_TIMEOUT_MS)
 
 #define PEER_ID_STORAGE_NAME		"peer_id"
 #define BT_ID_LUT_STORAGE_NAME		"bt_lut"
@@ -101,6 +103,7 @@ static u8_t cur_peer_id;
 static bool cur_peer_id_valid;
 static u8_t tmp_peer_id;
 static bool dongle_peer_selected_on_init;
+static bool erase_adv_was_extended;
 
 
 #if CONFIG_BT_PERIPHERAL
@@ -454,6 +457,7 @@ static void erase_adv_confirm(void)
 		return;
 	}
 	LOG_INF("Start advertising for peer erase");
+	erase_adv_was_extended = false;
 
 	struct ble_peer_operation_event *event = new_ble_peer_operation_event();
 
@@ -693,6 +697,65 @@ static int init(void)
 	return 0;
 }
 
+static bool ble_peer_event_handler(const struct ble_peer_event *event)
+{
+	if (state != STATE_ERASE_ADV) {
+		return false;
+	}
+
+	if (event->state == PEER_STATE_CONNECTED) {
+		/* Ensure that connected peer will have time to establish
+		 * security.
+		 */
+		if ((k_delayed_work_remaining_get(&timeout) < ERASE_ADV_NEW_CONN_TIMEOUT_MS) &&
+		    !erase_adv_was_extended) {
+			k_delayed_work_submit(&timeout,
+					      ERASE_ADV_NEW_CONN_TIMEOUT);
+			erase_adv_was_extended = true;
+		}
+	} else if (event->state == PEER_STATE_SECURED) {
+		/* Ignore secured for previous local id. */
+		struct bt_conn_info bt_info;
+		int err = bt_conn_get_info(event->id, &bt_info);
+
+		if (err) {
+			LOG_ERR("Cannot get conn info");
+			module_set_state(MODULE_STATE_ERROR);
+			return false;
+		}
+
+		if (bt_info.id != get_bt_stack_peer_id(cur_peer_id)) {
+			LOG_INF("Connection for old id - ignored");
+			int err = bt_conn_disconnect(event->id,
+					BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+
+			if (err && (err != -ENOTCONN)) {
+				LOG_ERR("Cannot disconnect peer (err=%d)", err);
+				module_set_state(MODULE_STATE_ERROR);
+			}
+
+			return false;
+		}
+
+		LOG_INF("Erased peer");
+		swap_bt_stack_peer_id();
+
+		state = STATE_IDLE;
+
+		struct ble_peer_operation_event *event =
+			new_ble_peer_operation_event();
+
+		event->op = PEER_OPERATION_ERASED;
+		event->bt_app_id = cur_peer_id;
+		event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
+
+		EVENT_SUBMIT(event);
+		k_delayed_work_cancel(&timeout);
+	}
+
+	return false;
+}
+
 static bool click_event_handler(const struct click_event *event)
 {
 	if (event->key_id != CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON) {
@@ -821,54 +884,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_event(eh)) {
-		const struct ble_peer_event *event = cast_ble_peer_event(eh);
-
-		if ((state == STATE_ERASE_ADV) &&
-		    (event->state == PEER_STATE_SECURED)) {
-			/* Ignore secured for previous local id. */
-			struct bt_conn_info bt_info;
-			int err = bt_conn_get_info(event->id, &bt_info);
-
-			if (err) {
-				LOG_ERR("Cannot get conn info");
-				module_set_state(MODULE_STATE_ERROR);
-				return false;
-			}
-
-			if (bt_info.id != get_bt_stack_peer_id(cur_peer_id)) {
-				LOG_INF("Connection for old id - ignored");
-				int err = bt_conn_disconnect(event->id,
-					      BT_HCI_ERR_REMOTE_USER_TERM_CONN);
-
-				if (err && (err != -ENOTCONN)) {
-					LOG_ERR("Cannot disconnect peer (err=%d)",
-						err);
-					module_set_state(MODULE_STATE_ERROR);
-				}
-
-				return false;
-			}
-
-			LOG_INF("Erased peer");
-			if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-				swap_bt_stack_peer_id();
-			}
-
-			state = STATE_IDLE;
-
-			struct ble_peer_operation_event *event =
-				new_ble_peer_operation_event();
-
-			event->op = PEER_OPERATION_ERASED;
-			event->bt_app_id = cur_peer_id;
-			event->bt_stack_id = get_bt_stack_peer_id(cur_peer_id);
-
-			EVENT_SUBMIT(event);
-			k_delayed_work_cancel(&timeout);
-		}
-
-		return false;
+	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
+	    is_ble_peer_event(eh)) {
+		return ble_peer_event_handler(cast_ble_peer_event(eh));
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL) &&
@@ -892,7 +910,9 @@ static bool event_handler(const struct event_header *eh)
 }
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
+#if CONFIG_BT_PERIPHERAL
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+#endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_event);
 EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
