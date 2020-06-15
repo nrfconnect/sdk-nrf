@@ -13,7 +13,8 @@ sys.path.append('..')
 from devices import DEVICE
 from devices import get_device_pid, get_device_vid, get_device_type
 from NrfHidDevice import NrfHidDevice
-from modules.dfu import get_dfu_image_version, fwinfo, fwreboot, dfu_transfer
+from modules.dfu import DfuImage
+from modules.dfu import fwinfo, fwreboot, dfu_transfer
 from modules.config import fetch_config, change_config
 
 
@@ -92,14 +93,22 @@ class Device:
         dfu_image = file
         return dfu_transfer(self.dev, dfu_image, update_progressbar)
 
-    @staticmethod
-    def dfu_image_version(filepath):
-        ver = get_dfu_image_version(filepath)
-        if ver is None:
-            return "Wrong image"
+    def get_dfu_image_properties(self, filepath):
+        info = fwinfo(self.dev)
+        if info is None:
+            return None, None
+
+        self.img_file = DfuImage(filepath, info, self.dev.get_board_name())
+
+        version = self.img_file.get_dfu_image_version()
+        bin_path = self.img_file.get_dfu_image_bin_path()
+
+        if version is not None:
+            version_str = '.'.join([str(i) for i in version])
         else:
-            v = '.'.join([str(i) for i in ver])
-            return v
+            version_str = None
+
+        return version_str, bin_path
 
 
 if __name__ == '__main__':

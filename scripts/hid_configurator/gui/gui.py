@@ -13,7 +13,6 @@ from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from plyer import notification
 
@@ -141,13 +140,19 @@ class Gui(App):
         self._popup.open()
 
     def load_list(self, files_path):
-        print(files_path)
-        self.filepath = files_path[0]
+        version, self.bin_filepath = self.device.get_dfu_image_properties(files_path[0])
+
+        if (version is None) or (self.bin_filepath is None):
+            text = 'Cannot perform firmware update.'
+            text += '\nDevice does not support firmware update or update file is improper.'
+            self.root.ids.new_firmware_label.text = text
+            self.dismiss_popup()
+            return
+
         self.root.ids.dfu_buttons.ids.start_uploading_button.disabled = False
 
-        text = 'File:\n   {}\n'.format(os.path.split(self.filepath)[1])
-        text += 'New firmware version:\n   {}\n'.format(
-            self.device.dfu_image_version(self.filepath))
+        text = 'File:\n   {}\n'.format(os.path.basename(self.bin_filepath))
+        text += 'New firmware version:\n   {}\n'.format(version)
         self.root.ids.new_firmware_label.text = text
 
         self.dismiss_popup()
@@ -159,8 +164,7 @@ class Gui(App):
         self.root.ids.dfu_buttons.ids.choose_file_button.disabled = True
         dfu_label = self.root.ids.dfu_label
         dfu_label.text = 'Transfer in progress'
-        print(self.filepath)
-        success = self.device.perform_dfu(self.filepath, update_progressbar)
+        success = self.device.perform_dfu(self.bin_filepath, update_progressbar)
         if success:
             info = 'DFU transfer completed'
             message = 'Firmware will be switched on next reboot'
