@@ -32,8 +32,10 @@ endif ()
 # Automatically include the hci_rpmsg sample as child image, and change
 # the board to be the network core.
 if (CONFIG_BT_RPMSG_NRF53)
-  if ((BOARD STREQUAL nrf5340pdk_nrf5340_cpuappns) OR
-      (BOARD STREQUAL nrf5340pdk_nrf5340_cpuapp))
+  if (CONFIG_SOC_NRF5340_CPUAPP)
+
+    message("Adding 'hci_rpmsg' sample as child image since "
+      "CONFIG_BT_RPMSG_NRF53 is set to 'y'")
 
     if (CONFIG_BT_LL_NRFXLIB_DEFAULT)
       add_overlay_config(
@@ -53,6 +55,9 @@ if (CONFIG_BT_RPMSG_NRF53)
 endif()
 
 if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
+  message("Adding 'empty_app_core' sample as child image since "
+    "CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE is set to 'y'")
+
   add_child_image(
     NAME empty_app_core
     SOURCE_DIR ${NRF_DIR}/samples/nrf5340/empty_app_core
