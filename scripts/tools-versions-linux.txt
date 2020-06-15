@@ -1,0 +1,12 @@
+python3=3.8.0-3~18.04
+git=1:2.17.1-1ubuntu0.7
+cmake=3.17.3-0kitware1
+ninja-build=1.8.2-1
+gperf=3.1-1
+dtc=1.4.7-3ubuntu2
+gnuarmemb=9-2019-q4-major
+gnuarmemb-short=9-2019q4
+ses=4.52
+ccache=3.4.1-1
+dfu_util=0.9-1
+west=0.8.0

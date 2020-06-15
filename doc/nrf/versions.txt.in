@@ -1,0 +1,72 @@
+.. |ccache_recommended_ver_linux| replace:: @CCACHE_VERSION_LINUX@
+
+.. |cmake_min_ver| replace:: @CMAKE_VERSION_MINIMUM@
+.. |cmake_recommended_ver_win10| replace:: @CMAKE_VERSION_WIN10@
+.. |cmake_recommended_ver_darwin| replace:: @CMAKE_VERSION_DARWIN@
+.. |cmake_recommended_ver_linux| replace:: @CMAKE_VERSION_LINUX@
+
+.. |dfu_util_recommended_ver_linux| replace:: @DFU_UTIL_VERSION_LINUX@
+
+.. |dtc_min_ver| replace:: @DTC_VERSION_MINIMUM@
+.. |dtc_recommended_ver_win10| replace:: @DTC_VERSION_WIN10@
+.. |dtc_recommended_ver_darwin| replace:: @DTC_VERSION_DARWIN@
+.. |dtc_recommended_ver_linux| replace:: @DTC_VERSION_LINUX@
+
+.. |git_recommended_ver_win10| replace:: @GIT_VERSION_WIN10@
+.. |git_recommended_ver_darwin| replace:: @GIT_VERSION_DARWIN@
+.. |git_recommended_ver_linux| replace:: @GIT_VERSION_LINUX@
+
+.. |gnuarmemb_min_ver| replace:: @GNUARMEMB_VERSION_MINIMUM@
+.. |gnuarmemb_recommended_ver_win10| replace:: @GNUARMEMB_VERSION_WIN10@
+.. |gnuarmemb_recommended_ver_darwin| replace:: @GNUARMEMB_VERSION_DARWIN@
+.. |gnuarmemb_recommended_ver_linux| replace:: @GNUARMEMB_VERSION_LINUX@
+
+.. |gperf_min_ver| replace:: @GPERF_VERSION_MINIMUM@
+.. |gperf_recommended_ver_win10| replace:: @GPERF_VERSION_WIN10@
+.. |gperf_recommended_ver_darwin| replace:: @GPERF_VERSION_DARWIN@
+.. |gperf_recommended_ver_linux| replace:: @GPERF_VERSION_LINUX@
+
+.. |ninja_min_ver| replace:: @NINJA_VERSION_MINIMUM@
+.. |ninja_recommended_ver_win10| replace:: @NINJA_VERSION_WIN10@
+.. |ninja_recommended_ver_darwin| replace:: @NINJA_VERSION_DARWIN@
+.. |ninja_recommended_ver_linux| replace:: @NINJA-BUILD_VERSION_LINUX@
+
+.. |python_min_ver| replace:: @PYTHON_VERSION_MINIMUM@
+.. |python_recommended_ver_win10| replace:: @PYTHON_VERSION_WIN10@
+.. |python_recommended_ver_darwin| replace:: @PYTHON_VERSION_DARWIN@
+.. |python_recommended_ver_linux| replace:: @PYTHON3_VERSION_LINUX@
+
+.. |ses_min_ver| replace:: @SES_VERSION_MINIMUM@
+.. |ses_recommended_ver_win10| replace:: @SES_VERSION_WIN10@
+.. |ses_recommended_ver_darwin| replace:: @SES_VERSION_DARWIN@
+.. |ses_recommended_ver_linux| replace:: @SES_VERSION_LINUX@
+
+.. |west_min_ver| replace:: @WEST_VERSION_MINIMUM@
+.. |west_recommended_ver_win10| replace:: @WEST_VERSION_WIN10@
+.. |west_recommended_ver_darwin| replace:: @WEST_VERSION_DARWIN@
+.. |west_recommended_ver_linux| replace:: @WEST_VERSION_LINUX@
+
+.. |anytree_ver| replace:: @ANYTREE_VERSION@
+.. |canopen_ver| replace:: @CANOPEN_VERSION@
+.. |click_ver| replace:: @CLICK_VERSION@
+.. |cbor_ver| replace:: @CBOR_VERSION@
+.. |cryptography_ver| replace:: @CRYPTOGRAPHY_VERSION@
+.. |ecdsa_ver| replace:: @ECDSA_VERSION@
+.. |imagesize_ver| replace:: @IMAGESIZE_VERSION@
+.. |intelhex_ver| replace:: @INTELHEX_VERSION@
+.. |packaging_ver| replace:: @PACKAGING_VERSION@
+.. |progress_ver| replace:: @PROGRESS_VERSION@
+.. |pyelftools_ver| replace:: @PYELFTOOLS_VERSION@
+.. |pylint_ver| replace:: @PYLINT_VERSION@
+.. |PyYAML_ver| replace:: @PYYAML_VERSION@
+.. |west_ver| replace:: @WEST_VERSION@
+.. |windows-curses_ver| replace:: @WINDOWS-CURSES_VERSION@
+
+.. |breathe_ver| replace:: @BREATHE_VERSION@
+.. |docutils_ver| replace:: @DOCUTILS_VERSION@
+.. |recommonmark_ver| replace:: @RECOMMONMARK_VERSION@
+.. |sphinx_ver| replace:: @SPHINX_VERSION@
+.. |sphinx-tabs_ver| replace:: @SPHINX-TABS_VERSION@
+.. |sphinx_rtd_theme_ver| replace:: @SPHINX_RTD_THEME_VERSION@
+.. |sphinxcontrib-mscgen_ver| replace:: @SPHINXCONTRIB-MSCGEN_VERSION@
+.. |sphinxcontrib-svg2pdfconverter_ver| replace:: @SPHINXCONTRIB-SVG2PDFCONVERTER_VERSION@

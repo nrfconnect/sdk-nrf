@@ -224,6 +224,7 @@ html_redirect_pages = [
 rst_epilog = """
 .. include:: /links.txt
 .. include:: /shortcuts.txt
+.. include:: /versions.txt
 """
 
 def setup(app):
