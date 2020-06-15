@@ -87,7 +87,7 @@ function(add_child_image_from_source)
   endif()
 
   if (NOT (${${ACI_NAME}_BOARD} IN_LIST PM_DOMAINS))
-    list(APPEND PM_DOMAINS ${${ACI_NAME}_BOARD})
+    set_property(GLOBAL APPEND PROPERTY PM_DOMAINS ${${ACI_NAME}_BOARD})
     share("list(APPEND PM_DOMAINS ${${ACI_NAME}_BOARD})")
   endif()
 
@@ -191,7 +191,6 @@ function(add_child_image_from_source)
   # Increase the scope of this variable to make it more available
   set(${ACI_NAME}_KERNEL_HEX_NAME ${${ACI_NAME}_KERNEL_HEX_NAME} CACHE STRING "" FORCE)
   set(${ACI_NAME}_KERNEL_ELF_NAME ${${ACI_NAME}_KERNEL_ELF_NAME} CACHE STRING "" FORCE)
-  set(PM_DOMAINS ${PM_DOMAINS} CACHE STRING "" FORCE)
 
   if(MULTI_IMAGE_DEBUG_MAKEFILE AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(multi_image_build_args "-d" "${MULTI_IMAGE_DEBUG_MAKEFILE}")
