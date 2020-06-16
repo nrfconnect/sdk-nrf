@@ -126,6 +126,12 @@ struct ble_discovery_complete_event {
 };
 EVENT_TYPE_DECLARE(ble_discovery_complete_event);
 
+/** @brief BLE SMP transfer event. */
+struct ble_smp_transfer_event {
+	struct event_header header;
+};
+EVENT_TYPE_DECLARE(ble_smp_transfer_event);
+
 #ifdef __cplusplus
 }
 #endif
