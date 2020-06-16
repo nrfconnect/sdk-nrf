@@ -77,7 +77,7 @@ Kconfig*                                  @tejlmand
 /samples/nfc/                             @grochu
 /samples/nrf5340/empty_app_core/          @doki-nordic
 /samples/nrf9160/                         @rlubos @lemrey
-/samples/nrf9160/spm/                     @lemrey @hakonfam @ioannisg
+/samples/spm/                             @lemrey @hakonfam @ioannisg
 /samples/openthread/                      @MarekPorwisz @lmaciejonczyk
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/peripheral/radio_test/           @kapi-no

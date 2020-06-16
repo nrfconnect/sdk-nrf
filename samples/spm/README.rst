@@ -1,17 +1,17 @@
 .. _secure_partition_manager:
 
-nRF9160: Secure Partition Manager
-#################################
+Secure Partition Manager
+########################
 
 The Secure Partition Manager sample provides a reference use of the System Protection Unit peripheral.
-This firmware is required to set up the nRF9160 DK so that it can run user applications in the non-secure domain.
+This firmware is required to set up an nRF device with Trusted Execution (|trusted_execution|) so that it can run user applications in the non-secure domain.
 
 Overview
 ********
 
-The sample uses the SPM to configure secure attributions for the nRF9160 SiP and jump into the non-secure application.
+The sample uses the SPM to configure secure attributions and jump into the non-secure application.
 
-The SPM utilizes the SPU peripheral to configure security attributions for the nRF9160 flash, SRAM, and peripherals.
+The SPM utilizes the SPU peripheral to configure security attributions for flash, SRAM, and peripherals.
 After the configuration setup is complete, the sample loads the application firmware that is located on the device.
 
 Security attribution configuration
@@ -32,15 +32,15 @@ Requirements for the application firmware
 =========================================
 
 * The application firmware must be located in the slot_ns flash partition.
-  For more details, see the `nrf9160dk_nrf9160_partition_conf.dts`_ file in the nrf9160dk_nrf9160 board definition.
+  For more details, see the partition configuration file for the chosen board (e.g. `nrf9160dk_nrf9160_partition_conf.dts`_ for the nRF9160 DK).
   Note that if you build your application firmware with the |NCS|, this requirement is automatically fulfilled.
 
-* The application firmware must be built as a non-secure firmware for the nrf9160dk_nrf9160ns build target.
+* The application firmware must be built as a non-secure firmware for the build target (e.g. nrf9160dk_nrf9160ns for the nRF9160 DK).
 
 Automatic building of SPM
 =========================
 
-The sample is automatically built by the non-secure applications when the nrf9160dk_nrf9160ns build target is used.
+The sample is automatically built by the non-secure applications when the non-secure build target is used (e.g. nrf9160dk_nrf9160ns).
 However, it is not a part of the non-secure application.
 
 Instead of programming SPM and the non-secure application at the same time, you might want to program them individually.
@@ -52,20 +52,20 @@ The security attribution configuration for the flash will change when SPM is not
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set7_start
-   :end-before: set7_end
+   :start-after: set19_start
+   :end-before: set19_end
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/spm`
+.. |sample path| replace:: :file:`samples/spm`
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a secure firmware image for the nrf9160dk_nrf9160 board.
+The sample is built as a secure firmware image for the nrf9160dk_nrf9160 and nrf5340pdk_nrf5340 boards.
 See `Automatic building of SPM`_ if you want to program it independently from the non-secure application firmware.
 
 
