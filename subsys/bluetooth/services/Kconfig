@@ -23,5 +23,6 @@ rsource "Kconfig.nus_c"
 rsource "Kconfig.throughput"
 rsource "Kconfig.latency"
 rsource "Kconfig.latency_c"
+rsource "Kconfig.gadgets"
 
 endmenu
