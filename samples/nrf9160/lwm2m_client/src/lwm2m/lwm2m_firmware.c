@@ -95,7 +95,7 @@ static int firmware_block_received_cb(u16_t obj_inst_id,
 	/* Erase bank 1 before starting the write process */
 	if (bytes_downloaded == 0) {
 		flash_img_init(&dfu_ctx);
-#if defined(CONFIG_FOTA_ERASE_PROGRESSIVELY)
+#if defined(CONFIG_IMG_ERASE_PROGRESSIVELY)
 		LOG_INF("Download firmware started, erasing progressively.");
 #else
 		LOG_INF("Download firmware started, erasing second bank");
@@ -182,7 +182,7 @@ int lwm2m_init_image(void)
 			return ret;
 		}
 		LOG_INF("Marked image as OK");
-#if !defined(CONFIG_FOTA_ERASE_PROGRESSIVELY)
+#if !defined(CONFIG_IMG_ERASE_PROGRESSIVELY)
 		ret = boot_erase_img_bank(FLASH_AREA_IMAGE_SECONDARY);
 		if (ret) {
 			LOG_ERR("Flash area %d erase: error %d",
