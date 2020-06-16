@@ -449,6 +449,22 @@
 
 .. _`Mosquitto`: https://mosquitto.org/
 
+.. _`Alexa Gadgets Bluetooth LE`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/bluetooth-le-pair-connect.html
+.. _`Alexa Gadgets Bluetooth LE Packet Format`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/packet-ble.html
+.. _`Alexa Gadgets Setup`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/steps-to-set-up-gadget.html
+.. _`Alexa Gadgets Interfaces`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/defined-interfaces.html
+.. _`Alexa Gadgets Custom Event`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/custom-interface.html#events
+.. _`Alexa Gadgets Registration`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/steps-to-set-up-gadget.html
+.. _`Alexa Gadgets Pairing`: https://www.amazon.com/gp/help/customer/display.html?nodeId=GV66YEZ2245F4QYS
+.. _`Alerts interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alerts-interface.html
+.. _`Alexa.Gadget.MusicData interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alexa-gadget-musicdata-interface.html
+.. _`Alexa.Gadget.SpeechData interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alexa-gadget-speechdata-interface.html
+.. _`Alexa.Gadget.StateListener interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alexa-gadget-statelistener-interface.html
+.. _`Alexa Gadgets Notifications interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/notifications-interface.html
+.. _`Alexa Gadgets Github color cycler`: https://github.com/alexa/Alexa-Gadgets-Raspberry-Pi-Samples/tree/v2.0.0/src/examples/color_cycler#step-4-create-your-custom-skill
+
+.. _`Nanopb`: https://jpa.kapsi.fi/nanopb/
+.. _`Nanopb Downloads`: https://jpa.kapsi.fi/nanopb/download/
 
 .. ### Links to specific files on GitHub
 

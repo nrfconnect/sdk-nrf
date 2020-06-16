@@ -1,0 +1,4 @@
+custom_event_proto.Event.Header.namespace max_size:32
+custom_event_proto.Event.Header.name max_size:32
+custom_event_proto.Event.Header.messageId max_size:32
+custom_event_proto.Event.payload max_size:512

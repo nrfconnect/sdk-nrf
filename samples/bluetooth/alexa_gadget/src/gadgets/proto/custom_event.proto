@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message custom_event_proto {
+    Event event = 1;
+    message Event {
+        Header header = 1;
+        string payload = 2;
+        message Header {
+          string namespace = 1;
+          string name = 2;
+          string messageId = 3;
+        }
+    }
+}

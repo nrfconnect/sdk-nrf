@@ -29,6 +29,10 @@ manifest:
       url-base: https://github.com/ThrowTheSwitch
     - name: armmbed
       url-base: https://github.com/ARMmbed
+    - name: nanopb
+      url-base: https://github.com/nanopb
+    - name: alexa
+      url-base: https://github.com/alexa
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -112,6 +116,14 @@ manifest:
       repo-path: mbedtls
       revision: mbedtls-2.16.6
       remote: armmbed
+    - name: nanopb
+      path: modules/lib/nanopb
+      revision: nanopb-0.4.2
+      remote: nanopb
+    - name: Alexa-Gadgets-Embedded-Sample-Code
+      path: modules/alexa-embedded
+      revision: face92d8c62184832793f518bb1f19379538c5c1
+      remote: alexa
 
   # West-related configuration for the nrf repository.
   self:
