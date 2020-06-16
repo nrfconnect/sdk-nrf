@@ -175,8 +175,7 @@ bool ot_coap_is_provisioning_active(void)
 	return srv_context.provisioning_enabled;
 }
 
-int ot_coap_init(otStateChangedCallback on_state_changed,
-		 provisioning_request_callback_t on_provisioning_request,
+int ot_coap_init(provisioning_request_callback_t on_provisioning_request,
 		 light_request_callback_t on_light_request)
 {
 	otError error;
@@ -197,13 +196,6 @@ int ot_coap_init(otStateChangedCallback on_state_changed,
 
 	light_resource.mContext = srv_context.ot;
 	light_resource.mHandler = light_request_handler;
-
-	error = otSetStateChangedCallback(srv_context.ot, on_state_changed,
-					  srv_context.ot);
-	if (error != OT_ERROR_NONE) {
-		LOG_ERR("Failed to set OpenThread callback. Error: %d", error);
-		goto end;
-	}
 
 	otCoapSetDefaultHandler(srv_context.ot, coap_default_handler, NULL);
 	otCoapAddResource(srv_context.ot, &light_resource);
