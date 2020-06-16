@@ -90,7 +90,7 @@ See the following example code:
 .. code-block:: cmake
 
    if (CONFIG_SPM)
-     add_child_image(spm ${CMAKE_CURRENT_LIST_DIR}/nrf9160/spm)
+     add_child_image(spm ${CMAKE_CURRENT_LIST_DIR}/spm)
    endif()
 
    if (CONFIG_SECURE_BOOT)
