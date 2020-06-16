@@ -25,6 +25,14 @@ Read more about the Bluetooth Mesh specification on the Bluetooth SIG website:
 * `Bluetooth Mesh FAQ`_
 * `Bluetooth Mesh Study Guide`_
 
+For information about basic Mesh concepts and architecture in NCS, read the following pages:
+
+.. toctree::
+   :maxdepth: 1
+
+   ug_bt_mesh_concepts.rst
+   ug_bt_mesh_architecture.rst
+
 .. _mesh_ug_supported features:
 
 Supported features

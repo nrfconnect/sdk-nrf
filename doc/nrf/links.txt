@@ -225,6 +225,8 @@
 
 .. _`Battery Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245138
 
+.. ### Links to Bluetooth Mesh
+
 .. _`Mesh Model Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
 
 .. _`Bluetooth Mesh Profile Specification`: https://www.bluetooth.com/specifications/mesh-specifications/
