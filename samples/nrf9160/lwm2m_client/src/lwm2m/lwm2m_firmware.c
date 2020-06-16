@@ -131,6 +131,9 @@ static int firmware_block_received_cb(u16_t obj_inst_id,
 	if (!last_block) {
 		/* Keep going */
 		return ret;
+	} else {
+		LOG_INF("Firmware downloaded, %d bytes in total",
+			bytes_downloaded);
 	}
 
 	if (total_size && (bytes_downloaded != total_size)) {
