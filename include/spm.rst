@@ -3,12 +3,12 @@
 Secure Partition Manager (SPM)
 ##############################
 
-The Secure Partition Manager (SPM) provides functionality for the Trusted Execution Environment of the nRF9160.
+The Secure Partition Manager (SPM) provides functionality for the Trusted Execution Environment of the nRF9160 and the nRF5340.
 
 Overview
 ********
 
-The Cortex-M33 CPU in the nRF9160 implements ARM TrustZone, which means it can run a "secure" and a "non-secure" app side by side.
+The Cortex-M33 CPU in the nRF9160 and nRF5340 devices implements ARM TrustZone, which means it can run a "secure" and a "non-secure" app side by side.
 The SPM, being the secure app, is responsible for configuring the permissions and resources of the non-secure app and then booting it.
 Such configuration is required to run non-secure apps.
 The SPM also provides the non-secure app with access to features (:ref:`lib_spm_secure_services`) that are normally only available to secure apps.
