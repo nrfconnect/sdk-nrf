@@ -421,11 +421,30 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 
 	switch (mqtt_evt->type) {
 	case MQTT_EVT_CONNACK:
-		LOG_DBG("MQTT client connected!");
+
+		if (mqtt_evt->param.connack.return_code) {
+			LOG_ERR("MQTT_EVT_CONNACK, error: %d",
+				mqtt_evt->param.connack.return_code);
+#if defined(CONFIG_CLOUD_API)
+			cloud_evt.data.err =
+				mqtt_evt->param.connack.return_code;
+			cloud_evt.type = CLOUD_EVT_ERROR;
+			cloud_notify_event(aws_iot_backend, &cloud_evt,
+				   config->user_data);
+#else
+			aws_iot_evt.data.err =
+				mqtt_evt->param.connack.return_code;
+			aws_iot_evt.type = AWS_IOT_EVT_ERROR;
+			aws_iot_notify_event(&aws_iot_evt);
+#endif
+			break;
+		}
 
 		if (!mqtt_evt->param.connack.session_present_flag) {
 			topic_subscribe();
 		}
+
+		LOG_DBG("MQTT client connected!");
 
 #if defined(CONFIG_CLOUD_API)
 		cloud_evt.data.persistent_session =
