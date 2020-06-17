@@ -233,7 +233,9 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 
 	if (!pairing_state_obj || pairing_state_obj->type != cJSON_String) {
 		if (cJSON_HasObjectItem(desired_obj, "config") == false) {
-			LOG_DBG("No valid state found!");
+			LOG_WRN("Unhandled data received from nRF Cloud.");
+			LOG_INF("Ensure device firmware is up to date.");
+			LOG_INF("Delete and re-add device to nRF Cloud if problem persists.");
 		}
 		cJSON_Delete(root_obj);
 		return -ENOENT;
@@ -244,7 +246,7 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 	if (compare(state_str, DUA_PIN_STR)) {
 		(*requested_state) = STATE_UA_PIN_WAIT;
 	} else {
-		LOG_ERR("Deprecated state. Delete device from nrfCloud and update device with JITP certificates.");
+		LOG_ERR("Deprecated state. Delete device from nRF Cloud and update device with JITP certificates.");
 		cJSON_Delete(root_obj);
 		return -ENOTSUP;
 	}
