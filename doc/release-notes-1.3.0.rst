@@ -14,6 +14,7 @@ Support for production and deployment in end products is coming soon.
 Highlights
 **********
 
+* New home for the |NCS|
 * Support for Thread and Zigbee
 * Support for Bluetooth Mesh
 * nRF Desktop supported for production
@@ -21,6 +22,13 @@ Highlights
 * Support for using external flash for the secondary slot in MCUboot
 * General updates and bugfixes
 
+A new home
+**********
+
+Starting with this release, the |NCS| has moved to a new GitHub organization, `nrfconnect <https://github.com/nrfconnect>`_.
+All repositories were renamed to provide clear and concise names that better reflect the composition of the codebase.
+If you are a new |NCS| user, there are no actions you need to take.
+If you used previous releases of the |NCS|, you should follow the instructions in :ref:`repo_move`.
 
 Release tag
 ***********
