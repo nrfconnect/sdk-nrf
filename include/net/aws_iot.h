@@ -83,6 +83,8 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_FOTA_ERASE_PENDING,
 	/** FOTA erase done. */
 	AWS_IOT_EVT_FOTA_ERASE_DONE,
+	/** AWS IoT library error. */
+	AWS_IOT_EVT_ERROR
 };
 
 /** @brief AWS IoT topic data. */
