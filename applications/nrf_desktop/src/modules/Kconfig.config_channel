@@ -12,6 +12,23 @@ config DESKTOP_CONFIG_CHANNEL_ENABLE
 	  Enables user to change firmware parameters at runtime over the
 	  configuration channel.
 
+config DESKTOP_CONFIG_CHANNEL_OUT_REPORT
+	bool "Enable additional HID output report"
+	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
+	depends on BT_PERIPHERAL
+	help
+	  Use additional HID output report for configuration channel data
+	  transfer. The HID output report is used only by nRF Desktop dongle,
+	  other hosts use the HID feature report.
+
+	  For HID output reports, the dongle can use write without response.
+	  In that case LLPM peripheral does not have to respond instead of
+	  providing HID notification during one connection event.
+
+	  Using HID output report prevents report rate drops when forwarding
+	  configuration channel data, but it increases memory consumption of
+	  the peripheral.
+
 config DESKTOP_CONFIG_CHANNEL_TIMEOUT
 	int "Transaction timeout on configuration channel in seconds"
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE

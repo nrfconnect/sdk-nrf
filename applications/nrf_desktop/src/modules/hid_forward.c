@@ -286,10 +286,20 @@ static void handle_config_forward(const struct config_forward_event *event)
 		return;
 	}
 
-	struct bt_gatt_hids_c_rep_info *config_rep =
-		bt_gatt_hids_c_rep_find(recipient_hidc,
-					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
-					REPORT_ID_USER_CONFIG);
+	bool has_out_report = false;
+	struct bt_gatt_hids_c_rep_info *config_rep;
+
+	config_rep = bt_gatt_hids_c_rep_find(recipient_hidc,
+					     BT_GATT_HIDS_REPORT_TYPE_OUTPUT,
+					     REPORT_ID_USER_CONFIG_OUT);
+
+	if (!config_rep) {
+		config_rep = bt_gatt_hids_c_rep_find(recipient_hidc,
+					     BT_GATT_HIDS_REPORT_TYPE_FEATURE,
+					     REPORT_ID_USER_CONFIG);
+	} else {
+		has_out_report = true;
+	}
 
 	if (!config_rep) {
 		LOG_ERR("Feature report not found");
@@ -329,11 +339,22 @@ static void handle_config_forward(const struct config_forward_event *event)
 
 	notify_config_forwarded(CONFIG_STATUS_PENDING);
 
-	int err = bt_gatt_hids_c_rep_write(recipient_hidc,
-					   config_rep,
-					   hidc_write_cb,
-					   report,
-					   sizeof(report));
+	int err;
+
+	if (has_out_report) {
+		err = bt_gatt_hids_c_rep_write_wo_rsp(recipient_hidc,
+						      config_rep,
+						      report,
+						      sizeof(report),
+						      hidc_write_cb);
+	} else {
+		err = bt_gatt_hids_c_rep_write(recipient_hidc,
+					       config_rep,
+					       hidc_write_cb,
+					       report,
+					       sizeof(report));
+	}
+
 	if (err) {
 		LOG_ERR("Writing report failed, err:%d", err);
 		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
