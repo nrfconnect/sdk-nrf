@@ -35,6 +35,7 @@ It provides an abstraction of the following modules:
   * :ref:`at_cmd_readme`
   * :ref:`at_cmd_parser_readme`
   * :ref:`at_notif_readme`
+  * :ref:`sms`
 
   .. lwm2m_osal_mod_list_end
 

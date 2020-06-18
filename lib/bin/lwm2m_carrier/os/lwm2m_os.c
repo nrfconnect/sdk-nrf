@@ -11,13 +11,8 @@
 #include <stdbool.h>
 #include <zephyr.h>
 #include <string.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <bsd.h>
-#include <modem/lte_lc.h>
-#include <modem/bsdlib.h>
+
 #include <net/download_client.h>
 #include <power/reboot.h>
 #include <sys/util.h>
@@ -26,8 +21,18 @@
 #include <logging/log.h>
 #include <errno.h>
 #include <nrf_errno.h>
-#include <modem/modem_key_mgmt.h>
 #include <random/rand32.h>
+
+/* NCS Modem modules dependencies. */
+
+#include <modem/bsdlib.h>
+#include <modem/lte_lc.h>
+#include <modem/modem_key_mgmt.h>
+#include <modem/at_cmd.h>
+#include <modem/at_notif.h>
+#include <modem/at_cmd_parser.h>
+#include <modem/at_params.h>
+#include <modem/sms.h>
 
 /* NVS-related defines */
 
@@ -327,6 +332,7 @@ int lwm2m_os_at_init(void)
 {
 	int err;
 
+	/* AT command interface driver and notifications initialization. */
 	err = at_cmd_init();
 	if (err) {
 		return -1;
@@ -337,6 +343,14 @@ int lwm2m_os_at_init(void)
 		return -1;
 	}
 
+	/* SMS client module initialization. The library will register itself as an SMS listener. */
+	err = sms_init();
+	if (err) {
+		/* Only one SMS client is available in the system. */
+		lwm2m_os_log(LOG_LEVEL_ERR, "Unable to register as SMS client");
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -344,6 +358,11 @@ int lwm2m_os_at_notif_register_handler(void *context,
 				       lwm2m_os_at_cmd_handler_t handler)
 {
 	return at_notif_register_handler(context, handler);
+}
+
+int lwm2m_os_sms_client_register(lwm2m_os_sms_client_handler_t listener, void *context)
+{
+	return sms_register_listener(listener, context);
 }
 
 int lwm2m_os_at_cmd_write(const char *const cmd, char *buf, size_t buf_len)

@@ -4,11 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <modem/sms.h>
+
 #include <logging/log.h>
 #include <zephyr.h>
 #include <stdio.h>
-#include <modem/sms.h>
 #include <errno.h>
+
 #include <modem/at_cmd.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>

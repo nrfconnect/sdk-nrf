@@ -57,6 +57,20 @@ struct lwm2m_os_at_param_list {
 typedef void (*lwm2m_os_at_cmd_handler_t)(void *ctx, const char *response);
 
 /**
+ * @brief SMS PDU data.
+ */
+struct lwm2m_os_sms_data {
+	char *alpha;
+	u16_t length;
+	char *pdu;
+};
+
+/**
+ * @brief SMS listener callback function.
+ */
+typedef void (*lwm2m_os_sms_client_handler_t)(struct lwm2m_os_sms_data *const data, void *context);
+
+/**
  * @defgroup lwm2m_os_download_evt_id LwM2M OS download events
  * @{
  */
@@ -207,6 +221,12 @@ int lwm2m_os_bsdlib_shutdown(void);
  * @brief Initialize AT command driver.
  */
 int lwm2m_os_at_init(void);
+
+
+/**
+ * @brief Register as an SMS client/listener.
+ */
+int lwm2m_os_sms_client_register(sms_callback_t listener, void *context);
 
 /**
  * @brief Set AT command global notification handler.
