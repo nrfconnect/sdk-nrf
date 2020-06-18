@@ -392,6 +392,12 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 				   void const *buf, u16_t len, u16_t offset,
 				   u8_t flags)
 {
+	/* Write command operation is not allowed for this characteristic. */
+	if (flags & BT_GATT_WRITE_FLAG_CMD) {
+		LOG_DBG("Feature Report write command received. Ignore received data.");
+		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
+	}
+
 	LOG_DBG("Writing to Feature Report characteristic.");
 
 	struct bt_gatt_hids_outp_feat_rep *rep = attr->user_data;
