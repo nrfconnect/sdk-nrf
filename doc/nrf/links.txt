@@ -2,14 +2,12 @@
 
 .. _`Zephyr`: https://zephyrproject.org/
 
-.. _`Zephyr Project documentation`: http://docs.zephyrproject.org/
+.. _`Zephyr Project documentation`: https://docs.zephyrproject.org/
 
 .. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 
-.. _`Zephyr coding style`: http://docs.zephyrproject.org/contribute/contribute_guidelines.html
-
-.. _`Devicetree vs Kconfig`: http://docs.zephyrproject.org/latest/guides/dts/index.html#devicetree-vs-kconfig
+.. _`Zephyr coding style`: https://docs.zephyrproject.org/contribute/contribute_guidelines.html
 
 .. _`RTT Viewer`: https://docs.zephyrproject.org/latest/guides/tools/nordic_segger.html
 
@@ -169,19 +167,19 @@
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64
-.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64
+.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
 
 .. _`HID usage tables`: https://www.usb.org/hid
 
 .. _`SEGGER SystemView`: https://www.segger.com/products/development-tools/systemview/
 
-.. _`CMock`: http://www.throwtheswitch.org/cmock
+.. _`CMock`: https://www.throwtheswitch.org/cmock
 
-.. _`Unity`: http://www.throwtheswitch.org/unity
+.. _`Unity`: https://www.throwtheswitch.org/unity
 
 .. _`MCUmgr`: https://github.com/apache/mynewt-mcumgr
 
@@ -244,7 +242,7 @@
 
 .. ### Links to NFC specs
 
-.. _`Bluetooth Secure Simple Pairing Using NFC`: http://nfc-forum.org/our-work/specifications-and-application-documents/application-documents
+.. _`Bluetooth Secure Simple Pairing Using NFC`: https://www.bluetooth.com/bluetooth-resources/bluetooth-secure-simple-pairing-using-nfc-application-document/
 
 .. _`NFC Forum specification overview`: https://nfc-forum.org/our-work/specification-releases/specifications/
 
@@ -328,7 +326,7 @@
 
 .. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
 
-.. _`reStructuredText Primer`: http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
+.. _`reStructuredText Primer`: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 
 .. _`ST25R3911B chip documentation`: https://www.st.com/resource/en/datasheet/st25r3911b.pdf
 
@@ -358,13 +356,13 @@
 .. _`Ephemeris`: https://en.wikipedia.org/wiki/Ephemeris
 .. _`Almanac`: https://en.wikipedia.org/wiki/GPS_signals#Almanac
 
-.. _`SUPL context model`: http://www.openmobilealliance.org/release/SUPL/V1_0-20060127-C/OMA-AD-SUPL-V1_0-20060127-C.pdf#page=16
+.. _`SUPL context model`: https://www.openmobilealliance.org/release/SUPL/V1_0-20060127-C/OMA-AD-SUPL-V1_0-20060127-C.pdf#page=16
 
 .. _`LTE Positioning Protocol (LPP)`:  https://www.etsi.org/deliver/etsi_ts/136300_136399/136355/11.01.00_60/ts_136355v110100p.pdf#page=12
 
-.. _`SET-initiated SUPL collaboration`: http://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=128
+.. _`SET-initiated SUPL collaboration`: https://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=128
 
-.. _`SET-Initiated Non-Roaming Successful Case (Proxy mode)`: http://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=129
+.. _`SET-Initiated Non-Roaming Successful Case (Proxy mode)`: https://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=129
 
 .. _`Secure Location Protocol (SLP)` : https://en.wikipedia.org/wiki/Service_Location_Protocol
 
