@@ -1183,12 +1183,11 @@ static void update_key(const struct hid_keymap *map, s16_t value)
 	u8_t report_id = map->report_id;
 
 	struct report_data *rd = get_report_data(report_id);
+	struct report_state *rs = rd->linked_rs;
 
 	bool connected = false;
 
-	if (state.selected) {
-		struct report_state *rs = get_report_state(state.selected, report_id);
-
+	if (rs) {
 		connected = (rs->state != STATE_DISCONNECTED);
 	}
 
