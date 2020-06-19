@@ -2,12 +2,12 @@
 
 .. _`Zephyr Project`: https://zephyrproject.org/
 
-.. _`Zephyr Project documentation`: http://docs.zephyrproject.org/
+.. _`Zephyr Project documentation`: https://docs.zephyrproject.org/
 
 .. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 
-.. _`Zephyr coding style`: http://docs.zephyrproject.org/contribute/contribute_guidelines.html
+.. _`Zephyr coding style`: https://docs.zephyrproject.org/contribute/contribute_guidelines.html
 
 .. ### Links to MCUboot
 
@@ -16,7 +16,7 @@
 
 .. ### Link to the NCS repositories
 
-.. |ncs_repo| replace:: https://github.com/NordicPlayground/fw-nrfconnect-nrf
+.. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
 .. _`fw-nrfconnect-nrf`: https://github.com/NordicPlayground/fw-nrfconnect-nrf
 
 .. _`fw-nrfconnect-zephyr`: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
@@ -29,8 +29,11 @@
 .. _`change log`: https://github.com/NordicPlayground/fw-nrfconnect-nrf/wiki/Changelog
 
 
-
 .. ### Links to Nordic documentation
+
+.. _`nRF Connect SDK v1.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.3.0/nrf/index.html
+
+.. _`nRF Connect SDK v1.2.1 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.1/nrf/index.html
 
 .. _`nRF Connect SDK v1.2.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/index.html
 
@@ -49,7 +52,7 @@
 
 .. _`nRF Connect Programmer`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_introduction.html
 
-.. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem.html
+.. _`Updating the nRF9160 DK cellular modem`: https://infocenter.nordicsemi.com/topic/ug_nc_programmer/UG/nrf_connect_programmer/ncp_updating_modem_nrf9160dk.html
 
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/board_controller.html
 
@@ -138,20 +141,19 @@
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64
-.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: http://segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
-
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v452_win_x86.zip
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v452_win_x64.zip
+.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v452_macos_x64.dmg
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v452_linux_x86.tar.gz
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v452_linux_x64.tar.gz
 
 .. _`HID usage tables`: https://www.usb.org/hid
 
 .. _`SEGGER SystemView`: https://www.segger.com/products/development-tools/systemview/
 
-.. _`CMock`: http://www.throwtheswitch.org/cmock
+.. _`CMock`: https://www.throwtheswitch.org/cmock
 
-.. _`Unity`: http://www.throwtheswitch.org/unity
+.. _`Unity`: https://www.throwtheswitch.org/unity
 
 .. _`MCUmgr`: https://github.com/apache/mynewt-mcumgr
 
@@ -191,7 +193,7 @@
 
 .. ### Links to NFC specs
 
-.. _`Bluetooth Secure Simple Pairing Using NFC`: http://nfc-forum.org/our-work/specifications-and-application-documents/application-documents
+.. _`Bluetooth Secure Simple Pairing Using NFC`: https://www.bluetooth.com/bluetooth-resources/bluetooth-secure-simple-pairing-using-nfc-application-document/
 
 
 
@@ -199,7 +201,7 @@
 
 .. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
 
-.. _`reStructuredText Primer`: http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
+.. _`reStructuredText Primer`: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 
 .. _`ST25R3911B chip documentation`: https://www.st.com/resource/en/datasheet/st25r3911b.pdf
 
