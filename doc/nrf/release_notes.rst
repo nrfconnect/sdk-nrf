@@ -17,6 +17,7 @@ Important issues that are discovered after a release is tagged are listed in the
    :maxdepth: 1
 
    doc/release-notes-1.3.0
+   doc/release-notes-1.2.1
    doc/release-notes-1.2.0
    doc/release-notes-1.1.0
    doc/release-notes-1.0.0

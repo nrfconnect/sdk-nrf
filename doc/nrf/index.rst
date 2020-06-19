@@ -16,6 +16,7 @@ Documentation for different versions of the |NCS| is available at the following 
 
 * `nRF Connect SDK latest documentation`_ (from the master branch)
 * `nRF Connect SDK v1.3.0 documentation`_
+* `nRF Connect SDK v1.2.1 documentation`_
 * `nRF Connect SDK v1.2.0 documentation`_
 * `nRF Connect SDK v1.1.0 documentation`_
 * `nRF Connect SDK v1.0.0 documentation`_
