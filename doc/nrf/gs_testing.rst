@@ -22,6 +22,48 @@ Connect with the following settings:
  * No parity
  * HW flow control: None
 
+.. _testing_rtt:
+
+How to use RTT
+**************
+
+To view the logging output using Real Time Transfer (RTT), modify the configuration settings of the sample to override the default UART console:
+
+ .. code-block:: none
+
+    CONFIG_USE_SEGGER_RTT=y
+    CONFIG_RTT_CONSOLE=y
+    CONFIG_UART_CONSOLE=n
+
+.. note::
+
+   SEGGER's J-Link RTT is part of the `J-Link Software and Documentation Pack`_.
+   You must have this software installed on your platform to use RTT.
+
+.. _testing_rtt_connect:
+
+Connecting via RTT
+==================
+
+To run RTT on your platform, complete the following steps:
+
+1. From the J-Link installation directory, open the J-Link RTT Viewer application:
+
+   * On Windows, the executable is called :file:`JLinkRTTViewer.exe`.
+   * On Linux, the executable is called :file:`JLinkRTTViewerExe`.
+
+#. Select the following options to configure your connection:
+
+   * Connection to J-Link: USB
+   * Target Device: Select your IC from the list
+   * Target Interface and Speed: SWD, 4000 KHz
+   * RTT Control Block: Auto Detection
+
+   .. figure:: /images/rtt_viewer_configuration.png
+      :alt: Example of RTT Viewer configuration
+
+#. Click :guilabel:`OK` to view the logging output from the device.
+
 .. _lte_connect:
 
 How to connect with LTE Link Monitor
