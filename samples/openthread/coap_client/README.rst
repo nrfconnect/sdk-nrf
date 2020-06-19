@@ -29,12 +29,14 @@ For example usage of the native Thread CoAP API, see the :ref:`coap_server_sampl
 Requirements
 ************
 
-* One or more of the following development kits for Thread CoAP Client:
+The sample supports the following development kits:
 
-  * |nRF52840DK|
-  * |nRF52833DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set8_start
+   :end-before: set8_end
 
-* One or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
+You can use one or more of the development kits listed above as the Thread CoAP Client.
+You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
 
 User interface
 **************

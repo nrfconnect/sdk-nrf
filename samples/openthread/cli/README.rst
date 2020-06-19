@@ -21,12 +21,13 @@ It is recommended to use at least two development kits running the same sample t
 Requirements
 ************
 
-* One of the following development kits for testing the network status:
+The sample supports the following development kits for testing the network status:
 
-  * |nRF52840DK|
-  * |nRF52833DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set8_start
+   :end-before: set8_end
 
-* Optionally, one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for testing communication and :ref:`thread_ot_commissioning_configuring_on-mesh`.
+Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for testing communication and :ref:`thread_ot_commissioning_configuring_on-mesh`.
 
 User interface
 **************

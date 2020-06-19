@@ -25,12 +25,14 @@ For example usage of the Zephyr CoAp API, see the :ref:`coap_client_sample` samp
 Requirements
 ************
 
-* One or more of the following development kits for Thread CoAP Server:
+The sample supports the following development kits:
 
-  * |nRF52840DK|
-  * |nRF52833DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set8_start
+   :end-before: set8_end
 
-* One or more compatible development kits programmed with the :ref:`coap_client_sample` sample.
+You can use one or more of the development kits listed above as the Thread CoAP Server.
+You also need one or more compatible development kits programmed with the :ref:`coap_client_sample` sample.
 
 User interface
 **************
