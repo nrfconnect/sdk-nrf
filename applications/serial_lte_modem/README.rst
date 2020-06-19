@@ -156,7 +156,7 @@ MQTT AT Commands
 
 The following proprietary MQTT AT commands are used in this application:
 
-* AT#XMQTTCON=<op>[,<cid>,<url>,<port>[,<sec_tag>]]
+* AT#XMQTTCON=<op>[,<cid>,<username>,<password>,<url>,<port>[,<sec_tag>]]
 * AT#XMQTTPUB=<topic>,<datatype>,<msg>,<qos>,<retain>
 * AT#XMQTTSUB=<topic>,<qos>
 * AT#XMQTTUNSUB=<topic>
