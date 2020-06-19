@@ -3,19 +3,24 @@
 Generic Level Server
 ####################
 
-The Generic Level Server model owns a single Generic Level state.
+The Generic Level Server model contains a single Generic Level state.
 
 States
 =======
 
-**Generic Level**: ``s16_t``
+The Generic Level Server model contains the following state:
 
-The user is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_lvl_srv_handlers` handler structure.
+Generic Level: ``s16_t``
+    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_lvl_srv_handlers` handler structure.
 
-Changes to the Generic Level state may include transition parameters.
-While transitioning to a new level state, any requests to read out the current level should report the actual current level in the transition, as well as the terminal level and remaining time in milliseconds, including delay.
+    Changes to the Generic Level state may include transition parameters.
+    While transitioning to a new level, any request to read out the current level should report the following information:
 
-If the transition includes a delay, the state shall remain unchanged until the delay expires.
+    * Actual current level in the transition
+    * Target level
+    * Remaining time in milliseconds (including an optional delay)
+
+    If the transition includes a delay, the state must remain unchanged until the delay expires.
 
 Extended models
 ================

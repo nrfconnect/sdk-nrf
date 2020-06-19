@@ -16,7 +16,7 @@ The Lightness Control Server is always disabled by default, and must be enabled 
 Overview
 ********
 
-Read this section for more detailed information about the following Light LC Server aspects:
+In this section, you can find more detailed information about the following aspects of Light LC Server:
 
 * `Composition data structure`_
 * `Relationship with other nodes`_
@@ -37,7 +37,7 @@ Conventionally, the Light LC Server is instantiated on the next element after th
 
    Light Lightness Control Server composition data structure
 
-In the application, this composition data looks like the following:
+In the application, this composition data looks like this:
 
 .. code-block:: c
 
@@ -62,8 +62,10 @@ When the Light LC Server model controls a Light Lightness Server, all nodes shou
 .. figure:: /images/bt_mesh_light_ctrl_nodes.svg
    :alt: Light Lightness Control Server node organization
 
-The dimmer devices that want to override the light level of the Lightness Server can publish directly to the Lightness Server, but the Light LC Server will override its changes on the next state transition.
-To make permanent changes to the light level for each state, change the Light LC Server's configuration with a :ref:`bt_mesh_light_ctrl_cli_readme` model.
+The dimmer devices that want to override the light level of the Lightness Server can publish directly to the Lightness Server, but the Light LC Server will override the changes on the next state transition.
+To make permanent changes to the light level for each state, change the Light LC Server's configuration with the :ref:`bt_mesh_light_ctrl_cli_readme` model.
+
+.. _bt_mesh_light_ctrl_srv_composition_state_machine:
 
 Lightness state machine
 =======================
@@ -81,7 +83,7 @@ Prolong
    The lights are at a slightly dimmed level, ready to get back to their *On* level as soon as activity is detected.
 
 Each state has a lightness level and a transition time used for fading.
-When the state changes, the light level fades from the previous state's level to the new state's level in a time span determined by the new state.
+When the state changes, the light level fades from the previous state's level to the new state's level in a transition time span determined by the new state.
 
 When the Light LC Server is turned on, the following sequence takes place:
 
@@ -90,19 +92,20 @@ When the Light LC Server is turned on, the following sequence takes place:
 
    Light Lightness Control Server light levels
 
-The state machine is cycled through its states by the following events:
+The state machine cycles through the states with the following events:
 
 Timeout
-   The current state has timed out, and will automatically move into the next state.
+   Triggered when the current state has timed out.
+   The state machine automatically moves into the next state.
 
 On
-   A motion sensor is triggered or a light switch is pressed.
+   Toggled when a motion sensor is triggered or the On button is pressed on a light switch.
 
 Off
-   Off is pressed on a light switch.
+   Toggled when the Off button is pressed on a light switch.
 
 The On and Prolong states will start a timer as soon as the transition into the state is finished.
-When this timer expires, the state machine will automatically go to the next state.
+When this timer expires, the state machine will automatically go into the next state.
 If the On event is triggered while in the On state, the timer is reset, and the transition to the Prolong state is postponed.
 
 .. figure:: /images/bt_mesh_light_ctrl_states.svg
@@ -121,12 +124,16 @@ The state machine has two different output values for each state:
 Light level
    The light level decides the output light level sent to the controlled Light Lightness Server.
    Each state has a configurable light level, and the output light level will be the light level of the current state, with linear transitions between the states.
-   By default, the Standby state sets the light level to 0%, the On state 100%, and the Prolong state 50%.
+   The default light level values per state are:
+
+   * Standby state - 0%
+   * On state - 100%
+   * Prolong state - 50%
 
 Target illuminance level
    Each state has a configurable target illuminance level, which is used as input to the :ref:`bt_mesh_light_ctrl_srv_reg_readme`.
    The target illuminance level decides the ambient illuminance the regulator should try to achieve, as measured by illuminance sensors nearby.
-   Just like the light level, the target illuminance always matches the configured target illuminance for the current state, with linear transitions between the states.
+   Just like with the light level, the target illuminance always matches the configured target illuminance for the current state, with linear transitions between the states.
 
 External event triggers
 -----------------------
@@ -139,32 +146,32 @@ On event
 The On event lets the Light LC Server know that there is activity in the room.
 It can be generated by light switches and sensors.
 
-Light switches can implement one of the following models to send On messages that turn the Light LC Server on:
+* Light switches can implement one of the following models to send On messages that turn the Light LC Server on:
 
-* The :ref:`bt_mesh_onoff_cli_readme` model -- which should publish to the Light LC Server's extended Generic OnOff Server model.
-* The :ref:`bt_mesh_light_ctrl_cli_readme` model -- which should publish Light OnOff Set messages to the Light LC Server.
+  * The :ref:`bt_mesh_onoff_cli_readme` model -- which should publish to the Light LC Server's extended Generic OnOff Server model.
+  * The :ref:`bt_mesh_light_ctrl_cli_readme` model -- which should publish Light OnOff Set messages to the Light LC Server.
 
-Occupancy sensors may also trigger the On event, depending on the current state and occupancy mode:
+* Occupancy sensors can also trigger the On event, depending on the current state and occupancy mode:
 
-* If the occupancy mode is enabled, sensor readings that indicating activity can trigger an On event at any time.
-* If the occupancy mode is disabled, sensors cannot turn the lights on, but they will still prevent lights from turning off.
+  * If the occupancy mode is enabled, sensor readings that indicate activity can trigger an On event at any time.
+  * If the occupancy mode is disabled, sensors cannot turn the lights on, but they will still prevent lights from turning off.
 
-The following sensor types may also trigger the On event:
+The following sensor types can also trigger the On event:
 
-Motion sensed : :cpp:var:`bt_mesh_sensor_motion_sensed`
+Motion sensed - :cpp:var:`bt_mesh_sensor_motion_sensed`
    Any sensor value higher than 0 triggers an On event in the Light LC Server state machine.
    Messages with a value of 0 are ignored.
 
-People count : :cpp:var:`bt_mesh_sensor_people_count`
-   Any sensor value higher than 0 triggers an On event in the Light LC Server state machine.
-   Messages with a value of 0 are ignored.
+People count - :cpp:var:`bt_mesh_sensor_people_count`
+   Any sensor value higher than ``0`` triggers an On event in the Light LC Server state machine.
+   Messages with a value of ``0`` are ignored.
 
-Presence detected : :cpp:var:`bt_mesh_sensor_presence_detected`
+Presence detected - :cpp:var:`bt_mesh_sensor_presence_detected`
    Messages with a ``true`` value triggers an On event in the Light LC Server state machine.
    Messages with a ``false`` value are ignored.
 
-Time since motion sensed : :cpp:var:`bt_mesh_sensor_time_since_motion_sensed`
-   When the sensor's *Time since motion sensed* value is lower than the Light LC Server's occupancy delay, the Light LC Server starts a timer that expires at the time equal to motion sensed time plus occupancy delay.
+Time since motion sensed - :cpp:var:`bt_mesh_sensor_time_since_motion_sensed`
+   When the sensor's *Time since motion sensed* value is lower than the Light LC Server's occupancy delay, the Light LC Server starts a timer that expires at the time equal to *Motion sensed* plus *occupancy delay*.
    When this timer expires, an On event is generated.
 
 .. note::
@@ -175,101 +182,93 @@ Off event
 ~~~~~~~~~
 
 The Off event can only be generated by a light switch being turned off.
-It moves the Light LC Server into Standby, transitioning from the previous light level with the
-:cpp:enumerator:`manual mode Standby fade time <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL>` .
+It moves the Light LC Server into Standby, transitioning from the previous light level with the manual mode Standby fade time (:cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL>`).
 
-The Off event puts the Light LC Server into manual mode, which disables sensor input until the :option:`manual mode timeout <CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL>` expires.
-This prevents the lights from turning back on from the movement of the person pressing the light switch.
+The Off event puts the Light LC Server into manual mode, which disables sensor input until the manual mode timeout (:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL`) expires.
+This prevents the lights from turning back on by the movement of the person that presses the light switch.
 
 .. note::
-   Contrary to the other timing parameters, the manual mode timeout is proprietary, and cannot be reconfigured at runtime by other models in the mesh network.
+   Unlike other timing parameters, the manual mode timeout is proprietary and cannot be reconfigured at runtime by other models in the mesh network.
 
-Light switches may either implement a :ref:`bt_mesh_onoff_cli_readme` or a :ref:`bt_mesh_light_ctrl_cli_readme` to send Off messages turning the Light LC Server on.
-The Generic OnOff Client model should publish to the Light LC Server's extended Generic OnOff Server model.
-The Light Lightness Control Client model should publish Light OnOff Set messages to the Light LC Server.
+Light switches can implement one of the following clients to send Off messages that turn the Light LC Server on:
 
-If a Timeout transition from Prolong to Standby is already in progress, the Light LC Server will check whether the remaining transition time is shorter than the Off event fade time, and execute whichever is the fastest.
+* :ref:`bt_mesh_onoff_cli_readme` - This model should publish to the Light LC Server's extended Generic OnOff Server model.
+* :ref:`bt_mesh_light_ctrl_cli_readme` - This model should publish Light OnOff Set messages to the Light LC Server.
+
+If a Timeout transition from Prolong to Standby is already in progress, the Light LC Server will check whether the remaining transition time is shorter than the Off event fade time and will execute whichever is the fastest.
 
 
 State machine configuration
 ---------------------------
 
-Both the timing and output levels are configurable at compile time and runtime.
-The compile time configuration is done through the Light Control Server Kconfig menu options, while the runtime configuration must be done by a Light Control Client model instance through the Light Lightness Controller Setup Server.
+Both the timing and output levels are configurable at compile time and at runtime:
+
+* The compile time configuration is done through the Light Control Server Kconfig menu options.
+* The runtime configuration must be done by a Light Control Client model instance through the Light Lightness Controller Setup Server.
 
 Timing parameters
 ~~~~~~~~~~~~~~~~~
 
-Delay from occupancy detected until light turns on
+This section lists compile and runtime options to be used when setting timing parameters.
 
+Delay from occupancy detected until light turns on
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_OCCUPANCY_DELAY`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_OCCUPANCY_DELAY>`
 
 Transition time to On state
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_ON`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_ON>`
 
 Time in On state
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_ON`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_ON <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_ON>`
 
 Transition time to Prolong state
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_PROLONG`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_PROLONG>`
 
 Time in Prolong state
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_PROLONG`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_PROLONG>`
 
 Transition time to Standby state (in auto mode)
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_STANDBY_AUTO`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_AUTO>`
 
 Transition time to Standby state (in manual mode)
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_STANDBY_MANUAL`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_TIME_FADE_STANDBY_MANUAL>`
 
 Manual mode timeout
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL`
     * No runtime option available.
 
 Output parameters
 ~~~~~~~~~~~~~~~~~
 
-On state light level
+This section lists compile and runtime options to be used when setting output parameters.
 
+On state light level
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_ON`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_LIGHTNESS_ON <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_LIGHTNESS_ON>`
 
 Prolong state light level
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_LIGHTNESS_PROLONG <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_LIGHTNESS_PROLONG>`
 
 Standby state light level
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_STANDBY`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_LIGHTNESS_STANDBY <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_LIGHTNESS_STANDBY>`
 
 On state target illuminance
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_ON>`
 
 Prolong state target illuminance
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_PROLONG>`
 
 Standby state target illuminance
-
     * Compile time: :option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY`
     * Runtime: :cpp:enumerator:`BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY <bt_mesh_light_ctrl::BT_MESH_LIGHT_CTRL_PROP_ILLUMINANCE_STANDBY>`
 
@@ -280,24 +279,29 @@ Illuminance regulator
 =====================
 
 The illuminance regulator complements the light level state machine by adding an ambient illuminance sensor feedback loop.
-This allows the lightness server to adjust its output level based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
+This allows the lightness server to adjust its output level that is based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
 
 .. figure:: /images/bt_mesh_light_ctrl_reg.svg
    :alt: Light Lightness Control Server illuminance regulator
 
    Light Lightness Control Server illuminance regulator
 
-The illuminance regulator takes the state machine's target illuminance level as the reference level, and compares it to sensor data from an external illuminance sensor.
+The illuminance regulator takes the state machine's target illuminance level as the reference level and compares it to sensor data from an external illuminance sensor.
 The inputs are compared to establish an error for the regulator, which the regulator tries to minimize.
 The regulator contains a proportional (P) and an integral (I) component whose outputs are summarized to a light level output.
 
 The illuminance regulator's output level only comes into effect if the required output level is higher than the state machine's output light level.
-To get full benefit of the regulator, the state machine's light level output should generally be configured to a lower value than desired, while instead keeping the target illuminance levels high.
+To get full benefit of the regulator, the state machine's light level output should generally be configured to a lower value than desired, while keeping the target illuminance levels high.
 This allows the regulator to conserve energy by taking advantage of the room's ambient lighting.
 
 The regulator operates in a compile time configurable interval between 10 and 100 ms.
-For each step, the regulator calculates the integral of the error since the last step, and adds this to an internal sum.
-This sum is multiplied by an integral coefficient, and summarized with the raw difference multiplied by a proportional coefficient.
+For each step, the regulator:
+
+1. Calculates the integral of the error since the last step.
+#. Adds the integral to an internal sum.
+#. Multiplies this sum by an integral coefficient.
+#. Summarizes the sum with the raw difference multiplied by a proportional coefficient.
+
 Both the internal integral sum and the output level is represented as an unsigned 16-bit integer.
 
 To reduce noise, the regulator has a configurable accuracy property, which allows it to ignore errors smaller than the configured accuracy (represented as a percentage of the light level).
@@ -311,10 +315,10 @@ Sensor input
 ------------
 
 The regulator relies on regular sensor input data to function correctly.
-This sensor data must come from an external :ref:`bt_mesh_sensor_srv_readme` model, reporting the ambient light level with the :cpp:var:`bt_mesh_sensor_present_amb_light_level` sensor type.
+This sensor data must come from an external :ref:`bt_mesh_sensor_srv_readme` model and report the ambient light level with the :cpp:var:`bt_mesh_sensor_present_amb_light_level` sensor type.
 The Sensor Server should publish its sensor readings to an address the Light LC Server is subscribed to, using a common application key.
 
-The Light LC Server will process all incoming sensor messages, and use them in the next regulator step.
+The Light LC Server will process all incoming sensor messages and use them in the next regulator step.
 The regulator depends on frequent readings from the sensor server to provide a stable output for the Lightness Server.
 If the sensor reports are too slow, the regulator might oscillate, as it attempts to compensate for outdated feedback.
 
@@ -324,19 +328,19 @@ If the sensor reports are too slow, the regulator might oscillate, as it attempt
 
 The Sensor Server may be instantiated on the same mesh node as the Light LC Server, or on a different mesh node in the same area.
 The regulator performance depends heavily on the sensor's placement and sensitivity.
-In general, ambient light sensor devices should be placed such that their light sensor captures the human perception of the room's light level as closely as possible.
+In general, ambient light sensor devices should be placed in a way that allows their light sensor to capture the human perception of the room's light level as closely as possible.
 
 Tuning the regulator
 --------------------
 
-Regulator tuning is a complex problem that depends on a lot of internal and external parameters.
+Regulator tuning is complex and depends on a lot of internal and external parameters.
 Varying sensor delay, light output and light change rate may significantly affect the regulator performance and accuracy.
 To compensate for the external parameters, each regulator component provides user controllable coefficients that change their impact on the output value:
 
 * K\ :sub:`p` - for the proportional component
 * K\ :sub:`i` - for the integral component
 
-These coefficients can have individual values for positive and negative errors, referenced to as follows in the API:
+These coefficients can have individual values for positive and negative errors, referenced as follows in the API:
 
 * K\ :sub:`pu` - proportional up; used when target is higher.
 * K\ :sub:`pd` - proportional down; used when target is lower.
@@ -348,7 +352,8 @@ The coefficient adjustments are typically done by analyzing the system's *step r
 The step response is the overall system response to a change in reference value, for instance in a state change in the light level state machine.
 
 .. note::
-    The transition time between states in the Light LC Server makes the feedback loop more forgiving, and a larger transition time can compensate for poor regulator response.
+    The transition time between states in the Light LC Server makes the feedback loop more forgiving.
+    A larger transition time can compensate for poor regulator response.
 
 The illuminance regulator is a PI regulator, which uses the following components to compensate for a mismatch between the reference and the measured level:
 
@@ -375,7 +380,7 @@ The value of the coefficients is typically a trade-off between fast response tim
 States
 ******
 
-Not to be confused with the state machine states, the Light LC Server's states represent its current mode of operation and configuration.
+Not to be confused with the :ref:`state machine states <bt_mesh_light_ctrl_srv_composition_state_machine>`, the Light LC Server's states represent its current mode of operation and configuration.
 
 Mode: ``bool``
     Enables or disables the Light LC Server.

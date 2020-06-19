@@ -8,33 +8,34 @@ It should be instantiated in the light fixture node.
 
 The Light Lightness Server adds the following new model instances in the composition data, in addition to the extended :ref:`bt_mesh_lvl_srv_readme` and :ref:`bt_mesh_ponoff_srv_readme` models:
 
-- Light Lightness Server
-- Light Lightness Setup Server
+* Light Lightness Server
+* Light Lightness Setup Server
 
 These model instances share the states of Light Lightness Server, but accept different messages.
-This allows fine-grained control of the access rights for the Light Lightness states, as these model instances can be bound to different application keys.
+This allows for a fine-grained control of the access rights for the Light Lightness states, as these model instances can be bound to different application keys:
 
-The Light Lightness Server only provides write access to the Light state for the user, in addition to read access to all the meta states.
-
-The Light Lightness Setup Server provides write access to the Default Light and Light Range meta states.
-This allows the configurator devices to set up the range and the default value for the Light state.
+* The Light Lightness Server only provides write access to the Light state for the user, in addition to read access to all the meta states.
+* The Light Lightness Setup Server provides write access to the Default Light and Light Range meta states.
+  This allows the configurator devices to set up the range and the default value for the Light state.
 
 States
 ======
 
-**Light**: ``u16_t``
+The Generic Power OnOff Server model contains the following states:
+
+Light: ``u16_t``
     The Light state represents the emitted light level of an element, and ranges from ``0`` to ``65535``.
     The Light state is bound to the Generic Level State of the extended :ref:`bt_mesh_lvl_srv_readme`:
 
-    ::
+    .. code-block:: console
 
-      Light (Actual) = Generic Level + 32768
+       Light (Actual) = Generic Level + 32768
 
     The Generic OnOff state of :ref:`bt_mesh_onoff_srv_readme` (extended through the :ref:`bt_mesh_ponoff_srv_readme`) is derived from the Light state:
 
-    ::
+    .. code-block:: console
 
-      Generic OnOff = (Light > 0)
+       Generic OnOff = (Light > 0)
 
     Conversely, if the Generic OnOff state is changed to ``Off``, the Light state is set to ``0``.
     If the Generic OnOff state is changed to ``On`` and the Default Light state is set, the Light state is set to the value of the Default Light state.
@@ -42,16 +43,13 @@ States
 
     The Light state power up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_OFF <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_OFF>`:
-      The Light state is set to ``0`` on power up.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>`:
-      The Light state is set to Default Light on power up, or to the last known non-zero Light state if the Default Light is not set.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>`:
-      The Light state is set to the last known Light level (zero or non-zero).
+    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_OFF <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_OFF>` - The Light state is set to ``0`` on power up.
+    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>` - The Light state is set to Default Light on power up, or to the last known non-zero Light state if the Default Light is not set.
+    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>` - The Light state is set to the last known Light level (zero or non-zero).
 
-    The user is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_lightness_srv_handlers` handler structure.
+    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_lightness_srv_handlers` handler structure.
 
-**Default Light**: ``s16_t``
+Default Light: ``s16_t``
     The Default Light state is a meta state that controls the default non-zero Light level.
     It is used when the light is turned on, but its exact level is not specified.
 
@@ -59,7 +57,7 @@ States
 
     The Default Light state uses the configured lightness representation.
 
-**Light Range**: :cpp:type:`bt_mesh_lightness_range`
+Light Range: :cpp:type:`bt_mesh_lightness_range`
     The Light Range state is a meta state that determines the accepted Light level range.
 
     If the Light level is set to a value outside the current Light Range, it is moved to fit inside the range.

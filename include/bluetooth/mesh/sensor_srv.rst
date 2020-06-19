@@ -8,24 +8,24 @@ There may be multiple Sensor Server models on a single mesh node, and each model
 
 The Sensor Server Model adds two model instances in the composition data:
 
-* A Sensor Server
-* A Sensor Setup Server
+* Sensor Server
+* Sensor Setup Server
 
 The two model instances share the states of the Sensor Server, but accept different messages.
-This allows fine-grained control of the access rights for the Sensor Server states, as the two model instances can be bound to different application keys.
+This allows for a fine-grained control of the access rights for the Sensor Server states, as the two model instances can be bound to different application keys.
 
-The Sensor Server is the "user facing" model in the pair, and provides access to the Sensor Descriptors, the Sensor Data and Sensor Series, all of which are read-only states.
+* Sensor Server is the user-facing model in the pair.
+  It provides access to the Sensor Descriptors, the Sensor Data, and Sensor Series, all of which are read-only states.
+* Sensor Setup Server provides access to the Sensor Cadence and Sensor Settings, allowing configurator devices to set up the publish rate and parameters for each sensor.
 
-The Sensor Setup Server provides access to the Sensor Cadence and Sensor Settings, allowing configurator devices to set up the publish rate and parameters for each sensor.
-
-Usage
-=====
+Configuration
+=============
 
 The Sensor Server model requires a list of :cpp:type:`bt_mesh_sensor` pointers at compile time.
-The list of sensors may not be changed at runtime, and only one of each type of sensor may be held by a Sensor Server.
+The list of sensors cannot be changed at runtime, and only one of each type of sensors can be held by a Sensor Server.
 To expose multiple sensors of the same type, multiple Sensor Servers must be instantiated on different elements.
 
-Initialization of the Sensor Server may typically look like this:
+The initialization of the Sensor Server can look like this:
 
 .. code-block:: c
 
@@ -40,8 +40,11 @@ Initialization of the Sensor Server may typically look like this:
    };
    static struct bt_mesh_sensor_srv sensor_srv = BT_MESH_SENSOR_SRV_INIT(sensors, ARRAY_SIZE(sensors));
 
-Each sensor may be implemented in its own separate module by exposing the sensor instance as an extern variable and pointing to it in the server's sensor list.
-Note that the list of pointers may be ``const``, while the sensor instances themselves may not.
+Each sensor can be implemented in its own separate module by exposing the sensor instance as an external variable and pointing to it in the server's sensor list.
+
+
+.. note::
+    The list of pointers can be ``const``, while the sensor instances themselves cannot.
 
 All sensors exposed by the Sensor Server must be present in the Server's list.
 Passing unlisted sensor instances to the Server API results in undefined behavior.
@@ -49,18 +52,26 @@ Passing unlisted sensor instances to the Server API results in undefined behavio
 States
 ======
 
-The Sensor Server does not hold any states on its own, but instead exposes the states of all its sensors.
+The Sensor Server does not hold any states on its own.
+Instead, it exposes the states of all its sensors.
 
 Extended models
 ===============
 
 None.
 
-Persistent Storage
+Persistent storage
 ==================
 
-The Sensor Server stores the cadence state of each sensor instance persistently, including the minimum interval, delta thresholds, fast period divisor and fast cadence range.
-Any other data, such as sensor settings or sample data is managed by the application, and must be stored separately.
+The Sensor Server stores the cadence state of each sensor instance persistently, including:
+
+* Minimum interval
+* Delta thresholds
+* Fast period divisor
+* Fast cadence range
+
+Any other data is managed by the application and must be stored separately.
+This applies for example to sensor settings or sample data.
 
 API documentation
 =================
