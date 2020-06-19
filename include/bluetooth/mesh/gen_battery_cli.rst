@@ -3,7 +3,7 @@
 Generic Battery Client
 ######################
 
-The Generic Battery Client model can query the state of a Generic Battery Server model remotely, but does not have any ability to control the Battery state.
+The Generic Battery Client model can query the state of a :ref:`bt_mesh_battery_srv_readme` model remotely, but does not have any ability to control the Battery state.
 
 Extended models
 ================

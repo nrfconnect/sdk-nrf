@@ -5,7 +5,7 @@ Generic Battery models
 
 The Generic Battery models allow remote monitoring of the battery status of a mesh device.
 
-There are two Generic Battery models:
+The following Generic Battery models are supported:
 
 .. toctree::
    :maxdepth: 1
@@ -13,6 +13,9 @@ There are two Generic Battery models:
 
    gen_battery_srv.rst
    gen_battery_cli.rst
+
+The Generic Battery models also feature their own common types, listed in the section below.
+For types common to all models, see :ref:`bt_mesh_models`.
 
 Common types
 =============

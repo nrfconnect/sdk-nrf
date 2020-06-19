@@ -10,19 +10,13 @@ The Light Lightness models can represent light in the following ways:
 - *Actual*: Lightness is represented on a perceptually uniform lightness scale.
 - *Linear*: Lightness is represented on a linear scale.
 
-The application can select whether to use the Actual or Linear representation.
-To do so, use :option:`CONFIG_BT_MESH_LIGHTNESS_ACTUAL` or :option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` configuration options, respectively, in the API at compile time.
-By default, the Actual representation is used.
-Internally, the models will always support both representations, so nodes with different representations can be be used interchangeably.
+The relationship between the *Actual* and the *Linear* representations is the following:
 
-.. note::
-    The relationship between the *Actual* and the *Linear* representations is the following:
+*Light (Linear) = (Light (Actual))*:sup:`2`
 
-    *Light (Linear) = (Light (Actual))*:sup:`2`
+Bindings with other states are always made to the *Actual* representation.
 
-    Bindings with other states are always made to the *Actual* representation.
-
-The following Light Lightness models are available:
+The following Light Lightness models are supported:
 
 .. toctree::
    :maxdepth: 1
@@ -31,8 +25,22 @@ The following Light Lightness models are available:
    lightness_srv.rst
    lightness_cli.rst
 
-Common types
+The Light Lightness models also feature their own common types, listed in the `Common types`_ section below.
+For types common to all models, see :ref:`bt_mesh_models`.
+
+Configuration
 =============
+
+The application can select whether to use the Actual or Linear representation.
+To do so, use the following options in the API at compile time:
+
+* :option:`CONFIG_BT_MESH_LIGHTNESS_ACTUAL` - Used by default.
+* :option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR`
+
+Internally, the models will always support both representations, so nodes with different representations can be be used interchangeably.
+
+Common types
+============
 
 | Header file: :file:`include/bluetooth/mesh/lightness.h`
 

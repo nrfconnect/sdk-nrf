@@ -14,7 +14,7 @@ Mesh model template
 
 The XYZ Mesh models allow to remotely control a disco light with a mesh device.
 
-There are the following XYZ models:
+The following XYZ models are supported:
 
 .. toctree::
    :maxdepth: 1
@@ -32,7 +32,8 @@ Common types*
 
 .. tip::
    The Common types section is optional.
-   If the model does not have its own common types, do not add this section, but still mention at the end of the page that the model does not have its own common types.
+   Use this section to inform if the model does not have its own common types.
+   For example, add `The XYZ models only use native types, and have no common model specific types.`
 
 This section lists the types common to the XYZ mesh model.
 
