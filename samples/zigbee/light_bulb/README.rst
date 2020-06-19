@@ -17,15 +17,20 @@ In the default sample configuration, the changes to the light bulb brightness ar
 Requirements
 ************
 
-* One or more of the following development kits:
+The sample supports the following development kits:
 
-  * |nRF52840DK|
-  * |nRF52833DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set8_start
+   :end-before: set8_end
 
-* The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample programmed on one separate device.
-* The :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample programmed on one or more separate devices.
+You can use one or more of the development kits listed above and mix different development kits.
 
-You can mix different development kits.
+For this sample to work, the following samples also need to be programmed:
+
+* The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample on one separate device.
+* The :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample on one or more separate devices.
+
+
 
 User interface
 **************
