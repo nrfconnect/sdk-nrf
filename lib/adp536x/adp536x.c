@@ -293,12 +293,10 @@ int adp536x_factory_reset(void)
 
 int adp536x_init(const char *dev_name)
 {
-	int err = 0;
-
 	i2c_dev = device_get_binding(dev_name);
-	if (err) {
-		err = -ENODEV;
+	if (i2c_dev == NULL) {
+		return -ENODEV;
 	}
 
-	return err;
+	return 0;
 }
