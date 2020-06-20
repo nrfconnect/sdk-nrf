@@ -123,6 +123,7 @@ If the configuration option ``CONFIG_SLM_TCP_PROXY`` is defined, the following A
 * AT#XTCPSVR=<op>[,<port>[,[sec_tag]]
 * AT#XTCPCLI=<op>[,<url>,<port>[,[sec_tag]]
 * AT#XTCPSEND=<datatype>,<data>
+* AT#XTCPRECV
 
 If the configuration option ``CONFIG_SLM_UDP_PROXY`` is defined, the following AT commands are available to use the UDP proxy service:
 
@@ -175,7 +176,7 @@ The following proprietary FTP AT commands are used in this application:
 
 * AT#XFTP=<cmd>[,<param1>[<param2]..]]
 
-More detailed usage for different operation commands:
+The different command options for <cmd> are listed below:
 
 * AT#XFTP="open",<username>,<password>,<hostname>[,<port>[,<sec_tag>]]
 * AT#XFTP="status"
