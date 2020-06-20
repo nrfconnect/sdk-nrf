@@ -10,6 +10,7 @@
 #include <net/socket.h>
 #include <modem/modem_info.h>
 #include <net/tls_credentials.h>
+#include <sys/ring_buffer.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_tcp_proxy.h"
@@ -39,6 +40,7 @@ enum slm_tcp_proxy_at_cmd_type {
 	AT_TCP_SERVER,
 	AT_TCP_CLIENT,
 	AT_TCP_SEND,
+	AT_TCP_RECV,
 	AT_TCP_PROXY_MAX
 };
 
@@ -46,14 +48,17 @@ enum slm_tcp_proxy_at_cmd_type {
 static int handle_at_tcp_server(enum at_cmd_type cmd_type);
 static int handle_at_tcp_client(enum at_cmd_type cmd_type);
 static int handle_at_tcp_send(enum at_cmd_type cmd_type);
+static int handle_at_tcp_recv(enum at_cmd_type cmd_type);
 
 /**@brief SLM AT Command list type. */
 static slm_at_cmd_list_t m_tcp_proxy_at_list[AT_TCP_PROXY_MAX] = {
 	{AT_TCP_SERVER, "AT#XTCPSVR", handle_at_tcp_server},
 	{AT_TCP_CLIENT, "AT#XTCPCLI", handle_at_tcp_client},
 	{AT_TCP_SEND, "AT#XTCPSEND", handle_at_tcp_send},
+	{AT_TCP_RECV, "AT#XTCPRECV", handle_at_tcp_recv},
 };
 
+RING_BUF_DECLARE(data_buf, CONFIG_AT_CMD_RESPONSE_MAX_LEN / 2);
 static u8_t data_hex[DATA_HEX_MAX_SIZE];
 static struct k_thread tcp_thread;
 static K_THREAD_STACK_DEFINE(tcp_thread_stack, THREAD_STACK_SIZE);
@@ -344,6 +349,15 @@ static int do_tcp_send(const u8_t *data, int datalen)
 	}
 }
 
+static int tcp_data_save(u8_t *data, u32_t length)
+{
+	if (ring_buf_space_get(&data_buf) < length) {
+		return -1; /* RX overrun */
+	}
+
+	return ring_buf_put(&data_buf, data, length);
+}
+
 static void tcp_thread_func(void *p1, void *p2, void *p3)
 {
 	int ret;
@@ -387,11 +401,14 @@ thread_entry:
 	}
 	fds.fd = sock;
 	fds.events = POLLIN;
+	ring_buf_reset(&data_buf);
 	while (true) {
 		if (proxy.role == AT_TCP_ROLE_SERVER &&
 			k_timer_status_get(&conn_timer) > 0) {
 			k_timer_stop(&conn_timer);
 			LOG_INF("Connecion timeout");
+			sprintf(rsp_buf, "#XTCPSVR: timeout\r\n");
+			rsp_send(rsp_buf, strlen(rsp_buf));
 			close(proxy.sock_peer);
 			goto thread_entry;
 		}
@@ -418,22 +435,30 @@ thread_entry:
 			if (slm_util_hex_check(data, ret)) {
 				ret = slm_util_htoa(data, ret, data_hex,
 					DATA_HEX_MAX_SIZE);
-				if (ret > 0) {
-					sprintf(rsp_buf,
-						"#XTCPRECV: %d, %d\r\n",
-						DATATYPE_HEXADECIMAL, ret);
-					rsp_send(rsp_buf, strlen(rsp_buf));
-					rsp_send(data_hex, ret);
-					rsp_send("\r\n", 2);
-				} else {
+				if (ret < 0) {
 					LOG_ERR("hex convert error: %d", ret);
+					continue;
 				}
-			} else {
-				sprintf(rsp_buf, "#XTCPRECV: %d, %d\r\n",
-					DATATYPE_PLAINTEXT, ret);
+				if (tcp_data_save(data_hex, ret) < 0) {
+					sprintf(rsp_buf,
+						"#XTCPDATA: overrun\r\n");
+				} else {
+					sprintf(rsp_buf,
+						"#XTCPDATA: %d, %d\r\n",
+						DATATYPE_HEXADECIMAL,
+						ret);
+				}
 				rsp_send(rsp_buf, strlen(rsp_buf));
-				rsp_send(data, ret);
-				rsp_send("\r\n", 2);
+			} else {
+				if (tcp_data_save(data, ret) < 0) {
+					sprintf(rsp_buf,
+						"#XTCPDATA: overrun\r\n");
+				} else {
+					sprintf(rsp_buf,
+						"#XTCPDATA: %d, %d\r\n",
+						DATATYPE_PLAINTEXT, ret);
+				}
+				rsp_send(rsp_buf, strlen(rsp_buf));
 			}
 		}
 	}
@@ -441,7 +466,7 @@ thread_entry:
 
 /**@brief handle AT#XTCPSVR commands
  *  AT#XTCPSVR=<op>[,<port>[,[sec_tag]]
- *  AT#XTCPSVR? READ command not supported
+ *  AT#XTCPSVR?
  *  AT#XTCPSVR=?
  */
 static int handle_at_tcp_server(enum at_cmd_type cmd_type)
@@ -482,6 +507,15 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 			err = do_tcp_server_stop(0);
 		} break;
 
+	case AT_CMD_TYPE_READ_COMMAND:
+		if (proxy.role == AT_TCP_ROLE_SERVER) {
+			sprintf(rsp_buf, "#XTCPSVR: %d, %d\r\n",
+				proxy.sock, proxy.sock_peer);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+		}
+		err = 0;
+		break;
+
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf, "#XTCPSVR: (%d, %d),<port>,<sec_tag>\r\n",
 			AT_SERVER_STOP, AT_SERVER_START);
@@ -498,7 +532,7 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 
 /**@brief handle AT#XTCPCLI commands
  *  AT#XTCPCLI=<op>[,<url>,<port>[,[sec_tag]]
- *  AT#XTCPCLI? READ command not supported
+ *  AT#XTCPCLI?
  *  AT#XTCPCLI=?
  */
 static int handle_at_tcp_client(enum at_cmd_type cmd_type)
@@ -546,6 +580,14 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 			}
 			err = do_tcp_client_disconnect(0);
 		} break;
+
+	case AT_CMD_TYPE_READ_COMMAND:
+		if (proxy.role == AT_TCP_ROLE_CLIENT) {
+			sprintf(rsp_buf, "#XTCPCLI: %d\r\n", proxy.sock);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+		}
+		err = 0;
+		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf,
@@ -598,6 +640,38 @@ static int handle_at_tcp_send(enum at_cmd_type cmd_type)
 			err = do_tcp_send(data, size);
 		}
 		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
+/**@brief handle AT#XTCPRECV commands
+ *  AT#XTCPRECV
+ *  AT#XTCPRECV? READ command not supported
+ *  AT#XTCPRECV=? TEST command not supported
+ */
+static int handle_at_tcp_recv(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+	{
+		u32_t sz_send = 0;
+
+		if (ring_buf_is_empty(&data_buf) == 0) {
+			sz_send = ring_buf_get(&data_buf, rsp_buf,
+					sizeof(rsp_buf));
+			rsp_send(rsp_buf, sz_send);
+			rsp_send("\r\n", 2);
+		}
+		sprintf(rsp_buf, "#XTCPRECV: %d\r\n", sz_send);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+	} break;
 
 	default:
 		break;
