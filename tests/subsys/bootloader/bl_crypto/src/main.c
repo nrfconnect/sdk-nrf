@@ -150,7 +150,6 @@ const uint8_t input2[] = "test vector";
 void test_sha256(void)
 {
 	test_sha256_string(NULL, 0, sha256_empty_string, true);
-	test_sha256_string(const_fw_data, ARRAY_SIZE(const_fw_data), image_fw_hash, true);
 	test_sha256_string(input2, strlen(input2), sha256_test_vector_string, true);
 
 	test_sha256_string(input3, strlen(input3), sha256_test_vector_string, false);
@@ -159,6 +158,8 @@ void test_sha256(void)
 
 	/* Size restrictions. */
 #if CONFIG_FLASH_SIZE > 300
+	test_sha256_string(const_fw_data, ARRAY_SIZE(const_fw_data),
+			   image_fw_hash, true);
 	test_sha256_string(long_input, ARRAY_SIZE(long_input), long_input_hash, true);
 	test_sha256_string(long_input, ARRAY_SIZE(long_input), sha256_test_vector_string, false);
 #endif
