@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-cmake_minimum_required(VERSION 3.8.2)
+cmake_minimum_required(VERSION 3.13.1)
 
 # This sample runs as a non-secure application on nRF91. Therefore, it
 # requires the secure_partition_manager that prepares the required
