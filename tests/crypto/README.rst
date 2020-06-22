@@ -166,7 +166,7 @@ Testing
 =======
 
 1. Compile and program the application.
-#. Observe the result of the different test vectors in the log using `RTT Viewer`_ or a terminal emulator.
+#. Observe the result of the different test vectors in the log using :ref:`RTT Viewer <zephyr:nordic_segger>` or a terminal emulator.
    The last line of the output indicates the test result::
 
       PROJECT EXECUTION SUCCESSFUL

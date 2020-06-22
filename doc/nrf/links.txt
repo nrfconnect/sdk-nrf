@@ -7,10 +7,6 @@
 .. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 
-.. _`Zephyr coding style`: https://docs.zephyrproject.org/contribute/contribute_guidelines.html
-
-.. _`RTT Viewer`: https://docs.zephyrproject.org/latest/guides/tools/nordic_segger.html
-
 .. ### Links to MCUboot
 
 .. _`MCUboot`: https://mcuboot.com
