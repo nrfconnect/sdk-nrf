@@ -26,7 +26,9 @@ DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
 
 config FPROTECT_BLOCK_SIZE
 	hex
-	default NRF_SPU_FLASH_REGION_SIZE if SOC_NRF9160 || SOC_NRF5340_CPUAPP
-	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+	default NRF_SPU_FLASH_REGION_SIZE if CPU_HAS_NRF_IDAU
+	default NRF_MPU_FLASH_REGION_SIZE if HAS_HW_NRF_MPU
+	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
+	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
 	help
 	  Block size of fprotect
