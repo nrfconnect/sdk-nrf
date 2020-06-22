@@ -300,6 +300,14 @@ static int ble_adv_start(bool can_fast_adv)
 		goto error;
 	}
 
+	struct bt_conn *conn = NULL;
+
+	bt_conn_foreach(BT_CONN_TYPE_LE, conn_find, &conn);
+	if (conn) {
+		LOG_INF("Already connected, do not advertise");
+		return 0;
+	}
+
 	bool direct = false;
 
 	if (bond_find_data.peer_id < bond_find_data.peer_count) {
@@ -317,11 +325,7 @@ static int ble_adv_start(bool can_fast_adv)
 					       fast_adv);
 	}
 
-	if (err == -ECONNREFUSED || (err == -ENOMEM)) {
-		LOG_WRN("Already connected, do not advertise");
-		err = 0;
-		goto error;
-	} else if (err) {
+	if (err) {
 		LOG_ERR("Advertising failed to start (err %d)", err);
 		goto error;
 	}
