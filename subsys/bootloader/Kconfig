@@ -26,6 +26,7 @@ config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
 	select FW_INFO
+	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
