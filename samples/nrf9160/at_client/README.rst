@@ -20,11 +20,13 @@ For more information on the AT commands, see the `AT Commands Reference Guide`_.
 Requirements
 ************
 
-* The following development board:
+The sample supports the following development kit:
 
-  * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 Building and running
 ********************
