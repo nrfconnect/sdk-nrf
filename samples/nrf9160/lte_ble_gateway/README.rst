@@ -22,13 +22,17 @@ Flipping the Thingy:52, which causes a change in the flip state to "UPSIDE_DOWN"
 Requirements
 ************
 
-* A `Nordic Thingy:52`_
-* The following development board:
+The sample supports the following development kit:
 
-  * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* :ref:`zephyr:bluetooth-hci-uart-sample` must be programmed to the nRF52 board controller on the board.
-* .. include:: /includes/spm.txt
+Additionally, the sample requires a `Nordic Thingy:52`_.
+
+The :ref:`zephyr:bluetooth-hci-uart-sample` sample must be programmed to the nRF52 board controller on the board.
+
+.. include:: /includes/spm.txt
 
 User interface
 **************

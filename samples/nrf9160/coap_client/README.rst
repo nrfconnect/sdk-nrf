@@ -26,12 +26,15 @@ Other resources can be configured using the Kconfig option ``CONFIG_COAP_RESOURC
 Requirements
 ************
 
-* The following development board:
+The sample supports the following development kit:
 
-  * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* .. include:: /includes/spm.txt
-* A public CoAP server IP address or URL available on the internet
+The sample also requires a public CoAP server IP address or URL available on the internet.
+
+.. include:: /includes/spm.txt
 
 Building and running
 ********************

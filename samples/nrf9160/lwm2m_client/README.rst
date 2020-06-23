@@ -42,14 +42,16 @@ can also receive actuation commands such as buzzer activation and light control.
 Requirements
 ************
 
-* The following development board:
+The sample supports the following development kit:
 
-    * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* .. include:: /includes/spm.txt
+The sample also requires an LwM2M server URL address available on the internet.
+For this sample, the URL address mentioned on the `Leshan Demo Server`_ page is used.
 
-* An LwM2M server URL address available on the internet.
-  For this sample, the URL address mentioned on the `Leshan Demo Server`_ page is used.
+.. include:: /includes/spm.txt
 
 Building and Running
 ********************

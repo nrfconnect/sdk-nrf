@@ -61,11 +61,13 @@ See the comprehensive `tutorial on SSL.com`_ for instructions on how to convert 
 Requirements
 ************
 
-* The following development board:
+The sample supports the following development kit:
 
-  * |nRF9160DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set5_start
+   :end-before: set5_end
 
-* .. include:: /includes/spm.txt
+.. include:: /includes/spm.txt
 
 
 Building and running
