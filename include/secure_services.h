@@ -22,18 +22,39 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
+#include <zephyr.h>
 #include <fw_info.h>
+#include <../arch/arm/include/aarch32/cortex_m/tz_ns.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** Implement a wrapper function around a secure_service.
+ *
+ * This function must reside in the non-secure binary. It makes the secure
+ * service thread safe by locking the scheduler while the service is running.
+ * The scheduler locking is done via TZ_THREAD_SAFE_NONSECURE_ENTRY_FUNC().
+ *
+ * The macro implements of the wrapper function. The wrapper function has the
+ * same function signature as the secure service.
+ *
+ * @param ret   The return type of the secure service and the wrapper function.
+ * @param name  The name of the wrapper function. The secure service is assumed
+ *              to be named the same, but with the suffix '_nse'. E.g. the
+ *              wrapper function foo() wraps the secure service foo_nse().
+ * @param ...   The arguments of the secure service and the wrapper function, as
+ *              they would appear in a function signature, i.e. type and name.
+ */
+#define NRF_NSE(ret, name, ...) \
+ret name ## _nse(__VA_ARGS__); \
+TZ_THREAD_SAFE_NONSECURE_ENTRY_FUNC(name, ret, name ## _nse, __VA_ARGS__)
 
 /** Request a system reboot from the Secure Firmware.
  *
  * Rebooting is not available from the Non-Secure Firmware.
  */
 void spm_request_system_reboot(void);
-
 
 /** Request a random number from the Secure Firmware.
  *
@@ -51,7 +72,6 @@ void spm_request_system_reboot(void);
  * @retval -EINVAL  If @c len is invalid. Currently, @c len must be 144.
  */
 int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
-
 
 /** Request a read operation to be executed from Secure Firmware.
  *
