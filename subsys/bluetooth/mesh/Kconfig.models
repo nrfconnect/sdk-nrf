@@ -25,6 +25,54 @@ config BT_MESH_ONOFF_CLI
 	help
 	  Enable Mesh Generic OnOff Client model.
 
+config BT_MESH_TIME
+	bool
+
+menuconfig BT_MESH_TIME_SRV
+	bool "Time Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_TIME
+	help
+	  Enable Mesh Time Server model.
+
+if BT_MESH_TIME_SRV
+
+config BT_MESH_TIME_SRV_PERSISTENT
+	bool "Store the Time Server context persistently"
+	default y
+	help
+	  Enable persistent storage for the Time state.
+
+config BT_MESH_TIME_MESH_HOP_UNCERTAINTY
+	int "Time model mesh hop uncertainty"
+	default 30
+	help
+	  This value defines the maximum delay of one mesh message
+	  hop in milliseconds.
+
+config BT_MESH_TIME_SRV_CLOCK_ACCURACY
+	int "Time model clock uncertainty"
+	default 20 if CLOCK_CONTROL_NRF_K32SRC_20PPM
+	default 30 if CLOCK_CONTROL_NRF_K32SRC_30PPM
+	default 50 if CLOCK_CONTROL_NRF_K32SRC_50PPM
+	default 75 if CLOCK_CONTROL_NRF_K32SRC_75PPM
+	default 100 if CLOCK_CONTROL_NRF_K32SRC_100PPM
+	default 150 if CLOCK_CONTROL_NRF_K32SRC_150PPM
+	default 250 if CLOCK_CONTROL_NRF_K32SRC_250PPM
+	default 500
+	help
+	  This value defines the clock drift in microseconds per second, and is
+	  used to calculate overall time uncertainty for the Bluetooth Mesh
+	  Time Server model.
+
+endif
+
+config BT_MESH_TIME_CLI
+	bool "Time Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_TIME
+	help
+	  Enable Mesh Time Client model.
 
 config BT_MESH_LVL_SRV
 	bool "Generic Level Server"
