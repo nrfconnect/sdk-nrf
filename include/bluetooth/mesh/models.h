@@ -46,6 +46,10 @@
 #include <bluetooth/mesh/light_ctrl_srv.h>
 #include <bluetooth/mesh/light_ctrl_cli.h>
 
+/* Time and Scene models */
+#include <bluetooth/mesh/time_cli.h>
+#include <bluetooth/mesh/time_srv.h>
+
 /** @brief Check whether the model publishes to a unicast address.
  *
  * @param[in] mod Model to check
