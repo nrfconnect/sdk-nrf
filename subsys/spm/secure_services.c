@@ -9,7 +9,6 @@
 #include <power/reboot.h>
 #include <sys/util.h>
 #include <autoconf.h>
-#include <secure_services.h>
 #include <string.h>
 #include <bl_validation.h>
 
@@ -26,6 +25,9 @@
  *
  * Note: the function will be located in a Non-Secure
  * Callable region of the Secure Firmware Image.
+ *
+ * These should not be called directly. Instead call them through their wrapper
+ * functions, e.g. call spm_request_read_nse() via spm_request_read().
  */
 
 #ifdef CONFIG_SPM_SERVICE_RNG
@@ -66,7 +68,7 @@ struct read_range {
 
 
 __TZ_NONSECURE_ENTRY_FUNC
-int spm_request_read(void *destination, uint32_t addr, size_t len)
+int spm_request_read_nse(void *destination, uint32_t addr, size_t len)
 {
 	static const struct read_range ranges[] = {
 #ifdef PM_MCUBOOT_ADDRESS
@@ -101,7 +103,7 @@ int spm_request_read(void *destination, uint32_t addr, size_t len)
 
 #ifdef CONFIG_SPM_SERVICE_REBOOT
 __TZ_NONSECURE_ENTRY_FUNC
-void spm_request_system_reboot(void)
+void spm_request_system_reboot_nse(void)
 {
 	sys_reboot(SYS_REBOOT_COLD);
 }
@@ -110,7 +112,7 @@ void spm_request_system_reboot(void)
 
 #ifdef CONFIG_SPM_SERVICE_RNG
 __TZ_NONSECURE_ENTRY_FUNC
-int spm_request_random_number(uint8_t *output, size_t len, size_t *olen)
+int spm_request_random_number_nse(uint8_t *output, size_t len, size_t *olen)
 {
 	int err;
 
@@ -126,7 +128,7 @@ int spm_request_random_number(uint8_t *output, size_t len, size_t *olen)
 
 #ifdef CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
 __TZ_NONSECURE_ENTRY_FUNC
-int spm_firmware_info(uint32_t fw_address, struct fw_info *info)
+int spm_firmware_info_nse(uint32_t fw_address, struct fw_info *info)
 {
 	const struct fw_info *tmp_info;
 
@@ -148,7 +150,7 @@ int spm_firmware_info(uint32_t fw_address, struct fw_info *info)
 
 #ifdef CONFIG_SPM_SERVICE_PREVALIDATE
 __TZ_NONSECURE_ENTRY_FUNC
-int spm_prevalidate_b1_upgrade(uint32_t dst_addr, uint32_t src_addr)
+int spm_prevalidate_b1_upgrade_nse(uint32_t dst_addr, uint32_t src_addr)
 {
 	if (!bl_validate_firmware_available()) {
 		return -ENOTSUP;
