@@ -81,12 +81,17 @@ const static char * const opt_descr[] = {
 
 static u8_t dfu_slot_id(void)
 {
+#if CONFIG_BOOTLOADER_MCUBOOT
+	/* MCUBoot always puts new image in the secondary slot. */
+	return IMAGE1_ID;
+#else
 	BUILD_ASSERT(IMAGE0_ADDRESS < IMAGE1_ADDRESS);
 	if ((u32_t)(uintptr_t)dfu_slot_id < IMAGE1_ADDRESS) {
 		return IMAGE1_ID;
 	}
 
 	return IMAGE0_ID;
+#endif
 }
 
 static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
@@ -230,7 +235,10 @@ static void handle_dfu_data(const u8_t *data, const size_t size)
 	if (img_length == cur_offset) {
 		LOG_INF("DFU image written");
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
-		boot_request_upgrade(false);
+		err = boot_request_upgrade(false);
+		if (err) {
+			LOG_ERR("Cannot request the DFU (%d)", err);
+		}
 #endif
 		goto dfu_finish;
 	} else {
