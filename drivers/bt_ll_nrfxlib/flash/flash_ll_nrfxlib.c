@@ -34,8 +34,8 @@ static struct {
 	struct k_sem sync;
 	const void *data;
 	off_t addr;
-	u16_t len;
-	u16_t prev_len;
+	u32_t len;
+	u32_t prev_len;
 	u32_t tmp_word;      /**< Used for unalinged writes. */
 	/* NOTE: Read is not async, so not a part of this enum. */
 	enum {
