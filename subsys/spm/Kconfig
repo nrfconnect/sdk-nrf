@@ -111,6 +111,13 @@ config SPM_SERVICE_PREVALIDATE
 	  secure service is needed for the app to access the prevalidation
 	  function.
 
+config SPM_SERVICE_BUSY_WAIT
+	bool "Busy wait in secure mode (debug function)"
+	default y
+	help
+	  Busy wait in secure mode. Will keep the CPU in secure mode for the
+	  duration specified. Use to write tests that require secure mode.
+
 endif # SPM_SECURE_SERVICES
 
 config SPM_BLOCK_NON_SECURE_RESET
