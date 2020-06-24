@@ -38,3 +38,7 @@ NRF_NSE(int, spm_firmware_info, uint32_t fw_address, struct fw_info *info);
 #ifdef CONFIG_SPM_SERVICE_PREVALIDATE
 NRF_NSE(int, spm_prevalidate_b1_upgrade, uint32_t dst_addr, uint32_t src_addr);
 #endif /* CONFIG_SPM_SERVICE_PREVALIDATE */
+
+#ifdef CONFIG_SPM_SERVICE_BUSY_WAIT
+NRF_NSE(void, spm_busy_wait, uint32_t busy_wait_us);
+#endif /* CONFIG_SPM_SERVICE_BUSY_WAIT */

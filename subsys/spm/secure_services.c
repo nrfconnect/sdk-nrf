@@ -159,3 +159,12 @@ int spm_prevalidate_b1_upgrade_nse(uint32_t dst_addr, uint32_t src_addr)
 	return result;
 }
 #endif /* CONFIG_SPM_SERVICE_PREVALIDATE */
+
+
+#ifdef CONFIG_SPM_SERVICE_BUSY_WAIT
+__TZ_NONSECURE_ENTRY_FUNC
+void spm_busy_wait_nse(uint32_t busy_wait_us)
+{
+	k_busy_wait(busy_wait_us);
+}
+#endif /* CONFIG_SPM_SERVICE_BUSY_WAIT */

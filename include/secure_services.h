@@ -111,6 +111,15 @@ int spm_firmware_info(uint32_t fw_address, struct fw_info *info);
  */
 int spm_prevalidate_b1_upgrade(uint32_t dst_addr, uint32_t src_addr);
 
+/** Busy wait in secure mode (debug function)
+ *
+ * This function is for writing tests that require the execution to be in
+ * secure mode
+ *
+ * @param[in]  busy_wait_us  The number of microseconds to wait for.
+ */
+void spm_busy_wait(uint32_t busy_wait_us);
+
 #ifdef __cplusplus
 }
 #endif
