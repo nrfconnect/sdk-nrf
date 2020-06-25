@@ -80,6 +80,12 @@ If you choose to do so, use the Python scripts in ``scripts\bootloader`` to crea
       This will erase the whole chip before programming the new image.
       In |SES|, choose :guilabel:`Target` > :guilabel:`Connect J-Link` and then :guilabel:`Target` > :guilabel:`Erase All` to erase the whole chip.
 
+   .. note::
+      On some chips (for example, nRF9160 or nRF5340), the provisioned data is held in the OTP region in UICR.
+      Because of this, the public key hash cannot contain half-words with the value 0xFFFF, because half-words are writeable when they are 0xFFFF, so such hashes cannot be guaranteed to be immutable.
+      The bootloader will refuse to boot if any hash contains a half-word with the value 0xFFFF.
+      If your public key hash is found to have 0xFFFF, please regenerate it or use another public key.
+
 The bootloader uses the :ref:`doc_bl_storage` library to access provisioned data.
 
 Requirements

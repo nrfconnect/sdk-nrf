@@ -59,28 +59,64 @@ static const struct bl_storage_data *p_bl_storage_data =
 
 u32_t s0_address_read(void)
 {
-	return p_bl_storage_data->s0_address;
+	u32_t addr = p_bl_storage_data->s0_address;
+
+	__DSB(); /* Because of nRF9160 Erratum 7 */
+	return addr;
 }
 
 u32_t s1_address_read(void)
 {
-	return p_bl_storage_data->s1_address;
+	u32_t addr = p_bl_storage_data->s1_address;
+
+	__DSB(); /* Because of nRF9160 Erratum 7 */
+	return addr;
 }
 
 u32_t num_public_keys_read(void)
 {
-	return p_bl_storage_data->num_public_keys;
-}
+	u32_t num_pk = p_bl_storage_data->num_public_keys;
 
+	__DSB(); /* Because of nRF9160 Erratum 7 */
+	return num_pk;
+}
 
 /* Value written to the invalidation token when invalidating an entry. */
 #define INVALID_VAL 0xFFFF0000
+
+static bool key_is_valid(u32_t key_idx)
+{
+	bool ret = (p_bl_storage_data->key_data[key_idx].valid != INVALID_VAL);
+
+	__DSB(); /* Because of nRF9160 Erratum 7 */
+	return ret;
+}
+
+static u16_t read_halfword(const u16_t *ptr);
+
+int verify_public_keys(void)
+{
+	for (u32_t n = 0; n < num_public_keys_read(); n++) {
+		if (key_is_valid(n)) {
+			const u16_t *p_key_n = (const u16_t *)
+					p_bl_storage_data->key_data[n].hash;
+			size_t hash_len_u16 = (CONFIG_SB_PUBLIC_KEY_HASH_LEN/2);
+
+			for (u32_t i = 0; i < hash_len_u16; i++) {
+				if (read_halfword(&p_key_n[i]) == 0xFFFF) {
+					return -EHASHFF;
+				}
+			}
+		}
+	}
+	return 0;
+}
 
 int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 {
 	const u8_t *p_key;
 
-	if (p_bl_storage_data->key_data[key_idx].valid == INVALID_VAL) {
+	if (!key_is_valid(key_idx)) {
 		return -EINVAL;
 	}
 
@@ -103,6 +139,7 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 	__ASSERT(((u32_t)p_key % 4 == 0), "Key address is not word aligned");
 
 	memcpy(p_buf, p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
+	__DSB(); /* Because of nRF9160 Erratum 7 */
 
 	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;
 }
@@ -114,6 +151,7 @@ void invalidate_public_key(u32_t key_idx)
 
 	if (*invalidation_token != INVALID_VAL) {
 		/* Write if not already written. */
+		__DSB(); /* Because of nRF9160 Erratum 7 */
 		nrfx_nvmc_word_write((u32_t)invalidation_token, INVALID_VAL);
 	}
 }
@@ -134,6 +172,7 @@ static u16_t read_halfword(const u16_t *ptr)
 	bool top_half = ((u32_t)ptr % 4); /* Addr not div by 4 */
 	u32_t target_addr = (u32_t)ptr & ~3; /* Floor address */
 	u32_t val32 = *(u32_t *)target_addr;
+	__DSB(); /* Because of nRF9160 Erratum 7 */
 
 	return (top_half ? (val32 >> 16) : val32) & 0x0000FFFF;
 }
