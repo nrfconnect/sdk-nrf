@@ -111,6 +111,7 @@ foreach(target zephyr nrf mcuboot nrfxlib kconfig)
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${TARGET_BINARY_DIR}/rst
     COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/*.log
     COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/*.warnings
+    COMMAND ${CMAKE_COMMAND} -E remove ${TARGET_BINARY_DIR}/last_doxy_run_tstamp
     # Remove generated HTML as well
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${HTML_DIR}/${target}
   )
