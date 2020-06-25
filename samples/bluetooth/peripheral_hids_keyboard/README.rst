@@ -71,11 +71,11 @@ LED 3:
 
 If the `NFC_OOB_PAIRING` feature is enabled:
 
-LED 4:
-   Indicates if an NFC field is present.
-
 Button 4:
    Starts advertising.
+
+LED 4:
+   Indicates if an NFC field is present.
 
 
 Building and running
