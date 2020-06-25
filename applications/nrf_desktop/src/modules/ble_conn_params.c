@@ -30,6 +30,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_CONN_PARAMS_LOG_LEVEL);
 
 struct connected_peer {
 	struct bt_conn *conn;
+	bool discovered;
 	bool llpm_support;
 	u16_t requested_latency;
 };
@@ -105,6 +106,13 @@ static int set_conn_params(struct bt_conn *conn, u16_t conn_latency,
 static void update_peer_conn_params(const struct connected_peer *peer)
 {
 	__ASSERT_NO_MSG(peer);
+	/* Do not update peripheral's connection parameters before the discovery
+	 * is completed.
+	 */
+	if (!peer->discovered) {
+		return;
+	}
+
 	struct bt_conn *conn = peer->conn;
 	u16_t latency = peer->requested_latency;
 
@@ -207,6 +215,7 @@ static void peer_disconnected(struct bt_conn *conn)
 	if (peer) {
 		peer->conn = NULL;
 		peer->llpm_support = false;
+		peer->discovered = false;
 		peer->requested_latency = 0;
 	}
 }
@@ -217,10 +226,7 @@ static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support)
 
 	if (peer) {
 		peer->llpm_support = peer_llpm_support;
-		/* Make sure that initial connection latency after discovery
-		 * is set to zero.
-		 */
-		peer->requested_latency = 0;
+		peer->discovered = true;
 		update_peer_conn_params(peer);
 	}
 }
