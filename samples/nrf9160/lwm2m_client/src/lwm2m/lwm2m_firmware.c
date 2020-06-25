@@ -24,6 +24,8 @@ LOG_MODULE_REGISTER(app_lwm2m_firmware, CONFIG_APP_LOG_LEVEL);
 #define FLASH_AREA_IMAGE_SECONDARY	PM_MCUBOOT_SECONDARY_ID
 #define FLASH_BANK_SIZE			PM_MCUBOOT_SECONDARY_SIZE
 
+#define BYTE_PROGRESS_STEP (1024 * 10)
+
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
 static u8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 #endif
@@ -79,7 +81,8 @@ static int firmware_block_received_cb(u16_t obj_inst_id,
 {
 	static u8_t percent_downloaded;
 	static u32_t bytes_downloaded;
-	u8_t downloaded;
+	u8_t curent_percent;
+	u32_t current_bytes;
 	int ret = 0;
 
 	if (total_size > FLASH_BANK_SIZE) {
@@ -107,20 +110,24 @@ static int firmware_block_received_cb(u16_t obj_inst_id,
 #endif
 	}
 
-	bytes_downloaded += data_len;
-
-	/* display a % downloaded, if it's different */
-	if (total_size) {
-		downloaded = bytes_downloaded * 100 / total_size;
+	/* Display a % downloaded or byte progress, if no total size was
+	 * provided (this can happen in PULL mode FOTA)
+	 */
+	if (total_size > 0) {
+		curent_percent = bytes_downloaded * 100 / total_size;
+		if (curent_percent > percent_downloaded) {
+			percent_downloaded = curent_percent;
+			LOG_INF("Downloaded %d%%", percent_downloaded);
+		}
 	} else {
-		/* Total size is empty when there is only one block */
-		downloaded = 100;
+		current_bytes = bytes_downloaded + data_len;
+		if (current_bytes / BYTE_PROGRESS_STEP >
+		    bytes_downloaded / BYTE_PROGRESS_STEP) {
+			LOG_INF("Downloaded %d kB", current_bytes / 1024);
+		}
 	}
 
-	if (downloaded > percent_downloaded) {
-		percent_downloaded = downloaded;
-		LOG_INF("%d%%", percent_downloaded);
-	}
+	bytes_downloaded += data_len;
 
 	ret = flash_img_buffered_write(&dfu_ctx, data, data_len, last_block);
 	if (ret < 0) {
