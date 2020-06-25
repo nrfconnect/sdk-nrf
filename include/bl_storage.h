@@ -14,6 +14,9 @@
 extern "C" {
 #endif
 
+
+#define EHASHFF 113 /* A hash contains too many 0xFs. */
+
 /** @defgroup bl_storage Bootloader storage (protected data).
  * @{
  */
@@ -38,6 +41,14 @@ u32_t s1_address_read(void);
  * @return Number of public key data slots.
  */
 u32_t num_public_keys_read(void);
+
+/**
+ * @brief Function for reading number of public key data slots.
+ *
+ * @retval 0         if all keys are ok
+ * @retval -EHASHFF  if one or more keys contains an aligned 0xFFFF.
+ */
+int verify_public_keys(void);
 
 /**
  * @brief Function for reading public key data.

@@ -7,4 +7,6 @@
 #define PM_B0_IMAGE_SIZE 0x1000
 #define PM_PROVISION_ADDRESS 0x7000
 #define PM_PROVISION_SIZE 0x1000
+#define PM_S0_SIZE 0x10000
+#define PM_S1_SIZE 0x10000
 #endif /* PM_CONFIG_H__ */

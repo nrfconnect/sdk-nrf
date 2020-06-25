@@ -13,6 +13,7 @@ extern "C" {
 
 #include <stdbool.h>
 #include <fw_info.h>
+#include <zephyr/types.h>
 
 /** @defgroup bl_validation Bootloader firmware validation
  * @{
