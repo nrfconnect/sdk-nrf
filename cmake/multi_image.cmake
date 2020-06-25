@@ -59,40 +59,47 @@ endfunction()
 
 # See 'add_child_image'
 function(add_child_image_from_source)
-  set(oneValueArgs NAME SOURCE_DIR DOMAIN)
+  set(oneValueArgs NAME SOURCE_DIR DOMAIN BOARD)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
 
   if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
     message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
   endif()
 
+  if (${ACI_NAME}_BOARD)
+    message(FATAL_ERROR
+      "${ACI_NAME}_BOARD set in outer scope. Will be ignored, use "
+      "`add_child_image(BOARD ${${ACI_NAME}_BOARD} ...)` for adding a child "
+      "image for specific board")
+  endif()
 
   # Add the new partition manager domain if needed.
   # The domain corresponds to the BOARD without the 'ns' suffix.
   if (ACI_DOMAIN)
-    if (${ACI_NAME}_BOARD)
+    if ("${ACI_BOARD}" STREQUAL "")
       message(FATAL_ERROR
-        "Parent image cannot set BOARD of the child image when DOMAIN is set")
+        "No board specified for domain '${ACI_DOMAIN}'. This configuration is "
+        "typically defined in ${BOARD_DIR}/Kconfig")
     endif()
-    set(${ACI_NAME}_BOARD ${ACI_DOMAIN})
-    set(${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION ${ACI_NAME} CACHE STRING "" FORCE)
-  elseif (NOT ${ACI_NAME}_BOARD)
-    # Set ${ACI_NAME}_BOARD based on what BOARD is set to if not already set by parent
-    # It is assumed that only the root app will be built as non-secure.
-    # This is not a valid assumption as there might be multiple non-secure
-    # images defined.
-    # TODO: Allow multiple non-secure images by using Kconfig to set the
-    # secure/non-secure property rather than using a separate board definition.
-    get_board_without_ns_suffix(${BOARD} ${ACI_NAME}_BOARD)
+
+    # This needs to be made globally available as it is used in other files.
+    set(${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION ${ACI_NAME} CACHE INTERNAL "")
+    set(${ACI_NAME}_DOMAIN ${ACI_DOMAIN})
+
+    if (NOT (${ACI_DOMAIN} IN_LIST PM_DOMAINS))
+      list(APPEND PM_DOMAINS ${ACI_DOMAIN})
+      set_property(GLOBAL APPEND PROPERTY PM_DOMAINS ${ACI_DOMAIN})
+    endif()
+  elseif (NOT ACI_BOARD)
+    # No BOARD is given as argument, this triggers automatic conversion of
+    # *.ns board from parent image.
+    get_board_without_ns_suffix(${BOARD} ACI_BOARD)
   endif()
 
-  if (NOT (${${ACI_NAME}_BOARD} IN_LIST PM_DOMAINS))
-    set_property(GLOBAL APPEND PROPERTY PM_DOMAINS ${${ACI_NAME}_BOARD})
-    share("list(APPEND PM_DOMAINS ${${ACI_NAME}_BOARD})")
-  endif()
+  set(${ACI_NAME}_BOARD ${ACI_BOARD})
 
 
-  message("\n=== child image ${ACI_NAME} - ${${ACI_NAME}_BOARD} begin ===")
+  message("\n=== child image ${ACI_NAME} - ${ACI_DOMAIN} begin ===")
   # Construct a list of variables that, when present in the root
   # image, should be passed on to all child images as well.
   list(APPEND
@@ -182,7 +189,7 @@ function(add_child_image_from_source)
     message(FATAL_ERROR "CMake generation for ${ACI_NAME} failed, aborting. Command: ${ret}")
   endif()
 
-  message("=== child image ${ACI_NAME} - ${${ACI_NAME}_BOARD} end ===\n")
+  message("=== child image ${ACI_NAME} - ${ACI_DOMAIN} end ===\n")
 
   # Include some variables from the child image into the parent image
   # namespace

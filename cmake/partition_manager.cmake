@@ -21,17 +21,10 @@ macro(add_region)
   endif()
 endmacro()
 
-# Get the domain of the current board.
-# In a multi core/SoC build, each core/SoC is a domain as seen from the
-# Partition Manager. Each domain is handled individually by the Partition
-# Manager. Once the Partition Manager has solved all the domains, it creates
-# a global configuration consisting of all domain configurations.
-get_board_without_ns_suffix(${BOARD} domain)
-
 # Load static configuration if found.
 set(user_def_pm_static ${PM_STATIC_YML_FILE})
 set(nodomain_pm_static ${APPLICATION_SOURCE_DIR}/pm_static.yml)
-set(domain_pm_static ${APPLICATION_SOURCE_DIR}/pm_static_${domain}.yml)
+set(domain_pm_static ${APPLICATION_SOURCE_DIR}/pm_static_${DOMAIN}.yml)
 
 if(EXISTS "${user_def_pm_static}" AND NOT IS_DIRECTORY "${user_def_pm_static}")
   set(static_configuration_file ${user_def_pm_static})
@@ -51,7 +44,7 @@ endif()
 #
 # The dynamic partition is specified by the parent domain (i.e. the domain
 # which creates the current domain through 'create_domain_image()'.
-if("${IMAGE_NAME}" STREQUAL "${${domain}_PM_DOMAIN_DYNAMIC_PARTITION}_")
+if("${IMAGE_NAME}" STREQUAL "${${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION}_")
   set(is_dynamic_partition_in_domain TRUE)
 endif()
 
@@ -86,7 +79,7 @@ endif()
 if (NOT is_dynamic_partition_in_domain)
   set(dynamic_partition "app")
 else()
-  set(dynamic_partition ${${domain}_PM_DOMAIN_DYNAMIC_PARTITION})
+  set(dynamic_partition ${${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION})
   set(
     dynamic_partition_argument
     "--flash_primary-dynamic-partition;${dynamic_partition}"
@@ -112,14 +105,14 @@ foreach (image ${PM_IMAGES})
     message(FATAL_ERROR "Could not find shared vars file: ${shared_vars_file}")
   endif()
   include(${shared_vars_file})
-  list(APPEND prefixed_images ${domain}:${image})
+  list(APPEND prefixed_images ${DOMAIN}:${image})
   list(APPEND images ${image})
   list(APPEND input_files  ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm.yml)
   list(APPEND header_files ${${image}_ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
 endforeach()
 
 # Explicitly add the dynamic partition image
-list(APPEND prefixed_images "${domain}:${dynamic_partition}")
+list(APPEND prefixed_images "${DOMAIN}:${dynamic_partition}")
 list(APPEND images ${dynamic_partition})
 list(APPEND input_files ${ZEPHYR_BINARY_DIR}/${generated_path}/pm.yml)
 list(APPEND header_files ${ZEPHYR_BINARY_DIR}/${generated_path}/pm_config.h)
@@ -165,9 +158,9 @@ if (CONFIG_PM_EXTERNAL_FLASH)
     )
 endif()
 
-set(pm_out_partition_files ${ZEPHYR_BINARY_DIR}/../partitions_${domain}.yml)
-set(pm_out_region_files ${ZEPHYR_BINARY_DIR}/../regions_${domain}.yml)
-set(pm_out_dotconf_files ${ZEPHYR_BINARY_DIR}/../pm_${domain}.config)
+set(pm_out_partition_files ${ZEPHYR_BINARY_DIR}/../partitions_${DOMAIN}.yml)
+set(pm_out_region_files ${ZEPHYR_BINARY_DIR}/../regions_${DOMAIN}.yml)
+set(pm_out_dotconf_files ${ZEPHYR_BINARY_DIR}/../pm_${DOMAIN}.config)
 
 set(pm_cmd
   ${PYTHON_EXECUTABLE}
@@ -258,9 +251,8 @@ foreach(part ${PM_ALL_BY_SIZE})
   endif()
 endforeach()
 
-string(TOUPPER ${domain} DOMAIN)
 if (${is_dynamic_partition_in_domain})
-  set(merged_suffix _${domain})
+  set(merged_suffix _${DOMAIN})
   string(TOUPPER ${merged_suffix} MERGED_SUFFIX)
 endif()
 set(merged merged${merged_suffix})
@@ -353,11 +345,11 @@ if (is_dynamic_partition_in_domain)
   # Expose the generated partition manager configuration files to parent image.
   # This is used by the root image to create the global configuration in
   # pm_config.h.
-  share("set(${domain}_PM_DOMAIN_PARTITIONS ${pm_out_partition_files})")
-  share("set(${domain}_PM_DOMAIN_REGIONS ${pm_out_region_files})")
-  share("set(${domain}_PM_DOMAIN_HEADER_FILES ${header_files})")
-  share("set(${domain}_PM_DOMAIN_IMAGES ${prefixed_images})")
-  share("set(${domain}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${merged}.hex)")
+  share("set(${DOMAIN}_PM_DOMAIN_PARTITIONS ${pm_out_partition_files})")
+  share("set(${DOMAIN}_PM_DOMAIN_REGIONS ${pm_out_region_files})")
+  share("set(${DOMAIN}_PM_DOMAIN_HEADER_FILES ${header_files})")
+  share("set(${DOMAIN}_PM_DOMAIN_IMAGES ${prefixed_images})")
+  share("set(${DOMAIN}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${merged}.hex)")
 else()
   # This is the root image, generate the global pm_config.h
   # First, include the shared_vars.cmake file for all child images.
@@ -368,7 +360,7 @@ else()
   endif()
   foreach (d ${PM_DOMAINS})
     # Don't include shared vars from own domain.
-    if (NOT ${domain} STREQUAL ${d})
+    if (NOT ("${DOMAIN}" STREQUAL "${d}"))
       set(shared_vars_file
         ${CMAKE_BINARY_DIR}/${${d}_PM_DOMAIN_DYNAMIC_PARTITION}/shared_vars.cmake
         )
