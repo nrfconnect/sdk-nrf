@@ -47,10 +47,11 @@ if (CONFIG_BT_RPMSG_NRF53)
     add_child_image(
       NAME hci_rpmsg
       SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
-      DOMAIN nrf5340pdk_nrf5340_cpunet)
+      DOMAIN CPUNET
+      BOARD ${CONFIG_DOMAIN_CPUNET_BOARD})
   else()
     message(FATAL_ERROR
-      "Board ${BOARD} not supported for including hci_rpmsg as child image")
+      "SoC not supported for including hci_rpmsg as child image")
   endif()
 endif()
 
@@ -61,5 +62,6 @@ if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
   add_child_image(
     NAME empty_app_core
     SOURCE_DIR ${NRF_DIR}/samples/nrf5340/empty_app_core
-    DOMAIN nrf5340pdk_nrf5340_cpuapp)
+    DOMAIN CPUNET
+    BOARD ${CONFIG_DOMAIN_CPUNET_BOARD})
 endif()

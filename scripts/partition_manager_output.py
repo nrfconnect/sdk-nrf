@@ -148,13 +148,21 @@ def main():
 
     for partition in args.input_partitions:
         fn = path.basename(partition)
-        domain_name = fn[fn.index("partitions_") + len("partitions_"):fn.index(".yml")]
+        if 'partitions_' in fn:
+            domain_name = fn[fn.index("partitions_") + len("partitions_"):fn.index(".yml")]
+        else:
+            # Root domain does not have domain suffix in the partitions file name.
+            domain_name = ''
         with open(partition, 'r') as f:
             gpm_config[domain_name] = yaml.safe_load(f)
 
     for region in args.input_regions:
         fn = path.basename(region)
-        domain_name = fn[fn.index("regions_") + len("regions_"):fn.index(".yml")]
+        if 'regions_' in fn:
+            domain_name = fn[fn.index("regions_") + len("regions_"):fn.index(".yml")]
+        else:
+            # Root domain does not have domain suffix in the regions file name.
+            domain_name = ''
         with open(region, 'r') as f:
             greg_config[domain_name] = yaml.safe_load(f)
 
