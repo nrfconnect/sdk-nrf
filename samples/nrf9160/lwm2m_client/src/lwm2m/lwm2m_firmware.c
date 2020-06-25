@@ -25,12 +25,21 @@ LOG_MODULE_REGISTER(app_lwm2m_firmware, CONFIG_APP_LOG_LEVEL);
 #define FLASH_BANK_SIZE			PM_MCUBOOT_SECONDARY_SIZE
 
 #define BYTE_PROGRESS_STEP (1024 * 10)
+#define REBOOT_DELAY       K_SECONDS(1)
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
 static u8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 #endif
 
 static struct flash_img_context dfu_ctx;
+
+static struct k_delayed_work reboot_work;
+
+static void reboot_work_handler(struct k_work *work)
+{
+	LOG_PANIC();
+	sys_reboot(0);
+}
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
 static int firmware_update_cb(u16_t obj_inst_id)
@@ -58,8 +67,8 @@ static int firmware_update_cb(u16_t obj_inst_id)
 	boot_request_upgrade(false);
 
 	LOG_INF("Rebooting device");
-	LOG_PANIC();
-	sys_reboot(0);
+
+	k_delayed_work_submit(&reboot_work, REBOOT_DELAY);
 
 	return 0;
 
@@ -159,6 +168,8 @@ cleanup:
 
 int lwm2m_init_firmware(void)
 {
+	k_delayed_work_init(&reboot_work, reboot_work_handler);
+
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 	/* setup data buffer for block-wise transfer */
