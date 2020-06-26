@@ -20,7 +20,7 @@ extern "C" {
 	0x06, 0x00, 0xff, /* Usage Page (Vendor Defined 0xFF00) */	\
 	0x0A, 0x01, 0xff, /* Usage (0xFF01) */				\
 	0x15, 0x00,       /* Logical Minimum (0) */			\
-	0x25, 0xFF,       /* Logical Maximum (255) */			\
+	0x26, 0xff, 0x00, /* Logical Maximum (255) */			\
 	0x75, 0x08,       /* Report Size (8) */				\
 	0x95, REPORT_SIZE_USER_CONFIG,       /* Report Count */		\
 	0xB1, 0x02        /* Feature (Data, Variable, Absolute) */	\
@@ -31,7 +31,7 @@ extern "C" {
 	0x06, 0x00, 0xff, /* Usage Page (Vendor Defined 0xFF00) */	\
 	0x0A, 0x02, 0xff, /* Usage (0xFF02) */				\
 	0x15, 0x00,       /* Logical Minimum (0) */			\
-	0x25, 0xFF,       /* Logical Maximum (255) */			\
+	0x26, 0xff, 0x00, /* Logical Maximum (255) */			\
 	0x75, 0x08,       /* Report Size (8) */				\
 	0x95, REPORT_SIZE_USER_CONFIG,       /* Report Count */		\
 	0x91, 0x02        /* Output (Data, Variable, Absolute) */	\
