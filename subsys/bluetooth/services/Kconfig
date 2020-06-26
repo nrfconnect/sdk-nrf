@@ -13,6 +13,7 @@ config BT_NRF_SERVICES
 	  Services.
 
 rsource "Kconfig.bas_c"
+rsource "Kconfig.bms_srv"
 rsource "Kconfig.dfu_smp_c"
 rsource "Kconfig.hids"
 rsource "Kconfig.hids_c"
