@@ -508,11 +508,15 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (proxy.role == AT_TCP_ROLE_SERVER) {
+		if (proxy.sock != INVALID_SOCKET &&
+		    proxy.role == AT_TCP_ROLE_SERVER) {
 			sprintf(rsp_buf, "#XTCPSVR: %d, %d\r\n",
 				proxy.sock, proxy.sock_peer);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+		} else {
+			sprintf(rsp_buf, "#XTCPSVR: %d, %d\r\n",
+				INVALID_SOCKET, INVALID_SOCKET);
 		}
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -582,10 +586,13 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (proxy.role == AT_TCP_ROLE_CLIENT) {
+		if (proxy.sock != INVALID_SOCKET &&
+		    proxy.role == AT_TCP_ROLE_CLIENT) {
 			sprintf(rsp_buf, "#XTCPCLI: %d\r\n", proxy.sock);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+		} else {
+			sprintf(rsp_buf, "#XTCPCLI: %d\r\n", INVALID_SOCKET);
 		}
+		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
 
@@ -649,22 +656,32 @@ static int handle_at_tcp_send(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XTCPRECV commands
- *  AT#XTCPRECV
+ *  AT#XTCPRECV[=<length>]
  *  AT#XTCPRECV? READ command not supported
  *  AT#XTCPRECV=? TEST command not supported
  */
 static int handle_at_tcp_recv(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
+	u16_t length = 0;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
 	{
 		u32_t sz_send = 0;
 
+		if (at_params_valid_count_get(&at_param_list) > 1) {
+			err = at_params_short_get(&at_param_list, 1, &length);
+			if (err) {
+				return err;
+			}
+		}
 		if (ring_buf_is_empty(&data_buf) == 0) {
 			sz_send = ring_buf_get(&data_buf, rsp_buf,
 					sizeof(rsp_buf));
+			if (length > 0 && sz_send > length) {
+				sz_send = length;
+			}
 			rsp_send(rsp_buf, sz_send);
 			rsp_send("\r\n", 2);
 		}
