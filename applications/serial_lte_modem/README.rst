@@ -124,7 +124,7 @@ If the configuration option ``CONFIG_SLM_TCP_PROXY`` is defined, the following A
 * AT#XTCPSVR=<op>[,<port>[,[sec_tag]]
 * AT#XTCPCLI=<op>[,<url>,<port>[,[sec_tag]]
 * AT#XTCPSEND=<datatype>,<data>
-* AT#XTCPRECV
+* AT#XTCPRECV[=<length>]
 
 If the configuration option ``CONFIG_SLM_UDP_PROXY`` is defined, the following AT commands are available to use the UDP proxy service:
 
