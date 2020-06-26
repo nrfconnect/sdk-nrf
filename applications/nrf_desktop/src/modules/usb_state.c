@@ -326,7 +326,6 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		break;
 
 	case USB_DC_DISCONNECTED:
-		__ASSERT_NO_MSG(state != USB_STATE_DISCONNECTED);
 		new_state = USB_STATE_DISCONNECTED;
 		break;
 
