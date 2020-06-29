@@ -1,7 +1,7 @@
 .. _sampleboardnames:
 
-Set used by BLE (Central BAS, Central DFU SMP, Central HIDS, Central UART, EnOcean, Mesh Light, Mesh Light Switch, Peripheral HIDS Keyboard,  Peripheral HIDS mouse,
-Peripheral UART, NUS Shell Transport, Throughput) and NFC samples
+Set used by BLE (Central BAS, Central DFU SMP, Central HIDS, Central UART, EnOcean, Mesh Light, Mesh Light Switch, Peripheral HIDS Keyboard, Peripheral HIDS mouse,
+Peripheral UART, NUS Shell Transport, Throughput, Bond Management service) and NFC samples
 
 .. set1_start
 
