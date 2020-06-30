@@ -342,6 +342,8 @@ add_custom_target(
   nrfxlib-html
   COMMAND ${CMAKE_COMMAND} -E env
   NRF_BASE=${NRF_BASE}
+  NRF_OUTPUT=${HTML_DIR}/nrf
+  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
   NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
   NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
@@ -357,6 +359,21 @@ add_dependencies(nrfxlib-html nrfxlib-content nrfxlib-doxy)
 
 add_custom_target(nrfxlib)
 add_dependencies(nrfxlib nrfxlib-html)
+
+add_custom_target(
+  nrfxlib-inventory
+  COMMAND ${CMAKE_COMMAND} -E env
+  NRF_BASE=${NRF_BASE}
+  NRF_OUTPUT=${HTML_DIR}/nrf
+  NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
+  NRFXLIB_BUILD=${NRFXLIB_BINARY_DIR}
+  NRFXLIB_OUTPUT=${HTML_DIR}/nrfxlib
+  NRFXLIB_RST_SRC=${NRFXLIB_RST_OUT}
+  KCONFIG_OUTPUT=${HTML_DIR}/kconfig
+  ${SPHINXBUILD} -w ${NRFXLIB_SPHINX_LOG} -N -b inventory ${NRFXLIB_SPHINXOPTS} ${NRFXLIB_RST_OUT} ${HTML_DIR}/nrfxlib
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
+add_dependencies(nrfxlib-inventory nrfxlib-content nrfxlib-doxy)
 
 #
 # Add targets for building the shared Kconfig documentation
