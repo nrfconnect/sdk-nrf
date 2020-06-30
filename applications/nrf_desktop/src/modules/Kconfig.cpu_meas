@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "CPU load measurement"
+
+config DESKTOP_CPU_MEAS_ENABLE
+	bool "Enable measuring CPU load"
+	select CPU_LOAD
+	help
+	  The CPU load is sent periodically using dedicated application event.
+
+if DESKTOP_CPU_MEAS_ENABLE
+
+config DESKTOP_CPU_MEAS_PERIOD
+	int "Time between subsequent CPU load events [ms]"
+	default 1000
+	range 1 4294000
+	help
+	  The CPU load event is submitted periodically by a delayed work.
+	  When the event is submitted, application module resets measurement.
+	  Accodring to CPU load subsystem documentation, measurement must be
+	  reset at least every 4294 seconds. Otherwise results are invalid.
+
+module = DESKTOP_CPU_MEAS
+module-str = CPU meas
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu
