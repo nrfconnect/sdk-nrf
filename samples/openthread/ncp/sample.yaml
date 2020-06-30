@@ -1,0 +1,9 @@
+sample:
+  description: Test OpenThread NCP
+  name: OpenThread NCP sample
+tests:
+  samples.openthread.ncp:
+    build_only: true
+    build_on_all: true
+    tags: openthread ncp
+    platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833

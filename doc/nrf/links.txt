@@ -276,6 +276,10 @@
 
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_JOINER.md
 
+.. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
+
+.. _`pyspinel`: https://github.com/openthread/pyspinel/blob/master/README.md
+
 .. ### Links to Zigbee
 
 .. _`Zigbee Alliance`: https://www.zigbeealliance.org
