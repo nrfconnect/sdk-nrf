@@ -19,6 +19,7 @@
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/t4t/isodep.h>
 #include <nfc/t4t/hl_procedure.h>
+#include <nfc/ndef/ch_rec_parser.h>
 #include <sys/byteorder.h>
 
 #define NFCA_BD 128
@@ -37,7 +38,7 @@
 #define NFC_T4T_ISODEP_RX_DATA_MAX_SIZE 1024
 #define NFC_T4T_APDU_MAX_SIZE 1024
 
-#define NFC_NDEF_LE_OOB_REC_PARSER_BUFF_SIZE 100
+#define NFC_NDEF_REC_PARSER_BUFF_SIZE 128
 
 #define NFC_TX_DATA_LEN NFC_T4T_ISODEP_FSD
 #define NFC_RX_DATA_LEN NFC_T4T_ISODEP_FSD
@@ -166,7 +167,7 @@ static int t2t_header_read(void)
 static void ndef_le_oob_rec_analyze(const struct nfc_ndef_record_desc *le_oob_rec_desc)
 {
 	int err;
-	uint8_t desc_buf[NFC_NDEF_LE_OOB_REC_PARSER_BUFF_SIZE];
+	uint8_t desc_buf[NFC_NDEF_REC_PARSER_BUFF_SIZE];
 	uint32_t desc_buf_len = sizeof(desc_buf);
 
 	err = nfc_ndef_le_oob_rec_parse(le_oob_rec_desc, desc_buf,
@@ -181,11 +182,58 @@ static void ndef_le_oob_rec_analyze(const struct nfc_ndef_record_desc *le_oob_re
 }
 /** .. include_endpoint_le_oob_rec_parser_rst */
 
+/** .. include_startingpoint_ch_rec_parser_rst */
+static void ndef_ch_rec_analyze(const struct nfc_ndef_record_desc *ndef_rec_desc)
+{
+	int err;
+	uint8_t hs_buf[NFC_NDEF_REC_PARSER_BUFF_SIZE];
+	uint32_t hs_buf_len = sizeof(hs_buf);
+	uint8_t ac_buf[NFC_NDEF_REC_PARSER_BUFF_SIZE];
+	uint32_t ac_buf_len = sizeof(ac_buf);
+	struct nfc_ndef_ch_rec *ch_rec;
+	struct nfc_ndef_ch_ac_rec *ac_rec;
+
+	err = nfc_ndef_ch_rec_parse(ndef_rec_desc, hs_buf, &hs_buf_len);
+	if (err) {
+		printk("Error during parsing Handover Select record: %d\n",
+		       err);
+		return;
+	}
+
+	ch_rec = (struct nfc_ndef_ch_rec *)hs_buf;
+
+	printk("Handover Select Record payload");
+
+	nfc_ndef_ch_rec_printout(ch_rec);
+
+	for (size_t i = 0; i < ch_rec->local_records->record_count; i++) {
+		if (nfc_ndef_ch_ac_rec_check(ch_rec->local_records->record[i])) {
+			err = nfc_ndef_ch_ac_rec_parse(ch_rec->local_records->record[i],
+						       ac_buf, &ac_buf_len);
+			if (err) {
+				printk("Error during parsing AC record: %d\n",
+				       err);
+				return;
+			}
+
+			ac_rec = (struct nfc_ndef_ch_ac_rec *)ac_buf;
+
+			nfc_ndef_ac_rec_printout(ac_rec);
+		}
+	}
+}
+/** .. include_endpoint_ch_rec_parser_rst */
+
 static void ndef_rec_analyze(const struct nfc_ndef_record_desc *ndef_rec_desc)
 {
 	/* Match NDEF Record with specific NDEF Record parser. */
-	if (nfc_ndef_le_oob_rec_check(ndef_rec_desc)) {
+	if (nfc_ndef_ch_rec_check(ndef_rec_desc,
+				  NFC_NDEF_CH_REC_TYPE_HANDOVER_SELECT)) {
+		ndef_ch_rec_analyze(ndef_rec_desc);
+	} else if (nfc_ndef_le_oob_rec_check(ndef_rec_desc)) {
 		ndef_le_oob_rec_analyze(ndef_rec_desc);
+	} else {
+		/* Do nothing */
 	}
 }
 
