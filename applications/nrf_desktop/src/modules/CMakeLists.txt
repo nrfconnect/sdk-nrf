@@ -76,3 +76,6 @@ target_sources_ifdef(CONFIG_DESKTOP_CONSTLAT_ENABLE
 
 target_sources_ifdef(CONFIG_DESKTOP_FAILSAFE_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/failsafe.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_CPU_MEAS_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpu_meas.c)
