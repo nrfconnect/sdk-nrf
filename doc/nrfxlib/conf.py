@@ -23,10 +23,19 @@
 
 import sys
 import os
+import os.path as path
 
 if "NRF_BASE" not in os.environ:
     sys.exit("$NRF_BASE environment variable undefined.")
 NRF_BASE = os.path.abspath(os.environ["NRF_BASE"])
+
+if "NRF_OUTPUT" not in os.environ:
+    sys.exit("$NRF_OUTPUT environment variable undefined.")
+NRF_OUTPUT = os.path.abspath(os.environ["NRF_OUTPUT"])
+
+if "NRF_RST_SRC" not in os.environ:
+    sys.exit("$NRF_RST_SRC environment variable undefined.")
+NRF_RST_SRC = os.path.abspath(os.environ["NRF_RST_SRC"])
 
 if "NRFXLIB_BUILD" not in os.environ:
     sys.exit("$NRFXLIB_BUILD environment variable undefined.")
@@ -50,13 +59,19 @@ KCONFIG_OUTPUT = os.path.abspath(os.environ["KCONFIG_OUTPUT"])
 #
 # needs_sphinx = '1.0'
 
+# Let Sphinx find our extensions.
+sys.path.append(os.path.join(NRF_BASE, 'scripts', 'sphinx_extensions'))
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.intersphinx',
-              'breathe',
-              'sphinx.ext.ifconfig',
-              'sphinxcontrib.mscgen']
+extensions = [
+    'sphinx.ext.intersphinx',
+    'breathe',
+    'sphinx.ext.ifconfig',
+    'sphinxcontrib.mscgen',
+    'inventory_builder',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['../_templates']
@@ -151,10 +166,18 @@ html_show_license = True
 # Link the Kconfig docs with Intersphinx so that references to Kconfig symbols
 # (via :option:`CONFIG_FOO`) turn into links
 intersphinx_mapping = {
-    'kconfig': (os.path.relpath(KCONFIG_OUTPUT, NRFXLIB_OUTPUT),
-                os.path.join(os.path.relpath(KCONFIG_OUTPUT, NRFXLIB_RST_SRC),
-                             'objects.inv'))
+    'kconfig': (
+        path.relpath(KCONFIG_OUTPUT, NRFXLIB_OUTPUT),
+        path.join(path.relpath(KCONFIG_OUTPUT, NRFXLIB_RST_SRC),
+                  'objects.inv')),
 }
+
+# Allow linking to nrf documentation if available
+if path.isfile(path.join(NRF_OUTPUT, 'objects.inv')):
+    intersphinx_mapping['nrf'] = (
+        path.relpath(NRF_OUTPUT, NRFXLIB_OUTPUT),
+        path.join(path.relpath(NRF_OUTPUT, NRFXLIB_RST_SRC), 'objects.inv'),
+    )
 
 breathe_projects = {
     "nrfxlib": "{}/doxygen/xml".format(NRFXLIB_BUILD),
