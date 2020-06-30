@@ -20,6 +20,8 @@ When working with Thread in |NCS|, you can use the following tools during Thread
 
 * `nRF Thread Topology Monitor`_ - This desktop application helps to visualize the current network topology.
 * `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
+* `wpantund`_ - Utility for providing a native IPv6 interface to a Network Co-Processor.
+* `pyspinel`_ - Tool for controlling OpenThread Network Co-Processor instances through command line interface.
 
 Using Thread tools is optional.
 
