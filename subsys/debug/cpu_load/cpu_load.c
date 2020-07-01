@@ -216,7 +216,7 @@ void cpu_load_reset(void)
 static u32_t sleep_ticks_to_us(u32_t ticks)
 {
 	return IS_ENABLED(CONFIG_CPU_LOAD_ALIGNED_CLOCKS) ?
-	   (u32_t)(((u64_t)ticks * 1000000) / CONFIG_SYS_CLOCK_TICKS_PER_SEC) :
+	   (u32_t)(((u64_t)ticks * 1000000) / sys_clock_hw_cycles_per_sec()) :
 	   ticks;
 }
 
@@ -230,9 +230,8 @@ u32_t cpu_load_get(void)
 	sleep_us = sleep_ticks_to_us(nrfx_timer_capture(&timer, 0));
 	total_cyc = k_cycle_get_32() - cycle_ref;
 
-	total_us = ((u64_t)total_cyc * 1000000)/
-				CONFIG_SYS_CLOCK_TICKS_PER_SEC;
-
+	total_us = ((u64_t)total_cyc * 1000000) /
+		    sys_clock_hw_cycles_per_sec();
 	__ASSERT(total_us < UINT32_MAX, "Measurement is limited.");
 
 	/* Because of different clock sources for system clock and TIMER it
