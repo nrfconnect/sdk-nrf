@@ -10,6 +10,7 @@
 #include <net/tls_credentials.h>
 #include <net/net_ip.h>
 #include <net/ftp_client.h>
+#include <sys/ring_buffer.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_ftp.h"
@@ -96,6 +97,8 @@ static ftp_op_list_t ftp_op_list[FTP_OP_MAX] = {
 	{FTP_OP_PUT, "put", do_ftp_put},
 };
 
+RING_BUF_DECLARE(ftp_data_buf, CONFIG_AT_CMD_RESPONSE_MAX_LEN / 2);
+
 /* global functions defined in different files */
 void rsp_send(const u8_t *str, size_t len);
 
@@ -109,6 +112,28 @@ void ftp_ctrl_callback(const u8_t *msg, u16_t len)
 	rsp_send((u8_t *)msg, len);
 }
 
+static int ftp_data_save(u8_t *data, u32_t length)
+{
+	if (ring_buf_space_get(&ftp_data_buf) < length) {
+		return -1; /* RX overrun */
+	}
+
+	return ring_buf_put(&ftp_data_buf, data, length);
+}
+
+static int ftp_data_send(void)
+{
+	u32_t sz_send = 0;
+
+	if (ring_buf_is_empty(&ftp_data_buf) == 0) {
+		sz_send = ring_buf_get(&ftp_data_buf, rsp_buf, sizeof(rsp_buf));
+		rsp_send(rsp_buf, sz_send);
+		rsp_send("\r\n", 2);
+	}
+
+	return sz_send;
+}
+
 void ftp_data_callback(const u8_t *msg, u16_t len)
 {
 	if (slm_util_hex_check((u8_t *)msg, len)) {
@@ -117,12 +142,12 @@ void ftp_data_callback(const u8_t *msg, u16_t len)
 
 		ret = slm_util_htoa(msg, len, rsp_buf, size);
 		if (ret > 0) {
-			rsp_send(rsp_buf, ret);
+			ftp_data_save(rsp_buf, ret);
 		} else {
 			LOG_WRN("hex convert error: %d", ret);
 		}
 	} else {
-		rsp_send((u8_t *)msg, len);
+		ftp_data_save((u8_t *)msg, len);
 	}
 }
 
@@ -266,8 +291,14 @@ static int do_ftp_ls(void)
 		target[sz_target] = '\0';
 	}
 
+	ring_buf_reset(&ftp_data_buf);
 	ret = ftp_list(options, target);
-	return (ret == FTP_CODE_226) ? 0 : -1;
+	if (ret == FTP_CODE_226) {
+		ftp_data_send();
+		return 0;
+	} else {
+		return -1;
+	}
 }
 
 /* AT#XFTP="cd",<folder> */
@@ -411,8 +442,14 @@ static int do_ftp_get(void)
 	}
 	file[sz_file] = '\0';
 
+	ring_buf_reset(&ftp_data_buf);
 	ret = ftp_get(file);
-	return (ret == FTP_CODE_226) ? 0 : -1;
+	if (ret == FTP_CODE_226) {
+		ftp_data_send();
+		return 0;
+	} else {
+		return -1;
+	}
 }
 
 /* AT#XFTP="put",<file>[<datatype>,<data>] */

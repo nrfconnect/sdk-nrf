@@ -39,7 +39,6 @@ static struct ftp_client {
 static struct k_work_q ftp_work_q;
 static char ctrl_buf[NET_IPV4_MTU];
 static K_SEM_DEFINE(tx_done, 0, 1);
-static K_SEM_DEFINE(rx_done, 0, 1);
 
 enum data_task_type {
 	TASK_SEND,
@@ -280,7 +279,6 @@ static void data_task(struct k_work *item)
 
 	if (task_param->task == TASK_RECEIVE) {
 		do_ftp_recv_data(task_param->ctrl_msg);
-		k_sem_give(&rx_done);
 	} else if (task_param->task == TASK_SEND) {
 		do_ftp_send_data(task_param->ctrl_msg,
 				task_param->data,
@@ -652,8 +650,6 @@ int ftp_get(const char *file)
 
 	/* Set up data connection */
 	k_work_submit_to_queue(&ftp_work_q, &data_task_param.work);
-	k_sem_take(&rx_done, K_FOREVER);
-	client.ctrl_callback("\r\n", 2);
 
 	/* Receive control */
 	do {
