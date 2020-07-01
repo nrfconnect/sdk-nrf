@@ -585,7 +585,8 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 		}
 
 		prog.data.ptr = fota_status;
-		LOG_ERR("JOB STATUS: %s", log_strdup(prog.data.ptr));
+		LOG_DBG("Job status (ID/progress): %s",
+			log_strdup(prog.data.ptr));
 		err = job_status_stream(&prog);
 		if (err) {
 			LOG_ERR("job_status_stream failed %d", err);
