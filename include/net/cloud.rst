@@ -17,6 +17,13 @@ This handler will receive events when, for example, data is received from the cl
 After successful initialization of the cloud backend, you can establish a connection to the cloud.
 If the connection succeeds, the backend emits a "ready event", and you can start interacting with the cloud.
 
+Using Cloud API with  different cloud backends
+**********************************************
+
+See the following documentation to know more about using this library with different cloud backends:
+
+* :ref:`use_nrfcloud_cloudapi`
+
 .. _cloud_api_reference:
 
 API Reference
