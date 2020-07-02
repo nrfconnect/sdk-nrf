@@ -99,8 +99,11 @@ Generic commands
 The following proprietary generic AT commands are used in this application:
 
 * AT#XSLMVER
+* AT#XSLMUART=<baudrate>
 * AT#XSLEEP[=<shutdown_mode>]
 * AT#XCLAC
+
+If the client sets new UART baudrate by AT#XSLMUART, the client should wait at least 100ms to send command in new baudrate.
 
 BSD Socket AT commands
 **********************
