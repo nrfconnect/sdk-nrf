@@ -64,6 +64,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`nfc_t2t_parser_readme`
 * :ref:`nfc_ndef_parser_readme`
 * :ref:`nfc_ndef_le_oob_rec_parser_readme`
+* :ref:`nfc_ndef_ch_rec_parser_readme`
 * :ref:`nfc_t4t_apdu_readme`
 * :ref:`nfc_t4t_isodep_readme`
 * :ref:`nfc_t4t_hl_procedure_readme`
