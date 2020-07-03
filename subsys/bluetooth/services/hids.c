@@ -965,7 +965,7 @@ int bt_gatt_hids_init(struct bt_gatt_hids *hids_obj,
 	BT_GATT_POOL_CHRC(&hids_obj->gp,
 			  BT_UUID_HIDS_CTRL_POINT,
 			  BT_GATT_CHRC_WRITE_WITHOUT_RESP,
-			  HIDS_GATT_PERM_DEFAULT | GATT_PERM_WRITE_MASK,
+			  HIDS_GATT_PERM_DEFAULT & GATT_PERM_WRITE_MASK,
 			  NULL, hids_ctrl_point_write, &hids_obj->cp);
 
 	/* Register HIDS attributes in GATT database. */
