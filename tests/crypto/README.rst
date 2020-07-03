@@ -121,13 +121,11 @@ See :option:`CONFIG_NORDIC_SECURITY_BACKEND`.
 Requirements
 ************
 
-* One of the following development boards:
+The tests support the following development kits:
 
-  * |nRF9160DK|
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set18_start
+   :end-before: set18_end
 
 .. note::
    Nordic devices such as nRF51, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.
