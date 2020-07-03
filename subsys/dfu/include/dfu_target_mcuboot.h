@@ -86,6 +86,14 @@ int dfu_target_mcuboot_write(const void *const buf, size_t len);
  */
 int dfu_target_mcuboot_done(bool successful);
 
+/**
+ * @brief Not implemented function for erasing MCUBoot upgrade slot.
+
+ *
+ * @return -ENOTSUP
+ */
+int dfu_target_mcuboot_erase(void);
+
 #endif /* DFU_TARGET_MCUBOOT_H__ */
 
 /**@} */

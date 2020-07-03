@@ -231,3 +231,8 @@ int dfu_target_mcuboot_done(bool successful)
 	reset_flash_context();
 	return err;
 }
+
+int dfu_target_mcuboot_erase(void)
+{
+	return -ENOTSUP;
+}

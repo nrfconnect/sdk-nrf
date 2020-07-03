@@ -36,6 +36,7 @@ struct dfu_target {
 	int (*init)(size_t file_size, dfu_target_callback_t cb);
 	int (*offset_get)(size_t *offset);
 	int (*write)(const void *const buf, size_t len);
+	int (*erase)(void);
 	int (*done)(bool successful);
 };
 
@@ -115,6 +116,14 @@ int dfu_target_done(bool successful);
  *	   code identicating reason of failure.
  **/
 int dfu_target_reset(void);
+
+/**
+ * @brief Erase storage bank for initialized DFU target
+ *
+ * @return 0 for an successful deinitialization and reset or a negative error
+ *	   code identicating reason of failure.
+ **/
+int dfu_target_erase(void);
 
 #ifdef __cplusplus
 }

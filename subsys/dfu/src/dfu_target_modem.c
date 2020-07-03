@@ -53,43 +53,6 @@ static int apply_modem_upgrade(void)
 	}
 	return 0;
 }
-#define SLEEP_TIME 1
-static int delete_banked_modem_fw(void)
-{
-	int err;
-	socklen_t len = sizeof(offset);
-	int timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
-
-	LOG_INF("Deleting firmware image, this can take several minutes");
-	err = setsockopt(fd, SOL_DFU, SO_DFU_BACKUP_DELETE, NULL, 0);
-	if (err < 0) {
-		LOG_ERR("Failed to delete backup, errno %d", errno);
-		return -EFAULT;
-	}
-	while (true) {
-		err = getsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
-		if (err < 0) {
-			if (timeout < 0) {
-				callback(DFU_TARGET_EVT_TIMEOUT);
-				timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
-			}
-			if (errno == ENOEXEC) {
-				err = get_modem_error();
-				if (err != DFU_ERASE_PENDING) {
-					LOG_ERR("DFU error: %d", err);
-				}
-				k_sleep(K_SECONDS(SLEEP_TIME));
-			}
-			timeout -= SLEEP_TIME;
-		} else {
-			callback(DFU_TARGET_EVT_ERASE_DONE);
-			LOG_INF("Modem FW delete complete");
-			break;
-		}
-	}
-
-	return 0;
-}
 
 /**@brief Initialize DFU socket. */
 static int modem_dfu_socket_init(void)
@@ -128,6 +91,44 @@ bool dfu_target_modem_identify(const void *const buf)
 {
 	return ((const struct modem_delta_header *)buf)->magic == MODEM_MAGIC;
 
+}
+
+#define SLEEP_TIME 1
+int dfu_target_modem_erase(void)
+{
+	int err;
+	socklen_t len = sizeof(offset);
+	int timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
+
+	LOG_INF("Deleting firmware image, this can take several minutes");
+	err = setsockopt(fd, SOL_DFU, SO_DFU_BACKUP_DELETE, NULL, 0);
+	if (err < 0) {
+		LOG_ERR("Failed to delete backup, errno %d", errno);
+		return -EFAULT;
+	}
+	while (true) {
+		err = getsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
+		if (err < 0) {
+			if (timeout < 0) {
+				callback(DFU_TARGET_EVT_TIMEOUT);
+				timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
+			}
+			if (errno == ENOEXEC) {
+				err = get_modem_error();
+				if (err != DFU_ERASE_PENDING) {
+					LOG_ERR("DFU error: %d", err);
+				}
+				k_sleep(K_SECONDS(SLEEP_TIME));
+			}
+			timeout -= SLEEP_TIME;
+		} else {
+			callback(DFU_TARGET_EVT_ERASE_DONE);
+			LOG_INF("Modem FW delete complete");
+			break;
+		}
+	}
+
+	return 0;
 }
 
 int dfu_target_modem_init(size_t file_size, dfu_target_callback_t cb)
@@ -169,7 +170,7 @@ int dfu_target_modem_init(size_t file_size, dfu_target_callback_t cb)
 	}
 
 	if (offset == DIRTY_IMAGE) {
-		delete_banked_modem_fw();
+		dfu_target_modem_erase();
 	} else if (offset != 0) {
 		LOG_INF("Setting offset to 0x%x", offset);
 		len = sizeof(offset);
@@ -217,7 +218,7 @@ int dfu_target_modem_write(const void *const buf, size_t len)
 	case DFU_INVALID_UUID:
 		return -EINVAL;
 	case DFU_INVALID_FILE_OFFSET:
-		delete_banked_modem_fw();
+		dfu_target_modem_erase();
 		err = dfu_target_modem_write(buf, len);
 		if (err < 0) {
 			return -EINVAL;
@@ -225,7 +226,7 @@ int dfu_target_modem_write(const void *const buf, size_t len)
 			return 0;
 		}
 	case DFU_AREA_NOT_BLANK:
-		delete_banked_modem_fw();
+		dfu_target_modem_erase();
 		err = dfu_target_modem_write(buf, len);
 		if (err < 0) {
 			return -EINVAL;

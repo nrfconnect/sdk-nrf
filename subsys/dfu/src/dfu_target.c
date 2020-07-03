@@ -13,6 +13,7 @@ static const struct dfu_target dfu_target_ ## name  = { \
 	.init = dfu_target_ ## name ## _init, \
 	.offset_get = dfu_target_## name ##_offset_get, \
 	.write = dfu_target_ ## name ## _write, \
+	.erase = dfu_target_ ## name ## _erase, \
 	.done = dfu_target_ ## name ## _done, \
 }
 
@@ -122,6 +123,22 @@ int dfu_target_done(bool successful)
 	}
 
 	return 0;
+}
+
+int dfu_target_erase(void)
+{
+	int err = 0;
+
+	if (current_target == NULL) {
+		return -EACCES;
+	}
+
+	err = current_target->erase();
+	if (err != 0) {
+		LOG_ERR("Unable to clean up dfu_target");
+	}
+
+	return err;
 }
 
 int dfu_target_reset(void)
