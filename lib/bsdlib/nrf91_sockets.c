@@ -160,6 +160,18 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case SO_BINDTODEVICE:
 			*nrf_out_optname = NRF_SO_BINDTODEVICE;
 			break;
+		case SO_REUSEADDR:
+			*nrf_out_optname = NRF_SO_REUSEADDR;
+			break;
+		case SO_SILENCE_ALL:
+			*nrf_out_optname = NRF_SO_SILENCE_ALL;
+			break;
+		case SO_IP_ECHO_REPLY:
+			*nrf_out_optname = NRF_SO_SILENCE_IP_ECHO_REPLY;
+			break;
+		case SO_IPV6_ECHO_REPLY:
+			*nrf_out_optname = NRF_SO_SILENCE_IPV6_ECHO_REPLY;
+			break;
 		default:
 			retval = -1;
 			break;
