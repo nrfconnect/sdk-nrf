@@ -78,13 +78,15 @@ int fota_download_init(fota_download_callback_t client_callback);
  * @param sec_tag Security tag you want to use with HTTPS set to -1 to Disable.
  * @param port Port which to connect to. Set to 0 for default HTTP/HTTPS port.
  * @param apn Access Point Name to use or NULL to use the default APN.
+ * @param img_type Type of image which exsists in the file path being pointed
+ *		   too.
  *
  * @retval 0	     If download has started successfully.
  * @retval -EALREADY If download is already ongoing.
  *                   Otherwise, a negative value is returned.
  */
 int fota_download_start(const char *host, const char *file, int sec_tag,
-			uint16_t port, const char *apn);
+			uint16_t port, const char *apn, int img_type);
 
 #ifdef __cplusplus
 }

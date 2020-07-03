@@ -21,6 +21,7 @@
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static fota_download_callback_t callback;
+static bool erase_done = false;
 static struct download_client   dlc;
 static struct k_delayed_work    dlc_with_offset_work;
 static int socket_retries_left;
@@ -50,6 +51,7 @@ static void dfu_target_callback_handler(enum dfu_target_evt_id evt)
 		send_evt(FOTA_DOWNLOAD_EVT_ERASE_PENDING);
 		break;
 	case DFU_TARGET_EVT_ERASE_DONE:
+		erase_done = true;
 		send_evt(FOTA_DOWNLOAD_EVT_ERASE_DONE);
 		break;
 	default:
@@ -217,9 +219,9 @@ static void download_with_offset(struct k_work *unused)
 }
 
 int fota_download_start(const char *host, const char *file, int sec_tag,
-			uint16_t port, const char *apn)
+			uint16_t port, const char *apn, int img_type)
 {
-	int err = -1;
+	int err = -EFAULT;
 
 	struct download_client_cfg config = {
 		.port = port,
@@ -264,6 +266,23 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
 		file = update;
 	}
 #endif /* PM_S1_ADDRESS */
+
+	err = dfu_target_init(img_type, 0, dfu_target_callback_handler);
+	if (err != 0) {
+		return err;
+	}
+	err = dfu_target_erase();
+	if (err != 0 && err != -ENOTSUP) {
+		return err;
+	}
+
+	while (!erase_done) {k_yield();};
+	erase_done = false;
+
+	err = dfu_target_reset();
+	if (err != 0) {
+		return err;
+	}
 
 	err = download_client_connect(&dlc, host, &config);
 	if (err != 0) {

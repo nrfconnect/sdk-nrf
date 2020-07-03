@@ -497,6 +497,7 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 			break;
 		}
 		link_offline = true;
+		printk("link_offline\n");
 		break;
 
 	case AWS_FOTA_EVT_ERASE_DONE:

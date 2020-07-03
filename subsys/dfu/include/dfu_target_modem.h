@@ -67,7 +67,7 @@ int dfu_target_modem_write(const void *const buf, size_t len);
 int dfu_target_modem_done(bool successful);
 
 /**
- * @brief Delete what is stored in the modems firmware bank 
+ * @brief Delete what is stored in the modems firmware bank
  *
  * @return 0 on success, negative errno otherwise.
  */

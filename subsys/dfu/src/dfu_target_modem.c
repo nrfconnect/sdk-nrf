@@ -20,6 +20,7 @@ struct modem_delta_header {
 static int  fd;
 static int  offset;
 static dfu_target_callback_t callback;
+static struct k_work erase_work;
 
 static int get_modem_error(void)
 {
@@ -94,8 +95,7 @@ bool dfu_target_modem_identify(const void *const buf)
 }
 
 #define SLEEP_TIME 1
-int dfu_target_modem_erase(void)
-{
+static void erase_modem_dfu_bank(struct k_work *unused) {
 	int err;
 	socklen_t len = sizeof(offset);
 	int timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
@@ -104,30 +104,39 @@ int dfu_target_modem_erase(void)
 	err = setsockopt(fd, SOL_DFU, SO_DFU_BACKUP_DELETE, NULL, 0);
 	if (err < 0) {
 		LOG_ERR("Failed to delete backup, errno %d", errno);
-		return -EFAULT;
+		// return -EFAULT;
 	}
+
 	while (true) {
 		err = getsockopt(fd, SOL_DFU, SO_DFU_OFFSET, &offset, &len);
 		if (err < 0) {
-			if (timeout < 0) {
-				callback(DFU_TARGET_EVT_TIMEOUT);
-				timeout = CONFIG_DFU_TARGET_MODEM_TIMEOUT;
-			}
 			if (errno == ENOEXEC) {
 				err = get_modem_error();
 				if (err != DFU_ERASE_PENDING) {
 					LOG_ERR("DFU error: %d", err);
 				}
 				k_sleep(K_SECONDS(SLEEP_TIME));
+				LOG_INF("Sleeping for 1 sec");
 			}
 			timeout -= SLEEP_TIME;
-		} else {
+		} else if (timeout < 0) {
+			k_work_submit(&erase_work);
+			callback(DFU_TARGET_EVT_TIMEOUT);
+			break;
+		}
+		else {
 			callback(DFU_TARGET_EVT_ERASE_DONE);
 			LOG_INF("Modem FW delete complete");
 			break;
 		}
 	}
 
+	return;
+}
+
+int dfu_target_modem_erase(void)
+{
+	k_work_submit(&erase_work);
 	return 0;
 }
 
@@ -136,6 +145,8 @@ int dfu_target_modem_init(size_t file_size, dfu_target_callback_t cb)
 	int err;
 	size_t scratch_space;
 	socklen_t len = sizeof(offset);
+
+	k_work_init(&erase_work, erase_modem_dfu_bank);
 
 	callback = cb;
 

@@ -251,8 +251,9 @@ static int job_update_accepted(struct mqtt_client *const client,
 		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG
 #endif
 
+		//TODO: Replace with define
 		err = fota_download_start(hostname, file_path, sec_tag, port,
-					  apn);
+					  apn, 2);
 		if (err) {
 			LOG_ERR("Error (%d) when trying to start firmware "
 				"download", err);
