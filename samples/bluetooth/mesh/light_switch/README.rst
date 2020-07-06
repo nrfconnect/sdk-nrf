@@ -47,30 +47,33 @@ If the model is configured to publish to a unicast address, the model handler ca
 The response from the target device updates the corresponding LED on the Mesh Light Switch device.
 If the model is configured to publish to a group address, it calls :cpp:func:`bt_mesh_onoff_cli_set_unack` instead, to avoid getting responses from multiple devices at once.
 
+
+
 Requirements
 ************
 
-* One of the following development kits:
+The sample supports the following development kits:
 
-  * |nRF5340DK|; if you use this development kit, add the following options to the configuration of the network sample:
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set1_start
+   :end-before: set1_end
 
-    .. code-block:: none
+.. note::
+   If you use nRF5340 PDK, add the following options to the configuration of the network sample:
 
-        CONFIG_BT_CTLR_TX_BUFFER_SIZE=74
-        CONFIG_BT_CTLR_DATA_LENGTH_MAX=74
+   .. code-block:: none
 
-    This is required because Bluetooth Mesh has different |BLE| Controller requirements than other Bluetooth samples.
+      CONFIG_BT_CTLR_TX_BUFFER_SIZE=74
+      CONFIG_BT_CTLR_DATA_LENGTH_MAX=74
 
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+   This is required because Bluetooth Mesh has different |BLE| Controller requirements than other Bluetooth samples.
 
-* Smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+The sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
   * `nRF Mesh mobile app for Android`_
   * `nRF Mesh mobile app for iOS`_
 
-* :ref:`bluetooth_mesh_light` sample application programmed on a separate device and configured according to the Mesh Light sample's :ref:`bluetooth_mesh_light_testing` guide.
+An additional requirement is the :ref:`bluetooth_mesh_light` sample application programmed on a separate device and configured according to the Mesh Light sample's :ref:`bluetooth_mesh_light_testing` guide.
 
 User interface
 **************
