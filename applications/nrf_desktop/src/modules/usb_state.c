@@ -370,6 +370,10 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 		/* Ignore */
 		break;
 
+	case USB_DC_INTERFACE:
+		/* Ignore */
+		break;
+
 	case USB_DC_ERROR:
 		module_set_state(MODULE_STATE_ERROR);
 		break;
