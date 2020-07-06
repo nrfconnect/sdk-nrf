@@ -31,7 +31,7 @@ Kconfig*                                  @tejlmand
 /doc/CMakeLists.txt                       @carlescufi
 /doc/scripts/                             @carlescufi
 /doc/**/conf.py                           @carlescufi
-/doc/nrf/                                 @ru-fu @b-gent
+/doc/nrf/                                 @carlescufi
 # All subfolders
 /drivers/                                 @anangl
 /drivers/bt_ll_nrfxlib/                   @anangl @rugeGerritsen
