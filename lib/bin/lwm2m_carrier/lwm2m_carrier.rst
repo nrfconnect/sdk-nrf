@@ -11,7 +11,8 @@ Some examples of carrier device management platforms are listed below:
 * `Verizon's Thingspace`_
 * `AT&T's IoT Platform`_
 
-This library uses LwM2M protocol to communicate with device manager platforms, but it does not expose an LwM2M API to your application. If you want to use LwM2M for other purposes, see :ref:`lwm2m_interface`.
+This library uses LwM2M protocol to communicate with device manager platforms, but it does not expose an LwM2M API to your application.
+If you want to use LwM2M for other purposes, see :ref:`lwm2m_interface`.
 
 The :ref:`lwm2m_carrier` sample demonstrates how to run this library in an application.
 The LwM2M carrier library is also used in the :ref:`asset_tracker` application.
@@ -21,11 +22,32 @@ Application integration
 
 The LwM2M carrier library has an OS abstraction layer.
 See :file:`lwm2m_os.h`.
-This makes the LwM2M carrier library independent of the underlying implementation of primitives such as timers, non-volatile storage, and heap allocation.
-The OS abstraction is fully implemented for the |NCS|, and it would have to be ported if used on other systems.
+This abstraction layer makes the LwM2M carrier library independent of the |NCS| modules and underlying implementation of primitives such as timers, non-volatile storage, and heap allocation.
+It provides an abstraction of the following modules:
+
+* |NCS| modules:
+
+  .. lwm2m_osal_mod_list_start
+
+  * ``drivers/lte_link_control``
+  * :ref:`lib_download_client`
+  * :ref:`modem_key_mgmt`
+  * :ref:`at_cmd_readme`
+  * :ref:`at_cmd_parser_readme`
+  * :ref:`at_notif_readme`
+
+  .. lwm2m_osal_mod_list_end
+
+* Zephyr modules:
+
+  * :ref:`zephyr:kernel_api` (``include/kernel.h``)
+  * :ref:`zephyr:nvs_api`
+
+The OS abstraction layer is fully implemented for the |NCS|, and it would have to be ported if used with other RTOS or on other systems.
 
 To run the library in an application, you must implement the application with the API of the library.
 You can enable the module using the :option:`CONFIG_LWM2M_CARRIER` Kconfig option.
+
 
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
