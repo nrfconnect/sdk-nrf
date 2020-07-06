@@ -52,22 +52,23 @@ The model handling is implemented in :file:`src/model_handler.c`, which uses the
 Requirements
 ************
 
-* One of the following development kits:
+The sample supports the following development kits:
 
-  * |nRF5340DK|; if you use this development kit, add the following options to the configuration of the network sample:
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set1_start
+   :end-before: set1_end
 
-    .. code-block:: none
+.. note::
+   If you use nRF5340 PDK, add the following options to the configuration of the network sample:
 
-        CONFIG_BT_CTLR_TX_BUFFER_SIZE=74
-        CONFIG_BT_CTLR_DATA_LENGTH_MAX=74
+   .. code-block:: none
 
-    This is required because Bluetooth Mesh has different |BLE| Controller requirements than other Bluetooth samples.
+      CONFIG_BT_CTLR_TX_BUFFER_SIZE=74
+      CONFIG_BT_CTLR_DATA_LENGTH_MAX=74
 
-  * |nRF52840DK|
-  * |nRF52DK|
-  * |nRF51DK|
+   This is required because Bluetooth Mesh has different |BLE| Controller requirements than other Bluetooth samples.
 
-* Smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
   * `nRF Mesh mobile app for Android`_
   * `nRF Mesh mobile app for iOS`_

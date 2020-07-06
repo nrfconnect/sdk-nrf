@@ -6,7 +6,7 @@ Peripheral UART, NUS Shell Transport, Throughput) and NFC samples
 .. set1_start
 
 +--------------------------------+-----------+------------------------------------------------+--------------------------------+
-|Hardware platforms              |PCA        |Board name                                      |Build target                   |
+|Hardware platforms              |PCA        |Board name                                      |Build target                    |
 +================================+===========+================================================+================================+
 |:ref:`nRF5340 PDK <ug_nrf5340>` |PCA10095   |:ref:`nrf5340pdk_nrf5340 <nrf5340pdk_nrf5340>`  |``nrf5340pdk_nrf5340_cpuapp``   |
 |                                |           |                                                |                                |
