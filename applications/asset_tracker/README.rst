@@ -228,15 +228,24 @@ Dependencies
 
 This application uses the following |NCS| libraries and drivers:
 
+
 * :ref:`lib_nrf_cloud`
 * :ref:`modem_info_readme`
 * :ref:`at_cmd_parser_readme`
 * ``drivers/nrf9160_gps``
-* ``lib/bsd_lib``
 * ``drivers/sensor/sensor_sim``
 * :ref:`dk_buttons_and_leds_readme`
-* ``drivers/lte_link_control``
+* :ref:`lte_lc_readme`
+* |NCS| modules abstracted via the LwM2M carrier OS abstraction layer (:file:`lwm2m_os.h`)
 
-In addition, it uses the Secure Partition Manager sample:
+.. include:: /../../lib/bin/lwm2m_carrier/lwm2m_carrier.rst
+  :start-after: lwm2m_osal_mod_list_start
+  :end-before: lwm2m_osal_mod_list_end
+
+It uses the following `nrfxlib`_ libraries:
+
+* :ref:`nrfxlib:bsdlib`
+
+In addition, it uses the following sample:
 
 * :ref:`secure_partition_manager`
