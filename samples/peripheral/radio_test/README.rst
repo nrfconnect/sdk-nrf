@@ -30,16 +30,18 @@ See :ref:`radio_test_ui` for a list of available commands.
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set1_start
+   :end-before: set1_end
 
-    * Network core
+You can use any one of the development kits listed above.
 
-  * |nRF52840DK|
-  * |nRF52DK|
+.. note::
+   On nRF5340 DK, the sample is designed to run on the network core.
 
-* One of the following testing devices:
+The sample also requires one of the following testing devices:
 
   * Another board with the same sample.
     See :ref:`radio_test_testing_board`.
