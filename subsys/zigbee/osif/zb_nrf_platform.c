@@ -32,14 +32,22 @@ typedef enum {
 /**
  * Type definition of element of the application callback and alarm queue.
  */
-typedef struct {
+struct zb_app_cb_s {
 	zb_callback_type_t type;
 	zb_callback_t func;
 	zb_callback2_t func2;
 	zb_uint16_t param;
 	zb_uint16_t user_param;
 	s64_t alarm_timestamp;
-} zb_app_cb_t;
+};
+
+/**
+ * Type definition of the callback scheduled on the workq.
+ */
+struct zb_workq_cb_s {
+	zb_callback_t func;
+	zb_uint8_t param;
+};
 
 
 LOG_MODULE_REGISTER(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
@@ -58,8 +66,15 @@ static K_MUTEX_DEFINE(zigbee_mutex);
  * Message queue, that is used to pass ZBOSS callbacks and alarms from
  * ISR and other threads to ZBOSS main loop context.
  */
-K_MSGQ_DEFINE(zb_app_cb_msgq, sizeof(zb_app_cb_t),
+K_MSGQ_DEFINE(zb_app_cb_msgq, sizeof(struct zb_app_cb_s),
 	      CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH, 4);
+
+/**
+ * Message queue, that is used to pass ZBOSS callbacks and from
+ * ISR to workq context.
+ */
+K_MSGQ_DEFINE(zb_workq_cb_msgq, sizeof(struct zb_workq_cb_s),
+	      CONFIG_ZIGBEE_WORKQ_CB_QUEUE_LENGTH, 4);
 
 /**
  * Work queue that will schedule processing of callbacks from the message queue.
@@ -79,7 +94,7 @@ static k_tid_t zboss_tid;
 static void zb_app_cb_process(zb_bufid_t bufid)
 {
 	zb_ret_t ret_code = RET_OK;
-	zb_app_cb_t new_app_cb;
+	struct zb_app_cb_s new_app_cb;
 
 	/* Mark te processing callback as non-scheduled. */
 	(void)atomic_set((atomic_t *)&zb_app_cb_process_scheduled, 0);
@@ -92,20 +107,11 @@ static void zb_app_cb_process(zb_bufid_t bufid)
 	while (!k_msgq_peek(&zb_app_cb_msgq, &new_app_cb)) {
 		switch (new_app_cb.type) {
 		case ZB_CALLBACK_TYPE_SINGLE_PARAM:
-			ret_code = zb_schedule_app_callback(
-					new_app_cb.func,
-					(zb_uint8_t)new_app_cb.param,
-					ZB_FALSE,
-					0,
-					ZB_FALSE);
+			new_app_cb.func((zb_uint8_t)new_app_cb.param);
 			break;
 		case ZB_CALLBACK_TYPE_TWO_PARAMS:
-			ret_code = zb_schedule_app_callback(
-					new_app_cb.func,
-					(zb_uint8_t)new_app_cb.param,
-					ZB_TRUE,
-					new_app_cb.user_param,
-					ZB_FALSE);
+			new_app_cb.func2((zb_uint8_t)new_app_cb.param,
+					 new_app_cb.user_param);
 			break;
 		case ZB_CALLBACK_TYPE_ALARM_SET:
 		{
@@ -177,7 +183,13 @@ static void zb_app_cb_process(zb_bufid_t bufid)
 
 static void zb_app_cb_process_schedule(struct k_work *item)
 {
-	zb_app_cb_t new_app_cb;
+	struct zb_app_cb_s new_app_cb;
+	struct zb_workq_cb_s new_workq_cb;
+
+	/* Call or immediate workq items. */
+	while (!k_msgq_get(&zb_workq_cb_msgq, &new_workq_cb, K_NO_WAIT)) {
+		new_workq_cb.func(new_workq_cb.param);
+	}
 
 	if (k_msgq_peek(&zb_app_cb_msgq, &new_app_cb)) {
 		return;
@@ -267,9 +279,24 @@ static void zboss_thread(void *arg1, void *arg2, void *arg3)
 	}
 }
 
+zb_ret_t zigbee_schedule_work(zb_callback_t func, zb_uint8_t param)
+{
+	struct zb_workq_cb_s new_workq_cb = {
+		.func = func,
+		.param = param,
+	};
+
+	if (k_msgq_put(&zb_workq_cb_msgq, &new_workq_cb, K_NO_WAIT)) {
+		return RET_OVERFLOW;
+	}
+
+	k_work_submit(&zb_app_cb_work);
+	return RET_OK;
+}
+
 zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_SINGLE_PARAM,
 		.func = func,
 		.param = param,
@@ -283,13 +310,13 @@ zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param)
 	return RET_OK;
 }
 
-zb_ret_t zigbee_schedule_callback2(zb_callback_t func,
+zb_ret_t zigbee_schedule_callback2(zb_callback2_t func,
 				   zb_uint8_t param,
 				   zb_uint16_t user_param)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_TWO_PARAMS,
-		.func = func,
+		.func2 = func,
 		.param = param,
 		.user_param = user_param,
 	};
@@ -306,7 +333,7 @@ zb_ret_t zigbee_schedule_alarm(zb_callback_t func,
 			       zb_uint8_t param,
 			       zb_time_t run_after)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_ALARM_SET,
 		.func = func,
 		.param = param,
@@ -324,7 +351,7 @@ zb_ret_t zigbee_schedule_alarm(zb_callback_t func,
 
 zb_ret_t zigbee_schedule_alarm_cancel(zb_callback_t func, zb_uint8_t param)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_ALARM_CANCEL,
 		.func = func,
 		.param = param,
@@ -340,7 +367,7 @@ zb_ret_t zigbee_schedule_alarm_cancel(zb_callback_t func, zb_uint8_t param)
 
 zb_ret_t zigbee_get_out_buf_delayed(zb_callback_t func)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_GET_OUT_BUF_DELAYED,
 		.func = func,
 	};
@@ -355,7 +382,7 @@ zb_ret_t zigbee_get_out_buf_delayed(zb_callback_t func)
 
 zb_ret_t zigbee_get_in_buf_delayed(zb_callback_t func)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_GET_IN_BUF_DELAYED,
 		.func = func,
 	};
@@ -371,7 +398,7 @@ zb_ret_t zigbee_get_in_buf_delayed(zb_callback_t func)
 zb_ret_t zigbee_get_out_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
 					zb_uint16_t max_size)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_GET_OUT_BUF_DELAYED_EXT,
 		.func2 = func,
 		.user_param = param,
@@ -389,7 +416,7 @@ zb_ret_t zigbee_get_out_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
 zb_ret_t zigbee_get_in_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
 					zb_uint16_t max_size)
 {
-	zb_app_cb_t new_app_cb = {
+	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_GET_IN_BUF_DELAYED_EXT,
 		.func2 = func,
 		.user_param = param,

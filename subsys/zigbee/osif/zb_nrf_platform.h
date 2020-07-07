@@ -37,6 +37,18 @@ void zigbee_event_notify(zigbee_event_t event);
  */
 u32_t zigbee_event_poll(u32_t timeout_ms);
 
+/**@brief Schedule single-param callback execution on the workq.
+ *
+ * This API is used for callbacks that should be called immediately from the
+ * workq context.
+ *
+ * @param func    function to execute
+ * @param param - callback parameter - usually ref to packet buffer
+ *
+ * @return RET_OK or RET_OVERFLOW.
+ */
+zb_ret_t zigbee_schedule_work(zb_callback_t func, zb_uint8_t param);
+
 /**@brief Schedule single-param callback execution.
  *
  * This API is thread- and ISR- safe.
@@ -67,7 +79,7 @@ zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param);
  *
  * @return RET_OK or RET_OVERFLOW.
  */
-zb_ret_t zigbee_schedule_callback2(zb_callback_t func, zb_uint8_t param,
+zb_ret_t zigbee_schedule_callback2(zb_callback2_t func, zb_uint8_t param,
 				   zb_uint16_t user_param);
 
 

@@ -98,7 +98,7 @@ static void setup_test_case(void)
  */
 static void test_tx_rx(void)
 {
-	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
+	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -135,7 +135,7 @@ static void test_sleep(void)
  */
 static void test_undiv_tx_rx(void)
 {
-	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
+	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -166,7 +166,7 @@ static void test_undiv_tx_rx(void)
  */
 static void test_multi_tx_rx(void)
 {
-	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
+	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -194,7 +194,7 @@ static void test_multi_tx_rx(void)
  */
 static void test_small_rx_buffer(void)
 {
-	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
+	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -220,7 +220,7 @@ static void test_small_rx_buffer(void)
  */
 static void test_single_rx_chunk(void)
 {
-	zb_uint8_t test_serial_data[ZIGBEE_UART_RX_CHUNK_SIZE] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -235,7 +235,7 @@ static void test_single_rx_chunk(void)
  */
 static void test_two_rx_chunks(void)
 {
-	zb_uint8_t test_serial_data[ZIGBEE_UART_RX_CHUNK_SIZE * 2] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN * 2] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -251,10 +251,10 @@ static void test_two_rx_chunks(void)
  */
 static void test_rx_timeout_single_byte(void)
 {
-#if ZIGBEE_UART_RX_CHUNK_SIZE < 2
+#if CONFIG_ZIGBEE_UART_RX_CHUNK_LEN < 2
 	ztest_test_skip();
 #else
-	zb_uint8_t test_serial_data[1] = { 0 };
+	zb_uint8_t test_serial_data[1] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -275,10 +275,10 @@ static void test_rx_timeout_single_byte(void)
  */
 static void test_rx_timeout_chunk_and_single_byte(void)
 {
-#if ZIGBEE_UART_RX_CHUNK_SIZE < 2
+#if CONFIG_ZIGBEE_UART_RX_CHUNK_LEN < 2
 	ztest_test_skip();
 #else
-	zb_uint8_t test_serial_data[ZIGBEE_UART_RX_CHUNK_SIZE + 1] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN + 1] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -299,7 +299,7 @@ static void test_rx_timeout_chunk_and_single_byte(void)
  */
 static void test_rx_timeout_two_chunks_and_single_byte(void)
 {
-	zb_uint8_t test_serial_data[ZIGBEE_UART_RX_CHUNK_SIZE * 2 + 1] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN*2+1] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 

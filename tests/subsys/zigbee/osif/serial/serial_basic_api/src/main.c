@@ -86,7 +86,7 @@ static void setup_test_case(void)
  */
 static void test_tx_rx(void)
 {
-	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
+	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -118,7 +118,7 @@ static void test_sleep(void)
  */
 static void test_undiv_tx_rx(void)
 {
-	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
+	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -141,7 +141,7 @@ static void test_undiv_tx_rx(void)
  */
 static void test_multi_tx_rx(void)
 {
-	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = { 0 };
+	zb_uint8_t test_serial_data[TEST_UART_BUF_LEN] = {0};
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 

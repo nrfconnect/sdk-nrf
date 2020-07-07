@@ -78,7 +78,7 @@ static void zb_app_cb_process_schedule(struct k_work *item)
 /**
  * Prototype defined in zb_nrf_platform.h
  */
-zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param)
+zb_ret_t zigbee_schedule_work(zb_callback_t func, zb_uint8_t param)
 {
 	struct zb_app_cb_s new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_SINGLE_PARAM,

@@ -93,6 +93,12 @@ config ZIGBEE_APP_CB_QUEUE_LENGTH
 	  Elements from this queue are flushed right after ZBOSS context awakes,
 	  before the actual callback execution.
 
+config ZIGBEE_WORKQ_CB_QUEUE_LENGTH
+	int "Length of the immediate application callbacks workq"
+	default 2
+	help
+	  This queue is used to pass callbacks from interrupt to thread context.
+
 config ZIGBEE_VENDOR_OUI
 	hex "A value that represents MAC Address Block Large"
 	default 0xf4ce36
@@ -192,7 +198,15 @@ config ZIGBEE_UART_RX_TIMEOUT
 
 config ZIGBEE_UART_PARTIAL_RX_TIMEOUT
 	int "Timeout value between the last received byte and the RX event if only a part of RX buffer was received, in milliseconds"
-	default 10
+	default 1
+
+config ZIGBEE_UART_RX_CHUNK_LEN
+	int "Size of the single reception buffer"
+	default 2
+
+config ZIGBEE_UART_RX_BUF_LEN
+	int "Size of the asynchronous receive buffer"
+	default 16
 
 config ZIGBEE_UART_TX_BUF_LEN
 	int "Size of the synchronous transmit buffer"
