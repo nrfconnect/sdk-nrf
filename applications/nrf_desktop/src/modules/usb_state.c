@@ -141,6 +141,8 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 
 static void report_sent(bool error)
 {
+	__ASSERT_NO_MSG(sent_report_id != REPORT_ID_COUNT);
+
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
 	event->report_id = sent_report_id;
@@ -166,6 +168,8 @@ static void send_hid_report(const struct hid_report_event *event)
 
 	if (state != USB_STATE_ACTIVE) {
 		/* USB not connected. */
+		sent_report_id = event->dyndata.data[0];
+		report_sent(true);
 		return;
 	}
 
@@ -189,6 +193,8 @@ static void send_hid_report(const struct hid_report_event *event)
 			/* Boot protocol is not supported or this is not a
 			 * boot report.
 			 */
+			sent_report_id = event->dyndata.data[0];
+			report_sent(true);
 			return;
 		}
 	} else {
@@ -218,7 +224,7 @@ static void reset_pending_report(void)
 {
 	if (sent_report_id != REPORT_ID_COUNT) {
 		LOG_WRN("USB clear report notification waiting flag");
-		sent_report_id = REPORT_ID_COUNT;
+		report_sent(true);
 	}
 }
 
