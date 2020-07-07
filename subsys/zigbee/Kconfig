@@ -208,6 +208,61 @@ config RADIO_STATISTICS
 
 endmenu #menu "ZBOSS osif configuration"
 
+if BOOTLOADER_MCUBOOT && MCUMGR
+menu "Zigbee OTA DFU configuration"
+
+config ZIGBEE_OTA_APP_VERSION
+	string "Zigbee application version"
+	default "0.0.0"
+
+config ZIGBEE_OTA_MANUFACTURER_ID
+	hex "Manufacturer ID"
+	default 0x127F
+	range 0x0000 0xFFFF
+	help
+	  This is the ZigBee assigned identifier for each member company.
+	  0x127F - Nordic Semiconductor
+	  0xFFFF - wild card value has a 'match all' effect.
+
+config ZIGBEE_OTA_IMAGE_TYPE
+	hex "Image type"
+	default 0xFFFF
+	range 0x0000 0xFFFF
+	help
+	  0x0000 - 0xFFBF Manufacturer Specific
+	  0xFFC0 - Client Security credentials
+	  0xFFC1 - Client Configuration
+	  0xFFC2 - Server Log
+	  0xFFC3 - Picture
+	  0xFFFF - Wild card value has a 'match all' effect.
+
+config ZIGBEE_OTA_COMMENT
+	string "OTA header string"
+	default ""
+	help
+	  Firmware comment to be used in Zigbee OTA header.
+
+config ENABLE_ZIGBEE_OTA_MIN_HW_VERSION
+	bool "Enable Zigbee OTA minimum hw version"
+
+config ZIGBEE_OTA_MIN_HW_VERSION
+	hex "Zigbee OTA minimum hw version"
+	default 0
+	range 0x00 0xFF
+	depends on ENABLE_ZIGBEE_OTA_MIN_HW_VERSION
+
+config ENABLE_ZIGBEE_OTA_MAX_HW_VERSION
+	bool "Enable Zigbee OTA maximum hw version"
+
+config ZIGBEE_OTA_MAX_HW_VERSION
+	hex "Zigbee OTA maximum hw version"
+	default 0
+	range 0x00 0xFF
+	depends on ENABLE_ZIGBEE_OTA_MAX_HW_VERSION
+
+endmenu #menu "Zigbee DFU configuration"
+endif #BOOTLOADER_MCUBOOT && MCUMGR
+
 config APP_LINK_WITH_ZIGBEE
 	bool
 	default y
