@@ -32,9 +32,8 @@ static enum nfc_ndef_record_location record_location_get(u32_t index,
 	return record_location;
 }
 
-int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
-			u8_t *msg_buffer,
-			u32_t *msg_len)
+int nfc_ndef_generic_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
+				u8_t *msg_buffer, u32_t *msg_len, bool nested)
 {
 	u32_t sum_of_len = 0;
 
@@ -49,7 +48,7 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		return -EINVAL;
 	}
 
-	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN)) {
+	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN) && !nested) {
 		sum_of_len += NLEN_FIELD_SIZE;
 		if (*msg_len < sum_of_len) {
 			return -ENOSR;
@@ -80,7 +79,7 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		/* next record */
 		pp_record_rec_desc++;
 	}
-	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN)) {
+	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN) && !nested) {
 		if (msg_buffer) {
 			if (sum_of_len - NLEN_FIELD_SIZE > UINT16_MAX) {
 				return -ENOTSUP;

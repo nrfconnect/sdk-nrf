@@ -9,6 +9,7 @@
 
 #include <zephyr/types.h>
 #include <nfc/ndef/record.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,6 +43,33 @@ struct nfc_ndef_msg_desc {
 };
 
 /**
+ * @brief Encode an NDEF message or a nested NDEF message.
+ *
+ * This function encodes an NDEF message or a nested NFC NDEF message according
+ * to the provided message descriptor.
+ *
+ * @note The way of encoding an NDEF message may vary depending on tag's
+ * platform. Set CONFIG_NFC_NDEF_MSG_WITH_NLEN=y if you want to use Type 4 Tag
+ * in application's configuration prj.conf file.
+ *
+ * @param ndef_msg_desc Pointer to the message descriptor.
+ * @param msg_buffer Pointer to the message destination. If NULL, function
+ * will calculate the expected size of the message.
+ * @param msg_len Size of the available memory for the message as input. Size
+ * of the generated message as output.
+ * @param nested Encoding NFC nested message. If it is set to true the NLEN
+ *               field will not be encoded even if CONFIG_NFC_NDEF_MSG_WITH_NLEN
+ *               is set.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nfc_ndef_generic_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
+				u8_t *msg_buffer,
+				u32_t *msg_len,
+				bool nested);
+
+/**
  * @brief Encode an NDEF message.
  *
  * This function encodes an NDEF message according to the provided message
@@ -60,9 +88,34 @@ struct nfc_ndef_msg_desc {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
-			u8_t *msg_buffer,
-			u32_t *msg_len);
+static inline int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
+				      u8_t *msg_buffer,
+				      u32_t *msg_len)
+{
+	return nfc_ndef_generic_msg_encode(ndef_msg_desc, msg_buffer, msg_len, false);
+}
+
+/**
+ * @brief Encode a nested NDEF message.
+ *
+ * This function encodes a nested NDEF message according to the
+ * provided message descriptor.
+ *
+ * @param ndef_msg_desc Pointer to the message descriptor.
+ * @param msg_buffer Pointer to the message destination. If NULL, function
+ * will calculate the expected size of the message.
+ * @param msg_len Size of the available memory for the message as input. Size
+ * of the generated message as output.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+static inline int nfc_ndef_nested_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
+					     u8_t *msg_buffer,
+					     u32_t *msg_len)
+{
+	return nfc_ndef_generic_msg_encode(ndef_msg_desc, msg_buffer, msg_len, true);
+}
 
 /**
  * @brief Clear an NDEF message.
@@ -140,23 +193,23 @@ int nfc_ndef_msg_record_add(struct nfc_ndef_msg_desc *msg,
  * @param nested_message Pointer to the message descriptor to encapsulate
  * as the record's payload.
  */
-#define NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF(name,			\
-					    tnf_arg,			\
-					    id_arg,			\
-					    id_len,			\
-					    type_arg,			\
-					    type_len,			\
-					    nested_message)		\
-	struct nfc_ndef_record_desc name##_ndef_record_nested_desc =	\
-	{								\
-		.tnf = tnf_arg,						\
-		.id_length = id_len,					\
-		.id =  id_arg,						\
-		.type_length = type_len,				\
-		.type = type_arg,					\
-		.payload_constructor =					\
-			(payload_constructor_t)(nfc_ndef_msg_encode),	\
-		.payload_descriptor = (void *) (nested_message)		\
+#define NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF(name,			     \
+					    tnf_arg,			     \
+					    id_arg,			     \
+					    id_len,			     \
+					    type_arg,			     \
+					    type_len,			     \
+					    nested_message)		     \
+	struct nfc_ndef_record_desc name##_ndef_record_nested_desc =	     \
+	{								     \
+		.tnf = tnf_arg,						     \
+		.id_length = id_len,					     \
+		.id =  id_arg,						     \
+		.type_length = type_len,				     \
+		.type = type_arg,					     \
+		.payload_constructor =					     \
+			(payload_constructor_t)(nfc_ndef_nested_msg_encode), \
+		.payload_descriptor = (void *) (nested_message)		     \
 	}
 
 /** @brief Macro for accessing the NFC NDEF record descriptor instance
