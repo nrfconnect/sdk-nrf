@@ -75,7 +75,7 @@ The sleep current of MCU can be lowered to about 1.8 uA by completing the follow
 Optional configuration
 **********************
 
-After enabling the Zigbee protocol and defining the Zigbee device role, you can enable additional options in Kconfig and modify `Stack configuration options`_.
+After enabling the Zigbee protocol and defining the Zigbee device role, you can enable additional options in Kconfig and modify `ZBOSS stack start options`_.
 
 You can enable the following additional configuration options:
 
@@ -91,14 +91,16 @@ You can enable the following additional configuration options:
 * :option:`CONFIG_ZIGBEE_VENDOR_OUI` - Represents MAC Address Block Large, and by default it is set to Nordic Semiconductor's MA-L block (f4-ce-36).
 * :option:`CONFIG_ZIGBEE_CLI_LOG_ENABLED` - Enables logging of the incoming ZCL frames, and it is enabled by default.
 
-Stack configuration options
-===========================
+ZBOSS stack start options
+=========================
 
 Zigbee is initialized after Zephyr's kernel start.
-The ZBOSS stack works on a separate Zephyr thread that is created and started with :cpp:func:`zigbee_enable`.
-This function must be called by the application.
+The ZBOSS stack can be started using one of the following options:
 
-The ZBOSS thread can be configured using the following options:
+* Started and executed from the main thread, as `described in the ZBOSS development guide <Stack commissioning start sequence_>`_.
+* Started from a dedicated Zephyr thread, which in turn can be created and started by calling :cpp:func:`zigbee_enable`.
+
+The dedicated thread can be configured using the following options:
 
 * :option:`CONFIG_ZBOSS_DEFAULT_THREAD_PRIORITY` - Defines thread priority; set to 3 by default.
 * :option:`CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE` - Defines the size of the thread stack; set to 2048 by default.
