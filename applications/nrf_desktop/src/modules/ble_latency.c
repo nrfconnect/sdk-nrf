@@ -21,6 +21,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 	K_SECONDS(CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S)
 #define LOW_LATENCY_CHECK_PERIOD_MS	K_SECONDS(5)
 #define DEFAULT_LATENCY			CONFIG_BT_PERIPHERAL_PREF_SLAVE_LATENCY
+#define DEFAULT_TIMEOUT			CONFIG_BT_PERIPHERAL_PREF_TIMEOUT
 #define REG_CONN_INTERVAL_LLPM_MASK	0x0d00
 #define REG_CONN_INTERVAL_BLE_DEFAULT	0x0006
 
@@ -33,6 +34,7 @@ enum {
 	CONN_LOW_LATENCY_REQUIRED	= BIT(1),
 	CONN_LOW_LATENCY_LOCKED		= BIT(2),
 	CONN_IS_LLPM			= BIT(3),
+	CONN_IS_SECURED			= BIT(4),
 };
 
 static u8_t latency_state;
@@ -58,6 +60,24 @@ static void security_timeout_fn(struct k_work *w)
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
 		LOG_INF("Peer disconnected");
+	}
+}
+
+static void set_init_conn_params(void)
+{
+	const struct bt_le_conn_param param = {
+		.interval_min = REG_CONN_INTERVAL_BLE_DEFAULT,
+		.interval_max = REG_CONN_INTERVAL_BLE_DEFAULT,
+		.latency = 0,
+		.timeout = DEFAULT_TIMEOUT
+	};
+
+	int err = bt_conn_le_param_update(active_conn, &param);
+
+	if (!err || (err == -EALREADY)) {
+		LOG_INF("Init connection parameters are set");
+	} else {
+		LOG_WRN("Failed to update conn parameters (err %d)", err);
 	}
 }
 
@@ -93,7 +113,7 @@ static void set_conn_latency(bool low_latency)
 
 	err = bt_conn_le_param_update(active_conn, &param);
 
-	if (!err) {
+	if (!err || (err == -EALREADY)) {
 		LOG_INF("BLE latency %screased", low_latency ? "de" : "in");
 
 		if (low_latency) {
@@ -130,7 +150,14 @@ static void low_latency_check_fn(struct k_work *w)
 	__ASSERT_NO_MSG(!((latency_state & CONN_LOW_LATENCY_LOCKED) &&
 			  (latency_state & CONN_IS_LLPM)));
 
-	if (latency_state & CONN_LOW_LATENCY_REQUIRED) {
+	/* Do not increase slave latency until the connection is secured.
+	 * Increasing slave latency may significantly increase time
+	 * required to establish security on some hosts.
+	 */
+	if (!(latency_state & CONN_IS_SECURED)) {
+		k_delayed_work_submit(&low_latency_check,
+				      LOW_LATENCY_CHECK_PERIOD_MS);
+	} else if (latency_state & CONN_LOW_LATENCY_REQUIRED) {
 		latency_state &= ~CONN_LOW_LATENCY_REQUIRED;
 		k_delayed_work_submit(&low_latency_check,
 				      LOW_LATENCY_CHECK_PERIOD_MS);
@@ -213,6 +240,7 @@ static bool event_handler(const struct event_header *eh)
 			if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK)) {
 				latency_state |= CONN_LOW_LATENCY_LOCKED;
 			}
+			set_init_conn_params();
 			k_delayed_work_submit(&security_timeout,
 					      SECURITY_FAIL_TIMEOUT_MS);
 			break;
@@ -224,10 +252,11 @@ static bool event_handler(const struct event_header *eh)
 			/* Clear BLE latency state. */
 			latency_state = 0;
 			k_delayed_work_cancel(&low_latency_check);
-
-			/* Fall-through */
+			k_delayed_work_cancel(&security_timeout);
+			break;
 
 		case PEER_STATE_SECURED:
+			latency_state |= CONN_IS_SECURED;
 			k_delayed_work_cancel(&security_timeout);
 			break;
 
