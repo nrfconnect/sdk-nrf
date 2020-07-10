@@ -87,11 +87,6 @@ Complete the following steps to build the documentation output:
            ninja zephyr
 
    This step can take up to 15 minutes.
-#. Run ninja to build the nrfxlib documentation:
-
-        .. code-block:: console
-
-           ninja nrfxlib
 
 #. Run ninja to build the mcuboot documentation:
 
@@ -99,11 +94,23 @@ Complete the following steps to build the documentation output:
 
            ninja mcuboot
 
+#. Run ninja to build the nrfxlib inventory file (used by nrf):
+
+        .. code-block:: console
+
+           ninja nrfxlib-inventory
+
 #. Run ninja to build the |NCS| documentation:
 
         .. code-block:: console
 
            ninja nrf
+
+#. Run ninja to build the nrfxlib documentation:
+
+        .. code-block:: console
+
+           ninja nrfxlib
 
 The documentation output is written to ``_build\html``. Double-click the ``index.html`` file to display the documentation in your browser.
 
@@ -168,9 +175,10 @@ the source tree:
    cmake -GNinja -Bbuild/ -Hncs/nrf/doc
    # Now run ninja on the generated build system:
    ninja -C build/ zephyr
-   ninja -C build/ nrfxlib
    ninja -C build/ mcuboot
+   ninja -C build/ nrfxlib-inventory
    ninja -C build/ nrf
+   ninja -C build/ nrfxlib
    # If you modify or add .rst files in the nRF repository, run ninja again:
    ninja -C build/ nrf
 
