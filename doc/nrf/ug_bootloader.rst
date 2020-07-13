@@ -101,7 +101,7 @@ Both bootloaders can easily be included in your application using :ref:`ug_multi
 Adding the immutable bootloader
 ===============================
 
-To add the immutable bootloader to your application, set :option:`CONFIG_SECURE_BOOT` and add your private key file under :option:`CONFIG_SB_SIGNING_PUBLIC_KEY`.
+To add the immutable bootloader to your application, set :option:`CONFIG_SECURE_BOOT` and add your private key file under :option:`CONFIG_SB_SIGNING_KEY_FILE`.
 |how_to_configure|
 
 See the documentation of the :ref:`bootloader` sample for more information.
