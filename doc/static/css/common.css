@@ -104,3 +104,11 @@ div.figure {
 .rst-content div.breathe-sectiondef {
   padding-left: 0 !important;
 }
+p.highlight-link {
+  font-size: 90%;
+  margin: 0;
+  margin-top: 5px;
+}
+p.highlight-link > a {
+  color: white;
+}
