@@ -211,8 +211,13 @@ add_custom_target(
 )
 add_dependencies(nrf-html nrf-doxy nrf-content)
 
+add_custom_target(
+  nrf-copy-versions
+  COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/versions.json ${HTML_DIR}/versions.json
+)
+
 add_custom_target(nrf)
-add_dependencies(nrf nrf-html)
+add_dependencies(nrf nrf-html nrf-copy-versions)
 
 #
 # Add mcuboot-related targets
