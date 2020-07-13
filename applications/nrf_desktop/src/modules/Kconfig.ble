@@ -293,7 +293,6 @@ comment "BLE QoS management"
 
 config DESKTOP_BLE_QOS_ENABLE
 	bool "Enable BLE channel map management"
-	depends on BT_CENTRAL
 	depends on BT_LL_NRFXLIB
 	select BT_HCI_VS_EVT_USER
 	help
@@ -318,6 +317,7 @@ config DESKTOP_BLE_QOS_STACK_SIZE
 config DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
 	bool "Enable BLE QoS statistics printout"
 	depends on DESKTOP_BLE_QOS_ENABLE
+	depends on USB
 	select USB_COMPOSITE_DEVICE
 	select USB_CDC_ACM
 	select SERIAL

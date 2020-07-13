@@ -180,7 +180,7 @@ bool chmap_filter_process(struct chmap_instance *p_inst);
  *
  * @param[in] p_inst Channel map instance pointer
  *
- * @return pointer to @ref CHMAP_BLE_BITMAP_SIZE sized channel map array
+ * @return pointer to @ref CHMAP_BLE_BITMASK_SIZE sized channel map array
  */
 u8_t *chmap_filter_suggested_map_get(struct chmap_instance *p_inst);
 
