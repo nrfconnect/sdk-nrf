@@ -208,7 +208,7 @@ int http_parse(struct download_client *client, size_t len)
 			 * copy them at the beginning of the buffer
 			 * and update the offset.
 			 */
-			LOG_WRN("Copying %u payload bytes",
+			LOG_DBG("Copying %u payload bytes",
 				client->offset - hdr_len);
 			memcpy(client->buf, client->buf + hdr_len,
 			       client->offset - hdr_len);
