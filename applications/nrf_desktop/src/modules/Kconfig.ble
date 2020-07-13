@@ -216,6 +216,18 @@ config DESKTOP_BLE_SCAN_DURATION_S
 	help
 	  After this time scan is disabled if any peripheral is connected.
 
+config DESKTOP_BLE_SCAN_MOUSE_LIMIT
+	int "Maximum number of bonded mice"
+	default 1
+	range 0 255
+	depends on DESKTOP_BLE_SCANNING_ENABLE
+
+config DESKTOP_BLE_SCAN_KEYBOARD_LIMIT
+	int "Maximum number of bonded keyboards"
+	default 1
+	range 0 255
+	depends on DESKTOP_BLE_SCANNING_ENABLE
+
 if DESKTOP_BLE_SCANNING_ENABLE
 
 module = DESKTOP_BLE_SCANNING

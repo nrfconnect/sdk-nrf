@@ -200,16 +200,26 @@ static int configure_address_filters(u8_t *filter_mode)
 
 static int configure_name_filters(u8_t *filter_mode)
 {
-	u8_t peers_mask = 0;
+	u8_t peer_cnt[PEER_TYPE_COUNT] = {0};
+	static const u8_t peer_limit[PEER_TYPE_COUNT] = {
+		[PEER_TYPE_MOUSE] = CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT,
+		[PEER_TYPE_KEYBOARD] = CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT,
+	};
 	int err = 0;
 
 	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-		peers_mask |= BIT(subscribed_peers[i].peer_type);
+		enum peer_type type = subscribed_peers[i].peer_type;
+
+		if (type == PEER_TYPE_COUNT) {
+			continue;
+		}
+		__ASSERT_NO_MSG(peer_cnt[type] < peer_limit[type]);
+		peer_cnt[type]++;
 	}
 
 	/* Bluetooth scan filters are defined in separate header. */
 	for (size_t i = 0; i < ARRAY_SIZE(peer_name); i++) {
-		if ((BIT(i) & peers_mask) ||
+		if ((peer_cnt[i] == peer_limit[i]) ||
 		    (peer_name[i] == NULL)) {
 			continue;
 		}
@@ -232,7 +242,7 @@ static int configure_name_filters(u8_t *filter_mode)
 
 static int configure_filters(void)
 {
-	BUILD_ASSERT(CONFIG_BT_MAX_PAIRED == CONFIG_BT_MAX_CONN, "");
+	BUILD_ASSERT(CONFIG_BT_MAX_PAIRED >= CONFIG_BT_MAX_CONN, "");
 	BUILD_ASSERT(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
 			 "Insufficient number of address filters");
 	BUILD_ASSERT(ARRAY_SIZE(peer_name) <= CONFIG_BT_SCAN_NAME_CNT,
