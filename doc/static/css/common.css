@@ -112,3 +112,15 @@ p.highlight-link {
 p.highlight-link > a {
   color: white;
 }
+div.version .dropdown a {
+ color: #fff;
+}
+div.version ul.dropdown {
+ padding-top: 10px;
+}
+div#version_status {
+ background-color: #f0f0a8;
+ border: 1px dotted black;
+ padding: 5px;
+ margin-top: 10px;
+}

@@ -345,3 +345,4 @@ def setup(app):
     app.add_stylesheet("css/zephyr.css")
     app.add_stylesheet("css/common.css")
     app.add_js_file("js/removesearch.js")
+    app.add_js_file("js/ncs.js")
