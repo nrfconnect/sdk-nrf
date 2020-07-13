@@ -9,48 +9,113 @@ menuconfig  DOWNLOAD_CLIENT
 
 if DOWNLOAD_CLIENT
 
-config DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE
-	int "Non-TLS fragment size"
-	range 512 4096
-	default 4096
+config DOWNLOAD_CLIENT_BUF_SIZE
+	int "Buffer size (static)"
+	range 256 4096
+	default 2048
 	help
-	  Size of the data fragments reported to the application in each event
-	  when not using TLS. Use a larger fragment size to reduce the
-	  bandwidth overhead due to the HTTP headers.
+	  Size of the internal buffer used for incoming and
+	  outgoing packets. It must be large enough to
+	  acommodate for the largest between the HTTP fragment
+	  and CoAP block. In case of CoAP, the CoAP header
+	  length of 20 bytes should be taken into account.
 
-config DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE
-	int "TLS fragment size"
-	range 512 2048 if BSD_LIBRARY
-	default 2048 if BSD_LIBRARY
-	range 512 4096
-	default 4096
-	help
-	  Size of the data fragments reported to the application in each event
-	  when using TLS. Use a larger fragment size to reduce the
-	  bandwidth overhead due to the HTTP headers. When using the BSD library,
-	  the fragment cannot exceed 2.3 kB.
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE
+	int
+	default 256 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_256
+	default 512 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_512
+	default 1024 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_1024
+	default 2048 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
+	default 4096 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
 
-config DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE
-	int "Response size"
-	default DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE
+choice
+	prompt "HTTP(S) fragment size"
+	default DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
 	help
-	  Buffer to accommodate for the HTTP response.
-	  Must be large enough to accomodate for a full fragment.
+	  Size of the data fragments reported to the application when
+	  using HTTP or HTTPS. Use the largest fragment size when using HTTPS
+	  to reduce the bandwidth overhead due to the HTTP headers, which are
+	  sent for each fragment.
+	  When using the BSD library and TLS, the fragment size cannot exceed 2 kB.
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
+	bool "4096"
+	depends on !BSD_LIBRARY
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 4096
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
+	bool "2048"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 2048
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_1024
+	bool "1024"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 1024
+
+	config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_512
+	bool "512"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 512
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_256
+	bool "256"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 256
+
+endchoice
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE
+	int
+	default 3 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_128
+	default 4 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_256
+	default 5 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+
+choice
+	prompt "CoAP block size"
+	depends on COAP
+	default DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+	help
+	   CoAP blockwise transfer block size.
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+	bool "512"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 532
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_256
+	bool "256"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 276
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_128
+	bool "128"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 148
+
+endchoice
+
+comment "Stack and stack buffers"
 
 config DOWNLOAD_CLIENT_STACK_SIZE
 	int "Thread stack size"
 	default 2048
 
+config DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
+	int "Maximum hostname length (stack)"
+	range 8 256
+	default 64
+
+config DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
+	int "Maximum filename length (stack)"
+	range 8 256
+	default 192
+
 config DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS
 	int "Receive timeout, in milliseconds"
-	default -1
+	default 4000
 	range -1 30000
 	help
 	  Socket timeout for recv() calls, in milliseconds.
+	  When using CoAP, set a timeout to be able to detect
+	  when a retrasmission is necessary.
 	  Set to -1 disable.
 
 config DOWNLOAD_CLIENT_IPV6
-	bool "Prefer IPv6 connections"
+	bool "Use IPv6 when possible"
 	help
 	  Prefer IPv6 protocol but fallback to
 	  IPv4 when the hostname can't be resolved.
@@ -66,7 +131,7 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 if DOWNLOAD_CLIENT_LOG_LEVEL_DBG
 
 config DOWNLOAD_CLIENT_LOG_HEADERS
-	bool "Log HTTP headers to Console [Debug]"
+	bool "Log protocol headers to console [Debug]"
 
 endif
 

@@ -89,7 +89,6 @@ static void app_dfu_transfer_start(struct k_work *unused)
 	retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
 				     CONFIG_DOWNLOAD_FILE,
 				     sec_tag,
-				     CONFIG_DOWNLOAD_PORT,
 				     apn);
 	if (retval != 0) {
 		/* Re-enable button callback */

@@ -6,6 +6,7 @@
 
 #include <lwm2m_os.h>
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <zephyr.h>
@@ -560,13 +561,18 @@ static lwm2m_os_download_callback_t lwm2m_os_lib_callback;
 int lwm2m_os_download_connect(const char *host,
 			      const struct lwm2m_os_download_cfg *cfg)
 {
+	#define HOST 128
+	#define PORT 8
+
+	static char hostname[HOST + PORT];
 	struct download_client_cfg config = {
 		.sec_tag = cfg->sec_tag,
 		.apn = cfg->apn,
-		.port = cfg->port,
 	};
 
-	return download_client_connect(&http_downloader, host, &config);
+	snprintf(hostname, sizeof(hostname), "%s:%d", host, cfg->port);
+
+	return download_client_connect(&http_downloader, hostname, &config);
 }
 
 int lwm2m_os_download_disconnect(void)
