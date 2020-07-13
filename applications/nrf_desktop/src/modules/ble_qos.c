@@ -780,17 +780,25 @@ static void ble_qos_thread_fn(void)
 		u8_t *chmap;
 
 		chmap = chmap_filter_suggested_map_get(chmap_inst);
-		err = bt_le_set_chan_map(chmap);
-		if (err) {
-			LOG_WRN("bt_le_set_chan_map: %d", err);
-		} else {
-			LOG_DBG("Channel map update");
-			chmap_filter_suggested_map_confirm(chmap_inst);
 
-			k_mutex_lock(&data_access_mutex, K_FOREVER);
-			memcpy(current_chmap, chmap, sizeof(current_chmap));
-			k_mutex_unlock(&data_access_mutex);
+		struct ble_qos_event *event = new_ble_qos_event();
+		BUILD_ASSERT(sizeof(event->chmap) == CHMAP_BLE_BITMASK_SIZE, "");
+		memcpy(event->chmap, chmap, CHMAP_BLE_BITMASK_SIZE);
+		EVENT_SUBMIT(event);
+
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = bt_le_set_chan_map(chmap);
+			if (err) {
+				LOG_WRN("bt_le_set_chan_map: %d", err);
+			} else {
+				LOG_DBG("Channel map update");
+			}
 		}
+
+		chmap_filter_suggested_map_confirm(chmap_inst);
+		k_mutex_lock(&data_access_mutex, K_FOREVER);
+		memcpy(current_chmap, chmap, sizeof(current_chmap));
+		k_mutex_unlock(&data_access_mutex);
 	}
 }
 

@@ -42,6 +42,10 @@ config DESKTOP_INIT_LOG_BLE_SMP_TRANSFER_EVENT
 	bool "BLE SMP transfer event"
 	default y
 
+config DESKTOP_INIT_LOG_BLE_QOS_EVENT
+	bool "BLE QOS event"
+	default y
+
 config DESKTOP_INIT_LOG_BUTTON_EVENT
 	bool "Button event"
 	default y

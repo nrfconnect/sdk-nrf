@@ -19,6 +19,10 @@
 
 #include "event_manager.h"
 
+#if CONFIG_DESKTOP_BLE_QOS_ENABLE
+#include "chmap_filter.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -131,6 +135,16 @@ struct ble_smp_transfer_event {
 	struct event_header header;
 };
 EVENT_TYPE_DECLARE(ble_smp_transfer_event);
+
+#if CONFIG_DESKTOP_BLE_QOS_ENABLE
+/** @brief BLE QoS event. */
+struct ble_qos_event {
+	struct event_header header;
+
+	u8_t chmap[CHMAP_BLE_BITMASK_SIZE];
+};
+EVENT_TYPE_DECLARE(ble_qos_event);
+#endif
 
 #ifdef __cplusplus
 }
