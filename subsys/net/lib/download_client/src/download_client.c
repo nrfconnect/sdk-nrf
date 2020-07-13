@@ -10,33 +10,41 @@
 #include <zephyr/types.h>
 #include <toolchain/common.h>
 #include <net/socket.h>
+#include <nrf_socket.h>
 #include <net/tls_credentials.h>
 #include <net/download_client.h>
 #include <logging/log.h>
-#include <modem/bsdlib.h>
 
 LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
-#define GET_TEMPLATE                                                           \
-	"GET /%s HTTP/1.1\r\n"                                                 \
-	"Host: %s\r\n"                                                         \
-	"Connection: keep-alive\r\n"                                           \
-	"Range: bytes=%u-%u\r\n"                                               \
-	"\r\n"
+#define SIN6(A) ((struct sockaddr_in6 *)(A))
+#define SIN(A) ((struct sockaddr_in *)(A))
 
-BUILD_ASSERT(CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE <=
-		 CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
-		 "The response buffer must accommodate for a full non-TLS fragment");
+#define HOSTNAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 
-BUILD_ASSERT(CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE <=
-		 CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
-		 "The response buffer must accommodate for a full TLS fragment");
+int url_parse_port(const char *url, uint16_t *port);
+int url_parse_proto(const char *url, int *proto, int *type);
+int url_parse_host(const char *url, char *host, size_t len);
 
-#if defined(CONFIG_LOG) && !defined(CONFIG_LOG_IMMEDIATE)\
-			&& defined(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)
-BUILD_ASSERT(CONFIG_LOG_BUFFER_SIZE >= 2048,
-		 "Please increase log buffer sizer");
-#endif
+int http_parse(struct download_client *client, size_t len);
+int http_get_request_send(struct download_client *client);
+
+int coap_block_init(struct download_client *client, size_t from);
+int coap_parse(struct download_client *client, size_t len);
+int coap_request_send(struct download_client *client);
+
+static const char *str_family(int family)
+{
+	switch (family) {
+	case AF_INET:
+		return "IPv4";
+	case AF_INET6:
+		return "IPv6";
+	default:
+		__ASSERT(false, "Unsupported family");
+		return NULL;
+	}
+}
 
 static int socket_timeout_set(int fd)
 {
@@ -81,14 +89,15 @@ static int socket_sectag_set(int fd, int sec_tag)
 	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
 		LOG_ERR("Failed to setup peer verification, errno %d", errno);
-		return -1;
+		return -errno;
 	}
 
+	LOG_INF("Setting up TLS credentials, tag %d", sec_tag);
 	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 			 sizeof(sec_tag_t) * ARRAY_SIZE(sec_tag_list));
 	if (err) {
 		LOG_ERR("Failed to setup socket security tag, errno %d", errno);
-		return -1;
+		return -errno;
 	}
 
 	return 0;
@@ -98,135 +107,173 @@ static int socket_apn_set(int fd, const char *apn)
 {
 	int err;
 	size_t len;
-	struct ifreq ifr = {0};
 
 	__ASSERT_NO_MSG(apn);
 
 	len = strlen(apn);
-	if (len >= sizeof(ifr.ifr_name)) {
+	if (len >= IFNAMSIZ) {
 		LOG_ERR("Access point name is too long.");
-		return -1;
+		return -EINVAL;
 	}
 
-	memcpy(ifr.ifr_name, apn, len);
-	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &ifr, len);
+	LOG_INF("Setting up APN: %s", log_strdup(apn));
+
+	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, apn, len);
 	if (err) {
-		LOG_ERR("Failed to bind socket, errno %d", errno);
-		return -1;
+		LOG_ERR("Failed to bind socket to network \"%s\", err %d",
+			log_strdup(apn), errno);
+		return -ENETUNREACH;
 	}
 
 	return 0;
 }
 
-static int resolve_and_connect(int family, const char *host,
-			       const struct download_client_cfg *cfg)
+static int host_lookup(const char *host, int family, const char *apn,
+		       struct sockaddr *sa)
 {
-	int fd;
 	int err;
-	int proto;
-	uint16_t port;
-	struct addrinfo *addr;
-	struct addrinfo *info;
+	struct addrinfo *ai;
+	char hostname[HOSTNAME_SIZE];
 
-	__ASSERT_NO_MSG(host);
-	__ASSERT_NO_MSG(cfg);
-
-	/* Set up port and protocol */
-	if (cfg->sec_tag == -1) {
-		proto = IPPROTO_TCP;
-		port = (cfg->port != 0) ? htons(cfg->port) :
-					  htons(80); /* HTTP, port 80 */
-	} else {
-		proto = IPPROTO_TLS_1_2;
-		port = (cfg->port != 0) ? htons(cfg->port) :
-					  htons(443); /* HTTPS, port 443 */
-	}
-
-	/* Lookup host */
 	struct addrinfo hints = {
 		.ai_family = family,
-		.ai_socktype = SOCK_STREAM,
-		.ai_protocol = proto,
-		/* Either a valid, NULL-terminated access point name or NULL. */
-		.ai_next =  cfg->apn ?
+		.ai_next = apn ?
 			&(struct addrinfo) {
 				.ai_family    = AF_LTE,
 				.ai_socktype  = SOCK_MGMT,
 				.ai_protocol  = NPROTO_PDN,
-				.ai_canonname = (char *)cfg->apn
+				.ai_canonname = (char *)apn
 			} : NULL,
 	};
 
-	err = getaddrinfo(host, NULL, &hints, &info);
+	/* Extract the hostname, without protocol or port */
+	err = url_parse_host(host, hostname, sizeof(hostname));
 	if (err) {
-		LOG_WRN("Failed to resolve hostname %s on %s", log_strdup(host),
-			family == AF_INET ? "IPv4" : "IPv6");
 		return err;
 	}
 
-	LOG_INF("Attempting to connect over %s",
-		family == AF_INET ? log_strdup("IPv4") : log_strdup("IPv6"));
-
-	fd = socket(family, SOCK_STREAM, proto);
-	if (fd < 0) {
-		LOG_ERR("Failed to create socket, errno %d", errno);
-		goto cleanup;
+	err = getaddrinfo(hostname, NULL, &hints, &ai);
+	if (err) {
+		LOG_WRN("Failed to resolve hostname %s on %s",
+			log_strdup(hostname), str_family(family));
+		return -EHOSTUNREACH;
 	}
 
-	if (cfg->apn != NULL) {
-		LOG_INF("Setting up APN: %s", log_strdup(cfg->apn));
-		err = socket_apn_set(fd, cfg->apn);
-		if (err) {
-			goto cleanup;
-		}
-	}
+	*sa = *(ai->ai_addr);
+	freeaddrinfo(ai);
 
-	if (proto == IPPROTO_TLS_1_2) {
-		LOG_INF("Setting up TLS credentials");
-		err = socket_sectag_set(fd, cfg->sec_tag);
-		if (err) {
-			goto cleanup;
-		}
-	}
+	return 0;
+}
 
-	/* Not connected */
-	err = -1;
+static int client_connect(struct download_client *dl, const char *host,
+			  struct sockaddr *sa, int *fd)
+{
+	int err;
+	int type;
+	uint16_t port;
+	socklen_t addrlen;
 
-	for (addr = info; addr != NULL; addr = addr->ai_next) {
-		struct sockaddr * const sa = addr->ai_addr;
-
-		switch (sa->sa_family) {
-		case AF_INET6:
-			((struct sockaddr_in6 *)sa)->sin6_port = port;
-			break;
-		case AF_INET:
-			((struct sockaddr_in *)sa)->sin_port = port;
-			break;
-		}
-
-		err = connect(fd, sa, addr->ai_addrlen);
-		if (err) {
-			/* Try next address */
-			LOG_ERR("Unable to connect, errno %d", errno);
+	err = url_parse_proto(host, &dl->proto, &type);
+	if (err) {
+		LOG_DBG("Protocol not specified, defaulting to HTTP(S)");
+		type = SOCK_STREAM;
+		if (dl->config.sec_tag != -1) {
+			dl->proto = IPPROTO_TLS_1_2;
 		} else {
-			/* Connected */
+			dl->proto = IPPROTO_TCP;
+		}
+	}
+
+	if (dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2) {
+		if (!IS_ENABLED(CONFIG_COAP)) {
+			return -EPROTONOSUPPORT;
+		}
+	}
+
+	if (dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2) {
+		if (dl->config.sec_tag == -1) {
+			LOG_WRN("No security tag provided for TLS/DTLS");
+			return -EINVAL;
+		}
+	}
+
+	err = url_parse_port(host, &port);
+	if (err) {
+		switch (dl->proto) {
+		case IPPROTO_TLS_1_2:
+			port = 443;
+			break;
+		case IPPROTO_TCP:
+			port = 80;
+			break;
+		case IPPROTO_DTLS_1_2:
+			port = 5684;
+			break;
+		case IPPROTO_UDP:
+			port = 5683;
 			break;
 		}
+		LOG_DBG("Port not specified, using default: %d", port);
+	}
+
+	switch (sa->sa_family) {
+	case AF_INET6:
+		SIN6(sa)->sin6_port = htons(port);
+		addrlen = sizeof(struct sockaddr_in6);
+		break;
+	case AF_INET:
+		SIN(sa)->sin_port = htons(port);
+		addrlen = sizeof(struct sockaddr_in);
+		break;
+	default:
+		return -EAFNOSUPPORT;
+	}
+
+	LOG_DBG("family: %d, type: %d, proto: %d",
+		sa->sa_family, type, dl->proto);
+
+	*fd = socket(sa->sa_family, type, dl->proto);
+	if (*fd < 0) {
+		LOG_ERR("Failed to create socket, err %d", errno);
+		return -errno;
+	}
+
+	if (dl->config.apn != NULL && strlen(dl->config.apn)) {
+		err = socket_apn_set(*fd, dl->config.apn);
+		if (err) {
+			goto cleanup;
+		}
+	}
+
+	if ((dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2)
+	     && (dl->config.sec_tag != -1)) {
+		err = socket_sectag_set(*fd, dl->config.sec_tag);
+		if (err) {
+			goto cleanup;
+		}
+	}
+
+	LOG_INF("Connecting to %s", log_strdup(host));
+	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
+		*fd, addrlen, str_family(sa->sa_family), port);
+
+	err = connect(*fd, sa, addrlen);
+	if (err) {
+		LOG_ERR("Unable to connect, errno %d", errno);
+		err = -errno;
 	}
 
 cleanup:
-	freeaddrinfo(info);
-
 	if (err) {
 		/* Unable to connect, close socket */
-		close(fd);
-		fd = -1;
+		close(*fd);
+		*fd = -1;
 	}
 
-	return fd;
+	return err;
 }
 
-static int socket_send(const struct download_client *client, size_t len)
+int socket_send(const struct download_client *client, size_t len)
 {
 	int sent;
 	size_t off = 0;
@@ -234,7 +281,7 @@ static int socket_send(const struct download_client *client, size_t len)
 	while (len) {
 		sent = send(client->fd, client->buf + off, len, 0);
 		if (sent <= 0) {
-			return -EIO;
+			return -errno;
 		}
 
 		off += sent;
@@ -244,116 +291,17 @@ static int socket_send(const struct download_client *client, size_t len)
 	return 0;
 }
 
-static int get_request_send(struct download_client *client)
+static int request_send(struct download_client *dl)
 {
-	int err;
-	int len;
-	size_t off;
-
-	__ASSERT_NO_MSG(client);
-	__ASSERT_NO_MSG(client->host);
-	__ASSERT_NO_MSG(client->file);
-
-	/* Offset of last byte in range (Content-Range) */
-	off = client->progress + client->fragment_size - 1;
-
-	if (client->file_size != 0) {
-		/* Don't request bytes past the end of file */
-		off = MIN(off, client->file_size);
-	}
-
-	len = snprintf(client->buf, CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
-		       GET_TEMPLATE, client->file, client->host,
-		       client->progress, off);
-
-	if (len < 0 || len > CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE) {
-		LOG_ERR("Cannot create GET request, buffer too small");
-		return -ENOMEM;
-	}
-
-	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
-	}
-
-	LOG_DBG("Sending HTTP request");
-	err = socket_send(client, len);
-	if (err) {
-		LOG_ERR("Failed to send HTTP request, errno %d", errno);
-		return err;
-	}
-
-	return 0;
-}
-
-/* Returns:
- *  1 while the header is being received
- *  0 if the header has been fully received
- * -1 on error
- */
-static int header_parse(struct download_client *client)
-{
-	char *p;
-	size_t hdr;
-
-	p = strstr(client->buf, "\r\n\r\n");
-	if (!p) {
-		/* Awaiting full GET response */
-		LOG_DBG("Awaiting full header in response");
-		return 1;
-	}
-
-	/* Offset of the end of the HTTP header in the buffer */
-	hdr = p + strlen("\r\n\r\n") - client->buf;
-
-	__ASSERT(hdr < sizeof(client->buf), "Buffer overflow");
-
-	LOG_DBG("GET header size: %u", hdr);
-
-	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(client->buf, hdr, "GET");
-	}
-
-	/* If file size is not known, read it from the header */
-	if (client->file_size == 0) {
-		p = strstr(client->buf, "Content-Range: bytes");
-		if (!p) {
-			/* Cannot continue */
-			LOG_ERR("Server did not send "
-				"\"Content-Range\" in response");
-			return -1;
+	switch (dl->proto) {
+	case IPPROTO_TCP:
+	case IPPROTO_TLS_1_2:
+		return http_get_request_send(dl);
+	case IPPROTO_UDP:
+	case IPPROTO_DTLS_1_2:
+		if (IS_ENABLED(CONFIG_COAP)) {
+			return coap_request_send(dl);
 		}
-		p = strstr(p, "/");
-		if (!p) {
-			/* Cannot continue */
-			LOG_ERR("Server did not send file size in response");
-			return -1;
-		}
-
-		client->file_size = atoi(p + 1);
-
-		LOG_DBG("File size = %d", client->file_size);
-	}
-
-	p = strstr(client->buf, "Connection: close");
-	if (p) {
-		LOG_WRN("Peer closed connection, will attempt to re-connect");
-		client->connection_close = true;
-	}
-
-	if (client->offset != hdr) {
-		/* The current buffer contains some payload bytes.
-		 * Copy them at the beginning of the buffer
-		 * then update the offset.
-		 */
-		LOG_WRN("Copying %u payload bytes", client->offset - hdr);
-		memcpy(client->buf, client->buf + hdr, client->offset - hdr);
-
-		client->offset -= hdr;
-	} else {
-		/* Reset the offset.
-		 * The payload is received in an empty buffer.
-		 */
-		client->offset = 0;
 	}
 
 	return 0;
@@ -361,10 +309,7 @@ static int header_parse(struct download_client *client)
 
 static int fragment_evt_send(const struct download_client *client)
 {
-	__ASSERT(client->offset <= client->fragment_size,
-		 "Fragment overflow!");
-
-	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_MAX_RESPONSE_SIZE,
+	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 		 "Buffer overflow!");
 
 	const struct download_client_evt evt = {
@@ -411,7 +356,7 @@ static int reconnect(struct download_client *dl)
 
 void download_thread(void *client, void *a, void *b)
 {
-	int rc;
+	int rc = 0;
 	size_t len;
 	struct download_client *const dl = client;
 
@@ -434,36 +379,40 @@ restart_and_suspend:
 			 * and it has been accounted in our progress, we have
 			 * to hand it to the application before discarding it.
 			 */
-			if ((dl->offset > 0) && (dl->has_header)) {
+			if ((dl->offset > 0) && (dl->http.has_header)) {
 				rc = fragment_evt_send(dl);
 				if (rc) {
 					/* Restart and suspend */
-					LOG_INF("Fragment refused, download "
-						"stopped.");
+					LOG_INF("Fragment refused, download stopped.");
 					break;
 				}
 			}
 
 			if (len == -1) {
+				if (errno == ETIMEDOUT) {
+					LOG_DBG("Socket timeout, resending");
+					goto send_again;
+				}
 				LOG_ERR("Error in recv(), errno %d", errno);
-				rc = error_evt_send(dl, ENOTCONN);
 			}
 
 			if (len == 0) {
 				LOG_WRN("Peer closed connection!");
-				rc = error_evt_send(dl, ECONNRESET);
 			}
 
+			/* Notify the application of the error via en event.
+			 * Attempt to reconnect and resume the download
+			 * if the application returns Zero via the event.
+			 */
+			rc = error_evt_send(dl, ECONNRESET);
 			if (rc) {
 				/* Restart and suspend */
 				break;
 			}
 
 			rc = reconnect(dl);
-			if (rc == -ENETUNREACH) {
-				LOG_WRN("Network is down, "
-					"suspending thread");
-				error_evt_send(dl, ENETUNREACH);
+			if (rc) {
+				error_evt_send(dl, EHOSTDOWN);
 				break;
 			}
 
@@ -472,48 +421,31 @@ restart_and_suspend:
 
 		LOG_DBG("Read %d bytes from socket", len);
 
-		/* Accumulate buffer offset */
-		dl->offset += len;
-
-		if (!dl->has_header) {
-			rc = header_parse(dl);
+		if (dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) {
+			rc = http_parse(client, len);
 			if (rc > 0) {
-				/* Wait for payload */
+				/* Wait for more data (fragment/header) */
 				continue;
 			}
-			if (rc < 0) {
-				/* Something was wrong with the header.
-				 * Restart and suspend, no point in retrying.
-				 */
-				error_evt_send(dl, EBADMSG);
-				break;
-			}
-
-			dl->has_header = true;
+		} else if (IS_ENABLED(CONFIG_COAP)) {
+			rc = coap_parse(client, len);
 		}
 
-		/* Accumulate overall file progress.
-		 *
-		 * If the last recv() call read an HTTP header,
-		 * the offset has been moved to the end of the header in
-		 * header_parse(). Thus, we accumulate the offset
-		 * to the progress.
-		 *
-		 * If the last recv() call received only a HTTP message body,
-		 * then we accumulate 'len'.
-		 *
-		 */
-		dl->progress += MIN(dl->offset, len);
-
-		/* Have we received a whole fragment or the whole file? */
-		if ((dl->offset < dl->fragment_size) &&
-		    (dl->progress != dl->file_size)) {
-			LOG_DBG("Awaiting full fragment (%u)", dl->offset);
-			continue;
+		if (rc < 0) {
+			/* Something was wrong with the packet
+			 * Restart and suspend
+			 */
+			error_evt_send(dl, EBADMSG);
+			break;
 		}
 
-		LOG_INF("Downloaded %u/%u bytes (%d%%)", dl->progress,
-			dl->file_size, (dl->progress * 100) / dl->file_size);
+		if (dl->file_size) {
+			LOG_INF("Downloaded %u/%u bytes (%d%%)",
+				dl->progress, dl->file_size,
+				(dl->progress * 100) / dl->file_size);
+		} else {
+			LOG_INF("Downloaded %u bytes", dl->progress);
+		}
 
 		/* Send fragment to application.
 		 * If the application callback returns non-zero, stop.
@@ -536,36 +468,33 @@ restart_and_suspend:
 		}
 
 		/* Attempt to reconnect if the connection was closed */
-		if (dl->connection_close) {
-			dl->connection_close = false;
+		if (dl->http.connection_close) {
+			dl->http.connection_close = false;
 			reconnect(dl);
 		}
 
-		/* Request next fragment */
-		/* Send a GET request for the next bytes */
 send_again:
 		dl->offset = 0;
-		dl->has_header = false;
+		/* Request next fragment, if necessary (HTTPS/CoAP) */
+		if (dl->proto != IPPROTO_TCP || len == 0) {
+			dl->http.has_header = false;
 
-		rc = get_request_send(dl);
-		if (rc) {
-			if (errno == EHOSTDOWN) {
-				continue;
-			}
-
-			rc = error_evt_send(dl, ECONNRESET);
+			rc = request_send(dl);
 			if (rc) {
-				/* Restart and suspend */
-				break;
+				rc = error_evt_send(dl, ECONNRESET);
+				if (rc) {
+					/* Restart and suspend */
+					break;
+				}
+
+				rc = reconnect(dl);
+				if (rc) {
+					error_evt_send(dl, EHOSTDOWN);
+					break;
+				}
+
+				goto send_again;
 			}
-			rc = reconnect(dl);
-			if (rc == ENETUNREACH) {
-				LOG_WRN("Network is down, "
-					"suspending download thread");
-				error_evt_send(dl, ENETUNREACH);
-				break;
-			}
-			goto send_again;
 		}
 	}
 
@@ -599,6 +528,7 @@ int download_client_connect(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config)
 {
 	int err;
+	struct sockaddr sa;
 
 	if (client == NULL || host == NULL || config == NULL) {
 		return -EINVAL;
@@ -610,14 +540,6 @@ int download_client_connect(struct download_client *client, const char *host,
 		}
 	}
 
-	if (config->sec_tag != -1) {
-		client->fragment_size =
-			CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE;
-	} else {
-		client->fragment_size =
-			CONFIG_DOWNLOAD_CLIENT_MAX_FRAGMENT_SIZE;
-	}
-
 	if (client->fd != -1) {
 		/* Already connected */
 		return 0;
@@ -625,26 +547,23 @@ int download_client_connect(struct download_client *client, const char *host,
 
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		client->fd =
-			resolve_and_connect(AF_INET6, host, config);
+		err = host_lookup(host, AF_INET6, config->apn, &sa);
 	}
-	if (client->fd < 0) {
-		client->fd =
-			resolve_and_connect(AF_INET, host, config);
+	if (err || !IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
+		err = host_lookup(host, AF_INET, config->apn, &sa);
 	}
 
-	if (client->fd < 0) {
-		if ((client->fd == DNS_EAI_SYSTEM) && (errno == ENETUNREACH)) {
-			return -ENETUNREACH;
-		}
-
-		return -EINVAL;
+	if (err) {
+		return err;
 	}
 
-	client->host = host;
 	client->config = *config;
+	client->host = host;
 
-	LOG_INF("Connected to %s", log_strdup(host));
+	err = client_connect(client, host, &sa, &client->fd);
+	if (client->fd < 0) {
+		return err;
+	}
 
 	/* Set socket timeout, if configured */
 	err = socket_timeout_set(client->fd);
@@ -679,8 +598,12 @@ int download_client_start(struct download_client *client, const char *file,
 {
 	int err;
 
-	if (client == NULL || client->fd < 0) {
+	if (client == NULL) {
 		return -EINVAL;
+	}
+
+	if (client->fd < 0) {
+		return -ENOTCONN;
 	}
 
 	client->file = file;
@@ -688,15 +611,19 @@ int download_client_start(struct download_client *client, const char *file,
 	client->progress = from;
 
 	client->offset = 0;
-	client->has_header = false;
+	client->http.has_header = false;
 
-	LOG_INF("Downloading: %s [%u]", log_strdup(client->file),
-		client->progress);
+	if (IS_ENABLED(CONFIG_COAP)) {
+		coap_block_init(client, from);
+	}
 
-	err = get_request_send(client);
+	err = request_send(client);
 	if (err) {
 		return err;
 	}
+
+	LOG_INF("Downloading: %s [%u]", log_strdup(client->file),
+		client->progress);
 
 	/* Let the thread run */
 	k_thread_resume(client->tid);
