@@ -11,6 +11,7 @@
 #include <sys/__assert.h>
 #include <mpsl.h>
 #include <mpsl_timeslot.h>
+#include "mpsl_fem_internal.h"
 #include "multithreading_lock.h"
 #if defined(CONFIG_NRFX_DPPI)
 #include <nrfx_dppi.h>
@@ -183,6 +184,13 @@ static int mpsl_lib_init(const struct device *dev)
 			   mpsl_rtc0_isr_wrapper, IRQ_ZERO_LATENCY);
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_radio_isr_wrapper, IRQ_ZERO_LATENCY);
+
+#if IS_ENABLED(CONFIG_MPSL_FEM)
+	err = mpsl_fem_configure();
+	if (err) {
+		return err;
+	}
+#endif
 
 	return 0;
 }
