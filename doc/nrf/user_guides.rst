@@ -20,6 +20,7 @@ They introduce you to important concepts and guide you through developing your a
    ug_thread
    ug_zigbee
    ug_ble_controller
+   ug_radio_fem
    ug_esb
    ug_multi_image
    ug_bootloader

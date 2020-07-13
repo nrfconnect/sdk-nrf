@@ -24,6 +24,85 @@ config MPSL_TIMESLOT_SESSION_COUNT
 	help
 	  Maximum number of timeslot sessions.
 
+DT_COMPAT_NORDIC_NRF21540_GPIO := nordic,nrf21540_gpio
+DT_COMPAT_SKYWORKS_SKY66112_11 := skyworks,sky66112-11
+
+config MPSL_FEM
+	bool "Radio front-end module (FEM) support"
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540_GPIO)) || \
+			$(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_SKYWORKS_SKY66112_11))
+	help
+	  Controls if front-end module (FEM) it to be configured automatically
+	  when MPSL is initialized. Default value and type of FEM to use
+	  is determined by the devicetree.
+
+if MPSL_FEM
+
+choice MPSL_FEM_CHOICE
+	prompt "Radio front-end module (FEM) type"
+	default MPSL_FEM_NRF21540_GPIO if \
+		$(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540_GPIO))
+	default MPSL_FEM_SKY66112_11 if \
+		$(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_SKYWORKS_SKY66112_11))
+
+config MPSL_FEM_NRF21540_GPIO
+	bool "nRF21540 front-end module in GPIO mode"
+
+config MPSL_FEM_SKY66112_11
+	bool "SKY66112-11 front-end module"
+
+endchoice	# MPSL_FEM_CHOICE
+
+if MPSL_FEM_NRF21540_GPIO
+
+config MPSL_FEM_NRF21540_GPIO_GPIOTE_TX_EN
+	int "GPIOTE channel number used to control TX_EN pin of the front-end module"
+	default 7
+
+config MPSL_FEM_NRF21540_GPIO_GPIOTE_RX_EN
+	int "GPIOTE channel number used to control RX_EN pin of the front-end module"
+	default 6
+
+config MPSL_FEM_NRF21540_GPIO_GPIOTE_PDN
+	int "GPIOTE channel number used to control PDN pin of the front-end module"
+	default 5
+
+config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_0
+	int "PPI channel reserved for the front-end module"
+	default 15
+
+config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_1
+	int "PPI channel reserved for the front-end module"
+	default 16
+
+config MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_2
+	int "PPI channel reserved for the front-end module"
+	default 5
+
+endif
+
+if MPSL_FEM_SKY66112_11
+
+config MPSL_FEM_SKY66112_11_GPIOTE_CTX
+	int "GPIOTE channel number used to control CTX pin of the front-end module"
+	default 7
+
+config MPSL_FEM_SKY66112_11_GPIOTE_CRX
+	int "GPIOTE channel number used to control CRX pin of the front-end module"
+	default 6
+
+config MPSL_FEM_SKY66112_11_PPI_CHANNEL_0
+	int "PPI channel reserved for the front-end module"
+	default 15
+
+config MPSL_FEM_SKY66112_11_PPI_CHANNEL_1
+	int "PPI channel reserved for the front-end module"
+	default 16
+
+endif
+
+endif	# MPSL_FEM
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

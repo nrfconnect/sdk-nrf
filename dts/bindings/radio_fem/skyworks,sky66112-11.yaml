@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+
+description: >
+    This is a representation of the Skyworks SKY66112-11 Radio Front-End module.
+
+compatible: "skyworks,sky66112-11"
+
+include: base.yaml
+
+properties:
+    ctx-pin:
+        type: int
+        description: >
+            Pin number of the SOC controlling CTX pin of the SKY66112-11
+
+    crx-pin:
+        type: int
+        description: >
+            Pin number of the SOC controlling CRX pin of the SKY66112-11
+
+    ctx-settle-time-us:
+        type: int
+        default: 23
+        description: >
+            Settling time in microseconds from activation of CTX to trasnsmit.
+
+    crx-settle-time-us:
+        type: int
+        default: 5
+        description: >
+            Settling time in microseconds from activation of CRX to receive.
+
+    tx-gain-db:
+        type: int
+        default: 22
+        description: >
+            TX gain of the PA amplifier of SKY66112-11 in dB.
+
+    rx-gain-db:
+        type: int
+        default: 11
+        description: >
+            RX gain of the LNA amplifier of SKY66112-11 in dB.

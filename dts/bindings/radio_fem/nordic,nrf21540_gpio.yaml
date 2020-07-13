@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+
+description: >
+    This is a representation of the nRF21540 Radio Front-End module
+
+compatible: "nordic,nrf21540_gpio"
+
+include: base.yaml
+
+properties:
+    tx-en-pin:
+        type: int
+        description: >
+            Pin number of the SOC controlling TX_EN pin of the nRF21540
+
+    rx-en-pin:
+        type: int
+        description: >
+            Pin number of the SOC controlling RX_EN pin of the nRFf21540
+
+    pdn-pin:
+        type: int
+        description: >
+            Pin number of the SOC controlling PDN pin of the nRF21540
+
+    tx-en-settle-time-us:
+        type: int
+        default: 13
+        description: >
+            Settling time in microseconds from state PG to TX
+
+    rx-en-settle-time-us:
+        type: int
+        default: 13
+        description: >
+            Settling time in microseconds from state PG to RX
+
+    pdn-settle-time-us:
+        type: int
+        default: 18
+        description: >
+            Settling time in microseconds from state PD to PG
+
+    trx-hold-time-us:
+        type: int
+        default: 5
+        description: >
+            Power-off time in microseconds when changing from RX or TX to PG
+
+    tx-gain-db:
+        type: int
+        default: 20
+        description: >
+            TX gain of the nRF21540 PA amplifier in dB.
+
+    rx-gain-db:
+        type: int
+        default: 20
+        description: >
+            RX gain of the nRF21540 LNA amplifier in dB.

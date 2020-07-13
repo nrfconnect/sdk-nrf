@@ -4,12 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 
+#include <devicetree.h>
 #include <init.h>
 #include <irq.h>
 #include <kernel.h>
 #include <logging/log.h>
 #include <mpsl.h>
 #include <mpsl_timeslot.h>
+#include <mpsl_fem_config_nrf21540_gpio.h>
+#include <mpsl_fem_config_simple_gpio.h>
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
@@ -110,6 +113,125 @@ static u8_t m_config_clock_source_get(void)
 #endif
 }
 
+#if CONFIG_MPSL_FEM_NRF21540_GPIO
+static int fem_nrf21540_gpio_configure(void)
+{
+	/* FEM configuration requires gpiote and ppi channels.
+	 * Currently there is no reliable common method to dynamically
+	 * allocate such channels. FEM module needs only "some" channels
+	 * to use whichever they are, but FEM needs them for exclusive use
+	 * and does not enable them immediately.
+	 *
+	 * When common api to assign gpiote and ppi channels is available
+	 * current solution based on macros coming from Kconfig should be
+	 * reworked.
+	 */
+
+#if !DT_NODE_EXISTS(DT_NODELABEL(nrf_radio_fem))
+#error Node with label 'nrf_radio_fem' not found in the devicetree.
+#endif
+
+	mpsl_fem_nrf21540_gpio_interface_config_t cfg = {
+		.fem_config = {
+			.pa_time_gap_us  =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_settle_time_us),
+			.lna_time_gap_us =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_settle_time_us),
+			.pdn_settle_us   =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), pdn_settle_time_us),
+			.trx_hold_us     =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), trx_hold_time_us),
+			.pa_gain_db      =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), tx_gain_db),
+			.lna_gain_db     =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), rx_gain_db)
+		},
+		.pa_pin_config = {
+			.enable       = true,
+			.active_high  = true,
+			.gpio_pin     = DT_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_pin),
+			.gpiote_ch_id = CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_TX_EN
+		},
+		.lna_pin_config = {
+			.enable       = true,
+			.active_high  = true,
+			.gpio_pin     = DT_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_pin),
+			.gpiote_ch_id = CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_RX_EN
+		},
+		.pdn_pin_config = {
+			.enable       = true,
+			.active_high  = true,
+			.gpio_pin     = DT_PROP(DT_NODELABEL(nrf_radio_fem), pdn_pin),
+			.gpiote_ch_id = CONFIG_MPSL_FEM_NRF21540_GPIO_GPIOTE_PDN
+		},
+		.ppi_channels = {
+			CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_0,
+			CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_1,
+			CONFIG_MPSL_FEM_NRF21540_GPIO_PPI_CHANNEL_2
+		}
+	};
+
+	return mpsl_fem_nrf21540_gpio_interface_config_set(&cfg);
+}
+#endif
+
+#if CONFIG_MPSL_FEM_SKY66112_11
+static int fem_sky66112_11_configure(void)
+{
+#if !DT_NODE_EXISTS(DT_NODELABEL(nrf_radio_fem))
+#error Node with label 'nrf_radio_fem' not found in the devicetree.
+#endif
+
+	mpsl_fem_simple_gpio_interface_config_t cfg = {
+		.fem_config = {
+			.pa_time_gap_us  =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), ctx_settle_time_us),
+			.lna_time_gap_us =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), crx_settle_time_us),
+			.pa_gain_db      =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), tx_gain_db),
+			.lna_gain_db     =
+				DT_PROP(DT_NODELABEL(nrf_radio_fem), rx_gain_db)
+		},
+		.pa_pin_config = {
+			.enable       = true,
+			.active_high  = true,
+			.gpio_pin     = DT_PROP(DT_NODELABEL(nrf_radio_fem), ctx_pin),
+			.gpiote_ch_id = CONFIG_MPSL_FEM_SKY66112_11_GPIOTE_CTX
+		},
+		.lna_pin_config = {
+			.enable       = true,
+			.active_high  = true,
+			.gpio_pin     = DT_PROP(DT_NODELABEL(nrf_radio_fem), crx_pin),
+			.gpiote_ch_id = CONFIG_MPSL_FEM_SKY66112_11_GPIOTE_CRX
+		},
+		.ppi_channels = {
+			CONFIG_MPSL_FEM_SKY66112_11_PPI_CHANNEL_0,
+			CONFIG_MPSL_FEM_SKY66112_11_PPI_CHANNEL_1
+		}
+	};
+
+	return mpsl_fem_simple_gpio_interface_config_set(&cfg);
+}
+#endif
+
+static int fem_configure(void)
+{
+	int err = 0;
+
+#if CONFIG_MPSL_FEM_NRF21540_GPIO
+	err = fem_nrf21540_gpio_configure();
+#elif CONFIG_MPSL_FEM_SKY66112_11
+	err = fem_sky66112_11_configure();
+#elif CONFIG_MSPL_FEM
+#error Incomplete CONFIG_MPSL_FEM configuration. No supported FEM type found.
+#else
+	/* No FEM in use */
+#endif
+
+	return err;
+}
+
 static int mpsl_lib_init(struct device *dev)
 {
 	ARG_UNUSED(dev);
@@ -146,6 +268,11 @@ static int mpsl_lib_init(struct device *dev)
 			   mpsl_rtc0_isr_wrapper, IRQ_ZERO_LATENCY);
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_radio_isr_wrapper, IRQ_ZERO_LATENCY);
+
+	err = fem_configure();
+	if (err) {
+		return err;
+	}
 
 	return 0;
 }
