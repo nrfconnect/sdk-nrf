@@ -11,6 +11,7 @@ However, it customizes Zephyr's sample to the NCS requirements (for example, by 
 * Increased mbedTLS heap size.
 * Lowered main stack size to increase user application space.
 * No obsolete configuration options.
+* Vendor hooks for NCP allowing User to extend handled properties by its own, customized functionalities.
 
 Overview
 ********
@@ -24,6 +25,27 @@ Additionally, it comes with the following functionalities enabled:
 
 * :option:`CONFIG_OPENTHREAD_BORDER_AGENT` - Enables Border Agent support.
 * :option:`CONFIG_OPENTHREAD_DHCP6_SERVER` - Enables DHCPv6 server capability.
+
+.. _ot_ncp_sample_features:
+
+Additional features for NCP sample
+==================================
+
+Besides its basic functionalities, this sample supports additional features, which can be turned on or off independently.
+These features are defined as overlays to the main project configuration file.
+
+The following features are available in the NCP sample:
+
+* :file:`overlay-vendor_hook.conf` - Enables vendor hooks feature support.
+
+Vendor hooks
+------------
+
+The vendor hook feature allows you to define your own commands and properties for the Spinel protocol, and extend the standard set used in communication with NCP.
+Thanks to this feature, you can add new custom functionalities and manage them from host device by using serial interface - in the same way as the default functionalities.
+
+For more detailed information about the vendor hooks feature and host device configuration, see :ref:`ug_thread_vendor_hooks`.
+For information about how to enable the vendor hook feature for this sample, see `Enabling vendor hook feature`_.
 
 Requirements
 ************
@@ -46,9 +68,9 @@ User interface
 All the interactions with the application are handled using serial communication.
 
 For the interaction with the application, this sample uses `wpantund`_ process with wpanctl commands.
-It is also possible to communicate with NCP board using `pyspinel`_ commands.
+It is also possible to communicate with NCP board using `PySpinel`_ commands.
 
-You can use your own application instead of wpantund and pyspinel provided that it supports the spinel communication protocol.
+You can use your own application instead of wpantund and PySpinel provided that it supports the spinel communication protocol.
 
 Sample by default reconfigures baudrate 1000000 bit/s for serial communication.
 
@@ -60,6 +82,38 @@ Building and running
 |enable_thread_before_testing|
 
 .. include:: /includes/build_and_run.txt
+
+.. _ot_ncp_sample_features_enabling:
+
+Enabling additional features
+============================
+
+When building the sample, you can enable :ref:`additional sample features <ot_ncp_sample_features>`.
+To do this, modify :makevar:`OVERLAY_CONFIG`.
+For example, to enable vendor hooks, set :file:`overlay-vendor_hook.conf`.
+See :ref:`cmake_options` for instructions on how to add this option.
+
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+Enabling vendor hook feature
+----------------------------
+
+For this sample, handling of extension commands and properties is done through the vendor hook :file:`.cpp` file, which is dynamically attached to the NCP component during the compilation.
+
+To enable the feature:
+
+1. Provide the implementation of this file.
+#. Insert information about the file location in the ``CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`` field.
+   This field is located in the overlay configuration file (see :file:`overlay-vendor_hook.conf`).
+   The inserted path must be relative to the NCP sample directory.
+
+The NCP sample provides the vendor hook :file:`user_vendor_hook.cpp` file in the :file:`src` directory that demonstrates the proposed implementation of handler methods.
+You can either:
+
+* Use the provided :file:`user_vendor_hook.cpp` file.
+* Provide your own implementation and replace the ``CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`` option value in the overlay file with the path to your file.
+
+For information about how to test the vendor hook feature, see :ref:`ug_thread_vendor_hooks_testing`.
 
 Testing
 =======

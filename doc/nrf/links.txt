@@ -288,7 +288,7 @@
 
 .. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
 
-.. _`pyspinel`: https://github.com/openthread/pyspinel/blob/master/README.md
+.. _`PySpinel`: https://github.com/openthread/pyspinel/blob/master/README.md
 
 .. ### Links to Zigbee
 
