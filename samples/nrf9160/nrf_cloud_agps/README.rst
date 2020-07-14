@@ -96,13 +96,213 @@ After programming the sample to your nRF9160-based device, test it by performing
 #. Log into your nRF Cloud account and select your device.
 #. Power on the nRF9160-based device.
 #. The device connects to the LTE network and nRF Cloud.
+
+   .. code-block:: console
+
+	  -------------------------
+	  I: nRF Cloud and A-GPS sample has started
+	  I: Connecting to LTE network. This may take minutes.
+	  I: PSM mode requested
+	  +CEREG: 2,"7725","0138E000",7,0,0,"11100000","11100000"
+	  +CSCON: 1
+	  +CEREG: 1,"7725","0138E000",7,,,"00000010","00000110"
+	  I: Network registration status: Connected - home network
+
 #. Make sure that GPS has started by confirming that the device requests GPS assistance data and receives a response.
    You can do this by checking the logs.
+
+   .. code-block:: console
+
+          D: GPS socket created, fd: 1232491587
+	  I: CLOUD_EVT_CONNECTED
+	  I: CLOUD_EVT_DATA_RECEIVED
+	  I: CLOUD_EVT_PAIR_DONE
+	  I: CLOUD_EVT_READY
+	  I: CLOUD_EVT_DATA_RECEIVED
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 3
+	  D: Sent A-GPS data to modem, type: 7
+	  D: Sent A-GPS data to modem, type: 8
+	  D: Sent A-GPS data to modem, type: 1
+	  D: Sent A-GPS data to modem, type: 4
+	  D: Sent A-GPS data to modem, type: 9
+	  I: A-GPS data successfully processed
+	  I: GPS will start in 3 seconds
+	  I: CLOUD_EVT_DATA_RECEIVED
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  D: Sent A-GPS data to modem, type: 2
+	  I: A-GPS data successfully processed
+	  I: GPS will start in 3 seconds
+	  D: GPS mode is enabled
+	  D: GPS operational
+
 #. Observe that the GPS starts to track the position based on the satellite data received.
+
+   .. code-block:: console
+
+	  I: Periodic GPS search started with interval 240 s, timeout 120 s
+	  D: A-GPS data update needed
+	  D: Waiting for time window to operate
+	  +CSCON: 0
+	  D: GPS has time window to operate
+	  D: Tracking: 0 Using: 0 Unhealthy: 0
+	  D: Seconds since last fix 23
+	  I: Tracking: 29
+	  D: Tracking SV 29: not used,     healthy
+	  D: Tracking: 1 Using: 0 Unhealthy: 0
+	  D: Seconds since last fix 24
+	  I: Tracking: 5  29
+	  D: Tracking SV 29: not used,     healthy
+	  D: Tracking SV  5: not used,     healthy
+	  D: Tracking: 2 Using: 0 Unhealthy: 0
+	  D: Seconds since last fix 25
+	  I: Tracking: 5  9  21  26  29
+	  D: Tracking SV 29: not used,     healthy
+	  D: Tracking SV  5: not used,     healthy
+	  D: Tracking SV  9: not used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26: not used,     healthy
+	  D: Tracking: 5 Using: 0 Unhealthy: 0
+	  D: Seconds since last fix 26
+	  D: Tracking SV 29: not used,     healthy
+	  D: Tracking SV  5: not used,     healthy
+	  D: Tracking SV  9: not used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26: not used,     healthy
+	  D: Tracking: 5 Using: 0 Unhealthy: 0
+	  D: Seconds since last fix 27
+	  D: Tracking SV 29: not used,     healthy
+	  D: Tracking SV  5: not used,     healthy
+	  D: Tracking SV  9: not used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26: not used,     healthy
+	  D: Tracking: 5 Using: 0 Unhealthy: 0
+	  D: Seconds since last fix 28
+	  D: Tracking SV 29: not used,     healthy
+	  D: Tracking SV  5: not used,     healthy
+	  D: Tracking SV  9: not used,     healthy
+          D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26: not used,     healthy
+	  D: Tracking: 5 Using: 0 Unhealthy: 0
+	  D: Seconds since last fix 29
+	  D: Tracking SV 29:     used,     healthy
+	  D: Tracking SV  5:     used,     healthy
+	  D: Tracking SV  9:     used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26:     used,     healthy
+	  D: Tracking: 5 Using: 4 Unhealthy: 0
+	  D: Seconds since last fix 30
+	  D: Tracking SV 29:     used,     healthy
+	  D: Tracking SV  5:     used,     healthy
+	  D: Tracking SV  9:     used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26:     used,     healthy
+	  D: Tracking: 5 Using: 4 Unhealthy: 0
+	  D: Seconds since last fix 31
+	  D: Tracking SV 29:     used,     healthy
+	  D: Tracking SV  5:     used,     healthy
+	  D: Tracking SV  9:     used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26:     used,     healthy
+	  D: Tracking: 5 Using: 4 Unhealthy: 0
+	  D: Seconds since last fix 32
+	  D: Tracking SV 29:     used,     healthy
+	  D: Tracking SV  5:     used,     healthy
+	  D: Tracking SV  9:     used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26:     used,     healthy
+	  D: Tracking: 5 Using: 4 Unhealthy: 0
+	  D: Seconds since last fix 33
+	  D: PVT: Position fix
+	  D: Stopping GPS
+
 #. Observe that the current position of the device shows up on the GPS position map in nRF Cloud, after acquiring the GPS position fix.
+   The position details are also displayed on the terminal.
+
+   .. code-block:: console
+
+          I: ---------       FIX       ---------
+	  I: Time to fix: 20 seconds
+	  I: Longitude:  5.399481
+	  Latitude:   61.362466
+	  Altitude:   10.276114
+	  Speed:      0.118597
+	  Heading:    0.000000
+	  Date:       09-07-2020
+	  Time (UTC): 08:52:29
+
+	  I: -----------------------------------
+	  D: Tracking SV 29:     used,     healthy
+	  D: Tracking SV  5:     used,     healthy
+	  D: Tracking SV  9:     used,     healthy
+	  D: Tracking SV 21: not used,     healthy
+	  D: Tracking SV 26:     used,     healthy
+	  D: Tracking: 5 Using: 4 Unhealthy: 0
+	  D: Seconds since last fix 0
+	  D: NMEA: Position fix
+	  I: GPS position sent to cloud
+
+
 #. Optionally press Button 1 and observe that the predefined message is sent from the device to nRF Cloud.
    Note that this interrupts the GPS search for a period of time since LTE requires the use of the radio resources of the device.
-
 
 Dependencies
 ************
