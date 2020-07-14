@@ -10,8 +10,10 @@ set(NRF_SUPPORTED_BOARDS
 	nrf52833dk_nrf52833
 )
 
+set(OT_NCP_VENDOR_HOOK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(openthread_ncp)
 
-target_sources(app PRIVATE src/main.c)
+target_sources(app PRIVATE src/main.c src/nrf_802154_radio_wrapper.c)
