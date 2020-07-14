@@ -30,6 +30,8 @@ Kconfig*                                  @tejlmand
 # All doc related files
 /doc/CMakeLists.txt                       @carlescufi
 /doc/scripts/                             @carlescufi
+/doc/static/                              @carlescufi
+/doc/themes/                              @carlescufi
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
 # All subfolders
