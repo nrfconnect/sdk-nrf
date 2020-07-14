@@ -440,18 +440,18 @@ _UPSTREAM = 'https://github.com/zephyrproject-rtos/zephyr'
 # Set of project paths blacklisted from inclusion in the NCS.
 _PROJECT_BLACKLIST = set(
     PurePath(p) for p in
-    ['modules/hal/atmel',
-     'modules/hal/esp-idf',
-     'modules/hal/qmsi',
+    ['modules/hal/altera',
+     'modules/hal/atmel',
      'modules/hal/cypress',
-     'modules/hal/openisa',
+     'modules/hal/esp-idf',
+     'modules/hal/infineon',
      'modules/hal/microchip',
+     'modules/hal/nxp',
+     'modules/hal/openisa',
+     'modules/hal/qmsi',
      'modules/hal/silabs',
      'modules/hal/stm32',
      'modules/hal/ti',
-     'modules/hal/nxp',
      'modules/hal/xtensa',
-     'modules/hal/altera',
-     'modules/hal/infineon',
      'modules/tee/tfm',
      ])
