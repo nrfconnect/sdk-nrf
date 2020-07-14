@@ -271,7 +271,7 @@ class NcsCompare(NcsWestCommand):
             current NCS west manifest-rev branches (i.e. the results of your
             most recent 'west update').
 
-            Use --verbose to include information on blacklisted
+            Use --verbose to include information on blocked
             upstream projects.'''))
 
     def do_add_parser(self, parser_adder):
@@ -303,22 +303,22 @@ class NcsCompare(NcsWestCommand):
                  if self.zephyr_rev != self.zephyr_sha else ''))
         log.inf()
 
-        present_blacklisted = []
+        present_blocked = []
         present_allowed = []
-        missing_blacklisted = []
+        missing_blocked = []
         missing_allowed = []
         for zp in self.z_pmap.values():
             nn = to_ncs_name(zp)
             present = nn in self.ncs_pmap
-            blacklisted = PurePath(zp.path) in _PROJECT_BLACKLIST
+            blocked = PurePath(zp.path) in _BLOCKED_PROJECTS
             if present:
-                if blacklisted:
-                    present_blacklisted.append(zp)
+                if blocked:
+                    present_blocked.append(zp)
                 else:
                     present_allowed.append(zp)
             else:
-                if blacklisted:
-                    missing_blacklisted.append(zp)
+                if blocked:
+                    missing_blocked.append(zp)
                 else:
                     missing_allowed.append(zp)
 
@@ -326,30 +326,30 @@ class NcsCompare(NcsWestCommand):
             for p in projects:
                 log.inf(f'{_name_and_path(p)}')
 
-        if missing_blacklisted and log.VERBOSE >= log.VERBOSE_NORMAL:
-            log.banner('blacklisted zephyr projects',
+        if missing_blocked and log.VERBOSE >= log.VERBOSE_NORMAL:
+            log.banner('blocked zephyr projects',
                        'not in nrf (these are all OK):')
-            print_lst(missing_blacklisted)
+            print_lst(missing_blocked)
 
-        log.banner('blacklisted zephyr projects in NCS:')
-        if present_blacklisted:
+        log.banner('blocked zephyr projects in NCS:')
+        if present_blocked:
             log.wrn(f'these should all be removed from {self.manifest.path}!')
-            print_lst(present_blacklisted)
+            print_lst(present_blocked)
         else:
             log.inf('none (OK)')
 
-        log.banner('non-blacklisted zephyr projects missing from NCS:')
+        log.banner('non-blocked zephyr projects missing from NCS:')
         if missing_allowed:
             west_yml = self.manifest.path
             log.wrn(
-                f'missing projects should be added to NCS or blacklisted\n'
+                f'missing projects should be added to NCS or blocked\n'
                 f"  To add to NCS:\n"
                 f"    1. do the zephyr mergeup\n"
                 f"    2. update zephyr revision in {west_yml}\n"
                 f"    3. add projects to zephyr's name_whitelist in "
                 f"{west_yml}\n"
                 f"    4. run west {self.name} again to check your work\n"
-                f"  To blacklist: edit _PROJECT_BLACKLIST in {__file__}")
+                f"  To block: edit _BLOCKED_PROJECTS in {__file__}")
             for p in missing_allowed:
                 log.small_banner(f'{_name_and_path(p)}:')
                 log.inf(f'upstream revision: {p.revision}')
@@ -437,8 +437,8 @@ def _name_and_path(project):
 
 _UPSTREAM = 'https://github.com/zephyrproject-rtos/zephyr'
 
-# Set of project paths blacklisted from inclusion in the NCS.
-_PROJECT_BLACKLIST = set(
+# Set of project paths blocked from inclusion in the NCS.
+_BLOCKED_PROJECTS = set(
     PurePath(p) for p in
     ['modules/hal/altera',
      'modules/hal/atmel',
