@@ -446,6 +446,7 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/esp-idf',
      'modules/hal/infineon',
      'modules/hal/microchip',
+     'modules/hal/nuvoton',
      'modules/hal/nxp',
      'modules/hal/openisa',
      'modules/hal/qmsi',
