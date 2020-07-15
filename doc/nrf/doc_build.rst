@@ -18,6 +18,7 @@ Before you can build the documentation, install the |NCS| as described in :ref:`
 Make sure that you have installed the required :ref:`Python dependencies <additional_deps>`.
 
 See the *Installing the documentation processors* section in the :ref:`zephyr:zephyr_doc` developer guide for information about installing the required tools to build the documentation and their supported versions.
+In addition to these tools, you must install `mscgen`_ and make sure the ``mscgen`` executable is in your ``PATH``.
 
 .. note::
    On Windows, the Sphinx executable ``sphinx-build.exe`` is placed in

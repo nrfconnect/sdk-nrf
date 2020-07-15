@@ -221,6 +221,8 @@
 
 .. _`Setting up an AWS account`: https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/
 
+.. _`mscgen`: http://www.mcternan.me.uk/mscgen/
+
 .. ### Links to Bluetooth specs
 
 .. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification
