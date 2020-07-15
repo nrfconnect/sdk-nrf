@@ -15,3 +15,8 @@ zephyr_library_sources_ifdef(
 	CONFIG_COAP
 	src/coap.c
 )
+
+zephyr_library_sources_ifdef(
+	CONFIG_DOWNLOAD_CLIENT_SHELL
+	src/shell.c
+)
