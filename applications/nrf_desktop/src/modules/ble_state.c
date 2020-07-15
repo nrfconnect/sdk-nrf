@@ -19,7 +19,7 @@
 
 #ifdef CONFIG_BT_LL_NRFXLIB
 #include "ble_controller_hci_vs.h"
-#endif
+#endif /* CONFIG_BT_LL_NRFXLIB */
 
 #define MODULE ble_state
 #include "module_state_event.h"
@@ -351,7 +351,7 @@ static void bt_ready(int err)
 
 	LOG_INF("Bluetooth initialized");
 
-#ifdef CONFIG_BT_LL_NRFXLIB
+#ifdef CONFIG_DESKTOP_BLE_USE_LLPM
 	hci_vs_cmd_llpm_mode_set_t *p_cmd_enable;
 
 	struct net_buf *buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
@@ -366,7 +366,7 @@ static void bt_ready(int err)
 	} else {
 		LOG_INF("LLPM enabled");
 	}
-#endif /* CONFIG_BT_LL_NRFXLIB */
+#endif /* CONFIG_DESKTOP_BLE_USE_LLPM */
 
 	module_set_state(MODULE_STATE_READY);
 }

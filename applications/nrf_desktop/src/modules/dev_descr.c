@@ -13,7 +13,7 @@
 #include "dev_descr.h"
 
 static u8_t device_descr[] = {
-	[DEV_DESCR_LLPM_SUPPORT_POS] = IS_ENABLED(CONFIG_BT_LL_NRFXLIB),
+	[DEV_DESCR_LLPM_SUPPORT_POS] = IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM),
 };
 
 static ssize_t read_dev_descr(struct bt_conn *conn,

@@ -21,7 +21,11 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_CONN_PARAMS_LOG_LEVEL);
 
 #define CONN_INTERVAL_LLPM_US		1000   /* 1 ms */
 #define CONN_INTERVAL_LLPM_REG		0x0d01 /* 1 ms */
-#define CONN_INTERVAL_BLE_REG		0x0006 /* 7.5 ms */
+#if (CONFIG_DESKTOP_BLE_USE_LLPM && (CONFIG_BT_MAX_CONN > 2))
+ #define CONN_INTERVAL_BLE_REG		0x0008 /* 10 ms */
+#else
+ #define CONN_INTERVAL_BLE_REG		0x0006 /* 7.5 ms */
+#endif
 #define CONN_LATENCY_LOW		0
 #define CONN_LATENCY_DEFAULT		99
 #define CONN_SUPERVISION_TIMEOUT	400
@@ -55,7 +59,7 @@ static int set_conn_params(struct bt_conn *conn, u16_t conn_latency,
 {
 	int err;
 
-#ifdef CONFIG_BT_LL_NRFXLIB
+#ifdef CONFIG_DESKTOP_BLE_USE_LLPM
 	if (peer_llpm_support) {
 		struct net_buf *buf;
 		hci_vs_cmd_conn_update_t *cmd_conn_update;
@@ -83,7 +87,7 @@ static int set_conn_params(struct bt_conn *conn, u16_t conn_latency,
 		err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf,
 					   NULL);
 	} else
-#endif /* CONFIG_BT_LL_NRFXLIB */
+#endif /* CONFIG_DESKTOP_BLE_USE_LLPM */
 	{
 		struct bt_le_conn_param param = {
 			.interval_min = CONN_INTERVAL_BLE_REG,
@@ -128,7 +132,7 @@ static void update_peer_conn_params(const struct connected_peer *peer)
 	} else {
 		LOG_INF("Conn params for peer: %p set: %s, latency: %"PRIu16,
 		  peer->conn,
-		  (IS_ENABLED(CONFIG_BT_LL_NRFXLIB) && peer->llpm_support) ?
+		  (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM) && peer->llpm_support) ?
 		  "LLPM" : "BLE", latency);
 	}
 }

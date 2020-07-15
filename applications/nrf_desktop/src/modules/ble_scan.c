@@ -278,6 +278,8 @@ static bool is_llpm_peer_connected(void)
 {
 	bool llpm_peer_connected = false;
 
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM));
+
 	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
 		if (!bt_addr_le_cmp(&subscribed_peers[i].addr, BT_ADDR_LE_NONE)) {
 			break;
@@ -338,7 +340,8 @@ static void scan_start(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM) &&
+	    (CONFIG_BT_MAX_CONN == 2)) {
 		if (scanning) {
 			scan_stop();
 		}
@@ -468,14 +471,21 @@ static void scan_init(void)
 		.window = BT_GAP_SCAN_FAST_WINDOW,
 	};
 
-	static const struct bt_le_conn_param cp = {
-		.interval_min = 6,
-		.interval_max = 6,
+	struct bt_le_conn_param cp = {
 		.latency = 0,
 		.timeout = 400,
 	};
 
-	static const struct bt_scan_init_param scan_init = {
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM) &&
+	    (CONFIG_BT_MAX_CONN > 2)) {
+		cp.interval_min = 8;
+		cp.interval_max = 8;
+	} else {
+		cp.interval_min = 6;
+		cp.interval_max = 6;
+	}
+
+	struct bt_scan_init_param scan_init = {
 		.connect_if_match = true,
 		.scan_param = &sp,
 		.conn_param = &cp,
