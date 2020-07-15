@@ -246,8 +246,8 @@ static int job_update_accepted(struct mqtt_client *const client,
 		execution_state = AWS_JOBS_IN_PROGRESS;
 		LOG_INF("Start downloading firmware from %s/%s",
 			log_strdup(hostname), log_strdup(file_path));
-#if defined(DOWNLOAD_CLIENT_TLS)
-		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG
+#if defined(CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG)
+		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
 #endif
 
 		err = fota_download_start(hostname, file_path, sec_tag, apn);

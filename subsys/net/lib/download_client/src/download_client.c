@@ -534,12 +534,6 @@ int download_client_connect(struct download_client *client, const char *host,
 		return -EINVAL;
 	}
 
-	if (!IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_TLS)) {
-		if (config->sec_tag != -1) {
-			return -EINVAL;
-		}
-	}
-
 	if (client->fd != -1) {
 		/* Already connected */
 		return 0;
