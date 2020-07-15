@@ -115,9 +115,11 @@ Complete the following steps to build the documentation output:
 The documentation output is written to ``_build\html``. Double-click the ``index.html`` file to display the documentation in your browser.
 
 .. tip::
-   If you modify or add RST files, you only need to rerun the steps that build the respective documentation: step 4 (if you did changes to Kconfig), step 5 (if you modified the Zephyr documentation), step 6 (if you modified the nrfxlib documentation), step 7 (if you modified the MCUboot documentation), or step 8 (if you modified the |NCS| documentation).
 
+   If you modify or add RST files, you do not need to rerun all steps. For simple changes, it is sufficient to run the step that builds the respective documentation (for example, only ``ninja nrf`` for changes to the |NCS| documentation).
+   If this results in unexpected build errors, follow :ref:`caching_and_cleaning` and rerun all build steps.
 
+.. _caching_and_cleaning:
 
 Caching and cleaning
 ********************
