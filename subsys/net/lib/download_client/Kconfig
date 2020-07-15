@@ -121,6 +121,9 @@ config DOWNLOAD_CLIENT_IPV6
 	  Prefer IPv6 protocol but fallback to
 	  IPv4 when the hostname can't be resolved.
 
+config DOWNLOAD_CLIENT_SHELL
+	bool "Enable shell"
+	depends on SHELL
 
 module=DOWNLOAD_CLIENT
 module-dep=LOG
