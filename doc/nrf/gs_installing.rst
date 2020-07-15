@@ -346,21 +346,27 @@ The full list of repositories with their old and new URLs can be found in the fo
 
    * - Old URL
      - New URL
+     - File system path
 
    * - https://github.com/NordicPlayground/fw-nrfconnect-nrf
      - https://github.com/nrfconnect/sdk-nrf
+     - :file:`ncs/nrf`
 
    * - https://github.com/NordicPlayground/fw-nrfconnect-zephyr
      - https://github.com/nrfconnect/sdk-zephyr
+     - :file:`ncs/zephyr`
 
    * - https://github.com/NordicPlayground/fw-nrfconnect-mcuboot
      - https://github.com/nrfconnect/sdk-mcuboot
+     - :file:`ncs/bootloader/mcuboot`
 
    * - https://github.com/NordicPlayground/fw-nrfconnect-mcumgr
      - https://github.com/nrfconnect/sdk-mcumgr
+     - :file:`ncs/modules/lib/mcumgr`
 
    * - https://github.com/NordicPlayground/nrfxlib
      - https://github.com/nrfconnect/sdk-nrfxlib
+     - :file:`ncs/nrfxlib`
 
 
 Before you change the remotes, rename any personal forks that you have of the
