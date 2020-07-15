@@ -48,9 +48,9 @@ enum data_task_type {
 static struct data_task {
 	struct k_work work;
 	enum data_task_type task;
-	char ctrl_msg[64];	/* PSAV resposne */
+	char *ctrl_msg;		/* PSAV resposne */
 	uint8_t *data;		/* TX data */
-	uint16_t length;		/* TX length */
+	uint16_t length;	/* TX length */
 } data_task_param;
 
 static int parse_return_code(const uint8_t *message, int success_code)
@@ -214,6 +214,7 @@ static int do_ftp_recv_ctrl(bool post_result, int success_code)
 		return -ECONNRESET;
 	}
 
+	ctrl_buf[ret] = 0x00;
 	LOG_HEXDUMP_DBG(ctrl_buf, ret, "RXC");
 
 	if (post_result) {
@@ -512,7 +513,7 @@ int ftp_list(const char *options, const char *target)
 	if (ret != FTP_CODE_227) {
 		return ret;
 	}
-	strcpy(data_task_param.ctrl_msg, ctrl_buf);
+	data_task_param.ctrl_msg = ctrl_buf;
 	data_task_param.task = TASK_RECEIVE;
 
 	/* Send LIST/NLST command in control channel */
@@ -638,7 +639,7 @@ int ftp_get(const char *file)
 	if (ret != FTP_CODE_227) {
 		return ret;
 	}
-	strcpy(data_task_param.ctrl_msg, ctrl_buf);
+	data_task_param.ctrl_msg = ctrl_buf;
 	data_task_param.task = TASK_RECEIVE;
 
 	/* Send RETR command in control channel */
@@ -681,7 +682,7 @@ int ftp_put(const char *file, const uint8_t *data, uint16_t length)
 		if (ret != FTP_CODE_227) {
 			return ret;
 		}
-		strcpy(data_task_param.ctrl_msg, ctrl_buf);
+		data_task_param.ctrl_msg = ctrl_buf;
 		data_task_param.task = TASK_SEND;
 		data_task_param.data = (uint8_t *)data;
 		data_task_param.length = length;
