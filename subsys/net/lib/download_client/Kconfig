@@ -121,8 +121,6 @@ config DOWNLOAD_CLIENT_IPV6
 	  Prefer IPv6 protocol but fallback to
 	  IPv4 when the hostname can't be resolved.
 
-config DOWNLOAD_CLIENT_TLS
-	bool "Download over HTTPS"
 
 module=DOWNLOAD_CLIENT
 module-dep=LOG

@@ -144,7 +144,7 @@ Updated libraries
 
 * :ref:`lib_download_client`:
 
-  * Added the :option:`CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE` option that allows to configure fragment sizes for TLS connections and non-TLS connections independently.
+  * Added the ``CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE`` option that allows to configure fragment sizes for TLS connections and non-TLS connections independently.
   * Added support for using non-default ports.
 
 * :ref:`lib_spm`:
