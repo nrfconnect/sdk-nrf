@@ -6,7 +6,7 @@ Bluetooth connection context
 Data related to a Bluetooth connection can be stored in a Bluetooth connection context.
 The Bluetooth connection context library can be used with Bluetooth LE services that require the connection context to support multilink functionality for the GATT server role.
 
-Each instance of the library can store the contexts for a configurable number of Bluetooth connections (see the *Connection Management* section in Zephyr's :ref:`zephyr:bluetooth_api` documentation).
+Each instance of the library can store the contexts for a configurable number of Bluetooth connections (see :ref:`zephyr:bluetooth_connection_mgmt` in the Zephyr documentation).
 
 The following Bluetooth LE service shows how to use this library: :ref:`hids_readme`
 
