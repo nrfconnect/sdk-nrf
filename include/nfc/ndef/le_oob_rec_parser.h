@@ -52,7 +52,7 @@ bool nfc_ndef_le_oob_rec_check(const struct nfc_ndef_record_desc *rec_desc);
  *            Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_le_oob_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
-			      u8_t *result_buf, u32_t *result_buf_len);
+			      uint8_t *result_buf, uint32_t *result_buf_len);
 
 /** @brief Print the parsed contents of an NDEF LE OOB Record.
  *

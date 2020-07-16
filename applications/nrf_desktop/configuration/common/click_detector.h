@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 struct click_detector_config {
-	u16_t key_id;
+	uint16_t key_id;
 	bool consume_button_event;
 };
 

@@ -39,16 +39,16 @@ enum nfc_t4t_hl_transaction_type {
 
 struct t4t_hl_ndef {
 	struct nfc_t4t_cc_file *cc;
-	u8_t *buff;
-	u16_t buff_size;
-	u16_t nlen;
-	u8_t file_id[FILE_ID_SIZE];
+	uint8_t *buff;
+	uint16_t buff_size;
+	uint16_t nlen;
+	uint8_t file_id[FILE_ID_SIZE];
 };
 
 struct t4t_hl_cc {
 	struct nfc_t4t_cc_file *cc;
-	u16_t len;
-	u8_t data[CONFIG_NFC_T4T_HL_PROCEDURE_CC_BUFFER_SIZE];
+	uint16_t len;
+	uint8_t data[CONFIG_NFC_T4T_HL_PROCEDURE_CC_BUFFER_SIZE];
 };
 
 struct t4t_hl_procedure {
@@ -56,8 +56,8 @@ struct t4t_hl_procedure {
 	struct t4t_hl_ndef ndef;
 	enum nfc_t4t_hl_transaction_type transaction_type;
 	enum nfc_t4t_hl_procedure_select select_type;
-	u16_t file_offset;
-	u8_t apdu_buff[CONFIG_NFC_T4T_HL_PROCEDURE_APDU_BUF_SIZE];
+	uint16_t file_offset;
+	uint8_t apdu_buff[CONFIG_NFC_T4T_HL_PROCEDURE_APDU_BUF_SIZE];
 };
 
 static struct t4t_hl_procedure t4t_hl;
@@ -66,7 +66,7 @@ static const struct nfc_t4t_hl_procedure_cb *hl_cb;
 static int t4t_hl_data_exchange(struct nfc_t4t_apdu_comm *comm)
 {
 	int err;
-	u16_t apdu_len = sizeof(t4t_hl.apdu_buff);
+	uint16_t apdu_len = sizeof(t4t_hl.apdu_buff);
 
 	err = nfc_t4t_apdu_comm_encode(comm,
 				       t4t_hl.apdu_buff,
@@ -85,8 +85,8 @@ static int on_cc_read(const struct nfc_t4t_apdu_resp *resp)
 
 	int err;
 	struct nfc_t4t_apdu_comm apdu_comm;
-	const u8_t *data = resp->data.buff;
-	u16_t len = resp->data.len;
+	const uint8_t *data = resp->data.buff;
+	uint16_t len = resp->data.len;
 
 	if ((resp->data.len) && (t4t_hl.cc_file.len == 0)) {
 		t4t_hl.cc_file.len = sys_get_be16(data);
@@ -131,8 +131,8 @@ static int on_ndef_nlen_read(const struct nfc_t4t_apdu_resp *resp)
 {
 	__ASSERT_NO_MSG(resp);
 
-	const u8_t *data = resp->data.buff;
-	u16_t len = resp->data.len;
+	const uint8_t *data = resp->data.buff;
+	uint16_t len = resp->data.len;
 
 	if (len != NDEF_FILE_NLEN_SIZE) {
 		LOG_ERR("NDEF NLEN response is to long");
@@ -144,7 +144,7 @@ static int on_ndef_nlen_read(const struct nfc_t4t_apdu_resp *resp)
 	return 0;
 }
 
-static int t4t_file_assign(u16_t id)
+static int t4t_file_assign(uint16_t id)
 {
 	struct nfc_t4t_tlv_block_file file;
 
@@ -161,10 +161,10 @@ static int ndef_file_chunk_read(const struct nfc_t4t_apdu_resp *resp)
 	__ASSERT_NO_MSG(resp);
 
 	int err;
-	u16_t file_id;
+	uint16_t file_id;
 	struct nfc_t4t_apdu_comm apdu_comm;
-	const u8_t *data = resp->data.buff;
-	u16_t len = resp->data.len;
+	const uint8_t *data = resp->data.buff;
+	uint16_t len = resp->data.len;
 
 	if (t4t_hl.ndef.buff_size < t4t_hl.file_offset + len) {
 		return -ENOMEM;
@@ -205,7 +205,7 @@ static int ndef_file_chunk_read(const struct nfc_t4t_apdu_resp *resp)
 static int ndef_file_chunk_update(void)
 {
 	struct nfc_t4t_apdu_comm apdu_comm;
-	u8_t nlen_data[NDEF_FILE_NLEN_SIZE];
+	uint8_t nlen_data[NDEF_FILE_NLEN_SIZE];
 
 	nfc_t4t_apdu_comm_clear(&apdu_comm);
 
@@ -236,7 +236,7 @@ static int ndef_file_chunk_update(void)
 
 static void on_ndef_nlen_update(void)
 {
-	u16_t file_id = sys_get_be16(t4t_hl.ndef.file_id);
+	uint16_t file_id = sys_get_be16(t4t_hl.ndef.file_id);
 
 	if (hl_cb->ndef_updated) {
 		hl_cb->ndef_updated(file_id);
@@ -300,7 +300,7 @@ int nfc_t4t_hl_procedure_cb_register(const struct nfc_t4t_hl_procedure_cb *cb)
 	return 0;
 }
 
-int nfc_t4t_hl_procedure_on_data_received(const u8_t *data, size_t len)
+int nfc_t4t_hl_procedure_on_data_received(const uint8_t *data, size_t len)
 {
 	int err = 0;
 	struct nfc_t4t_apdu_resp apdu_resp;
@@ -333,7 +333,7 @@ int nfc_t4t_hl_procedure_on_data_received(const u8_t *data, size_t len)
 int nfc_t4t_hl_procedure_ndef_tag_app_select(void)
 {
 	struct nfc_t4t_apdu_comm apdu_comm;
-	u8_t t4t_app_name[] = NFC_T4T_APDU_SELECT_DATA;
+	uint8_t t4t_app_name[] = NFC_T4T_APDU_SELECT_DATA;
 
 	nfc_t4t_apdu_comm_clear(&apdu_comm);
 
@@ -349,7 +349,7 @@ int nfc_t4t_hl_procedure_ndef_tag_app_select(void)
 	return t4t_hl_data_exchange(&apdu_comm);
 }
 
-int nfc_t4t_hl_procedure_ndef_file_select(u16_t id)
+int nfc_t4t_hl_procedure_ndef_file_select(uint16_t id)
 {
 	struct nfc_t4t_apdu_comm apdu_comm;
 
@@ -400,8 +400,8 @@ int nfc_t4t_hl_procedure_cc_read(struct nfc_t4t_cc_file *cc)
 }
 
 int nfc_t4t_hl_procedure_ndef_read(struct nfc_t4t_cc_file *cc,
-				   u8_t *ndef_buff,
-				   u16_t ndef_len)
+				   uint8_t *ndef_buff,
+				   uint16_t ndef_len)
 {
 	struct nfc_t4t_apdu_comm apdu_comm;
 
@@ -426,13 +426,13 @@ int nfc_t4t_hl_procedure_ndef_read(struct nfc_t4t_cc_file *cc,
 }
 
 int nfc_t4t_hl_procedure_ndef_update(struct nfc_t4t_cc_file *cc,
-				     u8_t *ndef_data, u16_t ndef_len)
+				     uint8_t *ndef_data, uint16_t ndef_len)
 {
 	struct nfc_t4t_apdu_comm apdu_comm;
-	u16_t file_id;
-	u16_t nlen;
+	uint16_t file_id;
+	uint16_t nlen;
 	struct nfc_t4t_tlv_block *tlv_block;
-	u8_t nlen_val[] = {0x00, 0x00};
+	uint8_t nlen_val[] = {0x00, 0x00};
 
 	if (!cc || !ndef_data || (ndef_len < NDEF_FILE_NLEN_SIZE)) {
 		return -EINVAL;

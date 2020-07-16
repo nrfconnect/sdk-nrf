@@ -89,11 +89,11 @@ struct bt_mesh_battery_status {
 	 * Current battery level in percent, or
 	 * @ref BT_MESH_BATTERY_LVL_UNKNOWN.
 	 */
-	u8_t battery_lvl;
+	uint8_t battery_lvl;
 	/** Minutes until discharged, or @ref BT_MESH_BATTERY_TIME_UNKNOWN. */
-	u32_t discharge_minutes;
+	uint32_t discharge_minutes;
 	/** Minutes until discharged, or @ref BT_MESH_BATTERY_TIME_UNKNOWN. */
-	u32_t charge_minutes;
+	uint32_t charge_minutes;
 	/** Presence state. */
 	enum bt_mesh_battery_presence presence;
 	/** Charge level indicator. */

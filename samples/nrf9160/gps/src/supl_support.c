@@ -23,7 +23,7 @@ int open_supl_socket(void)
 	int err = -1;
 	int proto;
 	int gai_cnt = 0;
-	u16_t port;
+	uint16_t port;
 	struct addrinfo *addr;
 	struct addrinfo *info;
 

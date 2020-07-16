@@ -14,7 +14,7 @@ LOG_MODULE_REGISTER(app_lwm2m_temp, CONFIG_APP_LOG_LEVEL);
 /* use 25.5C if no sensor available */
 static struct float32_value temp_float = { 25, 500000 };
 static struct device *die_dev;
-static s32_t timestamp;
+static int32_t timestamp;
 
 #if defined(CONFIG_TEMP_NRF5_NAME)
 static int read_temperature(struct device *temp_dev,
@@ -44,10 +44,10 @@ static int read_temperature(struct device *temp_dev,
 }
 #endif
 
-static void *temp_read_cb(u16_t obj_inst_id, u16_t res_id, u16_t res_inst_id,
+static void *temp_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 			  size_t *data_len)
 {
-	s32_t ts;
+	int32_t ts;
 
 	/* Only object instance 0 is currently used */
 	if (obj_inst_id != 0) {

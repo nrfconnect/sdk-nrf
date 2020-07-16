@@ -88,7 +88,7 @@ static bool module_event_handler(const struct module_state_event *event)
 #endif
 	};
 
-	static u32_t req_state;
+	static uint32_t req_state;
 
 	BUILD_ASSERT(ARRAY_SIZE(req_modules) < (8 * sizeof(req_state)),
 			"Array size bigger than number of bits");

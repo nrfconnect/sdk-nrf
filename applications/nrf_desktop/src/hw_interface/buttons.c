@@ -49,10 +49,10 @@ static enum state state;
 static void scan_fn(struct k_work *work);
 
 
-static int set_cols(u32_t mask)
+static int set_cols(uint32_t mask)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
-		u32_t val = (mask & BIT(i)) ? (1) : (0);
+		uint32_t val = (mask & BIT(i)) ? (1) : (0);
 		int err;
 
 		if (val || !mask) {
@@ -80,7 +80,7 @@ static int set_cols(u32_t mask)
 	return 0;
 }
 
-static int get_rows(u32_t *mask)
+static int get_rows(uint32_t *mask)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
 		int val = gpio_pin_get_raw(gpio_devs[row[i].port], row[i].pin);
@@ -222,7 +222,7 @@ static void scan_fn(struct k_work *work)
 			(state == STATE_SUSPENDING));
 
 	/* Get current state */
-	u32_t raw_state[COLUMNS];
+	uint32_t raw_state[COLUMNS];
 	memset(raw_state, 0, sizeof(raw_state));
 
 	for (size_t i = 0; i < COLUMNS; i++) {
@@ -244,21 +244,21 @@ static void scan_fn(struct k_work *work)
 		goto error;
 	}
 
-	static u32_t settled_state[COLUMNS];
+	static uint32_t settled_state[COLUMNS];
 
 	/* Prevent bouncing */
-	static u32_t prev_state[COLUMNS];
+	static uint32_t prev_state[COLUMNS];
 	for (size_t i = 0; i < COLUMNS; i++) {
-		u32_t bounce_mask = prev_state[i] ^ raw_state[i];
+		uint32_t bounce_mask = prev_state[i] ^ raw_state[i];
 		prev_state[i] = raw_state[i];
 		raw_state[i] &= ~bounce_mask;
 		raw_state[i] |= settled_state[i] & bounce_mask;
 	}
 
 	/* Prevent ghosting */
-	u32_t cur_state[COLUMNS];
+	uint32_t cur_state[COLUMNS];
 	for (size_t i = 0; i < COLUMNS; i++) {
-		u32_t blocking_mask = 0;
+		uint32_t blocking_mask = 0;
 		for (size_t j = 0; j < COLUMNS; j++) {
 			if (i == j) {
 				continue;
@@ -353,7 +353,7 @@ error:
 
 static void button_pressed_isr(struct device *gpio_dev,
 			       struct gpio_callback *cb,
-			       u32_t pins)
+			       uint32_t pins)
 {
 	int err = 0;
 
@@ -377,7 +377,7 @@ static void button_pressed_isr(struct device *gpio_dev,
 	 * itself to prevent double execution when interrupt for another
 	 * pin was triggered in-between.
 	 */
-	for (u32_t pin = 0; (pins != 0) && !err; pins >>= 1, pin++) {
+	for (uint32_t pin = 0; (pins != 0) && !err; pins >>= 1, pin++) {
 		if ((pins & 1) != 0) {
 			err = gpio_pin_interrupt_configure(gpio_dev, pin,
 							   GPIO_INT_DISABLE);
@@ -456,7 +456,7 @@ static void init_fn(void)
 		goto error;
 	}
 
-	u32_t pin_mask[ARRAY_SIZE(port_map)] = {0};
+	uint32_t pin_mask[ARRAY_SIZE(port_map)] = {0};
 	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
 		/* Module starts in scanning mode and will switch to
 		 * callback mode if no button is pressed.

@@ -31,11 +31,11 @@ extern "C" {
  * @retval  true   if the image is valid
  * @retval  false  if the image is invalid
  */
-bool bl_validate_firmware(u32_t fw_dst_address, u32_t fw_src_address);
+bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address);
 
 /* Typedef for use in EXT_API declaration */
 typedef
-bool (*bl_validate_firmware_t)(u32_t fw_dst_address, u32_t fw_src_address);
+bool (*bl_validate_firmware_t)(uint32_t fw_dst_address, uint32_t fw_src_address);
 
 /** Whether bl_validate_firmware() is available.
  *
@@ -54,7 +54,7 @@ bool bl_validate_firmware_available(void);
  *
  * @details See @ref bl_validate_firmware for more details.
  */
-bool bl_validate_firmware_local(u32_t fw_address,
+bool bl_validate_firmware_local(uint32_t fw_address,
 				const struct fw_info *fwinfo);
 
 
@@ -74,7 +74,7 @@ struct bl_validate_fw_ext_api {
  *
  * @return See @ref set_monotonic_counter.
  */
-int set_monotonic_version(u16_t version, u16_t slot);
+int set_monotonic_version(uint16_t version, uint16_t slot);
 
 
 /** Read version and slot from monotonic counter.
@@ -83,7 +83,7 @@ int set_monotonic_version(u16_t version, u16_t slot);
  *
  * @return Firmware version
  */
-u16_t get_monotonic_version(u16_t *slot_out);
+uint16_t get_monotonic_version(uint16_t *slot_out);
 
   /** @} */
 

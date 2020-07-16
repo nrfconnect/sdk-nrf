@@ -104,9 +104,9 @@ const static char * const opt_descr[] = {
 };
 
 static enum state state;
-static u8_t cur_peer_id;
+static uint8_t cur_peer_id;
 static bool cur_peer_id_valid;
-static u8_t tmp_peer_id;
+static uint8_t tmp_peer_id;
 static bool dongle_peer_selected_on_init;
 static bool erase_adv_was_extended;
 
@@ -119,7 +119,7 @@ static bool erase_adv_was_extended;
 #error Device must be Bluetooth peripheral or central.
 #endif
 
-static u8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
+static uint8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
 static bool bt_stack_id_lut_valid;
 
 #define TEMP_PEER_ID (CONFIG_BT_MAX_PAIRED - 1)
@@ -185,7 +185,7 @@ SETTINGS_STATIC_HANDLER_DEFINE(ble_bond, MODULE_NAME, NULL, settings_set, NULL,
 			       NULL);
 #endif /* CONFIG_BT_PERIPHERAL */
 
-static u8_t get_bt_stack_peer_id(u8_t id)
+static uint8_t get_bt_stack_peer_id(uint8_t id)
 {
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 		if ((state == STATE_ERASE_PEER) ||
@@ -233,7 +233,7 @@ static void swap_bt_stack_peer_id(void)
 			bt_stack_id_lut[0] = 1;
 		}
 	}
-	u8_t temp = bt_stack_id_lut[TEMP_PEER_ID];
+	uint8_t temp = bt_stack_id_lut[TEMP_PEER_ID];
 
 	bt_stack_id_lut[TEMP_PEER_ID] = bt_stack_id_lut[cur_peer_id];
 	bt_stack_id_lut[cur_peer_id] = temp;
@@ -246,7 +246,7 @@ static void swap_bt_stack_peer_id(void)
 	}
 }
 
-static int remove_peers(u8_t identity)
+static int remove_peers(uint8_t identity)
 {
 	LOG_INF("Remove peers on identity %u", identity);
 
@@ -310,7 +310,7 @@ static void cancel_operation(void)
 	EVENT_SUBMIT(event);
 }
 
-static u8_t next_peer_id(u8_t id)
+static uint8_t next_peer_id(uint8_t id)
 {
 	id++;
 	BUILD_ASSERT(TEMP_PEER_ID == (CONFIG_BT_MAX_PAIRED - 1));
@@ -353,7 +353,7 @@ static void select_next(void)
 	EVENT_SUBMIT(event);
 }
 
-static int store_peer_id(u8_t peer_id)
+static int store_peer_id(uint8_t peer_id)
 {
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		char key[] = MODULE_NAME "/" PEER_ID_STORAGE_NAME;
@@ -828,7 +828,7 @@ static void selector_event_handler(const struct selector_event *event)
 	}
 }
 
-static void config_set(const u8_t opt_id, const u8_t *data, const size_t size)
+static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t size)
 {
 	ARG_UNUSED(data);
 	ARG_UNUSED(size);
@@ -864,7 +864,7 @@ static void config_set(const u8_t opt_id, const u8_t *data, const size_t size)
 	};
 }
 
-static void config_fetch(const u8_t opt_id, u8_t *data, size_t *size)
+static void config_fetch(const uint8_t opt_id, uint8_t *data, size_t *size)
 {
 	LOG_WRN("Config fetch is not supported");
 }

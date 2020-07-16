@@ -36,7 +36,7 @@ static int frame_size_check(const struct config_channel_frame *frame,
 }
 
 static int data_len_check(const struct config_channel_frame *frame,
-			  u8_t event_data_len, bool usb)
+			  uint8_t event_data_len, bool usb)
 {
 	const size_t min_size = sizeof(frame->recipient) +
 				sizeof(frame->event_id) +
@@ -75,7 +75,7 @@ void config_channel_init(struct config_channel_state *cfg_chan)
 	cfg_chan->disconnected = false;
 }
 
-int config_channel_report_parse(const u8_t *buffer, size_t length,
+int config_channel_report_parse(const uint8_t *buffer, size_t length,
 				struct config_channel_frame *frame, bool usb)
 {
 	int err = frame_size_check(frame, length, usb);
@@ -110,7 +110,7 @@ int config_channel_report_parse(const u8_t *buffer, size_t length,
 	return pos;
 }
 
-int config_channel_report_fill(u8_t *buffer, const size_t length,
+int config_channel_report_fill(uint8_t *buffer, const size_t length,
 			       const struct config_channel_frame *frame, bool usb)
 {
 	int err = frame_size_check(frame, length, usb);
@@ -152,8 +152,8 @@ int config_channel_report_fill(u8_t *buffer, const size_t length,
 }
 
 int config_channel_report_get(struct config_channel_state *cfg_chan,
-			      u8_t *buffer, size_t length, bool usb,
-			      u16_t local_product_id)
+			      uint8_t *buffer, size_t length, bool usb,
+			      uint16_t local_product_id)
 {
 	int pos;
 
@@ -186,7 +186,7 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 			}
 
 			cfg_chan->frame.event_data_len = cfg_chan->fetch.data_len;
-			cfg_chan->frame.event_data = (u8_t *) &cfg_chan->fetch.data;
+			cfg_chan->frame.event_data = (uint8_t *) &cfg_chan->fetch.data;
 			cfg_chan->frame.status = CONFIG_STATUS_SUCCESS;
 		} else {
 			if (cfg_chan->frame.recipient != local_product_id) {
@@ -231,8 +231,8 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
 }
 
 int config_channel_report_set(struct config_channel_state *cfg_chan,
-			      const u8_t *buffer, size_t length, bool usb,
-			      u16_t local_product_id)
+			      const uint8_t *buffer, size_t length, bool usb,
+			      uint16_t local_product_id)
 {
 	if (usb && (atomic_get(&cfg_chan->status) == CONFIG_STATUS_PENDING)) {
 		LOG_WRN("Busy forwarding");

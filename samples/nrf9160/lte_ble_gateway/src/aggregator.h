@@ -29,9 +29,9 @@
 enum sensor_data_type { THINGY_ORIENTATION, GPS_POSITION };
 
 struct sensor_data {
-	u8_t length;
+	uint8_t length;
 	enum sensor_data_type type;
-	u8_t data[ENTRY_MAX_SIZE];
+	uint8_t data[ENTRY_MAX_SIZE];
 };
 
 int aggregator_init(void);

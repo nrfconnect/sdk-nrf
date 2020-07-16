@@ -49,11 +49,11 @@ static struct data_task {
 	struct k_work work;
 	enum data_task_type task;
 	char ctrl_msg[64];	/* PSAV resposne */
-	u8_t *data;		/* TX data */
-	u16_t length;		/* TX length */
+	uint8_t *data;		/* TX data */
+	uint16_t length;		/* TX length */
 } data_task_param;
 
-static int parse_return_code(const u8_t *message, int success_code)
+static int parse_return_code(const uint8_t *message, int success_code)
 {
 	char code_str[6]; /* max 1xxxx*/
 	int ret = FTP_CODE_500;
@@ -71,7 +71,7 @@ static int establish_data_channel(const char *pasv_msg)
 	int ret;
 	char tmp[16];
 	char *tmp1, *tmp2;
-	u16_t data_port;
+	uint16_t data_port;
 	int data_sock;
 
 	/* Parse Server port from passive message
@@ -134,10 +134,10 @@ static int establish_data_channel(const char *pasv_msg)
 
 /**@brief Send FTP message via socket
  */
-static int do_ftp_send_ctrl(const u8_t *message, int length)
+static int do_ftp_send_ctrl(const uint8_t *message, int length)
 {
 	int ret;
-	u32_t offset = 0;
+	uint32_t offset = 0;
 
 	LOG_HEXDUMP_DBG(message, length, "TXC");
 
@@ -158,11 +158,11 @@ static int do_ftp_send_ctrl(const u8_t *message, int length)
 
 /**@brief Send FTP data via socket
  */
-static int do_ftp_send_data(const char *pasv_msg, u8_t *message, u16_t length)
+static int do_ftp_send_data(const char *pasv_msg, uint8_t *message, uint16_t length)
 {
 	int data_sock;
 	int ret;
-	u32_t offset = 0;
+	uint32_t offset = 0;
 
 	/* Establish data channel */
 	ret = establish_data_channel(pasv_msg);
@@ -306,7 +306,7 @@ static void keepalive_timeout(struct k_timer *dummy)
 
 K_TIMER_DEFINE(keepalive_timer, keepalive_timeout, NULL);
 
-int ftp_open(const char *hostname, u16_t port, int sec_tag)
+int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 {
 	int ret;
 	struct addrinfo *result;
@@ -666,7 +666,7 @@ int ftp_get(const char *file)
 	return ret;
 }
 
-int ftp_put(const char *file, const u8_t *data, u16_t length)
+int ftp_put(const char *file, const uint8_t *data, uint16_t length)
 {
 	int ret;
 	char put_cmd[128];
@@ -683,7 +683,7 @@ int ftp_put(const char *file, const u8_t *data, u16_t length)
 		}
 		strcpy(data_task_param.ctrl_msg, ctrl_buf);
 		data_task_param.task = TASK_SEND;
-		data_task_param.data = (u8_t *)data;
+		data_task_param.data = (uint8_t *)data;
 		data_task_param.length = length;
 	}
 

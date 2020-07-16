@@ -13,16 +13,16 @@ LOG_MODULE_REGISTER(app_lwm2m_light, CONFIG_APP_LOG_LEVEL);
 
 #define LIGHT_NAME	"LED1"
 
-static u32_t led_state;
+static uint32_t led_state;
 
 /* TODO: Move to a pre write hook that can handle ret codes once available */
-static int lc_on_off_cb(u16_t obj_inst_id, u16_t res_id, u16_t res_inst_id,
-			u8_t *data, u16_t data_len,
+static int lc_on_off_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
+			uint8_t *data, uint16_t data_len,
 			bool last_block, size_t total_size)
 {
-	u32_t led_val;
+	uint32_t led_val;
 
-	led_val = *(u8_t *) data;
+	led_val = *(uint8_t *) data;
 	if (led_val != led_state) {
 		ui_led_set_state(UI_LED_1, led_val);
 		led_state = led_val;

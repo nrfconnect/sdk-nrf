@@ -126,7 +126,7 @@ struct bt_mesh_light_ctrl_cli {
 	/** Collection of handler callbacks. */
 	const struct bt_mesh_light_ctrl_cli_handlers *handlers;
 	/** Current transaction ID. */
-	u8_t tid;
+	uint8_t tid;
 };
 
 /** @brief Get a Light Lightness Control Server's current Mode.

@@ -19,31 +19,31 @@
 #define NFC_FIELD_LED		DK_LED1
 
 /* Text message in English with its language code. */
-static const u8_t en_payload[] = {
+static const uint8_t en_payload[] = {
 	'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'
 };
-static const u8_t en_code[] = {'e', 'n'};
+static const uint8_t en_code[] = {'e', 'n'};
 
 /* Text message in Norwegian with its language code. */
-static const u8_t no_payload[] = {
+static const uint8_t no_payload[] = {
 	'H', 'a', 'l', 'l', 'o', ' ', 'V', 'e', 'r', 'd', 'e', 'n', '!'
 };
-static const u8_t no_code[] = {'N', 'O'};
+static const uint8_t no_code[] = {'N', 'O'};
 
 /* Text message in Polish with its language code. */
-static const u8_t pl_payload[] = {
+static const uint8_t pl_payload[] = {
 	'W', 'i', 't', 'a', 'j', ' ', 0xc5, 0x9a, 'w', 'i', 'e', 'c', 'i',
 	'e', '!'
 };
-static const u8_t pl_code[] = {'P', 'L'};
+static const uint8_t pl_code[] = {'P', 'L'};
 
 /* Buffer used to hold an NFC NDEF message. */
-static u8_t ndef_msg_buf[NDEF_MSG_BUF_SIZE];
+static uint8_t ndef_msg_buf[NDEF_MSG_BUF_SIZE];
 
 
 static void nfc_callback(void *context,
 			 enum nfc_t2t_event event,
-			 const u8_t *data,
+			 const uint8_t *data,
 			 size_t data_length)
 {
 	ARG_UNUSED(context);
@@ -66,7 +66,7 @@ static void nfc_callback(void *context,
 /**
  * @brief Function for encoding the NDEF text message.
  */
-static int welcome_msg_encode(u8_t *buffer, u32_t *len)
+static int welcome_msg_encode(uint8_t *buffer, uint32_t *len)
 {
 	int err;
 
@@ -132,7 +132,7 @@ static int welcome_msg_encode(u8_t *buffer, u32_t *len)
 
 int main(void)
 {
-	u32_t len = sizeof(ndef_msg_buf);
+	uint32_t len = sizeof(ndef_msg_buf);
 
 	printk("Starting NFC Text Record example\n");
 

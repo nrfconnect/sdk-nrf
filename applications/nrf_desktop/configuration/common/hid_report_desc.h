@@ -46,7 +46,7 @@ enum report_id {
 };
 
 
-extern const u8_t hid_report_desc[];
+extern const uint8_t hid_report_desc[];
 extern const size_t hid_report_desc_size;
 
 #ifdef __cplusplus

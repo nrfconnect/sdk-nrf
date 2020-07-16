@@ -125,7 +125,7 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
  */
 int modem_key_mgmt_permission_set(nrf_sec_tag_t sec_tag,
 				  enum modem_key_mgnt_cred_type cred_type,
-				  u8_t perm_flags);
+				  uint8_t perm_flags);
 
 /**
  * @brief Check if a credential exists in persistent storage.
@@ -143,7 +143,7 @@ int modem_key_mgmt_permission_set(nrf_sec_tag_t sec_tag,
  */
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgnt_cred_type cred_type,
-			  bool *exists, u8_t *perm_flags);
+			  bool *exists, uint8_t *perm_flags);
 
 #endif /* MODEM_KEY_MGMT_H__ */
 /**@} */

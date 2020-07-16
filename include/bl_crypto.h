@@ -35,8 +35,8 @@ extern "C" {
 	typedef nrf_cc310_bl_hash_context_sha256_t bl_sha256_ctx_t;
 #else
 	#define SHA256_CTX_SIZE 128
-	// u32_t to make sure it is aligned equally as the other contexts.
-	typedef u32_t bl_sha256_ctx_t[SHA256_CTX_SIZE/4];
+	// uint32_t to make sure it is aligned equally as the other contexts.
+	typedef uint32_t bl_sha256_ctx_t[SHA256_CTX_SIZE/4];
 #endif
 
 /**
@@ -70,19 +70,19 @@ int bl_crypto_init(void);
  *
  * @remark No parameter can be NULL.
  */
-int bl_root_of_trust_verify(const u8_t *public_key,
-			    const u8_t *public_key_hash,
-			    const u8_t *signature,
-			    const u8_t *firmware,
-			    const u32_t firmware_len);
+int bl_root_of_trust_verify(const uint8_t *public_key,
+			    const uint8_t *public_key_hash,
+			    const uint8_t *signature,
+			    const uint8_t *firmware,
+			    const uint32_t firmware_len);
 
 /* Typedef for use in EXT_API declaration */
 typedef int (*bl_root_of_trust_verify_t)(
-			    const u8_t *public_key,
-			    const u8_t *public_key_hash,
-			    const u8_t *signature,
-			    const u8_t *firmware,
-			    const u32_t firmware_len);
+			    const uint8_t *public_key,
+			    const uint8_t *public_key_hash,
+			    const uint8_t *signature,
+			    const uint8_t *firmware,
+			    const uint32_t firmware_len);
 
 
 /**
@@ -90,11 +90,11 @@ typedef int (*bl_root_of_trust_verify_t)(
  *
  * See @ref bl_root_of_trust_verify for docs.
  */
-int bl_root_of_trust_verify_external(const u8_t *public_key,
-				     const u8_t *public_key_hash,
-				     const u8_t *signature,
-				     const u8_t *firmware,
-				     const u32_t firmware_len);
+int bl_root_of_trust_verify_external(const uint8_t *public_key,
+				     const uint8_t *public_key_hash,
+				     const uint8_t *signature,
+				     const uint8_t *firmware,
+				     const uint32_t firmware_len);
 
 
 /**
@@ -127,11 +127,11 @@ typedef int (*bl_sha256_init_t)(bl_sha256_ctx_t *ctx);
  * @retval -EINVAL   If @p ctx was NULL, uninitialized, or corrupted.
  * @retval -ENOSYS   If the context has already been finalized.
  */
-int bl_sha256_update(bl_sha256_ctx_t *ctx, const u8_t *data, u32_t data_len);
+int bl_sha256_update(bl_sha256_ctx_t *ctx, const uint8_t *data, uint32_t data_len);
 
 /* Typedef for use in EXT_API declaration */
-typedef int (*bl_sha256_update_t)(bl_sha256_ctx_t *ctx, const u8_t *data,
-				u32_t data_len);
+typedef int (*bl_sha256_update_t)(bl_sha256_ctx_t *ctx, const uint8_t *data,
+				uint32_t data_len);
 
 
 /**
@@ -144,10 +144,10 @@ typedef int (*bl_sha256_update_t)(bl_sha256_ctx_t *ctx, const u8_t *data,
  * @retval 0         On success.
  * @retval -EINVAL   If @p ctx was NULL or corrupted, or @p output was NULL.
  */
-int bl_sha256_finalize(bl_sha256_ctx_t *ctx, u8_t *output);
+int bl_sha256_finalize(bl_sha256_ctx_t *ctx, uint8_t *output);
 
 /* Typedef for use in EXT_API declaration */
-typedef int (*bl_sha256_finalize_t)(bl_sha256_ctx_t *ctx, u8_t *output);
+typedef int (*bl_sha256_finalize_t)(bl_sha256_ctx_t *ctx, uint8_t *output);
 
 
 /**
@@ -163,11 +163,11 @@ typedef int (*bl_sha256_finalize_t)(bl_sha256_ctx_t *ctx, u8_t *output);
  * @return Any error code from @ref bl_sha256_init, @ref bl_sha256_update, or
  *         @ref bl_sha256_finalize if something else went wrong.
  */
-int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected);
+int bl_sha256_verify(const uint8_t *data, uint32_t data_len, const uint8_t *expected);
 
 /* Typedef for use in EXT_API declaration */
-typedef int (*bl_sha256_verify_t)(const u8_t *data, u32_t data_len,
-				const u8_t *expected);
+typedef int (*bl_sha256_verify_t)(const uint8_t *data, uint32_t data_len,
+				const uint8_t *expected);
 
 
 /**
@@ -183,17 +183,17 @@ typedef int (*bl_sha256_verify_t)(const u8_t *data, u32_t data_len,
  * @retval -EINVAL   A parameter was NULL, or the @p hash_len was not 32 bytes.
  * @retval -ESIGINV  The signature validation failed.
  */
-int bl_secp256r1_validate(const u8_t *hash,
-			  u32_t hash_len,
-			  const u8_t *signature,
-			  const u8_t *public_key);
+int bl_secp256r1_validate(const uint8_t *hash,
+			  uint32_t hash_len,
+			  const uint8_t *signature,
+			  const uint8_t *public_key);
 
 /* Typedef for use in EXT_API declaration */
 typedef int (*bl_secp256r1_validate_t)(
-			  const u8_t *hash,
-			  u32_t hash_len,
-			  const u8_t *signature,
-			  const u8_t *public_key);
+			  const uint8_t *hash,
+			  uint32_t hash_len,
+			  const uint8_t *signature,
+			  const uint8_t *public_key);
 
 
 /**
@@ -211,7 +211,7 @@ struct bl_sha256_ext_api {
 	bl_sha256_update_t bl_sha256_update;
 	bl_sha256_finalize_t bl_sha256_finalize;
 	bl_sha256_verify_t bl_sha256_verify;
-	u32_t bl_sha256_ctx_size;
+	uint32_t bl_sha256_ctx_size;
 };
 
 /**

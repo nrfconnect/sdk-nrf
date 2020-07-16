@@ -10,6 +10,7 @@ config BSD_LIBRARY
 	prompt "Use BSD Socket library for IP/TLS/DTLS"
 	select FPU
 	select FPU_SHARING
+	select NET_SOCKETS_POSIX_NAMES
 	imply NET_SOCKETS_OFFLOAD
 	depends on TRUSTED_EXECUTION_NONSECURE
 	help

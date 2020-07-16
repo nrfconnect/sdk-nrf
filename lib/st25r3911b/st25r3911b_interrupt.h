@@ -90,7 +90,7 @@ int st25r3911b_irq_init(struct k_sem *irq_sem);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_irq_modify(u32_t clr_mask, u32_t set_mask);
+int st25r3911b_irq_modify(uint32_t clr_mask, uint32_t set_mask);
 
 /** @brief Enable NFC Reader interrupts.
  *
@@ -102,7 +102,7 @@ int st25r3911b_irq_modify(u32_t clr_mask, u32_t set_mask);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_irq_enable(u32_t mask);
+int st25r3911b_irq_enable(uint32_t mask);
 
 /** @brief Disable NFC Reader interrupts.
  *
@@ -114,7 +114,7 @@ int st25r3911b_irq_enable(u32_t mask);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_irq_disable(u32_t mask);
+int st25r3911b_irq_disable(uint32_t mask);
 
 /** @brief Clear NFC Reader interrupts status.
  *
@@ -137,7 +137,7 @@ int st25r39_irq_clear(void);
  *
  *  @return Interrupts status.
  */
-u32_t st25r3911b_irq_wait_for_irq(u32_t mask, s32_t timeout);
+uint32_t st25r3911b_irq_wait_for_irq(uint32_t mask, int32_t timeout);
 
 /** @brief Read NFC Reader interrupts status.
  *
@@ -146,7 +146,7 @@ u32_t st25r3911b_irq_wait_for_irq(u32_t mask, s32_t timeout);
  *
  *  @return Interrupts status.
  */
-u32_t st25r3911b_irq_read(void);
+uint32_t st25r3911b_irq_read(void);
 
 #ifdef __cplusplus
 }

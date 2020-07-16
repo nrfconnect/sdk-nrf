@@ -49,7 +49,7 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, LBS_UUID_SERVICE),
 };
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
 		printk("Connection failed (err %u)\n", err);
@@ -61,7 +61,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	dk_set_led_on(CON_STATUS_LED);
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	printk("Disconnected (reason %u)\n", reason);
 
@@ -167,7 +167,7 @@ static struct bt_gatt_lbs_cb lbs_callbacs = {
 	.button_cb = app_button_cb,
 };
 
-static void button_changed(u32_t button_state, u32_t has_changed)
+static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & USER_BUTTON) {
 		bt_gatt_lbs_send_button_state(button_state);

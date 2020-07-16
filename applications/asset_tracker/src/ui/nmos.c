@@ -39,7 +39,7 @@ struct nmos_config {
 static struct device *gpio_dev;
 static struct device *pwm_dev;
 
-static u32_t current_period_us;
+static uint32_t current_period_us;
 
 static struct nmos_config nmos_pins[] = {
 	[UI_NMOS_1] = NMOS_CONFIG(CONFIG_UI_NMOS_1_PIN),
@@ -48,7 +48,7 @@ static struct nmos_config nmos_pins[] = {
 	[UI_NMOS_4] = NMOS_CONFIG(CONFIG_UI_NMOS_4_PIN),
 };
 
-static int pwm_out(u32_t pin, u32_t period_us, u32_t duty_cycle_us)
+static int pwm_out(uint32_t pin, uint32_t period_us, uint32_t duty_cycle_us)
 {
 
 	/* Applying workaround due to limitations in PWM driver that doesn't
@@ -78,7 +78,7 @@ static bool pwm_is_in_use(void)
 }
 #endif /* CONFIG_DEVICE_POWER_MANAGEMENT */
 
-static void nmos_pwm_disable(u32_t nmos_idx)
+static void nmos_pwm_disable(uint32_t nmos_idx)
 {
 	pwm_out(nmos_pins[nmos_idx].pin, current_period_us, 0);
 
@@ -105,7 +105,7 @@ static int nmos_pwm_enable(size_t nmos_idx)
 	nmos_pins[nmos_idx].mode = NMOS_MODE_PWM;
 
 #ifdef CONFIG_DEVICE_POWER_MANAGEMENT
-	u32_t power_state;
+	uint32_t power_state;
 
 	device_get_power_state(pwm_dev, &power_state);
 
@@ -125,7 +125,7 @@ static int nmos_pwm_enable(size_t nmos_idx)
 	return err;
 }
 
-static int configure_gpio(u32_t pin)
+static int configure_gpio(uint32_t pin)
 {
 	int err;
 
@@ -204,7 +204,7 @@ int ui_nmos_init(void)
 	return err;
 }
 
-int ui_nmos_pwm_set(size_t nmos_idx, u32_t period, u32_t pulse)
+int ui_nmos_pwm_set(size_t nmos_idx, uint32_t period, uint32_t pulse)
 {
 	if ((pulse > period) || (period == 0)) {
 		LOG_ERR("Period has to be non-zero and period >= duty cycle");
@@ -229,7 +229,7 @@ int ui_nmos_pwm_set(size_t nmos_idx, u32_t period, u32_t pulse)
 	return pwm_out(nmos_pins[nmos_idx].pin, period, pulse);
 }
 
-int ui_nmos_write(size_t nmos_idx, u8_t value)
+int ui_nmos_write(size_t nmos_idx, uint8_t value)
 {
 	int err;
 

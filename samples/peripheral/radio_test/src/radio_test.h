@@ -68,27 +68,27 @@ struct radio_test_config {
 	union {
 		struct {
 			/** Radio output power. */
-			u8_t txpower;
+			uint8_t txpower;
 
 			/** Radio channel. */
-			u8_t channel;
+			uint8_t channel;
 		} unmodulated_tx;
 
 		struct {
 			/** Radio output power. */
-			u8_t txpower;
+			uint8_t txpower;
 
 			/** Radio transmission pattern. */
 			enum transmit_pattern pattern;
 
 			/** Radio channel. */
-			u8_t channel;
+			uint8_t channel;
 
 			/**
 			 * Number of pacets to transmit.
 			 * Set to zero for continuous TX.
 			 */
-			u32_t packets_num;
+			uint32_t packets_num;
 
 			/** Callback to indicate that TX is finished. */
 			void (*cb)(void);
@@ -99,46 +99,46 @@ struct radio_test_config {
 			enum transmit_pattern pattern;
 
 			/** Radio channel. */
-			u8_t channel;
+			uint8_t channel;
 		} rx;
 
 		struct {
 			/** Radio output power. */
-			u8_t txpower;
+			uint8_t txpower;
 
 			/** Radio start channel (frequency). */
-			u8_t channel_start;
+			uint8_t channel_start;
 
 			/** Radio end channel (frequency). */
-			u8_t channel_end;
+			uint8_t channel_end;
 
 			/** Delay time in milliseconds. */
-			u32_t delay_ms;
+			uint32_t delay_ms;
 		} tx_sweep;
 
 		struct {
 			/** Radio start channel (frequency). */
-			u8_t channel_start;
+			uint8_t channel_start;
 
 			/** Radio end channel (frequency). */
-			u8_t channel_end;
+			uint8_t channel_end;
 
 			/** Delay time in milliseconds. */
-			u32_t delay_ms;
+			uint32_t delay_ms;
 		} rx_sweep;
 
 		struct {
 			/** Radio output power. */
-			u8_t txpower;
+			uint8_t txpower;
 
 			/** Radio transmission pattern. */
 			enum transmit_pattern pattern;
 
 			/** Radio channel. */
-			u8_t channel;
+			uint8_t channel;
 
 			/** Duty cycle. */
-			u32_t duty_cycle;
+			uint32_t duty_cycle;
 		} modulated_tx_duty_cycle;
 	} params;
 };
@@ -148,14 +148,14 @@ struct radio_rx_stats {
 	/** Content of the last packet. */
 	struct {
 		/** Content of the last packet. */
-		u8_t *buf;
+		uint8_t *buf;
 
 		/** Length of the last packet. */
 		size_t len;
 	} last_packet;
 
 	/** Number of received packets with valid CRC. */
-	u32_t packet_cnt;
+	uint32_t packet_cnt;
 };
 
 /**
@@ -189,6 +189,6 @@ void radio_rx_stats_get(struct radio_rx_stats *rx_stats);
  *
  * @param[in] dcdc_state  DC/DC converter state.
  */
-void toggle_dcdc_state(u8_t dcdc_state);
+void toggle_dcdc_state(uint8_t dcdc_state);
 
 #endif /* RADIO_TEST_H_ */

@@ -134,8 +134,8 @@ LOG_MODULE_REGISTER(modem_info);
 struct modem_info_data {
 	const char *cmd;
 	const char *data_name;
-	u8_t param_index;
-	u8_t param_count;
+	uint8_t param_index;
+	uint8_t param_count;
 	enum at_param_type data_type;
 };
 
@@ -350,8 +350,8 @@ static bool is_cesq_notification(const char *buf, size_t len)
 
 static void flip_iccid_string(char *buf)
 {
-	u8_t current_char;
-	u8_t next_char;
+	uint8_t current_char;
+	uint8_t next_char;
 
 	for (size_t i = 0; i < strlen(buf); i = i + 2) {
 		current_char = buf[i];
@@ -366,7 +366,7 @@ static int modem_info_parse(const struct modem_info_data *modem_data,
 			    const char *buf)
 {
 	int err;
-	u32_t param_index;
+	uint32_t param_index;
 
 	err = at_parser_max_params_from_str(buf, NULL, &m_param_list,
 					    modem_data->param_count);
@@ -417,7 +417,7 @@ int modem_info_name_get(enum modem_info info, char *name)
 	return len;
 }
 
-int modem_info_short_get(enum modem_info info, u16_t *buf)
+int modem_info_short_get(enum modem_info info, uint16_t *buf)
 {
 	int err;
 	char recv_buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
@@ -454,7 +454,7 @@ int modem_info_short_get(enum modem_info info, u16_t *buf)
 		return err;
 	}
 
-	return sizeof(u16_t);
+	return sizeof(uint16_t);
 }
 
 int modem_info_string_get(enum modem_info info, char *buf,
@@ -462,7 +462,7 @@ int modem_info_string_get(enum modem_info info, char *buf,
 {
 	int err;
 	char recv_buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
-	u16_t param_value;
+	uint16_t param_value;
 	int ip_cnt = 0;
 	char *ip_str_end = recv_buf;
 	/* index into the AT cmd response buffer */
@@ -599,7 +599,7 @@ static void modem_info_rsrp_subscribe_handler(void *context, const char *respons
 {
 	ARG_UNUSED(context);
 
-	u16_t param_value;
+	uint16_t param_value;
 	int err;
 
 	if (!is_cesq_notification(response, strlen(response))) {

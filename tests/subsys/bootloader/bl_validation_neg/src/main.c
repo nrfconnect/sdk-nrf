@@ -16,25 +16,25 @@
 
 
 /* These symbols are defined in linker scripts. */
-extern const u32_t _ext_apis_size[];
-extern const u32_t _ext_apis_req_size[];
+extern const uint32_t _ext_apis_size[];
+extern const uint32_t _ext_apis_req_size[];
 
 extern const struct fw_info m_firmware_info;
 
 #define VAL_INFO_MAX_SIZE 0x1000
-u32_t val_info_buf[VAL_INFO_MAX_SIZE];
+uint32_t val_info_buf[VAL_INFO_MAX_SIZE];
 
 void test_validation_neg1(void)
 {
-	u32_t copy_len = (u32_t)_flash_used;
+	uint32_t copy_len = (uint32_t)_flash_used;
 
 	/* Round up to at least the next SPU region. */
-	u32_t new_addr = ROUND_UP(PM_ADDRESS + (PM_SIZE / 2), 0x8000);
+	uint32_t new_addr = ROUND_UP(PM_ADDRESS + (PM_SIZE / 2), 0x8000);
 
 	const struct fw_info s1_info = {
 		.magic = {FIRMWARE_INFO_MAGIC},
 		.total_size = PM_S0_ADDRESS - PM_S1_ADDRESS,
-		.size = ((u32_t)_flash_used),
+		.size = ((uint32_t)_flash_used),
 		.version = CONFIG_FW_INFO_FIRMWARE_VERSION + 1,
 		.address = new_addr,
 		.boot_address = new_addr,
@@ -50,24 +50,24 @@ void test_validation_neg1(void)
 		/* Second boot */
 		zassert_not_equal(CONFIG_FW_INFO_VALID_VAL,
 			s1_info_copied->valid, "Failed to invalidate S1.\r\n");
-		zassert_equal((u32_t)s1_info_copied, PM_S1_ADDRESS,
+		zassert_equal((uint32_t)s1_info_copied, PM_S1_ADDRESS,
 			"S1 info found at wrong address.\r\n");
-		u32_t ret = nrfx_nvmc_page_erase(PM_S1_ADDRESS);
+		uint32_t ret = nrfx_nvmc_page_erase(PM_S1_ADDRESS);
 
 		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
 	} else {
 		/* First boot */
 
 		/* Copy app */
-		for (u32_t erase_addr = new_addr;
+		for (uint32_t erase_addr = new_addr;
 			erase_addr < (new_addr + copy_len);
 			erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash),
 							erase_block_size)) {
-			u32_t ret = nrfx_nvmc_page_erase(new_addr);
+			uint32_t ret = nrfx_nvmc_page_erase(new_addr);
 
 			zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
 		}
-		nrfx_nvmc_words_write(new_addr, (const u32_t *)PM_ADDRESS,
+		nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_ADDRESS,
 			(copy_len + 3) / 4);
 
 		/* Write to S1 */
@@ -78,19 +78,19 @@ void test_validation_neg1(void)
 			sizeof(s1_info), "Failed to copy S1 info.\r\n");
 
 		s1_info_copied = fw_info_find(PM_S1_ADDRESS);
-		zassert_equal((u32_t)s1_info_copied, PM_S1_ADDRESS,
+		zassert_equal((uint32_t)s1_info_copied, PM_S1_ADDRESS,
 			"S1 info wrongly copied.\r\n");
 
 		/* Modify copied app's validation info */
-		memcpy(val_info_buf, (const u32_t *)(PM_ADDRESS + copy_len),
+		memcpy(val_info_buf, (const uint32_t *)(PM_ADDRESS + copy_len),
 			VAL_INFO_MAX_SIZE);
 
 		struct __packed {
-			u32_t magic[MAGIC_LEN_WORDS];
-			u32_t address;
+			uint32_t magic[MAGIC_LEN_WORDS];
+			uint32_t address;
 		} *val_info = (void *)(val_info_buf);
 
-		const u32_t validation_info_magic[] = {VALIDATION_INFO_MAGIC};
+		const uint32_t validation_info_magic[] = {VALIDATION_INFO_MAGIC};
 
 		zassert_mem_equal(validation_info_magic, val_info->magic,
 			MAGIC_LEN_WORDS*4,
@@ -111,12 +111,12 @@ void test_validation_neg1(void)
 void test_validation_neg2(void)
 {
 #if PM_PROVISION_ADDRESS > 0xF00000
-	u32_t num_public_keys = num_public_keys_read();
+	uint32_t num_public_keys = num_public_keys_read();
 	bool any_valid = false;
 
-	__aligned(4) u8_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
+	__aligned(4) uint8_t key_data[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
 
-	for (u32_t key_data_idx = 0; key_data_idx < num_public_keys;
+	for (uint32_t key_data_idx = 0; key_data_idx < num_public_keys;
 			key_data_idx++) {
 		int retval = public_key_data_read(key_data_idx,
 				key_data, CONFIG_SB_PUBLIC_KEY_HASH_LEN);

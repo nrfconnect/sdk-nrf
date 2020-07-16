@@ -13,8 +13,8 @@
 /** Persistent storage handling */
 struct bt_mesh_plvl_srv_settings_data {
 	struct bt_mesh_plvl_range range;
-	u16_t default_power;
-	u16_t last;
+	uint16_t default_power;
+	uint16_t last;
 	bool is_on;
 } __packed;
 
@@ -31,7 +31,7 @@ static int store_state(struct bt_mesh_plvl_srv *srv)
 		.range = srv->range,
 	};
 
-	return bt_mesh_model_data_store(srv->plvl_model, false, &data,
+	return bt_mesh_model_data_store(srv->plvl_model, false, NULL, &data,
 					sizeof(data));
 }
 
@@ -170,7 +170,7 @@ static void plvl_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_plvl_status status;
 	struct bt_mesh_plvl_set set;
-	u8_t tid;
+	uint8_t tid;
 
 	set.power_lvl = net_buf_simple_pull_le16(buf);
 	tid = net_buf_simple_pull_u8(buf);
@@ -246,10 +246,10 @@ static void set_default(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	struct bt_mesh_plvl_srv *srv = mod->user_data;
-	u16_t new = net_buf_simple_pull_le16(buf);
+	uint16_t new = net_buf_simple_pull_le16(buf);
 
 	if (new != srv->default_power) {
-		u16_t old = srv->default_power;
+		uint16_t old = srv->default_power;
 
 		srv->default_power = new;
 		if (srv->handlers->default_update) {
@@ -444,7 +444,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		CONTAINER_OF(lvl_srv, struct bt_mesh_plvl_srv, lvl);
 	struct bt_mesh_plvl_status status = { 0 };
 
-	u16_t start_value = srv->last;
+	uint16_t start_value = srv->last;
 
 	if (delta_set->new_transaction) {
 		srv->handlers->power_get(srv, NULL, &status);
@@ -480,7 +480,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_plvl_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_plvl_srv, lvl);
 	struct bt_mesh_plvl_status status = { 0 };
-	u16_t target;
+	uint16_t target;
 
 	srv->handlers->power_get(srv, NULL, &status);
 
@@ -499,10 +499,10 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 
 	if (move_set->delta != 0 && move_set->transition) {
-		s32_t distance = abs(target - status.current);
+		int32_t distance = abs(target - status.current);
 
-		s32_t time_to_edge =
-			((u64_t)distance * (u64_t)move_set->transition->time) /
+		int32_t time_to_edge =
+			((uint64_t)distance * (uint64_t)move_set->transition->time) /
 			abs(move_set->delta);
 
 		if (time_to_edge > 0) {

@@ -70,7 +70,7 @@ static void z_to_nrf_ipv6(const struct sockaddr *z_in,
 	nrf_out->sin6_family = NRF_AF_INET6;
 	memcpy(nrf_out->sin6_addr.s6_addr, ptr->sin6_addr.s6_addr,
 		sizeof(struct in6_addr));
-	nrf_out->sin6_scope_id = (u32_t)ptr->sin6_scope_id;
+	nrf_out->sin6_scope_id = (uint32_t)ptr->sin6_scope_id;
 }
 
 static void nrf_to_z_ipv6(struct sockaddr *z_out,
@@ -83,7 +83,7 @@ static void nrf_to_z_ipv6(struct sockaddr *z_out,
 	ptr->sin6_family = AF_INET6;
 	memcpy(ptr->sin6_addr.s6_addr, nrf_in->sin6_addr.s6_addr,
 		sizeof(struct nrf_in6_addr));
-	ptr->sin6_scope_id = (u8_t)nrf_in->sin6_scope_id;
+	ptr->sin6_scope_id = (uint8_t)nrf_in->sin6_scope_id;
 }
 
 static int z_to_nrf_level(int z_in_level, int *nrf_out_level)
@@ -822,7 +822,7 @@ static ssize_t nrf91_socket_offload_sendmsg(void *obj, const struct msghdr *msg,
 	ssize_t ret;
 	int i;
 	static K_MUTEX_DEFINE(sendmsg_lock);
-	static u8_t buf[CONFIG_BSD_LIBRARY_SENDMSG_BUF_SIZE];
+	static uint8_t buf[CONFIG_BSD_LIBRARY_SENDMSG_BUF_SIZE];
 
 	if (msg == NULL) {
 		errno = EINVAL;

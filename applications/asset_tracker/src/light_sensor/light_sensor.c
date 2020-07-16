@@ -44,15 +44,15 @@ static struct ls_ch_data *ls_data[LS_CH__END] = { [LS_CH_RED] = &ls_ch_red,
 static light_sensor_data_ready_cb ls_cb;
 static struct k_delayed_work ls_poller;
 static struct k_work_q *ls_work_q;
-static u32_t data_send_interval_s = CONFIG_LIGHT_SENSOR_DATA_SEND_INTERVAL;
+static uint32_t data_send_interval_s = CONFIG_LIGHT_SENSOR_DATA_SEND_INTERVAL;
 static bool initialized;
 
 static void light_sensor_poll_fn(struct k_work *work);
 
-static inline int submit_poll_work(const u32_t delay_s)
+static inline int submit_poll_work(const uint32_t delay_s)
 {
 	return k_delayed_work_submit_to_queue(ls_work_q, &ls_poller,
-					      K_SECONDS((u32_t)delay_s));
+					      K_SECONDS((uint32_t)delay_s));
 }
 
 int light_sensor_poll(void)
@@ -142,7 +142,7 @@ void light_sensor_poll_fn(struct k_work *work)
 	submit_poll_work(data_send_interval_s);
 }
 
-void light_sensor_set_send_interval(const u32_t interval_s)
+void light_sensor_set_send_interval(const uint32_t interval_s)
 {
 	if (interval_s == data_send_interval_s) {
 		return;
@@ -162,7 +162,7 @@ void light_sensor_set_send_interval(const u32_t interval_s)
 	}
 }
 
-u32_t light_sensor_get_send_interval(void)
+uint32_t light_sensor_get_send_interval(void)
 {
 	return data_send_interval_s;
 }

@@ -35,8 +35,8 @@ static void test_params_put_get_int_setup(void)
 
 static void test_params_put_get_int(void)
 {
-	u16_t tmp_short = 0;
-	u32_t tmp_int   = 0;
+	uint16_t tmp_short = 0;
+	uint32_t tmp_int   = 0;
 
 	zassert_equal(-EINVAL, at_params_short_put(NULL, 0, 1),
 		      "at_params_short_put should return -EINVAL");
@@ -145,8 +145,8 @@ static void test_params_put_get_array_setup(void)
 
 static void test_params_put_get_array(void)
 {
-	const u32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
-	u32_t       test_buf[32];
+	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
+	uint32_t       test_buf[32];
 	size_t      test_buf_len = sizeof(test_buf);
 
 	zassert_equal(-EINVAL, at_params_array_put(NULL, 1,
@@ -202,7 +202,7 @@ static void test_params_put_get_array_teardown(void)
 static void test_params_get_type_setup(void)
 {
 	const char    test_str[] = "Test, 1, 2, 3";
-	const u32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
+	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
 
 	at_params_list_init(&test_list, TEST_PARAMS);
 	at_params_short_put(&test_list, 0, 2);
@@ -274,7 +274,7 @@ static void test_params_get_count_setup(void)
 static void test_params_get_count(void)
 {
 	const char test_str[]    = "Hello World!";
-	const u32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
+	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
 
 	zassert_equal(-EINVAL, at_params_valid_count_get(NULL),
 		      "Get count should return -EINVAL");
@@ -318,7 +318,7 @@ static void test_params_get_size(void)
 {
 	size_t len;
 	const char test_str[]    = "Hello World!";
-	const u32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
+	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
 
 	zassert_equal(-EINVAL, at_params_size_get(NULL, 0, &len),
 		      "Get size should return -EINVAL");
@@ -332,14 +332,14 @@ static void test_params_get_size(void)
 	at_params_short_put(&test_list, 0, 1);
 
 	at_params_size_get(&test_list, 0, &len);
-	zassert_equal(sizeof(u16_t), len,
-		      "Get size should return sizeof(u16_t)");
+	zassert_equal(sizeof(uint16_t), len,
+		      "Get size should return sizeof(uint16_t)");
 
 	at_params_int_put(&test_list, 0, 1);
 
 	at_params_size_get(&test_list, 0, &len);
-	zassert_equal(sizeof(u32_t), len,
-		      "Get size should return sizeof(u32_t)");
+	zassert_equal(sizeof(uint32_t), len,
+		      "Get size should return sizeof(uint32_t)");
 
 	at_params_string_put(&test_list, 0, test_str, sizeof(test_str));
 
@@ -373,10 +373,10 @@ static void test_params_list_management_setup(void)
 static void test_params_list_management(void)
 {
 	int   ret;
-	u32_t tmp_int;
+	uint32_t tmp_int;
 
 	const char test_str[]    = "Hello World!";
-	const u32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
+	const uint32_t test_array[] = {1, 2, 3, 4, 5, 6, 7};
 
 	for (int i = 0; i <= TEST_PARAMS; ++i) {
 		ret = at_params_int_put(&test_list, i, 1);

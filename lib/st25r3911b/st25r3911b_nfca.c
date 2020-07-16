@@ -49,7 +49,7 @@ LOG_MODULE_DECLARE(st25r3911b);
 #define NFCA_SEL_CMD_LEN 1
 #define NFCA_SEL_PAR_LEN 1
 #define NFCA_SDD_REQ_LEN (NFCA_SEL_CMD_LEN + NFCA_SEL_PAR_LEN)
-#define NFCA_SDD_DATA_SET(_bytes, _bits) ((u8_t)(((_bytes) << 4) + (_bits)))
+#define NFCA_SDD_DATA_SET(_bytes, _bits) ((uint8_t)(((_bytes) << 4) + (_bits)))
 #define NFCA_SEL_REQ_BASE 0x91
 #define NFCA_SEL_REQ_N_CMD(_lvl) (NFCA_SEL_REQ_BASE + 2 * (_lvl))
 
@@ -77,32 +77,32 @@ extern const k_tid_t thread;
 
 struct nfc_state {
 	atomic_t tag;
-	u32_t txrx;
-	u32_t anticollision;
+	uint32_t txrx;
+	uint32_t anticollision;
 };
 
 struct nfca_sel_req {
-	u8_t sel_cmd;
-	u8_t sel_par;
-	u8_t nfcid1[NFCA_NFCID1_SINGLE_SIZE];
-	u8_t bcc;
+	uint8_t sel_cmd;
+	uint8_t sel_par;
+	uint8_t nfcid1[NFCA_NFCID1_SINGLE_SIZE];
+	uint8_t bcc;
 };
 
 struct nfca_collision_rsp {
-	u8_t sel_cmd;
-	u8_t sel_par;
-	u8_t data[NFCA_NFCID1_SINGLE_SIZE + NFCA_SDD_REQ_LEN];
+	uint8_t sel_cmd;
+	uint8_t sel_par;
+	uint8_t data[NFCA_NFCID1_SINGLE_SIZE + NFCA_SDD_REQ_LEN];
 };
 
 struct nfca_sdd_req {
-	u8_t sel_cmd;
-	u8_t sel_par;
+	uint8_t sel_cmd;
+	uint8_t sel_par;
 };
 
 struct nfc_transfer {
 	const struct st25r3911b_nfca_buf *tx_buf;
 	const struct st25r3911b_nfca_buf *rx_buf;
-	u32_t fdt;
+	uint32_t fdt;
 	size_t written_byte;
 	size_t received_byte;
 	bool auto_crc;
@@ -110,13 +110,13 @@ struct nfc_transfer {
 };
 
 struct fifo_water_lvl {
-	u8_t tx;
-	u8_t rx;
+	uint8_t tx;
+	uint8_t rx;
 };
 
 struct nfc_fifo {
-	u8_t bytes_to_read;
-	u8_t incomplete_bits;
+	uint8_t bytes_to_read;
+	uint8_t incomplete_bits;
 	bool parity_miss;
 };
 
@@ -126,7 +126,7 @@ struct st25r3911b_nfca {
 	struct nfc_transfer transfer;
 	struct nfc_fifo fifo;
 	struct fifo_water_lvl water_lvl;
-	u32_t cmd;
+	uint32_t cmd;
 	const struct st25r3911b_nfca_cb *cb;
 };
 
@@ -181,12 +181,12 @@ static void nfca_event_init(struct k_poll_event *events)
 			  &user_sem);
 }
 
-static void state_set(u32_t state)
+static void state_set(uint32_t state)
 {
 	atomic_set(&nfca.state.tag, state);
 }
 
-static int fifo_incomplete_bit_set(u8_t bits)
+static int fifo_incomplete_bit_set(uint8_t bits)
 {
 	return st25r3911b_reg_modify(ST25R3911B_REG_NUM_TX_BYTES_REG2,
 				     ST25R3911B_REG_NUM_TX_BYTES_REG2_NBTX,
@@ -231,13 +231,13 @@ static int transmission_prepare(void)
 	return st25r3911b_cmd_execute(ST25R3911B_CMD_RESET_RX_GAIN);
 }
 
-static int anticollision_transmit(u8_t *tx_buf, size_t tx_bytes,
+static int anticollision_transmit(uint8_t *tx_buf, size_t tx_bytes,
 				  size_t tx_bits, bool antcl)
 {
 	int err;
-	u8_t cmd;
-	u32_t mask_timer;
-	u16_t no_rsp_timer;
+	uint8_t cmd;
+	uint32_t mask_timer;
+	uint16_t no_rsp_timer;
 
 	if (antcl) {
 		/* Set sending anticollision frame */
@@ -335,10 +335,10 @@ static int anticollision_transmit(u8_t *tx_buf, size_t tx_bytes,
 	return st25r3911b_cmd_execute(cmd);
 }
 
-static int transfer_fdt_set(u32_t fdt)
+static int transfer_fdt_set(uint32_t fdt)
 {
 	int err;
-	u32_t mask_timer;
+	uint32_t mask_timer;
 
 	mask_timer = NFCA_MIN_LISTEN_FDT -
 		     (ST25R3911B_FDT_ADJUST + NFCA_POLL_FTD_ADJUSMENT);
@@ -363,9 +363,9 @@ static int transfer_fdt_set(u32_t fdt)
 	return err;
 }
 
-static u8_t bcc_calculate(u8_t *buf, u8_t len)
+static uint8_t bcc_calculate(uint8_t *buf, uint8_t len)
 {
-	u8_t bcc = 0;
+	uint8_t bcc = 0;
 
 	__ASSERT_NO_MSG(len == NFCA_BCC_CACL_LEN);
 
@@ -379,11 +379,11 @@ static u8_t bcc_calculate(u8_t *buf, u8_t len)
 	return bcc;
 }
 
-static int read_rx_data(u8_t *data, size_t len)
+static int read_rx_data(uint8_t *data, size_t len)
 {
 	int err;
-	u8_t fifo_status;
-	u32_t received;
+	uint8_t fifo_status;
+	uint32_t received;
 
 	/* Check number of bytes in FIFO */
 	err = st25r3911b_reg_read(ST25R3911B_REG_FIFO_STATUS_1, &fifo_status);
@@ -413,15 +413,15 @@ static int read_rx_data(u8_t *data, size_t len)
 	return st25r3911b_fifo_read(data + received, nfca.fifo.bytes_to_read);
 }
 
-static void tag_platform_detect(u8_t sel_rsp)
+static void tag_platform_detect(uint8_t sel_rsp)
 {
-	u8_t tag = sel_rsp & NFCA_SEL_RSP_TAG_PLATFORM_MASK;
+	uint8_t tag = sel_rsp & NFCA_SEL_RSP_TAG_PLATFORM_MASK;
 
 	tag >>= NFCA_SEL_RSP_TAG_PLATFORM_SHIFT;
 	nfca.tag.type = tag;
 }
 
-static int anticollision_resolution(u32_t cascade_lvl)
+static int anticollision_resolution(uint32_t cascade_lvl)
 {
 	struct nfca_sdd_req sdd_req;
 
@@ -436,7 +436,7 @@ static int anticollision_resolution(u32_t cascade_lvl)
 	LOG_DBG("Collision resolution procedure start, cascade %u",
 		cascade_lvl);
 
-	return anticollision_transmit((u8_t *)&sdd_req, sizeof(sdd_req),
+	return anticollision_transmit((uint8_t *)&sdd_req, sizeof(sdd_req),
 				      0, true);
 }
 
@@ -444,12 +444,12 @@ static int anticollision_rx(void)
 {
 	int err;
 
-	u8_t buff[NFCA_ANTICOLLISION_FRAME_LEN] = {0};
+	uint8_t buff[NFCA_ANTICOLLISION_FRAME_LEN] = {0};
 	struct nfca_sel_req sel_req;
-	u8_t rsp_len;
-	u8_t bcc;
-	u8_t sel_rsp;
-	static u8_t nfcid_idx;
+	uint8_t rsp_len;
+	uint8_t bcc;
+	uint8_t sel_rsp;
+	static uint8_t nfcid_idx;
 
 	err = read_rx_data(buff, sizeof(buff));
 	if (err) {
@@ -510,7 +510,7 @@ static int anticollision_rx(void)
 
 	memcpy(sel_req.nfcid1, buff, sizeof(sel_req.nfcid1));
 
-	return anticollision_transmit((u8_t *)&sel_req, sizeof(sel_req),
+	return anticollision_transmit((uint8_t *)&sel_req, sizeof(sel_req),
 				      0, false);
 }
 
@@ -542,7 +542,7 @@ static int on_rx_complete(void)
 		break;
 
 	case STATE_TAG_DETECTION:
-		err = read_rx_data((u8_t *)&nfca.tag.sens_resp,
+		err = read_rx_data((uint8_t *)&nfca.tag.sens_resp,
 				   sizeof(nfca.tag.sens_resp));
 
 		if (nfca.tag.sens_resp.platform_info == NFCA_T1T_PLATFORM) {
@@ -586,8 +586,8 @@ static int on_rx_complete(void)
 
 static int tx_fifo_water(void)
 {
-	u8_t *buff;
-	u8_t bytes_to_send;
+	uint8_t *buff;
+	uint8_t bytes_to_send;
 
 	bytes_to_send = MIN(nfca.transfer.tx_buf->len - nfca.transfer.written_byte,
 			    nfca.water_lvl.tx);
@@ -601,8 +601,8 @@ static int tx_fifo_water(void)
 
 static int rx_fifo_water(void)
 {
-	u8_t *buf;
-	u32_t bytes_to_receive = nfca.water_lvl.rx;
+	uint8_t *buf;
+	uint32_t bytes_to_receive = nfca.water_lvl.rx;
 
 	buf = nfca.transfer.rx_buf->data + nfca.transfer.received_byte;
 
@@ -613,7 +613,7 @@ static int rx_fifo_water(void)
 	return st25r3911b_fifo_read(buf, bytes_to_receive);
 }
 
-static int on_fifo_water_lvl(u32_t state)
+static int on_fifo_water_lvl(uint32_t state)
 {
 	int err;
 
@@ -638,10 +638,10 @@ static int on_fifo_water_lvl(u32_t state)
 static int on_collision(void)
 {
 	int err;
-	u8_t col_disp = 0;
-	u8_t buf[NFCA_ANTICOLLISION_FRAME_LEN] = {0};
-	u8_t bytes;
-	u8_t bits;
+	uint8_t col_disp = 0;
+	uint8_t buf[NFCA_ANTICOLLISION_FRAME_LEN] = {0};
+	uint8_t bytes;
+	uint8_t bits;
 	struct nfca_collision_rsp coll_resp;
 
 	if (nfca.state.tag != STATE_ANTICOLLISION) {
@@ -675,10 +675,10 @@ static int on_collision(void)
 	memcpy(coll_resp.data, buf, bytes);
 
 	/* Send a response to collision */
-	return anticollision_transmit((u8_t *)&coll_resp, bytes, bits, true);
+	return anticollision_transmit((uint8_t *)&coll_resp, bytes, bits, true);
 }
 
-static void rx_error_check(u32_t irq)
+static void rx_error_check(uint32_t irq)
 {
 	if (nfca.state.txrx != RX_STATE_START) {
 		return;
@@ -700,7 +700,7 @@ static void rx_error_check(u32_t irq)
 static int irq_process(void)
 {
 	int err = 0;
-	u32_t irq;
+	uint32_t irq;
 
 	irq = st25r3911b_irq_read();
 
@@ -754,9 +754,9 @@ static int irq_process(void)
 static int tag_detect(enum st25r3911b_nfca_detect_cmd cmd)
 {
 	int err;
-	u8_t direct_cmd;
-	u32_t mask_timer;
-	u32_t no_rsp_timer;
+	uint8_t direct_cmd;
+	uint32_t mask_timer;
+	uint32_t no_rsp_timer;
 
 	/* Set sending anticollision frame */
 	err = st25r3911b_reg_modify(ST25R3911B_REG_ISO14443A, 0,
@@ -851,11 +851,11 @@ static int tag_detect(enum st25r3911b_nfca_detect_cmd cmd)
 
 static int transfer(const struct st25r3911b_nfca_buf *tx,
 		    const struct st25r3911b_nfca_buf *rx,
-		    u32_t fdt, bool auto_crc)
+		    uint32_t fdt, bool auto_crc)
 {
 	int err;
-	u8_t cmd;
-	u32_t irq;
+	uint8_t cmd;
+	uint32_t irq;
 
 	/* Do not set sending anticollision frame */
 	err = st25r3911b_reg_modify(ST25R3911B_REG_ISO14443A,
@@ -942,7 +942,7 @@ static int transfer(const struct st25r3911b_nfca_buf *tx,
 static int tag_sleep(void)
 {
 	int err;
-	u8_t tx_buffer[] = NFCA_SLEEP_CMD;
+	uint8_t tx_buffer[] = NFCA_SLEEP_CMD;
 	const struct st25r3911b_nfca_buf tx = {
 		.data = tx_buffer,
 		.len = sizeof(tx_buffer)
@@ -1059,7 +1059,7 @@ int st25r3911b_nfca_process(void)
 	return 0;
 }
 
-int st25r3911b_nfca_init(struct k_poll_event *events, u8_t cnt,
+int st25r3911b_nfca_init(struct k_poll_event *events, uint8_t cnt,
 			 const struct st25r3911b_nfca_cb *cb)
 {
 	int err;
@@ -1187,7 +1187,7 @@ int st25r3911b_nfca_anticollision_start(void)
 
 int st25r3911b_nfca_transfer(const struct st25r3911b_nfca_buf *tx,
 			     const struct st25r3911b_nfca_buf *rx,
-			     u32_t fdt, bool auto_crc)
+			     uint32_t fdt, bool auto_crc)
 {
 	if ((!tx) || (!rx)) {
 		return -EINVAL;
@@ -1222,24 +1222,24 @@ int st25r3911b_nfca_tag_sleep(void)
 	return 0;
 }
 
-int st25r3911b_nfca_crc_calculate(const u8_t *data, size_t len,
+int st25r3911b_nfca_crc_calculate(const uint8_t *data, size_t len,
 				  struct st25r3911b_nfca_crc *crc_val)
 {
 	if ((!data) || (!crc_val) || (len <= 0)) {
 		return -EINVAL;
 	}
 
-	u32_t crc = NFCA_CRC_INITIAL_VALUE;
-	u8_t *crc_pos = crc_val->crc;
+	uint32_t crc = NFCA_CRC_INITIAL_VALUE;
+	uint8_t *crc_pos = crc_val->crc;
 
 	do {
-		u8_t byte;
+		uint8_t byte;
 
 		byte = *data++;
-		byte = (byte ^ (u8_t)(crc & 0x00FF));
+		byte = (byte ^ (uint8_t)(crc & 0x00FF));
 		byte = (byte ^ (byte << 4));
-		crc = (crc >> 8) ^ ((u32_t)byte << 8) ^
-		      ((u32_t) byte << 3) ^ ((u32_t) byte >> 4);
+		crc = (crc >> 8) ^ ((uint32_t)byte << 8) ^
+		      ((uint32_t) byte << 3) ^ ((uint32_t) byte >> 4);
 
 	} while (--len);
 

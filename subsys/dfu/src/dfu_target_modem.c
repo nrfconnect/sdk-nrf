@@ -12,9 +12,9 @@ LOG_MODULE_REGISTER(dfu_target_modem, CONFIG_DFU_TARGET_LOG_LEVEL);
 #define MODEM_MAGIC 0x7544656d
 
 struct modem_delta_header {
-	u16_t pad1;
-	u16_t pad2;
-	u32_t magic;
+	uint16_t pad1;
+	uint16_t pad2;
+	uint32_t magic;
 };
 
 static int  fd;
@@ -96,7 +96,7 @@ static int modem_dfu_socket_init(void)
 {
 	int err;
 	socklen_t len;
-	u8_t version[36];
+	uint8_t version[36];
 	char version_string[37];
 
 	/* Create a socket for firmware upgrade*/
@@ -196,7 +196,7 @@ int dfu_target_modem_write(const void *const buf, size_t len)
 	int send_result = 0;
 
 	while (send_result >= 0) {
-		send_result = send(fd, (((u8_t *)buf) + sent),
+		send_result = send(fd, (((uint8_t *)buf) + sent),
 				   (len - sent), 0);
 		if (send_result > 0) {
 			sent += send_result;

@@ -228,7 +228,7 @@ int _bt_mesh_loc_srv_update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-s32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
+int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
 				 struct bt_mesh_msg_ctx *ctx,
 				 const struct bt_mesh_loc_global *global)
 {
@@ -242,7 +242,7 @@ s32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
 	return model_send(srv->model, ctx, &msg);
 }
 
-s32_t bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
+int32_t bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
 				struct bt_mesh_msg_ctx *ctx,
 				const struct bt_mesh_loc_local *local)
 {

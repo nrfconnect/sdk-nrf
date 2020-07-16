@@ -22,7 +22,7 @@ The following code example shows how to parse the raw data from a Type 2 Tag:
 .. code-block:: c
 
         /* Buffer with raw data from a Type 2 Tag. */
-        u8_t raw_tag_data[] = ..;
+        uint8_t raw_tag_data[] = ..;
 
         /* Declaration of Type 2 Tag structure which
          * can contain a maximum of 10 TLV blocks.

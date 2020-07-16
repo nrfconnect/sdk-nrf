@@ -140,22 +140,22 @@
 
 static struct device *i2c_dev;
 
-static int adp536x_reg_read(u8_t reg, u8_t *buff)
+static int adp536x_reg_read(uint8_t reg, uint8_t *buff)
 {
 	return i2c_reg_read_byte(i2c_dev, ADP536X_I2C_ADDR, reg, buff);
 }
 
-static int adp536x_reg_write(u8_t reg, u8_t val)
+static int adp536x_reg_write(uint8_t reg, uint8_t val)
 {
 	return i2c_reg_write_byte(i2c_dev, ADP536X_I2C_ADDR, reg, val);
 }
 
-static int adp536x_reg_write_mask(u8_t reg_addr,
-			       u32_t mask,
-			       u8_t data)
+static int adp536x_reg_write_mask(uint8_t reg_addr,
+			       uint32_t mask,
+			       uint8_t data)
 {
 	int err;
-	u8_t tmp;
+	uint8_t tmp;
 
 	err = adp536x_reg_read(reg_addr, &tmp);
 	if (err) {
@@ -168,21 +168,21 @@ static int adp536x_reg_write_mask(u8_t reg_addr,
 	return adp536x_reg_write(reg_addr, tmp);
 }
 
-int adp536x_charger_current_set(u8_t value)
+int adp536x_charger_current_set(uint8_t value)
 {
 	return adp536x_reg_write_mask(ADP536X_CHG_CURRENT_SET,
 					ADP536X_CHG_CURRENT_SET_ICHG_MSK,
 					ADP536X_CHG_CURRENT_SET_ICHG(value));
 }
 
-int adp536x_vbus_current_set(u8_t value)
+int adp536x_vbus_current_set(uint8_t value)
 {
 	return adp536x_reg_write_mask(ADP536X_CHG_VBUS_ILIM,
 					ADP536X_CHG_VBUS_ILIM_ILIM_MSK,
 					ADP536X_CHG_VBUS_ILIM_ILIM(value));
 }
 
-int adp536x_charger_termination_voltage_set(u8_t value)
+int adp536x_charger_termination_voltage_set(uint8_t value)
 {
 	return adp536x_reg_write_mask(ADP536X_CHG_TERM_SET,
 					ADP536X_CHG_TERM_SET_VTRM_MSK,
@@ -203,12 +203,12 @@ int adp536x_charging_enable(bool enable)
 					ADP536X_CHG_FUNC_EN_CHG(enable));
 }
 
-int adp536x_charger_status_1_read(u8_t *buf)
+int adp536x_charger_status_1_read(uint8_t *buf)
 {
 	return adp536x_reg_read(ADP536X_CHG_STATUS_1, buf);
 }
 
-int adp536x_charger_status_2_read(u8_t *buf)
+int adp536x_charger_status_2_read(uint8_t *buf)
 {
 	return adp536x_reg_read(ADP536X_CHG_STATUS_2, buf);
 }
@@ -227,7 +227,7 @@ int adp536x_oc_chg_hiccup_set(bool enable)
 				ADP536X_BAT_PROTECT_CTRL_OC_CHG_HICCUP(enable));
 }
 
-int adp536x_oc_chg_current_set(u8_t value)
+int adp536x_oc_chg_current_set(uint8_t value)
 {
 	return adp536x_reg_write_mask(ADP536X_BAT_OC_CHG,
 					ADP536X_BAT_OC_CHG_OC_CHG_MSK,
@@ -237,7 +237,7 @@ int adp536x_oc_chg_current_set(u8_t value)
 int adp536x_buck_1v8_set(void)
 {
 	/* 1.8V equals to 0b11000 = 0x18 according to ADP536X datasheet. */
-	u8_t value = 0x18;
+	uint8_t value = 0x18;
 
 	return adp536x_reg_write_mask(ADP536X_BUCK_OUTPUT,
 					ADP536X_BUCK_OUTPUT_VOUT_BUCK_MSK,
@@ -254,7 +254,7 @@ int adp536x_buck_discharge_set(bool enable)
 int adp536x_buckbst_3v3_set(void)
 {
 	/* 3.3V equals to 0b10011 = 0x13, according to ADP536X datasheet. */
-	u8_t value = 0x13;
+	uint8_t value = 0x13;
 
 	return adp536x_reg_write_mask(ADP536X_BUCKBST_OUTPUT,
 				ADP536X_BUCKBST_OUTPUT_VOUT_BUCKBST_MSK,

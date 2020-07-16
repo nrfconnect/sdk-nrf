@@ -25,7 +25,7 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);
 
-#define ADC_DEVICE_NAME		DT_LABEL(DT_ALIAS(adc_0))
+#define ADC_DEVICE_NAME		DT_LABEL(DT_NODELABEL(adc))
 #define ADC_RESOLUTION		12
 #define ADC_OVERSAMPLING	4 /* 2^ADC_OVERSAMPLING samples are averaged */
 #define ADC_MAX 		4096
@@ -52,7 +52,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);
 #endif
 
 static struct device *adc_dev;
-static s16_t adc_buffer;
+static int16_t adc_buffer;
 static bool adc_async_read_pending;
 
 static struct k_delayed_work battery_lvl_read;
@@ -142,8 +142,8 @@ static void battery_monitor_stop(void)
 
 static void battery_lvl_process(void)
 {
-	u32_t voltage = BATTERY_VOLTAGE(adc_buffer);
-	u8_t level;
+	uint32_t voltage = BATTERY_VOLTAGE(adc_buffer);
+	uint8_t level;
 
 	if (voltage > CONFIG_DESKTOP_BATTERY_MEAS_MAX_LEVEL) {
 		level = 100;

@@ -21,9 +21,9 @@ static struct k_work provisioning_work;
 static struct k_timer led_timer;
 static struct k_timer provisioning_timer;
 
-static void on_light_request(u8_t command)
+static void on_light_request(uint8_t command)
 {
-	static u8_t val;
+	static uint8_t val;
 
 	switch (command) {
 	case THREAD_COAP_UTILS_LIGHT_CMD_ON:
@@ -78,7 +78,7 @@ static void on_provisioning_timer_expiry(struct k_timer *timer_id)
 
 static void on_led_timer_expiry(struct k_timer *timer_id)
 {
-	static u8_t val = 1;
+	static uint8_t val = 1;
 
 	ARG_UNUSED(timer_id);
 
@@ -93,16 +93,16 @@ static void on_led_timer_stop(struct k_timer *timer_id)
 	dk_set_led_off(PROVISIONING_LED);
 }
 
-static void on_button_changed(u32_t button_state, u32_t has_changed)
+static void on_button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	u32_t buttons = button_state & has_changed;
+	uint32_t buttons = button_state & has_changed;
 
 	if (buttons & DK_BTN4_MSK) {
 		k_work_submit(&provisioning_work);
 	}
 }
 
-static void on_thread_state_changed(u32_t flags, void *p_context)
+static void on_thread_state_changed(uint32_t flags, void *p_context)
 {
 	if (flags & OT_CHANGED_THREAD_ROLE) {
 		switch (otThreadGetDeviceRole(p_context)) {

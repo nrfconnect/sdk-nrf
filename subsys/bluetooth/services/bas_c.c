@@ -29,13 +29,13 @@ LOG_MODULE_REGISTER(bas_c, CONFIG_BT_GATT_BAS_C_LOG_LEVEL);
  * @retval BT_GATT_ITER_STOP     Stop notification
  * @retval BT_GATT_ITER_CONTINUE Continue notification
  */
-static u8_t notify_process(struct bt_conn *conn,
+static uint8_t notify_process(struct bt_conn *conn,
 			   struct bt_gatt_subscribe_params *params,
-			   const void *data, u16_t length)
+			   const void *data, uint16_t length)
 {
 	struct bt_gatt_bas_c *bas_c;
-	u8_t battery_level;
-	const u8_t *bdata = data;
+	uint8_t battery_level;
+	const uint8_t *bdata = data;
 
 	bas_c = CONTAINER_OF(params, struct bt_gatt_bas_c, notify_params);
 	if (!data || !length) {
@@ -84,13 +84,13 @@ static u8_t notify_process(struct bt_conn *conn,
  * @retval BT_GATT_ITER_STOP     Stop notification
  * @retval BT_GATT_ITER_CONTINUE Continue notification
  */
-static u8_t read_process(struct bt_conn *conn, u8_t err,
+static uint8_t read_process(struct bt_conn *conn, uint8_t err,
 			     struct bt_gatt_read_params *params,
-			     const void *data, u16_t length)
+			     const void *data, uint16_t length)
 {
 	struct bt_gatt_bas_c *bas_c;
-	u8_t battery_level = BT_GATT_BAS_VAL_INVALID;
-	const u8_t *bdata = data;
+	uint8_t battery_level = BT_GATT_BAS_VAL_INVALID;
+	const uint8_t *bdata = data;
 
 	bas_c = CONTAINER_OF(params, struct bt_gatt_bas_c, read_params);
 
@@ -133,13 +133,13 @@ static u8_t read_process(struct bt_conn *conn, u8_t err,
  * @retval BT_GATT_ITER_STOP     Stop notification
  * @retval BT_GATT_ITER_CONTINUE Continue notification
  */
-static u8_t periodic_read_process(struct bt_conn *conn, u8_t err,
+static uint8_t periodic_read_process(struct bt_conn *conn, uint8_t err,
 				  struct bt_gatt_read_params *params,
-				  const void *data, u16_t length)
+				  const void *data, uint16_t length)
 {
 	struct bt_gatt_bas_c *bas_c;
-	u8_t battery_level = BT_GATT_BAS_VAL_INVALID;
-	const u8_t *bdata = data;
+	uint8_t battery_level = BT_GATT_BAS_VAL_INVALID;
+	const uint8_t *bdata = data;
 
 	bas_c = CONTAINER_OF(params, struct bt_gatt_bas_c,
 			periodic_read.params);
@@ -390,7 +390,7 @@ int bt_gatt_bas_c_get(struct bt_gatt_bas_c *bas_c)
 
 
 int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
-				      s32_t interval,
+				      int32_t interval,
 				      bt_gatt_bas_c_notify_cb func)
 {
 	if (!bas_c || !func) {

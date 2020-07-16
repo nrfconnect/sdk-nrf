@@ -90,8 +90,8 @@ struct lte_lc_edrx_cfg {
 };
 
 struct lte_lc_cell {
-	u32_t id;	/* E-UTRAN cell ID */
-	u32_t tac;	/* Tracking Area Code */
+	uint32_t id;	/* E-UTRAN cell ID */
+	uint32_t tac;	/* Tracking Area Code */
 };
 
 struct lte_lc_evt {

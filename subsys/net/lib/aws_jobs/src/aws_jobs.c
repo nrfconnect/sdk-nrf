@@ -4,6 +4,7 @@
  *SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
 #include <zephyr.h>
+#include <random/rand32.h>
 #include <stdio.h>
 #include <net/mqtt.h>
 #include <logging/log.h>
@@ -25,7 +26,7 @@ static const char *execution_status_strings[] = {
 
 struct topic_conf {
 	int msg_id;
-	const u8_t *name;
+	const uint8_t *name;
 	const char *suffix;
 };
 
@@ -68,8 +69,8 @@ const struct topic_conf TOPIC_UPDATE_CONF = {
  *
  */
 #define TOPIC_TEMPLATE "$aws/things/%s/jobs/%s%s%s%s"
-static int construct_topic(const u8_t *client_id, const u8_t *job_id,
-			   const struct topic_conf *conf, u8_t *out_buf,
+static int construct_topic(const uint8_t *client_id, const uint8_t *job_id,
+			   const struct topic_conf *conf, uint8_t *out_buf,
 			   struct mqtt_topic *topic, bool remove_suffix)
 {
 	if (client_id == NULL || job_id == NULL || conf == NULL ||
@@ -100,8 +101,8 @@ static int construct_topic(const u8_t *client_id, const u8_t *job_id,
 	return 0;
 }
 
-static int reg_topic(struct mqtt_client *const client, u8_t *topic_buf,
-		     struct topic_conf const *conf, const u8_t *job_id,
+static int reg_topic(struct mqtt_client *const client, uint8_t *topic_buf,
+		     struct topic_conf const *conf, const uint8_t *job_id,
 		     bool subscribe)
 {
 	if (client == NULL) {
@@ -133,7 +134,7 @@ static int reg_topic(struct mqtt_client *const client, u8_t *topic_buf,
 
 
 int aws_jobs_create_topic_notify_next(struct mqtt_client *const client,
-					 u8_t *topic_buf)
+					 uint8_t *topic_buf)
 {
 	struct mqtt_topic topic;
 
@@ -143,19 +144,19 @@ int aws_jobs_create_topic_notify_next(struct mqtt_client *const client,
 }
 
 int aws_jobs_subscribe_topic_notify_next(struct mqtt_client *const client,
-					 u8_t *topic_buf)
+					 uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_NOTIFY_NEXT_CONF, "", true);
 }
 
 int aws_jobs_unsubscribe_topic_notify_next(struct mqtt_client *const client,
-					   u8_t *topic_buf)
+					   uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_NOTIFY_NEXT_CONF, "", false);
 }
 
 int aws_jobs_create_topic_notify(struct mqtt_client *const client,
-				 u8_t *topic_buf)
+				 uint8_t *topic_buf)
 {
 	struct mqtt_topic topic;
 
@@ -164,19 +165,19 @@ int aws_jobs_create_topic_notify(struct mqtt_client *const client,
 }
 
 int aws_jobs_subscribe_topic_notify(struct mqtt_client *const client,
-				    u8_t *topic_buf)
+				    uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf,  &TOPIC_NOTIFY_CONF, "", true);
 }
 
 int aws_jobs_unsubscribe_topic_notify(struct mqtt_client *const client,
-				      u8_t *topic_buf)
+				      uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_NOTIFY_CONF, "", false);
 }
 
 int aws_jobs_create_topic_get(struct mqtt_client *const client,
-				 const u8_t *job_id, u8_t *topic_buf)
+				 const uint8_t *job_id, uint8_t *topic_buf)
 {
 	struct mqtt_topic topic;
 
@@ -185,32 +186,32 @@ int aws_jobs_create_topic_get(struct mqtt_client *const client,
 }
 
 int aws_jobs_subscribe_topic_get(struct mqtt_client *const client,
-				 const u8_t *job_id, u8_t *topic_buf)
+				 const uint8_t *job_id, uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_GET_CONF, job_id, true);
 }
 
 int aws_jobs_unsubscribe_topic_get(struct mqtt_client *const client,
-				   const u8_t *job_id, u8_t *topic_buf)
+				   const uint8_t *job_id, uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_GET_CONF, job_id, false);
 }
 
 int aws_jobs_subscribe_topic_update(struct mqtt_client *const client,
-				    const u8_t *job_id, u8_t *topic_buf)
+				    const uint8_t *job_id, uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_UPDATE_CONF, job_id, true);
 }
 
 int aws_jobs_unsubscribe_topic_update(struct mqtt_client *const client,
-				      const u8_t *job_id, u8_t *topic_buf)
+				      const uint8_t *job_id, uint8_t *topic_buf)
 {
 	return reg_topic(client, topic_buf, &TOPIC_UPDATE_CONF, job_id, false);
 }
 
-static int publish(struct mqtt_client *const client, const u8_t *job_id,
-		   const struct topic_conf *conf, u8_t *payload_data,
-		   size_t payload_data_len, u8_t *topic_buf)
+static int publish(struct mqtt_client *const client, const uint8_t *job_id,
+		   const struct topic_conf *conf, uint8_t *payload_data,
+		   size_t payload_data_len, uint8_t *topic_buf)
 {
 	struct mqtt_topic topic;
 
@@ -239,11 +240,11 @@ static int publish(struct mqtt_client *const client, const u8_t *job_id,
 #define UPDATE_JOB_PAYLOAD "{\"status\":\"%s\",\"statusDetails\": %s,"\
 "\"expectedVersion\": \"%d\",\"clientToken\": \"%s\"}"
 int aws_jobs_update_job_execution(struct mqtt_client *const client,
-				  const u8_t *job_id,
+				  const uint8_t *job_id,
 				  enum execution_status status,
-				  const u8_t *status_details,
+				  const uint8_t *status_details,
 				  int expected_version,
-				  const u8_t *client_token, u8_t *topic_buf)
+				  const uint8_t *client_token, uint8_t *topic_buf)
 {
 	/* The rest of the parameters are checked later */
 	if (client_token == NULL) {
@@ -254,7 +255,7 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 	 * is actually 32kb set it to what is the limiting factor which is the
 	 * MQTT buffer size for reception.
 	 */
-	u8_t update_job_payload[CONFIG_UPDATE_JOB_PAYLOAD_LEN];
+	uint8_t update_job_payload[CONFIG_UPDATE_JOB_PAYLOAD_LEN];
 
 	int ret = snprintf(update_job_payload, sizeof(update_job_payload),
 			   UPDATE_JOB_PAYLOAD, execution_status_strings[status],
@@ -276,14 +277,14 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
 
 #define JOB_ID_GET_PAYLOAD "{\"clientToken\": \"\"}"
 int aws_jobs_get_job_execution(struct mqtt_client *const client,
-			       const char *job_id, u8_t *topic_buf)
+			       const char *job_id, uint8_t *topic_buf)
 {
 	return publish(client, job_id, &TOPIC_GET_CONF, JOB_ID_GET_PAYLOAD,
 		       strlen(JOB_ID_GET_PAYLOAD), topic_buf);
 }
 
 bool aws_jobs_cmp(const char *sub, const char *pub, size_t pub_len,
-		 const u8_t *suffix)
+		 const uint8_t *suffix)
 {
 	int ret;
 

@@ -37,23 +37,23 @@ enum nct_cc_opcode {
 struct nct_dc_data {
 	struct nrf_cloud_data data;
 	struct nrf_cloud_topic topic;
-	u32_t id;
+	uint32_t id;
 };
 
 struct nct_cc_data {
 	struct nrf_cloud_data data;
 	struct nrf_cloud_topic topic;
-	u32_t id;
+	uint32_t id;
 	enum nct_cc_opcode opcode;
 };
 
 struct nct_evt {
-	s32_t status;
+	int32_t status;
 	union {
 		struct nct_cc_data *cc;
 		struct nct_dc_data *dc;
-		u32_t data_id;
-		u8_t flag;
+		uint32_t data_id;
+		uint8_t flag;
 	} param;
 	enum nct_evt_type type;
 };

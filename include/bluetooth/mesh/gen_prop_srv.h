@@ -161,14 +161,14 @@ struct bt_mesh_prop_srv {
 	/** Model publication parameters. */
 	struct bt_mesh_model_pub pub;
 	/** Property ID currently being published. */
-	u16_t pub_id;
+	uint16_t pub_id;
 	/** Which state is currently being published. */
 	enum bt_mesh_prop_srv_state pub_state;
 
 	/** List of properties supported by the server. */
 	struct bt_mesh_prop *const properties;
 	/** Number of properties supported by the server. */
-	const u32_t property_count;
+	const uint32_t property_count;
 
 	/** @brief Set a property value.
 	 *

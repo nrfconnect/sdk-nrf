@@ -8,7 +8,7 @@
 
 #include "hid_report_desc.h"
 
-const u8_t hid_report_desc[] = {
+const uint8_t hid_report_desc[] = {
 
 #if CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT
 	0x05, 0x01,     /* Usage Page (Generic Desktop) */

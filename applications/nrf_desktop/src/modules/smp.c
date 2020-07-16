@@ -26,7 +26,7 @@ static void submit_smp_transfer_event(void)
 	EVENT_SUBMIT(event);
 }
 
-static int upload_confirm(u32_t offset, u32_t size, void *arg)
+static int upload_confirm(uint32_t offset, uint32_t size, void *arg)
 {
 	static bool dfu_started;
 

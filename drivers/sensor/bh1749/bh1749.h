@@ -108,7 +108,7 @@ struct bh1749_data {
 	struct gpio_callback gpio_cb;
 	struct k_work work;
 	struct device *dev;
-	u16_t sample_rgb_ir[BH1749_SAMPLES_TO_FETCH];
+	uint16_t sample_rgb_ir[BH1749_SAMPLES_TO_FETCH];
 	enum async_init_step async_init_step;
 	int err;
 	bool ready;

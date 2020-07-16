@@ -29,7 +29,7 @@
 
 #define NDEF_RESTORE_BTN_MSK	DK_BTN1_MSK
 
-static u8_t ndef_msg_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for NDEF file. */
+static uint8_t ndef_msg_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for NDEF file. */
 
 enum {
 	FLASH_WRITE_FINISHED,
@@ -38,8 +38,8 @@ enum {
 	FLASH_WRITE_STARTED,
 };
 static atomic_t op_flags;
-static u8_t flash_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for flash update. */
-static u8_t flash_buf_len; /**< Length of the flash buffer. */
+static uint8_t flash_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for flash update. */
+static uint8_t flash_buf_len; /**< Length of the flash buffer. */
 
 static void flash_buffer_prepare(size_t data_length)
 {
@@ -60,9 +60,9 @@ static void flash_buffer_prepare(size_t data_length)
  */
 static void nfc_callback(void *context,
 			 enum nfc_t4t_event event,
-			 const u8_t *data,
+			 const uint8_t *data,
 			 size_t data_length,
-			 u32_t flags)
+			 uint32_t flags)
 {
 	ARG_UNUSED(context);
 	ARG_UNUSED(data);
@@ -135,7 +135,7 @@ int main(void)
 	}
 
 	/* Restore default NDEF message if button is pressed. */
-	u32_t button_state;
+	uint32_t button_state;
 
 	dk_read_buttons(&button_state, NULL);
 	if (button_state & NDEF_RESTORE_BTN_MSK) {

@@ -91,7 +91,7 @@ static void power_down_counter_reset(void)
 	}
 }
 
-enum power_states sys_pm_policy_next_state(s32_t ticks)
+enum power_states sys_pm_policy_next_state(int32_t ticks)
 {
 	return SYS_POWER_STATE_ACTIVE;
 }

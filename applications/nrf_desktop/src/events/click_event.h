@@ -37,7 +37,7 @@ enum click {
 struct click_event {
 	struct event_header header;
 
-	u16_t key_id;
+	uint16_t key_id;
 	enum click click;
 };
 

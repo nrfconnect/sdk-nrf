@@ -36,7 +36,7 @@
  */
 #define ZB_ERROR_CHECK(ERR_CODE)					\
 	do {								\
-		const u32_t LOCAL_ERR_CODE = (u32_t) (-ERR_CODE);	\
+		const uint32_t LOCAL_ERR_CODE = (uint32_t) (-ERR_CODE);	\
 		if (LOCAL_ERR_CODE != RET_OK) {				\
 			LOG_ERR("ERROR %u [%s] at %s:%u",		\
 				LOCAL_ERR_CODE,				\
@@ -66,7 +66,7 @@
 #else
 #define ZB_ERROR_CHECK(ERR_CODE)				  \
 	do {							  \
-		const u32_t LOCAL_ERR_CODE = (u32_t) (-ERR_CODE); \
+		const uint32_t LOCAL_ERR_CODE = (uint32_t) (-ERR_CODE); \
 		if (LOCAL_ERR_CODE != RET_OK) {			  \
 			k_fatal_halt(K_ERR_KERNEL_PANIC);	  \
 		}						  \

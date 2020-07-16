@@ -22,7 +22,7 @@ extern "C" {
 struct button_event {
 	struct event_header header;
 
-	u16_t key_id;
+	uint16_t key_id;
 	bool  pressed;
 };
 

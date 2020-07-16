@@ -46,16 +46,16 @@ static serial_recv_data_cb_t rx_data_cb;
 static serial_send_data_cb_t tx_data_cb;
 static serial_send_data_cb_t tx_trx_data_cb;
 
-static u8_t *uart_tx_buf;
+static uint8_t *uart_tx_buf;
 static size_t uart_tx_buf_len;
-static u8_t uart_tx_buf_mem[CONFIG_ZIGBEE_UART_TX_BUF_LEN];
+static uint8_t uart_tx_buf_mem[CONFIG_ZIGBEE_UART_TX_BUF_LEN];
 
-static u8_t *uart_rx_buf;
+static uint8_t *uart_rx_buf;
 static size_t uart_rx_buf_offset;
 static size_t uart_rx_buf_len;
 
-static u8_t uart_rx_buf_chunk[2][ZIGBEE_UART_RX_CHUNK_SIZE];
-static u8_t *uart_rx_buf_chunk_released;
+static uint8_t uart_rx_buf_chunk[2][ZIGBEE_UART_RX_CHUNK_SIZE];
+static uint8_t *uart_rx_buf_chunk_released;
 
 
 /**
@@ -63,7 +63,7 @@ static u8_t *uart_rx_buf_chunk_released;
  */
 static void uart_rx_notify(zb_bufid_t bufid)
 {
-	u8_t *rx_buf = uart_rx_buf;
+	uint8_t *rx_buf = uart_rx_buf;
 	size_t rx_buf_len = uart_rx_buf_offset;
 
 	ARG_UNUSED(bufid);
@@ -83,7 +83,7 @@ static void uart_rx_notify(zb_bufid_t bufid)
  *
  * @param rx_buf data buffer
  */
-static void store_rx_buf(u8_t *rx_buf)
+static void store_rx_buf(uint8_t *rx_buf)
 {
 	if (uart_rx_buf_offset >= uart_rx_buf_len) {
 		return;
@@ -120,7 +120,7 @@ static void store_rx_buf(u8_t *rx_buf)
  *
  * @return True if RX timeout detected.
  */
-static bool handle_rx_chunk(u8_t *buf, size_t len)
+static bool handle_rx_chunk(uint8_t *buf, size_t len)
 {
 	bool rx_timeout_occurred = false;
 
@@ -161,7 +161,7 @@ static bool handle_rx_chunk(u8_t *buf, size_t len)
 static void uart_evt_handler(struct uart_event *evt, void *user_data)
 {
 	static bool restart_rx;
-	static u8_t *blocked_buf_chunk;
+	static uint8_t *blocked_buf_chunk;
 
 	switch (evt->type) {
 	case UART_TX_DONE:

@@ -34,7 +34,7 @@ struct data_chunk_item {
 	/* Required by the sys_slist */
 	sys_snode_t node;
 	/* User data storage */
-	u8_t data[CHUNK_DATA_SIZE];
+	uint8_t data[CHUNK_DATA_SIZE];
 };
 
 /* The instance structure real declaration */
@@ -69,7 +69,7 @@ static struct bt_gatt_dm bt_gatt_dm_inst;
 static void *user_data_alloc(struct bt_gatt_dm *dm,
 			     size_t len)
 {
-	u8_t *user_data_loc;
+	uint8_t *user_data_loc;
 	struct data_chunk_item *item;
 
 	/* Round up len to 32 bits to make sure that return pointers are always
@@ -170,7 +170,7 @@ static struct bt_gatt_dm_attr *attr_store(struct bt_gatt_dm *dm,
 	}
 
 	size_t uuid_size = get_uuid_size(attr->uuid);
-	u8_t *attr_data = user_data_alloc(dm, additional_len + uuid_size);
+	uint8_t *attr_data = user_data_alloc(dm, additional_len + uuid_size);
 
 	if (!attr_data) {
 		LOG_ERR("No space for attribute data.");
@@ -205,7 +205,7 @@ static struct bt_uuid *uuid_store(struct bt_gatt_dm *dm,
 
 static struct bt_gatt_dm_attr *attr_find_by_handle(
 	struct bt_gatt_dm *dm,
-	u16_t handle)
+	uint16_t handle)
 {
 	if (!dm->cur_attr_id) {
 		return NULL;
@@ -261,7 +261,7 @@ static void discovery_complete_error(struct bt_gatt_dm *dm, int err)
 	}
 }
 
-static u8_t discovery_process_service(struct bt_gatt_dm *dm,
+static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 				      const struct bt_gatt_attr *attr,
 				      struct bt_gatt_discover_params *params)
 {
@@ -322,7 +322,7 @@ static u8_t discovery_process_service(struct bt_gatt_dm *dm,
 	return BT_GATT_ITER_STOP;
 }
 
-static u8_t discovery_process_attribute(struct bt_gatt_dm *dm,
+static uint8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 					 const struct bt_gatt_attr *attr,
 					 struct bt_gatt_discover_params *params)
 {
@@ -367,7 +367,7 @@ static u8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static u8_t discovery_process_characteristic(
+static uint8_t discovery_process_characteristic(
 		struct bt_gatt_dm *dm,
 		const struct bt_gatt_attr *attr,
 		struct bt_gatt_discover_params *params)
@@ -402,7 +402,7 @@ static u8_t discovery_process_characteristic(
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static u8_t discovery_callback(struct bt_conn *conn,
+static uint8_t discovery_callback(struct bt_conn *conn,
 			       const struct bt_gatt_attr *attr,
 			       struct bt_gatt_discover_params *params)
 {
@@ -515,7 +515,7 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_char_by_uuid(
 
 const struct bt_gatt_dm_attr *bt_gatt_dm_attr_by_handle(
 	const struct bt_gatt_dm *dm,
-	u16_t handle)
+	uint16_t handle)
 {
 	return attr_find_by_handle((struct bt_gatt_dm *)dm, handle);
 }

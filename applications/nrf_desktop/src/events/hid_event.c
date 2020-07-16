@@ -46,8 +46,8 @@ static void profile_hid_report_event(struct log_event_buf *buf,
 
 	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
-	profiler_log_encode_u32(buf, (u32_t)event->dyndata.data[0]);
-	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
+	profiler_log_encode_u32(buf, (uint32_t)event->dyndata.data[0]);
+	profiler_log_encode_u32(buf, (uint32_t)event->subscriber);
 }
 
 EVENT_INFO_DEFINE(hid_report_event,
@@ -78,7 +78,7 @@ static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(eh);
 
-	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
+	profiler_log_encode_u32(buf, (uint32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->connected);
 }
 
@@ -117,7 +117,7 @@ static void profile_hid_report_sent_event(struct log_event_buf *buf,
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(eh);
 
-	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
+	profiler_log_encode_u32(buf, (uint32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->report_id);
 	profiler_log_encode_u32(buf, event->error);
 }
@@ -150,7 +150,7 @@ static void profile_hid_report_subscription_event(struct log_event_buf *buf,
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(eh);
 
-	profiler_log_encode_u32(buf, (u32_t)event->subscriber);
+	profiler_log_encode_u32(buf, (uint32_t)event->subscriber);
 	profiler_log_encode_u32(buf, event->report_id);
 	profiler_log_encode_u32(buf, event->enabled);
 }

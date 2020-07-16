@@ -17,11 +17,11 @@ LOG_MODULE_REGISTER(app_lwm2m_button, CONFIG_APP_LOG_LEVEL);
 #define SWITCH1_NAME	"SWITCH1"
 #define SWITCH2_NAME	"SWITCH2"
 
-static s32_t timestamp[4];
+static int32_t timestamp[4];
 
 int handle_button_events(struct ui_evt *evt)
 {
-	s32_t ts;
+	int32_t ts;
 	bool state;
 
 	if (!evt) {

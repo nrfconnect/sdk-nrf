@@ -66,7 +66,7 @@ struct bt_mesh_dtt_cli {
 	 */
 	void (*const status_handler)(struct bt_mesh_dtt_cli *cli,
 				     struct bt_mesh_msg_ctx *ctx,
-				     s32_t transition_time);
+				     int32_t transition_time);
 
 	/** Response context for tracking acknowledged messages. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
@@ -94,7 +94,7 @@ struct bt_mesh_dtt_cli {
  * @retval -EAGAIN The request timed out.
  */
 int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
-		    s32_t *rsp_transition_time);
+		    int32_t *rsp_transition_time);
 
 /** @brief Set the Default Transition Time of the server.
  *
@@ -118,7 +118,7 @@ int bt_mesh_dtt_get(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
  * @retval -EAGAIN The request timed out.
  */
 int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
-		    u32_t transition_time, s32_t *rsp_transition_time);
+		    uint32_t transition_time, int32_t *rsp_transition_time);
 
 /** @brief Set the Default Transition Time of the server without requesting a
  * response.
@@ -138,7 +138,7 @@ int bt_mesh_dtt_set(struct bt_mesh_dtt_cli *cli, struct bt_mesh_msg_ctx *ctx,
  * @retval -EAGAIN The device has not been provisioned.
  */
 int bt_mesh_dtt_set_unack(struct bt_mesh_dtt_cli *cli,
-			  struct bt_mesh_msg_ctx *ctx, u32_t transition_time);
+			  struct bt_mesh_msg_ctx *ctx, uint32_t transition_time);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_dtt_cli_op[];

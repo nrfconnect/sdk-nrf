@@ -93,8 +93,8 @@ struct ble_peer_operation_event {
 	struct event_header header;
 
 	enum peer_operation op;
-	u8_t bt_app_id;
-	u8_t bt_stack_id;
+	uint8_t bt_app_id;
+	uint8_t bt_stack_id;
 };
 EVENT_TYPE_DECLARE(ble_peer_operation_event);
 
@@ -103,10 +103,10 @@ struct ble_peer_conn_params_event {
 	struct event_header header;
 
 	void *id;
-	u16_t interval_min;
-	u16_t interval_max;
-	u16_t latency;
-	u16_t timeout;
+	uint16_t interval_min;
+	uint16_t interval_max;
+	uint16_t latency;
+	uint16_t timeout;
 	bool updated;
 };
 EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
@@ -124,7 +124,7 @@ struct ble_discovery_complete_event {
 	struct event_header header;
 
 	struct bt_gatt_dm *dm;
-	u16_t pid;
+	uint16_t pid;
 	bool peer_llpm_support;
 	enum peer_type peer_type;
 };
@@ -141,7 +141,7 @@ EVENT_TYPE_DECLARE(ble_smp_transfer_event);
 struct ble_qos_event {
 	struct event_header header;
 
-	u8_t chmap[CHMAP_BLE_BITMASK_SIZE];
+	uint8_t chmap[CHMAP_BLE_BITMASK_SIZE];
 };
 EVENT_TYPE_DECLARE(ble_qos_event);
 #endif

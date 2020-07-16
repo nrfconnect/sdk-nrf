@@ -14,16 +14,16 @@ LOG_MODULE_REGISTER(button, CONFIG_UI_LOG_LEVEL);
 static ui_callback_t callback;
 
 /**@brief Callback for button events from the DK buttons and LEDs library. */
-static void button_handler(u32_t button_states, u32_t has_changed)
+static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	struct ui_evt evt;
-	u8_t btn_num;
+	uint8_t btn_num;
 
 	while (has_changed) {
 		btn_num = 0;
 
 		/* Get bit position for next button that changed state. */
-		for (u8_t i = 0; i < 32; i++) {
+		for (uint8_t i = 0; i < 32; i++) {
 			if (has_changed & BIT(i)) {
 				btn_num = i + 1;
 				break;
@@ -60,7 +60,7 @@ int ui_button_init(ui_callback_t cb)
 	return err;
 }
 
-bool ui_button_is_active(u32_t button)
+bool ui_button_is_active(uint32_t button)
 {
 	return dk_get_buttons() & BIT((button - 1));
 }

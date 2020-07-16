@@ -61,8 +61,8 @@ static struct k_delayed_work uart_work;
 
 struct uart_data_t {
 	void *fifo_reserved;
-	u8_t data[UART_BUF_SIZE];
-	u16_t len;
+	uint8_t data[UART_BUF_SIZE];
+	uint16_t len;
 };
 
 static K_FIFO_DEFINE(fifo_uart_tx_data);
@@ -79,11 +79,11 @@ static const struct bt_data sd[] = {
 
 static void uart_cb(struct uart_event *evt, void *user_data)
 {
-	static u8_t *current_buf;
+	static uint8_t *current_buf;
 	static size_t aborted_len;
 	static bool buf_release;
 	struct uart_data_t *buf;
-	static u8_t *aborted_buf;
+	static uint8_t *aborted_buf;
 
 	switch (evt->type) {
 	case UART_TX_DONE:
@@ -172,7 +172,7 @@ static void uart_cb(struct uart_event *evt, void *user_data)
 
 	case UART_TX_ABORTED:
 			if (!aborted_buf) {
-				aborted_buf = (u8_t *)evt->data.tx.buf;
+				aborted_buf = (uint8_t *)evt->data.tx.buf;
 			}
 
 			aborted_len += evt->data.tx.len;
@@ -232,7 +232,7 @@ static int uart_init(void)
 	return uart_rx_enable(uart, rx->data, sizeof(rx->data), 50);
 }
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -249,7 +249,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	dk_set_led_on(CON_STATUS_LED);
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -374,8 +374,8 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 static struct bt_conn_auth_cb conn_auth_callbacks;
 #endif
 
-static void bt_receive_cb(struct bt_conn *conn, const u8_t *const data,
-			  u16_t len)
+static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
+			  uint16_t len)
 {
 	int err;
 	char addr[BT_ADDR_LE_STR_LEN] = {0};
@@ -384,7 +384,7 @@ static void bt_receive_cb(struct bt_conn *conn, const u8_t *const data,
 
 	LOG_INF("Received data from: %s", log_strdup(addr));
 
-	for (u16_t pos = 0; pos != len;) {
+	for (uint16_t pos = 0; pos != len;) {
 		struct uart_data_t *tx = k_malloc(sizeof(*tx));
 
 		if (!tx) {
@@ -448,9 +448,9 @@ static void num_comp_reply(bool accept)
 	auth_conn = NULL;
 }
 
-void button_changed(u32_t button_state, u32_t has_changed)
+void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	u32_t buttons = button_state & has_changed;
+	uint32_t buttons = button_state & has_changed;
 
 	if (auth_conn) {
 		if (buttons & KEY_PASSKEY_ACCEPT) {

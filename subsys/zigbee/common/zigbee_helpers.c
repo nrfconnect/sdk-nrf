@@ -33,7 +33,7 @@
 /* Number of RAM banks available at the SoC. */
 #define RAM_BANKS_NBR               8
 /* End of RAM used by the application. */
-#define RAM_END_ADDR                ((u32_t)&_image_ram_end)
+#define RAM_END_ADDR                ((uint32_t)&_image_ram_end)
 extern char _image_ram_end;
 #else
 #define UNUSED_RAM_POWER_OFF_UNSUPPORTED
@@ -62,7 +62,7 @@ static bool           stack_initialised;
 static bool           is_rejoin_procedure_started;
 static bool           is_rejoin_stop_requested;
 static bool           is_rejoin_in_progress;
-static u8_t           rejoin_attempt_cnt;
+static uint8_t           rejoin_attempt_cnt;
 #if defined ZB_ED_ROLE
 static volatile bool  wait_for_user_input;
 static volatile bool  is_rejoin_start_scheduled;
@@ -83,8 +83,8 @@ zb_void_t zigbee_erase_persistent_storage(zb_bool_t erase)
 #endif
 }
 
-int to_hex_str(char *out, u16_t out_size, const u8_t *in,
-	       u8_t in_size, bool reverse)
+int to_hex_str(char *out, uint16_t out_size, const uint8_t *in,
+	       uint8_t in_size, bool reverse)
 {
 	int bytes_written = 0;
 	int status;
@@ -106,18 +106,18 @@ int to_hex_str(char *out, u16_t out_size, const u8_t *in,
 	return bytes_written;
 }
 
-int ieee_addr_to_str(char *str_buf, u16_t buf_len,
+int ieee_addr_to_str(char *str_buf, uint16_t buf_len,
 		     const zb_ieee_addr_t addr)
 {
-	return to_hex_str(str_buf, buf_len, (const u8_t *)addr,
+	return to_hex_str(str_buf, buf_len, (const uint8_t *)addr,
 			  sizeof(zb_ieee_addr_t), true);
 }
 
-bool parse_hex_str(char const *in_str, u8_t in_str_len, u8_t *out_buff,
-		   u8_t out_buff_size, bool reverse)
+bool parse_hex_str(char const *in_str, uint8_t in_str_len, uint8_t *out_buff,
+		   uint8_t out_buff_size, bool reverse)
 {
-	u8_t i = 0;
-	s8_t delta = 1;
+	uint8_t i = 0;
+	int8_t delta = 1;
 
 	/* Skip 0x suffix if present. */
 	if ((in_str_len > 2) && (in_str[0] == '0') &&
@@ -139,7 +139,7 @@ bool parse_hex_str(char const *in_str, u8_t in_str_len, u8_t *out_buff,
 	memset(out_buff, 0, out_buff_size);
 
 	while (i < in_str_len) {
-		u8_t nibble;
+		uint8_t nibble;
 
 		if (char2hex(*in_str, &nibble)) {
 			break;
@@ -178,14 +178,14 @@ addr_type_t parse_address(const char *input, zb_addr_u *addr,
 	if ((len == 2 * sizeof(zb_ieee_addr_t)) &&
 	    (addr_type == ADDR_ANY || addr_type == ADDR_LONG)) {
 		result = ADDR_LONG;
-	} else if ((len == 2 * sizeof(u16_t)) &&
+	} else if ((len == 2 * sizeof(uint16_t)) &&
 		   (addr_type == ADDR_ANY || addr_type == ADDR_SHORT)) {
 		result = ADDR_SHORT;
 	} else {
 		return ADDR_INVALID;
 	}
 
-	return parse_hex_str(input, len, (u8_t *)addr, len / 2, true) ?
+	return parse_hex_str(input, len, (uint8_t *)addr, len / 2, true) ?
 			     result :
 			     ADDR_INVALID;
 }
@@ -632,7 +632,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 	return ret_code;
 }
 
-void zigbee_led_status_update(zb_bufid_t bufid, u32_t led_idx)
+void zigbee_led_status_update(zb_bufid_t bufid, uint32_t led_idx)
 {
 	zb_zdo_app_signal_hdr_t *p_sg_p = NULL;
 	zb_zdo_app_signal_type_t sig = zb_get_app_signal(bufid, &p_sg_p);
@@ -873,9 +873,9 @@ void zigbee_configure_sleepy_behavior(bool enable)
  *
  * @return    Start address of RAM bank.
  */
-static inline u32_t ram_bank_bottom_addr(u8_t bank_id)
+static inline uint32_t ram_bank_bottom_addr(uint8_t bank_id)
 {
-	u32_t bank_addr = RAM_START_ADDR + bank_id
+	uint32_t bank_addr = RAM_START_ADDR + bank_id
 			  * RAM_BANK_0_7_SECTION_SIZE
 			  * RAM_BANK_0_7_SECTIONS_NBR;
 	return bank_addr;
@@ -889,10 +889,10 @@ static inline u32_t ram_bank_bottom_addr(u8_t bank_id)
  *
  * @return    Start address of section of RAM bank.
  */
-static u32_t ram_sect_bank_bottom_addr(u8_t bank_id, u8_t section_id)
+static uint32_t ram_sect_bank_bottom_addr(uint8_t bank_id, uint8_t section_id)
 {
 	/* Get base address of given RAM bank. */
-	u32_t section_addr = ram_bank_bottom_addr(bank_id);
+	uint32_t section_addr = ram_bank_bottom_addr(bank_id);
 
 	/* Calculate section address offset. */
 	if (bank_id == 8) {
@@ -911,13 +911,13 @@ void zigbee_power_down_unused_ram(void)
 	return;
 #else
 	/* ID of top RAM bank. Depends of amount of RAM available at SoC. */
-	u8_t     bank_id                 = RAM_BANKS_NBR;
-	u8_t     section_id              = 5;
-	u32_t    section_size            = 0;
+	uint8_t     bank_id                 = RAM_BANKS_NBR;
+	uint8_t     section_id              = 5;
+	uint32_t    section_size            = 0;
 	/* Mask to power down whole RAM bank. */
-	u32_t    ram_bank_power_off_mask = 0xFFFFFFFF;
+	uint32_t    ram_bank_power_off_mask = 0xFFFFFFFF;
 	/* Mask to select sections of RAM bank to power off. */
-	u32_t    mask_off;
+	uint32_t    mask_off;
 
 	/* Power off banks with unused RAM only. */
 	while (ram_bank_bottom_addr(bank_id) >= RAM_END_ADDR) {

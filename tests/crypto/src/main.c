@@ -16,9 +16,9 @@ static int init_leds(void)
 	return dk_leds_init();
 }
 
-void run_suites(test_case_t *test_cases, u32_t test_case_count)
+void run_suites(test_case_t *test_cases, uint32_t test_case_count)
 {
-	for (u32_t i = 0; i < test_case_count; i++) {
+	for (uint32_t i = 0; i < test_case_count; i++) {
 		uint32_t n_cases = get_vector_count(&test_cases[i]);
 		if (n_cases == 0) {
 			continue;

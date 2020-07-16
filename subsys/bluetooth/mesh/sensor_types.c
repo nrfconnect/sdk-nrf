@@ -80,7 +80,7 @@ UNIT(unitless) = { "Unitless" };
 	{                                                                      \
 		.flags = ((_flags) | (SCALAR_IS_DIV(_scalar) ? DIVIDE : 0)),   \
 		.max = _max,                                                   \
-		.value = (s64_t)((SCALAR_IS_DIV(_scalar) ? (1.0 / (_scalar)) : \
+		.value = (int64_t)((SCALAR_IS_DIV(_scalar) ? (1.0 / (_scalar)) : \
 							   (_scalar)) +        \
 				 0.5),                                         \
 	}
@@ -145,23 +145,23 @@ enum scalar_repr_flags {
 
 struct scalar_repr {
 	enum scalar_repr_flags flags;
-	u32_t max; /**< Highest encoded value */
-	s64_t value;
+	uint32_t max; /**< Highest encoded value */
+	int64_t value;
 };
 
-static s64_t mul_scalar(s64_t val, const struct scalar_repr *repr)
+static int64_t mul_scalar(int64_t val, const struct scalar_repr *repr)
 {
 	return (repr->flags & DIVIDE) ? (val / repr->value) :
 	       (val * repr->value);
 }
 
-static s64_t div_scalar(s64_t val, const struct scalar_repr *repr)
+static int64_t div_scalar(int64_t val, const struct scalar_repr *repr)
 {
 	return (repr->flags & DIVIDE) ? (val * repr->value) :
 	       (val / repr->value);
 }
 
-static u32_t scalar_max(const struct bt_mesh_sensor_format *format)
+static uint32_t scalar_max(const struct bt_mesh_sensor_format *format)
 {
 	const struct scalar_repr *repr = format->user_data;
 
@@ -173,7 +173,7 @@ static u32_t scalar_max(const struct bt_mesh_sensor_format *format)
 		return BIT64(8 * format->size - 1) - 1;
 	}
 
-	u32_t max_value = BIT64(8 * format->size) - 1;
+	uint32_t max_value = BIT64(8 * format->size) - 1;
 
 	if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID)) {
 		max_value -= 2;
@@ -184,7 +184,7 @@ static u32_t scalar_max(const struct bt_mesh_sensor_format *format)
 	return max_value;
 }
 
-static s32_t scalar_min(const struct bt_mesh_sensor_format *format)
+static int32_t scalar_min(const struct bt_mesh_sensor_format *format)
 {
 	const struct scalar_repr *repr = format->user_data;
 
@@ -205,14 +205,14 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	s64_t raw = div_scalar(val->val1, repr) +
+	int64_t raw = div_scalar(val->val1, repr) +
 		    div_scalar(val->val2, repr) / 1000000LL;
 
-	u32_t max_value = scalar_max(format);
-	s32_t min_value = scalar_min(format);
+	uint32_t max_value = scalar_max(format);
+	int32_t min_value = scalar_min(format);
 
 	if (raw > max_value || raw < min_value) {
-		u32_t type_max = BIT64(8 * format->size) - 1;
+		uint32_t type_max = BIT64(8 * format->size) - 1;
 
 		if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID)) {
 			raw = type_max - 2;
@@ -252,19 +252,19 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	s32_t raw;
+	int32_t raw;
 
 	switch (format->size) {
 	case 1:
 		if (repr->flags & SIGNED) {
-			raw = (s8_t) net_buf_simple_pull_u8(buf);
+			raw = (int8_t) net_buf_simple_pull_u8(buf);
 		} else {
 			raw = net_buf_simple_pull_u8(buf);
 		}
 		break;
 	case 2:
 		if (repr->flags & SIGNED) {
-			raw = (s16_t) net_buf_simple_pull_le16(buf);
+			raw = (int16_t) net_buf_simple_pull_le16(buf);
 		} else {
 			raw = net_buf_simple_pull_le16(buf);
 		}
@@ -283,14 +283,14 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 		return -ERANGE;
 	}
 
-	u32_t max_value = scalar_max(format);
-	s32_t min_value = scalar_min(format);
+	uint32_t max_value = scalar_max(format);
+	int32_t min_value = scalar_min(format);
 
 	if (raw < min_value || raw > max_value) {
 		return -ERANGE;
 	}
 
-	s64_t million = mul_scalar(raw * 1000000LL, repr);
+	int64_t million = mul_scalar(raw * 1000000LL, repr);
 
 	val->val1 = million / 1000000LL;
 	val->val2 = million % 1000000LL;
@@ -317,7 +317,7 @@ static int boolean_decode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	u8_t b = net_buf_simple_pull_u8(buf);
+	uint8_t b = net_buf_simple_pull_u8(buf);
 
 	if (b > 1) {
 		return -EINVAL;
@@ -348,7 +348,7 @@ static int exp_1_1_decode(const struct bt_mesh_sensor_format *format,
 		return -ENOMEM;
 	}
 
-	u64_t time_ns = sensor_powtime_decode_ns(net_buf_simple_pull_u8(buf));
+	uint64_t time_ns = sensor_powtime_decode_ns(net_buf_simple_pull_u8(buf));
 
 	val->val1 = time_ns / 1000000L;
 	val->val2 = time_ns % 1000000L;
@@ -383,8 +383,8 @@ static int float32_decode(const struct bt_mesh_sensor_format *format,
 	memcpy(&fvalue, net_buf_simple_pull_mem(buf, sizeof(float)),
 	       sizeof(float));
 
-	val->val1 = (u32_t)fvalue;
-	val->val2 = ((u32_t)(fvalue * 1000000.0f)) / 1000000L;
+	val->val1 = (uint32_t)fvalue;
+	val->val2 = ((uint32_t)(fvalue * 1000000.0f)) / 1000000L;
 	return 0;
 }
 
@@ -948,7 +948,7 @@ SENSOR_TYPE(gain) = {
 };
 /******************************************************************************/
 
-const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(u16_t id)
+const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id)
 {
 	Z_STRUCT_SECTION_FOREACH(bt_mesh_sensor_type, type) {
 		if (type->id == id) {

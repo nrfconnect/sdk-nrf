@@ -49,22 +49,22 @@ struct nfc_ndef_ch_hc_rec {
 	/** Carrier description. */
 	struct {
 		/** Carrier type field length. */
-		u8_t type_len;
+		uint8_t type_len;
 
 		/** A unique identification od the alternative carrier.
 		 *  It shall follow the structure, encoding, and format
 		 *  implied by the value of the CTF field.
 		 */
-		const u8_t *type;
+		const uint8_t *type;
 
 		/** Optional data length. */
-		u8_t data_len;
+		uint8_t data_len;
 
 		/** Optional information about alternative carrier.
 		 *  It length can be calculated using following formula:
 		 *  (NDEF Record Payload length - carrier type length) - 2
 		 */
-		u8_t *data;
+		uint8_t *data;
 	} carrier;
 };
 
@@ -95,12 +95,12 @@ enum nfc_ndef_ch_ac_rec_cps {
  */
 struct nfc_ndef_ch_ac_rec_ref {
 	/** Length of the data field. */
-	u8_t length;
+	uint8_t length;
 
 	/** Pointer to the Data Reference characters.
 	 *  Not relevant if length is 0.
 	 */
-	const u8_t *data;
+	const uint8_t *data;
 };
 
 /**
@@ -114,10 +114,10 @@ struct nfc_ndef_ch_ac_rec {
 	struct nfc_ndef_ch_ac_rec_ref carrier_data_ref;
 
 	/** Maximum number of Auxiliary Data Reference fields. */
-	const u8_t max_aux_data_ref_cnt;
+	const uint8_t max_aux_data_ref_cnt;
 
 	/** Number of Auxiliary Data Reference fields. */
-	u8_t aux_data_ref_cnt;
+	uint8_t aux_data_ref_cnt;
 
 	/** Pointer to the Auxiliary Data Reference fields. */
 	struct nfc_ndef_ch_ac_rec_ref *aux_data_ref;
@@ -128,7 +128,7 @@ struct nfc_ndef_ch_ac_rec {
  */
 struct nfc_ndef_ch_cr_rec {
 	/** Randomly generated number. */
-	u16_t random;
+	uint16_t random;
 };
 
 /**
@@ -138,12 +138,12 @@ struct nfc_ndef_ch_rec {
 	/** Major version number of the supported
 	 *  Connection Handover specification.
 	 */
-	u8_t major_version;
+	uint8_t major_version;
 
 	/** Minor version number of the supported
 	 *  Connection Handover specification.
 	 */
-	u8_t minor_version;
+	uint8_t minor_version;
 
 	/** Pointer to a message encapsulating local records. */
 	struct nfc_ndef_msg_desc *local_records;
@@ -164,7 +164,7 @@ struct nfc_ndef_ch_rec {
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
-				   u8_t *buf, u32_t *len);
+				   uint8_t *buf, uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -371,7 +371,7 @@ int nfc_ndef_ch_rec_local_record_add(struct nfc_ndef_record_desc *ch_rec,
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
-				      u8_t *buf, u32_t *len);
+				      uint8_t *buf, uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -425,7 +425,7 @@ int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
  *         Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_ch_ac_rec_payload_encode(const struct nfc_ndef_ch_ac_rec *nfc_rec_ac,
-				      u8_t *buf, u32_t *len);
+				      uint8_t *buf, uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor
@@ -499,8 +499,8 @@ void nfc_ndef_ch_ac_rec_auxiliary_data_ref_clear(struct nfc_ndef_record_desc *ac
  *         Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_ch_ac_rec_auxiliary_data_ref_add(struct nfc_ndef_record_desc *ac_rec,
-					      const u8_t *aux_data,
-					      u8_t aux_length);
+					      const uint8_t *aux_data,
+					      uint8_t aux_length);
 
 /**
  * @brief Constructor for an NFC NDEF Collision Resolution record payload.
@@ -517,7 +517,7 @@ int nfc_ndef_ch_ac_rec_auxiliary_data_ref_add(struct nfc_ndef_record_desc *ac_re
  *         Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_ch_cr_rec_payload_encode(const struct nfc_ndef_ch_cr_rec *nfc_rec_cr,
-				      u8_t *buf, u32_t *len);
+				      uint8_t *buf, uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing an NFC NDEF record descriptor

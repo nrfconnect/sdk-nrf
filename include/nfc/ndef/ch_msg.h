@@ -60,7 +60,7 @@ struct nfc_ndef_ch_msg_records {
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_ch_msg_le_oob_encode(const struct nfc_ndef_le_oob_rec_payload_desc *oob,
-				  u8_t *buf, size_t *len);
+				  uint8_t *buf, size_t *len);
 
 /**
  * @brief Create an NFC NDEF Handover Select message.

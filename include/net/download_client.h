@@ -87,7 +87,7 @@ struct download_client_cfg {
 	/** IP port.
 	 *  Pass zero to use default, or non-zero to override.
 	 */
-	u16_t port;
+	uint16_t port;
 	/** TLS security tag.
 	 *  Pass -1 to disable TLS.
 	 */

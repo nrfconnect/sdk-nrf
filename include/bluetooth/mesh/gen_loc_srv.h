@@ -134,7 +134,7 @@ struct bt_mesh_loc_srv {
 	struct bt_mesh_model_pub pub;
 
 	/** Current opcode being published. */
-	u16_t pub_op;
+	uint16_t pub_op;
 	/** Pointer to a handler structure. */
 	const struct bt_mesh_loc_srv_handlers *const handlers;
 };
@@ -162,7 +162,7 @@ struct bt_mesh_loc_srv {
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
  */
-s32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
+int32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
 				 struct bt_mesh_msg_ctx *ctx,
 				 const struct bt_mesh_loc_global *global);
 
@@ -189,7 +189,7 @@ s32_t bt_mesh_loc_srv_global_pub(struct bt_mesh_loc_srv *srv,
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
  */
-s32_t bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
+int32_t bt_mesh_loc_srv_local_pub(struct bt_mesh_loc_srv *srv,
 				struct bt_mesh_msg_ctx *ctx,
 				const struct bt_mesh_loc_local *local);
 

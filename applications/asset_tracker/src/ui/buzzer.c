@@ -22,7 +22,7 @@ LOG_MODULE_REGISTER(buzzer, CONFIG_UI_LOG_LEVEL);
 struct device *pwm_dev;
 static atomic_t buzzer_enabled;
 
-static u32_t intensity_to_duty_cycle_divisor(u8_t intensity)
+static uint32_t intensity_to_duty_cycle_divisor(uint8_t intensity)
 {
 	return MIN(
 		MAX(((intensity - BUZZER_MIN_INTENSITY) *
@@ -33,11 +33,11 @@ static u32_t intensity_to_duty_cycle_divisor(u8_t intensity)
 		BUZZER_MIN_DUTY_CYCLE_DIV);
 }
 
-static int pwm_out(u32_t frequency, u8_t intensity)
+static int pwm_out(uint32_t frequency, uint8_t intensity)
 {
-	static u32_t prev_period;
-	u32_t period = (frequency > 0) ? USEC_PER_SEC / frequency : 0;
-	u32_t duty_cycle = (intensity == 0) ? 0 :
+	static uint32_t prev_period;
+	uint32_t period = (frequency > 0) ? USEC_PER_SEC / frequency : 0;
+	uint32_t duty_cycle = (intensity == 0) ? 0 :
 		period / intensity_to_duty_cycle_divisor(intensity);
 
 	/* Applying workaround due to limitations in PWM driver that doesn't
@@ -107,7 +107,7 @@ int ui_buzzer_init(void)
 	return err;
 }
 
-int ui_buzzer_set_frequency(u32_t frequency, u8_t intensity)
+int ui_buzzer_set_frequency(uint32_t frequency, uint8_t intensity)
 {
 	if (frequency == 0 || intensity == 0) {
 		LOG_DBG("Frequency set to 0, disabling PWM\n");

@@ -29,8 +29,8 @@ char buf[1024];
 
 /* Stubs and mocks */
 bool dfu_ctx_mcuboot_set_b1_file__s0_active;
-static u32_t s0_version;
-static u32_t s1_version;
+static uint32_t s0_version;
+static uint32_t s1_version;
 const char *download_client_start_file;
 char *dfu_ctx_mcuboot_set_b1_file__update;
 
@@ -82,7 +82,7 @@ int download_client_init(struct download_client *client,
 	return 0;
 }
 
-int spm_firmware_info(u32_t fw_address, struct fw_info *info)
+int spm_firmware_info(uint32_t fw_address, struct fw_info *info)
 {
 	zassert_true(info != NULL, NULL);
 

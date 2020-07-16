@@ -88,8 +88,8 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #define CONN_CYCLE_AFTER_ASSOCIATION_REQ_MS K_MINUTES(5)
 
 struct rsrp_data {
-	u16_t value;
-	u16_t offset;
+	uint16_t value;
+	uint16_t offset;
 };
 
 #if CONFIG_MODEM_INFO
@@ -118,7 +118,7 @@ static struct modem_param_info modem_param;
 static struct cloud_channel_data signal_strength_cloud_data;
 #endif /* CONFIG_MODEM_INFO */
 
-static s64_t gps_last_active_time;
+static int64_t gps_last_active_time;
 static atomic_t carrier_requested_disconnect;
 static atomic_t cloud_connect_attempts;
 
@@ -372,7 +372,7 @@ static void send_agps_request(struct k_work *work)
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	int err;
-	static s64_t last_request_timestamp;
+	static int64_t last_request_timestamp;
 
 /* Request A-GPS data no more often than every hour (time in milliseconds). */
 #define AGPS_UPDATE_PERIOD (60 * 60 * 1000)
@@ -486,7 +486,7 @@ static void send_button_data_work_fn(struct k_work *work)
 	sensor_data_send(&button_cloud_data);
 }
 
-void connect_to_cloud(const s32_t connect_delay_s)
+void connect_to_cloud(const int32_t connect_delay_s)
 {
 	static bool initial_connect = true;
 
@@ -741,11 +741,11 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 	}
 
 	if (motion_activity_is_active() && gps_control_is_enabled()) {
-		static s64_t next_active_time;
-		s64_t last_active_time = gps_last_active_time / 1000;
-		s64_t now = k_uptime_get() / 1000;
-		s64_t time_since_fix_attempt = now - last_active_time;
-		s64_t time_until_next_attempt = next_active_time - now;
+		static int64_t next_active_time;
+		int64_t last_active_time = gps_last_active_time / 1000;
+		int64_t now = k_uptime_get() / 1000;
+		int64_t time_since_fix_attempt = now - last_active_time;
+		int64_t time_until_next_attempt = next_active_time - now;
 
 		LOG_DBG("Last at %lld s, now %lld s, next %lld s; "
 			"%lld secs since last, %lld secs until next",
@@ -759,7 +759,7 @@ static void motion_trigger_gps(motion_data_t  motion_data)
 
 		time_since_fix_attempt = MAX(0, (MIN(time_since_fix_attempt,
 			CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL)));
-		s64_t time_to_start_next_fix = 1 +
+		int64_t time_to_start_next_fix = 1 +
 			CONFIG_GPS_CONTROL_FIX_CHECK_INTERVAL -
 			time_since_fix_attempt;
 
@@ -878,19 +878,19 @@ static void cloud_cmd_handler(struct cloud_command *cmd)
 	} else if ((cmd->channel == CLOUD_CHANNEL_RGB_LED) &&
 		   (cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
 		   (cmd->type == CLOUD_CMD_COLOR)) {
-		ui_led_set_color(((u32_t)cmd->data.sv.value >> 16) & 0xFF,
-				 ((u32_t)cmd->data.sv.value >> 8) & 0xFF,
-				 ((u32_t)cmd->data.sv.value) & 0xFF);
+		ui_led_set_color(((uint32_t)cmd->data.sv.value >> 16) & 0xFF,
+				 ((uint32_t)cmd->data.sv.value >> 8) & 0xFF,
+				 ((uint32_t)cmd->data.sv.value) & 0xFF);
 	} else if ((cmd->group == CLOUD_CMD_GROUP_CFG_SET) &&
 			   (cmd->type == CLOUD_CMD_INTERVAL)) {
 		if (cmd->channel == CLOUD_CHANNEL_LIGHT_SENSOR) {
 #if defined(CONFIG_LIGHT_SENSOR)
 			light_sensor_set_send_interval(
-				(u32_t)cmd->data.sv.value);
+				(uint32_t)cmd->data.sv.value);
 #endif
 		} else if (cmd->channel == CLOUD_CHANNEL_ENVIRONMENT) {
 			env_sensors_set_send_interval(
-				(u32_t)cmd->data.sv.value);
+				(uint32_t)cmd->data.sv.value);
 		} else if (cmd->channel == CLOUD_CHANNEL_GPS) {
 			/* TODO: update GPS controller to handle send */
 			/* interval */
@@ -950,8 +950,8 @@ static void modem_rsrp_handler(char rsrp_value)
 static void modem_rsrp_data_send(struct k_work *work)
 {
 	char buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
-	static s32_t rsrp_prev; /* RSRP value last sent to cloud */
-	s32_t rsrp_current;
+	static int32_t rsrp_prev; /* RSRP value last sent to cloud */
+	int32_t rsrp_current;
 	size_t len;
 
 	if (!data_send_enabled()) {
@@ -1298,7 +1298,7 @@ static void on_user_pairing_req(const struct cloud_event *evt)
 
 static void cycle_cloud_connection(struct k_work *work)
 {
-	s32_t reboot_wait_ms = REBOOT_AFTER_DISCONNECT_WAIT_MS;
+	int32_t reboot_wait_ms = REBOOT_AFTER_DISCONNECT_WAIT_MS;
 
 	LOG_INF("Disconnecting from cloud...");
 
@@ -1431,7 +1431,7 @@ void connection_evt_handler(const struct cloud_event *const evt)
 			evt->data.persistent_session);
 #endif
 	} else if (evt->type == CLOUD_EVT_DISCONNECTED) {
-		s32_t connect_wait_s = CONFIG_CLOUD_CONNECT_RETRY_DELAY;
+		int32_t connect_wait_s = CONFIG_CLOUD_CONNECT_RETRY_DELAY;
 
 		LOG_INF("CLOUD_EVT_DISCONNECTED: %d", evt->data.err);
 		ui_led_set_pattern(UI_LTE_CONNECTED);
@@ -1480,7 +1480,7 @@ void connection_evt_handler(const struct cloud_event *const evt)
 
 static void set_gps_enable(const bool enable)
 {
-	s32_t delay_ms = 0;
+	int32_t delay_ms = 0;
 	bool changing = (enable != gps_control_is_enabled());
 
 	/* Exit early if the link is not ready or if the cloud

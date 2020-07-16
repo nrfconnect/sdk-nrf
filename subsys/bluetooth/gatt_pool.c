@@ -80,13 +80,13 @@ static struct bt_uuid const * const uuid_ccc = BT_UUID_GATT_CCC;
 #define EL_IN_POOL_VERIFY(pool, el)                                            \
 	do {                                                                   \
 		__ASSERT(pool != NULL, "Pool is uninitialized");               \
-		__ASSERT(((u32_t)el >= (u32_t)pool) &&                         \
-			     (((u32_t)el) < (((u32_t)pool) + sizeof(pool))),   \
+		__ASSERT(((uint32_t)el >= (uint32_t)pool) &&                         \
+			     (((uint32_t)el) < (((uint32_t)pool) + sizeof(pool))),   \
 			 "Element does not belong to the pool");               \
 	} while ((0))
 
 #define ADDR_2_INDEX(pool, el)                                                 \
-	((((u32_t)el) - ((u32_t)pool)) / (sizeof(pool[0])))
+	((((uint32_t)el) - ((uint32_t)pool)) / (sizeof(pool[0])))
 
 static size_t free_element_find(struct svc_el_pool *el_pool, size_t el_cnt)
 {
@@ -297,7 +297,7 @@ int bt_gatt_pool_svc_alloc(struct bt_gatt_pool *gp,
 	return 0;
 }
 
-int bt_gatt_pool_chrc_alloc(struct bt_gatt_pool *gp, u8_t props,
+int bt_gatt_pool_chrc_alloc(struct bt_gatt_pool *gp, uint8_t props,
 			    struct bt_gatt_attr const *attr)
 {
 	int ret;
@@ -380,7 +380,7 @@ int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
 
 int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
 			   struct _bt_gatt_ccc *ccc,
-			   u8_t perm)
+			   uint8_t perm)
 {
 	struct bt_gatt_attr *attr;
 
@@ -425,7 +425,7 @@ static size_t mask_print(atomic_t *mask, size_t mask_size)
 	size_t used_el_cnt = 0;
 
 	for (size_t i = 0; i < mask_size; i++) {
-		u32_t state_part = mask[mask_size - i - 1];
+		uint32_t state_part = mask[mask_size - i - 1];
 
 		printk("%08X", state_part);
 		used_el_cnt += popcount(state_part);

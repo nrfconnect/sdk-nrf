@@ -100,7 +100,7 @@ void error_handler(enum error_type err_type, int err)
 #if !defined(CONFIG_DEBUG)
 	sys_reboot(SYS_REBOOT_COLD);
 #else
-	u8_t led_pattern;
+	uint8_t led_pattern;
 
 	switch (err_type) {
 	case ERROR_NRF_CLOUD:
@@ -148,7 +148,7 @@ void bsd_recoverable_error_handler(uint32_t err)
 /**@brief Callback for GPS events */
 static void gps_handler(struct device *dev, struct gps_event *evt)
 {
-	u32_t button_state, has_changed;
+	uint32_t button_state, has_changed;
 	struct sensor_data in_data = {
 		.type = GPS_POSITION,
 		.length = evt->nmea.len,
@@ -203,8 +203,8 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 static void leds_update(struct k_work *work)
 {
 	static bool led_on;
-	static u8_t current_led_on_mask;
-	u8_t led_on_mask = current_led_on_mask;
+	static uint8_t current_led_on_mask;
+	uint8_t led_on_mask = current_led_on_mask;
 
 	ARG_UNUSED(work);
 
@@ -397,7 +397,7 @@ static void cloud_connect(struct k_work *work)
 }
 
 /**@brief Callback for button events from the DK buttons and LEDs library. */
-static void button_handler(u32_t buttons, u32_t has_changed)
+static void button_handler(uint32_t buttons, uint32_t has_changed)
 {
 	printk("button_handler: button 1: %u, button 2: %u "
 	       "switch 1: %u, switch 2: %u\n",

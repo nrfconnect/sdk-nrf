@@ -25,27 +25,27 @@ extern "C" {
 
 struct gps_nmea {
 	char buf[GPS_NMEA_SENTENCE_MAX_LENGTH];
-	u8_t len;
+	uint8_t len;
 };
 
 struct gps_datetime {
-	u16_t year;
-	u8_t month;
-	u8_t day;
-	u8_t hour;
-	u8_t minute;
-	u8_t seconds;
-	u16_t ms;
+	uint16_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t seconds;
+	uint16_t ms;
 };
 
 struct gps_sv {
-	u16_t sv;		/**< SV number 1...32 for GPS. */
-	u16_t cn0;		/**< 0.1 dB/Hz. */
-	s16_t elevation;	/**< SV elevation angle in degrees. */
-	s16_t azimuth;		/**< SV azimuth angle in degrees. */
-	u8_t signal;		/**< Signal type. 0: invalid, 1: GPS L1C/A. */
-	u8_t in_fix:1;		/**< Satellite used in fix calculation. */
-	u8_t unhealthy:1;	/**< Satellite is marked as unhealthy. */
+	uint16_t sv;		/**< SV number 1...32 for GPS. */
+	uint16_t cn0;		/**< 0.1 dB/Hz. */
+	int16_t elevation;	/**< SV elevation angle in degrees. */
+	int16_t azimuth;		/**< SV azimuth angle in degrees. */
+	uint8_t signal;		/**< Signal type. 0: invalid, 1: GPS L1C/A. */
+	uint8_t in_fix:1;		/**< Satellite used in fix calculation. */
+	uint8_t unhealthy:1;	/**< Satellite is marked as unhealthy. */
 };
 
 struct gps_pvt {
@@ -97,7 +97,7 @@ struct gps_config {
 	/* Interval, in seconds, at which to start GPS search. The value is
 	 * ignored outside periodic mode. Minimum accepted value is 10 seconds.
 	 */
-	u32_t interval;
+	uint32_t interval;
 
 	/* Time to search for fix before giving up. If used in periodic mode,
 	 * the timeout repeats every interval. K_FOREVER or 0 indicate that
@@ -105,7 +105,7 @@ struct gps_config {
 	 * continuous mode, where it will stay on until explicitly stopped
 	 * also in case of valid PVT.
 	 */
-	s32_t timeout;
+	int32_t timeout;
 
 	/* Delete stored assistance data before starting GPS search. */
 	bool delete_agps_data;
@@ -125,20 +125,20 @@ enum gps_agps_type {
 };
 
 struct gps_agps_request {
-	u32_t sv_mask_ephe;	/* Bit mask indicating the satellite PRNs for
+	uint32_t sv_mask_ephe;	/* Bit mask indicating the satellite PRNs for
 				 * which the assistance GPS ephemeris data is
 				 * needed.
 				 */
-	u32_t sv_mask_alm;	/* Bit mask indicating the satellite PRNs for
+	uint32_t sv_mask_alm;	/* Bit mask indicating the satellite PRNs for
 				 * which the assistance GPS almanac data is
 				 * needed.
 				 */
-	u8_t utc:1;		/* GPS UTC parameters. */
-	u8_t klobuchar:1;	/* Klobuchar parameters. */
-	u8_t nequick:1;		/* NeQuick parameters. */
-	u8_t system_time_tow:1;	/* GPS system time and SV TOWs. */
-	u8_t position:1;	/* Position assistance parameters. */
-	u8_t integrity:1;	/* Integrity assistance parameters. */
+	uint8_t utc:1;		/* GPS UTC parameters. */
+	uint8_t klobuchar:1;	/* Klobuchar parameters. */
+	uint8_t nequick:1;		/* NeQuick parameters. */
+	uint8_t system_time_tow:1;	/* GPS system time and SV TOWs. */
+	uint8_t position:1;	/* Position assistance parameters. */
+	uint8_t integrity:1;	/* Integrity assistance parameters. */
 };
 
 /**

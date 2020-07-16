@@ -427,7 +427,7 @@ Functions
      * @retval 0        If the operation was successful.
      * @retval -EINVAL  If @p len is invalid. Currently, @p len must be 144.
      */
-     int spm_request_random_number(u8_t *output, size_t len, size_t *olen);
+     int spm_request_random_number(uint8_t *output, size_t len, size_t *olen);
 
 Enums
 =====

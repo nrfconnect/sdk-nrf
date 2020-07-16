@@ -83,7 +83,7 @@ static void error_check_handler(struct k_work *work)
 
 
 static void cs_change(struct device *gpio_dev, struct gpio_callback *cb,
-	       u32_t pins)
+	       uint32_t pins)
 {
 	if (!atomic_get(&active)) {
 		return;

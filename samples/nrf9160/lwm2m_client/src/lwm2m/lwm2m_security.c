@@ -31,8 +31,8 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 {
 	int ret;
 	char *server_url;
-	u16_t server_url_len;
-	u8_t server_url_flags;
+	uint16_t server_url_len;
+	uint8_t server_url_flags;
 
 	/* setup SECURITY object */
 

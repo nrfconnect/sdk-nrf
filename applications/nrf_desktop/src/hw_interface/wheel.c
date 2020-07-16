@@ -35,7 +35,7 @@ enum state {
 	STATE_SUSPENDED
 };
 
-static const u32_t qdec_pin[] = {
+static const uint32_t qdec_pin[] = {
 	DT_PROP(DT_NODELABEL(qdec), a_pin),
 	DT_PROP(DT_NODELABEL(qdec), b_pin)
 };
@@ -76,7 +76,7 @@ static void data_ready_handler(struct device *dev, struct sensor_trigger *trig)
 
 	struct wheel_event *event = new_wheel_event();
 
-	s32_t wheel = value.val1;
+	int32_t wheel = value.val1;
 
 	if (!IS_ENABLED(CONFIG_DESKTOP_WHEEL_INVERT_AXIS)) {
 		wheel *= -1;
@@ -129,7 +129,7 @@ static int wakeup_int_ctrl_nolock(bool enable)
 }
 
 static void wakeup_cb(struct device *gpio_dev, struct gpio_callback *cb,
-		      u32_t pins)
+		      uint32_t pins)
 {
 	struct wake_up_event *event;
 	int err;

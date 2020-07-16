@@ -10,14 +10,14 @@
 #include <nfc_t2t_lib.h>
 
 static struct bt_le_oob oob_local;
-static u8_t ndef_msg_buf[256]; /* Buffer used to hold an NFC NDEF message. */
+static uint8_t ndef_msg_buf[256]; /* Buffer used to hold an NFC NDEF message. */
 
 void nfc_field_detected(void);
 void nfc_field_lost(void);
 
 static void nfc_callback(void *context,
 			 enum nfc_t2t_event event,
-			 const u8_t *data,
+			 const uint8_t *data,
 			 size_t data_length)
 {
 	ARG_UNUSED(context);
@@ -36,7 +36,7 @@ static void nfc_callback(void *context,
 	}
 }
 
-int nfc_ndef_le_oob_msg_encode(u8_t *buffer, u32_t *len)
+int nfc_ndef_le_oob_msg_encode(uint8_t *buffer, uint32_t *len)
 {
 	int err;
 	struct nfc_ndef_le_oob_rec_payload_desc rec_payload;
@@ -84,7 +84,7 @@ int nfc_ndef_le_oob_msg_encode(u8_t *buffer, u32_t *len)
 
 void app_nfc_init(void)
 {
-	u32_t len = sizeof(ndef_msg_buf);
+	uint32_t len = sizeof(ndef_msg_buf);
 
 	printk("NFC configuration start\n");
 

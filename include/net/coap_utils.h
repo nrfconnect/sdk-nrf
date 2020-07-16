@@ -34,8 +34,8 @@ void coap_init(int ip_family);
  * @retval != 0 On failure.
  */
 int coap_send_request(enum coap_method method, const struct sockaddr *addr,
-		      const char *const *uri_path_options, u8_t *payload,
-		      u16_t payload_size, coap_reply_t reply_cb);
+		      const char *const *uri_path_options, uint8_t *payload,
+		      uint16_t payload_size, coap_reply_t reply_cb);
 
 #endif
 

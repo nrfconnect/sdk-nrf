@@ -27,9 +27,9 @@ LOG_MODULE_REGISTER(dfu_smp_c, CONFIG_BT_GATT_DFU_SMP_C_LOG_LEVEL);
  *  @retval BT_GATT_ITER_STOP     Stop notification
  *  @retval BT_GATT_ITER_CONTINUE Continue notification
  */
-static u8_t bt_gatt_dfu_smp_c_notify(struct bt_conn *conn,
+static uint8_t bt_gatt_dfu_smp_c_notify(struct bt_conn *conn,
 				     struct bt_gatt_subscribe_params *params,
-				     const void *data, u16_t length)
+				     const void *data, uint16_t length)
 {
 	struct bt_gatt_dfu_smp_c *dfu_smp_c;
 
@@ -48,11 +48,11 @@ static u8_t bt_gatt_dfu_smp_c_notify(struct bt_conn *conn,
 		dfu_smp_c->rsp_state.data       = data;
 		if (dfu_smp_c->rsp_state.offset == 0) {
 			/* First block */
-			u32_t total_len;
+			uint32_t total_len;
 			const struct dfu_smp_header *header;
 
 			header = data;
-			total_len = (((u16_t)header->len_h8) << 8) |
+			total_len = (((uint16_t)header->len_h8) << 8) |
 				    header->len_l8;
 			total_len += sizeof(struct dfu_smp_header);
 			dfu_smp_c->rsp_state.total_size = total_len;

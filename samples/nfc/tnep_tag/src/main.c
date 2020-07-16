@@ -21,17 +21,17 @@
 #define LED_SVC_ONE DK_LED3
 #define LED_SVC_TWO DK_LED4
 
-static const  u8_t msg[] = "Hello World";
-static const u8_t en_code[] = {'e', 'n'};
+static const  uint8_t msg[] = "Hello World";
+static const uint8_t en_code[] = {'e', 'n'};
 
 static const char svc_one_msg[] = "Service pi = 3.14159265358979323846";
 static const char svc_two_msg[] = "Service e  = 2.71828182845904523536";
 
-static const u8_t svc_one_uri[] = "svc:pi";
-static const u8_t svc_two_uri[] = "svc:e";
+static const uint8_t svc_one_uri[] = "svc:pi";
+static const uint8_t svc_two_uri[] = "svc:e";
 
-static u8_t tag_buffer[NDEF_TNEP_MSG_SIZE];
-static u8_t tag_buffer2[NDEF_TNEP_MSG_SIZE];
+static uint8_t tag_buffer[NDEF_TNEP_MSG_SIZE];
+static uint8_t tag_buffer2[NDEF_TNEP_MSG_SIZE];
 
 NFC_NDEF_MSG_DEF(ndef_msg, 16);
 
@@ -66,7 +66,7 @@ static void tnep_svc_one_deselected(void)
 
 	dk_set_led_off(LED_SVC_ONE);
 }
-static void tnep_svc_one_msg_received(const u8_t *data, size_t len)
+static void tnep_svc_one_msg_received(const uint8_t *data, size_t len)
 {
 	int err;
 
@@ -96,7 +96,7 @@ static void tnep_svc_two_deselected(void)
 
 	dk_set_led_off(LED_SVC_TWO);
 }
-static void tnep_svc_two_msg_received(const u8_t *data, size_t len)
+static void tnep_svc_two_msg_received(const uint8_t *data, size_t len)
 {
 	int err;
 
@@ -124,7 +124,7 @@ static struct nfc_tnep_tag_service training_services[] = {
 };
 
 static void nfc_callback(void *context, enum nfc_t4t_event event,
-			 const u8_t *data, size_t data_length, u32_t flags)
+			 const uint8_t *data, size_t data_length, uint32_t flags)
 {
 	switch (event) {
 	case NFC_T4T_EVENT_NDEF_UPDATED:
@@ -149,10 +149,10 @@ static void nfc_callback(void *context, enum nfc_t4t_event event,
 	}
 }
 
-static void button_pressed(u32_t button_state, u32_t has_changed)
+static void button_pressed(uint32_t button_state, uint32_t has_changed)
 {
 	int err;
-	u32_t button = button_state & has_changed;
+	uint32_t button = button_state & has_changed;
 
 	if (button & DK_BTN1_MSK) {
 		err = nfc_tnep_tag_tx_msg_app_data(&NFC_NDEF_TEXT_RECORD_DESC(svc_two_rec),

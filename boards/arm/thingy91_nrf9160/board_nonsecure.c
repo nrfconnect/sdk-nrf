@@ -26,7 +26,7 @@ static int thingy91_magpio_configure(void)
 #if defined(CONFIG_BSD_LIBRARY) && defined(CONFIG_NET_SOCKETS_OFFLOAD)
 	int at_socket_fd;
 	int buffer;
-	u8_t read_buffer[AT_CMD_MAX_READ_LENGTH];
+	uint8_t read_buffer[AT_CMD_MAX_READ_LENGTH];
 
 	at_socket_fd = socket(AF_LTE, SOCK_DGRAM, NPROTO_AT);
 	if (at_socket_fd == -1) {

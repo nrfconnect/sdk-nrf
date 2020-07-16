@@ -13,7 +13,7 @@
 
 /** Persistent storage handling */
 struct ponoff_settings_data {
-	u8_t on_power_up;
+	uint8_t on_power_up;
 	bool on_off;
 } __packed;
 
@@ -26,7 +26,7 @@ static int store(struct bt_mesh_ponoff_srv *srv,
 
 	struct ponoff_settings_data data;
 
-	data.on_power_up = (u8_t)srv->on_power_up;
+	data.on_power_up = (uint8_t)srv->on_power_up;
 
 	switch (srv->on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:
@@ -44,7 +44,7 @@ static int store(struct bt_mesh_ponoff_srv *srv,
 		return -EINVAL;
 	}
 
-	return bt_mesh_model_data_store(srv->ponoff_model, false, &data,
+	return bt_mesh_model_data_store(srv->ponoff_model, false, NULL, &data,
 					sizeof(data));
 }
 
@@ -213,12 +213,17 @@ static void bt_mesh_ponoff_srv_reset(struct bt_mesh_model *model)
 
 #ifdef CONFIG_BT_SETTINGS
 static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
+					   const char *name,
 					   size_t len_rd,
 					   settings_read_cb read_cb,
 					   void *cb_arg)
 {
 	struct bt_mesh_ponoff_srv *srv = model->user_data;
 	struct ponoff_settings_data data;
+
+	if (name) {
+		return -ENOTSUP; /* TODO support this */
+	}
 
 	if (read_cb(cb_arg, &data, sizeof(data)) != sizeof(data)) {
 		return -EINVAL;

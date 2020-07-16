@@ -25,7 +25,7 @@ extern "C" {
  */
 struct led_color {
 	/** Values for color channels. */
-	u8_t c[CONFIG_DESKTOP_LED_COLOR_COUNT];
+	uint8_t c[CONFIG_DESKTOP_LED_COLOR_COUNT];
 };
 
 
@@ -40,10 +40,10 @@ struct led_effect_step {
 	struct led_color color;
 
 	/** Number of substeps. */
-	u16_t substep_count;
+	uint16_t substep_count;
 
 	/** Duration of a single substep. */
-	u16_t substep_time;
+	uint16_t substep_time;
 };
 
 
@@ -54,7 +54,7 @@ struct led_effect {
 	const struct led_effect_step *steps;
 
 	/** Number of steps for the given effect. */
-	u16_t step_count;
+	uint16_t step_count;
 
 	/** Flag that indicates if the sequence should start again after it finishes. */
 	bool loop_forever;

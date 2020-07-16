@@ -43,7 +43,7 @@ static K_WORK_DEFINE(bt_send_work, bt_send_work_handler);
 
 static struct bt_conn *current_conn;
 static struct bt_gatt_exchange_params exchange_params;
-static u32_t nus_max_send_len;
+static uint32_t nus_max_send_len;
 static atomic_t ready;
 static atomic_t active;
 
@@ -56,7 +56,7 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, NUS_UUID_SERVICE),
 };
 
-static void exchange_func(struct bt_conn *conn, u8_t err,
+static void exchange_func(struct bt_conn *conn, uint8_t err,
 			  struct bt_gatt_exchange_params *params)
 {
 	if (!err) {
@@ -64,7 +64,7 @@ static void exchange_func(struct bt_conn *conn, u8_t err,
 	}
 }
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -95,7 +95,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	EVENT_SUBMIT(event);
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -123,8 +123,8 @@ static struct bt_conn_cb conn_callbacks = {
 
 static void bt_send_work_handler(struct k_work *work)
 {
-	u16_t len;
-	u8_t *buf;
+	uint16_t len;
+	uint8_t *buf;
 	int err;
 	bool notif_disabled = false;
 
@@ -152,16 +152,16 @@ static void bt_send_work_handler(struct k_work *work)
 	}
 }
 
-static void bt_receive_cb(struct bt_conn *conn, const u8_t *const data,
-			  u16_t len)
+static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
+			  uint16_t len)
 {
 	void *buf;
-	u16_t remainder;
+	uint16_t remainder;
 
 	remainder = len;
 
 	do {
-		u16_t copy_len;
+		uint16_t copy_len;
 		int err;
 
 		err = k_mem_slab_alloc(&ble_rx_slab, &buf, K_NO_WAIT);
@@ -271,7 +271,7 @@ static bool event_handler(const struct event_header *eh)
 			return false;
 		}
 
-		u32_t written = ring_buf_put(
+		uint32_t written = ring_buf_put(
 			&ble_tx_ring_buf,
 			event->buf,
 			event->len);
@@ -279,7 +279,7 @@ static bool event_handler(const struct event_header *eh)
 			LOG_WRN("UART_%d -> BLE overflow", event->dev_idx);
 		}
 
-		u32_t buf_utilization =
+		uint32_t buf_utilization =
 			(ring_buf_capacity_get(&ble_tx_ring_buf) -
 			ring_buf_space_get(&ble_tx_ring_buf));
 

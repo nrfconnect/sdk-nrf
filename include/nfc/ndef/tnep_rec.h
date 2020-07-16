@@ -28,47 +28,47 @@ extern "C" {
  * @brief External reference to the type field of the TNEP records,
  *        defined in the file @c nfc_tnep_rec.c.
  */
-extern const u8_t nfc_ndef_tnep_rec_type_svc_param[];
-extern const u8_t nfc_ndef_tnep_rec_type_svc_select[];
-extern const u8_t nfc_ndef_tnep_rec_type_status[];
+extern const uint8_t nfc_ndef_tnep_rec_type_svc_param[];
+extern const uint8_t nfc_ndef_tnep_rec_type_svc_select[];
+extern const uint8_t nfc_ndef_tnep_rec_type_status[];
 
 /** @brief TNEP Status. */
 struct nfc_ndef_tnep_rec_status {
 	/** Status type for TNEP Status Message */
-	u8_t status;
+	uint8_t status;
 };
 
 /** @brief Service structure. */
 struct nfc_ndef_tnep_rec_svc_select {
 	/** Length of the following Service Name URI. */
-	u8_t uri_len;
+	uint8_t uri_len;
 
 	/** Service Name URI. */
-	const u8_t *uri;
+	const uint8_t *uri;
 };
 
 /** @brief Service Parameters in the TNEP's Initial NDEF message. */
 struct nfc_ndef_tnep_rec_svc_param {
 	/** TNEP Version. */
-	u8_t version;
+	uint8_t version;
 
 	/** Length of the Service Name URI. */
-	u8_t uri_length;
+	uint8_t uri_length;
 
 	/** Service Name URI. */
-	const u8_t *uri;
+	const uint8_t *uri;
 
 	/** TNEP communication mode */
-	u8_t communication_mode;
+	uint8_t communication_mode;
 
 	/** Minimum waiting time. */
-	u8_t min_time;
+	uint8_t min_time;
 
 	/** Maximum number of waiting time extensions N_wait. */
-	u8_t max_time_ext;
+	uint8_t max_time_ext;
 
 	/** Maximum NDEF message size in bytes. */
-	u16_t max_size;
+	uint16_t max_size;
 };
 
 /**
@@ -85,7 +85,7 @@ struct nfc_ndef_tnep_rec_svc_param {
  * Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_rec_status *payload_desc,
-				     u8_t *buffer, u32_t *len);
+				     uint8_t *buffer, uint32_t *len);
 
 /**
  * @brief Payload constructor for the TNEP Service Select Record.
@@ -101,7 +101,7 @@ int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_rec_status *payload_de
  *	   Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_tnep_rec_svc_select_payload(struct nfc_ndef_tnep_rec_svc_select *payload_desc,
-					 u8_t *buffer, u32_t *len);
+					 uint8_t *buffer, uint32_t *len);
 
 /**
  * @brief Payload constructor for the Service Parameter Record.
@@ -117,7 +117,7 @@ int nfc_ndef_tnep_rec_svc_select_payload(struct nfc_ndef_tnep_rec_svc_select *pa
  *         Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payload_desc,
-					u8_t *buffer, u32_t *len);
+					uint8_t *buffer, uint32_t *len);
 
 /**
  * @brief Macro for creating and initializing a NFC NDEF record descriptor for

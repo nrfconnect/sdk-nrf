@@ -71,9 +71,9 @@ struct bt_mesh_sensor_srv {
 	/** Ordered linked list of sensors. */
 	sys_slist_t sensors;
 	/** Publish sequence counter */
-	u16_t seq;
+	uint16_t seq;
 	/** Number of sensors. */
-	u8_t sensor_count;
+	uint8_t sensor_count;
 
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;

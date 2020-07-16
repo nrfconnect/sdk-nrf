@@ -130,7 +130,7 @@ void *bt_conn_ctx_get(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)
 	return NULL;
 }
 
-const struct bt_conn_ctx *bt_conn_ctx_get_by_id(struct bt_conn_ctx_lib *ctx_lib, u8_t id)
+const struct bt_conn_ctx *bt_conn_ctx_get_by_id(struct bt_conn_ctx_lib *ctx_lib, uint8_t id)
 {
 	__ASSERT_NO_MSG(ctx_lib != NULL);
 	__ASSERT_NO_MSG(id < bt_conn_ctx_count(ctx_lib));

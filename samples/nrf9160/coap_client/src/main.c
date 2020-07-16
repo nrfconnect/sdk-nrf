@@ -11,6 +11,7 @@
 #include <net/coap.h>
 #include <net/socket.h>
 #include <modem/lte_lc.h>
+#include <random/rand32.h>
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
 #endif
@@ -22,9 +23,9 @@
 static int sock;
 static struct pollfd fds;
 static struct sockaddr_storage server;
-static u16_t next_token;
+static uint16_t next_token;
 
-static u8_t coap_buf[APP_COAP_MAX_MSG_LEN];
+static uint8_t coap_buf[APP_COAP_MAX_MSG_LEN];
 
 #if defined(CONFIG_BSD_LIBRARY)
 
@@ -105,15 +106,15 @@ static int client_init(void)
 }
 
 /**@brief Handles responses from the remote CoAP server. */
-static int client_handle_get_response(u8_t *buf, int received)
+static int client_handle_get_response(uint8_t *buf, int received)
 {
 	int err;
 	struct coap_packet reply;
-	const u8_t *payload;
-	u16_t payload_len;
-	u8_t token[8];
-	u16_t token_len;
-	u8_t temp_buf[16];
+	const uint8_t *payload;
+	uint16_t payload_len;
+	uint8_t token[8];
+	uint16_t token_len;
+	uint8_t temp_buf[16];
 
 	err = coap_packet_parse(&reply, buf, received, NULL, 0);
 	if (err < 0) {
@@ -149,7 +150,7 @@ static int client_get_send(void)
 
 	err = coap_packet_init(&request, coap_buf, sizeof(coap_buf),
 			       APP_COAP_VERSION, COAP_TYPE_NON_CON,
-			       sizeof(next_token), (u8_t *)&next_token,
+			       sizeof(next_token), (uint8_t *)&next_token,
 			       COAP_METHOD_GET, coap_next_id());
 	if (err < 0) {
 		printk("Failed to create CoAP request, %d\n", err);
@@ -157,7 +158,7 @@ static int client_get_send(void)
 	}
 
 	err = coap_packet_append_option(&request, COAP_OPTION_URI_PATH,
-					(u8_t *)CONFIG_COAP_RESOURCE,
+					(uint8_t *)CONFIG_COAP_RESOURCE,
 					strlen(CONFIG_COAP_RESOURCE));
 	if (err < 0) {
 		printk("Failed to encode CoAP option, %d\n", err);
@@ -271,7 +272,7 @@ static int wait(int timeout)
 
 void main(void)
 {
-	s64_t next_msg_time = APP_COAP_SEND_INTERVAL_MS;
+	int64_t next_msg_time = APP_COAP_SEND_INTERVAL_MS;
 	int err, received;
 
 	printk("The nRF CoAP client sample started\n");
@@ -300,7 +301,7 @@ void main(void)
 			next_msg_time += APP_COAP_SEND_INTERVAL_MS;
 		}
 
-		s64_t remaining = next_msg_time - k_uptime_get();
+		int64_t remaining = next_msg_time - k_uptime_get();
 
 		if (remaining < 0) {
 			remaining = 0;

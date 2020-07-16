@@ -51,7 +51,7 @@ int st25r3911b_spi_init(void);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_multiple_reg_write(u8_t start_reg, u8_t *val,
+int st25r3911b_multiple_reg_write(uint8_t start_reg, uint8_t *val,
 				  size_t len);
 
 /** @brief Write a single NFCA Reader register.
@@ -62,7 +62,7 @@ int st25r3911b_multiple_reg_write(u8_t start_reg, u8_t *val,
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-static inline int st25r3911b_reg_write(u8_t reg, u8_t val)
+static inline int st25r3911b_reg_write(uint8_t reg, uint8_t val)
 {
 	return st25r3911b_multiple_reg_write(reg, &val, 1);
 }
@@ -83,7 +83,7 @@ static inline int st25r3911b_reg_write(u8_t reg, u8_t val)
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_multiple_reg_read(u8_t start_reg, u8_t *val, size_t len);
+int st25r3911b_multiple_reg_read(uint8_t start_reg, uint8_t *val, size_t len);
 
 /** @brief Read a single NFC Reader register.
  *
@@ -93,7 +93,7 @@ int st25r3911b_multiple_reg_read(u8_t start_reg, u8_t *val, size_t len);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-static inline int st25r3911b_reg_read(u8_t reg, u8_t *val)
+static inline int st25r3911b_reg_read(uint8_t reg, uint8_t *val)
 {
 	return st25r3911b_multiple_reg_read(reg, val, 1);
 }
@@ -107,7 +107,7 @@ static inline int st25r3911b_reg_read(u8_t reg, u8_t *val)
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_cmd_execute(u8_t cmd);
+int st25r3911b_cmd_execute(uint8_t cmd);
 
 /** @brief Modify a single NFC Reader register.
  *
@@ -124,7 +124,7 @@ int st25r3911b_cmd_execute(u8_t cmd);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_reg_modify(u8_t reg, u8_t clr_mask, u8_t set_mask);
+int st25r3911b_reg_modify(uint8_t reg, uint8_t clr_mask, uint8_t set_mask);
 
 /** @brief Read NFC Reader FIFO data.
  *
@@ -137,7 +137,7 @@ int st25r3911b_reg_modify(u8_t reg, u8_t clr_mask, u8_t set_mask);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_fifo_read(u8_t *data, size_t length);
+int st25r3911b_fifo_read(uint8_t *data, size_t length);
 
 /** @brief Write NFC Reader FIFO data.
  *
@@ -150,7 +150,7 @@ int st25r3911b_fifo_read(u8_t *data, size_t length);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_fifo_write(u8_t *data, size_t length);
+int st25r3911b_fifo_write(uint8_t *data, size_t length);
 
 #ifdef __cplusplus
 }

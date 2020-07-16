@@ -8,15 +8,15 @@
 #include "msg_parser_local.h"
 
 int nfc_ndef_msg_parser_internal(struct nfc_ndef_parser_memo_desc *parser_memo_desc,
-				 const u8_t *nfc_data,
-				 u32_t *nfc_data_len)
+				 const uint8_t *nfc_data,
+				 uint32_t *nfc_data_len)
 {
 	enum nfc_ndef_record_location record_location;
 
 	int err;
 
-	u32_t nfc_data_left = *nfc_data_len;
-	u32_t temp_nfc_data_len = 0;
+	uint32_t nfc_data_left = *nfc_data_len;
+	uint32_t temp_nfc_data_len = 0;
 
 	/* Want to modify -> use local copy. */
 	struct nfc_ndef_bin_payload_desc *bin_pay_desc =
@@ -77,13 +77,13 @@ int nfc_ndef_msg_parser_internal(struct nfc_ndef_parser_memo_desc *parser_memo_d
 }
 
 
-int nfc_ndef_msg_parser_memo_resolve(const u8_t *result_buf,
-				     u32_t *result_buf_len,
+int nfc_ndef_msg_parser_memo_resolve(const uint8_t *result_buf,
+				     uint32_t *result_buf_len,
 				     struct nfc_ndef_parser_memo_desc *parser_memo_desc)
 {
-	u32_t max_rec_num;
-	u32_t memory_last;
-	u8_t *end;
+	uint32_t max_rec_num;
+	uint32_t memory_last;
+	uint8_t *end;
 	const struct nfc_ndef_record_desc **record_desc_array;
 
 	if (*result_buf_len < sizeof(struct nfc_ndef_msg_parser_msg_1)) {
@@ -106,10 +106,9 @@ int nfc_ndef_msg_parser_memo_resolve(const u8_t *result_buf,
 	parser_memo_desc->msg_desc->max_record_count = max_rec_num;
 	parser_memo_desc->msg_desc->record_count = 0;
 
-	end = (u8_t *) &parser_memo_desc->rec_desc[max_rec_num];
+	end = (uint8_t *) &parser_memo_desc->rec_desc[max_rec_num];
 
 	*result_buf_len = end - result_buf;
 
 	return 0;
 }
-

@@ -178,7 +178,7 @@ static void modem_configure(void)
 }
 
 #if defined(CONFIG_CLOUD_PUBLICATION_BUTTON_PRESS)
-static void button_handler(u32_t button_states, u32_t has_changed)
+static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
 		k_delayed_work_submit(&cloud_update_work, K_NO_WAIT);

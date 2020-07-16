@@ -30,15 +30,15 @@
 #endif
 
 
-int fprotect_area(u32_t start, size_t length)
+int fprotect_area(uint32_t start, size_t length)
 {
 	ENABLE_PROTECTION_IN_DEBUG(NRF_BPROT,
 				   ENABLE_IN_DEBUG
 				   );
 
-	u32_t block_start = start / BPROT_REGIONS_SIZE;
-	u32_t block_end   = (start + length) / BPROT_REGIONS_SIZE;
-	u32_t block_mask[BPROT_CONFIGS_NUM] = {0};
+	uint32_t block_start = start / BPROT_REGIONS_SIZE;
+	uint32_t block_end   = (start + length) / BPROT_REGIONS_SIZE;
+	uint32_t block_mask[BPROT_CONFIGS_NUM] = {0};
 
 	BUILD_ASSERT(BPROT_REGIONS_SIZE == CONFIG_FPROTECT_BLOCK_SIZE);
 
@@ -54,11 +54,11 @@ int fprotect_area(u32_t start, size_t length)
 		return -EINVAL;
 	}
 
-	for (u32_t i = block_start; i < block_end; i++) {
+	for (uint32_t i = block_start; i < block_end; i++) {
 		block_mask[i / BITS_PER_LONG] |= BIT(i % BITS_PER_LONG);
 	}
 
-	for (u32_t i = 0; i < BPROT_CONFIGS_NUM; i++) {
+	for (uint32_t i = 0; i < BPROT_CONFIGS_NUM; i++) {
 		PROTECT(NRF_BPROT, i, block_mask[i]);
 	}
 

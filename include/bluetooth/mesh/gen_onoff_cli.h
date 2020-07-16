@@ -66,7 +66,7 @@ struct bt_mesh_onoff_cli {
 				     struct bt_mesh_msg_ctx *ctx,
 				     const struct bt_mesh_onoff_status *status);
 	/** Current Transaction ID. */
-	u8_t tid;
+	uint8_t tid;
 	/** Response context for tracking acknowledged messages. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
 	/** Publish parameters. */

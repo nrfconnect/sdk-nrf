@@ -50,8 +50,8 @@ K_SEM_DEFINE(nus_write_sem, 0, 1);
 
 struct uart_data_t {
 	void *fifo_reserved;
-	u8_t  data[UART_BUF_SIZE];
-	u16_t len;
+	uint8_t  data[UART_BUF_SIZE];
+	uint16_t len;
 };
 
 static K_FIFO_DEFINE(fifo_uart_tx_data);
@@ -60,7 +60,7 @@ static K_FIFO_DEFINE(fifo_uart_rx_data);
 static struct bt_conn *default_conn;
 static struct bt_gatt_nus_c gatt_nus_c;
 
-static void ble_data_sent(u8_t err, const u8_t *const data, u16_t len)
+static void ble_data_sent(uint8_t err, const uint8_t *const data, uint16_t len)
 {
 	struct uart_data_t *buf;
 
@@ -75,11 +75,11 @@ static void ble_data_sent(u8_t err, const u8_t *const data, u16_t len)
 	}
 }
 
-static u8_t ble_data_received(const u8_t *const data, u16_t len)
+static uint8_t ble_data_received(const uint8_t *const data, uint16_t len)
 {
 	int err;
 
-	for (u16_t pos = 0; pos != len;) {
+	for (uint16_t pos = 0; pos != len;) {
 		struct uart_data_t *tx = k_malloc(sizeof(*tx));
 
 		if (!tx) {
@@ -119,11 +119,11 @@ static u8_t ble_data_received(const u8_t *const data, u16_t len)
 
 static void uart_cb(struct uart_event *evt, void *user_data)
 {
-	static u8_t *current_buf;
+	static uint8_t *current_buf;
 	static size_t aborted_len;
 	static bool buf_release;
 	struct uart_data_t *buf;
-	static u8_t *aborted_buf;
+	static uint8_t *aborted_buf;
 
 	switch (evt->type) {
 	case UART_TX_DONE:
@@ -213,7 +213,7 @@ static void uart_cb(struct uart_event *evt, void *user_data)
 
 	case UART_TX_ABORTED:
 			if (!aborted_buf) {
-				aborted_buf = (u8_t *)evt->data.tx.buf;
+				aborted_buf = (uint8_t *)evt->data.tx.buf;
 			}
 
 			aborted_len += evt->data.tx.len;
@@ -326,7 +326,7 @@ static void gatt_discover(struct bt_conn *conn)
 	}
 }
 
-static void connected(struct bt_conn *conn, u8_t conn_err)
+static void connected(struct bt_conn *conn, uint8_t conn_err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 	int err;
@@ -354,7 +354,7 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 	}
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 	int err;

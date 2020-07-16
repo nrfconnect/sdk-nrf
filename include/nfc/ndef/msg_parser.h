@@ -55,7 +55,7 @@ struct nfc_ndef_msg_parser_msg_2 {
  */
 #define NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(max_count_of_records)          \
 	(sizeof(struct nfc_ndef_msg_parser_msg_1) +                           \
-	 ((NFC_NDEF_MSG_PARSER_DELTA) * ((u32_t)(max_count_of_records) - 1)))
+	 ((NFC_NDEF_MSG_PARSER_DELTA) * ((uint32_t)(max_count_of_records) - 1)))
 
 /** @brief Parse NFC NDEF messages.
  *
@@ -79,10 +79,10 @@ struct nfc_ndef_msg_parser_msg_2 {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_parse(const u8_t  *result_buf,
-		       u32_t *result_buf_len,
-		       const u8_t *raw_data,
-		       u32_t *raw_data_len);
+int nfc_ndef_msg_parse(const uint8_t  *result_buf,
+		       uint32_t *result_buf_len,
+		       const uint8_t *raw_data,
+		       uint32_t *raw_data_len);
 
 /** @brief Print the parsed contents of an NDEF message.
  *

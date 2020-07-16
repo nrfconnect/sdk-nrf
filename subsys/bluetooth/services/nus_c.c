@@ -20,9 +20,9 @@ enum {
 	NUS_C_RX_WRITE_PENDING
 };
 
-static u8_t on_received(struct bt_conn *conn,
+static uint8_t on_received(struct bt_conn *conn,
 			struct bt_gatt_subscribe_params *params,
-			const void *data, u16_t length)
+			const void *data, uint16_t length)
 {
 	struct bt_gatt_nus_c *nus_c;
 
@@ -47,12 +47,12 @@ static u8_t on_received(struct bt_conn *conn,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static void on_sent(struct bt_conn *conn, u8_t err,
+static void on_sent(struct bt_conn *conn, uint8_t err,
 		    struct bt_gatt_write_params *params)
 {
 	struct bt_gatt_nus_c *nus_c;
 	const void *data;
-	u16_t length;
+	uint16_t length;
 
 	/* Retrieve NUS Client module context. */
 	nus_c = CONTAINER_OF(params, struct bt_gatt_nus_c, rx_write_params);
@@ -83,8 +83,8 @@ int bt_gatt_nus_c_init(struct bt_gatt_nus_c *nus_c,
 	return 0;
 }
 
-int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const u8_t *data,
-		       u16_t len)
+int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const uint8_t *data,
+		       uint16_t len)
 {
 	int err;
 

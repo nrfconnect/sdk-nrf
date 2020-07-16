@@ -17,12 +17,12 @@
 static K_SEM_DEFINE(tx_lock, 1, 1);
 static K_SEM_DEFINE(rx_lock, 0, 1);
 
-static u8_t uart_rx_test_buf[TEST_UART_BUF_LEN];
-static u32_t uart_rx_buf_cnt;
-static u8_t uart_rx_mem_test_buf[TEST_UART_BUF_LEN];
+static uint8_t uart_rx_test_buf[TEST_UART_BUF_LEN];
+static uint32_t uart_rx_buf_cnt;
+static uint8_t uart_rx_mem_test_buf[TEST_UART_BUF_LEN];
 
 
-static size_t fill_with_test_data(u8_t *buf, size_t len)
+static size_t fill_with_test_data(uint8_t *buf, size_t len)
 {
 	for (size_t i = 0; i < len; i++) {
 		buf[i] = (i % 0x100);
@@ -60,7 +60,7 @@ static void configure_test_suite(void)
  * Assert that the UART buffer uart_rx_test_buf was filled with exactly len
  * bytes and are equal to the contents of buf.
  */
-static void assert_transmission(u8_t *buf, size_t len)
+static void assert_transmission(uint8_t *buf, size_t len)
 {
 	zassert_equal(0, k_sem_take(&rx_lock, TEST_RX_LOCK_TIMEOUT),
 		"Reception was not finished within the RX timeout");

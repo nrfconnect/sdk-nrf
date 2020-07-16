@@ -78,9 +78,9 @@ struct bt_mesh_sensor_descriptor {
 	/** Sampling type for the sensor data. */
 	enum bt_mesh_sensor_sampling sampling_type;
 	/** Measurement period for the samples, if applicable. */
-	u64_t period;
+	uint64_t period;
 	/** Update interval for the samples, if applicable. */
-	u64_t update_interval;
+	uint64_t update_interval;
 };
 
 /** Delta threshold type. */
@@ -208,11 +208,11 @@ struct bt_mesh_sensor_channel {
  */
 struct bt_mesh_sensor_type {
 	/** Device Property ID. */
-	u16_t id;
+	uint16_t id;
 	/** Flags, @see BT_MESH_SENSOR_TYPE_FLAG_SERIES */
-	u8_t flags;
+	uint8_t flags;
 	/** The number of channels supported by this type. */
-	u8_t channel_count;
+	uint8_t channel_count;
 	/** Array of channel descriptors.
 	 *
 	 *  All channels are mandatory and immutable.
@@ -300,7 +300,7 @@ struct bt_mesh_sensor_series {
 	const struct bt_mesh_sensor_column *columns;
 
 	/** Number of columns. */
-	u32_t column_count;
+	uint32_t column_count;
 
 	/** @brief Getter for the series values.
 	 *
@@ -377,22 +377,22 @@ struct bt_mesh_sensor {
 		struct sensor_value prev;
 
 		/** Sequence number of the previous publication. */
-		u16_t seq;
+		uint16_t seq;
 
 		/** Minimum possible interval for fast cadence value publishing
 		 *  in seconds.
 		 *
 		 *  @see BT_MESH_SENSOR_INTERVAL_MAX
 		 */
-		u8_t min_int;
+		uint8_t min_int;
 
 		/** Fast period divisor used when publishing with fast cadence.
 		 */
-		u8_t pub_div : 4;
+		uint8_t pub_div : 4;
 
 		/** Flag indicating whether the sensor is in fast cadence mode.
 		 */
-		u8_t fast_pub : 1;
+		uint8_t fast_pub : 1;
 	} state;
 };
 
@@ -427,7 +427,7 @@ bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
  *
  *  @return The associated sensor type, or NULL if the ID is unknown.
  */
-const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(u16_t id);
+const struct bt_mesh_sensor_type *bt_mesh_sensor_type_get(uint16_t id);
 
 /** @brief Check whether a single channel sensor value lies within a column.
  *

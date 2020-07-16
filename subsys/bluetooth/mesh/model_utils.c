@@ -20,11 +20,11 @@
 #define MOD_ACKD_TIMEOUT_BASE 200
 #define MOD_ACKD_TIMEOUT_PER_HOP 50
 
-int tid_check_and_update(struct bt_mesh_tid_ctx *prev_transaction, u8_t tid,
+int tid_check_and_update(struct bt_mesh_tid_ctx *prev_transaction, uint8_t tid,
 			 const struct bt_mesh_msg_ctx *ctx)
 {
 	/* This updates the timestamp in the progress: */
-	s64_t uptime_delta = k_uptime_delta(&prev_transaction->timestamp);
+	int64_t uptime_delta = k_uptime_delta(&prev_transaction->timestamp);
 
 	if (prev_transaction->src == ctx->addr &&
 	    prev_transaction->dst == ctx->recv_dst &&
@@ -39,24 +39,24 @@ int tid_check_and_update(struct bt_mesh_tid_ctx *prev_transaction, u8_t tid,
 	return 0;
 }
 
-static const u32_t model_transition_res[] = {
+static const uint32_t model_transition_res[] = {
 	100,
 	1 * MSEC_PER_SEC,
 	10 * MSEC_PER_SEC,
 	60 * 10 * MSEC_PER_SEC,
 };
 
-s32_t model_transition_decode(u8_t encoded_transition)
+int32_t model_transition_decode(uint8_t encoded_transition)
 {
-	u8_t steps = (encoded_transition & 0x3f);
-	u8_t res = (encoded_transition >> 6);
+	uint8_t steps = (encoded_transition & 0x3f);
+	uint8_t res = (encoded_transition >> 6);
 
 	return (steps == TRANSITION_TIME_UNKNOWN) ?
 		       SYS_FOREVER_MS :
 		       (model_transition_res[res] * steps);
 }
 
-u8_t model_transition_encode(s32_t transition_time)
+uint8_t model_transition_encode(int32_t transition_time)
 {
 	if (transition_time == 0) {
 		return 0;
@@ -73,19 +73,19 @@ u8_t model_transition_encode(s32_t transition_time)
 	 * the max value of each step resolution. The formula for the limit is
 	 * ((0x3e * res[i]) + (((0x3e * res[i]) / res[i+1]) + 1) * res[i+1])/2.
 	 */
-	const s32_t limits[] = {
+	const int32_t limits[] = {
 		6600,
 		66 * MSEC_PER_SEC,
 		910 * MSEC_PER_SEC,
 		60 * 620 * MSEC_PER_SEC,
 	};
 
-	for (u8_t i = 0; i < ARRAY_SIZE(model_transition_res); ++i) {
+	for (uint8_t i = 0; i < ARRAY_SIZE(model_transition_res); ++i) {
 		if (transition_time > limits[i]) {
 			continue;
 		}
 
-		u8_t steps = ((transition_time + model_transition_res[i] / 2) /
+		uint8_t steps = ((transition_time + model_transition_res[i] / 2) /
 			      model_transition_res[i]);
 		steps = MAX(1, steps);
 		steps = MIN(0x3e, steps);
@@ -95,12 +95,12 @@ u8_t model_transition_encode(s32_t transition_time)
 	return TRANSITION_TIME_UNKNOWN;
 }
 
-u8_t model_delay_encode(u32_t delay)
+uint8_t model_delay_encode(uint32_t delay)
 {
 	return delay / DELAY_TIME_STEP_MS;
 }
 
-s32_t model_delay_decode(u8_t encoded_delay)
+int32_t model_delay_decode(uint8_t encoded_delay)
 {
 	return encoded_delay * 5;
 }
@@ -124,7 +124,7 @@ int model_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 
 int model_ackd_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 		    struct net_buf_simple *buf,
-		    struct bt_mesh_model_ack_ctx *ack, u32_t rsp_op,
+		    struct bt_mesh_model_ack_ctx *ack, uint32_t rsp_op,
 		    void *user_data)
 {
 	if (ack &&
@@ -137,8 +137,8 @@ int model_ackd_send(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 
 	if (ack) {
 		if (retval == 0) {
-			u8_t ttl = (ctx ? ctx->send_ttl : mod->pub->ttl);
-			s32_t time = (MOD_ACKD_TIMEOUT_BASE +
+			uint8_t ttl = (ctx ? ctx->send_ttl : mod->pub->ttl);
+			int32_t time = (MOD_ACKD_TIMEOUT_BASE +
 				      ttl * MOD_ACKD_TIMEOUT_PER_HOP);
 			return model_ack_wait(ack, time);
 		}

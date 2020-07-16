@@ -116,7 +116,7 @@ static void cmd_send(struct k_work *work)
 	uart_irq_rx_enable(uart_dev);
 }
 
-static void uart_rx_handler(u8_t character)
+static void uart_rx_handler(uint8_t character)
 {
 	static bool inside_quotes;
 	static size_t at_cmd_len;
@@ -191,7 +191,7 @@ send:
 
 static void isr(struct device *dev)
 {
-	u8_t character;
+	uint8_t character;
 
 	uart_irq_update(dev);
 
@@ -212,7 +212,7 @@ static void isr(struct device *dev)
 static int at_uart_init(char *uart_dev_name)
 {
 	int err;
-	u8_t dummy;
+	uint8_t dummy;
 
 	uart_dev = device_get_binding(uart_dev_name);
 	if (uart_dev == NULL) {
@@ -220,7 +220,7 @@ static int at_uart_init(char *uart_dev_name)
 		return -EINVAL;
 	}
 
-	u32_t start_time = k_uptime_get_32();
+	uint32_t start_time = k_uptime_get_32();
 
 	/* Wait for the UART line to become valid */
 	do {

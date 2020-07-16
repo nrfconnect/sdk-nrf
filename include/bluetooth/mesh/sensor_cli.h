@@ -76,13 +76,13 @@ struct bt_mesh_sensor_cadence_status {
 	 *  The sensor's fast period interval is
 	 *  publish_period / (1 << fast_period_div).
 	 */
-	u8_t fast_period_div;
+	uint8_t fast_period_div;
 	/** Logarithmic minimum publish period.
 	 *
 	 *  The sensor's fast period interval is never lower than
 	 *  (1 << min_int).
 	 */
-	u8_t min_int;
+	uint8_t min_int;
 	/** Sensor threshold values. */
 	struct bt_mesh_sensor_threshold threshold;
 };
@@ -108,7 +108,7 @@ struct bt_mesh_sensor_series_entry {
 /** Sensor info structure. */
 struct bt_mesh_sensor_info {
 	/** Sensor Device Property ID */
-	u16_t id;
+	uint16_t id;
 	/** Sensor descriptor. */
 	struct bt_mesh_sensor_descriptor descriptor;
 };
@@ -184,7 +184,7 @@ struct bt_mesh_sensor_cli_handlers {
 	void (*settings)(struct bt_mesh_sensor_cli *cli,
 			 struct bt_mesh_msg_ctx *ctx,
 			 const struct bt_mesh_sensor_type *sensor,
-			 const u16_t *ids, u32_t count);
+			 const uint16_t *ids, uint32_t count);
 
 	/** @brief Sensor setting status callback.
 	 *
@@ -229,7 +229,7 @@ struct bt_mesh_sensor_cli_handlers {
 	void (*series_entry)(struct bt_mesh_sensor_cli *cli,
 			     struct bt_mesh_msg_ctx *ctx,
 			     const struct bt_mesh_sensor_type *sensor,
-			     u8_t index, u8_t count,
+			     uint8_t index, uint8_t count,
 			     const struct bt_mesh_sensor_series_entry *entry);
 
 	/** @brief Unknown type callback.
@@ -244,8 +244,8 @@ struct bt_mesh_sensor_cli_handlers {
 	 *                    sensor type.
 	 */
 	void (*unknown_type)(struct bt_mesh_sensor_cli *cli,
-			     struct bt_mesh_msg_ctx *ctx, u16_t id,
-			     u32_t opcode);
+			     struct bt_mesh_msg_ctx *ctx, uint16_t id,
+			     uint32_t opcode);
 };
 
 /** @brief Retrieve a list of all sensors in a sensor server.
@@ -285,7 +285,7 @@ struct bt_mesh_sensor_cli_handlers {
 int bt_mesh_sensor_cli_list_get(struct bt_mesh_sensor_cli *cli,
 				struct bt_mesh_msg_ctx *ctx,
 				struct bt_mesh_sensor_info *sensors,
-				u32_t *count);
+				uint32_t *count);
 
 /** @brief Get the descriptor for the given sensor.
  *
@@ -426,7 +426,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
 int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
 				    struct bt_mesh_sensor_type *sensor,
-				    u16_t *ids, u32_t *count);
+				    uint16_t *ids, uint32_t *count);
 
 /** @brief Get a setting value for a sensor.
  *
@@ -611,7 +611,7 @@ int bt_mesh_sensor_cli_series_entries_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_column *range,
-	struct bt_mesh_sensor_series_entry *rsp, u32_t *count);
+	struct bt_mesh_sensor_series_entry *rsp, uint32_t *count);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_sensor_cli_op[];

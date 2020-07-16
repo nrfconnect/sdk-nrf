@@ -48,7 +48,7 @@ struct bt_mesh_onoff_status {
 	/** The target value of the Generic OnOff state (optional). */
 	bool target_on_off;
 	/** Remaining time value in milliseconds. */
-	s32_t remaining_time;
+	int32_t remaining_time;
 };
 
 #ifdef __cplusplus

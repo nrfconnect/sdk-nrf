@@ -61,7 +61,7 @@ struct bt_mesh_lvl_cli {
 	/** Acknowledged message tracking. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
 	/** Current transaction ID. */
-	u8_t tid;
+	uint8_t tid;
 
 	/** @brief Level status message handler.
 	 *

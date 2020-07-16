@@ -24,7 +24,7 @@ static const struct bt_mesh_onoff_srv_handlers onoff_handlers = {
 struct led_ctx {
 	struct bt_mesh_onoff_srv srv;
 	struct k_delayed_work work;
-	u32_t remaining;
+	uint32_t remaining;
 	bool value;
 };
 
@@ -131,7 +131,7 @@ static struct k_delayed_work attention_blink_work;
 static void attention_blink(struct k_work *work)
 {
 	static int idx;
-	const u8_t pattern[] = {
+	const uint8_t pattern[] = {
 		BIT(0) | BIT(1),
 		BIT(1) | BIT(2),
 		BIT(2) | BIT(3),

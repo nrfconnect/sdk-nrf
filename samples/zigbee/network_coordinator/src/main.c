@@ -64,12 +64,12 @@ static zb_void_t steering_finished(zb_uint8_t param)
  * @param[in]   has_changed   Bitmask containing buttons
  *                            that has changed their state.
  */
-static void button_changed(u32_t button_state, u32_t has_changed)
+static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	/* Calculate bitmask of buttons that are pressed
 	 * and have changed their state.
 	 */
-	u32_t buttons = button_state & has_changed;
+	uint32_t buttons = button_state & has_changed;
 	zb_bool_t comm_status;
 
 	if (buttons & KEY_ZIGBEE_NETWORK_REOPEN) {

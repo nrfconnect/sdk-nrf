@@ -159,7 +159,7 @@ bool zzhc_check_http_payload(struct zzhc *ctx)
 int zzhc_get_at_param_short(struct zzhc *ctx, char *data, int idx)
 {
 	int rc;
-	u16_t evt;
+	uint16_t evt;
 	struct at_param_list *at_list = (struct at_param_list *)ctx->at_list;
 
 	rc = at_parser_max_params_from_str(data, NULL, at_list, AT_PARAMS_MAX);

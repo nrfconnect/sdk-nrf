@@ -182,7 +182,7 @@ To register an application module as a configuration channel listener, complete 
 
    .. code-block:: c
 
-       static void config_set(const u8_t opt_id, const u8_t *data,
+       static void config_set(const uint8_t opt_id, const uint8_t *data,
                       const size_t size)
        {
            switch (opt_id) {
@@ -216,7 +216,7 @@ To register an application module as a configuration channel listener, complete 
 
    .. code-block:: c
 
-       static void config_get(const u8_t opt_id, u8_t *data, size_t *size)
+       static void config_get(const uint8_t opt_id, uint8_t *data, size_t *size)
        {
            switch (opt_id) {
            case TEST_MODULE_OPT_FILTER_PARAM:

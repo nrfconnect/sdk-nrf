@@ -53,7 +53,7 @@ typedef struct {
  *          increment this value.
  * @ref zigbee_logger_eprxzcl_ep_handler puts this value in every log line
  */
-static u32_t log_counter;
+static uint32_t log_counter;
 
 /**@brief Circular buffer of logs
  *        produced by @ref zigbee_logger_eprxzcl_ep_handler
@@ -128,7 +128,7 @@ zb_uint8_t zigbee_logger_eprxzcl_ep_handler(zb_bufid_t bufid)
 			ZB_BUF_GET_PARAM(bufid, zb_zcl_parsed_hdr_t);
 		size_t payload_length = zb_buf_len(bufid);
 		const zb_uint8_t *payload = zb_buf_begin(bufid);
-		u32_t log_number = log_counter++;
+		uint32_t log_number = log_counter++;
 
 		status = snprintf(log_message_curr,
 				  log_message_end - log_message_curr,

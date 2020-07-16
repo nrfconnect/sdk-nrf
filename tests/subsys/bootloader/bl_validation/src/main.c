@@ -35,18 +35,18 @@ void test_validation(void)
 		"Fail 2. Incorrectly validated app with wrong offset.\r\n");
 
 	/* 0x1000 to account for validation info. */
-	u32_t copy_len = (u32_t)_flash_used + 1000;
+	uint32_t copy_len = (uint32_t)_flash_used + 1000;
 
 	/* Round up to at least the next SPU region. */
-	u32_t new_addr = ROUND_UP(PM_ADDRESS + copy_len, 0x8000);
+	uint32_t new_addr = ROUND_UP(PM_ADDRESS + copy_len, 0x8000);
 
-	for (u32_t erase_addr = new_addr; erase_addr < (new_addr + copy_len);
+	for (uint32_t erase_addr = new_addr; erase_addr < (new_addr + copy_len);
 	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
-		u32_t ret = nrfx_nvmc_page_erase(new_addr);
+		uint32_t ret = nrfx_nvmc_page_erase(new_addr);
 
 		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
 	}
-	nrfx_nvmc_words_write(new_addr, (const u32_t *)PM_ADDRESS,
+	nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_ADDRESS,
 		(copy_len + 3) / 4);
 
 	zassert_true(bl_validate_firmware(PM_ADDRESS, new_addr),
@@ -55,14 +55,14 @@ void test_validation(void)
 	zassert_false(bl_validate_firmware(PM_ADDRESS + 0x300, new_addr),
 		"Fail 4. Incorrectly validated copy against wrong addr.\r\n");
 
-	u32_t mangle_addr = new_addr + 0x300;
+	uint32_t mangle_addr = new_addr + 0x300;
 
-	zassert_not_equal(0, *(u32_t *)mangle_addr,
+	zassert_not_equal(0, *(uint32_t *)mangle_addr,
 		"Unable to mangle, word is 0. \r\n");
 
 	nrfx_nvmc_word_write(mangle_addr, 0);
 
-	zassert_equal(0, *(u32_t *)mangle_addr,
+	zassert_equal(0, *(uint32_t *)mangle_addr,
 		"Unable to mangle, word was not written to 0. \r\n");
 
 	zassert_false(bl_validate_firmware(PM_ADDRESS, new_addr),

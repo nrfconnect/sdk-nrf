@@ -30,7 +30,7 @@ typedef void (*ot_disconnection_cb_t)(struct k_work *item);
  * @param[in] val 1 if the MTD is in MED mode
  *                0 if the MTD is in SED mode
  */
-typedef void (*mtd_mode_toggle_cb_t)(u32_t val);
+typedef void (*mtd_mode_toggle_cb_t)(uint32_t val);
 
 /** @brief Initialize CoAP client utilities.
  */

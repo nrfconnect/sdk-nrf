@@ -26,7 +26,7 @@ int lwm2m_init_device(char *serial_num);
 int lwm2m_init_location(void);
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
-void *firmware_read_cb(u16_t obj_inst_id, size_t *data_len);
+void *firmware_read_cb(uint16_t obj_inst_id, size_t *data_len);
 int lwm2m_init_firmware(void);
 int lwm2m_init_image(void);
 #endif

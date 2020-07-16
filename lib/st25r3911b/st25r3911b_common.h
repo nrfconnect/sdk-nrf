@@ -92,7 +92,7 @@ int st25r3911b_init(void);
  *  @retval 0  If the operation was successful.
  *             Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_tx_len_set(u16_t len);
+int st25r3911b_tx_len_set(uint16_t len);
 
 /** @brief Set NFC Reader No-Response timer.
  *
@@ -123,7 +123,7 @@ int st25r3911b_tx_len_set(u16_t len);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_non_response_timer_set(u16_t fc, bool long_range, bool emv);
+int st25r3911b_non_response_timer_set(uint16_t fc, bool long_range, bool emv);
 
 /** Set NFC Reader Mask Receive timer.
  *
@@ -139,7 +139,7 @@ int st25r3911b_non_response_timer_set(u16_t fc, bool long_range, bool emv);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_mask_receive_timer_set(u32_t fc);
+int st25r3911b_mask_receive_timer_set(uint32_t fc);
 
 /** @brief Perform automatic collision resolution and switch on the NFC Reader
  *         field.
@@ -159,8 +159,8 @@ int st25r3911b_mask_receive_timer_set(u32_t fc);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_field_on(u8_t collision_threshold, u8_t peer_threshold,
-			u8_t delay);
+int st25r3911b_field_on(uint8_t collision_threshold, uint8_t peer_threshold,
+			uint8_t delay);
 
 /** @brief Disable NFC Reader Receiver and Transceiver.
  *
@@ -184,7 +184,7 @@ int st25r3911b_rx_tx_disable(void);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_fifo_reload_lvl_get(u8_t *tx_lvl, u8_t *rx_lvl);
+int st25r3911b_fifo_reload_lvl_get(uint8_t *tx_lvl, uint8_t *rx_lvl);
 
 /** @brief Enable/disable NFC Reader technology LED.
  *

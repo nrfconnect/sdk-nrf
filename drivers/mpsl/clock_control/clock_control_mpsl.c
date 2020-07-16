@@ -23,7 +23,7 @@
 /* MPSL clock control structure */
 struct mpsl_clock_control_data {
 	sys_slist_t async_on_list;
-	u8_t hfclk_count;
+	uint8_t hfclk_count;
 };
 
 /* MPSL clock control callbacks */
@@ -107,7 +107,7 @@ static int hf_clock_stop(void)
 static enum clock_control_status hf_get_status(void)
 {
 	int errcode;
-	u32_t is_running = 0;
+	uint32_t is_running = 0;
 
 	if (!is_context_atomic()) {
 		errcode = MULTITHREADING_LOCK_ACQUIRE();
@@ -176,7 +176,7 @@ static int clock_start(struct device *dev, clock_control_subsys_t subsys)
 	switch (type) {
 	case CLOCK_CONTROL_NRF_TYPE_HFCLK:
 		key = irq_lock();
-		if ((u8_t)(mpsl_control_data->hfclk_count + 1) == 0) {
+		if ((uint8_t)(mpsl_control_data->hfclk_count + 1) == 0) {
 			/* overflow the start count that it can support */
 			irq_unlock(key);
 			return -ENOTSUP;
@@ -235,7 +235,7 @@ static int clock_stop(struct device *dev, clock_control_subsys_t subsys)
 }
 
 static int clock_get_rate(struct device *dev, clock_control_subsys_t subsys,
-			  u32_t *rate)
+			  uint32_t *rate)
 {
 	ARG_UNUSED(dev);
 
@@ -288,7 +288,7 @@ static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
 	switch (clock_status) {
 	case CLOCK_CONTROL_STATUS_ON:
 		if (subsys == CLOCK_CONTROL_NRF_SUBSYS_HF) {
-			if ((u8_t)(mpsl_control_data->hfclk_count + 1) == 0) {
+			if ((uint8_t)(mpsl_control_data->hfclk_count + 1) == 0) {
 				/*  the counter of HFCLK gets overflow */
 				irq_unlock(key);
 				return -ENOTSUP;
@@ -366,7 +366,7 @@ DEVICE_AND_API_INIT(clock_nrf,
 
 void nrf5_power_usb_power_int_enable(bool enable)
 {
-	u32_t mask;
+	uint32_t mask;
 
 
 	mask = NRF_POWER_INT_USBDETECTED_MASK |
@@ -393,7 +393,7 @@ static void hf_clock_started_callback(void)
 	 * hf_clock_start().
 	 */
 	int key = irq_lock();
-	u32_t is_running = 0;
+	uint32_t is_running = 0;
 	int errcode = mpsl_clock_hfclk_is_running(&is_running);
 
 	if (errcode) {

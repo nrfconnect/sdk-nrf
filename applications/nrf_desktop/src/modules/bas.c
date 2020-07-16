@@ -20,16 +20,16 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BAS_LOG_LEVEL);
 
 
 static bool active;
-static u8_t battery = 100;
+static uint8_t battery = 100;
 
 static void blvl_ccc_cfg_changed(const struct bt_gatt_attr *attr,
-				 u16_t value)
+				 uint16_t value)
 {
 	active = (value == BT_GATT_CCC_NOTIFY);
 }
 
 static ssize_t read_blvl(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-			 void *buf, u16_t len, u16_t offset)
+			 void *buf, uint16_t len, uint16_t offset)
 {
 	const char *value = attr->user_data;
 

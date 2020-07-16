@@ -27,7 +27,7 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 void test_cpu_load(void)
 {
 	int err;
-	u32_t load;
+	uint32_t load;
 
 	if (IS_ENABLED(CONFIG_SOC_NRF9160)) {
 		/* Wait for LF clock stabilization. */
@@ -37,10 +37,10 @@ void test_cpu_load(void)
 #ifdef DPPI_PRESENT
 	static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(1);
 	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG;
-	u8_t ch;
-	u32_t evt = nrf_power_event_address_get(NRF_POWER,
+	uint8_t ch;
+	uint32_t evt = nrf_power_event_address_get(NRF_POWER,
 						NRF_POWER_EVENT_SLEEPENTER);
-	u32_t tsk = nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT);
+	uint32_t tsk = nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT);
 
 	config.frequency = NRF_TIMER_FREQ_1MHz;
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;

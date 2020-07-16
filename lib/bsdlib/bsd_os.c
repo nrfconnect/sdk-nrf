@@ -141,7 +141,7 @@ static bool sleeping_thread_add(struct sleeping_thread *thread)
 	bool allow_to_sleep = false;
 	struct thread_monitor_entry *entry;
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	entry = thread_monitor_entry_get(k_current_get());
 
@@ -160,7 +160,7 @@ static void sleeping_thread_remove(struct sleeping_thread *thread)
 {
 	struct thread_monitor_entry *entry;
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	sys_slist_find_and_remove(&sleeping_threads, &thread->node);
 
@@ -173,7 +173,7 @@ static void sleeping_thread_remove(struct sleeping_thread *thread)
 int32_t bsd_os_timedwait(uint32_t context, int32_t *timeout)
 {
 	struct sleeping_thread thread;
-	s64_t start, remaining;
+	int64_t start, remaining;
 
 	start = k_uptime_get();
 
@@ -453,11 +453,11 @@ int32_t bsd_os_trace_put(const uint8_t * const data, uint32_t len)
 	 * Split RAM buffer into smaller chunks
 	 * to be transferred using DMA.
 	 */
-	u32_t remaining_bytes = len;
+	uint32_t remaining_bytes = len;
 
 	while (remaining_bytes) {
-		u8_t transfer_len = MIN(remaining_bytes, UINT8_MAX);
-		u32_t idx = len - remaining_bytes;
+		uint8_t transfer_len = MIN(remaining_bytes, UINT8_MAX);
+		uint32_t idx = len - remaining_bytes;
 
 		nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);
 		remaining_bytes -= transfer_len;

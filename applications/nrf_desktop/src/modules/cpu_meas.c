@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CPU_MEAS_LOG_LEVEL);
 static struct k_delayed_work cpu_load_read;
 
 
-static void send_cpu_load_event(u32_t load)
+static void send_cpu_load_event(uint32_t load)
 {
 	struct cpu_load_event *event = new_cpu_load_event();
 

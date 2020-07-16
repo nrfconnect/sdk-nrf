@@ -124,10 +124,11 @@ Both options must be enabled to allow logging.
 This said, enabling logging is optional, because it is enabled by default for all Thread samples.
 However, you must set one of the following logging levels to start receiving the logging output:
 
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_ERROR` - Enables logging only for errors.
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_WARNING` - Enables logging for errors and warnings.
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_INFO` - Enables logging for informational messages, errors, and warnings.
-* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_DEBUG` - Enables logging for debug messages, informational messages, errors, and warnings.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_CRIT` - critical error logging only.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_WARN` - enable warning logging in addition to critical errors.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_NOTE` - additionally enable notice logging.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_INFO` - additionally enable informational logging.
+* :option:`CONFIG_OPENTHREAD_LOG_LEVEL_DEBG` - additionally enable debug logging.
 
 Zephyr L2 logging options
 =========================

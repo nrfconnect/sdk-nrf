@@ -72,36 +72,36 @@ enum nfc_t4t_apdu_comm_ins {
  */
 struct nfc_t4t_apdu_data {
 	/** Data field length. */
-	u16_t len;
+	uint16_t len;
 
 	/** Pointer to data field. */
-	u8_t *buff;
+	uint8_t *buff;
 };
 
 /** @brief Command Application Protocol Data Unit (C-APDU) descriptor.
  */
 struct nfc_t4t_apdu_comm {
 	/* Class byte. */
-	u8_t class_byte;
+	uint8_t class_byte;
 
 	/** The chosen code of instruction. */
 	enum nfc_t4t_apdu_comm_ins instruction;
 
 	/** Parameters associated with the instruction code. */
-	u16_t parameter;
+	uint16_t parameter;
 
 	/** Optional data fields (Lc + data bytes). */
 	struct nfc_t4t_apdu_data data;
 
 	/** Optional response length field (Le). */
-	u16_t resp_len;
+	uint16_t resp_len;
 };
 
 /** @brief Response Application Protocol Data Unit (R-APDU) descriptor.
  */
 struct nfc_t4t_apdu_resp {
 	/** Mandatory status field. */
-	u16_t status;
+	uint16_t status;
 
 	/** Optional data field. */
 	struct nfc_t4t_apdu_data data;
@@ -132,7 +132,7 @@ static inline void nfc_t4t_apdu_resp_clear(struct nfc_t4t_apdu_resp *resp_apdu);
  *            Otherwise, a (negative) error code is returned.
  */
 int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
-			     u8_t *raw_data, u16_t *len);
+			     uint8_t *raw_data, uint16_t *len);
 
 /** @brief Decode R-APDU.
  *
@@ -147,7 +147,7 @@ int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
  *            Otherwise, a (negative) error code is returned.
  */
 int nfc_t4t_apdu_resp_decode(struct nfc_t4t_apdu_resp *resp_apdu,
-			     const u8_t *raw_data, u16_t len);
+			     const uint8_t *raw_data, uint16_t len);
 
 /** @brief Print an R-APDU descriptor.
  *

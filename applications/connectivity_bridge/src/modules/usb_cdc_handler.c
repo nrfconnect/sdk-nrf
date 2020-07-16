@@ -34,9 +34,9 @@ static K_WORK_DEFINE(cdc_dtr_work, cdc_dtr_work_handler);
 K_MEM_SLAB_DEFINE(cdc_rx_slab, USB_CDC_RX_BLOCK_SIZE, USB_CDC_RX_BLOCK_COUNT, USB_CDC_SLAB_ALIGNMENT);
 
 static struct device *devices[CDC_DEVICE_COUNT];
-static u32_t cdc_ready[CDC_DEVICE_COUNT];
+static uint32_t cdc_ready[CDC_DEVICE_COUNT];
 
-static u8_t overflow_buf[64];
+static uint8_t overflow_buf[64];
 
 static void cdc_dtr_timer_handler(struct k_timer *timer)
 {
@@ -47,7 +47,7 @@ static void poll_dtr(void)
 {
 	for (int i = 0; i < CDC_DEVICE_COUNT; ++i) {
 		int err;
-		u32_t cdc_val;
+		uint32_t cdc_val;
 
 		err = uart_line_ctrl_get(devices[i],
 					 UART_LINE_CTRL_DTR,
@@ -58,7 +58,7 @@ static void poll_dtr(void)
 		}
 
 		if (cdc_val != cdc_ready[i]) {
-			u32_t baudrate;
+			uint32_t baudrate;
 
 			err = uart_line_ctrl_get(devices[i],
 						UART_LINE_CTRL_BAUD_RATE,
@@ -140,7 +140,7 @@ static void enable_rx_irq(int dev_idx)
 	uart_irq_rx_enable(devices[dev_idx]);
 }
 
-static void usbd_status(enum usb_dc_status_code cb_status, const u8_t *param)
+static void usbd_status(enum usb_dc_status_code cb_status, const uint8_t *param)
 {
 	switch (cb_status) {
 	case USB_DC_ERROR:

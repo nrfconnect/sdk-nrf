@@ -49,7 +49,7 @@ static void status_handler(struct bt_mesh_onoff_cli *cli,
 	       status->present_on_off ? "on" : "off");
 }
 
-static void button_handler_cb(u32_t pressed, u32_t changed)
+static void button_handler_cb(uint32_t pressed, uint32_t changed)
 {
 	if (!bt_mesh_is_provisioned()) {
 		return;
@@ -111,7 +111,7 @@ static struct k_delayed_work attention_blink_work;
 static void attention_blink(struct k_work *work)
 {
 	static int idx;
-	const u8_t pattern[] = {
+	const uint8_t pattern[] = {
 		BIT(0) | BIT(1),
 		BIT(1) | BIT(2),
 		BIT(2) | BIT(3),

@@ -44,13 +44,13 @@ enum tnep_app_data_state {
 static atomic_t current_state = TNEP_STATE_DISABLED;
 
 struct tnep_buffer {
-	u8_t *data;
-	u8_t *swap_data;
+	uint8_t *data;
+	uint8_t *swap_data;
 	size_t len;
 };
 
 struct tnep_rx_buffer {
-	const u8_t *data;
+	const uint8_t *data;
 	size_t len;
 };
 
@@ -78,7 +78,7 @@ struct tnep_tag {
 	size_t records_cnt;
 	atomic_t app_data_expected;
 	nfc_payload_set_t data_set;
-	u8_t *current_buff;
+	uint8_t *current_buff;
 };
 
 static struct tnep_control tnep_ctrl;
@@ -204,8 +204,8 @@ static int tnep_tx_initial_msg_set(void)
 }
 
 static bool ndef_check_rec_type(const struct nfc_ndef_record_desc *record,
-				const u8_t *type_field,
-				const u32_t type_field_length)
+				const uint8_t *type_field,
+				const uint32_t type_field_length)
 {
 	int cmp_res;
 
@@ -218,7 +218,7 @@ static bool ndef_check_rec_type(const struct nfc_ndef_record_desc *record,
 	return (cmp_res == 0);
 }
 
-static int tnep_svc_set_active(const u8_t *uri_name, size_t uri_length)
+static int tnep_svc_set_active(const uint8_t *uri_name, size_t uri_length)
 {
 
 	for (size_t i = 0; i < tnep.svc_cnt; i++) {
@@ -241,7 +241,7 @@ static int tnep_svc_select_from_msg(void)
 	int err;
 	enum tnep_svc_record_status svc_status = TNEP_SVC_NOT_FOUND;
 	const struct nfc_ndef_msg_desc *msg_p;
-	u8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(
 				CONFIG_NFC_TNEP_RX_MAX_RECORD_CNT)];
 	size_t desc_buf_len = sizeof(desc_buf);
 
@@ -261,8 +261,8 @@ static int tnep_svc_select_from_msg(void)
 
 		if (select_rec) {
 			/* Set service from record as active (or deselect) */
-			u8_t bin_rec[CONFIG_NFC_TNEP_RX_MAX_RECORD_SIZE];
-			u32_t bin_rec_len = sizeof(bin_rec);
+			uint8_t bin_rec[CONFIG_NFC_TNEP_RX_MAX_RECORD_SIZE];
+			uint32_t bin_rec_len = sizeof(bin_rec);
 			struct nfc_ndef_tnep_rec_svc_select service;
 
 			memset(bin_rec, 0x00, bin_rec_len);
@@ -510,8 +510,8 @@ static void tnep_sm_service_selected(enum tnep_event event)
 	tnep_error_check(err);
 }
 
-int nfc_tnep_tag_tx_msg_buffer_register(u8_t *tx_buff,
-					u8_t *tx_swap_buff,
+int nfc_tnep_tag_tx_msg_buffer_register(uint8_t *tx_buff,
+					uint8_t *tx_swap_buff,
 					size_t len)
 {
 	if (!tx_buff || !tx_swap_buff || !len) {
@@ -526,7 +526,7 @@ int nfc_tnep_tag_tx_msg_buffer_register(u8_t *tx_buff,
 	return 0;
 }
 
-void nfc_tnep_tag_rx_msg_indicate(const u8_t *rx_buffer, size_t len)
+void nfc_tnep_tag_rx_msg_indicate(const uint8_t *rx_buffer, size_t len)
 {
 	if ((len < 1) || !rx_buffer) {
 		return;
@@ -538,7 +538,7 @@ void nfc_tnep_tag_rx_msg_indicate(const u8_t *rx_buffer, size_t len)
 	k_poll_signal_raise(&tnep_ctrl.msg_rx, TNEP_EVENT_MSG_RX_NEW);
 }
 
-int nfc_tnep_tag_init(struct k_poll_event *events, u8_t event_cnt,
+int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 		      struct nfc_ndef_msg_desc *msg,
 		      nfc_payload_set_t payload_set)
 {

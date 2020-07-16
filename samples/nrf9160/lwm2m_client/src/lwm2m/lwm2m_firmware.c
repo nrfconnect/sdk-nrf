@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(app_lwm2m_firmware, CONFIG_APP_LOG_LEVEL);
 #define REBOOT_DELAY       K_SECONDS(1)
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
-static u8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
+static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 #endif
 
 static struct flash_img_context dfu_ctx;
@@ -42,7 +42,7 @@ static void reboot_work_handler(struct k_work *work)
 }
 
 #if defined(CONFIG_LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT)
-static int firmware_update_cb(u16_t obj_inst_id)
+static int firmware_update_cb(uint16_t obj_inst_id)
 {
 	struct update_counter update_counter;
 	int ret = 0;
@@ -76,22 +76,22 @@ cleanup:
 	return ret;
 }
 
-static void *firmware_get_buf(u16_t obj_inst_id, u16_t res_id,
-			      u16_t res_inst_id, size_t *data_len)
+static void *firmware_get_buf(uint16_t obj_inst_id, uint16_t res_id,
+			      uint16_t res_inst_id, size_t *data_len)
 {
 	*data_len = sizeof(firmware_buf);
 	return firmware_buf;
 }
 
-static int firmware_block_received_cb(u16_t obj_inst_id,
-				      u16_t res_id, u16_t res_inst_id,
-				      u8_t *data, u16_t data_len,
+static int firmware_block_received_cb(uint16_t obj_inst_id,
+				      uint16_t res_id, uint16_t res_inst_id,
+				      uint8_t *data, uint16_t data_len,
 				      bool last_block, size_t total_size)
 {
-	static u8_t percent_downloaded;
-	static u32_t bytes_downloaded;
-	u8_t curent_percent;
-	u32_t current_bytes;
+	static uint8_t percent_downloaded;
+	static uint32_t bytes_downloaded;
+	uint8_t curent_percent;
+	uint32_t current_bytes;
 	int ret = 0;
 
 	if (total_size > FLASH_BANK_SIZE) {

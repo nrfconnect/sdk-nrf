@@ -36,19 +36,19 @@ static struct radio_param_config {
 	nrf_radio_mode_t mode;
 
 	/** Radio output power. */
-	u8_t txpower;
+	uint8_t txpower;
 
 	/** Radio start channel (frequency). */
-	u8_t channel_start;
+	uint8_t channel_start;
 
 	/** Radio end channel (frequency). */
-	u8_t channel_end;
+	uint8_t channel_end;
 
 	/** Delay time in milliseconds. */
-	u32_t delay_ms;
+	uint32_t delay_ms;
 
 	/** Duty cycle. */
-	u32_t duty_cycle;
+	uint32_t duty_cycle;
 } config = {
 	.tx_pattern = TRANSMIT_PATTERN_RANDOM,
 	.mode = NRF_RADIO_MODE_BLE_1MBIT,
@@ -66,7 +66,7 @@ static struct radio_test_config test_config;
 static bool test_in_progress;
 
 #if USE_MORE_RADIO_MODES
-static void ieee_channel_check(const struct shell *shell, u8_t channel)
+static void ieee_channel_check(const struct shell *shell, uint8_t channel)
 {
 	if (config.mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
 		if ((channel < IEEE_MIN_CHANNEL) ||
@@ -88,7 +88,7 @@ static void ieee_channel_check(const struct shell *shell, u8_t channel)
 static int cmd_start_channel_set(const struct shell *shell, size_t argc,
 				 char **argv)
 {
-	u32_t channel;
+	uint32_t channel;
 
 	if (argc == 1) {
 		shell_help(shell);
@@ -107,7 +107,7 @@ static int cmd_start_channel_set(const struct shell *shell, size_t argc,
 		return -EINVAL;
 	}
 
-	config.channel_start = (u8_t) channel;
+	config.channel_start = (uint8_t) channel;
 
 	shell_print(shell, "Start channel set to: %d", channel);
 	return 0;
@@ -116,7 +116,7 @@ static int cmd_start_channel_set(const struct shell *shell, size_t argc,
 static int cmd_end_channel_set(const struct shell *shell, size_t argc,
 			       char **argv)
 {
-	u32_t channel;
+	uint32_t channel;
 
 	if (argc == 1) {
 		shell_help(shell);
@@ -135,7 +135,7 @@ static int cmd_end_channel_set(const struct shell *shell, size_t argc,
 		return -EINVAL;
 	}
 
-	config.channel_end = (u8_t) channel;
+	config.channel_end = (uint8_t) channel;
 
 	shell_print(shell, "End channel set to: %d", channel);
 	return 0;
@@ -143,7 +143,7 @@ static int cmd_end_channel_set(const struct shell *shell, size_t argc,
 
 static int cmd_time_set(const struct shell *shell, size_t argc, char **argv)
 {
-	u32_t time;
+	uint32_t time;
 
 	if (argc == 1) {
 		shell_help(shell);
@@ -263,7 +263,7 @@ static int cmd_tx_modulated_carrier_start(const struct shell *shell,
 static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 			      char **argv)
 {
-	u32_t duty_cycle;
+	uint32_t duty_cycle;
 
 	if (argc == 1) {
 		shell_help(shell);
@@ -307,7 +307,7 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 #if defined(TOGGLE_DCDC_HELP)
 static int cmd_toggle_dc(const struct shell *shell, size_t argc, char **argv)
 {
-	u32_t state;
+	uint32_t state;
 
 	if (argc == 1) {
 		shell_help(shell);
@@ -325,7 +325,7 @@ static int cmd_toggle_dc(const struct shell *shell, size_t argc, char **argv)
 		return -EINVAL;
 	}
 
-	toggle_dcdc_state((u8_t) state);
+	toggle_dcdc_state((uint8_t) state);
 
 #if NRF_POWER_HAS_DCDCEN_VDDH
 	shell_print(shell,

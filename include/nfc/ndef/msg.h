@@ -36,9 +36,9 @@ struct nfc_ndef_msg_desc {
 	/** Number of elements in the allocated record array, which defines
 	 *  the maximum number of records within the NDEF message.
 	 */
-	u32_t max_record_count;
+	uint32_t max_record_count;
 	/** Number of records in the NDEF message. */
-	u32_t record_count;
+	uint32_t record_count;
 };
 
 /**
@@ -61,8 +61,8 @@ struct nfc_ndef_msg_desc {
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
-			u8_t *msg_buffer,
-			u32_t *msg_len);
+			uint8_t *msg_buffer,
+			uint32_t *msg_len);
 
 /**
  * @brief Clear an NDEF message.

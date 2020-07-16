@@ -36,7 +36,7 @@ void date_time_set(const struct tm *new_date_time);
  *  @return 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int date_time_uptime_to_unix_time_ms(s64_t *uptime);
+int date_time_uptime_to_unix_time_ms(int64_t *uptime);
 
 /** @brief Get the current date time UTC.
  *
@@ -46,7 +46,7 @@ int date_time_uptime_to_unix_time_ms(s64_t *uptime);
  *  @return 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int date_time_now(s64_t *unix_time_ms);
+int date_time_now(int64_t *unix_time_ms);
 
 /** @brief Asynchronous update of internal date time UTC. This function
  *         initiates a date time update regardless of the internal update

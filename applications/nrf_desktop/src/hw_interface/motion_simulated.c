@@ -63,7 +63,7 @@ static void set_default_state(void)
 	}
 }
 
-static void motion_event_send(s16_t dx, s16_t dy)
+static void motion_event_send(int16_t dx, int16_t dy)
 {
 	struct motion_event *event = new_motion_event();
 
@@ -77,7 +77,7 @@ static void generate_motion_event(void)
 	BUILD_ASSERT((edge_time & (edge_time - 1)) == 0,
 			 "Edge time must be power of 2");
 
-	u32_t t = k_uptime_get_32();
+	uint32_t t = k_uptime_get_32();
 	size_t v1_id = (t / edge_time) % ARRAY_SIZE(coords);
 	size_t v2_id = (v1_id + 1) % ARRAY_SIZE(coords);
 
@@ -101,7 +101,7 @@ static bool event_handler(const struct event_header *eh)
 			cast_hid_report_subscription_event(eh);
 
 		if (event->report_id == REPORT_ID_MOUSE) {
-			static u8_t peer_count;
+			static uint8_t peer_count;
 
 			if (event->enabled) {
 				__ASSERT_NO_MSG(peer_count < UCHAR_MAX);

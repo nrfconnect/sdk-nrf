@@ -38,7 +38,7 @@ typedef struct {
 	zb_callback2_t func2;
 	zb_uint16_t param;
 	zb_uint16_t user_param;
-	s64_t alarm_timestamp;
+	int64_t alarm_timestamp;
 } zb_app_cb_t;
 
 
@@ -480,7 +480,7 @@ __weak zb_uint32_t zb_get_utc_time(void)
 /**@brief Read IEEE long address from FICR registers. */
 void zb_osif_get_ieee_eui64(zb_ieee_addr_t ieee_eui64)
 {
-	u64_t factoryAddress;
+	uint64_t factoryAddress;
 
 	/* Read random address from FICR. */
 	factoryAddress = (uint64_t)NRF_FICR->DEVICEID[0] << 32;
@@ -498,7 +498,7 @@ void zigbee_event_notify(zigbee_event_t event)
 	k_poll_signal_raise(&zigbee_sig, event);
 }
 
-u32_t zigbee_event_poll(u32_t timeout_ms)
+uint32_t zigbee_event_poll(uint32_t timeout_ms)
 {
 	/* Configure event/signals to wait for in wait_for_event function */
 	static struct k_poll_event wait_events[] = {
@@ -509,7 +509,7 @@ u32_t zigbee_event_poll(u32_t timeout_ms)
 
 	unsigned int signaled;
 	int result;
-	s64_t time_stamp = k_uptime_get();
+	int64_t time_stamp = k_uptime_get();
 
 	k_poll(wait_events, 1, K_MSEC(timeout_ms));
 

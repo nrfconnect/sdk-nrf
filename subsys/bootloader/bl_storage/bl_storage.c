@@ -18,12 +18,12 @@
  *  struct counter_collection.
  */
 struct bl_storage_data {
-	u32_t s0_address;
-	u32_t s1_address;
-	u32_t num_public_keys; /* Number of entries in 'key_data' list. */
+	uint32_t s0_address;
+	uint32_t s1_address;
+	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
 	struct {
-		u32_t valid;
-		u8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
+		uint32_t valid;
+		uint8_t hash[CONFIG_SB_PUBLIC_KEY_HASH_LEN];
 	} key_data[1];
 };
 
@@ -35,9 +35,9 @@ struct bl_storage_data {
  *  (available on e.g. nRF91 and nRF53).
  */
 struct monotonic_counter {
-	u16_t description; /* Counter description. What the counter is used for. See COUNTER_DESC_*. */
-	u16_t num_counter_slots; /* Number of entries in 'counter_slots' list. */
-	u16_t counter_slots[1];
+	uint16_t description; /* Counter description. What the counter is used for. See COUNTER_DESC_*. */
+	uint16_t num_counter_slots; /* Number of entries in 'counter_slots' list. */
+	uint16_t counter_slots[1];
 };
 
 /** The second data structure in the provision page. It has unknown length since
@@ -46,8 +46,8 @@ struct monotonic_counter {
  *  entries beyond the first cannot be accessed via array indices.
  */
 struct counter_collection {
-	u16_t type; /* Must be "monotonic counter". */
-	u16_t num_counters; /* Number of entries in 'counters' list. */
+	uint16_t type; /* Must be "monotonic counter". */
+	uint16_t num_counters; /* Number of entries in 'counters' list. */
 	struct monotonic_counter counters[1];
 };
 
@@ -57,25 +57,25 @@ struct counter_collection {
 static const struct bl_storage_data *p_bl_storage_data =
 	(struct bl_storage_data *)PM_PROVISION_ADDRESS;
 
-u32_t s0_address_read(void)
+uint32_t s0_address_read(void)
 {
-	u32_t addr = p_bl_storage_data->s0_address;
+	uint32_t addr = p_bl_storage_data->s0_address;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 	return addr;
 }
 
-u32_t s1_address_read(void)
+uint32_t s1_address_read(void)
 {
-	u32_t addr = p_bl_storage_data->s1_address;
+	uint32_t addr = p_bl_storage_data->s1_address;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 	return addr;
 }
 
-u32_t num_public_keys_read(void)
+uint32_t num_public_keys_read(void)
 {
-	u32_t num_pk = p_bl_storage_data->num_public_keys;
+	uint32_t num_pk = p_bl_storage_data->num_public_keys;
 
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 	return num_pk;
@@ -84,7 +84,7 @@ u32_t num_public_keys_read(void)
 /* Value written to the invalidation token when invalidating an entry. */
 #define INVALID_VAL 0xFFFF0000
 
-static bool key_is_valid(u32_t key_idx)
+static bool key_is_valid(uint32_t key_idx)
 {
 	bool ret = (p_bl_storage_data->key_data[key_idx].valid != INVALID_VAL);
 
@@ -92,17 +92,17 @@ static bool key_is_valid(u32_t key_idx)
 	return ret;
 }
 
-static u16_t read_halfword(const u16_t *ptr);
+static uint16_t read_halfword(const uint16_t *ptr);
 
 int verify_public_keys(void)
 {
-	for (u32_t n = 0; n < num_public_keys_read(); n++) {
+	for (uint32_t n = 0; n < num_public_keys_read(); n++) {
 		if (key_is_valid(n)) {
-			const u16_t *p_key_n = (const u16_t *)
+			const uint16_t *p_key_n = (const uint16_t *)
 					p_bl_storage_data->key_data[n].hash;
 			size_t hash_len_u16 = (CONFIG_SB_PUBLIC_KEY_HASH_LEN/2);
 
-			for (u32_t i = 0; i < hash_len_u16; i++) {
+			for (uint32_t i = 0; i < hash_len_u16; i++) {
 				if (read_halfword(&p_key_n[i]) == 0xFFFF) {
 					return -EHASHFF;
 				}
@@ -112,9 +112,9 @@ int verify_public_keys(void)
 	return 0;
 }
 
-int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
+int public_key_data_read(uint32_t key_idx, uint8_t *p_buf, size_t buf_size)
 {
-	const u8_t *p_key;
+	const uint8_t *p_key;
 
 	if (!key_is_valid(key_idx)) {
 		return -EINVAL;
@@ -136,7 +136,7 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 	 */
 	BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN % 4 == 0);
 	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
-	__ASSERT(((u32_t)p_key % 4 == 0), "Key address is not word aligned");
+	__ASSERT(((uint32_t)p_key % 4 == 0), "Key address is not word aligned");
 
 	memcpy(p_buf, p_key, CONFIG_SB_PUBLIC_KEY_HASH_LEN);
 	__DSB(); /* Because of nRF9160 Erratum 7 */
@@ -144,15 +144,15 @@ int public_key_data_read(u32_t key_idx, u8_t *p_buf, size_t buf_size)
 	return CONFIG_SB_PUBLIC_KEY_HASH_LEN;
 }
 
-void invalidate_public_key(u32_t key_idx)
+void invalidate_public_key(uint32_t key_idx)
 {
-	const u32_t *invalidation_token =
+	const uint32_t *invalidation_token =
 			&p_bl_storage_data->key_data[key_idx].valid;
 
 	if (*invalidation_token != INVALID_VAL) {
 		/* Write if not already written. */
 		__DSB(); /* Because of nRF9160 Erratum 7 */
-		nrfx_nvmc_word_write((u32_t)invalidation_token, INVALID_VAL);
+		nrfx_nvmc_word_write((uint32_t)invalidation_token, INVALID_VAL);
 	}
 }
 
@@ -167,11 +167,11 @@ void invalidate_public_key(u32_t key_idx)
  *
  * @return value
  */
-static u16_t read_halfword(const u16_t *ptr)
+static uint16_t read_halfword(const uint16_t *ptr)
 {
-	bool top_half = ((u32_t)ptr % 4); /* Addr not div by 4 */
-	u32_t target_addr = (u32_t)ptr & ~3; /* Floor address */
-	u32_t val32 = *(u32_t *)target_addr;
+	bool top_half = ((uint32_t)ptr % 4); /* Addr not div by 4 */
+	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
+	uint32_t val32 = *(uint32_t *)target_addr;
 	__DSB(); /* Because of nRF9160 Erratum 7 */
 
 	return (top_half ? (val32 >> 16) : val32) & 0x0000FFFF;
@@ -187,13 +187,13 @@ static u16_t read_halfword(const u16_t *ptr)
  * @param[in]  ptr  Address to write to.
  * @param[in]  val  Value to write into @p ptr.
  */
-static void write_halfword(const u16_t *ptr, u16_t val)
+static void write_halfword(const uint16_t *ptr, uint16_t val)
 {
-	bool top_half = (u32_t)ptr % 4; /* Addr not div by 4 */
-	u32_t target_addr = (u32_t)ptr & ~3; /* Floor address */
+	bool top_half = (uint32_t)ptr % 4; /* Addr not div by 4 */
+	uint32_t target_addr = (uint32_t)ptr & ~3; /* Floor address */
 
-	u32_t val32 = (u32_t)val | 0xFFFF0000;
-	u32_t val32_shifted = ((u32_t)val << 16) | 0x0000FFFF;
+	uint32_t val32 = (uint32_t)val | 0xFFFF0000;
+	uint32_t val32_shifted = ((uint32_t)val << 16) | 0x0000FFFF;
 
 	nrfx_nvmc_word_write(target_addr, top_half ? val32_shifted : val32);
 }
@@ -213,7 +213,7 @@ static const struct counter_collection *get_counter_collection(void)
  *
  *  param[in]  description  Which counter to get. See COUNTER_DESC_*.
  */
-static const struct monotonic_counter *get_counter_struct(u16_t description)
+static const struct monotonic_counter *get_counter_struct(uint16_t description)
 {
 	const struct counter_collection *counters = get_counter_collection();
 
@@ -224,7 +224,7 @@ static const struct monotonic_counter *get_counter_struct(u16_t description)
 	const struct monotonic_counter *current = counters->counters;
 
 	for (size_t i = 0; i < read_halfword(&counters->num_counters); i++) {
-		u16_t num_slots = read_halfword(&current->num_counter_slots);
+		uint16_t num_slots = read_halfword(&current->num_counter_slots);
 
 		if (read_halfword(&current->description) == description) {
 			return current;
@@ -237,11 +237,11 @@ static const struct monotonic_counter *get_counter_struct(u16_t description)
 }
 
 
-u16_t num_monotonic_counter_slots(void)
+uint16_t num_monotonic_counter_slots(void)
 {
 	const struct monotonic_counter *counter
 			= get_counter_struct(COUNTER_DESC_VERSION);
-	u16_t num_slots = 0;
+	uint16_t num_slots = 0;
 
 	if (counter != NULL) {
 		num_slots = read_halfword(&counter->num_counter_slots);
@@ -257,16 +257,16 @@ u16_t num_monotonic_counter_slots(void)
  * @return The current value of the counter (the highest value before the first
  *         free slot).
  */
-static u16_t get_counter(const u16_t **free_slot)
+static uint16_t get_counter(const uint16_t **free_slot)
 {
-	u16_t highest_counter = 0;
-	const u16_t *addr = NULL;
-	const u16_t *slots =
+	uint16_t highest_counter = 0;
+	const uint16_t *addr = NULL;
+	const uint16_t *slots =
 			get_counter_struct(COUNTER_DESC_VERSION)->counter_slots;
-	u16_t num_slots = num_monotonic_counter_slots();
+	uint16_t num_slots = num_monotonic_counter_slots();
 
-	for (u32_t i = 0; i < num_slots; i++) {
-		u16_t counter = ~read_halfword(&slots[i]);
+	for (uint32_t i = 0; i < num_slots; i++) {
+		uint16_t counter = ~read_halfword(&slots[i]);
 
 		if (counter == 0) {
 			addr = &slots[i];
@@ -284,16 +284,16 @@ static u16_t get_counter(const u16_t **free_slot)
 }
 
 
-u16_t get_monotonic_counter(void)
+uint16_t get_monotonic_counter(void)
 {
 	return get_counter(NULL);
 }
 
 
-int set_monotonic_counter(u16_t new_counter)
+int set_monotonic_counter(uint16_t new_counter)
 {
-	const u16_t *next_counter_addr;
-	u16_t counter = get_counter(&next_counter_addr);
+	const uint16_t *next_counter_addr;
+	uint16_t counter = get_counter(&next_counter_addr);
 
 	if (new_counter <= counter) {
 		/* Counter value must increase. */

@@ -44,7 +44,7 @@ void cpu_load_reset(void);
  *
  * @return The current CPU load value.
  */
-u32_t cpu_load_get(void);
+uint32_t cpu_load_get(void);
 
 /** @} */
 

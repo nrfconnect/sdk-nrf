@@ -23,7 +23,7 @@ typedef int (*slm_at_handler_t) (enum at_cmd_type);
 
 /**@brief AT command list item type. */
 typedef struct slm_at_cmd_list {
-	u8_t type;
+	uint8_t type;
 	char *string;
 	slm_at_handler_t handler;
 } slm_at_cmd_list_t;

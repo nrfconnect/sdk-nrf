@@ -109,7 +109,7 @@ struct bt_mesh_lightness_srv_handlers {
 	 */
 	void (*const default_update)(struct bt_mesh_lightness_srv *srv,
 				     struct bt_mesh_msg_ctx *ctx,
-				     u16_t old_default, u16_t new_default);
+				     uint16_t old_default, uint16_t new_default);
 
 	/** @brief The Light Range state has changed.
 	 *
@@ -154,9 +154,9 @@ struct bt_mesh_lightness_srv {
 	/** Current Light Level Range. */
 	struct bt_mesh_lightness_range range;
 	/** Current Default Light Level. */
-	u16_t default_light;
+	uint16_t default_light;
 	/** The last known Light Level. */
-	u16_t last;
+	uint16_t last;
 	/** Internal flag state. */
 	atomic_t flags;
 };

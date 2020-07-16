@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(dk_buttons_and_leds, CONFIG_DK_LIBRARY_LOG_LEVEL);
 
 struct gpio_pin {
 	const char * const port;
-	const u8_t number;
+	const uint8_t number;
 };
 
 static const struct gpio_pin button_pins[] = {
@@ -99,9 +99,9 @@ static int callback_ctrl(bool enable)
 	return err;
 }
 
-static u32_t get_buttons(void)
+static uint32_t get_buttons(void)
 {
-	u32_t ret = 0;
+	uint32_t ret = 0;
 	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
 		int val;
 
@@ -119,7 +119,7 @@ static u32_t get_buttons(void)
 	return ret;
 }
 
-static void button_handlers_call(u32_t button_state, u32_t has_changed)
+static void button_handlers_call(uint32_t button_state, uint32_t has_changed)
 {
 	struct button_handler *handler;
 
@@ -138,16 +138,16 @@ static void button_handlers_call(u32_t button_state, u32_t has_changed)
 
 static void buttons_scan_fn(struct k_work *work)
 {
-	static u32_t last_button_scan;
+	static uint32_t last_button_scan;
 	static bool initial_run = true;
-	u32_t button_scan;
+	uint32_t button_scan;
 
 	button_scan = get_buttons();
 	atomic_set(&my_buttons, (atomic_val_t)button_scan);
 
 	if (!initial_run) {
 		if (button_scan != last_button_scan) {
-			u32_t has_changed = (button_scan ^ last_button_scan);
+			uint32_t has_changed = (button_scan ^ last_button_scan);
 
 			button_handlers_call(button_scan, has_changed);
 		}
@@ -212,7 +212,7 @@ int dk_leds_init(void)
 }
 
 static void button_pressed(struct device *gpio_dev, struct gpio_callback *cb,
-		    u32_t pins)
+		    uint32_t pins)
 {
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
@@ -268,7 +268,7 @@ int dk_buttons_init(button_handler_t button_handler)
 		}
 	}
 
-	u32_t pin_mask = 0;
+	uint32_t pin_mask = 0;
 
 	for (size_t i = 0; i < ARRAY_SIZE(button_pins); i++) {
 		/* Module starts in scanning mode and will switch to
@@ -329,10 +329,10 @@ int dk_button_handler_remove(struct button_handler *handler)
 }
 #endif
 
-void dk_read_buttons(u32_t *button_state, u32_t *has_changed)
+void dk_read_buttons(uint32_t *button_state, uint32_t *has_changed)
 {
-	static u32_t last_state;
-	u32_t current_state = atomic_get(&my_buttons);
+	static uint32_t last_state;
+	uint32_t current_state = atomic_get(&my_buttons);
 
 	if (button_state != NULL) {
 		*button_state = current_state;
@@ -345,17 +345,17 @@ void dk_read_buttons(u32_t *button_state, u32_t *has_changed)
 	last_state = current_state;
 }
 
-u32_t dk_get_buttons(void)
+uint32_t dk_get_buttons(void)
 {
 	return atomic_get(&my_buttons);
 }
 
-int dk_set_leds(u32_t leds)
+int dk_set_leds(uint32_t leds)
 {
 	return dk_set_leds_state(leds, DK_ALL_LEDS_MSK);
 }
 
-int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask)
+int dk_set_leds_state(uint32_t leds_on_mask, uint32_t leds_off_mask)
 {
 	if ((leds_on_mask & ~DK_ALL_LEDS_MSK) != 0 ||
 	   (leds_off_mask & ~DK_ALL_LEDS_MSK) != 0) {
@@ -364,7 +364,7 @@ int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask)
 
 	for (size_t i = 0; i < ARRAY_SIZE(led_pins); i++) {
 		if ((BIT(i) & leds_on_mask) || (BIT(i) & leds_off_mask)) {
-			u32_t val = (BIT(i) & leds_on_mask) ? (1) : (0);
+			uint32_t val = (BIT(i) & leds_on_mask) ? (1) : (0);
 
 			if (IS_ENABLED(CONFIG_DK_LIBRARY_INVERT_LEDS)) {
 				val = 1 - val;
@@ -382,7 +382,7 @@ int dk_set_leds_state(u32_t leds_on_mask, u32_t leds_off_mask)
 	return 0;
 }
 
-int dk_set_led(u8_t led_idx, u32_t val)
+int dk_set_led(uint8_t led_idx, uint32_t val)
 {
 	int err;
 
@@ -398,12 +398,12 @@ int dk_set_led(u8_t led_idx, u32_t val)
 	return err;
 }
 
-int dk_set_led_on(u8_t led_idx)
+int dk_set_led_on(uint8_t led_idx)
 {
 	return dk_set_led(led_idx, 1);
 }
 
-int dk_set_led_off(u8_t led_idx)
+int dk_set_led_off(uint8_t led_idx)
 {
 	return dk_set_led(led_idx, 0);
 }

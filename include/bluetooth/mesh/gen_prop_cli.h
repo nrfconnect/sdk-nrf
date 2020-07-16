@@ -54,8 +54,8 @@ struct bt_mesh_prop_cli;
 
 /** List of property IDs. */
 struct bt_mesh_prop_list {
-	u8_t count; /**< Number of IDs in the list. */
-	u16_t *ids; /**< Available Property IDs. */
+	uint8_t count; /**< Number of IDs in the list. */
+	uint16_t *ids; /**< Available Property IDs. */
 };
 
 /**
@@ -155,7 +155,7 @@ int bt_mesh_prop_cli_props_get(struct bt_mesh_prop_cli *cli,
  */
 int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
 			      struct bt_mesh_msg_ctx *ctx,
-			      enum bt_mesh_prop_srv_kind kind, u16_t id,
+			      enum bt_mesh_prop_srv_kind kind, uint16_t id,
 			      struct bt_mesh_prop_val *rsp);
 
 /** @brief Set a property value in a User Property Server.

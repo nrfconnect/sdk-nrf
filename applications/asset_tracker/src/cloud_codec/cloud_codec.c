@@ -365,7 +365,7 @@ int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
 	__ASSERT_NO_MSG(output != NULL);
 
 	char buf[6];
-	u8_t len;
+	uint8_t len;
 	struct cloud_channel_data cloud_sensor;
 
 	switch (sensor_data->type) {
@@ -432,7 +432,7 @@ int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
 				   struct cloud_msg *output)
 {
 	char buf[LIGHT_SENSOR_DATA_STRING_MAX_LEN];
-	u8_t len;
+	uint8_t len;
 	struct cloud_channel_data cloud_sensor;
 	struct light_sensor_data send = { .red = LIGHT_SENSOR_DATA_NO_UPDATE,
 					  .green = LIGHT_SENSOR_DATA_NO_UPDATE,
@@ -541,9 +541,9 @@ cleanup:
 
 int cloud_encode_device_status_data(
 	void *modem_param,
-	const char *const ui[], const u32_t ui_count,
-	const char *const fota[], const u32_t fota_count,
-	const u16_t fota_version,
+	const char *const ui[], const uint32_t ui_count,
+	const char *const fota[], const uint32_t fota_count,
+	const uint16_t fota_version,
 	struct cloud_msg *output)
 {
 	__ASSERT_NO_MSG((ui != NULL) || !ui_count);

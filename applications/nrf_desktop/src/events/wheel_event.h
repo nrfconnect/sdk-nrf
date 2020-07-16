@@ -22,7 +22,7 @@ extern "C" {
 struct wheel_event {
 	struct event_header header;
 
-	s16_t wheel;
+	int16_t wheel;
 };
 
 EVENT_TYPE_DECLARE(wheel_event);

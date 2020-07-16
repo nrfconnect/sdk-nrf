@@ -17,10 +17,10 @@ In this example, the record contains the text "Hello World!" and the language co
 
 .. code-block:: c
 
-   static const u8_t en_payload[] = {
+   static const uint8_t en_payload[] = {
    	'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'
    };
-   static const u8_t en_code[] = {'e', 'n'};
+   static const uint8_t en_code[] = {'e', 'n'};
 
    int err;
 

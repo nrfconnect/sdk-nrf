@@ -22,8 +22,8 @@ extern "C" {
 struct motion_event {
 	struct event_header header;
 
-	s16_t dx;
-	s16_t dy;
+	int16_t dx;
+	int16_t dy;
 };
 
 EVENT_TYPE_DECLARE(motion_event);

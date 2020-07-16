@@ -30,10 +30,10 @@ static struct device *gpio_dev;
 static struct k_spinlock spinlock;
 static struct k_sem *sem;
 
-static u32_t irq_mask;
+static uint32_t irq_mask;
 
 static void irq_pin_cb(struct device *gpiob, struct gpio_callback *cb,
-		       u32_t pins)
+		       uint32_t pins)
 {
 	k_sem_give(sem);
 }
@@ -68,12 +68,12 @@ static int gpio_init(void)
 					    GPIO_INT_EDGE_RISING);
 }
 
-u32_t st25r3911b_irq_read(void)
+uint32_t st25r3911b_irq_read(void)
 {
-	u8_t data[IRQ_REG_CNT] = {0};
-	u32_t status = 0;
+	uint8_t data[IRQ_REG_CNT] = {0};
+	uint32_t status = 0;
 	int value = 0;
-	u8_t cnt = 0;
+	uint8_t cnt = 0;
 	int err;
 
 	/* In some cases, interrupts come so quickly that
@@ -89,9 +89,9 @@ u32_t st25r3911b_irq_read(void)
 			break;
 		}
 
-		status = (u32_t)data[0];
-		status |= ((u32_t)data[1] << 8);
-		status |= ((u32_t)data[2] << 16);
+		status = (uint32_t)data[0];
+		status |= ((uint32_t)data[1] << 8);
+		status |= ((uint32_t)data[2] << 16);
 
 		value = gpio_pin_get_raw(gpio_dev, IRQ_PIN);
 		value = (value < 0) ? 0 : value;
@@ -112,11 +112,11 @@ u32_t st25r3911b_irq_read(void)
 	return status;
 }
 
-int st25r3911b_irq_modify(u32_t clr_mask, u32_t set_mask)
+int st25r3911b_irq_modify(uint32_t clr_mask, uint32_t set_mask)
 {
 	int err = 0;
-	u32_t mask;
-	u32_t old_mask;
+	uint32_t mask;
+	uint32_t old_mask;
 	struct k_spinlock_key key;
 
 	key = k_spin_lock(&spinlock);
@@ -134,7 +134,7 @@ int st25r3911b_irq_modify(u32_t clr_mask, u32_t set_mask)
 			continue;
 		}
 
-		u8_t val = (u8_t)(old_mask >> (8 * i));
+		uint8_t val = (uint8_t)(old_mask >> (8 * i));
 
 		err = st25r3911b_reg_write(ST25R3911B_REG_MASK_MAIN_INT + i,
 					   val);
@@ -150,27 +150,27 @@ int st25r3911b_irq_modify(u32_t clr_mask, u32_t set_mask)
 	return err;
 }
 
-int st25r3911b_irq_enable(u32_t mask)
+int st25r3911b_irq_enable(uint32_t mask)
 {
 	return st25r3911b_irq_modify(mask, 0);
 }
 
-int st25r3911b_irq_disable(u32_t mask)
+int st25r3911b_irq_disable(uint32_t mask)
 {
 	return st25r3911b_irq_modify(0, mask);
 }
 
 int st25r39_irq_clear(void)
 {
-	u8_t val[IRQ_REG_CNT] = {0};
+	uint8_t val[IRQ_REG_CNT] = {0};
 
 	return st25r3911b_multiple_reg_read(ST25R3911B_REG_MAIN_INT,
 					    val, ARRAY_SIZE(val));
 }
 
-u32_t st25r3911b_irq_wait_for_irq(u32_t mask, s32_t timeout)
+uint32_t st25r3911b_irq_wait_for_irq(uint32_t mask, int32_t timeout)
 {
-	u32_t status;
+	uint32_t status;
 	int err;
 
 	err = k_sem_take(sem, K_MSEC(timeout));

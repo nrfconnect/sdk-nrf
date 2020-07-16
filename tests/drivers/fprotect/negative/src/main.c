@@ -20,8 +20,8 @@
 
 static void test_flash_write_protected(void)
 {
-	u8_t wd[256];
-	u32_t invalid_write_addr = 0x7000;
+	uint8_t wd[256];
+	uint32_t invalid_write_addr = 0x7000;
 	int err;
 
 	(void)memset(wd, 0xa5, sizeof(wd));

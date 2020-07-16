@@ -29,22 +29,22 @@ static const struct bt_uuid_128 custom_desc_chrc_uuid = BT_UUID_INIT_128(
 		0x7d, 0x17, 0x19, 0x46, 0x75, 0x2, 0x47, 0x25);
 
 static bool active;
-static u8_t chmap[CHMAP_BLE_BITMASK_SIZE];
+static uint8_t chmap[CHMAP_BLE_BITMASK_SIZE];
 static struct k_spinlock lock;
 
 static void chmap_ccc_cfg_changed(const struct bt_gatt_attr *attr,
-				 u16_t value)
+				 uint16_t value)
 {
 	active = (value == BT_GATT_CCC_NOTIFY);
 }
 
 static ssize_t read_chmap(struct bt_conn *conn, const struct bt_gatt_attr *attr,
-			  void *buf, u16_t len, u16_t offset)
+			  void *buf, uint16_t len, uint16_t offset)
 {
 	const void *value = attr->user_data;
 	__ASSERT_NO_MSG(value == &chmap);
 
-	u8_t chmap_local[sizeof(chmap)];
+	uint8_t chmap_local[sizeof(chmap)];
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 	memcpy(chmap_local, chmap, sizeof(chmap));

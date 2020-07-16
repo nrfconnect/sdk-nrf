@@ -22,16 +22,16 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STATE_LOG_LEVEL);
 
 static enum led_system_state system_state = LED_SYSTEM_STATE_IDLE;
 
-static u8_t connected;
+static uint8_t connected;
 static bool peer_search;
 static enum peer_operation peer_op = PEER_OPERATION_CANCEL;
-static u8_t cur_peer_id;
+static uint8_t cur_peer_id;
 
 
 static void load_peer_state_led(void)
 {
 	enum led_peer_state state = LED_PEER_STATE_DISCONNECTED;
-	u8_t peer_id = cur_peer_id;
+	uint8_t peer_id = cur_peer_id;
 
 	switch (peer_op) {
 	case PEER_OPERATION_SELECT:

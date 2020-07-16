@@ -36,7 +36,7 @@ struct connected_peer {
 	struct bt_conn *conn;
 	bool discovered;
 	bool llpm_support;
-	u16_t requested_latency;
+	uint16_t requested_latency;
 };
 
 static struct connected_peer peers[CONFIG_BT_MAX_CONN];
@@ -54,7 +54,7 @@ static struct connected_peer *find_connected_peer(const struct bt_conn *conn)
 	return NULL;
 }
 
-static int set_conn_params(struct bt_conn *conn, u16_t conn_latency,
+static int set_conn_params(struct bt_conn *conn, uint16_t conn_latency,
 			   bool peer_llpm_support)
 {
 	int err;
@@ -63,7 +63,7 @@ static int set_conn_params(struct bt_conn *conn, u16_t conn_latency,
 	if (peer_llpm_support) {
 		struct net_buf *buf;
 		hci_vs_cmd_conn_update_t *cmd_conn_update;
-		u16_t conn_handle;
+		uint16_t conn_handle;
 
 		err = bt_hci_get_conn_handle(conn, &conn_handle);
 		if (err) {
@@ -118,7 +118,7 @@ static void update_peer_conn_params(const struct connected_peer *peer)
 	}
 
 	struct bt_conn *conn = peer->conn;
-	u16_t latency = peer->requested_latency;
+	uint16_t latency = peer->requested_latency;
 
 	__ASSERT_NO_MSG(conn);
 	int err = set_conn_params(conn, latency, peer->llpm_support);

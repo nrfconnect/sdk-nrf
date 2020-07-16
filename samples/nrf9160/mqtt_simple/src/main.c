@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <drivers/uart.h>
 #include <string.h>
+#include <random/rand32.h>
 
 #include <net/mqtt.h>
 #include <net/socket.h>
@@ -17,9 +18,9 @@
 #endif
 
 /* Buffers for MQTT client. */
-static u8_t rx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
-static u8_t tx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
-static u8_t payload_buf[CONFIG_MQTT_PAYLOAD_BUFFER_SIZE];
+static uint8_t rx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
+static uint8_t tx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
+static uint8_t payload_buf[CONFIG_MQTT_PAYLOAD_BUFFER_SIZE];
 
 /* The mqtt client struct */
 static struct mqtt_client client;
@@ -74,7 +75,7 @@ void lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 
 /**@brief Function to print strings without null-termination
  */
-static void data_print(u8_t *prefix, u8_t *data, size_t len)
+static void data_print(uint8_t *prefix, uint8_t *data, size_t len)
 {
 	char buf[len + 1];
 
@@ -86,7 +87,7 @@ static void data_print(u8_t *prefix, u8_t *data, size_t len)
 /**@brief Function to publish data on the configured topic
  */
 static int data_publish(struct mqtt_client *c, enum mqtt_qos qos,
-	u8_t *data, size_t len)
+	uint8_t *data, size_t len)
 {
 	struct mqtt_publish_param param;
 
@@ -135,8 +136,8 @@ static int subscribe(void)
  */
 static int publish_get_payload(struct mqtt_client *c, size_t length)
 {
-	u8_t *buf = payload_buf;
-	u8_t *end = buf + length;
+	uint8_t *buf = payload_buf;
+	uint8_t *end = buf + length;
 
 	if (length > sizeof(payload_buf)) {
 		return -EMSGSIZE;
@@ -317,7 +318,7 @@ static void client_init(struct mqtt_client *client)
 	/* MQTT client configuration */
 	client->broker = &broker;
 	client->evt_cb = mqtt_evt_handler;
-	client->client_id.utf8 = (u8_t *)CONFIG_MQTT_CLIENT_ID;
+	client->client_id.utf8 = (uint8_t *)CONFIG_MQTT_CLIENT_ID;
 	client->client_id.size = strlen(CONFIG_MQTT_CLIENT_ID);
 	client->password = NULL;
 	client->user_name = NULL;

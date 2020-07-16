@@ -128,8 +128,8 @@ static void test_params_string_parsing(void)
 	int ret;
 	char *remainder = NULL;
 	char tmpbuf[32];
-	u32_t tmpbuf_len;
-	u32_t tmpint;
+	uint32_t tmpbuf_len;
+	uint32_t tmpint;
 
 	const char *str1 = "+TEST:1,\"Hello World!\"\r\n";
 	const char *str2 = "%TEST: 1, \"Hello World!\"\r\n";
@@ -529,8 +529,8 @@ static void test_at_cmd_set(void)
 {
 	int ret;
 	char tmpbuf[32];
-	u32_t tmpbuf_len;
-	u16_t tmpshrt;
+	uint32_t tmpbuf_len;
+	uint16_t tmpshrt;
 
 	static const char at_cmd_cgmi[] = "AT+CGMI";
 
@@ -660,7 +660,7 @@ static void test_at_cmd_read(void)
 {
 	int ret;
 	char tmpbuf[32];
-	u32_t tmpbuf_len;
+	uint32_t tmpbuf_len;
 
 	static const char at_cmd_cfun_read[] = "AT+CFUN?";
 
@@ -698,7 +698,7 @@ static void test_at_cmd_test(void)
 {
 	int ret;
 	char tmpbuf[32];
-	u32_t tmpbuf_len;
+	uint32_t tmpbuf_len;
 
 	static const char at_cmd_cfun_read[] = "AT+CFUN=?";
 

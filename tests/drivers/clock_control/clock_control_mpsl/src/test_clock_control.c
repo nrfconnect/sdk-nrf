@@ -13,13 +13,13 @@ LOG_MODULE_REGISTER(test);
 
 struct device_subsys_data {
 	clock_control_subsys_t subsys;
-	u32_t startup_us;
+	uint32_t startup_us;
 };
 
 struct device_data {
 	const char *name;
 	const struct device_subsys_data *subsys_data;
-	u32_t subsys_cnt;
+	uint32_t subsys_cnt;
 };
 
 static const struct device_data devices[] = {
@@ -45,7 +45,7 @@ static const struct device_data devices[] = {
 
 typedef void (*test_func_t)(const char *dev_name,
 			    clock_control_subsys_t subsys,
-			    u32_t startup_us);
+			    uint32_t startup_us);
 
 typedef bool (*test_capability_check_t)(const char *dev_name,
 					clock_control_subsys_t subsys);
@@ -81,7 +81,7 @@ static void tear_down_instance(const char *dev_name,
 
 static void test_with_single_instance(const char *dev_name,
 				      clock_control_subsys_t subsys,
-				      u32_t startup_time,
+				      uint32_t startup_time,
 				      test_func_t func,
 				      test_capability_check_t capability_check)
 {
@@ -112,7 +112,7 @@ static void test_all_instances(test_func_t func,
  */
 static void test_on_off_status_instance(const char *dev_name,
 					clock_control_subsys_t subsys,
-					u32_t startup_us)
+					uint32_t startup_us)
 {
 	struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
@@ -154,7 +154,7 @@ static void test_on_off_status(void)
  */
 static void test_multiple_users_instance(const char *dev_name,
 					 clock_control_subsys_t subsys,
-					 u32_t startup_us)
+					 uint32_t startup_us)
 {
 	struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
@@ -227,7 +227,7 @@ static void clock_on_callback(struct device *dev,
  */
 static void test_async_on_off_instance(const char *dev_name,
 				       clock_control_subsys_t subsys,
-				       u32_t startup_us)
+				       uint32_t startup_us)
 {
 	struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
@@ -304,7 +304,7 @@ static void clock_on_counting_callback(struct device *dev,
  */
 static void test_async_on_off_multiple_users_instance(const char *dev_name,
 						clock_control_subsys_t subsys,
-						u32_t startup_us)
+						uint32_t startup_us)
 {
 	struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
@@ -360,7 +360,7 @@ static void test_async_on_off_multiple_users_instance(const char *dev_name,
  */
 static void test_async_on_too_many_users_instance(const char *dev_name,
 						clock_control_subsys_t subsys,
-						u32_t startup_us)
+						uint32_t startup_us)
 {
 	struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
@@ -435,7 +435,7 @@ static void test_async_on_off_multiple_users(void)
  */
 static void test_async_on_stopped_instance(const char *dev_name,
 					   clock_control_subsys_t subsys,
-					   u32_t startup_us)
+					   uint32_t startup_us)
 {
 	struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
@@ -487,7 +487,7 @@ static void test_async_on_stopped(void)
  */
 static void test_immediate_cb_when_clock_on_instance(const char *dev_name,
 						clock_control_subsys_t subsys,
-						u32_t startup_us)
+						uint32_t startup_us)
 {
 	struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;

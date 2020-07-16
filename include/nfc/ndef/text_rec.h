@@ -43,13 +43,13 @@ struct nfc_ndef_text_rec_payload {
 	/** Type of the Unicode Transformation Format. */
 	enum nfc_ndef_text_rec_utf utf;
 	/** Pointer to the IANA language code. */
-	u8_t const *lang_code;
+	uint8_t const *lang_code;
 	/** Length of the IANA language code. */
-	u8_t lang_code_len;
+	uint8_t lang_code_len;
 	/** Pointer to the user text. */
-	u8_t const *data;
+	uint8_t const *data;
 	/** Length of the user text. */
-	u32_t data_len;
+	uint32_t data_len;
 };
 
 /**
@@ -66,15 +66,15 @@ struct nfc_ndef_text_rec_payload {
  */
 int nfc_ndef_text_rec_payload_encode(
 		struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc,
-		u8_t *buff,
-		u32_t *len);
+		uint8_t *buff,
+		uint32_t *len);
 
 /**
  * @brief External reference to the type field of the Text record, defined in
  * the file @c text_rec.c. It is used in the
  * @ref NFC_NDEF_TEXT_RECORD_DESC_DEF macro.
  */
-extern const u8_t nfc_ndef_text_rec_type_field[];
+extern const uint8_t nfc_ndef_text_rec_type_field[];
 
 /**
  * @brief Size of the type field of the Text record, defined in the file

@@ -8,7 +8,7 @@
 #include <shell/shell.h>
 #include <event_manager.h>
 
-u32_t event_manager_displayed_events;
+uint32_t event_manager_displayed_events;
 
 static int show_events(const struct shell *shell, size_t argc,
 		char **argv)
@@ -92,7 +92,7 @@ static int show_subscribers(const struct shell *shell, size_t argc,
 static void set_event_displaying(const struct shell *shell, size_t argc,
 				 char **argv, bool enable)
 {
-	u32_t evt_mask = 0;
+	uint32_t evt_mask = 0;
 
 	/* If no IDs specified, all registered events are affected */
 	if (argc == 1) {

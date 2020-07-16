@@ -17,7 +17,7 @@
 typedef struct {
 	struct device *device;
 	struct counter_alarm_cfg alarm_cfg;
-	u8_t alarm_ch_id;
+	uint8_t alarm_ch_id;
 	volatile zb_bool_t is_init;
 	volatile atomic_t is_running;
 } zb_timer_t;
@@ -31,8 +31,8 @@ static zb_timer_t zb_timer = {
 zb_void_t zb_osif_zboss_timer_tick(void);
 
 /* Timer interrupt handler. */
-static void zb_timer_alarm_handler(struct device *counter_dev, u8_t chan_id,
-				   u32_t ticks, void *user_data)
+static void zb_timer_alarm_handler(struct device *counter_dev, uint8_t chan_id,
+				   uint32_t ticks, void *user_data)
 {
 	switch (chan_id) {
 	case ALARM_CHANNEL_ID:
@@ -112,7 +112,7 @@ zb_uint32_t zb_osif_timer_get(void)
 	zb_uint32_t time_cur;
 
 	if (zb_osif_timer_is_on() == ZB_TRUE) {
-		u32_t ticks;
+		uint32_t ticks;
 		(void)counter_get_value(zb_timer.device, &ticks);
 		time_cur = (zb_uint32_t)counter_ticks_to_us(zb_timer.device,
 							    ticks);

@@ -46,9 +46,9 @@ struct peer_conn_event {
 	struct event_header header;
 
 	enum peer_id peer_id;
-	u8_t dev_idx;
+	uint8_t dev_idx;
 	enum peer_conn_state conn_state;
-	u32_t baudrate;
+	uint32_t baudrate;
 };
 
 EVENT_TYPE_DECLARE(peer_conn_event);

@@ -182,15 +182,15 @@ static int at_parse_process_element(const char **str, int index,
 	} else if (state == ARRAY) {
 		char *next;
 		size_t i = 0;
-		u32_t tmparray[AT_CMD_MAX_ARRAY_SIZE];
+		uint32_t tmparray[AT_CMD_MAX_ARRAY_SIZE];
 
-		tmparray[i++] = (u32_t)strtoul(tmpstr, &next, 10);
+		tmparray[i++] = (uint32_t)strtoul(tmpstr, &next, 10);
 		tmpstr = next;
 
 		while (!is_array_stop(*tmpstr) && !is_terminated(*tmpstr)) {
 			if (is_separator(*tmpstr)) {
 				tmparray[i++] =
-					(u32_t)strtoul(++tmpstr, &next, 10);
+					(uint32_t)strtoul(++tmpstr, &next, 10);
 
 				if (strlen(tmpstr) == strlen(next)) {
 					break;
@@ -207,17 +207,17 @@ static int at_parse_process_element(const char **str, int index,
 			}
 		}
 
-		at_params_array_put(list, index, tmparray, i * sizeof(u32_t));
+		at_params_array_put(list, index, tmparray, i * sizeof(uint32_t));
 
 		tmpstr++;
 	} else if (state == NUMBER) {
 		char *next;
-		int value = (u32_t)strtoul(tmpstr, &next, 10);
+		int value = (uint32_t)strtoul(tmpstr, &next, 10);
 
 		tmpstr = next;
 
 		if (value <= USHRT_MAX) {
-			at_params_short_put(list, index, (u16_t)value);
+			at_params_short_put(list, index, (uint16_t)value);
 		} else {
 			at_params_int_put(list, index, value);
 		}

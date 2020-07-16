@@ -15,8 +15,8 @@
 #include <device.h>
 #include <drivers/flash.h>
 
-static u8_t write_data[] = "Hello world";
-static u32_t valid_write_addr = 0x1C000;
+static uint8_t write_data[] = "Hello world";
+static uint32_t valid_write_addr = 0x1C000;
 
 #define SOC_NV_FLASH_CONTROLLER_NODE DT_NODELABEL(flash_controller)
 #define FLASH_DEV_NAME DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE)
@@ -33,7 +33,7 @@ static void test_flash_write(void)
 static void test_flash_read(void)
 {
 	int retval = 0;
-	u8_t read_data[strlen(write_data)+1];
+	uint8_t read_data[strlen(write_data)+1];
 	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	retval = flash_read(flash_dev, valid_write_addr, read_data, ARRAY_SIZE(read_data));
 	zassert_true(retval == 0, "flash_read failed");
@@ -57,7 +57,7 @@ static void test_flash_read(void)
 static void test_flash_read_protected(void)
 {
 	int retval;
-	u8_t rd[256];
+	uint8_t rd[256];
 	struct device *flash_dev = device_get_binding(FLASH_DEV_NAME);
 	retval = flash_read(flash_dev, 0, rd, sizeof(rd));
 	zassert_true(retval == 0, "flash read to protected area failed");

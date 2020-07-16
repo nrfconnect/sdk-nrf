@@ -14,7 +14,7 @@
 
 #define LE_ROLE_PAYLOAD_SIZE 1UL
 
-static int bt_data_encode(struct bt_data *ad, u8_t **buff, size_t *size)
+static int bt_data_encode(struct bt_data *ad, uint8_t **buff, size_t *size)
 {
 	const size_t ad_len = ad->data_len + AD_LEN_FIELD_SIZE
 		+ AD_TYPE_FIELD_SIZE;
@@ -37,12 +37,12 @@ static int bt_data_encode(struct bt_data *ad, u8_t **buff, size_t *size)
 	return 0;
 }
 
-static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, u8_t **buff,
+static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, uint8_t **buff,
 				  size_t *size)
 {
 	int err;
 	struct bt_data dev_addr_ad;
-	u8_t dev_addr_buff[sizeof(*dev_addr)];
+	uint8_t dev_addr_buff[sizeof(*dev_addr)];
 
 	if (!dev_addr) {
 		return -EINVAL;
@@ -53,7 +53,7 @@ static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, u8_t **buff,
 
 	dev_addr_ad.type = BT_DATA_LE_BT_DEVICE_ADDRESS;
 	dev_addr_ad.data_len = sizeof(dev_addr_buff);
-	dev_addr_ad.data = (const u8_t *) dev_addr_buff;
+	dev_addr_ad.data = (const uint8_t *) dev_addr_buff;
 
 	err = bt_data_encode(&dev_addr_ad, buff, size);
 	if (err) {
@@ -63,7 +63,7 @@ static int ble_device_addr_encode(const bt_addr_le_t *dev_addr, u8_t **buff,
 	return 0;
 }
 
-static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, u8_t **buff,
+static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, uint8_t **buff,
 			  size_t *size)
 {
 	int err;
@@ -86,8 +86,8 @@ static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, u8_t **buff,
 }
 
 int nfc_ndef_le_oob_rec_payload_constructor(
-	const struct nfc_ndef_le_oob_rec_payload_desc *payload_desc, u8_t *buff,
-	u32_t *len)
+	const struct nfc_ndef_le_oob_rec_payload_desc *payload_desc, uint8_t *buff,
+	uint32_t *len)
 {
 	int err;
 	size_t rem_size = *len;
@@ -147,7 +147,7 @@ int nfc_ndef_le_oob_rec_payload_constructor(
 		struct bt_data appearance_ad = {
 			.type = BT_DATA_GAP_APPEARANCE,
 			.data_len = sizeof(*payload_desc->appearance),
-			.data = (const u8_t *) payload_desc->appearance,
+			.data = (const uint8_t *) payload_desc->appearance,
 		};
 
 		err = bt_data_encode(&appearance_ad, &buff, &rem_size);

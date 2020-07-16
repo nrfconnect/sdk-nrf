@@ -18,8 +18,8 @@
 /** Persistent storage handling */
 struct bt_mesh_lightness_srv_settings_data {
 	struct bt_mesh_lightness_range range;
-	u16_t default_light;
-	u16_t last;
+	uint16_t default_light;
+	uint16_t last;
 	bool is_on;
 } __packed;
 
@@ -44,8 +44,8 @@ static int store_state(struct bt_mesh_lightness_srv *srv)
 	       data.last, data.default_light, data.is_on ? "On" : "Off",
 	       data.range.min, data.range.max);
 
-	return bt_mesh_model_data_store(srv->lightness_model, false, &data,
-					sizeof(data));
+	return bt_mesh_model_data_store(srv->lightness_model, false, NULL,
+					&data, sizeof(data));
 }
 
 static void lvl_status_encode(struct net_buf_simple *buf,
@@ -223,7 +223,7 @@ static void lightness_set(struct bt_mesh_model *mod,
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_lightness_status status;
 	struct bt_mesh_lightness_set set;
-	u8_t tid;
+	uint8_t tid;
 
 	set.lvl = repr_to_light(net_buf_simple_pull_le16(buf), repr);
 	tid = net_buf_simple_pull_u8(buf);
@@ -322,10 +322,10 @@ static void set_default(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	struct bt_mesh_lightness_srv *srv = mod->user_data;
-	u16_t new = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
+	uint16_t new = repr_to_light(net_buf_simple_pull_le16(buf), ACTUAL);
 
 	if (new != srv->default_light) {
-		u16_t old = srv->default_light;
+		uint16_t old = srv->default_light;
 
 		srv->default_light = new;
 		if (srv->handlers->default_update) {
@@ -532,7 +532,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		CONTAINER_OF(lvl_srv, struct bt_mesh_lightness_srv, lvl);
 	struct bt_mesh_lightness_status status = { 0 };
 
-	u16_t start_value = srv->last;
+	uint16_t start_value = srv->last;
 
 	if (delta_set->new_transaction) {
 		srv->handlers->light_get(srv, NULL, &status);
@@ -542,7 +542,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	/* Delta lvl is bound to the lightness actual state, so the calculation
 	 * must happen in that space:
 	 */
-	u16_t target_actual =
+	uint16_t target_actual =
 		light_to_repr(start_value, ACTUAL) + delta_set->delta;
 
 	struct bt_mesh_lightness_set set = {
@@ -575,7 +575,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	struct bt_mesh_lightness_srv *srv =
 		CONTAINER_OF(lvl_srv, struct bt_mesh_lightness_srv, lvl);
 	struct bt_mesh_lightness_status status = { 0 };
-	u16_t target;
+	uint16_t target;
 
 	srv->handlers->light_get(srv, NULL, &status);
 
@@ -592,7 +592,7 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 					     .transition = &transition };
 
 	if (move_set->delta != 0 && move_set->transition) {
-		u32_t distance = abs(target - status.current);
+		uint32_t distance = abs(target - status.current);
 		/* Note: We're not actually converting from the lightness actual
 		 * space to the linear space here, even if configured. This
 		 * means that a generic level server communicating with a
@@ -600,12 +600,12 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 		 * server's transition as non-linear. The transition time and
 		 * end points are unaffected by this.
 		 */
-		u32_t time_to_edge =
-			((u64_t)distance * (u64_t)move_set->transition->time) /
+		uint32_t time_to_edge =
+			((uint64_t)distance * (uint64_t)move_set->transition->time) /
 			abs(move_set->delta);
 
 		BT_DBG("Move: distance: %u delta: %u step: %u ms time: %u ms",
-		       (u32_t)distance, move_set->delta,
+		       (uint32_t)distance, move_set->delta,
 		       move_set->transition->time, time_to_edge);
 
 		if (time_to_edge > 0) {
@@ -724,6 +724,7 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *mod)
 
 #ifdef CONFIG_BT_SETTINGS
 static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *mod,
+					      const char *name,
 					      size_t len_rd,
 					      settings_read_cb read_cb,
 					      void *cb_arg)
@@ -731,6 +732,10 @@ static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *mod,
 	struct bt_mesh_lightness_srv *srv = mod->user_data;
 	struct bt_mesh_lightness_srv_settings_data data;
 	ssize_t result;
+
+	if (name) {
+		return -ENOTSUP; /* TODO support this */
+	}
 
 	result = read_cb(cb_arg, &data, sizeof(data));
 	if (result <= 0) {

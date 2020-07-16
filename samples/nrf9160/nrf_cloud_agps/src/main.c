@@ -21,8 +21,8 @@ LOG_MODULE_REGISTER(nrf_cloud_agps_sample,
 
 static struct cloud_backend *cloud_backend;
 static struct device *gps_dev;
-static u64_t start_search_timestamp;
-static u64_t fix_timestamp;
+static uint64_t start_search_timestamp;
+static uint64_t fix_timestamp;
 static struct k_delayed_work gps_start_work;
 static struct k_delayed_work reboot_work;
 
@@ -187,9 +187,9 @@ static void print_pvt_data(struct gps_pvt *pvt_data)
 
 static void print_satellite_stats(struct gps_pvt *pvt_data)
 {
-	u8_t tracked = 0;
-	u32_t tracked_sats = 0;
-	static u32_t prev_tracked_sats;
+	uint8_t tracked = 0;
+	uint32_t tracked_sats = 0;
+	static uint32_t prev_tracked_sats;
 	char print_buf[100];
 	size_t print_buf_len;
 
@@ -292,7 +292,7 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 
 		LOG_INF("---------       FIX       ---------");
 		LOG_INF("Time to fix: %d seconds",
-			(u32_t)(fix_timestamp - start_search_timestamp) / 1000);
+			(uint32_t)(fix_timestamp - start_search_timestamp) / 1000);
 		print_pvt_data(&evt->pvt);
 		LOG_INF("-----------------------------------");
 		break;
@@ -351,7 +351,7 @@ static int modem_configure(void)
 	return err;
 }
 
-static void button_handler(u32_t button_states, u32_t has_changed)
+static void button_handler(uint32_t button_states, uint32_t has_changed)
 {
 	if (has_changed & button_states & DK_BTN1_MSK) {
 		cloud_send_msg();

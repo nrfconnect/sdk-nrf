@@ -65,34 +65,34 @@ static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
 static struct k_thread thread;
 
 struct params_ble {
-	u16_t sample_count_min;
-	u8_t min_channel_count;
-	s16_t weight_crc_ok;
-	s16_t weight_crc_error;
-	u16_t ble_block_threshold;
-	u8_t eval_max_count;
-	u16_t eval_duration;
-	u16_t eval_keepout_duration;
-	u16_t eval_success_threshold;
+	uint16_t sample_count_min;
+	uint8_t min_channel_count;
+	int16_t weight_crc_ok;
+	int16_t weight_crc_error;
+	uint16_t ble_block_threshold;
+	uint8_t eval_max_count;
+	uint16_t eval_duration;
+	uint16_t eval_keepout_duration;
+	uint16_t eval_success_threshold;
 } __packed;
 
 struct params_wifi {
-	s16_t wifi_rating_inc;
-	s16_t wifi_present_threshold;
-	s16_t wifi_active_threshold;
+	int16_t wifi_rating_inc;
+	int16_t wifi_present_threshold;
+	int16_t wifi_active_threshold;
 } __packed;
 
 struct params_chmap {
-	u8_t chmap[CHMAP_BLE_BITMASK_SIZE];
+	uint8_t chmap[CHMAP_BLE_BITMASK_SIZE];
 } __packed;
 
 struct params_blacklist {
-	u16_t wifi_chn_bitmask;
+	uint16_t wifi_chn_bitmask;
 } __packed;
 
-static u8_t chmap_instance_buf[CHMAP_FILTER_INST_SIZE];
+static uint8_t chmap_instance_buf[CHMAP_FILTER_INST_SIZE];
 static struct chmap_instance *chmap_inst;
-static u8_t current_chmap[CHMAP_BLE_BITMASK_SIZE] = CHMAP_BLE_BITMASK_DEFAULT;
+static uint8_t current_chmap[CHMAP_BLE_BITMASK_SIZE] = CHMAP_BLE_BITMASK_DEFAULT;
 static atomic_t processing;
 static atomic_t new_blacklist;
 static atomic_t params_updated;
@@ -107,7 +107,7 @@ BUILD_ASSERT(THREAD_PRIORITY >= CONFIG_BT_HCI_TX_PRIO);
 static void ble_qos_thread_fn(void);
 
 static struct device *cdc_dev;
-static u32_t cdc_dtr;
+static uint32_t cdc_dtr;
 
 enum ble_qos_opt {
 	BLE_QOS_OPT_BLACKLIST,
@@ -126,13 +126,13 @@ static const char * const opt_descr[] = {
 };
 
 
-static void update_blacklist(const u8_t *blacklist)
+static void update_blacklist(const uint8_t *blacklist)
 {
 	atomic_set(&new_blacklist, sys_get_le16(blacklist));
 }
 
-static void update_parameters(const u8_t *qos_ble_params,
-			      const u8_t *qos_wifi_params)
+static void update_parameters(const uint8_t *qos_ble_params,
+			      const uint8_t *qos_wifi_params)
 {
 	size_t pos;
 
@@ -200,7 +200,7 @@ static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
 	if (!strcmp(key, opt_descr[BLE_QOS_OPT_BLACKLIST])) {
-		u8_t data[sizeof(struct params_blacklist)];
+		uint8_t data[sizeof(struct params_blacklist)];
 
 		ssize_t len = read_cb(cb_arg, data, sizeof(data));
 
@@ -217,7 +217,7 @@ static int settings_set(const char *key, size_t len_rd,
 		__ASSERT_NO_MSG(false);
 
 	} else if (!strcmp(key, opt_descr[BLE_QOS_OPT_PARAM_BLE])) {
-		u8_t data[sizeof(struct params_ble)];
+		uint8_t data[sizeof(struct params_ble)];
 
 		ssize_t len = read_cb(cb_arg, data, sizeof(data));
 
@@ -230,7 +230,7 @@ static int settings_set(const char *key, size_t len_rd,
 		update_parameters(data, NULL);
 
 	} else if (!strcmp(key, opt_descr[BLE_QOS_OPT_PARAM_WIFI])) {
-		u8_t data[sizeof(struct params_wifi)];
+		uint8_t data[sizeof(struct params_wifi)];
 
 		ssize_t len = read_cb(cb_arg, data, sizeof(data));
 
@@ -249,7 +249,7 @@ static int settings_set(const char *key, size_t len_rd,
 SETTINGS_STATIC_HANDLER_DEFINE(ble_qos, MODULE_NAME, NULL, settings_set, NULL,
 			       NULL);
 
-static void send_uart_data(struct device *cdc_dev, const u8_t *str, int str_len)
+static void send_uart_data(struct device *cdc_dev, const uint8_t *str, int str_len)
 {
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 	int sent = uart_fifo_fill(cdc_dev, str, str_len);
@@ -272,8 +272,8 @@ static void ble_chn_stats_print(bool update_channel_map)
 {
 	char str[64];
 	int str_len, part_len;
-	s16_t chn_rating;
-	u8_t chn_freq, chn_state;
+	int16_t chn_rating;
+	uint8_t chn_freq, chn_state;
 
 	if (!IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE)) {
 		return;
@@ -281,7 +281,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 
 	if (IS_ENABLED(CONFIG_UART_LINE_CTRL)) {
 		int err;
-		u32_t cdc_val;
+		uint32_t cdc_val;
 
 		/* Repeated to monitor CDC state */
 		err = uart_line_ctrl_get(cdc_dev,
@@ -305,7 +305,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 			str,
 			sizeof(str),
 			"[%08" PRIu32 "]Channel map update\n",
-			(u32_t)k_cycle_get_32());
+			(uint32_t)k_cycle_get_32());
 		if (str_len <= 0 || str_len > sizeof(str)) {
 			LOG_ERR("Encoding error");
 			return;
@@ -324,7 +324,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 	send_uart_data(cdc_dev, str, str_len);
 
 	str_len = 0;
-	for (u8_t i = 0; i < CHMAP_BLE_CHANNEL_COUNT; i++) {
+	for (uint8_t i = 0; i < CHMAP_BLE_CHANNEL_COUNT; i++) {
 		chmap_filter_chn_info_get(
 			chmap_inst,
 			i,
@@ -358,13 +358,13 @@ static void ble_chn_stats_print(bool update_channel_map)
 	send_uart_data(cdc_dev, str, str_len);
 }
 
-static void hid_pkt_stats_print(u32_t ble_recv)
+static void hid_pkt_stats_print(uint32_t ble_recv)
 {
-	static u32_t prev_ble;
-	static u32_t prev_timestamp;
-	u32_t timestamp;
-	u32_t time_diff, rate_diff;
-	u32_t ble_rate;
+	static uint32_t prev_ble;
+	static uint32_t prev_timestamp;
+	uint32_t timestamp;
+	uint32_t time_diff, rate_diff;
+	uint32_t ble_rate;
 	char str[64];
 	int str_len;
 
@@ -407,7 +407,7 @@ static void hid_pkt_stats_print(u32_t ble_recv)
 
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
-	u8_t *subevent_code;
+	uint8_t *subevent_code;
 	hci_vs_subevent_qos_conn_event_report_t *evt;
 
 	subevent_code = net_buf_simple_pull_mem(
@@ -466,7 +466,7 @@ static void enable_qos_reporting(void)
 	}
 }
 
-static void store_config(const u8_t opt_id, const u8_t *data,
+static void store_config(const uint8_t opt_id, const uint8_t *data,
 			 const size_t data_size)
 {
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
@@ -486,7 +486,7 @@ static void store_config(const u8_t opt_id, const u8_t *data,
 	}
 }
 
-static void update_config(const u8_t opt_id, const u8_t *data,
+static void update_config(const uint8_t opt_id, const uint8_t *data,
 			  const size_t size)
 {
 	switch (opt_id) {
@@ -530,7 +530,7 @@ static void update_config(const u8_t opt_id, const u8_t *data,
 	}
 }
 
-static void fill_qos_ble_params(u8_t *data, size_t *size)
+static void fill_qos_ble_params(uint8_t *data, size_t *size)
 {
 	struct chmap_filter_params chmap_params;
 	size_t pos = 0;
@@ -567,7 +567,7 @@ static void fill_qos_ble_params(u8_t *data, size_t *size)
 	*size = pos;
 }
 
-static void fill_qos_wifi_params(u8_t *data, size_t *size)
+static void fill_qos_wifi_params(uint8_t *data, size_t *size)
 {
 	struct chmap_filter_params chmap_params;
 	size_t pos = 0;
@@ -586,7 +586,7 @@ static void fill_qos_wifi_params(u8_t *data, size_t *size)
 	*size = pos;
 }
 
-static void fill_qos_channel_map(u8_t *data, size_t *size)
+static void fill_qos_channel_map(uint8_t *data, size_t *size)
 {
 	struct params_chmap qos_chmap;
 
@@ -597,14 +597,14 @@ static void fill_qos_channel_map(u8_t *data, size_t *size)
 	*size = sizeof(qos_chmap);
 }
 
-static void fill_qos_blacklist(u8_t *data, size_t *size)
+static void fill_qos_blacklist(uint8_t *data, size_t *size)
 {
 	sys_put_le16(chmap_filter_wifi_blacklist_get(), data);
 
 	*size = sizeof(struct params_blacklist);
 }
 
-static void fetch_config(const u8_t opt_id, u8_t *data, size_t *size)
+static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 {
 	switch (opt_id) {
 	case BLE_QOS_OPT_BLACKLIST:
@@ -632,8 +632,8 @@ static bool event_handler(const struct event_header *eh)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE) &&
 	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
-		static s32_t hid_pkt_recv_count;
-		static u32_t cdc_notify_count;
+		static int32_t hid_pkt_recv_count;
+		static uint32_t cdc_notify_count;
 
 		/* Count number of HID packets received via BLE. */
 		/* Send stats printout via CDC every 100 packets. */
@@ -752,8 +752,8 @@ static void ble_qos_thread_fn(void)
 		}
 
 		/* Check and apply new blacklist received via config channel */
-		u16_t blacklist_update =
-			(u16_t) atomic_set(&new_blacklist, INVALID_BLACKLIST);
+		uint16_t blacklist_update =
+			(uint16_t) atomic_set(&new_blacklist, INVALID_BLACKLIST);
 
 		if (blacklist_update != INVALID_BLACKLIST) {
 			err = chmap_filter_blacklist_set(
@@ -777,7 +777,7 @@ static void ble_qos_thread_fn(void)
 			continue;
 		}
 
-		u8_t *chmap;
+		uint8_t *chmap;
 
 		chmap = chmap_filter_suggested_map_get(chmap_inst);
 

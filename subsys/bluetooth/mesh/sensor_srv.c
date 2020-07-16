@@ -22,7 +22,7 @@
 	SYS_SLIST_FOR_EACH_CONTAINER(_list, _node, state.node)
 
 static struct bt_mesh_sensor *sensor_get(struct bt_mesh_sensor_srv *srv,
-					 u16_t id)
+					 uint16_t id)
 {
 	struct bt_mesh_sensor *sensor;
 
@@ -36,9 +36,9 @@ static struct bt_mesh_sensor *sensor_get(struct bt_mesh_sensor_srv *srv,
 	return NULL;
 }
 
-static u16_t tolerance_encode(const struct sensor_value *tol)
+static uint16_t tolerance_encode(const struct sensor_value *tol)
 {
-	u64_t tol_mill = 1000000L * tol->val1 + tol->val2;
+	uint64_t tol_mill = 1000000L * tol->val1 + tol->val2;
 
 	if (tol_mill > (1000000L * 100L)) {
 		return 0;
@@ -66,7 +66,8 @@ static void cadence_store(const struct bt_mesh_sensor_srv *srv)
 		}
 	}
 
-	if (bt_mesh_model_data_store(srv->model, false, buf.data, buf.len)) {
+	if (bt_mesh_model_data_store(srv->model, false, NULL,
+				     buf.data, buf.len)) {
 		BT_ERR("Sensor server data store failed");
 	}
 }
@@ -80,8 +81,8 @@ static void sensor_descriptor_encode(struct net_buf_simple *buf,
 	const struct bt_mesh_sensor_descriptor *d =
 		sensor->descriptor ? sensor->descriptor : &dummy;
 
-	u16_t tol_pos = tolerance_encode(&d->tolerance.positive);
-	u16_t tol_neg = tolerance_encode(&d->tolerance.negative);
+	uint16_t tol_pos = tolerance_encode(&d->tolerance.positive);
+	uint16_t tol_neg = tolerance_encode(&d->tolerance.negative);
 
 	net_buf_simple_add_u8(buf, tol_pos & 0xff);
 	net_buf_simple_add_u8(buf,
@@ -152,7 +153,7 @@ static void handle_descriptor_get(struct bt_mesh_model *mod,
 	struct bt_mesh_sensor *sensor;
 
 	if (buf->len == 2) {
-		u16_t id = net_buf_simple_pull_le16(buf);
+		uint16_t id = net_buf_simple_pull_le16(buf);
 
 		if (id == BT_MESH_PROP_ID_PROHIBITED) {
 			return;
@@ -198,7 +199,7 @@ static void handle_get(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_sensor *sensor;
 
 	if (buf->len == 2) {
-		u16_t id = net_buf_simple_pull_le16(buf);
+		uint16_t id = net_buf_simple_pull_le16(buf);
 
 		if (id == BT_MESH_PROP_ID_PROHIBITED) {
 			return;
@@ -227,7 +228,7 @@ static const struct bt_mesh_sensor_column *
 column_get(const struct bt_mesh_sensor_series *series,
 	   const struct sensor_value *val)
 {
-	for (u32_t i = 0; i < series->column_count; ++i) {
+	for (uint32_t i = 0; i < series->column_count; ++i) {
 		if (series->columns[i].start.val1 == val->val1 &&
 		    series->columns[i].start.val2 == val->val2) {
 			return &series->columns[i];
@@ -248,7 +249,7 @@ static void handle_column_get(struct bt_mesh_model *mod,
 		return;
 	}
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED) {
 		return;
@@ -310,7 +311,7 @@ static void handle_series_get(struct bt_mesh_model *mod,
 		return;
 	}
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED) {
 		return;
@@ -355,7 +356,7 @@ static void handle_series_get(struct bt_mesh_model *mod,
 		return;
 	}
 
-	for (u32_t i = 0; i < sensor->series.column_count; ++i) {
+	for (uint32_t i = 0; i < sensor->series.column_count; ++i) {
 		const struct bt_mesh_sensor_column *col =
 			&sensor->series.columns[i];
 
@@ -394,7 +395,7 @@ static void handle_cadence_get(struct bt_mesh_model *mod,
 {
 	struct bt_mesh_sensor_srv *srv = mod->user_data;
 	struct bt_mesh_sensor *sensor;
-	u16_t id;
+	uint16_t id;
 	int err;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_SENSOR_OP_CADENCE_STATUS,
@@ -430,7 +431,7 @@ static void cadence_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 {
 	struct bt_mesh_sensor_srv *srv = mod->user_data;
 	struct bt_mesh_sensor *sensor;
-	u16_t id;
+	uint16_t id;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_SENSOR_OP_CADENCE_STATUS,
 				 BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS);
@@ -450,7 +451,7 @@ static void cadence_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	struct bt_mesh_sensor_threshold threshold;
-	u8_t period_div, min_int;
+	uint8_t period_div, min_int;
 	int err;
 
 	err = sensor_cadence_decode(buf, sensor->type, &period_div, &min_int,
@@ -513,7 +514,7 @@ static void handle_settings_get(struct bt_mesh_model *mod,
 {
 	struct bt_mesh_sensor_srv *srv = mod->user_data;
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED) {
 		return;
@@ -533,7 +534,7 @@ static void handle_settings_get(struct bt_mesh_model *mod,
 		goto respond;
 	}
 
-	for (u32_t i = 0; i < MIN(CONFIG_BT_MESH_SENSOR_SRV_SETTINGS_MAX,
+	for (uint32_t i = 0; i < MIN(CONFIG_BT_MESH_SENSOR_SRV_SETTINGS_MAX,
 				  sensor->settings.count);
 	     ++i) {
 		net_buf_simple_add_le16(&rsp,
@@ -545,9 +546,9 @@ respond:
 }
 
 static const struct bt_mesh_sensor_setting *
-setting_get(struct bt_mesh_sensor *sensor, u16_t setting_id)
+setting_get(struct bt_mesh_sensor *sensor, uint16_t setting_id)
 {
-	for (u32_t i = 0; i < sensor->settings.count; i++) {
+	for (uint32_t i = 0; i < sensor->settings.count; i++) {
 		if (sensor->settings.list[i].type->id == setting_id) {
 			return &sensor->settings.list[i];
 		}
@@ -560,8 +561,8 @@ static void handle_setting_get(struct bt_mesh_model *mod,
 			       struct net_buf_simple *buf)
 {
 	struct bt_mesh_sensor_srv *srv = mod->user_data;
-	u16_t id = net_buf_simple_pull_le16(buf);
-	u16_t setting_id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t setting_id = net_buf_simple_pull_le16(buf);
 	int err;
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED ||
@@ -587,7 +588,7 @@ static void handle_setting_get(struct bt_mesh_model *mod,
 		goto respond;
 	}
 
-	u8_t minlen = rsp.len;
+	uint8_t minlen = rsp.len;
 
 	net_buf_simple_add_u8(&rsp, setting->set ? 0x03 : 0x01);
 
@@ -612,8 +613,8 @@ static void setting_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf, bool ack)
 {
 	struct bt_mesh_sensor_srv *srv = mod->user_data;
-	u16_t id = net_buf_simple_pull_le16(buf);
-	u16_t setting_id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t setting_id = net_buf_simple_pull_le16(buf);
 	int err;
 
 	if (id == BT_MESH_PROP_ID_PROHIBITED ||
@@ -653,7 +654,7 @@ static void setting_set(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 
 	setting->set(sensor, setting, ctx, values);
 
-	u8_t minlen = rsp.len;
+	uint8_t minlen = rsp.len;
 
 	net_buf_simple_add_u8(&rsp, 0x03); /* RW */
 
@@ -718,7 +719,7 @@ static int sensor_srv_init(struct bt_mesh_model *mod)
 	/* Establish a sorted list of sensors, as this is a requirement when
 	 * sending multiple sensor values in one message.
 	 */
-	u16_t min_id = 0;
+	uint16_t min_id = 0;
 
 	for (int count = 0; count < srv->sensor_count; ++count) {
 		struct bt_mesh_sensor *best = NULL;
@@ -772,8 +773,8 @@ static int sensor_srv_settings_set(struct bt_mesh_model *mod, size_t len_rd,
 
 	while (buf.len) {
 		struct bt_mesh_sensor *s;
-		u8_t pub_div;
-		u16_t id = net_buf_simple_pull_le16(&buf);
+		uint8_t pub_div;
+		uint16_t id = net_buf_simple_pull_le16(&buf);
 
 		s = sensor_get(srv, id);
 		if (!s) {
@@ -811,9 +812,9 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_srv_cb = {
  *  @return The publish interval of the sensor measured in number of published
  *          messages by the server.
  */
-static u16_t pub_int_get(const struct bt_mesh_sensor *sensor, u8_t period_div)
+static uint16_t pub_int_get(const struct bt_mesh_sensor *sensor, uint8_t period_div)
 {
-	u8_t div = (sensor->state.pub_div * sensor->state.fast_pub);
+	uint8_t div = (sensor->state.pub_div * sensor->state.fast_pub);
 
 	return (1U << MAX(0, period_div - div));
 }
@@ -827,11 +828,11 @@ static u16_t pub_int_get(const struct bt_mesh_sensor *sensor, u8_t period_div)
  *  @return The minimum interval of the sensor measured in number of published
  *          messages by the server.
  */
-static u16_t min_int_get(const struct bt_mesh_sensor *sensor, u8_t period_div,
-			 u32_t base_period)
+static uint16_t min_int_get(const struct bt_mesh_sensor *sensor, uint8_t period_div,
+			 uint32_t base_period)
 {
-	u32_t pub_int = (base_period >> period_div);
-	u32_t min_int = (1 << sensor->state.min_int);
+	uint32_t pub_int = (base_period >> period_div);
+	uint32_t min_int = (1 << sensor->state.min_int);
 
 	return ceiling_fraction(min_int, pub_int);
 }
@@ -848,10 +849,10 @@ static u16_t min_int_get(const struct bt_mesh_sensor *sensor, u8_t period_div,
  *  @param base_period Server's original base period.
  */
 static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
-			struct bt_mesh_sensor *s, u8_t period_div,
-			u32_t base_period)
+			struct bt_mesh_sensor *s, uint8_t period_div,
+			uint32_t base_period)
 {
-	u16_t min_int = min_int_get(s, period_div, base_period);
+	uint16_t min_int = min_int_get(s, period_div, base_period);
 	int err;
 
 	if (srv->seq - s->state.seq < min_int) {
@@ -866,7 +867,7 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 	}
 
 	bool delta_triggered = bt_mesh_sensor_delta_threshold(s, value);
-	u16_t interval = pub_int_get(s, period_div);
+	uint16_t interval = pub_int_get(s, period_div);
 
 	if (!delta_triggered && srv->seq - s->state.seq < interval) {
 		return;
@@ -888,8 +889,8 @@ int _bt_mesh_sensor_srv_update_handler(struct bt_mesh_model *mod)
 
 	bt_mesh_model_msg_init(srv->pub.msg, BT_MESH_SENSOR_OP_STATUS);
 
-	u32_t original_len = srv->pub.msg->len;
-	u8_t period_div = srv->pub.period_div;
+	uint32_t original_len = srv->pub.msg->len;
+	uint8_t period_div = srv->pub.period_div;
 
 	BT_DBG("#%u Period: %u ms Divisor: %u (%s)", srv->seq,
 	       bt_mesh_model_pub_period_get(mod), period_div,
@@ -898,7 +899,7 @@ int _bt_mesh_sensor_srv_update_handler(struct bt_mesh_model *mod)
 	srv->pub.period_div = 0;
 	srv->pub.fast_period = 0;
 
-	u32_t base_period = bt_mesh_model_pub_period_get(mod);
+	uint32_t base_period = bt_mesh_model_pub_period_get(mod);
 
 	SENSOR_FOR_EACH(&srv->sensors, s)
 	{

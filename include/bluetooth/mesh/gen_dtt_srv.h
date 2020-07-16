@@ -57,7 +57,7 @@ struct bt_mesh_dtt_srv;
 /** Generic Default Transition Time server instance. */
 struct bt_mesh_dtt_srv {
 	/** Current transition time in milliseconds */
-	u32_t transition_time;
+	uint32_t transition_time;
 
 	/** @brief Update handler for the transition time state.
 	 *
@@ -73,8 +73,8 @@ struct bt_mesh_dtt_srv {
 	 */
 	void (*const update)(struct bt_mesh_dtt_srv *srv,
 			     struct bt_mesh_msg_ctx *ctx,
-			     u32_t old_transition_time,
-			     u32_t new_transition_time);
+			     uint32_t old_transition_time,
+			     uint32_t new_transition_time);
 	/** Composition data Model entry pointer. */
 	struct bt_mesh_model *model;
 	/** Model publish parameters. */
@@ -90,7 +90,7 @@ struct bt_mesh_dtt_srv {
  * @param[in] srv Server to set the DTT of.
  * @param[in] transition_time New Default Transition Time.
  */
-void bt_mesh_dtt_srv_set(struct bt_mesh_dtt_srv *srv, u32_t transition_time);
+void bt_mesh_dtt_srv_set(struct bt_mesh_dtt_srv *srv, uint32_t transition_time);
 
 /** @brief Publish the current transition time.
  *

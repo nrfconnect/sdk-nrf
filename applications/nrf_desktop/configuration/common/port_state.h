@@ -16,8 +16,8 @@ extern "C" {
 #endif
 
 struct pin_state {
-	u32_t pin;
-	u32_t val;
+	uint32_t pin;
+	uint32_t val;
 };
 
 struct port_state {

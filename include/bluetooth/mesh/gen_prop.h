@@ -90,7 +90,7 @@ enum bt_mesh_prop_srv_kind {
 /** Property representation. */
 struct bt_mesh_prop {
 	/** Property ID. @sa bt_mesh_property_ids. */
-	u16_t id;
+	uint16_t id;
 	/** User access flags for the property. */
 	enum bt_mesh_prop_access user_access;
 };
@@ -99,7 +99,7 @@ struct bt_mesh_prop {
 struct bt_mesh_prop_val {
 	struct bt_mesh_prop meta; /**< Metadata for this property. */
 	size_t size; /**< Size of the property value. */
-	u8_t *value; /**< Property value. */
+	uint8_t *value; /**< Property value. */
 };
 
 #ifdef __cplusplus

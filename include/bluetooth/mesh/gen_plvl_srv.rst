@@ -20,7 +20,7 @@ The Generic Power Level Setup Server provides access to the two metastates, Defa
 States
 =======
 
-**Generic Power Level**: ``u16_t``
+**Generic Power Level**: ``uint16_t``
 
 The Generic Power Level state controls the Power level of an element, and ranges from 0 to 65535.
 The Generic Power Level state is bound to the Generic Level State of the :ref:`bt_mesh_lvl_srv_readme`:
@@ -47,7 +47,7 @@ The Power state power up behavior is determined by the On Power Up state of the 
 
 The user is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_plvl_srv_handlers` handler structure.
 
-**Default Power**: ``s16_t``
+**Default Power**: ``int16_t``
 
 The Default Power state is a metastate that controls the default non-zero Generic Power Level.
 It is used when the Generic Power Level turns on, but its exact level is not specified.

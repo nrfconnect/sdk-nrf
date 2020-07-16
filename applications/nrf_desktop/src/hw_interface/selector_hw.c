@@ -35,7 +35,7 @@ struct selector {
 	const struct selector_config *config;
 	struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
 	struct k_delayed_work work;
-	u8_t position;
+	uint8_t position;
 };
 
 static struct device *gpio_dev[ARRAY_SIZE(port_map)];
@@ -139,12 +139,12 @@ static int disable_interrupts_nolock(struct selector *selector)
 }
 
 static void selector_isr(struct device *dev, struct gpio_callback *cb,
-			 u32_t pins_mask)
+			 uint32_t pins_mask)
 {
-	u8_t port = dev - gpio_dev[0];
+	uint8_t port = dev - gpio_dev[0];
 	struct selector *sel;
 
-	sel = CONTAINER_OF((u8_t *)cb - port * sizeof(sel->gpio_cb[0]),
+	sel = CONTAINER_OF((uint8_t *)cb - port * sizeof(sel->gpio_cb[0]),
 			   struct selector,
 			   gpio_cb);
 	disable_interrupts_nolock(sel);
@@ -176,7 +176,7 @@ static void selector_work_fn(struct k_work *w)
 static int configure_callbacks(struct selector *selector)
 {
 	const struct gpio_pin *sel_pins = selector->config->pins;
-	u32_t bitmask[ARRAY_SIZE(gpio_dev)] = {0};
+	uint32_t bitmask[ARRAY_SIZE(gpio_dev)] = {0};
 	int err = 0;
 
 	__ASSERT_NO_MSG(selector->config->pins_size > 0);

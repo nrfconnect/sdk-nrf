@@ -78,7 +78,7 @@ struct event_dyndata {
 	size_t size;
 
 	/** Dynamic data. */
-	u8_t data[0];
+	uint8_t data[0];
 };
 
 
@@ -112,7 +112,7 @@ struct event_info {
 			   const struct event_header *eh);
 
 	/** Number of logged data fields. */
-	const u8_t log_arg_cnt;
+	const uint8_t log_arg_cnt;
 
 	/** Labels of logged data fields. */
 	const char **log_arg_labels;

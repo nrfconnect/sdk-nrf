@@ -48,10 +48,10 @@ static void handle_last_status(struct bt_mesh_model *mod,
 	}
 
 	struct bt_mesh_plvl_cli *cli = mod->user_data;
-	u16_t last = net_buf_simple_pull_le16(buf);
+	uint16_t last = net_buf_simple_pull_le16(buf);
 
 	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LEVEL_STATUS, ctx)) {
-		u16_t *rsp = cli->ack_ctx.user_data;
+		uint16_t *rsp = cli->ack_ctx.user_data;
 		*rsp = last;
 		model_ack_rx(&cli->ack_ctx);
 	}
@@ -70,10 +70,10 @@ static void handle_default_status(struct bt_mesh_model *mod,
 	}
 
 	struct bt_mesh_plvl_cli *cli = mod->user_data;
-	u16_t default_lvl = net_buf_simple_pull_le16(buf);
+	uint16_t default_lvl = net_buf_simple_pull_le16(buf);
 
 	if (model_ack_match(&cli->ack_ctx, BT_MESH_PLVL_OP_LEVEL_STATUS, ctx)) {
-		u16_t *rsp = cli->ack_ctx.user_data;
+		uint16_t *rsp = cli->ack_ctx.user_data;
 		*rsp = default_lvl;
 		model_ack_rx(&cli->ack_ctx);
 	}
@@ -229,7 +229,7 @@ int bt_mesh_plvl_cli_range_set_unack(struct bt_mesh_plvl_cli *cli,
 }
 
 int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
-				 struct bt_mesh_msg_ctx *ctx, u16_t *rsp)
+				 struct bt_mesh_msg_ctx *ctx, uint16_t *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_PLVL_OP_DEFAULT_GET,
 				 BT_MESH_PLVL_MSG_LEN_DEFAULT_GET);
@@ -242,7 +242,7 @@ int bt_mesh_plvl_cli_default_get(struct bt_mesh_plvl_cli *cli,
 
 int bt_mesh_plvl_cli_default_set(struct bt_mesh_plvl_cli *cli,
 				 struct bt_mesh_msg_ctx *ctx,
-				 u16_t default_power, u16_t *rsp)
+				 uint16_t default_power, uint16_t *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_PLVL_OP_DEFAULT_SET,
 				 BT_MESH_PLVL_MSG_LEN_DEFAULT_SET);
@@ -256,7 +256,7 @@ int bt_mesh_plvl_cli_default_set(struct bt_mesh_plvl_cli *cli,
 
 int bt_mesh_plvl_cli_default_set_unack(struct bt_mesh_plvl_cli *cli,
 				       struct bt_mesh_msg_ctx *ctx,
-				       u16_t default_power)
+				       uint16_t default_power)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_PLVL_OP_DEFAULT_SET_UNACK,
 				 BT_MESH_PLVL_MSG_LEN_DEFAULT_SET);
@@ -267,7 +267,7 @@ int bt_mesh_plvl_cli_default_set_unack(struct bt_mesh_plvl_cli *cli,
 }
 
 int bt_mesh_plvl_cli_last_get(struct bt_mesh_plvl_cli *cli,
-			      struct bt_mesh_msg_ctx *ctx, u16_t *rsp)
+			      struct bt_mesh_msg_ctx *ctx, uint16_t *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_PLVL_OP_LAST_GET,
 				 BT_MESH_PLVL_MSG_LEN_LAST_GET);

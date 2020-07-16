@@ -13,17 +13,17 @@
 
 K_FIFO_DEFINE(aggregator_fifo);
 
-static u32_t entry_count;
+static uint32_t entry_count;
 
 struct fifo_entry {
 	void *fifo_reserved;
-	u8_t data[ENTRY_MAX_SIZE];
+	uint8_t data[ENTRY_MAX_SIZE];
 };
 
 int aggregator_put(struct sensor_data in_data)
 {
 	struct fifo_entry *fifo_data = NULL;
-	u32_t  lock = irq_lock();
+	uint32_t  lock = irq_lock();
 	int    err  = 0;
 
 	if (entry_count == FIFO_MAX_ELEMENT_COUNT) {
@@ -62,7 +62,7 @@ int aggregator_get(struct sensor_data *out_data)
 		return -EINVAL;
 	}
 
-	u32_t lock = irq_lock();
+	uint32_t lock = irq_lock();
 
 	fifo_data = k_fifo_get(&aggregator_fifo, K_NO_WAIT);
 	if (fifo_data == NULL) {
@@ -84,7 +84,7 @@ exit:
 void aggregator_clear(void)
 {
 	void *fifo_data;
-	u32_t lock = irq_lock();
+	uint32_t lock = irq_lock();
 
 	while (1) {
 		fifo_data = k_fifo_get(&aggregator_fifo, K_NO_WAIT);

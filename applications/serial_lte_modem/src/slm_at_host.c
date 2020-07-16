@@ -64,14 +64,14 @@ enum shutdown_modes {
 
 static enum term_modes term_mode;
 static struct device *uart_dev;
-static u8_t at_buf[AT_MAX_CMD_LEN];
+static uint8_t at_buf[AT_MAX_CMD_LEN];
 static size_t at_buf_len;
 static struct k_work cmd_send_work;
 static const char termination[3] = { '\0', '\r', '\n' };
 
-static u8_t uart_rx_buf[UART_RX_LEN];
-static u8_t *uart_tx_buf;
-static u8_t buf_num;
+static uint8_t uart_rx_buf[UART_RX_LEN];
+static uint8_t *uart_tx_buf;
+static uint8_t buf_num;
 
 static K_SEM_DEFINE(tx_done, 0, 1);
 
@@ -85,7 +85,7 @@ extern struct at_param_list at_param_list;
 /* forward declaration */
 void slm_at_host_uninit(void);
 
-void rsp_send(const u8_t *str, size_t len)
+void rsp_send(const uint8_t *str, size_t len)
 {
 	int ret;
 
@@ -146,7 +146,7 @@ static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
 {
 	int ret = -EINVAL;
 	enum at_cmd_type type;
-	u16_t shutdown_mode;
+	uint16_t shutdown_mode;
 
 	ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);
 	if (ret < 0) {
@@ -339,7 +339,7 @@ done:
 	}
 }
 
-static void uart_rx_handler(u8_t character)
+static void uart_rx_handler(uint8_t character)
 {
 	static bool inside_quotes;
 	static size_t cmd_len;
@@ -458,7 +458,7 @@ int slm_at_host_init(void)
 	char *uart_dev_name;
 	int err;
 	enum term_modes mode = CONFIG_SLM_AT_HOST_TERMINATION;
-	u32_t start_time;
+	uint32_t start_time;
 
 	/* Choosing the termination mode */
 	if (mode < MODE_COUNT) {

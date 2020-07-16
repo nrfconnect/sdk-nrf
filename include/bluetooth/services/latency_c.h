@@ -35,13 +35,13 @@ struct bt_gatt_latency_c_cb {
 	 * @param[in] buf Latency data.
 	 * @param[in] len Latency data length.
 	 */
-	void (*latency_response)(const void *buf, u16_t len);
+	void (*latency_response)(const void *buf, uint16_t len);
 };
 
 /** @brief Latency client structure. */
 struct bt_gatt_latency_c {
 	/** Characteristic handle. */
-	u16_t handle;
+	uint16_t handle;
 
 	/** Latency parameter. */
 	struct bt_gatt_write_params latency_params;
@@ -101,7 +101,7 @@ int bt_gatt_latency_c_handles_assign(struct bt_gatt_dm *dm,
  *          request is waiting for a response.
  */
 int bt_gatt_latency_c_request(struct bt_gatt_latency_c *latency,
-			      const void *data, u16_t len);
+			      const void *data, uint16_t len);
 
 #ifdef __cplusplus
 }

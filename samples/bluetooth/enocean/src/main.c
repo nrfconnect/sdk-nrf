@@ -9,8 +9,8 @@
 #include <dk_buttons_and_leds.h>
 
 static void enocean_button(struct bt_enocean_device *device,
-			   enum bt_enocean_button_action action, u8_t changed,
-			   const u8_t *opt_data, size_t opt_data_len)
+			   enum bt_enocean_button_action action, uint8_t changed,
+			   const uint8_t *opt_data, size_t opt_data_len)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -36,7 +36,7 @@ static void enocean_button(struct bt_enocean_device *device,
 
 static void enocean_sensor(struct bt_enocean_device *device,
 			   const struct bt_enocean_sensor_data *data,
-			   const u8_t *opt_data, size_t opt_data_len)
+			   const uint8_t *opt_data, size_t opt_data_len)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 

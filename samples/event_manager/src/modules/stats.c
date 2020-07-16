@@ -16,9 +16,9 @@ LOG_MODULE_REGISTER(MODULE, STATS_LOG_LEVEL);
 
 #define STATS_ARR_SIZE 10
 
-static s32_t val_arr[STATS_ARR_SIZE];
+static int32_t val_arr[STATS_ARR_SIZE];
 
-static void add_to_stats(s32_t value)
+static void add_to_stats(int32_t value)
 {
 	static size_t ind;
 

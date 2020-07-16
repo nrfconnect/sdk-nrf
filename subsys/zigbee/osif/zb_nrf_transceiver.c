@@ -24,10 +24,10 @@ LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 /* Definition of FIFO queue entry for the received frame */
 typedef struct nrf_802154_rx_frame {
 	void	*fifo_reserved; /* 1st word reserved for the kernel's use. */
-	u8_t	*data; /* Pointer to a received frame. */
-	s8_t	power; /* Last received frame RSSI value. */
-	u8_t	lqi; /* Last received frame LQI value. */
-	u32_t	time; /* Timestamp in microseconds. */
+	uint8_t	*data; /* Pointer to a received frame. */
+	int8_t	power; /* Last received frame RSSI value. */
+	uint8_t	lqi; /* Last received frame LQI value. */
+	uint32_t	time; /* Timestamp in microseconds. */
 	bool	pending_bit;
 } rx_frame_t;
 
@@ -46,8 +46,8 @@ static struct {
 	/* Semaphore for waiting for end of energy detection procedure. */
 	struct k_sem sem;
 	volatile bool failed;   /* Energy detection procedure failed. */
-	volatile u32_t time_us; /* Duration of energy detection procedure. */
-	volatile u8_t rssi_val; /* Detected energy level. */
+	volatile uint32_t time_us; /* Duration of energy detection procedure. */
+	volatile uint8_t rssi_val; /* Detected energy level. */
 } energy_detect;
 
 static volatile bool acked_with_pending_bit;
@@ -123,7 +123,7 @@ void zb_trans_set_pan_id(zb_uint16_t pan_id)
 /* Sets the long address in the radio driver. */
 void zb_trans_set_long_addr(zb_ieee_addr_t long_addr)
 {
-	LOG_DBG("Function: %s, long addr: 0x%llx", __func__, (u64_t)*long_addr);
+	LOG_DBG("Function: %s, long addr: 0x%llx", __func__, (uint64_t)*long_addr);
 	nrf_802154_extended_address_set(long_addr);
 }
 
@@ -131,7 +131,7 @@ void zb_trans_set_long_addr(zb_ieee_addr_t long_addr)
 void zb_trans_set_short_addr(zb_uint16_t addr)
 {
 	LOG_DBG("Function: %s, 0x%x", __func__, addr);
-	nrf_802154_short_address_set((u8_t *)(&addr));
+	nrf_802154_short_address_set((uint8_t *)(&addr));
 }
 
 /* Start the energy detection procedure */
@@ -308,10 +308,10 @@ zb_bool_t zb_trans_set_pending_bit(zb_uint8_t *addr, zb_bool_t value,
 	LOG_DBG("Function: %s, value: %d", __func__, value);
 	if (!value) {
 		return (zb_bool_t)nrf_802154_pending_bit_for_addr_set(
-			(const u8_t *)addr, (bool)extended);
+			(const uint8_t *)addr, (bool)extended);
 	} else {
 		return (zb_bool_t)nrf_802154_pending_bit_for_addr_clear(
-			(const u8_t *)addr, (bool)extended);
+			(const uint8_t *)addr, (bool)extended);
 	}
 }
 
@@ -408,8 +408,8 @@ zb_uint8_t zb_trans_get_next_packet(zb_bufid_t buf)
  * @param[in]  power  RSSI of received frame or 0 if ACK was not requested.
  * @param[in]  lqi    LQI of received frame or 0 if ACK was not requested.
  */
-void nrf_802154_transmitted_raw(const u8_t *frame, u8_t *ack,
-				s8_t power, u8_t lqi)
+void nrf_802154_transmitted_raw(const uint8_t *frame, uint8_t *ack,
+				int8_t power, uint8_t lqi)
 {
 	ARG_UNUSED(frame);
 	ARG_UNUSED(power);
@@ -433,7 +433,7 @@ void nrf_802154_transmitted_raw(const u8_t *frame, u8_t *ack,
  * @param[in]  error  Reason of the failure.
  */
 
-void nrf_802154_transmit_failed(u8_t const *frame,
+void nrf_802154_transmit_failed(uint8_t const *frame,
 				nrf_802154_tx_error_t error)
 {
 	ARG_UNUSED(frame);
@@ -486,7 +486,7 @@ void nrf_802154_transmit_failed(u8_t const *frame,
 }
 
 /* Callback notifies about the start of the ACK frame transmission. */
-void nrf_802154_tx_ack_started(const u8_t *data)
+void nrf_802154_tx_ack_started(const uint8_t *data)
 {
     /* Check if the frame pending bit is set in ACK frame. */
 	acked_with_pending_bit = data[FRAME_PENDING_OFFSET] & FRAME_PENDING_BIT;
@@ -521,8 +521,8 @@ void nrf_802154_tx_ack_started(const u8_t *data)
  * @param[in]  power   RSSI of received frame.
  * @param[in]  lqi     LQI of received frame.
  */
-void nrf_802154_received_timestamp_raw(u8_t *data, s8_t power,
-				       u8_t lqi, u32_t time)
+void nrf_802154_received_timestamp_raw(uint8_t *data, int8_t power,
+				       uint8_t lqi, uint32_t time)
 {
 #ifdef CONFIG_RADIO_STATISTICS
 	zb_osif_get_radio_stats()->rx_successful++;
@@ -531,7 +531,7 @@ void nrf_802154_received_timestamp_raw(u8_t *data, s8_t power,
 	rx_frame_t *rx_frame_free_slot = NULL;
 
 	/* Find free slot for frame */
-	for (u32_t i = 0; i < ARRAY_SIZE(rx_frames); i++) {
+	for (uint32_t i = 0; i < ARRAY_SIZE(rx_frames); i++) {
 		if (rx_frames[i].data == NULL) {
 			rx_frame_free_slot = &rx_frames[i];
 			break;
@@ -598,7 +598,7 @@ void nrf_802154_receive_failed(nrf_802154_rx_error_t error)
 }
 
 /* Callback notify that Energy Detection procedure finished. */
-void nrf_802154_energy_detected(u8_t result)
+void nrf_802154_energy_detected(uint8_t result)
 {
 	energy_detect.rssi_val = result;
 	k_sem_give(&energy_detect.sem);

@@ -59,7 +59,7 @@ static void stop_generating_keys(void)
 	}
 }
 
-static void send_button_event(u16_t key_id, bool pressed)
+static void send_button_event(uint16_t key_id, bool pressed)
 {
 	struct button_event *event = new_button_event();
 
@@ -68,7 +68,7 @@ static void send_button_event(u16_t key_id, bool pressed)
 	EVENT_SUBMIT(event);
 }
 
-static bool gen_key_id(u16_t *generated_key)
+static bool gen_key_id(uint16_t *generated_key)
 {
 	if (cur_key_idx >= ARRAY_SIZE(simulated_key_sequence)) {
 		cur_key_idx = 0;
@@ -85,7 +85,7 @@ static bool gen_key_id(u16_t *generated_key)
 
 static bool generate_button_event(void)
 {
-	u16_t key_id;
+	uint16_t key_id;
 
 	if (!gen_key_id(&key_id)) {
 		return false;

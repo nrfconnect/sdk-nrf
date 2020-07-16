@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
+#include <random/rand32.h>
 #include "slm_util.h"
 #include "slm_at_mqtt.h"
 
@@ -61,18 +62,18 @@ static slm_at_cmd_list_t m_mqtt_at_list[AT_MQTT_MAX] = {
 static struct slm_mqtt_ctx {
 	bool connected;
 	bool sec_transport;
-	u8_t cid[MQTT_MAX_CID_LEN + 1];
+	uint8_t cid[MQTT_MAX_CID_LEN + 1];
 	struct mqtt_utf8 username;
-	u8_t uname[MQTT_MAX_USERNAME_LEN + 1];
+	uint8_t uname[MQTT_MAX_USERNAME_LEN + 1];
 	struct mqtt_utf8 password;
-	u8_t pword[MQTT_MAX_PASSWORD_LEN + 1];
+	uint8_t pword[MQTT_MAX_PASSWORD_LEN + 1];
 	char url[MQTT_MAX_URL_LEN + 1];
-	u32_t port;
-	u32_t sec_tag;
+	uint32_t port;
+	uint32_t sec_tag;
 } ctx;
 
 /* global functions defined in different files */
-void rsp_send(const u8_t *str, size_t len);
+void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -84,9 +85,9 @@ extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 static K_THREAD_STACK_DEFINE(mqtt_thread_stack, THREAD_STACK_SIZE);
 
 /* Buffers for MQTT client. */
-static u8_t rx_buffer[MQTT_MESSAGE_BUFFER_LEN];
-static u8_t tx_buffer[MQTT_MESSAGE_BUFFER_LEN];
-static u8_t payload_buf[MQTT_MESSAGE_BUFFER_LEN];
+static uint8_t rx_buffer[MQTT_MESSAGE_BUFFER_LEN];
+static uint8_t tx_buffer[MQTT_MESSAGE_BUFFER_LEN];
+static uint8_t payload_buf[MQTT_MESSAGE_BUFFER_LEN];
 
 /* The mqtt client struct */
 static struct mqtt_client client;
@@ -131,7 +132,7 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c,
 		int size = evt->param.publish.message.payload.len * 2;
 		char data_hex[size];
 
-		ret = slm_util_htoa((const u8_t *)&payload_buf,
+		ret = slm_util_htoa((const uint8_t *)&payload_buf,
 				evt->param.publish.message.payload.len,
 				data_hex, size);
 		if (ret < 0) {
@@ -492,21 +493,21 @@ static int do_mqtt_disconnect(void)
 	return err;
 }
 
-static int do_mqtt_publish(u16_t qos, u16_t retain,
-				u8_t *topic, size_t topic_len,
-				u8_t *msg, size_t msg_len)
+static int do_mqtt_publish(uint16_t qos, uint16_t retain,
+				uint8_t *topic, size_t topic_len,
+				uint8_t *msg, size_t msg_len)
 {
 	int err = -EINVAL;
 	struct mqtt_publish_param param;
 
 	if (qos <= MQTT_QOS_2_EXACTLY_ONCE) {
-		param.message.topic.qos = (u8_t)qos;
+		param.message.topic.qos = (uint8_t)qos;
 	} else {
 		return err;
 	}
 
 	if (retain <= 1) {
-		param.retain_flag = (u8_t)retain;
+		param.retain_flag = (uint8_t)retain;
 	} else {
 		return err;
 	}
@@ -520,10 +521,10 @@ static int do_mqtt_publish(u16_t qos, u16_t retain,
 	return mqtt_publish(&client, &param);
 }
 
-static int do_mqtt_subscribe(u16_t op,
-				u8_t *topic_buf,
+static int do_mqtt_subscribe(uint16_t op,
+				uint8_t *topic_buf,
 				size_t topic_len,
-				u16_t qos)
+				uint16_t qos)
 {
 	int err = -EINVAL;
 	struct mqtt_topic subscribe_topic;
@@ -535,7 +536,7 @@ static int do_mqtt_subscribe(u16_t op,
 	};
 
 	if (qos <= MQTT_QOS_2_EXACTLY_ONCE) {
-		subscribe_topic.qos = (u8_t)qos;
+		subscribe_topic.qos = (uint8_t)qos;
 	} else {
 		return err;
 	}
@@ -560,7 +561,7 @@ static int handle_at_mqtt_connect(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 
-	u16_t op;
+	uint16_t op;
 	size_t url_sz = MQTT_MAX_URL_LEN;
 	size_t cid_sz = MQTT_MAX_CID_LEN;
 	size_t username_sz = MQTT_MAX_USERNAME_LEN;
@@ -679,10 +680,10 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 
-	u16_t qos, retain, datatype;
-	u8_t topic[MQTT_MAX_TOPIC_LEN];
+	uint16_t qos, retain, datatype;
+	uint8_t topic[MQTT_MAX_TOPIC_LEN];
 	size_t topic_sz = MQTT_MAX_TOPIC_LEN;
-	u8_t msg[MQTT_MESSAGE_BUFFER_LEN];
+	uint8_t msg[MQTT_MESSAGE_BUFFER_LEN];
 	size_t msg_sz = MQTT_MESSAGE_BUFFER_LEN;
 
 	switch (cmd_type) {
@@ -714,7 +715,7 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 		}
 		if (datatype == DATATYPE_HEXADECIMAL) {
 			size_t data_len = msg_sz / 2;
-			u8_t data_hex[data_len];
+			uint8_t data_hex[data_len];
 
 			data_len = slm_util_atoh(msg, msg_sz,
 						data_hex, data_len);
@@ -755,7 +756,7 @@ static int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 static int handle_at_mqtt_subscribe(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t qos;
+	uint16_t qos;
 	char topic[MQTT_MAX_TOPIC_LEN];
 	int topic_sz = MQTT_MAX_TOPIC_LEN;
 

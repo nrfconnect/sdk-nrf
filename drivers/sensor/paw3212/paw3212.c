@@ -116,8 +116,8 @@ struct paw3212_data {
 	struct device                *spi_dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
-	s16_t                        x;
-	s16_t                        y;
+	int16_t                        x;
+	int16_t                        y;
 	sensor_trigger_handler_t     data_ready_handler;
 	struct k_work                trigger_handler_work;
 	struct k_delayed_work        init_work;
@@ -133,7 +133,7 @@ static const struct spi_config spi_cfg = {
 	.slave = DT_REG_ADDR(DT_DRV_INST(0)),
 };
 
-static const s32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
+static const int32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
 	[ASYNC_INIT_STEP_POWER_UP]  = 1,
 	[ASYNC_INIT_STEP_VERIFY_ID] = 0,
 	[ASYNC_INIT_STEP_CONFIGURE] = 0,
@@ -156,10 +156,10 @@ static struct paw3212_data paw3212_data;
 DEVICE_DECLARE(paw3212);
 
 
-static s16_t expand_s12(s16_t x)
+static int16_t expand_s12(int16_t x)
 {
 	/* Left shifting of negative values is undefined behavior, so we cannot
-	 * depend on automatic integer promotion (it will convert s16_t to int).
+	 * depend on automatic integer promotion (it will convert int16_t to int).
 	 * To expand sign we cast s16 to unsigned int and left shift it then
 	 * cast it to signed integer and do the right shift. Since type is
 	 * signed compiler will perform arithmetic shift. This last operation
@@ -191,7 +191,7 @@ static int spi_cs_ctrl(struct paw3212_data *dev_data, bool enable)
 	return err;
 }
 
-static int reg_read(struct paw3212_data *dev_data, u8_t reg, u8_t *buf)
+static int reg_read(struct paw3212_data *dev_data, uint8_t reg, uint8_t *buf)
 {
 	int err;
 
@@ -246,7 +246,7 @@ static int reg_read(struct paw3212_data *dev_data, u8_t reg, u8_t *buf)
 	return 0;
 }
 
-static int reg_write(struct paw3212_data *dev_data, u8_t reg, u8_t val)
+static int reg_write(struct paw3212_data *dev_data, uint8_t reg, uint8_t val)
 {
 	int err;
 
@@ -257,7 +257,7 @@ static int reg_write(struct paw3212_data *dev_data, u8_t reg, u8_t val)
 		return err;
 	}
 
-	u8_t buf[] = {
+	uint8_t buf[] = {
 		SPI_WRITE_BIT | reg,
 		val
 	};
@@ -288,7 +288,7 @@ static int reg_write(struct paw3212_data *dev_data, u8_t reg, u8_t val)
 	return 0;
 }
 
-static int update_cpi(struct paw3212_data *dev_data, u32_t cpi)
+static int update_cpi(struct paw3212_data *dev_data, uint32_t cpi)
 {
 	int err;
 
@@ -297,7 +297,7 @@ static int update_cpi(struct paw3212_data *dev_data, u32_t cpi)
 		return -EINVAL;
 	}
 
-	u8_t regval = cpi / PAW3212_CPI_STEP;
+	uint8_t regval = cpi / PAW3212_CPI_STEP;
 
 	LOG_INF("Set CPI: %u (requested: %u, reg:0x%" PRIx8 ")",
 		regval * PAW3212_CPI_STEP, cpi, regval);
@@ -328,10 +328,10 @@ static int update_cpi(struct paw3212_data *dev_data, u32_t cpi)
 	return err;
 }
 
-static int update_sleep_timeout(struct paw3212_data *dev_data, u8_t reg_addr,
-				u32_t timeout_ms)
+static int update_sleep_timeout(struct paw3212_data *dev_data, uint8_t reg_addr,
+				uint32_t timeout_ms)
 {
-	u32_t timeout_step_ms;
+	uint32_t timeout_step_ms;
 
 	switch (reg_addr) {
 	case PAW3212_REG_SLEEP1:
@@ -348,7 +348,7 @@ static int update_sleep_timeout(struct paw3212_data *dev_data, u8_t reg_addr,
 		return -ENOTSUP;
 	}
 
-	u32_t etm = timeout_ms / timeout_step_ms - 1;
+	uint32_t etm = timeout_ms / timeout_step_ms - 1;
 
 	if ((etm < PAW3212_ETM_MIN) || (etm > PAW3212_ETM_MAX)) {
 		LOG_WRN("Sleep timeout %" PRIu32 " out of range", timeout_ms);
@@ -369,7 +369,7 @@ static int update_sleep_timeout(struct paw3212_data *dev_data, u8_t reg_addr,
 		return err;
 	}
 
-	u8_t regval;
+	uint8_t regval;
 
 	err = reg_read(dev_data, reg_addr, &regval);
 	if (err) {
@@ -396,12 +396,12 @@ static int update_sleep_timeout(struct paw3212_data *dev_data, u8_t reg_addr,
 	return err;
 }
 
-static int update_sample_time(struct paw3212_data *dev_data, u8_t reg_addr,
-			      u32_t sample_time_ms)
+static int update_sample_time(struct paw3212_data *dev_data, uint8_t reg_addr,
+			      uint32_t sample_time_ms)
 {
-	u32_t sample_time_step;
-	u32_t sample_time_min;
-	u32_t sample_time_max;
+	uint32_t sample_time_step;
+	uint32_t sample_time_min;
+	uint32_t sample_time_max;
 
 	switch (reg_addr) {
 	case PAW3212_REG_SLEEP1:
@@ -428,7 +428,7 @@ static int update_sample_time(struct paw3212_data *dev_data, u8_t reg_addr,
 		return -EINVAL;
 	}
 
-	u8_t reg_freq = (sample_time_ms - sample_time_min) / sample_time_step;
+	uint8_t reg_freq = (sample_time_ms - sample_time_min) / sample_time_step;
 
 	LOG_INF("Set sleep%d sample time: %u (requested: %u, reg:0x%" PRIx8 ")",
 		reg_addr - PAW3212_REG_SLEEP1 + 1,
@@ -446,7 +446,7 @@ static int update_sample_time(struct paw3212_data *dev_data, u8_t reg_addr,
 		return err;
 	}
 
-	u8_t regval;
+	uint8_t regval;
 
 	err = reg_read(dev_data, reg_addr, &regval);
 	if (err) {
@@ -471,7 +471,7 @@ static int update_sample_time(struct paw3212_data *dev_data, u8_t reg_addr,
 	return err;
 }
 
-static int toggle_sleep_modes(struct paw3212_data *dev_data, u8_t reg_addr1, u8_t reg_addr2,
+static int toggle_sleep_modes(struct paw3212_data *dev_data, uint8_t reg_addr1, uint8_t reg_addr2,
 			      bool enable)
 {
 	int err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT,
@@ -481,7 +481,7 @@ static int toggle_sleep_modes(struct paw3212_data *dev_data, u8_t reg_addr1, u8_
 		return err;
 	}
 
-	u8_t regval;
+	uint8_t regval;
 
 	LOG_INF("%sable sleep", (enable) ? ("En") : ("Dis"));
 
@@ -492,7 +492,7 @@ static int toggle_sleep_modes(struct paw3212_data *dev_data, u8_t reg_addr1, u8_
 		return err;
 	}
 
-	u8_t sleep_enable_mask = BIT(PAW3212_SLP_ENH_POS) |
+	uint8_t sleep_enable_mask = BIT(PAW3212_SLP_ENH_POS) |
 				 BIT(PAW3212_SLP2_ENH_POS);
 
 	if (enable) {
@@ -537,7 +537,7 @@ static int toggle_sleep_modes(struct paw3212_data *dev_data, u8_t reg_addr1, u8_
 }
 
 static void irq_handler(struct device *gpiob, struct gpio_callback *cb,
-			u32_t pins)
+			uint32_t pins)
 {
 	int err;
 
@@ -596,7 +596,7 @@ static int paw3212_async_init_verify_id(struct paw3212_data *dev_data)
 {
 	int err;
 
-	u8_t product_id;
+	uint8_t product_id;
 	err = reg_read(dev_data, PAW3212_REG_PRODUCT_ID, &product_id);
 	if (err) {
 		LOG_ERR("Cannot obtain product ID");
@@ -618,7 +618,7 @@ static int paw3212_async_init_configure(struct paw3212_data *dev_data)
 
 	err = reg_write(dev_data, PAW3212_REG_WRITE_PROTECT, PAW3212_WPMAGIC);
 	if (!err) {
-		u8_t mouse_option = 0;
+		uint8_t mouse_option = 0;
 
 		if (IS_ENABLED(CONFIG_PAW3212_ORIENTATION_90)) {
 			mouse_option |= PAW3212_MOUSE_OPT_XY_SWAP |
@@ -774,7 +774,7 @@ static int paw3212_init(struct device *dev)
 static int paw3212_sample_fetch(struct device *dev, enum sensor_channel chan)
 {
 	struct paw3212_data *dev_data = &paw3212_data;
-	u8_t motion_status;
+	uint8_t motion_status;
 	int err;
 
 	ARG_UNUSED(dev);
@@ -795,8 +795,8 @@ static int paw3212_sample_fetch(struct device *dev, enum sensor_channel chan)
 	}
 
 	if ((motion_status & PAW3212_MOTION_STATUS_MOTION) != 0) {
-		u8_t x_low;
-		u8_t y_low;
+		uint8_t x_low;
+		uint8_t y_low;
 
 		if ((motion_status & PAW3212_MOTION_STATUS_DXOVF) != 0) {
 			LOG_WRN("X delta overflowed");
@@ -818,7 +818,7 @@ static int paw3212_sample_fetch(struct device *dev, enum sensor_channel chan)
 		}
 
 		if (IS_ENABLED(CONFIG_PAW3212_12_BIT_MODE)) {
-			u8_t xy_high;
+			uint8_t xy_high;
 
 			err = reg_read(dev_data, PAW3212_REG_DELTA_XY_HIGH,
 				       &xy_high);
@@ -830,8 +830,8 @@ static int paw3212_sample_fetch(struct device *dev, enum sensor_channel chan)
 			dev_data->x = PAW3212_DELTA_X(xy_high, x_low);
 			dev_data->y = PAW3212_DELTA_Y(xy_high, y_low);
 		} else {
-			dev_data->x = (s8_t)x_low;
-			dev_data->y = (s8_t)y_low;
+			dev_data->x = (int8_t)x_low;
+			dev_data->y = (int8_t)y_low;
 		}
 	} else {
 		dev_data->x = 0;
@@ -932,7 +932,7 @@ static int paw3212_attr_set(struct device *dev, enum sensor_channel chan,
 		return -EBUSY;
 	}
 
-	switch ((u32_t)attr) {
+	switch ((uint32_t)attr) {
 	case PAW3212_ATTR_CPI:
 		err = update_cpi(dev_data, PAW3212_SVALUE_TO_CPI(*val));
 		break;

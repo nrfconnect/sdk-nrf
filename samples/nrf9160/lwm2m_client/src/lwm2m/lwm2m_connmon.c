@@ -16,10 +16,10 @@ LOG_MODULE_REGISTER(app_lwm2m_connmon, CONFIG_APP_LOG_LEVEL);
 static struct modem_param_info modem_param;
 static struct k_work modem_data_work;
 static struct k_work modem_signal_work;
-static s32_t modem_rsrp;
+static int32_t modem_rsrp;
 
 /* LTE-FDD bearer & NB-IoT bearer */
-static u8_t bearers[2] = { 6U, 7U };
+static uint8_t bearers[2] = { 6U, 7U };
 
 static void modem_data_update(struct k_work *work)
 {
@@ -52,7 +52,7 @@ static void modem_data_update(struct k_work *work)
 		strlen(modem_param.network.apn.value_string),
 		LWM2M_RES_DATA_FLAG_RO);
 
-	lwm2m_engine_set_u32("4/0/8", (u32_t)modem_param.network.cellid_dec);
+	lwm2m_engine_set_u32("4/0/8", (uint32_t)modem_param.network.cellid_dec);
 	lwm2m_engine_set_u16("4/0/9", modem_param.network.mnc.value);
 	lwm2m_engine_set_u16("4/0/10", modem_param.network.mcc.value);
 
@@ -76,14 +76,14 @@ static void modem_signal_handler(char rsrp_value)
 		return;
 	}
 
-	modem_rsrp = (s8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
+	modem_rsrp = (int8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
 	LOG_DBG("rsrp:%d", modem_rsrp);
 	k_work_submit(&modem_signal_work);
 }
 
 static void modem_signal_update(struct k_work *work)
 {
-	static u32_t timestamp_prev;
+	static uint32_t timestamp_prev;
 
 	if ((timestamp_prev != 0) &&
 	    (k_uptime_get_32() - timestamp_prev <

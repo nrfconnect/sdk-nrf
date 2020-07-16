@@ -19,8 +19,8 @@
 #include "nrf_cc310_platform_entropy.h"
 #endif
 
-static int entropy_cc310_rng_get_entropy(struct device *dev, u8_t *buffer,
-					 u16_t length)
+static int entropy_cc310_rng_get_entropy(struct device *dev, uint8_t *buffer,
+					 uint16_t length)
 {
 	int res = -EINVAL;
 	size_t olen;

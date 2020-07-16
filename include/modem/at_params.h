@@ -51,11 +51,11 @@ enum at_param_type {
 /** @brief Parameter value. */
 union at_param_value {
 	/** Integer value. */
-	u32_t int_val;
+	uint32_t int_val;
 	/** String value. */
 	char *str_val;
-	/** Array of u32_t */
-	u32_t *array_val;
+	/** Array of uint32_t */
+	uint32_t *array_val;
 };
 
 /** @brief A parameter is defined with a type, length and value. */
@@ -124,7 +124,7 @@ void at_params_list_free(struct at_param_list *list);
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_short_put(const struct at_param_list *list, size_t index,
-			u16_t value);
+			uint16_t value);
 
 /**
  * @brief Add a parameter in the list at the specified index and assign it an
@@ -140,7 +140,7 @@ int at_params_short_put(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_int_put(const struct at_param_list *list, size_t index,
-		      u32_t value);
+		      uint32_t value);
 
 /**
  * @brief Add a parameter in the list at the specified index and assign it a
@@ -165,7 +165,7 @@ int at_params_string_put(const struct at_param_list *list, size_t index,
  * array type value.
  *
  * The parameter array value is copied and added to the list.
- * If a parameter exists at this index, it is replaced. Only numbers (u32_t)
+ * If a parameter exists at this index, it is replaced. Only numbers (uint32_t)
  * are currently supported. If the list contain compound values the parser
  * will try to convert the value. Either 0 will be stored or if the value start
  * with a numeric value that value will be converted, the rest of the value
@@ -180,7 +180,7 @@ int at_params_string_put(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_array_put(const struct at_param_list *list, size_t index,
-			const u32_t *array, size_t array_len);
+			const uint32_t *array, size_t array_len);
 
 /**
  * @brief Add a parameter in the list at the specified index and assign it a
@@ -226,7 +226,7 @@ int at_params_size_get(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_short_get(const struct at_param_list *list, size_t index,
-			u16_t *value);
+			uint16_t *value);
 
 /**
  * @brief Get a parameter value as an integer number.
@@ -242,7 +242,7 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_int_get(const struct at_param_list *list, size_t index,
-		      u32_t *value);
+		      uint32_t *value);
 
 /**
  * @brief Get a parameter value as a string.
@@ -282,7 +282,7 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_array_get(const struct at_param_list *list, size_t index,
-			u32_t *array, size_t *len);
+			uint32_t *array, size_t *len);
 
 /**
  * @brief Get the number of valid parameters in the list.
@@ -291,7 +291,7 @@ int at_params_array_get(const struct at_param_list *list, size_t index,
  *
  * @return The number of valid parameters until an empty parameter is found.
  */
-u32_t at_params_valid_count_get(const struct at_param_list *list);
+uint32_t at_params_valid_count_get(const struct at_param_list *list);
 
 /**
  * @brief Get parameter type for parameter at index

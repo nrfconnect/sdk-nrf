@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(BH1749, CONFIG_SENSOR_LOG_LEVEL);
 
 #define DT_DRV_COMPAT rohm_bh1749
 
-static const s32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
+static const int32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
 	[ASYNC_INIT_STEP_RESET_CHECK] = 2,
 	[ASYNC_INIT_RGB_ENABLE] = 0,
 	[ASYNC_INIT_STEP_CONFIGURE] = 0
@@ -44,7 +44,7 @@ static int bh1749_sample_fetch(struct device *dev, enum sensor_channel chan)
 
 {
 	struct bh1749_data *data = dev->driver_data;
-	u8_t status;
+	uint8_t status;
 
 	if (chan != SENSOR_CHAN_ALL) {
 		LOG_ERR("Unsupported sensor channel");
@@ -73,15 +73,15 @@ static int bh1749_sample_fetch(struct device *dev, enum sensor_channel chan)
 
 	if (i2c_burst_read(data->i2c, DT_REG_ADDR(DT_DRV_INST(0)),
 			   BH1749_RED_DATA_LSB,
-			   (u8_t *)data->sample_rgb_ir,
-			   BH1749_SAMPLES_TO_FETCH * sizeof(u16_t))) {
+			   (uint8_t *)data->sample_rgb_ir,
+			   BH1749_SAMPLES_TO_FETCH * sizeof(uint16_t))) {
 		LOG_ERR("Could not read sensor samples");
 		return -EIO;
 	}
 
 	if (IS_ENABLED(CONFIG_BH1749_TRIGGER)) {
 		/* Clearing interrupt by reading INTERRUPT register */
-		u8_t dummy;
+		uint8_t dummy;
 
 		if (i2c_reg_read_byte(data->i2c,
 				      DT_REG_ADDR(DT_DRV_INST(0)),
@@ -142,7 +142,7 @@ static int bh1749_channel_get(struct device *dev,
 
 static int bh1749_check(struct bh1749_data *data)
 {
-	u8_t manufacturer_id;
+	uint8_t manufacturer_id;
 
 	if (i2c_reg_read_byte(data->i2c, DT_REG_ADDR(DT_DRV_INST(0)),
 			      BH1749_MANUFACTURER_ID, &manufacturer_id)) {
@@ -157,7 +157,7 @@ static int bh1749_check(struct bh1749_data *data)
 		return -EIO;
 	}
 
-	u8_t part_id;
+	uint8_t part_id;
 
 	if (i2c_reg_read_byte(data->i2c, DT_REG_ADDR(DT_DRV_INST(0)),
 			      BH1749_SYSTEM_CONTROL, &part_id)) {
@@ -186,7 +186,7 @@ static int bh1749_sw_reset(struct device *dev)
 
 static int bh1749_rgb_measurement_enable(struct bh1749_data *data, bool enable)
 {
-	u8_t en = enable ?
+	uint8_t en = enable ?
 		  BH1749_MODE_CONTROL2_RGB_EN_ENABLE :
 		  BH1749_MODE_CONTROL2_RGB_EN_DISABLE;
 

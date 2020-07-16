@@ -12,13 +12,13 @@
 
 #include "dev_descr.h"
 
-static u8_t device_descr[] = {
+static uint8_t device_descr[] = {
 	[DEV_DESCR_LLPM_SUPPORT_POS] = IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM),
 };
 
 static ssize_t read_dev_descr(struct bt_conn *conn,
 			      const struct bt_gatt_attr *attr,
-			      void *buf, u16_t len, u16_t offset)
+			      void *buf, uint16_t len, uint16_t offset)
 {
 	__ASSERT_NO_MSG(attr != NULL);
 	__ASSERT_NO_MSG(attr->user_data != NULL);

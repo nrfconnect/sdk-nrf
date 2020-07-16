@@ -37,7 +37,7 @@ int ndef_file_setup(void);
  * @return  0 when update request has been added to the queue.
  *          Otherwise, error code.
  */
-int ndef_file_update(u8_t const *buff, u32_t size);
+int ndef_file_update(uint8_t const *buff, uint32_t size);
 
 /**
  * @brief Function for loading NDEF message from the flash file.
@@ -51,7 +51,7 @@ int ndef_file_update(u8_t const *buff, u32_t size);
  * @return  0 when NDEF message has been retrieved properly. Otherwise error
  * code is returned.
  */
-int ndef_file_load(u8_t *buff, u32_t size);
+int ndef_file_load(uint8_t *buff, uint32_t size);
 
 /**
  * @brief Function for creating the default NDEF message: URL "nordicsemi.com".
@@ -62,7 +62,7 @@ int ndef_file_load(u8_t *buff, u32_t size);
  *
  * @return 0 if the message has been created, error code otherwise.
  */
-int ndef_file_default_message(u8_t *buff, u32_t *size);
+int ndef_file_default_message(uint8_t *buff, uint32_t *size);
 
 /**
  * @brief Function for creating and storing the default NDEF message:
@@ -74,7 +74,7 @@ int ndef_file_default_message(u8_t *buff, u32_t *size);
  *
  * @return 0 if the message has been created, error code otherwise.
  */
-int ndef_restore_default(u8_t *buff, u32_t size);
+int ndef_restore_default(uint8_t *buff, uint32_t size);
 
 /** @} */
 

@@ -55,12 +55,12 @@ static const char *device_names[UART_DEVICE_COUNT] = {
 struct uart_rx_buf {
 	atomic_t ref_counter;
 	size_t len;
-	u8_t buf[UART_BUF_SIZE];
+	uint8_t buf[UART_BUF_SIZE];
 };
 
 struct uart_tx_buf {
 	struct ring_buf rb;
-	u32_t buf[UART_BUF_SIZE];
+	uint32_t buf[UART_BUF_SIZE];
 };
 
 BUILD_ASSERT((sizeof(struct uart_rx_buf) % UART_SLAB_ALIGNMENT) == 0);
@@ -72,7 +72,7 @@ K_MEM_SLAB_DEFINE(uart_rx_slab, UART_SLAB_BLOCK_SIZE, UART_SLAB_BLOCK_COUNT, UAR
 
 static struct device *devices[UART_DEVICE_COUNT];
 static struct uart_tx_buf uart_tx_ringbufs[UART_DEVICE_COUNT];
-static u32_t uart_default_baudrate[UART_DEVICE_COUNT];
+static uint32_t uart_default_baudrate[UART_DEVICE_COUNT];
 /* UART RX only enabled when there is one or more subscribers (power saving) */
 static int subscriber_count[UART_DEVICE_COUNT];
 static bool enable_rx_retry[UART_DEVICE_COUNT];
@@ -82,13 +82,13 @@ static bool framing_error_msg_sent[UART_DEVICE_COUNT];
 static char framing_error_msg[] =
 	"[UART FRAMING ERROR! CHECK BAUDRATE!]";
 
-static void enable_uart_rx(u8_t dev_idx);
-static void disable_uart_rx(u8_t dev_idx);
-static void set_uart_power_state(u8_t dev_idx, bool active);
-static int uart_tx_start(u8_t dev_idx);
-static void uart_tx_finish(u8_t dev_idx, size_t len);
+static void enable_uart_rx(uint8_t dev_idx);
+static void disable_uart_rx(uint8_t dev_idx);
+static void set_uart_power_state(uint8_t dev_idx, bool active);
+static int uart_tx_start(uint8_t dev_idx);
+static void uart_tx_finish(uint8_t dev_idx, size_t len);
 
-static inline struct uart_rx_buf *block_start_get(u8_t *buf)
+static inline struct uart_rx_buf *block_start_get(uint8_t *buf)
 {
 	size_t block_num;
 
@@ -230,7 +230,7 @@ static void uart_callback(struct uart_event *evt, void *user_data)
 	}
 }
 
-static void set_uart_baudrate(u8_t dev_idx, u32_t baudrate)
+static void set_uart_baudrate(uint8_t dev_idx, uint32_t baudrate)
 {
 	struct device *dev = devices[dev_idx];
 	struct uart_config cfg;
@@ -259,13 +259,13 @@ static void set_uart_baudrate(u8_t dev_idx, u32_t baudrate)
 	}
 }
 
-static void set_uart_power_state(u8_t dev_idx, bool active)
+static void set_uart_power_state(uint8_t dev_idx, bool active)
 {
 #if UART_SET_PM_STATE
 	struct device *dev = devices[dev_idx];
 	int err;
-	u32_t current_state;
-	u32_t target_state;
+	uint32_t current_state;
+	uint32_t target_state;
 
 	target_state = active ? DEVICE_PM_ACTIVE_STATE : DEVICE_PM_SUSPEND_STATE;
 
@@ -291,7 +291,7 @@ static void set_uart_power_state(u8_t dev_idx, bool active)
 #endif
 }
 
-static void enable_uart_rx(u8_t dev_idx)
+static void enable_uart_rx(uint8_t dev_idx)
 {
 	struct device *dev = devices[dev_idx];
 	int err;
@@ -317,7 +317,7 @@ static void enable_uart_rx(u8_t dev_idx)
 	}
 }
 
-static void disable_uart_rx(u8_t dev_idx)
+static void disable_uart_rx(uint8_t dev_idx)
 {
 	struct device *dev = devices[dev_idx];
 	int err;
@@ -329,11 +329,11 @@ static void disable_uart_rx(u8_t dev_idx)
 	}
 }
 
-static int uart_tx_start(u8_t dev_idx)
+static int uart_tx_start(uint8_t dev_idx)
 {
 	int len;
 	int err;
-	u8_t *buf;
+	uint8_t *buf;
 
 	len = ring_buf_get_claim(
 			&uart_tx_ringbufs[dev_idx].rb,
@@ -350,7 +350,7 @@ static int uart_tx_start(u8_t dev_idx)
 	return 0;
 }
 
-static void uart_tx_finish(u8_t dev_idx, size_t len)
+static void uart_tx_finish(uint8_t dev_idx, size_t len)
 {
 	int err;
 
@@ -360,10 +360,10 @@ static void uart_tx_finish(u8_t dev_idx, size_t len)
 	}
 }
 
-static int uart_tx_enqueue(u8_t *data, size_t data_len, u8_t dev_idx)
+static int uart_tx_enqueue(uint8_t *data, size_t data_len, uint8_t dev_idx)
 {
 	atomic_t started;
-	u32_t written;
+	uint32_t written;
 	int err;
 
 	written = ring_buf_put(&uart_tx_ringbufs[dev_idx].rb, data, data_len);
@@ -431,7 +431,7 @@ static bool event_handler(const struct event_header *eh)
 		const struct ble_data_event *event =
 			cast_ble_data_event(eh);
 		/* Only one BLE Service instance: always map to UART_0 */
-		u8_t dev_idx = 0;
+		uint8_t dev_idx = 0;
 
 		if (!devices[dev_idx]) {
 			return false;

@@ -31,7 +31,7 @@ extern "C" {
 struct hid_notification_event {
 	struct event_header header; /**< Event header. */
 
-	u8_t report_id; /**< HID report id. */
+	uint8_t report_id; /**< HID report id. */
 	bool enabled; /**< True if report is enabled. */
 };
 

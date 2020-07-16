@@ -31,17 +31,17 @@ enum discovery_state {
 
 static enum discovery_state state;
 
-static u16_t peer_vid;
-static u16_t peer_pid;
+static uint16_t peer_vid;
+static uint16_t peer_pid;
 static bool peer_llpm_support;
 static struct bt_conn *discovering_peer_conn;
 static const struct bt_uuid * const pnp_uuid = BT_UUID_DIS_PNP_ID;
 
 static struct k_work next_discovery_step;
 
-#define VID_POS_IN_PNP_ID	sizeof(u8_t)
-#define PID_POS_IN_PNP_ID	(VID_POS_IN_PNP_ID + sizeof(u16_t))
-#define MIN_LEN_DIS_PNP_ID	(PID_POS_IN_PNP_ID + sizeof(u16_t))
+#define VID_POS_IN_PNP_ID	sizeof(uint8_t)
+#define PID_POS_IN_PNP_ID	(VID_POS_IN_PNP_ID + sizeof(uint16_t))
+#define MIN_LEN_DIS_PNP_ID	(PID_POS_IN_PNP_ID + sizeof(uint16_t))
 
 
 static void peer_disconnect(struct bt_conn *conn)
@@ -110,14 +110,14 @@ static void discovery_error(struct bt_conn *conn, int err, void *context)
 	peer_disconnect(conn);
 }
 
-static void read_dev_descr(const u8_t *ptr, u16_t len)
+static void read_dev_descr(const uint8_t *ptr, uint16_t len)
 {
 	__ASSERT_NO_MSG(len >= DEV_DESCR_LEN);
 	peer_llpm_support = ptr[DEV_DESCR_LLPM_SUPPORT_POS];
 	LOG_INF("LLPM %ssupported", peer_llpm_support ? ("") : ("not "));
 }
 
-static void read_dis(const u8_t *ptr, u16_t len)
+static void read_dis(const uint8_t *ptr, uint16_t len)
 {
 	__ASSERT_NO_MSG(len >= MIN_LEN_DIS_PNP_ID);
 
@@ -127,9 +127,9 @@ static void read_dis(const u8_t *ptr, u16_t len)
 	LOG_INF("VID: %02x PID: %02x", peer_vid, peer_pid);
 }
 
-static u8_t read_attr(struct bt_conn *conn, u8_t err,
+static uint8_t read_attr(struct bt_conn *conn, uint8_t err,
 		      struct bt_gatt_read_params *params,
-		      const void *data, u16_t length)
+		      const void *data, uint16_t length)
 {
 	if (err) {
 		LOG_ERR("Problem reading GATT (err:%" PRIu8 ")", err);
@@ -138,7 +138,7 @@ static u8_t read_attr(struct bt_conn *conn, u8_t err,
 	}
 
 	__ASSERT_NO_MSG(data != NULL);
-	const u8_t *data_ptr = data;
+	const uint8_t *data_ptr = data;
 
 	switch (state) {
 	case DISCOVERY_STATE_DEV_DESCR:

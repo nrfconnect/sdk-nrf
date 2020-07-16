@@ -16,10 +16,10 @@
 LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 
 /* Convert task address to associated subscribe register */
-#define SUBSCRIBE_ADDR(task) (volatile u32_t *)(task + 0x80)
+#define SUBSCRIBE_ADDR(task) (volatile uint32_t *)(task + 0x80)
 
 /* Convert event address to associated publish register */
-#define PUBLISH_ADDR(evt) (volatile u32_t *)(evt + 0x80)
+#define PUBLISH_ADDR(evt) (volatile uint32_t *)(evt + 0x80)
 
 /* Handle which is used by the user to enable and disable the trace pin is
  * encapsulating ppi channel(s). Bit 31 is set to indicate that handle is
@@ -35,18 +35,18 @@ LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 #define HANDLE_FLAG BIT(31)
 #define PAIR_FLAG BIT(30)
 
-#define HANDLE_ENCODE(value) (void *)((u32_t)value | HANDLE_FLAG)
+#define HANDLE_ENCODE(value) (void *)((uint32_t)value | HANDLE_FLAG)
 #define PACK_CHANNELS(start_ch, stop_ch) (PAIR_FLAG | start_ch | (stop_ch << 8))
 
-#define IS_VALID_HANDLE(handle) ((u32_t)handle & HANDLE_FLAG)
-#define IS_PAIR(handle) ((u32_t)handle & PAIR_FLAG)
+#define IS_VALID_HANDLE(handle) ((uint32_t)handle & HANDLE_FLAG)
+#define IS_PAIR(handle) ((uint32_t)handle & PAIR_FLAG)
 
-#define GET_CH(handle) ((u32_t)handle & 0xFF)
+#define GET_CH(handle) ((uint32_t)handle & 0xFF)
 #define GET_START_CH(handle) GET_CH(handle)
-#define GET_STOP_CH(handle) (((u32_t)handle >> 8) & 0xFF)
+#define GET_STOP_CH(handle) (((uint32_t)handle >> 8) & 0xFF)
 
 /** @brief Allocate (D)PPI channel. */
-static nrfx_err_t ppi_alloc(u8_t *ch, u32_t evt)
+static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 {
 	nrfx_err_t err;
 #ifdef DPPI_PRESENT
@@ -67,21 +67,21 @@ static nrfx_err_t ppi_alloc(u8_t *ch, u32_t evt)
 }
 
 /** @brief Set task and event on (D)PPI channel. */
-static void ppi_assign(u8_t ch, u32_t evt, u32_t task)
+static void ppi_assign(uint8_t ch, uint32_t evt, uint32_t task)
 {
 #ifdef DPPI_PRESENT
 	/* Use mask of one of subscribe registers in the system, assuming that
 	 * all subscribe registers has the same mask for enabling channel.
 	 */
-	*SUBSCRIBE_ADDR(task) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | (u32_t)ch;
-	*PUBLISH_ADDR(evt) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | (u32_t)ch;
+	*SUBSCRIBE_ADDR(task) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | (uint32_t)ch;
+	*PUBLISH_ADDR(evt) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | (uint32_t)ch;
 #else
 	(void)nrfx_ppi_channel_assign(ch, evt, task);
 #endif
 }
 
 /** @brief Enable (D)PPI channels. */
-static void ppi_enable(u32_t channel_mask)
+static void ppi_enable(uint32_t channel_mask)
 {
 #ifdef DPPI_PRESENT
 	nrf_dppi_channels_enable(NRF_DPPIC, channel_mask);
@@ -91,7 +91,7 @@ static void ppi_enable(u32_t channel_mask)
 }
 
 /** @brief Disable (D)PPI channels. */
-static void ppi_disable(u32_t channel_mask)
+static void ppi_disable(uint32_t channel_mask)
 {
 #ifdef DPPI_PRESENT
 	nrf_dppi_channels_disable(NRF_DPPIC, channel_mask);
@@ -106,9 +106,9 @@ static void ppi_disable(u32_t channel_mask)
  *
  * @return Allocated channel or -1 if failed to allocate.
  */
-static int gpiote_channel_alloc(u32_t pin)
+static int gpiote_channel_alloc(uint32_t pin)
 {
-	for (u8_t channel = 0; channel < GPIOTE_CH_NUM; ++channel) {
+	for (uint8_t channel = 0; channel < GPIOTE_CH_NUM; ++channel) {
 		if (!nrf_gpiote_te_is_enabled(NRF_GPIOTE, channel)) {
 			nrf_gpiote_task_configure(NRF_GPIOTE, channel, pin,
 						  NRF_GPIOTE_POLARITY_TOGGLE,
@@ -121,13 +121,13 @@ static int gpiote_channel_alloc(u32_t pin)
 	return -1;
 }
 
-void *ppi_trace_config(u32_t pin, u32_t evt)
+void *ppi_trace_config(uint32_t pin, uint32_t evt)
 {
 	int err;
-	u32_t task;
+	uint32_t task;
 	int gpiote_ch;
 	nrf_gpiote_task_t task_id;
-	u8_t ppi_ch;
+	uint8_t ppi_ch;
 
 	err = ppi_alloc(&ppi_ch, evt);
 	if (err != NRFX_SUCCESS) {
@@ -148,12 +148,12 @@ void *ppi_trace_config(u32_t pin, u32_t evt)
 	return HANDLE_ENCODE(ppi_ch);
 }
 
-void *ppi_trace_pair_config(u32_t pin, u32_t start_evt, u32_t stop_evt)
+void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)
 {
 	int err;
-	u32_t task;
-	u8_t start_ch;
-	u8_t stop_ch;
+	uint32_t task;
+	uint8_t start_ch;
+	uint8_t stop_ch;
 	int gpiote_ch;
 	nrf_gpiote_task_t task_set_id;
 	nrf_gpiote_task_t task_clr_id;
@@ -195,7 +195,7 @@ void *ppi_trace_pair_config(u32_t pin, u32_t start_evt, u32_t stop_evt)
 #endif
 }
 
-static u32_t ppi_channel_mask_get(void *handle)
+static uint32_t ppi_channel_mask_get(void *handle)
 {
 	return IS_PAIR(handle) ?
 			BIT(GET_START_CH(handle)) | BIT(GET_STOP_CH(handle)) :

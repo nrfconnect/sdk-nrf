@@ -27,7 +27,7 @@ const static char *opt_descr[] = {
 	"board_name"
 };
 
-static void fetch_config(const u8_t opt_id, u8_t *data, size_t *size)
+static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 {
 	switch (opt_id) {
 	case INFO_OPT_BOARD_NAME:
@@ -51,7 +51,7 @@ static void fetch_config(const u8_t opt_id, u8_t *data, size_t *size)
 	}
 }
 
-static void set_config(const u8_t opt_id, const u8_t *data, const size_t size)
+static void set_config(const uint8_t opt_id, const uint8_t *data, const size_t size)
 {
 	LOG_WRN("Config set is not supported");
 }

@@ -37,7 +37,7 @@ static void properties_status(struct bt_mesh_model *mod,
 	struct bt_mesh_prop_list list;
 
 	list.count = buf->len / 2;
-	list.ids = (u16_t *)net_buf_simple_pull_mem(buf, buf->len);
+	list.ids = (uint16_t *)net_buf_simple_pull_mem(buf, buf->len);
 
 	if (model_ack_match(&cli->ack_ctx,
 			    op_get(BT_MESH_PROP_OP_PROPS_STATUS, kind), ctx)) {
@@ -188,7 +188,7 @@ int bt_mesh_prop_cli_props_get(struct bt_mesh_prop_cli *cli,
 
 int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,
 			      struct bt_mesh_msg_ctx *ctx,
-			      enum bt_mesh_prop_srv_kind kind, u16_t id,
+			      enum bt_mesh_prop_srv_kind kind, uint16_t id,
 			      struct bt_mesh_prop_val *rsp)
 {
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_ADMIN_PROP_GET,

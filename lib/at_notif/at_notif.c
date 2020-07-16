@@ -109,8 +109,8 @@ static void notif_dispatch(const char *response)
 	/* Dispatch notifications to all registered handlers */
 	LOG_DBG("Dispatching events:");
 	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&handler_list, curr, tmp, node) {
-		LOG_DBG(" - ctx=0x%08X, handler=0x%08X", (u32_t)curr->ctx,
-			(u32_t)curr->handler);
+		LOG_DBG(" - ctx=0x%08X, handler=0x%08X", (uint32_t)curr->ctx,
+			(uint32_t)curr->handler);
 		curr->handler(curr->ctx, response);
 	}
 	LOG_DBG("Done");
@@ -146,7 +146,7 @@ int at_notif_register_handler(void *context, at_notif_handler_t handler)
 {
 	if (handler == NULL) {
 		LOG_ERR("Invalid handler (context=0x%08X, handler=0x%08X)",
-			(u32_t)context, (u32_t)handler);
+			(uint32_t)context, (uint32_t)handler);
 		return -EINVAL;
 	}
 	return append_notif_handler(context, handler);
@@ -156,7 +156,7 @@ int at_notif_deregister_handler(void *context, at_notif_handler_t handler)
 {
 	if (handler == NULL) {
 		LOG_ERR("Invalid handler (context=0x%08X, handler=0x%08X)",
-			(u32_t)context, (u32_t)handler);
+			(uint32_t)context, (uint32_t)handler);
 		return -EINVAL;
 	}
 	return remove_notif_handler(context, handler);

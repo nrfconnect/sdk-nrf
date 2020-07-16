@@ -26,7 +26,7 @@ extern "C" {
  * @{
  */
 
-#define MAGIC_LEN_WORDS (CONFIG_FW_INFO_MAGIC_LEN / sizeof(u32_t))
+#define MAGIC_LEN_WORDS (CONFIG_FW_INFO_MAGIC_LEN / sizeof(uint32_t))
 
 
 /**
@@ -44,21 +44,21 @@ struct __packed fw_info_ext_api {
 	/* Magic value to verify that the struct has the correct format.
 	 * The magic value will change whenever the format changes.
 	 */
-	u32_t magic[MAGIC_LEN_WORDS];
+	uint32_t magic[MAGIC_LEN_WORDS];
 
 	/* The length of this header plus everything after this header. Must be
 	 * word-aligned.
 	 */
-	u32_t ext_api_len;
+	uint32_t ext_api_len;
 
 	/* The id of the EXT_API. */
-	u32_t ext_api_id;
+	uint32_t ext_api_id;
 
 	/* Flags specifying properties of the EXT_API. */
-	u32_t ext_api_flags;
+	uint32_t ext_api_flags;
 
 	/* The version of this EXT_API. */
-	u32_t ext_api_version;
+	uint32_t ext_api_version;
 };
 
 /** @cond
@@ -78,12 +78,12 @@ OFFSET_CHECK(struct fw_info_ext_api, ext_api_version, 24);
 
 
 /* Macro for initializing struct fw_info_ext_api instances in the correct
- * linker section. Also creates a u8_t in another section to provide a count of
+ * linker section. Also creates a uint8_t in another section to provide a count of
  * the number of struct fw_info_ext_api instances.
  */
 #define EXT_API(ext_api_name, type, name) \
 	Z_GENERIC_SECTION(.ext_apis) \
-	const u8_t _CONCAT(name, _ext_api_counter) = 0xFF; \
+	const uint8_t _CONCAT(name, _ext_api_counter) = 0xFF; \
 	BUILD_ASSERT((sizeof(type) % 4) == 0, \
 			"Size of EXT_API " #type " is not word-aligned"); \
 	struct __packed _CONCAT(name, _t) \
@@ -108,10 +108,10 @@ OFFSET_CHECK(struct fw_info_ext_api, ext_api_version, 24);
  * @return pointer if valid, NULL if not.
  */
 static inline const struct fw_info_ext_api *fw_info_ext_api_check(
-							u32_t ext_api_addr)
+							uint32_t ext_api_addr)
 {
 	const struct fw_info_ext_api *ext_api;
-	const u32_t ext_api_magic[] = {EXT_API_MAGIC};
+	const uint32_t ext_api_magic[] = {EXT_API_MAGIC};
 
 	ext_api = (const struct fw_info_ext_api *)(ext_api_addr);
 	if (memcmp(ext_api->magic, ext_api_magic, CONFIG_FW_INFO_MAGIC_LEN)
@@ -145,12 +145,12 @@ struct __packed fw_info_ext_api_request {
 	struct fw_info_ext_api request;
 
 	/* The maximum accepted version. */
-	u32_t ext_api_max_version;
+	uint32_t ext_api_max_version;
 
 	/* This EXT_API is required. I.e. having this EXT_API available is a
 	 * hard requirement.
 	 */
-	u32_t required;
+	uint32_t required;
 
 	/* Where to place a pointer to the EXT_API. */
 	const struct fw_info_ext_api **ext_api;
@@ -168,12 +168,12 @@ OFFSET_CHECK(struct fw_info_ext_api_request, ext_api, 36);
  */
 
 /* Decorator for struct fw_info_ext_api_request instances to place them in the
- * correct linker section. Also creates a u8_t in another section to provide a
+ * correct linker section. Also creates a uint8_t in another section to provide a
  * count of the number of struct fw_info_ext_api instances.
  */
 #define EXT_API_REQ(name, req, type, var_name) \
 	Z_GENERIC_SECTION(.ext_apis_req) \
-	const u8_t _CONCAT(var_name, _ext_api_req_counter) = 0xFF; \
+	const uint8_t _CONCAT(var_name, _ext_api_req_counter) = 0xFF; \
 	__noinit const struct __packed \
 	{ \
 		struct fw_info_ext_api header; \
@@ -208,36 +208,36 @@ struct __packed fw_info {
 	/* Magic value to verify that the struct has the correct format.
 	 * The magic value will change whenever the format changes.
 	 */
-	u32_t magic[MAGIC_LEN_WORDS];
+	uint32_t magic[MAGIC_LEN_WORDS];
 
 	/* Total size of this fw_info struct including the EXT_API lists. */
-	u32_t total_size;
+	uint32_t total_size;
 
 	/* Size of the firmware image code. */
-	u32_t size;
+	uint32_t size;
 
 	/* Monotonically increasing version counter.*/
-	u32_t version;
+	uint32_t version;
 
 	/* The address of the start of the image. */
-	u32_t address;
+	uint32_t address;
 
 	/* The address of the boot point (vector table) of the firmware. */
-	u32_t boot_address;
+	uint32_t boot_address;
 
 	/* Value that can be modified to invalidate the firmware. Has the value
 	 * CONFIG_FW_INFO_VALID_VAL when valid.
 	 */
-	u32_t valid;
+	uint32_t valid;
 
 	/* Reserved values (set to 0) */
-	u32_t reserved[4];
+	uint32_t reserved[4];
 
 	/* The number of EXT_APIs in the @ref ext_apis list. */
-	u32_t ext_api_num;
+	uint32_t ext_api_num;
 
 	/* The number of EXT_API requests in the @ref ext_apis list. */
-	u32_t ext_api_request_num;
+	uint32_t ext_api_request_num;
 
 	/* A list of @ref ext_api_num EXT_APIs followed by @ref
 	 * ext_api_request_num EXT_API requests. Since the entries have
@@ -272,10 +272,10 @@ BUILD_ASSERT(sizeof(struct fw_info) == offsetof(struct fw_info, ext_apis),
  *
  * @return pointer if valid, NULL if not.
  */
-static inline const struct fw_info *fw_info_check(u32_t fw_info_addr)
+static inline const struct fw_info *fw_info_check(uint32_t fw_info_addr)
 {
 	const struct fw_info *finfo;
-	const u32_t fw_info_magic[] = {FIRMWARE_INFO_MAGIC};
+	const uint32_t fw_info_magic[] = {FIRMWARE_INFO_MAGIC};
 
 	finfo = (const struct fw_info *)(fw_info_addr);
 	if (memcmp(finfo->magic, fw_info_magic, CONFIG_FW_INFO_MAGIC_LEN)
@@ -314,7 +314,7 @@ static inline const struct fw_info *fw_info_check(u32_t fw_info_addr)
 #define FW_INFO_CURRENT_OFFSET (CONFIG_FW_INFO_OFFSET + FW_INFO_VECTOR_OFFSET)
 
 /* Array for run time usage. */
-static const u32_t fw_info_allowed_offsets[] = {
+static const uint32_t fw_info_allowed_offsets[] = {
 					FW_INFO_OFFSET0, FW_INFO_OFFSET1,
 					FW_INFO_OFFSET2, FW_INFO_OFFSET3,
 					FW_INFO_OFFSET4};
@@ -345,11 +345,11 @@ BUILD_ASSERT(ARRAY_SIZE(fw_info_allowed_offsets) == FW_INFO_OFFSET_COUNT,
  *
  * @return  A pointer to the fw_info struct if found. Otherwise NULL.
  */
-static inline const struct fw_info *fw_info_find(u32_t firmware_address)
+static inline const struct fw_info *fw_info_find(uint32_t firmware_address)
 {
 	const struct fw_info *finfo;
 
-	for (u32_t i = 0; i < FW_INFO_OFFSET_COUNT; i++) {
+	for (uint32_t i = 0; i < FW_INFO_OFFSET_COUNT; i++) {
 		finfo = fw_info_check(firmware_address +
 						fw_info_allowed_offsets[i]);
 		if (finfo) {

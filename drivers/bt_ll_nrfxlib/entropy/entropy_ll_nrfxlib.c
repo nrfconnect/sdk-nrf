@@ -33,14 +33,14 @@ static inline struct rng_driver_data *rng_driver_data_get(struct device *dev)
 	return dev->driver_data;
 }
 
-static int rng_driver_get_entropy(struct device *dev, u8_t *buf, u16_t len)
+static int rng_driver_get_entropy(struct device *dev, uint8_t *buf, uint16_t len)
 {
 	struct rng_driver_data *rng_dev = rng_driver_data_get(dev);
-	u8_t *p_dst = buf;
-	u32_t bytes_left = len;
+	uint8_t *p_dst = buf;
+	uint32_t bytes_left = len;
 
 	while (bytes_left > 0) {
-		u32_t bytes_read = 0;
+		uint32_t bytes_read = 0;
 
 		while (bytes_read == 0) {
 			int errcode = MULTITHREADING_LOCK_ACQUIRE();
@@ -67,8 +67,8 @@ static int rng_driver_get_entropy(struct device *dev, u8_t *buf, u16_t len)
 	return 0;
 }
 
-static int rng_driver_get_entropy_isr(struct device *dev, u8_t *buf, u16_t len,
-				      u32_t flags)
+static int rng_driver_get_entropy_isr(struct device *dev, uint8_t *buf, uint16_t len,
+				      uint32_t flags)
 {
 
 	int errcode = 0;

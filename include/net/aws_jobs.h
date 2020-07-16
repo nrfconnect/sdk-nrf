@@ -72,7 +72,7 @@ enum execution_status {
  *                 to be AWS_JOBS_TOPIC_MAX_LEN in size.
  */
 int aws_jobs_create_topic_notify_next(struct mqtt_client *const client,
-					 u8_t *topic_buf);
+					 uint8_t *topic_buf);
 
 /**
  * @brief Construct the notify-next topic and subscribe to it for receiving
@@ -87,7 +87,7 @@ int aws_jobs_create_topic_notify_next(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameter is not valid.
  */
 int aws_jobs_subscribe_topic_notify_next(struct mqtt_client *const client,
-					 u8_t *topic_buf);
+					 uint8_t *topic_buf);
 
 /**
  * @brief Construct the notify-next topic and unsubscribe from it to stop
@@ -102,7 +102,7 @@ int aws_jobs_subscribe_topic_notify_next(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameter is not valid.
  */
 int aws_jobs_unsubscribe_topic_notify_next(struct mqtt_client *const client,
-					   u8_t *topic_buf);
+					   uint8_t *topic_buf);
 
 /**
  * @brief Construct the notify topic for receiving AWS IoT jobs.
@@ -116,7 +116,7 @@ int aws_jobs_unsubscribe_topic_notify_next(struct mqtt_client *const client,
  *                 to be AWS_JOBS_TOPIC_MAX_LEN in size.
  */
 int aws_jobs_create_topic_notify(struct mqtt_client *const client,
-				 u8_t *topic_buf);
+				 uint8_t *topic_buf);
 
 /**
  * @brief Construct the notify topic and subscribe to it for receiving
@@ -130,7 +130,7 @@ int aws_jobs_create_topic_notify(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameter is not valid.
  */
 int aws_jobs_subscribe_topic_notify(struct mqtt_client *const client,
-				    u8_t *topic_buf);
+				    uint8_t *topic_buf);
 
 /**
  * @brief Construct the notify topic and unsubscribe to stop receiving
@@ -145,7 +145,7 @@ int aws_jobs_subscribe_topic_notify(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameter is not valid.
  */
 int aws_jobs_unsubscribe_topic_notify(struct mqtt_client *const client,
-				      u8_t *topic_buf);
+				      uint8_t *topic_buf);
 
 /**
  * @brief Construct the get topic for a job ID.
@@ -160,7 +160,7 @@ int aws_jobs_unsubscribe_topic_notify(struct mqtt_client *const client,
  *                 to be AWS_JOBS_TOPIC_MAX_LEN in size.
  */
 int aws_jobs_create_topic_get(struct mqtt_client *const client,
-			      const u8_t *job_id, u8_t *topic_buf);
+			      const uint8_t *job_id, uint8_t *topic_buf);
 
 /**
  * @brief Construct the get topic for a job ID and subscribe to it for both
@@ -175,7 +175,7 @@ int aws_jobs_create_topic_get(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameter is not valid.
  */
 int aws_jobs_subscribe_topic_get(struct mqtt_client *const client,
-				 const u8_t *job_id, u8_t *topic_buf);
+				 const uint8_t *job_id, uint8_t *topic_buf);
 
 /**
  * @brief Construct the get topic for a job ID and unsubscribe from it for both
@@ -191,7 +191,7 @@ int aws_jobs_subscribe_topic_get(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameters are not valid.
  */
 int aws_jobs_unsubscribe_topic_get(struct mqtt_client *const client,
-				   const u8_t *job_id, u8_t *topic_buf);
+				   const uint8_t *job_id, uint8_t *topic_buf);
 
 /**
  * @brief Construct the update topic for a job ID and subscribe to rejected and
@@ -206,7 +206,7 @@ int aws_jobs_unsubscribe_topic_get(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameters are not valid.
  */
 int aws_jobs_subscribe_topic_update(struct mqtt_client *const client,
-				    const u8_t *job_id, u8_t *topic_buf);
+				    const uint8_t *job_id, uint8_t *topic_buf);
 
 /**
  * @brief Construct the update topic for a job ID and unsubscribe from rejected
@@ -222,7 +222,7 @@ int aws_jobs_subscribe_topic_update(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameters are not valid.
  */
 int aws_jobs_unsubscribe_topic_update(struct mqtt_client *const client,
-				      const u8_t *job_id, u8_t *topic_buf);
+				      const uint8_t *job_id, uint8_t *topic_buf);
 
 /**
  * @brief AWS Jobs update job execution status function.
@@ -248,12 +248,12 @@ int aws_jobs_unsubscribe_topic_update(struct mqtt_client *const client,
  * @retval -EINVAL If the provided input parameters are not valid.
  */
 int aws_jobs_update_job_execution(struct mqtt_client *const client,
-				  const u8_t *job_id,
+				  const uint8_t *job_id,
 				  enum execution_status status,
-				  const u8_t *status_details,
+				  const uint8_t *status_details,
 				  int expected_version,
-				  const u8_t *client_token,
-				  u8_t *topic_buf);
+				  const uint8_t *client_token,
+				  uint8_t *topic_buf);
 
 /**
  * @brief AWS Jobs get job execution.
@@ -270,7 +270,7 @@ int aws_jobs_update_job_execution(struct mqtt_client *const client,
  *                 mqtt_publish error code or the error code of snprintf.
  */
 int aws_jobs_get_job_execution(struct mqtt_client *const client,
-			       const char *job_id, u8_t *topic_buf);
+			       const char *job_id, uint8_t *topic_buf);
 
 /**
  * @brief Compare topics
@@ -286,7 +286,7 @@ int aws_jobs_get_job_execution(struct mqtt_client *const client,
  * @return true if topics with given suffix match, false otherwise.
  */
 bool aws_jobs_cmp(const char *sub, const char *pub, size_t pub_len,
-		  const u8_t *suffix);
+		  const uint8_t *suffix);
 
 #ifdef __cplusplus
 }

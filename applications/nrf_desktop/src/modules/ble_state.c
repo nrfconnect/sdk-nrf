@@ -30,8 +30,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_STATE_LOG_LEVEL);
 
 struct bond_find_data {
 	bt_addr_le_t peer_address;
-	u8_t peer_id;
-	u8_t peer_count;
+	uint8_t peer_id;
+	uint8_t peer_count;
 };
 
 static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
@@ -79,7 +79,7 @@ static void send_passkey_req(bool active)
 
 static void set_tx_power(struct bt_conn *conn)
 {
-	u16_t conn_handle;
+	uint16_t conn_handle;
 
 	int err = bt_hci_get_conn_handle(conn, &conn_handle);
 
@@ -108,7 +108,7 @@ static void set_tx_power(struct bt_conn *conn)
 		err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL,
 					   buf, &rsp);
 		if (err) {
-			u8_t reason = rsp ?
+			uint8_t reason = rsp ?
 			  ((struct bt_hci_rp_vs_write_tx_power_level *)rsp->data)->status : 0;
 
 			LOG_ERR("Cannot set TX power (err: %d reason 0x%02x)",
@@ -125,7 +125,7 @@ static void set_tx_power(struct bt_conn *conn)
 	}
 }
 
-static void connected(struct bt_conn *conn, u8_t error)
+static void connected(struct bt_conn *conn, uint8_t error)
 {
 	/* Make sure that connection will remain valid. */
 	bt_conn_ref(conn);
@@ -219,7 +219,7 @@ disconnect:
 	disconnect_peer(conn);
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -255,7 +255,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 
 static struct bt_gatt_exchange_params exchange_params;
 
-static void exchange_func(struct bt_conn *conn, u8_t err,
+static void exchange_func(struct bt_conn *conn, uint8_t err,
 			  struct bt_gatt_exchange_params *params)
 {
 	LOG_INF("MTU exchange done");
@@ -326,8 +326,8 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 	return false;
 }
 
-static void le_param_updated(struct bt_conn *conn, u16_t interval,
-			     u16_t latency, u16_t timeout)
+static void le_param_updated(struct bt_conn *conn, uint16_t interval,
+			     uint16_t latency, uint16_t timeout)
 {
 	struct ble_peer_conn_params_event *event =
 		new_ble_peer_conn_params_event();

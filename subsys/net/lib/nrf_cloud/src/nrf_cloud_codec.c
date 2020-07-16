@@ -338,7 +338,7 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 	return 0;
 }
 
-int nrf_cloud_encode_state(u32_t reported_state, struct nrf_cloud_data *output)
+int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *output)
 {
 	int ret;
 

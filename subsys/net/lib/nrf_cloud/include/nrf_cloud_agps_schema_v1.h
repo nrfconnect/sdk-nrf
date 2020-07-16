@@ -39,108 +39,108 @@ enum nrf_cloud_agps_type {
 };
 
 struct nrf_cloud_agps_utc {
-	s32_t a1;
-	s32_t a0;
-	u8_t tot;
-	u8_t wn_t;
-	s8_t delta_tls;
-	u8_t wn_lsf;
-	s8_t dn;
-	s8_t delta_tlsf;
+	int32_t a1;
+	int32_t a0;
+	uint8_t tot;
+	uint8_t wn_t;
+	int8_t delta_tls;
+	uint8_t wn_lsf;
+	int8_t dn;
+	int8_t delta_tlsf;
 } __packed;
 
 struct nrf_cloud_agps_ephemeris {
-	u8_t sv_id;
-	u8_t health;
-	u16_t iodc;
-	u16_t toc;
-	s8_t af2;
-	s16_t af1;
-	s32_t af0;
-	s8_t tgd;
-	u8_t ura;
-	u8_t fit_int;
-	u16_t toe;
-	s32_t w;
-	s16_t delta_n;
-	s32_t m0;
-	s32_t omega_dot;
-	u32_t e;
-	s16_t idot;
-	u32_t sqrt_a;
-	s32_t i0;
-	s32_t omega0;
-	s16_t crs;
-	s16_t cis;
-	s16_t cus;
-	s16_t crc;
-	s16_t cic;
-	s16_t cuc;
+	uint8_t sv_id;
+	uint8_t health;
+	uint16_t iodc;
+	uint16_t toc;
+	int8_t af2;
+	int16_t af1;
+	int32_t af0;
+	int8_t tgd;
+	uint8_t ura;
+	uint8_t fit_int;
+	uint16_t toe;
+	int32_t w;
+	int16_t delta_n;
+	int32_t m0;
+	int32_t omega_dot;
+	uint32_t e;
+	int16_t idot;
+	uint32_t sqrt_a;
+	int32_t i0;
+	int32_t omega0;
+	int16_t crs;
+	int16_t cis;
+	int16_t cus;
+	int16_t crc;
+	int16_t cic;
+	int16_t cuc;
 } __packed;
 
 struct nrf_cloud_agps_almanac {
-	u8_t sv_id;
-	u8_t wn;
-	u8_t toa;
-	u8_t ioda;
-	u16_t e;
-	s16_t delta_i;
-	s16_t omega_dot;
-	u8_t sv_health;
-	u32_t sqrt_a;
-	s32_t omega0;
-	s32_t w;
-	s32_t m0;
-	s16_t af0;
-	s16_t af1;
+	uint8_t sv_id;
+	uint8_t wn;
+	uint8_t toa;
+	uint8_t ioda;
+	uint16_t e;
+	int16_t delta_i;
+	int16_t omega_dot;
+	uint8_t sv_health;
+	uint32_t sqrt_a;
+	int32_t omega0;
+	int32_t w;
+	int32_t m0;
+	int16_t af0;
+	int16_t af1;
 } __packed;
 
 struct nrf_cloud_agps_klobuchar {
-	s8_t alpha0;
-	s8_t alpha1;
-	s8_t alpha2;
-	s8_t alpha3;
-	s8_t beta0;
-	s8_t beta1;
-	s8_t beta2;
-	s8_t beta3;
+	int8_t alpha0;
+	int8_t alpha1;
+	int8_t alpha2;
+	int8_t alpha3;
+	int8_t beta0;
+	int8_t beta1;
+	int8_t beta2;
+	int8_t beta3;
 } __packed;
 
 struct nrf_cloud_agps_nequick {
-	s16_t ai0;
-	s16_t ai1;
-	s16_t ai2;
-	u8_t storm_cond;
-	u8_t storm_valid;
+	int16_t ai0;
+	int16_t ai1;
+	int16_t ai2;
+	uint8_t storm_cond;
+	uint8_t storm_valid;
 } __packed;
 
 struct nrf_cloud_agps_tow_element {
-	u8_t sv_id;
-	u16_t tlm;
-	u8_t flags;
+	uint8_t sv_id;
+	uint16_t tlm;
+	uint8_t flags;
 } __packed;
 
 struct nrf_cloud_agps_system_time {
-	u16_t date_day;
-	u32_t time_full_s;
-	u16_t time_frac_ms;
-	u32_t sv_mask;
+	uint16_t date_day;
+	uint32_t time_full_s;
+	uint16_t time_frac_ms;
+	uint32_t sv_mask;
 	struct nrf_cloud_agps_tow_element sv_tow[NRF_CLOUD_AGPS_MAX_SV_TOW];
 } __packed;
 
 struct nrf_cloud_agps_location {
-	s32_t latitude;
-	s32_t longitude;
-	s16_t altitude;
-	u8_t unc_semimajor;
-	u8_t unc_semiminor;
-	u8_t orientation_major;
-	u8_t unc_altitude;
-	u8_t confidence;
+	int32_t latitude;
+	int32_t longitude;
+	int16_t altitude;
+	uint8_t unc_semimajor;
+	uint8_t unc_semiminor;
+	uint8_t orientation_major;
+	uint8_t unc_altitude;
+	uint8_t confidence;
 } __packed;
 
 struct nrf_cloud_agps_integrity {
-	u32_t integrity_mask;
+	uint32_t integrity_mask;
 };
 
 struct nrf_cloud_apgs_element {

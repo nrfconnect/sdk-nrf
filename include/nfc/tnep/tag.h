@@ -38,7 +38,7 @@ struct nfc_tnep_tag_service_cb {
 	 *  @param[in] data Pointer to received data.
 	 *  @param[in] len Received data length.
 	 */
-	void (*message_received)(const u8_t *data, size_t len);
+	void (*message_received)(const uint8_t *data, size_t len);
 
 	/**
 	 * @brief Function called when an internal error in TNEP detected.
@@ -137,7 +137,7 @@ struct nfc_tnep_tag_service {
 	}
 
 
-typedef int (*nfc_payload_set_t)(u8_t *, size_t);
+typedef int (*nfc_payload_set_t)(uint8_t *, size_t);
 
 /**
  * @brief Register TNEP message buffer.
@@ -152,8 +152,8 @@ typedef int (*nfc_payload_set_t)(u8_t *, size_t);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_tnep_tag_tx_msg_buffer_register(u8_t *tx_buff,
-					u8_t *tx_swap_buff,
+int nfc_tnep_tag_tx_msg_buffer_register(uint8_t *tx_buff,
+					uint8_t *tx_swap_buff,
 					size_t len);
 /**
  * @brief Start communication using TNEP.
@@ -171,7 +171,7 @@ int nfc_tnep_tag_tx_msg_buffer_register(u8_t *tx_buff,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_tnep_tag_init(struct k_poll_event *events, u8_t event_cnt,
+int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 		      struct nfc_ndef_msg_desc *msg,
 		      nfc_payload_set_t payload_set);
 
@@ -219,7 +219,7 @@ void nfc_tnep_tag_process(void);
  * @param[in] rx_buffer Pointer to NDEF message buffer.
  * @param[in] len Length of NDEF message buffer.
  */
-void nfc_tnep_tag_rx_msg_indicate(const u8_t *rx_buffer, size_t len);
+void nfc_tnep_tag_rx_msg_indicate(const uint8_t *rx_buffer, size_t len);
 
 /**
  * @brief Add application data record to next message.

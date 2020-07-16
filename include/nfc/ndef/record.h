@@ -55,8 +55,8 @@ extern "C" {
  *           Otherwise, a (negative) error code is returned.
  */
 typedef int (*payload_constructor_t)(void *payload_descriptor,
-				     u8_t *buffer,
-				     u32_t *len);
+				     uint8_t *buffer,
+				     uint32_t *len);
 /**
  * @brief Type Name Format (TNF) Field Values.
  *
@@ -94,13 +94,13 @@ struct nfc_ndef_record_desc {
 	/** Length of the ID field. If 0, a record format without ID field is
 	 *  assumed.
 	 */
-	u8_t id_length;
+	uint8_t id_length;
 	/** Pointer to the ID field data. Not relevant if id_length is 0. */
-	u8_t const *id;
+	uint8_t const *id;
 	/** Length of the type field.*/
-	u8_t type_length;
+	uint8_t type_length;
 	/** Pointer to the type field data. Not relevant if type_length is 0. */
-	u8_t const *type;
+	uint8_t const *type;
 	/** Pointer to the payload constructor function. */
 	payload_constructor_t payload_constructor;
 	/** Pointer to the data for the payload constructor function. */
@@ -126,8 +126,8 @@ enum nfc_ndef_record_location {
  * @brief Binary data descriptor containing the payload for the record.
  */
 struct nfc_ndef_bin_payload_desc {
-	u8_t const *payload;  /**< Pointer to the buffer with the data. */
-	u32_t payload_length; /**< Length of data in bytes. */
+	uint8_t const *payload;  /**< Pointer to the buffer with the data. */
+	uint32_t payload_length; /**< Length of data in bytes. */
 };
 
 /**
@@ -258,8 +258,8 @@ struct nfc_ndef_bin_payload_desc {
  */
 int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 			   enum nfc_ndef_record_location const record_location,
-			   u8_t *record_buffer,
-			   u32_t *record_len);
+			   uint8_t *record_buffer,
+			   uint32_t *record_len);
 
 /**
  * @brief Construct the payload for an NFC NDEF record from binary data.
@@ -279,8 +279,8 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
  */
 int nfc_ndef_bin_payload_memcopy(
 			struct nfc_ndef_bin_payload_desc *payload_descriptor,
-			u8_t *buffer,
-			u32_t *len);
+			uint8_t *buffer,
+			uint32_t *len);
 
 /**
  * @}
