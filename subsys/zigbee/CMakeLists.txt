@@ -24,6 +24,7 @@ zephyr_library_sources(osif/zb_nrf_crypto.c)
 zephyr_library_sources(osif/zb_nrf_pwr_mgmt.c)
 zephyr_library_sources(common/zigbee_helpers.c)
 zephyr_library_sources(common/zigbee_logger_eprxzcl.c)
+zephyr_library_sources_ifdef(CONFIG_ZIGBEE_OTA common/zigbee_ota_client.c)
 zephyr_library_sources_ifdef(CONFIG_ZIGBEE_HAVE_SERIAL osif/zb_nrf_serial.c)
 zephyr_library_sources_ifndef(CONFIG_ZIGBEE_HAVE_SERIAL osif/zb_nrf_logger.c)
 zephyr_library_sources_ifdef(

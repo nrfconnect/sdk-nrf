@@ -21,6 +21,15 @@
 #include <zb_nrf_platform.h>
 #include "zb_mem_config_custom.h"
 
+#if CONFIG_ZIGBEE_OTA
+#include <zigbee_ota_client.h>
+
+/* LED indicating OTA Client Activity. */
+#define OTA_ACTIVITY_LED           DK_LED2
+
+extern zb_af_endpoint_desc_t ota_upgrade_client_ep;
+#endif /* CONFIG_ZIGBEE_OTA */
+
 
 #define RUN_STATUS_LED             DK_LED1
 #define RUN_LED_BLINK_INTERVAL     K_MSEC(1000)
@@ -75,7 +84,7 @@ struct bulb_context {
 };
 
 struct buttons_context {
-	uint32_t          state;
+	uint32_t       state;
 	atomic_t       long_poll;
 	struct k_timer alarm;
 };
@@ -109,9 +118,20 @@ ZB_HA_DECLARE_DIMMER_SWITCH_EP(dimmer_switch_ep,
 /* Declare application's device context (list of registered endpoints)
  * for Dimmer Switch device.
  */
-ZB_HA_DECLARE_DIMMER_SWITCH_CTX(dimmer_switch_ctx, dimmer_switch_ep);
+#ifndef CONFIG_ZIGBEE_OTA
+ZBOSS_DECLARE_DEVICE_CTX_1_EP(dimmer_switch_ctx, dimmer_switch_ep);
+#else
 
-/* Forward declarations */
+  #if LIGHT_SWITCH_ENDPOINT == CONFIG_ZIGBEE_OTA_ENDPOINT
+    #error "Light switch and Zigbee OTA endpoints should be different."
+  #endif
+
+ZBOSS_DECLARE_DEVICE_CTX_2_EP(dimmer_switch_ctx,
+			      ota_upgrade_client_ep,
+			      dimmer_switch_ep);
+#endif /* CONFIG_ZIGBEE_OTA */
+
+/* Forward declarations. */
 static void light_switch_button_handler(struct k_timer *timer);
 static void find_light_bulb_alarm(struct k_timer *timer);
 static void find_light_bulb(zb_bufid_t bufid);
@@ -264,7 +284,7 @@ static void find_light_bulb_cb(zb_bufid_t bufid)
 		(resp->match_len > 0) &&
 		(bulb_ctx.short_addr == 0xFFFF)) {
 
-		/* Match EP list follows right after response header */
+		/* Match EP list follows right after response header. */
 		match_ep = (zb_uint8_t *)(resp + 1);
 
 		/* We are searching for exact cluster, so only 1 EP
@@ -316,7 +336,7 @@ static void find_light_bulb(zb_bufid_t bufid)
 	req->addr_of_interest = MATCH_DESC_REQ_ROLE;
 	req->profile_id       = ZB_AF_HA_PROFILE_ID;
 
-	/* We are searching for 2 clusters: On/Off and Level Control Server */
+	/* We are searching for 2 clusters: On/Off and Level Control Server. */
 	req->num_in_clusters  = 2;
 	req->num_out_clusters = 0;
 	req->cluster_list[0]  = ZB_ZCL_CLUSTER_ID_ON_OFF;
@@ -372,7 +392,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	zb_zdo_app_signal_type_t    sig = zb_get_app_signal(bufid, &sig_hndler);
 	zb_ret_t                    status = ZB_GET_APP_SIGNAL_STATUS(bufid);
 
-	/* Update network status LED */
+	/* Update network status LED. */
 	zigbee_led_status_update(bufid, ZIGBEE_NETWORK_STATE_LED);
 
 	switch (sig) {
@@ -382,12 +402,15 @@ void zboss_signal_handler(zb_bufid_t bufid)
 		/* Call default signal handler. */
 		ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
 		if (status == RET_OK) {
-			/* Check the light device address */
+			/* Check the light device address. */
 			if (bulb_ctx.short_addr == 0xFFFF) {
 				k_timer_start(&bulb_ctx.find_alarm,
 					      MATCH_DESC_REQ_START_DELAY,
 					      MATCH_DESC_REQ_TIMEOUT);
 			}
+#ifdef CONFIG_ZIGBEE_OTA
+			zb_ota_client_periodical_discovery_srv_start();
+#endif /* CONFIG_ZIGBEE_OTA */
 		}
 		break;
 	default:
@@ -400,6 +423,97 @@ void zboss_signal_handler(zb_bufid_t bufid)
 		zb_buf_free(bufid);
 	}
 }
+
+#ifdef CONFIG_ZIGBEE_OTA
+static void zcl_device_cb(zb_bufid_t bufid)
+{
+	static int blink_status;
+	zb_zcl_device_callback_param_t *device_cb_param =
+		ZB_BUF_GET_PARAM(bufid, zb_zcl_device_callback_param_t);
+
+	device_cb_param->status = RET_OK;
+	switch (device_cb_param->device_cb_id) {
+	case ZB_ZCL_OTA_UPGRADE_VALUE_CB_ID:
+	{
+		zb_zcl_ota_upgrade_value_param_t *ota_upgrade_value =
+			&(device_cb_param->cb_param.ota_value_param);
+
+		switch (ota_upgrade_value->upgrade_status) {
+		case ZB_ZCL_OTA_UPGRADE_STATUS_START:
+			/* Check if OTA client is in the middle of image
+			 * download. If so, silently ignore the second
+			 * QueryNextImageResponse packet from OTA server.
+			 */
+			if (zb_zcl_ota_upgrade_get_ota_status(
+				device_cb_param->endpoint) !=
+				ZB_ZCL_OTA_UPGRADE_IMAGE_STATUS_NORMAL) {
+
+				ota_upgrade_value->upgrade_status =
+					ZB_ZCL_OTA_UPGRADE_STATUS_BUSY;
+
+			/* Check if we're not downgrading.
+			 * If we do, let's politely say no since we do not
+			 * support that.
+			 */
+			} else if (ota_upgrade_value->upgrade.start.file_version
+				 > zb_ota_get_image_ver()) {
+				zb_ota_dfu_init();
+				ota_upgrade_value->upgrade_status =
+					ZB_ZCL_OTA_UPGRADE_STATUS_OK;
+			} else {
+				LOG_DBG("ZB_ZCL_OTA_UPGRADE_STATUS_ABORT");
+				ota_upgrade_value->upgrade_status =
+					ZB_ZCL_OTA_UPGRADE_STATUS_ABORT;
+			}
+			break;
+
+		case ZB_ZCL_OTA_UPGRADE_STATUS_RECEIVE:
+			/* Process image block. */
+			ota_upgrade_value->upgrade_status =
+				zb_ota_process_chunk(ota_upgrade_value,
+						     bufid);
+			dk_set_led(OTA_ACTIVITY_LED, (++blink_status) % 2);
+			break;
+
+		case ZB_ZCL_OTA_UPGRADE_STATUS_CHECK:
+			ota_upgrade_value->upgrade_status =
+				ZB_ZCL_OTA_UPGRADE_STATUS_OK;
+			break;
+
+		case ZB_ZCL_OTA_UPGRADE_STATUS_APPLY:
+			dk_set_led_on(OTA_ACTIVITY_LED);
+			ota_upgrade_value->upgrade_status =
+				ZB_ZCL_OTA_UPGRADE_STATUS_OK;
+			break;
+
+		case ZB_ZCL_OTA_UPGRADE_STATUS_FINISH:
+			LOG_INF("ZB_ZCL_OTA_UPGRADE_STATUS_FINISH");
+			/* It is time to upgrade FW.
+			 * We use callback so the stack can have time to i.e.
+			 * send response etc.
+			 */
+			zigbee_schedule_callback(zb_ota_reboot_application, 0);
+			break;
+
+		case ZB_ZCL_OTA_UPGRADE_STATUS_ABORT:
+			LOG_INF("Zigbee DFU Aborted");
+			ota_upgrade_value->upgrade_status =
+				ZB_ZCL_OTA_UPGRADE_STATUS_ABORT;
+			dk_set_led_off(OTA_ACTIVITY_LED);
+			zb_ota_dfu_abort();
+			break;
+
+		default:
+			break;
+		}
+		/* No need to free the buffer - stack handles that if needed. */
+		break;
+	}
+	default:
+		break;
+	}
+}
+#endif /* CONFIG_ZIGBEE_OTA */
 
 void main(void)
 {
@@ -419,9 +533,6 @@ void main(void)
 	/* Set default bulb short_addr. */
 	bulb_ctx.short_addr = 0xFFFF;
 
-	/* Register dimmer switch device context (endpoints). */
-	ZB_AF_REGISTER_DEVICE_CTX(&dimmer_switch_ctx);
-
 	/* If "sleepy button" is defined, check its state during Zigbee
 	 * initialization and enable sleepy behavior at device if defined button
 	 * is pressed. Additionally, power off unused sections of RAM to lower
@@ -437,7 +548,17 @@ void main(void)
 	}
 #endif
 
-	/* Start Zigbee default thread */
+#ifdef CONFIG_ZIGBEE_OTA
+	zb_ota_client_init();
+	zb_ota_confirm_image();
+	/* Register callback for handling ZCL commands. */
+	ZB_ZCL_REGISTER_DEVICE_CB(zcl_device_cb);
+#endif /* CONFIG_ZIGBEE_OTA */
+
+	/* Register dimmer switch device context (endpoints). */
+	ZB_AF_REGISTER_DEVICE_CTX(&dimmer_switch_ctx);
+
+	/* Start Zigbee default thread. */
 	zigbee_enable();
 
 	LOG_INF("ZBOSS Light Switch example started");
