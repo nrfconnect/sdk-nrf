@@ -20,7 +20,7 @@ For more information about some aspects of Thread, see the following pages:
 .. toctree::
    :maxdepth: 1
 
-   ug_thread_stack_architecture.rst
+   ug_thread_architectures.rst
    ug_thread_ot_integration.rst
    ug_thread_commissioning.rst
 
