@@ -93,7 +93,7 @@ Buttons:
 
 LEDs:
    Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
-   First LED outputs the current light level of the Light Lightness Server in the second element.
+   First LED outputs the current light level of the Light Lightness Server in the first element.
 
 
 Building and running
