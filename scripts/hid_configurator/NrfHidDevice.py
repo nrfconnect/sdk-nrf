@@ -90,7 +90,7 @@ class Response(object):
         return Response(rcpt, event_id, status, event_data)
 
 class NrfHidDevice():
-    def __init__(self, name, vid, pid, dongle_pid):
+    def __init__(self, name, vid, pid, dongle_pid, req_hwid=None):
         self.name = name
         self.vid = vid
         self.pid = pid
@@ -108,18 +108,20 @@ class NrfHidDevice():
 
         for d in devs:
             if self.dev_ptr is None:
-                board_name = NrfHidDevice._discover_board_name(d, pid)
+                board_name, hwid = NrfHidDevice._discover_device_info(d, pid)
 
                 if board_name is not None:
                     config = NrfHidDevice._discover_device_config(d, pid)
                 else:
                     config = None
 
-                if config is not None:
+                if (config is not None) and \
+                   ((req_hwid is None) or (req_hwid == hwid)):
                     self.dev_config = config
                     self.dev_ptr = d
                     self.board_name = board_name
-                    print("Device board name is {}".format(board_name))
+                    self.hwid = hwid
+                    print("Device board name is {} (HW ID: {})".format(board_name, hwid))
                 else:
                     d.close()
             else:
@@ -334,13 +336,13 @@ class NrfHidDevice():
         return device_config
 
     @staticmethod
-    def _discover_board_name(dev, recipient):
+    def _discover_device_info(dev, recipient):
         success, max_mod_id = NrfHidDevice._fetch_max_mod_id(dev, recipient)
         if not success:
             return None
 
         # Module with the highest index contains information about board name.
-        # Discover only this module to recude discovery time.
+        # Discover only this module to reduce discovery time.
         module_name, module_config = NrfHidDevice._discover_module_config(dev,
                                                                           recipient,
                                                                           max_mod_id)
@@ -348,15 +350,20 @@ class NrfHidDevice():
             return None
 
         dev_cfg = {module_name : module_config}
-        event_id = NrfHidDevice._get_event_id(module_name, 'board_name', dev_cfg)
 
+        event_id = NrfHidDevice._get_event_id(module_name, 'board_name', dev_cfg)
         success, fetched_data = NrfHidDevice._exchange_feature_report(dev, recipient,
                                                                       event_id, None,
                                                                       True)
-
         board_name = fetched_data.decode('utf-8').replace(chr(0x00), '')
 
-        return board_name
+        event_id = NrfHidDevice._get_event_id(module_name, 'hwid', dev_cfg)
+        success, fetched_data = NrfHidDevice._exchange_feature_report(dev, recipient,
+                                                                      event_id, None,
+                                                                      True)
+        hwid = fetched_data.hex()
+
+        return board_name, hwid
 
     def _config_operation(self, module_name, option_name, is_get, value, poll_interval):
         if not self.initialized():
