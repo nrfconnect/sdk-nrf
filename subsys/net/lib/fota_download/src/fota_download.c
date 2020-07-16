@@ -123,6 +123,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			if (res != 0) {
 				LOG_ERR("Unable to free DFU target resources");
 			}
+			first_fragment = true;
 			(void) download_client_disconnect(&dlc);
 			send_evt(FOTA_DOWNLOAD_EVT_ERROR);
 			return err;
