@@ -44,13 +44,13 @@ See the `System OFF mode`_ page in the nRF52840 Product Specification for more i
 Requirements
 ************
 
-* One of the following development boards:
+The sample supports the following development kits:
 
-  * |nRF5340DK|
-  * |nRF52840DK|
-  * |nRF52DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set1_start
+   :end-before: set1_end
 
-* Smartphone or tablet with the NFC feature.
+The sample also requires a smartphone or tablet with the NFC feature.
 
 
 User interface

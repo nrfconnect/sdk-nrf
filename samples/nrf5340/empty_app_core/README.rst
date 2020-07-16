@@ -25,9 +25,12 @@ It does the following things:
 
 Requirements
 ************
-The following development board:
 
-  * |nRF5340DK|
+The sample supports the following development kit:
+
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set15_start
+   :end-before: set15_end
 
 Building and running
 ********************
@@ -47,8 +50,8 @@ Dependencies
 
 This sample uses the following `nrfx`_ dependencies:
 
-  * ``nrfx/nrf.h``
-  * ``nrfx/nrfx.h``
+* ``nrfx/nrf.h``
+* ``nrfx/nrfx.h``
 
 In addition, it uses the following Zephyr libraries:
 
