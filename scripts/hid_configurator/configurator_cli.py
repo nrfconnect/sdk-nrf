@@ -159,6 +159,8 @@ def parse_arguments():
 
     for device_name in DEVICE:
         device_parser = sp_devices.add_parser(device_name)
+        device_parser.add_argument('--hwid', type=str,
+                                   help='Hardware ID of the device')
 
         sp_commands = device_parser.add_subparsers(dest='command')
         sp_commands.required = True
@@ -220,7 +222,8 @@ def configurator():
     dev = NrfHidDevice(args.device_type,
                        get_device_vid(args.device_type),
                        get_device_pid(args.device_type),
-                       get_device_pid('dongle'))
+                       get_device_pid('dongle'),
+                       args.hwid)
 
     if not dev.initialized():
         print('Cannot find selected device')
