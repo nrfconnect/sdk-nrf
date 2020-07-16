@@ -139,7 +139,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ${PYTHON_EXECUTABLE}
       ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
       --application ${PROJECT_BINARY_DIR}/app_update.bin
-      --application-version-string ${CONFIG_ZIGBEE_OTA_APP_VERSION}
+      --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
       --zigbee-manufacturer-id ${CONFIG_ZIGBEE_OTA_MANUFACTURER_ID}
       --zigbee-image-type ${CONFIG_ZIGBEE_OTA_IMAGE_TYPE}
       --zigbee-comment ${CONFIG_ZIGBEE_OTA_COMMENT}

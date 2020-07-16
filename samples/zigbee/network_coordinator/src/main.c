@@ -8,10 +8,8 @@
  *  @brief Simple Zigbee network coordinator implementation
  */
 
-#include <zephyr/types.h>
 #include <zephyr.h>
 #include <device.h>
-#include <soc.h>
 #include <logging/log.h>
 #include <dk_buttons_and_leds.h>
 
@@ -24,7 +22,6 @@
 
 #define RUN_STATUS_LED          DK_LED1
 #define RUN_LED_BLINK_INTERVAL  1000
-
 
 /* LED indicating that network is opened for new nodes */
 #define ZIGBEE_NETWORK_STATE_LED          DK_LED3
@@ -93,12 +90,12 @@ static void configure_gpio(void)
 
 	err = dk_buttons_init(button_changed);
 	if (err) {
-		LOG_ERR("Cannot init buttons (err: %d)\n", err);
+		LOG_ERR("Cannot init buttons (err: %d)", err);
 	}
 
 	err = dk_leds_init();
 	if (err) {
-		LOG_ERR("Cannot init LEDs (err: %d)\n", err);
+		LOG_ERR("Cannot init LEDs (err: %d)", err);
 	}
 }
 
@@ -215,7 +212,7 @@ void main(void)
 {
 	int blink_status = 0;
 
-	LOG_INF("Starting ZBOSS Coordinator example\n");
+	LOG_INF("Starting ZBOSS Coordinator example");
 
 	/* Initialize */
 	configure_gpio();
@@ -223,7 +220,7 @@ void main(void)
 	/* Start Zigbee default thread */
 	zigbee_enable();
 
-	LOG_INF("ZBOSS Coordinator example started\n");
+	LOG_INF("ZBOSS Coordinator example started");
 
 	while (1) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);

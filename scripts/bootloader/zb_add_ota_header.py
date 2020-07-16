@@ -114,11 +114,11 @@ class OTA_header:
             self.__additional_fields.append(fields_values)
 
 def convert_version_string_to_int(s):
-    """Convert from semver string "1.2.3", to integer 10203"""
+    """Convert from semver string "1.2.3", to integer 1020003"""
     numbers = s.split(".")
     if len(numbers) != 3:
         raise ValueError("application-version-string parameter must be on the format x.y.z")
-    js = [1024*1024, 1024, 0]
+    js = [0x100*0x10000, 0x10000, 1]
     return sum([js[i] * int(numbers[i]) for i in range(3)])
 
 def hex2int(x):

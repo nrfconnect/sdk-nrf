@@ -238,12 +238,18 @@ config RADIO_STATISTICS
 
 endmenu #menu "ZBOSS osif configuration"
 
-if BOOTLOADER_MCUBOOT && MCUMGR
-menu "Zigbee OTA DFU configuration"
+menuconfig ZIGBEE_OTA
+bool "Enable Zigbee OTA DFU"
+imply BOOTLOADER_MCUBOOT
+imply MCUMGR
+imply DFU_TARGET
 
-config ZIGBEE_OTA_APP_VERSION
-	string "Zigbee application version"
-	default "0.0.0"
+if ZIGBEE_OTA
+
+config ZIGBEE_OTA_HW_VERSION
+	int "Zigbee hardware version"
+	range 0 65535
+	default 52
 
 config ZIGBEE_OTA_MANUFACTURER_ID
 	hex "Manufacturer ID"
@@ -290,8 +296,17 @@ config ZIGBEE_OTA_MAX_HW_VERSION
 	range 0x00 0xFF
 	depends on ENABLE_ZIGBEE_OTA_MAX_HW_VERSION
 
-endmenu #menu "Zigbee DFU configuration"
-endif #BOOTLOADER_MCUBOOT && MCUMGR
+config ZIGBEE_OTA_DATA_BLOCK_SIZE
+	int "Maximum data size of Query Block Image"
+	default 64
+	range 4 64
+
+config ZIGBEE_OTA_ENDPOINT
+	int "Zigbee OTA endpoint"
+	default 10
+	range 1 240
+
+endif #ZIGBEE_OTA
 
 config APP_LINK_WITH_ZIGBEE
 	bool
