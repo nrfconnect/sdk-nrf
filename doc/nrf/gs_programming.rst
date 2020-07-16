@@ -149,7 +149,7 @@ Complete the following steps to build |NCS| projects on the command line after c
       See :ref:`configure_application` for additional information about configuring an application.
 
       After running the ``west build`` command, the build files can be found in ``build/zephyr``.
-      For more information on the contents of the build directory, see the *Build Directory Contents* section in the Zephyr documentation on :ref:`zephyr:build_an_application`.
+      For more information on the contents of the build directory, see :ref:`zephyr:build-directory-contents`.
 
       .. include:: gs_programming.rst
          :start-after: .. imp_note_nrf91_start

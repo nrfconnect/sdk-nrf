@@ -6,7 +6,7 @@ Building the |NCS| documentation
 The |NCS| documentation is written using the reStructuredText markup language (.rst file extension) with Sphinx extensions and processed using Sphinx.
 API documentation is included from Doxygen comments.
 
-See the *Documentation overview* section in the :ref:`zephyr:zephyr_doc` developer guide for information about reStructuredText.
+See :ref:`zephyr:documentation-overview` in the Zephyr developer guide for information about reStructuredText.
 
 
 Before you start
@@ -15,7 +15,7 @@ Before you start
 Before you can build the documentation, install the |NCS| as described in :ref:`gs_installing`.
 Make sure that you have installed the required :ref:`Python dependencies <additional_deps>`.
 
-See the *Installing the documentation processors* section in the :ref:`zephyr:zephyr_doc` developer guide for information about installing the required tools to build the documentation and their supported versions.
+See :ref:`zephyr:documentation-processors` in the Zephyr developer guide for information about installing the required tools to build the documentation and their supported versions.
 In addition to these tools, you must install `mscgen`_ and make sure the ``mscgen`` executable is in your ``PATH``.
 
 .. note::

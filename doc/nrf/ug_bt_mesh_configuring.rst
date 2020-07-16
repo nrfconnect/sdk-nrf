@@ -26,7 +26,7 @@ Optional features in the Bluetooth Mesh stack must be explicitly enabled:
 * :option:`CONFIG_BT_MESH_CDB` - Enables the Configuration Database subsystem.
 
 The persistent storage of the Bluetooth Mesh provisioning and configuration data is enabled by :option:`CONFIG_BT_SETTINGS`.
-See the Persistent Storage section of :ref:`zephyr:bluetooth-arch` for details.
+See the :ref:`zephyr:bluetooth-persistent-storage` section of :ref:`zephyr:bluetooth-arch` for details.
 
 Mesh models
 ===========
