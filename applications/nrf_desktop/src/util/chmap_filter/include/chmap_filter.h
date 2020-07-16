@@ -86,41 +86,41 @@ extern "C" {
  */
 struct chmap_filter_params {
 /** Maintenance algorithm needs these many samples to run [int] */
-	u16_t maintenance_sample_count;
+	uint16_t maintenance_sample_count;
 /** Initial channel rating [int] */
-	s32_t initial_rating;
+	int32_t initial_rating;
 /** Min num of channels in channel map [int] */
-	u8_t  min_channel_count;
+	uint8_t  min_channel_count;
 /** Channel rating weight of CRC OK [fix] */
-	s16_t ble_weight_crc_ok;
+	int16_t ble_weight_crc_ok;
 /** Channel rating weight of CRC ERR [fix] */
-	s16_t ble_weight_crc_error;
+	int16_t ble_weight_crc_error;
 /** Factor for BLE channel rating trim. Must be < 100.
  *  Note: "high" value can lead to rating overflow [fix]
  */
-	s16_t ble_rating_trim;
+	int16_t ble_rating_trim;
 /** Threshold of average rating required to block of single channel [fix] */
-	s16_t ble_block_threshold;
+	int16_t ble_block_threshold;
 /** BLE channel suspected of being affected by wifi will not be blocked as
  *  single channel until this time has passed [int]
  */
-	u16_t ble_wifi_keepout_duration;
+	uint16_t ble_wifi_keepout_duration;
 /** Wifi strength increase factor. Higher value blocks wifi faster [fix] */
-	s16_t wifi_rating_inc;
+	int16_t wifi_rating_inc;
 /** Threshold of average rating that indicates Wifi presence [fix] */
-	s16_t wifi_present_threshold;
+	int16_t wifi_present_threshold;
 /** Threshold of average rating required to block wifi channel [fix] */
-	s16_t wifi_active_threshold;
+	int16_t wifi_active_threshold;
 /** Factor for Wifi channel rating trim. Must be < 100. [fix] */
-	s16_t wifi_rating_trim;
+	int16_t wifi_rating_trim;
 /** Maximum number of channels that can be evaluated at a time [int] */
-	u8_t  eval_max_count;
+	uint8_t  eval_max_count;
 /** Evaluated channels will be evaluated for these many time units [int] */
-	u16_t eval_duration;
+	uint16_t eval_duration;
 /** Blocked channels will not be evaluated for these many time units [int] */
-	u16_t eval_keepout_duration;
+	uint16_t eval_keepout_duration;
 /** Rating of evaluated channel must be above this threshold [fix] */
-	s16_t eval_success_threshold;
+	int16_t eval_success_threshold;
 /** Dynamic block and evaluation durations. [bool]
  *  Fewer channels in channel map = shorter time until evaluation.
  *  Channel blocked in the past = longer time until evaluation
@@ -164,9 +164,9 @@ int chmap_filter_instance_init(struct chmap_instance *p_inst, size_t size);
  */
 void chmap_filter_crc_update(
 	struct chmap_instance *p_inst,
-	u8_t ch_idx,
-	u16_t crc_ok,
-	u8_t crc_error);
+	uint8_t ch_idx,
+	uint16_t crc_ok,
+	uint8_t crc_error);
 
 /**@brief Process channel map filter
  *
@@ -182,7 +182,7 @@ bool chmap_filter_process(struct chmap_instance *p_inst);
  *
  * @return pointer to @em CHMAP_BLE_BITMAP_SIZE sized channel map array
  */
-u8_t *chmap_filter_suggested_map_get(struct chmap_instance *p_inst);
+uint8_t *chmap_filter_suggested_map_get(struct chmap_instance *p_inst);
 
 /**@brief Confirm that suggested channel map has been applied
  *
@@ -233,7 +233,7 @@ int chmap_filter_params_set(
  * @return Bitmask of wifi channels.
  *         E.g. channel 6 and channel 8 = (1 << 6) | (1 << 8) = 320
  */
-u16_t chmap_filter_wifi_blacklist_get(void);
+uint16_t chmap_filter_wifi_blacklist_get(void);
 
 /**@brief Set wifi channels blacklist
  *
@@ -253,7 +253,7 @@ u16_t chmap_filter_wifi_blacklist_get(void);
  * @retval 0 when successful,
  * @retval -EINVAL if blacklist exceeds minimum channel count.
  */
-int chmap_filter_blacklist_set(struct chmap_instance *p_inst, u16_t blacklist);
+int chmap_filter_blacklist_set(struct chmap_instance *p_inst, uint16_t blacklist);
 
 /**@brief Get BLE channel information
  *
@@ -268,10 +268,10 @@ int chmap_filter_blacklist_set(struct chmap_instance *p_inst, u16_t blacklist);
  */
 int chmap_filter_chn_info_get(
 	struct chmap_instance *p_inst,
-	u8_t chn_idx,
-	u8_t *p_state,
-	s16_t *p_rating,
-	u8_t *p_freq);
+	uint8_t chn_idx,
+	uint8_t *p_state,
+	int16_t *p_rating,
+	uint8_t *p_freq);
 
 #ifdef __cplusplus
 }

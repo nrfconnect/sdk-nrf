@@ -92,7 +92,7 @@ struct aws_iot_topic_data {
 	/** Type of shadow topic that will be published to. */
 	enum aws_iot_topic_type type;
 	/** Pointer to string of application specific topic. */
-	char *str;
+	const char *str;
 	/** Length of application specific topic. */
 	size_t len;
 };

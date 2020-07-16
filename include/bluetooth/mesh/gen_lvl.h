@@ -49,7 +49,7 @@ extern "C" {
 /** Generic Level set message parameters.  */
 struct bt_mesh_lvl_set {
 	/** New level. */
-	s16_t lvl;
+	int16_t lvl;
 	/** Whether this is a new action. */
 	bool new_transaction;
 	/**
@@ -63,7 +63,7 @@ struct bt_mesh_lvl_set {
 /** Generic Level delta set message parameters.  */
 struct bt_mesh_lvl_delta_set {
 	/** Translation from original value. */
-	s32_t delta;
+	int32_t delta;
 	/**
 	 * Whether this is a new transaction. If true, the delta should be
 	 * relative to the current value. If false, the delta should be
@@ -81,7 +81,7 @@ struct bt_mesh_lvl_delta_set {
 /** Generic Level move set message parameters. */
 struct bt_mesh_lvl_move_set {
 	/** Translation to make for every transition step. */
-	s16_t delta;
+	int16_t delta;
 	/** Whether this is a new action. */
 	bool new_transaction;
 	/**
@@ -96,17 +96,17 @@ struct bt_mesh_lvl_move_set {
 /** Generic Level status message parameters.  */
 struct bt_mesh_lvl_status {
 	/** Current level value. */
-	s16_t current;
+	int16_t current;
 	/**
 	 * Target value for the ongoing transition. If there's no ongoing
 	 * transition, @c target should match @c value.
 	 */
-	s16_t target;
+	int16_t target;
 	/**
 	 * Time remaining of the ongoing transition, or @em K_FOREVER.
 	 * If there's no ongoing transition, @c remaining_time is 0.
 	 */
-	s32_t remaining_time;
+	int32_t remaining_time;
 };
 
 #ifdef __cplusplus

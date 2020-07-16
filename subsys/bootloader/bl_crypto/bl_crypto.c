@@ -37,10 +37,10 @@ BUILD_ASSERT(CONFIG_SB_PUBLIC_KEY_HASH_LEN <= CONFIG_SB_HASH_LEN,
 #include <ocrypto_constant_time.h>
 #include "bl_crypto_internal.h"
 
-static int verify_truncated_hash(const u8_t *data, u32_t data_len,
-		const u8_t *expected, u32_t hash_len, bool external)
+static int verify_truncated_hash(const uint8_t *data, uint32_t data_len,
+		const uint8_t *expected, uint32_t hash_len, bool external)
 {
-	u8_t hash[CONFIG_SB_HASH_LEN];
+	uint8_t hash[CONFIG_SB_HASH_LEN];
 
 	__ASSERT(hash_len <= CONFIG_SB_HASH_LEN, "truncated hash length too long.");
 
@@ -54,11 +54,11 @@ static int verify_truncated_hash(const u8_t *data, u32_t data_len,
 	return 0;
 }
 
-static int verify_signature(const u8_t *data, u32_t data_len,
-		const u8_t *signature, const u8_t *public_key, bool external)
+static int verify_signature(const uint8_t *data, uint32_t data_len,
+		const uint8_t *signature, const uint8_t *public_key, bool external)
 {
-	u8_t hash1[CONFIG_SB_HASH_LEN];
-	u8_t hash2[CONFIG_SB_HASH_LEN];
+	uint8_t hash1[CONFIG_SB_HASH_LEN];
+	uint8_t hash2[CONFIG_SB_HASH_LEN];
 
 	int retval = get_hash(hash1, data, data_len, external);
 	if (retval != 0) {
@@ -75,9 +75,9 @@ static int verify_signature(const u8_t *data, u32_t data_len,
 
 /* Base implementation, with 'external' parameter. */
 static int root_of_trust_verify(
-		const u8_t *public_key, const u8_t *public_key_hash,
-		const u8_t *signature, const u8_t *firmware,
-		const u32_t firmware_len, bool external)
+		const uint8_t *public_key, const uint8_t *public_key_hash,
+		const uint8_t *signature, const uint8_t *firmware,
+		const uint32_t firmware_len, bool external)
 {
 	__ASSERT(public_key && public_key_hash && signature && firmware,
 			"A parameter was NULL.");
@@ -95,15 +95,15 @@ static int root_of_trust_verify(
 
 
 int root_of_trust_verify(
-		const u8_t *public_key, const u8_t *public_key_hash,
-		const u8_t *signature, const u8_t *firmware,
-		const u32_t firmware_len, bool external);
+		const uint8_t *public_key, const uint8_t *public_key_hash,
+		const uint8_t *signature, const uint8_t *firmware,
+		const uint32_t firmware_len, bool external);
 
 
 /* For use by the bootloader. */
-int bl_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
-			 const u8_t *signature, const u8_t *firmware,
-			 const u32_t firmware_len)
+int bl_root_of_trust_verify(const uint8_t *public_key, const uint8_t *public_key_hash,
+			 const uint8_t *signature, const uint8_t *firmware,
+			 const uint32_t firmware_len)
 {
 	return root_of_trust_verify(public_key, public_key_hash, signature,
 					firmware, firmware_len, false);
@@ -112,16 +112,16 @@ int bl_root_of_trust_verify(const u8_t *public_key, const u8_t *public_key_hash,
 
 /* For use through EXT_API. */
 int bl_root_of_trust_verify_external(
-			const u8_t *public_key, const u8_t *public_key_hash,
-			const u8_t *signature, const u8_t *firmware,
-			const u32_t firmware_len)
+			const uint8_t *public_key, const uint8_t *public_key_hash,
+			const uint8_t *signature, const uint8_t *firmware,
+			const uint32_t firmware_len)
 {
 	return root_of_trust_verify(public_key, public_key_hash, signature,
 					firmware, firmware_len, true);
 }
 
 #ifndef CONFIG_BL_SHA256_EXT_API_REQUIRED
-int bl_sha256_verify(const u8_t *data, u32_t data_len, const u8_t *expected)
+int bl_sha256_verify(const uint8_t *data, uint32_t data_len, const uint8_t *expected)
 {
 	return verify_truncated_hash(data, data_len, expected, CONFIG_SB_HASH_LEN, true);
 }

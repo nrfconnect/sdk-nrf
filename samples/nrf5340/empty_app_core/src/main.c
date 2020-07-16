@@ -20,8 +20,8 @@
  * @param reg_begin  Address to `POWER` register of the first NRF_VMC->RAM item
  * @param reg_last   Address to `POWER` register of the last NRF_VMC->RAM item
  */
-void disable_ram_and_wfi(register volatile u32_t *reg_begin,
-			 register volatile u32_t *reg_last)
+void disable_ram_and_wfi(register volatile uint32_t *reg_begin,
+			 register volatile uint32_t *reg_last)
 {
 	__disable_irq();
 
@@ -54,7 +54,7 @@ static int network_gpio_allow(struct device *dev)
 	ARG_UNUSED(dev);
 
 	/* Allow Network MCU to use all GPIOs */
-	for (u32_t i = 0; i < ARRAY_SIZE(NRF_P0_S->PIN_CNF); i++) {
+	for (uint32_t i = 0; i < ARRAY_SIZE(NRF_P0_S->PIN_CNF); i++) {
 		NRF_P0_S->PIN_CNF[i] = (GPIO_PIN_CNF_MCUSEL_NetworkMCU <<
 					GPIO_PIN_CNF_MCUSEL_Pos);
 	}

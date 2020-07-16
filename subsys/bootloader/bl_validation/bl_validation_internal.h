@@ -14,7 +14,7 @@ extern "C" {
 #include <zephyr/types.h>
 
 
-static bool within(u32_t addr, u32_t start, u32_t end)
+static bool within(uint32_t addr, uint32_t start, uint32_t end)
 {
 	if (start > end) {
 		return false;
@@ -28,8 +28,8 @@ static bool within(u32_t addr, u32_t start, u32_t end)
 	return true;
 }
 
-static bool region_within(u32_t inner_start, u32_t inner_end,
-			u32_t start, u32_t end)
+static bool region_within(uint32_t inner_start, uint32_t inner_end,
+			uint32_t start, uint32_t end)
 {
 	if (inner_start > inner_end) {
 		return false;

@@ -8,7 +8,7 @@
 #include <bluetooth/mesh/gen_dtt_srv.h>
 #include "model_utils.h"
 
-static void encode_status(struct net_buf_simple *buf, u32_t transition_time)
+static void encode_status(struct net_buf_simple *buf, uint32_t transition_time)
 {
 	bt_mesh_model_msg_init(buf, BT_MESH_DTT_OP_STATUS);
 	net_buf_simple_add_u8(buf, model_transition_encode(transition_time));
@@ -44,8 +44,8 @@ static void set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	struct bt_mesh_dtt_srv *srv = model->user_data;
-	u32_t old_time = srv->transition_time;
-	u32_t new_time = model_transition_decode(net_buf_simple_pull_u8(buf));
+	uint32_t old_time = srv->transition_time;
+	uint32_t new_time = model_transition_decode(net_buf_simple_pull_u8(buf));
 
 	if (new_time == SYS_FOREVER_MS) {
 		/* Invalid parameter */
@@ -63,7 +63,7 @@ static void set_dtt(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	if (IS_ENABLED(CONFIG_BT_MESH_DTT_SRV_PERSISTENT)) {
-		(void)bt_mesh_model_data_store(model, false,
+		(void)bt_mesh_model_data_store(model, false, NULL,
 					       &srv->transition_time,
 					       sizeof(srv->transition_time));
 	}
@@ -103,10 +103,15 @@ static int bt_mesh_dtt_srv_init(struct bt_mesh_model *model)
 
 #ifdef CONFIG_BT_MESH_DTT_SRV_PERSISTENT
 static int bt_mesh_dtt_srv_settings_set(struct bt_mesh_model *model,
+					const char *name,
 					size_t len_rd, settings_read_cb read_cb,
 					void *cb_arg)
 {
 	struct bt_mesh_dtt_srv *srv = model->user_data;
+
+	if (name) {
+		return -ENOTSUP; /* TODO support this */
+	}
 
 	ssize_t bytes = read_cb(cb_arg, &srv->transition_time,
 				sizeof(srv->transition_time));
@@ -137,9 +142,9 @@ int _bt_mesh_dtt_srv_update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-void bt_mesh_dtt_srv_set(struct bt_mesh_dtt_srv *srv, u32_t transition_time)
+void bt_mesh_dtt_srv_set(struct bt_mesh_dtt_srv *srv, uint32_t transition_time)
 {
-	u32_t old = srv->transition_time;
+	uint32_t old = srv->transition_time;
 
 	srv->transition_time = transition_time;
 

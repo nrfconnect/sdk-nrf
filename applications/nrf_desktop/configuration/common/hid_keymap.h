@@ -19,9 +19,9 @@ extern "C" {
 
 /** @brief HID map entry. */
 struct hid_keymap {
-	u16_t key_id;	/**< Key HW id. */
-	u16_t usage_id;	/**< Assigned usage. */
-	u8_t report_id;	/**< Id of the target report. */
+	uint16_t key_id;	/**< Key HW id. */
+	uint16_t usage_id;	/**< Assigned usage. */
+	uint8_t report_id;	/**< Id of the target report. */
 };
 
 #ifdef __cplusplus

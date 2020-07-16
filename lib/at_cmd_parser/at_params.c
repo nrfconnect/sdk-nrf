@@ -57,9 +57,9 @@ static size_t at_param_size(const struct at_param *param)
 	__ASSERT(param != NULL, "Parameter cannot be NULL.");
 
 	if (param->type == AT_PARAM_TYPE_NUM_SHORT) {
-		return sizeof(u16_t);
+		return sizeof(uint16_t);
 	} else if (param->type == AT_PARAM_TYPE_NUM_INT) {
-		return sizeof(u32_t);
+		return sizeof(uint32_t);
 	} else if ((param->type == AT_PARAM_TYPE_STRING) ||
 		   (param->type == AT_PARAM_TYPE_ARRAY)) {
 		return param->size;
@@ -112,7 +112,7 @@ void at_params_list_free(struct at_param_list *list)
 }
 
 int at_params_short_put(const struct at_param_list *list, size_t index,
-			u16_t value)
+			uint16_t value)
 {
 	if (list == NULL || list->params == NULL) {
 		return -EINVAL;
@@ -127,7 +127,7 @@ int at_params_short_put(const struct at_param_list *list, size_t index,
 	at_param_clear(param);
 
 	param->type = AT_PARAM_TYPE_NUM_SHORT;
-	param->value.int_val = (u32_t)(value & USHRT_MAX);
+	param->value.int_val = (uint32_t)(value & USHRT_MAX);
 	return 0;
 }
 
@@ -152,7 +152,7 @@ int at_params_empty_put(const struct at_param_list *list, size_t index)
 }
 
 int at_params_int_put(const struct at_param_list *list, size_t index,
-		      u32_t value)
+		      uint32_t value)
 {
 	if (list == NULL || list->params == NULL) {
 		return -EINVAL;
@@ -201,7 +201,7 @@ int at_params_string_put(const struct at_param_list *list, size_t index,
 }
 
 int at_params_array_put(const struct at_param_list *list, size_t index,
-			const u32_t *array, size_t array_len)
+			const uint32_t *array, size_t array_len)
 {
 	if (list == NULL || list->params == NULL || array == NULL) {
 		return -EINVAL;
@@ -213,7 +213,7 @@ int at_params_array_put(const struct at_param_list *list, size_t index,
 		return -EINVAL;
 	}
 
-	u32_t *param_value = (u32_t *)k_malloc(array_len);
+	uint32_t *param_value = (uint32_t *)k_malloc(array_len);
 
 	if (param_value == NULL) {
 		return -ENOMEM;
@@ -247,7 +247,7 @@ int at_params_size_get(const struct at_param_list *list, size_t index,
 }
 
 int at_params_short_get(const struct at_param_list *list, size_t index,
-			u16_t *value)
+			uint16_t *value)
 {
 	if (list == NULL || list->params == NULL || value == NULL) {
 		return -EINVAL;
@@ -263,12 +263,12 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
 		return -EINVAL;
 	}
 
-	*value = (u16_t)param->value.int_val;
+	*value = (uint16_t)param->value.int_val;
 	return 0;
 }
 
 int at_params_int_get(const struct at_param_list *list, size_t index,
-		      u32_t *value)
+		      uint32_t *value)
 {
 	if (list == NULL || list->params == NULL || value == NULL) {
 		return -EINVAL;
@@ -320,7 +320,7 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
 }
 
 int at_params_array_get(const struct at_param_list *list, size_t index,
-			u32_t *array, size_t *len)
+			uint32_t *array, size_t *len)
 {
 	if (list == NULL || list->params == NULL || array == NULL ||
 	    len == NULL) {
@@ -349,7 +349,7 @@ int at_params_array_get(const struct at_param_list *list, size_t index,
 	return 0;
 }
 
-u32_t at_params_valid_count_get(const struct at_param_list *list)
+uint32_t at_params_valid_count_get(const struct at_param_list *list)
 {
 	if (list == NULL || list->params == NULL) {
 		return -EINVAL;

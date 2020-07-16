@@ -52,7 +52,7 @@ bool slm_util_cmd_casecmp(const char *cmd, const char *slm_cmd);
  *
  * @return true if the input is hexdecimal array, otherwise false
  */
-bool slm_util_hex_check(const u8_t *hex, u16_t hex_len);
+bool slm_util_hex_check(const uint8_t *hex, uint16_t hex_len);
 
 /**
  * @brief Encode hex array to hexdecimal string (ASCII text)
@@ -65,8 +65,8 @@ bool slm_util_hex_check(const u8_t *hex, u16_t hex_len);
  * @return actual size of ascii string if the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_util_htoa(const u8_t *hex, u16_t hex_len,
-		char *ascii, u16_t ascii_len);
+int slm_util_htoa(const uint8_t *hex, uint16_t hex_len,
+		char *ascii, uint16_t ascii_len);
 
 /**
  * @brief Decode hexdecimal string (ASCII text) to hex array
@@ -79,8 +79,8 @@ int slm_util_htoa(const u8_t *hex, u16_t hex_len,
  * @return actual size of hex array if the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int slm_util_atoh(const char *ascii, u16_t ascii_len,
-		u8_t *hex, u16_t hex_len);
+int slm_util_atoh(const char *ascii, uint16_t ascii_len,
+		uint8_t *hex, uint16_t hex_len);
 
 
 /**@brief Check whether a string has valid IPv4 address or not
@@ -90,7 +90,7 @@ int slm_util_atoh(const char *ascii, u16_t ascii_len,
  *
  * @return true if text string is IPv4 address, false otherwise
  */
-bool check_for_ipv4(const char *address, u8_t length);
+bool check_for_ipv4(const char *address, uint8_t length);
 
 /** @} */
 

@@ -28,14 +28,14 @@ static void on_ot_disconnect(struct k_work *item)
 	dk_set_led_off(OT_CONNECTION_LED);
 }
 
-static void on_mtd_mode_toggle(u32_t val)
+static void on_mtd_mode_toggle(uint32_t val)
 {
 	dk_set_led(MTD_SED_LED, val);
 }
 
-static void on_button_changed(u32_t button_state, u32_t has_changed)
+static void on_button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	u32_t buttons = button_state & has_changed;
+	uint32_t buttons = button_state & has_changed;
 
 	if (buttons & DK_BTN1_MSK) {
 		coap_client_toggle_one_light();

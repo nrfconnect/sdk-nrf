@@ -55,7 +55,7 @@ static void double_to_sensor_value(double val,
  */
 static void sensor_sim_gpio_callback(struct device *dev,
 				struct gpio_callback *cb,
-				u32_t pins)
+				uint32_t pins)
 {
 	ARG_UNUSED(pins);
 	struct sensor_sim_data *drv_data =
@@ -210,7 +210,7 @@ static double generate_pseudo_random(void)
  */
 static double generate_sine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32();
+	uint32_t time = k_uptime_get_32();
 
 	return offset + amplitude * sin(time % 65535);
 }

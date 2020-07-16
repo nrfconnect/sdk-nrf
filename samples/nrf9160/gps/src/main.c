@@ -46,10 +46,10 @@ static const char            at_commands[][31]  = {
 
 static int                   gnss_fd;
 static char                  nmea_strings[10][NRF_GNSS_NMEA_MAX_LEN];
-static u32_t                 nmea_string_cnt;
+static uint32_t                 nmea_string_cnt;
 
 static bool                  got_fix;
-static u64_t                 fix_timestamp;
+static uint64_t                 fix_timestamp;
 static nrf_gnss_data_frame_t last_pvt;
 
 K_SEM_DEFINE(lte_ready, 0, 1);
@@ -216,9 +216,9 @@ static int init_app(void)
 
 static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 {
-	u8_t  tracked          = 0;
-	u8_t  in_fix           = 0;
-	u8_t  unhealthy        = 0;
+	uint8_t  tracked          = 0;
+	uint8_t  in_fix           = 0;
+	uint8_t  unhealthy        = 0;
 
 	for (int i = 0; i < NRF_GNSS_MAX_SATELLITES; ++i) {
 
@@ -371,7 +371,7 @@ int inject_agps_type(void *agps,
 int main(void)
 {
 	nrf_gnss_data_frame_t gps_data;
-	u8_t		      cnt = 0;
+	uint8_t		      cnt = 0;
 
 #ifdef CONFIG_SUPL_CLIENT_LIB
 	static struct supl_api supl_api = {

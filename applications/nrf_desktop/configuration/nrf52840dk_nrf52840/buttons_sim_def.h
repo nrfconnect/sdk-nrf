@@ -15,7 +15,7 @@
  */
 const struct {} buttons_sim_def_include_once;
 
-const static u16_t simulated_key_sequence[] = {
+const static uint16_t simulated_key_sequence[] = {
 	KEY_ID(0x00, 0x11), /* N */
 	KEY_ID(0x00, 0x12), /* O */
 	KEY_ID(0x00, 0x15), /* R */

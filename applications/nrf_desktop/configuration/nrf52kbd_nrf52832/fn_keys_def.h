@@ -15,7 +15,7 @@
  */
 const struct {} fn_key_def_include_once;
 
-static const u16_t fn_keys[] = {
+static const uint16_t fn_keys[] = {
 	KEY_ID(0x01, 0x03), /* f3 -> e-mail */
 	KEY_ID(0x03, 0x01), /* esc -> fn lock */
 	KEY_ID(0x03, 0x03), /* f4 -> calculator */

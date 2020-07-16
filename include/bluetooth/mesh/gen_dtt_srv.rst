@@ -22,7 +22,7 @@ States
 
 The Generic Level Server model contains the following state:
 
-Generic Default Transition Time: ``s32_t``
+Generic Default Transition Time: ``int32_t``
     This state can have the following values:
 
     * `0` to perform the state change instantly or when no transition is planned

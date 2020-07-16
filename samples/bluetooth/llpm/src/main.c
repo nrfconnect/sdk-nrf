@@ -45,8 +45,8 @@ static const struct bt_data sd[] = {
 };
 
 static struct {
-	u32_t latency;
-	u32_t crc_errors;
+	uint32_t latency;
+	uint32_t crc_errors;
 } llpm_latency;
 
 void scan_filter_match(struct bt_scan_device_info *device_info,
@@ -163,7 +163,7 @@ static void advertise_and_scan(void)
 	printk("Scanning successfully started\n");
 }
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
 		printk("Connection failed (err %u)\n", err);
@@ -193,7 +193,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	}
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	printk("Disconnected (reason %u)\n", reason);
 
@@ -207,8 +207,8 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	advertise_and_scan();
 }
 
-static void le_param_updated(struct bt_conn *conn, u16_t interval,
-			     u16_t latency, u16_t timeout)
+static void le_param_updated(struct bt_conn *conn, uint16_t interval,
+			     uint16_t latency, uint16_t timeout)
 {
 	if (interval == INTERVAL_LLPM) {
 		printk("Connection interval updated: LLPM (1 ms)\n");
@@ -255,7 +255,7 @@ static int enable_llpm_short_connection_interval(void)
 		return -ENOMEM;
 	}
 
-	u16_t conn_handle;
+	uint16_t conn_handle;
 
 	err = bt_hci_get_conn_handle(default_conn, &conn_handle);
 	if (err) {
@@ -280,7 +280,7 @@ static int enable_llpm_short_connection_interval(void)
 
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
-	u8_t code;
+	uint8_t code;
 	hci_vs_subevent_qos_conn_event_report_t *evt;
 
 	code = net_buf_simple_pull_u8(buf);
@@ -329,16 +329,16 @@ static int enable_qos_conn_evt_report(void)
 	return 0;
 }
 
-static void latency_response_handler(const void *buf, u16_t len)
+static void latency_response_handler(const void *buf, uint16_t len)
 {
-	u32_t latency_time;
+	uint32_t latency_time;
 
 	if (len == sizeof(latency_time)) {
 		/* compute how long the time spent */
-		latency_time = *((u32_t *)buf);
-		u32_t cycles_spent = k_cycle_get_32() - latency_time;
+		latency_time = *((uint32_t *)buf);
+		uint32_t cycles_spent = k_cycle_get_32() - latency_time;
 		llpm_latency.latency =
-			(u32_t)k_cyc_to_ns_floor64(cycles_spent) / 2000;
+			(uint32_t)k_cyc_to_ns_floor64(cycles_spent) / 2000;
 	}
 }
 
@@ -373,7 +373,7 @@ static void test_run(void)
 
 	/* Start sending the timestamp to its peer */
 	while (default_conn) {
-		u32_t time = k_cycle_get_32();
+		uint32_t time = k_cycle_get_32();
 
 		err = bt_gatt_latency_c_request(&gatt_latency_client, &time,
 						sizeof(time));

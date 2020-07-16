@@ -69,7 +69,7 @@ LOG_MODULE_DECLARE(nfc_t4t_cc_file, CONFIG_NFC_T4T_CC_FILE_LOG_LEVEL);
 /** @brief Validates maximum file size field range. This field is present
  *         in every File Control TLV.
  */
-static bool max_field_range_verify(u32_t value, u32_t min, u32_t max)
+static bool max_field_range_verify(uint32_t value, uint32_t min, uint32_t max)
 {
 	return !((value < min) || (value > max));
 }
@@ -110,7 +110,7 @@ static int nfc_t4t_file_control_tl_validate(struct nfc_t4t_tlv_block *file_contr
 /**@brief Function for parsing value field of File Control TLV.
  */
 static int nfc_t4t_file_control_value_parse(struct nfc_t4t_tlv_block *file_control_tlv,
-					    const u8_t *value_buff)
+					    const uint8_t *value_buff)
 {
 	struct nfc_t4t_tlv_block_file_control_val *control_tlv_val;
 
@@ -183,11 +183,11 @@ static int nfc_t4t_file_control_value_parse(struct nfc_t4t_tlv_block *file_contr
 
 
 int nfc_t4t_tlv_block_parse(struct nfc_t4t_tlv_block *file_control_tlv,
-			    const u8_t *raw_data,
-			    u16_t *len)
+			    const uint8_t *raw_data,
+			    uint16_t *len)
 {
 	int err;
-	const u8_t *offset = raw_data;
+	const uint8_t *offset = raw_data;
 
 	if (*len < TLV_MIN_TL_FIELD_LEN) {
 		return -ENOMEM;
@@ -217,7 +217,7 @@ int nfc_t4t_tlv_block_parse(struct nfc_t4t_tlv_block *file_control_tlv,
 	}
 
 	/* Calculate the total TLV block size. */
-	u16_t tlv_block_len = (offset - raw_data) + file_control_tlv->length;
+	uint16_t tlv_block_len = (offset - raw_data) + file_control_tlv->length;
 
 	if (*len < tlv_block_len) {
 		return -ENOMEM;
@@ -238,7 +238,7 @@ int nfc_t4t_tlv_block_parse(struct nfc_t4t_tlv_block *file_control_tlv,
 }
 
 
-void nfc_t4t_tlv_block_printout(u8_t num, const struct nfc_t4t_tlv_block *t4t_tlv_block)
+void nfc_t4t_tlv_block_printout(uint8_t num, const struct nfc_t4t_tlv_block *t4t_tlv_block)
 {
 	LOG_INF("%d file Control TLV", num);
 	switch (t4t_tlv_block->type) {

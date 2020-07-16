@@ -25,7 +25,7 @@ extern "C" {
 #define _ROW_BITS(_row) ((_row & BIT_MASK(_ROW_SIZE)) << _ROW_POS)
 
 
-#define KEY_ID(_col, _row) ((u16_t)(_COL_BITS(_col) | _ROW_BITS(_row)))
+#define KEY_ID(_col, _row) ((uint16_t)(_COL_BITS(_col) | _ROW_BITS(_row)))
 
 #define KEY_COL(_keyid) ((_keyid >> _COL_POS) & BIT_MASK(_COL_SIZE))
 #define KEY_ROW(_keyid) ((_keyid >> _ROW_POS) & BIT_MASK(_ROW_SIZE))

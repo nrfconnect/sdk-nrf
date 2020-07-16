@@ -32,7 +32,7 @@ extern "C" {
 /* SPU FLASH regions */
 #if (defined(CONFIG_SOC_NRF5340_CPUAPP) \
 	&& defined(CONFIG_NRF5340_CPUAPP_ERRATUM19))
-static inline u32_t spu_flash_region_size(void)
+static inline uint32_t spu_flash_region_size(void)
 {
 	if (NRF_FICR->INFO.PART == 0x5340) {
 		if (NRF_FICR->INFO.VARIANT == 0x41414142) {
@@ -44,7 +44,7 @@ static inline u32_t spu_flash_region_size(void)
 	return 0;
 }
 
-static inline u32_t num_spu_flash_regions(void)
+static inline uint32_t num_spu_flash_regions(void)
 {
 	if (NRF_FICR->INFO.PART == 0x5340) {
 		if (NRF_FICR->INFO.VARIANT == 0x41414142) {
@@ -154,7 +154,7 @@ static inline u32_t num_spu_flash_regions(void)
 	SPU_FLASHNSC_REGION_REGION_Msk)
 
 #define FLASH_NSC_REGION_FROM_ADDR(addr)                                       \
-	FLASH_NSC_REGION(((u32_t)addr / FLASH_SECURE_ATTRIBUTION_REGION_SIZE))
+	FLASH_NSC_REGION(((uint32_t)addr / FLASH_SECURE_ATTRIBUTION_REGION_SIZE))
 
 #define FLASH_NSC_REGION_LOCK                                                  \
 	((SPU_FLASHNSC_REGION_LOCK_Locked << SPU_FLASHNSC_REGION_LOCK_Pos) &   \
@@ -169,7 +169,7 @@ static inline u32_t num_spu_flash_regions(void)
 	SPU_FLASHNSC_SIZE_LOCK_Msk)
 
 #define FLASH_NSC_SIZE_FROM_ADDR(addr) FLASH_SECURE_ATTRIBUTION_REGION_SIZE    \
-	- (((u32_t)(addr)) % FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
+	- (((uint32_t)(addr)) % FLASH_SECURE_ATTRIBUTION_REGION_SIZE)
 
 #define FLASH_NSC_SIZE_REG(size) FLASH_NSC_SIZE((size) / FLASH_NSC_MIN_SIZE)
 

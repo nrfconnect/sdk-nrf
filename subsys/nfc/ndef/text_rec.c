@@ -15,10 +15,10 @@
 /** Reserved position. */
 #define TEXT_REC_RESERVED_POS         6
 
-const u8_t nfc_ndef_text_rec_type_field[] = {'T'};
+const uint8_t nfc_ndef_text_rec_type_field[] = {'T'};
 
 /* Function for calculating payload size. */
-static u32_t nfc_text_rec_payload_size_get(
+static uint32_t nfc_text_rec_payload_size_get(
 	    struct nfc_ndef_text_rec_payload const *nfc_rec_text_payload_desc)
 {
 	return (TEXT_REC_STATUS_SIZE +
@@ -28,8 +28,8 @@ static u32_t nfc_text_rec_payload_size_get(
 
 int nfc_ndef_text_rec_payload_encode(
 		struct nfc_ndef_text_rec_payload *nfc_rec_text_payload_desc,
-		u8_t *buff,
-		u32_t *len)
+		uint8_t *buff,
+		uint32_t *len)
 {
 	if ((!nfc_rec_text_payload_desc->lang_code_len)			||
 	    (nfc_rec_text_payload_desc->lang_code_len &
@@ -44,7 +44,7 @@ int nfc_ndef_text_rec_payload_encode(
 		return -EINVAL;
 	}
 
-	u32_t payload_size =
+	uint32_t payload_size =
 		    nfc_text_rec_payload_size_get(nfc_rec_text_payload_desc);
 
 	if (buff) {

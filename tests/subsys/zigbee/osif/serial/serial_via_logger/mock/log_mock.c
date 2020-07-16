@@ -7,12 +7,12 @@
 #include <sys/util.h>
 #include "log_mock.h"
 
-static u8_t log_mock_array[20];
-static s32_t log_mock_idx;
+static uint8_t log_mock_array[20];
+static int32_t log_mock_idx;
 
-void log_mock_hexdump(u8_t *buf, s32_t len, char *s)
+void log_mock_hexdump(uint8_t *buf, int32_t len, char *s)
 {
-	s32_t i;
+	int32_t i;
 
 	for (i = 0; i < len; i++) {
 		if (log_mock_idx < ARRAY_SIZE(log_mock_array)) {
@@ -21,12 +21,12 @@ void log_mock_hexdump(u8_t *buf, s32_t len, char *s)
 	}
 }
 
-s32_t log_mock_get_buf_len(void)
+int32_t log_mock_get_buf_len(void)
 {
 	return log_mock_idx;
 }
 
-s32_t log_mock_get_buf_data(s32_t index)
+int32_t log_mock_get_buf_data(int32_t index)
 {
 	if (index < log_mock_idx) {
 		return log_mock_array[index];

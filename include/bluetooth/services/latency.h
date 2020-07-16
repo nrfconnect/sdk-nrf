@@ -35,13 +35,13 @@ struct bt_gatt_latency_cb {
 	 * @param[in] buf Latency data.
 	 * @param[in] len Latency data length.
 	 */
-	void (*latency_request)(const void *buf, u16_t len);
+	void (*latency_request)(const void *buf, uint16_t len);
 };
 
 /** @brief Latency structure. */
 struct bt_gatt_latency {
 	/** Characteristic handle. */
-	u16_t handle;
+	uint16_t handle;
 
 	/** Connection object. */
 	struct bt_conn *conn;

@@ -25,7 +25,7 @@
 
 #define FLASH_URL_ADDRESS_ID 1 /**< Address of URL message in FLASH */
 
-static const u8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". */
+static const uint8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". */
 	{'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'};
 
  /* Flash block size in bytes */
@@ -54,13 +54,13 @@ int ndef_file_setup(void)
 	return err;
 }
 
-int ndef_file_update(u8_t const *buff, u32_t size)
+int ndef_file_update(uint8_t const *buff, uint32_t size)
 {
 	/* Update FLASH file with new NDEF message. */
 	return nvs_write(&fs, FLASH_URL_ADDRESS_ID, buff, size);
 }
 
-int ndef_file_default_message(u8_t *buff, u32_t *size)
+int ndef_file_default_message(uint8_t *buff, uint32_t *size)
 {
 	/* Encode URI message into buffer. */
 	return nfc_ndef_uri_msg_encode(NFC_URI_HTTP_WWW,
@@ -70,7 +70,7 @@ int ndef_file_default_message(u8_t *buff, u32_t *size)
 				  size);
 }
 
-int ndef_restore_default(u8_t *buff, u32_t size)
+int ndef_restore_default(uint8_t *buff, uint32_t size)
 {
 	int err;
 
@@ -88,7 +88,7 @@ int ndef_restore_default(u8_t *buff, u32_t size)
 	return err;
 }
 
-int ndef_file_load(u8_t *buff, u32_t size)
+int ndef_file_load(uint8_t *buff, uint32_t size)
 {
 	int err;
 

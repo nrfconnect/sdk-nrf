@@ -102,7 +102,7 @@ static bool tlv_block_is_data_length_correct(struct nfc_t2t_tlv_block *block_to_
  *
  */
 static bool nfc_t2t_is_end_reached(struct nfc_t2t *t2t,
-				   u16_t offset)
+				   uint16_t offset)
 {
 	return offset == (t2t->cc.data_area_size + NFC_T2T_FIRST_DATA_BLOCK_OFFSET);
 }
@@ -143,8 +143,8 @@ static bool nfc_t2t_is_version_supported(struct nfc_t2t *t2t)
  *
  */
 static bool nfc_t2t_is_field_within_data_range(struct nfc_t2t *t2t,
-					       u16_t offset,
-					       u16_t field_length)
+					       uint16_t offset,
+					       uint16_t field_length)
 {
 	/* Invalid argument, return false. */
 	if (field_length == 0) {
@@ -177,8 +177,8 @@ static bool nfc_t2t_is_field_within_data_range(struct nfc_t2t *t2t,
  *           Otherwise, a (negative) error code is returned.
  */
 static int nfc_t2t_type_extract(struct nfc_t2t *t2t,
-				const u8_t *raw_data,
-				u16_t *t_offset,
+				const uint8_t *raw_data,
+				uint16_t *t_offset,
 				struct nfc_t2t_tlv_block *tlv_buf)
 {
 	if (!nfc_t2t_is_field_within_data_range(t2t, *t_offset,
@@ -213,11 +213,11 @@ static int nfc_t2t_type_extract(struct nfc_t2t *t2t,
  *           Otherwise, a (negative) error code is returned.
  */
 static int nfc_t2t_length_extract(struct nfc_t2t *t2t,
-				  const u8_t *raw_data,
-				  u16_t *l_offset,
+				  const uint8_t *raw_data,
+				  uint16_t *l_offset,
 				  struct nfc_t2t_tlv_block *tlv_buf)
 {
-	u16_t length;
+	uint16_t length;
 
 	if (!nfc_t2t_is_field_within_data_range(t2t, *l_offset,
 						NFC_T2T_TLV_L_SHORT_LENGTH)) {
@@ -274,8 +274,8 @@ static int nfc_t2t_length_extract(struct nfc_t2t *t2t,
  *           Otherwise, a (negative) error code is returned.
  */
 static int nfc_t2t_value_ptr_extract(struct nfc_t2t *t2t,
-				     const u8_t *raw_data,
-				     u16_t *v_offset,
+				     const uint8_t *raw_data,
+				     uint16_t *v_offset,
 				     struct nfc_t2t_tlv_block *tlv_buf)
 {
 	if (tlv_buf->length == 0) {
@@ -315,8 +315,8 @@ static int nfc_t2t_value_ptr_extract(struct nfc_t2t *t2t,
  *           Otherwise, a (negative) error code is returned.
  */
 static int nfc_t2t_tlv_block_extract(struct nfc_t2t *t2t,
-				     const u8_t *raw_data,
-				     u16_t *offset,
+				     const uint8_t *raw_data,
+				     uint16_t *offset,
 				     struct nfc_t2t_tlv_block  *tlv_buf)
 {
 	int err;
@@ -388,15 +388,15 @@ static int nfc_t2t_tlv_block_extract(struct nfc_t2t *t2t,
  */
 static bool nfc_t2t_is_bcc_correct(struct nfc_t2t_sn *sn)
 {
-	u8_t bcc1 = (u8_t)NFC_T2T_UID_BCC_CASCADE_BYTE ^
-		    (u8_t)sn->manufacturer_id ^
-		    (u8_t)((sn->serial_number_part_1 >> 8) & 0xFF) ^
-		    (u8_t)(sn->serial_number_part_1 & 0xFF);
+	uint8_t bcc1 = (uint8_t)NFC_T2T_UID_BCC_CASCADE_BYTE ^
+		    (uint8_t)sn->manufacturer_id ^
+		    (uint8_t)((sn->serial_number_part_1 >> 8) & 0xFF) ^
+		    (uint8_t)(sn->serial_number_part_1 & 0xFF);
 
-	u8_t bcc2 = (u8_t)((sn->serial_number_part_2 >> 24) & 0xFF) ^
-		    (u8_t)((sn->serial_number_part_2 >> 16) & 0xFF) ^
-		    (u8_t)((sn->serial_number_part_2 >> 8) & 0xFF) ^
-		    (u8_t)(sn->serial_number_part_2 & 0xFF);
+	uint8_t bcc2 = (uint8_t)((sn->serial_number_part_2 >> 24) & 0xFF) ^
+		    (uint8_t)((sn->serial_number_part_2 >> 16) & 0xFF) ^
+		    (uint8_t)((sn->serial_number_part_2 >> 8) & 0xFF) ^
+		    (uint8_t)(sn->serial_number_part_2 & 0xFF);
 
 	return (bcc1 == sn->check_byte_0) && (bcc2 == sn->check_byte_1);
 }
@@ -417,7 +417,7 @@ static bool nfc_t2t_is_bcc_correct(struct nfc_t2t_sn *sn)
  *           Otherwise, a (negative) error code is returned.
  */
 static int nfc_t2t_internal_parse(struct nfc_t2t *t2t,
-				  const u8_t *raw_data)
+				  const uint8_t *raw_data)
 {
 	t2t->sn.manufacturer_id      = raw_data[0];
 	t2t->sn.serial_number_part_1 = sys_get_be16(&raw_data[1]);
@@ -450,9 +450,9 @@ static int nfc_t2t_internal_parse(struct nfc_t2t *t2t,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-static int nfc_t2t_cc_parse(struct nfc_t2t *t2t, const u8_t *raw_data)
+static int nfc_t2t_cc_parse(struct nfc_t2t *t2t, const uint8_t *raw_data)
 {
-	const u8_t *cc_block = raw_data + NFC_T2T_CC_BLOCK_OFFSET;
+	const uint8_t *cc_block = raw_data + NFC_T2T_CC_BLOCK_OFFSET;
 
 	if (cc_block[0] != NFC_T2T_NFC_FORUM_DEFINED_DATA) {
 		return -EINVAL;
@@ -486,8 +486,8 @@ static int nfc_t2t_cc_parse(struct nfc_t2t *t2t, const u8_t *raw_data)
  *           Otherwise, a (negative) error code is returned.*
  */
 static int nfc_t2t_tlv_parse(struct nfc_t2t *t2t,
-			     const u8_t *raw_data,
-			     u16_t *tlv_offset)
+			     const uint8_t *raw_data,
+			     uint16_t *tlv_offset)
 {
 	int err;
 	struct nfc_t2t_tlv_block new_block;
@@ -537,7 +537,7 @@ void nfc_t2t_clear(struct nfc_t2t *t2t)
 }
 
 
-int nfc_t2t_parse(struct nfc_t2t *t2t, const u8_t *raw_data)
+int nfc_t2t_parse(struct nfc_t2t *t2t, const uint8_t *raw_data)
 {
 	int err;
 
@@ -557,7 +557,7 @@ int nfc_t2t_parse(struct nfc_t2t *t2t, const u8_t *raw_data)
 		return -EFAULT;
 	}
 
-	u16_t offset = NFC_T2T_FIRST_DATA_BLOCK_OFFSET;
+	uint16_t offset = NFC_T2T_FIRST_DATA_BLOCK_OFFSET;
 
 	while (offset > 0) {
 		/* Check if end of tag is reached

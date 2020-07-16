@@ -120,7 +120,7 @@ struct bt_mesh_onoff_srv {
  * not configured.
  * @retval -EAGAIN The device has not been provisioned.
  */
-s32_t bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
+int32_t bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
 			    struct bt_mesh_msg_ctx *ctx,
 			    const struct bt_mesh_onoff_status *status);
 

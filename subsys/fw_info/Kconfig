@@ -36,10 +36,10 @@ config FW_INFO_MAGIC_COMMON
 	  Magic word for all structs (32 bits).
 	  This is used by different metadata structs (in fw_info.h and
 	  elsewhere). They each have their own magic word composed of three
-	  u32_t values, where one is always this option (FW_INFO_MAGIC_COMMON).
-	  One of the u32_ts is a compatibility ID constructed from
+	  uint32_t values, where one is always this option (FW_INFO_MAGIC_COMMON).
+	  One of the uint32_ts is a compatibility ID constructed from
 	  FW_INFO_HARDWARE_ID, FW_INFO_VERSION, FW_CRYPTO_ID, and
-	  FW_INFO_MAGIC_COMPATIBILITY_ID, while the final u32_t is completely
+	  FW_INFO_MAGIC_COMPATIBILITY_ID, while the final uint32_t is completely
 	  different for each struct, e.g. FW_INFO_MAGIC_FIRMWARE_INFO.
 	  The bootloader expects a certain value for each struct, and if it
 	  attempts to read a struct without a matching magic word, the struct

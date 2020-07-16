@@ -20,7 +20,7 @@ extern "C" {
 
 void lc_pwm_led_init(void);
 
-void lc_pwm_led_set(u16_t desired_lvl);
+void lc_pwm_led_set(uint16_t desired_lvl);
 
 #ifdef __cplusplus
 }

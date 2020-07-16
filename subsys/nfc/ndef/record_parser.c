@@ -22,10 +22,10 @@ LOG_MODULE_DECLARE(nfc_ndef_parser, CONFIG_NFC_NDEF_PARSER_LOG_LEVEL);
 int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 			  struct nfc_ndef_record_desc *rec_desc,
 			  enum nfc_ndef_record_location *record_location,
-			  const u8_t *nfc_data,
-			  u32_t *nfc_data_len)
+			  const uint8_t *nfc_data,
+			  uint32_t *nfc_data_len)
 {
-	u32_t expected_rec_size = NDEF_RECORD_BASE_SHORT_LEN;
+	uint32_t expected_rec_size = NDEF_RECORD_BASE_SHORT_LEN;
 
 	if (expected_rec_size > *nfc_data_len) {
 		return -EINVAL;
@@ -43,11 +43,11 @@ int nfc_ndef_record_parse(struct nfc_ndef_bin_payload_desc *bin_pay_desc,
 
 	*record_location = (enum nfc_ndef_record_location) ((*nfc_data) & NDEF_RECORD_LOCATION_MASK);
 
-	u8_t flags = *(nfc_data++);
+	uint8_t flags = *(nfc_data++);
 
 	rec_desc->type_length = *(nfc_data++);
 
-	u32_t payload_length;
+	uint32_t payload_length;
 
 	if (flags & NDEF_RECORD_SR_MASK) {
 		payload_length = *(nfc_data++);
@@ -121,20 +121,20 @@ static const char * const tnf_strings[] = {
 	"Reserved"
 };
 
-void nfc_ndef_record_printout(u32_t num,
+void nfc_ndef_record_printout(uint32_t num,
 			      const struct nfc_ndef_record_desc *rec_desc)
 {
 	LOG_INF("NDEF record %d content:", num);
 	LOG_INF("TNF: %s", tnf_strings[rec_desc->tnf]);
 
 	if (rec_desc->id != NULL) {
-		LOG_HEXDUMP_INF((u8_t *)rec_desc->id,
+		LOG_HEXDUMP_INF((uint8_t *)rec_desc->id,
 				rec_desc->id_length,
 				"Record ID: ");
 	}
 
 	if (rec_desc->type != NULL) {
-		LOG_HEXDUMP_INF((u8_t *)rec_desc->type,
+		LOG_HEXDUMP_INF((uint8_t *)rec_desc->type,
 				rec_desc->type_length,
 				"Record type: ");
 	}
@@ -146,7 +146,7 @@ void nfc_ndef_record_printout(u32_t num,
 		if (bin_pay_desc->payload != NULL) {
 			LOG_INF("Payload length: %d bytes",
 				bin_pay_desc->payload_length);
-			LOG_HEXDUMP_DBG((u8_t *)bin_pay_desc->payload,
+			LOG_HEXDUMP_DBG((uint8_t *)bin_pay_desc->payload,
 					bin_pay_desc->payload_length,
 					"Payload length: ");
 		} else {

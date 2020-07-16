@@ -20,7 +20,7 @@
 LOG_MODULE_REGISTER(cpu_load, CONFIG_CPU_LOAD_LOG_LEVEL);
 
 /* Convert event address to associated publish register */
-#define PUBLISH_ADDR(evt) (volatile u32_t *)(evt + 0x80)
+#define PUBLISH_ADDR(evt) (volatile uint32_t *)(evt + 0x80)
 
 /* Indicates that channel is not allocated. */
 #define CH_INVALID 0xFF
@@ -35,8 +35,8 @@ LOG_MODULE_REGISTER(cpu_load, CONFIG_CPU_LOAD_LOG_LEVEL);
 static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(CONFIG_CPU_LOAD_TIMER_INSTANCE);
 static bool ready;
 static struct k_delayed_work cpu_load_log;
-static u32_t cycle_ref;
-static u32_t shared_ch_mask;
+static uint32_t cycle_ref;
+static uint32_t shared_ch_mask;
 
 #define IS_CH_SHARED(ch) \
 	(IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS) && \
@@ -44,7 +44,7 @@ static u32_t shared_ch_mask;
 
 
 /** @brief Allocate (D)PPI channel. */
-static nrfx_err_t ppi_alloc(u8_t *ch, u32_t evt)
+static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 {
 	nrfx_err_t err;
 #ifdef DPPI_PRESENT
@@ -68,7 +68,7 @@ static nrfx_err_t ppi_alloc(u8_t *ch, u32_t evt)
 	return err;
 }
 
-static nrfx_err_t ppi_free(u8_t ch)
+static nrfx_err_t ppi_free(uint8_t ch)
 {
 #ifdef DPPI_PRESENT
 	if (!IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)
@@ -82,7 +82,7 @@ static nrfx_err_t ppi_free(u8_t ch)
 #endif
 }
 
-static void ppi_cleanup(u8_t ch_tick, u8_t ch_sleep, u8_t ch_wakeup)
+static void ppi_cleanup(uint8_t ch_tick, uint8_t ch_sleep, uint8_t ch_wakeup)
 {
 	nrfx_err_t err = NRFX_SUCCESS;
 
@@ -105,9 +105,9 @@ static void ppi_cleanup(u8_t ch_tick, u8_t ch_sleep, u8_t ch_wakeup)
 
 static void cpu_load_log_fn(struct k_work *item)
 {
-	u32_t load = cpu_load_get();
-	u32_t percent = load / 1000;
-	u32_t fraction = load % 1000;
+	uint32_t load = cpu_load_get();
+	uint32_t percent = load / 1000;
+	uint32_t fraction = load % 1000;
 
 	cpu_load_reset();
 	LOG_INF("Load:%d,%03d%%", percent, fraction);
@@ -128,9 +128,9 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 
 int cpu_load_init(void)
 {
-	u8_t ch_sleep;
-	u8_t ch_wakeup;
-	u8_t ch_tick = 0;
+	uint8_t ch_sleep;
+	uint8_t ch_wakeup;
+	uint8_t ch_tick = 0;
 	nrfx_err_t err;
 	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG;
 	int ret = 0;
@@ -213,24 +213,24 @@ void cpu_load_reset(void)
 	cycle_ref = k_cycle_get_32();
 }
 
-static u32_t sleep_ticks_to_us(u32_t ticks)
+static uint32_t sleep_ticks_to_us(uint32_t ticks)
 {
 	return IS_ENABLED(CONFIG_CPU_LOAD_ALIGNED_CLOCKS) ?
-	   (u32_t)(((u64_t)ticks * 1000000) / sys_clock_hw_cycles_per_sec()) :
+	   (uint32_t)(((uint64_t)ticks * 1000000) / sys_clock_hw_cycles_per_sec()) :
 	   ticks;
 }
 
-u32_t cpu_load_get(void)
+uint32_t cpu_load_get(void)
 {
-	u32_t sleep_us;
-	u32_t total_cyc;
-	u64_t total_us;
-	u64_t load;
+	uint32_t sleep_us;
+	uint32_t total_cyc;
+	uint64_t total_us;
+	uint64_t load;
 
 	sleep_us = sleep_ticks_to_us(nrfx_timer_capture(&timer, 0));
 	total_cyc = k_cycle_get_32() - cycle_ref;
 
-	total_us = ((u64_t)total_cyc * 1000000) /
+	total_us = ((uint64_t)total_cyc * 1000000) /
 		    sys_clock_hw_cycles_per_sec();
 	__ASSERT(total_us < UINT32_MAX, "Measurement is limited.");
 
@@ -240,17 +240,17 @@ u32_t cpu_load_get(void)
 	 * Note that for simplicity reasons module does not handle TIMER
 	 * overflow.
 	 */
-	load = (total_us > (u64_t)sleep_us) ?
-			(100000 * (total_us - (u64_t)sleep_us)) / total_us : 0;
+	load = (total_us > (uint64_t)sleep_us) ?
+			(100000 * (total_us - (uint64_t)sleep_us)) / total_us : 0;
 
-	return (u32_t)load;
+	return (uint32_t)load;
 }
 
 static int cmd_cpu_load_get(const struct shell *shell, size_t argc, char **argv)
 {
-	u32_t load;
-	u32_t percent;
-	u32_t fraction;
+	uint32_t load;
+	uint32_t percent;
+	uint32_t fraction;
 
 	if (!ready) {
 		shell_error(shell, "Not initialized.");

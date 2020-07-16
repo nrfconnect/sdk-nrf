@@ -35,8 +35,8 @@ int crypto_init_signing(void)
 }
 
 
-int bl_secp256r1_validate(const u8_t *hash, u32_t hash_len,
-		const u8_t *public_key, const u8_t *signature)
+int bl_secp256r1_validate(const uint8_t *hash, uint32_t hash_len,
+		const uint8_t *public_key, const uint8_t *signature)
 {
 	CRYSError_t ret;
 	nrf_cc310_bl_ecdsa_verify_context_secp256r1_t context;

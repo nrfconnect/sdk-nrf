@@ -153,7 +153,7 @@ void *bt_conn_ctx_get(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn);
  * @return Pointer to the @ref bt_conn_ctx struct if the operation
  *         was successful. Otherwise NULL.
  */
-const struct bt_conn_ctx *bt_conn_ctx_get_by_id(struct bt_conn_ctx_lib *ctx_lib, u8_t id);
+const struct bt_conn_ctx *bt_conn_ctx_get_by_id(struct bt_conn_ctx_lib *ctx_lib, uint8_t id);
 
 /**
  * @brief Release a connection context from the memory pool.

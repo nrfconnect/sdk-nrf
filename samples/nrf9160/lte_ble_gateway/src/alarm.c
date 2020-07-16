@@ -25,7 +25,7 @@ void alarm(void)
 
 void send_aggregated_data(void)
 {
-	static u8_t gps_data_buffer[GPS_NMEA_SENTENCE_MAX_LENGTH];
+	static uint8_t gps_data_buffer[GPS_NMEA_SENTENCE_MAX_LENGTH];
 
 	static struct nrf_cloud_sensor_data gps_cloud_data = {
 		.type = NRF_CLOUD_SENSOR_GPS,
@@ -72,7 +72,7 @@ void send_aggregated_data(void)
 			gps_cloud_data.data.ptr = &aggregator_data.data[4];
 			gps_cloud_data.data.len = aggregator_data.length;
 			gps_cloud_data.tag =
-			    *((u32_t *)&aggregator_data.data[0]);
+			    *((uint32_t *)&aggregator_data.data[0]);
 			sensor_data_send(&gps_cloud_data);
 			break;
 

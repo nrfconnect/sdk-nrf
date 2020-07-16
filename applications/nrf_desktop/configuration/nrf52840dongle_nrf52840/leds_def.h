@@ -17,9 +17,9 @@ const struct {} leds_def_include_once;
 static const size_t led_pins[CONFIG_DESKTOP_LED_COUNT]
 			    [CONFIG_DESKTOP_LED_COLOR_COUNT] = {
 	{
-		DT_PROP(DT_ALIAS(pwm_0), ch0_pin),
+		DT_PROP(DT_NODELABEL(pwm0), ch0_pin),
 	},
 	{
-		DT_PROP(DT_ALIAS(pwm_1), ch0_pin),
+		DT_PROP(DT_NODELABEL(pwm1), ch0_pin),
 	}
 };

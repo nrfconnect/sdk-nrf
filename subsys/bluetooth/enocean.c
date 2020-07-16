@@ -30,14 +30,14 @@
 #define FLAG_DIRTY BIT(1)
 
 struct __packed nonce {
-	u8_t addr[6];
-	u32_t seq;
-	u8_t padding[3];
+	uint8_t addr[6];
+	uint32_t seq;
+	uint8_t padding[3];
 };
 
 struct device_entry {
 	bt_addr_le_t addr;
-	u8_t key[16];
+	uint8_t key[16];
 };
 
 enum entry_tag {
@@ -64,7 +64,7 @@ static struct bt_enocean_device *device_find(const bt_addr_le_t *addr)
 }
 
 static struct bt_enocean_device *device_alloc(const bt_addr_le_t *addr,
-					      u32_t seq, const u8_t key[16])
+					      uint32_t seq, const uint8_t key[16])
 {
 	for (int i = 0; i < ARRAY_SIZE(devices); ++i) {
 		if (!(devices[i].flags & FLAG_ACTIVE)) {
@@ -79,7 +79,7 @@ static struct bt_enocean_device *device_alloc(const bt_addr_le_t *addr,
 	return NULL;
 }
 
-static void encode_tag(char buf[SETTINGS_TAG_SIZE], u8_t index,
+static void encode_tag(char buf[SETTINGS_TAG_SIZE], uint8_t index,
 		       enum entry_tag tag)
 {
 	snprintk(buf, SETTINGS_TAG_SIZE, "bt/enocean/%u/%c", index, tag);
@@ -123,8 +123,8 @@ static int store_new_dev(const struct bt_enocean_device *dev)
 	return settings_save_one(tag, &dev->seq, 4);
 }
 
-static int auth(const struct bt_enocean_device *dev, u32_t seq,
-		const u8_t *signature, const u8_t *payload, u8_t len)
+static int auth(const struct bt_enocean_device *dev, uint32_t seq,
+		const uint8_t *signature, const uint8_t *payload, uint8_t len)
 {
 	struct nonce nonce;
 	int err;
@@ -133,7 +133,7 @@ static int auth(const struct bt_enocean_device *dev, u32_t seq,
 	nonce.seq = seq;
 	memset(nonce.padding, 0, sizeof(nonce.padding));
 
-	err = bt_ccm_decrypt(dev->key, (u8_t *)&nonce, signature, 0, payload,
+	err = bt_ccm_decrypt(dev->key, (uint8_t *)&nonce, signature, 0, payload,
 			     len, NULL, SIGNATURE_LEN);
 	if (err) {
 		return err;
@@ -146,8 +146,8 @@ static int handle_switch_commissioning(const struct bt_le_scan_recv_info *info,
 				       struct net_buf_simple *buf,
 				       bool has_short_name)
 {
-	u32_t seq = net_buf_simple_pull_le32(buf);
-	const u8_t *key = net_buf_simple_pull_mem(buf, 16);
+	uint32_t seq = net_buf_simple_pull_le32(buf);
+	const uint8_t *key = net_buf_simple_pull_mem(buf, 16);
 
 	if (!has_short_name && buf->len != 6) {
 		return -EINVAL;
@@ -157,7 +157,7 @@ static int handle_switch_commissioning(const struct bt_le_scan_recv_info *info,
 }
 
 static void handle_switch_data(const struct bt_le_scan_recv_info *info,
-			       struct net_buf_simple *buf, const u8_t *payload)
+			       struct net_buf_simple *buf, const uint8_t *payload)
 {
 	if (!cb->button) {
 		return;
@@ -170,13 +170,13 @@ static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 		return;
 	}
 
-	u32_t seq = net_buf_simple_pull_le32(buf);
+	uint32_t seq = net_buf_simple_pull_le32(buf);
 
 	if (seq <= dev->seq) {
 		return;
 	}
 
-	u8_t status = net_buf_simple_pull_u8(buf);
+	uint8_t status = net_buf_simple_pull_u8(buf);
 
 	/* Top 3 bits must be 0 */
 	if (status & BIT_MASK(3) << 5) {
@@ -184,7 +184,7 @@ static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 	}
 
 	size_t opt_data_len = buf->len - SIGNATURE_LEN;
-	u8_t *opt_data = NULL;
+	uint8_t *opt_data = NULL;
 
 	if (opt_data_len != 0 && opt_data_len != 1 && opt_data_len != 2 &&
 	    opt_data_len != 4) {
@@ -199,7 +199,7 @@ static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 	       status & BIT(0) ? "pressed" : "released", !!(status & BIT(1)),
 	       !!(status & BIT(2)), !!(status & BIT(3)), !!(status & BIT(4)));
 
-	u8_t *signature = net_buf_simple_pull_mem(buf, SIGNATURE_LEN);
+	uint8_t *signature = net_buf_simple_pull_mem(buf, SIGNATURE_LEN);
 
 	err = auth(dev, seq, signature, payload, 9 + opt_data_len);
 	if (err) {
@@ -218,18 +218,18 @@ static void handle_switch_data(const struct bt_le_scan_recv_info *info,
 }
 
 struct data_entry {
-	u8_t type;
-	u8_t len;
+	uint8_t type;
+	uint8_t len;
 	union {
-		u32_t value;
-		const u8_t *pointer;
+		uint32_t value;
+		const uint8_t *pointer;
 	};
 };
 
 static void data_entry_pull(struct net_buf_simple *buf,
 			    struct data_entry *entry)
 {
-	u8_t header = net_buf_simple_pull_u8(buf);
+	uint8_t header = net_buf_simple_pull_u8(buf);
 
 	entry->type = header & BIT_MASK(6);
 
@@ -263,8 +263,8 @@ static void data_entry_pull(struct net_buf_simple *buf,
 }
 
 static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
-			       struct net_buf_simple *buf, const u8_t *payload,
-			       u8_t tot_len)
+			       struct net_buf_simple *buf, const uint8_t *payload,
+			       uint8_t tot_len)
 {
 	if (!cb->sensor) {
 		return;
@@ -272,7 +272,7 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 
 	struct bt_enocean_device *dev;
 	struct data_entry entry;
-	u32_t seq;
+	uint32_t seq;
 	int err;
 
 	seq = net_buf_simple_pull_le32(buf);
@@ -293,13 +293,13 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 	}
 
 	struct bt_enocean_sensor_data data = { 0 };
-	const u8_t *opt_data = NULL;
-	u8_t opt_data_len = 0;
+	const uint8_t *opt_data = NULL;
+	uint8_t opt_data_len = 0;
 	bool occupancy;
-	u16_t light_sensor;
-	u16_t battery_voltage;
-	u16_t light_solar_cell;
-	u8_t energy_lvl;
+	uint16_t light_sensor;
+	uint16_t battery_voltage;
+	uint16_t light_solar_cell;
+	uint8_t energy_lvl;
 
 	BT_DBG("Sensor data:");
 	while (buf->len >= 2 + SIGNATURE_LEN) {
@@ -350,7 +350,7 @@ static void handle_sensor_data(const struct bt_le_scan_recv_info *info,
 		return;
 	}
 
-	const u8_t *signature = net_buf_simple_pull_mem(buf, SIGNATURE_LEN);
+	const uint8_t *signature = net_buf_simple_pull_mem(buf, SIGNATURE_LEN);
 
 	err = auth(dev, seq, signature, payload, tot_len);
 	if (err) {
@@ -374,9 +374,9 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 		return;
 	}
 
-	u8_t *payload = buf->data;
-	u8_t len = net_buf_simple_pull_u8(buf);
-	u8_t type = net_buf_simple_pull_u8(buf);
+	uint8_t *payload = buf->data;
+	uint8_t len = net_buf_simple_pull_u8(buf);
+	uint8_t type = net_buf_simple_pull_u8(buf);
 	bool has_shortened_name = (type == BT_DATA_NAME_SHORTENED);
 
 	/* An old version of EnOcean firmware would include the shortened name
@@ -393,7 +393,7 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 		return;
 	}
 
-	u16_t manufacturer = net_buf_simple_pull_le16(buf);
+	uint16_t manufacturer = net_buf_simple_pull_le16(buf);
 
 	if (manufacturer != 0x03da) {
 		return;
@@ -473,7 +473,7 @@ static int settings_set(const char *key, size_t len, settings_read_cb read_cb,
 	const char *tag;
 	int size;
 
-	u32_t index = atoi(key);
+	uint32_t index = atoi(key);
 
 	if (index >= ARRAY_SIZE(devices)) {
 		return -ENOMEM;
@@ -554,8 +554,8 @@ void bt_enocean_commissioning_disable(void)
 	commissioning = false;
 }
 
-int bt_enocean_commission(const bt_addr_le_t *addr, const u8_t key[16],
-			  u32_t seq)
+int bt_enocean_commission(const bt_addr_le_t *addr, const uint8_t key[16],
+			  uint32_t seq)
 {
 	struct bt_enocean_device *dev;
 	int err;
@@ -608,9 +608,9 @@ void bt_enocean_decommission(struct bt_enocean_device *dev)
 	dev->flags = 0;
 }
 
-u32_t bt_enocean_foreach(bt_enocean_foreach_cb_t cb, void *user_data)
+uint32_t bt_enocean_foreach(bt_enocean_foreach_cb_t cb, void *user_data)
 {
-	u32_t count = 0;
+	uint32_t count = 0;
 
 	for (int i = 0; i < ARRAY_SIZE(devices); ++i) {
 		if (devices[i].flags & FLAG_ACTIVE) {

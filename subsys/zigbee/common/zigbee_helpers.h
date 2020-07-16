@@ -42,24 +42,24 @@ zb_void_t zigbee_erase_persistent_storage(zb_bool_t erase);
  * @note    Null terminator is written if buf_len is large enough,
  *          but does not count for the return value.
  */
-int to_hex_str(char *out, u16_t out_size, const u8_t *in,
-	       u8_t in_size, bool reverse);
+int to_hex_str(char *out, uint16_t out_size, const uint8_t *in,
+	       uint8_t in_size, bool reverse);
 
-/**@brief Read array of u8_t from hex string.
+/**@brief Read array of uint8_t from hex string.
  *
  * @param in_str        Pointer to the input hex string.
  * @param in_str_len    Length, in characters, of the input string.
- * @param out_buff      Pointer to the output u8_t array.
- * @param out_buff_size Size, in bytes, of the output u8_t array.
+ * @param out_buff      Pointer to the output uint8_t array.
+ * @param out_buff_size Size, in bytes, of the output uint8_t array.
  * @param reverse       If true then parse from end to start.
  *
  * @retval true   if the conversion succeed
  * @retval false  if the conversion failed
  */
-bool parse_hex_str(char const *in_str, u8_t in_str_len,
-		   u8_t *out_buff, u8_t out_buff_size, bool reverse);
+bool parse_hex_str(char const *in_str, uint8_t in_str_len,
+		   uint8_t *out_buff, uint8_t out_buff_size, bool reverse);
 
-/**@brief Parse a hex string to u8_t.
+/**@brief Parse a hex string to uint8_t.
  *
  * The function verifies if input is valid, i.e., if all input characters
  * are valid hex digits. If an invalid character is found then function fails.
@@ -70,12 +70,12 @@ bool parse_hex_str(char const *in_str, u8_t in_str_len,
  * @retval true   if the conversion succeed
  * @retval false  if the conversion failed
  */
-static inline bool parse_hex_u8(char const *s, u8_t *value)
+static inline bool parse_hex_u8(char const *s, uint8_t *value)
 {
 	return parse_hex_str(s, strlen(s), value, sizeof(*value), true);
 }
 
-/**@brief Parse a hex string to u16_t.
+/**@brief Parse a hex string to uint16_t.
  *
  * The function verifies if input is valid, i.e., if all input characters
  * are valid hex digits. If an invalid character is found then function fails.
@@ -86,9 +86,9 @@ static inline bool parse_hex_u8(char const *s, u8_t *value)
  * @retval true   if the conversion succeed
  * @retval false  if the conversion failed
  */
-static inline bool parse_hex_u16(char const *s, u16_t *value)
+static inline bool parse_hex_u16(char const *s, uint16_t *value)
 {
-	return parse_hex_str(s, strlen(s), (u8_t *)value, sizeof(*value), true);
+	return parse_hex_str(s, strlen(s), (uint8_t *)value, sizeof(*value), true);
 }
 
 /**@brief Function for converting 64-bit address to hex string.
@@ -106,7 +106,7 @@ static inline bool parse_hex_u16(char const *s, u16_t *value)
  * @note    Null terminator is written if buf_len is large enough,
  *          but does not count for the return value.
  */
-int ieee_addr_to_str(char *str_buf, u16_t buf_len,
+int ieee_addr_to_str(char *str_buf, uint16_t buf_len,
 		     const zb_ieee_addr_t in);
 
 /**@brief Address type.
@@ -197,7 +197,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid);
  * @param[in] led_idx LED index, as defined in the board-specific
  *                    BSP header. The index starts from 0.
  */
-void zigbee_led_status_update(zb_bufid_t bufid, u32_t led_idx);
+void zigbee_led_status_update(zb_bufid_t bufid, uint32_t led_idx);
 
 /**@brief Function for indicating the default signal handler
  *        about user input on the device.

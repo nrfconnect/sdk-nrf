@@ -16,10 +16,10 @@ First, define the URI string and create a buffer for the message:
 
 .. code-block:: c
 
-   static const u8_t m_url[] =
+   static const uint8_t m_url[] =
        {'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'}; //URL "nordicsemi.com"
 
-   u8_t m_ndef_msg_buf[256];
+   uint8_t m_ndef_msg_buf[256];
 
 Then create the URI message with one URI record.
 As parameters, provide the URI identifier code (:cpp:member:`NFC_URI_HTTP_WWW` in this example), the URI string, the length of the URI string, the message buffer, and the size of the available memory in the buffer:

@@ -17,7 +17,7 @@ static void handle_mode(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 		return;
 	}
 
-	u8_t enabled = net_buf_simple_pull_u8(buf);
+	uint8_t enabled = net_buf_simple_pull_u8(buf);
 
 	if (enabled > 1) {
 		return;
@@ -46,7 +46,7 @@ static void handle_occupancy(struct bt_mesh_model *mod,
 		return;
 	}
 
-	u8_t enabled = net_buf_simple_pull_u8(buf);
+	uint8_t enabled = net_buf_simple_pull_u8(buf);
 
 	if (enabled > 1) {
 		return;
@@ -71,7 +71,7 @@ static void handle_light_onoff(struct bt_mesh_model *mod,
 	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
 	struct bt_mesh_onoff_status status;
 
-	u8_t onoff = net_buf_simple_pull_u8(buf);
+	uint8_t onoff = net_buf_simple_pull_u8(buf);
 
 	if (onoff > 1) {
 		return;
@@ -115,7 +115,7 @@ static void handle_prop(struct bt_mesh_model *mod, struct bt_mesh_msg_ctx *ctx,
 	struct sensor_value value;
 	int err;
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	format = prop_format_get(id);
 	if (!format) {

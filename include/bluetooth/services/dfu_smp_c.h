@@ -49,21 +49,21 @@ struct bt_gatt_dfu_smp_c;
  */
 struct dfu_smp_header {
 	/** Operation. */
-	u8_t op;
+	uint8_t op;
 	/** Operational flags. */
-	u8_t flags;
+	uint8_t flags;
 	/** Payload length high byte. */
-	u8_t len_h8;
+	uint8_t len_h8;
 	/** Payload length low byte. */
-	u8_t len_l8;
+	uint8_t len_l8;
 	/** Group ID high byte. */
-	u8_t group_h8;
+	uint8_t group_h8;
 	/** Group ID low byte. */
-	u8_t group_l8;
+	uint8_t group_l8;
 	/** Sequence number. */
-	u8_t seq;
+	uint8_t seq;
 	/** Command ID. */
-	u8_t id;
+	uint8_t id;
 };
 
 /** @brief Current response state.
@@ -81,7 +81,7 @@ struct bt_gatt_dfu_smp_rsp_state {
 	/** @brief The size of the data chunk. */
 	size_t chunk_size;
 	/** @brief Pointer to the data.        */
-	const u8_t *data;
+	const uint8_t *data;
 };
 
 /** @brief Handle part of the response.
@@ -119,9 +119,9 @@ struct bt_gatt_dfu_smp_c {
 	/** Handles. */
 	struct bt_gatt_dfu_smp_c_handles {
 		/** SMP characteristic value handle. */
-		u16_t smp;
+		uint16_t smp;
 		/** SMP characteristic CCC handle. */
-		u16_t smp_ccc;
+		uint16_t smp_ccc;
 	} handles;
 	/** Current response state. */
 	struct bt_gatt_dfu_smp_rsp_state rsp_state;

@@ -15,10 +15,10 @@
 struct lightness_ctx {
 	struct bt_mesh_lightness_srv lightness_srv;
 	struct k_delayed_work per_work;
-	u16_t target_lvl;
-	u16_t current_lvl;
-	u32_t time_per;
-	u16_t rem_time;
+	uint16_t target_lvl;
+	uint16_t current_lvl;
+	uint32_t time_per;
+	uint16_t rem_time;
 };
 
 /** Configuration server definition */
@@ -42,7 +42,7 @@ static struct k_delayed_work attention_blink_work;
 static void attention_blink(struct k_work *work)
 {
 	static int idx;
-	const u8_t pattern[] = {
+	const uint8_t pattern[] = {
 		BIT(0) | BIT(1),
 		BIT(1) | BIT(2),
 		BIT(2) | BIT(3),
@@ -77,7 +77,7 @@ BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 static void start_new_light_trans(const struct bt_mesh_lightness_set *set,
 				  struct lightness_ctx *ctx)
 {
-	u32_t step_cnt = abs(set->lvl - ctx->current_lvl) / PWM_SIZE_STEP;
+	uint32_t step_cnt = abs(set->lvl - ctx->current_lvl) / PWM_SIZE_STEP;
 
 	k_delayed_work_cancel(&ctx->per_work);
 	ctx->target_lvl = set->lvl;

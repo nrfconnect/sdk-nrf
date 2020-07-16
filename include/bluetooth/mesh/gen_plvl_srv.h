@@ -108,7 +108,7 @@ struct bt_mesh_plvl_srv_handlers {
 	 */
 	void (*const default_update)(struct bt_mesh_plvl_srv *srv,
 				     struct bt_mesh_msg_ctx *ctx,
-				     u16_t old_default, u16_t new_default);
+				     uint16_t old_default, uint16_t new_default);
 
 	/** @brief The Power Range state has changed.
 	 *
@@ -153,9 +153,9 @@ struct bt_mesh_plvl_srv {
 	/** Current Power Range. */
 	struct bt_mesh_plvl_range range;
 	/** Current Default Power. */
-	u16_t default_power;
+	uint16_t default_power;
 	/** The last known Power Level. */
-	u16_t last;
+	uint16_t last;
 	/** Whether the Power is on. */
 	bool is_on;
 };

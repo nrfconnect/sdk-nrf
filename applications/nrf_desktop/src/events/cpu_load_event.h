@@ -23,7 +23,7 @@ extern "C" {
 struct cpu_load_event {
 	struct event_header header; /**< Event header. */
 
-	u32_t load; /**< CPU load [in 0,001% units]. */
+	uint32_t load; /**< CPU load [in 0,001% units]. */
 };
 
 EVENT_TYPE_DECLARE(cpu_load_event);

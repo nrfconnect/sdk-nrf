@@ -26,10 +26,10 @@ K_MUTEX_DEFINE(scan_add_mutex);
  */
 struct bt_scan_control {
 	/* Number of active filters. */
-	u8_t filter_cnt;
+	uint8_t filter_cnt;
 
 	/* Number of matched filters. */
-	u8_t filter_match_cnt;
+	uint8_t filter_match_cnt;
 
 	/* Indicates whether at least one filter has been fitted. */
 	bool filter_match;
@@ -56,7 +56,7 @@ struct bt_scan_name_filter {
 	char target_name[CONFIG_BT_SCAN_NAME_CNT][CONFIG_BT_SCAN_NAME_MAX_LEN];
 
 	/* Name filter counter. */
-	u8_t cnt;
+	uint8_t cnt;
 
 	/* Flag to inform about enabling or disabling this filter.
 	 */
@@ -73,11 +73,11 @@ struct bt_scan_short_name_filter {
 		char target_name[CONFIG_BT_SCAN_SHORT_NAME_MAX_LEN];
 
 		/* Minimum length of the short name. */
-		u8_t min_len;
+		uint8_t min_len;
 	} name[CONFIG_BT_SCAN_SHORT_NAME_CNT];
 
 	/* Short name filter counter. */
-	u8_t cnt;
+	uint8_t cnt;
 
 	/* Flag to inform about enabling or disabling this filter. */
 	bool enabled;
@@ -90,7 +90,7 @@ struct bt_scan_addr_filter {
 	bt_addr_le_t target_addr[CONFIG_BT_SCAN_ADDRESS_CNT];
 
 	/* Address filter counter. */
-	u8_t cnt;
+	uint8_t cnt;
 
 	/* Flag to inform about enabling or disabling this filter. */
 	bool enabled;
@@ -121,7 +121,7 @@ struct bt_scan_uuid_filter {
 	struct bt_scan_uuid uuid[CONFIG_BT_SCAN_UUID_CNT];
 
 	/* UUID filter counter. */
-	u8_t cnt;
+	uint8_t cnt;
 
 	/* Flag to inform about enabling or disabling this filter. */
 	bool enabled;
@@ -131,10 +131,10 @@ struct bt_scan_appearance_filter {
 	/* Apperances that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
-	u16_t appearance[CONFIG_BT_SCAN_APPEARANCE_CNT];
+	uint16_t appearance[CONFIG_BT_SCAN_APPEARANCE_CNT];
 
 	/* Appearance filter counter. */
-	u8_t cnt;
+	uint8_t cnt;
 
 	/* Flag to inform about enabling or disabling this filter. */
 	bool enabled;
@@ -147,16 +147,16 @@ struct bt_scan_manufacturer_data_filter {
 		/* Manufacturer data that the main application will scan for,
 		 * and that will be advertised by the peripherals.
 		 */
-		u8_t data[CONFIG_BT_SCAN_MANUFACTURER_DATA_MAX_LEN];
+		uint8_t data[CONFIG_BT_SCAN_MANUFACTURER_DATA_MAX_LEN];
 
 		/* Length of the manufacturere data that the main application
 		 * will scan for.
 		 */
-		u8_t data_len;
+		uint8_t data_len;
 	} manufacturer_data[CONFIG_BT_SCAN_MANUFACTURER_DATA_CNT];
 
 	/* Name filter counter. */
-	u8_t cnt;
+	uint8_t cnt;
 
 	/* Flag to inform about enabling or disabling this filter. */
 	bool enabled;
@@ -321,7 +321,7 @@ static bool adv_addr_compare(const bt_addr_le_t *target_addr,
 {
 	const bt_addr_le_t *addr =
 			bt_scan.scan_filters.addr.target_addr;
-	u8_t counter = bt_scan.scan_filters.addr.cnt;
+	uint8_t counter = bt_scan.scan_filters.addr.cnt;
 
 	for (size_t i = 0; i < counter; i++) {
 		if (bt_addr_le_cmp(target_addr, &addr[i]) == 0) {
@@ -358,7 +358,7 @@ static int scan_addr_filter_add(const bt_addr_le_t *target_addr)
 	char addr[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_t *addr_filter =
 			bt_scan.scan_filters.addr.target_addr;
-	u8_t counter = bt_scan.scan_filters.addr.cnt;
+	uint8_t counter = bt_scan.scan_filters.addr.cnt;
 
 	/* If no memory for filter. */
 	if (counter >= CONFIG_BT_SCAN_ADDRESS_CNT) {
@@ -388,8 +388,8 @@ static int scan_addr_filter_add(const bt_addr_le_t *target_addr)
 	return 0;
 }
 
-static bool adv_name_cmp(const u8_t *data,
-			 u8_t data_len,
+static bool adv_name_cmp(const uint8_t *data,
+			 uint8_t data_len,
 			 const char *target_name)
 {
 	return strncmp(target_name, data, data_len) == 0;
@@ -400,8 +400,8 @@ static bool adv_name_compare(const struct bt_data *data,
 {
 	struct bt_scan_name_filter const *name_filter =
 			&bt_scan.scan_filters.name;
-	u8_t counter = bt_scan.scan_filters.name.cnt;
-	u8_t data_len = data->data_len;
+	uint8_t counter = bt_scan.scan_filters.name.cnt;
+	uint8_t data_len = data->data_len;
 
 	/* Compare the name found with the name filter. */
 	for (size_t i = 0; i < counter; i++) {
@@ -441,7 +441,7 @@ static void name_check(struct bt_scan_control *control,
 
 static int scan_name_filter_add(const char *name)
 {
-	u8_t counter = bt_scan.scan_filters.name.cnt;
+	uint8_t counter = bt_scan.scan_filters.name.cnt;
 	size_t name_len;
 
 	/* If no memory for filter. */
@@ -474,10 +474,10 @@ static int scan_name_filter_add(const char *name)
 	return 0;
 }
 
-static bool adv_short_name_cmp(const u8_t *data,
-			       u8_t data_len,
+static bool adv_short_name_cmp(const uint8_t *data,
+			       uint8_t data_len,
 			       const char *target_name,
-			       u8_t short_name_min_len)
+			       uint8_t short_name_min_len)
 {
 	if ((data_len >= short_name_min_len) &&
 	    (strncmp(target_name, data, data_len) == 0)) {
@@ -492,8 +492,8 @@ static bool adv_short_name_compare(const struct bt_data *data,
 {
 	const struct bt_scan_short_name_filter *name_filter =
 			&bt_scan.scan_filters.short_name;
-	u8_t counter = bt_scan.scan_filters.short_name.cnt;
-	u8_t data_len = data->data_len;
+	uint8_t counter = bt_scan.scan_filters.short_name.cnt;
+	uint8_t data_len = data->data_len;
 
 	/* Compare the name found with the name filters. */
 	for (size_t i = 0; i < counter; i++) {
@@ -534,11 +534,11 @@ static void short_name_check(struct bt_scan_control *control,
 
 static int scan_short_name_filter_add(const struct bt_scan_short_name *short_name)
 {
-	u8_t counter =
+	uint8_t counter =
 		bt_scan.scan_filters.short_name.cnt;
 	struct bt_scan_short_name_filter *short_name_filter =
 		    &bt_scan.scan_filters.short_name;
-	u8_t name_len;
+	uint8_t name_len;
 
 	/* If no memory for filter. */
 	if (counter >= CONFIG_BT_SCAN_SHORT_NAME_CNT) {
@@ -574,24 +574,24 @@ static int scan_short_name_filter_add(const struct bt_scan_short_name *short_nam
 	return 0;
 }
 
-static bool find_uuid(const u8_t *data,
-		      u8_t data_len,
-		      u8_t uuid_type,
+static bool find_uuid(const uint8_t *data,
+		      uint8_t data_len,
+		      uint8_t uuid_type,
 		      const struct bt_scan_uuid *target_uuid)
 {
-	u8_t uuid_len;
+	uint8_t uuid_len;
 
 	switch (uuid_type) {
 	case BT_UUID_TYPE_16:
-		uuid_len = sizeof(u16_t);
+		uuid_len = sizeof(uint16_t);
 		break;
 
 	case BT_UUID_TYPE_32:
-		uuid_len = sizeof(u32_t);
+		uuid_len = sizeof(uint32_t);
 		break;
 
 	case BT_UUID_TYPE_128:
-		uuid_len = BT_SCAN_UUID_128_SIZE * sizeof(u8_t);
+		uuid_len = BT_SCAN_UUID_128_SIZE * sizeof(uint8_t);
 		break;
 
 	default:
@@ -613,15 +613,15 @@ static bool find_uuid(const u8_t *data,
 	return false;
 }
 
-static bool adv_uuid_compare(const struct bt_data *data, u8_t uuid_type,
+static bool adv_uuid_compare(const struct bt_data *data, uint8_t uuid_type,
 			     struct bt_scan_control *control)
 {
 	const struct bt_scan_uuid_filter *uuid_filter =
 			&bt_scan.scan_filters.uuid;
 	const bool all_filters_mode = bt_scan.scan_filters.all_mode;
-	const u8_t counter = bt_scan.scan_filters.uuid.cnt;
-	u8_t data_len = data->data_len;
-	u8_t uuid_match_cnt = 0;
+	const uint8_t counter = bt_scan.scan_filters.uuid.cnt;
+	uint8_t data_len = data->data_len;
+	uint8_t uuid_match_cnt = 0;
 
 	for (size_t i = 0; i < counter; i++) {
 
@@ -664,7 +664,7 @@ static bool is_uuid_filter_enabled(void)
 
 static void uuid_check(struct bt_scan_control *control,
 		       const struct bt_data *data,
-		       u8_t type)
+		       uint8_t type)
 {
 	if (is_uuid_filter_enabled()) {
 		if (adv_uuid_compare(data, type, control)) {
@@ -680,7 +680,7 @@ static void uuid_check(struct bt_scan_control *control,
 static int scan_uuid_filter_add(struct bt_uuid *uuid)
 {
 	struct bt_scan_uuid *uuid_filter = bt_scan.scan_filters.uuid.uuid;
-	u8_t counter = bt_scan.scan_filters.uuid.cnt;
+	uint8_t counter = bt_scan.scan_filters.uuid.cnt;
 	struct bt_uuid_16 *uuid_16;
 	struct bt_uuid_32 *uuid_32;
 	struct bt_uuid_128 *uuid_128;
@@ -733,15 +733,15 @@ static int scan_uuid_filter_add(struct bt_uuid *uuid)
 	return 0;
 }
 
-static bool find_appearance(const u8_t *data,
-			    u8_t data_len,
-			    const u16_t *appearance)
+static bool find_appearance(const uint8_t *data,
+			    uint8_t data_len,
+			    const uint16_t *appearance)
 {
-	if (data_len != sizeof(u16_t)) {
+	if (data_len != sizeof(uint16_t)) {
 		return false;
 	}
 
-	u16_t decoded_appearance = sys_get_be16(data);
+	uint16_t decoded_appearance = sys_get_be16(data);
 
 	if (decoded_appearance == *appearance) {
 		return true;
@@ -756,9 +756,9 @@ static bool adv_appearance_compare(const struct bt_data *data,
 {
 	const struct bt_scan_appearance_filter *appearance_filter =
 			&bt_scan.scan_filters.appearance;
-	const u8_t counter =
+	const uint8_t counter =
 			bt_scan.scan_filters.appearance.cnt;
-	u8_t data_len = data->data_len;
+	uint8_t data_len = data->data_len;
 
 	/* Verify if the advertised appearance matches
 	 * the provided appearance.
@@ -797,10 +797,10 @@ static void appearance_check(struct bt_scan_control *control,
 	}
 }
 
-static int scan_appearance_filter_add(u16_t appearance)
+static int scan_appearance_filter_add(uint16_t appearance)
 {
-	u16_t *appearance_filter = bt_scan.scan_filters.appearance.appearance;
-	u8_t counter = bt_scan.scan_filters.appearance.cnt;
+	uint16_t *appearance_filter = bt_scan.scan_filters.appearance.appearance;
+	uint8_t counter = bt_scan.scan_filters.appearance.cnt;
 
 	/* If no memory. */
 	if (counter >= CONFIG_BT_SCAN_APPEARANCE_CNT) {
@@ -823,10 +823,10 @@ static int scan_appearance_filter_add(u16_t appearance)
 	return 0;
 }
 
-static bool adv_manufacturer_data_cmp(const u8_t *data,
-				      u8_t data_len,
-				      const u8_t *target_data,
-				      u8_t target_data_len)
+static bool adv_manufacturer_data_cmp(const uint8_t *data,
+				      uint8_t data_len,
+				      const uint8_t *target_data,
+				      uint8_t target_data_len)
 {
 	if (target_data_len > data_len) {
 		return false;
@@ -844,7 +844,7 @@ static bool adv_manufacturer_data_compare(const struct bt_data *data,
 {
 	const struct bt_scan_manufacturer_data_filter *md_filter =
 		&bt_scan.scan_filters.manufacturer_data;
-	u8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
+	uint8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
 
 	/* Compare the name found with the name filter. */
 	for (size_t i = 0; i < counter; i++) {
@@ -888,7 +888,7 @@ static int scan_manufacturer_data_filter_add(const struct bt_scan_manufacturer_d
 {
 	struct bt_scan_manufacturer_data_filter *md_filter =
 		&bt_scan.scan_filters.manufacturer_data;
-	u8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
+	uint8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
 
 	/* If no memory for filter. */
 	if (counter >= CONFIG_BT_SCAN_MANUFACTURER_DATA_CNT) {
@@ -925,7 +925,7 @@ static int scan_manufacturer_data_filter_add(const struct bt_scan_manufacturer_d
 	return 0;
 }
 
-static bool check_filter_mode(u8_t mode)
+static bool check_filter_mode(uint8_t mode)
 {
 	return (mode & MODE_CHECK) != 0;
 }
@@ -953,7 +953,7 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 	struct bt_scan_short_name *short_name;
 	bt_addr_le_t *addr;
 	struct bt_uuid *uuid;
-	u16_t appearance;
+	uint16_t appearance;
 	struct bt_scan_manufacturer_data *manufacturer_data;
 	int err = 0;
 
@@ -985,7 +985,7 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 		break;
 
 	case BT_SCAN_FILTER_TYPE_APPEARANCE:
-		appearance = *((u16_t *)data);
+		appearance = *((uint16_t *)data);
 		err = scan_appearance_filter_add(appearance);
 		break;
 
@@ -1046,7 +1046,7 @@ void bt_scan_filter_disable(void)
 	bt_scan.scan_filters.manufacturer_data.enabled = false;
 }
 
-int bt_scan_filter_enable(u8_t mode, bool match_all)
+int bt_scan_filter_enable(uint8_t mode, bool match_all)
 {
 	/* Check if the mode is correct. */
 	if (!check_filter_mode(mode)) {
@@ -1261,7 +1261,7 @@ static void filter_state_check(struct bt_scan_control *control,
 	}
 }
 
-static void scan_device_found(const bt_addr_le_t *addr, s8_t rssi, u8_t type,
+static void scan_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 			      struct net_buf_simple *ad)
 {
 	struct bt_scan_control scan_control;

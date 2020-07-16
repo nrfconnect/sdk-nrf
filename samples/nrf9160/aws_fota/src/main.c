@@ -17,6 +17,7 @@
 #include <net/aws_fota.h>
 #include <dfu/mcuboot.h>
 #include <power/reboot.h>
+#include <random/rand32.h>
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");
@@ -42,13 +43,13 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 #else
 #define CLIENT_ID_LEN sizeof(CONFIG_CLOUD_CLIENT_ID)
 #endif
-static u8_t client_id_buf[CLIENT_ID_LEN];
-static u8_t current_job_id[AWS_JOBS_JOB_ID_MAX_LEN];
+static uint8_t client_id_buf[CLIENT_ID_LEN];
+static uint8_t current_job_id[AWS_JOBS_JOB_ID_MAX_LEN];
 
 /* Buffers for MQTT client. */
-static u8_t rx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
-static u8_t tx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
-static u8_t payload_buf[CONFIG_MQTT_PAYLOAD_BUFFER_SIZE];
+static uint8_t rx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
+static uint8_t tx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
+static uint8_t payload_buf[CONFIG_MQTT_PAYLOAD_BUFFER_SIZE];
 
 /* MQTT Broker details. */
 static struct sockaddr_storage broker_storage;
@@ -83,13 +84,13 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 	struct mqtt_publish_param param;
 	char update_delta_topic[strlen(AWS) + strlen("/shadow/update") +
 				sizeof(client_id_buf)];
-	u8_t shadow_update_payload[CONFIG_DEVICE_SHADOW_PAYLOAD_SIZE];
+	uint8_t shadow_update_payload[CONFIG_DEVICE_SHADOW_PAYLOAD_SIZE];
 
 	int ret = snprintf(update_delta_topic,
 			   sizeof(update_delta_topic),
 			   UPDATE_DELTA_TOPIC,
 			   client->client_id.utf8);
-	u32_t update_delta_topic_len = ret;
+	uint32_t update_delta_topic_len = ret;
 
 	if (ret >= sizeof(update_delta_topic)) {
 		return -ENOMEM;
@@ -101,7 +102,7 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 		       sizeof(shadow_update_payload),
 		       SHADOW_STATE_UPDATE,
 		       CONFIG_APP_VERSION);
-	u32_t shadow_update_payload_len = ret;
+	uint32_t shadow_update_payload_len = ret;
 
 	if (ret >= sizeof(shadow_update_payload)) {
 		return -ENOMEM;
@@ -123,7 +124,7 @@ static int update_device_shadow_version(struct mqtt_client *const client)
 #endif /* !defined(CONFIG_USE_NRF_CLOUD) */
 
 /**@brief Function to print strings without null-termination. */
-static void data_print(u8_t *prefix, u8_t *data, size_t len)
+static void data_print(uint8_t *prefix, uint8_t *data, size_t len)
 {
 	char buf[len + 1];
 
@@ -135,11 +136,11 @@ static void data_print(u8_t *prefix, u8_t *data, size_t len)
 /**@brief Function to read the published payload.
  */
 static int publish_get_payload(struct mqtt_client *c,
-			       u8_t *write_buf,
+			       uint8_t *write_buf,
 			       size_t length)
 {
-	u8_t *buf = write_buf;
-	u8_t *end = buf + length;
+	uint8_t *buf = write_buf;
+	uint8_t *end = buf + length;
 
 	if (length > sizeof(payload_buf)) {
 		return -EMSGSIZE;
@@ -328,7 +329,7 @@ static void broker_init(const char *hostname)
 #define MAX_OF_2 MAX(sizeof(CLOUD_CA_CERTIFICATE),\
 		     sizeof(CLOUD_CLIENT_PRIVATE_KEY))
 #define MAX_LEN MAX(MAX_OF_2, sizeof(CLOUD_CLIENT_PUBLIC_CERTIFICATE))
-static u8_t certificates[][MAX_LEN] = {{CLOUD_CA_CERTIFICATE},
+static uint8_t certificates[][MAX_LEN] = {{CLOUD_CA_CERTIFICATE},
 				       {CLOUD_CLIENT_PRIVATE_KEY},
 				       {CLOUD_CLIENT_PUBLIC_CERTIFICATE} };
 static const size_t cert_len[] = {

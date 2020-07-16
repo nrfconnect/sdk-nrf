@@ -21,7 +21,7 @@ int fota_update_counter_read(struct update_counter *update_counter)
 	return 0;
 }
 
-int fota_update_counter_update(enum counter_type type, u32_t new_value)
+int fota_update_counter_update(enum counter_type type, uint32_t new_value)
 {
 	if (type == COUNTER_UPDATE) {
 		uc.update = new_value;

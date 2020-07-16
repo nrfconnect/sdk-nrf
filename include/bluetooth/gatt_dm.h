@@ -38,9 +38,9 @@ struct bt_gatt_dm_attr {
 	/** Attribute UUID */
 	struct bt_uuid	*uuid;
 	/** Attribute handle */
-	u16_t		handle;
+	uint16_t		handle;
 	/** Attribute permissions */
-	u8_t		perm;
+	uint8_t		perm;
 };
 
 /** @brief Discovery callback structure.
@@ -203,7 +203,7 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_char_by_uuid(
  *         attribute with such a pointer.
  */
 const struct bt_gatt_dm_attr *bt_gatt_dm_attr_by_handle(
-	const struct bt_gatt_dm *dm, u16_t handle);
+	const struct bt_gatt_dm *dm, uint16_t handle);
 
 /** @brief Get next attribute
  *

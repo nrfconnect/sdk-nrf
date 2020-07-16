@@ -26,13 +26,13 @@ extern "C" {
 struct bt_gatt_throughput_metrics {
 
         /** Number of GATT writes received. */
-	u32_t write_count;
+	uint32_t write_count;
 
         /** Number of bytes received. */
-	u32_t write_len;
+	uint32_t write_len;
 
         /** Transfer speed in bits per second. */
-	u32_t write_rate;
+	uint32_t write_rate;
 };
 
 /** @brief Throughput callback structure. */
@@ -47,7 +47,7 @@ struct bt_gatt_throughput_cb {
 	 * @retval BT_GATT_ITER_CONTINUE To keep notifications enabled.
 	 * @retval BT_GATT_ITER_STOP To disable notifications.
 	 */
-	u8_t (*data_read)(const struct bt_gatt_throughput_metrics *met);
+	uint8_t (*data_read)(const struct bt_gatt_throughput_metrics *met);
 
 	/** @brief Data received callback.
 	 *
@@ -71,7 +71,7 @@ struct bt_gatt_throughput_cb {
 /** @brief Throughput structure. */
 struct bt_gatt_throughput {
 	/** Throughput Characteristic handle. */
-	u16_t char_handle;
+	uint16_t char_handle;
 
 	/** GATT read parameters for the Throughput Characteristic. */
 	struct bt_gatt_read_params read_params;
@@ -142,7 +142,7 @@ int bt_gatt_throughput_read(struct bt_gatt_throughput *throughput);
  *            Otherwise, a negative error code is returned.
  */
 int bt_gatt_throughput_write(struct bt_gatt_throughput *throughput,
-			     const u8_t *data, u16_t len);
+			     const uint8_t *data, uint16_t len);
 
 #ifdef __cplusplus
 }

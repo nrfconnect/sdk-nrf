@@ -24,8 +24,8 @@ extern "C" {
 
 /** Generic Transition parameters for the model messages. */
 struct bt_mesh_model_transition {
-	u32_t time; /**< Transition time value in milliseconds */
-	u32_t delay; /**< Message execution delay in milliseconds */
+	uint32_t time; /**< Transition time value in milliseconds */
+	uint32_t delay; /**< Message execution delay in milliseconds */
 };
 
 /**
@@ -33,10 +33,10 @@ struct bt_mesh_model_transition {
  * transaction in model spec messages.
  */
 struct bt_mesh_tid_ctx {
-	u16_t src; /**< Source address. */
-	u16_t dst; /**< Destination address. */
-	u64_t timestamp; /**< System uptime of the transaction. */
-	u8_t tid; /**< Transaction ID. */
+	uint16_t src; /**< Source address. */
+	uint16_t dst; /**< Destination address. */
+	uint64_t timestamp; /**< System uptime of the transaction. */
+	uint8_t tid; /**< Transaction ID. */
 };
 
 /**
@@ -45,8 +45,8 @@ struct bt_mesh_tid_ctx {
  */
 struct bt_mesh_model_ack_ctx {
 	struct k_sem sem; /**< Sync semaphore. */
-	u32_t op; /**< Opcode we're waiting for. */
-	u16_t dst; /**< Address of the node that should respond. */
+	uint32_t op; /**< Opcode we're waiting for. */
+	uint16_t dst; /**< Address of the node that should respond. */
 	void *user_data; /**< User specific parameter. */
 };
 

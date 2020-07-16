@@ -26,12 +26,12 @@
 
 /** @brief Set of flags for enabling/disabling profiling for given event types.
  */
-extern u32_t profiler_enabled_events;
+extern uint32_t profiler_enabled_events;
 
 
 /** @brief Number of event types registered in the Profiler.
  */
-extern u8_t profiler_num_events;
+extern uint8_t profiler_num_events;
 
 
 /** @brief Data types for profiling.
@@ -53,9 +53,9 @@ enum profiler_arg {
 struct log_event_buf {
 #ifdef CONFIG_PROFILER
 	/** Pointer to the end of the payload. */
-	u8_t *payload;
+	uint8_t *payload;
 	/** Array where the payload is located before it is sent. */
-	u8_t payload_start[CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN];
+	uint8_t payload_start[CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN];
 #endif
 };
 
@@ -122,13 +122,13 @@ static inline bool is_profiling_enabled(size_t profiler_event_id)
  * @return ID assigned to the event type.
  */
 #ifdef CONFIG_PROFILER
-u16_t profiler_register_event_type(const char *name, const char **args,
+uint16_t profiler_register_event_type(const char *name, const char **args,
 				   const enum profiler_arg *arg_types,
-				   u8_t arg_cnt);
+				   uint8_t arg_cnt);
 #else
-static inline u16_t profiler_register_event_type(const char *name,
+static inline uint16_t profiler_register_event_type(const char *name,
 			const char **args, const enum profiler_arg *arg_types,
-			u8_t arg_cnt) {return 0; }
+			uint8_t arg_cnt) {return 0; }
 #endif
 
 
@@ -152,10 +152,10 @@ static inline void profiler_log_start(struct log_event_buf *buf) {}
  * @param buf Pointer to the data buffer.
  */
 #ifdef CONFIG_PROFILER
-void profiler_log_encode_u32(struct log_event_buf *buf, u32_t data);
+void profiler_log_encode_u32(struct log_event_buf *buf, uint32_t data);
 #else
 static inline void profiler_log_encode_u32(struct log_event_buf *buf,
-					   u32_t data) {}
+					   uint32_t data) {}
 #endif
 
 
@@ -189,10 +189,10 @@ static inline void profiler_log_add_mem_address(struct log_event_buf *buf,
  * @param buf Pointer to the data buffer.
  */
 #ifdef CONFIG_PROFILER
-void profiler_log_send(struct log_event_buf *buf, u16_t event_type_id);
+void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id);
 #else
 static inline void profiler_log_send(struct log_event_buf *buf,
-				     u16_t event_type_id) {}
+				     uint16_t event_type_id) {}
 #endif
 
 

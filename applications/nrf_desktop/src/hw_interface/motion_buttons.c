@@ -34,11 +34,11 @@ enum dir {
 };
 
 
-static u32_t timestamp[DIR_COUNT];
+static uint32_t timestamp[DIR_COUNT];
 static enum state state;
 
 
-static void motion_event_send(s16_t dx, s16_t dy)
+static void motion_event_send(int16_t dx, int16_t dy)
 {
 	struct motion_event *event = new_motion_event();
 
@@ -48,7 +48,7 @@ static void motion_event_send(s16_t dx, s16_t dy)
 	EVENT_SUBMIT(event);
 }
 
-static enum dir key_to_dir(u16_t key_id)
+static enum dir key_to_dir(uint16_t key_id)
 {
 	enum dir dir = DIR_COUNT;
 	switch (key_id) {
@@ -75,9 +75,9 @@ static enum dir key_to_dir(u16_t key_id)
 	return dir;
 }
 
-static s16_t update_motion_dir(enum dir dir, u32_t ts)
+static int16_t update_motion_dir(enum dir dir, uint32_t ts)
 {
-	u32_t time_diff = ts - timestamp[dir];
+	uint32_t time_diff = ts - timestamp[dir];
 
 	if (time_diff > UCHAR_MAX) {
 		time_diff = UCHAR_MAX;
@@ -93,9 +93,9 @@ static s16_t update_motion_dir(enum dir dir, u32_t ts)
 
 static void send_motion(void)
 {
-	u32_t ts = k_uptime_get();
-	s16_t x = 0;
-	s16_t y = 0;
+	uint32_t ts = k_uptime_get();
+	int16_t x = 0;
+	int16_t y = 0;
 
 	y += update_motion_dir(DIR_UP, ts);
 	y -= update_motion_dir(DIR_DOWN, ts);
@@ -113,7 +113,7 @@ static bool handle_button_event(const struct button_event *event)
 		return false;
 	}
 
-	u32_t *ts = &timestamp[dir];
+	uint32_t *ts = &timestamp[dir];
 
 	if (!event->pressed) {
 		*ts = 0;
@@ -168,7 +168,7 @@ static bool handle_hid_report_sent_event(const struct hid_report_sent_event *eve
 static bool handle_hid_report_subscription_event(const struct hid_report_subscription_event *event)
 {
 	if (event->report_id == REPORT_ID_MOUSE) {
-		static u8_t peer_count;
+		static uint8_t peer_count;
 
 		if (event->enabled) {
 			__ASSERT_NO_MSG(peer_count < UCHAR_MAX);

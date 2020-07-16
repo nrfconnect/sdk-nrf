@@ -46,28 +46,28 @@ extern "C" {
  */
 struct nfc_t4t_isodep_tag {
 	/** Frame Waiting Time. */
-	u32_t fwt;
+	uint32_t fwt;
 
 	/** Start-up Frame Guard Time */
-	u32_t sfgt;
+	uint32_t sfgt;
 
 	/** Frame size for proximity card. */
-	u16_t fsc;
+	uint16_t fsc;
 
 	/** Logical number of the addressed Listener.*/
-	u8_t did;
+	uint8_t did;
 
 	/** Listener-Poller bit rate divisor. */
-	u8_t lp_divisor;
+	uint8_t lp_divisor;
 
 	/** Poller-Listener bit rate divisor. */
-	u8_t pl_divisor;
+	uint8_t pl_divisor;
 
 	/** Historical bytes. */
-	u8_t historical[NFC_T4T_ISODEP_HIST_MAX_LEN];
+	uint8_t historical[NFC_T4T_ISODEP_HIST_MAX_LEN];
 
 	/** Historical bytes length. */
-	u8_t historical_len;
+	uint8_t historical_len;
 
 	/** DID supported. */
 	bool did_supported;
@@ -121,7 +121,7 @@ struct nfc_t4t_isodep_cb {
 	 * @param[in] data     Pointer to the received data.
 	 * @param[in] data_len Received data length.
 	 */
-	void (*data_received)(const u8_t *data, size_t data_len);
+	void (*data_received)(const uint8_t *data, size_t data_len);
 
 	/**@brief Type 4 Tag ISO-DEP selected callback.
 	 *
@@ -144,7 +144,7 @@ struct nfc_t4t_isodep_cb {
 	 * @param[in] data_len Data length.
 	 * @param[in] ftd      Maximum frame delay time.
 	 */
-	void (*ready_to_send)(u8_t *data, size_t data_len, u32_t ftd);
+	void (*ready_to_send)(uint8_t *data, size_t data_len, uint32_t ftd);
 
 	/**@brief ISO-DEP error callback.
 	 *
@@ -173,7 +173,7 @@ struct nfc_t4t_isodep_cb {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_t4t_isodep_rats_send(enum nfc_t4t_isodep_fsd fsd, u8_t did);
+int nfc_t4t_isodep_rats_send(enum nfc_t4t_isodep_fsd fsd, uint8_t did);
 
 /**@brief Send a Deselect command.
  *
@@ -200,7 +200,7 @@ int nfc_t4t_isodep_tag_deselect(void);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_t4t_isodep_data_received(const u8_t *data, size_t data_len, int err);
+int nfc_t4t_isodep_data_received(const uint8_t *data, size_t data_len, int err);
 
 /**@brief Exchange the specified amount of data.
  *
@@ -213,7 +213,7 @@ int nfc_t4t_isodep_data_received(const u8_t *data, size_t data_len, int err);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_t4t_isodep_transmit(const u8_t *data, size_t data_len);
+int nfc_t4t_isodep_transmit(const uint8_t *data, size_t data_len);
 
 /**@brief Handle a transmission timeout error.
  *
@@ -240,8 +240,8 @@ void nfc_t4t_isodep_on_timeout(void);
  *           Otherwise, a (negative) error code is returned.
  *
  */
-int nfc_t4t_isodep_init(u8_t *tx_buf, size_t tx_size,
-			u8_t *rx_buf, size_t rx_size,
+int nfc_t4t_isodep_init(uint8_t *tx_buf, size_t tx_size,
+			uint8_t *rx_buf, size_t rx_size,
 			const struct nfc_t4t_isodep_cb *cb);
 
 #ifdef __cplusplus

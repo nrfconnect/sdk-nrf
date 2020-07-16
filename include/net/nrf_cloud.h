@@ -70,7 +70,7 @@ enum nrf_cloud_sensor {
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
 struct nrf_cloud_data {
 	/** Length of the data. */
-	u32_t len;
+	uint32_t len;
 	/** Pointer to the data. */
 	const void *ptr;
 };
@@ -78,7 +78,7 @@ struct nrf_cloud_data {
 /**@brief MQTT topic. */
 struct nrf_cloud_topic {
 	/** Length of the topic. */
-	u32_t len;
+	uint32_t len;
 	/** Pointer to the topic. */
 	const void *ptr;
 };
@@ -86,7 +86,7 @@ struct nrf_cloud_topic {
 /**@brief Sensors that are supported by the device. */
 struct nrf_cloud_sensor_list {
 	/** Size of the list. */
-	u8_t size;
+	uint8_t size;
 	/** Supported sensor types. */
 	const enum nrf_cloud_sensor *ptr;
 };
@@ -112,7 +112,7 @@ struct nrf_cloud_sensor_data {
 	/** Unique tag to identify the sent data.
 	 *  Useful for matching the acknowledgment.
 	 */
-	u32_t tag;
+	uint32_t tag;
 };
 
 /**@brief Asynchronous events received from the module. */
@@ -120,7 +120,7 @@ struct nrf_cloud_evt {
 	/** The event that occurred. */
 	enum nrf_cloud_evt_type type;
 	/** Any status associated with the event. */
-	u32_t status;
+	uint32_t status;
 	/** Received data. */
 	struct nrf_cloud_data data;
 	/** Topic on which data was received. */

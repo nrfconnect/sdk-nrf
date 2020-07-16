@@ -41,7 +41,7 @@ extern "C" {
 
 /** @brief Callback type for data received. */
 typedef void (*nus_received_cb_t)(struct bt_conn *conn,
-				  const u8_t *const data, u16_t len);
+				  const uint8_t *const data, uint16_t len);
 
 /** @brief Callback type for data sent. */
 typedef void (*nus_sent_cb_t)(struct bt_conn *conn);
@@ -85,7 +85,7 @@ int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks);
  * @retval 0 If the data is sent.
  *           Otherwise, a negative value is returned.
  */
-int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, u16_t len);
+int bt_gatt_nus_send(struct bt_conn *conn, const uint8_t *data, uint16_t len);
 
 /**@brief Get maximum data length that can be used for @ref bt_gatt_nus_send.
  *
@@ -93,7 +93,7 @@ int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, u16_t len);
  *
  * @return Maximum data length.
  */
-static inline u32_t bt_gatt_nus_max_send(struct bt_conn *conn)
+static inline uint32_t bt_gatt_nus_max_send(struct bt_conn *conn)
 {
 	/* According to 3.4.7.1 Handle Value Notification off the ATT protocol.
 	 * Maximum supported notification is ATT_MTU - 3 */

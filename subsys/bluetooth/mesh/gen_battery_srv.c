@@ -26,19 +26,19 @@ static void encode_status(struct net_buf_simple *buf,
 	bt_mesh_model_msg_init(buf, BT_MESH_BATTERY_OP_STATUS);
 	net_buf_simple_add_u8(buf, status->battery_lvl);
 
-	u8_t *discharge = net_buf_simple_add(buf, 3);
+	uint8_t *discharge = net_buf_simple_add(buf, 3);
 
 	discharge[0] = status->discharge_minutes;
 	discharge[1] = status->discharge_minutes >> 8;
 	discharge[2] = status->discharge_minutes >> 16;
 
-	u8_t *charge = net_buf_simple_add(buf, 3);
+	uint8_t *charge = net_buf_simple_add(buf, 3);
 
 	charge[0] = status->charge_minutes;
 	charge[1] = status->charge_minutes >> 8;
 	charge[2] = status->charge_minutes >> 16;
 
-	u8_t flags = ((status->presence & BIT_MASK(2)) |
+	uint8_t flags = ((status->presence & BIT_MASK(2)) |
 		      ((status->indicator & BIT_MASK(2)) << 2) |
 		      ((status->charging & BIT_MASK(2)) << 4) |
 		      ((status->service & BIT_MASK(2)) << 6));
@@ -99,7 +99,7 @@ int _bt_mesh_battery_srv_update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-s32_t bt_mesh_battery_srv_pub(struct bt_mesh_battery_srv *srv,
+int32_t bt_mesh_battery_srv_pub(struct bt_mesh_battery_srv *srv,
 			      struct bt_mesh_msg_ctx *ctx,
 			      const struct bt_mesh_battery_status *status)
 {

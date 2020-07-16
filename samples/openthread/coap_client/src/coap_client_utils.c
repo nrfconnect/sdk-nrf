@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(coap_client_utils, CONFIG_COAP_CLIENT_UTILS_LOG_LEVEL);
 
 #define RESPONSE_POLL_PERIOD 100
 
-static u32_t poll_period;
+static uint32_t poll_period;
 
 static struct k_work unicast_light_work;
 static struct k_work multicast_light_work;
@@ -99,8 +99,8 @@ static int on_provisioning_reply(const struct coap_packet *response,
 				 const struct sockaddr *from)
 {
 	int ret = 0;
-	const u8_t *payload;
-	u16_t payload_size = 0u;
+	const uint8_t *payload;
+	uint16_t payload_size = 0u;
 
 	ARG_UNUSED(reply);
 	ARG_UNUSED(from);
@@ -132,7 +132,7 @@ exit:
 
 static void toggle_one_light(struct k_work *item)
 {
-	u8_t payload = (u8_t)THREAD_COAP_UTILS_LIGHT_CMD_TOGGLE;
+	uint8_t payload = (uint8_t)THREAD_COAP_UTILS_LIGHT_CMD_TOGGLE;
 
 	ARG_UNUSED(item);
 
@@ -151,7 +151,7 @@ static void toggle_one_light(struct k_work *item)
 
 static void toggle_mesh_lights(struct k_work *item)
 {
-	static u8_t command = (u8_t)THREAD_COAP_UTILS_LIGHT_CMD_OFF;
+	static uint8_t command = (uint8_t)THREAD_COAP_UTILS_LIGHT_CMD_OFF;
 
 	ARG_UNUSED(item);
 
@@ -201,7 +201,7 @@ static void toggle_minimal_sleepy_end_device(struct k_work *item)
 	on_mtd_mode_toggle(mode.mRxOnWhenIdle);
 }
 
-static void on_thread_state_changed(u32_t flags, void *p_context)
+static void on_thread_state_changed(uint32_t flags, void *p_context)
 {
 	if (flags & OT_CHANGED_THREAD_ROLE) {
 		switch (otThreadGetDeviceRole(p_context)) {

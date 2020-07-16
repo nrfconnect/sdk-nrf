@@ -62,7 +62,7 @@ static slm_at_cmd_list_t m_udp_proxy_at_list[AT_UDP_PROXY_MAX] = {
 	{AT_UDP_SEND, "AT#XUDPSEND", handle_at_udp_send},
 };
 
-static u8_t data_hex[DATA_HEX_MAX_SIZE];
+static uint8_t data_hex[DATA_HEX_MAX_SIZE];
 static struct k_thread udp_thread;
 static K_THREAD_STACK_DEFINE(udp_thread_stack, THREAD_STACK_SIZE);
 static k_tid_t udp_thread_id;
@@ -71,7 +71,7 @@ static struct sockaddr_in remote;
 static int udp_sock;
 
 /* global functions defined in different files */
-void rsp_send(const u8_t *str, size_t len);
+void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -81,7 +81,7 @@ extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 /** forward declaration of thread function **/
 static void udp_thread_func(void *p1, void *p2, void *p3);
 
-static int do_udp_server_start(u16_t port, int sec_tag)
+static int do_udp_server_start(uint16_t port, int sec_tag)
 {
 	int ret = 0;
 	struct sockaddr_in local;
@@ -174,7 +174,7 @@ static int do_udp_server_stop(int error)
 	return ret;
 }
 
-static int do_udp_client_connect(const char *url, u16_t port, int sec_tag)
+static int do_udp_client_connect(const char *url, uint16_t port, int sec_tag)
 {
 	int ret;
 
@@ -282,10 +282,10 @@ static int do_udp_client_disconnect(int error)
 	return ret;
 }
 
-static int do_udp_send(const u8_t *data, int datalen)
+static int do_udp_send(const uint8_t *data, int datalen)
 {
 	int ret = 0;
-	u32_t offset = 0;
+	uint32_t offset = 0;
 
 	if (udp_sock == INVALID_SOCKET) {
 		LOG_ERR("Not connected yet");
@@ -370,7 +370,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 static int handle_at_udp_server(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t op;
+	uint16_t op;
 	int param_count = at_params_valid_count_get(&at_param_list);
 
 	switch (cmd_type) {
@@ -383,7 +383,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (op == AT_SERVER_START) {
-			u16_t port;
+			uint16_t port;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
 			if (param_count < 3) {
@@ -431,7 +431,7 @@ static int handle_at_udp_server(enum at_cmd_type cmd_type)
 static int handle_at_udp_client(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t op;
+	uint16_t op;
 	int param_count = at_params_valid_count_get(&at_param_list);
 
 	switch (cmd_type) {
@@ -444,7 +444,7 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (op == AT_CLIENT_CONNECT) {
-			u16_t port;
+			uint16_t port;
 			char url[TCPIP_MAX_URL];
 			int size = TCPIP_MAX_URL;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
@@ -497,7 +497,7 @@ static int handle_at_udp_client(enum at_cmd_type cmd_type)
 static int handle_at_udp_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t datatype;
+	uint16_t datatype;
 	char data[NET_IPV4_MTU];
 	int size = NET_IPV4_MTU;
 
@@ -519,7 +519,7 @@ static int handle_at_udp_send(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (datatype == DATATYPE_HEXADECIMAL) {
-			u8_t data_hex[size / 2];
+			uint8_t data_hex[size / 2];
 
 			err = slm_util_atoh(data, size, data_hex, size / 2);
 			if (err > 0) {

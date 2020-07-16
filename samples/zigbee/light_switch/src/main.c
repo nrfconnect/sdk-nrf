@@ -74,7 +74,7 @@ struct bulb_context {
 };
 
 struct buttons_context {
-	u32_t          state;
+	uint32_t          state;
 	atomic_t       long_poll;
 	struct k_timer alarm;
 };
@@ -123,7 +123,7 @@ static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t on_off);
  * @param[in]   has_changed   Bitmask containing buttons that has
  *                            changed their state.
  */
-static void button_handler(u32_t button_state, u32_t has_changed)
+static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
 	zb_uint16_t cmd_id;
 	zb_ret_t zb_err_code;

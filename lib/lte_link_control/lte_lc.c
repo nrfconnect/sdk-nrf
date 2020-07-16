@@ -421,17 +421,17 @@ static int parse_psm_cfg(struct at_param_list *at_params,
 	size_t timer_str_len = sizeof(timer_str) - 1;
 	size_t unit_str_len = sizeof(unit_str) - 1;
 	size_t lut_idx;
-	u32_t timer_unit, timer_value;
+	uint32_t timer_unit, timer_value;
 
 	/* Lookup table for T3324 timer used for PSM active time in seconds.
 	 * Ref: GPRS Timer 2 IE in 3GPP TS 24.008 Table 10.5.163/3GPP TS 24.008.
 	 */
-	static const u32_t t3324_lookup[8] = {2, 60, 600, 60, 60, 60, 60, 0};
+	static const uint32_t t3324_lookup[8] = {2, 60, 600, 60, 60, 60, 60, 0};
 
 	/* Lookup table for T3412 timer used for periodic TAU. Unit is seconds.
 	 * Ref: GPRS Timer 3 in 3GPP TS 24.008 Table 10.5.163a/3GPP TS 24.008.
 	 */
-	static const u32_t t3412_lookup[8] = {600, 3600, 36000, 2, 30, 60,
+	static const uint32_t t3412_lookup[8] = {600, 3600, 36000, 2, 30, 60,
 					      1152000, 0};
 
 	/* Parse periodic TAU string */
@@ -1137,21 +1137,21 @@ static int get_ptw_multiplier(float *ptw_multiplier)
 	return 0;
 }
 
-static int get_edrx_value(u8_t idx, float *edrx_value)
+static int get_edrx_value(uint8_t idx, float *edrx_value)
 {
 	int err;
 	enum lte_lc_system_mode sys_mode;
-	u16_t multiplier = 0;
+	uint16_t multiplier = 0;
 
 	/* Lookup table to eDRX multiplier values, based on T_eDRX values found
 	 * in Table 10.5.5.32/3GPP TS 24.008. The actual value is
 	 * (multiplier * 10.24 s), except for the first entry which is handled
 	 * as a special case per note 3 in the specification.
 	 */
-	static const u16_t edrx_lookup_ltem[16] = {
+	static const uint16_t edrx_lookup_ltem[16] = {
 		0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 32, 64, 128, 256, 256, 256
 	};
-	static const u16_t edrx_lookup_nbiot[16] = {
+	static const uint16_t edrx_lookup_nbiot[16] = {
 		2, 2, 2, 4, 2, 8, 2, 2, 2, 16, 32, 64, 128, 256, 512, 1024
 	};
 
@@ -1200,7 +1200,7 @@ static int parse_edrx(const char *at_response,
 		      struct lte_lc_edrx_cfg *cfg)
 {
 	int err;
-	u8_t idx;
+	uint8_t idx;
 	struct at_param_list resp_list = {0};
 	char tmp_buf[5];
 	size_t len = sizeof(tmp_buf) - 1;

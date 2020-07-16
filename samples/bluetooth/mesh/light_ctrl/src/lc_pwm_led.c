@@ -43,9 +43,9 @@ void lc_pwm_led_init(void)
 	}
 }
 
-void lc_pwm_led_set(u16_t desired_lvl)
+void lc_pwm_led_set(uint16_t desired_lvl)
 {
-	u32_t scaled_lvl =
+	uint32_t scaled_lvl =
 		(PWM_PERIOD * desired_lvl) /
 		BT_MESH_LIGHTNESS_MAX;
 

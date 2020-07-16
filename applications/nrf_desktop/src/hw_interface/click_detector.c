@@ -33,8 +33,8 @@ enum state {
 };
 
 struct key_state {
-	s32_t click_short_timeout;
-	s32_t pressed_time;
+	int32_t click_short_timeout;
+	int32_t pressed_time;
 };
 
 static struct key_state keys[ARRAY_SIZE(click_detector_config)];
@@ -43,7 +43,7 @@ static enum state state;
 static struct k_delayed_work click_check;
 
 
-static void submit_click_event(u16_t key_id, enum click click)
+static void submit_click_event(uint16_t key_id, enum click click)
 {
 	struct click_event *event = new_click_event();
 
@@ -53,7 +53,7 @@ static void submit_click_event(u16_t key_id, enum click click)
 	EVENT_SUBMIT(event);
 }
 
-static enum click get_click(s32_t time_diff)
+static enum click get_click(int32_t time_diff)
 {
 	if (time_diff < SHORT_CLICK_MAX) {
 		return CLICK_SHORT;
@@ -66,7 +66,7 @@ static enum click get_click(s32_t time_diff)
 	return CLICK_NONE;
 }
 
-static bool update_click_short_timeout(struct key_state *key, u16_t key_id)
+static bool update_click_short_timeout(struct key_state *key, uint16_t key_id)
 {
 	if (key->click_short_timeout != TIMER_INACTIVE) {
 		key->click_short_timeout -= CLICK_CHECK_PERIOD;
@@ -82,7 +82,7 @@ static bool update_click_short_timeout(struct key_state *key, u16_t key_id)
 	return false;
 }
 
-static bool update_click_time(struct key_state *key, u16_t key_id)
+static bool update_click_time(struct key_state *key, uint16_t key_id)
 {
 	if (key->pressed_time != TIMER_INACTIVE) {
 		key->pressed_time += CLICK_CHECK_PERIOD;
@@ -105,7 +105,7 @@ static void click_check_fn(struct k_work *work)
 	bool any_processed = false;
 
 	for (size_t i = 0; i < ARRAY_SIZE(keys); i++) {
-		u16_t key_id = click_detector_config[i].key_id;
+		uint16_t key_id = click_detector_config[i].key_id;
 
 		if (update_click_short_timeout(&keys[i], key_id)) {
 		       any_processed = true;
@@ -135,7 +135,7 @@ static void init(void)
 	state = STATE_ACTIVE;
 }
 
-static void process_key(struct key_state *key, u16_t key_id, bool pressed)
+static void process_key(struct key_state *key, uint16_t key_id, bool pressed)
 {
 	__ASSERT_NO_MSG(state == STATE_ACTIVE);
 

@@ -18,9 +18,9 @@ static struct bt_gatt_nus_cb nus_cb;
 static ssize_t on_receive(struct bt_conn *conn,
 			  const struct bt_gatt_attr *attr,
 			  const void *buf,
-			  u16_t len,
-			  u16_t offset,
-			  u8_t flags)
+			  uint16_t len,
+			  uint16_t offset,
+			  uint8_t flags)
 {
 	LOG_DBG("Received data, handle %d, conn %p",
 		attr->handle, conn);
@@ -67,7 +67,7 @@ int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks)
 	return 0;
 }
 
-int bt_gatt_nus_send(struct bt_conn *conn, const u8_t *data, uint16_t len)
+int bt_gatt_nus_send(struct bt_conn *conn, const uint8_t *data, uint16_t len)
 {
 	struct bt_gatt_notify_params params = {0};
 	const struct bt_gatt_attr *attr = &nus_svc.attrs[2];

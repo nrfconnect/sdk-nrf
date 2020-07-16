@@ -56,8 +56,8 @@ struct nfc_ndef_parser_memo_desc {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_parser_memo_resolve(const u8_t *result_buf,
-				     u32_t *result_buf_len,
+int nfc_ndef_msg_parser_memo_resolve(const uint8_t *result_buf,
+				     uint32_t *result_buf_len,
 				     struct nfc_ndef_parser_memo_desc *parser_memo_desc);
 
 
@@ -79,8 +79,8 @@ int nfc_ndef_msg_parser_memo_resolve(const u8_t *result_buf,
  *            Otherwise, a (negative) error code is returned.
  */
 int nfc_ndef_msg_parser_internal(struct nfc_ndef_parser_memo_desc *parser_memo_desc,
-				 const u8_t *nfc_data,
-				 u32_t *nfc_data_len);
+				 const uint8_t *nfc_data,
+				 uint32_t *nfc_data_len);
 
 /**
  * @}

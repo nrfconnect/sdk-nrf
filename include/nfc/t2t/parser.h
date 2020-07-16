@@ -26,45 +26,45 @@ struct nfc_t2t_sn {
 	/** Manufacturer ID (the most significant byte of the
 	 *  UID/serial number).
 	 */
-	u8_t manufacturer_id;
+	uint8_t manufacturer_id;
 
 	/** Bytes 5-4 of the tag UID. */
-	u16_t serial_number_part_1;
+	uint16_t serial_number_part_1;
 
 	/** Bytes 3-0 of the tag UID. */
-	u32_t serial_number_part_2;
+	uint32_t serial_number_part_2;
 
 	/** First block check character byte (XOR of the cascade tag byte,
 	 *  manufacturer ID byte, and the serial_number_part_1 bytes).
 	 */
-	u8_t check_byte_0;
+	uint8_t check_byte_0;
 
 	/** Second block check character byte
 	 * (XOR of the serial_number_part_2 bytes).
 	 */
-	u8_t check_byte_1;
+	uint8_t check_byte_1;
 
 	/** Tag internal bytes. */
-	u8_t internal;
+	uint8_t internal;
 };
 
 /** @brief Descriptor for the Capability Container (CC) bytes of a Type 2 Tag.
  */
 struct nfc_t2t_cc {
 	/** Major version of the supported Type 2 Tag specification. */
-	u8_t major_version;
+	uint8_t major_version;
 
 	/** Minor version of the supported Type 2 Tag specification. */
-	u8_t minor_version;
+	uint8_t minor_version;
 
 	/** Size of the data area in bytes. */
-	u16_t data_area_size;
+	uint16_t data_area_size;
 
 	/** Read access for the data area. */
-	u8_t read_access;
+	uint8_t read_access;
 
 	/** Write access for the data area. */
-	u8_t write_access;
+	uint8_t write_access;
 };
 
 /** @brief Type 2 Tag descriptor.
@@ -74,19 +74,19 @@ struct nfc_t2t {
 	struct nfc_t2t_sn sn;
 
 	/** Value of the lock bytes. */
-	u16_t lock_bytes;
+	uint16_t lock_bytes;
 
 	/** Values within the Capability Container area of the tag. */
 	struct nfc_t2t_cc cc;
 
 	/** Maximum number of TLV blocks that can be stored. */
-	const u16_t max_tlv_blocks;
+	const uint16_t max_tlv_blocks;
 
 	/** Pointer to the array for TLV blocks. */
 	struct nfc_t2t_tlv_block *tlv_block_array;
 
 	/** Number of TLV blocks stored in the Type 2 Tag. */
-	u16_t tlv_count;
+	uint16_t tlv_count;
 };
 
 /** @brief Create and initialize a Type 2 Tag descriptor.
@@ -164,7 +164,7 @@ void nfc_t2t_clear(struct nfc_t2t *t2t);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_t2t_parse(struct nfc_t2t *t2t, const u8_t *raw_data);
+int nfc_t2t_parse(struct nfc_t2t *t2t, const uint8_t *raw_data);
 
 /** @brief Print parsed contents of the Type 2 Tag.
  *

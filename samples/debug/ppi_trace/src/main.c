@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(app);
 #define RTC_LABEL DT_LABEL(DT_NODELABEL(rtc0))
 #endif
 
-static void alarm_callback(struct device *dev, u8_t chan_id, u32_t ticks,
+static void alarm_callback(struct device *dev, uint8_t chan_id, uint32_t ticks,
 			   void *user_data);
 
 static struct counter_alarm_cfg alarm_cfg = {
@@ -34,7 +34,7 @@ static struct counter_alarm_cfg alarm_cfg = {
 
 extern void bluetooth_enable(void);
 
-static void ppi_trace_pin_setup(u32_t pin, u32_t evt)
+static void ppi_trace_pin_setup(uint32_t pin, uint32_t evt)
 {
 	void *handle;
 
@@ -62,11 +62,11 @@ static void ppi_trace_setup(void)
 	LOG_INF("PPI trace setup done.");
 }
 
-static void alarm_callback(struct device *dev, u8_t chan_id, u32_t ticks,
+static void alarm_callback(struct device *dev, uint8_t chan_id, uint32_t ticks,
 			   void *user_data)
 {
 	int err;
-	u32_t alarm_cnt = (u32_t)user_data + 1;
+	uint32_t alarm_cnt = (uint32_t)user_data + 1;
 
 	alarm_cfg.ticks = ticks + counter_us_to_ticks(dev, ALARM_PERIOD_US);
 	alarm_cfg.user_data = (void *)alarm_cnt;

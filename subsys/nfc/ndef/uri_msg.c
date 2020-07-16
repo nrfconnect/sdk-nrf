@@ -8,10 +8,10 @@
 #include <nfc/ndef/uri_msg.h>
 
 int nfc_ndef_uri_msg_encode(enum nfc_ndef_uri_rec_id uri_id_code,
-			    u8_t const *const uri_data,
-			    u8_t uri_data_len,
-			    u8_t *buf,
-			    u32_t *len)
+			    uint8_t const *const uri_data,
+			    uint8_t uri_data_len,
+			    uint8_t *buf,
+			    uint32_t *len)
 {
 	int err;
 

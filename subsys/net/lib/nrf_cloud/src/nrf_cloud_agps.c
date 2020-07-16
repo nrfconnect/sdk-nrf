@@ -138,7 +138,7 @@ int nrf_cloud_agps_request(enum gps_agps_type *types, size_t type_count)
 		modem_info.network.mcc.value,
 		modem_info.network.mnc.value,
 		modem_info.network.area_code.value,
-		(u32_t)modem_info.network.cellid_dec,
+		(uint32_t)modem_info.network.cellid_dec,
 		types_array);
 
 	if (len < 0) {
@@ -421,7 +421,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 				    const char *buf)
 {
-	static u16_t elements_left_to_process;
+	static uint16_t elements_left_to_process;
 	static enum nrf_cloud_agps_type element_type;
 	size_t len = 0;
 
@@ -434,7 +434,7 @@ static size_t get_next_agps_element(struct nrf_cloud_apgs_element *element,
 			(enum nrf_cloud_agps_type)buf[NRF_CLOUD_AGPS_BIN_TYPE_OFFSET];
 		element_type = element->type;
 		elements_left_to_process =
-			*(u16_t *)&buf[NRF_CLOUD_AGPS_BIN_COUNT_OFFSET] - 1;
+			*(uint16_t *)&buf[NRF_CLOUD_AGPS_BIN_COUNT_OFFSET] - 1;
 		len += NRF_CLOUD_AGPS_BIN_TYPE_SIZE +
 			NRF_CLOUD_AGPS_BIN_COUNT_SIZE;
 	} else {
@@ -494,7 +494,7 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len, const int *socket)
 	struct nrf_cloud_apgs_element element = {};
 	struct nrf_cloud_agps_system_time sys_time;
 	size_t parsed_len = 0;
-	u8_t version;
+	uint8_t version;
 
 	version = buf[NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_INDEX];
 	parsed_len += NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE;

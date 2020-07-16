@@ -51,7 +51,7 @@ After registering the types, you can send information about event occurrences us
 It is good practice to wrap the calls in one function that you then call to profile event occurrences.
 The following code example shows a function for profiling an event with data::
 
-	static void profile_data_event(u32_t val1, s32_t val2)
+	static void profile_data_event(uint32_t val1, int32_t val2)
 	{
 		struct log_event_buf buf;
 

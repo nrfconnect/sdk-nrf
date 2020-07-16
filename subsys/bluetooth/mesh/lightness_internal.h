@@ -35,7 +35,7 @@ enum light_repr {
 	LINEAR,
 };
 
-static inline u32_t lightness_sqrt32(u32_t val)
+static inline uint32_t lightness_sqrt32(uint32_t val)
 {
 	/* Shortcut out of this for the very common case of 0: */
 	if (val == 0) {
@@ -43,7 +43,7 @@ static inline u32_t lightness_sqrt32(u32_t val)
 	}
 
 	/* Square root by binary search from the highest bit: */
-	u32_t factor = 0;
+	uint32_t factor = 0;
 
 	/* sqrt(UINT32_MAX) < (1 << 16), so the highest bit will be bit 15: */
 	for (int i = 15; i >= 0; --i) {
@@ -56,18 +56,18 @@ static inline u32_t lightness_sqrt32(u32_t val)
 	return factor;
 }
 
-static inline u16_t linear_to_actual(u16_t linear)
+static inline uint16_t linear_to_actual(uint16_t linear)
 {
 	/* Conversion: actual = 65535 * sqrt(linear / 65535) */
 	return lightness_sqrt32(65535UL * linear);
 }
 
-static inline u16_t actual_to_linear(u16_t actual)
+static inline uint16_t actual_to_linear(uint16_t actual)
 {
 	/* Conversion:
 	 * linear = CEIL(65535 * (actual * actual) / (65535 * 65535)))
 	 */
-	return ceiling_fraction((u32_t) actual * (u32_t) actual, 65535UL);
+	return ceiling_fraction((uint32_t) actual * (uint32_t) actual, 65535UL);
 }
 
 /** @brief Convert light from the specified representation to the configured.
@@ -77,7 +77,7 @@ static inline u16_t actual_to_linear(u16_t actual)
  *
  *  @return The light value in the configured representation.
  */
-static inline u16_t repr_to_light(u16_t val, enum light_repr repr)
+static inline uint16_t repr_to_light(uint16_t val, enum light_repr repr)
 {
 	if (IS_ENABLED(CONFIG_BT_MESH_LIGHTNESS_LINEAR) && repr == ACTUAL) {
 		return actual_to_linear(val);
@@ -97,7 +97,7 @@ static inline u16_t repr_to_light(u16_t val, enum light_repr repr)
  *
  *  @return The light value in the representation specified in @c repr.
  */
-static inline u16_t light_to_repr(u16_t light, enum light_repr repr)
+static inline uint16_t light_to_repr(uint16_t light, enum light_repr repr)
 {
 	if (IS_ENABLED(CONFIG_BT_MESH_LIGHTNESS_LINEAR) && repr == ACTUAL) {
 		return linear_to_actual(light);

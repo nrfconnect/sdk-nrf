@@ -35,7 +35,7 @@ void zigbee_event_notify(zigbee_event_t event);
  *
  * @returns The amount of milliseconds that the ZBOSS task was blocked.
  */
-u32_t zigbee_event_poll(u32_t timeout_ms);
+uint32_t zigbee_event_poll(uint32_t timeout_ms);
 
 /**@brief Schedule single-param callback execution.
  *

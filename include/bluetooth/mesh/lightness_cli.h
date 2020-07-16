@@ -72,7 +72,7 @@ struct bt_mesh_lightness_cli_handlers {
 	 */
 	void (*const default_status)(struct bt_mesh_lightness_cli *cli,
 				     struct bt_mesh_msg_ctx *ctx,
-				     u16_t default_light);
+				     uint16_t default_light);
 
 	/** @brief Light Range status message handler.
 	 *
@@ -92,7 +92,7 @@ struct bt_mesh_lightness_cli_handlers {
 	 */
 	void (*const last_light_status)(struct bt_mesh_lightness_cli *cli,
 					struct bt_mesh_msg_ctx *ctx,
-					u16_t last);
+					uint16_t last);
 };
 
 /**
@@ -107,7 +107,7 @@ struct bt_mesh_lightness_cli {
 	/** Acknowledged message tracking. */
 	struct bt_mesh_model_ack_ctx ack_ctx;
 	/** Current transaction ID. */
-	u8_t tid;
+	uint8_t tid;
 	/** Collection of handler callbacks */
 	const struct bt_mesh_lightness_cli_handlers *const handlers;
 };
@@ -272,7 +272,7 @@ int bt_mesh_lightness_cli_range_set_unack(
  * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
-				      struct bt_mesh_msg_ctx *ctx, u16_t *rsp);
+				      struct bt_mesh_msg_ctx *ctx, uint16_t *rsp);
 
 /** @brief Set the Default Light state in the server.
  *
@@ -297,7 +297,7 @@ int bt_mesh_lightness_cli_default_get(struct bt_mesh_lightness_cli *cli,
  */
 int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
 				      struct bt_mesh_msg_ctx *ctx,
-				      u16_t default_light, u16_t *rsp);
+				      uint16_t default_light, uint16_t *rsp);
 
 /** @brief Set the Default Light state in the server without requesting a
  * response.
@@ -318,7 +318,7 @@ int bt_mesh_lightness_cli_default_set(struct bt_mesh_lightness_cli *cli,
  */
 int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
 					    struct bt_mesh_msg_ctx *ctx,
-					    u16_t default_light);
+					    uint16_t default_light);
 
 /** @brief Get the last non-zero Light Level of the bound server.
  *
@@ -344,7 +344,7 @@ int bt_mesh_lightness_cli_default_set_unack(struct bt_mesh_lightness_cli *cli,
  * @retval -ETIMEDOUT The request timed out without a response.
  */
 int bt_mesh_lightness_cli_last_get(struct bt_mesh_lightness_cli *cli,
-				   struct bt_mesh_msg_ctx *ctx, u16_t *rsp);
+				   struct bt_mesh_msg_ctx *ctx, uint16_t *rsp);
 
 /** @cond INTERNAL_HIDDEN */
 extern const struct bt_mesh_model_op _bt_mesh_lightness_cli_op[];

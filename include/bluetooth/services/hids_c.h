@@ -43,10 +43,10 @@ struct bt_gatt_hids_c_rep_info;
  * @retval BT_GATT_ITER_STOP     Stop notification.
  * @retval BT_GATT_ITER_CONTINUE Continue notification.
  */
-typedef u8_t (*bt_gatt_hids_c_read_cb)(struct bt_gatt_hids_c *hids_c,
+typedef uint8_t (*bt_gatt_hids_c_read_cb)(struct bt_gatt_hids_c *hids_c,
 				       struct bt_gatt_hids_c_rep_info *rep,
-				       u8_t err,
-				       const u8_t *data);
+				       uint8_t err,
+				       const uint8_t *data);
 
 /**
  * @brief Callback function that is called when a write response is received.
@@ -57,7 +57,7 @@ typedef u8_t (*bt_gatt_hids_c_read_cb)(struct bt_gatt_hids_c *hids_c,
  */
 typedef void (*bt_gatt_hids_c_write_cb)(struct bt_gatt_hids_c *hids_c,
 					struct bt_gatt_hids_c_rep_info *rep,
-					u8_t err);
+					uint8_t err);
 
 /**
  * @brief Callback function that is called when the HIDS client is ready.
@@ -101,8 +101,8 @@ typedef void (*bt_gatt_hids_c_prep_fail_cb)(struct bt_gatt_hids_c *hids_c,
  * @param offset Current data chunk offset.
  */
 typedef void (*bt_gatt_hids_c_map_cb)(struct bt_gatt_hids_c *hids_c,
-				      u8_t err,
-				      const u8_t *data,
+				      uint8_t err,
+				      const uint8_t *data,
 				      size_t size,
 				      size_t offset);
 
@@ -162,13 +162,13 @@ struct bt_gatt_hids_c {
 	/** Handlers for descriptors */
 	struct bt_gatt_hids_c_handlers {
 		/** Protocol Mode Characteristic value handle. */
-		u16_t pm;
+		uint16_t pm;
 		/** Report Map descriptor handle. */
-		u16_t rep_map;
+		uint16_t rep_map;
 		/** HID Information Characteristic handle. */
-		u16_t info;
+		uint16_t info;
 		/** HID Control Point Characteristic handle. */
-		u16_t cp;
+		uint16_t cp;
 	} handlers;
 	/**
 	 * @brief Callback for HIDS client ready
@@ -209,7 +209,7 @@ struct bt_gatt_hids_c {
 		 * information is read. This structure helps tracking the
 		 * current state of this process.
 		 */
-		u8_t rep_idx;
+		uint8_t rep_idx;
 	} init_repref;
 
 	struct {
@@ -230,7 +230,7 @@ struct bt_gatt_hids_c {
 	/** Array of report information structures. */
 	struct bt_gatt_hids_c_rep_info **rep_info;
 	/** Number of records. */
-	u8_t rep_cnt;
+	uint8_t rep_cnt;
 	/** Current state. */
 	bool ready;
 	/** Current protocol mode. */
@@ -369,7 +369,7 @@ int bt_gatt_hids_c_rep_read(struct bt_gatt_hids_c *hids_c,
 int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
 			     struct bt_gatt_hids_c_rep_info *rep,
 			     bt_gatt_hids_c_write_cb func,
-			     const void *data, u8_t length);
+			     const void *data, uint8_t length);
 
 /**
  * @brief Send a write command addressing the report value descriptor.
@@ -389,7 +389,7 @@ int bt_gatt_hids_c_rep_write(struct bt_gatt_hids_c *hids_c,
  */
 int bt_gatt_hids_c_rep_write_wo_rsp(struct bt_gatt_hids_c *hids_c,
 				    struct bt_gatt_hids_c_rep_info *rep,
-				    const void *data, u8_t length,
+				    const void *data, uint8_t length,
 				    bt_gatt_hids_c_write_cb func);
 
 /**
@@ -634,7 +634,7 @@ struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_next(
 struct bt_gatt_hids_c_rep_info *bt_gatt_hids_c_rep_find(
 	struct bt_gatt_hids_c *hids_c,
 	enum bt_gatt_hids_report_type type,
-	u8_t id);
+	uint8_t id);
 
 /**
  * @brief Set user data in report.
@@ -661,7 +661,7 @@ void *bt_gatt_hids_c_rep_user_data(const struct bt_gatt_hids_c_rep_info *rep);
  *
  * @return Report identifier.
  */
-u8_t bt_gatt_hids_c_rep_id(const struct bt_gatt_hids_c_rep_info *rep);
+uint8_t bt_gatt_hids_c_rep_id(const struct bt_gatt_hids_c_rep_info *rep);
 
 
 /**

@@ -290,7 +290,7 @@ Test vectors
 A test vector is a set of inputs and expected outputs to verify the functionality provided in a test case::
 
    typedef const struct {
-	   const u32_t digest_type;        /**< Digest type of HMAC operation. */
+	   const uint32_t digest_type;        /**< Digest type of HMAC operation. */
 	   const int expected_err_code;    /**< Expected error code from HMAC operation. */
 	   const uint8_t expected_result;  /**< Expected result of HMAC operation. */
 	   const char *p_test_vector_name; /**< Pointer to HMAC test vector name. */

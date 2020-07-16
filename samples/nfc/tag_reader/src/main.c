@@ -50,8 +50,8 @@
 #define TRANSMIT_DELAY 3000
 #define ALL_REQ_DELAY 2000
 
-static u8_t tx_data[NFC_TX_DATA_LEN];
-static u8_t rx_data[NFC_RX_DATA_LEN];
+static uint8_t tx_data[NFC_TX_DATA_LEN];
+static uint8_t rx_data[NFC_RX_DATA_LEN];
 
 static struct k_poll_event events[ST25R3911B_NFCA_EVENT_CNT];
 static struct k_delayed_work transmit_work;
@@ -82,14 +82,14 @@ enum t2t_state {
 
 struct t2t_tag {
 	enum t2t_state state;
-	u16_t data_bytes;
-	u8_t data[NFCA_T2T_BUFFER_SIZE];
+	uint16_t data_bytes;
+	uint8_t data[NFCA_T2T_BUFFER_SIZE];
 };
 
 struct t4t_tag {
-	u8_t data[NFC_T4T_ISODEP_RX_DATA_MAX_SIZE];
-	u8_t ndef[MAX_TLV_BLOCKS][NFC_T4T_APDU_MAX_SIZE];
-	u8_t tlv_index;
+	uint8_t data[NFC_T4T_ISODEP_RX_DATA_MAX_SIZE];
+	uint8_t ndef[MAX_TLV_BLOCKS][NFC_T4T_APDU_MAX_SIZE];
+	uint8_t tlv_index;
 };
 
 static enum nfc_tag_type tag_type;
@@ -112,9 +112,9 @@ static void nfc_tag_detect(bool all_request)
 	}
 }
 
-static int ftd_calculate(u8_t *data, size_t len)
+static int ftd_calculate(uint8_t *data, size_t len)
 {
-	u8_t ftd_align;
+	uint8_t ftd_align;
 
 	ftd_align = (data[len - 1] & NFCA_LAST_BIT_MASK) ?
 		NFCA_FDT_ALIGN_84 : NFCA_FDT_ALIGN_20;
@@ -122,9 +122,9 @@ static int ftd_calculate(u8_t *data, size_t len)
 	return len * NFCA_BD * BITS_IN_BYTE + ftd_align;
 }
 
-static int nfc_t2t_read_block_cmd_make(u8_t *tx_data,
+static int nfc_t2t_read_block_cmd_make(uint8_t *tx_data,
 				       size_t tx_data_size,
-				       u8_t block_num)
+				       uint8_t block_num)
 {
 	if (!tx_data) {
 		return -EINVAL;
@@ -166,8 +166,8 @@ static int t2t_header_read(void)
 static void ndef_le_oob_rec_analyze(const struct nfc_ndef_record_desc *le_oob_rec_desc)
 {
 	int err;
-	u8_t desc_buf[NFC_NDEF_LE_OOB_REC_PARSER_BUFF_SIZE];
-	u32_t desc_buf_len = sizeof(desc_buf);
+	uint8_t desc_buf[NFC_NDEF_LE_OOB_REC_PARSER_BUFF_SIZE];
+	uint32_t desc_buf_len = sizeof(desc_buf);
 
 	err = nfc_ndef_le_oob_rec_parse(le_oob_rec_desc, desc_buf,
 					&desc_buf_len);
@@ -189,11 +189,11 @@ static void ndef_rec_analyze(const struct nfc_ndef_record_desc *ndef_rec_desc)
 	}
 }
 
-static void ndef_data_analyze(const u8_t *ndef_msg_buff, size_t nfc_data_len)
+static void ndef_data_analyze(const uint8_t *ndef_msg_buff, size_t nfc_data_len)
 {
 	int  err;
 	struct nfc_ndef_msg_desc *ndef_msg_desc;
-	u8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(MAX_NDEF_RECORDS)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(MAX_NDEF_RECORDS)];
 	size_t desc_buf_len = sizeof(desc_buf);
 
 	err = nfc_ndef_msg_parse(desc_buf,
@@ -213,7 +213,7 @@ static void ndef_data_analyze(const u8_t *ndef_msg_buff, size_t nfc_data_len)
 	}
 }
 
-static void t2t_data_read_complete(u8_t *data)
+static void t2t_data_read_complete(uint8_t *data)
 {
 	int err;
 
@@ -247,14 +247,14 @@ static void t2t_data_read_complete(u8_t *data)
 	k_delayed_work_submit(&transmit_work, K_MSEC(TRANSMIT_DELAY));
 }
 
-static int t2t_on_data_read(const u8_t *data, size_t data_len,
-			    void (*t2t_read_complete)(u8_t *))
+static int t2t_on_data_read(const uint8_t *data, size_t data_len,
+			    void (*t2t_read_complete)(uint8_t *))
 {
 	int err;
 	int ftd;
-	u8_t block_to_read;
-	u16_t offset = 0;
-	static u8_t block_num;
+	uint8_t block_to_read;
+	uint16_t offset = 0;
+	static uint8_t block_num;
 
 	block_to_read = t2t.data_bytes / NFC_T2T_BLOCK_SIZE;
 	offset = block_num * NFC_T2T_BLOCK_SIZE;
@@ -289,7 +289,7 @@ static int t2t_on_data_read(const u8_t *data, size_t data_len,
 	return err;
 }
 
-static int on_t2t_transfer_complete(const u8_t *data, size_t len)
+static int on_t2t_transfer_complete(const uint8_t *data, size_t len)
 {
 	switch (t2t.state) {
 	case T2T_HEADER_READ:
@@ -403,7 +403,7 @@ static void anticollision_completed(const struct st25r3911b_nfca_tag_info *tag_i
 	}
 }
 
-static void transfer_completed(const u8_t *data, size_t len, int err)
+static void transfer_completed(const uint8_t *data, size_t len, int err)
 {
 	if (err) {
 		printk("NFC Transfer error: %d.\n", err);
@@ -472,7 +472,7 @@ static void t4t_isodep_error(int err)
 	nfc_tag_detect(false);
 }
 
-static void t4t_isodep_data_send(u8_t *data, size_t data_len, u32_t ftd)
+static void t4t_isodep_data_send(uint8_t *data, size_t data_len, uint32_t ftd)
 {
 	int err;
 
@@ -485,7 +485,7 @@ static void t4t_isodep_data_send(u8_t *data, size_t data_len, u32_t ftd)
 	}
 }
 
-static void t4t_isodep_received(const u8_t *data, size_t data_len)
+static void t4t_isodep_received(const uint8_t *data, size_t data_len)
 {
 	int err;
 
@@ -580,7 +580,7 @@ static void t4t_hl_cc_read(struct nfc_t4t_cc_file *cc)
 	printk("No NDEF File TLV in Capability Container.");
 }
 
-static void t4t_hl_ndef_read(u16_t file_id, const u8_t *data, size_t len)
+static void t4t_hl_ndef_read(uint16_t file_id, const uint8_t *data, size_t len)
 {
 	int err;
 	struct nfc_t4t_cc_file *cc;

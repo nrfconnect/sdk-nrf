@@ -26,7 +26,7 @@ static struct device *gpio_dev;
 static struct gpio_callback gpio_cb;
 
 static struct k_delayed_work gen_sync_event;
-static u16_t sync_event_id;
+static uint16_t sync_event_id;
 static int pin_value;
 
 
@@ -46,14 +46,14 @@ static void register_sync_event(void)
 
 static void gen_sync_event_isr(struct device *gpio_dev,
 			       struct gpio_callback *cb,
-			       u32_t pins)
+			       uint32_t pins)
 {
 	profile_sync_event();
 }
 
 static void gen_sync_event_fn(struct k_work *work)
 {
-	static u32_t sync_period = SYNC_PERIOD_MIN;
+	static uint32_t sync_period = SYNC_PERIOD_MIN;
 
 	sync_period += SYNC_PERIOD_STEP;
 	if (sync_period > SYNC_PERIOD_MAX) {

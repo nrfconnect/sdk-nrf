@@ -46,11 +46,11 @@ struct tnep_poller {
 	const struct nfc_ndef_tnep_rec_svc_param *active_svc;
 	const struct nfc_tnep_poller_cb *cb;
 	const struct nfc_tnep_poller_ndef_api *api;
-	s64_t last_time;
+	int64_t last_time;
 	enum tnep_poller_state state;
 	enum nfc_tnep_tag_type type;
-	u32_t wait_time;
-	u8_t retry_cnt;
+	uint32_t wait_time;
+	uint8_t retry_cnt;
 };
 
 static struct tnep_poller tnep;
@@ -64,7 +64,7 @@ static int tnep_tag_update_prepare(const struct nfc_ndef_msg_desc *msg,
 
 	int err;
 	size_t len = tnep.tx->size;
-	u8_t *data = tnep.tx->data;
+	uint8_t *data = tnep.tx->data;
 
 	*tx_len = 0;
 
@@ -98,7 +98,7 @@ static int tnep_tag_update_prepare(const struct nfc_ndef_msg_desc *msg,
 }
 
 static bool status_record_check(const struct nfc_ndef_record_desc *record,
-				const u8_t *type_field,
+				const uint8_t *type_field,
 				size_t type_field_length)
 {
 	if (!record->type_length) {
@@ -140,7 +140,7 @@ static int tnep_data_analyze(const struct nfc_ndef_msg_desc *msg,
 	return -EAGAIN;
 }
 
-static bool service_param_rec_check(u8_t tnf, const u8_t *type, u8_t length)
+static bool service_param_rec_check(uint8_t tnf, const uint8_t *type, uint8_t length)
 {
 	__ASSERT_NO_MSG(type);
 
@@ -162,7 +162,7 @@ static int svc_param_record_get(const struct nfc_ndef_bin_payload_desc *bin_pay_
 	__ASSERT_NO_MSG(bin_pay_desc);
 	__ASSERT_NO_MSG(param);
 
-	const u8_t *nfc_data = bin_pay_desc->payload;
+	const uint8_t *nfc_data = bin_pay_desc->payload;
 
 	/* Check length. */
 	if (bin_pay_desc->payload_length < NFC_TNEP_SERVICE_PARAM_MIN_LEN) {
@@ -197,7 +197,7 @@ static int svc_param_record_get(const struct nfc_ndef_bin_payload_desc *bin_pay_
 static void on_svc_delayed_operation(void)
 {
 	int err;
-	s64_t time_spent;
+	int64_t time_spent;
 
 	time_spent = k_uptime_delta(&tnep.last_time);
 
@@ -315,11 +315,11 @@ int nfc_tnep_poller_api_set(const struct nfc_tnep_poller_ndef_api *api,
 
 int nfc_tnep_poller_svc_search(const struct nfc_ndef_msg_desc *ndef_msg,
 			       struct nfc_ndef_tnep_rec_svc_param *params,
-			       u8_t *cnt)
+			       uint8_t *cnt)
 {
 	int err;
 	const struct nfc_ndef_record_desc *record;
-	u8_t size;
+	uint8_t size;
 
 	if (!ndef_msg || !params || !cnt) {
 		LOG_ERR("NULL argument.");
@@ -369,7 +369,7 @@ int nfc_tnep_poller_svc_search(const struct nfc_ndef_msg_desc *ndef_msg,
 
 int nfc_tnep_poller_svc_select(const struct nfc_tnep_buf *svc_buf,
 			       const struct nfc_ndef_tnep_rec_svc_param *svc,
-			       u32_t max_ndef_area_size)
+			       uint32_t max_ndef_area_size)
 {
 	int err;
 	size_t len = 0;
@@ -538,10 +538,10 @@ int nfc_tnep_poller_svc_write(const struct nfc_ndef_msg_desc *msg,
 	return tnep.api->ndef_update(tnep.tx->data, len);
 }
 
-int nfc_tnep_poller_on_ndef_read(const u8_t *data, size_t len)
+int nfc_tnep_poller_on_ndef_read(const uint8_t *data, size_t len)
 {
 	int err;
-	u8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(CONFIG_NFC_TNEP_POLLER_RX_MAX_RECORD_CNT)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(CONFIG_NFC_TNEP_POLLER_RX_MAX_RECORD_CNT)];
 	size_t desc_buf_len = sizeof(desc_buf);
 	struct nfc_tnep_poller_msg poller_msg;
 	struct nfc_ndef_msg_desc *msg;

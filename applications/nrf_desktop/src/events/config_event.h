@@ -57,7 +57,7 @@ extern "C" {
 struct config_event {
 	struct event_header header;
 
-	u8_t id;
+	uint8_t id;
 	struct event_dyndata dyndata;
 };
 
@@ -69,8 +69,8 @@ EVENT_TYPE_DYNDATA_DECLARE(config_event);
 struct config_fetch_event {
 	struct event_header header;
 
-	u16_t recipient;
-	u8_t id;
+	uint16_t recipient;
+	uint8_t id;
 	void *channel_id;
 	struct event_dyndata dyndata;
 };
@@ -83,8 +83,8 @@ EVENT_TYPE_DYNDATA_DECLARE(config_fetch_event);
 struct config_fetch_request_event {
 	struct event_header header;
 
-	u16_t recipient;
-	u8_t id;
+	uint16_t recipient;
+	uint8_t id;
 	void *channel_id;
 };
 
@@ -106,8 +106,8 @@ enum config_status {
 struct config_forward_event {
 	struct event_header header;
 
-	u16_t recipient;
-	u8_t id;
+	uint16_t recipient;
+	uint8_t id;
 	enum config_status status;
 
 	struct event_dyndata dyndata;
@@ -121,8 +121,8 @@ EVENT_TYPE_DYNDATA_DECLARE(config_forward_event);
 struct config_forward_get_event {
 	struct event_header header;
 
-	u16_t recipient;
-	u8_t id;
+	uint16_t recipient;
+	uint8_t id;
 	void *channel_id;
 	enum config_status status;
 };
@@ -144,8 +144,8 @@ EVENT_TYPE_DECLARE(config_forwarded_event);
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) > 0);						\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) <= OPT_FIELD_MASK);					\
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {					\
-		static u8_t config_module_id = MODULE_BROADCAST;				\
-		static u8_t cur_opt_descr;							\
+		static uint8_t config_module_id = MODULE_BROADCAST;				\
+		static uint8_t cur_opt_descr;							\
 												\
 		if (is_config_event(eh)) {							\
 			struct config_event *event = cast_config_event(eh);			\
@@ -169,7 +169,7 @@ EVENT_TYPE_DECLARE(config_forwarded_event);
 		if (is_config_fetch_request_event(eh)) {					\
 			const struct config_fetch_request_event *event =			\
 				cast_config_fetch_request_event(eh);				\
-			u8_t data_buf[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];			\
+			uint8_t data_buf[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];			\
 			size_t data_size = 0;							\
 												\
 			memset(data_buf, 0, sizeof(data_buf));					\
@@ -197,7 +197,7 @@ EVENT_TYPE_DECLARE(config_forwarded_event);
 						strcpy(data_buf, data_ptr);			\
 						cur_opt_descr++;				\
 					} else {						\
-						data_size = sizeof(u8_t);			\
+						data_size = sizeof(uint8_t);			\
 						data_buf[0] = MODULE_DESCR_END_CHAR;		\
 						cur_opt_descr = 0;				\
 					}							\

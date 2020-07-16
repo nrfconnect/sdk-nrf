@@ -61,8 +61,8 @@ static void onoff_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_model_transition transition;
 	struct bt_mesh_onoff_set set;
 
-	u8_t on_off = net_buf_simple_pull_u8(buf);
-	u8_t tid = net_buf_simple_pull_u8(buf);
+	uint8_t on_off = net_buf_simple_pull_u8(buf);
+	uint8_t tid = net_buf_simple_pull_u8(buf);
 
 	if (on_off > 1) {
 		return;
@@ -142,7 +142,7 @@ int _bt_mesh_onoff_srv_update_handler(struct bt_mesh_model *model)
 	return 0;
 }
 
-s32_t bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
+int32_t bt_mesh_onoff_srv_pub(struct bt_mesh_onoff_srv *srv,
 			    struct bt_mesh_msg_ctx *ctx,
 			    const struct bt_mesh_onoff_status *status)
 {

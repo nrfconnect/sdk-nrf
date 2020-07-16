@@ -22,7 +22,7 @@ const struct {} battery_def_include_once;
  * Each element is CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA higher than previous.
  * Defined separately for every configuration.
  */
-static const u8_t battery_voltage_to_soc[] = {
+static const uint8_t battery_voltage_to_soc[] = {
 0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2,
 2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,
 4,  5,  5,  5,  6,  6,  7,  7,  8,  8,  9,  9, 10, 11, 12, 13, 13, 14, 15, 16,

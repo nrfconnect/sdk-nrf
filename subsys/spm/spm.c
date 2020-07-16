@@ -131,11 +131,11 @@ static void spm_config_nsc_flash(void)
 	 * the HW restrictions: The size must be a power of 2 between 32 and
 	 * 4096, and the end address must fall on a SPU region boundary.
 	 */
-	u32_t nsc_size = FLASH_NSC_SIZE_FROM_ADDR(__sg_start);
+	uint32_t nsc_size = FLASH_NSC_SIZE_FROM_ADDR(__sg_start);
 
-	__ASSERT((u32_t)__sg_size <= nsc_size,
+	__ASSERT((uint32_t)__sg_size <= nsc_size,
 		"The Non-Secure Callable region is overflowed by %d byte(s).\n",
-		(u32_t)__sg_size - nsc_size);
+		(uint32_t)__sg_size - nsc_size);
 
 	nrf_spu_flashnsc_set(NRF_SPU, 0, FLASH_NSC_SIZE_REG(nsc_size),
 			FLASH_NSC_REGION_FROM_ADDR(__sg_start), false);
@@ -146,7 +146,7 @@ static void spm_config_nsc_flash(void)
 #endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
 
 
-static void config_regions(bool ram, size_t start, size_t end, u32_t perm)
+static void config_regions(bool ram, size_t start, size_t end, uint32_t perm)
 {
 	const size_t region_size = ram ? RAM_SECURE_ATTRIBUTION_REGION_SIZE
 					: FLASH_SECURE_ATTRIBUTION_REGION_SIZE;
@@ -176,9 +176,9 @@ static void spm_config_flash(void)
 	/* Regions of flash up to and including SPM are configured as Secure.
 	 * The rest of flash is configured as Non-Secure.
 	 */
-	const u32_t secure_flash_perm = FLASH_READ | FLASH_WRITE | FLASH_EXEC
+	const uint32_t secure_flash_perm = FLASH_READ | FLASH_WRITE | FLASH_EXEC
 			| FLASH_LOCK | FLASH_SECURE;
-	const u32_t nonsecure_flash_perm = FLASH_READ | FLASH_WRITE | FLASH_EXEC
+	const uint32_t nonsecure_flash_perm = FLASH_READ | FLASH_WRITE | FLASH_EXEC
 			| FLASH_LOCK | FLASH_NONSEC;
 
 	PRINT("Flash regions\t\tDomain\t\tPermissions\n");
@@ -210,9 +210,9 @@ static void spm_config_sram(void)
 	 * The rest of SRAM is allocated to Non-Secure firmware image.
 	 */
 
-	const u32_t secure_ram_perm = SRAM_READ | SRAM_WRITE | SRAM_EXEC
+	const uint32_t secure_ram_perm = SRAM_READ | SRAM_WRITE | SRAM_EXEC
 		| SRAM_LOCK | SRAM_SECURE;
-	const u32_t nonsecure_ram_perm = SRAM_READ | SRAM_WRITE | SRAM_EXEC
+	const uint32_t nonsecure_ram_perm = SRAM_READ | SRAM_WRITE | SRAM_EXEC
 		| SRAM_LOCK | SRAM_NONSEC;
 
 	PRINT("SRAM region\t\tDomain\t\tPermissions\n");
@@ -227,9 +227,9 @@ static void spm_config_sram(void)
 	PRINT("\n");
 }
 
-static bool usel_or_split(u8_t id)
+static bool usel_or_split(uint8_t id)
 {
-	const u32_t perm = NRF_SPU->PERIPHID[id].PERM;
+	const uint32_t perm = NRF_SPU->PERIPHID[id].PERM;
 
 	/* NRF_GPIOTE1_NS needs special handling as its
 	 * peripheral ID for non-secure han incorrect properties
@@ -253,7 +253,7 @@ static bool usel_or_split(u8_t id)
 	return present && (usel || split);
 }
 
-static int spm_config_peripheral(u8_t id, bool dma_present)
+static int spm_config_peripheral(uint8_t id, bool dma_present)
 {
 	/* Set a peripheral to Non-Secure state, if
 	 * - it is present
@@ -279,7 +279,7 @@ static int spm_config_peripheral(u8_t id, bool dma_present)
 	return 0;
 }
 
-static void spm_dppi_configure(u32_t mask)
+static void spm_dppi_configure(uint32_t mask)
 {
 	NRF_SPU->DPPI[0].PERM = mask;
 }
@@ -290,8 +290,8 @@ static void spm_config_peripherals(void)
 #ifndef CONFIG_SPM_BOOT_SILENTLY
 		char *name;
 #endif
-		u8_t id;
-		u8_t nonsecure;
+		uint8_t id;
+		uint8_t nonsecure;
 	};
 
 	/* - All user peripherals are allocated to the Non-Secure domain.
@@ -432,15 +432,15 @@ void spm_jump(void)
 	/* Extract initial MSP of the Non-Secure firmware image.
 	 * The assumption is that the MSP is located at VTOR_NS[0].
 	 */
-	u32_t *vtor_ns = (u32_t *)NON_SECURE_APP_ADDRESS;
+	uint32_t *vtor_ns = (uint32_t *)NON_SECURE_APP_ADDRESS;
 
-	PRINT("SPM: NS image at 0x%x\n", (u32_t)vtor_ns);
+	PRINT("SPM: NS image at 0x%x\n", (uint32_t)vtor_ns);
 	PRINT("SPM: NS MSP at 0x%x\n", vtor_ns[0]);
 	PRINT("SPM: NS reset vector at 0x%x\n", vtor_ns[1]);
 
 	/* Configure Non-Secure stack */
 	tz_nonsecure_setup_conf_t spm_ns_conf = {
-		.vtor_ns = (u32_t)vtor_ns,
+		.vtor_ns = (uint32_t)vtor_ns,
 		.msp_ns = vtor_ns[0],
 		.psp_ns = 0,
 		.control_ns.npriv = 0, /* Privileged mode*/
@@ -474,7 +474,7 @@ void spm_jump(void)
 
 	} else {
 		PRINT("SPM: wrong pointer type: 0x%x\n",
-		      (u32_t)reset_ns);
+		      (uint32_t)reset_ns);
 	}
 }
 

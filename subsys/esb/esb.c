@@ -110,10 +110,10 @@ enum esb_state {
 
 /* Pipe info PID and CRC and acknowledgment payload. */
 struct pipe_info {
-	u16_t crc;	  /* CRC of the last received packet.
+	uint16_t crc;	  /* CRC of the last received packet.
 			   * Used to detect retransmits.
 			   */
-	u8_t pid;	  /* Packet ID of the last received packet
+	uint8_t pid;	  /* Packet ID of the last received packet
 			   * Used to detect retransmits.
 			   */
 	bool ack_payload; /* State of the transmission of ACK payloads. */
@@ -124,9 +124,9 @@ struct payload_tx_fifo {
 	 /* Payload queue */
 	struct esb_payload *payload[CONFIG_ESB_TX_FIFO_SIZE];
 
-	u32_t back;	/* Back of the queue (last in). */
-	u32_t front;	/* Front of queue (first out). */
-	u32_t count;	/* Number of elements in the queue. */
+	uint32_t back;	/* Back of the queue (last in). */
+	uint32_t front;	/* Front of queue (first out). */
+	uint32_t count;	/* Number of elements in the queue. */
 };
 
 /* First-in, first-out queue of received payloads. */
@@ -134,9 +134,9 @@ struct payload_rx_fifo {
 	 /* Payload queue */
 	struct esb_payload *payload[CONFIG_ESB_RX_FIFO_SIZE];
 
-	u32_t back;	/* Back of the queue (last in). */
-	u32_t front;	/* Front of queue (first out). */
-	u32_t count;	/* Number of elements in the queue. */
+	uint32_t back;	/* Back of the queue (last in). */
+	uint32_t front;	/* Front of queue (first out). */
+	uint32_t count;	/* Number of elements in the queue. */
 };
 
 /* Enhanced ShockBurst address.
@@ -146,13 +146,13 @@ struct payload_rx_fifo {
  * guide for more information.
  */
 struct esb_address {
-	u8_t base_addr_p0[4];	/* Base address for pipe 0, in big endian. */
-	u8_t base_addr_p1[4];   /* Base address for pipe 1-7, in big endian. */
-	u8_t pipe_prefixes[8];	/* Address prefix for pipe 0 to 7. */
-	u8_t num_pipes;		/* Number of pipes available. */
-	u8_t addr_length;	/* Length of the address plus the prefix. */
-	u8_t rx_pipes_enabled;	/* Bitfield for enabled pipes. */
-	u8_t rf_channel;        /* Channel to use (between 0 and 100). */
+	uint8_t base_addr_p0[4];	/* Base address for pipe 0, in big endian. */
+	uint8_t base_addr_p1[4];   /* Base address for pipe 1-7, in big endian. */
+	uint8_t pipe_prefixes[8];	/* Address prefix for pipe 0 to 7. */
+	uint8_t num_pipes;		/* Number of pipes available. */
+	uint8_t addr_length;	/* Length of the address plus the prefix. */
+	uint8_t rx_pipes_enabled;	/* Bitfield for enabled pipes. */
+	uint8_t rf_channel;        /* Channel to use (between 0 and 100). */
 };
 
 
@@ -181,25 +181,25 @@ static struct esb_payload *current_payload;
 /* FIFOs and buffers */
 static struct payload_tx_fifo tx_fifo;
 static struct payload_rx_fifo rx_fifo;
-static u8_t tx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
-static u8_t rx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
+static uint8_t tx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
+static uint8_t rx_payload_buffer[CONFIG_ESB_MAX_PAYLOAD_LENGTH + 2];
 
 /* Run time variables */
-static u8_t pids[CONFIG_ESB_PIPE_COUNT];
+static uint8_t pids[CONFIG_ESB_PIPE_COUNT];
 static struct pipe_info rx_pipe_info[CONFIG_ESB_PIPE_COUNT];
-static volatile u32_t interrupt_flags;
-static volatile u32_t retransmits_remaining;
-static volatile u32_t last_tx_attempts;
-static volatile u32_t wait_for_ack_timeout_us;
+static volatile uint32_t interrupt_flags;
+static volatile uint32_t retransmits_remaining;
+static volatile uint32_t last_tx_attempts;
+static volatile uint32_t wait_for_ack_timeout_us;
 
-static u32_t radio_shorts_common = RADIO_SHORTS_COMMON;
+static uint32_t radio_shorts_common = RADIO_SHORTS_COMMON;
 
 /* These function pointers are changed dynamically, depending on protocol
  * configuration and state. Note that they will be 0 initialized.
  */
 static void (*on_radio_disabled)(void);
 static void (*on_radio_end)(void);
-static void (*update_rf_payload_format)(u32_t payload_length);
+static void (*update_rf_payload_format)(uint32_t payload_length);
 
 /*  The following functions are assigned to the function pointers above. */
 static void on_radio_disabled_tx_noack(void);
@@ -209,14 +209,14 @@ static void on_radio_disabled_rx(void);
 static void on_radio_disabled_rx_ack(void);
 
 /*  Function to do bytewise bit-swap on an unsigned 32-bit value */
-static u32_t bytewise_bit_swap(const u8_t *input)
+static uint32_t bytewise_bit_swap(const uint8_t *input)
 {
 #if __CORTEX_M == (0x04U)
-	u32_t inp = (*(u32_t *)input);
+	uint32_t inp = (*(uint32_t *)input);
 
-	return sys_cpu_to_be32((u32_t)__RBIT(inp));
+	return sys_cpu_to_be32((uint32_t)__RBIT(inp));
 #else
-	u32_t inp = sys_cpu_to_le32(*(u32_t *)input);
+	uint32_t inp = sys_cpu_to_le32(*(uint32_t *)input);
 
 	inp = (inp & 0xF0F0F0F0) >> 4 | (inp & 0x0F0F0F0F) << 4;
 	inp = (inp & 0xCCCCCCCC) >> 2 | (inp & 0x33333333) << 2;
@@ -226,7 +226,7 @@ static u32_t bytewise_bit_swap(const u8_t *input)
 }
 
 /* Convert a base address from nRF24L format to nRF5 format */
-static u32_t addr_conv(const u8_t *addr)
+static uint32_t addr_conv(const uint8_t *addr)
 {
 	return __REV(bytewise_bit_swap(addr));
 }
@@ -245,8 +245,8 @@ static void apply_address_workarounds(void)
 		/* Workaround for nRF52832 Rev 1 Errata 102 and nRF52832 Rev 1
 		 * Errata 106. This will reduce sensitivity by 3dB.
 		 */
-		*((volatile u32_t *)0x40001774) =
-		    (*((volatile u32_t *)0x40001774) & 0xFFFFFFFE) | 0x01000000;
+		*((volatile uint32_t *)0x40001774) =
+		    (*((volatile uint32_t *)0x40001774) & 0xFFFFFFFE) | 0x01000000;
 	}
 
 	/* Check if the device is an nRF52832 Rev. 2. */
@@ -257,24 +257,24 @@ static void apply_address_workarounds(void)
 		 * use a unique address 0 since this will avoid the 3dBm penalty
 		 * incurred from the workaround.
 		 */
-		u32_t base_address_mask =
+		uint32_t base_address_mask =
 			esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
 
 		/* Load the two addresses before comparing them to ensure
 		 * defined ordering of volatile accesses.
 		 */
-		u32_t addr0 = NRF_RADIO->BASE0 & base_address_mask;
-		u32_t addr1 = NRF_RADIO->BASE1 & base_address_mask;
+		uint32_t addr0 = NRF_RADIO->BASE0 & base_address_mask;
+		uint32_t addr1 = NRF_RADIO->BASE1 & base_address_mask;
 
 		if (addr0 == addr1) {
-			u32_t prefix0 = NRF_RADIO->PREFIX0 & 0x000000FF;
-			u32_t prefix1 = (NRF_RADIO->PREFIX0 & 0x0000FF00) >> 8;
-			u32_t prefix2 = (NRF_RADIO->PREFIX0 & 0x00FF0000) >> 16;
-			u32_t prefix3 = (NRF_RADIO->PREFIX0 & 0xFF000000) >> 24;
-			u32_t prefix4 = NRF_RADIO->PREFIX1 & 0x000000FF;
-			u32_t prefix5 = (NRF_RADIO->PREFIX1 & 0x0000FF00) >> 8;
-			u32_t prefix6 = (NRF_RADIO->PREFIX1 & 0x00FF0000) >> 16;
-			u32_t prefix7 = (NRF_RADIO->PREFIX1 & 0xFF000000) >> 24;
+			uint32_t prefix0 = NRF_RADIO->PREFIX0 & 0x000000FF;
+			uint32_t prefix1 = (NRF_RADIO->PREFIX0 & 0x0000FF00) >> 8;
+			uint32_t prefix2 = (NRF_RADIO->PREFIX0 & 0x00FF0000) >> 16;
+			uint32_t prefix3 = (NRF_RADIO->PREFIX0 & 0xFF000000) >> 24;
+			uint32_t prefix4 = NRF_RADIO->PREFIX1 & 0x000000FF;
+			uint32_t prefix5 = (NRF_RADIO->PREFIX1 & 0x0000FF00) >> 8;
+			uint32_t prefix6 = (NRF_RADIO->PREFIX1 & 0x00FF0000) >> 16;
+			uint32_t prefix7 = (NRF_RADIO->PREFIX1 & 0xFF000000) >> 24;
 
 			if (prefix0 == prefix1 || prefix0 == prefix2 ||
 			    prefix0 == prefix3 || prefix0 == prefix4 ||
@@ -284,8 +284,8 @@ static void apply_address_workarounds(void)
 				 * avoid using such address combinations if
 				 * possible.
 				 */
-				*(volatile u32_t *)0x40001774 =
-					((*(volatile u32_t *)0x40001774) &
+				*(volatile uint32_t *)0x40001774 =
+					((*(volatile uint32_t *)0x40001774) &
 					 0xfffffffe) |
 					0x01000000;
 			}
@@ -294,7 +294,7 @@ static void apply_address_workarounds(void)
 #endif
 }
 
-static void update_rf_payload_format_esb_dpl(u32_t payload_length)
+static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
 {
 #if (CONFIG_ESB_MAX_PAYLOAD_LENGTH <= 32)
 	/* Using 6 bits for length */
@@ -315,7 +315,7 @@ static void update_rf_payload_format_esb_dpl(u32_t payload_length)
 		(CONFIG_ESB_MAX_PAYLOAD_LENGTH << RADIO_PCNF1_MAXLEN_Pos);
 }
 
-static void update_rf_payload_format_esb(u32_t payload_length)
+static void update_rf_payload_format_esb(uint32_t payload_length)
 {
 	NRF_RADIO->PCNF0 = (1 << RADIO_PCNF0_S0LEN_Pos) |
 			   (0 << RADIO_PCNF0_LFLEN_Pos) |
@@ -329,7 +329,7 @@ static void update_rf_payload_format_esb(u32_t payload_length)
 		(payload_length << RADIO_PCNF1_MAXLEN_Pos);
 }
 
-static void update_radio_addresses(u8_t update_mask)
+static void update_radio_addresses(uint8_t update_mask)
 {
 	if ((update_mask & ADDR_UPDATE_MASK_BASE0) != 0) {
 		NRF_RADIO->BASE0 = addr_conv(esb_addr.base_addr_p0);
@@ -480,7 +480,7 @@ static void tx_fifo_remove_last(void)
 		return;
 	}
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	tx_fifo.count--;
 	if (++tx_fifo.front >= CONFIG_ESB_TX_FIFO_SIZE) {
@@ -502,7 +502,7 @@ static void tx_fifo_remove_last(void)
  *  @retval true   Operation successful.
  *  @retval false  Operation failed.
  */
-static bool rx_fifo_push_rfbuf(u8_t pipe, u8_t pid)
+static bool rx_fifo_push_rfbuf(uint8_t pipe, uint8_t pid)
 {
 	if (rx_fifo.count >= CONFIG_ESB_RX_FIFO_SIZE) {
 		return false;
@@ -548,24 +548,24 @@ static void sys_timer_init(void)
 static void ppi_init(void)
 {
 	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_START].EEP =
-		(u32_t)&NRF_RADIO->EVENTS_READY;
+		(uint32_t)&NRF_RADIO->EVENTS_READY;
 	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_START].TEP =
-		(u32_t)&ESB_SYS_TIMER->TASKS_START;
+		(uint32_t)&ESB_SYS_TIMER->TASKS_START;
 
 	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_STOP].EEP =
-		(u32_t)&NRF_RADIO->EVENTS_ADDRESS;
+		(uint32_t)&NRF_RADIO->EVENTS_ADDRESS;
 	NRF_PPI->CH[CONFIG_ESB_PPI_TIMER_STOP].TEP =
-		(u32_t)&ESB_SYS_TIMER->TASKS_SHUTDOWN;
+		(uint32_t)&ESB_SYS_TIMER->TASKS_SHUTDOWN;
 
 	NRF_PPI->CH[CONFIG_ESB_PPI_RX_TIMEOUT].EEP =
-		(u32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[0];
+		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[0];
 	NRF_PPI->CH[CONFIG_ESB_PPI_RX_TIMEOUT].TEP =
-		(u32_t)&NRF_RADIO->TASKS_DISABLE;
+		(uint32_t)&NRF_RADIO->TASKS_DISABLE;
 
 	NRF_PPI->CH[CONFIG_ESB_PPI_TX_START].EEP =
-		(u32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[1];
+		(uint32_t)&ESB_SYS_TIMER->EVENTS_COMPARE[1];
 	NRF_PPI->CH[CONFIG_ESB_PPI_TX_START].TEP =
-		(u32_t)&NRF_RADIO->TASKS_TXEN;
+		(uint32_t)&NRF_RADIO->TASKS_TXEN;
 }
 
 static void start_tx_transaction(void)
@@ -633,7 +633,7 @@ static void start_tx_transaction(void)
 	NRF_RADIO->RXADDRESSES = 1 << current_payload->pipe;
 	NRF_RADIO->FREQUENCY = esb_addr.rf_channel;
 
-	NRF_RADIO->PACKETPTR = (u32_t)tx_payload_buffer;
+	NRF_RADIO->PACKETPTR = (uint32_t)tx_payload_buffer;
 
 	NVIC_ClearPendingIRQ(RADIO_IRQn);
 	irq_enable(RADIO_IRQn);
@@ -688,7 +688,7 @@ static void on_radio_disabled_tx(void)
 		update_rf_payload_format(0);
 	}
 
-	NRF_RADIO->PACKETPTR = (u32_t)rx_payload_buffer;
+	NRF_RADIO->PACKETPTR = (uint32_t)rx_payload_buffer;
 	on_radio_disabled = on_radio_disabled_tx_wait_for_ack;
 	esb_state = ESB_STATE_PTX_RX_ACK;
 }
@@ -716,7 +716,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 
 		if (esb_cfg.protocol != ESB_PROTOCOL_ESB &&
 		    rx_payload_buffer[0] > 0) {
-			if (rx_fifo_push_rfbuf((u8_t)NRF_RADIO->TXADDRESS,
+			if (rx_fifo_push_rfbuf((uint8_t)NRF_RADIO->TXADDRESS,
 					       rx_payload_buffer[1] >> 1)) {
 				interrupt_flags |=
 					INT_RX_DATA_RECEIVED_MSK;
@@ -751,7 +751,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			NRF_RADIO->SHORTS = radio_shorts_common |
 					    RADIO_SHORTS_DISABLED_RXEN_Msk;
 			update_rf_payload_format(current_payload->length);
-			NRF_RADIO->PACKETPTR = (u32_t)tx_payload_buffer;
+			NRF_RADIO->PACKETPTR = (uint32_t)tx_payload_buffer;
 			on_radio_disabled = on_radio_disabled_tx;
 			esb_state = ESB_STATE_PTX_TX_ACK;
 			ESB_SYS_TIMER->TASKS_START = 1;
@@ -767,7 +767,7 @@ static void clear_events_restart_rx(void)
 {
 	NRF_RADIO->SHORTS = radio_shorts_common;
 	update_rf_payload_format(esb_cfg.payload_length);
-	NRF_RADIO->PACKETPTR = (u32_t)rx_payload_buffer;
+	NRF_RADIO->PACKETPTR = (uint32_t)rx_payload_buffer;
 	NRF_RADIO->EVENTS_DISABLED = 0;
 	NRF_RADIO->TASKS_DISABLE = 1;
 
@@ -868,7 +868,7 @@ static void on_radio_disabled_rx(void)
 		esb_state = ESB_STATE_PRX_SEND_ACK;
 		NRF_RADIO->TXADDRESS = NRF_RADIO->RXMATCH;
 
-		NRF_RADIO->PACKETPTR = (u32_t)tx_payload_buffer;
+		NRF_RADIO->PACKETPTR = (uint32_t)tx_payload_buffer;
 		on_radio_disabled = on_radio_disabled_rx_ack;
 	} else {
 		clear_events_restart_rx();
@@ -892,7 +892,7 @@ static void on_radio_disabled_rx_ack(void)
 			    RADIO_SHORTS_DISABLED_TXEN_Msk;
 	update_rf_payload_format(esb_cfg.payload_length);
 
-	NRF_RADIO->PACKETPTR = (u32_t)rx_payload_buffer;
+	NRF_RADIO->PACKETPTR = (uint32_t)rx_payload_buffer;
 	on_radio_disabled = on_radio_disabled_rx;
 
 	esb_state = ESB_STATE_PRX;
@@ -902,11 +902,11 @@ static void on_radio_disabled_rx_ack(void)
  *
  * @param[out] interrupts	Interrupt flags.
  */
-static void get_and_clear_irqs(u32_t *interrupts)
+static void get_and_clear_irqs(uint32_t *interrupts)
 {
 	__ASSERT_NO_MSG(interrupts != NULL);
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	*interrupts = interrupt_flags;
 	interrupt_flags = 0;
@@ -947,7 +947,7 @@ static void RADIO_IRQHandler(void)
 
 static void ESB_EVT_IRQHandler(void)
 {
-	u32_t interrupts;
+	uint32_t interrupts;
 	struct esb_evt event;
 
 	event.tx_attempts = last_tx_attempts;
@@ -1060,19 +1060,19 @@ int esb_init(const struct esb_config *config)
 				   ESB_BUGFIX_TIMER_IRQHandler, 0);
 
 		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX1].EEP =
-		    (u32_t)&NRF_RADIO->EVENTS_ADDRESS;
+		    (uint32_t)&NRF_RADIO->EVENTS_ADDRESS;
 		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX1].TEP =
-		    (u32_t)&ESB_BUGFIX_TIMER->TASKS_START;
+		    (uint32_t)&ESB_BUGFIX_TIMER->TASKS_START;
 
 		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX2].EEP =
-		    (u32_t)&NRF_RADIO->EVENTS_BCMATCH;
+		    (uint32_t)&NRF_RADIO->EVENTS_BCMATCH;
 		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX2].TEP =
-		    (u32_t)&ESB_BUGFIX_TIMER->TASKS_SHUTDOWN;
+		    (uint32_t)&ESB_BUGFIX_TIMER->TASKS_SHUTDOWN;
 
 		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX3].EEP =
-		    (u32_t)&NRF_RADIO->EVENTS_BCMATCH;
+		    (uint32_t)&NRF_RADIO->EVENTS_BCMATCH;
 		NRF_PPI->CH[CONFIG_ESB_PPI_BUGFIX3].TEP =
-		    (u32_t)&ESB_BUGFIX_TIMER->TASKS_CLEAR;
+		    (uint32_t)&ESB_BUGFIX_TIMER->TASKS_CLEAR;
 
 		NRF_PPI->CHENSET = (1 << CONFIG_ESB_PPI_BUGFIX1) |
 				   (1 << CONFIG_ESB_PPI_BUGFIX2) |
@@ -1087,7 +1087,7 @@ int esb_init(const struct esb_config *config)
 	if ((NRF_FICR->INFO.VARIANT & 0x0000FF00) == 0x00004500) {
 		/* Check if the device is an nRF52832 Rev. 2. */
 		/* Workaround for nRF52832 rev 2 errata 182 */
-		*(volatile u32_t *)0x4000173C |= (1 << 10);
+		*(volatile uint32_t *)0x4000173C |= (1 << 10);
 	}
 #endif
 
@@ -1161,7 +1161,7 @@ int esb_write_payload(const struct esb_payload *payload)
 		return -EINVAL;
 	}
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	memcpy(tx_fifo.payload[tx_fifo.back], payload,
 	       sizeof(struct esb_payload));
@@ -1199,7 +1199,7 @@ int esb_read_rx_payload(struct esb_payload *payload)
 		return -ENODATA;
 	}
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	payload->length = rx_fifo.payload[rx_fifo.front]->length;
 	payload->pipe = rx_fifo.payload[rx_fifo.front]->pipe;
@@ -1252,7 +1252,7 @@ int esb_start_rx(void)
 
 	NRF_RADIO->RXADDRESSES = esb_addr.rx_pipes_enabled;
 	NRF_RADIO->FREQUENCY = esb_addr.rf_channel;
-	NRF_RADIO->PACKETPTR = (u32_t)rx_payload_buffer;
+	NRF_RADIO->PACKETPTR = (uint32_t)rx_payload_buffer;
 
 	NVIC_ClearPendingIRQ(RADIO_IRQn);
 	irq_enable(RADIO_IRQn);
@@ -1292,7 +1292,7 @@ int esb_flush_tx(void)
 		return -EACCES;
 	}
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	tx_fifo.count = 0;
 	tx_fifo.back = 0;
@@ -1312,7 +1312,7 @@ int esb_pop_tx(void)
 		return -ENODATA;
 	}
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	if (++tx_fifo.back >= CONFIG_ESB_TX_FIFO_SIZE) {
 		tx_fifo.back = 0;
@@ -1330,7 +1330,7 @@ int esb_flush_rx(void)
 		return -EACCES;
 	}
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	rx_fifo.count = 0;
 	rx_fifo.back = 0;
@@ -1343,7 +1343,7 @@ int esb_flush_rx(void)
 	return 0;
 }
 
-int esb_set_address_length(u8_t length)
+int esb_set_address_length(uint8_t length)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1353,7 +1353,7 @@ int esb_set_address_length(u8_t length)
 	}
 
 #ifdef CONFIG_SOC_NRF52832
-	u32_t base_address_mask = length == 5 ? 0xFFFF0000 : 0xFF000000;
+	uint32_t base_address_mask = length == 5 ? 0xFFFF0000 : 0xFF000000;
 
 	/* Check if the device is an nRF52832 Rev. 1. */
 	if ((NRF_FICR->INFO.VARIANT & 0x0000FF00) == 0x00004200) {
@@ -1407,7 +1407,7 @@ int esb_set_address_length(u8_t length)
 	return 0;
 }
 
-int esb_set_base_address_0(const u8_t *addr)
+int esb_set_base_address_0(const uint8_t *addr)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1444,7 +1444,7 @@ int esb_set_base_address_0(const u8_t *addr)
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0xXX00XXXX
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0x00XXXXXX
 		 */
-		u32_t base_address_mask =
+		uint32_t base_address_mask =
 			esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
 		if ((addr_conv(addr) & base_address_mask) == 0 &&
 		    (NRF_RADIO->PREFIX0 & 0x000000FF) == 0) {
@@ -1461,7 +1461,7 @@ int esb_set_base_address_0(const u8_t *addr)
 	return 0;
 }
 
-int esb_set_base_address_1(const u8_t *addr)
+int esb_set_base_address_1(const uint8_t *addr)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1498,7 +1498,7 @@ int esb_set_base_address_1(const u8_t *addr)
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0xXX00XXXX
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0x00XXXXXX
 		 */
-		u32_t base_address_mask =
+		uint32_t base_address_mask =
 			esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
 		if ((addr_conv(addr) & base_address_mask) == 0 &&
 		    ((NRF_RADIO->PREFIX0 & 0x0000FF00) == 0 ||
@@ -1521,7 +1521,7 @@ int esb_set_base_address_1(const u8_t *addr)
 	return 0;
 }
 
-int esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
+int esb_set_prefixes(const uint8_t *prefixes, uint8_t num_pipes)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1561,7 +1561,7 @@ int esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0xXX00XXXX
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0x00XXXXXX
 		 */
-		u32_t base_address_mask =
+		uint32_t base_address_mask =
 			esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
 
 		if (num_pipes >= 1 &&
@@ -1571,7 +1571,7 @@ int esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
 		}
 
 		if ((NRF_RADIO->BASE1 & base_address_mask) == 0) {
-			for (u8_t i = 1; i < num_pipes; i++) {
+			for (uint8_t i = 1; i < num_pipes; i++) {
 				if (prefixes[i] == 0) {
 					return -EINVAL;
 				}
@@ -1590,7 +1590,7 @@ int esb_set_prefixes(const u8_t *prefixes, u8_t num_pipes)
 	return 0;
 }
 
-int esb_update_prefix(u8_t pipe, u8_t prefix)
+int esb_update_prefix(uint8_t pipe, uint8_t prefix)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1627,7 +1627,7 @@ int esb_update_prefix(u8_t pipe, u8_t prefix)
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0xXX00XXXX
 		 * BASE1 = 0x00XXXXXX, PREFIX1 = 0x00XXXXXX
 		 */
-		u32_t base_address_mask =
+		uint32_t base_address_mask =
 			esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
 		if (pipe == 0) {
 			if ((NRF_RADIO->BASE0 & base_address_mask) == 0 &&
@@ -1650,7 +1650,7 @@ int esb_update_prefix(u8_t pipe, u8_t prefix)
 	return 0;
 }
 
-int esb_enable_pipes(u8_t enable_mask)
+int esb_enable_pipes(uint8_t enable_mask)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1666,7 +1666,7 @@ int esb_enable_pipes(u8_t enable_mask)
 	return 0;
 }
 
-int esb_set_rf_channel(u32_t channel)
+int esb_set_rf_channel(uint32_t channel)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1680,7 +1680,7 @@ int esb_set_rf_channel(u32_t channel)
 	return 0;
 }
 
-int esb_get_rf_channel(u32_t *channel)
+int esb_get_rf_channel(uint32_t *channel)
 {
 	if (channel == NULL) {
 		return -EINVAL;
@@ -1705,7 +1705,7 @@ int esb_set_tx_power(enum esb_tx_power tx_output_power)
 	return 0;
 }
 
-int esb_set_retransmit_delay(u16_t delay)
+int esb_set_retransmit_delay(uint16_t delay)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1719,7 +1719,7 @@ int esb_set_retransmit_delay(u16_t delay)
 	return 0;
 }
 
-int esb_set_retransmit_count(u16_t count)
+int esb_set_retransmit_count(uint16_t count)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
@@ -1741,7 +1741,7 @@ int esb_set_bitrate(enum esb_bitrate bitrate)
 	return update_radio_bitrate() ? 0 : -EINVAL;
 }
 
-int esb_reuse_pid(u8_t pipe)
+int esb_reuse_pid(uint8_t pipe)
 {
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;

@@ -19,7 +19,7 @@ static size_t unfold_contentline(const char *buf, char *prop_buf)
 	size_t unfold_size = 0;
 	const char *sol = buf;
 	char *eol;
-	u16_t total_line_len = 0, single_line_len = 0;
+	uint16_t total_line_len = 0, single_line_len = 0;
 
 	while (1) {
 		eol = strstr(sol, "\r\n");

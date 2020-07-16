@@ -54,7 +54,7 @@ struct hid_report_sent_event {
 	struct event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
-	u8_t report_id; /**< Report id. */
+	uint8_t report_id; /**< Report id. */
 	bool error; /**< If true error occured on send. */
 };
 
@@ -66,7 +66,7 @@ struct hid_report_subscription_event {
 	struct event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
-	u8_t report_id; /**< Report id. */
+	uint8_t report_id; /**< Report id. */
 	bool enabled; /**< True if notification are enabled. */
 };
 

@@ -100,7 +100,7 @@ static struct tcpip_client {
 } client;
 
 /* global functions defined in different files */
-void rsp_send(const u8_t *str, size_t len);
+void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -109,7 +109,7 @@ extern char rsp_buf[CONFIG_AT_CMD_RESPONSE_MAX_LEN];
 
 /**@brief Resolves host IPv4 address and port
  */
-static int parse_host_by_ipv4(const char *ip, u16_t port)
+static int parse_host_by_ipv4(const char *ip, uint16_t port)
 {
 	struct sockaddr_in *address4 = ((struct sockaddr_in *)&remote);
 
@@ -124,7 +124,7 @@ static int parse_host_by_ipv4(const char *ip, u16_t port)
 	}
 }
 
-static int parse_host_by_name(const char *name, u16_t port, int socktype)
+static int parse_host_by_name(const char *name, uint16_t port, int socktype)
 {
 	int err;
 	struct addrinfo *result;
@@ -163,7 +163,7 @@ static int parse_host_by_name(const char *name, u16_t port, int socktype)
 	return 0;
 }
 
-static int do_socket_open(u8_t type, u8_t role, int sec_tag)
+static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 {
 	int ret = 0;
 
@@ -330,7 +330,7 @@ static int do_socketopt_get(int name)
 	return ret;
 }
 
-static int do_bind(u16_t port)
+static int do_bind(uint16_t port)
 {
 	int ret;
 	struct sockaddr_in local;
@@ -374,7 +374,7 @@ static int do_bind(u16_t port)
 	return 0;
 }
 
-static int do_connect(const char *url, u16_t port)
+static int do_connect(const char *url, uint16_t port)
 {
 	int ret;
 
@@ -449,9 +449,9 @@ static int do_accept(void)
 	return 0;
 }
 
-static int do_send(const u8_t *data, int datalen)
+static int do_send(const uint8_t *data, int datalen)
 {
-	u32_t offset = 0;
+	uint32_t offset = 0;
 	int ret = 0;
 	int sock = client.sock;
 
@@ -492,7 +492,7 @@ static int do_send(const u8_t *data, int datalen)
 	}
 }
 
-static int do_recv(u16_t length)
+static int do_recv(uint16_t length)
 {
 	int ret;
 	char data[NET_IPV4_MTU];
@@ -555,7 +555,7 @@ static int do_recv(u16_t length)
 	return ret;
 }
 
-static int do_udp_init(const char *url, u16_t port)
+static int do_udp_init(const char *url, uint16_t port)
 {
 	int ret;
 
@@ -573,9 +573,9 @@ static int do_udp_init(const char *url, u16_t port)
 	return 0;
 }
 
-static int do_sendto(const char *url, u16_t port, const u8_t *data, int datalen)
+static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int datalen)
 {
-	u32_t offset = 0;
+	uint32_t offset = 0;
 	int ret;
 
 	ret = do_udp_init(url, port);
@@ -613,7 +613,7 @@ static int do_sendto(const char *url, u16_t port, const u8_t *data, int datalen)
 	}
 }
 
-static int do_recvfrom(const char *url, u16_t port, u16_t length)
+static int do_recvfrom(const char *url, uint16_t port, uint16_t length)
 {
 	int ret;
 	char data[NET_IPV4_MTU];
@@ -675,8 +675,8 @@ static int do_recvfrom(const char *url, u16_t port, u16_t length)
 static int handle_at_socket(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t op;
-	u16_t role;
+	uint16_t op;
+	uint16_t role;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -688,7 +688,7 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (op == AT_SOCKET_OPEN) {
-			u16_t type;
+			uint16_t type;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
 			if (at_params_valid_count_get(&at_param_list) < 4) {
@@ -757,8 +757,8 @@ static int handle_at_socket(enum at_cmd_type cmd_type)
 static int handle_at_socketopt(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t op;
-	u16_t name;
+	uint16_t op;
+	uint16_t name;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -818,7 +818,7 @@ static int handle_at_socketopt(enum at_cmd_type cmd_type)
 static int handle_at_bind(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t port;
+	uint16_t port;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");
@@ -854,7 +854,7 @@ static int handle_at_connect(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	char url[TCPIP_MAX_URL];
 	int size = TCPIP_MAX_URL;
-	u16_t port;
+	uint16_t port;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");
@@ -988,7 +988,7 @@ static int handle_at_accept(enum at_cmd_type cmd_type)
 static int handle_at_send(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t datatype;
+	uint16_t datatype;
 	char data[NET_IPV4_MTU];
 	int size = NET_IPV4_MTU;
 
@@ -1011,7 +1011,7 @@ static int handle_at_send(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (datatype == DATATYPE_HEXADECIMAL) {
-			u8_t data_hex[size / 2];
+			uint8_t data_hex[size / 2];
 
 			err = slm_util_atoh(data, size, data_hex, size / 2);
 			if (err > 0) {
@@ -1037,7 +1037,7 @@ static int handle_at_send(enum at_cmd_type cmd_type)
 static int handle_at_recv(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t length = NET_IPV4_MTU;
+	uint16_t length = NET_IPV4_MTU;
 
 	if (!client.connected) {
 		LOG_ERR("Not connected yet");
@@ -1071,8 +1071,8 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	char url[TCPIP_MAX_URL];
-	u16_t port;
-	u16_t datatype;
+	uint16_t port;
+	uint16_t datatype;
 	char data[NET_IPV4_MTU];
 	int size;
 
@@ -1111,7 +1111,7 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (datatype == DATATYPE_HEXADECIMAL) {
-			u8_t data_hex[size / 2];
+			uint8_t data_hex[size / 2];
 
 			err = slm_util_atoh(data, size, data_hex, size / 2);
 			if (err > 0) {
@@ -1139,8 +1139,8 @@ static int handle_at_recvfrom(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	char url[TCPIP_MAX_URL];
 	int size = TCPIP_MAX_URL;
-	u16_t port;
-	u16_t length = NET_IPV4_MTU;
+	uint16_t port;
+	uint16_t length = NET_IPV4_MTU;
 
 	if (client.sock < 0) {
 		LOG_ERR("Socket not opened yet");

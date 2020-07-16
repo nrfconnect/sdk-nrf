@@ -22,7 +22,7 @@ extern "C" {
 struct config_event {
 	struct event_header header;
 
-	s8_t init_value1;
+	int8_t init_value1;
 };
 
 EVENT_TYPE_DECLARE(config_event);

@@ -80,7 +80,7 @@ void scan_connecting_error(struct bt_scan_device_info *device_info)
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
 		scan_connecting_error, NULL);
 
-static void exchange_func(struct bt_conn *conn, u8_t att_err,
+static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 			  struct bt_gatt_exchange_params *params)
 {
 	struct bt_conn_info info = {0};
@@ -140,7 +140,7 @@ struct bt_gatt_dm_cb discovery_cb = {
 	.error_found       = discovery_error,
 };
 
-static void connected(struct bt_conn *conn, u8_t hci_err)
+static void connected(struct bt_conn *conn, uint8_t hci_err)
 {
 	struct bt_conn_info info = {0};
 	int err;
@@ -246,7 +246,7 @@ static void adv_start(void)
 	}
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	struct bt_conn_info info = {0};
 	int err;
@@ -273,7 +273,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason)
 	}
 }
 
-static u8_t throughput_read(const struct bt_gatt_throughput_metrics *met)
+static uint8_t throughput_read(const struct bt_gatt_throughput_metrics *met)
 {
 	printk("[peer] received %u bytes (%u KB)"
 	       " in %u GATT writes at %u bps\n",
@@ -287,7 +287,7 @@ static u8_t throughput_read(const struct bt_gatt_throughput_metrics *met)
 
 static void throughput_received(const struct bt_gatt_throughput_metrics *met)
 {
-	static u32_t kb;
+	static uint32_t kb;
 
 	if (met->write_len == 0) {
 		kb = 0;
@@ -319,10 +319,10 @@ static const struct bt_gatt_throughput_cb throughput_cb = {
 static void test_run(void)
 {
 	int err;
-	u64_t stamp;
-	s64_t delta;
-	u32_t data = 0;
-	u32_t prog = 0;
+	uint64_t stamp;
+	int64_t delta;
+	uint32_t data = 0;
+	uint32_t prog = 0;
 
 	/* a dummy data buffer */
 	static char dummy[256];
@@ -366,7 +366,7 @@ static void test_run(void)
 
 	printk("\nDone\n");
 	printk("[local] sent %u bytes (%u KB) in %lld ms at %llu kbps\n",
-	       data, data / 1024, delta, ((u64_t)data * 8 / delta));
+	       data, data / 1024, delta, ((uint64_t)data * 8 / delta));
 
 	/* read back char from peer */
 	err = bt_gatt_throughput_read(&gatt_throughput);

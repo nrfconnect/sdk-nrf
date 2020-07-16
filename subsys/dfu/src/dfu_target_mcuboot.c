@@ -115,7 +115,7 @@ static int settings_set(const char *key, size_t len_rd,
 bool dfu_target_mcuboot_identify(const void *const buf)
 {
 	/* MCUBoot headers starts with 4 byte magic word */
-	return *((const u32_t *)buf) == MCUBOOT_HEADER_MAGIC;
+	return *((const uint32_t *)buf) == MCUBOOT_HEADER_MAGIC;
 }
 
 int dfu_target_mcuboot_init(size_t file_size, dfu_target_callback_t cb)
@@ -171,7 +171,7 @@ int dfu_target_mcuboot_offset_get(size_t *out)
 
 int dfu_target_mcuboot_write(const void *const buf, size_t len)
 {
-	int err = flash_img_buffered_write(&flash_img, (u8_t *)buf, len, false);
+	int err = flash_img_buffered_write(&flash_img, (uint8_t *)buf, len, false);
 
 	if (err != 0) {
 		LOG_ERR("flash_img_buffered_write error %d", err);

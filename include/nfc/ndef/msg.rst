@@ -37,7 +37,7 @@ The following code example shows how to generate a record descriptor:
 .. code-block:: c
 
    int err;
-   u32_t length;
+   uint32_t length;
 
    /// Declare record descriptor by macro - create and initialize an instance of
    ///   nfc_ndef_record_desc_t.
@@ -83,9 +83,9 @@ The following code example shows how to create two messages:
 .. code-block:: c
 
    int err;
-   u8_t buffer_for_message[512];
-   u8_t buffer_for_message_2[128];
-   u32_t length;
+   uint8_t buffer_for_message[512];
+   uint8_t buffer_for_message_2[128];
+   uint32_t length;
 
    // Declare message descriptor by macro - create and initialize an instance of
    //   nfc_ndef_msg_desc_t and an array of pointers to nfc_ndef_record_desc_t.

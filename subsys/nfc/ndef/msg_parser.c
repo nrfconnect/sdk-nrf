@@ -8,10 +8,10 @@
 
 LOG_MODULE_REGISTER(nfc_ndef_parser, CONFIG_NFC_NDEF_PARSER_LOG_LEVEL);
 
-int nfc_ndef_msg_parse(const u8_t *result_buf,
-		       u32_t *result_buf_len,
-		       const u8_t *raw_data,
-		       u32_t *raw_data_len)
+int nfc_ndef_msg_parse(const uint8_t *result_buf,
+		       uint32_t *result_buf_len,
+		       const uint8_t *raw_data,
+		       uint32_t *raw_data_len)
 {
 	int err;
 	struct nfc_ndef_parser_memo_desc parser_memory_helper;
@@ -34,7 +34,7 @@ int nfc_ndef_msg_parse(const u8_t *result_buf,
 
 void nfc_ndef_msg_printout(const struct nfc_ndef_msg_desc *msg_desc)
 {
-	u32_t i;
+	uint32_t i;
 
 	LOG_INF("NDEF message contains %d record(s)",
 		msg_desc->record_count);

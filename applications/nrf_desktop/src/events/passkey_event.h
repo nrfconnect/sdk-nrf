@@ -23,7 +23,7 @@ extern "C" {
 struct passkey_input_event {
 	struct event_header header;
 
-	u32_t passkey;
+	uint32_t passkey;
 };
 
 EVENT_TYPE_DECLARE(passkey_input_event);

@@ -26,8 +26,8 @@ extern "C" {
 struct uart_data_event {
 	struct event_header header;
 
-	u8_t dev_idx;
-	u8_t *buf;
+	uint8_t dev_idx;
+	uint8_t *buf;
 	size_t len;
 };
 

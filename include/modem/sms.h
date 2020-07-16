@@ -27,7 +27,7 @@ extern "C" {
 /** @brief SMS PDU data. */
 struct sms_data {
 	char *alpha;
-	u16_t length;
+	uint16_t length;
 	char *pdu;
 };
 

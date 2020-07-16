@@ -67,7 +67,7 @@ struct nfc_t4t_hl_procedure_cb {
 	 *                 function.
 	 * @param[in] len Received data length.
 	 */
-	void (*ndef_read)(u16_t file_id, const u8_t *data, size_t len);
+	void (*ndef_read)(uint16_t file_id, const uint8_t *data, size_t len);
 
 	/**@brief HL Procedure NDEF file updated callback.
 	 *
@@ -76,7 +76,7 @@ struct nfc_t4t_hl_procedure_cb {
 	 *
 	 * @param[in] file id File Identifier.
 	 */
-	void (*ndef_updated)(u16_t file_id);
+	void (*ndef_updated)(uint16_t file_id);
 };
 
 /**@brief Handle High Level Procedure received data.
@@ -90,7 +90,7 @@ struct nfc_t4t_hl_procedure_cb {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_t4t_hl_procedure_on_data_received(const u8_t *data, size_t len);
+int nfc_t4t_hl_procedure_on_data_received(const uint8_t *data, size_t len);
 
 /**@brief Register High Level Procedure callback.
  *
@@ -134,7 +134,7 @@ int nfc_t4t_hl_procedure_cc_read(struct nfc_t4t_cc_file *cc);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_t4t_hl_procedure_ndef_file_select(u16_t id);
+int nfc_t4t_hl_procedure_ndef_file_select(uint16_t id);
 
 /**@brief Perform NDEF Read Procedure.
  *
@@ -149,7 +149,7 @@ int nfc_t4t_hl_procedure_ndef_file_select(u16_t id);
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_t4t_hl_procedure_ndef_read(struct nfc_t4t_cc_file *cc,
-				   u8_t *ndef_buff, u16_t ndef_len);
+				   uint8_t *ndef_buff, uint16_t ndef_len);
 
 /**@brief Perform NDEF Update Procedure.
  *
@@ -164,7 +164,7 @@ int nfc_t4t_hl_procedure_ndef_read(struct nfc_t4t_cc_file *cc,
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_t4t_hl_procedure_ndef_update(struct nfc_t4t_cc_file *cc,
-				     u8_t *ndef_data, u16_t ndef_len);
+				     uint8_t *ndef_data, uint16_t ndef_len);
 
 #ifdef __cplusplus
 }

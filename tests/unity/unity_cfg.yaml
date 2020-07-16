@@ -21,11 +21,11 @@
     :treat_externs: :include
     :callback_after_arg_check: true
     :treat_as:
-        's8_t': 'INT8'
-        'u8_t': 'HEX8'
-        's16_t': 'INT16'
-        'u16_t': 'HEX16'
-        's32_t': 'INT32'
-        'u32_t': 'HEX32'
-        's64_t': 'INT64'
-        'u64_t': 'HEX64'
+        'int8_t': 'INT8'
+        'uint8_t': 'HEX8'
+        'int16_t': 'INT16'
+        'uint16_t': 'HEX16'
+        'int32_t': 'INT32'
+        'uint32_t': 'HEX32'
+        'int64_t': 'INT64'
+        'uint64_t': 'HEX64'

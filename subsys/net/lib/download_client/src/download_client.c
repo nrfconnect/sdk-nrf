@@ -45,7 +45,7 @@ static int socket_timeout_set(int fd)
 		return 0;
 	}
 
-	const u32_t timeout_ms = CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS;
+	const uint32_t timeout_ms = CONFIG_DOWNLOAD_CLIENT_SOCK_TIMEOUT_MS;
 
 	struct timeval timeo = {
 		.tv_sec = (timeout_ms / 1000),
@@ -123,7 +123,7 @@ static int resolve_and_connect(int family, const char *host,
 	int fd;
 	int err;
 	int proto;
-	u16_t port;
+	uint16_t port;
 	struct addrinfo *addr;
 	struct addrinfo *info;
 

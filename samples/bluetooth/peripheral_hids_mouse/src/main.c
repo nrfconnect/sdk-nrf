@@ -80,8 +80,8 @@ BT_GATT_HIDS_DEF(hids_obj,
 
 static struct k_delayed_work hids_work;
 struct mouse_pos {
-	s16_t x_val;
-	s16_t y_val;
+	int16_t x_val;
+	int16_t y_val;
 };
 
 /* Mouse movement queue. */
@@ -254,7 +254,7 @@ static bool is_conn_slot_free(void)
 }
 
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -287,7 +287,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 }
 
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -381,9 +381,9 @@ static void hid_init(void)
 	int err;
 	struct bt_gatt_hids_init_param hids_init_param = { 0 };
 	struct bt_gatt_hids_inp_rep *hids_inp_rep;
-	static const u8_t mouse_movement_mask[ceiling_fraction(INPUT_REP_MOVEMENT_LEN, 8)] = {0};
+	static const uint8_t mouse_movement_mask[ceiling_fraction(INPUT_REP_MOVEMENT_LEN, 8)] = {0};
 
-	static const u8_t report_map[] = {
+	static const uint8_t report_map[] = {
 		0x05, 0x01,     /* Usage Page (Generic Desktop) */
 		0x09, 0x02,     /* Usage (Mouse) */
 
@@ -494,7 +494,7 @@ static void hid_init(void)
 }
 
 
-static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
+static void mouse_movement_send(int16_t x_delta, int16_t y_delta)
 {
 	for (size_t i = 0; i < CONFIG_BT_GATT_HIDS_MAX_CLIENT_COUNT; i++) {
 
@@ -509,16 +509,16 @@ static void mouse_movement_send(s16_t x_delta, s16_t y_delta)
 			bt_gatt_hids_boot_mouse_inp_rep_send(&hids_obj,
 							     conn_mode[i].conn,
 							     NULL,
-							     (s8_t) x_delta,
-							     (s8_t) y_delta,
+							     (int8_t) x_delta,
+							     (int8_t) y_delta,
 							     NULL);
 		} else {
-			u8_t x_buff[2];
-			u8_t y_buff[2];
-			u8_t buffer[INPUT_REP_MOVEMENT_LEN];
+			uint8_t x_buff[2];
+			uint8_t y_buff[2];
+			uint8_t buffer[INPUT_REP_MOVEMENT_LEN];
 
-			s16_t x = MAX(MIN(x_delta, 0x07ff), -0x07ff);
-			s16_t y = MAX(MIN(y_delta, 0x07ff), -0x07ff);
+			int16_t x = MAX(MIN(x_delta, 0x07ff), -0x07ff);
+			int16_t y = MAX(MIN(y_delta, 0x07ff), -0x07ff);
 
 			/* Convert to little-endian. */
 			sys_put_le16(x, x_buff);
@@ -669,11 +669,11 @@ static void num_comp_reply(bool accept)
 }
 
 
-void button_changed(u32_t button_state, u32_t has_changed)
+void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	bool data_to_send = false;
 	struct mouse_pos pos;
-	u32_t buttons = button_state & has_changed;
+	uint32_t buttons = button_state & has_changed;
 
 	memset(&pos, 0, sizeof(struct mouse_pos));
 
@@ -740,7 +740,7 @@ void configure_buttons(void)
 
 static void bas_notify(void)
 {
-	u8_t battery_level = bt_gatt_bas_get_battery_level();
+	uint8_t battery_level = bt_gatt_bas_get_battery_level();
 
 	battery_level--;
 

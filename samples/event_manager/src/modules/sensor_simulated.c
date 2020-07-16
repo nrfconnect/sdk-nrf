@@ -20,9 +20,9 @@ static K_THREAD_STACK_DEFINE(sensor_simulated_thread_stack,
 			     SENSOR_SIMULATED_THREAD_STACK_SIZE);
 static struct k_thread sensor_simulated_thread;
 
-static s8_t value1;
-static s16_t value2;
-static s32_t value3;
+static int8_t value1;
+static int16_t value2;
+static int32_t value3;
 
 static void measure_update(void)
 {

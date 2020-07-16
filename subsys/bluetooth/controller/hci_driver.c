@@ -73,18 +73,18 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define MEMPOOL_SIZE ((CONFIG_BLECTRL_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
 		      (BLECTRL_MASTER_COUNT * MASTER_MEM_SIZE))
 
-static u8_t ble_controller_mempool[MEMPOOL_SIZE];
+static uint8_t ble_controller_mempool[MEMPOOL_SIZE];
 
 #if IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER)
-extern void bt_ctlr_assert_handle(char *file, u32_t line);
+extern void bt_ctlr_assert_handle(char *file, uint32_t line);
 
-void blectlr_assertion_handler(const char *const file, const u32_t line)
+void blectlr_assertion_handler(const char *const file, const uint32_t line)
 {
 	bt_ctlr_assert_handle((char *) file, line);
 }
 
 #else /* !IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
-void blectlr_assertion_handler(const char *const file, const u32_t line)
+void blectlr_assertion_handler(const char *const file, const uint32_t line)
 {
 	BT_ERR("BleCtlr ASSERT: %s, %d", log_strdup(file), line);
 	k_oops();
@@ -135,7 +135,7 @@ static int acl_handle(struct net_buf *acl)
 static int hci_driver_send(struct net_buf *buf)
 {
 	int err;
-	u8_t type;
+	uint8_t type;
 
 	BT_DBG("");
 
@@ -167,12 +167,12 @@ static int hci_driver_send(struct net_buf *buf)
 	return err;
 }
 
-static void data_packet_process(u8_t *hci_buf)
+static void data_packet_process(uint8_t *hci_buf)
 {
 	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_FOREVER);
 	struct bt_hci_acl_hdr *hdr = (void *)hci_buf;
-	u16_t hf, handle, len;
-	u8_t flags, pb, bc;
+	uint16_t hf, handle, len;
+	uint8_t flags, pb, bc;
 
 	if (!data_buf) {
 		BT_ERR("No data buffer available");
@@ -193,7 +193,7 @@ static void data_packet_process(u8_t *hci_buf)
 	bt_recv(data_buf);
 }
 
-static bool event_packet_is_discardable(const u8_t *hci_buf)
+static bool event_packet_is_discardable(const uint8_t *hci_buf)
 {
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
 
@@ -211,7 +211,7 @@ static bool event_packet_is_discardable(const u8_t *hci_buf)
 	}
 	case BT_HCI_EVT_VENDOR:
 	{
-		u8_t subevent = hci_buf[2];
+		uint8_t subevent = hci_buf[2];
 
 		switch (subevent) {
 		case HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT:
@@ -225,7 +225,7 @@ static bool event_packet_is_discardable(const u8_t *hci_buf)
 	}
 }
 
-static void event_packet_process(u8_t *hci_buf)
+static void event_packet_process(uint8_t *hci_buf)
 {
 	bool discardable = event_packet_is_discardable(hci_buf);
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
@@ -239,14 +239,14 @@ static void event_packet_process(u8_t *hci_buf)
 	} else if (hdr->evt == BT_HCI_EVT_CMD_COMPLETE) {
 		struct bt_hci_evt_cmd_complete *cc = (void *)&hci_buf[2];
 		struct bt_hci_evt_cc_status *ccs = (void *)&hci_buf[5];
-		u16_t opcode = sys_le16_to_cpu(cc->opcode);
+		uint16_t opcode = sys_le16_to_cpu(cc->opcode);
 
 		BT_DBG("Command Complete (0x%04x) status: 0x%02x,"
 		       " ncmd: %u, len %u",
 		       opcode, ccs->status, cc->ncmd, hdr->len);
 	} else if (hdr->evt == BT_HCI_EVT_CMD_STATUS) {
 		struct bt_hci_evt_cmd_status *cs = (void *)&hci_buf[2];
-		u16_t opcode = sys_le16_to_cpu(cs->opcode);
+		uint16_t opcode = sys_le16_to_cpu(cs->opcode);
 
 		BT_DBG("Command Status (0x%04x) status: 0x%02x",
 		       opcode, cs->status);
@@ -268,11 +268,7 @@ static void event_packet_process(u8_t *hci_buf)
 	}
 
 	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
-	if (bt_hci_evt_is_prio(hdr->evt)) {
-		bt_recv_prio(evt_buf);
-	} else {
-		bt_recv(evt_buf);
-	}
+	bt_recv(evt_buf);
 }
 
 static bool fetch_and_process_hci_evt(uint8_t *p_hci_buffer)
@@ -317,7 +313,7 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	static u8_t hci_buffer[HCI_MSG_BUFFER_MAX_SIZE];
+	static uint8_t hci_buffer[HCI_MSG_BUFFER_MAX_SIZE];
 
 	bool received_evt = false;
 	bool received_data = false;
@@ -352,7 +348,7 @@ static int hci_driver_open(void)
 			NULL, NULL, NULL, K_PRIO_COOP(CONFIG_BLECTLR_PRIO), 0,
 			K_NO_WAIT);
 
-	u8_t build_revision[BLE_CONTROLLER_BUILD_REVISION_SIZE];
+	uint8_t build_revision[BLE_CONTROLLER_BUILD_REVISION_SIZE];
 
 	ble_controller_build_revision_get(build_revision);
 	LOG_HEXDUMP_INF(build_revision, sizeof(build_revision),

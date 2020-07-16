@@ -23,6 +23,6 @@
  *
  * @return 0 if success, error code otherwise.
  */
-int get_hash(u8_t *hash, const u8_t *data, u32_t data_len, bool external);
+int get_hash(uint8_t *hash, const uint8_t *data, uint32_t data_len, bool external);
 
 #endif

@@ -37,10 +37,10 @@
  *           Otherwise, a (negative) error code is returned.
  */
 int service_info_json_object_encode(const char *const ui[],
-				    const u32_t ui_count,
+				    const uint32_t ui_count,
 				    const char *const fota[],
-					const u32_t fota_count,
-					const u16_t fota_version,
+					const uint32_t fota_count,
+					const uint16_t fota_version,
 					cJSON *obj_out);
 
 /** @} */

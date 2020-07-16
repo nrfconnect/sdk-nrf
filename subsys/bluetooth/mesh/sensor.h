@@ -114,8 +114,8 @@ int sensor_status_encode(struct net_buf_simple *buf,
 			 const struct bt_mesh_sensor *sensor,
 			 const struct sensor_value *values);
 
-int sensor_status_id_encode(struct net_buf_simple *buf, u8_t len, u16_t id);
-void sensor_status_id_decode(struct net_buf_simple *buf, u8_t *len, u16_t *id);
+int sensor_status_id_encode(struct net_buf_simple *buf, uint8_t len, uint16_t id);
+void sensor_status_id_decode(struct net_buf_simple *buf, uint8_t *len, uint16_t *id);
 
 int sensor_value_encode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
@@ -142,19 +142,19 @@ int sensor_column_decode(
 
 int sensor_cadence_encode(struct net_buf_simple *buf,
 			  const struct bt_mesh_sensor_type *sensor_type,
-			  u8_t fast_period_div, u8_t min_int,
+			  uint8_t fast_period_div, uint8_t min_int,
 			  const struct bt_mesh_sensor_threshold *threshold);
 int sensor_cadence_decode(struct net_buf_simple *buf,
 			  const struct bt_mesh_sensor_type *sensor_type,
-			  u8_t *fast_period_div, u8_t *min_int,
+			  uint8_t *fast_period_div, uint8_t *min_int,
 			  struct bt_mesh_sensor_threshold *threshold);
-u8_t sensor_value_len(const struct bt_mesh_sensor_type *type);
+uint8_t sensor_value_len(const struct bt_mesh_sensor_type *type);
 
-u8_t sensor_powtime_encode(u64_t raw);
-u64_t sensor_powtime_decode(u8_t encoded);
-u64_t sensor_powtime_decode_ns(u8_t val);
+uint8_t sensor_powtime_encode(uint64_t raw);
+uint64_t sensor_powtime_decode(uint8_t encoded);
+uint64_t sensor_powtime_decode_ns(uint8_t val);
 
-u8_t sensor_pub_div_get(const struct bt_mesh_sensor *s, u32_t base_period);
+uint8_t sensor_pub_div_get(const struct bt_mesh_sensor *s, uint32_t base_period);
 
 void sensor_cadence_update(struct bt_mesh_sensor *sensor,
 			   const struct sensor_value *value);

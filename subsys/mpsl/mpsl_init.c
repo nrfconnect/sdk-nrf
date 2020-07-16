@@ -86,13 +86,13 @@ ISR_DIRECT_DECLARE(mpsl_radio_isr_wrapper)
 	return 1;
 }
 
-static void m_assert_handler(const char *const file, const u32_t line)
+static void m_assert_handler(const char *const file, const uint32_t line)
 {
 	LOG_ERR("MPSL ASSERT: %s, %d", log_strdup(file), line);
 	k_oops();
 }
 
-static u8_t m_config_clock_source_get(void)
+static uint8_t m_config_clock_source_get(void)
 {
 #ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
 	return MPSL_CLOCK_LF_SRC_RC;

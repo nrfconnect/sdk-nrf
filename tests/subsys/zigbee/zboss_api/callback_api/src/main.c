@@ -21,7 +21,7 @@
 
 
 K_SEM_DEFINE(zboss_init_lock, 0, 1);
-static u32_t zboss_signals_collected;
+static uint32_t zboss_signals_collected;
 
 /**@brief Zigbee stack event handler.
  *
@@ -78,11 +78,11 @@ void test_zboss_startup_signals(void)
 }
 
 
-K_MSGQ_DEFINE(zb_callback_queue, sizeof(u32_t), N_THREADS, 4);
+K_MSGQ_DEFINE(zb_callback_queue, sizeof(uint32_t), N_THREADS, 4);
 
-void add_to_queue_from_callback(u8_t int_to_put)
+void add_to_queue_from_callback(uint8_t int_to_put)
 {
-	const u32_t ref_int[N_THREADS] = {0, 1, 2, 3};
+	const uint32_t ref_int[N_THREADS] = {0, 1, 2, 3};
 	int ret_val;
 
 	ret_val = k_msgq_put(&zb_callback_queue,
@@ -140,9 +140,9 @@ void test_zboss_app_callbacks(void)
 {
 	k_tid_t thread_id_array[N_THREADS] = {THREAD_0, THREAD_1,
 					      THREAD_2, THREAD_3};
-	u8_t expected_queue_usage_cnt = 0;
+	uint8_t expected_queue_usage_cnt = 0;
 
-	for (u8_t i = 0; i < ARRAY_SIZE(thread_id_array); i++) {
+	for (uint8_t i = 0; i < ARRAY_SIZE(thread_id_array); i++) {
 		k_thread_start(thread_id_array[i]);
 		expected_queue_usage_cnt++;
 
@@ -155,7 +155,7 @@ void test_zboss_app_callbacks(void)
 			"Queue usage cnt differs from expected usage count.");
 	}
 
-	for (u8_t i = 0; i < ARRAY_SIZE(thread_id_array); i++) {
+	for (uint8_t i = 0; i < ARRAY_SIZE(thread_id_array); i++) {
 		int data;
 		int err = k_msgq_get(&zb_callback_queue, &data, K_NO_WAIT);
 

@@ -153,7 +153,7 @@ int bt_gatt_pool_svc_alloc(struct bt_gatt_pool *gp,
  *
  *  @return 0 or a negative error code.
  */
-int bt_gatt_pool_chrc_alloc(struct bt_gatt_pool *gp, u8_t props,
+int bt_gatt_pool_chrc_alloc(struct bt_gatt_pool *gp, uint8_t props,
 			    struct bt_gatt_attr const *attr);
 
 /** @brief Take an attribute descriptor from the pool.
@@ -177,7 +177,7 @@ int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
  */
 int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
 			   struct _bt_gatt_ccc *ccc,
-			   u8_t perm);
+			   uint8_t perm);
 
 /** @brief Free the whole dynamically created GATT service.
  *

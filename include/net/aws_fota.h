@@ -83,7 +83,7 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client,
  * @return Length of the job id string (not counting the terminating
  *         null character) or a negative value on error.
  */
-int aws_fota_get_job_id(u8_t *const job_id_buf, size_t buf_size);
+int aws_fota_get_job_id(uint8_t *const job_id_buf, size_t buf_size);
 
 #ifdef __cplusplus
 }

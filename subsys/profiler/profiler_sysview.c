@@ -11,21 +11,21 @@
 
 /* By default, when there is no shell, all events are profiled. */
 #ifndef CONFIG_SHELL
-u32_t profiler_enabled_events = 0xffffffff;
+uint32_t profiler_enabled_events = 0xffffffff;
 #endif
 
 static char descr[CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS]
 		 [CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
 
-u8_t profiler_num_events;
+uint8_t profiler_num_events;
 
 static char *arg_types_encodings[] = {
-					"%u",	/* u8_t */
-					"%d",	/* s8_t */
-					"%u",	/* u16_t */
-					"%d",	/* s16_t */
-					"%u",	/* u32_t */
-					"%d",	/* s32_t */
+					"%u",	/* uint8_t */
+					"%d",	/* int8_t */
+					"%u",	/* uint16_t */
+					"%d",	/* int16_t */
+					"%u",	/* uint32_t */
+					"%d",	/* int32_t */
 					"%s",	/* string */
 					"%D"	/* time */
 				     };
@@ -45,7 +45,7 @@ static void event_module_description(void)
 	/* Memory barrier to make sure that data is
 	 * visible before being accessed
 	 */
-	u32_t ne = events.NumEvents;
+	uint32_t ne = events.NumEvents;
 
 	__DMB();
 
@@ -54,12 +54,12 @@ static void event_module_description(void)
 	}
 }
 
-static u32_t shorten_mem_address(const void *event_mem_address)
+static uint32_t shorten_mem_address(const void *event_mem_address)
 {
 #ifdef CONFIG_SRAM_BASE_ADDRESS
-	return (u32_t)(((u8_t *)event_mem_address) - CONFIG_SRAM_BASE_ADDRESS);
+	return (uint32_t)(((uint8_t *)event_mem_address) - CONFIG_SRAM_BASE_ADDRESS);
 #else
-	return (u32_t)event_mem_address;
+	return (uint32_t)event_mem_address;
 #endif
 }
 
@@ -79,15 +79,15 @@ const char *profiler_get_event_descr(size_t profiler_event_id)
 	return descr[profiler_event_id];
 }
 
-u16_t profiler_register_event_type(const char *name, const char **args,
+uint16_t profiler_register_event_type(const char *name, const char **args,
 				   const enum profiler_arg *arg_types,
-				   u8_t arg_cnt)
+				   uint8_t arg_cnt)
 {
 	/* Lock to make sure that this function can be called
 	 * from multiple threads
 	 */
 	k_sched_lock();
-	u32_t ne = events.NumEvents;
+	uint32_t ne = events.NumEvents;
 
 	size_t temp = snprintf(descr[ne],
 			CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS,
@@ -120,13 +120,13 @@ u16_t profiler_register_event_type(const char *name, const char **args,
 void profiler_log_start(struct log_event_buf *buf)
 {
 	/* protocol implementation in SysView demands incrementing pointer
-	 * by sizeof(u32_t) on start
+	 * by sizeof(uint32_t) on start
 	 */
-	__ASSERT_NO_MSG(sizeof(u32_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
-	buf->payload = buf->payload_start + sizeof(u32_t);
+	__ASSERT_NO_MSG(sizeof(uint32_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
+	buf->payload = buf->payload_start + sizeof(uint32_t);
 }
 
-void profiler_log_encode_u32(struct log_event_buf *buf, u32_t data)
+void profiler_log_encode_u32(struct log_event_buf *buf, uint32_t data)
 {
 	__ASSERT_NO_MSG(buf->payload - buf->payload_start + sizeof(data)
 		 <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
@@ -143,7 +143,7 @@ void profiler_log_add_mem_address(struct log_event_buf *buf,
 			shorten_mem_address(event_mem_address));
 }
 
-void profiler_log_send(struct log_event_buf *buf, u16_t event_type_id)
+void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
 	SEGGER_SYSVIEW_SendPacket(buf->payload_start, buf->payload,
 				  event_type_id);

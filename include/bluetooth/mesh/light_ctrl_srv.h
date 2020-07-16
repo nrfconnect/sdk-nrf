@@ -84,21 +84,21 @@ enum bt_mesh_light_ctrl_srv_state {
 /** Light Lightness Control Server configuration. */
 struct bt_mesh_light_ctrl_srv_cfg {
 	/** Delay from occupancy detected until light turns on. */
-	u32_t occupancy_delay;
+	uint32_t occupancy_delay;
 	/** Transition time to On state. */
-	u32_t fade_on;
+	uint32_t fade_on;
 	/** Time in On state. */
-	u32_t on;
+	uint32_t on;
 	/** Transition time to Prolong state. */
-	u32_t fade_prolong;
+	uint32_t fade_prolong;
 	/** Time in Prolong state. */
-	u32_t prolong;
+	uint32_t prolong;
 	/** Transition time to Standby state (in auto mode). */
-	u32_t fade_standby_auto;
+	uint32_t fade_standby_auto;
 	/** Transition time to Standby state (in manual mode). */
-	u32_t fade_standby_manual;
+	uint32_t fade_standby_manual;
 	/** State-wise light levels */
-	u16_t light[LIGHT_CTRL_STATE_COUNT];
+	uint16_t light[LIGHT_CTRL_STATE_COUNT];
 };
 
 /** Illumination regulator configuration */
@@ -106,15 +106,15 @@ struct bt_mesh_light_ctrl_srv_reg_cfg {
 	/** Target illuminance values */
 	struct sensor_value lux[LIGHT_CTRL_STATE_COUNT];
 	/** Regulator positive integral coefficient */
-	u16_t kiu;
+	uint16_t kiu;
 	/** Regulator negative integral coefficient */
-	u16_t kid;
+	uint16_t kid;
 	/** Regulator positive propotional coefficient */
-	u16_t kpu;
+	uint16_t kpu;
 	/** Regulator negative propotional coefficient */
-	u16_t kpd;
+	uint16_t kpd;
 	/** Regulator dead zone (in percent) */
-	u8_t accuracy;
+	uint8_t accuracy;
 };
 
 /** Illumination regulator */
@@ -122,7 +122,7 @@ struct bt_mesh_light_ctrl_srv_reg {
 	/** Regulator step timer */
 	struct k_delayed_work timer;
 	/** Internal integral sum. */
-	u16_t i;
+	uint16_t i;
 	/** Regulator configuration */
 	struct bt_mesh_light_ctrl_srv_reg_cfg cfg;
 };
@@ -139,11 +139,11 @@ struct bt_mesh_light_ctrl_srv {
 	/** Parameters for the start of current state */
 	struct {
 		/** Initial light level */
-		u16_t initial_light;
+		uint16_t initial_light;
 		/** Initial illumination level */
 		struct sensor_value initial_lux;
 		/** Fade duration */
-		u32_t duration;
+		uint32_t duration;
 	} fade;
 	/** Present ambient illumination */
 	struct sensor_value ambient_lux;

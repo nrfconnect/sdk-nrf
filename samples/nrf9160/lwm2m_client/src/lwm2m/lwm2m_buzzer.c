@@ -14,9 +14,9 @@ LOG_MODULE_REGISTER(app_lwm2m_buzzer, CONFIG_APP_LOG_LEVEL);
 
 #define BUZZER_NAME	"BUZZER"
 
-static int buzzer_state_cb(u16_t obj_inst_id,
-			   u16_t res_id, u16_t res_inst_id,
-			   u8_t *data, u16_t data_len,
+static int buzzer_state_cb(uint16_t obj_inst_id,
+			   uint16_t res_id, uint16_t res_inst_id,
+			   uint8_t *data, uint16_t data_len,
 			   bool last_block, size_t total_size)
 {
 	if (*data == 0) {

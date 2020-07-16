@@ -51,7 +51,7 @@
 
 static struct bt_conn *default_conn;
 static struct bt_gatt_hids_c hids_c;
-static u8_t capslock_state;
+static uint8_t capslock_state;
 
 
 static void hids_on_ready(struct k_work *work);
@@ -179,7 +179,7 @@ static void gatt_discover(struct bt_conn *conn)
 	}
 }
 
-static void connected(struct bt_conn *conn, u8_t conn_err)
+static void connected(struct bt_conn *conn, uint8_t conn_err)
 {
 	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -201,7 +201,7 @@ static void connected(struct bt_conn *conn, u8_t conn_err)
 	}
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 	int err;
@@ -278,13 +278,13 @@ static void scan_init(void)
 	}
 }
 
-static u8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
+static uint8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
 			     struct bt_gatt_hids_c_rep_info *rep,
-			     u8_t err,
-			     const u8_t *data)
+			     uint8_t err,
+			     const uint8_t *data)
 {
-	u8_t size = bt_gatt_hids_c_rep_size(rep);
-	u8_t i;
+	uint8_t size = bt_gatt_hids_c_rep_size(rep);
+	uint8_t i;
 
 	if (!data) {
 		return BT_GATT_ITER_STOP;
@@ -299,13 +299,13 @@ static u8_t hids_c_notify_cb(struct bt_gatt_hids_c *hids_c,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static u8_t hids_c_boot_mouse_report(struct bt_gatt_hids_c *hids_c,
+static uint8_t hids_c_boot_mouse_report(struct bt_gatt_hids_c *hids_c,
 				     struct bt_gatt_hids_c_rep_info *rep,
-				     u8_t err,
-				     const u8_t *data)
+				     uint8_t err,
+				     const uint8_t *data)
 {
-	u8_t size = bt_gatt_hids_c_rep_size(rep);
-	u8_t i;
+	uint8_t size = bt_gatt_hids_c_rep_size(rep);
+	uint8_t i;
 
 	if (!data) {
 		return BT_GATT_ITER_STOP;
@@ -318,13 +318,13 @@ static u8_t hids_c_boot_mouse_report(struct bt_gatt_hids_c *hids_c,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static u8_t hids_c_boot_kbd_report(struct bt_gatt_hids_c *hids_c,
+static uint8_t hids_c_boot_kbd_report(struct bt_gatt_hids_c *hids_c,
 				   struct bt_gatt_hids_c_rep_info *rep,
-				   u8_t err,
-				   const u8_t *data)
+				   uint8_t err,
+				   const uint8_t *data)
 {
-	u8_t size = bt_gatt_hids_c_rep_size(rep);
-	u8_t i;
+	uint8_t size = bt_gatt_hids_c_rep_size(rep);
+	uint8_t i;
 
 	if (!data) {
 		return BT_GATT_ITER_STOP;
@@ -424,7 +424,7 @@ static void button_bootmode(void)
 
 static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 			  struct bt_gatt_hids_c_rep_info *rep,
-			  u8_t err)
+			  uint8_t err)
 {
 	printk("Caps lock sent\n");
 }
@@ -432,7 +432,7 @@ static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 static void button_capslock(void)
 {
 	int err;
-	u8_t data;
+	uint8_t data;
 
 	if (!bt_gatt_hids_c_ready_check(&hids_c)) {
 		printk("HID device not ready\n");
@@ -461,10 +461,10 @@ static void button_capslock(void)
 }
 
 
-static u8_t capslock_read_cb(struct bt_gatt_hids_c *hids_c,
+static uint8_t capslock_read_cb(struct bt_gatt_hids_c *hids_c,
 			     struct bt_gatt_hids_c_rep_info *rep,
-			     u8_t err,
-			     const u8_t *data)
+			     uint8_t err,
+			     const uint8_t *data)
 {
 	if (err) {
 		printk("Capslock read error (err: %u)\n", err);
@@ -483,7 +483,7 @@ static u8_t capslock_read_cb(struct bt_gatt_hids_c *hids_c,
 
 static void capslock_write_cb(struct bt_gatt_hids_c *hids_c,
 			      struct bt_gatt_hids_c_rep_info *rep,
-			      u8_t err)
+			      uint8_t err)
 {
 	int ret;
 
@@ -507,7 +507,7 @@ static void button_capslock_rsp(void)
 		return;
 	}
 	int err;
-	u8_t data;
+	uint8_t data;
 
 	capslock_state = capslock_state ? 0 : 1;
 	data = capslock_state ? 0x02 : 0;
@@ -523,9 +523,9 @@ static void button_capslock_rsp(void)
 }
 
 
-static void button_handler(u32_t button_state, u32_t has_changed)
+static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
-	u32_t button = button_state & has_changed;
+	uint32_t button = button_state & has_changed;
 
 	if (button & KEY_BOOTMODE_MASK) {
 		button_bootmode();

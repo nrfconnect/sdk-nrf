@@ -50,7 +50,7 @@ static mpsl_timeslot_request_t timeslot_request_normal = {
 static mpsl_timeslot_signal_return_param_t signal_callback_return_param;
 
 /* Message queue for printing the signal type from timeslot callback */
-K_MSGQ_DEFINE(callback_msgq, sizeof(u32_t), 10, 4);
+K_MSGQ_DEFINE(callback_msgq, sizeof(uint32_t), 10, 4);
 
 /* Message queue for requesting MPSL API calls to non-preemptible thread */
 K_MSGQ_DEFINE(mpsl_api_msgq, sizeof(enum mpsl_timeslot_call), 10, 4);
@@ -201,7 +201,7 @@ static void mpsl_nonpreemptible_thread(void)
 
 static void console_print_thread(void)
 {
-	u32_t signal_type = 0;
+	uint32_t signal_type = 0;
 
 	while (1) {
 		if (k_msgq_get(&callback_msgq, &signal_type, K_FOREVER) == 0) {

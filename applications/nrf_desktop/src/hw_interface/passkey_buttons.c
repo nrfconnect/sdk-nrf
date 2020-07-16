@@ -26,20 +26,20 @@ enum state {
 };
 
 struct input_buf {
-	u8_t buf[CONFIG_DESKTOP_PASSKEY_MAX_LEN];
-	u8_t cnt;
+	uint8_t buf[CONFIG_DESKTOP_PASSKEY_MAX_LEN];
+	uint8_t cnt;
 };
 
 static enum state state;
 static struct input_buf digits;
 
 
-static u32_t encode_input(struct input_buf *buffer)
+static uint32_t encode_input(struct input_buf *buffer)
 {
-	u32_t res = 0;
-	u32_t mult = 1;
+	uint32_t res = 0;
+	uint32_t mult = 1;
 
-	/* Translate input_buf { buf=[5,4], cnt=2} into the u32_t value 54. */
+	/* Translate input_buf { buf=[5,4], cnt=2} into the uint32_t value 54. */
 	for (size_t i = buffer->cnt; i > 0; i--) {
 		res += buffer->buf[i - 1] * mult;
 		mult *= DIGIT_CNT;
@@ -52,7 +52,7 @@ static void input_confirm(struct input_buf *buffer)
 {
 	struct passkey_input_event *event = new_passkey_input_event();
 
-	__ASSERT_NO_MSG(sizeof(event->passkey) == sizeof(u32_t));
+	__ASSERT_NO_MSG(sizeof(event->passkey) == sizeof(uint32_t));
 
 	event->passkey = encode_input(buffer);
 	EVENT_SUBMIT(event);
@@ -72,7 +72,7 @@ static void remove_elem(struct input_buf *buffer)
 	}
 }
 
-static void add_elem(struct input_buf *buffer, u8_t new_elem)
+static void add_elem(struct input_buf *buffer, uint8_t new_elem)
 {
 	if (buffer->cnt < ARRAY_SIZE(buffer->buf)) {
 		buffer->buf[buffer->cnt] = new_elem;
@@ -83,7 +83,7 @@ static void add_elem(struct input_buf *buffer, u8_t new_elem)
 }
 
 static bool update_digit_input_key(struct input_buf *input,
-				   u16_t in_key_id, bool pressed)
+				   uint16_t in_key_id, bool pressed)
 {
 	if (!pressed) {
 		return false;
@@ -104,9 +104,9 @@ static bool update_digit_input_key(struct input_buf *input,
 }
 
 static bool update_delete_key(struct input_buf *input,
-			      u16_t in_key_id, bool pressed)
+			      uint16_t in_key_id, bool pressed)
 {
-	static s64_t delete_press_times[ARRAY_SIZE(delete_keys)];
+	static int64_t delete_press_times[ARRAY_SIZE(delete_keys)];
 
 	for (size_t i = 0; i < ARRAY_SIZE(delete_keys); i++) {
 		if (in_key_id == delete_keys[i]) {
@@ -116,7 +116,7 @@ static bool update_delete_key(struct input_buf *input,
 				delete_press_times[i] = k_uptime_get();
 
 			} else {
-				s64_t hold_time =
+				int64_t hold_time =
 				    k_uptime_delta(&delete_press_times[i]);
 
 				if (hold_time > CLEAR_INPUT_ON_HOLD_TIMEOUT) {
@@ -134,7 +134,7 @@ static bool update_delete_key(struct input_buf *input,
 }
 
 static bool update_confirm_key(struct input_buf *input,
-			       u16_t in_key_id, bool pressed)
+			       uint16_t in_key_id, bool pressed)
 {
 	if (!pressed) {
 		return false;
@@ -159,7 +159,7 @@ static bool button_event_handler(const struct button_event *event)
 	}
 
 	static bool (*update_key_func[])(struct input_buf *input,
-					 u16_t in_key_id, bool pressed) = {
+					 uint16_t in_key_id, bool pressed) = {
 		update_digit_input_key,
 		update_confirm_key,
 		update_delete_key

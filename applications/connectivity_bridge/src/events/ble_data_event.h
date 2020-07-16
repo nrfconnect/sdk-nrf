@@ -26,7 +26,7 @@ extern "C" {
 struct ble_data_event {
 	struct event_header header;
 
-	u8_t *buf;
+	uint8_t *buf;
 	size_t len;
 };
 

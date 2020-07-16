@@ -34,9 +34,9 @@ LOG_MODULE_REGISTER(nfc_t4t_apdu, CONFIG_NFC_T4T_APDU_LOG_LEVEL);
 /* Size of Status field contained in R-APDU. */
 #define STATUS_SIZE 2U
 
-static u16_t nfc_t4t_apdu_comm_size_calc(const struct nfc_t4t_apdu_comm *cmd_apdu)
+static uint16_t nfc_t4t_apdu_comm_size_calc(const struct nfc_t4t_apdu_comm *cmd_apdu)
 {
-	u16_t res = CLASS_TYPE_SIZE + INSTRUCTION_TYPE_SIZE + PARAMETER_SIZE;
+	uint16_t res = CLASS_TYPE_SIZE + INSTRUCTION_TYPE_SIZE + PARAMETER_SIZE;
 
 	if (cmd_apdu->data.buff) {
 		if (cmd_apdu->data.len > LC_LONG_FORMAT_THR) {
@@ -60,7 +60,7 @@ static u16_t nfc_t4t_apdu_comm_size_calc(const struct nfc_t4t_apdu_comm *cmd_apd
 }
 
 static int nfc_t4t_apdu_comm_args_validate(const struct nfc_t4t_apdu_comm *cmd_apdu,
-					   u8_t *raw_data, u16_t *len)
+					   uint8_t *raw_data, uint16_t *len)
 {
 	if ((!cmd_apdu) || (!raw_data) || (!len)) {
 		return -EINVAL;
@@ -74,7 +74,7 @@ static int nfc_t4t_apdu_comm_args_validate(const struct nfc_t4t_apdu_comm *cmd_a
 }
 
 int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
-			     u8_t *raw_data, u16_t *len)
+			     uint8_t *raw_data, uint16_t *len)
 {
 	int err;
 
@@ -87,7 +87,7 @@ int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
 	/* Check if there is enough memory in the provided buffer to store
 	 * described C-APDU.
 	 */
-	u16_t comm_apdu_len = nfc_t4t_apdu_comm_size_calc(cmd_apdu);
+	uint16_t comm_apdu_len = nfc_t4t_apdu_comm_size_calc(cmd_apdu);
 
 	if (comm_apdu_len > *len) {
 		return -ENOMEM;
@@ -100,7 +100,7 @@ int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
 	*raw_data++ = cmd_apdu->instruction;
 
 	sys_put_be16(cmd_apdu->parameter, raw_data);
-	raw_data += sizeof(u16_t);
+	raw_data += sizeof(uint16_t);
 
 	/* Check if optional data field should be included. */
 	if (cmd_apdu->data.buff) {
@@ -109,7 +109,7 @@ int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
 			*raw_data++ = LC_LONG_FORMAT_TOKEN;
 
 			sys_put_be16(cmd_apdu->data.len, raw_data);
-			raw_data += sizeof(u16_t);
+			raw_data += sizeof(uint16_t);
 		} else {
 			/* Use short data length encoding. */
 			*raw_data++ = cmd_apdu->data.len;
@@ -126,7 +126,7 @@ int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
 		/* Use long response length encoding. */
 		if (cmd_apdu->resp_len > LE_LONG_FORMAT_THR) {
 			sys_put_be16(cmd_apdu->resp_len, raw_data);
-			raw_data += sizeof(u16_t);
+			raw_data += sizeof(uint16_t);
 		} else {
 			/* Use short response length encoding. */
 			if (cmd_apdu->resp_len == LE_LONG_FORMAT_THR) {
@@ -141,8 +141,8 @@ int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
 }
 
 static int nfc_t4t_apdu_resp_args_validate(const struct nfc_t4t_apdu_resp *resp_apdu,
-					   const u8_t *raw_data,
-					   u16_t len)
+					   const uint8_t *raw_data,
+					   uint16_t len)
 {
 	if ((!resp_apdu) || (!raw_data)) {
 		return -EINVAL;
@@ -156,8 +156,8 @@ static int nfc_t4t_apdu_resp_args_validate(const struct nfc_t4t_apdu_resp *resp_
 }
 
 int nfc_t4t_apdu_resp_decode(struct nfc_t4t_apdu_resp *resp_apdu,
-			     const u8_t *raw_data,
-			     u16_t len)
+			     const uint8_t *raw_data,
+			     uint16_t len)
 {
 	int err;
 
@@ -172,7 +172,7 @@ int nfc_t4t_apdu_resp_decode(struct nfc_t4t_apdu_resp *resp_apdu,
 	/*  Optional data field is present in R-APDU. */
 	if (len > STATUS_SIZE) {
 		resp_apdu->data.len = len - STATUS_SIZE;
-		resp_apdu->data.buff = (u8_t *)raw_data;
+		resp_apdu->data.buff = (uint8_t *)raw_data;
 	}
 
 	resp_apdu->status = sys_get_be16(raw_data + resp_apdu->data.len);

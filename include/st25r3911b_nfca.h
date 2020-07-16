@@ -68,7 +68,7 @@ enum st25r3911b_nfca_detect_cmd {
  */
 struct st25r3911b_nfca_buf {
 	/** Data to TX/RX. */
-	u8_t *data;
+	uint8_t *data;
 
 	/** Data length. */
 	size_t len;
@@ -78,10 +78,10 @@ struct st25r3911b_nfca_buf {
  */
 struct st25r3911b_nfca_sens_resp {
 	/** Anticollision data. */
-	u8_t anticollison;
+	uint8_t anticollison;
 
 	/** Platform information data.*/
-	u8_t platform_info;
+	uint8_t platform_info;
 };
 
 /** @brief NFC-A Tag information.
@@ -94,13 +94,13 @@ struct st25r3911b_nfca_tag_info {
 	struct st25r3911b_nfca_sens_resp sens_resp;
 
 	/** SEL response. */
-	u8_t sel_resp;
+	uint8_t sel_resp;
 
 	/** NFCID1 length. */
-	u8_t nfcid1_len;
+	uint8_t nfcid1_len;
 
 	/** NFCID1. */
-	u8_t nfcid1[ST25R3911B_NFCA_NFCID1_MAX_LEN];
+	uint8_t nfcid1[ST25R3911B_NFCA_NFCID1_MAX_LEN];
 
 	/** Tag sleep.*/
 	bool sleep;
@@ -110,7 +110,7 @@ struct st25r3911b_nfca_tag_info {
  */
 struct st25r3911b_nfca_crc {
 	/** CRC - 16. */
-	u8_t crc[ST25R3911B_NFCA_CRC_LEN];
+	uint8_t crc[ST25R3911B_NFCA_CRC_LEN];
 };
 
 /** @brief NFC-A callback.
@@ -150,7 +150,7 @@ struct st25r3911b_nfca_cb {
 	 *  @param len Received data length.
 	 *  @param err Transfer error. If 0, the transfer was successful.
 	 */
-	void (*transfer_completed)(const u8_t *data, size_t len, int err);
+	void (*transfer_completed)(const uint8_t *data, size_t len, int err);
 
 	/** @brief NFC-A receive time-out.
 	 *
@@ -175,7 +175,7 @@ struct st25r3911b_nfca_cb {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_nfca_init(struct k_poll_event *events, u8_t cnt,
+int st25r3911b_nfca_init(struct k_poll_event *events, uint8_t cnt,
 			  const struct st25r3911b_nfca_cb *cb);
 
 /** @brief Switch on the NFC Reader field.
@@ -238,7 +238,7 @@ int st25r3911b_nfca_anticollision_start(void);
  */
 int st25r3911b_nfca_transfer(const struct st25r3911b_nfca_buf *tx,
 			     const struct st25r3911b_nfca_buf *rx,
-			     u32_t fdt, bool auto_crc);
+			     uint32_t fdt, bool auto_crc);
 
 /** @brief Exchange the specified amount of data with an automatically
  *         generated CRC.
@@ -253,7 +253,7 @@ int st25r3911b_nfca_transfer(const struct st25r3911b_nfca_buf *tx,
  */
 static inline int st25r3911b_nfca_transfer_with_crc(const struct st25r3911b_nfca_buf *tx,
 						    const struct st25r3911b_nfca_buf *rx,
-						    u32_t fdt)
+						    uint32_t fdt)
 {
 	return st25r3911b_nfca_transfer(tx, rx, fdt, true);
 }
@@ -273,7 +273,7 @@ static inline int st25r3911b_nfca_transfer_with_crc(const struct st25r3911b_nfca
  */
 static inline int st25r3911b_nfca_transfer_without_crc(const struct st25r3911b_nfca_buf *tx,
 						       const struct st25r3911b_nfca_buf *rx,
-						       u32_t fdt)
+						       uint32_t fdt)
 {
 	return st25r3911b_nfca_transfer(tx, rx, fdt, false);
 }
@@ -300,7 +300,7 @@ int st25r3911b_nfca_tag_sleep(void);
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int st25r3911b_nfca_crc_calculate(const u8_t *data, size_t len,
+int st25r3911b_nfca_crc_calculate(const uint8_t *data, size_t len,
 				  struct st25r3911b_nfca_crc *crc_val);
 
 /** @brief Process NFC-A library.

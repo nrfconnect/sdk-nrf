@@ -30,7 +30,7 @@ static void update_location_data(struct gps_nmea *nmea)
 static void gps_event_handler(struct device *dev, struct gps_event *evt)
 {
 	ARG_UNUSED(dev);
-	static u32_t timestamp_prev;
+	static uint32_t timestamp_prev;
 
 	if (evt->type != GPS_EVT_NMEA_FIX) {
 		return;

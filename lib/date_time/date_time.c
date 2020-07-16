@@ -44,7 +44,7 @@ K_SEM_DEFINE(time_fetch_sem, 0, 1);
 static struct k_delayed_work time_work;
 
 static struct time_aux {
-	s64_t date_time_utc;
+	int64_t date_time_utc;
 	int last_date_time_update;
 } time_aux;
 
@@ -111,14 +111,14 @@ static int time_modem_get(void)
 		return -ENODATA;
 	}
 
-	time_aux.date_time_utc = (s64_t)timeutil_timegm64(&date_time) * 1000;
+	time_aux.date_time_utc = (int64_t)timeutil_timegm64(&date_time) * 1000;
 	time_aux.last_date_time_update = k_uptime_get();
 
 	return 0;
 }
 #endif
 
-static int sntp_time_request(struct ntp_servers *server, u32_t timeout,
+static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
 			     struct sntp_time *time)
 {
 	int err;
@@ -174,7 +174,7 @@ static int time_NTP_server_get(void)
 
 		LOG_DBG("Got time response from NTP server %s",
 			log_strdup(servers[i].server_str));
-		time_aux.date_time_utc = (s64_t)sntp_time.seconds * 1000;
+		time_aux.date_time_utc = (int64_t)sntp_time.seconds * 1000;
 		time_aux.last_date_time_update = k_uptime_get();
 		return 0;
 	}
@@ -271,10 +271,10 @@ static int date_time_init(struct device *unused)
 void date_time_set(const struct tm *new_date_time)
 {
 	time_aux.last_date_time_update = k_uptime_get();
-	time_aux.date_time_utc = (s64_t)timeutil_timegm64(new_date_time) * 1000;
+	time_aux.date_time_utc = (int64_t)timeutil_timegm64(new_date_time) * 1000;
 }
 
-int date_time_uptime_to_unix_time_ms(s64_t *uptime)
+int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 {
 	if (!initial_valid_time) {
 		LOG_ERR("Valid time not currently available, requesting time");
@@ -287,7 +287,7 @@ int date_time_uptime_to_unix_time_ms(s64_t *uptime)
 	return 0;
 }
 
-int date_time_now(s64_t *unix_time_ms)
+int date_time_now(int64_t *unix_time_ms)
 {
 	*unix_time_ms = k_uptime_get();
 

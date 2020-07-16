@@ -28,21 +28,21 @@
 #define CHAN_TO_FREQ(_channel) (2400 + _channel)
 
 /* Buffer for the radio TX packet */
-static u8_t tx_packet[RADIO_MAX_PAYLOAD_LEN];
+static uint8_t tx_packet[RADIO_MAX_PAYLOAD_LEN];
 /* Buffer for the radio RX packet. */
-static u8_t rx_packet[RADIO_MAX_PAYLOAD_LEN];
+static uint8_t rx_packet[RADIO_MAX_PAYLOAD_LEN];
 /* Number of transmitted packets. */
-static u32_t tx_packet_cnt;
+static uint32_t tx_packet_cnt;
 /* Number of received packets with valid CRC. */
-static u32_t rx_packet_cnt;
+static uint32_t rx_packet_cnt;
 
 /* Radio current channel (frequency). */
-static u8_t current_channel;
+static uint8_t current_channel;
 
 /* Timer used for channel sweeps and tx with duty cycle. */
 static const nrfx_timer_t timer = NRFX_TIMER_INSTANCE(0);
 
-static u8_t rnd8(void)
+static uint8_t rnd8(void)
 {
 	nrf_rng_event_clear(NRF_RNG, NRF_RNG_EVENT_VALRDY);
 
@@ -52,7 +52,7 @@ static u8_t rnd8(void)
 	return nrf_rng_random_value_get(NRF_RNG);
 }
 
-static void radio_channel_set(nrf_radio_mode_t mode, u8_t channel)
+static void radio_channel_set(nrf_radio_mode_t mode, uint8_t channel)
 {
 #if USE_MORE_RADIO_MODES
 	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
@@ -190,7 +190,7 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 	nrf_radio_packet_configure(NRF_RADIO, &packet_conf);
 }
 
-static void generate_modulated_rf_packet(u8_t mode,
+static void generate_modulated_rf_packet(uint8_t mode,
 					 enum transmit_pattern pattern)
 {
 	radio_config(mode, pattern);
@@ -207,7 +207,7 @@ static void generate_modulated_rf_packet(u8_t mode,
 #endif /* USE_MORE_RADIO_MODES */
 
 	/* Fill payload with random data. */
-	for (u8_t i = 0; i < sizeof(tx_packet) - 1; i++) {
+	for (uint8_t i = 0; i < sizeof(tx_packet) - 1; i++) {
 		if (pattern == TRANSMIT_PATTERN_RANDOM) {
 			tx_packet[i + 1] = rnd8();
 		} else if (pattern == TRANSMIT_PATTERN_11001100) {
@@ -234,7 +234,7 @@ static void radio_disable(void)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 }
 
-static void radio_unmodulated_tx_carrier(u8_t mode, u8_t txpower, u8_t channel)
+static void radio_unmodulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t channel)
 {
 	radio_disable();
 
@@ -247,7 +247,7 @@ static void radio_unmodulated_tx_carrier(u8_t mode, u8_t txpower, u8_t channel)
 	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
 }
 
-static void radio_modulated_tx_carrier(u8_t mode, u8_t txpower, u8_t channel,
+static void radio_modulated_tx_carrier(uint8_t mode, uint8_t txpower, uint8_t channel,
 				       enum transmit_pattern pattern)
 {
 	radio_disable();
@@ -293,7 +293,7 @@ static void radio_modulated_tx_carrier(u8_t mode, u8_t txpower, u8_t channel,
 	}
 }
 
-static void radio_rx(u8_t mode, u8_t channel, enum transmit_pattern pattern)
+static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern pattern)
 {
 	radio_disable();
 
@@ -312,7 +312,7 @@ static void radio_rx(u8_t mode, u8_t channel, enum transmit_pattern pattern)
 	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 }
 
-static void radio_sweep_start(u8_t channel, u32_t delay_ms)
+static void radio_sweep_start(uint8_t channel, uint32_t delay_ms)
 {
 	current_channel = channel;
 
@@ -330,23 +330,23 @@ static void radio_sweep_start(u8_t channel, u32_t delay_ms)
 	nrfx_timer_enable(&timer);
 }
 
-static void radio_modulated_tx_carrier_duty_cycle(u8_t mode, u8_t txpower,
-						  u8_t channel,
+static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, uint8_t txpower,
+						  uint8_t channel,
 						  enum transmit_pattern pattern,
-						  u32_t duty_cycle)
+						  uint32_t duty_cycle)
 {
 	/* Lookup table with time per byte in each radio MODE
 	 * Mapped per NRF_RADIO->MODE available on nRF5-series devices
 	 */
-	static const u8_t time_in_us_per_byte[16] = {
+	static const uint8_t time_in_us_per_byte[16] = {
 		8, 4, 32, 8, 4, 64, 16, 0, 0, 0, 0, 0, 0, 0, 0, 32
 	};
 
 	/* 1 byte preamble, 5 byte address (BALEN + PREFIX),
 	 * and sizeof(payload), no CRC
 	 */
-	const u32_t total_payload_size     = 1 + 5 + sizeof(tx_packet);
-	const u32_t total_time_per_payload =
+	const uint32_t total_payload_size     = 1 + 5 + sizeof(tx_packet);
+	const uint32_t total_time_per_payload =
 		time_in_us_per_byte[mode] * total_payload_size;
 
 	/* Duty cycle = 100 * Time_on / (time_on + time_off),
@@ -354,7 +354,7 @@ static void radio_modulated_tx_carrier_duty_cycle(u8_t mode, u8_t txpower,
 	 * In addition, the timer includes the "total_time_per_payload",
 	 * so we need to add this to the total timer cycle.
 	 */
-	u32_t delay_time = total_time_per_payload +
+	uint32_t delay_time = total_time_per_payload +
 			   ((100 * total_time_per_payload -
 			   (total_time_per_payload * duty_cycle)) /
 			   duty_cycle);
@@ -450,7 +450,7 @@ void radio_rx_stats_get(struct radio_rx_stats *rx_stats)
 }
 
 #if NRF_POWER_HAS_DCDCEN_VDDH || NRF_POWER_HAS_DCDCEN
-void toggle_dcdc_state(u8_t dcdc_state)
+void toggle_dcdc_state(uint8_t dcdc_state)
 {
 	bool is_enabled;
 
@@ -478,8 +478,8 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 		(const struct radio_test_config *) context;
 
 	if (event_type == NRF_TIMER_EVENT_COMPARE0) {
-		u8_t channel_start;
-		u8_t channel_end;
+		uint8_t channel_start;
+		uint8_t channel_end;
 
 		if (config->type == TX_SWEEP) {
 			radio_unmodulated_tx_carrier(config->mode,

@@ -36,19 +36,19 @@ extern "C" {
 /** EnOcean sensor data message. */
 struct bt_enocean_sensor_data {
 	bool *occupancy; /**< Current occupancy status. */
-	u16_t *light_sensor; /**< Light level in sensor (lx). */
-	u16_t *battery_voltage; /**< Backup battery voltage (mV). */
-	u16_t *light_solar_cell; /**< Light level in solar cell (lx). */
-	u8_t *energy_lvl; /**< Energy level (percent). */
+	uint16_t *light_sensor; /**< Light level in sensor (lx). */
+	uint16_t *battery_voltage; /**< Backup battery voltage (mV). */
+	uint16_t *light_solar_cell; /**< Light level in solar cell (lx). */
+	uint8_t *energy_lvl; /**< Energy level (percent). */
 };
 
 /** EnOcean device representation. */
 struct bt_enocean_device {
-	u32_t seq;  /**< Most recent sequence number. */
-	u8_t flags; /**< Internal flags field. */
-	s8_t rssi; /**< Most recent RSSI measurement. */
+	uint32_t seq;  /**< Most recent sequence number. */
+	uint8_t flags; /**< Internal flags field. */
+	int8_t rssi; /**< Most recent RSSI measurement. */
 	bt_addr_le_t addr; /**< Device address. */
-	u8_t key[16]; /**< Device key. */
+	uint8_t key[16]; /**< Device key. */
 };
 
 /** Type of button event */
@@ -77,8 +77,8 @@ struct bt_enocean_callbacks {
 	 *  @param opt_data_len Length of the optional data.
 	 */
 	void (*button)(struct bt_enocean_device *device,
-		       enum bt_enocean_button_action action, u8_t changed,
-		       const u8_t *opt_data, size_t opt_data_len);
+		       enum bt_enocean_button_action action, uint8_t changed,
+		       const uint8_t *opt_data, size_t opt_data_len);
 
 	/** @brief Callback for EnOcean Sensor reports.
 	 *
@@ -95,7 +95,7 @@ struct bt_enocean_callbacks {
 	 */
 	void (*sensor)(struct bt_enocean_device *device,
 		       const struct bt_enocean_sensor_data *data,
-		       const u8_t *opt_data, size_t opt_data_len);
+		       const uint8_t *opt_data, size_t opt_data_len);
 
 	/** @brief Callback for EnOcean commissioning.
 	 *
@@ -167,8 +167,8 @@ void bt_enocean_commissioning_disable(void);
  *  @retval -ECANCELED The commissioning callback rejected the device.
  *  @retval -EBUSY     Failed allocating persistent storage data.
  */
-int bt_enocean_commission(const bt_addr_le_t *addr, const u8_t key[16],
-			  u32_t seq);
+int bt_enocean_commission(const bt_addr_le_t *addr, const uint8_t key[16],
+			  uint32_t seq);
 
 /** @brief Forget an EnOcean device.
  *
@@ -188,7 +188,7 @@ void bt_enocean_decommission(struct bt_enocean_device *dev);
  *
  *  @return The number of devices visited.
  */
-u32_t bt_enocean_foreach(bt_enocean_foreach_cb_t cb, void *user_data);
+uint32_t bt_enocean_foreach(bt_enocean_foreach_cb_t cb, void *user_data);
 
 #ifdef __cplusplus
 }

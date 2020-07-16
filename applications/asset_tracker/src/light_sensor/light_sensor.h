@@ -25,10 +25,10 @@ extern "C" {
 
 struct light_sensor_data {
 	/* light levels in lux */
-	s32_t red;
-	s32_t green;
-	s32_t blue;
-	s32_t ir;
+	int32_t red;
+	int32_t green;
+	int32_t blue;
+	int32_t ir;
 };
 
 typedef void (*light_sensor_data_ready_cb)(void);
@@ -56,14 +56,14 @@ int light_sensor_get_data(struct light_sensor_data *const data);
  * @param interval_s Interval, in seconds. 0 to disable.
  *
  */
-void light_sensor_set_send_interval(const u32_t interval_s);
+void light_sensor_set_send_interval(const uint32_t interval_s);
 
 /**
  * @brief Get light sensor's poll/send interval.
  *
  * @return Interval, in seconds.
  */
-u32_t light_sensor_get_send_interval(void);
+uint32_t light_sensor_get_send_interval(void);
 
 /**
  * @brief Perform an immediate poll of the light sensor.

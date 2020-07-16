@@ -33,7 +33,7 @@ struct enqueued_event_item {
 
 struct hids_subscriber {
 	struct bt_gatt_hids_c hidc;
-	u16_t pid;
+	uint16_t pid;
 };
 
 static struct hids_subscriber subscribers[CONFIG_BT_MAX_CONN];
@@ -73,7 +73,7 @@ static void enqueue_hid_event(struct hid_report_event *event)
 	}
 }
 
-static void forward_hid_report(u8_t report_id, const u8_t *data, size_t size)
+static void forward_hid_report(uint8_t report_id, const uint8_t *data, size_t size)
 {
 	struct hid_report_event *event = new_hid_report_event(size + sizeof(report_id));
 
@@ -101,10 +101,10 @@ static void forward_hid_report(u8_t report_id, const u8_t *data, size_t size)
 	k_spin_unlock(&lock, key);
 }
 
-static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
+static uint8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 		      struct bt_gatt_hids_c_rep_info *rep,
-		      u8_t err,
-		      const u8_t *data)
+		      uint8_t err,
+		      const uint8_t *data)
 {
 	if (!data) {
 		return BT_GATT_ITER_STOP;
@@ -114,7 +114,7 @@ static u8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 		return BT_GATT_ITER_CONTINUE;
 	}
 
-	u8_t report_id = bt_gatt_hids_c_rep_id(rep);
+	uint8_t report_id = bt_gatt_hids_c_rep_id(rep);
 	size_t size = bt_gatt_hids_c_rep_size(rep);
 
 	__ASSERT_NO_MSG((report_id != REPORT_ID_RESERVED) &&
@@ -173,7 +173,7 @@ static void init(void)
 	sys_slist_init(&enqueued_event_list);
 }
 
-static int register_subscriber(struct bt_gatt_dm *dm, u16_t pid)
+static int register_subscriber(struct bt_gatt_dm *dm, uint16_t pid)
 {
 	size_t i;
 	for (i = 0; i < ARRAY_SIZE(subscribers); i++) {
@@ -205,7 +205,7 @@ static void notify_config_forwarded(enum config_status status)
 
 static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 			  struct bt_gatt_hids_c_rep_info *rep,
-			  u8_t err)
+			  uint8_t err)
 {
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
@@ -215,9 +215,9 @@ static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 	}
 }
 
-static u8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
+static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 			  struct bt_gatt_hids_c_rep_info *rep,
-			  u8_t err, const u8_t *data)
+			  uint8_t err, const uint8_t *data)
 {
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
@@ -255,7 +255,7 @@ static u8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 	return 0;
 }
 
-static struct hids_subscriber *find_subscriber_hidc(u16_t pid)
+static struct hids_subscriber *find_subscriber_hidc(uint16_t pid)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 		if (subscribers[i].pid == pid) {
@@ -314,7 +314,7 @@ static void handle_config_forward(const struct config_forward_event *event)
 	}
 
 	struct config_channel_frame frame;
-	u8_t report[REPORT_SIZE_USER_CONFIG];
+	uint8_t report[REPORT_SIZE_USER_CONFIG];
 
 	if (event->status == CONFIG_STATUS_FETCH) {
 		LOG_INF("Forwarding fetch request");
@@ -326,7 +326,7 @@ static void handle_config_forward(const struct config_forward_event *event)
 	frame.recipient = event->recipient;
 	frame.event_id = event->id;
 	frame.event_data_len = event->dyndata.size;
-	frame.event_data = (u8_t *)event->dyndata.data;
+	frame.event_data = (uint8_t *)event->dyndata.data;
 
 	int pos = config_channel_report_fill(report, sizeof(report), &frame,
 					     false);
@@ -423,14 +423,14 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 
 	while (NULL != (rep = bt_gatt_hids_c_rep_next(&subscriber->hidc, rep))) {
 		if (bt_gatt_hids_c_rep_type(rep) == BT_GATT_HIDS_REPORT_TYPE_INPUT) {
-			u8_t report_id = bt_gatt_hids_c_rep_id(rep);
+			uint8_t report_id = bt_gatt_hids_c_rep_id(rep);
 			size_t size = bt_gatt_hids_c_rep_size(rep);
 
 			__ASSERT_NO_MSG((report_id != REPORT_ID_RESERVED) &&
 					(report_id < REPORT_ID_COUNT));
 
 			/* Release all pressed keys. */
-			u8_t empty_data[size];
+			uint8_t empty_data[size];
 
 			memset(empty_data, 0, sizeof(empty_data));
 

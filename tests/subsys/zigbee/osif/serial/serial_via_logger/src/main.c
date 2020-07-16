@@ -15,13 +15,13 @@
 #include "log_mock.h"
 
 
-static u8_t test_logger_data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+static uint8_t test_logger_data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 				  11, 12, 13, 14, 15, 16, 17, 18};
 
 
 static void test_logger(void)
 {
-	s32_t i;
+	int32_t i;
 
 	zb_osif_serial_put_bytes(test_logger_data,
 				 ARRAY_SIZE(test_logger_data));

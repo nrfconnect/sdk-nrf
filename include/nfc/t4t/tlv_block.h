@@ -56,10 +56,10 @@ enum nfc_t4t_tlv_block_type {
  */
 struct nfc_t4t_tlv_block_file {
 	/** Pointer to the file content. */
-	u8_t *content;
+	uint8_t *content;
 
 	/** Length of file content. */
-	u16_t len;
+	uint16_t len;
 };
 
 /**@brief Extended NDEF/NDEF/Proprietary File Control Value descriptor.
@@ -70,16 +70,16 @@ struct nfc_t4t_tlv_block_file_control_val {
 	struct nfc_t4t_tlv_block_file file;
 
 	/** Maximum size (in bytes) of the file. */
-	u32_t max_file_size;
+	uint32_t max_file_size;
 
 	/** File identifier. */
-	u16_t file_id;
+	uint16_t file_id;
 
 	/** File read access condition. */
-	u8_t read_access;
+	uint8_t read_access;
 
 	/** File write access condition. */
-	u8_t write_access;
+	uint8_t write_access;
 };
 
 /**@brief File Control TLV block descriptor.
@@ -89,10 +89,10 @@ struct nfc_t4t_tlv_block {
 	struct nfc_t4t_tlv_block_file_control_val value;
 
 	/** Length of the value field. */
-	u16_t length;
+	uint16_t length;
 
 	/** Type of the TLV block. */
-	u8_t type;
+	uint8_t type;
 };
 
 /**@brief Function for parsing raw data of File Control TLV, read from
@@ -112,8 +112,8 @@ struct nfc_t4t_tlv_block {
  *            Otherwise, a (negative) error code is returned.
  */
 int nfc_t4t_tlv_block_parse(struct nfc_t4t_tlv_block *file_control_tlv,
-			    const u8_t *raw_data,
-			    u16_t *len);
+			    const uint8_t *raw_data,
+			    uint16_t *len);
 
 /**@brief Function for printing TLV block descriptor.
  *
@@ -122,7 +122,7 @@ int nfc_t4t_tlv_block_parse(struct nfc_t4t_tlv_block *file_control_tlv,
  *  @param[in] num TLV block number.
  *  @param[in] t4t_tlv_block Pointer to the TLV block descriptor.
  */
-void nfc_t4t_tlv_block_printout(u8_t num, const struct nfc_t4t_tlv_block *t4t_tlv_block);
+void nfc_t4t_tlv_block_printout(uint8_t num, const struct nfc_t4t_tlv_block *t4t_tlv_block);
 
 /**
  *@}

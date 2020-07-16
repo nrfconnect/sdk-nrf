@@ -29,8 +29,8 @@ struct led {
 	const struct led_effect *state_effect;
 	struct led_effect led_stream_effect;
 	struct led_effect_step steps_queue[STEPS_QUEUE_ARRAY_SIZE];
-	u8_t rx_idx;
-	u8_t tx_idx;
+	uint8_t rx_idx;
+	uint8_t tx_idx;
 	bool streaming;
 };
 
@@ -55,12 +55,12 @@ static size_t next_index(size_t index)
 	return (index + 1) % STEPS_QUEUE_ARRAY_SIZE;
 }
 
-static bool queue_data(const u8_t *data, const size_t size, struct led *led)
+static bool queue_data(const uint8_t *data, const size_t size, struct led *led)
 {
 	static const size_t min_len = CONFIG_DESKTOP_LED_COLOR_COUNT * sizeof(led->steps_queue[led->rx_idx].color.c[0])
 			 + sizeof(led->steps_queue[led->rx_idx].substep_count)
 			 + sizeof(led->steps_queue[led->rx_idx].substep_time)
-			 + sizeof(u8_t); /* LED ID */
+			 + sizeof(uint8_t); /* LED ID */
 
 	BUILD_ASSERT(min_len <= LED_STREAM_DATA_SIZE, "");
 
@@ -119,7 +119,7 @@ static bool is_queue_empty(struct led *led)
 	return led->rx_idx == led->tx_idx;
 }
 
-static bool store_data(const u8_t *data, const size_t size, struct led *led)
+static bool store_data(const uint8_t *data, const size_t size, struct led *led)
 {
 	size_t free_places = count_free_places(led);
 
@@ -155,7 +155,7 @@ static void send_data_from_queue(struct led *led)
 	}
 }
 
-static void handle_incoming_step(const u8_t *data, const size_t size)
+static void handle_incoming_step(const uint8_t *data, const size_t size)
 {
 	if (!initialized) {
 		LOG_WRN("Not initialized");
@@ -184,7 +184,7 @@ static void handle_incoming_step(const u8_t *data, const size_t size)
 	}
 }
 
-static void config_set(const u8_t opt_id, const u8_t *data, const size_t size)
+static void config_set(const uint8_t opt_id, const uint8_t *data, const size_t size)
 {
 	switch (opt_id) {
 	case LED_STREAM_OPT_SET_LED_EFFECT:
@@ -197,9 +197,9 @@ static void config_set(const u8_t opt_id, const u8_t *data, const size_t size)
 	}
 }
 
-static void fetch_leds_state(u8_t *data, size_t *size)
+static void fetch_leds_state(uint8_t *data, size_t *size)
 {
-	u8_t free_places;
+	uint8_t free_places;
 
 	BUILD_ASSERT(sizeof(initialized) + ARRAY_SIZE(leds) * sizeof(free_places) <=
 		     CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
@@ -222,7 +222,7 @@ static void fetch_leds_state(u8_t *data, size_t *size)
 	*size = pos;
 }
 
-static void config_get(const u8_t opt_id, u8_t *data, size_t *size)
+static void config_get(const uint8_t opt_id, uint8_t *data, size_t *size)
 {
 	switch (opt_id) {
 	case LED_STREAM_OPT_GET_LEDS_STATE:

@@ -105,7 +105,7 @@ struct bt_scan_filter_info {
 	bool enabled;
 
 	/** Filter count. */
-	u8_t cnt;
+	uint8_t cnt;
 };
 
 /**@brief Filter status structure.
@@ -139,10 +139,10 @@ struct bt_scan_adv_info {
 	/** BLE advertising type. According to
 	 *  Bluetooth Specification 7.8.5
 	 */
-	u8_t adv_type;
+	uint8_t adv_type;
 
 	/** Received Signal Strength Indication in dBm. */
-	s8_t rssi;
+	int8_t rssi;
 };
 
 /**@brief A helper structure to set filters for the name.
@@ -152,17 +152,17 @@ struct bt_scan_short_name {
 	const char *name;
 
 	/** Minimum length of the short name. */
-	u8_t min_len;
+	uint8_t min_len;
 };
 
 /**@brief A helper structure to set filters for the manufacturer data.
  */
 struct bt_scan_manufacturer_data {
 	/** Pointer to the manufacturer data. */
-	u8_t *data;
+	uint8_t *data;
 
 	/** Manufacturer data length. */
-	u8_t data_len;
+	uint8_t data_len;
 };
 
 /**@brief Structure for Scanning Module initialization.
@@ -196,7 +196,7 @@ struct bt_scan_name_filter_status {
 	const char *name;
 
 	/** Length of the matched name. */
-	u8_t len;
+	uint8_t len;
 };
 
 /**@brief Address filter status structure, used to inform the application
@@ -221,7 +221,7 @@ struct bt_scan_uuid_filter_status {
 	const struct bt_uuid *uuid[CONFIG_BT_SCAN_UUID_CNT];
 
 	/** Matched UUID count. */
-	u8_t count;
+	uint8_t count;
 };
 
 /**@brief Appearance filter status structure, used to inform the application
@@ -232,7 +232,7 @@ struct bt_scan_appearance_filter_status {
 	bool match;
 
 	/** Pointer to the matched filter appearance. */
-	const u16_t *appearance;
+	const uint16_t *appearance;
 };
 
 /**@brief Manufacturer data filter status structure, used to inform the
@@ -243,10 +243,10 @@ struct bt_scan_manufacturer_data_filter_status {
 	bool match;
 
 	/** Pointer to the matched filter manufacturer data. */
-	const u8_t *data;
+	const uint8_t *data;
 
 	/** Length of the matched manufacturer data. */
-	u8_t len;
+	uint8_t len;
 };
 
 /**@brief Structure for setting the filter status.
@@ -453,7 +453,7 @@ void bt_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param);
  *	     code is returned.
  *
  */
-int bt_scan_filter_enable(u8_t mode, bool match_all);
+int bt_scan_filter_enable(uint8_t mode, bool match_all);
 
 /**@brief Function for disabling filtering.
  *

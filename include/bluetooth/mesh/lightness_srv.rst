@@ -23,7 +23,7 @@ States
 
 The Generic Power OnOff Server model contains the following states:
 
-Light: ``u16_t``
+Light: ``uint16_t``
     The Light state represents the emitted light level of an element, and ranges from ``0`` to ``65535``.
     The Light state is bound to the Generic Level State of the extended :ref:`bt_mesh_lvl_srv_readme`:
 
@@ -49,7 +49,7 @@ Light: ``u16_t``
 
     Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_lightness_srv_handlers` handler structure.
 
-Default Light: ``s16_t``
+Default Light: ``int16_t``
     The Default Light state is a meta state that controls the default non-zero Light level.
     It is used when the light is turned on, but its exact level is not specified.
 

@@ -131,7 +131,7 @@
 	sck-pin = <3>;
 	mosi-pin = <4>;
 	miso-pin = <5>;
-	cs-gpios = <&gpio0 8 0>, <&gpio0 7 0>;
+	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>, <&gpio0 7 GPIO_ACTIVE_LOW>;
 
 	adxl362@0 {
 		compatible = "adi,adxl362";

@@ -16,10 +16,10 @@ LOG_MODULE_REGISTER(MODULE);
 
 #define USB_SERIALNUMBER_TEMPLATE "THINGY91_%04X%08X"
 
-static u8_t usb_serial_str[] = "THINGY91_12PLACEHLDRS";
+static uint8_t usb_serial_str[] = "THINGY91_12PLACEHLDRS";
 
 /* Overriding weak function to set iSerialNumber at runtime. */
-u8_t *usb_update_sn_string_descriptor(void)
+uint8_t *usb_update_sn_string_descriptor(void)
 {
 	snprintk(usb_serial_str, sizeof(usb_serial_str), USB_SERIALNUMBER_TEMPLATE,
 				(uint32_t)(NRF_FICR->DEVICEADDR[1] & 0x0000FFFF)|0x0000C000,

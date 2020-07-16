@@ -37,7 +37,7 @@ int cert_provision(void)
 	BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 	int err;
 	bool exists;
-	u8_t unused;
+	uint8_t unused;
 
 	err = modem_key_mgmt_exists(TLS_SEC_TAG,
 				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
@@ -129,7 +129,7 @@ static int led_app_version(void)
 }
 
 void dfu_button_pressed(struct device *gpiob, struct gpio_callback *cb,
-			u32_t pins)
+			uint32_t pins)
 {
 	k_work_submit(&fota_work);
 	gpio_pin_interrupt_configure(gpiob, DT_GPIO_PIN(DT_ALIAS(sw0), gpios),

@@ -85,8 +85,8 @@ enum state {
 
 struct bond_find_data {
 	bt_addr_le_t peer_address;
-	u8_t peer_id;
-	u8_t peer_count;
+	uint8_t peer_id;
+	uint8_t peer_count;
 };
 
 /* When using BT_LE_ADV_OPT_USE_NAME, device name is added to scan response
@@ -99,7 +99,7 @@ static bool adv_swift_pair;
 
 static struct k_delayed_work adv_update;
 static struct k_delayed_work sp_grace_period_to;
-static u8_t cur_identity = BT_ID_DEFAULT; /* We expect zero */
+static uint8_t cur_identity = BT_ID_DEFAULT; /* We expect zero */
 
 enum peer_rpa {
 	PEER_RPA_ERASED,

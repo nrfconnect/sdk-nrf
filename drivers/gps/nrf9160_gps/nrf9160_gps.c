@@ -68,7 +68,7 @@ struct nrf9160_gps_config {
 
 static int stop_gps(struct device *dev, bool is_timeout);
 
-static u64_t fix_timestamp;
+static uint64_t fix_timestamp;
 
 static nrf_gnss_agps_data_type_t type_lookup_gps2socket[] = {
 	[GPS_AGPS_UTC_PARAMETERS]	= NRF_GNSS_AGPS_UTC_PARAMETERS,
@@ -136,12 +136,12 @@ static bool pvt_deadline_missed(nrf_gnss_pvt_data_frame_t *pvt)
 
 static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 {
-	u8_t  n_tracked = 0;
-	u8_t  n_used = 0;
-	u8_t  n_unhealthy = 0;
+	uint8_t  n_tracked = 0;
+	uint8_t  n_used = 0;
+	uint8_t  n_unhealthy = 0;
 
 	for (int i = 0; i < NRF_GNSS_MAX_SATELLITES; ++i) {
-		u8_t sv = pvt_data->pvt.sv[i].sv;
+		uint8_t sv = pvt_data->pvt.sv[i].sv;
 		bool used = (pvt_data->pvt.sv[i].flags &
 			     NRF_GNSS_SV_FLAG_USED_IN_FIX) ? true : false;
 		bool unhealthy = (pvt_data->pvt.sv[i].flags &
@@ -699,7 +699,7 @@ static void timeout_work_fn(struct k_work *work)
 	stop_gps(dev, true);
 
 	if (drv_data->current_cfg.nav_mode == GPS_NAV_MODE_PERIODIC) {
-		u32_t start_delay = drv_data->current_cfg.interval -
+		uint32_t start_delay = drv_data->current_cfg.interval -
 				    drv_data->current_cfg.timeout;
 
 		k_delayed_work_submit(&drv_data->start_work,

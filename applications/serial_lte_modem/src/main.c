@@ -58,7 +58,7 @@ static void exit_idle(struct k_work *work)
 }
 
 static void gpio_callback(struct device *dev,
-		     struct gpio_callback *gpio_cb, u32_t pins)
+		     struct gpio_callback *gpio_cb, uint32_t pins)
 {
 	k_work_submit_to_queue(&slm_work_q, &exit_idle_work);
 }
@@ -154,7 +154,7 @@ void start_execute(void)
 #if defined(CONFIG_SLM_GPIO_WAKEUP)
 void main(void)
 {
-	u32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
+	uint32_t rr = nrf_power_resetreas_get(NRF_POWER_NS);
 
 	LOG_DBG("RR: 0x%08x", rr);
 	if (rr & NRF_POWER_RESETREAS_OFF_MASK) {

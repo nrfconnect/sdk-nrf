@@ -13,14 +13,14 @@
 #define NFC_NDEF_TNEP_SELECT_NO_URI_SIZE 1
 #define NFC_NDEF_TNEP_PARAMS_NO_URI_SIZE 7
 
-const u8_t nfc_ndef_tnep_rec_type_status[] = {'T', 'e' };
-const u8_t nfc_ndef_tnep_rec_type_svc_select[] = {'T', 's'};
-const u8_t nfc_ndef_tnep_rec_type_svc_param[] = {'T', 'p'};
+const uint8_t nfc_ndef_tnep_rec_type_status[] = {'T', 'e' };
+const uint8_t nfc_ndef_tnep_rec_type_svc_select[] = {'T', 's'};
+const uint8_t nfc_ndef_tnep_rec_type_svc_param[] = {'T', 'p'};
 
 /* Function for calculating TNEP service select record payload size. */
-static u32_t nfc_tnep_calc_size_service_select(struct nfc_ndef_tnep_rec_svc_select *payload_decs)
+static uint32_t nfc_tnep_calc_size_service_select(struct nfc_ndef_tnep_rec_svc_select *payload_decs)
 {
-	u32_t record_length = 0;
+	uint32_t record_length = 0;
 
 	if (payload_decs->uri_len) {
 		record_length = payload_decs->uri_len +
@@ -31,9 +31,9 @@ static u32_t nfc_tnep_calc_size_service_select(struct nfc_ndef_tnep_rec_svc_sele
 }
 
 /* Function for calculating TNEP service parameters record payload size. */
-static u32_t nfc_tnep_calc_size_service_param(struct nfc_ndef_tnep_rec_svc_param *payload_decs)
+static uint32_t nfc_tnep_calc_size_service_param(struct nfc_ndef_tnep_rec_svc_param *payload_decs)
 {
-	u32_t record_length = 0;
+	uint32_t record_length = 0;
 
 	if (payload_decs->uri_length != 0) {
 		record_length = payload_decs->uri_length +
@@ -44,9 +44,9 @@ static u32_t nfc_tnep_calc_size_service_param(struct nfc_ndef_tnep_rec_svc_param
 }
 
 int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_rec_status *payload_desc,
-				     u8_t *buffer, u32_t *len)
+				     uint8_t *buffer, uint32_t *len)
 {
-	u32_t payload_size;
+	uint32_t payload_size;
 
 	if (!payload_desc || !len) {
 		return -EINVAL;
@@ -68,14 +68,14 @@ int nfc_ndef_tnep_rec_status_payload(struct nfc_ndef_tnep_rec_status *payload_de
 }
 
 int nfc_ndef_tnep_rec_svc_select_payload(struct nfc_ndef_tnep_rec_svc_select *payload_desc,
-					 u8_t *buffer, u32_t *len)
+					 uint8_t *buffer, uint32_t *len)
 {
 	if (!payload_desc || !len) {
 
 		return -EINVAL;
 	}
 
-	u32_t payload_size;
+	uint32_t payload_size;
 
 	payload_size = nfc_tnep_calc_size_service_select(payload_desc);
 
@@ -98,7 +98,7 @@ int nfc_ndef_tnep_rec_svc_select_payload(struct nfc_ndef_tnep_rec_svc_select *pa
 }
 
 int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payload_desc,
-					u8_t *buffer, u32_t *len)
+					uint8_t *buffer, uint32_t *len)
 {
 	if (!payload_desc->version ||
 	    !payload_desc->uri_length ||
@@ -107,7 +107,7 @@ int nfc_ndef_tnep_rec_svc_param_payload(struct nfc_ndef_tnep_rec_svc_param *payl
 		return -EINVAL;
 	}
 
-	u32_t payload_size = nfc_tnep_calc_size_service_param(payload_desc);
+	uint32_t payload_size = nfc_tnep_calc_size_service_param(payload_desc);
 
 	if (buffer) {
 		if (payload_size > *len) {

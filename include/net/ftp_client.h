@@ -217,7 +217,7 @@ enum ftp_trasfer_type {
  * @param msg FTP client data received, or local message
  * @param len length of message
  */
-typedef void (*ftp_client_callback_t)(const u8_t *msg, u16_t len);
+typedef void (*ftp_client_callback_t)(const uint8_t *msg, uint16_t len);
 
 /**@brief Initialize the FTP client library.
  *
@@ -245,7 +245,7 @@ int ftp_uninit(void);
  *
  * @retval ftp_return_code or negative if error
  */
-int ftp_open(const char *hostname, u16_t port, int sec_tag);
+int ftp_open(const char *hostname, uint16_t port, int sec_tag);
 
 /**@brief FTP server login.
  *
@@ -350,7 +350,7 @@ int ftp_get(const char *file);
  *
  * @retval ftp_return_code or negative if error
  */
-int ftp_put(const char *file, const u8_t *data, u16_t length);
+int ftp_put(const char *file, const uint8_t *data, uint16_t length);
 
 
 #ifdef __cplusplus

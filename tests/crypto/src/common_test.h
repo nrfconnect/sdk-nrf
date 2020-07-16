@@ -282,8 +282,8 @@ typedef const struct {
 /**@brief ECDSA Verify test vector information.
  */
 typedef const struct {
-	const u32_t src_line_num; /**< Test vector source file line number. */
-	const u32_t curve_type; /**< Curve type for test vector. */
+	const uint32_t src_line_num; /**< Test vector source file line number. */
+	const uint32_t curve_type; /**< Curve type for test vector. */
 	const int expected_err_code; /**< Expected error code from ECDSA verify
 									 operation. */
 	const char *p_test_vector_name; /**< Pointer to ECDSA test vector name. */
@@ -304,8 +304,8 @@ typedef const struct {
 /**@brief ECDSA Sign test vector information.
  */
 typedef const struct {
-	const u32_t src_line_num; /**< Test vector source file line number. */
-	const u32_t curve_type; /**< Curve type for test vector. */
+	const uint32_t src_line_num; /**< Test vector source file line number. */
+	const uint32_t curve_type; /**< Curve type for test vector. */
 	const int expected_sign_err_code; /**< Expected error code from ECDSA sign
 									   operation. */
 	const int expected_verify_err_code; /**< Expected result of following ECDSA
@@ -326,8 +326,8 @@ typedef const struct {
 /**@brief ECDSA Random test vector information.
  */
 typedef const struct {
-	const u32_t src_line_num; /**< Test vector source file line number. */
-	const u32_t curve_type; /**< Curve type for test vector. */
+	const uint32_t src_line_num; /**< Test vector source file line number. */
+	const uint32_t curve_type; /**< Curve type for test vector. */
 	const char *p_test_vector_name; /**< Pointer to ECDSA test vector name. */
 	const char *
 		p_input; /**< Pointer to ECDSA hash input in hex string format. */
@@ -337,7 +337,7 @@ typedef const struct {
 /**@brief ECDH test vector information.
  */
 typedef const struct {
-	const u32_t curve_type; /**< Curve type for test vector. */
+	const uint32_t curve_type; /**< Curve type for test vector. */
 	const int expected_err_code; /**< Expected error code from ECDH operation. */
 	const uint8_t expected_result; /**< Expected result of ECDH operation. */
 	const char *p_test_vector_name; /**< Pointer to ECDH test vector name. */
@@ -366,7 +366,7 @@ typedef const struct {
 /**@brief Hash test vector information.
  */
 typedef const struct {
-	const u32_t digest_type; /**< Digest type of hash operation. */
+	const uint32_t digest_type; /**< Digest type of hash operation. */
 	const int expected_err_code; /**< Expected error code from hash operation. */
 	const uint8_t expected_result; /**< Expected result of hash operation. */
 	const hash_mem_mode_t mode; /**< Hash memory operation. */
@@ -385,7 +385,7 @@ typedef const struct {
 /**@brief hmac test vector information.
  */
 typedef const struct {
-	const u32_t digest_type; /**< Digest type of hmac operation. */
+	const uint32_t digest_type; /**< Digest type of hmac operation. */
 	const int expected_err_code; /**< Expected error code from hmac operation. */
 	const uint8_t expected_result; /**< Expected result of hmac operation. */
 	const char *p_test_vector_name; /**< Pointer to hmac test vector name. */
@@ -399,7 +399,7 @@ typedef const struct {
 /**@brief hkdf test vector information.
  */
 typedef const struct {
-	const u32_t digest_type; /**< Digest type of hkdf operation. */
+	const uint32_t digest_type; /**< Digest type of hkdf operation. */
 	const int expected_err_code; /**< Expected error code from hkdf operation. */
 	const int expected_err_code_expand; /**< Expected error code from hkdf expand
 										 operation. */

@@ -22,13 +22,13 @@ LOG_MODULE_REGISTER(app_lwm2m_device, CONFIG_APP_LOG_LEVEL);
 #define CLIENT_FLASH_SIZE	PM_MCUBOOT_SECONDARY_SIZE
 #define REBOOT_DELAY		K_SECONDS(1)
 
-static u8_t bat_idx = LWM2M_DEVICE_PWR_SRC_TYPE_BAT_INT;
+static uint8_t bat_idx = LWM2M_DEVICE_PWR_SRC_TYPE_BAT_INT;
 static int bat_mv = 3800;
 static int bat_ma = 125;
-static u8_t usb_idx = LWM2M_DEVICE_PWR_SRC_TYPE_USB;
+static uint8_t usb_idx = LWM2M_DEVICE_PWR_SRC_TYPE_USB;
 static int usb_mv = 5000;
 static int usb_ma = 900;
-static u8_t bat_status = LWM2M_DEVICE_BATTERY_STATUS_CHARGING;
+static uint8_t bat_status = LWM2M_DEVICE_BATTERY_STATUS_CHARGING;
 static int mem_total = (CLIENT_FLASH_SIZE / 1024);
 
 static struct k_delayed_work reboot_work;
@@ -39,7 +39,7 @@ static void reboot_work_handler(struct k_work *work)
 	sys_reboot(0);
 }
 
-static int device_reboot_cb(u16_t obj_inst_id)
+static int device_reboot_cb(uint16_t obj_inst_id)
 {
 	LOG_INF("DEVICE: Reboot in progress");
 
@@ -48,7 +48,7 @@ static int device_reboot_cb(u16_t obj_inst_id)
 	return 0;
 }
 
-static int device_factory_default_cb(u16_t obj_inst_id)
+static int device_factory_default_cb(uint16_t obj_inst_id)
 {
 	LOG_INF("DEVICE: FACTORY DEFAULT (TODO)");
 

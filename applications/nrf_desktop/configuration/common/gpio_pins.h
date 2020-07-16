@@ -21,8 +21,8 @@ static const char * const port_map[] = {
 };
 
 struct gpio_pin {
-	u8_t port;
-	u8_t pin;
+	uint8_t port;
+	uint8_t pin;
 };
 
 #endif /* _GPIO_PINS_H_ */

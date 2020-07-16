@@ -30,17 +30,17 @@ struct bt_gatt_nus_c_handles {
         /** Handle of the NUS RX characteristic, as provided by
 	 *  a discovery.
          */
-	u16_t rx;
+	uint16_t rx;
 
         /** Handle of the NUS TX characteristic, as provided by
 	 *  a discovery.
          */
-	u16_t tx;
+	uint16_t tx;
 
         /** Handle of the CCC descriptor of the NUS TX characteristic,
 	 *  as provided by a discovery.
          */
-	u16_t tx_ccc;
+	uint16_t tx_ccc;
 };
 
 /** @brief NUS Client callback structure. */
@@ -56,7 +56,7 @@ struct bt_gatt_nus_c_cbs {
 	 * @retval BT_GATT_ITER_CONTINUE To keep notifications enabled.
 	 * @retval BT_GATT_ITER_STOP To disable notifications.
 	 */
-	u8_t (*data_received)(const u8_t *data, u16_t len);
+	uint8_t (*data_received)(const uint8_t *data, uint16_t len);
 
 	/** @brief Data sent callback.
 	 *
@@ -66,7 +66,7 @@ struct bt_gatt_nus_c_cbs {
 	 * @param[in] data Transmitted data.
 	 * @param[in] len Length of transmitted data.
 	 */
-	void (*data_sent)(u8_t err, const u8_t *data, u16_t len);
+	void (*data_sent)(uint8_t err, const uint8_t *data, uint16_t len);
 
 	/** @brief TX notifications disabled callback.
 	 *
@@ -134,8 +134,8 @@ int bt_gatt_nus_c_init(struct bt_gatt_nus_c *nus_c,
  * @retval 0 If the operation was successful.
  *           Otherwise, a negative error code is returned.
  */
-int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const u8_t *data,
-		       u16_t len);
+int bt_gatt_nus_c_send(struct bt_gatt_nus_c *nus_c, const uint8_t *data,
+		       uint16_t len);
 
 /** @brief Assign handles to the NUS Client instance.
  *

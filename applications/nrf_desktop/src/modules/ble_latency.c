@@ -37,7 +37,7 @@ enum {
 	CONN_IS_SECURED			= BIT(4),
 };
 
-static u8_t latency_state;
+static uint8_t latency_state;
 
 
 static void security_timeout_fn(struct k_work *w)
@@ -102,7 +102,7 @@ static void set_conn_latency(bool low_latency)
 	/* Request with connection interval set to a LLPM value is rejected
 	 * by Zephyr Bluetooth API.
 	 */
-	u16_t interval = (info.le.interval & REG_CONN_INTERVAL_LLPM_MASK) ?
+	uint16_t interval = (info.le.interval & REG_CONN_INTERVAL_LLPM_MASK) ?
 			  REG_CONN_INTERVAL_BLE_DEFAULT : info.le.interval;
 	const struct bt_le_conn_param param = {
 		.interval_min = interval,

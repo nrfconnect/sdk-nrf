@@ -17,7 +17,7 @@
 
 /* By default, when there is no shell, all events are profiled. */
 #ifndef CONFIG_SHELL
-u32_t profiler_enabled_events = 0xffffffff;
+uint32_t profiler_enabled_events = 0xffffffff;
 #endif
 
 
@@ -34,21 +34,21 @@ enum nordic_command {
 char descr[CONFIG_MAX_NUMBER_OF_CUSTOM_EVENTS]
 	  [CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS];
 static char *arg_types_encodings[] = {
-					"u8",  /* u8_t */
-					"s8",  /* s8_t */
-					"u16", /* u16_t */
-					"s16", /* s16_t */
-					"u32", /* u32_t */
-					"s32", /* s32_t */
+					"u8",  /* uint8_t */
+					"s8",  /* int8_t */
+					"u16", /* uint16_t */
+					"s16", /* int16_t */
+					"u32", /* uint32_t */
+					"s32", /* int32_t */
 					"s",   /* string */
 					"t"    /* time */
 				     };
 
-u8_t profiler_num_events;
+uint8_t profiler_num_events;
 
-static u8_t buffer_data[CONFIG_PROFILER_NORDIC_DATA_BUFFER_SIZE];
-static u8_t buffer_info[CONFIG_PROFILER_NORDIC_INFO_BUFFER_SIZE];
-static u8_t buffer_commands[CONFIG_PROFILER_NORDIC_COMMAND_BUFFER_SIZE];
+static uint8_t buffer_data[CONFIG_PROFILER_NORDIC_DATA_BUFFER_SIZE];
+static uint8_t buffer_info[CONFIG_PROFILER_NORDIC_INFO_BUFFER_SIZE];
+static uint8_t buffer_commands[CONFIG_PROFILER_NORDIC_COMMAND_BUFFER_SIZE];
 
 static k_tid_t protocol_thread_id;
 
@@ -63,7 +63,7 @@ static void send_system_description(void)
 	/* Memory barrier to make sure that data is visible
 	 * before being accessed
 	 */
-	u8_t ne = profiler_num_events;
+	uint8_t ne = profiler_num_events;
 
 	__DMB();
 	char end_line = '\n';
@@ -90,7 +90,7 @@ static void send_system_description(void)
 static void profiler_nordic_thread_fn(void)
 {
 	while (protocol_running) {
-		u8_t read_data;
+		uint8_t read_data;
 		enum nordic_command command;
 
 		if (SEGGER_RTT_Read(
@@ -171,15 +171,15 @@ const char *profiler_get_event_descr(size_t profiler_event_id)
 	return descr[profiler_event_id];
 }
 
-u16_t profiler_register_event_type(const char *name, const char **args,
+uint16_t profiler_register_event_type(const char *name, const char **args,
 				   const enum profiler_arg *arg_types,
-				   u8_t arg_cnt)
+				   uint8_t arg_cnt)
 {
 	/* Lock to make sure that this function can be called
 	 * from multiple threads
 	 */
 	k_sched_lock();
-	u8_t ne = profiler_num_events;
+	uint8_t ne = profiler_num_events;
 	size_t temp = snprintf(descr[ne],
 			CONFIG_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS,
 			"%s,%d", name, ne);
@@ -220,12 +220,12 @@ u16_t profiler_register_event_type(const char *name, const char **args,
 void profiler_log_start(struct log_event_buf *buf)
 {
 	/* Adding one to pointer to make space for event type ID */
-	__ASSERT_NO_MSG(sizeof(u8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
-	buf->payload = buf->payload_start + sizeof(u8_t);
+	__ASSERT_NO_MSG(sizeof(uint8_t) <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
+	buf->payload = buf->payload_start + sizeof(uint8_t);
 	profiler_log_encode_u32(buf, k_cycle_get_32());
 }
 
-void profiler_log_encode_u32(struct log_event_buf *buf, u32_t data)
+void profiler_log_encode_u32(struct log_event_buf *buf, uint32_t data)
 {
 	__ASSERT_NO_MSG(buf->payload - buf->payload_start + sizeof(data)
 			 <= CONFIG_PROFILER_CUSTOM_EVENT_BUF_LEN);
@@ -236,19 +236,19 @@ void profiler_log_encode_u32(struct log_event_buf *buf, u32_t data)
 void profiler_log_add_mem_address(struct log_event_buf *buf,
 				  const void *mem_address)
 {
-	profiler_log_encode_u32(buf, (u32_t)mem_address);
+	profiler_log_encode_u32(buf, (uint32_t)mem_address);
 }
 
-void profiler_log_send(struct log_event_buf *buf, u16_t event_type_id)
+void profiler_log_send(struct log_event_buf *buf, uint16_t event_type_id)
 {
 	__ASSERT_NO_MSG(event_type_id <= UCHAR_MAX);
 	if (sending_events) {
-		u8_t type_id = event_type_id & UCHAR_MAX;
+		uint8_t type_id = event_type_id & UCHAR_MAX;
 
 		buf->payload_start[0] = type_id;
 		int key = irq_lock();
 
-		u8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
+		uint8_t num_bytes_send = SEGGER_RTT_WriteNoLock(
 				CONFIG_PROFILER_NORDIC_RTT_CHANNEL_DATA,
 				buf->payload_start,
 				buf->payload - buf->payload_start);

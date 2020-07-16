@@ -14,7 +14,7 @@
 #include <bl_validation.h>
 
 
-static void validate_and_boot(const struct fw_info *fw_info, u16_t slot)
+static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 {
 	printk("Attempting to boot slot %d.\r\n", slot);
 
@@ -54,8 +54,8 @@ void main(void)
 		return;
 	}
 
-	u32_t s0_addr = s0_address_read();
-	u32_t s1_addr = s1_address_read();
+	uint32_t s0_addr = s0_address_read();
+	uint32_t s1_addr = s1_address_read();
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 

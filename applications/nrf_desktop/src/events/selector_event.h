@@ -23,8 +23,8 @@ extern "C" {
 struct selector_event {
 	struct event_header header;
 
-	u8_t selector_id;
-	u8_t position;
+	uint8_t selector_id;
+	uint8_t position;
 };
 
 EVENT_TYPE_DECLARE(selector_event);

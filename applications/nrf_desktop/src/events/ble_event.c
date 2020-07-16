@@ -36,7 +36,7 @@ static void profile_ble_peer_event(struct log_event_buf *buf,
 {
 	const struct ble_peer_event *event = cast_ble_peer_event(eh);
 
-	profiler_log_encode_u32(buf, (u32_t)event->id);
+	profiler_log_encode_u32(buf, (uint32_t)event->id);
 	profiler_log_encode_u32(buf, event->state);
 }
 
@@ -63,7 +63,7 @@ static void profile_ble_peer_search_event(struct log_event_buf *buf,
 {
 	const struct ble_peer_search_event *event = cast_ble_peer_search_event(eh);
 
-	profiler_log_encode_u32(buf, (u32_t)event->active);
+	profiler_log_encode_u32(buf, (uint32_t)event->active);
 }
 
 EVENT_INFO_DEFINE(ble_peer_search_event,

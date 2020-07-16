@@ -31,8 +31,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 #define SUBSCRIBED_PEERS_STORAGE_NAME "subscribers"
 
 struct subscriber_data {
-	u8_t conn_count;
-	u8_t peer_count;
+	uint8_t conn_count;
+	uint8_t peer_count;
 };
 
 struct subscribed_peer {
@@ -162,7 +162,7 @@ static void scan_stop(void)
 	}
 }
 
-static int configure_address_filters(u8_t *filter_mode)
+static int configure_address_filters(uint8_t *filter_mode)
 {
 	size_t i;
 	int err = 0;
@@ -198,10 +198,10 @@ static int configure_address_filters(u8_t *filter_mode)
 	return err;
 }
 
-static int configure_name_filters(u8_t *filter_mode)
+static int configure_name_filters(uint8_t *filter_mode)
 {
-	u8_t peer_cnt[PEER_TYPE_COUNT] = {0};
-	static const u8_t peer_limit[PEER_TYPE_COUNT] = {
+	uint8_t peer_cnt[PEER_TYPE_COUNT] = {0};
+	static const uint8_t peer_limit[PEER_TYPE_COUNT] = {
 		[PEER_TYPE_MOUSE] = CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT,
 		[PEER_TYPE_KEYBOARD] = CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT,
 	};
@@ -250,7 +250,7 @@ static int configure_filters(void)
 	BUILD_ASSERT(ARRAY_SIZE(peer_name) == PEER_TYPE_COUNT, "");
 	bt_scan_filter_remove_all();
 
-	u8_t filter_mode = 0;
+	uint8_t filter_mode = 0;
 	int err = configure_address_filters(&filter_mode);
 
 	bool use_name_filters = true;

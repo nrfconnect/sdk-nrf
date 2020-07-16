@@ -25,8 +25,8 @@ LOG_MODULE_REGISTER(nfc_ndef_le_oob_rec_parser,
 /* Size of terminator character required for BLE Device name. */
 #define NULL_TERMINATOR_SIZE 1UL
 
-static u8_t *memory_allocate(struct net_buf_simple *mem_alloc,
-			     u32_t alloc_size)
+static uint8_t *memory_allocate(struct net_buf_simple *mem_alloc,
+			     uint32_t alloc_size)
 {
 	if (net_buf_simple_tailroom(mem_alloc) < alloc_size) {
 		return NULL;
@@ -35,8 +35,8 @@ static u8_t *memory_allocate(struct net_buf_simple *mem_alloc,
 	return net_buf_simple_add(mem_alloc, alloc_size);
 }
 
-static int ble_device_address_decode(const u8_t *payload_buf,
-				     u32_t payload_len,
+static int ble_device_address_decode(const uint8_t *payload_buf,
+				     uint32_t payload_len,
 				     bt_addr_le_t *addr)
 {
 	if (!addr) {
@@ -55,7 +55,7 @@ static int ble_device_address_decode(const u8_t *payload_buf,
 	return 0;
 }
 
-static int le_role_decode(const u8_t *payload_buf, u32_t payload_len,
+static int le_role_decode(const uint8_t *payload_buf, uint32_t payload_len,
 			  enum nfc_ndef_le_oob_rec_le_role *le_role)
 {
 	if (!le_role) {
@@ -71,8 +71,8 @@ static int le_role_decode(const u8_t *payload_buf, u32_t payload_len,
 	return 0;
 }
 
-static int tk_value_decode(const u8_t *payload_buf, u32_t payload_len,
-			   u8_t *tk_value)
+static int tk_value_decode(const uint8_t *payload_buf, uint32_t payload_len,
+			   uint8_t *tk_value)
 {
 	if (!tk_value) {
 		return -ENOMEM;
@@ -87,8 +87,8 @@ static int tk_value_decode(const u8_t *payload_buf, u32_t payload_len,
 	return 0;
 }
 
-static int le_sc_confirm_value_decode(const u8_t *payload_buf,
-				      u32_t payload_len,
+static int le_sc_confirm_value_decode(const uint8_t *payload_buf,
+				      uint32_t payload_len,
 				      struct bt_le_oob_sc_data *le_sc_data)
 {
 	if (!le_sc_data) {
@@ -104,8 +104,8 @@ static int le_sc_confirm_value_decode(const u8_t *payload_buf,
 	return 0;
 }
 
-static int le_sc_random_value_decode(const u8_t *payload_buf,
-				     u32_t payload_len,
+static int le_sc_random_value_decode(const uint8_t *payload_buf,
+				     uint32_t payload_len,
 				     struct bt_le_oob_sc_data *le_sc_data)
 {
 	if (!le_sc_data) {
@@ -121,8 +121,8 @@ static int le_sc_random_value_decode(const u8_t *payload_buf,
 	return 0;
 }
 
-static int appearance_decode(const u8_t *payload_buf, u32_t payload_len,
-			     u16_t *appearance)
+static int appearance_decode(const uint8_t *payload_buf, uint32_t payload_len,
+			     uint16_t *appearance)
 {
 	if (!appearance) {
 		return -ENOMEM;
@@ -137,8 +137,8 @@ static int appearance_decode(const u8_t *payload_buf, u32_t payload_len,
 	return 0;
 }
 
-static int flags_decode(const u8_t *payload_buf, u32_t payload_len,
-			u8_t *flags)
+static int flags_decode(const uint8_t *payload_buf, uint32_t payload_len,
+			uint8_t *flags)
 {
 	if (!flags) {
 		return -ENOMEM;
@@ -153,14 +153,14 @@ static int flags_decode(const u8_t *payload_buf, u32_t payload_len,
 	return 0;
 }
 
-static int nfc_ndef_le_oob_rec_payload_parse(const u8_t *payload_buf,
-					     u32_t payload_len,
-					     u8_t *result_buf,
-					     u32_t *result_buf_len)
+static int nfc_ndef_le_oob_rec_payload_parse(const uint8_t *payload_buf,
+					     uint32_t payload_len,
+					     uint8_t *result_buf,
+					     uint32_t *result_buf_len)
 {
 	int err = 0;
-	const u32_t total_buf_size = *result_buf_len;
-	u32_t index = 0;
+	const uint32_t total_buf_size = *result_buf_len;
+	uint32_t index = 0;
 	struct nfc_ndef_le_oob_rec_payload_desc *le_oob_rec_desc;
 	struct net_buf_simple mem_alloc;
 
@@ -182,7 +182,7 @@ static int nfc_ndef_le_oob_rec_payload_parse(const u8_t *payload_buf,
 
 	/* Parse record payload. */
 	while (index < payload_len) {
-		u8_t ad_len;
+		uint8_t ad_len;
 
 		ad_len = payload_buf[index];
 		index += AD_LEN_FIELD_SIZE;
@@ -192,10 +192,10 @@ static int nfc_ndef_le_oob_rec_payload_parse(const u8_t *payload_buf,
 			return -EINVAL;
 		}
 
-		u8_t ad_type = payload_buf[index];
-		const u8_t *ad_data =
+		uint8_t ad_type = payload_buf[index];
+		const uint8_t *ad_data =
 			&payload_buf[index + AD_TYPE_FIELD_SIZE];
-		u8_t ad_data_len = ad_len - AD_TYPE_FIELD_SIZE;
+		uint8_t ad_data_len = ad_len - AD_TYPE_FIELD_SIZE;
 
 		/* Decode AD payload. */
 		switch (ad_type) {
@@ -242,14 +242,14 @@ static int nfc_ndef_le_oob_rec_payload_parse(const u8_t *payload_buf,
 			}
 			break;
 		case BT_DATA_GAP_APPEARANCE:
-			le_oob_rec_desc->appearance = (u16_t *)
+			le_oob_rec_desc->appearance = (uint16_t *)
 				memory_allocate(&mem_alloc,
 					sizeof(*le_oob_rec_desc->appearance));
 			err = appearance_decode(ad_data, ad_data_len,
 				le_oob_rec_desc->appearance);
 			break;
 		case BT_DATA_FLAGS:
-			le_oob_rec_desc->flags = (u8_t *)
+			le_oob_rec_desc->flags = (uint8_t *)
 				memory_allocate(&mem_alloc,
 					sizeof(*le_oob_rec_desc->flags));
 			err = flags_decode(ad_data, ad_data_len,
@@ -258,7 +258,7 @@ static int nfc_ndef_le_oob_rec_payload_parse(const u8_t *payload_buf,
 		case BT_DATA_NAME_SHORTENED:
 		case BT_DATA_NAME_COMPLETE:
 		{
-			u8_t *name;
+			uint8_t *name;
 
 			name = memory_allocate(&mem_alloc, ad_data_len +
 					       NULL_TERMINATOR_SIZE);
@@ -311,7 +311,7 @@ bool nfc_ndef_le_oob_rec_check(const struct nfc_ndef_record_desc *rec_desc)
 }
 
 int nfc_ndef_le_oob_rec_parse(const struct nfc_ndef_record_desc *rec_desc,
-			      u8_t *result_buf, u32_t *result_buf_len)
+			      uint8_t *result_buf, uint32_t *result_buf_len)
 {
 	int err;
 	struct nfc_ndef_bin_payload_desc *payload_desc;

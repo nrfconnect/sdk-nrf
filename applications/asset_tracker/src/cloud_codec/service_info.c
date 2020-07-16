@@ -11,7 +11,7 @@
 #define FOTAS_JSON_NAME "fota_v"
 #define FOTAS_JSON_NAME_SIZE (sizeof(FOTAS_JSON_NAME) + 5)
 
-static int add_array_obj(const char * const items[], const u32_t item_cnt,
+static int add_array_obj(const char * const items[], const uint32_t item_cnt,
 			 const char * const item_name, cJSON * const obj)
 {
 	cJSON *obj_to_add = NULL;
@@ -26,7 +26,7 @@ static int add_array_obj(const char * const items[], const u32_t item_cnt,
 		return -ENOMEM;
 	}
 
-	for (u32_t cnt = 0; cnt < item_cnt; ++cnt) {
+	for (uint32_t cnt = 0; cnt < item_cnt; ++cnt) {
 		if (items[cnt] != NULL) {
 			str = cJSON_CreateString(items[cnt]);
 			if (str == NULL) {
@@ -48,8 +48,8 @@ static int add_array_obj(const char * const items[], const u32_t item_cnt,
 }
 
 int service_info_json_object_encode(
-	const char * const ui[], const u32_t ui_count, const char * const fota[],
-	const u32_t fota_count, const u16_t fota_version, cJSON * const obj_out)
+	const char * const ui[], const uint32_t ui_count, const char * const fota[],
+	const uint32_t fota_count, const uint16_t fota_version, cJSON * const obj_out)
 {
 	int err = 0;
 	cJSON *service_info_obj = NULL;

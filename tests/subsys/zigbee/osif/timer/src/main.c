@@ -31,19 +31,19 @@ static void test_zb_osif_timer(void)
 	zassert_false(ZB_CHECK_TIMER_IS_ON(), "Counter running");
 
 	ZB_START_HW_TIMER();
-	u32_t timestamp1 = zb_osif_timer_get();
+	uint32_t timestamp1 = zb_osif_timer_get();
 
 	k_usleep(500);
-	u32_t timestamp2 = zb_osif_timer_get();
+	uint32_t timestamp2 = zb_osif_timer_get();
 
 	zassert_true((timestamp2 > timestamp1),
 		     "Timer is not incrementing");
 
 	ZB_START_HW_TIMER();
-	u32_t alarm_count = GetAlarmCount();
+	uint32_t alarm_count = GetAlarmCount();
 
 	k_usleep(ZB_BEACON_INTERVAL_USEC);
-	u32_t new_alarm_count = GetAlarmCount();
+	uint32_t new_alarm_count = GetAlarmCount();
 
 	zassert_true((alarm_count != new_alarm_count),
 		     "Alarm handler has not occurred");

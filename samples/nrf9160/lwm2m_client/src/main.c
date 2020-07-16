@@ -40,8 +40,8 @@ BUILD_ASSERT(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
 #define IMEI_LEN		15
 #define ENDPOINT_NAME_LEN	(IMEI_LEN + 8)
 
-static u8_t endpoint_name[ENDPOINT_NAME_LEN+1];
-static u8_t imei_buf[IMEI_LEN + 5]; /* account for /n/r */
+static uint8_t endpoint_name[ENDPOINT_NAME_LEN+1];
+static uint8_t imei_buf[IMEI_LEN + 5]; /* account for /n/r */
 static struct lwm2m_ctx client;
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)

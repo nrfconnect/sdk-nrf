@@ -34,9 +34,9 @@ static struct {
 	struct k_sem sync;
 	const void *data;
 	off_t addr;
-	u32_t len;
-	u32_t prev_len;
-	u32_t tmp_word;      /**< Used for unalinged writes. */
+	uint32_t len;
+	uint32_t prev_len;
+	uint32_t tmp_word;      /**< Used for unalinged writes. */
 	/* NOTE: Read is not async, so not a part of this enum. */
 	enum {
 		FLASH_OP_NONE,
@@ -69,15 +69,28 @@ static void btctlr_flash_page_layout_get(
 	size_t *layout_size);
 #endif /* defined(CONFIG_FLASH_PAGE_LAYOUT) */
 
+static const struct flash_parameters *
+btctlr_flash_parameters_get(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+	static const struct flash_parameters btctlr_flash_parameters = {
+		.write_block_size = FLASH_DRIVER_WRITE_BLOCK_SIZE,
+		.erase_value = 0xff,
+	};
+
+	return &btctlr_flash_parameters;
+}
+
 static const struct flash_driver_api btctrl_flash_api = {
 	.read = btctlr_flash_read,
 	.write = btctlr_flash_write,
 	.erase = btctlr_flash_erase,
 	.write_protection = btctlr_flash_write_protection_set,
+	.get_parameters = btctlr_flash_parameters_get,
 #if defined(CONFIG_FLASH_PAGE_LAYOUT)
 	.page_layout = btctlr_flash_page_layout_get,
 #endif  /* CONFIG_FLASH_PAGE_LAYOUT */
-	.write_block_size = FLASH_DRIVER_WRITE_BLOCK_SIZE
 };
 
 
@@ -105,7 +118,7 @@ static inline off_t align_32(off_t addr)
 
 static inline size_t bytes_to_words(size_t bytes)
 {
-	return bytes / sizeof(u32_t);
+	return bytes / sizeof(uint32_t);
 }
 
 static inline bool is_page_aligned(off_t addr)
@@ -113,7 +126,7 @@ static inline bool is_page_aligned(off_t addr)
 	return (addr & (nrfx_nvmc_flash_page_size_get() - 1)) == 0;
 }
 
-static void flash_operation_complete_callback(u32_t status)
+static void flash_operation_complete_callback(uint32_t status)
 {
 	__ASSERT_NO_MSG(flash_state.op == FLASH_OP_WRITE ||
 			flash_state.op == FLASH_OP_ERASE);
@@ -141,7 +154,7 @@ static size_t offset_32(const void *addr)
 }
 
 /**
- * Copies unaligned data into a word (u32_t).
+ * Copies unaligned data into a word (uint32_t).
  *
  * This function is used when either @p src or @p dst is an non-word aligned
  * pointer.
@@ -161,7 +174,7 @@ static size_t offset_32(const void *addr)
  *
  * @returns the number of bytes copied into @p word_dst.
  */
-static size_t unaligned_word_copy(u32_t *word_dst,
+static size_t unaligned_word_copy(uint32_t *word_dst,
 				  const void *dst,
 				  const void *src,
 				  size_t len)
@@ -178,7 +191,7 @@ static size_t unaligned_word_copy(u32_t *word_dst,
 	 * bytes_to_copy          : MIN(1, 2) => 1
 	 */
 	size_t max_offset = MAX(offset_32(dst), offset_32(src));
-	size_t remaining_bytes_in_word = sizeof(u32_t) - max_offset;
+	size_t remaining_bytes_in_word = sizeof(uint32_t) - max_offset;
 	size_t bytes_to_copy = MIN(len, remaining_bytes_in_word);
 
 	/* nRF52832 Product specification:
@@ -188,7 +201,7 @@ static size_t unaligned_word_copy(u32_t *word_dst,
 	 *  unchanged in the word to '1'.
 	 */
 	*word_dst = ~0;
-	memcpy(&((u8_t *)word_dst)[offset_32(dst)], src, bytes_to_copy);
+	memcpy(&((uint8_t *)word_dst)[offset_32(dst)], src, bytes_to_copy);
 	return bytes_to_copy;
 }
 
@@ -196,11 +209,11 @@ static int flash_op_write(void)
 {
 	if (is_aligned_32(flash_state.addr) &&
 	    is_aligned_32((off_t) flash_state.data) &&
-	    flash_state.len >= sizeof(u32_t)) {
+	    flash_state.len >= sizeof(uint32_t)) {
 		flash_state.prev_len = MIN(align_32(flash_state.len),
 					   nrfx_nvmc_flash_page_size_get());
 		return ble_controller_flash_write(
-			(u32_t) flash_state.addr,
+			(uint32_t) flash_state.addr,
 			flash_state.data,
 			bytes_to_words(flash_state.prev_len),
 			flash_operation_complete_callback);
@@ -211,7 +224,7 @@ static int flash_op_write(void)
 			flash_state.data,
 			flash_state.len);
 		return ble_controller_flash_write(
-			(u32_t)align_32(flash_state.addr),
+			(uint32_t)align_32(flash_state.addr),
 			&flash_state.tmp_word,
 			1,
 			flash_operation_complete_callback);
@@ -229,7 +242,7 @@ static int flash_op_execute(void)
 		} else if (flash_state.op == FLASH_OP_ERASE) {
 			flash_state.prev_len = nrfx_nvmc_flash_page_size_get();
 			err = ble_controller_flash_page_erase(
-				(u32_t)flash_state.addr,
+				(uint32_t)flash_state.addr,
 				flash_operation_complete_callback);
 		} else {
 			__ASSERT(0, "Unsupported operation");

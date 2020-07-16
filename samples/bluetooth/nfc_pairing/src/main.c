@@ -35,12 +35,12 @@
 #define KEY_BOND_REMOVE_MASK DK_BTN4_MSK
 
 /* Buffer used to hold an NFC NDEF message. */
-static u8_t ndef_msg_buf[NDEF_MSG_BUF_SIZE];
+static uint8_t ndef_msg_buf[NDEF_MSG_BUF_SIZE];
 static struct bt_le_oob oob_local;
 static struct k_work adv_work;
 static struct k_work pair_msg_work;
-static u8_t conn_cnt;
-static u8_t tk_value[NFC_NDEF_LE_OOB_REC_TK_LEN];
+static uint8_t conn_cnt;
+static uint8_t tk_value[NFC_NDEF_LE_OOB_REC_TK_LEN];
 
 /* Bonded address queue. */
 K_MSGQ_DEFINE(bonds_queue,
@@ -112,7 +112,7 @@ static void advertising_start(void)
 }
 
 /** .. include_startingpoint_pair_msg_rst */
-static int pairing_msg_generate(u32_t *len)
+static int pairing_msg_generate(uint32_t *len)
 {
 	int err;
 	struct nfc_ndef_le_oob_rec_payload_desc rec_payload;
@@ -164,9 +164,9 @@ static int pairing_msg_generate(u32_t *len)
  */
 static void nfc_callback(void *context,
 			 enum nfc_t4t_event event,
-			 const u8_t *data,
+			 const uint8_t *data,
 			 size_t data_length,
-			 u32_t flags)
+			 uint32_t flags)
 {
 	ARG_UNUSED(context);
 	ARG_UNUSED(data);
@@ -194,7 +194,7 @@ static void nfc_callback(void *context,
 static void pair_msg_handler(struct k_work *work)
 {
 	int err;
-	u32_t len = sizeof(ndef_msg_buf);
+	uint32_t len = sizeof(ndef_msg_buf);
 
 	err = pairing_msg_generate(&len);
 	if (err) {
@@ -347,7 +347,7 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.pairing_accept = pairing_accept,
 };
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -374,7 +374,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	}
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -413,7 +413,7 @@ static struct bt_conn_cb conn_callbacks = {
 static void nfc_init(void)
 {
 	int err;
-	u32_t len = sizeof(ndef_msg_buf);
+	uint32_t len = sizeof(ndef_msg_buf);
 
 	/* Set up NFC */
 	err = nfc_t4t_setup(nfc_callback, NULL);
@@ -445,10 +445,10 @@ static void nfc_init(void)
 	printk("NFC configuration done\n");
 }
 
-void button_changed(u32_t button_state, u32_t has_changed)
+void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 	int err;
-	u32_t buttons = button_state & has_changed;
+	uint32_t buttons = button_state & has_changed;
 
 	if (buttons & KEY_BOND_REMOVE_MASK) {
 		err = bt_unpair(BT_ID_DEFAULT, NULL);

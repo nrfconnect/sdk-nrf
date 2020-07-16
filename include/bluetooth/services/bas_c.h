@@ -55,7 +55,7 @@ struct bt_gatt_bas_c;
  *                      (NULL received from the stack).
  */
 typedef void (*bt_gatt_bas_c_notify_cb)(struct bt_gatt_bas_c *bas_c,
-					u8_t battery_level);
+					uint8_t battery_level);
 
 /**
  * @brief Read complete callback.
@@ -67,7 +67,7 @@ typedef void (*bt_gatt_bas_c_notify_cb)(struct bt_gatt_bas_c *bas_c,
  * @param err           ATT error code or 0.
  */
 typedef void (*bt_gatt_bas_c_read_cb)(struct bt_gatt_bas_c *bas_c,
-				      u8_t battery_level,
+				      uint8_t battery_level,
 				      int err);
 
 /**
@@ -103,13 +103,13 @@ struct bt_gatt_bas_c {
 	/** Read value callback. */
 	bt_gatt_bas_c_read_cb read_cb;
 	/** Handle of the Battery Level Characteristic. */
-	u16_t val_handle;
+	uint16_t val_handle;
 	/** Handle of the CCCD of the Battery Level Characteristic. */
-	u16_t ccc_handle;
+	uint16_t ccc_handle;
 	/** Current battery value. */
-	u8_t battery_level;
+	uint8_t battery_level;
 	/** Properties of the service. */
-	u8_t properties;
+	uint8_t properties;
 	/** Notification supported. */
 	bool notify;
 };
@@ -234,7 +234,7 @@ static inline bool bt_gatt_bas_c_notify_supported(struct bt_gatt_bas_c *bas_c)
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_gatt_bas_c_periodic_read_start(struct bt_gatt_bas_c *bas_c,
-				      s32_t interval,
+				      int32_t interval,
 				      bt_gatt_bas_c_notify_cb func);
 
 /**

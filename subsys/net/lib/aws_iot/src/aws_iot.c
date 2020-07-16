@@ -2,6 +2,7 @@
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <net/cloud.h>
+#include <random/rand32.h>
 #include <stdio.h>
 
 #if defined(CONFIG_AWS_FOTA)

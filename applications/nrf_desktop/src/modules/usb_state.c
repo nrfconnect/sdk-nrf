@@ -36,15 +36,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #endif
 
 static enum usb_state state;
-static u8_t hid_protocol = HID_PROTOCOL_REPORT;
+static uint8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
-static u8_t sent_report_id = REPORT_ID_COUNT;
+static uint8_t sent_report_id = REPORT_ID_COUNT;
 
 static struct config_channel_state cfg_chan;
 
-static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
+static int get_report(struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
 {
-	u8_t request_value[2];
+	uint8_t request_value[2];
 
 	sys_put_le16(setup->wValue, request_value);
 
@@ -53,7 +53,7 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 			if (request_value[0] == REPORT_ID_USER_CONFIG) {
 				size_t length = *len;
-				u8_t *buffer = *data;
+				uint8_t *buffer = *data;
 
 				int err = config_channel_report_get(&cfg_chan,
 							buffer,
@@ -88,9 +88,9 @@ static int get_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 	return 0;
 }
 
-static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
+static int set_report(struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
 {
-	u8_t request_value[2];
+	uint8_t request_value[2];
 
 	sys_put_le16(setup->wValue, request_value);
 
@@ -99,7 +99,7 @@ static int set_report(struct usb_setup_packet *setup, s32_t *len, u8_t **data)
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 			if (request_value[0] == REPORT_ID_USER_CONFIG) {
 				size_t length = *len;
-				u8_t *buffer = *data;
+				uint8_t *buffer = *data;
 
 				int err = config_channel_report_set(&cfg_chan,
 							buffer,
@@ -173,7 +173,7 @@ static void send_hid_report(const struct hid_report_event *event)
 		return;
 	}
 
-	const u8_t *report_buffer = event->dyndata.data;
+	const uint8_t *report_buffer = event->dyndata.data;
 	size_t report_size = event->dyndata.size;
 
 	__ASSERT_NO_MSG(report_size > 0);
@@ -318,7 +318,7 @@ static void broadcast_subscription_change(void)
 	}
 }
 
-static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
+static void device_status(enum usb_dc_status_code cb_status, const uint8_t *param)
 {
 	static enum usb_state before_suspend;
 	enum usb_state new_state = state;
@@ -413,7 +413,7 @@ static void device_status(enum usb_dc_status_code cb_status, const u8_t *param)
 	}
 }
 
-static void protocol_change(u8_t protocol)
+static void protocol_change(uint8_t protocol)
 {
 	BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_DISABLED) ==
 			 !IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL),

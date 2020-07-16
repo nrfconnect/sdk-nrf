@@ -14,10 +14,10 @@
  */
 #define NDEF_RECORD_BASE_LONG_SIZE (2 + NDEF_RECORD_PAYLOAD_LEN_LONG_SIZE)
 
-static u32_t record_header_size_calc(
+static uint32_t record_header_size_calc(
 			struct nfc_ndef_record_desc const *ndef_record_desc)
 {
-	u32_t len;
+	uint32_t len;
 
 	len = NDEF_RECORD_BASE_LONG_SIZE + ndef_record_desc->id_length +
 			ndef_record_desc->type_length;
@@ -31,20 +31,20 @@ static u32_t record_header_size_calc(
 
 int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 			   enum nfc_ndef_record_location const record_location,
-			   u8_t *record_buffer,
-			   u32_t *record_len)
+			   uint8_t *record_buffer,
+			   uint32_t *record_len)
 {
-	u8_t *payload_len = NULL; /* use as pointer to payload length field */
-	u32_t record_payload_len;
+	uint8_t *payload_len = NULL; /* use as pointer to payload length field */
+	uint32_t record_payload_len;
 
 	if (!ndef_record_desc) {
 		return -EINVAL;
 	}
 	/* count record length without payload */
-	u32_t record_header_len = record_header_size_calc(ndef_record_desc);
+	uint32_t record_header_len = record_header_size_calc(ndef_record_desc);
 
 	if (record_buffer) {
-		u8_t *flags; /* use as pointer to TNF + flags field */
+		uint8_t *flags; /* use as pointer to TNF + flags field */
 
 		/* verify location range */
 		if (record_location & (~NDEF_RECORD_LOCATION_MASK)) {
@@ -112,7 +112,7 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 
 	if (record_buffer) {
 		/* PAYLOAD LENGTH */
-		*(u32_t *)payload_len = sys_cpu_to_be32(record_payload_len);
+		*(uint32_t *)payload_len = sys_cpu_to_be32(record_payload_len);
 	}
 
 	*record_len = record_header_len + record_payload_len;
@@ -122,8 +122,8 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 
 int nfc_ndef_bin_payload_memcopy(
 			struct nfc_ndef_bin_payload_desc *payload_descriptor,
-			u8_t *buffer,
-			u32_t *len)
+			uint8_t *buffer,
+			uint32_t *len)
 {
 	if (buffer) {
 		if (*len < payload_descriptor->payload_length) {

@@ -36,7 +36,7 @@ enum slm_gps_mode {
 
 static struct gps_client {
 	int sock; /* Socket descriptor. */
-	u16_t mask; /* NMEA mask */
+	uint16_t mask; /* NMEA mask */
 	bool running; /* GPS running status */
 	bool has_fix; /* At least one fix is got */
 } client;
@@ -49,10 +49,10 @@ static nrf_gnss_data_frame_t gps_data;
 static struct k_thread gps_thread;
 static k_tid_t gps_thread_id;
 static K_THREAD_STACK_DEFINE(gps_thread_stack, THREAD_STACK_SIZE);
-static u64_t ttft_start;
+static uint64_t ttft_start;
 
 /* global functions defined in different files */
-void rsp_send(const u8_t *str, size_t len);
+void rsp_send(const uint8_t *str, size_t len);
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -211,10 +211,10 @@ K_WORK_DEFINE(supl_work, supl_handler);
 
 static void gps_satellite_stats(void)
 {
-	static u8_t last_tracked;
-	u8_t tracked = 0;
-	u8_t in_fix = 0;
-	u8_t unhealthy = 0;
+	static uint8_t last_tracked;
+	uint8_t tracked = 0;
+	uint8_t in_fix = 0;
+	uint8_t unhealthy = 0;
 
 	if (gps_data.data_id != NRF_GNSS_PVT_DATA_ID || client.has_fix) {
 		return;
@@ -280,7 +280,7 @@ static void gps_thread_fn(void *arg1, void *arg2, void *arg3)
 			if (IS_FIX(gps_data.pvt.flags)) {
 				gps_pvt_notify();
 				if (!client.has_fix) {
-					u64_t now = k_uptime_get();
+					uint64_t now = k_uptime_get();
 
 					sprintf(rsp_buf, "#XGPSP: TTFF %ds\r\n",
 						(int)(now - ttft_start)/1000);
@@ -410,7 +410,7 @@ static int do_gps_stop(void)
 static int handle_at_gps(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	u16_t op;
+	uint16_t op;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:

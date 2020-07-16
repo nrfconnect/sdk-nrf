@@ -25,9 +25,9 @@ static inline void
 bt_mesh_loc_global_encode(struct net_buf_simple *buf,
 			  const struct bt_mesh_loc_global *loc)
 {
-	u32_t latitude = (u32_t)(loc->latitude * BT_MESH_LOC_LATITUDE_FACTOR);
-	u32_t longitude =
-		(u32_t)(loc->longitude * BT_MESH_LOC_LONGITUDE_FACTOR);
+	uint32_t latitude = (uint32_t)(loc->latitude * BT_MESH_LOC_LATITUDE_FACTOR);
+	uint32_t longitude =
+		(uint32_t)(loc->longitude * BT_MESH_LOC_LONGITUDE_FACTOR);
 
 	net_buf_simple_add_le32(buf, latitude);
 	net_buf_simple_add_le32(buf, longitude);
@@ -44,9 +44,9 @@ static inline void bt_mesh_loc_global_decode(struct net_buf_simple *buf,
 	loc->altitude = net_buf_simple_pull_le16(buf);
 }
 
-static inline u8_t bt_mesh_loc_4bit_log2_encode(u32_t value)
+static inline uint8_t bt_mesh_loc_4bit_log2_encode(uint32_t value)
 {
-	for (u8_t x = 0; x < 15; x++) {
+	for (uint8_t x = 0; x < 15; x++) {
 		if (value <= (125U << x)) {
 			return x;
 		}
@@ -61,7 +61,7 @@ static inline void bt_mesh_loc_local_encode(struct net_buf_simple *buf,
 	net_buf_simple_add_le16(buf, loc->east);
 	net_buf_simple_add_le16(buf, loc->altitude);
 
-	u8_t enc_floor;
+	uint8_t enc_floor;
 
 	switch (loc->floor_number) {
 	case BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_0:
@@ -82,13 +82,13 @@ static inline void bt_mesh_loc_local_encode(struct net_buf_simple *buf,
 	net_buf_simple_add_u8(buf, enc_floor);
 
 	/* Encoding for the update time and precision is t = 2^(x - 3) */
-	u8_t enc_update_time =
+	uint8_t enc_update_time =
 		loc->time_delta >= 0 ?
 			bt_mesh_loc_4bit_log2_encode(loc->time_delta) :
 			BIT_MASK(4U);
-	u8_t enc_precision = bt_mesh_loc_4bit_log2_encode(loc->precision_mm);
+	uint8_t enc_precision = bt_mesh_loc_4bit_log2_encode(loc->precision_mm);
 
-	u16_t uncertainty = (loc->is_mobile) |
+	uint16_t uncertainty = (loc->is_mobile) |
 			    ((enc_update_time & BIT_MASK(4U)) << 8U) |
 			    ((enc_precision & BIT_MASK(4U)) << 12U);
 
@@ -102,7 +102,7 @@ static inline void bt_mesh_loc_local_decode(struct net_buf_simple *buf,
 	loc->east = net_buf_simple_pull_le16(buf);
 	loc->altitude = net_buf_simple_pull_le16(buf);
 
-	u8_t enc_floor = net_buf_simple_pull_u8(buf);
+	uint8_t enc_floor = net_buf_simple_pull_u8(buf);
 
 	switch (enc_floor) {
 	case BT_MESH_LOC_FLOOR_NUMBER_GROUND_FLOOR_0:
@@ -115,7 +115,7 @@ static inline void bt_mesh_loc_local_decode(struct net_buf_simple *buf,
 		break;
 	}
 
-	u16_t uncertainty = net_buf_simple_pull_le16(buf);
+	uint16_t uncertainty = net_buf_simple_pull_le16(buf);
 
 	loc->is_mobile = uncertainty & BIT_MASK(1);
 	loc->time_delta = (125 << ((uncertainty >> 8) & BIT_MASK(4)));

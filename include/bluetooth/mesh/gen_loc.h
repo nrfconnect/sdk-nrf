@@ -78,25 +78,25 @@ struct bt_mesh_loc_global {
 	 * Global altitude above the WGS84 datum in meters.
 	 * @sa bt_mesh_loc_altitude_defines
 	 */
-	s16_t altitude;
+	int16_t altitude;
 };
 
 /** Local location parameters. */
 struct bt_mesh_loc_local {
 	/** Local north position in decimeters. */
-	s16_t north;
+	int16_t north;
 	/** Local east position in decimeters. */
-	s16_t east;
+	int16_t east;
 	/** Local altitude in decimeters. @sa bt_mesh_loc_altitude_defines */
-	s16_t altitude;
+	int16_t altitude;
 	/** Floor number. @sa bt_mesh_loc_floor_number_defines */
-	s16_t floor_number;
+	int16_t floor_number;
 	/** Whether the device is movable. */
 	bool is_mobile;
 	/** Time since the previous position update, or @em K_FOREVER. */
-	s32_t time_delta;
+	int32_t time_delta;
 	/** Precision of the location in millimeters. */
-	u32_t precision_mm;
+	uint32_t precision_mm;
 };
 
 #ifdef __cplusplus

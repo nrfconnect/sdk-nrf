@@ -78,9 +78,9 @@ struct nfc_ndef_uri_rec_payload {
 	/** URI identifier code. */
 	enum nfc_ndef_uri_rec_id uri_id_code;
 	/** Pointer to a URI string. */
-	u8_t const *uri_data;
+	uint8_t const *uri_data;
 	/** Length of the URI string. */
-	u8_t uri_data_len;
+	uint8_t uri_data_len;
 };
 
 /**
@@ -88,7 +88,7 @@ struct nfc_ndef_uri_rec_payload {
  * file @c uri_rec.c. It is used in the @ref NFC_NDEF_URI_RECORD_DESC_DEF
  * macro.
  */
-extern const u8_t nfc_ndef_uri_rec_type;
+extern const uint8_t nfc_ndef_uri_rec_type;
 
 /**
  * @brief Construct the payload for a URI record.
@@ -107,8 +107,8 @@ extern const u8_t nfc_ndef_uri_rec_type;
  * buffer space.
  */
 int nfc_ndef_uri_rec_payload_encode(struct nfc_ndef_uri_rec_payload *input,
-				    u8_t *buff,
-				    u32_t *len);
+				    uint8_t *buff,
+				    uint32_t *len);
 
 /** @brief Macro for generating a description of a URI record.
  *

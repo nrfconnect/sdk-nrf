@@ -11,11 +11,11 @@
 
 LOG_MODULE_REGISTER(dk_bt_mesh_prov, CONFIG_BT_MESH_DK_PROV_LOG_LEVEL);
 
-static u32_t oob_toggles;
-static u32_t oob_toggle_count;
+static uint32_t oob_toggles;
+static uint32_t oob_toggle_count;
 static struct k_delayed_work oob_work;
 
-static u32_t button_press_count;
+static uint32_t button_press_count;
 static struct button_handler button_handler;
 
 static void oob_blink_toggle(struct k_work *work)
@@ -33,7 +33,7 @@ static void oob_blink_toggle(struct k_work *work)
 	}
 }
 
-static int output_number(bt_mesh_output_action_t action, u32_t number)
+static int output_number(bt_mesh_output_action_t action, uint32_t number)
 {
 	if (IS_ENABLED(CONFIG_BT_MESH_DK_PROV_OOB_LOG) &&
 	    action == BT_MESH_DISPLAY_NUMBER) {
@@ -72,13 +72,13 @@ static void oob_button_timeout(struct k_work *work)
 	bt_mesh_input_number(button_press_count);
 }
 
-static void oob_button_handler(u32_t button_state, u32_t has_changed)
+static void oob_button_handler(uint32_t button_state, uint32_t has_changed)
 {
 	if (!(button_state & has_changed)) {
 		return;
 	}
 
-	u32_t led = button_press_count++ & BIT_MASK(3);
+	uint32_t led = button_press_count++ & BIT_MASK(3);
 
 	dk_set_leds_state(BIT(led) & DK_ALL_LEDS_MSK,
 			  BIT(led - 4) & DK_ALL_LEDS_MSK);
@@ -86,7 +86,7 @@ static void oob_button_handler(u32_t button_state, u32_t has_changed)
 	k_delayed_work_submit(&oob_work, K_SECONDS(3));
 }
 
-static int input(bt_mesh_input_action_t act, u8_t size)
+static int input(bt_mesh_input_action_t act, uint8_t size)
 {
 	if (!IS_ENABLED(CONFIG_BT_MESH_DK_PROV_OOB_BUTTON)) {
 		return -ENOTSUP;
@@ -120,7 +120,7 @@ static void oob_stop(void)
 	}
 }
 
-static void prov_complete(u16_t net_idx, u16_t src)
+static void prov_complete(uint16_t net_idx, uint16_t src)
 {
 	oob_stop();
 	LOG_DBG("Prov complete! Addr: 0x%04x\n", src);
@@ -132,7 +132,7 @@ static void prov_reset(void)
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 }
 
-static u8_t dev_uuid[16];
+static uint8_t dev_uuid[16];
 
 static const struct bt_mesh_prov prov = {
 	.uuid = dev_uuid,

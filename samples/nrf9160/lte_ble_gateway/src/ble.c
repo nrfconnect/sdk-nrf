@@ -34,23 +34,23 @@
 
 extern void alarm(void);
 
-static u8_t on_received(struct bt_conn *conn,
+static uint8_t on_received(struct bt_conn *conn,
 			struct bt_gatt_subscribe_params *params,
-			const void *data, u16_t length)
+			const void *data, uint16_t length)
 {
 	if (length > 0) {
-		printk("Orientation: %x\n", ((u8_t *)data)[0]);
+		printk("Orientation: %x\n", ((uint8_t *)data)[0]);
 		struct sensor_data in_data;
 
 		in_data.type = THINGY_ORIENTATION;
 		in_data.length = 1;
-		in_data.data[0] = ((u8_t *)data)[0];
+		in_data.data[0] = ((uint8_t *)data)[0];
 
 		if (aggregator_put(in_data) != 0) {
 			printk("Was not able to insert Thingy orientation data into aggregator.\n");
 		}
 		/* If the thingy is upside down, trigger an alarm. */
-		if (((u8_t *)data)[0] == 3) {
+		if (((uint8_t *)data)[0] == 3) {
 			alarm();
 		}
 
@@ -123,7 +123,7 @@ static struct bt_gatt_dm_cb discovery_cb = {
 	.error_found = discovery_error_found,
 };
 
-static void connected(struct bt_conn *conn, u8_t conn_err)
+static void connected(struct bt_conn *conn, uint8_t conn_err)
 {
 	int err;
 	char addr[BT_ADDR_LE_STR_LEN];

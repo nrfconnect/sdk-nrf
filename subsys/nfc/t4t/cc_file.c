@@ -43,8 +43,8 @@ LOG_MODULE_REGISTER(nfc_t4t_cc_file, CONFIG_NFC_T4T_CC_FILE_LOG_LEVEL);
 /** @brief Function for validating arguments used by CC file parsing procedure.
  */
 static int nfc_t4t_cc_args_validate(struct nfc_t4t_cc_file *t4t_cc_file,
-				    const u8_t *raw_data,
-				    u16_t len)
+				    const uint8_t *raw_data,
+				    uint16_t len)
 {
 	if ((!t4t_cc_file) ||
 	    (!t4t_cc_file->tlv_block_array) ||
@@ -68,7 +68,7 @@ static int nfc_t4t_cc_args_validate(struct nfc_t4t_cc_file *t4t_cc_file,
  */
 int nfc_t4t_cc_file_validate(struct nfc_t4t_cc_file *t4t_cc_file)
 {
-	u16_t type = t4t_cc_file->tlv_block_array[0].type;
+	uint16_t type = t4t_cc_file->tlv_block_array[0].type;
 
 	if ((t4t_cc_file->major_version == NFC_T4T_EXTENDED_MAJOR_VER &&
 	     type == NFC_T4T_TLV_BLOCK_TYPE_EXTENDED_NDEF_FILE_CONTROL_TLV) ||
@@ -107,11 +107,11 @@ static int nfc_t4t_tlv_block_insert(struct nfc_t4t_cc_file *t4t_cc_file,
 
 
 int nfc_t4t_cc_file_parse(struct nfc_t4t_cc_file *t4t_cc_file,
-			  const u8_t *raw_data,
-			  u16_t len)
+			  const uint8_t *raw_data,
+			  uint16_t len)
 {
 	int err;
-	const u8_t *offset = raw_data;
+	const uint8_t *offset = raw_data;
 	struct nfc_t4t_tlv_block new_block;
 
 	err = nfc_t4t_cc_args_validate(t4t_cc_file, raw_data, len);
@@ -137,7 +137,7 @@ int nfc_t4t_cc_file_parse(struct nfc_t4t_cc_file *t4t_cc_file,
 	len -= (offset - raw_data);
 
 	while (len > 0) {
-		u16_t tlv_len = len;
+		uint16_t tlv_len = len;
 
 		err = nfc_t4t_tlv_block_parse(&new_block, offset, &tlv_len);
 		if (err) {
@@ -158,7 +158,7 @@ int nfc_t4t_cc_file_parse(struct nfc_t4t_cc_file *t4t_cc_file,
 
 
 struct nfc_t4t_tlv_block *nfc_t4t_cc_file_content_get(struct nfc_t4t_cc_file *t4t_cc_file,
-						      u16_t file_id)
+						      uint16_t file_id)
 {
 	struct nfc_t4t_tlv_block *tlv_array = t4t_cc_file->tlv_block_array;
 
@@ -177,7 +177,7 @@ struct nfc_t4t_tlv_block *nfc_t4t_cc_file_content_get(struct nfc_t4t_cc_file *t4
 
 int nfc_t4t_cc_file_content_set(struct nfc_t4t_cc_file *t4t_cc_file,
 				const struct nfc_t4t_tlv_block_file *file,
-				u16_t file_id)
+				uint16_t file_id)
 {
 	struct nfc_t4t_tlv_block *tlv_block;
 

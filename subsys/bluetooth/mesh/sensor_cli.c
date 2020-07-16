@@ -18,48 +18,48 @@
 
 struct list_rsp {
 	struct bt_mesh_sensor_info *sensors;
-	u32_t count;
+	uint32_t count;
 };
 
 struct settings_rsp {
-	u16_t id;
-	u16_t *ids;
-	u32_t count;
+	uint16_t id;
+	uint16_t *ids;
+	uint32_t count;
 };
 
 struct setting_rsp {
-	u16_t id;
-	u16_t setting_id;
+	uint16_t id;
+	uint16_t setting_id;
 	struct bt_mesh_sensor_setting_status *setting;
 };
 
 struct sensor_data_rsp {
-	u16_t id;
+	uint16_t id;
 	struct sensor_value *value;
 };
 
 struct series_data_rsp {
 	struct bt_mesh_sensor_series_entry *entries;
 	const struct bt_mesh_sensor_column *col;
-	u16_t id;
-	u32_t count;
+	uint16_t id;
+	uint32_t count;
 };
 
 struct cadence_rsp {
-	u16_t id;
+	uint16_t id;
 	struct bt_mesh_sensor_cadence_status *cadence;
 };
 
-static void tolerance_decode(u16_t encoded, struct sensor_value *tolerance)
+static void tolerance_decode(uint16_t encoded, struct sensor_value *tolerance)
 {
-	u32_t toll_mill = (encoded * 100ULL * 1000000ULL) / 4095ULL;
+	uint32_t toll_mill = (encoded * 100ULL * 1000000ULL) / 4095ULL;
 
 	tolerance->val1 = toll_mill / 1000000ULL;
 	tolerance->val2 = toll_mill % 1000000ULL;
 }
 
 static void unknown_type(struct bt_mesh_sensor_cli *cli,
-			 struct bt_mesh_msg_ctx *ctx, u16_t id, u32_t op)
+			 struct bt_mesh_msg_ctx *ctx, uint16_t id, uint32_t op)
 {
 	if (cli->cb && cli->cb->unknown_type) {
 		cli->cb->unknown_type(cli, ctx, id, op);
@@ -76,7 +76,7 @@ static void handle_descriptor_status(struct bt_mesh_model *mod,
 
 	struct bt_mesh_sensor_cli *cli = mod->user_data;
 	struct list_rsp *ack_ctx = cli->ack.user_data;
-	u32_t count = 0;
+	uint32_t count = 0;
 	bool is_rsp;
 
 	is_rsp = model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_DESCRIPTOR_STATUS,
@@ -93,7 +93,7 @@ static void handle_descriptor_status(struct bt_mesh_model *mod,
 	struct bt_mesh_sensor_info sensor;
 
 	while (buf->len >= 8) {
-		u32_t tolerances;
+		uint32_t tolerances;
 
 		sensor.id = net_buf_simple_pull_le16(buf);
 		tolerances = net_buf_simple_pull_le24(buf);
@@ -136,8 +136,8 @@ static void handle_status(struct bt_mesh_model *mod,
 
 	while (buf->len > 3) {
 		const struct bt_mesh_sensor_type *type;
-		u8_t length;
-		u16_t id;
+		uint8_t length;
+		uint16_t id;
 
 		sensor_status_id_decode(buf, &length, &id);
 		if (length == 0) {
@@ -157,7 +157,7 @@ static void handle_status(struct bt_mesh_model *mod,
 			continue;
 		}
 
-		u8_t expected_len = sensor_value_len(type);
+		uint8_t expected_len = sensor_value_len(type);
 
 		if (length != expected_len) {
 			BT_WARN("Invalid length for 0x%04x: %u (expected %u)",
@@ -211,7 +211,7 @@ static int parse_series_entry(const struct bt_mesh_sensor_type *type,
 		return err;
 	}
 
-	u64_t end_mill = (entry->column.start.val1 + width.val1) * 1000000L +
+	uint64_t end_mill = (entry->column.start.val1 + width.val1) * 1000000L +
 			 (entry->column.start.val2 + width.val2);
 
 	entry->column.end.val1 = end_mill / 1000000L;
@@ -230,7 +230,7 @@ static void handle_column_status(struct bt_mesh_model *mod,
 	const struct bt_mesh_sensor_type *type;
 	int err;
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	type = bt_mesh_sensor_type_get(id);
 	if (!type) {
@@ -283,7 +283,7 @@ static void handle_series_status(struct bt_mesh_model *mod,
 	const struct bt_mesh_sensor_type *type;
 	struct series_data_rsp *rsp = NULL;
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 
 	type = bt_mesh_sensor_type_get(id);
 	if (!type) {
@@ -308,9 +308,9 @@ static void handle_series_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	u8_t count = buf->len / col_format->size * 2 + sensor_value_len(type);
+	uint8_t count = buf->len / col_format->size * 2 + sensor_value_len(type);
 
-	for (u8_t i = 0; i < count; i++) {
+	for (uint8_t i = 0; i < count; i++) {
 		struct bt_mesh_sensor_series_entry entry;
 
 		(void)parse_series_entry(type, col_format, buf, &entry);
@@ -338,7 +338,7 @@ static void handle_cadence_status(struct bt_mesh_model *mod,
 	struct cadence_rsp *rsp = cli->ack.user_data;
 	int err;
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 	const struct bt_mesh_sensor_type *type = bt_mesh_sensor_type_get(id);
 
 	if (!type) {
@@ -388,7 +388,7 @@ static void handle_settings_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	u16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
 	const struct bt_mesh_sensor_type *type = bt_mesh_sensor_type_get(id);
 
 	if (!type) {
@@ -397,11 +397,11 @@ static void handle_settings_status(struct bt_mesh_model *mod,
 	}
 
 	/* The list may be unaligned: */
-	u16_t ids[(BT_MESH_RX_SDU_MAX -
+	uint16_t ids[(BT_MESH_RX_SDU_MAX -
 		   BT_MESH_MODEL_OP_LEN(BT_MESH_SENSOR_OP_SETTINGS_STATUS) -
 		   2) /
-		  sizeof(u16_t)];
-	u32_t count = buf->len / 2;
+		  sizeof(uint16_t)];
+	uint32_t count = buf->len / 2;
 
 	memcpy(ids, net_buf_simple_pull_mem(buf, buf->len),
 	       count * sizeof(ids));
@@ -413,7 +413,7 @@ static void handle_settings_status(struct bt_mesh_model *mod,
 	if (model_ack_match(&cli->ack, BT_MESH_SENSOR_OP_SETTINGS_STATUS,
 			    ctx) &&
 	    rsp->id == id) {
-		memcpy(rsp->ids, ids, sizeof(u16_t) * MIN(count, rsp->count));
+		memcpy(rsp->ids, ids, sizeof(uint16_t) * MIN(count, rsp->count));
 		rsp->count = count;
 		model_ack_rx(&cli->ack);
 	}
@@ -427,10 +427,10 @@ static void handle_setting_status(struct bt_mesh_model *mod,
 	struct setting_rsp *rsp = cli->ack.user_data;
 	int err;
 
-	u16_t id = net_buf_simple_pull_le16(buf);
-	u16_t setting_id = net_buf_simple_pull_le16(buf);
+	uint16_t id = net_buf_simple_pull_le16(buf);
+	uint16_t setting_id = net_buf_simple_pull_le16(buf);
 	struct bt_mesh_sensor_setting_status setting;
-	u8_t access;
+	uint8_t access;
 
 	if (buf->len == 0) {
 		setting.type = NULL;
@@ -520,7 +520,7 @@ const struct bt_mesh_model_cb _bt_mesh_sensor_cli_cb = {
 int bt_mesh_sensor_cli_list_get(struct bt_mesh_sensor_cli *cli,
 				struct bt_mesh_msg_ctx *ctx,
 				struct bt_mesh_sensor_info *sensors,
-				u32_t *count)
+				uint32_t *count)
 {
 	int err;
 
@@ -689,7 +689,7 @@ int bt_mesh_sensor_cli_cadence_set_unack(
 int bt_mesh_sensor_cli_settings_get(struct bt_mesh_sensor_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
 				    struct bt_mesh_sensor_type *sensor,
-				    u16_t *ids, u32_t *count)
+				    uint16_t *ids, uint32_t *count)
 {
 	int err;
 
@@ -883,7 +883,7 @@ int bt_mesh_sensor_cli_series_entries_get(
 	struct bt_mesh_sensor_cli *cli, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_sensor_type *sensor,
 	const struct bt_mesh_sensor_column *range,
-	struct bt_mesh_sensor_series_entry *rsp, u32_t *count)
+	struct bt_mesh_sensor_series_entry *rsp, uint32_t *count)
 {
 	const struct bt_mesh_sensor_format *col_format;
 	int err;

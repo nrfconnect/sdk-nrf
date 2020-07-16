@@ -33,16 +33,16 @@ int bt_rand(void *buf, size_t len)
 		}
 	}
 
-	return entropy_get_entropy(dev, (u8_t *)buf, len);
+	return entropy_get_entropy(dev, (uint8_t *)buf, len);
 }
 
-int bt_encrypt_le(const u8_t key[BT_ECB_BLOCK_SIZE],
-		  const u8_t plaintext[BT_ECB_BLOCK_SIZE],
-		  u8_t enc_data[BT_ECB_BLOCK_SIZE])
+int bt_encrypt_le(const uint8_t key[BT_ECB_BLOCK_SIZE],
+		  const uint8_t plaintext[BT_ECB_BLOCK_SIZE],
+		  uint8_t enc_data[BT_ECB_BLOCK_SIZE])
 {
-	u8_t key_le[BT_ECB_BLOCK_SIZE];
-	u8_t plaintext_le[BT_ECB_BLOCK_SIZE];
-	u8_t enc_data_le[BT_ECB_BLOCK_SIZE];
+	uint8_t key_le[BT_ECB_BLOCK_SIZE];
+	uint8_t plaintext_le[BT_ECB_BLOCK_SIZE];
+	uint8_t enc_data_le[BT_ECB_BLOCK_SIZE];
 
 	BT_HEXDUMP_DBG(key, BT_ECB_BLOCK_SIZE, "key");
 	BT_HEXDUMP_DBG(plaintext, BT_ECB_BLOCK_SIZE, "plaintext");
@@ -67,9 +67,9 @@ int bt_encrypt_le(const u8_t key[BT_ECB_BLOCK_SIZE],
 	return errcode;
 }
 
-int bt_encrypt_be(const u8_t key[BT_ECB_BLOCK_SIZE],
-		  const u8_t plaintext[BT_ECB_BLOCK_SIZE],
-		  u8_t enc_data[BT_ECB_BLOCK_SIZE])
+int bt_encrypt_be(const uint8_t key[BT_ECB_BLOCK_SIZE],
+		  const uint8_t plaintext[BT_ECB_BLOCK_SIZE],
+		  uint8_t enc_data[BT_ECB_BLOCK_SIZE])
 {
 	BT_HEXDUMP_DBG(key, BT_ECB_BLOCK_SIZE, "key");
 	BT_HEXDUMP_DBG(plaintext, BT_ECB_BLOCK_SIZE, "plaintext");

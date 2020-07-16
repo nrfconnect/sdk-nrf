@@ -20,33 +20,33 @@
  */
 struct config_channel_frame {
 	/** HID report ID of the feature report used for transmitting data. */
-	u8_t report_id;
+	uint8_t report_id;
 
 	/** Product ID of the device to which the request is addressed.
 	    Needed to route requests in a multi-device setup. */
-	u16_t recipient;
+	uint16_t recipient;
 
 	/** ID of the option to be set or fetched. */
-	u8_t event_id;
+	uint8_t event_id;
 
 	/** Status of the request. Also, used by sender to ask for fetch. */
-	u8_t status;
+	uint8_t status;
 
 	/** Length of data in the request. */
-	u8_t event_data_len;
+	uint8_t event_data_len;
 
 	/** Arbitrary length data connected to the request. */
-	u8_t *event_data;
+	uint8_t *event_data;
 };
 
 struct fetch {
 	atomic_t done;
-	u8_t data[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];
+	uint8_t data[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];
 	size_t data_len;
 
 	/* Recently fetched event_id and recipient. */
-	u8_t event_id;
-	u16_t recipient;
+	uint8_t event_id;
+	uint16_t recipient;
 };
 
 /** @brief Configuration channel instance.
@@ -97,8 +97,8 @@ void config_channel_init(struct config_channel_state *cfg_chan);
  *	     code is returned.
  */
 int config_channel_report_get(struct config_channel_state *cfg_chan,
-			      u8_t *buffer, size_t length, bool usb,
-			      u16_t local_product_id);
+			      uint8_t *buffer, size_t length, bool usb,
+			      uint16_t local_product_id);
 /**
  * @brief Handle a report set operation on the configuration channel.
  *
@@ -113,8 +113,8 @@ int config_channel_report_get(struct config_channel_state *cfg_chan,
  *	     code is returned.
  */
 int config_channel_report_set(struct config_channel_state *cfg_chan,
-			      const u8_t *buffer, size_t length, bool usb,
-			      u16_t local_product_id);
+			      const uint8_t *buffer, size_t length, bool usb,
+			      uint16_t local_product_id);
 
 /**
  * @brief Parse the configuration channel report.
@@ -127,7 +127,7 @@ int config_channel_report_set(struct config_channel_state *cfg_chan,
  * @return 0 if the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int config_channel_report_parse(const u8_t *buffer, size_t length,
+int config_channel_report_parse(const uint8_t *buffer, size_t length,
 				struct config_channel_frame *frame, bool usb);
 /**
  * @brief Fill the configuration channel report with
@@ -141,7 +141,7 @@ int config_channel_report_parse(const u8_t *buffer, size_t length,
  * @return 0 if the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int config_channel_report_fill(u8_t *buffer, const size_t length,
+int config_channel_report_fill(uint8_t *buffer, const size_t length,
 			       const struct config_channel_frame *frame, bool usb);
 
 /**

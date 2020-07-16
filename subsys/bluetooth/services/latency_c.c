@@ -26,12 +26,12 @@ enum {
 
 static const struct bt_gatt_latency_c_cb *callbacks;
 
-static void received_latency_response(struct bt_conn *conn, u8_t err,
+static void received_latency_response(struct bt_conn *conn, uint8_t err,
 				      struct bt_gatt_write_params *params)
 {
 	struct bt_gatt_latency_c *latency;
 	const void *buf;
-	u16_t len;
+	uint16_t len;
 
 	/* Retrieve Latency context. */
 	latency = CONTAINER_OF(params, struct bt_gatt_latency_c,
@@ -114,7 +114,7 @@ int bt_gatt_latency_c_handles_assign(struct bt_gatt_dm *dm,
 }
 
 int bt_gatt_latency_c_request(struct bt_gatt_latency_c *latency,
-			      const void *data, u16_t len)
+			      const void *data, uint16_t len)
 {
 	int err;
 

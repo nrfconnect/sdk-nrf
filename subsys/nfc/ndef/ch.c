@@ -25,10 +25,10 @@
 /* Size of the field with Carrier Type Length. */
 #define HC_REC_CARRIER_TYPE_LEN_SIZE 1
 
-static u32_t nfc_ac_rec_payload_size_get(const struct nfc_ndef_ch_ac_rec *ac_rec)
+static uint32_t nfc_ac_rec_payload_size_get(const struct nfc_ndef_ch_ac_rec *ac_rec)
 {
 	/* Initialize with size of byte with CPS. */
-	u32_t payload_size = AC_REC_CPS_BYTE_SIZE;
+	uint32_t payload_size = AC_REC_CPS_BYTE_SIZE;
 
 	/* Add Carrier Data Reference size. */
 	payload_size +=  ac_rec->carrier_data_ref.length +
@@ -46,9 +46,9 @@ static u32_t nfc_ac_rec_payload_size_get(const struct nfc_ndef_ch_ac_rec *ac_rec
 	return payload_size;
 }
 
-static u32_t nfc_hc_payload_size_get(const struct nfc_ndef_ch_hc_rec *hc_rec)
+static uint32_t nfc_hc_payload_size_get(const struct nfc_ndef_ch_hc_rec *hc_rec)
 {
-	u32_t payload_size = HC_REC_CTF_BYTE_SIZE;
+	uint32_t payload_size = HC_REC_CTF_BYTE_SIZE;
 
 	payload_size += hc_rec->carrier.type_len +
 			HC_REC_CARRIER_TYPE_LEN_SIZE;
@@ -59,7 +59,7 @@ static u32_t nfc_hc_payload_size_get(const struct nfc_ndef_ch_hc_rec *hc_rec)
 }
 
 int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
-				   u8_t *buf, u32_t *len)
+				   uint8_t *buf, uint32_t *len)
 {
 	int err;
 
@@ -112,9 +112,9 @@ int nfc_ndef_ch_rec_local_record_add(struct nfc_ndef_record_desc *ch_rec,
 }
 
 int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
-				      u8_t *buf, u32_t *len)
+				      uint8_t *buf, uint32_t *len)
 {
-	u32_t payload_size = nfc_hc_payload_size_get(hc_rec);
+	uint32_t payload_size = nfc_hc_payload_size_get(hc_rec);
 
 	if (!buf) {
 		*len = payload_size;
@@ -152,9 +152,9 @@ int nfc_ndef_ch_hc_rec_payload_encode(const struct nfc_ndef_ch_hc_rec *hc_rec,
 }
 
 int nfc_ndef_ch_ac_rec_payload_encode(const struct nfc_ndef_ch_ac_rec *nfc_rec_ac,
-				      u8_t *buf, u32_t *len)
+				      uint8_t *buf, uint32_t *len)
 {
-	u32_t payload_size = nfc_ac_rec_payload_size_get(nfc_rec_ac);
+	uint32_t payload_size = nfc_ac_rec_payload_size_get(nfc_rec_ac);
 
 	if (!buf) {
 		*len = payload_size;
@@ -213,8 +213,8 @@ void nfc_ndef_ch_ac_rec_auxiliary_data_ref_clear(struct nfc_ndef_record_desc *ac
 }
 
 int nfc_ndef_ch_ac_rec_auxiliary_data_ref_add(struct nfc_ndef_record_desc *ac_rec,
-					      const u8_t *aux_data,
-					      u8_t aux_length)
+					      const uint8_t *aux_data,
+					      uint8_t aux_length)
 {
 	struct nfc_ndef_ch_ac_rec *ac_rec_payload =
 		(struct nfc_ndef_ch_ac_rec *)ac_rec->payload_descriptor;
@@ -231,9 +231,9 @@ int nfc_ndef_ch_ac_rec_auxiliary_data_ref_add(struct nfc_ndef_record_desc *ac_re
 }
 
 int nfc_ndef_ch_cr_rec_payload_encode(const struct nfc_ndef_ch_cr_rec *nfc_rec_cr,
-				      u8_t *buf, u32_t *len)
+				      uint8_t *buf, uint32_t *len)
 {
-	u32_t payload_size = 0;
+	uint32_t payload_size = 0;
 
 	if (buf) {
 		if (sizeof(nfc_rec_cr->random) > *len) {

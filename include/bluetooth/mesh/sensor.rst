@@ -319,7 +319,7 @@ Example: Average ambient temperature in a period of day as a sensor series:
        /* The column pointer is always a direct pointer to one of our columns,
         *  so determining the column index is easy:
         */
-       u32_t index = column - &columns[0];
+       uint32_t index = column - &columns[0];
 
        value[0] = avg_temp[index];
        value[1] = column->start;

@@ -28,25 +28,25 @@ struct nfc_t4t_cc_file {
 	struct nfc_t4t_tlv_block *tlv_block_array;
 
 	/** Number of TLV blocks stored in the Type 4 Tag. */
-	u16_t tlv_count;
+	uint16_t tlv_count;
 
 	/** Maximum number of TLV blocks. */
-	u16_t max_tlv_blocks;
+	uint16_t max_tlv_blocks;
 
 	/** Size (bytes) of a Capability Container including this field. */
-	u16_t len;
+	uint16_t len;
 
 	/** MLe field - maximum R-APDU data size (bytes). */
-	u16_t max_rapdu_size;
+	uint16_t max_rapdu_size;
 
 	/** MLc field - maximum C-APDU data size (bytes). */
-	u16_t max_capdu_size;
+	uint16_t max_capdu_size;
 
 	/** Major version of the supported Type 4 Tag specification. */
-	u8_t major_version;
+	uint8_t major_version;
 
 	/** Minor version of the supported Type 4 Tag specification. */
-	u8_t minor_version;
+	uint8_t minor_version;
 };
 
 /** @brief Macro for creating and initializing a Type 4 Tag
@@ -93,8 +93,8 @@ struct nfc_t4t_cc_file {
  *            Otherwise, a (negative) error code is returned.
  */
 int nfc_t4t_cc_file_parse(struct nfc_t4t_cc_file *t4t_cc_file,
-			  const u8_t *raw_data,
-			  u16_t len);
+			  const uint8_t *raw_data,
+			  uint16_t len);
 
 /** @brief Function for finding File Control TLV block within the
  *         CC file descriptor.
@@ -109,7 +109,7 @@ int nfc_t4t_cc_file_parse(struct nfc_t4t_cc_file *t4t_cc_file,
  *  @retval NULL If TLV with the specified File ID was not found.
  */
 struct nfc_t4t_tlv_block *nfc_t4t_cc_file_content_get(struct nfc_t4t_cc_file *t4t_cc_file,
-						      u16_t file_id);
+						      uint16_t file_id);
 
 /** @brief Function for binding a file with its File Control TLV block.
  *
@@ -125,7 +125,7 @@ struct nfc_t4t_tlv_block *nfc_t4t_cc_file_content_get(struct nfc_t4t_cc_file *t4
  */
 int nfc_t4t_cc_file_content_set(struct nfc_t4t_cc_file *t4t_cc_file,
 				const struct nfc_t4t_tlv_block_file *file,
-				u16_t file_id);
+				uint16_t file_id);
 
 /** @brief Function for printing the CC file descriptor.
  *

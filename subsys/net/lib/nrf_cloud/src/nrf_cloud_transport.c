@@ -122,10 +122,10 @@ static struct nct {
 	struct mqtt_utf8 dc_rx_endp;
 	struct mqtt_utf8 dc_m_endp;
 	struct mqtt_utf8 job_status_endp;
-	u32_t message_id;
-	u8_t rx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
-	u8_t tx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
-	u8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN];
+	uint32_t message_id;
+	uint8_t rx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
+	uint8_t tx_buf[CONFIG_NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN];
+	uint8_t payload_buf[CONFIG_NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN];
 } nct;
 
 static const struct mqtt_topic nct_cc_rx_list[] = {
@@ -169,7 +169,7 @@ static const struct mqtt_topic nct_cc_tx_list[] = {
 	}
 };
 
-static u32_t const nct_cc_rx_opcode_map[] = {
+static uint32_t const nct_cc_rx_opcode_map[] = {
 	NCT_CC_OPCODE_UPDATE_REQ,
 	NCT_CC_OPCODE_UPDATE_REJECT_RSP,
 	NCT_CC_OPCODE_UPDATE_ACCEPT_RSP
@@ -192,36 +192,45 @@ static void dc_endpoint_reset(void)
 }
 
 /* Get the next unused message id. */
-static u32_t dc_get_next_message_id(void)
+static uint32_t dc_get_next_message_id(void)
 {
 	nct.message_id++;
 
-	if ((u16_t)nct.message_id == 0) {
+	if ((uint16_t)nct.message_id == 0) {
 		nct.message_id++;
 	}
 
 	return nct.message_id;
 }
 
-/* Free memory allocated for the data endpoint and reset the endpoint. */
+/* Free memory allocated for the data endpoint and reset the endpoint.
+ *
+ * Casting away const for rx, tx, and m seems to be OK because the
+ * nct_dc_endpoint_set() caller gets the buffers from
+ * json_decode_and_alloc(), which uses nrf_cloud_malloc() to call
+ * k_malloc().
+ *
+ * The job_status_endp.utf8 buffer is allocated in this file as
+ * non-const, so casting away const here is safe.
+ */
 static void dc_endpoint_free(void)
 {
 	if (nct.dc_rx_endp.utf8 != NULL) {
-		nrf_cloud_free(nct.dc_rx_endp.utf8);
+		nrf_cloud_free((void *)nct.dc_rx_endp.utf8);
 	}
 	if (nct.dc_tx_endp.utf8 != NULL) {
-		nrf_cloud_free(nct.dc_tx_endp.utf8);
+		nrf_cloud_free((void *)nct.dc_tx_endp.utf8);
 	}
 	if (nct.dc_m_endp.utf8 != NULL) {
-		nrf_cloud_free(nct.dc_m_endp.utf8);
+		nrf_cloud_free((void *)nct.dc_m_endp.utf8);
 	}
 	if (nct.job_status_endp.utf8 != NULL) {
-		nrf_cloud_free(nct.job_status_endp.utf8);
+		nrf_cloud_free((void *)nct.job_status_endp.utf8);
 	}
 	dc_endpoint_reset();
 }
 
-static u32_t dc_send(const struct nct_dc_data *dc_data, u8_t qos)
+static uint32_t dc_send(const struct nct_dc_data *dc_data, uint8_t qos)
 {
 	if (dc_data == NULL) {
 		return -EINVAL;
@@ -235,7 +244,7 @@ static u32_t dc_send(const struct nct_dc_data *dc_data, u8_t qos)
 
 	/* Populate payload. */
 	if ((dc_data->data.len != 0) && (dc_data->data.ptr != NULL)) {
-		publish.message.payload.data = (u8_t *)dc_data->data.ptr;
+		publish.message.payload.data = (uint8_t *)dc_data->data.ptr;
 		publish.message.payload.len = dc_data->data.len;
 	}
 
@@ -248,19 +257,19 @@ static u32_t dc_send(const struct nct_dc_data *dc_data, u8_t qos)
 	return mqtt_publish(&nct.client, &publish);
 }
 
-static bool strings_compare(const char *s1, const char *s2, u32_t s1_len,
-			    u32_t s2_len)
+static bool strings_compare(const char *s1, const char *s2, uint32_t s1_len,
+			    uint32_t s2_len)
 {
 	return (strncmp(s1, s2, MIN(s1_len, s2_len))) ? false : true;
 }
 
 /* Verify if the topic is a control channel topic or not. */
-static bool control_channel_topic_match(u32_t list_id,
+static bool control_channel_topic_match(uint32_t list_id,
 					const struct mqtt_topic *topic,
 					enum nct_cc_opcode *opcode)
 {
 	struct mqtt_topic *topic_list;
-	u32_t list_size;
+	uint32_t list_size;
 
 	if (list_id == NCT_RX_LIST) {
 		topic_list = (struct mqtt_topic *)nct_cc_rx_list;
@@ -272,7 +281,7 @@ static bool control_channel_topic_match(u32_t list_id,
 		return false;
 	}
 
-	for (u32_t index = 0; index < list_size; index++) {
+	for (uint32_t index = 0; index < list_size; index++) {
 		if (strings_compare(
 			    topic->topic.utf8, topic_list[index].topic.utf8,
 			    topic->topic.size, topic_list[index].topic.size)) {
@@ -491,7 +500,7 @@ static int job_status_stream(const struct nct_dc_data *dc_data)
 
 	/* Populate payload. */
 	if ((dc_data->data.len != 0) && (dc_data->data.ptr != NULL)) {
-		publish.message.payload.data = (u8_t *)dc_data->data.ptr;
+		publish.message.payload.data = (uint8_t *)dc_data->data.ptr;
 		publish.message.payload.len = dc_data->data.len;
 	}
 
@@ -609,7 +618,7 @@ int nct_mqtt_connect(void)
 
 		nct.client.broker = (struct sockaddr *)&nct.broker;
 		nct.client.evt_cb = nct_mqtt_evt_handler;
-		nct.client.client_id.utf8 = (u8_t *)client_id_buf;
+		nct.client.client_id.utf8 = (uint8_t *)client_id_buf;
 		nct.client.client_id.size = strlen(client_id_buf);
 		nct.client.protocol_version = MQTT_VERSION_3_1_1;
 		nct.client.password = NULL;
@@ -939,7 +948,7 @@ int nct_cc_connect(void)
 
 int nct_cc_send(const struct nct_cc_data *cc_data)
 {
-	static u32_t msg_id;
+	static uint32_t msg_id;
 
 	if (cc_data == NULL) {
 		LOG_ERR("cc_data == NULL");
@@ -961,7 +970,7 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 
 	/* Populate payload. */
 	if ((cc_data->data.len != 0) && (cc_data->data.ptr != NULL)) {
-		publish.message.payload.data = (u8_t *)cc_data->data.ptr,
+		publish.message.payload.data = (uint8_t *)cc_data->data.ptr,
 		publish.message.payload.len = cc_data->data.len;
 	}
 
@@ -1003,40 +1012,42 @@ void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endp,
 	 */
 	dc_endpoint_free();
 
-	nct.dc_tx_endp.utf8 = (u8_t *)tx_endp->ptr;
+	nct.dc_tx_endp.utf8 = (const uint8_t *)tx_endp->ptr;
 	nct.dc_tx_endp.size = tx_endp->len;
 
-	nct.dc_rx_endp.utf8 = (u8_t *)rx_endp->ptr;
+	nct.dc_rx_endp.utf8 = (const uint8_t *)rx_endp->ptr;
 	nct.dc_rx_endp.size = rx_endp->len;
 
 	if (m_endp != NULL) {
-		nct.dc_m_endp.utf8 = (u8_t *)m_endp->ptr;
+		nct.dc_m_endp.utf8 = (const uint8_t *)m_endp->ptr;
 		nct.dc_m_endp.size = m_endp->len;
 
 #if defined(CONFIG_AWS_FOTA)
+		void *job_status_utf8;
 		int ret;
 
 		nct.job_status_endp.size =
 			nct.dc_m_endp.size + NCT_TOPIC_PREFIX_M_D_LEN +
 			NRF_CLOUD_CLIENT_ID_LEN + NCT_JOB_STATUS_TOPIC_LEN + 1;
-		nct.job_status_endp.utf8 =
-			nrf_cloud_malloc(nct.job_status_endp.size);
-		if (nct.job_status_endp.utf8 == NULL) {
+		job_status_utf8 = nrf_cloud_malloc(nct.job_status_endp.size);
+		if (job_status_utf8 == NULL) {
 			LOG_ERR("Failed to allocate mem for job status topic");
+			nct.job_status_endp.utf8 = NULL;
+			nct.job_status_endp.size = 0;
 			return;
 		}
-
-		ret = snprintf(nct.job_status_endp.utf8,
+		ret = snprintf(job_status_utf8,
 			       nct.job_status_endp.size, "%s%s%s%s",
 			       nct.dc_m_endp.utf8, NCT_M_D_TOPIC_PREFIX,
 			       client_id_buf, NCT_JOB_STATUS_TOPIC);
 		if ((ret <= 0) || (ret >= nct.job_status_endp.size)) {
-			nrf_cloud_free(nct.job_status_endp.utf8);
+			nrf_cloud_free(job_status_utf8);
 			nct.job_status_endp.utf8 = NULL;
 			nct.job_status_endp.size = 0;
 			LOG_ERR("Failed to build job status topic");
 			return;
 		}
+		nct.job_status_endp.utf8 = (const uint8_t *)job_status_utf8;
 		/* size is actually string length */
 		nct.job_status_endp.size = ret;
 #endif

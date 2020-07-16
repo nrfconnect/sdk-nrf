@@ -52,10 +52,10 @@ struct gps_sim_data {
  *
  * @param gps_data Pointer to NMEA sentence.
  */
-static u8_t nmea_checksum_get(const u8_t *gps_data)
+static uint8_t nmea_checksum_get(const uint8_t *gps_data)
 {
-	const u8_t *i = gps_data + 1;
-	u8_t checksum = 0;
+	const uint8_t *i = gps_data + 1;
+	uint8_t checksum = 0;
 
 	while (*i != '*') {
 		if ((i - gps_data) > GPS_NMEA_SENTENCE_MAX_LENGTH) {
@@ -77,7 +77,7 @@ static u8_t nmea_checksum_get(const u8_t *gps_data)
  */
 static double generate_sine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32() / CONFIG_GPS_SIM_FIX_TIME;
+	uint32_t time = k_uptime_get_32() / CONFIG_GPS_SIM_FIX_TIME;
 
 	return offset + amplitude * sin(time % UINT16_MAX);
 }
@@ -91,7 +91,7 @@ static double generate_sine(double offset, double amplitude)
  */
 static double generate_cosine(double offset, double amplitude)
 {
-	u32_t time = k_uptime_get_32() / CONFIG_GPS_SIM_FIX_TIME;
+	uint32_t time = k_uptime_get_32() / CONFIG_GPS_SIM_FIX_TIME;
 
 	return offset + amplitude * cos(time % UINT16_MAX);
 }
@@ -115,16 +115,16 @@ static double generate_pseudo_random(void)
 static void generate_gps_data(struct gps_nmea *gps_data,
 			      double max_variation)
 {
-	static u8_t hour = BASE_GPS_SAMPLE_HOUR;
-	static u8_t minute = BASE_GPS_SAMPLE_MINUTE;
-	static u8_t second = BASE_GPS_SAMPLE_SECOND;
-	static u32_t last_uptime;
+	static uint8_t hour = BASE_GPS_SAMPLE_HOUR;
+	static uint8_t minute = BASE_GPS_SAMPLE_MINUTE;
+	static uint8_t second = BASE_GPS_SAMPLE_SECOND;
+	static uint32_t last_uptime;
 	double lat = BASE_GSP_SAMPLE_LAT;
 	double lng = BASE_GSP_SAMPLE_LNG;
 	char lat_heading = 'N';
 	char lng_heading = 'E';
-	u32_t uptime;
-	u8_t checksum;
+	uint32_t uptime;
+	uint8_t checksum;
 
 	if (IS_ENABLED(CONFIG_GPS_SIM_ELLIPSOID)) {
 		lat = generate_sine(BASE_GSP_SAMPLE_LAT, max_variation / 2.0);

@@ -12,7 +12,7 @@
 #define DIGIT_CNT 10
 
 struct passkey_input_config {
-	const u16_t key_ids[DIGIT_CNT];
+	const uint16_t key_ids[DIGIT_CNT];
 };
 
 #endif /* _PASSKEY_BUTTONS_H_ */
