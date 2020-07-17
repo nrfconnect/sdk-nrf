@@ -222,7 +222,7 @@ static int bt_mesh_ponoff_srv_settings_set(struct bt_mesh_model *model,
 	struct ponoff_settings_data data;
 
 	if (name) {
-		return -ENOTSUP; /* TODO support this */
+		return -ENOENT;
 	}
 
 	if (read_cb(cb_arg, &data, sizeof(data)) != sizeof(data)) {

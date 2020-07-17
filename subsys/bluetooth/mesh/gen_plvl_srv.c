@@ -617,11 +617,15 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *mod)
 
 #ifdef CONFIG_BT_SETTINGS
 static int bt_mesh_plvl_srv_settings_set(struct bt_mesh_model *mod,
-					 size_t len_rd,
+					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {
 	struct bt_mesh_plvl_srv *srv = mod->user_data;
 	struct bt_mesh_plvl_srv_settings_data data;
+
+	if (name) {
+		return -ENOENT;
+	}
 
 	if (read_cb(cb_arg, &data, sizeof(data)) != sizeof(data)) {
 		return -EINVAL;

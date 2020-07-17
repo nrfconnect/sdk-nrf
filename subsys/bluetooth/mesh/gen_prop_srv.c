@@ -541,12 +541,16 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *mod)
 
 #ifdef CONFIG_BT_SETTINGS
 static int bt_mesh_prop_srv_settings_set(struct bt_mesh_model *model,
-					 size_t len_rd,
+					 const char *name, size_t len_rd,
 					 settings_read_cb read_cb, void *cb_arg)
 {
 	struct bt_mesh_prop_srv *srv = model->user_data;
 	uint8_t entries[CONFIG_BT_MESH_PROP_MAXCOUNT];
 	ssize_t size = MIN(sizeof(entries), len_rd);
+
+	if (name) {
+		return -ENOENT;
+	}
 
 	size = read_cb(cb_arg, &entries, size);
 

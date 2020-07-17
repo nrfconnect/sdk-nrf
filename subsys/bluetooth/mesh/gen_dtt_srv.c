@@ -110,7 +110,7 @@ static int bt_mesh_dtt_srv_settings_set(struct bt_mesh_model *model,
 	struct bt_mesh_dtt_srv *srv = model->user_data;
 
 	if (name) {
-		return -ENOTSUP; /* TODO support this */
+		return -ENOENT;
 	}
 
 	ssize_t bytes = read_cb(cb_arg, &srv->transition_time,
