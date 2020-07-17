@@ -13,6 +13,7 @@ For information about how to start working with Zigbee in |NCS|, see the followi
 
    ug_zigbee_overview.rst
    ug_zigbee_configuring.rst
+   ug_zigbee_configuring_libraries.rst
 
 See :ref:`zigbee_samples` for the list of available Zigbee samples.
 

@@ -3,7 +3,7 @@
 Zigbee overview
 ###############
 
-Zigbee is a portable, low-power software networking protocol that provides connectivity over an 802.15.4-based mesh network.
+|zigbee_description|
 It also defines an application layer that provides interoperability among all vendors.
 
 In combination with |NCS| and the integrated Zephyr RTOS, Zigbee allows for easy development of low-power connected solutions.
