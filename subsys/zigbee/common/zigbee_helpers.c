@@ -469,7 +469,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		 * Note: if the application shares some resources between Zigbee
 		 *       stack and other tasks/contexts, device disabling should
 		 *       be overwritten by implementing one of the weak
-		 *       functions inside zb_nrf_common.c.
+		 *       functions inside zb_nrf_pwr_mgmt.c.
 		 */
 		zb_sleep_now();
 		break;
