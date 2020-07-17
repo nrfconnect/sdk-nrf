@@ -34,6 +34,7 @@ struct enqueued_event_item {
 struct hids_subscriber {
 	struct bt_gatt_hids_c hidc;
 	uint16_t pid;
+	uint8_t hwid[HWID_LEN];
 };
 
 static struct hids_subscriber subscribers[CONFIG_BT_MAX_CONN];
@@ -173,7 +174,8 @@ static void init(void)
 	sys_slist_init(&enqueued_event_list);
 }
 
-static int register_subscriber(struct bt_gatt_dm *dm, uint16_t pid)
+static int register_subscriber(struct bt_gatt_dm *dm, uint16_t pid,
+			       const uint8_t *hwid, size_t hwid_len)
 {
 	size_t i;
 	for (i = 0; i < ARRAY_SIZE(subscribers); i++) {
@@ -184,6 +186,10 @@ static int register_subscriber(struct bt_gatt_dm *dm, uint16_t pid)
 	__ASSERT_NO_MSG(i < ARRAY_SIZE(subscribers));
 
 	subscribers[i].pid = pid;
+
+	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
+	memcpy(subscribers[i].hwid, hwid, hwid_len);
+
 	int err = bt_gatt_hids_c_handles_assign(dm, &subscribers[i].hidc);
 
 	if (err) {
@@ -440,6 +446,7 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 
 	bt_gatt_hids_c_release(&subscriber->hidc);
 	subscriber->pid = 0;
+	memset(subscriber->hwid, 0, sizeof(subscriber->hwid));
 }
 
 static void clear_state(void)
@@ -521,7 +528,8 @@ static bool event_handler(const struct event_header *eh)
 		const struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(eh);
 
-		register_subscriber(event->dm, event->pid);
+		register_subscriber(event->dm, event->pid,
+				    event->hwid, sizeof(event->hwid));
 
 		return false;
 	}

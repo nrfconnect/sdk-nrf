@@ -6,6 +6,7 @@
 
 #include <sys/byteorder.h>
 #include <zephyr/types.h>
+#include <stdio.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/gatt_dm.h>
@@ -22,7 +23,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_DISCOVERY_LOG_LEVEL);
 
 enum discovery_state {
 	DISCOVERY_STATE_START,
-	DISCOVERY_STATE_DEV_DESCR,
+	DISCOVERY_STATE_DEV_DESCR_LLPM,
+	DISCOVERY_STATE_DEV_DESCR_HWID,
 	DISCOVERY_STATE_DIS,
 	DISCOVERY_STATE_HIDS,
 
@@ -34,6 +36,8 @@ static enum discovery_state state;
 static uint16_t peer_vid;
 static uint16_t peer_pid;
 static bool peer_llpm_support;
+static uint8_t peer_hwid[HWID_LEN];
+
 static struct bt_conn *discovering_peer_conn;
 static const struct bt_uuid * const pnp_uuid = BT_UUID_DIS_PNP_ID;
 
@@ -74,6 +78,8 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 	event->dm = dm;
 	event->pid = peer_pid;
 	event->peer_llpm_support = peer_llpm_support;
+	__ASSERT_NO_MSG(sizeof(peer_hwid) == sizeof(event->hwid));
+	memcpy(event->hwid, peer_hwid, sizeof(peer_hwid));
 
 	for (size_t i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
 		if (bt_peripherals[i].pid == peer_pid) {
@@ -110,11 +116,35 @@ static void discovery_error(struct bt_conn *conn, int err, void *context)
 	peer_disconnect(conn);
 }
 
-static void read_dev_descr(const uint8_t *ptr, uint16_t len)
+static void read_dev_descr_llpm(const uint8_t *ptr, uint16_t len)
 {
 	__ASSERT_NO_MSG(len >= DEV_DESCR_LEN);
 	peer_llpm_support = ptr[DEV_DESCR_LLPM_SUPPORT_POS];
 	LOG_INF("LLPM %ssupported", peer_llpm_support ? ("") : ("not "));
+}
+
+static void read_dev_descr_hwid(const uint8_t *ptr, uint16_t len)
+{
+	__ASSERT_NO_MSG(len == HWID_LEN);
+	memcpy(peer_hwid, ptr, HWID_LEN);
+
+	const size_t log_buf_len = 2 * len + 1;
+	char log_buf[log_buf_len];
+	int pos = 0;
+	int err = snprintf(&log_buf[pos], log_buf_len - pos,
+			   "%02x", ptr[0]);
+
+	for (size_t i = 1; (i < len) && (err > 0); i++) {
+		pos += err;
+		err = snprintf(&log_buf[pos], log_buf_len - pos,
+			       "%02x", ptr[i]);
+	}
+
+	if (err > 0) {
+		LOG_INF("HW ID: %s", log_strdup(log_buf));
+	} else {
+		LOG_ERR("Failed to log HW ID");
+	}
 }
 
 static void read_dis(const uint8_t *ptr, uint16_t len)
@@ -141,8 +171,12 @@ static uint8_t read_attr(struct bt_conn *conn, uint8_t err,
 	const uint8_t *data_ptr = data;
 
 	switch (state) {
-	case DISCOVERY_STATE_DEV_DESCR:
-		read_dev_descr(data_ptr, length);
+	case DISCOVERY_STATE_DEV_DESCR_LLPM:
+		read_dev_descr_llpm(data_ptr, length);
+		break;
+
+	case DISCOVERY_STATE_DEV_DESCR_HWID:
+		read_dev_descr_hwid(data_ptr, length);
 		break;
 
 	case DISCOVERY_STATE_DIS:
@@ -167,8 +201,12 @@ static void discovery_completed(struct bt_gatt_dm *dm, void *context)
 	int err;
 
 	switch (state) {
-	case DISCOVERY_STATE_DEV_DESCR:
+	case DISCOVERY_STATE_DEV_DESCR_LLPM:
 		uuid = &custom_desc_chrc_uuid.uuid;
+		break;
+
+	case DISCOVERY_STATE_DEV_DESCR_HWID:
+		uuid = &hwid_chrc_uuid.uuid;
 		break;
 
 	case DISCOVERY_STATE_DIS:
@@ -263,7 +301,8 @@ static void next_discovery_step_fn(struct k_work *w)
 	state++;
 
 	switch (state) {
-	case DISCOVERY_STATE_DEV_DESCR:
+	case DISCOVERY_STATE_DEV_DESCR_LLPM:
+	case DISCOVERY_STATE_DEV_DESCR_HWID:
 		start_discovery(discovering_peer_conn, &custom_desc_uuid.uuid, false);
 		break;
 
