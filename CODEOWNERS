@@ -34,6 +34,7 @@ Kconfig*                                  @tejlmand
 /doc/themes/                              @carlescufi
 /doc/**/conf.py                           @carlescufi
 /doc/nrf/                                 @carlescufi
+/doc/versions.json                        @carlescufi
 # All subfolders
 /drivers/                                 @anangl
 /drivers/bt_ll_nrfxlib/                   @anangl @rugeGerritsen
