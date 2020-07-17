@@ -1,0 +1,39 @@
+menu "Download sample"
+
+config SAMPLE_SECURE_SOCKET
+	bool "Use TLS/DTLS"
+
+if SAMPLE_SECURE_SOCKET
+config SAMPLE_SEC_TAG
+	int "Security tag"
+	default 42
+
+config SAMPLE_CERT_FILE
+	string "Certificate file name"
+	default "../cert/file-example.pem"
+endif
+
+choice SAMPLE_FILE
+	prompt "Test file"
+
+config SAMPLE_FILE_HTTP
+	bool "HTTP test file"
+	depends on !SAMPLE_SECURE_SOCKET
+config SAMPLE_FILE_HTTPS
+	bool "HTTPS test file"
+	depends on SAMPLE_SECURE_SOCKET
+config SAMPLE_FILE_CUSTOM
+	bool "Custom test file"
+
+endchoice
+
+config SAMPLE_FILE_URL
+	string "URL of resource to download" if SAMPLE_FILE_CUSTOM
+	default "http://speedtest.ftp.otenet.gr/files/test100k.db" if SAMPLE_FILE_HTTP
+	default "https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_100kB.jpg" if SAMPLE_FILE_HTTPS
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
