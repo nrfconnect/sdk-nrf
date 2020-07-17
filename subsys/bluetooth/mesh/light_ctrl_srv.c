@@ -1391,7 +1391,7 @@ static int lc_setup_srv_settings_set(struct bt_mesh_model *mod,
 	ssize_t result;
 
 	if (name) {
-		return -ENOTSUP; /* TODO support this */
+		return -ENOENT;
 	}
 
 	result = read_cb(cb_arg, &data, sizeof(data));

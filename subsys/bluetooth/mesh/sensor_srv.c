@@ -751,14 +751,19 @@ static int sensor_srv_init(struct bt_mesh_model *mod)
 	return 0;
 }
 
-static int sensor_srv_settings_set(struct bt_mesh_model *mod, size_t len_rd,
-				   settings_read_cb read_cb, void *cb_arg)
+static int sensor_srv_settings_set(struct bt_mesh_model *mod, const char *name,
+				   size_t len_rd, settings_read_cb read_cb,
+				   void *cb_arg)
 {
 	struct bt_mesh_sensor_srv *srv = mod->user_data;
 	int err = 0;
 
 	NET_BUF_SIMPLE_DEFINE(buf, (CONFIG_BT_MESH_SENSOR_SRV_SENSORS_MAX *
 				    BT_MESH_SENSOR_MSG_MAXLEN_CADENCE_STATUS));
+
+	if (name) {
+		return -ENOENT;
+	}
 
 	ssize_t len = read_cb(cb_arg, net_buf_simple_add(&buf, len_rd), len_rd);
 
