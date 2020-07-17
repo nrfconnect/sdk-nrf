@@ -6,6 +6,7 @@
 
 #include <zephyr.h>
 #include <zephyr/types.h>
+#include <drivers/hwinfo.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/gatt.h>
@@ -16,15 +17,30 @@ static uint8_t device_descr[] = {
 	[DEV_DESCR_LLPM_SUPPORT_POS] = IS_ENABLED(CONFIG_DESKTOP_BLE_USE_LLPM),
 };
 
+static ssize_t read_hwid(struct bt_conn *conn,
+			 const struct bt_gatt_attr *attr,
+			 void *buf, uint16_t len, uint16_t offset)
+{
+	__ASSERT_NO_MSG(attr != NULL);
+
+	uint8_t hwid[HWID_LEN];
+	ssize_t ret = hwinfo_get_device_id(hwid, sizeof(hwid));
+
+	__ASSERT_NO_MSG(ret == HWID_LEN);
+	ARG_UNUSED(ret);
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset,
+				 hwid, sizeof(hwid));
+}
+
 static ssize_t read_dev_descr(struct bt_conn *conn,
 			      const struct bt_gatt_attr *attr,
 			      void *buf, uint16_t len, uint16_t offset)
 {
 	__ASSERT_NO_MSG(attr != NULL);
 	__ASSERT_NO_MSG(attr->user_data != NULL);
-	const char *value = attr->user_data;
 
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, value,
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, device_descr,
 				 sizeof(device_descr));
 }
 
@@ -34,5 +50,9 @@ BT_GATT_SERVICE_DEFINE(custom_desc_svc,
 	BT_GATT_CHARACTERISTIC(&custom_desc_chrc_uuid.uuid,
 			       BT_GATT_CHRC_READ,
 			       BT_GATT_PERM_READ_ENCRYPT,
-			       read_dev_descr, NULL, &device_descr),
+			       read_dev_descr, NULL, device_descr),
+	BT_GATT_CHARACTERISTIC(&hwid_chrc_uuid.uuid,
+			       BT_GATT_CHRC_READ,
+			       BT_GATT_PERM_READ_ENCRYPT,
+			       read_hwid, NULL, NULL),
 );
