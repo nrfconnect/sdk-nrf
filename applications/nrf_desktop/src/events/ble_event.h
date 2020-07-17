@@ -18,6 +18,7 @@
 #include <bluetooth/conn.h>
 
 #include "event_manager.h"
+#include "hwid.h"
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
 #include "chmap_filter.h"
@@ -125,6 +126,7 @@ struct ble_discovery_complete_event {
 
 	struct bt_gatt_dm *dm;
 	uint16_t pid;
+	uint8_t hwid[HWID_LEN];
 	bool peer_llpm_support;
 	enum peer_type peer_type;
 };
