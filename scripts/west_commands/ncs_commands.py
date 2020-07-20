@@ -5,8 +5,10 @@
 '''The "ncs-xyz" extension commands.'''
 
 import argparse
+import os
 from pathlib import Path
 import subprocess
+import sys
 from textwrap import dedent
 
 from west import log
@@ -16,6 +18,11 @@ from west.manifest import Manifest, MalformedManifest, ImportFlag, \
 import yaml
 
 import ncs_west_helpers as nwh
+
+# The parent scripts/ directory contains the pygit2_helpers module.
+sys.path.append(os.fspath(Path(__file__).parent.parent))
+
+from pygit2_helpers import commit_affects_files, commit_shortlog
 
 def add_zephyr_rev_arg(parser):
     parser.add_argument('-z', '--zephyr-rev', metavar='REF',
@@ -36,14 +43,14 @@ def likely_merged(np, zp, nsha, zsha):
                 '(revert these if appropriate):', color=log.WRN_COLOR)
         for dc, ucs in likely_merged.items():
             if len(ucs) == 1:
-                log.inf(f'- {dc.oid} {nwh.commit_shortlog(dc)}')
+                log.inf(f'- {dc.oid} {commit_shortlog(dc)}')
                 log.inf(f'  Similar upstream shortlog:\n'
-                        f'  {ucs[0].oid} {nwh.commit_shortlog(ucs[0])}')
+                        f'  {ucs[0].oid} {commit_shortlog(ucs[0])}')
             else:
-                log.inf(f'- {dc.oid} {nwh.commit_shortlog(dc)}\n'
+                log.inf(f'- {dc.oid} {commit_shortlog(dc)}\n'
                         '  Similar upstream shortlogs:')
                 for i, uc in enumerate(ucs, start=1):
-                    log.inf(f'    {i}. {uc.oid} {nwh.commit_shortlog(uc)}')
+                    log.inf(f'    {i}. {uc.oid} {commit_shortlog(uc)}')
     else:
         log.dbg('no downstream patches seem to have been merged upstream')
 
@@ -252,14 +259,14 @@ class NcsLoot(NcsWestCommand):
                 (f'{len(loot)} total' if loot else 'none') +
                 (', output limited by --file' if args.files else ''))
         for c in loot:
-            if args.files and not nwh.commit_affects_files(c, args.files):
+            if args.files and not commit_affects_files(c, args.files):
                 log.dbg(f"skipping {c.oid}; it doesn't affect file filter",
                         level=log.VERBOSE_VERY)
                 continue
             if args.sha_only:
                 log.inf(str(c.oid))
             else:
-                log.inf(f'- {c.oid} {nwh.commit_shortlog(c)}')
+                log.inf(f'- {c.oid} {commit_shortlog(c)}')
 
 class NcsCompare(NcsWestCommand):
     def __init__(self):
