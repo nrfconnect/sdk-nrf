@@ -14,7 +14,7 @@
 #include <sys/printk.h>
 #include <sys/byteorder.h>
 #include <st25r3911b_nfca.h>
-#include <nfc/ndef/file.h>
+#include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/ndef/text_rec.h>
 #include <nfc/t4t/isodep.h>
@@ -438,8 +438,8 @@ static void t4t_hl_ndef_read(uint16_t file_id, const uint8_t *data, size_t len)
 	printk("NDEF file read, id: 0x%x.\n", file_id);
 
 	if (tnep_mode) {
-		err = nfc_tnep_poller_on_ndef_read(nfc_ndef_file_msg_get(data),
-						   nfc_ndef_file_msg_size_get(len));
+		err = nfc_tnep_poller_on_ndef_read(nfc_t4t_ndef_file_msg_get(data),
+						   nfc_t4t_ndef_file_msg_size_get(len));
 		if (err) {
 			printk("TNEP Read data error: %d\n", err);
 		}
@@ -479,8 +479,8 @@ static void t4t_hl_ndef_read(uint16_t file_id, const uint8_t *data, size_t len)
 			/* Look for first message contains TNEP Service
 			 * Parameter Records.
 			 */
-			if (tnep_data_search(nfc_ndef_file_msg_get(tlv_block[i].value.file.content),
-					     nfc_ndef_file_msg_size_get(tlv_block[i].value.file.len))) {
+			if (tnep_data_search(nfc_t4t_ndef_file_msg_get(tlv_block[i].value.file.content),
+					     nfc_t4t_ndef_file_msg_size_get(tlv_block[i].value.file.len))) {
 				tnep_msg_max_size = tlv_block[i].value.max_file_size;
 
 				/* In case when NFC Tag device contains more

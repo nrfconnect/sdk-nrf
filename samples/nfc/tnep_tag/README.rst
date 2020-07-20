@@ -68,6 +68,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`tnep_tag_readme`
 * :ref:`nfc_ndef`
 * :ref:`nfc_text`
+* :ref:`nfc_t4t_ndef_file_readme`
 
 In addition, it uses the following Zephyr libraries:
 
