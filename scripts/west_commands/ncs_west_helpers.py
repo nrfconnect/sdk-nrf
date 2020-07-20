@@ -12,8 +12,8 @@
 from collections import OrderedDict
 from pathlib import Path
 import re
-import textwrap
 import sys
+import textwrap
 
 try:
     import editdistance
