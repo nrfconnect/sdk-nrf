@@ -49,13 +49,6 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 		return -EINVAL;
 	}
 
-	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN)) {
-		sum_of_len += NLEN_FIELD_SIZE;
-		if (*msg_len < sum_of_len) {
-			return -ENOSR;
-		}
-	}
-
 	for (uint32_t i = 0; i < ndef_msg_desc->record_count; i++) {
 		enum nfc_ndef_record_location record_location;
 		uint32_t temp_len;
@@ -79,15 +72,6 @@ int nfc_ndef_msg_encode(struct nfc_ndef_msg_desc const *ndef_msg_desc,
 
 		/* next record */
 		pp_record_rec_desc++;
-	}
-	if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN)) {
-		if (msg_buffer) {
-			if (sum_of_len - NLEN_FIELD_SIZE > UINT16_MAX) {
-				return -ENOTSUP;
-			}
-			*(uint16_t *)msg_buffer =
-				sys_cpu_to_be16(sum_of_len - NLEN_FIELD_SIZE);
-		}
 	}
 
 	*msg_len = sum_of_len;

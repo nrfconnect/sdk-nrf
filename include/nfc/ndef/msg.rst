@@ -11,7 +11,7 @@ Finally, encode and create the message.
 
 By default, NDEF messages are encoded for the Type 2 Tag platform.
 See :ref:`ug_nfc_ndef_format` for a description of the format.
-You can choose to encode the message for the Type 4 Tag platform by setting :option:`CONFIG_NFC_NDEF_MSG_WITH_NLEN` to ``y``.
+You can choose to encode an NDEF file containing the NDEF message for the Type 4 Tag platform using the :ref:`nfc_t4t_ndef_file_readme` library.
 In this case, an additional field is added in front of an NDEF message.
 
 You can also encapsulate a message as payload for a record.

@@ -63,10 +63,6 @@ config NFC_NDEF_CH_REC
 	help
 	  Enable NDEF Connection Handover records generator library
 
-config NFC_NDEF_MSG_WITH_NLEN
-	bool
-	prompt "Encode NDEF message with additional NLEN field"
-
 config NDEF_FILE_SIZE
 	int
 	prompt "NDEF file maximal size"
