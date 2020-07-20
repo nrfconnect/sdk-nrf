@@ -64,6 +64,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`nfc_uri`
+* :ref:`nfc_t4t_ndef_file_readme`
 
 In addition, it uses the Type 4 Tag library from nrfxlib:
 

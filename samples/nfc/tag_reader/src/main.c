@@ -16,6 +16,7 @@
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/ndef/le_oob_rec_parser.h>
 #include <nfc/t2t/parser.h>
+#include <nfc/t4t/ndef_file.h>
 #include <nfc/t4t/isodep.h>
 #include <nfc/t4t/hl_procedure.h>
 #include <sys/byteorder.h>
@@ -35,7 +36,6 @@
 #define NFC_T4T_ISODEP_FSD 256
 #define NFC_T4T_ISODEP_RX_DATA_MAX_SIZE 1024
 #define NFC_T4T_APDU_MAX_SIZE 1024
-#define TAG_TYPE_4_NLEN_FIELD_SIZE 2
 
 #define NFC_NDEF_LE_OOB_REC_PARSER_BUFF_SIZE 100
 
@@ -614,8 +614,8 @@ static void t4t_hl_ndef_read(uint16_t file_id, const uint8_t *data, size_t len)
 	for (size_t i = 0; i < cc->tlv_count; i++) {
 		if ((tlv_block[i].type == NFC_T4T_TLV_BLOCK_TYPE_NDEF_FILE_CONTROL_TLV) ||
 		    (tlv_block[i].value.file.content != NULL)) {
-			ndef_data_analyze(tlv_block[i].value.file.content + TAG_TYPE_4_NLEN_FIELD_SIZE,
-					tlv_block[i].value.file.len - TAG_TYPE_4_NLEN_FIELD_SIZE);
+			ndef_data_analyze(nfc_t4t_ndef_file_msg_get(tlv_block[i].value.file.content),
+					  nfc_t4t_ndef_file_msg_size_get(tlv_block[i].value.file.len));
 		}
 	}
 

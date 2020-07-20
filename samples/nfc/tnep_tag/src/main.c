@@ -12,6 +12,7 @@
 
 #include <nfc_t4t_lib.h>
 #include <nfc/tnep/tag.h>
+#include <nfc/ndef/file.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/ndef/text_rec.h>
 
@@ -129,10 +130,8 @@ static void nfc_callback(void *context, enum nfc_t4t_event event,
 	switch (event) {
 	case NFC_T4T_EVENT_NDEF_UPDATED:
 		if (data_length > 0) {
-			if (IS_ENABLED(CONFIG_NFC_NDEF_MSG_WITH_NLEN)) {
-				data += NLEN_FIELD_SIZE;
-			}
-			nfc_tnep_tag_rx_msg_indicate(data, data_length);
+			nfc_tnep_tag_rx_msg_indicate(nfc_ndef_file_msg_get(data),
+						     data_length);
 		}
 
 		break;

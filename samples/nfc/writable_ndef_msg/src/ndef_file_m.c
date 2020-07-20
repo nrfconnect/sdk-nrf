@@ -18,6 +18,7 @@
 #include <device.h>
 #include <string.h>
 #include <fs/nvs.h>
+#include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/uri_msg.h>
 #include <storage/flash_map.h>
 
@@ -58,15 +59,32 @@ int ndef_file_update(uint8_t const *buff, uint32_t size)
 	return nvs_write(&fs, FLASH_URL_ADDRESS_ID, buff, size);
 }
 
+/** .. include_startingpoint_ndef_file_rst */
 int ndef_file_default_message(uint8_t *buff, uint32_t *size)
 {
+	int err;
+	uint32_t ndef_size = nfc_t4t_ndef_file_msg_size_get(*size);
+
 	/* Encode URI message into buffer. */
-	return nfc_ndef_uri_msg_encode(NFC_URI_HTTP_WWW,
-				  m_url,
-				  sizeof(m_url),
-				  buff,
-				  size);
+	err = nfc_ndef_uri_msg_encode(NFC_URI_HTTP_WWW,
+				      m_url,
+				      sizeof(m_url),
+				      nfc_t4t_ndef_file_msg_get(buff),
+				      &ndef_size);
+	if (err) {
+		return err;
+	}
+
+	err = nfc_t4t_ndef_file_encode(buff, &ndef_size);
+	if (err) {
+		return err;
+	}
+
+	*size = ndef_size;
+
+	return 0;
 }
+/** .. include_endpoint_ndef_file_rst */
 
 int ndef_restore_default(uint8_t *buff, uint32_t size)
 {
