@@ -5,7 +5,7 @@
 '''The "ncs-xyz" extension commands.'''
 
 import argparse
-from pathlib import PurePath
+from pathlib import Path
 import subprocess
 from textwrap import dedent
 
@@ -310,7 +310,7 @@ class NcsCompare(NcsWestCommand):
         for zp in self.z_pmap.values():
             nn = to_ncs_name(zp)
             present = nn in self.ncs_pmap
-            blocked = PurePath(zp.path) in _BLOCKED_PROJECTS
+            blocked = Path(zp.path) in _BLOCKED_PROJECTS
             if present:
                 if blocked:
                     present_blocked.append(zp)
@@ -439,7 +439,7 @@ _UPSTREAM = 'https://github.com/zephyrproject-rtos/zephyr'
 
 # Set of project paths blocked from inclusion in the NCS.
 _BLOCKED_PROJECTS = set(
-    PurePath(p) for p in
+    Path(p) for p in
     ['modules/hal/altera',
      'modules/hal/atmel',
      'modules/hal/cypress',

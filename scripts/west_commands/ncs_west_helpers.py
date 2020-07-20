@@ -10,7 +10,7 @@
 # https://github.com/foundriesio/zephyr_tools/.
 
 from collections import OrderedDict
-from pathlib import PurePath
+from pathlib import Path
 import re
 import textwrap
 import sys
@@ -149,12 +149,12 @@ def commit_affects_files(commit, files):
     :param files: sequence of paths relative to commit object
                   repository root
     '''
-    as_paths = set(PurePath(f) for f in files)
+    as_paths = set(Path(f) for f in files)
     for p in commit.parents:
         diff = commit.tree.diff_to_tree(p.tree)
         for d in diff.deltas:
-            if (PurePath(d.old_file.path) in as_paths or
-                    PurePath(d.new_file.path) in as_paths):
+            if (Path(d.old_file.path) in as_paths or
+                    Path(d.new_file.path) in as_paths):
                 return True
     return False
 
