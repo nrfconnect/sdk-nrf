@@ -1,0 +1,34 @@
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+if NET_L2_OPENTHREAD
+
+menu "OpenThread"
+
+config OPENTHREAD_NRF_SECURITY
+	bool "Enable nrf_security module for OpenThread"
+	default y
+	depends on !OPENTHREAD_MBEDTLS
+	select NORDIC_SECURITY_BACKEND
+	select OBERON_BACKEND
+	select MBEDTLS_VANILLA_BACKEND
+	select MBEDTLS_TLS_LIBRARY
+	select MBEDTLS_AES_C
+	select MBEDTLS_RSA_C
+	select MBEDTLS_ECJPAKE_C
+	select MBEDTLS_ECP_C
+	select MBEDTLS_ENABLE_HEAP
+	select NRF_SECURITY_ADVANCED
+	help
+	  Enables nrf_security module for use by OpenThread. This allows
+	  OpenThread to make use of hardware accelerated cryptography functions
+	  if available as well as fast oberon backend for software encryption.
+
+config OPENTHREAD_MBEDTLS_TARGET
+	default "mbedtls_common" if OPENTHREAD_NRF_SECURITY
+
+endmenu
+
+endif

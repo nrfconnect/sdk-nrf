@@ -6,5 +6,6 @@
 menu "Networking"
 
 rsource "lib/Kconfig"
+rsource "openthread/Kconfig"
 
 endmenu
