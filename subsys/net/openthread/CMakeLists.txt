@@ -4,5 +4,3 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-add_subdirectory(lib)
-add_subdirectory_ifdef(CONFIG_NET_L2_OPENTHREAD openthread)
