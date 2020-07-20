@@ -47,10 +47,6 @@ struct nfc_ndef_msg_desc {
  * This function encodes an NDEF message according to the provided message
  * descriptor.
  *
- * @note The way of encoding an NDEF message may vary depending on tag's
- * platform. Set CONFIG_NFC_NDEF_MSG_WITH_NLEN=y if you want to use Type 4 Tag
- * in application's configuration prj.conf file.
- *
  * @param ndef_msg_desc Pointer to the message descriptor.
  * @param msg_buffer Pointer to the message destination. If NULL, function
  * will calculate the expected size of the message.

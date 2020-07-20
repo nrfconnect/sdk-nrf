@@ -4,6 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+config NFC_T4T_NDEF_FILE
+	bool "NFC Type 4 Tag NDEF File"
+	default y if (NFC_T4T_NRFXLIB && NFC_NDEF_MSG) || NFC_T4T_HL_PROCEDURE
+	help
+	  Enable NFC Type 4 Tag NDEF File generator library.
+
 config NFC_T4T_ISODEP
 	bool "NFC Type 4 Tag isodep"
 	help
