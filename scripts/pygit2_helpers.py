@@ -16,6 +16,8 @@ __all__ = [
     'shortlog_no_sauce',
 
     'commit_reverts_what', 'commit_shortlog', 'commit_affects_files',
+
+    'zephyr_commit_area',
 ]
 
 from pathlib import Path
@@ -127,3 +129,134 @@ def commit_affects_files(commit, files):
                     Path(d.new_file.path) in as_paths):
                 return True
     return False
+
+def zephyr_commit_area(commit):
+    '''Make a guess about what area a zephyr commit affected.
+
+    This is entirely based on heuristics and may return complete
+    nonsense, but it's correct enough for our purposes of roughly
+    segmenting commits to areas so the appropriate maintainers can
+    analyze them for NCS release notes.
+
+    The return value is one of these strings: 'Kernel', 'Bluetooth',
+    'Drivers', 'Networking', 'Arches/Boards', 'Other'
+
+    :param commit: pygit2.Commit object
+    '''
+    area_pfx = _commit_area_prefix(commit_shortlog(commit))
+
+    if area_pfx is None:
+        return 'Other'
+
+    for test_regex, area in _SHORTLOG_RE_TO_AREA:
+        match = test_regex.fullmatch(area_pfx)
+        if match:
+            break
+    else:
+        area = 'Other'
+
+    # The code this was copied from has finer-grained area heuristics
+    # than NCS currently needs. Don't throw that work away as we may
+    # want to drill down a bit more in the future, but for now, we
+    # only want a rough breakdown.
+    if area in ('Kernel', 'Bluetooth', 'Drivers', 'Networking'):
+        return area
+    elif area in ('Arches', 'Boards'):
+        return 'Arches/Boards'
+
+    return 'Other'
+
+def _commit_area_prefix(commit_shortlog):
+    '''Get the prefix of a pull request title which describes its area.
+
+    This returns the "raw" prefix as it appears in the title. To
+    canonicalize this to one of a known set of areas for a zephyr PR, use
+    zephyr_pr_area() instead. If no prefix is present, returns None.
+    '''
+    # Base case for recursion.
+    if not commit_shortlog:
+        return None
+
+    # 'Revert "foo"' should map to foo's area prefix.
+    if shortlog_is_revert(commit_shortlog):
+        commit_shortlog = shortlog_reverts_what(commit_shortlog)
+        return _commit_area_prefix(commit_shortlog)
+
+    # If there is no ':', there is no area. Otherwise, the candidate
+    # area is the substring up to the first ':'.
+    if ':' not in commit_shortlog:
+        return None
+    area, rest = [s.strip() for s in commit_shortlog.split(':', 1)]
+
+    # subsys: foo should map to foo's area prefix, etc.
+    if area in ['subsys', 'include', 'api']:
+        return _commit_area_prefix(rest)
+
+    return area
+
+def _invert_keys_val_list(kvs):
+    for k, vs in kvs:
+        for v in vs:
+            yield v, k
+
+# This list maps the 'area' a commit affects to a list of
+# shortlog prefixes (the content before the first ':') in the Zephyr
+# commit shortlogs that belong to it.
+#
+# The values are lists of case-insensitive regular expressions that
+# are matched against the shortlog prefix of each commit. Matches are
+# done with regex.fullmatch().
+#
+# Keep its definition sorted alphabetically by key.
+_AREA_TO_SHORTLOG_RES = [
+    ('Arches', ['arch(/.*)?', 'arc(/.*)?', 'arm(/.*)?', 'esp32(/.*)?',
+                'imx(/.*)?', 'native(/.*)?', 'native_posix', 'nios2(/.*)?',
+                'posix(/.*)?', 'lpc(/.*)?', 'riscv(32)?(/.*)?', 'soc(/.*)?',
+                'x86(_64)?(/.*)?', 'xtensa(/.*)?']),
+    ('Bluetooth', ['bluetooth', 'bt']),
+    ('Boards', ['boards?(/.*)?', 'mimxrt1050_evk']),
+    ('Build', ['build', 'c[+][+]', 'clang(/.*)?', 'cmake', 'kconfig',
+               'gen_isr_tables?', 'gen_syscall_header', 'genrest',
+               'isr_tables?', 'ld', 'linker', 'menuconfig', 'size_report',
+               'toolchains?']),
+    ('Continuous Integration', ['ci', 'coverage', 'sanitycheck', 'gitlint']),
+    ('Cryptography', ['crypto', 'mbedtls']),
+    ('Debugging', ['debug']),
+    ('Device Tree', ['dt', 'dts(/.*)?', 'dt-bindings',
+                     'extract_dts_includes?']),
+    ('Documentation', ['docs?(/.*)?', 'CONTRIBUTING.rst', 'doxygen']),
+    ('Drivers', ['drivers?(/.*)?',
+                 'adc', 'aio', 'can', 'clock_control', 'counter', 'crc',
+                 'device([.]h)?', 'display', 'dma', 'entropy', 'eth',
+                 'ethernet',
+                 'flash', 'flash_map', 'gpio', 'grove', 'hid', 'i2c', 'i2s',
+                 'interrupt_controller', 'ipm', 'led_strip', 'led', 'netusb',
+                 'pci', 'pinmux', 'pwm', 'rtc', 'sensors?(/.*)?',
+                 'serial(/.*)?', 'shared_irq', 'spi', 'timer', 'uart',
+                 'uart_pipe', 'usb(/.*)?', 'watchdog',
+                 # Technically in subsys/ (or parts are), but treated
+                 # as drivers
+                 'console', 'random', 'storage']),
+    ('Firmware Update', ['dfu(/.*)?', 'mgmt']),
+    ('Kernel',  ['kernel(/.*)?', 'poll', 'mempool', 'spinlock', 'syscalls',
+                 'work_q', 'init.h', 'userspace', 'k_queue', 'k_poll',
+                 'app_memory']),
+    ('Libraries', ['libc?', 'json', 'jwt', 'ring_buffer', 'lib(/.*)',
+                   'misc/dlist']),
+    ('Logging', ['logging', 'logger', 'log']),
+    ('Maintainers', ['CODEOWNERS([.]rst)?']),
+    ('Miscellaneous', ['misc', 'release', 'shell', 'printk', 'version']),
+    ('Networking', ['net(/.*)?', 'openthread', 'slip', 'ieee802154']),
+    ('Power Management', ['power']),
+    ('Samples', ['samples?(/.*)?']),
+    ('Scripts', ['scripts?(/.*)?', 'coccinelle', 'runner',
+                 'gen_app_partitions(.py)?', 'gen_syscalls.py',
+                 'gen_syscall_header.py', 'kconfiglib', 'west']),
+    ('Storage', ['fs(/.*)?', 'disks?', 'fcb', 'settings']),
+    ('Testing', ['tests?(/.*)?', 'testing', 'unittest', 'ztest', 'tracing']),
+    ]
+
+# This 'inverts' the key/value relationship in _AREA_TO_SHORTLOG_RES to
+# make a list from shortlog prefix REs to areas.
+_SHORTLOG_RE_TO_AREA = [(re.compile(k, flags=re.IGNORECASE), v) for k, v in
+                        _invert_keys_val_list(_AREA_TO_SHORTLOG_RES)]
