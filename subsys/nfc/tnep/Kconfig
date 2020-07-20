@@ -10,6 +10,7 @@ config NFC_TNEP_TAG
 	select NFC_NDEF_MSG
 	select NFC_NDEF_TNEP_RECORD
 	select NFC_NDEF_PARSER
+	select NFC_T4T_NDEF_FILE
 	help
 	  Enable TAG NDEF Exchange Protocol
 
@@ -39,6 +40,7 @@ config NFC_TNEP_POLLER
 	select NFC_NDEF_MSG
 	select NFC_NDEF_PARSER
 	select NFC_NDEF_TNEP_RECORD
+	select NFC_T4T_NDEF_FILE
 	help
 	  Enable Tag NDEF Exchange Protocol for Poller side
 

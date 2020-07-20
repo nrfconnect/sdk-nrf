@@ -8,6 +8,7 @@
 #include <logging/log.h>
 #include <sys/byteorder.h>
 #include <sys/util.h>
+#include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/ndef/tnep_rec.h>
 #include <nfc/tnep/poller.h>
@@ -69,12 +70,12 @@ static int tnep_tag_update_prepare(const struct nfc_ndef_msg_desc *msg,
 	*tx_len = 0;
 
 	if (tnep.type == NFC_TNEP_TAG_TYPE_T4T) {
-		data += NFC_TNEP_NDEF_NLEN_SIZE;
+		data = nfc_t4t_ndef_file_msg_get(data);
 
 		/* Subtract NDEF NLEN field, to calculate
 		 * available space for NDEF Message correctly.
 		 */
-		len -= NFC_TNEP_NDEF_NLEN_SIZE;
+		len = nfc_t4t_ndef_file_msg_size_get(len);
 	}
 
 	/* Encode NDEF Message into raw buffer. */
@@ -87,9 +88,7 @@ static int tnep_tag_update_prepare(const struct nfc_ndef_msg_desc *msg,
 	}
 
 	if (tnep.type == NFC_TNEP_TAG_TYPE_T4T) {
-		sys_put_be16(len, tnep.tx->data);
-
-		len += NFC_TNEP_NDEF_NLEN_SIZE;
+		nfc_t4t_ndef_file_encode(tnep.tx->data, &len);
 	}
 
 	*tx_len = len;

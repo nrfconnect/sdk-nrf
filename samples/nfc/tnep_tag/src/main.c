@@ -12,7 +12,7 @@
 
 #include <nfc_t4t_lib.h>
 #include <nfc/tnep/tag.h>
-#include <nfc/ndef/file.h>
+#include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/ndef/text_rec.h>
 
@@ -130,7 +130,7 @@ static void nfc_callback(void *context, enum nfc_t4t_event event,
 	switch (event) {
 	case NFC_T4T_EVENT_NDEF_UPDATED:
 		if (data_length > 0) {
-			nfc_tnep_tag_rx_msg_indicate(nfc_ndef_file_msg_get(data),
+			nfc_tnep_tag_rx_msg_indicate(nfc_t4t_ndef_file_msg_get(data),
 						     data_length);
 		}
 

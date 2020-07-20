@@ -8,6 +8,7 @@
 #include <kernel.h>
 #include <nfc/tnep/tag.h>
 #include <nfc/ndef/msg.h>
+#include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
 #include <logging/log.h>
 
@@ -120,6 +121,7 @@ static int tnep_tx_msg_encode(void)
 	int err = 0;
 	unsigned int key;
 	size_t len;
+	uint8_t *data;
 
 
 	if (tnep.current_buff == tnep.tx.data) {
@@ -131,11 +133,21 @@ static int tnep_tx_msg_encode(void)
 	memset(tnep.current_buff, 0, tnep.tx.len);
 
 	len = tnep.tx.len;
+	data = tnep.current_buff;
+
+	if (IS_ENABLED(CONFIG_NFC_T4T_NRFXLIB)) {
+		len = nfc_t4t_ndef_file_msg_size_get(len);
+		data = nfc_t4t_ndef_file_msg_get(data);
+	}
 
 	if (tnep.msg->record_count > 0) {
 		err = nfc_ndef_msg_encode(tnep.msg,
-					  tnep.current_buff,
+					  data,
 					  &len);
+	}
+
+	if (IS_ENABLED(CONFIG_NFC_T4T_NRFXLIB)) {
+		nfc_t4t_ndef_file_encode(tnep.current_buff, &len);
 	}
 
 	key = irq_lock();
