@@ -87,11 +87,11 @@ Building and running
 Activating sample extensions
 ============================
 
-To activate the extensions supported by this sample, modify :makevar:`CONF_FILE` in the following manner:
+To activate the extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
-* For the Minimal Thread Device variant, apply :file:`overlay-mtd.conf`.
+* For the Minimal Thread Device variant, set :file:`overlay-mtd.conf`.
 
-For more information, see :ref:`important-build-vars` in the Zephyr documentation.
+See :ref:`cmake_options` for instructions on how to add this option.
 
 Testing
 =======
