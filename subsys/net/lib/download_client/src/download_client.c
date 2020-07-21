@@ -366,6 +366,13 @@ restart_and_suspend:
 	while (true) {
 		__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
 
+		if (sizeof(dl->buf) - dl->offset == 0) {
+			LOG_ERR("Could not fit HTTP header from server (> %d)",
+				sizeof(dl->buf));
+			error_evt_send(dl, E2BIG);
+			break;
+		}
+
 		LOG_DBG("Receiving up to %d bytes at %p...",
 			(sizeof(dl->buf) - dl->offset), (dl->buf + dl->offset));
 
