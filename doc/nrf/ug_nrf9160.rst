@@ -94,6 +94,14 @@ The firmware for the modem is available as precompiled binary.
 You can download the firmware from the `nRF9160 product website (compatible downloads)`_.
 The zip file contains both the full firmware and patches to upgrade from one version to another.
 
+Different versions of the LTE modem firmware are available and these versions are certified for the mobile network operators who have their own certification programs.
+See the `nRF9160 compatibility matrix`_ for more information.
+
+.. note::
+
+   Most operators do not require other certifications than GCF or PTCRB.
+   For the current status of GCF and PTCRB certifications, see `nRF9160 certifications`_.
+
 There are two ways to update the modem firmware:
 
 Full upgrade
