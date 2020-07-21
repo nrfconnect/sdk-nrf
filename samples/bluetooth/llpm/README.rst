@@ -116,7 +116,7 @@ After programming the sample to both boards, test it by performing the following
 #. Observe the terminal connected to the slave. The latency measurements are printed in the terminal.
    The latency is expected to be shorter than the default connection interval::
 
-       Transmission Latency: 80917 (us), CRC errors 0
+       Transmission Latency: 80917 (us), CRC mismatches: 0
 
 #. Press a key in the terminal that is connected to the master.
 #. Observe the connection gets updated to LLPM connection interval (1 ms) on both sides::
@@ -126,13 +126,13 @@ After programming the sample to both boards, test it by performing the following
 #. Observe the terminal connected to the slave.
    The measured latency on the slave becomes approximate 1 ms::
 
-       Transmission Latency: 1098 (us), CRC errors 0
+       Transmission Latency: 1098 (us), CRC mismatches: 0
 
 #. Press a key in the terminal that is connected to the master.
 #. Observe the terminal connected to the master.
    The measured latency on the master remains approximate 1 ms::
 
-       Transmission Latency: 1235 (us), CRC errors 0
+       Transmission Latency: 1235 (us), CRC mismatches: 0
 
 .. msc::
    hscale = "1.3";
@@ -184,30 +184,30 @@ The result should look similar to the following output.
    Press any key to set LLPM short connection interval (1 ms)
    Press any key to start measuring transmission latency
    Connection interval updated: LLPM (1 ms)
-   Transmission Latency: 1235 (us), CRC errors 0
-   Transmission Latency: 1007 (us), CRC errors 0
-   Transmission Latency: 1434 (us), CRC errors 0
-   Transmission Latency: 1312 (us), CRC errors 0
-   Transmission Latency: 1220 (us), CRC errors 0
-   Transmission Latency: 991 (us), CRC errors 0
-   Transmission Latency: 1419 (us), CRC errors 0
-   Transmission Latency: 1281 (us), CRC errors 0
-   Transmission Latency: 1052 (us), CRC errors 0
-   Transmission Latency: 991 (us), CRC errors 0
-   Transmission Latency: 1403 (us), CRC errors 0
-   Transmission Latency: 1296 (us), CRC errors 0
-   Transmission Latency: 1052 (us), CRC errors 0
-   Transmission Latency: 976 (us), CRC errors 0
-   Transmission Latency: 1358 (us), CRC errors 0
-   Transmission Latency: 1281 (us), CRC errors 0
-   Transmission Latency: 1052 (us), CRC errors 0
-   Transmission Latency: 976 (us), CRC errors 0
-   Transmission Latency: 1358 (us), CRC errors 0
-   Transmission Latency: 1281 (us), CRC errors 0
-   Transmission Latency: 1052 (us), CRC errors 0
-   Transmission Latency: 976 (us), CRC errors 0
-   Transmission Latency: 1358 (us), CRC errors 0
-   Transmission Latency: 1281 (us), CRC errors 0
+   Transmission Latency: 1235 (us), CRC mismatches: 0
+   Transmission Latency: 1007 (us), CRC mismatches: 0
+   Transmission Latency: 1434 (us), CRC mismatches: 0
+   Transmission Latency: 1312 (us), CRC mismatches: 0
+   Transmission Latency: 1220 (us), CRC mismatches: 0
+   Transmission Latency: 991 (us), CRC mismatches: 0
+   Transmission Latency: 1419 (us), CRC mismatches: 0
+   Transmission Latency: 1281 (us), CRC mismatches: 0
+   Transmission Latency: 1052 (us), CRC mismatches: 0
+   Transmission Latency: 991 (us), CRC mismatches: 0
+   Transmission Latency: 1403 (us), CRC mismatches: 0
+   Transmission Latency: 1296 (us), CRC mismatches: 0
+   Transmission Latency: 1052 (us), CRC mismatches: 0
+   Transmission Latency: 976 (us), CRC mismatches: 0
+   Transmission Latency: 1358 (us), CRC mismatches: 0
+   Transmission Latency: 1281 (us), CRC mismatches: 0
+   Transmission Latency: 1052 (us), CRC mismatches: 0
+   Transmission Latency: 976 (us), CRC mismatches: 0
+   Transmission Latency: 1358 (us), CRC mismatches: 0
+   Transmission Latency: 1281 (us), CRC mismatches: 0
+   Transmission Latency: 1052 (us), CRC mismatches: 0
+   Transmission Latency: 976 (us), CRC mismatches: 0
+   Transmission Latency: 1358 (us), CRC mismatches: 0
+   Transmission Latency: 1281 (us), CRC mismatches: 0
 
 - For the slave::
 
@@ -229,30 +229,30 @@ The result should look similar to the following output.
    Conn. interval is 80 units (1.25 ms/unit)
    Service discovery completed
    Press any key to start measuring transmission latency
-   Transmission Latency: 80917 (us), CRC errors 0
-   Transmission Latency: 80841 (us), CRC errors 0
-   Transmission Latency: 80749 (us), CRC errors 0
-   Transmission Latency: 80673 (us), CRC errors 0
-   Transmission Latency: 80596 (us), CRC errors 0
-   Transmission Latency: 80505 (us), CRC errors 0
-   Transmission Latency: 80429 (us), CRC errors 0
-   Transmission Latency: 80337 (us), CRC errors 0
-   Transmission Latency: 80261 (us), CRC errors 0
-   Transmission Latency: 80184 (us), CRC errors 0
-   Transmission Latency: 80093 (us), CRC errors 0
-   Transmission Latency: 80017 (us), CRC errors 0
-   Transmission Latency: 79940 (us), CRC errors 0
-   Transmission Latency: 79849 (us), CRC errors 0
+   Transmission Latency: 80917 (us), CRC mismatches: 0
+   Transmission Latency: 80841 (us), CRC mismatches: 0
+   Transmission Latency: 80749 (us), CRC mismatches: 0
+   Transmission Latency: 80673 (us), CRC mismatches: 0
+   Transmission Latency: 80596 (us), CRC mismatches: 0
+   Transmission Latency: 80505 (us), CRC mismatches: 0
+   Transmission Latency: 80429 (us), CRC mismatches: 0
+   Transmission Latency: 80337 (us), CRC mismatches: 0
+   Transmission Latency: 80261 (us), CRC mismatches: 0
+   Transmission Latency: 80184 (us), CRC mismatches: 0
+   Transmission Latency: 80093 (us), CRC mismatches: 0
+   Transmission Latency: 80017 (us), CRC mismatches: 0
+   Transmission Latency: 79940 (us), CRC mismatches: 0
+   Transmission Latency: 79849 (us), CRC mismatches: 0
    Connection interval updated: LLPM (1 ms)
-   Transmission Latency: 81604 (us), CRC errors 0
-   Transmission Latency: 30181 (us), CRC errors 0
-   Transmission Latency: 1098 (us), CRC errors 0
-   Transmission Latency: 1129 (us), CRC errors 0
-   Transmission Latency: 1037 (us), CRC errors 0
-   Transmission Latency: 930 (us), CRC errors 0
-   Transmission Latency: 1312 (us), CRC errors 0
-   Transmission Latency: 1083 (us), CRC errors 0
-   Transmission Latency: 1007 (us), CRC errors 0
+   Transmission Latency: 81604 (us), CRC mismatches: 0
+   Transmission Latency: 30181 (us), CRC mismatches: 0
+   Transmission Latency: 1098 (us), CRC mismatches: 0
+   Transmission Latency: 1129 (us), CRC mismatches: 0
+   Transmission Latency: 1037 (us), CRC mismatches: 0
+   Transmission Latency: 930 (us), CRC mismatches: 0
+   Transmission Latency: 1312 (us), CRC mismatches: 0
+   Transmission Latency: 1083 (us), CRC mismatches: 0
+   Transmission Latency: 1007 (us), CRC mismatches: 0
 
 
 Dependencies
