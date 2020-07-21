@@ -12,7 +12,6 @@
 from collections import OrderedDict
 import os
 from pathlib import Path
-import re
 import sys
 import textwrap
 
@@ -39,11 +38,9 @@ __all__ = ['InvalidRepositoryError', 'UnknownCommitsError', 'RepoAnalyzer']
 
 class InvalidRepositoryError(RuntimeError):
     '''Git repository does not exist or cannot be analyzed.'''
-    pass
 
 class UnknownCommitsError(RuntimeError):
     '''Unknown or invalid commit ref or refs.'''
-    pass
 
 #
 # Repository analysis
@@ -65,12 +62,12 @@ class RepoAnalyzer:
         self._up = upstream_project
         self._ur = upstream_ref
         assert self._dp.path == self._up.path
-        self._repo = self._load_repo(self._dp.abspath)
+        self._repo = _load_repo(self._dp.abspath)
 
         # string identifying a downstream sauce tag;
         # if your sauce tags look like [xyz <tag>], use "xyz". this can
         # also be a tuple of strings to find multiple sources of sauce.
-        self._downstream_sauce = self._parse_sauce(downstream_sauce)
+        self._downstream_sauce = _parse_sauce(downstream_sauce)
         # domain name (like "@example.com") used by downstream committers;
         # this can also be a tuple of domains.
         self._downstream_domain = downstream_domain
@@ -130,24 +127,6 @@ class RepoAnalyzer:
     #
     # Internal helpers
     #
-
-    def _parse_sauce(self, sauce):
-        # Returns sauce as an immutable object (by copying a sequence
-        # into a tuple if sauce is not a string)
-
-        if isinstance(sauce, str):
-            return sauce
-        else:
-            return tuple(sauce)
-
-    def _load_repo(self, path):
-        try:
-            return pygit2.Repository(path)
-        except KeyError:
-            # pygit2 raises KeyError when the current path is not a Git
-            # repository.
-            msg = "Can't initialize Git repository at {}"
-            raise InvalidRepositoryError(msg.format(path))
 
     def _new_upstream_only_commits(self):
         '''Commits in `upstream_ref` history since merge base with
@@ -279,3 +258,21 @@ class RepoAnalyzer:
                 likely_merged[dc] = matches
 
         return likely_merged
+
+def _parse_sauce(sauce):
+    # Returns sauce as an immutable object (by copying a sequence
+    # into a tuple if sauce is not a string)
+
+    if isinstance(sauce, str):
+        return sauce
+    else:
+        return tuple(sauce)
+
+def _load_repo(path):
+    try:
+        return pygit2.Repository(path)
+    except KeyError:
+        # pygit2 raises KeyError when the current path is not a Git
+        # repository.
+        msg = "Can't initialize Git repository at {}"
+        raise InvalidRepositoryError(msg.format(path))
