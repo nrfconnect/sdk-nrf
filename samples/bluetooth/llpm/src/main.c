@@ -46,7 +46,7 @@ static const struct bt_data sd[] = {
 
 static struct {
 	uint32_t latency;
-	uint32_t crc_errors;
+	uint32_t crc_mismatches;
 } llpm_latency;
 
 void scan_filter_match(struct bt_scan_device_info *device_info,
@@ -289,7 +289,7 @@ static bool on_vs_evt(struct net_buf_simple *buf)
 	}
 
 	evt = (void *)buf->data;
-	llpm_latency.crc_errors += evt->crc_error_count;
+	llpm_latency.crc_mismatches += evt->crc_error_count;
 
 	return true;
 }
@@ -384,8 +384,9 @@ static void test_run(void)
 		k_sleep(K_MSEC(200)); /* wait for latency response */
 
 		if (llpm_latency.latency) {
-			printk("Transmission Latency: %u (us), CRC errors %u\n",
-			       llpm_latency.latency, llpm_latency.crc_errors);
+			printk("Transmission Latency: %u (us), CRC mismatches: %u\n",
+			       llpm_latency.latency,
+			       llpm_latency.crc_mismatches);
 		} else {
 			printk("Did not receive a latency response\n");
 		}
