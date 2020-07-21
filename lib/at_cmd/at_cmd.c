@@ -17,8 +17,8 @@ LOG_MODULE_REGISTER(at_cmd, CONFIG_AT_CMD_LOG_LEVEL);
 
 #define THREAD_PRIORITY   K_PRIO_PREEMPT(CONFIG_AT_CMD_THREAD_PRIO)
 
-#define AT_CMD_OK_STR    "OK"
-#define AT_CMD_ERROR_STR "ERROR"
+#define AT_CMD_OK_STR    "OK\r\n"
+#define AT_CMD_ERROR_STR "ERROR\r\n"
 #define AT_CMD_CMS_STR   "+CMS ERROR:"
 #define AT_CMD_CME_STR   "+CME ERROR:"
 
@@ -73,16 +73,19 @@ static int open_socket(void)
 	return 0;
 }
 
-static int get_return_code(char *buf, struct resp_item *ret)
+static int get_return_code(char *buf, size_t bytes_read, struct resp_item *ret)
 {
+	bool match;
 	char *tmpstr = NULL;
 	int new_len  = 0;
 
 	ret->state = AT_CMD_NOTIFICATION;
 
 	do {
-		tmpstr = strstr(buf, AT_CMD_OK_STR);
-		if (tmpstr) {
+		/* must match `OK` at the end of the response */
+		tmpstr = buf + bytes_read - ARRAY_SIZE(AT_CMD_OK_STR);
+		match = !strncmp(tmpstr, AT_CMD_OK_STR, strlen(AT_CMD_OK_STR));
+		if (match) {
 			ret->state = AT_CMD_OK;
 			ret->code  = 0;
 			break;
@@ -90,6 +93,7 @@ static int get_return_code(char *buf, struct resp_item *ret)
 
 		tmpstr = strstr(buf, AT_CMD_CMS_STR);
 		if (tmpstr) {
+			match = true;
 			ret->state = AT_CMD_ERROR_CMS;
 			ret->code = atoi(&buf[ARRAY_SIZE(AT_CMD_CMS_STR) - 1]);
 			break;
@@ -97,20 +101,23 @@ static int get_return_code(char *buf, struct resp_item *ret)
 
 		tmpstr = strstr(buf, AT_CMD_CME_STR);
 		if (tmpstr) {
+			match = true;
 			ret->state = AT_CMD_ERROR_CME;
-			ret->code = atoi(&buf[ARRAY_SIZE(AT_CMD_CMS_STR) - 1]);
+			ret->code = atoi(&buf[ARRAY_SIZE(AT_CMD_CME_STR) - 1]);
 			break;
 		}
 
-		tmpstr = strstr(buf, AT_CMD_ERROR_STR);
-		if (tmpstr) {
+		/* must match `ERROR` at the end of the response */
+		tmpstr = buf + bytes_read - ARRAY_SIZE(AT_CMD_ERROR_STR);
+		match = !strncmp(tmpstr, AT_CMD_ERROR_STR, strlen(AT_CMD_ERROR_STR));
+		if (match) {
 			ret->state = AT_CMD_ERROR;
 			ret->code  = -ENOEXEC;
 			break;
 		}
 	} while (0);
 
-	if (tmpstr) {
+	if (match) {
 		new_len = tmpstr - buf;
 		buf[new_len++] = '\0';
 	} else {
@@ -246,7 +253,7 @@ static void socket_thread_fn(void *arg1, void *arg2, void *arg3)
 
 		LOG_DBG("at_cmd_rx %d bytes, %s", bytes_read, log_strdup(buf));
 
-		payload_len = get_return_code(buf, &ret);
+		payload_len = get_return_code(buf, bytes_read, &ret);
 
 		/* Verify the buffer size if provided, and copy the message */
 		if (current_cmd.cmd != NULL &&
