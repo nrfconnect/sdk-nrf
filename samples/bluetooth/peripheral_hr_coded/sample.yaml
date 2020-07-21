@@ -1,0 +1,9 @@
+sample:
+  name: Bluetooth LE peripheral HR Coded
+  description: Bluetooth Low Energy peripheral heart rate service connecting on LE Coded PHY
+tests:
+  samples.bluetooth.peripheral_hr_coded:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: nrf52840dk_nrf52840 nrf5340pdk_nrf5340_cpuapp
+    tags: bluetooth ci_build
