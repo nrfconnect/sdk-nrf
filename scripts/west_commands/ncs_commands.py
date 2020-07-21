@@ -108,8 +108,6 @@ class NcsWestCommand(WestCommand):
             except ValueError as ve:
                 # West guarantees that get_projects()'s ValueError
                 # has exactly two values in args.
-                #
-                # pylint: disable=unbalanced-tuple-unpacking
                 unknown, uncloned = ve.args
                 if unknown:
                     log.die('unknown projects:', ', '.join(unknown))
