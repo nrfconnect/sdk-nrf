@@ -21,6 +21,25 @@ extern "C" {
 #endif
 
 
+/** @brief Config channel status list. */
+#define CONFIG_STATUS_LIST		\
+	X(PENDING)			\
+	X(SET)				\
+	X(FETCH)			\
+	X(SUCCESS)			\
+	X(TIMEOUT)			\
+	X(REJECT)			\
+	X(WRITE_ERROR)			\
+	X(DISCONNECTED_ERROR)
+
+enum config_status {
+#define X(name) _CONCAT(CONFIG_STATUS_, name),
+	CONFIG_STATUS_LIST
+#undef X
+
+	CONFIG_STATUS_COUNT
+};
+
 /* Maximum length of fetched data. */
 #define CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE 16
 
@@ -52,93 +71,35 @@ extern "C" {
 #define OPT_DESCR_MODULE_TYPE "module_type"
 
 /** @brief Configuration channel event.
- * Used to change firmware parameters at runtime.
+ * Used to forward configuration channel request/response.
  */
 struct config_event {
 	struct event_header header;
 
-	uint8_t id;
+	uint16_t transport_id;
+	bool is_request;
+
+	/* Data exchanged with host. */
+	uint8_t event_id;
+	uint16_t recipient;
+	uint8_t status;
 	struct event_dyndata dyndata;
 };
 
 EVENT_TYPE_DYNDATA_DECLARE(config_event);
 
-/** @brief Configuration channel fetch event.
- * Used to fetch firmware parameters to host.
- */
-struct config_fetch_event {
-	struct event_header header;
-
-	uint16_t recipient;
-	uint8_t id;
-	void *channel_id;
-	struct event_dyndata dyndata;
-};
-
-EVENT_TYPE_DYNDATA_DECLARE(config_fetch_event);
-
-/** @brief Configuration channel fetch request event.
- * Used to request fetching firmware parameters to host.
- */
-struct config_fetch_request_event {
-	struct event_header header;
-
-	uint16_t recipient;
-	uint8_t id;
-	void *channel_id;
-};
-
-EVENT_TYPE_DECLARE(config_fetch_request_event);
-
-enum config_status {
-	CONFIG_STATUS_SUCCESS,
-	CONFIG_STATUS_PENDING,
-	CONFIG_STATUS_FETCH,
-	CONFIG_STATUS_TIMEOUT,
-	CONFIG_STATUS_REJECT,
-	CONFIG_STATUS_WRITE_ERROR,
-	CONFIG_STATUS_DISCONNECTED_ERROR,
-};
-
-/** @brief Configuration channel forward event.
- * Used to pass configuration from dongle to connected devices.
- */
-struct config_forward_event {
-	struct event_header header;
-
-	uint16_t recipient;
-	uint8_t id;
-	enum config_status status;
-
-	struct event_dyndata dyndata;
-};
-
-EVENT_TYPE_DYNDATA_DECLARE(config_forward_event);
-
-/** @brief Configuration channel forward get event.
- * Used to forward configuration channel get request to connected devices.
- */
-struct config_forward_get_event {
-	struct event_header header;
-
-	uint16_t recipient;
-	uint8_t id;
-	void *channel_id;
-	enum config_status status;
-};
-
-EVENT_TYPE_DECLARE(config_forward_get_event);
-
-/** @brief Configuration channel forwarded event.
- * Used to confirm that event has been successfully forwarded.
- */
-struct config_forwarded_event {
-	struct event_header header;
-
-	enum config_status status;
-};
-
-EVENT_TYPE_DECLARE(config_forwarded_event);
+#ifdef CONFIG_USB_DEVICE_PID
+ #define DEVICE_PID CONFIG_USB_DEVICE_PID
+ #ifdef CONFIG_BT_GATT_DIS_PNP_PID
+  #if CONFIG_USB_DEVICE_PID != CONFIG_BT_GATT_DIS_PNP_PID
+   #error Device PIDs are not consistent
+  #endif
+ #endif
+#elif defined(CONFIG_BT_GATT_DIS_PNP_PID)
+ #define DEVICE_PID CONFIG_BT_GATT_DIS_PNP_PID
+#else
+ #error Device PID is not defined
+#endif
 
 extern const uint8_t __start_config_channel_modules[];
 extern const uint8_t __stop_config_channel_modules[];
@@ -146,36 +107,35 @@ extern const uint8_t __stop_config_channel_modules[];
 #define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn, is_info)	\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) > 0);						\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) <= OPT_FIELD_MASK);					\
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {					\
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && is_config_event(eh)) {		\
 		static const uint8_t module_id_in_section					\
 			__attribute__((__section__("config_channel_modules"))) = 0;		\
 		uint8_t config_module_id =							\
 			&module_id_in_section - (uint8_t *)__start_config_channel_modules;	\
 		static uint8_t cur_opt_descr;							\
 												\
-		if (is_config_event(eh)) {							\
-			struct config_event *event = cast_config_event(eh);			\
+		struct config_event *event = cast_config_event(eh);				\
 												\
-			if (MOD_FIELD_GET(event->id) == config_module_id) {			\
-				__ASSERT_NO_MSG(config_set_fn != NULL); 			\
-				(*config_set_fn)(OPT_ID_GET(OPT_FIELD_GET(event->id)),		\
-						 event->dyndata.data,				\
-						 event->dyndata.size);				\
-			}									\
+		uint8_t rsp_data_buf[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];			\
+		size_t rsp_data_size = 0;							\
+		bool consume = false;								\
 												\
+		/* Not for us. */								\
+		if (event->recipient != DEVICE_PID) {						\
 			return false;								\
 		}										\
 												\
-		if (is_config_fetch_request_event(eh)) {					\
-			const struct config_fetch_request_event *event =			\
-				cast_config_fetch_request_event(eh);				\
-			uint8_t data_buf[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];			\
-			size_t data_size = 0;							\
-												\
-			memset(data_buf, 0, sizeof(data_buf));					\
-												\
-			if ((MOD_FIELD_GET(event->id) == MODULE_BROADCAST) &&			\
-			    (OPT_FIELD_GET(event->id) == BROADCAST_OPT_MAX_MOD_ID)) {		\
+		if (event->status == CONFIG_STATUS_SET) {					\
+			if (MOD_FIELD_GET(event->event_id) == config_module_id) {		\
+				BUILD_ASSERT(config_set_fn != NULL); 				\
+				(*config_set_fn)(OPT_ID_GET(OPT_FIELD_GET(event->event_id)),	\
+						 event->dyndata.data,				\
+						 event->dyndata.size);				\
+				consume = true;							\
+			}									\
+		} else if (event->status == CONFIG_STATUS_FETCH) {				\
+			if ((MOD_FIELD_GET(event->event_id) == MODULE_BROADCAST) &&		\
+			    (OPT_FIELD_GET(event->event_id) == BROADCAST_OPT_MAX_MOD_ID)) {	\
 				cur_opt_descr = 0;						\
 				if (is_info) {							\
 					size_t max_mod_id =					\
@@ -184,11 +144,12 @@ extern const uint8_t __stop_config_channel_modules[];
 												\
 					__ASSERT(max_mod_id < MODULE_BROADCAST,			\
 						 "You can have up to 15 configurable modules"); \
-					data_buf[0] = (uint8_t)max_mod_id;			\
-					data_size = (sizeof(uint8_t));				\
+					rsp_data_buf[0] = max_mod_id;				\
+					rsp_data_size = (sizeof(rsp_data_buf[0]));		\
+					consume = true;						\
 				}								\
-			} else if (MOD_FIELD_GET(event->id) == config_module_id) {		\
-				if (OPT_FIELD_GET(event->id) == MODULE_OPT_MODULE_DESCR) {	\
+			} else if (MOD_FIELD_GET(event->event_id) == config_module_id) {	\
+				if (OPT_FIELD_GET(event->event_id) == MODULE_OPT_MODULE_DESCR) {\
 					if (cur_opt_descr < ARRAY_SIZE(opt_descr) + 1) {	\
 						const char *data_ptr;				\
 												\
@@ -197,40 +158,44 @@ extern const uint8_t __stop_config_channel_modules[];
 						} else {					\
 							data_ptr = opt_descr[cur_opt_descr - 1];\
 						}						\
-						data_size = strlen(data_ptr);			\
-						__ASSERT_NO_MSG(data_size <			\
-							CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);	\
-						strcpy(data_buf, data_ptr);			\
+						rsp_data_size = strlen(data_ptr);		\
+						__ASSERT_NO_MSG(rsp_data_size <			\
+								sizeof(rsp_data_buf));		\
+						strcpy(rsp_data_buf, data_ptr);			\
 						cur_opt_descr++;				\
 					} else {						\
-						data_size = sizeof(uint8_t);			\
-						data_buf[0] = MODULE_DESCR_END_CHAR;		\
+						rsp_data_size = sizeof(uint8_t);		\
+						rsp_data_buf[0] = MODULE_DESCR_END_CHAR;	\
 						cur_opt_descr = 0;				\
 					}							\
 				} else {							\
-					__ASSERT_NO_MSG(config_fetch_fn != NULL);		\
-					(*config_fetch_fn)(OPT_ID_GET(OPT_FIELD_GET(event->id)),\
-							   data_buf,				\
-							   &data_size);				\
+					BUILD_ASSERT(config_fetch_fn != NULL);			\
+					(*config_fetch_fn)(OPT_ID_GET(				\
+							      OPT_FIELD_GET(event->event_id)),	\
+							   rsp_data_buf,			\
+							   &rsp_data_size);			\
 				}								\
+				consume = true;							\
 			}									\
-												\
-			if (!data_size) {							\
-				return false;							\
-			}									\
-												\
-			struct config_fetch_event *fetch_event =				\
-			  new_config_fetch_event(data_size);					\
-												\
-			memcpy(fetch_event->dyndata.data, data_buf, data_size);			\
-			fetch_event->id = event->id;						\
-			fetch_event->recipient = event->recipient;				\
-			fetch_event->channel_id = event->channel_id;				\
-												\
-			EVENT_SUBMIT(fetch_event);						\
-												\
-			return false;								\
 		}										\
+												\
+		if (consume) {									\
+			struct config_event *rsp = new_config_event(rsp_data_size);		\
+												\
+			rsp->transport_id = event->transport_id;				\
+			rsp->recipient = event->recipient;					\
+			rsp->event_id = event->event_id;					\
+			rsp->status = CONFIG_STATUS_SUCCESS;					\
+			rsp->is_request = false;						\
+												\
+			if (rsp_data_size > 0) {						\
+				memcpy(rsp->dyndata.data, rsp_data_buf, rsp_data_size);		\
+			}									\
+												\
+			EVENT_SUBMIT(rsp);							\
+		}										\
+												\
+		return consume;									\
 	}
 
 #ifdef __cplusplus
