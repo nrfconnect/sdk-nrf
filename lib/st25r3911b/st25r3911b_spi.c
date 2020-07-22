@@ -37,6 +37,7 @@ static struct device *spi_dev;
 /* SPI CS pin configuration */
 static struct spi_cs_control spi_cs = {
 	.gpio_pin = DT_SPI_DEV_CS_GPIOS_PIN(ST25R3911B_NODE),
+	.gpio_dt_flags = DT_SPI_DEV_CS_GPIOS_FLAGS(ST25R3911B_NODE),
 	.delay = T_NCS_SCLK
 };
 
