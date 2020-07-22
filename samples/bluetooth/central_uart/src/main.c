@@ -83,7 +83,7 @@ static uint8_t ble_data_received(const uint8_t *const data, uint16_t len)
 		struct uart_data_t *tx = k_malloc(sizeof(*tx));
 
 		if (!tx) {
-			LOG_WRN("Not able to allocate UART send data buffer\n");
+			LOG_WRN("Not able to allocate UART send data buffer");
 			return BT_GATT_ITER_CONTINUE;
 		}
 
@@ -339,7 +339,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		return;
 	}
 
-	LOG_INF("Connected: %s\n", log_strdup(addr));
+	LOG_INF("Connected: %s", log_strdup(addr));
 
 	err = bt_conn_set_security(conn, BT_SECURITY_L2);
 	if (err) {
