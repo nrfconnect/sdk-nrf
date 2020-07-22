@@ -20,7 +20,7 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 
 #include "hid_report_desc.h"
-#include "config_channel.h"
+#include "config_channel_transport.h"
 
 #include "hid_event.h"
 #include "usb_event.h"
@@ -40,7 +40,7 @@ static uint8_t hid_protocol = HID_PROTOCOL_REPORT;
 static struct device *usb_dev;
 static uint8_t sent_report_id = REPORT_ID_COUNT;
 
-static struct config_channel_state cfg_chan;
+static struct config_channel_transport cfg_chan_transport;
 
 static int get_report(struct usb_setup_packet *setup, int32_t *len, uint8_t **data)
 {
@@ -55,14 +55,18 @@ static int get_report(struct usb_setup_packet *setup, int32_t *len, uint8_t **da
 				size_t length = *len;
 				uint8_t *buffer = *data;
 
-				int err = config_channel_report_get(&cfg_chan,
-							buffer,
-							length,
-							true,
-							CONFIG_USB_DEVICE_PID);
+				/* HID Feature report ID is specific to USB.
+				 * Config channel does not use it.
+				 */
+				buffer[0] = REPORT_ID_USER_CONFIG;
+				int err = config_channel_transport_get(&cfg_chan_transport,
+								&buffer[1],
+								length - 1);
+
 				if (err) {
 					LOG_WRN("Failed to process report get");
 				}
+
 				return err;
 			} else {
 				LOG_WRN("Unsupported report ID");
@@ -101,11 +105,12 @@ static int set_report(struct usb_setup_packet *setup, int32_t *len, uint8_t **da
 				size_t length = *len;
 				uint8_t *buffer = *data;
 
-				int err = config_channel_report_set(&cfg_chan,
-							buffer,
-							length,
-							true,
-							CONFIG_USB_DEVICE_PID);
+				/* HID Feature report ID is specific to USB.
+				 * Config channel does not use it.
+				 */
+				int err = config_channel_transport_set(&cfg_chan_transport,
+								&buffer[1],
+								length - 1);
 
 				if (err) {
 					LOG_WRN("Failed to process report set");
@@ -408,7 +413,7 @@ static void device_status(enum usb_dc_status_code cb_status, const uint8_t *para
 
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
 		    new_state != USB_STATE_ACTIVE) {
-			config_channel_disconnect(&cfg_chan);
+			config_channel_transport_disconnect(&cfg_chan_transport);
 		}
 	}
 }
@@ -474,7 +479,7 @@ static int usb_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		config_channel_init(&cfg_chan);
+		config_channel_transport_init(&cfg_chan_transport);
 	}
 
 	return err;
@@ -509,24 +514,9 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-	    is_config_forwarded_event(eh)) {
-		config_channel_forwarded_receive(&cfg_chan,
-						 cast_config_forwarded_event(eh));
-
-		return false;
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-	    is_config_fetch_event(eh)) {
-		config_channel_fetch_receive(&cfg_chan,
-					     cast_config_fetch_event(eh));
-
-		return false;
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
 	    is_config_event(eh)) {
-		config_channel_event_done(&cfg_chan, cast_config_event(eh));
+		config_channel_transport_rsp_receive(&cfg_chan_transport,
+						     cast_config_event(eh));
 
 		return false;
 	}
@@ -540,7 +530,5 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE(MODULE, config_forwarded_event);
-EVENT_SUBSCRIBE(MODULE, config_fetch_event);
 EVENT_SUBSCRIBE(MODULE, config_event);
 #endif

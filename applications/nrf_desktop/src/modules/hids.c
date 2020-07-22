@@ -20,7 +20,7 @@
 #include "config_event.h"
 
 #include "hid_report_desc.h"
-#include "config_channel.h"
+#include "config_channel_transport.h"
 
 #define MODULE hids
 #include "module_state_event.h"
@@ -61,7 +61,7 @@ static struct bt_conn *cur_conn;
 static bool secured;
 static bool protocol_boot;
 
-static struct config_channel_state cfg_chan;
+static struct config_channel_transport cfg_chan_transport;
 static struct k_delayed_work notify_secured;
 
 static void broadcast_subscription_change(uint8_t report_id, bool enabled)
@@ -232,17 +232,17 @@ static void feature_report_handler(struct bt_gatt_hids_rep *rep,
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		if (!write) {
-			int err = config_channel_report_get(&cfg_chan, rep->data,
-							    rep->size, false,
-							    CONFIG_BT_GATT_DIS_PNP_PID);
+			int err = config_channel_transport_get(&cfg_chan_transport,
+							       rep->data,
+							       rep->size);
 
 			if (err) {
 				LOG_WRN("Failed to process report get");
 			}
 		} else {
-			int err = config_channel_report_set(&cfg_chan, rep->data,
-							    rep->size, false,
-							    CONFIG_BT_GATT_DIS_PNP_PID);
+			int err = config_channel_transport_set(&cfg_chan_transport,
+							       rep->data,
+							       rep->size);
 
 			if (err) {
 				LOG_WRN("Failed to process report set");
@@ -385,7 +385,7 @@ static int module_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		config_channel_init(&cfg_chan);
+		config_channel_transport_init(&cfg_chan_transport);
 	}
 
 	hids_init_param.pm_evt_handler = pm_evt_handler;
@@ -492,7 +492,7 @@ static void notify_hids(const struct ble_peer_event *event)
 		}
 
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-			config_channel_disconnect(&cfg_chan);
+			config_channel_transport_disconnect(&cfg_chan_transport);
 		}
 
 		cur_conn = NULL;
@@ -572,19 +572,13 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-	    is_config_fetch_event(eh)) {
-		config_channel_fetch_receive(&cfg_chan,
-					     cast_config_fetch_event(eh));
-
-		return false;
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
 	    is_config_event(eh)) {
-		config_channel_event_done(&cfg_chan, cast_config_event(eh));
+		config_channel_transport_rsp_receive(&cfg_chan_transport,
+					cast_config_event(eh));
 
 		return false;
 	}
+
 
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
@@ -596,7 +590,6 @@ EVENT_SUBSCRIBE(MODULE, hid_report_event);
 EVENT_SUBSCRIBE(MODULE, hid_notification_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE(MODULE, config_fetch_event);
 EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
 EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);
