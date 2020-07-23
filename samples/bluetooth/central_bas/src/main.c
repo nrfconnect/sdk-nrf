@@ -47,18 +47,12 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
 			      bool connectable)
 {
-	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(device_info->addr, addr, sizeof(addr));
 
 	printk("Filters matched. Address: %s connectable: %s\n",
 		addr, connectable ? "yes" : "no");
-
-	err = bt_scan_stop();
-	if (err) {
-		printk("Stop LE scan failed (err %d)\n", err);
-	}
 }
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
