@@ -8,7 +8,6 @@ config ENTROPY_CC310
 	bool "Arm CC310 RNG driver for Nordic devices"
 	depends on HW_CC310 || (SOC_NRF9160 && SPM)
 	depends on ENTROPY_GENERATOR
-	depends on !BT_LLL_VENDOR_NORDIC
 	select ENTROPY_HAS_DRIVER
 	default y
 	help
