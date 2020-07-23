@@ -130,7 +130,8 @@ void lte_lc_register_handler(lte_lc_evt_handler_t handler);
 /**@brief Initializes the module and configures the modem.
  *
  * @note a follow-up call to lte_lc_connect() or lte_lc_connect_async() must be
- * 	 made to establish an LTE connection.
+ *	 made to establish an LTE connection. The module can be initialized
+ *	 only once, and subsequent calls will return -EALREADY.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -150,6 +151,10 @@ int lte_lc_connect(void);
  *	  network. The function blocks until connection is established, or
  *	  the connection attempt times out.
  *
+ * @note The module can be initialized only once, and repeated calls will
+ *	 return -EALREADY. lte_lc_connect_async() should be used on subsequent
+ *	 calls.
+ *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_init_and_connect(void);
@@ -168,6 +173,9 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 
 /**@brief Initializes the LTE module, configures the modem and connects to LTE
  *	  network. Non-blocking.
+ *
+ * @note The module can be initialized only once, and repeated calls will
+ *	 return -EALREADY. lte_lc_connect() should be used on subsequent calls.
  *
  * @param handler Event handler for receiving LTE events. The parameter can be
  *		  NULL if an event handler is already registered.
