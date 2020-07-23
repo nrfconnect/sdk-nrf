@@ -278,11 +278,15 @@ static int parse_cereg(const char *notification,
 	str_buf[len] = '\0';
 	cell->id = strtoul(str_buf, NULL, 16);
 
-	/* Parse PSM configuration */
-	err = parse_psm_cfg(&resp_list, true, psm_cfg);
-	if (err) {
-		LOG_ERR("Failed to parse PSM configuration, error: %d", err);
-		goto clean_exit;
+	/* Parse PSM configuration only when registered */
+	if ((*reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+	    (*reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		err = parse_psm_cfg(&resp_list, true, psm_cfg);
+		if (err) {
+			LOG_ERR("Failed to parse PSM configuration, error: %d",
+				err);
+			goto clean_exit;
+		}
 	}
 
 clean_exit:
