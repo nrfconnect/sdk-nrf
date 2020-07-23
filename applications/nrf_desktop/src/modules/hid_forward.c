@@ -14,7 +14,7 @@
 #include "module_state_event.h"
 
 #include "hid_report_desc.h"
-#include "config_channel.h"
+#include "config_channel_transport.h"
 
 #include "hid_event.h"
 #include "ble_event.h"
@@ -25,6 +25,10 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
 #define MAX_ENQUEUED_ITEMS CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
+#define CFG_CHAN_RSP_READ_DELAY		K_MSEC(15)
+#define CFG_CHAN_MAX_RSP_POLL_CNT	50
+
+BUILD_ASSERT(CFG_CHAN_MAX_RSP_POLL_CNT <= UCHAR_MAX);
 
 struct enqueued_report {
 	sys_snode_t node;
@@ -33,16 +37,17 @@ struct enqueued_report {
 
 struct hids_subscriber {
 	struct bt_gatt_hids_c hidc;
+	struct k_delayed_work read_rsp;
+	struct config_event *cfg_chan_rsp;
 	uint16_t pid;
 	uint8_t hwid[HWID_LEN];
+	uint8_t cur_poll_cnt;
 };
 
 static struct hids_subscriber subscribers[CONFIG_BT_MAX_CONN];
 static const void *usb_id;
 static bool usb_ready;
 static bool usb_busy;
-static bool forward_pending;
-static void *channel_id;
 
 static sys_slist_t enqueued_report_list;
 static size_t enqueued_report_count;
@@ -126,54 +131,6 @@ static uint8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static void hidc_ready(struct bt_gatt_hids_c *hids_c)
-{
-	struct bt_gatt_hids_c_rep_info *rep = NULL;
-
-	while (NULL != (rep = bt_gatt_hids_c_rep_next(hids_c, rep))) {
-		if (bt_gatt_hids_c_rep_type(rep) ==
-		    BT_GATT_HIDS_REPORT_TYPE_INPUT) {
-			int err = bt_gatt_hids_c_rep_subscribe(hids_c,
-							       rep,
-							       hidc_read);
-
-			if (err) {
-				LOG_ERR("Cannot subscribe to report (err:%d)",
-					err);
-			} else {
-				LOG_INF("Subscriber to rep id:%d",
-					bt_gatt_hids_c_rep_id(rep));
-			}
-		}
-	}
-}
-
-static void hidc_pm_update(struct bt_gatt_hids_c *hids_c)
-{
-	LOG_INF("Protocol mode updated");
-}
-
-static void hidc_prep_error(struct bt_gatt_hids_c *hids_c, int err)
-{
-	if (err) {
-		LOG_ERR("err:%d", err);
-	}
-}
-
-static void init(void)
-{
-	static const struct bt_gatt_hids_c_init_params params = {
-		.ready_cb = hidc_ready,
-		.prep_error_cb = hidc_prep_error,
-		.pm_update_cb = hidc_pm_update,
-	};
-
-	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
-		bt_gatt_hids_c_init(&subscribers[i].hidc, &params);
-	}
-	sys_slist_init(&enqueued_report_list);
-}
-
 static int register_subscriber(struct bt_gatt_dm *dm, uint16_t pid,
 			       const uint8_t *hwid, size_t hwid_len)
 {
@@ -199,66 +156,132 @@ static int register_subscriber(struct bt_gatt_dm *dm, uint16_t pid,
 	return err;
 }
 
-static void notify_config_forwarded(enum config_status status)
+static void submit_forward_error_rsp(struct hids_subscriber *sub,
+				     enum config_status rsp_status)
 {
-	struct config_forwarded_event *event = new_config_forwarded_event();
+	struct config_event *rsp = sub->cfg_chan_rsp;
 
-	forward_pending = (status == CONFIG_STATUS_PENDING);
+	rsp->status = rsp_status;
+	/* Error response has no additional data. */
+	rsp->dyndata.size = 0;
+	EVENT_SUBMIT(rsp);
 
-	event->status = status;
-	EVENT_SUBMIT(event);
-}
-
-static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
-			  struct bt_gatt_hids_c_rep_info *rep,
-			  uint8_t err)
-{
-	if (err) {
-		LOG_WRN("Failed to write report: %d", err);
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-	} else {
-		notify_config_forwarded(CONFIG_STATUS_SUCCESS);
-	}
+	sub->cfg_chan_rsp = NULL;
 }
 
 static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 			  struct bt_gatt_hids_c_rep_info *rep,
 			  uint8_t err, const uint8_t *data)
 {
-	if (err) {
-		LOG_WRN("Failed to write report: %d", err);
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-	} else {
-		struct config_channel_frame frame;
+	/* Make sure that the handler will not preempt system workqueue
+	 * and it will not be preempted by system workqueue.
+	 */
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
 
-		int pos = config_channel_report_parse(data, REPORT_SIZE_USER_CONFIG,
-						      &frame, false);
+	struct hids_subscriber *sub = CONTAINER_OF(hidc,
+						   struct hids_subscriber,
+						   hidc);
+
+	if (err) {
+		LOG_WRN("Failed to read report: %d", err);
+		submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+	} else {
+		/* Recipient and event_id must be stored to send proper values
+		 * on error.
+		 */
+		uint16_t recipient = sub->cfg_chan_rsp->recipient;
+		uint8_t event_id = sub->cfg_chan_rsp->event_id;
+
+		int pos = config_channel_report_parse(data,
+						      REPORT_SIZE_USER_CONFIG,
+						      sub->cfg_chan_rsp);
+
 		if (pos < 0) {
-			LOG_WRN("Could not set report");
+			LOG_WRN("Failed to parse response: %d", pos);
+			sub->cfg_chan_rsp->recipient = recipient;
+			sub->cfg_chan_rsp->event_id = event_id;
+			submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
 			return pos;
 		}
 
-		if (frame.status != CONFIG_STATUS_SUCCESS) {
-			LOG_INF("GATT read done, but fetch was not ready yet");
+		if (sub->cfg_chan_rsp->status == CONFIG_STATUS_PENDING) {
+			LOG_WRN("GATT read done, but fetch was not ready yet");
+			sub->cfg_chan_rsp->recipient = recipient;
+			sub->cfg_chan_rsp->event_id = event_id;
+			sub->cur_poll_cnt++;
 
-			/* Do not notify requester, host will schedule next read. */
-			forward_pending = false;
-			return 0;
+			if (sub->cur_poll_cnt >= CFG_CHAN_MAX_RSP_POLL_CNT) {
+				submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+			} else {
+				k_delayed_work_submit(&sub->read_rsp,
+						      CFG_CHAN_RSP_READ_DELAY);
+			}
+		} else {
+			EVENT_SUBMIT(sub->cfg_chan_rsp);
+			sub->cfg_chan_rsp = NULL;
 		}
-
-		struct config_fetch_event *event =
-			new_config_fetch_event(frame.event_data_len);
-
-		event->id = frame.event_id;
-		event->recipient = frame.recipient;
-		event->channel_id = channel_id;
-
-		memcpy(event->dyndata.data, &data[pos], frame.event_data_len);
-
-		EVENT_SUBMIT(event);
 	}
 
 	return 0;
+}
+
+static void read_rsp_fn(struct k_work *work)
+{
+	struct hids_subscriber *sub = CONTAINER_OF(work,
+						struct hids_subscriber,
+						read_rsp);
+	struct bt_gatt_hids_c_rep_info *config_rep =
+		bt_gatt_hids_c_rep_find(&sub->hidc,
+					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
+					REPORT_ID_USER_CONFIG);
+
+	__ASSERT_NO_MSG(config_rep);
+	int err = bt_gatt_hids_c_rep_read(&sub->hidc,
+					  config_rep,
+					  hidc_read_cfg);
+
+	if (err) {
+		LOG_WRN("Cannot read feature report (err: %d)", err);
+		submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+	}
+}
+
+static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
+			  struct bt_gatt_hids_c_rep_info *rep,
+			  uint8_t err)
+{
+	/* Make sure that the handler will not preempt system workqueue
+	 * and it will not be preempted by system workqueue.
+	 */
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
+	struct hids_subscriber *sub = CONTAINER_OF(hidc,
+						   struct hids_subscriber,
+						   hidc);
+
+	if (err) {
+		LOG_WRN("Failed to write report: %d", err);
+		submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+		return;
+	}
+
+	/* HID forward does not fetch configuration channel response for
+	 * set operation. This is done to prevent HID report rate drops
+	 * (for LLPM connection, the peripheral may send either HID report
+	 * or configuration channel response in given connection interval).
+	 */
+	if (sub->cfg_chan_rsp->status != CONFIG_STATUS_SET) {
+		sub->cur_poll_cnt = 0;
+		k_delayed_work_submit(&sub->read_rsp,
+				      CFG_CHAN_RSP_READ_DELAY);
+	} else {
+		__ASSERT_NO_MSG(sub->cfg_chan_rsp->dyndata.size == 0);
+		sub->cfg_chan_rsp->status = CONFIG_STATUS_SUCCESS;
+		EVENT_SUBMIT(sub->cfg_chan_rsp);
+		sub->cfg_chan_rsp = NULL;
+	}
 }
 
 static struct hids_subscriber *find_subscriber_hidc(uint16_t pid)
@@ -271,14 +294,53 @@ static struct hids_subscriber *find_subscriber_hidc(uint16_t pid)
 	return NULL;
 }
 
-static void handle_config_forward(const struct config_forward_event *event)
+
+static struct config_event *generate_response(const struct config_event *event,
+					      size_t dyndata_size)
 {
+	__ASSERT_NO_MSG(event->is_request);
+
+	struct config_event *rsp =
+		new_config_event(dyndata_size);
+
+	rsp->recipient = event->recipient;
+	rsp->event_id = event->event_id;
+	rsp->transport_id = event->transport_id;
+	rsp->is_request = false;
+
+	return rsp;
+}
+
+static void send_nodata_response(const struct config_event *event,
+				 enum config_status rsp_status)
+{
+	struct config_event *rsp = generate_response(event, 0);
+
+	rsp->status = rsp_status;
+	EVENT_SUBMIT(rsp);
+}
+
+static bool handle_config_event(const struct config_event *event)
+{
+	/* Make sure the function will not be preempted by hidc callbacks. */
+	BUILD_ASSERT(CONFIG_SYSTEM_WORKQUEUE_PRIORITY < 0);
+
+	/* Ignore response event. */
+	if (!event->is_request) {
+		return false;
+	}
+
 	struct hids_subscriber *subscriber = find_subscriber_hidc(event->recipient);
 
 	if (!subscriber) {
 		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
-		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
-		return;
+		return false;
+	}
+
+	if (subscriber->cfg_chan_rsp) {
+		send_nodata_response(event, CONFIG_STATUS_REJECT);
+		LOG_WRN("Transaction already in progress");
+		return true;
 	}
 
 	struct bt_gatt_hids_c *recipient_hidc =	&subscriber->hidc;
@@ -286,10 +348,9 @@ static void handle_config_forward(const struct config_forward_event *event)
 	__ASSERT_NO_MSG(recipient_hidc != NULL);
 
 	if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
+		send_nodata_response(event, CONFIG_STATUS_REJECT);
 		LOG_WRN("Cannot forward, peer disconnected");
-
-		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
-		return;
+		return true;
 	}
 
 	bool has_out_report = false;
@@ -308,42 +369,26 @@ static void handle_config_forward(const struct config_forward_event *event)
 	}
 
 	if (!config_rep) {
+		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
 		LOG_ERR("Feature report not found");
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-		return;
+		return true;
 	}
 
 	if (event->dyndata.size > UCHAR_MAX) {
+		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
 		LOG_WRN("Event data too big");
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-		return;
+		return true;
 	}
 
-	struct config_channel_frame frame;
 	uint8_t report[REPORT_SIZE_USER_CONFIG];
-
-	if (event->status == CONFIG_STATUS_FETCH) {
-		LOG_INF("Forwarding fetch request");
-		frame.status = CONFIG_STATUS_FETCH;
-	} else {
-		frame.status = CONFIG_STATUS_PENDING;
-	}
-
-	frame.recipient = event->recipient;
-	frame.event_id = event->id;
-	frame.event_data_len = event->dyndata.size;
-	frame.event_data = (uint8_t *)event->dyndata.data;
-
-	int pos = config_channel_report_fill(report, sizeof(report), &frame,
-					     false);
+	int pos = config_channel_report_fill(report, REPORT_SIZE_USER_CONFIG,
+					     event);
 
 	if (pos < 0) {
-		LOG_WRN("Could not set report");
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-		return;
+		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
+		LOG_WRN("Invalid event data");
+		return true;
 	}
-
-	notify_config_forwarded(CONFIG_STATUS_PENDING);
 
 	int err;
 
@@ -362,63 +407,24 @@ static void handle_config_forward(const struct config_forward_event *event)
 	}
 
 	if (err) {
+		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
 		LOG_ERR("Writing report failed, err:%d", err);
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
+	} else {
+		size_t dyndata_size;
+
+		/* Set opetaion provides response without additional data. */
+		if (event->status == CONFIG_STATUS_SET) {
+			dyndata_size = 0;
+		} else {
+			dyndata_size = CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE;
+		}
+		/* Response will be handled by hidc_write_cb. */
+		__ASSERT_NO_MSG(subscriber->cfg_chan_rsp == NULL);
+		subscriber->cfg_chan_rsp = generate_response(event,
+							     dyndata_size);
 	}
 
-	return;
-}
-
-static void handle_config_forward_get(const struct config_forward_get_event *event)
-{
-	struct hids_subscriber *subscriber =
-		find_subscriber_hidc(event->recipient);
-
-	if (!subscriber) {
-		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
-		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
-		return;
-	}
-
-	struct bt_gatt_hids_c *recipient_hidc =	&subscriber->hidc;
-
-	__ASSERT_NO_MSG(recipient_hidc != NULL);
-
-	if (forward_pending) {
-		LOG_DBG("GATT operation already pending");
-		return;
-	}
-
-	if (!bt_gatt_hids_c_ready_check(recipient_hidc)) {
-		LOG_WRN("Cannot forward, peer disconnected");
-
-		notify_config_forwarded(CONFIG_STATUS_DISCONNECTED_ERROR);
-		return;
-	}
-
-	struct bt_gatt_hids_c_rep_info *config_rep =
-		bt_gatt_hids_c_rep_find(recipient_hidc,
-					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
-					REPORT_ID_USER_CONFIG);
-
-	if (!config_rep) {
-		LOG_ERR("Feature report not found");
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-		return;
-	}
-
-	notify_config_forwarded(CONFIG_STATUS_PENDING);
-
-	channel_id = event->channel_id;
-
-	int err = bt_gatt_hids_c_rep_read(recipient_hidc,
-					  config_rep,
-					  hidc_read_cfg);
-
-	if (err) {
-		LOG_ERR("Reading report failed, err:%d", err);
-		notify_config_forwarded(CONFIG_STATUS_WRITE_ERROR);
-	}
+	return true;
 }
 
 static void disconnect_subscriber(struct hids_subscriber *subscriber)
@@ -446,7 +452,12 @@ static void disconnect_subscriber(struct hids_subscriber *subscriber)
 
 	bt_gatt_hids_c_release(&subscriber->hidc);
 	subscriber->pid = 0;
+	k_delayed_work_cancel(&subscriber->read_rsp);
 	memset(subscriber->hwid, 0, sizeof(subscriber->hwid));
+	subscriber->cur_poll_cnt = 0;
+	if (subscriber->cfg_chan_rsp) {
+		submit_forward_error_rsp(subscriber, CONFIG_STATUS_WRITE_ERROR);
+	}
 }
 
 static void clear_state(void)
@@ -477,6 +488,55 @@ static void clear_state(void)
 	__ASSERT_NO_MSG(enqueued_report_count == 0);
 
 	k_spin_unlock(&lock, key);
+}
+
+static void hidc_ready(struct bt_gatt_hids_c *hids_c)
+{
+	struct bt_gatt_hids_c_rep_info *rep = NULL;
+
+	while (NULL != (rep = bt_gatt_hids_c_rep_next(hids_c, rep))) {
+		if (bt_gatt_hids_c_rep_type(rep) ==
+		    BT_GATT_HIDS_REPORT_TYPE_INPUT) {
+			int err = bt_gatt_hids_c_rep_subscribe(hids_c,
+							       rep,
+							       hidc_read);
+
+			if (err) {
+				LOG_ERR("Cannot subscribe to report (err:%d)",
+					err);
+			} else {
+				LOG_INF("Subscriber to rep id:%d",
+					bt_gatt_hids_c_rep_id(rep));
+			}
+		}
+	}
+}
+
+static void hidc_prep_error(struct bt_gatt_hids_c *hids_c, int err)
+{
+	if (err) {
+		LOG_ERR("err:%d", err);
+	}
+}
+
+static void hidc_pm_update(struct bt_gatt_hids_c *hids_c)
+{
+	LOG_INF("Protocol mode updated");
+}
+
+static void init(void)
+{
+	static const struct bt_gatt_hids_c_init_params params = {
+		.ready_cb = hidc_ready,
+		.prep_error_cb = hidc_prep_error,
+		.pm_update_cb = hidc_pm_update,
+	};
+
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		bt_gatt_hids_c_init(&subscribers[i].hidc, &params);
+		k_delayed_work_init(&subscribers[i].read_rsp, read_rsp_fn);
+	}
+	sys_slist_init(&enqueued_report_list);
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -586,16 +646,8 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		if (is_config_forward_event(eh)) {
-			handle_config_forward(cast_config_forward_event(eh));
-
-			return false;
-		}
-
-		if (is_config_forward_get_event(eh)) {
-			handle_config_forward_get(cast_config_forward_get_event(eh));
-
-			return false;
+		if (is_config_event(eh)) {
+			return handle_config_event(cast_config_event(eh));
 		}
 	}
 
@@ -613,6 +665,5 @@ EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE(MODULE, config_forward_event);
-EVENT_SUBSCRIBE(MODULE, config_forward_get_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
