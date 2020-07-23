@@ -336,6 +336,18 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	if (conn_err) {
 		LOG_INF("Failed to connect to %s (%d)", log_strdup(addr),
 			conn_err);
+
+		if (default_conn == conn) {
+			bt_conn_unref(default_conn);
+			default_conn = NULL;
+
+			err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+			if (err) {
+				LOG_ERR("Scanning failed to start (err %d)",
+					err);
+			}
+		}
+
 		return;
 	}
 

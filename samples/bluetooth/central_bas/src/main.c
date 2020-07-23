@@ -178,6 +178,18 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 
 	if (conn_err) {
 		printk("Failed to connect to %s (%u)\n", addr, conn_err);
+		if (conn == default_conn) {
+			bt_conn_unref(default_conn);
+			default_conn = NULL;
+
+			/* This demo doesn't require active scan */
+			err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+			if (err) {
+				printk("Scanning failed to start (err %d)\n",
+				       err);
+			}
+		}
+
 		return;
 	}
 
