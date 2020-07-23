@@ -89,6 +89,7 @@ Zigbee
 * Added:
 
    * :ref:`Zigbee shell <zigbee_shell_sample>`.
+   * Added ZCL commands to :ref:`Zigbee Shell library <lib_zigbee_shell>`.
 
 Common
 ======
