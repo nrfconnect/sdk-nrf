@@ -33,6 +33,7 @@ zephyr_library_sources_ifdef(
 	cli/zigbee_cli_utils.c
 	cli/zigbee_cli_cmd.c
 	cli/zigbee_cli_cmd_bdb.c
+	cli/zigbee_cli_cmd_zdo.c
 	cli/zigbee_cli_cmd_zscheduler.c
 )
 
