@@ -303,11 +303,11 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 			       BT_CONN_LE_CREATE_CONN,
 			       &bt_scan.conn_param, &conn);
 
-	LOG_DBG("Connecting");
+	LOG_DBG("Connecting (%d)", err);
 
 	if (err) {
 		/* If an error occurred, send an event to
-		 * the all intrested.
+		 * the all interested.
 		 */
 		notify_connecting_error(&control->device_info);
 	} else {
