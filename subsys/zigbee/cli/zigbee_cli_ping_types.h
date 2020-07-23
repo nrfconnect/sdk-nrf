@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef ZIGBEE_CLI_PING_H__
-#define ZIGBEE_CLI_PING_H__
+#ifndef ZIGBEE_CLI_PING_TYPES_H__
+#define ZIGBEE_CLI_PING_TYPES_H__
 
 #include <shell/shell.h>
 
@@ -86,4 +86,4 @@ struct ping_reply_data {
  */
 void zb_ping_set_ping_indication_cb(ping_time_cb_t cb);
 
-#endif /* ZIGBEE_CLI_PING_H__ */
+#endif /* ZIGBEE_CLI_PING_TYPES_H__ */

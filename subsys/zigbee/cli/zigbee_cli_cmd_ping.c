@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <errno.h>
@@ -19,9 +19,7 @@
 
 #define ZIGBEE_PING_FRAME_CONTROL_FIELD 0x11
 
-#define LOG_SUBMODULE_NAME ping
-
-LOG_MODULE_REGISTER(LOG_SUBMODULE_NAME, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+LOG_MODULE_REGISTER(ping, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 static uint8_t ping_seq_num;
 static ping_time_cb_t ping_ind_cb;
@@ -400,6 +398,7 @@ static void ping_request_send(struct ctx_entry *ping_entry)
 	       ping_entry->ping_req_data.count);
 	cmd_buf_ptr += ping_entry->ping_req_data.count;
 	ping_entry->ping_req_data.ping_seq = ping_seq_num;
+	ping_entry->id  = ping_seq_num;
 	ping_seq_num++;
 
 	/* Schedule frame to send. */

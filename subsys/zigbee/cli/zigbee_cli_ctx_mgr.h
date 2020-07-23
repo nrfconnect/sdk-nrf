@@ -11,6 +11,7 @@
 
 #include "zigbee_cli_zdo_types.h"
 #include "zigbee_cli_ping_types.h"
+#include "zigbee_cli_zcl_types.h"
 
 #define CTX_MGR_ENTRY_IVALID_INDEX 0xFF
 
@@ -19,9 +20,11 @@
 enum ctx_entry_type {
 	CTX_MGR_INVALID_ENTRY_TYPE,
 	CTX_MGR_ZDO_ENTRY_TYPE,
-	CTX_MGR_ZCL_ENTRY_TYPE,
 	CTX_MGR_PING_REQ_ENTRY_TYPE,
-	CTX_MGR_PING_REPLY_ENTRY_TYPE
+	CTX_MGR_PING_REPLY_ENTRY_TYPE,
+	CTX_MGR_ATTR_REQ_ENTRY_TYPE,
+	CTX_MGR_CFG_REPORT_REQ_ENTRY_TYPE,
+	CTX_MGR_GENERIC_CMD_ENTRY_TYPE
 };
 
 /* A context manager entry structure associated with a given frame,
@@ -48,6 +51,9 @@ struct ctx_entry {
 		struct zdo_data zdo_data;
 		struct ping_req_data ping_req_data;
 		struct ping_reply_data ping_reply_data;
+		struct read_write_attr_req_data read_write_attr_req_data;
+		struct configure_reporting_req_data configure_reporting_req_data;
+		struct generic_cmd_data generic_cmd_data;
 	};
 };
 
