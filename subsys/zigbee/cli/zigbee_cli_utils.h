@@ -126,7 +126,7 @@ void zb_cli_print_hexdump(const struct shell *shell, const uint8_t *data,
  *
  * The value is expected to be low endian.
  *
- * @param shell     Pointer to shell instance.
+ * @param shell     Pointer to the shell instance.
  * @param addr      64 data to be printed out.
  */
 static inline void zb_cli_print_eui64(const struct shell *shell,
