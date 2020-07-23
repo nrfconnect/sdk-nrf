@@ -235,19 +235,28 @@ static int flash_op_execute(void)
 {
 	int err;
 
+	if (flash_state.op == FLASH_OP_WRITE) {
+		err = flash_op_write();
+	} else if (flash_state.op == FLASH_OP_ERASE) {
+		flash_state.prev_len = nrfx_nvmc_flash_page_size_get();
+		err = ble_controller_flash_page_erase(
+			(uint32_t)flash_state.addr,
+			flash_operation_complete_callback);
+	} else {
+		__ASSERT(0, "Unsupported operation");
+		err = -EINVAL;
+	}
+
+	return err;
+}
+
+static int flash_op_execute_with_lock(void)
+{
+	int err;
+
 	err = MULTITHREADING_LOCK_ACQUIRE();
 	if (!err) {
-		if (flash_state.op == FLASH_OP_WRITE) {
-			err = flash_op_write();
-		} else if (flash_state.op == FLASH_OP_ERASE) {
-			flash_state.prev_len = nrfx_nvmc_flash_page_size_get();
-			err = ble_controller_flash_page_erase(
-				(uint32_t)flash_state.addr,
-				flash_operation_complete_callback);
-		} else {
-			__ASSERT(0, "Unsupported operation");
-			err = -EINVAL;
-		}
+		err = flash_op_execute();
 		MULTITHREADING_LOCK_RELEASE();
 	}
 	return err;
@@ -302,7 +311,7 @@ static int btctlr_flash_write(struct device *dev,
 	flash_state.addr = offset;
 	flash_state.len = len;
 
-	err = flash_op_execute();
+	err = flash_op_execute_with_lock();
 	if (!err) {
 		err = k_sem_take(&flash_state.sync, K_FOREVER);
 		__ASSERT_NO_MSG(err == 0);
@@ -337,7 +346,7 @@ static int btctlr_flash_erase(struct device *dev, off_t offset, size_t len)
 	flash_state.addr = offset;
 	flash_state.len = len;
 
-	err = flash_op_execute();
+	err = flash_op_execute_with_lock();
 	if (!err) {
 		err = k_sem_take(&flash_state.sync, K_FOREVER);
 		__ASSERT_NO_MSG(err == 0);

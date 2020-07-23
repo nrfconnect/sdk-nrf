@@ -8,8 +8,10 @@
 #include <irq.h>
 #include <kernel.h>
 #include <logging/log.h>
+#include <sys/__assert.h>
 #include <mpsl.h>
 #include <mpsl_timeslot.h>
+#include "multithreading_lock.h"
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
@@ -43,9 +45,15 @@ static void signal_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
+	int errcode;
+
 	while (true) {
 		k_sem_take(&sem_signal, K_FOREVER);
+
+		errcode = MULTITHREADING_LOCK_ACQUIRE();
+		__ASSERT_NO_MSG(errcode == 0);
 		mpsl_low_priority_process();
+		MULTITHREADING_LOCK_RELEASE();
 	}
 }
 
