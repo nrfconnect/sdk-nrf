@@ -62,7 +62,6 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 			      struct bt_scan_filter_match *filter_match,
 			      bool connectable)
 {
-	int err;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (!filter_match->uuid.match ||
@@ -80,11 +79,6 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	printk("Filters matched on UUID 0x%04x.\nAddress: %s connectable: %s\n",
 		BT_UUID_16(uuid)->val,
 		addr, connectable ? "yes" : "no");
-
-	err = bt_scan_stop();
-	if (err) {
-		printk("Stop LE scan failed (err %d)\n", err);
-	}
 }
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
