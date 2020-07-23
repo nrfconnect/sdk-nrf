@@ -170,7 +170,7 @@ This means that you do not have to use one :file:`prj.conf` file for your projec
 
 .. note::
     Creating build types and selecting them is optional.
-    This is a feature specific to the :ref:`application development in |NCS| <ncs-app-dev>`.
+    This is a feature specific to the :ref:`application development in nRF Connect SDK <ncs-app-dev>`.
 
 .. _gs_modifying_build_types_creating:
 
