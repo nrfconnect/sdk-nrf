@@ -1,34 +1,117 @@
 #!/usr/bin/env python3
 
 import argparse
+from contextlib import closing
 from collections import defaultdict, namedtuple
 import getpass
 import netrc
 import os
+import sqlite3
 import sys
+from typing import Dict, List, Optional, Union
 
 import pygit2
-from github import Github
+import github
 
 from pygit2_helpers import zephyr_commit_area, commit_shortlog
 
-# A container for pull request information. The 'pull_request'
-# attribute is a github.PullRequest, and 'commits' is a list of
-# pygit2.Commit objects.
-#
-# If args.zephyr_areas is given, zephyr_area is not None and is a
-# string determined by heuristic for what area the PR touched most,
-# based on its commit shortlogs.
-pr_info = namedtuple('pr_info', 'pull_request commits zephyr_area')
+# A container for pull request information. The commits attribute
+# is a list of pygit2.Commit objects.
+pr_info = namedtuple('pr_info', 'number title html_url commits')
 
-def parse_args():
+# A tuple describing the results of querying the file system and
+# GitHub API for information about a commit.
+commit_result = namedtuple('commit_result',
+                           'sha remote_org remote_repo '
+                           'pr_num pr_title pr_url')
+
+class ResultsDatabase:
+    '''Object oriented interface for accessing the results database.
+
+    Usage pseudocode:
+
+        with ResultsDatabase('my-sqlite.db') as db:
+            for query in my_query_list:
+                previous_result = db.get_result(query.sha)
+                if previous_result:
+                    continue
+
+                result = fetch_result(query)
+                db.add_result(result)
+
+    This pattern ensures that you don't call fetch_result() for data
+    that are already available, and makes sure to checkpoint any results
+    in the database, even if fetch_result() throws an exception.
+    '''
+
+    # No efforts have been made to optimize this interface.
+
+    _CREATE_TABLE_IF_NOT_EXISTS = '''
+    CREATE TABLE IF NOT EXISTS results
+    (sha TEXT PRIMARY KEY NOT NULL,
+    remote_org TEXT, remote_repo TEXT,
+    pr_num INTEGER, pr_title TEXT, pr_url TEXT)
+    '''
+
+    def __init__(self, sqlite_db=None):
+        self.sqlite_db = sqlite_db or ':memory:'
+        self._con = None
+
+    def __enter__(self):
+        self._con = sqlite3.connect(self.sqlite_db)
+        self._con.execute(self._CREATE_TABLE_IF_NOT_EXISTS)
+        self._con.commit()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._con is not None:
+            self._con.commit()
+            self._con.close()
+        self._con = None
+
+    def get_result(self,
+                   commit_or_sha: Union[str, pygit2.Commit]) -> commit_result:
+        '''Get the commit_result from a previous run, or None.
+
+        You can only call this during the time that this object is
+        live within a with statement.'''
+        if isinstance(commit_or_sha, pygit2.Commit):
+            sha = str(commit_or_sha.oid)
+        else:
+            sha = commit_or_sha
+
+        with closing(self._con.cursor()) as cursor:
+            cursor.execute("SELECT * from results WHERE sha=?", (sha,))
+            result = cursor.fetchone()
+            if result is None:
+                return None
+            else:
+                return commit_result(*tuple(result))
+
+    def add_result(self, result: commit_result) -> None:
+        '''Insert a new commit_result into the database.
+
+        Raises sqlite3.IntegrityError if duplicate entries for the
+        same SHA are added to the database.
+        '''
+        with closing(self._con.cursor()) as cursor:
+            cursor.execute('INSERT INTO results VALUES '
+                           '(?,?,?,?,?,?)', result)
+
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         epilog='''Get a list of pull requests associated
         with a range of commits in a GitHub repository.
 
         For promptless operation, either set up a ~/.netrc with
         credentials for github.com, or define a GITHUB_TOKEN environment
-        variable.''')
+        variable.
+
+        You are likely to run into problems with GitHub API rate limiting
+        with larger commit ranges. To save and restore results from earlier
+        runs, use the --sqlite-db option. This avoids requesting information
+        from the GitHub API server that is already available locally.
+        ''')
 
     parser.add_argument('gh_repo',
                         help='''repository in <organization>/<repo> format,
@@ -42,9 +125,13 @@ def parse_args():
                         help='''local_path is zephyr; also try to figure
                         out what areas the pull requests affect''')
 
+    parser.add_argument('-d', '--sqlite-db',
+                        help='''sqlite database file for storing results;
+                        will be created if it does not exist''')
+
     return parser.parse_args()
 
-def get_gh_credentials():
+def get_gh_credentials() -> Dict:
     # Get github.Github credentials.
     #
     # This function tried to get github.com credentials from a
@@ -86,24 +173,27 @@ def get_gh_credentials():
 
     return {'login_or_token': token}
 
-def get_gh_repo(args):
-    # Get a github.Repository object for the remote repository from
-    # the org/repo string in the command line arguments. This requires
-    # getting github.com credentials.
+def get_gh_repo(repo_org_and_name) -> github.Repository:
+    # Get the remote repository from the org/repo string in the
+    # command line arguments.
+    #
+    # This requires getting github.com credentials.
 
-    return Github(**get_gh_credentials()).get_repo(args.gh_repo)
+    return github.Github(**get_gh_credentials()).get_repo(repo_org_and_name)
 
-def get_pygit2_commits(args):
-    # Get a list of pygit2.Commit objects for the commit range given
-    # by the command line arguments from the repository on the local
-    # file system.
+def get_pygit2_commits(args: argparse.Namespace) -> List[pygit2.Commit]:
+    # Get commit objects for the commit range given by args.start and
+    # args.end from the repository in args.local_path.
 
     repo = pygit2.Repository(args.local_path)
     walker = repo.walk(repo.revparse_single(args.end).oid)
     walker.hide(repo.revparse_single(args.start).oid)
     return list(walker)
 
-def get_pull_info_in_range(args):
+def get_commit_results_for_range(
+        repo_org_and_name: str,
+        commit_list: List[pygit2.Commit],
+        sqlite_db: Optional[str]) -> List[commit_result]:
     # Get information about pull requests which are associated with a
     # commit range.
     #
@@ -111,83 +201,144 @@ def get_pull_info_in_range(args):
     # stderr as we go, as a sign of life so users know what's
     # happening.
     #
-    # The return value is a list of pr_info tuples.
+    # It is also subject to network errors and GitHub API rate
+    # limiting, so we cache results locally in args.sqlite_db. This
+    # defaults to an in-memory database if the argument is None, allowing
+    # easy getting started at the cost of throwing information away.
 
-    # Get list of commits from local repository, as pygit2.Commit objects.
-    commit_list = get_pygit2_commits(args)
+    results = {}  # sha to commit_result
+    with ResultsDatabase(sqlite_db) as db:
+        # Get pre-existing results from database file.
+        if sqlite_db is not None:
+            results.update(get_results_from_db(db, commit_list))
 
-    # Get associated PRs using GitHub API, as github.PullRequest objects.
-    # Map each pull request number to its object and commits.
-    gh_repo = get_gh_repo(args)
-    pr_num_to_pr = {}
-    pr_num_to_commits = defaultdict(list)
-    if args.zephyr_areas:
-        sha_to_area = {}
-    for commit in commit_list:
-        sha = str(commit.oid)
-        if args.zephyr_areas:
-            area = zephyr_commit_area(commit)
-            sha_to_area[sha] = area
-            area_str = f'{area:13}:'
-        else:
-            area_str = ''
-
-        gh_prs = list(gh_repo.get_commit(sha).get_pulls())
-        if len(gh_prs) != 1:
-            sys.exit(f'{sha} has {len(gh_prs)} prs (expected 1): {gh_prs}')
-        gh_pr = gh_prs[0]
-        pr_num_to_commits[gh_pr.number].append(commit)
-        pr_num_to_pr[gh_pr.number] = gh_pr
-        # cut off the shortlog to a fixed length for readability of the output.
-        shortlog = commit_shortlog(commit)[:15]
-        print(f'{sha}:{area_str}{shortlog:15}:{gh_pr.html_url}:{gh_pr.title}',
-              file=sys.stderr)
-    print(file=sys.stderr)
-
-    # Bundle up the return dict
-    ret = []
-    for pr_num, commits in pr_num_to_commits.items():
-        if args.zephyr_areas:
-            # Assign an area to the PR by taking the area of each
-            # commit, and picking the one that happens the most.
-            # Hopefully this is good enough.
-            area_counts = defaultdict(int)
-            for commit in commits:
+        # Fetch results which are still missing from the network.
+        remaining = len(commit_list) - len(results)
+        if remaining != 0:
+            print(f'Fetching data for {remaining} commits from the network...',
+                  file=sys.stderr)
+            gh_repo = get_gh_repo(repo_org_and_name)
+            for commit in commit_list:
                 sha = str(commit.oid)
-                area_counts[sha_to_area[sha]] += 1
-            zephyr_area = max(area_counts, key=lambda area: area_counts[area])
-        else:
-            zephyr_area = None
+                if sha not in results:
+                    results[sha] = get_result_from_network(commit, gh_repo, db)
+            print('Done fetching commit data from the network.',
+                  file=sys.stderr)
 
-        ret.append(pr_info(pr_num_to_pr[pr_num], commits, zephyr_area))
+    # Give back the results in 'git log' order.
+    return [results[str(commit.oid)] for commit in commit_list]
 
-    return ret
+def get_results_from_db(
+        db: ResultsDatabase,
+        commit_list: List[pygit2.Commit]) -> Dict[str, commit_result]:
+    # Fetches known results from db for the commits in commit_list.
+    # Prints signs of life to stderr.
 
-def print_pr(pr):
-    print(f'- #{pr.number}: {pr.title}\n'
-          f'  {pr.html_url}')
+    results = {}
+    for commit in commit_list:
+        result = db.get_result(commit)
+        if result is not None:
+            results[result.sha] = result
+
+    print(f'Found {len(results)} commit results in the database.',
+          file=sys.stderr)
+    return results
+
+def get_result_from_network(commit: pygit2.Commit,
+                            gh_repo: github.Repository,
+                            db: ResultsDatabase) -> commit_result:
+    # Fetch a commit_result from the network for 'commit'.
+    # Saves the new commit_result in db before returning.
+    # Prints signs of life to stderr.
+
+    # Get the commit_result for commit from gh_repo.
+    sha = str(commit.oid)
+    gh_prs = list(gh_repo.get_commit(sha).get_pulls())
+    if len(gh_prs) != 1:
+        sys.exit(f'{sha} has {len(gh_prs)} prs (expected 1): {gh_prs}')
+    gh_pr = gh_prs[0]
+    result = commit_result(sha, gh_repo.owner.login, gh_repo.name,
+                           gh_pr.number, gh_pr.title, gh_pr.html_url)
+
+    # Cache the result in the database.
+    db.add_result(result)
+
+    # Print sign of life.
+    print(f'\t{sha[:10]} {commit_shortlog(commit)}\n'
+          f'\t           PR #{gh_pr.number:5}: {gh_pr.title}',
+          file=sys.stderr)
+
+    return result
+
+def guess_pr_area(commits: List[pygit2.Commit]) -> str:
+    # Assign an area to the PR by taking the area of each commit, and
+    # picking the one that happens the most. Hopefully this is good
+    # enough. We could consider adding pull request label tracking to
+    # what we retrieve from GitHub if it turns out not to be.
+
+    area_counts = defaultdict(int)
+    for commit in commits:
+        area_counts[zephyr_commit_area(commit)] += 1
+    return max(area_counts, key=lambda area: area_counts[area])
+
+def print_pr_info(info):
+    print(f'- #{info.number}: {info.title}\n'
+          f'  {info.html_url}')
 
 def main():
     args = parse_args()
 
-    # Get the pull request info.
-    pr_info_list = get_pull_info_in_range(args)
+    if args.sqlite_db is None:
+        print('warning: --sqlite-db was not given; you will need to '
+              'start over if you are rate-limited or another error occurs',
+              file=sys.stderr)
 
-    print(f'{len(pr_info_list)} pull requests total were found.\n')
+    commit_list = get_pygit2_commits(args)
+    sha_to_commit = {str(commit.oid): commit for commit in commit_list}
+    print(f'Range {args.start}..{args.end} has {len(commit_list)} commits.',
+          file=sys.stderr)
+
+    # Get the results.
+    results = get_commit_results_for_range(args.gh_repo, commit_list,
+                                           args.sqlite_db)
+
+    # ResultsDatabase representations are commit-centric. Convert
+    # these to a pull-request-centric representation.
+    pr_num_to_commits = defaultdict(list)
+    pr_num_to_results = defaultdict(list)
+    for result in results:
+        pr_num_to_commits[result.pr_num].append(sha_to_commit[result.sha])
+        pr_num_to_results[result.pr_num].append(result)
+    pr_num_to_info = {}
+    for pr_num, commits in pr_num_to_commits.items():
+        results = pr_num_to_results[pr_num]
+        pr_num_to_info[pr_num] = pr_info(pr_num,
+                                         results[0].pr_title,
+                                         results[0].pr_url,
+                                         commits)
+
+    # Print information about each resulting pull request.
+    print(f'\n{len(pr_num_to_info)} pull requests found in the range.\n')
     if args.zephyr_areas:
-        area_to_prs = defaultdict(list)
-        for info in pr_info_list:
-            area_to_prs[info.zephyr_area].append(info.pull_request)
+        area_to_pr_infos = defaultdict(list)
+        for pr_num, info in pr_num_to_info.items():
+            area = guess_pr_area(info.commits)
+            area_to_pr_infos[area].append(info)
+
         print('Pull requests grouped by a guess of the zephyr area:')
-        for area, prs in area_to_prs.items():
+        for area, infos in area_to_pr_infos.items():
             print(f'\n{area}')
             print('-' * len(area))
             print()
-            for pr in prs:
-                print_pr(pr)
+            for info in infos:
+                print_pr_info(info)
     else:
-        for info in pr_info_list:
-            print_pr(info.pull_request)
+        for info in pr_num_to_info.values():
+            print_pr_info(info)
+
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
