@@ -15,6 +15,7 @@
  */
 
 #include <nfc/tnep/base.h>
+#include <kernel.h>
 
 /** NFC TNEP library event count. */
 #define NFC_TNEP_EVENTS_NUMBER 2
@@ -24,6 +25,19 @@
 
 /** Maximum Waiting Time extension. */
 #define NFC_TNEP_TAG_MAX_N_WAIT_TIME 15
+
+/**
+ * @brief Macro for creating and initializing an NFC NDEF TNEP
+ *        Application message descriptor.
+ *
+ * Use the macro @ref NFC_NDEF_MSG to access the NDEF message descriptor
+ * instance. This macro reserves place for the TNEP Status Record.
+ *
+ * @param _name Name of the related instance.
+ * @param _max_record_cnt Maximal count of records in the message.
+ */
+#define NFC_TNEP_TAG_APP_MSG_DEF(_name, _max_record_cnt) \
+	NFC_NDEF_MSG_DEF(_name, (_max_record_cnt + 1))
 
 struct nfc_tnep_tag_service_cb {
 	/** @brief Function called when service was selected. */
@@ -160,8 +174,6 @@ int nfc_tnep_tag_tx_msg_buffer_register(uint8_t *tx_buff,
  *
  * @param[out] events TNEP Tag Events.
  * @param[in] event_cnt Event count. This library needs 2 events.
- * @param[in,out] msg Pointer to NDEF message structure. It is used to
- *                    create TNEP NDEF message.
  * @param[in] payload_set Function for setting NDEF data for NFC TNEP
  *                        Tag Device. This library use it internally
  *                        to set raw NDEF message to the Tag NDEF file.
@@ -172,7 +184,6 @@ int nfc_tnep_tag_tx_msg_buffer_register(uint8_t *tx_buff,
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
-		      struct nfc_ndef_msg_desc *msg,
 		      nfc_payload_set_t payload_set);
 
 /**
@@ -230,15 +241,19 @@ void nfc_tnep_tag_rx_msg_indicate(const uint8_t *rx_buffer, size_t len);
  * To indicate that application has no more data use
  * nfc_tnep_tag_tx_msg_no_app_data().
  *
- * @param[in] record Pointer to application data records.
- * @param[in] cnt Records count.
+ * @param[in] msg Pointer to NDEF Message with application data. The Message
+ *                must have at least one free slot for the TNEP Status Record
+ *                which is added automatically by this function. So if you
+ *                want to encode for example 2 NDEF Records the NDEF Message
+ *                minimal Record count is 3. Use @ref NFC_TNEP_TAG_APP_MSG_DEF
+ *                which reserves slot for the TNEP Status Record.
  * @param[in] status TNEP App data message status.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_tnep_tag_tx_msg_app_data(const struct nfc_ndef_record_desc *record,
-				 size_t cnt, enum nfc_tnep_status_value status);
+int nfc_tnep_tag_tx_msg_app_data(struct nfc_ndef_msg_desc *msg,
+				 enum nfc_tnep_status_value status);
 
 /**
  * @brief Respond with no more application data.
