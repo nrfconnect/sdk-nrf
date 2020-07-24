@@ -20,11 +20,15 @@ See the change log for each library in the :doc:`nrfxlib documentation <nrfxlib:
 sdk-zephyr
 ==========
 
-The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``ac117c8d``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``4ef29b34e3``, plus some |NCS| specific additions.
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
-*
+* Kernel
+
+  * The ``CONFIG_KERNEL_DEBUG`` Kconfig option, which was used to enable ``printk()`` based debugging of the kernel internals, has been removed.
+    The kernel now uses the standard Zephyr logging API at DBG log level for this purpose.
+    The logging module used for the kernel is named ``os``.
 
 The following list contains |NCS| specific additions:
 
