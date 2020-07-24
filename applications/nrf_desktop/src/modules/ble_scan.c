@@ -413,7 +413,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	LOG_INF("Filters matched. %s %sconnectable",
 		log_strdup(addr), connectable ? "" : "non");
 
-	scan_stop();
+	/* Scanning will be stopped by nrf scan module. */
 }
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
