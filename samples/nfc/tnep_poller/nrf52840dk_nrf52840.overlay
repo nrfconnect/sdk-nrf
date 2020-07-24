@@ -4,7 +4,7 @@
 	sck-pin = <47>;
 	mosi-pin = <45>;
 	miso-pin = <46>;
-	cs-gpios = <&gpio1 12 0>;
+	cs-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
 
 	st25r3911b@0 {
 		label = "ST25R3911B";
