@@ -159,6 +159,7 @@ static int mpsl_signal_thread_init(struct device *dev)
 			signal_thread, NULL, NULL, NULL,
 			K_PRIO_COOP(CONFIG_MPSL_THREAD_COOP_PRIO),
 			0, K_NO_WAIT);
+	k_thread_name_set(&signal_thread_data, "MPSL signal");
 
 	IRQ_CONNECT(MPSL_LOW_PRIO_IRQn, MPSL_LOW_PRIO,
 		    mpsl_low_prio_irq_handler, NULL, 0);
