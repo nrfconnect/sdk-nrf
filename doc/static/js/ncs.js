@@ -176,6 +176,19 @@ function NCS () {
     window.NCS.versions = versions_data;
   }
 
+  /*
+   * When the "Hide Search Matches" (from Sphinx's doctools) link is clicked,
+   * rewrite the URL to remove the search term.
+   */
+  state.hideSearchMatches = function() {
+    $('.highlight-link > a').on('click', function(){
+      // Remove any ?highlight=* search querystring element
+      window.location.assign(
+        window.location.href.replace(/[?]highlight=[^#]*/, '')
+      );
+    });
+  }
+
   return state;
 };
 
@@ -185,6 +198,7 @@ if (typeof window !== 'undefined') {
 
 $(document).ready(function(){
   window.NCS.updateLocations();
+  window.NCS.hideSearchMatches();
 
   if (window.NCS.loadVersions()) {
     window.NCS.updatePage();
