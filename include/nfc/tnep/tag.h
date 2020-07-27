@@ -153,6 +153,19 @@ struct nfc_tnep_tag_service {
 
 typedef int (*nfc_payload_set_t)(uint8_t *, size_t);
 
+/**@brief Callback type for encoding the Initial TNEP NDEF Message.
+ *
+ * This callback is called every time when the TNEP NDEF library
+ * encodes the Initial TNEP message. You must use
+ * @ref nfc_tnep_initial_msg_encode function to finish encoding.
+ *
+ * @param[in] msg Pointer to the Initial TNEP NDEF message.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+typedef int (*initial_msg_encode_t)(struct nfc_ndef_msg_desc *msg);
+
 /**
  * @brief Register TNEP message buffer.
  *
@@ -187,25 +200,50 @@ int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 		      nfc_payload_set_t payload_set);
 
 /**
- * @brief Create the initial TNEP NDEF message.
+ * @brief Create the Initial TNEP NDEF Message.
  *
- * This function create the Initial TNEP message. Initial NDEF message
+ * This function creates the Initial TNEP message. Initial NDEF message
  * has to contain at least one service parameters record. It can
  * contain also optional NDEF Records which can be used by NFC Poller
  * Device which does not support TNEP Protocol.
  *
  * @param[in] svc Pointer to the first service information structure.
  * @param[in] svc_cnt Number of provided services for application.
- * @param[in] records Pointer to the first no TNEP NDEF Records structure.
- * @param[in] records_cnt Number of privided NDEF Records.
+ * @param[in] max_record_cnt Maximum count of the optional NDEF Records
+ * @param[in] msg_encode_cb Callback function for encoding the
+ *                          Initial TNEP NDEF message. Can be set to NULL
+ *                          if @p max_record_cnt is 0 then only the Service
+ *                          Parameters Records are encoded into the Initial
+ *                          TNEP NDEF message.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int nfc_tnep_tag_initial_msg_create(const struct nfc_tnep_tag_service *svc,
-				    size_t svc_cnt,
-				    const struct nfc_ndef_record_desc *records,
-				    size_t records_cnt);
+				    size_t svc_cnt, size_t max_record_cnt,
+				    initial_msg_encode_t msg_encode_cb);
+
+/**
+ * @brief Encode the Initial NDEF message
+ *
+ * This function encodes the Initial TNEP NDEF Message. It must be used
+ * in combination with @ref initial_msg_encode_t callback function.
+ *
+ * @param[in] msg Pointer to the Initial NDEF message descriptor. NDEF Records
+ *                can be added to it also before calling this function.
+ * @param[in] records Pointer to the first NDEF Records structure. Can be set
+ *                    to NULL if there are no additional NDEF Records to
+ *                    encode or Records are encoded directly to the Initial
+ *                    NDEF message.
+ * @param[in] records_cnt Number of provided NDEF Records. It must be set to 0
+ *                        when @p records is NULL.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nfc_tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg,
+				const struct nfc_ndef_record_desc *records,
+				size_t records_cnt);
 
 /**
  * @brief Waiting for a signals to execute protocol logic.

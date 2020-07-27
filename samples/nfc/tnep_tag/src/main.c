@@ -16,13 +16,14 @@
 #include <nfc/ndef/msg.h>
 #include <nfc/ndef/text_rec.h>
 
+#define TNEP_INITIAL_MSG_RECORD_COUNT 1
+
 #define NDEF_TNEP_MSG_SIZE 1024
 
 #define LED_INIT DK_LED1
 #define LED_SVC_ONE DK_LED3
 #define LED_SVC_TWO DK_LED4
 
-static const  uint8_t msg[] = "Hello World";
 static const uint8_t en_code[] = {'e', 'n'};
 
 static const uint8_t svc_one_uri[] = "svc:pi";
@@ -30,9 +31,6 @@ static const uint8_t svc_two_uri[] = "svc:e";
 
 static uint8_t tag_buffer[NDEF_TNEP_MSG_SIZE];
 static uint8_t tag_buffer2[NDEF_TNEP_MSG_SIZE];
-
-NFC_NDEF_TEXT_RECORD_DESC_DEF(nfc_text, UTF_8, en_code, sizeof(en_code),
-			      msg, strlen(msg));
 
 static struct k_poll_event events[NFC_TNEP_EVENTS_NUMBER];
 
@@ -147,6 +145,19 @@ static void nfc_callback(void *context, enum nfc_t4t_event event,
 	}
 }
 
+static int tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg)
+{
+	const uint8_t text[] = "Hello World";
+
+	NFC_NDEF_TEXT_RECORD_DESC_DEF(nfc_text, UTF_8, en_code,
+				      sizeof(en_code), text,
+				      strlen(text));
+
+	return nfc_tnep_initial_msg_encode(msg,
+					   &NFC_NDEF_TEXT_RECORD_DESC(nfc_text),
+					   1);
+}
+
 static void button_pressed(uint32_t button_state, uint32_t has_changed)
 {
 	int err;
@@ -214,7 +225,8 @@ void main(void)
 
 	err = nfc_tnep_tag_initial_msg_create(training_services,
 					      ARRAY_SIZE(training_services),
-					      &NFC_NDEF_TEXT_RECORD_DESC(nfc_text), 1);
+					      TNEP_INITIAL_MSG_RECORD_COUNT,
+					      tnep_initial_msg_encode);
 	if (err) {
 		printk("Cannot create initial TNEP message, err: %d\n", err);
 	}

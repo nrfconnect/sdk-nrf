@@ -65,11 +65,11 @@ struct tnep_tag {
 	struct tnep_rx_buffer rx;
 	const struct nfc_tnep_tag_service *svc_active;
 	const struct nfc_tnep_tag_service *svc;
-	const struct nfc_ndef_record_desc *records;
 	size_t svc_cnt;
-	size_t records_cnt;
+	size_t max_records_cnt;
 	atomic_t app_data_expected;
 	nfc_payload_set_t data_set;
+	initial_msg_encode_t initial_msg_encode;
 	uint8_t *current_buff;
 };
 
@@ -178,27 +178,25 @@ static int tnep_tx_msg_add_rec_status(struct nfc_ndef_msg_desc *msg,
 
 	status_record.status = status;
 
-	err = tnep_tx_msg_add_rec(msg, &NFC_NDEF_TNEP_RECORD_DESC(status_record));
+	err = tnep_tx_msg_add_rec(msg,
+				  &NFC_NDEF_TNEP_RECORD_DESC(status_record));
 
 	return err;
 }
 
-static int tnep_tx_initial_msg_set()
+static int tnep_tx_initial_msg_set(void)
 {
 	int err = 0;
 
-	NFC_NDEF_MSG_DEF(initial_msg, tnep.records_cnt + tnep.svc_cnt);
+	NFC_NDEF_MSG_DEF(initial_msg, tnep.svc_cnt + tnep.max_records_cnt);
 
 	tnep_tx_msg_clear(&NFC_NDEF_MSG(initial_msg));
 
-	if (tnep.records && tnep.records_cnt) {
-		for (size_t i = 0; i < tnep.records_cnt; i++) {
-			err = tnep_tx_msg_add_rec(&NFC_NDEF_MSG(initial_msg),
-						  &tnep.records[i]);
-			if (err) {
-				return err;
-			}
-		}
+	/* If initial message callback is available call it to encode
+	 * non-TNEP NDEF Records.
+	 */
+	if (tnep.initial_msg_encode && (tnep.max_records_cnt > 0)) {
+		return tnep.initial_msg_encode(&NFC_NDEF_MSG(initial_msg));
 	}
 
 	for (size_t i = 0; i < tnep.svc_cnt; i++) {
@@ -561,9 +559,8 @@ int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 }
 
 int nfc_tnep_tag_initial_msg_create(const struct nfc_tnep_tag_service *svc,
-				    size_t svc_cnt,
-				    const struct nfc_ndef_record_desc *records,
-				    size_t records_cnt)
+				    size_t svc_cnt, size_t max_record_cnt,
+				    initial_msg_encode_t msg_encode_cb)
 {
 	int err;
 
@@ -571,10 +568,15 @@ int nfc_tnep_tag_initial_msg_create(const struct nfc_tnep_tag_service *svc,
 		return -EINVAL;
 	}
 
+	if (max_record_cnt && !msg_encode_cb) {
+		LOG_ERR("No callback provides when maximum NDEF Record count id greater than 0");
+		return -EINVAL;
+	}
+
 	tnep.svc = svc;
 	tnep.svc_cnt = svc_cnt;
-	tnep.records = records;
-	tnep.records_cnt = records_cnt;
+	tnep.max_records_cnt = max_record_cnt;
+	tnep.initial_msg_encode = msg_encode_cb;
 
 	LOG_DBG("NDEF message init");
 	err = tnep_tx_initial_msg_set();
@@ -586,6 +588,46 @@ int nfc_tnep_tag_initial_msg_create(const struct nfc_tnep_tag_service *svc,
 	atomic_set(&current_state, TNEP_STATE_SERVICE_READY);
 
 	return err;
+}
+
+int nfc_tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg,
+				const struct nfc_ndef_record_desc *records,
+				size_t records_cnt)
+{
+	int err;
+	size_t used_records;
+
+	if (!msg) {
+		return -EINVAL;
+	}
+
+	if (records && (records_cnt < 1)) {
+		return -EINVAL;
+	}
+
+	used_records = msg->record_count + tnep.svc_cnt;
+
+	if (records_cnt > (tnep.max_records_cnt - used_records)) {
+		return -ENOMEM;
+	}
+
+	for (size_t i = 0; i < records_cnt; i++) {
+		err = tnep_tx_msg_add_rec(msg,
+					  &records[i]);
+		if (err) {
+			return err;
+		}
+	}
+
+	for (size_t i = 0; i < tnep.svc_cnt; i++) {
+		err = tnep_tx_msg_add_rec(msg,
+					  tnep.svc[i].ndef_record);
+		if (err) {
+			return err;
+		}
+	}
+
+	return tnep_tx_msg_encode(msg);
 }
 
 void nfc_tnep_tag_process(void)
