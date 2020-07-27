@@ -30,6 +30,34 @@ The following list summarizes the most important changes inherited from upstream
     The kernel now uses the standard Zephyr logging API at DBG log level for this purpose.
     The logging module used for the kernel is named ``os``.
 
+* Networking:
+
+  * LwM2M:
+
+    * Fixed a bug where a FOTA socket was not closed after the download (PULL mode).
+    * Added a Kconfig option :option:`CONFIG_LWM2M_SECONDS_TO_UPDATE_EARLY` that specifies how long before the time-out the Registration Update will be sent.
+    * Added ObjLnk resource type support.
+
+  * MQTT:
+
+    * The ``utf8`` pointer in the :c:type:`mqtt_utf8` struct is now const.
+    * The default ``clean_session`` value is now configurable with Kconfig (see :option:`CONFIG_MQTT_CLEAN_SESSION`).
+
+  * OpenThread:
+
+    * Updated the OpenThread revision to upstream commit e653478c503d5b13207b01938fa1fa494a8b87d3.
+    * Implemented a missing ``enable`` API function for the OpenThread interface.
+    * Cleaned up the OpenThread Kconfig file.
+      OpenThread dependencies are now enabled automatically.
+    * Allowed the application to register a callback function for OpenThread state changes.
+    * Reimplemented the logger glue layer for better performance.
+    * Updated the OpenThread thread priority class to be configurable.
+    * Added several Kconfig options to customize the OpenThread stack.
+
+  * Socket offloading:
+
+    * Removed dependency to the :option:`CONFIG_NET_SOCKETS_POSIX_NAMES` configuration option.
+
 The following list contains |NCS| specific additions:
 
 *
