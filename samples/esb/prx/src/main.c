@@ -13,7 +13,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 
-LOG_MODULE_REGISTER(esb_prx);
+LOG_MODULE_REGISTER(esb_prx, CONFIG_ESB_PRX_APP_LOG_LEVEL);
 
 #define LED_ON 0
 #define LED_OFF 1
