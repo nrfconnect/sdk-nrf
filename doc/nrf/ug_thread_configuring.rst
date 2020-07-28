@@ -23,40 +23,11 @@ Mandatory configuration
 To use the Thread protocol in |NCS|, set the following Kconfig options:
 
 * :option:`CONFIG_NET_L2_OPENTHREAD` - This option enables the OpenThread stack required for the correct operation of the Thread protocol and allows you to use them.
-* :option:`CONFIG_CPLUSPLUS` - This option must be enabled, because OpenThread is implemented in C++.
-* :option:`CONFIG_REBOOT` - This option is needed to ensure safe reboot.
-* :option:`CONFIG_ENTROPY_GENERATOR` - Required by both OpenThread and radio driver.
-* Options related to the Settings subsystem in the ``storage_partition`` partition of the internal flash:
-
-  * :option:`CONFIG_SETTINGS`
-  * :option:`CONFIG_FLASH`
-  * :option:`CONFIG_FLASH_PAGE_LAYOUT`
-  * :option:`CONFIG_FLASH_MAP`
-  * :option:`CONFIG_MPU_ALLOW_FLASH_WRITE`
-  * :option:`CONFIG_NVS`
 
 * General setting options related to network configuration:
 
   * :option:`CONFIG_NETWORKING`
-  * :option:`CONFIG_NET_UDP`
-  * :option:`CONFIG_NET_SOCKETS`
-
-IPv6 mandatory configuration
-============================
-
-The Thread protocol can only be used with IPv6.
-IPv4 is not supported.
-
-Enable the following options to make Thread work over IPv6:
-
-* :option:`CONFIG_NET_IPV6`
-* :option:`CONFIG_NET_CONFIG_NEED_IPV6`
-
-Additionally, since Thread by default registers a considerable amount of IP addresses, the default IPv6 address count values must be increased.
-Set the following options to the provided values:
-
-* :option:`CONFIG_NET_IF_UNICAST_IPV6_ADDR_COUNT` to ``6``
-* :option:`CONFIG_NET_IF_MCAST_IPV6_ADDR_COUNT` to ``8``
+  * :option:`CONFIG_NET_SOCKETS` - This option can be omitted if OpenThread is meant to work only in the NCP architecture.
 
 Optional configuration
 **********************
@@ -88,17 +59,13 @@ It involves two devices: a Commissioner that is already in the Thread network an
 
 Configuring this process is optional, because the Thread :ref:`openthread_samples` in |NCS| use hardcoded network information.
 
-If you want to manually enable the Thread network Commissioner role on a device, set the following Kconfig options to the provided values:
+If you want to manually enable the Thread network Commissioner role on a device, set the following Kconfig option to the provided value:
 
 * :option:`CONFIG_OPENTHREAD_COMMISSIONER` to ``y``.
-* :option:`CONFIG_MBEDTLS_HEAP_SIZE` to ``10240``.
 
-To enable the Thread network Joiner role on a device, set the following Kconfig options to the provided values:
+To enable the Thread network Joiner role on a device, set the following Kconfig option to the provided value:
 
 * :option:`CONFIG_OPENTHREAD_JOINER` to ``y``.
-* :option:`CONFIG_MBEDTLS_HEAP_SIZE` to ``10240``.
-
-The MBEDTLS heap size needs to be increased for both Commissioner and Joiner, because the joining process is memory-consuming and requires at least 10 KB of RAM.
 
 You can also configure how the commissioning process is to be started:
 
