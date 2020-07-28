@@ -57,3 +57,5 @@ module-str = TNEP_POLLER
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_TNEP_POLLER
+
+rsource "ch/Kconfig"
