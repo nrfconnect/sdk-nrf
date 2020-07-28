@@ -4,7 +4,7 @@ function NCS () {
   let state = {};
 
   // XXX: do not remove the trailing '/'
-  const NCS_URL_ROOT = "https://developer.nordicsemi.com/nRF_Connect_SDK/doc/";
+  const NCS_PATH_PREFIX = "/nRF_Connect_SDK/doc/";
 
   /*
    * Allow running from localhost; local build can be served with:
@@ -13,11 +13,12 @@ function NCS () {
   state.updateLocations = function(){
     const host = window.location.host;
     if (host.startsWith("localhost")) {
-      this.url_root = window.location.protocol + "//" + host + "/";
+      this.url_prefix = "/";
     } else {
-      this.url_root = NCS_URL_ROOT;
+      this.url_prefix = NCS_PATH_PREFIX;
     }
 
+    this.url_root = window.location.protocol + "//" + host + this.url_prefix;
     this.url_suffix = "/nrf/index.html";
     this.in_dev_url = this.url_root + "latest" + this.url_suffix;
     this.version_data_url = this.url_root + "latest" + "/versions.json";
@@ -27,7 +28,13 @@ function NCS () {
    * Infer the currently running version of the documentation
    */
   state.findCurrentVersion = function() {
-    window.NCS.current_version = window.location.pathname.split("/")[1];
+    const path = window.location.pathname;
+    if (path.startsWith(this.url_prefix)) {
+      const prefix_len = this.url_prefix.length;
+      window.NCS.current_version = path.slice(prefix_len).split("/")[0];
+    } else {
+      window.NCS.current_version = "latest";
+    }
   };
 
   /*
@@ -37,8 +44,15 @@ function NCS () {
     const ncs = window.NCS;
     const versions = ncs.versions.VERSIONS;
 
+    // Avoid applying DOM changes on errors
+    const path = window.location.pathname;
+    if (!path.startsWith(this.url_prefix)) {
+      return;
+    }
+
     // Only display dropdown for nRF Connect documentation set
-    if (window.location.pathname.split("/")[2] !== "nrf") {
+    const prefix_len = this.url_prefix.length;
+    if (path.slice(prefix_len).split("/")[1] !== "nrf") {
       return;
     }
 
