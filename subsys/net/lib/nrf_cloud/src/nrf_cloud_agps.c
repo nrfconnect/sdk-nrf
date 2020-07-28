@@ -384,7 +384,7 @@ static int agps_send_to_modem(struct nrf_cloud_apgs_element *agps_data)
 		LOG_DBG("A-GPS type: NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION");
 
 		return send_to_modem(&klobuchar, sizeof(klobuchar),
-				NRF_CLOUD_AGPS_KLOBUCHAR_CORRECTION);
+				NRF_GNSS_AGPS_KLOBUCHAR_IONOSPHERIC_CORRECTION);
 	}
 	case NRF_CLOUD_AGPS_GPS_SYSTEM_CLOCK: {
 		nrf_gnss_agps_data_system_time_and_sv_tow_t time_and_tow;
