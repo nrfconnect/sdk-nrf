@@ -19,7 +19,7 @@ const struct {} hid_keymap_def_include_once;
 /*
  * HID keymap. The Consumer Control keys are defined in section 15 of
  * the HID Usage Tables document under the following URL:
- * http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
+ * https://www.usb.org/sites/default/files/hut1_12.pdf
  */
 static const struct hid_keymap hid_keymap[] = {
 	{ KEY_ID(0x00, 0x00), 0x0004, REPORT_ID_KEYBOARD_KEYS }, /* A */
