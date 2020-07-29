@@ -438,3 +438,13 @@ add_custom_target(
         ${HTML_DIR}/kconfig
 )
 add_dependencies(kconfig-html kconfig-content)
+
+add_custom_target(
+  build-all
+  COMMAND ${CMAKE_MAKE_PROGRAM} kconfig-html
+  COMMAND ${CMAKE_MAKE_PROGRAM} zephyr
+  COMMAND ${CMAKE_MAKE_PROGRAM} mcuboot
+  COMMAND ${CMAKE_MAKE_PROGRAM} nrfxlib-inventory
+  COMMAND ${CMAKE_MAKE_PROGRAM} nrf
+  COMMAND ${CMAKE_MAKE_PROGRAM} nrfxlib
+)
