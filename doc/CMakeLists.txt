@@ -407,15 +407,13 @@ add_custom_target(
     KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
     KCONFIG_DOC_MODE=1
       ${PYTHON_EXECUTABLE}
-        ${NRF_BASE}/doc/scripts/genrest_custom.py
-        --custom-modules BuildDir,${CMAKE_BINARY_DIR}
-                         MCUboot,${MCUBOOT_BASE}
-        --zephyr-genrest ${ZEPHYR_BASE}/doc/scripts/genrest.py ${KCONFIG_RST_OUT}
+        ${ZEPHYR_BASE}/doc/scripts/genrest.py ${KCONFIG_RST_OUT}
         --separate-all-index
         --modules Zephyr,zephyr,${ZEPHYR_BASE}
                   nRF,nrf,${NRF_BASE}
                   nrfxlib,nrfxlib,${NRFXLIB_BASE}
-
+        --no-index-modules BuildDir,${CMAKE_BINARY_DIR}
+                           MCUboot,${MCUBOOT_BASE}
   VERBATIM
 )
 
