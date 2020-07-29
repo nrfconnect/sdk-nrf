@@ -124,9 +124,9 @@ struct nfc_tnep_tag_service {
 				 _message_cb,                               \
 				 _error_cb)                                 \
 									    \
-	BUILD_ASSERT(_t_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                  \
+	BUILD_ASSERT(_t_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                      \
 			 "The Waiting time has to be equal or smaller than 63");                 \
-	BUILD_ASSERT(_n_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                  \
+	BUILD_ASSERT(_n_wait <= NFC_TNEP_TAG_MAX_WAIT_TIME,                                      \
 			 "The Waiting time extension count has to be equal or smaller then 15"); \
 												 \
 	NFC_TNEP_SERIVCE_PARAM_RECORD_DESC_DEF(_name, NFC_TNEP_VERSION,	\
@@ -138,7 +138,10 @@ struct nfc_tnep_tag_service {
 		.deselected = _deselect_cb,                             \
 		.message_received = _message_cb,                        \
 		.error_detected = _error_cb,                            \
-	}
+	};                                                              \
+									\
+	const Z_STRUCT_SECTION_ITERABLE(nfc_tnep_tag_service, _name##_svc) = \
+		NFC_TNEP_TAG_SERVICE(_name)
 
 /**
  * @brief macro for accessing the TNEP Service.
@@ -203,12 +206,11 @@ int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
  * @brief Create the Initial TNEP NDEF Message.
  *
  * This function creates the Initial TNEP message. Initial NDEF message
- * has to contain at least one service parameters record. It can
- * contain also optional NDEF Records which can be used by NFC Poller
- * Device which does not support TNEP Protocol.
+ * has to contain at least one service parameters record defined
+ * using @ref NFC_TNEP_TAG_SERVICE_DEF. It can contain also optional NDEF
+ * Records which can be used by NFC Poller Device which does not support
+ * TNEP Protocol.
  *
- * @param[in] svc Pointer to the first service information structure.
- * @param[in] svc_cnt Number of provided services for application.
  * @param[in] max_record_cnt Maximum count of the optional NDEF Records
  * @param[in] msg_encode_cb Callback function for encoding the
  *                          Initial TNEP NDEF message. Can be set to NULL
@@ -219,8 +221,7 @@ int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_tnep_tag_initial_msg_create(const struct nfc_tnep_tag_service *svc,
-				    size_t svc_cnt, size_t max_record_cnt,
+int nfc_tnep_tag_initial_msg_create(size_t max_record_cnt,
 				    initial_msg_encode_t msg_encode_cb);
 
 /**
@@ -314,6 +315,13 @@ int nfc_tnep_tag_tx_msg_no_app_data(void);
  * shall provide TNEP Initial message.
  */
 void nfc_tnep_tag_on_selected(void);
+
+/**
+ * @brief Get the NFC Tag TNEP service count.
+ *
+ * @return TNEP Tag Service count.
+ */
+size_t nfc_tnep_tag_svc_count_get(void);
 
 /**
  * @}

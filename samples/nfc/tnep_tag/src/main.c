@@ -116,11 +116,6 @@ NFC_TNEP_TAG_SERVICE_DEF(svc_two, svc_two_uri, (ARRAY_SIZE(svc_two_uri) - 1),
 		     tnep_svc_two_selected, tnep_svc_two_deselected,
 		     tnep_svc_two_msg_received, tnep_svc_error);
 
-static struct nfc_tnep_tag_service training_services[] = {
-	NFC_TNEP_TAG_SERVICE(svc_one),
-	NFC_TNEP_TAG_SERVICE(svc_two),
-};
-
 static void nfc_callback(void *context, enum nfc_t4t_event event,
 			 const uint8_t *data, size_t data_length, uint32_t flags)
 {
@@ -223,9 +218,7 @@ void main(void)
 		return;
 	}
 
-	err = nfc_tnep_tag_initial_msg_create(training_services,
-					      ARRAY_SIZE(training_services),
-					      TNEP_INITIAL_MSG_RECORD_COUNT,
+	err = nfc_tnep_tag_initial_msg_create(TNEP_INITIAL_MSG_RECORD_COUNT,
 					      tnep_initial_msg_encode);
 	if (err) {
 		printk("Cannot create initial TNEP message, err: %d\n", err);
