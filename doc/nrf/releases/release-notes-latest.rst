@@ -24,7 +24,7 @@ The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repositor
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
-* Kernel
+* Kernel:
 
   * The ``CONFIG_KERNEL_DEBUG`` Kconfig option, which was used to enable ``printk()`` based debugging of the kernel internals, has been removed.
     The kernel now uses the standard Zephyr logging API at DBG log level for this purpose.
@@ -57,6 +57,39 @@ The following list summarizes the most important changes inherited from upstream
   * Socket offloading:
 
     * Removed dependency to the :option:`CONFIG_NET_SOCKETS_POSIX_NAMES` configuration option.
+
+* Bluetooth:
+
+  * Added support for LE Advertising Extensions.
+  * Added APIs for application-controlled data length and PHY updates.
+  * Added legacy OOB pairing support.
+  * Multiple improvements to OOB data access and pairing.
+  * Deprecated ``BT_LE_SCAN_FILTER_DUPLICATE``.
+    Use :cpp:enumerator:`BT_LE_SCAN_OPT_FILTER_DUPLICATE <bt_gap::BT_LE_SCAN_OPT_FILTER_DUPLICATE>` instead.
+  * Deprecated ``BT_LE_SCAN_FILTER_WHITELIST``.
+    Use :cpp:enumerator:`BT_LE_SCAN_OPT_FILTER_WHITELIST <bt_gap::BT_LE_SCAN_OPT_FILTER_WHITELIST>` instead.
+  * Deprecated ``bt_le_scan_param::filter_dup``.
+    Use ``bt_le_scan_param::options`` instead.
+  * Deprecated ``bt_conn_create_le()``.
+    Use :cpp:func:`bt_conn_le_create` instead.
+  * Deprecated ``bt_conn_create_auto_le()``.
+     Use :cpp:func:`bt_conn_le_create_auto` instead.
+  * Deprecated ``bt_conn_create_slave_le()``.
+    Use :cpp:func:`bt_le_adv_start` instead, with ``bt_le_adv_param::peer`` set to the remote peer's address.
+  * Deprecated the ``BT_LE_ADV_*`` macros.
+    Use the ``BT_GAP_ADV_*`` enums instead.
+
+* Bluetooth LE Controller:
+
+  * Updated the Controller to be 5.2 compliant.
+  * Made PHY support configurable.
+  * Updated the Controller to only use control procedures supported by the peer.
+  * Added support for the nRF52820 SoC.
+  * Removed the legacy Controller.
+
+* Bluetooth Mesh:
+
+  * Removed the ``net_idx`` parameter from the Health Client model APIs because it can be derived (by the stack) from the ``app_idx`` parameter.
 
 The following list contains |NCS| specific additions:
 
