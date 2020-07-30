@@ -63,3 +63,20 @@ if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
     SOURCE_DIR ${NRF_DIR}/samples/nrf5340/empty_app_core
     DOMAIN nrf5340pdk_nrf5340_cpuapp)
 endif()
+
+if (CONFIG_OT_RCP_NRF53)
+  if (CONFIG_SOC_NRF5340_CPUAPP)
+
+    message("Adding 'ot_rcp' sample as child image since "
+      "CONFIG_OT_RCP_NRF53 is set to y")
+
+    add_child_image(
+      NAME ot_rcp
+      SOURCE_DIR ${ZEPHYR_BASE}/samples/bluetooth/hci_rpmsg
+      DOMAIN nrf5340pdk_nrf5340_cpunet
+    )
+  else()
+    message(FATAL_ERROR
+      "Board ${BOARD} not supported for including 'ot_rcp' as child image")
+  endif()
+endif()
