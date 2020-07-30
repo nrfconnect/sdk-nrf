@@ -34,6 +34,7 @@ static uint8_t tag_buffer2[NDEF_TNEP_MSG_SIZE];
 
 static struct k_poll_event events[NFC_TNEP_EVENTS_NUMBER];
 
+/** .. include_startingpoint_tnep_service_rst */
 static void tnep_svc_one_selected(void)
 {
 	int err;
@@ -80,6 +81,8 @@ static void tnep_svc_error(int err_code)
 {
 	printk("Service data exchange error: %d\n", err_code);
 }
+
+/** .. include_endpoint_tnep_service_rst */
 
 static void tnep_svc_two_selected(void)
 {
@@ -140,6 +143,7 @@ static void nfc_callback(void *context, enum nfc_t4t_event event,
 	}
 }
 
+/** .. include_startingpoint_initial_msg_cb_rst */
 static int tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg)
 {
 	const uint8_t text[] = "Hello World";
@@ -152,6 +156,7 @@ static int tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg)
 					   &NFC_NDEF_TEXT_RECORD_DESC(nfc_text),
 					   1);
 }
+/** .. include_endpoint_initial_cb_msg_rst */
 
 static void button_pressed(uint32_t button_state, uint32_t has_changed)
 {
@@ -218,11 +223,13 @@ void main(void)
 		return;
 	}
 
+/** .. include_startingpoint_initial_msg_rst */
 	err = nfc_tnep_tag_initial_msg_create(TNEP_INITIAL_MSG_RECORD_COUNT,
 					      tnep_initial_msg_encode);
 	if (err) {
 		printk("Cannot create initial TNEP message, err: %d\n", err);
 	}
+/** .. include_endpoint_initial_msg_rst */
 
 	err = nfc_t4t_emulation_start();
 	if (err) {

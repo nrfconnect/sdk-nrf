@@ -27,14 +27,14 @@
 #define NFC_TNEP_TAG_MAX_N_WAIT_TIME 15
 
 /**
- * @brief Macro for creating and initializing an NFC NDEF TNEP
+ * @brief Create and initialize an NFC NDEF TNEP
  *        Application message descriptor.
  *
  * Use the macro @ref NFC_NDEF_MSG to access the NDEF message descriptor
- * instance. This macro reserves place for the TNEP Status Record.
+ * instance. This macro reserves place for the TNEP status record.
  *
  * @param _name Name of the related instance.
- * @param _max_record_cnt Maximal count of records in the message.
+ * @param _max_record_cnt Maximum count of records in the message.
  */
 #define NFC_TNEP_TAG_APP_MSG_DEF(_name, _max_record_cnt) \
 	NFC_NDEF_MSG_DEF(_name, (_max_record_cnt + 1))
@@ -156,7 +156,7 @@ struct nfc_tnep_tag_service {
 
 typedef int (*nfc_payload_set_t)(uint8_t *, size_t);
 
-/**@brief Callback type for encoding the Initial TNEP NDEF Message.
+/**@brief Callback type for encoding the Initial TNEP NDEF message.
  *
  * This callback is called every time when the TNEP NDEF library
  * encodes the Initial TNEP message. You must use
@@ -203,15 +203,15 @@ int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 		      nfc_payload_set_t payload_set);
 
 /**
- * @brief Create the Initial TNEP NDEF Message.
+ * @brief Create the Initial TNEP NDEF message.
  *
  * This function creates the Initial TNEP message. Initial NDEF message
  * has to contain at least one service parameters record defined
- * using @ref NFC_TNEP_TAG_SERVICE_DEF. It can contain also optional NDEF
- * Records which can be used by NFC Poller Device which does not support
+ * using @ref NFC_TNEP_TAG_SERVICE_DEF. It can also contain optional NDEF
+ * records which can be used by NFC Poller Device which does not support
  * TNEP Protocol.
  *
- * @param[in] max_record_cnt Maximum count of the optional NDEF Records
+ * @param[in] max_record_cnt Maximum count of the optional NDEF records
  * @param[in] msg_encode_cb Callback function for encoding the
  *                          Initial TNEP NDEF message. Can be set to NULL
  *                          if @p max_record_cnt is 0 then only the Service
@@ -227,16 +227,16 @@ int nfc_tnep_tag_initial_msg_create(size_t max_record_cnt,
 /**
  * @brief Encode the Initial NDEF message
  *
- * This function encodes the Initial TNEP NDEF Message. It must be used
+ * This function encodes the Initial TNEP NDEF message. It must be used
  * in combination with @ref initial_msg_encode_t callback function.
  *
- * @param[in] msg Pointer to the Initial NDEF message descriptor. NDEF Records
+ * @param[in] msg Pointer to the Initial NDEF message descriptor. NDEF records
  *                can be added to it also before calling this function.
- * @param[in] records Pointer to the first NDEF Records structure. Can be set
- *                    to NULL if there are no additional NDEF Records to
- *                    encode or Records are encoded directly to the Initial
+ * @param[in] records Pointer to the first NDEF records structure. Can be set
+ *                    to NULL if there are no additional NDEF records to
+ *                    encode or records are encoded directly to the Initial
  *                    NDEF message.
- * @param[in] records_cnt Number of provided NDEF Records. It must be set to 0
+ * @param[in] records_cnt Number of provided NDEF records. It must be set to 0
  *                        when @p records is NULL.
  *
  * @retval 0 If the operation was successful.
@@ -280,12 +280,12 @@ void nfc_tnep_tag_rx_msg_indicate(const uint8_t *rx_buffer, size_t len);
  * To indicate that application has no more data use
  * nfc_tnep_tag_tx_msg_no_app_data().
  *
- * @param[in] msg Pointer to NDEF Message with application data. The Message
- *                must have at least one free slot for the TNEP Status Record
+ * @param[in] msg Pointer to NDEF message with application data. The message
+ *                must have at least one free slot for the TNEP status record
  *                which is added automatically by this function. So if you
- *                want to encode for example 2 NDEF Records the NDEF Message
- *                minimal Record count is 3. Use @ref NFC_TNEP_TAG_APP_MSG_DEF
- *                which reserves slot for the TNEP Status Record.
+ *                want to encode for example 2 NDEF records the NDEF message
+ *                minimal record count is 3. Use @ref NFC_TNEP_TAG_APP_MSG_DEF
+ *                which reserves slot for the TNEP status record.
  * @param[in] status TNEP App data message status.
  *
  * @retval 0 If the operation was successful.
@@ -300,8 +300,8 @@ int nfc_tnep_tag_tx_msg_app_data(struct nfc_ndef_msg_desc *msg,
  * If the NDEF application on the NFC Tag Device has finished, and
  * therefore the NFC Tag Device has no more application data
  * available for the Reader/Writer, then the NFC Tag Device SHALL
- * provide a Status message containing a single record that is a
- * TNEP Status record indicating success.
+ * provide a status message containing a single record that is a
+ * TNEP status record indicating success.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
