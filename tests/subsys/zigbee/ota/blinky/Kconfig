@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "Blinky Sample Settings"
+
+config BLINKY_LED_MASK
+	hex "Mask of DK LEDs"
+	range 0x1 0xF
+	default 0xF
+	help
+	  The default setting blinks all LEDs.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

@@ -1,0 +1,16 @@
+sample:
+  name: Blinky
+  description: Minimal sample, the smallest possible Zephyr application for OTA testing purpose.
+tests:
+  zigbee.ota.blinky_led1:
+    build_only: true
+    extra_args: CONF_FILE='common.conf;blinky_led1.conf'
+    build_on_all: true
+    platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833
+    tags: ci_build
+  zigbee.ota.blinky_led2:
+    build_only: true
+    extra_args: CONF_FILE='common.conf;blinky_led2.conf'
+    build_on_all: true
+    platform_whitelist: nrf52840dk_nrf52840 nrf52833dk_nrf52833
+    tags: ci_build
