@@ -35,34 +35,47 @@ The client (application or upper-layer protocol) must define these services and 
 At least one TNEP service must be defined for the initial NDEF message to be created.
 
 To create a TNEP service, use the :c:macro:`NFC_TNEP_TAG_SERVICE_DEF` macro.
+The service data is stored in the persistent storage.
 
-After defining the services, create a table that lists all of them.
-You can use :c:macro:`NFC_TNEP_TAG_SERVICE` to get the names of the created services.
+Initial TNEP NDEF message
+=========================
 
-The service table is given to the :cpp:func:`nfc_tnep_tag_initial_msg_create` function and the Service Parameter record of each service is inserted into the initial TNEP message.
+When calling the :cpp:func:`nfc_tnep_tag_initial_msg_create` function, the service data is loaded and the Service Parameter record of each service is inserted into the Initial TNEP message.
 A Service Parameter record contains parameters for communicating with the service.
+You can also encode additional NDEF records into the Initial TNEP message in the following way:
 
-See the following code for an example of service definition and TNEP initialization:
+#. Pass a callback to :cpp:func:`nfc_tnep_tag_initial_msg_create`.
+#. Define an additional record inside the callback and call :cpp:func:`nfc_tnep_initial_msg_encode`.
+
+See the following code for an example of the Initial message encoding:
+
+.. literalinclude:: ../../../samples/nfc/tnep_tag/src/main.c
+    :language: c
+    :start-after: include_startingpoint_initial_msg_cb_rst
+    :end-before: include_endpoint_initial_cb_msg_rst
+
+The following code shows how to create the Initial NDEF message:
+
+.. literalinclude:: ../../../samples/nfc/tnep_tag/src/main.c
+    :language: c
+    :start-after: include_startingpoint_initial_msg_rst
+    :end-before: include_endpoint_initial_msg_rst
+
+
+See also the following code for an example of service definition and TNEP initialization:
 
 .. code-block:: c
 
 	#define NFC_TNEP_TAG_SERVICE_DEF(service_name, uri, uri_length, mode, t_wait, n_wait, mac_msg_size
 								 select_cb, deselect_cb message_cb, timeout_cb, error_cb)
 
-	NFC_NDEF_MSG_DEF(ndef_msg, 16);
-
-	static struct nfc_tnep_tag_service services[] = {
-		NFC_TNEP_TAG_SERVICE(service_name),
-	};
-
 	nfc_tnep_tx_msg_buffer_register(buffer, swap_buffer, buffer_length);
 
-	nfc_tnep_init(event, event_cnt, &NFC_NDEF_MSG(ndef_msg),
-		      nfc_txt_rw_payload_set);
+	nfc_tnep_init(event, event_cnt, nfc_txt_rw_payload_set);
 
 	nfc_tXt_setup();
 
-	nfc_tnep_tag_initial_msg_create(services, ARRAY_SIZE(services), NULL, 0);
+	nfc_tnep_tag_initial_msg_create(1, NULL);
 
 	nfc_tXt_emulation_start();
 
@@ -95,28 +108,14 @@ If the application does not reply before the expiration on the time period speci
 
 The following code demonstrates how to exchange NDEF messages using the tag library after initialization:
 
+.. literalinclude:: ../../../samples/nfc/tnep_tag/src/main.c
+    :language: c
+    :start-after: include_startingpoint_tnep_service_rst
+    :end-before: include_endpoint_tnep_service_rst
+
+The following code demonstrates how to process the TNEP library:
+
 .. code-block:: c
-
-	static void training_service_selected(void)
-	{
-		/* service selection function body */
-                nfc_tnep_tag_tx_msg_app_data(app_records, records_cnt);
-
-		return 0;
-	}
-
-	static void training_service_deselected(void)
-	{
-		/* service deselection function body */
-	}
-
-	static void training_service_new_message(void)
-	{
-		/* new application data function body */
-
-		/* Add application data reply*/
-		nfc_tnep_tx_msg_app_data(app_record);
-	}
 
 	tag_x_tag_handler()
 	{
