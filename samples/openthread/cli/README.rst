@@ -18,6 +18,9 @@ The CLI sample comes with the :ref:`full set of OpenThread functionalities <thre
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample to be able to test communication.
 
+An additional functionality of this particular sample is the possibility of updating OpenThread libraries
+with the version compiled from the current source.
+
 See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
 
 .. _ot_cli_sample_diag_module:
@@ -59,6 +62,8 @@ Building and running
 |enable_thread_before_testing|
 
 .. include:: /includes/build_and_run.txt
+
+To update OpenThread libraries provided by the ``nrfxlib``, please invoke ``west build -b nrf52840dk_nrf52840 -t install_openthread_libraries``.
 
 Testing
 =======

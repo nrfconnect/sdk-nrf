@@ -304,6 +304,14 @@ The following table lists the supported features for each of these sets.
       - ✔
       -
 
+Replacing OpenThread Libraries
+******************************
+
+Each OpenThread example provides a possibility to replace libraries present in the nrfxlib when configured to build OpenThread stack from source with :option:`CONFIG_OPENTHREAD_SOURCES`.
+After the sample is build execute the following to overwrite the exising nrfxlib libraries with currently built ones::
+
+  west build -t install_openthread_libraries
+
 UART recommendations for NCP
 ****************************
 
