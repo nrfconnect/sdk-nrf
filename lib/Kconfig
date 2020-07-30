@@ -26,5 +26,6 @@ rsource "sms/Kconfig"
 rsource "modem_key_mgmt/Kconfig"
 rsource "supl/Kconfig"
 rsource "date_time/Kconfig"
+rsource "ram_pwrdn/Kconfig"
 
 endmenu

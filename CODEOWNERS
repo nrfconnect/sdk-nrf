@@ -62,6 +62,7 @@ Kconfig*                                  @tejlmand
 /lib/modem_key_mgmt/                      @rlubos
 /lib/pdn_management/                      @rlubos
 /lib/multithreading_lock/                 @joerchan @rugeGerritsen
+/lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
 /lib/fatal_error/                         @ioannisg
 /lib/sms/                                 @metc
 /lib/st25r3911b/                          @grochu
