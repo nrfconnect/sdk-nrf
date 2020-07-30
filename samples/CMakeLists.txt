@@ -109,3 +109,21 @@ if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
     DOMAIN CPUAPP
     BOARD ${CONFIG_DOMAIN_CPUAPP_BOARD})
 endif()
+
+if (CONFIG_NRF_802154_SER_HOST)
+  if (CONFIG_SOC_NRF5340_CPUAPP)
+
+    message("Adding '802154_rpmsg' sample as child image since "
+      "CONFIG_NRF_802154_SER_HOST is set to y")
+
+    add_child_image(
+      NAME 802154_rpmsg
+      SOURCE_DIR ${ZEPHYR_BASE}/samples/boards/nrf/ieee802154/802154_rpmsg
+      DOMAIN CPUNET
+      BOARD ${CONFIG_DOMAIN_CPUNET_BOARD}
+    )
+  else()
+    message(FATAL_ERROR
+      "Board ${BOARD} not supported for including '802154_rpmsg' as child image")
+  endif()
+endif()

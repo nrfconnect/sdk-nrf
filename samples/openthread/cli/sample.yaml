@@ -1,9 +1,9 @@
 sample:
-  description: Test OpenThread Command Line Interface.
   name: OpenThread CLI sample
+  description: Test OpenThread Command Line Interface.
 tests:
   samples.openthread.cli:
     build_only: true
     build_on_all: true
-    tags: openthread cli
-    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
+    platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
