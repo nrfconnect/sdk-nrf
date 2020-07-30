@@ -6,6 +6,7 @@
 #include <zephyr.h>
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
+#include <ram_pwrdn.h>
 
 #include "coap_client_utils.h"
 
@@ -59,6 +60,10 @@ void main(void)
 	int ret;
 
 	LOG_INF("Start CoAP-client sample");
+
+	if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
+		power_down_unused_ram();
+	}
 
 	ret = dk_buttons_init(on_button_changed);
 	if (ret) {

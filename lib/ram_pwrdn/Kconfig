@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig RAM_POWER_DOWN_LIBRARY
+	bool "Enable API for turning off unused RAM segments"
+	help
+	  This allows application to call API for disabling unused RAM segments.
+	  This is usually not needed, but can improve battery lifetime for
+	  applications that spend most of the time in the sleep mode with most
+	  peripherals disabled.
+
+
+
+if RAM_POWER_DOWN_LIBRARY
+
+module =  RAM_POWERDOWN
+module-str = RAM Power down module
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # RAM_POWER_DOWN_LIBRARY

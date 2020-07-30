@@ -222,9 +222,4 @@ void user_input_indicate(void);
 void zigbee_configure_sleepy_behavior(bool enable);
 #endif
 
-/**@brief Function for powering down unused RAM. Powers down all unused sections
- * in RAM banks.
- */
-void zigbee_power_down_unused_ram(void);
-
 #endif /* ZIGBEE_HELPERS_H__ */

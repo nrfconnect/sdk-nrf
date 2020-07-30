@@ -12,6 +12,7 @@
 #include <device.h>
 #include <logging/log.h>
 #include <dk_buttons_and_leds.h>
+#include <ram_pwrdn.h>
 
 #include <zboss_api.h>
 #include <zboss_api_addons.h>
@@ -429,7 +430,10 @@ void main(void)
 #if defined BUTTON_SLEEPY
 	if (dk_get_buttons() & BUTTON_SLEEPY) {
 		zigbee_configure_sleepy_behavior(true);
-		zigbee_power_down_unused_ram();
+
+		if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
+			power_down_unused_ram();
+		}
 	}
 #endif
 
