@@ -239,6 +239,18 @@
 
 .. _`mscgen`: http://www.mcternan.me.uk/mscgen/
 
+.. _`Azure Firmware Over The Air (FOTA)`: https://docs.microsoft.com/en-us/azure/iot-hub/tutorial-firmware-update
+.. _`Azure IoT Hub`: https://azure.microsoft.com/en-us/services/iot-hub/
+.. _`Azure IoT Hub DPS`: https://docs.microsoft.com/en-us/azure/iot-dps/
+.. _`Azure Portal`: https://portal.azure.com/
+.. _`Create Azure IoT Hub certificates`: https://github.com/Azure/azure-iot-sdk-c/blob/master/tools/CACertificates/CACertificateOverview.md
+.. _`Azure IoT Hub direct method`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-direct-methods
+.. _`Baltimore CyberTrust Root certificate`: https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
+.. _`Azure IoT Hub MQTT protocol support`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-mqtt-support
+.. _`Azure IoT Explorer`: https://docs.microsoft.com/en-us/azure/iot-pnp/howto-use-iot-explorer
+.. _`Azure Blob Storage`: https://azure.microsoft.com/en-us/services/storage/blobs/
+.. _`Azure IoT Hub device twin messages`: https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-device-twins
+
 .. ### Links to Bluetooth specs
 
 .. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/bluetooth-core-specification
@@ -264,6 +276,7 @@
 .. _`Bluetooth Mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
 
 .. _`Bluetooth Mesh Study Guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
+
 
 .. ### Links to NFC specs
 
