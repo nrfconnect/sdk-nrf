@@ -316,6 +316,9 @@ static int header_parse(struct download_client *client)
 	if (client->file_size == 0) {
 		p = strstr(client->buf, "Content-Range: bytes");
 		if (!p) {
+			p = strstr(client->buf, "content-range: bytes");
+		}
+		if (!p) {
 			/* Cannot continue */
 			LOG_ERR("Server did not send "
 				"\"Content-Range\" in response");
@@ -334,6 +337,9 @@ static int header_parse(struct download_client *client)
 	}
 
 	p = strstr(client->buf, "Connection: close");
+	if (!p) {
+		p = strstr(client->buf, "connection: close");
+	}
 	if (p) {
 		LOG_WRN("Peer closed connection, will attempt to re-connect");
 		client->connection_close = true;
@@ -344,7 +350,7 @@ static int header_parse(struct download_client *client)
 		 * Copy them at the beginning of the buffer
 		 * then update the offset.
 		 */
-		LOG_WRN("Copying %u payload bytes", client->offset - hdr);
+		LOG_DBG("Copying %u payload bytes", client->offset - hdr);
 		memcpy(client->buf, client->buf + hdr, client->offset - hdr);
 
 		client->offset -= hdr;
