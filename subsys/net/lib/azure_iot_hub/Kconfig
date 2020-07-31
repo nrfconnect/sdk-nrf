@@ -1,0 +1,101 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig AZURE_IOT_HUB
+	bool "Azure IoT Hub [EXPERIMENTAL]"
+	select MQTT_LIB
+	select MQTT_LIB_TLS
+
+if AZURE_IOT_HUB
+
+config AZURE_IOT_HUB_HOSTNAME
+	string "Azure IoT Hub hostname"
+
+config AZURE_IOT_HUB_HOSTNAME_MAX_LEN
+	int "Max length for Azure IoT Hub name"
+	default 48
+
+config AZURE_IOT_HUB_STATIC_IPV4
+	bool "Enable use of static IPv4"
+
+config AZURE_IOT_HUB_STATIC_IPV4_ADDR
+	string "Static IPv4 address"
+	depends on AZURE_IOT_HUB_STATIC_IPV4
+
+config AZURE_IOT_HUB_SEC_TAG
+	int "TLS sec tag"
+	help
+	  Security tag where TLS credentials are stored.
+
+config AZURE_IOT_HUB_PORT
+	int "Azure IoT Hub port"
+	default 8883
+
+config AZURE_IOT_HUB_TLS_SESSION_CACHING
+	bool "Enable TLS session caching"
+	default y
+
+config AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN
+	int "Buffer sizes for the MQTT library"
+	default 256
+	help
+	  Specifies maximum message size can be transmitted/received through
+	  MQTT (exluding MQTT PUBLISH payload).
+
+config AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN
+	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)."
+	default 1024
+
+config AZURE_IOT_HUB_DEVICE_ID_MAX_LEN
+	int "Maximum length of device ID"
+	default 30
+
+config AZURE_IOT_HUB_DEVICE_ID
+	string "Device ID"
+	help
+	  Device ID to be used when connecting to IoT hub and optionally DPS.
+	  Providing a device ID can also be done run-time if
+	  AZURE_IOT_HUB_DEVICE_ID_APP is selected.
+
+config AZURE_IOT_HUB_DEVICE_ID_APP
+	bool "Provide device ID run-time"
+
+config AZURE_IOT_HUB_STACK_SIZE
+	int "Connection thread stack size"
+	default 2048
+
+config AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST
+	bool "Request device twin automatically when connected"
+	default y
+
+config AZURE_IOT_HUB_DPS
+	bool "Use Device Provisioning Service"
+	select CJSON_LIB
+	depends on SETTINGS
+	help
+	  Enabling DPS will make the device connect to the specified DPS
+	  host name, provision the device and retrieve the IoT hub host name to
+	  use. The registration ID will be set to AZURE_IOT_HUB_DEVICE_ID if it
+	  is provided, or alternatively the device ID provided by the
+	  application if AZURE_IOT_HUB_DEVICE_ID_APP is enabled.
+
+if AZURE_IOT_HUB_DPS
+
+config AZURE_IOT_HUB_DPS_ID_SCOPE
+	string "DPS ID scope"
+
+config AZURE_IOT_HUB_DPS_HOSTNAME
+	string "DPS host name"
+	default "global.azure-devices-provisioning.net"
+
+endif # AZURE_IOT_HUB_DPS
+
+module=AZURE_IOT_HUB
+module-dep=LOG
+module-str=Azure IoT Hub
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AZURE_IOT_HUB
