@@ -91,6 +91,80 @@ The following list summarizes the most important changes inherited from upstream
 
   * Removed the ``net_idx`` parameter from the Health Client model APIs because it can be derived (by the stack) from the ``app_idx`` parameter.
 
+* Drivers:
+
+  * Clock control:
+
+    * Fixed an issue in the nRF clock control driver that could lead to a fatal error during the system initialization, when calibration was started before kernel services became available.
+
+  * Display:
+
+    * Added support for temperature sensors in the SSD16xx driver.
+
+  * Entropy:
+
+    * Fixed a race condition in the nRF5 entropy driver that could result in missing the wake-up event (which caused the ``kernel.memory_protection.stack_random`` test to fail).
+
+  * Flash:
+
+    * Extended the flash API with the :cpp:func:`flash_get_parameters` function.
+    * Fixed an issue in the Nordic Semiconductor nRF flash driver (soc_flash_nrf) that caused operations to fail if a Bluetooth central had multiple connections.
+    * Added support for a 2 IO pin setup in the nRF QSPI NOR flash driver (nrf_qspi_nor).
+    * Added support for sub-word lengths of read and write transfers in the nRF QSPI NOR flash driver (nrf_qspi_nor).
+    * Improved the handling of erase operations in the nRF QSPI NOR flash driver (nrf_qspi_nor), the AT45 family flash driver (spi_flash_at45), and the SPI NOR flash driver (spi_nor).
+      Now the operation is not started if it cannot be completed successfully.
+
+  * GPIO:
+
+    * Removed deprecated API functions and macros.
+    * Improved allocation of GPIOTE channels in the nRF GPIO driver (gpio_nrfx).
+
+  * I2C:
+
+    * Fixed handling of scattered transactions in the nRF TWIM nrfx driver (i2c_nrfx_twim) by introducing an optional concatenation buffer.
+    * Used a time limit (100 ms) when waiting for transactions to complete, in both nRF drivers.
+
+  * LoRa:
+
+    * Added support for SX126x transceivers.
+
+  * PWM:
+
+    * Clarified the expected API behavior regarding zero pulse length and non-zero pulse equal to period length.
+
+  * Sensors:
+
+    * Added support for the IIS2DH accelerometer.
+    * Added the :cpp:func:`sensor_attr_get` API function for getting the value of a sensor attribute.
+
+  * Serial:
+
+    * Clarified in the UART API that the :cpp:enumerator:`UART_RX_RDY <uart_interface::UART_RX_RDY>` event is to be generated before :cpp:enumerator:`UART_RX_DISABLED <uart_interface::UART_RX_DISABLED>` if any received data remains.
+      Updated all drivers in this regard.
+    * Changed the nRF UART nrfx drivers (uart_nrfx_uart/uarte) to use the DT ``hw-flow-control`` property instead of Kconfig options.
+    * Fixed disabling of the TX interrupt in the uart_nrfx_uart driver.
+    * Fixed the uart_nrfx_uarte driver to prevent spurious :cpp:enumerator:`UART_RX_BUF_REQUEST <uart_interface::UART_RX_BUF_REQUEST>` events.
+
+  * SPI:
+
+    * Updated the ``cs-gpios`` properties in DT SPI nodes with proper GPIO flags specifying the active level.
+      Updated the related drivers to use the flags from ``cs-gpios`` properties instead of hard-coded values.
+
+  * Timer:
+
+    * Fixed an issue in the nRF Real Time Counter Timer driver (nrf_rtc_timer) that could cause time-outs to be triggered prematurely.
+    * Fixed announcing of kernel ticks in the nRF Real Time Counter Timer driver (nrf_rtc_timer) that made some kernel tests fail when the :option:`CONFIG_TICKLESS_KERNEL` option was disabled.
+
+  * USB:
+
+    * Unified endpoint helper macros across all USB device drivers.
+    * Fixed handling of fragmented transfers on the control OUT endpoint in the Nordic Semiconductor USB Device Controller driver (usb_dc_nrfx).
+    * Introduced names for threads used in USB classes, to aid debugging.
+
+  * Watchdog:
+
+    * Updated the description of the :cpp:func:`wdt_feed` API function to reflect an additional error return code.
+
 * Storage and file systems:
 
   * Fixed a possible NULL pointer dereference when using any of the ``fs_`` functions.
