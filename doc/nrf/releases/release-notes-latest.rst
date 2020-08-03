@@ -20,7 +20,17 @@ See the change log for each library in the :doc:`nrfxlib documentation <nrfxlib:
 sdk-zephyr
 ==========
 
+.. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
+
 The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``4ef29b34e3``, plus some |NCS| specific additions.
+
+For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run this command from the :file:`ncs/zephyr` repository after running ``west update``::
+
+   git log --oneline 4ef29b34e3 ^v2.3.0-rc1-ncs1
+
+For a complete list of |NCS| specific commits, run::
+
+   git log --oneline manifest-rev ^4ef29b34e3
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
