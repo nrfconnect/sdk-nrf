@@ -89,7 +89,7 @@ You can enable the following additional configuration options:
     For example, you can set channels 13, 16, and 21.
     You must have at least one channel enabled with this option.
 * :option:`CONFIG_ZIGBEE_VENDOR_OUI` - Represents MAC Address Block Large, and by default it is set to Nordic Semiconductor's MA-L block (f4-ce-36).
-* :option:`CONFIG_ZIGBEE_CLI_LOG_ENABLED` - Enables logging of the incoming ZCL frames, and it is enabled by default.
+* :option:`CONFIG_ZIGBEE_SHELL_LOG_ENABLED` - Enables logging of the incoming ZCL frames, and it is enabled by default.
 
 ZBOSS stack start options
 =========================
@@ -133,7 +133,7 @@ To do this, configure the related Kconfig option for one or more modules that yo
 
 * :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`
 * :option:`CONFIG_ZBOSS_OSIF_LOG_LEVEL`
-* :option:`CONFIG_ZIGBEE_CLI_LOG_LEVEL`
+* :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
 * :option:`CONFIG_ZIGBEE_HELPERS_LOG_LEVEL`
 
 For each of the modules, you can set the following logging options:

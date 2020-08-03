@@ -100,6 +100,12 @@ config ZIGBEE_VENDOR_OUI
 	  A value that represents MAC Address Block Large (MA-L, formerly called Organizationally Unique Identifier, or OUI), a part of the device's EUI-64 address.
 	  By default, use Nordic Semiconductor's MA-L block (f4-ce-36), assigned by the IEEE Registration Authority.
 
+config ZIGBEE_DEBUG_FUNCTIONS
+	bool "Include Zigbee debug functions"
+	help
+	  Include functions to suspend/resume zboss thread.
+	  It may be helpful when debugging but using this functions can cause instability of the device.
+
 menu "Zigbee Log configuration"
 
 config ZBOSS_ERROR_PRINT_TO_LOG
@@ -115,11 +121,11 @@ config ZIGBEE_ERROR_TO_STRING_ENABLED
 	help
 	  Include functions for mapping ZBOSS errors to string.
 
-config ZIGBEE_CLI_LOG_ENABLED
-	bool "Include functions for CLI logging"
+config ZIGBEE_SHELL_LOG_ENABLED
+	bool "Include functions for Zigbee Shell logging"
 	default y
 	help
-	  Include functions for CLI logging.
+	  Include functions for Zigbee Shell logging.
 
 config ZBOSS_TRACE_MASK
 	hex "Trace mask of ZBOSS stack logs"
@@ -152,9 +158,9 @@ module = ZBOSS_TRACE
 module-str = ZBOSS trace
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-# Configure ZIGBEE_CLI_LOG_LEVEL
-module = ZIGBEE_CLI
-module-str = Zigbee CLI
+# Configure ZIGBEE_SHELL_LOG_LEVEL
+module = ZIGBEE_SHELL
+module-str = Zigbee Shell
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 # Configure ZBOSS_OSIF_LOG_LEVEL
@@ -172,7 +178,7 @@ endmenu #menu "Zigbee Log configuration"
 menu "ZBOSS osif configuration"
 
 menuconfig ZIGBEE_HAVE_SERIAL
-	bool "Enable UART serial interface for ZBOSS CLI"
+	bool "UART serial abstract for ZBOSS OSIF"
 	select SERIAL
 	select UART_ASYNC_API
 
@@ -199,6 +205,30 @@ config ZIGBEE_UART_TX_BUF_LEN
 	default 128
 
 endif #ZIGBEE_HAVE_SERIAL
+
+menuconfig ZIGBEE_SHELL
+	bool "Enable Zigbee Shell"
+	select SHELL
+
+if ZIGBEE_SHELL
+
+config ZIGBEE_SHELL_DEBUG_CMD
+	bool "Enable debug shell commands"
+	select ZIGBEE_DEBUG_FUNCTIONS
+	help
+	  This option enables:
+
+	  - Logging incoming ZCL frames.
+	  - Command to send custom ZCL frames.
+	  - Command to suspend/resume Zigbee Stack execution.
+
+	  Note: These commands may be useful when debugging but can cause instability of the device.
+
+config ZIGBEE_SHELL_ENDPOINT
+	int "Number of endpoint to be used by the Zigbee Shell instance"
+	range 1 240
+
+endif #ZIGBEE_SHELL
 
 config RADIO_STATISTICS
 	bool "Collect radio statistics"

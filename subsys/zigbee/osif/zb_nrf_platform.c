@@ -9,6 +9,9 @@
 #include <logging/log.h>
 #include <init.h>
 
+#ifdef CONFIG_ZIGBEE_SHELL
+#include <zigbee_cli.h>
+#endif
 #include <zboss_api.h>
 #include "zb_nrf_platform.h"
 #include "zb_nrf_crypto.h"
@@ -75,6 +78,46 @@ volatile atomic_t zb_app_cb_process_scheduled = ATOMIC_INIT(0);
 K_THREAD_STACK_DEFINE(zboss_stack_area, CONFIG_ZBOSS_DEFAULT_THREAD_STACK_SIZE);
 static struct k_thread zboss_thread_data;
 static k_tid_t zboss_tid;
+static bool stack_is_started;
+
+#ifdef CONFIG_ZIGBEE_DEBUG_FUNCTIONS
+/**@brief Function for suspending zboss thread.
+ */
+void zigbee_debug_suspend_zboss_thread(void)
+{
+	k_thread_suspend(zboss_tid);
+}
+
+/**@brief Function for resuming zboss thread.
+ */
+void zigbee_debug_resume_zboss_thread(void)
+{
+	k_thread_resume(zboss_tid);
+}
+
+/**@brief Function for getting the state of the Zigbee stack thread
+ *        processing suspension.
+ */
+bool zigbee_is_zboss_thread_suspended(void)
+{
+	if (zboss_tid) {
+		if (!(zboss_tid->base.thread_state & _THREAD_SUSPENDED)) {
+			return false;
+		}
+	}
+	return true;
+}
+#endif /* defined(CONFIG_ZIGBEE_DEBUG_FUNCTIONS) */
+
+/**@brief Function for checking if the Zigbee stack has been started.
+ *
+ * @retval true   Zigbee stack has been started.
+ * @retval false  Zigbee stack has not been started yet.
+ */
+bool zigbee_is_stack_started(void)
+{
+	return stack_is_started;
+}
 
 static void zb_app_cb_process(zb_bufid_t bufid)
 {
@@ -101,7 +144,7 @@ static void zb_app_cb_process(zb_bufid_t bufid)
 			break;
 		case ZB_CALLBACK_TYPE_TWO_PARAMS:
 			ret_code = zb_schedule_app_callback(
-					new_app_cb.func,
+					(zb_callback_t)(new_app_cb.func2),
 					(zb_uint8_t)new_app_cb.param,
 					ZB_TRUE,
 					new_app_cb.user_param,
@@ -206,6 +249,8 @@ static void zb_app_cb_process_schedule(struct k_work *item)
 
 static int zigbee_init(struct device *unused)
 {
+	ARG_UNUSED(unused);
+
 	zb_ieee_addr_t ieee_addr;
 	zb_uint32_t channel_mask;
 
@@ -262,6 +307,11 @@ static void zboss_thread(void *arg1, void *arg2, void *arg3)
 	zb_err_code = zboss_start_no_autostart();
 	__ASSERT(zb_err_code == RET_OK, "Error when starting ZBOSS stack!");
 
+	stack_is_started = true;
+#ifdef CONFIG_ZIGBEE_SHELL
+	zb_cli_configure_endpoint();
+#endif /* defined(CONFIG_ZIGBEE_SHELL) */
+
 	while (1) {
 		zboss_main_loop_iteration();
 	}
@@ -283,13 +333,13 @@ zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param)
 	return RET_OK;
 }
 
-zb_ret_t zigbee_schedule_callback2(zb_callback_t func,
+zb_ret_t zigbee_schedule_callback2(zb_callback2_t func,
 				   zb_uint8_t param,
 				   zb_uint16_t user_param)
 {
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_TWO_PARAMS,
-		.func = func,
+		.func2 = func,
 		.param = param,
 		.user_param = user_param,
 	};
