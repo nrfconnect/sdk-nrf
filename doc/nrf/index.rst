@@ -12,16 +12,7 @@ The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is bui
    nRF53 Series devices (which are pre-production) and Thread, Zigbee, and Bluetooth Mesh protocols are supported for development in v1.3.0 for prototyping and evaluation.
    Support for production and deployment in end products is coming soon.
 
-Documentation for different versions of the |NCS| is available at the following links:
-
-* `nRF Connect SDK latest documentation`_ (from the master branch)
-* `nRF Connect SDK v1.3.0 documentation`_
-* `nRF Connect SDK v1.2.1 documentation`_
-* `nRF Connect SDK v1.2.0 documentation`_
-* `nRF Connect SDK v1.1.0 documentation`_
-* `nRF Connect SDK v1.0.0 documentation`_
-* `nRF Connect SDK v0.4.0 documentation`_
-* `nRF Connect SDK v0.3.0 documentation`_
+To access different versions of the |NCS| documentation, use the version drop-down in the top-left corner.
 
 .. toctree::
    :maxdepth: 2
