@@ -8,7 +8,7 @@
 #define ZB_NRF_PLATFORM_H__
 
 #include <zboss_api.h>
-
+#include <kernel.h>
 
 typedef enum {
 	ZIGBEE_EVENT_TX_FAILED,
@@ -17,6 +17,32 @@ typedef enum {
 	ZIGBEE_EVENT_APP,
 } zigbee_event_t;
 
+#ifdef CONFIG_ZIGBEE_DEBUG_FUNCTIONS
+/**@brief Function for suspending zboss thread.
+ */
+void zigbee_debug_suspend_zboss_thread(void);
+
+/**@brief Function for resuming zboss thread.
+ */
+void zigbee_debug_resume_zboss_thread(void);
+
+/**@brief Function for getting the state of the Zigbee stack thread
+ *        processing suspension.
+ *
+ * @retval true   Scheduler processing is suspended or zboss thread
+ *                is not yet created.
+ * @retval false  Scheduler processing is not suspended and zboss thread
+ *                is created.
+ */
+bool zigbee_is_zboss_thread_suspended(void);
+#endif /* defined(CONFIG_ZIGBEE_DEBUG_FUNCTIONS) */
+
+/**@brief Function for checking if the Zigbee stack has been started.
+ *
+ * @retval true   Zigbee stack has been started.
+ * @retval false  Zigbee stack has not been started yet.
+ */
+bool zigbee_is_stack_started(void);
 
 /* Function for starting Zigbee thread. */
 void zigbee_enable(void);
@@ -67,7 +93,7 @@ zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param);
  *
  * @return RET_OK or RET_OVERFLOW.
  */
-zb_ret_t zigbee_schedule_callback2(zb_callback_t func, zb_uint8_t param,
+zb_ret_t zigbee_schedule_callback2(zb_callback2_t func, zb_uint8_t param,
 				   zb_uint16_t user_param);
 
 
