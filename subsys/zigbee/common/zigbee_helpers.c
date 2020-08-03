@@ -419,8 +419,18 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 					zb_zdo_signal_leave_params_t);
 			LOG_INF("Network left (leave type: %d)",
 				leave_params->leave_type);
-			/* Start network rejoin procedure */
-			start_network_rejoin();
+
+			if (zb_get_network_role() ==
+			    ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+				/* For coordinator node,
+				 * start network formation.
+				 */
+				comm_status = bdb_start_top_level_commissioning(
+						ZB_BDB_NETWORK_FORMATION);
+			} else {
+				/* Start network rejoin procedure. */
+				start_network_rejoin();
+			}
 		} else {
 			LOG_ERR("Unable to leave network (status: %d)", status);
 		}
