@@ -91,6 +91,40 @@ The following list summarizes the most important changes inherited from upstream
 
   * Removed the ``net_idx`` parameter from the Health Client model APIs because it can be derived (by the stack) from the ``app_idx`` parameter.
 
+* Storage and file systems:
+
+  * Fixed a possible NULL pointer dereference when using any of the ``fs_`` functions.
+    The functions will now return an error code in this case.
+  * Fixed a garbage-collection issue in the NVS subsystem.
+
+* Devicetree:
+
+  * Removed all nRF-specific aliases to particular hardware peripherals, because they are no longer needed now that nodes can be addressed by node labels.
+    For example, you should now use ``DT_NODELABEL(i2c0)`` instead of ``DT_ALIAS(i2c_0)``.
+
+* Build system:
+
+  * Renamed the ``TEXT_SECTION_OFFSET`` symbol to ``ROM_START_OFFSET``.
+  * Added a number of iterable section macros to the set of linker macros, including ``Z_ITERABLE_SECTION_ROM`` and ``Z_ITERABLE_SECTION_RAM``.
+  * Added a new Zephyr Build Configuration package with support for specific build configuration for Zephyr derivatives (including forks).
+    See :ref:`zephyr:cmake_pkg` for more information.
+
+* Samples:
+
+  * Updated the :ref:`zephyr:nrf-system-off-sample` to better support low-power states of Nordic Semiconductor devices.
+  * Updated the :ref:`zephyr:usb_mass` to perform all application-level configuration before the USB subsystem starts.
+    The sample now also supports FAT file systems on external storage.
+
+Modules:
+
+  * Introduced a ``depends`` keyword that can be added to a module's :file:`module.yml` file to declare dependencies to other modules.
+    This allows to correctly establish the order of processing.
+
+Other:
+
+  * Implemented ``nanosleep`` in the POSIX subsystem.
+  * Deprecated the Zephyr-specific types in favor of the standard C99 int types.
+
 The following list contains |NCS| specific additions:
 
 *
