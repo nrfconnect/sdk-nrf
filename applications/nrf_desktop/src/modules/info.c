@@ -6,15 +6,14 @@
 
 #include <zephyr.h>
 #include <sys/byteorder.h>
-#include <drivers/hwinfo.h>
 
+#include "hwid.h"
 #include "config_event.h"
 
 #define MODULE info
 #include "module_state_event.h"
 
 #define BOARD_NAME_SEPARATOR	'_'
-#define HWID_LEN		8
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_INFO_LOG_LEVEL);
@@ -51,17 +50,9 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 
 	case INFO_OPT_HWID:
-	{
-		uint8_t hwid[HWID_LEN];
-		ssize_t ret = hwinfo_get_device_id(hwid, sizeof(hwid));
-
-		__ASSERT_NO_MSG(ret == HWID_LEN);
-		ARG_UNUSED(ret);
-
-		memcpy(data, hwid, HWID_LEN);
+		hwid_get(data, CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
 		*size = HWID_LEN;
 		break;
-	}
 
 	default:
 		LOG_WRN("Unknown config fetch option ID %" PRIu8, opt_id);

@@ -11,6 +11,7 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/gatt.h>
 
+#include "hwid.h"
 #include "dev_descr.h"
 
 static uint8_t device_descr[] = {
@@ -24,10 +25,8 @@ static ssize_t read_hwid(struct bt_conn *conn,
 	__ASSERT_NO_MSG(attr != NULL);
 
 	uint8_t hwid[HWID_LEN];
-	ssize_t ret = hwinfo_get_device_id(hwid, sizeof(hwid));
 
-	__ASSERT_NO_MSG(ret == HWID_LEN);
-	ARG_UNUSED(ret);
+	hwid_get(hwid, sizeof(hwid));
 
 	return bt_gatt_attr_read(conn, attr, buf, len, offset,
 				 hwid, sizeof(hwid));

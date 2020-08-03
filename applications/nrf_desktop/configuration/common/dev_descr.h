@@ -26,8 +26,6 @@ const struct {} dev_descr_include_once;
 #define DEV_DESCR_LEN			(DEV_DESCR_LLPM_SUPPORT_POS + \
 					DEV_DESCR_LLPM_SUPPORT_SIZE)
 
-#define HWID_LEN			8
-
 static struct bt_uuid_128 custom_desc_uuid = BT_UUID_INIT_128(
 	0x25, 0x1d, 0x09, 0x1c, 0x78, 0x2e, 0x46, 0x98,
 	0xac, 0x13, 0x44, 0x75, 0x01, 0x00, 0x00, 0x00);
