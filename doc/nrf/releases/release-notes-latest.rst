@@ -225,4 +225,9 @@ Other:
 
 The following list contains |NCS| specific additions:
 
-*
+* Added support for the |NCS|'s :ref:`partition_manager`, which can be used for flash partitioning.
+* Added the following network socket and address extensions to the :ref:`zephyr:bsd_sockets_interface` interface to support the functionality provided by the :ref:`nrfxlib:bsdlib`:
+  AF_LTE, NPROTO_AT, NPROTO_PDN, NPROTO_DFU, SOCK_MGMT, SO_RCVTIMEO, SO_BINDTODEVICE, SOL_PDN, SOL_DFU, SO_PDN_CONTEXT_ID, SO_PDN_STATE, SOL_DFU, SO_DFU_ERROR, TLS_SESSION_CACHE, SO_SNDTIMEO, MSG_TRUNC, SO_SILENCE_ALL, SO_IP_ECHO_REPLY, SO_IPV6_ECHO_REPLY
+* Added support for enabling TLS caching when using the :ref:`zephyr:mqtt_socket_interface` library.
+  See :c:macro:`TLS_SESSION_CACHE`.
+* Updated the nrf9160ns DTS to support accessing the CryptoCell CC310 hardware from non-secure code.
