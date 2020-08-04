@@ -236,6 +236,9 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		aws_iot_disconnect();
 		sys_reboot(0);
 		break;
+	case AWS_IOT_EVT_FOTA_DL_PROGRESS:
+		printk("AWS_IOT_EVT_FOTA_DL_PROGRESS, (%d%%)",
+		       evt->data.fota_progress);
 	case AWS_IOT_EVT_ERROR:
 		printk("AWS_IOT_EVT_ERROR, %d\n", evt->data.err);
 		break;
