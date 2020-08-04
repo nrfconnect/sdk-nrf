@@ -31,13 +31,14 @@ END_OF_TRANSFER_CHAR = '\n'
 
 
 class ConfigStatus(IntEnum):
-    SUCCESS            = 0
-    PENDING            = 1
+    PENDING            = 0
+    SET                = 1
     FETCH              = 2
-    TIMEOUT            = 3
-    REJECT             = 4
-    WRITE_ERROR        = 5
-    DISCONNECTED_ERROR = 6
+    SUCCESS            = 3
+    TIMEOUT            = 4
+    REJECT             = 5
+    WRITE_ERROR        = 6
+    DISCONNECTED_ERROR = 7
     FAULT              = 99
 
 class NrfHidTransport():
@@ -53,7 +54,7 @@ class NrfHidTransport():
         else:
             event_data_len = 0
 
-        if status == ConfigStatus.PENDING:
+        if status == ConfigStatus.SET:
             # No addtional checks
             pass
         elif status == ConfigStatus.FETCH:
@@ -357,7 +358,7 @@ class NrfHidDevice():
         if is_get:
             status = ConfigStatus.FETCH
         else:
-            status = ConfigStatus.PENDING
+            status = ConfigStatus.SET
 
         success, fetched_data = NrfHidTransport.exchange_feature_report(self.dev_ptr, self.pid,
                                                                         event_id, status,
