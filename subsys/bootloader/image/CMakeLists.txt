@@ -70,8 +70,7 @@ if (CONFIG_SB_VALIDATE_FW_SIGNATURE AND
   set(PROVISION_DEPENDS signature_public_key_file_target)
 endif()
 
-# TODO don't check board, look at SoC
-if (CONFIG_BOARD_NRF5340PDK_NRF5340_CPUNET)
+if (CONFIG_SOC_NRF5340_CPUAPP)
   set(s0_arg --s0-addr $<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>)
 else()
   set(s0_arg --s0-addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
