@@ -17,6 +17,10 @@
 .. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
 
+.. _`fork button on the sdk-nrf repository page`: https://github.com/nrfconnect/sdk-nrf#fork-destination-box
+
+.. _`Pull requests tab`: https://github.com/nrfconnect/sdk-nrf/pulls
+
 .. _`sdk-zephyr`: https://github.com/nrfconnect/sdk-zephyr
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
