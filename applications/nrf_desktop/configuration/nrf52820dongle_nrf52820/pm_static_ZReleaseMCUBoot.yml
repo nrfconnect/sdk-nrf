@@ -6,23 +6,20 @@ mcuboot_pad:
   size: 0x200
 app:
   address: 0xd200
-  size: 0x2fe00
+  size: 0x30e00
 mcuboot_primary:
   orig_span: &id001
   - mcuboot_pad
   - app
   span: *id001
   address: 0xd000
-  size: 0x30000
+  size: 0x31000
 mcuboot_primary_app:
   orig_span: &id002
   - app
   span: *id002
   address: 0xd200
-  size: 0x2fe00
-mcuboot_secondary:
-  address: 0x3d000
-  size: 0x1000
+  size: 0x30e00
 settings_storage:
   address: 0x3e000
   size: 0x2000
