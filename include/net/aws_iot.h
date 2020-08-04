@@ -83,6 +83,8 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_FOTA_ERASE_PENDING,
 	/** FOTA erase done. */
 	AWS_IOT_EVT_FOTA_ERASE_DONE,
+	/** FOTA progress notification. */
+	AWS_IOT_EVT_FOTA_DL_PROGRESS,
 	/** AWS IoT library error. */
 	AWS_IOT_EVT_ERROR
 };
@@ -126,6 +128,8 @@ struct aws_iot_evt {
 	union {
 		struct aws_iot_data msg;
 		int err;
+		/** FOTA progress in percentage. */
+		int fota_progress;
 		bool persistent_session;
 	} data;
 };

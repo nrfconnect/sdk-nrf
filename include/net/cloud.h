@@ -41,6 +41,7 @@ enum cloud_event_type {
 	CLOUD_EVT_FOTA_DONE,
 	CLOUD_EVT_FOTA_ERASE_PENDING,
 	CLOUD_EVT_FOTA_ERASE_DONE,
+	CLOUD_EVT_FOTA_DL_PROGRESS,
 	CLOUD_EVT_COUNT
 };
 
@@ -127,6 +128,8 @@ struct cloud_event {
 	union {
 		struct cloud_msg msg;
 		int err;
+		/** FOTA progress in percentage. */
+		int fota_progress;
 		bool persistent_session;
 	} data;
 };

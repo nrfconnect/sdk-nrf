@@ -52,6 +52,9 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 	ARG_UNUSED(backend);
 
 	switch (evt->type) {
+	case CLOUD_EVT_CONNECTING:
+		LOG_INF("CLOUD_EVT_CONNECTING");
+		break;
 	case CLOUD_EVT_CONNECTED:
 		LOG_INF("CLOUD_EVT_CONNECTED");
 		break;
