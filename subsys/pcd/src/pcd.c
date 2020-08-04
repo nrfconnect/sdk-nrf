@@ -37,7 +37,7 @@ int pcd_invalidate(struct pcd_cmd *cmd)
 int pcd_transfer(struct pcd_cmd *cmd, struct device *fdev)
 {
 	struct stream_flash_ctx stream;
-	u8_t buf[CONFIG_PCD_BUF_SIZE];
+	uint8_t buf[CONFIG_PCD_BUF_SIZE];
 	int rc;
 
 	if (cmd == NULL) {
@@ -51,7 +51,7 @@ int pcd_transfer(struct pcd_cmd *cmd, struct device *fdev)
 		return rc;
 	}
 
-	rc = stream_flash_buffered_write(&stream, (u8_t *)cmd->src,
+	rc = stream_flash_buffered_write(&stream, (uint8_t *)cmd->src,
 					 cmd->len, true);
 	if (rc != 0) {
 		LOG_ERR("stream_flash_buffered_write fail: %d", rc);

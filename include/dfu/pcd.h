@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 #include <device.h>
+#include <linker/linker-defs.h>
 
 /** Magic value written to indicate that a copy should take place. */
 #define PCD_CMD_MAGIC_COPY 0xb5b4b3b6
@@ -36,12 +37,14 @@ extern "C" {
  *  and the receiver of the DFU image.
  */
 struct pcd_cmd {
-	u32_t magic;     /* Magic value to identify this structure in memory */
+	uint32_t magic;  /* Magic value to identify this structure in memory */
 	const void *src; /* Source address to copy from */
 	size_t len;      /* Number of bytes to copy */
 	size_t offset;   /* Offset to store the flash image in */
-	u8_t buf[CONFIG_PCD_BUF_SIZE]; /* Copy buffer */
+	uint8_t buf[CONFIG_PCD_BUF_SIZE]; /* Copy buffer */
 };
+
+#define PCD_CMD_ADDRESS (ROUND_DOWN((__kernel_ram_end - sizeof(struct pcd_cmd)), 4))
 
 /** @brief Get a PCD CMD from the specified address.
  *

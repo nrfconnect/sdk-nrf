@@ -15,7 +15,6 @@
 #include <dfu/pcd.h>
 #include <device.h>
 
-#define CMD_ADDR 0x20000000
 #define FLASH_NAME DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL
 
 void main(void)
@@ -29,7 +28,7 @@ void main(void)
 		return;
 	}
 
-	cmd = pcd_get_cmd((void*)CMD_ADDR);
+	cmd = pcd_get_cmd((void*)PCD_CMD_ADDRESS);
 	if (cmd != NULL) {
 		err = pcd_transfer(cmd, fdev);
 		if (err != 0) {
@@ -38,7 +37,7 @@ void main(void)
 		}
 	}
 
-	u32_t s0_addr = s0_address_read();
+	uint32_t s0_addr = s0_address_read();
 
 	if (cmd != NULL) {
 		if (!bl_validate_firmware(s0_addr, s0_addr)) {
@@ -57,6 +56,6 @@ void main(void)
 	}
 
 	bl_boot(fw_info_find(s0_addr));
-	
+
 	return;
 }
