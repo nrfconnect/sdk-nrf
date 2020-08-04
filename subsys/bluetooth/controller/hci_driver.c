@@ -5,6 +5,7 @@
  */
 
 #include <drivers/bluetooth/hci_driver.h>
+#include <bluetooth/controller.h>
 #include <bluetooth/hci_vs.h>
 #include <init.h>
 #include <irq.h>
@@ -496,6 +497,13 @@ uint8_t bt_read_static_addr(struct bt_hci_vs_static_addr addrs[], uint8_t size)
 	return 0;
 }
 #endif /* !defined(CONFIG_BT_HCI_VS_EXT) */
+
+void bt_ctlr_set_public_addr(const uint8_t *addr)
+{
+	const hci_vs_cmd_zephyr_write_bd_addr_t *bd_addr = (void *)addr;
+
+	(void)hci_vs_cmd_zephyr_write_bd_addr(bd_addr);
+}
 
 static int hci_driver_init(struct device *unused)
 {
