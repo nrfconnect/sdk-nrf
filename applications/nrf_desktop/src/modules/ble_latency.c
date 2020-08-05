@@ -269,7 +269,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-	    (is_config_event(eh) || is_config_fetch_request_event(eh))) {
+	    is_config_event(eh)) {
 		use_low_latency();
 
 		return false;
@@ -323,8 +323,7 @@ EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE(MODULE, config_event);
-EVENT_SUBSCRIBE(MODULE, config_fetch_request_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
 #if CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK
 EVENT_SUBSCRIBE(MODULE, power_down_event);
