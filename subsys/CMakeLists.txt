@@ -8,6 +8,7 @@ if (CONFIG_BT)
   add_subdirectory(bluetooth)
 endif()
 
+add_subdirectory_ifdef(CONFIG_FW_INFO fw_info)
 add_subdirectory_ifdef(CONFIG_IS_SECURE_BOOTLOADER bootloader)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT bootloader/image)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO bootloader/bl_crypto)
@@ -37,7 +38,6 @@ if (CONFIG_NFC_T2T_NRFXLIB OR
         add_subdirectory(nfc)
 endif()
 
-add_subdirectory_ifdef(CONFIG_FW_INFO	fw_info)
 add_subdirectory_ifdef(CONFIG_SHELL_BT_NUS	shell)
 
 add_subdirectory(debug)

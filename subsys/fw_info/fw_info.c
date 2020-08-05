@@ -30,6 +30,10 @@ const struct fw_info m_firmware_info =
 {
 	.magic = {FIRMWARE_INFO_MAGIC},
 	.total_size = (uint32_t)_fw_info_size,
+	/* If this image is signed together with one or more other images,
+	 * this value is updated to point to the end of the last image
+	 * being signed.
+	 */
 	.size = ((uint32_t)_flash_used),
 	.version = CONFIG_FW_INFO_FIRMWARE_VERSION,
 	.address = ((uint32_t)_image_rom_start),

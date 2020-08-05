@@ -84,9 +84,20 @@ foreach (slot ${slots})
     list(APPEND sign_depends ${slot}_hex)
   endif()
 
-  set(to_sign ${PROJECT_BINARY_DIR}/${slot}.hex)
+  set(to_sign ${PROJECT_BINARY_DIR}/${slot}_correct_size.hex)
+  set(to_sign_incorrect_size ${PROJECT_BINARY_DIR}/${slot}.hex)
   set(hash_file ${GENERATED_PATH}/${slot}_firmware.sha256)
   set(signature_file ${GENERATED_PATH}/${slot}_firmware.signature)
+
+  set(size_fix_cmd
+    ${PYTHON_EXECUTABLE}
+    ${NRF_BOOTLOADER_SCRIPTS}/fix_size.py
+    --magic-value "${FIRMWARE_INFO_MAGIC}"
+    --offset ${CONFIG_FW_INFO_OFFSET}
+    --valid ${CONFIG_FW_INFO_VALID_VAL}
+    --in ${to_sign_incorrect_size}
+    --out ${to_sign}
+    )
 
   set(hash_cmd
     ${PYTHON_EXECUTABLE}
@@ -130,6 +141,8 @@ foreach (slot ${slots})
   add_custom_command(
     OUTPUT
     ${signature_file}
+    COMMAND
+    ${size_fix_cmd}
     COMMAND
     ${hash_cmd}
     COMMAND
