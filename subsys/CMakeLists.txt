@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-if (CONFIG_BT)
+if (CONFIG_BT OR CONFIG_BT_RPC_CLIENT)
   add_subdirectory(bluetooth)
 endif()
 

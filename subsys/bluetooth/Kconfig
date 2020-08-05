@@ -24,4 +24,8 @@ rsource "services/Kconfig"
 
 endif # BT
 
+rsource "rpc/client/Kconfig"
+rsource "rpc/host/Kconfig"
+
 endmenu
+

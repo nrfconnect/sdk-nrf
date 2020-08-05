@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menuconfig BT_RPC_CLIENT
+	bool "nRF RPC client for BLE API"
+	help
+	  Bluetooth Low Energy API over nRF PRC library.
+
+if BT_RPC_CLIENT
+
+endif # BT_RPC_CLIENT
