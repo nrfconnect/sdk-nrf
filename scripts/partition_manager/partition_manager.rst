@@ -67,6 +67,9 @@ There are some limitations when multiple application images within the same doma
 In particular, partition definitions are global per domain, and must be identical across calls to ``add_partition_manager_config()``.
 If the same partition is defined twice with different configurations within a domain, the Partition Manager will fail.
 
+.. note::
+   If Partition Manager configurations are only defined by subsystems (i.e. only one image is included in the build), the option :option:`CONFIG_PM_SINGLE_IMAGE` must be set for the Partition Manager script to be executed.
+
 .. _pm_yaml_format:
 
 Configuration file format

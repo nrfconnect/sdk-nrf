@@ -59,7 +59,9 @@ config PM_SINGLE_IMAGE
 	bool "Use the Partition Manager for single image builds"
 	help
 	  Use the Partition Manager feature to partition the device even if
-	  only a single image is included in the build.
+	  only a single image is included in the build. This is typically set
+	  when a subsystem that defines its own Partition Manager configuration
+	  is included in the build.
 
 menuconfig PM_EXTERNAL_FLASH
 	bool "Support external flash in Partition Manager"
