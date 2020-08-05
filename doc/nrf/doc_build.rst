@@ -60,61 +60,73 @@ Complete the following steps to build the documentation output:
 
 #. Generate the Ninja build files:
 
-        .. code-block:: console
+   .. code-block:: console
 
-           cmake -GNinja -B_build .
+      cmake -GNinja -B_build .
 
 #. Enter the generated build folder:
 
-        .. code-block:: console
+   .. code-block:: console
 
-           cd _build
+      cd _build
 
-#. Run ninja to build the Kconfig documentation:
+#. Run ninja to build the documentation:
 
-        .. code-block:: console
+   .. code-block:: console
 
-           ninja kconfig-html
+      ninja build-all
 
-#. Run ninja to build the Zephyr documentation:
+   This command will build all documentation sets.
+   Note that this process can take quite some time.
 
-        .. code-block:: console
+   Alternatively, if you want to build each documentation set separately, complete the following steps:
 
-           ninja zephyr
+   a. Run ninja to build the Kconfig documentation:
 
-   This step can take up to 15 minutes.
+      .. code-block:: console
 
-#. Run ninja to build the mcuboot documentation:
+         ninja kconfig-html
 
-        .. code-block:: console
+   #. Run ninja to build the Zephyr documentation:
 
-           ninja mcuboot
+      .. code-block:: console
 
-#. Run ninja to build the nrfxlib inventory file (used by nrf):
+         ninja zephyr
 
-        .. code-block:: console
+      This step can take up to 15 minutes.
 
-           ninja nrfxlib-inventory
+   #. Run ninja to build the mcuboot documentation:
 
-#. Run ninja to build the |NCS| documentation:
+      .. code-block:: console
 
-        .. code-block:: console
+         ninja mcuboot
 
-           ninja nrf
+   #. Run ninja to build the nrfxlib inventory file (used by nrf):
 
-#. Run ninja to build the nrfxlib documentation:
+      .. code-block:: console
 
-        .. code-block:: console
+         ninja nrfxlib-inventory
 
-           ninja nrfxlib
+   #. Run ninja to build the |NCS| documentation:
+
+      .. code-block:: console
+
+         ninja nrf
+
+   #. Run ninja to build the nrfxlib documentation:
+
+      .. code-block:: console
+
+         ninja nrfxlib
 
 The documentation output is written to ``_build\html``.
 Double-click the ``index.html`` file to display the documentation in your browser.
 
 .. tip::
 
-   If you modify or add RST files, you do not need to rerun all steps. For simple changes, it is sufficient to run the step that builds the respective documentation (for example, only ``ninja nrf`` for changes to the |NCS| documentation).
-   If this results in unexpected build errors, follow :ref:`caching_and_cleaning` and rerun all build steps.
+   If you modify or add RST files, you do not need to rerun the full documentation build.
+   For simple changes, it is sufficient to run the substep that builds the respective documentation (for example, only ``ninja nrf`` for changes to the |NCS| documentation).
+   If this results in unexpected build errors, follow :ref:`caching_and_cleaning` and rerun ``ninja build-all``.
 
 .. _caching_and_cleaning:
 
