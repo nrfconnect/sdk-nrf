@@ -239,6 +239,30 @@ def convert_str_to_list(with_str):
             with_str[k].append(v)
 
 
+def resolve_ambiguous_requirements(reqs, unsolved):
+    """
+    Find partitions where the requirements are identical, and therefore
+    ambiguous. For all partitions with identical requirements, introduce
+    requirements so that the partitions have unique placements(sorted by name).
+    """
+
+    buckets = dict()
+    for partition in unsolved:
+        key = str(reqs[partition]['placement'])
+        if key not in buckets:
+            buckets[key] = list()
+        buckets[key].append(partition)
+
+    for partitions in buckets.values():
+        if len(partitions) > 1:
+            # Two or more partitions share the same requirement, update the
+            # requirements to ensure explicit order.
+            partitions = sorted(partitions)
+            for i in range(len(partitions) - 1):
+                reqs[partitions[i]]['placement'] \
+                    = {'before': [partitions[i + 1]]}
+
+
 def resolve(reqs, dp):
     convert_str_to_list(reqs)
     solution = list([dp])
@@ -251,7 +275,9 @@ def resolve(reqs, dp):
     clean_sub_partitions(reqs, sub_partitions)
 
     unsolved = get_images_which_need_resolving(reqs, sub_partitions)
+    resolve_ambiguous_requirements(reqs, unsolved)
     solve_first_last(reqs, unsolved, solution)
+
     while unsolved:
         solve_direction(reqs, sub_partitions, unsolved, solution, 'before')
         solve_direction(reqs, sub_partitions, unsolved, solution, 'after')
@@ -1494,6 +1520,27 @@ def test():
     expect_list(['c', 'd', 'app'], s)
     expect_list(['b'], sub)
     expect_list(['d'], sub['b']['orig_span']) # Backup must contain edits.
+
+    # Verify that ambiguous requirements are resolved
+    td = {
+        '2': {'placement': {'before': ['end']}},
+        '1': {'placement': {'before': ['end']}},
+        'app': {'region': 'flash_primary'}
+    }
+    s, _ = resolve(td, 'app')
+    expect_list(['app', '1', '2'], s)
+
+    td = {
+        '6': {'placement': {'after': ['3']}},
+        '4': {'placement': {'after': ['3']}},
+        '5': {'placement': {'after': ['3']}},
+        '2': {'placement': {'after': ['start']}},
+        '3': {'placement': {'after': ['start']}},
+        '1': {'placement': {'after': ['start']}},
+        'app': {'region': 'flash_primary'}
+    }
+    s, _ = resolve(td, 'app')
+    expect_list(['1', '2', '3', '4', '5', '6', 'app'], s)
 
     # Verify aligning dynamic partitions
 
