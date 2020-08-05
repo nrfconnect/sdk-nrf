@@ -71,7 +71,7 @@ LOG_MODULE_DECLARE(st25r3911b);
 /* NFC-A CRC initial value. NFC Forum Digital 2.0 6.4.1.3. */
 #define NFCA_CRC_INITIAL_VALUE 0x6363
 
-#define RXS_TIMEOUT 10
+#define RXS_TIMEOUT 200
 
 extern const k_tid_t thread;
 
