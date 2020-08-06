@@ -140,23 +140,23 @@ struct config_forwarded_event {
 
 EVENT_TYPE_DECLARE(config_forwarded_event);
 
-#define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn, last)	\
+extern const uint8_t __start_config_channel_modules[];
+extern const uint8_t __stop_config_channel_modules[];
+
+#define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn, is_info)	\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) > 0);						\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) <= OPT_FIELD_MASK);					\
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {					\
-		static uint8_t config_module_id = MODULE_BROADCAST;				\
+		static const uint8_t module_id_in_section					\
+			__attribute__((__section__("config_channel_modules"))) = 0;		\
+		uint8_t config_module_id =							\
+			&module_id_in_section - (uint8_t *)__start_config_channel_modules;	\
 		static uint8_t cur_opt_descr;							\
 												\
 		if (is_config_event(eh)) {							\
 			struct config_event *event = cast_config_event(eh);			\
 												\
-			if ((MOD_FIELD_GET(event->id) == MODULE_BROADCAST) &&			\
-			    (OPT_FIELD_GET(event->id) == BROADCAST_OPT_MAX_MOD_ID)) {		\
-				config_module_id = event->dyndata.data[0];			\
-				__ASSERT(config_module_id < MODULE_BROADCAST,			\
-					 "You can use up to 15 configuration modules");		\
-				event->dyndata.data[0]++;					\
-			} else if (MOD_FIELD_GET(event->id) == config_module_id) {		\
+			if (MOD_FIELD_GET(event->id) == config_module_id) {			\
 				__ASSERT_NO_MSG(config_set_fn != NULL); 			\
 				(*config_set_fn)(OPT_ID_GET(OPT_FIELD_GET(event->id)),		\
 						 event->dyndata.data,				\
@@ -177,9 +177,15 @@ EVENT_TYPE_DECLARE(config_forwarded_event);
 			if ((MOD_FIELD_GET(event->id) == MODULE_BROADCAST) &&			\
 			    (OPT_FIELD_GET(event->id) == BROADCAST_OPT_MAX_MOD_ID)) {		\
 				cur_opt_descr = 0;						\
-				if (last) {							\
-					data_buf[0] = config_module_id;				\
-					data_size = (sizeof(config_module_id));			\
+				if (is_info) {							\
+					size_t max_mod_id =					\
+						(uint8_t *)__stop_config_channel_modules - 1 -	\
+						(uint8_t *)__start_config_channel_modules;	\
+												\
+					__ASSERT(max_mod_id < MODULE_BROADCAST,			\
+						 "You can have up to 15 configurable modules"); \
+					data_buf[0] = (uint8_t)max_mod_id;			\
+					data_size = (sizeof(uint8_t));				\
 				}								\
 			} else if (MOD_FIELD_GET(event->id) == config_module_id) {		\
 				if (OPT_FIELD_GET(event->id) == MODULE_OPT_MODULE_DESCR) {	\
