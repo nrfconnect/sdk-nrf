@@ -68,6 +68,17 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_CSCON_RRC_MODE_INDEX			1
 #define AT_CSCON_READ_RRC_MODE_INDEX		2
 
+#define SYS_MODE_PREFERRED \
+	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)	? \
+		LTE_LC_SYSTEM_MODE_LTEM			: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)	? \
+		LTE_LC_SYSTEM_MODE_NBIOT		: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)	? \
+		LTE_LC_SYSTEM_MODE_LTEM_GPS		: \
+	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)	? \
+		LTE_LC_SYSTEM_MODE_NBIOT_GPS		: \
+	LTE_LC_SYSTEM_MODE_NONE)
+
 /* Forward declarations */
 static int parse_nw_reg_status(const char *at_response,
 			       enum lte_lc_nw_reg_status *status,
@@ -125,16 +136,15 @@ static const char offline[] = "AT+CFUN=4";
 /* Enable CSCON (RRC mode) notifications */
 static const char cscon[] = "AT+CSCON=1";
 
-static const enum lte_lc_system_mode sys_mode_preferred =
-	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)	?
-		LTE_LC_SYSTEM_MODE_LTEM			:
-	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT)	?
-		LTE_LC_SYSTEM_MODE_NBIOT		:
-	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS)	?
-		LTE_LC_SYSTEM_MODE_LTEM_GPS		:
-	IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NBIOT_GPS)	?
-		LTE_LC_SYSTEM_MODE_NBIOT_GPS		:
-	LTE_LC_SYSTEM_MODE_NONE;
+static const enum lte_lc_system_mode sys_mode_preferred = SYS_MODE_PREFERRED;
+
+/* System mode to use when connecting to LTE network, which can be changed in
+ * two ways:
+ *	- Automatically to fallback mode (if enabled) when connection to the
+ *	  preferred mode is unsuccessful and times out.
+ *	- By calling lte_lc_system_mode_set() and set the mode explicitly.
+ */
+static enum lte_lc_system_mode sys_mode_target = SYS_MODE_PREFERRED;
 
 static const enum lte_lc_system_mode sys_mode_fallback =
 #if IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK)
@@ -148,6 +158,8 @@ static const enum lte_lc_system_mode sys_mode_fallback =
 		LTE_LC_SYSTEM_MODE_LTEM_GPS		:
 #endif
 	LTE_LC_SYSTEM_MODE_NONE;
+
+static enum lte_lc_system_mode sys_mode_current = LTE_LC_SYSTEM_MODE_NONE;
 
 /* Parameters to be passed when using AT%XSYSTEMMMODE=<params> */
 static const char *const system_mode_params[] = {
@@ -316,7 +328,8 @@ static void at_handler(void *context, const char *response)
 
 	switch (notif_type) {
 	case LTE_LC_NOTIF_CEREG: {
-		static enum lte_lc_nw_reg_status prev_reg_status;
+		static enum lte_lc_nw_reg_status prev_reg_status =
+			LTE_LC_NW_REG_NOT_REGISTERED;
 		static struct lte_lc_cell prev_cell;
 		static struct lte_lc_psm_cfg prev_psm_cfg;
 		enum lte_lc_nw_reg_status reg_status = 0;
@@ -498,16 +511,27 @@ static int w_lte_lc_init(void)
 		return -EALREADY;
 	}
 
+	err = lte_lc_system_mode_get(&sys_mode_current);
+	if (err) {
+		LOG_ERR("Could not get current system mode, error: %d", err);
+		return err;
+	}
+
 	err = at_notif_register_handler(NULL, at_handler);
 	if (err) {
 		LOG_ERR("Can't register AT handler, error: %d", err);
 		return err;
 	}
 
-	err = lte_lc_system_mode_set(sys_mode_preferred);
-	if (err) {
-		LOG_ERR("Could not set system mode, error: %d", err);
-		return err;
+	if (sys_mode_current != sys_mode_target) {
+		err = lte_lc_system_mode_set(sys_mode_target);
+		if (err) {
+			LOG_ERR("Could not set system mode, error: %d", err);
+			return err;
+		}
+	} else {
+		LOG_DBG("Preferred system mode (%d) is already configured",
+			sys_mode_current);
 	}
 
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM) && \
@@ -609,7 +633,6 @@ static int w_lte_lc_init(void)
 static int w_lte_lc_connect(bool blocking)
 {
 	int err;
-	enum lte_lc_system_mode current_network_mode = sys_mode_preferred;
 	bool retry;
 
 	if (!is_initialized) {
@@ -622,7 +645,7 @@ static int w_lte_lc_connect(bool blocking)
 	do {
 		retry = false;
 
-		err = lte_lc_system_mode_set(current_network_mode);
+		err = lte_lc_system_mode_set(sys_mode_target);
 		if (err) {
 			return err;
 		}
@@ -637,8 +660,8 @@ static int w_lte_lc_connect(bool blocking)
 			LOG_INF("Network connection attempt timed out");
 
 			if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) &&
-			    (current_network_mode == sys_mode_preferred)) {
-				current_network_mode = sys_mode_fallback;
+			    (sys_mode_target == sys_mode_preferred)) {
+				sys_mode_target = sys_mode_fallback;
 				retry = true;
 
 				err = lte_lc_offline();
@@ -868,14 +891,8 @@ int lte_lc_edrx_param_set(const char *edrx)
 int lte_lc_edrx_req(bool enable)
 {
 	int err, actt;
-	enum lte_lc_system_mode mode;
 
-	err = lte_lc_system_mode_get(&mode);
-	if (err) {
-		return err;
-	}
-
-	switch (mode) {
+	switch (sys_mode_current) {
 	case LTE_LC_SYSTEM_MODE_LTEM:
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 		actt = AT_CEDRXS_ACTT_WB;
@@ -1113,16 +1130,7 @@ clean_exit:
  */
 static int get_ptw_multiplier(float *ptw_multiplier)
 {
-	int err;
-	enum lte_lc_system_mode sys_mode;
-
-	err = lte_lc_system_mode_get(&sys_mode);
-	if (err) {
-		LOG_ERR("Failed to get system mode, error: %d", err);
-		return err;
-	}
-
-	switch (sys_mode) {
+	switch (sys_mode_current) {
 	case LTE_LC_SYSTEM_MODE_LTEM: /* Fall through */
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 		*ptw_multiplier = 1.28;
@@ -1143,8 +1151,6 @@ static int get_ptw_multiplier(float *ptw_multiplier)
 
 static int get_edrx_value(uint8_t idx, float *edrx_value)
 {
-	int err;
-	enum lte_lc_system_mode sys_mode;
 	uint16_t multiplier = 0;
 
 	/* Lookup table to eDRX multiplier values, based on T_eDRX values found
@@ -1163,13 +1169,7 @@ static int get_edrx_value(uint8_t idx, float *edrx_value)
 		return -EINVAL;
 	}
 
-	err = lte_lc_system_mode_get(&sys_mode);
-	if (err) {
-		LOG_ERR("Failed to get system mode, error: %d", err);
-		return err;
-	}
-
-	switch (sys_mode) {
+	switch (sys_mode_current) {
 	case LTE_LC_SYSTEM_MODE_LTEM: /* Fall through */
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 		multiplier = edrx_lookup_ltem[idx];
@@ -1187,7 +1187,7 @@ static int get_edrx_value(uint8_t idx, float *edrx_value)
 
 	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
 
-	return err;
+	return 0;
 }
 
 /**@brief Parses an AT command response, and returns the current eDRX settings.
@@ -1367,6 +1367,9 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode)
 		LOG_ERR("Could not send AT command, error: %d", err);
 	}
 
+	sys_mode_current = mode;
+	sys_mode_target = mode;
+
 	return err;
 }
 
@@ -1461,7 +1464,13 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
 	default:
 		LOG_ERR("Invalid system mode, assuming parsing error");
 		err = -EFAULT;
-		break;
+		goto clean_exit;
+	}
+
+	if (sys_mode_current != *mode) {
+		LOG_DBG("Current system mode updated from %d to %d",
+			sys_mode_current, *mode);
+		sys_mode_current = *mode;
 	}
 
 clean_exit:
