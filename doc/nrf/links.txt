@@ -97,6 +97,8 @@
 
 .. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
 
+.. _`DFU over Zigbee`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_zigbee.html
+
 .. ### Links to the Nordic website
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
