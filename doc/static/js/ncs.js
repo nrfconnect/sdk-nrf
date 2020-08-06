@@ -19,8 +19,6 @@ function NCS () {
     }
 
     this.url_root = window.location.protocol + "//" + host + this.url_prefix;
-    this.url_suffix = "/nrf/index.html";
-    this.in_dev_url = this.url_root + "latest" + this.url_suffix;
     this.version_data_url = this.url_root + "latest" + "/versions.json";
   };
 
@@ -38,7 +36,29 @@ function NCS () {
   };
 
   /*
-   * This updates the list of versions displayed below the current version.
+   * Infer the current page being browsed, stripped from any fixed and
+   * versioned prefix; it'll be used to jump to the same page in another
+   * docset version.
+   */
+  state.findCurrentPage = function() {
+    const path = window.location.pathname;
+    const version_prefix = window.NCS.current_version + "/";
+    if (path.startsWith(this.url_prefix)) {
+      const prefix_len = this.url_prefix.length;
+      let new_page = path.slice(prefix_len);
+      if (new_page.startsWith(version_prefix)) {
+        new_page = new_page.slice(version_prefix.length);
+      }
+      window.NCS.current_page = new_page;
+    } else {
+      window.NCS.current_page = "nrf/index.html";
+    }
+  };
+
+  /*
+   * Updates the dropbox of nRF Connect SDK versions displayed below the
+   * current development version, and links to the same page currently being
+   * browsed in those earlier releases.
    */
   state.updateVersionDropDown = function() {
     const ncs = window.NCS;
@@ -59,8 +79,8 @@ function NCS () {
     let links = '';
     $.each(versions, function(_, v) {
       if (v !== ncs.current_version) {
-        links += "<li><a href=" + ncs.url_root + v + ncs.url_suffix + ">" +
-                  v + "</a></li>";
+        links += "<li><a href=" + ncs.url_root + v + "/" + ncs.current_page +
+          ">" + v + "</a></li>";
       }
     });
 
@@ -81,15 +101,17 @@ function NCS () {
   state.showVersion = function() {
     const ncs = window.NCS;
     const VERSIONS = ncs.versions.VERSIONS;
-    const latest_release_url = ncs.url_root + VERSIONS[1] + ncs.url_suffix;
+    const path_suffix = "/" +  ncs.current_page;
+    const last_release_url = ncs.url_root + VERSIONS[1] + path_suffix;
+    const latest_release_url = ncs.url_root + "latest" + path_suffix;
 
     const OLD_RELEASE_MSG =
       "You are looking at an older version of the documentation. You might " +
       "want to switch to the documentation for the <a href='" +
-      latest_release_url + "'>" + VERSIONS[1] + "</a> release or the " +
-      "<a href='" + ncs.in_dev_url + "'>current state of development</a>.";
+      last_release_url + "'>" + VERSIONS[1] + "</a> release or the " +
+      "<a href='" + latest_release_url + "'>current state of development</a>.";
 
-    const LATEST_RELEASE_MSG =
+    const LAST_RELEASE_MSG =
       "You are looking at the documentation for the last official release.";
 
     if ($("#version_status").length === 0) {
@@ -102,7 +124,7 @@ function NCS () {
       $("div#version_status").hide();
       break;
     case VERSIONS[1]:
-      $("div#version_status").html(LATEST_RELEASE_MSG);
+      $("div#version_status").html(LAST_RELEASE_MSG);
       break;
     default:
       $("div#version_status").html(OLD_RELEASE_MSG);
@@ -147,6 +169,7 @@ function NCS () {
   state.updatePage = function() {
     let ncs = window.NCS;
     ncs.findCurrentVersion();
+    ncs.findCurrentPage();
     ncs.updateVersionDropDown();
     ncs.showVersion();
     ncs.updateDocsetVersions();
