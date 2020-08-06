@@ -13,6 +13,9 @@
 /* Aliases for zephyr - mcuboot/ncs style naming */
 #define image_0 mcuboot_primary
 #define image_1 mcuboot_secondary
+#define image_0_nonsecure mcuboot_primary
+#define image_1_nonsecure mcuboot_secondary
+#define image_scratch mcuboot_scratch
 
 #if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS)
 #define storage settings_storage
