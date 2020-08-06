@@ -16,3 +16,7 @@ For information on how to use the supplied libraries, see :ref:`ug_zigbee_config
    :glob:
 
    zigbee/lib_zigbee_signal_handler
+<<<<<<< HEAD
+=======
+   zigbee/lib_zigbee_dfu_ota
+>>>>>>> doc: add documentation for zigbee dfu
