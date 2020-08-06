@@ -254,8 +254,6 @@ static void work_init(void)
 
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
-	int err;
-
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:
 		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
@@ -267,10 +265,6 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
 
-		err = lte_lc_psm_req(true);
-		if (err) {
-			printk("PSM request failed, error: %d", err);
-		}
 		k_sem_give(&lte_connected);
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
