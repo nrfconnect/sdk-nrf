@@ -27,7 +27,7 @@ To use the Thread protocol in |NCS|, set the following Kconfig options:
 * General setting options related to network configuration:
 
   * :option:`CONFIG_NETWORKING`
-  * :option:`CONFIG_NET_SOCKETS` - This option can be omitted if OpenThread is meant to work only in the NCP architecture.
+  * :option:`CONFIG_NET_SOCKETS` - This option can be omitted if OpenThread is meant to work only in the :ref:`thread_architectures_designs_cp_ncp` architecture.
 
 Optional configuration
 **********************
@@ -136,3 +136,43 @@ By default, when a Thread device is configured as MTD, it operates as Minimal En
 You can choose to make it operate as Sleepy End Device (SED) by enabling the :option:`CONFIG_OPENTHREAD_MTD_SED` option.
 
 For more information, see `Device Types on OpenThread portal`_.
+
+UART recommendations for NCP
+****************************
+
+Use the following recommended default UART settings for configuration based on :ref:`thread_architectures_designs_cp_ncp` architecture:
+
+* Bit rate: 1000000
+* Start bits: 1
+* Data bits: 8
+* Stop bits: 1
+* No parity
+* Flow Control: Hardware
+
+Flow control
+============
+
+UART Hardware Flow Control is recommended in the Nordic solution.
+Using Software Flow Control is neither recommended nor implemented.
+
+Hardware reset
+==============
+
+Use the Arduino-style hardware reset, where the DTR signal is coupled to the RES pin through a 0.01[micro]F capacitor.
+This causes the NCP to automatically reset whenever the serial port is opened.
+
+.. note::
+    This hardware reset method is not used in Nordic's solution.
+    It is recommended to dedicate one of your host pins to control the RES pin on the NCP, so that you can easily perform a hardware reset if necessary.
+
+Recommended UART signals
+========================
+
+The following UART signals are used in the Nordic solution:
+
+* RX
+* TX
+* CTS
+* RTS
+* DTS (optional, not used)
+* RES
