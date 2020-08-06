@@ -149,6 +149,8 @@ static const enum lte_lc_system_mode sys_mode_fallback =
 #endif
 	LTE_LC_SYSTEM_MODE_NONE;
 
+static enum lte_lc_system_mode current_system_mode;
+
 /* Parameters to be passed when using AT%XSYSTEMMMODE=<params> */
 static const char *const system_mode_params[] = {
 	[LTE_LC_SYSTEM_MODE_LTEM]	= "1,0,0,0",
@@ -510,6 +512,8 @@ static int w_lte_lc_init(void)
 		return err;
 	}
 
+	current_system_mode = sys_mode_preferred;
+
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM) && \
 	(defined(CONFIG_BOARD_THINGY91_NRF9160NS) || \
 	 defined(CONFIG_BOARD_NRF9160_PCA10090NS))
@@ -609,7 +613,6 @@ static int w_lte_lc_init(void)
 static int w_lte_lc_connect(bool blocking)
 {
 	int err;
-	enum lte_lc_system_mode current_network_mode = sys_mode_preferred;
 	bool retry;
 
 	if (!is_initialized) {
@@ -622,7 +625,7 @@ static int w_lte_lc_connect(bool blocking)
 	do {
 		retry = false;
 
-		err = lte_lc_system_mode_set(current_network_mode);
+		err = lte_lc_system_mode_set(current_system_mode);
 		if (err) {
 			return err;
 		}
@@ -637,8 +640,8 @@ static int w_lte_lc_connect(bool blocking)
 			LOG_INF("Network connection attempt timed out");
 
 			if (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) &&
-			    (current_network_mode == sys_mode_preferred)) {
-				current_network_mode = sys_mode_fallback;
+			    (current_system_mode == sys_mode_preferred)) {
+				current_system_mode = sys_mode_fallback;
 				retry = true;
 
 				err = lte_lc_offline();
@@ -868,14 +871,8 @@ int lte_lc_edrx_param_set(const char *edrx)
 int lte_lc_edrx_req(bool enable)
 {
 	int err, actt;
-	enum lte_lc_system_mode mode;
 
-	err = lte_lc_system_mode_get(&mode);
-	if (err) {
-		return err;
-	}
-
-	switch (mode) {
+	switch (current_system_mode) {
 	case LTE_LC_SYSTEM_MODE_LTEM:
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 		actt = AT_CEDRXS_ACTT_WB;
@@ -1113,16 +1110,7 @@ clean_exit:
  */
 static int get_ptw_multiplier(float *ptw_multiplier)
 {
-	int err;
-	enum lte_lc_system_mode sys_mode;
-
-	err = lte_lc_system_mode_get(&sys_mode);
-	if (err) {
-		LOG_ERR("Failed to get system mode, error: %d", err);
-		return err;
-	}
-
-	switch (sys_mode) {
+	switch (current_system_mode) {
 	case LTE_LC_SYSTEM_MODE_LTEM: /* Fall through */
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 		*ptw_multiplier = 1.28;
@@ -1143,8 +1131,6 @@ static int get_ptw_multiplier(float *ptw_multiplier)
 
 static int get_edrx_value(uint8_t idx, float *edrx_value)
 {
-	int err;
-	enum lte_lc_system_mode sys_mode;
 	uint16_t multiplier = 0;
 
 	/* Lookup table to eDRX multiplier values, based on T_eDRX values found
@@ -1163,13 +1149,7 @@ static int get_edrx_value(uint8_t idx, float *edrx_value)
 		return -EINVAL;
 	}
 
-	err = lte_lc_system_mode_get(&sys_mode);
-	if (err) {
-		LOG_ERR("Failed to get system mode, error: %d", err);
-		return err;
-	}
-
-	switch (sys_mode) {
+	switch (current_system_mode) {
 	case LTE_LC_SYSTEM_MODE_LTEM: /* Fall through */
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
 		multiplier = edrx_lookup_ltem[idx];
@@ -1187,7 +1167,7 @@ static int get_edrx_value(uint8_t idx, float *edrx_value)
 
 	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
 
-	return err;
+	return 0;
 }
 
 /**@brief Parses an AT command response, and returns the current eDRX settings.
@@ -1461,7 +1441,11 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode)
 	default:
 		LOG_ERR("Invalid system mode, assuming parsing error");
 		err = -EFAULT;
-		break;
+		goto clean_exit;
+	}
+
+	if (current_system_mode != *mode) {
+		current_system_mode = *mode;
 	}
 
 clean_exit:
