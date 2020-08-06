@@ -108,15 +108,16 @@ class NrfHidDevice():
 
         for d in devs:
             if self.dev_ptr is None:
-                board_name, hwid = NrfHidDevice._discover_device_info(d, pid)
+                config = NrfHidDevice._discover_device_config(d, pid)
 
-                if board_name is not None:
-                    config = NrfHidDevice._discover_device_config(d, pid)
+                if config is not None:
+                    board_name, hwid = NrfHidDevice._discover_device_info(d, pid, config)
                 else:
-                    config = None
+                    board_name = None
+                    hwid = None
 
-                if (config is not None) and \
-                   ((req_hwid is None) or (req_hwid == hwid)):
+                if (config is not None) and (board_name is not None) and \
+                   (hwid is not None) and ((req_hwid is None) or (req_hwid == hwid)):
                     self.dev_config = config
                     self.dev_ptr = d
                     self.board_name = board_name
@@ -244,13 +245,6 @@ class NrfHidDevice():
     def _fetch_max_mod_id(dev, recipient):
         event_id = (MOD_BROADCAST << MOD_FIELD_POS) | \
                    (OPT_BROADCAST_MAX_MOD_ID << OPT_FIELD_POS)
-        event_data = struct.pack('<B', 0)
-
-        success = NrfHidDevice._exchange_feature_report(dev, recipient,
-                                                        event_id, event_data,
-                                                        False)
-        if not success:
-            return False, None
 
         success, fetched_data = NrfHidDevice._exchange_feature_report(dev, recipient,
                                                                       event_id, None,
@@ -336,32 +330,36 @@ class NrfHidDevice():
         return device_config
 
     @staticmethod
-    def _discover_device_info(dev, recipient):
-        success, max_mod_id = NrfHidDevice._fetch_max_mod_id(dev, recipient)
-        if not success:
-            return None
+    def _discover_device_info(dev, recipient, dev_cfg):
+        INFO_MODULE_NAME = 'info'
 
-        # Module with the highest index contains information about board name.
-        # Discover only this module to reduce discovery time.
-        module_name, module_config = NrfHidDevice._discover_module_config(dev,
-                                                                          recipient,
-                                                                          max_mod_id)
-        if (module_name is None) or (module_config is None):
-            return None
+        try:
+            event_id = NrfHidDevice._get_event_id(INFO_MODULE_NAME, 'board_name', dev_cfg)
+        except KeyError:
+            print('Cannot get board_name (recipient: {})'.format(recipient))
+            return None, None
 
-        dev_cfg = {module_name : module_config}
-
-        event_id = NrfHidDevice._get_event_id(module_name, 'board_name', dev_cfg)
         success, fetched_data = NrfHidDevice._exchange_feature_report(dev, recipient,
                                                                       event_id, None,
                                                                       True)
-        board_name = fetched_data.decode('utf-8').replace(chr(0x00), '')
+        if success:
+            board_name = fetched_data.decode('utf-8').replace(chr(0x00), '')
+        else:
+            return None, None
 
-        event_id = NrfHidDevice._get_event_id(module_name, 'hwid', dev_cfg)
+        try:
+            event_id = NrfHidDevice._get_event_id(INFO_MODULE_NAME, 'hwid', dev_cfg)
+        except KeyError:
+            print('Cannot get hwid (recipient: {})'.format(recipient))
+            return None, None
+
         success, fetched_data = NrfHidDevice._exchange_feature_report(dev, recipient,
                                                                       event_id, None,
                                                                       True)
-        hwid = fetched_data.hex()
+        if success:
+            hwid = fetched_data.hex()
+        else:
+            return None, None
 
         return board_name, hwid
 
