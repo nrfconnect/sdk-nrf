@@ -18,12 +18,16 @@
 
 #include "nrf_rpc.h"
 
+void bt_ready_cb(int err)
+{
+	printk("BT READY: %d\n", err);
+}
 
 void main(void)
 {
 	int err;
 
-	err = bt_enable(NULL);
+	err = bt_enable(bt_ready_cb);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;

@@ -10,6 +10,10 @@ enum {
 	BT_ENABLE_RPC_CMD,
 };
 
+enum {
+	BT_READY_CB_T_ENCODER_RPC_EVT,
+};
+
 
 NRF_RPC_GROUP_DECLARE(bt_rpc_grp);
 

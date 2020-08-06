@@ -29,7 +29,7 @@
 
 void main(void)
 {
-	printk("Starting nRF PRC host\n");
+	printk("Starting nRF PRC bluetooth host\n");
 }
 
 static void err_handler(const struct nrf_rpc_err_report *report)

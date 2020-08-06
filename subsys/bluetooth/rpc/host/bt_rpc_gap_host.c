@@ -15,10 +15,26 @@ void report_decoding_error(uint8_t cmd_evt_id, void* DATA) {
 }
 
 
-void bt_ready_cb(int err)
+
+
+void bt_ready_cb_t_encoder(ser_callback_slot_t callback_slot, uint32_t _rsv1,
+			   uint64_t _rsv2, int err)
 {
-	printk("BT READY: %d\n", err);
+	SERIALIZE(CALLBACK(bt_ready_cb_t));
+	SERIALIZE(EVENT);
+
+	struct nrf_rpc_cbor_ctx _ctx;                                            /*####%AZLc*/
+	size_t _buffer_size_max = 8;                                             /*#####@cfw*/
+
+	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*##AvrU03s*/
+
+	ser_encode_callback_slot(&_ctx.encoder, callback_slot);                  /*####%A4zG*/
+	ser_encode_int(&_ctx.encoder, err);                                      /*#####@fek*/
+
+	nrf_rpc_cbor_evt_no_err(&bt_rpc_grp,                                     /*####%BFUY*/
+		BT_READY_CB_T_ENCODER_RPC_EVT, &_ctx);                           /*#####@XCE*/
 }
+
 
 
 static void bt_enable_rpc_handler(CborValue *_value, void *_handler_data)        /*####%Bims*/
@@ -27,7 +43,7 @@ static void bt_enable_rpc_handler(CborValue *_value, void *_handler_data)       
 	bt_ready_cb_t cb;                                                        /*####%AX3q*/
 	int _result;                                                             /*#####@ImM*/
 
-	cb = bt_ready_cb;  /*##Ctv5nEY*/
+	cb = (bt_ready_cb_t)ser_decode_callback(_value, bt_ready_cb_t_encoder);  /*##Ctv5nEY*/
 
 	if (!ser_decoding_done_and_check(_value)) {                              /*######%AE*/
 		goto decoding_error;                                             /*######QTM*/

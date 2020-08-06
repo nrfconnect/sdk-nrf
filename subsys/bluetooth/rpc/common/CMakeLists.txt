@@ -8,3 +8,4 @@ zephyr_include_directories(include)
 
 zephyr_sources(bt_rpc_common.c)
 zephyr_sources(serialize.c)
+zephyr_sources(cbkproxy.c)
