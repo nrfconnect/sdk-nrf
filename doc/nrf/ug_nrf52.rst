@@ -88,7 +88,7 @@ The |NCS| Bluetooth stack is fully supported by Nordic Semiconductor for nRF52 S
 The :ref:`ug_ble_controller` user guide contains more information about the two available Bluetooth LE Controllers and instructions for switching between them.
 
 See :ref:`zephyr:bluetooth` for documentation on the Bluetooth Host and open source LE Controller.
-For documentation about the nRF Bluetooth LE Controller and information on what variants of the controller support which chips, see :ref:`nrfxlib:ble_controller`.
+For documentation about the SoftDevice Controller and information on what variants of the controller support which chips, see :ref:`nrfxlib:softdevice_controller`.
 
 The |NCS| contains a variety of :ref:`ble_samples` that target nRF52 Series devices.
 In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included from Zephyr.

@@ -162,7 +162,7 @@ nRF BLE Controller
 ==================
 
 * Added support for the nRF BLE controller 0.2.0-4.prealpha. Includes drivers to access HCI, flash, clock control, and entropy hardware.
-  For details, see :ref:`nrfxlib:ble_controller_changelog`.
+  For details, see :ref:`nrfxlib:softdevice_controller_changelog`.
 
 Subsystems
 ==========
