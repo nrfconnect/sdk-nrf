@@ -46,7 +46,9 @@ set(NRF_BOOTLOADER_SCRIPTS ${NRF_SCRIPTS}/bootloader)
 set(PROVISION_HEX_NAME     provision.hex)
 set(PROVISION_HEX          ${PROJECT_BINARY_DIR}/${PROVISION_HEX_NAME})
 
-if (CONFIG_SB_VALIDATE_FW_SIGNATURE)
+# Skip signing if MCUBoot is to be booted and its not built from source
+if (CONFIG_SB_VALIDATE_FW_SIGNATURE AND
+    NOT (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE))
   include(${CMAKE_CURRENT_LIST_DIR}/../cmake/debug_keys.cmake)
   include(${CMAKE_CURRENT_LIST_DIR}/../cmake/sign.cmake)
 
