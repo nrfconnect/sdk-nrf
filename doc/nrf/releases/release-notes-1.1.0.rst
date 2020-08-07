@@ -328,8 +328,8 @@ Updated libraries
 nRF BLE Controller
 ==================
 
-* Updated the :ref:`nrfxlib:ble_controller` to v0.3.0-3.prealpha.
-  For details, see the :ref:`nrfxlib:ble_controller_changelog`.
+* Updated the :ref:`nrfxlib:softdevice_controller` to v0.3.0-3.prealpha.
+  For details, see the :ref:`nrfxlib:softdevice_controller_changelog`.
 
 * Improved the default static memory pool allocation.
   The controller now determines its static memory pool size based on the maximum Link Layer packet length.
@@ -478,7 +478,7 @@ Documentation
   * :ref:`ug_bootloader`
   * :ref:`dev-model`
   * :ref:`ug_nrf9160`
-  * :ref:`nrfxlib:ble_controller`
+  * :ref:`nrfxlib:softdevice_controller`
   * :ref:`nrfxlib:bsdlib`
   * :ref:`nrfxlib:nrf_cc310_platform_readme`
   * :ref:`nrf_security_readme`
@@ -511,7 +511,7 @@ Bluetooth Low Energy
 --------------------
 
 * :option:`CONFIG_BT_HCI_TX_STACK_SIZE` must be set to 1536 when selecting :option:`CONFIG_BT_LL_NRFXLIB`.
-* The :ref:`nrfxlib:ble_controller` 0.3.0-3.prealpha might assert when receiving a packet with an CRC error on LE Coded PHY after performing a DLE procedure where RX Octets is changed to a value above 140.
+* The :ref:`nrfxlib:softdevice_controller` 0.3.0-3.prealpha might assert when receiving a packet with an CRC error on LE Coded PHY after performing a DLE procedure where RX Octets is changed to a value above 140.
 * :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` must be set to 2048 when selecting :option:`CONFIG_BT_LL_NRFXLIB` on :ref:`central_uart` and :ref:`central_bas`.
 * :option:`CONFIG_NFCT_IRQ_PRIORITY` must be set to 5 or less when selecting :option:`CONFIG_BT_LL_NRFXLIB` on :ref:`peripheral_hids_keyboard`.
 * When selecting :option:`CONFIG_BT_LL_NRFXLIB`:

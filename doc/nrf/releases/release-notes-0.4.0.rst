@@ -229,7 +229,7 @@ Bluetooth Low Energy
 * :ref:`peripheral_lbs` does not report the Button 1 state correctly.
 * The central samples (:ref:`central_uart`, :ref:`bluetooth_central_hids`) do not support any pairing methods with MITM protection.
 * The :ref:`gatt_dm_readme` is not supported on nRF51 devices.
-* Bluetooth LE samples cannot be built with the :ref:`nrfxlib:ble_controller` v0.1.0.
+* Bluetooth LE samples cannot be built with the :ref:`nrfxlib:softdevice_controller` v0.1.0.
 
 Bootloader
 ----------

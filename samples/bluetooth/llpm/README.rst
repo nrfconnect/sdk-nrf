@@ -80,7 +80,7 @@ Requirements
   * |nRF52840DK|
   * |nRF52DK|
   * |nRF5340DK|
-  * Other boards running BLE Controller variants that support LLPM (see :ref:`nrfxlib:ble_controller` Proprietary feature support)
+  * Other boards running BLE Controller variants that support LLPM (see :ref:`nrfxlib:softdevice_controller` Proprietary feature support)
 
   You can mix different boards.
 * Connection to a computer with a serial terminal for each of the boards.
@@ -265,7 +265,7 @@ This sample uses the following |NCS| libraries:
 
 This sample uses the following `nrfxlib`_ libraries:
 
-* :ref:`nrfxlib:ble_controller`
+* :ref:`nrfxlib:softdevice_controller`
 
 In addition, it uses the following Zephyr libraries:
 

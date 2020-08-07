@@ -23,7 +23,7 @@ See `Usage in samples`_ for more information.
 nRF Bluetooth LE Controller
 ***************************
 
-The :ref:`nRF Bluetooth LE Controller <nrfxlib:ble_controller>` is designed for nRF52 and nRF53 Series devices.
+The :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>` is designed for nRF52 and nRF53 Series devices.
 It provides the same implementation of the Link Layer that is available as part of Nordic Semiconductor's SoftDevices.
 The nRF Bluetooth LE Controller is developed, tested, and supported by Nordic Semiconductor.
 
@@ -31,8 +31,8 @@ The nRF Bluetooth LE Controller is distributed as a set of precompiled, linkable
 There are different variants of the libraries that support different feature sets.
 Which variant you should choose depends on the chip that you are using, the features that you need, and the amount of available memory.
 
-Nordic's Bluetooth LE Controller supports an extensive standard feature set from the Bluetooth 5.2 specification and a number of extensions for high-performance applications like Low Latency Packet mode (LLPM).
-See the :ref:`nRF Bluetooth LE Controller documentation <nrfxlib:ble_controller>` for a detailed list of supported features.
+Nordic's SoftDevice Controller supports an extensive standard feature set from the Bluetooth 5.2 specification and a number of extensions for high-performance applications like Low Latency Packet mode (LLPM).
+See the :ref:`SoftDevice Controller documentation <nrfxlib:softdevice_controller>` for a detailed list of supported features.
 
 
 Zephyr Bluetooth LE Controller

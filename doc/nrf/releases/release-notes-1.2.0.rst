@@ -290,7 +290,7 @@ Crypto
 nRF Bluetooth LE Controller
 ===========================
 
-* Updated the :ref:`nrfxlib:ble_controller` libraries:
+* Updated the :ref:`nrfxlib:softdevice_controller` libraries:
 
   * Removed version numbers for the libraries.
   * Added preliminary support for the S140 variant with the nRF5340 device.
@@ -300,7 +300,7 @@ nRF Bluetooth LE Controller
   * Made Data Length Extensions a configurable feature.
   * Fixed an issue where an assert could occur when receiving a packet with a CRC error after performing a data length procedure on Coded PHY.
 
-  For details, see the :ref:`nrfxlib:ble_controller_changelog`.
+  For details, see the :ref:`nrfxlib:softdevice_controller_changelog`.
 
 Multi-Protocol Service Layer (MPSL)
 ===================================
@@ -516,7 +516,7 @@ Documentation
 
     * :ref:`nrfxlib:bsdlib` - extended and restructured the content
     * :ref:`nrfxlib:mpsl` - added
-    * :ref:`nrfxlib:ble_controller_readme` - updated to match current version of the nRF Bluetooth LE Controller
+    * :ref:`nrfxlib:softdevice_controller_readme` - updated to match current version of the nRF Bluetooth LE Controller
 
 
 
@@ -547,7 +547,7 @@ Bluetooth Low Energy
 
 * Bluetooth LE cannot be used in a non-secure application, for example, an application built for the nrf5340_dk_nrf5340_cpuappns board.
   Use the nrf5340_dk_nrf5340_cpuapp board instead.
-* The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:ble_controller` because the NFC subsystem does not work with the controller library.
+* The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:softdevice_controller` because the NFC subsystem does not work with the controller library.
   The library uses the MPSL Clock driver, which does not provide an API for asynchronous clock operation.
   NFC requires this API to work correctly.
 * When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth LE Controller, directed advertising does not time out and the regular advertising cannot be started.

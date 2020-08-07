@@ -214,7 +214,7 @@ Bluetooth Low Energy
 nRF Bluetooth LE Controller
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the :ref:`nrfxlib:ble_controller_changelog` for detailed information.
+See the :ref:`nrfxlib:softdevice_controller_changelog` for detailed information.
 
 * Added feature to configure TX power per role/connection.
 
@@ -521,7 +521,7 @@ Bluetooth Low Energy
 Bluetooth Mesh
 --------------
 
-* On nRF5340, only the :ref:`nrfxlib:ble_controller` is supported for Bluetooth Mesh. (NCSDK-5580)
+* On nRF5340, only the :ref:`nrfxlib:softdevice_controller` is supported for Bluetooth Mesh. (NCSDK-5580)
 
 Common
 ======
@@ -580,7 +580,7 @@ nRF9160
 Bluetooth Low Energy
 ====================
 
-* The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:ble_controller` because the NFC subsystem does not work with the controller library.
+* The :ref:`peripheral_hids_keyboard` sample cannot be used with the :ref:`nrfxlib:softdevice_controller` because the NFC subsystem does not work with the controller library.
   The library uses the MPSL Clock driver, which does not provide an API for asynchronous clock operation.
   NFC requires this API to work correctly. (fixed)
 * When the :ref:`peripheral_hids_mouse` sample is used with the Zephyr Bluetooth LE Controller, directed advertising does not time out and the regular advertising cannot be started. (fixed)
