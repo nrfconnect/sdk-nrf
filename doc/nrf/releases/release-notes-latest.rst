@@ -24,11 +24,25 @@ The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repositor
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
+* Architectures:
+
+  * Fixed parsing of Cortex-M MemManage Stacking Errors to correctly report thread stack corruptions.
+
 * Kernel:
 
   * The ``CONFIG_KERNEL_DEBUG`` Kconfig option, which was used to enable ``printk()`` based debugging of the kernel internals, has been removed.
     The kernel now uses the standard Zephyr logging API at DBG log level for this purpose.
     The logging module used for the kernel is named ``os``.
+
+* Boards:
+
+  * Introduced a board definition for the nRF5340 DK.
+  * Added the netif capability for the :ref:`zephyr:nrf52840dk_nrf52840`.
+  * Listed GPIO as a supported feature in nRF-based board definitions.
+  * Modified I2C1 and SPI2 pin assignments in the :ref:`zephyr:nrf5340pdk_nrf5340` to match
+    the standard location for I2C and SPI in the Arduino header.
+  * Added nRF52820 nrfx defines for emulation on the :ref:`zephyr:nrf52833dk_nrf52833`.
+
 
 * Networking:
 
