@@ -8,6 +8,7 @@ import struct
 import time
 import logging
 from enum import IntEnum
+import codecs
 
 REPORT_ID = 6
 REPORT_SIZE = 30
@@ -128,6 +129,7 @@ class NrfHidTransport():
                 break
 
             (rsp_recipient, rsp_event_id, rsp_status, rsp_event_data) = rsp
+            rsp_status = ConfigStatus(rsp_status)
 
             if rsp_status == ConfigStatus.PENDING:
                 # Response was not ready
@@ -327,7 +329,8 @@ class NrfHidDevice():
                                                                         event_id, ConfigStatus.FETCH,
                                                                         None)
         if success:
-            hwid = fetched_data.hex()
+            hwid = codecs.encode(fetched_data, 'hex')
+            hwid = hwid.decode('utf-8')
         else:
             return None, None
 
