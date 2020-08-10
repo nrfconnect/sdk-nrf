@@ -150,7 +150,7 @@ Set used by samples (BH1749: Ambient Light Sensor IC)
 
 .. set10_end
 
-Set used by application (nRF Desktop- Gaming Mouse)
+Set used by application (nRF Desktop - Gaming Mouse)
 
 .. set11_start
 
@@ -162,7 +162,7 @@ Set used by application (nRF Desktop- Gaming Mouse)
 
 .. set11_end
 
-Set used by application (nRF Desktop - Mouse)
+Set used by application (nRF Desktop - Desktop Mouse)
 
 
 .. set12_start
