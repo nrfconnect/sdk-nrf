@@ -9,10 +9,10 @@ It implements the Link Layer, which is the low-level, real-time protocol that co
 
 The |NCS| contains two implementations of a Bluetooth LE Controller:
 
-* `nRF Bluetooth LE Controller`_
+* `SoftDevice Controller`_
 * `Zephyr Bluetooth LE Controller`_
 
-The nRF Bluetooth LE Controller is implemented by Nordic Semiconductor.
+The SoftDevice Controller is implemented by Nordic Semiconductor.
 The Zephyr Bluetooth LE Controller is an open source Link Layer developed in `Zephyr`_, to which Nordic Semiconductor is a contributor.
 
 Both Link Layers integrate with the Zephyr Bluetooth LE Host, which completes the full Bluetooth LE protocol stack solution in the |NCS|.
@@ -20,14 +20,14 @@ It is possible to select either Bluetooth LE Controller for application developm
 See `Usage in samples`_ for more information.
 
 
-nRF Bluetooth LE Controller
-***************************
+SoftDevice Controller
+*********************
 
 The :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>` is designed for nRF52 and nRF53 Series devices.
 It provides the same implementation of the Link Layer that is available as part of Nordic Semiconductor's SoftDevices.
-The nRF Bluetooth LE Controller is developed, tested, and supported by Nordic Semiconductor.
+The SoftDevice Controller is developed, tested, and supported by Nordic Semiconductor.
 
-The nRF Bluetooth LE Controller is distributed as a set of precompiled, linkable libraries that can be found in the `nrfxlib`_ repository.
+The SoftDevice Controller is distributed as a set of precompiled, linkable libraries that can be found in the `nrfxlib`_ repository.
 There are different variants of the libraries that support different feature sets.
 Which variant you should choose depends on the chip that you are using, the features that you need, and the amount of available memory.
 
@@ -52,7 +52,7 @@ Usage in samples
 ****************
 
 Most :ref:`Bluetooth LE samples <ble_samples>` in the |NCS| can use either Bluetooth LE Controller.
-An exception is the :ref:`ble_llpm` sample, which requires the nRF Bluetooth LE Controller that supports LLPM.
+An exception is the :ref:`ble_llpm` sample, which requires the SoftDevice Controller that supports LLPM.
 
 By default, all samples except for the :ref:`ble_llpm` sample are currently configured to use Zephyr's Bluetooth LE Controller.
-To use the nRF Bluetooth LE Controller instead, set :option:`CONFIG_BT_LL_NRFXLIB_DEFAULT` to ``y`` in the :file:`prj.conf` file (see :ref:`configure_application`) and make sure to build from a clean build directory.
+To use the SoftDevice Controller instead, set :option:`CONFIG_BT_LL_NRFXLIB_DEFAULT` to ``y`` in the :file:`prj.conf` file (see :ref:`configure_application`) and make sure to build from a clean build directory.

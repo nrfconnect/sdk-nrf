@@ -24,7 +24,7 @@ With regards to the nRF5340 samples, this means that the network core runs the r
 
 Currently, the |NCS| provides the following solutions for the network core:
 
-* :ref:`ug_ble_controller` (both the nRF Bluetooth LE Controller and the Zephyr Bluetooth LE Controller)
+* :ref:`ug_ble_controller` (both the SoftDevice Controller and the Zephyr Bluetooth LE Controller)
 * Samples that directly use the radio peripheral
 
 See `Network samples`_ for more information.
@@ -99,7 +99,7 @@ This Zephyr sample is designed specifically to enable the Bluetooth LE Controlle
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with a Bluetooth Host stack that runs on a separate core (for example, the nRF5340 application core).
 
 This sample must be programmed to the network core to run standard Bluetooth Low Energy samples on nRF5340.
-You can choose whether to use the nRF Bluetooth LE Controller or the Zephyr Bluetooth LE Controller for this sample.
+You can choose whether to use the SoftDevice Controller or the Zephyr Bluetooth LE Controller for this sample.
 See :ref:`ug_ble_controller` for more information.
 
 You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.

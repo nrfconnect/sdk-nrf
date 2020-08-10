@@ -23,7 +23,7 @@ LLPM connection interval (1 ms)
 Physical layer (PHY)
    Starting with Bluetooth 5, the over-the-air data rate in Bluetooth Low Energy supports 2 Ms/s (mega symbol per second), which allows for faster transmission.
    The LLPM connection interval is only supported on *LE 2M PHY*.
-   Otherwise, the BLE controller will deny the request command.
+   Otherwise, the SoftDevice Controller will deny the request command.
 
 QoS connection event reports
    When reports are enabled, one report will be generated on every connection event.
@@ -80,7 +80,7 @@ Requirements
   * |nRF52840DK|
   * |nRF52DK|
   * |nRF5340DK|
-  * Other boards running BLE Controller variants that support LLPM (see :ref:`nrfxlib:softdevice_controller` Proprietary feature support)
+  * Other boards running SoftDevice Controller variants that support LLPM (see :ref:`nrfxlib:softdevice_controller` Proprietary feature support)
 
   You can mix different boards.
 * Connection to a computer with a serial terminal for each of the boards.

@@ -136,7 +136,7 @@ The nrfx repository is included in the |NCS| as a module of the Zephyr repositor
 Multi-protocol support
 **********************
 
-The nRF52 Series devices support running another protocol in parallel with the nRF Bluetooth LE Controller.
+The nRF52 Series devices support running another protocol in parallel with the SoftDevice Controller.
 
 The :ref:`Multi-Protocol Service Layer (MPSL) <nrfxlib:mpsl>` library provides services for multi-protocol applications.
 
