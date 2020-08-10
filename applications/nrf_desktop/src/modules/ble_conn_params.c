@@ -9,7 +9,7 @@
 #include <bluetooth/gatt_dm.h>
 
 #ifdef CONFIG_BT_LL_NRFXLIB
-#include "ble_controller_hci_vs.h"
+#include "sdc_hci_vs.h"
 #endif /* CONFIG_BT_LL_NRFXLIB */
 
 #define MODULE ble_conn_params
@@ -62,7 +62,7 @@ static int set_conn_params(struct bt_conn *conn, uint16_t conn_latency,
 #ifdef CONFIG_DESKTOP_BLE_USE_LLPM
 	if (peer_llpm_support) {
 		struct net_buf *buf;
-		hci_vs_cmd_conn_update_t *cmd_conn_update;
+		sdc_hci_vs_cmd_conn_update_t *cmd_conn_update;
 		uint16_t conn_handle;
 
 		err = bt_hci_get_conn_handle(conn, &conn_handle);
@@ -71,7 +71,7 @@ static int set_conn_params(struct bt_conn *conn, uint16_t conn_latency,
 			return err;
 		}
 
-		buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
+		buf = bt_hci_cmd_create(SDC_HCI_VS_OPCODE_CMD_CONN_UPDATE,
 					sizeof(*cmd_conn_update));
 		if (!buf) {
 			LOG_ERR("Could not allocate command buffer");
@@ -84,7 +84,7 @@ static int set_conn_params(struct bt_conn *conn, uint16_t conn_latency,
 		cmd_conn_update->conn_latency        = conn_latency;
 		cmd_conn_update->supervision_timeout = CONN_SUPERVISION_TIMEOUT;
 
-		err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf,
+		err = bt_hci_cmd_send_sync(SDC_HCI_VS_OPCODE_CMD_CONN_UPDATE, buf,
 					   NULL);
 	} else
 #endif /* CONFIG_DESKTOP_BLE_USE_LLPM */

@@ -14,7 +14,7 @@
 
 #include <nrfx_nvmc.h>
 
-#include "ble_controller_soc.h"
+#include "sdc_soc.h"
 #include "multithreading_lock.h"
 
 #define SOC_NV_FLASH_NODE DT_NODELABEL(flash0)
@@ -212,7 +212,7 @@ static int flash_op_write(void)
 	    flash_state.len >= sizeof(uint32_t)) {
 		flash_state.prev_len = MIN(align_32(flash_state.len),
 					   nrfx_nvmc_flash_page_size_get());
-		return ble_controller_flash_write(
+		return sdc_soc_flash_write_async(
 			(uint32_t) flash_state.addr,
 			flash_state.data,
 			bytes_to_words(flash_state.prev_len),
@@ -223,7 +223,7 @@ static int flash_op_write(void)
 			(void *)flash_state.addr,
 			flash_state.data,
 			flash_state.len);
-		return ble_controller_flash_write(
+		return sdc_soc_flash_write_async(
 			(uint32_t)align_32(flash_state.addr),
 			&flash_state.tmp_word,
 			1,
@@ -239,7 +239,7 @@ static int flash_op_execute(void)
 		err = flash_op_write();
 	} else if (flash_state.op == FLASH_OP_ERASE) {
 		flash_state.prev_len = nrfx_nvmc_flash_page_size_get();
-		err = ble_controller_flash_page_erase(
+		err = sdc_soc_flash_page_erase_async(
 			(uint32_t)flash_state.addr,
 			flash_operation_complete_callback);
 	} else {

@@ -18,7 +18,7 @@
 #include "passkey_event.h"
 
 #ifdef CONFIG_BT_LL_NRFXLIB
-#include "ble_controller_hci_vs.h"
+#include "sdc_hci_vs.h"
 #endif /* CONFIG_BT_LL_NRFXLIB */
 
 #define MODULE ble_state
@@ -352,15 +352,15 @@ static void bt_ready(int err)
 	LOG_INF("Bluetooth initialized");
 
 #ifdef CONFIG_DESKTOP_BLE_USE_LLPM
-	hci_vs_cmd_llpm_mode_set_t *p_cmd_enable;
+	sdc_hci_vs_cmd_llpm_mode_set_t *p_cmd_enable;
 
-	struct net_buf *buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
+	struct net_buf *buf = bt_hci_cmd_create(SDC_HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
 						sizeof(*p_cmd_enable));
 
 	p_cmd_enable = net_buf_add(buf, sizeof(*p_cmd_enable));
 	p_cmd_enable->enable = 1;
 
-	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf, NULL);
+	err = bt_hci_cmd_send_sync(SDC_HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf, NULL);
 	if (err) {
 		LOG_ERR("Error enabling LLPM (err: %d)", err);
 	} else {

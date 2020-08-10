@@ -29,7 +29,7 @@ QoS connection event reports
    When reports are enabled, one report will be generated on every connection event.
    The report gives information about the quality of service of the connection event.
    The values in the report are used to describe the quality of links.
-   For parameter descriptions, see :cpp:enum:`hci_vs_subevent_qos_conn_event_report_t` (in :file:`ble_controller_hci_vs.h`).
+   For parameter descriptions, see :cpp:enum:`sdc_hci_vs_subevent_qos_conn_event_report_t` (in :file:`sdc_hci_vs.h`).
 
 Transmission latency
    The definition of the latency used in this example counts the time interval from the sender's application to the GATT service of the receiver.
