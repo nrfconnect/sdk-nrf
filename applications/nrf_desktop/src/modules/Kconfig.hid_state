@@ -8,6 +8,7 @@ menu "HID State"
 
 config DESKTOP_HID_STATE_ENABLE
 	bool "Enable HID state"
+	depends on BT_PERIPHERAL
 	help
 	  HID events processing module.
 

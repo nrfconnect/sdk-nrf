@@ -24,11 +24,11 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
-#define MAX_ENQUEUED_ITEMS	5
+#define MAX_ENQUEUED_ITEMS CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
 
-struct enqueued_event_item {
+struct enqueued_report {
 	sys_snode_t node;
-	struct hid_report_event *event;
+	struct hid_report_event *report;
 };
 
 struct hids_subscriber {
@@ -44,59 +44,59 @@ static bool usb_busy;
 static bool forward_pending;
 static void *channel_id;
 
-static sys_slist_t enqueued_event_list;
-static size_t enqueued_event_count;
+static sys_slist_t enqueued_report_list;
+static size_t enqueued_report_count;
 
 static struct k_spinlock lock;
 
 
-static void enqueue_hid_event(struct hid_report_event *event)
+static void enqueue_hid_report(struct hid_report_event *report)
 {
-	struct enqueued_event_item *item;
+	struct enqueued_report *item;
 
-	if (enqueued_event_count < MAX_ENQUEUED_ITEMS) {
+	if (enqueued_report_count < MAX_ENQUEUED_ITEMS) {
 		item = k_malloc(sizeof(*item));
-		enqueued_event_count++;
+		enqueued_report_count++;
 	} else {
-		LOG_WRN("Enqueue dropped the oldest event");
-		item = CONTAINER_OF(sys_slist_get(&enqueued_event_list),
+		LOG_WRN("Enqueue dropped the oldest report");
+		item = CONTAINER_OF(sys_slist_get(&enqueued_report_list),
 				    __typeof__(*item),
 				    node);
-		k_free(item->event);
+		k_free(item->report);
 	}
 
 	if (!item) {
 		LOG_ERR("OOM error");
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
-		item->event = event;
-		sys_slist_append(&enqueued_event_list, &item->node);
+		item->report = report;
+		sys_slist_append(&enqueued_report_list, &item->node);
 	}
 }
 
 static void forward_hid_report(uint8_t report_id, const uint8_t *data, size_t size)
 {
-	struct hid_report_event *event = new_hid_report_event(size + sizeof(report_id));
+	struct hid_report_event *report = new_hid_report_event(size + sizeof(report_id));
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
 	if (!usb_ready) {
 		k_spin_unlock(&lock, key);
-		k_free(event);
+		k_free(report);
 		return;
 	}
 
-	event->subscriber = usb_id;
+	report->subscriber = usb_id;
 
 	/* Forward report as is adding report id on the front. */
-	event->dyndata.data[0] = report_id;
-	memcpy(&event->dyndata.data[1], data, size);
+	report->dyndata.data[0] = report_id;
+	memcpy(&report->dyndata.data[1], data, size);
 
 	if (!usb_busy) {
-		EVENT_SUBMIT(event);
+		EVENT_SUBMIT(report);
 		usb_busy = true;
 	} else {
-		enqueue_hid_event(event);
+		enqueue_hid_report(report);
 	}
 
 	k_spin_unlock(&lock, key);
@@ -171,7 +171,7 @@ static void init(void)
 	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 		bt_gatt_hids_c_init(&subscribers[i].hidc, &params);
 	}
-	sys_slist_init(&enqueued_event_list);
+	sys_slist_init(&enqueued_report_list);
 }
 
 static int register_subscriber(struct bt_gatt_dm *dm, uint16_t pid,
@@ -458,23 +458,23 @@ static void clear_state(void)
 	usb_busy = false;
 
 	/* Clear all the reports. */
-	while (!sys_slist_is_empty(&enqueued_event_list)) {
-		struct enqueued_event_item *item;;
+	while (!sys_slist_is_empty(&enqueued_report_list)) {
+		struct enqueued_report *item;;
 
-		item = CONTAINER_OF(sys_slist_get(&enqueued_event_list),
+		item = CONTAINER_OF(sys_slist_get(&enqueued_report_list),
 				     __typeof__(*item),
 				    node);
-		enqueued_event_count--;
+		enqueued_report_count--;
 
 		k_spin_unlock(&lock, key);
 
-		k_free(item->event);
+		k_free(item->report);
 		k_free(item);
 
 		key = k_spin_lock(&lock);
 	}
 
-	__ASSERT_NO_MSG(enqueued_event_count == 0);
+	__ASSERT_NO_MSG(enqueued_report_count == 0);
 
 	k_spin_unlock(&lock, key);
 }
@@ -486,15 +486,15 @@ static bool event_handler(const struct event_header *eh)
 
 		__ASSERT_NO_MSG(usb_ready);
 
-		struct enqueued_event_item *item = NULL;
+		struct enqueued_report *item = NULL;
 
-		if (!sys_slist_is_empty(&enqueued_event_list)) {
-			item = CONTAINER_OF(sys_slist_get(&enqueued_event_list),
+		if (!sys_slist_is_empty(&enqueued_report_list)) {
+			item = CONTAINER_OF(sys_slist_get(&enqueued_report_list),
 					    __typeof__(*item),
 					    node);
-			enqueued_event_count--;
+			enqueued_report_count--;
 
-			EVENT_SUBMIT(item->event);
+			EVENT_SUBMIT(item->report);
 		} else {
 			usb_busy = false;
 		}

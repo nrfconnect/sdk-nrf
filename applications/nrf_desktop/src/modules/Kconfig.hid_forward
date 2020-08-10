@@ -7,13 +7,22 @@
 menu "BLE HID Client"
 
 config DESKTOP_HID_FORWARD_ENABLE
-	bool
+	bool "Enable HID forward"
 	depends on BT_CENTRAL
-	default y
+	depends on !DESKTOP_HID_STATE_ENABLE
 	help
 	  This option enables HID over GATT Client.
+	  The reports received from the BLE are forwarded to the USB.
 
 if DESKTOP_HID_FORWARD_ENABLE
+
+config DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
+	int "Enqueued reports limit"
+	default 5
+	range BT_MAX_CONN 255
+	help
+	  The USB can forward one report at a time. If busy the incoming report
+	  will be enqueued.
 
 module = DESKTOP_HID_FORWARD
 module-str = HID over GATT client
