@@ -1,0 +1,9 @@
+sample:
+  name: Bluetooth Low Energy Central NFC Pairing reference
+  description: Bluetooth Low Energy Central NFC Pairing reference sample
+tests:
+  samples.bluetooth.central_nfc_pairing:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf5340pdk_nrf5340_cpuapp
+    tags: bluetooth ci_build
