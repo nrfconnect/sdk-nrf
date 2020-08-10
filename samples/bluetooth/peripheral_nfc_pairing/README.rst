@@ -37,7 +37,7 @@ This sample can exchange OOB data with an NFC Forum Polling device with TNEP sup
 Static Handover
 ===============
 
-A Static Handover Tag contains a Handover Select Message with carrier information NDEF records or a single Carrier Configuration Record.
+A tag in the Static Handover mode, contains a Handover Select Message with carrier information NDEF records or a single Carrier Configuration Record.
 
 .. figure:: /images/nfc_static_connection_handover.svg
    :alt: Static Handover
@@ -106,7 +106,7 @@ Testing with NFC Poller Device
 Testing with NFC TNEP Poller Device
 -----------------------------------
 
-1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`nfc_central_pairing` and observe that LED 2 is lit.
+1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that LED 2 is lit.
 #. Observe the output log.
    The content of the exchanged NDEF messages is printed there.
 #. Check the security level of the paring on the terminal.
