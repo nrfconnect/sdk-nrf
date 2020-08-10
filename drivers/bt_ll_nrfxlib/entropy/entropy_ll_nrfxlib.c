@@ -10,8 +10,8 @@
 #include <irq.h>
 #include <kernel.h>
 #include <kernel_includes.h>
-#include <ble_controller.h>
-#include <ble_controller_soc.h>
+#include <sdc.h>
+#include <sdc_soc.h>
 
 #include <multithreading_lock.h>
 
@@ -48,8 +48,7 @@ static int rng_driver_get_entropy(struct device *dev, uint8_t *buf, uint16_t len
 			if (errcode) {
 				return errcode;
 			}
-			bytes_read = ble_controller_rand_vector_get(p_dst,
-								    bytes_left);
+			bytes_read = sdc_soc_rand_vector_poll(p_dst, bytes_left);
 			MULTITHREADING_LOCK_RELEASE();
 
 			if (!bytes_read) {
@@ -76,13 +75,13 @@ static int rng_driver_get_entropy_isr(struct device *dev, uint8_t *buf, uint16_t
 	if (likely((flags & ENTROPY_BUSYWAIT) == 0)) {
 		errcode = MULTITHREADING_LOCK_ACQUIRE_NO_WAIT();
 		if (!errcode) {
-			errcode = ble_controller_rand_vector_get(buf, len);
+			errcode = sdc_soc_rand_vector_poll(buf, len);
 			MULTITHREADING_LOCK_RELEASE();
 		}
 	} else {
 		errcode = MULTITHREADING_LOCK_ACQUIRE_FOREVER_WAIT();
 		if (!errcode) {
-			ble_controller_rand_vector_get_blocking(buf, len);
+			sdc_soc_rand_vector_get(buf, len);
 			MULTITHREADING_LOCK_RELEASE();
 		}
 	}
@@ -98,7 +97,7 @@ static void rng_driver_isr(void *param)
 {
 	ARG_UNUSED(param);
 
-	ble_controller_RNG_IRQHandler();
+	sdc_RNG_IRQHandler();
 
 	/* This sema wakes up the pending client buffer to fill it with new
 	 * random values.

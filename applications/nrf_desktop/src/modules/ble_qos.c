@@ -17,7 +17,7 @@
 #include <bluetooth/conn.h>
 #include <bluetooth/hci.h>
 
-#include "ble_controller_hci_vs.h"
+#include "sdc_hci_vs.h"
 
 #include "chmap_filter.h"
 
@@ -408,14 +408,14 @@ static void hid_pkt_stats_print(uint32_t ble_recv)
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
 	uint8_t *subevent_code;
-	hci_vs_subevent_qos_conn_event_report_t *evt;
+	sdc_hci_vs_subevent_qos_conn_event_report_t *evt;
 
 	subevent_code = net_buf_simple_pull_mem(
 		buf,
 		sizeof(*subevent_code));
 
 	switch (*subevent_code) {
-	case HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT:
+	case SDC_HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT:
 		if (atomic_get(&processing)) {
 			/* Cheaper to skip this update */
 			/* instead of using locks */
@@ -446,9 +446,9 @@ static void enable_qos_reporting(void)
 		return;
 	}
 
-	hci_vs_cmd_qos_conn_event_report_enable_t *cmd_enable;
+	sdc_hci_vs_cmd_qos_conn_event_report_enable_t *cmd_enable;
 
-	buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE,
+	buf = bt_hci_cmd_create(SDC_HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE,
 				sizeof(*cmd_enable));
 	if (!buf) {
 		LOG_ERR("Failed to enable HCI VS QoS");
@@ -459,7 +459,7 @@ static void enable_qos_reporting(void)
 	cmd_enable->enable = 1;
 
 	err = bt_hci_cmd_send_sync(
-		HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE, buf, NULL);
+		SDC_HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE, buf, NULL);
 	if (err) {
 		LOG_ERR("Failed to enable HCI VS QoS");
 		return;

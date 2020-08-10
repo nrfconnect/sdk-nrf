@@ -18,7 +18,7 @@
 #include <bluetooth/services/latency_c.h>
 #include <bluetooth/scan.h>
 #include <bluetooth/gatt_dm.h>
-#include <ble_controller_hci_vs.h>
+#include <sdc_hci_vs.h>
 
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -219,9 +219,9 @@ static int enable_llpm_mode(void)
 {
 	int err;
 	struct net_buf *buf;
-	hci_vs_cmd_llpm_mode_set_t *cmd_enable;
+	sdc_hci_vs_cmd_llpm_mode_set_t *cmd_enable;
 
-	buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
+	buf = bt_hci_cmd_create(SDC_HCI_VS_OPCODE_CMD_LLPM_MODE_SET,
 				sizeof(*cmd_enable));
 	if (!buf) {
 		printk("Could not allocate LLPM command buffer\n");
@@ -231,7 +231,7 @@ static int enable_llpm_mode(void)
 	cmd_enable = net_buf_add(buf, sizeof(*cmd_enable));
 	cmd_enable->enable = true;
 
-	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf, NULL);
+	err = bt_hci_cmd_send_sync(SDC_HCI_VS_OPCODE_CMD_LLPM_MODE_SET, buf, NULL);
 	if (err) {
 		printk("Error enabling LLPM %d\n", err);
 		return err;
@@ -246,9 +246,9 @@ static int enable_llpm_short_connection_interval(void)
 	int err;
 	struct net_buf *buf;
 
-	hci_vs_cmd_conn_update_t *cmd_conn_update;
+	sdc_hci_vs_cmd_conn_update_t *cmd_conn_update;
 
-	buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_CONN_UPDATE,
+	buf = bt_hci_cmd_create(SDC_HCI_VS_OPCODE_CMD_CONN_UPDATE,
 				sizeof(*cmd_conn_update));
 	if (!buf) {
 		printk("Could not allocate command buffer\n");
@@ -269,7 +269,7 @@ static int enable_llpm_short_connection_interval(void)
 	cmd_conn_update->conn_latency        = 0;
 	cmd_conn_update->supervision_timeout = 300;
 
-	err = bt_hci_cmd_send_sync(HCI_VS_OPCODE_CMD_CONN_UPDATE, buf, NULL);
+	err = bt_hci_cmd_send_sync(SDC_HCI_VS_OPCODE_CMD_CONN_UPDATE, buf, NULL);
 	if (err) {
 		printk("Update connection parameters failed (err %d)\n", err);
 		return err;
@@ -281,10 +281,10 @@ static int enable_llpm_short_connection_interval(void)
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
 	uint8_t code;
-	hci_vs_subevent_qos_conn_event_report_t *evt;
+	sdc_hci_vs_subevent_qos_conn_event_report_t *evt;
 
 	code = net_buf_simple_pull_u8(buf);
-	if (code != HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT) {
+	if (code != SDC_HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT) {
 		return false;
 	}
 
@@ -306,9 +306,9 @@ static int enable_qos_conn_evt_report(void)
 		return err;
 	}
 
-	hci_vs_cmd_qos_conn_event_report_enable_t *cmd_enable;
+	sdc_hci_vs_cmd_qos_conn_event_report_enable_t *cmd_enable;
 
-	buf = bt_hci_cmd_create(HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE,
+	buf = bt_hci_cmd_create(SDC_HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE,
 				sizeof(*cmd_enable));
 	if (!buf) {
 		printk("Could not allocate command buffer\n");
@@ -319,7 +319,7 @@ static int enable_qos_conn_evt_report(void)
 	cmd_enable->enable = true;
 
 	err = bt_hci_cmd_send_sync(
-		HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE, buf, NULL);
+		SDC_HCI_VS_OPCODE_CMD_QOS_CONN_EVENT_REPORT_ENABLE, buf, NULL);
 	if (err) {
 		printk("Could not send command buffer (err %d)\n", err);
 		return err;
