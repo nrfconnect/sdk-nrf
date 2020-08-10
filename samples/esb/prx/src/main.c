@@ -208,7 +208,6 @@ void main(void)
 		return;
 	}
 
-	while (1) {
-		/* do nothing */
-	}
+	/* return to idle thread */
+	return;
 }
