@@ -13,12 +13,41 @@ LOG_MODULE_REGISTER(app);
 #define BUF_SIZE 64
 static K_MEM_SLAB_DEFINE(uart_slab, BUF_SIZE, 3, 4);
 
+static void uart_irq_handler(struct device *dev, void *context)
+{
+	uint8_t buf[] = {1, 2, 3, 4, 5};
+
+	if (uart_irq_tx_ready(dev)) {
+		(void)uart_fifo_fill(dev, buf, sizeof(buf));
+		uart_irq_tx_disable(dev);
+	}
+
+	if (uart_irq_rx_ready(dev)) {
+		uint8_t buf[10];
+		int len = uart_fifo_read(dev, buf, sizeof(buf));
+
+		if (len) {
+			printk("read %d bytes\n", len);
+		}
+	}
+}
+
+static void interrupt_driven(struct device *dev)
+{
+	uart_irq_callback_set(dev, uart_irq_handler);
+	uart_irq_rx_enable(dev);
+	while (1) {
+		uart_irq_tx_enable(dev);
+		k_sleep(K_MSEC(500));
+	}
+}
+
 static void uart_callback(struct device *dev,
-			  struct uart_event *evt, void *user_data)
+			  struct uart_event *evt,
+			  void *user_data)
 {
 	struct device *uart = user_data;
 	int err;
-
 
 	switch (evt->type) {
 	case UART_TX_DONE:
@@ -57,17 +86,11 @@ static void uart_callback(struct device *dev,
 	}
 }
 
-void main(void)
+static void async(struct device *lpuart)
 {
-	struct device *lpuart;
 	uint8_t txbuf[5] = {1, 2, 3, 4, 5};
 	int err;
 	uint8_t *buf;
-
-	k_msleep(1000);
-
-	lpuart = device_get_binding("LPUART");
-	__ASSERT(lpuart, "Failed to get the device");
 
 	err = k_mem_slab_alloc(&uart_slab, (void **)&buf, K_NO_WAIT);
 	__ASSERT(err == 0, "Failed to alloc slab");
@@ -83,5 +106,21 @@ void main(void)
 		__ASSERT(err == 0, "Failed to initiate transmission");
 
 		k_sleep(K_MSEC(500));
+	}
+}
+
+void main(void)
+{
+	struct device *lpuart;
+
+	k_msleep(1000);
+
+	lpuart = device_get_binding("LPUART");
+	__ASSERT(lpuart, "Failed to get the device");
+
+	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_INT_DRIVEN)) {
+		interrupt_driven(lpuart);
+	} else {
+		async(lpuart);
 	}
 }
