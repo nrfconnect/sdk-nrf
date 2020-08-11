@@ -1,0 +1,42 @@
+{
+	"source-pairs": [
+		{
+			"cli": "client/bt_rpc_gap_cli.c",
+			"host": "host/bt_rpc_gap_host.c"
+		}
+	],
+	"cmd-id-pattern": "$_RPC_CMD",
+	"evt-id-pattern": "$_RPC_EVT",
+	"indent-size": 8,
+	"indent-string": "\t",
+	"generator": "NrfRpcCborGenerator",
+	"clang-params": "--config ${include-stubs}/conf.txt -include _rpc_defines.h ",
+	"include-stubs": {
+		"syscall_list.h": "",
+		"devicetree_unfixed.h": "",
+		"devicetree_fixups.h": "",
+		"kobj-types-enum.h": "",
+		"syscalls/kernel.h": "",
+		"_rpc_defines.h": [
+			"#define CONFIG_NRF_RPC_TR_RPMSG 1",
+			"#define CONFIG_ARM 1",
+			"#define CONFIG_MP_NUM_CPUS 1",
+			"#define CONFIG_ARMV6_M_ARMV8_M_BASELINE 1",
+			"#define CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC 16000000",
+			"#define CONFIG_SYS_CLOCK_TICKS_PER_SEC 16000000",
+			"#define CONFIG_COOP_ENABLED 1"
+		],
+		"conf.txt": [
+			"-Wno-undefined-internal",
+			"-Iclient/include",
+			"-Ihost/include",
+			"-Icommon/include",
+			"-I../../nrf_rpc/include",
+			"-I../../../../nrfxlib/nrf_rpc/include",
+			"-I../../../../modules/lib/tinycbor/include",
+			"-I../../../../zephyr/include",
+			"-I../../../../modules/lib/open-amp/open-amp/lib/include",
+			"-I../../../../nrf/samples/nrf_rpc/entropy_nrf53/cpuapp/build_nrf5340pdk_nrf5340_cpuapp/modules/libmetal/libmetal/lib/include"
+		]
+	}
+}

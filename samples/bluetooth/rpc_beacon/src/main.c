@@ -16,50 +16,71 @@
 
 #include <bluetooth/bluetooth.h>
 
+#ifdef NRF5340_XXAA_APPLICATION
 #include "nrf_rpc.h"
+#endif // NRF5340_XXAA_APPLICATION
 
-void bt_ready_cb(int err)
+
+#ifdef CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#else
+#define DEVICE_NAME "rpc_beacon"
+#endif
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
+
+
+/*
+ * Set Advertisement data. Based on the Eddystone specification:
+ * https://github.com/google/eddystone/blob/master/protocol-specification.md
+ * https://github.com/google/eddystone/tree/master/eddystone-url
+ */
+static const struct bt_data ad[] = {
+	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0xaa, 0xfe),
+	BT_DATA_BYTES(BT_DATA_SVC_DATA16,
+		      0xaa, 0xfe, /* Eddystone UUID */
+		      0x10, /* Eddystone-URL frame type */
+		      0x00, /* Calibrated Tx power at 0m */
+		      0x00, /* URL Scheme Prefix http://www. */
+		      'z', 'e', 'p', 'h', 'y', 'r',
+		      'p', 'r', 'o', 'j', 'e', 'c', 't',
+		      0x08) /* .org */
+};
+
+/* Set Scan Response data */
+static const struct bt_data sd[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+};
+
+static void bt_ready(int err)
 {
-	printk("BT READY: %d\n", err);
+	if (err) {
+		printk("Bluetooth init failed (err %d)\n", err);
+		return;
+	}
+
+	printk("Bluetooth initialized\n");
+
+	/* Start advertising */
+	err = bt_le_adv_start(BT_LE_ADV_NCONN, ad, ARRAY_SIZE(ad),
+			      sd, ARRAY_SIZE(sd));
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+
+	printk("Beacon started\n");
 }
 
 void main(void)
 {
 	int err;
 
-	err = bt_enable(bt_ready_cb);
+	printk("Starting Beacon Demo\n");
+
+	/* Initialize the Bluetooth Subsystem */
+	err = bt_enable(bt_ready);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return;
 	}
-
 }
-
-static void err_handler(const struct nrf_rpc_err_report *report)
-{
-	printk("nRF RPC error %d ocurred. See nRF RPC logs for more details.",
-	       report->code);
-	k_oops();
-}
-
-
-static int serialization_init(struct device *dev)
-{
-	ARG_UNUSED(dev);
-
-	int err;
-
-	printk("Init begin\n");
-
-	err = nrf_rpc_init(err_handler);
-	if (err) {
-		return -EINVAL;
-	}
-
-	printk("Init done\n");
-
-	return 0;
-}
-
-
-SYS_INIT(serialization_init, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);

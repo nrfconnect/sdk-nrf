@@ -4,6 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
-zephyr_include_directories(include)
+target_include_directories(zephyr_interface BEFORE INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 zephyr_sources(bt_rpc_gap_cli.c)

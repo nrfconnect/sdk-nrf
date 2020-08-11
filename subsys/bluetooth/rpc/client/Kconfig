@@ -11,4 +11,12 @@ menuconfig BT_RPC_CLIENT
 
 if BT_RPC_CLIENT
 
+config BT_RPC_INITIALIZE_NRF_RPC
+	bool "Automatically initialize nRF RPC library"
+	default y
+	help
+	  Initialize nRF RPC library during the system startup. Disabling this
+	  option allow user to initialize it in a different way.
+
+
 endif # BT_RPC_CLIENT

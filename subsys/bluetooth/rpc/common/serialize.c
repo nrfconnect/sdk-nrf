@@ -81,6 +81,23 @@ void ser_encode_int(CborEncoder* encoder, int32_t value)
 	}
 }
 
+void ser_encode_buffer(CborEncoder *encoder, const void *data, size_t size)
+{
+	CborError err;
+
+	if (is_encoder_invalid(encoder))
+		return;
+
+	if (data == NULL) {
+		err = cbor_encode_null(encoder);
+	} else {
+		err = cbor_encode_byte_string(encoder, (const uint8_t *)data, size);
+	}
+
+	if (err != CborNoError) {
+		set_encoder_invalid(encoder, err);
+	}
+}
 
 void ser_encode_callback(CborEncoder* encoder, void* callback)
 {
@@ -162,6 +179,161 @@ error_exit:
 }
 
 
+void *ser_scratchpad_get(struct ser_scratchpad *scratchpad, size_t size)
+{
+	void *result;
+	size_t aligned_size;
+
+	aligned_size = SCRATCHPAD_ALIGN(size);
+
+	if (scratchpad->size < aligned_size) {
+		return NULL;
+	}
+
+	result = (void *)scratchpad->data;
+	scratchpad->data += aligned_size;
+	scratchpad->size -= aligned_size;
+
+	return result;
+}
+
+void *ser_decode_buffer(CborValue *value, void *buffer, size_t buffer_size)
+{
+	CborError err = CborErrorIllegalType;
+	void *result;
+	size_t len;
+
+	if (is_decoder_invalid(value))
+		return NULL;
+
+	if (cbor_value_is_byte_string(value)) {
+
+		err = cbor_value_get_string_length(value, &len);
+
+		if (err == CborErrorUnknownLength)
+			err = cbor_value_calculate_string_length(value, &len);
+
+		if (err != CborNoError)
+			goto error_exit;
+
+		if (len > buffer_size) {
+			err = CborErrorIO;
+			goto error_exit;
+		}
+
+		result = buffer;
+
+		err = cbor_value_copy_byte_string(value, result, &len, value);
+		if (err != CborNoError)
+			goto error_exit;
+
+	} else if (cbor_value_is_null(value)) {
+
+		err = cbor_value_advance_fixed(value);
+		if (err != CborNoError)
+			goto error_exit;
+		result = NULL;
+
+	} else {
+
+		goto error_exit;
+
+	}
+
+	return result;
+
+error_exit:
+	set_decoder_invalid(value, err);
+	return NULL;
+}
+
+size_t ser_decode_buffer_size(CborValue *value)
+{
+	CborError err = CborErrorIllegalType;
+	size_t result;
+
+	if (is_decoder_invalid(value))
+		goto error_exit;
+
+	if (cbor_value_is_byte_string(value)) {
+
+		err = cbor_value_get_string_length(value, &result);
+
+		if (err == CborErrorUnknownLength)
+			err = cbor_value_calculate_string_length(value, &result);
+
+		if (err != CborNoError)
+			goto error_exit;
+
+
+	} else if (cbor_value_is_null(value)) {
+
+		result = 0;
+
+	} else {
+
+		goto error_exit;
+
+	}
+
+	return result;
+
+error_exit:
+	set_decoder_invalid(value, err);
+	return 0;
+}
+
+void *ser_decode_buffer_sp(struct ser_scratchpad *scratchpad)
+{
+	CborValue* value = scratchpad->value;
+	CborError err = CborErrorIllegalType;
+	void *result;
+	size_t len;
+
+	if (is_decoder_invalid(value))
+		return NULL;
+
+	if (cbor_value_is_byte_string(value)) {
+
+		err = cbor_value_get_string_length(value, &len);
+
+		if (err == CborErrorUnknownLength)
+			err = cbor_value_calculate_string_length(value, &len);
+
+		if (err != CborNoError)
+			goto error_exit;
+
+		result = ser_scratchpad_get(scratchpad, len);
+		if (result == NULL) {
+			err = CborErrorIO;
+			goto error_exit;
+		}
+
+		err = cbor_value_copy_byte_string(value, result, &len, value);
+		if (err != CborNoError)
+			goto error_exit;
+
+	} else if (cbor_value_is_null(value)) {
+
+		err = cbor_value_advance_fixed(value);
+		if (err != CborNoError)
+			goto error_exit;
+		result = NULL;
+
+	} else {
+
+		goto error_exit;
+
+	}
+
+	return result;
+
+error_exit:
+	set_decoder_invalid(value, err);
+	return NULL;
+}
+
+
 void* ser_decode_callback_slot(CborValue *value)
 {
 	int slot = ser_decode_uint(value);
@@ -225,12 +397,27 @@ void ser_rsp_simple_i32(CborValue *value, void *handler_data)
 }
 
 
-void ser_rsp_send_i32(int32_t response)
+void ser_rsp_simple_void(CborValue *value, void *handler_data)
+{
+}
+
+
+void ser_rsp_send_int(int32_t response)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
 	NRF_RPC_CBOR_ALLOC(ctx, 1 + sizeof(int32_t));
 	ser_encode_int(&ctx.encoder, response);
+
+	nrf_rpc_cbor_rsp_no_err(&ctx);
+}
+
+
+void ser_rsp_send_void()
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(ctx, 0);
 
 	nrf_rpc_cbor_rsp_no_err(&ctx);
 }
