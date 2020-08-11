@@ -258,7 +258,7 @@ comment "BLE connection parameters"
 
 config DESKTOP_BLE_USE_LLPM
 	bool "Use LLPM connection parameters"
-	depends on BT_LL_NRFXLIB
+	depends on BT_LL_SOFTDEVICE
 	default y
 	help
 	  LLPM connection interval is necessary to achieve high report rates
@@ -278,7 +278,7 @@ config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 
 config DESKTOP_BLE_LOW_LATENCY_LOCK
 	bool "Keep the slave latency low for LLPM connections"
-	depends on BT_LL_NRFXLIB
+	depends on BT_LL_SOFTDEVICE
 	help
 	  When this option is selected, the slave latency is kept low
 	  for the LLPM connection unless device is in low power mode. This
@@ -304,7 +304,7 @@ comment "BLE QoS management"
 
 config DESKTOP_BLE_QOS_ENABLE
 	bool "Enable BLE channel map management"
-	depends on BT_LL_NRFXLIB
+	depends on BT_LL_SOFTDEVICE
 	select BT_HCI_VS_EVT_USER
 	help
 	  Enable device to avoid congested RF channels.

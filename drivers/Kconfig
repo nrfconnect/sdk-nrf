@@ -12,7 +12,7 @@ rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "gps/Kconfig"
 
-if BT_LL_NRFXLIB
+if BT_LL_SOFTDEVICE
 rsource "bt_ll_nrfxlib/Kconfig"
 endif
 

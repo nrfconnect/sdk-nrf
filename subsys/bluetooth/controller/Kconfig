@@ -12,7 +12,7 @@ config BT_HCI_TX_STACK_SIZE
 	# NOTE: This value is derived from other symbols and should only be
 	# changed if required by architecture
 	int
-	default 1536 if BT_LL_NRFXLIB
+	default 1536 if BT_LL_SOFTDEVICE
 	help
 	  Stack size needed for executing bt_send with specified driver.
 	  NOTE: This is an advanced setting and should not be changed unless
@@ -41,7 +41,7 @@ config BT_RX_STACK_SIZE
 # when Nordic BLE controller is used.
 config SYSTEM_WORKQUEUE_STACK_SIZE
 	int
-	default 2048 if BT_LL_NRFXLIB
+	default 2048 if BT_LL_SOFTDEVICE
 
 config BLECTRL_SLAVE_COUNT
 	int "Number of concurrent slave roles"
@@ -78,11 +78,11 @@ config BLECTLR_RX_STACK_SIZE
 	  Size of the receiving thread stack, used to retrieve HCI events and
 	  data from the controller.
 
-# The BLE controller library variants are defined in nrfxlib, here we redefine
+# The SoftDevice Controller library variants are defined in nrfxlib, here we redefine
 # the choice to 'import' them, so they appear in the same menu as the rest.
 
-choice BLE_CONTROLLER_VARIANT
-	prompt "BLE Controller variant"
+choice SOFTDEVICE_CONTROLLER_VARIANT
+	prompt "SoftDevice Controller variant"
 	bool
 
 endchoice
