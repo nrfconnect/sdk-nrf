@@ -22,17 +22,18 @@ The timeslot session is closed when any key is pressed in the terminal.
 Requirements
 ************
 
-One of the following development boards:
+The sample supports any one of the following development kits:
 
-  * |nRF52DK|
-  * |nRF52840DK|
-  * |nRF5340DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set4_start
+   :end-before: set4_end
 
-    .. note::
-       For the nRF5340DK this sample is only supported on the network core (nrf5340pdk_nrf5340_cpunet), and the :ref:`nrf5340_empty_app_core` sample must be flashed on the application core.
+.. note::
+   For nRF5340 PDK, this sample is only supported on the network core (nrf5340pdk_nrf5340_cpunet), and the :ref:`nrf5340_empty_app_core` sample must be flashed on the application core.
 
 Building and Running
 ********************
+
 .. |sample path| replace:: :file:`samples/mpsl/timeslot`
 
 .. include:: /includes/build_and_run.txt
