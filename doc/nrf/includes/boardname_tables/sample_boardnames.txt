@@ -19,7 +19,7 @@ Peripheral UART, NUS Shell Transport, Throughput) and NFC samples
 
 .. set1_end
 
-Set used by BLE samples (LLPM, peripheral GATT Discovery Manager), Enhanced ShockBurst Transmitter/Receiver, MPSL Timeslot) and application (Serial LTE modem)
+Set used by BLE samples (LLPM, peripheral GATT Discovery Manager), Enhanced ShockBurst Transmitter/Receiver, and application (Serial LTE modem)
 
 .. set2_start
 
@@ -53,7 +53,7 @@ Set used by BLE samples (Peripheral LBS)
 
 .. set3_end
 
-Set used by samples (Radio Test)
+Set used by samples (Radio Test, MPSL Timeslot)
 
 .. set4_start
 
