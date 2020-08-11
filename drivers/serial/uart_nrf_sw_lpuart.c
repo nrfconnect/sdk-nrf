@@ -52,6 +52,24 @@ enum rx_state {
 	RX_TO_OFF,
 };
 
+#if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+struct lpuart_int_driven {
+	uart_irq_callback_user_data_t callback;
+	void *user_data;
+
+	uint8_t txbuf[CONFIG_NRF_SW_LPUART_INT_DRV_TX_BUF_SIZE];
+	size_t txlen;
+
+	uint8_t rxbuf[CONFIG_NRF_SW_LPUART_MAX_PACKET_SIZE];
+	size_t rxlen;
+	size_t rxrd;
+
+	bool tx_enabled;
+	bool rx_enabled;
+	bool err_enabled;
+};
+#endif
+
 /* Low power uart structure. */
 struct lpuart_data {
 	/* Physical UART device */
@@ -65,6 +83,9 @@ struct lpuart_data {
 
 	/* Timer used for TX timeouting. */
 	struct k_timer tx_timer;
+
+	/* Buffer used for poll out. */
+	atomic_t txbyte;
 
 	/* Current TX buffer. */
 	const uint8_t *tx_buf;
@@ -87,6 +108,10 @@ struct lpuart_data {
 
 	/* Set to true if request has been detected. */
 	bool rx_req;
+
+#if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+	struct lpuart_int_driven int_driven;
+#endif
 };
 
 /* Configuration structured. */
@@ -369,10 +394,18 @@ static void uart_callback(struct device *uart, struct uart_event *evt,
 
 	switch (evt->type) {
 	case UART_TX_DONE:
-		tx_complete(data);
-		user_callback(dev, evt);
-		break;
+	{
+		const uint8_t *txbuf = evt->data.tx.buf;
 
+		tx_complete(data);
+		if (txbuf == (void *)&data->txbyte) {
+			data->txbyte = -1;
+		} else {
+			user_callback(dev, evt);
+		}
+
+		break;
+	}
 	case UART_TX_ABORTED:
 		LOG_DBG("tx aborted");
 		user_callback(dev, evt);
@@ -398,6 +431,7 @@ static void uart_callback(struct device *uart, struct uart_event *evt,
 		break;
 
 	case UART_RX_DISABLED:
+		LOG_DBG("Rx disabled");
 		__ASSERT_NO_MSG((data->rx_state != RX_ACTIVE) &&
 			 (data->rx_state != RX_IDLE) &&
 			 (data->rx_state != RX_OFF));
@@ -420,6 +454,7 @@ static void tx_timeout(struct k_timer *timer)
 {
 	struct device *dev = k_timer_user_data_get(timer);
 	struct lpuart_data *data = get_dev_data(dev);
+	const uint8_t *txbuf = data->tx_buf;
 	int err;
 
 	if (data->tx_active) {
@@ -432,18 +467,23 @@ static void tx_timeout(struct k_timer *timer)
 		return;
 	}
 
-	struct uart_event evt = {
-		.type = UART_TX_ABORTED,
-		.data = {
-			.tx = {
-				.buf = data->tx_buf,
-				.len = 0
-			}
-		}
-	};
-
 	tx_complete(data);
-	user_callback(dev, &evt);
+
+	if (txbuf == (void *)&data->txbyte) {
+		data->txbyte = -1;
+	} else {
+		struct uart_event evt = {
+			.type = UART_TX_ABORTED,
+			.data = {
+				.tx = {
+					.buf = txbuf,
+					.len = 0
+				}
+			}
+		};
+
+		user_callback(dev, &evt);
+	}
 }
 
 static int api_tx(struct device *dev, const uint8_t *buf,
@@ -568,6 +608,205 @@ static int api_rx_disable(struct device *dev)
 	return uart_rx_disable(data->uart);
 }
 
+#if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+
+static uint32_t int_driven_rd_available(struct lpuart_data *data)
+{
+	return data->int_driven.rxlen - data->int_driven.rxrd;
+}
+
+static void int_driven_rx_feed(struct device *dev, struct lpuart_data *data)
+{
+	int err;
+
+	data->int_driven.rxlen = 0;
+	data->int_driven.rxrd = 0;
+	err = api_rx_buf_rsp(dev, data->int_driven.rxbuf,
+			     sizeof(data->int_driven.rxbuf));
+	__ASSERT_NO_MSG(err >= 0);
+}
+
+static void int_driven_evt_handler(struct device *lpuart,
+				   struct uart_event *evt,
+				   void *user_data)
+{
+	struct lpuart_data *data = get_dev_data(lpuart);
+	bool call_handler = false;
+
+	switch (evt->type) {
+	case UART_TX_DONE:
+		data->int_driven.txlen = 0;
+		call_handler = true;
+		break;
+	case UART_RX_RDY:
+		__ASSERT_NO_MSG(data->int_driven.rxlen == 0);
+		data->int_driven.rxlen = evt->data.rx.len;
+		call_handler = data->int_driven.rx_enabled;
+		break;
+	case UART_RX_BUF_REQUEST:
+		if (int_driven_rd_available(data) == 0) {
+			int_driven_rx_feed(lpuart, data);
+		}
+		break;
+	case UART_RX_STOPPED:
+		call_handler = data->int_driven.err_enabled;
+		break;
+	case UART_RX_DISABLED:
+	{
+		int err;
+
+		data->int_driven.rxlen = 0;
+		data->int_driven.rxrd = 0;
+		err = api_rx_enable(lpuart, data->int_driven.rxbuf,
+					sizeof(data->int_driven.rxbuf), 1);
+		__ASSERT_NO_MSG(err >= 0);
+		break;
+	}
+	default:
+		break;
+	}
+
+	if (call_handler) {
+		data->int_driven.callback(lpuart, data->int_driven.user_data);
+	}
+}
+
+static int api_fifo_read(struct device *dev, uint8_t *rx_data, const int size)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+	uint32_t available = int_driven_rd_available(data);
+	uint32_t cpylen = 0;
+
+	if (available) {
+		cpylen = MIN(available, size);
+		memcpy(rx_data,
+		       &data->int_driven.rxbuf[data->int_driven.rxrd],
+		       cpylen);
+		data->int_driven.rxrd += cpylen;
+		if ((data->rx_state == RX_IDLE)
+		    && !int_driven_rd_available(data)) {
+			/* Whole packet read, RX can be re-enabled. */
+			int_driven_rx_feed(dev, data);
+		}
+	}
+
+	return cpylen;
+}
+
+static int api_fifo_fill(struct device *dev, const uint8_t *tx_data, int size)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+	int err;
+
+	size = MIN(size, sizeof(data->int_driven.txbuf));
+	if (!atomic_cas((atomic_t *)&data->int_driven.txlen, 0, size)) {
+		return 0;
+	}
+
+	memcpy(data->int_driven.txbuf, tx_data, size);
+
+	err = api_tx(dev, data->int_driven.txbuf,
+		     data->int_driven.txlen,
+		     CONFIG_NRF_SW_LPUART_DEFAULT_TX_TIMEOUT);
+	if (err < 0) {
+		data->int_driven.txlen = 0;
+
+		return 0;
+	}
+
+	return size;
+}
+
+static void api_irq_tx_enable(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.tx_enabled = true;
+	if (data->tx_buf == NULL) {
+		data->int_driven.callback(dev, data->int_driven.user_data);
+	}
+}
+
+static void api_irq_tx_disable(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.tx_enabled = false;
+}
+
+static int api_irq_tx_ready(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	return data->int_driven.tx_enabled && (data->tx_buf == NULL);
+}
+
+static void api_irq_callback_set(struct device *dev,
+				 uart_irq_callback_user_data_t cb,
+				 void *user_data)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.callback = cb;
+	data->int_driven.user_data = user_data;
+}
+
+static void api_irq_rx_enable(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.rx_enabled = true;
+	if (int_driven_rd_available(data)) {
+		data->int_driven.callback(dev, data->int_driven.user_data);
+	}
+}
+
+static void api_irq_rx_disable(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.rx_enabled = false;
+}
+
+static int api_irq_rx_ready(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	return data->int_driven.rx_enabled &
+		int_driven_rd_available(get_dev_data(dev));
+}
+
+static int api_irq_tx_complete(struct device *dev)
+{
+	return api_irq_tx_ready(dev);
+}
+
+static void api_irq_err_enable(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.err_enabled = true;
+}
+
+static void api_irq_err_disable(struct device *dev)
+{
+	struct lpuart_data *data = get_dev_data(dev);
+
+	data->int_driven.err_enabled = false;
+}
+
+static int api_irq_is_pending(struct device *dev)
+{
+	return api_irq_rx_ready(dev) || api_irq_tx_ready(dev);
+}
+
+static int api_irq_update(struct device *dev)
+{
+	return 1;
+}
+
+#endif /* CONFIG_NRF_SW_LPUART_INT_DRIVEN */
+
 static int lpuart_init(struct device *dev)
 {
 	struct lpuart_data *data = get_dev_data(dev);
@@ -592,17 +831,59 @@ static int lpuart_init(struct device *dev)
 	k_timer_init(&data->tx_timer, tx_timeout, NULL);
 	k_timer_user_data_set(&data->tx_timer, dev);
 
-	return uart_callback_set(data->uart, uart_callback, (void *)dev);
+	err = uart_callback_set(data->uart, uart_callback, (void *)dev);
+	if (err < 0) {
+		return -EINVAL;
+	}
+
+#if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+	err = uart_callback_set(dev, int_driven_evt_handler, NULL);
+	if (err < 0) {
+		return -EINVAL;
+	}
+
+	err = api_rx_enable(dev, data->int_driven.rxbuf,
+				sizeof(data->int_driven.rxbuf), 1);
+#endif
+
+	data->txbyte = -1;
+
+	return err;
 }
 
 static int api_poll_in(struct device *dev, unsigned char *p_char)
 {
+#if CONFIG_NRF_SW_LPUART_INT_DRIVEN
+	return api_fifo_read(dev, p_char, 1) ? 0 : -1;
+#else
 	return -ENOTSUP;
+#endif
 }
 
 static void api_poll_out(struct device *dev, unsigned char out_char)
 {
-	/* not supported */
+	struct lpuart_data *data = get_dev_data(dev);
+	bool thread_ctx = !k_is_in_isr() && !k_is_pre_kernel();
+	int err;
+
+	if (thread_ctx) {
+		/* in thread context pend until tx is in idle */
+		while (data->tx_buf) {
+			k_msleep(1);
+		}
+	} else if (data->tx_buf) {
+		return;
+	}
+
+	if (!atomic_cas(&data->txbyte, -1, out_char)) {
+		return;
+	}
+
+	err = api_tx(dev, (uint8_t *)&data->txbyte, 1,
+		     CONFIG_NRF_SW_LPUART_DEFAULT_TX_TIMEOUT);
+	if (err < 0) {
+		data->txbyte = -1;
+	}
 }
 
 static int api_configure(struct device *dev, const struct uart_config *cfg)
@@ -648,6 +929,10 @@ static const struct lpuart_config lpuart_config = {
 
 static struct lpuart_data lpuart_data;
 
+#define INT_DRIVEN_API_SET(fp, func) \
+	.fp = IS_ENABLED(CONFIG_NRF_SW_LPUART_INT_DRIVEN) ? func : NULL
+
+
 static const struct uart_driver_api lpuart_api = {
 	.callback_set = api_callback_set,
 	.tx = api_tx,
@@ -659,6 +944,22 @@ static const struct uart_driver_api lpuart_api = {
 	.poll_out = api_poll_out,
 	.configure = api_configure,
 	.config_get = api_config_get,
+#if CONFIG_UART_INTERRUPT_DRIVEN
+	INT_DRIVEN_API_SET(fifo_fill, api_fifo_fill),
+	INT_DRIVEN_API_SET(fifo_read, api_fifo_read),
+	INT_DRIVEN_API_SET(irq_tx_enable, api_irq_tx_enable),
+	INT_DRIVEN_API_SET(irq_tx_disable, api_irq_tx_disable),
+	INT_DRIVEN_API_SET(irq_tx_ready, api_irq_tx_ready),
+	INT_DRIVEN_API_SET(irq_rx_enable, api_irq_rx_enable),
+	INT_DRIVEN_API_SET(irq_rx_disable, api_irq_rx_disable),
+	INT_DRIVEN_API_SET(irq_tx_complete, api_irq_tx_complete),
+	INT_DRIVEN_API_SET(irq_rx_ready, api_irq_rx_ready),
+	INT_DRIVEN_API_SET(irq_err_enable, api_irq_err_enable),
+	INT_DRIVEN_API_SET(irq_err_disable, api_irq_err_disable),
+	INT_DRIVEN_API_SET(irq_is_pending, api_irq_is_pending),
+	INT_DRIVEN_API_SET(irq_update, api_irq_update),
+	INT_DRIVEN_API_SET(irq_callback_set, api_irq_callback_set)
+#endif
 };
 
 DEVICE_AND_API_INIT(lpuart, "LPUART", lpuart_init, &lpuart_data,

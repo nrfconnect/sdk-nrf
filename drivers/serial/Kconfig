@@ -16,6 +16,31 @@ if NRF_SW_LPUART
 config NRF_SW_LPUART_MAX_PACKET_SIZE
 	int "Maximum RX packet size"
 	default 128
+	help
+	  If interrupt driven API is enabled then internal RX buffer of that
+	  size is created.
+
+config NRF_SW_LPUART_DEFAULT_TX_TIMEOUT
+	int "TX Timeout in milliseconds"
+	default 1000
+	help
+	  Timeout is used in uart_poll_out and uart_fifo_fill (in interrupt
+	  driven API is enabled).
+
+config NRF_SW_LPUART_INT_DRIVEN
+	bool "Enable interrupt driven API"
+	select UART_INTERRUPT_DRIVEN
+	help
+	  If enabled, then asynchronous API cannot be used
+
+config NRF_SW_LPUART_INT_DRV_TX_BUF_SIZE
+	int "Tx buffer size"
+	default 128
+	depends on NRF_SW_LPUART_INT_DRIVEN
+	help
+	  Internal buffer of that size is created and used by uart_fifo_fill.
+	  For optimal performance it should be able to fit the longest possible
+	  packet.
 
 module = NRF_SW_LPUART
 module-str = low power uart
