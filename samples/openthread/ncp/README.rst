@@ -33,6 +33,7 @@ These features are defined as overlays to the main project configuration file.
 The following features are available in the NCP sample:
 
 * :file:`overlay-vendor_hook.conf` - Enables vendor hooks feature support.
+* :file:`overlay-logging.conf` - Presents how to change log levels of specific modules.
 
 Vendor hooks
 ------------
@@ -42,6 +43,17 @@ Thanks to this feature, you can add new custom functionalities and manage them f
 
 For more detailed information about the vendor hooks feature and host device configuration, see :ref:`ug_thread_vendor_hooks`.
 For information about how to enable the vendor hook feature for this sample, see `Enabling vendor hook feature`_.
+
+Logging
+-------
+
+This sample by default uses Spinel logging backend, which allows sending log messages to the host device using Spinel protocol.
+Presented feature is very useful, because it doesn't require having seperate interfaces to communicate with NCP via Spinel protocol and collect log messages.
+Moreover selecting Spinel logging backend (by setting CONFIG_LOG_BACKEND_SPINEL) doesn't exclude using another backend like UART or RTT at the same time.
+
+By default log levels of all modules are set to critical to not engage microprocessor in unnecessary activites, but User is able to change it in overlay :file:`overlay-logging.conf`.
+It is possible to change log levels of User modules, whole Zephyr system and OpenThread independently to make solution flexible.
+For information how to include overlay file, when building target, see `Enabling additional features`_.
 
 Requirements
 ************
