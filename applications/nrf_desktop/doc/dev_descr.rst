@@ -4,7 +4,7 @@ Device description module
 #########################
 
 The device description module defines custom GATT Service, which contains information about whether the peripheral supports the Low Latency Packet Mode (LLPM).
-Only the nrfxlib Link Layer (:option:`CONFIG_BT_LL_NRFXLIB`) supports the LLPM extension.
+Only the nrfxlib Link Layer (:option:`CONFIG_BT_LL_SOFTDEVICE`) supports the LLPM extension.
 The Service is mandatory for all nRF Desktop peripherals that connect to the nRF Desktop centrals.
 
 Module events

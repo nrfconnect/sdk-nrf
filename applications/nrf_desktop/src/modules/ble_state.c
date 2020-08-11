@@ -17,9 +17,9 @@
 #include "ble_event.h"
 #include "passkey_event.h"
 
-#ifdef CONFIG_BT_LL_NRFXLIB
+#ifdef CONFIG_BT_LL_SOFTDEVICE
 #include "sdc_hci_vs.h"
-#endif /* CONFIG_BT_LL_NRFXLIB */
+#endif /* CONFIG_BT_LL_SOFTDEVICE */
 
 #define MODULE ble_state
 #include "module_state_event.h"
@@ -149,7 +149,7 @@ static void connected(struct bt_conn *conn, uint8_t error)
 	/* For nrfxlib LL TX power level has to be set using HCI command.
 	 * The default value set in Kconfig has no effect.
 	 */
-	if (IS_ENABLED(CONFIG_BT_LL_NRFXLIB)) {
+	if (IS_ENABLED(CONFIG_BT_LL_SOFTDEVICE)) {
 		set_tx_power(conn);
 	}
 

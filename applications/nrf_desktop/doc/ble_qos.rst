@@ -4,7 +4,7 @@ Bluetooth LE Quality of Service module
 #######################################
 
 Use the Bluetooth LE Quality of Service (QoS) module to achieve better connection quality and higher report rate by avoiding congested RF channels.
-The module can be used only by nRF Desktop central with the nrfxlib's Link Layer (:option:`CONFIG_BT_LL_NRFXLIB`).
+The module can be used only by nRF Desktop central with the nrfxlib's Link Layer (:option:`CONFIG_BT_LL_SOFTDEVICE`).
 
 Module events
 *************

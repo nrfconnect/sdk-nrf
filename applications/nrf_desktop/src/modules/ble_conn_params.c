@@ -8,9 +8,9 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/gatt_dm.h>
 
-#ifdef CONFIG_BT_LL_NRFXLIB
+#ifdef CONFIG_BT_LL_SOFTDEVICE
 #include "sdc_hci_vs.h"
-#endif /* CONFIG_BT_LL_NRFXLIB */
+#endif /* CONFIG_BT_LL_SOFTDEVICE */
 
 #define MODULE ble_conn_params
 #include "module_state_event.h"

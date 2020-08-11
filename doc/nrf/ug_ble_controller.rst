@@ -55,4 +55,4 @@ Most :ref:`Bluetooth LE samples <ble_samples>` in the |NCS| can use either Bluet
 An exception is the :ref:`ble_llpm` sample, which requires the SoftDevice Controller that supports LLPM.
 
 By default, all samples except for the :ref:`ble_llpm` sample are currently configured to use Zephyr's Bluetooth LE Controller.
-To use the SoftDevice Controller instead, set :option:`CONFIG_BT_LL_NRFXLIB_DEFAULT` to ``y`` in the :file:`prj.conf` file (see :ref:`configure_application`) and make sure to build from a clean build directory.
+To use the SoftDevice Controller instead, set :option:`CONFIG_BT_LL_SOFTDEVICE_DEFAULT` to ``y`` in the :file:`prj.conf` file (see :ref:`configure_application`) and make sure to build from a clean build directory.

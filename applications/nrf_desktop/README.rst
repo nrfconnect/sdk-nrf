@@ -1249,7 +1249,7 @@ For detailed information about every option, see the Kconfig help.
 
 The nRF Desktop devices use one of the following Link Layers:
 
-* :option:`CONFIG_BT_LL_NRFXLIB` that supports the Low Latency Packet Mode (LLPM).
+* :option:`CONFIG_BT_LL_SOFTDEVICE` that supports the Low Latency Packet Mode (LLPM).
 * :option:`CONFIG_BT_LL_SW_SPLIT` that does not support the LLPM and has a lower memory usage, so it can be used by memory-limited devices.
 
 .. _nrf_desktop_bluetooth_guide_modules:

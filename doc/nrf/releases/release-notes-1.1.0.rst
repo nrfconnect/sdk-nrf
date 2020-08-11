@@ -388,7 +388,7 @@ Bluetooth Low Energy
   * Added "Numeric Comparison" pairing support and aligned LED usage in peripheral samples.
   * Added nRF52840 Dongle support in :ref:`peripheral_lbs`.
 
-* Fixed default connections configuration when selecting :option:`CONFIG_BT_LL_NRFXLIB`.
+* Fixed default connections configuration when selecting :option:`CONFIG_BT_LL_SOFTDEVICE`.
 
 
 NFC
@@ -510,11 +510,11 @@ Subsystems
 Bluetooth Low Energy
 --------------------
 
-* :option:`CONFIG_BT_HCI_TX_STACK_SIZE` must be set to 1536 when selecting :option:`CONFIG_BT_LL_NRFXLIB`.
+* :option:`CONFIG_BT_HCI_TX_STACK_SIZE` must be set to 1536 when selecting :option:`CONFIG_BT_LL_SOFTDEVICE`.
 * The :ref:`nrfxlib:softdevice_controller` 0.3.0-3.prealpha might assert when receiving a packet with an CRC error on LE Coded PHY after performing a DLE procedure where RX Octets is changed to a value above 140.
-* :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` must be set to 2048 when selecting :option:`CONFIG_BT_LL_NRFXLIB` on :ref:`central_uart` and :ref:`central_bas`.
-* :option:`CONFIG_NFCT_IRQ_PRIORITY` must be set to 5 or less when selecting :option:`CONFIG_BT_LL_NRFXLIB` on :ref:`peripheral_hids_keyboard`.
-* When selecting :option:`CONFIG_BT_LL_NRFXLIB`:
+* :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` must be set to 2048 when selecting :option:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`central_uart` and :ref:`central_bas`.
+* :option:`CONFIG_NFCT_IRQ_PRIORITY` must be set to 5 or less when selecting :option:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`peripheral_hids_keyboard`.
+* When selecting :option:`CONFIG_BT_LL_SOFTDEVICE`:
   If a directed high duty cycle advertiser times out, the application might have to wait a short time before starting a new connectable advertiser.
   Otherwise, starting the advertiser will fail.
 * Bluetooth Low Energy peripheral samples are unstable in some conditions (when pairing and bonding are performed and then disconnections/re-connections happen).

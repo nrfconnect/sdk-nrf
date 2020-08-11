@@ -37,7 +37,7 @@ if (CONFIG_BT_RPMSG_NRF53)
     message("Adding 'hci_rpmsg' sample as child image since "
       "CONFIG_BT_RPMSG_NRF53 is set to 'y'")
 
-    if (CONFIG_BT_LL_NRFXLIB_DEFAULT)
+    if (CONFIG_BT_LL_SOFTDEVICE_DEFAULT)
       add_overlay_config(
         hci_rpmsg
         ${NRF_DIR}/subsys/bluetooth/controller/bt_ll_nrfxlib_hci_rpmsg.conf
