@@ -49,24 +49,57 @@ static struct k_delayed_work power_down_trigger;
 static struct k_delayed_work error_trigger;
 static atomic_t power_down_count;
 static unsigned int connection_count;
-static bool usb_connected;
+static enum usb_state usb_state;
 
+
+static bool is_device_powered(void)
+{
+	return (usb_state == USB_STATE_POWERED) ||
+	       (usb_state == USB_STATE_ACTIVE);
+}
+
+static bool system_off_check(void)
+{
+	return !IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_STAY_ON) &&
+	       (usb_state == USB_STATE_DISCONNECTED) &&
+	       (connection_count == 0) &&
+	       (power_state == POWER_STATE_SUSPENDED);
+}
+
+static void system_off(void)
+{
+	if (power_state == POWER_STATE_ERROR_SUSPENDED) {
+		power_state = POWER_STATE_ERROR_OFF;
+	} else {
+		power_state = POWER_STATE_OFF;
+	}
+
+	LOG_WRN("System turned off");
+	LOG_PANIC();
+
+	sys_pm_force_power_state(SYS_POWER_STATE_DEEP_SLEEP_1);
+}
 
 static void power_down(struct k_work *work)
 {
-	__ASSERT_NO_MSG(!usb_connected);
-	__ASSERT_NO_MSG(power_state == POWER_STATE_IDLE);
+	__ASSERT_NO_MSG(!is_device_powered());
 
 	atomic_val_t cnt = atomic_add(&power_down_count, POWER_DOWN_CHECK_MS);
 
 	if (cnt >= POWER_DOWN_TIMEOUT_MS) {
-		LOG_INF("System power down");
+		if (system_off_check()) {
+			system_off();
+		} else if (power_state != POWER_STATE_SUSPENDED) {
+			LOG_INF("System power down");
 
-		struct power_down_event *event = new_power_down_event();
+			struct power_down_event *event = new_power_down_event();
 
-		event->error = false;
-		power_state = POWER_STATE_SUSPENDING;
-		EVENT_SUBMIT(event);
+			event->error = false;
+			power_state = POWER_STATE_SUSPENDING;
+			EVENT_SUBMIT(event);
+		} else {
+			/* Stay suspended. */
+		}
 	} else {
 		k_delayed_work_submit(&power_down_trigger,
 				      K_MSEC(POWER_DOWN_CHECK_MS));
@@ -101,20 +134,6 @@ bool sys_pm_policy_low_power_devices(enum power_states pm_state)
 	return sys_pm_is_sleep_state(pm_state);
 }
 
-static void system_off(void)
-{
-	if (power_state == POWER_STATE_ERROR_SUSPENDED) {
-		power_state = POWER_STATE_ERROR_OFF;
-	} else {
-		power_state = POWER_STATE_OFF;
-	}
-
-	LOG_WRN("System turned off");
-	LOG_PANIC();
-
-	sys_pm_force_power_state(SYS_POWER_STATE_DEEP_SLEEP_1);
-}
-
 static void error(struct k_work *work)
 {
 	struct power_down_event *event = new_power_down_event();
@@ -144,19 +163,21 @@ static bool event_handler(const struct event_header *eh)
 			return false;
 		}
 
-		if (!usb_connected && (power_state == POWER_STATE_SUSPENDING)) {
+		if ((power_state == POWER_STATE_SUSPENDING) &&
+		    !is_device_powered()) {
 			LOG_INF("Power down the board");
 
 			profiler_term();
 
-			if (IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_STAY_ON) ||
-			    (connection_count > 0)) {
-				/* Connection is active, keep OS alive. */
-				power_state = POWER_STATE_SUSPENDED;
-				LOG_WRN("System suspended");
-			} else {
+			power_state = POWER_STATE_SUSPENDED;
+
+			if (system_off_check()) {
 				/* No active connection, turn system off. */
 				system_off();
+			} else {
+				/* Connection is active or USB suspended,
+				 * keep OS alive. */
+				LOG_WRN("System suspended");
 			}
 		}
 
@@ -181,7 +202,7 @@ static bool event_handler(const struct event_header *eh)
 		LOG_INF("Wake up the board");
 
 		power_state = POWER_STATE_IDLE;
-		if (!usb_connected) {
+		if (!is_device_powered()) {
 			power_down_counter_reset();
 			k_delayed_work_submit(&power_down_trigger,
 					      K_MSEC(POWER_DOWN_CHECK_MS));
@@ -215,21 +236,20 @@ static bool event_handler(const struct event_header *eh)
 			break;
 		}
 
-		if (!usb_connected && (connection_count == 0) &&
-		    (power_state == POWER_STATE_SUSPENDED) &&
-		    !IS_ENABLED(CONFIG_DESKTOP_POWER_MANAGER_STAY_ON)) {
+		if (system_off_check()) {
 			/* Last peer disconnected during standby.
 			 * Turn system off.
 			 */
 			system_off();
+		} else {
+			power_down_counter_reset();
 		}
-
-		power_down_counter_reset();
 
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) && is_usb_state_event(eh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) &&
+	    is_usb_state_event(eh)) {
 		const struct usb_state_event *event = cast_usb_state_event(eh);
 
 		if ((power_state == POWER_STATE_ERROR_SUSPENDED) ||
@@ -237,9 +257,11 @@ static bool event_handler(const struct event_header *eh)
 			return false;
 		}
 
+		usb_state = event->state;
+
 		switch (event->state) {
 		case USB_STATE_POWERED:
-			usb_connected = true;
+		case USB_STATE_ACTIVE:
 			k_delayed_work_cancel(&power_down_trigger);
 			if (power_state != POWER_STATE_IDLE) {
 				struct wake_up_event *wue =
@@ -249,10 +271,18 @@ static bool event_handler(const struct event_header *eh)
 			break;
 
 		case USB_STATE_DISCONNECTED:
-			usb_connected = false;
+			/* USB disconnect happens when USB wakes up.
+			 * Don't turn the system off directly but start
+			 * power down counter instead. */
 			power_down_counter_reset();
 			k_delayed_work_submit(&power_down_trigger,
 					      K_MSEC(POWER_DOWN_CHECK_MS));
+			break;
+
+		case USB_STATE_SUSPENDED:
+			/* Trigger immediate power down to standby. */
+			atomic_set(&power_down_count, POWER_DOWN_TIMEOUT_MS);
+			power_down(NULL);
 			break;
 
 		default:
