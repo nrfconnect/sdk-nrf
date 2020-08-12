@@ -5,7 +5,9 @@
  */
 
 #include <ztest.h>
-#include "zb_osif_platform.h"
+
+#include <zboss_api.h>
+#include <zb_osif_platform.h>
 
 #define ZB_BEACON_INTERVAL_USEC 15360
 
