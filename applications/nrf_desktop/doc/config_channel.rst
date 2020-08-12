@@ -266,6 +266,6 @@ API documentation
 | Header file: :file:`applications/nrf_desktop/src/util/config_channel.h`
 | Source file: :file:`applications/nrf_desktop/src/util/config_channel.c`
 
-.. doxygengroup:: config_channel
+.. doxygengroup:: config_channel_transport
    :project: nrf
    :members:
