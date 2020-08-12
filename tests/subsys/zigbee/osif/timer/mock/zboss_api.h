@@ -1,4 +1,4 @@
-#include "zb_types.h"
+#include <zb_types.h>
 
 /* stubs */
 #define ZB_BEACON_INTERVAL_USEC 15360
