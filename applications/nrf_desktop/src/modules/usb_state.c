@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include "hid_event.h"
 #include "usb_event.h"
 #include "config_event.h"
+#include "power_event.h"
 
 #define REPORT_TYPE_INPUT	0x01
 #define REPORT_TYPE_OUTPUT	0x02
@@ -449,6 +450,22 @@ static void protocol_change(uint8_t protocol)
 	}
 }
 
+static void usb_wakeup(void)
+{
+	int err = usb_wakeup_request();
+
+	if (!err) {
+		LOG_INF("USB wakeup requested");
+	} else if (err == -EAGAIN) {
+		/* Already woken up - waiting for host */
+		LOG_WRN("USB wakeup pending");
+	} else if (err == -EACCES) {
+		LOG_INF("USB wakeup was not enabled by the host");
+	} else {
+		LOG_ERR("USB wakeup request failed (err:%d)", err);
+	}
+}
+
 static int usb_init(void)
 {
 	usb_dev = device_get_binding(CONFIG_USB_HID_DEVICE_NAME "_0");
@@ -521,6 +538,12 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_USB_DEVICE_REMOTE_WAKEUP) &&
+	    is_wake_up_event(eh)) {
+		usb_wakeup();
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -531,4 +554,7 @@ EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE(MODULE, config_event);
+#endif
+#if CONFIG_USB_DEVICE_REMOTE_WAKEUP
+EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

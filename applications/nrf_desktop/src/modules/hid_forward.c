@@ -20,6 +20,7 @@
 #include "ble_event.h"
 #include "usb_event.h"
 #include "config_event.h"
+#include "power_event.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
@@ -48,6 +49,7 @@ static struct hids_subscriber subscribers[CONFIG_BT_MAX_CONN];
 static const void *usb_id;
 static bool usb_ready;
 static bool usb_busy;
+static bool suspended;
 
 static sys_slist_t enqueued_report_list;
 static size_t enqueued_report_count;
@@ -85,7 +87,7 @@ static void forward_hid_report(uint8_t report_id, const uint8_t *data, size_t si
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
-	if (!usb_ready) {
+	if (!usb_ready && !suspended && !enqueued_report_count) {
 		k_spin_unlock(&lock, key);
 		k_free(report);
 		return;
@@ -97,11 +99,16 @@ static void forward_hid_report(uint8_t report_id, const uint8_t *data, size_t si
 	report->dyndata.data[0] = report_id;
 	memcpy(&report->dyndata.data[1], data, size);
 
-	if (!usb_busy) {
+	if (!usb_busy && !suspended && !enqueued_report_count) {
 		EVENT_SUBMIT(report);
 		usb_busy = true;
 	} else {
 		enqueue_hid_report(report);
+	}
+
+	if (suspended) {
+		struct wake_up_event *event = new_wake_up_event();
+		EVENT_SUBMIT(event);
 	}
 
 	k_spin_unlock(&lock, key);
@@ -539,30 +546,36 @@ static void init(void)
 	sys_slist_init(&enqueued_report_list);
 }
 
+static void send_enqueued_report(void)
+{
+	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	__ASSERT_NO_MSG(usb_ready);
+
+	struct enqueued_report *item = NULL;
+
+	if (!sys_slist_is_empty(&enqueued_report_list)) {
+		item = CONTAINER_OF(sys_slist_get(&enqueued_report_list),
+				__typeof__(*item),
+				node);
+		enqueued_report_count--;
+
+		EVENT_SUBMIT(item->report);
+
+		usb_busy = true;
+	} else {
+		usb_busy = false;
+	}
+
+	k_spin_unlock(&lock, key);
+
+	k_free(item);
+}
+
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
-		k_spinlock_key_t key = k_spin_lock(&lock);
-
-		__ASSERT_NO_MSG(usb_ready);
-
-		struct enqueued_report *item = NULL;
-
-		if (!sys_slist_is_empty(&enqueued_report_list)) {
-			item = CONTAINER_OF(sys_slist_get(&enqueued_report_list),
-					    __typeof__(*item),
-					    node);
-			enqueued_report_count--;
-
-			EVENT_SUBMIT(item->report);
-		} else {
-			usb_busy = false;
-		}
-
-		k_spin_unlock(&lock, key);
-
-		k_free(item);
-
+		send_enqueued_report();
 		return false;
 	}
 
@@ -603,6 +616,7 @@ static bool event_handler(const struct event_header *eh)
 				k_spinlock_key_t key = k_spin_lock(&lock);
 				usb_ready = true;
 				k_spin_unlock(&lock, key);
+				send_enqueued_report();
 			} else {
 				clear_state();
 			}
@@ -628,20 +642,24 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (is_usb_state_event(eh)) {
-		const struct usb_state_event *event =
-			cast_usb_state_event(eh);
+		const struct usb_state_event *event = cast_usb_state_event(eh);
 
-		switch (event->state) {
-		case USB_STATE_ACTIVE:
+		if (!usb_id) {
 			usb_id = event->id;
-			break;
-		case USB_STATE_DISCONNECTED:
-			clear_state();
-			break;
-		default:
-			/* Ignore */
-			break;
 		}
+
+		return false;
+	}
+
+	if (is_wake_up_event(eh)) {
+		suspended = false;
+
+		return false;
+	}
+
+	if (is_power_down_event(eh)) {
+		suspended = true;
+
 		return false;
 	}
 
@@ -664,6 +682,8 @@ EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, usb_state_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+EVENT_SUBSCRIBE(MODULE, power_down_event);
+EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
