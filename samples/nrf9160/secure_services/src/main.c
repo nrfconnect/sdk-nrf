@@ -99,14 +99,19 @@ void main(void)
 	printk("\n");
 #endif
 
+#if defined(PM_S0_ADDRESS) && !defined(PM_S0_IMAGE_ADDRESS)
+	#define PM_S0_IMAGE_ADDRESS PM_S0_ADDRESS
+#endif
+
 #if defined(PM_S0_ADDRESS) && defined(CONFIG_SPM_SERVICE_PREVALIDATE)
-	int valid = spm_prevalidate_b1_upgrade(PM_S0_ADDRESS, PM_S0_ADDRESS);
+	int valid = spm_prevalidate_b1_upgrade(PM_S0_IMAGE_ADDRESS,
+		PM_S0_IMAGE_ADDRESS);
 
 	if (valid < 0 && valid != -ENOTSUP) {
 		printk("Unexpected error from spm_prevalidate_b1_upgrade: %d\n",
 			valid);
 	} else {
-		printk("S0 valid? %s\n",
+		printk("S0 (0x%x) valid? %s\n", PM_S0_IMAGE_ADDRESS,
 			valid == 1 ? "True" : valid == 0 ? "False" : "Unknown");
 	}
 	printk("\n");
