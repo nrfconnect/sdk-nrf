@@ -25,6 +25,7 @@ struct ser_scratchpad {
 
 void *ser_scratchpad_get(struct ser_scratchpad *scratchpad, size_t size);
 
+void ser_encode_null(CborEncoder *encoder);
 void ser_encode_uint(CborEncoder *encoder, uint32_t value);
 void ser_encode_int(CborEncoder *encoder, int32_t value);
 void ser_encode_uint64(CborEncoder *encoder, uint64_t value);
@@ -32,7 +33,9 @@ void ser_encode_int64(CborEncoder *encoder, int64_t value);
 void ser_encode_buffer(CborEncoder *encoder, const void *data, size_t size);
 void ser_encode_callback(CborEncoder *encoder, void *callback);
 static inline void ser_encode_callback_slot(CborEncoder *encoder, uint32_t slot);
+void ser_encoder_invalid(CborEncoder *encoder);
 
+void ser_decode_skip(CborValue *value);
 uint32_t ser_decode_uint(CborValue *value);
 int32_t ser_decode_int(CborValue *value);
 uint64_t ser_decode_uint64(CborValue *value);
@@ -42,6 +45,7 @@ size_t ser_decode_buffer_size(CborValue *value);
 void *ser_decode_buffer_sp(struct ser_scratchpad *scratchpad);
 void *ser_decode_callback(CborValue *value, void* handler);
 void *ser_decode_callback_slot(CborValue *value);
+void ser_decoder_invalid(CborValue *value, CborError err);
 
 bool ser_decoding_done_and_check(CborValue *value);
 

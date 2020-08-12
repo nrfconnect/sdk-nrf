@@ -14,7 +14,7 @@ static inline bool is_decoder_invalid(CborValue *value)
 	return !value->parser;
 }
 
-static void set_decoder_invalid(CborValue *value, CborError err)
+void ser_decoder_invalid(CborValue *value, CborError err)
 {
 	if (is_decoder_invalid(value))
 		return;
@@ -51,6 +51,19 @@ static void check_final_decode_valid(CborValue *value)
 	}
 }
 
+void ser_encode_null(CborEncoder *encoder)
+{
+	CborError err;
+
+	if (is_encoder_invalid(encoder))
+		return;
+	
+	err = cbor_encode_null(encoder);
+
+	if (err != CborNoError) {
+		set_encoder_invalid(encoder, err);
+	}
+}
 
 void ser_encode_uint(CborEncoder *encoder, uint32_t value)
 {
@@ -123,6 +136,26 @@ void ser_encode_callback(CborEncoder* encoder, void* callback)
 		set_encoder_invalid(encoder, err);
 }
 
+void ser_encoder_invalid(CborEncoder* encoder)
+{
+	set_encoder_invalid(encoder, CborErrorIO);
+}
+
+
+void ser_decode_skip(CborValue *value)
+{
+	CborError err;
+
+	if (is_decoder_invalid(value))
+		return;
+
+	err = cbor_value_advance(value);
+
+	if (err != CborNoError) {
+		ser_decoder_invalid(value, err);
+	}
+}
+
 
 uint32_t ser_decode_uint(CborValue *value)
 {
@@ -148,7 +181,7 @@ uint32_t ser_decode_uint(CborValue *value)
 	return result;
 
 error_exit:
-	set_decoder_invalid(value, err);
+	ser_decoder_invalid(value, err);
 	return 0;
 }
 
@@ -174,7 +207,7 @@ int32_t ser_decode_int(CborValue *value)
 	return result;
 
 error_exit:
-	set_decoder_invalid(value, err);
+	ser_decoder_invalid(value, err);
 	return 0;
 }
 
@@ -243,7 +276,7 @@ void *ser_decode_buffer(CborValue *value, void *buffer, size_t buffer_size)
 	return result;
 
 error_exit:
-	set_decoder_invalid(value, err);
+	ser_decoder_invalid(value, err);
 	return NULL;
 }
 
@@ -279,7 +312,7 @@ size_t ser_decode_buffer_size(CborValue *value)
 	return result;
 
 error_exit:
-	set_decoder_invalid(value, err);
+	ser_decoder_invalid(value, err);
 	return 0;
 }
 
@@ -329,7 +362,7 @@ void *ser_decode_buffer_sp(struct ser_scratchpad *scratchpad)
 	return result;
 
 error_exit:
-	set_decoder_invalid(value, err);
+	ser_decoder_invalid(value, err);
 	return NULL;
 }
 
@@ -340,7 +373,7 @@ void* ser_decode_callback_slot(CborValue *value)
 	void* result = cbkproxy_in_get(slot);
 
 	if (result == NULL)
-		set_decoder_invalid(value, CborErrorIO);
+		ser_decoder_invalid(value, CborErrorIO);
 
 	return result;
 }
@@ -378,7 +411,7 @@ void* ser_decode_callback(CborValue *value, void* handler)
 	return result;
 
 error_exit:
-	set_decoder_invalid(value, err);
+	ser_decoder_invalid(value, err);
 	return NULL;
 }
 

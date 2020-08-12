@@ -8,13 +8,15 @@
 
 #include "bt_rpc_common.h"
 #include "serialize.h"
+#include "cbkproxy.h"
+
 
 SERIALIZE(GROUP(bt_rpc_grp));
 
 SERIALIZE(RAW_STRUCT(bt_addr_le_t));
 
 
-void report_decoding_error(uint8_t cmd_evt_id, void* DATA) {
+static void report_decoding_error(uint8_t cmd_evt_id, void* DATA) {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
 		    NRF_RPC_PACKET_TYPE_CMD);
 }

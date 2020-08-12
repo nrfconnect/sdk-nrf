@@ -18,5 +18,8 @@ config BT_RPC_INITIALIZE_NRF_RPC
 	  Initialize nRF RPC library during the system startup. Disabling this
 	  option allow user to initialize it in a different way.
 
+config BT_MAX_CONN
+	int "Maximum number of simultaneous connections"
+	default 1
 
 endif # BT_RPC_CLIENT

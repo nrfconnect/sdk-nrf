@@ -10,7 +10,7 @@
 #include "cbkproxy.h"
 
 
-void report_decoding_error(uint8_t cmd_evt_id, void* DATA) {
+static void report_decoding_error(uint8_t cmd_evt_id, void* DATA) {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
 		    NRF_RPC_PACKET_TYPE_CMD);
 }
@@ -36,13 +36,6 @@ static inline void bt_ready_cb_t_callback(int err,
 }
 
 CBKPROXY_HANDLER(bt_ready_cb_t_encoder, bt_ready_cb_t_callback, (int err), (err));
-
-#define S4(x) #x
-#define S3(x) S4(x)
-#define S2(x) S3(x)
-#define S1(x) S2(x)
-
-//#pragma message S1(CBKPROXY_HANDLER(bt_ready_cb_t_encoder, bt_ready_cb_t_callback, (int err), (err)))
 
 static void bt_enable_rpc_handler(CborValue *_value, void *_handler_data)        /*####%Bims*/
 {                                                                                /*#####@U54*/
@@ -195,9 +188,11 @@ void net_buf_simple_enc(CborEncoder *_encoder, struct net_buf_simple *_data)
 	ser_encode_buffer(_encoder, _data->data, _data->len);
 }
 
-void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr, int8_t rssi,
-			      uint8_t adv_type, struct net_buf_simple *buf,
-			      uint32_t callback_slot)
+
+static inline void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr,
+					    int8_t rssi, uint8_t adv_type,
+					    struct net_buf_simple *buf,
+					    uint32_t callback_slot)
 {
 	SERIALIZE(CALLBACK(bt_le_scan_cb_t *));
 
@@ -227,6 +222,7 @@ void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr, int8_t rssi,
 CBKPROXY_HANDLER(bt_le_scan_cb_t_encoder, bt_le_scan_cb_t_callback,
 		 (const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type,
 		  struct net_buf_simple *buf), (addr, rssi, adv_type, buf));
+
 
 static void bt_le_scan_start_rpc_handler(CborValue *_value, void *_handler_data)     /*####%BtgB*/
 {                                                                                    /*#####@oaA*/
