@@ -906,7 +906,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
-				  config_fetch, false);
+				  config_fetch);
 
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);

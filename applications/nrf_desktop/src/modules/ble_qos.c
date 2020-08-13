@@ -714,8 +714,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	GEN_CONFIG_EVENT_HANDLERS("qos", opt_descr, update_config, fetch_config,
-				  false);
+	GEN_CONFIG_EVENT_HANDLERS("qos", opt_descr, update_config,
+				  fetch_config);
 
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
