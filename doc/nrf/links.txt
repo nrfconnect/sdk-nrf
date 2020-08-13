@@ -89,6 +89,14 @@
 
 .. _`nAN34`: https://infocenter.nordicsemi.com/pdf/nan_34.pdf
 
+.. _`Power saving mode setting section in AT commands reference document`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/cpsms.html
+
+.. _`Measuring current on nRF9160 DK`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/hw_measure_current.html
+
+.. _`Release Assistance Indication (RAI)`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/nw_service/xrai.html
+
+.. _`Measuring Current on Thingy:91`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/hw_power_current_measurement.html
+
 .. ### Links to the Nordic website
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
