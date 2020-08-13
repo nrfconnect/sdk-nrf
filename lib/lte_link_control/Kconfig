@@ -157,6 +157,15 @@ config LTE_NETWORK_MODE_NBIOT_GPS
 
 endchoice
 
+config LTE_RAI_REQ_VALUE
+	string "Requested RAI value"
+	default "0"
+	help
+		Sets Release Assistance Indication. Allowed values
+		are "0", "3" and "4" signifying disabled,
+		control plane one response, and control plane no response,
+		respectively. For reference see 3GPP 24.301 Ch. 9.9.4.25.
+
 config LTE_NETWORK_USE_FALLBACK
 	bool "Use fallback network mode if selected mode fails"
 	default y
