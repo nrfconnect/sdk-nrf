@@ -280,9 +280,11 @@ static bool event_handler(const struct event_header *eh)
 			break;
 
 		case USB_STATE_SUSPENDED:
-			/* Trigger immediate power down to standby. */
-			atomic_set(&power_down_count, POWER_DOWN_TIMEOUT_MS);
-			power_down(NULL);
+			if (IS_ENABLED(CONFIG_USB_DEVICE_REMOTE_WAKEUP)) {
+				/* Trigger immediate power down to standby. */
+				atomic_set(&power_down_count, POWER_DOWN_TIMEOUT_MS);
+				power_down(NULL);
+			}
 			break;
 
 		default:
