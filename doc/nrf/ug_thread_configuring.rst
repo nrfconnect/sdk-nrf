@@ -79,6 +79,24 @@ To do this, modify the setting of the following Kconfig option:
 
 For more configuration options, read the module documentation.
 
+.. _thread_ug_thread_1_2:
+
+Thread Specification v1.2 options
+=================================
+
+The OpenThread stack can be configured to operate in compliance with either Thread Specification v1.1 or :ref:`Thread Specification v1.2 <thread_ug_supported_features_v12>`.
+You can change the stack version by using the following Kconfig options:
+
+* :option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_1` - Selects the Thread stack version that is compliant with Thread Specification v1.1.
+  This option is enabled by default if no other option is selected.
+* :option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_2` - Selects the Thread stack version that is compliant with Thread Specification v1.2.
+
+By selecting support for the v1.2, you enable the following features in addition to the :ref:`v1.1 features <thread_ug_supported_features>`:
+
+* Enhanced Frame Pending
+* Enhanced Keep Alive
+* Thread domain name
+
 Thread commissioning
 ====================
 

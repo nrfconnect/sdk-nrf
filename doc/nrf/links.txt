@@ -295,33 +295,25 @@
 
 .. ### Links to Thread and OpenThread
 
-.. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
-
-.. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/master/src/cli/README.md
-
-.. _`OpenThread.io`: https://openthread.io
-
-.. _`Thread Group`: https://www.threadgroup.org
-
-.. _`Thread protocol specification`: https://www.threadgroup.org/ThreadSpec
-
 .. _`Creative Commons 3.0 Attribution License`: https://creativecommons.org/licenses/by/3.0/
-
 .. _`shared by Google`: https://developers.google.com/readme/policies/
 
+.. _`OpenThread CoAP API`: https://openthread.io/reference/group/api-coap
+.. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/master/src/cli/README.md
+.. _`OpenThread.io`: https://openthread.io
 .. _`Device Types on OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
-
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
-
-.. _`Thread Group's Commissioning White Paper`: https://www.threadgroup.org/Portals/0/documents/support/CommissioningWhitePaper_658_2.pdf
-
 .. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_COMMISSIONER.md
-
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/master/src/cli/README_JOINER.md
+
+.. _`Thread Group`: https://www.threadgroup.org
+.. _`Thread protocol specification`: https://www.threadgroup.org/ThreadSpec
+.. _`Thread Group's Commissioning White Paper`: https://www.threadgroup.org/Portals/0/documents/support/CommissioningWhitePaper_658_2.pdf
+.. _`Thread Specification v1.2 Commercial White Paper`: https://www.threadgroup.org/Portals/0/documents/support/ThreadInCommercialWhitePaper_2542_1.pdf
+.. _`Thread Specification v1.2 Base Features`: https://www.threadgroup.org/Portals/0/documents/support/Thread%201.2%20Base%20Features.pdf
 
 .. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
 .. _`wpantund Installation Guide`: https://github.com/openthread/wpantund/blob/master/INSTALL.md
-
 .. _`PySpinel`: https://github.com/openthread/pyspinel/blob/master/README.md
 
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
