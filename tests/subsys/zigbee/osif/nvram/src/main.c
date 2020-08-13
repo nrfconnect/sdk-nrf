@@ -23,7 +23,7 @@ BUILD_ASSERT((ZBOSS_NVRAM_PAGE_SIZE % PHYSICAL_PAGE_SIZE) == 0,
 static char zb_nvram_buf[PAGE_SIZE];
 
 /* Stub for ZBOSS callout */
-zb_void_t zb_nvram_erase_finished_stub(zb_uint8_t page)
+void zb_nvram_erase_finished_stub(zb_uint8_t page)
 {
 }
 

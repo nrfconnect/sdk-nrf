@@ -73,7 +73,7 @@ __weak zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
  * wants to implement their own going-to-deep-sleep policy/share resources
  * between Zigbee stack and other components.
  */
-__weak zb_void_t zb_osif_wake_up(void)
+__weak void zb_osif_wake_up(void)
 {
 #if ZB_TRACE_LEVEL
 	ZB_SET_TRACE_ON();

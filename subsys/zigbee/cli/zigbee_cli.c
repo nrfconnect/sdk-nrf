@@ -31,7 +31,7 @@ zb_uint8_t zb_cli_get_endpoint(void)
 
 /**@brief Sets the Endpoint number used by the CLI.
  */
-zb_void_t zb_cli_set_endpoint(zb_uint8_t ep)
+void zb_cli_set_endpoint(zb_uint8_t ep)
 {
 	cli_ep = ep;
 }
@@ -39,7 +39,7 @@ zb_void_t zb_cli_set_endpoint(zb_uint8_t ep)
 /**@brief Configures CLI endpoint by setting number of endpoint to be used
  * by the CLI and for chosen endpoint registers CLI endpoint handler.
  */
-zb_void_t zb_cli_configure_endpoint(void)
+void zb_cli_configure_endpoint(void)
 {
 	zb_zcl_globals_t *zcl_ctx = zb_zcl_get_ctx();
 	zb_af_endpoint_desc_t *cli_ep_desc;
@@ -77,7 +77,7 @@ zb_void_t zb_cli_configure_endpoint(void)
 
 /**@brief Sets the debug mode.
  */
-zb_void_t zb_cli_debug_set(zb_bool_t debug)
+void zb_cli_debug_set(zb_bool_t debug)
 {
 	debug_mode = debug;
 }

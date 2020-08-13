@@ -28,7 +28,7 @@ static zb_timer_t zb_timer = {
 };
 
 /* Forward declaration, dependency to ZBOSS */
-zb_void_t zb_osif_zboss_timer_tick(void);
+void zb_osif_zboss_timer_tick(void);
 
 /* Timer interrupt handler. */
 static void zb_timer_alarm_handler(struct device *counter_dev, uint8_t chan_id,

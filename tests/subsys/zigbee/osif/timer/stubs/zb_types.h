@@ -20,8 +20,6 @@ typedef unsigned short     zb_uint16_t;
 
 typedef signed short       zb_int16_t;
 
-typedef void               zb_void_t;
-
 
 /** @brief General purpose boolean type. */
 typedef enum zb_bool_e zb_bool_t;

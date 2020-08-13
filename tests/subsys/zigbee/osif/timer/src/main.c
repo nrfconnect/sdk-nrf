@@ -12,7 +12,7 @@
 static zb_uint32_t alarm_counter;
 
 /* mock for timer alarm handler */
-zb_void_t zb_osif_zboss_timer_tick(void)
+void zb_osif_zboss_timer_tick(void)
 {
 	alarm_counter++;
 }

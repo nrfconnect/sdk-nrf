@@ -24,7 +24,7 @@ LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 /* ZBOSS callout that should be called once flash erase page operation
  * is finished.
  */
-zb_void_t zb_nvram_erase_finished(zb_uint8_t page);
+void zb_nvram_erase_finished(zb_uint8_t page);
 
 static const struct flash_area *fa; /* ZBOSS nvram */
 

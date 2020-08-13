@@ -21,12 +21,12 @@ zb_uint8_t zb_cli_get_endpoint(void);
 
 /**@brief Sets the Endpoint number used by the CLI.
  */
-zb_void_t zb_cli_set_endpoint(zb_uint8_t ep);
+void zb_cli_set_endpoint(zb_uint8_t ep);
 
 /**@brief Configures CLI endpoint by setting number of endpoint to be used
  * by the CLI and registers CLI endpoint handler for chosen endpoint.
  */
-zb_void_t zb_cli_configure_endpoint(void);
+void zb_cli_configure_endpoint(void);
 
 /**@brief Function for intercepting every frame coming to the endpoint,
  *        so the frame may be processed before it is processed by the Zigbee
@@ -44,7 +44,7 @@ zb_uint8_t zb_cli_ep_handler(zb_bufid_t bufid);
  *
  * @param debug    Turns the debug mode on (ZB_TRUE) or off (ZB_FALSE).
  */
-zb_void_t zb_cli_debug_set(zb_bool_t debug);
+void zb_cli_debug_set(zb_bool_t debug);
 /**@brief Function for getting the state of the debug mode of the CLI.
  *
  * @retval ZB_TRUE  Debug mode is turned on.

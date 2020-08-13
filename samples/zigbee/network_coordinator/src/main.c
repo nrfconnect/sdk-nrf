@@ -51,7 +51,7 @@ LOG_MODULE_REGISTER(app);
  *
  * @param[in]   param   Not used. Required by callback type definition.
  */
-static zb_void_t steering_finished(zb_uint8_t param)
+static void steering_finished(zb_uint8_t param)
 {
 	ARG_UNUSED(param);
 	LOG_INF("Network steering finished");
