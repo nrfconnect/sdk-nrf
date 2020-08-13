@@ -250,7 +250,7 @@ int lte_lc_ptw_set(const char *ptw);
  * eDRX is subsequently enabled using `lte_lc_edrx_req`.
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
- * @param edrx eDRX value
+ * @param edrx eDRX value.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
@@ -261,9 +261,32 @@ int lte_lc_edrx_param_set(const char *edrx);
  * default values are defined in kconfig.
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
+ * @param enable Boolean value enabling or disabling the use of eDRX.
+ *
  * @return Zero on success or (negative) error code otherwise.
  */
 int lte_lc_edrx_req(bool enable);
+
+
+/** @brief Function for setting modem RAI value to be used when
+ * RAI is subsequently enabled using `lte_lc_rai_req`.
+ * For reference see 3GPP 24.301 Ch. 9.9.4.25.
+ *
+ * @param value RAI value.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_rai_param_set(const char *value);
+
+/** @brief Function for requesting modem to enable or disable
+ * use of RAI using values set by `lte_lc_rai_param_set`. The
+ * default values are defined in Kconfig.
+ *
+ * @param enable Boolean value enabling or disabling the use of RAI.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_rai_req(bool enable);
 
 /**
  * @brief Set the parameters for the default PDP context.
