@@ -24,6 +24,9 @@ extern "C" {
 /** @brief Config channel status list. */
 #define CONFIG_STATUS_LIST		\
 	X(PENDING)			\
+	X(GET_MAX_MOD_ID)		\
+	X(GET_HWID)			\
+	X(GET_BOARD_NAME)		\
 	X(SET)				\
 	X(FETCH)			\
 	X(SUCCESS)			\
@@ -60,8 +63,6 @@ enum config_status {
 #define OPT_ID_GET(opt_field)	(opt_field - 1)
 
 /* Common module option macros */
-#define MODULE_BROADCAST		BIT_MASK(MOD_FIELD_SIZE)
-#define BROADCAST_OPT_MAX_MOD_ID	0x0
 #define MODULE_OPT_MODULE_DESCR		0x0
 
 /* Character used to inform about end of module description. */
@@ -102,9 +103,8 @@ EVENT_TYPE_DYNDATA_DECLARE(config_event);
 #endif
 
 extern const uint8_t __start_config_channel_modules[];
-extern const uint8_t __stop_config_channel_modules[];
 
-#define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn, is_info)	\
+#define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn)		\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) > 0);						\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) <= OPT_FIELD_MASK);					\
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && is_config_event(eh)) {		\
@@ -134,21 +134,7 @@ extern const uint8_t __stop_config_channel_modules[];
 				consume = true;							\
 			}									\
 		} else if (event->status == CONFIG_STATUS_FETCH) {				\
-			if ((MOD_FIELD_GET(event->event_id) == MODULE_BROADCAST) &&		\
-			    (OPT_FIELD_GET(event->event_id) == BROADCAST_OPT_MAX_MOD_ID)) {	\
-				cur_opt_descr = 0;						\
-				if (is_info) {							\
-					size_t max_mod_id =					\
-						(uint8_t *)__stop_config_channel_modules - 1 -	\
-						(uint8_t *)__start_config_channel_modules;	\
-												\
-					__ASSERT(max_mod_id < MODULE_BROADCAST,			\
-						 "You can have up to 15 configurable modules"); \
-					rsp_data_buf[0] = max_mod_id;				\
-					rsp_data_size = (sizeof(rsp_data_buf[0]));		\
-					consume = true;						\
-				}								\
-			} else if (MOD_FIELD_GET(event->event_id) == config_module_id) {	\
+			if (MOD_FIELD_GET(event->event_id) == config_module_id) {		\
 				if (OPT_FIELD_GET(event->event_id) == MODULE_OPT_MODULE_DESCR) {\
 					if (cur_opt_descr < ARRAY_SIZE(opt_descr) + 1) {	\
 						const char *data_ptr;				\
@@ -159,9 +145,9 @@ extern const uint8_t __stop_config_channel_modules[];
 							data_ptr = opt_descr[cur_opt_descr - 1];\
 						}						\
 						rsp_data_size = strlen(data_ptr);		\
-						__ASSERT_NO_MSG(rsp_data_size <			\
+						__ASSERT_NO_MSG(rsp_data_size <=		\
 								sizeof(rsp_data_buf));		\
-						strcpy(rsp_data_buf, data_ptr);			\
+						strncpy(rsp_data_buf, data_ptr, rsp_data_size);	\
 						cur_opt_descr++;				\
 					} else {						\
 						rsp_data_size = sizeof(uint8_t);		\

@@ -698,7 +698,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	GEN_CONFIG_EVENT_HANDLERS("sensor", opt_descr, update_config,
-				  fetch_config, false);
+				  fetch_config);
 
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);

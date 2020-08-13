@@ -18,22 +18,56 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_INFO_LOG_LEVEL);
 
-enum config_info_opt {
-	INFO_OPT_BOARD_NAME,
-	INFO_OPT_HWID,
 
-	INFO_OPT_COUNT
-};
-
-const static char *opt_descr[] = {
-	"board_name",
-	"hwid",
-};
-
-static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
+static struct config_event *generate_response(const struct config_event *event,
+					      size_t dyndata_size)
 {
-	switch (opt_id) {
-	case INFO_OPT_BOARD_NAME:
+	__ASSERT_NO_MSG(event->is_request);
+
+	struct config_event *rsp = new_config_event(dyndata_size);
+
+	rsp->recipient = event->recipient;
+	rsp->event_id = event->event_id;
+	rsp->transport_id = event->transport_id;
+	rsp->is_request = false;
+
+	return rsp;
+}
+
+static void submit_response(struct config_event *rsp)
+{
+	rsp->status = CONFIG_STATUS_SUCCESS;
+	EVENT_SUBMIT(rsp);
+}
+
+static bool handle_config_event(const struct config_event *event)
+{
+	/* Not for us. */
+	if (event->recipient != DEVICE_PID) {
+		return false;
+	}
+
+	switch (event->status) {
+	case CONFIG_STATUS_GET_MAX_MOD_ID:
+	{
+		extern const uint8_t __start_config_channel_modules[];
+		extern const uint8_t __stop_config_channel_modules[];
+
+		size_t max_mod_id = (uint8_t *)__stop_config_channel_modules -
+				    (uint8_t *)__start_config_channel_modules - 1;
+
+		__ASSERT(max_mod_id <= BIT_MASK(MOD_FIELD_SIZE),
+			 "You can have up to 16 configurable modules");
+
+		struct config_event *rsp = generate_response(event,
+							     sizeof(uint8_t));
+
+		rsp->dyndata.data[0] = max_mod_id;
+		submit_response(rsp);
+		return true;
+	}
+
+	case CONFIG_STATUS_GET_BOARD_NAME:
 	{
 		const char *start_ptr = CONFIG_BOARD;
 		const char *end_ptr = strchr(start_ptr, BOARD_NAME_SEPARATOR);
@@ -42,27 +76,30 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 		size_t name_len = end_ptr - start_ptr;
 
 		__ASSERT_NO_MSG((name_len > 0) &&
-			(name_len < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
+			(name_len <= CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
 
-		strncpy(data, start_ptr, name_len);
-		*size = name_len;
-		break;
+		struct config_event *rsp = generate_response(event, name_len);
+
+		strncpy(rsp->dyndata.data, start_ptr, name_len);
+		submit_response(rsp);
+		return true;
 	}
 
-	case INFO_OPT_HWID:
-		hwid_get(data, CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
-		*size = HWID_LEN;
-		break;
+	case CONFIG_STATUS_GET_HWID:
+	{
+		struct config_event *rsp = generate_response(event, HWID_LEN);
+
+		BUILD_ASSERT(HWID_LEN <= CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE);
+		hwid_get(rsp->dyndata.data, HWID_LEN);
+		submit_response(rsp);
+		return true;
+	}
 
 	default:
-		LOG_WRN("Unknown config fetch option ID %" PRIu8, opt_id);
 		break;
 	}
-}
 
-static void set_config(const uint8_t opt_id, const uint8_t *data, const size_t size)
-{
-	LOG_WRN("Config set is not supported");
+	return false;
 }
 
 static bool event_handler(const struct event_header *eh)
@@ -78,8 +115,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, set_config,
-				  fetch_config, true);
+	if (is_config_event(eh)) {
+		return handle_config_event(cast_config_event(eh));
+	}
 
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);

@@ -557,7 +557,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
-				  fetch_config, false);
+				  fetch_config);
 
 	if (is_ble_peer_event(eh)) {
 		device_in_use = true;

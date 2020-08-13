@@ -238,7 +238,7 @@ static void config_get(const uint8_t opt_id, uint8_t *data, size_t *size)
 static bool event_handler(const struct event_header *eh)
 {
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
-				  config_get, false);
+				  config_get);
 
 	if (is_led_event(eh)) {
 		const struct led_event *event = cast_led_event(eh);
