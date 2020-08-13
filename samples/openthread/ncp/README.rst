@@ -67,7 +67,7 @@ User interface
 
 All the interactions with the application are handled using serial communication.
 
-For the interaction with the application, this sample uses `wpantund`_ process with wpanctl commands.
+For the interaction with the application, this sample uses :ref:`ug_thread_tools_wpantund` process with ``wpanctl`` commands.
 It is also possible to communicate with NCP board using `PySpinel`_ commands.
 
 You can use your own application instead of wpantund and PySpinel provided that it supports the spinel communication protocol.
@@ -122,23 +122,7 @@ After building the sample and programming it to your development kit, test it by
 
 1. Connect the NCP board's SEGGER J-Link USB port to the PC USB port with an USB cable.
 #. Get the board's serial port name (e.g. /dev/ttyACM0).
-#. Open a shell and run the wpantund process by using the following command:
-
-   .. code-block:: console
-
-      wpantund -I <network_interface_name> -s <serial_port_name> -b <baudrate>
-
-   For ``baudrate``, use value 1000000.
-   For ``serial_port_name``, use the value from the previous step.
-   For ``network_interface_name``, use a name of your choice.
-   In this testing procedure, this will be `leader_interface`.
-#. Open another shell and run the wpanctl process by using the following command:
-
-   .. code-block:: console
-
-      wpanctl -I leader_interface
-
-   This process can be used to control the connected NCP board.
+#. Run and configure wpantund and wpanctl as described in :ref:`ug_thread_tools_wpantund_configuring`.
 #. In the wpanctl shell, run the following command to check the NCP board state:
 
    .. code-block:: console

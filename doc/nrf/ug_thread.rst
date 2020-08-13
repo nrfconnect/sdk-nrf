@@ -14,17 +14,9 @@ For information about how to start working with Thread in |NCS|, see the followi
    ug_thread_overview.rst
    ug_thread_configuring.rst
    ug_thread_vendor_hooks.rst
+   ug_thread_tools.rst
 
 See :ref:`openthread_samples` for the list of available Thread samples.
-
-When working with Thread in |NCS|, you can use the following tools during Thread application development:
-
-* `nRF Thread Topology Monitor`_ - This desktop application helps to visualize the current network topology.
-* `nRF Sniffer for 802.15.4 based on nRF52840 with Wireshark`_ - Tool for analyzing network traffic during development.
-* `wpantund`_ - Utility for providing a native IPv6 interface to a Network Co-Processor.
-* `PySpinel`_ - Tool for controlling OpenThread Network Co-Processor instances through command line interface.
-
-Using Thread tools is optional.
 
 ----
 
