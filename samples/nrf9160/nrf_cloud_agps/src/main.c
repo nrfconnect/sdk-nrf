@@ -55,6 +55,7 @@ static void gps_start_work_fn(struct k_work *work)
 		.power_mode = GPS_POWER_MODE_DISABLED,
 		.timeout = 120,
 		.interval = 240,
+		.priority = true,
 	};
 
 	ARG_UNUSED(work);
