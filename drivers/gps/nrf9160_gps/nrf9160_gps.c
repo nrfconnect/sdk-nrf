@@ -64,6 +64,7 @@ struct nrf9160_gps_config {
 	nrf_gnss_nmea_mask_t nmea_mask;
 	nrf_gnss_delete_mask_t delete_mask;
 	nrf_gnss_power_save_mode_t power_mode;
+	bool priority;
 };
 
 static int stop_gps(struct device *dev, bool is_timeout);
@@ -467,6 +468,8 @@ static int parse_cfg(struct gps_config *cfg_src,
 		cfg_dst->power_mode = NRF_GNSS_PSM_DUTY_CYCLING_POWER;
 	}
 
+	cfg_dst->priority = cfg_src->priority;
+
 	return 0;
 }
 
@@ -541,6 +544,42 @@ static int start(struct device *dev, struct gps_config *cfg)
 		}
 	}
 
+	/* The GPS is started before setting NRF_SO_GNSS_ENABLE_PRIORITY or
+	 * NRF_SO_GNSS_DISABLE_PRIORITY as that's currently a requirement
+	 * by bsdlib.
+	 */
+	retval = nrf_setsockopt(drv_data->socket,
+				NRF_SOL_GNSS,
+				NRF_SO_GNSS_START,
+				&gps_cfg.delete_mask,
+				sizeof(gps_cfg.delete_mask));
+	if (retval != 0) {
+		LOG_ERR("Failed to start GPS");
+		return -EIO;
+	}
+
+	if (gps_cfg.priority) {
+		retval = nrf_setsockopt(drv_data->socket,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_ENABLE_PRIORITY, NULL, 0);
+		if (retval != 0) {
+			LOG_ERR("Failed to enable GPS priority");
+			return -EIO;
+		}
+	} else {
+		retval = nrf_setsockopt(drv_data->socket,
+					NRF_SOL_GNSS,
+					NRF_SO_GNSS_DISABLE_PRIORITY, NULL, 0);
+		if (retval != 0) {
+			LOG_ERR("Failed to disable GPS priority");
+			return -EIO;
+		}
+	}
+
+	/* The GPS has to be started again here because setting the options
+	 * NRF_SO_GNSS_ENABLE_PRIORITY or NRF_SO_GNSS_ENABLE_PRIORITY
+	 * implicitly stops the GPS.
+	 */
 	retval = nrf_setsockopt(drv_data->socket,
 				NRF_SOL_GNSS,
 				NRF_SO_GNSS_START,
