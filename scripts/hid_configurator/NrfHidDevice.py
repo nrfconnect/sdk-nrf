@@ -15,14 +15,10 @@ REPORT_SIZE = 30
 EVENT_DATA_LEN_MAX = REPORT_SIZE - 6
 
 MOD_FIELD_POS = 4
-MOD_BROADCAST = 0xf
-
 OPT_FIELD_POS = 0
 OPT_FIELD_MAX_OPT_CNT = 0xf
 
-OPT_BROADCAST_MAX_MOD_ID = 0x0
-
-OPT_MODULE_DEV_DESCR = 0x0
+OPT_MODULE_DESCR = 0x0
 
 POLL_INTERVAL_DEFAULT = 0.02
 POLL_RETRY_COUNT = 200
@@ -32,13 +28,16 @@ END_OF_TRANSFER_CHAR = '\n'
 
 class ConfigStatus(IntEnum):
     PENDING            = 0
-    SET                = 1
-    FETCH              = 2
-    SUCCESS            = 3
-    TIMEOUT            = 4
-    REJECT             = 5
-    WRITE_ERROR        = 6
-    DISCONNECTED_ERROR = 7
+    GET_MAX_MOD_ID     = 1
+    GET_HWID           = 2
+    GET_BOARD_NAME     = 3
+    SET                = 4
+    FETCH              = 5
+    SUCCESS            = 6
+    TIMEOUT            = 7
+    REJECT             = 8
+    WRITE_ERROR        = 9
+    DISCONNECTED_ERROR = 10
     FAULT              = 99
 
 class NrfHidTransport():
@@ -57,6 +56,11 @@ class NrfHidTransport():
         if status == ConfigStatus.SET:
             # No addtional checks
             pass
+        elif status in (ConfigStatus.GET_MAX_MOD_ID,
+                        ConfigStatus.GET_HWID,
+                        ConfigStatus.GET_BOARD_NAME):
+            assert event_id == 0
+            assert event_data_len == 0
         elif status == ConfigStatus.FETCH:
             assert event_data_len == 0
         else:
@@ -178,16 +182,20 @@ class NrfHidDevice():
 
         for d in devs:
             if self.dev_ptr is None:
-                config = NrfHidDevice._discover_device_config(d, pid)
+                board_name, hwid = NrfHidDevice._read_device_info(d, pid)
 
-                if config is not None:
-                    board_name, hwid = NrfHidDevice._discover_device_info(d, pid, config)
+                # HW ID missmatch
+                if (req_hwid is not None) and (req_hwid != hwid):
+                    d.close()
+                    continue
+
+                if (board_name is not None) and (hwid is not None):
+                    config = NrfHidDevice._discover_device_config(d, pid)
                 else:
-                    board_name = None
-                    hwid = None
+                    config = None
 
                 if (config is not None) and (board_name is not None) and \
-                   (hwid is not None) and ((req_hwid is None) or (req_hwid == hwid)):
+                   (hwid is not None):
                     self.dev_config = config
                     self.dev_ptr = d
                     self.board_name = board_name
@@ -215,23 +223,22 @@ class NrfHidDevice():
         return devs
 
     @staticmethod
-    def _fetch_max_mod_id(dev, recipient):
-        event_id = (MOD_BROADCAST << MOD_FIELD_POS) | \
-                   (OPT_BROADCAST_MAX_MOD_ID << OPT_FIELD_POS)
-
-        success, fetched_data = NrfHidTransport.exchange_feature_report(dev, recipient,
-                                                                        event_id, ConfigStatus.FETCH,
+    def _read_max_mod_id(dev, recipient):
+        success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
+                                                                        recipient,
+                                                                        0,
+                                                                        ConfigStatus.GET_MAX_MOD_ID,
                                                                         None)
         if not success or not fetched_data:
-            return False, None
+            return None
 
         max_mod_id = ord(fetched_data.decode('utf-8'))
 
-        return success, max_mod_id
+        return max_mod_id
 
     @staticmethod
     def _fetch_next_option(dev, recipient, module_id):
-        event_id = (module_id << MOD_FIELD_POS) | (OPT_MODULE_DEV_DESCR << OPT_FIELD_POS)
+        event_id = (module_id << MOD_FIELD_POS) | (OPT_MODULE_DESCR << OPT_FIELD_POS)
 
         success, fetched_data = NrfHidTransport.exchange_feature_report(dev, recipient,
                                                                         event_id, ConfigStatus.FETCH,
@@ -252,17 +259,9 @@ class NrfHidDevice():
 
     @staticmethod
     def _discover_module_config(dev, recipient, module_id):
-        module_config = {}
-
-        success, module_name = NrfHidDevice._fetch_next_option(dev, recipient,
-                                                               module_id)
-        if not success:
-            return None, None
-
-        module_config['id'] = module_id
-        module_config['options'] = {}
-        # First fetched option (with index 0) is module name
-        opt_idx = 1
+        fetched_options = []
+        fetch_idx = 0
+        end_of_transfer_idx = None
 
         while True:
             success, opt = NrfHidDevice._fetch_next_option(dev, recipient,
@@ -270,17 +269,41 @@ class NrfHidDevice():
             if not success:
                 return None, None
 
-            if opt[0] == END_OF_TRANSFER_CHAR:
+            if opt in fetched_options:
                 break
 
-            if opt_idx > OPT_FIELD_MAX_OPT_CNT:
+            if opt[0] == END_OF_TRANSFER_CHAR:
+                end_of_transfer_idx = len(fetched_options)
+
+            fetched_options.append(opt)
+
+            if fetch_idx > OPT_FIELD_MAX_OPT_CNT + 1:
                 print("Improper module description")
                 return None, None
 
-            module_config['options'][opt] = {
+            fetch_idx += 1
+
+        if end_of_transfer_idx is None:
+            print("Improper module description")
+            return None, None
+
+        fetched_options = fetched_options[end_of_transfer_idx:] + \
+                          fetched_options[:end_of_transfer_idx]
+        fetched_options = fetched_options[1:]
+
+        module_name = fetched_options[0]
+        fetched_options = fetched_options[1:]
+
+        module_config = {}
+        module_config['id'] = module_id
+        module_config['options'] = {}
+
+        # Option with index 0 is module description
+        opt_idx = 1
+        for o in fetched_options:
+            module_config['options'][o] = {
                 'id' : opt_idx,
             }
-
             opt_idx += 1
 
         return module_name, module_config
@@ -289,8 +312,8 @@ class NrfHidDevice():
     def _discover_device_config(dev, recipient):
         device_config = {}
 
-        success, max_mod_id = NrfHidDevice._fetch_max_mod_id(dev, recipient)
-        if not success or (max_mod_id is None):
+        max_mod_id = NrfHidDevice._read_max_mod_id(dev, recipient)
+        if max_mod_id is None:
             return None
 
         for i in range(0, max_mod_id + 1):
@@ -303,31 +326,21 @@ class NrfHidDevice():
         return device_config
 
     @staticmethod
-    def _discover_device_info(dev, recipient, dev_cfg):
-        INFO_MODULE_NAME = 'info'
-
-        try:
-            event_id = NrfHidDevice._get_event_id(INFO_MODULE_NAME, 'board_name', dev_cfg)
-        except KeyError:
-            print('Cannot get board_name (recipient: {})'.format(recipient))
-            return None, None
-
-        success, fetched_data = NrfHidTransport.exchange_feature_report(dev, recipient,
-                                                                        event_id, ConfigStatus.FETCH,
+    def _read_device_info(dev, recipient):
+        success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
+                                                                        recipient,
+                                                                        0,
+                                                                        ConfigStatus.GET_BOARD_NAME,
                                                                         None)
         if success:
             board_name = fetched_data.decode('utf-8').replace(chr(0x00), '')
         else:
             return None, None
 
-        try:
-            event_id = NrfHidDevice._get_event_id(INFO_MODULE_NAME, 'hwid', dev_cfg)
-        except KeyError:
-            print('Cannot get hwid (recipient: {})'.format(recipient))
-            return None, None
-
-        success, fetched_data = NrfHidTransport.exchange_feature_report(dev, recipient,
-                                                                        event_id, ConfigStatus.FETCH,
+        success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
+                                                                        recipient,
+                                                                        0,
+                                                                        ConfigStatus.GET_HWID,
                                                                         None)
         if success:
             hwid = codecs.encode(fetched_data, 'hex')
