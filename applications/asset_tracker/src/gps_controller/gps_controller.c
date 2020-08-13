@@ -33,7 +33,8 @@ static void start(struct k_work *work)
 		.power_mode = GPS_POWER_MODE_DISABLED,
 		.timeout = CONFIG_GPS_CONTROL_FIX_TRY_TIME,
 		.interval = CONFIG_GPS_CONTROL_FIX_TRY_TIME +
-			gps_reporting_interval_seconds
+			gps_reporting_interval_seconds,
+		.priority = true,
 	};
 
 	if (gps_dev == NULL) {
