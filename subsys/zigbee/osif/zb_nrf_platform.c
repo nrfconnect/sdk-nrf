@@ -487,7 +487,7 @@ void zb_osif_abort(void)
 	k_fatal_halt(K_ERR_KERNEL_PANIC);
 }
 
-zb_void_t zb_reset(zb_uint8_t param)
+void zb_reset(zb_uint8_t param)
 {
 	ZVUNUSED(param);
 

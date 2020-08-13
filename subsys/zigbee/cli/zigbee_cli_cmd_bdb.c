@@ -444,7 +444,7 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
  *
  * @param[in] param Unused param.
  */
-zb_void_t zb_install_code_add(zb_uint8_t param)
+void zb_install_code_add(zb_uint8_t param)
 {
 	ARG_UNUSED(param);
 

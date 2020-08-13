@@ -401,7 +401,7 @@ static void bulb_clusters_attr_init(void)
  * @param[in]   bufid   Reference to Zigbee stack buffer
  *                      used to pass received data.
  */
-static zb_void_t zcl_device_cb(zb_bufid_t bufid)
+static void zcl_device_cb(zb_bufid_t bufid)
 {
 	zb_uint8_t cluster_id;
 	zb_uint8_t attr_id;

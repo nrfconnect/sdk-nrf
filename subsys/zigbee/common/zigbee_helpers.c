@@ -54,7 +54,7 @@ static void stop_network_rejoin(zb_uint8_t was_scheduled);
 /**@brief Function to set the Erase persistent storage
  *        depending on the erase pin
  */
-zb_void_t zigbee_erase_persistent_storage(zb_bool_t erase)
+void zigbee_erase_persistent_storage(zb_bool_t erase)
 {
 #ifdef ZB_USE_NVRAM
 	zb_set_nvram_erase_at_start(erase);
