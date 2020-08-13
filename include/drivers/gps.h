@@ -109,6 +109,12 @@ struct gps_config {
 
 	/* Delete stored assistance data before starting GPS search. */
 	bool delete_agps_data;
+
+	/* Give GPS priority in competition with other radio resource users.
+	 * This may affect the operation of other protocols, such as LTE in the
+	 * case of nRF9160.
+	 */
+	bool priority;
 };
 
 /* Flags indicating which AGPS assistance data set is written to the GPS module.
