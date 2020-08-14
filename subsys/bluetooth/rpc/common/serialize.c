@@ -156,6 +156,13 @@ void ser_decode_skip(CborValue *value)
 	}
 }
 
+bool ser_decode_is_null(CborValue *value)
+{
+	if (is_decoder_invalid(value))
+		return true;
+	
+	return cbor_value_is_null(value);
+}
 
 uint32_t ser_decode_uint(CborValue *value)
 {

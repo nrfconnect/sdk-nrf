@@ -15,6 +15,8 @@
 	"indent-string": "\t",
 	"generator": "NrfRpcCborGenerator",
 	"clang-params": "--config ${include-stubs}/conf.txt -include _rpc_defines.h ",
+	"clang-cli-params": "-DCONFIG_BT_RPC_CLIENT=1",
+	"clang-host-params": "-DCONFIG_BT_RPC_HOST=1",
 	"include-stubs": {
 		"syscall_list.h": "",
 		"devicetree_unfixed.h": "",
@@ -22,6 +24,7 @@
 		"kobj-types-enum.h": "",
 		"syscalls/kernel.h": "",
 		"_rpc_defines.h": [
+			"#define NRF_RPC_GENERATOR",
 			"#define CONFIG_NRF_RPC_TR_RPMSG 1",
 			"#define CONFIG_ARM 1",
 			"#define CONFIG_MP_NUM_CPUS 1",
@@ -31,7 +34,9 @@
 			"#define CONFIG_COOP_ENABLED 1",
 			"#define CONFIG_BT_MAX_CONN 3",
 			"#define CONFIG_BT_USER_PHY_UPDATE 1",
-			"#define CONFIG_BT_USER_DATA_LEN_UPDATE 1"
+			"#define CONFIG_BT_USER_DATA_LEN_UPDATE 1",
+			"#define CONFIG_BT_WHITELIST",
+			"#define CONFIG_BT_CENTRAL"
 		],
 		"conf.txt": [
 			"-Wno-undefined-internal",

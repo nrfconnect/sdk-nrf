@@ -10,11 +10,53 @@
 #include "cbkproxy.h"
 
 
-static void report_decoding_error(uint8_t cmd_evt_id, void* DATA) {
+
+static void report_decoding_error(uint8_t cmd_evt_id, void* data) {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
 		    NRF_RPC_PACKET_TYPE_CMD);
 }
 
+
+static void bt_rpc_get_check_table_rpc_handler(CborValue *_value, void *_handler_data)/*####%BoCa*/
+{                                                                                     /*#####@raA*/
+
+	struct nrf_rpc_cbor_ctx _ctx;                                                 /*#######%A*/
+	size_t size;                                                                  /*#######TW*/
+	uint8_t * data;                                                               /*#######hm*/
+	size_t _buffer_size_max = 5;                                                  /*#######Yg*/
+	struct ser_scratchpad _scratchpad;                                            /*########@*/
+
+	SER_SCRATCHPAD_ALLOC(&_scratchpad, _value);                                   /*##EZKHjKY*/
+
+	size = ser_decode_uint(_value);                                               /*####%Cl/C*/
+	data = ser_scratchpad_get(&_scratchpad, sizeof(uint8_t) * size);              /*#####@bC8*/
+
+	if (!ser_decoding_done_and_check(_value)) {                                   /*######%FE*/
+		goto decoding_error;                                                  /*######QTM*/
+	}                                                                             /*######@1Y*/
+
+	bt_rpc_get_check_table(data, size);                                           /*##Dju7zA4*/
+
+	_buffer_size_max += sizeof(uint8_t) * size;                                   /*##CFMA56g*/
+
+	{                                                                             /*####%AnG1*/
+		NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                           /*#####@zxs*/
+
+		ser_encode_buffer(&_ctx.encoder, data, sizeof(uint8_t) * size);       /*##DNObIzM*/
+
+		SER_SCRATCHPAD_FREE(&_scratchpad);                                    /*##Eq1r7Tg*/
+
+		nrf_rpc_cbor_rsp_no_err(&_ctx);                                       /*####%BIlG*/
+	}                                                                             /*#####@TnU*/
+
+	return;                                                                       /*#######%B*/
+decoding_error:                                                                       /*#######6u*/
+	report_decoding_error(BT_RPC_GET_CHECK_TABLE_RPC_CMD, _handler_data);         /*#######0o*/
+	SER_SCRATCHPAD_FREE(&_scratchpad);                                            /*#######OU*/
+}                                                                                     /*########@*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_get_check_table, BT_RPC_GET_CHECK_TABLE_RPC_CMD,/*####%Bg3e*/
+	bt_rpc_get_check_table_rpc_handler, NULL);                                          /*#####@qXw*/
 
 
 static inline void bt_ready_cb_t_callback(int err,
@@ -45,7 +87,7 @@ static void bt_enable_rpc_handler(CborValue *_value, void *_handler_data)       
 
 	cb = (bt_ready_cb_t)ser_decode_callback(_value, bt_ready_cb_t_encoder);  /*##Ctv5nEY*/
 
-	if (!ser_decoding_done_and_check(_value)) {                              /*######%AE*/
+	if (!ser_decoding_done_and_check(_value)) {                              /*######%FE*/
 		goto decoding_error;                                             /*######QTM*/
 	}                                                                        /*######@1Y*/
 
@@ -120,13 +162,13 @@ static void bt_le_adv_start_rpc_handler(CborValue *_value, void *_handler_data) 
 		bt_data_dec(&_scratchpad, &sd[_i]);                              /*#########*/
 	}                                                                        /*########@*/
 
-	if (!ser_decoding_done_and_check(_value)) {                              /*######%AE*/
+	if (!ser_decoding_done_and_check(_value)) {                              /*######%FE*/
 		goto decoding_error;                                             /*######QTM*/
 	}                                                                        /*######@1Y*/
 
 	_result = bt_le_adv_start(&param, ad, ad_len, sd, sd_len);               /*##DovAJXw*/
 
-	SER_SCRATCHPAD_FREE(&_scratchpad);                                       /*##Eq1r7Tg*/
+		SER_SCRATCHPAD_FREE(&_scratchpad);                               /*##Eq1r7Tg*/
 
 	ser_rsp_send_int(_result);                                               /*##BPC96+4*/
 
@@ -144,7 +186,7 @@ static void bt_le_adv_stop_rpc_handler(CborValue *_value, void *_handler_data)  
 
 	int _result;                                                             /*##AWc+iOc*/
 
-	nrf_rpc_cbor_decoding_done(_value);                                      /*##AGkSPWY*/
+	nrf_rpc_cbor_decoding_done(_value);                                      /*##FGkSPWY*/
 
 	_result = bt_le_adv_stop();                                              /*##Du9+9xY*/
 
@@ -176,10 +218,8 @@ size_t net_buf_simple_sp_size(struct net_buf_simple *_data)
 
 size_t net_buf_simple_buf_size(struct net_buf_simple *_data)
 {
-	return _data->len;
+	return 3 + _data->len;
 }
-
-SERIALIZE(STRUCT_BUFFER_CONST(net_buf_simple, 3));
 
 void net_buf_simple_enc(CborEncoder *_encoder, struct net_buf_simple *_data)
 {
@@ -196,9 +236,9 @@ static inline void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr,
 {
 	SERIALIZE(CALLBACK(bt_le_scan_cb_t *));
 
-	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%AY*/
-	size_t _scratchpad_size = 0;                                             /*######rAF*/
-	size_t _buffer_size_max = 18;                                            /*######@eg*/
+	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%AQ*/
+	size_t _scratchpad_size = 0;                                             /*######Krt*/
+	size_t _buffer_size_max = 15;                                            /*######@KM*/
 
 	_buffer_size_max += addr ? sizeof(bt_addr_le_t) : 0;                     /*####%CE/i*/
 	_buffer_size_max += net_buf_simple_buf_size(buf);                        /*#####@n2Y*/
@@ -236,7 +276,7 @@ static void bt_le_scan_start_rpc_handler(CborValue *_value, void *_handler_data)
 	bt_le_scan_param_dec(_value, &param);                                        /*####%CtFV*/
 	cb = (bt_le_scan_cb_t *)ser_decode_callback(_value, bt_le_scan_cb_t_encoder);/*#####@F4o*/
 
-	if (!ser_decoding_done_and_check(_value)) {                                  /*######%AE*/
+	if (!ser_decoding_done_and_check(_value)) {                                  /*######%FE*/
 		goto decoding_error;                                                 /*######QTM*/
 	}                                                                            /*######@1Y*/
 

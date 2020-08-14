@@ -36,6 +36,7 @@ static inline void ser_encode_callback_slot(CborEncoder *encoder, uint32_t slot)
 void ser_encoder_invalid(CborEncoder *encoder);
 
 void ser_decode_skip(CborValue *value);
+bool ser_decode_is_null(CborValue *value);
 uint32_t ser_decode_uint(CborValue *value);
 int32_t ser_decode_int(CborValue *value);
 uint64_t ser_decode_uint64(CborValue *value);
