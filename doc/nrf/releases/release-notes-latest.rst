@@ -24,11 +24,15 @@ sdk-zephyr
 
 The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``4ef29b34e3``, plus some |NCS| specific additions.
 
-For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run this command from the :file:`ncs/zephyr` repository after running ``west update``::
+For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
+
+.. code-block:: none
 
    git log --oneline 4ef29b34e3 ^v2.3.0-rc1-ncs1
 
-For a complete list of |NCS| specific commits, run::
+For a complete list of |NCS| specific commits, run:
+
+.. code-block:: none
 
    git log --oneline manifest-rev ^4ef29b34e3
 
@@ -53,7 +57,6 @@ The following list summarizes the most important changes inherited from upstream
     the standard location for I2C and SPI in the Arduino header.
   * Added nRF52820 nrfx defines for emulation on the :ref:`zephyr:nrf52833dk_nrf52833`.
 
-
 * Networking:
 
   * LwM2M:
@@ -64,12 +67,12 @@ The following list summarizes the most important changes inherited from upstream
 
   * MQTT:
 
-    * The ``utf8`` pointer in the :c:type:`mqtt_utf8` struct is now const.
+    * The ``utf8`` pointer in the :cpp:class:`mqtt_utf8` struct is now const.
     * The default ``clean_session`` value is now configurable with Kconfig (see :option:`CONFIG_MQTT_CLEAN_SESSION`).
 
   * OpenThread:
 
-    * Updated the OpenThread revision to upstream commit e653478c503d5b13207b01938fa1fa494a8b87d3.
+    * Updated the OpenThread revision to upstream commit ``e653478c503d5b13207b01938fa1fa494a8b87d3``.
     * Implemented a missing ``enable`` API function for the OpenThread interface.
     * Cleaned up the OpenThread Kconfig file.
       OpenThread dependencies are now enabled automatically.
@@ -93,13 +96,13 @@ The following list summarizes the most important changes inherited from upstream
   * Deprecated ``BT_LE_SCAN_FILTER_WHITELIST``.
     Use :cpp:enumerator:`BT_LE_SCAN_OPT_FILTER_WHITELIST <bt_gap::BT_LE_SCAN_OPT_FILTER_WHITELIST>` instead.
   * Deprecated ``bt_le_scan_param::filter_dup``.
-    Use ``bt_le_scan_param::options`` instead.
+    Use :cpp:member:`bt_le_scan_param::options` instead.
   * Deprecated ``bt_conn_create_le()``.
     Use :cpp:func:`bt_conn_le_create` instead.
   * Deprecated ``bt_conn_create_auto_le()``.
-     Use :cpp:func:`bt_conn_le_create_auto` instead.
+    Use :cpp:func:`bt_conn_le_create_auto` instead.
   * Deprecated ``bt_conn_create_slave_le()``.
-    Use :cpp:func:`bt_le_adv_start` instead, with ``bt_le_adv_param::peer`` set to the remote peer's address.
+    Use :cpp:func:`bt_le_adv_start` instead, with :cpp:member:`bt_le_adv_param::peer` set to the remote peer's address.
   * Deprecated the ``BT_LE_ADV_*`` macros.
     Use the ``BT_GAP_ADV_*`` enums instead.
 
@@ -213,12 +216,12 @@ The following list summarizes the most important changes inherited from upstream
   * Updated the :ref:`zephyr:usb_mass` to perform all application-level configuration before the USB subsystem starts.
     The sample now also supports FAT file systems on external storage.
 
-Modules:
+* Modules:
 
   * Introduced a ``depends`` keyword that can be added to a module's :file:`module.yml` file to declare dependencies to other modules.
     This allows to correctly establish the order of processing.
 
-Other:
+* Other:
 
   * Implemented ``nanosleep`` in the POSIX subsystem.
   * Deprecated the Zephyr-specific types in favor of the standard C99 int types.
@@ -227,6 +230,7 @@ The following list contains |NCS| specific additions:
 
 * Added support for the |NCS|'s :ref:`partition_manager`, which can be used for flash partitioning.
 * Added the following network socket and address extensions to the :ref:`zephyr:bsd_sockets_interface` interface to support the functionality provided by the :ref:`nrfxlib:bsdlib`:
+
   AF_LTE, NPROTO_AT, NPROTO_PDN, NPROTO_DFU, SOCK_MGMT, SO_RCVTIMEO, SO_BINDTODEVICE, SOL_PDN, SOL_DFU, SO_PDN_CONTEXT_ID, SO_PDN_STATE, SOL_DFU, SO_DFU_ERROR, TLS_SESSION_CACHE, SO_SNDTIMEO, MSG_TRUNC, SO_SILENCE_ALL, SO_IP_ECHO_REPLY, SO_IPV6_ECHO_REPLY
 * Added support for enabling TLS caching when using the :ref:`zephyr:mqtt_socket_interface` library.
   See :c:macro:`TLS_SESSION_CACHE`.
