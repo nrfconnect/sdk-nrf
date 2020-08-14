@@ -24,9 +24,9 @@
 .. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/nrfxlib
 .. _`nrfxlib`: https://github.com/nrfconnect/nrfxlib
 
-.. _`change log`: https://github.com/nrfconnect/sdk-nrf/wiki/Changelog
+.. _`nRF Connect SDK changelog`: https://github.com/nrfconnect/sdk-nrf/wiki/Changelog
 
-.. _`master branch section in the change log`: https://github.com/nrfconnect/sdk-nrf/wiki/Changelog#master-branch
+.. _`master branch section in the changelog`: https://github.com/nrfconnect/sdk-nrf/wiki/Changelog#master-branch
 
 .. _`Known issues`: https://github.com/nrfconnect/sdk-nrf/wiki/Known-issues
 

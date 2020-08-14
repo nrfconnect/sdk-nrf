@@ -9,9 +9,9 @@ Important issues that are discovered after a release is tagged are listed in the
 
 .. important::
    A "99" at the end of the version number of this documentation indicates continuous updates on the master branch since the previous major.minor release.
-   Changes between releases that are merged into the master branch are tracked in the `change log`_ in the sdk-nrf repository wiki.
+   Changes between releases that are merged into the master branch are tracked in the `nRF Connect SDK changelog`_ in the sdk-nrf repository wiki.
 
-   Note that there might be additional changes on the master branch that are not listed in the change log.
+   Note that there might be additional changes on the master branch that are not listed in the changelog.
 
 .. toctree::
    :maxdepth: 1

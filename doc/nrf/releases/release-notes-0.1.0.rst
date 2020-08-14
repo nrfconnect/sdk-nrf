@@ -44,8 +44,8 @@ Supported boards
 * PCA20041 (TBD)
 
 
-Change log
-**********
+Changelog
+*********
 
 The following sections provide detailed lists of changes by component.
 

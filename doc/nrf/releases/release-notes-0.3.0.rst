@@ -80,8 +80,8 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - :ref:`gs_installing_tools`
 
 
-Change log
-**********
+Changelog
+*********
 
 The following sections provide detailed lists of changes by component.
 

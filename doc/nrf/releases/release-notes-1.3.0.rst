@@ -51,8 +51,8 @@ Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ t
 See `Updating the nRF9160 DK cellular modem`_ for instructions.
 
 
-Change log
-**********
+Changelog
+*********
 
 The following sections provide detailed lists of changes by component.
 

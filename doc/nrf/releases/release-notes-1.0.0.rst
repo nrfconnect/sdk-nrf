@@ -81,8 +81,8 @@ It is available from the following links:
 * `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
 
 
-Change log
-**********
+Changelog
+*********
 
 The following sections provide detailed lists of changes by component.
 
