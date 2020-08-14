@@ -429,7 +429,7 @@ static int handle_at_icmp_ping(enum at_cmd_type cmd_type)
  */
 int slm_at_icmp_parse(const char *at_cmd)
 {
-	int ret = -ENOTSUP;
+	int ret = -ENOENT;
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_ICMP_MAX; i++) {

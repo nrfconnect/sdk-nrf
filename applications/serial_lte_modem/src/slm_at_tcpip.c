@@ -193,10 +193,8 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 	}
 	if (client.sock < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
-		sprintf(rsp_buf, "#XSOCKET: %d\r\n", -errno);
-		rsp_send(rsp_buf, strlen(rsp_buf));
-		client.ip_proto = IPPROTO_IP;
 		ret = -errno;
+		goto error_exit;
 	}
 
 	if (sec_tag != INVALID_SEC_TAG) {
@@ -206,17 +204,16 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 			sprintf(rsp_buf,
 				"#XSOCKET: (D)TLS Server not supported\r\n");
 			rsp_send(rsp_buf, strlen(rsp_buf));
-			close(client.sock);
-			client.sock = INVALID_SOCKET;
-			return -ENOTSUP;
+			ret = -ENOTSUP;
+			goto error_exit;
 		}
 
 		ret = setsockopt(client.sock, SOL_TLS, TLS_SEC_TAG_LIST,
 				sec_tag_list, sizeof(sec_tag_t));
 		if (ret) {
-			LOG_ERR("set tag list failed: %d", -errno);
-			close(client.sock);
-			return -errno;
+			LOG_ERR("set (d)tls tag list failed: %d", -errno);
+			ret = -errno;
+			goto error_exit;
 		}
 	}
 
@@ -226,6 +223,14 @@ static int do_socket_open(uint8_t type, uint8_t role, int sec_tag)
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	LOG_DBG("Socket opened");
+	return ret;
+
+error_exit:
+	LOG_DBG("Socket not opened");
+	if (client.sock >= 0) {
+		close(client.sock);
+	}
+	slm_at_tcpip_init();
 	return ret;
 }
 
@@ -239,14 +244,10 @@ static int do_socket_close(int error)
 			LOG_WRN("close() failed: %d", -errno);
 			ret = -errno;
 		}
-		client.sock = INVALID_SOCKET;
 		if (client.sock_peer > 0) {
 			close(client.sock_peer);
 		}
-		client.role = AT_SOCKET_ROLE_CLIENT;
-		client.sock_peer = INVALID_SOCKET;
-		client.connected = false;
-
+		slm_at_tcpip_init();
 		sprintf(rsp_buf, "#XSOCKET: %d, closed\r\n", error);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		LOG_DBG("Socket closed");
@@ -573,7 +574,8 @@ static int do_udp_init(const char *url, uint16_t port)
 	return 0;
 }
 
-static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int datalen)
+static int do_sendto(const char *url, uint16_t port, const uint8_t *data,
+		int datalen)
 {
 	uint32_t offset = 0;
 	int ret;
@@ -613,19 +615,12 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 	}
 }
 
-static int do_recvfrom(const char *url, uint16_t port, uint16_t length)
+static int do_recvfrom(uint16_t length)
 {
 	int ret;
 	char data[NET_IPV4_MTU];
-	int sockaddr_len = sizeof(struct sockaddr_in);
 
-	ret = do_udp_init(url, port);
-	if (ret < 0) {
-		return ret;
-	}
-
-	ret = recvfrom(client.sock, data, length, 0,
-		(struct sockaddr *)&remote, &sockaddr_len);
+	ret = recvfrom(client.sock, data, length, 0, NULL, NULL);
 	if (ret < 0) {
 		LOG_ERR("recvfrom() error: %d", -errno);
 		if (errno != EAGAIN && errno != ETIMEDOUT) {
@@ -1130,16 +1125,13 @@ static int handle_at_sendto(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XRECVFROM commands
- *  AT#XRECVFROM=<url>,<port>[,<length>]
+ *  AT#XRECVFROM[=<length>]
  *  AT#XRECVFROM? READ command not supported
  *  AT#XRECVFROM=? TEST command not supported
  */
 static int handle_at_recvfrom(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
-	char url[TCPIP_MAX_URL];
-	int size = TCPIP_MAX_URL;
-	uint16_t port;
 	uint16_t length = NET_IPV4_MTU;
 
 	if (client.sock < 0) {
@@ -1154,25 +1146,13 @@ static int handle_at_recvfrom(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (at_params_valid_count_get(&at_param_list) < 3) {
-			return -EINVAL;
-		}
-		err = at_params_string_get(&at_param_list, 1, url, &size);
-		if (err) {
-			return err;
-		}
-		url[size] = '\0';
-		err = at_params_short_get(&at_param_list, 2, &port);
-		if (err) {
-			return err;
-		}
-		if (at_params_valid_count_get(&at_param_list) > 3) {
-			err = at_params_short_get(&at_param_list, 3, &length);
+		if (at_params_valid_count_get(&at_param_list) > 1) {
+			err = at_params_short_get(&at_param_list, 1, &length);
 			if (err) {
 				return err;
 			}
 		}
-		err = do_recvfrom(url, port, length);
+		err = do_recvfrom(length);
 		break;
 
 	default:
@@ -1245,7 +1225,7 @@ static int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
  */
 int slm_at_tcpip_parse(const char *at_cmd)
 {
-	int ret = -ENOTSUP;
+	int ret = -ENOENT;
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_TCPIP_MAX; i++) {

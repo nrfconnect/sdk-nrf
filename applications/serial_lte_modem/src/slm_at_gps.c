@@ -469,7 +469,7 @@ static int handle_at_gps(enum at_cmd_type cmd_type)
  */
 int slm_at_gps_parse(const char *at_cmd)
 {
-	int ret = -ENOTSUP;
+	int ret = -ENOENT;
 
 	if (slm_util_cmd_casecmp(at_cmd, AT_GPS)) {
 		ret = at_parser_params_from_str(at_cmd, NULL, &at_param_list);

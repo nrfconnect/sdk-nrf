@@ -506,7 +506,7 @@ static int do_ftp_put(void)
  */
 int slm_at_ftp_parse(const char *at_cmd)
 {
-	int ret = -ENOTSUP;
+	int ret = -ENOENT;
 	char op_str[16];
 	int size = 16;
 

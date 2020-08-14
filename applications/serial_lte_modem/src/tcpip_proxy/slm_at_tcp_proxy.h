@@ -19,12 +19,14 @@
 /**
  * @brief TCP proxy AT command parser.
  *
- * @param at_cmd AT command string.
+ * @param at_cmd AT command or data string.
+ * @param length AT command or data string length.
  *
  * @retval 0 If the operation was successful.
- *           Otherwise, a (negative) error code is returned.
+ *           Otherwise, negative code means error.
+ *           Otherwise, positive code means data is sent in data mode.
  */
-int slm_at_tcp_proxy_parse(const char *at_cmd);
+int slm_at_tcp_proxy_parse(const char *at_cmd, uint16_t length);
 
 /**
  * @brief List TCP proxy AT commands.

@@ -119,20 +119,20 @@ The following proprietary BSD socket AT commands are used in this application:
 * AT#XSEND=<datatype>,<data>
 * AT#XRECV[=<length>]
 * AT#XSENDTO=<url>,<port>,<datatype>,<data>
-* AT#XRECVFROM=<url>,<port>[,<length>]
+* AT#XRECVFROM[=<length>]
 * AT#XGETADDRINFO=<url>
 
 If the configuration option ``CONFIG_SLM_TCP_PROXY`` is defined, the following AT commands are available to use the TCP proxy service:
 
-* AT#XTCPSVR=<op>[,<port>[,[sec_tag]]
-* AT#XTCPCLI=<op>[,<url>,<port>[,[sec_tag]]
+* AT#XTCPSVR=<op>[,<port>[,<sec_tag>]]
+* AT#XTCPCLI=<op>[,<url>,<port>[,<sec_tag>]
 * AT#XTCPSEND=<datatype>,<data>
 * AT#XTCPRECV[=<length>]
 
 If the configuration option ``CONFIG_SLM_UDP_PROXY`` is defined, the following AT commands are available to use the UDP proxy service:
 
-* AT#XUDPSVR=<op>[,<port>[,[sec_tag]]
-* AT#XUDPCLI=<op>[,<url>,<port>[,[sec_tag]]
+* AT#XUDPSVR=<op>[,<port>]
+* AT#XUDPCLI=<op>[,<url>,<port>[,<sec_tag>]
 * AT#XUDPSEND=<datatype>,<data>
 
 ICMP AT commands
