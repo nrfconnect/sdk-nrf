@@ -404,6 +404,21 @@ zb_uint8_t zb_ota_process_chunk(const zb_zcl_ota_upgrade_value_param_t *ota,
 	uint8_t ret = ZB_ZCL_OTA_UPGRADE_STATUS_OK;
 	uint32_t bytes_consumed = 0;
 	uint32_t bytes_copied = 0;
+	zb_zcl_ota_upgrade_image_block_res_t payload;
+	zb_zcl_parse_status_t status;
+
+	/* Workaround for ZOI-113:
+	 *  Parse the packet once more to get the correct pointer to the
+	 *  buffer with firmware chunk.
+	 */
+	ZB_ZCL_OTA_UPGRADE_GET_IMAGE_BLOCK_RES(&payload, bufid, status);
+	if (status != ZB_ZCL_PARSE_STATUS_SUCCESS) {
+		LOG_WRN("Unable to parse the Image Block Response. Status: %d",
+			status);
+		return ZB_ZCL_OTA_UPGRADE_STATUS_ERROR;
+	}
+
+	uint8_t *block_data = payload.response.success.image_data;
 
 	if (ota->upgrade.receive.file_offset !=
 	    ota_ctx.ota_header_fill_level + ota_ctx.ota_firmware_fill_level) {
@@ -417,7 +432,7 @@ zb_uint8_t zb_ota_process_chunk(const zb_zcl_ota_upgrade_value_param_t *ota,
 	/* Process image header and save it in the memory. */
 	if (ota_ctx.mandatory_header_finished == false) {
 		ret = zb_ota_process_mandatory_header(
-			&ota->upgrade.receive.block_data[bytes_consumed],
+			&block_data[bytes_consumed],
 			ota->upgrade.receive.data_length - bytes_consumed,
 			&bytes_copied);
 		bytes_consumed += bytes_copied;
@@ -428,7 +443,7 @@ zb_uint8_t zb_ota_process_chunk(const zb_zcl_ota_upgrade_value_param_t *ota,
 	 */
 	if (ota_ctx.process_optional_header) {
 		ret = zb_ota_process_optional_header(
-			&ota->upgrade.receive.block_data[bytes_consumed],
+			&block_data[bytes_consumed],
 			ota->upgrade.receive.data_length - bytes_consumed,
 			&bytes_copied);
 		bytes_consumed += bytes_copied;
@@ -439,7 +454,7 @@ zb_uint8_t zb_ota_process_chunk(const zb_zcl_ota_upgrade_value_param_t *ota,
 	 */
 	if (ota_ctx.process_magic_word) {
 		ret = zb_ota_process_magic_word(
-			&ota->upgrade.receive.block_data[bytes_consumed],
+			&block_data[bytes_consumed],
 			ota->upgrade.receive.data_length - bytes_consumed,
 			&bytes_copied);
 		bytes_consumed += bytes_copied;
@@ -448,7 +463,7 @@ zb_uint8_t zb_ota_process_chunk(const zb_zcl_ota_upgrade_value_param_t *ota,
 	/* Pass the image to the DFU target module. */
 	if (ota_ctx.process_bin_image) {
 		ret = zb_ota_process_firmware(
-			&ota->upgrade.receive.block_data[bytes_consumed],
+			&block_data[bytes_consumed],
 			ota->upgrade.receive.data_length - bytes_consumed,
 			&bytes_copied);
 		bytes_consumed += bytes_copied;
