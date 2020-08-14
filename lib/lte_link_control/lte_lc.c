@@ -299,6 +299,10 @@ static int parse_cereg(const char *notification,
 				err);
 			goto clean_exit;
 		}
+	} else {
+		/* When device is not registered, PSM valies are invalid */
+		psm_cfg->tau = -1;
+		psm_cfg->active_time = -1;
 	}
 
 clean_exit:
