@@ -7,15 +7,15 @@ The most relevant changes that are present on the master branch of the |NCS|, as
 Note that this file is a work in progress and might not cover all relevant changes.
 
 
-Change log
-**********
+Changelog
+*********
 
-See the `master branch section in the change log`_ for a list of the most important changes.
+See the `master branch section in the changelog`_ for a list of the most important changes.
 
 sdk-nrfxlib
 ===========
 
-See the change log for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for the most current information.
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for the most current information.
 
 sdk-zephyr
 ==========
