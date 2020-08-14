@@ -38,7 +38,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #define FATAL_STR	"FATAL ERROR\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
 
-#define SLM_VERSION	"#XSLMVER: 1.2\r\n"
+#define SLM_VERSION	"#XSLMVER: 1.4\r\n"
 #define AT_CMD_SLMVER	"AT#XSLMVER"
 #define AT_CMD_SLEEP	"AT#XSLEEP"
 #define AT_CMD_CLAC	"AT#XCLAC"
@@ -173,13 +173,13 @@ static void handle_at_clac(void)
 	rsp_send("\r\n", 2);
 	rsp_send(AT_CMD_CLAC, sizeof(AT_CMD_CLAC) - 1);
 	rsp_send("\r\n", 2);
-	slm_at_tcpip_clac();
 #if defined(CONFIG_SLM_TCP_PROXY)
 	slm_at_tcp_proxy_clac();
 #endif
 #if defined(CONFIG_SLM_UDP_PROXY)
 	slm_at_udp_proxy_clac();
 #endif
+	slm_at_tcpip_clac();
 	slm_at_icmp_clac();
 	slm_at_gps_clac();
 	slm_at_mqtt_clac();
@@ -358,40 +358,45 @@ static void cmd_send(struct k_work *work)
 		}
 	}
 
-	err = slm_at_tcpip_parse(at_buf);
-	if (err == 0) {
-		rsp_send(OK_STR, sizeof(OK_STR) - 1);
-		goto done;
-	} else if (err != -ENOTSUP) {
-		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
-		goto done;
-	}
 #if defined(CONFIG_SLM_TCP_PROXY)
-	err = slm_at_tcp_proxy_parse(at_buf);
-	if (err == 0) {
+	err = slm_at_tcp_proxy_parse(at_buf, at_buf_len);
+	if (err > 0) {
+		goto done;
+	} else if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
-	} else if (err != -ENOTSUP) {
+	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
 #endif
 
 #if defined(CONFIG_SLM_UDP_PROXY)
-	err = slm_at_udp_proxy_parse(at_buf);
-	if (err == 0) {
+	err = slm_at_udp_proxy_parse(at_buf, at_buf_len);
+	if (err > 0) {
+		goto done;
+	} else if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
-	} else if (err != -ENOTSUP) {
+	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
 #endif
 
+	err = slm_at_tcpip_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+
 	err = slm_at_icmp_parse(at_buf);
 	if (err == 0) {
 		goto done;
-	} else if (err != -ENOTSUP) {
+	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
@@ -400,7 +405,7 @@ static void cmd_send(struct k_work *work)
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
-	} else if (err != -ENOTSUP) {
+	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
@@ -409,7 +414,7 @@ static void cmd_send(struct k_work *work)
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
-	} else if (err != -ENOTSUP) {
+	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
@@ -418,11 +423,12 @@ static void cmd_send(struct k_work *work)
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
-	} else if (err != -ENOTSUP) {
+	} else if (err != -ENOENT) {
 		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
 		goto done;
 	}
 
+	/* Send to modem */
 	err = at_cmd_write(at_buf, buf, AT_MAX_CMD_LEN, &state);
 	if (err < 0) {
 		LOG_ERR("AT command error: %d", err);
@@ -502,20 +508,23 @@ static void uart_rx_handler(uint8_t character)
 	/* Check if the character marks line termination. */
 	switch (term_mode) {
 	case MODE_NULL_TERM:
-		/* Fall through. */
+		goto send;
 	case MODE_CR:
 		if (character == termination[term_mode]) {
+			cmd_len--;
 			goto send;
 		}
 		break;
 	case MODE_LF:
 		if ((at_buf[pos - 1]) &&
 			character == termination[term_mode]) {
+			cmd_len--;
 			goto send;
 		}
 		break;
 	case MODE_CR_LF:
 		if ((at_buf[pos - 1] == '\r') && (character == '\n')) {
+			cmd_len -= 2;
 			goto send;
 		}
 		break;

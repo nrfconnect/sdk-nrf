@@ -837,7 +837,7 @@ static int handle_at_mqtt_unsubscribe(enum at_cmd_type cmd_type)
  */
 int slm_at_mqtt_parse(const char *at_cmd)
 {
-	int ret = -ENOTSUP;
+	int ret = -ENOENT;
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_MQTT_MAX; i++) {

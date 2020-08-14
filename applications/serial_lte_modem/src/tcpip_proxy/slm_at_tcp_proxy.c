@@ -26,7 +26,9 @@ enum slm_tcp_proxy_operation {
 	AT_SERVER_STOP,
 	AT_CLIENT_DISCONNECT = AT_SERVER_STOP,
 	AT_SERVER_START,
-	AT_CLIENT_CONNECT = AT_SERVER_START
+	AT_CLIENT_CONNECT = AT_SERVER_START,
+	AT_SERVER_START_WITH_DATAMODE,
+	AT_CLIENT_CONNECT_WITH_DATAMODE = AT_SERVER_START_WITH_DATAMODE
 };
 
 /**@brief Proxy roles. */
@@ -70,6 +72,7 @@ static struct tcp_proxy_t {
 	int sock; /* Socket descriptor. */
 	int sock_peer; /* Socket descriptor for peer. */
 	int role; /* Client or Server proxy */
+	bool datamode; /* Data mode flag*/
 } proxy;
 
 /* global functions defined in different files */
@@ -180,13 +183,13 @@ static int do_tcp_server_stop(int error)
 			LOG_WRN("close() failed: %d", -errno);
 			ret = -errno;
 		}
-		proxy.sock = INVALID_SOCKET;
-		proxy.sock_peer = INVALID_SOCKET;
-		proxy.role = INVALID_ROLE;
+		(void)slm_at_tcp_proxy_init();
 		if (error) {
 			sprintf(rsp_buf, "#XTCPSVR: %d stopped\r\n", error);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+		} else {
+			sprintf(rsp_buf, "#XTCPSVR: stopped\r\n");
 		}
+		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
 	return ret;
@@ -290,14 +293,14 @@ static int do_tcp_client_disconnect(int error)
 			LOG_WRN("close() failed: %d", -errno);
 			ret = -errno;
 		}
-		proxy.sock = INVALID_SOCKET;
-		proxy.role = INVALID_ROLE;
-
+		(void)slm_at_tcp_proxy_init();
 		if (error) {
 			sprintf(rsp_buf, "#XTCPCLI: %d disconnected\r\n",
 				error);
-			rsp_send(rsp_buf, strlen(rsp_buf));
+		} else {
+			sprintf(rsp_buf, "#XTCPCLI: disconnected\r\n");
 		}
+		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
 	return ret;
@@ -310,11 +313,12 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 	int sock;
 
 	if (proxy.role == AT_TCP_ROLE_CLIENT &&
-		proxy.sock != INVALID_SOCKET) {
+	    proxy.sock != INVALID_SOCKET) {
 		sock = proxy.sock;
 	} else if (proxy.role == AT_TCP_ROLE_SERVER &&
-		proxy.sock_peer != INVALID_SOCKET) {
+		   proxy.sock_peer != INVALID_SOCKET) {
 		sock = proxy.sock_peer;
+		k_timer_stop(&conn_timer);
 	} else {
 		LOG_ERR("Not connected yet");
 		return -EINVAL;
@@ -342,11 +346,55 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 
 	sprintf(rsp_buf, "#XTCPSEND: %d\r\n", offset);
 	rsp_send(rsp_buf, strlen(rsp_buf));
+
+	/* restart activity timer */
+	if (proxy.role == AT_TCP_ROLE_SERVER) {
+		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
+			K_NO_WAIT);
+	}
+
 	if (ret >= 0) {
 		return 0;
 	} else {
 		return ret;
 	}
+}
+
+static int do_tcp_send_datamode(const uint8_t *data, int datalen)
+{
+	int ret = 0;
+	uint32_t offset = 0;
+	int sock;
+
+	if (proxy.role == AT_TCP_ROLE_CLIENT &&
+	    proxy.sock != INVALID_SOCKET) {
+		sock = proxy.sock;
+	} else if (proxy.role == AT_TCP_ROLE_SERVER &&
+		   proxy.sock_peer != INVALID_SOCKET) {
+		sock = proxy.sock_peer;
+		k_timer_stop(&conn_timer);
+	} else {
+		LOG_ERR("Not connected yet");
+		return -EINVAL;
+	}
+
+	while (offset < datalen) {
+		ret = send(sock, data + offset, datalen - offset, 0);
+		if (ret < 0) {
+			LOG_ERR("send() failed: %d", -errno);
+			ret = -errno;
+			break;
+		}
+		offset += ret;
+	}
+
+	/* restart activity timer */
+	if (proxy.role == AT_TCP_ROLE_SERVER) {
+		k_timer_start(&conn_timer, K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
+			K_NO_WAIT);
+	}
+
+	return offset;
 }
 
 static int tcp_data_save(uint8_t *data, uint32_t length)
@@ -424,6 +472,10 @@ thread_entry:
 		if ((fds.revents & POLLIN) == POLLIN) {
 			char data[NET_IPV4_MTU];
 
+			/* stop activity timer */
+			if (proxy.role == AT_TCP_ROLE_SERVER) {
+				k_timer_stop(&conn_timer);
+			}
 			ret = recv(sock, data, NET_IPV4_MTU, 0);
 			if (ret < 0) {
 				LOG_WRN("recv() error: %d", -errno);
@@ -432,7 +484,9 @@ thread_entry:
 			if (ret == 0) {
 				continue;
 			}
-			if (slm_util_hex_check(data, ret)) {
+			if (proxy.datamode) {
+				rsp_send(data, ret);
+			} else if (slm_util_hex_check(data, ret)) {
 				ret = slm_util_htoa(data, ret, data_hex,
 					DATA_HEX_MAX_SIZE);
 				if (ret < 0) {
@@ -460,6 +514,13 @@ thread_entry:
 				}
 				rsp_send(rsp_buf, strlen(rsp_buf));
 			}
+			/* restart activity timer */
+			if (proxy.role == AT_TCP_ROLE_SERVER) {
+				k_timer_start(
+					&conn_timer,
+					K_SECONDS(CONFIG_SLM_TCP_CONN_TIME),
+					K_NO_WAIT);
+			}
 		}
 	}
 }
@@ -484,7 +545,8 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		if (op == AT_SERVER_START) {
+		if (op == AT_SERVER_START ||
+		    op == AT_SERVER_START_WITH_DATAMODE) {
 			uint16_t port;
 			sec_tag_t sec_tag = INVALID_SEC_TAG;
 
@@ -499,6 +561,9 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 				at_params_int_get(&at_param_list, 3, &sec_tag);
 			}
 			err = do_tcp_server_start(port, sec_tag);
+			if (err == 0 && op == AT_SERVER_START_WITH_DATAMODE) {
+				proxy.datamode = true;
+			}
 		} else if (op == AT_SERVER_STOP) {
 			if (proxy.sock < 0) {
 				LOG_WRN("Server is not running");
@@ -510,8 +575,8 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (proxy.sock != INVALID_SOCKET &&
 		    proxy.role == AT_TCP_ROLE_SERVER) {
-			sprintf(rsp_buf, "#XTCPSVR: %d, %d\r\n",
-				proxy.sock, proxy.sock_peer);
+			sprintf(rsp_buf, "#XTCPSVR: %d, %d, %d\r\n",
+				proxy.sock, proxy.sock_peer, proxy.datamode);
 		} else {
 			sprintf(rsp_buf, "#XTCPSVR: %d, %d\r\n",
 				INVALID_SOCKET, INVALID_SOCKET);
@@ -521,8 +586,9 @@ static int handle_at_tcp_server(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf, "#XTCPSVR: (%d, %d),<port>,<sec_tag>\r\n",
-			AT_SERVER_STOP, AT_SERVER_START);
+		sprintf(rsp_buf, "#XTCPSVR: (%d, %d, %d),<port>,<sec_tag>\r\n",
+			AT_SERVER_STOP, AT_SERVER_START,
+			AT_SERVER_START_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -554,7 +620,8 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		if (op == AT_CLIENT_CONNECT) {
+		if (op == AT_CLIENT_CONNECT ||
+		    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
 			uint16_t port;
 			char url[TCPIP_MAX_URL];
 			int size = TCPIP_MAX_URL;
@@ -577,6 +644,10 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 				at_params_int_get(&at_param_list, 4, &sec_tag);
 			}
 			err = do_tcp_client_connect(url, port, sec_tag);
+			if (err == 0 &&
+			    op == AT_CLIENT_CONNECT_WITH_DATAMODE) {
+				proxy.datamode = true;
+			}
 		} else if (op == AT_CLIENT_DISCONNECT) {
 			if (proxy.sock < 0) {
 				LOG_WRN("Client is not connected");
@@ -588,7 +659,8 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 	case AT_CMD_TYPE_READ_COMMAND:
 		if (proxy.sock != INVALID_SOCKET &&
 		    proxy.role == AT_TCP_ROLE_CLIENT) {
-			sprintf(rsp_buf, "#XTCPCLI: %d\r\n", proxy.sock);
+			sprintf(rsp_buf, "#XTCPCLI: %d, %d\r\n",
+				proxy.sock, proxy.datamode);
 		} else {
 			sprintf(rsp_buf, "#XTCPCLI: %d\r\n", INVALID_SOCKET);
 		}
@@ -598,8 +670,9 @@ static int handle_at_tcp_client(enum at_cmd_type cmd_type)
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf,
-			"#XTCPCLI: (%d, %d),<url>,<port>,<sec_tag>\r\n",
-			AT_CLIENT_DISCONNECT, AT_CLIENT_CONNECT);
+			"#XTCPCLI: (%d, %d, %d),<url>,<port>,<sec_tag>\r\n",
+			AT_CLIENT_DISCONNECT, AT_CLIENT_CONNECT,
+			AT_CLIENT_CONNECT_WITH_DATAMODE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -699,9 +772,9 @@ static int handle_at_tcp_recv(enum at_cmd_type cmd_type)
 
 /**@brief API to handle TCP proxy AT commands
  */
-int slm_at_tcp_proxy_parse(const char *at_cmd)
+int slm_at_tcp_proxy_parse(const char *at_cmd, uint16_t length)
 {
-	int ret = -ENOTSUP;
+	int ret = -ENOENT;
 	enum at_cmd_type type;
 
 	for (int i = 0; i < AT_TCP_PROXY_MAX; i++) {
@@ -717,6 +790,11 @@ int slm_at_tcp_proxy_parse(const char *at_cmd)
 			ret = m_tcp_proxy_at_list[i].handler(type);
 			break;
 		}
+	}
+
+	/* handle sending in data mode */
+	if (ret == -ENOENT && proxy.datamode) {
+		ret = do_tcp_send_datamode(at_cmd, length);
 	}
 
 	return ret;
@@ -739,6 +817,7 @@ int slm_at_tcp_proxy_init(void)
 	proxy.sock = INVALID_SOCKET;
 	proxy.sock_peer = INVALID_SOCKET;
 	proxy.role = INVALID_ROLE;
+	proxy.datamode = false;
 
 	return 0;
 }
