@@ -127,16 +127,11 @@ void bt_gatt_bas_c_init(struct bt_gatt_bas_c *bas_c);
 /**
  * @brief Assign handles to the BAS Client instance.
  *
- * This function should be called when a link with a peer has been established,
- * to associate the link to this instance of the module. This makes it
- * possible to handle several links and associate each link to a particular
- * instance of this module. The GATT attribute handles are provided by the
- * GATT Discovery Manager.
- *
- * @note
- * This function starts the report discovery process.
- * Wait for one of the functions in @ref bt_gatt_hids_c_init_params
- * before using the BAS Client object.
+ * This function should be called when a connection with a peer has been
+ * established, to associate the connection to this instance of the module.
+ * This makes it possible to handle multiple connections and associate each
+ * connection to a particular instance of this module.
+ * The GATT attribute handles are provided by the GATT Discovery Manager.
  *
  * @param dm    Discovery object.
  * @param bas_c BAS Client object.
