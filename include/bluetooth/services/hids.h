@@ -9,9 +9,9 @@
 
 /**
  * @file
- * @defgroup bt_gatt_hids BLE GATT Human Interface Device Service API
+ * @defgroup bt_gatt_hids Bluetooth LE GATT Human Interface Device Service API
  * @{
- * @brief API for the BLE GATT Human Interface Device (HID) Service.
+ * @brief API for the Bluetooth LE GATT Human Interface Device (HID) Service.
  */
 
 #ifdef __cplusplus
@@ -62,7 +62,7 @@ extern "C" {
 
 
 /**@brief Helping macro for @ref BT_GATT_HIDS_DEF, that calculates
- *        the link context size for BLE HIDS instance.
+ *        the link context size for HIDS instance.
  */
 #define _BT_GATT_HIDS_CONN_CTX_SIZE_CALC(...)		   \
 	(FOR_EACH(GET_ARG1, (+), __VA_ARGS__)	+ \

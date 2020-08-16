@@ -10,7 +10,7 @@
  * @file
  * @defgroup bt_gatt_bas_c_api Battery Service Client API
  * @{
- * @brief API for the BLE GATT Battery Service (BAS) Client.
+ * @brief API for the Bluetooth LE GATT Battery Service (BAS) Client.
  */
 
 #include <kernel.h>

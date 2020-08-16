@@ -6,9 +6,9 @@
 
 /**
  * @file
- * @defgroup bt_gatt_throughput BLE GATT Throughput Service API
+ * @defgroup bt_gatt_throughput Bluetooth LE GATT Throughput Service API
  * @{
- * @brief API for the BLE GATT Throughput Service.
+ * @brief API for the Bluetooth LE GATT Throughput Service.
  */
 
 #ifndef BT_GATT_THROUGHPUT_H_

@@ -47,9 +47,10 @@ struct bt_gatt_lbs_cb {
 
 /** @brief Initialize the LBS Service.
  *
- * This function registers a BLE service with two characteristics: Button
- * and LED. Enable notifications for the Button Characteristic to let a
- * connected BLE unit know when the button state changes.
+ * This function registers a GATT service with two characteristics: Button
+ * and LED.
+ * Send notifications for the Button Characteristic to let connected peers know
+ * when the button state changes.
  * Write to the LED Characteristic to change the state of the LED on the
  * board.
  *
@@ -66,7 +67,7 @@ int bt_gatt_lbs_init(struct bt_gatt_lbs_cb *callbacks);
 /** @brief Send the button state.
  *
  * This function sends a binary state, typically the state of a
- * button, to the connected BLE unit.
+ * button, to all connected peers.
  *
  * @param[in] button_state The state of the button.
  *
