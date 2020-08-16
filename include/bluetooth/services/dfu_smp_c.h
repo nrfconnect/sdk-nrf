@@ -9,9 +9,9 @@
 
 /**
  * @file
- * @defgroup bt_gatt_dfu_smp_c BLE GATT DFU SMP Client API
+ * @defgroup bt_gatt_dfu_smp_c Bluetooth LE GATT DFU SMP Client API
  * @{
- * @brief API for the BLE GATT DFU SMP (DFU_SMP) Client.
+ * @brief API for the Bluetooth LE GATT DFU SMP (DFU_SMP) Client.
  */
 
 #ifdef __cplusplus

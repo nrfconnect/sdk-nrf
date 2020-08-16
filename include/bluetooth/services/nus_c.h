@@ -9,9 +9,9 @@
 
 /**
  * @file
- * @defgroup bt_gatt_nus_c BLE GATT NUS Client API
+ * @defgroup bt_gatt_nus_c Bluetooth LE GATT NUS Client API
  * @{
- * @brief API for the BLE GATT Nordic UART Service (NUS) Client.
+ * @brief API for the Bluetooth LE GATT Nordic UART Service (NUS) Client.
  */
 
 #ifdef __cplusplus

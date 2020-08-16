@@ -58,9 +58,9 @@ struct bt_gatt_nus_cb {
 
 /**@brief Initialize the service.
  *
- * @details This function registers a BLE service with two characteristics,
- *          TX and RX. A BLE unit that is connected to this service can send
- *          data to the RX Characteristic. When the BLE unit enables
+ * @details This function registers a GATT service with two characteristics,
+ *          TX and RX. A remote device that is connected to this service
+ *          can send data to the RX Characteristic. When the remote enables
  *          notifications, it is notified when data is sent to the TX
  *          Characteristic.
  *
@@ -75,10 +75,11 @@ int bt_gatt_nus_init(struct bt_gatt_nus_cb *callbacks);
 
 /**@brief Send data.
  *
- * @details This function sends data from the BLE unit that runs this service
- *          to another BLE unit that is connected to it.
+ * @details This function sends data to a connected peer, or all connected
+ *          peers.
  *
- * @param[in] conn Pointer to connection Object.
+ * @param[in] conn Pointer to connection object, or NULL to send to all
+ *                 connected peers.
  * @param[in] data Pointer to a data buffer.
  * @param[in] len  Length of the data in the buffer.
  *

@@ -6,9 +6,9 @@
 
 /**
  * @file
- * @defgroup bt_gatt_latency BLE GATT Latency Service API
+ * @defgroup bt_gatt_latency Bluetooth LE GATT Latency Service API
  * @{
- * @brief API for the BLE GATT Latency Service.
+ * @brief API for the Bluetooth LE GATT Latency Service.
  */
 
 #ifndef BT_GATT_LATENCY_H_

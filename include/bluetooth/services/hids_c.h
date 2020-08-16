@@ -9,9 +9,9 @@
 
 /**
  * @file
- * @defgroup bt_gatt_hids_c BLE GATT HIDS Client API
+ * @defgroup bt_gatt_hids_c Bluetooth LE GATT HIDS Client API
  * @{
- * @brief API for the BLE GATT HID Service (HIDS) Client.
+ * @brief API for the Bluetooth LE GATT HID Service (HIDS) Client.
  */
 
 #ifdef __cplusplus
@@ -303,7 +303,7 @@ void bt_gatt_hids_c_release(struct bt_gatt_hids_c *hids_c);
  *
  * @note
  * This function disables transfers inside the HIDS client library.
- * It does not abort any pending transfers in the BLE stack.
+ * It does not abort any pending transfers in the Bluetooth LE stack.
  *
  * @param hids_c HIDS client object.
  */

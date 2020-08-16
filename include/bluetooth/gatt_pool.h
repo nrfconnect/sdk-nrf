@@ -9,9 +9,9 @@
 
 /**
  * @file
- * @defgroup bt_gatt_pool  BLE GATT attribute pools API
+ * @defgroup bt_gatt_pool  Bluetooth LE GATT attribute pools API
  * @{
- * @brief BLE GATT attribute pools.
+ * @brief Bluetooth LE GATT attribute pools.
  */
 
 #ifdef __cplusplus
@@ -38,7 +38,7 @@ extern "C" {
 		.attr_array_size = _attr_array_size                            \
 	}
 
-/** @brief Define a new BLE GATT attribute pool.
+/** @brief Define a new GATT attribute pool.
  *
  *  This macro creates a new attribute pool.
  *

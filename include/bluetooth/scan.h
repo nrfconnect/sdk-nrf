@@ -9,7 +9,7 @@
  * @{
  * @brief BT Scanning module
  *
- * @details The Scanning Module handles the BLE scanning for
+ * @details The Scanning Module handles the Bluetooth LE scanning for
  *          your application. The module offers several criteria
  *          for filtering the devices available for connection,
  *          and it can also work in the simple mode without using the filtering.
@@ -136,7 +136,7 @@ struct bt_filter_status {
 /**@brief Advertising info structure.
  */
 struct bt_scan_adv_info {
-	/** BLE advertising type. According to
+	/** Bluetooth LE advertising type. According to
 	 *  Bluetooth Specification 7.8.5
 	 */
 	uint8_t adv_type;
@@ -285,7 +285,7 @@ struct bt_scan_device_info {
 	/** Information about advertising. */
 	struct bt_scan_adv_info adv_info;
 
-	/** Pointer to device BLE address. */
+	/** Pointer to device LE address. */
 	const bt_addr_le_t *addr;
 
 	/** Connection parameters for LE connection. */
