@@ -228,7 +228,11 @@ static void advertising_continue(void)
 		adv_param.options |= BT_LE_ADV_OPT_ONE_TIME;
 		err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad),
 				      NULL, 0);
-		if (err) {
+
+		/* Re-enabling advertising when it is already active
+		 * is not an error here.
+		 */
+		if (err && (err != -EALREADY)) {
 			printk("Advertising failed to start (err %d)\n", err);
 			return;
 		}
