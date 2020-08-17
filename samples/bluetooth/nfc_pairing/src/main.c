@@ -54,7 +54,6 @@ static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 };
 
-#if defined(NRF5340_XXAA_APPLICATION)
 static int tk_value_generate(void)
 {
 	int err;
@@ -66,26 +65,6 @@ static int tk_value_generate(void)
 
 	return err;
 }
-#else
-static int tk_value_generate(void)
-{
-	int err;
-	struct device *dev;
-
-	dev = device_get_binding(DT_CHOSEN_ZEPHYR_ENTROPY_LABEL);
-	if (!dev) {
-		printk("error: no entropy device\n");
-		return -ENXIO;
-	}
-
-	err = entropy_get_entropy(dev, tk_value, sizeof(tk_value));
-	if (err) {
-		printk("entropy_get_entropy failed: %d\n", err);
-	}
-
-	return err;
-}
-#endif /* NRF5340_XXAA_APPLICATION */
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
 {
