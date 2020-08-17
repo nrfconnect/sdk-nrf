@@ -189,6 +189,10 @@ Below are some of the requirements and limitations of the application while runn
    * The LwM2M carrier library initializes and uses the :ref:`bsdlib`.
      This library is needed to track the modem FOTA states.
 
+* The application should not use the *NB-IoT* LTE mode.
+
+   * The LwM2M carrier library is currently only certified for the *LTE-M* LTE mode.
+   * The :option:`CONFIG_LTE_NETWORK_USE_FALLBACK` should be disabled in your application, as seen in the :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`).
 
 * The LwM2M carrier library controls the LTE link.
 
