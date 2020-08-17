@@ -236,6 +236,16 @@ int lte_lc_psm_req(bool enable);
  */
 int lte_lc_psm_get(int *tau, int *active_time);
 
+/** @brief Function for setting Paging Time Window (PTW) value to be used when
+ *	   eDRX is requested using `lte_lc_edrx_req`.
+ *	   For reference see subclause 10.5.5.32 of 3GPP TS 24.008.
+ *
+ * @param ptw Paging Time Window value as null-terminated string.
+ *
+ * @return Zero on success or (negative) error code otherwise.
+ */
+int lte_lc_ptw_set(const char *ptw);
+
 /** @brief Function for setting modem eDRX value to be used when
  * eDRX is subsequently enabled using `lte_lc_edrx_req`.
  * For reference see 3GPP 27.007 Ch. 7.40.

@@ -121,6 +121,8 @@ static const char unlock_plmn[] = "AT+COPS=0";
 static const char edrx_disable[] = "AT+CEDRXS=3";
 /* Default eDRX setting */
 static char edrx_param[5] = CONFIG_LTE_EDRX_REQ_VALUE;
+/* Default PTW setting */
+static char ptw_param[5] = CONFIG_LTE_PTW_VALUE;
 /* Default PSM RAT setting */
 static char psm_param_rat[9] = CONFIG_LTE_PSM_REQ_RAT;
 /* Default PSM RPATU setting */
@@ -900,6 +902,19 @@ int lte_lc_edrx_param_set(const char *edrx)
 	return 0;
 }
 
+int lte_lc_ptw_set(const char *ptw)
+{
+	if (ptw == NULL || strlen(ptw) != 4) {
+		return -EINVAL;
+	}
+
+	strncpy(ptw_param, ptw, sizeof(ptw_param));
+
+	LOG_DBG("PTW set to %s", log_strdup(ptw_param));
+
+	return 0;
+}
+
 int lte_lc_edrx_req(bool enable)
 {
 	int err, actt;
@@ -936,7 +951,35 @@ int lte_lc_edrx_req(bool enable)
 		err = at_cmd_write(edrx_disable, NULL, 0, NULL);
 	}
 
-	return err;
+	if (err) {
+		LOG_ERR("Failed to %s eDRX, error: %d",
+			enable ? "enable" : "disable", err);
+		return err;
+	}
+
+	/* PTW must be requested after AT+CEDRXS is sent, and the length of the
+	 * string must be 4 to be valid.
+	 */
+	if (strlen(ptw_param) == 4) {
+		char ptw[25];
+		ssize_t len;
+
+		len = snprintf(ptw, sizeof(ptw),
+			       "AT%%XPTW=%d,\"%s\"", actt, ptw_param);
+		if ((len < 0) || (len >= sizeof(ptw))) {
+			LOG_ERR("Failed to create PTW request");
+			return -ENOMEM;
+		}
+
+		err = at_cmd_write(ptw, NULL, 0, NULL);
+		if (err) {
+			LOG_ERR("Failed to request PTW (%s), error: %d",
+				log_strdup(ptw), err);
+			return err;
+		}
+	}
+
+	return 0;
 }
 
 int lte_lc_pdp_context_set(enum lte_lc_pdp_type type, const char *apn,
