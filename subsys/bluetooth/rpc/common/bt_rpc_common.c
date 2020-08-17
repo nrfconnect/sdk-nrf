@@ -197,7 +197,6 @@ typedef struct check_list_entry str_check_list_entry_t;
 #define DEF_CONFIG_BT_MAX_CONN 0xFF,
 #define DEF_CONFIG_BT_ID_MAX 0xFF,
 #define DEF_CONFIG_BT_EXT_ADV_MAX_ADV_SET 0xFF,
-#define DEF_CONFIG_BT_DEVICE_NAME "",
 
 static const check_list_entry_t check_table[] = {
 	CHECK_FLAGS(

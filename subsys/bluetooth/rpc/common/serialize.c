@@ -65,6 +65,20 @@ void ser_encode_null(CborEncoder *encoder)
 	}
 }
 
+void ser_encode_bool(CborEncoder *encoder, bool value)
+{
+	CborError err;
+
+	if (is_encoder_invalid(encoder))
+		return;
+	
+	err = cbor_encode_boolean(encoder, value);
+
+	if (err != CborNoError) {
+		set_encoder_invalid(encoder, err);
+	}
+}
+
 void ser_encode_uint(CborEncoder *encoder, uint32_t value)
 {
 	CborError err;
@@ -92,6 +106,27 @@ void ser_encode_int(CborEncoder* encoder, int32_t value)
 	if (err != CborNoError) {
 		set_encoder_invalid(encoder, err);
 	}
+}
+
+void ser_encode_str(CborEncoder *encoder, const char *value, int len)
+{
+	CborError err;
+
+	if (is_encoder_invalid(encoder))
+		return;
+
+	if (value == NULL) {
+		err = cbor_encode_null(encoder);
+	} else if (len < 0) {
+		err = cbor_encode_text_stringz(encoder, value);
+	} else {
+		err = cbor_encode_text_string(encoder, value, len);
+	}
+
+	if (err != CborNoError) {
+		set_encoder_invalid(encoder, err);
+	}
+
 }
 
 void ser_encode_buffer(CborEncoder *encoder, const void *data, size_t size)
@@ -162,6 +197,32 @@ bool ser_decode_is_null(CborValue *value)
 		return true;
 	
 	return cbor_value_is_null(value);
+}
+
+bool ser_decode_bool(CborValue *value)
+{
+	CborError err = CborErrorIllegalType;
+	bool result;
+
+	if (is_decoder_invalid(value))
+		return 0;
+
+	if (cbor_value_is_boolean(value)) {
+		err = cbor_value_get_boolean(value, &result);
+		if (err != CborNoError)
+			goto error_exit;
+		err = cbor_value_advance_fixed(value);
+		if (err != CborNoError)
+			goto error_exit;
+	} else {
+		goto error_exit;
+	}
+
+	return result;
+
+error_exit:
+	ser_decoder_invalid(value, err);
+	return 0;
 }
 
 uint32_t ser_decode_uint(CborValue *value)
@@ -323,6 +384,57 @@ error_exit:
 	return 0;
 }
 
+char *ser_decode_str_sp(struct ser_scratchpad *scratchpad)
+{
+	CborValue* value = scratchpad->value;
+	CborError err = CborErrorIllegalType;
+	char *result;
+	size_t len;
+
+	if (is_decoder_invalid(value))
+		return NULL;
+
+	if (cbor_value_is_text_string(value)) {
+
+		err = cbor_value_get_string_length(value, &len);
+
+		if (err == CborErrorUnknownLength)
+			err = cbor_value_calculate_string_length(value, &len);
+
+		if (err != CborNoError)
+			goto error_exit;
+
+		result = (char *)ser_scratchpad_get(scratchpad, len);
+		if (result == NULL) {
+			err = CborErrorIO;
+			goto error_exit;
+		}
+
+		err = cbor_value_copy_text_string(value, result, &len, value);
+		if (err != CborNoError)
+			goto error_exit;
+
+	} else if (cbor_value_is_null(value)) {
+
+		err = cbor_value_advance_fixed(value);
+		if (err != CborNoError)
+			goto error_exit;
+		result = NULL;
+
+	} else {
+
+		goto error_exit;
+
+	}
+
+	return result;
+
+error_exit:
+	ser_decoder_invalid(value, err);
+	return NULL;
+}
+
+
 void *ser_decode_buffer_sp(struct ser_scratchpad *scratchpad)
 {
 	CborValue* value = scratchpad->value;
@@ -432,7 +544,19 @@ bool ser_decoding_done_and_check(CborValue *value)
 
 void ser_rsp_simple_i32(CborValue *value, void *handler_data)
 {
-	*(uint32_t *)handler_data = ser_decode_int(value);
+	*(int32_t *)handler_data = ser_decode_int(value);
+	check_final_decode_valid(value);
+}
+
+void ser_rsp_simple_bool(CborValue *value, void *handler_data)
+{
+	*(bool *)handler_data = ser_decode_bool(value);
+	check_final_decode_valid(value);
+}
+
+void ser_rsp_simple_u8(CborValue *value, void *handler_data)
+{
+	*(uint8_t *)handler_data = ser_decode_int(value);
 	check_final_decode_valid(value);
 }
 
@@ -448,6 +572,26 @@ void ser_rsp_send_int(int32_t response)
 
 	NRF_RPC_CBOR_ALLOC(ctx, 1 + sizeof(int32_t));
 	ser_encode_int(&ctx.encoder, response);
+
+	nrf_rpc_cbor_rsp_no_err(&ctx);
+}
+
+void ser_rsp_send_uint(uint32_t response)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(ctx, 1 + sizeof(uint32_t));
+	ser_encode_uint(&ctx.encoder, response);
+
+	nrf_rpc_cbor_rsp_no_err(&ctx);
+}
+
+void ser_rsp_send_bool(bool response)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(ctx, 1);
+	ser_encode_bool(&ctx.encoder, response);
 
 	nrf_rpc_cbor_rsp_no_err(&ctx);
 }

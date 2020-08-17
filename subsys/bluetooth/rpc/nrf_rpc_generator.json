@@ -36,7 +36,11 @@
 			"#define CONFIG_BT_USER_PHY_UPDATE 1",
 			"#define CONFIG_BT_USER_DATA_LEN_UPDATE 1",
 			"#define CONFIG_BT_WHITELIST",
-			"#define CONFIG_BT_CENTRAL"
+			"#define CONFIG_BT_CENTRAL",
+			"#define CONFIG_BT_SMP",
+			"#define CONFIG_BT_BREDR",
+			"#define CONFIG_BT_REMOTE_INFO",
+			"#define CONFIG_BT_SMP_APP_PAIRING_ACCEPT"
 		],
 		"conf.txt": [
 			"-Wno-undefined-internal",
