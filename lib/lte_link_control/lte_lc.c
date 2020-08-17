@@ -892,6 +892,13 @@ int lte_lc_edrx_req(bool enable)
 {
 	int err, actt;
 
+	if (sys_mode_current == LTE_LC_SYSTEM_MODE_NONE) {
+		err = lte_lc_system_mode_get(&sys_mode_current);
+		if (err) {
+			return err;
+		}
+	}
+
 	switch (sys_mode_current) {
 	case LTE_LC_SYSTEM_MODE_LTEM:
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
@@ -902,8 +909,8 @@ int lte_lc_edrx_req(bool enable)
 		actt = AT_CEDRXS_ACTT_NB;
 		break;
 	default:
-		LOG_ERR("Unknown system mode");
-		LOG_ERR("Cannot request eDRX for unknown system mode");
+		LOG_ERR("Cannot request eDRX for this system mode (%d)",
+			sys_mode_current);
 		return -EOPNOTSUPP;
 	}
 
