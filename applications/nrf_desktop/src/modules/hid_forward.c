@@ -548,13 +548,10 @@ static void init(void)
 
 static void send_enqueued_report(void)
 {
-	k_spinlock_key_t key = k_spin_lock(&lock);
+	if (usb_ready && !usb_busy &&
+	    !sys_slist_is_empty(&enqueued_report_list)) {
+		struct enqueued_report *item;
 
-	__ASSERT_NO_MSG(usb_ready);
-
-	struct enqueued_report *item = NULL;
-
-	if (!sys_slist_is_empty(&enqueued_report_list)) {
 		item = CONTAINER_OF(sys_slist_get(&enqueued_report_list),
 				__typeof__(*item),
 				node);
@@ -562,20 +559,19 @@ static void send_enqueued_report(void)
 
 		EVENT_SUBMIT(item->report);
 
+		k_free(item);
+
 		usb_busy = true;
-	} else {
-		usb_busy = false;
 	}
-
-	k_spin_unlock(&lock, key);
-
-	k_free(item);
 }
 
 static bool event_handler(const struct event_header *eh)
 {
 	if (is_hid_report_sent_event(eh)) {
+		k_spinlock_key_t key = k_spin_lock(&lock);
+		usb_busy = false;
 		send_enqueued_report();
+		k_spin_unlock(&lock, key);
 		return false;
 	}
 
@@ -615,8 +611,8 @@ static bool event_handler(const struct event_header *eh)
 			if (event->enabled) {
 				k_spinlock_key_t key = k_spin_lock(&lock);
 				usb_ready = true;
-				k_spin_unlock(&lock, key);
 				send_enqueued_report();
+				k_spin_unlock(&lock, key);
 			} else {
 				clear_state();
 			}
