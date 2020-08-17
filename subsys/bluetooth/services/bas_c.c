@@ -337,11 +337,12 @@ int bt_gatt_bas_c_unsubscribe(struct bt_gatt_bas_c *bas_c)
 		return -EINVAL;
 	}
 
-	if (!bas_c->notify_params.notify) {
+	if (!bas_c->notify_cb) {
 		return -EFAULT;
 	}
+
 	err = bt_gatt_unsubscribe(bas_c->conn, &bas_c->notify_params);
-	bas_c->notify_params.notify = NULL;
+	bas_c->notify_cb = NULL;
 	return err;
 }
 
