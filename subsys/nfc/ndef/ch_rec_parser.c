@@ -108,7 +108,6 @@ static int hc_rec_payload_parse(struct nfc_ndef_bin_payload_desc *payload_desc,
 	if (payload_len < 1) {
 		*result_buf_len =
 			(buf_size - net_buf_simple_tailroom(&buf));
-
 		return 0;
 	}
 
@@ -207,6 +206,8 @@ static int ac_rec_payload_parse(struct nfc_ndef_bin_payload_desc *payload_desc,
 	payload_len--;
 
 	if (!ac_rec->aux_data_ref_cnt) {
+		*result_buf_len =
+			(buf_size - net_buf_simple_tailroom(&buf));
 		return 0;
 	}
 
