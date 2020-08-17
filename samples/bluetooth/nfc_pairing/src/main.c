@@ -8,6 +8,7 @@
 #include <zephyr.h>
 
 #include <nfc_t4t_lib.h>
+#include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/ndef/ch.h>
 #include <nfc/ndef/ch_msg.h>
@@ -117,6 +118,7 @@ static int pairing_msg_generate(uint32_t *len)
 	int err;
 	struct nfc_ndef_le_oob_rec_payload_desc rec_payload;
 	struct nfc_ndef_ch_msg_records ch_records;
+	uint32_t ndef_size = nfc_t4t_ndef_file_msg_size_get(*len);
 
 	NFC_NDEF_MSG_DEF(hs_msg, 2);
 
@@ -154,8 +156,25 @@ static int pairing_msg_generate(uint32_t *len)
 	err = nfc_ndef_ch_msg_hs_create(&NFC_NDEF_MSG(hs_msg),
 					&NFC_NDEF_CH_RECORD_DESC(hs_rec),
 					&ch_records);
+	if (err) {
+		return err;
+	}
 
-	return nfc_ndef_msg_encode(&NFC_NDEF_MSG(hs_msg), ndef_msg_buf, len);
+	err = nfc_ndef_msg_encode(&NFC_NDEF_MSG(hs_msg),
+				  nfc_t4t_ndef_file_msg_get(ndef_msg_buf),
+				  &ndef_size);
+	if (err) {
+		return err;
+	}
+
+	err = nfc_t4t_ndef_file_encode(ndef_msg_buf, &ndef_size);
+	if (err) {
+		return err;
+	}
+
+	*len = ndef_size;
+
+	return 0;
 }
 /** .. include_endpoint_pair_msg_rst */
 
