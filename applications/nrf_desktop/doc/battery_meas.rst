@@ -53,7 +53,7 @@ Because Zephyr's :ref:`zephyr:gpio_api` driver is used to control this pin, also
 Implementation details
 **********************
 
-:c:type:`struct k_delayed_work` starts the asynchronous voltage measurement and resubmits itself.
+:cpp:class:`k_delayed_work` starts the asynchronous voltage measurement and resubmits itself.
 When it is processed the next time, it reads the measured voltage.
 This read sequence is repeated periodically.
 When the system goes to the low-power state, the work is canceled.

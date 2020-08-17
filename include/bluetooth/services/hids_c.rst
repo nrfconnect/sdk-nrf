@@ -29,7 +29,7 @@ Usage
 *****
 
 .. note::
-   Do not access any of the values in the :cpp:type:`bt_gatt_hids_c` object structure directly.
+   Do not access any of the values in the :cpp:class:`bt_gatt_hids_c` object structure directly.
    All values that should be accessed have accessor functions.
    The reason that the structure is fully defined is to allow the application to allocate the memory for it.
 

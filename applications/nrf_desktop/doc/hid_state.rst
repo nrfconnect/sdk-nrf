@@ -67,7 +67,7 @@ Out of all available input data types, the following types are collected by the 
 * `Relative value data`_ (axes)
 * `Absolute value data`_ (buttons)
 
-Both types are stored in the :c:type:`struct report_data` structure.
+Both types are stored in the :cpp:class:`report_data` structure.
 
 Relative value data
 -------------------
@@ -77,7 +77,7 @@ Both ``motion_event`` and ``wheel_event`` are sources of this type of data.
 
 To indicate a change to this input data, overwrite the value that is already stored.
 
-When either ``motion_event`` or ``wheel_event`` is received, the |hid_state| selects the :c:type:`struct report_data` structure associated with the mouse HID report and stores the values at the right position within this structure's ``axes`` member.
+When either ``motion_event`` or ``wheel_event`` is received, the |hid_state| selects the :cpp:class:`report_data` structure associated with the mouse HID report and stores the values at the right position within this structure's ``axes`` member.
 
 .. note::
     The values of axes are stored every time the input data is received, but these values are cleared when a report is connected to the subscriber.
@@ -92,12 +92,12 @@ The ``button_event`` is the source of this type of data.
 To indicate a change to this input data, overwrite the value that is already stored.
 
 Since keys on the board can be associated to a usage ID, and thus be part of different HID reports, the first step is to identify to which report the key belongs and what usage it represents.
-This is done by obtaining the key mapping from the :c:type:`struct hid_keymap` structure.
+This is done by obtaining the key mapping from the :cpp:class:`hid_keymap` structure.
 This structure is part of the application configuration files for the specific board and is defined in :file:`hid_keymap_def.h`.
 
 Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
 
-* If the report is connected, the value is stored at the right position in the ``items`` member of :c:type:`struct report_data` associated with the report.
+* If the report is connected, the value is stored at the right position in the ``items`` member of :cpp:class:`report_data` associated with the report.
 * If the report is not connected, the value is stored in the ``eventq`` event queue member of the same structure.
 
 The difference between these operations is that storing value onto the queue (second case) preserves the order of input events.
@@ -113,7 +113,7 @@ The storing approach before the connection depends on the data type:
 
 The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it is able to connect to the host.
 
-When the device is disconnected and the input event with the absolute value data is received, the data is stored onto the event queue (``eventq``), a member of :c:type:`struct report_data` structure.
+When the device is disconnected and the input event with the absolute value data is received, the data is stored onto the event queue (``eventq``), a member of :cpp:class:`report_data` structure.
 This queue preserves an order at which input data events are received.
 
 Storing limitations
@@ -157,8 +157,8 @@ Tracking state of HID report notifications
 ==========================================
 
 For each subscriber, the |hid_state| module tracks the state of notifications for each of the available HID reports.
-These are tracked in the subscriber's structure :c:type:`struct subscriber`.
-This structure's member ``state`` is an array of :c:type:`struct report_state` structures.
+These are tracked in the subscriber's structure :cpp:class:`subscriber`.
+This structure's member ``state`` is an array of :cpp:class:`report_state` structures.
 Each element corresponds to one available HID report.
 
 The subscriber connects to the HID reports by submitting ``hid_report_subscription_event``.
@@ -167,17 +167,17 @@ Depending on the connection method, this event can be submitted:
 * For Bluetooth, when the notification is enabled for a given HID report.
 * For USB, when the device is connected to USB.
 
-The :c:type:`struct report_state` structure serves the following purposes:
+The :cpp:class:`report_state` structure serves the following purposes:
 
 * Tracks the state of the connection.
-* Contains the link connecting the object to the right :c:type:`struct report_data` structure, from which the data is taken when the HID report is formed.
+* Contains the link connecting the object to the right :cpp:class:`report_data` structure, from which the data is taken when the HID report is formed.
 * Tracks the number of reports of the associated type that were sent to the subscriber.
 
 Forming HID reports
 ===================
 
 When a HID report is to be sent to the subscriber, the |hid_state| calls the function responsible for the report generation.
-The :c:type:`struct report_data` structure is passed as an argument to this function.
+The :cpp:class:`report_data` structure is passed as an argument to this function.
 
 .. note::
     The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).

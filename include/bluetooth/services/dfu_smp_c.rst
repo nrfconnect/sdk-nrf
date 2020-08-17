@@ -38,7 +38,7 @@ Usage
 *****
 
 .. note::
-   Do not access any of the values in the :cpp:type:`bt_gatt_dfu_smp_c` object structure directly.
+   Do not access any of the values in the :cpp:class:`bt_gatt_dfu_smp_c` object structure directly.
    All values that should be accessed have accessor functions.
    The reason that the structure is fully defined is to allow the application to allocate the memory for it.
 
@@ -56,7 +56,7 @@ Sending a command
 =================
 
 To send a command, use :cpp:func:`bt_gatt_dfu_smp_c_command`.
-The command is provided as a raw binary buffer consisting of a :cpp:type:`dfu_smp_header` and the payload.
+The command is provided as a raw binary buffer consisting of a :cpp:class:`dfu_smp_header` and the payload.
 
 
 Processing the response
@@ -67,7 +67,7 @@ It is passed to the callback function that was provided when issuing the command
 
 Use :cpp:func:`bt_gatt_dfu_smp_c_rsp_state` to access the data of the current part of the response.
 As the response might be received in multiple notifications, use :cpp:func:`bt_gatt_dfu_smp_c_rsp_total_check` to verify if this is the last part of the response.
-The offset size of the current part and the total size are available in fields of the :cpp:type:`bt_gatt_dfu_smp_rsp_state` structure.
+The offset size of the current part and the total size are available in fields of the :cpp:class:`bt_gatt_dfu_smp_rsp_state` structure.
 
 
 API documentation

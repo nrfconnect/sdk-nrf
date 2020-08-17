@@ -13,7 +13,7 @@ This allows for different RGB or monochromatic colors.
 An example may be an LED that is blinking or breathing with a given color.
 Such LED behavior is referred to as *LED effect*.
 
-The LED effect (:c:type:`struct led_effect`) is described by the following characteristics:
+The LED effect (:cpp:class:`led_effect`) is described by the following characteristics:
 
 * Pointer to array of LED steps (:cpp:member:`steps`).
 * Size of the array (:cpp:member:`step_count`).
@@ -66,7 +66,7 @@ Implementation details
 **********************
 
 The LED color is achieved by setting the proper pulse widths for the PWM signals.
-To achieve the desired LED effect, colors for the given LED are periodically updated using work (:c:type:`struct k_delayed_work`).
+To achieve the desired LED effect, colors for the given LED are periodically updated using work (:cpp:class:`k_delayed_work`).
 One work automatically updates the color of a single LED.
 
 This module turns off all LEDs when the application goes to the power down state.

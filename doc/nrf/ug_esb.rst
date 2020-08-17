@@ -96,7 +96,7 @@ To do so, the PRX adds a packet to its TX FIFO, which is sent as the payload in 
 
 
 If the PTX does not receive the ACK after the initial transmitted packet, it attempts to retransmit the packet until the ACK is finally being received.
-The maximum number of allowed retransmission attempts and the delay between each attempt is specified by the most recent call to either :cpp:func:`esb_init` (where the values of :cpp:member:`retransmit_count` and :cpp:member:`retransmit_delay` in the :cpp:type:`esb_config` structure specify the number of retransmission attempts and the delay between them, respectively) or the functions :cpp:func:`esb_set_retransmit_count` and :cpp:func:`esb_set_retransmit_delay`.
+The maximum number of allowed retransmission attempts and the delay between each attempt is specified by the most recent call to either :cpp:func:`esb_init` (where the values of :cpp:member:`retransmit_count` and :cpp:member:`retransmit_delay` in the :cpp:class:`esb_config` structure specify the number of retransmission attempts and the delay between them, respectively) or the functions :cpp:func:`esb_set_retransmit_count` and :cpp:func:`esb_set_retransmit_delay`.
 The retransmission delay is defined as the duration between the start of each transmission attempt.
 Note that this differs from the legacy nRF24L Series hardware implementation, where the delay was defined as the duration from the end of a packet transmission until the start of the retransmission.
 
@@ -111,7 +111,7 @@ However, repeated packets will always be ACKed by the PRX, even though they are 
 
 
 A PTX can select that individual packets that are transmitted to the PRX do not require an ACK to be sent in return from the PRX.
-This decision is taken by the application when uploading a packet to the TX FIFO using the :cpp:member:`esb_payload::noack` field of the :cpp:type:`p_payload` parameter that is passed to the :cpp:func:`esb_write_payload` function.
+This decision is taken by the application when uploading a packet to the TX FIFO using the :cpp:member:`esb_payload::noack` field of the :cpp:class:`esb_payload` parameter that is passed to the :cpp:func:`esb_write_payload` function.
 
 When the PRX receives a packet that does not require an ACK, it does not send an ACK packet to the PTX, and as a result the PTX will continue retransmitting the packet until the maximum number of allowed retransmission attempts is reached.
 

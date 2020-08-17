@@ -29,13 +29,13 @@ The :file:`port_state_def.h` file defines the states set to the GPIO ports by th
 * ``port_state_on`` - State set on the system start and wake-up.
 * ``port_state_off`` - State set when the system enters the low-power mode.
 
-Every :c:type:`struct port_state` refers to a single GPIO port and contains the following information:
+Every :cpp:class:`port_state` refers to a single GPIO port and contains the following information:
 
 * :cpp:member:`name` - GPIO device name (obtained from :ref:`devicetree <zephyr:dt-guide>`, for example with ``DT_LABEL(DT_NODELABEL(gpio0))``).
-* :cpp:member:`ps` - Pointer to the array of :c:type:`struct pin_state`.
+* :cpp:member:`ps` - Pointer to the array of :cpp:class:`pin_state`.
 * :cpp:member:`ps_count` - Size of the `ps` array.
 
-Every :c:type:`struct pin state` defines the state of a single GPIO pin:
+Every :cpp:class:`pin_state` defines the state of a single GPIO pin:
 
 * :cpp:member:`pin` - Pin number.
 * :cpp:member:`val` - Value set for the pin.

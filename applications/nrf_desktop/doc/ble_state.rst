@@ -6,8 +6,8 @@ Bluetooth LE state module
 Use the Bluetooth LE state module to:
 
 * Enable Bluetooth (:cpp:func:`bt_enable`).
-* Handle Zephyr connection callbacks (:c:type:`struct bt_conn_cb`).
-* Handle Zephyr authenticated pairing callbacks (:c:type:`struct bt_conn_auth_cb`).
+* Handle Zephyr connection callbacks (:cpp:type:`bt_conn_cb`).
+* Handle Zephyr authenticated pairing callbacks (:cpp:type:`bt_conn_auth_cb`).
 * Propagate information about the connection state and parameters by using :ref:`event_manager` events.
 
 Module events
@@ -59,9 +59,9 @@ The :ref:`nrf_desktop_ble_conn_params` updates the connection parameters on ``bl
 Connection references
 =====================
 
-The |ble_state| keeps references to :c:type:`struct bt_conn` objects to ensure that they remain valid when other application modules access them.
+The |ble_state| keeps references to :cpp:class:`bt_conn` objects to ensure that they remain valid when other application modules access them.
 When a new connection is established, the module calls :cpp:func:`bt_conn_ref` to increase the object reference counter.
-After ``ble_peer_event`` regarding disconnection or connection failure is received by all other application modules, the |ble_state| unreferences the :c:type:`struct bt_conn` object by using :cpp:func:`bt_conn_unref`.
+After ``ble_peer_event`` regarding disconnection or connection failure is received by all other application modules, the |ble_state| unreferences the :cpp:class:`bt_conn` object by using :cpp:func:`bt_conn_unref`.
 
 For Bluetooth Peripheral, the |ble_state| is used to request the connection security level 2.
 If the connection security level 2 is not established, the peripheral device disconnects.
@@ -69,7 +69,7 @@ If the connection security level 2 is not established, the peripheral device dis
 Passkey enabled
 ===============
 
-If you set the ``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`` option, the |ble_state| registers the set of authenticated pairing callbacks (:c:type:`struct bt_conn_auth_cb`).
+If you set the ``CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`` option, the |ble_state| registers the set of authenticated pairing callbacks (:cpp:type:`bt_conn_auth_cb`).
 The callbacks can be used to achieve higher security levels.
 The passkey input is handled in the :ref:`nrf_desktop_passkey`.
 

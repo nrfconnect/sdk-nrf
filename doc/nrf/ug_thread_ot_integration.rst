@@ -47,8 +47,8 @@ The OpenThread network stack uses the following threads:
 * ``tx_workq`` - Responsible for receiving the UDP packet, scheduling the OpenThread Tasklet for transmission, and unlocking the ``openthread`` thread by giving the semaphore.
 * ``workqueue`` - Responsible for invoking the radio driver API to schedule a transmission.
 * ``802154 RX`` - Responsible for the upper half processing of the radio frame reception (that is, the core stack part).
-  Works on objects of type :c:type:`nrf5_802154_rx_frame` that are put to the :c:type:`nrf5_data.rx_fifo` from the RX IRQ context.
-  The thread is responsible for creating the :c:type:`net_pkt` structure and passing it to the upper layer with :cpp:func:`net_recv_data()`.
+  Works on objects of type :cpp:class:`nrf5_802154_rx_frame` that are put to the :c:type:`nrf5_data.rx_fifo` from the RX IRQ context.
+  The thread is responsible for creating the :cpp:class:`net_pkt` structure and passing it to the upper layer with :cpp:func:`net_recv_data()`.
 
 Apart from these threads, the OpenThread stack also uses the :ref:`application threads <threads_v2>`.
 Usually one or more, these threads execute the application logic.
@@ -66,7 +66,7 @@ The OpenThread network stack components are located in the following directories
 
 The responsibilities of the OpenThread shim layer are as follows:
 
-* Translating the data into the Zephyr's native :c:type:`net_pkt` structure.
+* Translating the data into the Zephyr's native :cpp:class:`net_pkt` structure.
 * Providing the OpenThread thread body and synchronization API.
 * Providing :cpp:func:`openthread_send()` and :cpp:func:`openthread_recv()` calls that are registered as the L2 interface API.
 * Providing a way to initialize the OpenThread stack.
@@ -113,12 +113,12 @@ The numbers in the figure correspond to the step numbers in the following data r
     As a result, it puts a work item with :cpp:func:`net_recv_data()` to have the frame processed.
 4.  The work queue thread ``rx_workq`` calls the registered handler for every queued frame.
     In this case, the registered handler :cpp:func:`openthread_recv()` checks if the frame is of the IEEE 802.15.4 type.
-    If this is the case, it inserts the frame into :c:type:``rx_pkt_fifo` and returns ``NET_OK``.
+    If this is the case, it inserts the frame into :cpp:class:`rx_pkt_fifo` and returns ``NET_OK``.
 5.  The ``openthread`` thread gets a frame from the FIFO and processes it.
     It also handles the IP header compression and reassembly of fragmented traffic.
 6.  As soon as the thread detects a valid IPv6 packet that needs to be handled by the higher layer, it calls the registered callback :cpp:func:`ot_receive_handler()`.
-    This callback creates a buffer for a :c:type:`net_pkt` structure that is going to be passed to Zephyr's IP stack.
-    It also calls :cpp:func:`net_recv_data()` to have the :c:type:`net_pkt` structure processed.
+    This callback creates a buffer for a :cpp:class:`net_pkt` structure that is going to be passed to Zephyr's IP stack.
+    It also calls :cpp:func:`net_recv_data()` to have the :cpp:class:`net_pkt` structure processed.
 7.  This time the :cpp:func:`openthread_recv()` called by the workqueue returns ``NET_CONTINUE``.
     This indicates that the valid IPv6 packet is present and needs to be processed by Zephyr's higher layer.
 8.  :cpp:func:`net_ipv6_input()` passes the packet to the next higher layer.
@@ -145,12 +145,12 @@ The numbers in the figure correspond to the step numbers in the following data t
 
 1. The application uses the :ref:`BSD socket API <bsd_sockets_interface>` when sending the data.
    However, direct interaction with the OpenThread API is possible, for example to use its CoAP implementation.
-2. The application data is prepared for sending to the kernel space and copied to internal :c:type:`net_buf` structures.
+2. The application data is prepared for sending to the kernel space and copied to internal :cpp:class:`net_buf` structures.
 3. Depending on the socket type, a protocol header is added in front of the data.
    For example, if the socket is a UDP socket, a UDP header is constructed and placed in front of the data.
-4. A UDP :c:type:`net_pkt` structured is queued to be processed with :cpp:func:`process_tx_packet()`.
+4. A UDP :cpp:class:`net_pkt` structured is queued to be processed with :cpp:func:`process_tx_packet()`.
    In the call chain, the :cpp:func:`openthread_send()` is called.
-   It converts the :c:type:`net_pkt` to the :c:type:`otMessage` format and invokes :cpp:func:`otIp6Send()`.
+   It converts the :cpp:class:`net_pkt` to the :cpp:class:`otMessage` format and invokes :cpp:func:`otIp6Send()`.
    In this step, the message is processed by the OpenThread stack.
 5. The tasklet to schedule the transmission is posted and the semaphore that unlocks the ``openthread`` thread is given.
    Mac and Submac operations take place.

@@ -8,7 +8,7 @@ The library parses the calendaring information and returns parsed calendar event
 
 The library first detects the beginning of the calendar object by locating the delimiter ``BEGIN:VCALENDAR``.
 It then parses the following calendar content fragment by fragment.
-For each calendar component that is parsed, the library sends a parsed event (:c:type:`ical_parser_evt`) to the application.
+For each calendar component that is parsed, the library sends a parsed event (:cpp:class:`ical_parser_evt`) to the application.
 
 Supported features
 ******************
