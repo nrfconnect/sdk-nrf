@@ -91,6 +91,15 @@ config LTE_EDRX_REQ_VALUE
 		The value 1001 corresponds to 163.84 seconds, and is valid for
 		both LTE-M and NB-IoT networks.
 
+config LTE_PTW_VALUE
+	string "Requested PTW value"
+	help
+		Sets the Paging Time Window value to be requested when enabling
+		eDRX. The allowed values for LTE-M and NB-IoT differ.
+		The format is a string with half a byte in 4-bit format,
+		corresponding to bits 8 to 5 in octet 3 of eDRX information
+		element	according to 10.5.5.32 of 3GPP TS 24.008.
+
 config LTE_LEGACY_PCO_MODE
 	bool "Enable legacy LTE Protocol Configuration Options mode"
 
