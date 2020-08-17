@@ -51,15 +51,18 @@ int pcd_transfer(struct pcd_cmd *cmd, struct device *fdev)
 		return rc;
 	}
 
-	rc = stream_flash_buffered_write(&stream, (uint8_t *)cmd->src,
+	rc = stream_flash_buffered_write(&stream, (uint8_t *)cmd->src_addr,
 					 cmd->len, true);
 	if (rc != 0) {
 		LOG_ERR("stream_flash_buffered_write fail: %d", rc);
 		return rc;
 	}
 
+	LOG_INF("Transfer done");
 	/* Signal complete by setting magic to 0 */
 	cmd->magic = PCD_CMD_MAGIC_DONE;
-
+	/* Wait for being rebooted */
+	while(1);
+	CODE_UNREACHABLE;
 	return 0;
 }

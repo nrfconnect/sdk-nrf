@@ -22,7 +22,6 @@ extern "C" {
 #endif
 
 #include <device.h>
-#include <linker/linker-defs.h>
 
 /** Magic value written to indicate that a copy should take place. */
 #define PCD_CMD_MAGIC_COPY 0xb5b4b3b6
@@ -37,14 +36,23 @@ extern "C" {
  *  and the receiver of the DFU image.
  */
 struct pcd_cmd {
-	uint32_t magic;  /* Magic value to identify this structure in memory */
-	const void *src; /* Source address to copy from */
-	size_t len;      /* Number of bytes to copy */
-	size_t offset;   /* Offset to store the flash image in */
-	uint8_t buf[CONFIG_PCD_BUF_SIZE]; /* Copy buffer */
-};
+	uint32_t magic;   /* Magic value to identify this structure in memory */
+	void * src_addr;  /* Source address to copy from */
+	size_t len;       /* Number of bytes to copy */
+	size_t offset;    /* Offset to store the flash image in */
+} __attribute__ ((aligned(4)));
 
-#define PCD_CMD_ADDRESS (ROUND_DOWN((__kernel_ram_end - sizeof(struct pcd_cmd)), 4))
+#if DT_HAS_CHOSEN(zephyr_ipc_shm)
+#define SHM_NODE            DT_CHOSEN(zephyr_ipc_shm)
+#define SHM_BASE_ADDRESS    DT_REG_ADDR(SHM_NODE)
+#define SHM_SIZE            sizeof(pcd_cmd);
+#endif
+
+#if defined(SHM_BASE_ADDRESS) && (SHM_BASE_ADDRESS != 0)
+#define PCD_CMD_ADDRESS SHM_BASE_ADDRESS
+#else
+#error "Could not find shared memory address"
+#endif
 
 /** @brief Get a PCD CMD from the specified address.
  *
