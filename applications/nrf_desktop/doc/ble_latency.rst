@@ -36,7 +36,7 @@ When the device is in the low power mode and :ref:`nrf_desktop_config_channel` i
 Implementation details
 **********************
 
-The |ble_latency| uses delayed works (:c:type:`struct k_delayed_work`) to control the connection latency and trigger the security time-out.
+The |ble_latency| uses delayed works (:cpp:class:`k_delayed_work`) to control the connection latency and trigger the security time-out.
 
 The module listens for ``config_event`` and ``config_fetch_request_event`` to detect when the :ref:`nrf_desktop_config_channel` is in use.
 

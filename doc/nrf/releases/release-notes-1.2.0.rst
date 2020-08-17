@@ -246,7 +246,7 @@ Updated libraries
 * :ref:`doc_fw_info`:
 
   * Renamed ABIs to EXT_APIs.
-  * Restructured the :c:type:`fw_info` structure:
+  * Restructured the :cpp:class:`fw_info` structure:
 
     * Renamed the fields ``firmware_size``, ``firmware_address``, and ``firmware_version`` to ``size``, ``address``, and ``version``.
     * Added a field to invalidate the structure.

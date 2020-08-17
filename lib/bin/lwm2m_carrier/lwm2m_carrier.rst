@@ -140,7 +140,7 @@ LwM2M carrier library events
 
 :c:macro:`LWM2M_CARRIER_EVENT_ERROR`
    This event indicates an error.
-   The event data struct :c:type:`lwm2m_carrier_event_error_t` contains the information about the error (:cpp:member:`code` and :cpp:member:`value`).
+   The event data struct :cpp:type:`lwm2m_carrier_event_error_t` contains the information about the error (:cpp:member:`code` and :cpp:member:`value`).
 
    :c:macro:`LWM2M_CARRIER_ERROR_CONNECT_FAIL`
       This error is generated from the :cpp:func:`lte_lc_init_and_connect` function.
@@ -159,7 +159,7 @@ LwM2M carrier library events
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG`
       This error indicates that the update package has been rejected.
       The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client.
-      The :cpp:member:`value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\bsdlib\\include\\nrf_socket.h`.
+      The :cpp:member:`value` field will have an error of type :cpp:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\bsdlib\\include\\nrf_socket.h`.
 
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PROTO`
       This error indicates a protocol error.
@@ -224,8 +224,8 @@ Below are some of the requirements and limitations of the application while runn
 * The LwM2M carrier library uses a TLS session for FOTA.
   TLS handshakes performed by the application might fail if the LwM2M carrier library is performing one at the same time.
 
-   * If the application is in a TLS session and a :c:type:`LWM2M_CARRIER_EVENT_FOTA_START` event is sent to the application, the application must immediately end the TLS session.
-   * TLS becomes available again upon the next :c:type:`LWM2M_CARRIER_EVENT_READY` or :c:type:`LWM2M_CARRIER_EVENT_DEFERRED` event.
+   * If the application is in a TLS session and a :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event is sent to the application, the application must immediately end the TLS session.
+   * TLS becomes available again upon the next :c:macro:`LWM2M_CARRIER_EVENT_READY` or :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED` event.
    * The application should implement a retry mechanism so that the application can perform the TLS handshake later.
    * Another alternative is to supply TLS from a source other than the modem, for example `Mbed TLS`_.
 

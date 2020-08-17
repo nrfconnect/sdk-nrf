@@ -34,7 +34,7 @@ The |click_detector| detects click types based on ``button_event``.
 Make sure you define the :ref:`nrf_desktop_buttons` hardware interface.
 
 Set ``CONFIG_DESKTOP_CLICK_DETECTOR_ENABLE`` and define the module configuration.
-The configuration (array of :c:type:`struct click_detector_config`) is written in the :file:`click_detector_def.h`` file located in the board-specific directory in the application configuration directory.
+The configuration (array of :cpp:class:`click_detector_config`) is written in the :file:`click_detector_def.h`` file located in the board-specific directory in the application configuration directory.
 
 For every click detector, make sure to define the following information:
 
@@ -44,7 +44,7 @@ For every click detector, make sure to define the following information:
 Implementation details
 **********************
 
-Tracing of key states is implemented using a periodically submitted work (:c:type:`struct k_delayed_work`).
+Tracing of key states is implemented using a periodically submitted work (:cpp:class:`k_delayed_work`).
 The work updates the states of traced keys and sends ``click_event``.
 The work is not submitted if there is no key for which the state should be updated.
 

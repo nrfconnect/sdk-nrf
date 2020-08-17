@@ -17,7 +17,7 @@ It must be located at one of the following offsets from the start of the image: 
 The reason that the structure is not located at 0x00 is that this can be problematic in some use cases, such as when the vector table must be located at 0x00.
 
 These rules make it simple to retrieve the information by checking for each possible offset (0x0, 0x200, 0x400, 0x800, 0x1000) if the first 12 bytes match the magic value.
-If they do, the information can be retrieved according to the definition in :c:type:`fw_info`.
+If they do, the information can be retrieved according to the definition in :cpp:class:`fw_info`.
 
 Information structure
 *********************
@@ -122,7 +122,7 @@ To create an EXT_API, complete the following steps:
       ver = 1
       source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
-#. Declare a new struct type that starts with the :c:type:`fw_info_ext_api` struct:
+#. Declare a new struct type that starts with the :cpp:class:`fw_info_ext_api` struct:
 
    .. code-block:: c
 

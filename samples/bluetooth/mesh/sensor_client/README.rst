@@ -56,7 +56,7 @@ The models are used for the following purposes:
 * Mesh sensor client gets sensor data from one or more :ref:`Mesh sensor server(s) <bt_mesh_sensor_srv_readme>`.
 
 The model handling is implemented in :file:`src/model_handler.c`.
-A :c:type:`struct k_delayed_work` item is submitted recursively to periodically request sensor data.
+A :cpp:class:`k_delayed_work` item is submitted recursively to periodically request sensor data.
 
 Requirements
 ************

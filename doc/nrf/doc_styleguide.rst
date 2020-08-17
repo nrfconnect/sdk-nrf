@@ -174,7 +174,8 @@ The `Breathe documentation`_ contains information about what you can link to.
 To link directly to a doxygen reference from RST, use the following Breathe domains:
 
 * Function: ``:cpp:func:``
-* Structure: ``:c:type:``
+* Structure: ``:cpp:class:``
+* Type: ``:cpp:type:``
 * Enum (the list): ``:cpp:enum:``
 * Enumerator (an item): ``:cpp:enumerator:``
 * Macro or define: ``:c:macro:``

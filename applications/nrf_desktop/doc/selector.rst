@@ -23,14 +23,14 @@ The module implemented in :file:`selector_hw.c` uses the Zephyr :ref:`zephyr:gpi
 For this reason, you should set :option:`CONFIG_GPIO` option.
 
 Set ``CONFIG_DESKTOP_SELECTOR_HW_ENABLE`` option to enable the module.
-The configuration for this module is an array of :c:type:`struct selector_config` pointers.
+The configuration for this module is an array of :cpp:class:`selector_config` pointers.
 The array is written in the :file:`selector_hw_def.h` file located in the board-specific directory in the application configuration directory.
 
 For every hardware selector, define the following parameters:
 
 * :cpp:member:`id` - ID of the hardware selector.
-* :cpp:member:`pins` - Pointer to the array of :c:type:`struct gpio_pin`.
-* :cpp:member:`pins_size` - Size of the array of :c:type:`struct gpio_pin`.
+* :cpp:member:`pins` - Pointer to the array of :cpp:class:`gpio_pin`.
+* :cpp:member:`pins_size` - Size of the array of :cpp:class:`gpio_pin`.
 
 .. warning::
     Each source of ``selector_event`` must have a unique ID to properly distinguish events from different sources.
@@ -47,6 +47,6 @@ When the application goes to sleep, selectors are not informing about state chan
 
 If a selector is placed between states, it is in unknown state and ``selector_event`` is not sent.
 
-Recording of selector state changes is implemented using GPIO callbacks (:c:type:`struct gpio_callback`) and work (:c:type:`struct k_delayed_work`).
+Recording of selector state changes is implemented using GPIO callbacks (:cpp:class:`gpio_callback`) and work (:cpp:class:`k_delayed_work`).
 Each state change triggers an interrupt (GPIO interrupt for pin level high).
 Callback of an interrupt submits work, which sends ``selector_event``.

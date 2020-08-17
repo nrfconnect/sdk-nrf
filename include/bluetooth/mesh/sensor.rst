@@ -92,7 +92,7 @@ Each sensor type may consist of one or more channels.
 The list of sensor channels in each sensor type is immutable, and all channels must always have a valid value when the sensor data is passed around.
 This is slightly different from the sensor type representation in the Bluetooth Mesh Specification, which represents multi-channel sensors as structures, rather than flat lists.
 
-Each channel in a sensor type is represented by a single :c:type:`sensor_value`.
+Each channel in a sensor type is represented by a single :cpp:class:`sensor_value`.
 For sensor values that are represented as whole numbers, the fractional part of the value (:cpp:member:`sensor_value::val2`) is ignored.
 Boolean types are inferred only from the integer part of the value (:cpp:member:`sensor_value::val1`).
 
