@@ -25,6 +25,7 @@ One of the following boards:
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
+  * |nRF52833DK|
 
 User interface
 **************
