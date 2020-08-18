@@ -65,6 +65,20 @@ void ser_encode_null(CborEncoder *encoder)
 	}
 }
 
+void ser_encode_undefined(CborEncoder *encoder)
+{
+	CborError err;
+
+	if (is_encoder_invalid(encoder))
+		return;
+	
+	err = cbor_encode_undefined(encoder);
+
+	if (err != CborNoError) {
+		set_encoder_invalid(encoder, err);
+	}
+}
+
 void ser_encode_bool(CborEncoder *encoder, bool value)
 {
 	CborError err;
@@ -197,6 +211,14 @@ bool ser_decode_is_null(CborValue *value)
 		return true;
 	
 	return cbor_value_is_null(value);
+}
+
+bool ser_decode_is_undefined(CborValue *value)
+{
+	if (is_decoder_invalid(value))
+		return true;
+	
+	return cbor_value_is_undefined(value);
 }
 
 bool ser_decode_bool(CborValue *value)

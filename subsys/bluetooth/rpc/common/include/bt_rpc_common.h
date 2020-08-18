@@ -1,7 +1,11 @@
 #ifndef BT_RPC_COMMON_H_
 #define BT_RPC_COMMON_H_
 
+#include "bluetooth/bluetooth.h"
+#include "bluetooth/conn.h"
+
 #include "nrf_rpc_cbor.h"
+
 
 #define _BT_RPC_TYPE_COMARE_CONCAT2(a, b, c) a ## _ ## b ## _ ## c
 #define _BT_RPC_TYPE_COMARE_CONCAT(a, b, c) _BT_RPC_TYPE_COMARE_CONCAT2(a, b, c)
@@ -14,6 +18,8 @@
  */
 
 enum {
+	BT_RPC_GET_CHECK_TABLE_RPC_CMD,
+	
 	BT_ENABLE_RPC_CMD,
 	BT_SET_NAME_RPC_CMD,
 	BT_LE_ADV_START_RPC_CMD,
@@ -28,6 +34,29 @@ enum {
 	BT_GET_NAME_OUT_RPC_CMD,
 	BT_LE_EXT_ADV_CREATE_RPC_CMD,
 	BT_LE_ADV_UPDATE_DATA_RPC_CMD,
+	BT_LE_EXT_ADV_DELETE_RPC_CMD,
+	BT_LE_EXT_ADV_CB_SCANNED_CALLBACK_RPC_CMD,
+	BT_LE_EXT_ADV_CB_SENT_CALLBACK_RPC_CMD,
+	BT_LE_EXT_ADV_CB_CONNECTED_CALLBACK_RPC_CMD,
+	BT_LE_EXT_ADV_START_RPC_CMD,
+	BT_LE_SCAN_STOP_RPC_CMD,
+	BT_LE_EXT_ADV_STOP_RPC_CMD,
+	BT_LE_EXT_ADV_SET_DATA_RPC_CMD,
+	BT_LE_EXT_ADV_UPDATE_PARAM_RPC_CMD,
+	BT_LE_EXT_ADV_GET_INDEX_RPC_CMD,
+	BT_LE_EXT_ADV_GET_INFO_RPC_CMD,
+	BT_LE_SCAN_CB_REGISTER_ON_REMOTE_RPC_CMD,
+	BT_LE_SCAN_CB_RECV_RPC_CMD,
+	BT_LE_SCAN_CB_TIMEOUT_RPC_CMD,
+	BT_LE_WHITELIST_ADD_RPC_CMD,
+	BT_LE_WHITELIST_REM_RPC_CMD,
+	BT_LE_WHITELIST_CLEAR_RPC_CMD,
+	BT_LE_SET_CHAN_MAP_RPC_CMD,
+	BT_LE_OOB_GET_LOCAL_RPC_CMD,
+	BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD,
+	BT_UNPAIR_RPC_CMD,
+	BT_FOREACH_BOND_RPC_CMD,
+	BT_FOREACH_BOND_CB_CALLBACK_RPC_CMD,
 
 	BT_CONN_REMOTE_UPDATE_REF_RPC_CMD,
 	BT_CONN_GET_INFO_RPC_CMD,
@@ -75,7 +104,6 @@ enum {
 	BT_CONN_AUTH_PASSKEY_CONFIRM_RPC_CMD,
 	BT_CONN_AUTH_PAIRING_CONFIRM_RPC_CMD,
 
-	BT_RPC_GET_CHECK_TABLE_RPC_CMD,
 };
 
 enum {
@@ -96,13 +124,15 @@ enum {
 };
 
 
+typedef void (*bt_foreach_bond_cb)(const struct bt_bond_info *info,
+				   void *user_data);
 typedef void (*bt_le_ext_adv_cb_sent)(struct bt_le_ext_adv *adv,
 		     struct bt_le_ext_adv_sent_info *info);
 typedef void (*bt_le_ext_adv_cb_connected)(struct bt_le_ext_adv *adv,
 			  struct bt_le_ext_adv_connected_info *info);
 typedef void (*bt_le_ext_adv_cb_scanned)(struct bt_le_ext_adv *adv,
 			struct bt_le_ext_adv_scanned_info *info);
-			
+
 NRF_RPC_GROUP_DECLARE(bt_rpc_grp);
 
 #if defined(CONFIG_BT_RPC_HOST)
@@ -111,5 +141,13 @@ void bt_rpc_get_check_table(uint8_t *data, size_t size);
 bool bt_rpc_validate_check_table(uint8_t* data, size_t size);
 size_t bt_rpc_calc_check_table_size();
 #endif
+
+#define BT_RPC_POOL_DEFINE(name, size) \
+	BUILD_ASSERT(size > 0, "BT_RPC_POOL empty"); \
+	BUILD_ASSERT(size <= 32, "BT_RPC_POOL too big"); \
+	static atomic_t name = ~(((uint32_t)1 << (8 * sizeof(uint32_t) - (size))) - (uint32_t)1)
+
+int bt_rpc_pool_reserve(atomic_t *pool_mask);
+void bt_rpc_pool_release(atomic_t *pool_mask, int number);
 
 #endif /* BT_RPC_COMMON_H_ */

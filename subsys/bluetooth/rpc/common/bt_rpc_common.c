@@ -419,3 +419,29 @@ size_t bt_rpc_calc_check_table_size()
 }
 
 #endif
+
+int bt_rpc_pool_reserve(atomic_t *pool_mask)
+{
+	int number;
+	atomic_val_t mask_shadow;
+	atomic_val_t this_mask;
+
+	mask_shadow = atomic_get(pool_mask);
+	do {
+		number = __CLZ(mask_shadow);
+		if (number >= 32) {
+			return -1;
+		}
+		this_mask = (0x80000000u >> number);
+		mask_shadow = atomic_and(pool_mask, ~this_mask);
+	} while ((mask_shadow & this_mask) == 0);
+
+	return number;
+}
+
+void bt_rpc_pool_release(atomic_t *pool_mask, int number)
+{
+	if (number >= 0) {
+		atomic_or(pool_mask, 0x80000000u >> number);
+	}
+}

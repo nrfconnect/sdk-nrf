@@ -45,7 +45,9 @@
 			"#define CONFIG_BT_EXT_ADV_MAX_ADV_SET 4"
 		],
 		"conf.txt": [
+			"-Wno-int-to-pointer-cast",
 			"-Wno-undefined-internal",
+			"-I${include-stubs}",
 			"-Iclient/include",
 			"-Ihost/include",
 			"-Icommon/include",
@@ -55,6 +57,14 @@
 			"-I../../../../zephyr/include",
 			"-I../../../../modules/lib/open-amp/open-amp/lib/include",
 			"-I../../../../nrf/samples/nrf_rpc/entropy_nrf53/cpuapp/build_nrf5340pdk_nrf5340_cpuapp/modules/libmetal/libmetal/lib/include"
+		],
+		"logging/log.h": [
+			"#define LOG_MODULE_DECLARE(...)",
+			"#define LOG_MODULE_REGISTER(...)",
+			"#define LOG_ERR(...)",
+			"#define LOG_WRN(...)",
+			"#define LOG_INF(...)",
+			"#define LOG_DBG(...)"
 		]
 	}
 }

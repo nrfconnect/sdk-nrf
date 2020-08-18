@@ -26,6 +26,7 @@ struct ser_scratchpad {
 void *ser_scratchpad_get(struct ser_scratchpad *scratchpad, size_t size);
 
 void ser_encode_null(CborEncoder *encoder);
+void ser_encode_undefined(CborEncoder *encoder);
 void ser_encode_bool(CborEncoder *encoder, bool value);
 void ser_encode_uint(CborEncoder *encoder, uint32_t value);
 void ser_encode_int(CborEncoder *encoder, int32_t value);
@@ -39,6 +40,7 @@ void ser_encoder_invalid(CborEncoder *encoder);
 
 void ser_decode_skip(CborValue *value);
 bool ser_decode_is_null(CborValue *value);
+bool ser_decode_is_undefined(CborValue *value);
 bool ser_decode_bool(CborValue *value);
 uint32_t ser_decode_uint(CborValue *value);
 int32_t ser_decode_int(CborValue *value);

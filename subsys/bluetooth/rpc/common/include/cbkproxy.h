@@ -95,17 +95,15 @@ void *cbkproxy_out_get(int index, void *handler);
  *
  * @param callback Callback function.
  *
- * @returns Slot number or -1 if no more slots are available or the function
- *          was called with the same callback, but different handler.
+ * @returns Slot number or -1 if no more slots are available.
  */
 int cbkproxy_in_set(void *callback);
 
 /** @brief Gets input callback proxy.
  *
  * @param      index     Slot index.
- * @param[out] callback  Callback function.
  *
- * @returns Proxy handler function or NULL if slot index is invalid.
+ * @returns Callback function or NULL if slot index is invalid.
  */
 void *cbkproxy_in_get(int index);
 
