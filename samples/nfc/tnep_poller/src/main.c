@@ -656,7 +656,7 @@ void main(void)
 {
 	int err;
 
-	printk("NFC reader sample started.\n");
+	printk("NFC TNEP Poller sample started.\n");
 	nfc_t4t_hl_procedure_cb_register(&t4t_hl_procedure_cb);
 
 	k_delayed_work_init(&transmit_work, transfer_handler);
