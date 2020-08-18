@@ -906,6 +906,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_delete, BT_LE_EXT_ADV_DELETE_
 	bt_le_ext_adv_delete_rpc_handler, NULL);                                        /*#####@Hzk*/
 
 #endif /* defined(CONFIG_BT_EXT_ADV) || defined(NRF_RPC_GENERATOR) */
+
 void bt_le_ext_adv_start_param_dec(CborValue *_value, struct bt_le_ext_adv_start_param *_data)/*####%Bmcv*/
 {                                                                                             /*#####@efo*/
 

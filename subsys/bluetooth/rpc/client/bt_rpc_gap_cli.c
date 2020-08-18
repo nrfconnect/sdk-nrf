@@ -679,6 +679,8 @@ void bt_le_scan_param_enc(CborEncoder *_encoder, const struct bt_le_scan_param *
 {                                                                                     /*#####@RoA*/
 
 	SERIALIZE(STRUCT(struct bt_le_scan_param));
+	SERIALIZE(UNION_SELECT(options));
+	SERIALIZE(DEL(filter_dup));
 
 	ser_encode_uint(_encoder, _data->type);                                       /*#######%A*/
 	ser_encode_uint(_encoder, _data->options);                                    /*#######4W*/
