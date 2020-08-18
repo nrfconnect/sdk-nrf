@@ -50,11 +50,12 @@ static inline void zb_cli_print_error(const struct shell *shell,
  *
  * Individual items in the list are delimited by comma.
  *
- * @param text_buffer   a pointer to text buffer
- * @param hdr           the list header string
- * @param fmt           a printf like format of an individual list item
- * @param type          type of the list item
- * @param size          the list size (in items)
+ * @param text_buffer   A pointer to text buffer.
+ * @param hdr           The list header string.
+ * @param fmt           A printf like format of an individual list item.
+ * @param type          Type of the list item.
+ * @param ptr           A pointer to the first item in the list.
+ * @param size          The list size (in items).
  */
 #define PRINT_LIST(text_buffer, hdr, fmt, type, ptr, size)                   \
 {                                                                            \
