@@ -163,17 +163,17 @@ static int register_peripheral(struct bt_gatt_dm *dm, uint16_t pid,
 	return err;
 }
 
-static void submit_forward_error_rsp(struct hids_peripheral *sub,
+static void submit_forward_error_rsp(struct hids_peripheral *per,
 				     enum config_status rsp_status)
 {
-	struct config_event *rsp = sub->cfg_chan_rsp;
+	struct config_event *rsp = per->cfg_chan_rsp;
 
 	rsp->status = rsp_status;
 	/* Error response has no additional data. */
 	rsp->dyndata.size = 0;
 	EVENT_SUBMIT(rsp);
 
-	sub->cfg_chan_rsp = NULL;
+	per->cfg_chan_rsp = NULL;
 }
 
 static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
@@ -186,47 +186,47 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 	__ASSERT_NO_MSG(!k_is_in_isr());
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 
-	struct hids_peripheral *sub = CONTAINER_OF(hidc,
+	struct hids_peripheral *per = CONTAINER_OF(hidc,
 						   struct hids_peripheral,
 						   hidc);
 
 	if (err) {
 		LOG_WRN("Failed to read report: %d", err);
-		submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 	} else {
 		/* Recipient and event_id must be stored to send proper values
 		 * on error.
 		 */
-		uint16_t recipient = sub->cfg_chan_rsp->recipient;
-		uint8_t event_id = sub->cfg_chan_rsp->event_id;
+		uint16_t recipient = per->cfg_chan_rsp->recipient;
+		uint8_t event_id = per->cfg_chan_rsp->event_id;
 
 		int pos = config_channel_report_parse(data,
 						      REPORT_SIZE_USER_CONFIG,
-						      sub->cfg_chan_rsp);
+						      per->cfg_chan_rsp);
 
 		if (pos < 0) {
 			LOG_WRN("Failed to parse response: %d", pos);
-			sub->cfg_chan_rsp->recipient = recipient;
-			sub->cfg_chan_rsp->event_id = event_id;
-			submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+			per->cfg_chan_rsp->recipient = recipient;
+			per->cfg_chan_rsp->event_id = event_id;
+			submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 			return pos;
 		}
 
-		if (sub->cfg_chan_rsp->status == CONFIG_STATUS_PENDING) {
+		if (per->cfg_chan_rsp->status == CONFIG_STATUS_PENDING) {
 			LOG_WRN("GATT read done, but fetch was not ready yet");
-			sub->cfg_chan_rsp->recipient = recipient;
-			sub->cfg_chan_rsp->event_id = event_id;
-			sub->cur_poll_cnt++;
+			per->cfg_chan_rsp->recipient = recipient;
+			per->cfg_chan_rsp->event_id = event_id;
+			per->cur_poll_cnt++;
 
-			if (sub->cur_poll_cnt >= CFG_CHAN_MAX_RSP_POLL_CNT) {
-				submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+			if (per->cur_poll_cnt >= CFG_CHAN_MAX_RSP_POLL_CNT) {
+				submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 			} else {
-				k_delayed_work_submit(&sub->read_rsp,
+				k_delayed_work_submit(&per->read_rsp,
 						      CFG_CHAN_RSP_READ_DELAY);
 			}
 		} else {
-			EVENT_SUBMIT(sub->cfg_chan_rsp);
-			sub->cfg_chan_rsp = NULL;
+			EVENT_SUBMIT(per->cfg_chan_rsp);
+			per->cfg_chan_rsp = NULL;
 		}
 	}
 
@@ -235,22 +235,22 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 
 static void read_rsp_fn(struct k_work *work)
 {
-	struct hids_peripheral *sub = CONTAINER_OF(work,
+	struct hids_peripheral *per = CONTAINER_OF(work,
 						struct hids_peripheral,
 						read_rsp);
 	struct bt_gatt_hids_c_rep_info *config_rep =
-		bt_gatt_hids_c_rep_find(&sub->hidc,
+		bt_gatt_hids_c_rep_find(&per->hidc,
 					BT_GATT_HIDS_REPORT_TYPE_FEATURE,
 					REPORT_ID_USER_CONFIG);
 
 	__ASSERT_NO_MSG(config_rep);
-	int err = bt_gatt_hids_c_rep_read(&sub->hidc,
+	int err = bt_gatt_hids_c_rep_read(&per->hidc,
 					  config_rep,
 					  hidc_read_cfg);
 
 	if (err) {
 		LOG_WRN("Cannot read feature report (err: %d)", err);
-		submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 	}
 }
 
@@ -264,13 +264,13 @@ static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 	__ASSERT_NO_MSG(!k_is_in_isr());
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 
-	struct hids_peripheral *sub = CONTAINER_OF(hidc,
+	struct hids_peripheral *per = CONTAINER_OF(hidc,
 						   struct hids_peripheral,
 						   hidc);
 
 	if (err) {
 		LOG_WRN("Failed to write report: %d", err);
-		submit_forward_error_rsp(sub, CONFIG_STATUS_WRITE_ERROR);
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 		return;
 	}
 
@@ -279,15 +279,15 @@ static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 	 * (for LLPM connection, the peripheral may send either HID report
 	 * or configuration channel response in given connection interval).
 	 */
-	if (sub->cfg_chan_rsp->status != CONFIG_STATUS_SET) {
-		sub->cur_poll_cnt = 0;
-		k_delayed_work_submit(&sub->read_rsp,
+	if (per->cfg_chan_rsp->status != CONFIG_STATUS_SET) {
+		per->cur_poll_cnt = 0;
+		k_delayed_work_submit(&per->read_rsp,
 				      CFG_CHAN_RSP_READ_DELAY);
 	} else {
-		__ASSERT_NO_MSG(sub->cfg_chan_rsp->dyndata.size == 0);
-		sub->cfg_chan_rsp->status = CONFIG_STATUS_SUCCESS;
-		EVENT_SUBMIT(sub->cfg_chan_rsp);
-		sub->cfg_chan_rsp = NULL;
+		__ASSERT_NO_MSG(per->cfg_chan_rsp->dyndata.size == 0);
+		per->cfg_chan_rsp->status = CONFIG_STATUS_SUCCESS;
+		EVENT_SUBMIT(per->cfg_chan_rsp);
+		per->cfg_chan_rsp = NULL;
 	}
 }
 
@@ -337,20 +337,20 @@ static bool handle_config_event(const struct config_event *event)
 		return false;
 	}
 
-	struct hids_peripheral *peripheral = find_peripheral(event->recipient);
+	struct hids_peripheral *per = find_peripheral(event->recipient);
 
-	if (!peripheral) {
+	if (!per) {
 		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
 		return false;
 	}
 
-	if (peripheral->cfg_chan_rsp) {
+	if (per->cfg_chan_rsp) {
 		send_nodata_response(event, CONFIG_STATUS_REJECT);
 		LOG_WRN("Transaction already in progress");
 		return true;
 	}
 
-	struct bt_gatt_hids_c *recipient_hidc =	&peripheral->hidc;
+	struct bt_gatt_hids_c *recipient_hidc =	&per->hidc;
 
 	__ASSERT_NO_MSG(recipient_hidc != NULL);
 
@@ -426,21 +426,20 @@ static bool handle_config_event(const struct config_event *event)
 			dyndata_size = CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE;
 		}
 		/* Response will be handled by hidc_write_cb. */
-		__ASSERT_NO_MSG(peripheral->cfg_chan_rsp == NULL);
-		peripheral->cfg_chan_rsp = generate_response(event,
-							     dyndata_size);
+		__ASSERT_NO_MSG(per->cfg_chan_rsp == NULL);
+		per->cfg_chan_rsp = generate_response(event, dyndata_size);
 	}
 
 	return true;
 }
 
-static void disconnect_peripheral(struct hids_peripheral *peripheral)
+static void disconnect_peripheral(struct hids_peripheral *per)
 {
 	LOG_INF("HID device disconnected");
 
 	struct bt_gatt_hids_c_rep_info *rep = NULL;
 
-	while (NULL != (rep = bt_gatt_hids_c_rep_next(&peripheral->hidc, rep))) {
+	while (NULL != (rep = bt_gatt_hids_c_rep_next(&per->hidc, rep))) {
 		if (bt_gatt_hids_c_rep_type(rep) == BT_GATT_HIDS_REPORT_TYPE_INPUT) {
 			uint8_t report_id = bt_gatt_hids_c_rep_id(rep);
 			size_t size = bt_gatt_hids_c_rep_size(rep);
@@ -457,13 +456,13 @@ static void disconnect_peripheral(struct hids_peripheral *peripheral)
 		}
 	}
 
-	bt_gatt_hids_c_release(&peripheral->hidc);
-	peripheral->pid = 0;
-	k_delayed_work_cancel(&peripheral->read_rsp);
-	memset(peripheral->hwid, 0, sizeof(peripheral->hwid));
-	peripheral->cur_poll_cnt = 0;
-	if (peripheral->cfg_chan_rsp) {
-		submit_forward_error_rsp(peripheral, CONFIG_STATUS_WRITE_ERROR);
+	bt_gatt_hids_c_release(&per->hidc);
+	per->pid = 0;
+	k_delayed_work_cancel(&per->read_rsp);
+	memset(per->hwid, 0, sizeof(per->hwid));
+	per->cur_poll_cnt = 0;
+	if (per->cfg_chan_rsp) {
+		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 	}
 }
 
