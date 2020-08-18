@@ -25,6 +25,7 @@ Requirements
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
+  * |nRF52833DK|
 
 * Smartphone or tablet with NFC Tools application (or equivalent)
 

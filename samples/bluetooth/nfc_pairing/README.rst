@@ -34,6 +34,7 @@ Requirements
   * |nRF5340DK|
   * |nRF52840DK|
   * |nRF52DK|
+  * |nRF52833DK|
 
 * NFC polling device (for example, a smartphone or a tablet with NFC support)
 
