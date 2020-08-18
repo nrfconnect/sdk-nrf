@@ -44,6 +44,7 @@ uint32_t ser_decode_uint(CborValue *value);
 int32_t ser_decode_int(CborValue *value);
 uint64_t ser_decode_uint64(CborValue *value);
 int64_t ser_decode_int64(CborValue *value);
+void ser_decode_str(CborValue *value, char *buffer, size_t size);
 char *ser_decode_str_sp(struct ser_scratchpad *scratchpad);
 void *ser_decode_buffer(CborValue *value, void *buffer, size_t buffer_size);
 size_t ser_decode_buffer_size(CborValue *value);

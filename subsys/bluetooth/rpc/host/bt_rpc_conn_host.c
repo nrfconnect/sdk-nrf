@@ -36,6 +36,7 @@ static void encode_bt_conn(CborEncoder *encoder,
 
 struct bt_conn *decode_bt_conn(CborValue *value)
 {
+	// TODO: Create an issue in Zephyr to make bt_conn_lookup_index() public.
 	extern struct bt_conn *bt_conn_lookup_index(uint8_t index);
 	struct bt_conn *conn;
 	uint8_t index;
@@ -849,17 +850,13 @@ static struct bt_conn_cb bt_conn_cb_register_data = {
 #endif /* defined(CONFIG_BT_USER_PHY_UPDATE) */
 };
 
-static void bt_conn_cb_register_on_remote()
-{
-	bt_conn_cb_register(&bt_conn_cb_register_data);
-}
-
 static void bt_conn_cb_register_on_remote_rpc_handler(CborValue *_value, void *_handler_data)/*####%Bndp*/
 {                                                                                            /*#####@dbA*/
 
 	nrf_rpc_cbor_decoding_done(_value);                                                  /*##FGkSPWY*/
 
-	bt_conn_cb_register_on_remote();                                                     /*##DnWEvrE*/
+	SERIALIZE(CUSTOM_EXECUTE);
+	bt_conn_cb_register(&bt_conn_cb_register_data);
 
 	ser_rsp_send_void();                                                                 /*##BEYGLxw*/
 

@@ -15,10 +15,19 @@
 
 enum {
 	BT_ENABLE_RPC_CMD,
+	BT_SET_NAME_RPC_CMD,
 	BT_LE_ADV_START_RPC_CMD,
 	BT_LE_ADV_STOP_RPC_CMD,
 	BT_LE_SCAN_START_RPC_CMD,
 	BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD,
+	BT_ID_CREATE_RPC_CMD,
+	BT_ID_RESET_RPC_CMD,
+	BT_ID_DELETE_RPC_CMD,
+	BT_ID_GET_RPC_CMD,
+	BT_SET_ID_ADDR_RPC_CMD,
+	BT_GET_NAME_OUT_RPC_CMD,
+	BT_LE_EXT_ADV_CREATE_RPC_CMD,
+	BT_LE_ADV_UPDATE_DATA_RPC_CMD,
 
 	BT_CONN_REMOTE_UPDATE_REF_RPC_CMD,
 	BT_CONN_GET_INFO_RPC_CMD,
@@ -87,6 +96,13 @@ enum {
 };
 
 
+typedef void (*bt_le_ext_adv_cb_sent)(struct bt_le_ext_adv *adv,
+		     struct bt_le_ext_adv_sent_info *info);
+typedef void (*bt_le_ext_adv_cb_connected)(struct bt_le_ext_adv *adv,
+			  struct bt_le_ext_adv_connected_info *info);
+typedef void (*bt_le_ext_adv_cb_scanned)(struct bt_le_ext_adv *adv,
+			struct bt_le_ext_adv_scanned_info *info);
+			
 NRF_RPC_GROUP_DECLARE(bt_rpc_grp);
 
 #if defined(CONFIG_BT_RPC_HOST)

@@ -40,7 +40,9 @@
 			"#define CONFIG_BT_SMP",
 			"#define CONFIG_BT_BREDR",
 			"#define CONFIG_BT_REMOTE_INFO",
-			"#define CONFIG_BT_SMP_APP_PAIRING_ACCEPT"
+			"#define CONFIG_BT_SMP_APP_PAIRING_ACCEPT",
+			"#define CONFIG_BT_DEVICE_NAME_MAX 64",
+			"#define CONFIG_BT_EXT_ADV_MAX_ADV_SET 4"
 		],
 		"conf.txt": [
 			"-Wno-undefined-internal",

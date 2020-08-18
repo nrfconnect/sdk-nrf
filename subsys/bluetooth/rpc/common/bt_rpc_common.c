@@ -197,6 +197,7 @@ typedef struct check_list_entry str_check_list_entry_t;
 #define DEF_CONFIG_BT_MAX_CONN 0xFF,
 #define DEF_CONFIG_BT_ID_MAX 0xFF,
 #define DEF_CONFIG_BT_EXT_ADV_MAX_ADV_SET 0xFF,
+#define DEF_CONFIG_BT_DEVICE_NAME_MAX 0xFF,
 
 static const check_list_entry_t check_table[] = {
 	CHECK_FLAGS(
@@ -216,10 +217,20 @@ static const check_list_entry_t check_table[] = {
 		CONFIG_BT_FIXED_PASSKEY,
 		CONFIG_BT_SMP_APP_PAIRING_ACCEPT,
 		CONFIG_BT_EXT_ADV,
+		CONFIG_BT_OBSERVER),
+	CHECK_FLAGS(
+		CONFIG_BT_ECC,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
 		0),
 	CHECK_UINT8(CONFIG_BT_MAX_CONN),
 	CHECK_UINT8(CONFIG_BT_ID_MAX),
 	CHECK_UINT8(CONFIG_BT_EXT_ADV_MAX_ADV_SET),
+	CHECK_UINT8(CONFIG_BT_DEVICE_NAME_MAX),
 	CHECK_UINT16_PAIR(CONFIG_CBKPROXY_OUT_SLOTS, CONFIG_CBKPROXY_IN_SLOTS),
 };
 
