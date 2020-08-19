@@ -291,6 +291,16 @@
 
 .. _`PySpinel`: https://github.com/openthread/pyspinel/blob/master/README.md
 
+.. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
+
+.. _`Thread Group members`: https://www.threadgroup.org/thread-group
+
+.. _`Thread Group's Confluence wiki page`: https://threadgroup.atlassian.net/wiki/spaces/THREADTEST/pages/25900869/Supporting+Material
+
+.. _`OpenThread THCI`: https://github.com/openthread/openthread/tree/master/tools/harness-thci
+
+.. _`Openthread acting as a new reference platform`: https://openthread.io/certification/automation-setup#acting_as_a_new_reference_platform
+
 .. ### Links to Zigbee
 
 .. _`Zigbee Alliance`: https://www.zigbeealliance.org
