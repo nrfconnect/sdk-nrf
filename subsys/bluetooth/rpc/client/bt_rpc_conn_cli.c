@@ -7,7 +7,7 @@
 #include "bt_rpc_common.h"
 #include "serialize.h"
 #include "cbkproxy.h"
-#if 0
+
 SERIALIZE(GROUP(bt_rpc_grp));
 SERIALIZE(RAW_STRUCT(bt_addr_le_t));
 SERIALIZE(RAW_STRUCT(struct bt_conn_oob_info));
@@ -51,6 +51,11 @@ struct bt_conn {
 	struct bt_le_oob_sc_data oobd_remote;
 #endif /* defined(CONFIG_BT_SMP) && !defined(CONFIG_BT_SMP_OOB_LEGACY_PAIR_ONLY) */
 };
+
+// TODO: Add ifdef on usage instead of dummy define
+#ifndef CONFIG_BT_MAX_CONN
+#define CONFIG_BT_MAX_CONN 1
+#endif
 
 static struct bt_conn connections[CONFIG_BT_MAX_CONN];
 
@@ -1802,4 +1807,55 @@ struct bt_conn *bt_conn_lookup_addr_le(uint8_t id, const bt_addr_le_t *peer)
 
 	return _result._result;                                                  /*##BW0ge3U*/
 }
-#endif
+
+struct bt_conn_get_dst_out_rpc_res                                               /*####%BqWq*/
+{                                                                                /*#####@t8s*/
+
+	bool _result;                                                            /*####%CS8k*/
+	bt_addr_le_t * dst;                                                      /*#####@4yA*/
+
+};                                                                               /*##B985gv0*/
+
+static void bt_conn_get_dst_out_rpc_rsp(CborValue *_value, void *_handler_data)  /*####%BjK+*/
+{                                                                                /*#####@s/Q*/
+
+	struct bt_conn_get_dst_out_rpc_res *_res =                               /*####%AZTi*/
+		(struct bt_conn_get_dst_out_rpc_res *)_handler_data;             /*#####@aPU*/
+
+	_res->_result = ser_decode_bool(_value);                                 /*####%DR+D*/
+	ser_decode_buffer(_value, _res->dst, sizeof(bt_addr_le_t));              /*#####@IyI*/
+
+}                                                                                /*##B9ELNqo*/
+
+static bool bt_conn_get_dst_out(const struct bt_conn *conn, bt_addr_le_t *dst)
+{
+	SERIALIZE(OUT(dst));
+
+	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%Ac*/
+	struct bt_conn_get_dst_out_rpc_res _result;                              /*######qK2*/
+	size_t _buffer_size_max = 3;                                             /*######@JY*/
+
+	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*##AvrU03s*/
+
+	encode_bt_conn(&_ctx.encoder, conn);                                     /*##A0Ocmvc*/
+
+	_result.dst = dst;                                                       /*##CwZuN14*/
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_GET_DST_OUT_RPC_CMD,        /*####%BGpN*/
+		&_ctx, bt_conn_get_dst_out_rpc_rsp, &_result);                   /*#####@Hcs*/
+
+	return _result._result;                                                  /*##BW0ge3U*/
+}
+
+const bt_addr_le_t *bt_conn_get_dst(const struct bt_conn *conn)
+{
+	bool not_null;
+	
+	not_null = bt_conn_get_dst_out(conn, (bt_addr_le_t *)&conn->dst);
+
+	if (not_null) {
+		return &conn->dst;
+	} else {
+		return NULL;
+	}
+}

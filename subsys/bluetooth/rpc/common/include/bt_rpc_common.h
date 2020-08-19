@@ -80,6 +80,7 @@ enum bt_rpc_cmd_from_cli_to_host
 	BT_CONN_AUTH_PAIRING_CONFIRM_RPC_CMD,
 	BT_CONN_FOREACH_RPC_CMD,
 	BT_CONN_LOOKUP_ADDR_LE_RPC_CMD,
+	BT_CONN_GET_DST_OUT_RPC_CMD,
 };
 
 enum bt_rpc_cmd_from_host_to_cli
