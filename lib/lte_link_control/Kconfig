@@ -15,7 +15,7 @@ if LTE_LINK_CONTROL
 
 config LTE_AUTO_INIT_AND_CONNECT
 	bool "Auto Initialize and Connect for the LTE link"
-	default y
+	default y if AT_CMD_SYS_INIT
 	help
 		Turn on to make the LTE Link Controller to
 		automatically initialize and connect the modem
