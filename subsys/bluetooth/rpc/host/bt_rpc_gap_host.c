@@ -292,8 +292,6 @@ static void bt_le_scan_start_rpc_handler(CborValue *_value, void *_handler_data)
 	bt_le_scan_cb_t *cb;                                                         /*######eZM*/
 	int _result;                                                                 /*######@I4*/
 
-	_result = 0;
-
 	bt_le_scan_param_dec(_value, &param);                                        /*####%CtFV*/
 	cb = (bt_le_scan_cb_t *)ser_decode_callback(_value, bt_le_scan_cb_t_encoder);/*#####@F4o*/
 
@@ -905,7 +903,6 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_delete, BT_LE_EXT_ADV_DELETE_RPC_CMD,/*####%BoK+*/
 	bt_le_ext_adv_delete_rpc_handler, NULL);                                        /*#####@Hzk*/
 
-#endif /* defined(CONFIG_BT_EXT_ADV) || defined(NRF_RPC_GENERATOR) */
 
 void bt_le_ext_adv_start_param_dec(CborValue *_value, struct bt_le_ext_adv_start_param *_data)/*####%Bmcv*/
 {                                                                                             /*#####@efo*/
@@ -1112,6 +1109,46 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_get_info, BT_LE_EXT_ADV_GET_INFO_RPC_CMD,/*####%BvCT*/
 	bt_le_ext_adv_get_info_rpc_handler, NULL);                                          /*#####@lMA*/
 
+static void bt_le_ext_adv_oob_get_local_rpc_handler(CborValue *_value, void *_handler_data)/*####%BkEH*/
+{                                                                                          /*#####@oTk*/
+
+	struct nrf_rpc_cbor_ctx _ctx;                                                      /*#######%A*/
+	int _result;                                                                       /*#######Yy*/
+	struct bt_le_ext_adv * adv;                                                        /*#######T2*/
+	struct bt_le_oob _oob_data;                                                        /*########w*/
+	struct bt_le_oob * oob = &_oob_data;                                               /*########4*/
+	size_t _buffer_size_max = 5;                                                       /*########@*/
+
+	adv = (struct bt_le_ext_adv *)ser_decode_uint(_value);                             /*##CovnGwc*/
+
+	if (!ser_decoding_done_and_check(_value)) {                                        /*######%FE*/
+		goto decoding_error;                                                       /*######QTM*/
+	}                                                                                  /*######@1Y*/
+
+	_result = bt_le_ext_adv_oob_get_local(adv, oob);                                   /*##Drtpehc*/
+
+	_buffer_size_max += bt_le_oob_buf_size(oob);                                       /*##CDZJbOk*/
+
+	{                                                                                  /*####%AnG1*/
+		NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                                /*#####@zxs*/
+
+		ser_encode_int(&_ctx.encoder, _result);                                    /*####%DCYN*/
+		bt_le_oob_enc(&_ctx.encoder, oob);                                         /*#####@uAQ*/
+
+		nrf_rpc_cbor_rsp_no_err(&_ctx);                                            /*####%BIlG*/
+	}                                                                                  /*#####@TnU*/
+
+	return;                                                                            /*######%FS*/
+decoding_error:                                                                            /*######+6v*/
+	report_decoding_error(BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD, _handler_data);         /*######@6g*/
+
+}                                                                                          /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_oob_get_local, BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD,/*####%Bo7+*/
+	bt_le_ext_adv_oob_get_local_rpc_handler, NULL);                                               /*#####@PoM*/
+
+#endif /* defined(CONFIG_BT_EXT_ADV) || defined(NRF_RPC_GENERATOR) */
+
 static void bt_le_scan_stop_rpc_handler(CborValue *_value, void *_handler_data)  /*####%BjGj*/
 {                                                                                /*#####@TTc*/
 
@@ -1225,6 +1262,8 @@ static void bt_le_scan_cb_register_on_remote_rpc_handler(CborValue *_value, void
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_cb_register_on_remote, BT_LE_SCAN_CB_REGISTER_ON_REMOTE_RPC_CMD,/*####%BhkM*/
 	bt_le_scan_cb_register_on_remote_rpc_handler, NULL);                                                    /*#####@+9k*/
 
+#if defined(CONFIG_BT_WHITELIST) || defined(NRF_RPC_GENERATOR)
+
 static void bt_le_whitelist_add_rpc_handler(CborValue *_value, void *_handler_data)/*####%BvAc*/
 {                                                                                  /*#####@JS8*/
 
@@ -1292,6 +1331,8 @@ static void bt_le_whitelist_clear_rpc_handler(CborValue *_value, void *_handler_
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_whitelist_clear, BT_LE_WHITELIST_CLEAR_RPC_CMD,/*####%BuWk*/
 	bt_le_whitelist_clear_rpc_handler, NULL);                                         /*#####@hqA*/
+
+#endif /* defined(CONFIG_BT_WHITELIST) || defined(NRF_RPC_GENERATOR) */
 
 static void bt_le_set_chan_map_rpc_handler(CborValue *_value, void *_handler_data)/*####%Blh4*/
 {                                                                                 /*#####@46c*/
@@ -1387,43 +1428,7 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_get_local, BT_LE_OOB_GET_LOCAL_RPC_CMD,/*####%Bhtb*/
 	bt_le_oob_get_local_rpc_handler, NULL);                                       /*#####@RcU*/
 
-static void bt_le_ext_adv_oob_get_local_rpc_handler(CborValue *_value, void *_handler_data)/*####%BkEH*/
-{                                                                                          /*#####@oTk*/
-
-	struct nrf_rpc_cbor_ctx _ctx;                                                      /*#######%A*/
-	int _result;                                                                       /*#######Yy*/
-	struct bt_le_ext_adv * adv;                                                        /*#######T2*/
-	struct bt_le_oob _oob_data;                                                        /*########w*/
-	struct bt_le_oob * oob = &_oob_data;                                               /*########4*/
-	size_t _buffer_size_max = 5;                                                       /*########@*/
-
-	adv = (struct bt_le_ext_adv *)ser_decode_uint(_value);                             /*##CovnGwc*/
-
-	if (!ser_decoding_done_and_check(_value)) {                                        /*######%FE*/
-		goto decoding_error;                                                       /*######QTM*/
-	}                                                                                  /*######@1Y*/
-
-	_result = bt_le_ext_adv_oob_get_local(adv, oob);                                   /*##Drtpehc*/
-
-	_buffer_size_max += bt_le_oob_buf_size(oob);                                       /*##CDZJbOk*/
-
-	{                                                                                  /*####%AnG1*/
-		NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                                /*#####@zxs*/
-
-		ser_encode_int(&_ctx.encoder, _result);                                    /*####%DCYN*/
-		bt_le_oob_enc(&_ctx.encoder, oob);                                         /*#####@uAQ*/
-
-		nrf_rpc_cbor_rsp_no_err(&_ctx);                                            /*####%BIlG*/
-	}                                                                                  /*#####@TnU*/
-
-	return;                                                                            /*######%FS*/
-decoding_error:                                                                            /*######+6v*/
-	report_decoding_error(BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD, _handler_data);         /*######@6g*/
-
-}                                                                                          /*##B9ELNqo*/
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_oob_get_local, BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD,/*####%Bo7+*/
-	bt_le_ext_adv_oob_get_local_rpc_handler, NULL);                                               /*#####@PoM*/
+#if defined(CONFIG_BT_CONN) || defined(NRF_RPC_GENERATOR)
 
 static void bt_unpair_rpc_handler(CborValue *_value, void *_handler_data)        /*####%BrQf*/
 {                                                                                /*#####@3HE*/
@@ -1452,6 +1457,8 @@ decoding_error:                                                                 
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_unpair, BT_UNPAIR_RPC_CMD,               /*####%Bk5s*/
 	bt_unpair_rpc_handler, NULL);                                            /*#####@0hI*/
+
+#endif /* defined(CONFIG_BT_CONN) || defined(NRF_RPC_GENERATOR) */
 
 size_t bt_bond_info_buf_size(const struct bt_bond_info *_data)                   /*####%BgGS*/
 {                                                                                /*#####@gCc*/
@@ -1497,6 +1504,8 @@ static inline void bt_foreach_bond_cb_callback(const struct bt_bond_info *info,
 CBKPROXY_HANDLER(bt_foreach_bond_cb_encoder, bt_foreach_bond_cb_callback,
 	(const struct bt_bond_info *info, void *user_data), (info, user_data));
 
+#if defined(CONFIG_BT_SMP) || defined(NRF_RPC_GENERATOR)
+
 static void bt_foreach_bond_rpc_handler(CborValue *_value, void *_handler_data)            /*####%BsUN*/
 {                                                                                          /*#####@qL4*/
 
@@ -1525,3 +1534,4 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_foreach_bond, BT_FOREACH_BOND_RPC_CMD,   /*####%Bgmc*/
 	bt_foreach_bond_rpc_handler, NULL);                                      /*#####@t3Y*/
 
+#endif /* defined(CONFIG_BT_SMP) || defined(NRF_RPC_GENERATOR) */

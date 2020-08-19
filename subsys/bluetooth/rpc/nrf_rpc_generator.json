@@ -14,7 +14,7 @@
 	"indent-size": 8,
 	"indent-string": "\t",
 	"generator": "NrfRpcCborGenerator",
-	"clang-params": "--config ${include-stubs}/conf.txt -include _rpc_defines.h ",
+	"clang-params": "--config ${include-stubs}/conf.txt",
 	"clang-cli-params": "-DCONFIG_BT_RPC_CLIENT=1",
 	"clang-host-params": "-DCONFIG_BT_RPC_HOST=1",
 	"include-stubs": {
@@ -45,6 +45,7 @@
 			"#define CONFIG_BT_EXT_ADV_MAX_ADV_SET 4"
 		],
 		"conf.txt": [
+			"-include _rpc_defines.h",
 			"-Wno-int-to-pointer-cast",
 			"-Wno-undefined-internal",
 			"-I${include-stubs}",

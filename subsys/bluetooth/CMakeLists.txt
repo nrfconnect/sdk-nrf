@@ -18,14 +18,7 @@ add_subdirectory_ifdef(CONFIG_BT_NRF_SERVICES services)
 add_subdirectory_ifdef(CONFIG_BT_RPC_CLIENT rpc/client)
 add_subdirectory_ifdef(CONFIG_BT_RPC_HOST rpc/host)
 
-if (CONFIG_BT_RPC_CLIENT)
-	message("-------------------------------------------------- CLIENT")
-endif()
-
-if (CONFIG_BT_RPC_HOST)
-	message("-------------------------------------------------- HOST")
-endif()
-
+# TODO: make CONFIG_BT_RPC = CONFIG_BT_RPC_CLIENT OR CONFIG_BT_RPC_HOST
 if(CONFIG_BT_RPC_CLIENT OR CONFIG_BT_RPC_HOST)
 	add_subdirectory(rpc/common)
 endif()

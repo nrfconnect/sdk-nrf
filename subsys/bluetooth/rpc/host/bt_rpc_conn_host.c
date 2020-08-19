@@ -1,4 +1,4 @@
-
+#if 0
 #include "zephyr.h"
 
 #include "nrf_rpc_cbor.h"
@@ -89,10 +89,11 @@ static void bt_conn_remote_update_ref_rpc_handler(CborValue *_value, void *_hand
 
 	ser_rsp_send_void();                                                             /*##BEYGLxw*/
 
-	return;                                                                          /*######%B8*/
-decoding_error:                                                                          /*#######bJ*/
-	report_decoding_error(BT_CONN_REMOTE_UPDATE_REF_RPC_CMD, _handler_data);         /*#######x0*/
-}                                                                                        /*#######@E*/
+	return;                                                                          /*######%Fb*/
+decoding_error:                                                                          /*######UYw*/
+	report_decoding_error(BT_CONN_REMOTE_UPDATE_REF_RPC_CMD, _handler_data);         /*######@jo*/
+
+}                                                                                        /*##B9ELNqo*/
 
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_remote_update_ref, BT_CONN_REMOTE_UPDATE_REF_RPC_CMD,/*####%BpL0*/
@@ -210,10 +211,11 @@ static void bt_conn_get_info_rpc_handler(CborValue *_value, void *_handler_data)
 		nrf_rpc_cbor_rsp_no_err(&_ctx);                                  /*####%BIlG*/
 	}                                                                        /*#####@TnU*/
 
-	return;                                                                  /*######%B2*/
-decoding_error:                                                                  /*#######/F*/
-	report_decoding_error(BT_CONN_GET_INFO_RPC_CMD, _handler_data);          /*#######Ho*/
-}                                                                                /*#######@E*/
+	return;                                                                  /*######%Ff*/
+decoding_error:                                                                  /*######mLS*/
+	report_decoding_error(BT_CONN_GET_INFO_RPC_CMD, _handler_data);          /*######@24*/
+
+}                                                                                /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_get_info, BT_CONN_GET_INFO_RPC_CMD, /*####%BruT*/
 	bt_conn_get_info_rpc_handler, NULL);                                     /*#####@j6w*/
@@ -272,10 +274,11 @@ static void bt_conn_get_remote_info_rpc_handler(CborValue *_value, void *_handle
 		nrf_rpc_cbor_rsp_no_err(&_ctx);                                        /*####%BIlG*/
 	}                                                                              /*#####@TnU*/
 
-	return;                                                                        /*######%B3*/
-decoding_error:                                                                        /*#######YW*/
-	report_decoding_error(BT_CONN_GET_REMOTE_INFO_RPC_CMD, _handler_data);         /*#######7u*/
-}                                                                                      /*#######@M*/
+	return;                                                                        /*######%FV*/
+decoding_error:                                                                        /*######MFs*/
+	report_decoding_error(BT_CONN_GET_REMOTE_INFO_RPC_CMD, _handler_data);         /*######@iE*/
+
+}                                                                                      /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_get_remote_info, BT_CONN_GET_REMOTE_INFO_RPC_CMD,/*####%BoP0*/
 	bt_conn_get_remote_info_rpc_handler, NULL);                                           /*#####@ZY8*/
@@ -325,10 +328,11 @@ static void bt_conn_le_param_update_rpc_handler(CborValue *_value, void *_handle
 
 	ser_rsp_send_int(_result);                                                     /*##BPC96+4*/
 
-	return;                                                                        /*######%B7*/
-decoding_error:                                                                        /*#######Al*/
-	report_decoding_error(BT_CONN_LE_PARAM_UPDATE_RPC_CMD, _handler_data);         /*#######Es*/
-}                                                                                      /*#######@c*/
+	return;                                                                        /*######%FS*/
+decoding_error:                                                                        /*######4Mq*/
+	report_decoding_error(BT_CONN_LE_PARAM_UPDATE_RPC_CMD, _handler_data);         /*######@o8*/
+
+}                                                                                      /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_le_param_update, BT_CONN_LE_PARAM_UPDATE_RPC_CMD,/*####%BnpE*/
 	bt_conn_le_param_update_rpc_handler, NULL);                                           /*#####@lCw*/
@@ -361,10 +365,11 @@ static void bt_conn_le_data_len_update_rpc_handler(CborValue *_value, void *_han
 
 	ser_rsp_send_int(_result);                                                        /*##BPC96+4*/
 
-	return;                                                                           /*######%B7*/
-decoding_error:                                                                           /*#######cL*/
-	report_decoding_error(BT_CONN_LE_DATA_LEN_UPDATE_RPC_CMD, _handler_data);         /*#######PL*/
-}                                                                                         /*#######@M*/
+	return;                                                                           /*######%FX*/
+decoding_error:                                                                           /*######281*/
+	report_decoding_error(BT_CONN_LE_DATA_LEN_UPDATE_RPC_CMD, _handler_data);         /*######@x8*/
+
+}                                                                                         /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_le_data_len_update, BT_CONN_LE_DATA_LEN_UPDATE_RPC_CMD,/*####%BiAv*/
 	bt_conn_le_data_len_update_rpc_handler, NULL);                                              /*#####@J5g*/
@@ -400,10 +405,11 @@ static void bt_conn_le_phy_update_rpc_handler(CborValue *_value, void *_handler_
 
 	ser_rsp_send_int(_result);                                                   /*##BPC96+4*/
 
-	return;                                                                      /*######%B+*/
-decoding_error:                                                                      /*#######R/*/
-	report_decoding_error(BT_CONN_LE_PHY_UPDATE_RPC_CMD, _handler_data);         /*#######DC*/
-}                                                                                    /*#######@0*/
+	return;                                                                      /*######%FR*/
+decoding_error:                                                                      /*######Q7+*/
+	report_decoding_error(BT_CONN_LE_PHY_UPDATE_RPC_CMD, _handler_data);         /*######@50*/
+
+}                                                                                    /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_le_phy_update, BT_CONN_LE_PHY_UPDATE_RPC_CMD,/*####%BhbB*/
 	bt_conn_le_phy_update_rpc_handler, NULL);                                         /*#####@ByA*/
@@ -427,10 +433,11 @@ static void bt_conn_disconnect_rpc_handler(CborValue *_value, void *_handler_dat
 
 	ser_rsp_send_int(_result);                                                /*##BPC96+4*/
 
-	return;                                                                   /*######%B4*/
-decoding_error:                                                                   /*#######av*/
-	report_decoding_error(BT_CONN_DISCONNECT_RPC_CMD, _handler_data);         /*#######jo*/
-}                                                                                 /*#######@c*/
+	return;                                                                   /*######%FU*/
+decoding_error:                                                                   /*######ptV*/
+	report_decoding_error(BT_CONN_DISCONNECT_RPC_CMD, _handler_data);         /*######@Do*/
+
+}                                                                                 /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_disconnect, BT_CONN_DISCONNECT_RPC_CMD,/*####%BgGh*/
 	bt_conn_disconnect_rpc_handler, NULL);                                      /*#####@euA*/
@@ -481,10 +488,11 @@ static void bt_conn_le_create_rpc_handler(CborValue *_value, void *_handler_data
 		nrf_rpc_cbor_rsp_no_err(&_ctx);                                  /*####%BIlG*/
 	}                                                                        /*#####@TnU*/
 
-	return;                                                                  /*######%B6*/
-decoding_error:                                                                  /*#######+h*/
-	report_decoding_error(BT_CONN_LE_CREATE_RPC_CMD, _handler_data);         /*#######gy*/
-}                                                                                /*#######@k*/
+	return;                                                                  /*######%Fd*/
+decoding_error:                                                                  /*######Nio*/
+	report_decoding_error(BT_CONN_LE_CREATE_RPC_CMD, _handler_data);         /*######@FI*/
+
+}                                                                                /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_le_create, BT_CONN_LE_CREATE_RPC_CMD,/*####%BqOb*/
 	bt_conn_le_create_rpc_handler, NULL);                                     /*#####@KWY*/
@@ -509,10 +517,11 @@ static void bt_conn_le_create_auto_rpc_handler(CborValue *_value, void *_handler
 
 	ser_rsp_send_int(_result);                                                    /*##BPC96+4*/
 
-	return;                                                                       /*######%B+*/
-decoding_error:                                                                       /*#######8w*/
-	report_decoding_error(BT_CONN_LE_CREATE_AUTO_RPC_CMD, _handler_data);         /*#######+T*/
-}                                                                                     /*#######@Q*/
+	return;                                                                       /*######%FR*/
+decoding_error:                                                                       /*######j2t*/
+	report_decoding_error(BT_CONN_LE_CREATE_AUTO_RPC_CMD, _handler_data);         /*######@VU*/
+
+}                                                                                     /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_le_create_auto, BT_CONN_LE_CREATE_AUTO_RPC_CMD,/*####%BgrF*/
 	bt_conn_le_create_auto_rpc_handler, NULL);                                          /*#####@RNA*/
@@ -563,10 +572,11 @@ static void bt_le_set_auto_conn_rpc_handler(CborValue *_value, void *_handler_da
 
 	ser_rsp_send_int(_result);                                                 /*##BPC96+4*/
 
-	return;                                                                    /*######%B/*/
-decoding_error:                                                                    /*#######Y0*/
-	report_decoding_error(BT_LE_SET_AUTO_CONN_RPC_CMD, _handler_data);         /*#######/P*/
-}                                                                                  /*#######@I*/
+	return;                                                                    /*######%Fa*/
+decoding_error:                                                                    /*######E2M*/
+	report_decoding_error(BT_LE_SET_AUTO_CONN_RPC_CMD, _handler_data);         /*######@TQ*/
+
+}                                                                                  /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_set_auto_conn, BT_LE_SET_AUTO_CONN_RPC_CMD,/*####%Bh4e*/
 	bt_le_set_auto_conn_rpc_handler, NULL);                                       /*#####@GRg*/
@@ -595,10 +605,11 @@ static void bt_conn_set_security_rpc_handler(CborValue *_value, void *_handler_d
 
 	ser_rsp_send_int(_result);                                                  /*##BPC96+4*/
 
-	return;                                                                     /*######%By*/
-decoding_error:                                                                     /*#######Uj*/
-	report_decoding_error(BT_CONN_SET_SECURITY_RPC_CMD, _handler_data);         /*#######Pv*/
-}                                                                                   /*#######@c*/
+	return;                                                                     /*######%Fc*/
+decoding_error:                                                                     /*######xvd*/
+	report_decoding_error(BT_CONN_SET_SECURITY_RPC_CMD, _handler_data);         /*######@dI*/
+
+}                                                                                   /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_set_security, BT_CONN_SET_SECURITY_RPC_CMD,/*####%BvSE*/
 	bt_conn_set_security_rpc_handler, NULL);                                        /*#####@UNk*/
@@ -629,10 +640,11 @@ static void bt_conn_get_security_rpc_handler(CborValue *_value, void *_handler_d
 		nrf_rpc_cbor_rsp_no_err(&_ctx);                                     /*####%BIlG*/
 	}                                                                           /*#####@TnU*/
 
-	return;                                                                     /*######%B6*/
-decoding_error:                                                                     /*#######sP*/
-	report_decoding_error(BT_CONN_GET_SECURITY_RPC_CMD, _handler_data);         /*#######vr*/
-}                                                                                   /*#######@0*/
+	return;                                                                     /*######%FR*/
+decoding_error:                                                                     /*######kIW*/
+	report_decoding_error(BT_CONN_GET_SECURITY_RPC_CMD, _handler_data);         /*######@a4*/
+
+}                                                                                   /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_get_security, BT_CONN_GET_SECURITY_RPC_CMD,/*####%BhdT*/
 	bt_conn_get_security_rpc_handler, NULL);                                        /*#####@rZw*/
@@ -655,10 +667,11 @@ static void bt_conn_enc_key_size_rpc_handler(CborValue *_value, void *_handler_d
 
 	ser_rsp_send_uint(_result);                                                 /*##BJsBF7s*/
 
-	return;                                                                     /*######%B3*/
-decoding_error:                                                                     /*#######sz*/
-	report_decoding_error(BT_CONN_ENC_KEY_SIZE_RPC_CMD, _handler_data);         /*#######K1*/
-}                                                                                   /*#######@w*/
+	return;                                                                     /*######%FT*/
+decoding_error:                                                                     /*######h2o*/
+	report_decoding_error(BT_CONN_ENC_KEY_SIZE_RPC_CMD, _handler_data);         /*######@Dk*/
+
+}                                                                                   /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_enc_key_size, BT_CONN_ENC_KEY_SIZE_RPC_CMD,/*####%Bnf/*/
 	bt_conn_enc_key_size_rpc_handler, NULL);                                        /*#####@k/c*/
@@ -882,10 +895,11 @@ static void bt_set_bondable_rpc_handler(CborValue *_value, void *_handler_data) 
 
 	ser_rsp_send_void();                                                     /*##BEYGLxw*/
 
-	return;                                                                  /*######%B0*/
-decoding_error:                                                                  /*#######W7*/
-	report_decoding_error(BT_SET_BONDABLE_RPC_CMD, _handler_data);           /*#######aQ*/
-}                                                                                /*#######@M*/
+	return;                                                                  /*######%FU*/
+decoding_error:                                                                  /*######12U*/
+	report_decoding_error(BT_SET_BONDABLE_RPC_CMD, _handler_data);           /*######@U8*/
+
+}                                                                                /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_set_bondable, BT_SET_BONDABLE_RPC_CMD,   /*####%BhWw*/
 	bt_set_bondable_rpc_handler, NULL);                                      /*#####@QqU*/
@@ -906,10 +920,11 @@ static void bt_set_oob_data_flag_rpc_handler(CborValue *_value, void *_handler_d
 
 	ser_rsp_send_void();                                                        /*##BEYGLxw*/
 
-	return;                                                                     /*######%B7*/
-decoding_error:                                                                     /*#######by*/
-	report_decoding_error(BT_SET_OOB_DATA_FLAG_RPC_CMD, _handler_data);         /*#######/2*/
-}                                                                                   /*#######@c*/
+	return;                                                                     /*######%FT*/
+decoding_error:                                                                     /*######HxL*/
+	report_decoding_error(BT_SET_OOB_DATA_FLAG_RPC_CMD, _handler_data);         /*######@Jg*/
+
+}                                                                                   /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_set_oob_data_flag, BT_SET_OOB_DATA_FLAG_RPC_CMD,/*####%BvWO*/
 	bt_set_oob_data_flag_rpc_handler, NULL);                                        /*#####@tW8*/
@@ -939,11 +954,12 @@ static void bt_le_oob_set_legacy_tk_rpc_handler(CborValue *_value, void *_handle
 
 	ser_rsp_send_int(_result);                                                     /*##BPC96+4*/
 
-	return;                                                                        /*#######%B*/
-decoding_error:                                                                        /*#######9J*/
-	report_decoding_error(BT_LE_OOB_SET_LEGACY_TK_RPC_CMD, _handler_data);         /*#######Zr*/
-	SER_SCRATCHPAD_FREE(&_scratchpad);                                             /*#######YI*/
-}                                                                                      /*########@*/
+	return;                                                                        /*######%Fb*/
+decoding_error:                                                                        /*#######/p*/
+	report_decoding_error(BT_LE_OOB_SET_LEGACY_TK_RPC_CMD, _handler_data);         /*#######6f*/
+	SER_SCRATCHPAD_FREE(&_scratchpad);                                             /*#######@s*/
+
+}                                                                                      /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_set_legacy_tk, BT_LE_OOB_SET_LEGACY_TK_RPC_CMD,/*####%BrP3*/
 	bt_le_oob_set_legacy_tk_rpc_handler, NULL);                                           /*#####@U4k*/
@@ -1019,10 +1035,11 @@ static void bt_le_oob_set_sc_data_rpc_handler(CborValue *_value, void *_handler_
 
 	ser_rsp_send_int(_result);                                                   /*##BPC96+4*/
 
-	return;                                                                      /*######%Bw*/
-decoding_error:                                                                      /*#######PP*/
-	report_decoding_error(BT_LE_OOB_SET_SC_DATA_RPC_CMD, _handler_data);         /*#######nC*/
-}                                                                                    /*#######@4*/
+	return;                                                                      /*######%Fc*/
+decoding_error:                                                                      /*######Mj6*/
+	report_decoding_error(BT_LE_OOB_SET_SC_DATA_RPC_CMD, _handler_data);         /*######@DI*/
+
+}                                                                                    /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_set_sc_data, BT_LE_OOB_SET_SC_DATA_RPC_CMD,/*####%BqMl*/
 	bt_le_oob_set_sc_data_rpc_handler, NULL);                                         /*#####@mrg*/
@@ -1070,10 +1087,11 @@ static void bt_le_oob_get_sc_data_rpc_handler(CborValue *_value, void *_handler_
 		nrf_rpc_cbor_rsp_no_err(&_ctx);                                      /*####%BIlG*/
 	}                                                                            /*#####@TnU*/
 
-	return;                                                                      /*######%Bz*/
-decoding_error:                                                                      /*#######QA*/
-	report_decoding_error(BT_LE_OOB_GET_SC_DATA_RPC_CMD, _handler_data);         /*#######PM*/
-}                                                                                    /*#######@g*/
+	return;                                                                      /*######%FQ*/
+decoding_error:                                                                      /*######FDp*/
+	report_decoding_error(BT_LE_OOB_GET_SC_DATA_RPC_CMD, _handler_data);         /*######@uM*/
+
+}                                                                                    /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_get_sc_data, BT_LE_OOB_GET_SC_DATA_RPC_CMD,/*####%Bms7*/
 	bt_le_oob_get_sc_data_rpc_handler, NULL);                                         /*#####@Uzk*/
@@ -1098,10 +1116,11 @@ static void bt_passkey_set_rpc_handler(CborValue *_value, void *_handler_data)  
 
 	ser_rsp_send_int(_result);                                               /*##BPC96+4*/
 
-	return;                                                                  /*######%B5*/
-decoding_error:                                                                  /*#######Vn*/
-	report_decoding_error(BT_PASSKEY_SET_RPC_CMD, _handler_data);            /*#######9K*/
-}                                                                                /*#######@o*/
+	return;                                                                  /*######%Fb*/
+decoding_error:                                                                  /*######nBu*/
+	report_decoding_error(BT_PASSKEY_SET_RPC_CMD, _handler_data);            /*######@pk*/
+
+}                                                                                /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_passkey_set, BT_PASSKEY_SET_RPC_CMD,     /*####%Bikf*/
 	bt_passkey_set_rpc_handler, NULL);                                       /*#####@0sw*/
@@ -1351,15 +1370,14 @@ static void bt_conn_auth_cb_register_on_remote_rpc_handler(CborValue *_value, vo
 
 	ser_rsp_send_int(_result);                                                                /*##BPC96+4*/
 
-	return;                                                                                   /*######%By*/
-decoding_error:                                                                                   /*#######ej*/
-	report_decoding_error(BT_CONN_AUTH_CB_REGISTER_ON_REMOTE_RPC_CMD, _handler_data);         /*#######1v*/
-}                                                                                                 /*#######@k*/
+	return;                                                                                   /*######%FW*/
+decoding_error:                                                                                   /*######ose*/
+	report_decoding_error(BT_CONN_AUTH_CB_REGISTER_ON_REMOTE_RPC_CMD, _handler_data);         /*######@q8*/
+
+}                                                                                                 /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_cb_register_on_remote, BT_CONN_AUTH_CB_REGISTER_ON_REMOTE_RPC_CMD,/*####%Bv1D*/
 	bt_conn_auth_cb_register_on_remote_rpc_handler, NULL);                                                      /*#####@ltE*/
-
-#endif /* defined(CONFIG_BT_SMP) || defined(CONFIG_BT_BREDR) */
 
 static void bt_conn_auth_passkey_entry_rpc_handler(CborValue *_value, void *_handler_data)/*####%Btp1*/
 {                                                                                         /*#####@zxI*/
@@ -1379,10 +1397,11 @@ static void bt_conn_auth_passkey_entry_rpc_handler(CborValue *_value, void *_han
 
 	ser_rsp_send_int(_result);                                                        /*##BPC96+4*/
 
-	return;                                                                           /*######%B6*/
-decoding_error:                                                                           /*#######Lw*/
-	report_decoding_error(BT_CONN_AUTH_PASSKEY_ENTRY_RPC_CMD, _handler_data);         /*#######uK*/
-}                                                                                         /*#######@A*/
+	return;                                                                           /*######%FV*/
+decoding_error:                                                                           /*######OrX*/
+	report_decoding_error(BT_CONN_AUTH_PASSKEY_ENTRY_RPC_CMD, _handler_data);         /*######@54*/
+
+}                                                                                         /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_passkey_entry, BT_CONN_AUTH_PASSKEY_ENTRY_RPC_CMD,/*####%BgTg*/
 	bt_conn_auth_passkey_entry_rpc_handler, NULL);                                              /*#####@Tp0*/
@@ -1403,10 +1422,11 @@ static void bt_conn_auth_cancel_rpc_handler(CborValue *_value, void *_handler_da
 
 	ser_rsp_send_int(_result);                                                 /*##BPC96+4*/
 
-	return;                                                                    /*######%B1*/
-decoding_error:                                                                    /*#######rs*/
-	report_decoding_error(BT_CONN_AUTH_CANCEL_RPC_CMD, _handler_data);         /*#######3u*/
-}                                                                                  /*#######@0*/
+	return;                                                                    /*######%FR*/
+decoding_error:                                                                    /*######Die*/
+	report_decoding_error(BT_CONN_AUTH_CANCEL_RPC_CMD, _handler_data);         /*######@6o*/
+
+}                                                                                  /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_cancel, BT_CONN_AUTH_CANCEL_RPC_CMD,/*####%Bszd*/
 	bt_conn_auth_cancel_rpc_handler, NULL);                                       /*#####@WsM*/
@@ -1427,13 +1447,18 @@ static void bt_conn_auth_passkey_confirm_rpc_handler(CborValue *_value, void *_h
 
 	ser_rsp_send_int(_result);                                                          /*##BPC96+4*/
 
-	return;                                                                             /*######%Bx*/
-decoding_error:                                                                             /*#######ZY*/
-	report_decoding_error(BT_CONN_AUTH_PASSKEY_CONFIRM_RPC_CMD, _handler_data);         /*#######EJ*/
-}                                                                                           /*#######@I*/
+	return;                                                                             /*######%FT*/
+decoding_error:                                                                             /*######jKc*/
+	report_decoding_error(BT_CONN_AUTH_PASSKEY_CONFIRM_RPC_CMD, _handler_data);         /*######@kU*/
+
+}                                                                                           /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_passkey_confirm, BT_CONN_AUTH_PASSKEY_CONFIRM_RPC_CMD,/*####%BgAl*/
 	bt_conn_auth_passkey_confirm_rpc_handler, NULL);                                                /*#####@ea4*/
+
+#endif /* defined(CONFIG_BT_SMP) || defined(CONFIG_BT_BREDR) */
+
+#if defined(CONFIG_BT_SMP) || defined(CONFIG_BT_BREDR) || defined(NRF_RPC_GENERATOR)
 
 static void bt_conn_auth_pairing_confirm_rpc_handler(CborValue *_value, void *_handler_data)/*####%BmTk*/
 {                                                                                           /*#####@eD0*/
@@ -1451,10 +1476,101 @@ static void bt_conn_auth_pairing_confirm_rpc_handler(CborValue *_value, void *_h
 
 	ser_rsp_send_int(_result);                                                          /*##BPC96+4*/
 
-	return;                                                                             /*######%Bw*/
-decoding_error:                                                                             /*#######qO*/
-	report_decoding_error(BT_CONN_AUTH_PAIRING_CONFIRM_RPC_CMD, _handler_data);         /*#######ma*/
-}                                                                                           /*#######@0*/
+	return;                                                                             /*######%Fa*/
+decoding_error:                                                                             /*######5Qw*/
+	report_decoding_error(BT_CONN_AUTH_PAIRING_CONFIRM_RPC_CMD, _handler_data);         /*######@SA*/
+
+}                                                                                           /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_pairing_confirm, BT_CONN_AUTH_PAIRING_CONFIRM_RPC_CMD,/*####%BijI*/
 	bt_conn_auth_pairing_confirm_rpc_handler, NULL);                                                /*#####@VU4*/
+
+#endif /* defined(CONFIG_BT_SMP) || defined(CONFIG_BT_BREDR) || defined(NRF_RPC_GENERATOR) */
+
+
+static inline void bt_conn_foreach_cb_callback(struct bt_conn *conn, void *data,
+					       uint32_t callback_slot)
+{
+	SERIALIZE(CALLBACK(bt_conn_foreach_cb));
+
+	struct nrf_rpc_cbor_ctx _ctx;                                            /*####%ARzi*/
+	size_t _buffer_size_max = 11;                                            /*#####@x8o*/
+
+	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*##AvrU03s*/
+
+	encode_bt_conn(&_ctx.encoder, conn);                                     /*######%A6*/
+	ser_encode_uint(&_ctx.encoder, (uintptr_t)data);                         /*######W+6*/
+	ser_encode_callback_slot(&_ctx.encoder, callback_slot);                  /*######@Ww*/
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_FOREACH_CB_CALLBACK_RPC_CMD,/*####%BKc8*/
+		&_ctx, ser_rsp_simple_void, NULL);                               /*#####@HvE*/
+}
+
+CBKPROXY_HANDLER(bt_conn_foreach_cb_encoder, bt_conn_foreach_cb_callback,
+	(struct bt_conn *conn, void *data), (conn, data));
+
+static void bt_conn_foreach_rpc_handler(CborValue *_value, void *_handler_data)            /*####%Bixe*/
+{                                                                                          /*#####@7pE*/
+
+	int type;                                                                          /*######%AV*/
+	bt_conn_foreach_cb func;                                                           /*######jq0*/
+	void * data;                                                                       /*######@8U*/
+
+	type = ser_decode_int(_value);                                                     /*######%Ch*/
+	func = (bt_conn_foreach_cb)ser_decode_callback(_value, bt_conn_foreach_cb_encoder);/*######0/s*/
+	data = (void *)ser_decode_uint(_value);                                            /*######@VI*/
+
+	if (!ser_decoding_done_and_check(_value)) {                                        /*######%FE*/
+		goto decoding_error;                                                       /*######QTM*/
+	}                                                                                  /*######@1Y*/
+
+	bt_conn_foreach(type, func, data);                                                 /*##Dkyjw2I*/
+
+	ser_rsp_send_void();                                                               /*##BEYGLxw*/
+
+	return;                                                                            /*######%Fd*/
+decoding_error:                                                                            /*######JVK*/
+	report_decoding_error(BT_CONN_FOREACH_RPC_CMD, _handler_data);                     /*######@qw*/
+
+}                                                                                          /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_foreach, BT_CONN_FOREACH_RPC_CMD,   /*####%Bois*/
+	bt_conn_foreach_rpc_handler, NULL);                                      /*#####@RjU*/
+
+static void bt_conn_lookup_addr_le_rpc_handler(CborValue *_value, void *_handler_data)/*####%BsMb*/
+{                                                                                     /*#####@ISo*/
+
+	struct nrf_rpc_cbor_ctx _ctx;                                                 /*#######%A*/
+	struct bt_conn *_result;                                                      /*#######eB*/
+	uint8_t id;                                                                   /*#######P4*/
+	bt_addr_le_t _peer_data;                                                      /*########N*/
+	const bt_addr_le_t * peer;                                                    /*########I*/
+	size_t _buffer_size_max = 3;                                                  /*########@*/
+
+	id = ser_decode_uint(_value);                                                 /*####%CrMZ*/
+	peer = ser_decode_buffer(_value, &_peer_data, sizeof(bt_addr_le_t));          /*#####@6MU*/
+
+	if (!ser_decoding_done_and_check(_value)) {                                   /*######%FE*/
+		goto decoding_error;                                                  /*######QTM*/
+	}                                                                             /*######@1Y*/
+
+	_result = bt_conn_lookup_addr_le(id, peer);                                   /*##Dp2yzPE*/
+
+	{                                                                             /*####%AnG1*/
+		NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                           /*#####@zxs*/
+
+		encode_bt_conn(&_ctx.encoder, _result);                               /*##DIUWBhg*/
+
+		nrf_rpc_cbor_rsp_no_err(&_ctx);                                       /*####%BIlG*/
+	}                                                                             /*#####@TnU*/
+
+	return;                                                                       /*######%FU*/
+decoding_error:                                                                       /*######Uys*/
+	report_decoding_error(BT_CONN_LOOKUP_ADDR_LE_RPC_CMD, _handler_data);         /*######@WY*/
+
+}                                                                                     /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_lookup_addr_le, BT_CONN_LOOKUP_ADDR_LE_RPC_CMD,/*####%BhIg*/
+	bt_conn_lookup_addr_le_rpc_handler, NULL);                                          /*#####@Mg8*/
+
+#endif
