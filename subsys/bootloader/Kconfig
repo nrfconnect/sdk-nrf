@@ -17,6 +17,7 @@ config BUILD_S1_VARIANT
 config S1_VARIANT_IMAGE_NAME
 	string
 	default "mcuboot" if MCUBOOT || BOOTLOADER_MCUBOOT
+	default "spm" if !BOOTLOADER_MCUBOOT && IS_SPM
 	default "app" if !BOOTLOADER_MCUBOOT
 	depends on BUILD_S1_VARIANT
 	help

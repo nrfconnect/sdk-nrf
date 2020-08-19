@@ -8,11 +8,12 @@ if (CONFIG_BUILD_S1_VARIANT AND
     ((${CONFIG_S1_VARIANT_IMAGE_NAME} STREQUAL "app" AND NOT IMAGE_NAME)
     OR
     ("${CONFIG_S1_VARIANT_IMAGE_NAME}_" STREQUAL "${IMAGE_NAME}")))
-# Create second executable for the second slot of the second stage
-# bootloader. This is done inside this file since it is non-trivial to add
-# executable targets outside the root CMakeLists.txt. The problem is that
-# most of the variables required for compiling/linking is only available
-# in the scope of this file.
+
+  # Create second executable for the second slot of the second stage
+  # bootloader. This is done inside this file since it is non-trivial to add
+  # executable targets outside the root CMakeLists.txt. The problem is that
+  # most of the variables required for compiling/linking is only available
+  # in the scope of this file.
 
   set(link_variant_name s1)
   set(link_variant ${link_variant_name}_)
@@ -91,7 +92,7 @@ if (CONFIG_BUILD_S1_VARIANT AND
     )
 
   # Link against linker script with updated offset.
-  set(exe ${link_variant}image)
+  set(exe ${link_variant}${IMAGE_NAME}image)
   add_executable(${exe} ${ZEPHYR_BASE}/misc/empty_file.c ${${link_variant}generated_kernel_files})
   toolchain_ld_link_elf(
     TARGET_ELF            ${exe}

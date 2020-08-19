@@ -5,6 +5,43 @@
 #
 
 if (CONFIG_SPM)
+  if (CONFIG_BUILD_S1_VARIANT AND NOT CONFIG_BOOTLOADER_MCUBOOT)
+    # Inject this configuration from parent image to SPM, since we need
+    # an S1 candidate of SPM as well as the app.
+    add_overlay_config(
+      spm
+      ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/build_s1.conf
+      )
+
+    set(s1_spm_app_hex ${PROJECT_BINARY_DIR}/s1_spm_app.hex)
+    set(s1_spm_app_files
+      ${PROJECT_BINARY_DIR}/s1_spm_image.hex
+      ${PROJECT_BINARY_DIR}/s1_image.hex
+      )
+
+    print(s1_spm_app_files)
+    add_custom_command(
+      OUTPUT ${s1_spm_app_hex}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_BASE}/scripts/mergehex.py
+      -o ${s1_spm_app_hex}
+      ${s1_spm_app_files}
+      DEPENDS
+      ${s1_spm_app_files}
+      spm_subimage
+      s1_image_hex
+      )
+
+    # Wrapper target for the merge command.
+    add_custom_target(
+      s1_spm_app_hex_target
+      DEPENDS
+      ${s1_spm_app_hex}
+      ${spm_app_hex_list}
+      )
+  endif()
+
   add_child_image(
     NAME spm
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/spm

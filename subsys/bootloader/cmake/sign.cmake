@@ -78,10 +78,16 @@ foreach (slot ${slots})
   set(signed_bin ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
   set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex ${SIGN_KEY_FILE_DEPENDS})
-  if(DEFINED ${slot}_is_from_child_image)
-    list(APPEND sign_depends ${${slot}_is_from_child_image}_subimage)
+
+  if (CONFIG_BUILD_S1_VARIANT AND NOT CONFIG_BOOTLOADER_MCUBOOT AND
+      CONFIG_SPM AND ("${slot}" STREQUAL s1_image))
+    list(APPEND sign_depends s1_spm_app_hex_target)
   else()
-    list(APPEND sign_depends ${slot}_hex)
+    if(DEFINED ${slot}_is_from_child_image)
+      list(APPEND sign_depends ${${slot}_is_from_child_image}_subimage)
+    else()
+      list(APPEND sign_depends ${slot}_hex)
+    endif()
   endif()
 
   set(to_sign ${PROJECT_BINARY_DIR}/${slot}.hex)
