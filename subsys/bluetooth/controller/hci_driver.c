@@ -29,13 +29,13 @@ static struct k_thread recv_thread_data;
 static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
 
 #if defined(CONFIG_BT_CONN)
-/* It should not be possible to set CONFIG_BLECTRL_SLAVE_COUNT larger than
+/* It should not be possible to set CONFIG_SDC_SLAVE_COUNT larger than
  * CONFIG_BT_MAX_CONN. Kconfig should make sure of that, this assert is to
  * verify that assumption.
  */
-BUILD_ASSERT(CONFIG_BLECTRL_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
+BUILD_ASSERT(CONFIG_SDC_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
 
-#define BLECTRL_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BLECTRL_SLAVE_COUNT)
+#define BLECTRL_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_SDC_SLAVE_COUNT)
 
 #else
 
@@ -47,7 +47,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
 			 (BLECTRL_MASTER_COUNT > 0));
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
-			 (CONFIG_BLECTRL_SLAVE_COUNT > 0));
+			 (CONFIG_SDC_SLAVE_COUNT > 0));
 
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH_MAX
 	#define MAX_TX_PACKET_SIZE CONFIG_BT_CTLR_DATA_LENGTH_MAX
@@ -71,7 +71,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	SDC_DEFAULT_RX_PACKET_COUNT) \
 	+ SDC_MEM_SLAVE_LINKS_SHARED)
 
-#define MEMPOOL_SIZE ((CONFIG_BLECTRL_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
+#define MEMPOOL_SIZE ((CONFIG_SDC_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
 		      (BLECTRL_MASTER_COUNT * MASTER_MEM_SIZE))
 
 static uint8_t sdc_mempool[MEMPOOL_SIZE];
@@ -371,7 +371,7 @@ static int hci_driver_open(void)
 		return required_memory;
 	}
 
-	cfg.slave_count.count = CONFIG_BLECTRL_SLAVE_COUNT;
+	cfg.slave_count.count = CONFIG_SDC_SLAVE_COUNT;
 
 	required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
@@ -395,7 +395,7 @@ static int hci_driver_open(void)
 	}
 
 	cfg.event_length.event_length_us =
-		CONFIG_BLECTRL_MAX_CONN_EVENT_LEN_DEFAULT;
+		CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT;
 	required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 				       SDC_CFG_TYPE_EVENT_LENGTH,
