@@ -115,3 +115,9 @@
 .blue-box {
  background: #00A9CE;
 }
+
+
+/* color for numbered steps */
+div.numbered-step>h2::before, div.numbered-step>h3::before, div.numbered-step>h4::before, div.numbered-step>h5::before {
+  background: #00a9ce;
+}
