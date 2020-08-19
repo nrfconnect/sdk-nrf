@@ -18,6 +18,8 @@ This sample has Commissioner, Joiner, and Border Router roles enabled by default
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample to be able to test communication.
 
+See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
+
 Requirements
 ************
 
