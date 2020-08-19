@@ -72,6 +72,7 @@ static const struct bt_data ad_bonded[] = {
 
 enum state {
 	STATE_DISABLED,
+	STATE_DISABLED_OFF,
 	STATE_OFF,
 	STATE_IDLE,
 	STATE_ACTIVE_FAST,
@@ -429,8 +430,9 @@ static void init(void)
 		k_delayed_work_init(&sp_grace_period_to, sp_grace_period_fn);
 	}
 
-	/* We should not start advertising before ble_bond is ready */
-	state = STATE_OFF;
+	/* We should not start advertising before ble_bond is ready.
+	 * Stay in disabled state. */
+
 	module_set_state(MODULE_STATE_READY);
 }
 
@@ -508,7 +510,20 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!started);
 
 			/* Settings need to be loaded before advertising start */
-			start();
+			switch (state) {
+			case STATE_DISABLED:
+				state = STATE_OFF;
+				start();
+				break;
+			case STATE_DISABLED_OFF:
+				state = STATE_OFF;
+				break;
+			default:
+				/* Should not happen. */
+				__ASSERT_NO_MSG(false);
+				break;
+			}
+
 			started = true;
 		}
 
@@ -570,7 +585,8 @@ static bool event_handler(const struct event_header *eh)
 		case PEER_OPERATION_SELECTED:
 		case PEER_OPERATION_ERASE_ADV:
 		case PEER_OPERATION_ERASE_ADV_CANCEL:
-			if ((state == STATE_OFF) || (state == STATE_GRACE_PERIOD)) {
+			if ((state == STATE_OFF) || (state == STATE_GRACE_PERIOD) ||
+			    (state == STATE_DISABLED) || (state == STATE_DISABLED_OFF)) {
 				cur_identity = event->bt_stack_id;
 				__ASSERT_NO_MSG(cur_identity < CONFIG_BT_ID_MAX);
 				break;
@@ -654,8 +670,12 @@ static bool event_handler(const struct event_header *eh)
 
 			case STATE_OFF:
 			case STATE_GRACE_PERIOD:
-			case STATE_DISABLED:
+			case STATE_DISABLED_OFF:
 				/* No action */
+				break;
+
+			case STATE_DISABLED:
+				state = STATE_DISABLED_OFF;
 				break;
 
 			default:
@@ -668,7 +688,8 @@ static bool event_handler(const struct event_header *eh)
 				module_set_state(MODULE_STATE_ERROR);
 			}
 
-			return state != STATE_OFF;
+			return (state != STATE_OFF) &&
+			       (state != STATE_DISABLED);
 		}
 
 		if (is_wake_up_event(eh)) {
@@ -700,6 +721,10 @@ static bool event_handler(const struct event_header *eh)
 			case STATE_DELAYED_ACTIVE_SLOW:
 			case STATE_DISABLED:
 				/* No action */
+				break;
+
+			case STATE_DISABLED_OFF:
+				state = STATE_DISABLED;
 				break;
 
 			default:
