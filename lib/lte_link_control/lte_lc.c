@@ -170,6 +170,9 @@ static const char *const system_mode_params[] = {
 	[LTE_LC_SYSTEM_MODE_NBIOT_GPS]	= "0,1,1,0",
 };
 
+/* TODO: Clean up the below antenna tuning code and decide on where it should
+ *	 stay in the link controller or not.
+ */
 #if defined(CONFIG_LWM2M_CARRIER) && !defined(CONFIG_GPS_USE_SIM)
 #if defined(CONFIG_BOARD_THINGY91_NRF9160NS)
 	const char *const lwm2m_ant_cfg[] = {
@@ -177,10 +180,15 @@ static const char *const system_mode_params[] = {
 			"2,1710,2200,3,824,894,4,880,960,5,791,849,"
 			"7,1565,1586",
 			"AT%XCOEX0=1,1,1565,1586"};
-#elif defined(CONFIG_BOARD_NRF9160_PCA10090NS)
+#elif defined(CONFIG_BOARD_NRF9160DK_NRF9160NS)
 	const char *const lwm2m_ant_cfg[] = {
-			"AT\%XMAGPIO=1,0,0,1,1,1565,1586",
-			"AT\%XCOEX0=1,1,1565,1586"};
+			"AT\%XMAGPIO=1,0,0,1,1,1565,1586"
+#if defined(CONFIG_NRF9160_GPS_ANTENNA_ONBOARD)
+			, "AT\%XCOEX0=1,1,1565,1586"
+#elif defined(CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL)
+			, "AT\%XCOEX0"
+#endif
+			};
 #endif
 #endif
 
