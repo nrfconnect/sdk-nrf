@@ -46,7 +46,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 5867c6e9c8805cc8067e23b23ad34240419b7c5c
+      revision: a87b995bec8717597a81e2eb8b68901dbdc889b4
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -88,11 +88,11 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 92992c0cc46c19fd698b6a1e7ca06dea37e19bf7
+      revision: 50eec26a462d8cbc171dbbdca623979294a6227b
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: sdk-mcumgr
-      revision: 898a5a7f5224be8345e58eca3b9a84389ed61d15
+      revision: cfe5eb98a9493017448846fd1a44a9340bd0a22f
       path: modules/lib/mcumgr
     - name: nrfxlib
       repo-path: sdk-nrfxlib

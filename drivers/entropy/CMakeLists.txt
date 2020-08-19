@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 zephyr_library_amend()
-zephyr_library_sources_if_kconfig(entropy_cc310.c)
+zephyr_library_sources_ifdef(CONFIG_ENTROPY_CC310 entropy_cc310.c)
 
 # Link with the nrf_cc310 platform library if the following is met:
 # -nRF52840 device

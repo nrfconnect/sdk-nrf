@@ -541,8 +541,11 @@ send:
 	cmd_len = 0;
 }
 
-static void uart_callback(struct uart_event *evt, void *user_data)
+static void uart_callback(struct device *dev, struct uart_event *evt,
+			  void *user_data)
 {
+	ARG_UNUSED(dev);
+
 	int err;
 	static uint16_t pos;
 

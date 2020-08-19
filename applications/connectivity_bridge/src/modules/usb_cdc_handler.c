@@ -87,10 +87,9 @@ static void cdc_dtr_work_handler(struct k_work *work)
 	poll_dtr();
 }
 
-static void cdc_uart_interrupt_handler(void *user_data)
+static void cdc_uart_interrupt_handler(struct device *dev, void *user_data)
 {
 	int dev_idx = (int) user_data;
-	struct device *dev = devices[dev_idx];
 
 	uart_irq_update(dev);
 

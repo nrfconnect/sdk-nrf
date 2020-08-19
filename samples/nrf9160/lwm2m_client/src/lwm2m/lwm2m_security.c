@@ -60,5 +60,9 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 	lwm2m_engine_set_opaque("0/0/5",
 				(void *)client_psk, sizeof(client_psk));
 #endif /* CONFIG_LWM2M_DTLS_SUPPORT */
+
+	/* Security and Server object need matching Short Server ID value. */
+	lwm2m_engine_set_u16("0/0/10", 101);
+	lwm2m_engine_set_u16("1/0/0", 101);
 	return ret;
 }

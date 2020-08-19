@@ -117,8 +117,10 @@ static uint8_t ble_data_received(const uint8_t *const data, uint16_t len)
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static void uart_cb(struct uart_event *evt, void *user_data)
+static void uart_cb(struct device *dev, struct uart_event *evt, void *user_data)
 {
+	ARG_UNUSED(dev);
+
 	static uint8_t *current_buf;
 	static size_t aborted_len;
 	static bool buf_release;

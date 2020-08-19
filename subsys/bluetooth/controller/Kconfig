@@ -68,8 +68,7 @@ config SDC_MAX_CONN_EVENT_LEN_DEFAULT
 config BLECTLR_PRIO
 	# Hidden option to set the priority of the controller threads
 	int
-	default BT_RX_PRIO if BT_HCI_HOST || BT_RECV_IS_RX_THREAD
-	default 8
+	default BT_RX_PRIO_HIGH
 
 config BLECTLR_RX_STACK_SIZE
 	int "Size of the receive thread stack"

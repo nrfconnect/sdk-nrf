@@ -377,7 +377,7 @@ static void sdc_flash_page_layout_get(
 
 static int flash_init(struct device *dev)
 {
-	dev->driver_api = &flash_api;
+	dev->api = &flash_api;
 	k_sem_init(&flash_state.sync, 0, 1);
 	k_mutex_init(&flash_state.lock);
 

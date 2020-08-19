@@ -191,7 +191,7 @@ static void generate_gps_data(struct gps_nmea *gps_data,
 
 static void notify_event(struct device *dev, struct gps_event *evt)
 {
-	struct gps_sim_data *drv_data = dev->driver_data;
+	struct gps_sim_data *drv_data = dev->data;
 
 	if (drv_data->handler) {
 		drv_data->handler(dev, evt);
@@ -302,7 +302,7 @@ static void fix_work_fn(struct k_work *work)
 
 static int start(struct device *dev, struct gps_config *cfg)
 {
-	struct gps_sim_data *drv_data = dev->driver_data;
+	struct gps_sim_data *drv_data = dev->data;
 
 	if ((dev == NULL) || (cfg == NULL)) {
 		return -EINVAL;
@@ -328,7 +328,7 @@ static int start(struct device *dev, struct gps_config *cfg)
 
 static int stop(struct device *dev)
 {
-	struct gps_sim_data *drv_data = dev->driver_data;
+	struct gps_sim_data *drv_data = dev->data;
 
 	if (dev == NULL) {
 		return -EINVAL;
@@ -354,7 +354,7 @@ static int stop(struct device *dev)
 
 static int init(struct device *dev, gps_event_handler_t handler)
 {
-	struct gps_sim_data *drv_data = dev->driver_data;
+	struct gps_sim_data *drv_data = dev->data;
 
 	if (handler == NULL) {
 		LOG_ERR("Event handler must be provided");
@@ -374,7 +374,7 @@ static int init(struct device *dev, gps_event_handler_t handler)
 
 static int gps_sim_setup(struct device *dev)
 {
-	struct gps_sim_data *drv_data = dev->driver_data;
+	struct gps_sim_data *drv_data = dev->data;
 
 	drv_data->dev = dev;
 	drv_data->state = GPS_SIM_UNINIT;

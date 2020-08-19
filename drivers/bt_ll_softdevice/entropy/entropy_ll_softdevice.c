@@ -28,9 +28,9 @@ static struct rng_driver_data rng_data;
 static inline struct rng_driver_data *rng_driver_data_get(struct device *dev)
 {
 	__ASSERT_NO_MSG(dev != NULL);
-	__ASSERT_NO_MSG((intptr_t) dev->driver_data == (intptr_t) &rng_data);
+	__ASSERT_NO_MSG((intptr_t) dev->data == (intptr_t) &rng_data);
 
-	return dev->driver_data;
+	return dev->data;
 }
 
 static int rng_driver_get_entropy(struct device *dev, uint8_t *buf, uint16_t len)

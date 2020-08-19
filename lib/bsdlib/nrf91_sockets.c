@@ -1097,10 +1097,6 @@ static int nrf91_socket_offload_ioctl(void *obj, unsigned int request,
 	int sd = OBJ_TO_SD(obj);
 
 	switch (request) {
-	/* Handle close specifically. */
-	case ZFD_IOCTL_CLOSE:
-		return nrf_close(sd);
-
 	case ZFD_IOCTL_POLL_PREPARE:
 		return -EXDEV;
 
@@ -1138,10 +1134,18 @@ static ssize_t nrf91_socket_offload_write(void *obj, const void *buffer,
 	return nrf91_socket_offload_sendto(obj, buffer, count, 0, NULL, 0);
 }
 
+static int nrf91_socket_offload_close(void *obj)
+{
+	int sd = OBJ_TO_SD(obj);
+
+	return nrf_close(sd);
+}
+
 static const struct socket_op_vtable nrf91_socket_fd_op_vtable = {
 	.fd_vtable = {
 		.read = nrf91_socket_offload_read,
 		.write = nrf91_socket_offload_write,
+		.close = nrf91_socket_offload_close,
 		.ioctl = nrf91_socket_offload_ioctl,
 	},
 	.bind = nrf91_socket_offload_bind,

@@ -189,8 +189,10 @@ send:
 	}
 }
 
-static void isr(struct device *dev)
+static void isr(struct device *dev, void *user_data)
 {
+	ARG_UNUSED(user_data);
+
 	uint8_t character;
 
 	uart_irq_update(dev);

@@ -48,7 +48,7 @@ int bh1749_attr_set(struct device *dev,
 		    enum sensor_attribute attr,
 		    const struct sensor_value *val)
 {
-	struct bh1749_data *data = dev->driver_data;
+	struct bh1749_data *data = dev->data;
 
 	if (chan != SENSOR_CHAN_ALL) {
 		return -ENOTSUP;
@@ -98,7 +98,7 @@ int bh1749_trigger_set(struct device *dev,
 		       const struct sensor_trigger *trig,
 		       sensor_trigger_handler_t handler)
 {
-	struct bh1749_data *data = dev->driver_data;
+	struct bh1749_data *data = dev->data;
 	uint8_t interrupt_source = 0;
 
 	gpio_pin_interrupt_configure(data->gpio,
@@ -162,7 +162,7 @@ int bh1749_trigger_set(struct device *dev,
 int bh1749_gpio_interrupt_init(struct device *dev)
 {
 	int err;
-	struct bh1749_data *drv_data = dev->driver_data;
+	struct bh1749_data *drv_data = dev->data;
 
 	/* Setup gpio interrupt */
 	drv_data->gpio =

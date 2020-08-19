@@ -259,7 +259,7 @@ static inline int gps_start(struct device *dev, struct gps_config *cfg)
 		return -EINVAL;
 	}
 
-	api = (struct gps_driver_api *)dev->driver_api;
+	api = (struct gps_driver_api *)dev->api;
 
 	if (api->start == NULL) {
 		return -ENOTSUP;
@@ -281,7 +281,7 @@ static inline int gps_stop(struct device *dev)
 		return -EINVAL;
 	}
 
-	api = (struct gps_driver_api *)dev->driver_api;
+	api = (struct gps_driver_api *)dev->api;
 
 	if (api->stop == NULL) {
 		return -ENOTSUP;
@@ -309,7 +309,7 @@ static inline int gps_agps_write(struct device *dev, enum gps_agps_type type,
 		return -EINVAL;
 	}
 
-	api = (struct gps_driver_api *)dev->driver_api;
+	api = (struct gps_driver_api *)dev->api;
 
 	if (api->agps_write == NULL) {
 		return -ENOTSUP;
@@ -334,7 +334,7 @@ static inline int gps_init(struct device *dev, gps_event_handler_t handler)
 		return -EINVAL;
 	}
 
-	api = (struct gps_driver_api *)dev->driver_api;
+	api = (struct gps_driver_api *)dev->api;
 
 	if (api->init == NULL) {
 		return -ENOTSUP;
@@ -358,7 +358,7 @@ static inline int gps_deinit(struct device *dev)
 		return -EINVAL;
 	}
 
-	api = (struct gps_driver_api *)dev->driver_api;
+	api = (struct gps_driver_api *)dev->api;
 
 	if (api->deinit == NULL) {
 		return -ENOTSUP;

@@ -174,7 +174,7 @@ static void print_satellite_stats(nrf_gnss_data_frame_t *pvt_data)
 
 static void notify_event(struct device *dev, struct gps_event *evt)
 {
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 
 	if (drv_data->handler) {
 		drv_data->handler(dev, evt);
@@ -183,7 +183,7 @@ static void notify_event(struct device *dev, struct gps_event *evt)
 
 static void on_fix(struct device *dev)
 {
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 
 	switch (drv_data->current_cfg.nav_mode) {
 	case GPS_NAV_MODE_PERIODIC:
@@ -219,7 +219,7 @@ static int open_socket(struct gps_drv_data *drv_data)
 static void gps_thread(int dev_ptr)
 {
 	struct device *dev = INT_TO_POINTER(dev_ptr);
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 	int len;
 	bool operation_blocked = false;
 	bool has_fix = false;
@@ -379,7 +379,7 @@ wait:
 
 static int init_thread(struct device *dev)
 {
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 
 	drv_data->thread_id = k_thread_create(
 			&drv_data->thread, drv_data->thread_stack,
@@ -515,7 +515,7 @@ static int parse_cfg(struct gps_config *cfg_src,
 static int start(struct device *dev, struct gps_config *cfg)
 {
 	int retval, err;
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 	struct nrf9160_gps_config gps_cfg = { 0 };
 
 	if (atomic_get(&drv_data->is_shutdown) == 1) {
@@ -673,7 +673,7 @@ set_configuration:
 static int setup(struct device *dev)
 {
 	int err = 0;
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 
 	drv_data->socket = -1;
 	drv_data->dev = dev;
@@ -709,7 +709,7 @@ static int setup(struct device *dev)
 
 static int stop_gps(struct device *dev, bool is_timeout)
 {
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 	nrf_gnss_delete_mask_t delete_mask = 0;
 	int retval;
 
@@ -737,7 +737,7 @@ static int stop_gps(struct device *dev, bool is_timeout)
 static int stop(struct device *dev)
 {
 	int err = 0;
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 
 	if (atomic_get(&drv_data->is_shutdown) == 1) {
 		return -EHOSTDOWN;
@@ -819,7 +819,7 @@ static int agps_write(struct device *dev, enum gps_agps_type type, void *data,
 		      size_t data_len)
 {
 	int err;
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 	nrf_gnss_agps_data_type_t data_type = type_lookup_gps2socket[type];
 
 	err = nrf_sendto(drv_data->socket, data, data_len, 0, &data_type,
@@ -836,7 +836,7 @@ static int agps_write(struct device *dev, enum gps_agps_type type, void *data,
 
 static int init(struct device *dev, gps_event_handler_t handler)
 {
-	struct gps_drv_data *drv_data = dev->driver_data;
+	struct gps_drv_data *drv_data = dev->data;
 	int err;
 
 	if (atomic_get(&drv_data->is_init)) {
