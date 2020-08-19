@@ -43,7 +43,7 @@ static int(*const async_init_fn[ASYNC_INIT_STEP_COUNT])(
 static int bh1749_sample_fetch(struct device *dev, enum sensor_channel chan)
 
 {
-	struct bh1749_data *data = dev->driver_data;
+	struct bh1749_data *data = dev->data;
 	uint8_t status;
 
 	if (chan != SENSOR_CHAN_ALL) {
@@ -105,7 +105,7 @@ static int bh1749_channel_get(struct device *dev,
 			      enum sensor_channel chan,
 			      struct sensor_value *val)
 {
-	struct bh1749_data *data = dev->driver_data;
+	struct bh1749_data *data = dev->data;
 
 	if (unlikely(!data->ready)) {
 		LOG_INF("Device is not initialized yet");
@@ -200,7 +200,7 @@ static int bh1749_rgb_measurement_enable(struct bh1749_data *data, bool enable)
 
 static void bh1749_async_init(struct k_work *work)
 {
-	struct bh1749_data *data = bh1749_dev->driver_data;
+	struct bh1749_data *data = bh1749_dev->data;
 
 	ARG_UNUSED(work);
 
@@ -283,7 +283,7 @@ static int bh1749_init(struct device *dev)
 {
 	bh1749_dev = dev;
 
-	struct bh1749_data *data = bh1749_dev->driver_data;
+	struct bh1749_data *data = bh1749_dev->data;
 	data->i2c = device_get_binding(DT_BUS_LABEL(DT_DRV_INST(0)));
 
 	if (data->i2c == NULL) {

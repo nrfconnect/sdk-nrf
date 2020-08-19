@@ -158,8 +158,11 @@ static bool handle_rx_chunk(uint8_t *buf, size_t len)
 	return rx_timeout_occurred;
 }
 
-static void uart_evt_handler(struct uart_event *evt, void *user_data)
+static void uart_evt_handler(struct device *dev, struct uart_event *evt,
+			     void *user_data)
 {
+	ARG_UNUSED(dev);
+
 	static bool restart_rx;
 	static uint8_t *blocked_buf_chunk;
 

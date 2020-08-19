@@ -137,10 +137,10 @@ static void uart_rx_buf_unref(void *buf)
 	}
 }
 
-static void uart_callback(struct uart_event *evt, void *user_data)
+static void uart_callback(struct device *dev, struct uart_event *evt,
+			  void *user_data)
 {
 	int dev_idx = (int) user_data;
-	struct device *dev = devices[dev_idx];
 	struct uart_data_event *event;
 	struct uart_rx_buf *buf;
 	int err;

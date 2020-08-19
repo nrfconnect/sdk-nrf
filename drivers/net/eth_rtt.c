@@ -248,7 +248,7 @@ static void rtt_send_end(struct eth_rtt_context *context)
  */
 static int eth_send(struct device *dev, struct net_pkt *pkt)
 {
-	struct eth_rtt_context *context = dev->driver_data;
+	struct eth_rtt_context *context = dev->data;
 	struct net_buf *frag;
 
 	if (LOG_LEVEL >= LOG_LEVEL_DBG) {
@@ -458,7 +458,7 @@ static void poll_work_handler(struct k_work *work)
 static void eth_iface_init(struct net_if *iface)
 {
 	int mac_addr_bytes = -1;
-	struct eth_rtt_context *context = net_if_get_device(iface)->driver_data;
+	struct eth_rtt_context *context = net_if_get_device(iface)->data;
 
 	ethernet_init(iface);
 
@@ -522,7 +522,7 @@ static enum ethernet_hw_caps eth_capabilities(struct device *dev)
  */
 static int eth_rtt_init(struct device *dev)
 {
-	struct eth_rtt_context *context = dev->driver_data;
+	struct eth_rtt_context *context = dev->data;
 
 	SEGGER_RTT_ConfigUpBuffer(CONFIG_ETH_RTT_CHANNEL, CHANNEL_NAME,
 				  context->rtt_up_buffer,

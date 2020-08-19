@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <device.h>
 #include <kernel_includes.h>
+#include <sys/onoff.h>
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
 #include <mpsl.h>
@@ -20,11 +21,46 @@
 
 #define DT_DRV_COMPAT nordic_nrf_clock
 
+static int clock_start(struct device *dev, clock_control_subsys_t subsys);
+static int clock_stop(struct device *dev, clock_control_subsys_t subsys);
+static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
+			     struct clock_control_async_data *data);
+static int clock_get_rate(struct device *dev, clock_control_subsys_t subsys,
+			  uint32_t *rate);
+static enum clock_control_status
+clock_get_status(struct device *dev, clock_control_subsys_t subsys);
+static int clock_control_init(struct device *dev);
+
+static const struct clock_control_driver_api clock_control_api = {
+	.on = clock_start,
+	.off = clock_stop,
+	.async_on = clock_async_start,
+	.get_rate = clock_get_rate,
+	.get_status = clock_get_status,
+};
+
 /* MPSL clock control structure */
 struct mpsl_clock_control_data {
 	sys_slist_t async_on_list;
 	uint8_t hfclk_count;
 };
+
+static struct mpsl_clock_control_data clock_control_data;
+
+DEVICE_AND_API_INIT(clock_nrf, DT_INST_LABEL(0), clock_control_init,
+		    &clock_control_data, NULL, PRE_KERNEL_1,
+		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &clock_control_api);
+
+static struct onoff_manager onoff_managers[CLOCK_CONTROL_NRF_TYPE_COUNT];
+
+static enum clock_control_nrf_type
+manager_to_clock_type(struct onoff_manager *mgr)
+{
+	__ASSERT_NO_MSG(PART_OF_ARRAY(onoff_managers, mgr));
+	return ((enum clock_control_nrf_type)(POINTER_TO_UINT(mgr) -
+					      POINTER_TO_UINT(onoff_managers)) /
+		sizeof(*mgr));
+}
 
 /* MPSL clock control callbacks */
 static void hf_clock_started_callback(void);
@@ -32,6 +68,7 @@ static void hf_clock_started_callback(void);
 static bool is_context_atomic(void)
 {
 	int key = irq_lock();
+
 	irq_unlock(key);
 
 	return arch_irq_unlocked(key) || k_is_in_isr();
@@ -168,7 +205,7 @@ void nrf_power_clock_isr(void)
 
 static int clock_start(struct device *dev, clock_control_subsys_t subsys)
 {
-	struct mpsl_clock_control_data *mpsl_control_data = dev->driver_data;
+	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
 	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
 	int errcode = 0;
 	int key;
@@ -200,7 +237,7 @@ static int clock_start(struct device *dev, clock_control_subsys_t subsys)
 
 static int clock_stop(struct device *dev, clock_control_subsys_t subsys)
 {
-	struct mpsl_clock_control_data *mpsl_control_data = dev->driver_data;
+	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
 	enum clock_control_nrf_type type = (enum clock_control_nrf_type)subsys;
 	int errcode = 0;
 	int key;
@@ -280,7 +317,7 @@ static enum clock_control_status clock_get_status(struct device *dev,
 static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
 			     struct clock_control_async_data *data)
 {
-	struct mpsl_clock_control_data *mpsl_control_data = dev->driver_data;
+	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
 	int errcode = 0;
 	int key = irq_lock();
 	enum clock_control_status clock_status = clock_get_status(dev, subsys);
@@ -288,7 +325,8 @@ static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
 	switch (clock_status) {
 	case CLOCK_CONTROL_STATUS_ON:
 		if (subsys == CLOCK_CONTROL_NRF_SUBSYS_HF) {
-			if ((uint8_t)(mpsl_control_data->hfclk_count + 1) == 0) {
+			if ((uint8_t)
+			    (mpsl_control_data->hfclk_count + 1) == 0) {
 				/*  the counter of HFCLK gets overflow */
 				irq_unlock(key);
 				return -ENOTSUP;
@@ -331,9 +369,54 @@ static int clock_async_start(struct device *dev, clock_control_subsys_t subsys,
 	return errcode;
 }
 
+static void started_cb(struct device *dev,
+		       clock_control_subsys_t subsys,
+		       void *user_data)
+{
+	onoff_notify_fn notify = user_data;
+
+	enum clock_control_nrf_type type = (enum clock_control_nrf_type) subsys;
+	struct onoff_manager *mgr = &onoff_managers[type];
+
+	/* Result will always be zero since clock start cannot fail. */
+	const int res = 0;
+
+	notify(mgr, res);
+}
+
+static void onoff_start(struct onoff_manager *mgr, onoff_notify_fn notify)
+{
+	struct device *dev = DEVICE_GET(clock_nrf);
+	enum clock_control_nrf_type type = manager_to_clock_type(mgr);
+	static struct clock_control_async_data data;
+
+	/* Assumes that the onoff_start() will not be called twice from
+	 * different contexts.
+	 */
+	data.cb = started_cb;
+	data.user_data = notify;
+
+	int err = clock_async_start(
+		dev, (clock_control_subsys_t) type, &data);
+
+	if (err) {
+		notify(mgr, err);
+	}
+}
+
+static void onoff_stop(struct onoff_manager *mgr, onoff_notify_fn notify)
+{
+	struct device *dev = DEVICE_GET(clock_nrf);
+	enum clock_control_nrf_type type = manager_to_clock_type(mgr);
+
+	int err = clock_stop(dev, (clock_control_subsys_t) type);
+
+	notify(mgr, err);
+}
+
 static int clock_control_init(struct device *dev)
 {
-	struct mpsl_clock_control_data *mpsl_control_data = dev->driver_data;
+	struct mpsl_clock_control_data *mpsl_control_data = dev->data;
 
 	/* No-op. LFCLK is initialized by mpsl_init() at PRE_KERNEL_1,
 	 * see subsys/mpsl/mpsl_init.c.
@@ -344,23 +427,24 @@ static int clock_control_init(struct device *dev)
 
 	sys_slist_init(&(mpsl_control_data->async_on_list));
 	mpsl_control_data->hfclk_count = 0;
+
+	static const struct onoff_transitions transitions = {
+		.start = onoff_start,
+		.stop = onoff_stop
+	};
+
+	for (enum clock_control_nrf_type i = 0;
+	     i < CLOCK_CONTROL_NRF_TYPE_COUNT; i++) {
+		int err = onoff_manager_init(&onoff_managers[i], &transitions);
+
+		if (err < 0) {
+			return err;
+		}
+	}
+
 	return 0;
 }
 
-static const struct clock_control_driver_api clock_control_api = {
-	.on = clock_start,
-	.off = clock_stop,
-	.async_on = clock_async_start,
-	.get_rate = clock_get_rate,
-	.get_status = clock_get_status,
-};
-
-static struct mpsl_clock_control_data clock_control_data;
-
-DEVICE_AND_API_INIT(clock_nrf,
-		    DT_INST_LABEL(0),
-		    clock_control_init, &clock_control_data, NULL, PRE_KERNEL_1,
-		    CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &clock_control_api);
 
 #if IS_ENABLED(CONFIG_USB_NRFX)
 
@@ -416,4 +500,16 @@ static void hf_clock_started_callback(void)
 
 	sys_slist_init(list);
 	irq_unlock(key);
+}
+
+struct onoff_manager *z_nrf_clock_control_get_onoff(clock_control_subsys_t sys)
+{
+	__ASSERT_NO_MSG((enum clock_control_nrf_type) sys <
+			CLOCK_CONTROL_NRF_TYPE_COUNT);
+	return &onoff_managers[(unsigned int) sys];
+}
+
+void z_nrf_clock_control_lf_on(enum nrf_lfclk_start_mode start_mode)
+{
+	/* No-op. LFCLK is started by default by mpsl_init(). */
 }

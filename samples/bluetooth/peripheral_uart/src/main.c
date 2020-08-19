@@ -77,8 +77,10 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, NUS_UUID_SERVICE),
 };
 
-static void uart_cb(struct uart_event *evt, void *user_data)
+static void uart_cb(struct device *dev, struct uart_event *evt, void *user_data)
 {
+	ARG_UNUSED(dev);
+
 	static uint8_t *current_buf;
 	static size_t aborted_len;
 	static bool buf_release;
