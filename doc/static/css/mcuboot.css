@@ -22,3 +22,8 @@
 .wy-menu-vertical li.current a {
  color: #159957;
 }
+
+/* color for numbered steps */
+div.numbered-step>h2::before, div.numbered-step>h3::before, div.numbered-step>h4::before, div.numbered-step>h5::before {
+  background: #159957;
+}

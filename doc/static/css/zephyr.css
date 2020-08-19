@@ -73,3 +73,8 @@ th,td {
 .rst-versions {
  position: fixed !important;
 }
+
+/* color for numbered steps */
+div.numbered-step>h2::before, div.numbered-step>h3::before, div.numbered-step>h4::before, div.numbered-step>h5::before {
+  background: #a67dfb;
+}
