@@ -23,26 +23,43 @@
 
 #include <nrfx.h>
 
+#define FLASH_REG_IDX(address) \
+	((address) / (FLASH_SECURE_ATTRIBUTION_REGION_SIZE))
+
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
+
+extern uint32_t _app_address[];
+
+#define SPM_AND_APP_IN_BOTH_S0_AND_S1 (defined(PM_S1_ID) && \
+	(PM_SPM_ADDRESS < (PM_S0_ADDRESS + PM_S0_SIZE)))
+#if SPM_AND_APP_IN_BOTH_S0_AND_S1
+#define FIRST_NON_SECURE_FLASH_REGION_INDEX FLASH_REG_IDX(PM_APP_ADDRESS)
+#define SECOND_SECURE_REGION_INDEX FLASH_REG_IDX(PM_S1_ADDRESS)
+#define SECOND_NON_SECURE_REGION_INDEX FLASH_REG_IDX(PM_S1_ADDRESS + PM_SPM_SIZE)
+#define NON_SECURE_APP_ADDRESS _app_address
+#else
 #define NON_SECURE_APP_ADDRESS PM_APP_ADDRESS
+#endif /* SPM_AND_APP_IN_BOTH_S0_AND_S1 */
 #else
 #include <storage/flash_map.h>
 #define NON_SECURE_APP_ADDRESS FLASH_AREA_ID(image_0_nonsecure)
+
 #endif /* USE_PARTITION_MANAGER */
 
 /* This reflects the configuration in DTS. */
 #define NON_SECURE_RAM_OFFSET 0x10000
 
-#define NON_SECURE_FLASH_REGION_INDEX \
-	((NON_SECURE_APP_ADDRESS) / (FLASH_SECURE_ATTRIBUTION_REGION_SIZE))
+#define NON_SECURE_FLASH_REGION_INDEX FLASH_REG_IDX(NON_SECURE_APP_ADDRESS)
 #define NON_SECURE_RAM_REGION_INDEX \
 	((NON_SECURE_RAM_OFFSET) / (RAM_SECURE_ATTRIBUTION_REGION_SIZE))
 
 /*
  *  * The security configuration for depends on where the non secure app
- *  * is placed. All flash regions before the region which contains the
- *  * non secure app is configured as Secure.
+ *  * is placed, and if there is one or two possible locations for the non
+ *  * secure app. If the non secure app can only reside in one location, all
+ *  * flash regions before the region which contains the non secure app is
+ *  * configured as Secure.
  *
  *                FLASH
  *  1 MB  |---------------------|
@@ -59,6 +76,32 @@
  *        |     Secure          |
  *        |      Flash          |
  *  0 kB  |---------------------|
+ *
+ *  * If the non secure app can be stored in two different locations, the
+ *  * configuration will look as follows.
+ *
+ *                FLASH
+ *  1 MB  |---------------------|
+ *        |                     |
+ *        |                     |
+ *        |                     |
+ *        |     Non-Secure      |
+ *        |       Flash         |
+ *        |                     |
+ *  X kB  |---------------------|
+ *        |                     |
+ *        |     Secure          |
+ *        |      Flash          |
+ *  X kB  |---------------------|
+ *        |     Non-Secure      |
+ *        |       Flash         |
+ *        |                     |
+ *  X kB  |---------------------|
+ *        |                     |
+ *        |     Secure          |
+ *        |      Flash          |
+ *  0 kB  |---------------------|
+ *
  *
  *  * The security configuration for SRAM is applied:
  *
@@ -183,11 +226,37 @@ static void spm_config_flash(void)
 
 	PRINT("Flash regions\t\tDomain\t\tPermissions\n");
 
+#if SPM_AND_APP_IN_BOTH_S0_AND_S1
+	/* SPM + APP can be located in either B1 slots (S0 and S1)
+	 * hence, we must configure two separate secure and non-secure areas.
+	 */
+
+	/* The first secure region covers everything up to and including SPM. */
+	config_regions(false, 0, FIRST_NON_SECURE_FLASH_REGION_INDEX,
+			secure_flash_perm);
+
+	/* The first non-secure region covers the app partition in S0. */
+	config_regions(false, FIRST_NON_SECURE_FLASH_REGION_INDEX,
+			SECOND_SECURE_REGION_INDEX,
+			nonsecure_flash_perm);
+
+	/* The second secure region covers the SPM partition in S1. */
+	config_regions(false, SECOND_SECURE_REGION_INDEX,
+			SECOND_NON_SECURE_REGION_INDEX,
+			secure_flash_perm);
+	/* The second non-secure region covers the app partition in S1 as well
+	 * as the rest of the flash.
+	 */
+	config_regions(false, SECOND_NON_SECURE_REGION_INDEX,
+			NUM_FLASH_SECURE_ATTRIBUTION_REGIONS,
+			nonsecure_flash_perm);
+#else
 	config_regions(false, 0, NON_SECURE_FLASH_REGION_INDEX,
 			secure_flash_perm);
 	config_regions(false, NON_SECURE_FLASH_REGION_INDEX,
 			NUM_FLASH_SECURE_ATTRIBUTION_REGIONS,
 			nonsecure_flash_perm);
+#endif
 	PRINT("\n");
 
 #if defined(CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS)
