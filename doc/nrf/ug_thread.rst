@@ -6,8 +6,6 @@ Working with Thread
 The |NCS| provides support for developing applications using the Thread protocol.
 This support is based on the OpenThread stack, which is integrated into Zephyr.
 
-For information about how to start working with Thread in |NCS|, see the following pages:
-
 .. toctree::
    :maxdepth: 1
 
