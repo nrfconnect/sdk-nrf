@@ -20,7 +20,7 @@
 #include "multithreading_lock.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
-#define LOG_MODULE_NAME bt_ctlr_hci_driver
+#define LOG_MODULE_NAME sdc_hci_driver
 #include "common/log.h"
 
 static K_SEM_DEFINE(sem_recv, 0, 1);
@@ -35,16 +35,16 @@ static K_THREAD_STACK_DEFINE(recv_thread_stack, CONFIG_BLECTLR_RX_STACK_SIZE);
  */
 BUILD_ASSERT(CONFIG_SDC_SLAVE_COUNT <= CONFIG_BT_MAX_CONN);
 
-#define BLECTRL_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_SDC_SLAVE_COUNT)
+#define SDC_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_SDC_SLAVE_COUNT)
 
 #else
 
-#define BLECTRL_MASTER_COUNT 0
+#define SDC_MASTER_COUNT 0
 
 #endif /* CONFIG_BT_CONN */
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
-			 (BLECTRL_MASTER_COUNT > 0));
+			 (SDC_MASTER_COUNT > 0));
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 			 (CONFIG_SDC_SLAVE_COUNT > 0));
@@ -72,22 +72,22 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	+ SDC_MEM_SLAVE_LINKS_SHARED)
 
 #define MEMPOOL_SIZE ((CONFIG_SDC_SLAVE_COUNT * SLAVE_MEM_SIZE) + \
-		      (BLECTRL_MASTER_COUNT * MASTER_MEM_SIZE))
+		      (SDC_MASTER_COUNT * MASTER_MEM_SIZE))
 
 static uint8_t sdc_mempool[MEMPOOL_SIZE];
 
 #if IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER)
 extern void bt_ctlr_assert_handle(char *file, uint32_t line);
 
-void blectlr_assertion_handler(const char *const file, const uint32_t line)
+void sdc_assertion_handler(const char *const file, const uint32_t line)
 {
 	bt_ctlr_assert_handle((char *) file, line);
 }
 
 #else /* !IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
-void blectlr_assertion_handler(const char *const file, const uint32_t line)
+void sdc_assertion_handler(const char *const file, const uint32_t line)
 {
-	BT_ERR("BleCtlr ASSERT: %s, %d", log_strdup(file), line);
+	BT_ERR("SoftDevice Controller ASSERT: %s, %d", log_strdup(file), line);
 	k_oops();
 }
 #endif /* IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
@@ -354,13 +354,13 @@ static int hci_driver_open(void)
 
 	sdc_build_revision_get(build_revision);
 	LOG_HEXDUMP_INF(build_revision, sizeof(build_revision),
-			"BLE controller build revision: ");
+			"SoftDevice Controller build revision: ");
 
 	int err;
 	int required_memory;
 	sdc_cfg_t cfg;
 
-	cfg.master_count.count = BLECTRL_MASTER_COUNT;
+	cfg.master_count.count = SDC_MASTER_COUNT;
 
 	/* NOTE: sdc_cfg_set() returns a negative errno on error. */
 	required_memory =
@@ -449,7 +449,7 @@ static int hci_driver_open(void)
 }
 
 static const struct bt_hci_driver drv = {
-	.name = "Controller",
+	.name = "SoftDevice Controller",
 	.bus = BT_HCI_DRIVER_BUS_VIRTUAL,
 	.open = hci_driver_open,
 	.send = hci_driver_send,
@@ -511,7 +511,7 @@ static int hci_driver_init(struct device *unused)
 
 	bt_hci_driver_register(&drv);
 
-	err = sdc_init(blectlr_assertion_handler);
+	err = sdc_init(sdc_assertion_handler);
 	return err;
 }
 
