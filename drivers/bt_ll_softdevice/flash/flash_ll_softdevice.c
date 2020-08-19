@@ -46,50 +46,50 @@ static struct {
 } flash_state;
 
 /* Forward declarations */
-static int btctlr_flash_read(struct device *dev,
-			     off_t offset,
-			     void *data,
-			     size_t len);
-static int btctlr_flash_write(struct device *dev,
-			      off_t offset,
-			      const void *data,
-			      size_t len);
-static int btctlr_flash_erase(struct device *dev,
-			      off_t offset,
-			      size_t size);
-static int btctlr_flash_write_protection_set(struct device *dev,
-					     bool enable);
+static int sdc_flash_read(struct device *dev,
+			off_t offset,
+			void *data,
+			size_t len);
+static int sdc_flash_write(struct device *dev,
+			off_t offset,
+			const void *data,
+			size_t len);
+static int sdc_flash_erase(struct device *dev,
+			off_t offset,
+			size_t size);
+static int sdc_flash_write_protection_set(struct device *dev,
+					bool enable);
 
 static int flash_op_execute(void);
 
 #if defined(CONFIG_FLASH_PAGE_LAYOUT)
-static void btctlr_flash_page_layout_get(
+static void sdc_flash_page_layout_get(
 	struct device *dev,
 	const struct flash_pages_layout **layout,
 	size_t *layout_size);
 #endif /* defined(CONFIG_FLASH_PAGE_LAYOUT) */
 
 static const struct flash_parameters *
-btctlr_flash_parameters_get(const struct device *dev)
+sdc_flash_parameters_get(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 
-	static const struct flash_parameters btctlr_flash_parameters = {
+	static const struct flash_parameters flash_parameters = {
 		.write_block_size = FLASH_DRIVER_WRITE_BLOCK_SIZE,
 		.erase_value = 0xff,
 	};
 
-	return &btctlr_flash_parameters;
+	return &flash_parameters;
 }
 
-static const struct flash_driver_api btctrl_flash_api = {
-	.read = btctlr_flash_read,
-	.write = btctlr_flash_write,
-	.erase = btctlr_flash_erase,
-	.write_protection = btctlr_flash_write_protection_set,
-	.get_parameters = btctlr_flash_parameters_get,
+static const struct flash_driver_api flash_api = {
+	.read = sdc_flash_read,
+	.write = sdc_flash_write,
+	.erase = sdc_flash_erase,
+	.write_protection = sdc_flash_write_protection_set,
+	.get_parameters = sdc_flash_parameters_get,
 #if defined(CONFIG_FLASH_PAGE_LAYOUT)
-	.page_layout = btctlr_flash_page_layout_get,
+	.page_layout = sdc_flash_page_layout_get,
 #endif  /* CONFIG_FLASH_PAGE_LAYOUT */
 };
 
@@ -264,7 +264,7 @@ static int flash_op_execute_with_lock(void)
 
 /* Driver API. */
 
-static int btctlr_flash_read(struct device *dev,
+static int sdc_flash_read(struct device *dev,
 			     off_t offset,
 			     void *data,
 			     size_t len)
@@ -290,7 +290,7 @@ static int btctlr_flash_read(struct device *dev,
 	return 0;
 }
 
-static int btctlr_flash_write(struct device *dev,
+static int sdc_flash_write(struct device *dev,
 			      off_t offset,
 			      const void *data,
 			      size_t len)
@@ -321,7 +321,7 @@ static int btctlr_flash_write(struct device *dev,
 	return err;
 }
 
-static int btctlr_flash_erase(struct device *dev, off_t offset, size_t len)
+static int sdc_flash_erase(struct device *dev, off_t offset, size_t len)
 {
 	int err;
 
@@ -356,7 +356,7 @@ static int btctlr_flash_erase(struct device *dev, off_t offset, size_t len)
 	return err;
 }
 
-static int btctlr_flash_write_protection_set(struct device *dev, bool enable)
+static int sdc_flash_write_protection_set(struct device *dev, bool enable)
 {
 	/* The BLE controller handles the write protection automatically. */
 	return 0;
@@ -365,7 +365,7 @@ static int btctlr_flash_write_protection_set(struct device *dev, bool enable)
 #if defined(CONFIG_FLASH_PAGE_LAYOUT)
 static struct flash_pages_layout dev_layout;
 
-static void btctlr_flash_page_layout_get(
+static void sdc_flash_page_layout_get(
 	struct device *dev,
 	const struct flash_pages_layout **layout,
 	size_t *layout_size)
@@ -375,9 +375,9 @@ static void btctlr_flash_page_layout_get(
 }
 #endif /* defined(CONFIG_FLASH_PAGE_LAYOUT) */
 
-static int nrf_btctrl_flash_init(struct device *dev)
+static int flash_init(struct device *dev)
 {
-	dev->driver_api = &btctrl_flash_api;
+	dev->driver_api = &flash_api;
 	k_sem_init(&flash_state.sync, 0, 1);
 	k_mutex_init(&flash_state.lock);
 
@@ -389,6 +389,6 @@ static int nrf_btctrl_flash_init(struct device *dev)
 	return 0;
 }
 
-DEVICE_INIT(nrf_btctrl_flash, DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE),
-	    nrf_btctrl_flash_init, NULL, NULL, POST_KERNEL,
+DEVICE_INIT(flash, DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE),
+	    flash_init, NULL, NULL, POST_KERNEL,
 	    CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
