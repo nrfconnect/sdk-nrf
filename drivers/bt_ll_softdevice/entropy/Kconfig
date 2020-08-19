@@ -6,8 +6,8 @@
 
 if ENTROPY_GENERATOR
 
-config ENTROPY_NRF_LL_NRFXLIB
-	bool "nRF BLE Controller entropy driver"
+config ENTROPY_NRF_LL_SOFTDEVICE
+	bool "SoftDevice Controller entropy driver"
 	default y
 	select ENTROPY_NRF_FORCE_ALT
 	select ENTROPY_HAS_DRIVER
