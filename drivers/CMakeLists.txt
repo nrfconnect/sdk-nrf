@@ -6,7 +6,7 @@
 
 add_subdirectory_ifdef(CONFIG_SENSOR sensor)
 add_subdirectory_ifdef(CONFIG_NETWORKING net)
-add_subdirectory_ifdef(CONFIG_BT_LL_SOFTDEVICE bt_ll_nrfxlib)
+add_subdirectory_ifdef(CONFIG_BT_LL_SOFTDEVICE bt_ll_softdevice)
 add_subdirectory_ifdef(CONFIG_MPSL mpsl)
 add_subdirectory(hw_cc310)
 add_subdirectory(entropy)

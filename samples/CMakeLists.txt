@@ -40,7 +40,7 @@ if (CONFIG_BT_RPMSG_NRF53)
     if (CONFIG_BT_LL_SOFTDEVICE_DEFAULT)
       add_overlay_config(
         hci_rpmsg
-        ${NRF_DIR}/subsys/bluetooth/controller/bt_ll_nrfxlib_hci_rpmsg.conf
+        ${NRF_DIR}/subsys/bluetooth/controller/bt_ll_softdevice_hci_rpmsg.conf
         )
     endif()
 

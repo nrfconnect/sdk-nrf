@@ -6,8 +6,8 @@
 
 if FLASH
 
-config SOC_FLASH_NRF_LL_NRFXLIB
-	bool "nRF BLE Controller flash driver"
+config SOC_FLASH_NRF_LL_SOFTDEVICE
+	bool "SoftDevice Controller flash driver"
 	default y
 	select FLASH_NRF_FORCE_ALT
 	select FLASH_HAS_PAGE_LAYOUT
@@ -16,6 +16,6 @@ config SOC_FLASH_NRF_LL_NRFXLIB
 	select MPU_ALLOW_FLASH_WRITE if CPU_HAS_MPU
 	select MULTITHREADING_LOCK
 	help
-	  Enables nRF BLE Controller flash driver.
+	  Enables SoftDevice Controller flash driver.
 
 endif # FLASH
