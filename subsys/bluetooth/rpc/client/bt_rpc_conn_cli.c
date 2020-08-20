@@ -395,7 +395,7 @@ void bt_conn_remote_info_dec(CborValue *value, struct bt_conn *conn, struct bt_c
 
 	if (remote_info->type == BT_CONN_TYPE_LE && conn != NULL) {
 		LOCK_CONN_INFO();
-		remote_info->le.features = ser_decode_buffer(value, &conn->features, sizeof(bt_addr_le_t));
+		remote_info->le.features = ser_decode_buffer(value, &conn->features, sizeof(conn->features));
 		UNLOCK_CONN_INFO();
 	} else {
 		/* non-LE connection types are not supported. */
