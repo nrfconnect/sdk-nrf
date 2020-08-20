@@ -151,9 +151,9 @@ static int mpsl_lib_init(struct device *dev)
 	clock_cfg.source = m_config_clock_source_get();
 	clock_cfg.accuracy_ppm = m_config_clock_accuracy_get();
 
-#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
-	clock_cfg.rc_ctiv = MPSL_RECOMMENDED_RC_CTIV;
-	clock_cfg.rc_temp_ctiv = MPSL_RECOMMENDED_RC_TEMP_CTIV;
+#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
+	clock_cfg.rc_ctiv = CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD * 4 / 1000;
+	clock_cfg.rc_temp_ctiv = CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP + 1;
 #else
 	clock_cfg.rc_ctiv = 0;
 	clock_cfg.rc_temp_ctiv = 0;
