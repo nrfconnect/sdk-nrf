@@ -42,17 +42,11 @@ struct pcd_cmd {
 	size_t offset;    /* Offset to store the flash image in */
 } __attribute__ ((aligned(4)));
 
-#if DT_HAS_CHOSEN(zephyr_ipc_shm)
-#define SHM_NODE            DT_CHOSEN(zephyr_ipc_shm)
-#define SHM_BASE_ADDRESS    DT_REG_ADDR(SHM_NODE)
-#define SHM_SIZE            sizeof(pcd_cmd);
-#endif
+#define APP_CORE_SRAM_BASE_ADDRESS 0x20000000
+#define APP_CORE_SRAM_SIZE KB(512)
+#define PCD_CMD_ADDRESS (APP_CORE_SRAM_BASE_ADDRESS + APP_CORE_SRAM_SIZE \
+			- sizeof(struct pcd_cmd))
 
-#if defined(SHM_BASE_ADDRESS) && (SHM_BASE_ADDRESS != 0)
-#define PCD_CMD_ADDRESS SHM_BASE_ADDRESS
-#else
-#error "Could not find shared memory address"
-#endif
 
 /** @brief Get a PCD CMD from the specified address.
  *
