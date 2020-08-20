@@ -1,0 +1,134 @@
+name: Compliance
+
+on: pull_request
+
+jobs:
+  compliance_job:
+    runs-on: ubuntu-latest
+    name: Run compliance checks on patch series (PR)
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v2
+      with:
+        path: ncs/nrf
+        fetch-depth: 0
+
+    - name: cache-pip
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-doc-pip
+
+    - name: Install python dependencies
+      run: |
+        pip3 install -U pip
+        pip3 install  -U setuptools
+        export PATH="$HOME/.local/bin:$PATH"
+        pip3 install  -U wheel
+        pip3 install  -U python-magic junitparser gitlint pylint pykwalify
+        pip3 install --user -U west
+        pip3 show -f west
+
+    - name: West init and update
+      working-directory: ncs
+      run: |
+        export PATH="$HOME/.local/bin:$PATH"
+        export PATH="$HOME/bin:$PATH"
+        west init -l nrf
+        west update
+        west zephyr-export
+
+    - name: Run Compliance Tests
+      id: compliance
+      env:
+        BASE_REF: ${{ github.base_ref }}
+      working-directory: ncs/nrf
+      run: |
+        export PATH="$HOME/.local/bin:$PATH"
+        export PATH="$HOME/bin:$PATH"
+        export ZEPHYR_BASE="$(dirname "$(pwd)")/zephyr"
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        git remote -v
+        git branch
+        git rebase origin/${BASE_REF}
+        $ZEPHYR_BASE/scripts/ci/check_compliance.py -m Codeowners -m Devicetree -m Gitlint -m Identity -m Nits -m pylint -m checkpatch -m Kconfig -c origin/${BASE_REF}.. || true
+
+    - name: upload-results
+      uses: actions/upload-artifact@v2
+      continue-on-error: True
+      with:
+        name: compliance.xml
+        path: ncs/nrf/compliance.xml
+
+    - name: check-warns
+      working-directory: ncs/nrf
+      run: |
+        if [ -s Nits.txt ]; then
+           errors=$(cat Nits.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=Nits.txt::$errors"
+           exit=1
+        fi
+        if [ -s checkpatch.txt ]; then
+           errors=$(cat checkpatch.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=Checkpatch.txt::$errors"
+           exit=1
+        fi
+        if [ -s Identity.txt ]; then
+           errors=$(cat Identity.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=Identity.txt::$errors"
+           exit=1
+        fi
+        if [ -s Gitlint.txt ]; then
+           errors=$(cat Gitlint.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=Gitlint.txt::$errors"
+           exit=1
+        fi
+        if [ -s pylint.txt ]; then
+           errors=$(cat pylint.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=pylint.txt::$errors"
+           exit=1
+        fi
+        if [ -s Devicetree.txt ]; then
+           errors=$(cat Devicetree.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=Devicetree.txt::$errors"
+           exit=1
+        fi
+        if [ -s Kconfig.txt ]; then
+           errors=$(cat Kconfig.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=Kconfig.txt::$errors"
+           exit=1
+        fi
+        if [ -s Codeowners.txt ]; then
+           errors=$(cat Codeowners.txt)
+           errors="${errors//'%'/'%25'}"
+           errors="${errors//$'\n'/'%0A'}"
+           errors="${errors//$'\r'/'%0D'}"
+           echo "::error file=Codeowners.txt::$errors"
+           exit=1
+        fi
+
+        if [ ${exit} == 1 ]; then
+          exit 1;
+        fi
