@@ -22,6 +22,8 @@ manifest:
     # NCS repositories are hosted here.
     - name: ncs
       url-base: https://github.com/nrfconnect
+    - name: siho
+      url-base: https://github.com/sigvartmh
     # Third-party repository sources:
     - name: zephyrproject
       url-base: https://github.com/zephyrproject-rtos
@@ -87,9 +89,10 @@ manifest:
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
     - name: mcuboot
-      repo-path: sdk-mcuboot
-      revision: 92992c0cc46c19fd698b6a1e7ca06dea37e19bf7
+      repo-path: fw-nrfconnect-mcuboot-1
+      revision: smh-botnet
       path: bootloader/mcuboot
+      remote: siho
     - name: mcumgr
       repo-path: sdk-mcumgr
       revision: 898a5a7f5224be8345e58eca3b9a84389ed61d15
