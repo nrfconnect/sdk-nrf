@@ -78,10 +78,6 @@ static int subscriber_count[UART_DEVICE_COUNT];
 static bool enable_rx_retry[UART_DEVICE_COUNT];
 static atomic_t uart_tx_started[UART_DEVICE_COUNT];
 
-static bool framing_error_msg_sent[UART_DEVICE_COUNT];
-static char framing_error_msg[] =
-	"[UART FRAMING ERROR! CHECK BAUDRATE!]";
-
 static void enable_uart_rx(uint8_t dev_idx);
 static void disable_uart_rx(uint8_t dev_idx);
 static void set_uart_power_state(uint8_t dev_idx, bool active);
@@ -200,28 +196,12 @@ static void uart_callback(struct uart_event *evt, void *user_data)
 		break;
 	case UART_RX_STOPPED:
 		LOG_WRN("UART_%d stop reason %d", dev_idx, evt->data.rx_stop.reason);
-		if (evt->data.rx_stop.data.buf) {
-			uart_rx_buf_unref(evt->data.rx_stop.data.buf);
-		}
 
-		if (evt->data.rx_stop.reason & UART_ERROR_FRAMING &&
-			!framing_error_msg_sent[dev_idx]) {
-			/* Send error message so user can identify baud rate issues */
-			event = new_uart_data_event();
-			event->dev_idx = dev_idx;
-			event->buf = framing_error_msg;
-			event->len = sizeof(framing_error_msg);
-			EVENT_SUBMIT(event);
-
-			framing_error_msg_sent[dev_idx] = true;
-		}
-
-		if ((evt->data.rx_stop.reason & UART_ERROR_FRAMING) == 0) {
-			/* Unexpected stop: restart RX after DISABLED event */
-			/* Avoid restarting upon framing error, as this is unlikely to */
-			/* recover until UART is reopened with proper baud rate */
-			enable_rx_retry[dev_idx] = true;
-		}
+		/* Retry automatically in case of unexpected stop.
+		 * Typically happens when the peer does not drive its TX GPIO,
+		 * or if there is a baud rate mismatch.
+		 */
+		enable_rx_retry[dev_idx] = true;
 		break;
 	default:
 		LOG_ERR("Unexpected event: %d", evt->type);
@@ -464,7 +444,6 @@ static bool event_handler(const struct event_header *eh)
 
 		if (event->conn_state == PEER_STATE_CONNECTED) {
 			subscriber_count[event->dev_idx] += 1;
-			framing_error_msg_sent[event->dev_idx] = false;
 			set_uart_baudrate(event->dev_idx, event->baudrate);
 		} else {
 			subscriber_count[event->dev_idx] -= 1;
