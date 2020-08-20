@@ -16,24 +16,19 @@
 #define UNUSED ;
 #endif
 
+#if defined(NRF_RPC_GENERATOR)
+#define _
+#endif
 
-#define LOCK_GAP_CACHE() k_mutex_lock(&bt_rpc_gap_cache_mutex, K_FOREVER)
-#define UNLOCK_GAP_CACHE() k_mutex_unlock(&bt_rpc_gap_cache_mutex)
 
 K_MUTEX_DEFINE(bt_rpc_gap_cache_mutex);
+#define LOCK_GAP_CACHE() k_mutex_lock(&bt_rpc_gap_cache_mutex, K_FOREVER)
+#define UNLOCK_GAP_CACHE() k_mutex_unlock(&bt_rpc_gap_cache_mutex)
 
 static void report_decoding_error(uint8_t cmd_evt_id, void* data) {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
 		    NRF_RPC_PACKET_TYPE_CMD);
 }
-
-#if defined(CONFIG_BT_EXT_ADV) || defined(NRF_RPC_GENERATOR)
-
-static struct bt_le_ext_adv_cb cb_cache[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
-static uint8_t cb_cache_map[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
-BT_RPC_POOL_DEFINE(cb_cache_pool, CONFIG_BT_EXT_ADV_MAX_ADV_SET);
-
-#endif /* defined(CONFIG_BT_EXT_ADV) || defined(NRF_RPC_GENERATOR) */
 
 static void bt_rpc_get_check_table_rpc_handler(CborValue *_value, void *_handler_data)/*####%BoCa*/
 {                                                                                     /*#####@raA*/
@@ -124,193 +119,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_enable, BT_ENABLE_RPC_CMD,              
 	bt_enable_rpc_handler, NULL);                                            /*#####@rg4*/
 
 
-void bt_data_dec(struct ser_scratchpad *_scratchpad, struct bt_data *_data)      /*####%Bne5*/
-{                                                                                /*#####@+3g*/
 
-	CborValue *_value = _scratchpad->value;                                  /*##AU3cSLw*/
-
-	_data->type = ser_decode_uint(_value);                                   /*######%Ck*/
-	_data->data_len = ser_decode_uint(_value);                               /*######cDJ*/
-	_data->data = ser_decode_buffer_sp(_scratchpad);                         /*######@Vg*/
-
-}                                                                                /*##B9ELNqo*/
-
-void bt_le_adv_param_dec(struct ser_scratchpad *_scratchpad, struct bt_le_adv_param *_data)/*####%Bklr*/
-{                                                                                          /*#####@MEU*/
-
-	CborValue *_value = _scratchpad->value;                                            /*##AU3cSLw*/
-
-	_data->id = ser_decode_uint(_value);                                               /*#######%C*/
-	_data->sid = ser_decode_uint(_value);                                              /*#######uD*/
-	_data->secondary_max_skip = ser_decode_uint(_value);                               /*########8*/
-	_data->options = ser_decode_uint(_value);                                          /*########H*/
-	_data->interval_min = ser_decode_uint(_value);                                     /*########O*/
-	_data->interval_max = ser_decode_uint(_value);                                     /*########8*/
-	_data->peer = ser_decode_buffer_sp(_scratchpad);                                   /*########@*/
-
-}                                                                                          /*##B9ELNqo*/
-
-static void bt_le_adv_start_rpc_handler(CborValue *_value, void *_handler_data)  /*####%BkMc*/
-{                                                                                /*#####@+8A*/
-
-	struct bt_le_adv_param param;                                            /*#######%A*/
-	size_t ad_len;                                                           /*########c*/
-	struct bt_data * ad;                                                     /*########X*/
-	size_t sd_len;                                                           /*########6*/
-	struct bt_data * sd;                                                     /*########P*/
-	int _result;                                                             /*########U*/
-	struct ser_scratchpad _scratchpad;                                       /*########4*/
-	size_t _i;                                                               /*########@*/
-
-	SER_SCRATCHPAD_ALLOC(&_scratchpad, _value);                              /*##EZKHjKY*/
-
-	bt_le_adv_param_dec(&_scratchpad, &param);                               /*########%*/
-	ad_len = ser_decode_uint(_value);                                        /*########C*/
-	ad = ser_scratchpad_get(&_scratchpad, ad_len * sizeof(struct bt_data));  /*########j*/
-	if (ad == NULL) {                                                        /*########c*/
-		goto decoding_error;                                             /*########r*/
-	}                                                                        /*########S*/
-	for (_i = 0; _i < ad_len; _i++) {                                        /*########q*/
-		bt_data_dec(&_scratchpad, &ad[_i]);                              /*########E*/
-	}                                                                        /*#########*/
-	sd_len = ser_decode_uint(_value);                                        /*#########*/
-	sd = ser_scratchpad_get(&_scratchpad, sd_len * sizeof(struct bt_data));  /*#########*/
-	if (sd == NULL) {                                                        /*#########*/
-		goto decoding_error;                                             /*#########*/
-	}                                                                        /*#########*/
-	for (_i = 0; _i < sd_len; _i++) {                                        /*#########*/
-		bt_data_dec(&_scratchpad, &sd[_i]);                              /*#########*/
-	}                                                                        /*########@*/
-
-	if (!ser_decoding_done_and_check(_value)) {                              /*######%FE*/
-		goto decoding_error;                                             /*######QTM*/
-	}                                                                        /*######@1Y*/
-
-	_result = bt_le_adv_start(&param, ad, ad_len, sd, sd_len);               /*##DovAJXw*/
-
-		SER_SCRATCHPAD_FREE(&_scratchpad);                               /*##Eq1r7Tg*/
-
-	ser_rsp_send_int(_result);                                               /*##BPC96+4*/
-
-	return;                                                                  /*######%FX*/
-decoding_error:                                                                  /*#######q+*/
-	report_decoding_error(BT_LE_ADV_START_RPC_CMD, _handler_data);           /*#######5i*/
-	SER_SCRATCHPAD_FREE(&_scratchpad);                                       /*#######@o*/
-
-}                                                                                /*##B9ELNqo*/
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_adv_start, BT_LE_ADV_START_RPC_CMD,   /*####%BpKn*/
-	bt_le_adv_start_rpc_handler, NULL);                                      /*#####@Slg*/
-
-static void bt_le_adv_stop_rpc_handler(CborValue *_value, void *_handler_data)   /*####%BlBQ*/
-{                                                                                /*#####@4G8*/
-
-	int _result;                                                             /*##AWc+iOc*/
-
-	nrf_rpc_cbor_decoding_done(_value);                                      /*##FGkSPWY*/
-
-	_result = bt_le_adv_stop();                                              /*##Du9+9xY*/
-
-	ser_rsp_send_int(_result);                                               /*##BPC96+4*/
-
-}                                                                                /*##B9ELNqo*/
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_adv_stop, BT_LE_ADV_STOP_RPC_CMD,     /*####%BpS4*/
-	bt_le_adv_stop_rpc_handler, NULL);                                       /*#####@7tk*/
-
-void bt_le_scan_param_dec(CborValue *_value, struct bt_le_scan_param *_data)     /*####%Bjc4*/
-{                                                                                /*#####@EWA*/
-
-	_data->type = ser_decode_uint(_value);                                   /*#######%C*/
-	_data->options = ser_decode_uint(_value);                                /*#######sD*/
-	_data->interval = ser_decode_uint(_value);                               /*########m*/
-	_data->window = ser_decode_uint(_value);                                 /*########T*/
-	_data->timeout = ser_decode_uint(_value);                                /*########W*/
-	_data->interval_coded = ser_decode_uint(_value);                         /*########c*/
-	_data->window_coded = ser_decode_uint(_value);                           /*########@*/
-
-}                                                                                /*##B9ELNqo*/
-
-
-size_t net_buf_simple_sp_size(struct net_buf_simple *_data)
-{
-	return SCRATCHPAD_ALIGN(_data->len);
-}
-
-size_t net_buf_simple_buf_size(struct net_buf_simple *_data)
-{
-	return 3 + _data->len;
-}
-
-void net_buf_simple_enc(CborEncoder *_encoder, struct net_buf_simple *_data)
-{
-	SERIALIZE(CUSTOM_STRUCT(struct net_buf_simple));
-	
-	ser_encode_buffer(_encoder, _data->data, _data->len);
-}
-
-
-static inline void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr,
-					    int8_t rssi, uint8_t adv_type,
-					    struct net_buf_simple *buf,
-					    uint32_t callback_slot)
-{
-	SERIALIZE(CALLBACK(bt_le_scan_cb_t *));
-
-	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%AQ*/
-	size_t _scratchpad_size = 0;                                             /*######Krt*/
-	size_t _buffer_size_max = 15;                                            /*######@KM*/
-
-	_buffer_size_max += addr ? sizeof(bt_addr_le_t) : 0;                     /*####%CE/i*/
-	_buffer_size_max += net_buf_simple_buf_size(buf);                        /*#####@n2Y*/
-
-	_scratchpad_size += net_buf_simple_sp_size(buf);                         /*##EGDrauo*/
-
-	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*####%AoDN*/
-	ser_encode_uint(&_ctx.encoder, _scratchpad_size);                        /*#####@BNc*/
-
-	ser_encode_buffer(&_ctx.encoder, addr, sizeof(bt_addr_le_t));            /*#######%A*/
-	ser_encode_int(&_ctx.encoder, rssi);                                     /*#######7/*/
-	ser_encode_uint(&_ctx.encoder, adv_type);                                /*#######+b*/
-	net_buf_simple_enc(&_ctx.encoder, buf);                                  /*#######AI*/
-	ser_encode_callback_slot(&_ctx.encoder, callback_slot);                  /*########@*/
-
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD,   /*####%BAqD*/
-		&_ctx, ser_rsp_simple_void, NULL);                               /*#####@cTU*/
-}
-
-
-CBKPROXY_HANDLER(bt_le_scan_cb_t_encoder, bt_le_scan_cb_t_callback,
-		 (const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type,
-		  struct net_buf_simple *buf), (addr, rssi, adv_type, buf));
-
-
-static void bt_le_scan_start_rpc_handler(CborValue *_value, void *_handler_data)     /*####%BtgB*/
-{                                                                                    /*#####@oaA*/
-
-	struct bt_le_scan_param param;                                               /*######%Aa*/
-	bt_le_scan_cb_t *cb;                                                         /*######eZM*/
-	int _result;                                                                 /*######@I4*/
-
-	bt_le_scan_param_dec(_value, &param);                                        /*####%CtFV*/
-	cb = (bt_le_scan_cb_t *)ser_decode_callback(_value, bt_le_scan_cb_t_encoder);/*#####@F4o*/
-
-	if (!ser_decoding_done_and_check(_value)) {                                  /*######%FE*/
-		goto decoding_error;                                                 /*######QTM*/
-	}                                                                            /*######@1Y*/
-
-	_result = bt_le_scan_start(&param, cb);                                      /*##DiKuFZA*/
-
-	ser_rsp_send_int(_result);                                                   /*##BPC96+4*/
-
-	return;                                                                      /*######%FR*/
-decoding_error:                                                                      /*######Kcd*/
-	report_decoding_error(BT_LE_SCAN_START_RPC_CMD, _handler_data);              /*######@z0*/
-
-}                                                                                    /*##B9ELNqo*/
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_start, BT_LE_SCAN_START_RPC_CMD, /*####%BnWD*/
-	bt_le_scan_start_rpc_handler, NULL);                                     /*#####@Jb0*/
+#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_)
 
 static void bt_set_name_rpc_handler(CborValue *_value, void *_handler_data)      /*####%BgLQ*/
 {                                                                                /*#####@EdU*/
@@ -404,6 +214,8 @@ decoding_error:                                                                 
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_get_name_out, BT_GET_NAME_OUT_RPC_CMD,   /*####%BuEw*/
 	bt_get_name_out_rpc_handler, NULL);                                      /*#####@65I*/
+
+#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_) */
 
 static void bt_set_id_addr_rpc_handler(CborValue *_value, void *_handler_data)   /*####%BvyT*/
 {                                                                                /*#####@wb0*/
@@ -597,6 +409,150 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_id_delete, BT_ID_DELETE_RPC_CMD,         /*####%BibD*/
 	bt_id_delete_rpc_handler, NULL);                                         /*#####@9Jg*/
 
+void bt_data_dec(struct ser_scratchpad *_scratchpad, struct bt_data *_data)      /*####%Bne5*/
+{                                                                                /*#####@+3g*/
+
+	CborValue *_value = _scratchpad->value;                                  /*##AU3cSLw*/
+
+	_data->type = ser_decode_uint(_value);                                   /*######%Ck*/
+	_data->data_len = ser_decode_uint(_value);                               /*######cDJ*/
+	_data->data = ser_decode_buffer_sp(_scratchpad);                         /*######@Vg*/
+
+}                                                                                /*##B9ELNqo*/
+
+void bt_le_scan_param_dec(CborValue *_value, struct bt_le_scan_param *_data)     /*####%Bjc4*/
+{                                                                                /*#####@EWA*/
+
+	_data->type = ser_decode_uint(_value);                                   /*#######%C*/
+	_data->options = ser_decode_uint(_value);                                /*#######sD*/
+	_data->interval = ser_decode_uint(_value);                               /*########m*/
+	_data->window = ser_decode_uint(_value);                                 /*########T*/
+	_data->timeout = ser_decode_uint(_value);                                /*########W*/
+	_data->interval_coded = ser_decode_uint(_value);                         /*########c*/
+	_data->window_coded = ser_decode_uint(_value);                           /*########@*/
+
+}                                                                                /*##B9ELNqo*/
+
+
+size_t net_buf_simple_sp_size(struct net_buf_simple *_data)
+{
+	return SCRATCHPAD_ALIGN(_data->len);
+}
+
+size_t net_buf_simple_buf_size(struct net_buf_simple *_data)
+{
+	return 3 + _data->len;
+}
+
+void net_buf_simple_enc(CborEncoder *_encoder, struct net_buf_simple *_data)
+{
+	SERIALIZE(CUSTOM_STRUCT(struct net_buf_simple));
+
+	ser_encode_buffer(_encoder, _data->data, _data->len);
+}
+
+
+static inline void bt_le_scan_cb_t_callback(const bt_addr_le_t *addr,
+					    int8_t rssi, uint8_t adv_type,
+					    struct net_buf_simple *buf,
+					    uint32_t callback_slot)
+{
+	SERIALIZE(CALLBACK(bt_le_scan_cb_t *));
+
+	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%AQ*/
+	size_t _scratchpad_size = 0;                                             /*######Krt*/
+	size_t _buffer_size_max = 15;                                            /*######@KM*/
+
+	_buffer_size_max += addr ? sizeof(bt_addr_le_t) : 0;                     /*####%CE/i*/
+	_buffer_size_max += net_buf_simple_buf_size(buf);                        /*#####@n2Y*/
+
+	_scratchpad_size += net_buf_simple_sp_size(buf);                         /*##EGDrauo*/
+
+	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*####%AoDN*/
+	ser_encode_uint(&_ctx.encoder, _scratchpad_size);                        /*#####@BNc*/
+
+	ser_encode_buffer(&_ctx.encoder, addr, sizeof(bt_addr_le_t));            /*#######%A*/
+	ser_encode_int(&_ctx.encoder, rssi);                                     /*#######7/*/
+	ser_encode_uint(&_ctx.encoder, adv_type);                                /*#######+b*/
+	net_buf_simple_enc(&_ctx.encoder, buf);                                  /*#######AI*/
+	ser_encode_callback_slot(&_ctx.encoder, callback_slot);                  /*########@*/
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SCAN_CB_T_CALLBACK_RPC_CMD,   /*####%BAqD*/
+		&_ctx, ser_rsp_simple_void, NULL);                               /*#####@cTU*/
+}
+
+
+CBKPROXY_HANDLER(bt_le_scan_cb_t_encoder, bt_le_scan_cb_t_callback,
+		 (const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type,
+		  struct net_buf_simple *buf), (addr, rssi, adv_type, buf));
+
+void bt_le_adv_param_dec(struct ser_scratchpad *_scratchpad, struct bt_le_adv_param *_data)/*####%Bklr*/
+{                                                                                          /*#####@MEU*/
+
+	CborValue *_value = _scratchpad->value;                                            /*##AU3cSLw*/
+
+	_data->id = ser_decode_uint(_value);                                               /*#######%C*/
+	_data->sid = ser_decode_uint(_value);                                              /*#######uD*/
+	_data->secondary_max_skip = ser_decode_uint(_value);                               /*########8*/
+	_data->options = ser_decode_uint(_value);                                          /*########H*/
+	_data->interval_min = ser_decode_uint(_value);                                     /*########O*/
+	_data->interval_max = ser_decode_uint(_value);                                     /*########8*/
+	_data->peer = ser_decode_buffer_sp(_scratchpad);                                   /*########@*/
+
+}                                                                                          /*##B9ELNqo*/
+
+static void bt_le_adv_start_rpc_handler(CborValue *_value, void *_handler_data)  /*####%BkMc*/
+{                                                                                /*#####@+8A*/
+
+	struct bt_le_adv_param param;                                            /*#######%A*/
+	size_t ad_len;                                                           /*########c*/
+	struct bt_data * ad;                                                     /*########X*/
+	size_t sd_len;                                                           /*########6*/
+	struct bt_data * sd;                                                     /*########P*/
+	int _result;                                                             /*########U*/
+	struct ser_scratchpad _scratchpad;                                       /*########4*/
+	size_t _i;                                                               /*########@*/
+
+	SER_SCRATCHPAD_ALLOC(&_scratchpad, _value);                              /*##EZKHjKY*/
+
+	bt_le_adv_param_dec(&_scratchpad, &param);                               /*########%*/
+	ad_len = ser_decode_uint(_value);                                        /*########C*/
+	ad = ser_scratchpad_get(&_scratchpad, ad_len * sizeof(struct bt_data));  /*########j*/
+	if (ad == NULL) {                                                        /*########c*/
+		goto decoding_error;                                             /*########r*/
+	}                                                                        /*########S*/
+	for (_i = 0; _i < ad_len; _i++) {                                        /*########q*/
+		bt_data_dec(&_scratchpad, &ad[_i]);                              /*########E*/
+	}                                                                        /*#########*/
+	sd_len = ser_decode_uint(_value);                                        /*#########*/
+	sd = ser_scratchpad_get(&_scratchpad, sd_len * sizeof(struct bt_data));  /*#########*/
+	if (sd == NULL) {                                                        /*#########*/
+		goto decoding_error;                                             /*#########*/
+	}                                                                        /*#########*/
+	for (_i = 0; _i < sd_len; _i++) {                                        /*#########*/
+		bt_data_dec(&_scratchpad, &sd[_i]);                              /*#########*/
+	}                                                                        /*########@*/
+
+	if (!ser_decoding_done_and_check(_value)) {                              /*######%FE*/
+		goto decoding_error;                                             /*######QTM*/
+	}                                                                        /*######@1Y*/
+
+	_result = bt_le_adv_start(&param, ad, ad_len, sd, sd_len);               /*##DovAJXw*/
+
+		SER_SCRATCHPAD_FREE(&_scratchpad);                               /*##Eq1r7Tg*/
+
+	ser_rsp_send_int(_result);                                               /*##BPC96+4*/
+
+	return;                                                                  /*######%FX*/
+decoding_error:                                                                  /*#######q+*/
+	report_decoding_error(BT_LE_ADV_START_RPC_CMD, _handler_data);           /*#######5i*/
+	SER_SCRATCHPAD_FREE(&_scratchpad);                                       /*#######@o*/
+
+}                                                                                /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_adv_start, BT_LE_ADV_START_RPC_CMD,   /*####%BpKn*/
+	bt_le_adv_start_rpc_handler, NULL);                                      /*#####@Slg*/
+
 static void bt_le_adv_update_data_rpc_handler(CborValue *_value, void *_handler_data)/*####%Buyg*/
 {                                                                                    /*#####@rwo*/
 
@@ -647,8 +603,53 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_adv_update_data, BT_LE_ADV_UPDATE_DATA_RPC_CMD,/*####%BpKp*/
 	bt_le_adv_update_data_rpc_handler, NULL);                                         /*#####@XTI*/
 
+static void bt_le_adv_stop_rpc_handler(CborValue *_value, void *_handler_data)   /*####%BlBQ*/
+{                                                                                /*#####@4G8*/
 
-#if defined(CONFIG_BT_EXT_ADV) || defined(NRF_RPC_GENERATOR)
+	int _result;                                                             /*##AWc+iOc*/
+
+	nrf_rpc_cbor_decoding_done(_value);                                      /*##FGkSPWY*/
+
+	_result = bt_le_adv_stop();                                              /*##Du9+9xY*/
+
+	ser_rsp_send_int(_result);                                               /*##BPC96+4*/
+
+}                                                                                /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_adv_stop, BT_LE_ADV_STOP_RPC_CMD,     /*####%BpS4*/
+	bt_le_adv_stop_rpc_handler, NULL);                                       /*#####@7tk*/
+
+size_t bt_le_oob_buf_size(const struct bt_le_oob *_data)                         /*####%Bq7Y*/
+{                                                                                /*#####@wVE*/
+
+	size_t _buffer_size_max = 13;                                            /*##Adi6hug*/
+
+	_buffer_size_max += sizeof(bt_addr_le_t);                                /*######%CH*/
+	_buffer_size_max += 16 * sizeof(uint8_t);                                /*######4Ws*/
+	_buffer_size_max += 16 * sizeof(uint8_t);                                /*######@J0*/
+
+	return _buffer_size_max;                                                 /*##BWmN6G8*/
+
+}                                                                                /*##B9ELNqo*/
+
+void bt_le_oob_enc(CborEncoder *_encoder, const struct bt_le_oob *_data)         /*####%Bot9*/
+{                                                                                /*#####@mlg*/
+
+	SERIALIZE(STRUCT(struct bt_le_oob));
+	SERIALIZE(STRUCT_INLINE(le_sc_data));
+
+	ser_encode_buffer(_encoder, &_data->addr, sizeof(bt_addr_le_t));         /*######%A/*/
+	ser_encode_buffer(_encoder, _data->le_sc_data.r, 16 * sizeof(uint8_t));  /*######M73*/
+	ser_encode_buffer(_encoder, _data->le_sc_data.c, 16 * sizeof(uint8_t));  /*######@n8*/
+
+}                                                                                /*##B9ELNqo*/
+
+#if defined(CONFIG_BT_EXT_ADV) || defined(_)
+
+static struct bt_le_ext_adv_cb ext_adv_cb_cache[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
+static uint8_t ext_adv_cb_cache_map[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
+BT_RPC_POOL_DEFINE(ext_adv_cb_cache_pool, CONFIG_BT_EXT_ADV_MAX_ADV_SET);
+
 
 UNUSED
 static const size_t bt_le_ext_adv_sent_info_buf_size = 2;                        /*##Bmv+ZKI*/
@@ -663,14 +664,14 @@ void bt_le_ext_adv_sent_info_enc(CborEncoder *_encoder, const struct bt_le_ext_a
 }                                                                                                   /*##B9ELNqo*/
 
 UNUSED
-static const size_t bt_le_ext_adv_connected_info_buf_size = 5;                   /*##BmX03J8*/
+static const size_t bt_le_ext_adv_connected_info_buf_size = 3;                   /*##BlJ3Oas*/
 
 void bt_le_ext_adv_connected_info_enc(CborEncoder *_encoder, const struct bt_le_ext_adv_connected_info *_data)/*####%Bq/K*/
 {                                                                                                             /*#####@F68*/
 
 	SERIALIZE(STRUCT(struct bt_le_ext_adv_connected_info));
 
-	ser_encode_uint(_encoder, (uintptr_t)_data->conn);                                                    /*##A9M+INg*/
+	encode_bt_conn(_encoder, _data->conn);                                                                /*##Ay+jNcI*/
 
 }                                                                                                             /*##B9ELNqo*/
 
@@ -736,8 +737,8 @@ void bt_le_ext_adv_cb_connected_callback(struct bt_le_ext_adv *adv,
 {
 	SERIALIZE(CALLBACK(bt_le_ext_adv_cb_connected));
 
-	struct nrf_rpc_cbor_ctx _ctx;                                                    /*####%AYVk*/
-	size_t _buffer_size_max = 13;                                                    /*#####@yks*/
+	struct nrf_rpc_cbor_ctx _ctx;                                                    /*####%ARzi*/
+	size_t _buffer_size_max = 11;                                                    /*#####@x8o*/
 
 	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                                      /*##AvrU03s*/
 
@@ -818,9 +819,9 @@ static void bt_le_ext_adv_create_rpc_handler(CborValue *_value, void *_handler_d
 	if (ser_decode_is_undefined(_value)) {
 		ser_decode_skip(_value);
 	} else {
-		cb_index = bt_rpc_pool_reserve(&cb_cache_pool);
+		cb_index = bt_rpc_pool_reserve(&ext_adv_cb_cache_pool);
 		if (cb_index >= 0) {
-			cb = &cb_cache[cb_index];
+			cb = &ext_adv_cb_cache[cb_index];
 			bt_le_ext_adv_cb_dec(_value, cb);
 		} else {
 			_adv_data = NULL;
@@ -840,9 +841,9 @@ static void bt_le_ext_adv_create_rpc_handler(CborValue *_value, void *_handler_d
 
 	if (_result == 0) {
 		adv_index = bt_le_ext_adv_get_index(_adv_data);
-		cb_cache_map[adv_index] = cb_index;
+		ext_adv_cb_cache_map[adv_index] = cb_index;
 	} else {
-		bt_rpc_pool_release(&cb_cache_pool, cb_index);
+		bt_rpc_pool_release(&ext_adv_cb_cache_pool, cb_index);
 	}
 
 	{                                                                           /*####%AnG1*/
@@ -861,47 +862,12 @@ decoding_error:                                                                 
 	report_decoding_error(BT_LE_EXT_ADV_CREATE_RPC_CMD, _handler_data);         /*#######r5*/
 	SER_SCRATCHPAD_FREE(&_scratchpad);                                          /*#######@Q*/
 
-	bt_rpc_pool_release(&cb_cache_pool, cb_index);
+	bt_rpc_pool_release(&ext_adv_cb_cache_pool, cb_index);
 
 }                                                                                   /*##B9ELNqo*/
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_create, BT_LE_EXT_ADV_CREATE_RPC_CMD,/*####%BmDg*/
 	bt_le_ext_adv_create_rpc_handler, NULL);                                        /*#####@/Eg*/
-
-static void bt_le_ext_adv_delete_rpc_handler(CborValue *_value, void *_handler_data)/*####%Bng3*/
-{                                                                                   /*#####@ydU*/
-
-	struct bt_le_ext_adv * adv;                                                 /*####%AX6g*/
-	int _result;                                                                /*#####@WOc*/
-
-	size_t adv_index;
-	size_t cb_index;
-
-	adv = (struct bt_le_ext_adv *)ser_decode_uint(_value);                      /*##CovnGwc*/
-
-	if (!ser_decoding_done_and_check(_value)) {                                 /*######%FE*/
-		goto decoding_error;                                                /*######QTM*/
-	}                                                                           /*######@1Y*/
-
-	adv_index = bt_le_ext_adv_get_index(adv);
-
-	_result = bt_le_ext_adv_delete(adv);                                        /*##Dk4ka24*/
-
-	if (adv_index <= CONFIG_BT_EXT_ADV_MAX_ADV_SET) {
-		cb_index = cb_cache_map[adv_index];
-		bt_rpc_pool_release(&cb_cache_pool, cb_index);
-	}
-
-	ser_rsp_send_int(_result);                                                  /*##BPC96+4*/
-
-	return;                                                                     /*######%Fc*/
-decoding_error:                                                                     /*######6uF*/
-	report_decoding_error(BT_LE_EXT_ADV_DELETE_RPC_CMD, _handler_data);         /*######@Zw*/
-
-}                                                                                   /*##B9ELNqo*/
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_delete, BT_LE_EXT_ADV_DELETE_RPC_CMD,/*####%BoK+*/
-	bt_le_ext_adv_delete_rpc_handler, NULL);                                        /*#####@Hzk*/
 
 
 void bt_le_ext_adv_start_param_dec(CborValue *_value, struct bt_le_ext_adv_start_param *_data)/*####%Bmcv*/
@@ -1049,6 +1015,41 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_update_param, BT_LE_EXT_ADV_UPDATE_PARAM_RPC_CMD,/*####%Brbi*/
 	bt_le_ext_adv_update_param_rpc_handler, NULL);                                              /*#####@5SI*/
 
+static void bt_le_ext_adv_delete_rpc_handler(CborValue *_value, void *_handler_data)/*####%Bng3*/
+{                                                                                   /*#####@ydU*/
+
+	struct bt_le_ext_adv * adv;                                                 /*####%AX6g*/
+	int _result;                                                                /*#####@WOc*/
+
+	size_t adv_index;
+	size_t cb_index;
+
+	adv = (struct bt_le_ext_adv *)ser_decode_uint(_value);                      /*##CovnGwc*/
+
+	if (!ser_decoding_done_and_check(_value)) {                                 /*######%FE*/
+		goto decoding_error;                                                /*######QTM*/
+	}                                                                           /*######@1Y*/
+
+	adv_index = bt_le_ext_adv_get_index(adv);
+
+	_result = bt_le_ext_adv_delete(adv);                                        /*##Dk4ka24*/
+
+	if (adv_index <= CONFIG_BT_EXT_ADV_MAX_ADV_SET) {
+		cb_index = ext_adv_cb_cache_map[adv_index];
+		bt_rpc_pool_release(&ext_adv_cb_cache_pool, cb_index);
+	}
+
+	ser_rsp_send_int(_result);                                                  /*##BPC96+4*/
+
+	return;                                                                     /*######%Fc*/
+decoding_error:                                                                     /*######6uF*/
+	report_decoding_error(BT_LE_EXT_ADV_DELETE_RPC_CMD, _handler_data);         /*######@Zw*/
+
+}                                                                                   /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_delete, BT_LE_EXT_ADV_DELETE_RPC_CMD,/*####%BoK+*/
+	bt_le_ext_adv_delete_rpc_handler, NULL);                                        /*#####@Hzk*/
+
 static void bt_le_ext_adv_get_index_rpc_handler(CborValue *_value, void *_handler_data)/*####%Bju3*/
 {                                                                                      /*#####@GBw*/
 
@@ -1147,7 +1148,36 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_oob_get_local, BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD,/*####%Bo7+*/
 	bt_le_ext_adv_oob_get_local_rpc_handler, NULL);                                               /*#####@PoM*/
 
-#endif /* defined(CONFIG_BT_EXT_ADV) || defined(NRF_RPC_GENERATOR) */
+#endif /* defined(CONFIG_BT_EXT_ADV) || defined(_) */
+
+#if defined(CONFIG_BT_OBSERVER) || defined(_)
+
+static void bt_le_scan_start_rpc_handler(CborValue *_value, void *_handler_data)     /*####%BtgB*/
+{                                                                                    /*#####@oaA*/
+
+	struct bt_le_scan_param param;                                               /*######%Aa*/
+	bt_le_scan_cb_t *cb;                                                         /*######eZM*/
+	int _result;                                                                 /*######@I4*/
+
+	bt_le_scan_param_dec(_value, &param);                                        /*####%CtFV*/
+	cb = (bt_le_scan_cb_t *)ser_decode_callback(_value, bt_le_scan_cb_t_encoder);/*#####@F4o*/
+
+	if (!ser_decoding_done_and_check(_value)) {                                  /*######%FE*/
+		goto decoding_error;                                                 /*######QTM*/
+	}                                                                            /*######@1Y*/
+
+	_result = bt_le_scan_start(&param, cb);                                      /*##DiKuFZA*/
+
+	ser_rsp_send_int(_result);                                                   /*##BPC96+4*/
+
+	return;                                                                      /*######%FR*/
+decoding_error:                                                                      /*######Kcd*/
+	report_decoding_error(BT_LE_SCAN_START_RPC_CMD, _handler_data);              /*######@z0*/
+
+}                                                                                    /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_start, BT_LE_SCAN_START_RPC_CMD, /*####%BnWD*/
+	bt_le_scan_start_rpc_handler, NULL);                                     /*#####@Jb0*/
 
 static void bt_le_scan_stop_rpc_handler(CborValue *_value, void *_handler_data)  /*####%BjGj*/
 {                                                                                /*#####@TTc*/
@@ -1262,7 +1292,9 @@ static void bt_le_scan_cb_register_on_remote_rpc_handler(CborValue *_value, void
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_cb_register_on_remote, BT_LE_SCAN_CB_REGISTER_ON_REMOTE_RPC_CMD,/*####%BhkM*/
 	bt_le_scan_cb_register_on_remote_rpc_handler, NULL);                                                    /*#####@+9k*/
 
-#if defined(CONFIG_BT_WHITELIST) || defined(NRF_RPC_GENERATOR)
+#endif /* defined(CONFIG_BT_OBSERVER) || defined(_) */
+
+#if defined(CONFIG_BT_WHITELIST) || defined(_)
 
 static void bt_le_whitelist_add_rpc_handler(CborValue *_value, void *_handler_data)/*####%BvAc*/
 {                                                                                  /*#####@JS8*/
@@ -1332,7 +1364,7 @@ static void bt_le_whitelist_clear_rpc_handler(CborValue *_value, void *_handler_
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_whitelist_clear, BT_LE_WHITELIST_CLEAR_RPC_CMD,/*####%BuWk*/
 	bt_le_whitelist_clear_rpc_handler, NULL);                                         /*#####@hqA*/
 
-#endif /* defined(CONFIG_BT_WHITELIST) || defined(NRF_RPC_GENERATOR) */
+#endif /* defined(CONFIG_BT_WHITELIST) || defined(_) */
 
 static void bt_le_set_chan_map_rpc_handler(CborValue *_value, void *_handler_data)/*####%Blh4*/
 {                                                                                 /*#####@46c*/
@@ -1366,30 +1398,6 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_set_chan_map, BT_LE_SET_CHAN_MAP_RPC_
 	bt_le_set_chan_map_rpc_handler, NULL);                                      /*#####@+Ow*/
 
 
-size_t bt_le_oob_buf_size(const struct bt_le_oob *_data)                         /*####%Bq7Y*/
-{                                                                                /*#####@wVE*/
-
-	size_t _buffer_size_max = 13;                                            /*##Adi6hug*/
-
-	_buffer_size_max += sizeof(bt_addr_le_t);                                /*######%CH*/
-	_buffer_size_max += 16 * sizeof(uint8_t);                                /*######4Ws*/
-	_buffer_size_max += 16 * sizeof(uint8_t);                                /*######@J0*/
-
-	return _buffer_size_max;                                                 /*##BWmN6G8*/
-
-}                                                                                /*##B9ELNqo*/
-
-void bt_le_oob_enc(CborEncoder *_encoder, const struct bt_le_oob *_data)         /*####%Bot9*/
-{                                                                                /*#####@mlg*/
-
-	SERIALIZE(STRUCT(struct bt_le_oob));
-	SERIALIZE(STRUCT_INLINE(le_sc_data));
-
-	ser_encode_buffer(_encoder, &_data->addr, sizeof(bt_addr_le_t));         /*######%A/*/
-	ser_encode_buffer(_encoder, _data->le_sc_data.r, 16 * sizeof(uint8_t));  /*######M73*/
-	ser_encode_buffer(_encoder, _data->le_sc_data.c, 16 * sizeof(uint8_t));  /*######@n8*/
-
-}                                                                                /*##B9ELNqo*/
 static void bt_le_oob_get_local_rpc_handler(CborValue *_value, void *_handler_data)/*####%Bs1C*/
 {                                                                                  /*#####@hM0*/
 
@@ -1428,7 +1436,7 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_get_local, BT_LE_OOB_GET_LOCAL_RPC_CMD,/*####%Bhtb*/
 	bt_le_oob_get_local_rpc_handler, NULL);                                       /*#####@RcU*/
 
-#if defined(CONFIG_BT_CONN) || defined(NRF_RPC_GENERATOR)
+#if defined(CONFIG_BT_CONN) || defined(_)
 
 static void bt_unpair_rpc_handler(CborValue *_value, void *_handler_data)        /*####%BrQf*/
 {                                                                                /*#####@3HE*/
@@ -1458,7 +1466,9 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_unpair, BT_UNPAIR_RPC_CMD,               /*####%Bk5s*/
 	bt_unpair_rpc_handler, NULL);                                            /*#####@0hI*/
 
-#endif /* defined(CONFIG_BT_CONN) || defined(NRF_RPC_GENERATOR) */
+#endif /* defined(CONFIG_BT_CONN) || defined(_) */
+
+#if (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(_)
 
 size_t bt_bond_info_buf_size(const struct bt_bond_info *_data)                   /*####%BgGS*/
 {                                                                                /*#####@gCc*/
@@ -1504,8 +1514,6 @@ static inline void bt_foreach_bond_cb_callback(const struct bt_bond_info *info,
 CBKPROXY_HANDLER(bt_foreach_bond_cb_encoder, bt_foreach_bond_cb_callback,
 	(const struct bt_bond_info *info, void *user_data), (info, user_data));
 
-#if defined(CONFIG_BT_SMP) || defined(NRF_RPC_GENERATOR)
-
 static void bt_foreach_bond_rpc_handler(CborValue *_value, void *_handler_data)            /*####%BsUN*/
 {                                                                                          /*#####@qL4*/
 
@@ -1534,4 +1542,4 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_foreach_bond, BT_FOREACH_BOND_RPC_CMD,   /*####%Bgmc*/
 	bt_foreach_bond_rpc_handler, NULL);                                      /*#####@t3Y*/
 
-#endif /* defined(CONFIG_BT_SMP) || defined(NRF_RPC_GENERATOR) */
+#endif /* (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(_) */

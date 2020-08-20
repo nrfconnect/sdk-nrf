@@ -15,14 +15,17 @@ LOG_MODULE_REGISTER(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 
 NRF_RPC_GROUP_DEFINE(bt_rpc_grp, "bt_rpc", NULL, NULL, NULL);
 
+BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_BREDR), "BT_RPC does not support BR/EDR");
+
+
 
 #ifdef CONFIG_BT_RPC_INITIALIZE_NRF_RPC
 
 
 static void err_handler(const struct nrf_rpc_err_report *report)
 {
-	printk("nRF RPC error %d ocurred. See nRF RPC logs for more details.",
-	       report->code);
+	LOG_ERR("nRF RPC error %d ocurred. See nRF RPC logs for more details.",
+		report->code);
 	k_oops();
 }
 
@@ -33,14 +36,14 @@ static int serialization_init(struct device *dev)
 
 	int err;
 
-	printk("Init begin\n"); // TODO: Log instead of printk
+	LOG_DBG("Init begin");
 
 	err = nrf_rpc_init(err_handler);
 	if (err) {
 		return -EINVAL;
 	}
 
-	printk("Init done\n");
+	LOG_DBG("Init done\n");
 
 	return 0;
 }
@@ -212,7 +215,7 @@ static const check_list_entry_t check_table[] = {
 	CHECK_FLAGS(
 		CONFIG_BT_REMOTE_VERSION,
 		CONFIG_BT_SMP,
-		CONFIG_BT_BREDR,
+		CONFIG_BT_CONN,
 		CONFIG_BT_REMOTE_INFO,
 		CONFIG_BT_FIXED_PASSKEY,
 		CONFIG_BT_SMP_APP_PAIRING_ACCEPT,
@@ -220,8 +223,8 @@ static const check_list_entry_t check_table[] = {
 		CONFIG_BT_OBSERVER),
 	CHECK_FLAGS(
 		CONFIG_BT_ECC,
-		0,
-		0,
+		CONFIG_BT_DEVICE_NAME_DYNAMIC,
+		CONFIG_BT_SMP_SC_PAIR_ONLY,
 		0,
 		0,
 		0,

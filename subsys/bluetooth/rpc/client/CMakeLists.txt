@@ -6,4 +6,6 @@
 
 target_include_directories(zephyr_interface BEFORE INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-zephyr_sources(bt_rpc_gap_cli.c bt_rpc_conn_cli.c)
+zephyr_sources(bt_rpc_gap_cli.c)
+zephyr_sources_ifdef(CONFIG_BT_CONN bt_rpc_conn_cli.c)
+

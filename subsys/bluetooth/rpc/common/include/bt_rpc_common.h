@@ -6,7 +6,6 @@
 
 #include "nrf_rpc_cbor.h"
 
-
 #define _BT_RPC_TYPE_COMARE_CONCAT2(a, b, c) a ## _ ## b ## _ ## c
 #define _BT_RPC_TYPE_COMARE_CONCAT(a, b, c) _BT_RPC_TYPE_COMARE_CONCAT2(a, b, c)
 #define _BT_RPC_TYPE_COMARE_UNIQUE() _BT_RPC_TYPE_COMARE_CONCAT(_bt_rpc_rsv_unique, __COUNTER__, __LINE__)
@@ -128,9 +127,8 @@ enum {
 	FLAG_OOB_DATA_REQUEST_PRESENT = 0x010,
 	FLAG_CANCEL_PRESENT = 0x020,
 	FLAG_PAIRING_CONFIRM_PRESENT = 0x040,
-	FLAG_PINCODE_ENTRY_PRESENT = 0x080,
-	FLAG_PAIRING_COMPLETE_PRESENT = 0x100,
-	FLAG_PAIRING_FAILED_PRESENT = 0x200,
+	FLAG_PAIRING_COMPLETE_PRESENT = 0x80,
+	FLAG_PAIRING_FAILED_PRESENT = 0x100,
 };
 
 typedef void (*bt_conn_foreach_cb)(struct bt_conn *conn, void *data);
@@ -159,5 +157,8 @@ size_t bt_rpc_calc_check_table_size();
 
 int bt_rpc_pool_reserve(atomic_t *pool_mask);
 void bt_rpc_pool_release(atomic_t *pool_mask, int number);
+
+void encode_bt_conn(CborEncoder *encoder, const struct bt_conn *conn);
+struct bt_conn *decode_bt_conn(CborValue *value);
 
 #endif /* BT_RPC_COMMON_H_ */
