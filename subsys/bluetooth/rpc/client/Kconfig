@@ -12,6 +12,11 @@ menuconfig BT_RPC_CLIENT
 
 if BT_RPC_CLIENT
 
+# Overrides the default Bluetooth HCI driver
+choice BT_HCI_BUS_TYPE
+	default BT_NO_DRIVER
+endchoice
+
 config BT_RPC_INITIALIZE_NRF_RPC
 	bool "Automatically initialize nRF RPC library"
 	default y
