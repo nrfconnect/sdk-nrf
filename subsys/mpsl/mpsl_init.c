@@ -118,6 +118,30 @@ static uint8_t m_config_clock_source_get(void)
 #endif
 }
 
+static uint16_t m_config_clock_accuracy_get(void)
+{
+#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_500PPM
+	return 500;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_250PPM
+	return 250;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_150PPM
+	return 150;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_100PPM
+	return 100;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_75PPM
+	return 75;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_50PPM
+	return 50;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_30PPM
+	return 30;
+#elif CONFIG_CLOCK_CONTROL_NRF_K32SRC_20PPM
+	return 20;
+#else
+	#error "Clock accuracy is not supported or not defined"
+	return 0;
+#endif
+}
+
 static int mpsl_lib_init(struct device *dev)
 {
 	ARG_UNUSED(dev);
@@ -125,7 +149,7 @@ static int mpsl_lib_init(struct device *dev)
 	mpsl_clock_lfclk_cfg_t clock_cfg;
 
 	clock_cfg.source = m_config_clock_source_get();
-	clock_cfg.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
+	clock_cfg.accuracy_ppm = m_config_clock_accuracy_get();
 
 #ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
 	clock_cfg.rc_ctiv = MPSL_RECOMMENDED_RC_CTIV;

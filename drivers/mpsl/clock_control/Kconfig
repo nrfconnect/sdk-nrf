@@ -12,7 +12,7 @@ config CLOCK_CONTROL_MPSL
 	select MULTITHREADING_LOCK
 
 choice CLOCK_CONTROL_NRF_SOURCE
-	prompt "32 KHz clock source"
+	prompt "32KHz clock source"
 	default CLOCK_CONTROL_NRF_K32SRC_XTAL
 
 config CLOCK_CONTROL_NRF_K32SRC_RC
@@ -22,6 +22,7 @@ config CLOCK_CONTROL_NRF_K32SRC_XTAL
 	bool "Crystal Oscillator"
 
 config CLOCK_CONTROL_NRF_K32SRC_SYNTH
+	depends on !SOC_SERIES_NRF91X
 	bool "Synthesized from HFCLK"
 
 config CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING
@@ -34,7 +35,69 @@ config CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING
 
 endchoice
 
-config CLOCK_CONTROL_NRF_ACCURACY
-	int "32 KHz clock accuracy"
-	default 250 if CLOCK_CONTROL_NRF_K32SRC_RC
-	default 20
+config CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
+	bool "Enable LF clock calibration"
+	depends on !SOC_SERIES_NRF91X
+	default n if BOARD_NRF5340PDK_NRF5340_CPUAPP || BOARD_NRF5340PDK_NRF5340_CPUAPPNS
+	default y if CLOCK_CONTROL_NRF_K32SRC_RC
+	help
+	  If calibration is disabled when RC is used for low frequency clock then
+	  accuracy of the low frequency clock will degrade. Disable on your own
+	  risk.
+
+if CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
+
+config CLOCK_CONTROL_NRF_CALIBRATION_PERIOD
+	int "Calibration opportunity period in milliseconds"
+	default 4000
+	help
+	  Periodically, calibration action is performed. Action includes
+	  temperature measurement followed by clock calibration. Calibration may
+	  be skipped if temperature change (compared to measurement of previous
+	  calibration) did not exceeded CLOCK_CONTROL_NRF_CALIBRATION_TEMP_DIFF
+	  and number of consecutive skips did not exceeded
+	  CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP.
+
+config CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP
+	int "Maximum number of calibration skips"
+	default 1
+	range 0 255
+	help
+	  Calibration is skipped when temperature change since last calibration
+	  was less than configured threshold. If number of consecutive skips
+	  reaches configured value then calibration is performed
+	  unconditionally. Set to 0 to perform calibration periodically
+	  regardless of temperature change.
+
+endif # CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
+
+choice CLOCK_CONTROL_NRF_ACCURACY
+	prompt "32KHz clock accuracy"
+	default CLOCK_CONTROL_NRF_K32SRC_500PPM if CLOCK_CONTROL_NRF_K32SRC_RC
+	default CLOCK_CONTROL_NRF_K32SRC_20PPM
+
+config CLOCK_CONTROL_NRF_K32SRC_500PPM
+	bool "251 ppm to 500 ppm"
+
+config CLOCK_CONTROL_NRF_K32SRC_250PPM
+	bool "151 ppm to 250 ppm"
+
+config CLOCK_CONTROL_NRF_K32SRC_150PPM
+	bool "101 ppm to 150 ppm"
+
+config CLOCK_CONTROL_NRF_K32SRC_100PPM
+	bool "76 ppm to 100 ppm"
+
+config CLOCK_CONTROL_NRF_K32SRC_75PPM
+	bool "51 ppm to 75 ppm"
+
+config CLOCK_CONTROL_NRF_K32SRC_50PPM
+	bool "31 ppm to 50 ppm"
+
+config CLOCK_CONTROL_NRF_K32SRC_30PPM
+	bool "21 ppm to 30 ppm"
+
+config CLOCK_CONTROL_NRF_K32SRC_20PPM
+	bool "0 ppm to 20 ppm"
+
+endchoice
