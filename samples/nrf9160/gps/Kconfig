@@ -11,6 +11,18 @@ config GPS_SAMPLE_NMEA_ONLY
 	help
 	  Outputs only NMEA strings from the GPS.
 
+choice GPS_SAMPLE_ANTENNA
+	default GPS_SAMPLE_ANTENNA_ONBOARD
+	prompt "Select which antenna to use for GPS"
+
+config GPS_SAMPLE_ANTENNA_ONBOARD
+	bool "Use onboard antenna"
+
+config GPS_SAMPLE_ANTENNA_EXTERNAL
+	bool "Use external antenna"
+
+endchoice
+
 endmenu
 
 menu "Zephyr Kernel"
