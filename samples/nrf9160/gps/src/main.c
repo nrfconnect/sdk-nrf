@@ -33,7 +33,7 @@
 #ifdef CONFIG_GPS_SAMPLE_ANTENNA_ONBOARD
 #define AT_COEX0       "AT\%XCOEX0=1,1,1570,1580"
 #elif CONFIG_GPS_SAMPLE_ANTENNA_EXTERNAL
-#define AT_COEX0       "AT\%COEX0"
+#define AT_COEX0       "AT\%XCOEX0"
 #endif
 #endif
 
