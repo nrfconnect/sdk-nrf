@@ -28,10 +28,13 @@
 
 #define AT_CMD_SIZE(x) (sizeof(x) - 1)
 
-
 #ifdef CONFIG_BOARD_NRF9160DK_NRF9160NS
 #define AT_MAGPIO      "AT\%XMAGPIO=1,0,0,1,1,1574,1577"
+#ifdef CONFIG_GPS_SAMPLE_ANTENNA_ONBOARD
 #define AT_COEX0       "AT\%XCOEX0=1,1,1570,1580"
+#elif CONFIG_GPS_SAMPLE_ANTENNA_EXTERNAL
+#define AT_COEX0       "AT\%COEX0"
+#endif
 #endif
 
 static const char            update_indicator[] = {'\\', '|', '/', '-'};
