@@ -150,6 +150,8 @@ struct nfc_tnep_poller_cb {
 	 * @param[in] err Detected error code.
 	 */
 	void (*error)(int err);
+
+	sys_snode_t node;
 };
 
 /**@brief TNEP Poller buffer structure. */
@@ -164,13 +166,19 @@ struct nfc_tnep_buf {
 /**@brief Initialize the NFC TNEP Poller Device.
  *
  * @param[in] tx_buf Pointer to TNEP Poller Tx buffer.
- * @param[in] cb Pointer to TNEP Poller callback structure.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int nfc_tnep_poller_init(const struct nfc_tnep_buf *tx_buf,
-			 const struct nfc_tnep_poller_cb *cb);
+int nfc_tnep_poller_init(const struct nfc_tnep_buf *tx_buf);
+
+/**@brief Register TNEP Poller callbacks.
+ *
+ * Register callbacks to monitor the TNEP Poller data exchange.
+ *
+ * @param cb Callback struct.
+ */
+void nfc_tnep_poller_cb_register(struct nfc_tnep_poller_cb *cb);
 
 /**@brief Set NDEF API for the NFC TNEP Poller Device
  *
@@ -293,7 +301,7 @@ int nfc_tnep_poller_on_ndef_write(void);
 /**@brief Get the selected/active service.
  *
  * @retval Pointer to the selected/active service.
- *         If no slected/active service then NULL pointer is returned.
+ *         If no selected/active service then NULL pointer is returned.
  */
 const struct nfc_ndef_tnep_rec_svc_param *active_service_get(void);
 

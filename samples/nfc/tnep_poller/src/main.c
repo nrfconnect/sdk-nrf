@@ -661,7 +661,9 @@ void main(void)
 
 	k_delayed_work_init(&transmit_work, transfer_handler);
 
-	err = nfc_tnep_poller_init(&tnep_tx_buf, &tnep_cb);
+	nfc_tnep_poller_cb_register(&tnep_cb);
+
+	err = nfc_tnep_poller_init(&tnep_tx_buf);
 	if (err) {
 		printk("NFC TNEP Protocol initialization err: %d\n", err);
 		return;

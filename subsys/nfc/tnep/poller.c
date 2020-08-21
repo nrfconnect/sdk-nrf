@@ -47,6 +47,7 @@ struct tnep_poller {
 	const struct nfc_ndef_tnep_rec_svc_param *active_svc;
 	const struct nfc_tnep_poller_cb *cb;
 	const struct nfc_tnep_poller_ndef_api *api;
+	sys_slist_t callback_list;
 	int64_t last_time;
 	enum tnep_poller_state state;
 	enum nfc_tnep_tag_type type;
@@ -55,6 +56,67 @@ struct tnep_poller {
 };
 
 static struct tnep_poller tnep;
+
+static void svc_select_notify(const struct nfc_ndef_tnep_rec_svc_param *param,
+			      const struct nfc_tnep_poller_msg *msg,
+			      bool timeout)
+{
+	struct nfc_tnep_poller_cb *cb;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&tnep.callback_list, cb, node) {
+		if (cb->svc_selected) {
+			cb->svc_selected(param, msg, timeout);
+		}
+	}
+}
+
+static void svc_deselect_notify(void)
+{
+	struct nfc_tnep_poller_cb *cb;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&tnep.callback_list, cb, node) {
+		if (cb->svc_deselected) {
+			cb->svc_deselected();
+		}
+	}
+}
+
+static void svc_received_notify(const struct nfc_ndef_tnep_rec_svc_param *param,
+				const struct nfc_tnep_poller_msg *msg,
+				bool timeout)
+{
+	struct nfc_tnep_poller_cb *cb;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&tnep.callback_list, cb, node) {
+		if (cb->svc_received) {
+			cb->svc_received(param, msg, timeout);
+		}
+	}
+}
+
+static void svc_sent_notify(const struct nfc_ndef_tnep_rec_svc_param *param,
+			    const struct nfc_tnep_poller_msg *msg,
+			    bool timeout)
+{
+	struct nfc_tnep_poller_cb *cb;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&tnep.callback_list, cb, node) {
+		if (cb->svc_sent) {
+			cb->svc_sent(param, msg, timeout);
+		}
+	}
+}
+
+static void svc_error_notify(int err)
+{
+	struct nfc_tnep_poller_cb *cb;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&tnep.callback_list, cb, node) {
+		if (cb->error) {
+			cb->error(err);
+		}
+	}
+}
 
 static int tnep_tag_update_prepare(const struct nfc_ndef_msg_desc *msg,
 				   size_t *tx_len)
@@ -204,8 +266,8 @@ static void on_svc_delayed_operation(void)
 				    time_spent > tnep.wait_time ?
 				    K_NO_WAIT :
 				    K_MSEC(tnep.wait_time - time_spent));
-	if (err && tnep.cb->error) {
-		tnep.cb->error(err);
+	if (err) {
+		svc_error_notify(err);
 	}
 }
 
@@ -227,9 +289,7 @@ static void tnep_delay_handler(struct k_work *work)
 	}
 
 	if (err) {
-		if (tnep.cb->error) {
-			tnep.cb->error(err);
-		}
+		svc_error_notify(err);
 	}
 }
 
@@ -237,26 +297,20 @@ static int on_ndef_read_cb(struct nfc_tnep_poller_msg *poller_msg, bool timeout)
 {
 	switch (tnep.state) {
 	case TNEP_POLLER_STATE_SELECTING:
-		if (tnep.cb->svc_selected) {
-			tnep.cb->svc_selected(tnep.active_svc, poller_msg,
-					      timeout);
-		}
+		svc_select_notify(tnep.active_svc, poller_msg,
+				  timeout);
 
 		break;
 
 	case TNEP_POLLER_STATE_READING:
-		if (tnep.cb->svc_received) {
-			tnep.cb->svc_received(tnep.active_svc, poller_msg,
-					      timeout);
-		}
+		svc_received_notify(tnep.active_svc, poller_msg,
+				    timeout);
 
 		break;
 
 	case TNEP_POLLER_STATE_UPDATING:
-		if (tnep.cb->svc_sent) {
-			tnep.cb->svc_sent(tnep.active_svc, poller_msg,
-					  timeout);
-		}
+		svc_sent_notify(tnep.active_svc, poller_msg,
+				timeout);
 
 		break;
 
@@ -267,10 +321,18 @@ static int on_ndef_read_cb(struct nfc_tnep_poller_msg *poller_msg, bool timeout)
 	return 0;
 }
 
-int nfc_tnep_poller_init(const struct nfc_tnep_buf *tx_buf,
-			 const struct nfc_tnep_poller_cb *cb)
+void nfc_tnep_poller_cb_register(struct nfc_tnep_poller_cb *cb)
 {
-	if (!tx_buf || !cb) {
+	if (!cb) {
+		return;
+	}
+
+	sys_slist_append(&tnep.callback_list, &cb->node);
+}
+
+int nfc_tnep_poller_init(const struct nfc_tnep_buf *tx_buf)
+{
+	if (!tx_buf) {
 		return -EINVAL;
 	}
 
@@ -284,7 +346,6 @@ int nfc_tnep_poller_init(const struct nfc_tnep_buf *tx_buf,
 		return -ENOMEM;
 	}
 
-	tnep.cb = cb;
 	tnep.tx = tx_buf;
 	tnep.state = TNEP_POLLER_STATE_IDLE;
 
@@ -601,9 +662,7 @@ int nfc_tnep_poller_on_ndef_write(void)
 		tnep.active_svc = NULL;
 		tnep.state = TNEP_POLLER_STATE_IDLE;
 
-		if (tnep.cb->svc_deselected) {
-			tnep.cb->svc_deselected();
-		}
+		svc_deselect_notify();
 
 		break;
 
