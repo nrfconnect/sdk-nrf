@@ -428,12 +428,14 @@ int ftp_login(const char *username, const char *password)
 
 int ftp_close(void)
 {
-	int ret;
+	int ret = 0;
 
-	ret = do_ftp_send_ctrl(CMD_QUIT, sizeof(CMD_QUIT) - 1);
-	if (ret == 0) {
-		ret = do_ftp_recv_ctrl(true, FTP_CODE_221);
-		k_timer_stop(&keepalive_timer);
+	if (client.connected) {
+		ret = do_ftp_send_ctrl(CMD_QUIT, sizeof(CMD_QUIT) - 1);
+		if (ret == 0) {
+			ret = do_ftp_recv_ctrl(true, FTP_CODE_221);
+			k_timer_stop(&keepalive_timer);
+		}
 	}
 
 	close(client.sock);
@@ -731,5 +733,11 @@ int ftp_init(ftp_client_callback_t ctrl_callback,
 
 int ftp_uninit(void)
 {
-	return ftp_close();
+	int ret = 0;
+
+	if (client.sock != INVALID_SOCKET) {
+		ret = ftp_close();
+	}
+
+	return ret;
 }
