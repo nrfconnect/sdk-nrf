@@ -95,6 +95,10 @@ struct download_client_cfg {
 	 *  or NULL to use the default APN.
 	 */
 	const char *apn;
+	/** Maximum fragment size to download. 0 indicates that Kconfigured
+	 *  values shall be used.
+	 */
+	size_t frag_size_override;
 };
 
 /**
