@@ -57,7 +57,12 @@ int http_get_request_send(struct download_client *client)
 	}
 
 	/* Offset of last byte in range (Content-Range) */
-	off = client->progress + CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE - 1;
+	if (client->config.frag_size_override) {
+		off = client->progress + client->config.frag_size_override - 1;
+	} else {
+		off = client->progress +
+			CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE - 1;
+	}
 
 	if (client->file_size != 0) {
 		/* Don't request bytes past the end of file */

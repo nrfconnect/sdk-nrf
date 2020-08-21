@@ -546,6 +546,11 @@ int download_client_connect(struct download_client *client, const char *host,
 		return 0;
 	}
 
+	if (config->frag_size_override > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
+		LOG_ERR("The configured fragment size is larger than buffer");
+		return -E2BIG;
+	}
+
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
 		err = host_lookup(host, AF_INET6, config->apn, &sa);
