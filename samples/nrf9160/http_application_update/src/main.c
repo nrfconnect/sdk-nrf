@@ -89,7 +89,8 @@ static void app_dfu_transfer_start(struct k_work *unused)
 	retval = fota_download_start(CONFIG_DOWNLOAD_HOST,
 				     CONFIG_DOWNLOAD_FILE,
 				     sec_tag,
-				     apn);
+				     apn,
+				     0);
 	if (retval != 0) {
 		/* Re-enable button callback */
 		gpio_pin_interrupt_configure(gpiob,

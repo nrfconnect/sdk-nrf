@@ -217,13 +217,14 @@ static void download_with_offset(struct k_work *unused)
 }
 
 int fota_download_start(const char *host, const char *file, int sec_tag,
-			const char *apn)
+			const char *apn, size_t fragment_size)
 {
 	int err = -1;
 
 	struct download_client_cfg config = {
 		.sec_tag = sec_tag,
 		.apn = apn,
+		.frag_size_override = fragment_size,
 	};
 
 	if (host == NULL || file == NULL || callback == NULL) {
