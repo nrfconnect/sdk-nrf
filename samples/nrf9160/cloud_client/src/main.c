@@ -29,7 +29,7 @@ static void cloud_update_work_fn(struct k_work *work)
 		.qos = CLOUD_QOS_AT_MOST_ONCE,
 		.endpoint.type = CLOUD_EP_TOPIC_MSG,
 		.buf = CONFIG_CLOUD_MESSAGE,
-		.len = sizeof(CONFIG_CLOUD_MESSAGE)
+		.len = strlen(CONFIG_CLOUD_MESSAGE)
 	};
 
 	err = cloud_send(cloud_backend, &msg);
