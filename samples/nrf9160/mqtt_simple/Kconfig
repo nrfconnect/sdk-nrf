@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Nordic Semiconductor ASA
+# Copyright (c) 2020 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
@@ -33,8 +33,22 @@ config MQTT_PAYLOAD_BUFFER_SIZE
 	int "MQTT payload buffer size"
 	default 128
 
+config MQTT_TLS_SEC_TAG
+	int "TLS credentials security tag"
+	default 24
+
+config MQTT_TLS_SESSION_CACHING
+	bool "Enable TLS session caching"
+
+config MQTT_TLS_PEER_VERIFY
+	int "Set peer verification level"
+	default 2
+	help
+		Set to 0 for VERIFY_NONE, 1 for VERIFY_OPTIONAL, and 2 for
+		VERIFY_REQUIRED.
+
 endmenu
 
 menu "Zephyr Kernel"
-source "$ZEPHYR_BASE/Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu

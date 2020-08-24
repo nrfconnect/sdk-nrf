@@ -438,6 +438,9 @@
 
 .. _`Content-Range requests (IETF RFC 7233)`: https://tools.ietf.org/html/rfc7233
 
+.. _`Mosquitto`: https://mosquitto.org/
+
+
 .. ### Links to specific files on GitHub
 
 .. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/master/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
