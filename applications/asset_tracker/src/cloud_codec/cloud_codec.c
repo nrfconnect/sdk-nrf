@@ -366,7 +366,7 @@ int cloud_encode_env_sensors_data(const env_sensor_data_t *sensor_data,
 
 	char buf[6];
 	uint8_t len;
-	struct cloud_channel_data cloud_sensor;
+	struct cloud_channel_data cloud_sensor = { 0 };
 
 	switch (sensor_data->type) {
 	case ENV_SENSOR_TEMPERATURE:
@@ -403,9 +403,7 @@ int cloud_encode_motion_data(const motion_data_t *motion_data,
 	__ASSERT_NO_MSG(motion_data != NULL);
 	__ASSERT_NO_MSG(output != NULL);
 
-	struct cloud_channel_data cloud_sensor;
-
-	cloud_sensor.type = CLOUD_CHANNEL_FLIP;
+	struct cloud_channel_data cloud_sensor = { .type = CLOUD_CHANNEL_FLIP };
 
 	switch (motion_data->orientation) {
 	case MOTION_ORIENTATION_NORMAL:
@@ -433,7 +431,10 @@ int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
 {
 	char buf[LIGHT_SENSOR_DATA_STRING_MAX_LEN];
 	uint8_t len;
-	struct cloud_channel_data cloud_sensor;
+	struct cloud_channel_data cloud_sensor = {
+					  .type = CLOUD_CHANNEL_LIGHT_SENSOR
+					  };
+
 	struct light_sensor_data send = { .red = LIGHT_SENSOR_DATA_NO_UPDATE,
 					  .green = LIGHT_SENSOR_DATA_NO_UPDATE,
 					  .blue = LIGHT_SENSOR_DATA_NO_UPDATE,
@@ -466,7 +467,6 @@ int cloud_encode_light_sensor_data(const struct light_sensor_data *sensor_data,
 
 	cloud_sensor.data.buf = buf;
 	cloud_sensor.data.len = len;
-	cloud_sensor.type = CLOUD_CHANNEL_LIGHT_SENSOR;
 
 	return cloud_encode_data(&cloud_sensor, CLOUD_CMD_GROUP_DATA, output);
 }
