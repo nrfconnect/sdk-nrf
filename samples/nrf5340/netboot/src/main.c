@@ -19,18 +19,20 @@
 
 void main(void)
 {
-	struct pcd_cmd *cmd;
+	struct pcd_cmd *cmd = NULL;
+	struct pcd_cmd *rsp = NULL;
 	int err = fprotect_area(PM_B0N_IMAGE_ADDRESS, PM_B0N_IMAGE_SIZE);
 	struct device *fdev = device_get_binding(FLASH_NAME);
 
 	if (err) {
 		printk("Failed to protect b0n flash, cancel startup.\n\r");
-		return;
+		goto failure;
 	}
-
+	
 	cmd = pcd_get_cmd((void*)PCD_CMD_ADDRESS);
-	if (cmd != NULL) {
-		err = pcd_transfer(cmd, fdev);
+	rsp = pcd_get_cmd((void*)PCD_RSP_ADDRESS);
+	if (cmd != NULL && rsp != NULL) {
+		err = pcd_transfer(cmd, rsp, fdev);
 		if (err != 0) {
 			printk("Failed to transfer image: %d. \n\r", err);
 			return;
@@ -44,7 +46,7 @@ void main(void)
 			err = pcd_invalidate(cmd);
 			if (err != 0) {
 				printk("Failed invalidation: %d. \n\r", err);
-				return;
+				goto failure;
 			}
 		}
 	}
@@ -52,10 +54,13 @@ void main(void)
 	err = fprotect_area(PM_APP_ADDRESS, PM_APP_SIZE);
 	if (err) {
 		printk("Failed to protect app flash: %d. \n\r", err);
-		return;
+		goto failure;
 	}
 
 	bl_boot(fw_info_find(s0_addr));
 
+failure:
+	rsp->magic = PCD_CMD_MAGIC_FAIL;
 	return;
+	CODE_UNREACHABLE;
 }

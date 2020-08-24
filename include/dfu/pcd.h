@@ -20,14 +20,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 #include <device.h>
 
 /** Magic value written to indicate that a copy should take place. */
 #define PCD_CMD_MAGIC_COPY 0xb5b4b3b6
-/** Magic value written to indicate that a copy failed. */
+/** Magic value written to indicate that a something failed. */
 #define PCD_CMD_MAGIC_FAIL 0x25bafc15
-/** Magic value written to indicate that a copy failed. */
+/** Magic value written to indicate that a copy is done. */
 #define PCD_CMD_MAGIC_DONE 0xf103ce5d
 
 /** @brief PCD command structure.
@@ -44,8 +43,14 @@ struct pcd_cmd {
 
 #define APP_CORE_SRAM_BASE_ADDRESS 0x20000000
 #define APP_CORE_SRAM_SIZE KB(512)
+#if !defined(CONFIG_NRF_SPU_RAM_REGION_SIZE) //&& defined nrf53?
+#define CONFIG_NRF_SPU_RAM_REGION_SIZE 0x2000
+#endif
 #define PCD_CMD_ADDRESS (APP_CORE_SRAM_BASE_ADDRESS + APP_CORE_SRAM_SIZE \
 			- sizeof(struct pcd_cmd))
+#define PCD_RSP_ADDRESS (APP_CORE_SRAM_BASE_ADDRESS + APP_CORE_SRAM_SIZE \
+			- sizeof(struct pcd_cmd) \
+			- CONFIG_NRF_SPU_RAM_REGION_SIZE)
 
 
 /** @brief Get a PCD CMD from the specified address.
@@ -72,11 +77,13 @@ int pcd_invalidate(struct pcd_cmd *cmd);
  * provided flash device.
  *
  * @param cmd The PCD CMD whose configuration will be used for the transfer.
+ * @param cmd The PCD CMD response structure which is used to notify when the
+ *	      transfer is done.
  * @param fdev The flash device to transfer the DFU image to.
  *
  * @retval non-negative integer on success, negative errno code on failure.
  */
-int pcd_transfer(struct pcd_cmd *cmd, struct device *fdev);
+int pcd_transfer(struct pcd_cmd *cmd, struct pcd_cmd *rsp, struct device *fdev);
 
 #endif /* PCD_H__ */
 

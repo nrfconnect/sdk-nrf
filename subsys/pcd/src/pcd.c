@@ -34,7 +34,7 @@ int pcd_invalidate(struct pcd_cmd *cmd)
 	return 0;
 }
 
-int pcd_transfer(struct pcd_cmd *cmd, struct device *fdev)
+int pcd_transfer(struct pcd_cmd *cmd, struct pcd_cmd *rsp, struct device *fdev)
 {
 	struct stream_flash_ctx stream;
 	uint8_t buf[CONFIG_PCD_BUF_SIZE];
@@ -59,8 +59,8 @@ int pcd_transfer(struct pcd_cmd *cmd, struct device *fdev)
 	}
 
 	LOG_INF("Transfer done");
-	/* Signal complete by setting magic to 0 */
-	cmd->magic = PCD_CMD_MAGIC_DONE;
+	/* Signal complete by setting magic to DONE */
+	rsp->magic = PCD_CMD_MAGIC_DONE;
 	/* Wait for being rebooted */
 	while(1);
 	CODE_UNREACHABLE;
