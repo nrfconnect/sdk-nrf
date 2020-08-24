@@ -114,6 +114,10 @@ config DESKTOP_INIT_LOG_USB_STATE_EVENT
 	bool "USB state event"
 	default y
 
+config DESKTOP_INIT_LOG_USB_HID_EVENT
+	bool "USB HID event"
+	default y
+
 config DESKTOP_INIT_LOG_WHEEL_EVENT
 	bool "Wheel event"
 	default y

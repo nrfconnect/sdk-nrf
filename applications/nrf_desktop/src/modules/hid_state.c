@@ -1376,22 +1376,14 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 	return false;
 }
 
-static bool handle_usb_state_event(const struct usb_state_event *event)
+static bool handle_usb_hid_event(const struct usb_hid_event *event)
 {
-	switch (event->state) {
-	case USB_STATE_ACTIVE:
+	if (event->enabled) {
 		if (!get_subscriber_by_type(true)) {
 			connect_subscriber(event->id, true, 1);
 		}
-		break;
-
-	case USB_STATE_DISCONNECTED:
+	} else {
 		disconnect_subscriber(event->id);
-		break;
-
-	default:
-		/* Ignore */
-		break;
 	}
 
 	return false;
@@ -1444,8 +1436,8 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) &&
-	    is_usb_state_event(eh)) {
-		return handle_usb_state_event(cast_usb_state_event(eh));
+	    is_usb_hid_event(eh)) {
+		return handle_usb_hid_event(cast_usb_hid_event(eh));
 	}
 
 	if (is_module_state_event(eh)) {
@@ -1460,7 +1452,7 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE(MODULE, usb_state_event);
+EVENT_SUBSCRIBE(MODULE, usb_hid_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
