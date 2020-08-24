@@ -9,6 +9,10 @@
 #include <net/aws_fota.h>
 #endif
 
+#if defined(CONFIG_BOARD_QEMU_X86) && !defined(CONFIG_BSD_LIBRARY)
+#include "certificates.h"
+#endif
+
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(aws_iot, CONFIG_AWS_IOT_LOG_LEVEL);
@@ -156,7 +160,7 @@ static int connect_error_translate(const int err)
 	default:
 		LOG_ERR("AWS broker connect failed %d", err);
 		return CLOUD_CONNECT_RES_ERR_MISC;
-#endif
+#endif /* !defined(CONFIG_CLOUD_API) */
 	}
 }
 
@@ -195,7 +199,7 @@ static int api_connect_error_translate(const int err)
 		return -ENODATA;
 	}
 }
-#endif
+#endif /* defined(CONFIG_BSD_LIBRARY) */
 
 static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 {
@@ -266,7 +270,7 @@ static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 	} else {
 		LOG_ERR("Library event handler not registered, or empty event");
 	}
-#endif
+#endif /* !defined(CONFIG_CLOUD_API) */
 }
 
 #if defined(CONFIG_AWS_FOTA)
@@ -618,6 +622,50 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 	}
 }
 
+#if !defined(CONFIG_BSD_LIBRARY)
+static int certificates_provision(void)
+{
+	static bool certs_added;
+	int err;
+
+	if (!IS_ENABLED(CONFIG_NET_SOCKETS_SOCKOPT_TLS) || certs_added) {
+		return 0;
+	}
+
+	err = tls_credential_add(CONFIG_AWS_IOT_SEC_TAG,
+				 TLS_CREDENTIAL_CA_CERTIFICATE,
+				 AWS_IOT_CA_CERTIFICATE,
+				 sizeof(AWS_IOT_CA_CERTIFICATE));
+	if (err < 0) {
+		LOG_ERR("Failed to register CA certificate: %d",
+			err);
+		return err;
+	}
+
+	err = tls_credential_add(CONFIG_AWS_IOT_SEC_TAG,
+				 TLS_CREDENTIAL_PRIVATE_KEY,
+				 AWS_IOT_CLIENT_PRIVATE_KEY,
+				 sizeof(AWS_IOT_CLIENT_PRIVATE_KEY));
+	if (err < 0) {
+		LOG_ERR("Failed to register private key: %d", err);
+		return err;
+	}
+
+	err = tls_credential_add(CONFIG_AWS_IOT_SEC_TAG,
+				 TLS_CREDENTIAL_SERVER_CERTIFICATE,
+				 AWS_IOT_CLIENT_PUBLIC_CERTIFICATE,
+				 sizeof(AWS_IOT_CLIENT_PUBLIC_CERTIFICATE));
+	if (err < 0) {
+		LOG_ERR("Failed to register public certificate: %d", err);
+		return err;
+	}
+
+	certs_added = true;
+
+	return 0;
+}
+#endif /* !defined(CONFIG_BSD_LIBRARY) */
+
 #if defined(CONFIG_AWS_IOT_STATIC_IPV4)
 static int broker_init(void)
 {
@@ -702,7 +750,7 @@ static int broker_init(void)
 
 	return err;
 }
-#endif
+#endif /* !defined(CONFIG_AWS_IOT_STATIC_IP) */
 
 static int client_broker_init(struct mqtt_client *const client)
 {
@@ -741,6 +789,21 @@ static int client_broker_init(struct mqtt_client *const client)
 	tls_cfg->sec_tag_count		= ARRAY_SIZE(sec_tag_list);
 	tls_cfg->sec_tag_list		= sec_tag_list;
 	tls_cfg->hostname		= CONFIG_AWS_IOT_BROKER_HOST_NAME;
+
+#if defined(CONFIG_BSD_LIBRARY)
+	tls_cfg->session_cache		=
+		IS_ENABLED(CONFIG_AWS_IOT_TLS_SESSION_CACHING) ?
+			TLS_SESSION_CACHE_ENABLED : TLS_SESSION_CACHE_DISABLED;
+#else
+	/* TLS session caching is not supported by the Zephyr network stack */
+	tls_cfg->session_cache = TLS_SESSION_CACHE_DISABLED;
+
+	err = certificates_provision();
+	if (err) {
+		LOG_ERR("Could not provision certificates, error: %d", err);
+		return err;
+	}
+#endif /* !defined(CONFIG_BSD_LIBRARY) */
 
 	return err;
 }
@@ -1045,7 +1108,7 @@ reset:
 #define POLL_THREAD_STACK_SIZE 4096
 #else
 #define POLL_THREAD_STACK_SIZE 2560
-#endif
+#endif /* defined(CONFIG_AWS_IOT_CONNECTION_POLL_THREAD) */
 K_THREAD_DEFINE(connection_poll_thread, POLL_THREAD_STACK_SIZE,
 		aws_iot_cloud_poll, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
@@ -1136,4 +1199,4 @@ static const struct cloud_api aws_iot_api = {
 };
 
 CLOUD_BACKEND_DEFINE(AWS_IOT, aws_iot_api);
-#endif
+#endif /* defined(CONFIG_CLOUD_API) */
