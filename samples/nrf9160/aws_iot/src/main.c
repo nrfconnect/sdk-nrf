@@ -413,7 +413,7 @@ void main(void)
 
 	k_sem_take(&lte_connected, K_FOREVER);
 
-	date_time_update();
+	date_time_update_async();
 
 	/** Sleep to ensure that time has been obtained before
 	 *  communication with AWS IoT.

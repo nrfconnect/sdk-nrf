@@ -10,7 +10,9 @@
 #include <device.h>
 #include <stdio.h>
 #include <stdlib.h>
+#if defined(CONFIG_DATE_TIME_MODEM)
 #include <modem/at_cmd.h>
+#endif
 #include <time.h>
 #include <errno.h>
 #include <string.h>
@@ -22,6 +24,7 @@
 
 LOG_MODULE_REGISTER(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 
+#if defined(CONFIG_DATE_TIME_MODEM)
 #define AT_CMD_MODEM_DATE_TIME			"AT+CCLK?"
 #define AT_CMD_MODEM_DATE_TIME_RESPONSE_LEN	32
 
@@ -30,7 +33,9 @@ LOG_MODULE_REGISTER(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
  * the modem.
  */
 #define MODEM_TIME_DEFAULT 115
+#endif
 
+#if defined(CONFIG_DATE_TIME_NTP)
 #define UIO_IP      "ntp.uio.no"
 #define GOOGLE_IP_1 "time1.google.com"
 #define GOOGLE_IP_2 "time2.google.com"
@@ -38,18 +43,6 @@ LOG_MODULE_REGISTER(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 #define GOOGLE_IP_4 "time4.google.com"
 
 #define NTP_DEFAULT_PORT "123"
-
-K_SEM_DEFINE(time_fetch_sem, 0, 1);
-
-static struct k_delayed_work time_work;
-
-static struct time_aux {
-	int64_t date_time_utc;
-	int last_date_time_update;
-} time_aux;
-
-static struct sntp_time sntp_time;
-static bool initial_valid_time;
 
 struct ntp_servers {
 	const char *server_str;
@@ -63,6 +56,20 @@ struct ntp_servers servers[] = {
 	{.server_str = GOOGLE_IP_3},
 	{.server_str = GOOGLE_IP_4}
 };
+
+static struct sntp_time sntp_time;
+#endif
+
+K_SEM_DEFINE(time_fetch_sem, 0, 1);
+
+static struct k_delayed_work time_work;
+
+static struct time_aux {
+	int64_t date_time_utc;
+	int last_date_time_update;
+} time_aux;
+
+static bool initial_valid_time;
 
 #if defined(CONFIG_DATE_TIME_MODEM)
 static int time_modem_get(void)
@@ -118,6 +125,7 @@ static int time_modem_get(void)
 }
 #endif
 
+#if defined(CONFIG_DATE_TIME_NTP)
 static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
 			     struct sntp_time *time)
 {
@@ -183,6 +191,7 @@ static int time_NTP_server_get(void)
 
 	return -ENODATA;
 }
+#endif
 
 static int current_time_check(void)
 {
@@ -231,6 +240,7 @@ static void new_date_time_get(void)
 
 		LOG_DBG("Not getting cellular network time");
 #endif
+#if defined(CONFIG_DATE_TIME_NTP)
 		LOG_DBG("Fallback on NTP server");
 
 		err = time_NTP_server_get();
@@ -241,6 +251,8 @@ static void new_date_time_get(void)
 		}
 
 		LOG_DBG("Not getting time from NTP server");
+#endif
+		LOG_DBG("Not getting time from any time source");
 	}
 }
 
@@ -250,13 +262,15 @@ K_THREAD_DEFINE(time_thread, CONFIG_DATE_TIME_THREAD_SIZE,
 
 static void date_time_handler(struct k_work *work)
 {
-	k_sem_give(&time_fetch_sem);
+	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0) {
+		k_sem_give(&time_fetch_sem);
 
-	LOG_DBG("New date time update in: %d seconds",
-		CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS);
+		LOG_DBG("New date time update in: %d seconds",
+			CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS);
 
-	k_delayed_work_submit(&time_work,
+		k_delayed_work_submit(&time_work,
 			K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
+	}
 }
 
 static int date_time_init(struct device *unused)
@@ -268,35 +282,139 @@ static int date_time_init(struct device *unused)
 	return 0;
 }
 
-void date_time_set(const struct tm *new_date_time)
+int date_time_set(const struct tm *new_date_time)
 {
+	int err = 0;
+
+	/** Seconds after the minute. tm_sec is generally 0-59.
+	 *  The extra range is to accommodate for leap seconds
+	 *  in certain systems.
+	 */
+	if (new_date_time->tm_sec < 0 || new_date_time->tm_sec > 61) {
+		LOG_ERR("Seconds in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	/** Minutes after the hour. */
+	if (new_date_time->tm_min < 0 || new_date_time->tm_min > 59) {
+		LOG_ERR("Minutes in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	/** Hours since midnight. */
+	if (new_date_time->tm_hour < 0 || new_date_time->tm_hour > 23) {
+		LOG_ERR("Hours in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	/** Day of the month. */
+	if (new_date_time->tm_mday < 1 || new_date_time->tm_mday > 31) {
+		LOG_ERR("Day in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	/** Months since January. */
+	if (new_date_time->tm_mon < 0 || new_date_time->tm_mon > 11) {
+		LOG_ERR("Month in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	/** Years since 1900. 115 corresponds to the year 2015. */
+	if (new_date_time->tm_year < 115 || new_date_time->tm_year > 1900) {
+		LOG_ERR("Year in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	/** Days since Sunday. */
+	if (new_date_time->tm_wday < 0 || new_date_time->tm_wday > 6) {
+		LOG_ERR("Week day in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	/** Days since January 1. */
+	if (new_date_time->tm_yday < 0 || new_date_time->tm_yday > 365) {
+		LOG_ERR("Year day in time structure not in correct format");
+		err = -EINVAL;
+	}
+
+	if (err) {
+		return err;
+	}
+
+	initial_valid_time = true;
 	time_aux.last_date_time_update = k_uptime_get();
 	time_aux.date_time_utc = (int64_t)timeutil_timegm64(new_date_time) * 1000;
+
+	return 0;
 }
 
 int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 {
+	int64_t uptime_prev = *uptime;
+
 	if (!initial_valid_time) {
-		LOG_ERR("Valid time not currently available, requesting time");
-		k_sem_give(&time_fetch_sem);
+		LOG_ERR("Valid time not currently available");
 		return -ENODATA;
 	}
 
 	*uptime += time_aux.date_time_utc - time_aux.last_date_time_update;
+
+	/** Check if the passed in uptime was allready converted,
+	 * meaning that after a second conversion it is greater than the
+	 * current date time UTC.
+	 */
+	if (*uptime > time_aux.date_time_utc +
+	    (k_uptime_get() - time_aux.last_date_time_update)) {
+		LOG_ERR("Uptime to large or previously converted");
+		LOG_ERR("Clear variable or set a new uptime");
+		*uptime = uptime_prev;
+		return -EINVAL;
+	}
 
 	return 0;
 }
 
 int date_time_now(int64_t *unix_time_ms)
 {
+	int err;
+	int64_t unix_time_ms_prev = *unix_time_ms;
+
 	*unix_time_ms = k_uptime_get();
 
-	return date_time_uptime_to_unix_time_ms(unix_time_ms);
+	err = date_time_uptime_to_unix_time_ms(unix_time_ms);
+	if (err) {
+		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+		*unix_time_ms = unix_time_ms_prev;
+	}
+
+	return err;
 }
 
-void date_time_update(void)
+int date_time_update_async(void)
 {
 	k_sem_give(&time_fetch_sem);
+
+	return 0;
+}
+
+int date_time_clear(void)
+{
+	time_aux.date_time_utc = 0;
+	time_aux.last_date_time_update = 0;
+	initial_valid_time = false;
+
+	return 0;
+}
+
+int date_time_timestamp_clear(int64_t *unix_timestamp)
+{
+	if (unix_timestamp == NULL) {
+		return -EINVAL;
+	}
+
+	*unix_timestamp = 0;
+
+	return 0;
 }
 
 DEVICE_INIT(date_time, "DATE_TIME",
