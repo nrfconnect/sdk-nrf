@@ -8,7 +8,7 @@ To show this interaction, the sample requires a server sample that is compatible
 The recommended server sample referenced on this page is :ref:`coap_server_sample`.
 
 .. note::
-    This sample supports the Minimal Thread Device variant.
+    This sample supports optional :ref:`coap_client_sample_multi_ext` and Minimal Thread Device variants.
     See :ref:`coap_client_sample_activating_variants` for details.
 
 Overview
@@ -26,6 +26,15 @@ The following CoAP resources are accessed on the server side:
 This sample uses :ref:`Zephyr CoAP API<zephyr:coap_sock_interface>` for communication, which is the preferred API to use for new CoAP applications.
 For example usage of the native Thread CoAP API, see the :ref:`coap_server_sample` sample.
 
+.. _coap_client_sample_multi_ext:
+
+Multiprotocol |BLE| extension
+=============================
+
+This optional extension can demonstrate the OpenThread stack and :ref:`nrfxlib:softdevice_controller` working concurrently.
+It uses the :ref:`nus_service_readme` library to control the LED states over |BLE| in a Thread network.
+For more information about multiprotocol feature, see :ref:`ug_multiprotocol_support`.
+
 Requirements
 ************
 
@@ -37,6 +46,14 @@ The sample supports the following development kits:
 
 You can use one or more of the development kits listed above as the Thread CoAP Client.
 You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
+
+Multiprotocol extension requirements
+====================================
+
+If you enable the :ref:`coap_client_sample_multi_ext`, make sure you have a phone or a tablet with the `nRF Toolbox`_ application installed.
+
+.. note::
+  The :ref:`testing instructions <coap_client_sample_testing_ble>` refer to nRF Toolbox, but similar applications can be used as well, for example `nRF Connect for Mobile`_.
 
 User interface
 **************
@@ -63,15 +80,28 @@ Minimal Thread Device assignments
 When the device is working as Minimal Thread Device (MTD), the following LED and Button assignments are also available:
 
 LED 3:
-    Indicates the mode the device is working in:
+    The mode the device is working in:
 
     * On when in the Minimal End Device (MED) mode.
     * Off when in the Sleepy End Device (SED) mode.
 
 Button 3:
-    Pressing results in toggling the power consumption between SED and MED.
+    Toggle the power consumption between SED and MED.
 
 For more information, see :ref:`thread_ug_device_type` in the Thread user guide.
+
+Multiprotocol |BLE| extension assignments
+=========================================
+
+LED 2:
+   On when |BLE| connection is established.
+
+UART command assignments:
+   The following command assignments are configured and used in nRF Toolbox when :ref:`coap_client_sample_testing_ble`:
+
+   * ``u`` - Send a unicast CoAP message over Thread (the same operation as **Button 1**).
+   * ``m`` - Send a multicast CoAP message over Thread (the same operation as **Button 2**).
+   * ``p`` - Send a pairing request as CoAP message over Thread (the same operation as **Button 4**).
 
 Building and running
 ********************
@@ -87,9 +117,10 @@ Building and running
 Activating sample extensions
 ============================
 
-To activate the extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
+To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
 * For the Minimal Thread Device variant, set :file:`overlay-mtd.conf`.
+* For the Multiprotocol BLE extension, set :file:`overlay-multiprotocol_ble.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 
@@ -130,6 +161,69 @@ At this point, the radio is disabled when it is idle and the serial console is n
 Pressing **Button 3** again will switch the mode back to MED.
 Switching between SED and MED modes does not affect the standard testing procedure, but terminal logs are not available in the SED mode.
 
+.. _coap_client_sample_testing_ble:
+
+Testing multiprotocol |BLE| extension
+-------------------------------------
+
+To test the multiprotocol |BLE| extension, complete the following steps after the standard `Testing`_ procedure:
+
+#. Set up nRF Toolbox by completing the following steps:
+
+   .. tabs::
+
+      .. tab:: a. Start UART
+
+         Tap :guilabel:`UART` to open the UART application in nRF Toolbox.
+
+         .. figure:: /images/nrftoolbox_uart_default.png
+            :alt: UART application in nRF Toolbox
+
+            UART application in nRF Toolbox
+
+      .. tab:: b. Configure commands
+
+         Configure the UART commands by completing the following steps:
+
+         1. Tap the :guilabel:`EDIT` button in the top right corner of the application.
+            The button configuration window appears.
+         #. Create the active application buttons by completing the following steps:
+
+            a. Bind the top left button to the ``u`` command, with EOL set to LF and an icon of your choice.
+               For this testing procedure, the :guilabel:`>` icon is used.
+            #. Bind the top middle button to the ``m`` command, with EOL set to LF and an icon of your choice.
+               For this testing procedure, the play button icon is used.
+            #. Bind the top right button to the ``p`` command, with EOL set to LF and an icon of your choice.
+               For this testing procedure, the settings gear icon is used.
+
+            .. figure:: /images/nrftoolbox_uart_settings.png
+               :alt: Configuring buttons in nRF Toolbox - UART application
+
+               Configuring buttons in the UART application of nRF Toolbox
+
+         #. Tap the :guilabel:`DONE` button in the top right corner of the application.
+
+      .. tab:: c. Connect to device
+
+         Tap :guilabel:`CONNECT` and select the ``NUS_CoAP_client`` device from the list of devices.
+
+         .. figure:: /images/nrftoolbox_uart_connected.png
+            :alt: nRF Toolbox - UART application view after establishing connection
+
+            The UART application of nRF Toolbox after establishing the connection
+
+         .. note::
+            Observe that **LED 2** on your CoAP Multiprotocol Client node is solid, which indicates that the Bluetooth connection is established.
+   ..
+
+#. In nRF Toolbox, press the middle button to control **LED 4** on all CoAP server nodes.
+#. Pair a client with a server by completing the following steps:
+
+   a. Press **Button 4** on a server node to enable pairing.
+   #. In nRF Toolbox, press the right button to pair the two nodes.
+
+#. In nRF Toolbox, press the left button to control **LED 4** on the paired server node.
+
 Sample output
 =============
 
@@ -157,3 +251,14 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:kernel_api`:
 
   * ``include/kernel.h``
+
+The following dependencies are added by the optional multiprotocol |BLE| extension:
+
+* :ref:`nrfxlib:softdevice_controller`
+* :ref:`nus_service_readme`
+* Zephyr's :ref:`zephyr:bluetooth_api`:
+
+  * ``include/bluetooth/bluetooth.h``
+  * ``include/bluetooth/gatt.h``
+  * ``include/bluetooth/hci.h``
+  * ``include/bluetooth/uuid.h``
