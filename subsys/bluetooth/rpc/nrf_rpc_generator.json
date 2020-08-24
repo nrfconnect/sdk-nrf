@@ -7,6 +7,10 @@
 		{
 			"cli": "client/bt_rpc_conn_cli.c",
 			"host": "host/bt_rpc_conn_host.c"
+		},
+		{
+			"cli": "client/bt_rpc_gatt_cli.c",
+			"host": "host/bt_rpc_gatt_host.c"
 		}
 	],
 	"cmd-id-pattern": "$_RPC_CMD",
@@ -42,7 +46,8 @@
 			"#define CONFIG_BT_REMOTE_INFO",
 			"#define CONFIG_BT_SMP_APP_PAIRING_ACCEPT",
 			"#define CONFIG_BT_DEVICE_NAME_MAX 64",
-			"#define CONFIG_BT_EXT_ADV_MAX_ADV_SET 4"
+			"#define CONFIG_BT_EXT_ADV_MAX_ADV_SET 4",
+			"#define CONFIG_BT_MAX_PAIRED 4"
 		],
 		"conf.txt": [
 			"-include _rpc_defines.h",
