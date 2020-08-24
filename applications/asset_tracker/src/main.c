@@ -1725,7 +1725,7 @@ static void ui_evt_handler(struct ui_evt evt)
 
 void handle_bsdlib_init_ret(void)
 {
-	#if defined(CONFIG_BSD_LIBRARY)
+#if defined(CONFIG_BSD_LIBRARY)
 	int ret = bsdlib_get_init_ret();
 
 	/* Handle return values relating to modem firmware update */
@@ -1747,7 +1747,52 @@ void handle_bsdlib_init_ret(void)
 	default:
 		break;
 	}
-	#endif /* CONFIG_BSD_LIBRARY */
+#endif /* CONFIG_BSD_LIBRARY */
+}
+
+static void lte_handler(const struct lte_lc_evt *const evt)
+{
+#if defined(CONFIG_BSD_LIBRARY)
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
+		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			break;
+		}
+
+		LOG_INF("Network registration status: %s",
+			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
+			"Connected - home network" : "Connected - roaming");
+		break;
+	case LTE_LC_EVT_PSM_UPDATE:
+		LOG_INF("PSM parameter update: TAU: %d, Active time: %d",
+			evt->psm_cfg.tau, evt->psm_cfg.active_time);
+		break;
+	case LTE_LC_EVT_EDRX_UPDATE: {
+		char log_buf[60];
+		ssize_t len;
+
+		len = snprintf(log_buf, sizeof(log_buf),
+			       "eDRX parameter update: eDRX: %0.2f, PTW: %0.2f",
+			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
+		if ((len > 0) && (len < sizeof(log_buf))) {
+			LOG_INF("%s", log_strdup(log_buf));
+		}
+		break;
+	}
+	case LTE_LC_EVT_RRC_UPDATE:
+		LOG_INF("RRC mode: %s",
+			evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED ?
+			"Connected" : "Idle");
+		break;
+	case LTE_LC_EVT_CELL_UPDATE:
+		LOG_INF("LTE cell changed: Cell ID: %d, Tracking area: %d",
+			evt->cell.id, evt->cell.tac);
+		break;
+	default:
+		break;
+	}
+#endif /* CONFIG_BSD_LIBRARY */
 }
 
 void main(void)
@@ -1772,7 +1817,9 @@ void main(void)
 	ui_init(ui_evt_handler);
 #endif
 	work_init();
-
+#if defined(CONFIG_BSD_LIBRARY)
+	lte_lc_register_handler(lte_handler);
+#endif /* CONFIG_BSD_LIBRARY */
 	while (modem_configure() != 0) {
 		LOG_WRN("Failed to establish LTE connection.");
 		LOG_WRN("Will retry in %d seconds.",
