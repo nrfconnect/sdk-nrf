@@ -28,11 +28,24 @@ static int log_usb_state_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->state < USB_STATE_COUNT);
 
-	return snprintf(buf, buf_len, "id:%p state:%s", event->id,
-			state_name[event->state]);
+	return snprintf(buf, buf_len, "state:%s", state_name[event->state]);
 }
 
 EVENT_TYPE_DEFINE(usb_state_event,
 		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_STATE_EVENT),
 		  log_usb_state_event,
+		  NULL);
+
+static int log_usb_hid_event(const struct event_header *eh, char *buf,
+			     size_t buf_len)
+{
+	const struct usb_hid_event *event = cast_usb_hid_event(eh);
+
+	return snprintf(buf, buf_len, "id:%p %sabled", event->id,
+			(event->enabled)?("en"):("dis"));
+}
+
+EVENT_TYPE_DEFINE(usb_hid_event,
+		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_HID_EVENT),
+		  log_usb_hid_event,
 		  NULL);
