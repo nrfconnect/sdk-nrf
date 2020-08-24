@@ -6,18 +6,24 @@
 
 menuconfig DATE_TIME
 	bool "Date time library"
-	depends on BSD_LIBRARY
-	select AT_CMD
-	select SNTP
 
 if DATE_TIME
 
 config DATE_TIME_UPDATE_INTERVAL_SECONDS
 	int "Date time update interval, in seconds"
 	default 3600
+	help
+		Setting this option to 0 disables sequential date time updates.
 
 config DATE_TIME_MODEM
 	bool "Get date time from the nRF9160 onboard modem"
+	depends on BSD_LIBRARY
+	select AT_CMD
+	default y
+
+config DATE_TIME_NTP
+	bool "Get date time from NTP servers"
+	select SNTP
 	default y
 
 config DATE_TIME_THREAD_SIZE
