@@ -156,6 +156,7 @@ static struct k_delayed_work cloud_connect_work;
 static struct k_work device_status_work;
 static struct k_delayed_work send_agps_request_work;
 static struct k_work motion_data_send_work;
+static struct k_work no_sim_go_offline_work;
 
 #if defined(CONFIG_AT_CMD)
 #define MODEM_AT_CMD_BUFFER_LEN (CONFIG_AT_CMD_RESPONSE_MAX_LEN + 1)
@@ -200,6 +201,7 @@ static void cycle_cloud_connection(struct k_work *work);
 static void set_gps_enable(const bool enable);
 static bool data_send_enabled(void);
 static void connection_evt_handler(const struct cloud_event *const evt);
+static void no_sim_go_offline(struct k_work *work);
 
 static void shutdown_modem(void)
 {
@@ -1543,6 +1545,7 @@ static void work_init(void)
 	k_delayed_work_init(&cloud_connect_work, cloud_connect_work_fn);
 	k_work_init(&device_status_work, device_status_send);
 	k_work_init(&motion_data_send_work, motion_data_send);
+	k_work_init(&no_sim_go_offline_work, no_sim_go_offline);
 #if CONFIG_MODEM_INFO
 	k_delayed_work_init(&rsrp_work, modem_rsrp_data_send);
 #endif /* CONFIG_MODEM_INFO */
@@ -1750,19 +1753,34 @@ void handle_bsdlib_init_ret(void)
 #endif /* CONFIG_BSD_LIBRARY */
 }
 
+static void no_sim_go_offline(struct k_work *work)
+{
+#if defined(CONFIG_BSD_LIBRARY)
+	lte_lc_offline();
+	/* Wait for lte_lc events to be processed before printing info message */
+	k_sleep(K_MSEC(100));
+	LOG_INF("No SIM card detected.");
+	LOG_INF("Insert SIM and reset device to run the asset tracker.");
+	ui_led_set_pattern(UI_LED_ERROR_LTE_LC);
+#endif /* CONFIG_BSD_LIBRARY */
+}
+
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
 #if defined(CONFIG_BSD_LIBRARY)
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:
-		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			break;
-		}
 
-		LOG_INF("Network registration status: %s",
+		if (evt->nw_reg_status == LTE_LC_NW_REG_UICC_FAIL) {
+			k_work_submit_to_queue(&application_work_q,
+				       &no_sim_go_offline_work);
+
+		} else if ((evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+			(evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			LOG_INF("Network registration status: %s",
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
+		}
 		break;
 	case LTE_LC_EVT_PSM_UPDATE:
 		LOG_INF("PSM parameter update: TAU: %d, Active time: %d",
@@ -1773,8 +1791,8 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		ssize_t len;
 
 		len = snprintf(log_buf, sizeof(log_buf),
-			       "eDRX parameter update: eDRX: %0.2f, PTW: %0.2f",
-			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
+					"eDRX parameter update: eDRX: %0.2f, PTW: %0.2f",
+					evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 		if ((len > 0) && (len < sizeof(log_buf))) {
 			LOG_INF("%s", log_strdup(log_buf));
 		}
