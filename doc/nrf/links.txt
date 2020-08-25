@@ -7,6 +7,8 @@
 .. _`official Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
 
+.. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/reference/networking/apis.html
+
 .. ### Links to MCUboot
 
 .. _`MCUboot`: https://mcuboot.com
@@ -431,6 +433,8 @@
 .. _`tutorial on SSL.com`: https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
 
 .. _`RFC959 File Transfer Protocol (FTP)`: https://tools.ietf.org/html/rfc959
+
+.. _`RFC1055 Serial Line Internet Protocol (SLIP)`: https://tools.ietf.org/html/rfc1055
 
 .. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
 
