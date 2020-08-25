@@ -114,7 +114,7 @@ class NrfHidTransport():
         try:
             dev.send_feature_report(data)
         except Exception as e:
-            logging.error('Send feature report problem: {}'.format(e))
+            logging.debug('Send feature report problem: {}'.format(e))
             return False, None
 
         for _ in range(POLL_RETRY_COUNT):
