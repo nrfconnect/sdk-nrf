@@ -690,7 +690,7 @@ static bool event_handler(const struct event_header *eh)
 				sub = &subscribers[i];
 			}
 
-			if (sub->id == event->subscriber) {
+			if (subscribers[i].id == event->subscriber) {
 				break;
 			}
 		}
