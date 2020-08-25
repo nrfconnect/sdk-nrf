@@ -29,6 +29,7 @@ LOG_MODULE_REGISTER(at_host, CONFIG_SLM_LOG_LEVEL);
 #include "slm_at_udp_proxy.h"
 #endif
 #include "slm_at_mqtt.h"
+#include "slm_at_httpc.h"
 
 #define SLM_UART_0_NAME	"UART_0"
 #define SLM_UART_2_NAME	"UART_2"
@@ -184,6 +185,7 @@ static void handle_at_clac(void)
 	slm_at_gps_clac();
 	slm_at_mqtt_clac();
 	slm_at_ftp_clac();
+	slm_at_httpc_clac();
 }
 
 static int handle_at_sleep(const char *at_cmd, enum shutdown_modes *mode)
@@ -420,6 +422,15 @@ static void cmd_send(struct k_work *work)
 	}
 
 	err = slm_at_ftp_parse(at_buf);
+	if (err == 0) {
+		rsp_send(OK_STR, sizeof(OK_STR) - 1);
+		goto done;
+	} else if (err != -ENOENT) {
+		rsp_send(ERROR_STR, sizeof(ERROR_STR) - 1);
+		goto done;
+	}
+
+	err = slm_at_httpc_parse(at_buf, at_buf_len);
 	if (err == 0) {
 		rsp_send(OK_STR, sizeof(OK_STR) - 1);
 		goto done;
@@ -686,10 +697,14 @@ int slm_at_host_init(void)
 		LOG_ERR("MQTT could not be initialized: %d", err);
 		return -EFAULT;
 	}
-
 	err = slm_at_ftp_init();
 	if (err) {
 		LOG_ERR("FTP could not be initialized: %d", err);
+		return -EFAULT;
+	}
+	err = slm_at_httpc_init();
+	if (err) {
+		LOG_ERR("HTTP could not be initialized: %d", err);
 		return -EFAULT;
 	}
 
@@ -736,6 +751,10 @@ void slm_at_host_uninit(void)
 	err = slm_at_ftp_uninit();
 	if (err) {
 		LOG_WRN("FTP could not be uninitialized: %d", err);
+	}
+	err = slm_at_httpc_uninit();
+	if (err) {
+		LOG_WRN("HTTP could not be uninitialized: %d", err);
 	}
 	err = at_notif_deregister_handler(NULL, response_handler);
 	if (err) {

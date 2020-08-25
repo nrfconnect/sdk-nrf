@@ -28,6 +28,7 @@ target_sources(app PRIVATE src/slm_at_icmp.c)
 target_sources(app PRIVATE src/slm_at_gps.c)
 target_sources(app PRIVATE src/slm_at_mqtt.c)
 target_sources(app PRIVATE src/slm_at_ftp.c)
+target_sources(app PRIVATE src/slm_at_httpc.c)
 
 add_subdirectory(src/tcpip_proxy)
 

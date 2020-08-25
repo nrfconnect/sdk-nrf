@@ -18,6 +18,7 @@ config SLM_AT_MODE
 	select MQTT_LIB
 	select MQTT_LIB_TLS
 	select FTP_CLIENT
+	select HTTP_CLIENT
 
 config SLM_AT_MAX_PARAM
 	int "Max number of parameters in AT command"
