@@ -143,10 +143,10 @@ There are multiple ways to build the tests.
 See :ref:`nrf_security` for additional information about configuring the Nordic Security Module.
 You can use the following configuration files to build the test in a specific setup:
 
-* :file:`overlay-backend-sw.conf` - software only, except a hardware module to generate entropy for RNG
-* :file:`overlay-backend-hw.conf` - hardware-accelerated using the Arm CryptoCell accelerator (for cryptography and entropy for RNG)
-* :file:`overlay-backend-hw-sw.conf` - a combination of hardware acceleration using Arm CryptoCell and a software implementation that adds key sizes and algorithms not supported in CryptoCell (the setup uses hardware as much as possible)
-* :file:`overlay-backend-oberon.conf` - uses the Oberon software library only for all cryptographic operations
+* :file:`overlay-vanilla.conf` - uses the Mbed TLS software library for all cryptographic operations
+* :file:`overlay-oberon.conf` - uses the Oberon software library for all cryptographic operations
+* :file:`overlay-cc310.conf` - uses the Arm CryptoCell-310 for all cryptographic operations
+* :file:`overlay-multi.conf` - uses all of the above, favoring hardware acceleration when possible
 
 .. _crypto_test_ztest_custom:
 
