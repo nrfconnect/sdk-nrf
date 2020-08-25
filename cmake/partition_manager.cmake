@@ -419,23 +419,26 @@ else()
     ${global_hex_depends}
     )
 
-  # For convenience, generate global hex file containing all domains' hex files.
-  set(final_merged ${PROJECT_BINARY_DIR}/merged_domains.hex)
+  if (PM_DOMAINS)
+    # For convenience, generate global hex file containing all domains' hex
+    # files.
+    set(final_merged ${ZEPHYR_BINARY_DIR}/merged_domains.hex)
 
-  # Add command to merge files.
-  add_custom_command(
-    OUTPUT ${final_merged}
-    COMMAND
-    ${PYTHON_EXECUTABLE}
-    ${ZEPHYR_BASE}/scripts/mergehex.py
-    -o ${final_merged}
-    ${domain_hex_files}
-    DEPENDS
-    ${global_hex_depends}
-    )
+    # Add command to merge files.
+    add_custom_command(
+      OUTPUT ${final_merged}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_BASE}/scripts/mergehex.py
+      -o ${final_merged}
+      ${domain_hex_files}
+      DEPENDS
+      ${global_hex_depends}
+      )
 
-  # Wrapper target for the merge command.
-  add_custom_target(merged_domains_hex ALL DEPENDS ${final_merged})
+    # Wrapper target for the merge command.
+    add_custom_target(merged_domains_hex ALL DEPENDS ${final_merged})
+  endif()
 
   # Add ${merged}.hex as the representative hex file for flashing this app.
   if(TARGET flash)
