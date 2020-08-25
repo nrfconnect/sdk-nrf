@@ -274,31 +274,36 @@ static int parse_cereg(const char *notification,
 
 	*reg_status = status;
 
-	/* Parse tracking area code */
-	err = at_params_string_get(&resp_list,
-				   AT_CEREG_TAC_INDEX,
-				   str_buf, &len);
-	if (err) {
-		LOG_ERR("Could not get tracking area code, error: %d", err);
-		goto clean_exit;
+	if (*reg_status != LTE_LC_NW_REG_UICC_FAIL) {
+		/* Parse tracking area code */
+		err = at_params_string_get(&resp_list,
+					AT_CEREG_TAC_INDEX,
+					str_buf, &len);
+		if (err) {
+			LOG_ERR("Could not get tracking area code, error: %d", err);
+			goto clean_exit;
+		}
+
+		str_buf[len] = '\0';
+		cell->tac = strtoul(str_buf, NULL, 16);
+
+		/* Parse cell ID */
+		len = sizeof(str_buf) - 1;
+
+		err = at_params_string_get(&resp_list,
+					AT_CEREG_CELL_ID_INDEX,
+					str_buf, &len);
+		if (err) {
+			LOG_ERR("Could not get cell ID, error: %d", err);
+			goto clean_exit;
+		}
+
+		str_buf[len] = '\0';
+		cell->id = strtoul(str_buf, NULL, 16);
+	} else {
+		cell->tac = UINT32_MAX;
+		cell->id = UINT32_MAX;
 	}
-
-	str_buf[len] = '\0';
-	cell->tac = strtoul(str_buf, NULL, 16);
-
-	/* Parse cell ID */
-	len = sizeof(str_buf) - 1;
-
-	err = at_params_string_get(&resp_list,
-				   AT_CEREG_CELL_ID_INDEX,
-				   str_buf, &len);
-	if (err) {
-		LOG_ERR("Could not get cell ID, error: %d", err);
-		goto clean_exit;
-	}
-
-	str_buf[len] = '\0';
-	cell->id = strtoul(str_buf, NULL, 16);
 
 	/* Parse PSM configuration only when registered */
 	if ((*reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
