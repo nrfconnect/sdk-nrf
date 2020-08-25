@@ -199,6 +199,10 @@ breathe_projects = {
     "nrf": "{}/doxygen/xml".format(NRF_BUILD),
 }
 breathe_default_project = "nrf"
+breathe_domain_by_extension = {
+    "h": "c",
+    "c": "c",
+}
 
 # Qualifiers to a function are causing Sphinx/Breathe to warn about
 # Error when parsing function declaration and more.  This is a list
@@ -207,6 +211,7 @@ breathe_default_project = "nrf"
 cpp_id_attributes = ['__syscall', '__syscall_inline', '__deprecated',
     '__may_alias', '__used', '__unused', '__weak',
     '__DEPRECATED_MACRO', 'FUNC_NORETURN' ]
+c_id_attributes = cpp_id_attributes
 
 
 # Custom added feature to allow redirecting old URLs (caused by

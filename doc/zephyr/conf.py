@@ -308,6 +308,10 @@ breathe_projects = {
     "doc-examples": "{}/doxygen/xml".format(ZEPHYR_BUILD)
 }
 breathe_default_project = "Zephyr"
+breathe_domain_by_extension = {
+    "h": "c",
+    "c": "c",
+}
 
 # Qualifiers to a function are causing Sphihx/Breathe to warn about
 # Error when parsing function declaration and more.  This is a list
@@ -316,6 +320,7 @@ breathe_default_project = "Zephyr"
 cpp_id_attributes = ['__syscall', '__syscall_inline', '__deprecated',
     '__may_alias', '__used', '__unused', '__weak',
     '__DEPRECATED_MACRO', 'FUNC_NORETURN' ]
+c_id_attributes = cpp_id_attributes
 
 # docs_title is used in the breadcrumb title in the zephyr docs theme
 html_context = {
