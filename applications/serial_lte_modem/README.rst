@@ -16,6 +16,7 @@ It provides the following features:
 * Support for GPS proprietary AT commands
 * Support for MQTT client proprietary AT commands
 * Support for FTP client proprietary AT commands
+* Support for HTTP client proprietary AT commands
 * Support for communication to external MCU over UART
 
 All nRF91 modem AT commands are also supported.
@@ -196,6 +197,158 @@ The different command options for <cmd> are listed below:
 * AT#XFTP="delete",<file>
 * AT#XFTP="get",<file>
 * AT#XFTP="put",<file>[<datatype>,<data>]
+
+HTTP Client AT Commands
+***********************
+
+The following proprietary HTTP Client AT commands and unsolicited notifications are used in this application:
+
+.. list-table::
+   :align: left
+   :header-rows: 1
+
+   * - HTTP Client AT Commands
+     - Description
+   * - AT#XHTTPCCON=<op>[,<host>,<port>[,<sec_tag>]]
+     - Connect to/disconnect from an HTTP server.
+   * - AT#XHTTPCREQ=<method>,<resource>,<header>[,<payload_length>]
+     - Send an HTTP request to the HTTP server.
+   * - #XHTTPCRSP=<byte_received>,<state><CR><LF><response>
+     - Indicate that a part of HTTP response was received.
+
+AT#XHTTPCCON
+============
+
+The AT#XHTTPCCON command connects to/disconnects from an HTTP server.
+
+.. code-block:: none
+
+   AT#XHTTPCCON=<op>[,<host>,<port>[,<sec_tag>]]
+
+.. csv-table::
+    :header: Command Parameters, Data Type, Description
+
+    op, integer, "| 1: Connect to HTTP host
+    | 0: Disconnect from HTTP host"
+    host, string, Domain name of HTTP server.
+    port, integer, TCP port number on which HTTP server is listening.
+    sec_tag, integer, Security tag to be used for secure session.
+
+The #XHTTPCCON unsolicited notification indicates the state of connection.
+
+.. code-block:: none
+
+   #XHTTPCCON=<state>
+
+.. csv-table::
+    :header: Notification Parameters, Data Type, Description
+
+    state, integer, "| 1: Connected to HTTP host
+    | 0: Disconnected from HTTP host"
+
+The example below connects to an HTTP server:
+
+.. code-block:: none
+
+   AT#XHTTPCCON=1,"postman-echo.com",80
+   #XHTTPCCON:1
+   OK
+
+AT#XHTTPCREQ
+============
+
+The AT#XHTTPCREQ sends an HTTP request to the HTTP server.
+
+.. code-block:: none
+
+   AT#XHTTPCREQ=<method>,<resource>,<header>[,<payload_length>]
+
+.. csv-table::
+    :header: Command Parameters, Data Type, Description
+
+    method, string, "Request method string."
+    resource, string, "Target resource to handle the request."
+    header, string, "Header field of request. Each header field should be terminated with <CR><LF>."
+    payload_length, integer, "| Length of payload. If payload_length is greater than 0, the SLM will enter pass-through mode
+    | and expect the upcoming UART input data as payload. SLM will then send the payload to the HTTP server
+    | until *payload_length* bytes are sent.
+    |
+    | To abort sending payload, use *AT#XHTTPCCON=0* to disconnect from server."
+
+The #XHTTPCREQ unsolicited notification indicates the state of request.
+
+.. code-block:: none
+
+   #XHTTPCREQ:<state>
+
+.. csv-table::
+    :header: Notification Parameters, Data Type, Description
+
+    state, integer, "| 0: Request is sent successfully.
+    | 1: Wait for payload data.
+    | Negative integer: Error code"
+
+#XHTTPCRSP
+==========
+
+The #XHTTPCRSP unsolicited notification indicates that a part of HTTP response was
+received.
+
+.. code-block:: none
+
+   #XHTTPCRSP=<byte_received>,<state><CR><LF><response>
+
+.. csv-table::
+    :header: Notification Parameters, Data Type, Description
+
+    byte_received, integer, Length of partially received HTTP response.
+    state, integer, "| 0. The whole HTTP response is received.
+    | 1: There is more HTTP response data to come.
+    | Negative integer: Error code"
+    response, raw data, The raw data of the HTTP response including headers and body.
+
+The example below sends a GET request to retrieve data from the server without an optional header:
+
+.. code-block:: none
+
+   AT#XHTTPCREQ="GET","/get?foo1=bar1&foo2=bar2",""
+   OK
+   #XHTTPCREQ:0
+   #XHTTPCRSP:576,0
+   HTTP/1.1 200 OK
+   Date: Wed, 09 Sep 2020 08:08:45 GMT
+   Content-Type: application/json; charset=utf-8
+   Content-Length: 244
+   Connection: keep-alive
+   ETag: W/"f4-8qqGYUH6MF4k5ssZjXy/pQ2Wv2M"
+   Vary: Accept-Encoding
+   set-cookie: sails.sid=s%3Awm7Yy6ZHF1L9bhf5GQFyOfskldPnP1AU.3tM0APxqLZLEaHtZMlUi9OJH8AR7OI%2F9qNV8h1NQOj8; Path=/; HttpOnly
+
+The example below sends a POST request to send data to the server with an optional header:
+
+.. code-block:: none
+
+   AT#XHTTPCREQ="POST","/post","User-Agent: SLM/1.2.0
+   Accept: */*
+   Content-Type: application/x-www-form-urlencoded
+   Content-Length: 20
+   ",20
+   OK
+   #XHTTPCREQ:1
+   12345678901234567890
+   OK
+   #XHTTPCREQ:0
+   #XHTTPCRSP:576,1
+   HTTP/1.1 200 OK
+   Date: Wed, 09 Sep 2020 08:21:03 GMT
+   Content-Type: application/json; charset=utf-8
+   Content-Length: 405
+   Connection: keep-alive
+   ETag: W/"195-JTHehAiV7LQRCKihfzcZBX1rgGM"
+   Vary: Accept-Encoding
+   set-cookie: sails.sid=s%3AtApCs6p2Ja2on5dYO8QvhQSEEfnvkjOX.31HKOpZcip6MzzUoqPw2WZib0rPpimc5y10Mjczukoc; Path=/; HttpOnly
+   {"args":{},"data":"","files":{},"form":{"12345678901234567890":""},"headers":{"x-forwarded-proto":"https","x-forwarded-port":"443","host":"postman-echo.com","x-amzn-trace-id":"Root=1-5f589067-d61d0850c65f3568f9c9e050","content-length":"20",#XHTTPCRSP:165,0
+   "user-agent":"SLM/1.2.0","accept":"*/*","content-type":"application/x-www-form-urlencoded"},"json":{"12345678901234567890":""},"url":"https://postman-echo.com/post"}
 
 Building and Running
 ********************
