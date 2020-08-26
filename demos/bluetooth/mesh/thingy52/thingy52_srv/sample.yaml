@@ -1,0 +1,9 @@
+sample:
+  name: Bluetooth Mesh Thingy:52 Server
+  description: Bluetooth Mesh Thingy:52 Server
+tests:
+  samples.bluetooth.mesh.thingy52_srv:
+    build_only: true
+    build_on_all: true
+    platform_whitelist: thingy52_nrf52832
+    tags: bluetooth ci_build

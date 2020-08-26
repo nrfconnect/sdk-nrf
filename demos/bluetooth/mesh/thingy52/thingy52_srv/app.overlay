@@ -1,0 +1,14 @@
+/* Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+&pwm0 {
+	status = "okay";
+	ch0-pin = <27>;
+	ch0-inverted;
+};
+
+&sx1509b {
+	status = "okay";
+};

@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+config BT_MESH_THINGY52_MOD
+	bool "Bluetooth Mesh Thingy:52 model"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Thingy:52 model.
+
+config BT_MESH_THINGY52_CLI
+	bool "Bluetooth Mesh Thingy:52 Client model"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Thingy:52 Client model.

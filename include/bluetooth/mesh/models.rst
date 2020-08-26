@@ -28,3 +28,4 @@ For more information about these and other models, see also `Mesh Model Overview
    ../../../include/bluetooth/mesh/sensor_models.rst
    ../../../include/bluetooth/mesh/time.rst
    ../../../include/bluetooth/mesh/scene.rst
+   ../../../demos/bluetooth/mesh/thingy52/common/model/thingy52_srv.rst
