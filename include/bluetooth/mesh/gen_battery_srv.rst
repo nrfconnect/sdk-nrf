@@ -14,7 +14,7 @@ Generic Battery Status: :c:struct:`bt_mesh_battery_status`
     The Generic Battery Status is a composite state, which means that it contains various information about the battery state.
     The battery state can only be changed locally, so a :ref:`bt_mesh_battery_cli_readme` is only able to observe it.
 
-    Your application is expected to hold the Generic Battery Status state memory and provide access to the state through the :cpp:member:`bt_mesh_battery_srv::get` handler function.
+    Your application is expected to hold the Generic Battery Status state memory and provide access to the state through the :c:member:`bt_mesh_battery_srv.get` handler function.
     All the fields in the Generic Battery Status have special *unknown* values, which are used by default.
 
 Extended models

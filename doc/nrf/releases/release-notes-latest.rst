@@ -163,19 +163,19 @@ The following list summarizes the most important changes inherited from upstream
   * Deprecated ``BT_LE_SCAN_FILTER_WHITELIST``.
     Use :c:enumerator:`BT_LE_SCAN_OPT_FILTER_WHITELIST` instead.
   * Deprecated ``bt_le_scan_param::filter_dup``.
-    Use :cpp:member:`bt_le_scan_param::options` instead.
+    Use :c:member:`bt_le_scan_param.options` instead.
   * Deprecated ``bt_conn_create_le()``.
     Use :c:func:`bt_conn_le_create` instead.
   * Deprecated ``bt_conn_create_auto_le()``.
     Use :c:func:`bt_conn_le_create_auto` instead.
   * Deprecated ``bt_conn_create_slave_le()``.
-    Use :c:func:`bt_le_adv_start` instead, with :cpp:member:`bt_le_adv_param::peer` set to the remote peer's address.
+    Use :c:func:`bt_le_adv_start` instead, with :c:member:`bt_le_adv_param.peer` set to the remote peer's address.
   * Deprecated the ``BT_LE_ADV_*`` macros.
     Use the ``BT_GAP_ADV_*`` enums instead.
   * Updated L2CAP RX MTU to be controlled by :option:`CONFIG_BT_L2CAP_RX_MTU` (instead of :option:`CONFIG_BT_RX_BUF_LEN`) when :option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` is disabled.
     If :option:`CONFIG_BT_RX_BUF_LEN` is changed from its default value, :option:`CONFIG_BT_L2CAP_RX_MTU` should be set to ``CONFIG_BT_RX_BUF_LEN - 8``.
   * Added support for periodic advertisement to the Host.
-  * Added a :cpp:member:`bt_conn_auth_cb::bond_deleted` callback to the Host.
+  * Added a :c:member:`bt_conn_auth_cb.bond_deleted` callback to the Host.
   * Added support for starting a persistent advertiser when the maximum number of connections has been reached.
   * Fixed the settings of Advertising Data on extended advertising instances.
   * Updated the SMP implementation in the Host to reject legacy pairing early in SC-only mode.

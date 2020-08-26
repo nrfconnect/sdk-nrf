@@ -28,9 +28,9 @@ The array is written in the :file:`selector_hw_def.h` file located in the board-
 
 For every hardware selector, define the following parameters:
 
-* :cpp:member:`id` - ID of the hardware selector.
-* :cpp:member:`pins` - Pointer to the array of :c:struct:`gpio_pin`.
-* :cpp:member:`pins_size` - Size of the array of :c:struct:`gpio_pin`.
+* :c:member:`selector_config.id` - ID of the hardware selector.
+* :c:member:`selector_config.pins` - Pointer to the array of :c:struct:`gpio_pin`.
+* :c:member:`selector_config.pins_size` - Size of the array of :c:struct:`gpio_pin`.
 
 .. warning::
     Each source of ``selector_event`` must have a unique ID to properly distinguish events from different sources.

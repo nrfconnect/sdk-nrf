@@ -25,7 +25,7 @@ When developing, take the following into account:
   An element with a User Property Server and no Admin or Manufacturer Server is useless.
 * The model keeps the user access field of each Admin and Manufacturer property in persistent storage.
   The property values themselves must be stored by the application.
-* Your application should provide access to the property values through the callbacks of server getter (:cpp:member:`bt_mesh_prop_srv::get`) and setter (:cpp:member:`bt_mesh_prop_srv::set`).
+* Your application should provide access to the property values through the callbacks of server getter (:c:member:`bt_mesh_prop_srv.get`) and setter (:c:member:`bt_mesh_prop_srv.set`).
 * The set of Property IDs and their order cannot be changed.
 
 States

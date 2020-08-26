@@ -43,7 +43,7 @@ Generic Default Transition Time: ``int32_t``
     Values lower than 100 milliseconds and higher than 0 are encoded as 100 milliseconds.
     Values higher than the max value of 620 minutes are encoded as "undefined".
 
-    The DTT Server holds the memory for this state itself, and optionally notifies the user of any changes through :cpp:member:`bt_mesh_dtt_srv::update_handler`.
+    The DTT Server holds the memory for this state itself, and optionally notifies the user of any changes through :c:member:`bt_mesh_dtt_srv.update_handler`.
     If your application changes the transition time manually, the change must be published using :c:func:`bt_mesh_dtt_srv_pub`.
 
 Extended models

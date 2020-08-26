@@ -183,26 +183,26 @@ LwM2M carrier library events
 
 :c:macro:`LWM2M_CARRIER_EVENT_ERROR`
    This event indicates an error.
-   The event data struct :cpp:type:`lwm2m_carrier_event_error_t` contains the information about the error (:cpp:member:`code` and :cpp:member:`value`).
+   The event data struct :cpp:type:`lwm2m_carrier_event_error_t` contains the information about the error (:c:member:`lwm2m_carrier_event_error_t.code` and :c:member:`lwm2m_carrier_event_error_t.value`).
 
    :c:macro:`LWM2M_CARRIER_ERROR_CONNECT_FAIL`
       This error is generated from the :c:func:`lte_lc_init_and_connect` function.
       It indicates possible problems with the SIM card, or insufficient network coverage.
-      See :cpp:member:`value` field of the event.
+      See :c:member:`lwm2m_carrier_event_error_t.value` field of the event.
 
    :c:macro:`LWM2M_CARRIER_ERROR_DISCONNECT_FAIL`
       This error is generated from the :c:func:`lte_lc_offline` function.
-      See :cpp:member:`value` field of the event.
+      See :c:member:`lwm2m_carrier_event_error_t.value` field of the event.
 
    :c:macro:`LWM2M_CARRIER_ERROR_BOOTSTRAP`
-      This error is generated from the :c:func:`modem_key_mgmt_write` function, if the :cpp:member:`value` field is negative.
-      If the :cpp:member:`value` field is 0, it indicates that the bootstrap sequence has failed.
+      This error is generated from the :c:func:`modem_key_mgmt_write` function, if the :c:member:`lwm2m_carrier_event_error_t.value` field is negative.
+      If the :c:member:`lwm2m_carrier_event_error_t.value` field is 0, it indicates that the bootstrap sequence has failed.
       If this error persists, contact your carrier.
 
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG`
       This error indicates that the update package has been rejected.
       The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client.
-      The :cpp:member:`value` field will have an error of type :cpp:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\bsdlib\\include\\nrf_socket.h`.
+      The :c:member:`lwm2m_carrier_event_error_t.value` field will have an error of type :cpp:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\bsdlib\\include\\nrf_socket.h`.
 
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PROTO`
       This error indicates a protocol error.

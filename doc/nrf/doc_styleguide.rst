@@ -179,7 +179,7 @@ To link directly to a doxygen reference from RST, use the following Breathe doma
 * Enum (the list): ``:c:enum:``
 * Enumerator (an item): ``:c:enumerator:``
 * Macro or define: ``:c:macro:``
-* Structure member: ``:cpp:member:``
+* Structure member: ``:c:member:``
 
 Hyperlinks
 ----------

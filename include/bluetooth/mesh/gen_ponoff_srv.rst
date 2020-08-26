@@ -39,7 +39,7 @@ Generic On Power Up: :c:enum:`bt_mesh_on_power_up`
     * :c:enumerator:`BT_MESH_ON_POWER_UP_RESTORE` - The OnOff state is initialized to its last known value.
       If any other states are bound to the On Power Up state, they are initialized to their default values.
 
-    The memory for the Generic On Power Up state is contained in the model structure, and state changes can be observed with the :cpp:member:`bt_mesh_ponoff_srv::update` callback.
+    The memory for the Generic On Power Up state is contained in the model structure, and state changes can be observed with the :c:member:`bt_mesh_ponoff_srv.update` callback.
 
 Extended models
 ===============

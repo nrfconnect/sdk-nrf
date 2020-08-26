@@ -53,7 +53,7 @@ Default Light: ``int16_t``
     The Default Light state is a meta state that controls the default non-zero Light level.
     It is used when the light is turned on, but its exact level is not specified.
 
-    The memory for the Default Light state is held by the model, and the application may receive updates on state changes through the :cpp:member:`bt_mesh_lightness_srv_handlers::default_update` callback.
+    The memory for the Default Light state is held by the model, and the application may receive updates on state changes through the :c:member:`bt_mesh_lightness_srv_handlers.default_update` callback.
 
     The Default Light state uses the configured lightness representation.
 
@@ -67,7 +67,7 @@ Light Range: :c:struct:`bt_mesh_lightness_range`
     .. note::
         The Light level may always be set to zero, even if this is outside the current Light Range.
 
-    The memory for the Light Range state is held by the model, and the application may receive updates on state changes through the :cpp:member:`bt_mesh_lightness_srv_handlers::range_update` callback.
+    The memory for the Light Range state is held by the model, and the application may receive updates on state changes through the :c:member:`bt_mesh_lightness_srv_handlers.range_update` callback.
 
     The Light Range state uses the configured lightness representation.
 

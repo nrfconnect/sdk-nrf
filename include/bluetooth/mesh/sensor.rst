@@ -93,8 +93,8 @@ The list of sensor channels in each sensor type is immutable, and all channels m
 This is slightly different from the sensor type representation in the Bluetooth Mesh Specification, which represents multi-channel sensors as structures, rather than flat lists.
 
 Each channel in a sensor type is represented by a single :c:struct:`sensor_value`.
-For sensor values that are represented as whole numbers, the fractional part of the value (:cpp:member:`sensor_value::val2`) is ignored.
-Boolean types are inferred only from the integer part of the value (:cpp:member:`sensor_value::val1`).
+For sensor values that are represented as whole numbers, the fractional part of the value (:c:member:`sensor_value.val2`) is ignored.
+Boolean types are inferred only from the integer part of the value (:c:member:`sensor_value.val1`).
 
 Every sensor channel has a name and a unit, as listed in the sensor type documentation.
 The name and unit are only available if :option:`CONFIG_BT_MESH_SENSOR_LABELS` option is set, and can aid in debugging and presentation of the sensor output.
@@ -173,7 +173,7 @@ Sensors may report their values to the mesh in three ways:
 
 Unprompted publications may be done at any time, and only includes the sensor data of a single sensor at a time.
 The application may generate an unprompted publication by calling :c:func:`bt_mesh_sensor_srv_sample`.
-This triggers the sensor's :cpp:member:`bt_mesh_sensor::get` callback, and only publishes if the sensor's *Delta threshold* is satisfied.
+This triggers the sensor's :c:member:`bt_mesh_sensor.get` callback, and only publishes if the sensor's *Delta threshold* is satisfied.
 
 Unprompted publications can also be forced by calling :c:func:`bt_mesh_sensor_srv_pub` directly.
 
@@ -239,7 +239,7 @@ A sensor's Descriptor contains parameters that may aid other mesh nodes in inter
 * Update interval
 
 The sensor descriptor is constant throughout the sensor's lifetime.
-If the sensor has a descriptor, a pointer to it should be passed to :cpp:member:`bt_mesh_sensor::descriptor` on init.
+If the sensor has a descriptor, a pointer to it should be passed to :c:member:`bt_mesh_sensor.descriptor` on init.
 
 See :c:struct:`bt_mesh_sensor_descriptor` for details.
 
@@ -249,14 +249,14 @@ Usage
 =====
 
 Sensors instances are generally static structures that are initialized at startup.
-Only the :cpp:member:`bt_mesh_sensor::type` member is mandatory, the rest are optional.
+Only the :c:member:`bt_mesh_sensor.type` member is mandatory, the rest are optional.
 Apart from the Cadence and Descriptor states, all states are accessed through getter functions.
 The absence of a getter for a state marks it as not supported by the sensor.
 
 Sensor data
 ***********
 
-Sensor data is accessed through the :cpp:member:`bt_mesh_sensor::get` callback, which is expected to fill the ``rsp`` parameter with the most recent sensor data and return a status code.
+Sensor data is accessed through the :c:member:`bt_mesh_sensor.get` callback, which is expected to fill the ``rsp`` parameter with the most recent sensor data and return a status code.
 Each sensor channel will be encoded internally according to the sensor type.
 
 The sensor data in the callback typically comes from a sensor using the :ref:`Zephyr sensor API <zephyr:sensor_api>`.
@@ -281,7 +281,7 @@ Sensor series
 *************
 
 Sensor series data is organized into a static set of columns, specified at init.
-The sensor series :cpp:member:`bt_mesh_sensor_series::get` callback must be implemented to enable the sensor's series data feature.
+The sensor series :c:member:`bt_mesh_sensor_series.get` callback must be implemented to enable the sensor's series data feature.
 Only some sensor types support series access, see the sensor type's documentation.
 The format of the column may be queried with :c:func:`bt_mesh_sensor_column_format_get`.
 
@@ -335,7 +335,7 @@ The list of settings a sensor supports should be set on init.
 The list should be constant throughout the sensor's lifetime, and may be declared ``const``.
 Each entry in the list has a type and two access callbacks, and the list should only contain unique entry types.
 
-The :cpp:member:`bt_mesh_sensor_setting::get` callback is mandatory, while the :cpp:member:`bt_mesh_sensor_setting::set` is optional, allowing for read-only entries.
+The :c:member:`bt_mesh_sensor_setting.get` callback is mandatory, while the :c:member:`bt_mesh_sensor_setting.set` is optional, allowing for read-only entries.
 The value of the settings may change at runtime, even outside the ``set`` callback.
 New values may be rejected by returning a negative error code from the ``set`` callback.
 

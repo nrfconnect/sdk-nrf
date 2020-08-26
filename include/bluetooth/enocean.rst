@@ -59,16 +59,16 @@ EnOcean Easyfit wall switches may be put into the commissioning mode by completi
 #. Quickly press and release the same button (hold for less than 2 seconds).
 #. Press and hold the same button again for more than 7 seconds before releasing it.
 
-The switch will transmit its security key, which the library picks up and stores before calling the :cpp:member:`bt_enocean_callbacks::commissioned` callback.
+The switch will transmit its security key, which the library picks up and stores before calling the :c:member:`bt_enocean_callbacks.commissioned` callback.
 
 To exit the commissioning mode on a wall switch device, press any of the other buttons on the switch.
-The library will now be reporting button presses through the :cpp:member:`bt_enocean_callbacks::button` callback.
+The library will now be reporting button presses through the :c:member:`bt_enocean_callbacks.button` callback.
 
 Commissioning sensor units
 --------------------------
 
 To have the EnOcean Easyfit sensor unit modules publish their security key, short-press the front button of the device.
-The library registers the security key and stores it before calling :cpp:member:`bt_enocean_callbacks::commissioned`.
+The library registers the security key and stores it before calling :c:member:`bt_enocean_callbacks.commissioned`.
 
 The sensor unit never enters the commissioning mode.
 After publishing its security key, the sensor unit automatically goes back to reporting sensor readings at periodic intervals.

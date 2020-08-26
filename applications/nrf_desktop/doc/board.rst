@@ -31,11 +31,11 @@ The :file:`port_state_def.h` file defines the states set to the GPIO ports by th
 
 Every :c:struct:`port_state` refers to a single GPIO port and contains the following information:
 
-* :cpp:member:`name` - GPIO device name (obtained from :ref:`devicetree <zephyr:dt-guide>`, for example with ``DT_LABEL(DT_NODELABEL(gpio0))``).
-* :cpp:member:`ps` - Pointer to the array of :c:struct:`pin_state`.
-* :cpp:member:`ps_count` - Size of the `ps` array.
+* :c:member:`port_state.name` - GPIO device name (obtained from :ref:`devicetree <zephyr:dt-guide>`, for example with ``DT_LABEL(DT_NODELABEL(gpio0))``).
+* :c:member:`port_state.ps` - Pointer to the array of :c:struct:`pin_state`.
+* :c:member:`port_state.ps_count` - Size of the `ps` array.
 
 Every :c:struct:`pin_state` defines the state of a single GPIO pin:
 
-* :cpp:member:`pin` - Pin number.
-* :cpp:member:`val` - Value set for the pin.
+* :c:member:`pin_state.pin` - Pin number.
+* :c:member:`pin_state.val` - Value set for the pin.
