@@ -72,22 +72,22 @@ Functions
 =========
 The sample uses the following functions:
 
-* :cpp:func:`cloud_get_binding()` : Binds to a desired cloud backend using an identifiable string.
+* :c:func:`cloud_get_binding` : Binds to a desired cloud backend using an identifiable string.
 
 
-* :cpp:func:`cloud_init()` : Sets up the cloud connection.
+* :c:func:`cloud_init` : Sets up the cloud connection.
 
 
-* :cpp:func:`cloud_connect()` : Connects to the cloud service.
+* :c:func:`cloud_connect` : Connects to the cloud service.
 
 
-* :cpp:func:`cloud_ping()` : Pings the cloud service.
+* :c:func:`cloud_ping` : Pings the cloud service.
 
 
-* :cpp:func:`cloud_input()` : Retrieves data from the cloud service.
+* :c:func:`cloud_input` : Retrieves data from the cloud service.
 
 
-* :cpp:func:`cloud_send()` : Sends data to the cloud service.
+* :c:func:`cloud_send` : Sends data to the cloud service.
 
 
 Cloud events used in the sample

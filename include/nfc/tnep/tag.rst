@@ -16,7 +16,7 @@ Configuring NDEF message buffers
 ================================
 
 The tag library communicates with the :ref:`nrfxlib:type_4_tag` library using NDEF message buffers.
-The buffers are initialized all at the same time by :cpp:func:`nfc_tnep_tag_tx_msg_buffer_register`.
+The buffers are initialized all at the same time by :c:func:`nfc_tnep_tag_tx_msg_buffer_register`.
 
 To use the NDEF message buffers, you must configure the following elements:
 
@@ -25,7 +25,7 @@ To use the NDEF message buffers, you must configure the following elements:
 
 The buffers must be linked with the tag layer in the application.
 
-When the polling device writes a new NDEF message to the tag buffer, the application must inform the tag library by calling :cpp:func:`nfc_tnep_tag_rx_msg_indicate`.
+When the polling device writes a new NDEF message to the tag buffer, the application must inform the tag library by calling :c:func:`nfc_tnep_tag_rx_msg_indicate`.
 
 Defining TNEP services
 ======================
@@ -40,12 +40,12 @@ The service data is stored in the persistent storage.
 Initial TNEP NDEF message
 =========================
 
-When calling the :cpp:func:`nfc_tnep_tag_initial_msg_create` function, the service data is loaded and the Service Parameter record of each service is inserted into the Initial TNEP message.
+When calling the :c:func:`nfc_tnep_tag_initial_msg_create` function, the service data is loaded and the Service Parameter record of each service is inserted into the Initial TNEP message.
 A Service Parameter record contains parameters for communicating with the service.
 You can also encode additional NDEF records into the Initial TNEP message in the following way:
 
-#. Pass a callback to :cpp:func:`nfc_tnep_tag_initial_msg_create`.
-#. Define an additional record inside the callback and call :cpp:func:`nfc_tnep_initial_msg_encode`.
+#. Pass a callback to :c:func:`nfc_tnep_tag_initial_msg_create`.
+#. Define an additional record inside the callback and call :c:func:`nfc_tnep_initial_msg_encode`.
 
 See the following code for an example of the Initial message encoding:
 
@@ -92,7 +92,7 @@ Receiving new messages
 **********************
 
 When a new NDEF message appears in the buffer and it contains a Service Select record, the application can select this service.
-To do this, the application should inform the TNEP tag library of the received NDEF message by calling :cpp:func:`nfc_tnep_tag_rx_msg_indicate`.
+To do this, the application should inform the TNEP tag library of the received NDEF message by calling :c:func:`nfc_tnep_tag_rx_msg_indicate`.
 The tag library will then change its state to Service Selected.
 From that point, the service description message will not longer be provided.
 
@@ -100,10 +100,10 @@ After the successful service selection, the select callback function of the serv
 If the tag library was already in Service Selected state when receiving the NDEF message with the Service Select record, the deselect callback of the previous service is called before the select callback of the new service.
 
 When the library is in the Service Selected state, the service's new message callback is called after successfully processing the new message.
-Application data can be added to the reply message with :cpp:func:`nfc_tnep_tag_tx_msg_app_data`.
+Application data can be added to the reply message with :c:func:`nfc_tnep_tag_tx_msg_app_data`.
 This function can be called from the Service Selected callback or from any other context, for example a different thread.
 
-If the tag application has no more data, it will reply by using :cpp:func:`nfc_tnep_tag_tx_msg_no_app_data`.
+If the tag application has no more data, it will reply by using :c:func:`nfc_tnep_tag_tx_msg_no_app_data`.
 If the application does not reply before the expiration on the time period specified by the service's initialization parameters, the service will be deselected by the polling device.
 
 The following code demonstrates how to exchange NDEF messages using the tag library after initialization:

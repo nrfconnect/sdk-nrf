@@ -43,9 +43,9 @@ The models are used for the following purposes:
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` to detect button presses on the board.
 
-If the model is configured to publish to a unicast address, the model handler calls :cpp:func:`bt_mesh_onoff_cli_set` to turn the LEDs of a Mesh Light device on or off.
+If the model is configured to publish to a unicast address, the model handler calls :c:func:`bt_mesh_onoff_cli_set` to turn the LEDs of a Mesh Light device on or off.
 The response from the target device updates the corresponding LED on the Mesh Light Switch device.
-If the model is configured to publish to a group address, it calls :cpp:func:`bt_mesh_onoff_cli_set_unack` instead, to avoid getting responses from multiple devices at once.
+If the model is configured to publish to a group address, it calls :c:func:`bt_mesh_onoff_cli_set_unack` instead, to avoid getting responses from multiple devices at once.
 
 
 

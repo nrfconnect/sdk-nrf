@@ -27,8 +27,8 @@ For example, to download a file of size 47 kilobytes file with a fragment size o
 It is therefore recommended to use the largest fragment size to minimize the network usage.
 Make sure to configure the :option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` and the :option:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` options so that the buffer is large enough to accommodate the entire HTTP header of the request and the response.
 
-The application must provision the TLS credentials and pass the security tag to the library when using HTTPS and calling the :cpp:func:`download_client_connect` function.
-To provision a TLS certificate to the modem, use :cpp:func:`modem_key_mgmt_write` and other :ref:`modem_key_mgmt` APIs.
+The application must provision the TLS credentials and pass the security tag to the library when using HTTPS and calling the :c:func:`download_client_connect` function.
+To provision a TLS certificate to the modem, use :c:func:`modem_key_mgmt_write` and other :ref:`modem_key_mgmt` APIs.
 
 CoAP and CoAPS (DTLS 1.2)
 =========================
@@ -36,7 +36,7 @@ CoAP and CoAPS (DTLS 1.2)
 When downloading from a CoAP server, the library uses the CoAP block-wise transfer.
 Make sure to configure the :option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` option and the :option:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` option so that the buffer is large enough to accommodate the entire CoAP header and the CoAP block.
 
-The application must provision the TLS credentials and pass the security tag to the library when using CoAPS and calling :cpp:func:`download_client_connect`.
+The application must provision the TLS credentials and pass the security tag to the library when using CoAPS and calling :c:func:`download_client_connect`.
 
 Limitations
 ***********

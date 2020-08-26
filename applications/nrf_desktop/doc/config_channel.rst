@@ -107,8 +107,8 @@ The HID configurator uses the HID feature reports to exchange the data.
 
 Depending on the connection method:
 
-* If the device is connected through USB, requests are handled by the :ref:`nrf_desktop_usb_state` in the functions :cpp:func:`get_report` and :cpp:func:`set_report`.
-* If the device is connected over Bluetooth LE, requests are handled in :ref:`nrf_desktop_hids` in :cpp:func:`feature_report_handler`.
+* If the device is connected through USB, requests are handled by the :ref:`nrf_desktop_usb_state` in the functions :c:func:`get_report` and :c:func:`set_report`.
+* If the device is connected over Bluetooth LE, requests are handled in :ref:`nrf_desktop_hids` in :c:func:`feature_report_handler`.
   The argument :c:data:`write` indicates whether the report is a GATT write (set report) or a GATT read (get report).
 
   Forwarding requests through a dongle to a connected peripheral is handled in :ref:`nrf_desktop_hid_forward`.
@@ -206,7 +206,7 @@ To register an application module as a configuration channel listener, complete 
              [TEST_MODULE_OPT_PARAM_WIFI] = "param_wifi"
          };
 
-   * Set operation handler (:cpp:func:`config_set`):
+   * Set operation handler (:c:func:`config_set`):
 
      .. code-block:: c
 
@@ -240,7 +240,7 @@ To register an application module as a configuration channel listener, complete 
              }
          }
 
-   * Fetch operation handler (:cpp:func:`config_get`):
+   * Fetch operation handler (:c:func:`config_get`):
 
      .. code-block:: c
 

@@ -25,7 +25,7 @@ The RDY line is configured as input without pull-up and the interrupt is configu
 
 The driver implements the control protocol in the following way:
 
-#. The transmitter initiates the transmission by calling :cpp:func:`uart_tx`.
+#. The transmitter initiates the transmission by calling :c:func:`uart_tx`.
 #. The driver reconfigures the REQ line to input with pull-up and enables the detection of high to low transition.
 #. The line is set to high due to the pull-up register, and that triggers an interrupt on the RDY line.
 #. On that interrupt, the driver starts the UART receiver.
@@ -86,10 +86,10 @@ Usage
 
 You can access and control the low power UART using the Asynchronous UART API.
 
-Data is sent using :cpp:func:`uart_tx`.
+Data is sent using :c:func:`uart_tx`.
 The transfer will timeout if the receiver does not acknowledge its readiness.
 
-The receiver is enabled by calling :cpp:func:`uart_rx_enable`.
+The receiver is enabled by calling :c:func:`uart_rx_enable`.
 After that call, the receiver is set up and set to idle (low power) state.
 
 See :ref:`lpuart_sample` sample for an implementation of this driver.

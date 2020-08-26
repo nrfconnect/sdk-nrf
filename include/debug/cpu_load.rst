@@ -34,24 +34,24 @@ Usage
 The module allows the following usage scenarios:
 
 Enabling the module
-    Use :cpp:func:`cpu_load_init` to initialize the module.
+    Use :c:func:`cpu_load_init` to initialize the module.
     Calling this function resets the TIMER peripheral and the system clock.
 
     The module can be enabled also by using the ``cpu_load init`` command, if you enabled the shell commands.
 
 Getting the results
-    After the initialization, you can get the CPU load value by calling the :cpp:func:`cpu_load_get` function.
+    After the initialization, you can get the CPU load value by calling the :c:func:`cpu_load_get` function.
 
     * If called for the first time, the function will provide the load value since the start of the measurement period.
     * If called after a reset, the function will provide the load value since the last reset.
 
     You can also get the CPU load value by using the ``cpu_load get`` or the ``cpu_load`` command, if you enabled the shell commands.
 
-    In the periodic load measurement logging, the :cpp:func:`cpu_load_get` function is called alternately with the :cpp:func:`cpu_load_reset`.
+    In the periodic load measurement logging, the :c:func:`cpu_load_get` function is called alternately with the :c:func:`cpu_load_reset`.
 
 Resetting the measurement
-    You can reset the TIMER peripheral and the system clock read-out by using :cpp:func:`cpu_load_reset`.
-    This provides a new reference point from which the :cpp:func:`cpu_load_get` function measures the CPU load.
+    You can reset the TIMER peripheral and the system clock read-out by using :c:func:`cpu_load_reset`.
+    This provides a new reference point from which the :c:func:`cpu_load_get` function measures the CPU load.
 
     You can also reset the measurement using the ``cpu_load reset`` command, if you enabled the shell commands.
 

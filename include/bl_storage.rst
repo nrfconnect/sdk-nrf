@@ -40,7 +40,7 @@ The number of available slots, thus the number of different version numbers that
 
 The monotonic counter is enabled by default.
 You can disable it through :option:`CONFIG_SB_MONOTONIC_COUNTER`.
-If the counter is enabled, the :ref:`doc_bl_validation` library checks it against an image's version during :cpp:func:`bl_validate_firmware`.
+If the counter is enabled, the :ref:`doc_bl_validation` library checks it against an image's version during :c:func:`bl_validate_firmware`.
 
 
 API documentation

@@ -10,7 +10,7 @@ Overview
 ********
 
 This sample generates random numbers and prints them to the console, sleeps, then reboots.
-This is to demonstrate the :cpp:func:`spm_request_system_reboot` and :cpp:func:`spm_request_random_number` secure services.
+This is to demonstrate the :c:func:`spm_request_system_reboot` and :c:func:`spm_request_random_number` secure services.
 
 Requirements
 ************

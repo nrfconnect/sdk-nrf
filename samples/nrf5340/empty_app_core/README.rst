@@ -14,11 +14,11 @@ It does the following things:
 * During system initialization:
 
   * It allows the network core to access GPIO pins for LEDs and buttons.
-    If more pins are required, you can add them to the :cpp:func:`network_gpio_allow()` function.
+    If more pins are required, you can add them to the :c:func:`network_gpio_allow` function.
   * It starts the network core.
     This is not done directly in the source code of the sample, but internally by Zephyr.
 
-* In the :cpp:func:`main()` function of the sample:
+* In the :c:func:`main` function of the sample:
 
   * The application RAM is powered off to reduce power consumption.
   * The application core is suspended indefinitely.

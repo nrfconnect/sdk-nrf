@@ -94,7 +94,7 @@ nRF9160
 
 * :ref:`modem_key_mgmt` library:
 
-  * Added a :cpp:func:`modem_key_mgmt_cmp` function to the API, which allows to compare with a credential stored in the modem.
+  * Added a :c:func:`modem_key_mgmt_cmp` function to the API, which allows to compare with a credential stored in the modem.
   * Various minor fixes.
 
 * :ref:`modem_info_readme` library:
@@ -351,7 +351,7 @@ NFC
 Immutable bootloader
 --------------------
 
-* Exposed :cpp:func:`fw_info_ext_api_provide` as an :ref:`external API <doc_fw_info_ext_api>`, so that :doc:`mcuboot:index` can use it to provide external APIs from the :ref:`bootloader` to its images.
+* Exposed :c:func:`fw_info_ext_api_provide` as an :ref:`external API <doc_fw_info_ext_api>`, so that :doc:`mcuboot:index` can use it to provide external APIs from the :ref:`bootloader` to its images.
   This means that requesting external APIs in applications works even if MCUboot is included.
 * Fixed a bug so that the :ref:`bootloader` works with nRF5340 SPU flash regions.
 * Added a :ref:`doc_bl_storage` library:
@@ -457,7 +457,7 @@ nRF9160
 From v1.2.0
 -----------
 
-* The :cpp:func:`nrf_send` function in the :ref:`nrfxlib:bsdlib` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
+* The :c:func:`nrf_send` function in the :ref:`nrfxlib:bsdlib` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
   The behavior depends on the cellular network connection.
 * The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.
@@ -560,7 +560,7 @@ Zephyr
 ======
 
 * If the Zephyr kernel preempts the current thread and performs a context switch to a new thread while the current thread is executing a secure service, the behavior is undefined and might lead to a kernel fault.
-  To prevent this situation, a thread that aims to call a secure service must temporarily lock the kernel scheduler (:cpp:func:`k_sched_lock`) and unlock the scheduler (:cpp:func:`k_sched_unlock`) after returning from the secure call. (NCSIDB-108)
+  To prevent this situation, a thread that aims to call a secure service must temporarily lock the kernel scheduler (:c:func:`k_sched_lock`) and unlock the scheduler (:c:func:`k_sched_unlock`) after returning from the secure call. (NCSIDB-108)
 
 
 

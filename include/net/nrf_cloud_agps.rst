@@ -32,9 +32,9 @@ A-GPS data can be requested using one of the following methods:
 * By specifying an array of A-GPS types
 * By requesting all the available assistance data
 
-The :cpp:func:`nrf_cloud_agps_request` function is used to request by type, and the :cpp:func:`nrf_cloud_agps_request_all` function is used to return all available assistance data.
+The :c:func:`nrf_cloud_agps_request` function is used to request by type, and the :c:func:`nrf_cloud_agps_request_all` function is used to return all available assistance data.
 
-When nRF Cloud responds with the requested A-GPS data, the :cpp:func:`nrf_cloud_agps_process` function processes the received data.
+When nRF Cloud responds with the requested A-GPS data, the :c:func:`nrf_cloud_agps_process` function processes the received data.
 The function parses the data and passes it on to the modem.
 
 Practical considerations

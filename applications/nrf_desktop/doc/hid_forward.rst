@@ -48,7 +48,7 @@ Forwarding HID input reports
 
 After :ref:`nrf_desktop_ble_discovery` successfully discovers a connected peripheral, the HID forward module automatically subscribes for every HID input report provided by the peripheral.
 
-The :cpp:func:`hidc_read` callback is called when HID input report is received from the connected peripheral.
+The :c:func:`hidc_read` callback is called when HID input report is received from the connected peripheral.
 The received HID input report data is converted to ``hid_report_event``.
 
 ``hid_report_event`` is submitted and then the :ref:`nrf_desktop_usb_state` forwards it to the host.

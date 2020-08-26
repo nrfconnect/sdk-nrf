@@ -45,9 +45,9 @@ Implementation details
 
 During the initialization, the module registers the SMP Bluetooth service.
 
-The module registers the :cpp:func:`upload_confirm` callback that is used to confirm or reject the image upload.
-The image upload is rejected only if the :ref:`nrf_desktop_dfu` has called the :cpp:func:`dfu_lock` function.
-You can find the header file of the :cpp:func:`dfu_lock` at the following path: :file:`src/util/dfu_lock.h`.
+The module registers the :c:func:`upload_confirm` callback that is used to confirm or reject the image upload.
+The image upload is rejected only if the :ref:`nrf_desktop_dfu` has called the :c:func:`dfu_lock` function.
+You can find the header file of the :c:func:`dfu_lock` at the following path: :file:`src/util/dfu_lock.h`.
 Before the image is received through the SMP, the Simple Management Protocol application module calls the lock function.
 Also, firmware updates through the :ref:`nrf_desktop_dfu` are disabled until the nRF Desktop device is rebooted.
 The modification of the data in the secondary image slot, by any other application module during the ongoing DFU, would result in a broken firmware image that would be rejected by the bootloader.

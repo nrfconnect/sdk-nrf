@@ -99,7 +99,7 @@ Zigbee is initialized after Zephyr's kernel start.
 The ZBOSS stack can be started using one of the following options:
 
 * Started and executed from the main thread, as `described in the ZBOSS development guide <Stack commissioning start sequence_>`_.
-* Started from a dedicated Zephyr thread, which in turn can be created and started by calling :cpp:func:`zigbee_enable`.
+* Started from a dedicated Zephyr thread, which in turn can be created and started by calling :c:func:`zigbee_enable`.
 
 The dedicated thread can be configured using the following options:
 

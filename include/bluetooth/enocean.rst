@@ -36,7 +36,7 @@ However, when using the library with your application, you can configure the lim
 Usage
 =====
 
-The EnOcean library uses :cpp:func:`bt_le_scan_cb_register` to receive Bluetooth advertisement packets from nearby EnOcean devices.
+The EnOcean library uses :c:func:`bt_le_scan_cb_register` to receive Bluetooth advertisement packets from nearby EnOcean devices.
 The Bluetooth stack must be initialized separately, and Bluetooth scanning must be started by the application.
 The Bluetooth Mesh stack does this automatically, so when combined, the application does not need to perform any additional initialization.
 
@@ -48,7 +48,7 @@ Commissioning
 Before the library is able to process sensor or button messages from nearby EnOcean devices, the devices must be commissioned.
 By default, the commissioning behavior may be triggered by interacting with the devices, as explained in the following sections.
 
-To enable radio-based commissioning in your application, call :cpp:func:`bt_enocean_commissioning_enable`.
+To enable radio-based commissioning in your application, call :c:func:`bt_enocean_commissioning_enable`.
 
 Commissioning wall switches
 ---------------------------
@@ -80,7 +80,7 @@ After publishing its security key, the sensor unit automatically goes back to re
 Observing output
 ****************
 
-After commissioning an EnOcean device, its activity may be monitored through the :cpp:type:`bt_enocean_handlers` callback functions passed to :cpp:func:`bt_enocean_init`.
+After commissioning an EnOcean device, its activity may be monitored through the :cpp:type:`bt_enocean_handlers` callback functions passed to :c:func:`bt_enocean_init`.
 See the :ref:`enocean_sample` for a demonstration of the handler callback functions.
 
 Dependencies

@@ -90,9 +90,9 @@ To connect to Azure IoT Hub using DPS, complete the following steps:
 Initializing the library
 ************************
 
-The library is initialized by calling the :cpp:func:`azure_iot_hub_init` function.
+The library is initialized by calling the :c:func:`azure_iot_hub_init` function.
 If the initialization fails, the application cannot use any APIs of the library.
-Optionally, you can enable :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` and include a pointer to the :cpp:type:`azure_iot_hub_config` structure containing the device ID in the :cpp:func:`azure_iot_hub_init` function call.
+Optionally, you can enable :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` and include a pointer to the :cpp:type:`azure_iot_hub_config` structure containing the device ID in the :c:func:`azure_iot_hub_init` function call.
 
 Below is an example for setting the device ID at run time instead of compile time by configuring the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` option:
 
@@ -112,9 +112,9 @@ Below is an example for setting the device ID at run time instead of compile tim
 Connecting to Azure IoT Hub
 ***************************
 
-After the initialization, a :cpp:func:`azure_iot_hub_connect` function call connects the device to the configured IoT hub or DPS instance, depending on the configuration.
+After the initialization, a :c:func:`azure_iot_hub_connect` function call connects the device to the configured IoT hub or DPS instance, depending on the configuration.
 The initial TLS handshake takes some time to complete, typically in the range of few seconds, depending on the network conditions and the TLS cipher suite used.
-During the TLS handshake, :cpp:func:`azure_iot_hub_connect` blocks, so care must be taken when deciding the context from which the API is called.
+During the TLS handshake, :c:func:`azure_iot_hub_connect` blocks, so care must be taken when deciding the context from which the API is called.
 
 After a successful connection, the library automatically subscribes to the following standard Azure IoT Hub MQTT topics (See `Azure IoT Hub MQTT protocol support`_ for details):
 

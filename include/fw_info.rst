@@ -93,13 +93,13 @@ Some things to look out for are:
 Usage
 *****
 
-To locate and verify firmware information structures, use :cpp:func:`fw_info_find` and :cpp:func:`fw_info_check`, respectively.
+To locate and verify firmware information structures, use :c:func:`fw_info_find` and :c:func:`fw_info_check`, respectively.
 
-To find an EXT_API with a given version and flags, call :cpp:func:`fw_info_ext_api_find`.
+To find an EXT_API with a given version and flags, call :c:func:`fw_info_ext_api_find`.
 This function calls :cpp:member:`ext_api_in` under the hood, checks the EXT_API's version against the allowed range, and checks that it has all the flags set.
 
-To populate an image's :cpp:member:`ext_api_in` (before booting the image), the booting image should call :cpp:func:`fw_info_ext_api_provide` with the other image's firmware information structure.
-Note that if the booting (current) firmware image and the booted image's RAM overlap, :cpp:func:`fw_info_ext_api_provide` will corrupt the current firmware's RAM.
+To populate an image's :cpp:member:`ext_api_in` (before booting the image), the booting image should call :c:func:`fw_info_ext_api_provide` with the other image's firmware information structure.
+Note that if the booting (current) firmware image and the booted image's RAM overlap, :c:func:`fw_info_ext_api_provide` will corrupt the current firmware's RAM.
 This is ok if it is done immediately before booting the other image, thus after it has performed its last RAM access.
 
 Creating EXT_APIs

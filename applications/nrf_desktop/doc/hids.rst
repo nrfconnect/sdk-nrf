@@ -73,7 +73,7 @@ Detailed information about the usage of LEDs to display information to the user 
 Bluetooth LE connections and disconnections
 ===========================================
 
-The module informs the |GATT_HID| about the Bluetooth LE connections and disconnections using :cpp:func:`bt_gatt_hids_notify_connected` and :cpp:func:`bt_gatt_hids_notify_disconnected`, respectively.
+The module informs the |GATT_HID| about the Bluetooth LE connections and disconnections using :c:func:`bt_gatt_hids_notify_connected` and :c:func:`bt_gatt_hids_notify_disconnected`, respectively.
 
 Registered handlers
 ===================
