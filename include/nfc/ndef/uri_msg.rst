@@ -7,7 +7,7 @@ URI messages contain exactly one URI record, which in turn contains an address t
 In the most typical use case, the URI record contains a web address like "http\://www.nordicsemi.com" that the polling device opens in a web browser.
 
 URI records consist of a URI field (the actual address) and a URI identifier that specifies the protocol of the URI and is prepended to the URI.
-See :cpp:enum:`nfc_ndef_uri_rec_id` for the available protocols.
+See :c:enum:`nfc_ndef_uri_rec_id` for the available protocols.
 
 The :ref:`nfc_uri_record` module provides functions for creating the record, and the :ref:`nfc_uri_msg` module provides functions for creating and encoding the message.
 

@@ -396,7 +396,7 @@ Light OnOff: ``bool``
 
 Properties
     The Light Control Properties are used to configure the Light LC Server behavior.
-    See :cpp:type:`bt_mesh_light_ctrl_prop` for a list of supported properties and their representation.
+    See :c:enum:`bt_mesh_light_ctrl_prop` for a list of supported properties and their representation.
 
 Extended models
 ***************

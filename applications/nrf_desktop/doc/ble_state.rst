@@ -40,10 +40,10 @@ The module propagates information about the connection state changes using :c:st
 
 The connection state can be set to one of the following values:
 
-* :cpp:enum:`PEER_STATE_CONNECTED` - successfully connected to the remote peer.
-* :cpp:enum:`PEER_STATE_CONN_FAILED` - failed to connect the remote peer.
-* :cpp:enum:`PEER_STATE_SECURED` - set the connection security at least to level 2 (encryption and no authentication).
-* :cpp:enum:`PEER_STATE_DISCONNECTED` - disconnected from the remote peer.
+* :c:enum:`PEER_STATE_CONNECTED` - successfully connected to the remote peer.
+* :c:enum:`PEER_STATE_CONN_FAILED` - failed to connect the remote peer.
+* :c:enum:`PEER_STATE_SECURED` - set the connection security at least to level 2 (encryption and no authentication).
+* :c:enum:`PEER_STATE_DISCONNECTED` - disconnected from the remote peer.
 
 Connection parameters change
 ============================

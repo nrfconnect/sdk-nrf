@@ -8,7 +8,7 @@ The |led_state| is used to set LED effects based on the Bluetooth peer state and
 Controlled LEDs
 ***************
 
-The module controls LEDs defined by enumerators in :cpp:enum:`led_id`:
+The module controls LEDs defined by enumerators in :c:enum:`led_id`:
 
 * :c:enumerator:`LED_ID_SYSTEM_STATE` - Shows the system state.
   The system can be in one of the following states:
@@ -50,8 +50,8 @@ Do this in the :file:`led_state_def.h` file located in the board-specific direct
 
 The configuration consists of the following elements:
 
-* ``led_map`` - Maps the :cpp:enum:`led_id` values to IDs used by :ref:`nrf_desktop_leds`.
-  If no physical LED is assigned to a :cpp:enum:`led_id` value, assign :c:macro:`LED_UNAVAILABLE` as the ID used by :ref:`nrf_desktop_leds`.
+* ``led_map`` - Maps the :c:enum:`led_id` values to IDs used by :ref:`nrf_desktop_leds`.
+  If no physical LED is assigned to a :c:enum:`led_id` value, assign :c:macro:`LED_UNAVAILABLE` as the ID used by :ref:`nrf_desktop_leds`.
 * ``led_system_state_effect`` - Defines the LED effects used to show the system states.
   The effect must be defined for every system state.
 * ``led_peer_state_effect`` - Defines the LED effects used to show the Bluetooth peer states.

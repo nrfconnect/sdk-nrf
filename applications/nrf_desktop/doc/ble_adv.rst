@@ -70,7 +70,7 @@ Reaction on Bluetooth peer operation
 
 When the :ref:`nrf_desktop_ble_bond` triggers erase advertising or Bluetooth peer change, the |ble_adv| reacts on the received ``ble_peer_operation_event``.
 
-* If there is a peer connected over Bluetooth, the |ble_adv| triggers disconnection and submits a :c:struct:`ble_peer_event` with :cpp:member:`state` set to :cpp:enum:`PEER_STATE_DISCONNECTING` to let other application modules prepare for the planned disconnection.
+* If there is a peer connected over Bluetooth, the |ble_adv| triggers disconnection and submits a :c:struct:`ble_peer_event` with :cpp:member:`state` set to :c:enum:`PEER_STATE_DISCONNECTING` to let other application modules prepare for the planned disconnection.
 * Otherwise the Bluetooth advertising with the newly selected Bluetooth local identity is started.
 
 Avoiding connection requests from unbonded centrals when bonded

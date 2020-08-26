@@ -29,7 +29,7 @@ States
 
 The Generic Power OnOff Server model contains the following state:
 
-Generic On Power Up: :cpp:type:`bt_mesh_on_power_up`
+Generic On Power Up: :c:enum:`bt_mesh_on_power_up`
     The Generic On Power Up state controls the initial value of the extended Generic OnOff state when the device powers up.
     The state can have the following initial values:
 
