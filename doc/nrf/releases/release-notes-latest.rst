@@ -99,13 +99,13 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed Security and Server object instance matching.
     * Fixed handling of fds polling (in case there is another socket open).
     * Made ``send()`` calls on the same socket thread-safe.
-    * Fixed the size of the :cpp:class:`sockaddr` structure that was insufficient when provided on an IPv6 socket while IPv4 was enabled as well.
+    * Fixed the size of the :c:struct:`sockaddr` structure that was insufficient when provided on an IPv6 socket while IPv4 was enabled as well.
     * Fixed PUSH mode FOTA.
     * Fixed bootstrap procedure.
 
   * MQTT:
 
-    * The ``utf8`` pointer in the :cpp:class:`mqtt_utf8` struct is now const.
+    * The ``utf8`` pointer in the :c:struct:`mqtt_utf8` struct is now const.
     * The default ``clean_session`` value is now configurable with Kconfig (see :option:`CONFIG_MQTT_CLEAN_SESSION`).
     * Prevented double CONNACK event notification on server reject.
 
@@ -227,7 +227,7 @@ The following list summarizes the most important changes inherited from upstream
 
   * Bluetooth HCI:
 
-    * Fixed missing ``gpio_dt_flags`` in :cpp:class:`spi_cs_control` in the HCI driver over SPI transport.
+    * Fixed missing ``gpio_dt_flags`` in :c:struct:`spi_cs_control` in the HCI driver over SPI transport.
 
   * Clock control:
 
@@ -443,7 +443,7 @@ The following list summarizes the most important changes inherited from upstream
   * Implemented ``nanosleep`` in the POSIX subsystem.
   * Deprecated the Zephyr-specific types in favor of the standard C99 int types.
   * Removed ``CONFIG_NET_IF_USERSPACE_ACCESS``, because it is no longer needed.
-  * Renamed some attributes in the :cpp:class:`device` struct: ``config_info`` to ``config``, ``driver_api`` to ``api``, and ``driver_data`` to ``data``.
+  * Renamed some attributes in the :c:struct:`device` struct: ``config_info`` to ``config``, ``driver_api`` to ``api``, and ``driver_data`` to ``data``.
 
 The following list contains |NCS| specific additions:
 

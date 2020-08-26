@@ -34,15 +34,15 @@ States
 
 The Generic Location Server model contains the following states:
 
-Global Location: :cpp:type:`bt_mesh_loc_global`
+Global Location: :c:struct:`bt_mesh_loc_global`
     The Global Location state is a composite state representing a global location as a WGS84 coordinate point.
 
     * The latitude and longitude (in degrees) are represented as a ``double``, and are each encoded as a signed 32-bit integer.
     * The altitude is represented as a signed 16-bit integer, measured in meters.
 
-    The memory for the Global Location state is owned by the application, and should be exposed to the model through the callbacks in a :cpp:type:`bt_mesh_loc_srv_handlers` structure.
+    The memory for the Global Location state is owned by the application, and should be exposed to the model through the callbacks in a :c:struct:`bt_mesh_loc_srv_handlers` structure.
 
-Local Location: :cpp:type:`bt_mesh_loc_local`
+Local Location: :c:struct:`bt_mesh_loc_local`
     The Local Location state represents the device's location within a locally defined coordinate system, like the interior of a building.
     The state contains the following parameters:
 
@@ -50,7 +50,7 @@ Local Location: :cpp:type:`bt_mesh_loc_local`
     * Floor number
     * Parameters to determine the precision of the location parameters
 
-    The memory for the Local Location state is owned by the user, and should be exposed to the model through the callbacks in a :cpp:type:`bt_mesh_loc_srv_handlers` structure.
+    The memory for the Local Location state is owned by the user, and should be exposed to the model through the callbacks in a :c:struct:`bt_mesh_loc_srv_handlers` structure.
 
 Extended models
 ===============

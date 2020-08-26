@@ -10,7 +10,7 @@ States
 
 The Generic Battery Server model contains the following state:
 
-Generic Battery Status: :cpp:type:`bt_mesh_battery_status`
+Generic Battery Status: :c:struct:`bt_mesh_battery_status`
     The Generic Battery Status is a composite state, which means that it contains various information about the battery state.
     The battery state can only be changed locally, so a :ref:`bt_mesh_battery_cli_readme` is only able to observe it.
 

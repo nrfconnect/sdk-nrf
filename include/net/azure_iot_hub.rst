@@ -92,7 +92,7 @@ Initializing the library
 
 The library is initialized by calling the :c:func:`azure_iot_hub_init` function.
 If the initialization fails, the application cannot use any APIs of the library.
-Optionally, you can enable :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` and include a pointer to the :cpp:type:`azure_iot_hub_config` structure containing the device ID in the :c:func:`azure_iot_hub_init` function call.
+Optionally, you can enable :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` and include a pointer to the :c:struct:`azure_iot_hub_config` structure containing the device ID in the :c:func:`azure_iot_hub_init` function call.
 
 Below is an example for setting the device ID at run time instead of compile time by configuring the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` option:
 

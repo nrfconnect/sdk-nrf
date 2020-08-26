@@ -66,7 +66,7 @@ Connecting
 **********
 
 .. note::
-   The API requires that a configuration structure :cpp:class:`aws_iot_config` is declared in the application and passed into the :c:func:`aws_iot_init` and :c:func:`aws_iot_connect` functions.
+   The API requires that a configuration structure :c:struct:`aws_iot_config` is declared in the application and passed into the :c:func:`aws_iot_init` and :c:func:`aws_iot_connect` functions.
    This exposes the application to the MQTT socket used for the connection, which is polled on, in the application.
    It also enables the application to pass in a client id (*thingname*) at runtime.
 
@@ -165,7 +165,7 @@ To connect to the AWS IoT broker, set the following mandatory options (specified
 - :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 - :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-To enable the application to optionally pass a client id at runtime, set the ``client_id`` entry in the :cpp:class:`aws_iot_config` structure passed in the :c:func:`aws_iot_init` function and set the following option:
+To enable the application to optionally pass a client id at runtime, set the ``client_id`` entry in the :c:struct:`aws_iot_config` structure passed in the :c:func:`aws_iot_init` function and set the following option:
 
 - :option:`CONFIG_AWS_IOT_CLIENT_ID_APP`
 

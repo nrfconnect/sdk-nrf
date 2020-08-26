@@ -88,7 +88,7 @@ Header file
 -----------
 
 The header file must include the Event Manager header file (``#include event_manager.h``).
-To define the new event type, create a structure for it that contains ``struct event_header header`` as first field and, optionally, custom data fields.
+To define the new event type, create a structure for it that contains :c:struct:`event_header` ``header`` as first field and, optionally, custom data fields.
 Finally, declare the event type with the :c:macro:`EVENT_TYPE_DECLARE` macro, passing the name of the created structure as argument.
 
 The following code example shows a header file for the event type ``sample_event``:
@@ -167,13 +167,13 @@ The event handler function is called when any of the subscribed event types is b
 Note that only one event handler function can be registered for a listener.
 Therefore, if a listener subscribes to multiple event types, the function must handle all of them.
 
-The event handler gets a pointer to the :cpp:class:`event_header` structure as function argument.
+The event handler gets a pointer to the :c:struct:`event_header` structure as function argument.
 The function should return ``true`` to consume the event (which means that the event is not propagated to further listeners), or ``false`` otherwise.
 
 To check if an event has a given type, call the function with the name is\_\ *event_type_name* (for example, ``is_sample_event()``), passing the pointer to the event header as argument.
 This function returns ``true`` if the event matches the given type, or ``false`` otherwise.
 
-To access the event data, cast the :cpp:class:`event_header` structure to a proper event type using the function with the name cast\_\ *event_type_name* (for example, ``cast_sample_event()``), passing the pointer to the event header as argument.
+To access the event data, cast the :c:struct:`event_header` structure to a proper event type using the function with the name cast\_\ *event_type_name* (for example, ``cast_sample_event()``), passing the pointer to the event header as argument.
 
 Code example
 ============
@@ -213,7 +213,7 @@ Profiling an event
 ******************
 
 Event Manager events can be profiled (see :ref:`profiler`).
-To profile a given Event Manager event, you must define an :cpp:class:`event_info` structure (with :c:macro:`EVENT_INFO_DEFINE`) and provide it as argument when defining the event type.
+To profile a given Event Manager event, you must define an :c:struct:`event_info` structure (with :c:macro:`EVENT_INFO_DEFINE`) and provide it as argument when defining the event type.
 This structure contains a profiling function and information about the data fields that are logged.
 
 The profiling function should log the event data to a given buffer by calling :c:func:`profiler_log_encode_u32` (regardless of the profiled data type).
@@ -250,7 +250,7 @@ The following code example shows how to define the event profiling information s
 			  &sample_event_info); 	/* Structure with data for profiling. */
 
 .. note::
-	By default, all Event Manager events that are defined with an :cpp:class:`event_info` argument are profiled.
+	By default, all Event Manager events that are defined with an :c:struct:`event_info` argument are profiled.
 
 Shell integration
 *****************
