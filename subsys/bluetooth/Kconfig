@@ -26,9 +26,7 @@ endif # BT
 
 menu "BLE over nRF RPC"
 
-rsource "rpc/client/Kconfig"
-rsource "rpc/host/Kconfig"
-rsource "rpc/common/Kconfig"
+rsource "rpc/Kconfig"
 
 endmenu
 

@@ -20,6 +20,7 @@
 #define BT_RPC_GATT_ATTR_WRITE_PRESENT_FLAG 0x200
 
 struct bt_gatt_attr;
+struct bt_gatt_service_static;
 
 typedef	ssize_t (*bt_gatt_attr_read_cb_t)(struct bt_conn *conn,
 					  const struct bt_gatt_attr *attr,

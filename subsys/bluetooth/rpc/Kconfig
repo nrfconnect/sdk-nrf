@@ -4,7 +4,42 @@
 # SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
 #
 
+choice BT_RPC_SIDE_CHOICE
+	prompt "Bluetooth over RPC side Selection"
+	default BT_RPC_NONE
+
+config BT_RPC_NONE
+	bool "No Bluetooth over RPC"
+
+config BT_RPC_CLIENT
+	bool "Client side of Bluetooth over RPC"
+	select BT
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Bluetooth Low Energy API will use nRF PRC library to access host on
+	  the remote core.
+
+config BT_RPC_HOST
+	bool "Host side of Bluetooth over RPC"
+	select BT
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Bluetooth Low Energy API will use nRF PRC library to provide API for
+	  client on the remote core.
+
+endchoice
+
+
 if BT_RPC_HOST || BT_RPC_CLIENT
+
+config BT_RPC_INITIALIZE_NRF_RPC
+	bool "Automatically initialize nRF RPC library"
+	default y
+	help
+	  Initialize nRF RPC library during the system startup. Disabling this
+	  option allow user to initialize it in a different way.
 
 config CBKPROXY_OUT_SLOTS
 	int "Maximum number of RPC callback proxy output slots"
@@ -34,12 +69,6 @@ config BT_RPC_GATT_SRV_MAX
 	help
 	  TODO: More help
 
-config BT_RPC_COPY_BUFFER_SIZE
-	int "Size of the buffer to store copy of GATT data"
-	default 2048
-	help
-	  TODO: More help
-
 config BT_RPC_CUD_STRING_LENGTH_MAX
 	int "Maximum length of CUD descriptor string that can be send over BT_RPC"
 	default 0
@@ -54,5 +83,24 @@ module = BT_RPC
 module-str = BLE over nRF RPC
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
+
+if BT_RPC_CLIENT
+
+# Overrides the default Bluetooth HCI driver
+choice BT_HCI_BUS_TYPE
+	default BT_NO_DRIVER
+endchoice
+
+endif # BT_RPC_CLIENT
+
+if BT_RPC_HOST
+
+config BT_RPC_COPY_BUFFER_SIZE
+	int "Size of the buffer to store copy of GATT data"
+	default 2048
+	help
+	  TODO: More help
+
+endif # BT_RPC_HOST
 
 endif # BT_RPC_HOST || BT_RPC_CLIENT
