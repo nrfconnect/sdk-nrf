@@ -4,9 +4,9 @@ Download client
 ###############
 
 The download client library can be used to download files from an HTTP or a CoAP server.
-The download is carried out in a separate thread, and the application receives events such as :cpp:enumerator:`DOWNLOAD_CLIENT_EVT_FRAGMENT <dl_client::DOWNLOAD_CLIENT_EVT_FRAGMENT>` that contain the data fragments as the download progresses.
+The download is carried out in a separate thread, and the application receives events such as :c:enumerator:`DOWNLOAD_CLIENT_EVT_FRAGMENT` that contain the data fragments as the download progresses.
 The fragment size can be configured independently for HTTP and CoAP (block-wise transfer) using the :option:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` and the :option:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` options, respectively.
-When the download completes, the library sends the :cpp:enumerator:`DOWNLOAD_CLIENT_EVT_DONE <dl_client::DOWNLOAD_CLIENT_EVT_DONE>` event to the application.
+When the download completes, the library sends the :c:enumerator:`DOWNLOAD_CLIENT_EVT_DONE` event to the application.
 
 Protocols
 *********

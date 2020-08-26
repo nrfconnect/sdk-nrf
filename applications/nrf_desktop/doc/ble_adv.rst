@@ -42,7 +42,7 @@ Changing advertising interval
 Set the ``CONFIG_DESKTOP_BLE_FAST_ADV`` Kconfig option to make the peripheral initially advertise with shorter interval in order to speed up finding the peripheral by Bluetooth Centrals.
 
 * If the device uses indirect advertising, it will switch to slower advertising after the period of time defined in ``CONFIG_DESKTOP_BLE_FAST_ADV_TIMEOUT`` (in seconds).
-* If the device uses directed advertising, the ``ble_adv`` module will receive :c:struct:`ble_peer_event` with :cpp:member:`state` set to :cpp:enumerator:`PEER_STATE_CONN_FAILED` if the central does not connect during the predefined period of fast directed advertising.
+* If the device uses directed advertising, the ``ble_adv`` module will receive :c:struct:`ble_peer_event` with :cpp:member:`state` set to :c:enumerator:`PEER_STATE_CONN_FAILED` if the central does not connect during the predefined period of fast directed advertising.
   After the event is received, the device will switch to the low duty cycle directed avertising.
 
 Switching to slower advertising is done to reduce the energy consumption.

@@ -159,9 +159,9 @@ The following list summarizes the most important changes inherited from upstream
   * Added legacy OOB pairing support.
   * Multiple improvements to OOB data access and pairing.
   * Deprecated ``BT_LE_SCAN_FILTER_DUPLICATE``.
-    Use :cpp:enumerator:`BT_LE_SCAN_OPT_FILTER_DUPLICATE <bt_gap::BT_LE_SCAN_OPT_FILTER_DUPLICATE>` instead.
+    Use :c:enumerator:`BT_LE_SCAN_OPT_FILTER_DUPLICATE` instead.
   * Deprecated ``BT_LE_SCAN_FILTER_WHITELIST``.
-    Use :cpp:enumerator:`BT_LE_SCAN_OPT_FILTER_WHITELIST <bt_gap::BT_LE_SCAN_OPT_FILTER_WHITELIST>` instead.
+    Use :c:enumerator:`BT_LE_SCAN_OPT_FILTER_WHITELIST` instead.
   * Deprecated ``bt_le_scan_param::filter_dup``.
     Use :cpp:member:`bt_le_scan_param::options` instead.
   * Deprecated ``bt_conn_create_le()``.
@@ -290,11 +290,11 @@ The following list summarizes the most important changes inherited from upstream
 
   * Serial:
 
-    * Clarified in the UART API that the :cpp:enumerator:`UART_RX_RDY <uart_interface::UART_RX_RDY>` event is to be generated before :cpp:enumerator:`UART_RX_DISABLED <uart_interface::UART_RX_DISABLED>` if any received data remains.
+    * Clarified in the UART API that the :c:enumerator:`UART_RX_RDY` event is to be generated before :c:enumerator:`UART_RX_DISABLED` if any received data remains.
       Updated all drivers in this regard.
     * Changed the nRF UART nrfx drivers (uart_nrfx_uart/uarte) to use the DT ``hw-flow-control`` property instead of Kconfig options.
     * Fixed disabling of the TX interrupt in the uart_nrfx_uart driver.
-    * Fixed the uart_nrfx_uarte driver to prevent spurious :cpp:enumerator:`UART_RX_BUF_REQUEST <uart_interface::UART_RX_BUF_REQUEST>` events.
+    * Fixed the uart_nrfx_uarte driver to prevent spurious :c:enumerator:`UART_RX_BUF_REQUEST` events.
     * Removed counters reset from :c:func:`uart_rx_enable` in the nrf_uarte driver.
     * Changed wrappers of optional API functions to always be present and return ``-ENOTSUP`` when a given function is not implemented in the driver that is used.
     * Added another error code (``-EACCES``) that can be returned by the :c:func:`uart_rx_buf_rsp` API function.

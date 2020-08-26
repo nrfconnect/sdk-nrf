@@ -99,7 +99,7 @@ nRF9160
 
 * :ref:`modem_info_readme` library:
 
-  * Fixed an error in reading :cpp:enumerator:`MODEM_INFO_RSRP <modem_info::MODEM_INFO_RSRP>`.
+  * Fixed an error in reading :c:enumerator:`MODEM_INFO_RSRP`.
   * Added APN readout.
 
 * :ref:`lte_lc_readme` library:

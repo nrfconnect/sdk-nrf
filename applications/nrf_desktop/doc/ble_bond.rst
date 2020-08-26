@@ -57,7 +57,7 @@ Module states
 The |ble_bond| is implemented as a state machine.
 Every transition is triggered by an :ref:`event_manager` event with a predefined value.
 Some transitions can be also triggered by internal time-out.
-For example, the transition from :cpp:enum:`STATE_ERASE_PEER` to :cpp:enum:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event``, or an internal time-out.
+For example, the transition from :c:enumerator:`STATE_ERASE_PEER` to :c:enumerator:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event``, or an internal time-out.
 
 The following diagram shows states and transitions between these states after the module is initialized:
 
@@ -70,14 +70,14 @@ The following diagram shows states and transitions between these states after th
   The diagram does not present the states related to module going into standby (:cpp:enum:`STATE_STANDBY`, :cpp:enum:`STATE_DISABLED_STANDBY`, :cpp:enum:`STATE_DONGLE_CONN_STANDBY`).
   For more information about the standby states, see `Standby states`_.
 
-Receiving ``click_event`` with a click type that is not included in the schematic will result in cancelling the ongoing operation and returning to :cpp:enum:`STATE_IDLE`.
-This does not apply to :cpp:enum:`STATE_DONGLE_CONN`.
+Receiving ``click_event`` with a click type that is not included in the schematic will result in cancelling the ongoing operation and returning to :c:enumerator:`STATE_IDLE`.
+This does not apply to :c:enumerator:`STATE_DONGLE_CONN`.
 In this state, all the peer operations triggered by ``click_event`` are disabled.
 
 When the transition occurs:
 
 a. The :c:struct:`ble_peer_operation_event` with the defined :cpp:member:`op` is submitted.
-   For example, when the user confirms the erase advertising, the :c:struct:`ble_peer_operation_event` is submitted with :cpp:member:`op` set to :cpp:enum:`PEER_OPERATION_ERASE_ADV`.
+   For example, when the user confirms the erase advertising, the :c:struct:`ble_peer_operation_event` is submitted with :cpp:member:`op` set to :c:enumerator:`PEER_OPERATION_ERASE_ADV`.
 #. The currently selected application local identity is updated (if anything changed).
 
 Peer erasing
@@ -113,9 +113,9 @@ Standby states
 
 The module can go into one of the following standby states to make sure that the peer operations are not triggered when the device is suspended by :ref:`nrf_desktop_power_manager`:
 
-* :cpp:enum:`STATE_DISABLED_STANDBY` - the module is suspended before initialization.
-* :cpp:enum:`STATE_DONGLE_CONN_STANDBY` - the module is suspended while the dongle peer is selected.
-* :cpp:enum:`STATE_STANDBY` - the module is suspended while other Bluetooth peers are selected.
+* :c:enumerator:`STATE_DISABLED_STANDBY` - the module is suspended before initialization.
+* :c:enumerator:`STATE_DONGLE_CONN_STANDBY` - the module is suspended while the dongle peer is selected.
+* :c:enumerator:`STATE_STANDBY` - the module is suspended while other Bluetooth peers are selected.
 
 Going into the standby states and leaving them happens in reaction to the following events:
 
@@ -206,7 +206,7 @@ The module provides the following :ref:`nrf_desktop_config_channel` options:
   The option is available only for the nRF Desktop central.
 
 Perform :ref:`nrf_desktop_config_channel` set operation on selected option to trigger the operation.
-The options can be used only if the module is in :cpp:enum:`STATE_IDLE`.
+The options can be used only if the module is in :c:enumerator:`STATE_IDLE`.
 Because of this, they cannot be used when device is suspended by :ref:`nrf_desktop_power_manager`.
 The device must be woken up from suspended state before the operation is started.
 

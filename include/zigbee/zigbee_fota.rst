@@ -51,7 +51,7 @@ The library takes care of where the upgrade candidate is stored, depending on th
 When the download is completed, the download client sends an appropriate event.
 At this point, the received firmware is tagged as an upgrade candidate and the OTA server is queried for an update time.
 
-Once the OTA server triggers the update process, the library sends a :cpp:enumerator:`ZIGBEE_FOTA_EVT_FINISHED <zigbee_fota::ZIGBEE_FOTA_EVT_FINISHED>` callback event.
+Once the OTA server triggers the update process, the library sends a :c:enumerator:`ZIGBEE_FOTA_EVT_FINISHED` callback event.
 When the consumer of the library receives this event, it should issue a reboot command to apply the upgrade.
 
 .. _lib_zigbee_fota_options:

@@ -5,7 +5,7 @@ FTP client
 
 The FTP client library can be used to download or upload FTP server files.
 
-The file is downloaded in fragments of :cpp:enumerator:`NET_IPV4_MTU <ip_4_6::NET_IPV4_MTU>`.
+The file is downloaded in fragments of :c:enumerator:`NET_IPV4_MTU`.
 The size of a file can be fetched by LIST command.
 
 The FTP client library reports FTP control message and download data with two separate callback functions (:cpp:type:`ftp_client_callback_t` and :cpp:type:`ftp_client_callback_t`).

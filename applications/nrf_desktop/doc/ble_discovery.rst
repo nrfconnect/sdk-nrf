@@ -35,7 +35,7 @@ Complete the following steps to configure the module:
    * Parameters defined separately for every peripheral:
 
      * Product ID (PID)
-     * Peer type (:cpp:enum:`PEER_TYPE_MOUSE` or :cpp:enum:`PEER_TYPE_KEYBOARD`)
+     * Peer type (:c:enumerator:`PEER_TYPE_MOUSE` or :c:enumerator:`PEER_TYPE_KEYBOARD`)
 
    For an example of the module configuration, see :file:`configuration/nrf52840dongle_nrf52840/ble_discovery_def.h`.
 
@@ -55,7 +55,7 @@ The |ble_discovery| implementation is tasked with peripheral discovery and verif
 Peripheral discovery
 ====================
 
-The module starts the peripheral device discovery when it receives :c:struct:`ble_peer_event` with :cpp:member:`state` set to :cpp:enum:`PEER_STATE_SECURED`.
+The module starts the peripheral device discovery when it receives :c:struct:`ble_peer_event` with :cpp:member:`state` set to :c:enumerator:`PEER_STATE_SECURED`.
 
 The peripheral discovery consists of the following steps:
 
