@@ -67,7 +67,7 @@ The following diagram shows states and transitions between these states after th
    nRF Desktop Bluetooth LE bond module state diagram (click to enlarge)
 
 .. note::
-  The diagram does not present the states related to module going into standby (:cpp:enum:`STATE_STANDBY`, :cpp:enum:`STATE_DISABLED_STANDBY`, :cpp:enum:`STATE_DONGLE_CONN_STANDBY`).
+  The diagram does not present the states related to module going into standby (:c:enum:`STATE_STANDBY`, :c:enum:`STATE_DISABLED_STANDBY`, :c:enum:`STATE_DONGLE_CONN_STANDBY`).
   For more information about the standby states, see `Standby states`_.
 
 Receiving ``click_event`` with a click type that is not included in the schematic will result in cancelling the ongoing operation and returning to :c:enumerator:`STATE_IDLE`.

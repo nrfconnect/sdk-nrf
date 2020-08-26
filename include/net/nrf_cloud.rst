@@ -83,7 +83,7 @@ After receiving :c:enumerator:`NRF_CLOUD_EVT_READY`, the application can start s
 Sending sensor data
 *******************
 The library offers two APIs, :c:func:`nrf_cloud_sensor_data_send` and :c:func:`nrf_cloud_sensor_data_stream`, for sending sensor data to the cloud.
-Currently, the supported sensor types are GPS and FLIP (see :cpp:enum:`nrf_cloud_sensor`).
+Currently, the supported sensor types are GPS and FLIP (see :c:enum:`nrf_cloud_sensor`).
 
 Use :c:func:`nrf_cloud_sensor_data_stream` to send sensor data with best quality.
 

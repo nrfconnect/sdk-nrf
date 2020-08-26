@@ -104,7 +104,7 @@ SoftDevice Controller interaction
 ====================================
 
 The module uses CRC information from the SoftDevice Controller to adjust the channel map.
-The CRC information is received through the vendor-specific Bluetooth HCI event (:cpp:enum:`SDC_HCI_SUBEVENT_VS_QOS_CONN_EVENT_REPORT`).
+The CRC information is received through the vendor-specific Bluetooth HCI event (:c:enum:`SDC_HCI_SUBEVENT_VS_QOS_CONN_EVENT_REPORT`).
 
 Additional thread
 =================
