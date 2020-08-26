@@ -3,49 +3,66 @@
 Scanning module
 ###############
 
-The Scanning Module handles the BLE scanning for your application. You can use it to find an advertising device and establish a connection with it. The scan can be narrowed down to the device of a specific type by using filters.
+The scanning module handles the Bluetooth Low Energy scanning for your application.
+You can use it to find advertising devices and establish connections with them.
+
+Using :ref:`filters <nrf_bt_scan_readme_filters>`, you can narrow down the scan to devices of a specific type.
 
 The Scanning Module can work in one of the following modes:
 
-* simple mode without using filters, or
-* advanced mode that allows you to use advanced filters.
+* Simple mode - without using filters
+* Advanced mode - that allows using advanced filters
 
 The module can automatically establish a connection after a filter match.
+It can also receive :ref:`directed advertising packets <nrf_bt_scan_readme_directedadvertising>`.
 
 Usage
 *****
 
-.. list-table::
-   :header-rows: 1
 
-   * - Action
-     - Description
-   * - Initialization
-     - The module must be initialized with :cpp:func:`bt_scan_init` that can be called without initialization structure. When initialization structure is passed as NULL, the default static configuration is used. This configuration is also used when you use an initialization structure with NULL pointers to scan parameters and connection parameters.
-   * - Starting scanning
-     - When initialization completes, you can start scanning with :cpp:func:`bt_scan_start`. In the simplest mode when you do not using event handler, the connection can be established when scanner found device.
-   * - Changing parameters
-     - Call the function :cpp:func:`bt_scan_params_set` to change parameters.
-   * - Stopping scanning
-     - Call the function :cpp:func:`bt_scan_stop` to stop scanning.
-   * - Resuming scanning
-     - Scanning stops if the module established the connection automatically, or if the application calls :cpp:func:`bt_scan_stop`. To resume scanning use :cpp:func:`bt_scan_start`.
+You can use the scanning module to execute the following actions:
 
+Initialize
+   To initialize the module, call the function :cpp:func:`bt_scan_init`.
+
+   You can also call the function without an initialization structure.
+   When you pass the initialization structure as ``NULL``, the default static configuration is used.
+
+   This configuration is also used when you use an initialization structure with ``NULL`` pointers to scan parameters and connection parameters.
+
+Start scanning
+   When the initialization is completed, call the function :cpp:func:`bt_scan_start` to start scanning.
+
+   In simple mode, when you do not use the event handler, you can establish the connection when the scanner finds the device.
+
+Change parameters
+   To change parameters, call the function :cpp:func:`bt_scan_params_set`.
+
+Stop scanning
+   Scanning stops if the module established the connection automatically.
+   To manually stop scanning, call the function :cpp:func:`bt_scan_stop`.
+
+Resume scanning
+   To resume scanning, call the function :cpp:func:`bt_scan_start`.
+
+.. _nrf_bt_scan_readme_filters:
 
 Filters
 *******
 
-The module can set scanning filters of different type and mode.
+While using the scanning module in advanced mode, you can set select various filter types and modes.
 
-Filters types
-=============
+Filter types
+============
+
+Check the following table for the details on the available filter types.
 
 +-------------+--------------------------------------+
-| Filter tupe | Details                              |
+| Filter type | Details                              |
 +=============+======================================+
 | Name        | Filter set to the target name.       |
 +-------------+--------------------------------------+
-| Short name  | Filter set to the short target name. |
+| Short name  | Filter set to the target short name. |
 +-------------+--------------------------------------+
 | Address     | Filter set to the target address.    |
 +-------------+--------------------------------------+
@@ -58,45 +75,49 @@ Filters types
 Filter modes
 ============
 
-+-----------------------------------------------------------------------------------------------+
-| Filter mode | Behavior                                                                        |
-+=============+=================================================================================+
-| Normal      | Only one of the filters you set, regardless of the type, must be matched to     |
-|             | call filter match callback                                                      |
-+-------------+---------------------------------------------------------------------------------+
-| Multifilter | In this mode, at least one filter from each filter type you set must be         |
-|             | matched to call filter match callback, with UUID as an exception: all specified |
-|             | UUIDs must match in this mode.                                                  |
-|             |                                                                                 |
-|             | Example: Several filters are set for name, address, UUID, and appearance. To    |
-|             | call filter match callback, the following types                                 |
-|             | must match:                                                                     |
-|             |                                                                                 |
-|             | * one of the address filters,                                                   |
-|             | * one of the name filters,                                                      |
-|             | * one of the appearance filters,                                                |
-|             | * all of the UUID filters.                                                      |
-|             |                                                                                 |
-|             | Otherwise, the not found callback is called.                                    |
-+-------------+---------------------------------------------------------------------------------+
+Check the following table for the details on the behavior of the available filter modes.
+
++--------------+-----------------------------------------------------------------------------------------------------------+
+| Filter mode  | Behavior                                                                                                  |
++==============+===========================================================================================================+
+| Normal       | It triggers a filter match callback when only one of the filters set matches, regardless of the type.     |
++--------------+-----------------------------------------------------------------------------------------------------------+
+| Multifilter  | It triggers a filter match callback only when both of the following conditions happen:                    |
+|              |                                                                                                           |
+|              | * All specified UUIDs match.                                                                              |
+|              | * At least one filter for each of the filter types set matches.                                           |
+|              |                                                                                                           |
+|              | For example, several filters can be set for name, address, UUID, and appearance.                          |
+|              | To trigger a filter match callback in this scenario, all of the following types must match:               |
+|              |                                                                                                           |
+|              | * At least one of the address filters                                                                     |
+|              | * At least one of the name filters                                                                        |
+|              | * At least one of the appearance filters                                                                  |
+|              | * All of the UUID filters                                                                                 |
+|              |                                                                                                           |
+|              | If not all of these types match, the ``not found`` callback is triggered.                                 |
++--------------+-----------------------------------------------------------------------------------------------------------+
+
+.. _nrf_bt_scan_readme_directedadvertising:
 
 Directed Advertising
 ====================
 
-To support receiving Directed Advertising packets with the Scanning Module, enable one of the following options in Zephyr:
 
-* :option:`CONFIG_BT_PRIVACY` (scanning with changing addresses)
-* :option:`CONFIG_BT_SCAN_WITH_IDENTITY` (scanning with a local identity address)
+To receive directed advertising packets using the Scanning Module, enable one of the following options in Zephyr:
 
-It is recommended to use the privacy option.
-When privacy is enabled directed advertising is only supported from bonded peers.
-Use scanning with identity only when scanning with privacy is not possible.
+* :option:`CONFIG_BT_PRIVACY` - Scan with changing addresses
+* :option:`CONFIG_BT_SCAN_WITH_IDENTITY` - Scan with a local identity address
 
-When `Filters`_ are set, you can use the proprietary ``filter_no_match`` event to handle Directed Advertising.
-This event checks whether the Directed Advertising packets do not match any filters.
-In case of a positive verification, you can establish connection without the need to disable or reconfigure the existing filters.
+It is recommended to enable the :option:`CONFIG_BT_PRIVACY` option to support directed advertising only between bonded peers.
+Use the :option:`CONFIG_BT_SCAN_WITH_IDENTITY` option only when the :option:`CONFIG_BT_PRIVACY` option is not available.
 
-The following code sample demonstrates the ``filter_no_match`` event:
+When the scanning module is set in advanced mode and :ref:`filters <nrf_bt_scan_readme_filters>` are set, you can use the ``filter_no_match`` event to check if directed advertising packets have been received.
+They will typically not match any filter as, by specification, they do not contain any advertising data.
+
+If there is no match, you can establish a connection without the need to disable or reconfigure the existing filters.
+
+The following code sample demonstrates the usage of the ``filter_no_match`` event:
 
 .. literalinclude:: ../../samples/bluetooth/central_hids/src/main.c
     :language: c
