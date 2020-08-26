@@ -27,6 +27,6 @@ Set the time between subsequent CPU load measurements, in milliseconds, using th
 Implementation details
 **********************
 
-The module periodically submits the measured CPU load as ``cpu_load_event`` and resets the measurement.
+The module periodically submits the measured CPU load as :c:struct:`cpu_load_event` and resets the measurement.
 The event can be displayed in the logs or using the :ref:`profiler`.
 The :cpp:member:`load` presents the CPU load in 0,001% units.

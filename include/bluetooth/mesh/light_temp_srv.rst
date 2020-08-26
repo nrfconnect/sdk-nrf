@@ -32,7 +32,7 @@ Temperature: ``uint16_t``
 
     In the above formula, T_MIN and T_MAX are values representing the Light CTL Temperature Range Min and Light CTL Temperature Range Max states.
 
-    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_light_ctl_srv_handlers` handler structure.
+    Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
 Delta UV: ``int16_t``
     The Temperature state represents the distance from the black body curve.
@@ -43,9 +43,9 @@ Delta UV: ``int16_t``
 
        Represented Delta UV = (Light CTL Delta UV) / 32768
 
-    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_light_ctl_srv_handlers` handler structure.
+    Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
-Temperature Range: :cpp:type:`bt_mesh_light_temp_range`
+Temperature Range: :c:struct:`bt_mesh_light_temp_range`
     The Temperature Range state is a meta state that determines the accepted Temperature level range.
 
     If the Temperature level is set to a value outside the current Temperature Range, it is moved to fit inside the range.

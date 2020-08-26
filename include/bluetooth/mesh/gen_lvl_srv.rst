@@ -11,7 +11,7 @@ States
 The Generic Level Server model contains the following state:
 
 Generic Level: ``int16_t``
-    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_lvl_srv_handlers` handler structure.
+    Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_lvl_srv_handlers` handler structure.
 
     Changes to the Generic Level state may include transition parameters.
     While transitioning to a new level, any request to read out the current level should report the following information:

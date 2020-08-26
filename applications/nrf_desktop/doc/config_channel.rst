@@ -128,10 +128,10 @@ Depending on the connection method:
    Use the ``CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT`` Kconfig option in nRF Desktop peripheral configuration to add the mentioned HID output report.
    Disabling this option reduces the memory consumption.
 
-The ``config_event`` is used to propagate the configuration channel data.
+The :c:struct:`config_event` is used to propagate the configuration channel data.
 The configuration channel request received from host is propagated using the mentioned event with :cpp:member:`is_request` set to ``true``.
 The application module that handles the request consumes the event and provides the response.
-The response is provided as ``config_event`` with :cpp:member:`is_request` set to ``false``.
+The response is provided as :c:struct:`config_event` with :cpp:member:`is_request` set to ``false``.
 In case a request is not handled by any application module, the configuration channel transport will eventually receive it and generate an error response.
 
 Listener configuration
@@ -150,7 +150,7 @@ To register an application module as a configuration channel listener, complete 
 
 1. Make sure that the application module is an :ref:`event_manager` listener.
 #. Include the :file:`config_event.h` header.
-#. Subscribe for the ``config_event`` using the :c:macro:`EVENT_SUBSCRIBE_EARLY` macro:
+#. Subscribe for the :c:struct:`config_event` using the :c:macro:`EVENT_SUBSCRIBE_EARLY` macro:
 
    .. code-block:: c
 

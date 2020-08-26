@@ -63,7 +63,7 @@ Lightness: ``uint16_t``
     * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>` - The Lightness state is set to Default Lightness on power-up.
     * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>` - The Lightness state is set to the last known Light level (zero or non-zero).
 
-    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_light_ctl_srv_handlers` handler structure.
+    Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
 Temperature: ``uint16_t``
     The Temperature state represents the color temperature of the tunable white light emitted by an element.
@@ -75,7 +75,7 @@ Temperature: ``uint16_t``
     * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>` - The Temperature state is set to Default Temperature on power-up.
     * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>` - The Temperature state is set to the last known Temperature level.
 
-    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_light_ctl_srv_handlers` handler structure.
+    Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
 Delta UV: ``int16_t``
     The Temperature state represents the distance from the black body curve.
@@ -92,9 +92,9 @@ Delta UV: ``int16_t``
     * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>` - The Delta UV state is set to Default Delta UV on power-up.
     * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>` - The Delta UV state is set to the last known Delta UV level.
 
-    Your application is expected to hold the state memory and provide access to the state through the :cpp:type:`bt_mesh_light_ctl_srv_handlers` handler structure.
+    Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
-Default CTL: :cpp:type:`bt_mesh_light_ctl`
+Default CTL: :c:struct:`bt_mesh_light_ctl`
     The Default CTL state is a meta state that controls the default Lightness, Temperature and Delta UV level.
     It is used when the light is turned on, but its exact state levels are not specified.
 
@@ -103,7 +103,7 @@ Default CTL: :cpp:type:`bt_mesh_light_ctl`
 
     The Default Light state uses the configured lightness representation.
 
-Temperature Range: :cpp:type:`bt_mesh_light_temp_range`
+Temperature Range: :c:struct:`bt_mesh_light_temp_range`
     The Temperature Range state is a meta state that determines the accepted Temperature level range.
     If the Temperature level is set to a value outside the current Temperature Range, it is moved to fit inside the range.
     If the Temperature Range changes to exclude the current Temperature level, the Temperature level should be changed accordingly.
