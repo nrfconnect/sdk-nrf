@@ -76,8 +76,8 @@ In this state, all the peer operations triggered by ``click_event`` are disabled
 
 When the transition occurs:
 
-a. The :c:struct:`ble_peer_operation_event` with the defined :cpp:member:`op` is submitted.
-   For example, when the user confirms the erase advertising, the :c:struct:`ble_peer_operation_event` is submitted with :cpp:member:`op` set to :c:enumerator:`PEER_OPERATION_ERASE_ADV`.
+a. The :c:struct:`ble_peer_operation_event` with the defined :c:member:`ble_peer_operation_event.op` is submitted.
+   For example, when the user confirms the erase advertising, the :c:struct:`ble_peer_operation_event` is submitted with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_ERASE_ADV`.
 #. The currently selected application local identity is updated (if anything changed).
 
 Peer erasing

@@ -55,7 +55,7 @@ The |ble_discovery| implementation is tasked with peripheral discovery and verif
 Peripheral discovery
 ====================
 
-The module starts the peripheral device discovery when it receives :c:struct:`ble_peer_event` with :cpp:member:`state` set to :c:enumerator:`PEER_STATE_SECURED`.
+The module starts the peripheral device discovery when it receives :c:struct:`ble_peer_event` with :c:member:`ble_peer_event.state` set to :c:enumerator:`PEER_STATE_SECURED`.
 
 The peripheral discovery consists of the following steps:
 

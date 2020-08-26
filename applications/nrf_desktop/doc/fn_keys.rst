@@ -38,4 +38,4 @@ Implementation details
 **********************
 
 The module replaces the key ID for the dual-purpose keys when the Fn modifier is active (that is, when the Fn key is pressed or the Fn lock is active, but not both).
-The original :c:struct:`button_event` is consumed and the new event of the same type is submitted, but with remapped :cpp:member:`key_id`.
+The original :c:struct:`button_event` is consumed and the new event of the same type is submitted, but with remapped :c:member:`button_event.key_id`.

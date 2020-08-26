@@ -36,7 +36,7 @@ The |ble_state| module is used by both Bluetooth Peripheral and Bluetooth Centra
 Connection state change
 =======================
 
-The module propagates information about the connection state changes using :c:struct:`ble_peer_event`, where :cpp:member:`id` is a pointer to the connection object, and :cpp:member:`state` is the connection state.
+The module propagates information about the connection state changes using :c:struct:`ble_peer_event`, where :c:member:`ble_peer_event.id` is a pointer to the connection object, and :c:member:`ble_peer_event.state` is the connection state.
 
 The connection state can be set to one of the following values:
 

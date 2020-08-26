@@ -38,8 +38,8 @@ The configuration (array of :c:struct:`click_detector_config`) is written in the
 
 For every click detector, make sure to define the following information:
 
-* :cpp:member:`key_id` - ID of the selected key.
-* :cpp:member:`consume_button_event` - Whether the ``button_event`` with the given :cpp:member:`key_id` should be consumed by the module.
+* :c:member:`click_detector_config.key_id` - ID of the selected key.
+* :c:member:`click_detector_config.consume_button_event` - Whether the ``button_event`` with the given :c:member:`click_detector_config.key_id` should be consumed by the module.
 
 Implementation details
 **********************

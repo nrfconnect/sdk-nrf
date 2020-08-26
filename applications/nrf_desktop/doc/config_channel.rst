@@ -129,9 +129,9 @@ Depending on the connection method:
    Disabling this option reduces the memory consumption.
 
 The :c:struct:`config_event` is used to propagate the configuration channel data.
-The configuration channel request received from host is propagated using the mentioned event with :cpp:member:`is_request` set to ``true``.
+The configuration channel request received from host is propagated using the mentioned event with :c:member:`config_event.is_request` set to ``true``.
 The application module that handles the request consumes the event and provides the response.
-The response is provided as :c:struct:`config_event` with :cpp:member:`is_request` set to ``false``.
+The response is provided as :c:struct:`config_event` with :c:member:`config_event.is_request` set to ``false``.
 In case a request is not handled by any application module, the configuration channel transport will eventually receive it and generate an error response.
 
 Listener configuration

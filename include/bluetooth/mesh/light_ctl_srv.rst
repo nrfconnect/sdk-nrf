@@ -22,7 +22,7 @@ The following two model instances are added:
 * Light CTL Setup Server - Provides write access to Default CTL state and Temperature Range meta states, allowing configurator devices to set up a temperature range and a default CTL state
 
 In addition to the extended Lightness Server model, the Light CTL Server also requires a :ref:`bt_mesh_light_temp_srv_readme` to be instantiated on a subsequent element.
-The Light Temperature Server should reference the :cpp:member:`bt_mesh_light_ctl_srv::temp_srv`.
+The Light Temperature Server should reference the :c:member:`bt_mesh_light_ctl_srv.temp_srv`.
 
 Conventionally, the Light Temperature Server model is instantiated on the very next element, and the composition data looks as presented below.
 
@@ -99,7 +99,7 @@ Default CTL: :c:struct:`bt_mesh_light_ctl`
     It is used when the light is turned on, but its exact state levels are not specified.
 
     The memory for the Default Light state is held by the model, and the application may receive updates on state changes through the
-    :cpp:member:`bt_mesh_lightness_srv_handlers::default_update` callback.
+    :c:member:`bt_mesh_lightness_srv_handlers.default_update` callback.
 
     The Default Light state uses the configured lightness representation.
 
@@ -110,7 +110,7 @@ Temperature Range: :c:struct:`bt_mesh_light_temp_range`
 
     The Temperature Range state of the Light CTL Server is shared by the assosiated :ref:`bt_mesh_light_temp_srv_readme`.
 
-    The memory for the Temperature Range state is held by the model, and the application may receive updates on state changes through the :cpp:member:`bt_mesh_light_ctl_srv_handlers::temp_range_update` callback.
+    The memory for the Temperature Range state is held by the model, and the application may receive updates on state changes through the :c:member:`bt_mesh_light_ctl_srv_handlers.temp_range_update` callback.
 
 
 Extended models
@@ -121,7 +121,7 @@ The Light CTL Server extends the following model:
 * :ref:`bt_mesh_lightness_srv_readme`
 
 The state of the extended Lightness Server model is for the most part bound to states in the Light CTL Server.
-The only exception is the Lightness range state, which is exposed to the application through the :cpp:member:`bt_mesh_light_ctl_srv_handlers::lightness_range_update` callback of the Light CTL Server model.
+The only exception is the Lightness range state, which is exposed to the application through the :c:member:`bt_mesh_light_ctl_srv_handlers.lightness_range_update` callback of the Light CTL Server model.
 
 In addition to the extended Lightness Server model, the Light CTL Server model is associated with a Light Temperature model on a subsequent element.
 Contrary to the extended models, the associated models do not share subscription lists, but still share states.

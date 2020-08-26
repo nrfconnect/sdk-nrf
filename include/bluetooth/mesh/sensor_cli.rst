@@ -21,7 +21,7 @@ By default, all sensor types are available when the Sensor Client model is compi
 In this case, only the referenced sensor types will be available.
 
 .. note::
-    Whenever the Sensor Client receives a sensor type that it is unable to interpret, it calls its :cpp:member:`bt_mesh_sensor_cli_handlers::unknown_type` callback.
+    Whenever the Sensor Client receives a sensor type that it is unable to interpret, it calls its :c:member:`bt_mesh_sensor_cli_handlers.unknown_type` callback.
     The Sensor Client API is designed to force the application to reference any sensor types it wants to communicate with, so this issue will commonly not occur.
 
 The Sensor Client API supports both blocking functions and asynchronous callbacks for accessing the Sensor Server data.
