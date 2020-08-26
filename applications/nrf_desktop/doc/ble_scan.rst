@@ -57,9 +57,9 @@ Complete the following steps to enable the |ble_scan|:
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
 You can set the ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST`` option to make the device look for unbonded peripherals only on user request.
-The request is submitted by :ref:`nrf_desktop_ble_bond` as :c:struct:`ble_peer_operation_event` with :cpp:member:`op` set to :cpp:enum:`PEER_OPERATION_SCAN_REQUEST`.
+The request is submitted by :ref:`nrf_desktop_ble_bond` as :c:struct:`ble_peer_operation_event` with :cpp:member:`op` set to :c:enumerator:`PEER_OPERATION_SCAN_REQUEST`.
 
-The central always looks for new bonds also after the bond erase (on :c:struct:`ble_peer_operation_event` with :cpp:member:`op` set to :cpp:enum:`PEER_OPERATION_ERASED`).
+The central always looks for new bonds also after the bond erase (on :c:struct:`ble_peer_operation_event` with :cpp:member:`op` set to :c:enumerator:`PEER_OPERATION_ERASED`).
 If ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST`` is enabled, you can also set the ``CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT`` option to make the central scan for new peers after every boot.
 
 The following scanning scenarios are possible:

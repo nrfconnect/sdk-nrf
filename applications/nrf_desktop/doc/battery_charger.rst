@@ -53,6 +53,6 @@ The check is based on the edge interrupt count on the CSO pin in a period of tim
 On a battery state change, the new state is sent using ``battery_state_event``.
 The battery state can have one of the following values:
 
-* :cpp:enumerator:`BATTERY_STATE_IDLE` - Battery is not being charged (CSO pin set to logical high).
-* :cpp:enumerator:`BATTERY_STATE_CHARGING` - Battery is being charged (CSO pin set to logical low).
-* :cpp:enumerator:`BATTERY_STATE_ERROR` - Battery charger reported an error (a signal with the ``CONFIG_DESKTOP_BATTERY_CHARGER_CSO_FREQ`` frequency and a 50% duty cycle on the CSO pin).
+* :c:enumerator:`BATTERY_STATE_IDLE` - Battery is not being charged (CSO pin set to logical high).
+* :c:enumerator:`BATTERY_STATE_CHARGING` - Battery is being charged (CSO pin set to logical low).
+* :c:enumerator:`BATTERY_STATE_ERROR` - Battery charger reported an error (a signal with the ``CONFIG_DESKTOP_BATTERY_CHARGER_CSO_FREQ`` frequency and a 50% duty cycle on the CSO pin).

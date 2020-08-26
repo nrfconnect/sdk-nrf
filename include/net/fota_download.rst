@@ -28,7 +28,7 @@ Once the download has been started, all received data fragments are passed to th
 The :ref:`lib_dfu_target` library takes care of where the upgrade candidate is stored, depending on the image type that is being downloaded.
 
 When the download client sends the event indicating that the download has completed, the received firmware is tagged as an upgrade candidate, and the download client is instructed to disconnect from the server.
-The library then sends a :cpp:enumerator:`FOTA_DOWNLOAD_EVT_FINISHED<fota_download::FOTA_DOWNLOAD_EVT_FINISHED>` callback event.
+The library then sends a :c:enumerator:`FOTA_DOWNLOAD_EVT_FINISHED` callback event.
 When the consumer of the library receives this event, it should issue a reboot command to apply the upgrade.
 
 By default, the FOTA download library uses HTTP for downloading the firmware file.

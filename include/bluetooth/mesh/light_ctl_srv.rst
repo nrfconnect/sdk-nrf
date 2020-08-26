@@ -59,9 +59,9 @@ Lightness: ``uint16_t``
 
     The Lightness state power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_OFF <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_OFF>` - The Lightness state is set to ``0`` on power-up.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>` - The Lightness state is set to Default Lightness on power-up.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>` - The Lightness state is set to the last known Light level (zero or non-zero).
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Lightness state is set to ``0`` on power-up.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Lightness state is set to Default Lightness on power-up.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_RESTORE` - The Lightness state is set to the last known Light level (zero or non-zero).
 
     Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
@@ -71,9 +71,9 @@ Temperature: ``uint16_t``
 
     The Temperature state power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_OFF <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_OFF>` - The Temperature state is set to Default Temperature on power-up.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>` - The Temperature state is set to Default Temperature on power-up.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>` - The Temperature state is set to the last known Temperature level.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Temperature state is set to Default Temperature on power-up.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Temperature state is set to Default Temperature on power-up.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_RESTORE` - The Temperature state is set to the last known Temperature level.
 
     Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 
@@ -88,9 +88,9 @@ Delta UV: ``int16_t``
 
     The Delta UV state of the Light CTL Server is shared by the assosiated :ref:`bt_mesh_light_temp_srv_readme`, and its power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_OFF <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_OFF>` - The Delta UV state is set to Default Delta UV on power-up.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_ON <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_ON>` - The Delta UV state is set to Default Delta UV on power-up.
-    * :cpp:enumerator:`BT_MESH_ON_POWER_UP_RESTORE <bt_mesh_ponoff::BT_MESH_ON_POWER_UP_RESTORE>` - The Delta UV state is set to the last known Delta UV level.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Delta UV state is set to Default Delta UV on power-up.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Delta UV state is set to Default Delta UV on power-up.
+    * :c:enumerator:`BT_MESH_ON_POWER_UP_RESTORE` - The Delta UV state is set to the last known Delta UV level.
 
     Your application is expected to hold the state memory and provide access to the state through the :c:struct:`bt_mesh_light_ctl_srv_handlers` handler structure.
 

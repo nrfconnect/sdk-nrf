@@ -280,8 +280,8 @@ Updated libraries
 
   * Added support for specifying an access point name for the packet data network.
   * Moved the header file to ``include/net``.
-  * Updated to report a :cpp:enumerator:`DOWNLOAD_CLIENT_EVT_ERROR <dl_client::DOWNLOAD_CLIENT_EVT_ERROR>` error when unable to parse the HTTP header, with error reason EBADMSG.
-  * Returning 0 when receiving a :cpp:enumerator:`DOWNLOAD_CLIENT_EVT_ERROR <dl_client::DOWNLOAD_CLIENT_EVT_ERROR>` will now let the library retry the download.
+  * Updated to report a :c:enumerator:`DOWNLOAD_CLIENT_EVT_ERROR` error when unable to parse the HTTP header, with error reason EBADMSG.
+  * Returning 0 when receiving a :c:enumerator:`DOWNLOAD_CLIENT_EVT_ERROR` will now let the library retry the download.
 
 Updated drivers
 ---------------

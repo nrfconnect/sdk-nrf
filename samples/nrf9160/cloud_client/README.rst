@@ -94,16 +94,16 @@ Cloud events used in the sample
 ===============================
 The sample uses the following cloud events:
 
-* :cpp:enumerator:`CLOUD_EVT_CONNECTED <cloud_api::CLOUD_EVT_CONNECTED>` : Connected to the cloud service.
+* :c:enumerator:`CLOUD_EVT_CONNECTED` : Connected to the cloud service.
 
 
-* :cpp:enumerator:`CLOUD_EVT_READY<cloud_api::CLOUD_EVT_READY>` : Ready for cloud communication.
+* :c:enumerator:`CLOUD_EVT_READY` : Ready for cloud communication.
 
 
-* :cpp:enumerator:`CLOUD_EVT_DISCONNECTED<cloud_api::CLOUD_EVT_DISCONNECTED>` : Disconnected from the cloud service.
+* :c:enumerator:`CLOUD_EVT_DISCONNECTED` : Disconnected from the cloud service.
 
 
-* :cpp:enumerator:`CLOUD_EVT_DATA_RECEIVED<cloud_api::CLOUD_EVT_DATA_RECEIVED>` : Data received from the cloud service.
+* :c:enumerator:`CLOUD_EVT_DATA_RECEIVED` : Data received from the cloud service.
 
 .. note::
    Not all functionalities present in the generic cloud API are used by the different cloud backends.

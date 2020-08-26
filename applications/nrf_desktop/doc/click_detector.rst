@@ -10,10 +10,10 @@ Click type
 
 The module records the following click types:
 
-* :cpp:enumerator:`CLICK_SHORT` - Button pressed and released after short time.
-* :cpp:enumerator:`CLICK_NONE` - Button pressed and held for a period of time that is too long for :cpp:enumerator:`CLICK_SHORT`, but too short for :cpp:enumerator:`CLICK_LONG`.
-* :cpp:enumerator:`CLICK_LONG` - Button pressed and held for a long period of time.
-* :cpp:enumerator:`CLICK_DOUBLE` - Two sequences of the button press and release in a short time interval.
+* :c:enumerator:`CLICK_SHORT` - Button pressed and released after short time.
+* :c:enumerator:`CLICK_NONE` - Button pressed and held for a period of time that is too long for :c:enumerator:`CLICK_SHORT`, but too short for :c:enumerator:`CLICK_LONG`.
+* :c:enumerator:`CLICK_LONG` - Button pressed and held for a long period of time.
+* :c:enumerator:`CLICK_DOUBLE` - Two sequences of the button press and release in a short time interval.
 
 The exact values of time intervals for click types are defined in the :file:`click_detector.c` file.
 

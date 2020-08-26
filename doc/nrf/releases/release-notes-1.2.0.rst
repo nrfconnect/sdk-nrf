@@ -155,7 +155,7 @@ Updated libraries
 
 * :ref:`lib_fota_download`:
 
-  * Added an optional progress event (:cpp:enumerator:`FOTA_DOWNLOAD_EVT_PROGRESS <fota_download::FOTA_DOWNLOAD_EVT_PROGRESS>`) that informs the user of the library how many bytes have been downloaded.
+  * Added an optional progress event (:c:enumerator:`FOTA_DOWNLOAD_EVT_PROGRESS`) that informs the user of the library how many bytes have been downloaded.
   * Fixed a bug where the library continued downloading even if writing to the DFU target failed.
   * Implemented a mechanism to retry downloads if a socket error occurs.
 
