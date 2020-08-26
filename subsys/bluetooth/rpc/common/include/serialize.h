@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
 #ifndef SERIALIZE_H_
 #define SERIALIZE_H_
 

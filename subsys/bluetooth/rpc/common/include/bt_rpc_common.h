@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ */
 #ifndef BT_RPC_COMMON_H_
 #define BT_RPC_COMMON_H_
 

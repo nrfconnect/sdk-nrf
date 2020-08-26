@@ -1,4 +1,7 @@
 {
+	"Copyright (c) 2020 Nordic Semiconductor ASA":
+	"SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic",
+	
 	"source-pairs": [
 		{
 			"cli": "client/bt_rpc_gap_cli.c",
