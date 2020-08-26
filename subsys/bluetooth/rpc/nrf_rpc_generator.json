@@ -28,7 +28,7 @@
 		"kobj-types-enum.h": "",
 		"syscalls/kernel.h": "",
 		"_rpc_defines.h": [
-			"#define NRF_RPC_GENERATOR",
+			"#define __GENERATOR",
 			"#define CONFIG_NRF_RPC_TR_RPMSG 1",
 			"#define CONFIG_ARM 1",
 			"#define CONFIG_MP_NUM_CPUS 1",

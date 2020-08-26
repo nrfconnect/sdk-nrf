@@ -27,21 +27,35 @@ static struct bt_uuid const * const uuid_cpf = BT_UUID_GATT_CPF;
 static uint32_t copy_buffer[(CONFIG_BT_RPC_COPY_BUFFER_SIZE + 3) / 4];
 static size_t copy_buffer_length = 0;
 
-static struct bt_gatt_service_static *services[CONFIG_BT_RPC_GATT_SRV_MAX];
-static size_t service_count = 0;
-
 static uint8_t service_map[sizeof(copy_buffer) / sizeof(struct bt_gatt_attr)];
 
+static struct bt_gatt_service *current_service;
+static size_t current_service_attr_max;
+static int current_service_index;
 
-#ifndef NRF_RPC_GENERATOR
-#define UNUSED __attribute__((unused))
+
+#ifndef __GENERATOR
+#define UNUSED __attribute__((unused)) /* TODO: Improve generator to avoid this workaround */
 #else
 #define UNUSED ;
 #endif
 
-#if defined(NRF_RPC_GENERATOR)
-#define _
-#endif
+void *copy_buffer_reserve(size_t size)
+{
+	void *result;
+
+	size = (size + (sizeof(uint32_t) - 1)) & ~(sizeof(uint32_t) - 1);
+
+	if (size >= sizeof(copy_buffer) - copy_buffer_length) {
+		LOG_ERR("Copy buffer overflow. Increase CONFIG_BT_RPC_COPY_BUFFER_SIZE.");
+		return NULL;
+	}
+
+	result = &((uint8_t *)copy_buffer)[copy_buffer_length];
+	copy_buffer_length += size;
+
+	return result;
+}
 
 
 void bt_uuid_dec(CborValue *_value, struct bt_uuid *_data)                       /*####%BtNY*/
@@ -106,19 +120,53 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_notify_cb, BT_GATT_NOTIFY_CB_RPC_CM
 	bt_gatt_notify_cb_rpc_handler, NULL);                                     /*#####@NDk*/
 
 
+static int bt_rpc_gatt_start_service(uint8_t remote_service_index, size_t attr_count)
+{
+	struct bt_gatt_service_static *service;
+	struct bt_gatt_attr *attrs;
+	int service_index;
+
+	service = copy_buffer_reserve(sizeof(struct bt_gatt_service_static));
+	attrs = copy_buffer_reserve(sizeof(struct bt_gatt_attr) * attr_count);
+
+	if (service == NULL || attrs == NULL) {
+		return -NRF_ENOMEM;
+	}
+
+	service->attr_count = 0;
+	service->attrs = attrs;
+
+	service_index = add_service(service);
+
+	if (service_index < 0) {
+		return service_index;
+	} else if (service_index != (int)remote_service_index) {
+		return -NRF_EINVAL;
+	}
+
+	current_service = service;
+	current_service_attr_max = attr_count;
+	current_service_index = service_index;
+
+	return 0;
+}
+
+
 static void bt_rpc_gatt_start_service_rpc_handler(CborValue *_value, void *_handler_data)/*####%Brek*/
 {                                                                                        /*#####@cGw*/
 
-	size_t attr_count;                                                               /*####%Abkt*/
-	int _result;                                                                     /*#####@u2E*/
+	uint8_t service_index;                                                           /*######%AW*/
+	size_t attr_count;                                                               /*######vB0*/
+	int _result;                                                                     /*######@jQ*/
 
-	attr_count = ser_decode_uint(_value);                                            /*##CpZIu7U*/
+	service_index = ser_decode_uint(_value);                                         /*####%Cq49*/
+	attr_count = ser_decode_uint(_value);                                            /*#####@6Sw*/
 
 	if (!ser_decoding_done_and_check(_value)) {                                      /*######%FE*/
 		goto decoding_error;                                                     /*######QTM*/
 	}                                                                                /*######@1Y*/
 
-	_result = bt_rpc_gatt_start_service(attr_count);                                 /*##Dp3gOU0*/
+	_result = bt_rpc_gatt_start_service(service_index, attr_count);                  /*##DrfWttU*/
 
 	ser_rsp_send_int(_result);                                                       /*##BPC96+4*/
 
@@ -135,44 +183,22 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_start_service, BT_RPC_GATT_STAR
 int attr_to_index(const struct bt_gatt_attr *attr)
 {
 	int service_index;
-	int attr_index;
 	size_t service_map_index;
 	size_t diff = (uint8_t *)attr - (uint8_t *)copy_buffer;
-	struct bt_gatt_service_static *service;
 	
 	if (diff > sizeof(copy_buffer) - sizeof(struct bt_gatt_attr)) {
-		return -1;
+		return -NRF_EINVAL;
 	}
 
 	service_map_index = diff / sizeof(struct bt_gatt_attr);
 
 	service_index = service_map[service_map_index];
 
-	if (service_index >= service_count) {
-		return -1;
-	}
-
-	service = services[service_index];
-
-	attr_index = attr - service->attrs;
-
-	return (service_index << 16) | (attr_index & 0xFFFF);
+	return bt_rpc_gatt_srv_attr_to_index(service_index, attr);
 }
 
-const struct bt_gatt_attr *index_to_attr(int index)
+static size_t bt_uuid_gatt_buf_size(const struct bt_uuid *uuid)
 {
-	int service_index = index >> 16;
-	int attr_index = index & 0xFFFF;
-	struct bt_gatt_service_static *service = services[service_index];
-
-	if (service_index >= service_count || attr_index >= service->attr_count) {
-		return NULL;
-	}
-
-	return &service->attrs[attr_index];
-}
-
-static size_t bt_uuid_gatt_buf_size(const struct bt_uuid *uuid) {
 	switch (uuid->type)
 	{
 	case BT_UUID_TYPE_16:
@@ -567,4 +593,31 @@ decoding_error:                                                                 
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_send_desc_attr, BT_RPC_GATT_SEND_DESC_ATTR_RPC_CMD,/*####%BgQJ*/
 	bt_rpc_gatt_send_desc_attr_rpc_handler, NULL);                                              /*#####@fws*/
+
+static int bt_rpc_gatt_end_service(void)
+{
+	int res;
+	
+	res = bt_gatt_service_register(current_service);
+	current_service = NULL;
+	current_service_attr_max = 0;
+
+	return res;
+}
+
+static void bt_rpc_gatt_end_service_rpc_handler(CborValue *_value, void *_handler_data)/*####%Bi0y*/
+{                                                                                      /*#####@k5U*/
+
+	int _result;                                                                   /*##AWc+iOc*/
+
+	nrf_rpc_cbor_decoding_done(_value);                                            /*##FGkSPWY*/
+
+	_result = bt_rpc_gatt_end_service();                                           /*##DusAZ1Y*/
+
+	ser_rsp_send_int(_result);                                                     /*##BPC96+4*/
+
+}                                                                                      /*##B9ELNqo*/
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_end_service, BT_RPC_GATT_END_SERVICE_RPC_CMD,/*####%Bq8s*/
+	bt_rpc_gatt_end_service_rpc_handler, NULL);                                           /*#####@xJU*/
 

@@ -24,8 +24,8 @@ static void report_decoding_error(uint8_t cmd_evt_id, void* data) {
 #define LOCK_CONN_INFO() k_mutex_lock(&bt_rpc_conn_mutex, K_FOREVER)
 #define UNLOCK_CONN_INFO() k_mutex_unlock(&bt_rpc_conn_mutex)
 
-#ifndef NRF_RPC_GENERATOR
-#define UNUSED __attribute__((unused))
+#ifndef __GENERATOR
+#define UNUSED __attribute__((unused)) /* TODO: Improve generator to avoid this workaround */
 #else
 #define UNUSED ;
 #endif
@@ -272,7 +272,7 @@ uint8_t bt_conn_index(struct bt_conn *conn)
 	return get_conn_index(conn);
 }
 
-#if defined(CONFIG_BT_USER_PHY_UPDATE) || defined(_)
+#if defined(CONFIG_BT_USER_PHY_UPDATE) || defined(__GENERATOR)
 
 void bt_conn_le_phy_info_dec(CborValue *_value, struct bt_conn_le_phy_info *_data)/*####%Boer*/
 {                                                                                 /*#####@VUM*/
@@ -282,9 +282,9 @@ void bt_conn_le_phy_info_dec(CborValue *_value, struct bt_conn_le_phy_info *_dat
 
 }                                                                                 /*##B9ELNqo*/
 
-#endif /* defined(CONFIG_BT_USER_PHY_UPDATE) || defined(_) */
+#endif /* defined(CONFIG_BT_USER_PHY_UPDATE) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(_)
+#if defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(__GENERATOR)
 
 void bt_conn_le_data_len_info_dec(CborValue *_value, struct bt_conn_le_data_len_info *_data)/*####%BjZZ*/
 {                                                                                           /*#####@5uc*/
@@ -296,7 +296,7 @@ void bt_conn_le_data_len_info_dec(CborValue *_value, struct bt_conn_le_data_len_
 
 }                                                                                           /*##B9ELNqo*/
 
-#endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(_) */
+#endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(__GENERATOR) */
 
 void bt_conn_info_dec(CborValue *value, struct bt_conn *conn, struct bt_conn_info *info)
 {
@@ -493,7 +493,7 @@ int bt_conn_le_param_update(struct bt_conn *conn,
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#if defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(_)
+#if defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(__GENERATOR)
 
 UNUSED
 static const size_t bt_conn_le_data_len_param_buf_size = 6;                      /*##BlxRCAQ*/
@@ -528,9 +528,9 @@ int bt_conn_le_data_len_update(struct bt_conn *conn,
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(_) */
+#endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_USER_PHY_UPDATE) || defined(_)
+#if defined(CONFIG_BT_USER_PHY_UPDATE) || defined(__GENERATOR)
 
 UNUSED
 static const size_t bt_conn_le_phy_param_buf_size = 7;                           /*##BnRuFXI*/
@@ -566,7 +566,7 @@ int bt_conn_le_phy_update(struct bt_conn *conn,
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* defined(CONFIG_BT_USER_PHY_UPDATE) || defined(_) */
+#endif /* defined(CONFIG_BT_USER_PHY_UPDATE) || defined(__GENERATOR) */
 
 int bt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 {
@@ -587,7 +587,7 @@ int bt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#if defined(CONFIG_BT_CENTRAL) || defined(_)
+#if defined(CONFIG_BT_CENTRAL) || defined(__GENERATOR)
 
 UNUSED
 static const size_t bt_conn_le_create_param_buf_size = 20;                       /*##Bv4miOQ*/
@@ -654,7 +654,7 @@ int bt_conn_le_create(const bt_addr_le_t *peer,
 	return _result._result;                                                  /*##BW0ge3U*/
 }
 
-#if defined(CONFIG_BT_WHITELIST) || defined(_)
+#if defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR)
 
 int bt_conn_le_create_auto(const struct bt_conn_le_create_param *create_param,
 			   const struct bt_le_conn_param *conn_param)
@@ -692,9 +692,9 @@ int bt_conn_create_auto_stop(void)
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* defined(CONFIG_BT_WHITELIST) || defined(_) */
+#endif /* defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR) */
 
-#if !defined(CONFIG_BT_WHITELIST) || defined(_)
+#if !defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR)
 
 int bt_le_set_auto_conn(const bt_addr_le_t *addr,
 			const struct bt_le_conn_param *param)
@@ -723,11 +723,11 @@ int bt_le_set_auto_conn(const bt_addr_le_t *addr,
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* !defined(CONFIG_BT_WHITELIST) || defined(_) */
+#endif /* !defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR) */
 
-#endif /* defined(CONFIG_BT_CENTRAL) || defined(_) */
+#endif /* defined(CONFIG_BT_CENTRAL) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_SMP) || defined(_)
+#if defined(CONFIG_BT_SMP) || defined(__GENERATOR)
 
 int bt_conn_set_security(struct bt_conn *conn, bt_security_t sec)
 {
@@ -802,7 +802,7 @@ uint8_t bt_conn_enc_key_size(struct bt_conn *conn)
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* defined(CONFIG_BT_SMP) || defined(_) */
+#endif /* defined(CONFIG_BT_SMP) || defined(__GENERATOR) */
 
 static struct bt_conn_cb *first_bt_conn_cb = NULL;
 
@@ -959,7 +959,7 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_le_param_updated_call, BT_CONN_CB_LE_PARAM_UPDATED_CALL_RPC_CMD,/*####%BmVP*/
 	bt_conn_cb_le_param_updated_call_rpc_handler, NULL);                                                    /*#####@w4s*/
 
-#if defined(CONFIG_BT_SMP) || defined(_)
+#if defined(CONFIG_BT_SMP) || defined(__GENERATOR)
 
 static void bt_conn_cb_identity_resolved_call(struct bt_conn *conn, const bt_addr_le_t *rpa, const bt_addr_le_t *identity)
 {
@@ -1001,9 +1001,9 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_identity_resolved_call, BT_CONN_CB_IDENTITY_RESOLVED_CALL_RPC_CMD,/*####%Bl6V*/
 	bt_conn_cb_identity_resolved_call_rpc_handler, NULL);                                                     /*#####@2+8*/
 
-#endif /* defined(CONFIG_BT_SMP) || defined(_) */
+#endif /* defined(CONFIG_BT_SMP) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_SMP) || defined(_)
+#if defined(CONFIG_BT_SMP) || defined(__GENERATOR)
 
 static void bt_conn_cb_security_changed_call(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
@@ -1043,9 +1043,9 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_security_changed_call, BT_CONN_CB_SECURITY_CHANGED_CALL_RPC_CMD,/*####%BtY8*/
 	bt_conn_cb_security_changed_call_rpc_handler, NULL);                                                    /*#####@Q4w*/
 
-#endif /* defined(CONFIG_BT_SMP) || defined(_) */
+#endif /* defined(CONFIG_BT_SMP) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_REMOTE_INFO) || defined(_)
+#if defined(CONFIG_BT_REMOTE_INFO) || defined(__GENERATOR)
 
 static void bt_conn_cb_remote_info_available_call(struct bt_conn *conn, struct bt_conn_remote_info *remote_info)
 {
@@ -1086,9 +1086,9 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_remote_info_available_call, BT_CONN_CB_REMOTE_INFO_AVAILABLE_CALL_RPC_CMD,/*####%Bkxy*/
 	bt_conn_cb_remote_info_available_call_rpc_handler, NULL);                                                         /*#####@+X4*/
 
-#endif /* defined(CONFIG_BT_REMOTE_INFO) || defined(_) */
+#endif /* defined(CONFIG_BT_REMOTE_INFO) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_USER_PHY_UPDATE) || defined(_)
+#if defined(CONFIG_BT_USER_PHY_UPDATE) || defined(__GENERATOR)
 
 static void bt_conn_cb_le_phy_updated_call(struct bt_conn *conn, struct bt_conn_le_phy_info *param)
 {
@@ -1126,9 +1126,9 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_le_phy_updated_call, BT_CONN_CB_LE_PHY_UPDATED_CALL_RPC_CMD,/*####%Bmm8*/
 	bt_conn_cb_le_phy_updated_call_rpc_handler, NULL);                                                  /*#####@Wz8*/
 
-#endif /* defined(CONFIG_BT_USER_PHY_UPDATE) || defined(_) */
+#endif /* defined(CONFIG_BT_USER_PHY_UPDATE) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(_)
+#if defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(__GENERATOR)
 
 static void bt_conn_cb_le_data_len_updated_call(struct bt_conn *conn, struct bt_conn_le_data_len_info *info)
 {
@@ -1166,7 +1166,7 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_le_data_len_updated_call, BT_CONN_CB_LE_DATA_LEN_UPDATED_CALL_RPC_CMD,/*####%Br4G*/
 	bt_conn_cb_le_data_len_updated_call_rpc_handler, NULL);                                                       /*#####@7Us*/
 
-#endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(_) */
+#endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) || defined(__GENERATOR) */
 
 static void bt_conn_cb_register_on_remote()
 {
@@ -1196,7 +1196,7 @@ void bt_conn_cb_register(struct bt_conn_cb *cb)
 	}
 }
 
-#if defined(CONFIG_BT_SMP) || defined(_)
+#if defined(CONFIG_BT_SMP) || defined(__GENERATOR)
 
 void bt_set_bondable(bool enable) {
 	SERIALIZE();
@@ -1227,7 +1227,7 @@ void bt_set_oob_data_flag(bool enable)
 		&_ctx, ser_rsp_simple_void, NULL);                               /*#####@myc*/
 }
 
-#if !defined(CONFIG_BT_SMP_SC_PAIR_ONLY) || defined(_)
+#if !defined(CONFIG_BT_SMP_SC_PAIR_ONLY) || defined(__GENERATOR)
 
 int bt_le_oob_set_legacy_tk(struct bt_conn *conn, const uint8_t *tk)
 {
@@ -1256,9 +1256,9 @@ int bt_le_oob_set_legacy_tk(struct bt_conn *conn, const uint8_t *tk)
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* !defined(CONFIG_BT_SMP_SC_PAIR_ONLY) || defined(_) */
+#endif /* !defined(CONFIG_BT_SMP_SC_PAIR_ONLY) || defined(__GENERATOR) */
 
-#if !defined(CONFIG_BT_SMP_OOB_LEGACY_PAIR_ONLY) || defined(_)
+#if !defined(CONFIG_BT_SMP_OOB_LEGACY_PAIR_ONLY) || defined(__GENERATOR)
 
 size_t bt_le_oob_sc_data_buf_size(const struct bt_le_oob_sc_data *_data)         /*####%BhDG*/
 {                                                                                /*#####@jx4*/
@@ -1390,9 +1390,9 @@ int bt_le_oob_get_sc_data(struct bt_conn *conn,
 	return _result._result;                                                  /*##BW0ge3U*/
 }
 
-#endif /* !defined(CONFIG_BT_SMP_OOB_LEGACY_PAIR_ONLY) || defined(_) */
+#endif /* !defined(CONFIG_BT_SMP_OOB_LEGACY_PAIR_ONLY) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_FIXED_PASSKEY) || defined(_)
+#if defined(CONFIG_BT_FIXED_PASSKEY) || defined(__GENERATOR)
 
 int bt_passkey_set(unsigned int passkey)
 {
@@ -1412,11 +1412,11 @@ int bt_passkey_set(unsigned int passkey)
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* defined(CONFIG_BT_FIXED_PASSKEY) || defined(_) */
+#endif /* defined(CONFIG_BT_FIXED_PASSKEY) || defined(__GENERATOR) */
 
 static const struct bt_conn_auth_cb *auth_cb = NULL;
 
-#if defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT) || defined(_)
+#if defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT) || defined(__GENERATOR)
 
 void bt_conn_pairing_feat_dec(CborValue *_value, struct bt_conn_pairing_feat *_data)/*####%Bno2*/
 {                                                                                   /*#####@D28*/
@@ -1470,7 +1470,7 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_accept, BT_RPC_AUTH_CB_PAIRING_ACCEPT_RPC_CMD,/*####%BhNc*/
 	bt_rpc_auth_cb_pairing_accept_rpc_handler, NULL);                                                 /*#####@VbM*/
 
-#endif /* defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT) || defined(_) */
+#endif /* defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT) || defined(__GENERATOR) */
 
 static void bt_rpc_auth_cb_passkey_display_rpc_handler(CborValue *_value, void *_handler_data)/*####%BmkZ*/
 {                                                                                             /*#####@axk*/
@@ -1817,11 +1817,11 @@ int bt_conn_auth_pairing_confirm(struct bt_conn *conn)
 	return _result;                                                           /*##BX7TDLc*/
 }
 
-#else /* defined(CONFIG_BT_SMP) || defined(_) */
+#else /* defined(CONFIG_BT_SMP) || defined(__GENERATOR) */
 
 bt_security_t bt_conn_get_security(struct bt_conn *conn)
 {
 	return BT_SECURITY_L1;
 }
 
-#endif /* defined(CONFIG_BT_SMP) || defined(_) */
+#endif /* defined(CONFIG_BT_SMP) || defined(__GENERATOR) */

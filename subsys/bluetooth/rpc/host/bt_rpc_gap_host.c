@@ -10,14 +10,10 @@
 #include "cbkproxy.h"
 
 
-#ifndef NRF_RPC_GENERATOR
-#define UNUSED __attribute__((unused))
+#ifndef __GENERATOR
+#define UNUSED __attribute__((unused)) /* TODO: Improve generator to avoid this workaround */
 #else
 #define UNUSED ;
-#endif
-
-#if defined(NRF_RPC_GENERATOR)
-#define _
 #endif
 
 
@@ -120,7 +116,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_enable, BT_ENABLE_RPC_CMD,              
 
 
 
-#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_)
+#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR)
 
 static void bt_set_name_rpc_handler(CborValue *_value, void *_handler_data)      /*####%BgLQ*/
 {                                                                                /*#####@EdU*/
@@ -215,7 +211,7 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_get_name_out, BT_GET_NAME_OUT_RPC_CMD,   /*####%BuEw*/
 	bt_get_name_out_rpc_handler, NULL);                                      /*#####@65I*/
 
-#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_) */
+#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR) */
 
 static void bt_set_id_addr_rpc_handler(CborValue *_value, void *_handler_data)   /*####%BvyT*/
 {                                                                                /*#####@wb0*/
@@ -644,7 +640,7 @@ void bt_le_oob_enc(CborEncoder *_encoder, const struct bt_le_oob *_data)        
 
 }                                                                                /*##B9ELNqo*/
 
-#if defined(CONFIG_BT_EXT_ADV) || defined(_)
+#if defined(CONFIG_BT_EXT_ADV) || defined(__GENERATOR)
 
 static struct bt_le_ext_adv_cb ext_adv_cb_cache[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 static uint8_t ext_adv_cb_cache_map[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
@@ -1148,9 +1144,9 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_ext_adv_oob_get_local, BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD,/*####%Bo7+*/
 	bt_le_ext_adv_oob_get_local_rpc_handler, NULL);                                               /*#####@PoM*/
 
-#endif /* defined(CONFIG_BT_EXT_ADV) || defined(_) */
+#endif /* defined(CONFIG_BT_EXT_ADV) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_OBSERVER) || defined(_)
+#if defined(CONFIG_BT_OBSERVER) || defined(__GENERATOR)
 
 static void bt_le_scan_start_rpc_handler(CborValue *_value, void *_handler_data)     /*####%BtgB*/
 {                                                                                    /*#####@oaA*/
@@ -1292,9 +1288,9 @@ static void bt_le_scan_cb_register_on_remote_rpc_handler(CborValue *_value, void
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_scan_cb_register_on_remote, BT_LE_SCAN_CB_REGISTER_ON_REMOTE_RPC_CMD,/*####%BhkM*/
 	bt_le_scan_cb_register_on_remote_rpc_handler, NULL);                                                    /*#####@+9k*/
 
-#endif /* defined(CONFIG_BT_OBSERVER) || defined(_) */
+#endif /* defined(CONFIG_BT_OBSERVER) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_WHITELIST) || defined(_)
+#if defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR)
 
 static void bt_le_whitelist_add_rpc_handler(CborValue *_value, void *_handler_data)/*####%BvAc*/
 {                                                                                  /*#####@JS8*/
@@ -1364,7 +1360,7 @@ static void bt_le_whitelist_clear_rpc_handler(CborValue *_value, void *_handler_
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_whitelist_clear, BT_LE_WHITELIST_CLEAR_RPC_CMD,/*####%BuWk*/
 	bt_le_whitelist_clear_rpc_handler, NULL);                                         /*#####@hqA*/
 
-#endif /* defined(CONFIG_BT_WHITELIST) || defined(_) */
+#endif /* defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR) */
 
 static void bt_le_set_chan_map_rpc_handler(CborValue *_value, void *_handler_data)/*####%Blh4*/
 {                                                                                 /*#####@46c*/
@@ -1436,7 +1432,7 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_oob_get_local, BT_LE_OOB_GET_LOCAL_RPC_CMD,/*####%Bhtb*/
 	bt_le_oob_get_local_rpc_handler, NULL);                                       /*#####@RcU*/
 
-#if defined(CONFIG_BT_CONN) || defined(_)
+#if defined(CONFIG_BT_CONN) || defined(__GENERATOR)
 
 static void bt_unpair_rpc_handler(CborValue *_value, void *_handler_data)        /*####%BrQf*/
 {                                                                                /*#####@3HE*/
@@ -1466,9 +1462,9 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_unpair, BT_UNPAIR_RPC_CMD,               /*####%Bk5s*/
 	bt_unpair_rpc_handler, NULL);                                            /*#####@0hI*/
 
-#endif /* defined(CONFIG_BT_CONN) || defined(_) */
+#endif /* defined(CONFIG_BT_CONN) || defined(__GENERATOR) */
 
-#if (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(_)
+#if (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(__GENERATOR)
 
 size_t bt_bond_info_buf_size(const struct bt_bond_info *_data)                   /*####%BgGS*/
 {                                                                                /*#####@gCc*/
@@ -1542,4 +1538,4 @@ decoding_error:                                                                 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_foreach_bond, BT_FOREACH_BOND_RPC_CMD,   /*####%Bgmc*/
 	bt_foreach_bond_rpc_handler, NULL);                                      /*#####@t3Y*/
 
-#endif /* (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(_) */
+#endif /* (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(__GENERATOR) */

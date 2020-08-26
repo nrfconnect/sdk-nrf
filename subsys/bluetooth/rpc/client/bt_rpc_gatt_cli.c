@@ -11,6 +11,7 @@
 #include "bluetooth/gatt.h"
 
 #include "bt_rpc_common.h"
+#include "bt_rpc_gatt_common.h"
 #include "serialize.h"
 #include "cbkproxy.h"
 
@@ -23,62 +24,12 @@ SERIALIZE(OPAQUE_STRUCT(void));
 SERIALIZE(FILTERED_STRUCT(struct bt_conn, 3, encode_bt_conn, decode_bt_conn));
 
 
-#ifndef NRF_RPC_GENERATOR
-#define UNUSED __attribute__((unused))
+#ifndef __GENERATOR
+#define UNUSED __attribute__((unused)) /* TODO: Improve generator to avoid this workaround */
 #else
 #define UNUSED ;
 #endif
 
-#if defined(NRF_RPC_GENERATOR)
-#define _
-#endif
-
-
-static const struct bt_gatt_service_static *services[CONFIG_BT_RPC_GATT_SRV_MAX];
-static size_t service_count = 0;
-
-static int attr_to_index(struct bt_gatt_attr *attr)
-{
-	int attr_index;
-	int service_index;
-	const struct bt_gatt_service_static *service;
-
-	service_index = 0;
-	do
-	{
-		if (service_index >= service_count) {
-			return -1;
-		}
-		service = services[service_index];
-		if (attr >= service->attrs && attr < &service->attrs[service->attr_count]) {
-			break;
-		}
-		service_index++;
-	} while (true);
-
-	attr_index = attr - service->attrs;
-
-	return (service_index << 16) | (attr_index & 0xFFFF);
-}
-
-static const struct bt_gatt_attr *index_to_attr(int index)
-{
-	uint16_t attr_index = index & 0xFFFF;
-	uint8_t service_index = index >> 16;
-	const struct bt_gatt_service_static *service;
-
-	if (service_index >= service_count) {
-		return NULL;
-	}
-
-	service = services[service_index];
-
-	if (attr_index >= service->attr_count) {
-		return NULL;
-	}
-
-	return &service->attrs[attr_index];
-}
 
 ssize_t bt_gatt_attr_read(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 			  void *buf, uint16_t buf_len, uint16_t offset,
@@ -92,8 +43,7 @@ ssize_t bt_gatt_attr_read(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 
 	len = MIN(buf_len, value_len - offset);
 
-	LOG_DBG("handle 0x%04x offset %u length %u", attr->handle, offset,
-	       len);
+	LOG_DBG("handle 0x%04x offset %u length %u", attr->handle, offset, len);
 
 	memcpy(buf, (uint8_t *)value + offset, len);
 
@@ -160,8 +110,23 @@ static int send_init_done(void) {
 	return -0;
 }
 
-static int bt_rpc_gatt_start_service(size_t attr_count) {
-	return -0;
+static int bt_rpc_gatt_start_service(uint8_t service_index, size_t attr_count)
+{
+	SERIALIZE();
+
+	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%AT*/
+	int _result;                                                             /*######ewD*/
+	size_t _buffer_size_max = 7;                                             /*######@6Y*/
+
+	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*##AvrU03s*/
+
+	ser_encode_uint(&_ctx.encoder, service_index);                           /*####%A53t*/
+	ser_encode_uint(&_ctx.encoder, attr_count);                              /*#####@gs4*/
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_START_SERVICE_RPC_CMD,  /*####%BCaC*/
+		&_ctx, ser_rsp_simple_i32, &_result);                            /*#####@mjc*/
+
+	return _result;                                                          /*##BX7TDLc*/
 }
 
 int bt_gatt_notify_cb(struct bt_conn *conn,
@@ -170,21 +135,6 @@ int bt_gatt_notify_cb(struct bt_conn *conn,
 	return -0;                                                          
 }
 
-int add_service(const struct bt_gatt_service_static *service)
-{
-	int service_index;
-
-	if (service_count >= CONFIG_BT_RPC_GATT_SRV_MAX) {
-		LOG_ERR("Too many services send by BT_RPC. Increase CONFIG_BT_RPC_GATT_SRV_MAX.");
-		return -ENOMEM;
-	}
-
-	service_index = service_count;
-	services[service_index] = service;
-	service_count++;
-
-	return service_index;
-}
 
 static size_t bt_uuid_gatt_buf_size(const struct bt_uuid *uuid) {
 	switch (uuid->type)
@@ -336,6 +286,22 @@ static int send_cpf_attr(uint8_t special_attr, const struct bt_gatt_attr *attr)
 	return bt_rpc_gatt_send_desc_attr(special_attr, (uintptr_t)attr->write, 0, (uint8_t *)cpf, sizeof(struct bt_gatt_cpf));
 }
 
+static int bt_rpc_gatt_end_service(void)
+{
+	SERIALIZE();
+
+	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%AX*/
+	int _result;                                                             /*######56+*/
+	size_t _buffer_size_max = 0;                                             /*######@io*/
+
+	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*##AvrU03s*/
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_END_SERVICE_RPC_CMD,    /*####%BI1p*/
+		&_ctx, ser_rsp_simple_i32, &_result);                            /*#####@CO0*/
+
+	return _result;                                                          /*##BX7TDLc*/
+}
+
 static int send_service_static(const struct bt_gatt_service_static *svc)
 {
 	int res;
@@ -348,8 +314,10 @@ static int send_service_static(const struct bt_gatt_service_static *svc)
 	if (service_index < 0) {
 		return service_index;
 	}
+
+	LOG_DBG("Sending static service %d", service_index);
 	
-	res = bt_rpc_gatt_start_service(svc->attr_count);
+	res = bt_rpc_gatt_start_service(service_index, svc->attr_count);
 	if (res < 0) {
 		return res;
 	}
@@ -403,8 +371,13 @@ static int send_service_static(const struct bt_gatt_service_static *svc)
 			return res;
 		}
 	}
+	
+	res = bt_rpc_gatt_end_service();
+	if (res < 0) {
+		return res;
+	}
 
-	return 0;
+	return res;
 }
 
 int bt_rpc_gatt_init(void)
@@ -415,136 +388,3 @@ int bt_rpc_gatt_init(void)
 
 	return send_init_done();
 }
-
-#if 0
-
-size_t calc_gatt_attr_size(struct bt_gatt_attr *attr)
-{
-	size_t total_size = 0;
-
-	total_size += sizeof(struct bt_gatt_attr);
-
-	if ((uintptr_t)attr->read >= _BT_GATT_ATTR_RW_SPECIAL_FIRST
-		|| (uintptr_t)attr->write >= _BT_GATT_ATTR_RW_SPECIAL_FIRST) {
-
-		if (attr->read == _BT_GATT_ATTR_READ_SERVICE) {
-			struct bt_uuid *uuid = (struct bt_uuid *)attr->user_data;
-			switch (uuid->type) {
-			case BT_UUID_TYPE_16:
-				total_size += sizeof(struct bt_uuid_16);
-				break;
-			case BT_UUID_TYPE_32:
-				total_size += sizeof(struct bt_uuid_32);
-				break;
-			default:
-				total_size += sizeof(struct bt_uuid_128);
-				break;
-			}
-		} else if (attr->read == _BT_GATT_ATTR_READ_INCLUDED) {
-			// none
-		} else if (attr->read == _BT_GATT_ATTR_READ_CHRC) {
-			total_size += sizeof(struct bt_gatt_chrc);
-		}
-	}
-
-	for (i = 0; i < svc->attr_count; i++) {
-		total_size += calc_gatt_attr_size(&svc->attrs[i]);
-	}
-}
-
-int bt_rpc_gatt_start_service(size_t attr_count)
-{
-	SERIALIZE();
-
-	struct nrf_rpc_cbor_ctx _ctx;                                            /*######%Aa*/
-	int _result;                                                             /*######Qso*/
-	size_t _buffer_size_max = 5;                                             /*######@uA*/
-
-	NRF_RPC_CBOR_ALLOC(_ctx, _buffer_size_max);                              /*##AvrU03s*/
-
-	ser_encode_uint(&_ctx.encoder, attr_count);                              /*##A29iav8*/
-
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_START_SERVICE_RPC_CMD,  /*####%BCaC*/
-		&_ctx, ser_rsp_simple_i32, &_result);                            /*#####@mjc*/
-
-	return _result;                                                          /*##BX7TDLc*/
-}
-
-static void send_attr(struct bt_gatt_attr *attr)
-{
-	if ((uintptr_t)attr->read >= _BT_GATT_ATTR_RW_SPECIAL_FIRST
-		|| (uintptr_t)attr->write >= _BT_GATT_ATTR_RW_SPECIAL_FIRST) {
-
-		if (attr->read == _BT_GATT_ATTR_READ_SERVICE) {
-			struct bt_uuid *uuid = (struct bt_uuid *)attr->user_data;
-			switch (uuid->type) {
-			case BT_UUID_TYPE_16:
-				total_size += sizeof(struct bt_uuid_16);
-				break;
-			case BT_UUID_TYPE_32:
-				total_size += sizeof(struct bt_uuid_32);
-				break;
-			default:
-				total_size += sizeof(struct bt_uuid_128);
-				break;
-			}
-		} else if (attr->read == _BT_GATT_ATTR_READ_INCLUDED) {
-			// none
-		} else if (attr->read == _BT_GATT_ATTR_READ_CHRC) {
-			total_size += sizeof(struct bt_gatt_chrc);
-		}
-	}
-
-	for (i = 0; i < svc->attr_count; i++) {
-		total_size += calc_gatt_attr_size(&svc->attrs[i]);
-	}
-}
-
-
-
-void send_normal_attr(struct bt_gatt_attr *attr)
-{
-	
-}
-
-void send_service_attr(struct bt_gatt_attr *attr)
-{
-	struct bt_uuid *uuid = (struct bt_uuid *)attr->user_data;
-
-	send_special_attr(BT_RPC_GATT_ATTR_SERVICE, attr->perm, uuid);
-}
-
-void send_included_attr(struct bt_gatt_attr *attr)
-{
-	size_t attr_index;
-	struct bt_gatt_attr *included_attr =
-		(struct bt_gatt_attr *)attr->user_data;
-
-	attr_index = get_attr_index(included_attr);
-
-	send_special_attr(BT_RPC_GATT_ATTR_INCLUDED, attr->perm, attr_index);
-}
-
-void send_chrc_attr(struct bt_gatt_attr *attr)
-{
-	struct bt_gatt_chrc *chrc = (struct bt_gatt_chrc *)attr->user_data;
-
-	send_special_attr(BT_RPC_GATT_ATTR_INCLUDED, attr->perm, chrc->uuid, chrc->value_handle, chrc->properties);
-}
-
-void send_cud_attr(struct bt_gatt_attr *attr)
-{
-	const char *value = (const char *)user_data;
-
-	send_special_attr(BT_RPC_GATT_ATTR_INCLUDED, attr->perm, value);
-	struct bt_gatt_cpf
-}
-
-void send_cpf_attr(struct bt_gatt_attr *attr)
-{
-	const struct bt_gatt_cpf *cpf = (const struct bt_gatt_cpf *)user_data;
-
-	send_special_attr(BT_RPC_GATT_ATTR_INCLUDED, attr->perm, cpf);
-}
-
-#endif

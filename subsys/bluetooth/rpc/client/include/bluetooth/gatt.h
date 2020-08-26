@@ -25,6 +25,7 @@
 #include <bluetooth/att.h>
 
 #include "bt_rpc_common.h"
+#include "bt_rpc_gatt_common.h"
 
 #ifdef __cplusplus
 extern "C" {

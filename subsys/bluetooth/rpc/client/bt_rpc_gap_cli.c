@@ -26,14 +26,10 @@ SERIALIZE(FIELD_TYPE(struct bt_le_ext_adv_cb, bt_le_ext_adv_cb_connected, connec
 SERIALIZE(FIELD_TYPE(struct bt_le_ext_adv_cb, bt_le_ext_adv_cb_scanned, scanned));
 
 
-#ifndef NRF_RPC_GENERATOR
-#define UNUSED __attribute__((unused))
+#ifndef __GENERATOR
+#define UNUSED __attribute__((unused)) /* TODO: Improve generator to avoid this workaround */
 #else
 #define UNUSED ;
-#endif
-
-#if defined(NRF_RPC_GENERATOR)
-#define _
 #endif
 
 
@@ -149,7 +145,7 @@ int bt_enable(bt_ready_cb_t cb)
 
 int bt_set_name(const char *name)
 {
-#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_)
+#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR)
 
 	SERIALIZE(STR(name));
 
@@ -178,10 +174,10 @@ int bt_set_name(const char *name)
 
 	return -ENOMEM;
 
-#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_) */
+#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR) */
 }
 
-#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_)
+#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR)
 
 struct bt_get_name_out_rpc_res                                                   /*####%Bp8J*/
 {                                                                                /*#####@zYc*/
@@ -232,11 +228,11 @@ static bool bt_get_name_out(char *name, size_t size)
 
 }
 
-#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_) */
+#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR) */
 
 const char *bt_get_name(void)
 {
-#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_)
+#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR)
 
 	static char bt_name_cache[CONFIG_BT_DEVICE_NAME_MAX + 1];
 	bool not_null;
@@ -248,7 +244,7 @@ const char *bt_get_name(void)
 
 	return CONFIG_BT_DEVICE_NAME;
 
-#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(_) */
+#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) || defined(__GENERATOR) */
 }
 
 int bt_set_id_addr(const bt_addr_le_t *addr)
@@ -705,7 +701,7 @@ void bt_le_oob_dec(CborValue *_value, struct bt_le_oob *_data)                  
 
 }                                                                                /*##B9ELNqo*/
 
-#if defined(CONFIG_BT_EXT_ADV) || defined(_)
+#if defined(CONFIG_BT_EXT_ADV) || defined(__GENERATOR)
 
 void bt_le_ext_adv_sent_info_dec(CborValue *_value, struct bt_le_ext_adv_sent_info *_data)/*####%BgXN*/
 {                                                                                         /*#####@4IU*/
@@ -1123,9 +1119,9 @@ int bt_le_ext_adv_oob_get_local(struct bt_le_ext_adv *adv,
 	return _result._result;                                                  /*##BW0ge3U*/
 }
 
-#endif /* defined(CONFIG_BT_EXT_ADV) || defined(_) */
+#endif /* defined(CONFIG_BT_EXT_ADV) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_OBSERVER) || defined(_)
+#if defined(CONFIG_BT_OBSERVER) || defined(__GENERATOR)
 
 int bt_le_scan_start(const struct bt_le_scan_param *param, bt_le_scan_cb_t cb)
 {
@@ -1279,9 +1275,9 @@ void bt_le_scan_cb_register(struct bt_le_scan_cb *cb)
 	}
 }
 
-#endif /* defined(CONFIG_BT_OBSERVER) || defined(_) */
+#endif /* defined(CONFIG_BT_OBSERVER) || defined(__GENERATOR) */
 
-#if defined(CONFIG_BT_WHITELIST) || defined(_)
+#if defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR)
 
 int bt_le_whitelist_add(const bt_addr_le_t *addr)
 {
@@ -1341,7 +1337,7 @@ int bt_le_whitelist_clear(void)
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* defined(CONFIG_BT_WHITELIST) || defined(_) */
+#endif /* defined(CONFIG_BT_WHITELIST) || defined(__GENERATOR) */
 
 int bt_le_set_chan_map(uint8_t chan_map[5])
 {
@@ -1494,7 +1490,7 @@ int bt_addr_le_from_str(const char *str, const char *type, bt_addr_le_t *addr)
 	return 0;
 }
 
-#if defined(CONFIG_BT_CONN) || defined(_)
+#if defined(CONFIG_BT_CONN) || defined(__GENERATOR)
 
 int bt_unpair(uint8_t id, const bt_addr_le_t *addr)
 {
@@ -1517,9 +1513,9 @@ int bt_unpair(uint8_t id, const bt_addr_le_t *addr)
 	return _result;                                                          /*##BX7TDLc*/
 }
 
-#endif /* defined(CONFIG_BT_CONN) || defined(_) */
+#endif /* defined(CONFIG_BT_CONN) || defined(__GENERATOR) */
 
-#if (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(_)
+#if (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(__GENERATOR)
 
 void bt_bond_info_dec(CborValue *_value, struct bt_bond_info *_data)             /*####%BrU8*/
 {                                                                                /*#####@tRo*/
@@ -1575,4 +1571,4 @@ void bt_foreach_bond(uint8_t id, void (*func)(const struct bt_bond_info *info,
 		&_ctx, ser_rsp_simple_void, NULL);                               /*#####@aas*/
 }
 
-#endif /* (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(_) */
+#endif /* (defined(CONFIG_BT_CONN) && defined(CONFIG_BT_SMP)) || defined(__GENERATOR) */
