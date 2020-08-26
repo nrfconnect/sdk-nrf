@@ -19,6 +19,7 @@ They introduce you to important concepts and guide you through developing your a
    ug_nfc
    ug_thread
    ug_zigbee
+   ug_multiprotocol_support
    ug_ble_controller
    ug_esb
    ug_multi_image
