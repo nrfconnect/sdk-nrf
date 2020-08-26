@@ -158,17 +158,21 @@ if (CONFIG_PM_EXTERNAL_FLASH)
     )
 endif()
 
-set(pm_out_partition_files ${ZEPHYR_BINARY_DIR}/../partitions_${DOMAIN}.yml)
-set(pm_out_region_files ${ZEPHYR_BINARY_DIR}/../regions_${DOMAIN}.yml)
-set(pm_out_dotconf_files ${ZEPHYR_BINARY_DIR}/../pm_${DOMAIN}.config)
+if (DOMAIN)
+  set(UNDERSCORE_DOMAIN _${DOMAIN})
+endif()
+
+set(pm_out_partition_file ${APPLICATION_BINARY_DIR}/partitions${UNDERSCORE_DOMAIN}.yml)
+set(pm_out_region_file ${APPLICATION_BINARY_DIR}/regions${UNDERSCORE_DOMAIN}.yml)
+set(pm_out_dotconf_file ${APPLICATION_BINARY_DIR}/pm${UNDERSCORE_DOMAIN}.config)
 
 set(pm_cmd
   ${PYTHON_EXECUTABLE}
   ${NRF_DIR}/scripts/partition_manager.py
   --input-files ${input_files}
   --regions ${regions}
-  --output-partitions ${pm_out_partition_files}
-  --output-regions ${pm_out_region_files}
+  --output-partitions ${pm_out_partition_file}
+  --output-regions ${pm_out_region_file}
   ${dynamic_partition_argument}
   ${static_configuration}
   ${region_arguments}
@@ -177,9 +181,9 @@ set(pm_cmd
 set(pm_output_cmd
   ${PYTHON_EXECUTABLE}
   ${NRF_DIR}/scripts/partition_manager_output.py
-  --input-partitions ${pm_out_partition_files}
-  --input-regions ${pm_out_region_files}
-  --config-file ${pm_out_dotconf_files}
+  --input-partitions ${pm_out_partition_file}
+  --input-regions ${pm_out_region_file}
+  --config-file ${pm_out_dotconf_file}
   )
 
 # Run the partition manager algorithm.
@@ -209,7 +213,7 @@ endif()
 add_custom_target(partition_manager)
 
 # Make Partition Manager configuration available in CMake
-import_kconfig(PM_ ${pm_out_dotconf_files} pm_var_names)
+import_kconfig(PM_ ${pm_out_dotconf_file} pm_var_names)
 
 foreach(name ${pm_var_names})
   set_property(
@@ -345,8 +349,8 @@ if (is_dynamic_partition_in_domain)
   # Expose the generated partition manager configuration files to parent image.
   # This is used by the root image to create the global configuration in
   # pm_config.h.
-  share("set(${DOMAIN}_PM_DOMAIN_PARTITIONS ${pm_out_partition_files})")
-  share("set(${DOMAIN}_PM_DOMAIN_REGIONS ${pm_out_region_files})")
+  share("set(${DOMAIN}_PM_DOMAIN_PARTITIONS ${pm_out_partition_file})")
+  share("set(${DOMAIN}_PM_DOMAIN_REGIONS ${pm_out_region_file})")
   share("set(${DOMAIN}_PM_DOMAIN_HEADER_FILES ${header_files})")
   share("set(${DOMAIN}_PM_DOMAIN_IMAGES ${prefixed_images})")
   share("set(${DOMAIN}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${merged}.hex)")
@@ -370,8 +374,8 @@ else()
       include(${shared_vars_file})
       list(APPEND header_files ${${d}_PM_DOMAIN_HEADER_FILES})
       list(APPEND prefixed_images ${${d}_PM_DOMAIN_IMAGES})
-      list(APPEND pm_out_partition_files ${${d}_PM_DOMAIN_PARTITIONS})
-      list(APPEND pm_out_region_files ${${d}_PM_DOMAIN_REGIONS})
+      list(APPEND pm_out_partition_file ${${d}_PM_DOMAIN_PARTITIONS})
+      list(APPEND pm_out_region_file ${${d}_PM_DOMAIN_REGIONS})
       list(APPEND global_hex_depends ${${d}_PM_DOMAIN_DYNAMIC_PARTITION}_subimage)
       list(APPEND domain_hex_files ${${d}_PM_HEX_FILE})
     endif()
@@ -386,8 +390,8 @@ else()
   set(pm_global_output_cmd
     ${PYTHON_EXECUTABLE}
     ${NRF_DIR}/scripts/partition_manager_output.py
-    --input-partitions ${pm_out_partition_files}
-    --input-regions ${pm_out_region_files}
+    --input-partitions ${pm_out_partition_file}
+    --input-regions ${pm_out_region_file}
     --header-files ${header_files}
     --images ${prefixed_images}
     )
@@ -406,7 +410,7 @@ else()
   set_property(
     TARGET partition_manager
     PROPERTY PM_CONFIG_FILES
-    ${pm_out_partition_files}
+    ${pm_out_partition_file}
     )
 
   set_property(
