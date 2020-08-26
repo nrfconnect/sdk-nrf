@@ -59,18 +59,18 @@ To configure the library options, complete the following steps:
 Initializing
 ************
 
-The module is initialized by calling the  :cpp:func:`aws_iot_init` function.
+The module is initialized by calling the  :c:func:`aws_iot_init` function.
 If this API fails, the application must not use any APIs of the module.
 
 Connecting
 **********
 
 .. note::
-   The API requires that a configuration structure :cpp:class:`aws_iot_config` is declared in the application and passed into the :cpp:func:`aws_iot_init` and :cpp:func:`aws_iot_connect` functions.
+   The API requires that a configuration structure :cpp:class:`aws_iot_config` is declared in the application and passed into the :c:func:`aws_iot_init` and :c:func:`aws_iot_connect` functions.
    This exposes the application to the MQTT socket used for the connection, which is polled on, in the application.
    It also enables the application to pass in a client id (*thingname*) at runtime.
 
-After initialization, the :cpp:func:`aws_iot_connect` function must be called, to connect to the AWS IoT broker.
+After initialization, the :c:func:`aws_iot_connect` function must be called, to connect to the AWS IoT broker.
 If the API fails, the application must retry the connection.
 During an attempt to connect to the AWS Iot broker, the library tries to establish a connection using a TLS handshake.
 This can take some time, usually in the span of seconds.
@@ -81,9 +81,9 @@ After a successful connection, the API subscribes to AWS IoT Shadow topics and a
 Polling on MQTT socket
 **********************
 
-After a successful return of :cpp:func:`aws_iot_connect` function, the MQTT socket must be polled on, in addition to the periodic calls to :cpp:func:`aws_iot_ping` (to keep the connection to the AWS IoT broker alive) and :cpp:func:`aws_iot_input` (to get the data from the AWS IoT broker).
+After a successful return of :c:func:`aws_iot_connect` function, the MQTT socket must be polled on, in addition to the periodic calls to :c:func:`aws_iot_ping` (to keep the connection to the AWS IoT broker alive) and :c:func:`aws_iot_input` (to get the data from the AWS IoT broker).
 
-The code section below demonstrates how socket polling can be done in the main application after the :cpp:func:`aws_iot_init` function has been called.
+The code section below demonstrates how socket polling can be done in the main application after the :c:func:`aws_iot_init` function has been called.
 Connection polling can also be enabled in the AWS IoT backend by setting the configurable option :option:`CONFIG_AWS_IOT_CONNECTION_POLL_THREAD`.
 Note that if this option is enabled, you need not include the following section of code in :file:`main.c`
 
@@ -157,7 +157,7 @@ To subscribe to non AWS specific topics, specify the number of additional topics
 - :option:`CONFIG_AWS_IOT_APP_SUBSCRIPTION_LIST_COUNT`
 
 .. note::
-   The :cpp:func:`aws_iot_subscription_topics_add` function must be called with a list containing application topics, after calling :cpp:func:`aws_iot_init` and before calling :cpp:func:`aws_iot_connect` .
+   The :c:func:`aws_iot_subscription_topics_add` function must be called with a list containing application topics, after calling :c:func:`aws_iot_init` and before calling :c:func:`aws_iot_connect` .
 
 To connect to the AWS IoT broker, set the following mandatory options (specified in the `Configuring library options`_ section):
 
@@ -165,7 +165,7 @@ To connect to the AWS IoT broker, set the following mandatory options (specified
 - :option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 - :option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-To enable the application to optionally pass a client id at runtime, set the ``client_id`` entry in the :cpp:class:`aws_iot_config` structure passed in the :cpp:func:`aws_iot_init` function and set the following option:
+To enable the application to optionally pass a client id at runtime, set the ``client_id`` entry in the :cpp:class:`aws_iot_config` structure passed in the :c:func:`aws_iot_init` function and set the following option:
 
 - :option:`CONFIG_AWS_IOT_CLIENT_ID_APP`
 

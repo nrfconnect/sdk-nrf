@@ -1318,7 +1318,7 @@ Optionally, you can also enable the following module:
 
 .. note::
    The nRF Destkop devices enable :option:`CONFIG_BT_SETTINGS`.
-   When this option is enabled, the application is responsible for calling the :cpp:func:`settings_load` function - this is handled by the :ref:`nrf_desktop_settings_loader`.
+   When this option is enabled, the application is responsible for calling the :c:func:`settings_load` function - this is handled by the :ref:`nrf_desktop_settings_loader`.
 
 .. _nrf_desktop_bluetooth_guide_peripheral:
 

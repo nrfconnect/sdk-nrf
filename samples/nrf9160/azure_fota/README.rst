@@ -61,7 +61,7 @@ Check and configure the following library options that are used by the sample:
 
 .. note::
    If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is disabled, the device ID must be set in ``prj.conf``.
-   If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is enabled, the device ID must be provided using the :cpp:class:`azure_iot_hub_config` configuration struct in a call to the :cpp:func:`azure_iot_hub_init` function.
+   If the :option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is enabled, the device ID must be provided using the :cpp:class:`azure_iot_hub_config` configuration struct in a call to the :c:func:`azure_iot_hub_init` function.
 
 Building and running
 ********************

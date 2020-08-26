@@ -16,7 +16,7 @@ The current implementation supports the following technology:
 
 Initializing
 ************
-Before using any other APIs of the module, the application must call :cpp:func:`nrf_cloud_init`.
+Before using any other APIs of the module, the application must call :c:func:`nrf_cloud_init`.
 If this API fails, the application must not use any APIs of the module.
 
 .. note::
@@ -26,7 +26,7 @@ If this API fails, the application must not use any APIs of the module.
 
 Connecting
 **********
-The application can use :cpp:func:`nrf_cloud_connect` to connect to the cloud.
+The application can use :c:func:`nrf_cloud_connect` to connect to the cloud.
 This API triggers a series of events and actions in the system.
 If the API fails, the application must retry to connect.
 
@@ -64,7 +64,7 @@ The following message sequence chart shows the flow of events and expected appli
 .. note::
    This chart shows the sequence of successful user association of an unassociated device.
    Currently, nRF Cloud requires that communication is re-established to update the device's permission to send user data.
-   The application must disconnect using :cpp:func:`nrf_cloud_disconnect` and then reconnect using :cpp:func:`nrf_cloud_connect`.
+   The application must disconnect using :c:func:`nrf_cloud_disconnect` and then reconnect using :c:func:`nrf_cloud_connect`.
 
 When the device is successfully associated with a user on the cloud, subsequent connections to the cloud (also across power cycles) follow this sequence:
 
@@ -82,12 +82,12 @@ After receiving :cpp:enumerator:`NRF_CLOUD_EVT_READY`, the application can start
 
 Sending sensor data
 *******************
-The library offers two APIs, :cpp:func:`nrf_cloud_sensor_data_send` and :cpp:func:`nrf_cloud_sensor_data_stream`, for sending sensor data to the cloud.
+The library offers two APIs, :c:func:`nrf_cloud_sensor_data_send` and :c:func:`nrf_cloud_sensor_data_stream`, for sending sensor data to the cloud.
 Currently, the supported sensor types are GPS and FLIP (see :cpp:enum:`nrf_cloud_sensor`).
 
-Use :cpp:func:`nrf_cloud_sensor_data_stream` to send sensor data with best quality.
+Use :c:func:`nrf_cloud_sensor_data_stream` to send sensor data with best quality.
 
-Before sending any sensor data, call the function :cpp:func:`nrf_cloud_sensor_attach` with the type of the sensor.
+Before sending any sensor data, call the function :c:func:`nrf_cloud_sensor_attach` with the type of the sensor.
 Note that this function must be called after receiving the event :cpp:enumerator:`NRF_CLOUD_EVT_READY`.
 It triggers the event :cpp:enumerator:`NRF_CLOUD_EVT_SENSOR_ATTACHED` if the execution was successful.
 
@@ -99,7 +99,7 @@ If you want to remove the link between a device and an nRF Cloud user, you must 
 It is not possible for a device to unlink itself.
 
 When a user disassociates a device, the library disallows any further sensor data to be sent to the cloud and generates an :cpp:enumerator:`NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST` event.
-The application can then decide to associate again by responding with :cpp:func:`nrf_cloud_user_associate` with the new input sequence.
+The application can then decide to associate again by responding with :c:func:`nrf_cloud_user_associate` with the new input sequence.
 See the following message sequence chart:
 
 .. msc:
@@ -121,12 +121,12 @@ The following sections describe the various stages in the process of connection 
 Initialization
 ==============
 
-To use a defined Cloud API backend, a binding must be obtained using the Cloud API function :cpp:func:`cloud_get_binding` to which you can pass the name of the desired backend.
+To use a defined Cloud API backend, a binding must be obtained using the Cloud API function :c:func:`cloud_get_binding` to which you can pass the name of the desired backend.
 The nRF Cloud library defines the Cloud API backend as ``NRF_CLOUD`` via the :c:macro:`CLOUD_BACKEND_DEFINE` macro.
 
-The backend must be initialized using the :cpp:func:`cloud_init` function, with the binding, and a function pointer to user defined Cloud API event handler as parameters.
-If :cpp:func:`cloud_init` returns success, the backend is ready for use.
-The return values for a failure scenario of the :cpp:func:`cloud_init` function are described below for the nRF Cloud backend:
+The backend must be initialized using the :c:func:`cloud_init` function, with the binding, and a function pointer to user defined Cloud API event handler as parameters.
+If :c:func:`cloud_init` returns success, the backend is ready for use.
+The return values for a failure scenario of the :c:func:`cloud_init` function are described below for the nRF Cloud backend:
 
 *	-EACCES: invalid state; already initialized
 *	-EINVAL: invalid event handler provided
@@ -138,11 +138,11 @@ The return values for a failure scenario of the :cpp:func:`cloud_init` function 
 Connecting to the Cloud
 =======================
 
-The nRF Cloud library offers two ways to handle backend connections when the :cpp:func:`cloud_connect` function is called.
+The nRF Cloud library offers two ways to handle backend connections when the :c:func:`cloud_connect` function is called.
 If the :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, a cloud backend thread monitors the connection socket.
 If the option is not enabled, the user application is responsible for monitoring the socket.
 
-The dual functionalities of the :cpp:func:`cloud_connect` function in the two scenarios are described below:
+The dual functionalities of the :c:func:`cloud_connect` function in the two scenarios are described below:
 
 :option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` enabled
    Function does not block and returns success if the connection monitoring thread has started.
@@ -187,7 +187,7 @@ Following the :cpp:enumerator:`CLOUD_EVT_PAIR_DONE <cloud_api::CLOUD_EVT_PAIR_DO
 Disconnection from the Cloud
 ============================
 
-The user application can generate a disconnect request with the :cpp:func:`cloud_disconnect` function.
+The user application can generate a disconnect request with the :c:func:`cloud_disconnect` function.
 A successful disconnection is indicated by the :cpp:enumerator:`CLOUD_EVT_DISCONNECTED <cloud_api::CLOUD_EVT_DISCONNECTED>` event.
 The ``err`` field in the event message is set to :cpp:enumerator:`CLOUD_DISCONNECT_USER_REQUEST <cloud_api::CLOUD_DISCONNECT_USER_REQUEST>`.
 If an unexpected disconnect event is received, the ``err`` field contains the cause.

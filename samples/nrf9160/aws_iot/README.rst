@@ -20,7 +20,7 @@ Below are the two types of messages that are published:
 
 A type 2 message is only published upon an initial connection to the sample, while a type 1 message is published sequentially with a configurable time in between each publishing of the data.
 In addition to publishing data, the sample also subscribes to the AWS IoT shadow delta topic, and two customizable application specific topics.
-The customizable topics are not part of the AWS IoT shadow and must therefore be passed to the :ref:`lib_aws_iot` library using the :cpp:func:`aws_iot_subscription_topics_add` function.
+The customizable topics are not part of the AWS IoT shadow and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_subscription_topics_add` function.
 
 Requirements
 ************

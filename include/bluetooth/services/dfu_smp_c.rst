@@ -47,7 +47,7 @@ MTU negotiation
 
 The current DFU SMP Server implementation in the :ref:`zephyr:smp_svr_sample` requires the whole command to be sent in one transfer.
 For most operations, this requires a bigger MTU size than the default one.
-This requires MTU negotiation in the MTU exchange process (see :cpp:func:`bt_gatt_exchange_mtu`).
+This requires MTU negotiation in the MTU exchange process (see :c:func:`bt_gatt_exchange_mtu`).
 Writing long characteristic values is not supported.
 
 Note that this is a limitation of the :ref:`zephyr:smp_svr_sample`, not of the SMP Client.
@@ -55,7 +55,7 @@ Note that this is a limitation of the :ref:`zephyr:smp_svr_sample`, not of the S
 Sending a command
 =================
 
-To send a command, use :cpp:func:`bt_gatt_dfu_smp_c_command`.
+To send a command, use :c:func:`bt_gatt_dfu_smp_c_command`.
 The command is provided as a raw binary buffer consisting of a :cpp:class:`dfu_smp_header` and the payload.
 
 
@@ -63,10 +63,10 @@ Processing the response
 =======================
 
 The response to a command is sent as notification.
-It is passed to the callback function that was provided when issuing the command with :cpp:func:`bt_gatt_dfu_smp_c_command`.
+It is passed to the callback function that was provided when issuing the command with :c:func:`bt_gatt_dfu_smp_c_command`.
 
-Use :cpp:func:`bt_gatt_dfu_smp_c_rsp_state` to access the data of the current part of the response.
-As the response might be received in multiple notifications, use :cpp:func:`bt_gatt_dfu_smp_c_rsp_total_check` to verify if this is the last part of the response.
+Use :c:func:`bt_gatt_dfu_smp_c_rsp_state` to access the data of the current part of the response.
+As the response might be received in multiple notifications, use :c:func:`bt_gatt_dfu_smp_c_rsp_total_check` to verify if this is the last part of the response.
 The offset size of the current part and the total size are available in fields of the :cpp:class:`bt_gatt_dfu_smp_rsp_state` structure.
 
 

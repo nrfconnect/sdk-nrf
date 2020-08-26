@@ -23,7 +23,7 @@ Usage
 You can use the scanning module to execute the following actions:
 
 Initialize
-   To initialize the module, call the function :cpp:func:`bt_scan_init`.
+   To initialize the module, call the function :c:func:`bt_scan_init`.
 
    You can also call the function without an initialization structure.
    When you pass the initialization structure as ``NULL``, the default static configuration is used.
@@ -31,19 +31,19 @@ Initialize
    This configuration is also used when you use an initialization structure with ``NULL`` pointers to scan parameters and connection parameters.
 
 Start scanning
-   When the initialization is completed, call the function :cpp:func:`bt_scan_start` to start scanning.
+   When the initialization is completed, call the function :c:func:`bt_scan_start` to start scanning.
 
    In simple mode, when you do not use the event handler, you can establish the connection when the scanner finds the device.
 
 Change parameters
-   To change parameters, call the function :cpp:func:`bt_scan_params_set`.
+   To change parameters, call the function :c:func:`bt_scan_params_set`.
 
 Stop scanning
    Scanning stops if the module established the connection automatically.
-   To manually stop scanning, call the function :cpp:func:`bt_scan_stop`.
+   To manually stop scanning, call the function :c:func:`bt_scan_stop`.
 
 Resume scanning
-   To resume scanning, call the function :cpp:func:`bt_scan_start`.
+   To resume scanning, call the function :c:func:`bt_scan_start`.
 
 .. _nrf_bt_scan_readme_filters:
 

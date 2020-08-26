@@ -15,16 +15,16 @@ The information is fetched in the following prioritized order:
 #. If the time information obtained from the onboard modem of nRF9160 is not valid, the library requests time from NTP servers.
 #. If the NTP time request does not succeed, the library tries to request time information from several other NTP servers, before it fails.
 
-The :cpp:func:`date_time_set` function can be used to obtain the current date-time information from external sources independent of the internal date-time update routine.
+The :c:func:`date_time_set` function can be used to obtain the current date-time information from external sources independent of the internal date-time update routine.
 Time from GPS can be such an external source.
 
-To get date-time information from the library, either call the :cpp:func:`date_time_uptime_to_unix_time_ms` function or the :cpp:func:`date_time_now` function.
+To get date-time information from the library, either call the :c:func:`date_time_uptime_to_unix_time_ms` function or the :c:func:`date_time_now` function.
 See the API documentation for more information on these functions.
 
 .. note::
 
    The first date-time update cycle (after boot) does not occur until the time set by the :option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` has elapsed.
-   It is recommended to call the :cpp:func:`date_time_update` function after the device has connected to LTE, to get the initial date-time information.
+   It is recommended to call the :c:func:`date_time_update` function after the device has connected to LTE, to get the initial date-time information.
 
 Configuration
 *************

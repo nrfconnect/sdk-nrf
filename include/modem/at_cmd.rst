@@ -9,7 +9,7 @@ The AT command interface is designed to let multiple threads share a single AT s
 
 The AT command interface always parses the return code from the modem.
 Non-notification data such as OK, ERROR, and +CMS/+CME is removed from the string that is returned to the user.
-The return codes are returned as error codes in the return code of the write functions (:cpp:type:`at_cmd_write` and :cpp:type:`at_cmd_write_with_callback`) and also through the state parameter that can be supplied.
+The return codes are returned as error codes in the return code of the write functions (:c:func:`at_cmd_write` and :c:func:`at_cmd_write_with_callback`) and also through the state parameter that can be supplied.
 The state parameter must be used to differentiate between +CMS and +CME errors as the error codes are overlapping.
 Any subsequent writes from other threads are queued until all the data (return code + any payload) from the previous write is returned to the caller.
 This is to make sure that the correct thread gets the correct data and return code, because it is not possible to distinguish between two separate sessions.
@@ -31,7 +31,7 @@ Both schemes are limited to the maximum reception size defined by :option:`CONFI
 
 Notifications are always handled by a callback function.
 This callback function is separate from the one that is used to handle data returned immediately after sending a command.
-This callback is set by :cpp:type:`at_cmd_set_notification_handler`.
+This callback is set by :c:func:`at_cmd_set_notification_handler`.
 
 API documentation
 *****************

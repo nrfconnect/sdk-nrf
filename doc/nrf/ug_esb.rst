@@ -96,7 +96,7 @@ To do so, the PRX adds a packet to its TX FIFO, which is sent as the payload in 
 
 
 If the PTX does not receive the ACK after the initial transmitted packet, it attempts to retransmit the packet until the ACK is finally being received.
-The maximum number of allowed retransmission attempts and the delay between each attempt is specified by the most recent call to either :cpp:func:`esb_init` (where the values of :cpp:member:`retransmit_count` and :cpp:member:`retransmit_delay` in the :cpp:class:`esb_config` structure specify the number of retransmission attempts and the delay between them, respectively) or the functions :cpp:func:`esb_set_retransmit_count` and :cpp:func:`esb_set_retransmit_delay`.
+The maximum number of allowed retransmission attempts and the delay between each attempt is specified by the most recent call to either :c:func:`esb_init` (where the values of :cpp:member:`retransmit_count` and :cpp:member:`retransmit_delay` in the :cpp:class:`esb_config` structure specify the number of retransmission attempts and the delay between them, respectively) or the functions :c:func:`esb_set_retransmit_count` and :c:func:`esb_set_retransmit_delay`.
 The retransmission delay is defined as the duration between the start of each transmission attempt.
 Note that this differs from the legacy nRF24L Series hardware implementation, where the delay was defined as the duration from the end of a packet transmission until the start of the retransmission.
 
@@ -111,7 +111,7 @@ However, repeated packets will always be ACKed by the PRX, even though they are 
 
 
 A PTX can select that individual packets that are transmitted to the PRX do not require an ACK to be sent in return from the PRX.
-This decision is taken by the application when uploading a packet to the TX FIFO using the :cpp:member:`esb_payload::noack` field of the :cpp:class:`esb_payload` parameter that is passed to the :cpp:func:`esb_write_payload` function.
+This decision is taken by the application when uploading a packet to the TX FIFO using the :cpp:member:`esb_payload::noack` field of the :cpp:class:`esb_payload` parameter that is passed to the :c:func:`esb_write_payload` function.
 
 When the PRX receives a packet that does not require an ACK, it does not send an ACK packet to the PTX, and as a result the PTX will continue retransmitting the packet until the maximum number of allowed retransmission attempts is reached.
 
@@ -122,15 +122,15 @@ Setting up an ESB application
 
 Perform the following steps to set up an application to send and receive packets:
 
-1. Initialize ESB using :cpp:func:`esb_init`.
+1. Initialize ESB using :c:func:`esb_init`.
    You can use the default parameters in :c:macro:`ESB_DEFAULT_CONFIG` as starting point for the **p_config** parameter and reconfigure them if needed.
 #. If necessary, use any of the folowing functions to update the addresses, the address prefix, the channel, and the bitrate:
 
-   * :cpp:func:`esb_set_base_address_0`
-   * :cpp:func:`esb_set_base_address_1`
-   * :cpp:func:`esb_set_prefixes`
-   * :cpp:func:`esb_set_rf_channel`
-   * :cpp:func:`esb_set_bitrate`
+   * :c:func:`esb_set_base_address_0`
+   * :c:func:`esb_set_base_address_1`
+   * :c:func:`esb_set_prefixes`
+   * :c:func:`esb_set_rf_channel`
+   * :c:func:`esb_set_bitrate`
 
 #. Make sure that the high-frequency clock is running:
 
@@ -144,20 +144,20 @@ Perform the following steps to set up an application to send and receive packets
 
    * If the node is a PTX:
 
-     a. Add packets to the TX FIFO by calling :cpp:func:`esb_write_payload`.
-     #. Depending on the value of :cpp:member:`esb_config::tx_mode` that was used in the most recent call to :cpp:func:`esb_init`, you might have to call :cpp:func:`esb_start_tx` to start the transmission.
+     a. Add packets to the TX FIFO by calling :c:func:`esb_write_payload`.
+     #. Depending on the value of :cpp:member:`esb_config::tx_mode` that was used in the most recent call to :c:func:`esb_init`, you might have to call :c:func:`esb_start_tx` to start the transmission.
      #. After the radio has received an acknowledgment or timed out, handle :c:macro:`ESB_EVENT_TX_SUCCESS`, :c:macro:`ESB_EVENT_TX_FAILED`, and :c:macro:`ESB_EVENT_RX_RECEIVED` events.
 
    * If the node is a PRX:
 
      a. Handle :c:macro:`ESB_EVENT_RX_RECEIVED` events as packets are coming in.
 	    Multiple packets might arrive in the RX FIFO between each event.
-     #. To attach payloads to acknowledgment packets, add them to the TX FIFO using :cpp:func:`esb_write_payload`.
+     #. To attach payloads to acknowledgment packets, add them to the TX FIFO using :c:func:`esb_write_payload`.
 	    The payload must be queued before a packet is received.
 		After a queued payload is sent with an acknowledgment, it is assumed that it reaches the other device.
 		Therefore, an :c:macro:`ESB_EVENT_TX_SUCCESS` event is queued.
 
-To stop the ESB module, call :cpp:func:`esb_disable`.
+To stop the ESB module, call :c:func:`esb_disable`.
 Note, however, that if a transaction is ongoing when you disable the module, it is not completed.
 Therefore, you might want to check if the module is idle before disabling it.
 
@@ -167,7 +167,7 @@ Frequency selection
 ===================
 
 ESB can send or receive packets using any of the channels that the nRF5 chip can use.
-The channel is selected by calling the :cpp:func:`esb_set_rf_channel` function.
+The channel is selected by calling the :c:func:`esb_set_rf_channel` function.
 
 The PTX and PRX must be configured to use the same frequency to exchange packets.
 

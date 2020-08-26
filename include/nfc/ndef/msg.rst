@@ -70,10 +70,10 @@ Accordingly, a message descriptor (that holds the content of the message) contai
 Use the :c:macro:`NFC_NDEF_MSG_DEF` macro to create the message descriptor and the array of pointers.
 When creating the message descriptor, you specify how many records the message will contain, but you do not specify the actual records yet.
 
-To add the records, use the :cpp:func:`nfc_ndef_msg_record_add` function.
+To add the records, use the :c:func:`nfc_ndef_msg_record_add` function.
 
-After adding all records, call :cpp:func:`nfc_ndef_msg_encode` to actually create the message from the message descriptor.
-:cpp:func:`nfc_ndef_msg_encode` internally calls :cpp:func:`nfc_ndef_record_encode` to encode each record.
+After adding all records, call :c:func:`nfc_ndef_msg_encode` to actually create the message from the message descriptor.
+:c:func:`nfc_ndef_msg_encode` internally calls :c:func:`nfc_ndef_record_encode` to encode each record.
 The NDEF records are always encoded in long format.
 If no ID field is specified, a record without ID field is generated.
 
@@ -129,7 +129,7 @@ Encapsulating a message
 ***********************
 
 To encapsulate a message in a record so that it can be added to another message, use the :c:macro:`NFC_NDEF_NESTED_NDEF_MSG_RECORD_DEF` macro to create the record descriptor.
-This record descriptor uses :cpp:func:`nfc_ndef_msg_encode` as payload constructor.
+This record descriptor uses :c:func:`nfc_ndef_msg_encode` as payload constructor.
 You can then add this record descriptor to a message like any other record descriptor.
 
 The following code example shows how to encapsulate a message as payload for a record:

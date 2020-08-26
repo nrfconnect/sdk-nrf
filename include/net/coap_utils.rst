@@ -11,7 +11,7 @@ Overview
 
 The library uses :ref:`CoAP <zephyr:coap_sock_interface>` and :ref:`BSD socket API <bsd_sockets_interface>`.
 
-After calling :cpp:func:`coap_init`, the library opens a socket for receiving UDP packets for IPv4 or IPv6 connections, depending on the ``ip_family`` parameter.
+After calling :c:func:`coap_init`, the library opens a socket for receiving UDP packets for IPv4 or IPv6 connections, depending on the ``ip_family`` parameter.
 At this point, you can start sending CoAP non-confirmable requests, to which you will receive answers depending on the server configuration.
 
 Limitations

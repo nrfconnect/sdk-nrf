@@ -13,8 +13,8 @@ Overview
 The entropy data is generated on the network core using the Random Number Generator (RNG) peripheral.
 The :ref:`nrfxlib:nrf_rpc` uses the `TinyCBOR`_ data format and transmits the data using the default `RPMsg Messaging Protocol`_ (part of `OpenAMP`_) in the transport layer.
 
-The application core uses serialized function calls such as :cpp:func:`entropy_remote_init` and :cpp:func:`entropy_remote_get` to control the entropy driver on the network core.
-The :cpp:func:`entropy_remote_init` function is used for initializing the entropy, and the :cpp:func:`entropy_remote_get` function is used for obtaining the entropy data.
+The application core uses serialized function calls such as :c:func:`entropy_remote_init` and :c:func:`entropy_remote_get` to control the entropy driver on the network core.
+The :c:func:`entropy_remote_init` function is used for initializing the entropy, and the :c:func:`entropy_remote_get` function is used for obtaining the entropy data.
 
 When the sample starts, it displays the generated entropy data in the terminal at an interval of two seconds.
 
@@ -22,7 +22,7 @@ Network core
 ============
 
 The network core runs the entropy drivers, which use the RNG peripheral.
-When the network core receives the :cpp:func:`entropy_remote_get` remote function call, the following actions are performed:
+When the network core receives the :c:func:`entropy_remote_get` remote function call, the following actions are performed:
 
    * The network core searches for function decoders in the decoders table and calls them.
    * The network core encodes the response data for the function call and sends the data back to the application core.

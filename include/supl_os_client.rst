@@ -109,7 +109,7 @@ The SUPL client library implements the following functionalities:
 * Send A-GPS data to the GPS module
 
 These functionalities are implemented using a set of callback functions.
-Both the buffers and the pointers to the callback functions are passed to the SUPL client library through the :cpp:func:`supl_client_init` function.
+Both the buffers and the pointers to the callback functions are passed to the SUPL client library through the :c:func:`supl_client_init` function.
 
 API callback functions
 ======================
@@ -169,18 +169,18 @@ The various steps in the communication session are described below:
    When the modem is enabled, it initiates a TCP socket to connect to the SUPL server.
    In the SUPL session MSC above, the application opens a TCP socket to connect to the Google SUPL server.
 #. In order to start a SUPL session, the application must first initialize the SUPL client library.
-   This is done by calling the :cpp:func:`supl_init` function of the SUPL client OS integration library.
-   The function sets up the API and the buffers required for initializing the SUPL client library and invokes the :cpp:func:`supl_client_init` function with these parameters.
-#. The application can then begin the SUPL session by calling the :cpp:func:`supl_session` function with a copy of the :cpp:type:`nrf_gnss_agps_data_frame_t` data that was received through the AGPS request event from the GPS module.
+   This is done by calling the :c:func:`supl_init` function of the SUPL client OS integration library.
+   The function sets up the API and the buffers required for initializing the SUPL client library and invokes the :c:func:`supl_client_init` function with these parameters.
+#. The application can then begin the SUPL session by calling the :c:func:`supl_session` function with a copy of the :cpp:type:`nrf_gnss_agps_data_frame_t` data that was received through the AGPS request event from the GPS module.
    The SUPL client OS integration library generates the following parameters that are necessary for the session:
 
    * ``supl_session_ctx_t`` structure from the AGPS request event data
    * ``lte_params_t`` structure from the data read from the LTE modem
    * ``device_id`` from IMSI number
 
-#. The SUPL client OS integration library then starts the SUPL session by calling the :cpp:func:`supl_client_session` function from the SUPL client library with the ``supl_session_ctx_t`` parameter.
-   The application does not return from this function until the SUPL session is finished or the :cpp:func:`supl_client_abort` function is called.
-#. The :cpp:func:`supl_client_session` function forms the entry point for the SUPL session.
+#. The SUPL client OS integration library then starts the SUPL session by calling the :c:func:`supl_client_session` function from the SUPL client library with the ``supl_session_ctx_t`` parameter.
+   The application does not return from this function until the SUPL session is finished or the :c:func:`supl_client_abort` function is called.
+#. The :c:func:`supl_client_session` function forms the entry point for the SUPL session.
    There is no specific limit on the number of subsequent SUPL sessions that can be executed from this entry point.
    See the documentation on the `SET-Initiated Non-Roaming Successful Case (Proxy mode)`_ for more information on the SUPL session.
    The callback functions used for data transfer are listed below:
@@ -188,8 +188,8 @@ The various steps in the communication session are described below:
     * SUPL Write (:cpp:type:`supl_write_t`) : callback for sending outgoing data to the SUPL server
     * SUPL Read (:cpp:type:`supl_read_t`) : callback for receiving incoming data from the SUPL server
 
-#. The decoded SUPL data is sent to the GPS module using the AGPS Handler (:cpp:func:`agps_handler_t`) callback function.
-#. After the application returns from the :cpp:func:`supl_client_session` function, the TCP socket is no longer used by the SUPL client library and can be closed.
+#. The decoded SUPL data is sent to the GPS module using the AGPS Handler (:c:func:`agps_handler_t`) callback function.
+#. After the application returns from the :c:func:`supl_client_session` function, the TCP socket is no longer used by the SUPL client library and can be closed.
 
 SUPL client OS integration library
 **********************************
@@ -199,10 +199,10 @@ The SUPL client OS module integrates the SUPL client library into the |NCS|.
 SUPL session
 ============
 
-Before starting a SUPL session, the application must initialize the SUPL client library by calling the :cpp:func:`supl_init` function of the SUPL client OS integration library.
+Before starting a SUPL session, the application must initialize the SUPL client library by calling the :c:func:`supl_init` function of the SUPL client OS integration library.
 Once the library is initialized, any number of subsequent SUPL sessions can be executed with the same set of initialized parameters.
 
-To start the SUPL session, the application must call the :cpp:func:`supl_session` function of the SUPL client OS integration library.
+To start the SUPL session, the application must call the :c:func:`supl_session` function of the SUPL client OS integration library.
 The library then creates the necessary parameters and starts the SUPL session in the SUPL client library.
 The SUPL client OS integration library abstracts the details of the :ref:`supl_client_lib` away from the user.
 

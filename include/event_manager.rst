@@ -38,7 +38,7 @@ Apart from standard configuration parameters, there are several required setting
   If an out-of-memory error occurs when allocating an event, the system should reboot.
   Set this option to enable the sys_reboot API.
 
-Call :cpp:func:`event_manager_init` during the application start to initialize the Event Manager.
+Call :c:func:`event_manager_init` during the application start to initialize the Event Manager.
 
 Events
 ******
@@ -216,7 +216,7 @@ Event Manager events can be profiled (see :ref:`profiler`).
 To profile a given Event Manager event, you must define an :cpp:class:`event_info` structure (with :c:macro:`EVENT_INFO_DEFINE`) and provide it as argument when defining the event type.
 This structure contains a profiling function and information about the data fields that are logged.
 
-The profiling function should log the event data to a given buffer by calling :cpp:func:`profiler_log_encode_u32` (regardless of the profiled data type).
+The profiling function should log the event data to a given buffer by calling :c:func:`profiler_log_encode_u32` (regardless of the profiled data type).
 
 The following code examples shows a profiling function for the event type ``sample_event``:
 

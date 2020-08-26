@@ -172,10 +172,10 @@ Sensors may report their values to the mesh in three ways:
 - Polling
 
 Unprompted publications may be done at any time, and only includes the sensor data of a single sensor at a time.
-The application may generate an unprompted publication by calling :cpp:func:`bt_mesh_sensor_srv_sample`.
+The application may generate an unprompted publication by calling :c:func:`bt_mesh_sensor_srv_sample`.
 This triggers the sensor's :cpp:member:`bt_mesh_sensor::get` callback, and only publishes if the sensor's *Delta threshold* is satisfied.
 
-Unprompted publications can also be forced by calling :cpp:func:`bt_mesh_sensor_srv_pub` directly.
+Unprompted publications can also be forced by calling :c:func:`bt_mesh_sensor_srv_pub` directly.
 
 Periodic publication is controlled by the Sensor Server model's publication parameters, and configured by the Config models.
 The sensor Server model reports data for all its sensor instances periodically, at a rate determined by the sensors' cadence.
@@ -263,9 +263,9 @@ The sensor data in the callback typically comes from a sensor using the :ref:`Ze
 The Zephyr sensor API records samples in two steps:
 
 1.
-Tell the sensor to take a sample by calling :cpp:func:`sensor_sample_fetch`.
+Tell the sensor to take a sample by calling :c:func:`sensor_sample_fetch`.
 2.
-Read the recorded sample data with :cpp:func:`sensor_channel_get`.
+Read the recorded sample data with :c:func:`sensor_channel_get`.
 
 The first step may be done at any time.
 Typically, the sensor fetching is triggered by a timer, an external event or a sensor trigger, but it may be called in the ``get`` callback itself.
@@ -275,7 +275,7 @@ The method of sampling may be communicated to other mesh nodes through the senso
 The read step would typically be done in the callback, to pass the sensor data to the mesh.
 
 If the Sensor Server is configured to do periodic publishing, the ``get`` callback will be called for every publication interval.
-Publication may also be forced by calling :cpp:func:`bt_mesh_sensor_srv_sample`, which will trigger the ``get`` callback and publish only if the sensor value has changed.
+Publication may also be forced by calling :c:func:`bt_mesh_sensor_srv_sample`, which will trigger the ``get`` callback and publish only if the sensor value has changed.
 
 Sensor series
 *************
@@ -283,7 +283,7 @@ Sensor series
 Sensor series data is organized into a static set of columns, specified at init.
 The sensor series :cpp:member:`bt_mesh_sensor_series::get` callback must be implemented to enable the sensor's series data feature.
 Only some sensor types support series access, see the sensor type's documentation.
-The format of the column may be queried with :cpp:func:`bt_mesh_sensor_column_format_get`.
+The format of the column may be queried with :c:func:`bt_mesh_sensor_column_format_get`.
 
 The ``get`` callback gets called with a direct pointer to one of the columns in the column list, and is expected to fill the ``value`` parameter with sensor data for the specified column.
 If a Sensor Client requests a series of columns, the callback may be called repeatedly, requesting data from each column.

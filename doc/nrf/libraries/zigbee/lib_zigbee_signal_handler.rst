@@ -3,10 +3,10 @@
 Zigbee default signal handler
 #############################
 
-The :ref:`nrfxlib:zboss` interacts with the user application by invoking the :cpp:func:`zboss_signal_handler()` function whenever a stack event, such as network steering, occurs.
-It is mandatory to define :cpp:func:`zboss_signal_handler()` in the application.
+The :ref:`nrfxlib:zboss` interacts with the user application by invoking the :c:func:`zboss_signal_handler` function whenever a stack event, such as network steering, occurs.
+It is mandatory to define :c:func:`zboss_signal_handler` in the application.
 
-Because most of Zigbee devices behave in a similar way, :cpp:func:`zigbee_default_signal_handler()` was introduced to provide a default logic to handle stack signals.
+Because most of Zigbee devices behave in a similar way, :c:func:`zigbee_default_signal_handler` was introduced to provide a default logic to handle stack signals.
 
 .. note::
     |zigbee_library|
@@ -16,7 +16,7 @@ Because most of Zigbee devices behave in a similar way, :cpp:func:`zigbee_defaul
 Minimal zboss_signal_handler implementation
 *******************************************
 
-This function can be called in the application's :cpp:func:`zboss_signal_handler()` to simplify the implementation.
+This function can be called in the application's :c:func:`zboss_signal_handler` to simplify the implementation.
 In such case, this minimal implementation includes only a call to the default signal handler:
 
 
@@ -218,7 +218,7 @@ Use the following code as reference:
 Behavior on stack start
 ***********************
 
-When the stack is started through :cpp:func:`zigbee_enable()`, the stack generates the following signals:
+When the stack is started through :c:func:`zigbee_enable`, the stack generates the following signals:
 
 * ``ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY`` -- indicating that the stack attempted to load application-specific production configuration from flash memory.
 * ``ZB_ZDO_SIGNAL_SKIP_STARTUP`` -- indicating that the stack has initialized all internal structures and the Zigbee scheduler has started.
@@ -263,10 +263,10 @@ For factory new devices, the default signal handler will:
 
 * Start the BDB network formation on coordinator devices.
   Once finished, the stack will generate ``ZB_BDB_SIGNAL_FORMATION`` signal, and continue to :ref:`zarco_signal_handler_network`.
-* Call :cpp:func:`start_network_rejoin()` to start the :ref:`zarco_network_rejoin` on routers and end devices.
+* Call :c:func:`start_network_rejoin` to start the :ref:`zarco_network_rejoin` on routers and end devices.
   Once the procedure is started, the device tries to join the network until cancellation.
   Each try takes place after a longer period of waiting time, for a total maximum of 15 minutes.
-  Devices may behave differently because the implementation of :cpp:func:`start_network_rejoin()` is different for different Zigbee roles.
+  Devices may behave differently because the implementation of :c:func:`start_network_rejoin` is different for different Zigbee roles.
   See :ref:`zarco_network_rejoin` for more information.
 
 Once handling of the signal is finished, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal, and will continue to :ref:`zarco_signal_handler_network`.
@@ -292,7 +292,7 @@ For devices that have been already commissioned, the default handler will:
     * This will not open the network for new devices if one of existing devices is reset.
     * In case of the :ref:`zarco_network_rejoin` is running, it will be cancelled.
 
-* For routers and end devices, if they did not join the Zigbee network successfully, :ref:`zarco_network_rejoin` is started by calling :cpp:func:`start_network_rejoin()`.
+* For routers and end devices, if they did not join the Zigbee network successfully, :ref:`zarco_network_rejoin` is started by calling :c:func:`start_network_rejoin`.
 
 Once finished, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal, and continue to :ref:`zarco_signal_handler_network`.
 
@@ -333,9 +333,9 @@ Zigbee network leaving
 **********************
 
 The default signal handler implements the same behavior for handling ``ZB_ZDO_SIGNAL_LEAVE`` for both routers and end devices.
-When leaving the network, the default handler calls :cpp:func:`start_network_rejoin()` to start :ref:`zarco_network_rejoin` to join a new network.
+When leaving the network, the default handler calls :c:func:`start_network_rejoin` to start :ref:`zarco_network_rejoin` to join a new network.
 
-Once :cpp:func:`start_network_rejoin()` is called, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal and will continue to :ref:`zarco_signal_handler_network`.
+Once :c:func:`start_network_rejoin` is called, the stack will generate the ``ZB_BDB_SIGNAL_STEERING`` signal and will continue to :ref:`zarco_signal_handler_network`.
 
 .. figure:: /images/zigbee_signal_handler_09_leave.png
    :alt: Leaving the network following ZB_ZDO_SIGNAL_LEAVE
@@ -349,7 +349,7 @@ Zigbee network rejoining
 
 The Zigee network rejoin procedure is a mechanism that is similar to the ZDO rejoin back-off procedure.
 It is implemented to work with both routers and end devices and simplify handling of cases such as device joining, rejoining, or leaving the network.
-It is used in :cpp:func:`default_signal_handler()` by default.
+It is used in :c:func:`default_signal_handler` by default.
 
 If the network is left by a router or an end device, the device will try to join any open network.
 
@@ -357,30 +357,30 @@ If the network is left by a router or an end device, the device will try to join
 * The end device will use the default signal handler to try to join or rejoin the network for a finite period of time, because the end devices are often powered by batteries.
 
   * The procedure to join or rejoin the network is restarted after the device reset or power cycle.
-  * The procedure to join or rejoin the network can be restarted by calling :cpp:func:`user_input_indicate()`, but it needs to be implemented in the application (for example, by calling :cpp:func:`user_input_indicate()` when a button is pressed).
+  * The procedure to join or rejoin the network can be restarted by calling :c:func:`user_input_indicate`, but it needs to be implemented in the application (for example, by calling :c:func:`user_input_indicate` when a button is pressed).
     The procedure will be restarted only if the device does not join and the procedure is not running.
 
 The Zigbee rejoin procedure retries to join a network with each try after a specified amount of time: ``2^n`` seconds, where ``n`` is the number of retries.
 
 The period is limited to 15 minutes if the result is higher than that.
 
-* When :cpp:func:`start_network_rejoin()` is called, the rejoin procedure is started, and depending on the device role:
+* When :c:func:`start_network_rejoin` is called, the rejoin procedure is started, and depending on the device role:
 
   * For the end device, the application alarm is scheduled with ``stop_network_rejoin(ZB_TRUE)``, to be called after the amount of time specified in ``ZB_DEV_REJOIN_TIMEOUT_MS``.
     Once called, the alarm stops the rejoin.
 
-* When ``stop_network_rejoin(was_scheduled)`` is called, the network rejoin is canceled and the alarms scheduled by :cpp:func:`start_network_rejoin()` are canceled.
+* When ``stop_network_rejoin(was_scheduled)`` is called, the network rejoin is canceled and the alarms scheduled by :c:func:`start_network_rejoin` are canceled.
 
-  * Additionally for the end device, if :cpp:func:`stop_network_rejoin()` is called with ``was_scheduled`` set to ``ZB_TRUE``, :cpp:func:`user_input_indicate()` can restart the rejoin procedure.
+  * Additionally for the end device, if :c:func:`stop_network_rejoin` is called with ``was_scheduled`` set to ``ZB_TRUE``, :c:func:`user_input_indicate` can restart the rejoin procedure.
 
-* For end devices only, :cpp:func:`user_input_indicate()` restarts the rejoin procedure if the device did not join the network and is not trying to join a network.
+* For end devices only, :c:func:`user_input_indicate` restarts the rejoin procedure if the device did not join the network and is not trying to join a network.
   It is safe to call this function from an interrupt and to call it multiple times.
 
 
 .. warning::
-    The Zigbee network rejoin procedure is managed from multiple signals in :cpp:func:`default_signal_handler()`.
+    The Zigbee network rejoin procedure is managed from multiple signals in :c:func:`default_signal_handler`.
     If the application controls the network joining, rejoining, or leaving, each signal in which the Zigbee network rejoin procedure is managed should be handled in the application.
-    In this case, :cpp:func:`user_input_indicate()` must not be called.
+    In this case, :c:func:`user_input_indicate` must not be called.
 
 .. _zarco_sleep:
 
@@ -404,9 +404,9 @@ Additionally, it allows to implement a Zigbee Sleepy End Device.
 For more information about the power optimization of the Zigbee stack, see :ref:`zigbee_ug_sed`.
 
 The inactivity signal can be handled using the Zigbee default signal handler.
-If so, it will allow the Zigbee stack to enter the sleep state and suspend the Zigbee task by calling :cpp:func:`zigbee_event_poll()` function.
+If so, it will allow the Zigbee stack to enter the sleep state and suspend the Zigbee task by calling :c:func:`zigbee_event_poll` function.
 
-If the default behavior is not applicable for the application, you can customize the sleep functionality by overwriting the :cpp:func:`zb_osif_sleep` weak function and implementing a custom logic for handling the stack sleep state.
+If the default behavior is not applicable for the application, you can customize the sleep functionality by overwriting the :c:func:`zb_osif_sleep` weak function and implementing a custom logic for handling the stack sleep state.
 
 .. figure:: /images/zigbee_signal_handler_08_deep_sleep.png
    :alt: Implementing a custom logic for putting the stack into the sleep mode

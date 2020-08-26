@@ -163,10 +163,10 @@ Updated libraries
 
   * Added functionality to resume jobs that are marked as being in progress, which ensures a more robust FOTA operation through AWS IoT jobs.
   * Added offset reporting through the ``statusDetails`` field in an AWS IoT job, which makes it possible to track the progress of a FOTA operation more precisely.
-  * Removed the unused ``app_version`` parameter from the :cpp:func:`aws_fota_init` function.
-  * Inversed the interpretation of the return value of :cpp:func:`aws_fota_mqtt_evt_handler`.
+  * Removed the unused ``app_version`` parameter from the :c:func:`aws_fota_init` function.
+  * Inversed the interpretation of the return value of :c:func:`aws_fota_mqtt_evt_handler`.
     0 now indicates success, and no further handling is required.
-    1 indicates that further processing is required by the :cpp:func:`mqtt_evt_handler` that called :cpp:func:`aws_fota_mqtt_evt_handler`.
+    1 indicates that further processing is required by the :c:func:`mqtt_evt_handler` that called :c:func:`aws_fota_mqtt_evt_handler`.
 
 * :ref:`lib_nrf_cloud`:
 
@@ -265,7 +265,7 @@ Updated libraries
 
   * Added the configuration option :option:`CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`, which uses Zephyr's :ref:`zephyr:settings_api` subsystem.
     When this option is enabled, the write progress of an MCUboot style upgrade is stored, so that the progress is retained when the device reboots.
-  * Fixed a bug where :cpp:func:`dfu_target_done` logged the error message ``unable to deinitialize dfu resource`` when no target was initialized.
+  * Fixed a bug where :c:func:`dfu_target_done` logged the error message ``unable to deinitialize dfu resource`` when no target was initialized.
 
 * Moved the following libraries from ``drivers/`` to ``lib/``:
 
@@ -328,7 +328,7 @@ Bluetooth Low Energy
 * Updated the Bluetooth LE samples:
 
   * Enabled stack protection, assertions, and logging by default.
-  * Modified the samples to use the synchronous :cpp:func:`bt_enable` function.
+  * Modified the samples to use the synchronous :c:func:`bt_enable` function.
 
 * :ref:`nus_c_readme`, :ref:`bas_c_readme`, and :ref:`dfu_smp_c_readme`:
 
@@ -526,7 +526,7 @@ Known issues
 nRF9160
 =======
 
-* The :cpp:func:`nrf_send` function in the :ref:`nrfxlib:bsdlib` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
+* The :c:func:`nrf_send` function in the :ref:`nrfxlib:bsdlib` might be blocking for several minutes, even if the socket is configured for non-blocking operation.
   The behavior depends on the cellular network connection.
 * The :ref:`gps_with_supl_support_sample` sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
   As a workaround, insert a delay (``k_sleep()``) of a few seconds after the ``printf`` on line 294 in :file:`main.c`.
