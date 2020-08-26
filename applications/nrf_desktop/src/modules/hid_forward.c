@@ -6,6 +6,7 @@
 
 #include <zephyr/types.h>
 #include <sys/slist.h>
+#include <settings/settings.h>
 
 #include <bluetooth/services/hids_c.h>
 #include <sys/byteorder.h>
@@ -28,6 +29,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 #define MAX_ENQUEUED_ITEMS CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
 #define CFG_CHAN_RSP_READ_DELAY		K_MSEC(15)
 #define CFG_CHAN_MAX_RSP_POLL_CNT	50
+
+#define PERIPHERAL_ADDRESSES_STORAGE_NAME "paddr"
 
 BUILD_ASSERT(CFG_CHAN_MAX_RSP_POLL_CNT <= UCHAR_MAX);
 
@@ -53,28 +56,95 @@ struct hids_peripheral {
 	uint16_t pid;
 	uint8_t hwid[HWID_LEN];
 	uint8_t cur_poll_cnt;
+	uint8_t sub_id;
 };
 
 static struct subscriber subscribers[CONFIG_USB_HID_DEVICE_COUNT];
+static bt_addr_le_t peripheral_address[CONFIG_BT_MAX_PAIRED];
 static struct hids_peripheral peripherals[CONFIG_BT_MAX_CONN];
 static bool suspended;
 
 static struct k_spinlock lock;
 
 
-static struct subscriber *get_subscriber(const struct hids_peripheral *per)
+#if CONFIG_USB_HID_DEVICE_COUNT > 1
+static void verify_data(const struct bt_bond_info *info, void *user_data)
 {
-	BUILD_ASSERT((ARRAY_SIZE(subscribers) == ARRAY_SIZE(peripherals)) ||
-		     (ARRAY_SIZE(subscribers) == 1));
-
-	if (ARRAY_SIZE(subscribers) == ARRAY_SIZE(peripherals)) {
-		size_t idx = per - peripherals;
-
-		return &subscribers[idx];
+	for (size_t i = 0; i < ARRAY_SIZE(peripheral_address); i++) {
+		if (!bt_addr_le_cmp(&peripheral_address[i], &info->addr)) {
+			return;
+		}
 	}
 
+	LOG_WRN("Peer data inconsistency. Removing unknown peer.");
+	int err = bt_unpair(BT_ID_DEFAULT, &info->addr);
 
-	return &subscribers[0];
+	if (err) {
+		LOG_ERR("Cannot unpair peer (err %d)", err);
+		module_set_state(MODULE_STATE_ERROR);
+	}
+}
+
+static int settings_set(const char *key, size_t len_rd,
+			settings_read_cb read_cb, void *cb_arg)
+{
+	if (!strcmp(key, PERIPHERAL_ADDRESSES_STORAGE_NAME)) {
+		ssize_t len = read_cb(cb_arg, &peripheral_address,
+				      sizeof(peripheral_address));
+
+		if ((len != sizeof(peripheral_address)) || (len != len_rd)) {
+			LOG_ERR("Can't read peripheral addresses from storage");
+			module_set_state(MODULE_STATE_ERROR);
+			return len;
+		}
+	}
+
+	return 0;
+}
+
+static int verify_peripheral_address(void)
+{
+	/* On commit we should verify data to prevent inconsistency.
+	 * Inconsistency could be caused e.g. by reset after secure,
+	 * but before storing peer type in this module.
+	 */
+	bt_foreach_bond(BT_ID_DEFAULT, verify_data, NULL);
+
+	return 0;
+}
+
+SETTINGS_STATIC_HANDLER_DEFINE(hid_forward, MODULE_NAME, NULL, settings_set,
+			       verify_peripheral_address, NULL);
+#endif /* CONFIG_USB_HID_DEVICE_COUNT > 1 */
+
+static int store_peripheral_address(void)
+{
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		char key[] = MODULE_NAME "/" PERIPHERAL_ADDRESSES_STORAGE_NAME;
+		int err = settings_save_one(key, peripheral_address,
+					    sizeof(peripheral_address));
+
+		if (err) {
+			LOG_ERR("Problem storing peripheral addresses (err %d)",
+				err);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+static void reset_peripheral_address(void)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(peripheral_address); i++) {
+		bt_addr_le_copy(&peripheral_address[i], BT_ADDR_LE_NONE);
+	}
+}
+
+static struct subscriber *get_subscriber(const struct hids_peripheral *per)
+{
+	__ASSERT_NO_MSG(per->sub_id < ARRAY_SIZE(subscribers));
+	return &subscribers[per->sub_id];
 }
 
 static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
@@ -181,20 +251,50 @@ static uint8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 static int register_peripheral(struct bt_gatt_dm *dm, uint16_t pid,
 			       const uint8_t *hwid, size_t hwid_len)
 {
-	size_t i;
-	for (i = 0; i < ARRAY_SIZE(peripherals); i++) {
-		if (!bt_gatt_hids_c_assign_check(&peripherals[i].hidc)) {
+	BUILD_ASSERT((ARRAY_SIZE(subscribers) == ARRAY_SIZE(peripheral_address)) ||
+		     (ARRAY_SIZE(subscribers) == 1));
+
+	/* Route peripheral to the right subscriber. */
+	size_t sub_id;
+
+	if (ARRAY_SIZE(subscribers) == 1) {
+		/* If there is only one subscriber for all peripherals. */
+		sub_id = 0;
+	} else {
+		/* If there is a dedicated subscriber for each bonded peer. */
+		for (sub_id = 0; sub_id < ARRAY_SIZE(peripheral_address); sub_id++) {
+			if (!bt_addr_le_cmp(&peripheral_address[sub_id],
+					    bt_conn_get_dst(bt_gatt_dm_conn_get(dm)))) {
+				LOG_INF("Subscriber id found (%zu)", sub_id);
+				break;
+			}
+			if (!bt_addr_le_cmp(&peripheral_address[sub_id], BT_ADDR_LE_NONE)) {
+				LOG_INF("New subscriber id attached (%zu)", sub_id);
+				bt_addr_le_copy(&peripheral_address[sub_id],
+						bt_conn_get_dst(bt_gatt_dm_conn_get(dm)));
+				store_peripheral_address();
+				break;
+			}
+		}
+	}
+	__ASSERT_NO_MSG(sub_id < ARRAY_SIZE(subscribers));
+
+	size_t per_id;
+	for (per_id = 0; per_id < ARRAY_SIZE(peripherals); per_id++) {
+		if (!bt_gatt_hids_c_assign_check(&peripherals[per_id].hidc)) {
 			break;
 		}
 	}
-	__ASSERT_NO_MSG(i < ARRAY_SIZE(peripherals));
+	__ASSERT_NO_MSG(per_id < ARRAY_SIZE(peripherals));
 
-	peripherals[i].pid = pid;
+	peripherals[per_id].sub_id = sub_id;
+
+	peripherals[per_id].pid = pid;
 
 	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
-	memcpy(peripherals[i].hwid, hwid, hwid_len);
+	memcpy(peripherals[per_id].hwid, hwid, hwid_len);
 
-	int err = bt_gatt_hids_c_handles_assign(dm, &peripherals[i].hidc);
+	int err = bt_gatt_hids_c_handles_assign(dm, &peripherals[per_id].hidc);
 
 	if (err) {
 		LOG_ERR("Cannot assign handles (err:%d)", err);
@@ -585,6 +685,8 @@ static void init(void)
 		k_delayed_work_init(&per->read_rsp, read_rsp_fn);
 		sys_slist_init(&per->enqueued_report_list);
 	}
+
+	reset_peripheral_address();
 }
 
 static void send_enqueued_report(struct subscriber *sub)
@@ -730,6 +832,18 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_ble_peer_operation_event(eh)) {
+		const struct ble_peer_operation_event *event =
+			cast_ble_peer_operation_event(eh);
+
+		if (event->op == PEER_OPERATION_ERASED) {
+			reset_peripheral_address();
+			store_peripheral_address();
+		}
+
+		return false;
+	}
+
 	if (is_wake_up_event(eh)) {
 		suspended = false;
 
@@ -758,6 +872,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 EVENT_SUBSCRIBE(MODULE, power_down_event);

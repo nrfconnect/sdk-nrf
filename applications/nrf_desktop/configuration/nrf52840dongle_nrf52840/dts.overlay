@@ -15,7 +15,7 @@
 	compatible = "nordic,nrf-usbd";
 	status = "okay";
 	num-bidir-endpoints = <0>;
-	num-in-endpoints = <4>;
+	num-in-endpoints = <7>;
 	num-out-endpoints = <2>;
 	num-isoin-endpoints = <0>;
 	num-isoout-endpoints = <0>;
