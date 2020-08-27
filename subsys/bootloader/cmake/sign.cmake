@@ -58,6 +58,9 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/../cmake/bl_validation_magic.cmake)
 
 set(slots s0_image)
+if (CONFIG_SECURE_BOOT AND CONFIG_SOC_NRF5340_CPUNET)
+  list(APPEND slots app)
+endif()
 
 if (CONFIG_BUILD_S1_VARIANT)
   list(APPEND slots s1_image)

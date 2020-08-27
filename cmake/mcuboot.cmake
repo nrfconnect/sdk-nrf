@@ -181,6 +181,36 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     "version_MCUBOOT=${CONFIG_MCUBOOT_IMAGE_VERSION}"
     )
 
+  if (CONFIG_BT_RPMSG_NRF53 AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE
+      AND CONFIG_SOC_NRF5340_CPUAPP)
+    # Network core application updates are enabled.
+    # We know this since MCUBoot is enabled on the application core, and
+    # a network core child image is included in the build.
+    # These updates are verified by the application core MCUBoot.
+    # Create a signed variant of the network core application.
+
+    # Load the shared vars to get the path to the hex file to sign.
+    include(${CMAKE_BINARY_DIR}/hci_rpmsg/shared_vars.cmake)
+
+    sign(${CPUNET_PM_SIGNED_APP_HEX}
+      ${PROJECT_BINARY_DIR}/net_core_app
+      $<TARGET_PROPERTY:partition_manager,net_app_TO_SECONDARY>
+      hci_rpmsg_subimage
+      net_core_app_signed_hex
+      )
+
+    add_custom_target(
+      net_core_app_sign_target
+      DEPENDS ${net_core_app_signed_hex}
+      )
+
+    add_dependencies(
+      mcuboot_sign_target
+      net_core_app_sign_target
+      )
+
+  endif()
+
   if (CONFIG_BUILD_S1_VARIANT AND ("${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "mcuboot"))
     # Secure Boot (B0) is enabled, and we have to build update candidates
     # for both S1 and S0.

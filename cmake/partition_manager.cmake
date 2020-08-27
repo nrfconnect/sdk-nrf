@@ -373,6 +373,9 @@ if (is_dynamic_partition_in_domain)
   share("set(${DOMAIN}_PM_DOMAIN_HEADER_FILES ${header_files})")
   share("set(${DOMAIN}_PM_DOMAIN_IMAGES ${prefixed_images})")
   share("set(${DOMAIN}_PM_HEX_FILE ${PROJECT_BINARY_DIR}/${merged}.hex)")
+  share("set(${DOMAIN}_PM_DOTCONF_FILES ${pm_out_dotconf_file})")
+  share("set(${DOMAIN}_PM_APP_HEX ${PROJECT_BINARY_DIR}/app.hex)")
+  share("set(${DOMAIN}_PM_SIGNED_APP_HEX ${PROJECT_BINARY_DIR}/signed_by_b0_app.hex)")
 else()
   # This is the root image, generate the global pm_config.h
   # First, include the shared_vars.cmake file for all child images.
@@ -397,6 +400,51 @@ else()
       list(APPEND pm_out_region_file ${${d}_PM_DOMAIN_REGIONS})
       list(APPEND global_hex_depends ${${d}_PM_DOMAIN_DYNAMIC_PARTITION}_subimage)
       list(APPEND domain_hex_files ${${d}_PM_HEX_FILE})
+
+      # Add domain prefix cmake variables for all partitions
+      # Here, we actually overwrite the already imported kconfig values
+      # for our own domain. This is not an issue since all of these variables
+      # are accessed through the 'partition_manager' target, and most likely
+      # through generator expression, as this file is one of the last
+      # cmake files executed in the configure stage.
+      import_kconfig(PM_ ${${d}_PM_DOTCONF_FILES} ${d}_pm_var_names)
+
+      foreach(name ${${d}_pm_var_names})
+        set_property(
+          TARGET partition_manager
+          PROPERTY ${d}_${name}
+          ${${name}}
+          )
+      endforeach()
+
+      if (CONFIG_BT_RPMSG_NRF53
+          AND CONFIG_BOOTLOADER_MCUBOOT
+          AND CONFIG_SOC_NRF5340_CPUAPP
+          AND CONFIG_HCI_RPMSG_BUILD_STRATEGY_FROM_SOURCE)
+          # Create symbols for the offset reqired for moving the signed network
+          # core application to MCUBoots secondary slot. This is needed
+          # because  objcopy does not support arithmetic expressions as argument
+          # (e.g. '0x100+0x200'), and all of the symbols used to generate the
+          # offset are only available as a generator expression when MCUBoots
+          # cmake code exectues.
+
+          get_target_property(
+            net_app_addr
+            partition_manager
+            CPUNET_PM_APP_ADDRESS
+            )
+
+          # There is no padding in front of the network core application.
+          math(EXPR net_app_TO_SECONDARY
+            "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${net_app_addr} + ${PM_MCUBOOT_PAD_SIZE}")
+
+          set_property(
+            TARGET partition_manager
+            PROPERTY net_app_TO_SECONDARY
+            ${net_app_TO_SECONDARY}
+            )
+        endif()
+
     endif()
   endforeach()
 
