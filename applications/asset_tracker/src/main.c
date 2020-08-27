@@ -119,6 +119,7 @@ static struct cloud_channel_data signal_strength_cloud_data;
 #endif /* CONFIG_MODEM_INFO */
 
 static int64_t gps_last_active_time;
+static int64_t gps_last_search_start_time;
 static atomic_t carrier_requested_disconnect;
 static atomic_t cloud_connect_attempts;
 
@@ -628,6 +629,7 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 		LOG_INF("GPS_EVT_SEARCH_STARTED");
 		gps_control_set_active(true);
 		ui_led_set_pattern(UI_LED_GPS_SEARCHING);
+		gps_last_search_start_time = k_uptime_get();
 		break;
 	case GPS_EVT_SEARCH_STOPPED:
 		LOG_INF("GPS_EVT_SEARCH_STOPPED");
@@ -662,9 +664,13 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 			gps_cloud_data.tag = 0x1;
 		}
 
+		int64_t gps_time_from_start_to_fix_seconds = (k_uptime_get() -
+				gps_last_search_start_time) / 1000;
 		ui_led_set_pattern(UI_LED_GPS_FIX);
 		gps_control_set_active(false);
-		LOG_INF("GPS will be started in %d seconds",
+		LOG_INF("GPS will be started in %lld seconds",
+			CONFIG_GPS_CONTROL_FIX_TRY_TIME -
+			gps_time_from_start_to_fix_seconds +
 			gps_control_get_gps_reporting_interval());
 
 		k_work_submit_to_queue(&application_work_q,
