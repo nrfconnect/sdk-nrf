@@ -43,7 +43,7 @@ Getting the last known value
 
   .. note::
      The internally stored value is updated every time a notification or read response is received.
-     If no value is received from the server, the get function returns :cpp:type:`BT_GATT_BAS_VAL_INVALID`.
+     If no value is received from the server, the get function returns :c:macro:`BT_GATT_BAS_VAL_INVALID`.
 
 .. _bas_c_readme_periodic:
 
