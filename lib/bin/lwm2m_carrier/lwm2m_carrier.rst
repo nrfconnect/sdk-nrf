@@ -94,7 +94,7 @@ You can enable the module using the :option:`CONFIG_LWM2M_CARRIER` Kconfig optio
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 A bootstrap server provides the application with the configuration needed to connect to the device management servers.
-During self-testing of the certification process, you can provide the initialization parameter :cpp:type:`lwm2m_carrier_config_t` to overwrite the carrier default settings as described below:
+During self-testing of the certification process, you can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` to overwrite the carrier default settings as described below:
 
  * Specify the URI of the bootstrap server by using the :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` and :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_URI` Kconfig options.
  * Specify the `Pre-Shared Key (PSK)`_ by using the :option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_PSK` and :option:`CONFIG_LWM2M_CARRIER_CUSTOM_BOOTSTRAP_PSK` Kconfig options.
@@ -183,7 +183,7 @@ LwM2M carrier library events
 
 :c:macro:`LWM2M_CARRIER_EVENT_ERROR`
    This event indicates an error.
-   The event data struct :cpp:type:`lwm2m_carrier_event_error_t` contains the information about the error (:c:member:`lwm2m_carrier_event_error_t.code` and :c:member:`lwm2m_carrier_event_error_t.value`).
+   The event data struct :c:type:`lwm2m_carrier_event_error_t` contains the information about the error (:c:member:`lwm2m_carrier_event_error_t.code` and :c:member:`lwm2m_carrier_event_error_t.value`).
 
    :c:macro:`LWM2M_CARRIER_ERROR_CONNECT_FAIL`
       This error is generated from the :c:func:`lte_lc_init_and_connect` function.
@@ -202,7 +202,7 @@ LwM2M carrier library events
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG`
       This error indicates that the update package has been rejected.
       The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client.
-      The :c:member:`lwm2m_carrier_event_error_t.value` field will have an error of type :cpp:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\bsdlib\\include\\nrf_socket.h`.
+      The :c:member:`lwm2m_carrier_event_error_t.value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\bsdlib\\include\\nrf_socket.h`.
 
    :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PROTO`
       This error indicates a protocol error.

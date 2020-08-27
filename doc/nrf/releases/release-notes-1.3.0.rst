@@ -406,7 +406,7 @@ Build system
 Zephyr
 ======
 
-* Updated the time-out type to :cpp:type:`k_timeout_t`, because the Zephyr kernel deprecated its integer type as time-out in different APIs (timeout, scheduling, ...).
+* Updated the time-out type to :c:type:`k_timeout_t`, because the Zephyr kernel deprecated its integer type as time-out in different APIs (timeout, scheduling, ...).
 * Updated all files to use the C/C++ Devicetree generic API, because the C/C++ Devicetree value fetching API was reworked in Zephyr so that it uses compatible strings and new function-like macros to match properties.
   See :ref:`zephyr:dt-from-c`.
 
