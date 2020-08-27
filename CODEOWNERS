@@ -110,6 +110,7 @@ Kconfig*                                  @tejlmand
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
+/subsys/pcd/                              @hakonfam
 /subsys/profiler/                         @pdunaj
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @ioannisg
