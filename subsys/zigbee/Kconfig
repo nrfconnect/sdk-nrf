@@ -22,6 +22,8 @@ menuconfig ZIGBEE
 
 if ZIGBEE
 
+rsource "lib/Kconfig"
+
 choice ZIGBEE_CHANNEL_SELECTION_MODE
 	prompt "Zigbee channel selection mode"
 	default ZIGBEE_CHANNEL_SELECTION_MODE_SINGLE
@@ -237,76 +239,6 @@ config RADIO_STATISTICS
 	  This option enables the radio statistics.
 
 endmenu #menu "ZBOSS osif configuration"
-
-menuconfig ZIGBEE_OTA
-bool "Enable Zigbee OTA DFU"
-imply BOOTLOADER_MCUBOOT
-imply MCUMGR
-imply DFU_TARGET
-
-if ZIGBEE_OTA
-
-config ZIGBEE_OTA_HW_VERSION
-	int "Zigbee hardware version"
-	range 0 65535
-	default 52
-
-config ZIGBEE_OTA_MANUFACTURER_ID
-	hex "Manufacturer ID"
-	default 0x127F
-	range 0x0000 0xFFFF
-	help
-	  This is the ZigBee assigned identifier for each member company.
-	  0x127F - Nordic Semiconductor
-	  0xFFFF - wild card value has a 'match all' effect.
-
-config ZIGBEE_OTA_IMAGE_TYPE
-	hex "Image type"
-	default 0xFFFF
-	range 0x0000 0xFFFF
-	help
-	  0x0000 - 0xFFBF Manufacturer Specific
-	  0xFFC0 - Client Security credentials
-	  0xFFC1 - Client Configuration
-	  0xFFC2 - Server Log
-	  0xFFC3 - Picture
-	  0xFFFF - Wild card value has a 'match all' effect.
-
-config ZIGBEE_OTA_COMMENT
-	string "OTA header string"
-	default ""
-	help
-	  Firmware comment to be used in Zigbee OTA header.
-
-config ENABLE_ZIGBEE_OTA_MIN_HW_VERSION
-	bool "Enable Zigbee OTA minimum hw version"
-
-config ZIGBEE_OTA_MIN_HW_VERSION
-	hex "Zigbee OTA minimum hw version"
-	default 0
-	range 0x00 0xFF
-	depends on ENABLE_ZIGBEE_OTA_MIN_HW_VERSION
-
-config ENABLE_ZIGBEE_OTA_MAX_HW_VERSION
-	bool "Enable Zigbee OTA maximum hw version"
-
-config ZIGBEE_OTA_MAX_HW_VERSION
-	hex "Zigbee OTA maximum hw version"
-	default 0
-	range 0x00 0xFF
-	depends on ENABLE_ZIGBEE_OTA_MAX_HW_VERSION
-
-config ZIGBEE_OTA_DATA_BLOCK_SIZE
-	int "Maximum data size of Query Block Image"
-	default 64
-	range 4 64
-
-config ZIGBEE_OTA_ENDPOINT
-	int "Zigbee OTA endpoint"
-	default 10
-	range 1 240
-
-endif #ZIGBEE_OTA
 
 config APP_LINK_WITH_ZIGBEE
 	bool
