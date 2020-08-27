@@ -18,8 +18,8 @@ if DESKTOP_HID_FORWARD_ENABLE
 
 config DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
 	int "Enqueued reports limit"
-	default 5
-	range BT_MAX_CONN 255
+	default 2
+	range 1 255
 	help
 	  The USB can forward one report at a time. If busy the incoming report
 	  will be enqueued.
