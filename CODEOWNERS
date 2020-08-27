@@ -90,6 +90,7 @@ Kconfig*                                  @tejlmand
 /samples/usb/usb_uart_bridge/             @jhn-nordic @jtguggedal
 /samples/zigbee/                          @maciekfabia @mariuszpos
 /samples/CMakeLists.txt                   @tejlmand
+/samples/nrf5340/netboot/                 @hakonfam
 /scripts/                                 @mbolivar @tejlmand
 /scripts/hid_configurator/                @pdunaj
 /scripts/tools-versions-*.txt             @tejlmand @asle-nordic @groh @shanta-14

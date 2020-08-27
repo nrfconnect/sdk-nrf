@@ -295,6 +295,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		return false;
 	}
 
+#if defined(PM_S0_SIZE) && defined(PM_S1_SIZE)
 	BUILD_ASSERT(PM_S0_SIZE == PM_S1_SIZE,
 		"B0's slots aren't the same size. Check pm.yml.");
 	if ((fwinfo->size > (PM_S0_SIZE))
@@ -302,6 +303,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		PRINT("Invalid size or total_size in firmware info.\n\r");
 		return false;
 	}
+#endif
 
 	if (!region_within(fwinfo_address, fwinfo_end,
 			fw_src_address, fw_src_end)) {

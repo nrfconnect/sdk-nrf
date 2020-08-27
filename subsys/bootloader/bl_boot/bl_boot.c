@@ -39,12 +39,16 @@ extern uint32_t _vector_table_pointer;
 
 void bl_boot(const struct fw_info *fw_info)
 {
-#if !(defined(CONFIG_SOC_NRF9160) || defined(CONFIG_SOC_NRF5340_CPUAPP))
+#if !(defined(CONFIG_SOC_NRF9160) \
+      || defined(CONFIG_SOC_NRF5340_CPUNET) \
+      || defined(CONFIG_SOC_NRF5340_CPUAPP))
 	/* Protect bootloader storage data after firmware is validated so
 	 * invalidation of public keys can be written into the page if needed.
 	 * Note that for some devices (for example, nRF9160 and the nRF5340
 	 * application core), the bootloader storage data is kept in OTP which
-	 * does not need or support protection.
+	 * does not need or support protection. For nRF5340 network core the
+	 * bootloader storage data is locked together with the network core
+	 * application.
 	 */
 	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
 

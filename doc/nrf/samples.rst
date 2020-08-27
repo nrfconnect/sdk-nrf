@@ -36,6 +36,16 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/nrf9160/*/README
 
+.. _nrf5340_samples:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: nRF5340 samples
+   :glob:
+
+   ../../samples/nrf5340/*/README
+   ../../samples/nrf_rpc/entropy_nrf53/README
+
 .. _openthread_samples:
 
 .. toctree::
@@ -61,11 +71,9 @@ In addition, the |NCS| provides the following samples that showcase the use of a
 
    ../../samples/*/README
    ../../samples/debug/*/README
-   ../../samples/nrf5340/empty_app_core/README
    ../../samples/mpsl/*/README
    ../../samples/peripheral/*/README
    ../../samples/sensor/*/README
    ../../samples/usb/*/README
-   ../../samples/nrf_rpc/*/README
 
 For more complex examples, see :ref:`applications`.

@@ -1,0 +1,22 @@
+#include <autoconf.h>
+
+b0n_image:
+
+# If minimal config is enabled the binary will be around 5kB.
+# Since locking granularity is 2kB, ensure that size of `b0n` span is aligned.
+
+#if CONFIG_NETBOOT_MIN_PARTITION_SIZE
+  size: 0x2600
+#else
+  size: 0x8600
+#endif
+  placement:
+    after: start
+
+b0n:
+  span: [b0n_image, provision]
+
+provision:
+  size: 0x200
+  placement:
+    after: b0n_image

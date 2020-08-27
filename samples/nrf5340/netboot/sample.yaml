@@ -1,0 +1,14 @@
+sample:
+  name: netboot Sample
+tests:
+  samples.nrf5340.netboot:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf5340dk_nrf5340_cpunet nrf5340pdk_nrf5340_cpunet
+    tags: ci_build
+  samples.nrf5340.netboot.minimal_size:
+    build_only: true
+    build_on_all: true
+    platform_allow: nrf5340dk_nrf5340_cpunet nrf5340pdk_nrf5340_cpunet
+    extra_args: OVERLAY_CONFIG=overlay-minimal-size.conf
+    tags: ci_build
