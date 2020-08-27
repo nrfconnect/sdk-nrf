@@ -65,6 +65,7 @@ The sample supports the following development kits:
 
       CONFIG_BT_CTLR_TX_BUFFER_SIZE=74
       CONFIG_BT_CTLR_DATA_LENGTH_MAX=74
+      CONFIG_BT_LL_SW_SPLIT=y
 
    This is required because Bluetooth Mesh has different |BLE| Controller requirements than other Bluetooth samples.
 
