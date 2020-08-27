@@ -21,14 +21,14 @@
 #include <zb_nrf_platform.h>
 #include "zb_mem_config_custom.h"
 
-#if CONFIG_ZIGBEE_OTA
-#include <zigbee_ota_client.h>
+#if CONFIG_ZIGBEE_FOTA
+#include <zigbee/zigbee_fota.h>
+#include <power/reboot.h>
+#include <dfu/mcuboot.h>
 
 /* LED indicating OTA Client Activity. */
 #define OTA_ACTIVITY_LED           DK_LED2
-
-extern zb_af_endpoint_desc_t ota_upgrade_client_ep;
-#endif /* CONFIG_ZIGBEE_OTA */
+#endif /* CONFIG_ZIGBEE_FOTA */
 
 
 #define RUN_STATUS_LED             DK_LED1
@@ -118,18 +118,19 @@ ZB_HA_DECLARE_DIMMER_SWITCH_EP(dimmer_switch_ep,
 /* Declare application's device context (list of registered endpoints)
  * for Dimmer Switch device.
  */
-#ifndef CONFIG_ZIGBEE_OTA
+#ifndef CONFIG_ZIGBEE_FOTA
 ZBOSS_DECLARE_DEVICE_CTX_1_EP(dimmer_switch_ctx, dimmer_switch_ep);
 #else
 
-  #if LIGHT_SWITCH_ENDPOINT == CONFIG_ZIGBEE_OTA_ENDPOINT
+  #if LIGHT_SWITCH_ENDPOINT == CONFIG_ZIGBEE_FOTA_ENDPOINT
     #error "Light switch and Zigbee OTA endpoints should be different."
   #endif
 
+extern zb_af_endpoint_desc_t zigbee_fota_client_ep;
 ZBOSS_DECLARE_DEVICE_CTX_2_EP(dimmer_switch_ctx,
-			      ota_upgrade_client_ep,
+			      zigbee_fota_client_ep,
 			      dimmer_switch_ep);
-#endif /* CONFIG_ZIGBEE_OTA */
+#endif /* CONFIG_ZIGBEE_FOTA */
 
 /* Forward declarations. */
 static void light_switch_button_handler(struct k_timer *timer);
@@ -381,6 +382,42 @@ static void light_switch_button_handler(struct k_timer *timer)
 	}
 }
 
+#ifdef CONFIG_ZIGBEE_FOTA
+static void confirm_image(void)
+{
+	if (!boot_is_img_confirmed()) {
+		int ret = boot_write_img_confirmed();
+
+		if (ret) {
+			LOG_ERR("Couldn't confirm image: %d", ret);
+		} else {
+			LOG_INF("Marked image as OK");
+		}
+	}
+}
+
+static void ota_evt_handler(const struct zigbee_fota_evt *evt)
+{
+	switch (evt->id) {
+	case ZIGBEE_FOTA_EVT_PROGRESS:
+		dk_set_led(OTA_ACTIVITY_LED, evt->dl.progress % 2);
+		break;
+
+	case ZIGBEE_FOTA_EVT_FINISHED:
+		LOG_INF("Reboot application.");
+		sys_reboot(SYS_REBOOT_COLD);
+		break;
+
+	case ZIGBEE_FOTA_EVT_ERROR:
+		LOG_ERR("OTA image transfer failed.");
+		break;
+
+	default:
+		break;
+	}
+}
+#endif /* CONFIG_ZIGBEE_FOTA */
+
 /**@brief Zigbee stack event handler.
  *
  * @param[in]   bufid   Reference to the Zigbee stack buffer
@@ -395,6 +432,11 @@ void zboss_signal_handler(zb_bufid_t bufid)
 	/* Update network status LED. */
 	zigbee_led_status_update(bufid, ZIGBEE_NETWORK_STATE_LED);
 
+#ifdef CONFIG_ZIGBEE_FOTA
+	/* Pass signal to the OTA client implementation. */
+	zigbee_fota_signal_handler(bufid);
+#endif /* CONFIG_ZIGBEE_FOTA */
+
 	switch (sig) {
 	case ZB_BDB_SIGNAL_DEVICE_REBOOT:
 	/* fall-through */
@@ -408,9 +450,6 @@ void zboss_signal_handler(zb_bufid_t bufid)
 					      MATCH_DESC_REQ_START_DELAY,
 					      MATCH_DESC_REQ_TIMEOUT);
 			}
-#ifdef CONFIG_ZIGBEE_OTA
-			zb_ota_client_periodical_discovery_srv_start();
-#endif /* CONFIG_ZIGBEE_OTA */
 		}
 		break;
 	default:
@@ -423,97 +462,6 @@ void zboss_signal_handler(zb_bufid_t bufid)
 		zb_buf_free(bufid);
 	}
 }
-
-#ifdef CONFIG_ZIGBEE_OTA
-static void zcl_device_cb(zb_bufid_t bufid)
-{
-	static int blink_status;
-	zb_zcl_device_callback_param_t *device_cb_param =
-		ZB_BUF_GET_PARAM(bufid, zb_zcl_device_callback_param_t);
-
-	device_cb_param->status = RET_OK;
-	switch (device_cb_param->device_cb_id) {
-	case ZB_ZCL_OTA_UPGRADE_VALUE_CB_ID:
-	{
-		zb_zcl_ota_upgrade_value_param_t *ota_upgrade_value =
-			&(device_cb_param->cb_param.ota_value_param);
-
-		switch (ota_upgrade_value->upgrade_status) {
-		case ZB_ZCL_OTA_UPGRADE_STATUS_START:
-			/* Check if OTA client is in the middle of image
-			 * download. If so, silently ignore the second
-			 * QueryNextImageResponse packet from OTA server.
-			 */
-			if (zb_zcl_ota_upgrade_get_ota_status(
-				device_cb_param->endpoint) !=
-				ZB_ZCL_OTA_UPGRADE_IMAGE_STATUS_NORMAL) {
-
-				ota_upgrade_value->upgrade_status =
-					ZB_ZCL_OTA_UPGRADE_STATUS_BUSY;
-
-			/* Check if we're not downgrading.
-			 * If we do, let's politely say no since we do not
-			 * support that.
-			 */
-			} else if (ota_upgrade_value->upgrade.start.file_version
-				 > zb_ota_get_image_ver()) {
-				zb_ota_dfu_init();
-				ota_upgrade_value->upgrade_status =
-					ZB_ZCL_OTA_UPGRADE_STATUS_OK;
-			} else {
-				LOG_DBG("ZB_ZCL_OTA_UPGRADE_STATUS_ABORT");
-				ota_upgrade_value->upgrade_status =
-					ZB_ZCL_OTA_UPGRADE_STATUS_ABORT;
-			}
-			break;
-
-		case ZB_ZCL_OTA_UPGRADE_STATUS_RECEIVE:
-			/* Process image block. */
-			ota_upgrade_value->upgrade_status =
-				zb_ota_process_chunk(ota_upgrade_value,
-						     bufid);
-			dk_set_led(OTA_ACTIVITY_LED, (++blink_status) % 2);
-			break;
-
-		case ZB_ZCL_OTA_UPGRADE_STATUS_CHECK:
-			ota_upgrade_value->upgrade_status =
-				ZB_ZCL_OTA_UPGRADE_STATUS_OK;
-			break;
-
-		case ZB_ZCL_OTA_UPGRADE_STATUS_APPLY:
-			dk_set_led_on(OTA_ACTIVITY_LED);
-			ota_upgrade_value->upgrade_status =
-				ZB_ZCL_OTA_UPGRADE_STATUS_OK;
-			break;
-
-		case ZB_ZCL_OTA_UPGRADE_STATUS_FINISH:
-			LOG_INF("ZB_ZCL_OTA_UPGRADE_STATUS_FINISH");
-			/* It is time to upgrade FW.
-			 * We use callback so the stack can have time to i.e.
-			 * send response etc.
-			 */
-			zigbee_schedule_callback(zb_ota_reboot_application, 0);
-			break;
-
-		case ZB_ZCL_OTA_UPGRADE_STATUS_ABORT:
-			LOG_INF("Zigbee DFU Aborted");
-			ota_upgrade_value->upgrade_status =
-				ZB_ZCL_OTA_UPGRADE_STATUS_ABORT;
-			dk_set_led_off(OTA_ACTIVITY_LED);
-			zb_ota_dfu_abort();
-			break;
-
-		default:
-			break;
-		}
-		/* No need to free the buffer - stack handles that if needed. */
-		break;
-	}
-	default:
-		break;
-	}
-}
-#endif /* CONFIG_ZIGBEE_OTA */
 
 void main(void)
 {
@@ -548,12 +496,16 @@ void main(void)
 	}
 #endif
 
-#ifdef CONFIG_ZIGBEE_OTA
-	zb_ota_client_init();
-	zb_ota_confirm_image();
+#ifdef CONFIG_ZIGBEE_FOTA
+	/* Initialize Zigbee FOTA download service. */
+	zigbee_fota_init(ota_evt_handler);
+
+	/* Mark the current firmware as valid. */
+	confirm_image();
+
 	/* Register callback for handling ZCL commands. */
-	ZB_ZCL_REGISTER_DEVICE_CB(zcl_device_cb);
-#endif /* CONFIG_ZIGBEE_OTA */
+	ZB_ZCL_REGISTER_DEVICE_CB(zigbee_fota_zcl_cb);
+#endif /* CONFIG_ZIGBEE_FOTA */
 
 	/* Register dimmer switch device context (endpoints). */
 	ZB_AF_REGISTER_DEVICE_CTX(&dimmer_switch_ctx);
