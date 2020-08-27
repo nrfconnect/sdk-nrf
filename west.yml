@@ -92,7 +92,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: ec441e0a700280673e11f4e242ff5de696d4f962
+      revision: 82828b5cee28499157c340454e8cfa7a9beecd98
       path: bootloader/mcuboot
     - name: mcumgr
       repo-path: sdk-mcumgr
@@ -101,7 +101,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: f1dd2ee510f39e27ea4102bad369c026c0dad147
+      revision: 996b87e0ac42c5fc1b0f34100129f7184899a888
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
