@@ -1,0 +1,4 @@
+tests:
+  dfu.pcd:
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: pcd
