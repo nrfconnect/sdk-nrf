@@ -39,17 +39,21 @@ struct enqueued_report {
 	struct hid_report_event *report;
 };
 
+struct enqueued_reports {
+	sys_slist_t list;
+	size_t count;
+};
+
 struct subscriber {
 	const void *id;
 	uint32_t enabled_reports_bm;
 	bool busy;
-	int8_t last_peripheral_id;
+	uint8_t last_peripheral_id;
 };
 
 struct hids_peripheral {
 	struct bt_gatt_hids_c hidc;
-	sys_slist_t enqueued_report_list;
-	size_t enqueued_report_count;
+	struct enqueued_reports enqueued_report[REPORT_ID_COUNT];
 
 	struct k_delayed_work read_rsp;
 	struct config_event *cfg_chan_rsp;
@@ -57,14 +61,13 @@ struct hids_peripheral {
 	uint8_t hwid[HWID_LEN];
 	uint8_t cur_poll_cnt;
 	uint8_t sub_id;
+	uint8_t last_report_id;
 };
 
 static struct subscriber subscribers[CONFIG_USB_HID_DEVICE_COUNT];
 static bt_addr_le_t peripheral_address[CONFIG_BT_MAX_PAIRED];
 static struct hids_peripheral peripherals[CONFIG_BT_MAX_CONN];
 static bool suspended;
-
-static struct k_spinlock lock;
 
 
 #if CONFIG_USB_HID_DEVICE_COUNT > 1
@@ -153,17 +156,17 @@ static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
 	return (sub->enabled_reports_bm & BIT(report_id)) != 0;
 }
 
-static void enqueue_hid_report(struct hids_peripheral *per,
+static void enqueue_hid_report(struct enqueued_reports *enqueued_report,
 			       struct hid_report_event *report)
 {
 	struct enqueued_report *item;
 
-	if (per->enqueued_report_count < MAX_ENQUEUED_ITEMS) {
+	if (enqueued_report->count < MAX_ENQUEUED_ITEMS) {
 		item = k_malloc(sizeof(*item));
-		per->enqueued_report_count++;
+		enqueued_report->count++;
 	} else {
 		LOG_WRN("Enqueue dropped the oldest report");
-		item = CONTAINER_OF(sys_slist_get(&per->enqueued_report_list),
+		item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
 				    __typeof__(*item),
 				    node);
 		k_free(item->report);
@@ -174,7 +177,7 @@ static void enqueue_hid_report(struct hids_peripheral *per,
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
 		item->report = report;
-		sys_slist_append(&per->enqueued_report_list, &item->node);
+		sys_slist_append(&enqueued_report->list, &item->node);
 	}
 }
 
@@ -188,12 +191,14 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 		return;
 	}
 
+	if (report_id > ARRAY_SIZE(per->enqueued_report)) {
+		LOG_ERR("Unknown report id");
+		return;
+	}
+
 	struct hid_report_event *report = new_hid_report_event(size + sizeof(report_id));
 
-	k_spinlock_key_t key = k_spin_lock(&lock);
-
-	if (!is_report_enabled(sub, report_id) && !suspended && !per->enqueued_report_count) {
-		k_spin_unlock(&lock, key);
+	if (!is_report_enabled(sub, report_id) && !suspended && !per->enqueued_report[report_id].count) {
 		k_free(report);
 		return;
 	}
@@ -204,19 +209,18 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	report->dyndata.data[0] = report_id;
 	memcpy(&report->dyndata.data[1], data, size);
 
-	if (!sub->busy && !suspended && !per->enqueued_report_count) {
+	if (!sub->busy && !suspended && !per->enqueued_report[report_id].count) {
 		EVENT_SUBMIT(report);
+		per->last_report_id = report_id;
 		sub->busy = true;
 	} else {
-		enqueue_hid_report(per, report);
+		enqueue_hid_report(&per->enqueued_report[report_id], report);
 	}
 
 	if (suspended) {
 		struct wake_up_event *event = new_wake_up_event();
 		EVENT_SUBMIT(event);
 	}
-
-	k_spin_unlock(&lock, key);
 }
 
 static uint8_t hidc_read(struct bt_gatt_hids_c *hids_c,
@@ -224,6 +228,9 @@ static uint8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 		      uint8_t err,
 		      const uint8_t *data)
 {
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
 	struct hids_peripheral *per = CONTAINER_OF(hids_c,
 						   struct hids_peripheral,
 						   hidc);
@@ -246,6 +253,11 @@ static uint8_t hidc_read(struct bt_gatt_hids_c *hids_c,
 	forward_hid_report(per, report_id, data, size);
 
 	return BT_GATT_ITER_CONTINUE;
+}
+
+static bool is_peripheral_connected(struct hids_peripheral *per)
+{
+	return bt_gatt_hids_c_assign_check(&per->hidc);
 }
 
 static int register_peripheral(struct bt_gatt_dm *dm, uint16_t pid,
@@ -281,7 +293,7 @@ static int register_peripheral(struct bt_gatt_dm *dm, uint16_t pid,
 
 	size_t per_id;
 	for (per_id = 0; per_id < ARRAY_SIZE(peripherals); per_id++) {
-		if (!bt_gatt_hids_c_assign_check(&peripherals[per_id].hidc)) {
+		if (!is_peripheral_connected(&peripherals[per_id])) {
 			break;
 		}
 	}
@@ -440,7 +452,6 @@ static struct hids_peripheral *find_peripheral(uint16_t pid)
 	}
 	return NULL;
 }
-
 
 static struct config_event *generate_response(const struct config_event *event,
 					      size_t dyndata_size)
@@ -608,32 +619,28 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 
 static void clear_state(void)
 {
-	k_spinlock_key_t key = k_spin_lock(&lock);
+	for (size_t per_id = 0; per_id < ARRAY_SIZE(peripherals); per_id++) {
+		struct hids_peripheral *per = &peripherals[per_id];
 
-	for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
-		struct hids_peripheral *per = &peripherals[i];
+		for (size_t report_id = 0; report_id < ARRAY_SIZE(per->enqueued_report); report_id++) {
+			struct enqueued_reports *enqueued_report = &per->enqueued_report[report_id];
 
-		/* Clear all the reports. */
-		while (!sys_slist_is_empty(&per->enqueued_report_list)) {
-			struct enqueued_report *item;;
+			/* Clear all the reports. */
+			while (!sys_slist_is_empty(&enqueued_report->list)) {
+				struct enqueued_report *item;;
 
-			item = CONTAINER_OF(sys_slist_get(&per->enqueued_report_list),
-					     __typeof__(*item),
-					    node);
-			per->enqueued_report_count--;
+				item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
+						     __typeof__(*item),
+						    node);
+				enqueued_report->count--;
 
-			k_spin_unlock(&lock, key);
+				k_free(item->report);
+				k_free(item);
+			}
 
-			k_free(item->report);
-			k_free(item);
-
-			key = k_spin_lock(&lock);
+			__ASSERT_NO_MSG(enqueued_report->count == 0);
 		}
-
-		__ASSERT_NO_MSG(per->enqueued_report_count == 0);
 	}
-
-	k_spin_unlock(&lock, key);
 }
 
 static void hidc_ready(struct bt_gatt_hids_c *hids_c)
@@ -683,7 +690,13 @@ static void init(void)
 
 		bt_gatt_hids_c_init(&per->hidc, &params);
 		k_delayed_work_init(&per->read_rsp, read_rsp_fn);
-		sys_slist_init(&per->enqueued_report_list);
+
+		for (size_t report_id = 0; report_id < ARRAY_SIZE(per->enqueued_report); report_id++) {
+			struct enqueued_reports *enqueued_report = &per->enqueued_report[report_id];
+
+			sys_slist_init(&enqueued_report->list);
+			enqueued_report->count = 0;
+		}
 	}
 
 	reset_peripheral_address();
@@ -696,36 +709,50 @@ static void send_enqueued_report(struct subscriber *sub)
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
-		size_t idx = (sub->last_peripheral_id + i + 1) % ARRAY_SIZE(peripherals);
-		struct hids_peripheral *per = &peripherals[idx];
+		size_t per_id = (sub->last_peripheral_id + i + 1) % ARRAY_SIZE(peripherals);
+		struct hids_peripheral *per = &peripherals[per_id];
 
-		if (sys_slist_is_empty(&per->enqueued_report_list)) {
-			/* Nothing to send. */
+		/* Check if peripheral is linked with the subscriber. */
+		if (sub != get_subscriber(per)) {
 			continue;
 		}
 
-		struct enqueued_report *item;
-
-		item = CONTAINER_OF(sys_slist_peek_head(&per->enqueued_report_list),
-				    __typeof__(*item),
-				    node);
-		if (!is_report_enabled(sub, item->report->dyndata.data[0])) {
-			/* Not subscribed yet. */
+		/* Check if peripheral is connected. */
+		if (!is_peripheral_connected(per)) {
 			continue;
 		}
 
-		item = CONTAINER_OF(sys_slist_get(&per->enqueued_report_list),
-				    __typeof__(*item),
-				    node);
-		per->enqueued_report_count--;
+		for (size_t j = 0; j < ARRAY_SIZE(per->enqueued_report); j++) {
+			size_t report_id = (per->last_report_id + j + 1) % ARRAY_SIZE(per->enqueued_report);
+			struct enqueued_reports *enqueued_report = &per->enqueued_report[report_id];
 
-		EVENT_SUBMIT(item->report);
+			if (!is_report_enabled(sub, report_id)) {
+				/* Not subscribed yet. */
+				continue;
+			}
 
-		k_free(item);
+			if (sys_slist_is_empty(&enqueued_report->list)) {
+				/* Nothing to send. */
+				continue;
+			}
 
-		sub->busy = true;
-		sub->last_peripheral_id = idx;
-		break;
+			struct enqueued_report *item;
+
+			item = CONTAINER_OF(sys_slist_get(&enqueued_report->list),
+					    __typeof__(*item),
+					    node);
+			enqueued_report->count--;
+
+			EVENT_SUBMIT(item->report);
+
+			k_free(item);
+
+			per->last_report_id = report_id;
+			sub->busy = true;
+			sub->last_peripheral_id = per_id;
+
+			return;
+		}
 	}
 }
 
@@ -744,10 +771,8 @@ static bool event_handler(const struct event_header *eh)
 		}
 		__ASSERT_NO_MSG(sub);
 
-		k_spinlock_key_t key = k_spin_lock(&lock);
 		sub->busy = false;
 		send_enqueued_report(sub);
-		k_spin_unlock(&lock, key);
 
 		return false;
 	}
@@ -804,10 +829,8 @@ static bool event_handler(const struct event_header *eh)
 
 		__ASSERT_NO_MSG(event->report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
 		if (event->enabled) {
-			k_spinlock_key_t key = k_spin_lock(&lock);
 			sub->enabled_reports_bm |= BIT(event->report_id);
 			send_enqueued_report(sub);
-			k_spin_unlock(&lock, key);
 		} else {
 			sub->enabled_reports_bm &= ~BIT(event->report_id);
 			clear_state();
