@@ -47,6 +47,7 @@ struct enqueued_reports {
 struct subscriber {
 	const void *id;
 	uint32_t enabled_reports_bm;
+	uint32_t dirty_reports_bm;
 	bool busy;
 	uint8_t last_peripheral_id;
 };
@@ -156,6 +157,12 @@ static bool is_report_enabled(struct subscriber *sub, uint8_t report_id)
 	return (sub->enabled_reports_bm & BIT(report_id)) != 0;
 }
 
+static bool is_report_clean(struct subscriber *sub, uint8_t report_id)
+{
+	__ASSERT_NO_MSG(report_id < __CHAR_BIT__ * sizeof(sub->dirty_reports_bm));
+	return (sub->dirty_reports_bm & BIT(report_id)) == 0;
+}
+
 static void enqueue_hid_report(struct enqueued_reports *enqueued_report,
 			       struct hid_report_event *report)
 {
@@ -212,6 +219,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	if (!sub->busy && !suspended && !per->enqueued_report[report_id].count) {
 		EVENT_SUBMIT(report);
 		per->last_report_id = report_id;
+		sub->dirty_reports_bm &= ~BIT(report_id);
 		sub->busy = true;
 	} else {
 		enqueue_hid_report(&per->enqueued_report[report_id], report);
@@ -702,6 +710,28 @@ static void init(void)
 	reset_peripheral_address();
 }
 
+static void send_clean_report(struct subscriber *sub, uint8_t report_id)
+{
+	static const size_t report_size[] = {
+		[REPORT_ID_MOUSE] = REPORT_SIZE_MOUSE,
+		[REPORT_ID_KEYBOARD_KEYS] = REPORT_SIZE_KEYBOARD_KEYS,
+		[REPORT_ID_SYSTEM_CTRL] = REPORT_SIZE_SYSTEM_CTRL,
+		[REPORT_ID_CONSUMER_CTRL] = REPORT_SIZE_CONSUMER_CTRL,
+	};
+
+	struct hid_report_event *report = new_hid_report_event(report_size[report_id] + sizeof(report_id));
+
+	report->subscriber = sub->id;
+
+	/* Forward report as is adding report id on the front. */
+	report->dyndata.data[0] = report_id;
+	memset(&report->dyndata.data[1], 0, report_size[report_id]);
+
+	EVENT_SUBMIT(report);
+	sub->dirty_reports_bm &= ~BIT(report_id);
+	sub->busy = true;
+}
+
 static void send_enqueued_report(struct subscriber *sub)
 {
 	if (sub->busy) {
@@ -732,6 +762,10 @@ static void send_enqueued_report(struct subscriber *sub)
 			}
 
 			if (sys_slist_is_empty(&enqueued_report->list)) {
+				if (!is_report_clean(sub, report_id)) {
+					send_clean_report(sub, report_id);
+				}
+
 				/* Nothing to send. */
 				continue;
 			}
@@ -751,6 +785,14 @@ static void send_enqueued_report(struct subscriber *sub)
 			sub->busy = true;
 			sub->last_peripheral_id = per_id;
 
+			return;
+		}
+	}
+
+	/* Check if subscriber has clean reports. */
+	for (size_t report_id = 0; report_id < REPORT_ID_COUNT; report_id++) {
+		if (!is_report_clean(sub, report_id) && is_report_enabled(sub, report_id)) {
+			send_clean_report(sub, report_id);
 			return;
 		}
 	}
@@ -812,20 +854,12 @@ static bool event_handler(const struct event_header *eh)
 		struct subscriber *sub = NULL;
 
 		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
-			if ((subscribers[i].id == event->subscriber) ||
-			    (subscribers[i].id == NULL)) {
-				sub = &subscribers[i];
-			}
-
 			if (subscribers[i].id == event->subscriber) {
+				sub = &subscribers[i];
 				break;
 			}
 		}
 		__ASSERT_NO_MSG(sub);
-
-		if (!sub->id) {
-			sub->id = event->subscriber;
-		}
 
 		__ASSERT_NO_MSG(event->report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
 		if (event->enabled) {
@@ -867,6 +901,33 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
+	if (is_usb_hid_event(eh)) {
+		const struct usb_hid_event *event =
+			cast_usb_hid_event(eh);
+
+		struct subscriber *sub = NULL;
+
+		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+			if ((subscribers[i].id == event->id) ||
+			    (subscribers[i].id == NULL)) {
+				sub = &subscribers[i];
+			}
+
+			if (subscribers[i].id == event->id) {
+				break;
+			}
+		}
+		__ASSERT_NO_MSG(sub);
+
+		if (!sub->id) {
+			sub->id = event->id;
+		}
+
+		sub->dirty_reports_bm = BIT_MASK(REPORT_ID_COUNT);
+
+		return false;
+	}
+
 	if (is_wake_up_event(eh)) {
 		suspended = false;
 
@@ -898,6 +959,7 @@ EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+EVENT_SUBSCRIBE(MODULE, usb_hid_event);
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
