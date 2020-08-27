@@ -38,7 +38,7 @@ Sensors are accessed through the Sensor models, which are documented separately:
 Basic example
 =============
 
-A sensor reporting the device operating temperature could combine the Bluetooth Mesh :cpp:var:`Present Device Operating Temperature <bt_mesh_sensor_present_dev_op_temp>` sensor type with the on-chip ``TEMP_NRF5`` temperature sensor driver:
+A sensor reporting the device operating temperature could combine the Bluetooth Mesh :c:var:`Present Device Operating Temperature <bt_mesh_sensor_present_dev_op_temp>` sensor type with the on-chip ``TEMP_NRF5`` temperature sensor driver:
 
 .. code-block:: c
 
@@ -133,7 +133,7 @@ These sensor types have one primary channel containing the sensor data and two s
 Together, the three channels are able to represent historical sensor data as a histogram, and Sensor Client models may request access to specific measurement spans from a Sensor Server model.
 
 The unit of the measurement span is defined by the sensor type, and will typically be a time interval or a range of operational parameters, like temperature or voltage level.
-For instance, the :cpp:var:`bt_mesh_sensor_rel_dev_energy_use_in_a_period_of_day` sensor type represents the energy used by the device in specific periods of the day.
+For instance, the :c:var:`bt_mesh_sensor_rel_dev_energy_use_in_a_period_of_day` sensor type represents the energy used by the device in specific periods of the day.
 The primary channel of this sensor type measures energy usage in kWh, and the secondary channels denote the timespan in which the specific energy usage was measured.
 A sensor of this type may be queried for specific measurement periods measured in hours, and should provide the registered energy usage only for the requested time span.
 
@@ -144,7 +144,7 @@ Sensor setting types
 
 Some sensor types are made specifically to act as sensor settings.
 These values are encoded the same way as other sensor types, but typically represent a configurable sensor setting or some specification value assigned to the sensor from the manufacturer.
-For instance, the :cpp:var:`bt_mesh_sensor_motion_threshold` sensor type can be used to configure the sensitivity of a sensor reporting motion sensor data (:cpp:var:`bt_mesh_sensor_motion_sensed`).
+For instance, the :c:var:`bt_mesh_sensor_motion_threshold` sensor type can be used to configure the sensitivity of a sensor reporting motion sensor data (:c:var:`bt_mesh_sensor_motion_sensed`).
 
 Typically, settings should only be meta data related to the sensor data type, but the API contains no restrictions for which sensor types can be used for sensor settings.
 
