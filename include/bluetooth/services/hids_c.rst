@@ -12,8 +12,8 @@ The HID Service Client is used in the :ref:`bluetooth_central_hids` sample.
 The client uses the :ref:`gatt_dm_readme` module to acquire all attribute handles that are required to interact with the HID server.
 Some additional data must be read from the discovered descriptors before the HID client is ready.
 This process is started automatically just after the handles are assigned.
-If the process finishes successfully, the :cpp:type:`bt_gatt_hids_c_ready_cb` function is called.
-Otherwise, :cpp:type:`bt_gatt_hids_c_prep_fail_cb` is called.
+If the process finishes successfully, the :c:type:`bt_gatt_hids_c_ready_cb` function is called.
+Otherwise, :c:type:`bt_gatt_hids_c_prep_fail_cb` is called.
 
 
 Configuration
@@ -44,7 +44,7 @@ The following functions are available to retrieve the readiness state of the ser
 
 :c:func:`bt_gatt_hids_c_ready_check`
   Checks if the client object is fully ready to interact with the HID server.
-  The ready flag is set just before the :cpp:type:`bt_gatt_hids_c_ready_cb` function is called.
+  The ready flag is set just before the :c:type:`bt_gatt_hids_c_ready_cb` function is called.
 
 
 Reading the report map
@@ -104,7 +104,7 @@ This function returns the internally cached version of the current protocol mode
 To update this value directly from the device, use :c:func:`bt_gatt_hids_c_pm_update`.
 
 .. note::
-   Every time the protocol mode is changed, the :cpp:type:`bt_gatt_hids_c_pm_update_cb` function is called.
+   Every time the protocol mode is changed, the :c:type:`bt_gatt_hids_c_pm_update_cb` function is called.
 
 
 Suspending and resuming

@@ -80,7 +80,7 @@ After publishing its security key, the sensor unit automatically goes back to re
 Observing output
 ****************
 
-After commissioning an EnOcean device, its activity may be monitored through the :cpp:type:`bt_enocean_handlers` callback functions passed to :c:func:`bt_enocean_init`.
+After commissioning an EnOcean device, its activity may be monitored through the :c:type:`bt_enocean_handlers` callback functions passed to :c:func:`bt_enocean_init`.
 See the :ref:`enocean_sample` for a demonstration of the handler callback functions.
 
 Dependencies

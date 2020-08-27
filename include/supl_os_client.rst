@@ -121,7 +121,7 @@ The implementation is located in the :file:`samples\\nrf9160\\gps\\src\\` files.
 The various callback functions implemented in the SUPL client library and their purposes are listed below.
 
 AGPS handler
-   Callback function to handle nRF assistance data types (:cpp:type:`nrf_gnss_agps_data_type_t`).
+   Callback function to handle nRF assistance data types (:c:type:`nrf_gnss_agps_data_type_t`).
    This callback writes the A-GPS data to the GPS module.
    The `LTE Positioning Protocol (LPP)`_ data contained within the SUPL payload is converted to nRF AGPS data structures defined in :file:`nrf_socket.h` that can be written directly to the GNSS socket.
 
@@ -171,7 +171,7 @@ The various steps in the communication session are described below:
 #. In order to start a SUPL session, the application must first initialize the SUPL client library.
    This is done by calling the :c:func:`supl_init` function of the SUPL client OS integration library.
    The function sets up the API and the buffers required for initializing the SUPL client library and invokes the :c:func:`supl_client_init` function with these parameters.
-#. The application can then begin the SUPL session by calling the :c:func:`supl_session` function with a copy of the :cpp:type:`nrf_gnss_agps_data_frame_t` data that was received through the AGPS request event from the GPS module.
+#. The application can then begin the SUPL session by calling the :c:func:`supl_session` function with a copy of the :c:type:`nrf_gnss_agps_data_frame_t` data that was received through the AGPS request event from the GPS module.
    The SUPL client OS integration library generates the following parameters that are necessary for the session:
 
    * ``supl_session_ctx_t`` structure from the AGPS request event data
@@ -185,8 +185,8 @@ The various steps in the communication session are described below:
    See the documentation on the `SET-Initiated Non-Roaming Successful Case (Proxy mode)`_ for more information on the SUPL session.
    The callback functions used for data transfer are listed below:
 
-    * SUPL Write (:cpp:type:`supl_write_t`) : callback for sending outgoing data to the SUPL server
-    * SUPL Read (:cpp:type:`supl_read_t`) : callback for receiving incoming data from the SUPL server
+    * SUPL Write (:c:type:`supl_write_t`) : callback for sending outgoing data to the SUPL server
+    * SUPL Read (:c:type:`supl_read_t`) : callback for receiving incoming data from the SUPL server
 
 #. The decoded SUPL data is sent to the GPS module using the AGPS Handler (:c:func:`agps_handler_t`) callback function.
 #. After the application returns from the :c:func:`supl_client_session` function, the TCP socket is no longer used by the SUPL client library and can be closed.
