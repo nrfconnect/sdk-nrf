@@ -72,8 +72,9 @@ Zephyr includes the `OpenAMP`_ library, which provides a complete solution for e
 The IPC peripheral is presented to Zephyr as an Interprocessor Mailbox (IPM) device.
 The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver in `nrfx`_.
 
-.. |note| replace:: It is currently only possible to upgrade the firmware on the application core.
-   Also, there is currently no support for upgrading the bootloader (:doc:`mcuboot:index`) on the nRF5430.
+.. |note| replace:: To upgrade firmware on the network core, perform the steps for FOTA upgrade described below, replacing :file:`app_update.bin` (file used when upgrading firmware on the application core) with :file:`net_core_app_update.bin`.
+   In addition, ensure that :option:`CONFIG_PCD` is enabled for the MCUBoot child image.
+   For more details, see :ref:`nc_bootloader`.
 
 
 .. include:: ug_nrf52.rst

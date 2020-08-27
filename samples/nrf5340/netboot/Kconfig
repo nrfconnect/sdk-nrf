@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "nRF5340 Network Core Bootloader Sample Settings"
+
+config NETBOOT_MIN_PARTITION_SIZE
+	bool "Use minimimum partition size"
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
