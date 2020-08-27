@@ -84,9 +84,12 @@ You can enable the following additional configuration options:
     To configure a custom set of channels in the range from 11 to 26, edit the :option:`CONFIG_ZIGBEE_CHANNEL_MASK` option.
     For example, you can set channels 13, 16, and 21.
     You must have at least one channel enabled with this option.
+
 * :option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` - MAC Address Block Large is set to Nordic Semiconductor's MA-L block (f4-ce-36) by default.
   To set a different MA-L, enable this option and edit the :option:`CONFIG_IEEE802154_VENDOR_OUI` to the desired value.
-* :option:`CONFIG_ZIGBEE_SHELL_LOG_ENABLED` - Enables logging of the incoming ZCL frames, and it is enabled by default.
+* :option:`CONFIG_ZIGBEE_SHELL_LOG_ENABLED` - Enables logging of the incoming ZCL frames.
+  This option is enabled by default, and it uses the logging level set in :option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`.
+  See :ref:`zigbee_ug_logging_logger_options` for more information.
 
 ZBOSS stack start options
 =========================
@@ -110,6 +113,8 @@ Custom logging per module
 Logging is handled with the :option:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging_api` API.
 
+.. _zigbee_ug_logging_stack_logs:
+
 Stack logs
 ----------
 
@@ -120,6 +125,8 @@ To customize them, use the following options:
 * :option:`CONFIG_ZBOSS_TRACE_MASK` - Sets the modules from which ZBOSS will log the debug messages with :option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL`; no module is set by default.
 
 The stack logs are provided in a binary (hex dump) format.
+
+.. _zigbee_ug_logging_logger_options:
 
 Zephyr's logger options
 -----------------------
