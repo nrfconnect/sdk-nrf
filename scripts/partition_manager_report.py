@@ -86,7 +86,10 @@ def main():
 
     for i in args.input:
         fn = path.basename(i)
-        domain_name = fn[fn.index("partitions_") + len("partitions_"):fn.index(".yml")]
+        if '_' in fn:
+            domain_name = fn[fn.index("partitions_") + len("partitions_"):fn.index(".yml")]
+        else:
+            domain_name = ''
         with open(i, 'r') as f:
             pm_config_primary = {k: v for k, v in yaml.safe_load(f).items() if v['region'] == 'flash_primary'}
         min_address = min((part['address'] for part in pm_config_primary.values() if 'address' in part))
