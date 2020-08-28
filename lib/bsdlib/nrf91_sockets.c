@@ -1161,6 +1161,15 @@ static const struct socket_op_vtable nrf91_socket_fd_op_vtable = {
 
 static bool nrf91_socket_is_supported(int family, int type, int proto)
 {
+	if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_TLS)) {
+		return true;
+	}
+
+	if ((proto >= IPPROTO_TLS_1_0 && proto <= IPPROTO_TLS_1_2) ||
+	    (proto >= IPPROTO_DTLS_1_0 && proto <= IPPROTO_DTLS_1_2)) {
+		return false;
+	}
+
 	return true;
 }
 
