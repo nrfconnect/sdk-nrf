@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-void tai_to_ts(uint64_t uptime, struct tm *timeptr);
-int ts_to_tai(int64_t *uptime, struct tm *timeptr);
+void tai_to_ts(const struct bt_mesh_time_tai *tai, struct tm *timeptr);
+int ts_to_tai(struct bt_mesh_time_tai *tai, struct tm *timeptr);
 
 #ifdef __cplusplus
 }
