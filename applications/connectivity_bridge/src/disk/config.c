@@ -24,10 +24,90 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_MSC_LOG_LEVEL);
 #define FILE_NAME         "CONFIG.TXT"
 #endif
 
-#define SETTINGS_KEY "bridgecfg"
+#define SETTINGS_FILE_LINE_LEN_MAX 128
 
-#define SETTINGS_KEY_BLE "ble"
-#define SETTINGS_NAME_BLE "BLE_ENABLED"
+#define SETTINGS_KEY "cfg"
+
+#define SETTINGS_DISP_NAME_MAX_LEN sizeof(union cfg_opt_display_name_len)
+#define SETTINGS_VALUE_MAX_LEN sizeof(union cfg_opt_value_len)
+
+/* List of configuration options
+ * All options are treated as strings.
+ * The handler functions parses according to desired type.
+ * Null-terminator is always added to string length.
+ *
+ * To add a new configuration option, add a new list item according to format
+ * described below, and a corresponding callback function.
+ * The callback function will be triggered when a user changes the value
+ * in the configuration .txt file and unmounts the USB drive.
+ *
+ * Format: (_key, _presentation_name, _size, _default, _callback, _enabled)
+ */
+#define CONFIG_LIST \
+	X(ble_enable, BLE_ENABLED, 1, "0", ble_enable_opt_cb, (IS_ENABLED(CONFIG_BRIDGE_BLE_ENABLE) && !IS_ENABLED(CONFIG_BRIDGE_BLE_ALWAYS_ON))) \
+	X(ble_name, BLE_NAME, CONFIG_BT_DEVICE_NAME_MAX, CONFIG_BT_DEVICE_NAME, ble_name_opt_cb, IS_ENABLED(CONFIG_BT_DEVICE_NAME_DYNAMIC))
+
+struct cfg_option {
+	const char *display_name;
+	const char *settings_key;
+	char *settings_value;
+	const size_t settings_value_max_len;
+	bool enabled;
+	bool (*value_change_cb)(char *opt);
+};
+
+/* Define config value strings */
+#define X(_key, _name, _size, _default, _cb, _enabled)\
+		static char _key##_var[_size + 1] = _default;
+	CONFIG_LIST
+#undef X
+
+/* Forward declare callback functions */
+#define X(_key, _name, _size, _default, _cb, _enabled)\
+		static bool _cb(char *);
+	CONFIG_LIST
+#undef X
+
+/* Determine length of display name strings */
+union cfg_opt_display_name_len {
+#define X(_key, _name, _size, _default, _cb, _enabled)\
+		uint8_t _key[sizeof(STRINGIFY(_name)) + 1];
+	CONFIG_LIST
+#undef X
+};
+
+/* Determine length of config value strings */
+union cfg_opt_value_len {
+#define X(_key, _name, _size, _default, _cb, _enabled)\
+		uint8_t _key[_size + 1];
+	CONFIG_LIST
+#undef X
+};
+
+/* Determine length of settings key strings */
+union cfg_opt_key_len {
+#define X(_key, _name, _size, _default, _cb, _enabled)\
+		uint8_t _key[sizeof(STRINGIFY(_key)) + 1];
+	CONFIG_LIST
+#undef X
+};
+
+BUILD_ASSERT(sizeof(union cfg_opt_key_len) <= SETTINGS_MAX_NAME_LEN);
+BUILD_ASSERT(sizeof(union cfg_opt_value_len) <= SETTINGS_MAX_VAL_LEN);
+BUILD_ASSERT((SETTINGS_DISP_NAME_MAX_LEN + SETTINGS_VALUE_MAX_LEN + sizeof("=\r\n")) <= SETTINGS_FILE_LINE_LEN_MAX);
+
+/* Define boolean config value metadata structs */
+static struct cfg_option configs[] = {
+#define X(_key, _name, _size, _default, _cb, _enabled) \
+		{.display_name = STRINGIFY(_name),\
+		.settings_key = STRINGIFY(_key),\
+		.settings_value = _key##_var,\
+		.settings_value_max_len = _size,\
+		.enabled = _enabled,\
+		.value_change_cb = _cb},
+	CONFIG_LIST
+#undef X
+};
 
 static const char file_contents_header[] =
 "==========================================\r\n"
@@ -39,47 +119,115 @@ static const char file_contents_header[] =
 "safely disconnect (unmount) the drive and disconnect the USB cable.\r\n"
 "==========================================\r\n";
 
-static bool ble_enabled;
-
-static void send_ble_ctrl_event(bool enable)
+static bool ble_enable_opt_cb(char *opt)
 {
+	enum ble_ctrl_cmd cmd;
+
+	if (strcmp(opt, "0") == 0) {
+		cmd = BLE_CTRL_DISABLE;
+	} else if (strcmp(opt, "1") == 0) {
+		cmd = BLE_CTRL_ENABLE;
+	} else {
+		LOG_WRN("Unrecognized ble_enable_opt: %s", log_strdup(opt));
+		return false;
+	}
+
 	struct ble_ctrl_event *event = new_ble_ctrl_event();
 
-	event->cmd = enable ? BLE_CTRL_ENABLE : BLE_CTRL_DISABLE;
+	event->cmd = cmd;
 	EVENT_SUBMIT(event);
+
+	return true;
+}
+
+static bool ble_name_opt_cb(char *opt)
+{
+	static char ble_name_buffer[CONFIG_BT_DEVICE_NAME_MAX + 1];
+
+	__ASSERT_NO_MSG(strlen(opt) < sizeof(ble_name_buffer));
+
+	strcpy(ble_name_buffer, opt);
+
+	struct ble_ctrl_event *event = new_ble_ctrl_event();
+
+	event->cmd = BLE_CTRL_NAME_UPDATE;
+	event->param.name_update = ble_name_buffer;
+	EVENT_SUBMIT(event);
+
+	return true;
 }
 
 static void save_settings(void)
 {
 	int err;
 
-	err = settings_save_one(
-			SETTINGS_KEY "/" SETTINGS_KEY_BLE,
-			&ble_enabled, sizeof(ble_enabled));
-	if (err) {
-		LOG_ERR("settings_save_one: %d", err);
+	for (int i = 0; i < ARRAY_SIZE(configs); ++i) {
+		if (!configs[i].enabled) {
+			/* Option not active */
+			continue;
+		}
+
+		char key[SETTINGS_MAX_NAME_LEN + 1];
+
+		err = snprintf(key,
+				sizeof(key),
+				SETTINGS_KEY "/%s",
+				configs[i].settings_key);
+		if (err < 0 || err > sizeof(key)) {
+			LOG_ERR("Option format err: %s",
+				configs[i].settings_key);
+			continue;
+		}
+
+		err = settings_save_one(
+				key,
+				configs[i].settings_value,
+				strlen(configs[i].settings_value));
+		if (err) {
+			LOG_ERR("settings_save_one: %d", err);
+		}
 	}
 }
 
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	if (strcmp(key, SETTINGS_KEY_BLE) == 0) {
-		bool val = 0;
-		ssize_t len = read_cb(cb_arg, &val, sizeof(val));
-
-		if (len == sizeof(val)) {
-			ble_enabled = val;
+	for (int i = 0; i < ARRAY_SIZE(configs); ++i) {
+		if (!configs[i].enabled) {
+			/* Option not active */
+			continue;
 		}
-	}
 
-	return 0;
-}
+		if (strcmp(key, configs[i].settings_key) != 0) {
+			continue;
+		}
 
-static int commit(void)
-{
-	if (ble_enabled) {
-		send_ble_ctrl_event(true);
+		char cfg_val[SETTINGS_VALUE_MAX_LEN];
+		ssize_t len = read_cb(cb_arg, cfg_val, sizeof(cfg_val));
+
+		if (len == 0) {
+			continue;
+		}
+
+		if (len > configs[i].settings_value_max_len) {
+			LOG_WRN("Setting value overflow");
+			len = configs[i].settings_value_max_len;
+		}
+
+		/* null terminator included in string length */
+		cfg_val[len] = '\0';
+
+		if (strcmp(cfg_val, configs[i].settings_value) == 0) {
+			/* No change */
+			continue;
+		}
+
+		bool cfg_valid;
+
+		cfg_valid = configs[i].value_change_cb(cfg_val);
+		if (cfg_valid) {
+			strcpy(configs[i].settings_value, cfg_val);
+		}
 	}
 
 	return 0;
@@ -97,7 +245,6 @@ static void settings_init(void)
 	static struct settings_handler sh = {
 		.name = SETTINGS_KEY,
 		.h_set = settings_set,
-		.h_commit = commit,
 	};
 
 	err = settings_register(&sh);
@@ -110,7 +257,8 @@ static void settings_init(void)
 		return;
 	}
 }
-/**
+
+/*
  * Read a buf_size-sized chunk from file into buf.
  * if a newline (\n or \r\n) is found in buf, it is replaced
  * with null terminator and the function returns true.
@@ -120,35 +268,38 @@ static void settings_init(void)
 static bool read_line(struct fs_file_t *file, char *buf, size_t buf_size)
 {
 	ssize_t bytes_read;
-	ssize_t pos;
+	ssize_t newline_pos;
 
 	bytes_read = fs_read(file, buf, buf_size);
 	if (bytes_read <= 0) {
 		return false;
+	} else if (bytes_read < buf_size) {
+		/* End of file: insert newline in case it is missing */
+		buf[bytes_read] = '\n';
 	}
 
-	pos = 0;
+	newline_pos = 0;
 
 	for (int i = 1; i < bytes_read; ++i) {
 		if (buf[i] == '\n') {
-			pos = i;
+			newline_pos = i;
 			break;
 		}
 	}
 
-	if (pos) {
+	if (newline_pos) {
 		int err;
 
-		err = fs_seek(file, pos - bytes_read + 1, FS_SEEK_CUR);
+		err = fs_seek(file, newline_pos - bytes_read + 1, FS_SEEK_CUR);
 		if (err) {
 			LOG_ERR("fs_seek: %d", err);
 			return false;
 		}
 
-		if (buf[pos - 1] == '\r') {
-			buf[pos - 1] = '\0';
+		if (buf[newline_pos - 1] == '\r') {
+			buf[newline_pos - 1] = '\0';
 		} else {
-			buf[pos] = '\0';
+			buf[newline_pos] = '\0';
 		}
 
 		return true;
@@ -157,9 +308,15 @@ static bool read_line(struct fs_file_t *file, char *buf, size_t buf_size)
 	return false;
 }
 
-static bool read_line_setting_val(char *buf, const char *key, char **val)
+/*
+ * Check if buf contains configuration option 'name',
+ * following the format "name=value".
+ * If name matches, *val is updated to point after the '=' character
+ * and the function returns true.
+ */
+static bool read_line_setting_val(char *buf, const char *name, char **val)
 {
-	if (strncmp(buf, key, strlen(key)) != 0) {
+	if (strncmp(buf, name, strlen(name)) != 0) {
 		return false;
 	}
 
@@ -176,12 +333,14 @@ static bool read_line_setting_val(char *buf, const char *key, char **val)
 static void parse_file(const char *mnt_point)
 {
 	struct fs_file_t file;
-	char fname[128];
-	char linebuf[128];
+	char fname[SETTINGS_FILE_LINE_LEN_MAX];
+	char linebuf[SETTINGS_FILE_LINE_LEN_MAX];
 	int err;
+	bool changes_made;
 
 	err = snprintf(fname, sizeof(fname), "%s/" FILE_NAME, mnt_point);
 	if (err <= 0 || err > sizeof(fname)) {
+		LOG_ERR("filename format error");
 		return;
 	}
 
@@ -191,22 +350,42 @@ static void parse_file(const char *mnt_point)
 		return;
 	}
 
+	changes_made = false;
+
 	while (read_line(&file, linebuf, sizeof(linebuf))) {
-#if CONFIG_BRIDGE_BLE_ENABLE
-		char *ptr;
-		uint32_t ble_enabled_new = ble_enabled;
+		/* For every line in file, check against all config options */
+		for (int i = 0; i < ARRAY_SIZE(configs); ++i) {
+			char *cfg_val;
 
-		if (read_line_setting_val(linebuf, SETTINGS_NAME_BLE, &ptr)) {
-			ble_enabled_new = strtol(ptr, NULL, 10);
+			if (!read_line_setting_val(linebuf, configs[i].display_name, &cfg_val)) {
+				/* Line does not match this config option */
+				continue;
+			}
+
+			if (strcmp(cfg_val, configs[i].settings_value) == 0) {
+				/* No change */
+				break;
+			}
+
+			if (strlen(cfg_val) > configs[i].settings_value_max_len) {
+				/* Values exceeding expected length are truncated */
+				cfg_val[configs[i].settings_value_max_len] = '\0';
+			}
+
+			bool cfg_valid;
+
+			cfg_valid = configs[i].value_change_cb(cfg_val);
+			if (cfg_valid) {
+				strcpy(configs[i].settings_value, cfg_val);
+				changes_made = true;
+			}
+
+			break;
 		}
+	}
 
-		if (ble_enabled_new != ble_enabled) {
-			ble_enabled = ble_enabled_new;
-
-			save_settings();
-			send_ble_ctrl_event(ble_enabled);
-		}
-#endif
+	if (changes_made) {
+		save_settings();
 	}
 
 	err = fs_close(&file);
@@ -231,23 +410,34 @@ static bool event_handler(const struct event_header *eh)
 				strlen(file_contents_header));
 			__ASSERT_NO_MSG(err == 0);
 
-#if CONFIG_BRIDGE_BLE_ENABLE && !CONFIG_BRIDGE_BLE_ALWAYS_ON
-			char str[sizeof(SETTINGS_NAME_BLE) + 16];
-			int len;
+			/* Populate file with all options in list */
 
-			len = snprintf(str, sizeof(str), SETTINGS_NAME_BLE "=%d\r\n", ble_enabled);
-			if (len <= 0 || len > sizeof(str)) {
-				__ASSERT_NO_MSG(false);
-				return false;
+			for (int i = 0; i < ARRAY_SIZE(configs); ++i) {
+				char linebuf[SETTINGS_DISP_NAME_MAX_LEN + SETTINGS_VALUE_MAX_LEN + sizeof("=\r\n")];
+				int len;
+
+				if (!configs[i].enabled) {
+					continue;
+				}
+
+				len = snprintf(
+					linebuf,
+					sizeof(linebuf),
+					"%s=%s\r\n",
+					configs[i].display_name,
+					configs[i].settings_value);
+				if (len <= 0 || len > sizeof(linebuf)) {
+					__ASSERT_NO_MSG(false);
+					return false;
+				}
+
+				err = fs_event_helper_file_write(
+					event->mnt_point,
+					FILE_NAME,
+					linebuf,
+					len);
+				__ASSERT_NO_MSG(err == 0);
 			}
-
-			err = fs_event_helper_file_write(
-				event->mnt_point,
-				FILE_NAME,
-				str,
-				len);
-			__ASSERT_NO_MSG(err == 0);
-#endif /* CONFIG_BRIDGE_BLE_ENABLE */
 		} else if (event->req == FS_REQUEST_PARSE_FILE) {
 			parse_file(event->mnt_point);
 		}

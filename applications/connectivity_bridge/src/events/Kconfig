@@ -26,6 +26,10 @@ config BRIDGE_LOG_BLE_DATA_EVENT
 	bool "BLE data event"
 	default y
 
+config BRIDGE_LOG_BLE_CTRL_EVENT
+	bool "BLE data event"
+	default y
+
 config BRIDGE_LOG_PEER_CONN_EVENT
 	bool "Peer connection event"
 	default y
