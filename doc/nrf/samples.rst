@@ -65,7 +65,6 @@ In addition, the |NCS| provides the following samples that showcase the use of a
    ../../samples/mpsl/*/README
    ../../samples/peripheral/*/README
    ../../samples/sensor/*/README
-   ../../samples/spm/README
    ../../samples/usb/*/README
    ../../samples/nrf_rpc/*/README
 
