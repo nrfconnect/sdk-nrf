@@ -65,7 +65,7 @@ Complete the following steps to run the certification tests:
    .. code-block::
 
          cd ncs/nrf/samples/openthread/cli/
-         west build -b nrf52840dk_nrf52840 -- -DCONF_FILE="prj.conf harness/overlay-cert.conf"
+         west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="harness/overlay-cert.conf"
 
    .. note::
       The overlay file selects the precompiled OpenThread libraries by default.

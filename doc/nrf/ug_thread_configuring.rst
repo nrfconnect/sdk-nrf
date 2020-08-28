@@ -17,33 +17,48 @@ Thread requires the following Zephyr's modules to properly operate in |NCS|:
 * :ref:`zephyr:ieee802154_interface` radio driver - This library is automatically enabled when working with OpenThread on Nordic Semiconductor's Development Kits.
 * :ref:`zephyr:settings_api` subsystem - This is required to allow Thread to store settings in the non-volatile memory.
 
-Mandatory configuration
-***********************
+.. _ug_thread_configuring_basic:
+
+Basic configuration
+*******************
 
 To use the Thread protocol in |NCS|, set the following Kconfig options:
 
+* :option:`CONFIG_NETWORKING` - This option enables the generic link layer and the IP networking support.
 * :option:`CONFIG_NET_L2_OPENTHREAD` - This option enables the OpenThread stack required for the correct operation of the Thread protocol and allows you to use them.
 
-* General setting options related to network configuration:
+At this point, you can either:
 
-  * :option:`CONFIG_NETWORKING`
-  * :option:`CONFIG_NET_SOCKETS` - This option can be omitted if OpenThread is meant to work only in the :ref:`thread_architectures_designs_cp_ncp` architecture.
+* Define :ref:`additional configuration <ug_thread_configuring_additional>`
+* Choose :ref:`thread_ug_feature_sets`
 
-Optional configuration
-**********************
+.. _ug_thread_configuring_additional:
+
+Additional configuration
+************************
 
 Depending on your configuration needs, you can also set the following options:
 
-* :option:`CONFIG_NET_SHELL` - This option enables Zephyr's :ref:`zephyr:shell_api` if you need to access OpenThread CLI.
+* :option:`CONFIG_NET_SOCKETS` - This option enables API similar to BSD Sockets on top of the native Zephyr networking API.
+  This is needed for managing networking protocols.
+* :option:`CONFIG_NET_SHELL` - This option enables Zephyr's :ref:`zephyr:shell_api` if you need to access OpenThread CLI and use commands from `OpenThread CLI Reference`_.
 * :option:`CONFIG_COAP` - This option enables Zephyr's :ref:`zephyr:coap_sock_interface` support.
 * :option:`CONFIG_OPENTHREAD_COAP` - This option enables OpenThread's native CoAP API.
 
-You can also change the default values for the following options:
+You can also change the default values in menuconfig for the options listed in the following files:
+
+* :file:`subsys/net/l2/openthread/Kconfig.features` - OpenThread stack features.
+* :file:`subsys/net/l2/openthread/Kconfig.thread` - Thread network configuration options.
+
+This includes the following options:
 
 * :option:`CONFIG_OPENTHREAD_CHANNEL` - By default set to ``11``.
   You can set any value ranging from ``11`` to ``26``.
 * :option:`CONFIG_OPENTHREAD_PANID` - By default set to ``43981``.
   You can set any value ranging from ``0`` to ``65535``.
+
+Default configuration reference
+    The default configuration for all :ref:`openthread_samples` is defined in :file:`nrf/samples/openthread/openthread.conf`.
 
 For other optional configuration options, see the following sections:
 
@@ -70,7 +85,7 @@ Thread commissioning
 Thread commissioning is the process of adding new Thread devices to the network.
 It involves two devices: a Commissioner that is already in the Thread network and a Joiner that wants to become a member of the network.
 
-Configuring this process is optional, because the Thread :ref:`openthread_samples` in |NCS| use hardcoded network information.
+Configuring this process is optional, because the :ref:`openthread_samples` in |NCS| use hardcoded network information.
 
 If you want to manually enable the Thread network Commissioner role on a device, set the following Kconfig option to the provided value:
 
@@ -136,19 +151,138 @@ You can disable writing to log with the :option:`CONFIG_OPENTHREAD_L2_LOG_LEVEL_
 Switching device type
 =====================
 
-An OpenThread device can be configured to run as Full Thread Device (FTD) or Minimal Thread Device (MTD).
-Both device types serve different roles in the Thread network.
-An FTD can be both Router and End Device, while an MTD can only be an End Device.
+An OpenThread device can be configured to run as one of the following device types, which serve different roles in the Thread network:
 
-You can configure the device type using the following Kconfig options:
+Full Thread Device (FTD)
+    In this configuration, the device can be both Router and End Device.
+    To enable this device type thread, set the following Kconfig option:
 
-* :option:`CONFIG_OPENTHREAD_FTD` - Enables the Full Thread Device (FTD) thread. This is the default configuration if none is selected.
-* :option:`CONFIG_OPENTHREAD_MTD` - Enables the Minimal Thread Device (MTD) thread.
+    * :option:`CONFIG_OPENTHREAD_FTD`
 
-By default, when a Thread device is configured as MTD, it operates as Minimal End Device (MED).
-You can choose to make it operate as Sleepy End Device (SED) by enabling the :option:`CONFIG_OPENTHREAD_MTD_SED` option.
+    This is the default configuration if none is selected.
+
+Minimal Thread Device (MTD)
+    In this configuration, the device can only be an End Device.
+    To enable this device type thread, set the following Kconfig option:
+
+    * :option:`CONFIG_OPENTHREAD_MTD`
+
+    By default, when a Thread device is configured as MTD, it operates as Minimal End Device (MED).
+    You can choose to make it operate as Sleepy End Device (SED) by enabling the :option:`CONFIG_OPENTHREAD_MTD_SED` option.
 
 For more information, see `Device Types on OpenThread portal`_.
+
+.. _thread_ug_feature_sets:
+
+OpenThread configuration sets
+*****************************
+
+|NCS| provides predefined sets of features and optional functionalities from the OpenThread stack.
+You can use these sets for configuration purposes or for building libraries with complete Thread specification support.
+
+* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` - Enable the complete set of OpenThread features.
+* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD` - Enable optimized OpenThread features for FTD.
+* :option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` - Enable optimized OpenThread features for MTD.
+
+Selecting these sets is not related to :ref:`thread_ug_device_type`.
+
+The following table lists the supported features for each of these sets.
+
+.. note::
+    No tick means missing support for the given feature in the related configuration, while the tick is equal to ``=1`` value.
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+
+    * - OpenThread feature
+      - Master
+      - Optimized_FTD
+      - Optimized_MTD
+    * - BORDER_AGENT
+      - ✔
+      -
+      -
+    * - BORDER_ROUTER
+      - ✔
+      -
+      -
+    * - CHILD_SUPERVISION
+      - ✔
+      - ✔
+      - ✔
+    * - COAP
+      - ✔
+      - ✔
+      - ✔
+    * - COAPS
+      - ✔
+      - ✔
+      - ✔
+    * - COMMISSIONER
+      - ✔
+      -
+      -
+    * - DIAGNOSTIC
+      - ✔
+      -
+      -
+    * - DNS_CLIENT
+      - ✔
+      - ✔
+      - ✔
+    * - DHCP6_SERVER
+      - ✔
+      -
+      -
+    * - DHCP6_CLIENT
+      - ✔
+      - ✔
+      - ✔
+    * - ECDSA
+      - ✔
+      - ✔
+      - ✔
+    * - IP6_FRAGM
+      - ✔
+      - ✔
+      - ✔
+    * - JAM_DETECTION
+      - ✔
+      - ✔
+      - ✔
+    * - JOINER
+      - ✔
+      - ✔
+      - ✔
+    * - LINK_RAW
+      - ✔
+      -
+      -
+    * - MAC_FILTER
+      - ✔
+      - ✔
+      - ✔
+    * - MTD_NETDIAG
+      - ✔
+      -
+      -
+    * - SERVICE
+      - ✔
+      - ✔
+      -
+    * - SLAAC
+      - ✔
+      - ✔
+      - ✔
+    * - SNTP_CLIENT
+      - ✔
+      - ✔
+      - ✔
+    * - UDP_FORWARD
+      - ✔
+      - ✔
+      -
 
 UART recommendations for NCP
 ****************************

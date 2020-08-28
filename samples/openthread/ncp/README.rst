@@ -20,11 +20,7 @@ The sample demonstrates using an NCP target on the MCU to communicate with Users
 According to the NCP architecture, the MCU part needs to cooperate with user higher layer process to establish the complete full stack application.
 The sample shows how to set connection between NCP and wpantund.
 
-This sample has Commissioner, Joiner, and Border Router roles enabled by default.
-Additionally, it comes with the following functionalities enabled:
-
-* :option:`CONFIG_OPENTHREAD_BORDER_AGENT` - Enables Border Agent support.
-* :option:`CONFIG_OPENTHREAD_DHCP6_SERVER` - Enables DHCPv6 server capability.
+This sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
 .. _ot_ncp_sample_features:
 
