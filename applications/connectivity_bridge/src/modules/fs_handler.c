@@ -30,6 +30,7 @@ static struct fs_mount_t fatfs_mnt = {
 
 static bool fs_parse_pending;
 
+/* Initialize filesystem and leave it mounted */
 static int fs_init(void)
 {
 	int err;
@@ -104,6 +105,7 @@ static bool event_handler(const struct event_header *eh)
 			}
 
 			fs_parse_pending = false;
+
 			/* Use READY state while actively working with filesystem */
 			module_set_state(MODULE_STATE_READY);
 
@@ -115,7 +117,16 @@ static bool event_handler(const struct event_header *eh)
 
 			EVENT_SUBMIT(event);
 		} else if (check_state(event, MODULE_ID(usb_cdc), MODULE_STATE_STANDBY)) {
+			int err;
+
 			/* Event subscribers should look for file changes now */
+
+			err = fs_mount(&fatfs_mnt);
+			if (err) {
+				LOG_ERR("fs_mount: %d", err);
+				return false;
+			}
+
 			struct fs_event *event = new_fs_event();
 
 			event->req = FS_REQUEST_PARSE_FILE;
@@ -134,10 +145,31 @@ static bool event_handler(const struct event_header *eh)
 			cast_fs_event(eh);
 
 		if (event->req == FS_REQUEST_CREATE_FILE) {
-			/* All initial files have been created at this point. There will */
-			/* be no more file activity unless a USB disconnect happens */
+			int err;
+
+			/* All initial files have been created at this point.
+			 * There will be no more file activity,
+			 * unless a USB disconnect happens.
+			 */
+
+			err = fs_unmount(&fatfs_mnt);
+			if (err) {
+				LOG_ERR("fs_unmount: %d", err);
+			}
+
 			module_set_state(MODULE_STATE_STANDBY);
 		} else if (event->req == FS_REQUEST_PARSE_FILE) {
+			int err;
+
+			/* All files should now have finished parsing.
+			 * Filesystem can be unmounted again.
+			 */
+
+			err = fs_unmount(&fatfs_mnt);
+			if (err) {
+				LOG_ERR("fs_unmount: %d", err);
+			}
+
 			fs_parse_pending = false;
 		}
 
