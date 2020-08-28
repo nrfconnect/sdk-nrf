@@ -15,13 +15,12 @@
 
 #define DAYS_YEAR 365ULL
 #define DAYS_LEAP_YEAR 366ULL
-#define MS_PER_SEC 1000ULL
-#define MSEC_PER_MIN (60ULL * MS_PER_SEC)
-#define MSEC_PER_HOUR (60ULL * MSEC_PER_MIN)
-#define MSEC_PER_DAY (24ULL * MSEC_PER_HOUR)
+#define SEC_PER_MIN (60ULL)
+#define SEC_PER_HOUR (60ULL * SEC_PER_MIN)
+#define SEC_PER_DAY (24ULL * SEC_PER_HOUR)
 
-#define MSEC_PER_YEAR (DAYS_YEAR * MSEC_PER_DAY)
-#define MSEC_PER_LEAP_YEAR (DAYS_LEAP_YEAR * MSEC_PER_DAY)
+#define SEC_PER_YEAR (DAYS_YEAR * SEC_PER_DAY)
+#define SEC_PER_LEAP_YEAR (DAYS_LEAP_YEAR * SEC_PER_DAY)
 #define FEB_DAYS 28
 #define FEB_LEAP_DAYS 29
 #define WEEKDAY_CNT 7
@@ -37,9 +36,8 @@ static inline bool is_leap_year(uint32_t year)
 	       (((year % 100) != 0) || ((year % 400) == 0));
 }
 
-int ts_to_tai(int64_t *uptime, struct tm *timeptr)
+int ts_to_tai(struct bt_mesh_time_tai *tai, struct tm *timeptr)
 {
-	*uptime = 0;
 	uint32_t current_year = timeptr->tm_year + TM_START_YEAR;
 	uint32_t days = 0;
 
@@ -64,22 +62,23 @@ int ts_to_tai(int64_t *uptime, struct tm *timeptr)
 
 	days += timeptr->tm_mday - 1;
 
-	*uptime += (days * MSEC_PER_DAY);
-	*uptime += ((uint64_t)timeptr->tm_hour * MSEC_PER_HOUR);
-	*uptime += ((uint64_t)timeptr->tm_min * MSEC_PER_MIN);
-	*uptime += ((uint64_t)timeptr->tm_sec * MS_PER_SEC);
+	tai->sec = (days * SEC_PER_DAY);
+	tai->sec += ((uint64_t)timeptr->tm_hour * SEC_PER_HOUR);
+	tai->sec += ((uint64_t)timeptr->tm_min * SEC_PER_MIN);
+	tai->sec += (uint64_t)timeptr->tm_sec;
+	tai->subsec = 0;
 	return 0;
 }
 
-void tai_to_ts(int64_t uptime, struct tm *timeptr)
+void tai_to_ts(const struct bt_mesh_time_tai *tai, struct tm *timeptr)
 {
-	uint64_t day_cnt = uptime / MSEC_PER_DAY;
+	uint64_t day_cnt = tai->sec / SEC_PER_DAY;
 	bool is_leap;
 	uint32_t year;
 
-	timeptr->tm_hour = (uptime % MSEC_PER_DAY) / MSEC_PER_HOUR;
-	timeptr->tm_min = (uptime % MSEC_PER_HOUR) / MSEC_PER_MIN;
-	timeptr->tm_sec = (uptime % MSEC_PER_MIN) / MSEC_PER_SEC;
+	timeptr->tm_hour = (tai->sec % SEC_PER_DAY) / SEC_PER_HOUR;
+	timeptr->tm_min = (tai->sec % SEC_PER_HOUR) / SEC_PER_MIN;
+	timeptr->tm_sec = (tai->sec % SEC_PER_MIN);
 	timeptr->tm_wday = (TAI_START_DAY + day_cnt) % WEEKDAY_CNT;
 	timeptr->tm_isdst = -1;
 

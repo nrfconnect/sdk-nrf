@@ -34,10 +34,16 @@ enum bt_mesh_time_role {
 	BT_MESH_TIME_CLIENT,
 };
 
+/** TAI time. */
+struct bt_mesh_time_tai {
+	uint64_t sec:40, /**< Seconds */
+		 subsec:8; /**< 1/256th seconds */
+};
+
 /** Parameters for the Time Status message. */
 struct bt_mesh_time_status {
-	/** TAI in milliseconds. */
-	uint64_t tai;
+	/** TAI time. */
+	struct bt_mesh_time_tai tai;
 	/** Accumulated uncertainty of the Mesh Timestamp in milliseconds. */
 	uint64_t uncertainty;
 	/** Current TAI-UTC Delta (leap seconds). */

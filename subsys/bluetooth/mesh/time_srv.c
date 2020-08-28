@@ -10,13 +10,8 @@
 #include "model_utils.h"
 #include "time_util.h"
 
-#define TIME_UNKNOWN 0
-#define ZONE_OFFSET_ZERO 64U
 #define SEC_PER_MIN 60U
-#define MSEC_PER_MIN ((SEC_PER_MIN) * (MSEC_PER_SEC))
-#define TIME_ZONE_OFFSET_UNIT_STEP (15U * MSEC_PER_MIN)
-#define MS_PER_15_MIN (15 * 60 * 1000)
-#define MS_PER_SEC 1000
+#define SUBSEC_STEPS 256U
 
 struct bt_mesh_time_srv_settings_data {
 	uint8_t role;
@@ -26,14 +21,37 @@ struct bt_mesh_time_srv_settings_data {
 	uint64_t tai_of_delta_change;
 };
 
-static inline int64_t utc_change_to_ms(int16_t raw_utc)
+static inline int64_t zone_offset_to_sec(int16_t raw_zone)
 {
-	return raw_utc * MS_PER_SEC;
+	return raw_zone * 15 * SEC_PER_MIN;
 }
 
-static inline int64_t zone_offset_to_ms(int16_t raw_zone)
+static inline uint64_t tai_to_ms(const struct bt_mesh_time_tai *tai)
 {
-	return raw_zone * MS_PER_15_MIN;
+	return MSEC_PER_SEC * tai->sec +
+	       (MSEC_PER_SEC * tai->subsec) / SUBSEC_STEPS;
+}
+
+static inline bool tai_is_unknown(const struct bt_mesh_time_tai *tai)
+{
+	return !tai->sec && !tai->subsec;
+}
+
+static inline struct bt_mesh_time_tai
+tai_at(const struct bt_mesh_time_srv *srv, int64_t uptime)
+{
+	const struct bt_mesh_time_tai *sync = &srv->data.sync.status.tai;
+	int64_t steps = (SUBSEC_STEPS * (uptime - srv->data.sync.uptime)) /
+			MSEC_PER_SEC;
+
+	if (tai_is_unknown(sync)) {
+		return *sync;
+	}
+
+	return (struct bt_mesh_time_tai) {
+		.sec = sync->sec + (steps / SUBSEC_STEPS),
+		.subsec = sync->subsec + steps,
+	};
 }
 
 static int store_state(struct bt_mesh_time_srv *srv)
@@ -53,69 +71,39 @@ static int store_state(struct bt_mesh_time_srv *srv)
 	return bt_mesh_model_data_store(srv->model, false, NULL, &data, sizeof(data));
 }
 
-static uint64_t get_tai_ms(struct bt_mesh_time_srv_data *data, int64_t uptime)
+static uint64_t get_uncertainty_ms(const struct bt_mesh_time_srv *srv,
+				   int64_t uptime)
 {
-	if (data->sync.status.tai == TIME_UNKNOWN) {
-		return 0;
-	}
+	uint64_t drift = ((uptime - srv->data.sync.uptime) *
+			  CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY) /
+			 USEC_PER_SEC;
 
-	return data->sync.status.tai + (uptime - data->sync.uptime);
+	return srv->data.sync.status.uncertainty + drift;
 }
 
-static uint64_t get_uncertainty_ms(struct bt_mesh_time_srv_data *data,
-				int64_t uptime)
+static int16_t get_zone_offset(const struct bt_mesh_time_srv *srv,
+			       int64_t uptime)
 {
-	return data->sync.status.uncertainty +
-	       (((uptime - data->sync.uptime) *
-		 CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY) /
-		USEC_PER_SEC);
+	struct bt_mesh_time_tai tai = tai_at(srv, uptime);
+
+	if (srv->data.time_zone_change.timestamp &&
+	    tai.sec >= srv->data.time_zone_change.timestamp) {
+		return srv->data.time_zone_change.new_offset;
+	}
+
+	return srv->data.sync.status.time_zone_offset;
 }
 
-static int16_t get_zone_offset(struct bt_mesh_time_srv_data *data, int64_t uptime)
+static int16_t get_utc_delta(const struct bt_mesh_time_srv *srv, int64_t uptime)
 {
-	uint64_t curr_tai = get_tai_ms(data, uptime);
+	struct bt_mesh_time_tai tai = tai_at(srv, uptime);
 
-	if ((curr_tai >= (data->time_zone_change.timestamp * MSEC_PER_SEC)) &&
-	    (data->time_zone_change.timestamp != TIME_UNKNOWN)) {
-		return data->time_zone_change.new_offset;
-	} else {
-		return data->sync.status.time_zone_offset;
-	}
-}
-
-static int16_t get_utc_delta(struct bt_mesh_time_srv_data *data, int64_t uptime)
-{
-	uint64_t curr_tai = get_tai_ms(data, uptime);
-
-	if ((curr_tai >= (data->tai_utc_change.timestamp * MSEC_PER_SEC)) &&
-	    (data->tai_utc_change.timestamp != TIME_UNKNOWN)) {
-		return data->tai_utc_change.delta_new;
-	} else {
-		return data->sync.status.tai_utc_delta;
-	}
-}
-
-static void check_zone_utc_overflow(struct bt_mesh_time_srv *srv)
-{
-	bool store = false;
-
-	if ((srv->data.time_zone_change.timestamp * MSEC_PER_SEC) <=
-	    srv->data.sync.status.tai) {
-		srv->data.time_zone_change.new_offset =
-			srv->data.sync.status.time_zone_offset;
-		store = true;
+	if (srv->data.tai_utc_change.timestamp &&
+	    tai.sec >= srv->data.tai_utc_change.timestamp) {
+		return srv->data.tai_utc_change.delta_new;
 	}
 
-	if ((srv->data.tai_utc_change.timestamp * MSEC_PER_SEC) <=
-	    srv->data.sync.status.tai) {
-		srv->data.tai_utc_change.delta_new =
-			srv->data.sync.status.tai_utc_delta;
-		store = true;
-	}
-
-	if (store) {
-		store_state(srv);
-	}
+	return srv->data.sync.status.tai_utc_delta;
 }
 
 static int send_zone_status(struct bt_mesh_model *model,
@@ -123,11 +111,8 @@ static int send_zone_status(struct bt_mesh_model *model,
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 	struct bt_mesh_time_zone_status resp = {
-		.current_offset = get_zone_offset(&srv->data, k_uptime_get()),
-		.time_zone_change.new_offset =
-			srv->data.time_zone_change.new_offset,
-		.time_zone_change.timestamp =
-			srv->data.time_zone_change.timestamp,
+		.current_offset = get_zone_offset(srv, k_uptime_get()),
+		.time_zone_change = srv->data.time_zone_change,
 	};
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_TIME_OP_TIME_ZONE_STATUS,
 				 BT_MESH_TIME_MSG_LEN_TIME_ZONE_STATUS);
@@ -147,9 +132,8 @@ static int send_tai_utc_delta_status(struct bt_mesh_model *model,
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
 	struct bt_mesh_time_tai_utc_delta_status resp = {
-		.delta_current = get_utc_delta(&srv->data, k_uptime_get()),
-		.tai_utc_change.delta_new = srv->data.tai_utc_change.delta_new,
-		.tai_utc_change.timestamp = srv->data.tai_utc_change.timestamp,
+		.delta_current = get_utc_delta(srv, k_uptime_get()),
+		.tai_utc_change = srv->data.tai_utc_change,
 	};
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_TIME_OP_TAI_UTC_DELTA_STATUS,
 				 BT_MESH_TIME_MSG_LEN_TAI_UTC_DELTA_STATUS);
@@ -179,23 +163,29 @@ static int send_role_status(struct bt_mesh_model *model,
 }
 
 static int send_time_status(struct bt_mesh_model *model,
-			    struct bt_mesh_msg_ctx *rx_ctx, int64_t uptime)
+			    struct bt_mesh_msg_ctx *ctx, int64_t uptime)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
-	struct bt_mesh_time_status status = {
-		.tai = get_tai_ms(&srv->data, uptime),
-		.uncertainty = get_uncertainty_ms(&srv->data, uptime),
-		.is_authority = srv->data.sync.status.is_authority,
-		.time_zone_offset = get_zone_offset(&srv->data, uptime),
-		.tai_utc_delta = get_utc_delta(&srv->data, uptime),
-	};
+	struct bt_mesh_time_status status;
+	int err;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_TIME_OP_TIME_STATUS,
 				 BT_MESH_TIME_MSG_LEN_TIME_STATUS);
 	bt_mesh_model_msg_init(&msg, BT_MESH_TIME_OP_TIME_STATUS);
-	bt_mesh_time_encode_time_params(&msg, &status);
 
-	return bt_mesh_model_send(model, rx_ctx, &msg, NULL, NULL);
+	err = bt_mesh_time_srv_status(srv, uptime, &status);
+	if (err) {
+		/* Mesh Model Specification 5.2.1.4: If the TAI Seconds field is
+		 * 0, all other fields shall be omitted
+		 */
+		bt_mesh_time_buf_put_tai_sec(&msg, 0);
+	} else {
+		/* Account for delay in TX processing: */
+		status.uncertainty += CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY;
+		bt_mesh_time_encode_time_params(&msg, &status);
+	}
+
+	return model_send(model, ctx, &msg);
 }
 
 static void handle_time_status(struct bt_mesh_model *model,
@@ -217,7 +207,6 @@ static void handle_time_status(struct bt_mesh_model *model,
 	srv->data.sync.status.uncertainty = status.uncertainty;
 	srv->data.sync.status.time_zone_offset = status.time_zone_offset;
 	srv->data.sync.status.tai_utc_delta = status.tai_utc_delta;
-	check_zone_utc_overflow(srv);
 	if (srv->time_update_cb != NULL) {
 		srv->time_update_cb(srv, ctx, BT_MESH_TIME_SRV_STATUS_UPDATE);
 	}
@@ -239,16 +228,10 @@ static void handle_time_set(struct bt_mesh_model *model,
 			    struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
-	struct bt_mesh_time_status set_params;
 
-	bt_mesh_time_decode_time_params(buf, &set_params);
+	bt_mesh_time_decode_time_params(buf, &srv->data.sync.status);
 	srv->data.sync.uptime = k_uptime_get();
-	srv->data.sync.status.tai = set_params.tai;
-	srv->data.sync.status.uncertainty = set_params.uncertainty;
-	srv->data.sync.status.is_authority = set_params.is_authority;
-	srv->data.sync.status.time_zone_offset = set_params.time_zone_offset;
-	srv->data.sync.status.tai_utc_delta = set_params.tai_utc_delta;
-	check_zone_utc_overflow(srv);
+
 	if (srv->time_update_cb != NULL) {
 		srv->time_update_cb(srv, ctx, BT_MESH_TIME_SRV_SET_UPDATE);
 	}
@@ -317,8 +300,16 @@ static void handle_role_set(struct bt_mesh_model *model,
 			    struct net_buf_simple *buf)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
+	enum bt_mesh_time_role role;
 
-	srv->data.role = net_buf_simple_pull_u8(buf);
+	role = net_buf_simple_pull_u8(buf);
+	if (role != BT_MESH_TIME_NONE && role != BT_MESH_TIME_AUTHORITY &&
+	    role != BT_MESH_TIME_RELAY && role != BT_MESH_TIME_CLIENT) {
+		return;
+	}
+
+	srv->data.role = role;
+
 	store_state(srv);
 	send_role_status(model, ctx);
 }
@@ -413,114 +404,83 @@ int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
 int bt_mesh_time_srv_time_status_send(struct bt_mesh_time_srv *srv,
 				      struct bt_mesh_msg_ctx *ctx)
 {
-	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_TIME_OP_TIME_STATUS,
-				 BT_MESH_TIME_MSG_LEN_TIME_STATUS);
-	bt_mesh_model_msg_init(&msg, BT_MESH_TIME_OP_TIME_STATUS);
-	struct bt_mesh_time_status status = {
-		.tai = get_tai_ms(&srv->data, k_uptime_get()),
-		.uncertainty = get_uncertainty_ms(&srv->data, k_uptime_get()) +
-			       CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY,
-		.is_authority = srv->data.sync.status.is_authority,
-		.time_zone_offset = get_zone_offset(&srv->data, k_uptime_get()),
-		.tai_utc_delta = get_utc_delta(&srv->data, k_uptime_get()),
-	};
-
-	bt_mesh_time_encode_time_params(&msg, &status);
 	srv->model->pub->ttl = 0;
-
-	return model_send(srv->model, ctx, &msg);
+	return send_time_status(srv->model, ctx, k_uptime_get());
 }
 
 int bt_mesh_time_srv_status(struct bt_mesh_time_srv *srv, uint64_t uptime,
 			    struct bt_mesh_time_status *status)
 {
 	if ((srv->data.sync.uptime > uptime) ||
-	    srv->data.sync.status.tai == TIME_UNKNOWN) {
+	    tai_is_unknown(&srv->data.sync.status.tai)) {
 		return -EAGAIN;
 	}
 
-	status->tai = get_tai_ms(&srv->data, uptime);
-	status->uncertainty = get_uncertainty_ms(&srv->data, uptime);
-	status->tai_utc_delta =
-		status->tai < (srv->data.tai_utc_change.timestamp *
-			       MSEC_PER_SEC) ?
-			srv->data.sync.status.tai_utc_delta :
-			srv->data.tai_utc_change.delta_new;
-	status->time_zone_offset =
-		status->tai < (srv->data.time_zone_change.timestamp *
-			       MSEC_PER_SEC) ?
-			srv->data.sync.status.time_zone_offset :
-			srv->data.time_zone_change.new_offset;
+	status->tai = tai_at(srv, uptime),
+	status->uncertainty = get_uncertainty_ms(srv, uptime);
+	status->tai_utc_delta = get_utc_delta(srv, uptime);
+	status->time_zone_offset = get_zone_offset(srv, uptime);
 	status->is_authority = srv->data.sync.status.is_authority;
 	return 0;
 }
 
 int64_t bt_mesh_time_srv_mktime(struct bt_mesh_time_srv *srv, struct tm *timeptr)
 {
+	int64_t curr_utc_delta = srv->data.sync.status.tai_utc_delta;
+	int64_t curr_time_zone =
+		zone_offset_to_sec(srv->data.sync.status.time_zone_offset);
+	struct bt_mesh_time_tai tai;
 	int err;
-	int64_t mod_uptime;
 
-	err = ts_to_tai(&mod_uptime, timeptr);
+	err = ts_to_tai(&tai, timeptr);
 	if (err) {
 		return err;
 	}
 
-	mod_uptime -= zone_offset_to_ms(srv->data.sync.status.time_zone_offset);
-	mod_uptime += utc_change_to_ms(srv->data.sync.status.tai_utc_delta);
+	tai.sec -= curr_time_zone;
+	tai.sec += curr_utc_delta;
 
-	int64_t curr_time_zone =
-		zone_offset_to_ms(srv->data.sync.status.time_zone_offset);
 	int64_t new_time_zone =
-		zone_offset_to_ms(srv->data.time_zone_change.new_offset);
+		zone_offset_to_sec(srv->data.time_zone_change.new_offset);
 
 	if (srv->data.time_zone_change.timestamp &&
-	    (mod_uptime >=
-	     (srv->data.time_zone_change.timestamp * MSEC_PER_SEC +
-	      new_time_zone))) {
-		mod_uptime -= new_time_zone;
+	    tai.sec >= srv->data.time_zone_change.timestamp + new_time_zone) {
+		tai.sec -= new_time_zone;
 	} else {
-		mod_uptime -= curr_time_zone;
+		tai.sec -= curr_time_zone;
 	}
 
-	int64_t curr_utc_delta =
-		utc_change_to_ms(srv->data.sync.status.tai_utc_delta);
-	int64_t new_utc_delta =
-		utc_change_to_ms(srv->data.tai_utc_change.delta_new);
+	int64_t new_utc_delta = srv->data.tai_utc_change.delta_new;
 
 	if (srv->data.tai_utc_change.timestamp &&
-	    (mod_uptime >= (srv->data.tai_utc_change.timestamp * MSEC_PER_SEC -
-			    new_utc_delta))) {
-		mod_uptime += new_utc_delta;
+	    tai.sec >= srv->data.tai_utc_change.timestamp - new_utc_delta) {
+		tai.sec += new_utc_delta;
 	} else {
-		mod_uptime += curr_utc_delta;
+		tai.sec += curr_utc_delta;
 	}
 
-	if ((mod_uptime < 0) || (mod_uptime < srv->data.sync.status.tai)) {
+	if ((tai.sec < 0) || (tai.sec < srv->data.sync.status.tai.sec)) {
 		return -EINVAL;
 	}
 
-	return mod_uptime - srv->data.sync.status.tai + srv->data.sync.uptime;
+	return tai_to_ms(&tai) - tai_to_ms(&srv->data.sync.status.tai) +
+	       srv->data.sync.uptime;
 }
 
 struct tm *bt_mesh_time_srv_localtime_r(struct bt_mesh_time_srv *srv,
 					int64_t uptime, struct tm *timeptr)
 {
-	if (srv->data.sync.uptime > uptime) {
+	if (tai_is_unknown(&srv->data.sync.status.tai) ||
+	    srv->data.sync.uptime > uptime) {
 		return NULL;
 	}
 
-	int64_t local_time_ms = get_tai_ms(&srv->data, uptime);
-	int64_t current_zone_offset =
-		zone_offset_to_ms(get_zone_offset(&srv->data, uptime));
-	int64_t current_utc_offset =
-		utc_change_to_ms(get_utc_delta(&srv->data, uptime));
-	int64_t mod_uptime =
-		local_time_ms + current_zone_offset - current_utc_offset;
-	if (mod_uptime < 0) {
-		return NULL;
-	}
+	struct bt_mesh_time_tai tai = tai_at(srv, uptime);
 
-	tai_to_ts(mod_uptime, timeptr);
+	tai.sec += zone_offset_to_sec(get_zone_offset(srv, uptime));
+	tai.sec += get_utc_delta(srv, uptime);
+
+	tai_to_ts(&tai, timeptr);
 	return timeptr;
 }
 
@@ -539,23 +499,21 @@ uint64_t bt_mesh_time_srv_uncertainty_get(struct bt_mesh_time_srv *srv,
 		return -EAGAIN;
 	}
 
-	return get_uncertainty_ms(&srv->data, uptime);
+	return get_uncertainty_ms(srv, uptime);
 }
 
 void bt_mesh_time_srv_time_set(struct bt_mesh_time_srv *srv, int64_t uptime,
 			       const struct bt_mesh_time_status *status)
 {
 	srv->data.sync.uptime = uptime;
-	memcpy(&srv->data.sync.status, status,
-	       sizeof(struct bt_mesh_time_status));
+	srv->data.sync.status = *status;
 }
 
 void bt_mesh_time_srv_time_zone_change_set(
 	struct bt_mesh_time_srv *srv,
 	const struct bt_mesh_time_zone_change *data)
 {
-	memcpy(&srv->data.time_zone_change, data,
-	       sizeof(struct bt_mesh_time_zone_change));
+	srv->data.time_zone_change = *data;
 	store_state(srv);
 }
 
@@ -563,8 +521,7 @@ void bt_mesh_time_srv_tai_utc_change_set(
 	struct bt_mesh_time_srv *srv,
 	const struct bt_mesh_time_tai_utc_change *data)
 {
-	memcpy(&srv->data.tai_utc_change, data,
-	       sizeof(struct bt_mesh_time_tai_utc_change));
+	srv->data.tai_utc_change = *data;
 	store_state(srv);
 }
 
