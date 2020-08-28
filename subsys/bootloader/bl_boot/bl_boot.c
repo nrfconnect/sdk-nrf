@@ -80,9 +80,8 @@ void bl_boot(const struct fw_info *fw_info)
 
 	uninit_used_peripherals();
 
+	/* Disable SysTick and clear exception pending bit */
 	SysTick->CTRL = 0;
-
-	/* Disable fault handlers used by the bootloader */
 	SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk;
 
 #ifndef CONFIG_CPU_CORTEX_M0
@@ -95,8 +94,6 @@ void bl_boot(const struct fw_info *fw_info)
 		__set_CONTROL(__get_CONTROL() & ~CONTROL_SPSEL_Msk);
 	}
 
-	__DSB(); /* Force Memory Write before continuing */
-	__ISB(); /* Flush and refill pipeline with updated permissions */
 
 	VTOR = fw_info->address;
 	uint32_t *vector_table = (uint32_t *)fw_info->address;
@@ -104,6 +101,8 @@ void bl_boot(const struct fw_info *fw_info)
 	if (!fw_info_ext_api_provide(fw_info, true)) {
 		return;
 	}
+
+	__DSB(); /* Force Memory Write before continuing */
 
 #if defined(CONFIG_BUILTIN_STACK_GUARD) && \
     defined(CONFIG_CPU_CORTEX_M_HAS_SPLIM)
@@ -117,6 +116,8 @@ void bl_boot(const struct fw_info *fw_info)
 	/* Set MSP to the new address and clear any information from PSP */
 	__set_MSP(vector_table[0]);
 	__set_PSP(0);
+
+	__ISB();
 
 	/* Call reset handler. */
 	((void (*)(void))vector_table[1])();
