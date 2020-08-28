@@ -396,8 +396,25 @@ const struct bt_mesh_model_cb _bt_mesh_time_srv_cb = {
 int _bt_mesh_time_srv_update_handler(struct bt_mesh_model *model)
 {
 	struct bt_mesh_time_srv *srv = model->user_data;
+	struct bt_mesh_time_status status;
+	int err;
 
-	(void)bt_mesh_time_srv_time_status_send(srv, NULL);
+	if (srv->data.role != BT_MESH_TIME_AUTHORITY &&
+	    srv->data.role != BT_MESH_TIME_RELAY) {
+		return -EPERM;
+	}
+
+	err = bt_mesh_time_srv_status(srv, k_uptime_get(), &status);
+	if (err) {
+		return err;
+	}
+
+	/* Account for delay in TX processing: */
+	status.uncertainty += CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY;
+
+	bt_mesh_model_msg_init(srv->pub.msg, BT_MESH_TIME_OP_TIME_STATUS);
+	bt_mesh_time_encode_time_params(srv->pub.msg, &status);
+
 	return 0;
 }
 
