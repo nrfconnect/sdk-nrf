@@ -33,8 +33,8 @@ Requirements
 The sample supports the following development kits:
 
 .. include:: /includes/boardname_tables/sample_boardnames.txt
-   :start-after: set1_start
-   :end-before: set1_end
+   :start-after: set4_start
+   :end-before: set4_end
 
 You can use any one of the development kits listed above.
 

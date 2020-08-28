@@ -74,12 +74,13 @@ The model handling is implemented in :file:`src/model_handler.c`, which uses the
 Requirements
 ************
 
-* One of the following development kits:
+The sample supports the following development kits:
 
-  * |nRF52DK|
-  * |nRF52840DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set2_start
+   :end-before: set2_end
 
-* Smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
   * `nRF Mesh mobile app for Android`_
   * `nRF Mesh mobile app for iOS`_
