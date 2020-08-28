@@ -61,17 +61,18 @@ A :c:type:`struct k_delayed_work` item is submitted recursively to periodically 
 Requirements
 ************
 
-* One of the following development kits:
+The sample supports the following development kits:
 
-  * |nRF52840DK|
-  * |nRF52DK|
+.. include:: /includes/boardname_tables/sample_boardnames.txt
+   :start-after: set2_start
+   :end-before: set2_end
 
-* Smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
+The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
-  * `nRF Mesh mobile app for Android`_
-  * `nRF Mesh mobile app for iOS`_
+* `nRF Mesh mobile app for Android`_
+* `nRF Mesh mobile app for iOS`_
 
-* :ref:`bluetooth_mesh_sensor_server` sample application, programmed on a separate board and configured according to the Mesh sensor server sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
+Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample application, programmed on a separate development kit and configured according to the Mesh sensor server sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
 
 User interface
 **************

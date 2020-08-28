@@ -1,7 +1,6 @@
 .. _sampleboardnames:
 
-Set used by BLE (Central BAS, Central DFU SMP, Central HIDS, Central UART, EnOcean, Mesh Light, Mesh Light Switch, Peripheral HIDS Keyboard, Peripheral HIDS mouse,
-Peripheral UART, NUS Shell Transport, Throughput, Bond Management service) and NFC samples
+Set used by Bluetooth LE Samples and NFC samples
 
 .. set1_start
 
@@ -19,7 +18,7 @@ Peripheral UART, NUS Shell Transport, Throughput, Bond Management service) and N
 
 .. set1_end
 
-Set used by BLE samples (LLPM, peripheral GATT Discovery Manager), Enhanced ShockBurst Transmitter/Receiver, and application (Serial LTE modem)
+Set used by Bluetooth LE samples, Enhanced ShockBurst Transmitter/Receiver, and application (Serial LTE modem)
 
 .. set2_start
 
@@ -33,7 +32,7 @@ Set used by BLE samples (LLPM, peripheral GATT Discovery Manager), Enhanced Shoc
 
 .. set2_end
 
-Set used by BLE samples (Peripheral LBS)
+Set used by Bluetooth LE samples (Peripheral LBS)
 
 .. set3_start
 
@@ -70,7 +69,7 @@ Set used by samples (Radio Test, MPSL Timeslot)
 .. set4_end
 
 Set used by nRF9160 samples (AT Client, AWS FOTA, nRF CoAP Client, GPS sockets and SUPL client library, HTTP application update, HTTPS Client,
-LTE Sensor Gateway, LwM2M carrier, LwM2M Client, Simple MQTT,  Secure Services Sample)
+LTE Sensor Gateway, LwM2M carrier, LwM2M Client, Simple MQTT,  Secure Services Sample) and application (Serial LTE modem)
 
 .. set5_start
 
@@ -96,7 +95,7 @@ Set used by nRF9160 samples (Cloud Client, nRF Cloud A-GPS) and application (Ass
 
 .. set6_end
 
-Set used by nRF9160 sample (Secure Partition Manager)
+
 
 .. set7_start
 
@@ -240,7 +239,7 @@ Set used by sample (Immutable bootloader)
 
 .. set16_end
 
-Set used by samples (USB-UART bridge, Connectivity bridge)
+Set used by samples (USB-UART bridge) and application (Connectivity bridge)
 
 .. set17_start
 
@@ -251,6 +250,8 @@ Set used by samples (USB-UART bridge, Connectivity bridge)
 +--------------------------------+-----------+------------------+---------------------------+
 
 .. set17_end
+
+Set used by Tests (Crypto)
 
 .. set18_start
 
@@ -264,7 +265,7 @@ Set used by samples (USB-UART bridge, Connectivity bridge)
 
 .. set18_end
 
-Set used by the SPM sample
+Set used by sample (SPM)
 
 .. set19_start
 
