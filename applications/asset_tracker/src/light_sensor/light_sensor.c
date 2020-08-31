@@ -30,6 +30,7 @@ struct ls_ch_data {
 	struct sensor_value data;
 };
 
+static int64_t ls_ts;
 static struct ls_ch_data ls_ch_red = { .type = SENSOR_CHAN_RED };
 static struct ls_ch_data ls_ch_green = { .type = SENSOR_CHAN_GREEN };
 static struct ls_ch_data ls_ch_blue = { .type = SENSOR_CHAN_BLUE };
@@ -100,6 +101,7 @@ int light_sensor_get_data(struct light_sensor_data *const data)
 	data->green = ls_data[LS_CH_GREEN]->data.val1;
 	data->blue = ls_data[LS_CH_BLUE]->data.val1;
 	data->ir = ls_data[LS_CH_IR]->data.val1;
+	data->ts = ls_ts;
 
 	k_spin_unlock(&ls_lock, key);
 
@@ -132,6 +134,8 @@ void light_sensor_poll_fn(struct k_work *work)
 				ls_data[ch]->type, err);
 		}
 	}
+
+	ls_ts = k_uptime_get();
 
 	k_spin_unlock(&ls_lock, key);
 

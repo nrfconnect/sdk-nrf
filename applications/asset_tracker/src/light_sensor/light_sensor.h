@@ -29,6 +29,8 @@ struct light_sensor_data {
 	int32_t green;
 	int32_t blue;
 	int32_t ir;
+	/** Sensor sample uptime. */
+	int64_t ts;
 };
 
 typedef void (*light_sensor_data_ready_cb)(void);

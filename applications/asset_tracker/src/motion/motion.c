@@ -109,6 +109,8 @@ static void motion_work_q_handler(struct k_work *work)
 {
 	motion_data_t motion_data;
 
+	motion_data.ts = k_uptime_get();
+
 	if (accelerometer_poll(&motion_data.acceleration) == 0) {
 		if (get_orientation(&motion_data.orientation,
 					&motion_data.acceleration) == 0) {

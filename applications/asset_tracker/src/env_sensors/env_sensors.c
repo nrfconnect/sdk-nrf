@@ -116,6 +116,7 @@ static void env_sensors_poll_fn(struct k_work *work)
 			k_spinlock_key_t key = k_spin_lock(&(env_sensors[i]->lock));
 
 			env_sensors[i]->sensor.value = sensor_value_to_double(&data[i]);
+			env_sensors[i]->sensor.ts = k_uptime_get();
 			k_spin_unlock(&(env_sensors[i]->lock), key);
 		}
 	}

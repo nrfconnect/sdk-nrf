@@ -44,6 +44,8 @@ typedef struct {
 	env_sensor_t type;
 	/** Sensor sample value. */
 	double value;
+	/** Sensor sample uptime. */
+	int64_t ts;
 } env_sensor_data_t;
 
 typedef void (*env_sensors_data_ready_cb)(void);
