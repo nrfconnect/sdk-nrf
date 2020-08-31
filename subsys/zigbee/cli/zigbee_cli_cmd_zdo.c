@@ -12,7 +12,6 @@
 #include <zb_error_handler.h>
 #include <zb_nrf_platform.h>
 #include "zigbee_cli.h"
-#include "zigbee_cli_utils.h"
 
 #define BIND_ON_HELP \
 	("Create bind entry.\n" \

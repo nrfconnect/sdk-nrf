@@ -14,7 +14,6 @@
 #include <zb_error_handler.h>
 #include <zb_version.h>
 #include "zigbee_cli.h"
-#include "zigbee_cli_utils.h"
 
 #define DEBUG_HELP \
 	"Return state of debug mode.\n"

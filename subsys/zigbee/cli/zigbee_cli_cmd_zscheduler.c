@@ -9,7 +9,6 @@
 #include <zboss_api.h>
 #include <zb_nrf_platform.h>
 #include "zigbee_cli.h"
-#include "zigbee_cli_utils.h"
 
 
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
