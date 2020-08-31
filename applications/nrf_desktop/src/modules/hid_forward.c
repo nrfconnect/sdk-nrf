@@ -59,7 +59,6 @@ struct hids_peripheral {
 
 	struct k_delayed_work read_rsp;
 	struct config_event *cfg_chan_rsp;
-	uint16_t pid;
 	uint8_t cfg_chan_id;
 	uint8_t hwid[HWID_LEN];
 	uint8_t cur_poll_cnt;
@@ -263,8 +262,8 @@ static bool is_peripheral_connected(struct hids_peripheral *per)
 	return bt_gatt_hids_c_assign_check(&per->hidc);
 }
 
-static int register_peripheral(struct bt_gatt_dm *dm, uint16_t pid,
-			       const uint8_t *hwid, size_t hwid_len)
+static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
+			       size_t hwid_len)
 {
 	BUILD_ASSERT((ARRAY_SIZE(subscribers) == ARRAY_SIZE(peripheral_address)) ||
 		     (ARRAY_SIZE(subscribers) == 1));
@@ -303,8 +302,6 @@ static int register_peripheral(struct bt_gatt_dm *dm, uint16_t pid,
 	__ASSERT_NO_MSG(per_id < ARRAY_SIZE(peripherals));
 
 	peripherals[per_id].sub_id = sub_id;
-
-	peripherals[per_id].pid = pid;
 
 	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
 	memcpy(peripherals[per_id].hwid, hwid, hwid_len);
@@ -359,9 +356,16 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 						      REPORT_SIZE_USER_CONFIG,
 						      per->cfg_chan_rsp);
 
+		if (per->cfg_chan_rsp->recipient >= UINT8_MAX) {
+			/* Indicate problem when parsing response. */
+			pos = -ENOTSUP;
+		} else {
+			per->cfg_chan_rsp->recipient = recipient;
+			__ASSERT_NO_MSG(recipient == per->cfg_chan_id);
+		}
+
 		if (pos < 0) {
 			LOG_WRN("Failed to parse response: %d", pos);
-			per->cfg_chan_rsp->recipient = recipient;
 			per->cfg_chan_rsp->event_id = event_id;
 			submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 			return pos;
@@ -369,7 +373,6 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 
 		if (per->cfg_chan_rsp->status == CONFIG_STATUS_PENDING) {
 			LOG_WRN("GATT read done, but fetch was not ready yet");
-			per->cfg_chan_rsp->recipient = recipient;
 			per->cfg_chan_rsp->event_id = event_id;
 			per->cur_poll_cnt++;
 
@@ -446,13 +449,18 @@ static void hidc_write_cb(struct bt_gatt_hids_c *hidc,
 	}
 }
 
-static struct hids_peripheral *find_peripheral(uint16_t pid)
+static struct hids_peripheral *find_peripheral(uint8_t cfg_chan_id)
 {
+	if (cfg_chan_id == CFG_CHAN_UNUSED_PEER_ID) {
+		return NULL;
+	}
+
 	for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
-		if (peripherals[i].pid == pid) {
+		if (peripherals[i].cfg_chan_id == cfg_chan_id) {
 			return &peripherals[i];
 		}
 	}
+
 	return NULL;
 }
 
@@ -541,7 +549,7 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 	}
 }
 
-static bool handle_config_event(const struct config_event *event)
+static bool handle_config_event(struct config_event *event)
 {
 	/* Make sure the function will not be preempted by hidc callbacks. */
 	BUILD_ASSERT(CONFIG_SYSTEM_WORKQUEUE_PRIORITY < 0);
@@ -551,14 +559,21 @@ static bool handle_config_event(const struct config_event *event)
 		return false;
 	}
 
-	if ((event->recipient == DEVICE_PID) &&
+	if ((event->recipient == CFG_CHAN_RECIPIENT_LOCAL) &&
 	    ((event->status == CONFIG_STATUS_INDEX_PEERS) ||
 	     (event->status == CONFIG_STATUS_GET_PEER))) {
 		handle_config_channel_peers_req(event);
 		return true;
 	}
 
-	struct hids_peripheral *per = find_peripheral(event->recipient);
+	if (event->recipient >= UINT8_MAX) {
+		send_nodata_response(event, CONFIG_STATUS_REJECT);
+		LOG_WRN("Improper recipient");
+		return true;
+	}
+
+	struct hids_peripheral *per =
+		find_peripheral((uint8_t)event->recipient);
 
 	if (!per) {
 		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
@@ -608,9 +623,16 @@ static bool handle_config_event(const struct config_event *event)
 		return true;
 	}
 
+	uint16_t recipient = event->recipient;
 	uint8_t report[REPORT_SIZE_USER_CONFIG];
+
+	/* Update recipient of forwarded data. */
+	event->recipient = CFG_CHAN_RECIPIENT_LOCAL;
+
 	int pos = config_channel_report_fill(report, REPORT_SIZE_USER_CONFIG,
 					     event);
+
+	event->recipient = recipient;
 
 	if (pos < 0) {
 		send_nodata_response(event, CONFIG_STATUS_WRITE_ERROR);
@@ -678,7 +700,6 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	}
 
 	bt_gatt_hids_c_release(&per->hidc);
-	per->pid = 0;
 	k_delayed_work_cancel(&per->read_rsp);
 	memset(per->hwid, 0, sizeof(per->hwid));
 	per->cur_poll_cnt = 0;
@@ -871,8 +892,8 @@ static bool event_handler(const struct event_header *eh)
 		const struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(eh);
 
-		register_peripheral(event->dm, event->pid,
-				    event->hwid, sizeof(event->hwid));
+		register_peripheral(event->dm, event->hwid,
+				    sizeof(event->hwid));
 
 		return false;
 	}

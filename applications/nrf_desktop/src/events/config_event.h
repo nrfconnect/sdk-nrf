@@ -93,19 +93,6 @@ EVENT_TYPE_DYNDATA_DECLARE(config_event);
 
 #define CFG_CHAN_RECIPIENT_LOCAL 0x00
 
-#ifdef CONFIG_USB_DEVICE_PID
- #define DEVICE_PID CONFIG_USB_DEVICE_PID
- #ifdef CONFIG_BT_GATT_DIS_PNP_PID
-  #if CONFIG_USB_DEVICE_PID != CONFIG_BT_GATT_DIS_PNP_PID
-   #error Device PIDs are not consistent
-  #endif
- #endif
-#elif defined(CONFIG_BT_GATT_DIS_PNP_PID)
- #define DEVICE_PID CONFIG_BT_GATT_DIS_PNP_PID
-#else
- #error Device PID is not defined
-#endif
-
 extern const uint8_t __start_config_channel_modules[];
 
 #define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn)		\
@@ -125,7 +112,7 @@ extern const uint8_t __start_config_channel_modules[];
 		bool consume = false;								\
 												\
 		/* Not for us. */								\
-		if (event->recipient != DEVICE_PID) {						\
+		if (event->recipient != CFG_CHAN_RECIPIENT_LOCAL) {				\
 			return false;								\
 		}										\
 												\
