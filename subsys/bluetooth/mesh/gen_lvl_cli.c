@@ -20,9 +20,10 @@ static void handle_status(struct bt_mesh_model *mod,
 	struct bt_mesh_lvl_status status;
 
 	status.current = net_buf_simple_pull_le16(buf);
-	if (buf->len == 2) {
+	if (buf->len == 3) {
 		status.target = net_buf_simple_pull_le16(buf);
-		status.remaining_time = net_buf_simple_pull_u8(buf);
+		status.remaining_time =
+			model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else {
 		status.target = status.current;
 		status.remaining_time = 0;
