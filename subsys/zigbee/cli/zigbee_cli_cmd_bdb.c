@@ -11,7 +11,6 @@
 #include <zb_error_handler.h>
 #include <zb_nrf_platform.h>
 #include "zigbee_cli.h"
-#include "zigbee_cli_utils.h"
 
 #define IC_ADD_HELP \
 	("Add install code for device with given eui64.\n" \

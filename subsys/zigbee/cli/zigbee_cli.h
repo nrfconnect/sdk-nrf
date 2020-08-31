@@ -11,6 +11,7 @@
 
 #include <zboss_api.h>
 #include <zigbee_helpers.h>
+#include "zigbee_cli_utils.h"
 
 
 /**@brief Function to get the Endpoint number used by the CLI.
