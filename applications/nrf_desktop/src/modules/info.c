@@ -43,7 +43,7 @@ static void submit_response(struct config_event *rsp)
 static bool handle_config_event(const struct config_event *event)
 {
 	/* Not for us. */
-	if (event->recipient != DEVICE_PID) {
+	if (event->recipient != CFG_CHAN_RECIPIENT_LOCAL) {
 		return false;
 	}
 
