@@ -230,6 +230,14 @@ config ZIGBEE_SHELL_ENDPOINT
 	int "Number of endpoint to be used by the Zigbee Shell instance"
 	range 1 240
 
+config ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR
+	int "Number of entries in context manager"
+	default 24
+	range 3 254
+	help
+	  Number of entries in context manager of Zigbee Shell.
+	  Entries are shared by ZDO commands, ZCL commands and PING commands.
+
 endif #ZIGBEE_SHELL
 
 config RADIO_STATISTICS
