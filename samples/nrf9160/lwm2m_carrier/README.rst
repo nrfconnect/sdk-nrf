@@ -38,8 +38,11 @@ Troubleshooting
 
 Bootstrapping can take several minutes.
 This is expected and dependent on the availability of the LTE link.
-During bootstrap, several ``LWM2M_CARRIER_EVENT_CONNECT`` and ``LWM2M_CARRIER_EVENT_DISCONNECT`` events are printed.
+During bootstrap, several :c:macro:`LWM2M_CARRIER_EVENT_CONNECTED` and :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTED` events are printed.
 This is expected and is part of the bootstrapping procedure.
+For more information, see the :ref:`lwm2m_events` and :ref:`lwm2m_msc` sections in the LwM2M carrier library documentation.
+
+To completely restart and trigger a new bootstrap, the device must be erased and re-programmed, as mentioned in :ref:`lwm2m_app_int`.
 
 
 Dependencies
