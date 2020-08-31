@@ -17,6 +17,8 @@ If you want to use LwM2M for other purposes, see :ref:`lwm2m_interface`.
 The :ref:`lwm2m_carrier` sample demonstrates how to run this library in an application.
 The LwM2M carrier library is also used in the :ref:`asset_tracker` application.
 
+.. _lwm2m_app_int:
+
 Application integration
 ***********************
 
@@ -77,6 +79,7 @@ A weak implementation is included in :file:`nrf\\lib\\bin\\lwm2m_carrier\\os\\lw
 
 See :file:`nrf\\lib\\bin\\lwm2m_carrier\\include\\lwm2m_carrier.h` for all the events and API.
 
+.. _lwm2m_events:
 
 LwM2M carrier library events
 ============================
@@ -216,6 +219,13 @@ Below are some of the requirements and limitations of the application while runn
    * The LwM2M carrier library is currently only certified for the *LTE-M* LTE mode.
    * The :option:`CONFIG_LTE_NETWORK_USE_FALLBACK` should be disabled in your application, as seen in the :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`).
 
+* The LwM2M carrier library registers to receive several AT event reports using the :ref:`at_cmd_readme` and :ref:`at_notif_readme` libraries. The following notifications should not be deregistered by the application:
+
+   * SMS events (AT+CNMI).
+   * Packet Domain events (AT+CGEREP).
+   * Report Network Error Codes events (AT+CNEC): EPS Session Management events are used by the LwM2M carrier library. The application may enable or disable EPS Mobility Management events.
+   * Network Registration Status events (AT+CEREG): Notification Level 2 is used by the LwM2M carrier library. The application may increase this level, but should not decrease it.
+
 * The LwM2M carrier library controls the LTE link.
 
    * This is needed for storing keys to the modem, which requires disconnecting from an LTE link and connecting to it.
@@ -279,6 +289,8 @@ See the changelog for the latest updates in the LwM2M carrier library, and for a
     :maxdepth: 1
 
     doc/CHANGELOG.rst
+
+.. _lwm2m_msc:
 
 Message Sequence Charts
 ***********************
