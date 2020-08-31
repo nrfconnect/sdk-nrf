@@ -72,13 +72,13 @@ static inline void zb_cli_print_error(const struct shell *shell,
 
 /**@brief Convert ZCL attribute value to string.
  *
- * @param str_buf[out]    Pointer to a string buffer which will be filled.
- * @param buf_len[in]     String buffer length.
- * @param attr_type[in]   ZCL attribute type value.
- * @param attr[in]        Pointer to ZCL attribute value.
+ * @param[out] str_buf    Pointer to a string buffer which will be filled.
+ * @param[in]  buf_len    String buffer length.
+ * @param[in]  attr_type  ZCL attribute type value.
+ * @param[in]  attr       Pointer to ZCL attribute value.
  *
- * @return number of bytes written into string bufferor negative value
- * on error.
+ * @return Number of bytes written into string buffer or negative value
+ *         on error.
  */
 int zb_cli_zcl_attr_to_str(char *str_buf, uint16_t buf_len,
 			   zb_uint16_t attr_type, zb_uint8_t *attr);
