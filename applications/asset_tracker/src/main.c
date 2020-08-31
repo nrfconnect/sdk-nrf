@@ -42,6 +42,7 @@
 #include <modem/at_cmd.h>
 #include "watchdog.h"
 #include "gps_controller.h"
+#include <date_time.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(asset_tracker, CONFIG_ASSET_TRACKER_LOG_LEVEL);
@@ -76,6 +77,11 @@ defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
 #define CLOUD_LED_ON_STR "{\"led\":\"on\"}"
 #define CLOUD_LED_OFF_STR "{\"led\":\"off\"}"
 #define CLOUD_LED_MSK UI_LED_1
+
+/* Timeout in seconds in which the application will wait for an initial event
+ * from the date time library.
+ */
+#define DATE_TIME_TIMEOUT_S 15
 
 /* Interval in milliseconds after which the device will reboot
  * if the disconnect event has not been handled.
@@ -177,6 +183,7 @@ static K_SEM_DEFINE(bsdlib_initialized, 0, 1);
 static K_SEM_DEFINE(lte_connected, 0, 1);
 static K_SEM_DEFINE(cloud_ready_to_connect, 0, 1);
 #endif
+static K_SEM_DEFINE(date_time_obtained, 0, 1);
 
 #if CONFIG_MODEM_INFO
 static struct k_delayed_work rsrp_work;
@@ -621,6 +628,23 @@ static void send_modem_at_cmd_work_fn(struct k_work *work)
 	k_sem_give(&modem_at_cmd_sem);
 }
 
+static void gps_time_set(struct gps_pvt *gps_data)
+{
+	/* Change datetime.year and datetime.month to accommodate the
+	 * correct input format.
+	 */
+	struct tm gps_time = {
+		.tm_year = gps_data->datetime.year - 1900,
+		.tm_mon = gps_data->datetime.month - 1,
+		.tm_mday = gps_data->datetime.day,
+		.tm_hour = gps_data->datetime.hour,
+		.tm_min = gps_data->datetime.minute,
+		.tm_sec = gps_data->datetime.seconds,
+	};
+
+	date_time_set(&gps_time);
+}
+
 static void gps_handler(struct device *dev, struct gps_event *evt)
 {
 	gps_last_active_time = k_uptime_get();
@@ -648,6 +672,7 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 		break;
 	case GPS_EVT_PVT_FIX:
 		LOG_INF("GPS_EVT_PVT_FIX");
+		gps_time_set(&evt->pvt);
 		break;
 	case GPS_EVT_NMEA:
 		/* Don't spam logs */
@@ -659,6 +684,7 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 		gps_data.len = evt->nmea.len;
 		gps_cloud_data.data.buf = gps_data.buf;
 		gps_cloud_data.data.len = gps_data.len;
+		gps_cloud_data.ts = k_uptime_get();
 		gps_cloud_data.tag += 1;
 
 		if (gps_cloud_data.tag == 0) {
@@ -721,6 +747,7 @@ static void button_send(bool pressed)
 
 	button_cloud_data.data.buf = data;
 	button_cloud_data.data.len = strlen(data);
+	button_cloud_data.ts = k_uptime_get();
 	button_cloud_data.tag += 1;
 
 	if (button_cloud_data.tag == 0) {
@@ -1826,8 +1853,35 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 #endif /* CONFIG_BSD_LIBRARY */
 }
 
+static void date_time_event_handler(const struct date_time_evt *evt)
+{
+	switch (evt->type) {
+	case DATE_TIME_OBTAINED_MODEM:
+		LOG_INF("DATE_TIME_OBTAINED_MODEM");
+		break;
+	case DATE_TIME_OBTAINED_NTP:
+		LOG_INF("DATE_TIME_OBTAINED_NTP");
+		break;
+	case DATE_TIME_OBTAINED_EXT:
+		LOG_INF("DATE_TIME_OBTAINED_EXT");
+		break;
+	case DATE_TIME_NOT_OBTAINED:
+		LOG_INF("DATE_TIME_NOT_OBTAINED");
+		break;
+	default:
+		break;
+	}
+
+	/* Do not depend on obtained time, continue upon any event from the
+	 * date time library.
+	 */
+	k_sem_give(&date_time_obtained);
+}
+
 void main(void)
 {
+	int ret;
+
 	LOG_INF("Asset tracker started");
 	k_work_q_start(&application_work_q, application_stack_area,
 		       K_THREAD_STACK_SIZEOF(application_stack_area),
@@ -1862,6 +1916,14 @@ void main(void)
 	LOG_INF("Waiting for LWM2M carrier to complete initialization...");
 	k_sem_take(&cloud_ready_to_connect, K_FOREVER);
 #endif
+
+	date_time_update_async(date_time_event_handler);
+
+	ret = k_sem_take(&date_time_obtained, K_SECONDS(DATE_TIME_TIMEOUT_S));
+	if (ret) {
+		LOG_WRN("Date time, no callback event within %d seconds",
+			DATE_TIME_TIMEOUT_S);
+	}
 
 	connect_to_cloud(0);
 }

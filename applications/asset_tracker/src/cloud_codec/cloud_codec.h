@@ -104,6 +104,8 @@ struct cloud_channel_data {
 	 *  Useful for matching the acknowledgment.
 	 */
 	uint32_t tag;
+	/** Uptime of the sensor data to be transmitted. */
+	int64_t ts;
 };
 
 enum cloud_cmd_group {

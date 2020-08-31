@@ -48,7 +48,8 @@ typedef struct {
 typedef struct {
 	motion_orientation_state_t orientation;
 	motion_acceleration_data_t acceleration;
-	/* TODO add timestamp */
+	/** Data sampling uptime. */
+	int64_t ts;
 } motion_data_t;
 
 typedef void (*motion_handler_t)(motion_data_t  motion_data);
