@@ -12,7 +12,9 @@
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 #define COAP_VER 1
+#define FILENAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 
+int url_parse_file(const char *url, char *file, size_t len);
 int socket_send(const struct download_client *client, size_t len);
 
 int coap_block_init(struct download_client *client, size_t from)
@@ -77,7 +79,7 @@ int coap_parse(struct download_client *client, size_t len)
 	response_code = coap_header_get_code(&response);
 	if (response_code != COAP_RESPONSE_CODE_OK &&
 	    response_code != COAP_RESPONSE_CODE_CONTENT) {
-		LOG_ERR("Server responded with code %d", response_code);
+		LOG_ERR("Server responded with code 0x%x", response_code);
 		return -1;
 	}
 
@@ -106,6 +108,7 @@ int coap_parse(struct download_client *client, size_t len)
 int coap_request_send(struct download_client *client)
 {
 	int err;
+	char file[FILENAME_SIZE];
 	struct coap_packet request;
 
 	err = coap_packet_init(
@@ -118,8 +121,13 @@ int coap_request_send(struct download_client *client)
 		return err;
 	}
 
+	err = url_parse_file(client->file, file, sizeof(file));
+	if (err) {
+		return err;
+	}
+
 	err = coap_packet_append_option(&request, COAP_OPTION_URI_PATH,
-					client->file, strlen(client->file));
+					file, strlen(file));
 	if (err) {
 		LOG_ERR("Unable add option to request");
 		return err;
