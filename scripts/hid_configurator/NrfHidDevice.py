@@ -31,13 +31,15 @@ class ConfigStatus(IntEnum):
     GET_MAX_MOD_ID     = 1
     GET_HWID           = 2
     GET_BOARD_NAME     = 3
-    SET                = 4
-    FETCH              = 5
-    SUCCESS            = 6
-    TIMEOUT            = 7
-    REJECT             = 8
-    WRITE_ERROR        = 9
-    DISCONNECTED_ERROR = 10
+    INDEX_PEERS        = 4
+    GET_PEER           = 5
+    SET                = 6
+    FETCH              = 7
+    SUCCESS            = 8
+    TIMEOUT            = 9
+    REJECT             = 10
+    WRITE_ERROR        = 11
+    DISCONNECTED_ERROR = 12
     FAULT              = 99
 
 class NrfHidTransport():
@@ -58,7 +60,9 @@ class NrfHidTransport():
             pass
         elif status in (ConfigStatus.GET_MAX_MOD_ID,
                         ConfigStatus.GET_HWID,
-                        ConfigStatus.GET_BOARD_NAME):
+                        ConfigStatus.GET_BOARD_NAME,
+                        ConfigStatus.INDEX_PEERS,
+                        ConfigStatus.GET_PEER):
             assert event_id == 0
             assert event_data_len == 0
         elif status == ConfigStatus.FETCH:
@@ -158,7 +162,7 @@ class NrfHidTransport():
             if rsp_event_data is not None:
                 fetched_data = rsp_event_data
         else:
-            logging.error('Error: {}'.format(rsp_status.name))
+            logging.warning('Error response code: {}'.format(rsp_status.name))
 
         return success, fetched_data
 
@@ -189,6 +193,8 @@ class NrfHidDevice():
                     d.close()
                     continue
 
+                peers = NrfHidDevice._get_connected_peers(d, pid)
+
                 if (board_name is not None) and (hwid is not None):
                     config = NrfHidDevice._discover_device_config(d, pid)
                 else:
@@ -201,6 +207,8 @@ class NrfHidDevice():
                     self.board_name = board_name
                     self.hwid = hwid
                     print("Device board name is {} (HW ID: {})".format(board_name, hwid))
+                    if len(peers) > 0:
+                        print("Device has following peers: {}".format(list(peers)))
                 else:
                     d.close()
             else:
@@ -349,6 +357,48 @@ class NrfHidDevice():
             return None, None
 
         return board_name, hwid
+
+    @staticmethod
+    def _get_connected_peers(dev, recipient):
+        INVALID_PEER_ID = 0xff
+
+        peers = {}
+
+        success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
+                                                                        recipient,
+                                                                        0,
+                                                                        ConfigStatus.INDEX_PEERS,
+                                                                        None)
+        if not success:
+            return peers
+
+        while True:
+            success, fetched_data = NrfHidTransport.exchange_feature_report(dev,
+                                                                            recipient,
+                                                                            0,
+                                                                            ConfigStatus.GET_PEER,
+                                                                            None)
+
+            if success:
+                peer_hwid = codecs.encode(fetched_data[:-1], 'hex')
+                peer_hwid = peer_hwid.decode('utf-8')
+                peer_id = struct.unpack('<B', fetched_data[-1:])[0]
+
+                if peer_id != INVALID_PEER_ID:
+                    peers[peer_hwid] = peer_id
+                    if len(peers) > INVALID_PEER_ID:
+                        # Invalidate received peer list
+                        peers = {}
+                        break
+                else:
+                    break
+
+            else:
+                # Invalidate received peer list
+                peers = {}
+                break
+
+        return peers
 
     def _config_operation(self, module_name, option_name, is_get, value, poll_interval):
         if not self.initialized():
