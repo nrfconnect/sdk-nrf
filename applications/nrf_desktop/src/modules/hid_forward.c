@@ -29,6 +29,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 #define MAX_ENQUEUED_ITEMS CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
 #define CFG_CHAN_RSP_READ_DELAY		K_MSEC(15)
 #define CFG_CHAN_MAX_RSP_POLL_CNT	50
+#define CFG_CHAN_UNUSED_PEER_ID		UINT8_MAX
+#define CFG_CHAN_BASE_ID		(CFG_CHAN_RECIPIENT_LOCAL + 1)
 
 #define PERIPHERAL_ADDRESSES_STORAGE_NAME "paddr"
 
@@ -58,6 +60,7 @@ struct hids_peripheral {
 	struct k_delayed_work read_rsp;
 	struct config_event *cfg_chan_rsp;
 	uint16_t pid;
+	uint8_t cfg_chan_id;
 	uint8_t hwid[HWID_LEN];
 	uint8_t cur_poll_cnt;
 	uint8_t sub_id;
@@ -478,6 +481,66 @@ static void send_nodata_response(const struct config_event *event,
 	EVENT_SUBMIT(rsp);
 }
 
+static void handle_config_channel_peers_req(const struct config_event *event)
+{
+	BUILD_ASSERT(ARRAY_SIZE(peripherals) + CFG_CHAN_BASE_ID <=
+		     CFG_CHAN_UNUSED_PEER_ID);
+
+	static uint8_t cur_per;
+
+	switch (event->status) {
+	case CONFIG_STATUS_INDEX_PEERS:
+		for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
+			if (is_peripheral_connected(&peripherals[i])) {
+				peripherals[i].cfg_chan_id =
+					CFG_CHAN_BASE_ID + i;
+			}
+		}
+
+		cur_per = 0;
+		send_nodata_response(event, CONFIG_STATUS_SUCCESS);
+		break;
+
+	case CONFIG_STATUS_GET_PEER:
+	{
+		struct hids_peripheral *per = &peripherals[cur_per];
+
+		while ((per->cfg_chan_id == CFG_CHAN_UNUSED_PEER_ID) &&
+		       (cur_per < ARRAY_SIZE(peripherals))) {
+			cur_per++;
+		}
+
+		BUILD_ASSERT(sizeof(per->hwid) == HWID_LEN);
+
+		struct config_event *rsp = generate_response(event,
+						    HWID_LEN + sizeof(uint8_t));
+		size_t pos = 0;
+
+		if (cur_per < ARRAY_SIZE(peripherals)) {
+			memcpy(&rsp->dyndata.data[pos],
+			       per->hwid, sizeof(per->hwid));
+			pos += sizeof(per->hwid);
+
+			rsp->dyndata.data[pos] = per->cfg_chan_id;
+			cur_per++;
+		} else {
+			pos += HWID_LEN;
+
+			rsp->dyndata.data[pos] = CFG_CHAN_UNUSED_PEER_ID;
+		}
+
+		rsp->status = CONFIG_STATUS_SUCCESS;
+		EVENT_SUBMIT(rsp);
+		break;
+	}
+
+	default:
+		/* Not supported by this function. */
+		__ASSERT_NO_MSG(false);
+		break;
+	}
+}
+
 static bool handle_config_event(const struct config_event *event)
 {
 	/* Make sure the function will not be preempted by hidc callbacks. */
@@ -486,6 +549,13 @@ static bool handle_config_event(const struct config_event *event)
 	/* Ignore response event. */
 	if (!event->is_request) {
 		return false;
+	}
+
+	if ((event->recipient == DEVICE_PID) &&
+	    ((event->status == CONFIG_STATUS_INDEX_PEERS) ||
+	     (event->status == CONFIG_STATUS_GET_PEER))) {
+		handle_config_channel_peers_req(event);
+		return true;
 	}
 
 	struct hids_peripheral *per = find_peripheral(event->recipient);
@@ -612,6 +682,7 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	k_delayed_work_cancel(&per->read_rsp);
 	memset(per->hwid, 0, sizeof(per->hwid));
 	per->cur_poll_cnt = 0;
+	per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
 	if (per->cfg_chan_rsp) {
 		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_ERROR);
 	}
@@ -690,6 +761,7 @@ static void init(void)
 
 		bt_gatt_hids_c_init(&per->hidc, &params);
 		k_delayed_work_init(&per->read_rsp, read_rsp_fn);
+		per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
 
 		for (size_t report_id = 0; report_id < ARRAY_SIZE(per->enqueued_report); report_id++) {
 			struct enqueued_reports *enqueued_report = &per->enqueued_report[report_id];
