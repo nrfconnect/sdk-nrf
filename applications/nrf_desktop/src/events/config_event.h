@@ -27,6 +27,8 @@ extern "C" {
 	X(GET_MAX_MOD_ID)		\
 	X(GET_HWID)			\
 	X(GET_BOARD_NAME)		\
+	X(INDEX_PEERS)			\
+	X(GET_PEER)			\
 	X(SET)				\
 	X(FETCH)			\
 	X(SUCCESS)			\
@@ -88,6 +90,8 @@ struct config_event {
 };
 
 EVENT_TYPE_DYNDATA_DECLARE(config_event);
+
+#define CFG_CHAN_RECIPIENT_LOCAL 0x00
 
 #ifdef CONFIG_USB_DEVICE_PID
  #define DEVICE_PID CONFIG_USB_DEVICE_PID
