@@ -133,10 +133,15 @@ static void flash_operation_complete_callback(uint32_t status)
 
 	int err;
 
-	flash_state.addr += flash_state.prev_len;
-	flash_state.data = (const void *) ((intptr_t) flash_state.data +
-					   flash_state.prev_len);
-	flash_state.len -= flash_state.prev_len;
+	if (status == SDC_SOC_FLASH_CMD_STATUS_SUCCESS) {
+		flash_state.addr += flash_state.prev_len;
+		flash_state.data = (const void *) ((intptr_t) flash_state.data +
+						   flash_state.prev_len);
+		flash_state.len -= flash_state.prev_len;
+	} else {
+		/* Timeout occurred - retry the operation. */
+		__ASSERT_NO_MSG(status == SDC_SOC_FLASH_CMD_STATUS_TIMEOUT);
+	}
 
 	if (flash_state.len > 0) {
 		err = flash_op_execute();
