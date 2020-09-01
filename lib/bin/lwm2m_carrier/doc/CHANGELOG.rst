@@ -5,6 +5,21 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.9.1
+**********************
+
+Release with AT&T support, intended for modem firmware version 1.2.1 and the |NCS| version 1.3.1.
+
+Certification status
+====================
+
+The library is certified with AT&T.
+
+Changes
+=======
+
+* Minor fixes and improvements.
+
 liblwm2m_carrier 0.9.0
 **********************
 
