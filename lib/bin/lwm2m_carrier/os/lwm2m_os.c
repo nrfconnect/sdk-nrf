@@ -670,6 +670,8 @@ int lwm2m_os_lte_power_down(void)
 int lwm2m_os_errno(void)
 {
 	switch (errno) {
+	case 0:
+		return 0;
 	case EPERM:
 		return NRF_EPERM;
 	case ENOENT:
