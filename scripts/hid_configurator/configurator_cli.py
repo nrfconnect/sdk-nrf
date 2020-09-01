@@ -7,8 +7,8 @@ import argparse
 import logging
 import os
 
-from devices import DEVICE, get_device_pid, get_device_vid
-from NrfHidDevice import NrfHidDevice
+from devices import DEVICE
+from NrfHidManager import NrfHidManager
 
 from modules.config import change_config, fetch_config
 from modules.dfu import DfuImage
@@ -93,7 +93,8 @@ def perform_config(dev, args):
     value_type = option_config.type
 
     if value_type is not None and args.value is None:
-        success, val = fetch_config(dev, module_name, option_name, option_config)
+        success, val = fetch_config(dev, args.device_type, module_name,
+                                    option_name, option_config)
 
         if success:
             print('Fetched {}/{}: {}'.format(module_name, option_name, val))
@@ -111,7 +112,8 @@ def perform_config(dev, args):
                                                                    value_type))
                 return
 
-        success = change_config(dev, module_name, option_name, value, option_config)
+        success = change_config(dev, args.device_type, module_name,
+                                option_name, value, option_config)
 
         if success:
             if value_type is None:
@@ -219,19 +221,28 @@ def configurator():
 
     args = parse_arguments()
 
-    dev = NrfHidDevice(args.device_type,
-                       get_device_vid(args.device_type),
-                       get_device_pid(args.device_type),
-                       get_device_pid('dongle'),
-                       args.hwid)
+    backend = NrfHidManager()
+    devlist = backend.list_devices()
 
-    if not dev.initialized():
-        print('Cannot find selected device')
-        return
+    print()
+    if len(devlist) > 0:
+        print('Found following nRF Desktop devices:')
+        for d in devlist:
+            print("  {}".format(d))
+    else:
+        print('Found no nRF Desktop devices')
+    print()
 
-    configurator.ALLOWED_COMMANDS[args.command](dev, args)
+    devs = backend.find_devices(device_type=args.device_type, hwid=args.hwid)
 
-    dev.close_device()
+    if len(devs) == 0:
+        print('Specified device was not found')
+    elif len(devs) == 1:
+        print('Performing {} operation on {}'.format(args.command,
+                                                     devs[0].get_board_name()))
+        configurator.ALLOWED_COMMANDS[args.command](devs[0], args)
+    else:
+        print('More than one device found. Please specify hwid.')
 
 configurator.ALLOWED_COMMANDS = {
     'dfu' : perform_dfu,

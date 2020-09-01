@@ -14,6 +14,8 @@ REPORT_ID = 6
 REPORT_SIZE = 30
 EVENT_DATA_LEN_MAX = REPORT_SIZE - 6
 
+DEFAULT_RECIPIENT = 0x00
+
 MOD_FIELD_POS = 4
 OPT_FIELD_POS = 0
 OPT_FIELD_MAX_OPT_CNT = 0xf
@@ -168,65 +170,63 @@ class NrfHidTransport():
 
 
 class NrfHidDevice():
-    def __init__(self, name, vid, pid, dongle_pid, req_hwid=None):
-        self.name = name
-        self.vid = vid
-        self.pid = pid
-        self.dev_ptr = None
+    def __init__(self, dev, recipient):
+        self.recipient = recipient
+        self.dev_ptr = dev
+
         self.dev_config = None
         self.board_name = None
+        self.hwid = None
 
-        direct_devs = NrfHidDevice._open_devices(vid, pid)
-        dongle_devs = []
+        board_name, hwid = NrfHidDevice._read_device_info(dev, recipient)
 
-        if dongle_pid is not None:
-            dongle_devs = NrfHidDevice._open_devices(vid, dongle_pid)
+        if (board_name is not None) and (hwid is not None):
+            config = NrfHidDevice._discover_device_config(dev, recipient)
+        else:
+            config = None
 
-        devs = direct_devs + dongle_devs
-
-        for d in devs:
-            if self.dev_ptr is None:
-                board_name, hwid = NrfHidDevice._read_device_info(d, pid)
-
-                # HW ID missmatch
-                if (req_hwid is not None) and (req_hwid != hwid):
-                    d.close()
-                    continue
-
-                peers = NrfHidDevice._get_connected_peers(d, pid)
-
-                if (board_name is not None) and (hwid is not None):
-                    config = NrfHidDevice._discover_device_config(d, pid)
-                else:
-                    config = None
-
-                if (config is not None) and (board_name is not None) and \
-                   (hwid is not None):
-                    self.dev_config = config
-                    self.dev_ptr = d
-                    self.board_name = board_name
-                    self.hwid = hwid
-                    print("Device board name is {} (HW ID: {})".format(board_name, hwid))
-                    if len(peers) > 0:
-                        print("Device has following peers: {}".format(list(peers)))
-                else:
-                    d.close()
-            else:
-                d.close()
+        if config is not None:
+            self.dev_config = config
+            self.board_name = board_name
+            self.hwid = hwid
 
     @staticmethod
-    def _open_devices(vid, pid):
-        devs = []
+    def open_devices(vid):
+        dir_devs = {}
+        non_dir_devs = {}
+
         try:
-            devlist = hid.enumerate(vid=vid, pid=pid)
+            devlist = hid.enumerate(vid=vid)
             for d in devlist:
                 dev = hid.Device(path=d['path'])
-                devs.append(dev)
+                dev_active = False
+
+                discovered_dev = NrfHidDevice(dev, DEFAULT_RECIPIENT)
+                if discovered_dev.initialized():
+                    hwid = discovered_dev.get_hwid()
+                    if hwid not in dir_devs:
+                        dir_devs[hwid] = discovered_dev
+                        dev_active = True
+
+                peers = NrfHidDevice._get_connected_peers(dev, DEFAULT_RECIPIENT)
+                for p in peers:
+                    discovered_dev = NrfHidDevice(dev, peers[p])
+                    if discovered_dev.initialized():
+                        hwid = discovered_dev.get_hwid()
+                        if hwid not in non_dir_devs:
+                            non_dir_devs[hwid] = discovered_dev
+                            dev_active = True
+
+                if not dev_active:
+                    dev.close()
 
         except hid.HIDException:
             pass
         except Exception as e:
             logging.error('Unknown exception: {}'.format(e))
+
+        devs = non_dir_devs.copy()
+        devs.update(dir_devs)
 
         return devs
 
@@ -423,7 +423,8 @@ class NrfHidDevice():
         else:
             status = ConfigStatus.SET
 
-        success, fetched_data = NrfHidTransport.exchange_feature_report(self.dev_ptr, self.pid,
+        success, fetched_data = NrfHidTransport.exchange_feature_report(self.dev_ptr,
+                                                                        self.recipient,
                                                                         event_id, status,
                                                                         value, poll_interval)
         if is_get:
@@ -441,6 +442,9 @@ class NrfHidDevice():
             return False
         else:
             return True
+
+    def get_hwid(self):
+        return self.hwid
 
     def get_board_name(self):
         return self.board_name
