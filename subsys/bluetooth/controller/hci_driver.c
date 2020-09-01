@@ -215,7 +215,7 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 		uint8_t subevent = hci_buf[2];
 
 		switch (subevent) {
-		case SDC_HCI_VS_SUBEVENT_QOS_CONN_EVENT_REPORT:
+		case SDC_HCI_SUBEVENT_VS_QOS_CONN_EVENT_REPORT:
 			return true;
 		default:
 			return false;
@@ -499,9 +499,9 @@ uint8_t bt_read_static_addr(struct bt_hci_vs_static_addr addrs[], uint8_t size)
 
 void bt_ctlr_set_public_addr(const uint8_t *addr)
 {
-	const sdc_hci_vs_cmd_zephyr_write_bd_addr_t *bd_addr = (void *)addr;
+	const sdc_hci_cmd_vs_zephyr_write_bd_addr_t *bd_addr = (void *)addr;
 
-	(void)sdc_hci_vs_cmd_zephyr_write_bd_addr(bd_addr);
+	(void)sdc_hci_cmd_vs_zephyr_write_bd_addr(bd_addr);
 }
 
 static int hci_driver_init(struct device *unused)
