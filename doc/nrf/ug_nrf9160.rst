@@ -3,18 +3,15 @@
 Working with nRF9160
 ####################
 
-The |NCS| provides support for developing on the nRF9160 System in Package
-(SiP) using the nRF9160 DK (PCA10090), and offers samples
-dedicated for this device.
+The |NCS| provides support for developing on the nRF9160 System in Package (SiP) using the nRF9160 DK (PCA10090), and :ref:`offers samples <nrf9160_ug_drivs_libs_samples>` dedicated to this device.
 
 .. _nrf9160_ug_intro:
 
 Introduction
 ************
 
-The nRF9160 SiP integrates an application MCU, a full LTE modem, RF front end,
-and power management.
-With built-in GPS support, it is dedicated for asset tracking applications.
+The nRF9160 SiP integrates an application MCU, a full LTE modem, RF front end, and power management.
+With built-in GPS support, it is dedicated to asset tracking applications.
 For more details on the SiP, see the `nRF9160 product website`_.
 
 .. figure:: images/nrf9160_ug_overview.svg
@@ -22,8 +19,7 @@ For more details on the SiP, see the `nRF9160 product website`_.
 
    Overview of nRF91 application architecture
 
-The figure illustrates the conceptual layout when targeting
-an nRF9160 Cortex-M33 application MCU with TrustZone.
+The figure illustrates the conceptual layout when targeting an nRF9160 Cortex-M33 application MCU with TrustZone.
 
 Application MCU
 ===============
@@ -37,8 +33,7 @@ In Zephyr, :ref:`zephyr:nrf9160dk_nrf9160` is divided into two different build t
 * ``nrf9160dk_nrf9160`` for firmware in the secure domain
 * ``nrf9160dk_nrf9160ns`` for firmware in the non-secure domain
 
-Make sure to select the suitable build target when building your application.
-
+Make sure to select a suitable build target when building your application.
 
 Secure bootloader chain
 -----------------------
@@ -61,7 +56,6 @@ This firmware is required to set up the nRF9160 DK so that it can run user appli
 The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160ns`` build target.
 To disable the automatic inclusion of the Secure Partition Manager sample, set the option :option:`CONFIG_SPM` to "n" in the project configuration.
 
-
 Application
 -----------
 
@@ -83,14 +77,13 @@ The BSD library is the primary interface for operating the nRF9160 modem to esta
 The BSD library is Nordic Semiconductor's implementation of the BSD Socket API.
 See :ref:`nrfxlib:bsdlib` for detailed information.
 
-
 LTE modem
 =========
 
-The LTE modem handles the LTE communication.
+The LTE modem handles LTE communication.
 It is controlled through `AT commands <AT Commands Reference Guide>`_.
 
-The firmware for the modem is available as precompiled binary.
+The firmware for the modem is available as a precompiled binary.
 You can download the firmware from the `nRF9160 product website (compatible downloads)`_.
 The zip file contains both the full firmware and patches to upgrade from one version to another.
 
@@ -121,28 +114,38 @@ Delta patches
 Band lock
 *********
 
-The band lock is a functionality of the application that lets you send an
-AT command to the modem instructing it to operate only on specific bands.
-Band lock is handled by the **LTE Link Control** driver and is by default
-disabled in its Kconfig file.
+The band lock is a functionality of the application that lets you send an AT command to the modem instructing it to operate only on specific bands.
+The band lock is handled by the LTE Link Control driver.
+By default, the functionality is disabled in the driver's Kconfig file.
 
-The modem can only operate on four certified bands: 3, 4, 13, and 20.
-The application cannot override this restriction.
+The modem can operate in the following E-UTRA Bands: 1, 2, 3, 4, 5, 8, 12, 13, 17, 18, 19, 20, 25, 26, 28, and 66.
 
-You can, however, use the band lock to restrict modem operation to a subset of
-the four bands, which might improve the performance of your application.
-To check which bands are certified in your region,
-visit `nRF9160 Certifications`_.
+You can use the band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
+To check which bands are certified in your region, visit `nRF9160 Certifications`_.
 
-To set the band lock, edit the file :file:`drivers/lte_link_control/lte_lc.c`
-and modify the ``static const char lock_bands`` define.
-Each bit in this define represents one band counting from 1 to 20.
-Therefore, the default setting for bands 3, 4, 13, and 20 is represented by::
+To set the LTE band lock, enable the *LTE Link Control Library* in your project configuration file ``prj.conf``, using::
 
-	10000001000000001100
+   CONFIG_LTE_LINK_CONTROL=y
 
-It is a non-volatile setting that must be set before activating the modem.
+Then, enable the LTE band lock feature and the band lock mask in your projects configuration file, as follows::
+
+   CONFIG_LTE_LOCK_BANDS=y
+   CONFIG_LTE_LOCK_BAND_MASK="10000001000000001100"
+
+The band lock mask allows you to set the bands on which you want the modem to operate.
+Each bit in the :option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
+The maximum length of the string is 88 characters (bit string, 88 bits).
+
+The band lock is a non-volatile setting that must be set before activating the modem.
 It disappears when the modem is reset.
+To prevent this, you can set the modem in *power off* mode, by either:
+
+* sending directly the AT command ``AT+CFUN=0``.
+* calling the ``lte_lc_power_off`` function while the *LTE Link Control Library* is enabled.
+
+Both these options save the configurations and historical data in the Non-Volatile Storage before powering off the modem.
+
+As a recommendation, turn off the band lock after the connection is established and let the modem use the historical connection data to optimize the network search, in case the device is disconnected or moved.
 
 For more detailed information, see the `band lock section in the AT Commands reference document`_.
 
@@ -154,7 +157,7 @@ Network mode
 The modem supports LTE-M (Cat-M1) and Narrowband Internet of Things (NB-IoT or LTE Cat-NB).
 By default, the modem starts in LTE-M mode.
 
-When using the **LTE Link Control** driver, you can select LTE-M with :option:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :option:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
+When using the LTE Link Control driver, you can select LTE-M with :option:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :option:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
 
 To start in NB-IoT mode without the driver, send the following command before starting the modem protocols (by using ``AT+CFUN=1``)::
 
@@ -181,9 +184,9 @@ Concurrent GPS and LTE
 ======================
 
 |An nRF9160-based device| supports GPS in LTE-M and NB-IoT.
-Concurrent operation of GPS with optional power saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported and recommended.
+Concurrent operation of GPS with optional power-saving features, such as extended Discontinuous Reception (eDRX) and Power Saving Mode (PSM), is also supported and recommended.
 
-The following figure shows how the data transfer occurs in |an nRF9160-based device| with power saving in place.
+The following figure shows how the data transfer occurs in |an nRF9160-based device| with power-saving in place.
 
 .. figure:: /images/power_consumption.png
    :alt: Power consumption
@@ -207,7 +210,7 @@ FOTA upgrades can be used to apply delta patches to the `LTE modem`_ firmware an
 
 .. note::
    Even though the Secure Partition Manager and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
-   When we refer to the application in this section, we therefore mean the application including the Secure Partition Manager.
+   Any reference to the application in this section is meant to indicate the application including the Secure Partition Manager.
 
 To perform a FOTA upgrade, complete the following steps:
 
@@ -245,26 +248,22 @@ To perform a FOTA upgrade, complete the following steps:
 The full FOTA procedure depends on where the binary files are hosted for download.
 See the :ref:`aws_fota_sample` sample for a full implementation using AWS.
 
-.. _nrf9160_ug_drivs_libs_samples:
-
 Board controller
 ****************
 
-The nRF9160 DK contains an nRF52840 SoC that is used to route some of the nRF9160 SiP
-pins to different components on the DK, such as the Arduino pin headers, LEDs,
-and buttons. For a complete list of all the routing options available, see
-the `nRF9160 DK board control section in the nRF9160 DK User Guide`_.
+The nRF9160 DK contains an nRF52840 SoC that is used to route some of the nRF9160 SiP pins to different components on the DK, such as the Arduino pin headers, LEDs, and buttons.
+For a complete list of all the routing options available, see the `nRF9160 DK board control section in the nRF9160 DK User Guide`_.
 
 The nRF52840 SoC on the DK comes preprogrammed with a firmware.
-If you need to restore the original firmware at some point, download the
-nRF9160 DK board controller FW from the `nRF9160 DK product page`_.
+If you need to restore the original firmware at some point, download the nRF9160 DK board controller FW from the `nRF9160 DK product page`_.
 To program the HEX file, use nrfjprog (which is part of the `nRF Command Line Tools`_).
 
-If you want to route some pins differently from what is done in the
-preprogrammed firmware, program the :ref:`zephyr:hello_world` sample instead of the preprogrammed firmware.
+If you want to route some pins differently from what is done in the preprogrammed firmware, program the :ref:`zephyr:hello_world` sample instead of the preprogrammed firmware.
 Configure the sample (located under ``samples/hello_world``) for the nrf9160dk_nrf52840 board.
-All configuration options can be found under **Board configuration** in menuconfig.
+All configuration options can be found under *Board configuration* in menuconfig.
 See :ref:`zephyr:nrf9160dk_nrf52840` for detailed information about the board.
+
+.. _nrf9160_ug_drivs_libs_samples:
 
 Available drivers, libraries, and samples
 *****************************************
