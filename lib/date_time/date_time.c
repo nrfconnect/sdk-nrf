@@ -70,6 +70,18 @@ static struct time_aux {
 } time_aux;
 
 static bool initial_valid_time;
+static date_time_evt_handler_t app_evt_handler;
+
+static struct date_time_evt evt;
+
+static void date_time_notify_event(const struct date_time_evt *evt)
+{
+	__ASSERT(evt != NULL, "Library event not found");
+
+	if (app_evt_handler != NULL) {
+		app_evt_handler(evt);
+	}
+}
 
 #if defined(CONFIG_DATE_TIME_MODEM)
 static int time_modem_get(void)
@@ -141,7 +153,7 @@ static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
 		err = getaddrinfo(server->server_str, NTP_DEFAULT_PORT, &hints,
 				  &server->addr);
 		if (err) {
-			LOG_ERR("getaddrinfo, error: %d", err);
+			LOG_WRN("getaddrinfo, error: %d", err);
 			return err;
 		}
 	} else {
@@ -151,13 +163,13 @@ static int sntp_time_request(struct ntp_servers *server, uint32_t timeout,
 	err = sntp_init(&sntp_ctx, server->addr->ai_addr,
 			server->addr->ai_addrlen);
 	if (err) {
-		LOG_ERR("sntp_init, error: %d", err);
+		LOG_WRN("sntp_init, error: %d", err);
 		goto socket_close;
 	}
 
 	err = sntp_query(&sntp_ctx, timeout, time);
 	if (err) {
-		LOG_ERR("sntp_query, error: %d", err);
+		LOG_WRN("sntp_query, error: %d", err);
 	}
 
 socket_close:
@@ -187,7 +199,7 @@ static int time_NTP_server_get(void)
 		return 0;
 	}
 
-	LOG_ERR("Not getting time from any NTP server");
+	LOG_WRN("Not getting time from any NTP server");
 
 	return -ENODATA;
 }
@@ -223,6 +235,7 @@ static void new_date_time_get(void)
 		if (err == 0) {
 			LOG_DBG("Time successfully obtained");
 			initial_valid_time = true;
+			date_time_notify_event(&evt);
 			continue;
 		}
 
@@ -235,6 +248,8 @@ static void new_date_time_get(void)
 		if (err == 0) {
 			LOG_DBG("Time from cellular network obtained");
 			initial_valid_time = true;
+			evt.type = DATE_TIME_OBTAINED_MODEM;
+			date_time_notify_event(&evt);
 			continue;
 		}
 
@@ -247,12 +262,17 @@ static void new_date_time_get(void)
 		if (err == 0) {
 			LOG_DBG("Time from NTP server obtained");
 			initial_valid_time = true;
+			evt.type = DATE_TIME_OBTAINED_NTP;
+			date_time_notify_event(&evt);
 			continue;
 		}
 
 		LOG_DBG("Not getting time from NTP server");
 #endif
 		LOG_DBG("Not getting time from any time source");
+
+		evt.type = DATE_TIME_NOT_OBTAINED;
+		date_time_notify_event(&evt);
 	}
 }
 
@@ -345,6 +365,9 @@ int date_time_set(const struct tm *new_date_time)
 	time_aux.last_date_time_update = k_uptime_get();
 	time_aux.date_time_utc = (int64_t)timeutil_timegm64(new_date_time) * 1000;
 
+	evt.type = DATE_TIME_OBTAINED_EXT;
+	date_time_notify_event(&evt);
+
 	return 0;
 }
 
@@ -353,7 +376,7 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 	int64_t uptime_prev = *uptime;
 
 	if (!initial_valid_time) {
-		LOG_ERR("Valid time not currently available");
+		LOG_WRN("Valid time not currently available");
 		return -ENODATA;
 	}
 
@@ -365,8 +388,8 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 	 */
 	if (*uptime > time_aux.date_time_utc +
 	    (k_uptime_get() - time_aux.last_date_time_update)) {
-		LOG_ERR("Uptime to large or previously converted");
-		LOG_ERR("Clear variable or set a new uptime");
+		LOG_WRN("Uptime to large or previously converted");
+		LOG_WRN("Clear variable or set a new uptime");
 		*uptime = uptime_prev;
 		return -EINVAL;
 	}
@@ -383,15 +406,37 @@ int date_time_now(int64_t *unix_time_ms)
 
 	err = date_time_uptime_to_unix_time_ms(unix_time_ms);
 	if (err) {
-		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+		LOG_WRN("date_time_uptime_to_unix_time_ms, error: %d", err);
 		*unix_time_ms = unix_time_ms_prev;
 	}
 
 	return err;
 }
 
-int date_time_update_async(void)
+void date_time_register_handler(date_time_evt_handler_t evt_handler)
 {
+	if (evt_handler == NULL) {
+		app_evt_handler = NULL;
+
+		LOG_INF("Previously registered handler %p de-registered",
+			app_evt_handler);
+
+		return;
+	}
+
+	LOG_DBG("Registering handler %p", evt_handler);
+
+	app_evt_handler = evt_handler;
+}
+
+int date_time_update_async(date_time_evt_handler_t evt_handler)
+{
+	if (evt_handler) {
+		app_evt_handler = evt_handler;
+	} else if (app_evt_handler == NULL) {
+		LOG_DBG("No handler registered");
+	}
+
 	k_sem_give(&time_fetch_sem);
 
 	return 0;
