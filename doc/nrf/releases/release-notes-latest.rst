@@ -64,15 +64,21 @@ The following list summarizes the most important changes inherited from upstream
     * Fixed a bug where a FOTA socket was not closed after the download (PULL mode).
     * Added a Kconfig option :option:`CONFIG_LWM2M_SECONDS_TO_UPDATE_EARLY` that specifies how long before the time-out the Registration Update will be sent.
     * Added ObjLnk resource type support.
+    * Fixed a bug, where ``fds`` table provided to ``poll()`` function could contain invalid entries.
+    * Fixed PUSH mode FOTA.
+    * Fixed bootstrap procedure.
+    * Added mutex protection for ``send()`` calls, which can be called from multiple contexts.
+    * Added a proper Short Server ID resource handling, which is used to match Security and Server object instances.
 
   * MQTT:
 
     * The ``utf8`` pointer in the :cpp:class:`mqtt_utf8` struct is now const.
     * The default ``clean_session`` value is now configurable with Kconfig (see :option:`CONFIG_MQTT_CLEAN_SESSION`).
+    * Fixed a bug where ``CONNACK`` event was notified twice in case server rejected the connection.
 
   * OpenThread:
 
-    * Updated the OpenThread revision to upstream commit ``e653478c503d5b13207b01938fa1fa494a8b87d3``.
+    * Updated the OpenThread revision to upstream commit ``ac86fe52e62e60a66aeeb1c905cb1294709147e9``.
     * Implemented a missing ``enable`` API function for the OpenThread interface.
     * Cleaned up the OpenThread Kconfig file.
       OpenThread dependencies are now enabled automatically.
@@ -80,10 +86,19 @@ The following list summarizes the most important changes inherited from upstream
     * Reimplemented the logger glue layer for better performance.
     * Updated the OpenThread thread priority class to be configurable.
     * Added several Kconfig options to customize the OpenThread stack.
+    * Added support for ``OT_RADIO_CAPS_SLEEP_TO_TX`` radio capability.
+    * Fixed a bug where ``OT_RADIO_CAPS_TRANSMIT_RETRIES`` was incorrectly set in the OpenThread radio platfrom layer.
+    * Added a Kconfig option to select OpenThread stack version (:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_1`/:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_2`).
+    * Added a Kconfig option for NCP vendor hooks (:option:`CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`).
+    * Added a Kconfig option to select a custom mbedTLS instance, allowing to use nrf_security from nrfxlib with OpenThread (:option:`CONFIG_OPENTHREAD_MBEDTLS_TARGET`).
+    * Added a Kconfig option that allows to link Zephyr with pre-compiled OpenThread libraries (:option:`CONFIG_OPENTHREAD_IMPLEMENTATION`).
+    * Removed double-buffering in the OpenThread UART platform layer on TX path.
+    * Fixed OpenThread Diag module compilation.
 
   * Socket offloading:
 
     * Removed dependency to the :option:`CONFIG_NET_SOCKETS_POSIX_NAMES` configuration option.
+    * ``close()`` socket call is no longer using ``ioctl()`` underneath, it has a separate entry in a socket vtable.
 
 * Bluetooth:
 
