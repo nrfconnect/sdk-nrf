@@ -21,6 +21,30 @@
 extern "C" {
 #endif
 
+/** @brief Date time notification event types used to signal the application. */
+enum date_time_evt_type {
+	/** Date time library has obtained valid time from the modem. */
+	DATE_TIME_OBTAINED_MODEM,
+	/** Date time library has obtained valid time from NTP servers. */
+	DATE_TIME_OBTAINED_NTP,
+	/** Date time library has obtained valid time from external source. */
+	DATE_TIME_OBTAINED_EXT,
+	/** Date time library does not have valid time. */
+	DATE_TIME_NOT_OBTAINED
+};
+
+/** @brief Struct with data received from the Date time library. */
+struct date_time_evt {
+	/** Type of event. */
+	enum date_time_evt_type type;
+};
+
+/** @brief Date time library asynchronous event handler.
+ *
+ *  @param[in] evt The event and any associated parameters.
+ */
+typedef void (*date_time_evt_handler_t)(const struct date_time_evt *evt);
+
 /** @brief Set the current date time.
  *
  *  @note See http://www.cplusplus.com/reference/ctime/tm/ for accepted input
@@ -62,13 +86,30 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime);
  */
 int date_time_now(int64_t *unix_time_ms);
 
+/** @brief Register an event handler for Date time library events.
+ *
+ *  @warning The library only allows for one event handler to be registered
+ *           at a time. A passed in event handler in this function will
+ *           overwrite the previously set event handler.
+ *
+ *  @param evt_handler Event handler. Handler is de-registered if parameter is
+ *                     NULL.
+ */
+void date_time_register_handler(date_time_evt_handler_t evt_handler);
+
 /** @brief Asynchronous update of internal date time UTC. This function
  *         initiates a date time update regardless of the internal update
- *         interval.
+ *         interval. If an event handler is provided it will be updated
+ *         with library events, accordingly.
+ *
+ *  @param evt_handler Event handler. If the passed in pointer is NULL the
+ *                     previous registered event handler is not de-registered.
+ *                     This means that library events will still be received in
+ *                     the previously registered event handler.
  *
  *  @return 0 If the operation was successful.
  */
-int date_time_update_async(void);
+int date_time_update_async(date_time_evt_handler_t evt_handler);
 
 /** @brief Clear the current date time held by the library.
  *
