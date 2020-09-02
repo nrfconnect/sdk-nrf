@@ -97,7 +97,7 @@ pipeline {
                       (source ../zephyr/zephyr-env.sh && \
                       pip install --user -r ../tools/ci-tools/requirements.txt && \
                       pip install --user pylint && \
-		      echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>" > compliance.xml)
+		      echo "<?xml version=\\"1.0\\" encoding=\\"utf-8\\"?>" > compliance.xml)
                     """
                   }
                   finally {
