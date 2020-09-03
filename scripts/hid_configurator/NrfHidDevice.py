@@ -197,6 +197,12 @@ class NrfHidDevice():
 
         try:
             devlist = hid.enumerate(vid=vid)
+            # Config channel can use only first HID interface of nrf_desktop
+            # device. Other HID interfaces do not provide proper config channel
+            # response.
+            devlist = list(filter(lambda x: x['interface_number'] in (-1, 0),
+                                  devlist))
+
             for d in devlist:
                 dev = hid.Device(path=d['path'])
                 dev_active = False
