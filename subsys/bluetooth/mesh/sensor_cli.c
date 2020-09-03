@@ -308,12 +308,18 @@ static void handle_series_status(struct bt_mesh_model *mod,
 		return;
 	}
 
-	uint8_t count = buf->len / col_format->size * 2 + sensor_value_len(type);
+	size_t val_len = (col_format->size * 2) + sensor_value_len(type);
+	uint8_t count = buf->len / val_len;
 
 	for (uint8_t i = 0; i < count; i++) {
 		struct bt_mesh_sensor_series_entry entry;
+		int err;
 
-		(void)parse_series_entry(type, col_format, buf, &entry);
+		err = parse_series_entry(type, col_format, buf, &entry);
+		if (err) {
+			BT_ERR("Failed parsing column %u (err: %d)", i, err);
+			return;
+		}
 
 		if (cli->cb && cli->cb->series_entry) {
 			cli->cb->series_entry(cli, ctx, type, i, count, &entry);
