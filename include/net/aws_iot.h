@@ -69,7 +69,7 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_CONNECTING = 0x1,
 	/** Connected to AWS IoT broker. */
 	AWS_IOT_EVT_CONNECTED,
-	/** AWS IoT broker ready. */
+	/** AWS IoT library has subscribed to all configured topics. */
 	AWS_IOT_EVT_READY,
 	/** Disconnected to AWS IoT broker. */
 	AWS_IOT_EVT_DISCONNECTED,

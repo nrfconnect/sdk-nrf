@@ -409,6 +409,8 @@ static int aws_iot_topics_populate(char *const id, size_t id_len)
 	return 0;
 }
 
+/** Returns the number of topics subscribed to (0 or greater),
+  * or a negative error code. */
 static int topic_subscribe(void)
 {
 	int err;
@@ -514,7 +516,10 @@ static int topic_subscribe(void)
 		}
 	}
 
-	return err;
+	if (err < 0) {
+		return err;
+	}
+	return app_topic_data.list_count + ARRAY_SIZE(aws_iot_rx_list);
 }
 
 static int publish_get_payload(struct mqtt_client *const c, size_t length)
@@ -565,18 +570,33 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 			break;
 		}
 
-		if (!mqtt_evt->param.connack.session_present_flag) {
-			topic_subscribe();
-		}
-
 		LOG_DBG("MQTT client connected!");
 
 		aws_iot_evt.data.persistent_session =
 				   mqtt_evt->param.connack.session_present_flag;
 		aws_iot_evt.type = AWS_IOT_EVT_CONNECTED;
 		aws_iot_notify_event(&aws_iot_evt);
-		aws_iot_evt.type = AWS_IOT_EVT_READY;
-		aws_iot_notify_event(&aws_iot_evt);
+
+		if (!mqtt_evt->param.connack.session_present_flag) {
+			int res = topic_subscribe();
+
+			if (res < 0) {
+				aws_iot_evt.type = AWS_IOT_EVT_ERROR;
+				aws_iot_evt.data.err = err;
+				aws_iot_notify_event(&aws_iot_evt);
+				break;
+			}
+			if (res == 0) {
+				/* There were not topics to subscribe to. */
+				aws_iot_evt.type = AWS_IOT_EVT_READY;
+				aws_iot_notify_event(&aws_iot_evt);
+			} /* else: wait for SUBACK */
+		} else {
+			/** pre-existing session:
+			  * subscription is already established */
+			aws_iot_evt.type = AWS_IOT_EVT_READY;
+			aws_iot_notify_event(&aws_iot_evt);
+		}
 		break;
 	case MQTT_EVT_DISCONNECT:
 		LOG_DBG("MQTT_EVT_DISCONNECT: result = %d", mqtt_evt->result);
@@ -622,6 +642,9 @@ static void mqtt_evt_handler(struct mqtt_client *const c,
 		LOG_DBG("MQTT_EVT_SUBACK: id = %d result = %d",
 			mqtt_evt->param.suback.message_id,
 			mqtt_evt->result);
+		/* MQTT subscription established. */
+		aws_iot_evt.type = AWS_IOT_EVT_READY;
+		aws_iot_notify_event(&aws_iot_evt);
 		break;
 	default:
 		break;
