@@ -99,11 +99,10 @@ static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
 	if (!strcmp(key, FILE_FLASH_IMG)) {
-		size_t bytes_written = flash_img_bytes_written(&flash_img);
-		ssize_t len = read_cb(cb_arg, &bytes_written,
-				      sizeof(bytes_written));
+		ssize_t len = read_cb(cb_arg, &flash_img.stream.bytes_written,
+				      sizeof(flash_img.stream.bytes_written));
 
-		if (len != sizeof(bytes_written)) {
+		if (len != sizeof(flash_img.stream.bytes_written)) {
 			LOG_ERR("Can't read flash_img from storage");
 			return len;
 		}
