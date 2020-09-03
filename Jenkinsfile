@@ -97,7 +97,12 @@ pipeline {
                       (source ../zephyr/zephyr-env.sh && \
                       pip install --user -r ../tools/ci-tools/requirements.txt && \
                       pip install --user pylint && \
-		      echo "<?xml version=\\"1.0\\" encoding=\\"utf-8\\"?>" > compliance.xml)
+		      echo "<?xml version=\\"1.0\\" encoding=\\"utf-8\\"?>" > compliance.xml
+		      echo "<testsuites errors=\\"0\\" failures=\\"0\\" tests=\\"1\\">" >> compliance.xml
+		      echo "<testsuite errors=\\"0\\" failures=\\"0\\" tests=\\"1\\">" >> compliance.xml
+		      echo "<testcase classname=\\"nop\\" name=\\"nop\\"/>" >> compliance.xml
+		      echo "</testsuite>" >> compliance.xml
+		      echo "</testsuites>" >> compliance.xml)
                     """
                   }
                   finally {
