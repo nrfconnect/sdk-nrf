@@ -21,7 +21,7 @@ static int log_config_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->status < ARRAY_SIZE(status_name));
 
-	return snprintf(buf, buf_len, "%s %s rcpt: %04x id: %02x",
+	return snprintf(buf, buf_len, "%s %s rcpt: %02x id: %02x",
 			status_name[event->status],
 			event->is_request ? "req" : "rsp",
 			event->recipient,

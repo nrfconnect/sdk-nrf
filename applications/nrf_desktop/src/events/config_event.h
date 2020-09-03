@@ -73,6 +73,9 @@ enum config_status {
 /* Description of the option representing module type. */
 #define OPT_DESCR_MODULE_TYPE "module_type"
 
+/* Configuration channel local recipient. */
+#define CFG_CHAN_RECIPIENT_LOCAL 0x00
+
 /** @brief Configuration channel event.
  * Used to forward configuration channel request/response.
  */
@@ -84,14 +87,12 @@ struct config_event {
 
 	/* Data exchanged with host. */
 	uint8_t event_id;
-	uint16_t recipient;
+	uint8_t recipient;
 	uint8_t status;
 	struct event_dyndata dyndata;
 };
 
 EVENT_TYPE_DYNDATA_DECLARE(config_event);
-
-#define CFG_CHAN_RECIPIENT_LOCAL 0x00
 
 extern const uint8_t __start_config_channel_modules[];
 
