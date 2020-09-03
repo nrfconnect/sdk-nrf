@@ -57,7 +57,7 @@ struct sensor_state {
 };
 
 enum sensor_opt {
-	SENSOR_OPT_TYPE,
+	SENSOR_OPT_VARIANT,
 	SENSOR_OPT_CPI,
 	SENSOR_OPT_DOWNSHIFT_RUN,
 	SENSOR_OPT_DOWNSHIFT_REST1,
@@ -75,7 +75,7 @@ static struct device *sensor_dev;
 static struct sensor_state state;
 
 static const char * const opt_descr[] = {
-	[SENSOR_OPT_TYPE] = OPT_DESCR_MODULE_TYPE,
+	[SENSOR_OPT_VARIANT] = OPT_DESCR_MODULE_VARIANT,
 	[SENSOR_OPT_CPI] = "cpi",
 	[SENSOR_OPT_DOWNSHIFT_RUN] = "downshift",
 	[SENSOR_OPT_DOWNSHIFT_REST1] = "rest1",
@@ -125,9 +125,9 @@ static bool set_option(enum motion_sensor_option option, uint32_t value)
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	BUILD_ASSERT(SENSOR_OPT_TYPE == 0);
+	BUILD_ASSERT(SENSOR_OPT_VARIANT == 0);
 
-	for (size_t i = (SENSOR_OPT_TYPE + 1); i < ARRAY_SIZE(opt_descr); i++) {
+	for (size_t i = (SENSOR_OPT_VARIANT + 1); i < ARRAY_SIZE(opt_descr); i++) {
 		if (!strcmp(key, opt_descr[i])) {
 			uint32_t readout;
 
@@ -370,7 +370,7 @@ static int init(void)
 
 static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 {
-	if (opt_id == SENSOR_OPT_TYPE) {
+	if (opt_id == SENSOR_OPT_VARIANT) {
 		*size = strlen(CONFIG_DESKTOP_MOTION_SENSOR_TYPE);
 		__ASSERT_NO_MSG((*size != 0) &&
 				(*size < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
@@ -697,7 +697,7 @@ static bool event_handler(const struct event_header *eh)
 		return handle_usb_state_event(cast_usb_state_event(eh));
 	}
 
-	GEN_CONFIG_EVENT_HANDLERS("sensor", opt_descr, update_config,
+	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
 				  fetch_config);
 
 	/* If event is unhandled, unsubscribe. */

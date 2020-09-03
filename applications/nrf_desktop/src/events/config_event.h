@@ -70,8 +70,8 @@ enum config_status {
 /* Character used to inform about end of module description. */
 #define MODULE_DESCR_END_CHAR '\n'
 
-/* Description of the option representing module type. */
-#define OPT_DESCR_MODULE_TYPE "module_type"
+/* Description of the option representing module variant. */
+#define OPT_DESCR_MODULE_VARIANT "module_variant"
 
 /* Configuration channel local recipient. */
 #define CFG_CHAN_RECIPIENT_LOCAL 0x00
