@@ -612,6 +612,16 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
+	struct pairing_data_mitm pairing_data;
+
+	if (k_msgq_peek(&mitm_queue, &pairing_data) != 0) {
+		return;
+	}
+
+	if (pairing_data.conn == conn) {
+		bt_conn_unref(pairing_data.conn);
+		k_msgq_get(&mitm_queue, &pairing_data, K_NO_WAIT);
+	}
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
@@ -851,21 +861,32 @@ static void num_comp_reply(bool accept)
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
+	static bool pairing_button_pressed;
 
 	uint32_t buttons = button_state & has_changed;
 
 	if (k_msgq_num_used_get(&mitm_queue)) {
 		if (buttons & KEY_PAIRING_ACCEPT) {
+			pairing_button_pressed = true;
 			num_comp_reply(true);
 
 			return;
 		}
 
 		if (buttons & KEY_PAIRING_REJECT) {
+			pairing_button_pressed = true;
 			num_comp_reply(false);
 
 			return;
 		}
+	}
+
+	/* Do not take any action if the pairing button is released. */
+	if (pairing_button_pressed &&
+	    (has_changed & (KEY_PAIRING_ACCEPT | KEY_PAIRING_REJECT))) {
+		pairing_button_pressed = false;
+
+		return;
 	}
 
 	if (has_changed & KEY_TEXT_MASK) {
