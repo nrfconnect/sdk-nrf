@@ -98,6 +98,8 @@
 
 .. _`DFU over Zigbee`: https://infocenter.nordicsemi.com/topic/ug_nrfutil/UG/nrfutil/nrfutil_dfu_zigbee.html
 
+.. _`nRF Util`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrfutil%2FUG%2Fnrfutil%2Fnrfutil_intro.html
+
 .. ### Links to the Nordic website
 
 .. _`Nordic Semiconductor website`: https://www.nordicsemi.com/

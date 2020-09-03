@@ -1,6 +1,6 @@
 .. _sampleboardnames:
 
-Set used by Bluetooth LE Samples and NFC samples
+Set used by Bluetooth LE Samples, NFC samples, and NUS shell transport sample.
 
 .. set1_start
 
