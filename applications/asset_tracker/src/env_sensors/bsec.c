@@ -81,41 +81,53 @@ static bool backoff_enabled;
 static bool initialized;
 
 static struct k_work_q *env_sensors_work_q;
+#define SETTINGS_NAME_BSEC "bsec"
+#define SETTINGS_KEY_STATE "state"
+#define SETTINGS_BSEC_STATE SETTINGS_NAME_BSEC "/" SETTINGS_KEY_STATE
 
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	if (!strcmp(key, "state")) {
-		s_state_buffer_len = len_rd;
-		if (read_cb(cb_arg, s_state_buffer, len_rd) > 0) {
+	if (!key) {
+		LOG_ERR("Invalid key");
+		return -EINVAL;
+	}
+
+	LOG_DBG("Settings key: %s, size: %d", log_strdup(key), len_rd);
+
+	if (!strncmp(key, SETTINGS_KEY_STATE, strlen(SETTINGS_KEY_STATE))) {
+		if (len_rd > sizeof(s_state_buffer)) {
+			LOG_ERR("Setting too big: %d", len_rd);
+			return -EMSGSIZE;
+		}
+
+		s_state_buffer_len = read_cb(cb_arg, s_state_buffer, len_rd);
+		if (s_state_buffer_len > 0) {
 			return 0;
+		} else {
+			LOG_ERR("No settings data read");
+			return -ENODATA;
 		}
 	}
-	s_state_buffer_len = 0;
-	return -1;
+	return -ENOTSUP;
 }
+
+SETTINGS_STATIC_HANDLER_DEFINE(bsec, SETTINGS_NAME_BSEC, NULL, settings_set,
+			       NULL, NULL);
 
 static int enable_settings(void)
 {
 	int err;
 
-	settings_subsys_init();
-	struct settings_handler my_conf = {
-		.name = "bsec",
-		.h_set = settings_set
-	};
-
-	err = settings_register(&my_conf);
+	err = settings_subsys_init();
 	if (err) {
-		LOG_ERR("Cannot register settings handler");
+		LOG_ERR("Settings init failed: %d", err);
 		return err;
 	}
 
-	/* This module loads settings for all application modules */
-	err = settings_load();
+	err = settings_load_subtree(settings_handler_bsec.name);
 	if (err) {
-		LOG_ERR("Cannot load settings");
-		return err;
+		LOG_ERR("Cannot load settings: %d", err);
 	}
 
 	return err;
@@ -175,13 +187,18 @@ static uint32_t state_load(uint8_t *state_buffer, uint32_t n_buffer)
 		memcpy(state_buffer, s_state_buffer, s_state_buffer_len);
 		return s_state_buffer_len;
 	} else {
+		LOG_DBG("No stored state to load");
 		return 0;
 	}
 }
 
 static void state_save(const uint8_t *state_buffer, uint32_t length)
 {
-	settings_save_one("bsec/state", state_buffer, length);
+	if (length > sizeof(s_state_buffer)) {
+		LOG_ERR("State buffer too big to save: %d", length);
+		return;
+	}
+	settings_save_one(SETTINGS_BSEC_STATE, state_buffer, length);
 }
 
 static uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
@@ -289,19 +306,24 @@ int env_sensors_init_and_start(struct k_work_q *work_q,
 		LOG_ERR("cannot bind to BME680");
 		return -EINVAL;
 	}
+
 	ret = enable_settings();
 	if (ret) {
 		LOG_ERR("Cannot enable settings err: %d", ret);
 		return ret;
 	}
+
 	bsec_ret = bsec_iot_init(BSEC_SAMPLE_RATE, 1.2f, bus_write,
 				bus_read, delay_ms, state_load,
 				config_load);
+
 	if (bsec_ret.bme680_status) {
-		/* Could not initialize BME680 */
+		LOG_ERR("Could not initialize BME680: %d",
+			(int)bsec_ret.bme680_status);
 		return (int)bsec_ret.bme680_status;
 	} else if (bsec_ret.bsec_status) {
-		/* Could not initialize BSEC library */
+		LOG_ERR("Could not initialize BSEC library: %d",
+			(int)bsec_ret.bsec_status);
 		return (int)bsec_ret.bsec_status;
 	}
 
