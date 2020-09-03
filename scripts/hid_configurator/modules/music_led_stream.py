@@ -18,12 +18,11 @@ from modules.led_stream import fetch_free_steps_buffer_info, led_send_single_ste
 
 
 class MusicLedStream():
-    def __init__(self, dev, DEVICE_CONFIG, led_id, freq, filename):
-        if not validate_params(DEVICE_CONFIG, freq, led_id):
+    def __init__(self, dev, led_id, freq, filename):
+        if not validate_params(freq, led_id):
             raise ValueError("Invalid music LED stream parameters")
 
-        success, (ready, free) = fetch_free_steps_buffer_info(dev, led_id,
-                                    DEVICE_CONFIG['stream_led_cnt'])
+        success, (ready, free) = fetch_free_steps_buffer_info(dev, led_id)
         if not success:
             raise Exception("Device communication problem occurred")
 
@@ -38,7 +37,6 @@ class MusicLedStream():
         self.dev_params = {
             'max_free' : free,
             'dev' : dev,
-            'stream_led_cnt' : DEVICE_CONFIG['stream_led_cnt'],
             'led_id' : led_id,
         }
 
@@ -130,8 +128,7 @@ class MusicLedStream():
             self.led_effects['sent_cnt'] += 1
 
             success, (ready, free) = fetch_free_steps_buffer_info(self.dev_params['dev'],
-                                                    self.dev_params['led_id'],
-                                                    self.dev_params['stream_led_cnt'])
+                                                    self.dev_params['led_id'])
 
             if not success or not ready:
                 self.send_error_event.set()
@@ -189,18 +186,20 @@ class MusicLedStream():
     def stream_term(self):
         print("Music LED stream ended")
 
+        # Shutdown thread sending LED events to device
+        self.queue.put(None)
+        self.thread.join()
+
         self.stream.stop_stream()
         self.stream.close()
         self.p.terminate()
         self.file.close()
 
-        # Shutdown thread sending LED events to device
-        self.queue.put(None)
-
     def stream_start(self):
         try:
             print("Music LED stream started. Press Ctrl+C to interrupt.")
-            threading.Thread(target=self.send_led_effects).start()
+            self.thread = threading.Thread(target=self.send_led_effects)
+            self.thread.start()
 
             self.stream.start_stream()
             self.led_effects['start_time'] = time.time()
@@ -213,9 +212,9 @@ class MusicLedStream():
         self.stream_term()
 
 
-def send_music_led_stream(dev, DEVICE_CONFIG, led_id, freq, filename):
+def send_music_led_stream(dev, led_id, freq, filename):
     try:
-        mls = MusicLedStream(dev, DEVICE_CONFIG, led_id, freq, filename)
+        mls = MusicLedStream(dev, led_id, freq, filename)
         mls.stream_start()
     except Exception as e:
         print(e)
