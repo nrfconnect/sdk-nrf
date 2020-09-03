@@ -8,7 +8,7 @@ import collections
 import logging
 
 from NrfHidDevice import EVENT_DATA_LEN_MAX
-from devices import DEVICE
+from modules.module_config import MODULE_CONFIG
 
 
 class ConfigParser:
@@ -56,23 +56,23 @@ def check_range(value, value_range):
     return value_range[0] <= value <= value_range[1]
 
 
-def get_option_format(device_type, module_name, option_name_on_device):
+def get_option_format(module_name, option_name_on_device):
     try:
         # Search through nested dicts and see if 'format' key exists for the config option
-        format = DEVICE[device_type]['config'][module_name]['format'][option_name_on_device]
+        format = MODULE_CONFIG[module_name]['format'][option_name_on_device]
     except KeyError:
         format = None
 
     return format
 
-def change_config(dev, dev_name, module_name, option_name, value, option_descr):
+def change_config(dev, module_name, option_name, value, option_descr):
     value_range = option_descr.range
     logging.debug('Send request to update {}/{}: {}'.format(module_name,
                                                             option_name,
                                                             value))
 
     option_name_on_device = option_descr.option_name
-    format = get_option_format(dev_name, module_name, option_name_on_device)
+    format = get_option_format(module_name, option_name_on_device)
 
     if format is not None:
         # Read out first, then modify and write back (even if there is only one member in struct, to simplify code)
@@ -109,7 +109,7 @@ def change_config(dev, dev_name, module_name, option_name, value, option_descr):
     return success
 
 
-def fetch_config(dev, dev_name, module_name, option_name, option_descr):
+def fetch_config(dev, module_name, option_name, option_descr):
     logging.debug('Fetch the current value of {}/{} from the firmware'.format(module_name,
                                                                               option_name))
 
@@ -119,7 +119,7 @@ def fetch_config(dev, dev_name, module_name, option_name, option_descr):
     if not success or not fetched_data:
         return success, None
 
-    format = get_option_format(dev_name, module_name, option_name_on_device)
+    format = get_option_format(module_name, option_name_on_device)
 
     if format is None:
         return success, option_descr.type.from_bytes(fetched_data, byteorder='little')
