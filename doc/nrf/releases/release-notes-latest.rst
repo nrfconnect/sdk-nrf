@@ -45,31 +45,36 @@ sdk-zephyr
 
 .. NOTE TO MAINTAINERS: The latest Zephyr commit appears in multiple places; make sure you update them all.
 
-The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``4ef29b34e3``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| contains all commits from the upstream Zephyr repository up to and including ``0aaee6dcf5``, plus some |NCS| specific additions.
 
 For a complete list of upstream Zephyr commits incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 4ef29b34e3 ^v2.3.0-rc1-ncs1
+   git log --oneline 0aaee6dcf5 ^v2.3.0-rc1-ncs1
 
 For a complete list of |NCS| specific commits, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^4ef29b34e3
+   git log --oneline manifest-rev ^0aaee6dcf5
 
 The following list summarizes the most important changes inherited from upstream Zephyr:
 
 * Architectures:
 
   * Fixed parsing of Cortex-M MemManage Stacking Errors to correctly report thread stack corruptions.
+  * Extended the interrupt vector relaying feature to support Cortex-M Mainline architecture variants.
+  * Aligned the Cortex-M vector table according to VTOR requirements.
+  * Fixed booting in no-multithreading mode.
 
 * Kernel:
 
-  * The ``CONFIG_KERNEL_DEBUG`` Kconfig option, which was used to enable ``printk()`` based debugging of the kernel internals, has been removed.
+  * Removed the ``CONFIG_KERNEL_DEBUG`` Kconfig option, which was used to enable ``printk()`` based debugging of the kernel internals.
     The kernel now uses the standard Zephyr logging API at DBG log level for this purpose.
     The logging module used for the kernel is named ``os``.
+  * Added :cpp:func:`k_delayed_work_pending` to check if work has been submitted.
+  * Updated the kernel to not call swap if the next thread that is ready is the current thread.
 
 * Boards:
 
@@ -79,23 +84,34 @@ The following list summarizes the most important changes inherited from upstream
   * Modified I2C1 and SPI2 pin assignments in the :ref:`zephyr:nrf5340pdk_nrf5340` to match
     the standard location for I2C and SPI in the Arduino header.
   * Added nRF52820 nrfx defines for emulation on the :ref:`zephyr:nrf52833dk_nrf52833`.
+  * Added support for the :ref:`zephyr:nrf21540dk_nrf52840`.
+
 
 * Networking:
+
+  * Switched networking threads to use the kernel stack.
 
   * LwM2M:
 
     * Fixed a bug where a FOTA socket was not closed after the download (PULL mode).
     * Added a Kconfig option :option:`CONFIG_LWM2M_SECONDS_TO_UPDATE_EARLY` that specifies how long before the time-out the Registration Update will be sent.
     * Added ObjLnk resource type support.
+    * Fixed Security and Server object instance matching.
+    * Fixed handling of fds polling (in case there is another socket open).
+    * Made ``send()`` calls on the same socket thread-safe.
+    * Fixed the size of the :cpp:class:`sockaddr` structure that was insufficient when provided on an IPv6 socket while IPv4 was enabled as well.
+    * Fixed PUSH mode FOTA.
+    * Fixed bootstrap procedure.
 
   * MQTT:
 
     * The ``utf8`` pointer in the :cpp:class:`mqtt_utf8` struct is now const.
     * The default ``clean_session`` value is now configurable with Kconfig (see :option:`CONFIG_MQTT_CLEAN_SESSION`).
+    * Prevented double CONNACK event notification on server reject.
 
   * OpenThread:
 
-    * Updated the OpenThread revision to upstream commit ``e653478c503d5b13207b01938fa1fa494a8b87d3``.
+    * Updated the OpenThread revision to upstream commit ``ac86fe52e62e60a66aeeb1c905cb1294709147e9``.
     * Implemented a missing ``enable`` API function for the OpenThread interface.
     * Cleaned up the OpenThread Kconfig file.
       OpenThread dependencies are now enabled automatically.
@@ -103,10 +119,38 @@ The following list summarizes the most important changes inherited from upstream
     * Reimplemented the logger glue layer for better performance.
     * Updated the OpenThread thread priority class to be configurable.
     * Added several Kconfig options to customize the OpenThread stack.
+    * Added Sleep to Transmit as hardware radio capability (``OT_RADIO_CAPS_SLEEP_TO_TX``).
+    * Removed retransmissions from the radio capabilities (``OT_RADIO_CAPS_TRANSMIT_RETRIES``).
+    * Added a configuration option to select the OpenThread version (either 1.1 or 1.2).
+    * Added configuration options for NCP vendor hooks (see :option:`CONFIG_OPENTHREAD_NCP_VENDOR_HOOK_SOURCE`).
+    * Allowed use of custom mbed TLS (see :option:`CONFIG_OPENTHREAD_MBEDTLS_LIB_NAME`).
+    * Removed double-buffering in UART send.
+    * Fixed the network initialization when :option:`CONFIG_NET_CONFIG_MY_IPV6_ADDR` is not set.
+    * Added a Kconfig option that allows to link Zephyr with precompiled OpenThread libraries (see :option:`CONFIG_OPENTHREAD_SOURCES`).
+    * Added a Kconfig option to compile with Diagnostic functions support (see :option:`CONFIG_OPENTHREAD_DIAG`).
 
   * Socket offloading:
 
     * Removed dependency to the :option:`CONFIG_NET_SOCKETS_POSIX_NAMES` configuration option.
+    * Fixed an issue where the network interface was missing for offloaded drivers (#27037).
+    * Updated the ``close()`` socket call to no longer use ``ioctl()`` underneath.
+      It now has a separate entry in a socket vtable.
+
+  * IP:
+
+    * Fixed an issue where IPv6 RS messages did not comply with RFC4291.
+    * Added infrastructure for collecting stack timing statistics for network packet pass-through (see :option:`CONFIG_NET_PKT_TXTIME_STATS_DETAIL` and :option:`CONFIG_NET_PKT_RXTIME_STATS_DETAIL`).
+
+  * TCP:
+
+    * Made the new TCP stack the default one (see :option:`CONFIG_NET_TCP2`).
+    * Removed ``net_tcp_init()`` for non-native stacks.
+    * Implemented a blocking connect in the TCP2 stack.
+    * Fixed unaligned access in the TCP2 stack.
+
+  * Networking configuration:
+
+    * Added support for initialization from application.
 
 * Bluetooth:
 
@@ -128,6 +172,20 @@ The following list summarizes the most important changes inherited from upstream
     Use :cpp:func:`bt_le_adv_start` instead, with :cpp:member:`bt_le_adv_param::peer` set to the remote peer's address.
   * Deprecated the ``BT_LE_ADV_*`` macros.
     Use the ``BT_GAP_ADV_*`` enums instead.
+  * Updated L2CAP RX MTU to be controlled by :option:`CONFIG_BT_L2CAP_RX_MTU` (instead of :option:`CONFIG_BT_RX_BUF_LEN`) when :option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` is disabled.
+    If :option:`CONFIG_BT_RX_BUF_LEN` is changed from its default value, :option:`CONFIG_BT_L2CAP_RX_MTU` should be set to ``CONFIG_BT_RX_BUF_LEN - 8``.
+  * Added support for periodic advertisement to the Host.
+  * Added a :cpp:member:`bt_conn_auth_cb::bond_deleted` callback to the Host.
+  * Added support for starting a persistent advertiser when the maximum number of connections has been reached.
+  * Fixed the settings of Advertising Data on extended advertising instances.
+  * Updated the SMP implementation in the Host to reject legacy pairing early in SC-only mode.
+  * Fixed an issue with :cpp:func:`bt_gatt_service_unregister` not clearing CCC information, which might result in no space to store the CCC configuration.
+  * Added support in L2CAP for elevating the security level before sending the connection request if the application has set a required security level on the channel.
+  * Added an option to disable GATT security checks (see :option:`CONFIG_BT_CONN_DISABLE_SECURITY`).
+  * Added support for automatic discovery of CCC when subscribing (see :option:`CONFIG_BT_GATT_AUTO_DISCOVER_CCC`).
+  * Fixed an issue where a peripheral might not store CCC in non-volatile memory in case of multiple CCC changes (due to a race condition).
+  * Fixed a deadlock in receiving a disconnected event when disconnecting with pending GATT Write commands.
+  * Fixed an issue where a persistent advertiser would not be started due to a race condition.
 
 * Bluetooth LE Controller:
 
@@ -136,16 +194,45 @@ The following list summarizes the most important changes inherited from upstream
   * Updated the Controller to only use control procedures supported by the peer.
   * Added support for the nRF52820 SoC.
   * Removed the legacy Controller.
+  * Implemented a function to remove auxiliary advertising sets (``ll_adv_aux_set_remove()``).
+  * Implemented a function to remove all primary channels and auxiliary channels of an advertising set (``ll_adv_aux_set_clear()``).
+  * Fixed overflow that could happen when using uninitialized PDU.
+  * Removed redundant :option:`CONFIG_BT_LL_SW_SPLIT` conditional.
+  * Enforced that the Read RSSI command is supported if the Connection State is supported.
+  * Added missing aux acquire on periodic advertising.
+  * Updated the implementation to schedule non-overlapping sync PDUs.
+  * Fixed the handling of HCI commands for extended advertising.
+  * Added a terminate event for extended advertising.
+  * Filled the missing Periodic Advertising interval in the Extended Advertising Report when auxiliary PDUs contain Sync Info fields.
+  * Filled the referenced event counter of the Periodic Advertising SYNC_IND PDU into the Sync Info structure in the Common Extended Advertising Header Format.
+  * Switched HCI threads to use the kernel stack.
 
 * Bluetooth Mesh:
 
   * Removed the ``net_idx`` parameter from the Health Client model APIs because it can be derived (by the stack) from the ``app_idx`` parameter.
+  * Documented :ref:`Mesh Shell commands <zephyr:bluetooth_mesh_shell>`.
+  * Allowed to configure the advertiser stack size (see :option:`CONFIG_BT_MESH_ADV_STACK_SIZE`).
+  * Resolved a corner case where the segmented sending would be rescheduled before the segments were done sending.
+  * Fixed dangling transport segmentation buffer pointer when Friend feature is enabled.
+  * Switched advertising threads to use the kernel stack.
+
+* Bluetooth shell:
+
+  * Added an advertising option for undirected one-time advertising.
+  * Added an advertising option for advertising using identity address when local privacy is enabled.
+  * Added an advertising option for directed advertising to privacy-enabled peer when local privacy is disabled.
+  * Updated the info command to print PHY and data length information.
 
 * Drivers:
+
+  * Bluetooth HCI:
+
+    * Fixed missing ``gpio_dt_flags`` in :cpp:class:`spi_cs_control` in the HCI driver over SPI transport.
 
   * Clock control:
 
     * Fixed an issue in the nRF clock control driver that could lead to a fatal error during the system initialization, when calibration was started before kernel services became available.
+    * Reworked the nRF clock control driver implementation to use the On-Off Manager.
 
   * Display:
 
@@ -155,6 +242,10 @@ The following list summarizes the most important changes inherited from upstream
 
     * Fixed a race condition in the nRF5 entropy driver that could result in missing the wake-up event (which caused the ``kernel.memory_protection.stack_random`` test to fail).
 
+  * EEPROM:
+
+    * Fixed chip-select GPIO flags extraction from DTS in AT2x driver.
+
   * Flash:
 
     * Extended the flash API with the :cpp:func:`flash_get_parameters` function.
@@ -163,6 +254,10 @@ The following list summarizes the most important changes inherited from upstream
     * Added support for sub-word lengths of read and write transfers in the nRF QSPI NOR flash driver (nrf_qspi_nor).
     * Improved the handling of erase operations in the nRF QSPI NOR flash driver (nrf_qspi_nor), the AT45 family flash driver (spi_flash_at45), and the SPI NOR flash driver (spi_nor).
       Now the operation is not started if it cannot be completed successfully.
+    * Established the unrestricted alignment of flash reads for all drivers.
+    * Enhanced the nRF QSPI NOR flash driver (nrf_qspi_nor) so that it supports unaligned read offset, read length, and buffer offset.
+    * Added SFDP support in the SPI NOR flash driver (spi_nor).
+    * Fixed a regression in the nRF flash driver (soc_flash_nrf) when using the :option:`CONFIG_BT_CTLR_LOW_LAT` option.
 
   * GPIO:
 
@@ -173,6 +268,11 @@ The following list summarizes the most important changes inherited from upstream
 
     * Fixed handling of scattered transactions in the nRF TWIM nrfx driver (i2c_nrfx_twim) by introducing an optional concatenation buffer.
     * Used a time limit (100 ms) when waiting for transactions to complete, in both nRF drivers.
+
+  * IEEE 802.15.4:
+
+    * Added 802.15.4 multiprotocol support (see :option:`CONFIG_NRF_802154_MULTIPROTOCOL_SUPPORT`).
+    * Added the Kconfig option :option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` for defining OUI.
 
   * LoRa:
 
@@ -186,6 +286,7 @@ The following list summarizes the most important changes inherited from upstream
 
     * Added support for the IIS2DH accelerometer.
     * Added the :cpp:func:`sensor_attr_get` API function for getting the value of a sensor attribute.
+    * Added support for the :ref:`zephyr:wsen-itds`.
 
   * Serial:
 
@@ -194,9 +295,17 @@ The following list summarizes the most important changes inherited from upstream
     * Changed the nRF UART nrfx drivers (uart_nrfx_uart/uarte) to use the DT ``hw-flow-control`` property instead of Kconfig options.
     * Fixed disabling of the TX interrupt in the uart_nrfx_uart driver.
     * Fixed the uart_nrfx_uarte driver to prevent spurious :cpp:enumerator:`UART_RX_BUF_REQUEST <uart_interface::UART_RX_BUF_REQUEST>` events.
+    * Removed counters reset from :cpp:func:`uart_rx_enable` in the nrf_uarte driver.
+    * Changed wrappers of optional API functions to always be present and return ``-ENOTSUP`` when a given function is not implemented in the driver that is used.
+    * Added another error code (``-EACCES``) that can be returned by the :cpp:func:`uart_rx_buf_rsp` API function.
+      Updated all existing drivers that implement this function accordingly.
+    * Added initial clean-up of the receiver state in the nRF UARTE driver (uart_nrfx_uarte).
+    * Added initial disabling of the UART peripheral before its pins are configured in the nRF UART/UARTE drivers (uart_nrfx_uart/uarte).
 
   * SPI:
 
+    * Updated the implementation of the nRF SPIM driver (spi_nrfx_spim) to support data rates higher than 8 Mbps in the nRF5340 SoC.
+    * Changed wrappers of optional API functions to always be present and return ``-ENOTSUP`` when a given function is not implemented in the driver that is used.
     * Updated the ``cs-gpios`` properties in DT SPI nodes with proper GPIO flags specifying the active level.
       Updated the related drivers to use the flags from ``cs-gpios`` properties instead of hard-coded values.
 
@@ -210,6 +319,21 @@ The following list summarizes the most important changes inherited from upstream
     * Unified endpoint helper macros across all USB device drivers.
     * Fixed handling of fragmented transfers on the control OUT endpoint in the Nordic Semiconductor USB Device Controller driver (usb_dc_nrfx).
     * Introduced names for threads used in USB classes, to aid debugging.
+    * Updated the way the :cpp:func:`usb_enable` function should be used.
+      For some samples, this function was invoked automatically on system boot-up to enable the USB subsystem, but now it must be called explicitly by the application.
+      If your application relies on any of the following Kconfig options, it must also enable the USB subsystem:
+
+      * :option:`CONFIG_OPENTHREAD_NCP_SPINEL_ON_UART_ACM`
+      * :option:`CONFIG_USB_DEVICE_NETWORK_ECM`
+      * :option:`CONFIG_USB_DEVICE_NETWORK_EEM`
+      * :option:`CONFIG_USB_DEVICE_NETWORK_RNDIS`
+      * :option:`CONFIG_TRACING_BACKEND_USB`
+      * :option:`CONFIG_USB_UART_CONSOLE`
+
+    * Fixed an issue that CDC ACM was not accepting OUT transfers after Resume from Suspend.
+    * Fixed an issue with remote wake-up requests in the nRF driver.
+    * Updated the implementation of the HID class to allow sending data only in CONFIGURED state.
+    * Updated to use the kernel stack for threads not running in user space.
 
   * Watchdog:
 
@@ -220,6 +344,56 @@ The following list summarizes the most important changes inherited from upstream
   * Fixed a possible NULL pointer dereference when using any of the ``fs_`` functions.
     The functions will now return an error code in this case.
   * Fixed a garbage-collection issue in the NVS subsystem.
+  * Added the Kconfig option :option:`CONFIG_FS_FATFS_EXFAT` for enabling exFAT support.
+  * Added support for file open flags to fs and POSIX API.
+
+* Management:
+
+  * MCUmgr:
+
+    * Moved mcumgr into its own directory.
+    * Switched UDP port to use the kernel stack.
+    * Added missing socket close in error path for SMP.
+
+  * Added support for Open Supervised Device Protocol (OSDP) (see :option:`CONFIG_OSDP`).
+
+  * updatehub:
+
+    * Moved updatehub from :file:`lib` to :file:`subsys/mgmt`.
+    * Fixed out-of-bounds access and added a return value check for ``flash_img_init()``.
+    * Fixed a ``getaddrinfo`` resource leak.
+
+* Settings:
+
+  * Updated the implementation to return an error rather than faulting if there is an attempt to read a setting from a channel that does not support reading.
+  * Disallowed modifying the content of a static subtree name.
+
+* LVGL:
+
+  * Updated the library to the new major release v7.0.2.
+  * Aligned LVGL Kconfig constants with suggested defaults from upstream.
+
+* Tracing:
+
+  * Updated the API to check if the init function exists prior to calling it.
+
+* Logging:
+
+  * Fixed immediate logging with multiple backends.
+  * Switched logging thread to use the kernel stack.
+  * Allowed users to disable all shell backends at once using :option:`CONFIG_SHELL_LOG_BACKEND`.
+  * Added a logging backend for the Spinel protocol.
+  * Fixed timestamp calculation when using NEWLIB.
+
+* Shell:
+
+  * Switched to use the kernel stack.
+  * Fixed the select command.
+  * Fixed prompting dynamic commands.
+
+* libc:
+
+  * Simplified newlib malloc arena definition.
 
 * Devicetree:
 
@@ -232,22 +406,44 @@ The following list summarizes the most important changes inherited from upstream
   * Added a number of iterable section macros to the set of linker macros, including ``Z_ITERABLE_SECTION_ROM`` and ``Z_ITERABLE_SECTION_RAM``.
   * Added a new Zephyr Build Configuration package with support for specific build configuration for Zephyr derivatives (including forks).
     See :ref:`zephyr:cmake_pkg` for more information.
+  * Removed the set of ``*_if_kconfig()`` CMake functions.
+    Use ``_ifdef(CONFIG_ ...)`` instead.
+  * BOARD, SOC, DTS, and ARCH roots can now be specified in each module's :file:`zephyr/module.yml` file (see :ref:`modules_build_settings`).
+    If you use something similar to ``source $(SOC_DIR)/<path>``, change it to ``rsource <relative>/<path>`` or similar.
 
 * Samples:
 
   * Updated the :ref:`zephyr:nrf-system-off-sample` to better support low-power states of Nordic Semiconductor devices.
   * Updated the :ref:`zephyr:usb_mass` to perform all application-level configuration before the USB subsystem starts.
     The sample now also supports FAT file systems on external storage.
+  * Updated the :ref:`zephyr:nvs-sample` sample to do a full chip erase when flashing.
+  * Fixed the build of the :ref:`zephyr:bluetooth-mesh-onoff-level-lighting-vnd-sample` application with mcumgr.
+  * Added new commands ``write_unaligned`` and ``write_pattern`` to the :ref:`zephyr:samples_flash_shell`.
+  * Fixed the ``cmd_hdr`` and ``acl_hdr`` usage in the :ref:`zephyr:bluetooth-hci-spi-sample` sample.
+  * Removed the NFC sample.
+  * Updated the configuration for extended advertising in the :ref:`zephyr:bluetooth-hci-uart-sample` and :ref:`zephyr:bluetooth-hci-rpmsg-sample` samples.
 
 * Modules:
 
   * Introduced a ``depends`` keyword that can be added to a module's :file:`module.yml` file to declare dependencies to other modules.
     This allows to correctly establish the order of processing.
 
+* Testing infrastructure:
+
+  * sanitycheck:
+
+    * Added an ``integration`` option that is used to list platforms to use in integration testing (CI) and avoids whitelisting platforms.
+    * Updated sanitycheck to not expect a PASS result from build_only instances.
+    * Added a command line option for the serial_pty script.
+    * Added support for ``only_tags`` in the platform definition.
+    * Disabled returning errors on warnings.
+
 * Other:
 
   * Implemented ``nanosleep`` in the POSIX subsystem.
   * Deprecated the Zephyr-specific types in favor of the standard C99 int types.
+  * Removed ``CONFIG_NET_IF_USERSPACE_ACCESS``, because it is no longer needed.
+  * Renamed some attributes in the :cpp:class:`device` struct: ``config_info`` to ``config``, ``driver_api`` to ``api``, and ``driver_data`` to ``data``.
 
 The following list contains |NCS| specific additions:
 
