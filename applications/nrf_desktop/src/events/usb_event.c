@@ -15,7 +15,8 @@ static const char * const state_name[] = {
 	[USB_STATE_DISCONNECTED] = "DISCONNECTED",
 	[USB_STATE_POWERED]      = "POWERED",
 	[USB_STATE_ACTIVE]       = "ACTIVE",
-	[USB_STATE_SUSPENDED]    = "SUSPENDED"
+	[USB_STATE_SUSPENDED]    = "SUSPENDED",
+	[USB_STATE_HALTED]       = "HALTED"
 };
 
 static int log_usb_state_event(const struct event_header *eh, char *buf,

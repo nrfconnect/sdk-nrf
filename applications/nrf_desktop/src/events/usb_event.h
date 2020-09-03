@@ -32,6 +32,7 @@ enum usb_state {
 	USB_STATE_POWERED,      /**< Cable attached but no communication. */
 	USB_STATE_ACTIVE,       /**< Cable attached and data is exchanged. */
 	USB_STATE_SUSPENDED,    /**< Cable attached but port is suspended. */
+	USB_STATE_HALTED,       /**< Cable attached but device is halted. */
 
 	USB_STATE_COUNT         /**< Number of states. */
 };

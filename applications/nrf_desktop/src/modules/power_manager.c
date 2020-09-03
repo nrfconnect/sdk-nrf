@@ -55,7 +55,8 @@ static enum usb_state usb_state;
 static bool is_device_powered(void)
 {
 	return (usb_state == USB_STATE_POWERED) ||
-	       (usb_state == USB_STATE_ACTIVE);
+	       (usb_state == USB_STATE_ACTIVE) ||
+	       (usb_state == USB_STATE_HALTED);
 }
 
 static bool system_off_check(void)

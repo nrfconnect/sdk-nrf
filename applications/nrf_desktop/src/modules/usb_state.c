@@ -401,8 +401,10 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 static void device_status(enum usb_dc_status_code cb_status, const uint8_t *param)
 {
 	static enum usb_state before_suspend;
+	static enum usb_state before_halted;
 	enum usb_state new_state = state;
 
+	LOG_WRN("PDUNAJ %d", cb_status);
 	switch (cb_status) {
 	case USB_DC_CONNECTED:
 		if (state != USB_STATE_DISCONNECTED) {
@@ -451,11 +453,22 @@ static void device_status(enum usb_dc_status_code cb_status, const uint8_t *para
 		break;
 
 	case USB_DC_SET_HALT:
+		before_halted = state;
+		new_state = USB_STATE_HALTED;
+		LOG_WRN("USB halt set");
+		break;
+
 	case USB_DC_CLEAR_HALT:
-		/* Ignore */
+		if (state == USB_STATE_HALTED) {
+			new_state = before_halted;
+			LOG_WRN("USB halt cleared");
+		} else {
+			LOG_WRN("USB halt clear ignored");
+		}
 		break;
 
 	case USB_DC_INTERFACE:
+		LOG_WRN("USB interface - ignore");
 		/* Ignore */
 		break;
 
