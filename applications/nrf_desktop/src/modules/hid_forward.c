@@ -349,20 +349,21 @@ static uint8_t hidc_read_cfg(struct bt_gatt_hids_c *hidc,
 		/* Recipient and event_id must be stored to send proper values
 		 * on error.
 		 */
-		uint16_t recipient = per->cfg_chan_rsp->recipient;
+		uint8_t recipient = per->cfg_chan_rsp->recipient;
 		uint8_t event_id = per->cfg_chan_rsp->event_id;
 
 		int pos = config_channel_report_parse(data,
 						      REPORT_SIZE_USER_CONFIG,
 						      per->cfg_chan_rsp);
 
-		if (per->cfg_chan_rsp->recipient >= UINT8_MAX) {
-			/* Indicate problem when parsing response. */
+		if ((per->cfg_chan_rsp->status != CONFIG_STATUS_PENDING) &&
+		    (per->cfg_chan_rsp->status != CONFIG_STATUS_TIMEOUT) &&
+		    (per->cfg_chan_rsp->recipient != CFG_CHAN_RECIPIENT_LOCAL)) {
 			pos = -ENOTSUP;
-		} else {
-			per->cfg_chan_rsp->recipient = recipient;
-			__ASSERT_NO_MSG(recipient == per->cfg_chan_id);
 		}
+
+		per->cfg_chan_rsp->recipient = recipient;
+		__ASSERT_NO_MSG(recipient == per->cfg_chan_id);
 
 		if (pos < 0) {
 			LOG_WRN("Failed to parse response: %d", pos);
@@ -512,12 +513,20 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 
 	case CONFIG_STATUS_GET_PEER:
 	{
-		struct hids_peripheral *per = &peripherals[cur_per];
+		struct hids_peripheral *per;
 
-		while ((per->cfg_chan_id == CFG_CHAN_UNUSED_PEER_ID) &&
-		       (cur_per < ARRAY_SIZE(peripherals))) {
-			cur_per++;
+		if (cur_per < ARRAY_SIZE(peripherals)) {
 			per = &peripherals[cur_per];
+		} else {
+			per = NULL;
+		}
+
+		while ((cur_per < ARRAY_SIZE(peripherals)) &&
+		       (per->cfg_chan_id == CFG_CHAN_UNUSED_PEER_ID)) {
+			cur_per++;
+			if (cur_per < ARRAY_SIZE(peripherals)) {
+				per = &peripherals[cur_per];
+			}
 		}
 
 		BUILD_ASSERT(sizeof(per->hwid) == HWID_LEN);
@@ -568,17 +577,10 @@ static bool handle_config_event(struct config_event *event)
 		return true;
 	}
 
-	if (event->recipient >= UINT8_MAX) {
-		send_nodata_response(event, CONFIG_STATUS_REJECT);
-		LOG_WRN("Improper recipient");
-		return true;
-	}
-
-	struct hids_peripheral *per =
-		find_peripheral((uint8_t)event->recipient);
+	struct hids_peripheral *per = find_peripheral(event->recipient);
 
 	if (!per) {
-		LOG_INF("Recipent %02" PRIx16 "not found", event->recipient);
+		LOG_INF("Recipent %02" PRIx8 "not found", event->recipient);
 		return false;
 	}
 
@@ -625,7 +627,7 @@ static bool handle_config_event(struct config_event *event)
 		return true;
 	}
 
-	uint16_t recipient = event->recipient;
+	uint8_t recipient = event->recipient;
 	uint8_t report[REPORT_SIZE_USER_CONFIG];
 
 	/* Update recipient of forwarded data. */

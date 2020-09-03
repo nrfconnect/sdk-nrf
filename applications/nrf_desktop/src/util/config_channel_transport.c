@@ -11,7 +11,8 @@
 #include "hid_report_desc.h"
 
 #define MODULE config_channel_transport
-#define TRANSPORT_HEADER_SIZE 5
+#define TRANSPORT_HEADER_SIZE		4
+#define CONFIG_STATUS_POS		2
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_LOG_LEVEL);
@@ -50,7 +51,7 @@ static int data_len_check(size_t event_data_len)
 static void fill_response_pending(uint8_t *buffer)
 {
 	memset(buffer, 0, TRANSPORT_HEADER_SIZE);
-	buffer[3] = CONFIG_STATUS_PENDING;
+	buffer[CONFIG_STATUS_POS] = CONFIG_STATUS_PENDING;
 }
 
 int config_channel_report_parse(const uint8_t *buffer, size_t length,
@@ -64,11 +65,13 @@ int config_channel_report_parse(const uint8_t *buffer, size_t length,
 
 	size_t pos = 0;
 
-	event->recipient = sys_get_le16(&buffer[pos]);
+	event->recipient = buffer[pos];
 	pos += sizeof(event->recipient);
 
 	event->event_id = buffer[pos];
 	pos += sizeof(event->event_id);
+
+	__ASSERT_NO_MSG(pos == CONFIG_STATUS_POS);
 
 	event->status = buffer[pos];
 	pos += sizeof(event->status);
@@ -111,11 +114,13 @@ int config_channel_report_fill(uint8_t *buffer, const size_t length,
 
 	size_t pos = 0;
 
-	sys_put_le16(event->recipient, &buffer[pos]);
+	buffer[pos] = event->recipient;
 	pos += sizeof(event->recipient);
 
 	buffer[pos] = event->event_id;
 	pos += sizeof(event->event_id);
+
+	__ASSERT_NO_MSG(pos == CONFIG_STATUS_POS);
 
 	buffer[pos] = event->status;
 	pos += sizeof(event->status);
@@ -154,7 +159,7 @@ static void timeout_fn(struct k_work *work)
 	__ASSERT_NO_MSG(transport->state == CONFIG_CHANNEL_TRANSPORT_WAIT_RSP);
 
 	/* Send response with timeout status, without aditional data. */
-	transport->data[3] = CONFIG_STATUS_TIMEOUT;
+	transport->data[CONFIG_STATUS_POS] = CONFIG_STATUS_TIMEOUT;
 	drop_transactions(transport);
 	transport->state = CONFIG_CHANNEL_TRANSPORT_RSP_READY;
 }
