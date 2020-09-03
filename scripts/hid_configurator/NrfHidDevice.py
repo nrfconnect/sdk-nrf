@@ -148,7 +148,8 @@ class NrfHidTransport():
                 # Response was not ready
                 continue
 
-            if (rsp_recipient != recipient) or (rsp_event_id != event_id):
+            if (rsp_status != ConfigStatus.TIMEOUT) and \
+               ((rsp_recipient != recipient) or (rsp_event_id != event_id)):
                 logging.error('Response does not match the request:\n'
                               '\trequest: recipient {} event_id {}\n'
                               '\tresponse: recipient {}, event_id {}'.format(recipient,
