@@ -106,6 +106,7 @@ static int download_client_callback(const struct download_client_evt *event)
 				/* Abort current download procedure, and
 				 * schedule new download from offset.
 				 */
+				(void)download_client_disconnect(&dlc);
 				k_delayed_work_submit(&dlc_with_offset_work,
 						K_SECONDS(1));
 				LOG_INF("Refuse fragment, restart with offset");
@@ -207,13 +208,25 @@ static void download_with_offset(struct k_work *unused)
 {
 	int offset;
 	int err = dfu_target_offset_get(&offset);
+	if (err != 0) {
+		LOG_ERR("%s failed to get offset with error %d", __func__, err);
+		return;
+	}
+
+	err = download_client_connect(&dlc, dlc.host, &dlc.config);
+	if (err != 0) {
+		LOG_ERR("%s failed to connect with error %d", __func__, err);
+		return;
+	}
 
 	err = download_client_start(&dlc, dlc.file, offset);
-
-	LOG_INF("Downloading from offset: 0x%x", offset);
 	if (err != 0) {
-		LOG_ERR("%s failed with error %d", __func__, err);
+		LOG_ERR("%s failed to start download  with error %d", __func__,
+			err);
+		return;
 	}
+	LOG_INF("Downloading from offset: 0x%x", offset);
+	return;
 }
 
 int fota_download_start(const char *host, const char *file, int sec_tag,
