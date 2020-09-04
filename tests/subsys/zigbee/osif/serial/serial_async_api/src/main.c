@@ -11,7 +11,7 @@
 
 #define TEST_UART_BUF_LEN 256
 #define TEST_RX_LOCK_TIMEOUT K_MSEC(CONFIG_ZIGBEE_UART_PARTIAL_RX_TIMEOUT + 100)
-#define TEST_TX_LOCK_TIMEOUT K_MSEC(100)
+#define TEST_TX_LOCK_TIMEOUT K_MSEC(CONFIG_ZIGBEE_UART_PARTIAL_TX_TIMEOUT + 100)
 
 
 static K_SEM_DEFINE(tx_lock, 1, 1);
@@ -220,7 +220,7 @@ static void test_small_rx_buffer(void)
  */
 static void test_single_rx_chunk(void)
 {
-	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_BUF_LEN] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -235,7 +235,7 @@ static void test_single_rx_chunk(void)
  */
 static void test_two_rx_chunks(void)
 {
-	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN * 2] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_BUF_LEN * 2] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -251,7 +251,7 @@ static void test_two_rx_chunks(void)
  */
 static void test_rx_timeout_single_byte(void)
 {
-#if CONFIG_ZIGBEE_UART_RX_CHUNK_LEN < 2
+#if CONFIG_ZIGBEE_UART_RX_BUF_LEN < 2
 	ztest_test_skip();
 #else
 	zb_uint8_t test_serial_data[1] = { 0 };
@@ -275,10 +275,10 @@ static void test_rx_timeout_single_byte(void)
  */
 static void test_rx_timeout_chunk_and_single_byte(void)
 {
-#if CONFIG_ZIGBEE_UART_RX_CHUNK_LEN < 2
+#if CONFIG_ZIGBEE_UART_RX_BUF_LEN < 2
 	ztest_test_skip();
 #else
-	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN + 1] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_BUF_LEN + 1] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
@@ -299,7 +299,7 @@ static void test_rx_timeout_chunk_and_single_byte(void)
  */
 static void test_rx_timeout_two_chunks_and_single_byte(void)
 {
-	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_CHUNK_LEN*2+1] = { 0 };
+	zb_uint8_t test_serial_data[CONFIG_ZIGBEE_UART_RX_BUF_LEN*2+1] = { 0 };
 	size_t bytes_filled = fill_with_test_data(test_serial_data,
 						  sizeof(test_serial_data));
 
