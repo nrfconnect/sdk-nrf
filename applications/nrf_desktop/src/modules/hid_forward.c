@@ -473,6 +473,7 @@ static struct config_event *generate_response(const struct config_event *event,
 		new_config_event(dyndata_size);
 
 	rsp->recipient = event->recipient;
+	rsp->status = event->status;
 	rsp->event_id = event->event_id;
 	rsp->transport_id = event->transport_id;
 	rsp->is_request = false;
@@ -516,6 +517,7 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 		while ((per->cfg_chan_id == CFG_CHAN_UNUSED_PEER_ID) &&
 		       (cur_per < ARRAY_SIZE(peripherals))) {
 			cur_per++;
+			per = &peripherals[cur_per];
 		}
 
 		BUILD_ASSERT(sizeof(per->hwid) == HWID_LEN);
