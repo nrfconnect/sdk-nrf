@@ -39,7 +39,14 @@ Sink modules for ble_peer_event
 Source modules for config_event
 ===============================
 
+* :ref:`nrf_desktop_ble_bond`
+* :ref:`nrf_desktop_ble_qos`
+* :ref:`nrf_desktop_dfu`
+* :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_hids`
+* :ref:`nrf_desktop_info`
+* :ref:`nrf_desktop_led_stream`
+* :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_usb_state`
 
 .. _nrf_desktop_config_event_sinks:
@@ -51,55 +58,12 @@ Sink modules for config_event
 * :ref:`nrf_desktop_ble_latency`
 * :ref:`nrf_desktop_ble_qos`
 * :ref:`nrf_desktop_dfu`
-* :ref:`nrf_desktop_hids`
-* :ref:`nrf_desktop_led_stream`
-* :ref:`nrf_desktop_motion`
-* :ref:`nrf_desktop_usb_state`
-* :ref:`nrf_desktop_info`
-
-
-.. _nrf_desktop_config_fetch_event_sources:
-
-Source modules for config_fetch_event
-=====================================
-
-* :ref:`nrf_desktop_ble_bond`
-* :ref:`nrf_desktop_ble_qos`
-* :ref:`nrf_desktop_dfu`
 * :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_info`
 * :ref:`nrf_desktop_led_stream`
 * :ref:`nrf_desktop_motion`
-
-.. _nrf_desktop_config_fetch_event_sinks:
-
-Sink modules for config_fetch_event
-===================================
-
 * :ref:`nrf_desktop_hids`
 * :ref:`nrf_desktop_usb_state`
-
-
-.. _nrf_desktop_config_fetch_request_event_sources:
-
-Source modules for config_fetch_request_event
-=============================================
-
-* :ref:`nrf_desktop_hids`
-* :ref:`nrf_desktop_usb_state`
-
-.. _nrf_desktop_config_fetch_request_event_sinks:
-
-Sink modules for config_fetch_request_event
-===========================================
-
-* :ref:`nrf_desktop_ble_bond`
-* :ref:`nrf_desktop_ble_latency`
-* :ref:`nrf_desktop_ble_qos`
-* :ref:`nrf_desktop_dfu`
-* :ref:`nrf_desktop_led_stream`
-* :ref:`nrf_desktop_motion`
-* :ref:`nrf_desktop_info`
 
 
 .. _nrf_desktop_module_state_event_sources:
@@ -122,6 +86,7 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_buttons`
 * :ref:`nrf_desktop_buttons_sim`
 * :ref:`nrf_desktop_click_detector`
+* :ref:`nrf_desktop_cpu_meas`
 * :ref:`nrf_desktop_failsafe`
 * :ref:`nrf_desktop_fn_keys`
 * :ref:`nrf_desktop_hfclk_lock`
@@ -132,8 +97,11 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_leds`
 * :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_passkey`
+* :ref:`nrf_desktop_profiler_sync`
+* :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
+* :ref:`nrf_desktop_smp`
 * :ref:`nrf_desktop_usb_state`
 * :ref:`nrf_desktop_watchdog`
 * :ref:`nrf_desktop_wheel`
@@ -145,6 +113,7 @@ Sink modules for module_state_event
 
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_failsafe`
+* :ref:`nrf_desktop_profiler_sync`
 * :ref:`nrf_desktop_watchdog`
 * :ref:`nrf_desktop_bas`
 * :ref:`nrf_desktop_battery_charger`
@@ -161,6 +130,7 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_buttons_sim`
 * :ref:`nrf_desktop_click_detector`
 * :ref:`nrf_desktop_constlat`
+* :ref:`nrf_desktop_cpu_meas`
 * :ref:`nrf_desktop_dfu`
 * :ref:`nrf_desktop_fn_keys`
 * :ref:`nrf_desktop_hfclk_lock`
@@ -174,8 +144,10 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_passkey`
 * :ref:`nrf_desktop_power_manager`
+* :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
+* :ref:`nrf_desktop_smp`
 * :ref:`nrf_desktop_usb_state`
 * :ref:`nrf_desktop_wheel`
 
@@ -204,6 +176,7 @@ Sink modules for power_down_event
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_buttons_sim`
 * :ref:`nrf_desktop_click_detector`
+* :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_leds`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_power_manager`
@@ -215,6 +188,7 @@ Source modules for wake_up_event
 ================================
 
 * :ref:`nrf_desktop_buttons`
+* :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_power_manager`
 * :ref:`nrf_desktop_wheel`
@@ -235,7 +209,9 @@ Sink modules for wake_up_event
 * :ref:`nrf_desktop_click_detector`
 * :ref:`nrf_desktop_constlat`
 * :ref:`nrf_desktop_hfclk_lock`
+* :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_leds`
 * :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_selector`
+* :ref:`nrf_desktop_usb_state`
 * :ref:`nrf_desktop_wheel`

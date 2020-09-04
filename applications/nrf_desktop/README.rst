@@ -1497,6 +1497,7 @@ For more information about each application module and its configuration details
    doc/buttons_sim.rst
    doc/click_detector.rst
    doc/config_channel.rst
+   doc/cpu_meas.rst
    doc/dev_descr.rst
    doc/dfu.rst
    doc/failsafe.rst
@@ -1512,7 +1513,10 @@ For more information about each application module and its configuration details
    doc/motion.rst
    doc/passkey.rst
    doc/power_manager.rst
+   doc/profiler_sync.rst
+   doc/qos.rst
    doc/selector.rst
+   doc/smp.rst
    doc/settings_loader.rst
    doc/usb_state.rst
    doc/watchdog.rst
