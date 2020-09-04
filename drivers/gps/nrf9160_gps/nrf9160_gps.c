@@ -181,25 +181,6 @@ static void notify_event(struct device *dev, struct gps_event *evt)
 	}
 }
 
-static void on_fix(struct device *dev)
-{
-	struct gps_drv_data *drv_data = dev->data;
-
-	switch (drv_data->current_cfg.nav_mode) {
-	case GPS_NAV_MODE_PERIODIC:
-		/* Fall through */
-	case GPS_NAV_MODE_SINGLE_FIX:
-		k_delayed_work_cancel(&drv_data->timeout_work);
-		stop_gps(dev, false);
-		break;
-	case GPS_NAV_MODE_CONTINUOUS:
-		/* No action required */
-		break;
-	default:
-		break;
-	}
-}
-
 static int open_socket(struct gps_drv_data *drv_data)
 {
 	drv_data->socket = nrf_socket(NRF_AF_LOCAL, NRF_SOCK_DGRAM,
@@ -236,8 +217,27 @@ wait:
 		nrf_gnss_data_frame_t raw_gps_data = {0};
 		struct gps_event evt = {0};
 
+		/** There is no way of knowing if nrf_recv() blocks because the
+		 *  GPS timeout/retry value has expired or the GPS has gotten a
+		 *  fix. This check makes sure that a GPS_EVT_SEARCH_TIMEOUT is
+		 *  not propagated upon a fix.
+		 */
+		if (!has_fix) {
+			/** If nrf_recv() blocks for more than one second, a fix
+			 *  has been obtained or the GPS has timed out. Submit
+			 *  a delayed timeout work every two seconds to make
+			 *  sure the appropriate event is propagated upon
+			 *  a block.
+			 */
+			k_delayed_work_submit(&drv_data->timeout_work,
+					      K_SECONDS(2));
+		}
+
 		len = nrf_recv(drv_data->socket, &raw_gps_data,
-			   sizeof(nrf_gnss_data_frame_t), 0);
+			       sizeof(nrf_gnss_data_frame_t), 0);
+
+		k_delayed_work_cancel(&drv_data->timeout_work);
+
 		if (len <= 0) {
 			/* Is the GPS stopped, causing this error? */
 			if (!atomic_get(&drv_data->is_active)) {
@@ -312,7 +312,6 @@ wait:
 				evt.type = GPS_EVT_PVT_FIX;
 				fix_timestamp = k_uptime_get();
 				has_fix = true;
-				on_fix(dev);
 			} else {
 				evt.type = GPS_EVT_PVT;
 			}
@@ -652,16 +651,6 @@ set_configuration:
 		return -EIO;
 	}
 
-	if (gps_cfg.retry > 0) {
-		k_delayed_work_submit(&drv_data->timeout_work,
-				      K_SECONDS(cfg->timeout));
-	}
-
-	if (cfg->nav_mode == GPS_NAV_MODE_PERIODIC) {
-		k_delayed_work_submit(&drv_data->start_work,
-				      K_SECONDS(cfg->interval));
-	}
-
 	atomic_set(&drv_data->is_active, 1);
 	k_sem_give(&drv_data->thread_run_sem);
 
@@ -801,16 +790,6 @@ static void timeout_work_fn(struct k_work *work)
 	struct gps_event evt = {
 		.type = GPS_EVT_SEARCH_TIMEOUT
 	};
-
-	stop_gps(dev, true);
-
-	if (drv_data->current_cfg.nav_mode == GPS_NAV_MODE_PERIODIC) {
-		uint32_t start_delay = drv_data->current_cfg.interval -
-				    drv_data->current_cfg.timeout;
-
-		k_delayed_work_submit(&drv_data->start_work,
-				      K_SECONDS(start_delay));
-	}
 
 	notify_event(dev, &evt);
 }
