@@ -18,6 +18,8 @@ zephyr_compile_definitions(CONFIG_ZIGBEE_UART_DEVICE_NAME="UART_1")
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_TX_TIMEOUT=10)
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_RX_TIMEOUT=10)
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_PARTIAL_RX_TIMEOUT=10)
+zephyr_compile_definitions(CONFIG_ZIGBEE_UART_RX_CHUNK_LEN=2)
+zephyr_compile_definitions(CONFIG_ZIGBEE_UART_RX_BUF_LEN=16)
 zephyr_compile_definitions(CONFIG_ZIGBEE_UART_TX_BUF_LEN=128)
 
 zephyr_include_directories(${ZEPHYR_BASE}/../nrf/subsys/zigbee/osif)

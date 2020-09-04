@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
  */
+#include <kernel.h>
 #include <drivers/uart.h>
 #include <zboss_api.h>
 #include "zb_nrf_platform.h"
@@ -30,10 +31,6 @@
  * will not be informed about them immediately. The data will be passed to
  * the user with the next received bytes.
  */
-#ifndef ZIGBEE_UART_RX_CHUNK_SIZE
-#define ZIGBEE_UART_RX_CHUNK_SIZE 2
-#endif /* ZIGBEE_UART_RX_CHUNK_SIZE */
-
 
 static K_SEM_DEFINE(tx_done_sem, 1, 1);
 static K_SEM_DEFINE(rx_done_sem, 1, 1);
@@ -51,11 +48,142 @@ static size_t uart_tx_buf_len;
 static uint8_t uart_tx_buf_mem[CONFIG_ZIGBEE_UART_TX_BUF_LEN];
 
 static uint8_t *uart_rx_buf;
-static size_t uart_rx_buf_offset;
-static size_t uart_rx_buf_len;
+static volatile size_t uart_rx_buf_offset;
+static volatile size_t uart_rx_buf_len;
 
-static uint8_t uart_rx_buf_chunk[2][ZIGBEE_UART_RX_CHUNK_SIZE];
-static uint8_t *uart_rx_buf_chunk_released;
+/**
+ * Add (CONFIG_ZIGBEE_UART_RX_CHUNK_LEN - 1) to the buffer size, so the driver
+ * may write to the RX buffer directly, regardless the write pointer position.
+ */
+static uint8_t uart_rx_buf_mem[CONFIG_ZIGBEE_UART_RX_BUF_LEN +
+			       CONFIG_ZIGBEE_UART_RX_CHUNK_LEN - 1];
+static volatile size_t rx_write_i;
+static volatile size_t rx_req_i;
+static volatile size_t rx_read_i;
+
+/**
+ * Async: Push the buffer contents to the RX buffer.
+ *
+ * @param buf data buffer
+ * @param len data length
+ */
+static void rx_buf_push(uint8_t *buf, size_t len)
+{
+	size_t cpy_len = 0;
+
+	while (len) {
+		/* Calculate the maximum length of the linear copy. */
+		if (CONFIG_ZIGBEE_UART_RX_BUF_LEN - rx_write_i > len) {
+			cpy_len = len;
+		} else {
+			cpy_len = CONFIG_ZIGBEE_UART_RX_BUF_LEN - rx_write_i;
+		}
+
+		memcpy(&uart_rx_buf_mem[rx_write_i], buf, cpy_len);
+
+		/* Adjust the read pointer in case of buffer overflow. */
+		if ((rx_read_i > rx_write_i) &&
+		    (rx_read_i < rx_write_i + cpy_len)) {
+			rx_read_i = (rx_write_i + cpy_len + 1) %
+					CONFIG_ZIGBEE_UART_RX_BUF_LEN;
+		}
+
+		rx_write_i = (rx_write_i + cpy_len) %
+				CONFIG_ZIGBEE_UART_RX_BUF_LEN;
+		len -= cpy_len;
+	}
+}
+
+/**
+ * Async: Get the buffered data.
+ *
+ * @param buf destination data buffer
+ * @param len destination data buffer length
+ *
+ * @return The number of bytes written to the destination buffer.
+ */
+static size_t rx_buf_pop(uint8_t *buf, size_t len)
+{
+	size_t copied = 0;
+	size_t cpy_len = 0;
+
+	while ((rx_read_i != rx_write_i) && len) {
+		/* Calculate the maximum length of the linear copy. */
+		if (rx_write_i > rx_read_i) {
+			cpy_len = rx_write_i - rx_read_i;
+		} else {
+			cpy_len = CONFIG_ZIGBEE_UART_RX_BUF_LEN - rx_read_i;
+		}
+
+		/* Adjust the copy size to the input buffer length. */
+		if (cpy_len > len) {
+			cpy_len = len;
+		}
+
+		memcpy(&buf[copied], &uart_rx_buf_mem[rx_read_i], cpy_len);
+
+		copied += cpy_len;
+		len -= cpy_len;
+		rx_read_i = (rx_read_i + cpy_len) %
+				CONFIG_ZIGBEE_UART_RX_BUF_LEN;
+	}
+
+	return copied;
+}
+
+/**
+ * Async: Increment the write pointer in RX buffer.
+ *        This function is used to perform zero-copy data push, if the RX buffer
+ *        was passed directly to the driver.
+ *
+ * @param len data length
+ */
+static void rx_buf_accept(size_t len)
+{
+	size_t cpy_len = 0;
+
+	/* Calculate the amount of data written into readable area. */
+	if (CONFIG_ZIGBEE_UART_RX_BUF_LEN - rx_write_i > len) {
+		cpy_len = len;
+	} else {
+		cpy_len = CONFIG_ZIGBEE_UART_RX_BUF_LEN - rx_write_i;
+	}
+
+	/* Adjust the read pointer in case of buffer overflow. */
+	if ((rx_read_i > rx_write_i) && (rx_read_i < rx_write_i + cpy_len)) {
+		rx_read_i = (rx_write_i + cpy_len + 1) %
+				CONFIG_ZIGBEE_UART_RX_BUF_LEN;
+	}
+
+	rx_write_i  = (rx_write_i + cpy_len) % CONFIG_ZIGBEE_UART_RX_BUF_LEN;
+	len -= cpy_len;
+
+	/*
+	 * If the buffer was written in an unreadable area, copy the contents
+	 * back to the beginning of the buffer using regular push operation.
+	 */
+	__ASSERT(len < CONFIG_ZIGBEE_UART_RX_CHUNK_LEN,
+		"Memory corruption detected while incrementing buffer pointer");
+	if (len > 0) {
+		rx_buf_push(&uart_rx_buf_mem[CONFIG_ZIGBEE_UART_RX_BUF_LEN],
+			    len);
+	}
+}
+
+/**
+ * Async: Get the expected pointer in the RX buffer for the reception of the
+ *        next CONFIG_ZIGBEE_UART_RX_CHUNK_LEN bytes.
+ *
+ * @retval Pointer to the memory to write to.
+ */
+static uint8_t *rx_buf_get_next(void)
+{
+	size_t old_req_i = rx_req_i;
+
+	rx_req_i = (rx_req_i + CONFIG_ZIGBEE_UART_RX_CHUNK_LEN) %
+			CONFIG_ZIGBEE_UART_RX_BUF_LEN;
+	return &uart_rx_buf_mem[old_req_i];
+}
 
 
 /**
@@ -79,80 +207,54 @@ static void uart_rx_notify(zb_bufid_t bufid)
 }
 
 /**
- * Async: handle completion of buffer reception.
- *
- * @param rx_buf data buffer
- */
-static void store_rx_buf(uint8_t *rx_buf)
-{
-	if (uart_rx_buf_offset >= uart_rx_buf_len) {
-		return;
-	}
-
-	/* The whole RX chunk/buffer received. */
-	if ((rx_buf == uart_rx_buf_chunk[0]) ||
-	    (rx_buf == uart_rx_buf_chunk[1])) {
-		/*
-		 * In async mode we have to consider both chunks, because both
-		 * of them were passed before recv() API was called:
-		 *  [0] - as the RX buffer. First bytes will go there.
-		 *  [1] - as the next RX buffer, as the result of
-		 *        uart_rx_enable() API call.
-		 */
-		memcpy(&uart_rx_buf[uart_rx_buf_offset],
-		       rx_buf,
-		       ZIGBEE_UART_RX_CHUNK_SIZE);
-		uart_rx_buf_offset += ZIGBEE_UART_RX_CHUNK_SIZE;
-	} else {
-		/*
-		 * The received buffer is not one of RX chunks.
-		 * The user buffer is now fully filed in with data.
-		 */
-		uart_rx_buf_offset = uart_rx_buf_len;
-	}
-}
-
-/**
- * Async: Pass partial RX buffer.
+ * Async: Handle received bytes.
  *
  * @param buf data buffer
  * @param len data length.
  *
- * @return True if RX timeout detected.
+ * @return True if RX timeout detected and the RX operation should be restarted.
  */
 static bool handle_rx_chunk(uint8_t *buf, size_t len)
 {
 	bool rx_timeout_occurred = false;
 
 	/* Detect and handle the RX timeout event. */
-	if ((buf == uart_rx_buf_chunk[0]) ||
-	    (buf == uart_rx_buf_chunk[1])) {
-		if (len != ZIGBEE_UART_RX_CHUNK_SIZE) {
+	if ((buf >= uart_rx_buf_mem) &&
+	    (buf < uart_rx_buf_mem + sizeof(uart_rx_buf_mem))) {
+		/* Align write pointer. */
+		rx_buf_accept(len);
+
+		/* Copy data to the user's buffer. */
+		if (uart_rx_buf_offset < uart_rx_buf_len) {
+			uart_rx_buf_offset += rx_buf_pop(
+				&uart_rx_buf[uart_rx_buf_offset],
+				uart_rx_buf_len - uart_rx_buf_offset);
+		}
+
+		/* Detect RX timeout event. */
+		if (len != CONFIG_ZIGBEE_UART_RX_CHUNK_LEN) {
 			rx_timeout_occurred = true;
-			memcpy(&uart_rx_buf[uart_rx_buf_offset], buf, len);
 		}
 	} else {
+		/* Detect RX timeout event. */
 		if ((uart_rx_buf_offset + len) != uart_rx_buf_len) {
 			rx_timeout_occurred = true;
-			/*
-			 * The driver was writing data directly to user's
-			 * buffer, there is no need to do copying.
-			 */
 		}
+
+		/*
+		 * The received buffer is not one of RX chunks.
+		 * The user buffer was filled in with data directly.
+		 */
+		uart_rx_buf_offset += len;
 	}
 
 	if (rx_timeout_occurred) {
-		uart_rx_buf_offset += len;
+		/* In case of RX timeout: return the currently buffered data. */
 		uart_rx_buf_len = uart_rx_buf_offset;
 		/*
 		 * Disable RX in order to reset receiver and release user buffer
 		 */
 		uart_rx_disable(uart_dev);
-	} else {
-		/*
-		 * The whole buffer was received - pass data to the user buffer.
-		 */
-		store_rx_buf(buf);
 	}
 
 	return rx_timeout_occurred;
@@ -164,7 +266,7 @@ static void uart_evt_handler(struct device *dev, struct uart_event *evt,
 	ARG_UNUSED(dev);
 
 	static bool restart_rx;
-	static uint8_t *blocked_buf_chunk;
+	static bool writing_user_buf;
 
 	switch (evt->type) {
 	case UART_TX_DONE:
@@ -190,11 +292,8 @@ static void uart_evt_handler(struct device *dev, struct uart_event *evt,
 		break;
 
 	case UART_RX_RDY:
-		/* New chunk of data received. */
 		/* Sync: Pass received data through per-byte handler. */
-		/* Async: Copy the data to the user's buffer or mark the
-		 *        transfer as completed.
-		 */
+		/* Async: Pass received data through per-buffer handler. */
 		if (char_handler) {
 			for (size_t i = evt->data.rx.offset;
 			     i < evt->data.rx.offset + evt->data.rx.len;
@@ -203,13 +302,13 @@ static void uart_evt_handler(struct device *dev, struct uart_event *evt,
 			}
 		}
 
-		if (uart_rx_buf) {
-			restart_rx = handle_rx_chunk(evt->data.rx_buf.buf,
-				       evt->data.rx.offset + evt->data.rx.len);
-		}
+		restart_rx = handle_rx_chunk(
+			&evt->data.rx_buf.buf[evt->data.rx.offset],
+			evt->data.rx.len);
 		break;
 
 	case UART_RX_BUF_REQUEST:
+	{
 		/*
 		 * Sync: The continuous RX is implemented by receiving data
 		 *       through chunks into static memory.
@@ -218,78 +317,69 @@ static void uart_evt_handler(struct device *dev, struct uart_event *evt,
 		 *        buffers while the user buffer is unknown and filling
 		 *        the user's buffer afterwards.
 		 */
+		/*
+		 * Calculate the amount of data that can be written to the
+		 * user's buffer, based on static RX buffer.
+		 */
+		size_t offset = uart_rx_buf_offset +
+				CONFIG_ZIGBEE_UART_RX_CHUNK_LEN;
 		if (uart_rx_buf &&
-		    !blocked_buf_chunk &&
-		    uart_rx_buf_len > ZIGBEE_UART_RX_CHUNK_SIZE * 2) {
+		    !writing_user_buf &&
+		    (uart_rx_buf_len > offset)) {
 			/*
 			 * Async: The user provided RX buffer and the driver
 			 *        has just received the first chunk of data,
 			 *        which is already copied to user's buffer.
-			 *        The second chunk is being received, so
-			 *        skip two chunks while passing the
+			 *        The next chunk is being received, so
+			 *        skip additional chunk while passing the
 			 *        user's buffer.
 			 */
 			uart_rx_buf_rsp(uart_dev,
-			    &(uart_rx_buf[ZIGBEE_UART_RX_CHUNK_SIZE * 2]),
-			    uart_rx_buf_len - ZIGBEE_UART_RX_CHUNK_SIZE * 2);
-
-			/*
-			 * Async: Remember the free RX chunk and restore it once
-			 *        user's RX buffer will be filled with data.
-			 */
-			blocked_buf_chunk = uart_rx_buf_chunk_released;
-		} else if (uart_rx_buf_chunk_released) {
-			/* Sync: Pass the most recently released buffer. */
+				&(uart_rx_buf[offset]),
+				uart_rx_buf_len - offset);
+			writing_user_buf = true;
+		} else {
 			uart_rx_buf_rsp(uart_dev,
-					uart_rx_buf_chunk_released,
-					ZIGBEE_UART_RX_CHUNK_SIZE);
+					rx_buf_get_next(),
+					CONFIG_ZIGBEE_UART_RX_CHUNK_LEN);
 		}
-
-		/* The RX chunk was either remembered or used for reception. */
-		uart_rx_buf_chunk_released = NULL;
-		break;
+	}
+	break;
 
 	case UART_RX_BUF_RELEASED:
-		if (uart_rx_buf) {
-			if (uart_rx_buf_offset == uart_rx_buf_len) {
-				uart_rx_buf_len = 0;
-				zigbee_schedule_callback(uart_rx_notify, 0);
-			}
-		}
-
-		/*
-		 * Pass the consumed buffer through uart_rx_buf_chunk_released
-		 * variable to keep RX chunks in a loop.
-		 */
-		if (!uart_rx_buf_chunk_released) {
-			if ((evt->data.rx_buf.buf == uart_rx_buf_chunk[0]) ||
-			    (evt->data.rx_buf.buf == uart_rx_buf_chunk[1])) {
-				uart_rx_buf_chunk_released =
-					evt->data.rx_buf.buf;
-			} else if (blocked_buf_chunk) {
-				uart_rx_buf_chunk_released = blocked_buf_chunk;
-				blocked_buf_chunk = NULL;
+		if (uart_rx_buf && (uart_rx_buf_offset == uart_rx_buf_len)) {
+			uart_rx_buf_len = 0;
+			writing_user_buf = false;
+			if (zigbee_schedule_callback(uart_rx_notify, 0)) {
+				uart_rx_buf_offset = 0;
+				uart_rx_buf = NULL;
+				k_sem_give(&rx_fill_buffer_sem);
 			}
 		}
 		break;
 
 	case UART_RX_DISABLED:
+		/*
+		 * Reset the buffer request pointer, so the next buffer request
+		 * will start writing data from write pointer.
+		 */
+		rx_req_i = rx_write_i;
+
 		if (restart_rx && (!is_sleeping)) {
 			/*
 			 * Async: Reception was stopped due to RX timeout,
 			 *        restart it automatically.
 			 */
 			restart_rx = false;
-			uart_rx_buf_chunk_released = uart_rx_buf_chunk[1];
 			(void)uart_rx_enable(
 				uart_dev,
-				uart_rx_buf_chunk[0],
-				ZIGBEE_UART_RX_CHUNK_SIZE,
+				rx_buf_get_next(),
+				CONFIG_ZIGBEE_UART_RX_CHUNK_LEN,
 				CONFIG_ZIGBEE_UART_PARTIAL_RX_TIMEOUT);
 		} else {
 			/*
 			 * Reception finished and the next RX operation may
-			 * be started.
+			 * be started through zb_osif_uart_wake_up() API.
 			 */
 			restart_rx = false;
 			k_sem_give(&rx_done_sem);
@@ -299,14 +389,16 @@ static void uart_evt_handler(struct device *dev, struct uart_event *evt,
 	case UART_RX_STOPPED:
 		/* An error occurred during reception. Abort RX. */
 		if (uart_rx_buf) {
-			if (blocked_buf_chunk) {
-				uart_rx_buf_chunk_released = blocked_buf_chunk;
-				blocked_buf_chunk = NULL;
-			}
 			uart_rx_buf_len = 0;
-			zigbee_schedule_callback(uart_rx_notify, 0);
+			writing_user_buf = false;
+			if (zigbee_schedule_callback(uart_rx_notify, 0)) {
+				uart_rx_buf_offset = 0;
+				uart_rx_buf = NULL;
+				k_sem_give(&rx_fill_buffer_sem);
+			}
 		}
 		break;
+
 	default:
 		break;
 	}
@@ -319,6 +411,9 @@ void zb_osif_serial_init(void)
 		return;
 	}
 
+	/*
+	 * Reset all static variables in case of runtime init/uninit sequence.
+	 */
 	char_handler = NULL;
 	rx_data_cb = NULL;
 	tx_data_cb = NULL;
@@ -328,6 +423,9 @@ void zb_osif_serial_init(void)
 	uart_rx_buf = NULL;
 	uart_rx_buf_len = 0;
 	uart_rx_buf_offset = 0;
+	rx_write_i = 0;
+	rx_req_i = 0;
+	rx_read_i = 0;
 
 	uart_dev = device_get_binding(CONFIG_ZIGBEE_UART_DEVICE_NAME);
 	if (uart_dev == NULL) {
@@ -340,10 +438,9 @@ void zb_osif_serial_init(void)
 	}
 
 	(void)k_sem_take(&rx_done_sem, K_FOREVER);
-	uart_rx_buf_chunk_released = uart_rx_buf_chunk[1];
 	if (uart_rx_enable(uart_dev,
-			   uart_rx_buf_chunk[0],
-			   ZIGBEE_UART_RX_CHUNK_SIZE,
+			   rx_buf_get_next(),
+			   CONFIG_ZIGBEE_UART_RX_CHUNK_LEN,
 			   CONFIG_ZIGBEE_UART_PARTIAL_RX_TIMEOUT)) {
 		k_sem_give(&rx_done_sem);
 		uart_dev = NULL;
@@ -385,10 +482,9 @@ void zb_osif_uart_wake_up(void)
 
 	(void)k_sem_take(&rx_done_sem, K_FOREVER);
 	is_sleeping = false;
-	uart_rx_buf_chunk_released = uart_rx_buf_chunk[1];
 	if (uart_rx_enable(uart_dev,
-			   uart_rx_buf_chunk[0],
-			   ZIGBEE_UART_RX_CHUNK_SIZE,
+			   rx_buf_get_next(),
+			   CONFIG_ZIGBEE_UART_RX_CHUNK_LEN,
 			   CONFIG_ZIGBEE_UART_PARTIAL_RX_TIMEOUT)) {
 		k_sem_give(&rx_done_sem);
 		uart_dev = NULL;
@@ -425,9 +521,7 @@ void zb_osif_serial_recv_data(zb_uint8_t *buf, zb_ushort_t len)
 		return;
 	}
 
-	if ((uart_dev == NULL) ||
-	    ((len < 2 * ZIGBEE_UART_RX_CHUNK_SIZE) &&
-	     (len != ZIGBEE_UART_RX_CHUNK_SIZE))) {
+	if ((uart_dev == NULL) || (len == 0)) {
 		if (rx_data_cb) {
 			rx_data_cb(NULL, 0);
 		}
@@ -438,9 +532,19 @@ void zb_osif_serial_recv_data(zb_uint8_t *buf, zb_ushort_t len)
 		       K_MSEC(CONFIG_ZIGBEE_UART_RX_TIMEOUT))) {
 		/* Ongoing asynchronous reception. */
 		if (rx_data_cb) {
-			k_sem_give(&rx_fill_buffer_sem);
 			rx_data_cb(NULL, 0);
 		}
+		return;
+	}
+
+	/*
+	 * Flush already received data.
+	 */
+	uart_rx_buf_offset = rx_buf_pop(buf, len);
+	if (uart_rx_buf_offset == len) {
+		uart_rx_buf_offset = 0;
+		k_sem_give(&rx_fill_buffer_sem);
+		rx_data_cb(buf, len);
 		return;
 	}
 
