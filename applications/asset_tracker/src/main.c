@@ -124,6 +124,8 @@ static struct modem_param_info modem_param;
 static struct cloud_channel_data signal_strength_cloud_data;
 #endif /* CONFIG_MODEM_INFO */
 
+static struct gps_agps_request agps_request;
+
 static int64_t gps_last_active_time;
 static int64_t gps_last_search_start_time;
 static atomic_t carrier_requested_disconnect;
@@ -381,7 +383,7 @@ static void send_agps_request(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_AGPS)
 	int err;
 	static int64_t last_request_timestamp;
 
@@ -396,16 +398,16 @@ static void send_agps_request(struct k_work *work)
 
 	LOG_INF("Sending A-GPS request");
 
-	err = nrf_cloud_agps_request_all();
+	err = gps_agps_request(agps_request, GPS_SOCKET_NOT_PROVIDED);
 	if (err) {
-		LOG_ERR("A-GPS request failed, error: %d", err);
+		LOG_ERR("Failed to request A-GPS data, error: %d", err);
 		return;
 	}
 
 	last_request_timestamp = k_uptime_get();
 
 	LOG_INF("A-GPS request sent");
-#endif /* defined(CONFIG_NRF_CLOUD_AGPS) */
+#endif /* defined(CONFIG_AGPS) */
 }
 
 void cloud_connect_error_handler(enum cloud_connect_result err)
@@ -717,6 +719,7 @@ static void gps_handler(struct device *dev, struct gps_event *evt)
 		/* Send A-GPS request with short delay to avoid LTE network-
 		 * dependent corner-case where the request would not be sent.
 		 */
+		memcpy(&agps_request, &evt->agps_request, sizeof(agps_request));
 		k_delayed_work_submit_to_queue(&application_work_q,
 					       &send_agps_request_work,
 					       K_SECONDS(1));
@@ -1415,19 +1418,16 @@ void cloud_event_handler(const struct cloud_backend *const backend,
 			return;
 		}
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-		/* The decoder didn't handle the data, check if it's A-GPS data
-		 */
-		err = nrf_cloud_agps_process(evt->data.msg.buf,
-					     evt->data.msg.len,
-					     NULL);
+#if defined(CONFIG_AGPS)
+		err = gps_process_agps_data(evt->data.msg.buf,
+					    evt->data.msg.len);
 		if (err) {
 			LOG_WRN("Data was not valid A-GPS data, err: %d", err);
 			break;
 		}
 
 		LOG_INF("A-GPS data processed");
-#endif /* defined(CONFIG_GPS_USE_AGPS) */
+#endif /* defined(CONFIG_AGPS) */
 		break;
 	}
 	case CLOUD_EVT_PAIR_REQUEST:
