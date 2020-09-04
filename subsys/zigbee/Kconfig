@@ -182,7 +182,8 @@ menu "ZBOSS osif configuration"
 menuconfig ZIGBEE_HAVE_SERIAL
 	bool "UART serial abstract for ZBOSS OSIF"
 	select SERIAL
-	select UART_ASYNC_API
+	select UART_INTERRUPT_DRIVEN
+	select RING_BUFFER
 
 if ZIGBEE_HAVE_SERIAL
 
@@ -194,17 +195,17 @@ config ZIGBEE_UART_TX_TIMEOUT
 	int "Timeout value for starting asynchronous transmission, in milliseconds"
 	default 10
 
+config ZIGBEE_UART_PARTIAL_TX_TIMEOUT
+	int "Timeout value between the last transmitted byte and the TX ready event if only a part of TX buffer was transmitted, in milliseconds"
+	default 10
+
 config ZIGBEE_UART_RX_TIMEOUT
 	int "Timeout value for starting asynchronous reception, in milliseconds"
 	default 10
 
 config ZIGBEE_UART_PARTIAL_RX_TIMEOUT
-	int "Timeout value between the last received byte and the RX event if only a part of RX buffer was received, in milliseconds"
-	default 1
-
-config ZIGBEE_UART_RX_CHUNK_LEN
-	int "Size of the single reception buffer"
-	default 2
+       int "Timeout value between the last received byte and the RX event if only a part of RX buffer was received, in milliseconds"
+       default 10
 
 config ZIGBEE_UART_RX_BUF_LEN
 	int "Size of the asynchronous receive buffer"
