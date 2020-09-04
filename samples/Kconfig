@@ -31,5 +31,4 @@ if LOG
 config LOG_DEFAULT_LEVEL
 	default 1 if NCS_SAMPLES_DEFAULTS
 
-
 endif # LOG
