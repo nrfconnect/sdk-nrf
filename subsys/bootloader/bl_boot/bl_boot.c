@@ -101,6 +101,15 @@ void bl_boot(const struct fw_info *fw_info)
 		return;
 	}
 
+#if defined(CONFIG_BUILTIN_STACK_GUARD) && \
+    defined(CONFIG_CPU_CORTEX_M_HAS_SPLIM)
+	/* Reset limit registers to avoid inflicting stack overflow on image
+	 * being booted.
+	 */
+	__set_PSPLIM(0);
+	__set_MSPLIM(0);
+#endif
+
 	/* Set MSP to the new address and clear any information from PSP */
 	__set_MSP(vector_table[0]);
 	__set_PSP(0);
