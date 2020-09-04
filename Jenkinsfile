@@ -28,7 +28,7 @@ pipeline {
     parallelsAlwaysFailFast()
     timeout(time: CI_STATE.CFG.TIMEOUT.time, unit: CI_STATE.CFG.TIMEOUT.unit)
   }
-
+ 
   environment {
       GH_TOKEN = credentials('nordicbuilder-compliance-token') // This token is used to by check_compliance to comment on PRs and use checks
       GH_USERNAME = "NordicBuilder"
