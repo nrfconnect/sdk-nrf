@@ -91,7 +91,8 @@ static void pwm_out(struct led *led, struct led_color *color)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
 		pwm_pin_set_usec(led->pwm_dev, led_pins[i],
-				 255, color->c[i], 0);
+				 (1000000 / CONFIG_UI_LED_PWM_FREQUENCY),
+				 color->c[i], 0);
 	}
 }
 
