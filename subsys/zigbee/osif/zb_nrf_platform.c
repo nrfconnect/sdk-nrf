@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <kernel.h>
+#include <power/reboot.h>
 #include <logging/log.h>
 #include <init.h>
 
@@ -491,8 +492,7 @@ void zb_reset(zb_uint8_t param)
 {
 	ZVUNUSED(param);
 
-	LOG_ERR("Fatal error occurred");
-	k_fatal_halt(K_ERR_KERNEL_PANIC);
+	sys_reboot(SYS_REBOOT_COLD);
 }
 
 void zb_osif_enable_all_inter(void)
