@@ -268,11 +268,7 @@ static void event_packet_process(u8_t *hci_buf)
 	}
 
 	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
-	if (bt_hci_evt_is_prio(hdr->evt)) {
-		bt_recv_prio(evt_buf);
-	} else {
-		bt_recv(evt_buf);
-	}
+	bt_recv(evt_buf);
 }
 
 static bool fetch_and_process_hci_evt(uint8_t *p_hci_buffer)
