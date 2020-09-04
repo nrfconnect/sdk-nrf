@@ -12,6 +12,7 @@
 
 #include <zephyr.h>
 #include <drivers/entropy.h>
+#include <sys/util.h>
 
 #if defined(CONFIG_SPM)
 #include "secure_services.h"
@@ -29,12 +30,31 @@ static int entropy_cc310_rng_get_entropy(struct device *dev, uint8_t *buffer,
 	__ASSERT_NO_MSG(buffer != NULL);
 
 #if defined(CONFIG_SPM)
+	size_t offset = 0;
+	size_t to_copy;
+	uint8_t spm_buf[144]; /* 144 is the only length supported by
+			       * spm_request_random_number.
+			       */
+
 	/** This is a call from a non-secure app that enables secure services,
 	 *  in which case entropy is gathered by calling through SPM
 	 */
-	res = spm_request_random_number(buffer, length, &olen);
-	if (olen != length) {
-		return -EINVAL;
+	while (length > 0) {
+		res = spm_request_random_number(spm_buf, sizeof(spm_buf),
+						&olen);
+		if (res < 0) {
+			return res;
+		}
+
+		if (olen != sizeof(spm_buf)) {
+			return -EINVAL;
+		}
+
+		to_copy = MIN(length, sizeof(spm_buf));
+
+		memcpy(buffer + offset, spm_buf, to_copy);
+		length -= to_copy;
+		offset += to_copy;
 	}
 
 #else
