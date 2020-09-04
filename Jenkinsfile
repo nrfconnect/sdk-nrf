@@ -216,7 +216,7 @@ def runDownstreamCustom(String JOB_NAME, HashMap CI_STATE) {
     def jobs = [:]
 
     // ArrayList DOWNSTREAM_JOBS = lib_main.getDownStreamJobs(JOB_NAME, CI_STATE)
-	DOWNSTREAM_JOBS = [latest/sub/test-fw-nrfconnect-nrf/v1.3-branch:[propagate:true, wait:true], latest/sub/test-fw-nrfconnect-nrf_doc/v1.3-branch:[propagate:true, wait:true]]
+	def DOWNSTREAM_JOBS = [latest/sub/test-fw-nrfconnect-nrf/v1.3-branch:[propagate:true, wait:true], latest/sub/test-fw-nrfconnect-nrf_doc/v1.3-branch:[propagate:true, wait:true]]
     println "DOWNSTREAM_JOBS = " + DOWNSTREAM_JOBS
     DOWNSTREAM_JOBS.each { job ->
       println "Starting JOB = $job"
